@@ -17,29 +17,29 @@
 
 #include <QFrame>
 #include <QGridLayout>
+#include <QGroupBox>
 #include <QParallelAnimationGroup>
 #include <QScrollArea>
 #include <QToolButton>
-#include <QGroupBox>
 
 class Spoiler : public QGroupBox {
     Q_OBJECT
 
-public:
+ public:
     QScrollArea contentArea;
-    explicit Spoiler(const QString & title = "", const int animationDuration = 100, QWidget *parent = 0);
-    void setContentLayout(QLayout & contentLayout, bool toggled = false);
+    explicit Spoiler(
+        const QString& title = "", const int animationDuration = 100, QWidget* parent = 0);
+    void setContentLayout(QLayout& contentLayout, bool toggled = false);
 
-public slots:
+ public slots:
     void toggler(const bool check);
-    
-private:
+
+ private:
     QGridLayout mainLayout;
     QToolButton toggleButton;
     QFrame headerLine;
     QParallelAnimationGroup toggleAnimation;
-    int animationDuration{300};
-
+    int animationDuration {300};
 };
 
-#endif //GUI_UTILITIES_SPOILER
+#endif // GUI_UTILITIES_SPOILER

@@ -51,7 +51,6 @@ struct Edge {
 
     //! If true this Edge is marked to be deleted at the next clean up step
     bool _delete;
-    
 };
 
 std::ostream& operator<<(std::ostream& os, const Edge& edge);

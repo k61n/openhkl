@@ -232,11 +232,9 @@ void DataSet::saveHDF5(const std::string& filename) // const
             info = item.second.as<std::string>();
             H5::Attribute intAtt(infogroup.createAttribute(item.first, str80, metaSpace));
             intAtt.write(str80, info);
-        }
-        catch (const std::exception& ex) {
+        } catch (const std::exception& ex) {
             std::cerr << "Exception in " << __PRETTY_FUNCTION__ << ": " << ex.what() << std::endl;
-        }
-        catch (...) {
+        } catch (...) {
             std::cerr << "Uncaught exception in " << __PRETTY_FUNCTION__ << std::endl;
         }
     }
@@ -259,11 +257,10 @@ void DataSet::saveHDF5(const std::string& filename) // const
                 H5::Attribute intAtt(metadatagroup.createAttribute(
                     item.first, H5::PredType::NATIVE_DOUBLE, metaSpace));
                 intAtt.write(H5::PredType::NATIVE_DOUBLE, &dvalue);
-            }
-            catch (const std::exception& ex) {
-                std::cerr << "Exception in " << __PRETTY_FUNCTION__ << ": " << ex.what() << std::endl;
-            }
-            catch (...) {
+            } catch (const std::exception& ex) {
+                std::cerr << "Exception in " << __PRETTY_FUNCTION__ << ": " << ex.what()
+                          << std::endl;
+            } catch (...) {
                 std::cerr << "Uncaught exception in " << __PRETTY_FUNCTION__ << std::endl;
             }
         }
@@ -341,12 +338,12 @@ std::string DataSet::name() const
         data_name = data_name.substr(sep + 1, data_name.size() - sep - 1);
 
     size_t dot = data_name.find_last_of(".");
-    if (dot != std::string::npos){
+    if (dot != std::string::npos) {
         name = data_name.substr(0, dot);
-        ext  = data_name.substr(dot, data_name.size() - dot);
-    }else{
+        ext = data_name.substr(dot, data_name.size() - dot);
+    } else {
         name = data_name;
-        ext  = "";
+        ext = "";
     }
 
     if (!(_name == ""))

@@ -231,7 +231,8 @@ void UserDefinedUnitCellIndexer::index()
     //                                     for (size_t tii = 0; tii < 3; ++tii) {
     //                                         const double q2i_norm = bu_triplet.row(tii).norm();
 
-    //                                         // Try to match triplet1 and triplet2 i vectors, if the
+    //                                         // Try to match triplet1 and triplet2 i vectors, if
+    //                                         the
     //                                         // match fails skip this experimental triplet
     //                                         if (std::fabs((q2i_norm - q1i_norm) / q1i_norm)
     //                                             > distance_tolerance) {
@@ -242,9 +243,11 @@ void UserDefinedUnitCellIndexer::index()
     //                                             if (tii == tjj)
     //                                                 continue;
 
-    //                                             const double q2j_norm = bu_triplet.row(tjj).norm();
+    //                                             const double q2j_norm =
+    //                                             bu_triplet.row(tjj).norm();
 
-    //                                             // Try to match triplet1 and triplet2 j vectors, if
+    //                                             // Try to match triplet1 and triplet2 j vectors,
+    //                                             if
     //                                             // the match fails skip this experimental triplet
     //                                             if (std::fabs((q2j_norm - q1j_norm) / q1j_norm)
     //                                                 > distance_tolerance) {
@@ -258,10 +261,12 @@ void UserDefinedUnitCellIndexer::index()
     //                                                 const double q2k_norm =
     //                                                     bu_triplet.row(tkk).norm();
 
-    //                                                 // Try to match triplet1 and triplet2 k vectors,
+    //                                                 // Try to match triplet1 and triplet2 k
+    //                                                 vectors,
     //                                                 // if the match fails skip this experimental
     //                                                 // triplet
-    //                                                 if (std::fabs((q2k_norm - q1k_norm) / q1k_norm)
+    //                                                 if (std::fabs((q2k_norm - q1k_norm) /
+    //                                                 q1k_norm)
     //                                                     > distance_tolerance) {
     //                                                     continue;
     //                                                 }
@@ -316,9 +321,12 @@ void UserDefinedUnitCellIndexer::index()
     //                                                 matching_hkls.row(2) =
     //                                                     predicted_q_vectors[m_k].first;
 
-    //                                                 matching_q_vectors.row(0) = bu_triplet.row(tii);
-    //                                                 matching_q_vectors.row(1) = bu_triplet.row(tjj);
-    //                                                 matching_q_vectors.row(2) = bu_triplet.row(tkk);
+    //                                                 matching_q_vectors.row(0) =
+    //                                                 bu_triplet.row(tii);
+    //                                                 matching_q_vectors.row(1) =
+    //                                                 bu_triplet.row(tjj);
+    //                                                 matching_q_vectors.row(2) =
+    //                                                 bu_triplet.row(tkk);
 
     //                                                 auto BtUt = matching_hkls.inverse()
     //                                                     * matching_q_vectors;
@@ -338,7 +346,8 @@ void UserDefinedUnitCellIndexer::index()
     //                                                         nsx::ReciprocalVector(q.second),
     //                                                         *unit_cell);
     //                                                     if (miller_index.indexed(
-    //                                                             unit_cell->indexingTolerance())) {
+    //                                                             unit_cell->indexingTolerance()))
+    //                                                             {
     //                                                         ++n_indexed_q_vectors;
     //                                                     }
     //                                                 }

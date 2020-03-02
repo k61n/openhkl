@@ -11,8 +11,8 @@
 #include "core/convolve/ConvolverFactory.h"
 #include "core/experiment/DataSet.h"
 #include "core/instrument/Diffractometer.h"
-#include "core/peak/Peak3D.h"
 #include "core/peak/IPeakIntegrator.h"
+#include "core/peak/Peak3D.h"
 
 #include "base/geometry/ReciprocalVector.h"
 #include "base/utils/ProgressHandler.h"
@@ -76,8 +76,8 @@ TEST_CASE("test/crystal/TestRefiner.cpp", "")
 
     CHECK(found_peaks.size() >= 800);
 
-    nsx::IPeakIntegrator* integrator = experiment.getIntegrator(
-        std::string("Pixel sum integrator"));
+    nsx::IPeakIntegrator* integrator =
+        experiment.getIntegrator(std::string("Pixel sum integrator"));
 
     integrator->setPeakEnd(2.7);
     integrator->setBkgBegin(3.5);
@@ -95,21 +95,18 @@ TEST_CASE("test/crystal/TestRefiner.cpp", "")
     peak_filter->setBooleans(booleans);
     peak_filter->setDRange(d_range);
 
-    nsx::PeakCollection* found_collection = experiment.getPeakCollection(
-        "found_peaks");
+    nsx::PeakCollection* found_collection = experiment.getPeakCollection("found_peaks");
     peak_filter->resetFiltering(found_collection);
     peak_filter->filter(found_collection);
 
     experiment.acceptFilter("filtered_peaks", found_collection);
 
-    CHECK(experiment.getPeakCollection(
-        "filtered_peaks")->getPeakList().size() >= 600);
+    CHECK(experiment.getPeakCollection("filtered_peaks")->getPeakList().size() >= 600);
 
     // #########################################################
     // at this stage we have the peaks, now we index
     nsx::AutoIndexer* auto_indexer = experiment.autoIndexer();
-    nsx::PeakCollection* filtered_peaks = experiment.getPeakCollection(
-        "filtered_peaks");
+    nsx::PeakCollection* filtered_peaks = experiment.getPeakCollection("filtered_peaks");
 
     nsx::IndexerParameters parameters;
     auto_indexer->setParameters(parameters);
@@ -123,7 +120,6 @@ TEST_CASE("test/crystal/TestRefiner.cpp", "")
     CHECK(solution.second > 98.0);
 
 
-
     // set unit cell
     auto cell = solution.first;
 
@@ -132,7 +128,7 @@ TEST_CASE("test/crystal/TestRefiner.cpp", "")
     CHECK(std::abs((cell->reciprocalBasis() - constrained_cell.reciprocalBasis()).norm()) < 1e-6);
 
     std::vector<nsx::Peak3D*> peaks;
-    for (auto&& peak : filtered_peaks->getPeakList()){
+    for (auto&& peak : filtered_peaks->getPeakList()) {
         peak->setUnitCell(cell);
         peaks.push_back(peak);
     }

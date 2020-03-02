@@ -15,31 +15,28 @@
 #ifndef GUI_SUBFRAME_EXPERIMENT_PROPERTIES_NUMORPROPERTY_H
 #define GUI_SUBFRAME_EXPERIMENT_PROPERTIES_NUMORPROPERTY_H
 
-#include <QWidget>
 #include <QComboBox>
 #include <QTableWidget>
+#include <QWidget>
 
 //! Property widget of the numor
 class NumorProperty : public QWidget {
 
-public:
+ public:
+    //! The constructor
+    NumorProperty();
+    //! Public call to refresh the widget
+    void refreshInput();
 
-   //! The constructor
-   NumorProperty();
-   //! Public call to refresh the widget
-   void refreshInput();
-   
-private:
+ private:
+    //! Refresh when changed
+    void onChanged();
+    //! Clear content
+    void clear();
 
-   //! Refresh when changed
-   void onChanged();
-   //! Clear content
-   void clear();
-
-private:
-
-   QTableWidget* _table;
-   QComboBox* _numor_selector;
+ private:
+    QTableWidget* _table;
+    QComboBox* _numor_selector;
 };
 
 #endif // GUI_SUBFRAME_EXPERIMENT_PROPERTIES_NUMORPROPERTY_H

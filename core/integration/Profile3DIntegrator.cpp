@@ -22,9 +22,7 @@
 
 namespace nsx {
 
-Profile3DIntegrator::Profile3DIntegrator()
-{
-}
+Profile3DIntegrator::Profile3DIntegrator() {}
 
 static void updateFit(
     Intensity& I, Intensity& B, const std::vector<double>& profile,
@@ -65,8 +63,7 @@ static void updateFit(
 }
 
 bool Profile3DIntegrator::compute(
-    Peak3D* peak, ShapeLibrary* shape_library, 
-    const IntegrationRegion& region)
+    Peak3D* peak, ShapeLibrary* shape_library, const IntegrationRegion& region)
 {
     if (!shape_library)
         return false;
@@ -98,8 +95,7 @@ bool Profile3DIntegrator::compute(
 
     try {
         // throws if there are no neighboring peaks within the bounds
-        model_profile = shape_library->meanProfile(
-            event, radius(), nFrames());
+        model_profile = shape_library->meanProfile(event, radius(), nFrames());
     } catch (...) {
         return false;
     }

@@ -26,5 +26,4 @@ ExperimentTableView::ExperimentTableView(QWidget* parent) : QTableView(parent)
     verticalHeader()->show();
     // sortByColumn(0, Qt::AscendingOrder);
     setFocusPolicy(Qt::StrongFocus);
-
 }

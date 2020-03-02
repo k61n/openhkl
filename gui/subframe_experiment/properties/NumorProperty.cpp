@@ -40,17 +40,15 @@ NumorProperty::NumorProperty() : QWidget()
     grid_layout->addWidget(_table, 1, 0, 1, 1);
 
     connect(
-        _numor_selector, static_cast<void (QComboBox::*) (int) >(&QComboBox::currentIndexChanged),
-        this, &NumorProperty::onChanged
-    );
+        _numor_selector, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
+        this, &NumorProperty::onChanged);
 }
 
 void NumorProperty::refreshInput()
 {
     _numor_selector->blockSignals(true);
     _numor_selector->clear();
-    _numor_selector->addItems(
-        gSession->selectedExperiment()->getDataNames());
+    _numor_selector->addItems(gSession->selectedExperiment()->getDataNames());
     _numor_selector->blockSignals(false);
 
     if (!gSession->selectedExperiment()->getDataNames().isEmpty())
@@ -63,8 +61,7 @@ void NumorProperty::onChanged()
 
     if (gSession->selectedExperimentNum() >= 0) {
         SessionExperiment* exp = gSession->selectedExperiment();
-        nsx::sptrDataSet data = exp->getData(
-            _numor_selector->currentIndex());
+        nsx::sptrDataSet data = exp->getData(_numor_selector->currentIndex());
 
         if (data) {
             const nsx::MetaData& metadata = data->reader()->metadata();

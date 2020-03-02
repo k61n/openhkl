@@ -20,14 +20,13 @@
 
 namespace nsx {
 
-enum class listtype {FOUND,FILTERED,PREDICTED};
+enum class listtype { FOUND, FILTERED, PREDICTED };
 
 //! Container for a peaklist and its metadata
-class PeakCollection{
+class PeakCollection {
 
  public:
-
-    //!Default contructor
+    //! Default contructor
     PeakCollection();
     PeakCollection(const std::string& name, nsx::listtype type);
 
@@ -57,9 +56,9 @@ class PeakCollection{
     std::vector<nsx::Peak3D*> getFilteredPeakList() const;
 
     //! Returns the peak with index
-    nsx::listtype type() const {return _type;};
+    nsx::listtype type() const { return _type; };
     //! Returns the peak with index
-    void setType(listtype type) {_type = type;};
+    void setType(listtype type) { _type = type; };
 
     //! Returns the amount of peaks
     int numberOfPeaks() const;
@@ -78,15 +77,15 @@ class PeakCollection{
     //! Set the shape library needed for the peak prediction
     void setShapeLibrary(ShapeLibrary shape_library);
     //! Reset the shape library
-    void resetShapeLibrary() {_shape_library.reset(nullptr);};
+    void resetShapeLibrary() { _shape_library.reset(nullptr); };
     //! Get the shape library
-    ShapeLibrary* shapeLibrary() const {return _shape_library.get();};
+    ShapeLibrary* shapeLibrary() const { return _shape_library.get(); };
 
-private:
+ private:
     std::vector<std::unique_ptr<nsx::Peak3D>> _peaks;
     std::string _name;
 
-    nsx::listtype _type{listtype::FOUND};
+    nsx::listtype _type {listtype::FOUND};
     std::map<std::string, float> _meta;
 
     std::string _file_name;

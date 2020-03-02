@@ -15,8 +15,8 @@
 #ifndef CORE_LOADER_EXPERIMENTIMPORTER_H
 #define CORE_LOADER_EXPERIMENTIMPORTER_H
 
-#include "core/experiment/Experiment.h"
 #include "core/experiment/DataSet.h"
+#include "core/experiment/Experiment.h"
 #include "core/peak/PeakCollection.h"
 
 #include <H5Cpp.h>
@@ -26,8 +26,7 @@ namespace nsx {
 //! Manages the import of peak information to file.
 class ExperimentImporter {
 
-public:
-
+ public:
     //! Create the file
     bool setFilePath(std::string path, Experiment* experiment);
     //! Write the data into the current file
@@ -39,11 +38,11 @@ public:
     //! Finish writing the current file
     bool finishLoad();
 
-private:
+ private:
     //! The current file
     std::string _file_name;
 };
 
 } // namespace nsx
 
-#endif //CORE_OUTPUT_EXPERIMENTEXPORTER_H
+#endif // CORE_OUTPUT_EXPERIMENTEXPORTER_H

@@ -29,8 +29,7 @@ ShapeIntegrator::ShapeIntegrator(ShapeLibrary* lib, const AABB& aabb, int nx, in
 }
 
 bool ShapeIntegrator::compute(
-    Peak3D* peak, ShapeLibrary* shape_library,
-    const IntegrationRegion& region)
+    Peak3D* peak, ShapeLibrary* shape_library, const IntegrationRegion& region)
 {
     auto uc = peak->unitCell();
     auto data = peak->data();
@@ -38,7 +37,7 @@ bool ShapeIntegrator::compute(
     if (!uc || !data)
         throw std::runtime_error("ShapeIntegrator: Peak must have unit cell and data attached");
 
-    PixelSumIntegrator::compute(peak,shape_library, region);
+    PixelSumIntegrator::compute(peak, shape_library, region);
 
     const double mean_bkg = _meanBackground.value();
     const auto& events = region.data().events();

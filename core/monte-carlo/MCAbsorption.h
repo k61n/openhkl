@@ -15,7 +15,7 @@
 #ifndef CORE_MONTE_CARLO_MCABSORPTION_H
 #define CORE_MONTE_CARLO_MCABSORPTION_H
 
-#include <random>
+#include "base/hull/ConvexHull.h"
 
 namespace nsx {
 

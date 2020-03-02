@@ -22,7 +22,7 @@ nsx::Ellipsoid toDetectorSpace(const nsx::Ellipsoid e, const nsx::sptrDataSet da
         throw std::runtime_error("could not transform ellipse from q space to detector space");
 
     const auto& event = events[0];
-    //auto position =
+    // auto position =
     //    data->reader()->diffractometer()->detector()->pixelPosition(event._px, event._py);
     auto state = data->instrumentStates().interpolate(event._frame);
 

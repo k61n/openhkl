@@ -16,8 +16,8 @@
 #ifndef CORE_OUTPUT_EXPERIMENTEXPORTER_H
 #define CORE_OUTPUT_EXPERIMENTEXPORTER_H
 
-#include "core/experiment/Experiment.h"
 #include "core/experiment/DataSet.h"
+#include "core/experiment/Experiment.h"
 #include "core/peak/PeakCollection.h"
 
 #include <H5Cpp.h>
@@ -27,8 +27,7 @@ namespace nsx {
 //! Manages the export of peak information to file.
 class ExperimentExporter {
 
-public:
-
+ public:
     //! Create the file
     bool createFile(std::string name, std::string diffractometer, std::string path);
     //! Write the data into the current file
@@ -42,11 +41,11 @@ public:
     //! Finish writing the current file
     bool finishWrite();
 
-private:
+ private:
     //! The current file
     std::string _file_name;
 };
 
 } // namespace nsx
 
-#endif //CORE_OUTPUT_EXPERIMENTEXPORTER_H
+#endif // CORE_OUTPUT_EXPERIMENTEXPORTER_H

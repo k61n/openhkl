@@ -25,11 +25,11 @@ namespace nsx {
 
 class PeakFilter {
 
-public:
+ public:
     //! Constructor
     PeakFilter();
 
-public:
+ public:
     //! Filter peaks that are complementary to the given peaks
     void filterComplementary(PeakCollection* peak_collection) const;
 
@@ -76,18 +76,15 @@ public:
     //! Remove peaks which belongs to datasets containing too few peaks
     void filterSparseDataSet(PeakCollection* peak_collection) const;
 
-public:
-
+ public:
     //! Filter only enabled on a peak vector
-    std::vector<Peak3D*> filterEnabled(
-        const std::vector<Peak3D*> peaks_ptr, bool flag) const;
+    std::vector<Peak3D*> filterEnabled(const std::vector<Peak3D*> peaks_ptr, bool flag) const;
 
     //! Filter only enabled on a peak vector
     std::vector<Peak3D*> filterIndexed(
-        const std::vector<Peak3D*> peaks_ptr, const UnitCell &cell, double tolerance) const;
+        const std::vector<Peak3D*> peaks_ptr, const UnitCell& cell, double tolerance) const;
 
-public:
-
+ public:
     //! Run the filtering
     void filter(PeakCollection* peak_collection) const;
 
@@ -95,36 +92,36 @@ public:
     void resetFiltering(PeakCollection* peak_collection) const;
 
     //! Return the booleans
-    const std::bitset<13>* booleans() const {return &_filter_compute;};
+    const std::bitset<13>* booleans() const { return &_filter_compute; };
     //! Set the booleans
-    void setBooleans(const std::bitset<13> booleans) {_filter_compute = booleans;};
+    void setBooleans(const std::bitset<13> booleans) { _filter_compute = booleans; };
 
     //! Return the d range values
-    const std::array<double, 2>*dRange() const {return &_d_range;};
+    const std::array<double, 2>* dRange() const { return &_d_range; };
     //! Set the d range values
-    void setDRange(const std::array<double, 2> d_range) {_d_range = d_range;};
+    void setDRange(const std::array<double, 2> d_range) { _d_range = d_range; };
 
     //! Return the unit cell name
-    const std::string* unitCellName() const {return &_unit_cell;};
+    const std::string* unitCellName() const { return &_unit_cell; };
     //! Set the unit cell name
-    void setUnitCellName(const std::string unit_cell) { _unit_cell = unit_cell;};
+    void setUnitCellName(const std::string unit_cell) { _unit_cell = unit_cell; };
 
     //! Return the unit cell tolerance
-    const double* unitCellTolerance() const {return &_unit_cell_tolerance;};
+    const double* unitCellTolerance() const { return &_unit_cell_tolerance; };
     //! Set the unit cell tolerance
-    void setUnitCellTolerance(const double tolerance) {_unit_cell_tolerance = tolerance;}; 
+    void setUnitCellTolerance(const double tolerance) { _unit_cell_tolerance = tolerance; };
 
     //! Return the strength
-    const std::array<double, 2>* strength() const {return &_strength;};
+    const std::array<double, 2>* strength() const { return &_strength; };
     //! Set the strength
-    void setStrength(const std::array<double,2> strength) { _strength = strength;};
+    void setStrength(const std::array<double, 2> strength) { _strength = strength; };
 
     //! Return the significance
-    const double* significance() const {return &_significance;};
+    const double* significance() const { return &_significance; };
     //! Set the significance
-    void setSignificance(const double significance) {_significance = significance;};
+    void setSignificance(const double significance) { _significance = significance; };
 
-private:
+ private:
     //! The booleans for the filtering
     std::bitset<13> _filter_compute;
     //! The values for range
@@ -133,7 +130,7 @@ private:
     std::string _unit_cell;
     //! The unit cell tolerance
     double _unit_cell_tolerance;
-    //! The strength 
+    //! The strength
     std::array<double, 2> _strength;
     //! The significance
     double _significance;

@@ -24,16 +24,16 @@
 #include "core/integration/Profile1DIntegrator.h"
 #include "core/integration/Profile3DIntegrator.h"
 
+#include "gui/MainWin.h"
 #include "gui/dialogs/IntegrateDialog.h"
 #include "gui/frames/ProgressView.h"
-#include "gui/models/Session.h"
-#include "gui/MainWin.h"
 #include "gui/items/PeakCollectionItem.h"
+#include "gui/models/Session.h"
 
 #include <QDateTime>
 #include <QDebug>
-#include <QStringList>
 #include <QStandardItem>
+#include <QStringList>
 #include <iostream>
 #include <vector>
 
@@ -93,8 +93,8 @@ QStringList SessionExperiment::getPeakListNames()
     std::vector<std::string> names = _experiment->getCollectionNames();
     QStringList q_names;
 
-    for (std::string name :names){
-        q_names<<QString::fromStdString(name);
+    for (std::string name : names) {
+        q_names << QString::fromStdString(name);
     }
     return q_names;
 }
@@ -104,8 +104,8 @@ QStringList SessionExperiment::getFoundNames()
     std::vector<std::string> names = _experiment->getFoundCollectionNames();
     QStringList q_names;
 
-    for (std::string name :names){
-        q_names<<QString::fromStdString(name);
+    for (std::string name : names) {
+        q_names << QString::fromStdString(name);
     }
     return q_names;
 }
@@ -115,8 +115,8 @@ QStringList SessionExperiment::getPredictedNames()
     std::vector<std::string> names = _experiment->getPredictedCollectionNames();
     QStringList q_names;
 
-    for (std::string name :names){
-        q_names<<QString::fromStdString(name);
+    for (std::string name : names) {
+        q_names << QString::fromStdString(name);
     }
     return q_names;
 }
@@ -124,11 +124,11 @@ QStringList SessionExperiment::getPredictedNames()
 
 void SessionExperiment::generatePeakModel(const QString& peakListName)
 {
-    if( !_experiment->hasPeakCollection(peakListName.toStdString()))
+    if (!_experiment->hasPeakCollection(peakListName.toStdString()))
         return;
 
-    nsx::PeakCollection* peak_collection = _experiment->getPeakCollection(
-        peakListName.toStdString());
+    nsx::PeakCollection* peak_collection =
+        _experiment->getPeakCollection(peakListName.toStdString());
 
     PeakCollectionItem* peak_collection_item = new PeakCollectionItem(peak_collection);
     _peak_collection_items.push_back(peak_collection_item);
@@ -136,7 +136,6 @@ void SessionExperiment::generatePeakModel(const QString& peakListName)
     PeakCollectionModel* peak_collection_model = new PeakCollectionModel;
     peak_collection_model->setRoot(peak_collection_item);
     _peak_collection_models.push_back(peak_collection_model);
-
 }
 
 void SessionExperiment::generatePeakModels()
@@ -144,7 +143,7 @@ void SessionExperiment::generatePeakModels()
     _peak_collection_models.clear();
     std::vector<std::string> names = _experiment->getCollectionNames();
 
-    for (std::string name :names){
+    for (std::string name : names) {
         nsx::PeakCollection* peak_collection = _experiment->getPeakCollection(name);
 
         PeakCollectionItem* peak_collection_item = new PeakCollectionItem(peak_collection);
@@ -160,16 +159,15 @@ void SessionExperiment::removePeakModel(const QString& name)
 {
     std::string std_name = name.toStdString();
 
-    nsx::PeakCollection* peak_collection = _experiment->getPeakCollection(
-        std_name);
-    
+    nsx::PeakCollection* peak_collection = _experiment->getPeakCollection(std_name);
+
     if (!peak_collection)
         return;
 
     int item_index = 0;
     PeakCollectionItem* selected_item = nullptr;
-    for (PeakCollectionItem* peak_collection_item : _peak_collection_items){
-        if (peak_collection_item->name() == std_name){
+    for (PeakCollectionItem* peak_collection_item : _peak_collection_items) {
+        if (peak_collection_item->name() == std_name) {
             selected_item = peak_collection_item;
             break;
         }
@@ -181,8 +179,8 @@ void SessionExperiment::removePeakModel(const QString& name)
 
     int model_index = 0;
     PeakCollectionModel* selected_model = nullptr;
-    for (PeakCollectionModel* peak_collection_model : _peak_collection_models){
-        if (peak_collection_model->root() == selected_item){
+    for (PeakCollectionModel* peak_collection_model : _peak_collection_models) {
+        if (peak_collection_model->root() == selected_item) {
             selected_model = peak_collection_model;
             break;
         }
@@ -192,10 +190,8 @@ void SessionExperiment::removePeakModel(const QString& name)
     if (!selected_model)
         return;
 
-    _peak_collection_models.erase(
-        _peak_collection_models.begin() + model_index);
-    _peak_collection_items.erase(
-        _peak_collection_items.begin() + item_index);
+    _peak_collection_models.erase(_peak_collection_models.begin() + model_index);
+    _peak_collection_items.erase(_peak_collection_items.begin() + item_index);
 
     delete selected_model;
     delete selected_item;
@@ -214,23 +210,22 @@ PeakCollectionModel* SessionExperiment::peakModel(const QString& name)
 
 PeakCollectionModel* SessionExperiment::peakModel(int i)
 {
-    if (i>=_peak_collection_models.size())
+    if (i >= _peak_collection_models.size())
         return nullptr;
     return _peak_collection_models.at(i);
 }
 
-std::vector<nsx::Peak3D*> SessionExperiment::getPeaks(
-    const QString& peakListName, 
-    int /*upperindex*/, 
-    int /*lowerindex*/){
+std::vector<nsx::Peak3D*>
+SessionExperiment::getPeaks(const QString& peakListName, int /*upperindex*/, int /*lowerindex*/)
+{
 
-    if( !_experiment->hasPeakCollection(peakListName.toStdString())){
+    if (!_experiment->hasPeakCollection(peakListName.toStdString())) {
         std::vector<nsx::Peak3D*> peaks;
         return peaks;
     }
 
-    nsx::PeakCollection* peakCollection = _experiment->getPeakCollection(
-        peakListName.toStdString());
+    nsx::PeakCollection* peakCollection =
+        _experiment->getPeakCollection(peakListName.toStdString());
 
     std::vector<nsx::Peak3D*> peaks = peakCollection->getPeakList();
 
@@ -242,8 +237,8 @@ QStringList SessionExperiment::getUnitCellNames()
     std::vector<std::string> names = _experiment->getUnitCellNames();
     QStringList q_names;
 
-    for (std::string name :names){
-        q_names<<QString::fromStdString(name);
+    for (std::string name : names) {
+        q_names << QString::fromStdString(name);
     }
     return q_names;
 }
@@ -266,7 +261,7 @@ bool SessionExperiment::saveToFile(QString path)
 {
     bool success = experiment()->saveToFile(path.toStdString());
 
-    if (success){
+    if (success) {
         _save_path = path.toStdString();
         _saved = true;
     }

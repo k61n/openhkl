@@ -39,12 +39,11 @@ PeakItemGraphic::PeakItemGraphic(nsx::Peak3D* peak)
     : PlottableItem(nullptr, true, false), _peak(peak)
 {
     setVisible(true);
-    _size = Eigen::Vector2d(10,10);
+    _size = Eigen::Vector2d(10, 10);
     _color = Qt::red;
     _show_label = false;
     _show_center = true;
     redraw();
-
 }
 
 void PeakItemGraphic::redraw()
@@ -80,7 +79,7 @@ void PeakItemGraphic::redraw()
 
     _center_gi = new QGraphicsEllipseItem(this);
     _center_gi->setPen(center_pen);
-    _center_gi->setRect(-_size[0]/2, -_size[1]/2, _size[0], _size[1]);
+    _center_gi->setRect(-_size[0] / 2, -_size[1] / 2, _size[0], _size[1]);
     _center_gi->setParentItem(this);
     _center_gi->setBrush(QBrush(_color));
     _center_gi->setAcceptHoverEvents(false);
@@ -115,8 +114,8 @@ void PeakItemGraphic::setCenter(int frame)
 
 void PeakItemGraphic::setSize(int size)
 {
-    _size = Eigen::Vector2d(size,size);
-    _center_gi->setRect(-_size[0]/2, -_size[1]/2, _size[0], _size[1]);
+    _size = Eigen::Vector2d(size, size);
+    _center_gi->setRect(-_size[0] / 2, -_size[1] / 2, _size[0], _size[1]);
 }
 
 void PeakItemGraphic::setColor(QColor color)
@@ -127,7 +126,7 @@ void PeakItemGraphic::setColor(QColor color)
 
 void PeakItemGraphic::setOutlineColor(QColor color)
 {
-  _center_gi->setPen(QPen(color));
+    _center_gi->setPen(QPen(color));
 }
 
 nsx::Peak3D* PeakItemGraphic::peak() const
@@ -144,7 +143,8 @@ QRectF PeakItemGraphic::boundingRect() const
     return QRectF(-width / 2.0, -height / 2.0, width, height);
 }
 
-void PeakItemGraphic::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget)
+void PeakItemGraphic::paint(
+    QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget)
 {
     Q_UNUSED(widget)
 

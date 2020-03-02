@@ -87,10 +87,7 @@ void DetectorScene::linkPeakModel(PeakCollectionModel* source)
         unlinkPeakModel();
     _peak_model = source;
     connect(
-        _peak_model, &PeakCollectionModel::dataChanged,
-        this, &DetectorScene::peakModelDataChanged
-    );
-
+        _peak_model, &PeakCollectionModel::dataChanged, this, &DetectorScene::peakModelDataChanged);
 }
 
 PeakCollectionModel* DetectorScene::peakModel() const
@@ -145,7 +142,6 @@ void DetectorScene::drawPeakitems()
         peak_graphic->setCenter(_currentFrameIndex);
         _peak_graphics_items.push_back(peak_graphic);
         addItem(peak_graphic);
-
     }
 
     // if (_selected_peak_gi) {
@@ -244,7 +240,6 @@ void DetectorScene::slotChangeSelectedFrame(int frame)
     loadCurrentImage();
     updateMasks();
     drawPeakitems();
-
 }
 
 void DetectorScene::setMaxIntensity(int intensity)
@@ -467,39 +462,39 @@ void DetectorScene::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
             removeItem(_zoomrect);
             delete _zoomrect;
             emit dataChanged();
-        } //else {
-            // nsx::PeakList peaks = gSession->selectedExperiment()->getPeaks(0, 0)->peaks_;
+        } // else {
+          // nsx::PeakList peaks = gSession->selectedExperiment()->getPeaks(0, 0)->peaks_;
 
-            // if (CutterItem* p = dynamic_cast<CutterItem*>(_lastClickedGI)) {
-            //     // delete p....
-            //     _lastClickedGI = nullptr;
-            //     removeItem(p);
-            // } else if (PlottableItem* p = dynamic_cast<PlottableItem*>(_lastClickedGI))
-            //     gGui->updatePlot(p);
-            // else if (MaskItem* p = dynamic_cast<MaskItem*>(_lastClickedGI)) {
-            //     // add a new mask
-            //     auto it = findMask(p);
-            //     if (it != _masks.end()) {
-            //         it->second = new nsx::BoxMask(*p->getAABB());
-            //         _currentData->addMask(it->second);
-            //         _lastClickedGI = nullptr;
-            //     }
-            //     _currentData->maskPeaks(peaks);
-            //     update();
-            //     updateMasks();
-            //     //                gSession->onMaskedPeaksChanged(peaks);
-            // } else if (EllipseMaskItem* p = dynamic_cast<EllipseMaskItem*>(_lastClickedGI)) {
-            //     auto it = findMask(p);
-            //     if (it != _masks.end()) {
-            //         it->second = new nsx::EllipseMask(*p->getAABB());
-            //         _currentData->addMask(it->second);
-            //         _lastClickedGI = nullptr;
-            //     }
-            //     _currentData->maskPeaks(peaks);
-            //     update();
-            //     updateMasks();
-            //     //                gSession->onMaskedPeaksChanged(peaks);
-            // }
+        // if (CutterItem* p = dynamic_cast<CutterItem*>(_lastClickedGI)) {
+        //     // delete p....
+        //     _lastClickedGI = nullptr;
+        //     removeItem(p);
+        // } else if (PlottableItem* p = dynamic_cast<PlottableItem*>(_lastClickedGI))
+        //     gGui->updatePlot(p);
+        // else if (MaskItem* p = dynamic_cast<MaskItem*>(_lastClickedGI)) {
+        //     // add a new mask
+        //     auto it = findMask(p);
+        //     if (it != _masks.end()) {
+        //         it->second = new nsx::BoxMask(*p->getAABB());
+        //         _currentData->addMask(it->second);
+        //         _lastClickedGI = nullptr;
+        //     }
+        //     _currentData->maskPeaks(peaks);
+        //     update();
+        //     updateMasks();
+        //     //                gSession->onMaskedPeaksChanged(peaks);
+        // } else if (EllipseMaskItem* p = dynamic_cast<EllipseMaskItem*>(_lastClickedGI)) {
+        //     auto it = findMask(p);
+        //     if (it != _masks.end()) {
+        //         it->second = new nsx::EllipseMask(*p->getAABB());
+        //         _currentData->addMask(it->second);
+        //         _lastClickedGI = nullptr;
+        //     }
+        //     _currentData->maskPeaks(peaks);
+        //     update();
+        //     updateMasks();
+        //     //                gSession->onMaskedPeaksChanged(peaks);
+        // }
         // }
     }
 }
@@ -554,7 +549,8 @@ void DetectorScene::keyPressEvent(QKeyEvent* event)
             //     // if (it != _masks.end()) {
             //     //     _currentData->removeMask(it->second);
             //     //     _masks.erase(it);
-            //     //     nsx::PeakList peaks = gSession->selectedExperiment()->getPeaks(0, 0)->peaks_;
+            //     //     nsx::PeakList peaks = gSession->selectedExperiment()->getPeaks(0,
+            //     0)->peaks_;
             //     //     _currentData->maskPeaks(peaks);
             //     //     update();
             //     //     updateMasks();
@@ -565,7 +561,8 @@ void DetectorScene::keyPressEvent(QKeyEvent* event)
             //     // if (it != _masks.end()) {
             //     //     _currentData->removeMask(it->second);
             //     //     _masks.erase(it);
-            //     //     nsx::PeakList peaks = gSession->selectedExperiment()->getPeaks(0, 0)->peaks_;
+            //     //     nsx::PeakList peaks = gSession->selectedExperiment()->getPeaks(0,
+            //     0)->peaks_;
             //     //     _currentData->maskPeaks(peaks);
             //     //     update();
             //     //     updateMasks();
@@ -609,8 +606,7 @@ void DetectorScene::createToolTipText(QGraphicsSceneMouseEvent* event)
 
     QString ttip;
 
-    nsx::DirectVector pos =
-        _currentData->detector().pixelPosition(col, row);
+    nsx::DirectVector pos = _currentData->detector().pixelPosition(col, row);
 
     double gamma = state.gamma(pos);
     double nu = state.nu(pos);
@@ -700,7 +696,8 @@ void DetectorScene::loadCurrentImage()
     //             // IntegrationRegion constructor can throw if the region is invalid
     //             try {
     //                 nsx::IntegrationRegion region(
-    //                     peak, peak_item->peak()->peakEnd(), peak_item->peak()->bkgBegin(), peak_item->peak()->bkgEnd());
+    //                     peak, peak_item->peak()->peakEnd(), peak_item->peak()->bkgBegin(),
+    //                     peak_item->peak()->bkgEnd());
     //                 region.updateMask(mask, _currentFrameIndex);
     //             } catch (...) {
     //                 peak_item->peak()->setSelected(false);

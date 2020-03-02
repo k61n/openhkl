@@ -14,10 +14,10 @@
 
 #include "gui/subframe_index/SubframeAutoIndexer.h"
 
-#include "gui/dialogs/ListNameDialog.h"
 #include "base/utils/ProgressHandler.h"
 #include "base/utils/Units.h"
 #include "core/algo/AutoIndexer.h"
+#include "gui/dialogs/ListNameDialog.h"
 #include "gui/frames/UnitCellWidget.h"
 #include "gui/models/Session.h"
 
@@ -25,14 +25,14 @@
 #include <QLabel>
 
 SubframeAutoIndexer::SubframeAutoIndexer()
-    : QWidget(),
-    _peak_collection("temp", nsx::listtype::FOUND),
-    _peak_collection_item(),
-    _peak_collection_model()
+    : QWidget()
+    , _peak_collection("temp", nsx::listtype::FOUND)
+    , _peak_collection_item()
+    , _peak_collection_model()
 {
     setSizePolicies();
     _main_layout = new QHBoxLayout(this);
-    _right_element = new QSplitter(Qt::Vertical , this);
+    _right_element = new QSplitter(Qt::Vertical, this);
 
     QScrollArea* scroll_area = new QScrollArea(this);
     QWidget* scroll_widget = new QWidget();
@@ -48,9 +48,7 @@ SubframeAutoIndexer::SubframeAutoIndexer()
     setProceedUp();
     setPeakTableUp();
     setSolutionTableUp();
-    _left_layout->addItem(
-        new QSpacerItem(
-            20, 40, QSizePolicy::Minimum, QSizePolicy::Expanding));
+    _left_layout->addItem(new QSpacerItem(20, 40, QSizePolicy::Minimum, QSizePolicy::Expanding));
     _right_element->setSizePolicy(*_size_policy_right);
 
     _main_layout->addWidget(scroll_area);
@@ -111,12 +109,12 @@ void SubframeAutoIndexer::setInputUp()
     _input_grid->addWidget(_peak_combo, 1, 1, 1, 1);
 
     connect(
-        _exp_combo, static_cast<void (QComboBox::*) (int) >(&QComboBox::currentIndexChanged),
-        this, &SubframeAutoIndexer::updatePeakList);
+        _exp_combo, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this,
+        &SubframeAutoIndexer::updatePeakList);
 
     connect(
-        _peak_combo, static_cast<void (QComboBox::*) (int) >(&QComboBox::currentIndexChanged),
-        this, &SubframeAutoIndexer::refreshPeakTable);
+        _peak_combo, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this,
+        &SubframeAutoIndexer::refreshPeakTable);
 
     _input_box->setContentLayout(*_input_grid, true);
     _input_box->setSizePolicy(*_size_policy_box);
@@ -250,14 +248,9 @@ void SubframeAutoIndexer::setProceedUp()
     _save_button->setSizePolicy(*_size_policy_widgets);
     _left_layout->addWidget(_save_button);
 
-    connect(
-        _solve_button, &QPushButton::clicked,
-        this, &SubframeAutoIndexer::runAutoIndexer);
+    connect(_solve_button, &QPushButton::clicked, this, &SubframeAutoIndexer::runAutoIndexer);
 
-    connect(
-        _save_button, &QPushButton::clicked,
-        this, &SubframeAutoIndexer::acceptSolution);
-
+    connect(_save_button, &QPushButton::clicked, this, &SubframeAutoIndexer::acceptSolution);
 }
 
 void SubframeAutoIndexer::setPeakTableUp()
@@ -267,11 +260,11 @@ void SubframeAutoIndexer::setPeakTableUp()
 
     peak_group->setSizePolicy(*_size_policy_right);
 
-    _peak_table= new PeaksTableView(this);
+    _peak_table = new PeaksTableView(this);
     _peak_collection_model.setRoot(&_peak_collection_item);
     _peak_table->setModel(&_peak_collection_model);
 
-    peak_grid->addWidget(_peak_table, 0,0,0,0);
+    peak_grid->addWidget(_peak_table, 0, 0, 0, 0);
 
     _right_element->addWidget(peak_group);
 }
@@ -285,17 +278,15 @@ void SubframeAutoIndexer::setSolutionTableUp()
 
     _solution_table = new UnitCellTableView(this);
 
-    solution_grid->addWidget(_solution_table, 0,0,0,0);
+    solution_grid->addWidget(_solution_table, 0, 0, 0, 0);
 
     connect(
-        _solution_table->verticalHeader(), &QHeaderView::sectionClicked,
-        this, &SubframeAutoIndexer::selectSolutionHeader
-    );
+        _solution_table->verticalHeader(), &QHeaderView::sectionClicked, this,
+        &SubframeAutoIndexer::selectSolutionHeader);
 
     connect(
-        _solution_table, &UnitCellTableView::clicked,
-        this, &SubframeAutoIndexer::selectSolutionTable
-    );
+        _solution_table, &UnitCellTableView::clicked, this,
+        &SubframeAutoIndexer::selectSolutionTable);
 
     _right_element->addWidget(solution_group);
 }
@@ -312,7 +303,7 @@ void SubframeAutoIndexer::setExperiments()
     _exp_combo->clear();
     QList<QString> exp_list = gSession->experimentNames();
 
-    if (!exp_list.isEmpty()){
+    if (!exp_list.isEmpty()) {
         for (QString exp : exp_list) {
             _exp_combo->addItem(exp);
         }
@@ -328,10 +319,9 @@ void SubframeAutoIndexer::updatePeakList()
     _peak_combo->blockSignals(true);
 
     _peak_combo->clear();
-    _peak_list = gSession->experimentAt(
-        _exp_combo->currentIndex())->getPeakListNames();
+    _peak_list = gSession->experimentAt(_exp_combo->currentIndex())->getPeakListNames();
 
-    if (!_peak_list.isEmpty()){
+    if (!_peak_list.isEmpty()) {
         _peak_combo->addItems(_peak_list);
         _peak_combo->setCurrentIndex(0);
 
@@ -348,9 +338,10 @@ void SubframeAutoIndexer::refreshPeakTable()
     if (_peak_list.isEmpty() || _exp_combo->count() < 1)
         return;
 
-    nsx::PeakCollection* collection = gSession->experimentAt(
-        _exp_combo->currentIndex())->experiment()->getPeakCollection(
-            _peak_combo->currentText().toStdString());
+    nsx::PeakCollection* collection =
+        gSession->experimentAt(_exp_combo->currentIndex())
+            ->experiment()
+            ->getPeakCollection(_peak_combo->currentText().toStdString());
     _peak_collection_item.setPeakCollection(collection);
     _peak_collection_model.setRoot(&_peak_collection_item);
 }
@@ -360,8 +351,8 @@ void SubframeAutoIndexer::grabIndexerParameters()
     if (_peak_list.isEmpty() || _exp_combo->count() < 1)
         return;
 
-    nsx::AutoIndexer* auto_indexer = gSession->experimentAt(
-        _exp_combo->currentIndex())->experiment()->autoIndexer();
+    nsx::AutoIndexer* auto_indexer =
+        gSession->experimentAt(_exp_combo->currentIndex())->experiment()->autoIndexer();
     nsx::IndexerParameters parameters = auto_indexer->parameters();
 
     _niggli->setValue(parameters.niggliTolerance);
@@ -380,8 +371,8 @@ void SubframeAutoIndexer::setIndexerParameters() const
     if (_peak_list.isEmpty() || _exp_combo->count() < 1)
         return;
 
-    nsx::AutoIndexer* auto_indexer = gSession->experimentAt(
-        _exp_combo->currentIndex())->experiment()->autoIndexer();
+    nsx::AutoIndexer* auto_indexer =
+        gSession->experimentAt(_exp_combo->currentIndex())->experiment()->autoIndexer();
 
     nsx::IndexerParameters parameters;
     parameters.niggliTolerance = _niggli->value();
@@ -404,11 +395,12 @@ void SubframeAutoIndexer::runAutoIndexer()
 
     setIndexerParameters();
 
-    nsx::AutoIndexer* auto_indexer = gSession->experimentAt(
-        _exp_combo->currentIndex())->experiment()->autoIndexer();
-    nsx::PeakCollection* collection = gSession->experimentAt(
-        _exp_combo->currentIndex())->experiment()->getPeakCollection(
-            _peak_combo->currentText().toStdString());
+    nsx::AutoIndexer* auto_indexer =
+        gSession->experimentAt(_exp_combo->currentIndex())->experiment()->autoIndexer();
+    nsx::PeakCollection* collection =
+        gSession->experimentAt(_exp_combo->currentIndex())
+            ->experiment()
+            ->getPeakCollection(_peak_combo->currentText().toStdString());
 
 
     std::shared_ptr<nsx::ProgressHandler> handler(new nsx::ProgressHandler());
@@ -488,7 +480,7 @@ void SubframeAutoIndexer::buildSolutionsTable()
 void SubframeAutoIndexer::selectSolutionTable()
 {
     QItemSelectionModel* select = _solution_table->selectionModel();
-    QModelIndexList indices =  select->selectedRows();
+    QModelIndexList indices = select->selectedRows();
     if (!indices.isEmpty())
         selectSolutionHeader(indices[0].row());
 }
@@ -498,12 +490,13 @@ void SubframeAutoIndexer::selectSolutionHeader(int index)
     _selected_unit_cell = _solutions[index].first;
     _selected_unit_cell->printSelf(std::cout);
 
-    nsx::PeakCollection* collection = gSession->experimentAt(
-        _exp_combo->currentIndex())->experiment()->getPeakCollection(
-            _peak_combo->currentText().toStdString());
+    nsx::PeakCollection* collection =
+        gSession->experimentAt(_exp_combo->currentIndex())
+            ->experiment()
+            ->getPeakCollection(_peak_combo->currentText().toStdString());
 
     std::vector<nsx::Peak3D*> peaks = collection->getPeakList();
-    for (nsx::Peak3D* peak: peaks)
+    for (nsx::Peak3D* peak : peaks)
         peak->setUnitCell(_selected_unit_cell);
     refreshPeakTable();
 }
@@ -513,27 +506,27 @@ void SubframeAutoIndexer::acceptSolution()
     if (_peak_list.isEmpty() || _exp_combo->count() < 1)
         return;
 
-    if (_selected_unit_cell ){
+    if (_selected_unit_cell) {
 
         std::unique_ptr<ListNameDialog> dlg(new ListNameDialog());
         dlg->exec();
-        if (!dlg->listName().isEmpty()){
+        if (!dlg->listName().isEmpty()) {
             _selected_unit_cell->setName(dlg->listName().toStdString());
-            gSession->experimentAt(
-                _exp_combo->currentIndex())->experiment()->addUnitCell(
-                    dlg->listName().toStdString(), _selected_unit_cell.get());
+            gSession->experimentAt(_exp_combo->currentIndex())
+                ->experiment()
+                ->addUnitCell(dlg->listName().toStdString(), _selected_unit_cell.get());
             gSession->onUnitCellChanged();
 
-            nsx::PeakCollection* collection = gSession->experimentAt(
-                _exp_combo->currentIndex())->experiment()->getPeakCollection(
-                    _peak_combo->currentText().toStdString());
+            nsx::PeakCollection* collection =
+                gSession->experimentAt(_exp_combo->currentIndex())
+                    ->experiment()
+                    ->getPeakCollection(_peak_combo->currentText().toStdString());
 
             std::vector<nsx::Peak3D*> peaks = collection->getPeakList();
-            for (nsx::Peak3D* peak: peaks)
-                peak->setUnitCell(gSession->experimentAt(
-                    _exp_combo->currentIndex())->experiment()->getUnitCell(
-                        dlg->listName().toStdString()));
+            for (nsx::Peak3D* peak : peaks)
+                peak->setUnitCell(gSession->experimentAt(_exp_combo->currentIndex())
+                                      ->experiment()
+                                      ->getUnitCell(dlg->listName().toStdString()));
         }
-
     }
 }

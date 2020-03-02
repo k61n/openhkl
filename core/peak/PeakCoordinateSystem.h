@@ -37,7 +37,6 @@ namespace nsx {
 
 class PeakCoordinateSystem {
  public:
-
     //! Construct the coordinate system about the given peak.
     PeakCoordinateSystem(sptrPeak3D peak);
     //! Construct the coordinate system about the given peak.

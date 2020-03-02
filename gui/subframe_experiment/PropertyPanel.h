@@ -15,9 +15,9 @@
 #ifndef GUI_SUBFRAME_EXPERIMENT_PROPERTY_PANEL_H
 #define GUI_SUBFRAME_EXPERIMENT_PROPERTY_PANEL_H
 
-#include "gui/subframe_experiment/properties/InstrumentProperty.h" 
-#include "gui/subframe_experiment/properties/PeakProperties.h"
+#include "gui/subframe_experiment/properties/InstrumentProperty.h"
 #include "gui/subframe_experiment/properties/NumorProperty.h"
+#include "gui/subframe_experiment/properties/PeakProperties.h"
 #include "gui/subframe_experiment/properties/UnitCellProperty.h"
 
 //! Part of the main window that contains the property tabs

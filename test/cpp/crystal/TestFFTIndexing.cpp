@@ -55,7 +55,7 @@ TEST_CASE("test/crystal/TestFFTIndexing.cpp", "")
     }
     CHECK(peak_collection.numberOfPeaks() >= 5900);
 
-    nsx::AutoIndexer *const auto_indexer = experiment.autoIndexer();
+    nsx::AutoIndexer* const auto_indexer = experiment.autoIndexer();
     auto_indexer->setParameters(params);
     auto_indexer->autoIndex(peak_collection.getPeakList());
 

@@ -16,8 +16,8 @@
 #include "gui/subframe_predict/ShapeLibraryDialog.h"
 
 #include "core/experiment/DataSet.h"
-#include "core/peak/Peak3D.h"
 #include "core/peak/IPeakIntegrator.h"
+#include "core/peak/Peak3D.h"
 #include "core/raw/IDataReader.h"
 
 #include "core/shape/ShapeLibrary.h"
@@ -36,21 +36,21 @@
 #include <QGroupBox>
 #include <QHeaderView>
 #include <QItemDelegate>
+#include <QScrollArea>
+#include <QScrollBar>
 #include <QSpacerItem>
 #include <QTableWidgetItem>
-#include <QScrollBar>
-#include <QScrollArea>
 
-SubframePredictPeaks::SubframePredictPeaks() 
-    : QWidget(), 
-    _peak_collection("temp", nsx::listtype::FOUND),
-    _peak_collection_item(),
-    _peak_collection_model(),
-    _pixmap(nullptr)
+SubframePredictPeaks::SubframePredictPeaks()
+    : QWidget()
+    , _peak_collection("temp", nsx::listtype::FOUND)
+    , _peak_collection_item()
+    , _peak_collection_model()
+    , _pixmap(nullptr)
 {
     setSizePolicies();
     _main_layout = new QHBoxLayout(this);
-    _right_element = new QSplitter(Qt::Vertical , this);
+    _right_element = new QSplitter(Qt::Vertical, this);
 
     QScrollArea* scroll_area = new QScrollArea(this);
     QWidget* scroll_widget = new QWidget();
@@ -66,7 +66,7 @@ SubframePredictPeaks::SubframePredictPeaks()
     setPreviewUp();
     setFigureUp();
     setPeakTableUp();
-    
+
     _right_element->setSizePolicy(*_size_policy_right);
 
     _main_layout->addWidget(scroll_area);
@@ -78,7 +78,7 @@ void SubframePredictPeaks::setSizePolicies()
     _size_policy_widgets = new QSizePolicy();
     _size_policy_widgets->setHorizontalPolicy(QSizePolicy::Preferred);
     _size_policy_widgets->setVerticalPolicy(QSizePolicy::Fixed);
-    
+
     _size_policy_box = new QSizePolicy();
     _size_policy_box->setHorizontalPolicy(QSizePolicy::Preferred);
     _size_policy_box->setVerticalPolicy(QSizePolicy::Preferred);
@@ -105,7 +105,7 @@ void SubframePredictPeaks::setInputUp()
     QLabel* list_label = new QLabel("Data-set");
     list_label->setAlignment(Qt::AlignRight);
     _input_grid->addWidget(list_label, 1, 0, 1, 1);
-   
+
     _exp_combo = new QComboBox();
     _peak_combo = new QComboBox();
     _build_shape_lib = new QPushButton("Build Library");
@@ -113,26 +113,24 @@ void SubframePredictPeaks::setInputUp()
     _exp_combo->setMaximumWidth(1000);
     _peak_combo->setMaximumWidth(1000);
     _build_shape_lib->setMaximumWidth(1000);
-    
+
     _exp_combo->setSizePolicy(*_size_policy_widgets);
     _peak_combo->setSizePolicy(*_size_policy_widgets);
     _build_shape_lib->setSizePolicy(*_size_policy_widgets);
 
     _input_grid->addWidget(_exp_combo, 0, 1, 1, 1);
-    _input_grid->addWidget(_peak_combo, 1, 1, 1, 1); 
-    _input_grid->addWidget(_build_shape_lib, 2, 0, 1, 2); 
+    _input_grid->addWidget(_peak_combo, 1, 1, 1, 1);
+    _input_grid->addWidget(_build_shape_lib, 2, 0, 1, 2);
 
     connect(
-        _exp_combo, static_cast<void (QComboBox::*) (int) >(&QComboBox::currentIndexChanged), 
-        this, &SubframePredictPeaks::updatePeakList);
+        _exp_combo, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this,
+        &SubframePredictPeaks::updatePeakList);
 
     connect(
-        _peak_combo, static_cast<void (QComboBox::*) (int) >(&QComboBox::currentIndexChanged), 
-        this, &SubframePredictPeaks::refreshPeakShapeStatus);
+        _peak_combo, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this,
+        &SubframePredictPeaks::refreshPeakShapeStatus);
 
-    connect(
-        _build_shape_lib, &QPushButton::clicked, 
-        this, &SubframePredictPeaks::openShapeBuilder);
+    connect(_build_shape_lib, &QPushButton::clicked, this, &SubframePredictPeaks::openShapeBuilder);
 
     _input_box->setContentLayout(*_input_grid, true);
     _input_box->setSizePolicy(*_size_policy_box);
@@ -163,7 +161,7 @@ void SubframePredictPeaks::setParametersUp()
     label_ptr->setAlignment(Qt::AlignRight);
     para_grid->addWidget(label_ptr, 2, 0, 1, 1);
     label_ptr->setSizePolicy(*_size_policy_widgets);
-   
+
     label_ptr = new QLabel("d max (A):");
     label_ptr->setAlignment(Qt::AlignRight);
     para_grid->addWidget(label_ptr, 3, 0, 1, 1);
@@ -224,7 +222,7 @@ void SubframePredictPeaks::setParametersUp()
     _min_neighbors->setValue(20);
 
     _run_prediction->setMaximumWidth(1000);
-    
+
     _unit_cells->setSizePolicy(*_size_policy_widgets);
     _interpolation->setSizePolicy(*_size_policy_widgets);
     _d_min->setSizePolicy(*_size_policy_widgets);
@@ -247,9 +245,7 @@ void SubframePredictPeaks::setParametersUp()
     _para_box->setSizePolicy(*_size_policy_box);
     _para_box->contentArea.setSizePolicy(*_size_policy_box);
 
-    connect(
-        _run_prediction, &QPushButton::clicked, 
-        this, &SubframePredictPeaks::runPrediction);
+    connect(_run_prediction, &QPushButton::clicked, this, &SubframePredictPeaks::runPrediction);
 
     _left_layout->addWidget(_para_box);
 }
@@ -267,7 +263,7 @@ void SubframePredictPeaks::setIntegrateUp()
     label_ptr->setAlignment(Qt::AlignRight);
     integrate_grid->addWidget(label_ptr, 3, 0, 1, 1);
     label_ptr->setSizePolicy(*_size_policy_widgets);
-   
+
     label_ptr = new QLabel("Bckg. begin:");
     label_ptr->setAlignment(Qt::AlignRight);
     integrate_grid->addWidget(label_ptr, 4, 0, 1, 1);
@@ -359,7 +355,7 @@ void SubframePredictPeaks::setIntegrateUp()
     _n_frames_int->setValue(100);
 
     _run_integration->setMaximumWidth(1000);
-    
+
     _integrator->setSizePolicy(*_size_policy_widgets);
     _fit_center->setSizePolicy(*_size_policy_widgets);
     _fit_covariance->setSizePolicy(*_size_policy_widgets);
@@ -388,9 +384,7 @@ void SubframePredictPeaks::setIntegrateUp()
     _integrate_box->setSizePolicy(*_size_policy_box);
     _integrate_box->contentArea.setSizePolicy(*_size_policy_box);
 
-    connect(
-        _run_integration, &QPushButton::clicked, 
-        this, &SubframePredictPeaks::runIntegration);
+    connect(_run_integration, &QPushButton::clicked, this, &SubframePredictPeaks::runIntegration);
 
     _left_layout->addWidget(_integrate_box);
 }
@@ -452,7 +446,7 @@ void SubframePredictPeaks::setPreviewUp()
     _draw_active->setMaximumWidth(1000);
     _width_active->setMaximumWidth(1000);
     _color_active->setMaximumWidth(1000);
-    _draw_inactive->setMaximumWidth(1000);    
+    _draw_inactive->setMaximumWidth(1000);
     _width_inactive->setMaximumWidth(1000);
     _color_inactive->setMaximumWidth(1000);
     _live_check->setMaximumWidth(1000);
@@ -476,42 +470,34 @@ void SubframePredictPeaks::setPreviewUp()
     _preview_grid->addWidget(_live_check, 8, 0, 1, 2);
     _preview_grid->addWidget(_save_button, 9, 0, 1, 2);
 
-    connect(
-        _save_button, &QPushButton::clicked, 
-        this, &SubframePredictPeaks::accept);
+    connect(_save_button, &QPushButton::clicked, this, &SubframePredictPeaks::accept);
+
+    connect(_draw_active, &QCheckBox::stateChanged, this, &SubframePredictPeaks::refreshPeakVisual);
 
     connect(
-        _draw_active, &QCheckBox::stateChanged, 
-        this, &SubframePredictPeaks::refreshPeakVisual);
+        _width_active, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged), this,
+        &SubframePredictPeaks::refreshPeakVisual);
 
     connect(
-        _width_active, static_cast<void (QSpinBox::*) (int) >(&QSpinBox::valueChanged), 
-        this, &SubframePredictPeaks::refreshPeakVisual);
+        _color_active, &ColorButton::colorChanged, this, &SubframePredictPeaks::refreshPeakVisual);
 
     connect(
-        _color_active, &ColorButton::colorChanged, 
-        this, &SubframePredictPeaks::refreshPeakVisual);
+        _draw_inactive, &QCheckBox::stateChanged, this, &SubframePredictPeaks::refreshPeakVisual);
 
     connect(
-        _draw_inactive, &QCheckBox::stateChanged, 
-        this, &SubframePredictPeaks::refreshPeakVisual);
+        _width_inactive, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged), this,
+        &SubframePredictPeaks::refreshPeakVisual);
 
     connect(
-        _width_inactive, static_cast<void (QSpinBox::*) (int) >(&QSpinBox::valueChanged), 
-        this, &SubframePredictPeaks::refreshPeakVisual);
-
-    connect(
-        _color_inactive, &ColorButton::colorChanged, 
-        this, &SubframePredictPeaks::refreshPeakVisual);
+        _color_inactive, &ColorButton::colorChanged, this,
+        &SubframePredictPeaks::refreshPeakVisual);
 
     _preview_box->setContentLayout(*_preview_grid);
     _preview_box->setSizePolicy(*_size_policy_box);
     _preview_box->contentArea.setSizePolicy(*_size_policy_box);
 
     _left_layout->addWidget(_preview_box);
-    _left_layout->addItem(
-        new QSpacerItem(
-            20, 40, QSizePolicy::Minimum, QSizePolicy::Expanding));
+    _left_layout->addItem(new QSpacerItem(20, 40, QSizePolicy::Minimum, QSizePolicy::Expanding));
 }
 
 void SubframePredictPeaks::setFigureUp()
@@ -524,32 +510,30 @@ void SubframePredictPeaks::setFigureUp()
     _figure_view = new DetectorView(this);
     _figure_view->getScene()->linkPeakModel(&_peak_collection_model);
     _figure_view->scale(1, -1);
-    figure_grid->addWidget(_figure_view, 0,0,1,3);
+    figure_grid->addWidget(_figure_view, 0, 0, 1, 3);
 
     _data_combo = new QComboBox(this);
     _data_combo->setSizePolicy(*_size_policy_widgets);
-    figure_grid->addWidget(_data_combo, 1,0,1,1);
+    figure_grid->addWidget(_data_combo, 1, 0, 1, 1);
 
     _figure_scroll = new QScrollBar(this);
     _figure_scroll->setOrientation(Qt::Horizontal);
     _figure_scroll->setSizePolicy(*_size_policy_widgets);
-    figure_grid->addWidget(_figure_scroll, 1,1,1,1);
+    figure_grid->addWidget(_figure_scroll, 1, 1, 1, 1);
 
     _figure_spin = new QSpinBox(this);
     _figure_spin->setSizePolicy(*_size_policy_fixed);
-    figure_grid->addWidget(_figure_spin, 1,2,1,1);
+    figure_grid->addWidget(_figure_spin, 1, 2, 1, 1);
 
     connect(
-        _figure_scroll, SIGNAL(valueChanged(int)), 
-        _figure_view->getScene(), SLOT(slotChangeSelectedFrame(int)));
+        _figure_scroll, SIGNAL(valueChanged(int)), _figure_view->getScene(),
+        SLOT(slotChangeSelectedFrame(int)));
+
+    connect(_figure_scroll, SIGNAL(valueChanged(int)), _figure_spin, SLOT(setValue(int)));
 
     connect(
-        _figure_scroll, SIGNAL(valueChanged(int)), 
-        _figure_spin, SLOT(setValue(int)));
-
-    connect(
-        _figure_view->getScene(), &DetectorScene::signalSelectedPeakItemChanged, 
-        this, &SubframePredictPeaks::changeSelected);
+        _figure_view->getScene(), &DetectorScene::signalSelectedPeakItemChanged, this,
+        &SubframePredictPeaks::changeSelected);
 
     _right_element->addWidget(figure_group);
 }
@@ -565,7 +549,7 @@ void SubframePredictPeaks::setPeakTableUp()
     _peak_collection_model.setRoot(&_peak_collection_item);
     _peak_table->setModel(&_peak_collection_model);
 
-    peak_grid->addWidget(_peak_table, 0,0,0,0);
+    peak_grid->addWidget(_peak_table, 0, 0, 0, 0);
     _right_element->addWidget(peak_group);
 }
 
@@ -577,16 +561,16 @@ void SubframePredictPeaks::refreshAll()
 void SubframePredictPeaks::setExperiments()
 {
     _exp_combo->blockSignals(true);
-    
+
     _exp_combo->clear();
     QList<QString> exp_list = gSession->experimentNames();
 
-    if (!exp_list.isEmpty()){
+    if (!exp_list.isEmpty()) {
         for (QString exp : exp_list) {
             _exp_combo->addItem(exp);
         }
         _exp_combo->blockSignals(false);
-        
+
         updatePeakList();
         updateUnitCellList();
         updateDatasetList();
@@ -599,10 +583,9 @@ void SubframePredictPeaks::updatePeakList()
     _peak_combo->blockSignals(true);
 
     _peak_combo->clear();
-    _peak_list = gSession->experimentAt(
-        _exp_combo->currentIndex())->getPeakListNames();
+    _peak_list = gSession->experimentAt(_exp_combo->currentIndex())->getPeakListNames();
 
-    if (!_peak_list.isEmpty()){
+    if (!_peak_list.isEmpty()) {
         _peak_combo->addItems(_peak_list);
         _peak_combo->setCurrentIndex(0);
     }
@@ -615,10 +598,9 @@ void SubframePredictPeaks::updateUnitCellList()
     _unit_cells->blockSignals(true);
 
     _unit_cells->clear();
-    _unit_cell_list = gSession->experimentAt(
-        _exp_combo->currentIndex())->getUnitCellNames();
+    _unit_cell_list = gSession->experimentAt(_exp_combo->currentIndex())->getUnitCellNames();
 
-    if (!_unit_cell_list.isEmpty()){
+    if (!_unit_cell_list.isEmpty()) {
         _unit_cells->addItems(_unit_cell_list);
         _unit_cells->setCurrentIndex(0);
     }
@@ -631,7 +613,7 @@ void SubframePredictPeaks::updateDatasetList()
     _data_combo->clear();
     _data_list = gSession->experimentAt(_exp_combo->currentIndex())->allData();
 
-    if (!_data_list.isEmpty()){
+    if (!_data_list.isEmpty()) {
         for (nsx::sptrDataSet data : _data_list) {
             QFileInfo fileinfo(QString::fromStdString(data->filename()));
             _data_combo->addItem(fileinfo.baseName());
@@ -656,20 +638,14 @@ void SubframePredictPeaks::updateDatasetParameters(int idx)
 
     _figure_scroll->setMaximum(data->nFrames());
     _figure_scroll->setMinimum(0);
-    
+
     _figure_spin->setMaximum(data->nFrames());
     _figure_spin->setMinimum(0);
-} 
-
-void SubframePredictPeaks::grabPredictorParameters()
-{
-
 }
 
-void SubframePredictPeaks::setPredictorParameters() const
-{
+void SubframePredictPeaks::grabPredictorParameters() {}
 
-}
+void SubframePredictPeaks::setPredictorParameters() const {}
 
 void SubframePredictPeaks::runPrediction()
 {
@@ -682,10 +658,12 @@ void SubframePredictPeaks::runPrediction()
         ProgressView progressView(nullptr);
         progressView.watch(handler);
 
-        nsx::ShapeLibrary* lib = 
-            gSession->experimentAt(_exp_combo->currentIndex())->experiment()->getPeakCollection(_peak_combo->currentText().toStdString())->shapeLibrary();
-        nsx::UnitCell* cell = 
-            gSession->selectedExperiment()->experiment()->getUnitCell(_unit_cells->currentText().toStdString());
+        nsx::ShapeLibrary* lib = gSession->experimentAt(_exp_combo->currentIndex())
+                                     ->experiment()
+                                     ->getPeakCollection(_peak_combo->currentText().toStdString())
+                                     ->shapeLibrary();
+        nsx::UnitCell* cell = gSession->selectedExperiment()->experiment()->getUnitCell(
+            _unit_cells->currentText().toStdString());
 
         double d_min = _d_min->value();
         double d_max = _d_max->value();
@@ -699,13 +677,11 @@ void SubframePredictPeaks::runPrediction()
         int current_numor = 0;
         std::vector<nsx::Peak3D*> predicted_peaks;
 
-        for (nsx::sptrDataSet d : data){
+        for (nsx::sptrDataSet d : data) {
             qDebug() << "Predicting peaks for numor " << ++current_numor << " of " << data.size();
 
             std::vector<nsx::Peak3D*> predicted = nsx::predictPeaks(
-                lib, d, cell, d_min, d_max, 
-                radius, n_frames, neighbors, 
-                peak_interpolation);
+                lib, d, cell, d_min, d_max, radius, n_frames, neighbors, peak_interpolation);
 
             for (nsx::Peak3D* peak : predicted)
                 predicted_peaks.push_back(peak);
@@ -737,14 +713,18 @@ void SubframePredictPeaks::runIntegration()
         ProgressView progressView(nullptr);
         progressView.watch(handler);
 
-        nsx::IPeakIntegrator* integrator = 
-            gSession->experimentAt(_exp_combo->currentIndex())->experiment()->getIntegrator(_integrator->currentText().toStdString());
+        nsx::IPeakIntegrator* integrator =
+            gSession->experimentAt(_exp_combo->currentIndex())
+                ->experiment()
+                ->getIntegrator(_integrator->currentText().toStdString());
 
-        nsx::ShapeLibrary* lib = 
-            gSession->experimentAt(_exp_combo->currentIndex())->experiment()->getPeakCollection(_peak_combo->currentText().toStdString())->shapeLibrary();
+        nsx::ShapeLibrary* lib = gSession->experimentAt(_exp_combo->currentIndex())
+                                     ->experiment()
+                                     ->getPeakCollection(_peak_combo->currentText().toStdString())
+                                     ->shapeLibrary();
 
         if (!integrator)
-            return ;
+            return;
 
         integrator->setBkgBegin(_bkg_start_int->value());
         integrator->setBkgEnd(_bkg_end_int->value());
@@ -756,10 +736,10 @@ void SubframePredictPeaks::runIntegration()
         integrator->setFitCov(_fit_covariance->isChecked());
         integrator->setHandler(handler);
 
-        gSession->experimentAt(
-            _exp_combo->currentIndex())->experiment()->integratePredictedPeaks(
-                _integrator->currentText().toStdString(),
-                &_peak_collection,lib);
+        gSession->experimentAt(_exp_combo->currentIndex())
+            ->experiment()
+            ->integratePredictedPeaks(
+                _integrator->currentText().toStdString(), &_peak_collection, lib);
 
         refreshPeakTable();
 
@@ -772,11 +752,12 @@ void SubframePredictPeaks::accept()
 {
     std::unique_ptr<ListNameDialog> dlg(new ListNameDialog());
     dlg->exec();
-    if (!dlg->listName().isEmpty()){
-        gSession->experimentAt(_exp_combo->currentIndex())->experiment()->addPeakCollection(
-            dlg->listName().toStdString(),
-            nsx::listtype::PREDICTED,
-            _peak_collection.getPeakList());
+    if (!dlg->listName().isEmpty()) {
+        gSession->experimentAt(_exp_combo->currentIndex())
+            ->experiment()
+            ->addPeakCollection(
+                dlg->listName().toStdString(), nsx::listtype::PREDICTED,
+                _peak_collection.getPeakList());
         gSession->experimentAt(_exp_combo->currentIndex())->generatePeakModel(dlg->listName());
     }
 }
@@ -787,11 +768,12 @@ void SubframePredictPeaks::refreshPeakShapeStatus()
 
     if (_peak_list.isEmpty() || _exp_combo->count() < 1)
         shape_library_present = false;
-    
-    if (shape_library_present){
-        nsx::PeakCollection* collection = gSession->experimentAt(
-            _exp_combo->currentIndex())->experiment()->getPeakCollection(
-                _peak_combo->currentText().toStdString());
+
+    if (shape_library_present) {
+        nsx::PeakCollection* collection =
+            gSession->experimentAt(_exp_combo->currentIndex())
+                ->experiment()
+                ->getPeakCollection(_peak_combo->currentText().toStdString());
         if (collection->shapeLibrary() == nullptr)
             shape_library_present = false;
     }
@@ -812,24 +794,24 @@ void SubframePredictPeaks::refreshPeakTable()
 }
 
 void SubframePredictPeaks::refreshPeakVisual()
-{   
-    if (_peak_collection_item.childCount()==0)
+{
+    if (_peak_collection_item.childCount() == 0)
         return;
 
     bool valid;
     PeakItemGraphic* graphic;
 
-    for (int i = 0; i < _peak_collection_item.childCount(); ++i){
+    for (int i = 0; i < _peak_collection_item.childCount(); ++i) {
         PeakItem* peak = _peak_collection_item.peakItemAt(i);
         graphic = peak->peakGraphic();
         valid = peak->peak()->enabled();
 
-        if (valid){
+        if (valid) {
             graphic->showArea((_draw_active->checkState() == Qt::CheckState::Checked));
             graphic->showLabel(false);
             graphic->setSize(_width_active->value());
             graphic->setColor(_color_active->getColor());
-        }else{
+        } else {
             graphic->showArea((_draw_inactive->checkState() == Qt::CheckState::Checked));
             graphic->showLabel(false);
             graphic->setSize(_width_inactive->value());
@@ -841,7 +823,7 @@ void SubframePredictPeaks::refreshPeakVisual()
 }
 
 void SubframePredictPeaks::changeSelected(PeakItemGraphic* peak_graphic)
-{   
+{
     int row = _peak_collection_item.returnRowOfVisualItem(peak_graphic);
     QModelIndex index = _peak_collection_model.index(row, 0);
     _peak_table->selectRow(row);
@@ -850,13 +832,12 @@ void SubframePredictPeaks::changeSelected(PeakItemGraphic* peak_graphic)
 
 void SubframePredictPeaks::openShapeBuilder()
 {
-    nsx::PeakCollection* peak_collection = gSession->experimentAt(
-        _exp_combo->currentIndex())->experiment()->getPeakCollection(
-            _peak_combo->currentText().toStdString()
-        );
+    nsx::PeakCollection* peak_collection =
+        gSession->experimentAt(_exp_combo->currentIndex())
+            ->experiment()
+            ->getPeakCollection(_peak_combo->currentText().toStdString());
 
-    std::unique_ptr<ShapeLibraryDialog> dialog(
-        new ShapeLibraryDialog(peak_collection));
+    std::unique_ptr<ShapeLibraryDialog> dialog(new ShapeLibraryDialog(peak_collection));
 
     dialog->exec();
     refreshPeakShapeStatus();

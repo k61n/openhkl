@@ -67,7 +67,7 @@ class PeakItemGraphic : public PlottableItem {
     Eigen::Vector3d _upper;
     //! Size
     Eigen::Vector2d _size;
-     //! Color
+    //! Color
     QColor _color;
 };
 

@@ -15,73 +15,70 @@
 #ifndef GUI_SUBFRAME_EXPERIMENT_PROPERTIES_UNITCELLPROPERTY_H
 #define GUI_SUBFRAME_EXPERIMENT_PROPERTIES_UNITCELLPROPERTY_H
 
-#include <QWidget>
-#include <QDoubleSpinBox>
-#include <QSpinBox>
 #include <QComboBox>
+#include <QDoubleSpinBox>
 #include <QLineEdit>
 #include <QPushButton>
+#include <QSpinBox>
+#include <QWidget>
 
 //! Property widget for unit cell
 class UnitCellProperty : public QWidget {
-   
-public:
 
-   //! Constructor
-   UnitCellProperty();
-   //! Public call to refresh the widget
-   void refreshInput();
+ public:
+    //! Constructor
+    UnitCellProperty();
+    //! Public call to refresh the widget
+    void refreshInput();
 
-private:
+ private:
+    //! Set up the GUI size policies
+    void setSizePolicies();
+    //! Change the name of the unit cell
+    void setUnitCellName();
+    //! Change the chemical formula
+    void setChemicalFormula();
+    //! Set the z value
+    void setZValue(int z);
+    //! Set the mass density
+    void setMassDensity() const;
+    //! Selection of unit cell changed
+    void selectedCellChanged(int cell);
+    //! Display all informations in QDebug
+    void printAllInformation();
+    //! Add unit cell (User defined)
+    void addUnitCell();
+    //! Remove a unit cell (deletion)
+    void removeUnitCell();
+    //! Reset the values
+    void resetFields();
+    //! Reset the values
+    void setInputEnabled(bool state);
+    //! Launch the refinement tool
+    void launchRefiner();
 
-   //! Set up the GUI size policies
-   void setSizePolicies();
-   //! Change the name of the unit cell
-   void setUnitCellName();
-   //! Change the chemical formula
-   void setChemicalFormula();
-   //! Set the z value
-   void setZValue(int z);
-   //! Set the mass density
-   void setMassDensity() const;
-   //! Selection of unit cell changed
-   void selectedCellChanged(int cell);
-   //! Display all informations in QDebug
-   void printAllInformation();
-   //! Add unit cell (User defined)
-   void addUnitCell();
-   //! Remove a unit cell (deletion)
-   void removeUnitCell();
-   //! Reset the values
-   void resetFields();
-   //! Reset the values
-   void setInputEnabled(bool state);
-   //! Launch the refinement tool
-   void launchRefiner();
+ private:
+    QComboBox* unitcells;
+    QLineEdit* name;
+    QLineEdit* chemicalFormula;
+    QLineEdit* spaceGroup;
+    QSpinBox* z;
+    QDoubleSpinBox* indexingTolerance;
+    QDoubleSpinBox* a;
+    QDoubleSpinBox* b;
+    QDoubleSpinBox* c;
+    QDoubleSpinBox* alpha;
+    QDoubleSpinBox* beta;
+    QDoubleSpinBox* gamma;
 
-private: 
+    QPushButton* _add;
+    QPushButton* _remove;
+    QPushButton* _refine;
 
-   QComboBox* unitcells;
-   QLineEdit* name;
-   QLineEdit* chemicalFormula;
-   QLineEdit* spaceGroup;
-   QSpinBox* z;
-   QDoubleSpinBox* indexingTolerance;
-   QDoubleSpinBox* a;
-   QDoubleSpinBox* b;
-   QDoubleSpinBox* c;
-   QDoubleSpinBox* alpha;
-   QDoubleSpinBox* beta;
-   QDoubleSpinBox* gamma;
-
-   QPushButton* _add;
-   QPushButton* _remove;
-   QPushButton* _refine;
-
-   QSizePolicy* _size_policy_widgets;
-   QSizePolicy* _size_policy_box;
-   QSizePolicy* _size_policy_right;
-   QSizePolicy* _size_policy_fixed;
+    QSizePolicy* _size_policy_widgets;
+    QSizePolicy* _size_policy_box;
+    QSizePolicy* _size_policy_right;
+    QSizePolicy* _size_policy_fixed;
 };
 
 #endif // GUI_SUBFRAME_EXPERIMENT_PROPERTIES_UNITCELLPROPERTY_H

@@ -15,21 +15,19 @@
 #ifndef GUI_ITEMS_PEAKCOLLECTIONITEM_H
 #define GUI_ITEMS_PEAKCOLLECTIONITEM_H
 
+#include "core/peak/Peak3D.h"
 #include "core/peak/PeakCollection.h"
 #include "gui/items/PeakItem.h"
-#include "core/peak/Peak3D.h"
 #include <QStandardItem>
 
 class PeakCollectionItem {
 
-public: 
-
+ public:
     PeakCollectionItem();
     PeakCollectionItem(nsx::PeakCollection* peak_collection);
     ~PeakCollectionItem() = default;
 
-public: 
-
+ public:
     //! Set the peak collection
     void setPeakCollection(nsx::PeakCollection* peak_collection);
     //! Retrieve the name of the collection if present
@@ -39,9 +37,9 @@ public:
     //! Retrieve the number of columns of this item
     int columnCount() const;
     //! Retrieve the data of column and row
-    QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
+    QVariant data(const QModelIndex& index, int role = Qt::DisplayRole) const;
     //! Get the peak collection pointer
-    nsx::PeakCollection* peakCollection() const {return _peak_collection;};
+    nsx::PeakCollection* peakCollection() const { return _peak_collection; };
     //! Get the peak items pointer
     std::vector<PeakItem*> peakItems() const;
     //! Returns the peak item at a given row
@@ -61,13 +59,10 @@ public:
     //! Return number of peaks
     int numberOfPeaks(void) const;
 
-private:
-
+ private:
     nsx::PeakCollection* _peak_collection;
     std::vector<std::unique_ptr<PeakItem>> _peak_items;
     PeakDisplayModes _mode;
-
 };
 
 #endif // GUI_ITEMS_PEAKCOLLECTIONITEM_H
-

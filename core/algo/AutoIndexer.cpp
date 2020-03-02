@@ -71,8 +71,8 @@ void AutoIndexer::computeFFTSolutions(const std::vector<Peak3D*>& peaks)
 
     // Store the q-vectors of the peaks for auto-indexing
     std::vector<ReciprocalVector> qvects;
-    const std::vector<Peak3D*> filtered_peaks = PeakFilter{}.filterEnabled(peaks, true);
-    for (const Peak3D* peak: filtered_peaks) {
+    const std::vector<Peak3D*> filtered_peaks = PeakFilter {}.filterEnabled(peaks, true);
+    for (const Peak3D* peak : filtered_peaks) {
         auto q = peak->q().rowVector();
         qvects.push_back(ReciprocalVector(q));
     }
@@ -84,8 +84,9 @@ void AutoIndexer::computeFFTSolutions(const std::vector<Peak3D*>& peaks)
         throw std::runtime_error("Too few peaks to autoindex");
     }
     if (_handler)
-        _handler->log("Searching direct lattice vectors using" + std::to_string(qvects.size())
-                      + "peaks defined on numors:");
+        _handler->log(
+            "Searching direct lattice vectors using" + std::to_string(qvects.size())
+            + "peaks defined on numors:");
 
     // Find the best vectors via FFT
     std::vector<Eigen::RowVector3d> tvects = algo::findOnSphere(

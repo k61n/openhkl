@@ -111,9 +111,8 @@ class Peak3D {
 
     //! Update the integration of the peak
     void setManually(
-        Intensity intensity, double peakEnd, double bkgBegin, double bkgEnd,
-        double scale, double transmission, Intensity mean_bkg,
-        bool predicted, bool selected, bool masked );
+        Intensity intensity, double peakEnd, double bkgBegin, double bkgEnd, double scale,
+        double transmission, Intensity mean_bkg, bool predicted, bool selected, bool masked);
 
     //! Update the integration of the peak
     void updateIntegration(
@@ -162,9 +161,9 @@ class Peak3D {
     std::vector<Intensity> _rockingCurve;
 };
 
-using sptrPeak3D    = std::shared_ptr<Peak3D>;
-using PeakList      = std::vector<sptrPeak3D>;
-using sptrPeakList  = std::shared_ptr<PeakList>;
+using sptrPeak3D = std::shared_ptr<Peak3D>;
+using PeakList = std::vector<sptrPeak3D>;
+using sptrPeakList = std::shared_ptr<PeakList>;
 
 //! Sort peak into a list of equivalent peaks, using the space group symmetry,
 //! optionally including Friedel pairs (if this is not already a symmetry of the space group)

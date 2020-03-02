@@ -49,7 +49,7 @@ TEST_CASE("test/peak_find/TestPeakFinder.cpp", "")
     std::cout << "\nrecip ellipse center:\n" << elli_recip.center() << std::endl;
     std::cout << "\nrecip ellipse metric:\n" << elli_recip.metric() << std::endl;
 
-    for(int i=0; i<3; ++i)
+    for (int i = 0; i < 3; ++i)
         CHECK(qvec[i] == Approx(elli_recip.center()[i]).epsilon(1e-3));
 
     dataf->close();
