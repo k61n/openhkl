@@ -16,7 +16,6 @@
 #define CORE_INTEGRATION_SHAPEINTEGRATOR_H
 
 #include "core/integration/PixelSumIntegrator.h"
-#include "core/shape/ShapeLibrary.h"
 
 namespace nsx {
 

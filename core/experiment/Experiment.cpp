@@ -17,7 +17,7 @@
 #include <stdexcept>
 #include <utility>
 
-#include "core/experiment/DataSet.h"
+#include "core/data/DataSet.h"
 #include "core/experiment/Experiment.h"
 #include "core/instrument/Diffractometer.h"
 #include "core/instrument/Monochromator.h"
@@ -25,8 +25,8 @@
 #include "core/raw/IDataReader.h"
 #include "core/raw/MetaData.h"
 
-#include "core/loader/ExperimentImporter.h"
-#include "core/output/ExperimentExporter.h"
+#include "core/experiment/ExperimentImporter.h"
+#include "core/experiment/ExperimentExporter.h"
 
 #include "core/integration/GaussianIntegrator.h"
 #include "core/integration/ISigmaIntegrator.h"

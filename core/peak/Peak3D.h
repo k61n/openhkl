@@ -16,12 +16,9 @@
 #define CORE_PEAK_PEAK3D_H
 
 #include "base/geometry/Ellipsoid.h"
-#include "core/experiment/DataTypes.h"
+#include "core/data/DataTypes.h"
 #include "core/peak/Intensity.h"
 #include "tables/crystal/UnitCell.h"
-
-#include <memory>
-#include <vector>
 
 namespace nsx {
 
@@ -116,7 +113,10 @@ class Peak3D {
 
     //! Update the integration of the peak
     void updateIntegration(
-        const IPeakIntegrator& integrator, double peakEnd, double bkgBegin, double bkgEnd);
+        const std::vector<Intensity>& rockingCurve,
+        const Intensity& meanBackground,
+        const Intensity& integratedIntensity,
+        double peakEnd, double bkgBegin, double bkgEnd);
     //! Returns the q vector of the peak, transformed into sample coordinates.
     ReciprocalVector q() const;
     //! Returns the predicted q vector of the peak, based on Miller index.

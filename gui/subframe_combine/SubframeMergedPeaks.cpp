@@ -14,8 +14,8 @@
 
 #include "gui/subframe_combine/SubframeMergedPeaks.h"
 
-#include "core/analyse/MergedPeak.h"
-#include "core/experiment/DataSet.h"
+#include "core/statistics/MergedPeak.h"
+#include "core/data/DataSet.h"
 #include "core/statistics/CC.h"
 #include "core/statistics/RFactor.h"
 #include "core/statistics/ResolutionShell.h"

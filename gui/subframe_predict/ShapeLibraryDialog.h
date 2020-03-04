@@ -15,10 +15,10 @@
 #ifndef GUI_SUBFRAME_PREDICT_SHAPELIBRARYDIALOG_H
 #define GUI_SUBFRAME_PREDICT_SHAPELIBRARYDIALOG_H
 
-#include "core/peak/PeakCollection.h"
+#include "core/shape/PeakCollection.h"
 #include "gui/models/PeakCollectionModel.h"
 
-#include "core/experiment/DataTypes.h"
+#include "core/data/DataTypes.h"
 #include "core/peak/Peak3D.h"
 #include "core/shape/Profile3D.h"
 #include "core/shape/ShapeLibrary.h"

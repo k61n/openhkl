@@ -15,7 +15,7 @@
 #ifndef CORE_INTEGRATION_GAUSSIANINTEGRATOR_H
 #define CORE_INTEGRATION_GAUSSIANINTEGRATOR_H
 
-#include "core/peak/IPeakIntegrator.h"
+#include "core/shape/IPeakIntegrator.h"
 
 namespace nsx {
 

@@ -14,8 +14,8 @@
 
 #include "gui/subframe_filter/SubframeFilterPeaks.h"
 
-#include "core/analyse/PeakFilter.h"
-#include "core/peak/PeakCollection.h"
+#include "core/shape/PeakFilter.h"
+#include "core/shape/PeakCollection.h"
 #include "gui/MainWin.h"
 #include "gui/dialogs/ListNameDialog.h"
 #include "gui/models/Meta.h"

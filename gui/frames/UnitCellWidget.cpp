@@ -15,7 +15,7 @@
 #include "gui/frames/UnitCellWidget.h"
 
 #include "base/utils/Units.h"
-#include "core/analyse/PeakFilter.h"
+#include "core/shape/PeakFilter.h"
 #include "core/peak/Peak3D.h"
 #include "gui/models/Session.h"
 #include "tables/crystal/UnitCell.h"

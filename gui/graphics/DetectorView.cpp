@@ -14,7 +14,7 @@
 
 #include "gui/graphics/DetectorView.h"
 
-#include "core/experiment/DataSet.h"
+#include "core/data/DataSet.h"
 #include "core/instrument/Diffractometer.h"
 #include "core/raw/IDataReader.h"
 #include "gui/graphics/DetectorScene.h"

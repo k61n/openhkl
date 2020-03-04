@@ -15,7 +15,7 @@
 #ifndef GUI_MODELS_META_H
 #define GUI_MODELS_META_H
 
-#include "core/experiment/DataTypes.h"
+#include "core/data/DataTypes.h"
 #include "core/peak/Peak3D.h"
 #include "tables/crystal/UnitCell.h"
 #include <QMetaType>

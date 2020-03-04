@@ -14,8 +14,8 @@
 
 #include "gui/subframe_experiment/properties/NumorProperty.h"
 
-#include "core/experiment/DataSet.h"
-#include "core/experiment/DataTypes.h"
+#include "core/data/DataSet.h"
+#include "core/data/DataTypes.h"
 #include "core/raw/IDataReader.h"
 #include "gui/models/Session.h"
 

@@ -15,7 +15,6 @@
 #ifndef CORE_INSTRUMENT_INSTRUMENTSTATELIST_H
 #define CORE_INSTRUMENT_INSTRUMENTSTATELIST_H
 
-#include "core/instrument/InstrumentState.h"
 #include "core/instrument/InterpolatedState.h"
 #include <vector>
 

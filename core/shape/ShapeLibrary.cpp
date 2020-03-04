@@ -16,9 +16,9 @@
 
 #include "base/fit/Minimizer.h"
 #include "base/geometry/Ellipsoid.h"
-#include "core/algo/Qs2Events.h"
+#include "core/peak/Qs2Events.h"
 #include "core/detector/Detector.h"
-#include "core/experiment/DataSet.h"
+#include "core/data/DataSet.h"
 #include "core/instrument/Diffractometer.h"
 #include "core/instrument/Source.h"
 #include "core/peak/Peak3D.h"

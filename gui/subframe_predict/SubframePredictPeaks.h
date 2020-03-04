@@ -15,7 +15,7 @@
 #ifndef GUI_SUBFRAME_PREDICT_SUBFRAMEPREDICTPEAKS_H
 #define GUI_SUBFRAME_PREDICT_SUBFRAMEPREDICTPEAKS_H
 
-#include "core/peak/PeakCollection.h"
+#include "core/shape/PeakCollection.h"
 
 #include "gui/graphics/DetectorView.h"
 #include "gui/models/PeakCollectionModel.h"

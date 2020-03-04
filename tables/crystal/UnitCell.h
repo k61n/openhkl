@@ -18,7 +18,6 @@
 #include "tables/crystal/NiggliCharacter.h"
 #include "tables/crystal/SpaceGroup.h"
 
-#include <Eigen/Dense>
 #include <xsection/Material.h>
 
 namespace nsx {

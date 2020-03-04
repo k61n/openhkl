@@ -15,19 +15,19 @@
 #ifndef GUI_FRAMES_MERGEDPEAKINFORMATIONFRAME_H
 #define GUI_FRAMES_MERGEDPEAKINFORMATIONFRAME_H
 
-#include "core/peak/PeakCollection.h"
 #include "gui/graphics/DetectorView.h"
 #include "gui/models/PeakCollectionModel.h"
 #include "gui/views/PeakTableView.h"
-
-#include "core/analyse/MergedData.h"
-#include "core/output/PeakExporter.h"
-#include "core/peak/Peak3D.h"
 #include "gui/graphics/SXPlot.h"
-#include "tables/crystal/SpaceGroup.h"
-
 #include "gui/utility/ColorButton.h"
 #include "gui/utility/Spoiler.h"
+
+#include "core/statistics/MergedData.h"
+#include "core/peak/Peak3D.h"
+#include "core/shape/PeakCollection.h"
+#include "core/statistics/PeakExporter.h"
+
+#include "tables/crystal/SpaceGroup.h"
 
 #include <QCheckBox>
 #include <QComboBox>

@@ -1,7 +1,7 @@
 
 #include "gui/dialogs/HDF5ConverterDialog.h"
 
-#include "core/experiment/DataSet.h"
+#include "core/data/DataSet.h"
 #include "gui/MainWin.h"
 #include "gui/models/Session.h"
 #include <QDir>

@@ -17,7 +17,7 @@
 
 #include "base/mask/IMask.h"
 
-#include "core/experiment/DataTypes.h"
+#include "core/data/DataTypes.h"
 #include "core/peak/Peak3D.h"
 
 #include "gui/items/PeakItem.h"
