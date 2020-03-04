@@ -14,8 +14,8 @@
 
 #include "gui/models/SessionExperiment.h"
 
-#include "core/analyse/PeakFilter.h"
-#include "core/experiment/DataSet.h"
+#include "core/shape/PeakFilter.h"
+#include "core/data/DataSet.h"
 #include "core/instrument/HardwareParameters.h"
 #include "core/integration/GaussianIntegrator.h"
 #include "core/integration/ISigmaIntegrator.h"

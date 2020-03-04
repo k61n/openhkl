@@ -16,10 +16,9 @@
 
 #include "base/fit/FitParameters.h"
 #include "base/fit/Minimizer.h"
-#include "base/geometry/ReciprocalVector.h"
 #include "core/algo/FFTIndexing.h"
-#include "core/analyse/PeakFilter.h"
-#include "core/experiment/DataSet.h" // peak->data()->interpolatedState
+#include "core/shape/PeakFilter.h"
+#include "core/data/DataSet.h" // peak->data()->interpolatedState
 #include "tables/crystal/MillerIndex.h"
 
 #include <iostream>

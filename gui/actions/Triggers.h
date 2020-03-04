@@ -46,7 +46,6 @@ class Actions {
     QcrTrigger monochromaticSourceProperties {"monochramtic properties", "properties"};
     // Experiments/Peaks:
     QcrTrigger buildShapeLibrary {"build shape library", "build shape library"};
-    QcrTrigger correctAbsorption {"correct", "correct for absorption"};
     QcrTrigger filterPeaks {"filter peaks", "filter peaks"};
     QcrTrigger integratepeaks {"integrate peaks", "integrate peaks"};
     QcrTrigger normalize {"normalize", "normalize"};

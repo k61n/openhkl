@@ -15,7 +15,6 @@
 #ifndef CORE_PEAK_PEAKCOORDINATESYSTEM_H
 #define CORE_PEAK_PEAKCOORDINATESYSTEM_H
 
-#include "base/geometry/Ellipsoid.h"
 #include "core/detector/DetectorEvent.h"
 #include "core/instrument/InterpolatedState.h"
 #include "core/peak/Peak3D.h"

@@ -21,8 +21,6 @@
 #include "core/detector/DataOrder.h"
 #include "core/detector/DetectorEvent.h"
 
-#include <Eigen/Dense>
-
 namespace nsx {
 
 //! Pure virtual base class for detectors of different geometry.

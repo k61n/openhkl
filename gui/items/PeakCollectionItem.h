@@ -16,7 +16,7 @@
 #define GUI_ITEMS_PEAKCOLLECTIONITEM_H
 
 #include "core/peak/Peak3D.h"
-#include "core/peak/PeakCollection.h"
+#include "core/shape/PeakCollection.h"
 #include "gui/items/PeakItem.h"
 #include <QStandardItem>
 

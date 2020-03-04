@@ -15,9 +15,9 @@
 #include "gui/items/PeakCollectionItem.h"
 
 #include "base/geometry/ReciprocalVector.h"
-#include "core/analyse/PeakFilter.h"
+#include "core/shape/PeakFilter.h"
 #include "core/detector/Detector.h"
-#include "core/experiment/DataSet.h"
+#include "core/data/DataSet.h"
 #include "core/instrument/Diffractometer.h"
 #include "core/instrument/InstrumentState.h"
 #include "core/peak/Peak3D.h"

@@ -15,11 +15,11 @@
 #include <algorithm>
 #include <iterator>
 
-#include "core/algo/Qs2Events.h"
+#include "core/peak/Qs2Events.h"
 #include "core/algo/Refiner.h"
-#include "core/analyse/PeakFilter.h"
+#include "core/shape/PeakFilter.h"
 #include "core/detector/DetectorEvent.h"
-#include "core/experiment/DataSet.h"
+#include "core/data/DataSet.h"
 #include "core/instrument/InstrumentState.h"
 #include "core/peak/Peak3D.h"
 #include "tables/crystal/MillerIndex.h"

@@ -3,7 +3,7 @@
 #include <Eigen/Dense>
 
 #include "core/algo/DataReaderFactory.h"
-#include "core/algo/Qs2Events.h"
+#include "core/peak/Qs2Events.h"
 #include "core/experiment/Experiment.h"
 
 TEST_CASE("test/crystal/TestFFTIndexing.cpp", "")

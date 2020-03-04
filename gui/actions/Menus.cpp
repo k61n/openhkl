@@ -54,7 +54,7 @@ Menus::Menus(QMenuBar* mbar) : mbar_ {mbar}
     peaks->addActions({&actions->findPeaks, &actions->filterPeaks});
     peaks->addMenu(indexing);
     peaks->addActions({&actions->refine, &actions->buildShapeLibrary, &actions->integratepeaks,
-                       &actions->normalize, &actions->correctAbsorption, &actions->predictPeaks,
+                       &actions->normalize, &actions->predictPeaks,
                        &actions->statistics, &actions->show3d, &actions->peaksProperties});
     experiment_ = mbar_->addMenu("&Experiment");
     experiment_->addMenu(data);

@@ -15,7 +15,7 @@
 #ifndef GUI_GRAPHICS_CUTTERITEM_H
 #define GUI_GRAPHICS_CUTTERITEM_H
 
-#include "core/experiment/DataTypes.h"
+#include "core/data/DataTypes.h"
 #include "gui/graphics_items/PlottableItem.h"
 
 //! Base class for data cutter items of the detector image

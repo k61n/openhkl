@@ -16,9 +16,7 @@
 #define CORE_ALGO_AUTOINDEXER_H
 
 #include "base/utils/ProgressHandler.h"
-#include "core/peak/Peak3D.h"
-#include "core/peak/PeakCollection.h"
-#include "tables/crystal/UnitCell.h"
+#include "core/shape/PeakCollection.h"
 
 namespace nsx {
 

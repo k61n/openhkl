@@ -14,7 +14,7 @@
 
 #include "core/integration/ShapeIntegrator.h"
 #include "base/geometry/Ellipsoid.h"
-#include "core/experiment/DataSet.h"
+#include "core/data/DataSet.h"
 #include "core/peak/Intensity.h"
 #include "core/peak/Peak3D.h"
 #include "core/peak/PeakCoordinateSystem.h"

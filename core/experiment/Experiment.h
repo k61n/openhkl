@@ -16,14 +16,12 @@
 #define CORE_EXPERIMENT_EXPERIMENT_H
 
 #include "core/algo/AutoIndexer.h"
-#include "core/analyse/MergedData.h"
-#include "core/analyse/PeakFilter.h"
-#include "core/analyse/PeakFinder.h"
-#include "core/experiment/DataTypes.h"
+#include "core/statistics/MergedData.h"
+#include "core/shape/PeakFilter.h"
+#include "core/experiment/PeakFinder.h"
+#include "core/data/DataTypes.h"
 #include "core/instrument/Diffractometer.h"
-#include "core/peak/IPeakIntegrator.h"
-#include "core/peak/Peak3D.h"
-#include "core/peak/PeakCollection.h"
+#include "core/shape/IPeakIntegrator.h"
 #include "tables/crystal/UnitCell.h"
 
 namespace nsx {

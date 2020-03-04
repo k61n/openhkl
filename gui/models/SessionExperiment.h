@@ -22,7 +22,7 @@
 #include "tables/crystal/UnitCell.h"
 
 #include "core/peak/Peak3D.h"
-#include "core/peak/PeakCollection.h"
+#include "core/shape/PeakCollection.h"
 #include "gui/models/PeakCollectionModel.h"
 
 #include <QStandardItemModel>

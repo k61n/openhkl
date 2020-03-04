@@ -16,15 +16,11 @@
 #define CORE_SHAPE_SHAPELIBRARY_H
 
 #include "core/detector/DetectorEvent.h"
-#include "core/experiment/DataTypes.h"
 #include "core/peak/Peak3D.h"
 #include "core/shape/Profile1D.h"
 #include "core/shape/Profile3D.h"
-#include "tables/crystal/UnitCell.h"
 
-#include <Eigen/Dense>
 #include <array>
-#include <memory>
 
 namespace nsx {
 
