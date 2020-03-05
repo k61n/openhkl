@@ -58,12 +58,10 @@ void IPeakIntegrator::integrate(
     // integrate only those peaks that belong to the specified dataset
     auto it = std::remove_if(
         peaks.begin(), peaks.end(), [&](const Peak3D* peak) { return peak->dataSet() != data; });
-    qDebug() << "IPeakIntegrator::integrate DEB1";
     peaks.erase(it, peaks.end());
 
     std::string status = "Integrating " + std::to_string(peaks.size()) + " peaks...";
     qDebug() << QString::fromStdString(status);
-
     if (_handler) {
         _handler->setStatus(status.c_str());
         _handler->setProgress(0);
@@ -77,8 +75,7 @@ void IPeakIntegrator::integrate(
 
     for (auto peak : peaks) {
         try {
-            // IntegrationRegion constructor may throw (e.g. peak on boundary of
-            // image)
+            // IntegrationRegion constructor may throw (e.g. peak on boundary of image)
             regions.emplace(
                 std::make_pair(peak, IntegrationRegion(peak, _peak_end, _bkg_begin, _bkg_end)));
             integrated.emplace(std::make_pair(peak, false));
@@ -101,10 +98,12 @@ void IPeakIntegrator::integrate(
     }
 
     // only integrate the peaks with valid integration regions
+    qDebug() << "IPeakIntegrator::integrate remove invalid regions";
     it = std::remove_if(
         peaks.begin(), peaks.end(), [&](Peak3D*& p) { return regions.find(p) == regions.end(); });
     peaks.erase(it, peaks.end());
 
+    qDebug() << "IPeakIntegrator::integrate frames loop";
     for (idx = 0; idx < data->nFrames(); ++idx) {
         Eigen::MatrixXd current_frame;
         Eigen::MatrixXi mask;
