@@ -80,11 +80,6 @@ MainWin::MainWin()
 
 MainWin::~MainWin() {}
 
-void MainWin::refresh()
-{
-    bool hasData = false;
-}
-
 void MainWin::onDataChanged()
 {
     experiment->getImage()->dataChanged();

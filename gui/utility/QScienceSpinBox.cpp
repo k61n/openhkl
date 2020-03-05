@@ -11,6 +11,61 @@
     qDebug
 #endif
 
+namespace {
+
+// modified from qspinbox.cpp
+bool isIntermediateValueHelper(qint64 num, qint64 min, qint64 max, qint64* match=0)
+{
+    QSBDEBUG("%lld %lld %lld", num, min, max);
+
+    if (num >= min && num <= max) {
+        if (match)
+            *match = num;
+        QSBDEBUG("returns true 0");
+        return true;
+    }
+    qint64 tmp = num;
+
+    int numDigits = 0;
+    int digits[10];
+    if (tmp == 0) {
+        numDigits = 1;
+        digits[0] = 0;
+    } else {
+        tmp = qAbs(num);
+        for (int i = 0; tmp > 0; ++i) {
+            digits[numDigits++] = tmp % 10;
+            tmp /= 10;
+        }
+    }
+
+    int failures = 0;
+    qint64 number;
+    for (number = max; number >= min; --number) {
+        tmp = qAbs(number);
+        for (int i = 0; tmp > 0;) {
+            if (digits[i] == (tmp % 10)) {
+                if (++i == numDigits) {
+                    if (match)
+                        *match = number;
+                    QSBDEBUG("returns true 1");
+                    return true;
+                }
+            }
+            tmp /= 10;
+        }
+        if (failures++ == 500000) { // upper bound
+            if (match)
+                *match = num;
+            QSBDEBUG("returns true 2");
+            return true;
+        }
+    }
+    QSBDEBUG("returns false");
+    return false;
+}
+
+} // namespace
 
 QScienceSpinBox::QScienceSpinBox(QWidget* parent) : QDoubleSpinBox(parent)
 {
@@ -481,56 +536,4 @@ QString QScienceSpinBox::stripped(const QString& t, int* pos) const
     if (pos)
         (*pos) -= (s - text.size());
     return text;
-}
-
-// reimplemented function, copied from qspinbox.cpp
-static bool isIntermediateValueHelper(qint64 num, qint64 min, qint64 max, qint64* match)
-{
-    QSBDEBUG("%lld %lld %lld", num, min, max);
-
-    if (num >= min && num <= max) {
-        if (match)
-            *match = num;
-        QSBDEBUG("returns true 0");
-        return true;
-    }
-    qint64 tmp = num;
-
-    int numDigits = 0;
-    int digits[10];
-    if (tmp == 0) {
-        numDigits = 1;
-        digits[0] = 0;
-    } else {
-        tmp = qAbs(num);
-        for (int i = 0; tmp > 0; ++i) {
-            digits[numDigits++] = tmp % 10;
-            tmp /= 10;
-        }
-    }
-
-    int failures = 0;
-    qint64 number;
-    for (number = max; number >= min; --number) {
-        tmp = qAbs(number);
-        for (int i = 0; tmp > 0;) {
-            if (digits[i] == (tmp % 10)) {
-                if (++i == numDigits) {
-                    if (match)
-                        *match = number;
-                    QSBDEBUG("returns true 1");
-                    return true;
-                }
-            }
-            tmp /= 10;
-        }
-        if (failures++ == 500000) { // upper bound
-            if (match)
-                *match = num;
-            QSBDEBUG("returns true 2");
-            return true;
-        }
-    }
-    QSBDEBUG("returns false");
-    return false;
 }

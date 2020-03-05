@@ -8,9 +8,6 @@
 #include <QString>
 #include <QVariant>
 
-static bool
-isIntermediateValueHelper(qint64 num, qint64 minimum, qint64 maximum, qint64* match = 0);
-
 class QScienceSpinBox : public QDoubleSpinBox {
     Q_OBJECT
  public:

@@ -69,7 +69,6 @@ class MainWin : public QMainWindow {
     SideBar* sideBar() { return _side_bar; };
 
  private:
-    void refresh();
     void readSettings();
     void saveSettings() const;
     void closeEvent(QCloseEvent* event) override;
@@ -83,7 +82,7 @@ public:
     SubframePredictPeaks* predictor;
     SubframeMergedPeaks* merger;
 
-private:    
+private:
     QStackedWidget* _layout_stack;
     SideBar* _side_bar;
     class Menus* menus_;
