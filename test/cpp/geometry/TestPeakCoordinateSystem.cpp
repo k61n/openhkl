@@ -42,11 +42,11 @@ void run_test(const char* filename, const char* instrument)
         }
     }
 
-    nsx::sptrPeak3D peak(new nsx::Peak3D(dataf));
+    nsx::Peak3D peak(dataf);
 
     for (auto coord : coords) {
-        peak->setShape(nsx::Ellipsoid(coord, 2.0));
-        nsx::PeakCoordinateSystem frame(peak);
+        peak.setShape(nsx::Ellipsoid(coord, 2.0));
+        nsx::PeakCoordinateSystem frame(&peak);
 
         auto J = frame.jacobian();
 
@@ -72,7 +72,7 @@ void run_test(const char* filename, const char* instrument)
 
         auto detector_shape = frame.detectorShape(sigmaD, sigmaM);
 
-        peak->setShape(detector_shape);
+        peak.setShape(detector_shape);
 
         CHECK(frame.estimateDivergence() == Approx(sigmaD).epsilon(1e-6));
         CHECK(frame.estimateMosaicity() == Approx(sigmaM).epsilon(1e-6));
