@@ -84,8 +84,8 @@ bool Profile1DIntegrator::compute(
     if (!peak)
         return false;
 
-    const auto& events = region.data().events();
-    const auto& counts = region.data().counts();
+    const auto& events = region.peakData().events();
+    const auto& counts = region.peakData().counts();
 
     // TODO: should this be hard-coded??
     if (events.size() < 29)

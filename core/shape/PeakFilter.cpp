@@ -92,7 +92,7 @@ void PeakFilter::filterSparseDataSet(PeakCollection* peak_collection) const
     nsx::Peak3D* peak_ptr;
     for (int i = 0; i < peak_collection->numberOfPeaks(); ++i) {
         peak_ptr = peak_collection->getPeak(i);
-        auto data = peak_ptr->data();
+        auto data = peak_ptr->dataSet();
         if (!data)
             continue;
 

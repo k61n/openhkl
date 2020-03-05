@@ -189,8 +189,8 @@ void PeakCollectionItem::sort(int column, Qt::SortOrder order)
         }
         case Column::Numor: {
             compareFn = [&](std::unique_ptr<PeakItem>& p1, std::unique_ptr<PeakItem>& p2) {
-                int numor_1 = p1->peak()->data()->reader()->metadata().key<int>("Numor");
-                int numor_2 = p2->peak()->data()->reader()->metadata().key<int>("Numor");
+                int numor_1 = p1->peak()->dataSet()->reader()->metadata().key<int>("Numor");
+                int numor_2 = p2->peak()->dataSet()->reader()->metadata().key<int>("Numor");
                 return (numor_1 < numor_2);
             };
             break;

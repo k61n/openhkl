@@ -59,7 +59,7 @@ Peak3D::Peak3D(std::shared_ptr<nsx::Peak3D> peak)
     _masked = peak->masked();
     _predicted = peak->predicted();
     _transmission = peak->transmission();
-    _data = peak->data();
+    _data = peak->dataSet();
     _rockingCurve = peak->rockingCurve();
     _meanBackground = peak->meanBackground();
     _rawIntensity = peak->rawIntensity();

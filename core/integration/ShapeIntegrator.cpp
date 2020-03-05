@@ -32,7 +32,7 @@ bool ShapeIntegrator::compute(
     Peak3D* peak, ShapeLibrary* shape_library, const IntegrationRegion& region)
 {
     auto uc = peak->unitCell();
-    auto data = peak->data();
+    auto data = peak->dataSet();
 
     if (!uc || !data)
         throw std::runtime_error("ShapeIntegrator: Peak must have unit cell and data attached");
@@ -40,8 +40,8 @@ bool ShapeIntegrator::compute(
     PixelSumIntegrator::compute(peak, shape_library, region);
 
     const double mean_bkg = _meanBackground.value();
-    const auto& events = region.data().events();
-    const auto& counts = region.data().counts();
+    const auto& events = region.peakData().events();
+    const auto& counts = region.peakData().counts();
 
     Profile3D profile(_aabb, _nx, _ny, _nz);
     // todo: don't use default constructor!

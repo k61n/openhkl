@@ -168,7 +168,7 @@ void AutoIndexer::refineSolutions(const std::vector<Peak3D*>& peaks)
 
             Eigen::Vector3d c = peak->shape().center();
             Eigen::Matrix3d M = peak->shape().metric();
-            auto state = peak->data()->instrumentStates().interpolate(c[2]);
+            auto state = peak->dataSet()->instrumentStates().interpolate(c[2]);
             Eigen::Matrix3d J = state.jacobianQ(c[0], c[1]);
             Eigen::Matrix3d JI = J.inverse();
 

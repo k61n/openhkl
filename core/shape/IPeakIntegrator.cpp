@@ -57,7 +57,7 @@ void IPeakIntegrator::integrate(
     qDebug() << "IPeakIntegrator::integrate start";
     // integrate only those peaks that belong to the specified dataset
     auto it = std::remove_if(
-        peaks.begin(), peaks.end(), [&](const Peak3D* peak) { return peak->data() != data; });
+        peaks.begin(), peaks.end(), [&](const Peak3D* peak) { return peak->dataSet() != data; });
     qDebug() << "IPeakIntegrator::integrate DEB1";
     peaks.erase(it, peaks.end());
 
@@ -89,7 +89,7 @@ void IPeakIntegrator::integrate(
 
         // ignore partials
         auto bb = regions[peak].peakBB();
-        auto data = peak->data();
+        auto data = peak->dataSet();
         auto lo = bb.lower();
         auto hi = bb.upper();
 
@@ -126,7 +126,7 @@ void IPeakIntegrator::integrate(
 
             // done reading peak data
             if (result && !integrated[peak]) {
-                regions[peak].data().computeStandard();
+                regions[peak].peakData().computeStandard();
                 try {
                     if (compute(peak, shape_library, regions[peak])) {
                         peak->updateIntegration(

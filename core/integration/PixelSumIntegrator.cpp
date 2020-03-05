@@ -37,8 +37,8 @@ bool PixelSumIntegrator::compute(
     MeanBackgroundIntegrator::compute(peak, shape_library, region);
     PeakCoordinateSystem frame(peak);
 
-    const auto& events = region.data().events();
-    const auto& counts = region.data().counts();
+    const auto& events = region.peakData().events();
+    const auto& counts = region.peakData().counts();
 
     double sum_peak = 0.0;
     const double mean_bkg = _meanBackground.value();
