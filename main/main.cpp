@@ -19,13 +19,13 @@
 
 int main(int argc, char* argv[])
 {
-    QApplication app(argc, argv);
+    QApplication app {argc, argv};
 
     app.setApplicationName("NSXTool");
     app.setApplicationVersion("1.0");
     app.setOrganizationName("nsx");
 
-    QLoggingCategory::setFilterRules("*.debug=true\nqt.*.debug=false");
+    QLoggingCategory::setFilterRules("*.debug=true\nqt.*.debug=false\nqt.qpa*=false");
     Session session;
 
     new MainWin {};
