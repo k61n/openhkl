@@ -98,7 +98,7 @@ AbsorptionDialog::AbsorptionDialog() : QDialog {}
         dialog.setFileMode(QFileDialog::ExistingFile);
 
         QString fileName =
-            dialog.getOpenFileName(this, "Select video file", "", tr("Video file (*.info)"));
+            dialog.getOpenFileName(this, "Select video file", "", "Video file (*.info)");
         if (fileName.isEmpty())
             return;
         readInfoFile(fileName.toStdString());

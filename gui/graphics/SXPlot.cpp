@@ -237,12 +237,12 @@ void SXPlot::exportToAscii()
         return;
 
     QString fileName = QFileDialog::getSaveFileName(
-        this, tr("Choose ASCII file to export"), "", tr("Data File (*.dat)"));
+        this, "Choose ASCII file to export", "", "Data File (*.dat)");
 
     std::ofstream file;
     file.open(fileName.toStdString().c_str(), std::ios::out);
     if (!file.is_open())
-        QMessageBox::critical(this, tr("NSXTool"), tr("Problem opening file"));
+        QMessageBox::critical(this, "NSXTool", "Problem opening file");
 
     // First column is the key, then 2n columns (value error)
     Eigen::MatrixXd result(npoints, 2 * ngraphs + 1);
