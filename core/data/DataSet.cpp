@@ -70,7 +70,7 @@ int DataSet::dataAt(unsigned int x, unsigned int y, unsigned int z)
     return frame(z)(x, y);
 }
 
-Eigen::MatrixXi DataSet::frame(std::size_t idx)
+Eigen::MatrixXi DataSet::frame(std::size_t idx) const
 {
     return _reader->data(idx);
 }
