@@ -13,8 +13,8 @@
 //  ***********************************************************************************************
 
 #include "core/peak/PeakCoordinateSystem.h"
-#include "core/detector/Detector.h"
 #include "core/data/DataSet.h"
+#include "core/detector/Detector.h"
 #include "core/instrument/Diffractometer.h"
 #include "core/peak/Peak3D.h"
 #include "core/raw/IDataReader.h"

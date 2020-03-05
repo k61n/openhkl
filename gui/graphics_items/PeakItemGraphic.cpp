@@ -18,8 +18,8 @@
 #include "base/geometry/ReciprocalVector.h"
 #include "base/utils/Units.h"
 
-#include "core/detector/Detector.h"
 #include "core/data/DataSet.h"
+#include "core/detector/Detector.h"
 #include "core/instrument/Diffractometer.h"
 #include "core/instrument/InstrumentState.h"
 #include "core/peak/Peak3D.h"

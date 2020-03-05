@@ -4,12 +4,12 @@
 
 #include "base/utils/ProgressHandler.h"
 #include "core/algo/DataReaderFactory.h"
-#include "core/peak/Qs2Events.h"
-#include "core/experiment/PeakFinder.h"
 #include "core/convolve/ConvolverFactory.h"
 #include "core/data/DataSet.h"
 #include "core/experiment/Experiment.h"
+#include "core/experiment/PeakFinder.h"
 #include "core/peak/Peak3D.h"
+#include "core/peak/Qs2Events.h"
 #include "core/raw/IDataReader.h"
 
 nsx::Ellipsoid toDetectorSpace(const nsx::Ellipsoid e, const nsx::sptrDataSet data)

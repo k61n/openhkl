@@ -14,9 +14,9 @@
 
 #include "gui/subframe_find/SubframeFindPeaks.h"
 
-#include "core/experiment/PeakFinder.h"
 #include "core/convolve/ConvolverFactory.h"
 #include "core/data/DataSet.h"
+#include "core/experiment/PeakFinder.h"
 #include "core/integration/PixelSumIntegrator.h"
 #include "core/peak/Peak3D.h"
 #include "core/raw/IDataReader.h"
@@ -130,6 +130,7 @@ void PeakFinderFrame::setDataUp()
     connect(
         _exp_combo, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this,
         [=]() {
+            qDebug() << "PeakFinderFrame::_exp_combo currentIndexChanged";
             grabFinderParameters();
             grabIntegrationParameters();
             updateDatasetList();

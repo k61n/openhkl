@@ -11,20 +11,20 @@
 #include "core/convolve/ConvolverFactory.h"
 #include "core/data/DataSet.h"
 #include "core/instrument/Diffractometer.h"
-#include "core/shape/IPeakIntegrator.h"
 #include "core/peak/Peak3D.h"
+#include "core/shape/IPeakIntegrator.h"
 
 #include "base/geometry/ReciprocalVector.h"
 #include "base/utils/ProgressHandler.h"
 #include "base/utils/Units.h"
 #include "core/algo/Refiner.h"
-#include "core/shape/PeakFilter.h"
-#include "core/experiment/PeakFinder.h"
 #include "core/experiment/Experiment.h"
+#include "core/experiment/PeakFinder.h"
 #include "core/gonio/Gonio.h"
 #include "core/instrument/InstrumentState.h"
 #include "core/instrument/Sample.h"
 #include "core/peak/Peak3D.h"
+#include "core/shape/PeakFilter.h"
 
 TEST_CASE("test/crystal/TestRefiner.cpp", "")
 {

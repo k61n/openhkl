@@ -14,12 +14,12 @@
 
 #include "gui/subframe_predict/ShapeLibraryDialog.h"
 
-#include "core/shape/PeakFilter.h"
 #include "core/data/DataSet.h"
 #include "core/integration/ShapeIntegrator.h"
 #include "core/peak/Peak3D.h"
-#include "core/shape/PeakCollection.h"
 #include "core/peak/PeakCoordinateSystem.h"
+#include "core/shape/PeakCollection.h"
+#include "core/shape/PeakFilter.h"
 #include "core/shape/Profile3D.h"
 #include "core/shape/ShapeLibrary.h"
 #include "gui/frames/ProgressView.h"

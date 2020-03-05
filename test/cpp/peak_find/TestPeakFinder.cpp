@@ -3,9 +3,9 @@
 #include "base/geometry/Ellipsoid.h"
 #include "base/utils/ProgressHandler.h"
 #include "core/algo/DataReaderFactory.h"
-#include "core/experiment/PeakFinder.h"
 #include "core/data/DataSet.h"
 #include "core/experiment/Experiment.h"
+#include "core/experiment/PeakFinder.h"
 #include "core/instrument/Diffractometer.h"
 #include "core/raw/MetaData.h"
 

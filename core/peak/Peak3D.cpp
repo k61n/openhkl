@@ -178,10 +178,8 @@ bool Peak3D::predicted() const
 }
 
 void Peak3D::updateIntegration(
-    const std::vector<Intensity>& rockingCurve,
-    const Intensity& meanBackground,
-    const Intensity& integratedIntensity,
-    double peakEnd, double bkgBegin, double bkgEnd)
+    const std::vector<Intensity>& rockingCurve, const Intensity& meanBackground,
+    const Intensity& integratedIntensity, double peakEnd, double bkgBegin, double bkgEnd)
 {
     _rockingCurve = rockingCurve;
     _meanBackground = meanBackground;

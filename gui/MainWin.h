@@ -53,10 +53,7 @@ class MainWin : public QMainWindow {
     //! update the plot, plot the plottable item p
     void updatePlot(PlottableItem* p) { experiment->getPlot()->updatePlot(p); }
     //! change the cursor tooltip on the detector scene
-    void cursormode(int i)
-    {
-        experiment->getImage()->getView()->getScene()->changeCursorMode(i);
-    }
+    void cursormode(int i) { experiment->getImage()->getView()->getScene()->changeCursorMode(i); }
     //! export current plot to ASCII
     void exportPlot() { experiment->getPlot()->exportPlot(); }
     //! plot the x and y data, e is the error to y
@@ -73,7 +70,7 @@ class MainWin : public QMainWindow {
     void saveSettings() const;
     void closeEvent(QCloseEvent* event) override;
 
-public:
+ public:
     SubframeExperiment* experiment;
     SubframeHome* home;
     PeakFinderFrame* finder;
@@ -82,7 +79,7 @@ public:
     SubframePredictPeaks* predictor;
     SubframeMergedPeaks* merger;
 
-private:
+ private:
     QStackedWidget* _layout_stack;
     SideBar* _side_bar;
     class Menus* menus_;

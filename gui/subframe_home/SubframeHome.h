@@ -37,8 +37,7 @@ class SubframeHome : public QWidget {
     //! Set the right layout
     void _setRightLayout(QHBoxLayout* main_layout);
 
-private:
-
+ private:
     //! Switch the current experiment through the model index
     void _switchCurrentExperiment(const QModelIndex& index) const;
     //! Update the current list
@@ -48,12 +47,12 @@ private:
     //! Load the clicked item
     void _loadSelectedItem(QListWidgetItem* item);
 
-public:
+ public:
     //! Create a new experiment
     void createNew();
     //! Load an experiment from file
-    void loadFromFile(); 
-    
+    void loadFromFile();
+
     //! Save the current experiment
     void saveCurrent();
     //! Save all experiments provided they have save paths (not implemented)

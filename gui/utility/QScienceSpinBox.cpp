@@ -14,7 +14,7 @@
 namespace {
 
 // modified from qspinbox.cpp
-bool isIntermediateValueHelper(qint64 num, qint64 min, qint64 max, qint64* match=0)
+bool isIntermediateValueHelper(qint64 num, qint64 min, qint64 max, qint64* match = 0)
 {
     QSBDEBUG("%lld %lld %lld", num, min, max);
 

@@ -15,11 +15,11 @@
 #ifndef GUI_FRAMES_INSTRUMENTSTATESFRAME_H
 #define GUI_FRAMES_INSTRUMENTSTATESFRAME_H
 
+#include <QDoubleSpinBox>
 #include <QFrame>
+#include <QLabel>
 #include <QListWidget>
 #include <QSpinBox>
-#include <QLabel>
-#include <QDoubleSpinBox>
 
 //! Frame which shows the instrument states
 class InstrumentStatesFrame : public QFrame {

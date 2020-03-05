@@ -14,10 +14,10 @@
 
 #include "gui/actions/Actions.h"
 
-#include "gui/models/Session.h" //for gSession
 #include "gui/MainWin.h" // for gGui
+#include "gui/models/Session.h" //for gSession
 
-Actions::Actions():QObject()
+Actions::Actions() : QObject()
 {
     setupData();
     setupExperiment();
@@ -30,43 +30,28 @@ Actions::Actions():QObject()
 
 void Actions::setupFiles()
 {
-   new_experiment = new QAction("New experiment..."); 
-   load_experiment = new QAction("Load experiment..."); 
-   save_experiment = new QAction("Save...");
-   save_all_experiment = new QAction("Save all");
-   remove_experiment = new QAction("Remove experiment..."); 
-   quit = new QAction("Quit");
+    new_experiment = new QAction("New experiment...");
+    load_experiment = new QAction("Load experiment...");
+    save_experiment = new QAction("Save...");
+    save_all_experiment = new QAction("Save all");
+    remove_experiment = new QAction("Remove experiment...");
+    quit = new QAction("Quit");
 
-   connect(
-       new_experiment, &QAction::triggered,
-       [](){gGui->home->createNew();}
-    );
-   connect(
-       load_experiment, &QAction::triggered,
-       [](){gGui->home->loadFromFile();}
-    );
-   connect(
-       save_experiment, &QAction::triggered,
-       [](){gGui->home->saveCurrent();}
-    );
-   connect(
-       save_all_experiment, &QAction::triggered,
-       [](){gGui->home->saveAll();}
-    );
-//    connect(
-//        remove_experiment, &QAction::triggered,
-//        [](){gGui->home->remo();}
-//     );
-   connect(
-       quit, &QAction::triggered,
-       [](){gGui->close();}
-    );
+    connect(new_experiment, &QAction::triggered, []() { gGui->home->createNew(); });
+    connect(load_experiment, &QAction::triggered, []() { gGui->home->loadFromFile(); });
+    connect(save_experiment, &QAction::triggered, []() { gGui->home->saveCurrent(); });
+    connect(save_all_experiment, &QAction::triggered, []() { gGui->home->saveAll(); });
+    //    connect(
+    //        remove_experiment, &QAction::triggered,
+    //        [](){gGui->home->remo();}
+    //     );
+    connect(quit, &QAction::triggered, []() { gGui->close(); });
 }
 
 void Actions::setupData()
 {
 
-    
+
     // loadData.setTriggerHook([]() { gSession->loadData(); });
     // removeData.setTriggerHook([]() { gSession->removeData(); });
     // importRaw.setTriggerHook([]() { gSession->loadRawData(); });
@@ -137,7 +122,7 @@ void Actions::setupPeaks()
     //         gLogger->log("[ERROR] No peaks in selected experiment");
     //         return;
     //     }
-        // gSession->selectedExperiment()->autoAssignUnitCell();
+    // gSession->selectedExperiment()->autoAssignUnitCell();
     // });
     // buildShapeLibrary.setTriggerHook([]() { new ShapeLibraryDialog; });
     // refine.setTriggerHook([]() { new RefinerFrame; });

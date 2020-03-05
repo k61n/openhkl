@@ -113,10 +113,8 @@ class Peak3D {
 
     //! Update the integration of the peak
     void updateIntegration(
-        const std::vector<Intensity>& rockingCurve,
-        const Intensity& meanBackground,
-        const Intensity& integratedIntensity,
-        double peakEnd, double bkgBegin, double bkgEnd);
+        const std::vector<Intensity>& rockingCurve, const Intensity& meanBackground,
+        const Intensity& integratedIntensity, double peakEnd, double bkgBegin, double bkgEnd);
     //! Returns the q vector of the peak, transformed into sample coordinates.
     ReciprocalVector q() const;
     //! Returns the predicted q vector of the peak, based on Miller index.

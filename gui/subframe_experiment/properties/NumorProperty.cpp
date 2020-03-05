@@ -17,8 +17,8 @@
 #include "core/data/DataSet.h"
 #include "core/data/DataTypes.h"
 #include "core/raw/IDataReader.h"
-#include "gui/models/Session.h"
 #include "gui/MainWin.h"
+#include "gui/models/Session.h"
 
 #include <QFormLayout>
 #include <QHBoxLayout>
@@ -28,7 +28,7 @@
 NumorProperty::NumorProperty() : QWidget()
 {
     setSizePolicies();
-    
+
     QVBoxLayout* layout = new QVBoxLayout(this);
     QHBoxLayout* top_layout = new QHBoxLayout;
 
@@ -46,7 +46,7 @@ NumorProperty::NumorProperty() : QWidget()
     _table->setEditTriggers(QAbstractItemView::NoEditTriggers);
 
     _numor_selector->setSizePolicy(*_size_policy_widgets);
-    
+
     top_layout->addWidget(_numor_selector);
     top_layout->addWidget(_add);
     top_layout->addWidget(_remove);
@@ -55,15 +55,10 @@ NumorProperty::NumorProperty() : QWidget()
     layout->addWidget(_table);
 
     connect(
-        _numor_selector, static_cast<void (QComboBox::*) (int) >(&QComboBox::currentIndexChanged),
-        this, &NumorProperty::onChanged
-    );
+        _numor_selector, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
+        this, &NumorProperty::onChanged);
 
-    connect(
-        _add, &QPushButton::clicked, 
-        this, &NumorProperty::addMenuRequested
-    );
-
+    connect(_add, &QPushButton::clicked, this, &NumorProperty::addMenuRequested);
 }
 
 void NumorProperty::setSizePolicies()
@@ -71,7 +66,7 @@ void NumorProperty::setSizePolicies()
     _size_policy_widgets = new QSizePolicy();
     _size_policy_widgets->setHorizontalPolicy(QSizePolicy::Expanding);
     _size_policy_widgets->setVerticalPolicy(QSizePolicy::Fixed);
-    
+
     _size_policy_box = new QSizePolicy();
     _size_policy_box->setHorizontalPolicy(QSizePolicy::Preferred);
     _size_policy_box->setVerticalPolicy(QSizePolicy::Preferred);
@@ -93,13 +88,9 @@ void NumorProperty::addMenuRequested()
     QAction* add_from_raw = menu->addAction("Add raw data...");
     QAction* add_from_HDF5 = menu->addAction("Add hdf5 data...");
 
-    connect(
-        add_from_raw, &QAction::triggered, 
-        [](){gSession->loadRawData();});
+    connect(add_from_raw, &QAction::triggered, []() { gSession->loadRawData(); });
 
-    connect(
-        add_from_HDF5, &QAction::triggered, 
-        [](){gSession->loadData();});
+    connect(add_from_HDF5, &QAction::triggered, []() { gSession->loadData(); });
 
     menu->popup(mapToGlobal(_add->geometry().bottomLeft()));
 }

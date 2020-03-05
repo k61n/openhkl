@@ -19,13 +19,13 @@
 #include <set>
 
 #include "base/geometry/ReciprocalVector.h"
-#include "core/statistics/MergedData.h"
-#include "core/shape/Octree.h"
-#include "core/shape/PeakFilter.h"
 #include "core/data/DataSet.h"
 #include "core/instrument/Diffractometer.h"
 #include "core/instrument/Sample.h"
 #include "core/peak/Peak3D.h"
+#include "core/shape/Octree.h"
+#include "core/shape/PeakFilter.h"
+#include "core/statistics/MergedData.h"
 #include "tables/crystal/MillerIndex.h"
 #include "tables/crystal/SpaceGroup.h"
 #include "tables/crystal/UnitCell.h"

@@ -21,9 +21,9 @@
 
 #include "base/geometry/ReciprocalVector.h"
 #include "base/utils/Random.h"
-#include "core/statistics/MergedPeak.h"
 #include "core/data/DataSet.h"
 #include "core/peak/Peak3D.h"
+#include "core/statistics/MergedPeak.h"
 #include "tables/crystal/MillerIndex.h"
 #include "tables/crystal/UnitCell.h"
 

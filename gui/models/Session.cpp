@@ -95,7 +95,7 @@ void Session::removeExperiment()
     if (selectedExperiment_ == -1) {
         _experiments.removeFirst();
     }
-    
+
     selectedExperiment_ = _experiments.size() > 0 ? 0 : -1;
     onExperimentChanged();
 }

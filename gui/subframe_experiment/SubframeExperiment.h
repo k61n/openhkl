@@ -24,17 +24,15 @@
 
 class SubframeExperiment : public QWidget {
 
-public:
-
+ public:
     SubframeExperiment();
 
-    ImagePanel* getImage() {return _image;};
-    LoggerPanel* getLogger() {return _logger;};
-    PlotPanel* getPlot() {return _plot;};
-    PropertyPanel* getProperty() {return _properties;};
+    ImagePanel* getImage() { return _image; };
+    LoggerPanel* getLogger() { return _logger; };
+    PlotPanel* getPlot() { return _plot; };
+    PropertyPanel* getProperty() { return _properties; };
 
-private:
-
+ private:
     ImagePanel* _image;
     LoggerPanel* _logger;
     PlotPanel* _plot;

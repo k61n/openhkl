@@ -17,30 +17,28 @@
 
 #include "gui/graphics/DetectorView.h"
 
-#include <QSpinBox>
 #include <QComboBox>
 #include <QFrame>
 #include <QScrollBar>
+#include <QSpinBox>
 
 //! Part of the main window that contains the detector view
 class ImagePanel : public QWidget {
 
-public:
+ public:
+    ImagePanel();
+    void dataChanged();
+    void changeView(int option);
 
-   ImagePanel();
-   void dataChanged();
-   void changeView(int option);
+    DetectorView* getView() { return _image_view; };
 
-   DetectorView* getView() {return _image_view;};
+ private:
+    DetectorView* _image_view;
 
-private:
-
-   DetectorView* _image_view;
-
-   QSpinBox* _frame;
-   QComboBox* _mode;
-   QSlider* _slider;
-   QScrollBar* _scrollbar;
+    QSpinBox* _frame;
+    QComboBox* _mode;
+    QSlider* _slider;
+    QScrollBar* _scrollbar;
 };
 
 #endif // GUI_SUBFRAME_EXPERIMENT_IMAGE_PANEL_H

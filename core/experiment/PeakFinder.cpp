@@ -15,7 +15,6 @@
 #include "core/experiment/PeakFinder.h"
 
 #include "base/geometry/AABB.h"
-#include "core/shape/Octree.h"
 #include "core/convolve/ConvolverFactory.h"
 #include "core/data/DataSet.h"
 #include "core/experiment/Experiment.h"
@@ -23,6 +22,7 @@
 #include "core/instrument/Sample.h"
 #include "core/peak/Peak3D.h"
 #include "core/raw/IDataReader.h"
+#include "core/shape/Octree.h"
 #include <Eigen/Dense>
 #include <QDebug>
 #include <QtGlobal>
@@ -94,7 +94,7 @@ PeakFinder::PeakFinder()
     , _framesBegin(-1)
     , _framesEnd(-1)
 {
-     _convolver.reset(ConvolverFactory{}.create("annular", {{"r1", 5.}, {"r2", 10.}, {"r3", 15.}}));
+    _convolver.reset(ConvolverFactory {}.create("annular", {{"r1", 5.}, {"r2", 10.}, {"r3", 15.}}));
 }
 
 std::vector<Peak3D*> PeakFinder::currentPeaks()
@@ -373,7 +373,7 @@ void PeakFinder::findPrimaryBlobs(
         }
 
         if (_handler)
-            _handler->setProgress(100.0 * nframes / (end-begin+1));
+            _handler->setProgress(100.0 * nframes / (end - begin + 1));
     }
 
     if (_handler) {
@@ -619,15 +619,6 @@ void PeakFinder::find(DataList numors)
 
         std::map<int, Blob3D> local_blobs = {{}};
         nsx::EquivalenceList local_equivalences;
-
-// determine begining and ending index of current thread
-#pragma omp for
-        for (size_t i = 0; i < numor->nFrames(); ++i) {
-            if (loop_begin == -1) {
-                loop_begin = i;
-            }
-            loop_end = i + 1;
-        }
 
         // find blobs within the current frame range
         qDebug() << "PeakFinder::find: findPrimary from " << loop_begin << " to " << loop_end;

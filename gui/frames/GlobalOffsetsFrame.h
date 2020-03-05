@@ -18,17 +18,16 @@
 #include "gui/graphics/SXPlot.h"
 
 #include <QDialogButtonBox>
-#include <QListWidget>
-#include <QTableWidget>
-#include <QSpinBox>
 #include <QDoubleSpinBox>
 #include <QFrame>
+#include <QListWidget>
+#include <QSpinBox>
+#include <QTableWidget>
 
 enum class offsetMode { DETECTOR, SAMPLE };
 
 //! Frame which shows the global offsets of the detector or sample
-class GlobalOffsetsFrame : public QFrame 
-{
+class GlobalOffsetsFrame : public QFrame {
  public:
     GlobalOffsetsFrame(offsetMode mode);
 

@@ -16,9 +16,9 @@
 #include "gui/subframe_predict/ShapeLibraryDialog.h"
 
 #include "core/data/DataSet.h"
-#include "core/shape/IPeakIntegrator.h"
 #include "core/peak/Peak3D.h"
 #include "core/raw/IDataReader.h"
+#include "core/shape/IPeakIntegrator.h"
 
 #include "core/shape/ShapeLibrary.h"
 #include "tables/crystal/UnitCell.h"

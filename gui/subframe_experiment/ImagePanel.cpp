@@ -21,9 +21,8 @@
 #include "gui/models/Session.h"
 
 #include <QGraphicsView>
-#include <QHBoxLayout>
-#include <QHBoxLayout>
 #include <QGridLayout>
+#include <QHBoxLayout>
 #include <QScrollBar>
 #include <QSplitter>
 #include <QTreeView>
@@ -44,9 +43,7 @@ ImagePanel::ImagePanel() : QWidget()
     _scrollbar->setMouseTracking(true);
     _scrollbar->setFocusPolicy(Qt::WheelFocus);
     _scrollbar->setOrientation(Qt::Horizontal);
-    _scrollbar->setSizePolicy(QSizePolicy(
-        QSizePolicy::Expanding,
-        QSizePolicy::Fixed));
+    _scrollbar->setSizePolicy(QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed));
 
     _slider->setMouseTracking(true);
     _slider->setMinimum(1);
@@ -56,54 +53,43 @@ ImagePanel::ImagePanel() : QWidget()
     _slider->setOrientation(Qt::Vertical);
     _slider->setTickPosition(QSlider::TicksRight);
 
-    _mode->addItems( QStringList {
-        "selection", "zoom",  "line plot", 
-        "horizontal slice", "vertical slice", 
-        "rectangular mask", "ellipsoidal mask"});
+    _mode->addItems(QStringList {"selection", "zoom", "line plot", "horizontal slice",
+                                 "vertical slice", "rectangular mask", "ellipsoidal mask"});
 
-    _frame->setSizePolicy(QSizePolicy(
-        QSizePolicy::Minimum,
-        QSizePolicy::Fixed));
+    _frame->setSizePolicy(QSizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed));
 
-    top_layout->addWidget(_image_view, 0,0,1,1);
-    top_layout->addWidget(_slider, 0,1,1,1);
+    top_layout->addWidget(_image_view, 0, 0, 1, 1);
+    top_layout->addWidget(_slider, 0, 1, 1, 1);
 
-    main_layout->addLayout(top_layout, 0,0,1,3);
-    main_layout->addWidget(_scrollbar, 1,0,1,1);
-    main_layout->addWidget(_frame, 1,1,1,1);
-    main_layout->addWidget(_mode, 1,2,1,1);
+    main_layout->addLayout(top_layout, 0, 0, 1, 3);
+    main_layout->addWidget(_scrollbar, 1, 0, 1, 1);
+    main_layout->addWidget(_frame, 1, 1, 1, 1);
+    main_layout->addWidget(_mode, 1, 2, 1, 1);
 
     connect(
-        _slider, &QSlider::valueChanged, 
-        _image_view->getScene(), &DetectorScene::setMaxIntensity);
+        _slider, &QSlider::valueChanged, _image_view->getScene(), &DetectorScene::setMaxIntensity);
 
     connect(
-        _scrollbar, &QScrollBar::valueChanged, 
-        _image_view->getScene(), &DetectorScene::slotChangeSelectedFrame);
+        _scrollbar, &QScrollBar::valueChanged, _image_view->getScene(),
+        &DetectorScene::slotChangeSelectedFrame);
+
+    connect(_scrollbar, &QScrollBar::valueChanged, [=](int i) {
+        _frame->blockSignals(true);
+        _frame->setValue(i);
+        _frame->blockSignals(false);
+        _image_view->getScene()->slotChangeSelectedFrame(i);
+    });
+
+    connect(_frame, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged), [=](int i) {
+        _scrollbar->blockSignals(true);
+        _scrollbar->setValue(i);
+        _scrollbar->blockSignals(false);
+        _image_view->getScene()->slotChangeSelectedFrame(i);
+    });
 
     connect(
-        _scrollbar, &QScrollBar::valueChanged, 
-        [=](int i) { 
-            _frame->blockSignals(true);
-            _frame->setValue(i);
-            _frame->blockSignals(false);
-            _image_view->getScene()->slotChangeSelectedFrame(i);
-            });
-
-    connect(
-        _frame, static_cast<void (QSpinBox::*) (int) >(&QSpinBox::valueChanged), 
-        [=](int i) {
-            _scrollbar->blockSignals(true);
-            _scrollbar->setValue(i);
-            _scrollbar->blockSignals(false);
-            _image_view->getScene()->slotChangeSelectedFrame(i);
-            });
-
-    connect(
-        _mode, 
-        static_cast<void (QComboBox::*) (int) >(&QComboBox::currentIndexChanged), 
-        [=](int i) { _image_view->getScene()->changeInteractionMode(i);  });
-
+        _mode, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
+        [=](int i) { _image_view->getScene()->changeInteractionMode(i); });
 }
 
 void ImagePanel::dataChanged()

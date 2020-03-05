@@ -15,11 +15,11 @@
 #ifndef GUI_DIALOGS_RAWDATADIALOG_H
 #define GUI_DIALOGS_RAWDATADIALOG_H
 
+#include <QCheckBox>
+#include <QComboBox>
 #include <QDialog>
 #include <QDialogButtonBox>
-#include <QCheckBox>
 #include <QDoubleSpinBox>
-#include <QComboBox>
 
 //! Dialog to get the parameters to the selected raw data
 class RawDataDialog : public QDialog {
