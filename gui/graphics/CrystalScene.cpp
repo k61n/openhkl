@@ -235,14 +235,14 @@ void CrystalScene::triangulate()
         if (temp) {
             double x, y, z;
             temp->getCoordinates(x, y, z);
-            _hull->addVertex(Eigen::Vector3d(x * aspectratio, y * aspectratio, z * aspectratio));
+            _hull->addVertex(Eigen::Vector3d{x * aspectratio, y * aspectratio, z * aspectratio});
         }
     }
 
     try {
         _hull->updateHull();
     } catch (std::exception& e) {
-        QMessageBox::critical(nullptr, tr("NSXTool"), tr(e.what()));
+        QMessageBox::critical(nullptr, "NSXTool", e.what());
         return;
     }
     const std::vector<nsx::Triangle>& tcache = _hull->createFaceCache();

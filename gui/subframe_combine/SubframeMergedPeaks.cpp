@@ -553,7 +553,7 @@ void SubframeMergedPeaks::refreshGraphTable(int column)
 void SubframeMergedPeaks::saveStatistics()
 {
     QString filename =
-        QFileDialog::getSaveFileName(this, tr("Save the shell info"), ".", tr("(*.txt)"));
+        QFileDialog::getSaveFileName(this, "Save the shell info", ".", "(*.txt)");
 
     if (filename.isEmpty())
         return;
@@ -590,7 +590,7 @@ void SubframeMergedPeaks::saveMergedPeaks()
 
     if (format.compare("ShelX") == 0) {
         QString filename = QFileDialog::getSaveFileName(
-            this, tr("Save peaks to ShelX"), ".", tr("ShelX hkl file (*.hkl)"));
+            this, "Save peaks to ShelX", ".", "ShelX hkl file (*.hkl)");
 
         if (filename.isEmpty())
             return;
@@ -599,7 +599,7 @@ void SubframeMergedPeaks::saveMergedPeaks()
 
     } else if (format.compare("FullProf") == 0) {
         QString filename = QFileDialog::getSaveFileName(
-            this, tr("Save peaks to FullProf"), ".", tr("FullProf hkl file (*.hkl)"));
+            this, "Save peaks to FullProf", ".", "FullProf hkl file (*.hkl)");
 
         if (filename.isEmpty())
             return;
@@ -608,7 +608,7 @@ void SubframeMergedPeaks::saveMergedPeaks()
 
     } else if (format.compare("Phenix") == 0) {
         QString filename = QFileDialog::getSaveFileName(
-            this, tr("Save peaks to Phenix sca"), ".", tr("Phenix sca file (*.sca)"));
+            this, "Save peaks to Phenix sca", ".", "Phenix sca file (*.sca)");
 
         if (filename.isEmpty())
             return;
@@ -623,7 +623,7 @@ void SubframeMergedPeaks::saveUnmergedPeaks()
 
     if (format.compare("ShelX") == 0) {
         QString filename = QFileDialog::getSaveFileName(
-            this, tr("Save peaks to ShelX"), ".", tr("ShelX hkl file (*.hkl)"));
+            this, "Save peaks to ShelX", ".", "ShelX hkl file (*.hkl)");
 
         if (filename.isEmpty())
             return;
@@ -632,7 +632,7 @@ void SubframeMergedPeaks::saveUnmergedPeaks()
 
     } else if (format.compare("FullProf") == 0) {
         QString filename = QFileDialog::getSaveFileName(
-            this, tr("Save peaks to FullProf"), ".", tr("ShelX hkl file (*.hkl)"));
+            this, "Save peaks to FullProf", ".", "ShelX hkl file (*.hkl)");
 
         if (filename.isEmpty())
             return;
@@ -641,7 +641,7 @@ void SubframeMergedPeaks::saveUnmergedPeaks()
 
     } else if (format.compare("Phenix") == 0) {
         QString filename = QFileDialog::getSaveFileName(
-            this, tr("Save peaks to Phenix sca"), ".", tr("Phenix sca file (*.sca)"));
+            this, "Save peaks to Phenix sca", ".", "Phenix sca file (*.sca)");
 
         if (filename.isEmpty())
             return;
