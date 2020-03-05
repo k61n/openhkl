@@ -72,7 +72,7 @@ class DataSet {
     int dataAt(unsigned int x = 0, unsigned int y = 0, unsigned int z = 0);
 
     //! Read a single frame
-    Eigen::MatrixXi frame(std::size_t idx);
+    Eigen::MatrixXi frame(std::size_t idx) const;
 
     //! Returns frame after transforming to account for detector gain and baseline
     Eigen::MatrixXd transformedFrame(std::size_t idx);

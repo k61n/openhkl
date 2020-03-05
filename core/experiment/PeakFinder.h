@@ -71,13 +71,13 @@ class PeakFinder {
     void eliminateBlobs(std::map<int, Blob3D>& blobs) const;
 
     void findPrimaryBlobs(
-        sptrDataSet data, std::map<int, Blob3D>& blobs, EquivalenceList& equivalences, size_t begin,
-        size_t end);
+        const DataSet& data, std::map<int, Blob3D>& blobs, EquivalenceList& equivalences,
+        size_t begin, size_t end);
 
     void findCollisions(
-        sptrDataSet data, std::map<int, Blob3D>& blobs, EquivalenceList& equivalences) const;
+        const DataSet& data, std::map<int, Blob3D>& blobs, EquivalenceList& equivalences) const;
 
-    void mergeCollidingBlobs(sptrDataSet data, std::map<int, Blob3D>& blobs) const;
+    void mergeCollidingBlobs(const DataSet& data, std::map<int, Blob3D>& blobs) const;
 
     void mergeEquivalentBlobs(std::map<int, Blob3D>& blobs, EquivalenceList& equivalences) const;
 

@@ -216,7 +216,7 @@ void PeakFinder::eliminateBlobs(std::map<int, Blob3D>& blobs) const
     }
 }
 
-void PeakFinder::mergeCollidingBlobs(sptrDataSet data, std::map<int, Blob3D>& blobs) const
+void PeakFinder::mergeCollidingBlobs(const DataSet& data, std::map<int, Blob3D>& blobs) const
 {
     // serial section below
     size_t num_blobs;
@@ -240,7 +240,7 @@ void PeakFinder::mergeCollidingBlobs(sptrDataSet data, std::map<int, Blob3D>& bl
 }
 
 void PeakFinder::findPrimaryBlobs(
-    sptrDataSet data, std::map<int, Blob3D>& blobs, nsx::EquivalenceList& equivalences,
+    const DataSet& data, std::map<int, Blob3D>& blobs, nsx::EquivalenceList& equivalences,
     size_t begin, size_t end)
 {
     // update via handler if necessary
@@ -249,7 +249,7 @@ void PeakFinder::findPrimaryBlobs(
         _handler->setProgress(0);
     }
 
-    auto dectector = data->reader()->diffractometer()->detector();
+    auto dectector = data.reader()->diffractometer()->detector();
     int nrows = dectector->nRows();
     int ncols = dectector->nCols();
 
@@ -259,8 +259,8 @@ void PeakFinder::findPrimaryBlobs(
     // Map of Blobs (key : label, value : blob)
     blobs.clear();
 
-    nrows = data->nRows();
-    ncols = data->nCols();
+    nrows = data.nRows();
+    ncols = data.nCols();
 
     // Store labels of current and previous frames.
     std::vector<int> labels(nrows * ncols, 0);
@@ -290,7 +290,7 @@ void PeakFinder::findPrimaryBlobs(
 
         RealMatrix frame_data;
 
-        frame_data = data->frame(idx).cast<double>();
+        frame_data = data.frame(idx).cast<double>();
 
         RealMatrix filtered_frame = _convolver->convolve(frame_data);
 
@@ -377,7 +377,7 @@ void PeakFinder::findPrimaryBlobs(
             }
         }
 
-        progress = static_cast<double>(nframes) / static_cast<double>(data->nFrames()) * 100.0;
+        progress = static_cast<double>(nframes) / static_cast<double>(data.nFrames()) * 100.0;
 
         if (_handler)
             _handler->setProgress(progress);
@@ -390,7 +390,7 @@ void PeakFinder::findPrimaryBlobs(
 }
 
 void PeakFinder::findCollisions(
-    sptrDataSet data, std::map<int, Blob3D>& blobs, nsx::EquivalenceList& equivalences) const
+    const DataSet& data, std::map<int, Blob3D>& blobs, nsx::EquivalenceList& equivalences) const
 {
     // Clear the equivalence vectors for reuse purpose
     equivalences.clear();
@@ -446,10 +446,10 @@ void PeakFinder::findCollisions(
         }
     }
 
-    auto dectector = data->reader()->diffractometer()->detector();
+    auto dectector = data.reader()->diffractometer()->detector();
     int nrows = dectector->nRows();
     int ncols = dectector->nCols();
-    int nframes = data->nFrames();
+    int nframes = data.nFrames();
 
     Octree oct(
         Eigen::Vector3d(0.0, 0.0, 0.0),
@@ -638,8 +638,7 @@ void PeakFinder::find(DataList numors)
 
         // find blobs within the current frame range
         qDebug("PeakFinder::find: findPrimary\n");
-        findPrimaryBlobs(numor, local_blobs, local_equivalences, loop_begin, loop_end);
-
+        findPrimaryBlobs(*numor, local_blobs, local_equivalences, loop_begin, loop_end);
 
         // merge adjacent blobs
         qDebug("PeakFinder::find: mergeBlobs\n");
@@ -647,13 +646,11 @@ void PeakFinder::find(DataList numors)
         mergeEquivalentBlobs(local_blobs, local_equivalences);
 
         qDebug("PeakFinder::find: blob loop\n");
-        {
-            // merge the blobs into the global set
-            for (auto&& blob : local_blobs)
-                blobs.insert(blob);
-        }
+        // merge the blobs into the global set
+        for (auto&& blob : local_blobs)
+            blobs.insert(blob);
 
-        mergeCollidingBlobs(numor, blobs);
+        mergeCollidingBlobs(*numor, blobs);
         qDebug("PeakFinder::find: Found blob collisions\n");
 
         if (_handler) {
