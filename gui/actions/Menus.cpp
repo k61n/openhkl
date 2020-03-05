@@ -24,15 +24,15 @@
 Menus::Menus(QMenuBar* menu_bar) : _menu_bar {menu_bar}
 {
     Actions* actions = gGui->triggers;
-    
+
     _menu_bar->setNativeMenuBar(true);
 
-    _file_menu  = _menu_bar->addMenu("File");
-    _edit_menu  = _menu_bar->addMenu("Edit");
-    _data_menu  = _menu_bar->addMenu("Data");
+    _file_menu = _menu_bar->addMenu("File");
+    _edit_menu = _menu_bar->addMenu("Edit");
+    _data_menu = _menu_bar->addMenu("Data");
     _peaks_menu = _menu_bar->addMenu("Peaks");
-    _view_menu  = _menu_bar->addMenu("View");
-    _help_menu  = _menu_bar->addMenu("Help");
+    _view_menu = _menu_bar->addMenu("View");
+    _help_menu = _menu_bar->addMenu("Help");
 
     // The file part
     _file_menu->addAction(actions->new_experiment);
@@ -100,7 +100,8 @@ Menus::Menus(QMenuBar* menu_bar) : _menu_bar {menu_bar}
     // options_->addMenu(peakMenu);
 
     // view_ = new QMenu("&Main Window");
-    // view_->addActions({&actions->reset, separator(), &actions->viewExperiment, &actions->viewImage,
+    // view_->addActions({&actions->reset, separator(), &actions->viewExperiment,
+    // &actions->viewImage,
     //                    &actions->viewLogger, &actions->viewPlotter, &actions->viewProperties});
 
     // QMenu* viewsMenu = mbar_->addMenu("&Views");

@@ -18,7 +18,7 @@
 RawDataDialog::RawDataDialog() : QDialog()
 {
     QFormLayout* layout = new QFormLayout(this);
-    
+
     dataArrangement = new QComboBox();
     dataFormat = new QComboBox();
     swapEndianness = new QCheckBox("Swap endian");
@@ -29,8 +29,8 @@ RawDataDialog::RawDataDialog() : QDialog()
     buttons =
         new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, Qt::Horizontal, this);
 
-    dataArrangement->addItems(QStringList{"Column major", "Row major"});
-    dataFormat->addItems(QStringList{"8 bit integer", "16 bit integer", "32 bit integer"});
+    dataArrangement->addItems(QStringList {"Column major", "Row major"});
+    dataFormat->addItems(QStringList {"8 bit integer", "16 bit integer", "32 bit integer"});
     chi->setDecimals(3);
     phi->setDecimals(3);
     omega->setDecimals(3);
@@ -45,15 +45,9 @@ RawDataDialog::RawDataDialog() : QDialog()
     layout->addRow("wavelength", wave);
     layout->addRow(buttons);
 
-    connect(
-        buttons, &QDialogButtonBox::accepted,
-        this, &RawDataDialog::accept
-    );
+    connect(buttons, &QDialogButtonBox::accepted, this, &RawDataDialog::accept);
 
-    connect(
-        buttons, &QDialogButtonBox::rejected,
-        this, &RawDataDialog::reject
-    );
+    connect(buttons, &QDialogButtonBox::rejected, this, &RawDataDialog::reject);
 }
 
 bool RawDataDialog::rowMajor()

@@ -14,8 +14,8 @@
 
 #include "core/integration/PixelSumIntegrator.h"
 #include "base/geometry/Ellipsoid.h"
-#include "core/integration/Blob3D.h"
 #include "core/data/DataSet.h"
+#include "core/integration/Blob3D.h"
 #include "core/integration/MeanBackgroundIntegrator.h"
 #include "core/peak/Intensity.h"
 #include "core/peak/Peak3D.h"

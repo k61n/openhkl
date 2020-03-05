@@ -15,13 +15,13 @@
 #include <algorithm>
 #include <iterator>
 
-#include "core/peak/Qs2Events.h"
 #include "core/algo/Refiner.h"
-#include "core/shape/PeakFilter.h"
-#include "core/detector/DetectorEvent.h"
 #include "core/data/DataSet.h"
+#include "core/detector/DetectorEvent.h"
 #include "core/instrument/InstrumentState.h"
 #include "core/peak/Peak3D.h"
+#include "core/peak/Qs2Events.h"
+#include "core/shape/PeakFilter.h"
 #include "tables/crystal/MillerIndex.h"
 #include "tables/crystal/UnitCell.h"
 
@@ -138,8 +138,8 @@ int Refiner::updatePredictions(std::vector<Peak3D*> peaks) const
         const MillerIndex hkl(peak->q(), *batch_cell);
         const ReciprocalVector q_pred(
             hkl.rowVector().cast<double>() * batch_cell->reciprocalBasis());
-        const std::vector<DetectorEvent> events =
-            algo::qs2events({q_pred}, peak->dataSet()->instrumentStates(), peak->dataSet()->detector());
+        const std::vector<DetectorEvent> events = algo::qs2events(
+            {q_pred}, peak->dataSet()->instrumentStates(), peak->dataSet()->detector());
 
         // something wrong with new prediction...
         if (events.size() != 1) {

@@ -14,8 +14,8 @@
 
 #include "gui/graphics_tools/CutSliceItem.h"
 
-#include "core/detector/Detector.h"
 #include "core/data/DataSet.h"
+#include "core/detector/Detector.h"
 #include "core/instrument/Diffractometer.h"
 #include "core/raw/IDataReader.h"
 

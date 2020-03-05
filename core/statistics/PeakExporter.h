@@ -15,8 +15,8 @@
 #ifndef CORE_OUTPUT_PEAKEXPORTER_H
 #define CORE_OUTPUT_PEAKEXPORTER_H
 
-#include "core/statistics/MergedData.h"
 #include "core/peak/Peak3D.h"
+#include "core/statistics/MergedData.h"
 #include "core/statistics/ResolutionShell.h"
 #include "tables/crystal/SpaceGroup.h"
 

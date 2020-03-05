@@ -17,9 +17,9 @@
 #include "gui/models/Session.h"
 #include <QFileDialog>
 #include <QGraphicsView>
+#include <QPushButton>
 #include <QVBoxLayout>
 #include <fstream>
-#include <QPushButton>
 
 AbsorptionDialog::AbsorptionDialog() : QDialog {}
 {
@@ -80,57 +80,39 @@ AbsorptionDialog::AbsorptionDialog() : QDialog {}
     });
 
     connect(
-        rulerButton, &QPushButton::clicked,
-        [=]() {crystalScene->activateCalibrateDistance();}
-    );
+        rulerButton, &QPushButton::clicked, [=]() { crystalScene->activateCalibrateDistance(); });
+
+    connect(pickCenterButton, &QPushButton::clicked, [=]() { crystalScene->activatePickCenter(); });
 
     connect(
-        pickCenterButton, &QPushButton::clicked,
-        [=]() {crystalScene->activatePickCenter();}
-    );
+        pickPointButton, &QPushButton::clicked, [=]() { crystalScene->activatePickingPoints(); });
 
-    connect(
-        pickPointButton, &QPushButton::clicked,
-        [=]() {crystalScene->activatePickingPoints();}
-    );
+    connect(removePointButton, &QPushButton::clicked, [=]() {
+        crystalScene->activateRemovingPoints();
+    });
 
-    connect(
-        removePointButton, &QPushButton::clicked,
-        [=]() {crystalScene->activateRemovingPoints();}
-    );
+    connect(triangulateButton, &QPushButton::clicked, [=]() { crystalScene->triangulate(); });
 
-    connect(
-        triangulateButton, &QPushButton::clicked,
-        [=]() {crystalScene->triangulate();}
-    );
+    connect(openFileButton, &QPushButton::clicked, [=]() {
+        QFileDialog dialog(this);
+        dialog.setFileMode(QFileDialog::ExistingFile);
 
-    connect(
-        openFileButton, &QPushButton::clicked,
-        [=]() {
-            QFileDialog dialog(this);
-            dialog.setFileMode(QFileDialog::ExistingFile);
+        QString fileName =
+            dialog.getOpenFileName(this, "Select video file", "", tr("Video file (*.info)"));
+        if (fileName.isEmpty())
+            return;
+        readInfoFile(fileName.toStdString());
+    });
 
-            QString fileName =
-                    dialog.getOpenFileName(this, "Select video file", "", tr("Video file (*.info)"));
-            if (fileName.isEmpty())
-                return;
-            readInfoFile(fileName.toStdString());
-        }
-    );
-    
-    connect(
-        crystalScene, &CrystalScene::calibrateDistanceOK, 
-        [=]() {pickCenterButton->setEnabled(true);}
-    );
+    connect(crystalScene, &CrystalScene::calibrateDistanceOK, [=]() {
+        pickCenterButton->setEnabled(true);
+    });
 
-    connect(
-        crystalScene, &CrystalScene::calibrateCenterOK, 
-        [=]() {
-            pickPointButton->setEnabled(true);
-            removePointButton->setEnabled(true);
-            triangulateButton->setEnabled(true);
-        }
-    );
+    connect(crystalScene, &CrystalScene::calibrateCenterOK, [=]() {
+        pickPointButton->setEnabled(true);
+        removePointButton->setEnabled(true);
+        triangulateButton->setEnabled(true);
+    });
 
     crystalView->setRenderHint(QPainter::Antialiasing);
 

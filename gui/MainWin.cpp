@@ -14,8 +14,8 @@
 
 #include "gui/MainWin.h"
 
-#include "gui/actions/Menus.h"
 #include "gui/actions/Actions.h"
+#include "gui/actions/Menus.h"
 #include "gui/utility/SideBar.h"
 #include <QApplication>
 #include <QCloseEvent>

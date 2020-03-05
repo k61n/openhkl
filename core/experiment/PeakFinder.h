@@ -16,9 +16,9 @@
 #define CORE_ANALYSE_PEAKFINDER_H
 
 #include "base/utils/ProgressHandler.h"
-#include "core/integration/Blob3D.h"
 #include "core/convolve/Convolver.h"
 #include "core/data/DataSet.h"
+#include "core/integration/Blob3D.h"
 
 namespace nsx {
 

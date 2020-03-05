@@ -17,8 +17,8 @@
 #include "base/fit/FitParameters.h"
 #include "base/fit/Minimizer.h"
 #include "base/geometry/ReciprocalVector.h"
-#include "core/shape/PeakFilter.h"
 #include "core/peak/Peak3D.h"
+#include "core/shape/PeakFilter.h"
 #include "tables/crystal/MillerIndex.h"
 #include "tables/crystal/UnitCell.h"
 

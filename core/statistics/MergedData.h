@@ -15,8 +15,8 @@
 #ifndef CORE_ANALYSE_MERGEDDATA_H
 #define CORE_ANALYSE_MERGEDDATA_H
 
-#include "core/statistics/MergedPeak.h"
 #include "core/shape/PeakCollection.h"
+#include "core/statistics/MergedPeak.h"
 
 #include <set>
 

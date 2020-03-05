@@ -43,13 +43,13 @@ class AbsorptionDialog : public QDialog {
     //! Pointer to the QGraphicsScene
     CrystalScene* crystalScene;
 
-private:
-   QScrollBar* scrollBar;
-   QPushButton* rulerButton;
-   QPushButton* pickCenterButton;
-   QPushButton* pickPointButton;
-   QPushButton* removePointButton;
-   QPushButton* triangulateButton;
+ private:
+    QScrollBar* scrollBar;
+    QPushButton* rulerButton;
+    QPushButton* pickCenterButton;
+    QPushButton* pickPointButton;
+    QPushButton* removePointButton;
+    QPushButton* triangulateButton;
 };
 
 #endif // GUI_DIALOGS_ABSORPTIONDIALOG_H

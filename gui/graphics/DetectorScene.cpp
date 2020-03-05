@@ -20,8 +20,8 @@
 #include "base/mask/EllipseMask.h"
 #include "base/utils/Units.h"
 
-#include "core/detector/Detector.h"
 #include "core/data/DataSet.h"
+#include "core/detector/Detector.h"
 #include "core/gonio/Gonio.h"
 #include "core/instrument/Diffractometer.h"
 #include "core/instrument/InstrumentState.h"

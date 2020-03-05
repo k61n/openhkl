@@ -129,8 +129,8 @@ void IPeakIntegrator::integrate(
                 try {
                     if (compute(peak, shape_library, regions[peak])) {
                         peak->updateIntegration(
-                            rockingCurve(), meanBackground(), integratedIntensity(),
-                            _peak_end, _bkg_begin, _bkg_end);
+                            rockingCurve(), meanBackground(), integratedIntensity(), _peak_end,
+                            _bkg_begin, _bkg_end);
                     } else {
                         peak->setSelected(false);
                     }

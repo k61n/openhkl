@@ -15,17 +15,17 @@
 #include "gui/frames/UnitCellWidget.h"
 
 #include "base/utils/Units.h"
-#include "core/shape/PeakFilter.h"
 #include "core/peak/Peak3D.h"
+#include "core/shape/PeakFilter.h"
 #include "gui/models/Session.h"
 #include "tables/crystal/UnitCell.h"
 #include <QStandardItemModel>
 
-#include <QVBoxLayout>
+#include <QDoubleSpinBox>
 #include <QGroupBox>
 #include <QLabel>
 #include <QSpinBox>
-#include <QDoubleSpinBox>
+#include <QVBoxLayout>
 
 UnitCellWidget::UnitCellWidget(nsx::sptrUnitCell cell, const QString& /*name*/)
     : QWidget(), unitCell_ {cell}, wasSpaceGroupSet {false}
@@ -57,7 +57,7 @@ UnitCellWidget::UnitCellWidget(nsx::sptrUnitCell cell, const QString& /*name*/)
     c->setValue(character.c);
 
     QDoubleSpinBox* alpha = new QDoubleSpinBox();
-    QDoubleSpinBox* beta  = new QDoubleSpinBox();
+    QDoubleSpinBox* beta = new QDoubleSpinBox();
     QDoubleSpinBox* gamma = new QDoubleSpinBox();
     alpha->setValue(character.alpha / nsx::deg);
     beta->setValue(character.beta / nsx::deg);

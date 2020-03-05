@@ -17,10 +17,10 @@
 
 #include "base/parser/BloscFilter.h"
 #include "base/utils/Units.h" // deg
+#include "core/data/DataSet.h"
 #include "core/detector/Detector.h"
 #include "core/detector/DetectorEvent.h"
 #include "core/gonio/Gonio.h"
-#include "core/data/DataSet.h"
 #include "core/instrument/Monochromator.h"
 #include "core/instrument/Sample.h"
 #include "core/instrument/Source.h"
