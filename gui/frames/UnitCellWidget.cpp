@@ -27,7 +27,7 @@
 #include <QSpinBox>
 #include <QDoubleSpinBox>
 
-UnitCellWidget::UnitCellWidget(nsx::sptrUnitCell cell, const QString& name)
+UnitCellWidget::UnitCellWidget(nsx::sptrUnitCell cell, const QString& /*name*/)
     : QWidget(), unitCell_ {cell}, wasSpaceGroupSet {false}
 {
     nsx::UnitCellCharacter character = unitCell_->character();
@@ -76,13 +76,13 @@ UnitCellWidget::UnitCellWidget(nsx::sptrUnitCell cell, const QString& name)
     unitgrid->addWidget(alpha, 2, 1, 1, 1);
     unitgrid->addWidget(beta, 2, 3, 1, 1);
     unitgrid->addWidget(gamma, 2, 5, 1, 1);
-    
+
     whole->addWidget(unitcellparams);
     QHBoxLayout* horizontal = new QHBoxLayout();
     QGroupBox* matrixb = new QGroupBox("B matrix (row form)");
     QGridLayout* bmatrix = new QGridLayout(matrixb);
     Eigen::Matrix3d matrix_u = unitCell_->orientation();
-    Eigen::Matrix3d matrix_b = unitCell_->reciprocalBasis() * matrix_u;
+    // Eigen::Matrix3d matrix_b = unitCell_->reciprocalBasis() * matrix_u;
 
     QDoubleSpinBox* b00 = new QDoubleSpinBox();
     QDoubleSpinBox* b01 = new QDoubleSpinBox();
@@ -117,7 +117,7 @@ UnitCellWidget::UnitCellWidget(nsx::sptrUnitCell cell, const QString& name)
     horizontal->addWidget(matrixb);
     QGroupBox* matrixu = new QGroupBox("U matrix (row form)");
     QGridLayout* umatrix = new QGridLayout(matrixu);
-    Eigen::Matrix3d u = matrix_u.inverse();
+    // Eigen::Matrix3d u = matrix_u.inverse();
 
     QDoubleSpinBox* u00 = new QDoubleSpinBox();
     QDoubleSpinBox* u01 = new QDoubleSpinBox();
