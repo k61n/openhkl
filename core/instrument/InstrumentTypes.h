@@ -16,7 +16,6 @@
 #define CORE_INSTRUMENT_INSTRUMENTTYPES_H
 
 #include <memory>
-#include <vector>
 
 namespace nsx {
 
@@ -26,7 +25,6 @@ class InstrumentState;
 class RotAxis;
 
 using sptrExperiment = std::shared_ptr<Experiment>;
-using InstrumentStateList = std::vector<InstrumentState>;
 
 } // namespace nsx
 

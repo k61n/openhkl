@@ -14,8 +14,8 @@
 
 #include "gui/subframe_experiment/properties/NumorProperty.h"
 
-#include "core/experiment/DataSet.h"
-#include "core/experiment/DataTypes.h"
+#include "core/data/DataSet.h"
+#include "core/data/DataTypes.h"
 #include "core/raw/IDataReader.h"
 #include "gui/models/Session.h"
 #include "gui/MainWin.h"
@@ -108,8 +108,7 @@ void NumorProperty::refreshInput()
 {
     _numor_selector->blockSignals(true);
     _numor_selector->clear();
-    _numor_selector->addItems(
-        gSession->selectedExperiment()->getDataNames());
+    _numor_selector->addItems(gSession->selectedExperiment()->getDataNames());
     _numor_selector->blockSignals(false);
 
     if (!gSession->selectedExperiment()->getDataNames().isEmpty())
@@ -122,8 +121,7 @@ void NumorProperty::onChanged()
 
     if (gSession->selectedExperimentNum() >= 0) {
         SessionExperiment* exp = gSession->selectedExperiment();
-        nsx::sptrDataSet data = exp->getData(
-            _numor_selector->currentIndex());
+        nsx::sptrDataSet data = exp->getData(_numor_selector->currentIndex());
 
         if (data) {
             const nsx::MetaData& metadata = data->reader()->metadata();

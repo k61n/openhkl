@@ -31,7 +31,8 @@ PeaksTableView::PeaksTableView(QWidget* parent) : QTableView(parent)
 
     // connect(this, SIGNAL(clicked(QModelIndex)), this, SLOT(selectPeak(QModelIndex)));
 
-    // connect(this, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(togglePeakSelection(QModelIndex)));
+    // connect(this, SIGNAL(doubleClicked(QModelIndex)), this,
+    // SLOT(togglePeakSelection(QModelIndex)));
 }
 
 // void PeaksTableView::selectPeak(QModelIndex index)

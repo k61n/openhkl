@@ -15,7 +15,6 @@
 #ifndef GUI_SUBFRAME_EXPERIMENT_PROPERTIES_NUMORPROPERTY_H
 #define GUI_SUBFRAME_EXPERIMENT_PROPERTIES_NUMORPROPERTY_H
 
-#include <QWidget>
 #include <QComboBox>
 #include <QTableWidget>
 #include <QPushButton>

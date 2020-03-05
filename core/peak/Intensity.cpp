@@ -45,6 +45,11 @@ double Intensity::variance() const
     return _sigma2;
 }
 
+double Intensity::strength() const
+{
+    return _value / sigma();
+}
+
 Intensity Intensity::operator+(const Intensity& other) const
 {
     return Intensity(_value + other._value, _sigma2 + other._sigma2);

@@ -14,7 +14,7 @@
 
 #include "gui/frames/InstrumentStatesFrame.h"
 
-#include "core/experiment/DataSet.h"
+#include "core/data/DataSet.h"
 #include "gui/models/Meta.h"
 #include "gui/models/Session.h"
 #include <QDialogButtonBox>

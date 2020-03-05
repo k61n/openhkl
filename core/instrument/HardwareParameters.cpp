@@ -64,7 +64,7 @@ YAML::Node findResource(const std::string& instrumentName)
 
 std::set<std::string> getResourcesName(const std::string& resource_type)
 {
-    (void)resource_type;//Set to ignore warning 
+    (void)resource_type; // Set to ignore warning
     std::set<std::string> ret;
     for (auto it = database.begin(); it != database.end(); ++it)
         ret.insert(it->first);

@@ -15,7 +15,7 @@
 #ifndef CORE_INTEGRATION_MEANBACKGROUNDINTEGRATOR_H
 #define CORE_INTEGRATION_MEANBACKGROUNDINTEGRATOR_H
 
-#include "core/peak/IPeakIntegrator.h"
+#include "core/shape/IPeakIntegrator.h"
 
 namespace nsx {
 
@@ -24,9 +24,7 @@ namespace nsx {
 class MeanBackgroundIntegrator : public IPeakIntegrator {
  public:
     MeanBackgroundIntegrator();
-    bool compute(
-        Peak3D*, ShapeLibrary* shape_library, 
-        const IntegrationRegion& region) override;
+    bool compute(Peak3D*, ShapeLibrary* shape_library, const IntegrationRegion& region) override;
 };
 
 } // namespace nsx

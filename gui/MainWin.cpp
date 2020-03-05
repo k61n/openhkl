@@ -19,11 +19,11 @@
 #include "gui/utility/SideBar.h"
 #include <QApplication>
 #include <QCloseEvent>
+#include <QHBoxLayout>
 #include <QProgressBar>
 #include <QSettings>
 #include <QSplitter>
 #include <QStackedLayout>
-#include <QHBoxLayout>
 #include <QStatusBar>
 #include <QString>
 #include <QTimer>

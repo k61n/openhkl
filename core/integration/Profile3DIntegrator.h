@@ -15,7 +15,7 @@
 #ifndef CORE_INTEGRATION_PROFILE3DINTEGRATOR_H
 #define CORE_INTEGRATION_PROFILE3DINTEGRATOR_H
 
-#include "core/peak/IPeakIntegrator.h"
+#include "core/shape/IPeakIntegrator.h"
 #include "core/shape/ShapeLibrary.h"
 
 namespace nsx {
@@ -25,10 +25,8 @@ namespace nsx {
 class Profile3DIntegrator : public IPeakIntegrator {
  public:
     Profile3DIntegrator();
-    bool compute(
-        Peak3D* peak, ShapeLibrary* shape_library, 
-        const IntegrationRegion& region) override;
-
+    bool
+    compute(Peak3D* peak, ShapeLibrary* shape_library, const IntegrationRegion& region) override;
 };
 
 } // namespace nsx

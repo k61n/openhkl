@@ -14,9 +14,9 @@
 #include "gui/items/PeakItem.h"
 
 #include "base/geometry/ReciprocalVector.h"
-#include "core/analyse/PeakFilter.h"
+#include "core/shape/PeakFilter.h"
 #include "core/detector/Detector.h"
-#include "core/experiment/DataSet.h"
+#include "core/data/DataSet.h"
 #include "core/instrument/Diffractometer.h"
 #include "core/instrument/InstrumentState.h"
 #include "core/peak/Peak3D.h"
@@ -25,19 +25,17 @@
 #include "tables/crystal/MillerIndex.h"
 #include "tables/crystal/UnitCell.h"
 
-PeakItem::PeakItem(nsx::Peak3D* peak)
-    :QStandardItem()
+PeakItem::PeakItem(nsx::Peak3D* peak) : QStandardItem()
 {
     _peak = peak;
     _peak_graphic = std::unique_ptr<PeakItemGraphic>(new PeakItemGraphic(peak));
 }
 
-QVariant PeakItem::peakData(
-    const QModelIndex &index, int role, PeakDisplayModes mode) const
+QVariant PeakItem::peakData(const QModelIndex& index, int role, PeakDisplayModes mode) const
 {
 
     int col = index.column();
-    
+
     Eigen::RowVector3i hkl = {0, 0, 0};
     Eigen::RowVector3d hkl_error = {0.0, 0.0, 0.0};
 
@@ -50,12 +48,13 @@ QVariant PeakItem::peakData(
             hkl_error = miller_index.error();
         }
     }
-    
+
     double peak_d = 1.0 / (_peak->q().rowVector().norm());
     double intensity = _peak->correctedIntensity().value();
     double sigma_intensity = _peak->correctedIntensity().sigma();
+    double strength = _peak->correctedIntensity().strength();
     const Eigen::Vector3d& peak_center = _peak->shape().center();
-    
+
     switch (role) {
         case Qt::DisplayRole:
 
@@ -84,6 +83,9 @@ QVariant PeakItem::peakData(
                 case Column::Sigma: {
                     return sigma_intensity;
                 }
+                case Column::Strength: {
+                    return strength;
+                }
                 case Column::Numor: {
                     return _peak->data()->reader()->metadata().key<int>("Numor");
                 }
@@ -106,11 +108,11 @@ QVariant PeakItem::peakData(
             break;
         }
         case Qt::BackgroundColorRole: {
-            switch(mode){
+            switch (mode) {
                 case PeakDisplayModes::FILTER: {
-                    if (_peak->caughtByFilter()){
+                    if (_peak->caughtByFilter()) {
                         return QBrush(Qt::darkGreen);
-                    }else{
+                    } else {
                         return QBrush(Qt::darkRed);
                     }
                 }
@@ -129,4 +131,9 @@ QVariant PeakItem::peakData(
             break;
     }
     return QVariant::Invalid;
+}
+
+bool PeakItem::caughtByFilter(void) const
+{
+    return _peak->caughtByFilter();
 }

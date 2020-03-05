@@ -15,10 +15,11 @@
 #include <algorithm>
 #include <iterator>
 
+#include "core/peak/Qs2Events.h"
 #include "core/algo/Refiner.h"
-#include "core/analyse/PeakFilter.h"
+#include "core/shape/PeakFilter.h"
 #include "core/detector/DetectorEvent.h"
-#include "core/experiment/DataSet.h"
+#include "core/data/DataSet.h"
 #include "core/instrument/InstrumentState.h"
 #include "core/peak/Peak3D.h"
 #include "tables/crystal/MillerIndex.h"
@@ -33,8 +34,7 @@ Refiner::Refiner(
     PeakFilter peak_filter;
     std::vector<nsx::Peak3D*> filtered_peaks = peaks;
     filtered_peaks = peak_filter.filterEnabled(peaks, true);
-    filtered_peaks = peak_filter.filterIndexed(
-        filtered_peaks, *cell, cell->indexingTolerance());
+    filtered_peaks = peak_filter.filterIndexed(filtered_peaks, *cell, cell->indexingTolerance());
 
     auto sort_peaks_by_frame = [](Peak3D* p1, Peak3D* p2) -> bool {
         auto&& c1 = p1->shape().center();
@@ -113,16 +113,14 @@ int Refiner::updatePredictions(std::vector<Peak3D*> peaks) const
     PeakFilter peak_filter;
     std::vector<nsx::Peak3D*> filtered_peaks = peaks;
     filtered_peaks = peak_filter.filterEnabled(peaks, true);
-    filtered_peaks = peak_filter.filterIndexed(
-        filtered_peaks, *_cell, _cell->indexingTolerance());
+    filtered_peaks = peak_filter.filterIndexed(filtered_peaks, *_cell, _cell->indexingTolerance());
 
-    std::vector<nsx::Peak3D*> pred_peaks;
     int updated = 0;
 
     for (nsx::Peak3D* peak : filtered_peaks) {
         // find appropriate batch
         const RefinementBatch* b = nullptr;
-        double z = peak->shape().center()[2];
+        const double z = peak->shape().center()[2];
         for (auto&& batch : _batches) {
             if (batch.contains(z)) {
                 b = &batch;
@@ -137,9 +135,11 @@ int Refiner::updatePredictions(std::vector<Peak3D*> peaks) const
         auto batch_cell = b->cell();
 
         // update the position
-        MillerIndex hkl(peak->q(), *batch_cell);
-        ReciprocalVector q_pred(hkl.rowVector().cast<double>() * batch_cell->reciprocalBasis());
-        auto events = peak->data()->events({q_pred});
+        const MillerIndex hkl(peak->q(), *batch_cell);
+        const ReciprocalVector q_pred(
+            hkl.rowVector().cast<double>() * batch_cell->reciprocalBasis());
+        const std::vector<DetectorEvent> events =
+            algo::qs2events({q_pred}, peak->data()->instrumentStates(), peak->data()->detector());
 
         // something wrong with new prediction...
         if (events.size() != 1) {

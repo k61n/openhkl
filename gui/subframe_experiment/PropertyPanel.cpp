@@ -51,7 +51,6 @@ void PropertyPanel::experimentChanged()
 {
     _peaks->selectedExperimentChanged();
     _instrument->refreshInput();
-
 }
 
 void PropertyPanel::peaksChanged()
@@ -59,7 +58,7 @@ void PropertyPanel::peaksChanged()
     bool enabled = gSession->selectedExperimentNum() >= 0;
     if (enabled)
         _peaks->refreshInput();
-        _peaks->selectedPeaksChanged();
+    _peaks->selectedPeaksChanged();
 }
 
 void PropertyPanel::unitCellChanged()

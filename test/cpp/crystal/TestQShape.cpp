@@ -4,25 +4,27 @@
 
 #include "base/utils/ProgressHandler.h"
 #include "core/algo/DataReaderFactory.h"
-#include "core/analyse/PeakFinder.h"
+#include "core/peak/Qs2Events.h"
+#include "core/experiment/PeakFinder.h"
 #include "core/convolve/ConvolverFactory.h"
-#include "core/experiment/DataSet.h"
+#include "core/data/DataSet.h"
 #include "core/experiment/Experiment.h"
 #include "core/peak/Peak3D.h"
 #include "core/raw/IDataReader.h"
 
 nsx::Ellipsoid toDetectorSpace(const nsx::Ellipsoid e, const nsx::sptrDataSet data)
 {
-    auto events = data->events({nsx::ReciprocalVector(e.center())});
+    auto events = nsx::algo::qs2events(
+        {nsx::ReciprocalVector(e.center())}, data->instrumentStates(), data->detector());
 
     // something bad happened
     if (events.size() != 1)
         throw std::runtime_error("could not transform ellipse from q space to detector space");
 
     const auto& event = events[0];
-    //auto position =
+    // auto position =
     //    data->reader()->diffractometer()->detector()->pixelPosition(event._px, event._py);
-    auto state = data->interpolatedState(event._frame);
+    auto state = data->instrumentStates().interpolate(event._frame);
 
     // Jacobian of map from detector coords to sample q space
     Eigen::Matrix3d J = state.jacobianQ(event._px, event._py);

@@ -15,23 +15,19 @@
 #include "gui/models/ExperimentModel.h"
 #include "gui/models/Session.h"
 
-ExperimentModel::ExperimentModel(QObject *parent)
-    : QAbstractTableModel(parent)
-{
+ExperimentModel::ExperimentModel(QObject* parent) : QAbstractTableModel(parent) {}
 
-}
-
-int ExperimentModel::columnCount(const QModelIndex &/*parent*/) const
+int ExperimentModel::columnCount(const QModelIndex& /*parent*/) const
 {
     return 6;
 }
 
-int ExperimentModel::rowCount(const QModelIndex &/*parent*/) const
+int ExperimentModel::rowCount(const QModelIndex& /*parent*/) const
 {
     return gSession->numExperiments();
 }
 
-QVariant ExperimentModel::data(const QModelIndex &index, int role ) const 
+QVariant ExperimentModel::data(const QModelIndex& index, int role) const
 {
     int row = index.row();
 
@@ -51,7 +47,8 @@ QVariant ExperimentModel::data(const QModelIndex &index, int role ) const
             return QVariant();
         }
         case Qt::ToolTipRole: {
-            QString tooltip = QString::fromStdString(gSession->experimentAt(row)->experiment()->name());
+            QString tooltip =
+                QString::fromStdString(gSession->experimentAt(row)->experiment()->name());
             tooltip += " with data: " + gSession->experimentAt(row)->getDataNames().first();
             return tooltip;
         }
@@ -88,27 +85,23 @@ QVariant ExperimentModel::valueOutput(const QModelIndex& index) const
 
     if (col < 0 || columnCount() <= col)
         return QVariant();
-    
+
     switch (col) {
         case 0: {
-            return QString::fromStdString(
-                gSession->experimentAt(row)->experiment()->name());
+            return QString::fromStdString(gSession->experimentAt(row)->experiment()->name());
         }
         case 1: {
             return QString::fromStdString(
                 gSession->experimentAt(row)->experiment()->diffractometer()->name());
         }
         case 2: {
-            return QVariant(
-                gSession->experimentAt(row)->experiment()->numData());
+            return QVariant(gSession->experimentAt(row)->experiment()->numData());
         }
         case 3: {
-            return QVariant(
-                gSession->experimentAt(row)->experiment()->numPeakCollections());
+            return QVariant(gSession->experimentAt(row)->experiment()->numPeakCollections());
         }
         case 4: {
-            return QVariant(
-                gSession->experimentAt(row)->experiment()->numUnitCells());
+            return QVariant(gSession->experimentAt(row)->experiment()->numUnitCells());
         }
         default: return QVariant();
     }
@@ -142,4 +135,3 @@ QVariant ExperimentModel::headerData(int section, Qt::Orientation orientation, i
         return QVariant(section + 1);
     }
 }
-

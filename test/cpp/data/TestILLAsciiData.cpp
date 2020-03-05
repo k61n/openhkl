@@ -6,7 +6,7 @@
 
 #include "base/utils/Units.h"
 #include "core/algo/DataReaderFactory.h"
-#include "core/experiment/DataSet.h"
+#include "core/data/DataSet.h"
 #include "core/instrument/Diffractometer.h"
 #include "core/instrument/InstrumentState.h"
 #include "core/raw/IDataReader.h"

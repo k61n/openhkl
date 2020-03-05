@@ -20,8 +20,8 @@
 #include <QGridLayout>
 #include <QGroupBox>
 #include <QHeaderView>
-#include <QTableWidget>
 #include <QLabel>
+#include <QTableWidget>
 
 DetectorProperty::DetectorProperty() : QWidget()
 {
@@ -42,7 +42,7 @@ DetectorProperty::DetectorProperty() : QWidget()
     _height->setDecimals(4);
     _height->setButtonSymbols(symbols);
     _height->setReadOnly(true);
-    
+
     _distance->setMaximum(1000.);
     _distance->setDecimals(4);
     _distance->setButtonSymbols(symbols);

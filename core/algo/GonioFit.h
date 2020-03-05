@@ -15,7 +15,7 @@
 #ifndef CORE_ALGO_GONIOFIT_H
 #define CORE_ALGO_GONIOFIT_H
 
-#include "core/experiment/DataTypes.h"
+#include "core/data/DataTypes.h"
 #include "core/gonio/Gonio.h"
 #include <cstddef>
 #include <vector>

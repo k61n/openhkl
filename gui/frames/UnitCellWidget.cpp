@@ -14,10 +14,10 @@
 
 #include "gui/frames/UnitCellWidget.h"
 
-#include "gui/models/Session.h"
 #include "base/utils/Units.h"
+#include "core/shape/PeakFilter.h"
 #include "core/peak/Peak3D.h"
-#include "core/analyse/PeakFilter.h"
+#include "gui/models/Session.h"
 #include "tables/crystal/UnitCell.h"
 #include <QStandardItemModel>
 

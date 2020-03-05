@@ -20,8 +20,8 @@
 class SideBar : public QWidget {
  public:
     SideBar(QWidget* parent = nullptr);
-    void addAction(QAction *action);
-    QAction *addAction( const QIcon &icon, const QString &text);
+    void addAction(QAction* action);
+    QAction* addAction(const QIcon& icon, const QString& text);
     QSize minimumSizeHint() const;
     void manualSelect(int index);
 
@@ -34,19 +34,19 @@ class SideBar : public QWidget {
     void onPredictor();
     void onMerger();
 
-protected:
-    void paintEvent(QPaintEvent *event);
-    void mousePressEvent(QMouseEvent *event);
-    void mouseMoveEvent(QMouseEvent *event);
-    void leaveEvent(QEvent * event);
+ protected:
+    void paintEvent(QPaintEvent* event);
+    void mousePressEvent(QMouseEvent* event);
+    void mouseMoveEvent(QMouseEvent* event);
+    void leaveEvent(QEvent* event);
 
-    QAction *actionAt(const QPoint &at);
-private:
-    QList<QAction *> mActions;
+    QAction* actionAt(const QPoint& at);
 
-    QAction *mCheckedAction;
-    QAction *mOverAction;
+ private:
+    QList<QAction*> mActions;
 
+    QAction* mCheckedAction;
+    QAction* mOverAction;
 };
 
 #endif // GUI_PANELS_SIDEBAR_H

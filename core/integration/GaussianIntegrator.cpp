@@ -16,7 +16,7 @@
 #include "base/fit/FitParameters.h"
 #include "base/fit/Minimizer.h"
 #include "base/geometry/Ellipsoid.h"
-#include "core/experiment/DataSet.h"
+#include "core/data/DataSet.h"
 #include "core/peak/Intensity.h"
 #include "core/peak/Peak3D.h"
 
@@ -26,8 +26,7 @@
 
 namespace nsx {
 
-GaussianIntegrator::GaussianIntegrator(bool fit_center, bool fit_cov)
-    : IPeakIntegrator()
+GaussianIntegrator::GaussianIntegrator(bool fit_center, bool fit_cov) : IPeakIntegrator()
 {
     setFitCenter(fit_center);
     setFitCov(fit_cov);
@@ -88,8 +87,7 @@ static void residuals(
 }
 
 bool GaussianIntegrator::compute(
-    Peak3D* peak, ShapeLibrary* /*shape_library*/, 
-    const IntegrationRegion& region)
+    Peak3D* peak, ShapeLibrary* /*shape_library*/, const IntegrationRegion& region)
 {
     if (!peak)
         return false;

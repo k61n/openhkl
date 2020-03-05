@@ -15,10 +15,10 @@
 #ifndef GUI_SUBFRAME_PREDICT_SHAPELIBRARYDIALOG_H
 #define GUI_SUBFRAME_PREDICT_SHAPELIBRARYDIALOG_H
 
-#include "core/peak/PeakCollection.h"
+#include "core/shape/PeakCollection.h"
 #include "gui/models/PeakCollectionModel.h"
 
-#include "core/experiment/DataTypes.h"
+#include "core/data/DataTypes.h"
 #include "core/peak/Peak3D.h"
 #include "core/shape/Profile3D.h"
 #include "core/shape/ShapeLibrary.h"
@@ -28,98 +28,93 @@
 #include <QTableView>
 #include <set>
 
-#include <QGroupBox>
-#include <QWidget>
-#include <QPushButton>
-#include <QHBoxLayout>
-#include <QVBoxLayout>
-#include <QSplitter>
 #include <QCheckBox>
-#include <QSpinBox>
-#include <QDoubleSpinBox>
 #include <QComboBox>
-#include <QSizePolicy>
 #include <QDialog>
+#include <QDoubleSpinBox>
+#include <QGroupBox>
+#include <QHBoxLayout>
+#include <QPushButton>
+#include <QSizePolicy>
+#include <QSpinBox>
+#include <QSplitter>
+#include <QVBoxLayout>
+#include <QWidget>
 
 //! Dialog for building the shape library
 class ShapeLibraryDialog : public QDialog {
 
-public:
+ public:
+    ShapeLibraryDialog(nsx::PeakCollection* peak_collection);
 
-   ShapeLibraryDialog(nsx::PeakCollection* peak_collection);
+ private:
+    void calculate();
+    void build();
+    void drawFrame(int value);
+    void selectTargetPeak(int row);
+    void accept();
+    const nsx::Profile3D& profile() { return _profile; }
 
-private:
+ private:
+    //! Set up the GUI size policies
+    void setSizePolicies();
+    //! Build the parameters
+    void setParametersUp();
+    //! Build the preview
+    void setPreviewUp();
+    //! Once all the gui elements are set up fill them
+    void setUpParametrization(nsx::PeakCollection* peak_collection);
 
-   void calculate();
-   void build();
-   void drawFrame(int value);
-   void selectTargetPeak(int row);
-   void accept();
-   const nsx::Profile3D& profile() { return _profile; }
+ private:
+    //! The temporary collection
+    PeakCollectionModel _peak_collection_model;
+    //! The temporary collection
+    PeakCollectionItem _peak_collection_item;
 
-private:
+    nsx::ShapeLibrary _library;
+    nsx::sptrUnitCell _unitCell;
+    std::vector<nsx::Peak3D*> _peaks;
+    std::set<nsx::sptrDataSet> _data;
+    nsx::Profile3D _profile;
+    nsx::PeakCollection* _collection_ptr;
+    double _maximum;
+    ColorMap _cmap;
 
-   //! Set up the GUI size policies
-   void setSizePolicies();
-   //! Build the parameters
-   void setParametersUp();
-   //! Build the preview
-   void setPreviewUp();
-   //! Once all the gui elements are set up fill them
-   void setUpParametrization(nsx::PeakCollection* peak_collection);
+ private:
+    QWidget* _parameter_widget;
+    QWidget* _preview_widget;
 
-private:
+    QSizePolicy* _size_policy_widgets;
 
-   //! The temporary collection
-   PeakCollectionModel _peak_collection_model;
-   //! The temporary collection
-   PeakCollectionItem _peak_collection_item;
+    QSpinBox* _nx;
+    QSpinBox* _ny;
+    QSpinBox* _nz;
 
-   nsx::ShapeLibrary _library;
-   nsx::sptrUnitCell _unitCell;
-   std::vector<nsx::Peak3D*> _peaks;
-   std::set<nsx::sptrDataSet> _data;
-   nsx::Profile3D _profile;
-   nsx::PeakCollection* _collection_ptr;
-   double _maximum;
-   ColorMap _cmap;
+    QGroupBox* _kabsch;
 
-private:
+    QDoubleSpinBox* _sigma_D;
+    QDoubleSpinBox* _sigma_M;
 
-   QWidget* _parameter_widget;
-   QWidget* _preview_widget;
-   
-   QSizePolicy* _size_policy_widgets;
+    QDoubleSpinBox* _min_I_sigma;
+    QDoubleSpinBox* _min_d;
+    QDoubleSpinBox* _max_d;
+    QDoubleSpinBox* _peak_scale;
+    QDoubleSpinBox* _background_begin;
+    QDoubleSpinBox* _background_end;
 
-   QSpinBox* _nx;
-   QSpinBox* _ny;
-   QSpinBox* _nz;
+    QPushButton* _build_library;
 
-   QGroupBox* _kabsch;
+    QTableView* _table;
+    QDoubleSpinBox* _x;
+    QDoubleSpinBox* _y;
+    QDoubleSpinBox* _frame;
+    QDoubleSpinBox* _radius;
+    QDoubleSpinBox* _n_frames;
 
-   QDoubleSpinBox* _sigma_D;
-   QDoubleSpinBox* _sigma_M;
+    QPushButton* _calculate_mean_profile;
 
-   QDoubleSpinBox* _min_I_sigma;
-   QDoubleSpinBox* _min_d;
-   QDoubleSpinBox* _max_d;
-   QDoubleSpinBox* _peak_scale;
-   QDoubleSpinBox* _background_begin;
-   QDoubleSpinBox* _background_end;
-
-   QPushButton* _build_library;
-
-   QTableView* _table;
-   QDoubleSpinBox* _x;
-   QDoubleSpinBox* _y;
-   QDoubleSpinBox* _frame;
-   QDoubleSpinBox* _radius;
-   QDoubleSpinBox* _n_frames;
-
-   QPushButton* _calculate_mean_profile;
-
-   QGraphicsView* _graphics;
-   QSlider* _draw_frame;
+    QGraphicsView* _graphics;
+    QSlider* _draw_frame;
 };
 
 #endif // GUI_DIALOGS_SHAPELIBRARYDIALOG_H

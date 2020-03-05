@@ -20,20 +20,20 @@
 class ExperimentModel : public QAbstractTableModel {
     Q_OBJECT
  public:
-    ExperimentModel(QObject *parent= nullptr);
+    ExperimentModel(QObject* parent = nullptr);
     ~ExperimentModel() = default;
 
-public:
-    int columnCount(const QModelIndex &parent = QModelIndex()) const override;
-    int rowCount(const QModelIndex &parent = QModelIndex()) const override;
+ public:
+    int columnCount(const QModelIndex& parent = QModelIndex()) const override;
+    int rowCount(const QModelIndex& parent = QModelIndex()) const override;
     //! Return the data of the item (Manages role interaction)
-    QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
+    QVariant data(const QModelIndex& index, int role = Qt::DisplayRole) const override;
 
-public:
+ public:
     //! Returns whether the selected peak is valid
     bool indexIsValid(const QModelIndex& index) const;
 
-public:
+ public:
     //! Return the data of the item
     QVariant valueOutput(const QModelIndex& index) const;
     //! Return the data of the item

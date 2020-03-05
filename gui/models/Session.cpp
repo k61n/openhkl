@@ -15,7 +15,7 @@
 #include "gui/models/Session.h"
 
 #include "core/algo/DataReaderFactory.h"
-#include "core/experiment/DataSet.h"
+#include "core/data/DataSet.h"
 #include "core/instrument/HardwareParameters.h"
 #include "core/loader/RawDataReader.h"
 #include "core/raw/IDataReader.h"
@@ -37,7 +37,7 @@ bool Session::createExperiment(QString experimentName, QString instrumentName)
 {
     QList<QString> temp = experimentNames();
     QList<QString>::iterator it;
-    for (it = temp.begin(); it != temp.end(); ++it){
+    for (it = temp.begin(); it != temp.end(); ++it) {
         if (*it == experimentName)
             return false;
     }
@@ -55,7 +55,7 @@ bool Session::createExperiment(QString experimentName)
 
     QList<QString> temp = experimentNames();
     QList<QString>::iterator it;
-    for (it = temp.begin(); it != temp.end(); ++it){
+    for (it = temp.begin(); it != temp.end(); ++it) {
         if (*it == experimentName)
             return false;
     }
@@ -81,7 +81,7 @@ QList<QString> Session::experimentNames() const
 {
     QList<QString> names;
 
-    for (int i = 0 ; i < _experiments.size(); i++) {
+    for (int i = 0; i < _experiments.size(); i++) {
         names.append(QString::fromStdString(_experiments.at(i)->experiment()->name()));
     }
     return names;
@@ -95,6 +95,7 @@ void Session::removeExperiment()
     if (selectedExperiment_ == -1) {
         _experiments.removeFirst();
     }
+    
     selectedExperiment_ = _experiments.size() > 0 ? 0 : -1;
     onExperimentChanged();
 }
@@ -226,7 +227,7 @@ void Session::onDataChanged()
 void Session::onExperimentChanged()
 {
     gGui->onExperimentChanged();
-    onDataChanged();   
+    onDataChanged();
     onUnitCellChanged();
 }
 
@@ -244,14 +245,12 @@ bool Session::loadExperimentFromFile(QString filename)
 {
     bool success = createExperiment(QString::fromStdString("default"));
 
-    if (success){
+    if (success) {
         success = selectedExperiment()->experiment()->loadFromFile(filename.toStdString());
     }
-    if (success){
+    if (success) {
         selectedExperiment()->generatePeakModels();
         onExperimentChanged();
     }
     return success;
-
 }
-

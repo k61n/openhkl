@@ -16,8 +16,9 @@
 
 #include "base/fit/Minimizer.h"
 #include "base/geometry/Ellipsoid.h"
+#include "core/peak/Qs2Events.h"
 #include "core/detector/Detector.h"
-#include "core/experiment/DataSet.h"
+#include "core/data/DataSet.h"
 #include "core/instrument/Diffractometer.h"
 #include "core/instrument/Source.h"
 #include "core/peak/Peak3D.h"
@@ -42,7 +43,8 @@ static std::vector<Peak3D*> buildPeaksFromMillerIndices(
     for (auto idx : hkls)
         qs.emplace_back(idx.rowVector().cast<double>() * BU);
 
-    auto events = data->events(qs);
+    const std::vector<DetectorEvent> events =
+        algo::qs2events(qs, data->instrumentStates(), data->detector());
 
     for (auto event : events) {
         Peak3D* peak(new Peak3D(data));
@@ -60,10 +62,8 @@ static std::vector<Peak3D*> buildPeaksFromMillerIndices(
 }
 
 std::vector<Peak3D*> predictPeaks(
-    ShapeLibrary* library, sptrDataSet data, 
-    UnitCell* unit_cell, double dmin, double dmax,
-    double radius, double nframes, int min_neighbors, 
-    PeakInterpolation interpolation)
+    ShapeLibrary* library, sptrDataSet data, UnitCell* unit_cell, double dmin, double dmax,
+    double radius, double nframes, int min_neighbors, PeakInterpolation interpolation)
 {
     std::vector<Peak3D*> predicted_peaks;
 
@@ -78,7 +78,6 @@ std::vector<Peak3D*> predictPeaks(
         buildPeaksFromMillerIndices(data, predicted_hkls, unit_cell->reciprocalBasis());
     qDebug() << "Computing shapes of " << peaks.size() << " calculated peaks...";
 
-    
 
     for (auto peak : peaks) {
         peak->setUnitCell(unit_cell);
@@ -139,26 +138,26 @@ struct FitData {
     FitData(Peak3D* peak)
     {
         const auto* detector = peak->data()->reader()->diffractometer()->detector();
-        Eigen::Vector3d center = peak->shape().center();
-        auto state = peak->data()->interpolatedState(center[2]);
+        const Eigen::Vector3d center = peak->shape().center();
+        const auto state = peak->data()->instrumentStates().interpolate(center[2]);
 
         Rs = state.sampleOrientationMatrix().transpose();
         Rd = state.detectorOrientation;
 
-        auto p = detector->pixelPosition(center[0], center[1]);
-        Eigen::Vector3d p0 = state.samplePosition;
-        Eigen::Vector3d dp = p.vector() - p0;
+        const auto p = detector->pixelPosition(center[0], center[1]);
+        const Eigen::Vector3d p0 = state.samplePosition;
+        const Eigen::Vector3d dp = p.vector() - p0;
 
         kf = state.kfLab(p).rowVector();
         ki = state.ki().rowVector();
 
         Jk = kf * ki.transpose() / ki.squaredNorm() - Eigen::Matrix3d::Identity();
-        double r = dp.norm();
+        const double r = dp.norm();
 
         Jp = Rd * (-1 / r * Eigen::Matrix3d::Identity() + 1 / r / r / r * dp * dp.transpose());
         Jp *= ki.norm();
 
-        DetectorEvent event(center);
+        const DetectorEvent event(center);
         Jd = state.jacobianQ(event._px, event._py);
 
         q = kf - ki;
@@ -368,7 +367,8 @@ ShapeLibrary::meanProfile1D(const DetectorEvent& ev, double radius, double nfram
     return mean_profile;
 }
 
-std::vector<Peak3D*> ShapeLibrary::findNeighbors(const DetectorEvent& ev, double radius, double nframes) const
+std::vector<Peak3D*>
+ShapeLibrary::findNeighbors(const DetectorEvent& ev, double radius, double nframes) const
 {
     std::vector<Peak3D*> neighbors;
     Eigen::Vector3d center(ev._px, ev._py, ev._frame);

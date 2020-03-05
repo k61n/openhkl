@@ -17,8 +17,8 @@
 
 #include "base/fit/Minimizer.h"
 #include "core/algo/Refiner.h"
-#include "core/analyse/PeakFilter.h"
-#include "core/experiment/DataSet.h"
+#include "core/shape/PeakFilter.h"
+#include "core/data/DataSet.h"
 #include "core/instrument/InstrumentState.h"
 #include "core/peak/Peak3D.h"
 #include "tables/crystal/MillerIndex.h"
@@ -52,7 +52,7 @@ RefinementBatch::RefinementBatch(
 
         Eigen::Vector3d c = peak->shape().center();
         Eigen::Matrix3d M = peak->shape().metric();
-        auto state = peak->data()->interpolatedState(c[2]);
+        auto state = peak->data()->instrumentStates().interpolate(c[2]);
         Eigen::Matrix3d J = state.jacobianQ(c[0], c[1]);
         Eigen::Matrix3d JI = J.inverse();
         Eigen::Matrix3d A = JI.transpose() * M * JI;

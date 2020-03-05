@@ -19,8 +19,7 @@
 #include <QHBoxLayout>
 #include <QVBoxLayout>
 
-ListNameDialog::ListNameDialog()
-    : QDialog()
+ListNameDialog::ListNameDialog() : QDialog()
 {
     setModal(true);
     resize(500, 130);

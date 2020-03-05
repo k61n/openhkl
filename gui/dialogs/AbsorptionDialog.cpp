@@ -21,7 +21,7 @@
 #include <fstream>
 #include <QPushButton>
 
-AbsorptionDialog::AbsorptionDialog() : QDialog{}
+AbsorptionDialog::AbsorptionDialog() : QDialog {}
 {
     setAttribute(Qt::WA_DeleteOnClose);
     resize(900, 650);
@@ -154,7 +154,7 @@ void AbsorptionDialog::initializeSlider(int i)
     scrollBar->setRange(0, i);
 }
 
-void AbsorptionDialog::readInfoFile(const std::string &filename)
+void AbsorptionDialog::readInfoFile(const std::string& filename)
 {
     // Clear alll images.
     _imageList.clear();

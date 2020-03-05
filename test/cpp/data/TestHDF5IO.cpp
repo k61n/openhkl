@@ -5,7 +5,7 @@
 
 #include "base/utils/Units.h"
 #include "core/algo/DataReaderFactory.h"
-#include "core/experiment/DataSet.h"
+#include "core/data/DataSet.h"
 #include "core/instrument/Diffractometer.h"
 
 TEST_CASE("test/data/TestHDF5IO.cpp", "")

@@ -15,7 +15,7 @@
 #ifndef CORE_INTEGRATION_GAUSSIANINTEGRATOR_H
 #define CORE_INTEGRATION_GAUSSIANINTEGRATOR_H
 
-#include "core/peak/IPeakIntegrator.h"
+#include "core/shape/IPeakIntegrator.h"
 
 namespace nsx {
 
@@ -24,13 +24,10 @@ namespace nsx {
 class GaussianIntegrator : public IPeakIntegrator {
  public:
     GaussianIntegrator(bool fit_center, bool fit_cov);
-    bool compute(
-       Peak3D* peak, ShapeLibrary* shape_library, 
-       const IntegrationRegion& region) override;
+    bool
+    compute(Peak3D* peak, ShapeLibrary* shape_library, const IntegrationRegion& region) override;
     //! Returns the analytic profile computed over the given integration region
-    std::vector<double> profile(
-       Peak3D* peak, const IntegrationRegion& region);
-
+    std::vector<double> profile(Peak3D* peak, const IntegrationRegion& region);
 };
 
 } // namespace nsx

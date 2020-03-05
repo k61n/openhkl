@@ -16,9 +16,8 @@
 #define CORE_ALGO_REFINEMENTBATCH_H
 
 #include "base/fit/FitParameters.h"
-#include "core/instrument/InstrumentTypes.h"
+#include "core/instrument/InstrumentStateList.h"
 #include "core/peak/Peak3D.h"
-#include "tables/crystal/UnitCell.h"
 
 namespace nsx {
 

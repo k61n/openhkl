@@ -4,22 +4,21 @@
 #include <QPushButton>
 #include <QtGui>
 
-class ColorButton : public QPushButton
-{
+class ColorButton : public QPushButton {
     Q_OBJECT
-public:
-    explicit ColorButton(const QColor & color = Qt::black, QWidget *parent = 0);
+ public:
+    explicit ColorButton(const QColor& color = Qt::black, QWidget* parent = 0);
     QColor getColor();
 
-signals:
+ signals:
     void colorChanged(QColor);
 
-public slots:
-    void changeColor(const QColor &);
+ public slots:
+    void changeColor(const QColor&);
     void chooseColor();
-    void paintEvent(QPaintEvent *event);
+    void paintEvent(QPaintEvent* event);
 
-private:
+ private:
     QColor currentColor;
 };
 

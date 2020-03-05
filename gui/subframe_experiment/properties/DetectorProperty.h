@@ -15,29 +15,27 @@
 #ifndef GUI_SUBFRAME_EXPERIMENT_PROPERTIES_DETECTORPROPERTY_H
 #define GUI_SUBFRAME_EXPERIMENT_PROPERTIES_DETECTORPROPERTY_H
 
-#include <QTableWidget>
 #include <QDoubleSpinBox>
 #include <QSpinBox>
+#include <QTableWidget>
 
 //! Property widget of the detector
 class DetectorProperty : public QWidget {
 
-public:
+ public:
+    DetectorProperty();
+    ~DetectorProperty();
+    void refreshInput();
 
-   DetectorProperty();
-   ~DetectorProperty();
-   void refreshInput();
-private:
+ private:
+    void onValueChanged();
 
-   void onValueChanged();
-
-   QSpinBox* _columns;
-   QSpinBox* _rows;
-   QDoubleSpinBox* _height;
-   QDoubleSpinBox* _width;
-   QDoubleSpinBox* _distance;
-   QTableWidget* _axes;
-
+    QSpinBox* _columns;
+    QSpinBox* _rows;
+    QDoubleSpinBox* _height;
+    QDoubleSpinBox* _width;
+    QDoubleSpinBox* _distance;
+    QTableWidget* _axes;
 };
 
 #endif // GUI_SUBFRAME_EXPERIMENT_PROPERTIES_DETECTORPROPERTY_H

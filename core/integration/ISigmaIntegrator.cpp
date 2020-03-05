@@ -14,7 +14,7 @@
 
 #include "core/integration/ISigmaIntegrator.h"
 #include "base/geometry/Ellipsoid.h"
-#include "core/experiment/DataSet.h"
+#include "core/data/DataSet.h"
 #include "core/peak/Intensity.h"
 #include "core/peak/Peak3D.h"
 #include "core/peak/PeakCoordinateSystem.h"
@@ -22,14 +22,10 @@
 
 namespace nsx {
 
-ISigmaIntegrator::ISigmaIntegrator()
-    : PixelSumIntegrator(false, false)
-{
-}
+ISigmaIntegrator::ISigmaIntegrator() : PixelSumIntegrator(false, false) {}
 
 bool ISigmaIntegrator::compute(
-    Peak3D* peak, ShapeLibrary* shape_library, 
-    const IntegrationRegion& region)
+    Peak3D* peak, ShapeLibrary* shape_library, const IntegrationRegion& region)
 {
     if (!shape_library)
         return false;
@@ -57,8 +53,7 @@ bool ISigmaIntegrator::compute(
 
     try {
         // throws if there are no neighboring peaks within the bounds
-        mean_profile = shape_library->meanProfile1D(
-            DetectorEvent(c), radius(), nFrames());
+        mean_profile = shape_library->meanProfile1D(DetectorEvent(c), radius(), nFrames());
     } catch (...) {
         return false;
     }

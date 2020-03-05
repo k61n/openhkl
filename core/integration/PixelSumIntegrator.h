@@ -28,10 +28,8 @@ class PixelSumIntegrator : public MeanBackgroundIntegrator {
     //! @param fit_covariance update the peak shape covariance matrix as part of integration
     PixelSumIntegrator(bool fit_center, bool fit_covariance);
     ~PixelSumIntegrator();
-    bool compute(
-       Peak3D* peak, ShapeLibrary* shape_library, 
-       const IntegrationRegion& region) override;
-
+    bool
+    compute(Peak3D* peak, ShapeLibrary* shape_library, const IntegrationRegion& region) override;
 };
 
 } // namespace nsx

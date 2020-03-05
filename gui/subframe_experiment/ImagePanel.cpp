@@ -14,7 +14,7 @@
 
 #include "gui/subframe_experiment/ImagePanel.h"
 
-#include "core/experiment/DataSet.h"
+#include "core/data/DataSet.h"
 #include "gui/MainWin.h"
 #include "gui/actions/Actions.h"
 #include "gui/graphics/DetectorScene.h"

@@ -89,8 +89,8 @@ bool MatrixParser::operator()(
     return ss.eof() && index == n_elements;
 }
 
-bool MatrixParser::
-operator()(DataOrder dataOrder, const std::string& buffer, Eigen::MatrixXi& matrix) const
+bool MatrixParser::operator()(
+    DataOrder dataOrder, const std::string& buffer, Eigen::MatrixXi& matrix) const
 {
     return this->operator()(dataOrder, buffer.c_str(), buffer.size(), matrix);
 }

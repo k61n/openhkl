@@ -14,20 +14,20 @@
 
 #include "gui/subframe_experiment/properties/UnitCellProperty.h"
 
-#include "gui/models/Session.h"
-#include "gui/dialogs/RefinerDialog.h"
 #include "base/utils/Units.h"
+#include "gui/dialogs/RefinerDialog.h"
+#include "gui/models/Session.h"
 #include "tables/crystal/SpaceGroup.h"
 #include "tables/crystal/UnitCell.h"
 
 #include <QCompleter>
+#include <QDebug>
 #include <QFormLayout>
 #include <QGridLayout>
 #include <QGroupBox>
 #include <QHBoxLayout>
-#include <QVBoxLayout>
 #include <QLabel>
-#include <QDebug>
+#include <QVBoxLayout>
 
 UnitCellProperty::UnitCellProperty() : QWidget()
 {
@@ -84,7 +84,7 @@ UnitCellProperty::UnitCellProperty() : QWidget()
     _add->setIcon(QIcon(":/images/Add_item.svg"));
     _remove->setIcon(QIcon(":/images/Delete_item.svg"));
     _refine = new QPushButton("Refine parameters");
-    
+
     unitcells->setSizePolicy(*_size_policy_widgets);
 
     name->setSizePolicy(*_size_policy_widgets);
@@ -109,7 +109,7 @@ UnitCellProperty::UnitCellProperty() : QWidget()
     c->setSizePolicy(*_size_policy_widgets);
     c->setDecimals(5);
 
-    alpha->setButtonSymbols( QDoubleSpinBox::NoButtons);
+    alpha->setButtonSymbols(QDoubleSpinBox::NoButtons);
     alpha->setSizePolicy(*_size_policy_widgets);
     alpha->setDecimals(5);
 
@@ -158,59 +158,48 @@ UnitCellProperty::UnitCellProperty() : QWidget()
     overallLayout->addStretch();
 
     connect(
-        unitcells, static_cast<void (QComboBox::*) (int) >(&QComboBox::currentIndexChanged),
-        this, &UnitCellProperty::selectedCellChanged
-    );
+        unitcells, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this,
+        &UnitCellProperty::selectedCellChanged);
 
-    connect(
-        name, &QLineEdit::editingFinished, 
-        [=]() {
-            std::string old_name = unitcells->currentText().toStdString();
-            std::string new_name = name->text().toStdString();
+    connect(name, &QLineEdit::editingFinished, [=]() {
+        std::string old_name = unitcells->currentText().toStdString();
+        std::string new_name = name->text().toStdString();
 
-            if (old_name == new_name)
-                return;
+        if (old_name == new_name)
+            return;
 
-            gSession->selectedExperiment()->experiment()->addUnitCell(
-                new_name,gSession->selectedExperiment()->experiment()->getUnitCell(old_name));
-            gSession->selectedExperiment()->experiment()->getUnitCell(
-                new_name)->setName(new_name);
-            gSession->selectedExperiment()->experiment()->swapUnitCells(
-                old_name,new_name);    
-            gSession->selectedExperiment()->experiment()->removeUnitCell(old_name);
+        gSession->selectedExperiment()->experiment()->addUnitCell(
+            new_name, gSession->selectedExperiment()->experiment()->getUnitCell(old_name));
+        gSession->selectedExperiment()->experiment()->getUnitCell(new_name)->setName(new_name);
+        gSession->selectedExperiment()->experiment()->swapUnitCells(old_name, new_name);
+        gSession->selectedExperiment()->experiment()->removeUnitCell(old_name);
 
-            refreshInput();
+        refreshInput();
 
-            int idx =  gSession->selectedExperiment()->getUnitCellNames().indexOf(QString::fromStdString(new_name));
-            unitcells->setCurrentIndex(idx);
+        int idx = gSession->selectedExperiment()->getUnitCellNames().indexOf(
+            QString::fromStdString(new_name));
+        unitcells->setCurrentIndex(idx);
 
-            printAllInformation();
+        printAllInformation();
     });
 
     connect(chemicalFormula, &QLineEdit::editingFinished, [=]() {
         if (chemicalFormula->text().length() < 1)
             return;
         std::string formula = chemicalFormula->text().toStdString();
-        gSession->selectedExperiment()->experiment()->getUnitCell(unitcells->currentText().toStdString())->setMaterial(
-                    std::make_unique<xsection::Material>(formula));
+        gSession->selectedExperiment()
+            ->experiment()
+            ->getUnitCell(unitcells->currentText().toStdString())
+            ->setMaterial(std::make_unique<xsection::Material>(formula));
         setMassDensity();
         printAllInformation();
     });
 
-    connect(
-        _add, &QPushButton::clicked,
-        this, &UnitCellProperty::addUnitCell
-    );
+    connect(_add, &QPushButton::clicked, this, &UnitCellProperty::addUnitCell);
 
-    connect(
-        _remove, &QPushButton::clicked,
-        this, &UnitCellProperty::removeUnitCell
-    );
+    connect(_remove, &QPushButton::clicked, this, &UnitCellProperty::removeUnitCell);
 
-    connect(
-        _refine, &QPushButton::clicked,
-        this, &UnitCellProperty::launchRefiner
-    );
+    connect(_refine, &QPushButton::clicked, this, &UnitCellProperty::launchRefiner);
 
     resetFields();
     setInputEnabled(false);
@@ -221,7 +210,7 @@ void UnitCellProperty::setSizePolicies()
     _size_policy_widgets = new QSizePolicy();
     _size_policy_widgets->setHorizontalPolicy(QSizePolicy::Expanding);
     _size_policy_widgets->setVerticalPolicy(QSizePolicy::Fixed);
-    
+
     _size_policy_box = new QSizePolicy();
     _size_policy_box->setHorizontalPolicy(QSizePolicy::Preferred);
     _size_policy_box->setVerticalPolicy(QSizePolicy::Preferred);
@@ -243,9 +232,9 @@ void UnitCellProperty::refreshInput()
     unitcells->blockSignals(false);
 
     bool state;
-    if (gSession->selectedExperiment()->experiment()->getUnitCellNames().size() == 0){
+    if (gSession->selectedExperiment()->experiment()->getUnitCellNames().size() == 0) {
         state = false;
-    }else{
+    } else {
         state = true;
     }
 
@@ -268,7 +257,7 @@ void UnitCellProperty::setInputEnabled(bool state)
     c->setEnabled(state);
     alpha->setEnabled(state);
     beta->setEnabled(state);
-    gamma->setEnabled(state); 
+    gamma->setEnabled(state);
 }
 
 void UnitCellProperty::resetFields()
@@ -288,7 +277,8 @@ void UnitCellProperty::resetFields()
 
 void UnitCellProperty::setZValue(int z)
 {
-    nsx::UnitCell* unit_cell = gSession->selectedExperiment()->experiment()->getUnitCell(unitcells->currentText().toStdString());
+    nsx::UnitCell* unit_cell = gSession->selectedExperiment()->experiment()->getUnitCell(
+        unitcells->currentText().toStdString());
 
     unit_cell->setZ(z);
     setMassDensity();
@@ -299,7 +289,8 @@ void UnitCellProperty::selectedCellChanged(int cell)
     if (gSession->selectedExperiment()->experiment()->getUnitCellNames().size() == 0)
         return;
 
-    nsx::UnitCell* selected_cell = gSession->selectedExperiment()->experiment()->getUnitCell(gSession->selectedExperiment()->experiment()->getUnitCellNames()[cell]);
+    nsx::UnitCell* selected_cell = gSession->selectedExperiment()->experiment()->getUnitCell(
+        gSession->selectedExperiment()->experiment()->getUnitCellNames()[cell]);
 
     name->setText(QString::fromStdString(selected_cell->name()));
     xsection::Material* material = selected_cell->material();
@@ -322,7 +313,8 @@ void UnitCellProperty::selectedCellChanged(int cell)
 
 void UnitCellProperty::setMassDensity() const
 {
-    nsx::UnitCell* unit_cell = gSession->selectedExperiment()->experiment()->getUnitCell(unitcells->currentText().toStdString());
+    nsx::UnitCell* unit_cell = gSession->selectedExperiment()->experiment()->getUnitCell(
+        unitcells->currentText().toStdString());
 
     xsection::Material* material = unit_cell->material();
     if (!material)
@@ -337,7 +329,8 @@ void UnitCellProperty::setMassDensity() const
 void UnitCellProperty::printAllInformation()
 {
     qDebug() << "Unit Cell Information:";
-    nsx::UnitCell* cell = gSession->selectedExperiment()->experiment()->getUnitCell(unitcells->currentText().toStdString());
+    nsx::UnitCell* cell = gSession->selectedExperiment()->experiment()->getUnitCell(
+        unitcells->currentText().toStdString());
     qDebug() << "name: " << QString::fromStdString(cell->name());
     qDebug() << "volume: " << cell->volume();
     qDebug() << "z: " << cell->z();
@@ -359,14 +352,13 @@ void UnitCellProperty::addUnitCell()
     nsx::UnitCell uc = nsx::UnitCell();
     uc.setName("New unit cell");
 
-    gSession->selectedExperiment()->experiment()->addUnitCell(
-        "New unit cell", &uc);
+    gSession->selectedExperiment()->experiment()->addUnitCell("New unit cell", &uc);
 
     refreshInput();
 
     int i = 0;
-    for (std::string value : gSession->selectedExperiment()->experiment()->getUnitCellNames()){
-        if (value == "New unit cell"){
+    for (std::string value : gSession->selectedExperiment()->experiment()->getUnitCellNames()) {
+        if (value == "New unit cell") {
             selectedCellChanged(i);
         }
         ++i;
@@ -377,8 +369,7 @@ void UnitCellProperty::removeUnitCell()
 {
     if (gSession->selectedExperimentNum() == -1)
         return;
-    gSession->selectedExperiment()->experiment()->removeUnitCell(
-        name->text().toStdString());
+    gSession->selectedExperiment()->experiment()->removeUnitCell(name->text().toStdString());
     refreshInput();
     selectedCellChanged(0);
 }
@@ -386,9 +377,8 @@ void UnitCellProperty::removeUnitCell()
 void UnitCellProperty::launchRefiner()
 {
     std::unique_ptr<RefinerDialog> dialog(
-        new RefinerDialog(
-            gSession->selectedExperiment()->experiment()->getUnitCell(
-                unitcells->currentText().toStdString())));
+        new RefinerDialog(gSession->selectedExperiment()->experiment()->getUnitCell(
+            unitcells->currentText().toStdString())));
 
     dialog->exec();
 }

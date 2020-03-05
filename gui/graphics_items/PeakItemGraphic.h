@@ -50,6 +50,7 @@ class PeakItemGraphic : public PlottableItem {
     void setSize(int size);
     //! Change the peak color
     void setColor(QColor color);
+    void setOutlineColor(QColor color);
 
  private:
     //! Pointer to the Peak3D object
@@ -66,7 +67,7 @@ class PeakItemGraphic : public PlottableItem {
     Eigen::Vector3d _upper;
     //! Size
     Eigen::Vector2d _size;
-     //! Color
+    //! Color
     QColor _color;
 };
 

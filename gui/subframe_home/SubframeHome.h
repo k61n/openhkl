@@ -20,21 +20,19 @@
 
 #include <memory>
 
-#include <QWidget>
-#include <QPushButton>
-#include <QVBoxLayout>
 #include <QHBoxLayout>
 #include <QListWidget>
+#include <QPushButton>
+#include <QVBoxLayout>
+#include <QWidget>
 
 class SubframeHome : public QWidget {
-public:
-
-    //! Default constructor 
+ public:
+    //! Default constructor
     SubframeHome();
 
-private:
-
-    //! Set the left layout 
+ private:
+    //! Set the left layout
     void _setLeftLayout(QHBoxLayout* main_layout);
     //! Set the right layout
     void _setRightLayout(QHBoxLayout* main_layout);
@@ -42,16 +40,15 @@ private:
 private:
 
     //! Switch the current experiment through the model index
-    void _switchCurrentExperiment( const QModelIndex & index ) const;
+    void _switchCurrentExperiment(const QModelIndex& index) const;
     //! Update the current list
     void _updateLastLoadedList(QString name, QString file_path);
     //! Update the current list widget
     void _updateLastLoadedWidget();
     //! Load the clicked item
-    void _loadSelectedItem(QListWidgetItem * item);
+    void _loadSelectedItem(QListWidgetItem* item);
 
 public:
-
     //! Create a new experiment
     void createNew();
     //! Load an experiment from file
@@ -67,7 +64,7 @@ public:
     // ! Save the settings
     void saveSettings() const;
 
-private:
+ private:
     QPushButton* _new_exp;
     QPushButton* _old_exp;
     QPushButton* _save_current;

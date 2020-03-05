@@ -15,26 +15,24 @@
 #ifndef BASE_PARSER_PARSER_H
 #define BASE_PARSER_PARSER_H
 
-#include <vector>
-#include <string>
 #include <sstream>
+#include <string>
+#include <vector>
 
 namespace nsx {
 
 //! Method to read a vector of numeric values from two char pointers
-template<class T>
-void readNumFromChar(const char* begin, const char* end, std::vector<T>& v)
+template <class T> void readNumFromChar(const char* begin, const char* end, std::vector<T>& v)
 {
     std::istringstream istr(std::string(begin, end));
-    while(!istr.eof())
-    {
-        T num{};
+    while (!istr.eof()) {
+        T num {};
         istr >> num;
 
-		if(istr.fail())
-			break;
-        
-		v.push_back(num);
+        if (istr.fail())
+            break;
+
+        v.push_back(num);
     }
 }
 

@@ -14,7 +14,7 @@
 
 #include "core/integration/Profile1DIntegrator.h"
 #include "base/geometry/Ellipsoid.h"
-#include "core/experiment/DataSet.h"
+#include "core/data/DataSet.h"
 #include "core/peak/Intensity.h"
 #include "core/peak/Peak3D.h"
 #include "core/peak/PeakCoordinateSystem.h"
@@ -22,10 +22,7 @@
 
 namespace nsx {
 
-Profile1DIntegrator::Profile1DIntegrator()
-    : IPeakIntegrator()
-{
-}
+Profile1DIntegrator::Profile1DIntegrator() : IPeakIntegrator() {}
 
 static void updateFit(
     Intensity& I, Intensity& B, const std::vector<double>& dp, const std::vector<double>& dM,
@@ -78,7 +75,8 @@ static void updateFit(
     I = Intensity(new_I, cov(1, 1));
 }
 
-bool Profile1DIntegrator::compute(Peak3D* peak, ShapeLibrary* shape_library, const IntegrationRegion& region)
+bool Profile1DIntegrator::compute(
+    Peak3D* peak, ShapeLibrary* shape_library, const IntegrationRegion& region)
 {
     if (!shape_library)
         return false;
@@ -101,8 +99,7 @@ bool Profile1DIntegrator::compute(Peak3D* peak, ShapeLibrary* shape_library, con
 
     try {
         // throws if there are no neighboring peaks within the bounds
-        mean_profile = shape_library->meanProfile1D(
-            DetectorEvent(c), radius(), nFrames());
+        mean_profile = shape_library->meanProfile1D(DetectorEvent(c), radius(), nFrames());
     } catch (...) {
         return false;
     }
