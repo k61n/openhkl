@@ -26,7 +26,6 @@
 #include "gui/models/ColorMap.h"
 #include "gui/models/Session.h"
 
-#include <QCR/engine/logger.h>
 #include <QDebug>
 #include <QFormLayout>
 #include <QGroupBox>
@@ -325,18 +324,18 @@ void ShapeLibraryDialog::build()
     integrator.setBkgEnd(bkg_end_val);
 
     for (nsx::sptrDataSet data : _data) {
-        gLogger->log(
-            "[INFO]Fitting profiles in dataset " + QString::fromStdString(data->filename()));
+        // gLogger->log(
+        //     "[INFO]Fitting profiles in dataset " + QString::fromStdString(data->filename()));
 
         integrator.integrate(fit_peaks, &_library, data);
     }
-    gLogger->log("[INFO]Done fitting profiles");
+    // gLogger->log("[INFO]Done fitting profiles");
 
     _library = *integrator.library();
 
-    gLogger->log("[INFO]Updating peak shape model...");
+    // gLogger->log("[INFO]Updating peak shape model...");
     _library.updateFit(1000);
-    gLogger->log("[INFO]Done, mean pearson is " + QString::number(_library.meanPearson()));
+    // gLogger->log("[INFO]Done, mean pearson is " + QString::number(_library.meanPearson()));
 }
 
 void ShapeLibraryDialog::calculate()

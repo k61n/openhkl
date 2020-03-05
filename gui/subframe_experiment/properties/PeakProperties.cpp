@@ -16,7 +16,6 @@
 #include "gui/MainWin.h"
 #include "gui/models/Session.h"
 
-#include <QCR/engine/logger.h>
 #include <QFormLayout>
 #include <QHBoxLayout>
 #include <QMenu>

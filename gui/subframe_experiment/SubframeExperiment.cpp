@@ -21,30 +21,46 @@
 
 SubframeExperiment::SubframeExperiment() : QWidget()
 {
+
+    QSizePolicy left_size_policy;
+    left_size_policy.setHorizontalPolicy(QSizePolicy::Minimum);
+    left_size_policy.setVerticalPolicy(QSizePolicy::Expanding);
+
+    QSizePolicy right_size_policy;
+    right_size_policy.setHorizontalPolicy(QSizePolicy::Expanding);
+    right_size_policy.setVerticalPolicy(QSizePolicy::Expanding);
+
     QHBoxLayout* layout = new QHBoxLayout(this);
-    QSplitter* spliter = new QSplitter(this);
+    QSplitter* splitter = new QSplitter(this);
 
     QWidget* left_widget = new QWidget();
+    left_widget->setSizePolicy(left_size_policy);
     QVBoxLayout* left_layout = new QVBoxLayout;
 
-    properties = new PropertyPanel;
-    left_layout->addWidget(properties, 7);
-    logger = new LoggerPanel;
-    left_layout->addWidget(logger, 2);
+    _properties = new PropertyPanel;
+    _logger = new LoggerPanel;
+    _image = new ImagePanel;
+    _plot = new PlotPanel;
 
+    _properties->setSizePolicy(left_size_policy);
+    _logger->setSizePolicy(left_size_policy);
+
+    left_layout->addWidget(_properties, 7);
+    left_layout->addWidget(_logger, 2);
     left_widget->setLayout(left_layout);
-    spliter->addWidget(left_widget);
 
-    QSplitter* right_spliter = new QSplitter();
-    right_spliter->setOrientation(Qt::Orientation::Vertical);
-    right_spliter->setChildrenCollapsible(false);
+    QSplitter* right_splitter = new QSplitter();
+    right_splitter->setSizePolicy(right_size_policy);
+    right_splitter->setOrientation(Qt::Orientation::Vertical);
+    right_splitter->setChildrenCollapsible(false);
+    right_splitter->addWidget(_image);
+    right_splitter->addWidget(_plot);
 
-    image = new ImagePanel;
-    right_spliter->addWidget(image);
-    plot = new PlotPanel;
-    right_spliter->addWidget(plot);
+    splitter->addWidget(left_widget);
+    splitter->addWidget(right_splitter);
+    splitter->setStretchFactor(0, 0.25);
+    splitter->setStretchFactor(1, 1);
+    splitter->setChildrenCollapsible(false);
 
-    spliter->addWidget(right_spliter);
-
-    layout->addWidget(spliter);
+    layout->addWidget(splitter);
 }

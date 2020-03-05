@@ -22,15 +22,16 @@ class Menus {
  public:
     Menus() = delete;
     Menus(QMenuBar*);
-    QMenu* file_;
-    QMenu* export_;
-    QMenu* options_;
-    QMenu* experiment_;
-    QMenu* help_;
-    QMenu* view_;
+
+    QMenu* _file_menu;
+    QMenu* _edit_menu;
+    QMenu* _data_menu;
+    QMenu* _peaks_menu;
+    QMenu* _view_menu;
+    QMenu* _help_menu;
 
  private:
-    QMenuBar* mbar_;
+    QMenuBar* _menu_bar;
     QAction* separator() const;
     QMenu* actionsToMenu(const char* menuName, QList<QAction*> actions);
 };

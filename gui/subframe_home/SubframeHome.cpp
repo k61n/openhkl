@@ -55,15 +55,23 @@ void SubframeHome::_setLeftLayout(QHBoxLayout* main_layout)
     _new_exp = new QPushButton();
     _new_exp->setIcon(QIcon(":/images/create_new.svg"));
     _new_exp->setText("Create new experiment");
-    _new_exp->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
-    connect(_new_exp, &QPushButton::clicked, this, &SubframeHome::_createNew);
+    _new_exp->setSizePolicy(
+        QSizePolicy::Preferred, QSizePolicy::Preferred);
+    connect(
+        _new_exp, &QPushButton::clicked,
+        this, &SubframeHome::createNew
+    );
 
     _old_exp = new QPushButton();
     _old_exp->setIcon(QIcon(":/images/load_from_folder.svg"));
     _old_exp->setText("Load from file");
     _old_exp->setMinimumWidth(_new_exp->sizeHint().width());
-    _old_exp->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
-    connect(_old_exp, &QPushButton::clicked, this, &SubframeHome::_loadFromFile);
+    _old_exp->setSizePolicy(
+        QSizePolicy::Preferred, QSizePolicy::Preferred);
+    connect(
+        _old_exp, &QPushButton::clicked,
+        this, &SubframeHome::loadFromFile
+    );
 
     left_top->addWidget(_new_exp);
     left_top->addWidget(_old_exp);
@@ -119,7 +127,7 @@ void SubframeHome::_setRightLayout(QHBoxLayout* main_layout)
     main_layout->addLayout(right);
 }
 
-void SubframeHome::_createNew()
+void SubframeHome::createNew()
 {
     std::unique_ptr<ExperimentDialog> exp_dialog(new ExperimentDialog);
     exp_dialog->exec();
@@ -137,7 +145,7 @@ void SubframeHome::_createNew()
     }
 }
 
-void SubframeHome::_loadFromFile()
+void SubframeHome::loadFromFile()
 {
     QString file_path = QFileDialog::getOpenFileName(
         this, tr("Save the current experiment"), "", tr("Address Book (*.nsx);;All Files (*)"));

@@ -16,92 +16,122 @@
 
 #include "core/data/DataSet.h"
 #include "gui/MainWin.h"
-#include "gui/actions/Triggers.h"
+#include "gui/actions/Actions.h"
 #include "gui/graphics/DetectorScene.h"
 #include "gui/models/Session.h"
+
 #include <QGraphicsView>
 #include <QHBoxLayout>
+#include <QHBoxLayout>
+#include <QGridLayout>
 #include <QScrollBar>
 #include <QSplitter>
 #include <QTreeView>
-#include <QVBoxLayout>
 
-//-------------------------------------------------------------------------------------------------
-
-ImagePanel::ImagePanel() : QcrWidget {"Image"}
+ImagePanel::ImagePanel() : QWidget()
 {
-    QHBoxLayout* overallLayout = new QHBoxLayout(this);
-    QVBoxLayout* leftLayout = new QVBoxLayout;
-    frameLayout = new QFrame(this);
-    QHBoxLayout* leftLowerLayout = new QHBoxLayout(frameLayout);
-    imageView = new DetectorView;
-    leftLayout->addWidget(imageView);
-    scrollbar = new QScrollBar(frameLayout);
-    QSizePolicy sizePolicy6(QSizePolicy::Minimum, QSizePolicy::Fixed);
-    sizePolicy6.setHorizontalStretch(1);
-    sizePolicy6.setVerticalStretch(0);
-    sizePolicy6.setHeightForWidth(scrollbar->sizePolicy().hasHeightForWidth());
-    scrollbar->setSizePolicy(sizePolicy6);
-    scrollbar->setMouseTracking(true);
-    scrollbar->setFocusPolicy(Qt::WheelFocus);
-    scrollbar->setOrientation(Qt::Horizontal);
-    leftLowerLayout->addWidget(scrollbar);
-    frame = new QcrSpinBox("frame", new QcrCell<int>(1), 3);
-    leftLowerLayout->addWidget(frame);
-    leftLayout->addWidget(frameLayout);
-    intensityLayout = new QFrame(this);
-    QHBoxLayout* horizontalLayout = new QHBoxLayout(intensityLayout);
-    slide = new QSlider(intensityLayout);
-    slide->setMouseTracking(true);
-    slide->setAutoFillBackground(false);
-    slide->setMinimum(1);
-    slide->setMaximum(10000);
-    slide->setValue(5000);
-    imageView->getScene()->setMaxIntensity(5000);
-    slide->setSingleStep(1);
-    slide->setOrientation(Qt::Horizontal);
-    slide->setTickPosition(QSlider::NoTicks);
-    horizontalLayout->addWidget(slide);
-    mode = new QcrComboBox(
-        "adhoc_modus", new QcrCell<int>(1),
-        {"selection", "zoom", "line plot", "horizontal slice", "vertical slice", "rectangular mask",
-         "ellipsoidal mask"});
-    horizontalLayout->addWidget(mode);
-    leftLayout->addWidget(intensityLayout);
-    overallLayout->addLayout(leftLayout);
-    mode->setEnabled(false);
-    intensityLayout->setEnabled(false);
-    frameLayout->setEnabled(false);
+    QGridLayout* main_layout = new QGridLayout(this);
+    QGridLayout* top_layout = new QGridLayout;
 
-    connect(slide, SIGNAL(valueChanged(int)), imageView->getScene(), SLOT(setMaxIntensity(int)));
+    _image_view = new DetectorView();
+    _scrollbar = new QScrollBar();
+    _slider = new QSlider(Qt::Vertical);
+    _frame = new QSpinBox();
+    _mode = new QComboBox();
+
+    _image_view->getScene()->setMaxIntensity(5000);
+
+    _scrollbar->setMouseTracking(true);
+    _scrollbar->setFocusPolicy(Qt::WheelFocus);
+    _scrollbar->setOrientation(Qt::Horizontal);
+    _scrollbar->setSizePolicy(QSizePolicy(
+        QSizePolicy::Expanding,
+        QSizePolicy::Fixed));
+
+    _slider->setMouseTracking(true);
+    _slider->setMinimum(1);
+    _slider->setMaximum(10000);
+    _slider->setValue(5000);
+    _slider->setSingleStep(1);
+    _slider->setOrientation(Qt::Vertical);
+    _slider->setTickPosition(QSlider::TicksRight);
+
+    _mode->addItems( QStringList {
+        "selection", "zoom",  "line plot", 
+        "horizontal slice", "vertical slice", 
+        "rectangular mask", "ellipsoidal mask"});
+
+    _frame->setSizePolicy(QSizePolicy(
+        QSizePolicy::Minimum,
+        QSizePolicy::Fixed));
+
+    top_layout->addWidget(_image_view, 0,0,1,1);
+    top_layout->addWidget(_slider, 0,1,1,1);
+
+    main_layout->addLayout(top_layout, 0,0,1,3);
+    main_layout->addWidget(_scrollbar, 1,0,1,1);
+    main_layout->addWidget(_frame, 1,1,1,1);
+    main_layout->addWidget(_mode, 1,2,1,1);
+
     connect(
-        scrollbar, SIGNAL(valueChanged(int)), imageView->getScene(),
-        SLOT(slotChangeSelectedFrame(int)));
-    connect(scrollbar, &QScrollBar::valueChanged, [=](int i) { frame->setCellValue(i); });
-    frame->setHook([=](int i) { scrollbar->setValue(i); });
-    mode->setHook([=](int i) { imageView->getScene()->changeInteractionMode(i); });
+        _slider, &QSlider::valueChanged, 
+        _image_view->getScene(), &DetectorScene::setMaxIntensity);
+
+    connect(
+        _scrollbar, &QScrollBar::valueChanged, 
+        _image_view->getScene(), &DetectorScene::slotChangeSelectedFrame);
+
+    connect(
+        _scrollbar, &QScrollBar::valueChanged, 
+        [=](int i) { 
+            _frame->blockSignals(true);
+            _frame->setValue(i);
+            _frame->blockSignals(false);
+            _image_view->getScene()->slotChangeSelectedFrame(i);
+            });
+
+    connect(
+        _frame, static_cast<void (QSpinBox::*) (int) >(&QSpinBox::valueChanged), 
+        [=](int i) {
+            _scrollbar->blockSignals(true);
+            _scrollbar->setValue(i);
+            _scrollbar->blockSignals(false);
+            _image_view->getScene()->slotChangeSelectedFrame(i);
+            });
+
+    connect(
+        _mode, 
+        static_cast<void (QComboBox::*) (int) >(&QComboBox::currentIndexChanged), 
+        [=](int i) { _image_view->getScene()->changeInteractionMode(i);  });
+
 }
 
 void ImagePanel::dataChanged()
 {
-    mode->setEnabled(false);
-    intensityLayout->setEnabled(false);
-    frameLayout->setEnabled(false);
-    imageView->getScene()->resetScene();
+    _mode->setEnabled(false);
+    _slider->setEnabled(false);
+    _scrollbar->setEnabled(false);
+    _frame->setEnabled(false);
+
+    _image_view->getScene()->resetScene();
+
     if (gSession->selectedExperimentNum() >= 0) {
         nsx::sptrDataSet dataset = gSession->selectedExperiment()->getData(0);
         if (dataset) {
-            mode->setEnabled(true);
-            intensityLayout->setEnabled(true);
-            frameLayout->setEnabled(true);
-            int frames = dataset->nFrames();
-            scrollbar->setMaximum(frames);
-            scrollbar->setMinimum(0);
-            scrollbar->setSingleStep(1);
-            frame->setMaximum(frames);
-            frame->setMinimum(0);
-            frame->setSingleStep(1);
-            imageView->getScene()->slotChangeSelectedData(dataset, 0);
+            _mode->setEnabled(true);
+            _slider->setEnabled(true);
+            _scrollbar->setEnabled(true);
+            _frame->setEnabled(true);
+
+            _scrollbar->setMaximum(dataset->nFrames());
+            _scrollbar->setMinimum(0);
+            _scrollbar->setSingleStep(1);
+
+            _frame->setMaximum(dataset->nFrames());
+            _frame->setMinimum(0);
+            _frame->setSingleStep(1);
+
+            _image_view->getScene()->slotChangeSelectedData(dataset, 0);
         }
     }
 }
@@ -112,15 +142,6 @@ void ImagePanel::changeView(int option)
     trans.scale(-1, -1); // fromDetector (default; 0)
     if (option == 1) // fromSample
         trans.scale(-1, 1);
-    imageView->setTransform(trans);
-    imageView->fitScene();
-}
-
-//  ***********************************************************************************************
-
-SubframeImage::SubframeImage() : QcrDockWidget {"Image"}
-{
-    setWidget((centralWidget = new ImagePanel));
-    connect(
-        this, SIGNAL(visibilityChanged(bool)), &gGui->triggers->viewImage, SLOT(setChecked(bool)));
+    _image_view->setTransform(trans);
+    _image_view->fitScene();
 }

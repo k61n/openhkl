@@ -15,18 +15,17 @@
 #include "gui/subframe_experiment/LoggerPanel.h"
 
 #include "gui/MainWin.h"
-#include "gui/actions/Triggers.h"
-#include <QCR/engine/logger.h>
+#include "gui/actions/Actions.h"
 #include <QTreeView>
 
-LoggerPanel::LoggerPanel() : QcrWidget {"Logger"}
+LoggerPanel::LoggerPanel() : QWidget()
 {
     logText = new QTextEdit;
 
     QVBoxLayout* box = new QVBoxLayout(this);
     box->addWidget(logText);
 
-    connect(gLogger, SIGNAL(sigLine(QString)), this, SLOT(slotPrintLog(QString)));
+    // connect(gLogger, SIGNAL(sigLine(QString)), this, SLOT(slotPrintLog(QString)));
 }
 
 void LoggerPanel::slotPrintLog(const QString& line)

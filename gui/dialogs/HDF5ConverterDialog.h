@@ -15,11 +15,10 @@
 #ifndef GUI_DIALOGS_HDF5CONVERTERDIALOG_H
 #define GUI_DIALOGS_HDF5CONVERTERDIALOG_H
 
-#include <QCR/widgets/actions.h>
-#include <QCR/widgets/controls.h>
 #include <QDialog>
 #include <QDialogButtonBox>
 #include <QProgressBar>
+#include <QLineEdit>
 
 //! Dialog to convert selected numors to HDF5 format
 class HDF5ConverterDialog : public QDialog {
@@ -30,9 +29,9 @@ class HDF5ConverterDialog : public QDialog {
     void convert();
     void browseDirectory();
 
-    QcrLineEdit* directory;
-    QcrTextTriggerButton* browse;
-    QcrLineEdit* filename;
+    QLineEdit* directory;
+    QPushButton* browse;
+    QLineEdit* filename;
     QProgressBar* progress;
     QDialogButtonBox* buttons;
 };

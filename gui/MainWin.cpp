@@ -15,7 +15,7 @@
 #include "gui/MainWin.h"
 
 #include "gui/actions/Menus.h"
-#include "gui/actions/Triggers.h"
+#include "gui/actions/Actions.h"
 #include "gui/utility/SideBar.h"
 #include <QApplication>
 #include <QCloseEvent>
@@ -53,22 +53,22 @@ MainWin::MainWin()
     _side_bar = new SideBar(main_widget);
     main_layout->addWidget(_side_bar);
 
-    _home = new SubframeHome;
-    _experiment = new SubframeExperiment;
-    _finder = new PeakFinderFrame;
-    _filter = new SubframeFilterPeaks;
-    _indexer = new SubframeAutoIndexer;
-    _predictor = new SubframePredictPeaks;
-    _merger = new SubframeMergedPeaks;
+    home = new SubframeHome;
+    experiment = new SubframeExperiment;
+    finder = new PeakFinderFrame;
+    filter = new SubframeFilterPeaks;
+    indexer = new SubframeAutoIndexer;
+    predictor = new SubframePredictPeaks;
+    merger = new SubframeMergedPeaks;
 
     _layout_stack = new QStackedWidget(main_widget);
-    _layout_stack->addWidget(_home);
-    _layout_stack->addWidget(_experiment);
-    _layout_stack->addWidget(_finder);
-    _layout_stack->addWidget(_filter);
-    _layout_stack->addWidget(_indexer);
-    _layout_stack->addWidget(_predictor);
-    _layout_stack->addWidget(_merger);
+    _layout_stack->addWidget(home);
+    _layout_stack->addWidget(experiment);
+    _layout_stack->addWidget(finder);
+    _layout_stack->addWidget(filter);
+    _layout_stack->addWidget(indexer);
+    _layout_stack->addWidget(predictor);
+    _layout_stack->addWidget(merger);
     _layout_stack->setCurrentIndex(0);
 
     main_layout->addWidget(_layout_stack);
@@ -83,33 +83,27 @@ MainWin::~MainWin() {}
 void MainWin::refresh()
 {
     bool hasData = false;
-    menus_->export_->setEnabled(hasData);
-    menus_->experiment_->setEnabled(hasData);
-    menus_->file_->setEnabled(true);
-    menus_->help_->setEnabled(true);
-    menus_->options_->setEnabled(true);
-    menus_->view_->setEnabled(true);
 }
 
 void MainWin::onDataChanged()
 {
-    _experiment->image->dataChanged();
-    _experiment->properties->dataChanged();
+    experiment->getImage()->dataChanged();
+    experiment->getProperty()->dataChanged();
 }
 
 void MainWin::onExperimentChanged()
 {
-    _experiment->properties->experimentChanged();
+    experiment->getProperty()->experimentChanged();
 }
 
 void MainWin::onPeaksChanged()
 {
-    _experiment->properties->peaksChanged();
+    experiment->getProperty()->peaksChanged();
 }
 
 void MainWin::onUnitCellChanged()
 {
-    _experiment->properties->unitCellChanged();
+    experiment->getProperty()->unitCellChanged();
 }
 
 void MainWin::resetViews()
@@ -138,7 +132,7 @@ void MainWin::readSettings()
 void MainWin::closeEvent(QCloseEvent* event)
 {
     saveSettings();
-    _home->saveSettings();
+    home->saveSettings();
     delete triggers;
     delete menus_;
     gGui = nullptr;

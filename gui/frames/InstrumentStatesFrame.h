@@ -15,12 +15,14 @@
 #ifndef GUI_FRAMES_INSTRUMENTSTATESFRAME_H
 #define GUI_FRAMES_INSTRUMENTSTATESFRAME_H
 
-#include <QCR/widgets/controls.h>
-#include <QCR/widgets/views.h>
+#include <QFrame>
 #include <QListWidget>
+#include <QSpinBox>
+#include <QLabel>
+#include <QDoubleSpinBox>
 
 //! Frame which shows the instrument states
-class InstrumentStatesFrame : public QcrFrame {
+class InstrumentStatesFrame : public QFrame {
  public:
     InstrumentStatesFrame();
 
@@ -28,47 +30,48 @@ class InstrumentStatesFrame : public QcrFrame {
     void selectedDataChanged(int selectedData);
     void selectedFrameChanged(int selectedFrame);
 
-    QcrSpinBox* frameIndex;
+    QSpinBox* frameIndex;
     QSlider* frameSlider;
     QListWidget* data;
     QLabel* refinedLabel;
-    QcrDoubleSpinBox* samplePosX;
-    QcrDoubleSpinBox* samplePosY;
-    QcrDoubleSpinBox* samplePosZ;
 
-    QcrDoubleSpinBox* sampleOri_00;
-    QcrDoubleSpinBox* sampleOri_01;
-    QcrDoubleSpinBox* sampleOri_02;
-    QcrDoubleSpinBox* sampleOri_10;
-    QcrDoubleSpinBox* sampleOri_11;
-    QcrDoubleSpinBox* sampleOri_12;
-    QcrDoubleSpinBox* sampleOri_20;
-    QcrDoubleSpinBox* sampleOri_21;
-    QcrDoubleSpinBox* sampleOri_22;
+    QDoubleSpinBox* samplePosX;
+    QDoubleSpinBox* samplePosY;
+    QDoubleSpinBox* samplePosZ;
 
-    QcrDoubleSpinBox* sampleOff_00;
-    QcrDoubleSpinBox* sampleOff_01;
-    QcrDoubleSpinBox* sampleOff_02;
-    QcrDoubleSpinBox* sampleOff_10;
-    QcrDoubleSpinBox* sampleOff_11;
-    QcrDoubleSpinBox* sampleOff_12;
-    QcrDoubleSpinBox* sampleOff_20;
-    QcrDoubleSpinBox* sampleOff_21;
-    QcrDoubleSpinBox* sampleOff_22;
+    QDoubleSpinBox* sampleOri_00;
+    QDoubleSpinBox* sampleOri_01;
+    QDoubleSpinBox* sampleOri_02;
+    QDoubleSpinBox* sampleOri_10;
+    QDoubleSpinBox* sampleOri_11;
+    QDoubleSpinBox* sampleOri_12;
+    QDoubleSpinBox* sampleOri_20;
+    QDoubleSpinBox* sampleOri_21;
+    QDoubleSpinBox* sampleOri_22;
 
-    QcrDoubleSpinBox* detectorOri_00;
-    QcrDoubleSpinBox* detectorOri_01;
-    QcrDoubleSpinBox* detectorOri_02;
-    QcrDoubleSpinBox* detectorOri_10;
-    QcrDoubleSpinBox* detectorOri_11;
-    QcrDoubleSpinBox* detectorOri_12;
-    QcrDoubleSpinBox* detectorOri_20;
-    QcrDoubleSpinBox* detectorOri_21;
-    QcrDoubleSpinBox* detectorOri_22;
+    QDoubleSpinBox* sampleOff_00;
+    QDoubleSpinBox* sampleOff_01;
+    QDoubleSpinBox* sampleOff_02;
+    QDoubleSpinBox* sampleOff_10;
+    QDoubleSpinBox* sampleOff_11;
+    QDoubleSpinBox* sampleOff_12;
+    QDoubleSpinBox* sampleOff_20;
+    QDoubleSpinBox* sampleOff_21;
+    QDoubleSpinBox* sampleOff_22;
 
-    QcrDoubleSpinBox* beamX;
-    QcrDoubleSpinBox* beamY;
-    QcrDoubleSpinBox* beamZ;
+    QDoubleSpinBox* detectorOri_00;
+    QDoubleSpinBox* detectorOri_01;
+    QDoubleSpinBox* detectorOri_02;
+    QDoubleSpinBox* detectorOri_10;
+    QDoubleSpinBox* detectorOri_11;
+    QDoubleSpinBox* detectorOri_12;
+    QDoubleSpinBox* detectorOri_20;
+    QDoubleSpinBox* detectorOri_21;
+    QDoubleSpinBox* detectorOri_22;
+
+    QDoubleSpinBox* beamX;
+    QDoubleSpinBox* beamY;
+    QDoubleSpinBox* beamZ;
 };
 
 #endif // GUI_FRAMES_INSTRUMENTSTATESFRAME_H

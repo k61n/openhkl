@@ -39,11 +39,11 @@ void PropertyPanel::setCurrent(int index)
 
 void PropertyPanel::dataChanged()
 {
-    bool enabled = gSession->selectedExperimentNum() >= 0;
-    if (enabled)
-        enabled = !gSession->selectedExperiment()->getDataNames().empty();
-    setTabEnabled((int)tab::DATA, enabled);
-    if (enabled)
+    // bool enabled = gSession->selectedExperimentNum() >= 0;
+    // if (enabled)
+    //     enabled = !gSession->selectedExperiment()->getDataNames().empty();
+    // setTabEnabled((int)tab::DATA, enabled);
+    if (!gSession->selectedExperiment()->getDataNames().empty())
         _data->refreshInput();
 }
 

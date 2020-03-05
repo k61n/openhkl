@@ -25,14 +25,14 @@
 #include <QHBoxLayout>
 #include <QVBoxLayout>
 
-GlobalOffsetsFrame::GlobalOffsetsFrame(offsetMode mode) : QcrFrame {"adhoc_detectorOffsets"}
+GlobalOffsetsFrame::GlobalOffsetsFrame(offsetMode mode) : QFrame()
 {
     if (gSession->selectedExperimentNum() < 0) {
-        gLogger->log("[ERROR] No experiment selected");
+        // gLogger->log("[ERROR] No experiment selected");
         return;
     }
     if (gSession->selectedExperiment()->getDataNames().empty()) {
-        gLogger->log("[ERROR] No data loaded to selected experiment");
+        // gLogger->log("[ERROR] No data loaded to selected experiment");
         return;
     }
 
@@ -61,11 +61,18 @@ void GlobalOffsetsFrame::layout()
     left->addWidget(selectedData);
     QGroupBox* fitparams = new QGroupBox("Fit parameters");
     QFormLayout* form = new QFormLayout(fitparams);
-    iterations = new QcrSpinBox("adhoc_detectorOffsetsIterations", new QcrCell<int>(1000), 5);
+
+    iterations = new QSpinBox();
+    iterations->setMaximum(1000);
+    iterations->setValue(5);
     form->addRow("#iterations", iterations);
-    tolerance =
-        new QcrDoubleSpinBox("adhoc_detectorOffsetsTolerance", new QcrCell<double>(0.0), 6, 4);
+
+    tolerance = new QDoubleSpinBox();
+    tolerance->setMaximum(100);
+    tolerance->setDecimals(6);
+    tolerance->setValue(4);
     form->addRow("tolerance", tolerance);
+
     left->addWidget(fitparams);
     above->addLayout(left);
     offsets = new QTableWidget;
@@ -83,7 +90,7 @@ void GlobalOffsetsFrame::layout()
         1, new QTableWidgetItem("Offset (" + QString(QChar(0x00B0)) + ")"));
     // offsets->setItemDelegateForColumn(1, new DoubleItemDelegate());
 
-    tolerance->setCellValue(1.0e-6);
+    tolerance->setValue(1.0e-6);
 
     above->addWidget(offsets);
     whole->addLayout(above);
@@ -104,7 +111,7 @@ void GlobalOffsetsFrame::fit()
 
     // No item selected, just return
     if (selected_items.empty()) {
-        gLogger->log("[ERROR] No data selected for the fit.");
+        // gLogger->log("[ERROR] No data selected for the fit.");
         return;
     }
 
@@ -124,7 +131,7 @@ void GlobalOffsetsFrame::fit()
 
         // The fit failed for whatever reason, return
         if (!fit_results.success) {
-            gLogger->log("[ERROR] Could not fit the detector offsets.");
+            // gLogger->log("[ERROR] Could not fit the detector offsets.");
             return;
         }
 
@@ -147,7 +154,7 @@ void GlobalOffsetsFrame::fit()
 
         // The fit failed for whatever reason, return
         if (!fit_results.success) {
-            gLogger->log("[ERROR] Could not fit the sample offsets.");
+            // gLogger->log("[ERROR] Could not fit the sample offsets.");
             return;
         }
 
@@ -163,7 +170,7 @@ void GlobalOffsetsFrame::fit()
         xValues = QVector<double>::fromStdVector(iterationsval);
         yValues = QVector<double>::fromStdVector(costFunction);
     } else {
-        gLogger->log("[ERROR] invalide offset mode. Should be DETECTOR or SAMPLE");
+        // gLogger->log("[ERROR] invalide offset mode. Should be DETECTOR or SAMPLE");
         return;
     }
 
