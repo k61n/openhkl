@@ -94,16 +94,14 @@ PeakFinder::PeakFinder()
     , _framesBegin(-1)
     , _framesEnd(-1)
 {
-    ConvolverFactory convolver_factory;
-    _convolver.reset(convolver_factory.create("annular", {{"r1", 5.}, {"r2", 10.}, {"r3", 15.}}));
+     _convolver.reset(ConvolverFactory{}.create("annular", {{"r1", 5.}, {"r2", 10.}, {"r3", 15.}}));
 }
 
 std::vector<Peak3D*> PeakFinder::currentPeaks()
 {
     std::vector<Peak3D*> output;
-    for (sptrPeak3D peak : _current_peaks) {
+    for (sptrPeak3D peak : _current_peaks)
         output.push_back(peak.get());
-    }
     return output;
 }
 
@@ -253,9 +251,6 @@ void PeakFinder::findPrimaryBlobs(
     int nrows = dectector->nRows();
     int ncols = dectector->nCols();
 
-    // used to pass to progress handler
-    double progress = 0.0;
-
     // Map of Blobs (key : label, value : blob)
     blobs.clear();
 
@@ -377,10 +372,8 @@ void PeakFinder::findPrimaryBlobs(
             }
         }
 
-        progress = static_cast<double>(nframes) / static_cast<double>(data.nFrames()) * 100.0;
-
         if (_handler)
-            _handler->setProgress(progress);
+            _handler->setProgress(100.0 * nframes / (end-begin+1));
     }
 
     if (_handler) {
@@ -591,7 +584,7 @@ void PeakFinder::mergeEquivalentBlobs(
  */
 void PeakFinder::find(DataList numors)
 {
-    qDebug("PeakFinder::find ... with %li numors\n", numors.size());
+    qDebug() << "PeakFinder::find ... with " << numors.size() << " numors";
     _current_peaks.clear();
     _current_data = numors;
 
@@ -637,7 +630,7 @@ void PeakFinder::find(DataList numors)
         }
 
         // find blobs within the current frame range
-        qDebug("PeakFinder::find: findPrimary\n");
+        qDebug() << "PeakFinder::find: findPrimary from " << loop_begin << " to " << loop_end;
         findPrimaryBlobs(*numor, local_blobs, local_equivalences, loop_begin, loop_end);
 
         // merge adjacent blobs
@@ -645,13 +638,13 @@ void PeakFinder::find(DataList numors)
         std::cout << local_blobs.size() << std::endl;
         mergeEquivalentBlobs(local_blobs, local_equivalences);
 
-        qDebug("PeakFinder::find: blob loop\n");
+        qDebug("PeakFinder::find: blob loop");
         // merge the blobs into the global set
         for (auto&& blob : local_blobs)
             blobs.insert(blob);
 
         mergeCollidingBlobs(*numor, blobs);
-        qDebug("PeakFinder::find: Found blob collisions\n");
+        qDebug("PeakFinder::find: Found blob collisions");
 
         if (_handler) {
             _handler->setStatus("Blob finding complete.");

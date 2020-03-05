@@ -81,7 +81,7 @@ UnitCellWidget::UnitCellWidget(nsx::sptrUnitCell cell, const QString& /*name*/)
     QHBoxLayout* horizontal = new QHBoxLayout();
     QGroupBox* matrixb = new QGroupBox("B matrix (row form)");
     QGridLayout* bmatrix = new QGridLayout(matrixb);
-    Eigen::Matrix3d matrix_u = unitCell_->orientation();
+    // Eigen::Matrix3d matrix_u = unitCell_->orientation();
     // Eigen::Matrix3d matrix_b = unitCell_->reciprocalBasis() * matrix_u;
 
     QDoubleSpinBox* b00 = new QDoubleSpinBox();
