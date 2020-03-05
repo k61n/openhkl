@@ -1057,7 +1057,7 @@ void RefinerDialog::refine()
             std::vector<nsx::Peak3D*> temp_peaks = peak_collection->getPeakList();
 
             for (nsx::Peak3D* peak : temp_peaks) {
-                if (peak->data() != data)
+                if (peak->dataSet() != data)
                     continue;
                 if (peak->predicted())
                     predicted_peaks.push_back(peak);

@@ -70,7 +70,7 @@ void ShapeLibraryDialog::setUpParametrization(nsx::PeakCollection* peak_collecti
 
     _peaks = peak_collection->getPeakList();
     for (nsx::Peak3D* peak : _peaks)
-        _data.insert(peak->data());
+        _data.insert(peak->dataSet());
 
     Eigen::Matrix3d cov;
     cov.setZero();

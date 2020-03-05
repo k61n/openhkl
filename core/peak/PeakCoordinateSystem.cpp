@@ -27,7 +27,7 @@ namespace nsx {
 PeakCoordinateSystem::PeakCoordinateSystem(Peak3D* peak) : _peak(peak)
 {
     _event = DetectorEvent(peak->shape().center());
-    _state = peak->data()->instrumentStates().interpolate(_event._frame);
+    _state = peak->dataSet()->instrumentStates().interpolate(_event._frame);
     _ki = _state.ki().rowVector();
     _kf = peak->q().rowVector() * _state.sampleOrientationMatrix().transpose() + _ki;
 
@@ -44,7 +44,7 @@ PeakCoordinateSystem::PeakCoordinateSystem(Peak3D* peak) : _peak(peak)
 
 Eigen::Vector3d PeakCoordinateSystem::transform(const DetectorEvent& ev) const
 {
-    auto position = _peak->data()->detector().pixelPosition(ev._px, ev._py);
+    auto position = _peak->dataSet()->detector().pixelPosition(ev._px, ev._py);
     const Eigen::RowVector3d dk = _state.kfLab(position).rowVector() - _kf;
 
 // Kabsch coordinate system

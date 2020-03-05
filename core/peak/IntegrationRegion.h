@@ -47,9 +47,9 @@ class IntegrationRegion {
     //! Reset the integration region (i.e. free memory)
     void reset();
     //! Returns the underlying data stored by the region
-    const PeakData& data() const;
+    const PeakData& peakData() const;
     //! Returns the data stored by the region
-    PeakData& data();
+    PeakData& peakData();
     //! Returns the peak shape used by the region
     const Ellipsoid& shape() const;
     //! Returns the convex hull of the region (e.g. BrillouinZone)

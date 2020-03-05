@@ -480,7 +480,7 @@ void SubframeMergedPeaks::refreshUnmergedTable()
             const int l = hkl[2];
 
             const Eigen::Vector3d& c = unmerged_peak->shape().center();
-            std::string numor = unmerged_peak->data()->filename();
+            std::string numor = unmerged_peak->dataSet()->filename();
             nsx::Intensity I = unmerged_peak->correctedIntensity();
 
             const double intensity = I.value();

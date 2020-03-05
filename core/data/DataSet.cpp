@@ -288,7 +288,7 @@ void DataSet::maskPeaks(PeakList& peaks) const
 {
     for (auto peak : peaks) {
         // peak belongs to another dataset
-        if (peak->data().get() != this)
+        if (peak->dataSet().get() != this)
             continue;
 
         peak->setMasked(false);

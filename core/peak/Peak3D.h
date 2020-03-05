@@ -29,9 +29,9 @@ class IPeakIntegrator;
 class Peak3D {
  public:
     //! Create peak belonging to data without setting a position, shape, or intensity
-    Peak3D(sptrDataSet data);
+    Peak3D(sptrDataSet dataSet);
     //! Create peak belonging to data with given shape
-    Peak3D(sptrDataSet data, const Ellipsoid& shape);
+    Peak3D(sptrDataSet dataSet, const Ellipsoid& shape);
     //! Creat the peak from another peak
     Peak3D(std::shared_ptr<nsx::Peak3D> peak);
 
@@ -122,7 +122,7 @@ class Peak3D {
     //! Returns the predicted q vector of the peak, based on Miller index.
     // unused --- ReciprocalVector qPredicted() const;
     //! Returns the data set to which this peak belongs
-    sptrDataSet data() const { return _data; }
+    sptrDataSet dataSet() const { return _data; }
     //! Sets raw intensity count (from image), with no corrections
     void setRawIntensity(const Intensity& i);
     //! Returns peak center at the given frame

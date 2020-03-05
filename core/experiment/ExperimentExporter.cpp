@@ -337,7 +337,7 @@ bool ExperimentExporter::writePeaks(const std::map<std::string, PeakCollection*>
                 masked[i] = peak->masked();
                 predicted[i] = peak->predicted();
 
-                name = peak->data()->name();
+                name = peak->dataSet()->name();
                 data_names.push_back(name.c_str());
 
                 UnitCell* unit_cell_ptr = peak->unitCell();
