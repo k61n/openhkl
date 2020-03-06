@@ -140,7 +140,7 @@ void SubframeHome::createNew()
 void SubframeHome::loadFromFile()
 {
     QString file_path = QFileDialog::getOpenFileName(
-        this, "Save the current experiment", "", "Address Book (*.nsx);;All Files (*)");
+        this, "Load the current experiment", "", "NSXTool file (*.nsx)");
 
     if (file_path.isEmpty())
         return;
@@ -160,7 +160,7 @@ void SubframeHome::loadFromFile()
 void SubframeHome::saveCurrent()
 {
     QString file_path = QFileDialog::getSaveFileName(
-        this, "Save the current experiment", "", "NSXTool file (*.nsx);;All Files (*)");
+        this, "Save the current experiment", "", "NSXTool file (*.nsx)");
     bool success = gSession->selectedExperiment()->saveToFile(file_path);
 
     if (success) {
@@ -197,9 +197,8 @@ void SubframeHome::_updateLastLoadedList(QString name, QString file_path)
     QStringList temp = {name, file_path};
     _last_imports.prepend(temp);
 
-    if (_last_imports.size() > 5) {
+    if (_last_imports.size() > 5)
         _last_imports.removeLast();
-    }
 
     _updateLastLoadedWidget();
 }
