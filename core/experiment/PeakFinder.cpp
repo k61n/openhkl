@@ -247,15 +247,11 @@ void PeakFinder::findPrimaryBlobs(
         _handler->setProgress(0);
     }
 
-    auto dectector = data.reader()->diffractometer()->detector();
-    int nrows = dectector->nRows();
-    int ncols = dectector->nCols();
-
     // Map of Blobs (key : label, value : blob)
     blobs.clear();
 
-    nrows = data.nRows();
-    ncols = data.nCols();
+    int nrows = data.nRows();
+    int ncols = data.nCols();
 
     // Store labels of current and previous frames.
     std::vector<int> labels(nrows * ncols, 0);
@@ -265,32 +261,17 @@ void PeakFinder::findPrimaryBlobs(
     equivalences.clear();
     equivalences.reserve(100000);
 
-    // Labels of the left and top pixels with respect to current one and the one
-    // above in previous frame
-    int left, top, previous;
-
-    int label;
-    bool newlabel;
-    int index2D = 0;
-
-    // int representing the 8 possible nearest neighbor operations.
-    int code;
-
-    int nframes(0);
-
     // Iterate on all pixels in the image
     // #pragma omp for schedule(dynamic, DYNAMIC_CHUNK)
+    int nframes = 0;
     for (size_t idx = begin; idx < end; ++idx) {
         ++nframes;
 
-        RealMatrix frame_data;
-
-        frame_data = data.frame(idx).cast<double>();
-
+        RealMatrix frame_data = data.frame(idx).cast<double>();
         RealMatrix filtered_frame = _convolver->convolve(frame_data);
 
         // Go the the beginning of data
-        index2D = 0;
+        int index2D = 0;
         for (unsigned int row = 0; row < nrows; ++row) {
             for (unsigned int col = 0; col < ncols; ++col) {
                 // Discard pixel if value < threshold
@@ -300,18 +281,18 @@ void PeakFinder::findPrimaryBlobs(
                     continue;
                 }
 
-                newlabel = false;
-
                 // Gets labels of adjacent pixels
-                left = (col == 0 ? 0 : labels[index2D - 1]);
-                top = (row == 0 ? 0 : labels[index2D - ncols]);
-                previous = (idx == begin ? 0 : labels2[index2D]);
+                int left = (col == 0 ? 0 : labels[index2D - 1]);
+                int top = (row == 0 ? 0 : labels[index2D - ncols]);
+                int previous = (idx == begin ? 0 : labels2[index2D]);
                 // Encode type of config.
-                code = 0;
+                int code = 0;
                 code |= ((left != 0) << 0);
                 code |= ((top != 0) << 1);
                 code |= ((previous != 0) << 2);
 
+                int label = 0;
+                bool newlabel = false;
                 switch (code) {
                     case 0:
                         label = ++_current_label;

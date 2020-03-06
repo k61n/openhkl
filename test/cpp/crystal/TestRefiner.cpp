@@ -36,7 +36,6 @@ TEST_CASE("test/crystal/TestRefiner.cpp", "")
     experiment.addData(dataf);
 
     nsx::sptrProgressHandler progressHandler(new nsx::ProgressHandler);
-    nsx::sptrPeakFinder peakFinder(new nsx::PeakFinder);
 
     auto callback = [progressHandler]() {
         auto log = progressHandler->getLog();
