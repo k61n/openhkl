@@ -107,8 +107,6 @@ class PeakFinder {
     nsx::DataList _current_data;
 };
 
-using sptrPeakFinder = std::shared_ptr<PeakFinder>;
-
 } // namespace nsx
 
 #endif // CORE_ANALYSE_PEAKFINDER_H

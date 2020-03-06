@@ -43,7 +43,7 @@ TEST_CASE("test/crystal/TestQShape.cpp", "")
     experiment.addData(dataf);
 
     nsx::sptrProgressHandler progressHandler(new nsx::ProgressHandler);
-    nsx::sptrPeakFinder peakFinder(new nsx::PeakFinder);
+    nsx::PeakFinder peakFinder;
 
     auto callback = [progressHandler]() {
         auto log = progressHandler->getLog();
@@ -57,21 +57,21 @@ TEST_CASE("test/crystal/TestQShape.cpp", "")
     numors.push_back(dataf);
 
     // propagate changes to peak finder
-    peakFinder->setMinSize(30);
-    peakFinder->setMaxSize(10000);
-    peakFinder->setMaxFrames(10);
+    peakFinder.setMinSize(30);
+    peakFinder.setMaxSize(10000);
+    peakFinder.setMaxFrames(10);
 
     nsx::ConvolverFactory convolver_factory;
     auto convolver = convolver_factory.create("annular", {});
-    peakFinder->setConvolver(std::unique_ptr<nsx::Convolver>(convolver));
+    peakFinder.setConvolver(std::unique_ptr<nsx::Convolver>(convolver));
 
-    peakFinder->setThreshold(15.0);
-    peakFinder->setPeakScale(1.0);
+    peakFinder.setThreshold(15.0);
+    peakFinder.setPeakScale(1.0);
 
-    peakFinder->setHandler(progressHandler);
+    peakFinder.setHandler(progressHandler);
 
-    peakFinder->find(numors);
-    auto found_peaks = peakFinder->currentPeaks();
+    peakFinder.find(numors);
+    auto found_peaks = peakFinder.currentPeaks();
 
     try {
         CHECK(static_cast<int>(found_peaks.size()) >= 0);
