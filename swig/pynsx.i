@@ -178,6 +178,21 @@ using namespace nsx;
     import_array();
 %}
 
+%define ArrayExtendVal(name, T)
+%extend name<T> {
+    T __getitem__(int i) {
+    return (*self)[i];
+    }
+ }
+%enddef
+%define ArrayExtendCRef(name, T)
+%extend name<T> {
+    const T& __getitem__(int i) {
+    return (*self)[i];
+    }
+ }
+%enddef
+
 // eigen.i is found in ../swig/ and contains specific definitions to convert
 // Eigen matrices into Numpy arrays.
 %include <eigen.i>
@@ -225,10 +240,18 @@ using namespace nsx;
 %include "base/utils/Path.h"
 %include "base/utils/ProgressHandler.h"
 
+%ignore nsx::DirectVector::operator[];
 %include "base/geometry/DirectVector.h"
+ArrayExtendVal (DirectVector, double);
+ArrayExtendCRef(DirectVector, double);
+
 %template(DirectVectorList) std::vector<nsx::DirectVector>;
 
+%ignore nsx::ReciprocalVector::operator[];
 %include "base/geometry/ReciprocalVector.h"
+ArrayExtendVal (ReciprocalVector, double);
+ArrayExtendCRef(ReciprocalVector, double);
+
 %template(ReciprocalVectorList) std::vector<nsx::ReciprocalVector>;
 %template(ReciprocalVectorQueue) std::deque<nsx::ReciprocalVector>;
 
@@ -250,8 +273,13 @@ using namespace nsx;
 
 %include "tables/crystal/SymOp.h"
 %template(SymOpList) std::vector<nsx::SymOp>;
+
+%ignore nsx::MillerIndex::operator[];
 %include "tables/crystal/MillerIndex.h"
 %template(MillerIndexList) std::vector<nsx::MillerIndex>;
+ArrayExtendVal (MillerIndex, int);
+ArrayExtendCRef(MillerIndex, int);
+
 %include "tables/crystal/SpaceGroup.h"
 %include "tables/crystal/NiggliReduction.h"
 %include "tables/crystal/UnitCell.h"
