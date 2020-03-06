@@ -6,6 +6,9 @@ import unittest
 class TestBlob3D(unittest.TestCase):
 
     def testBlob(self):
+        '''
+        Construct _one_ ellipsoidal blob, then check whether it is correctly analyzed.
+        '''
 
         blob = nsx.Blob3D()
 
@@ -51,7 +54,6 @@ class TestBlob3D(unittest.TestCase):
         self.assertAlmostEqual(abs(eigVec[0,0]),1.0)
         self.assertAlmostEqual(abs(eigVec[1,1]),1.0)
         self.assertAlmostEqual(abs(eigVec[2,2]),1.0)
-
 
 
 if __name__ == '__main__':
