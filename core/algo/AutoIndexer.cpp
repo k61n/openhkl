@@ -91,6 +91,15 @@ void AutoIndexer::computeFFTSolutions(const std::vector<Peak3D*>& peaks)
     std::vector<Eigen::RowVector3d> tvects = algo::findOnSphere(
         qvects, _params.nVertices, _params.nSolutions, _params.subdiv, _params.maxdim);
 
+    // Need at least 3 t-vectors to form a basis
+    if (tvects.size() < 3) {
+        if (_handler)
+            _handler->log(
+                "Too few lattice planes detected to form a basis: tvects.size() = " +
+                std::to_string(tvects.size()) + " (minimum 3)");
+        throw std::runtime_error("Too few t-vectors to form basis");
+    }
+
     for (int i = 0; i < _params.nSolutions; ++i) {
         for (int j = i + 1; j < _params.nSolutions; ++j) {
             for (int k = j + 1; k < _params.nSolutions; ++k) {
