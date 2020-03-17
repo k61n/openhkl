@@ -28,6 +28,7 @@
 %include <std_shared_ptr.i>
 %include <std_string.i>
 %include <std_vector.i>
+%include <std_array.i>
 %include <typemaps.i>
 
 %template(vector_1d)  std::vector<double>;
@@ -44,7 +45,6 @@
 %shared_ptr(nsx::IDataReader)
 %shared_ptr(nsx::ILLDataReader)
 %shared_ptr(nsx::Peak3D)
-%shared_ptr(nsx::PeakCollection)
 %shared_ptr(nsx::ProgressHandler)
 %shared_ptr(nsx::RawDataReader)
 %shared_ptr(nsx::ShapeLibrary)

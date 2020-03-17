@@ -36,7 +36,9 @@ class PeakFinder {
 
     std::vector<Peak3D*> currentPeaks();
 
-    PeakCollection* peakCollection(const std::string& name);
+    PeakCollection* getPeakCollection();
+    void setPeakCollection(const std::string name, nsx::listtype type,
+                           std::vector<std::shared_ptr<nsx::Peak3D>> peak_list);
 
     DataList currentData() { return _current_data; };
 
@@ -108,6 +110,8 @@ class PeakFinder {
     nsx::PeakList _current_peaks;
 
     nsx::DataList _current_data;
+
+    nsx::PeakCollection _peak_collection;
 };
 
 } // namespace nsx

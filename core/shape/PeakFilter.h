@@ -99,6 +99,7 @@ class PeakFilter {
     const std::array<double, 2>* dRange() const { return &_d_range; };
     //! Set the d range values
     void setDRange(const std::array<double, 2> d_range) { _d_range = d_range; };
+    void setDRange(double dmin, double dmax) { _d_range = {dmin, dmax}; };
 
     //! Return the unit cell name
     const std::string* unitCellName() const { return &_unit_cell; };
@@ -114,6 +115,7 @@ class PeakFilter {
     const std::array<double, 2>* strength() const { return &_strength; };
     //! Set the strength
     void setStrength(const std::array<double, 2> strength) { _strength = strength; };
+    void setStrength(double strmin, double strmax) {_strength = {strmin, strmax}; }
 
     //! Return the significance
     const double* significance() const { return &_significance; };
@@ -121,7 +123,7 @@ class PeakFilter {
     void setSignificance(const double significance) { _significance = significance; };
 
  private:
-    //! The booleans for the filtering
+    
     std::bitset<13> _filter_compute;
     //! The values for range
     std::array<double, 2> _d_range;

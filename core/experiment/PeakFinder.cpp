@@ -92,6 +92,7 @@ PeakFinder::PeakFinder()
     , _maxSize(10000)
     , _maxFrames(10)
     , _framesBegin(-1)
+
     , _framesEnd(-1)
 {
     _convolver.reset(ConvolverFactory {}.create("annular", {{"r1", 5.}, {"r2", 10.}, {"r3", 15.}}));
@@ -105,13 +106,17 @@ std::vector<Peak3D*> PeakFinder::currentPeaks()
     return output;
 }
 
-PeakCollection* PeakFinder::peakCollection(const std::string& name)
+PeakCollection* PeakFinder::getPeakCollection()
 {
-    std::unique_ptr<nsx::PeakCollection>
-        collection(new nsx::PeakCollection(name, nsx::listtype::FOUND));
-    collection->populate(currentPeaks());
-    // return collection.get();
-    return collection.get();
+  PeakCollection* ptr = &_peak_collection;
+  return ptr;
+}
+
+void PeakFinder::setPeakCollection(const std::string name, nsx::listtype type,
+                                    std::vector<std::shared_ptr<nsx::Peak3D>> peak_list)
+{
+    _peak_collection = PeakCollection(name, type);
+    _peak_collection.populate(peak_list);
 }
 
 void PeakFinder::setHandler(const sptrProgressHandler& handler)
@@ -700,6 +705,8 @@ void PeakFinder::find(DataList numors)
         _handler->setStatus("Peak finding completed.");
         _handler->setProgress(100);
     }
+    std::string name = "Found peaks";
+    setPeakCollection(name, nsx::listtype::FOUND, _current_peaks);
     qDebug("exit PeakFinder::find\n");
 }
 

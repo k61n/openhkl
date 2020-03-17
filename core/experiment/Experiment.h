@@ -23,6 +23,7 @@
 #include "core/shape/PeakFilter.h"
 #include "core/statistics/MergedData.h"
 #include "tables/crystal/UnitCell.h"
+#include "core/shape/PeakCollection.h"
 
 namespace nsx {
 
@@ -72,9 +73,6 @@ class Experiment {
     //! Add a peak collection
     void addPeakCollection(
         const std::string& name, const listtype type, const std::vector<nsx::Peak3D*> peaks);
-    // Add a peak collection found by PeakFinder. Mostly for Swig interface
-    // (I don't want to have to define listtype in swig)
-    void addFoundPeakCollection(const std::string& name, PeakCollection* collection);
     //! Returns true if the experiment has a data
     bool hasPeakCollection(const std::string& name) const;
     //! Returns the peak list denoted by the name

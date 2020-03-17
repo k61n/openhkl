@@ -66,10 +66,6 @@ finder.setThreshold(80.0)
 
 # find the peaks
 finder.find([data])
-peaks = finder.peakCollection("strep")
-
-# number of peaks found
-print("...peakfinder found", peaks.numberOfPeaks(), "peaks")
 
 ##############################################################################
 ## Integrate the peaks
@@ -90,10 +86,10 @@ integrator.setBkgEnd(background_upper)
 
 expt.integrateFoundPeaks(integrator_type)
 
-print("...integration complete")
+# the peak collection
+peak_collection = finder.getPeakCollection()
 
-set_trace()
-expt.addFoundPeakCollection(peak_collection_name, finder.peakCollection(peak_collection_name))
+print("...integration complete")
 
 ##############################################################################
 ## Filter the peaks
@@ -108,11 +104,9 @@ max_d_range = 50.0
 
 # set parameters and do the filtering
 filter = expt.peakFilter()
-filter.setDRange([min_d_range, max_d_range])
-filter.setStrength([min_strength, max_strength])
+filter.setDRange(min_d_range, max_d_range)
+filter.setStrength(min_strength, max_strength)
 
-# the peak collection
-peak_collection = expt.getPeakCollection(peak_collection_name)
 filter.resetFiltering(peak_collection)
 filter.filter(peak_collection)
 
