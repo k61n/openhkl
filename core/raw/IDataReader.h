@@ -26,7 +26,7 @@ namespace nsx {
 class IDataReader {
  public:
     IDataReader(const std::string& filename, Diffractometer* diffractometer);
-    virtual ~IDataReader() = 0;
+    virtual ~IDataReader();
 
     //! Open the file
     virtual void open() = 0;
@@ -83,11 +83,11 @@ class IDataReader {
     std::string name() const;
 
  protected:
-    IDataReader() = delete;
+//    IDataReader() = delete;
 
-    IDataReader(const IDataReader& other) = delete;
+//    IDataReader(const IDataReader& other) = delete;
 
-    IDataReader& operator=(const IDataReader& other) = delete;
+//    IDataReader& operator=(const IDataReader& other) = delete;
 
     //! Stores the metadata
     MetaData _metadata;

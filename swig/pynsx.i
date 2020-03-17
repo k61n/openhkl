@@ -44,6 +44,7 @@
 %shared_ptr(nsx::IDataReader)
 %shared_ptr(nsx::ILLDataReader)
 %shared_ptr(nsx::Peak3D)
+%shared_ptr(nsx::PeakCollection)
 %shared_ptr(nsx::ProgressHandler)
 %shared_ptr(nsx::RawDataReader)
 %shared_ptr(nsx::ShapeLibrary)
@@ -110,6 +111,7 @@ using Eigen::Quaterniond;
 #include "core/integration/Blob3D.h"
 #include "core/statistics/MergedPeak.h"
 #include "core/shape/PeakFilter.h"
+#include "core/shape/PeakCollection.h"
 #include "core/experiment/PeakFinder.h"
 #include "core/convolve/AnnularConvolver.h"
 #include "core/convolve/AtomicConvolver.h"
@@ -354,6 +356,7 @@ ArrayExtendCRef(MillerIndex, int);
 %include "core/integration/Blob3D.h"
 %include "core/shape/PeakFilter.h"
 %include "core/statistics/MergedData.h"
+%include "core/shape/PeakCollection.h"
 %include "core/experiment/PeakFinder.h"
 %template(MergedPeakSet) std::set<nsx::MergedPeak>;
 

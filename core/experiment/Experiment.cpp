@@ -247,6 +247,12 @@ void Experiment::addPeakCollection(
     _peak_collections.insert(std::make_pair(name, std::move(ptr)));
 }
 
+void Experiment::addFoundPeakCollection(const std::string& name, PeakCollection* collection)
+{
+    std::unique_ptr<PeakCollection> new_ptr(collection);
+    _peak_collections.insert(std::make_pair(name, std::move(new_ptr)));
+}
+
 bool Experiment::hasPeakCollection(const std::string& name) const
 {
     auto peaks = _peak_collections.find(name);

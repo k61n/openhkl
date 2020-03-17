@@ -105,6 +105,15 @@ std::vector<Peak3D*> PeakFinder::currentPeaks()
     return output;
 }
 
+PeakCollection* PeakFinder::peakCollection(const std::string& name)
+{
+    std::unique_ptr<nsx::PeakCollection>
+        collection(new nsx::PeakCollection(name, nsx::listtype::FOUND));
+    collection->populate(currentPeaks());
+    return collection.get();
+
+}
+
 void PeakFinder::setHandler(const sptrProgressHandler& handler)
 {
     _handler = handler;
