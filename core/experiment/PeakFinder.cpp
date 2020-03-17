@@ -110,8 +110,8 @@ PeakCollection* PeakFinder::peakCollection(const std::string& name)
     std::unique_ptr<nsx::PeakCollection>
         collection(new nsx::PeakCollection(name, nsx::listtype::FOUND));
     collection->populate(currentPeaks());
+    // return collection.get();
     return collection.get();
-
 }
 
 void PeakFinder::setHandler(const sptrProgressHandler& handler)
