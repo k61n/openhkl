@@ -260,5 +260,12 @@ void AutoIndexer::refineSolutions(const std::vector<Peak3D*>& peaks)
     }
 }
 
+void AutoIndexer::printSolutions()
+{
+    for (auto solution : _solutions) {
+        std::cout << solution.second;
+        solution.first->printParams();
+    }
+}
 
 } // namespace nsx

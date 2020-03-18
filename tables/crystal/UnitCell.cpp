@@ -263,6 +263,17 @@ void UnitCell::printSelf(std::ostream& os) const
     }
 }
 
+void UnitCell::printParams()
+{
+    auto c = character();
+    std::cout << std::fixed << std::setw(10) << std::setprecision(5) << c.a
+              << std::fixed << std::setw(10) << std::setprecision(5) << c.b
+              << std::fixed << std::setw(10) << std::setprecision(5) << c.c
+              << std::fixed << std::setw(10) << std::setprecision(5) << c.alpha / deg
+              << std::fixed << std::setw(10) << std::setprecision(5) << c.beta / deg
+              << std::fixed << std::setw(10) << std::setprecision(5) << c.gamma / deg << std::endl;
+}
+
 std::ostream& operator<<(std::ostream& os, const UnitCell& uc)
 {
     uc.printSelf(os);

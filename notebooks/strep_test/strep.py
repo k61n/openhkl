@@ -45,7 +45,7 @@ data = nsx.DataSet(reader)
 expt.addData(data)
 
 detector = data.reader().diffractometer().detector()
-print("data loaded")
+print("data loaded\n")
 
 ################################################################################
 ## find the peaks and their position on the map
@@ -66,6 +66,7 @@ finder.setThreshold(80.0)
 
 # find the peaks
 finder.find([data])
+print("...peak finding complete\n")
 
 ##############################################################################
 ## Integrate the peaks
@@ -89,7 +90,7 @@ expt.integrateFoundPeaks(integrator_type)
 # the peak collection
 peak_collection = finder.getPeakCollection()
 
-print("...integration complete")
+print("...integration complete\n")
 
 ##############################################################################
 ## Filter the peaks
@@ -110,4 +111,38 @@ filter.setStrength(min_strength, max_strength)
 filter.resetFiltering(peak_collection)
 filter.filter(peak_collection)
 
-print("...filtering complete")
+# Peak counts
+npeaks = peak_collection.numberOfPeaks()
+ncaught = peak_collection.numberCaughtByFilter()
+print(str(npeaks) + " peaks")
+print(str(ncaught) + " peaks caught by filter")
+
+print("...filtering complete\n")
+
+##############################################################################
+## Finding the unit cell
+##############################################################################
+print("Autoindexing...")
+
+# Autoindexer parameters
+max_dim = 200.0
+n_solutions = 10
+n_vertices = 1000
+n_subdiv = 30
+indexing_tol = 0.2
+min_vol = 100.0
+
+autoindexer_params = nsx.IndexerParameters()
+autoindexer_params.maxdim = max_dim;
+autoindexer_params.nSolutions = n_solutions;
+autoindexer_params.nVertices = n_vertices;
+autoindexer_params.subdiv = n_subdiv;
+autoindexer_params.indexingTolerance = indexing_tol;
+autoindexer_params.minUnitCellVolume = min_vol
+
+auto_indexer = expt.autoIndexer()
+auto_indexer.setParameters(autoindexer_params)
+auto_indexer.autoIndex(peak_collection.getPeakList())
+auto_indexer.rankSolutions()
+auto_indexer.printSolutions()
+print("...autoindexing complete\n")

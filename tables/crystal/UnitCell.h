@@ -135,6 +135,9 @@ class UnitCell {
     //! Print into a stream
     void printSelf(std::ostream& os) const;
 
+    //! Print a summary of the cell parameters
+    void printParams();
+
     //! Returns the Z value for the unit cell
     unsigned int z() const;
 
