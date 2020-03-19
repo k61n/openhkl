@@ -24,7 +24,7 @@ class Parameters:
                              'background_upper' : 6.0 }
 
         self.filter =      { 'min_strength'     : 1.0,
-                             'max_strength'     : 1.0e8,
+                             'max_strength'     : 1.0e6,
                              'min_d_range'      : 1.5,
                              'max_d_range'      : 50 }
 
