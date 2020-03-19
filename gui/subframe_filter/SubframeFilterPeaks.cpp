@@ -528,21 +528,20 @@ void SubframeFilterPeaks::grabFilterParameters()
     _d_range_max->setValue(filter->dRange()->at(1));
     _significance_level->setValue(*(filter->significance()));
 
-    std::bitset<13> booleans = *(filter->booleans());
-    _selected->setChecked(bool(booleans[0]));
-    _masked->setChecked(bool(booleans[1]));
-    _predicted->setChecked(bool(booleans[2]));
-    _indexed_peaks->setChecked(bool(booleans[3]));
-    _extinct_spacegroup->setChecked(bool(booleans[4]));
-    _remove_overlaping->setChecked(bool(booleans[5]));
-    _keep_complementary->setChecked(bool(booleans[6]));
+    _selected->setChecked(filter->getFilterSelected());
+    _masked->setChecked(filter->getFilterMasked());
+    _predicted->setChecked(filter->getFilterPredicted());
+    _indexed_peaks->setChecked(filter->getFilterIndexed());
+    _extinct_spacegroup->setChecked(filter->getFilterExtinct());
+    _remove_overlaping->setChecked(filter->getFilterOverlapping());
+    _keep_complementary->setChecked(filter->getFilterComplementary());
 
-    _state_box->checker(bool(booleans[7]));
-    _unit_cell_box->checker(bool(booleans[8]));
-    _strength_box->checker(bool(booleans[9]));
-    _d_range_box->checker(bool(booleans[10]));
-    _sparse_box->checker(bool(booleans[11]));
-    _merge_box->checker(bool(booleans[12]));
+    _state_box->checker(filter->getFilterState());
+    _unit_cell_box->checker(filter->getFilterIndexTol());
+    _strength_box->checker(filter->getFilterStrength());
+    _d_range_box->checker(filter->getFilterDRange());
+    _sparse_box->checker(filter->getFilterSparse());
+    _merge_box->checker(filter->getFilterSignificance());
 }
 
 void SubframeFilterPeaks::setFilterParameters() const
@@ -553,39 +552,37 @@ void SubframeFilterPeaks::setFilterParameters() const
     nsx::PeakFilter* filter =
         gSession->experimentAt(_exp_combo->currentIndex())->experiment()->peakFilter();
 
-    std::bitset<13> booleans;
     if (_selected->isChecked())
-        booleans.set(0);
+        filter->setFilterSelected(true);
     if (_masked->isChecked())
-        booleans.set(1);
+        filter->setFilterMasked(true);
     if (_predicted->isChecked())
-        booleans.set(2);
+        filter->setFilterPredicted(true);
     if (_indexed_peaks->isChecked())
-        booleans.set(3);
+        filter->setFilterIndexed(true);
     if (_extinct_spacegroup->isChecked())
-        booleans.set(4);
+        filter->setFilterExtinct(true);
     if (_remove_overlaping->isChecked())
-        booleans.set(5);
+        filter->setFilterOverlapping(true);
     if (_keep_complementary->isChecked())
-        booleans.set(6);
+        filter->setFilterComplementary(true);
 
     if (_state_box->checked())
-        booleans.set(7);
+        filter->setFilterState(true);
     if (_unit_cell_box->checked())
-        booleans.set(8);
+        filter->setFilterIndexTol(true);
     if (_strength_box->checked())
-        booleans.set(9);
+        filter->setFilterStrength(true);
     if (_d_range_box->checked())
-        booleans.set(10);
+        filter->setFilterDRange(true);
     if (_sparse_box->checked())
-        booleans.set(11);
+        filter->setFilterSparse(true);
     if (_merge_box->checked())
-        booleans.set(12);
+        filter->setFilterSignificance(true);
 
     const std::array<double, 2> d_range {_d_range_min->value(), _d_range_max->value()};
     const std::array<double, 2> strength {_strength_min->value(), _strength_max->value()};
 
-    filter->setBooleans(booleans);
     filter->setUnitCellTolerance(_tolerance->value());
     filter->setSignificance(_significance_level->value());
     filter->setDRange(d_range);

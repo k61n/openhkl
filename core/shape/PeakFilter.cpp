@@ -34,13 +34,14 @@ namespace nsx {
 
 PeakFilter::PeakFilter()
 {
-    _filter_compute.set(0);
     _unit_cell = "";
     _unit_cell_tolerance = 0.2;
     _strength = {1.0, 1000000.};
     _d_range = {1.5, 50.0};
     _significance = 0.9900;
     _sparse = 100;
+    _filter_params = {false, false, false, false, false, false, false, false,
+                      false, false, false, false, false};
 }
 
 void PeakFilter::filterSignificance(PeakCollection* peak_collection) const
@@ -363,43 +364,43 @@ void PeakFilter::filterHasUnitCell(PeakCollection* peak_collection) const
 
 void PeakFilter::filter(PeakCollection* peak_collection) const
 {
-    if (_filter_compute[7]) {
-        if (_filter_compute[0])
+    if (_filter_params.state) {
+        if (_filter_params.selected)
             filterSelected(peak_collection);
-        if (_filter_compute[1])
+        if (_filter_params.masked)
             filterMasked(peak_collection);
-        if (_filter_compute[2])
+        if (_filter_params.predicted)
             filterPredicted(peak_collection);
     }
 
-    if (_filter_compute[3])
+    if (_filter_params.indexed)
         filterIndexed(peak_collection);
 
-    if (_filter_compute[8]) {
+    if (_filter_params.index_tol) {
         if (!(_unit_cell == "")) {
             filterIndexTolerance(peak_collection);
         }
     }
 
-    if (_filter_compute[9])
+    if (_filter_params.strength)
         filterStrength(peak_collection);
 
-    if (_filter_compute[10])
+    if (_filter_params.d_range)
         filterDRange(peak_collection);
 
-    if (_filter_compute[4])
+    if (_filter_params.extinct)
         filterExtincted(peak_collection);
 
-    if (_filter_compute[11])
+    if (_filter_params.sparse)
         filterSparseDataSet(peak_collection);
 
-    if (_filter_compute[12])
+    if (_filter_params.significance)
         filterSignificance(peak_collection);
 
-    if (_filter_compute[5])
+    if (_filter_params.overlapping)
         filterOverlapping(peak_collection);
 
-    if (_filter_compute[6])
+    if (_filter_params.complementary)
         filterComplementary(peak_collection);
 }
 
