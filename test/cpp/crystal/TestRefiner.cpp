@@ -102,10 +102,8 @@ TEST_CASE("test/crystal/TestRefiner.cpp", "")
     // #########################################################
     // Filter the peaks
     nsx::PeakFilter* peak_filter = experiment.peakFilter();
-    std::bitset<13> booleans;
-    booleans.set(10);
     const std::array<double, 2> d_range {1.5, 50};
-    peak_filter->setBooleans(booleans);
+    peak_filter->setFilterDRange(true);
     peak_filter->setDRange(d_range);
 
     nsx::PeakCollection* found_collection = experiment.getPeakCollection("found_peaks");

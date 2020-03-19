@@ -22,6 +22,11 @@ namespace nsx {
 
 //! Class to remove "bad" peaks based on various critera.
 
+struct FilterParameters {
+    bool selected, masked, predicted, indexed, index_tol, state, strength, d_range,
+        extinct, sparse, significance, overlapping, complementary;
+};
+
 class PeakFilter {
 
  public:
@@ -29,6 +34,35 @@ class PeakFilter {
     PeakFilter();
 
  public:
+    //! Set filter parameters
+    void setFilterSelected(bool val) { _filter_params.selected = val; };
+    void setFilterMasked(bool val) { _filter_params.masked = val; };
+    void setFilterPredicted(bool val) { _filter_params.predicted = val; };
+    void setFilterIndexed(bool val) { _filter_params.indexed = val; };
+    void setFilterIndexTol(bool val) { _filter_params.index_tol = val; };
+    void setFilterState(bool val) { _filter_params.state = val; };
+    void setFilterStrength(bool val) { _filter_params.strength = val; };
+    void setFilterDRange(bool val) { _filter_params.d_range = val; };
+    void setFilterExtinct(bool val) { _filter_params.extinct = val; };
+    void setFilterSparse(bool val) { _filter_params.sparse = val; };
+    void setFilterSignificance(bool val) { _filter_params.significance = val; };
+    void setFilterOverlapping(bool val) { _filter_params.overlapping = val; };
+    void setFilterComplementary(bool val) { _filter_params.complementary = val; };
+
+    bool getFilterSelected() { return _filter_params.selected; };
+    bool getFilterMasked() { return _filter_params.masked; };
+    bool getFilterPredicted() { return _filter_params.predicted; };
+    bool getFilterIndexed() { return _filter_params.indexed; };
+    bool getFilterIndexTol() { return _filter_params.index_tol; };
+    bool getFilterState() { return _filter_params.state; };
+    bool getFilterStrength() { return _filter_params.strength; };
+    bool getFilterDRange() { return _filter_params.d_range; };
+    bool getFilterExtinct() { return _filter_params.extinct; };
+    bool getFilterSparse() { return _filter_params.sparse; };
+    bool getFilterSignificance() { return _filter_params.significance; };
+    bool getFilterOverlapping() { return _filter_params.overlapping; };
+    bool getFilterComplementary() { return _filter_params.complementary; };
+
     //! Filter peaks that are complementary to the given peaks
     void filterComplementary(PeakCollection* peak_collection) const;
 
@@ -90,11 +124,6 @@ class PeakFilter {
     //! Reset filtering
     void resetFiltering(PeakCollection* peak_collection) const;
 
-    //! Return the booleans
-    const std::bitset<13>* booleans() const { return &_filter_compute; };
-    //! Set the booleans
-    void setBooleans(const std::bitset<13> booleans) { _filter_compute = booleans; };
-
     //! Return the d range values
     const std::array<double, 2>* dRange() const { return &_d_range; };
     //! Set the d range values
@@ -123,8 +152,8 @@ class PeakFilter {
     void setSignificance(const double significance) { _significance = significance; };
 
  private:
-    
-    std::bitset<13> _filter_compute;
+    //! booleans for filtering
+    FilterParameters _filter_params;
     //! The values for range
     std::array<double, 2> _d_range;
     //! The unit cell name
