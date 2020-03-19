@@ -85,6 +85,8 @@ class Experiment:
         self.finder = self.expt.peakFinder()
         convolver = nsx.AnnularConvolver()
         self.finder.setConvolver(convolver)
+        self.finder.setFilterDRange(True)
+        self.finder.setFilterStrength(True)
 
         self.finder.setMinSize(self.params.finder['min_size'])
         self.finder.setMaxSize(self.params.finder['max_size'])
