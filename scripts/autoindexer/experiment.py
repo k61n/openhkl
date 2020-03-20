@@ -54,6 +54,8 @@ class Experiment:
         Set up experiment object
         '''
         self.name = name
+        self.name_peaks = "peaks"
+        self.name_filtered = "filtered"
         self.expt = nsx.Experiment(name, detector)
         self.params = params
 
@@ -78,6 +80,9 @@ class Experiment:
         reader.end()
         self.data = nsx.DataSet(reader)
         self.expt.addData(self.data)
+
+        self.found_collection = None
+        self.filtered_collection = None
 
     def find_peaks(self):
         '''
@@ -107,13 +112,8 @@ class Experiment:
         integrator.setBkgEnd(self.params.integration['background_upper'])
 
         self.expt.integrateFoundPeaks(integrator_type)
-        self.expt.acceptFoundPeaks("peaks")
-
-    def get_peak_collection(self):
-        '''
-        Return the named peak collection from the experiment
-        '''
-        return self.expt.getPeakCollection(self.name)
+        self.expt.acceptFoundPeaks(self.name_peaks)
+        self.found_collection = self.expt.getPeakCollection(self.name_peaks)
 
     def filter_peaks(self):
         '''
@@ -130,12 +130,14 @@ class Experiment:
         filter.setDRange(min_d_range, max_d_range)
         filter.setStrength(min_strength, max_strength)
 
-        filter.resetFiltering(self.get_peak_collection())
-        filter.filter(self.get_peak_collection())
-        self.expt.acceptFilter("filtered", self.get_peak_collection())
+        filter.resetFiltering(self.found_collection)
+        filter.filter(self.found_collection)
+        self.expt.acceptFilter(self.name_filtered, self.found_collection)
+        self.filtered_collection = self.expt.getPeakCollection(self.name_filtered)
 
-        print(str(self.get_peak_collection().numberOfPeaks()) + " peaks")
-        print(str(self.get_peak_collection().numberCaughtByFilter()) + " peaks caught by filter")
+        set_trace()
+        print(str(self.found_collection.numberOfPeaks()) + " peaks")
+        print(str(self.filtered_collection.numberCaughtByFilter()) + " peaks caught by filter")
 
     def autoindex(self):
         autoindexer_params = nsx.IndexerParameters()
@@ -148,6 +150,6 @@ class Experiment:
 
         auto_indexer = self.expt.autoIndexer()
         auto_indexer.setParameters(autoindexer_params)
-        auto_indexer.autoIndex(self.get_peak_collection().getPeakList())
+        auto_indexer.autoIndex(self.filtered_collection.getPeakList())
         auto_indexer.rankSolutions()
         auto_indexer.printSolutions()

@@ -6,14 +6,13 @@ from experiment import Parameters, Experiment
 from pdb import set_trace
 
 parser = argparse.ArgumentParser(description='NSXTool autoindexing test script')
-parser.add_argument('--name', type=str, nargs=1, dest='name',
-                    help='name of system')
+parser.add_argument('--name', type=str, dest='name', help='name of system')
 parser.add_argument('--files', type=str, nargs='+', dest='files',
                     help='.tiff raw data files')
 args = parser.parse_args()
 
 filenames = args.files
-name = str(args.name)
+name = args.name
 detector = 'BioDiff5000'
 params = Parameters()
 
