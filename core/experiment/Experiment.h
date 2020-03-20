@@ -73,6 +73,9 @@ class Experiment {
     //! Add a peak collection
     void addPeakCollection(
         const std::string& name, const listtype type, const std::vector<nsx::Peak3D*> peaks);
+    //! Add a peak collection (for swig, to avoid wrapping listtype)
+    void addPeakCollection(
+        const std::string& name, const int ltype, const std::vector<nsx::Peak3D*> peaks);
     //! Returns true if the experiment has a data
     bool hasPeakCollection(const std::string& name) const;
     //! Returns the peak list denoted by the name

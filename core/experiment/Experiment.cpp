@@ -247,6 +247,15 @@ void Experiment::addPeakCollection(
     _peak_collections.insert(std::make_pair(name, std::move(ptr)));
 }
 
+void Experiment::addPeakCollection(
+    const std::string& name, const int ltype, const std::vector<nsx::Peak3D*> peaks)
+{
+  listtype lt = static_cast<listtype>(ltype);
+  std::unique_ptr<PeakCollection> ptr(new PeakCollection(name, lt));
+  ptr->populate(peaks);
+  _peak_collections.insert(std::make_pair(name, std::move(ptr)));
+}
+
 bool Experiment::hasPeakCollection(const std::string& name) const
 {
     auto peaks = _peak_collections.find(name);

@@ -334,7 +334,6 @@ ArrayExtendCRef(MillerIndex, int);
 %include "core/data/DataSet.h"
 %include "core/data/DataTypes.h"
 %template(DataList) std::vector<std::shared_ptr<nsx::DataSet>>;
-%include "core/experiment/Experiment.h"
 
 %include "core/shape/IPeakIntegrator.h"
 
@@ -360,6 +359,7 @@ ArrayExtendCRef(MillerIndex, int);
 %include "core/experiment/PeakFinder.h"
 %template(MergedPeakSet) std::set<nsx::MergedPeak>;
 
+%include "core/experiment/Experiment.h"
 %include "core/algo/DataReaderFactory.h"
 %include "core/algo/RefinementBatch.h"
 %include "core/algo/Refiner.h"
