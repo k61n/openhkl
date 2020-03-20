@@ -130,7 +130,6 @@ class Experiment:
         filter.setDRange(min_d_range, max_d_range)
         filter.setStrength(min_strength, max_strength)
 
-        set_trace()
         filter.resetFiltering(self.get_peak_collection())
         filter.filter(self.get_peak_collection())
         self.expt.acceptFilter("filtered", self.get_peak_collection())
