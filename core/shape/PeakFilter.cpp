@@ -34,13 +34,19 @@ namespace nsx {
 
 PeakFilter::PeakFilter()
 {
-    _filter_compute.set(0);
     _unit_cell = "";
     _unit_cell_tolerance = 0.2;
     _strength = {1.0, 1000000.};
     _d_range = {1.5, 50.0};
     _significance = 0.9900;
     _sparse = 100;
+    resetFilterFlags();
+}
+
+void PeakFilter::resetFilterFlags()
+{
+    _filter_flags = {true, false, false, false, false, false, false, false,
+                      false, false, false, false, false};
 }
 
 void PeakFilter::filterSignificance(PeakCollection* peak_collection) const
@@ -363,43 +369,43 @@ void PeakFilter::filterHasUnitCell(PeakCollection* peak_collection) const
 
 void PeakFilter::filter(PeakCollection* peak_collection) const
 {
-    if (_filter_compute[7]) {
-        if (_filter_compute[0])
+    if (_filter_flags.state) {
+        if (_filter_flags.selected)
             filterSelected(peak_collection);
-        if (_filter_compute[1])
+        if (_filter_flags.masked)
             filterMasked(peak_collection);
-        if (_filter_compute[2])
+        if (_filter_flags.predicted)
             filterPredicted(peak_collection);
     }
 
-    if (_filter_compute[3])
+    if (_filter_flags.indexed)
         filterIndexed(peak_collection);
 
-    if (_filter_compute[8]) {
+    if (_filter_flags.index_tol) {
         if (!(_unit_cell == "")) {
             filterIndexTolerance(peak_collection);
         }
     }
 
-    if (_filter_compute[9])
+    if (_filter_flags.strength)
         filterStrength(peak_collection);
 
-    if (_filter_compute[10])
+    if (_filter_flags.d_range)
         filterDRange(peak_collection);
 
-    if (_filter_compute[4])
+    if (_filter_flags.extinct)
         filterExtincted(peak_collection);
 
-    if (_filter_compute[11])
+    if (_filter_flags.sparse)
         filterSparseDataSet(peak_collection);
 
-    if (_filter_compute[12])
+    if (_filter_flags.significance)
         filterSignificance(peak_collection);
 
-    if (_filter_compute[5])
+    if (_filter_flags.overlapping)
         filterOverlapping(peak_collection);
 
-    if (_filter_compute[6])
+    if (_filter_flags.complementary)
         filterComplementary(peak_collection);
 }
 
