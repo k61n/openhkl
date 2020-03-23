@@ -92,7 +92,6 @@ class Experiment:
         self.finder = self.expt.peakFinder()
         convolver = nsx.AnnularConvolver()
         self.finder.setConvolver(convolver)
-        ltype = nsx.listtype_FOUND
 
         self.finder.setMinSize(self.params.finder['min_size'])
         self.finder.setMaxSize(self.params.finder['max_size'])
@@ -100,12 +99,12 @@ class Experiment:
         self.finder.setThreshold(self.params.finder['threshold'])
 
         self.finder.find([self.data])
-        self.expt.addPeakCollection(self.name, ltype, self.finder.currentPeaks())
 
     def integrate_peaks(self):
         '''
         Integrate the peaks
         '''
+        ltype = nsx.listtype_FOUND
         integrator_type = "Pixel sum integrator"
         integrator = self.expt.getIntegrator(integrator_type)
         integrator.setPeakEnd(self.params.integration['peak_area'])
@@ -113,7 +112,7 @@ class Experiment:
         integrator.setBkgEnd(self.params.integration['background_upper'])
 
         self.expt.integrateFoundPeaks(integrator_type)
-        self.expt.acceptFoundPeaks(self.name_peaks)
+        self.expt.addPeakCollection(self.name_peaks, ltype, self.finder.currentPeaks())
         self.found_collection = self.expt.getPeakCollection(self.name_peaks)
 
     def filter_peaks(self):
@@ -150,7 +149,7 @@ class Experiment:
 
         auto_indexer = self.expt.autoIndexer()
         auto_indexer.setParameters(autoindexer_params)
-        auto_indexer.autoIndex(self.found_collection.getPeakList())
+        auto_indexer.autoIndex(self.filtered_collection.getPeakList())
         auto_indexer.printSolutions()
 
     def save(self):
@@ -159,3 +158,4 @@ class Experiment:
     def load(self):
         self.expt.loadFromFile(self.nsxfile)
         self.found_collection = self.expt.getPeakCollection(self.name_peaks)
+        self.filtered_collection = self.expt.getPeakCollection(self.name_filtered)
