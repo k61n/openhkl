@@ -22,9 +22,20 @@ namespace nsx {
 
 //! Class to remove "bad" peaks based on various critera.
 
-struct FilterParameters {
-    bool selected, masked, predicted, indexed, index_tol, state, strength, d_range,
-        extinct, sparse, significance, overlapping, complementary;
+struct PeakFilterFlags {
+    bool selected;      //! filter by selection
+    bool masked;        //! filter by mask
+    bool predicted;     //! filter by predicted peaks
+    bool indexed;       //! filter by indexed peaks
+    bool index_tol;     //!
+    bool state;         //!
+    bool strength;      //! filter by strength (intensity/sigma)
+    bool d_range;       //! filter by detector range
+    bool extinct;       //! filter by extinction (allowed by unit cell)
+    bool sparse;        //!
+    bool significance;  //!
+    bool overlapping;   //!
+    bool complementary; //!
 };
 
 class PeakFilter {
@@ -35,33 +46,36 @@ class PeakFilter {
 
  public:
     //! Set filter parameters
-    void setFilterSelected(bool val) { _filter_params.selected = val; };
-    void setFilterMasked(bool val) { _filter_params.masked = val; };
-    void setFilterPredicted(bool val) { _filter_params.predicted = val; };
-    void setFilterIndexed(bool val) { _filter_params.indexed = val; };
-    void setFilterIndexTol(bool val) { _filter_params.index_tol = val; };
-    void setFilterState(bool val) { _filter_params.state = val; };
-    void setFilterStrength(bool val) { _filter_params.strength = val; };
-    void setFilterDRange(bool val) { _filter_params.d_range = val; };
-    void setFilterExtinct(bool val) { _filter_params.extinct = val; };
-    void setFilterSparse(bool val) { _filter_params.sparse = val; };
-    void setFilterSignificance(bool val) { _filter_params.significance = val; };
-    void setFilterOverlapping(bool val) { _filter_params.overlapping = val; };
-    void setFilterComplementary(bool val) { _filter_params.complementary = val; };
+    void setFilterSelected(bool val) { _filter_flags.selected = val; };
+    void setFilterMasked(bool val) { _filter_flags.masked = val; };
+    void setFilterPredicted(bool val) { _filter_flags.predicted = val; };
+    void setFilterIndexed(bool val) { _filter_flags.indexed = val; };
+    void setFilterIndexTol(bool val) { _filter_flags.index_tol = val; };
+    void setFilterState(bool val) { _filter_flags.state = val; };
+    void setFilterStrength(bool val) { _filter_flags.strength = val; };
+    void setFilterDRange(bool val) { _filter_flags.d_range = val; };
+    void setFilterExtinct(bool val) { _filter_flags.extinct = val; };
+    void setFilterSparse(bool val) { _filter_flags.sparse = val; };
+    void setFilterSignificance(bool val) { _filter_flags.significance = val; };
+    void setFilterOverlapping(bool val) { _filter_flags.overlapping = val; };
+    void setFilterComplementary(bool val) { _filter_flags.complementary = val; };
 
-    bool getFilterSelected() { return _filter_params.selected; };
-    bool getFilterMasked() { return _filter_params.masked; };
-    bool getFilterPredicted() { return _filter_params.predicted; };
-    bool getFilterIndexed() { return _filter_params.indexed; };
-    bool getFilterIndexTol() { return _filter_params.index_tol; };
-    bool getFilterState() { return _filter_params.state; };
-    bool getFilterStrength() { return _filter_params.strength; };
-    bool getFilterDRange() { return _filter_params.d_range; };
-    bool getFilterExtinct() { return _filter_params.extinct; };
-    bool getFilterSparse() { return _filter_params.sparse; };
-    bool getFilterSignificance() { return _filter_params.significance; };
-    bool getFilterOverlapping() { return _filter_params.overlapping; };
-    bool getFilterComplementary() { return _filter_params.complementary; };
+    bool getFilterSelected() { return _filter_flags.selected; };
+    bool getFilterMasked() { return _filter_flags.masked; };
+    bool getFilterPredicted() { return _filter_flags.predicted; };
+    bool getFilterIndexed() { return _filter_flags.indexed; };
+    bool getFilterIndexTol() { return _filter_flags.index_tol; };
+    bool getFilterState() { return _filter_flags.state; };
+    bool getFilterStrength() { return _filter_flags.strength; };
+    bool getFilterDRange() { return _filter_flags.d_range; };
+    bool getFilterExtinct() { return _filter_flags.extinct; };
+    bool getFilterSparse() { return _filter_flags.sparse; };
+    bool getFilterSignificance() { return _filter_flags.significance; };
+    bool getFilterOverlapping() { return _filter_flags.overlapping; };
+    bool getFilterComplementary() { return _filter_flags.complementary; };
+
+    //! set filter parameters to default
+    void resetFilterFlags();
 
     //! set filter parameters to default
     void resetFilterParameters();
@@ -156,7 +170,7 @@ class PeakFilter {
 
  private:
     //! booleans for filtering
-    FilterParameters _filter_params;
+    PeakFilterFlags _filter_flags;
     //! The values for range
     std::array<double, 2> _d_range;
     //! The unit cell name

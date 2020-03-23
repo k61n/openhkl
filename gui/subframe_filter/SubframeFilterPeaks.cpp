@@ -551,7 +551,7 @@ void SubframeFilterPeaks::setFilterParameters() const
 
     nsx::PeakFilter* filter =
         gSession->experimentAt(_exp_combo->currentIndex())->experiment()->peakFilter();
-    filter->resetFilterParameters();
+    filter->resetFilterFlags();
 
     if (_selected->isChecked())
         filter->setFilterSelected(true);
