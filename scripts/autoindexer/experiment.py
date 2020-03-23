@@ -112,7 +112,7 @@ class Experiment:
         integrator.setBkgEnd(self.params.integration['background_upper'])
 
         self.expt.integrateFoundPeaks(integrator_type)
-        self.expt.addPeakCollection(self.name_peaks, ltype, self.finder.currentPeaks())
+        self.expt.acceptFoundPeaks(self.name_peaks)
         self.found_collection = self.expt.getPeakCollection(self.name_peaks)
 
     def filter_peaks(self):
@@ -125,20 +125,25 @@ class Experiment:
         max_d_range = self.params.filter['max_d_range']
 
         filter = self.expt.peakFilter()
-        filter.setFilterDRange(True)
+        # Filter by d-range and strength
         filter.setFilterStrength(True)
+        filter.setFilterDRange(True)
         filter.setDRange(min_d_range, max_d_range)
         filter.setStrength(min_strength, max_strength)
 
         filter.resetFiltering(self.found_collection)
         filter.filter(self.found_collection)
         self.expt.acceptFilter(self.name_filtered, self.found_collection)
+        set_trace()
         self.filtered_collection = self.expt.getPeakCollection(self.name_filtered)
 
         print(str(self.found_collection.numberOfPeaks()) + " peaks")
         print(str(self.found_collection.numberCaughtByFilter()) + " peaks caught by filter")
 
     def autoindex(self):
+        '''
+        Compute the unit cell
+        '''
         autoindexer_params = nsx.IndexerParameters()
         autoindexer_params.maxdim = self.params.autoindexer['max_dim']
         autoindexer_params.nSolutions = self.params.autoindexer['n_solutions']
@@ -153,9 +158,15 @@ class Experiment:
         auto_indexer.printSolutions()
 
     def save(self):
+        '''
+        Save the experiment to self.name.nsx
+        '''
         self.expt.saveToFile(self.nsxfile)
 
     def load(self):
+        '''
+        Load the experiment from self.name.nsx
+        '''
         self.expt.loadFromFile(self.nsxfile)
         self.found_collection = self.expt.getPeakCollection(self.name_peaks)
         self.filtered_collection = self.expt.getPeakCollection(self.name_filtered)

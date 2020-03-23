@@ -21,6 +21,7 @@ nfiles = len(filenames)
 
 expt = Experiment(name, detector, params)
 if os.path.isfile(expt.nsxfile):
+    print(f"{expt.nsxfile} exists, loading experiment")
     expt.load()
 else:
     print("Loading data...")
@@ -32,7 +33,7 @@ else:
     print("Integrating...")
     expt.integrate_peaks()
     print("...integration complete\n")
-    print("Saving experiment to file {nsxfile}...")
+    print(f"Saving experiment to file {expt.nsxfile}")
     expt.save()
 
 print("Filtering...")
