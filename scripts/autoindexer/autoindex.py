@@ -2,6 +2,7 @@
 
 import sys
 import argparse
+import os.path
 from experiment import Parameters, Experiment
 from pdb import set_trace
 
@@ -19,15 +20,21 @@ params = Parameters()
 nfiles = len(filenames)
 
 expt = Experiment(name, detector, params)
-print("Loading data...")
-expt.load_raw_data(filenames)
-print("...data loaded\n")
-print("Finding peaks...")
-expt.find_peaks()
-print("...peak finding complete\n")
-print("Integrating...")
-expt.integrate_peaks()
-print("...integration complete\n")
+if os.path.isfile(expt.nsxfile):
+    expt.load()
+else:
+    print("Loading data...")
+    expt.load_raw_data(filenames)
+    print("...data loaded\n")
+    print("Finding peaks...")
+    expt.find_peaks()
+    print("...peak finding complete\n")
+    print("Integrating...")
+    expt.integrate_peaks()
+    print("...integration complete\n")
+    print("Saving experiment to file {nsxfile}...")
+    expt.save()
+
 print("Filtering...")
 expt.filter_peaks()
 print("...filtering complete\n")

@@ -58,6 +58,7 @@ class Experiment:
         self.name_filtered = "filtered"
         self.expt = nsx.Experiment(name, detector)
         self.params = params
+        self.nsxfile = self.name + ".nsx"
 
     def load_raw_data(self, filenames):
         '''
@@ -151,3 +152,10 @@ class Experiment:
         auto_indexer.setParameters(autoindexer_params)
         auto_indexer.autoIndex(self.found_collection.getPeakList())
         auto_indexer.printSolutions()
+
+    def save(self):
+        self.expt.saveToFile(self.nsxfile)
+
+    def load(self):
+        self.expt.loadFromFile(self.nsxfile)
+        self.found_collection = self.expt.getPeakCollection(self.name_peaks)
