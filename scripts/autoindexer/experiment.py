@@ -135,9 +135,8 @@ class Experiment:
         self.expt.acceptFilter(self.name_filtered, self.found_collection)
         self.filtered_collection = self.expt.getPeakCollection(self.name_filtered)
 
-        set_trace()
         print(str(self.found_collection.numberOfPeaks()) + " peaks")
-        print(str(self.filtered_collection.numberCaughtByFilter()) + " peaks caught by filter")
+        print(str(self.found_collection.numberCaughtByFilter()) + " peaks caught by filter")
 
     def autoindex(self):
         autoindexer_params = nsx.IndexerParameters()
@@ -150,6 +149,5 @@ class Experiment:
 
         auto_indexer = self.expt.autoIndexer()
         auto_indexer.setParameters(autoindexer_params)
-        auto_indexer.autoIndex(self.filtered_collection.getPeakList())
-        auto_indexer.rankSolutions()
+        auto_indexer.autoIndex(self.found_collection.getPeakList())
         auto_indexer.printSolutions()

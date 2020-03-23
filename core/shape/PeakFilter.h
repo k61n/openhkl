@@ -63,6 +63,9 @@ class PeakFilter {
     bool getFilterOverlapping() { return _filter_params.overlapping; };
     bool getFilterComplementary() { return _filter_params.complementary; };
 
+    //! set filter parameters to default
+    void resetFilterParameters();
+
     //! Filter peaks that are complementary to the given peaks
     void filterComplementary(PeakCollection* peak_collection) const;
 
