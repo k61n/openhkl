@@ -40,7 +40,12 @@ PeakFilter::PeakFilter()
     _d_range = {1.5, 50.0};
     _significance = 0.9900;
     _sparse = 100;
-    _filter_params = {false, false, false, false, false, false, false, false,
+    resetFilterParameters();
+}
+
+void PeakFilter::resetFilterParameters()
+{
+    _filter_params = {true, false, false, false, false, false, false, false,
                       false, false, false, false, false};
 }
 
