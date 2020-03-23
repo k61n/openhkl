@@ -77,9 +77,6 @@ class PeakFilter {
     //! set filter parameters to default
     void resetFilterFlags();
 
-    //! set filter parameters to default
-    void resetFilterParameters();
-
     //! Filter peaks that are complementary to the given peaks
     void filterComplementary(PeakCollection* peak_collection) const;
 
