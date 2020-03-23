@@ -23,8 +23,19 @@ namespace nsx {
 //! Class to remove "bad" peaks based on various critera.
 
 struct FilterParameters {
-    bool selected, masked, predicted, indexed, index_tol, state, strength, d_range,
-        extinct, sparse, significance, overlapping, complementary;
+    bool selected;      //! filter by selection
+    bool masked;        //! filter by mask
+    bool predicted;     //! filter by predicted peaks
+    bool indexed;       //! filter by indexed peaks
+    bool index_tol;     //!
+    bool state;         //!
+    bool strength;      //! filter by strength (intensity/sigma)
+    bool d_range;       //! filter by detector range
+    bool extinct;       //! filter by extinction (allowed by unit cell)
+    bool sparse;        //!
+    bool significance;  //!
+    bool overlapping;   //!
+    bool complementary; //!
 };
 
 class PeakFilter {
