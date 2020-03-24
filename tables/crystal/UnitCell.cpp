@@ -263,16 +263,16 @@ void UnitCell::printSelf(std::ostream& os) const
     }
 }
 
-std::string UnitCell::printCellParams()
+std::string UnitCell::toString()
 {
     std::ostringstream oss;
     auto c = character();
     oss << std::fixed << std::setw(10) << std::setprecision(5) << c.a
-        << std::fixed << std::setw(10) << std::setprecision(5) << c.b
-        << std::fixed << std::setw(10) << std::setprecision(5) << c.c
-        << std::fixed << std::setw(10) << std::setprecision(5) << c.alpha / deg
-        << std::fixed << std::setw(10) << std::setprecision(5) << c.beta / deg
-        << std::fixed << std::setw(10) << std::setprecision(5) << c.gamma / deg;
+        << std::setw(10) << c.b
+        << std::setw(10) << c.c
+        << std::setw(10) << c.alpha / deg
+        << std::setw(10) << c.beta / deg
+        << std::setw(10) << c.gamma / deg;
     return oss.str();
 }
 

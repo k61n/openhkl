@@ -1,5 +1,15 @@
 #!/usr/bin/env python3
 
+'''
+autoindex.py
+
+This script computes the unit cell from raw diffraction data in the form of a
+number of .tiff images. Note that it save intermediate data to a file 
+<name>.nsx after the integration step, and if this file is found, it will load
+it in subsequent runs. Note that this depends on the same .tiff files being
+loaded.
+'''
+
 import sys
 import argparse
 import os.path

@@ -1,5 +1,11 @@
 #!/usr/bin/env python3
 
+'''
+experiment.py
+
+Generalised wrapper for Python/C++ (Swig) NSXTool interface.
+'''
+
 import sys
 sys.path.append("/home/zamaan/codes/nsxtool/nsxtool/build/swig")
 import pynsx as nsx
@@ -12,6 +18,12 @@ def pynsxprint(printvalue):
     print("PYNSX: " + str(printvalue))
 
 class Parameters:
+    '''
+    Class for storing input parameters for a NSXTool data reduction. The
+    keywords correspond to the NSXTool GUI. A parameter can be added as
+    a constructor argument in the form of a key/value pair, and will be
+    inserted into the correct dictionary if possible.
+    '''
 
     def __init__(self, **kwargs):
         self.detector =    { 'wavelength'       : 2.67, 
@@ -54,6 +66,10 @@ class Parameters:
                 self.autoindexer[key] = kwargs[key]
 
 class Experiment:
+    '''
+    This class is object is broadly similary to the nsx::Experiment class, with
+    the data input simplified.
+    '''
 
     def __init__(self, name, detector, params):
         '''
