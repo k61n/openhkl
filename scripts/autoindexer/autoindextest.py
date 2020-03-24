@@ -2,7 +2,7 @@
 
 import sys
 import argparse
-from experiment import Parameters, Experiment
+from experiment import Parameters, Experiment, pynsxprint
 from pdb import set_trace
 
 parser = argparse.ArgumentParser(description='NSXTool autoindexing test script')
@@ -23,28 +23,28 @@ nfiles = len(filenames)
 frange = len(filenames) - nnumors
 
 for i in range(frange):
-    print("Trying numors " + str(i) + " to " + str(i+nnumors))
+    pynsxprint("Trying numors " + str(i) + " to " + str(i+nnumors))
     files = filenames[i:i+nnumors]
-    print("Files: " + str(files))
+    pynsxprint("Files: " + str(files))
     expt = Experiment(name, detector, params)
-    print("Loading data...")
+    pynsxprint("Loading data...")
     expt.load_raw_data(files)
-    print("...data loaded\n")
-    print("Finding peaks...")
+    pynsxprint("...data loaded\n")
+    pynsxprint("Finding peaks...")
     expt.find_peaks()
-    print("...peak finding complete\n")
-    print("Integrating...")
+    pynsxprint("...peak finding complete\n")
+    pynsxprint("Integrating...")
     expt.integrate_peaks()
-    print("...integration complete\n")
-    print("Filtering...")
+    pynsxprint("...integration complete\n")
+    pynsxprint("Filtering...")
     expt.filter_peaks()
-    print("...filtering complete\n")
-    print("Autoindexing...")
+    pynsxprint("...filtering complete\n")
+    pynsxprint("Autoindexing...")
     try:
         expt.autoindex()
     except(RuntimeError):
-        print("Autoindexing failed, trying next set of numors")
+        pynsxprint("Autoindexing failed, trying next set of numors")
         continue
-    print("...autoindexing complete\n")
-    print("Files: " + str(files))
+    pynsxprint("...autoindexing complete\n")
+    pynsxprint("Files: " + str(files))
     sys.exit(0)
