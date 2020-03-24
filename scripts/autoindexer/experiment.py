@@ -5,6 +5,12 @@ sys.path.append("/home/zamaan/codes/nsxtool/nsxtool/build/swig")
 import pynsx as nsx
 from pdb import set_trace
 
+def pynsxprint(printvalue):
+    '''
+    Print function to distinguish Python from C++ output
+    '''
+    print("PYNSX: " + str(printvalue))
+
 class Parameters:
 
     def __init__(self, **kwargs):

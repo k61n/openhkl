@@ -23,6 +23,7 @@
 
 #include <iostream>
 #include <string>
+#include <iomanip>
 
 namespace nsx {
 
@@ -262,9 +263,16 @@ void AutoIndexer::refineSolutions(const std::vector<Peak3D*>& peaks)
 
 void AutoIndexer::printSolutions()
 {
+    std::cout << std::setw(10) << "Quality"
+              << std::setw(10) << "a"
+              << std::setw(10) << "b"
+              << std::setw(10) << "c"
+              << std::setw(10) << "alpha"
+              << std::setw(10) << "beta"
+              << std::setw(10) << "gamma" << std::endl;
     for (auto solution : _solutions) {
-        std::cout << solution.second;
-        solution.first->printParams();
+      std::cout << std::fixed << std::setw(10) << std::setprecision(3)
+                << solution.second << solution.first->printCellParams() << std::endl;
     }
 }
 

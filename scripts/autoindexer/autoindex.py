@@ -3,7 +3,7 @@
 import sys
 import argparse
 import os.path
-from experiment import Parameters, Experiment
+from experiment import Parameters, Experiment, pynsxprint
 from pdb import set_trace
 
 parser = argparse.ArgumentParser(description='NSXTool autoindexing test script')
@@ -21,24 +21,24 @@ nfiles = len(filenames)
 
 expt = Experiment(name, detector, params)
 if os.path.isfile(expt.nsxfile):
-    print(f"{expt.nsxfile} exists, loading experiment")
+    pynsxprint(f"{expt.nsxfile} exists, loading experiment")
     expt.load()
 else:
-    print("Loading data...")
+    pynsxprint("Loading data...")
     expt.load_raw_data(filenames)
-    print("...data loaded\n")
-    print("Finding peaks...")
+    pynsxprint("...data loaded\n")
+    pynsxprint("Finding peaks...")
     expt.find_peaks()
-    print("...peak finding complete\n")
-    print("Integrating...")
+    pynsxprint("...peak finding complete\n")
+    pynsxprint("Integrating...")
     expt.integrate_peaks()
-    print("...integration complete\n")
-    print(f"Saving experiment to file {expt.nsxfile}")
+    pynsxprint("...integration complete\n")
+    pynsxprint(f"Saving experiment to file {expt.nsxfile}")
     expt.save()
 
-print("Filtering...")
+pynsxprint("Filtering...")
 expt.filter_peaks()
-print("...filtering complete\n")
-print("Autoindexing...")
+pynsxprint("...filtering complete\n")
+pynsxprint("Autoindexing...")
 expt.autoindex()
-print("...autoindexing complete\n")
+pynsxprint("...autoindexing complete\n")
