@@ -1,4 +1,4 @@
-# Streptavidin autoindexing tests --- instructions
+# Streptavidin autoindexing tests - instructions
 
 ## `autoindex.py`
 

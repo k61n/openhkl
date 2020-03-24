@@ -108,8 +108,8 @@ std::vector<Peak3D*> PeakFinder::currentPeaks()
 
 PeakCollection* PeakFinder::getPeakCollection()
 {
-  PeakCollection* ptr = &_peak_collection;
-  return ptr;
+    PeakCollection* ptr = &_peak_collection;
+    return ptr;
 }
 
 void PeakFinder::setPeakCollection(const std::string name, nsx::listtype type,

@@ -271,8 +271,8 @@ void AutoIndexer::printSolutions()
               << std::setw(10) << "beta"
               << std::setw(10) << "gamma" << std::endl;
     for (auto solution : _solutions) {
-      std::cout << std::fixed << std::setw(10) << std::setprecision(3)
-                << solution.second << solution.first->printCellParams() << std::endl;
+        std::cout << std::fixed << std::setw(10) << std::setprecision(3)
+                  << solution.second << solution.first->printCellParams() << std::endl;
     }
 }
 
