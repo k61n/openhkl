@@ -134,7 +134,6 @@ class Experiment:
         filter.resetFiltering(self.found_collection)
         filter.filter(self.found_collection)
         self.expt.acceptFilter(self.name_filtered, self.found_collection)
-        set_trace()
         self.filtered_collection = self.expt.getPeakCollection(self.name_filtered)
 
         print(str(self.found_collection.numberOfPeaks()) + " peaks")
