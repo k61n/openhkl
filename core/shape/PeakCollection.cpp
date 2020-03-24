@@ -121,6 +121,7 @@ int PeakCollection::numberCaughtByFilter() const
             caught++;
         }
     }
+    return caught;
 }
 
 int PeakCollection::numberRejectedByFilter() const
