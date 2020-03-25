@@ -1,5 +1,12 @@
 #!/usr/bin/env python3
 
+'''
+Test the autoindexer with a set of raw data files. Given a list of files
+and a number of numors for indexing, the script will loop over sets of n 
+contiguous numors and attempt to autoindex. Successful attempts are written
+to a logfile, which stores the cell parameters and files used to get them.
+'''
+
 import sys
 import argparse
 from experiment import Parameters, Experiment, pynsxprint

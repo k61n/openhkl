@@ -3,7 +3,7 @@
 '''
 autoindextest.py
 
-Class for testing autoindexer
+Classes for testing autoindexer
 '''
 
 import sys
@@ -13,6 +13,9 @@ import pynsx as nsx
 from pdb import set_trace
 
 class CellData:
+    '''
+    Storage class for cell data
+    '''
 
     def __init__(self, name, numors, quality, cell_params, filenames):
         self.name = name
@@ -33,6 +36,9 @@ class CellData:
         return f'{self.name:<8s}{numors:<16s}{self.quality:>8.2f}{cell_str}\n'
 
 class AutoIndexTest:
+    '''
+    Wrapper class to test the autoindexer
+    '''
 
     def __init__(self, name, detector, params):
         self.expt = Experiment(name, detector, params)
@@ -40,6 +46,9 @@ class AutoIndexTest:
         self.filenames = None
 
     def autoindex(self, filenames, numors):
+        '''
+        Run the autoindexer
+        '''
         self.filenames = filenames
         self.numors = numors
         self.expt.load_raw_data(filenames)
@@ -63,6 +72,9 @@ class AutoIndexTest:
         self.angle_tol = 0.1
 
     def set_tolerance(self, distance, angle):
+        '''
+        Set the tolerances determining a match for the cell parameters
+        '''
         self.distance_tol = distance
         self.angle_tol = angle
 
@@ -83,6 +95,9 @@ class AutoIndexTest:
         return passed
 
     def check_unit_cells(self):
+        '''
+        Check the list of autoindexer solutions for matches with the real unit cell
+        '''
         good_cells = []
         for index, cell in enumerate(self.unit_cells):
             quality, params = cell
