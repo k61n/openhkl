@@ -44,6 +44,8 @@ class AutoIndexTest:
         self.expt = Experiment(name, detector, params)
         self.name = name
         self.filenames = None
+        self.n_peaks = None
+        self.n_caught = None
 
     def autoindex(self, filenames, numors):
         '''
@@ -53,8 +55,8 @@ class AutoIndexTest:
         self.numors = numors
         self.expt.load_raw_data(filenames)
         self.expt.find_peaks()
-        self.expt.integrate_peaks()
-        self.expt.filter_peaks()
+        self.n_peaks = self.expt.integrate_peaks()
+        self.n_caught = self.expt.filter_peaks()
         self.expt.autoindex()
         self.unit_cells = self.expt.unit_cells
 
@@ -93,6 +95,12 @@ class AutoIndexTest:
         if abs(gamma - self.gamma_ref) > self.angle_tol:
             passed = False
         return passed
+
+    def number_of_peaks(self):
+        return self.n_peaks
+
+    def number_caught_by_filter(self):
+        return self.n_caught
 
     def check_unit_cells(self):
         '''

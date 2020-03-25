@@ -139,6 +139,8 @@ class Experiment:
         self.expt.integrateFoundPeaks(integrator_type)
         self.expt.acceptFoundPeaks(self.name_peaks)
         self.found_collection = self.expt.getPeakCollection(self.name_peaks)
+        n_peaks = self.found_collection.numberOfPeaks()
+        return n_peaks
 
     def filter_peaks(self):
         '''
@@ -161,8 +163,8 @@ class Experiment:
         self.expt.acceptFilter(self.name_filtered, self.found_collection)
         self.filtered_collection = self.expt.getPeakCollection(self.name_filtered)
 
-        print(str(self.found_collection.numberOfPeaks()) + " peaks")
-        print(str(self.found_collection.numberCaughtByFilter()) + " peaks caught by filter")
+        n_caught = self.found_collection.numberCaughtByFilter()
+        return n_caught
 
     def autoindex(self):
         '''

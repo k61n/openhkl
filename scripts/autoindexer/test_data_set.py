@@ -49,6 +49,9 @@ for i in range(frange):
     except RuntimeError:
         pynsxprint("Autoindexing failed, continuing...")
         continue
+    npeaks = str(indexer.number_of_peaks())
+    ncaught = str(indexer.number_caught_by_filter())
+    pynsxprint("Filter caught " + ncaught + " of " + npeaks + " peaks")
     pynsxprint("Autoindexing successful")
 
     good_cells = indexer.check_unit_cells()
@@ -57,9 +60,10 @@ for i in range(frange):
         for cell in good_cells:
             pynsxprint(cell)
             with open('log', 'a') as outfile:
+                outfile.write("Set " + str(cell))
+                outfile.write("Caught " + ncaught + "/" + npeaks + " peaks\n")
                 filestr = " ".join(files)
                 outfile.write(filestr + "\n")
-                outfile.write(str(cell))
         cells.extend(good_cells)
     else:
         pynsxprint("No good cells found")
