@@ -17,17 +17,26 @@ class CellData:
     def __init__(self, name, numors, quality, cell_params, filenames):
         self.name = name
         self.numors = numors
+        self.quality = quality
         self.cell_params = cell_params
         self.filenames = filenames
 
     def __str__(self):
-        numors_str = str(numors) 
-        return f'{self.name:<16s}{numors:<16s}{self.quality:>f10.2}\n'
+        numors = str(self.numors) 
+        a = self.cell_params[0]
+        b = self.cell_params[1]
+        c = self.cell_params[2]
+        alp = self.cell_params[3]
+        bet = self.cell_params[4]
+        gam = self.cell_params[5]
+        cell_str = f'{a:>10.3f}{b:>10.3f}{c:>10.3f}{alp:>9.3f}{bet:>9.3f}{gam:>9.3f}'
+        return f'{self.name:<8s}{numors:<16s}{self.quality:>8.2f}{cell_str}\n'
 
 class AutoIndexTest:
 
     def __init__(self, name, detector, params):
         self.expt = Experiment(name, detector, params)
+        self.name = name
         self.filenames = None
 
     def autoindex(self, filenames, numors):
@@ -38,7 +47,7 @@ class AutoIndexTest:
         self.expt.integrate_peaks()
         self.expt.filter_peaks()
         self.expt.autoindex()
-        self.unit_cells = expt.unit_cells()
+        self.unit_cells = self.expt.unit_cells
 
     def set_ref_cell(self, a, b, c, alpha, beta, gamma):
         '''
@@ -78,6 +87,6 @@ class AutoIndexTest:
         for index, cell in enumerate(self.unit_cells):
             quality, params = cell
             if self.check_cell(*params):
-                good_cell = CellData(name, self.numors, quality, params, self.filenames)
+                good_cell = CellData(self.name, self.numors, quality, params, self.filenames)
                 good_cells.append(good_cell)
         return good_cells

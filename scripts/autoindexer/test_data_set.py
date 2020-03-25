@@ -30,7 +30,7 @@ ref_cell = (46.426, 94.062, 104.008, 90.0, 90.0, 90.0)
 cells = []
 for i in range(frange):
     pynsxprint("Trying numors " + str(i) + " to " + str(i+args.nnumors))
-    numors = range(i,i+args.nnumors)
+    numors = list(range(i,i+args.nnumors))
     files = filenames[i:i+args.nnumors]
     pynsxprint("Files: " + str(files))
 
@@ -40,10 +40,22 @@ for i in range(frange):
     try:
         indexer.autoindex(files, numors)
     except RuntimeError:
-        print("Autoindexing failed, continuing...")
+        pynsxprint("Autoindexing failed, continuing...")
         continue
+    pynsxprint("Autoindexing successful")
+
     good_cells = indexer.check_unit_cells()
-    cells.extend(good_cells)
+    if good_cells:
+        pynsxprint(f"Found {len(good_cells)} good cells")
+        for cell in good_cells:
+            pynsxprint(cell)
+            with open('log', 'a') as outfile:
+                filestr = " ".join(files)
+                outfile.write(filestr + "\n")
+                outfile.write(str(cell))
+        cells.extend(good_cells)
+    else:
+        pynsxprint("No good cells found")
 
 for cell in cells:
-    print(cell)
+    pynsxprint(cell)
