@@ -57,6 +57,7 @@ void RawDataReader::addFrame(const std::string& filename)
     const auto& detector_gonio = _diffractometer->detector()->gonio();
     size_t n_detector_gonio_axes = detector_gonio.nAxes();
     Eigen::VectorXd dm(n_detector_gonio_axes);
+    dm.setZero(n_detector_gonio_axes);
     _detectorStates.push_back(eigenToVector(dm));
 
     // Getting Scan parameters for the sample
@@ -64,6 +65,7 @@ void RawDataReader::addFrame(const std::string& filename)
     size_t n_sample_gonio_axes = sample_gonio.nAxes();
 
     dm.resize(n_sample_gonio_axes);
+    dm.setZero(n_sample_gonio_axes);
 
     int omega = -1;
     int phi = -1;
