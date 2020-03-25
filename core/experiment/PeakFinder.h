@@ -19,6 +19,7 @@
 #include "core/convolve/Convolver.h"
 #include "core/data/DataSet.h"
 #include "core/integration/Blob3D.h"
+#include "core/shape/PeakCollection.h"
 
 namespace nsx {
 
@@ -34,6 +35,10 @@ class PeakFinder {
     void find(DataList numors);
 
     std::vector<Peak3D*> currentPeaks();
+
+    PeakCollection* getPeakCollection();
+    void setPeakCollection(const std::string name, nsx::listtype type,
+                           std::vector<std::shared_ptr<nsx::Peak3D>> peak_list);
 
     DataList currentData() { return _current_data; };
 
@@ -105,6 +110,8 @@ class PeakFinder {
     nsx::PeakList _current_peaks;
 
     nsx::DataList _current_data;
+
+    nsx::PeakCollection _peak_collection;
 };
 
 } // namespace nsx
