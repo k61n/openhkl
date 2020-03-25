@@ -8,6 +8,7 @@ Generalised wrapper for Python/C++ (Swig) NSXTool interface.
 
 import sys
 sys.path.append("/home/zamaan/codes/nsxtool/nsxtool/build/swig")
+import scipy
 import pynsx as nsx
 from pdb import set_trace
 
@@ -81,6 +82,8 @@ class Experiment:
         self.expt = nsx.Experiment(name, detector)
         self.params = params
         self.nsxfile = self.name + ".nsx"
+        self.solutions = None
+        self.unit_cells = None
 
     def load_raw_data(self, filenames):
         '''
@@ -173,10 +176,27 @@ class Experiment:
         autoindexer_params.indexingTolerance = self.params.autoindexer['indexing_tol']
         autoindexer_params.minUnitCellVolume = self.params.autoindexer['min_vol']
 
-        auto_indexer = self.expt.autoIndexer()
-        auto_indexer.setParameters(autoindexer_params)
-        auto_indexer.autoIndex(self.filtered_collection.getPeakList())
-        auto_indexer.printSolutions()
+        self.auto_indexer = self.expt.autoIndexer()
+        self.auto_indexer.setParameters(autoindexer_params)
+        self.auto_indexer.autoIndex(self.filtered_collection.getPeakList())
+        self.solutions = self.auto_indexer.solutions()
+        self.get_unit_cells()
+
+    def get_unit_cells(self):
+        deg = scipy.pi / 180.0
+        self.unit_cells = []
+        for cell in self.solutions:
+            quality = cell[1]
+            a = cell[0].character().a
+            b = cell[0].character().b
+            c = cell[0].character().c
+            alpha = cell[0].character().alpha / deg
+            beta = cell[0].character().beta / deg
+            gamma = cell[0].character().gamma / deg
+            self.unit_cells.append((quality, (a, b, c, alpha, beta, gamma)))
+
+    def print_unit_cells(self):
+        self.auto_indexer.printSolutions()
 
     def save(self):
         '''
