@@ -28,6 +28,7 @@
 %include <std_shared_ptr.i>
 %include <std_string.i>
 %include <std_vector.i>
+%include <std_array.i>
 %include <typemaps.i>
 
 %template(vector_1d)  std::vector<double>;
@@ -109,6 +110,7 @@ using Eigen::Quaterniond;
 #include "core/algo/Refiner.h"
 #include "core/integration/Blob3D.h"
 #include "core/statistics/MergedPeak.h"
+#include "core/shape/PeakCollection.h"
 #include "core/shape/PeakFilter.h"
 #include "core/experiment/PeakFinder.h"
 #include "core/convolve/AnnularConvolver.h"
@@ -332,7 +334,6 @@ ArrayExtendCRef(MillerIndex, int);
 %include "core/data/DataSet.h"
 %include "core/data/DataTypes.h"
 %template(DataList) std::vector<std::shared_ptr<nsx::DataSet>>;
-%include "core/experiment/Experiment.h"
 
 %include "core/shape/IPeakIntegrator.h"
 
@@ -352,11 +353,13 @@ ArrayExtendCRef(MillerIndex, int);
 
 %include "core/statistics/MergedPeak.h"
 %include "core/integration/Blob3D.h"
+%include "core/shape/PeakCollection.h"
 %include "core/shape/PeakFilter.h"
 %include "core/statistics/MergedData.h"
 %include "core/experiment/PeakFinder.h"
 %template(MergedPeakSet) std::set<nsx::MergedPeak>;
 
+%include "core/experiment/Experiment.h"
 %include "core/algo/DataReaderFactory.h"
 %include "core/algo/RefinementBatch.h"
 %include "core/algo/Refiner.h"

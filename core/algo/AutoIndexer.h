@@ -71,6 +71,8 @@ class AutoIndexer {
     void setHandler(std::shared_ptr<ProgressHandler> handler) { _handler = handler; };
     //! Set the handler
     void unsetHandler() { _handler = nullptr; };
+    //! Print solutions to stdout
+    void printSolutions();
 
  private:
     void computeFFTSolutions(const std::vector<Peak3D*>& peaks);

@@ -26,3 +26,5 @@ html/
 last_loaded.ini
 
 .DS_Store
+
+__pycache__
