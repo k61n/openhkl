@@ -14,11 +14,14 @@ from autoindextest import AutoIndexTest
 from pdb import set_trace
 
 parser = argparse.ArgumentParser(description='NSXTool autoindexing test script')
-parser.add_argument('--name', type=str, dest='name', help='name of system')
-parser.add_argument('--files', type=str, nargs='+', dest='files',
+parser.add_argument('--name', type=str, dest='name', required=True, 
+                    help='name of system')
+parser.add_argument('--files', type=str, nargs='+', dest='files', required=True,
                     help='.tiff raw data files')
-parser.add_argument('-n', '--nnumors', type=int, dest='nnumors', 
+parser.add_argument('-n', '--nnumors', type=int, dest='nnumors', required=True,
                     help='number of numors to process')
+parser.add_argument('-c', '--cell', type=float, nargs=6, dest='ref_cell', required=True,
+                    help='reference cell parameters a, b, c, alpha, beta, gamma')
 parser.add_argument('--length_tol', type=float, dest='length_tol', default=1.0,
                     help='Tolerance for cell lengths (a, b, c)')
 parser.add_argument('--angle_tol', type=float, dest='angle_tol', default=0.1,
@@ -29,10 +32,11 @@ args = parser.parse_args()
 
 filenames = args.files
 params = Parameters()
+pynsxprint("Refernce cell: " + str(args.ref_cell))
 
 nfiles = len(filenames)
 frange = len(filenames) - args.nnumors
-ref_cell = (46.426, 94.062, 104.008, 90.0, 90.0, 90.0)
+#ref_cell = (46.426, 94.062, 104.008, 90.0, 90.0, 90.0)
 
 cells = []
 for i in range(frange):
@@ -42,7 +46,7 @@ for i in range(frange):
     pynsxprint("Files: " + str(files))
 
     indexer = AutoIndexTest(str(i), args.detector, params)
-    indexer.set_ref_cell(*ref_cell)
+    indexer.set_ref_cell(*args.ref_cell)
     indexer.set_tolerance(args.length_tol, args.angle_tol)
     try:
         indexer.autoindex(files, numors)

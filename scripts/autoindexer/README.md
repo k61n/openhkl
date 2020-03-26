@@ -4,8 +4,6 @@
 
 The parameters as found in the GUI are input via the `Parameters` class in `experiment.py`. In the scripts I use the GUI defaults, but if you want to modify them, be sure to pass the relevant key/value pairs the the constructor.
 
-I have hard-coded the reference cell parameters for my working example (streptavidin+biotin) into the `test_data_set.py` script for now, be sure to modify if you're using a different data set.
-
 ## `scripts/autoindex/autoindex.py`
 
 1. Modify $PYTHONPATH in `autoindex.py` to point to the swig directory in the NSXTool build directory:
@@ -34,7 +32,7 @@ I have hard-coded the reference cell parameters for my working example (streptav
    ```sys.path.append("/home/zamaan/codes/nsxtool/nsxtool/build/swig")```
 2. Run the script on the a set of .tiff raw data files
    ```path/to/test_data_set.py --name strep --files *.tiff -n 8```
-   This will do all processing steps for all sets of 8 *contiguous* frames up to and including the autoindexing step. Be sure to modify the reference cell parameters.
+   This will do all processing steps for all sets of 8 *contiguous* frames up to and including the autoindexing step. Be sure to pass the reference cell parameters via the command line argument `-c/--cell`.
 3. The script will generate a log file that looks like this:
 	```
 	Set 2       [2, 3, 4, 5, 6, 7, 8, 9]   93.75    46.600    93.407   104.293   90.000   90.000   90.000
