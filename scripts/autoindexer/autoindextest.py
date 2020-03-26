@@ -8,7 +8,7 @@ Classes for testing autoindexer
 
 import sys
 sys.path.append("/home/zamaan/codes/nsxtool/nsxtool/build/swig")
-from experiment import Parameters, Experiment
+from experiment import Experiment
 import pynsx as nsx
 from pdb import set_trace
 

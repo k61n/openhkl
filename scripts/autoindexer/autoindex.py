@@ -13,7 +13,8 @@ loaded.
 import sys
 import argparse
 import os.path
-from experiment import Parameters, Experiment, pynsxprint
+from experiment import Experiment, pynsxprint
+from parameters import Parameters
 from pdb import set_trace
 
 parser = argparse.ArgumentParser(description='NSXTool autoindexing test script')
@@ -24,9 +25,16 @@ parser.add_argument('--detector', type=str, dest='detector', default='BioDiff500
                     help='Type of detector')
 parser.add_argument('--loadnsx', action='store_true', dest='loadnsx', default=False,
                     help='load <name>.nsx')
+parser.add_argument('-p', '--parameters', type=str, dest='paramfile',
+                    default='parameters', help='File containing experiment paramters')
 args = parser.parse_args()
 
 params = Parameters()
+if os.path.isfile(args.paramfile):
+    pynsxprint(f"Reading parameters from {args.paramfile}")
+    params.load(args.paramfile)
+else:
+    pynsxprint("No parameters file detected, using defaults")
 
 expt = Experiment(args.name, args.detector, params)
 if args.loadnsx:
@@ -44,14 +52,16 @@ else:
     expt.find_peaks()
     pynsxprint("...peak finding complete\n")
     pynsxprint("Integrating...")
-    expt.integrate_peaks()
+    npeaks = expt.integrate_peaks()
     pynsxprint("...integration complete\n")
     pynsxprint(f"Saving experiment to file {expt.nsxfile}")
     expt.save()
 
 pynsxprint("Filtering...")
-expt.filter_peaks()
+ncaught = expt.filter_peaks()
 pynsxprint("...filtering complete\n")
+pynsxprint("Filter caught " + str(ncaught) + " of " + str(npeaks) + " peaks")
+
 pynsxprint("Autoindexing...")
 expt.autoindex()
 pynsxprint("...autoindexing complete\n")
