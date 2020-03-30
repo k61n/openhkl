@@ -29,8 +29,6 @@ NexusDataReader::NexusDataReader(const std::string& filename, Diffractometer* in
 
 Eigen::MatrixXi NexusDataReader::data(size_t frame)
 {
-    std::cout << "Calling data() with frame " << frame << std::endl;
-
     if (!_isOpened)
         open();
 
