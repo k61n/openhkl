@@ -82,9 +82,9 @@ template <typename _type> void MetaData::add(const std::string& key, const _type
     std::pair<MetaDataKeySet::iterator, bool> it = _metakeys.insert(key);
 
     //  If all OK, then add the key to the map
-    const char* ptr = (*it.first).c_str();
+    const char* ptr = it.first->c_str();
     if (it.second) {
-        _map.insert(std::pair<const char*, _type>(ptr, value));
+        _map.insert({ptr, value});
     } else {
         auto it2 = _map.find(ptr);
         it2->second = value;
@@ -98,7 +98,7 @@ template <typename _type> _type MetaData::key(const std::string& name) const
     if (it == _metakeys.end())
         throw std::runtime_error("Could not find key :" + name + " in MetaData");
     // Then search in the map
-    const char* ptr = (*it).c_str();
+    const char* ptr = it->c_str();
     auto it2 = _map.find(ptr);
     if (it2 == _map.end())
         throw std::runtime_error("Could not find key :" + name + " in MetaData");
