@@ -16,6 +16,7 @@
 
 #include "core/loader/FakeDataReader.h"
 #include "core/loader/HDF5DataReader.h"
+#include "core/loader/NexusDataReader.h"
 #include "core/loader/ILLDataReader.h"
 #include "core/loader/RawDataReader.h"
 #include "core/loader/TiffDataReader.h"
@@ -39,7 +40,7 @@ DataReaderFactory::DataReaderFactory() : _callbacks()
     _callbacks["h5"] = &create_reader<HDF5DataReader>;
     _callbacks["hdf5"] = &create_reader<HDF5DataReader>;
     _callbacks["hdf"] = &create_reader<HDF5DataReader>;
-    _callbacks["nxs"] = &create_reader<HDF5DataReader>;
+    _callbacks["nxs"] = &create_reader<NexusDataReader>;
     _callbacks["raw"] = &create_reader<RawDataReader>;
     _callbacks["tif"] = &create_reader<TiffDataReader>;
     _callbacks["tiff"] = &create_reader<TiffDataReader>;

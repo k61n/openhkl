@@ -157,6 +157,7 @@ HDF5MetaDataReader::HDF5MetaDataReader(const std::string& filename, Diffractomet
     _file->close();
 }
 
+
 void HDF5MetaDataReader::open()
 {
     if (_isOpened)
@@ -212,6 +213,7 @@ void HDF5MetaDataReader::open()
     free(version);
     free(date);
 }
+
 
 void HDF5MetaDataReader::close()
 {
