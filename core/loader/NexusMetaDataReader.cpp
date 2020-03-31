@@ -143,13 +143,13 @@ NexusMetaDataReader::NexusMetaDataReader(
             const auto& detector_gonio = _diffractometer->detector()->gonio();
             size_t n_detector_gonio_axes = detector_gonio.nAxes();
             std::vector<double> det_states(n_detector_gonio_axes);
-            _detectorStates.emplace_back(det_states);
+            _detectorStates.emplace_back(std::move(det_states));
 
             std::vector<double> sample_states(n_sample_gonio_axes);
             sample_states[omega_idx] = scanned_vars[_nFrames * omega_idx + frame] * deg;
             sample_states[phi_idx] = scanned_vars[_nFrames * phi_idx + frame] * deg;
             sample_states[chi_idx] = scanned_vars[_nFrames * chi_idx + frame] * deg;
-            _sampleStates.emplace_back(sample_states);
+            _sampleStates.emplace_back(std::move(sample_states));
         }
 
 
