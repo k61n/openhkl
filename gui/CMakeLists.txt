@@ -1,5 +1,9 @@
 set(lib nsxgui)
 
+if((CMAKE_CXX_COMPILER_ID STREQUAL "GNU") OR (CMAKE_CXX_COMPILER_ID MATCHES "Clang"))
+    add_compile_options(-Wno-deprecated-copy) # to suppress warnings from Qt5 (at least <= 5.12.5)
+endif()
+
 file(GLOB_RECURSE sources *.cpp)
 add_library(${lib} ${sources})
 
