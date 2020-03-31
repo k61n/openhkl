@@ -39,14 +39,15 @@ const MetaDataKeySet& MetaData::keys() const
 {
     return _metakeys;
 }
+
 bool MetaData::isKey(const char* key) const
 {
     // Search if this key is in the set.
     auto it = _metakeys.find(std::string(key));
     if (it == _metakeys.end())
         return false;
-    const char* ptr = (*it).c_str();
-    auto it2 = _map.find(ptr);
+
+    auto it2 = _map.find(std::string(key));
     return (it2 != _map.end());
 }
 bool MetaData::isKey(const std::string& key) const
@@ -55,8 +56,8 @@ bool MetaData::isKey(const std::string& key) const
     auto it = _metakeys.find(key);
     if (it == _metakeys.end())
         return false;
-    const char* ptr = (*it).c_str();
-    auto it2 = _map.find(ptr);
+
+    auto it2 = _map.find(key);
     return (it2 != _map.end());
 }
 
@@ -66,8 +67,8 @@ std::variant<int, double, std::string> MetaData::key(const std::string& key) con
     auto it = _metakeys.find(key);
     if (it == _metakeys.end())
         throw std::runtime_error("Could not locate key " + key + " in the set of available keys");
-    const char* ptr = (*it).c_str();
-    auto it2 = _map.find(ptr);
+
+    auto it2 = _map.find(key);
     if (it2 != _map.end())
         return it2->second;
     else

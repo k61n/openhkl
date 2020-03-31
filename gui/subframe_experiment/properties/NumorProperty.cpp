@@ -126,7 +126,7 @@ void NumorProperty::onChanged()
             {
                 QTableWidgetItem* col0 = new QTableWidgetItem();
                 QTableWidgetItem* col1 = new QTableWidgetItem();
-                col0->setData(Qt::EditRole, QString(element.first));
+                col0->setData(Qt::EditRole, QString(element.first.c_str()));
 
                 if (std::holds_alternative<int>(element.second))
                     col1->setData(Qt::EditRole, std::get<int>(element.second));
