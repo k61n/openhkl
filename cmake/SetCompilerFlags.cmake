@@ -57,13 +57,13 @@ endif()
 
 # clang specific
 if(COMPILER_IS_CLANG)
-    add_compile_options(-Werror=delete-incomplete)
+    add_compile_options($<$<COMPILE_LANGUAGE:CXX>:-Werror=delete-incomplete>)
 endif()
 
 # gcc specific
 if(COMPILER_IS_GNU)
     if(GCC_VERSION VERSION_GREATER 4.9)
-        add_compile_options(-Werror=delete-incomplete)
+        add_compile_options($<$<COMPILE_LANGUAGE:CXX>:-Werror=delete-incomplete>)
         if(BUILD_OPTIMIZED_DEBUG)
             add_compile_options(-Og)
         endif()
