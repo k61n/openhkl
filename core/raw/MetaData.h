@@ -15,16 +15,15 @@
 #ifndef CORE_RAW_METADATA_H
 #define CORE_RAW_METADATA_H
 
-#include "base/utils/Variant.h"
-
 #include <map>
+#include <variant>
 #include <memory>
 #include <set>
 #include <string>
 
 namespace nsx {
 
-using MetaDataMap = std::map<const char*, Variant<int, double, std::string>>;
+using MetaDataMap = std::map<const char*, std::variant<int, double, std::string>>;
 using MetaDataKeySet = std::set<std::string>;
 
 //! Stores arbitrary meta data of a DataSet.
@@ -54,7 +53,7 @@ class MetaData {
     template <class _type> _type key(const char* key) const;
     //! Returns the value
     //@ return : value corresponding to key
-    Variant<int, double, std::string> key(const std::string& key) const;
+    std::variant<int, double, std::string> key(const std::string& key) const;
     //! Is this key in the metadata
     bool isKey(const std::string& key) const;
     //! Is this key in the metadata
@@ -102,7 +101,7 @@ template <typename _type> _type MetaData::key(const std::string& name) const
     auto it2 = _map.find(ptr);
     if (it2 == _map.end())
         throw std::runtime_error("Could not find key :" + name + " in MetaData");
-    return it2->second.as<_type>();
+    return std::get<_type>(it2->second);
 }
 
 template <typename _type> _type MetaData::key(const char* name) const
