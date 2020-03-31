@@ -82,12 +82,8 @@ template <typename _type> void MetaData::add(const std::string& key, const _type
 
     //  If all OK, then add the key to the map
     const char* ptr = it.first->c_str();
-    if (it.second) {
-        _map.insert({ptr, value});
-    } else {
-        auto it2 = _map.find(ptr);
-        it2->second = value;
-    }
+    // _map.insert_or_assign(std::pair<const char*, _type>(ptr, value));
+    _map.insert_or_assign(ptr, value);
 }
 
 template <typename _type> _type MetaData::key(const std::string& name) const
