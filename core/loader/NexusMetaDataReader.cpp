@@ -60,7 +60,6 @@ NexusMetaDataReader::NexusMetaDataReader(
         // get monitor
         double monitor = -1.;
         monitorGroup.openDataSet("monsum").read(&monitor, H5::PredType::NATIVE_DOUBLE);
-        std::cout << monitor << std::endl;
 
         // check instrument name
         char instr_name[128];
