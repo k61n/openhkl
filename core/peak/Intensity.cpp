@@ -24,12 +24,6 @@ Intensity::Intensity(double value, double sigma2) : _value(value), _sigma2(sigma
         _sigma2 = 0.0;
 }
 
-Intensity::Intensity(const Intensity& other) : _value(other._value), _sigma2(other._sigma2)
-{
-    if (_sigma2 < 0.0 || std::isnan(_sigma2))
-        _sigma2 = 0.0;
-}
-
 double Intensity::value() const
 {
     return _value;
