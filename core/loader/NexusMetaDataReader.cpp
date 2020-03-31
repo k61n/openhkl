@@ -142,21 +142,14 @@ NexusMetaDataReader::NexusMetaDataReader(
         for (size_t frame = 0; frame < _nFrames; ++frame) {
             const auto& detector_gonio = _diffractometer->detector()->gonio();
             size_t n_detector_gonio_axes = detector_gonio.nAxes();
-            Eigen::VectorXd dm(n_detector_gonio_axes);
-            _detectorStates.push_back(eigenToVector(dm));
+            std::vector<double> det_states(n_detector_gonio_axes);
+            _detectorStates.emplace_back(det_states);
 
-            dm.resize(n_sample_gonio_axes);
-
-            dm(omega_idx) = scanned_vars[_nFrames * omega_idx + frame];
-            dm(phi_idx) = scanned_vars[_nFrames * phi_idx + frame];
-            dm(chi_idx) = scanned_vars[_nFrames * chi_idx + frame];
-            // std::cout << "omega = " << dm(omega_idx) << ", phi = " << dm(phi_idx) << ", chi = "
-            // << dm(chi_idx) << std::endl;
-
-            // Use natural units internally (rad)
-            dm *= deg;
-
-            _sampleStates.push_back(eigenToVector(dm));
+            std::vector<double> sample_states(n_sample_gonio_axes);
+            sample_states[omega_idx] = scanned_vars[_nFrames * omega_idx + frame] * deg;
+            sample_states[phi_idx] = scanned_vars[_nFrames * phi_idx + frame] * deg;
+            sample_states[chi_idx] = scanned_vars[_nFrames * chi_idx + frame] * deg;
+            _sampleStates.emplace_back(sample_states);
         }
 
 
