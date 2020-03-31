@@ -91,5 +91,6 @@
         "variant": "cpp",
         "qaction": "cpp",
         "qspinbox": "cpp"
-    }
+    },
+    "cmake.configureOnOpen": false
 }
