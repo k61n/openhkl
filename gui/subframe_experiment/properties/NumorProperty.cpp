@@ -128,13 +128,13 @@ void NumorProperty::onChanged()
                 QTableWidgetItem* col1 = new QTableWidgetItem();
                 col0->setData(Qt::EditRole, QString(element.first));
 
-                if (element.second.is<int>())
-                    col1->setData(Qt::EditRole, element.second.as<int>());
-                else if (element.second.is<double>())
-                    col1->setData(Qt::EditRole, element.second.as<double>());
-                else if (element.second.is<std::string>()) {
+                if (std::holds_alternative<int>(element.second))
+                    col1->setData(Qt::EditRole, std::get<int>(element.second));
+                else if (std::holds_alternative<double>(element.second))
+                    col1->setData(Qt::EditRole, std::get<double>(element.second));
+                else if (std::holds_alternative<std::string>(element.second)) {
                     col1->setData(
-                        Qt::EditRole, QString::fromStdString(element.second.as<std::string>()));
+                        Qt::EditRole, QString::fromStdString(std::get<std::string>(element.second)));
                 } else {
                     delete col0;
                     delete col1;

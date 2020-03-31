@@ -4,7 +4,7 @@
 enable_language(CXX)
 enable_language(C)
 
-set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD 17)
 
 # determine if compiler is GNU/clang variety
 if( CMAKE_CXX_COMPILER_ID STREQUAL "GNU")

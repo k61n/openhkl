@@ -188,7 +188,7 @@ bool ExperimentExporter::writeData(const std::map<std::string, DataSet*> data)
                 std::string info;
 
                 try {
-                    info = item.second.as<std::string>();
+                    info = std::get<std::string>(item.second);
                     H5::Attribute intAtt(info_group->createAttribute(item.first, str80, metaSpace));
                     intAtt.write(str80, info);
                 } catch (const std::exception& ex) {
@@ -208,14 +208,14 @@ bool ExperimentExporter::writeData(const std::map<std::string, DataSet*> data)
                 int value;
 
                 try {
-                    value = item.second.as<int>();
+                    value = std::get<int>(item.second);
                     H5::Attribute intAtt(meta_data_group->createAttribute(
                         item.first, H5::PredType::NATIVE_INT32, metaSpace));
                     intAtt.write(H5::PredType::NATIVE_INT, &value);
                 } catch (...) {
                     try {
                         double d_value;
-                        d_value = item.second.as<double>();
+                        d_value = std::get<double>(item.second);
                         H5::Attribute intAtt(meta_data_group->createAttribute(
                             item.first, H5::PredType::NATIVE_DOUBLE, metaSpace));
                         intAtt.write(H5::PredType::NATIVE_DOUBLE, &d_value);

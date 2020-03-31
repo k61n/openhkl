@@ -229,7 +229,7 @@ void DataSet::saveHDF5(const std::string& filename) // const
         std::string info;
 
         try {
-            info = item.second.as<std::string>();
+            info = std::get<std::string>(item.second);
             H5::Attribute intAtt(infogroup.createAttribute(item.first, str80, metaSpace));
             intAtt.write(str80, info);
         } catch (const std::exception& ex) {
@@ -246,14 +246,14 @@ void DataSet::saveHDF5(const std::string& filename) // const
         int value;
 
         try {
-            value = item.second.as<int>();
+            value = std::get<int>(item.second);
             H5::Attribute intAtt(
                 metadatagroup.createAttribute(item.first, H5::PredType::NATIVE_INT32, metaSpace));
             intAtt.write(H5::PredType::NATIVE_INT, &value);
         } catch (...) {
             try {
                 double dvalue;
-                dvalue = item.second.as<double>();
+                dvalue = std::get<double>(item.second);
                 H5::Attribute intAtt(metadatagroup.createAttribute(
                     item.first, H5::PredType::NATIVE_DOUBLE, metaSpace));
                 intAtt.write(H5::PredType::NATIVE_DOUBLE, &dvalue);
