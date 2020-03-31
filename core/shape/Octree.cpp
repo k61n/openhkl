@@ -284,12 +284,6 @@ OctreeIterator::OctreeIterator(const Octree& node) : _node(&node)
         _node = &_node->_children[0];
 }
 
-OctreeIterator& OctreeIterator::operator=(const OctreeIterator& other)
-{
-    _node = other._node;
-    return *this;
-}
-
 bool OctreeIterator::operator!=(const OctreeIterator& other) const
 {
     return (_node != other._node);
