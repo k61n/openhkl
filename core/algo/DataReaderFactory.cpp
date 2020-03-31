@@ -16,8 +16,8 @@
 
 #include "core/loader/FakeDataReader.h"
 #include "core/loader/HDF5DataReader.h"
-#include "core/loader/NexusDataReader.h"
 #include "core/loader/ILLDataReader.h"
+#include "core/loader/NexusDataReader.h"
 #include "core/loader/RawDataReader.h"
 #include "core/loader/TiffDataReader.h"
 

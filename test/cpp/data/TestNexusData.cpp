@@ -26,21 +26,19 @@ TEST_CASE("test/data/TestNexusData.cpp", "")
 
     nsx::Diffractometer* diffractometer = nsx::Diffractometer::create("D19");
     std::shared_ptr<nsx::DataSet> datafile;
-    try
-    {
-        datafile = factory.create("nxs", "/home/tw/tmp/nsx/internal-192/501168.nxs", diffractometer);
-    }
-    catch(const std::exception& ex)
-    {
+    try {
+        datafile =
+            factory.create("nxs", "/home/tw/tmp/nsx/internal-192/501168.nxs", diffractometer);
+    } catch (const std::exception& ex) {
         std::cerr << "Skipping test because data file is not available." << std::endl;
         return;
     }
 
     datafile->open();
     Eigen::MatrixXi v = datafile->frame(0);
-    CHECK((v.rows()==256 && v.cols()==640));
-    //std::cout << v << std::endl;
+    CHECK((v.rows() == 256 && v.cols() == 640));
+    // std::cout << v << std::endl;
 
-    //CHECK(v.sum() == xxxxxxx);
+    // CHECK(v.sum() == xxxxxxx);
     datafile->close();
 }

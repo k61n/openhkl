@@ -34,8 +34,8 @@ Eigen::MatrixXi NexusDataReader::data(size_t frame)
 
     Eigen::Matrix<int, Eigen::Dynamic, Eigen::Dynamic, Eigen::ColMajor> m(_nRows, _nCols);
 
-    hsize_t count[3] = { 1, _nCols, _nRows };
-    hsize_t offset[3] = { frame, 0, 0 };
+    hsize_t count[3] = {1, _nCols, _nRows};
+    hsize_t offset[3] = {frame, 0, 0};
     _space->selectHyperslab(H5S_SELECT_SET, count, offset, nullptr, nullptr);
     _dataset->read(m.data(), H5::PredType::NATIVE_INT32, *_memspace, *_space);
 

@@ -28,13 +28,14 @@
 namespace nsx {
 
 
-NexusMetaDataReader::NexusMetaDataReader(const std::string& filename, Diffractometer* diffractometer)
+NexusMetaDataReader::NexusMetaDataReader(
+    const std::string& filename, Diffractometer* diffractometer)
     : IDataReader(filename, diffractometer), _dataset(nullptr), _space(nullptr), _memspace(nullptr)
 {
-    try
-    {
-        //std::cout << "frames = " << _nFrames << ", rows = " << _nRows << ", cols = " << _nCols << std::endl;
-        //std::cout << "nMonos = " << _diffractometer->source().nMonochromators() << std::endl;
+    try {
+        // std::cout << "frames = " << _nFrames << ", rows = " << _nRows << ", cols = " << _nCols <<
+        // std::endl; std::cout << "nMonos = " << _diffractometer->source().nMonochromators() <<
+        // std::endl;
 
         _file = std::unique_ptr<H5::H5File>(new H5::H5File(filename.c_str(), H5F_ACC_RDONLY));
 
@@ -64,7 +65,7 @@ NexusMetaDataReader::NexusMetaDataReader(const std::string& filename, Diffractom
         // check instrument name
         char instr_name[128];
         instrumentGroup.openDataSet("name").read(instr_name, H5::StrType(0, sizeof(instr_name)));
-        if(_diffractometer->name() != instr_name)
+        if (_diffractometer->name() != instr_name)
             throw std::runtime_error("Nexus: instrument name mismatch");
 
         // non-essential metadata fields
@@ -74,7 +75,8 @@ NexusMetaDataReader::NexusMetaDataReader(const std::string& filename, Diffractom
 
         char title[128], experiment_id[128];
         entryGroup.openDataSet("title").read(title, H5::StrType(0, sizeof(title)));
-        entryGroup.openDataSet("experiment_identifier").read(experiment_id, H5::StrType(0, sizeof(experiment_id)));
+        entryGroup.openDataSet("experiment_identifier")
+            .read(experiment_id, H5::StrType(0, sizeof(experiment_id)));
 
         double time;
         entryGroup.openDataSet("time").read(&time, H5::PredType::NATIVE_DOUBLE);
@@ -95,7 +97,8 @@ NexusMetaDataReader::NexusMetaDataReader(const std::string& filename, Diffractom
 
         // which axis is scanned?
         int scanned_axes[4];
-        dataGroup.openDataSet("scanned_variables/variables_names/scanned").read(&scanned_axes, H5::PredType::NATIVE_INT);
+        dataGroup.openDataSet("scanned_variables/variables_names/scanned")
+            .read(&scanned_axes, H5::PredType::NATIVE_INT);
         /*std::cout << "scanned axes: ";
         for(int i=0; i<4; ++i)
             std::cout << scanned_axes[i] << ", ";
@@ -106,15 +109,15 @@ NexusMetaDataReader::NexusMetaDataReader(const std::string& filename, Diffractom
         H5::DataSet dsScannedVars = dataGroup.openDataSet("scanned_variables/data");
         H5::DataSpace spaceScannedVars(dsScannedVars.getSpace());
         hsize_t dimScannedVars = spaceScannedVars.getSimpleExtentNdims();
-        if(dimScannedVars != 2)
+        if (dimScannedVars != 2)
             throw std::runtime_error("Nexus: invalid dimension of scanned variable block");
 
         hsize_t dimsScannedVars[2];
         spaceScannedVars.getSimpleExtentDims(&dimsScannedVars[0]);
-        if(dimsScannedVars[0] != 5 || dimsScannedVars[1] != _nFrames)
+        if (dimsScannedVars[0] != 5 || dimsScannedVars[1] != _nFrames)
             throw std::runtime_error("Nexus: invalid dimension of scanned variable block");
 
-        double *scanned_vars = new double[dimsScannedVars[0]*dimsScannedVars[1]];
+        double* scanned_vars = new double[dimsScannedVars[0] * dimsScannedVars[1]];
         dsScannedVars.read(scanned_vars, H5::PredType::NATIVE_DOUBLE);
 
 
@@ -124,21 +127,19 @@ NexusMetaDataReader::NexusMetaDataReader(const std::string& filename, Diffractom
 
         // TODO: match indices with "variables_names" in nexus file
         int omega_idx = -1, phi_idx = -1, chi_idx = -1;
-        for(size_t i=0; i<n_sample_gonio_axes; ++i)
-        {
+        for (size_t i = 0; i < n_sample_gonio_axes; ++i) {
             const std::string axis_name = sample_gonio.axis(i).name();
             omega_idx = axis_name == "omega" ? int(i) : omega_idx;
             chi_idx = axis_name == "chi" ? int(i) : chi_idx;
             phi_idx = axis_name == "phi" ? int(i) : phi_idx;
         }
 
-        if(omega_idx == -1 || phi_idx == -1 || chi_idx == -1)
+        if (omega_idx == -1 || phi_idx == -1 || chi_idx == -1)
             throw std::runtime_error("Nexus: could not find angle indices");
 
 
         // iterate instrument configuration for all frames
-        for(size_t frame=0; frame<_nFrames; ++frame)
-        {
+        for (size_t frame = 0; frame < _nFrames; ++frame) {
             const auto& detector_gonio = _diffractometer->detector()->gonio();
             size_t n_detector_gonio_axes = detector_gonio.nAxes();
             Eigen::VectorXd dm(n_detector_gonio_axes);
@@ -146,10 +147,11 @@ NexusMetaDataReader::NexusMetaDataReader(const std::string& filename, Diffractom
 
             dm.resize(n_sample_gonio_axes);
 
-            dm(omega_idx) = scanned_vars[_nFrames*omega_idx + frame];
-            dm(phi_idx) = scanned_vars[_nFrames*phi_idx + frame];
-            dm(chi_idx) = scanned_vars[_nFrames*chi_idx + frame];
-            //std::cout << "omega = " << dm(omega_idx) << ", phi = " << dm(phi_idx) << ", chi = " << dm(chi_idx) << std::endl;
+            dm(omega_idx) = scanned_vars[_nFrames * omega_idx + frame];
+            dm(phi_idx) = scanned_vars[_nFrames * phi_idx + frame];
+            dm(chi_idx) = scanned_vars[_nFrames * chi_idx + frame];
+            // std::cout << "omega = " << dm(omega_idx) << ", phi = " << dm(phi_idx) << ", chi = "
+            // << dm(chi_idx) << std::endl;
 
             // Use natural units internally (rad)
             dm *= deg;
@@ -160,9 +162,7 @@ NexusMetaDataReader::NexusMetaDataReader(const std::string& filename, Diffractom
 
         delete[] scanned_vars;
         _file->close();
-    }
-    catch(H5::Exception& e)
-    {
+    } catch (H5::Exception& e) {
         std::string what = "Nexus: " + e.getDetailMsg();
         throw std::runtime_error(what);
     }
@@ -174,13 +174,10 @@ void NexusMetaDataReader::open()
     if (_isOpened)
         return;
 
-    try
-    {
+    try {
         _file = std::unique_ptr<H5::H5File>(
             new H5::H5File(_metadata.key<std::string>("filename").c_str(), H5F_ACC_RDONLY));
-    } 
-    catch (...)
-    {
+    } catch (...) {
         if (_file)
             _file.reset();
         throw;
@@ -200,7 +197,8 @@ void NexusMetaDataReader::open()
 
 
     // create new data set
-    _dataset = std::unique_ptr<H5::DataSet>(new H5::DataSet(_file->openDataSet("/entry0/data_scan/detector_data/data")));
+    _dataset = std::unique_ptr<H5::DataSet>(
+        new H5::DataSet(_file->openDataSet("/entry0/data_scan/detector_data/data")));
 
     // dataspace of the dataset /counts
     _space = std::unique_ptr<H5::DataSpace>(new H5::DataSpace(_dataset->getSpace()));
@@ -215,7 +213,8 @@ void NexusMetaDataReader::open()
     _nFrames = dims[0];
     _nRows = dims[2];
     _nCols = dims[1];
-    //std::cout << "frames = " << _nFrames << ", rows = " << _nRows << ", cols = " << _nCols << std::endl;
+    // std::cout << "frames = " << _nFrames << ", rows = " << _nRows << ", cols = " << _nCols <<
+    // std::endl;
 
 
     // Size of one hyperslab

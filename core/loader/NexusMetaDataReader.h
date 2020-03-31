@@ -23,8 +23,7 @@ namespace nsx {
 
 //! IDataReader for Nexus files. Base class for NexusDataReader and FakeDataReader.
 
-class NexusMetaDataReader : public IDataReader
-{
+class NexusMetaDataReader : public IDataReader {
  public:
     NexusMetaDataReader() = delete;
     NexusMetaDataReader(const NexusMetaDataReader& other) = delete;
