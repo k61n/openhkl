@@ -16,14 +16,14 @@
 #define CORE_RAW_METADATA_H
 
 #include <map>
-#include <variant>
 #include <memory>
 #include <set>
 #include <string>
+#include <variant>
 
 namespace nsx {
 
-using MetaDataMap = std::map<const char*, std::variant<int, double, std::string>>;
+using MetaDataMap = std::map<std::string, std::variant<int, double, std::string>>;
 using MetaDataKeySet = std::set<std::string>;
 
 //! Stores arbitrary meta data of a DataSet.
@@ -31,9 +31,7 @@ using MetaDataKeySet = std::set<std::string>;
 //! MetaData class allow to store metadata associated with a data file  into a
 //! map indexed by the string of the entry. Any parameter type can be stored,
 //! using the corresponding template argument. A specific key can be retrieved
-//! back using the template type defined when the key was registered. From C++0x
-//! onwards, a parameter can be retrieved even if its type is unknown by the user
-//! using auto.
+//! back using the template type defined when the key was registered.
 class MetaData {
  public:
     //! Constructor
@@ -78,11 +76,10 @@ template <typename _type> void MetaData::add(const std::string& key, const _type
     // First, make sure the key is already in the keyset
     // Since this is a set, no duplicate will be found. No need to search
     // explicitely.
-    std::pair<MetaDataKeySet::iterator, bool> it = _metakeys.insert(key);
+    _metakeys.insert(key);
 
     //  If all OK, then add the key to the map
-    const char* ptr = (*it.first).c_str();
-    _map.insert(std::pair<const char*, _type>(ptr, value));
+    _map.insert_or_assign(key, value);
 }
 
 template <typename _type> _type MetaData::key(const std::string& name) const
@@ -91,9 +88,9 @@ template <typename _type> _type MetaData::key(const std::string& name) const
     auto it = _metakeys.find(name);
     if (it == _metakeys.end())
         throw std::runtime_error("Could not find key :" + name + " in MetaData");
+
     // Then search in the map
-    const char* ptr = (*it).c_str();
-    auto it2 = _map.find(ptr);
+    auto it2 = _map.find(name);
     if (it2 == _map.end())
         throw std::runtime_error("Could not find key :" + name + " in MetaData");
     return std::get<_type>(it2->second);

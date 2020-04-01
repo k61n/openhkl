@@ -24,6 +24,7 @@
 
 #include <memory>
 #include <stdexcept>
+#include <iostream>
 
 namespace nsx {
 
@@ -50,6 +51,10 @@ HDF5MetaDataReader::HDF5MetaDataReader(const std::string& filename, Diffractomet
         H5::DataType typ = attr.getDataType();
         std::string value;
         attr.read(typ, value);
+
+        // override stored filename with the current one
+        if(attr.getName() == "filename")
+            value = filename;
         _metadata.add<std::string>(attr.getName(), value);
     }
 

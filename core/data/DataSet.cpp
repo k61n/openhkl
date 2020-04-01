@@ -223,15 +223,14 @@ void DataSet::saveHDF5(const std::string& filename) // const
     H5::Group infogroup(file.createGroup("/Info"));
     H5::DataSpace metaSpace(H5S_SCALAR);
     H5::StrType str80(H5::PredType::C_S1, 80);
-    std::string info;
 
     for (const auto& item : map) {
-        std::string info;
-
         try {
-            info = std::get<std::string>(item.second);
-            H5::Attribute intAtt(infogroup.createAttribute(item.first, str80, metaSpace));
-            intAtt.write(str80, info);
+            if (std::holds_alternative<std::string>(item.second)) {
+                std::string info = std::get<std::string>(item.second);
+                H5::Attribute intAtt(infogroup.createAttribute(item.first, str80, metaSpace));
+                intAtt.write(str80, info);
+            }
         } catch (const std::exception& ex) {
             std::cerr << "Exception in " << __PRETTY_FUNCTION__ << ": " << ex.what() << std::endl;
         } catch (...) {
@@ -243,26 +242,22 @@ void DataSet::saveHDF5(const std::string& filename) // const
     H5::Group metadatagroup(file.createGroup("/Experiment"));
 
     for (const auto& item : map) {
-        int value;
-
         try {
-            value = std::get<int>(item.second);
-            H5::Attribute intAtt(
-                metadatagroup.createAttribute(item.first, H5::PredType::NATIVE_INT32, metaSpace));
-            intAtt.write(H5::PredType::NATIVE_INT, &value);
-        } catch (...) {
-            try {
-                double dvalue;
-                dvalue = std::get<double>(item.second);
+            if (std::holds_alternative<int>(item.second)) {
+                int value = std::get<int>(item.second);
+                H5::Attribute intAtt(metadatagroup.createAttribute(
+                    item.first, H5::PredType::NATIVE_INT32, metaSpace));
+                intAtt.write(H5::PredType::NATIVE_INT, &value);
+            } else if (std::holds_alternative<double>(item.second)) {
+                double dvalue = std::get<double>(item.second);
                 H5::Attribute intAtt(metadatagroup.createAttribute(
                     item.first, H5::PredType::NATIVE_DOUBLE, metaSpace));
                 intAtt.write(H5::PredType::NATIVE_DOUBLE, &dvalue);
-            } catch (const std::exception& ex) {
-                std::cerr << "Exception in " << __PRETTY_FUNCTION__ << ": " << ex.what()
-                          << std::endl;
-            } catch (...) {
-                std::cerr << "Uncaught exception in " << __PRETTY_FUNCTION__ << std::endl;
             }
+        } catch (const std::exception& ex) {
+            std::cerr << "Exception in " << __PRETTY_FUNCTION__ << ": " << ex.what() << std::endl;
+        } catch (...) {
+            std::cerr << "Uncaught exception in " << __PRETTY_FUNCTION__ << std::endl;
         }
     }
     file.close();
