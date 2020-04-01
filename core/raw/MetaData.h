@@ -76,7 +76,7 @@ template <typename _type> void MetaData::add(const std::string& key, const _type
     // First, make sure the key is already in the keyset
     // Since this is a set, no duplicate will be found. No need to search
     // explicitely.
-    std::pair<MetaDataKeySet::iterator, bool> it = _metakeys.insert(key);
+    _metakeys.insert(key);
 
     //  If all OK, then add the key to the map
     _map.insert_or_assign(key, value);
