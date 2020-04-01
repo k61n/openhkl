@@ -42,13 +42,7 @@ const MetaDataKeySet& MetaData::keys() const
 
 bool MetaData::isKey(const char* key) const
 {
-    // Search if this key is in the set.
-    auto it = _metakeys.find(std::string(key));
-    if (it == _metakeys.end())
-        return false;
-
-    auto it2 = _map.find(std::string(key));
-    return (it2 != _map.end());
+    return isKey(std::string(key));
 }
 
 bool MetaData::isKey(const std::string& key) const
