@@ -47,7 +47,7 @@ TEST_CASE(__FILE__, "")
     std::vector<int> vecI2;
     const char* pcI2 = "";
 
-    nsx::readNumFromChar<int>(pcI2, pcI2 + std::strlen(pcI), vecI2);
+    nsx::readNumFromChar<int>(pcI2, pcI2 + std::strlen(pcI2), vecI2);
 
     CHECK(vecI2.size() == 0);
 }
