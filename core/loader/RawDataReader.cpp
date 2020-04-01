@@ -56,41 +56,33 @@ void RawDataReader::addFrame(const std::string& filename)
 
     const auto& detector_gonio = _diffractometer->detector()->gonio();
     size_t n_detector_gonio_axes = detector_gonio.nAxes();
-    Eigen::VectorXd dm(n_detector_gonio_axes);
-    dm.setZero(n_detector_gonio_axes);
-    _detectorStates.push_back(eigenToVector(dm));
 
-    // Getting Scan parameters for the sample
     const auto& sample_gonio = _diffractometer->sample().gonio();
     size_t n_sample_gonio_axes = sample_gonio.nAxes();
 
-    dm.resize(n_sample_gonio_axes);
-    dm.setZero(n_sample_gonio_axes);
-
-    int omega = -1;
-    int phi = -1;
-    int chi = -1;
+    int omega_idx = -1, phi_idx = -1, chi_idx = -1;
     for (size_t i = 0; i < n_sample_gonio_axes; ++i) {
-        const std::string axis_name = sample_gonio.axis(i).name();
-        omega = axis_name == "omega" ? int(i) : omega;
-        chi = axis_name == "chi" ? int(i) : chi;
-        phi = axis_name == "phi" ? int(i) : phi;
+      const std::string axis_name = sample_gonio.axis(i).name();
+      omega_idx = axis_name == "omega" ? int(i) : omega_idx;
+      chi_idx = axis_name == "chi" ? int(i) : chi_idx;
+      phi_idx = axis_name == "phi" ? int(i) : phi_idx;
     }
 
-    assert(omega != -1);
-    assert(phi != -1);
-    assert(chi != -1);
+    if (omega_idx == -1 || phi_idx == -1 || chi_idx == -1)
+      throw std::runtime_error("RawDataReader: could not find angle indices");
 
     size_t idx = _nFrames - 1;
 
-    dm(omega) = idx * _parameters.delta_omega;
-    dm(phi) = idx * _parameters.delta_phi;
-    dm(chi) = idx * _parameters.delta_chi;
+    std::vector<double> det_states(n_detector_gonio_axes);
+    std::fill(det_states.begin(), det_states.end(), 0.0);
+    _detectorStates.emplace_back(std::move(det_states));
 
-    // Use natural units internally (rad)
-    dm *= deg;
-
-    _sampleStates.push_back(eigenToVector(dm));
+    std::vector<double> sample_states(n_sample_gonio_axes);
+    std::fill(sample_states.begin(), sample_states.end(), 0.0);
+    sample_states[omega_idx] = idx * _parameters.delta_omega * deg;
+    sample_states[phi_idx] = idx * _parameters.delta_phi * deg;
+    sample_states[chi_idx] = idx * _parameters.delta_chi * deg;
+    _sampleStates.emplace_back(std::move(sample_states));
 }
 
 void RawDataReader::open() {}
