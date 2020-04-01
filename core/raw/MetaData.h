@@ -16,10 +16,10 @@
 #define CORE_RAW_METADATA_H
 
 #include <map>
-#include <variant>
 #include <memory>
 #include <set>
 #include <string>
+#include <variant>
 
 namespace nsx {
 
@@ -31,9 +31,7 @@ using MetaDataKeySet = std::set<std::string>;
 //! MetaData class allow to store metadata associated with a data file  into a
 //! map indexed by the string of the entry. Any parameter type can be stored,
 //! using the corresponding template argument. A specific key can be retrieved
-//! back using the template type defined when the key was registered. From C++0x
-//! onwards, a parameter can be retrieved even if its type is unknown by the user
-//! using auto.
+//! back using the template type defined when the key was registered.
 class MetaData {
  public:
     //! Constructor

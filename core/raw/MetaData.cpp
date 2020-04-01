@@ -50,6 +50,7 @@ bool MetaData::isKey(const char* key) const
     auto it2 = _map.find(std::string(key));
     return (it2 != _map.end());
 }
+
 bool MetaData::isKey(const std::string& key) const
 {
     // Search if this key is in the set.
