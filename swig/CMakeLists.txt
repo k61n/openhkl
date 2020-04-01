@@ -2,6 +2,11 @@ if(POLICY CMP0071)
   cmake_policy(SET CMP0071 NEW)
 endif()
 
+if((CMAKE_CXX_COMPILER_ID STREQUAL "GNU") OR (CMAKE_CXX_COMPILER_ID MATCHES "Clang"))
+    # suppress warning from swig::container_owner<T>::back_reference(PyObject*, PyObject*)
+    add_compile_options(-Wno-unused-parameter)
+endif()
+
 set(CMAKE_SWIG_OUTDIR ${CMAKE_CURRENT_BINARY_DIR})
 
 include_directories(${CMAKE_SOURCE_DIR} ${XSection_INCLUDE_DIR})
