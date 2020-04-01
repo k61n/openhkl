@@ -44,7 +44,7 @@ void PeakCollection::populate(const std::vector<nsx::Peak3D*> peak_list)
 
 void PeakCollection::push_back(const nsx::Peak3D& peak)
 {
-    _peaks.push_back(std::move(std::unique_ptr<nsx::Peak3D> {new Peak3D(peak)}));
+    _peaks.push_back(std::unique_ptr<nsx::Peak3D> {new Peak3D(peak)});
 }
 
 void PeakCollection::addPeak(const std::shared_ptr<nsx::Peak3D>& peak)
