@@ -16,16 +16,18 @@
 #define GUI_FRAMES_GLOBALOFFSETSFRAME_H
 
 #include "gui/graphics/SXPlot.h"
-#include <QCR/widgets/controls.h>
-#include <QCR/widgets/views.h>
+
 #include <QDialogButtonBox>
+#include <QDoubleSpinBox>
+#include <QFrame>
 #include <QListWidget>
+#include <QSpinBox>
 #include <QTableWidget>
 
 enum class offsetMode { DETECTOR, SAMPLE };
 
 //! Frame which shows the global offsets of the detector or sample
-class GlobalOffsetsFrame : public QcrFrame {
+class GlobalOffsetsFrame : public QFrame {
  public:
     GlobalOffsetsFrame(offsetMode mode);
 
@@ -34,8 +36,8 @@ class GlobalOffsetsFrame : public QcrFrame {
     void fit();
     void actionClicked(QAbstractButton* button);
 
-    QcrSpinBox* iterations;
-    QcrDoubleSpinBox* tolerance;
+    QSpinBox* iterations;
+    QDoubleSpinBox* tolerance;
     QListWidget* selectedData;
     QTableWidget* offsets;
     QDialogButtonBox* buttons;

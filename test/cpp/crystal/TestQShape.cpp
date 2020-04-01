@@ -1,28 +1,44 @@
+//  ***********************************************************************************************
+//
+//  NSXTool: data reduction for neutron single-crystal diffraction
+//
+//! @file      test/cpp/crystal/TestQShape.cpp
+//! @brief     Test ...
+//!
+//! @homepage  ###HOMEPAGE###
+//! @license   GNU General Public License v3 or higher (see COPYING)
+//! @copyright Institut Laue-Langevin and Forschungszentrum Jülich GmbH 2016-
+//! @authors   see CITATION, MAINTAINER
+//
+//  ***********************************************************************************************
+
 #include "test/cpp/catch.hpp"
 
 #include <Eigen/Dense>
 
 #include "base/utils/ProgressHandler.h"
 #include "core/algo/DataReaderFactory.h"
-#include "core/analyse/PeakFinder.h"
 #include "core/convolve/ConvolverFactory.h"
-#include "core/experiment/DataSet.h"
+#include "core/data/DataSet.h"
 #include "core/experiment/Experiment.h"
+#include "core/experiment/PeakFinder.h"
 #include "core/peak/Peak3D.h"
+#include "core/peak/Qs2Events.h"
 #include "core/raw/IDataReader.h"
 
 nsx::Ellipsoid toDetectorSpace(const nsx::Ellipsoid e, const nsx::sptrDataSet data)
 {
-    auto events = data->events({nsx::ReciprocalVector(e.center())});
+    auto events = nsx::algo::qs2events(
+        {nsx::ReciprocalVector(e.center())}, data->instrumentStates(), data->detector());
 
     // something bad happened
     if (events.size() != 1)
         throw std::runtime_error("could not transform ellipse from q space to detector space");
 
     const auto& event = events[0];
-    //auto position =
+    // auto position =
     //    data->reader()->diffractometer()->detector()->pixelPosition(event._px, event._py);
-    auto state = data->interpolatedState(event._frame);
+    auto state = data->instrumentStates().interpolate(event._frame);
 
     // Jacobian of map from detector coords to sample q space
     Eigen::Matrix3d J = state.jacobianQ(event._px, event._py);
@@ -41,7 +57,7 @@ TEST_CASE("test/crystal/TestQShape.cpp", "")
     experiment.addData(dataf);
 
     nsx::sptrProgressHandler progressHandler(new nsx::ProgressHandler);
-    nsx::sptrPeakFinder peakFinder(new nsx::PeakFinder);
+    nsx::PeakFinder peakFinder;
 
     auto callback = [progressHandler]() {
         auto log = progressHandler->getLog();
@@ -55,21 +71,21 @@ TEST_CASE("test/crystal/TestQShape.cpp", "")
     numors.push_back(dataf);
 
     // propagate changes to peak finder
-    peakFinder->setMinSize(30);
-    peakFinder->setMaxSize(10000);
-    peakFinder->setMaxFrames(10);
+    peakFinder.setMinSize(30);
+    peakFinder.setMaxSize(10000);
+    peakFinder.setMaxFrames(10);
 
     nsx::ConvolverFactory convolver_factory;
     auto convolver = convolver_factory.create("annular", {});
-    peakFinder->setConvolver(std::unique_ptr<nsx::Convolver>(convolver));
+    peakFinder.setConvolver(std::unique_ptr<nsx::Convolver>(convolver));
 
-    peakFinder->setThreshold(15.0);
-    peakFinder->setPeakScale(1.0);
+    peakFinder.setThreshold(15.0);
+    peakFinder.setPeakScale(1.0);
 
-    peakFinder->setHandler(progressHandler);
+    peakFinder.setHandler(progressHandler);
 
-    peakFinder->find(numors);
-    auto found_peaks = peakFinder->currentPeaks();
+    peakFinder.find(numors);
+    auto found_peaks = peakFinder.currentPeaks();
 
     try {
         CHECK(static_cast<int>(found_peaks.size()) >= 0);

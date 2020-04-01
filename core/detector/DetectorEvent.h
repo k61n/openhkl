@@ -24,19 +24,21 @@ namespace nsx {
 class DetectorEvent {
  public:
     //! Constructor
-    DetectorEvent(double px = 0, double py = 0, double frame = -1, double tof = -1);
+    DetectorEvent() {}
+    //! Constructor
+    DetectorEvent(double px, double py, double frame, double tof = -1);
 
     //! Construct from a 3 vector
     explicit DetectorEvent(Eigen::Vector3d x, double tof = -1);
 
     //! Detector x-coord
-    double _px;
+    double _px {0};
     //! Detector y-coord
-    double _py;
+    double _py {0};
     //! Frame number, if applicable
-    double _frame;
+    double _frame {-1};
     //! Time of flight, if applicable
-    double _tof;
+    double _tof {-1};
 };
 
 } // namespace nsx

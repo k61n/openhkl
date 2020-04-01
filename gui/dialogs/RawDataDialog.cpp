@@ -13,38 +13,41 @@
 //  ***********************************************************************************************
 
 #include "gui/dialogs/RawDataDialog.h"
-
-#include "gui/MainWin.h"
 #include <QFormLayout>
 
-RawDataDialog::RawDataDialog() : QDialog(gGui)
+RawDataDialog::RawDataDialog() : QDialog()
 {
     QFormLayout* layout = new QFormLayout(this);
-    dataArrangement = new QcrComboBox(
-        "adhoc_dataarrangement", new QcrCell<int>(0), {"Column major", "Row major"});
-    layout->addRow("Data arrangement", dataArrangement);
-    dataFormat = new QcrComboBox(
-        "adhoc_dataformat", new QcrCell<int>(0),
-        {"8 bit integer", "16 bit integer", "32 bit integer"});
-    layout->addRow("Data format", dataFormat);
-    swapEndianness = new QcrCheckBox("adhoc_swap", "Swap endianness", new QcrCell<bool>(true));
-    layout->addRow(swapEndianness);
-    chi = new QcrDoubleSpinBox("adhoc_rawChi", new QcrCell<double>(0.0), 5, 3);
-    layout->addRow("delta chi", chi);
-    omega = new QcrDoubleSpinBox("adhoc_rawOmega", new QcrCell<double>(0.0), 5, 3);
-    layout->addRow("delta omega", omega);
-    phi = new QcrDoubleSpinBox("adhoc_rawPhi", new QcrCell<double>(0.0), 5, 3);
-    layout->addRow("delta phi", phi);
-    wave = new QcrDoubleSpinBox("adhoc_rawWavelength", new QcrCell<double>(0.0), 5, 3);
-    layout->addRow("wavelength", wave);
+
+    dataArrangement = new QComboBox();
+    dataFormat = new QComboBox();
+    swapEndianness = new QCheckBox("Swap endian");
+    chi = new QDoubleSpinBox();
+    omega = new QDoubleSpinBox();
+    phi = new QDoubleSpinBox();
+    wave = new QDoubleSpinBox();
     buttons =
         new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, Qt::Horizontal, this);
+
+    dataArrangement->addItems(QStringList {"Column major", "Row major"});
+    dataFormat->addItems(QStringList {"8 bit integer", "16 bit integer", "32 bit integer"});
+    chi->setDecimals(3);
+    phi->setDecimals(3);
+    omega->setDecimals(3);
+    wave->setDecimals(3);
+
+    layout->addRow("Data arrangement", dataArrangement);
+    layout->addRow("Data format", dataFormat);
+    layout->addRow(swapEndianness);
+    layout->addRow("delta chi", chi);
+    layout->addRow("delta omega", omega);
+    layout->addRow("delta phi", phi);
+    layout->addRow("wavelength", wave);
     layout->addRow(buttons);
 
-    QObject::connect(buttons, SIGNAL(accepted()), this, SLOT(accept()));
-    QObject::connect(buttons, SIGNAL(rejected()), this, SLOT(reject()));
+    connect(buttons, &QDialogButtonBox::accepted, this, &RawDataDialog::accept);
 
-    show();
+    connect(buttons, &QDialogButtonBox::rejected, this, &RawDataDialog::reject);
 }
 
 bool RawDataDialog::rowMajor()
@@ -54,7 +57,6 @@ bool RawDataDialog::rowMajor()
         return true;
     if (selection == "Column major")
         return false;
-    gLogger->log("[ERROR] RawDataDialog: unrecognized data arrangement!");
     return false;
 }
 
@@ -67,6 +69,6 @@ int RawDataDialog::bpp()
             return 2;
         case 2: // 32 bit
             return 4;
-        default: gLogger->log("[ERROR] RawDataDialog: unrecognized data format!"); return -1;
+        default: return -1;
     }
 }

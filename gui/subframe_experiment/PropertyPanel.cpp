@@ -39,11 +39,11 @@ void PropertyPanel::setCurrent(int index)
 
 void PropertyPanel::dataChanged()
 {
-    bool enabled = gSession->selectedExperimentNum() >= 0;
-    if (enabled)
-        enabled = !gSession->selectedExperiment()->getDataNames().empty();
-    setTabEnabled((int)tab::DATA, enabled);
-    if (enabled)
+    // bool enabled = gSession->selectedExperimentNum() >= 0;
+    // if (enabled)
+    //     enabled = !gSession->selectedExperiment()->getDataNames().empty();
+    // setTabEnabled((int)tab::DATA, enabled);
+    if (!gSession->selectedExperiment()->getDataNames().empty())
         _data->refreshInput();
 }
 
@@ -51,7 +51,6 @@ void PropertyPanel::experimentChanged()
 {
     _peaks->selectedExperimentChanged();
     _instrument->refreshInput();
-
 }
 
 void PropertyPanel::peaksChanged()
@@ -59,7 +58,7 @@ void PropertyPanel::peaksChanged()
     bool enabled = gSession->selectedExperimentNum() >= 0;
     if (enabled)
         _peaks->refreshInput();
-        _peaks->selectedPeaksChanged();
+    _peaks->selectedPeaksChanged();
 }
 
 void PropertyPanel::unitCellChanged()

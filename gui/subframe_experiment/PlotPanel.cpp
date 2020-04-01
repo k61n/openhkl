@@ -15,13 +15,13 @@
 #include "gui/subframe_experiment/PlotPanel.h"
 
 #include "gui/MainWin.h"
-#include "gui/actions/Triggers.h"
+#include "gui/actions/Actions.h"
 #include "gui/graphics/PlotFactory.h"
 
 //-------------------------------------------------------------------------------------------------
 //! class PlotPanel
 
-PlotPanel::PlotPanel() : QcrWidget {"Plotter"}
+PlotPanel::PlotPanel() : QWidget()
 {
     anchor = new QHBoxLayout(this);
     plot = new SXPlot(this);

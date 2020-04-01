@@ -21,13 +21,11 @@
 //! Property widget of the monochromatic source
 class SourceProperty : public QWidget {
  public:
-
     SourceProperty();
     void refreshInput();
     void clear();
 
  private:
- 
     void onMonoChanged(int);
     void onWavelength(double);
     void onWidth(double);
@@ -40,7 +38,6 @@ class SourceProperty : public QWidget {
     QDoubleSpinBox* _width;
     QDoubleSpinBox* _height;
     QDoubleSpinBox* _FWHM;
-
 };
 
 #endif // GUI_SUBFRAME_EXPERIMENT_PROPERTIES_SOURCEPROPERTY_H

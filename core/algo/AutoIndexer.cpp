@@ -16,30 +16,28 @@
 
 #include "base/fit/FitParameters.h"
 #include "base/fit/Minimizer.h"
-#include "base/geometry/ReciprocalVector.h"
 #include "core/algo/FFTIndexing.h"
-#include "core/analyse/PeakFilter.h"
-#include "core/experiment/DataSet.h" // peak->data()->interpolatedState
+#include "core/data/DataSet.h" // peak->data()->interpolatedState
+#include "core/shape/PeakFilter.h"
 #include "tables/crystal/MillerIndex.h"
 
 #include <iostream>
 #include <string>
+#include <iomanip>
 
 namespace nsx {
 
-AutoIndexer::AutoIndexer()
-    : _solutions(), 
-    _handler(nullptr)
+AutoIndexer::AutoIndexer() : _solutions(), _handler(nullptr)
 {
     _params = IndexerParameters();
 }
 
-void AutoIndexer::autoIndex(PeakCollection* peak_collection)
+void AutoIndexer::autoIndex(const std::vector<Peak3D*>& peaks)
 {
     // Find the Q-space directions along which the projection of the the Q-vectors
     // shows the highest periodicity
-    computeFFTSolutions(peak_collection);
-    refineSolutions(peak_collection);
+    computeFFTSolutions(peaks);
+    refineSolutions(peaks);
     removeBad(_params.solutionCutoff);
 
     // refine the constrained unit cells in order to get the uncertainties
@@ -67,21 +65,14 @@ const std::vector<std::pair<sptrUnitCell, double>>& AutoIndexer::solutions() con
     return _solutions;
 }
 
-void AutoIndexer::computeFFTSolutions(PeakCollection* peak_collection)
+void AutoIndexer::computeFFTSolutions(const std::vector<Peak3D*>& peaks)
 {
-    std::vector<Peak3D*> peaks = peak_collection->getPeakList();
-    
     _solutions.clear();
 
     // Store the q-vectors of the peaks for auto-indexing
     std::vector<ReciprocalVector> qvects;
-
-    PeakFilter peak_filter;
-    std::vector<Peak3D*> filtered_peaks = peak_filter.filterEnabled(
-        peaks, true);
-    
-    for (size_t i = 0; i < filtered_peaks.size(); ++i) {
-        Peak3D* peak = filtered_peaks.at(i);
+    const std::vector<Peak3D*> filtered_peaks = PeakFilter {}.filterEnabled(peaks, true);
+    for (const Peak3D* peak : filtered_peaks) {
         auto q = peak->q().rowVector();
         qvects.push_back(ReciprocalVector(q));
     }
@@ -92,28 +83,32 @@ void AutoIndexer::computeFFTSolutions(PeakCollection* peak_collection)
             _handler->log("AutoIndexer: too few peaks to index!");
         throw std::runtime_error("Too few peaks to autoindex");
     }
-
-    if (_handler) {
+    if (_handler)
         _handler->log(
             "Searching direct lattice vectors using" + std::to_string(qvects.size())
             + "peaks defined on numors:");
-    }
-
-    // Sets up a FFT indexer object
-    FFTIndexing indexing(_params.subdiv, _params.maxdim);
 
     // Find the best vectors via FFT
-    auto&& tvects = indexing.findOnSphere(qvects, _params.nVertices, _params.nSolutions);
-    qvects.clear();
+    std::vector<Eigen::RowVector3d> tvects = algo::findOnSphere(
+        qvects, _params.nVertices, _params.nSolutions, _params.subdiv, _params.maxdim);
+
+    // Need at least 3 t-vectors to form a basis
+    if (tvects.size() < 3) {
+        if (_handler)
+            _handler->log(
+                "Too few lattice planes detected to form a basis: tvects.size() = " +
+                std::to_string(tvects.size()) + " (minimum 3)");
+        throw std::runtime_error("Too few t-vectors to form basis");
+    }
 
     for (int i = 0; i < _params.nSolutions; ++i) {
         for (int j = i + 1; j < _params.nSolutions; ++j) {
             for (int k = j + 1; k < _params.nSolutions; ++k) {
                 // Build up a unit cell out of the current directions triplet
                 Eigen::Matrix3d A;
-                A.col(0) = tvects[i].first;
-                A.col(1) = tvects[j].first;
-                A.col(2) = tvects[k].first;
+                A.col(0) = tvects[i];
+                A.col(1) = tvects[j];
+                A.col(2) = tvects[k];
                 // Build a unit cell with direct vectors
                 auto cell = std::shared_ptr<UnitCell>(new UnitCell(A));
 
@@ -157,11 +152,10 @@ void AutoIndexer::rankSolutions()
         });
 }
 
-void AutoIndexer::refineSolutions(PeakCollection* peak_collection)
+void AutoIndexer::refineSolutions(const std::vector<Peak3D*>& peaks)
 {
-    #pragma omp parallel for
+    // TODO: candidate for easy parallelization
     for (auto&& soln : _solutions) {
-        std::vector<Peak3D*> peaks = peak_collection->getPeakList();
 
         auto cell = soln.first;
         cell->setIndexingTolerance(_params.indexingTolerance);
@@ -171,11 +165,10 @@ void AutoIndexer::refineSolutions(PeakCollection* peak_collection)
         std::vector<Eigen::Matrix3d> wt;
 
         PeakFilter peak_filter;
-        std::vector<Peak3D*> enabled_peaks = peak_filter.filterEnabled(
-            peaks, true);
+        std::vector<Peak3D*> enabled_peaks = peak_filter.filterEnabled(peaks, true);
 
-        std::vector<Peak3D*> filtered_peaks = peak_filter.filterIndexed(
-            enabled_peaks, *cell, cell->indexingTolerance());
+        std::vector<Peak3D*> filtered_peaks =
+            peak_filter.filterIndexed(enabled_peaks, *cell, cell->indexingTolerance());
 
         int success = filtered_peaks.size();
         for (auto peak : filtered_peaks) {
@@ -185,7 +178,7 @@ void AutoIndexer::refineSolutions(PeakCollection* peak_collection)
 
             Eigen::Vector3d c = peak->shape().center();
             Eigen::Matrix3d M = peak->shape().metric();
-            auto state = peak->data()->interpolatedState(c[2]);
+            auto state = peak->dataSet()->instrumentStates().interpolate(c[2]);
             Eigen::Matrix3d J = state.jacobianQ(c[0], c[1]);
             Eigen::Matrix3d JI = J.inverse();
 
@@ -256,8 +249,8 @@ void AutoIndexer::refineSolutions(PeakCollection* peak_collection)
         // Define the final score of this solution by computing the percentage of
         // the selected peaks which have been successfully indexed
 
-        std::vector<Peak3D*>  refiltered_peaks = peak_filter.filterIndexed(
-            filtered_peaks, *cell, cell->indexingTolerance());
+        std::vector<Peak3D*> refiltered_peaks =
+            peak_filter.filterIndexed(filtered_peaks, *cell, cell->indexingTolerance());
 
         double score = static_cast<double>(refiltered_peaks.size());
         double maxscore = static_cast<double>(filtered_peaks.size());
@@ -265,9 +258,22 @@ void AutoIndexer::refineSolutions(PeakCollection* peak_collection)
         // Percentage of indexing
         score /= 0.01 * maxscore;
         soln.second = score;
-
     }
 }
 
+void AutoIndexer::printSolutions()
+{
+    std::cout << std::setw(10) << "Quality"
+              << std::setw(10) << "a"
+              << std::setw(10) << "b"
+              << std::setw(10) << "c"
+              << std::setw(10) << "alpha"
+              << std::setw(10) << "beta"
+              << std::setw(10) << "gamma" << std::endl;
+    for (auto solution : _solutions) {
+        std::cout << std::fixed << std::setw(10) << std::setprecision(3)
+                  << solution.second << solution.first->toString() << std::endl;
+    }
+}
 
 } // namespace nsx

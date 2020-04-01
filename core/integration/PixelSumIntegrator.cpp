@@ -14,8 +14,8 @@
 
 #include "core/integration/PixelSumIntegrator.h"
 #include "base/geometry/Ellipsoid.h"
-#include "core/analyse/Blob3D.h"
-#include "core/experiment/DataSet.h"
+#include "core/data/DataSet.h"
+#include "core/integration/Blob3D.h"
 #include "core/integration/MeanBackgroundIntegrator.h"
 #include "core/peak/Intensity.h"
 #include "core/peak/Peak3D.h"
@@ -32,14 +32,13 @@ PixelSumIntegrator::PixelSumIntegrator(bool fit_center, bool fit_covariance)
 PixelSumIntegrator::~PixelSumIntegrator() {}
 
 bool PixelSumIntegrator::compute(
-    Peak3D* peak, ShapeLibrary* shape_library, 
-    const IntegrationRegion& region)
+    Peak3D* peak, ShapeLibrary* shape_library, const IntegrationRegion& region)
 {
     MeanBackgroundIntegrator::compute(peak, shape_library, region);
     PeakCoordinateSystem frame(peak);
 
-    const auto& events = region.data().events();
-    const auto& counts = region.data().counts();
+    const auto& events = region.peakData().events();
+    const auto& counts = region.peakData().counts();
 
     double sum_peak = 0.0;
     const double mean_bkg = _meanBackground.value();

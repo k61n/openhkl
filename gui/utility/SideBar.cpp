@@ -15,45 +15,31 @@
 #include "gui/MainWin.h"
 #include "gui/models/Session.h"
 
-#include <QPaintEvent>
-#include <QPainter>
 #include <QDebug>
 #include <QEvent>
+#include <QPaintEvent>
+#include <QPainter>
 
 #define action_height 100
 
 
-SideBar::SideBar(QWidget *parent) :
-    QWidget(parent), mCheckedAction(NULL), mOverAction(NULL)
+SideBar::SideBar(QWidget* parent) : QWidget(parent), mCheckedAction(NULL), mOverAction(NULL)
 {
     setMouseTracking(true);
 
-    QAction* home = addAction(
-        QIcon(":/images/home.svg"), 
-        "Home");
-    QAction* experiment = addAction(
-        QIcon(":/images/experiment_info.svg"), 
-        "Experiment");
-    QAction* finder = addAction(
-        QIcon(":/images/find_peaks.svg"), 
-        "Find Peaks");
-    QAction* filter = addAction(
-        QIcon(":/images/filterIcon.svg"), 
-        "Peak Filter");
-    QAction* indexer = addAction(
-        QIcon(":/images/uni_cell.svg"), 
-        "Indexer");
-    QAction* predictor = addAction(
-        QIcon(":/images/predict_peaks.svg"),
-        "Predictor");
-    QAction* info = addAction(
-        QIcon(":/images/merge.svg"), 
-        "Merger");
+    QAction* home = addAction(QIcon(":/images/home.svg"), "Home");
+    QAction* experiment = addAction(QIcon(":/images/experiment_info.svg"), "Experiment");
+    QAction* finder = addAction(QIcon(":/images/find_peaks.svg"), "Find Peaks");
+    QAction* filter = addAction(QIcon(":/images/filterIcon.svg"), "Peak Filter");
+    QAction* indexer = addAction(QIcon(":/images/uni_cell.svg"), "Indexer");
+    QAction* predictor = addAction(QIcon(":/images/predict_peaks.svg"), "Predictor");
+    QAction* info = addAction(QIcon(":/images/merge.svg"), "Merger");
 
     QAction* tempAction = mActions.at(0);
     mCheckedAction = tempAction;
     tempAction->setChecked(true);
-    update();;
+    update();
+    ;
 
     connect(home, &QAction::triggered, this, &SideBar::onHome);
     connect(experiment, &QAction::triggered, this, &SideBar::onExperiment);
@@ -64,7 +50,7 @@ SideBar::SideBar(QWidget *parent) :
     connect(info, &QAction::triggered, this, &SideBar::onMerger);
 }
 
-void SideBar::paintEvent(QPaintEvent *event)
+void SideBar::paintEvent(QPaintEvent* event)
 {
     QPainter p(this);
 
@@ -74,49 +60,51 @@ void SideBar::paintEvent(QPaintEvent *event)
 
     int action_y = 0;
     // p.fillRect(rect(), QColor(100, 100, 100));
-    for(auto action: mActions)
-    {
+    for (auto action : mActions) {
 
         QRect actionRect(0, action_y, event->rect().width(), action_height);
 
-        if(action->isChecked())
-        {
+        if (action->isChecked()) {
             p.fillRect(actionRect, QColor(35, 35, 35));
         }
 
-        if(action == mOverAction){
+        if (action == mOverAction) {
             p.fillRect(actionRect, QColor(150, 150, 150));
         }
 
         p.setPen(QColor(255, 255, 255));
         QSize size = p.fontMetrics().size(Qt::TextSingleLine, action->text());
-        QRect actionTextRect(QPoint(actionRect.width()/2 - size.width()/2, actionRect.bottom()-size.height()-5), size);
+        QRect actionTextRect(
+            QPoint(
+                actionRect.width() / 2 - size.width() / 2, actionRect.bottom() - size.height() - 5),
+            size);
         p.drawText(actionTextRect, Qt::AlignCenter, action->text());
 
-        QRect actionIconRect(0, action_y + 10, actionRect.width(), actionRect.height()-2*actionTextRect.height()-10);
-        QIcon  actionIcon(action->icon());
+        QRect actionIconRect(
+            0, action_y + 10, actionRect.width(),
+            actionRect.height() - 2 * actionTextRect.height() - 10);
+        QIcon actionIcon(action->icon());
         actionIcon.paint(&p, actionIconRect);
 
         action_y += actionRect.height();
     }
-
 }
 
 QSize SideBar::minimumSizeHint() const
 {
-    return action_height*QSize(1, mActions.size());
+    return action_height * QSize(1, mActions.size());
 }
 
-void SideBar::addAction(QAction *action)
+void SideBar::addAction(QAction* action)
 {
     mActions.push_back(action);
     action->setCheckable(true);
     update();
 }
 
-QAction *SideBar::addAction( const QIcon &icon, const QString &text)
+QAction* SideBar::addAction(const QIcon& icon, const QString& text)
 {
-    QAction *action = new QAction(icon, text, this);
+    QAction* action = new QAction(icon, text, this);
     action->setCheckable(true);
     mActions.push_back(action);
     update();
@@ -126,9 +114,9 @@ QAction *SideBar::addAction( const QIcon &icon, const QString &text)
 void SideBar::manualSelect(int index)
 {
     QAction* tempAction = mActions[index];
-    if(mCheckedAction)
+    if (mCheckedAction)
         mCheckedAction->setChecked(false);
-    if(mOverAction == tempAction)
+    if (mOverAction == tempAction)
         mOverAction = NULL;
     mCheckedAction = tempAction;
     mCheckedAction->trigger();
@@ -136,14 +124,14 @@ void SideBar::manualSelect(int index)
     update();
 }
 
-void SideBar::mousePressEvent(QMouseEvent *event)
+void SideBar::mousePressEvent(QMouseEvent* event)
 {
     QAction* tempAction = actionAt(event->pos());
-    if(tempAction == NULL || tempAction->isChecked())
+    if (tempAction == NULL || tempAction->isChecked())
         return;
-    if(mCheckedAction)
+    if (mCheckedAction)
         mCheckedAction->setChecked(false);
-    if(mOverAction == tempAction)
+    if (mOverAction == tempAction)
         mOverAction = NULL;
     mCheckedAction = tempAction;
     mCheckedAction->trigger();
@@ -152,35 +140,34 @@ void SideBar::mousePressEvent(QMouseEvent *event)
     QWidget::mousePressEvent(event);
 }
 
-void SideBar::mouseMoveEvent(QMouseEvent *event)
+void SideBar::mouseMoveEvent(QMouseEvent* event)
 {
     QAction* tempAction = actionAt(event->pos());
-    if(tempAction == NULL){
+    if (tempAction == NULL) {
         mOverAction = NULL;
         update();
         return;
     }
-    if(tempAction->isChecked() || mOverAction == tempAction)
+    if (tempAction->isChecked() || mOverAction == tempAction)
         return;
     mOverAction = tempAction;
     update();
     QWidget::mouseMoveEvent(event);
 }
 
-void SideBar::leaveEvent(QEvent * event)
+void SideBar::leaveEvent(QEvent* event)
 {
     mOverAction = NULL;
     update();
     QWidget::leaveEvent(event);
 }
 
-QAction* SideBar::actionAt(const QPoint &at)
+QAction* SideBar::actionAt(const QPoint& at)
 {
     int action_y = 0;
-    for(auto action: mActions)
-    {
+    for (auto action : mActions) {
         QRect actionRect(0, action_y, rect().width(), action_height);
-        if(actionRect.contains(at))
+        if (actionRect.contains(at))
             return action;
         action_y += actionRect.height();
     }
@@ -200,31 +187,31 @@ void SideBar::onExperiment()
 void SideBar::onFindPeaks()
 {
     gGui->_layout_stack->setCurrentIndex(2);
-    gGui->_finder->refreshAll();
+    gGui->finder->refreshAll();
 }
 
 void SideBar::onFilterPeaks()
 {
     gGui->_layout_stack->setCurrentIndex(3);
-    gGui->_filter->refreshAll();
+    gGui->filter->refreshAll();
 }
 
 void SideBar::onIndexer()
 {
     gGui->_layout_stack->setCurrentIndex(4);
-    gGui->_indexer->refreshAll();
+    gGui->indexer->refreshAll();
 }
 
 void SideBar::onPredictor()
 {
     gGui->_layout_stack->setCurrentIndex(5);
-    gGui->_predictor->refreshAll();
+    gGui->predictor->refreshAll();
 }
 
 void SideBar::onMerger()
 {
     gGui->_layout_stack->setCurrentIndex(6);
-    gGui->_merger->refreshAll();
+    gGui->merger->refreshAll();
 }
 
 #undef action_height

@@ -15,28 +15,26 @@
 #include "gui/dialogs/RefinerDialog.h"
 
 #include "core/algo/Refiner.h"
-#include "core/experiment/DataSet.h"
-#include "core/experiment/DataTypes.h"
+#include "core/data/DataSet.h"
+#include "core/data/DataTypes.h"
 #include "core/peak/Peak3D.h"
 #include "gui/models/Meta.h"
 #include "gui/models/Session.h"
 
+#include <QDebug>
 #include <QFileInfo>
 #include <QGridLayout>
 #include <QGroupBox>
 #include <QHBoxLayout>
-#include <QSpacerItem>
-#include <QVBoxLayout>
-#include <QTabWidget>
 #include <QLabel>
 #include <QScrollArea>
-#include <QDebug>
+#include <QSpacerItem>
 #include <QSplitter>
+#include <QTabWidget>
+#include <QVBoxLayout>
 
 
-RefinerDialog::RefinerDialog(nsx::UnitCell* unit_cell) 
-    : QDialog(),
-    _current_frame(0)
+RefinerDialog::RefinerDialog(nsx::UnitCell* unit_cell) : QDialog(), _current_frame(0)
 {
     _unit_cell = unit_cell;
 
@@ -53,7 +51,7 @@ void RefinerDialog::_layout()
 {
     QVBoxLayout* main_layout = new QVBoxLayout(this);
 
-    QSplitter*  splitter_item = new QSplitter();
+    QSplitter* splitter_item = new QSplitter();
     QWidget* top_content = new QWidget();
     QWidget* bot_content = new QWidget();
 
@@ -84,7 +82,7 @@ void RefinerDialog::_setSizePolicies()
     _size_policy_widgets = new QSizePolicy();
     _size_policy_widgets->setHorizontalPolicy(QSizePolicy::Preferred);
     _size_policy_widgets->setVerticalPolicy(QSizePolicy::Fixed);
-    
+
     _size_policy_box = new QSizePolicy();
     _size_policy_box->setHorizontalPolicy(QSizePolicy::Fixed);
     _size_policy_box->setVerticalPolicy(QSizePolicy::Preferred);
@@ -117,21 +115,17 @@ void RefinerDialog::_setInputUp()
     _refine_lattice = new QCheckBox("Refine lattice");
     _refine_sample_position = new QCheckBox("Refine sample position");
     _refine_detector_position = new QCheckBox("Refine detector position");
-    _refine_sample_orientation  = new QCheckBox("Refine sample orientation");
+    _refine_sample_orientation = new QCheckBox("Refine sample orientation");
     _refine_ki = new QCheckBox("Refine ki");
     _refine = new QPushButton("Refine");
 
     _refine_lattice->setChecked(true);
     _refine_sample_position->setChecked(true);
     _refine_sample_orientation->setChecked(true);
-    _select_peaks_list->setSelectionMode(
-        QAbstractItemView::MultiSelection);
-    _select_peaks_list->setEditTriggers(
-        QAbstractItemView::NoEditTriggers);
-    _select_data_list->setSelectionMode(
-        QAbstractItemView::MultiSelection);
-    _select_data_list->setEditTriggers(
-        QAbstractItemView::NoEditTriggers);
+    _select_peaks_list->setSelectionMode(QAbstractItemView::MultiSelection);
+    _select_peaks_list->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    _select_data_list->setSelectionMode(QAbstractItemView::MultiSelection);
+    _select_data_list->setEditTriggers(QAbstractItemView::NoEditTriggers);
 
     QHBoxLayout* batch_layout = new QHBoxLayout;
     _number_of_batches = new QSpinBox();
@@ -154,26 +148,19 @@ void RefinerDialog::_setInputUp()
     input_layout->addLayout(batch_layout);
 
     input_scroll->setWidget(input_content);
-    
+
     input_scroll->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     input_scroll->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
     input_scroll->setMinimumWidth(
-        input_content->width()
-        + qApp->style()->pixelMetric(QStyle::PM_ScrollBarExtent));
+        input_content->width() + qApp->style()->pixelMetric(QStyle::PM_ScrollBarExtent));
     _group_layout->addWidget(input_scroll);
     _group_layout->addWidget(_refine);
 
     _input_layout->addWidget(input_group);
 
-    connect(
-        _refine, &QPushButton::clicked,
-        this, &RefinerDialog::refine
-    );
+    connect(_refine, &QPushButton::clicked, this, &RefinerDialog::refine);
 
-    connect(
-        _select_data_list, &QListWidget::clicked,
-        this, &RefinerDialog::_setDataDrop
-    );
+    connect(_select_data_list, &QListWidget::clicked, this, &RefinerDialog::_setDataDrop);
 }
 
 void RefinerDialog::_setInformationUp()
@@ -182,7 +169,7 @@ void RefinerDialog::_setInformationUp()
 
     QTabWidget* info_tab = new QTabWidget();
     info_tab->setSizePolicy(*_size_policy_right);
-    
+
     QScrollArea* sample_tab = new QScrollArea();
     QScrollArea* uc_tab = new QScrollArea();
     QScrollArea* instrument_tab = new QScrollArea();
@@ -230,7 +217,7 @@ void RefinerDialog::_setInformationUp()
     info_tab->addTab(uc_tab, "Unit cell");
     info_tab->addTab(instrument_tab, "Instrument");
     info_tab->addTab(detector_tab, "Detector");
-    
+
     _info_layout->addWidget(info_tab);
 
     _navigator = new QWidget();
@@ -250,43 +237,27 @@ void RefinerDialog::_setInformationUp()
     navigator_layout->addWidget(_left);
     navigator_layout->addWidget(_current_index_spin);
     navigator_layout->addWidget(_right);
-    navigator_layout->addItem(
-        new QSpacerItem(
-            0, 0, QSizePolicy::Expanding, QSizePolicy::Minimum));
+    navigator_layout->addItem(new QSpacerItem(0, 0, QSizePolicy::Expanding, QSizePolicy::Minimum));
 
     _navigator->setLayout(navigator_layout);
     _info_layout->addWidget(_navigator);
-    _info_layout->addItem(
-        new QSpacerItem(
-            0, 0, QSizePolicy::Minimum, QSizePolicy::Minimum));
+    _info_layout->addItem(new QSpacerItem(0, 0, QSizePolicy::Minimum, QSizePolicy::Minimum));
+
+    connect(_left, &QPushButton::clicked, [=]() { _current_index_spin->stepDown(); });
+
+    connect(_right, &QPushButton::clicked, [=]() { _current_index_spin->stepUp(); });
 
     connect(
-        _left, &QPushButton::clicked,
-        [=]() {_current_index_spin->stepDown();}  
-    );
-
-    connect(
-        _right, &QPushButton::clicked,
-        [=]() {_current_index_spin->stepUp();}  
-    );
-
-    connect(
-        _current_index_spin, 
-        static_cast<void (QSpinBox::*) (int) >(&QSpinBox::valueChanged),
-        this,
+        _current_index_spin, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged), this,
         [this](int val) {
             _current_frame = val;
             _setInitialValues(val);
             _setRefinedValues(val);
-            }
-    );
+        });
 
     connect(
-        _select_data, 
-        static_cast<void (QComboBox::*) (int) >(&QComboBox::currentIndexChanged),
-        this, &RefinerDialog::_selectedDataChanged
-    );
-
+        _select_data, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this,
+        &RefinerDialog::_selectedDataChanged);
 }
 
 void RefinerDialog::_setSampleUp()
@@ -407,9 +378,10 @@ void RefinerDialog::_setSampleUp()
     _sample_layout->addWidget(_sample_orientation_21_ref, 11, 2, 1, 1);
     _sample_layout->addWidget(_sample_orientation_22_ref, 12, 2, 1, 1);
 
-    QList<QScienceSpinBox*> spin_boxes = _sample_layout->parentWidget()->findChildren<QScienceSpinBox*>();
+    QList<QScienceSpinBox*> spin_boxes =
+        _sample_layout->parentWidget()->findChildren<QScienceSpinBox*>();
 
-    foreach(QScienceSpinBox* spin_box, spin_boxes){
+    foreach (QScienceSpinBox* spin_box, spin_boxes) {
         spin_box->setSizePolicy(*_size_policy_fixed);
         spin_box->setButtonSymbols(QAbstractSpinBox::NoButtons);
         spin_box->setReadOnly(true);
@@ -420,13 +392,9 @@ void RefinerDialog::_setSampleUp()
 
     QList<QCheckBox*> checkboxes = _sample_layout->parentWidget()->findChildren<QCheckBox*>();
 
-    foreach(QCheckBox* checkbox, checkboxes){
-        connect(
-            checkbox, &QCheckBox::stateChanged,
-            this, &RefinerDialog::_plot
-        );
+    foreach (QCheckBox* checkbox, checkboxes) {
+        connect(checkbox, &QCheckBox::stateChanged, this, &RefinerDialog::_plot);
     }
-
 }
 
 void RefinerDialog::_setDetectorUp()
@@ -557,9 +525,10 @@ void RefinerDialog::_setDetectorUp()
     _detector_layout->addWidget(_detector_orientation_21_ref, 11, 2, 1, 1);
     _detector_layout->addWidget(_detector_orientation_22_ref, 12, 2, 1, 1);
 
-    QList<QScienceSpinBox*> spin_boxes = _detector_layout->parentWidget()->findChildren<QScienceSpinBox*>();
+    QList<QScienceSpinBox*> spin_boxes =
+        _detector_layout->parentWidget()->findChildren<QScienceSpinBox*>();
 
-    foreach(QScienceSpinBox* spin_box, spin_boxes){
+    foreach (QScienceSpinBox* spin_box, spin_boxes) {
         spin_box->setSizePolicy(*_size_policy_fixed);
         spin_box->setButtonSymbols(QAbstractSpinBox::NoButtons);
         spin_box->setReadOnly(true);
@@ -598,17 +567,17 @@ void RefinerDialog::_setUnitCellUp()
     _uc_layout->addWidget(label_ptr, 3, 0, 1, 1);
     label_ptr->setSizePolicy(*_size_policy_widgets);
 
-    label_ptr = new QLabel(QString((QChar)0x03B1)+":");
+    label_ptr = new QLabel(QString((QChar)0x03B1) + ":");
     label_ptr->setAlignment(Qt::AlignRight);
     _uc_layout->addWidget(label_ptr, 4, 0, 1, 1);
     label_ptr->setSizePolicy(*_size_policy_widgets);
 
-    label_ptr = new QLabel(QString((QChar)0x03B2)+":");
+    label_ptr = new QLabel(QString((QChar)0x03B2) + ":");
     label_ptr->setAlignment(Qt::AlignRight);
     _uc_layout->addWidget(label_ptr, 5, 0, 1, 1);
     label_ptr->setSizePolicy(*_size_policy_widgets);
 
-    label_ptr = new QLabel(QString((QChar)0x03B3)+":");
+    label_ptr = new QLabel(QString((QChar)0x03B3) + ":");
     label_ptr->setAlignment(Qt::AlignRight);
     _uc_layout->addWidget(label_ptr, 6, 0, 1, 1);
     label_ptr->setSizePolicy(*_size_policy_widgets);
@@ -640,9 +609,10 @@ void RefinerDialog::_setUnitCellUp()
     _uc_layout->addWidget(_uc_beta_ref, 5, 2, 1, 1);
     _uc_layout->addWidget(_uc_gamma_ref, 6, 2, 1, 1);
 
-    QList<QScienceSpinBox*> spin_boxes = _uc_layout->parentWidget()->findChildren<QScienceSpinBox*>();
+    QList<QScienceSpinBox*> spin_boxes =
+        _uc_layout->parentWidget()->findChildren<QScienceSpinBox*>();
 
-    foreach(QScienceSpinBox* spin_box, spin_boxes){
+    foreach (QScienceSpinBox* spin_box, spin_boxes) {
         spin_box->setSizePolicy(*_size_policy_fixed);
         spin_box->setButtonSymbols(QAbstractSpinBox::NoButtons);
         spin_box->setReadOnly(true);
@@ -712,9 +682,10 @@ void RefinerDialog::_setInstrumentUp()
     _instrument_layout->addWidget(_wavelength_ref, 4, 2, 1, 1);
     _instrument_layout->addWidget(_wavelength_offset_ref, 5, 2, 1, 1);
 
-    QList<QScienceSpinBox*> spin_boxes = _instrument_layout->parentWidget()->findChildren<QScienceSpinBox*>();
+    QList<QScienceSpinBox*> spin_boxes =
+        _instrument_layout->parentWidget()->findChildren<QScienceSpinBox*>();
 
-    foreach(QScienceSpinBox* spin_box, spin_boxes){
+    foreach (QScienceSpinBox* spin_box, spin_boxes) {
         spin_box->setSizePolicy(*_size_policy_fixed);
         spin_box->setButtonSymbols(QAbstractSpinBox::NoButtons);
         spin_box->setReadOnly(true);
@@ -732,25 +703,24 @@ void RefinerDialog::_setGraphUp()
     _visualise_plot->setSizePolicy(*_size_policy_right);
 
     _graph_layout->addWidget(_visualise_plot);
-
 }
 
 void RefinerDialog::_setUnitCellDrop()
 {
     _select_uc->blockSignals(true);
     QStringList uc_list = gSession->selectedExperiment()->getUnitCellNames();
-    if (!uc_list.isEmpty()){
+    if (!uc_list.isEmpty()) {
         _select_uc->addItems(uc_list);
         _select_uc->setCurrentIndex(0);
     }
     _select_uc->blockSignals(false);
-}  
+}
 
 void RefinerDialog::_setPeakList()
 {
     _select_peaks_list->blockSignals(true);
     QStringList peak_list = gSession->selectedExperiment()->getPeakListNames();
-    if (!peak_list.isEmpty()){
+    if (!peak_list.isEmpty()) {
         _select_peaks_list->addItems(peak_list);
     }
     _select_peaks_list->blockSignals(false);
@@ -760,13 +730,13 @@ void RefinerDialog::_setDataList()
 {
     _select_data_list->blockSignals(true);
     _data_list = gSession->selectedExperiment()->allData();
-    if (!_data_list.isEmpty()){
+    if (!_data_list.isEmpty()) {
         for (nsx::sptrDataSet data : _data_list) {
             QFileInfo fileinfo(QString::fromStdString(data->filename()));
             _select_data_list->addItem(fileinfo.baseName());
         }
     }
-    _select_data_list->blockSignals(false);   
+    _select_data_list->blockSignals(false);
 }
 
 void RefinerDialog::_setDataDrop()
@@ -774,20 +744,19 @@ void RefinerDialog::_setDataDrop()
     _select_data->blockSignals(true);
     QString last_text = _select_data->currentText();
     _select_data->clear();
-    QList<QListWidgetItem*> selected_data = _select_data_list
-        ->selectedItems();
-    if (!selected_data.isEmpty()){
+    QList<QListWidgetItem*> selected_data = _select_data_list->selectedItems();
+    if (!selected_data.isEmpty()) {
         for (QListWidgetItem* data_item : selected_data) {
             _select_data->addItem(data_item->text());
         }
-    }else{
+    } else {
         return;
     }
 
     int index = _select_data->findText(last_text);
-    if (index == -1){
+    if (index == -1) {
         _select_data->setCurrentIndex(0);
-    }else{
+    } else {
         _select_data->setCurrentIndex(index);
     }
     _select_data->blockSignals(false);
@@ -797,19 +766,15 @@ void RefinerDialog::_setDataDrop()
 
 void RefinerDialog::_selectedDataChanged()
 {
-    nsx::sptrDataSet data_set = gSession->selectedExperiment()
-        ->experiment()->data(
-            _select_data->currentText().toStdString()
-        );  
-    _current_index_spin->setMaximum(data_set->nFrames()-1);
-    if (_current_index_spin->value() > data_set->nFrames()-1){
-        _current_index_spin->setValue(data_set->nFrames()-1);
-    }else{
-        _current_index_spin->setValue(
-            _current_index_spin->value()
-        );
+    nsx::sptrDataSet data_set = gSession->selectedExperiment()->experiment()->data(
+        _select_data->currentText().toStdString());
+    _current_index_spin->setMaximum(data_set->nFrames() - 1);
+    if (_current_index_spin->value() > data_set->nFrames() - 1) {
+        _current_index_spin->setValue(data_set->nFrames() - 1);
+    } else {
+        _current_index_spin->setValue(_current_index_spin->value());
     }
-    
+
     _setInitialValues(_current_index_spin->value());
     _setRefinedValues(_current_index_spin->value());
     _plot();
@@ -824,20 +789,16 @@ void RefinerDialog::_fetchAllInitialValues()
     _nis.clear();
     _wavelengths.clear();
 
-    nsx::UnitCell* unit_cell = gSession->selectedExperiment()
-        ->experiment()->getUnitCell(
-            _select_uc->currentText().toStdString()
-        );
+    nsx::UnitCell* unit_cell = gSession->selectedExperiment()->experiment()->getUnitCell(
+        _select_uc->currentText().toStdString());
 
     if (!unit_cell)
         return;
 
-    QList<nsx::sptrDataSet> data_set_list = gSession->selectedExperiment()
-        ->allData();
+    QList<nsx::sptrDataSet> data_set_list = gSession->selectedExperiment()->allData();
 
-    for (nsx::sptrDataSet data_set: data_set_list){
-        const nsx::InstrumentStateList& instrument_states =
-            data_set->instrumentStates();
+    for (nsx::sptrDataSet data_set : data_set_list) {
+        const nsx::InstrumentStateList& instrument_states = data_set->instrumentStates();
 
         std::vector<Eigen::Matrix3d> sample_orientations_temp;
         std::vector<Eigen::Matrix3d> detector_orientations_temp;
@@ -849,53 +810,30 @@ void RefinerDialog::_fetchAllInitialValues()
         Eigen::Vector3d uc_dims_temp;
         Eigen::Vector3d uc_angles_temp;
 
-        for(nsx::InstrumentState state : instrument_states){
-            sample_orientations_temp.push_back(
-                state.sampleOrientationMatrix());
-            detector_orientations_temp.push_back(
-                state.detectorOrientation);
-            sample_positions_temp.push_back(
-                state.samplePosition);
-            detector_positions_temp.push_back(
-                state.detectorPositionOffset);
-            nis_temp.push_back(
-                state.ni);
-            wavelengths_temp.push_back(
-                state.wavelength);
-            wavelength_offsets_temp.push_back(
-                state.wavelength * (state.ni.norm() - 1.0));
+        for (nsx::InstrumentState state : instrument_states) {
+            sample_orientations_temp.push_back(state.sampleOrientationMatrix());
+            detector_orientations_temp.push_back(state.detectorOrientation);
+            sample_positions_temp.push_back(state.samplePosition);
+            detector_positions_temp.push_back(state.detectorPositionOffset);
+            nis_temp.push_back(state.ni);
+            wavelengths_temp.push_back(state.wavelength);
+            wavelength_offsets_temp.push_back(state.wavelength * (state.ni.norm() - 1.0));
         }
 
         nsx::UnitCellCharacter unitcharacter = unit_cell->character();
-        uc_dims_temp = Eigen::Vector3d {
-            unitcharacter.a,
-            unitcharacter.b,
-            unitcharacter.c
-        };
-        uc_angles_temp = Eigen::Vector3d {
-            unitcharacter.alpha,
-            unitcharacter.beta,
-            unitcharacter.gamma
-        };
+        uc_dims_temp = Eigen::Vector3d {unitcharacter.a, unitcharacter.b, unitcharacter.c};
+        uc_angles_temp =
+            Eigen::Vector3d {unitcharacter.alpha, unitcharacter.beta, unitcharacter.gamma};
 
-        _sample_orientations.emplace(
-            data_set, sample_orientations_temp);
-        _detector_orientations.emplace(
-            data_set, detector_orientations_temp);
-        _sample_positions.emplace(
-            data_set, sample_positions_temp);
-        _detector_positions.emplace(
-            data_set,detector_positions_temp);
-        _nis.emplace(
-            data_set, nis_temp);
-        _wavelengths.emplace(
-            data_set, wavelengths_temp);
-        _wavelength_offsets.emplace(
-            data_set, wavelength_offsets_temp);
-        _uc_dims.emplace(
-            data_set, uc_dims_temp);
-        _uc_angles.emplace(
-            data_set, uc_angles_temp);
+        _sample_orientations.emplace(data_set, sample_orientations_temp);
+        _detector_orientations.emplace(data_set, detector_orientations_temp);
+        _sample_positions.emplace(data_set, sample_positions_temp);
+        _detector_positions.emplace(data_set, detector_positions_temp);
+        _nis.emplace(data_set, nis_temp);
+        _wavelengths.emplace(data_set, wavelengths_temp);
+        _wavelength_offsets.emplace(data_set, wavelength_offsets_temp);
+        _uc_dims.emplace(data_set, uc_dims_temp);
+        _uc_angles.emplace(data_set, uc_angles_temp);
     }
 
     _setInitialValues(_current_frame);
@@ -910,24 +848,18 @@ void RefinerDialog::_fetchAllRefinedValues()
     _nis_ref.clear();
     _wavelengths_ref.clear();
 
-    nsx::UnitCell* unit_cell = gSession->selectedExperiment()
-        ->experiment()->getUnitCell(
-            _select_uc->currentText().toStdString()
-        );
+    nsx::UnitCell* unit_cell = gSession->selectedExperiment()->experiment()->getUnitCell(
+        _select_uc->currentText().toStdString());
 
-    nsx::sptrDataSet data_set = gSession->selectedExperiment()
-        ->experiment()->data(
-            _select_data->currentText().toStdString()
-        );    
-    QList<nsx::sptrDataSet> data_set_list = gSession->selectedExperiment()
-        ->allData();
+    nsx::sptrDataSet data_set = gSession->selectedExperiment()->experiment()->data(
+        _select_data->currentText().toStdString());
+    QList<nsx::sptrDataSet> data_set_list = gSession->selectedExperiment()->allData();
 
     if (!unit_cell)
         return;
 
-    for (nsx::sptrDataSet data_set: data_set_list){
-        const nsx::InstrumentStateList& instrument_states =
-            data_set->instrumentStates();
+    for (nsx::sptrDataSet data_set : data_set_list) {
+        const nsx::InstrumentStateList& instrument_states = data_set->instrumentStates();
 
         std::vector<Eigen::Matrix3d> sample_orientations_temp;
         std::vector<Eigen::Matrix3d> detector_orientations_temp;
@@ -939,57 +871,33 @@ void RefinerDialog::_fetchAllRefinedValues()
         Eigen::Vector3d uc_dims_temp;
         Eigen::Vector3d uc_angles_temp;
 
-        for(nsx::InstrumentState state : instrument_states){
-            sample_orientations_temp.push_back(
-                state.sampleOrientationMatrix());
-            detector_orientations_temp.push_back(
-                state.detectorOrientation);
-            sample_positions_temp.push_back(
-                state.samplePosition);
-            detector_positions_temp.push_back(
-                state.detectorPositionOffset);
-            nis_temp.push_back(
-                state.ni);
-            wavelengths_temp.push_back(
-                state.wavelength);
-            wavelength_offsets_temp.push_back(
-                state.wavelength * (state.ni.norm() - 1.0));
+        for (nsx::InstrumentState state : instrument_states) {
+            sample_orientations_temp.push_back(state.sampleOrientationMatrix());
+            detector_orientations_temp.push_back(state.detectorOrientation);
+            sample_positions_temp.push_back(state.samplePosition);
+            detector_positions_temp.push_back(state.detectorPositionOffset);
+            nis_temp.push_back(state.ni);
+            wavelengths_temp.push_back(state.wavelength);
+            wavelength_offsets_temp.push_back(state.wavelength * (state.ni.norm() - 1.0));
         }
 
         nsx::UnitCellCharacter unitcharacter = unit_cell->character();
-        uc_dims_temp = Eigen::Vector3d {
-            unitcharacter.a,
-            unitcharacter.b,
-            unitcharacter.c
-        };
-        uc_angles_temp = Eigen::Vector3d {
-            unitcharacter.alpha,
-            unitcharacter.beta,
-            unitcharacter.gamma
-        };
+        uc_dims_temp = Eigen::Vector3d {unitcharacter.a, unitcharacter.b, unitcharacter.c};
+        uc_angles_temp =
+            Eigen::Vector3d {unitcharacter.alpha, unitcharacter.beta, unitcharacter.gamma};
 
-        _sample_orientations_ref.emplace(
-            data_set, sample_orientations_temp);
-        _detector_orientations_ref.emplace(
-            data_set, detector_orientations_temp);
-        _sample_positions_ref.emplace(
-            data_set, sample_positions_temp);
-        _detector_positions_ref.emplace(
-            data_set,detector_positions_temp);
-        _nis_ref.emplace(
-            data_set, nis_temp);
-        _wavelengths_ref.emplace(
-            data_set, wavelengths_temp);
-        _wavelength_offsets_ref.emplace(
-            data_set, wavelength_offsets_temp);
-        _uc_dims_ref.emplace(
-            data_set, uc_dims_temp);
-        _uc_angles_ref.emplace(
-            data_set, uc_angles_temp);
+        _sample_orientations_ref.emplace(data_set, sample_orientations_temp);
+        _detector_orientations_ref.emplace(data_set, detector_orientations_temp);
+        _sample_positions_ref.emplace(data_set, sample_positions_temp);
+        _detector_positions_ref.emplace(data_set, detector_positions_temp);
+        _nis_ref.emplace(data_set, nis_temp);
+        _wavelengths_ref.emplace(data_set, wavelengths_temp);
+        _wavelength_offsets_ref.emplace(data_set, wavelength_offsets_temp);
+        _uc_dims_ref.emplace(data_set, uc_dims_temp);
+        _uc_angles_ref.emplace(data_set, uc_angles_temp);
     }
 
     _setRefinedValues(_current_frame);
-
 }
 
 void RefinerDialog::_setInitialValues(int frame)
@@ -1000,84 +908,49 @@ void RefinerDialog::_setInitialValues(int frame)
     if (temp_text.isEmpty())
         return;
 
-    nsx::sptrDataSet data_set = gSession->selectedExperiment()
-        ->experiment()->data(temp_text.toStdString());    
+    nsx::sptrDataSet data_set =
+        gSession->selectedExperiment()->experiment()->data(temp_text.toStdString());
 
-    _sample_orientation_00->setValue(
-        _sample_orientations[data_set][frame](0, 0));
-    _sample_orientation_01->setValue(
-        _sample_orientations[data_set][frame](0, 1));
-    _sample_orientation_02->setValue(
-        _sample_orientations[data_set][frame](0, 2));
-    _sample_orientation_10->setValue(
-        _sample_orientations[data_set][frame](1, 0));
-    _sample_orientation_11->setValue(
-        _sample_orientations[data_set][frame](1, 1));
-    _sample_orientation_12->setValue(
-        _sample_orientations[data_set][frame](1, 2));
-    _sample_orientation_20->setValue(
-        _sample_orientations[data_set][frame](2, 0));
-    _sample_orientation_21->setValue(
-        _sample_orientations[data_set][frame](2, 1));
-    _sample_orientation_22->setValue(
-        _sample_orientations[data_set][frame](2, 2));
+    _sample_orientation_00->setValue(_sample_orientations[data_set][frame](0, 0));
+    _sample_orientation_01->setValue(_sample_orientations[data_set][frame](0, 1));
+    _sample_orientation_02->setValue(_sample_orientations[data_set][frame](0, 2));
+    _sample_orientation_10->setValue(_sample_orientations[data_set][frame](1, 0));
+    _sample_orientation_11->setValue(_sample_orientations[data_set][frame](1, 1));
+    _sample_orientation_12->setValue(_sample_orientations[data_set][frame](1, 2));
+    _sample_orientation_20->setValue(_sample_orientations[data_set][frame](2, 0));
+    _sample_orientation_21->setValue(_sample_orientations[data_set][frame](2, 1));
+    _sample_orientation_22->setValue(_sample_orientations[data_set][frame](2, 2));
 
-    _detector_orientation_00->setValue(
-        _detector_orientations[data_set][frame](0, 0));
-    _detector_orientation_01->setValue(
-        _detector_orientations[data_set][frame](0, 1));
-    _detector_orientation_02->setValue(
-        _detector_orientations[data_set][frame](0, 2));
-    _detector_orientation_10->setValue(
-        _detector_orientations[data_set][frame](1, 0));
-    _detector_orientation_11->setValue(
-        _detector_orientations[data_set][frame](1, 1));
-    _detector_orientation_12->setValue(
-        _detector_orientations[data_set][frame](1, 2));
-    _detector_orientation_20->setValue(
-        _detector_orientations[data_set][frame](2, 0));
-    _detector_orientation_21->setValue(
-        _detector_orientations[data_set][frame](2, 1));
-    _detector_orientation_22->setValue(
-        _detector_orientations[data_set][frame](2, 2));
+    _detector_orientation_00->setValue(_detector_orientations[data_set][frame](0, 0));
+    _detector_orientation_01->setValue(_detector_orientations[data_set][frame](0, 1));
+    _detector_orientation_02->setValue(_detector_orientations[data_set][frame](0, 2));
+    _detector_orientation_10->setValue(_detector_orientations[data_set][frame](1, 0));
+    _detector_orientation_11->setValue(_detector_orientations[data_set][frame](1, 1));
+    _detector_orientation_12->setValue(_detector_orientations[data_set][frame](1, 2));
+    _detector_orientation_20->setValue(_detector_orientations[data_set][frame](2, 0));
+    _detector_orientation_21->setValue(_detector_orientations[data_set][frame](2, 1));
+    _detector_orientation_22->setValue(_detector_orientations[data_set][frame](2, 2));
 
-    _sample_position_X->setValue(
-        _sample_positions[data_set][frame][0]);
-    _sample_position_Y->setValue(
-        _sample_positions[data_set][frame][1]);
-    _sample_position_Z->setValue(
-        _sample_positions[data_set][frame][2]);
+    _sample_position_X->setValue(_sample_positions[data_set][frame][0]);
+    _sample_position_Y->setValue(_sample_positions[data_set][frame][1]);
+    _sample_position_Z->setValue(_sample_positions[data_set][frame][2]);
 
-    _detector_position_X->setValue(
-        _detector_positions[data_set][frame][0]);
-    _detector_position_Y->setValue(
-        _detector_positions[data_set][frame][1]);
-    _detector_position_Z->setValue(
-        _detector_positions[data_set][frame][2]);
+    _detector_position_X->setValue(_detector_positions[data_set][frame][0]);
+    _detector_position_Y->setValue(_detector_positions[data_set][frame][1]);
+    _detector_position_Z->setValue(_detector_positions[data_set][frame][2]);
 
-    _ni_X->setValue(
-        _nis[data_set][frame][0]);
-    _ni_Y->setValue(
-        _nis[data_set][frame][1]);
-    _ni_Z->setValue(
-        _nis[data_set][frame][2]);
-    _wavelength->setValue(
-        _wavelengths[data_set][frame]);
-    _wavelength_offset->setValue(
-        _wavelength_offsets[data_set][frame]);
+    _ni_X->setValue(_nis[data_set][frame][0]);
+    _ni_Y->setValue(_nis[data_set][frame][1]);
+    _ni_Z->setValue(_nis[data_set][frame][2]);
+    _wavelength->setValue(_wavelengths[data_set][frame]);
+    _wavelength_offset->setValue(_wavelength_offsets[data_set][frame]);
 
-    _uc_a->setValue(
-        _uc_dims[data_set][0]);
-    _uc_b->setValue(
-        _uc_dims[data_set][1]);
-    _uc_c->setValue(
-        _uc_dims[data_set][2]);
-    _uc_alpha->setValue(
-        _uc_angles[data_set][0]);
-    _uc_beta->setValue(
-        _uc_angles[data_set][1]);
-    _uc_gamma->setValue(
-        _uc_angles[data_set][2]);
+    _uc_a->setValue(_uc_dims[data_set][0]);
+    _uc_b->setValue(_uc_dims[data_set][1]);
+    _uc_c->setValue(_uc_dims[data_set][2]);
+    _uc_alpha->setValue(_uc_angles[data_set][0]);
+    _uc_beta->setValue(_uc_angles[data_set][1]);
+    _uc_gamma->setValue(_uc_angles[data_set][2]);
 }
 
 
@@ -1088,120 +961,80 @@ void RefinerDialog::_setRefinedValues(int frame)
     if (temp_text.isEmpty())
         return;
 
-    nsx::sptrDataSet data_set = gSession->selectedExperiment()
-        ->experiment()->data(temp_text.toStdString());    
+    nsx::sptrDataSet data_set =
+        gSession->selectedExperiment()->experiment()->data(temp_text.toStdString());
 
-    if ( refiners.find(data_set) == refiners.end() ) {
+    if (refiners.find(data_set) == refiners.end()) {
         return;
     }
 
-    _sample_orientation_00_ref->setValue(
-        _sample_orientations_ref[data_set][frame](0, 0));
-    _sample_orientation_01_ref->setValue(
-        _sample_orientations_ref[data_set][frame](0, 1));
-    _sample_orientation_02_ref->setValue(
-        _sample_orientations_ref[data_set][frame](0, 2));
-    _sample_orientation_10_ref->setValue(
-        _sample_orientations_ref[data_set][frame](1, 0));
-    _sample_orientation_11_ref->setValue(
-        _sample_orientations_ref[data_set][frame](1, 1));
-    _sample_orientation_12_ref->setValue(
-        _sample_orientations_ref[data_set][frame](1, 2));
-    _sample_orientation_20_ref->setValue(
-        _sample_orientations_ref[data_set][frame](2, 0));
-    _sample_orientation_21_ref->setValue(
-        _sample_orientations_ref[data_set][frame](2, 1));
-    _sample_orientation_22_ref->setValue(
-        _sample_orientations_ref[data_set][frame](2, 2));
+    _sample_orientation_00_ref->setValue(_sample_orientations_ref[data_set][frame](0, 0));
+    _sample_orientation_01_ref->setValue(_sample_orientations_ref[data_set][frame](0, 1));
+    _sample_orientation_02_ref->setValue(_sample_orientations_ref[data_set][frame](0, 2));
+    _sample_orientation_10_ref->setValue(_sample_orientations_ref[data_set][frame](1, 0));
+    _sample_orientation_11_ref->setValue(_sample_orientations_ref[data_set][frame](1, 1));
+    _sample_orientation_12_ref->setValue(_sample_orientations_ref[data_set][frame](1, 2));
+    _sample_orientation_20_ref->setValue(_sample_orientations_ref[data_set][frame](2, 0));
+    _sample_orientation_21_ref->setValue(_sample_orientations_ref[data_set][frame](2, 1));
+    _sample_orientation_22_ref->setValue(_sample_orientations_ref[data_set][frame](2, 2));
 
-    _detector_orientation_00_ref->setValue(
-        _detector_orientations_ref[data_set][frame](0, 0));
-    _detector_orientation_01_ref->setValue(
-        _detector_orientations_ref[data_set][frame](0, 1));
-    _detector_orientation_02_ref->setValue(
-        _detector_orientations_ref[data_set][frame](0, 2));
-    _detector_orientation_10_ref->setValue(
-        _detector_orientations_ref[data_set][frame](1, 0));
-    _detector_orientation_11_ref->setValue(
-        _detector_orientations_ref[data_set][frame](1, 1));
-    _detector_orientation_12_ref->setValue(
-        _detector_orientations_ref[data_set][frame](1, 2));
-    _detector_orientation_20_ref->setValue(
-        _detector_orientations_ref[data_set][frame](2, 0));
-    _detector_orientation_21_ref->setValue(
-        _detector_orientations_ref[data_set][frame](2, 1));
-    _detector_orientation_22_ref->setValue(
-        _detector_orientations_ref[data_set][frame](2, 2));
+    _detector_orientation_00_ref->setValue(_detector_orientations_ref[data_set][frame](0, 0));
+    _detector_orientation_01_ref->setValue(_detector_orientations_ref[data_set][frame](0, 1));
+    _detector_orientation_02_ref->setValue(_detector_orientations_ref[data_set][frame](0, 2));
+    _detector_orientation_10_ref->setValue(_detector_orientations_ref[data_set][frame](1, 0));
+    _detector_orientation_11_ref->setValue(_detector_orientations_ref[data_set][frame](1, 1));
+    _detector_orientation_12_ref->setValue(_detector_orientations_ref[data_set][frame](1, 2));
+    _detector_orientation_20_ref->setValue(_detector_orientations_ref[data_set][frame](2, 0));
+    _detector_orientation_21_ref->setValue(_detector_orientations_ref[data_set][frame](2, 1));
+    _detector_orientation_22_ref->setValue(_detector_orientations_ref[data_set][frame](2, 2));
 
-    _sample_position_X_ref->setValue(
-        _sample_positions_ref[data_set][frame][0]);
-    _sample_position_Y_ref->setValue(
-        _sample_positions_ref[data_set][frame][1]);
-    _sample_position_Z_ref->setValue(
-        _sample_positions_ref[data_set][frame][2]);
+    _sample_position_X_ref->setValue(_sample_positions_ref[data_set][frame][0]);
+    _sample_position_Y_ref->setValue(_sample_positions_ref[data_set][frame][1]);
+    _sample_position_Z_ref->setValue(_sample_positions_ref[data_set][frame][2]);
 
-    _detector_position_X_ref->setValue(
-        _detector_positions_ref[data_set][frame][0]);
-    _detector_position_Y_ref->setValue(
-        _detector_positions_ref[data_set][frame][1]);
-    _detector_position_Z_ref->setValue(
-        _detector_positions_ref[data_set][frame][2]);
+    _detector_position_X_ref->setValue(_detector_positions_ref[data_set][frame][0]);
+    _detector_position_Y_ref->setValue(_detector_positions_ref[data_set][frame][1]);
+    _detector_position_Z_ref->setValue(_detector_positions_ref[data_set][frame][2]);
 
-    _ni_X_ref->setValue(
-        _nis_ref[data_set][frame][0]);
-    _ni_Y_ref->setValue(
-        _nis_ref[data_set][frame][1]);
-    _ni_Z_ref->setValue(
-        _nis_ref[data_set][frame][2]);
-    _wavelength_ref->setValue(
-        _wavelengths_ref[data_set][frame]);
-    _wavelength_offset_ref->setValue(
-        _wavelength_offsets_ref[data_set][frame]);
+    _ni_X_ref->setValue(_nis_ref[data_set][frame][0]);
+    _ni_Y_ref->setValue(_nis_ref[data_set][frame][1]);
+    _ni_Z_ref->setValue(_nis_ref[data_set][frame][2]);
+    _wavelength_ref->setValue(_wavelengths_ref[data_set][frame]);
+    _wavelength_offset_ref->setValue(_wavelength_offsets_ref[data_set][frame]);
 
-    _uc_a_ref->setValue(
-        _uc_dims_ref[data_set][0]);
-    _uc_b_ref->setValue(
-        _uc_dims_ref[data_set][1]);
-    _uc_c_ref->setValue(
-        _uc_dims_ref[data_set][2]);
-    _uc_alpha_ref->setValue(
-        _uc_angles_ref[data_set][0]);
-    _uc_beta_ref->setValue(
-        _uc_angles_ref[data_set][1]);
-    _uc_gamma_ref->setValue(
-        _uc_angles_ref[data_set][2]);
+    _uc_a_ref->setValue(_uc_dims_ref[data_set][0]);
+    _uc_b_ref->setValue(_uc_dims_ref[data_set][1]);
+    _uc_c_ref->setValue(_uc_dims_ref[data_set][2]);
+    _uc_alpha_ref->setValue(_uc_angles_ref[data_set][0]);
+    _uc_beta_ref->setValue(_uc_angles_ref[data_set][1]);
+    _uc_gamma_ref->setValue(_uc_angles_ref[data_set][2]);
 }
 
 void RefinerDialog::refine()
 {
     int n_batches = _number_of_batches->value();
-    QList<QListWidgetItem*> selected_peaks = _select_peaks_list
-        ->selectedItems();
-    QList<QListWidgetItem*> selected_data = _select_data_list
-        ->selectedItems();
-    nsx::UnitCell* unit_cell = gSession
-        ->selectedExperiment()
-        ->experiment()
-        ->getUnitCell(
-            _select_uc->currentText().toStdString());
+    QList<QListWidgetItem*> selected_peaks = _select_peaks_list->selectedItems();
+    QList<QListWidgetItem*> selected_data = _select_data_list->selectedItems();
+    nsx::UnitCell* unit_cell = gSession->selectedExperiment()->experiment()->getUnitCell(
+        _select_uc->currentText().toStdString());
 
-    if (n_batches == 0){
-        qDebug() <<"[ERROR] 0 batch number";
+    if (n_batches == 0) {
+        qDebug() << "[ERROR] 0 batch number";
         return;
     }
 
-    if (selected_peaks.isEmpty()){
-        qDebug() <<"[ERROR] No peaks selected";
+    if (selected_peaks.isEmpty()) {
+        qDebug() << "[ERROR] No peaks selected";
         return;
     }
 
-    if (selected_data.isEmpty()){
-        qDebug() <<"[ERROR] No data selected";
+    if (selected_data.isEmpty()) {
+        qDebug() << "[ERROR] No data selected";
         return;
     }
 
     if (!unit_cell) {
-        qDebug() <<"[ERROR] No unit cell set for the selected peaks";
+        qDebug() << "[ERROR] No unit cell set for the selected peaks";
         return;
     }
 
@@ -1210,25 +1043,21 @@ void RefinerDialog::refine()
     for (QListWidgetItem* data_item : selected_data) {
 
         std::string data_name = data_item->text().toStdString();
-        nsx::sptrDataSet data = gSession
-            ->selectedExperiment()->experiment()
-            ->data(data_name);
+        nsx::sptrDataSet data = gSession->selectedExperiment()->experiment()->data(data_name);
         std::vector<nsx::Peak3D*> reference_peaks;
         std::vector<nsx::Peak3D*> predicted_peaks;
 
-        // Keep the peak that belong to this data and split them 
+        // Keep the peak that belong to this data and split them
         // between the found and predicted ones
         for (QListWidgetItem* peak_collection_item : selected_peaks) {
 
             std::string peak_name = peak_collection_item->text().toStdString();
-            nsx::PeakCollection* peak_collection = gSession
-                ->selectedExperiment()->experiment()
-                ->getPeakCollection(peak_name);
-            std::vector<nsx::Peak3D*> temp_peaks = 
-                peak_collection->getPeakList();
+            nsx::PeakCollection* peak_collection =
+                gSession->selectedExperiment()->experiment()->getPeakCollection(peak_name);
+            std::vector<nsx::Peak3D*> temp_peaks = peak_collection->getPeakList();
 
-            for(nsx::Peak3D* peak : temp_peaks){
-                if (peak->data() != data)
+            for (nsx::Peak3D* peak : temp_peaks) {
+                if (peak->dataSet() != data)
                     continue;
                 if (peak->predicted())
                     predicted_peaks.push_back(peak);
@@ -1237,58 +1066,52 @@ void RefinerDialog::refine()
             }
         }
 
-        qDebug() <<
-            "[INFO] " 
-            + QString::number(reference_peaks.size()) 
-            + " splitted into "
-            + QString::number(n_batches) 
-            + "refining batches.";
+        qDebug() << "[INFO] " + QString::number(reference_peaks.size()) + " splitted into "
+                + QString::number(n_batches) + "refining batches.";
 
-        std::vector<nsx::InstrumentState>& states = data->instrumentStates();
+        nsx::InstrumentStateList& states = data->instrumentStates();
 
         nsx::Refiner refiner(states, unit_cell, reference_peaks, n_batches);
 
         if (_refine_lattice->isChecked()) {
             refiner.refineUB();
-            qDebug() <<"[INFO] Refining UB matrix";
+            qDebug() << "[INFO] Refining UB matrix";
         }
 
         if (_refine_sample_position->isChecked()) {
             refiner.refineSamplePosition();
-            qDebug() <<"[INFO] Refinining sample position";
+            qDebug() << "[INFO] Refinining sample position";
         }
 
         if (_refine_detector_position->isChecked()) {
             refiner.refineDetectorOffset();
-            qDebug() <<"[INFO] Refinining detector position";
+            qDebug() << "[INFO] Refinining detector position";
         }
 
         if (_refine_sample_orientation->isChecked()) {
             refiner.refineSampleOrientation();
-            qDebug() <<"[INFO] Refinining sample orientation";
+            qDebug() << "[INFO] Refinining sample orientation";
         }
 
         if (_refine_ki->isChecked()) {
             refiner.refineKi();
-            qDebug() <<"[INFO] Refining Ki";
+            qDebug() << "[INFO] Refining Ki";
         }
 
         bool success = refiner.refine();
 
         if (success) {
-            qDebug() <<
-                "[INFO] Successfully refined parameters for numor "
-                + QString::fromStdString(data->filename());
+            qDebug() << "[INFO] Successfully refined parameters for numor "
+                    + QString::fromStdString(data->filename());
             int updated = refiner.updatePredictions(predicted_peaks);
             refiners.emplace(data, std::move(refiner));
-            qDebug() <<"[INFO] done; updated " + QString::number(updated) + " peaks";
+            qDebug() << "[INFO] done; updated " + QString::number(updated) + " peaks";
         } else {
-            qDebug() <<
-                "[INFO] Failed to refine parameters for numor "
-                + QString::fromStdString(data->filename());
+            qDebug() << "[INFO] Failed to refine parameters for numor "
+                    + QString::fromStdString(data->filename());
         }
     }
-    
+
     gSession->onExperimentChanged();
     _fetchAllRefinedValues();
     _plot();
@@ -1307,15 +1130,15 @@ void RefinerDialog::_plot()
     if (temp_text.isEmpty())
         return;
 
-    nsx::sptrDataSet data_set = gSession->selectedExperiment()
-        ->experiment()->data(temp_text.toStdString());    
+    nsx::sptrDataSet data_set =
+        gSession->selectedExperiment()->experiment()->data(temp_text.toStdString());
 
     std::vector<std::string> selected_text;
 
     QList<QCheckBox*> checkboxes = _sample_layout->parentWidget()->findChildren<QCheckBox*>();
 
-    foreach(QCheckBox* checkbox, checkboxes){
-        if(checkbox->isChecked()){
+    foreach (QCheckBox* checkbox, checkboxes) {
+        if (checkbox->isChecked()) {
             selected_text.push_back(checkbox->text().toStdString());
         }
     }
@@ -1324,142 +1147,102 @@ void RefinerDialog::_plot()
 
     int graph_num = 0;
 
-    std::vector<QColor> colors {
-        Qt::black,
-        Qt::blue,
-        Qt::red,
-        Qt::darkGreen,
-        Qt::darkMagenta,
-        Qt::darkYellow
-    };
+    std::vector<QColor> colors {Qt::black,     Qt::blue,        Qt::red,
+                                Qt::darkGreen, Qt::darkMagenta, Qt::darkYellow};
 
-    std::vector<std::string> position_names {
-        "Position X:",
-        "Position Y:",
-        "Position Z:"
-    };
+    std::vector<std::string> position_names {"Position X:", "Position Y:", "Position Z:"};
 
     // Positions
-    for (int index = 0; index < position_names.size(); ++index){
-        if (std::find(
-            selected_text.begin(), 
-            selected_text.end(), 
-            position_names[index]) != selected_text.end())
-        {
+    for (int index = 0; index < position_names.size(); ++index) {
+        if (std::find(selected_text.begin(), selected_text.end(), position_names[index])
+            != selected_text.end()) {
             QPen pen;
-            pen.setColor(colors[index%6]);
+            pen.setColor(colors[index % 6]);
             pen.setWidth(3);
 
             QVector<double> x_ini(_sample_positions[data_set].size());
             QVector<double> y_ini(_sample_positions[data_set].size());
 
-            for (int i = 0; i < _sample_positions[data_set].size(); ++i){
+            for (int i = 0; i < _sample_positions[data_set].size(); ++i) {
                 x_ini[i] = i;
                 y_ini[i] = _sample_positions[data_set][i][index];
             }
             _visualise_plot->addGraph();
             _visualise_plot->graph(graph_num)->setData(x_ini, y_ini);
             _visualise_plot->graph(graph_num)->setPen(pen);
-            _visualise_plot->graph(graph_num)->setName(
-                QString::fromStdString(
-                    position_names[index].substr(
-                        0, position_names[index].size()-1)));
+            _visualise_plot->graph(graph_num)->setName(QString::fromStdString(
+                position_names[index].substr(0, position_names[index].size() - 1)));
             ++graph_num;
 
-            if (!( refiners.find(data_set) == refiners.end() )) {
-                QVector<double> x_ref(
-                    _sample_positions_ref[data_set].size());
-                QVector<double> y_ref(
-                    _sample_positions_ref[data_set].size());
+            if (!(refiners.find(data_set) == refiners.end())) {
+                QVector<double> x_ref(_sample_positions_ref[data_set].size());
+                QVector<double> y_ref(_sample_positions_ref[data_set].size());
 
-                for (int i = 0; i < _sample_positions_ref[data_set].size(); ++i){
+                for (int i = 0; i < _sample_positions_ref[data_set].size(); ++i) {
                     x_ref[i] = i;
                     y_ref[i] = _sample_positions_ref[data_set][i][index];
                 }
 
-                pen.setDashPattern(
-                    QVector<qreal>() << 5<< 2 );
+                pen.setDashPattern(QVector<qreal>() << 5 << 2);
 
                 _visualise_plot->addGraph();
                 _visualise_plot->graph(graph_num)->setData(x_ref, y_ref);
                 _visualise_plot->graph(graph_num)->setPen(pen);
-                _visualise_plot->graph(graph_num)->setName(
-                    QString::fromStdString(
-                        position_names[index].substr(
-                            0, position_names[index].size()-1)
-                        +" refined"));
+                _visualise_plot->graph(graph_num)->setName(QString::fromStdString(
+                    position_names[index].substr(0, position_names[index].size() - 1)
+                    + " refined"));
                 ++graph_num;
             }
-
         }
     }
 
     std::vector<std::string> orientation_names {
-        "Orientation X-X:",
-        "Orientation X-Y:",
-        "Orientation X-Z:",
-        "Orientation Y-X:",
-        "Orientation Y-Y:",
-        "Orientation Y-Z:",
-        "Orientation Z-X:",
-        "Orientation Z-Y:",
-        "Orientation Z-Z:"
-    };
+        "Orientation X-X:", "Orientation X-Y:", "Orientation X-Z:",
+        "Orientation Y-X:", "Orientation Y-Y:", "Orientation Y-Z:",
+        "Orientation Z-X:", "Orientation Z-Y:", "Orientation Z-Z:"};
 
     // Orientations
-    for (int index = 0; index < orientation_names.size(); ++index){
-        if (std::find(
-            selected_text.begin(), 
-            selected_text.end(), 
-            orientation_names[index]) != selected_text.end())
-        {
+    for (int index = 0; index < orientation_names.size(); ++index) {
+        if (std::find(selected_text.begin(), selected_text.end(), orientation_names[index])
+            != selected_text.end()) {
             QPen pen;
-            pen.setColor(colors[index%6]);
+            pen.setColor(colors[index % 6]);
             pen.setWidth(3);
 
             QVector<double> x_ini(_sample_orientations[data_set].size());
             QVector<double> y_ini(_sample_orientations[data_set].size());
 
-            for (int i = 0; i < _sample_orientations[data_set].size(); ++i){
+            for (int i = 0; i < _sample_orientations[data_set].size(); ++i) {
                 x_ini[i] = i;
                 y_ini[i] = _sample_orientations[data_set][i](index);
             }
             _visualise_plot->addGraph();
             _visualise_plot->graph(graph_num)->setData(x_ini, y_ini);
             _visualise_plot->graph(graph_num)->setPen(pen);
-            _visualise_plot->graph(graph_num)->setName(
-                QString::fromStdString(
-                    orientation_names[index].substr(
-                        0, orientation_names[index].size()-1)));
+            _visualise_plot->graph(graph_num)->setName(QString::fromStdString(
+                orientation_names[index].substr(0, orientation_names[index].size() - 1)));
             ++graph_num;
 
-            if (!( refiners.find(data_set) == refiners.end() )) {
-                QVector<double> x_ref(
-                    _sample_orientations_ref[data_set].size());
-                QVector<double> y_ref(
-                    _sample_orientations_ref[data_set].size());
+            if (!(refiners.find(data_set) == refiners.end())) {
+                QVector<double> x_ref(_sample_orientations_ref[data_set].size());
+                QVector<double> y_ref(_sample_orientations_ref[data_set].size());
 
-                for (int i = 0; i < _sample_orientations_ref[data_set].size(); ++i){
+                for (int i = 0; i < _sample_orientations_ref[data_set].size(); ++i) {
                     x_ref[i] = i;
                     y_ref[i] = _sample_orientations_ref[data_set][i](index);
                 }
 
-                pen.setDashPattern(
-                    QVector<qreal>() << 5<< 2 );
+                pen.setDashPattern(QVector<qreal>() << 5 << 2);
 
                 _visualise_plot->addGraph();
                 _visualise_plot->graph(graph_num)->setData(x_ref, y_ref);
                 _visualise_plot->graph(graph_num)->setPen(pen);
-                _visualise_plot->graph(graph_num)->setName(
-                    QString::fromStdString(
-                        orientation_names[index].substr(
-                            0, orientation_names[index].size()-1)
-                        + " refined"));
+                _visualise_plot->graph(graph_num)->setName(QString::fromStdString(
+                    orientation_names[index].substr(0, orientation_names[index].size() - 1)
+                    + " refined"));
                 ++graph_num;
             }
-
         }
     }
     _visualise_plot->replot();
-
 }

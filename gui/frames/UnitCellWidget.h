@@ -16,12 +16,10 @@
 #define GUI_FRAMES_UNITCELLWIDGET_H
 
 #include "tables/crystal/UnitCell.h"
-#include <QCR/widgets/controls.h>
-#include <QCR/widgets/views.h>
 #include <QTableView>
 
 //! Tab of an indexer frame which shows the parameters of the selected unit cell
-class UnitCellWidget : public QcrWidget {
+class UnitCellWidget : public QWidget {
     Q_OBJECT
  public:
     UnitCellWidget(nsx::sptrUnitCell, const QString&);

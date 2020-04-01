@@ -14,16 +14,9 @@
 
 #include "core/peak/Peak3D.h"
 
-#include "base/geometry/ReciprocalVector.h"
-#include "base/utils/Units.h"
-#include "core/experiment/DataSet.h"
+#include "core/data/DataSet.h"
 #include "core/instrument/Diffractometer.h"
-#include "core/instrument/InstrumentState.h"
-#include "core/instrument/Sample.h"
-#include "core/instrument/Source.h"
-#include "core/peak/IPeakIntegrator.h"
 #include "core/raw/IDataReader.h"
-#include "tables/crystal/MillerIndex.h"
 
 #include <algorithm>
 #include <cmath>
@@ -66,11 +59,11 @@ Peak3D::Peak3D(std::shared_ptr<nsx::Peak3D> peak)
     _masked = peak->masked();
     _predicted = peak->predicted();
     _transmission = peak->transmission();
-    _data = peak->data();
+    _data = peak->dataSet();
     _rockingCurve = peak->rockingCurve();
     _meanBackground = peak->meanBackground();
     _rawIntensity = peak->rawIntensity();
-    
+
     _caught_by_filter = false;
     _rejected_by_filter = false;
 }
@@ -123,7 +116,7 @@ Intensity Peak3D::rawIntensity() const
 Intensity Peak3D::correctedIntensity() const
 {
     auto c = _shape.center();
-    auto state = _data->interpolatedState(c[2]);
+    auto state = _data->instrumentStates().interpolate(c[2]);
     const double lorentz = state.lorentzFactor(c[0], c[1]);
     const double factor = _scale / lorentz / _transmission;
     return rawIntensity() * factor / state.stepSize;
@@ -185,11 +178,12 @@ bool Peak3D::predicted() const
 }
 
 void Peak3D::updateIntegration(
-    const IPeakIntegrator& integrator, double peakEnd, double bkgBegin, double bkgEnd)
+    const std::vector<Intensity>& rockingCurve, const Intensity& meanBackground,
+    const Intensity& integratedIntensity, double peakEnd, double bkgBegin, double bkgEnd)
 {
-    _rockingCurve = integrator.rockingCurve();
-    _meanBackground = integrator.meanBackground();
-    _rawIntensity = integrator.integratedIntensity();
+    _rockingCurve = rockingCurve;
+    _meanBackground = meanBackground;
+    _rawIntensity = integratedIntensity;
     //_rawIntensity = integrator.peakIntensity(); // TODO: test, reactivate ???
     //_shape = integrator.fitShape(); // TODO: test, reactivate ???
     _peakEnd = peakEnd;
@@ -206,7 +200,7 @@ void Peak3D::setRawIntensity(const Intensity& i)
 ReciprocalVector Peak3D::q() const
 {
     auto pixel_coords = _shape.center();
-    auto state = _data->interpolatedState(pixel_coords[2]);
+    auto state = _data->instrumentStates().interpolate(pixel_coords[2]);
     const auto* detector = _data->reader()->diffractometer()->detector();
     auto detector_position =
         DirectVector(detector->pixelPosition(pixel_coords[0], pixel_coords[1]));
@@ -232,7 +226,7 @@ Ellipsoid Peak3D::qShape() const
         throw std::runtime_error("Attempted to compute q-shape of peak not attached to data");
 
     Eigen::Vector3d p = _shape.center();
-    auto state = _data->interpolatedState(p[2]);
+    auto state = _data->instrumentStates().interpolate(p[2]);
     Eigen::Vector3d q0 = q().rowVector();
 
     // Jacobian of map from detector coords to sample q space
@@ -244,44 +238,10 @@ Ellipsoid Peak3D::qShape() const
     return Ellipsoid(q0, q_inv_cov);
 }
 
-// found unused (JWu 11jun19)
-// ReciprocalVector Peak3D::qPredicted() const
-//{
-//    if (!_unitCell)
-//        return {};
-//    auto index = MillerIndex(q(), *_unitCell);
-//    return ReciprocalVector(_unitCell->fromIndex(index.rowVector().cast<double>()));
-//}
-
-// found unused (JWu 11jun19)
-// DetectorEvent Peak3D::predictCenter(double frame) const
-//{
-//    const DetectorEvent no_event = {0, 0, -1, -1};
-//
-//    if (!_unitCell)
-//        return no_event;
-//
-//    auto index = MillerIndex(q(), *_unitCell);
-//    auto state = _data->interpolatedState(frame);
-//    Eigen::RowVector3d q_hkl = _unitCell->fromIndex(index.rowVector().cast<double>());
-//    Eigen::RowVector3d ki = state.ki().rowVector();
-//    Eigen::RowVector3d kf = q_hkl * state.sampleOrientationMatrix().transpose() + ki;
-//
-//    const double alpha = ki.norm() / kf.norm();
-//
-//    Eigen::RowVector3d kf1 = alpha * kf;
-//    Eigen::RowVector3d kf2 = -alpha * kf;
-//
-//    Eigen::RowVector3d pred_kf = (kf1 - kf).norm() < (kf2 - kf).norm() ? kf1 : kf2;
-//
-//    return _data->reader()->diffractometer()->detector()->constructEvent(
-//        DirectVector(state.samplePosition),
-//        ReciprocalVector(pred_kf * state.detectorOrientation));
-//}
-
 bool Peak3D::caughtByFilter() const
 {
-    if (_rejected_by_filter) return false;
+    if (_rejected_by_filter)
+        return false;
     return _caught_by_filter;
 }
 
@@ -296,9 +256,8 @@ void Peak3D::rejectYou(bool reject)
 }
 
 void Peak3D::setManually(
-    Intensity intensity, double peakEnd, double bkgBegin, double bkgEnd,
-    double scale, double transmission, Intensity mean_bkg, 
-    bool predicted, bool selected, bool masked)
+    Intensity intensity, double peakEnd, double bkgBegin, double bkgEnd, double scale,
+    double transmission, Intensity mean_bkg, bool predicted, bool selected, bool masked)
 {
     _peakEnd = peakEnd;
     _bkgBegin = bkgBegin;
@@ -332,38 +291,5 @@ double Peak3D::bkgEnd() const
 {
     return _bkgEnd;
 }
-
-// found unused (JWu 11jun19)
-// std::vector<PeakList> findEquivalences(
-//    const SpaceGroup& group, const PeakList& peaks, bool friedel)
-//{
-//    std::vector<PeakList> peak_equivs;
-//
-//    for (auto peak : peaks) {
-//        bool found_equivalence = false;
-//        auto cell = peak->unitCell();
-//
-//        PeakFilter peak_filter;
-//        PeakList same_cell_peaks = peak_filter.unitCell(peaks, cell);
-//
-//        MillerIndex miller_index1(peak->q(), *cell);
-//
-//        for (size_t i = 0; i < peak_equivs.size() && !found_equivalence; ++i) {
-//            MillerIndex miller_index2(peak_equivs[i][0]->q(), *cell);
-//
-//            if ((friedel && group.isFriedelEquivalent(miller_index1, miller_index2))
-//                || (!friedel && group.isEquivalent(miller_index1, miller_index2))) {
-//                found_equivalence = true;
-//                peak_equivs[i].push_back(peak);
-//                continue;
-//            }
-//        }
-//
-//        // didn't find an equivalence?
-//        if (!found_equivalence)
-//            peak_equivs.emplace_back(PeakList({peak}));
-//    }
-//    return peak_equivs;
-//}
 
 } // namespace nsx

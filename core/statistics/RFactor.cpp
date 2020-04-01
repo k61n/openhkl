@@ -13,9 +13,9 @@
 //  ***********************************************************************************************
 
 #include "core/statistics/RFactor.h"
-#include "core/analyse/MergedData.h"
-#include "core/analyse/MergedPeak.h"
 #include "core/peak/Peak3D.h"
+#include "core/statistics/MergedData.h"
+#include "core/statistics/MergedPeak.h"
 
 static const double g_sqrt2pi = std::sqrt(2.0 / M_PI);
 

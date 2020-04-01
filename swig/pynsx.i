@@ -28,6 +28,7 @@
 %include <std_shared_ptr.i>
 %include <std_string.i>
 %include <std_vector.i>
+%include <std_array.i>
 %include <typemaps.i>
 
 %template(vector_1d)  std::vector<double>;
@@ -107,10 +108,11 @@ using Eigen::Quaterniond;
 #include "core/algo/FFTIndexing.h"
 #include "core/algo/RefinementBatch.h"
 #include "core/algo/Refiner.h"
-#include "core/analyse/Blob3D.h"
-#include "core/analyse/MergedPeak.h"
-#include "core/analyse/PeakFilter.h"
-#include "core/analyse/PeakFinder.h"
+#include "core/integration/Blob3D.h"
+#include "core/statistics/MergedPeak.h"
+#include "core/shape/PeakCollection.h"
+#include "core/shape/PeakFilter.h"
+#include "core/experiment/PeakFinder.h"
 #include "core/convolve/AnnularConvolver.h"
 #include "core/convolve/AtomicConvolver.h"
 #include "core/convolve/ConstantConvolver.h"
@@ -126,7 +128,7 @@ using Eigen::Quaterniond;
 #include "core/detector/DetectorFactory.h"
 #include "core/detector/FlatDetector.h"
 #include "core/detector/MatrixParser.h"
-#include "core/experiment/DataSet.h"
+#include "core/data/DataSet.h"
 #include "core/experiment/Experiment.h"
 #include "core/gonio/Axis.h"
 #include "core/gonio/AxisFactory.h"
@@ -150,8 +152,7 @@ using Eigen::Quaterniond;
 #include "core/loader/ILLDataReader.h"
 #include "core/loader/RawDataReader.h"
 #include "core/loader/TiffDataReader.h"
-#include "core/monte-carlo/MCAbsorption.h"
-#include "core/peak/IPeakIntegrator.h"
+#include "core/shape/IPeakIntegrator.h"
 #include "core/peak/IntegrationRegion.h"
 #include "core/peak/Intensity.h"
 #include "core/peak/Peak3D.h"
@@ -166,7 +167,7 @@ using Eigen::Quaterniond;
 #include "core/statistics/RFactor.h"
 #include "core/statistics/ResolutionShell.h"
 
-#include "core/output/PeakExporter.h"
+#include "core/statistics/PeakExporter.h"
 
 using namespace nsx;
 
@@ -178,6 +179,21 @@ using namespace nsx;
 %init %{
     import_array();
 %}
+
+%define ArrayExtendVal(name, T)
+%extend name<T> {
+    T __getitem__(int i) {
+    return (*self)[i];
+    }
+ }
+%enddef
+%define ArrayExtendCRef(name, T)
+%extend name<T> {
+    const T& __getitem__(int i) {
+    return (*self)[i];
+    }
+ }
+%enddef
 
 // eigen.i is found in ../swig/ and contains specific definitions to convert
 // Eigen matrices into Numpy arrays.
@@ -226,10 +242,18 @@ using namespace nsx;
 %include "base/utils/Path.h"
 %include "base/utils/ProgressHandler.h"
 
+%ignore nsx::DirectVector::operator[];
 %include "base/geometry/DirectVector.h"
+ArrayExtendVal (DirectVector, double);
+ArrayExtendCRef(DirectVector, double);
+
 %template(DirectVectorList) std::vector<nsx::DirectVector>;
 
+%ignore nsx::ReciprocalVector::operator[];
 %include "base/geometry/ReciprocalVector.h"
+ArrayExtendVal (ReciprocalVector, double);
+ArrayExtendCRef(ReciprocalVector, double);
+
 %template(ReciprocalVectorList) std::vector<nsx::ReciprocalVector>;
 %template(ReciprocalVectorQueue) std::deque<nsx::ReciprocalVector>;
 
@@ -251,8 +275,13 @@ using namespace nsx;
 
 %include "tables/crystal/SymOp.h"
 %template(SymOpList) std::vector<nsx::SymOp>;
+
+%ignore nsx::MillerIndex::operator[];
 %include "tables/crystal/MillerIndex.h"
 %template(MillerIndexList) std::vector<nsx::MillerIndex>;
+ArrayExtendVal (MillerIndex, int);
+ArrayExtendCRef(MillerIndex, int);
+
 %include "tables/crystal/SpaceGroup.h"
 %include "tables/crystal/NiggliReduction.h"
 %include "tables/crystal/UnitCell.h"
@@ -260,9 +289,6 @@ using namespace nsx;
 %template(indexer_solutions) std::vector<std::pair<std::shared_ptr<nsx::UnitCell>,double>>;
 %include "tables/crystal/GruberReduction.h"
 %include "tables/crystal/BrillouinZone.h"
-
-%include "tables/crystal/UnitCell.h"
-%include "tables/crystal/SpaceGroup.h"
 
 %include "core/gonio/Axis.h"
 %include "core/gonio/Gonio.h"
@@ -282,17 +308,12 @@ using namespace nsx;
 
 %include "core/instrument/InstrumentTypes.h"
 %include "core/instrument/Monochromator.h"
-%include "core/instrument/Source.h"
 %include "core/instrument/Diffractometer.h"
 %include "core/instrument/Sample.h"
 %include "core/instrument/InstrumentState.h"
 %include "core/instrument/InterpolatedState.h"
+%include "core/instrument/InstrumentStateList.h"
 %include "core/instrument/Source.h"
-%include "core/instrument/InstrumentState.h"
-%include "core/instrument/InterpolatedState.h"
-%include "core/instrument/Monochromator.h"
-%include "core/instrument/Diffractometer.h"
-%template(InstrumentStateList) std::vector<nsx::InstrumentState>;
 
 %include "core/raw/MetaData.h"
 %include "core/raw/IDataReader.h"
@@ -310,12 +331,11 @@ using namespace nsx;
 %include "core/peak/IntegrationRegion.h"
 %template(PeakList) std::vector<std::shared_ptr<nsx::Peak3D>>;
 
-%include "core/experiment/DataSet.h"
-%include "core/experiment/DataTypes.h"
+%include "core/data/DataSet.h"
+%include "core/data/DataTypes.h"
 %template(DataList) std::vector<std::shared_ptr<nsx::DataSet>>;
-%include "core/experiment/Experiment.h"
 
-%include "core/peak/IPeakIntegrator.h"
+%include "core/shape/IPeakIntegrator.h"
 
 %template(ConvolverParameters) std::map<std::string,double>;
 %include "core/convolve/Convolver.h"
@@ -331,14 +351,15 @@ using namespace nsx;
 %include "core/shape/Profile1D.h"
 %include "core/shape/ShapeLibrary.h"
 
-%include "core/analyse/MergedPeak.h"
-%include "core/analyse/Blob3D.h"
-%include "core/analyse/PeakFilter.h"
-%include "core/analyse/Blob3D.h"
-%include "core/analyse/MergedData.h"
-%include "core/analyse/PeakFinder.h"
+%include "core/statistics/MergedPeak.h"
+%include "core/integration/Blob3D.h"
+%include "core/shape/PeakCollection.h"
+%include "core/shape/PeakFilter.h"
+%include "core/statistics/MergedData.h"
+%include "core/experiment/PeakFinder.h"
 %template(MergedPeakSet) std::set<nsx::MergedPeak>;
 
+%include "core/experiment/Experiment.h"
 %include "core/algo/DataReaderFactory.h"
 %include "core/algo/RefinementBatch.h"
 %include "core/algo/Refiner.h"
@@ -354,14 +375,11 @@ using namespace nsx;
 
 %template(RefinementBatchList) std::vector<nsx::RefinementBatch>;
 
-%include "core/monte-carlo/MCAbsorption.h"
-
 %include "core/statistics/ResolutionShell.h"
 %include "core/statistics/RFactor.h"
 %include "core/statistics/CC.h"
-%include "core/statistics/CC.h"
 
-%include "core/output/PeakExporter.h"
+%include "core/statistics/PeakExporter.h"
 
 %newobject new_double;
 double* new_double();

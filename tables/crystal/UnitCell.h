@@ -18,7 +18,6 @@
 #include "tables/crystal/NiggliCharacter.h"
 #include "tables/crystal/SpaceGroup.h"
 
-#include <Eigen/Dense>
 #include <xsection/Material.h>
 
 namespace nsx {
@@ -100,7 +99,7 @@ class UnitCell {
     //! Sets lattice centering type
     void setLatticeCentring(LatticeCentring centring);
     //! Return the centering condition
-    char latticeCentering() const {return (char)_centring;};
+    char latticeCentering() const { return (char)_centring; };
 
     //! Sets Bravais type
     void setBravaisType(BravaisType bravais);
@@ -135,6 +134,9 @@ class UnitCell {
 
     //! Print into a stream
     void printSelf(std::ostream& os) const;
+
+    //! Print a summary of the cell parameters
+    std::string toString();
 
     //! Returns the Z value for the unit cell
     unsigned int z() const;
@@ -258,7 +260,7 @@ class UnitCell {
     //! orientation offset, and a set of parameters.
     void updateParameters(
         const Eigen::Matrix3d& U0, const Eigen::Vector3d& uOffset,
-        const Eigen::VectorXd& parameters) ;
+        const Eigen::VectorXd& parameters);
 
     //! Returns list of space groups which are compatible with the Bravais type of the cell
     std::vector<std::string> compatibleSpaceGroups() const;

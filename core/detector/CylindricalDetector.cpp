@@ -105,10 +105,9 @@ DirectVector CylindricalDetector::pixelPosition(double px, double py) const
     return DirectVector(result);
 }
 
-DetectorEvent
-CylindricalDetector::constructEvent(const DirectVector& from, const ReciprocalVector& kf) const
+DetectorEvent CylindricalDetector::constructEvent(
+    const DirectVector& from, const ReciprocalVector& kf, const double frame) const
 {
-    const DetectorEvent no_event = {0, 0, -1, -1};
     double px, py, tof;
 
     const Eigen::Vector3d direction = kf.rowVector().transpose();
@@ -120,29 +119,29 @@ CylindricalDetector::constructEvent(const DirectVector& from, const ReciprocalVe
 
     double Delta = b * b - 4 * a * c;
     if (Delta < 0)
-        return no_event;
+        return {}; // no_event
 
     Delta = sqrt(Delta);
 
     tof = 0.5 * (-b + Delta) / a;
     if (tof <= 0)
-        return no_event;
+        return {}; // no_event
 
     Eigen::RowVector3d v = from.vector() + direction * tof;
 
     double phi = atan2(v[0], v[1]) + 0.5 * _angularWidth;
     if (phi < 0 || phi >= _angularWidth)
-        return no_event;
+        return {}; // no_event
 
     double d = v[2] / _height + 0.5;
 
     if (d < 0 || d > 1.0)
-        return no_event;
+        return {}; // no_event
 
     px = phi / _angularWidth * (_nCols - 1);
     py = d * (_nRows - 1);
 
-    return {px, py, 0.0, tof};
+    return {px, py, frame, tof};
 }
 
 Eigen::Matrix3d CylindricalDetector::jacobian(double px, double /*py*/) const

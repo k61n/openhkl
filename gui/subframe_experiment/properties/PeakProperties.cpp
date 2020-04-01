@@ -13,16 +13,15 @@
 //  ***********************************************************************************************
 
 #include "gui/subframe_experiment/properties/PeakProperties.h"
-#include "gui/models/Session.h"
 #include "gui/MainWin.h"
+#include "gui/models/Session.h"
 
-#include <QCR/engine/logger.h>
 #include <QFormLayout>
+#include <QHBoxLayout>
+#include <QMenu>
+#include <QStandardItemModel>
 #include <QTreeView>
 #include <QVBoxLayout>
-#include <QHBoxLayout>
-#include <QStandardItemModel>
-#include <QMenu>
 
 PeakProperties::PeakProperties() : QWidget()
 {
@@ -72,24 +71,14 @@ PeakProperties::PeakProperties() : QWidget()
     layout->addLayout(meta_box);
 
     connect(
-        _peak_list_combo, static_cast<void (QComboBox::*) (int) >(&QComboBox::currentIndexChanged),
-        this, &PeakProperties::selectedPeaksChanged
-    );
+        _peak_list_combo, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
+        this, &PeakProperties::selectedPeaksChanged);
 
-    connect(
-        _add, &QPushButton::clicked, 
-        this, &PeakProperties::addMenuRequested
-    );
+    connect(_add, &QPushButton::clicked, this, &PeakProperties::addMenuRequested);
 
-    connect(
-        _filter, &QPushButton::clicked, 
-        this, &PeakProperties::jumpToFilter
-    );
+    connect(_filter, &QPushButton::clicked, this, &PeakProperties::jumpToFilter);
 
-    connect(
-        _remove, &QPushButton::clicked, 
-        this, &PeakProperties::deleteCollection
-    );
+    connect(_remove, &QPushButton::clicked, this, &PeakProperties::deleteCollection);
 }
 
 void PeakProperties::setSizePolicies()
@@ -97,7 +86,7 @@ void PeakProperties::setSizePolicies()
     _size_policy_widgets = new QSizePolicy();
     _size_policy_widgets->setHorizontalPolicy(QSizePolicy::Expanding);
     _size_policy_widgets->setVerticalPolicy(QSizePolicy::Fixed);
-    
+
     _size_policy_box = new QSizePolicy();
     _size_policy_box->setHorizontalPolicy(QSizePolicy::Preferred);
     _size_policy_box->setVerticalPolicy(QSizePolicy::Preferred);
@@ -115,8 +104,7 @@ void PeakProperties::refreshInput()
 {
     _peak_list_combo->blockSignals(true);
     _peak_list_combo->clear();
-    _peak_list_combo->addItems(
-        gSession->selectedExperiment()->getPeakListNames());
+    _peak_list_combo->addItems(gSession->selectedExperiment()->getPeakListNames());
     _peak_list_combo->blockSignals(false);
 
     if (!gSession->selectedExperiment()->getPeakListNames().isEmpty())
@@ -125,10 +113,11 @@ void PeakProperties::refreshInput()
 
 void PeakProperties::selectedPeaksChanged()
 {
-    PeakCollectionModel* model = gSession->selectedExperiment()->peakModel(_peak_list_combo->currentIndex());
+    PeakCollectionModel* model =
+        gSession->selectedExperiment()->peakModel(_peak_list_combo->currentIndex());
     _peak_table->setModel(model);
 
-    if (!model){
+    if (!model) {
         _type->setText("");
         _peak_num->setText("");
         _valid->setText("");
@@ -138,26 +127,23 @@ void PeakProperties::selectedPeaksChanged()
 
     nsx::listtype listType = model->root()->peakCollection()->type();
     switch (listType) {
-        case nsx::listtype::FILTERED : {
+        case nsx::listtype::FILTERED: {
             _type->setText("Filtered");
             break;
         }
-        case nsx::listtype::FOUND : {
+        case nsx::listtype::FOUND: {
             _type->setText("Found");
             break;
         }
-        case nsx::listtype::PREDICTED : {
+        case nsx::listtype::PREDICTED: {
             _type->setText("Predicted");
             break;
         }
     }
 
-    _peak_num->setText(QString::number(
-        model->root()->peakCollection()->numberOfPeaks()));
-    _valid->setText(QString::number(
-        model->root()->peakCollection()->numberOfValid()));
-    _non_valid->setText(QString::number(
-        model->root()->peakCollection()->numberOfInvalid()));
+    _peak_num->setText(QString::number(model->root()->peakCollection()->numberOfPeaks()));
+    _valid->setText(QString::number(model->root()->peakCollection()->numberOfValid()));
+    _non_valid->setText(QString::number(model->root()->peakCollection()->numberOfInvalid()));
 }
 
 void PeakProperties::selectedExperimentChanged()
@@ -175,13 +161,9 @@ void PeakProperties::addMenuRequested()
     QAction* add_from_finder = menu->addAction("Add from peak finder ...");
     QAction* add_from_predictor = menu->addAction("Add from peak predictor ...");
 
-    connect(
-        add_from_finder, &QAction::triggered, 
-        this, &PeakProperties::jumpToFinder);
+    connect(add_from_finder, &QAction::triggered, this, &PeakProperties::jumpToFinder);
 
-    connect(
-        add_from_predictor, &QAction::triggered, 
-        this, &PeakProperties::jumpToPredictor);
+    connect(add_from_predictor, &QAction::triggered, this, &PeakProperties::jumpToPredictor);
 
     menu->popup(mapToGlobal(_add->geometry().bottomLeft()));
 }
@@ -205,7 +187,6 @@ void PeakProperties::deleteCollection()
 {
     _peak_table->setModel(nullptr);
 
-    gSession->selectedExperiment()->removePeakModel(
-        _peak_list_combo->currentText());
+    gSession->selectedExperiment()->removePeakModel(_peak_list_combo->currentText());
     refreshInput();
 }

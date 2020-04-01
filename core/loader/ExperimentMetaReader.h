@@ -16,38 +16,35 @@
 #define CORE_LOADER_EXPERIMENTMETAREADER_H
 
 #include "core/raw/IDataReader.h" // inherits from
-
 #include <H5Cpp.h>
 
 namespace nsx {
 
 class ExperimentMetaReader : public IDataReader {
-public:
-   ExperimentMetaReader() = delete;
+ public:
+    ExperimentMetaReader() = delete;
 
-   ExperimentMetaReader(const ExperimentMetaReader& other) = delete;
+    ExperimentMetaReader(const ExperimentMetaReader& other) = delete;
 
-   ExperimentMetaReader(
-      const std::string& file_name, 
-      const std::string& group_name, 
-      Diffractometer* instrument);
+    ExperimentMetaReader(
+        const std::string& file_name, const std::string& group_name, Diffractometer* instrument);
 
-   ~ExperimentMetaReader() override = default;
+    ~ExperimentMetaReader() override = default;
 
-   ExperimentMetaReader& operator=(const ExperimentMetaReader& other) = delete;
+    ExperimentMetaReader& operator=(const ExperimentMetaReader& other) = delete;
 
-public:
-   //! override open of the file
-   virtual void open() override;
-   //! override close of the file
-   virtual void close() override;
+ public:
+    //! override open of the file
+    virtual void open() override;
+    //! override close of the file
+    virtual void close() override;
 
-protected:
-   std::unique_ptr<H5::H5File> _file;
-   std::unique_ptr<H5::Group> _group;
-   std::unique_ptr<H5::DataSet> _dataset;
-   std::unique_ptr<H5::DataSpace> _space;
-   std::unique_ptr<H5::DataSpace> _memspace;
+ protected:
+    std::unique_ptr<H5::H5File> _file;
+    std::unique_ptr<H5::Group> _group;
+    std::unique_ptr<H5::DataSet> _dataset;
+    std::unique_ptr<H5::DataSpace> _space;
+    std::unique_ptr<H5::DataSpace> _memspace;
 };
 
 } // namespace nsx

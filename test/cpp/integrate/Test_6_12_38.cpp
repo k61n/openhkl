@@ -1,3 +1,17 @@
+//  ***********************************************************************************************
+//
+//  NSXTool: data reduction for neutron single-crystal diffraction
+//
+//! @file      test/cpp/integrate/Test_6_12_38.cpp
+//! @brief     Test ...
+//!
+//! @homepage  ###HOMEPAGE###
+//! @license   GNU General Public License v3 or higher (see COPYING)
+//! @copyright Institut Laue-Langevin and Forschungszentrum Jülich GmbH 2016-
+//! @authors   see CITATION, MAINTAINER
+//
+//  ***********************************************************************************************
+
 #include "test/cpp/catch.hpp"
 #include <fstream>
 #include <iostream>
@@ -13,15 +27,15 @@
 #include "base/utils/Units.h"
 #include "core/algo/AutoIndexer.h"
 #include "core/algo/DataReaderFactory.h"
-#include "core/analyse/PeakFilter.h"
-#include "core/analyse/PeakFinder.h"
+#include "core/data/DataSet.h"
 #include "core/detector/DetectorEvent.h"
-#include "core/experiment/DataSet.h"
 #include "core/experiment/Experiment.h"
+#include "core/experiment/PeakFinder.h"
 #include "core/instrument/Diffractometer.h"
 #include "core/instrument/Sample.h"
 #include "core/integration/PixelSumIntegrator.h"
 #include "core/peak/Peak3D.h"
+#include "core/shape/PeakFilter.h"
 #include "core/shape/ShapeLibrary.h"
 #include "tables/crystal/UnitCell.h"
 
@@ -66,7 +80,7 @@ TEST_CASE("test/integrate/Test_6_12_38.cpp", "")
     integrator.setPeakEnd(2.7);
     integrator.setPeakEnd(3.0);
     integrator.setPeakEnd(4.0);
-    integrator.integrate(peaks,nullptr, dataf);
+    integrator.integrate(peaks, nullptr, dataf);
 
     CHECK(peak.enabled() == true);
 }

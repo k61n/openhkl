@@ -15,7 +15,7 @@
 #ifndef CORE_LOADER_EXPERIMENTDATAREADER_H
 #define CORE_LOADER_EXPERIMENTDATAREADER_H
 
-#include "core/loader/ExperimentMetaReader.h" // inherits from 
+#include "core/loader/ExperimentMetaReader.h" // inherits from
 
 namespace nsx {
 
@@ -28,7 +28,8 @@ class ExperimentDataReader : public ExperimentMetaReader {
     ExperimentDataReader(const ExperimentDataReader& other) = delete;
 
     // Note that we need this constructor explicitly defined for SWIG.
-    ExperimentDataReader(const std::string& file_name, const std::string& group_name,  Diffractometer* instrument);
+    ExperimentDataReader(
+        const std::string& file_name, const std::string& group_name, Diffractometer* instrument);
 
     ~ExperimentDataReader() = default;
 

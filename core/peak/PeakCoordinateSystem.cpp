@@ -13,39 +13,21 @@
 //  ***********************************************************************************************
 
 #include "core/peak/PeakCoordinateSystem.h"
+#include "core/data/DataSet.h"
 #include "core/detector/Detector.h"
-#include "core/experiment/DataSet.h"
 #include "core/instrument/Diffractometer.h"
 #include "core/peak/Peak3D.h"
 #include "core/raw/IDataReader.h"
 
 namespace nsx {
 
-PeakCoordinateSystem::PeakCoordinateSystem(sptrPeak3D peak) : _peak(peak.get())
-{
-    if (!_peak)
-        throw std::runtime_error("Cannot construct PeakCoordinateSystem from null Peak3d");
-
-    _event = DetectorEvent(peak->shape().center());
-    _state = peak->data()->interpolatedState(_event._frame);
-    _ki = _state.ki().rowVector();
-    _kf = peak->q().rowVector() * _state.sampleOrientationMatrix().transpose() + _ki;
-
-    _e1 = _kf.cross(_ki);
-    _e2 = _kf.cross(_e1);
-
-    _e1.normalize();
-    _e2.normalize();
-
-    _zeta = _e1.dot(_state.axis) * 180.0 / M_PI * _state.stepSize;
-    _e1 *= 180.0 / M_PI / _kf.norm();
-    _e2 *= 180.0 / M_PI / _kf.norm();
-}
+//    if (!_peak)
+//        throw std::runtime_error("Cannot construct PeakCoordinateSystem from null Peak3d");
 
 PeakCoordinateSystem::PeakCoordinateSystem(Peak3D* peak) : _peak(peak)
 {
     _event = DetectorEvent(peak->shape().center());
-    _state = peak->data()->interpolatedState(_event._frame);
+    _state = peak->dataSet()->instrumentStates().interpolate(_event._frame);
     _ki = _state.ki().rowVector();
     _kf = peak->q().rowVector() * _state.sampleOrientationMatrix().transpose() + _ki;
 
@@ -62,11 +44,10 @@ PeakCoordinateSystem::PeakCoordinateSystem(Peak3D* peak) : _peak(peak)
 
 Eigen::Vector3d PeakCoordinateSystem::transform(const DetectorEvent& ev) const
 {
-    auto det = _peak->data()->reader()->diffractometer()->detector();
-    auto position = det->pixelPosition(ev._px, ev._py);
+    auto position = _peak->dataSet()->detector().pixelPosition(ev._px, ev._py);
     const Eigen::RowVector3d dk = _state.kfLab(position).rowVector() - _kf;
 
-// Kabsh coordinate system
+// Kabsch coordinate system
 #if 1
     const double eps1 = _e1.dot(dk);
     const double eps2 = _e2.dot(dk);

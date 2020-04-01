@@ -1,11 +1,25 @@
+//  ***********************************************************************************************
+//
+//  NSXTool: data reduction for neutron single-crystal diffraction
+//
+//! @file      test/cpp/instrument/TestExperiment.cpp
+//! @brief     Test ...
+//!
+//! @homepage  ###HOMEPAGE###
+//! @license   GNU General Public License v3 or higher (see COPYING)
+//! @copyright Institut Laue-Langevin and Forschungszentrum Jülich GmbH 2016-
+//! @authors   see CITATION, MAINTAINER
+//
+//  ***********************************************************************************************
+
 #include "test/cpp/catch.hpp"
 
 #include <stdexcept>
 
 #include "core/algo/DataReaderFactory.h"
-#include "core/experiment/DataSet.h"
+#include "core/data/DataSet.h"
 #include "core/experiment/Experiment.h"
-#include "core/peak/IPeakIntegrator.h"
+#include "core/shape/IPeakIntegrator.h"
 
 TEST_CASE("test/instrument/TestExperiment.cpp", "")
 {

@@ -1,3 +1,17 @@
+//  ***********************************************************************************************
+//
+//  NSXTool: data reduction for neutron single-crystal diffraction
+//
+//! @file      test/cpp/geometry/TestPeakCoordinateSystem.cpp
+//! @brief     Test ...
+//!
+//! @homepage  ###HOMEPAGE###
+//! @license   GNU General Public License v3 or higher (see COPYING)
+//! @copyright Institut Laue-Langevin and Forschungszentrum Jülich GmbH 2016-
+//! @authors   see CITATION, MAINTAINER
+//
+//  ***********************************************************************************************
+
 #include "test/cpp/catch.hpp"
 #include <array>
 #include <fstream>
@@ -8,9 +22,9 @@
 #include <Eigen/Dense>
 
 #include "core/algo/DataReaderFactory.h"
+#include "core/data/DataSet.h"
 #include "core/detector/Detector.h"
 #include "core/detector/DetectorEvent.h"
-#include "core/experiment/DataSet.h"
 #include "core/experiment/Experiment.h"
 #include "core/instrument/Diffractometer.h"
 #include "core/peak/Peak3D.h"
@@ -42,11 +56,11 @@ void run_test(const char* filename, const char* instrument)
         }
     }
 
-    nsx::sptrPeak3D peak(new nsx::Peak3D(dataf));
+    nsx::Peak3D peak(dataf);
 
     for (auto coord : coords) {
-        peak->setShape(nsx::Ellipsoid(coord, 2.0));
-        nsx::PeakCoordinateSystem frame(peak);
+        peak.setShape(nsx::Ellipsoid(coord, 2.0));
+        nsx::PeakCoordinateSystem frame(&peak);
 
         auto J = frame.jacobian();
 
@@ -72,7 +86,7 @@ void run_test(const char* filename, const char* instrument)
 
         auto detector_shape = frame.detectorShape(sigmaD, sigmaM);
 
-        peak->setShape(detector_shape);
+        peak.setShape(detector_shape);
 
         CHECK(frame.estimateDivergence() == Approx(sigmaD).epsilon(1e-6));
         CHECK(frame.estimateMosaicity() == Approx(sigmaM).epsilon(1e-6));

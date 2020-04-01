@@ -21,7 +21,6 @@ class ExperimentTableView : public QTableView {
     Q_OBJECT
  public:
     explicit ExperimentTableView(QWidget* parent = 0);
-
 };
 
 #endif // GUI_MODELS_EXPERIMENTTABLEVIEW_H

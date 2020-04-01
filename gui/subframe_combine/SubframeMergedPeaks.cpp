@@ -14,9 +14,9 @@
 
 #include "gui/subframe_combine/SubframeMergedPeaks.h"
 
-#include "core/analyse/MergedPeak.h"
-#include "core/experiment/DataSet.h"
+#include "core/data/DataSet.h"
 #include "core/statistics/CC.h"
+#include "core/statistics/MergedPeak.h"
 #include "core/statistics/RFactor.h"
 #include "core/statistics/ResolutionShell.h"
 #include "gui/models/Session.h"
@@ -28,8 +28,7 @@
 #include <fstream>
 #include <iomanip>
 
-SubframeMergedPeaks::SubframeMergedPeaks()
-    : QWidget()
+SubframeMergedPeaks::SubframeMergedPeaks() : QWidget()
 {
     setSizePolicies();
 
@@ -71,20 +70,14 @@ SubframeMergedPeaks::SubframeMergedPeaks()
     layout->addWidget(_main_tab_widget);
 
     connect(
-        _exp_drop, static_cast<void (QComboBox::*) (int) >(
-            &QComboBox::currentIndexChanged),
-        this, &SubframeMergedPeaks::refreshPeakLists
-    );
+        _exp_drop, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this,
+        &SubframeMergedPeaks::refreshPeakLists);
     connect(
-        _found_drop, static_cast<void (QComboBox::*) (int) >(
-            &QComboBox::currentIndexChanged),
-        this, &SubframeMergedPeaks::processMerge
-    );
+        _found_drop, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this,
+        &SubframeMergedPeaks::processMerge);
     connect(
-        _predicted_drop, static_cast<void (QComboBox::*) (int) >(
-            &QComboBox::currentIndexChanged),
-        this, &SubframeMergedPeaks::processMerge
-    );
+        _predicted_drop, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
+        this, &SubframeMergedPeaks::processMerge);
 
     show();
 }
@@ -94,7 +87,7 @@ void SubframeMergedPeaks::setSizePolicies()
     _size_policy_widgets = new QSizePolicy();
     _size_policy_widgets->setHorizontalPolicy(QSizePolicy::Preferred);
     _size_policy_widgets->setVerticalPolicy(QSizePolicy::Fixed);
-    
+
     _size_policy_box = new QSizePolicy();
     _size_policy_box->setHorizontalPolicy(QSizePolicy::Preferred);
     _size_policy_box->setVerticalPolicy(QSizePolicy::Preferred);
@@ -115,10 +108,9 @@ void SubframeMergedPeaks::setDShellUp()
     _d_shell_view = new QTableView;
     _shell_model = new QStandardItemModel(0, 13, this);
     _d_shell_view->setModel(_shell_model);
-    _shell_model->setHorizontalHeaderLabels({
-        "dmax", "dmin", "nobs", "nmerge", "redundancy", "Rmeas",
-        "Rmeas(est.)", "Rmerge/Rsym", "Rmerge(est.)", "Rpim",
-        "Rpim(est.)", "CChalf", "CC*"});
+    _shell_model->setHorizontalHeaderLabels({"dmax", "dmin", "nobs", "nmerge", "redundancy",
+                                             "Rmeas", "Rmeas(est.)", "Rmerge/Rsym", "Rmerge(est.)",
+                                             "Rpim", "Rpim(est.)", "CChalf", "CC*"});
     shell_layout->addWidget(_d_shell_view);
 
     QHBoxLayout* d_shell_down = new QHBoxLayout;
@@ -140,7 +132,7 @@ void SubframeMergedPeaks::setDShellUp()
     label_ptr->setAlignment(Qt::AlignRight);
     d_shell_down_left->addWidget(label_ptr, 2, 0, 1, 1);
     label_ptr->setSizePolicy(*_size_policy_widgets);
-   
+
     label_ptr = new QLabel("Plot axis:");
     label_ptr->setAlignment(Qt::AlignRight);
     d_shell_down_left->addWidget(label_ptr, 4, 0, 1, 1);
@@ -171,7 +163,7 @@ void SubframeMergedPeaks::setDShellUp()
         selection_stats.append(header_item->text());
     }
     _plottable_statistics->addItems(selection_stats);
-    
+
     d_shell_down_left->addWidget(_d_min, 0, 1, 1, 1);
     d_shell_down_left->addWidget(_d_max, 1, 1, 1, 1);
     d_shell_down_left->addWidget(_d_shells, 2, 1, 1, 1);
@@ -185,32 +177,25 @@ void SubframeMergedPeaks::setDShellUp()
     d_shell_down->addWidget(_statistics_plot);
 
     connect(
-        _d_min, static_cast<void (QDoubleSpinBox::*) (double) >(
-            &QDoubleSpinBox::valueChanged), 
-        this, &SubframeMergedPeaks::refreshDShellTable);
+        _d_min, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged), this,
+        &SubframeMergedPeaks::refreshDShellTable);
 
     connect(
-        _d_max, static_cast<void (QDoubleSpinBox::*) (double) >(
-            &QDoubleSpinBox::valueChanged), 
-        this, &SubframeMergedPeaks::refreshDShellTable);
+        _d_max, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged), this,
+        &SubframeMergedPeaks::refreshDShellTable);
 
     connect(
-        _d_shells, static_cast<void (QSpinBox::*) (int) >(
-            &QSpinBox::valueChanged), 
-        this, &SubframeMergedPeaks::refreshDShellTable);
+        _d_shells, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged), this,
+        &SubframeMergedPeaks::refreshDShellTable);
+
+    connect(_friedel, &QCheckBox::clicked, this, &SubframeMergedPeaks::refreshDShellTable);
 
     connect(
-        _friedel, &QCheckBox::clicked, 
-        this, &SubframeMergedPeaks::refreshDShellTable);
+        _plottable_statistics,
+        static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this,
+        &SubframeMergedPeaks::refreshGraphTable);
 
-    connect(
-        _plottable_statistics, static_cast<void (QComboBox::*) (int) >(
-            &QComboBox::currentIndexChanged), 
-        this, &SubframeMergedPeaks::refreshGraphTable);
-
-    connect(
-        _save_shell, &QPushButton::clicked,
-        this, &SubframeMergedPeaks::saveStatistics);
+    connect(_save_shell, &QPushButton::clicked, this, &SubframeMergedPeaks::saveStatistics);
 
     shell_layout->addLayout(d_shell_down);
 }
@@ -221,24 +206,19 @@ void SubframeMergedPeaks::setMergedUp()
     _merged_view = new QTableView;
     _merged_model = new QStandardItemModel(7, 0, this);
     _merged_view->setModel(_merged_model);
-    _merged_model->setHorizontalHeaderLabels(
-        {"h", "k", "l", "I", "sigmaI", "chi2", "p"});
+    _merged_model->setHorizontalHeaderLabels({"h", "k", "l", "I", "sigmaI", "chi2", "p"});
     merged_layout->addWidget(_merged_view);
 
     QHBoxLayout* merged_row = new QHBoxLayout;
     _merged_save_type = new QComboBox();
-    _merged_save_type->addItems(
-        {"ShelX", "FullProf", "Phenix"}
-    );
+    _merged_save_type->addItems({"ShelX", "FullProf", "Phenix"});
     _save_merged = new QPushButton("Save merged");
     merged_row->addStretch();
     merged_row->addWidget(_merged_save_type);
     merged_row->addWidget(_save_merged);
     merged_layout->addLayout(merged_row);
 
-    connect(
-        _save_merged, &QPushButton::clicked,
-        this, &SubframeMergedPeaks::saveMergedPeaks);
+    connect(_save_merged, &QPushButton::clicked, this, &SubframeMergedPeaks::saveMergedPeaks);
 }
 
 void SubframeMergedPeaks::setUnmergedUp()
@@ -247,15 +227,12 @@ void SubframeMergedPeaks::setUnmergedUp()
     _unmerged_view = new QTableView;
     _unmerged_model = new QStandardItemModel(7, 0, this);
     _unmerged_view->setModel(_unmerged_model);
-    _unmerged_model->setHorizontalHeaderLabels(
-        {"h", "k", "l", "I", "sigmaI", "chi2", "p"});
+    _unmerged_model->setHorizontalHeaderLabels({"h", "k", "l", "I", "sigmaI", "chi2", "p"});
     unmerged_layout->addWidget(_unmerged_view);
 
     QHBoxLayout* unmerged_row = new QHBoxLayout;
     _unmerged_save_type = new QComboBox();
-    _unmerged_save_type->addItems(
-        {"ShelX", "FullProf", "Phenix"}
-    );
+    _unmerged_save_type->addItems({"ShelX", "FullProf", "Phenix"});
     _save_unmerged = new QPushButton("Save unmerged");
 
     unmerged_row->addStretch();
@@ -263,9 +240,7 @@ void SubframeMergedPeaks::setUnmergedUp()
     unmerged_row->addWidget(_save_unmerged);
     unmerged_layout->addLayout(unmerged_row);
 
-    connect(
-        _save_unmerged, &QPushButton::clicked,
-        this, &SubframeMergedPeaks::saveUnmergedPeaks);
+    connect(_save_unmerged, &QPushButton::clicked, this, &SubframeMergedPeaks::saveUnmergedPeaks);
 }
 
 void SubframeMergedPeaks::refreshAll()
@@ -276,16 +251,16 @@ void SubframeMergedPeaks::refreshAll()
 void SubframeMergedPeaks::refreshExperimentList()
 {
     _exp_drop->blockSignals(true);
-    
+
     _exp_drop->clear();
     QList<QString> exp_list = gSession->experimentNames();
 
-    if (!exp_list.isEmpty()){
+    if (!exp_list.isEmpty()) {
         for (QString exp : exp_list) {
             _exp_drop->addItem(exp);
         }
         _exp_drop->blockSignals(false);
-        
+
         refreshPeakLists();
     }
 }
@@ -302,10 +277,9 @@ void SubframeMergedPeaks::refreshFoundPeakList()
     _found_drop->blockSignals(true);
 
     _found_drop->clear();
-    _found_list = gSession->experimentAt(
-        _exp_drop->currentIndex())->getFoundNames();
+    _found_list = gSession->experimentAt(_exp_drop->currentIndex())->getFoundNames();
 
-    if (!_found_list.isEmpty()){
+    if (!_found_list.isEmpty()) {
         _found_drop->addItems(_found_list);
         _found_drop->setCurrentIndex(0);
     }
@@ -317,10 +291,9 @@ void SubframeMergedPeaks::refreshPredictedPeakList()
     _predicted_drop->blockSignals(true);
 
     _predicted_drop->clear();
-    _predicted_list = gSession->experimentAt(
-        _exp_drop->currentIndex())->getPredictedNames();
+    _predicted_list = gSession->experimentAt(_exp_drop->currentIndex())->getPredictedNames();
 
-    if (!_predicted_list.isEmpty()){
+    if (!_predicted_list.isEmpty()) {
         _predicted_drop->addItems(_predicted_list);
         _predicted_drop->setCurrentIndex(0);
     }
@@ -329,26 +302,25 @@ void SubframeMergedPeaks::refreshPredictedPeakList()
 
 void SubframeMergedPeaks::processMerge()
 {
-    if (_found_list.isEmpty() || _predicted_list.isEmpty()){
-        gSession->experimentAt(
-            _exp_drop->currentIndex())->experiment()->resetMergedPeaks();
+    if (_found_list.isEmpty() || _predicted_list.isEmpty()) {
+        gSession->experimentAt(_exp_drop->currentIndex())->experiment()->resetMergedPeaks();
         _merged_data = nullptr;
-    }else{
+    } else {
         std::vector<nsx::PeakCollection*> peak_collections;
         peak_collections.push_back(
-            gSession->experimentAt(
-                _exp_drop->currentIndex())->experiment()->getPeakCollection(
-                    _found_drop->currentText().toStdString()));
+            gSession->experimentAt(_exp_drop->currentIndex())
+                ->experiment()
+                ->getPeakCollection(_found_drop->currentText().toStdString()));
         peak_collections.push_back(
-            gSession->experimentAt(
-                _exp_drop->currentIndex())->experiment()->getPeakCollection(
-                    _predicted_drop->currentText().toStdString()));
+            gSession->experimentAt(_exp_drop->currentIndex())
+                ->experiment()
+                ->getPeakCollection(_predicted_drop->currentText().toStdString()));
 
-        gSession->experimentAt(
-            _exp_drop->currentIndex())->experiment()->setMergedPeaks(
-                peak_collections,_friedel->isChecked());
-        _merged_data = gSession->experimentAt(
-            _exp_drop->currentIndex())->experiment()->getMergedPeaks();
+        gSession->experimentAt(_exp_drop->currentIndex())
+            ->experiment()
+            ->setMergedPeaks(peak_collections, _friedel->isChecked());
+        _merged_data =
+            gSession->experimentAt(_exp_drop->currentIndex())->experiment()->getMergedPeaks();
     }
     refreshTables();
 }
@@ -368,8 +340,7 @@ void SubframeMergedPeaks::refreshDShellTable()
     int shells = _d_shells->value();
     bool inclFriedel = _friedel->isChecked();
 
-    QStandardItemModel* model = dynamic_cast<QStandardItemModel*>(
-        _d_shell_view->model());
+    QStandardItemModel* model = dynamic_cast<QStandardItemModel*>(_d_shell_view->model());
     model->removeRows(0, model->rowCount());
 
     if (_merged_data == nullptr)
@@ -378,12 +349,13 @@ void SubframeMergedPeaks::refreshDShellTable()
     if (_merged_data->totalSize() == 0)
         return;
 
-    nsx::PeakCollection* found = gSession->experimentAt(
-        _exp_drop->currentIndex())->experiment()->getPeakCollection(
-            _found_drop->currentText().toStdString());
-    nsx::PeakCollection* predicted = gSession->experimentAt(
-        _exp_drop->currentIndex())->experiment()->getPeakCollection(
-            _predicted_drop->currentText().toStdString());
+    nsx::PeakCollection* found = gSession->experimentAt(_exp_drop->currentIndex())
+                                     ->experiment()
+                                     ->getPeakCollection(_found_drop->currentText().toStdString());
+    nsx::PeakCollection* predicted =
+        gSession->experimentAt(_exp_drop->currentIndex())
+            ->experiment()
+            ->getPeakCollection(_predicted_drop->currentText().toStdString());
 
     nsx::ResolutionShell resolutionShell(min, max, shells);
     for (nsx::Peak3D* peak : found->getPeakList())
@@ -395,8 +367,7 @@ void SubframeMergedPeaks::refreshDShellTable()
         const double d_lower = resolutionShell.shell(i).dmin;
         const double d_upper = resolutionShell.shell(i).dmax;
 
-        nsx::MergedData merged_data_per_shell(
-            _merged_data->spaceGroup(), inclFriedel);
+        nsx::MergedData merged_data_per_shell(_merged_data->spaceGroup(), inclFriedel);
 
         for (nsx::Peak3D* peak : resolutionShell.shell(i).peaks)
             merged_data_per_shell.addPeak(peak);
@@ -409,8 +380,7 @@ void SubframeMergedPeaks::refreshDShellTable()
         QList<QStandardItem*> row;
         row.append(new QStandardItem(QString::number(d_upper)));
         row.append(new QStandardItem(QString::number(d_lower)));
-        row.append(new QStandardItem(QString::number(
-            merged_data_per_shell.totalSize())));
+        row.append(new QStandardItem(QString::number(merged_data_per_shell.totalSize())));
         row.append(
             new QStandardItem(QString::number(merged_data_per_shell.mergedPeakSet().size())));
         row.append(new QStandardItem(QString::number(merged_data_per_shell.redundancy())));
@@ -510,7 +480,7 @@ void SubframeMergedPeaks::refreshUnmergedTable()
             const int l = hkl[2];
 
             const Eigen::Vector3d& c = unmerged_peak->shape().center();
-            std::string numor = unmerged_peak->data()->filename();
+            std::string numor = unmerged_peak->dataSet()->filename();
             nsx::Intensity I = unmerged_peak->correctedIntensity();
 
             const double intensity = I.value();
@@ -543,7 +513,7 @@ void SubframeMergedPeaks::refreshGraphTable(int column)
 
     if (_merged_data->totalSize() == 0)
         return;
-        
+
     QStandardItemModel* _shell_model = dynamic_cast<QStandardItemModel*>(_d_shell_view->model());
     int nshells = _shell_model->rowCount() - 1;
     std::vector<double> shells(nshells);
@@ -573,19 +543,17 @@ void SubframeMergedPeaks::refreshGraphTable(int column)
     _statistics_plot->xAxis->setTickLabelFont(font);
     _statistics_plot->yAxis->setTickLabelFont(font);
 
-    _statistics_plot->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectAxes
-                                    | QCP::iSelectLegend | QCP::iSelectPlottables);
+    _statistics_plot->setInteractions(
+        QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectAxes | QCP::iSelectLegend
+        | QCP::iSelectPlottables);
     _statistics_plot->rescaleAxes();
     _statistics_plot->replot();
 }
 
 void SubframeMergedPeaks::saveStatistics()
 {
-    QString filename = QFileDialog::getSaveFileName(
-        this, 
-        tr("Save the shell info"), 
-        ".", 
-        tr("(*.txt)"));
+    QString filename =
+        QFileDialog::getSaveFileName(this, "Save the shell info", ".", "(*.txt)");
 
     if (filename.isEmpty())
         return;
@@ -598,71 +566,54 @@ void SubframeMergedPeaks::saveStatistics()
     if (_merged_data == nullptr)
         return;
 
-    nsx::PeakCollection* found = gSession->experimentAt(
-        _exp_drop->currentIndex())->experiment()->getPeakCollection(
-            _found_drop->currentText().toStdString());
-    nsx::PeakCollection* predicted = gSession->experimentAt(
-        _exp_drop->currentIndex())->experiment()->getPeakCollection(
-            _predicted_drop->currentText().toStdString());
+    nsx::PeakCollection* found = gSession->experimentAt(_exp_drop->currentIndex())
+                                     ->experiment()
+                                     ->getPeakCollection(_found_drop->currentText().toStdString());
+    nsx::PeakCollection* predicted =
+        gSession->experimentAt(_exp_drop->currentIndex())
+            ->experiment()
+            ->getPeakCollection(_predicted_drop->currentText().toStdString());
 
     nsx::ResolutionShell resolutionShell(min, max, shells);
     for (nsx::Peak3D* peak : found->getPeakList())
         resolutionShell.addPeak(peak);
     for (nsx::Peak3D* peak : predicted->getPeakList())
         resolutionShell.addPeak(peak);
-        
+
     exporter.saveStatistics(
-        filename.toStdString(),
-        resolutionShell,
-        _merged_data->spaceGroup(),
-        inclFriedel);
+        filename.toStdString(), resolutionShell, _merged_data->spaceGroup(), inclFriedel);
 }
 
 void SubframeMergedPeaks::saveMergedPeaks()
 {
     QString format = _merged_save_type->currentText();
 
-    if (format.compare("ShelX") == 0){
+    if (format.compare("ShelX") == 0) {
         QString filename = QFileDialog::getSaveFileName(
-            this, 
-            tr("Save peaks to ShelX"), 
-            ".", 
-            tr("ShelX hkl file (*.hkl)"));
+            this, "Save peaks to ShelX", ".", "ShelX hkl file (*.hkl)");
 
         if (filename.isEmpty())
             return;
 
-        exporter.saveToShelXMerged(
-            filename.toStdString(),
-            _merged_data);
+        exporter.saveToShelXMerged(filename.toStdString(), _merged_data);
 
-    } else if (format.compare("FullProf") == 0){
+    } else if (format.compare("FullProf") == 0) {
         QString filename = QFileDialog::getSaveFileName(
-            this, 
-            tr("Save peaks to FullProf"), 
-            ".", 
-            tr("FullProf hkl file (*.hkl)"));
+            this, "Save peaks to FullProf", ".", "FullProf hkl file (*.hkl)");
 
         if (filename.isEmpty())
             return;
 
-        exporter.saveToFullProfMerged(
-            filename.toStdString(),
-            _merged_data);
+        exporter.saveToFullProfMerged(filename.toStdString(), _merged_data);
 
-    } else if (format.compare("Phenix") == 0){
+    } else if (format.compare("Phenix") == 0) {
         QString filename = QFileDialog::getSaveFileName(
-            this, 
-            tr("Save peaks to Phenix sca"), 
-            ".", 
-            tr("Phenix sca file (*.sca)"));
+            this, "Save peaks to Phenix sca", ".", "Phenix sca file (*.sca)");
 
         if (filename.isEmpty())
             return;
 
-        exporter.saveToSCAMerged(
-            filename.toStdString(),
-            _merged_data);
+        exporter.saveToSCAMerged(filename.toStdString(), _merged_data);
     }
 }
 
@@ -670,46 +621,31 @@ void SubframeMergedPeaks::saveUnmergedPeaks()
 {
     QString format = _merged_save_type->currentText();
 
-    if (format.compare("ShelX") == 0){
+    if (format.compare("ShelX") == 0) {
         QString filename = QFileDialog::getSaveFileName(
-            this, 
-            tr("Save peaks to ShelX"), 
-            ".", 
-            tr("ShelX hkl file (*.hkl)"));
+            this, "Save peaks to ShelX", ".", "ShelX hkl file (*.hkl)");
 
         if (filename.isEmpty())
             return;
 
-        exporter.saveToShelXUnmerged(
-            filename.toStdString(),
-            _merged_data);
+        exporter.saveToShelXUnmerged(filename.toStdString(), _merged_data);
 
-    } else if (format.compare("FullProf") == 0){
+    } else if (format.compare("FullProf") == 0) {
         QString filename = QFileDialog::getSaveFileName(
-            this, 
-            tr("Save peaks to FullProf"), 
-            ".", 
-            tr("ShelX hkl file (*.hkl)"));
+            this, "Save peaks to FullProf", ".", "ShelX hkl file (*.hkl)");
 
         if (filename.isEmpty())
             return;
 
-        exporter.saveToFullProfUnmerged(
-            filename.toStdString(),
-            _merged_data);
+        exporter.saveToFullProfUnmerged(filename.toStdString(), _merged_data);
 
-    } else if (format.compare("Phenix") == 0){
+    } else if (format.compare("Phenix") == 0) {
         QString filename = QFileDialog::getSaveFileName(
-            this, 
-            tr("Save peaks to Phenix sca"), 
-            ".", 
-            tr("Phenix sca file (*.sca)"));
+            this, "Save peaks to Phenix sca", ".", "Phenix sca file (*.sca)");
 
         if (filename.isEmpty())
             return;
 
-        exporter.saveToSCAUnmerged(
-            filename.toStdString(),
-            _merged_data);
+        exporter.saveToSCAUnmerged(filename.toStdString(), _merged_data);
     }
 }

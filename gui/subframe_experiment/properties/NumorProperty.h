@@ -15,31 +15,40 @@
 #ifndef GUI_SUBFRAME_EXPERIMENT_PROPERTIES_NUMORPROPERTY_H
 #define GUI_SUBFRAME_EXPERIMENT_PROPERTIES_NUMORPROPERTY_H
 
-#include <QWidget>
 #include <QComboBox>
+#include <QPushButton>
 #include <QTableWidget>
 
 //! Property widget of the numor
 class NumorProperty : public QWidget {
 
-public:
+ public:
+    //! The constructor
+    NumorProperty();
+    //! Public call to refresh the widget
+    void refreshInput();
+    //! Set up the GUI size policies
+    void setSizePolicies();
 
-   //! The constructor
-   NumorProperty();
-   //! Public call to refresh the widget
-   void refreshInput();
-   
-private:
+ private:
+    //! Refresh when changed
+    void onChanged();
+    //! Clear content
+    void clear();
+    //! load selector
+    void addMenuRequested();
 
-   //! Refresh when changed
-   void onChanged();
-   //! Clear content
-   void clear();
+ private:
+    QTableWidget* _table;
+    QComboBox* _numor_selector;
 
-private:
+    QPushButton* _add;
+    QPushButton* _remove;
 
-   QTableWidget* _table;
-   QComboBox* _numor_selector;
+    QSizePolicy* _size_policy_widgets;
+    QSizePolicy* _size_policy_box;
+    QSizePolicy* _size_policy_right;
+    QSizePolicy* _size_policy_fixed;
 };
 
 #endif // GUI_SUBFRAME_EXPERIMENT_PROPERTIES_NUMORPROPERTY_H

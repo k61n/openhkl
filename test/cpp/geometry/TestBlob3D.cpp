@@ -1,9 +1,23 @@
+//  ***********************************************************************************************
+//
+//  NSXTool: data reduction for neutron single-crystal diffraction
+//
+//! @file      test/cpp/geometry/TestBlob3D.cpp
+//! @brief     Test ...
+//!
+//! @homepage  ###HOMEPAGE###
+//! @license   GNU General Public License v3 or higher (see COPYING)
+//! @copyright Institut Laue-Langevin and Forschungszentrum Jülich GmbH 2016-
+//! @authors   see CITATION, MAINTAINER
+//
+//  ***********************************************************************************************
+
 #include "test/cpp/catch.hpp"
 #include <cmath>
 
 #include <Eigen/Dense>
 
-#include "core/analyse/Blob3D.h"
+#include "core/integration/Blob3D.h"
 
 const double tolerance = 1e-5;
 

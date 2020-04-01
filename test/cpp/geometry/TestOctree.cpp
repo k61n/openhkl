@@ -1,3 +1,17 @@
+//  ***********************************************************************************************
+//
+//  NSXTool: data reduction for neutron single-crystal diffraction
+//
+//! @file      test/cpp/geometry/TestOctree.cpp
+//! @brief     Test ...
+//!
+//! @homepage  ###HOMEPAGE###
+//! @license   GNU General Public License v3 or higher (see COPYING)
+//! @copyright Institut Laue-Langevin and Forschungszentrum Jülich GmbH 2016-
+//! @authors   see CITATION, MAINTAINER
+//
+//  ***********************************************************************************************
+
 #include "test/cpp/catch.hpp"
 
 #include <Eigen/Dense>
@@ -7,7 +21,7 @@
 
 #include "base/geometry/AABB.h"
 #include "base/geometry/Ellipsoid.h"
-#include "core/analyse/Octree.h"
+#include "core/shape/Octree.h"
 
 void collision_test()
 {

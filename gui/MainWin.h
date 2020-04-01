@@ -15,15 +15,15 @@
 #ifndef GUI_MAINWIN_H
 #define GUI_MAINWIN_H
 
-#include "gui/subframe_filter/SubframeFilterPeaks.h"
-#include "gui/subframe_index/SubframeAutoIndexer.h"
-#include "gui/subframe_find/SubframeFindPeaks.h"
-#include "gui/subframe_predict/SubframePredictPeaks.h"
-#include "gui/subframe_experiment/SubframeExperiment.h"
-#include "gui/subframe_home/SubframeHome.h"
-#include "gui/subframe_combine/SubframeMergedPeaks.h"
-#include "gui/utility/SideBar.h"
 #include "gui/graphics/DetectorScene.h"
+#include "gui/subframe_combine/SubframeMergedPeaks.h"
+#include "gui/subframe_experiment/SubframeExperiment.h"
+#include "gui/subframe_filter/SubframeFilterPeaks.h"
+#include "gui/subframe_find/SubframeFindPeaks.h"
+#include "gui/subframe_home/SubframeHome.h"
+#include "gui/subframe_index/SubframeAutoIndexer.h"
+#include "gui/subframe_predict/SubframePredictPeaks.h"
+#include "gui/utility/SideBar.h"
 
 #include <QStackedWidget>
 
@@ -49,46 +49,41 @@ class MainWin : public QMainWindow {
     //! Refreshes the parts of the main window that depend on the peaks
     void onUnitCellChanged();
     //! change the detector image view
-    void changeView(int option) { _experiment->image->changeView(option); }
+    void changeView(int option) { experiment->getImage()->changeView(option); }
     //! update the plot, plot the plottable item p
-    void updatePlot(PlottableItem* p) { _experiment->plot->updatePlot(p); }
+    void updatePlot(PlottableItem* p) { experiment->getPlot()->updatePlot(p); }
     //! change the cursor tooltip on the detector scene
-    void cursormode(int i)
-    {
-        _experiment->image->imageView->getScene()->changeCursorMode(i);
-    }
+    void cursormode(int i) { experiment->getImage()->getView()->getScene()->changeCursorMode(i); }
     //! export current plot to ASCII
-    void exportPlot() { _experiment->plot->exportPlot(); }
+    void exportPlot() { experiment->getPlot()->exportPlot(); }
     //! plot the x and y data, e is the error to y
     void plotData(QVector<double>& x, QVector<double>& y, QVector<double>& e)
     {
-        _experiment->plot->plotData(x, y, e);
+        experiment->getPlot()->plotData(x, y, e);
     }
 
     //! Get the Sidebar
-    SideBar* sideBar() {return _side_bar;};
+    SideBar* sideBar() { return _side_bar; };
 
  private:
-
-    void refresh();
     void readSettings();
     void saveSettings() const;
     void closeEvent(QCloseEvent* event) override;
 
+ public:
+    SubframeExperiment* experiment;
+    SubframeHome* home;
+    PeakFinderFrame* finder;
+    SubframeFilterPeaks* filter;
+    SubframeAutoIndexer* indexer;
+    SubframePredictPeaks* predictor;
+    SubframeMergedPeaks* merger;
+
+ private:
     QStackedWidget* _layout_stack;
-    SubframeExperiment* _experiment;
-    SubframeHome* _home;
-    PeakFinderFrame* _finder;
-    SubframeFilterPeaks* _filter;
-    SubframeAutoIndexer* _indexer;
-    SubframePredictPeaks* _predictor;
-    SubframeMergedPeaks* _merger;
     SideBar* _side_bar;
-
     class Menus* menus_;
-
     QByteArray initialState_;
-
     friend class Actions;
     friend class SideBar;
 };

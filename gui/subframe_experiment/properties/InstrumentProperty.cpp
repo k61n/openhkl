@@ -12,7 +12,7 @@
 //
 //  ***********************************************************************************************
 
-#include "gui/subframe_experiment/properties/InstrumentProperty.h" 
+#include "gui/subframe_experiment/properties/InstrumentProperty.h"
 
 InstrumentProperty::InstrumentProperty() : QTabWidget()
 {

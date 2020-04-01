@@ -18,8 +18,8 @@
 #include "base/geometry/ReciprocalVector.h"
 #include "base/utils/Units.h"
 
+#include "core/data/DataSet.h"
 #include "core/detector/Detector.h"
-#include "core/experiment/DataSet.h"
 #include "core/instrument/Diffractometer.h"
 #include "core/instrument/InstrumentState.h"
 #include "core/peak/Peak3D.h"
@@ -39,12 +39,11 @@ PeakItemGraphic::PeakItemGraphic(nsx::Peak3D* peak)
     : PlottableItem(nullptr, true, false), _peak(peak)
 {
     setVisible(true);
-    _size = Eigen::Vector2d(10,10);
+    _size = Eigen::Vector2d(10, 10);
     _color = Qt::red;
     _show_label = false;
     _show_center = true;
     redraw();
-
 }
 
 void PeakItemGraphic::redraw()
@@ -80,7 +79,7 @@ void PeakItemGraphic::redraw()
 
     _center_gi = new QGraphicsEllipseItem(this);
     _center_gi->setPen(center_pen);
-    _center_gi->setRect(-_size[0]/2, -_size[1]/2, _size[0], _size[1]);
+    _center_gi->setRect(-_size[0] / 2, -_size[1] / 2, _size[0], _size[1]);
     _center_gi->setParentItem(this);
     _center_gi->setBrush(QBrush(_color));
     _center_gi->setAcceptHoverEvents(false);
@@ -115,14 +114,19 @@ void PeakItemGraphic::setCenter(int frame)
 
 void PeakItemGraphic::setSize(int size)
 {
-    _size = Eigen::Vector2d(size,size);
-    _center_gi->setRect(-_size[0]/2, -_size[1]/2, _size[0], _size[1]);
+    _size = Eigen::Vector2d(size, size);
+    _center_gi->setRect(-_size[0] / 2, -_size[1] / 2, _size[0], _size[1]);
 }
 
 void PeakItemGraphic::setColor(QColor color)
 {
     _color = color;
     _center_gi->setBrush(QBrush(_color));
+}
+
+void PeakItemGraphic::setOutlineColor(QColor color)
+{
+    _center_gi->setPen(QPen(color));
 }
 
 nsx::Peak3D* PeakItemGraphic::peak() const
@@ -139,7 +143,8 @@ QRectF PeakItemGraphic::boundingRect() const
     return QRectF(-width / 2.0, -height / 2.0, width, height);
 }
 
-void PeakItemGraphic::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget)
+void PeakItemGraphic::paint(
+    QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget)
 {
     Q_UNUSED(widget)
 
@@ -148,7 +153,6 @@ void PeakItemGraphic::paint(QPainter* painter, const QStyleOptionGraphicsItem* o
     Q_UNUSED(painter)
 
     // _label_gi->setVisible(_hovered || _show_label);
-
     // _center_gi->setVisible(_hovered || _show_center);
 }
 
@@ -210,9 +214,9 @@ void PeakItemGraphic::plot(SXPlot* plot)
     }
 
     const Eigen::Vector3d c = _peak->shape().center();
-    nsx::InterpolatedState state = _peak->data()->interpolatedState(c[2]);
+    nsx::InterpolatedState state = _peak->dataSet()->instrumentStates().interpolate(c[2]);
     nsx::DirectVector position =
-        _peak->data()->reader()->diffractometer()->detector()->pixelPosition(c[0], c[1]);
+        _peak->dataSet()->reader()->diffractometer()->detector()->pixelPosition(c[0], c[1]);
     double g = state.gamma(position);
     double n = state.nu(position);
     g /= nsx::deg;
@@ -228,7 +232,7 @@ void PeakItemGraphic::plot(SXPlot* plot)
         + " (" + QString::number(sI, 'f', 2) + ")\n";
 
     double scale = _peak->scale();
-    double monitor = _peak->data()->reader()->metadata().key<double>("monitor");
+    double monitor = _peak->dataSet()->reader()->metadata().key<double>("monitor");
     info += "Monitor " + QString::number(monitor * scale) + " counts";
     QCPTextElement* title = dynamic_cast<QCPTextElement*>(p->plotLayout()->element(0, 0));
     if (title != nullptr)

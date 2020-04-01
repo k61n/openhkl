@@ -263,6 +263,19 @@ void UnitCell::printSelf(std::ostream& os) const
     }
 }
 
+std::string UnitCell::toString()
+{
+    std::ostringstream oss;
+    auto c = character();
+    oss << std::fixed << std::setw(10) << std::setprecision(5) << c.a
+        << std::setw(10) << c.b
+        << std::setw(10) << c.c
+        << std::setw(10) << c.alpha / deg
+        << std::setw(10) << c.beta / deg
+        << std::setw(10) << c.gamma / deg;
+    return oss.str();
+}
+
 std::ostream& operator<<(std::ostream& os, const UnitCell& uc)
 {
     uc.printSelf(os);
@@ -731,8 +744,7 @@ UnitCell UnitCell::fromParameters(
 }
 
 void UnitCell::updateParameters(
-    const Eigen::Matrix3d& U0, const Eigen::Vector3d& uOffset,
-    const Eigen::VectorXd& parameters) 
+    const Eigen::Matrix3d& U0, const Eigen::Vector3d& uOffset, const Eigen::VectorXd& parameters)
 {
     // Gets new orientation from offsets
     Eigen::Quaterniond q(1.0, uOffset(0), uOffset(1), uOffset(2));
@@ -762,10 +774,9 @@ void UnitCell::updateParameters(
     // parameters defining lattice chatacer
     for (auto i = 0; i < nparams; ++i)
         ch += parameters(i) * kernel.col(i);
-        
+
     setMetric(ch(0), ch(5), ch(4), ch(1), ch(3), ch(2));
     setBasis(U * this->_a * _NP);
-
 }
 //! We calculate errors in the unit cell parameters using a simple propagation
 //! of error. For a function f(x) of a random variable x, with

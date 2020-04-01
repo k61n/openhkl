@@ -20,26 +20,26 @@
 
 class PeakCollectionModel : public QAbstractTableModel {
     Q_OBJECT
-public:
+ public:
     PeakCollectionModel();
-    PeakCollectionModel(QObject *parent);
+    PeakCollectionModel(QObject* parent);
     ~PeakCollectionModel() = default;
 
-public:
+ public:
     //! Set the root item that will be used within the model
     void setRoot(PeakCollectionItem* peak_collection);
     //! Set the root item that will be used within the model
-    PeakCollectionItem* root() const {return _root_item;};
+    PeakCollectionItem* root() const { return _root_item; };
     //! Retrieve the name
-    std::string name() const {return _name;};
+    std::string name() const { return _name; };
     //! Retrieve the row count
-    int rowCount(const QModelIndex &parent = QModelIndex()) const override;
-    //!retrieve the column count
-    int columnCount(const QModelIndex &parent = QModelIndex()) const override;
+    int rowCount(const QModelIndex& parent = QModelIndex()) const override;
+    //! retrieve the column count
+    int columnCount(const QModelIndex& parent = QModelIndex()) const override;
     //! Returns whether the selected peak is valid
     bool indexIsValid(const QModelIndex& index) const;
 
-public:
+ public:
     //! Return the data of the item (Manages role interaction)
     QVariant data(const QModelIndex& index, int role) const override;
     //! Manages the display and edition flags
@@ -47,14 +47,13 @@ public:
     //! Returns header information
     QVariant headerData(int section, Qt::Orientation orientation, int role) const override;
     //! Enumerator class for the model
-    enum Column { h, k, l, px, py, Frame, Intensity, Sigma, Numor, uc, d, Count };
+    enum Column { h, k, l, px, py, Frame, Intensity, Sigma, Strength, Numor, uc, d, Count };
     //! The sorthing of the peaks
     void sort(int column, Qt::SortOrder order) override;
 
-public:
+ public:
     PeakCollectionItem* _root_item = nullptr;
     std::string _name;
-
 };
 
 #endif // GUI_MODELS_PEAKCOLLECTIONMODEL_H

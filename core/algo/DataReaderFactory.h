@@ -15,8 +15,7 @@
 #ifndef CORE_ALGO_DATAREADERFACTORY_H
 #define CORE_ALGO_DATAREADERFACTORY_H
 
-#include "core/experiment/DataSet.h"
-#include <memory>
+#include "core/data/DataSet.h"
 
 namespace nsx {
 

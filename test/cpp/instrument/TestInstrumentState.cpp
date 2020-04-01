@@ -1,7 +1,21 @@
+//  ***********************************************************************************************
+//
+//  NSXTool: data reduction for neutron single-crystal diffraction
+//
+//! @file      test/cpp/instrument/TestInstrumentState.cpp
+//! @brief     Test ...
+//!
+//! @homepage  ###HOMEPAGE###
+//! @license   GNU General Public License v3 or higher (see COPYING)
+//! @copyright Institut Laue-Langevin and Forschungszentrum Jülich GmbH 2016-
+//! @authors   see CITATION, MAINTAINER
+//
+//  ***********************************************************************************************
+
 #include "test/cpp/catch.hpp"
 
 #include "core/algo/DataReaderFactory.h"
-#include "core/experiment/DataSet.h"
+#include "core/data/DataSet.h"
 #include "core/experiment/Experiment.h"
 #include "core/instrument/InstrumentState.h"
 #include "core/raw/IDataReader.h"
@@ -30,8 +44,8 @@ int nsx::UnitTest_DataSet::run()
 
     for (size_t i = 0; i < 100 * (dataf->nFrames() - 1); ++i) {
         double frame = double(i) / 100.0;
-        auto state = dataf->interpolatedState(frame);
-        //auto lframe = std::lround(std::floor(frame));
+        auto state = dataf->instrumentStates().interpolate(frame);
+        // auto lframe = std::lround(std::floor(frame));
     }
     return 0;
 }

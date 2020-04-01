@@ -15,9 +15,11 @@
 #ifndef GUI_DIALOGS_RAWDATADIALOG_H
 #define GUI_DIALOGS_RAWDATADIALOG_H
 
-#include <QCR/widgets/controls.h>
+#include <QCheckBox>
+#include <QComboBox>
 #include <QDialog>
 #include <QDialogButtonBox>
+#include <QDoubleSpinBox>
 
 //! Dialog to get the parameters to the selected raw data
 class RawDataDialog : public QDialog {
@@ -27,19 +29,19 @@ class RawDataDialog : public QDialog {
     double deltaChi() { return chi->value(); }
     double deltaOmega() { return omega->value(); }
     double deltaPhi() { return phi->value(); }
-    bool swapEndian() { return swapEndianness->getValue(); }
+    bool swapEndian() { return swapEndianness->isChecked(); }
     bool rowMajor();
     int bpp();
-    void setWavelength(double newWavelength) { wave->setCellValue(newWavelength); }
+    void setWavelength(double newWavelength) { wave->setValue(newWavelength); }
 
  private:
-    QcrComboBox* dataArrangement;
-    QcrComboBox* dataFormat;
-    QcrCheckBox* swapEndianness;
-    QcrDoubleSpinBox* chi;
-    QcrDoubleSpinBox* omega;
-    QcrDoubleSpinBox* phi;
-    QcrDoubleSpinBox* wave;
+    QComboBox* dataArrangement;
+    QComboBox* dataFormat;
+    QCheckBox* swapEndianness;
+    QDoubleSpinBox* chi;
+    QDoubleSpinBox* omega;
+    QDoubleSpinBox* phi;
+    QDoubleSpinBox* wave;
     QDialogButtonBox* buttons;
 };
 

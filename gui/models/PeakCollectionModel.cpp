@@ -14,15 +14,13 @@
 
 #include "gui/models/PeakCollectionModel.h"
 
-PeakCollectionModel::PeakCollectionModel()
-    :QAbstractTableModel()
+PeakCollectionModel::PeakCollectionModel() : QAbstractTableModel()
 {
     _root_item = nullptr;
     _name = "No Collection";
 }
 
-PeakCollectionModel::PeakCollectionModel(QObject *parent)
-    :QAbstractTableModel(parent)
+PeakCollectionModel::PeakCollectionModel(QObject* parent) : QAbstractTableModel(parent)
 {
     _root_item = nullptr;
     _name = "No Collection";
@@ -36,14 +34,14 @@ void PeakCollectionModel::setRoot(PeakCollectionItem* peak_collection)
     endResetModel();
 }
 
-int PeakCollectionModel::rowCount(const QModelIndex & /*parent*/) const
+int PeakCollectionModel::rowCount(const QModelIndex& /*parent*/) const
 {
     if (!_root_item)
         return 0;
     return _root_item->childCount();
 }
 
-int PeakCollectionModel::columnCount(const QModelIndex & /*parent*/) const
+int PeakCollectionModel::columnCount(const QModelIndex& /*parent*/) const
 {
     if (!_root_item)
         return 0;
@@ -57,10 +55,8 @@ bool PeakCollectionModel::indexIsValid(const QModelIndex& index) const
     return index.isValid() && (index.row() < rowCount());
 }
 
-QVariant PeakCollectionModel::data(
-    const QModelIndex &index, 
-    int role = Qt::DisplayRole) const 
-{   
+QVariant PeakCollectionModel::data(const QModelIndex& index, int role = Qt::DisplayRole) const
+{
     if (!indexIsValid(index))
         return QVariant();
     return _root_item->data(index, role);
@@ -104,6 +100,9 @@ QVariant PeakCollectionModel::headerData(int section, Qt::Orientation orientatio
             case Column::Sigma: {
                 return QString(QChar(0x03C3)) + "(Int.)";
             }
+            case Column::Strength: {
+                return QString("Strength");
+            }
             case Column::Numor: {
                 return QString("Numor");
             }
@@ -127,4 +126,3 @@ void PeakCollectionModel::sort(int column, Qt::SortOrder order)
     return _root_item->sort(column, order);
     emit dataChanged(QModelIndex(), QModelIndex());
 }
-

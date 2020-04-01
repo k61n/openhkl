@@ -28,13 +28,8 @@
 namespace nsx {
 
 ExperimentMetaReader::ExperimentMetaReader(
-    const std::string& file_name, 
-    const std::string& group_name,  
-    Diffractometer* diffractometer)
-    : IDataReader(file_name, diffractometer), 
-    _dataset(nullptr), 
-    _space(nullptr), 
-    _memspace(nullptr)
+    const std::string& file_name, const std::string& group_name, Diffractometer* diffractometer)
+    : IDataReader(file_name, diffractometer), _dataset(nullptr), _space(nullptr), _memspace(nullptr)
 {
     H5::Group infoGroup, experimentGroup, detectorGroup, sampleGroup;
 
@@ -42,10 +37,10 @@ ExperimentMetaReader::ExperimentMetaReader(
         _name = group_name;
 
         _file = std::unique_ptr<H5::H5File>(new H5::H5File(file_name.c_str(), H5F_ACC_RDONLY));
-        infoGroup = _file->openGroup("/DataCollections/"+group_name+"/Info");
-        experimentGroup = _file->openGroup("/DataCollections/"+group_name+"/Meta");
-        detectorGroup = _file->openGroup("/DataCollections/"+group_name+"/Detector");
-        sampleGroup = _file->openGroup("/DataCollections/"+group_name+"/Sample");
+        infoGroup = _file->openGroup("/DataCollections/" + group_name + "/Info");
+        experimentGroup = _file->openGroup("/DataCollections/" + group_name + "/Meta");
+        detectorGroup = _file->openGroup("/DataCollections/" + group_name + "/Detector");
+        sampleGroup = _file->openGroup("/DataCollections/" + group_name + "/Sample");
 
         _metadata.add<std::string>("real_path", file_name);
         _metadata.add<std::string>("group_name", group_name);
@@ -195,17 +190,9 @@ void ExperimentMetaReader::open()
 
     // Create new data set
     try {
-        _dataset =
-            std::unique_ptr<H5::DataSet>(
-                new H5::DataSet(
-                    _file->openDataSet(
-                        "/DataCollections/"
-                        +_metadata.key<std::string>("group_name")
-                        +"/" 
-                        +_metadata.key<std::string>("group_name")
-                        )
-                    )
-                );
+        _dataset = std::unique_ptr<H5::DataSet>(new H5::DataSet(_file->openDataSet(
+            "/DataCollections/" + _metadata.key<std::string>("group_name") + "/"
+            + _metadata.key<std::string>("group_name"))));
 
         // Dataspace of the dataset /counts
         _space = std::unique_ptr<H5::DataSpace>(new H5::DataSpace(_dataset->getSpace()));

@@ -14,7 +14,7 @@
 
 #include "gui/frames/InstrumentStatesFrame.h"
 
-#include "core/experiment/DataSet.h"
+#include "core/data/DataSet.h"
 #include "gui/models/Meta.h"
 #include "gui/models/Session.h"
 #include <QDialogButtonBox>
@@ -24,15 +24,15 @@
 #include <QHBoxLayout>
 #include <QVBoxLayout>
 
-InstrumentStatesFrame::InstrumentStatesFrame() : QcrFrame {"instrumentStates"}
+InstrumentStatesFrame::InstrumentStatesFrame() : QFrame()
 {
     if (gSession->selectedExperimentNum() < 0) {
-        gLogger->log("[ERROR] No experiment selected");
+        // gLogger->log("[ERROR] No experiment selected");
         return;
     }
     QList<nsx::sptrDataSet> datalist = gSession->selectedExperiment()->allData();
     if (datalist.empty()) {
-        gLogger->log("[ERROR] No dataset found");
+        // gLogger->log("[ERROR] No dataset found");
         return;
     }
     QAbstractSpinBox::ButtonSymbols buttonSymbols = QAbstractSpinBox::NoButtons;
@@ -56,7 +56,8 @@ InstrumentStatesFrame::InstrumentStatesFrame() : QcrFrame {"instrumentStates"}
     vertical_1->addWidget(data);
     QHBoxLayout* hL = new QHBoxLayout;
     hL->addWidget(new QLabel("Frame"));
-    frameIndex = new QcrSpinBox("adhoc_frameIndex", new QcrCell<int>(0), 3);
+    frameIndex = new QSpinBox();
+    // "adhoc_frameIndex", new QcrCell<int>(0), 3);
     frameIndex->setReadOnly(true);
     hL->addWidget(frameIndex);
     frameSlider = new QSlider(Qt::Horizontal);
@@ -69,41 +70,67 @@ InstrumentStatesFrame::InstrumentStatesFrame() : QcrFrame {"instrumentStates"}
     QGroupBox* groupBox_1 = new QGroupBox("Sample position", this);
     QHBoxLayout* gbLayout_1 = new QHBoxLayout(groupBox_1);
     gbLayout_1->addWidget(new QLabel("x"));
-    samplePosX = new QcrDoubleSpinBox("adhoc_samplePosX", new QcrCell<double>(0.00), 8, 6);
+
+    samplePosX = new QDoubleSpinBox();
     samplePosX->setReadOnly(true);
     samplePosX->setButtonSymbols(buttonSymbols);
     gbLayout_1->addWidget(samplePosX);
+
     gbLayout_1->addWidget(new QLabel("y"));
-    samplePosY = new QcrDoubleSpinBox("adhoc_samplePosY", new QcrCell<double>(0.00), 8, 6);
+
+    samplePosY = new QDoubleSpinBox();
     samplePosY->setReadOnly(true);
     samplePosY->setButtonSymbols(buttonSymbols);
     gbLayout_1->addWidget(samplePosY);
+
     gbLayout_1->addWidget(new QLabel("z"));
-    samplePosZ = new QcrDoubleSpinBox("adhoc_samplePosZ", new QcrCell<double>(0.00), 8, 6);
+
+    samplePosZ = new QDoubleSpinBox();
     samplePosZ->setReadOnly(true);
     samplePosZ->setButtonSymbols(buttonSymbols);
     gbLayout_1->addWidget(samplePosZ);
+
     vertical_2->addWidget(groupBox_1);
+
     QGroupBox* sampleOrientation = new QGroupBox("Sample orientation", this);
     QGridLayout* sampleOriGrid = new QGridLayout(sampleOrientation);
-    sampleOri_00 =
-        new QcrDoubleSpinBox("adhoc_sampleOrientation00", new QcrCell<double>(0.00), 8, 6);
-    sampleOri_01 =
-        new QcrDoubleSpinBox("adhoc_sampleOrientation01", new QcrCell<double>(0.10), 8, 6);
-    sampleOri_02 =
-        new QcrDoubleSpinBox("adhoc_sampleOrientation02", new QcrCell<double>(0.20), 8, 6);
-    sampleOri_10 =
-        new QcrDoubleSpinBox("adhoc_sampleOrientation10", new QcrCell<double>(1.00), 8, 6);
-    sampleOri_11 =
-        new QcrDoubleSpinBox("adhoc_sampleOrientation11", new QcrCell<double>(1.10), 8, 6);
-    sampleOri_12 =
-        new QcrDoubleSpinBox("adhoc_sampleOrientation12", new QcrCell<double>(1.20), 8, 6);
-    sampleOri_20 =
-        new QcrDoubleSpinBox("adhoc_sampleOrientation20", new QcrCell<double>(2.00), 8, 6);
-    sampleOri_21 =
-        new QcrDoubleSpinBox("adhoc_sampleOrientation21", new QcrCell<double>(2.10), 8, 6);
-    sampleOri_22 =
-        new QcrDoubleSpinBox("adhoc_sampleOrientation22", new QcrCell<double>(2.20), 8, 6);
+
+    sampleOri_00 = new QDoubleSpinBox();
+    sampleOri_00->setValue(0.00);
+    sampleOri_00->setDecimals(8);
+
+    sampleOri_01 = new QDoubleSpinBox();
+    sampleOri_01->setValue(0.10);
+    sampleOri_01->setDecimals(8);
+
+    sampleOri_02 = new QDoubleSpinBox();
+    sampleOri_02->setValue(0.20);
+    sampleOri_02->setDecimals(8);
+
+    sampleOri_10 = new QDoubleSpinBox();
+    sampleOri_10->setValue(1.00);
+    sampleOri_10->setDecimals(8);
+
+    sampleOri_11 = new QDoubleSpinBox();
+    sampleOri_11->setValue(1.10);
+    sampleOri_11->setDecimals(8);
+
+    sampleOri_12 = new QDoubleSpinBox();
+    sampleOri_12->setValue(1.10);
+    sampleOri_12->setDecimals(8);
+
+    sampleOri_20 = new QDoubleSpinBox();
+    sampleOri_20->setValue(2.00);
+    sampleOri_20->setDecimals(8);
+
+    sampleOri_21 = new QDoubleSpinBox();
+    sampleOri_21->setValue(2.10);
+    sampleOri_21->setDecimals(8);
+
+    sampleOri_22 = new QDoubleSpinBox();
+    sampleOri_22->setValue(2.20);
+    sampleOri_22->setDecimals(8);
+
     sampleOri_00->setReadOnly(true);
     sampleOri_00->setButtonSymbols(buttonSymbols);
     sampleOri_01->setReadOnly(true);
@@ -122,6 +149,7 @@ InstrumentStatesFrame::InstrumentStatesFrame() : QcrFrame {"instrumentStates"}
     sampleOri_21->setButtonSymbols(buttonSymbols);
     sampleOri_22->setReadOnly(true);
     sampleOri_22->setButtonSymbols(buttonSymbols);
+
     sampleOriGrid->addWidget(sampleOri_00, 0, 0, 1, 1);
     sampleOriGrid->addWidget(sampleOri_01, 0, 1, 1, 1);
     sampleOriGrid->addWidget(sampleOri_02, 0, 2, 1, 1);
@@ -131,27 +159,48 @@ InstrumentStatesFrame::InstrumentStatesFrame() : QcrFrame {"instrumentStates"}
     sampleOriGrid->addWidget(sampleOri_20, 2, 0, 1, 1);
     sampleOriGrid->addWidget(sampleOri_21, 2, 1, 1, 1);
     sampleOriGrid->addWidget(sampleOri_22, 2, 2, 1, 1);
+
     vertical_2->addWidget(sampleOrientation);
+
     QGroupBox* sampleOffsets = new QGroupBox("Sample orientation offsets", this);
     QGridLayout* offsetGrid = new QGridLayout(sampleOffsets);
-    sampleOff_00 =
-        new QcrDoubleSpinBox("adhoc_sampleOrientationOffset00", new QcrCell<double>(0.00), 8, 6);
-    sampleOff_01 =
-        new QcrDoubleSpinBox("adhoc_sampleOrientationOffset01", new QcrCell<double>(0.10), 8, 6);
-    sampleOff_02 =
-        new QcrDoubleSpinBox("adhoc_sampleOrientationOffset02", new QcrCell<double>(0.20), 8, 6);
-    sampleOff_10 =
-        new QcrDoubleSpinBox("adhoc_sampleOrientationOffset10", new QcrCell<double>(1.00), 8, 6);
-    sampleOff_11 =
-        new QcrDoubleSpinBox("adhoc_sampleOrientationOffset11", new QcrCell<double>(1.10), 8, 6);
-    sampleOff_12 =
-        new QcrDoubleSpinBox("adhoc_sampleOrientationOffset12", new QcrCell<double>(1.20), 8, 6);
-    sampleOff_20 =
-        new QcrDoubleSpinBox("adhoc_sampleOrientationOffset20", new QcrCell<double>(2.00), 8, 6);
-    sampleOff_21 =
-        new QcrDoubleSpinBox("adhoc_sampleOrientationOffset21", new QcrCell<double>(2.10), 8, 6);
-    sampleOff_22 =
-        new QcrDoubleSpinBox("adhoc_sampleOrientationOffset22", new QcrCell<double>(2.20), 8, 6);
+
+    sampleOff_00 = new QDoubleSpinBox();
+    sampleOff_00->setValue(0.00);
+    sampleOff_00->setDecimals(8);
+
+    sampleOff_01 = new QDoubleSpinBox();
+    sampleOff_01->setValue(0.10);
+    sampleOff_01->setDecimals(8);
+
+    sampleOff_02 = new QDoubleSpinBox();
+    sampleOff_02->setValue(0.20);
+    sampleOff_02->setDecimals(8);
+
+    sampleOff_10 = new QDoubleSpinBox();
+    sampleOff_10->setValue(1.00);
+    sampleOff_10->setDecimals(8);
+
+    sampleOff_11 = new QDoubleSpinBox();
+    sampleOff_11->setValue(1.10);
+    sampleOff_11->setDecimals(8);
+
+    sampleOff_12 = new QDoubleSpinBox();
+    sampleOff_12->setValue(1.10);
+    sampleOff_12->setDecimals(8);
+
+    sampleOff_20 = new QDoubleSpinBox();
+    sampleOff_20->setValue(2.00);
+    sampleOff_20->setDecimals(8);
+
+    sampleOff_21 = new QDoubleSpinBox();
+    sampleOff_21->setValue(2.10);
+    sampleOff_21->setDecimals(8);
+
+    sampleOff_22 = new QDoubleSpinBox();
+    sampleOff_22->setValue(2.20);
+    sampleOff_22->setDecimals(8);
+
     sampleOff_00->setReadOnly(true);
     sampleOff_00->setButtonSymbols(buttonSymbols);
     sampleOff_01->setReadOnly(true);
@@ -170,6 +219,7 @@ InstrumentStatesFrame::InstrumentStatesFrame() : QcrFrame {"instrumentStates"}
     sampleOff_21->setButtonSymbols(buttonSymbols);
     sampleOff_22->setReadOnly(true);
     sampleOff_22->setButtonSymbols(buttonSymbols);
+
     offsetGrid->addWidget(sampleOff_00, 0, 0, 1, 1);
     offsetGrid->addWidget(sampleOff_01, 0, 1, 1, 1);
     offsetGrid->addWidget(sampleOff_02, 0, 2, 1, 1);
@@ -179,27 +229,48 @@ InstrumentStatesFrame::InstrumentStatesFrame() : QcrFrame {"instrumentStates"}
     offsetGrid->addWidget(sampleOff_20, 2, 0, 1, 1);
     offsetGrid->addWidget(sampleOff_21, 2, 1, 1, 1);
     offsetGrid->addWidget(sampleOff_22, 2, 2, 1, 1);
+
     vertical_2->addWidget(sampleOffsets);
+
     QGroupBox* detectorOrientation = new QGroupBox("Detector orientation", this);
     QGridLayout* detectorGrid = new QGridLayout(detectorOrientation);
-    detectorOri_00 =
-        new QcrDoubleSpinBox("adhoc_detectorOrientation00", new QcrCell<double>(0.00), 8, 6);
-    detectorOri_01 =
-        new QcrDoubleSpinBox("adhoc_detectorOrientation01", new QcrCell<double>(0.10), 8, 6);
-    detectorOri_02 =
-        new QcrDoubleSpinBox("adhoc_detectorOrientation02", new QcrCell<double>(0.20), 8, 6);
-    detectorOri_10 =
-        new QcrDoubleSpinBox("adhoc_detectorOrientation10", new QcrCell<double>(1.00), 8, 6);
-    detectorOri_11 =
-        new QcrDoubleSpinBox("adhoc_detectorOrientation11", new QcrCell<double>(1.10), 8, 6);
-    detectorOri_12 =
-        new QcrDoubleSpinBox("adhoc_detectorOrientation12", new QcrCell<double>(1.20), 8, 6);
-    detectorOri_20 =
-        new QcrDoubleSpinBox("adhoc_detectorOrientation20", new QcrCell<double>(2.00), 8, 6);
-    detectorOri_21 =
-        new QcrDoubleSpinBox("adhoc_detectorOrientation21", new QcrCell<double>(2.10), 8, 6);
-    detectorOri_22 =
-        new QcrDoubleSpinBox("adhoc_detectorOrientation22", new QcrCell<double>(2.20), 8, 6);
+
+    detectorOri_00 = new QDoubleSpinBox();
+    detectorOri_00->setValue(0.00);
+    detectorOri_00->setDecimals(8);
+
+    detectorOri_01 = new QDoubleSpinBox();
+    detectorOri_01->setValue(0.10);
+    detectorOri_01->setDecimals(8);
+
+    detectorOri_02 = new QDoubleSpinBox();
+    detectorOri_02->setValue(0.20);
+    detectorOri_02->setDecimals(8);
+
+    detectorOri_10 = new QDoubleSpinBox();
+    detectorOri_10->setValue(1.00);
+    detectorOri_10->setDecimals(8);
+
+    detectorOri_11 = new QDoubleSpinBox();
+    detectorOri_11->setValue(1.10);
+    detectorOri_11->setDecimals(8);
+
+    detectorOri_12 = new QDoubleSpinBox();
+    detectorOri_12->setValue(1.10);
+    detectorOri_12->setDecimals(8);
+
+    detectorOri_20 = new QDoubleSpinBox();
+    detectorOri_20->setValue(2.00);
+    detectorOri_20->setDecimals(8);
+
+    detectorOri_21 = new QDoubleSpinBox();
+    detectorOri_21->setValue(2.10);
+    detectorOri_21->setDecimals(8);
+
+    detectorOri_22 = new QDoubleSpinBox();
+    detectorOri_22->setValue(2.20);
+    detectorOri_22->setDecimals(8);
+
     detectorOri_00->setReadOnly(true);
     detectorOri_00->setButtonSymbols(buttonSymbols);
     detectorOri_01->setReadOnly(true);
@@ -218,6 +289,7 @@ InstrumentStatesFrame::InstrumentStatesFrame() : QcrFrame {"instrumentStates"}
     detectorOri_21->setButtonSymbols(buttonSymbols);
     detectorOri_22->setReadOnly(true);
     detectorOri_22->setButtonSymbols(buttonSymbols);
+
     detectorGrid->addWidget(detectorOri_00, 0, 0, 1, 1);
     detectorGrid->addWidget(detectorOri_01, 0, 1, 1, 1);
     detectorGrid->addWidget(detectorOri_02, 0, 2, 1, 1);
@@ -227,24 +299,28 @@ InstrumentStatesFrame::InstrumentStatesFrame() : QcrFrame {"instrumentStates"}
     detectorGrid->addWidget(detectorOri_20, 2, 0, 1, 1);
     detectorGrid->addWidget(detectorOri_21, 2, 1, 1, 1);
     detectorGrid->addWidget(detectorOri_22, 2, 2, 1, 1);
+
     vertical_2->addWidget(detectorOrientation);
     QGroupBox* incommingBeam = new QGroupBox("Normalized incomming beam", this);
     QHBoxLayout* beamBox = new QHBoxLayout(incommingBeam);
     beamBox->addWidget(new QLabel("x"));
-    beamX = new QcrDoubleSpinBox("adhoc_beamX", new QcrCell<double>(0.00), 8, 6);
+    beamX = new QDoubleSpinBox();
     beamX->setReadOnly(true);
     beamX->setButtonSymbols(buttonSymbols);
     beamBox->addWidget(beamX);
+
     beamBox->addWidget(new QLabel("y"));
-    beamY = new QcrDoubleSpinBox("adhoc_beamY", new QcrCell<double>(0.00), 8, 6);
+    beamY = new QDoubleSpinBox();
     beamY->setReadOnly(true);
     beamY->setButtonSymbols(buttonSymbols);
     beamBox->addWidget(beamY);
+
     beamBox->addWidget(new QLabel("z"));
-    beamZ = new QcrDoubleSpinBox("adhoc_beamZ", new QcrCell<double>(0.00), 8, 6);
+    beamZ = new QDoubleSpinBox();
     beamZ->setReadOnly(true);
     beamZ->setButtonSymbols(buttonSymbols);
     beamBox->addWidget(beamZ);
+
     vertical_2->addWidget(incommingBeam);
     horizLayout->addLayout(vertical_2);
     overallLayout->addLayout(horizLayout);
@@ -253,7 +329,7 @@ InstrumentStatesFrame::InstrumentStatesFrame() : QcrFrame {"instrumentStates"}
     connect(buttonBox, &QDialogButtonBox::accepted, this, &InstrumentStatesFrame::close);
     connect(frameSlider, &QSlider::valueChanged, [=](int i) {
         selectedFrameChanged(i);
-        frameIndex->setCellValue(i);
+        frameIndex->setValue(i);
     });
     connect(
         data, &QListWidget::currentRowChanged, this, &InstrumentStatesFrame::selectedDataChanged);
@@ -266,7 +342,7 @@ void InstrumentStatesFrame::selectedDataChanged(int selectedData)
     Q_UNUSED(selectedData)
     QListWidgetItem* currentItem = data->currentItem();
     nsx::sptrDataSet currentData = currentItem->data(Qt::UserRole).value<nsx::sptrDataSet>();
-    frameIndex->setCellValue(0);
+    frameIndex->setValue(0);
     frameSlider->setMinimum(0);
     frameSlider->setMaximum(currentData->nFrames() - 1);
     frameSlider->setValue(0);
@@ -288,46 +364,46 @@ void InstrumentStatesFrame::selectedFrameChanged(int selectedFrame)
     refinedLabel->setText(selectedState.refined ? "Refined" : "Not refined");
 
     const auto& samplePosition = selectedState.samplePosition;
-    samplePosX->setCellValue(samplePosition[0]);
-    samplePosY->setCellValue(samplePosition[1]);
-    samplePosZ->setCellValue(samplePosition[2]);
+    samplePosX->setValue(samplePosition[0]);
+    samplePosY->setValue(samplePosition[1]);
+    samplePosZ->setValue(samplePosition[2]);
 
     const auto& sampleOri = selectedState.sampleOrientation.normalized().toRotationMatrix();
-    sampleOri_00->setCellValue(sampleOri(0, 0));
-    sampleOri_01->setCellValue(sampleOri(0, 1));
-    sampleOri_02->setCellValue(sampleOri(0, 2));
-    sampleOri_10->setCellValue(sampleOri(1, 0));
-    sampleOri_11->setCellValue(sampleOri(1, 1));
-    sampleOri_12->setCellValue(sampleOri(1, 2));
-    sampleOri_20->setCellValue(sampleOri(2, 0));
-    sampleOri_21->setCellValue(sampleOri(2, 1));
-    sampleOri_22->setCellValue(sampleOri(2, 2));
+    sampleOri_00->setValue(sampleOri(0, 0));
+    sampleOri_01->setValue(sampleOri(0, 1));
+    sampleOri_02->setValue(sampleOri(0, 2));
+    sampleOri_10->setValue(sampleOri(1, 0));
+    sampleOri_11->setValue(sampleOri(1, 1));
+    sampleOri_12->setValue(sampleOri(1, 2));
+    sampleOri_20->setValue(sampleOri(2, 0));
+    sampleOri_21->setValue(sampleOri(2, 1));
+    sampleOri_22->setValue(sampleOri(2, 2));
 
     const auto& sampleOffset =
         selectedState.sampleOrientationOffset.normalized().toRotationMatrix();
-    sampleOff_00->setCellValue(sampleOffset(0, 0));
-    sampleOff_01->setCellValue(sampleOffset(0, 1));
-    sampleOff_02->setCellValue(sampleOffset(0, 2));
-    sampleOff_10->setCellValue(sampleOffset(1, 0));
-    sampleOff_11->setCellValue(sampleOffset(1, 1));
-    sampleOff_12->setCellValue(sampleOffset(1, 2));
-    sampleOff_20->setCellValue(sampleOffset(2, 0));
-    sampleOff_21->setCellValue(sampleOffset(2, 1));
-    sampleOff_22->setCellValue(sampleOffset(2, 2));
+    sampleOff_00->setValue(sampleOffset(0, 0));
+    sampleOff_01->setValue(sampleOffset(0, 1));
+    sampleOff_02->setValue(sampleOffset(0, 2));
+    sampleOff_10->setValue(sampleOffset(1, 0));
+    sampleOff_11->setValue(sampleOffset(1, 1));
+    sampleOff_12->setValue(sampleOffset(1, 2));
+    sampleOff_20->setValue(sampleOffset(2, 0));
+    sampleOff_21->setValue(sampleOffset(2, 1));
+    sampleOff_22->setValue(sampleOffset(2, 2));
 
     const auto& detectorOri = selectedState.detectorOrientation;
-    detectorOri_00->setCellValue(detectorOri(0, 0));
-    detectorOri_01->setCellValue(detectorOri(0, 1));
-    detectorOri_02->setCellValue(detectorOri(0, 2));
-    detectorOri_10->setCellValue(detectorOri(1, 0));
-    detectorOri_11->setCellValue(detectorOri(1, 1));
-    detectorOri_12->setCellValue(detectorOri(1, 2));
-    detectorOri_20->setCellValue(detectorOri(2, 0));
-    detectorOri_21->setCellValue(detectorOri(2, 1));
-    detectorOri_22->setCellValue(detectorOri(2, 2));
+    detectorOri_00->setValue(detectorOri(0, 0));
+    detectorOri_01->setValue(detectorOri(0, 1));
+    detectorOri_02->setValue(detectorOri(0, 2));
+    detectorOri_10->setValue(detectorOri(1, 0));
+    detectorOri_11->setValue(detectorOri(1, 1));
+    detectorOri_12->setValue(detectorOri(1, 2));
+    detectorOri_20->setValue(detectorOri(2, 0));
+    detectorOri_21->setValue(detectorOri(2, 1));
+    detectorOri_22->setValue(detectorOri(2, 2));
 
     const auto& ni = selectedState.ni;
-    beamX->setCellValue(ni[0]);
-    beamY->setCellValue(ni[1]);
-    beamZ->setCellValue(ni[2]);
+    beamX->setValue(ni[0]);
+    beamY->setValue(ni[1]);
+    beamZ->setValue(ni[2]);
 }

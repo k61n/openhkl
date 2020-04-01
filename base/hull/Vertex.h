@@ -27,7 +27,7 @@ struct Vertex {
     Vertex();
     Vertex(int id);
     Vertex(const Vertex& other) = delete;
-    
+
     int _id;
 
     //! Constructs a Vertex object from a vector of coordinates
@@ -49,7 +49,6 @@ struct Vertex {
 
     //! True if the vertex has been processed
     bool _mark;
-
 };
 
 std::ostream& operator<<(std::ostream& os, const Vertex& vertex);

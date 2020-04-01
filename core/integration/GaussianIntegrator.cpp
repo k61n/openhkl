@@ -16,7 +16,7 @@
 #include "base/fit/FitParameters.h"
 #include "base/fit/Minimizer.h"
 #include "base/geometry/Ellipsoid.h"
-#include "core/experiment/DataSet.h"
+#include "core/data/DataSet.h"
 #include "core/peak/Intensity.h"
 #include "core/peak/Peak3D.h"
 
@@ -26,8 +26,7 @@
 
 namespace nsx {
 
-GaussianIntegrator::GaussianIntegrator(bool fit_center, bool fit_cov)
-    : IPeakIntegrator()
+GaussianIntegrator::GaussianIntegrator(bool fit_center, bool fit_cov) : IPeakIntegrator()
 {
     setFitCenter(fit_center);
     setFitCov(fit_cov);
@@ -88,21 +87,20 @@ static void residuals(
 }
 
 bool GaussianIntegrator::compute(
-    Peak3D* peak, ShapeLibrary* /*shape_library*/, 
-    const IntegrationRegion& region)
+    Peak3D* peak, ShapeLibrary* /*shape_library*/, const IntegrationRegion& region)
 {
     if (!peak)
         return false;
 
-    const size_t N = region.data().events().size();
+    const size_t N = region.peakData().events().size();
 
     std::vector<double> counts(N);
     std::vector<Eigen::Vector3d> x(N);
     Eigen::VectorXd wts(N);
 
     for (size_t i = 0; i < N; ++i) {
-        counts[i] = region.data().counts()[i];
-        const auto& ev = region.data().events()[i];
+        counts[i] = region.peakData().counts()[i];
+        const auto& ev = region.peakData().events()[i];
         x[i] = {ev._px, ev._py, ev._frame};
         wts[i] = counts[i] <= 0.0 ? 0.0 : 1.0 / counts[i];
     }
@@ -161,11 +159,11 @@ bool GaussianIntegrator::compute(
     }
 
     // consistency check: center should still be in dataset!
-    if (x0(0) < 0 || x0(0) >= peak->data()->nCols())
+    if (x0(0) < 0 || x0(0) >= peak->dataSet()->nCols())
         return false;
-    if (x0(1) < 0 || x0(1) >= peak->data()->nRows())
+    if (x0(1) < 0 || x0(1) >= peak->dataSet()->nRows())
         return false;
-    if (x0(2) < 0 || x0(2) >= peak->data()->nFrames())
+    if (x0(2) < 0 || x0(2) >= peak->dataSet()->nFrames())
         return false;
 
     // consistency check: covariance matrix should be positive definite
@@ -195,7 +193,7 @@ bool GaussianIntegrator::compute(
 
 std::vector<double> GaussianIntegrator::profile(Peak3D* peak, const IntegrationRegion& region)
 {
-    const auto& events = region.data().events();
+    const auto& events = region.peakData().events();
     const Eigen::Matrix3d A = peak->shape().metric();
     const Eigen::Vector3d x0 = peak->shape().center();
     const double factor = std::sqrt(A.determinant() / 8.0 / M_PI / M_PI / M_PI);

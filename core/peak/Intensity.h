@@ -23,7 +23,6 @@ class Intensity {
  public:
     //! Constructs an Intensity from its value and variance.
     Intensity(double value = 0.0, double sigma2 = 0.0);
-    Intensity(const Intensity& other);
 
     //! Returns the value of the Intensity
     double value() const;
@@ -33,6 +32,9 @@ class Intensity {
 
     //! Returns the variance of the Intensity
     double variance() const;
+
+    //! Return the strength (I/sigma)
+    double strength() const;
 
     //! Returns the sum of two Intensity whose value and variance are summed.
     Intensity operator+(const Intensity& other) const;

@@ -14,7 +14,7 @@
 
 #include "core/integration/MeanBackgroundIntegrator.h"
 #include "base/geometry/Ellipsoid.h"
-#include "core/experiment/DataSet.h"
+#include "core/data/DataSet.h"
 #include "core/peak/Intensity.h"
 #include "core/peak/Peak3D.h"
 
@@ -23,15 +23,14 @@ namespace nsx {
 MeanBackgroundIntegrator::MeanBackgroundIntegrator() : IPeakIntegrator() {}
 
 bool MeanBackgroundIntegrator::compute(
-    Peak3D* /*peak*/, ShapeLibrary* shape_library, 
-    const IntegrationRegion& region)
+    Peak3D* /*peak*/, ShapeLibrary* /*shape_library*/, const IntegrationRegion& region)
 {
     double sum_bkg = 0.0;
     double sum_bkg2 = 0.0;
     size_t nbkg = 0;
 
-    const auto& events = region.data().events();
-    const auto& counts = region.data().counts();
+    const auto& events = region.peakData().events();
+    const auto& counts = region.peakData().counts();
 
     // TODO: should this be hard-coded??
     if (events.size() < 20)

@@ -14,15 +14,21 @@
 
 #include "gui/frames/UnitCellWidget.h"
 
-#include "gui/models/Session.h"
 #include "base/utils/Units.h"
 #include "core/peak/Peak3D.h"
-#include "core/analyse/PeakFilter.h"
+#include "core/shape/PeakFilter.h"
+#include "gui/models/Session.h"
 #include "tables/crystal/UnitCell.h"
 #include <QStandardItemModel>
 
-UnitCellWidget::UnitCellWidget(nsx::sptrUnitCell cell, const QString& name)
-    : QcrWidget {name}, unitCell_ {cell}, wasSpaceGroupSet {false}
+#include <QDoubleSpinBox>
+#include <QGroupBox>
+#include <QLabel>
+#include <QSpinBox>
+#include <QVBoxLayout>
+
+UnitCellWidget::UnitCellWidget(nsx::sptrUnitCell cell, const QString& /*name*/)
+    : QWidget(), unitCell_ {cell}, wasSpaceGroupSet {false}
 {
     nsx::UnitCellCharacter character = unitCell_->character();
     // layout...
@@ -42,57 +48,52 @@ UnitCellWidget::UnitCellWidget(nsx::sptrUnitCell cell, const QString& name)
     unitgrid->addItem(new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum), 1, 6);
     QLabel* bravais = new QLabel(QString::fromStdString(unitCell_->bravaisTypeSymbol()));
     unitgrid->addWidget(bravais, 0, 1, 1, 1);
-    QcrDoubleSpinBox* a =
-        new QcrDoubleSpinBox("adhoc_readA", new QcrCell<double>(character.a), 8, 4);
+
+    QDoubleSpinBox* a = new QDoubleSpinBox();
+    QDoubleSpinBox* b = new QDoubleSpinBox();
+    QDoubleSpinBox* c = new QDoubleSpinBox();
+    a->setValue(character.a);
+    b->setValue(character.b);
+    c->setValue(character.c);
+
+    QDoubleSpinBox* alpha = new QDoubleSpinBox();
+    QDoubleSpinBox* beta = new QDoubleSpinBox();
+    QDoubleSpinBox* gamma = new QDoubleSpinBox();
+    alpha->setValue(character.alpha / nsx::deg);
+    beta->setValue(character.beta / nsx::deg);
+    gamma->setValue(character.gamma / nsx::deg);
+
     a->setReadOnly(true);
-    QcrDoubleSpinBox* b =
-        new QcrDoubleSpinBox("adhoc_readB", new QcrCell<double>(character.b), 8, 4);
     b->setReadOnly(true);
-    QcrDoubleSpinBox* c =
-        new QcrDoubleSpinBox("adhoc_readC", new QcrCell<double>(character.c), 8, 4);
     c->setReadOnly(true);
-    QcrDoubleSpinBox* alpha =
-        new QcrDoubleSpinBox("adhoc_readAlpha",
-                             new QcrCell<double>(character.alpha / nsx::deg), 8, 4);
     alpha->setReadOnly(true);
-    QcrDoubleSpinBox* beta =
-        new QcrDoubleSpinBox("adhoc_readBeta",
-                             new QcrCell<double>(character.beta / nsx::deg), 8, 4);
     beta->setReadOnly(true);
-    QcrDoubleSpinBox* gamma =
-        new QcrDoubleSpinBox("adhoc_readGamma",
-                             new QcrCell<double>(character.gamma / nsx::deg), 8, 4);
     gamma->setReadOnly(true);
+
     unitgrid->addWidget(a, 1, 1, 1, 1);
     unitgrid->addWidget(b, 1, 3, 1, 1);
     unitgrid->addWidget(c, 1, 5, 1, 1);
     unitgrid->addWidget(alpha, 2, 1, 1, 1);
     unitgrid->addWidget(beta, 2, 3, 1, 1);
     unitgrid->addWidget(gamma, 2, 5, 1, 1);
+
     whole->addWidget(unitcellparams);
     QHBoxLayout* horizontal = new QHBoxLayout();
     QGroupBox* matrixb = new QGroupBox("B matrix (row form)");
     QGridLayout* bmatrix = new QGridLayout(matrixb);
-    Eigen::Matrix3d matrix_u = unitCell_->orientation();
-    Eigen::Matrix3d matrix_b = unitCell_->reciprocalBasis() * matrix_u;
-    QcrDoubleSpinBox* b00 =
-        new QcrDoubleSpinBox("adhoc_b00", new QcrCell<double>(matrix_b(0, 0)), 8, 4);
-    QcrDoubleSpinBox* b01 =
-        new QcrDoubleSpinBox("adhoc_b01", new QcrCell<double>(matrix_b(0, 1)), 8, 4);
-    QcrDoubleSpinBox* b02 =
-        new QcrDoubleSpinBox("adhoc_b02", new QcrCell<double>(matrix_b(0, 2)), 8, 4);
-    QcrDoubleSpinBox* b10 =
-        new QcrDoubleSpinBox("adhoc_b10", new QcrCell<double>(matrix_b(1, 0)), 8, 4);
-    QcrDoubleSpinBox* b11 =
-        new QcrDoubleSpinBox("adhoc_b11", new QcrCell<double>(matrix_b(1, 1)), 8, 4);
-    QcrDoubleSpinBox* b12 =
-        new QcrDoubleSpinBox("adhoc_b12", new QcrCell<double>(matrix_b(1, 2)), 8, 4);
-    QcrDoubleSpinBox* b20 =
-        new QcrDoubleSpinBox("adhoc_b20", new QcrCell<double>(matrix_b(2, 0)), 8, 4);
-    QcrDoubleSpinBox* b21 =
-        new QcrDoubleSpinBox("adhoc_b21", new QcrCell<double>(matrix_b(2, 1)), 8, 4);
-    QcrDoubleSpinBox* b22 =
-        new QcrDoubleSpinBox("adhoc_b22", new QcrCell<double>(matrix_b(2, 2)), 8, 4);
+    // Eigen::Matrix3d matrix_u = unitCell_->orientation();
+    // Eigen::Matrix3d matrix_b = unitCell_->reciprocalBasis() * matrix_u;
+
+    QDoubleSpinBox* b00 = new QDoubleSpinBox();
+    QDoubleSpinBox* b01 = new QDoubleSpinBox();
+    QDoubleSpinBox* b02 = new QDoubleSpinBox();
+    QDoubleSpinBox* b10 = new QDoubleSpinBox();
+    QDoubleSpinBox* b11 = new QDoubleSpinBox();
+    QDoubleSpinBox* b12 = new QDoubleSpinBox();
+    QDoubleSpinBox* b20 = new QDoubleSpinBox();
+    QDoubleSpinBox* b21 = new QDoubleSpinBox();
+    QDoubleSpinBox* b22 = new QDoubleSpinBox();
+
     b00->setReadOnly(true);
     b01->setReadOnly(true);
     b02->setReadOnly(true);
@@ -102,6 +103,7 @@ UnitCellWidget::UnitCellWidget(nsx::sptrUnitCell cell, const QString& name)
     b20->setReadOnly(true);
     b21->setReadOnly(true);
     b22->setReadOnly(true);
+
     bmatrix->addWidget(b00, 0, 0, 1, 1);
     bmatrix->addWidget(b01, 0, 1, 1, 1);
     bmatrix->addWidget(b02, 0, 2, 1, 1);
@@ -111,19 +113,22 @@ UnitCellWidget::UnitCellWidget(nsx::sptrUnitCell cell, const QString& name)
     bmatrix->addWidget(b20, 2, 0, 1, 1);
     bmatrix->addWidget(b21, 2, 1, 1, 1);
     bmatrix->addWidget(b22, 2, 2, 1, 1);
+
     horizontal->addWidget(matrixb);
     QGroupBox* matrixu = new QGroupBox("U matrix (row form)");
     QGridLayout* umatrix = new QGridLayout(matrixu);
-    Eigen::Matrix3d u = matrix_u.inverse();
-    QcrDoubleSpinBox* u00 = new QcrDoubleSpinBox("adhoc_u00", new QcrCell<double>(u(0, 0)), 8, 4);
-    QcrDoubleSpinBox* u01 = new QcrDoubleSpinBox("adhoc_u01", new QcrCell<double>(u(0, 1)), 8, 4);
-    QcrDoubleSpinBox* u02 = new QcrDoubleSpinBox("adhoc_u02", new QcrCell<double>(u(0, 2)), 8, 4);
-    QcrDoubleSpinBox* u10 = new QcrDoubleSpinBox("adhoc_u10", new QcrCell<double>(u(1, 0)), 8, 4);
-    QcrDoubleSpinBox* u11 = new QcrDoubleSpinBox("adhoc_u11", new QcrCell<double>(u(1, 1)), 8, 4);
-    QcrDoubleSpinBox* u12 = new QcrDoubleSpinBox("adhoc_u12", new QcrCell<double>(u(1, 2)), 8, 4);
-    QcrDoubleSpinBox* u20 = new QcrDoubleSpinBox("adhoc_u20", new QcrCell<double>(u(2, 0)), 8, 4);
-    QcrDoubleSpinBox* u21 = new QcrDoubleSpinBox("adhoc_u21", new QcrCell<double>(u(2, 1)), 8, 4);
-    QcrDoubleSpinBox* u22 = new QcrDoubleSpinBox("adhoc_u22", new QcrCell<double>(u(2, 2)), 8, 4);
+    // Eigen::Matrix3d u = matrix_u.inverse();
+
+    QDoubleSpinBox* u00 = new QDoubleSpinBox();
+    QDoubleSpinBox* u01 = new QDoubleSpinBox();
+    QDoubleSpinBox* u02 = new QDoubleSpinBox();
+    QDoubleSpinBox* u10 = new QDoubleSpinBox();
+    QDoubleSpinBox* u11 = new QDoubleSpinBox();
+    QDoubleSpinBox* u12 = new QDoubleSpinBox();
+    QDoubleSpinBox* u20 = new QDoubleSpinBox();
+    QDoubleSpinBox* u21 = new QDoubleSpinBox();
+    QDoubleSpinBox* u22 = new QDoubleSpinBox();
+
     u00->setReadOnly(true);
     u01->setReadOnly(true);
     u02->setReadOnly(true);
@@ -133,6 +138,7 @@ UnitCellWidget::UnitCellWidget(nsx::sptrUnitCell cell, const QString& name)
     u20->setReadOnly(true);
     u21->setReadOnly(true);
     u22->setReadOnly(true);
+
     umatrix->addWidget(u00, 0, 0, 1, 1);
     umatrix->addWidget(u01, 0, 1, 1, 1);
     umatrix->addWidget(u02, 0, 2, 1, 1);
@@ -240,7 +246,7 @@ void UnitCellWidget::evaluateSpaceGroups()
 void UnitCellWidget::setSpaceGroup()
 {
     unitCell_->setSpaceGroup(spaceGroupOne);
-    qDebug() << "UnitCellWidget: set SpaceGroup of UnitCell "
-             << QString::fromStdString(unitCell_->name()) << " to "
-             << QString::fromStdString(spaceGroupOne);
+    // qDebug() << "UnitCellWidget: set SpaceGroup of UnitCell "
+    //          << QString::fromStdString(unitCell_->name()) << " to "
+    //          << QString::fromStdString(spaceGroupOne);
 }

@@ -16,7 +16,7 @@
 #define GUI_GRAPHICS_ITEMS_MASKITEM_H
 
 #include "base/geometry/AABB.h"
-#include "core/experiment/DataTypes.h"
+#include "core/data/DataTypes.h"
 #include "gui/graphics_items/SXGraphicsItem.h"
 
 //! Creates a mask

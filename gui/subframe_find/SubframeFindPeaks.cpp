@@ -14,9 +14,9 @@
 
 #include "gui/subframe_find/SubframeFindPeaks.h"
 
-#include "core/analyse/PeakFinder.h"
 #include "core/convolve/ConvolverFactory.h"
-#include "core/experiment/DataSet.h"
+#include "core/data/DataSet.h"
+#include "core/experiment/PeakFinder.h"
 #include "core/integration/PixelSumIntegrator.h"
 #include "core/peak/Peak3D.h"
 #include "core/raw/IDataReader.h"
@@ -35,22 +35,22 @@
 #include <QGroupBox>
 #include <QHeaderView>
 #include <QItemDelegate>
+#include <QLabel>
+#include <QScrollArea>
+#include <QScrollBar>
 #include <QSpacerItem>
 #include <QTableWidgetItem>
-#include <QScrollBar>
-#include <QScrollArea>
-#include <QLabel>
 
-PeakFinderFrame::PeakFinderFrame() 
-    : QWidget(), 
-    _peak_collection("temp", nsx::listtype::FOUND),
-    _peak_collection_item(),
-    _peak_collection_model(),
-    _pixmap(nullptr)
+PeakFinderFrame::PeakFinderFrame()
+    : QWidget()
+    , _peak_collection("temp", nsx::listtype::FOUND)
+    , _peak_collection_item()
+    , _peak_collection_model()
+    , _pixmap(nullptr)
 {
     setSizePolicies();
     _main_layout = new QHBoxLayout(this);
-    _right_element = new QSplitter(Qt::Vertical , this);
+    _right_element = new QSplitter(Qt::Vertical, this);
 
     QScrollArea* scroll_area = new QScrollArea(this);
     QWidget* scroll_widget = new QWidget();
@@ -66,7 +66,7 @@ PeakFinderFrame::PeakFinderFrame()
     setPreviewUp();
     setFigureUp();
     setPeakTableUp();
-    
+
     _right_element->setSizePolicy(*_size_policy_right);
 
     _main_layout->addWidget(scroll_area);
@@ -83,7 +83,7 @@ void PeakFinderFrame::setSizePolicies()
     _size_policy_widgets = new QSizePolicy();
     _size_policy_widgets->setHorizontalPolicy(QSizePolicy::Preferred);
     _size_policy_widgets->setVerticalPolicy(QSizePolicy::Fixed);
-    
+
     _size_policy_box = new QSizePolicy();
     _size_policy_box->setHorizontalPolicy(QSizePolicy::Preferred);
     _size_policy_box->setVerticalPolicy(QSizePolicy::Preferred);
@@ -110,7 +110,7 @@ void PeakFinderFrame::setDataUp()
     QLabel* data_label = new QLabel("Data-set");
     data_label->setAlignment(Qt::AlignRight);
     _data_grid->addWidget(data_label, 1, 0, 1, 1);
-   
+
     _exp_combo = new QComboBox();
     _data_combo = new QComboBox();
     _all_data = new QCheckBox("Search all");
@@ -118,7 +118,7 @@ void PeakFinderFrame::setDataUp()
     _exp_combo->setMaximumWidth(1000);
     _data_combo->setMaximumWidth(1000);
     _all_data->setMaximumWidth(1000);
-    
+
     _exp_combo->setSizePolicy(*_size_policy_widgets);
     _data_combo->setSizePolicy(*_size_policy_widgets);
     _all_data->setSizePolicy(*_size_policy_widgets);
@@ -128,15 +128,17 @@ void PeakFinderFrame::setDataUp()
     _data_grid->addWidget(_all_data, 2, 1, 1, 2);
 
     connect(
-        _exp_combo, static_cast<void (QComboBox::*) (int) >(&QComboBox::currentIndexChanged), 
-        this, [=](){
+        _exp_combo, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this,
+        [=]() {
+            qDebug() << "PeakFinderFrame::_exp_combo currentIndexChanged";
             grabFinderParameters();
             grabIntegrationParameters();
-            updateDatasetList();});
+            updateDatasetList();
+        });
 
     connect(
-        _data_combo, static_cast<void (QComboBox::*) (int) >(&QComboBox::currentIndexChanged), 
-        this, &PeakFinderFrame::updateDatasetParameters);
+        _data_combo, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this,
+        &PeakFinderFrame::updateDatasetParameters);
 
     _data_box->setContentLayout(*_data_grid);
     _data_box->setSizePolicy(*_size_policy_box);
@@ -186,7 +188,7 @@ void PeakFinderFrame::setBlobUp()
     QLabel* end_frame_label = new QLabel("End frame");
     end_frame_label->setAlignment(Qt::AlignRight);
     blob_grid->addWidget(end_frame_label, 8, 0, 1, 1);
-    
+
     _threshold_spin = new QSpinBox();
     _scale_spin = new QDoubleSpinBox();
     _min_size_spin = new QSpinBox();
@@ -243,9 +245,7 @@ void PeakFinderFrame::setBlobUp()
     blob_grid->addWidget(_end_frame_spin, 8, 1, 1, 1);
     blob_grid->addWidget(_find_button, 9, 0, 1, 2);
 
-    connect(
-        _find_button, &QPushButton::clicked, 
-        this, &PeakFinderFrame::find);
+    connect(_find_button, &QPushButton::clicked, this, &PeakFinderFrame::find);
 
     blob_para->setContentLayout(*blob_grid, true);
     blob_para->setSizePolicy(*_size_policy_box);
@@ -302,16 +302,13 @@ void PeakFinderFrame::setIntegrateUp()
     integGrid->addWidget(_bkg_upper, 3, 1, 1, 1);
     integGrid->addWidget(_integrate_button, 4, 0, 1, 2);
 
-    connect(
-        _integrate_button, &QPushButton::clicked, 
-        this, &PeakFinderFrame::integrate);
+    connect(_integrate_button, &QPushButton::clicked, this, &PeakFinderFrame::integrate);
 
     integration_para->setContentLayout(*integGrid);
     integration_para->setSizePolicy(*_size_policy_box);
     integration_para->contentArea.setSizePolicy(*_size_policy_box);
 
     _left_layout->addWidget(integration_para);
-    
 }
 
 void PeakFinderFrame::setPreviewUp()
@@ -372,7 +369,7 @@ void PeakFinderFrame::setPreviewUp()
     _draw_active->setMaximumWidth(1000);
     _width_active->setMaximumWidth(1000);
     _color_active->setMaximumWidth(1000);
-    _draw_inactive->setMaximumWidth(1000);    
+    _draw_inactive->setMaximumWidth(1000);
     _width_inactive->setMaximumWidth(1000);
     _color_inactive->setMaximumWidth(1000);
     _live_check->setMaximumWidth(1000);
@@ -396,43 +393,30 @@ void PeakFinderFrame::setPreviewUp()
     _preview_grid->addWidget(_live_check, 8, 0, 1, 2);
     _preview_grid->addWidget(_save_button, 9, 0, 1, 2);
 
-    connect(
-        _save_button, &QPushButton::clicked, 
-        this, &PeakFinderFrame::accept);
+    connect(_save_button, &QPushButton::clicked, this, &PeakFinderFrame::accept);
+
+    connect(_draw_active, &QCheckBox::stateChanged, this, &PeakFinderFrame::refreshPeakVisual);
 
     connect(
-        _draw_active, &QCheckBox::stateChanged, 
-        this, &PeakFinderFrame::refreshPeakVisual);
+        _width_active, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged), this,
+        &PeakFinderFrame::refreshPeakVisual);
+
+    connect(_color_active, &ColorButton::colorChanged, this, &PeakFinderFrame::refreshPeakVisual);
+
+    connect(_draw_inactive, &QCheckBox::stateChanged, this, &PeakFinderFrame::refreshPeakVisual);
 
     connect(
-        _width_active, static_cast<void (QSpinBox::*) (int) >(
-            &QSpinBox::valueChanged), 
-        this, &PeakFinderFrame::refreshPeakVisual);
+        _width_inactive, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged), this,
+        &PeakFinderFrame::refreshPeakVisual);
 
-    connect(
-        _color_active, &ColorButton::colorChanged, 
-        this, &PeakFinderFrame::refreshPeakVisual);
-
-    connect(
-        _draw_inactive, &QCheckBox::stateChanged, 
-        this, &PeakFinderFrame::refreshPeakVisual);
-
-    connect(
-        _width_inactive, static_cast<void (QSpinBox::*) (int) >(&QSpinBox::valueChanged), 
-        this, &PeakFinderFrame::refreshPeakVisual);
-
-    connect(
-        _color_inactive, &ColorButton::colorChanged, 
-        this, &PeakFinderFrame::refreshPeakVisual);
+    connect(_color_inactive, &ColorButton::colorChanged, this, &PeakFinderFrame::refreshPeakVisual);
 
     preview_box->setContentLayout(*_preview_grid);
     preview_box->setSizePolicy(*_size_policy_box);
     preview_box->contentArea.setSizePolicy(*_size_policy_box);
 
     _left_layout->addWidget(preview_box);
-    _left_layout->addItem(
-        new QSpacerItem(
-            20, 40, QSizePolicy::Minimum, QSizePolicy::Expanding));
+    _left_layout->addItem(new QSpacerItem(20, 40, QSizePolicy::Minimum, QSizePolicy::Expanding));
 }
 
 void PeakFinderFrame::setFigureUp()
@@ -445,28 +429,26 @@ void PeakFinderFrame::setFigureUp()
     _figure_view = new DetectorView(this);
     _figure_view->getScene()->linkPeakModel(&_peak_collection_model);
     _figure_view->scale(1, -1);
-    figure_grid->addWidget(_figure_view, 0,0,1,2);
-    
+    figure_grid->addWidget(_figure_view, 0, 0, 1, 2);
+
     _figure_scroll = new QScrollBar(this);
     _figure_scroll->setOrientation(Qt::Horizontal);
     _figure_scroll->setSizePolicy(*_size_policy_widgets);
-    figure_grid->addWidget(_figure_scroll, 1,0,1,1);
+    figure_grid->addWidget(_figure_scroll, 1, 0, 1, 1);
 
     _figure_spin = new QSpinBox(this);
     _figure_spin->setSizePolicy(*_size_policy_fixed);
-    figure_grid->addWidget(_figure_spin, 1,1,1,1);
+    figure_grid->addWidget(_figure_spin, 1, 1, 1, 1);
 
     connect(
-        _figure_scroll, SIGNAL(valueChanged(int)), 
-        _figure_view->getScene(), SLOT(slotChangeSelectedFrame(int)));
+        _figure_scroll, SIGNAL(valueChanged(int)), _figure_view->getScene(),
+        SLOT(slotChangeSelectedFrame(int)));
+
+    connect(_figure_scroll, SIGNAL(valueChanged(int)), _figure_spin, SLOT(setValue(int)));
 
     connect(
-        _figure_scroll, SIGNAL(valueChanged(int)), 
-        _figure_spin, SLOT(setValue(int)));
-
-    connect(
-        _figure_view->getScene(), &DetectorScene::signalSelectedPeakItemChanged, 
-        this, &PeakFinderFrame::changeSelected);
+        _figure_view->getScene(), &DetectorScene::signalSelectedPeakItemChanged, this,
+        &PeakFinderFrame::changeSelected);
 
     _right_element->addWidget(figure_group);
 }
@@ -486,7 +468,7 @@ void PeakFinderFrame::setPeakTableUp()
     _peak_table->setColumnHidden(1, true);
     _peak_table->setColumnHidden(2, true);
 
-    peak_grid->addWidget(_peak_table, 0,0,0,0);
+    peak_grid->addWidget(_peak_table, 0, 0, 0, 0);
 
     _right_element->addWidget(peak_group);
 }
@@ -499,7 +481,7 @@ void PeakFinderFrame::refreshAll()
 void PeakFinderFrame::setParametersUp()
 {
     QList<QString> exp_list = gSession->experimentNames();
-    if (exp_list.isEmpty()){
+    if (exp_list.isEmpty()) {
         return;
     }
 
@@ -521,11 +503,11 @@ void PeakFinderFrame::setParametersUp()
 void PeakFinderFrame::setExperimentsUp()
 {
     _exp_combo->blockSignals(true);
-    
+
     _exp_combo->clear();
     QList<QString> exp_list = gSession->experimentNames();
 
-    if (!exp_list.isEmpty()){
+    if (!exp_list.isEmpty()) {
         for (QString exp : exp_list) {
             _exp_combo->addItem(exp);
         }
@@ -542,7 +524,7 @@ void PeakFinderFrame::updateDatasetList()
     _data_combo->clear();
     _data_list = gSession->experimentAt(_exp_combo->currentIndex())->allData();
 
-    if (!_data_list.isEmpty()){
+    if (!_data_list.isEmpty()) {
         for (nsx::sptrDataSet data : _data_list) {
             QFileInfo fileinfo(QString::fromStdString(data->filename()));
             _data_combo->addItem(fileinfo.baseName());
@@ -571,14 +553,15 @@ void PeakFinderFrame::updateDatasetParameters(int idx)
 
     _figure_scroll->setMaximum(data->nFrames());
     _figure_scroll->setMinimum(0);
-    
+
     _figure_spin->setMaximum(data->nFrames());
     _figure_spin->setMinimum(0);
-} 
+}
 
 void PeakFinderFrame::grabFinderParameters()
 {
-    nsx::PeakFinder* finder = gSession->experimentAt(_exp_combo->currentIndex())->experiment()->peakFinder();
+    nsx::PeakFinder* finder =
+        gSession->experimentAt(_exp_combo->currentIndex())->experiment()->peakFinder();
 
     _min_size_spin->setValue(finder->minSize());
     _max_size_spin->setValue(finder->maxSize());
@@ -608,11 +591,11 @@ void PeakFinderFrame::grabFinderParameters()
         pname->setData(Qt::DisplayRole, name);
         pname->setFlags(pname->flags() ^ Qt::ItemIsEditable);
 
-        
+
         double val = it->second;
         QTableWidgetItem* pvalue = new QTableWidgetItem();
         pvalue->setData(Qt::DisplayRole, val);
-        
+
         _kernel_para_table->setItem(currentRow, 0, pname);
         _kernel_para_table->setItem(currentRow, 1, pvalue);
 
@@ -623,7 +606,9 @@ void PeakFinderFrame::grabFinderParameters()
 
 void PeakFinderFrame::setFinderParameters()
 {
-    nsx::PeakFinder* finder = gSession->experimentAt(_exp_combo->currentIndex())->experiment()->peakFinder();
+    qDebug() << "PeakFinderFrame::setFinderParameters";
+    nsx::PeakFinder* finder =
+        gSession->experimentAt(_exp_combo->currentIndex())->experiment()->peakFinder();
 
     finder->setMinSize(_min_size_spin->value());
     finder->setMaxSize(_max_size_spin->value());
@@ -642,9 +627,9 @@ void PeakFinderFrame::setFinderParameters()
 
 void PeakFinderFrame::grabIntegrationParameters()
 {
-    nsx::IPeakIntegrator* integrator = gSession->experimentAt(
-        _exp_combo->currentIndex())->experiment()->getIntegrator(
-        std::string("Pixel sum integrator"));
+    nsx::IPeakIntegrator* integrator = gSession->experimentAt(_exp_combo->currentIndex())
+                                           ->experiment()
+                                           ->getIntegrator(std::string("Pixel sum integrator"));
 
     _peak_area->setValue(integrator->peakEnd());
     _bkg_lower->setValue(integrator->backBegin());
@@ -672,11 +657,11 @@ void PeakFinderFrame::updateConvolutionParameters()
         pname->setData(Qt::DisplayRole, name);
         pname->setFlags(pname->flags() ^ Qt::ItemIsEditable);
 
-        
+
         QString val = QString::number(it->second);
         QTableWidgetItem* pvalue = new QTableWidgetItem();
         pvalue->setData(Qt::DisplayRole, val);
-        
+
         _kernel_para_table->setItem(currentRow, 0, pname);
         _kernel_para_table->setItem(currentRow, 1, pvalue);
 
@@ -689,15 +674,15 @@ void PeakFinderFrame::find()
 {
     nsx::DataList data_list;
 
-    if (_all_data->isChecked())
-    {
+    if (_all_data->isChecked()) {
         for (int i = 0; i < _data_list.size(); ++i)
             data_list.push_back(_data_list.at(i));
-    }else{
+    } else {
         data_list.push_back(_data_list.at(_data_combo->currentIndex()));
     }
 
-    nsx::PeakFinder* finder = gSession->experimentAt(_exp_combo->currentIndex())->experiment()->peakFinder();
+    nsx::PeakFinder* finder =
+        gSession->experimentAt(_exp_combo->currentIndex())->experiment()->peakFinder();
     nsx::sptrProgressHandler progHandler = nsx::sptrProgressHandler(new nsx::ProgressHandler);
     ProgressView progressView(nullptr);
     progressView.watch(progHandler);
@@ -716,10 +701,10 @@ void PeakFinderFrame::find()
 
 void PeakFinderFrame::integrate()
 {
-    nsx::sptrExperiment experiment = gSession->experimentAt(_exp_combo->currentIndex())->experiment();
+    nsx::sptrExperiment experiment =
+        gSession->experimentAt(_exp_combo->currentIndex())->experiment();
 
-    nsx::IPeakIntegrator* integrator = experiment->getIntegrator(
-        "Pixel sum integrator");
+    nsx::IPeakIntegrator* integrator = experiment->getIntegrator("Pixel sum integrator");
 
     integrator->setPeakEnd(_peak_area->value());
     integrator->setBkgBegin(_bkg_lower->value());
@@ -744,13 +729,16 @@ std::map<std::string, double> PeakFinderFrame::convolutionParameters()
 
 void PeakFinderFrame::accept()
 {
-    nsx::PeakFinder* finder = gSession->experimentAt(_exp_combo->currentIndex())->experiment()->peakFinder();
+    nsx::PeakFinder* finder =
+        gSession->experimentAt(_exp_combo->currentIndex())->experiment()->peakFinder();
 
-    if (!finder->currentPeaks().empty()){
+    if (!finder->currentPeaks().empty()) {
         std::unique_ptr<ListNameDialog> dlg(new ListNameDialog());
         dlg->exec();
-        if (!dlg->listName().isEmpty()){
-            gSession->experimentAt(_exp_combo->currentIndex())->experiment()->acceptFoundPeaks(dlg->listName().toStdString());
+        if (!dlg->listName().isEmpty()) {
+            gSession->experimentAt(_exp_combo->currentIndex())
+                ->experiment()
+                ->acceptFoundPeaks(dlg->listName().toStdString());
             gSession->experimentAt(_exp_combo->currentIndex())->generatePeakModel(dlg->listName());
         }
     }
@@ -792,8 +780,10 @@ void PeakFinderFrame::refreshPreview()
 
 void PeakFinderFrame::refreshPeakTable()
 {
-    std::vector<nsx::Peak3D*> peaks = 
-        gSession->experimentAt(_exp_combo->currentIndex())->experiment()->peakFinder()->currentPeaks();
+    std::vector<nsx::Peak3D*> peaks = gSession->experimentAt(_exp_combo->currentIndex())
+                                          ->experiment()
+                                          ->peakFinder()
+                                          ->currentPeaks();
 
     _figure_view->getScene()->clearPeakItems();
     _peak_collection.populate(peaks);
@@ -808,24 +798,24 @@ void PeakFinderFrame::refreshPeakTable()
 }
 
 void PeakFinderFrame::refreshPeakVisual()
-{   
-    if (_peak_collection_item.childCount()==0)
+{
+    if (_peak_collection_item.childCount() == 0)
         return;
 
     bool valid;
     PeakItemGraphic* graphic;
 
-    for (int i = 0; i < _peak_collection_item.childCount(); i++){
+    for (int i = 0; i < _peak_collection_item.childCount(); i++) {
         PeakItem* peak = _peak_collection_item.peakItemAt(i);
         graphic = peak->peakGraphic();
         valid = peak->peak()->enabled();
 
-        if (valid){
+        if (valid) {
             graphic->showArea((_draw_active->checkState() == Qt::CheckState::Checked));
             graphic->showLabel(false);
             graphic->setSize(_width_active->value());
             graphic->setColor(_color_active->getColor());
-        }else{
+        } else {
             graphic->showArea((_draw_inactive->checkState() == Qt::CheckState::Checked));
             graphic->showLabel(false);
             graphic->setSize(_width_inactive->value());

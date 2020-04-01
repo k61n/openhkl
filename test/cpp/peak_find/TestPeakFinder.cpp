@@ -1,11 +1,25 @@
+//  ***********************************************************************************************
+//
+//  NSXTool: data reduction for neutron single-crystal diffraction
+//
+//! @file      test/cpp/peak_find/TestPeakFinder.cpp
+//! @brief     Test ...
+//!
+//! @homepage  ###HOMEPAGE###
+//! @license   GNU General Public License v3 or higher (see COPYING)
+//! @copyright Institut Laue-Langevin and Forschungszentrum Jülich GmbH 2016-
+//! @authors   see CITATION, MAINTAINER
+//
+//  ***********************************************************************************************
+
 #include "test/cpp/catch.hpp"
 
 #include "base/geometry/Ellipsoid.h"
 #include "base/utils/ProgressHandler.h"
 #include "core/algo/DataReaderFactory.h"
-#include "core/analyse/PeakFinder.h"
-#include "core/experiment/DataSet.h"
+#include "core/data/DataSet.h"
 #include "core/experiment/Experiment.h"
+#include "core/experiment/PeakFinder.h"
 #include "core/instrument/Diffractometer.h"
 #include "core/raw/MetaData.h"
 
@@ -49,7 +63,7 @@ TEST_CASE("test/peak_find/TestPeakFinder.cpp", "")
     std::cout << "\nrecip ellipse center:\n" << elli_recip.center() << std::endl;
     std::cout << "\nrecip ellipse metric:\n" << elli_recip.metric() << std::endl;
 
-    for(int i=0; i<3; ++i)
+    for (int i = 0; i < 3; ++i)
         CHECK(qvec[i] == Approx(elli_recip.center()[i]).epsilon(1e-3));
 
     dataf->close();

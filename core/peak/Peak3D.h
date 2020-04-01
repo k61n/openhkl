@@ -16,12 +16,9 @@
 #define CORE_PEAK_PEAK3D_H
 
 #include "base/geometry/Ellipsoid.h"
-#include "core/experiment/DataTypes.h"
+#include "core/data/DataTypes.h"
 #include "core/peak/Intensity.h"
 #include "tables/crystal/UnitCell.h"
-
-#include <memory>
-#include <vector>
 
 namespace nsx {
 
@@ -32,9 +29,9 @@ class IPeakIntegrator;
 class Peak3D {
  public:
     //! Create peak belonging to data without setting a position, shape, or intensity
-    Peak3D(sptrDataSet data);
+    Peak3D(sptrDataSet dataSet);
     //! Create peak belonging to data with given shape
-    Peak3D(sptrDataSet data, const Ellipsoid& shape);
+    Peak3D(sptrDataSet dataSet, const Ellipsoid& shape);
     //! Creat the peak from another peak
     Peak3D(std::shared_ptr<nsx::Peak3D> peak);
 
@@ -111,19 +108,19 @@ class Peak3D {
 
     //! Update the integration of the peak
     void setManually(
-        Intensity intensity, double peakEnd, double bkgBegin, double bkgEnd,
-        double scale, double transmission, Intensity mean_bkg,
-        bool predicted, bool selected, bool masked );
+        Intensity intensity, double peakEnd, double bkgBegin, double bkgEnd, double scale,
+        double transmission, Intensity mean_bkg, bool predicted, bool selected, bool masked);
 
     //! Update the integration of the peak
     void updateIntegration(
-        const IPeakIntegrator& integrator, double peakEnd, double bkgBegin, double bkgEnd);
+        const std::vector<Intensity>& rockingCurve, const Intensity& meanBackground,
+        const Intensity& integratedIntensity, double peakEnd, double bkgBegin, double bkgEnd);
     //! Returns the q vector of the peak, transformed into sample coordinates.
     ReciprocalVector q() const;
     //! Returns the predicted q vector of the peak, based on Miller index.
     // unused --- ReciprocalVector qPredicted() const;
     //! Returns the data set to which this peak belongs
-    sptrDataSet data() const { return _data; }
+    sptrDataSet dataSet() const { return _data; }
     //! Sets raw intensity count (from image), with no corrections
     void setRawIntensity(const Intensity& i);
     //! Returns peak center at the given frame
@@ -162,9 +159,9 @@ class Peak3D {
     std::vector<Intensity> _rockingCurve;
 };
 
-using sptrPeak3D    = std::shared_ptr<Peak3D>;
-using PeakList      = std::vector<sptrPeak3D>;
-using sptrPeakList  = std::shared_ptr<PeakList>;
+using sptrPeak3D = std::shared_ptr<Peak3D>;
+using PeakList = std::vector<sptrPeak3D>;
+using sptrPeakList = std::shared_ptr<PeakList>;
 
 //! Sort peak into a list of equivalent peaks, using the space group symmetry,
 //! optionally including Friedel pairs (if this is not already a symmetry of the space group)

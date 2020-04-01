@@ -16,37 +16,35 @@
 #define GUI_SUBFRAME_EXPERIMENT_PROPERTIES_SAMPLESHAPEPROPERTIES_H
 
 
-#include <QTableWidget>
 #include <QLineEdit>
+#include <QTableWidget>
 
 
 //! Property widget for the sample and its shape
 class SampleShapeProperties : public QWidget {
 
-public:
+ public:
+    SampleShapeProperties();
 
-   SampleShapeProperties();
+    void refreshInput();
+    void clear();
 
-   void refreshInput();
-   void clear();
+ private:
+    void facesChanged();
+    void edgesChanged();
+    void verticesChanged();
+    void volumeChanged();
 
-private:
-   void facesChanged();
-   void edgesChanged();
-   void verticesChanged();
-   void volumeChanged();
+ private:
+    QLineEdit* _movie;
+    QLineEdit* _volume;
+    QLineEdit* _faces;
+    QLineEdit* _edges;
+    QLineEdit* _vertices;
 
-private:
+    // QTextTriggerButton* loadMovieButton;
 
-   QLineEdit* _movie;
-   QLineEdit* _volume;
-   QLineEdit* _faces;
-   QLineEdit* _edges;
-   QLineEdit* _vertices;
-
-   // QTextTriggerButton* loadMovieButton;
-
-   QTableWidget* sampleGoniometer;
+    QTableWidget* sampleGoniometer;
 };
 
 #endif // GUI_SUBFRAME_EXPERIMENT_PROPERTIES_SAMPLESHAPEPROPERTIES_H

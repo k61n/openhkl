@@ -16,14 +16,10 @@
 #define CORE_SHAPE_SHAPELIBRARY_H
 
 #include "core/detector/DetectorEvent.h"
-#include "core/experiment/DataTypes.h"
 #include "core/peak/Peak3D.h"
 #include "core/shape/Profile1D.h"
 #include "core/shape/Profile3D.h"
-#include "tables/crystal/UnitCell.h"
 
-#include <Eigen/Dense>
-#include <memory>
 #include <array>
 
 namespace nsx {
@@ -38,9 +34,8 @@ struct FitData;
 
 //! Helper function for predicting peaks
 std::vector<Peak3D*> predictPeaks(
-    ShapeLibrary* library, sptrDataSet data, UnitCell* unit_cell, 
-    double dmin, double dmax, double radius,
-    double nframes, int min_neighbors, PeakInterpolation interpolation);
+    ShapeLibrary* library, sptrDataSet data, UnitCell* unit_cell, double dmin, double dmax,
+    double radius, double nframes, int min_neighbors, PeakInterpolation interpolation);
 
 //! Store a library of peak shapes, to be used for peak prediction and integration.
 
@@ -86,7 +81,8 @@ class ShapeLibrary {
         PeakInterpolation interpolation) const;
 
     //! Find neighbors of a given peak
-    std::vector<Peak3D*> findNeighbors(const DetectorEvent& ev, double radius, double nframes) const;
+    std::vector<Peak3D*>
+    findNeighbors(const DetectorEvent& ev, double radius, double nframes) const;
 
     //! Returns the peak scale used for the library
     double peakScale() const;
@@ -105,7 +101,7 @@ class ShapeLibrary {
 
     //! Returns the background end used for the library
     std::array<double, 6> choleskyS() const;
-    
+
     //! Returns the background end used for the library
     std::map<Peak3D*, std::pair<Profile3D, Profile1D>> profiles() const;
 

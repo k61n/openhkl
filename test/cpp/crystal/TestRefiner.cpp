@@ -1,3 +1,17 @@
+//  ***********************************************************************************************
+//
+//  NSXTool: data reduction for neutron single-crystal diffraction
+//
+//! @file      test/cpp/crystal/TestRefiner.cpp
+//! @brief     Test ...
+//!
+//! @homepage  ###HOMEPAGE###
+//! @license   GNU General Public License v3 or higher (see COPYING)
+//! @copyright Institut Laue-Langevin and Forschungszentrum Jülich GmbH 2016-
+//! @authors   see CITATION, MAINTAINER
+//
+//  ***********************************************************************************************
+
 #include "test/cpp/catch.hpp"
 #include <fstream>
 #include <iostream>
@@ -9,22 +23,22 @@
 #include "core/algo/AutoIndexer.h"
 #include "core/algo/DataReaderFactory.h"
 #include "core/convolve/ConvolverFactory.h"
-#include "core/experiment/DataSet.h"
+#include "core/data/DataSet.h"
 #include "core/instrument/Diffractometer.h"
 #include "core/peak/Peak3D.h"
-#include "core/peak/IPeakIntegrator.h"
+#include "core/shape/IPeakIntegrator.h"
 
 #include "base/geometry/ReciprocalVector.h"
 #include "base/utils/ProgressHandler.h"
 #include "base/utils/Units.h"
 #include "core/algo/Refiner.h"
-#include "core/analyse/PeakFilter.h"
-#include "core/analyse/PeakFinder.h"
 #include "core/experiment/Experiment.h"
+#include "core/experiment/PeakFinder.h"
 #include "core/gonio/Gonio.h"
 #include "core/instrument/InstrumentState.h"
 #include "core/instrument/Sample.h"
 #include "core/peak/Peak3D.h"
+#include "core/shape/PeakFilter.h"
 
 TEST_CASE("test/crystal/TestRefiner.cpp", "")
 {
@@ -36,7 +50,6 @@ TEST_CASE("test/crystal/TestRefiner.cpp", "")
     experiment.addData(dataf);
 
     nsx::sptrProgressHandler progressHandler(new nsx::ProgressHandler);
-    nsx::sptrPeakFinder peakFinder(new nsx::PeakFinder);
 
     auto callback = [progressHandler]() {
         auto log = progressHandler->getLog();
@@ -76,8 +89,8 @@ TEST_CASE("test/crystal/TestRefiner.cpp", "")
 
     CHECK(found_peaks.size() >= 800);
 
-    nsx::IPeakIntegrator* integrator = experiment.getIntegrator(
-        std::string("Pixel sum integrator"));
+    nsx::IPeakIntegrator* integrator =
+        experiment.getIntegrator(std::string("Pixel sum integrator"));
 
     integrator->setPeakEnd(2.7);
     integrator->setBkgBegin(3.5);
@@ -89,32 +102,27 @@ TEST_CASE("test/crystal/TestRefiner.cpp", "")
     // #########################################################
     // Filter the peaks
     nsx::PeakFilter* peak_filter = experiment.peakFilter();
-    std::bitset<13> booleans;
-    booleans.set(10);
     const std::array<double, 2> d_range {1.5, 50};
-    peak_filter->setBooleans(booleans);
+    peak_filter->setFilterDRange(true);
     peak_filter->setDRange(d_range);
 
-    nsx::PeakCollection* found_collection = experiment.getPeakCollection(
-        "found_peaks");
+    nsx::PeakCollection* found_collection = experiment.getPeakCollection("found_peaks");
     peak_filter->resetFiltering(found_collection);
     peak_filter->filter(found_collection);
 
     experiment.acceptFilter("filtered_peaks", found_collection);
 
-    CHECK(experiment.getPeakCollection(
-        "filtered_peaks")->getPeakList().size() >= 600);
+    CHECK(experiment.getPeakCollection("filtered_peaks")->getPeakList().size() >= 600);
 
     // #########################################################
     // at this stage we have the peaks, now we index
     nsx::AutoIndexer* auto_indexer = experiment.autoIndexer();
-    nsx::PeakCollection* filtered_peaks = experiment.getPeakCollection(
-        "filtered_peaks");
+    nsx::PeakCollection* filtered_peaks = experiment.getPeakCollection("filtered_peaks");
 
     nsx::IndexerParameters parameters;
     auto_indexer->setParameters(parameters);
 
-    CHECK_NOTHROW(auto_indexer->autoIndex(filtered_peaks));
+    CHECK_NOTHROW(auto_indexer->autoIndex(filtered_peaks->getPeakList()));
     CHECK(auto_indexer->solutions().size() > 1);
 
     auto solution = auto_indexer->solutions().front();
@@ -122,7 +130,6 @@ TEST_CASE("test/crystal/TestRefiner.cpp", "")
     // correctly indexed at least 98% of peaks
     CHECK(solution.second > 98.0);
 
-    
 
     // set unit cell
     auto cell = solution.first;
@@ -132,7 +139,7 @@ TEST_CASE("test/crystal/TestRefiner.cpp", "")
     CHECK(std::abs((cell->reciprocalBasis() - constrained_cell.reciprocalBasis()).norm()) < 1e-6);
 
     std::vector<nsx::Peak3D*> peaks;
-    for (auto&& peak : filtered_peaks->getPeakList()){
+    for (auto&& peak : filtered_peaks->getPeakList()) {
         peak->setUnitCell(cell);
         peaks.push_back(peak);
     }

@@ -168,12 +168,12 @@ void IntegrationRegion::reset()
     _data.reset();
 }
 
-const PeakData& IntegrationRegion::data() const
+const PeakData& IntegrationRegion::peakData() const
 {
     return _data;
 }
 
-PeakData& IntegrationRegion::data()
+PeakData& IntegrationRegion::peakData()
 {
     return _data;
 }

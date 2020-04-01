@@ -15,154 +15,146 @@
 #ifndef GUI_FRAMES_PEAKFINDERFRAME_H
 #define GUI_FRAMES_PEAKFINDERFRAME_H
 
-#include "core/peak/PeakCollection.h"
+#include "core/shape/PeakCollection.h"
 
 #include "gui/graphics/DetectorView.h"
-#include "gui/views/PeakTableView.h"
 #include "gui/models/PeakCollectionModel.h"
-#include "gui/views/PeakTableView.h"
 #include "gui/utility/ColorButton.h"
+#include "gui/views/PeakTableView.h"
 
-#include <QTableWidget>
-#include <QWidget>
-#include <QPushButton>
-#include <QHBoxLayout>
-#include <QVBoxLayout>
-#include <QSplitter>
 #include <QCheckBox>
-#include <QSpinBox>
-#include <QDoubleSpinBox>
 #include <QComboBox>
+#include <QDoubleSpinBox>
+#include <QHBoxLayout>
+#include <QPushButton>
 #include <QSizePolicy>
+#include <QSpinBox>
+#include <QSplitter>
+#include <QTableWidget>
+#include <QVBoxLayout>
+#include <QWidget>
 
 //! Frame which shows the settings to find peaks
-class PeakFinderFrame : public QWidget{
-public:
+class PeakFinderFrame : public QWidget {
+ public:
+    PeakFinderFrame();
+    //! Change the convolution parameters
+    void updateConvolutionParameters();
+    //! Find peaks
+    void find();
+    //! integrate found peaks
+    void integrate();
+    //! Refresh all the panels
+    void refreshAll();
 
-   PeakFinderFrame();
-   //! Change the convolution parameters
-   void updateConvolutionParameters();
-   //! Find peaks
-   void find();
-   //! integrate found peaks
-   void integrate();
-   //! Refresh all the panels
-   void refreshAll(); 
+ private:
+    //! Set up the GUI size policies
+    void setSizePolicies();
+    //! Set up the data selection GUI
+    void setDataUp();
+    //! Set up the blob finding GUI
+    void setBlobUp();
+    //! Set up the Preview GUI
+    void setPreviewUp();
+    //! Set up the Preview GUI
+    void setIntegrateUp();
+    //! Set up the detector figure up
+    void setFigureUp();
+    //! Set the peak table view up
+    void setPeakTableUp();
+    //! Set the parameters values up
+    void setParametersUp();
 
-private:
+    //! Refresh the preview
+    void refreshPreview();
+    //! Refresh the found peaks list
+    void refreshPeakTable();
+    //! Refresh the found peaks visual properties
+    void refreshPeakVisual();
+    //! Change the peak selected in the table
+    void changeSelected(PeakItemGraphic* peak_graphic);
+    //! Accept and save current list
+    void accept();
 
-   //! Set up the GUI size policies
-   void setSizePolicies();
-   //! Set up the data selection GUI
-   void setDataUp();
-   //! Set up the blob finding GUI
-   void setBlobUp();
-   //! Set up the Preview GUI
-   void setPreviewUp();
-   //! Set up the Preview GUI
-   void setIntegrateUp();
-   //! Set up the detector figure up
-   void setFigureUp();
-   //! Set the peak table view up
-   void setPeakTableUp();
-   //! Set the parameters values up
-   void setParametersUp();
+ private:
+    //! Update the datalist as an experiment was changed
+    void setExperimentsUp();
 
-   //! Refresh the preview
-   void refreshPreview();
-   //! Refresh the found peaks list
-   void refreshPeakTable();
-   //! Refresh the found peaks visual properties
-   void refreshPeakVisual();
-   //! Change the peak selected in the table
-   void changeSelected(PeakItemGraphic* peak_graphic);
-   //! Accept and save current list
-   void accept();
+ private:
+    //! Update the datalist as an experiment was changed
+    void updateDatasetList();
+    //! Update the dataset related parameters
+    void updateDatasetParameters(int idx);
 
-private:
+    //! Grab the finder parameters
+    void grabFinderParameters();
+    //! Set the finder parameters
+    void setFinderParameters();
 
-   //! Update the datalist as an experiment was changed
-   void setExperimentsUp();
+    //! Grab the Integration parameters
+    void grabIntegrationParameters();
 
-private:
+ private:
+    //! Convolution parameter map
+    std::map<std::string, double> convolutionParameters();
 
-   //! Update the datalist as an experiment was changed
-   void updateDatasetList();
-   //! Update the dataset related parameters
-   void updateDatasetParameters(int idx);
+ private:
+    //! The model for the found peaks
+    nsx::PeakCollection _peak_collection;
+    //! The temporary collection
+    PeakCollectionItem _peak_collection_item;
+    //! The temporary collection
+    PeakCollectionModel _peak_collection_model;
+    //! The loaded data list
+    QList<nsx::sptrDataSet> _data_list;
 
-   //! Grab the finder parameters
-   void grabFinderParameters();
-   //! Set the finder parameters
-   void setFinderParameters();
+ private:
+    QHBoxLayout* _main_layout;
 
-   //! Grab the Integration parameters
-   void grabIntegrationParameters();
+    QVBoxLayout* _left_layout;
+    QSplitter* _right_element;
 
-private:
+    QComboBox* _exp_combo;
+    QComboBox* _data_combo;
+    QCheckBox* _all_data;
 
-   //! Convolution parameter map
-   std::map<std::string, double> convolutionParameters();
+    QSpinBox* _threshold_spin;
+    QDoubleSpinBox* _scale_spin;
+    QSpinBox* _min_size_spin;
+    QSpinBox* _max_size_spin;
+    QSpinBox* _max_width_spin;
+    QComboBox* _kernel_combo;
+    QTableWidget* _kernel_para_table;
+    QSpinBox* _start_frame_spin;
+    QSpinBox* _end_frame_spin;
 
-private:
+    QCheckBox* _draw_active;
+    QCheckBox* _draw_inactive;
+    QSpinBox* _width_active;
+    QSpinBox* _width_inactive;
+    ColorButton* _color_active;
+    ColorButton* _color_inactive;
+    QCheckBox* _live_check;
 
-   //! The model for the found peaks
-   nsx::PeakCollection _peak_collection;
-   //! The temporary collection
-   PeakCollectionItem _peak_collection_item;
-   //! The temporary collection
-   PeakCollectionModel _peak_collection_model;
-   //! The loaded data list
-   QList<nsx::sptrDataSet> _data_list;
+    QDoubleSpinBox* _peak_area;
+    QDoubleSpinBox* _bkg_lower;
+    QDoubleSpinBox* _bkg_upper;
 
-private:
-   QHBoxLayout* _main_layout;
+    DetectorView* _figure_view;
+    QGraphicsPixmapItem* _pixmap;
+    QSpinBox* _figure_spin;
+    QScrollBar* _figure_scroll;
 
-   QVBoxLayout* _left_layout;
-   QSplitter* _right_element;
+    PeaksTableView* _peak_table;
 
-   QComboBox* _exp_combo;
-   QComboBox* _data_combo;
-   QCheckBox* _all_data;
+    QPushButton* _find_button;
+    QPushButton* _integrate_button;
+    QPushButton* _save_button;
 
-   QSpinBox* _threshold_spin;
-   QDoubleSpinBox* _scale_spin;
-   QSpinBox* _min_size_spin;
-   QSpinBox* _max_size_spin;
-   QSpinBox* _max_width_spin;
-   QComboBox* _kernel_combo;
-   QTableWidget* _kernel_para_table;
-   QSpinBox* _start_frame_spin;
-   QSpinBox* _end_frame_spin;
-
-   QCheckBox* _draw_active;
-   QCheckBox* _draw_inactive;
-   QSpinBox* _width_active;
-   QSpinBox* _width_inactive;
-   ColorButton* _color_active;
-   ColorButton* _color_inactive;
-   QCheckBox* _live_check;
-
-   QDoubleSpinBox* _peak_area;
-   QDoubleSpinBox* _bkg_lower;
-   QDoubleSpinBox* _bkg_upper;
-
-   DetectorView* _figure_view;
-   QGraphicsPixmapItem* _pixmap;
-   QSpinBox* _figure_spin;
-   QScrollBar* _figure_scroll;
-
-   PeaksTableView* _peak_table;
-
-   QPushButton* _find_button;
-   QPushButton* _integrate_button;
-   QPushButton* _save_button;
-
-   QSizePolicy* _size_policy_widgets;
-   QSizePolicy* _size_policy_box;
-   QSizePolicy* _size_policy_right;
-   QSizePolicy* _size_policy_fixed;
-
+    QSizePolicy* _size_policy_widgets;
+    QSizePolicy* _size_policy_box;
+    QSizePolicy* _size_policy_right;
+    QSizePolicy* _size_policy_fixed;
 };
 
 #endif // GUI_FRAMES_PEAKFINDERFRAME_H

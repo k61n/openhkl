@@ -20,8 +20,8 @@
 #include "base/mask/EllipseMask.h"
 #include "base/utils/Units.h"
 
+#include "core/data/DataSet.h"
 #include "core/detector/Detector.h"
-#include "core/experiment/DataSet.h"
 #include "core/gonio/Gonio.h"
 #include "core/instrument/Diffractometer.h"
 #include "core/instrument/InstrumentState.h"
@@ -48,7 +48,6 @@
 #include "tables/crystal/SpaceGroup.h"
 #include "tables/crystal/UnitCell.h"
 
-#include <QCR/engine/logger.h>
 #include <QDebug>
 #include <QGraphicsSceneMouseEvent>
 #include <QKeyEvent>
@@ -62,7 +61,6 @@ DetectorScene::DetectorScene(QObject* parent)
     , _currentData(nullptr)
     , _currentFrameIndex(-1)
     , _currentIntensity(10)
-    , _currentFrame()
     , _cursorMode(PIXEL)
     , _mode(ZOOM)
     , _zoomstart(0, 0)
@@ -72,7 +70,6 @@ DetectorScene::DetectorScene(QObject* parent)
     , _peak_graphics_items()
     , _itemSelected(false)
     , _image(nullptr)
-    , _masks()
     , _lastClickedGI(nullptr)
     , _logarithmic(false)
     , _drawIntegrationRegion(false)
@@ -89,10 +86,7 @@ void DetectorScene::linkPeakModel(PeakCollectionModel* source)
         unlinkPeakModel();
     _peak_model = source;
     connect(
-        _peak_model, &PeakCollectionModel::dataChanged,
-        this, &DetectorScene::peakModelDataChanged
-    );
-
+        _peak_model, &PeakCollectionModel::dataChanged, this, &DetectorScene::peakModelDataChanged);
 }
 
 PeakCollectionModel* DetectorScene::peakModel() const
@@ -147,7 +141,6 @@ void DetectorScene::drawPeakitems()
         peak_graphic->setCenter(_currentFrameIndex);
         _peak_graphics_items.push_back(peak_graphic);
         addItem(peak_graphic);
-
     }
 
     // if (_selected_peak_gi) {
@@ -246,7 +239,6 @@ void DetectorScene::slotChangeSelectedFrame(int frame)
     loadCurrentImage();
     updateMasks();
     drawPeakitems();
-    
 }
 
 void DetectorScene::setMaxIntensity(int intensity)
@@ -469,39 +461,39 @@ void DetectorScene::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
             removeItem(_zoomrect);
             delete _zoomrect;
             emit dataChanged();
-        } //else {
-            // nsx::PeakList peaks = gSession->selectedExperiment()->getPeaks(0, 0)->peaks_;
+        } // else {
+          // nsx::PeakList peaks = gSession->selectedExperiment()->getPeaks(0, 0)->peaks_;
 
-            // if (CutterItem* p = dynamic_cast<CutterItem*>(_lastClickedGI)) {
-            //     // delete p....
-            //     _lastClickedGI = nullptr;
-            //     removeItem(p);
-            // } else if (PlottableItem* p = dynamic_cast<PlottableItem*>(_lastClickedGI))
-            //     gGui->updatePlot(p);
-            // else if (MaskItem* p = dynamic_cast<MaskItem*>(_lastClickedGI)) {
-            //     // add a new mask
-            //     auto it = findMask(p);
-            //     if (it != _masks.end()) {
-            //         it->second = new nsx::BoxMask(*p->getAABB());
-            //         _currentData->addMask(it->second);
-            //         _lastClickedGI = nullptr;
-            //     }
-            //     _currentData->maskPeaks(peaks);
-            //     update();
-            //     updateMasks();
-            //     //                gSession->onMaskedPeaksChanged(peaks);
-            // } else if (EllipseMaskItem* p = dynamic_cast<EllipseMaskItem*>(_lastClickedGI)) {
-            //     auto it = findMask(p);
-            //     if (it != _masks.end()) {
-            //         it->second = new nsx::EllipseMask(*p->getAABB());
-            //         _currentData->addMask(it->second);
-            //         _lastClickedGI = nullptr;
-            //     }
-            //     _currentData->maskPeaks(peaks);
-            //     update();
-            //     updateMasks();
-            //     //                gSession->onMaskedPeaksChanged(peaks);
-            // }
+        // if (CutterItem* p = dynamic_cast<CutterItem*>(_lastClickedGI)) {
+        //     // delete p....
+        //     _lastClickedGI = nullptr;
+        //     removeItem(p);
+        // } else if (PlottableItem* p = dynamic_cast<PlottableItem*>(_lastClickedGI))
+        //     gGui->updatePlot(p);
+        // else if (MaskItem* p = dynamic_cast<MaskItem*>(_lastClickedGI)) {
+        //     // add a new mask
+        //     auto it = findMask(p);
+        //     if (it != _masks.end()) {
+        //         it->second = new nsx::BoxMask(*p->getAABB());
+        //         _currentData->addMask(it->second);
+        //         _lastClickedGI = nullptr;
+        //     }
+        //     _currentData->maskPeaks(peaks);
+        //     update();
+        //     updateMasks();
+        //     //                gSession->onMaskedPeaksChanged(peaks);
+        // } else if (EllipseMaskItem* p = dynamic_cast<EllipseMaskItem*>(_lastClickedGI)) {
+        //     auto it = findMask(p);
+        //     if (it != _masks.end()) {
+        //         it->second = new nsx::EllipseMask(*p->getAABB());
+        //         _currentData->addMask(it->second);
+        //         _lastClickedGI = nullptr;
+        //     }
+        //     _currentData->maskPeaks(peaks);
+        //     update();
+        //     updateMasks();
+        //     //                gSession->onMaskedPeaksChanged(peaks);
+        // }
         // }
     }
 }
@@ -556,7 +548,8 @@ void DetectorScene::keyPressEvent(QKeyEvent* event)
             //     // if (it != _masks.end()) {
             //     //     _currentData->removeMask(it->second);
             //     //     _masks.erase(it);
-            //     //     nsx::PeakList peaks = gSession->selectedExperiment()->getPeaks(0, 0)->peaks_;
+            //     //     nsx::PeakList peaks = gSession->selectedExperiment()->getPeaks(0,
+            //     0)->peaks_;
             //     //     _currentData->maskPeaks(peaks);
             //     //     update();
             //     //     updateMasks();
@@ -567,7 +560,8 @@ void DetectorScene::keyPressEvent(QKeyEvent* event)
             //     // if (it != _masks.end()) {
             //     //     _currentData->removeMask(it->second);
             //     //     _masks.erase(it);
-            //     //     nsx::PeakList peaks = gSession->selectedExperiment()->getPeaks(0, 0)->peaks_;
+            //     //     nsx::PeakList peaks = gSession->selectedExperiment()->getPeaks(0,
+            //     0)->peaks_;
             //     //     _currentData->maskPeaks(peaks);
             //     //     update();
             //     //     updateMasks();
@@ -591,27 +585,27 @@ void DetectorScene::createToolTipText(QGraphicsSceneMouseEvent* event)
     if (!_currentData)
         return;
     nsx::Diffractometer* instr = _currentData->reader()->diffractometer();
-    nsx::Detector* det = instr->detector();
+    const nsx::Detector& det = _currentData->detector();
 
-    int nrows = int(det->nRows());
-    int ncols = int(det->nCols());
+    const int nrows = int(det.nRows());
+    const int ncols = int(det.nCols());
 
-    int col = static_cast<int>(event->lastScenePos().x());
-    int row = static_cast<int>(event->lastScenePos().y());
+    const int col = static_cast<int>(event->lastScenePos().x());
+    const int row = static_cast<int>(event->lastScenePos().y());
 
     if (col < 0 || col > ncols - 1 || row < 0 || row > nrows - 1)
         return;
-    int intensity = _currentFrame(row, col);
+    const int intensity = _currentFrame(row, col);
 
-    nsx::InstrumentState state = _currentData->interpolatedState(_currentFrameIndex);
+    const nsx::InstrumentState state =
+        _currentData->instrumentStates().interpolate(_currentFrameIndex);
 
     const nsx::Monochromator& mono = instr->source().selectedMonochromator();
     double wave = mono.wavelength();
 
     QString ttip;
 
-    nsx::DirectVector pos =
-        _currentData->reader()->diffractometer()->detector()->pixelPosition(col, row);
+    nsx::DirectVector pos = _currentData->detector().pixelPosition(col, row);
 
     double gamma = state.gamma(pos);
     double nu = state.nu(pos);
@@ -701,7 +695,8 @@ void DetectorScene::loadCurrentImage()
     //             // IntegrationRegion constructor can throw if the region is invalid
     //             try {
     //                 nsx::IntegrationRegion region(
-    //                     peak, peak_item->peak()->peakEnd(), peak_item->peak()->bkgBegin(), peak_item->peak()->bkgEnd());
+    //                     peak, peak_item->peak()->peakEnd(), peak_item->peak()->bkgBegin(),
+    //                     peak_item->peak()->bkgEnd());
     //                 region.updateMask(mask, _currentFrameIndex);
     //             } catch (...) {
     //                 peak_item->peak()->setSelected(false);

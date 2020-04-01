@@ -1,7 +1,7 @@
 
 #include "gui/dialogs/HDF5ConverterDialog.h"
 
-#include "core/experiment/DataSet.h"
+#include "core/data/DataSet.h"
 #include "gui/MainWin.h"
 #include "gui/models/Session.h"
 #include <QDir>
@@ -13,15 +13,13 @@ HDF5ConverterDialog::HDF5ConverterDialog() : QDialog {}
 {
     QVBoxLayout* wholeLayout = new QVBoxLayout(this);
     QHBoxLayout* firstLine = new QHBoxLayout;
-    directory = new QcrLineEdit("adhoc_directory", QDir::homePath());
+    directory = new QLineEdit(QDir::homePath());
     directory->setReadOnly(true);
-    QcrTrigger* trigger = new QcrTrigger("adhoc_browseDirectory", "browse directory");
-    trigger->setTriggerHook([=]() { browseDirectory(); });
-    browse = new QcrTextTriggerButton(trigger);
+    browse = new QPushButton("...");
     firstLine->addWidget(directory);
     firstLine->addWidget(browse);
     QHBoxLayout* secondLine = new QHBoxLayout;
-    filename = new QcrLineEdit("adhoc_hdfname", "");
+    filename = new QLineEdit("");
     secondLine->addWidget(filename);
     secondLine->addWidget(new QLabel(".h5"));
     progress = new QProgressBar(this);
@@ -32,25 +30,26 @@ HDF5ConverterDialog::HDF5ConverterDialog() : QDialog {}
     wholeLayout->addWidget(buttons);
     connect(buttons, &QDialogButtonBox::accepted, this, &HDF5ConverterDialog::convert);
     connect(buttons, &QDialogButtonBox::rejected, this, &HDF5ConverterDialog::reject);
+    connect(browse, &QPushButton::clicked, this, &HDF5ConverterDialog::browseDirectory);
 }
 
 void HDF5ConverterDialog::browseDirectory()
 {
     QString directoryPath =
-        QFileDialog::getExistingDirectory(this, "Browse Directory", directory->getValue());
-    directory->setCellValue(directoryPath);
+        QFileDialog::getExistingDirectory(this, "Browse Directory", directory->text());
+    directory->setText(directoryPath);
 }
 
 void HDF5ConverterDialog::convert()
 {
     QStringList numors = gSession->selectedExperiment()->getDataNames();
     if (numors.empty()) {
-        gLogger->log("[ERROR] No numors selected, conversion aborted");
+        // gLogger->log("[ERROR] No numors selected, conversion aborted");
         return;
     }
-    QString outputDirectory = directory->getValue();
+    QString outputDirectory = directory->text();
     if (outputDirectory.isEmpty()) {
-        gLogger->log("[ERROR] No output directory selected, conversion aborted");
+        // gLogger->log("[ERROR] No output directory selected, conversion aborted");
         return;
     }
     progress->setMaximum(numors.size());
@@ -59,18 +58,18 @@ void HDF5ConverterDialog::convert()
     for (QString numor : numors) {
         std::string numor_filename = numor.toStdString();
         std::string hdfFilename =
-            QDir(outputDirectory).filePath(filename->getValue() + ".h5").toStdString();
+            QDir(outputDirectory).filePath(filename->text() + ".h5").toStdString();
         if (hdfFilename.compare(numor_filename) == 0) {
-            gLogger->log("[ERROR] numor filename and target filename equal, conversion aborted");
+            // gLogger->log("[ERROR] numor filename and target filename equal, conversion aborted");
             return;
         }
 
         try {
             gSession->selectedExperiment()->getData(comp)->saveHDF5(hdfFilename);
         } catch (...) {
-            gLogger->log(
-                "[ERROR] The filename " + QString::fromStdString(hdfFilename)
-                + " could not be saved. May be a permission problem.");
+            // gLogger->log(
+            //     "[ERROR] The filename " + QString::fromStdString(hdfFilename)
+            //     + " could not be saved. May be a permission problem.");
         }
         progress->setValue(++comp);
     }

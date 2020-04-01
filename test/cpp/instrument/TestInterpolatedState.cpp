@@ -1,3 +1,17 @@
+//  ***********************************************************************************************
+//
+//  NSXTool: data reduction for neutron single-crystal diffraction
+//
+//! @file      test/cpp/instrument/TestInterpolatedState.cpp
+//! @brief     Test ...
+//!
+//! @homepage  ###HOMEPAGE###
+//! @license   GNU General Public License v3 or higher (see COPYING)
+//! @copyright Institut Laue-Langevin and Forschungszentrum Jülich GmbH 2016-
+//! @authors   see CITATION, MAINTAINER
+//
+//  ***********************************************************************************************
+
 #include "test/cpp/catch.hpp"
 
 #include <Eigen/Dense>
@@ -6,8 +20,8 @@
 #include "base/geometry/ReciprocalVector.h"
 #include "base/utils/ProgressHandler.h"
 #include "core/algo/DataReaderFactory.h"
+#include "core/data/DataSet.h"
 #include "core/detector/Detector.h"
-#include "core/experiment/DataSet.h"
 #include "core/experiment/Experiment.h"
 #include "core/instrument/Diffractometer.h"
 #include "core/instrument/InstrumentState.h"
@@ -44,7 +58,7 @@ void run_test(const char* filename, const char* instrument)
     for (auto coord : coords) {
         const double dt = 1e-3;
 
-        auto state = dataf->interpolatedState(coord[2]);
+        auto state = dataf->instrumentStates().interpolate(coord[2]);
         Eigen::Matrix3d Jq = state.jacobianQ(coord[0], coord[1]);
 
         auto pos0 = detector->pixelPosition(coord[0], coord[1]);
@@ -56,7 +70,7 @@ void run_test(const char* filename, const char* instrument)
         auto pos2 = detector->pixelPosition(coord[0], coord[1] + dt);
         Eigen::Vector3d dq2 = state.sampleQ(pos2).rowVector().transpose() - q0;
 
-        auto state3 = dataf->interpolatedState(coord[2] + dt);
+        auto state3 = dataf->instrumentStates().interpolate(coord[2] + dt);
         Eigen::Vector3d dq3 = state3.sampleQ(pos0).rowVector().transpose() - q0;
 
         // Numerical Jacobian

@@ -15,41 +15,41 @@
 #ifndef GUI_DIALOGS_ABSORPTIONDIALOG_H
 #define GUI_DIALOGS_ABSORPTIONDIALOG_H
 
-#include "gui/graphics/CrystalScene.h"
 #include "core/instrument/InstrumentTypes.h"
+#include "gui/graphics/CrystalScene.h"
 #include <QDialog>
 #include <QScrollBar>
-#include <QCR/widgets/actions.h>
 
 class AbsorptionDialog : public QDialog {
     Q_OBJECT
  public:
     AbsorptionDialog();
 
-   void initializeSlider(int i);
+    void initializeSlider(int i);
 
-private:
-   void on_button_openFile_pressed();
-   void setupInitialButtons();
-   //! Link to the experiment
-   nsx::sptrExperiment _experiment;
-   //! Rotation axis to collect movie
-   nsx::RotAxis* _spindleAxis;
-   //! Set of Roatation angle and absolute fileName for jpg image
-   std::vector<std::pair<double, std::string>> _imageList;
-   //! Path of the file
-   std::string _filepath;
-   //! read info file containing video information
-   void readInfoFile(const std::string& filename);
-   //! Pointer to the QGraphicsScene
-   CrystalScene* crystalScene;
+ private:
+    void on_button_openFile_pressed();
+    void setupInitialButtons();
+    //! Link to the experiment
+    nsx::sptrExperiment _experiment;
+    //! Rotation axis to collect movie
+    nsx::RotAxis* _spindleAxis;
+    //! Set of Roatation angle and absolute fileName for jpg image
+    std::vector<std::pair<double, std::string>> _imageList;
+    //! Path of the file
+    std::string _filepath;
+    //! read info file containing video information
+    void readInfoFile(const std::string& filename);
+    //! Pointer to the QGraphicsScene
+    CrystalScene* crystalScene;
 
-   QScrollBar* scrollBar;
-   QcrIconTriggerButton* rulerButton;
-   QcrIconTriggerButton* pickCenterButton;
-   QcrIconTriggerButton* pickPointButton;
-   QcrIconTriggerButton* removePointButton;
-   QcrIconTriggerButton* triangulateButton;
+ private:
+    QScrollBar* scrollBar;
+    QPushButton* rulerButton;
+    QPushButton* pickCenterButton;
+    QPushButton* pickPointButton;
+    QPushButton* removePointButton;
+    QPushButton* triangulateButton;
 };
 
 #endif // GUI_DIALOGS_ABSORPTIONDIALOG_H
