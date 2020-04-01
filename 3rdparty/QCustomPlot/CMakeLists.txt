@@ -1,6 +1,6 @@
 set(lib QCustomPlot)
 
-add_compile_options(-Wno-error=deprecated-declarations)
+#add_compile_options(-Wno-error=deprecated-declarations)
 
 add_library(${lib} QCustomPlot.cpp)
 
