@@ -6,7 +6,7 @@
 #    QCustomPlot_LIBRARIES
 
 find_path(QCustomPlot_INCLUDE_DIR NAMES qcustomplot.h)
-find_library(QCustomPlot_LIBRARIES NAMES qcustomplot libqcustomplot)
+find_library(QCustomPlot_LIBRARIES NAMES qcustomplot libqcustomplot libqcustomplot-qt5 libqcustomplot-qt5.so)
 
 include(FindPackageHandleStandardArgs)
 find_package_handle_standard_args(QCustomPlot DEFAULT_MSG QCustomPlot_LIBRARIES QCustomPlot_INCLUDE_DIR)
