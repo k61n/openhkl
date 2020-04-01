@@ -61,6 +61,8 @@ if((CMAKE_CXX_COMPILER_ID STREQUAL "GNU") OR (CMAKE_CXX_COMPILER_ID MATCHES "Cla
         endif()
     endif()
     add_compile_options(-Wall -Wextra -Wpedantic -Wno-sign-compare -Werror)
+    # exception for swig-generated code:
+    add_compile_options(-Wno-error=sometimes-uninitialized)
     #add_compile_options($<$<COMPILE_LANGUAGE:CXX>:-Werror=delete-incomplete>)
     add_compile_options(-pthread)
     add_definitions(-DEIGEN_FFTW_DEFAULT)
