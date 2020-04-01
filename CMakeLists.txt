@@ -115,6 +115,11 @@ set(CMAKE_AUTOUIC OFF)
 #  Other dependences
 ###################################################################################################
 
+find_package(QCustomPlot MODULE REQUIRED)
+message(STATUS "libQCustomPlot: FOUND=${QCustomPlot_FOUND},
+        VERSION=${QCustomPlot_VERSION}, LIB=${QCustomPlot_LIBRARIES},
+        INCLUDE_DIR=${QCustomPlot_INCLUDE_DIR}")
+
 include(CheckDependencies)
 
 ###################################################################################################
@@ -146,7 +151,6 @@ add_subdirectory(core)
 if(BUILD_NSX_GUI)
     find_package(QCR MODULE REQUIRED)
     message(STATUS "libQCR: FOUND=${QCR_FOUND}, VERSION=${QCR_VERSION}, LIB=${QCR_LIBRARIES}")
-    add_subdirectory(3rdparty/QCustomPlot)
     add_subdirectory(gui)
     add_subdirectory(main)
     if(BUILD_NSX_OLD_APPS)

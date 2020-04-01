@@ -15,57 +15,63 @@
 #ifndef GUI_GRAPHICS_SXPLOT_H
 #define GUI_GRAPHICS_SXPLOT_H
 
-#include "3rdparty/QCustomPlot/QCustomPlot.h"
+#include "qcustomplot.h"
 
 class PlottableItem;
 
+
 //! Base class of the plot types of the SubframePlot
 class SXPlot : public QCustomPlot {
-    Q_OBJECT
- public:
-    static SXPlot* create(QWidget* parent);
+   Q_OBJECT
+public:
+   static SXPlot* create(QWidget* parent);
 
-    explicit SXPlot(QWidget* parent = 0);
-    void keyPressEvent(QKeyEvent*);
-    virtual ~SXPlot();
+   explicit SXPlot(QWidget* parent = 0);
+   void keyPressEvent(QKeyEvent*);
+   virtual ~SXPlot();
 
-    // Getters and setters
+   // Error bar handling
+   QCPErrorBars* errorBars;
+   void addErrorBars(QCPGraph* graph, QVector<double>& error);
 
-    virtual std::string getType() const;
+   // Getters and setters
 
- public:
-    //! Manage the mouse move
-    void mouseMove(QMouseEvent* mouse_event);
-    //! Manage the mouse press
-    void mousePress(QMouseEvent* mouse_event);
-    //! Manage the mouse release
-    void mouseRelease(QMouseEvent* mouse_event);
-    //! Manage the mouse wheel
-    void mouseWheel(QWheelEvent* wheel_event);
+   virtual std::string getType() const;
 
-    //! Manage the zoom
-    void zoom(double x_init, double x_final, double y_init, double y_final);
-    //! Automatic zoom to fit all plotables
-    void resetZoom();
-    //! Update the plot
-    virtual void update(PlottableItem* item);
+public:
 
-    //! Manage double clicks
-    void titleDoubleClick(QMouseEvent* event, QCPPlotTitle* title);
-    //! Double click on the legend
-    void legendDoubleClick(QCPLegend* legend, QCPAbstractLegendItem* item);
-    //! Context menu
-    void setmenuRequested(QPoint);
-    //! Export the graphs into column ASCII format
-    void exportToAscii();
+   //! Manage the mouse move
+   void mouseMove(QMouseEvent* mouse_event);
+   //! Manage the mouse press
+   void mousePress(QMouseEvent* mouse_event);
+   //! Manage the mouse release
+   void mouseRelease(QMouseEvent* mouse_event);
+   //! Manage the mouse wheel
+   void mouseWheel(QWheelEvent* wheel_event);
 
- private:
-    void copyViewToClipboard();
+   //! Manage the zoom
+   void zoom(double x_init, double x_final, double y_init, double y_final);
+   //! Automatic zoom to fit all plotables
+   void resetZoom();
+   //! Update the plot
+   virtual void update(PlottableItem* item);
+
+   //! Manage double clicks
+   void titleDoubleClick(QMouseEvent* event, QCPTextElement* title);
+   //! Double click on the legend
+   void legendDoubleClick(QCPLegend* legend, QCPAbstractLegendItem* item);
+   //! Context menu
+   void setmenuRequested(QPoint);
+   //! Export the graphs into column ASCII format
+   // void exportToAscii(QCPErrorBars* errorBars);
+
+private:
+   void copyViewToClipboard();
 
 
- private:
-    QPoint _zoom_rect_origin;
-    QCPItemRect* _zoom_box;
+private:
+   QPoint _zoom_rect_origin;
+   QCPItemRect* _zoom_box;
 };
 
 #endif // GUI_GRAPHICS_SXPLOT_H
