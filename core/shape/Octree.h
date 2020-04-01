@@ -150,8 +150,6 @@ class OctreeIterator {
     //! The constructor from a reference to the Octree to be iterated.
     OctreeIterator(const Octree& tree);
 
-    OctreeIterator& operator=(const OctreeIterator& other);
-
     bool operator==(const OctreeIterator& other) const;
 
     bool operator!=(const OctreeIterator& other) const;
