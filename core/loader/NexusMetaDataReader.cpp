@@ -103,7 +103,7 @@ NexusMetaDataReader::NexusMetaDataReader(
             attr.read(typ, value);
 
             // override stored filename with the current one
-            if (attr.getName() == "file_name")
+            if (attr.getName() == "file_name" || attr.getName() == "filename")
                 _metadata.add<std::string>("original_filename", value);
             else
                 _metadata.add<std::string>(attr.getName(), value);
