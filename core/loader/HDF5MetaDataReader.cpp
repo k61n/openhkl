@@ -22,9 +22,9 @@
 #include "core/instrument/Diffractometer.h"
 #include "core/instrument/Sample.h"
 
+#include <iostream>
 #include <memory>
 #include <stdexcept>
-#include <iostream>
 
 namespace nsx {
 
@@ -53,8 +53,10 @@ HDF5MetaDataReader::HDF5MetaDataReader(const std::string& filename, Diffractomet
         attr.read(typ, value);
 
         // override stored filename with the current one
-        if(attr.getName() == "filename")
+        if (attr.getName() == "filename") {
+            _metadata.add<std::string>("original_filename", value);
             value = filename;
+        }
         _metadata.add<std::string>(attr.getName(), value);
     }
 

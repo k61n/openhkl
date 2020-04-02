@@ -22,6 +22,7 @@
 #include "core/instrument/Diffractometer.h"
 #include "core/instrument/Sample.h"
 
+#include <iostream>
 #include <memory>
 #include <stdexcept>
 
@@ -33,13 +34,10 @@ NexusMetaDataReader::NexusMetaDataReader(
     : IDataReader(filename, diffractometer), _dataset(nullptr), _space(nullptr), _memspace(nullptr)
 {
     try {
-        // std::cout << "frames = " << _nFrames << ", rows = " << _nRows << ", cols = " << _nCols <<
-        // std::endl; std::cout << "nMonos = " << _diffractometer->source().nMonochromators() <<
-        // std::endl;
-
         _file = std::unique_ptr<H5::H5File>(new H5::H5File(filename.c_str(), H5F_ACC_RDONLY));
 
-        H5::Group entryGroup = _file->openGroup("/entry0");
+        H5::Group rootGroup = _file->openGroup("/");
+        H5::Group entryGroup = rootGroup.openGroup("/entry0");
         H5::Group instrumentGroup = entryGroup.openGroup("instrument");
         H5::Group dataGroup = entryGroup.openGroup("data_scan");
         H5::Group monitorGroup = entryGroup.openGroup("monitor");
@@ -48,8 +46,10 @@ NexusMetaDataReader::NexusMetaDataReader(
         int numor = -1;
         entryGroup.openDataSet("run_number").read(&numor, H5::PredType::NATIVE_INT);
 
-        // get number of frames
-        dataGroup.openDataSet("total_steps").read(&_nFrames, H5::PredType::NATIVE_INT);
+        // get number of intended and actual frames
+        std::size_t totalSteps = 0;
+        dataGroup.openDataSet("total_steps").read(&totalSteps, H5::PredType::NATIVE_INT);
+        dataGroup.openDataSet("actual_step").read(&_nFrames, H5::PredType::NATIVE_INT);
 
         // get wavelength
         double wavelength = -1.;
@@ -87,11 +87,27 @@ NexusMetaDataReader::NexusMetaDataReader(
         _metadata.add<double>("monitor", monitor);
         _metadata.add<int>("Numor", numor);
         _metadata.add<int>("npdone", _nFrames);
+        _metadata.add<int>("total_steps", totalSteps);
+        _metadata.add<std::string>("filename", filename);
         _metadata.add<std::string>("title", title);
         _metadata.add<std::string>("experiment_identifier", experiment_id);
         _metadata.add<std::string>("start_time", start_time);
         _metadata.add<std::string>("end_time", end_time);
         _metadata.add<double>("time", time);
+
+        // put root attributes into meta data
+        for (int i = 0; i < rootGroup.getNumAttrs(); ++i) {
+            H5::Attribute attr = rootGroup.openAttribute(i);
+            H5::DataType typ = attr.getDataType();
+            std::string value;
+            attr.read(typ, value);
+
+            // override stored filename with the current one
+            if (attr.getName() == "file_name" || attr.getName() == "filename")
+                _metadata.add<std::string>("original_filename", value);
+            else
+                _metadata.add<std::string>(attr.getName(), value);
+        }
 
 
         // which axis is scanned?
@@ -108,13 +124,19 @@ NexusMetaDataReader::NexusMetaDataReader(
         H5::DataSet dsScannedVars = dataGroup.openDataSet("scanned_variables/data");
         H5::DataSpace spaceScannedVars(dsScannedVars.getSpace());
         hsize_t dimScannedVars = spaceScannedVars.getSimpleExtentNdims();
+        // std::cout << "dimScannedVars: " << dimScannedVars << std::endl;
         if (dimScannedVars != 2)
             throw std::runtime_error("Nexus: invalid dimension of scanned variable block");
 
-        hsize_t dimsScannedVars[2];
+        hsize_t dimsScannedVars[2] = {0, 0};
         spaceScannedVars.getSimpleExtentDims(&dimsScannedVars[0]);
-        if (dimsScannedVars[0] != 5 || dimsScannedVars[1] != _nFrames)
+        // std::cout << "dimsScannedVars[0]: " << dimsScannedVars[0] << std::endl;
+        // std::cout << "dimsScannedVars[1]: " << dimsScannedVars[1] << std::endl;
+        if (dimsScannedVars[0] != 5)
             throw std::runtime_error("Nexus: invalid dimension of scanned variable block");
+        if (dimsScannedVars[1] != _nFrames)
+            throw std::runtime_error(
+                "Nexus: mismatch between scanned variable block and number of frames");
 
         double* scanned_vars = new double[dimsScannedVars[0] * dimsScannedVars[1]];
         dsScannedVars.read(scanned_vars, H5::PredType::NATIVE_DOUBLE);
@@ -145,6 +167,7 @@ NexusMetaDataReader::NexusMetaDataReader(
             _detectorStates.emplace_back(std::move(det_states));
 
             std::vector<double> sample_states(n_sample_gonio_axes);
+            std::fill(sample_states.begin(), sample_states.end(), 0.);
             sample_states[omega_idx] = scanned_vars[_nFrames * omega_idx + frame] * deg;
             sample_states[phi_idx] = scanned_vars[_nFrames * phi_idx + frame] * deg;
             sample_states[chi_idx] = scanned_vars[_nFrames * chi_idx + frame] * deg;
