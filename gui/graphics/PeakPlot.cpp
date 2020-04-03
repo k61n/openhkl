@@ -34,9 +34,16 @@ PeakPlot::PeakPlot(QWidget* parent) : SXPlot(parent)
 
     addGraph();
     graph(0)->setPen(pen);
-    graph(0)->setErrorType(QCPGraph::etBoth);
     graph(0)->setLineStyle(QCPGraph::lsLine);
     graph(0)->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssCircle, 6));
+    xErrorBars_ = new QCPErrorBars{graph(0)->keyAxis(), graph(0)->valueAxis()};
+    yErrorBars_ = new QCPErrorBars{graph(0)->keyAxis(), graph(0)->valueAxis()};
+    xErrorBars_->setDataPlottable(graph(0));
+    yErrorBars_->setDataPlottable(graph(0));
+    xErrorBars_->setPen(pen);
+    yErrorBars_->setPen(pen);
+    xErrorBars_->setErrorType(QCPErrorBars::ErrorType::etKeyError);
+    yErrorBars_->setErrorType(QCPErrorBars::ErrorType::etValueError);
 
     xAxis->setLabel("Frame (a.u.)");
     yAxis->setLabel("Intensity (counts)");
@@ -46,7 +53,7 @@ PeakPlot::PeakPlot(QWidget* parent) : SXPlot(parent)
         QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectAxes | QCP::iSelectLegend
         | QCP::iSelectPlottables);
 
-    QCPPlotTitle* element = new QCPPlotTitle(this, "");
+    QCPTextElement* element = new QCPTextElement(this, "");
     element->setFont(QFont("Arial", 8, -1, true));
     plotLayout()->addElement(0, 0, element);
 }

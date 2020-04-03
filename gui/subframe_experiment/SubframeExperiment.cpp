@@ -58,8 +58,8 @@ SubframeExperiment::SubframeExperiment() : QWidget()
 
     splitter->addWidget(left_widget);
     splitter->addWidget(right_splitter);
-    splitter->setStretchFactor(0, 0.25);
-    splitter->setStretchFactor(1, 1);
+    splitter->setStretchFactor(0, 1);
+    splitter->setStretchFactor(1, 4);
     splitter->setChildrenCollapsible(false);
 
     layout->addWidget(splitter);

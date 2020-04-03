@@ -154,7 +154,7 @@ void AutoIndexer::rankSolutions()
 
 void AutoIndexer::refineSolutions(const std::vector<Peak3D*>& peaks)
 {
-#pragma omp parallel for
+    // TODO: candidate for easy parallelization
     for (auto&& soln : _solutions) {
 
         auto cell = soln.first;

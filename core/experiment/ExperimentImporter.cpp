@@ -202,7 +202,8 @@ bool ExperimentImporter::loadPeaks(Experiment* experiment)
 
                 hsize_t data_dims_out[2];
                 space.getSimpleExtentDims(data_dims_out, nullptr);
-                char* char_data_names[data_dims_out[0]];
+
+                char** char_data_names = new char*[data_dims_out[0]];
                 data_set.read((void*)char_data_names, data_type);
 
                 for (int ii = 0; ii < data_dims_out[0]; ++ii) {
@@ -212,6 +213,8 @@ bool ExperimentImporter::loadPeaks(Experiment* experiment)
                     }
                     data_names.push_back(text);
                 }
+
+                delete[] char_data_names;
             }
 
             std::cout << "Loading unit-cell names" << std::endl;
@@ -223,8 +226,8 @@ bool ExperimentImporter::loadPeaks(Experiment* experiment)
 
                 hsize_t uc_dims_out[2];
                 uc_space.getSimpleExtentDims(uc_dims_out, nullptr);
-                std::cout << uc_dims_out[0] << " " << uc_dims_out[1] << std::endl;
-                char* char_unit_cells[uc_dims_out[0]];
+
+                char** char_unit_cells = new char*[uc_dims_out[0]];
                 uc_data_set.read((void*)char_unit_cells, uc_data_type);
 
                 for (int ii = 0; ii < uc_dims_out[0]; ++ii) {
@@ -234,6 +237,8 @@ bool ExperimentImporter::loadPeaks(Experiment* experiment)
                     }
                     unit_cells.push_back(text);
                 }
+
+                delete[] char_unit_cells;
             }
 
             std::cout << "Finished reading data from file" << std::endl;

@@ -195,7 +195,8 @@ void PeakItemGraphic::plot(SXPlot* plot)
         q_intensity[i] = rockingCurve[i].value();
         q_error[i] = rockingCurve[i].sigma();
     }
-    p->graph(0)->setDataValueError(q_frames, q_intensity, q_error);
+    p->graph(0)->setData(q_frames, q_intensity);
+    p->addErrorBars(p->graph(0), q_error);
 
     // Now update text info:
     QString info;
@@ -233,7 +234,7 @@ void PeakItemGraphic::plot(SXPlot* plot)
     double scale = _peak->scale();
     double monitor = _peak->dataSet()->reader()->metadata().key<double>("monitor");
     info += "Monitor " + QString::number(monitor * scale) + " counts";
-    QCPPlotTitle* title = dynamic_cast<QCPPlotTitle*>(p->plotLayout()->element(0, 0));
+    QCPTextElement* title = dynamic_cast<QCPTextElement*>(p->plotLayout()->element(0, 0));
     if (title != nullptr)
         title->setText(info);
     p->rescaleAxes();

@@ -22,6 +22,7 @@
 #include "core/instrument/Diffractometer.h"
 #include "core/instrument/Sample.h"
 
+#include <iostream>
 #include <memory>
 #include <stdexcept>
 
@@ -50,6 +51,12 @@ HDF5MetaDataReader::HDF5MetaDataReader(const std::string& filename, Diffractomet
         H5::DataType typ = attr.getDataType();
         std::string value;
         attr.read(typ, value);
+
+        // override stored filename with the current one
+        if (attr.getName() == "filename") {
+            _metadata.add<std::string>("original_filename", value);
+            value = filename;
+        }
         _metadata.add<std::string>(attr.getName(), value);
     }
 
@@ -157,6 +164,7 @@ HDF5MetaDataReader::HDF5MetaDataReader(const std::string& filename, Diffractomet
     _file->close();
 }
 
+
 void HDF5MetaDataReader::open()
 {
     if (_isOpened)
@@ -212,6 +220,7 @@ void HDF5MetaDataReader::open()
     free(version);
     free(date);
 }
+
 
 void HDF5MetaDataReader::close()
 {
