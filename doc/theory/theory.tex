@@ -1,11 +1,9 @@
-%--------------------------------------------------------------------------------------------------
-\documentclass[twocolumn,preprintnumbers,amsmath,amssymb]{revtex4}
-\usepackage[utf8]{inputenc}
-\usepackage[english]{babel}
+\documentclass[11pt,a4paper]{article}
+\usepackage{amssymb,amsmath}
 \usepackage{url}
-\usepackage{amsmath}
-\usepackage[nottoc,numbib]{tocbibind}
 
+\topmargin -2cm
+\textheight 24cm
 
 % convenience commands
 \newcommand{\CChalf}{CC_{1/2}}
@@ -41,20 +39,21 @@
 % for placeholder text
 % \usepackage{lipsum}
 
-%--------------------------------------------------------------------------------------------------
 
 \begin{document}
 
 \title{NSXTool Internal Documentation of Implemented Theory}
-\author{the NSXTool collaboration}
+\author{The NSXTool Collaboration}
 
 \date{internal draft, work in progress, do not circulate, \today}
 
 
 \maketitle
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Overview}
-%--------------------------------------------------------------------------------------------------
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 We mention a few predecessors, for the sake of listing references: RETREAT \cite{StMc13},
 XDS \cite{Kab10a}, HKL2000 \cite{OtMi97,OtMi06,GewOJ}.
 
@@ -72,12 +71,15 @@ The basic workflow of NSXTool is as follows
   \item Computed merged statistics \ref{merged-statistics}
 \end{enumerate}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Lattice determination}
-%--------------------------------------------------------------------------------------------------
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 We use \cite{BuGG16} as one of our primary references.
 
+
 \subsection{Peak search} \label{peak-search}
-%--------------------------------------------------------------------------------------------------
+
 The initial peak search is essentially a pure image processing step, with no crystallographic
 input. The technique is roughly as follows
 \begin{enumerate}
@@ -104,7 +106,7 @@ ellipsoid overlap detection is implemented using the criterion described in \cit
 
 
 \subsection{Autoindexing} \label{autoindex}
-%--------------------------------------------------------------------------------------------------
+
 We use an autoindexing method based on 1d Fourier-transform, see \cite{StBR97,SaGA04}.
 
 The algorithm works as follows. We are given some set of $\bq$ vectors which lie approximately on
@@ -135,13 +137,14 @@ trial and error is required to determine the best FFT parameters.
 
 
 \subsection{Computing the reduced unit cell} \label{unit-cell}
-%--------------------------------------------------------------------------------------------------
+
 Once we have a lattice basis, we compute the Niggli cell following \cite{Gru73, KrGr76}
 and then transform the Niggli cell to a reduced standard form following \cite{GrSA03}. The cell
 is given an index from 1 to 44 corresponding to the 44 cases in the International Tables \cite{gruber-table}.
 
+
 \subsection{Computation of the first Brillouin zone}
-%--------------------------------------------------------------------------------------------------
+
 Let $B$ be matrix whose rows form a basis for the reciprocal space lattice. Thus the reciprocal lattice consists
 of the set
 \begin{equation} \{ (h k \ell) B \ | \ h,k,\ell \in \mathbf{Z} \}. \end{equation}
@@ -161,13 +164,13 @@ The \emph{Brillouin zone} is the smallest zone, which equivalently is the inters
 The goal of this subsection is to describe an algorithm to compute $Z_B$, without any assumptions on $B$.
 
 \subsubsection{Step 1: Compute an initial zone.}
-%--------------------------------------------------------------------------------------------------
+
 Let $\bb_1, \bb_2, \bb_3$ denote the rows of $B$, which form a basis of the dual lattice.
 We let the initial zone $Z_0$ be the parallelpiped centered at the origin bounded by the planes
 $H_{\pm \bq_i}$.
 
 \subsubsection{Step 2: Compute a bounding sphere.}
-%--------------------------------------------------------------------------------------------------
+
 The initial zone $Z_0$ contains the Brillouin zone. To find a bounding radius, compute the 6 vertices $\bq_i$ of $Z_0$,
 and take $R = \max_i |\bq_i|$. Since the Brillouin zone is contained in $Z_0$, and $Z_0$ is contained in the ball of radius $R$,
 we know that the Brillouin zone is contained in the ball of radius $R$. Therefore we have reduced the problem to checking
@@ -180,7 +183,7 @@ where $\lambda$ is the smallest eigenvalue of the symmetric matrix $B B^t$. Ther
 so we obtain an effective bound on the (finitely-many) values of $h,k,\ell$ which must be checked.
 
 \subsubsection{Step 3: Find the finitely-many bounding planes of $Z_B$.}
-%--------------------------------------------------------------------------------------------------
+
 Now we iterate.
 \begin{enumerate}
   \item Set $i = 0$, and let $Z_0$ be as above.
@@ -199,7 +202,7 @@ Now we iterate.
 
 
 \subsection{Space Groups} \label{spacegroup}
-%--------------------------------------------------------------------------------------------------
+
 We fix a real-space lattice $\Lambda$ which is spanned by real-space vectors $\ba_1, \ba_2, \ba_3$, i.e.
 \begin{equation} \Lambda = \{ n_1 \ba_1 + n_2 \ba_2 + n_3 \ba_3 \ | \ n_1, n_2, n_3 \in \mathbf{Z} \} \end{equation}
 we denote by $\Lambda^\ast$ the dual lattice, defined by
@@ -231,8 +234,10 @@ which shows that $f_{A^t q} = f_{q} e^{2 \pi i q \cdot b}$ whenever $(A,b) \in G
 For space group determination see e.g. \cite{Eva11,Kab10b}.
 
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Shape Prediction} \label{peak-prediction}
-%--------------------------------------------------------------------------------------------------
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 We make a simplifying assumption, that for a \emph{perfect plane wave} $k_i$, the observed scattering function has the form
 \begin{equation} \sum_{hkl} I_{hkl} f(\bq - \bq_{hkl}), \end{equation}
 i.e. that the peak shape is independent of its intensity and Miller index, specified by a single function $f(\bq)$.
@@ -270,15 +275,13 @@ Now make a simplifying assumption, $\Sigma_M = \sigma_M^2 Id$ and $\Sigma_D = \s
 
 Setting $\nabla L = 0$ we obtain the 2x2 system of linear equations...
 
-\begin{widetext}
-
 \begin{equation} \begin{bmatrix}
   3N & \sum_i \tr( (R_iA_i)(R_i A_i)^t) \\
   \sum_i \tr((R_iA_i)^t(R_i A_i)) & \sum_i \tr(((R_i A_i)^t(R_iA_i))^2)
 \end{bmatrix}
 \begin{bmatrix} \sigma_M^2 \\ \sigma_D^2 \end{bmatrix}
 =  \begin{bmatrix} \sum_i \tr(\Sigma_i) \\ \sum_i \tr((R_i A_i)^t \Sigma_i (R_i A_i)) \end{bmatrix}  \end{equation}
-\end{widetext}
+
 which is easily solved. One can also solve for the the full covariance matrices $\Sigma_M, \Sigma_D$ via gradient descent, since the gradient is easily computed analytically.. \textbf{Note: tested this out in Python, and it seems to work pretty well. So the assumptions may be justified!}
 
 Now, if we work in lab-based q-space, under the simplifying assumptions above, we find a covariance matrix
@@ -291,8 +294,8 @@ Now let
   \be_3 &= (k_f + k_i) / |k_f + k_i|
 \end{align}
 
+
 \subsection{Kabsch's Coordinate System}
-%--------------------------------------------------------------------------------------------------
 
 In \cite{Kab88} Kabsch introduced a per-peak coordinate system intented to undo effects from detector geometry.
 See also \cite{Kab10b} for an updated description of the coordinates and integration technique.
@@ -319,10 +322,12 @@ To better understand $\be_3$, consider the following: we want to find the axis $
 Now $(\ba \times \bq) \cdots k_f) = \ba \cdot (\ba \times k_f) = \ba \cdot (k_f \times k_i)$, so by the method of Langrange multipliers we must solve $k_f \times k_i = \lambda \ba$, which tells us immediately that the axis is in the direction of $\be_1$.
 
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Integration} \label{integration}
-%--------------------------------------------------------------------------------------------------
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 \subsection{Pixel sum method}
-%--------------------------------------------------------------------------------------------------
+
 Consider a peak centered at $q_0$ in (sampled-fixed) reciprocal space. The background-subtracted intensity distribution in a neighborhood of $q_0$ has a covariance matrix $\Sigma$, which is either computed (for strong peaks) or predicted (for weak peaks). The integration routine takes three parameters $r_1, r_2, r_2$ and produces
 two sets $\calB$ and $\calP$ of background and peak events, respectively, as follows:
 \begin{align}
@@ -344,8 +349,9 @@ The integrated peak intensity is then estimated as
 
 It should be noted that for weak peaks, the error is dominated by the error in the background estimate, and therefore we will obtain unsatisfactorily low values of $I/\sigma_I$.
 
+
 \subsection{Fitted Intensity}
-%--------------------------------------------------------------------------------------------------
+
 As shown in \cite{Dia69}, the integration error for weak peaks is dominated by background subtraction
 and it is typically better to find the integrated intensity by fitting to a profile learned from strong peaks.
 
@@ -392,7 +398,6 @@ with the single-pixel count probability distribution given by Poisson statistics
 with $\lambda=B+Ir$.
 
 Rewrite (\ref{Ebayes}) as
-\begin{widetext}
 \begin{equation}
   \ln p(B,I|M) = \sum_i\Big\{M_i\ln(B+IR_i)-(B+IR_i)\Big\} +\ln p(B) + \ln p(I) + \mathrm{const}.
 \end{equation}
@@ -402,7 +407,6 @@ Then
 \begin{equation}
   \ln p(B,I|M) = \sum_i\Big\{M_i\ln(B+IR_i)\Big\}-(NB+I) +\ln p(B) + \ln p(I) + \mathrm{const}.
 \end{equation}
-\end{widetext}
 We now must specify the a priori distributions of $B$ and $I$.
 This cannot be done without some arbitrariness.
 For instance, assume equal probability per decade within given limits.
@@ -420,8 +424,9 @@ Now, compute the most probable parameter values from
   \end{array}
 \end{equation}
 
+
 \subsection{$I/\sigma$ Integration}
-%--------------------------------------------------------------------------------------------------
+
 This is the integration technique used by RETREAT \cite{StMc13}. The method is described in detail in \cite{WiKS88}.
 In the article \cite{PrWM97} there is a detailed comparison between this method and profile fitting.
 
@@ -502,7 +507,7 @@ The fitted intensity is then defined to be
 
 
 \subsection{Combining estimates}
-%--------------------------------------------------------------------------------------------------
+
 In the previous subsections, we have described two methods of integration, producing estimates $\Ifit$ and $\Isum$, and also
 how to estimate their errors. Provided our error estimate is reasonable, we can combine these estimates into an even stronger
 estimate $\Iwt$, which is a weighted linear combination of $\Ifit$ and $\Isum$:
@@ -518,7 +523,7 @@ are disjoint sets, we can now easily and explicitly compute the covariance $\cov
 
 
 \subsection{Peak Shape Model}
-%---------------------------------------------------------------------------------------------------
+
 Motivated by the Monte-Carlo technique of EVAL-14 and EVAL-15, we consider a probabilistic
 approach to estimate the covariance matrix of the intensity distribution for a given peak.
 
@@ -561,13 +566,14 @@ Remarks
 \end{itemize}
 
 
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Measures of Data Quality} \label{merged-statistics}
-%--------------------------------------------------------------------------------------------------
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 \subsection{$R$ factors}
-%--------------------------------------------------------------------------------------------------
 
 For the definition of $R_{merge}$ see \cite{KaDi12}. For $R$ factors in general there is the paper \cite{Eva11}.
+
 
 \subsection{The correlation coefficients $\CChalf$ and $\CCstar$}
 The statistic $\CChalf$ as introduced in ~\cite{KaDi12}.
@@ -605,6 +611,7 @@ Thus we have
 \end{equation}
 This expression will be useful in the following subsection.
 
+
 \subsection{$\CCtrue$}
 Let $x, y, \xi, \eta, J$ be as in the previous subsection. Define
 \begin{equation} I = \frac{x+y}{2} \end{equation}
@@ -641,14 +648,17 @@ which amazingly is a function of $\CChalf$ only. We therefore define
 to be an estimate of $\CCtrue$, which can be calculated directly from the data. The statistic was introduced in \cite{KaDi12}.
 
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Other topics}
-%--------------------------------------------------------------------------------------------------
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 \subsection{Absorption correction}
-%--------------------------------------------------------------------------------------------------
+
 TODO
 
+
 \subsection{Monte-Carlo profile prediction}
-%--------------------------------------------------------------------------------------------------
+
 See papers \cite{DuKS14,ScXK15}. We have implemented a preliminary version of this algorithm,
 however it is definitely in need of testing and improvement.
 

@@ -1,11 +1,9 @@
-%--------------------------------------------------------------------------------------------------
-\documentclass[twocolumn,preprintnumbers,amsmath,amssymb]{revtex4}
-\usepackage[utf8]{inputenc}
-\usepackage[english]{babel}
+\documentclass[11pt,a4paper]{article}
+\usepackage{amssymb,amsmath}
 \usepackage{url}
-\usepackage{amsmath}
-\usepackage[nottoc,numbib]{tocbibind}
 
+\topmargin -2cm
+\textheight 24cm
 
 % convenience commands
 \newcommand{\CChalf}{CC_{1/2}}
@@ -20,27 +18,24 @@
 
 \def\v#1{\mathbf{#1}}
 
-% for placeholder text
-% \usepackage{lipsum}
-
-%--------------------------------------------------------------------------------------------------
 
 \begin{document}
 
-\title{NSXTool Internal Documentation: Notes on Literature}
+\title{NSXTool: Internal Notes on Literature}
 \author{the NSXTool collaboration}
 
 \date{internal notes, work in progress, do not circulate, \today}
 
-
 \maketitle
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Kabsch 2010b}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-Paper on ``Integration, scaling, space-group assignement and post-refinement'' \cite{Kab10b}.
+Paper \cite{Kab10b} on ``Integration, scaling, space-group assignement and post-refinement''.
 
 \subsection{Notation correspondences}
-%--------------------------------------------------------------------------------------------------
+%------------------------------------------------------------------------------
 
 \begin{tabular}{lll}
 &Kabsch &we\\\hline
@@ -50,7 +45,7 @@ detector distance &$F$ &?\\
 \end{tabular}
 
 \subsection{Spot prediction (Sect 2.2)}
-%--------------------------------------------------------------------------------------------------
+%------------------------------------------------------------------------------
 
 This section uses vector components in the coordinate system $\{\v{m}_1,\v{m}_2,\v{m}_3\}$.
 In this special system,
@@ -95,7 +90,7 @@ where the subscript~$\perp$ designates the projection into the plane
 perpendicular to $\v{m_2}$.
 
 \subsection{Standard spot size (Sect 2.3)}
-%--------------------------------------------------------------------------------------------------
+%------------------------------------------------------------------------------
 
 \subsubsection{Increase in path length}
 
