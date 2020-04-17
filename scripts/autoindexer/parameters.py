@@ -49,8 +49,19 @@ class Parameters:
                              'indexing_tol'     : 0.2,
                              'min_vol'          : 100.0 }
 
+        self.shapelib    = { 'peak_scale'       : 3.0,
+                             'bkg_begin'        : 3.0,
+                             'bkg_end'          : 4.5,
+                             'kabsch'           : True,
+                             'nx'               : 20,
+                             'ny'               : 20,
+                             'nz'               : 20,
+                             'sigma_d'          : 0.33,
+                             'sigma_m'          : 0.23 }
+
         self._dicts = [self.cell, self.detector, self.finder, 
-                       self.integration, self.filter, self.autoindexer]
+                       self.integration, self.filter, self.autoindexer,
+                       self.shapelib]
 
         for key in kwargs:
             for d in self._dicts:

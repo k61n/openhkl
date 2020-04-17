@@ -49,7 +49,7 @@ else:
     expt.load_raw_data(filenames)
     pynsxprint("...data loaded\n")
     pynsxprint("Finding peaks...")
-    expt.find_peaks()
+    expt.find_peaks(expt.data)
     pynsxprint("...peak finding complete\n")
     pynsxprint("Integrating...")
     npeaks = expt.integrate_peaks()

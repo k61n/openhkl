@@ -7,7 +7,7 @@ Generalised wrapper for Python/C++ (Swig) NSXTool interface.
 '''
 
 import sys
-sys.path.append("/home/zamaan/codes/nsxtool/nsxtool/build/swig")
+sys.path.append("/home/zamaan/codes/nsxtool/current/build/swig")
 import scipy
 import pynsx as nsx
 from pdb import set_trace
@@ -31,11 +31,14 @@ class Experiment:
         self.name = name
         self.name_peaks = "peaks"
         self.name_filtered = "filtered"
+        self.name_fit = "fit"
         self.expt = nsx.Experiment(name, detector)
         self.params = params
         self.nsxfile = self.name + ".nsx"
-        self.solutions = None
         self.unit_cells = None
+        self.ref_cell = params.cell
+        self.min_indexing_frames = 5
+        self.max_indexing_frames = 12
 
     def load_raw_data(self, filenames):
         '''
@@ -49,20 +52,27 @@ class Experiment:
         data_params.swap_endian = self.params.detector['swap_endian']
         data_params.bpp = self.params.detector['bpp']
 
-        reader = nsx.RawDataReader(filenames[0], self.expt.diffractometer())
-        reader.setParameters(data_params)
+        self.reader = nsx.RawDataReader(filenames[0], self.expt.diffractometer())
+        self.reader.setParameters(data_params)
 
         for filename in filenames[1:]:
-            reader.addFrame(filename)
+            self.reader.addFrame(filename)
+        self.reader.end()
 
-        reader.end()
-        self.data = nsx.DataSet(reader)
+        self.data = nsx.DataSet(self.reader)
         self.expt.addData(self.data)
 
         self.found_collection = None
         self.filtered_collection = None
 
-    def find_peaks(self):
+    def add_raw_data_frames(self, filenames):
+        for file in filenames:
+            self.reader.addFrame(file)
+        self.reader.end()
+        self.data = nsx.DataSet(self.reader)
+        self.expt.addData(self.data)
+
+    def find_peaks(self, dataset):
         '''
         Find the peaks
         '''
@@ -75,7 +85,7 @@ class Experiment:
         self.finder.setPeakScale(self.params.finder['peak_scale'])
         self.finder.setThreshold(self.params.finder['threshold'])
 
-        self.finder.find([self.data])
+        self.finder.find(dataset)
 
     def integrate_peaks(self):
         '''
@@ -118,10 +128,15 @@ class Experiment:
         n_caught = self.found_collection.numberCaughtByFilter()
         return n_caught
 
-    def autoindex(self):
+    def autoindex(self, length_tol, angle_tol):
         '''
-        Compute the unit cell
+        Compute the unit cells fromthe first n (< max_frames) frames
         '''
+
+        self.find_peaks([self.data])
+        npeaks = self.integrate_peaks()
+        ncaught = self.filter_peaks()
+
         autoindexer_params = nsx.IndexerParameters()
         autoindexer_params.maxdim = self.params.autoindexer['max_dim']
         autoindexer_params.nSolutions = self.params.autoindexer['n_solutions']
@@ -129,25 +144,112 @@ class Experiment:
         autoindexer_params.subdiv = self.params.autoindexer['n_subdiv']
         autoindexer_params.indexingTolerance = self.params.autoindexer['indexing_tol']
         autoindexer_params.minUnitCellVolume = self.params.autoindexer['min_vol']
-
         self.auto_indexer = self.expt.autoIndexer()
         self.auto_indexer.setParameters(autoindexer_params)
         self.auto_indexer.autoIndex(self.filtered_collection.getPeakList())
-        self.solutions = self.auto_indexer.solutions()
-        self.get_unit_cells()
+        cell = None
+        solutions = self.auto_indexer.solutions()
+        unit_cells = self.get_unit_cells(solutions)
+        return self.accept_cell(length_tol, angle_tol, solutions)
 
-    def get_unit_cells(self):
+    def accept_solution(self, collection, solution):
+        peak_list = collection.getPeakList()
+        for peak in peak_list:
+            peak.setUnitCell(solution)
+
+    def get_unit_cells(self, solutions):
+        '''
+        Get a list of unit cells from the C++ solutions
+        '''
+        unit_cells = []
+        for solution in solutions:
+            cell = self.solution2cell(solution)
+            unit_cells.append(cell)
+        return unit_cells
+
+    def solution2cell(self, solution):
+        '''
+        Convert the C++ solution to a tuple containing the quality and cell
+        parameters tuple
+        '''
         deg = scipy.pi / 180.0
-        self.unit_cells = []
-        for cell in self.solutions:
-            quality = cell[1]
-            a = cell[0].character().a
-            b = cell[0].character().b
-            c = cell[0].character().c
-            alpha = cell[0].character().alpha / deg
-            beta = cell[0].character().beta / deg
-            gamma = cell[0].character().gamma / deg
-            self.unit_cells.append((quality, (a, b, c, alpha, beta, gamma)))
+        quality = solution[1]
+        a = solution[0].character().a
+        b = solution[0].character().b
+        c = solution[0].character().c
+        alpha = solution[0].character().alpha / deg
+        beta = solution[0].character().beta / deg
+        gamma = solution[0].character().gamma / deg
+        return (quality, (a, b, c, alpha, beta, gamma))
+
+
+    def accept_cell(self, length_tol, angle_tol, solutions):
+        '''
+        Return solution if it matches the reference cell, otherwise return None
+        '''
+        accepted = None
+        for solution in solutions:
+            accept = True
+            quality, cell = self.solution2cell(solution)
+            set_trace()
+            if (cell[0] - self.ref_cell['a']) > length_tol:
+                accept = False
+                continue
+            if (cell[1] - self.ref_cell['b']) > length_tol:
+                accept = False
+                continue
+            if (cell[2] - self.ref_cell['c']) > length_tol:
+                accept = False
+                continue
+            if (cell[3]  - self.ref_cell['alpha']) > angle_tol:
+                accept = False
+                continue
+            if (cell[4] - self.ref_cell['beta']) > angle_tol:
+                accept = False
+                continue
+            if (cell[5] - self.ref_cell['gamma']) > angle_tol:
+                accept = False
+                continue
+            set_trace()
+            if accept:
+                accepted = solution
+                break
+        return accepted
+
+    def build_shape_library(self):
+
+        # Filter the weak peaks out
+
+        kabsch = self.params.shapelib['kabsch']
+        peak_scale = self.params.shapelib['peak_scale']
+        bkg_begin = self.params.shapelib['bkg_begin']
+        bkg_end = self.params.shapelib['bkg_end']
+        sigma_m = self.params.shapelib['sigma_m']
+        sigma_d = self.params.shapelib['sigma_d']
+        nx = self.params.shapelib['nx']
+        ny = self.params.shapelib['ny']
+        nz = self.params.shapelib['nz']
+
+        aabb = nsx.AABB()
+        if kabsch:
+            aabb.setLower(-peak_scale*sigma_d, -peak_scale*sigma_d, -peak_scale*sigma_m)
+            aabb.setUpper(peak_scale*sigma_d, peak_scale*sigma_d, peak_scale*sigma_m)
+        else:
+            aabb.setLower(-0.5*nx, -0.5*ny, -0.5*nz)
+            aabb.setUpper(0.5*nx, 0.5*ny, 0.5*nz)
+
+        # shape_library = nsx.ShapeLibrary(not kabsch, peak_scale, bkg_begin, bkg_end))
+        # shape_integrator = nsx.ShapeIntegrator(shape_library, aabb, nx, ny, nz))
+
+        # integrator.setPeakEnd(peak_scale);
+        # integrator.setBkgBegin(bkg_begin);
+        # integrator.setBkgEnd(bkg_end);
+
+        # for data in self.data:
+        #     integrator.integrate(self.filtered_peaks, shape_library, data);
+
+        # shape_library = integrator.library()
+        # shape_library.updateFit(1000);
 
     def print_unit_cells(self):
         self.auto_indexer.printSolutions()

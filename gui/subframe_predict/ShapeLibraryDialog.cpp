@@ -336,7 +336,7 @@ void ShapeLibraryDialog::build()
     _library = *integrator.library();
 
     // gLogger->log("[INFO]Updating peak shape model...");
-    _library.updateFit(1000);
+    _library.updateFit(1000); // This does nothing!! - zamaan
     // gLogger->log("[INFO]Done, mean pearson is " + QString::number(_library.meanPearson()));
 }
 

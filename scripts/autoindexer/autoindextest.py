@@ -54,7 +54,7 @@ class AutoIndexTest:
         self.filenames = filenames
         self.numors = numors
         self.expt.load_raw_data(filenames)
-        self.expt.find_peaks()
+        self.expt.find_peaks([self.expt.data])
         self.n_peaks = self.expt.integrate_peaks()
         self.n_caught = self.expt.filter_peaks()
         self.expt.autoindex()
