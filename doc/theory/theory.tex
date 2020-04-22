@@ -1,5 +1,6 @@
 \documentclass[11pt,a4paper]{article}
 \usepackage{amssymb,amsmath,bm}
+\usepackage{mathtools} % has \coloneqq for :=
 \usepackage{url}
 
 \topmargin -2cm
@@ -24,6 +25,7 @@
 
 \def\ba{\v{a}}
 \def\be{{\v{e}}}
+\def\k{{\v{k}}}
 \def\q{{\v{q}}}
 \def\bu{\v{u}}
 
@@ -246,38 +248,42 @@ For space group determination see e.g. \cite{Eva11,Kab10b}.
 \section{Shape Prediction} \label{peak-prediction}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-We make a simplifying assumption, that for a \emph{perfect plane wave} $k_\si$, the observed scattering function has the form
+We make a simplifying assumption, that for a \emph{perfect plane wave} $\k_\si$, the observed scattering function has the form
 \begin{equation} \sum_{hkl} I_{hkl} f(\q - \q_{hkl}), \end{equation}
 i.e. that the peak shape is independent of its intensity and Miller index, specified by a single function $f(\q)$.
 
-Now suppose that the incoming plane wave actually has momentum $k_\si + \delta k_\si$, with $\delta k_\si$ sampled from a probability distribution $p(\delta k_\si)$. Let $\bu$ be the unit vector pointing from the sample origin to a given detector pixel. Then the outgoing momentum associated with this pixel is
+Now suppose that the incoming plane wave actually has momentum $\k_\si + \delta \k_\si$, with $\delta \k_\si$ sampled from a probability distribution $p(\delta \k_\si)$.
+Let $\bu$ be the unit vector pointing from the sample origin to a given detector pixel.
+As we only consider elastic scattering,
+we can write the wavenumber as $K\coloneqq k_\si = k_\sf$.
+Then the outgoing momentum associated with this pixel is
 \begin{align}
-  |k_\si + \delta k_\si| \bu &= \bu \sqrt{k_\si^2  + 2 k_\si \cdot \delta k_\si + (\delta k_\si)^2 } \\
-  &\approx \bu\sqrt{k_\si^2  + 2 k_\si \cdot \delta k_\si} \\
-  &= \bu|k_\si|\sqrt{1+ 2\frac{k_\si \cdot \delta k_\si}{k_\si^2}} \\
-  &\approx \bu|k_\si| \left(1 +  \frac{k_\si \cdot \delta k_\si}{k_\si^2}\right) \\
-  &= k_\sf + \delta k_\sf,
+  |\k_\si + \delta \k_\si| \bu &= \bu \sqrt{\k_\si^2  + 2 \k_\si \cdot \delta \k_\si + (\delta \k_\si)^2 } \\
+  &\approx \bu\sqrt{\k_\si^2  + 2 \k_\si \cdot \delta \k_\si} \\
+  &= \bu K\sqrt{1+ 2\frac{\k_\si \cdot \delta \k_\si}{\k_\si^2}} \\
+  &\approx \bu K \left(1 +  \frac{\k_\si \cdot \delta \k_\si}{\k_\si^2}\right) \\
+  &= \k_\sf + \delta \k_\sf,
 \end{align}
-where $k_\sf = \bu|k_\si|$ and $\delta k_\sf = \bu(k_\si \cdot \delta k_\si) / |k_\si|$. Therefore, we have
+where $\k_\sf = \bu K$ and $\delta \k_\sf = \bu(\k_\si \cdot \delta \k_\si) / K$. Therefore, we have
 \begin{equation}
   \delta\q
-  = \delta k_\sf - \delta k_\si = \bu(k_\si \cdot \delta k_\si) / |k_\si| - \delta k_\si
-  =: A \delta k_\si,
+  = \delta \k_\sf - \delta \k_\si = \bu(\k_\si \cdot \delta \k_\si) / K - \delta \k_\si
+  =: A \delta \k_\si,
 \end{equation}
-where $A$ is the matrix $A = |k_\si|^{-1} \bu k_\si^t - \v1 = |k_\si|^{-2} k_\sf k_\si^t - \v1$. Note that $A k_\si = \q$ and therefore
-$\q + \delta \q = A(k_\si + \delta k_\si)$.
+where $A$ is the matrix $A = K^{-1} \bu \k_\si^t - \v1 = K^{-2} \k_\sf \k_\si^t - \v1$. Note that $A \k_\si = \q$ and therefore
+$\q + \delta \q = A(\k_\si + \delta \k_\si)$.
 
 Therefore, the observed intensity at detector position $(x,y)$ should be proportional to
 \begin{align}
-  &= \int f(\q - \q_{hkl} + \delta \q) p(\delta k_\si) d(\delta k_\si) \\
-  &= \int f(\q - \q_{hkl} + RA \delta k_\si) p(\delta k_\si) d(\delta k_\si)
+  &= \int f(\q - \q_{hkl} + \delta \q) p(\delta \k_\si) d(\delta \k_\si) \\
+  &= \int f(\q - \q_{hkl} + RA \delta \k_\si) p(\delta \k_\si) d(\delta \k_\si)
 \end{align}
 
 where $R$ is the rotation matrix taking lab coordinates to sample-fixed coordinates.
-\textbf{Assuming that $A$ is invertible (why? $\det A = -\frac{1}{2}\q^2$)}, we have $\delta k_\si = A^{-1} \delta \q$ and $d(\delta k_\si) = |\det A|^{-1} d(\delta \q)$. Let $\Sigma_M$ denote the variance-covariance matrix of the profile shape $f$ and let $\Sigma_D$ denote the variance-covariance matrix of the beam divergence $\delta k_\si$. Then from the above formula we see that the \emph{observed} profile shape will have (in sample-fixed q-space) a variance-covariance matrix given by
+\textbf{Assuming that $A$ is invertible (why? $\det A = -\frac{1}{2}\q^2$)}, we have $\delta \k_\si = A^{-1} \delta \q$ and $d(\delta \k_\si) = |\det A|^{-1} d(\delta \q)$. Let $\Sigma_M$ denote the variance-covariance matrix of the profile shape $f$ and let $\Sigma_D$ denote the variance-covariance matrix of the beam divergence $\delta \k_\si$. Then from the above formula we see that the \emph{observed} profile shape will have (in sample-fixed q-space) a variance-covariance matrix given by
 \begin{equation} \Sigma_M + R A \Sigma_D A^t R^t, \end{equation}
-where $R$ is the rotation matrix from lab space to sample space and $A = |k_\si|^{-2} k_\sf k_\si^t - \v1$.
-Note that the matrix $A$ depends only on $k_\sf$, i.e. on the detector pixel location, and the matrix $R$ depends on the sample orientation, i.e. the frame number.
+where $R$ is the rotation matrix from lab space to sample space and $A = K^{-2} \k_\sf \k_\si^t - \v1$.
+Note that the matrix $A$ depends only on $\k_\sf$, i.e. on the detector pixel location, and the matrix $R$ depends on the sample orientation, i.e. the frame number.
 
 
 
@@ -313,9 +319,9 @@ Now, if we work in lab-based q-space, under the simplifying assumptions above, w
 
 Now let
 \begin{align}
-  \be_1 &= (k_\sf \times k_\si) / |k_\sf \times k_\si| \\
-  \be_2 &= (k_\sf \times e_1) / |k_\sf \times e_1| \\
-  \be_3 &= (k_\sf + k_\si) / |k_\sf + k_\si|
+  \be_1 &= (\k_\sf \times \k_\si) / |\k_\sf \times \k_\si| \\
+  \be_2 &= (\k_\sf \times e_1) / |\k_\sf \times e_1| \\
+  \be_3 &= (\k_\sf + \k_\si) / |\k_\sf + \k_\si|
 \end{align}
 
 
@@ -325,25 +331,25 @@ In \cite{Kab88} Kabsch introduced a per-peak coordinate system intented to undo 
 See also \cite{Kab10b} for an updated description of the coordinates and integration technique.
 The basis introduced by Kabsch is the following:
 \begin{align}
-  \be_1 &= (\q \times k_\si) / |\q \times k_\si| \\
+  \be_1 &= (\q \times \k_\si) / |\q \times \k_\si| \\
   \be_2 &= (\q \times \be_1) / |\q \times \be_1| \\
-  \be_3 &= (k_\sf + k_\si) / |k_\sf + k_\si|
+  \be_3 &= (\k_\sf + \k_\si) / |\k_\sf + \k_\si|
 \end{align}
 with corresponding coordinates
 \begin{align}
-  \epsilon_1 &= \be_1 \cdot (k_\sf'-k_\sf) / |k_\sf| \\
-  \epsilon_2 &= \be_2 \cdot (k_\sf'-k_\sf) / |k_\sf| \\
+  \epsilon_1 &= \be_1 \cdot (\k_\sf'-\k_\sf) / |\k_\sf| \\
+  \epsilon_2 &= \be_2 \cdot (\k_\sf'-\k_\sf) / |\k_\sf| \\
   \epsilon_3 &= \be_3 \cdot (R_{\phi'-\phi}\q-\q) / |\q|
 \end{align}
 
 The coordinates $\epsilon_1, \epsilon_2$ correspond to the angular distribution (in radians) of the peak, as if it were measured on the Ewald sphere. Hence this corresponds to beam divergence and we may model the intensity distribution as $\exp(-(\epsilon_1^2 + \epsilon_2^2)/2 \sigma_D^2)$.
 
-To understand the last coordinate, consider the following. Take a peak with center $\q$ and consider a nearby point $\q'$. We project $\q'$ back to the Ewald sphere by rotating along the axis $\be_1$ (which is the normal of the plane containing $k_\sf$ and $k_\si$). The velocity of $q$ when it crosses the Ewald sphere by rotating along this axis is $\be_1 \times \q$. It is easy to verify that
+To understand the last coordinate, consider the following. Take a peak with center $\q$ and consider a nearby point $\q'$. We project $\q'$ back to the Ewald sphere by rotating along the axis $\be_1$ (which is the normal of the plane containing $\k_\sf$ and $\k_\si$). The velocity of $q$ when it crosses the Ewald sphere by rotating along this axis is $\be_1 \times \q$. It is easy to verify that
 \begin{equation} \be_1 \times \q = |q| \be_3 \end{equation}
 and therefore the coordinate $\epsilon_3$ may be interpreted as (approximately) and angular distance from the Ewald sphere.
 
-To better understand $\be_3$, consider the following: we want to find the axis $\ba$ such that $\q$ passes through the Ewald sphere as fast as possible. Hence, we want to maximize $(\ba \times \q) \cdot k_\sf$ subject to the constraint $\ba \cdot \ba = 1$.
-Now $(\ba \times \q) \cdots k_\sf) = \ba \cdot (\ba \times k_\sf) = \ba \cdot (k_\sf \times k_\si)$, so by the method of Langrange multipliers we must solve $k_\sf \times k_\si = \lambda \ba$, which tells us immediately that the axis is in the direction of $\be_1$.
+To better understand $\be_3$, consider the following: we want to find the axis $\ba$ such that $\q$ passes through the Ewald sphere as fast as possible. Hence, we want to maximize $(\ba \times \q) \cdot \k_\sf$ subject to the constraint $\ba \cdot \ba = 1$.
+Now $(\ba \times \q) \cdots \k_\sf) = \ba \cdot (\ba \times \k_\sf) = \ba \cdot (\k_\sf \times \k_\si)$, so by the method of Langrange multipliers we must solve $\k_\sf \times \k_\si = \lambda \ba$, which tells us immediately that the axis is in the direction of $\be_1$.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -571,7 +577,7 @@ Motivated by the Monte-Carlo technique of EVAL-14 and EVAL-15, we consider a pro
 approach to estimate the covariance matrix of the intensity distribution for a given peak.
 
 For a given detector event recorded at $(x,y,\theta)$, we have a corresponding reciprocal vector
-\begin{equation} q(x, y, \theta) = R_\theta (k_\sf(x, y) - k_\si). \end{equation}
+\begin{equation} q(x, y, \theta) = R_\theta (\k_\sf(x, y) - \k_\si). \end{equation}
 Note that by mapping to sample-fixed momentum space, we automatically undo distortion effects
 due to detector geometry. Expressed in these coordinates, the distribution of $q$ values is a
 function of beam divergence (and wavelength uncertainty), mosaicity, and the shape of the crystal.
