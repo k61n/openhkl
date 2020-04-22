@@ -29,7 +29,7 @@
 \def\q{{\v{q}}}
 \def\bu{\v{u}}
 
-\def\tr{\mathrm{tr}}
+\def\trace{\mathrm{tr}}
 
 \def\Ifit{{I_{\mathrm{fit}}}}
 \def\Isum{{I_{\mathrm{sum}}}}
@@ -258,48 +258,61 @@ As we only consider elastic scattering,
 we can write the wavenumber as $K\coloneqq k_\si = k_\sf$.
 Then the outgoing momentum associated with this pixel is
 \begin{align}
-  |\k_\si + \delta \k_\si| \bu &= \bu \sqrt{\k_\si^2  + 2 \k_\si \cdot \delta \k_\si + (\delta \k_\si)^2 } \\
-  &\approx \bu\sqrt{\k_\si^2  + 2 \k_\si \cdot \delta \k_\si} \\
-  &= \bu K\sqrt{1+ 2\frac{\k_\si \cdot \delta \k_\si}{\k_\si^2}} \\
-  &\approx \bu K \left(1 +  \frac{\k_\si \cdot \delta \k_\si}{\k_\si^2}\right) \\
+  |\k_\si + \delta \k_\si| \bu &= \bu \sqrt{K^2  + 2 \k_\si \cdot \delta \k_\si + (\delta \k_\si)^2 } \\
+  &\doteq \bu\sqrt{K^2  + 2 \k_\si \cdot \delta \k_\si} \\
+  &= \bu K\sqrt{1+ 2\frac{\k_\si \cdot \delta \k_\si}{K^2}} \\
+  &\doteq \bu K \left(1 +  \frac{\k_\si \cdot \delta \k_\si}{K^2}\right) \\
   &= \k_\sf + \delta \k_\sf,
 \end{align}
 where $\k_\sf = \bu K$ and $\delta \k_\sf = \bu(\k_\si \cdot \delta \k_\si) / K$. Therefore, we have
 \begin{equation}
   \delta\q
   = \delta \k_\sf - \delta \k_\si = \bu(\k_\si \cdot \delta \k_\si) / K - \delta \k_\si
-  =: A \delta \k_\si,
+  = \v{A} \delta \k_\si,
 \end{equation}
-where $A$ is the matrix $A = K^{-1} \bu \k_\si^t - \v1 = K^{-2} \k_\sf \k_\si^t - \v1$. Note that $A \k_\si = \q$ and therefore
-$\q + \delta \q = A(\k_\si + \delta \k_\si)$.
+where $\v{A}$ is the matrix
+\begin{equation}
+\v{A} \coloneqq K^{-1} \bu \k_\si^t - \v1 = K^{-2} \k_\sf \k_\si^t - \v1.
+\end{equation}
+Note that $\v{A} \k_\si = \q$ and therefore
+$\q + \delta \q = \v{A}(\k_\si + \delta \k_\si)$.
 
 Therefore, the observed intensity at detector position $(x,y)$ should be proportional to
 \begin{align}
   &= \int f(\q - \q_{hkl} + \delta \q) p(\delta \k_\si) d(\delta \k_\si) \\
-  &= \int f(\q - \q_{hkl} + RA \delta \k_\si) p(\delta \k_\si) d(\delta \k_\si)
+  &= \int f(\q - \q_{hkl} + \v{R}\v{A} \delta \k_\si) p(\delta \k_\si) d(\delta \k_\si)
 \end{align}
 
-where $R$ is the rotation matrix taking lab coordinates to sample-fixed coordinates.
-\textbf{Assuming that $A$ is invertible (why? $\det A = -\frac{1}{2}\q^2$)}, we have $\delta \k_\si = A^{-1} \delta \q$ and $d(\delta \k_\si) = |\det A|^{-1} d(\delta \q)$. Let $\Sigma_M$ denote the variance-covariance matrix of the profile shape $f$ and let $\Sigma_D$ denote the variance-covariance matrix of the beam divergence $\delta \k_\si$. Then from the above formula we see that the \emph{observed} profile shape will have (in sample-fixed q-space) a variance-covariance matrix given by
-\begin{equation} \Sigma_M + R A \Sigma_D A^t R^t, \end{equation}
-where $R$ is the rotation matrix from lab space to sample space and $A = K^{-2} \k_\sf \k_\si^t - \v1$.
-Note that the matrix $A$ depends only on $\k_\sf$, i.e. on the detector pixel location, and the matrix $R$ depends on the sample orientation, i.e. the frame number.
+where $\v{R}$ is the rotation matrix taking lab coordinates to sample-fixed coordinates.
+\textbf{Assuming that $\v{A}$ is invertible (why? $\det \v{A} = -\frac{1}{2}\q^2$)},
+we have $\delta \k_\si = A^{-1} \delta \q$ and $d(\delta \k_\si) = |\det \v{A}|^{-1} d(\delta \q)$.
+Let $\v\Sigma_M$ denote the variance-covariance matrix of the profile shape $f$
+and let $\v\Sigma_D$ denote the variance-covariance matrix of the beam divergence $\delta \k_\si$.
+Then from the above formula we see that the \emph{observed} profile shape will have
+(in sample-fixed q-space) a variance-covariance matrix given by
+\begin{equation}
+  \v\Sigma_M + \v{R} \v{A} \v\Sigma_D \v{A}^t \v{R}^t,
+\end{equation}
+where $R$ is the rotation matrix from lab space to sample space
+and $\v{A} = K^{-2} \k_\sf \k_\si^t - \v1$.
+Note that the matrix $\v{A}$ depends only on $\k_\sf$, i.e. on the detector pixel location,
+and the matrix $\v{R}$ depends on the sample orientation, i.e. the frame number.
 
-
-
-
-Now make a simplifying assumption, $\Sigma_M = \sigma_M^2 \v1$ and $\Sigma_D = \sigma_D^2 \v1$. For a set of observations $(\Sigma_i, R_i, A_i)$, we form the loss function
+Now make a simplifying assumption,
+$\v\Sigma_M = \sigma_M^2 \v1$ and $\v\Sigma_D = \sigma_D^2 \v1$.
+Consider $N$ observed blobs parameterized by $(\v\Sigma_b, \v{R}_b, \v{A}_b)$.
+Form the penalty function
 \begin{equation}
   L(\sigma_M^2, \sigma_D^2)
-  = \sum_i |\sigma_M^2 + \sigma_D^2 (R_i A_i)(R_iA_i)^t - \Sigma_i|^2
+  = \sum_{b=1}^N
+    \left|\sigma_M^2 + \sigma_D^2 (\v{R}_b \v{A}_b)(\v{R}_b\v{A}_b)^t - \v\Sigma_b\right|^2
 \end{equation}
 
-Setting $\nabla L = 0$ we obtain the 2x2 system of linear equations...
-
+Set $\v\nabla L = 0$ to obtain the 2x2 system of linear equations
 \begin{equation}
   \begin{bmatrix}
-    3N & \sum_i \tr( (R_iA_i)(R_i A_i)^t) \\
-    \sum_i \tr((R_iA_i)^t(R_i A_i)) & \sum_i \tr(((R_i A_i)^t(R_iA_i))^2)
+    3N & \sum_b \trace( (\v{R}_b\v{A}_b)(\v{R}_b \v{A}_b)^t) \\
+    \sum_b \trace((\v{R}_b\v{A}_b)^t(\v{R}_b \v{A}_b)) & \sum_b \trace(((\v{R}_b \v{A}_b)^t(\v{R}_b\v{A}_b))^2)
   \end{bmatrix}
   \begin{bmatrix}
     \sigma_M^2 \\
@@ -307,22 +320,20 @@ Setting $\nabla L = 0$ we obtain the 2x2 system of linear equations...
   \end{bmatrix}
   =
   \begin{bmatrix}
-    \sum_i \tr(\Sigma_i) \\
-    \sum_i \tr((R_i A_i)^t \Sigma_i (R_i A_i))
-  \end{bmatrix}
+    \sum_b \trace(\v\Sigma_b) \\
+    \sum_b \trace((\v{R}_b \v{A}_b)^t \v\Sigma_b (\v{R}_b \v{A}_b))
+  \end{bmatrix},
 \end{equation}
+which is easily solved.
+One can also solve for the the full covariance matrices $\v\Sigma_M, \v\Sigma_D$
+via gradient descent, since the gradient is easily computed analytically..
+\textbf{Note: tested this out in Python, and it seems to work pretty well.
+So the assumptions may be justified!}
 
-which is easily solved. One can also solve for the the full covariance matrices $\Sigma_M, \Sigma_D$ via gradient descent, since the gradient is easily computed analytically.. \textbf{Note: tested this out in Python, and it seems to work pretty well. So the assumptions may be justified!}
-
-Now, if we work in lab-based q-space, under the simplifying assumptions above, we find a covariance matrix
-\begin{equation} \Sigma = \sigma_M^2 \v1 + \sigma_D^2 A_i A_i^t \end{equation}
-
-Now let
-\begin{align}
-  \be_1 &= (\k_\sf \times \k_\si) / |\k_\sf \times \k_\si| \\
-  \be_2 &= (\k_\sf \times e_1) / |\k_\sf \times e_1| \\
-  \be_3 &= (\k_\sf + \k_\si) / |\k_\sf + \k_\si|
-\end{align}
+Now, if we work in lab-based q-space, under the simplifying assumptions above,
+we find a covariance matrix
+\textbf{TODO: this is notationally wrong and totally obscure}
+\begin{equation} \v\Sigma = \sigma_M^2 \v1 + \sigma_D^2 \v{A}_b \v{A}_b^t \end{equation}
 
 
 \subsection{Kabsch's Coordinate System}
@@ -339,7 +350,7 @@ with corresponding coordinates
 \begin{align}
   \epsilon_1 &= \be_1 \cdot (\k_\sf'-\k_\sf) / |\k_\sf| \\
   \epsilon_2 &= \be_2 \cdot (\k_\sf'-\k_\sf) / |\k_\sf| \\
-  \epsilon_3 &= \be_3 \cdot (R_{\phi'-\phi}\q-\q) / |\q|
+  \epsilon_3 &= \be_3 \cdot (\v{R}_{\phi'-\phi}\q-\q) / |\q|
 \end{align}
 
 The coordinates $\epsilon_1, \epsilon_2$ correspond to the angular distribution (in radians) of the peak, as if it were measured on the Ewald sphere. Hence this corresponds to beam divergence and we may model the intensity distribution as $\exp(-(\epsilon_1^2 + \epsilon_2^2)/2 \sigma_D^2)$.
@@ -358,11 +369,11 @@ Now $(\ba \times \q) \cdots \k_\sf) = \ba \cdot (\ba \times \k_\sf) = \ba \cdot 
 
 \subsection{Pixel sum method}
 
-Consider a peak centered at $q_0$ in (sampled-fixed) reciprocal space. The background-subtracted intensity distribution in a neighborhood of $q_0$ has a covariance matrix $\Sigma$, which is either computed (for strong peaks) or predicted (for weak peaks). The integration routine takes three parameters $r_1, r_2, r_2$ and produces
+Consider a peak centered at $q_0$ in (sampled-fixed) reciprocal space. The background-subtracted intensity distribution in a neighborhood of $q_0$ has a covariance matrix $\v\Sigma$, which is either computed (for strong peaks) or predicted (for weak peaks). The integration routine takes three parameters $r_1, r_2, r_2$ and produces
 two sets $\calB$ and $\calP$ of background and peak events, respectively, as follows:
 \begin{align}
-  \calP &= \{ i \ | \ (q_i-q_0)^t \Sigma^{-1} (q_i-q_0) < r_1^2 \} \\
-  \calB &= \{ i \ | \ r_2^2 < (q_i-q_0)^t \Sigma^{-1} (q_i-q_0) < r_3^2 \}
+  \calP &= \{ i \ | \ (q_i-q_0)^t \v\Sigma^{-1} (q_i-q_0) < r_1^2 \} \\
+  \calB &= \{ i \ | \ r_2^2 < (q_i-q_0)^t \v\Sigma^{-1} (q_i-q_0) < r_3^2 \}
 \end{align}
 The local background is estimated as
 \begin{align}
@@ -469,9 +480,9 @@ Now, compute the most probable parameter values from
 This is the integration technique used by RETREAT \cite{StMc13}. The method is described in detail in \cite{WiKS88}.
 In the article \cite{PrWM97} there is a detailed comparison between this method and profile fitting.
 
-For a given peak with mean background $\mu_b$, center $x_0$, and covariance matrix $\Sigma$, define
+For a given peak with mean background $\mu_b$, center $x_0$, and covariance matrix $\v\Sigma$, define
 \begin{align}
-  X_s &= \{ x \ | \ (x-x_0)^t\Sigma^{-1}(x-x_0) \leq s^2\} \\
+  X_s &= \{ x \ | \ (x-x_0)^t\v\Sigma^{-1}(x-x_0) \leq s^2\} \\
   I_s &= \sum_{X_\sigma} I_x
 \end{align}
 Then the error of $I_\sigma$ can be estimated (assuming Poisson statistics) as
@@ -563,8 +574,8 @@ subject to $a + b = 1$. We wish to minimize $\sigma^2_\Iwt$, which is equal to
 \end{equation}
 This is easily minimized using the method of Lagrange multipliers.
 The solution is $(a,b) = x/(x_1+x_2)$,
-where $x = \Sigma^{-1} \begin{bmatrix} 1 \\ 1 \end{bmatrix}$
-and $\Sigma$ is the variance-covariance matrix of $\Ifit$ and $\Isum$.
+where $x = \v\Sigma^{-1} \begin{bmatrix} 1 \\ 1 \end{bmatrix}$
+and $\v\Sigma$ is the variance-covariance matrix of $\Ifit$ and $\Isum$.
 
 Now, from the previous subsections, both $\Ifit$ and $\Isum$ have an explicit, linear dependence on the measured intensities $M_i$.
 Assuming that $M_i$ and $M_j$ are independent for $i \neq j$, and that $\calP$ and $\calB$
@@ -584,26 +595,26 @@ function of beam divergence (and wavelength uncertainty), mosaicity, and the sha
 Since the recorded peak is essentially a convolution of these effects, we can express the covariance
 matrix of the intensity distribution in sample-fixed momentum space as
 \begin{equation}
-  \Sigma = P \Sigma_M P^t + |k|^2 J_k \Sigma_D J_k^t + J_p \Sigma_S J_p^t
+  \v\Sigma = \v{P} \v\Sigma_M \v{P}^t + |k|^2 \v{J}_k \v\Sigma_D \v{J}_k^t + \v{J}_p \v\Sigma_S \v{J}_p^t
 \end{equation}
 where
 \begin{itemize}
-  \item $P$ is the projection matrix $|q|^2 1_{3\times 3}-qq^t$
-  \item $J_k = \partial q / \partial k$ is the derivative of $q$ with respect to incoming momentum $k$
-  \item $J_p = \partial q / \partial p$ is the derivative of $q$ with respect to sample position $p$
-  \item $\Sigma_M$ is a 3x3 covariance matrix representing the mosaicity of the crystal
-  \item $\Sigma_D$ is a 3x3 covariance matrix representing beam divergence and wavelength distribution
-  \item $\Sigma_S$ is a 3x3 covariance matrix representing the shape of the crystal in the beam
+  \item $\v{P}$ is the projection matrix $|q|^2 1_{3\times 3}-qq^t$
+  \item $\v{J}_k = \partial q / \partial k$ is the derivative of $q$ with respect to incoming momentum $k$
+  \item $\v{J}_p = \partial q / \partial p$ is the derivative of $q$ with respect to sample position $p$
+  \item $\v\Sigma_M$ is a 3x3 covariance matrix representing the mosaicity of the crystal
+  \item $\v\Sigma_D$ is a 3x3 covariance matrix representing beam divergence and wavelength distribution
+  \item $\v\Sigma_S$ is a 3x3 covariance matrix representing the shape of the crystal in the beam
 \end{itemize}
 
 Remarks
 \begin{itemize}
   \item This model assumes that there is no covariance between beam divergence, scattering point, and
     mosaicity. This seems reasonable for typical experiments but could be violated by some extreme cases.
-  \item $P_q, J_k, J_p$ are all determined by experiment setup and geometry; can be computed analytically.
-  \item For isotropic mosaicity, can take $\Sigma_M = \sigma_M^2 1_{3\times 3}$
-  \item Similarly, can set off-diagonal components of $\Sigma_D$ to zero if it is known there is no correlation.
-  \item $\Sigma_S$ represents the shape \emph{in the beam for a fixed orientation of the sample}, and therefore
+  \item $\v{P}_q, \v{J}_k, \v{J}_p$ are all determined by experiment setup and geometry; can be computed analytically.
+  \item For isotropic mosaicity, can take $\v\Sigma_M = \sigma_M^2 1_{3\times 3}$
+  \item Similarly, can set off-diagonal components of $\v\Sigma_D$ to zero if it is known there is no correlation.
+  \item $\v\Sigma_S$ represents the shape \emph{in the beam for a fixed orientation of the sample}, and therefore
     will typically need to be updated every few frames (unless e.g. the crystal is small and approximately spherical).
 
   \item Without imposing any constraints, the model has 3x6=18 free parameters, and each strong peak covariance matrix gives
@@ -619,7 +630,7 @@ Remarks
 \section{Measures of Data Quality} \label{merged-statistics}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\subsection{$R$ factors}
+\subsection{\boldmath$R$ factors}
 
 For the definition of $R_{merge}$ see \cite{KaDi12}. For $R$ factors in general there is the paper \cite{Eva11}.
 
@@ -661,7 +672,7 @@ Thus we have
 This expression will be useful in the following subsection.
 
 
-\subsection{$\CCtrue$}
+\subsection{\boldmath$\CCtrue$}
 Let $x, y, \xi, \eta, J$ be as in the previous subsection. Define
 \begin{equation} I = \frac{x+y}{2} \end{equation}
 denote the merged intensities of the entire dataset.
