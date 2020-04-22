@@ -356,7 +356,7 @@ with corresponding coordinates
 The coordinates $\epsilon_1, \epsilon_2$ correspond to the angular distribution (in radians) of the peak, as if it were measured on the Ewald sphere. Hence this corresponds to beam divergence and we may model the intensity distribution as $\exp(-(\epsilon_1^2 + \epsilon_2^2)/2 \sigma_D^2)$.
 
 To understand the last coordinate, consider the following. Take a peak with center $\q$ and consider a nearby point $\q'$. We project $\q'$ back to the Ewald sphere by rotating along the axis $\be_1$ (which is the normal of the plane containing $\k_\sf$ and $\k_\si$). The velocity of $q$ when it crosses the Ewald sphere by rotating along this axis is $\be_1 \times \q$. It is easy to verify that
-\begin{equation} \be_1 \times \q = |q| \be_3 \end{equation}
+\begin{equation} \be_1 \times \q = q \be_3 \end{equation}
 and therefore the coordinate $\epsilon_3$ may be interpreted as (approximately) and angular distance from the Ewald sphere.
 
 To better understand $\be_3$, consider the following: we want to find the axis $\ba$ such that $\q$ passes through the Ewald sphere as fast as possible. Hence, we want to maximize $(\ba \times \q) \cdot \k_\sf$ subject to the constraint $\ba \cdot \ba = 1$.
@@ -369,22 +369,26 @@ Now $(\ba \times \q) \cdots \k_\sf) = \ba \cdot (\ba \times \k_\sf) = \ba \cdot 
 
 \subsection{Pixel sum method}
 
-Consider a peak centered at $q_0$ in (sampled-fixed) reciprocal space. The background-subtracted intensity distribution in a neighborhood of $q_0$ has a covariance matrix $\v\Sigma$, which is either computed (for strong peaks) or predicted (for weak peaks). The integration routine takes three parameters $r_1, r_2, r_2$ and produces
-two sets $\calB$ and $\calP$ of background and peak events, respectively, as follows:
+Consider a peak centered at $\v{Q}$ in (sampled-fixed) reciprocal space. The background-subtracted intensity distribution in a neighborhood of $\v{Q}$ has a covariance matrix $\v\Sigma$, which is either computed (for strong peaks) or predicted (for weak peaks). The integration routine takes three parameters $r_1, r_2, r_2$ and produces
+two sets $\calB$ and $\calP$ of background and peak pixels, respectively, as follows:
 \begin{align}
-  \calP &= \{ i \ | \ (q_i-q_0)^t \v\Sigma^{-1} (q_i-q_0) < r_1^2 \} \\
-  \calB &= \{ i \ | \ r_2^2 < (q_i-q_0)^t \v\Sigma^{-1} (q_i-q_0) < r_3^2 \}
+  \calP &= \{ p ~|~ (\q_p-\v{Q})^t \v\Sigma^{-1} (\q_p-\v{Q}) < r_1^2 \} \\
+  \calB &= \{ p ~|~ r_2^2 < (\q_p-\v{Q})^t \v\Sigma^{-1} (\q_p-\v{Q}) < r_3^2 \}
 \end{align}
 The local background is estimated as
 \begin{align}
-  \mu_B &= \frac{1}{|\calB|} \sum_{i \in \calB} M_i \\
-  \sigma^2_B &= \frac{1}{|\calB|-1} \sum_{i \in \calB} (M_i - \mu_B)^2
+  \mu_B &= \frac{1}{|\calB|} \sum_{p \in \calB} M_p \\
+  \sigma^2_B &= \frac{1}{|\calB|-1} \sum_{p \in \calB} (M_p - \mu_B)^2
 \end{align}
-Note that in the case of Poisson statistics, we should have $\mu_B \approx \sigma^2_B$. By recording the pairs $(\mu_B, \sigma^2_B)$ from strong peaks, we can estimate the deviation from Poisson statistics and use this to improve error estimates (more later).
+\textbf{TODO: In the case of Poisson statistics, we should have $\mu_B \approx \sigma^2_B$.
+How to reconcile this with the above estimate that seems to be inspired by Gaussian statistics?}
+By recording the pairs $(\mu_B, \sigma^2_B)$ from strong peaks,
+we can estimate the deviation from Poisson statistics
+and use this to improve error estimates (more later).
 
 The integrated peak intensity is then estimated as
 \begin{align}
-  I &= \sum_{i \in \calP} (M_i - \mu_B) \\
+  I &= \sum_{p \in \calP} (M_p - \mu_B) \\
   \sigma^2_I &= I + \frac{|\calP|^2}{|\calB|} \overline{B}
 \end{align}
 
@@ -402,18 +406,18 @@ As in the previous subsection, using a covariance matrix and a parameters $r_1 <
 Assume that we know the resolution function $R_i$,
 normalized as
 \begin{equation}\label{Eresnor}
-  \sum_i R_i = 1.
+  \sum_p R_p = 1.
 \end{equation}
 
-We model the observed intensities $M_i$ as
-\begin{equation} M_i \simeq B + I R_i, \end{equation}
+We model the observed intensities $M_p$ as
+\begin{equation} M_p \simeq B + I R_p, \end{equation}
 where $B, I$ are the mean background and integrated intensity, yet to be fit. To find optimal values of $B,I$ we minimize the chi-squared loss
-\begin{equation} \chi^2 = \sum_{i \in \calP} \frac{(B+IR_i - M_i)^2}{\sigma^2_i}. \end{equation}
+\begin{equation} \chi^2 = \sum_{p \in \calP} \frac{(B+IR_p - M_p)^2}{\sigma^2_p}. \end{equation}
 For a fixed set of variances, minimizing $\chi^2$ reduces to the 2x2 linear system below:
 \begin{equation}
   \begin{bmatrix}
-    \sum 1/\sigma^2_i & \sum R_i / \sigma^2_i \\
-    \sum R_i/\sigma_i^2 & \sum R_i^2 / \sigma^2_i
+    \sum 1/\sigma^2_p & \sum R_p / \sigma^2_p \\
+    \sum R_p/\sigma_p^2 & \sum R_p^2 / \sigma^2_p
   \end{bmatrix}
   \begin{bmatrix}
     B \\
@@ -421,15 +425,15 @@ For a fixed set of variances, minimizing $\chi^2$ reduces to the 2x2 linear syst
   \end{bmatrix}
   =
   \begin{bmatrix}
-    \sum M_i/\sigma^2_i \\
-    \sum M_i R_i / \sigma^2_i
+    \sum M_p/\sigma^2_p \\
+    \sum M_p R_p / \sigma^2_p
   \end{bmatrix}
 \end{equation}
 Write this equation as $Ax = b$. It is easy to compute that the covariance matrix of $b$ is exactly the coefficient matrix
  $A$, and therefore the variance-covariance matrix of the solution vector $x = (B, I)$ is given by $A^{-1}$.
 
-The solution given above depends on the pixel uncertainties $\sigma_i^2$. As suggested by Kabsch 2010, we solve this iteratively. To begin, we set all $\sigma^2_i$ equal to some fixed value, say 1. This allows us to solve for $B$ and $I$. We then put the solved values into the error model
-\begin{equation} \sigma_i^2 = B + I R_i \end{equation}
+The solution given above depends on the pixel uncertainties $\sigma_p^2$. As suggested by Kabsch 2010, we solve this iteratively. To begin, we set all $\sigma^2_p$ equal to some fixed value, say 1. This allows us to solve for $B$ and $I$. We then put the solved values into the error model
+\begin{equation} \sigma_p^2 = B + I R_p \end{equation}
 and iterate until either $I$ becomes negative, or $(B, I)$ do not change within some given convergence criterion.
 
 \textbf{Bayesian approach} [JWu apr19]:
@@ -439,7 +443,7 @@ Determine expectation values or most probable values of $B,I$ from the condition
 \end{equation}
 Count statistics of the single pixels are independent of each other, hence
 \begin{equation}\label{Ec2p}
-  p(M|B,I) = \prod_i\, c(M_i|B,I;R_i)
+  p(M|B,I) = \prod_p\, c(M_p|B,I;R_p)
 \end{equation}
 with the single-pixel count probability distribution given by Poisson statistics,
 \begin{equation}
@@ -449,13 +453,13 @@ with $\lambda=B+Ir$.
 
 Rewrite (\ref{Ebayes}) as
 \begin{equation}
-  \ln p(B,I|M) = \sum_i\Big\{M_i\ln(B+IR_i)-(B+IR_i)\Big\} +\ln p(B) + \ln p(I) + \mathrm{const}.
+  \ln p(B,I|M) = \sum_p\Big\{M_p\ln(B+IR_p)-(B+IR_p)\Big\} +\ln p(B) + \ln p(I) + \mathrm{const}.
 \end{equation}
 Let $N$ pixels contribute to the sum.
 Use the normalization~(\ref{Eresnor}).
 Then
 \begin{equation}
-  \ln p(B,I|M) = \sum_i\Big\{M_i\ln(B+IR_i)\Big\}-(NB+I) +\ln p(B) + \ln p(I) + \mathrm{const}.
+  \ln p(B,I|M) = \sum_p\Big\{M_p\ln(B+IR_p)\Big\}-(NB+I) +\ln p(B) + \ln p(I) + \mathrm{const}.
 \end{equation}
 We now must specify the a priori distributions of $B$ and $I$.
 This cannot be done without some arbitrariness.
@@ -475,7 +479,7 @@ Now, compute the most probable parameter values from
 \end{equation}
 
 
-\subsection{$I/\sigma$ Integration}
+\subsection{\boldmath$I/\sigma$ Integration}
 
 This is the integration technique used by RETREAT \cite{StMc13}. The method is described in detail in \cite{WiKS88}.
 In the article \cite{PrWM97} there is a detailed comparison between this method and profile fitting.
@@ -588,7 +592,7 @@ Motivated by the Monte-Carlo technique of EVAL-14 and EVAL-15, we consider a pro
 approach to estimate the covariance matrix of the intensity distribution for a given peak.
 
 For a given detector event recorded at $(x,y,\theta)$, we have a corresponding reciprocal vector
-\begin{equation} q(x, y, \theta) = R_\theta (\k_\sf(x, y) - \k_\si). \end{equation}
+\begin{equation} \q(x, y, \theta) = \v{R}_\theta (\k_\sf(x, y) - \k_\si). \end{equation}
 Note that by mapping to sample-fixed momentum space, we automatically undo distortion effects
 due to detector geometry. Expressed in these coordinates, the distribution of $q$ values is a
 function of beam divergence (and wavelength uncertainty), mosaicity, and the shape of the crystal.
@@ -599,7 +603,7 @@ matrix of the intensity distribution in sample-fixed momentum space as
 \end{equation}
 where
 \begin{itemize}
-  \item $\v{P}$ is the projection matrix $|q|^2 1_{3\times 3}-qq^t$
+  \item $\v{P}$ is the projection matrix $q^2 1_{3\times 3}-qq^t$
   \item $\v{J}_k = \partial q / \partial k$ is the derivative of $q$ with respect to incoming momentum $k$
   \item $\v{J}_p = \partial q / \partial p$ is the derivative of $q$ with respect to sample position $p$
   \item $\v\Sigma_M$ is a 3x3 covariance matrix representing the mosaicity of the crystal
