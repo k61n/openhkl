@@ -261,7 +261,7 @@ where $k_f = \bu|k_i|$ and $\delta k_f = \bu(k_i \cdot \delta k_i) / |k_i|$. The
   = \delta k_f - \delta k_i = \bu(k_i \cdot \delta k_i) / |k_i| - \delta k_i
   =: A \delta k_i,
 \end{equation}
-where $A$ is the matrix $A = |k_i|^{-1} \bu k_i^t - Id = |k_i|^{-2} k_f k_i^t - Id$. Note that $A k_i = \q$ and therefore
+where $A$ is the matrix $A = |k_i|^{-1} \bu k_i^t - \v1 = |k_i|^{-2} k_f k_i^t - \v1$. Note that $A k_i = \q$ and therefore
 $\q + \delta \q = A(k_i + \delta k_i)$.
 
 Therefore, the observed intensity at detector position $(x,y)$ should be proportional to
@@ -273,13 +273,13 @@ Therefore, the observed intensity at detector position $(x,y)$ should be proport
 where $R$ is the rotation matrix taking lab coordinates to sample-fixed coordinates.
 \textbf{Assuming that $A$ is invertible (why? $\det A = -\frac{1}{2}\q^2$)}, we have $\delta k_i = A^{-1} \delta \q$ and $d(\delta k_i) = |\det A|^{-1} d(\delta \q)$. Let $\Sigma_M$ denote the variance-covariance matrix of the profile shape $f$ and let $\Sigma_D$ denote the variance-covariance matrix of the beam divergence $\delta k_i$. Then from the above formula we see that the \emph{observed} profile shape will have (in sample-fixed q-space) a variance-covariance matrix given by
 \begin{equation} \Sigma_M + R A \Sigma_D A^t R^t, \end{equation}
-where $R$ is the rotation matrix from lab space to sample space and $A = |k_i|^{-2} k_f k_i^t - Id$.
+where $R$ is the rotation matrix from lab space to sample space and $A = |k_i|^{-2} k_f k_i^t - \v1$.
 Note that the matrix $A$ depends only on $k_f$, i.e. on the detector pixel location, and the matrix $R$ depends on the sample orientation, i.e. the frame number.
 
 
 
 
-Now make a simplifying assumption, $\Sigma_M = \sigma_M^2 Id$ and $\Sigma_D = \sigma_D^2 Id$. For a set of observations $(\Sigma_i, R_i, A_i)$, we form the loss function
+Now make a simplifying assumption, $\Sigma_M = \sigma_M^2 \v1$ and $\Sigma_D = \sigma_D^2 \v1$. For a set of observations $(\Sigma_i, R_i, A_i)$, we form the loss function
 \begin{equation}
   L(\sigma_M^2, \sigma_D^2)
   = \sum_i |\sigma_M^2 + \sigma_D^2 (R_i A_i)(R_iA_i)^t - \Sigma_i|^2
@@ -306,7 +306,7 @@ Setting $\nabla L = 0$ we obtain the 2x2 system of linear equations...
 which is easily solved. One can also solve for the the full covariance matrices $\Sigma_M, \Sigma_D$ via gradient descent, since the gradient is easily computed analytically.. \textbf{Note: tested this out in Python, and it seems to work pretty well. So the assumptions may be justified!}
 
 Now, if we work in lab-based q-space, under the simplifying assumptions above, we find a covariance matrix
-\begin{equation} \Sigma = \sigma_M^2 Id + \sigma_D^2 A_i A_i^t \end{equation}
+\begin{equation} \Sigma = \sigma_M^2 \v1 + \sigma_D^2 A_i A_i^t \end{equation}
 
 Now let
 \begin{align}
