@@ -59,7 +59,7 @@
 Other software includes:
 RETREAT \cite{StMc13},
 XDS \cite{Kab10a},
-HKL2000 \cite{OtMi97,OtMi06,GewOJ},
+HKL2000 \cite{OtMi97,OtMi06,Gew03},
 DIALS \cite{WaWG16,WiWP18}.
 
 The NSXTool project was initially started as a replacement for RETREAT but many features were added
@@ -109,7 +109,8 @@ scaling factor has been applied. The merging process is repeated until there are
 overlapping ellipsoids.
 
 The collision detection problem for ellipsoids is sped up by storing them in an octree. The
-ellipsoid overlap detection is implemented using the criterion described in \cite{ellipsoid-collision}.
+ellipsoid overlap detection is implemented using the criterion described in
+\textbf{TODO: find literature}.
 
 
 \subsection{Autoindexing} \label{autoindex}
@@ -147,7 +148,7 @@ trial and error is required to determine the best FFT parameters.
 
 Once we have a lattice basis, we compute the Niggli cell following \cite{Gru73, KrGr76}
 and then transform the Niggli cell to a reduced standard form following \cite{GrSA03}. The cell
-is given an index from 1 to 44 corresponding to the 44 cases in the International Tables \cite{gruber-table}.
+is given an index from 1 to 44 corresponding to the 44 cases in the International Tables.
 
 
 \subsection{Computation of the first Brillouin zone}
