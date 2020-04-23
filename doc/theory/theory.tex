@@ -54,11 +54,18 @@
 \section{Overview}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-We mention a few predecessors, for the sake of listing references: RETREAT \cite{StMc13},
-XDS \cite{Kab10a}, HKL2000 \cite{OtMi97,OtMi06,GewOJ}.
+\subsection{Other software}
+
+Other software includes:
+RETREAT \cite{StMc13},
+XDS \cite{Kab10a},
+HKL2000 \cite{OtMi97,OtMi06,GewOJ},
+DIALS \cite{WaWG16,WiWP18}.
 
 The NSXTool project was initially started as a replacement for RETREAT but many features were added
 in order to add support for BioDiff.
+
+\subsection{Workflow}
 
 The basic workflow of NSXTool is as follows
 \begin{enumerate}
@@ -403,7 +410,8 @@ It should be noted that for weak peaks, the error is dominated by the error in t
 As shown in \cite{Dia69}, the integration error for weak peaks is dominated by background subtraction
 and it is typically better to find the integrated intensity by fitting to a profile learned from strong peaks.
 
-3D profile fitting is used by XDS \cite{Kab10a} and is described in some detail in \cite{Kab88,Kab10b}.
+3D profile fitting is used by XDS \cite{Kab10a}
+and is described in some detail in \cite{Kab88b,Kab10b}.
 
 As in the previous subsection, using a covariance matrix and a parameters $r_1 < r_2 < r_3$ we produce sets $\calP$ and $\calB$ of peak and background points.
 Assume that we know the resolution function $R_i$,
