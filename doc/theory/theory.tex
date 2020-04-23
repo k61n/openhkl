@@ -173,25 +173,29 @@ The goal of this subsection is to describe an algorithm to compute $Z_B$, withou
 
 \subsubsection{Step 1: Compute an initial zone.}
 
-Let $\v{b}_1, \v{b}_2, \v{b}_3$ denote the rows of $B$, which form a basis of the dual lattice.
+Let $\v{b}_1, \v{b}_2, \v{b}_3$ denote the rows of $\v{B}$,
+which form a basis of the dual lattice.
 We let the initial zone $Z_0$ be the parallelpiped centered at the origin bounded by the planes
 $H_{\pm \q_i}$.
 
 \subsubsection{Step 2: Compute a bounding sphere.}
 
-The initial zone $Z_0$ contains the Brillouin zone. To find a bounding radius, compute the 6 vertices $\q_i$ of $Z_0$,
-and take $R = \max_i |\q_i|$. Since the Brillouin zone is contained in $Z_0$, and $Z_0$ is contained in the ball of radius $R$,
-we know that the Brillouin zone is contained in the ball of radius $R$. Therefore we have reduced the problem to checking
+The initial zone $Z_0$ contains the Brillouin zone. To find a bounding radius,
+compute the 6 vertices $\q_i$ of $Z_0$,
+and take $R = \max_i |\q_i|$. Since the Brillouin zone is contained in $Z_0$,
+and $Z_0$ is contained in the ball of radius $R$,
+we know that the Brillouin zone is contained in the ball of radius $R$.
+Therefore we have reduced the problem to checking
 Bragg planes for $\q$ satisfying $|\q| \leq R$, of which there are finitely many.
 
-To simplify the problem further, take $\q = (h,k,\ell)\tr B$. Then
+To simplify the problem further, take $\q = (h,k,\ell)\tr \v{B}$. Then
 \begin{equation}
    |\q|^2|
-   = |(h,k,\ell)\tr B|^2
-   = (h,k,\ell)\tr B B\tr (h,k,\ell)
+   = |(h,k,\ell)\tr \v{B}|^2
+   = (h,k,\ell)\tr \v{B} \v{B}\tr (h,k,\ell)
    \geq \lambda (h^2 + k^2 + \ell^2),
 \end{equation}
-where $\lambda$ is the smallest eigenvalue of the symmetric matrix $B B\tr$. Therefore
+where $\lambda$ is the smallest eigenvalue of the symmetric matrix $\v{B} \v{B}\tr$. Therefore
 \begin{equation} |(h,k,\ell)| \leq \frac{R}{\sqrt\lambda}, \end{equation}
 so we obtain an effective bound on the (finitely-many) values of $h,k,\ell$ which must be checked.
 
@@ -202,7 +206,7 @@ Now we iterate.
   \item Set $i = 0$, and let $Z_0$ be as above.
   \item For each $(h, k, \ell)$ satisfying $|(h,k,\ell)| < R/\sqrt\lambda$
     \begin{enumerate}
-      \item Set $\q = (h,k,\ell)\tr B$.
+      \item Set $\q = (h,k,\ell)\tr\v{B}$.
       \item If $\q/2 \in Z_i$, then
         \begin{enumerate}
           \item Set $Z_{i+1} = Z_i \cap H_\q$.
