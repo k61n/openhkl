@@ -244,7 +244,7 @@ void Experiment::addPeakCollection(
 {
     std::unique_ptr<PeakCollection> ptr(new PeakCollection(name, type));
     ptr->populate(peaks);
-    _peak_collections.insert(std::make_pair(name, std::move(ptr)));
+    _peak_collections.insert_or_assign(name, std::move(ptr));
 }
 
 bool Experiment::hasPeakCollection(const std::string& name) const
@@ -312,7 +312,7 @@ void Experiment::acceptFilter(std::string name, PeakCollection* collection)
 {
     std::unique_ptr<PeakCollection> ptr(new PeakCollection(name, collection->type()));
     ptr->populateFromFiltered(collection);
-    _peak_collections.insert(std::make_pair(name, std::move(ptr)));
+    _peak_collections.insert_or_assign(name, std::move(ptr));
 }
 
 void Experiment::setMergedPeaks(std::vector<PeakCollection*> peak_collections, bool friedel)
