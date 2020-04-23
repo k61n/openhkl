@@ -254,13 +254,14 @@ Now consider the action of $g = (A,b)$:
 \end{align}
 which shows that $f_{A\tr q} = f_{q} e^{2 \pi i q \cdot b}$ whenever $(A,b) \in G$.
 
-
 For space group determination see e.g. \cite{Eva11,Kab10b}.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Shape Prediction} \label{peak-prediction}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\subsection{Rotating the beam profile}
 
 We make a simplifying assumption, that for a \emph{perfect plane wave} $\k_\si$, the observed scattering function has the form
 \begin{equation} \sum_{hkl} I_{hkl} f(\q - \q_{hkl}), \end{equation}
@@ -310,7 +311,7 @@ Let $\v\Sigma_M$ denote the variance-covariance matrix of the profile shape $f$
 and let $\v\Sigma_D$ denote the variance-covariance matrix of the beam divergence $\delta \k_\si$.
 Then from the above formula we see that the \emph{observed} profile shape will have
 (in sample-fixed q-space) a variance-covariance matrix given by
-\begin{equation}
+\begin{equation}\label{ESigmaMD}
   \v\Sigma_M + \v{R} \v{A} \v\Sigma_D \v{A}\tr \v{R}\tr,
 \end{equation}
 where $R$ is the rotation matrix from lab space to sample space
@@ -319,20 +320,26 @@ Note that the matrix $\v{A}$ depends only on $\k_\sf$, i.e. on the detector pixe
 and the matrix $\v{R}$ depends on the sample orientation, i.e. the frame number.
 
 Now make a simplifying assumption,
-$\v\Sigma_M = \sigma_M^2 \v1$ and $\v\Sigma_D = \sigma_D^2 \v1$.
+$\v\Sigma_M = \sigma_M^2 \v1$ and $\v\Sigma_D = \sigma_D^2 \v1$
+so that the expected variance-covariance matrix (\ref{ESigmaMD}) becomes
+\begin{equation}\label{ESigmaMD2}
+  \v\Sigma(\sigma_M,\sigma_D) = \v\Sigma_M + \v{R} \v{A} \v{A}\tr \v{R}\tr,
+\end{equation}
 Consider $N$ observed blobs parameterized by $(\v\Sigma_b, \v{R}_b, \v{A}_b)$.
+Write $\v{S}_b\coloneqq\v{R}_b\v{A}_b$.
 Form the penalty function
 \begin{equation}
   L(\sigma_M^2, \sigma_D^2)
   = \sum_{b=1}^N
-    \left|\sigma_M^2 + \sigma_D^2 (\v{R}_b \v{A}_b)(\v{R}_b\v{A}_b)\tr - \v\Sigma_b\right|^2
+    \left|\sigma_M^2\v1 + \sigma_D^2 (\v{S}_b)(\v{S}_b)\tr - \v\Sigma_b\right|^2
 \end{equation}
-
+Determine $\sigma_M^2$ and $\sigma_D^2$ by minimizing the difference
+between the empirical~$\v\Sigma_b$ and the expectation~(\ref{ESigmaMD2}).
 Set $\v\nabla L = 0$ to obtain the 2x2 system of linear equations
 \begin{equation}
   \begin{bmatrix}
-    3N & \sum_b \trace( (\v{R}_b\v{A}_b)(\v{R}_b \v{A}_b)\tr) \\
-    \sum_b \trace((\v{R}_b\v{A}_b)\tr(\v{R}_b \v{A}_b)) & \sum_b \trace(((\v{R}_b \v{A}_b)\tr(\v{R}_b\v{A}_b))^2)
+    3N & \sum_b \trace( (\v{S}_b)(\v{S}_b)\tr) \\
+    \sum_b \trace((\v{S}_b)\tr(\v{S}_b)) & \sum_b \trace(((\v{S}_b)\tr(\v{S}_b))^2)
   \end{bmatrix}
   \begin{bmatrix}
     \sigma_M^2 \\
@@ -341,14 +348,16 @@ Set $\v\nabla L = 0$ to obtain the 2x2 system of linear equations
   =
   \begin{bmatrix}
     \sum_b \trace(\v\Sigma_b) \\
-    \sum_b \trace((\v{R}_b \v{A}_b)\tr \v\Sigma_b (\v{R}_b \v{A}_b))
+    \sum_b \trace((\v{S}_b)\tr \v\Sigma_b (\v{S}_b))
   \end{bmatrix},
 \end{equation}
 which is easily solved.
 One can also solve for the the full covariance matrices $\v\Sigma_M, \v\Sigma_D$
-via gradient descent, since the gradient is easily computed analytically..
-\textbf{Note: tested this out in Python, and it seems to work pretty well.
-So the assumptions may be justified!}
+via gradient descent, since the gradient is easily computed analytically.
+[Here Jonathan says he tested ``this'' out in Python, and it seemed to work pretty well,
+so the assumptions may be justified.
+But we ignore whether ``this'' refers to the simplified $\v\Sigma = \sigma^2 \v1$
+or to the full computation with arbitrary $\v\Sigma$.]
 
 Now, if we work in lab-based q-space, under the simplifying assumptions above,
 we find a covariance matrix
