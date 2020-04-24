@@ -27,6 +27,7 @@
 \def\ba{\v{a}}
 \def\be{{\v{e}}}
 \def\k{{\v{k}}}
+\def\hk{{\v{\hat k}}}
 \def\q{{\v{q}}}
 \def\bu{\v{u}}
 
@@ -54,11 +55,18 @@
 \section{Overview}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-We mention a few predecessors, for the sake of listing references: RETREAT \cite{StMc13},
-XDS \cite{Kab10a}, HKL2000 \cite{OtMi97,OtMi06,GewOJ}.
+\subsection{Other software}
+
+Other software includes:
+RETREAT \cite{StMc13},
+XDS \cite{Kab10a},
+HKL2000 \cite{OtMi97,OtMi06,Gew03},
+DIALS \cite{WaWG16,WiWP18}.
 
 The NSXTool project was initially started as a replacement for RETREAT but many features were added
 in order to add support for BioDiff.
+
+\subsection{Workflow}
 
 The basic workflow of NSXTool is as follows
 \begin{enumerate}
@@ -102,7 +110,8 @@ scaling factor has been applied. The merging process is repeated until there are
 overlapping ellipsoids.
 
 The collision detection problem for ellipsoids is sped up by storing them in an octree. The
-ellipsoid overlap detection is implemented using the criterion described in \cite{ellipsoid-collision}.
+ellipsoid overlap detection is implemented using the criterion described in
+\textbf{TODO: find literature}.
 
 
 \subsection{Autoindexing} \label{autoindex}
@@ -140,7 +149,7 @@ trial and error is required to determine the best FFT parameters.
 
 Once we have a lattice basis, we compute the Niggli cell following \cite{Gru73, KrGr76}
 and then transform the Niggli cell to a reduced standard form following \cite{GrSA03}. The cell
-is given an index from 1 to 44 corresponding to the 44 cases in the International Tables \cite{gruber-table}.
+is given an index from 1 to 44 corresponding to the 44 cases in the International Tables.
 
 
 \subsection{Computation of the first Brillouin zone}
@@ -165,25 +174,29 @@ The goal of this subsection is to describe an algorithm to compute $Z_B$, withou
 
 \subsubsection{Step 1: Compute an initial zone.}
 
-Let $\v{b}_1, \v{b}_2, \v{b}_3$ denote the rows of $B$, which form a basis of the dual lattice.
+Let $\v{b}_1, \v{b}_2, \v{b}_3$ denote the rows of $\v{B}$,
+which form a basis of the dual lattice.
 We let the initial zone $Z_0$ be the parallelpiped centered at the origin bounded by the planes
 $H_{\pm \q_i}$.
 
 \subsubsection{Step 2: Compute a bounding sphere.}
 
-The initial zone $Z_0$ contains the Brillouin zone. To find a bounding radius, compute the 6 vertices $\q_i$ of $Z_0$,
-and take $R = \max_i |\q_i|$. Since the Brillouin zone is contained in $Z_0$, and $Z_0$ is contained in the ball of radius $R$,
-we know that the Brillouin zone is contained in the ball of radius $R$. Therefore we have reduced the problem to checking
+The initial zone $Z_0$ contains the Brillouin zone. To find a bounding radius,
+compute the 6 vertices $\q_i$ of $Z_0$,
+and take $R = \max_i |\q_i|$. Since the Brillouin zone is contained in $Z_0$,
+and $Z_0$ is contained in the ball of radius $R$,
+we know that the Brillouin zone is contained in the ball of radius $R$.
+Therefore we have reduced the problem to checking
 Bragg planes for $\q$ satisfying $|\q| \leq R$, of which there are finitely many.
 
-To simplify the problem further, take $\q = (h,k,\ell)\tr B$. Then
+To simplify the problem further, take $\q = (h,k,\ell)\tr \v{B}$. Then
 \begin{equation}
    |\q|^2|
-   = |(h,k,\ell)\tr B|^2
-   = (h,k,\ell)\tr B B\tr (h,k,\ell)
+   = |(h,k,\ell)\tr \v{B}|^2
+   = (h,k,\ell)\tr \v{B} \v{B}\tr (h,k,\ell)
    \geq \lambda (h^2 + k^2 + \ell^2),
 \end{equation}
-where $\lambda$ is the smallest eigenvalue of the symmetric matrix $B B\tr$. Therefore
+where $\lambda$ is the smallest eigenvalue of the symmetric matrix $\v{B} \v{B}\tr$. Therefore
 \begin{equation} |(h,k,\ell)| \leq \frac{R}{\sqrt\lambda}, \end{equation}
 so we obtain an effective bound on the (finitely-many) values of $h,k,\ell$ which must be checked.
 
@@ -194,7 +207,7 @@ Now we iterate.
   \item Set $i = 0$, and let $Z_0$ be as above.
   \item For each $(h, k, \ell)$ satisfying $|(h,k,\ell)| < R/\sqrt\lambda$
     \begin{enumerate}
-      \item Set $\q = (h,k,\ell)\tr B$.
+      \item Set $\q = (h,k,\ell)\tr\v{B}$.
       \item If $\q/2 \in Z_i$, then
         \begin{enumerate}
           \item Set $Z_{i+1} = Z_i \cap H_\q$.
@@ -241,13 +254,14 @@ Now consider the action of $g = (A,b)$:
 \end{align}
 which shows that $f_{A\tr q} = f_{q} e^{2 \pi i q \cdot b}$ whenever $(A,b) \in G$.
 
-
 For space group determination see e.g. \cite{Eva11,Kab10b}.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Shape Prediction} \label{peak-prediction}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\subsection{Rotating the beam profile}
 
 We make a simplifying assumption, that for a \emph{perfect plane wave} $\k_\si$, the observed scattering function has the form
 \begin{equation} \sum_{hkl} I_{hkl} f(\q - \q_{hkl}), \end{equation}
@@ -283,15 +297,21 @@ Therefore, the observed intensity at detector position $(x,y)$ should be proport
   &= \int f(\q - \q_{hkl} + \delta \q) P(\delta \k_\si) d(\delta \k_\si) \\
   &= \int f(\q - \q_{hkl} + \v{R}\v{A} \delta \k_\si) P(\delta \k_\si) d(\delta \k_\si)
 \end{align}
-
 where $\v{R}$ is the rotation matrix taking lab coordinates to sample-fixed coordinates.
-\textbf{Assuming that $\v{A}$ is invertible (why? $\det \v{A} = -\frac{1}{2}\q^2$)},
-we have $\delta \k_\si = A^{-1} \delta \q$ and $d(\delta \k_\si) = |\det \v{A}|^{-1} d(\delta \q)$.
+The matrix $\v{A}$ has $\det \v{A} = -\frac{1}{2}\q^2$
+and therefore is invertible.\footnote
+{The determinant of a matrix is the product of all eigenvalues.
+Guess three eigenvectors of $\v{A}$:
+$\k_\sf$, $K^2\k_\sf-(\k_\sf\k_\si)\k_\si$, $\k_\sf\times\k_\si$.
+Obtain the eigenvalues $\hk_\sf\hk_\si-1,-1,-1$.
+To evaluate $\hk_\sf\hk_\si$, use $\k_\sf^2=(\k_\si+\q)^2$.}
+So we have
+$\delta \k_\si = A^{-1} \delta \q$ and $d(\delta \k_\si) = |\det \v{A}|^{-1} d(\delta \q)$.
 Let $\v\Sigma_M$ denote the variance-covariance matrix of the profile shape $f$
 and let $\v\Sigma_D$ denote the variance-covariance matrix of the beam divergence $\delta \k_\si$.
 Then from the above formula we see that the \emph{observed} profile shape will have
 (in sample-fixed q-space) a variance-covariance matrix given by
-\begin{equation}
+\begin{equation}\label{ESigmaMD}
   \v\Sigma_M + \v{R} \v{A} \v\Sigma_D \v{A}\tr \v{R}\tr,
 \end{equation}
 where $R$ is the rotation matrix from lab space to sample space
@@ -300,20 +320,26 @@ Note that the matrix $\v{A}$ depends only on $\k_\sf$, i.e. on the detector pixe
 and the matrix $\v{R}$ depends on the sample orientation, i.e. the frame number.
 
 Now make a simplifying assumption,
-$\v\Sigma_M = \sigma_M^2 \v1$ and $\v\Sigma_D = \sigma_D^2 \v1$.
+$\v\Sigma_M = \sigma_M^2 \v1$ and $\v\Sigma_D = \sigma_D^2 \v1$
+so that the expected variance-covariance matrix (\ref{ESigmaMD}) becomes
+\begin{equation}\label{ESigmaMD2}
+  \v\Sigma(\sigma_M,\sigma_D) = \v\Sigma_M + \v{R} \v{A} \v{A}\tr \v{R}\tr,
+\end{equation}
 Consider $N$ observed blobs parameterized by $(\v\Sigma_b, \v{R}_b, \v{A}_b)$.
+Write $\v{S}_b\coloneqq\v{R}_b\v{A}_b$.
 Form the penalty function
 \begin{equation}
   L(\sigma_M^2, \sigma_D^2)
   = \sum_{b=1}^N
-    \left|\sigma_M^2 + \sigma_D^2 (\v{R}_b \v{A}_b)(\v{R}_b\v{A}_b)\tr - \v\Sigma_b\right|^2
+    \left|\sigma_M^2\v1 + \sigma_D^2 (\v{S}_b)(\v{S}_b)\tr - \v\Sigma_b\right|^2
 \end{equation}
-
+Determine $\sigma_M^2$ and $\sigma_D^2$ by minimizing the difference
+between the empirical~$\v\Sigma_b$ and the expectation~(\ref{ESigmaMD2}).
 Set $\v\nabla L = 0$ to obtain the 2x2 system of linear equations
 \begin{equation}
   \begin{bmatrix}
-    3N & \sum_b \trace( (\v{R}_b\v{A}_b)(\v{R}_b \v{A}_b)\tr) \\
-    \sum_b \trace((\v{R}_b\v{A}_b)\tr(\v{R}_b \v{A}_b)) & \sum_b \trace(((\v{R}_b \v{A}_b)\tr(\v{R}_b\v{A}_b))^2)
+    3N & \sum_b \trace( (\v{S}_b)(\v{S}_b)\tr) \\
+    \sum_b \trace((\v{S}_b)\tr(\v{S}_b)) & \sum_b \trace(((\v{S}_b)\tr(\v{S}_b))^2)
   \end{bmatrix}
   \begin{bmatrix}
     \sigma_M^2 \\
@@ -322,14 +348,16 @@ Set $\v\nabla L = 0$ to obtain the 2x2 system of linear equations
   =
   \begin{bmatrix}
     \sum_b \trace(\v\Sigma_b) \\
-    \sum_b \trace((\v{R}_b \v{A}_b)\tr \v\Sigma_b (\v{R}_b \v{A}_b))
+    \sum_b \trace((\v{S}_b)\tr \v\Sigma_b (\v{S}_b))
   \end{bmatrix},
 \end{equation}
 which is easily solved.
 One can also solve for the the full covariance matrices $\v\Sigma_M, \v\Sigma_D$
-via gradient descent, since the gradient is easily computed analytically..
-\textbf{Note: tested this out in Python, and it seems to work pretty well.
-So the assumptions may be justified!}
+via gradient descent, since the gradient is easily computed analytically.
+[Here Jonathan says he tested ``this'' out in Python, and it seemed to work pretty well,
+so the assumptions may be justified.
+But we ignore whether ``this'' refers to the simplified $\v\Sigma = \sigma^2 \v1$
+or to the full computation with arbitrary $\v\Sigma$.]
 
 Now, if we work in lab-based q-space, under the simplifying assumptions above,
 we find a covariance matrix
@@ -403,7 +431,8 @@ It should be noted that for weak peaks, the error is dominated by the error in t
 As shown in \cite{Dia69}, the integration error for weak peaks is dominated by background subtraction
 and it is typically better to find the integrated intensity by fitting to a profile learned from strong peaks.
 
-3D profile fitting is used by XDS \cite{Kab10a} and is described in some detail in \cite{Kab88,Kab10b}.
+3D profile fitting is used by XDS \cite{Kab10a}
+and is described in some detail in \cite{Kab88b,Kab10b}.
 
 As in the previous subsection, using a covariance matrix and a parameters $r_1 < r_2 < r_3$ we produce sets $\calP$ and $\calB$ of peak and background points.
 Assume that we know the resolution function $R_i$,
