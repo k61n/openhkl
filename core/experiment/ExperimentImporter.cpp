@@ -280,7 +280,7 @@ bool ExperimentImporter::loadPeaks(Experiment* experiment)
                 collection_type = listtype::PREDICTED;
             }
 
-            experiment->addPeakCollection(collection_name, collection_type, peaks);
+            experiment->updatePeakCollection(collection_name, collection_type, peaks);
 
             std::cout << "Created the peak collection" << std::endl;
         }
