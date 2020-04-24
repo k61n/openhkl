@@ -27,6 +27,10 @@ parser.add_argument('--loadnsx', action='store_true', dest='loadnsx', default=Fa
                     help='load <name>.nsx')
 parser.add_argument('-p', '--parameters', type=str, dest='paramfile',
                     default='parameters', help='File containing experiment paramters')
+parser.add_argument('--length_tol', type=float, dest='length_tol',
+                    default=1.0, help='length tolerance (a, b, c) for autoindexing')
+parser.add_argument('--angle_tol', type=float, dest='angle_tol',
+                    default=5.0, help='angle tolerance (alpha, beta, gamma) for autoindexing')
 args = parser.parse_args()
 
 params = Parameters()
@@ -63,6 +67,6 @@ pynsxprint("...filtering complete\n")
 pynsxprint("Filter caught " + str(ncaught) + " of " + str(npeaks) + " peaks")
 
 pynsxprint("Autoindexing...")
-expt.autoindex()
+expt.autoindex(args.length_tol, args.angle_tol)
 pynsxprint("...autoindexing complete\n")
 expt.print_unit_cells()

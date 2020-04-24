@@ -276,4 +276,9 @@ void AutoIndexer::printSolutions()
     }
 }
 
+void AutoIndexer::acceptSolution(std::shared_ptr<UnitCell> solution, const std::vector<nsx::Peak3D*>& peaks)
+{
+  for (auto peak : peaks) peak->setUnitCell(solution);
+}
+
 } // namespace nsx

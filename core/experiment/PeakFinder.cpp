@@ -621,7 +621,6 @@ void PeakFinder::find(DataList numors)
 
         // merge adjacent blobs
         qDebug("PeakFinder::find: mergeBlobs\n");
-        std::cout << local_blobs.size() << std::endl;
         mergeEquivalentBlobs(local_blobs, local_equivalences);
 
         qDebug("PeakFinder::find: blob loop");

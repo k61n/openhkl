@@ -6,7 +6,6 @@ workflow.py
 A test script for the entire NSXTool workflow
 '''
 
-import sys
 import argparse
 import os.path
 from nsx.experiment import Experiment, pynsxprint
@@ -39,7 +38,7 @@ else:
     pynsxprint("No parameters file detected, using defaults")
 
 expt = Experiment(args.name, args.detector, params)
-min_autoindex_frames = 5
+min_autoindex_frames = 7
 
 
 if not args.loadnsx:

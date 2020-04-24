@@ -73,6 +73,8 @@ class AutoIndexer {
     void unsetHandler() { _handler = nullptr; };
     //! Print solutions to stdout
     void printSolutions();
+    //! Set solution to be unit cell for given peak list
+    void acceptSolution(std::shared_ptr<UnitCell> solution, const std::vector<nsx::Peak3D*>& peaks);
 
  private:
     void computeFFTSolutions(const std::vector<Peak3D*>& peaks);

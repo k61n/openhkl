@@ -172,8 +172,7 @@ class Experiment:
 
     def accept_solution(self, collection, solution):
         peak_list = collection.getPeakList()
-        for peak in peak_list:
-            peak.setUnitCell(solution)
+        self.auto_indexer.acceptSolution(solution[0], peak_list)
 
     def get_unit_cells(self, solutions):
         '''
