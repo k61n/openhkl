@@ -60,7 +60,7 @@ if not args.loadnsx:
 
     if solution:
         cell = expt.solution2cell(solution)
-        a = [1][0]
+        a = cell[1][0]
         b = cell[1][1]
         c = cell[1][2]
         alpha = cell[1][3]
@@ -76,12 +76,11 @@ if not args.loadnsx:
 
     expt.add_raw_data_frames(filenames[index:])
     pynsxprint("Finding peaks...")
-    expt.find_peaks(expt.data)
+    expt.find_peaks([expt.data])
     pynsxprint("...peak finding complete\n")
     pynsxprint("Integrating...")
     npeaks = expt.integrate_peaks()
     pynsxprint("...integration complete\n")
-    pynsxprint(f"Saving experiment to file {expt.nsxfile}")
 
     pynsxprint("Filtering...")
     ncaught = expt.filter_peaks()
@@ -89,6 +88,7 @@ if not args.loadnsx:
     pynsxprint("Filter caught " + str(ncaught) + " of " + str(npeaks) + " peaks")
     expt.accept_solution(expt.filtered_collection, solution)
 
+    pynsxprint(f"Saving experiment to file {expt.nsxfile}")
     expt.save()
 else:
     if os.path.isfile(expt.nsxfile):
@@ -97,11 +97,11 @@ else:
     else:
         raise OSError("f{expt.nsxfile} not found")
 
-pynxsprint("Building shape library...")
-pynxsprint("...finished building shape library\n")
+pynsxprint("Building shape library...")
+pynsxprint("...finished building shape library\n")
 
-pynxsprint("Predicting peaks...")
-pynxsprint("...finished predicting peaks\n")
+pynsxprint("Predicting peaks...")
+pynsxprint("...finished predicting peaks\n")
 
 pynsxprint("Integrating...")
 pynsxprint("...integration complete\n")

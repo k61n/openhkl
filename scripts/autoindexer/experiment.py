@@ -7,16 +7,18 @@ Generalised wrapper for Python/C++ (Swig) NSXTool interface.
 '''
 
 import sys
-sys.path.append("/home/zamaan/codes/nsxtool/current/build/swig")
 import scipy
-import pynsx as nsx
 from pdb import set_trace
+sys.path.append("/home/zamaan/codes/nsxtool/current/build/swig")
+import pynsx as nsx
+
 
 def pynsxprint(printvalue):
     '''
     Print function to distinguish Python from C++ output
     '''
     print("PYNSX: " + str(printvalue))
+
 
 class Experiment:
     '''
@@ -60,17 +62,29 @@ class Experiment:
         self.reader.end()
 
         self.data = nsx.DataSet(self.reader)
-        self.expt.addData(self.data)
+        nframes = self.data.nFrames()
+        print(f'nframes = {nframes}')
+        self.expt.addData(self.name, self.data)
 
         self.found_collection = None
         self.filtered_collection = None
 
     def add_raw_data_frames(self, filenames):
+        data_params = nsx.RawDataReaderParameters()
+
+        data_params.wavelength = self.params.detector['wavelength']
+        data_params.delta_omega = self.params.detector['delta_omega']
+        data_params.row_major = self.params.detector['row_major']
+        data_params.swap_endian = self.params.detector['swap_endian']
+        data_params.bpp = self.params.detector['bpp']
         for file in filenames:
             self.reader.addFrame(file)
+        self.reader.setParameters(data_params)
         self.reader.end()
-        self.data = nsx.DataSet(self.reader)
         self.expt.addData(self.data)
+        self.data = nsx.DataSet(self.reader)
+        nframes = self.data.nFrames()
+        print(f'nframes = {nframes}')
 
     def find_peaks(self, dataset):
         '''
@@ -120,6 +134,7 @@ class Experiment:
         filter.setDRange(min_d_range, max_d_range)
         filter.setStrength(min_strength, max_strength)
 
+        self.found_collection = self.expt.getPeakCollection(self.name_peaks)
         filter.resetFiltering(self.found_collection)
         filter.filter(self.found_collection)
         self.expt.acceptFilter(self.name_filtered, self.found_collection)
@@ -130,7 +145,7 @@ class Experiment:
 
     def autoindex(self, length_tol, angle_tol):
         '''
-        Compute the unit cells fromthe first n (< max_frames) frames
+        Compute the unit cells from the peaks most recently found/integrated/filtered
         '''
 
         self.find_peaks([self.data])
@@ -142,14 +157,17 @@ class Experiment:
         autoindexer_params.nSolutions = self.params.autoindexer['n_solutions']
         autoindexer_params.nVertices = self.params.autoindexer['n_vertices']
         autoindexer_params.subdiv = self.params.autoindexer['n_subdiv']
-        autoindexer_params.indexingTolerance = self.params.autoindexer['indexing_tol']
-        autoindexer_params.minUnitCellVolume = self.params.autoindexer['min_vol']
+        autoindexer_params.indexingTolerance = \
+            self.params.autoindexer['indexing_tol']
+        autoindexer_params.minUnitCellVolume = \
+            self.params.autoindexer['min_vol']
         self.auto_indexer = self.expt.autoIndexer()
         self.auto_indexer.setParameters(autoindexer_params)
         self.auto_indexer.autoIndex(self.filtered_collection.getPeakList())
-        cell = None
         solutions = self.auto_indexer.solutions()
-        unit_cells = self.get_unit_cells(solutions)
+        print(f'Autoindex: {ncaught}/{npeaks} peaks caught by filter')
+        print(f'Autoindex: cells')
+        self.print_unit_cells()
         return self.accept_cell(length_tol, angle_tol, solutions)
 
     def accept_solution(self, collection, solution):
@@ -182,7 +200,6 @@ class Experiment:
         gamma = solution[0].character().gamma / deg
         return (quality, (a, b, c, alpha, beta, gamma))
 
-
     def accept_cell(self, length_tol, angle_tol, solutions):
         '''
         Return solution if it matches the reference cell, otherwise return None
@@ -191,7 +208,6 @@ class Experiment:
         for solution in solutions:
             accept = True
             quality, cell = self.solution2cell(solution)
-            set_trace()
             if (cell[0] - self.ref_cell['a']) > length_tol:
                 accept = False
                 continue
@@ -201,7 +217,7 @@ class Experiment:
             if (cell[2] - self.ref_cell['c']) > length_tol:
                 accept = False
                 continue
-            if (cell[3]  - self.ref_cell['alpha']) > angle_tol:
+            if (cell[3] - self.ref_cell['alpha']) > angle_tol:
                 accept = False
                 continue
             if (cell[4] - self.ref_cell['beta']) > angle_tol:
@@ -210,7 +226,6 @@ class Experiment:
             if (cell[5] - self.ref_cell['gamma']) > angle_tol:
                 accept = False
                 continue
-            set_trace()
             if accept:
                 accepted = solution
                 break
@@ -222,8 +237,6 @@ class Experiment:
 
         kabsch = self.params.shapelib['kabsch']
         peak_scale = self.params.shapelib['peak_scale']
-        bkg_begin = self.params.shapelib['bkg_begin']
-        bkg_end = self.params.shapelib['bkg_end']
         sigma_m = self.params.shapelib['sigma_m']
         sigma_d = self.params.shapelib['sigma_d']
         nx = self.params.shapelib['nx']
@@ -232,8 +245,10 @@ class Experiment:
 
         aabb = nsx.AABB()
         if kabsch:
-            aabb.setLower(-peak_scale*sigma_d, -peak_scale*sigma_d, -peak_scale*sigma_m)
-            aabb.setUpper(peak_scale*sigma_d, peak_scale*sigma_d, peak_scale*sigma_m)
+            aabb.setLower(-peak_scale*sigma_d, -peak_scale*sigma_d,
+                          -peak_scale*sigma_m)
+            aabb.setUpper(peak_scale*sigma_d, peak_scale*sigma_d,
+                          peak_scale*sigma_m)
         else:
             aabb.setLower(-0.5*nx, -0.5*ny, -0.5*nz)
             aabb.setUpper(0.5*nx, 0.5*ny, 0.5*nz)
@@ -266,4 +281,5 @@ class Experiment:
         '''
         self.expt.loadFromFile(self.nsxfile)
         self.found_collection = self.expt.getPeakCollection(self.name_peaks)
-        self.filtered_collection = self.expt.getPeakCollection(self.name_filtered)
+        self.filtered_collection = \
+            self.expt.getPeakCollection(self.name_filtered)

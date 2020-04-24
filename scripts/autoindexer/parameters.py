@@ -86,3 +86,12 @@ class Parameters:
                         else:
                             t = type(d[key])
                             d[key] = t(value)
+
+    def dump(self, filename):
+        '''
+        Dump parameters to a file
+        '''
+        with open(filename, 'w') as outfile:
+            for d in self._dicts:
+                for key in d:
+                    outfile.write(f'{key}     {d[key]}\n')
