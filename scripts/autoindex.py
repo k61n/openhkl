@@ -13,8 +13,8 @@ loaded.
 import sys
 import argparse
 import os.path
-from experiment import Experiment, pynsxprint
-from parameters import Parameters
+from nsx.experiment import Experiment, pynsxprint
+from nsx.parameters import Parameters
 from pdb import set_trace
 
 parser = argparse.ArgumentParser(description='NSXTool autoindexing test script')
@@ -49,7 +49,7 @@ else:
     expt.load_raw_data(filenames)
     pynsxprint("...data loaded\n")
     pynsxprint("Finding peaks...")
-    expt.find_peaks(expt.data)
+    expt.find_peaks([expt.data])
     pynsxprint("...peak finding complete\n")
     pynsxprint("Integrating...")
     npeaks = expt.integrate_peaks()

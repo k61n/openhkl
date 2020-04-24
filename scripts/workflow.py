@@ -9,8 +9,8 @@ A test script for the entire NSXTool workflow
 import sys
 import argparse
 import os.path
-from experiment import Experiment, pynsxprint
-from parameters import Parameters
+from nsx.experiment import Experiment, pynsxprint
+from nsx.parameters import Parameters
 from pdb import set_trace
 
 parser = argparse.ArgumentParser(description='NSXTool workflow test script')

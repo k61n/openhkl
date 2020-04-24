@@ -10,9 +10,9 @@ to a logfile, which stores the cell parameters and files used to get them.
 import sys
 import os.path
 import argparse
-from experiment import Experiment, pynsxprint
-from parameters import Parameters
-from autoindextest import AutoIndexTest
+from nsx.experiment import Experiment, pynsxprint
+from nsx.parameters import Parameters
+from nsx.autoindex.autoindextest import AutoIndexTest
 from pdb import set_trace
 
 parser = argparse.ArgumentParser(description='NSXTool autoindexing test script')
