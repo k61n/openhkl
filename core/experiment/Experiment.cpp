@@ -239,12 +239,12 @@ void Experiment::removeData(const std::string& name)
         _data.erase(it);
 }
 
-void Experiment::addPeakCollection(
+void Experiment::updatePeakCollection(
     const std::string& name, const listtype type, const std::vector<nsx::Peak3D*> peaks)
 {
     std::unique_ptr<PeakCollection> ptr(new PeakCollection(name, type));
     ptr->populate(peaks);
-    _peak_collections.insert(std::make_pair(name, std::move(ptr)));
+    _peak_collections.insert_or_assign(name, std::move(ptr));
 }
 
 bool Experiment::hasPeakCollection(const std::string& name) const
@@ -312,7 +312,7 @@ void Experiment::acceptFilter(std::string name, PeakCollection* collection)
 {
     std::unique_ptr<PeakCollection> ptr(new PeakCollection(name, collection->type()));
     ptr->populateFromFiltered(collection);
-    _peak_collections.insert(std::make_pair(name, std::move(ptr)));
+    _peak_collections.insert_or_assign(name, std::move(ptr));
 }
 
 void Experiment::setMergedPeaks(std::vector<PeakCollection*> peak_collections, bool friedel)
@@ -382,7 +382,7 @@ void Experiment::swapUnitCells(const std::string& old_cell_name, const std::stri
 void Experiment::acceptFoundPeaks(const std::string& name)
 {
     std::vector<Peak3D*> peaks = _peak_finder->currentPeaks();
-    addPeakCollection(name, listtype::FOUND, peaks);
+    updatePeakCollection(name, listtype::FOUND, peaks);
 }
 
 IPeakIntegrator* Experiment::getIntegrator(const std::string& name) const
