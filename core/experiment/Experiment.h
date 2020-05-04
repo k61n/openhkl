@@ -70,7 +70,7 @@ class Experiment {
 
  public: // Peak Collection
     //! Add a peak collection
-    void addPeakCollection(
+    void updatePeakCollection(
         const std::string& name, const listtype type, const std::vector<nsx::Peak3D*> peaks);
     //! Returns true if the experiment has a data
     bool hasPeakCollection(const std::string& name) const;

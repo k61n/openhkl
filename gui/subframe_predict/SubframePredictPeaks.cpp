@@ -755,7 +755,7 @@ void SubframePredictPeaks::accept()
     if (!dlg->listName().isEmpty()) {
         gSession->experimentAt(_exp_combo->currentIndex())
             ->experiment()
-            ->addPeakCollection(
+            ->updatePeakCollection(
                 dlg->listName().toStdString(), nsx::listtype::PREDICTED,
                 _peak_collection.getPeakList());
         gSession->experimentAt(_exp_combo->currentIndex())->generatePeakModel(dlg->listName());
