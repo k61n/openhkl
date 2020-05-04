@@ -39,10 +39,12 @@ class Experiment:
         self.nsxfile = self.name + ".nsx"
         self.unit_cells = None
         self.ref_cell = params.cell
-        self.min_indexing_frames = 5
-        self.max_indexing_frames = 12
+        self.data_sets = []
 
-    def load_raw_data(self, filenames):
+    def get_data(self, data_name):
+        return self.expt.getData(data_name)
+
+    def add_data_set(self, data_name, filenames):
         '''
         Load raw datafile (.tiff)
         '''
@@ -61,30 +63,11 @@ class Experiment:
             self.reader.addFrame(filename)
         self.reader.end()
 
-        self.data = nsx.DataSet(self.reader)
-        nframes = self.data.nFrames()
+        data = nsx.DataSet(self.reader)
+        nframes = data.nFrames()
         print(f'nframes = {nframes}')
-        self.expt.addData(self.name, self.data)
-
-        self.found_collection = None
-        self.filtered_collection = None
-
-    def add_raw_data_frames(self, filenames):
-        data_params = nsx.RawDataReaderParameters()
-
-        data_params.wavelength = self.params.detector['wavelength']
-        data_params.delta_omega = self.params.detector['delta_omega']
-        data_params.row_major = self.params.detector['row_major']
-        data_params.swap_endian = self.params.detector['swap_endian']
-        data_params.bpp = self.params.detector['bpp']
-        for file in filenames:
-            self.reader.addFrame(file)
-        self.reader.setParameters(data_params)
-        self.reader.end()
-        self.expt.addData(self.data)
-        self.data = nsx.DataSet(self.reader)
-        nframes = self.data.nFrames()
-        print(f'nframes = {nframes}')
+        self.expt.addData(data_name, data)
+        self.data_sets.append(data_name)
 
     def find_peaks(self, dataset):
         '''
@@ -143,12 +126,12 @@ class Experiment:
         n_caught = self.found_collection.numberCaughtByFilter()
         return n_caught
 
-    def autoindex(self, length_tol, angle_tol):
+    def autoindex(self, dataset, length_tol, angle_tol):
         '''
         Compute the unit cells from the peaks most recently found/integrated/filtered
         '''
 
-        self.find_peaks([self.data])
+        self.find_peaks([dataset])
         npeaks = self.integrate_peaks()
         ncaught = self.filter_peaks()
 
@@ -168,6 +151,7 @@ class Experiment:
         print(f'Autoindex: {ncaught}/{npeaks} peaks caught by filter')
         print(f'Autoindex: cells')
         self.print_unit_cells()
+        self.unit_cells = self.get_unit_cells(solutions)
         return self.accept_cell(length_tol, angle_tol, solutions)
 
     def accept_solution(self, collection, solution):

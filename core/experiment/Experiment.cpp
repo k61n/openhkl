@@ -108,7 +108,7 @@ Diffractometer* Experiment::diffractometer()
     return _diffractometer.get();
 }
 
-const std::map<std::string, sptrDataSet>& Experiment::data() const
+const std::map<std::string, sptrDataSet>& Experiment::getData() const
 {
     return _data;
 }
@@ -118,7 +118,7 @@ void Experiment::setDiffractometer(const std::string& diffractometerName)
     _diffractometer.reset(Diffractometer::create(diffractometerName));
 }
 
-sptrDataSet Experiment::data(std::string name)
+sptrDataSet Experiment::getData(std::string name)
 {
     auto it = _data.find(name);
     if (it == _data.end()) {

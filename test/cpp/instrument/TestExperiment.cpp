@@ -49,7 +49,7 @@ TEST_CASE("test/instrument/TestExperiment.cpp", "")
     exp.addData(data);
     exp.addData(data);
 
-    CHECK(exp.data("D10_ascii_example")->filename() == "D10_ascii_example");
+    CHECK(exp.getData("D10_ascii_example")->filename() == "D10_ascii_example");
 
     // Remove the data from the experiment
     exp.removeData("D10_ascii_example");

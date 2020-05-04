@@ -53,7 +53,7 @@ SessionExperiment::SessionExperiment(QString name, QString instrument)
 
 QStringList SessionExperiment::getDataNames()
 {
-    std::map<std::string, nsx::sptrDataSet> datamap = _experiment->data();
+    std::map<std::string, nsx::sptrDataSet> datamap = _experiment->getData();
     QStringList names;
     for (auto data : datamap)
         names.append(QString::fromStdString(data.first));
@@ -65,12 +65,12 @@ nsx::sptrDataSet SessionExperiment::getData(int index)
     if (index == -1)
         index = dataIndex_;
 
-    if (_experiment->data().empty())
+    if (_experiment->getData().empty())
         return nullptr;
 
     std::string selected = getDataNames().at(index).toStdString();
 
-    return _experiment->data().at(selected);
+    return _experiment->getData().at(selected);
 }
 
 int SessionExperiment::getIndex(const QString& dataname)
@@ -81,7 +81,7 @@ int SessionExperiment::getIndex(const QString& dataname)
 
 QList<nsx::sptrDataSet> SessionExperiment::allData()
 {
-    std::map<std::string, nsx::sptrDataSet> map = _experiment->data();
+    std::map<std::string, nsx::sptrDataSet> map = _experiment->getData();
     QList<nsx::sptrDataSet> list;
     for (auto data : map)
         list.append(data.second);
@@ -245,7 +245,7 @@ QStringList SessionExperiment::getUnitCellNames()
 
 void SessionExperiment::changeInstrument(const QString& instrumentname)
 {
-    if (!_experiment->data().empty())
+    if (!_experiment->getData().empty())
         return;
 
     std::string expname = _experiment->name();

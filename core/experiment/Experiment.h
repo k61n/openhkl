@@ -52,9 +52,9 @@ class Experiment {
 
  public: // Data sets
     //! Gets a reference to the data
-    const std::map<std::string, sptrDataSet>& data() const;
+    const std::map<std::string, sptrDataSet>& getData() const;
     //! Gets the pointer to a given data stored in the experiment
-    sptrDataSet data(std::string name);
+    sptrDataSet getData(std::string name);
     //! Gets the pointer to a given data stored in the experiment
     sptrDataSet dataShortName(std::string name);
     //! Get number of data

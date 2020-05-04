@@ -38,24 +38,30 @@ else:
     pynsxprint("No parameters file detected, using defaults")
 
 expt = Experiment(args.name, args.detector, params)
-min_autoindex_frames = 7
+all_data = "all"
+min_autoindex_frames = 5
 
 
 if not args.loadnsx:
     filenames = args.files
     pynsxprint("Loading data...")
-    expt.load_raw_data(filenames[0:min_autoindex_frames])
+    expt.add_data_set(all_data, filenames)
     pynsxprint("...data loaded\n")
     # Find the unit cell
     pynsxprint("Autoindexing...")
     index = min_autoindex_frames
-    while True:
-        solution = expt.autoindex(args.length_tol, args.angle_tol)
+    count = 1
+    while index < args.max_autoindex_frames:
+        autoindex_files = filenames[0:index]
+        set_name = "autoindex" + str(count)
+        expt.add_data_set(set_name, autoindex_files)
+        data = expt.get_data(set_name)
+        solution = expt.autoindex(data, args.length_tol, args.angle_tol)
         if solution:
             break
         else:
-            expt.add_raw_data_frames([filenames[index]])
             index += 1
+            count += 1
 
     if solution:
         cell = expt.solution2cell(solution)
@@ -73,9 +79,9 @@ if not args.loadnsx:
 
     pynsxprint("...autoindexing complete")
 
-    expt.add_raw_data_frames(filenames[index:])
     pynsxprint("Finding peaks...")
-    expt.find_peaks([expt.data])
+    data = expt.get_data(all_data)
+    expt.find_peaks([data])
     pynsxprint("...peak finding complete\n")
     pynsxprint("Integrating...")
     npeaks = expt.integrate_peaks()
