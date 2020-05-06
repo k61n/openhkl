@@ -20,7 +20,6 @@
 %feature("director") Profile1DIntegrator;
 %feature("director") ISigmaIntegrator;
 %feature("director") ShapeIntegrator;
-%feature("notabstract") ShapeIntegrator;
 
 %include <std_deque.i>
 %include <std_map.i>
@@ -335,6 +334,7 @@ ArrayExtendCRef(MillerIndex, int);
 %include "core/data/DataTypes.h"
 %template(DataList) std::vector<std::shared_ptr<nsx::DataSet>>;
 
+%include "core/shape/ShapeLibrary.h"
 %include "core/shape/IPeakIntegrator.h"
 
 %template(ConvolverParameters) std::map<std::string,double>;
@@ -349,7 +349,6 @@ ArrayExtendCRef(MillerIndex, int);
 
 %include "core/shape/Profile3D.h"
 %include "core/shape/Profile1D.h"
-%include "core/shape/ShapeLibrary.h"
 
 %include "core/statistics/MergedPeak.h"
 %include "core/integration/Blob3D.h"
