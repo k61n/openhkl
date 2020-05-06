@@ -20,6 +20,7 @@
 %feature("director") Profile1DIntegrator;
 %feature("director") ISigmaIntegrator;
 %feature("director") ShapeIntegrator;
+%feature("notabstract") ShapeIntegrator;
 
 %include <std_deque.i>
 %include <std_map.i>
@@ -47,7 +48,6 @@
 %shared_ptr(nsx::Peak3D)
 %shared_ptr(nsx::ProgressHandler)
 %shared_ptr(nsx::RawDataReader)
-%shared_ptr(nsx::ShapeLibrary)
 %shared_ptr(nsx::TiffDataReader)
 %shared_ptr(nsx::UnitCell)
 

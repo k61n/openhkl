@@ -103,7 +103,9 @@ else:
         raise OSError("f{expt.nsxfile} not found")
 
 pynsxprint("Building shape library...")
+expt.build_shape_library(expt.get_data(all_data))
 pynsxprint("...finished building shape library\n")
+expt.save()
 
 pynsxprint("Predicting peaks...")
 pynsxprint("...finished predicting peaks\n")
