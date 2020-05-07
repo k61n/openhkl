@@ -112,6 +112,8 @@ class Experiment {
     void swapUnitCells(const std::string& old_cell, const std::string& new_cell);
     //! Get the number of peak lists
     int numUnitCells() const { return _unit_cells.size(); };
+    //! Accept an autoindexer solution as the unit cell
+    void acceptUnitCell(std::shared_ptr<UnitCell> cell, PeakCollection* peaks);
 
  public: // Peak finder
     //! Get the address of the peak finder
@@ -162,6 +164,8 @@ class Experiment {
     std::unique_ptr<nsx::AutoIndexer> _auto_indexer;
     //! The found peak integrator
     std::map<std::string, std::unique_ptr<nsx::IPeakIntegrator>> _integrator_map;
+    //! The accepted unit cell
+    UnitCell _accepted_unit_cell;
 };
 
 } // namespace nsx

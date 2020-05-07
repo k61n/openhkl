@@ -39,7 +39,7 @@ else:
 
 expt = Experiment(args.name, args.detector, params)
 all_data = "all"
-min_autoindex_frames = 5
+min_autoindex_frames = 7
 
 
 if not args.loadnsx:
@@ -63,6 +63,8 @@ if not args.loadnsx:
             index += 1
             count += 1
 
+    # expt.accept_solution(expt.filtered_collection, solution)
+    # expt.filtered_collection.printUnitCells()
     if solution:
         cell = expt.solution2cell(solution)
         a = cell[1][0]
@@ -78,6 +80,7 @@ if not args.loadnsx:
         raise RuntimeError("Autoindexing Failed")
 
     pynsxprint("...autoindexing complete")
+    expt.remove_peak_collection(expt.filtered_peaks)
 
     pynsxprint("Finding peaks...")
     data = expt.get_data(all_data)
@@ -88,10 +91,11 @@ if not args.loadnsx:
     pynsxprint("...integration complete\n")
 
     pynsxprint("Filtering...")
-    ncaught = expt.filter_peaks()
+    ncaught = expt.filter_peaks(params.filter)
     pynsxprint("...filtering complete\n")
     pynsxprint("Filter caught " + str(ncaught) + " of " + str(npeaks) + " peaks")
-    expt.accept_solution(expt.filtered_collection, solution)
+    expt.accept_solution(solution[0], expt.filtered_collection)
+    expt.filtered_collection.printUnitCells()
 
     pynsxprint(f"Saving experiment to file {expt.nsxfile}")
     expt.save()

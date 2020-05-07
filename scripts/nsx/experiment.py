@@ -31,9 +31,9 @@ class Experiment:
         Set up experiment object
         '''
         self.name = name
-        self.name_peaks = "peaks"
-        self.name_filtered = "filtered"
-        self.name_fit = "fit"
+        self.found_peaks = "peaks"
+        self.filtered_peaks = "filtered"
+        self.fit_peaks = "fit"
         self.expt = nsx.Experiment(name, detector)
         self.params = params
         self.nsxfile = self.name + ".nsx"
@@ -96,19 +96,19 @@ class Experiment:
         integrator.setBkgEnd(self.params.integration['background_upper'])
 
         self.expt.integrateFoundPeaks(integrator_type)
-        self.expt.acceptFoundPeaks(self.name_peaks)
-        self.found_collection = self.expt.getPeakCollection(self.name_peaks)
+        self.expt.acceptFoundPeaks(self.found_peaks)
+        self.found_collection = self.expt.getPeakCollection(self.found_peaks)
         n_peaks = self.found_collection.numberOfPeaks()
         return n_peaks
 
-    def filter_peaks(self):
+    def filter_peaks(self, filter_params):
         '''
         Filter the peaks
         '''
-        min_strength = self.params.filter['min_strength']
-        max_strength = self.params.filter['max_strength']
-        min_d_range = self.params.filter['min_d_range']
-        max_d_range = self.params.filter['max_d_range']
+        min_strength = filter_params['min_strength']
+        max_strength = filter_params['max_strength']
+        min_d_range = filter_params['min_d_range']
+        max_d_range = filter_params['max_d_range']
 
         filter = self.expt.peakFilter()
         # Filter by d-range and strength
@@ -117,11 +117,11 @@ class Experiment:
         filter.setDRange(min_d_range, max_d_range)
         filter.setStrength(min_strength, max_strength)
 
-        self.found_collection = self.expt.getPeakCollection(self.name_peaks)
+        self.found_collection = self.expt.getPeakCollection(self.found_peaks)
         filter.resetFiltering(self.found_collection)
         filter.filter(self.found_collection)
-        self.expt.acceptFilter(self.name_filtered, self.found_collection)
-        self.filtered_collection = self.expt.getPeakCollection(self.name_filtered)
+        self.expt.acceptFilter(self.filtered_peaks, self.found_collection)
+        self.filtered_collection = self.expt.getPeakCollection(self.filtered_peaks)
 
         n_caught = self.found_collection.numberCaughtByFilter()
         return n_caught
@@ -133,7 +133,7 @@ class Experiment:
 
         self.find_peaks([dataset])
         npeaks = self.integrate_peaks()
-        ncaught = self.filter_peaks()
+        ncaught = self.filter_peaks(self.params.filter)
 
         autoindexer_params = nsx.IndexerParameters()
         autoindexer_params.maxdim = self.params.autoindexer['max_dim']
@@ -154,9 +154,10 @@ class Experiment:
         self.unit_cells = self.get_unit_cells(solutions)
         return self.accept_cell(length_tol, angle_tol, solutions)
 
-    def accept_solution(self, collection, solution):
-        peak_list = collection.getPeakList()
-        self.auto_indexer.acceptSolution(solution[0], peak_list)
+    def accept_solution(self, solution, collection):
+        self.expt.acceptUnitCell(solution, collection);
+        # peak_list = collection.getPeakList()
+        # self.auto_indexer.acceptSolution(solution[0], peak_list)
 
     def get_unit_cells(self, solutions):
         '''
@@ -214,17 +215,17 @@ class Experiment:
                 break
         return accepted
 
-    def build_shape_library(self):
+    def build_shape_library(self, data):
 
         # Filter the weak peaks out
 
         kabsch = self.params.shapelib['kabsch']
-        peak_scale = self.params.shapelib['peak_scale']
         sigma_m = self.params.shapelib['sigma_m']
         sigma_d = self.params.shapelib['sigma_d']
         nx = self.params.shapelib['nx']
         ny = self.params.shapelib['ny']
         nz = self.params.shapelib['nz']
+        peak_scale = self.params.shapelib['peak_scale']
 
         aabb = nsx.AABB()
         if kabsch:
@@ -236,18 +237,19 @@ class Experiment:
             aabb.setLower(-0.5*nx, -0.5*ny, -0.5*nz)
             aabb.setUpper(0.5*nx, 0.5*ny, 0.5*nz)
 
-        # shape_library = nsx.ShapeLibrary(not kabsch, peak_scale, bkg_begin, bkg_end))
-        # shape_integrator = nsx.ShapeIntegrator(shape_library, aabb, nx, ny, nz))
+        bkg_begin = self.params.shapelib['bkg_begin']
+        bkg_end = self.params.shapelib['bkg_end']
+        self.filter_peaks(self.params.filter)
 
-        # integrator.setPeakEnd(peak_scale);
-        # integrator.setBkgBegin(bkg_begin);
-        # integrator.setBkgEnd(bkg_end);
+        shape_library = nsx.ShapeLibrary(not kabsch, peak_scale, bkg_begin, bkg_end)
+        shape_integrator = nsx.ShapeIntegrator(shape_library, aabb, nx, ny, nz)
+        shape_integrator.setPeakEnd(peak_scale)
+        shape_integrator.setBkgBegin(bkg_begin)
+        shape_integrator.setBkgEnd(bkg_end)
+        peak_list = self.filtered_collection.getPeakList()
 
-        # for data in self.data:
-        #     integrator.integrate(self.filtered_peaks, shape_library, data);
-
-        # shape_library = integrator.library()
-        # shape_library.updateFit(1000);
+        shape_integrator.integrate(peak_list, shape_integrator.library(), data);
+        shape_library = shape_integrator.library()
 
     def print_unit_cells(self):
         self.auto_indexer.printSolutions()
@@ -263,6 +265,9 @@ class Experiment:
         Load the experiment from self.name.nsx
         '''
         self.expt.loadFromFile(self.nsxfile)
-        self.found_collection = self.expt.getPeakCollection(self.name_peaks)
+        self.found_collection = self.expt.getPeakCollection(self.found_peaks)
         self.filtered_collection = \
-            self.expt.getPeakCollection(self.name_filtered)
+            self.expt.getPeakCollection(self.filtered_peaks)
+
+    def remove_peak_collection(self, name):
+        self.expt.removePeakCollection(name)

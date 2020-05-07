@@ -498,4 +498,11 @@ bool Experiment::loadFromFile(std::string path)
     return success;
 }
 
+void Experiment::acceptUnitCell(std::shared_ptr<UnitCell> cell, PeakCollection* peaks)
+{
+    _accepted_unit_cell = *cell;
+    std::vector<Peak3D*> peak_list = peaks->getPeakList();
+    for (auto peak : peak_list) peak->setUnitCell(&_accepted_unit_cell);
+}
+
 } // namespace nsx
