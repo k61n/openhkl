@@ -110,29 +110,25 @@ void AutoIndexer::computeFFTSolutions(const std::vector<Peak3D*>& peaks)
                 A.col(1) = tvects[j];
                 A.col(2) = tvects[k];
                 // Build a unit cell with direct vectors
-                auto cell = std::shared_ptr<UnitCell>(new UnitCell(A));
+                std::shared_ptr<UnitCell> cell{new UnitCell{A}};
 
-                // If the unit cell volume is below the user-defined minimum volume,
-                // skip it
+                // Skip this unit cell if its volume is below a user-defined minimum.
                 if (cell->volume() < _params.minUnitCellVolume)
                     continue;
 
+                // Skip this unit cell if there is already an equivalent one.
                 bool equivalent = false;
-
-                // check to see if the cell is equivalent to a previous one. If so, skip
-                // it
                 for (auto solution : _solutions) {
                     if (cell->equivalent(*solution.first, _params.unitCellEquivalenceTolerance)) {
                         equivalent = true;
                         break;
                     }
                 }
-                // cell is equivalent to a previous one in the list
                 if (equivalent)
                     continue;
-                // Add this solution to the list of solution with a scored to be defined
-                // futher
-                _solutions.push_back(std::make_pair(cell, -1.0));
+
+                // Add this unit cell to the list of solution. Score will be computed later.
+                _solutions.push_back({cell, -1.0});
             }
         }
     }
@@ -221,8 +217,7 @@ void AutoIndexer::refineSolutions(const std::vector<Peak3D*>& peaks)
                 params.addParameter(&B(r, c));
         }
 
-        // Sets the Minimizer with the parameters store and the size of the residual
-        // vector
+        // Sets the Minimizer with the parameters store and the size of the residual vector
         Minimizer minimizer;
         minimizer.initialize(params, 3 * success);
         minimizer.set_f(residuals);
