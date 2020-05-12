@@ -10,6 +10,7 @@ import sys
 import scipy
 from pdb import set_trace
 sys.path.append("/home/zamaan/codes/nsxtool/current/build/swig")
+sys.path.append("/G/sw/nsx/build/swig") # Joachim
 import pynsx as nsx
 
 
