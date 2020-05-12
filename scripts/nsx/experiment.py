@@ -140,11 +140,19 @@ class Experiment:
         n_caught = self.found_collection.numberCaughtByFilter()
         return n_caught
 
+    def accept_unit_cell(self, peak_collection):
+        length_tol = self.params.autoindexer['length_tol']
+        angle_tol = self.params.autoindexer['angle_tol']
+        return self.expt.acceptUnitCell(peak_collection, length_tol, angle_tol)
+
     def autoindex(self, dataset, length_tol, angle_tol):
         '''
-        Compute the unit cells from the peaks most recently found/integrated/filtered
+        Compute the unit cells from the peaks most recently found/integrated/filtered.
+        Returns True if unit cell found.
         '''
 
+        self.length_tol = length_tol
+        self.angle_tol = angle_tol
         self.find_peaks([dataset])
         npeaks = self.integrate_peaks()
         ncaught = self.filter_peaks(self.params.filter)
@@ -165,7 +173,7 @@ class Experiment:
         print(f'Autoindex: {ncaught}/{npeaks} peaks caught by filter')
         print(f'Autoindex: cells')
         self.print_unit_cells()
-        return self.expt.acceptUnitCell(self.filtered_collection, length_tol, angle_tol)
+        return self.accept_unit_cell(self.filtered_collection)
 
     def get_accepted_cell(self):
         return self.expt.getAcceptedCell()
@@ -196,6 +204,7 @@ class Experiment:
         bkg_end = self.params.shapelib['bkg_end']
         self.filter_peaks(self.params.filter)
 
+        self.accept_unit_cell(self.filtered_collection)
         shape_library = nsx.ShapeLibrary(not kabsch, peak_scale, bkg_begin, bkg_end)
         shape_integrator = nsx.ShapeIntegrator(shape_library, aabb, nx, ny, nz)
         shape_integrator.setPeakEnd(peak_scale)

@@ -47,7 +47,9 @@ class Parameters:
                              'n_vertices'       : 1000,
                              'n_subdiv'         : 30,
                              'indexing_tol'     : 0.2,
-                             'min_vol'          : 100.0 }
+                             'min_vol'          : 100.0,
+                             'length_tol'       : 1.0,
+                             'angle_tol'        : 3.0 }
 
         self.shapelib    = { 'peak_scale'       : 3.0,
                              'bkg_begin'        : 3.0,
