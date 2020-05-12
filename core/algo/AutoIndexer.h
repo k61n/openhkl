@@ -75,6 +75,13 @@ class AutoIndexer {
     void printSolutions();
     //! Set solution to be unit cell for given peak list
     void acceptSolution(std::shared_ptr<UnitCell> solution, const std::vector<nsx::Peak3D*>& peaks);
+    //! Check if list of solutions contains reference unit cell. If it does,
+    //! assign it to _accepted_solution
+    bool hasSolution(double length_tol, double angle_tol);
+    //! Set the reference cell
+    void setReferenceCell(UnitCell* cell);
+    //! return the accepted solution
+    UnitCell* getAcceptedSolution();
 
  private:
     void computeFFTSolutions(const std::vector<Peak3D*>& peaks);
@@ -86,6 +93,9 @@ class AutoIndexer {
     IndexerParameters _params;
     std::vector<RankedSolution> _solutions;
     std::shared_ptr<ProgressHandler> _handler;
+
+    UnitCell* _reference_cell;
+    UnitCell* _accepted_solution;
 };
 
 } // namespace nsx

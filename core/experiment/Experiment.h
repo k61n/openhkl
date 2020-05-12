@@ -113,7 +113,7 @@ class Experiment {
     //! Get the number of peak lists
     int numUnitCells() const { return _unit_cells.size(); };
     //! Accept an autoindexer solution as the unit cell
-    void acceptUnitCell(std::shared_ptr<UnitCell> cell, PeakCollection* peaks);
+    bool acceptUnitCell(PeakCollection* peaks, double length_tol, double angle_tol);
 
  public: // Peak finder
     //! Get the address of the peak finder
@@ -126,6 +126,11 @@ class Experiment {
  public: // Autoindexer
     //! Get the auto indexer
     nsx::AutoIndexer* autoIndexer() const { return _auto_indexer.get(); };
+    //! Set the reference cell
+    void setReferenceCell(double a, double b, double c,
+                          double alpha, double beta, double gamma);
+    //! return a pointer to the accepted unit cell
+    UnitCell* getAcceptedCell();
 
  public: // Integrator
     nsx::IPeakIntegrator* getIntegrator(const std::string& name) const;
@@ -166,6 +171,8 @@ class Experiment {
     std::map<std::string, std::unique_ptr<nsx::IPeakIntegrator>> _integrator_map;
     //! The accepted unit cell
     UnitCell _accepted_unit_cell;
+    //! Reference unit cell
+    UnitCell _reference_cell;
 };
 
 } // namespace nsx

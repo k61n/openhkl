@@ -263,7 +263,7 @@ void AutoIndexer::refineSolutions(const std::vector<Peak3D*>& peaks)
 
 void AutoIndexer::printSolutions()
 {
-    std::cout << std::setw(10) << "Quality"
+    std::cout << std::setw(10) << "quality"
               << std::setw(10) << "a"
               << std::setw(10) << "b"
               << std::setw(10) << "c"
@@ -279,6 +279,27 @@ void AutoIndexer::printSolutions()
 void AutoIndexer::acceptSolution(std::shared_ptr<UnitCell> solution, const std::vector<nsx::Peak3D*>& peaks)
 {
   for (auto peak : peaks) peak->setUnitCell(solution);
+}
+
+void AutoIndexer::setReferenceCell(UnitCell* cell)
+{
+    _reference_cell = cell;
+}
+
+bool AutoIndexer::hasSolution(double length_tol, double angle_tol)
+{
+    for (auto solution : _solutions){
+        if (solution.first->isSimilar(_reference_cell, length_tol, angle_tol)){
+            _accepted_solution = solution.first.get();
+            return true;
+        }
+    }
+    return false;
+}
+
+UnitCell* AutoIndexer::getAcceptedSolution()
+{
+    return _accepted_solution;
 }
 
 } // namespace nsx

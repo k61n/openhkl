@@ -56,26 +56,16 @@ if not args.loadnsx:
         set_name = "autoindex" + str(count)
         expt.add_data_set(set_name, autoindex_files)
         data = expt.get_data(set_name)
-        solution = expt.autoindex(data, args.length_tol, args.angle_tol)
-        if solution:
+        cell_found = expt.autoindex(data, args.length_tol, args.angle_tol)
+        if cell_found:
             break
         else:
             index += 1
             count += 1
 
-    # expt.accept_solution(expt.filtered_collection, solution)
-    # expt.filtered_collection.printUnitCells()
-    if solution:
-        cell = expt.solution2cell(solution)
-        a = cell[1][0]
-        b = cell[1][1]
-        c = cell[1][2]
-        alpha = cell[1][3]
-        beta = cell[1][4]
-        gamma = cell[1][5]
-        cell_str = f'{a:>9.3f}{b:>9.3f}{c:>9.3f}{alpha:>8.3f}{beta:>8.2f}{gamma:>8.2f}'
+    if cell_found:
         pynsxprint("Unit cell:")
-        pynsxprint(cell_str)
+        pynsxprint(expt.get_accepted_cell().toString())
     else:
         raise RuntimeError("Autoindexing Failed")
 
@@ -94,8 +84,7 @@ if not args.loadnsx:
     ncaught = expt.filter_peaks(params.filter)
     pynsxprint("...filtering complete\n")
     pynsxprint("Filter caught " + str(ncaught) + " of " + str(npeaks) + " peaks")
-    expt.accept_solution(solution[0], expt.filtered_collection)
-    expt.filtered_collection.printUnitCells()
+    # expt.filtered_collection.printUnitCells()
 
     pynsxprint(f"Saving experiment to file {expt.nsxfile}")
     expt.save()
@@ -106,6 +95,7 @@ else:
     else:
         raise OSError("f{expt.nsxfile} not found")
 
+expt.print_unit_cells()
 pynsxprint("Building shape library...")
 expt.build_shape_library(expt.get_data(all_data))
 pynsxprint("...finished building shape library\n")

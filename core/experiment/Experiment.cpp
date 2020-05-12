@@ -498,11 +498,28 @@ bool Experiment::loadFromFile(std::string path)
     return success;
 }
 
-void Experiment::acceptUnitCell(std::shared_ptr<UnitCell> cell, PeakCollection* peaks)
+void Experiment::setReferenceCell(double a, double b, double c,
+                                  double alpha, double beta, double gamma)
 {
-    _accepted_unit_cell = *cell;
-    std::vector<Peak3D*> peak_list = peaks->getPeakList();
-    for (auto peak : peak_list) peak->setUnitCell(&_accepted_unit_cell);
+    _reference_cell = UnitCell(a, b, c, alpha, beta, gamma);
+    _auto_indexer->setReferenceCell(&_reference_cell);
+}
+
+bool Experiment::acceptUnitCell(PeakCollection* peaks, double length_tol, double angle_tol)
+{
+    bool accepted = false;
+    if (_auto_indexer->hasSolution(length_tol, angle_tol)){
+        _accepted_unit_cell = *_auto_indexer->getAcceptedSolution();
+        std::vector<Peak3D*> peak_list = peaks->getPeakList();
+        for (auto peak : peak_list) peak->setUnitCell(&_accepted_unit_cell);
+        accepted = true;
+    }
+    return accepted;
+}
+
+UnitCell* Experiment::getAcceptedCell()
+{
+    return &_accepted_unit_cell;
 }
 
 } // namespace nsx

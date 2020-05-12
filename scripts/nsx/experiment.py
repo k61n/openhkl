@@ -37,9 +37,22 @@ class Experiment:
         self.expt = nsx.Experiment(name, detector)
         self.params = params
         self.nsxfile = self.name + ".nsx"
-        self.unit_cells = None
         self.ref_cell = params.cell
         self.data_sets = []
+        self.set_reference_cell()
+
+    def set_reference_cell(self):
+        '''
+        Add the reference unit cell to the nsx::experiment object
+        '''
+        a = self.params.cell['a']
+        b = self.params.cell['b']
+        c = self.params.cell['c']
+        alpha = self.params.cell['alpha']
+        beta = self.params.cell['beta']
+        gamma = self.params.cell['gamma']
+        self.expt.setReferenceCell(a, b, c, alpha, beta, gamma)
+
 
     def get_data(self, data_name):
         return self.expt.getData(data_name)
@@ -151,69 +164,10 @@ class Experiment:
         print(f'Autoindex: {ncaught}/{npeaks} peaks caught by filter')
         print(f'Autoindex: cells')
         self.print_unit_cells()
-        self.unit_cells = self.get_unit_cells(solutions)
-        return self.accept_cell(length_tol, angle_tol, solutions)
+        return self.expt.acceptUnitCell(self.filtered_collection, length_tol, angle_tol)
 
-    def accept_solution(self, solution, collection):
-        self.expt.acceptUnitCell(solution, collection);
-        # peak_list = collection.getPeakList()
-        # self.auto_indexer.acceptSolution(solution[0], peak_list)
-
-    def get_unit_cells(self, solutions):
-        '''
-        Get a list of unit cells from the C++ solutions
-        '''
-        unit_cells = []
-        for solution in solutions:
-            cell = self.solution2cell(solution)
-            unit_cells.append(cell)
-        return unit_cells
-
-    def solution2cell(self, solution):
-        '''
-        Convert the C++ solution to a tuple containing the quality and cell
-        parameters tuple
-        '''
-        deg = scipy.pi / 180.0
-        quality = solution[1]
-        a = solution[0].character().a
-        b = solution[0].character().b
-        c = solution[0].character().c
-        alpha = solution[0].character().alpha / deg
-        beta = solution[0].character().beta / deg
-        gamma = solution[0].character().gamma / deg
-        return (quality, (a, b, c, alpha, beta, gamma))
-
-    def accept_cell(self, length_tol, angle_tol, solutions):
-        '''
-        Return solution if it matches the reference cell, otherwise return None
-        '''
-        accepted = None
-        for solution in solutions:
-            accept = True
-            quality, cell = self.solution2cell(solution)
-            if (cell[0] - self.ref_cell['a']) > length_tol:
-                accept = False
-                continue
-            if (cell[1] - self.ref_cell['b']) > length_tol:
-                accept = False
-                continue
-            if (cell[2] - self.ref_cell['c']) > length_tol:
-                accept = False
-                continue
-            if (cell[3] - self.ref_cell['alpha']) > angle_tol:
-                accept = False
-                continue
-            if (cell[4] - self.ref_cell['beta']) > angle_tol:
-                accept = False
-                continue
-            if (cell[5] - self.ref_cell['gamma']) > angle_tol:
-                accept = False
-                continue
-            if accept:
-                accepted = solution
-                break
-        return accepted
+    def get_accepted_cell(self):
+        return self.expt.getAcceptedCell()
 
     def build_shape_library(self, data):
 
