@@ -34,7 +34,7 @@ class Experiment:
         self.name = name
         self.found_peaks = "peaks"
         self.filtered_peaks = "filtered"
-        self.fit_peaks = "fit"
+        self.predicted_peaks = "predicted"
         self.expt = nsx.Experiment(name, detector)
         self.params = params
         self.nsxfile = self.name + ".nsx"
@@ -179,41 +179,24 @@ class Experiment:
         return self.expt.getAcceptedCell()
 
     def build_shape_library(self, data):
+        '''
+        Build the shape library for predicting the weak peaks
+        '''
+        shapelib_params = nsx.ShapeLibParameters()
 
-        # Filter the weak peaks out
-
-        kabsch = self.params.shapelib['kabsch']
-        sigma_m = self.params.shapelib['sigma_m']
-        sigma_d = self.params.shapelib['sigma_d']
-        nx = self.params.shapelib['nx']
-        ny = self.params.shapelib['ny']
-        nz = self.params.shapelib['nz']
-        peak_scale = self.params.shapelib['peak_scale']
-
-        aabb = nsx.AABB()
-        if kabsch:
-            aabb.setLower(-peak_scale*sigma_d, -peak_scale*sigma_d,
-                          -peak_scale*sigma_m)
-            aabb.setUpper(peak_scale*sigma_d, peak_scale*sigma_d,
-                          peak_scale*sigma_m)
-        else:
-            aabb.setLower(-0.5*nx, -0.5*ny, -0.5*nz)
-            aabb.setUpper(0.5*nx, 0.5*ny, 0.5*nz)
-
-        bkg_begin = self.params.shapelib['bkg_begin']
-        bkg_end = self.params.shapelib['bkg_end']
-        self.filter_peaks(self.params.filter)
-
+        shapelib_params.kabsch = self.params.shapelib['kabsch']
+        shapelib_params.sigma_m = self.params.shapelib['sigma_m']
+        shapelib_params.sigma_d = self.params.shapelib['sigma_d']
+        shapelib_params.nx = self.params.shapelib['nx']
+        shapelib_params.ny = self.params.shapelib['ny']
+        shapelib_params.nz = self.params.shapelib['nz']
+        shapelib_params.peak_scale = self.params.shapelib['peak_scale']
+        shapelib_params.d_min = self.params.shapelib['d_min']
+        shapelib_params.d_max = self.params.shapelib['d_max']
+        shapelib_params.bkg_begin = self.params.shapelib['bkg_begin']
+        shapelib_params.bkg_end = self.params.shapelib['bkg_end']
         self.accept_unit_cell(self.filtered_collection)
-        shape_library = nsx.ShapeLibrary(not kabsch, peak_scale, bkg_begin, bkg_end)
-        shape_integrator = nsx.ShapeIntegrator(shape_library, aabb, nx, ny, nz)
-        shape_integrator.setPeakEnd(peak_scale)
-        shape_integrator.setBkgBegin(bkg_begin)
-        shape_integrator.setBkgEnd(bkg_end)
-        peak_list = self.filtered_collection.getPeakList()
-
-        shape_integrator.integrate(peak_list, shape_integrator.library(), data);
-        shape_library = shape_integrator.library()
+        self.expt.buildShapeLibrary(self.filtered_collection, [data,], shapelib_params)
 
     def print_unit_cells(self):
         self.auto_indexer.printSolutions()
@@ -235,3 +218,16 @@ class Experiment:
 
     def remove_peak_collection(self, name):
         self.expt.removePeakCollection(name)
+
+    def predict_peaks(self, data, interpolation):
+        interpolation_types = {'None' : nsx.PeakInterpolation_NoInterpolation,
+                               'InverseDistance:': nsx.PeakInterpolation_InverseDistance,
+                               'Intensity:': nsx.PeakInterpolation_Intensity }
+        interpol = interpolation_types[interpolation]
+        prediction_params = nsx.PredictionParameters()
+        prediction_params.d_min = self.params.prediction['d_min']
+        prediction_params.d_max = self.params.prediction['d_max']
+        prediction_params.radius = self.params.prediction['radius']
+        prediction_params.frames = self.params.prediction['frames']
+        prediction_params.min_neighbours = self.params.prediction['neighbours']
+        self.expt.predictPeaks(self.predicted_peaks, [data,], prediction_params, interpol)

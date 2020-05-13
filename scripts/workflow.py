@@ -102,6 +102,7 @@ pynsxprint("...finished building shape library\n")
 expt.save()
 
 pynsxprint("Predicting peaks...")
+expt.predict_peaks(expt.get_data(all_data), 'None')
 pynsxprint("...finished predicting peaks\n")
 
 pynsxprint("Integrating...")

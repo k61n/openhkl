@@ -35,6 +35,7 @@ class Parameters:
 
         self.integration = { 'peak_area'        : 3.0,
                              'background_lower' : 3.0,
+
                              'background_upper' : 6.0 }
 
         self.filter =      { 'min_strength'     : 1.0,
@@ -55,11 +56,19 @@ class Parameters:
                              'bkg_begin'        : 3.0,
                              'bkg_end'          : 4.5,
                              'kabsch'           : True,
+                             'd_min'            : 1.5,
+                             'd_max'            : 50.0,
                              'nx'               : 20,
                              'ny'               : 20,
                              'nz'               : 20,
                              'sigma_d'          : 0.33,
                              'sigma_m'          : 0.23 }
+
+        self.prediction  = { 'd_min'            : 1.5,
+                             'd_max'            : 50.0,
+                             'radius'           : 100.0,
+                             'neighbours'       : 400.0,
+                             'frames'           : 20 }
 
         self._dicts = [self.cell, self.detector, self.finder, 
                        self.integration, self.filter, self.autoindexer,

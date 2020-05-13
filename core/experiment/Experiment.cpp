@@ -522,4 +522,79 @@ UnitCell* Experiment::getAcceptedCell()
     return &_accepted_unit_cell;
 }
 
+void Experiment::buildShapeLibrary(PeakCollection* peaks, DataList numors, ShapeLibParameters params)
+{
+    std::vector<Peak3D*> peak_list = peaks->getPeakList();
+    std::vector<Peak3D*> fit_peaks;
+
+    for (nsx::Peak3D* peak : peak_list) {
+        if (!peak->enabled())
+            continue;
+        double d = 1.0 / peak->q().rowVector().norm();
+
+        if (d > params.d_max || d < params.d_min)
+            continue;
+
+        nsx::Intensity intensity = peak->correctedIntensity();
+
+        if (intensity.value() <= params.min_strength * intensity.sigma())
+            continue;
+        fit_peaks.push_back(peak);
+    }
+
+    nsx::AABB aabb;
+
+    if (params.kabsch) {
+        Eigen::Vector3d sigma(params.sigma_d, params.sigma_d, params.sigma_m);
+        aabb.setLower(-params.peak_scale * sigma);
+        aabb.setUpper(params.peak_scale * sigma);
+    } else {
+        Eigen::Vector3d dx(params.nx, params.ny, params.nz);
+        aabb.setLower(-0.5 * dx);
+        aabb.setUpper(0.5 * dx);
+    }
+
+    _shape_library = nsx::ShapeLibrary(!params.kabsch, params.peak_scale,
+                                       params.bkg_begin, params.bkg_end);
+
+    nsx::ShapeIntegrator integrator(&_shape_library, aabb, params.nx, params.ny, params.nz);
+    integrator.setPeakEnd(params.peak_scale);
+    integrator.setBkgBegin(params.bkg_begin);
+    integrator.setBkgEnd(params.bkg_end);
+
+    for (auto data : numors)
+        integrator.integrate(fit_peaks, &_shape_library, data);
+
+    _shape_library = *integrator.library(); // why do this? - zamaan
+    // _shape_library.updateFit(1000); // This does nothing!! - zamaan
+}
+
+void Experiment::predictPeaks(std::string name, DataList numors, PredictionParameters params, PeakInterpolation interpol)
+{
+    int current_numor = 0;
+    std::vector<nsx::Peak3D*> predicted_peaks;
+
+    for (auto data : numors) {
+        std::cout << "Predicting peaks for numor " << ++current_numor << " of " <<
+            numors.size() << std::endl;
+
+        std::vector<nsx::Peak3D*> predicted =
+            nsx::predictPeaks(&_shape_library, data, &_accepted_unit_cell,
+                              params.d_min, params.d_max, params.radius,
+                              params.frames, params.min_neighbors, interpol);
+
+        for (nsx::Peak3D* peak : predicted)
+            predicted_peaks.push_back(peak);
+
+        std::cout << "Added " << predicted.size() << " predicted peaks.";
+    }
+    std::cout << "Completed  peak prediction. Added " << predicted_peaks.size() << " peaks";
+
+    updatePeakCollection(name, listtype::PREDICTED, predicted_peaks);
+
+    for (nsx::Peak3D* peak : predicted_peaks) // is this necessary? - zamaan
+        delete peak;
+    predicted_peaks.clear();
+}
+
 } // namespace nsx

@@ -148,6 +148,14 @@ class Experiment {
     //! Load from file
     bool loadFromFile(std::string path);
 
+public: // Prediction
+    //! Build the shape library
+    void buildShapeLibrary(PeakCollection* peaks, DataList numors,
+                           ShapeLibParameters params);
+    //! Predict peaks
+    void predictPeaks(std::string name, DataList numors, PredictionParameters params,
+                      PeakInterpolation interpol);
+
  private: // private variables
     //! The name of this experiment
     std::string _name = "No_name";
@@ -173,6 +181,8 @@ class Experiment {
     UnitCell _accepted_unit_cell;
     //! Reference unit cell
     UnitCell _reference_cell;
+    //! Peak shape library for prediction
+    ShapeLibrary _shape_library;
 };
 
 } // namespace nsx

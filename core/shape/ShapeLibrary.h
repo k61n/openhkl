@@ -24,6 +24,31 @@
 
 namespace nsx {
 
+struct ShapeLibParameters
+{
+    double d_min = 1.5;
+    double d_max = 50.0;
+    double peak_scale = 3.0;
+    double bkg_begin = 3.0;
+    double bkg_end = 4.5;
+    double min_strength = 1.0;
+    bool kabsch = true;
+    int nx = 20;
+    int ny = 20;
+    int nz = 20;
+    double sigma_d = 0.33;
+    double sigma_m = 0.23;
+};
+
+struct PredictionParameters
+{
+    double d_min = 1.5;
+    double d_max = 50.0;
+    double radius = 100.0;
+    int min_neighbors = 400;
+    double frames = 20.0; // why is this not an int? - zamaan
+};
+
 class ShapeLibrary;
 
 using sptrShapeLibrary = std::shared_ptr<ShapeLibrary>;
