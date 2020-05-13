@@ -24,28 +24,30 @@
 
 namespace nsx {
 
+//! Parameters for building the shape library
 struct ShapeLibParameters
 {
-    double d_min = 1.5;
-    double d_max = 50.0;
-    double peak_scale = 3.0;
-    double bkg_begin = 3.0;
-    double bkg_end = 4.5;
-    double min_strength = 1.0;
-    bool kabsch = true;
-    int nx = 20;
-    int ny = 20;
-    int nz = 20;
-    double sigma_d = 0.33;
-    double sigma_m = 0.23;
+    double d_min = 1.5;         //! Minimum detector range (filter)
+    double d_max = 50.0;        //! Maximum detector range (filter)
+    double peak_scale = 3.0;    //!
+    double bkg_begin = 3.0;     //! Start of background range in sigmas
+    double bkg_end = 4.5;       //! End of background range in sigmas
+    double min_strength = 1.0;  //! Minimum peak strength I/sigma (filter)
+    bool kabsch = true;         //! Are we using Kabsch or detector coordinates?
+    int nx = 20;                //! Number of x histogram bins for peak
+    int ny = 20;                //! Number of y histogram bins for peak
+    int nz = 20;                //! Number of z histogram bins for peak
+    double sigma_d = 0.33;      //! variance arising from beam divergence
+    double sigma_m = 0.23;      //! variance arising from crystal mosaicity
 };
 
+//! Parameters for peak prediction
 struct PredictionParameters
 {
-    double d_min = 1.5;
-    double d_max = 50.0;
-    double radius = 100.0;
-    int min_neighbors = 400;
+    double d_min = 1.5;         //! Minimum detector range (filter)
+    double d_max = 50.0;        //! Maximum detector range (filter)
+    double radius = 100.0;      //! Maximum radius for neighbouring peak search
+    int min_neighbors = 400;    //! Minimum number of neighbours required for shape library
     double frames = 20.0; // why is this not an int? - zamaan
 };
 
