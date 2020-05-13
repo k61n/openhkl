@@ -35,7 +35,7 @@ if os.path.isfile(args.paramfile):
     pynsxprint(f"Reading parameters from {args.paramfile}")
     params.load(args.paramfile)
 else:
-    pynsxprint("No parameters file detected, using defaults")
+    raise RuntimeError("No parameters file detected")
 
 expt = Experiment(args.name, args.detector, params)
 all_data = "all"
