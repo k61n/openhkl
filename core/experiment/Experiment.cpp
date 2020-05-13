@@ -532,35 +532,36 @@ void Experiment::buildShapeLibrary(PeakCollection* peaks, DataList numors, Shape
             continue;
         double d = 1.0 / peak->q().rowVector().norm();
 
-        if (d > params.d_max || d < params.d_min)
+        if (d > params.detector_range_max || d < params.detector_range_min)
             continue;
 
         nsx::Intensity intensity = peak->correctedIntensity();
 
-        if (intensity.value() <= params.min_strength * intensity.sigma())
+        if (intensity.value() <= params.strength_min * intensity.sigma())
             continue;
         fit_peaks.push_back(peak);
     }
 
     nsx::AABB aabb;
 
-    if (params.kabsch) {
-        Eigen::Vector3d sigma(params.sigma_d, params.sigma_d, params.sigma_m);
+    if (params.kabsch_coords) {
+        Eigen::Vector3d sigma(params.sigma_divergence, params.sigma_divergence,
+                              params.sigma_mosaicity);
         aabb.setLower(-params.peak_scale * sigma);
         aabb.setUpper(params.peak_scale * sigma);
     } else {
-        Eigen::Vector3d dx(params.nx, params.ny, params.nz);
+        Eigen::Vector3d dx(params.nbins_x, params.nbins_y, params.nbins_z);
         aabb.setLower(-0.5 * dx);
         aabb.setUpper(0.5 * dx);
     }
 
-    _shape_library = nsx::ShapeLibrary(!params.kabsch, params.peak_scale,
-                                       params.bkg_begin, params.bkg_end);
+    _shape_library = nsx::ShapeLibrary(!params.kabsch_coords, params.peak_scale,
+                                       params.background_range_min, params.background_range_max);
 
-    nsx::ShapeIntegrator integrator(&_shape_library, aabb, params.nx, params.ny, params.nz);
+    nsx::ShapeIntegrator integrator(&_shape_library, aabb, params.nbins_x, params.nbins_y, params.nbins_z);
     integrator.setPeakEnd(params.peak_scale);
-    integrator.setBkgBegin(params.bkg_begin);
-    integrator.setBkgEnd(params.bkg_end);
+    integrator.setBkgBegin(params.background_range_min);
+    integrator.setBkgEnd(params.background_range_max);
 
     for (auto data : numors)
         integrator.integrate(fit_peaks, &_shape_library, data);
@@ -580,8 +581,9 @@ void Experiment::predictPeaks(std::string name, DataList numors, PredictionParam
 
         std::vector<nsx::Peak3D*> predicted =
             nsx::predictPeaks(&_shape_library, data, &_accepted_unit_cell,
-                              params.d_min, params.d_max, params.radius,
-                              params.frames, params.min_neighbors, interpol);
+                              params.detector_range_min, params.detector_range_max,
+                              params.neighbour_max_radius, params.frame_range_max,
+                              params.min_n_neighbors, interpol);
 
         for (nsx::Peak3D* peak : predicted)
             predicted_peaks.push_back(peak);
