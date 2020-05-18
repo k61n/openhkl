@@ -48,6 +48,7 @@
 %shared_ptr(nsx::ProgressHandler)
 %shared_ptr(nsx::RawDataReader)
 %shared_ptr(nsx::TiffDataReader)
+%shared_ptr(nsx::NexusDataReader)
 %shared_ptr(nsx::UnitCell)
 
 %{
@@ -151,6 +152,7 @@ using Eigen::Quaterniond;
 #include "core/loader/ILLDataReader.h"
 #include "core/loader/RawDataReader.h"
 #include "core/loader/TiffDataReader.h"
+#include "core/loader/NexusDataReader.h"
 #include "core/shape/IPeakIntegrator.h"
 #include "core/peak/IntegrationRegion.h"
 #include "core/peak/Intensity.h"
@@ -322,6 +324,7 @@ ArrayExtendCRef(MillerIndex, int);
 %include "core/loader/HDF5DataReader.h"
 %include "core/loader/RawDataReader.h"
 %include "core/loader/TiffDataReader.h"
+%include "core/loader/NexusDataReader.h"
 
 %include "core/peak/Intensity.h"
 %include "core/peak/Peak3D.h"

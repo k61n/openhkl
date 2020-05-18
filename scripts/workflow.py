@@ -13,11 +13,13 @@ from nsx.parameters import Parameters
 from pdb import set_trace
 
 parser = argparse.ArgumentParser(description='NSXTool workflow test script')
-parser.add_argument('--name', type=str, dest='name', help='name of system')
+parser.add_argument('--name', type=str, dest='name', help='name of system', required=True)
 parser.add_argument('--files', type=str, nargs='+', dest='files',
-                    help='.tiff raw data files')
-parser.add_argument('--detector', type=str, dest='detector', default='BioDiff5000',
-                    help='Type of detector')
+                    help='Data files', required=True)
+parser.add_argument('--dataformat', type=str, dest='dataformat',
+                    help='Format of data files', required=True)
+parser.add_argument('--detector', type=str, dest='detector',
+                    help='Type of detector', required=True)
 parser.add_argument('--loadnsx', action='store_true', dest='loadnsx', default=False,
                     help='load <name>.nsx')
 parser.add_argument('-p', '--parameters', type=str, dest='paramfile',
@@ -39,13 +41,21 @@ else:
 
 expt = Experiment(args.name, args.detector, params)
 all_data = "all"
+numors = []
 min_autoindex_frames = 7
-
 
 if not args.loadnsx:
     filenames = args.files
+    expt.set_data_format(args.dataformat)
     pynsxprint("Loading data...")
-    expt.add_data_set(all_data, filenames)
+    if args.dataformat == 'raw':
+        name = 'all'
+        expt.add_data_set(name, filenames)
+        numors.append(expt.get_data(name))
+    elif args.dataformat == 'nexus':
+        for filename in filenames:
+            expt.add_data_set(filename, filename)
+        numors.append(expt.get_data(filename))
     pynsxprint("...data loaded\n")
     # Find the unit cell
     pynsxprint("Autoindexing...")
@@ -73,8 +83,7 @@ if not args.loadnsx:
     expt.remove_peak_collection(expt.filtered_peaks)
 
     pynsxprint("Finding peaks...")
-    data = expt.get_data(all_data)
-    expt.find_peaks([data])
+    expt.find_peaks(numors)
     pynsxprint("...peak finding complete\n")
     pynsxprint("Integrating...")
     npeaks = expt.integrate_peaks()

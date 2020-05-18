@@ -32,6 +32,7 @@ class Experiment:
         Set up experiment object
         '''
         self.name = name
+        self.dataformat = "raw"
         self.found_peaks = "peaks"
         self.filtered_peaks = "filtered"
         self.predicted_peaks = "predicted"
@@ -54,13 +55,33 @@ class Experiment:
         gamma = self.params.cell['gamma']
         self.expt.setReferenceCell(a, b, c, alpha, beta, gamma)
 
-
     def get_data(self, data_name):
         return self.expt.getData(data_name)
 
+    def set_data_format(self, dataformat):
+        self.dataformat = dataformat
+
     def add_data_set(self, data_name, filenames):
+        reader = None
+        if self.dataformat == 'raw':
+            if isinstance(filenames, str):
+                raise RuntimeError("RawDataReader requires >1 files (frames)")
+            reader = self.read_raw_data(data_name, filenames)
+        elif self.dataformat == 'nexus':
+            if not isinstance(filenames, str):
+                raise RuntimeError("NexusDataReader requires 1 file (frame)")
+            reader = self.read_nexus_data(data_name, filenames)
+        else:
+            raise RuntimeError("No valid data reader specified")
+
+        data = nsx.DataSet(reader)
+        print(f'dataset {data_name}: nframes = {data.nFrames()}')
+        self.expt.addData(data_name, data)
+        self.data_sets.append(data_name)
+
+    def read_raw_data(self, data_name, filenames):
         '''
-        Load raw datafile (.tiff)
+        Load raw datafiles (.tiff)
         '''
         data_params = nsx.RawDataReaderParameters()
 
@@ -70,18 +91,20 @@ class Experiment:
         data_params.swap_endian = self.params.detector['swap_endian']
         data_params.bpp = self.params.detector['bpp']
 
-        self.reader = nsx.RawDataReader(filenames[0], self.expt.diffractometer())
-        self.reader.setParameters(data_params)
+        reader = nsx.RawDataReader(filenames[0], self.expt.diffractometer())
+        reader.setParameters(data_params)
 
         for filename in filenames[1:]:
-            self.reader.addFrame(filename)
-        self.reader.end()
+            reader.addFrame(filename)
+        reader.end()
+        return reader
 
-        data = nsx.DataSet(self.reader)
-        nframes = data.nFrames()
-        print(f'nframes = {nframes}')
-        self.expt.addData(data_name, data)
-        self.data_sets.append(data_name)
+    def read_nexus_data(self, data_name, filename):
+        '''
+        Load ILL Nexus datafiles (.nxs)
+        '''
+        reader = nsx.NexusDataReader(filename, self.expt.diffractometer())
+        return reader
 
     def find_peaks(self, dataset):
         '''
