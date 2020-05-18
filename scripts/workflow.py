@@ -25,7 +25,9 @@ parser.add_argument('--loadnsx', action='store_true', dest='loadnsx', default=Fa
 parser.add_argument('-p', '--parameters', type=str, dest='paramfile',
                     default='parameters', help='File containing experiment paramters')
 parser.add_argument('--max_autoindex_frames', type=int, dest='max_autoindex_frames',
-                    default=12, help='Maximum number of frames to use for autoindexing')
+                    default=20, help='Maximum number of frames to use for autoindexing')
+parser.add_argument('--min_autoindex_frames', type=int, dest='min_autoindex_frames',
+                    default=7, help='Minimum number of frames to use for autoindexing')
 parser.add_argument('--length_tol', type=float, dest='length_tol',
                     default=1.0, help='length tolerance (a, b, c) for autoindexing')
 parser.add_argument('--angle_tol', type=float, dest='angle_tol',
@@ -40,9 +42,7 @@ else:
     raise RuntimeError("No parameters file detected")
 
 expt = Experiment(args.name, args.detector, params)
-all_data = "all"
 numors = []
-min_autoindex_frames = 7
 
 if not args.loadnsx:
     filenames = args.files
@@ -55,18 +55,20 @@ if not args.loadnsx:
     elif args.dataformat == 'nexus':
         for filename in filenames:
             expt.add_data_set(filename, filename)
-        numors.append(expt.get_data(filename))
+            numors.append(expt.get_data(filename))
     pynsxprint("...data loaded\n")
     # Find the unit cell
     pynsxprint("Autoindexing...")
-    index = min_autoindex_frames
+    index = args.min_autoindex_frames
     count = 1
+    data = numors[0]
     while index < args.max_autoindex_frames:
-        autoindex_files = filenames[0:index]
-        set_name = "autoindex" + str(count)
-        expt.add_data_set(set_name, autoindex_files)
-        data = expt.get_data(set_name)
-        cell_found = expt.autoindex(data, args.length_tol, args.angle_tol)
+        try:
+            cell_found = expt.autoindex(data, 0, index, args.length_tol, args.angle_tol)
+        except RuntimeError:
+            index += 1
+            count += 1
+            continue
         if cell_found:
             break
         else:
@@ -83,7 +85,7 @@ if not args.loadnsx:
     expt.remove_peak_collection(expt.filtered_peaks)
 
     pynsxprint("Finding peaks...")
-    expt.find_peaks(numors)
+    expt.find_peaks(numors, 0, -1)
     pynsxprint("...peak finding complete\n")
     pynsxprint("Integrating...")
     npeaks = expt.integrate_peaks()
@@ -106,12 +108,12 @@ else:
 
 expt.print_unit_cells()
 pynsxprint("Building shape library...")
-expt.build_shape_library(expt.get_data(all_data))
+expt.build_shape_library(numors)
 pynsxprint("...finished building shape library\n")
 expt.save()
 
 pynsxprint("Predicting peaks...")
-expt.predict_peaks(expt.get_data(all_data), 'None')
+expt.predict_peaks(numors, 'None')
 pynsxprint("...finished predicting peaks\n")
 
 pynsxprint("Integrating...")

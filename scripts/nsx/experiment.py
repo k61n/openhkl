@@ -32,6 +32,7 @@ class Experiment:
         Set up experiment object
         '''
         self.name = name
+        self.detector = detector
         self.dataformat = "raw"
         self.found_peaks = "peaks"
         self.filtered_peaks = "filtered"
@@ -42,6 +43,7 @@ class Experiment:
         self.ref_cell = params.cell
         self.data_sets = []
         self.set_reference_cell()
+        self.data_reader_factory = nsx.DataReaderFactory()
 
     def set_reference_cell(self):
         '''
@@ -62,19 +64,13 @@ class Experiment:
         self.dataformat = dataformat
 
     def add_data_set(self, data_name, filenames):
-        reader = None
         if self.dataformat == 'raw':
-            if isinstance(filenames, str):
-                raise RuntimeError("RawDataReader requires >1 files (frames)")
-            reader = self.read_raw_data(data_name, filenames)
+            data = self.read_raw_data(data_name, filenames)
         elif self.dataformat == 'nexus':
-            if not isinstance(filenames, str):
-                raise RuntimeError("NexusDataReader requires 1 file (frame)")
-            reader = self.read_nexus_data(data_name, filenames)
+            data = self.read_nexus_data(data_name, filenames)
         else:
             raise RuntimeError("No valid data reader specified")
 
-        data = nsx.DataSet(reader)
         print(f'dataset {data_name}: nframes = {data.nFrames()}')
         self.expt.addData(data_name, data)
         self.data_sets.append(data_name)
@@ -97,20 +93,24 @@ class Experiment:
         for filename in filenames[1:]:
             reader.addFrame(filename)
         reader.end()
-        return reader
+        data = nsx.DataSet(reader)
+        return data
 
     def read_nexus_data(self, data_name, filename):
         '''
         Load ILL Nexus datafiles (.nxs)
         '''
-        reader = nsx.NexusDataReader(filename, self.expt.diffractometer())
-        return reader
+        diffractometer = nsx.Diffractometer.create(self.detector)
+        extension = 'nxs'
+        return self.data_reader_factory.create(extension, filename, diffractometer)
 
-    def find_peaks(self, dataset):
+    def find_peaks(self, dataset, start_frame, end_frame):
         '''
         Find the peaks
         '''
         self.finder = self.expt.peakFinder()
+        self.finder.setFramesBegin(start_frame)
+        self.finder.setFramesEnd(end_frame)
         convolver = nsx.AnnularConvolver()
         self.finder.setConvolver(convolver)
 
@@ -168,7 +168,7 @@ class Experiment:
         angle_tol = self.params.autoindexer['angle_tol']
         return self.expt.acceptUnitCell(peak_collection, length_tol, angle_tol)
 
-    def autoindex(self, dataset, length_tol, angle_tol):
+    def autoindex(self, dataset, start_frame, end_frame, length_tol, angle_tol):
         '''
         Compute the unit cells from the peaks most recently found/integrated/filtered.
         Returns True if unit cell found.
@@ -176,7 +176,7 @@ class Experiment:
 
         self.length_tol = length_tol
         self.angle_tol = angle_tol
-        self.find_peaks([dataset])
+        self.find_peaks([dataset], start_frame, end_frame)
         npeaks = self.integrate_peaks()
         ncaught = self.filter_peaks(self.params.filter)
 
@@ -219,7 +219,7 @@ class Experiment:
         shapelib_params.bkg_begin = self.params.shapelib['bkg_begin']
         shapelib_params.bkg_end = self.params.shapelib['bkg_end']
         self.accept_unit_cell(self.filtered_collection)
-        self.expt.buildShapeLibrary(self.filtered_collection, [data,], shapelib_params)
+        self.expt.buildShapeLibrary(self.filtered_collection, data, shapelib_params)
 
     def print_unit_cells(self):
         self.auto_indexer.printSolutions()
@@ -253,4 +253,4 @@ class Experiment:
         prediction_params.radius = self.params.prediction['radius']
         prediction_params.frames = self.params.prediction['frames']
         prediction_params.min_neighbours = self.params.prediction['neighbours']
-        self.expt.predictPeaks(self.predicted_peaks, [data,], prediction_params, interpol)
+        self.expt.predictPeaks(self.predicted_peaks, data, prediction_params, interpol)
