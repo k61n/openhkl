@@ -52,9 +52,9 @@ class Experiment {
 
  public: // Data sets
     //! Gets a reference to the data
-    const std::map<std::string, sptrDataSet>& data() const;
+    const std::map<std::string, sptrDataSet>& getData() const;
     //! Gets the pointer to a given data stored in the experiment
-    sptrDataSet data(std::string name);
+    sptrDataSet getData(std::string name);
     //! Gets the pointer to a given data stored in the experiment
     sptrDataSet dataShortName(std::string name);
     //! Get number of data
@@ -112,6 +112,8 @@ class Experiment {
     void swapUnitCells(const std::string& old_cell, const std::string& new_cell);
     //! Get the number of peak lists
     int numUnitCells() const { return _unit_cells.size(); };
+    //! Accept an autoindexer solution as the unit cell
+    bool acceptUnitCell(PeakCollection* peaks, double length_tol, double angle_tol);
 
  public: // Peak finder
     //! Get the address of the peak finder
@@ -124,6 +126,11 @@ class Experiment {
  public: // Autoindexer
     //! Get the auto indexer
     nsx::AutoIndexer* autoIndexer() const { return _auto_indexer.get(); };
+    //! Set the reference cell
+    void setReferenceCell(double a, double b, double c,
+                          double alpha, double beta, double gamma);
+    //! return a pointer to the accepted unit cell
+    UnitCell* getAcceptedCell();
 
  public: // Integrator
     nsx::IPeakIntegrator* getIntegrator(const std::string& name) const;
@@ -140,6 +147,14 @@ class Experiment {
     bool saveToFile(std::string path) const;
     //! Load from file
     bool loadFromFile(std::string path);
+
+public: // Prediction
+    //! Build the shape library
+    void buildShapeLibrary(PeakCollection* peaks, DataList numors,
+                           ShapeLibParameters params);
+    //! Predict peaks
+    void predictPeaks(std::string name, DataList numors, PredictionParameters params,
+                      PeakInterpolation interpol);
 
  private: // private variables
     //! The name of this experiment
@@ -162,6 +177,12 @@ class Experiment {
     std::unique_ptr<nsx::AutoIndexer> _auto_indexer;
     //! The found peak integrator
     std::map<std::string, std::unique_ptr<nsx::IPeakIntegrator>> _integrator_map;
+    //! The accepted unit cell
+    UnitCell _accepted_unit_cell;
+    //! Reference unit cell
+    UnitCell _reference_cell;
+    //! Peak shape library for prediction
+    ShapeLibrary _shape_library;
 };
 
 } // namespace nsx

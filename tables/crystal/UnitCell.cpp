@@ -885,4 +885,21 @@ std::vector<std::string> UnitCell::compatibleSpaceGroups() const
     return compatible_space_groups;
 }
 
+bool UnitCell::isSimilar(UnitCell* other, double length_tol, double angle_tol)
+{
+    if (std::abs(character().a - other->character().a) > length_tol)
+        return false;
+    else if (std::abs(character().b - other->character().b) > length_tol)
+        return false;
+    else if (std::abs(character().c - other->character().c) > length_tol)
+        return false;
+    else if (std::abs(character().alpha - other->character().alpha) > angle_tol)
+        return false;
+    else if (std::abs(character().beta - other->character().beta) > angle_tol)
+        return false;
+    else if (std::abs(character().gamma - other->character().gamma) > angle_tol)
+        return false;
+    else return true;
+}
+
 } // namespace nsx

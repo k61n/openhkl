@@ -766,7 +766,7 @@ void RefinerDialog::_setDataDrop()
 
 void RefinerDialog::_selectedDataChanged()
 {
-    nsx::sptrDataSet data_set = gSession->selectedExperiment()->experiment()->data(
+    nsx::sptrDataSet data_set = gSession->selectedExperiment()->experiment()->getData(
         _select_data->currentText().toStdString());
     _current_index_spin->setMaximum(data_set->nFrames() - 1);
     if (_current_index_spin->value() > data_set->nFrames() - 1) {
@@ -851,7 +851,7 @@ void RefinerDialog::_fetchAllRefinedValues()
     nsx::UnitCell* unit_cell = gSession->selectedExperiment()->experiment()->getUnitCell(
         _select_uc->currentText().toStdString());
 
-    nsx::sptrDataSet data_set = gSession->selectedExperiment()->experiment()->data(
+    nsx::sptrDataSet data_set = gSession->selectedExperiment()->experiment()->getData(
         _select_data->currentText().toStdString());
     QList<nsx::sptrDataSet> data_set_list = gSession->selectedExperiment()->allData();
 
@@ -909,7 +909,7 @@ void RefinerDialog::_setInitialValues(int frame)
         return;
 
     nsx::sptrDataSet data_set =
-        gSession->selectedExperiment()->experiment()->data(temp_text.toStdString());
+        gSession->selectedExperiment()->experiment()->getData(temp_text.toStdString());
 
     _sample_orientation_00->setValue(_sample_orientations[data_set][frame](0, 0));
     _sample_orientation_01->setValue(_sample_orientations[data_set][frame](0, 1));
@@ -962,7 +962,7 @@ void RefinerDialog::_setRefinedValues(int frame)
         return;
 
     nsx::sptrDataSet data_set =
-        gSession->selectedExperiment()->experiment()->data(temp_text.toStdString());
+        gSession->selectedExperiment()->experiment()->getData(temp_text.toStdString());
 
     if (refiners.find(data_set) == refiners.end()) {
         return;
@@ -1043,7 +1043,7 @@ void RefinerDialog::refine()
     for (QListWidgetItem* data_item : selected_data) {
 
         std::string data_name = data_item->text().toStdString();
-        nsx::sptrDataSet data = gSession->selectedExperiment()->experiment()->data(data_name);
+        nsx::sptrDataSet data = gSession->selectedExperiment()->experiment()->getData(data_name);
         std::vector<nsx::Peak3D*> reference_peaks;
         std::vector<nsx::Peak3D*> predicted_peaks;
 
@@ -1131,7 +1131,7 @@ void RefinerDialog::_plot()
         return;
 
     nsx::sptrDataSet data_set =
-        gSession->selectedExperiment()->experiment()->data(temp_text.toStdString());
+        gSession->selectedExperiment()->experiment()->getData(temp_text.toStdString());
 
     std::vector<std::string> selected_text;
 

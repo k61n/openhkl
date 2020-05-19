@@ -108,7 +108,7 @@ Diffractometer* Experiment::diffractometer()
     return _diffractometer.get();
 }
 
-const std::map<std::string, sptrDataSet>& Experiment::data() const
+const std::map<std::string, sptrDataSet>& Experiment::getData() const
 {
     return _data;
 }
@@ -118,7 +118,7 @@ void Experiment::setDiffractometer(const std::string& diffractometerName)
     _diffractometer.reset(Diffractometer::create(diffractometerName));
 }
 
-sptrDataSet Experiment::data(std::string name)
+sptrDataSet Experiment::getData(std::string name)
 {
     auto it = _data.find(name);
     if (it == _data.end()) {
@@ -496,6 +496,107 @@ bool Experiment::loadFromFile(std::string path)
         success = importer.loadPeaks(this);
     }
     return success;
+}
+
+void Experiment::setReferenceCell(double a, double b, double c,
+                                  double alpha, double beta, double gamma)
+{
+    _reference_cell = UnitCell(a, b, c, alpha, beta, gamma);
+    _auto_indexer->setReferenceCell(&_reference_cell);
+}
+
+bool Experiment::acceptUnitCell(PeakCollection* peaks, double length_tol, double angle_tol)
+{
+    bool accepted = false;
+    if (_auto_indexer->hasSolution(length_tol, angle_tol)){
+        _accepted_unit_cell = *_auto_indexer->getAcceptedSolution();
+        std::vector<Peak3D*> peak_list = peaks->getPeakList();
+        for (auto peak : peak_list) peak->setUnitCell(&_accepted_unit_cell);
+        accepted = true;
+    }
+    return accepted;
+}
+
+UnitCell* Experiment::getAcceptedCell()
+{
+    return &_accepted_unit_cell;
+}
+
+void Experiment::buildShapeLibrary(PeakCollection* peaks, DataList numors, ShapeLibParameters params)
+{
+    std::vector<Peak3D*> peak_list = peaks->getPeakList();
+    std::vector<Peak3D*> fit_peaks;
+
+    for (nsx::Peak3D* peak : peak_list) {
+        if (!peak->enabled())
+            continue;
+        double d = 1.0 / peak->q().rowVector().norm();
+
+        if (d > params.detector_range_max || d < params.detector_range_min)
+            continue;
+
+        nsx::Intensity intensity = peak->correctedIntensity();
+
+        if (intensity.value() <= params.strength_min * intensity.sigma())
+            continue;
+        fit_peaks.push_back(peak);
+    }
+
+    nsx::AABB aabb;
+
+    if (params.kabsch_coords) {
+        Eigen::Vector3d sigma(params.sigma_divergence, params.sigma_divergence,
+                              params.sigma_mosaicity);
+        aabb.setLower(-params.peak_scale * sigma);
+        aabb.setUpper(params.peak_scale * sigma);
+    } else {
+        Eigen::Vector3d dx(params.nbins_x, params.nbins_y, params.nbins_z);
+        aabb.setLower(-0.5 * dx);
+        aabb.setUpper(0.5 * dx);
+    }
+
+    _shape_library = nsx::ShapeLibrary(!params.kabsch_coords, params.peak_scale,
+                                       params.background_range_min, params.background_range_max);
+
+    nsx::ShapeIntegrator integrator(&_shape_library, aabb, params.nbins_x, params.nbins_y, params.nbins_z);
+    integrator.setPeakEnd(params.peak_scale);
+    integrator.setBkgBegin(params.background_range_min);
+    integrator.setBkgEnd(params.background_range_max);
+
+    for (auto data : numors)
+        integrator.integrate(fit_peaks, &_shape_library, data);
+
+    _shape_library = *integrator.library(); // why do this? - zamaan
+    // _shape_library.updateFit(1000); // This does nothing!! - zamaan
+}
+
+void Experiment::predictPeaks(std::string name, DataList numors, PredictionParameters params, PeakInterpolation interpol)
+{
+    int current_numor = 0;
+    std::vector<nsx::Peak3D*> predicted_peaks;
+
+    for (auto data : numors) {
+        std::cout << "Predicting peaks for numor " << ++current_numor << " of " <<
+            numors.size() << std::endl;
+
+        std::vector<nsx::Peak3D*> predicted =
+            nsx::predictPeaks(&_shape_library, data, &_accepted_unit_cell,
+                              params.detector_range_min, params.detector_range_max,
+                              params.neighbour_max_radius, params.frame_range_max,
+                              params.min_n_neighbors, interpol);
+
+        for (nsx::Peak3D* peak : predicted)
+            predicted_peaks.push_back(peak);
+
+        std::cout << "Added " << predicted.size() << " predicted peaks.";
+    }
+    std::cout << "Completed  peak prediction. Added " << predicted_peaks.size() << " peaks";
+
+    updatePeakCollection(name, listtype::PREDICTED, predicted_peaks);
+
+    for (nsx::Peak3D* peak : predicted_peaks) // is this necessary? - zamaan
+        delete peak;
+    predicted_peaks.clear();
 }
 
 } // namespace nsx

@@ -265,6 +265,9 @@ class UnitCell {
     //! Returns list of space groups which are compatible with the Bravais type of the cell
     std::vector<std::string> compatibleSpaceGroups() const;
 
+    //! Return true if similar to another unit cell
+    bool isSimilar(UnitCell* other, double length_tol, double angle_tol);
+
 #ifndef SWIG
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 #endif

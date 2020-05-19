@@ -80,6 +80,8 @@ class PeakCollection {
     //! Get the shape library
     ShapeLibrary* shapeLibrary() const { return _shape_library.get(); };
 
+    void printUnitCells();
+
  private:
     std::vector<std::unique_ptr<nsx::Peak3D>> _peaks;
     std::string _name;
