@@ -65,7 +65,7 @@ if not args.loadnsx:
     while index < args.max_autoindex_frames:
         try:
             cell_found = expt.autoindex(data, 0, index, args.length_tol, args.angle_tol)
-        except RuntimeError:
+        except RuntimeError: # Not enough peaks to autoindex?
             index += 1
             count += 1
             continue
@@ -100,11 +100,8 @@ if not args.loadnsx:
     pynsxprint(f"Saving experiment to file {expt.nsxfile}")
     expt.save()
 else:
-    if os.path.isfile(expt.nsxfile):
-        pynsxprint(f"{expt.nsxfile} exists, loading experiment")
-        expt.load()
-    else:
-        raise OSError("f{expt.nsxfile} not found")
+    pynsxprint(f"Loading experiment from {expt.nsxfile}")
+    expt.load()
 
 expt.print_unit_cells()
 pynsxprint("Building shape library...")

@@ -7,7 +7,7 @@ Generalised wrapper for Python/C++ (Swig) NSXTool interface.
 '''
 
 import sys
-import scipy
+import os.path
 from pdb import set_trace
 sys.path.append("/home/zamaan/codes/nsxtool/current/build/swig")
 sys.path.append("/G/sw/nsx/build/swig") # Joachim
@@ -234,6 +234,8 @@ class Experiment:
         '''
         Load the experiment from self.name.nsx
         '''
+        if not os.path.isfile(self.nsxfile):
+            raise OSError("f{self.nsxfile} not found")
         self.expt.loadFromFile(self.nsxfile)
         self.found_collection = self.expt.getPeakCollection(self.found_peaks)
         self.filtered_collection = \
