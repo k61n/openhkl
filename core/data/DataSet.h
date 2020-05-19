@@ -24,6 +24,7 @@
 namespace nsx {
 
 //! Class used to manage loading detector images and metadata from disk.
+//! Note that this class does not contain any actual data! Only metadata! - Zamaan
 
 class DataSet {
     friend class UnitTest_DataSet;

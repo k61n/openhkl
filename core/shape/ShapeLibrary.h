@@ -24,6 +24,33 @@
 
 namespace nsx {
 
+//! Parameters for building the shape library
+struct ShapeLibParameters
+{
+    double detector_range_min = 1.5;     //! Minimum detector range (filter)
+    double detector_range_max = 50.0;    //! Maximum detector range (filter)
+    double peak_scale = 3.0;             //!
+    double background_range_min = 3.0;   //! Start of background range in sigmas
+    double background_range_max = 4.5;   //! End of background range in sigmas
+    double strength_min = 1.0;           //! Minimum peak strength I/sigma (filter)
+    bool kabsch_coords = true;           //! Are we using Kabsch or detector coordinates?
+    int nbins_x = 20;                    //! Number of x histogram bins for peak
+    int nbins_y = 20;                    //! Number of y histogram bins for peak
+    int nbins_z = 20;                    //! Number of z histogram bins for peak
+    double sigma_divergence = 0.33;      //! variance arising from beam divergence
+    double sigma_mosaicity = 0.23;       //! variance arising from crystal mosaicity
+};
+
+//! Parameters for peak prediction
+struct PredictionParameters
+{
+    double detector_range_min = 1.5;     //! Minimum detector range (filter)
+    double detector_range_max = 50.0;    //! Maximum detector range (filter)
+    double neighbour_max_radius = 100.0; //! Maximum radius for neighbouring peak search
+    int min_n_neighbors = 400;           //! Minimum number of neighbours required for shape library
+    double frame_range_max = 20.0;       //! Maximum angular separation of peaks in frames
+};
+
 class ShapeLibrary;
 
 using sptrShapeLibrary = std::shared_ptr<ShapeLibrary>;

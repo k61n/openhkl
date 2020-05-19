@@ -47,8 +47,8 @@
 %shared_ptr(nsx::Peak3D)
 %shared_ptr(nsx::ProgressHandler)
 %shared_ptr(nsx::RawDataReader)
-%shared_ptr(nsx::ShapeLibrary)
 %shared_ptr(nsx::TiffDataReader)
+%shared_ptr(nsx::NexusDataReader)
 %shared_ptr(nsx::UnitCell)
 
 %{
@@ -152,6 +152,7 @@ using Eigen::Quaterniond;
 #include "core/loader/ILLDataReader.h"
 #include "core/loader/RawDataReader.h"
 #include "core/loader/TiffDataReader.h"
+#include "core/loader/NexusDataReader.h"
 #include "core/shape/IPeakIntegrator.h"
 #include "core/peak/IntegrationRegion.h"
 #include "core/peak/Intensity.h"
@@ -323,6 +324,7 @@ ArrayExtendCRef(MillerIndex, int);
 %include "core/loader/HDF5DataReader.h"
 %include "core/loader/RawDataReader.h"
 %include "core/loader/TiffDataReader.h"
+%include "core/loader/NexusDataReader.h"
 
 %include "core/peak/Intensity.h"
 %include "core/peak/Peak3D.h"
@@ -335,6 +337,7 @@ ArrayExtendCRef(MillerIndex, int);
 %include "core/data/DataTypes.h"
 %template(DataList) std::vector<std::shared_ptr<nsx::DataSet>>;
 
+%include "core/shape/ShapeLibrary.h"
 %include "core/shape/IPeakIntegrator.h"
 
 %template(ConvolverParameters) std::map<std::string,double>;
@@ -349,7 +352,6 @@ ArrayExtendCRef(MillerIndex, int);
 
 %include "core/shape/Profile3D.h"
 %include "core/shape/Profile1D.h"
-%include "core/shape/ShapeLibrary.h"
 
 %include "core/statistics/MergedPeak.h"
 %include "core/integration/Blob3D.h"

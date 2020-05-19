@@ -35,6 +35,7 @@ class Parameters:
 
         self.integration = { 'peak_area'        : 3.0,
                              'background_lower' : 3.0,
+
                              'background_upper' : 6.0 }
 
         self.filter =      { 'min_strength'     : 1.0,
@@ -47,10 +48,31 @@ class Parameters:
                              'n_vertices'       : 1000,
                              'n_subdiv'         : 30,
                              'indexing_tol'     : 0.2,
-                             'min_vol'          : 100.0 }
+                             'min_vol'          : 100.0,
+                             'length_tol'       : 1.0,
+                             'angle_tol'        : 3.0 }
+
+        self.shapelib    = { 'peak_scale'       : 3.0,
+                             'bkg_begin'        : 3.0,
+                             'bkg_end'          : 4.5,
+                             'kabsch'           : True,
+                             'd_min'            : 1.5,
+                             'd_max'            : 50.0,
+                             'nx'               : 20,
+                             'ny'               : 20,
+                             'nz'               : 20,
+                             'sigma_d'          : 0.33,
+                             'sigma_m'          : 0.23 }
+
+        self.prediction  = { 'd_min'            : 1.5,
+                             'd_max'            : 50.0,
+                             'radius'           : 100.0,
+                             'neighbours'       : 400.0,
+                             'frames'           : 20 }
 
         self._dicts = [self.cell, self.detector, self.finder, 
-                       self.integration, self.filter, self.autoindexer]
+                       self.integration, self.filter, self.autoindexer,
+                       self.shapelib]
 
         for key in kwargs:
             for d in self._dicts:
@@ -75,3 +97,12 @@ class Parameters:
                         else:
                             t = type(d[key])
                             d[key] = t(value)
+
+    def dump(self, filename):
+        '''
+        Dump parameters to a file
+        '''
+        with open(filename, 'w') as outfile:
+            for d in self._dicts:
+                for key in d:
+                    outfile.write(f'{key}     {d[key]}\n')

@@ -68,9 +68,19 @@ void AABB::setLower(const Eigen::Vector3d& lower)
     _lowerBound = lower;
 }
 
+void AABB::setLower(double lowerx, double lowery, double lowerz)
+{
+    _lowerBound << lowerx, lowery, lowerz;
+}
+
 void AABB::setUpper(const Eigen::Vector3d& upper)
 {
     _upperBound = upper;
+}
+
+void AABB::setUpper(double upperx, double uppery, double upperz)
+{
+    _upperBound << upperx, uppery, upperz;
 }
 
 const Eigen::Vector3d& AABB::lower() const

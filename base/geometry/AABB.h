@@ -55,11 +55,13 @@ class AABB {
     const Eigen::Vector3d& lower() const;
     //! Sets the lower bound of the ellipsoid
     void setLower(const Eigen::Vector3d& lower);
+    void setLower(double lowerx, double lowery, double lowerz);
 
     //! Gets a constant reference to the upper bound of the bounding box of the shape
     const Eigen::Vector3d& upper() const;
     //! Sets the upper bound of the ellipsoid
     void setUpper(const Eigen::Vector3d& upper);
+    void setUpper(double upperx, double uppery, double upperz);
 
     //! Returns the center of the bounding box of the shape
     Eigen::Vector3d center() const;
