@@ -106,3 +106,8 @@ class Parameters:
             for d in self._dicts:
                 for key in d:
                     outfile.write(f'{key}     {d[key]}\n')
+
+    def set_parameter(self, key, value):
+        for d in self._dicts:
+            if key in d:
+                d[key] = value

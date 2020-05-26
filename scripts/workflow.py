@@ -17,7 +17,7 @@ parser.add_argument('--name', type=str, dest='name', help='name of system', requ
 parser.add_argument('--files', type=str, nargs='+', dest='files',
                     help='Data files', required=True)
 parser.add_argument('--dataformat', type=str, dest='dataformat',
-                    help='Format of data files', required=True)
+                    help='Format of data files')
 parser.add_argument('--detector', type=str, dest='detector',
                     help='Type of detector', required=True)
 parser.add_argument('--loadnsx', action='store_true', dest='loadnsx', default=False,
@@ -42,9 +42,13 @@ else:
     raise RuntimeError("No parameters file detected")
 
 expt = Experiment(args.name, args.detector, params)
+expt.set_logger()
+logger = expt.get_logger()
 numors = []
 
 if not args.loadnsx:
+    if not args.dataformat:
+        raise RuntimeError("Command line argument --dataformat must be specified")
     filenames = args.files
     expt.set_data_format(args.dataformat)
     pynsxprint("Loading data...")
@@ -64,7 +68,7 @@ if not args.loadnsx:
     data = numors[0]
     while index < args.max_autoindex_frames:
         try:
-            cell_found = expt.autoindex(data, 0, index, args.length_tol, args.angle_tol)
+            cell_found = expt.autoindex_dataset(data, 0, index, args.length_tol, args.angle_tol)
         except RuntimeError: # Not enough peaks to autoindex?
             index += 1
             count += 1
@@ -82,36 +86,28 @@ if not args.loadnsx:
         raise RuntimeError("Autoindexing Failed")
 
     pynsxprint("...autoindexing complete")
-    expt.remove_peak_collection(expt.filtered_peaks)
+    expt.remove_peak_collection("filtered")
 
     pynsxprint("Finding peaks...")
     expt.find_peaks(numors, 0, -1)
-    pynsxprint("...peak finding complete\n")
     pynsxprint("Integrating...")
     npeaks = expt.integrate_peaks()
-    pynsxprint("...integration complete\n")
 
     pynsxprint("Filtering...")
     ncaught = expt.filter_peaks(params.filter)
-    pynsxprint("...filtering complete\n")
     pynsxprint("Filter caught " + str(ncaught) + " of " + str(npeaks) + " peaks")
     # expt.filtered_collection.printUnitCells()
 
-    pynsxprint(f"Saving experiment to file {expt.nsxfile}")
     expt.save()
 else:
-    pynsxprint(f"Loading experiment from {expt.nsxfile}")
     expt.load()
 
 expt.print_unit_cells()
 pynsxprint("Building shape library...")
 expt.build_shape_library(numors)
-pynsxprint("...finished building shape library\n")
 expt.save()
 
 pynsxprint("Predicting peaks...")
 expt.predict_peaks(numors, 'None')
-pynsxprint("...finished predicting peaks\n")
 
 pynsxprint("Integrating...")
-pynsxprint("...integration complete\n")
