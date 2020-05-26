@@ -45,8 +45,8 @@ PeakFilter::PeakFilter()
 
 void PeakFilter::resetFilterFlags()
 {
-    _filter_flags = {true, false, false, false, false, false, false, false,
-                      false, false, false, false, false};
+    _filter_flags = {true,  false, false, false, false, false, false,
+                     false, false, false, false, false, false};
 }
 
 void PeakFilter::filterSignificance(PeakCollection* peak_collection) const

@@ -62,14 +62,14 @@ void RawDataReader::addFrame(const std::string& filename)
 
     int omega_idx = -1, phi_idx = -1, chi_idx = -1;
     for (size_t i = 0; i < n_sample_gonio_axes; ++i) {
-      const std::string axis_name = sample_gonio.axis(i).name();
-      omega_idx = axis_name == "omega" ? int(i) : omega_idx;
-      chi_idx = axis_name == "chi" ? int(i) : chi_idx;
-      phi_idx = axis_name == "phi" ? int(i) : phi_idx;
+        const std::string axis_name = sample_gonio.axis(i).name();
+        omega_idx = axis_name == "omega" ? int(i) : omega_idx;
+        chi_idx = axis_name == "chi" ? int(i) : chi_idx;
+        phi_idx = axis_name == "phi" ? int(i) : phi_idx;
     }
 
     if (omega_idx == -1 || phi_idx == -1 || chi_idx == -1)
-      throw std::runtime_error("RawDataReader: could not find angle indices");
+        throw std::runtime_error("RawDataReader: could not find angle indices");
 
     size_t idx = _nFrames - 1;
 
@@ -85,9 +85,9 @@ void RawDataReader::addFrame(const std::string& filename)
     _sampleStates.emplace_back(std::move(sample_states));
 }
 
-void RawDataReader::open() {}
+void RawDataReader::open() { }
 
-void RawDataReader::close() {}
+void RawDataReader::close() { }
 
 void RawDataReader::end()
 {

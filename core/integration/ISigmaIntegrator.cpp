@@ -22,7 +22,7 @@
 
 namespace nsx {
 
-ISigmaIntegrator::ISigmaIntegrator() : PixelSumIntegrator(false, false) {}
+ISigmaIntegrator::ISigmaIntegrator() : PixelSumIntegrator(false, false) { }
 
 bool ISigmaIntegrator::compute(
     Peak3D* peak, ShapeLibrary* shape_library, const IntegrationRegion& region)

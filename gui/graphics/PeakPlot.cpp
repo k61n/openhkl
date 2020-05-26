@@ -36,8 +36,8 @@ PeakPlot::PeakPlot(QWidget* parent) : SXPlot(parent)
     graph(0)->setPen(pen);
     graph(0)->setLineStyle(QCPGraph::lsLine);
     graph(0)->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssCircle, 6));
-    xErrorBars_ = new QCPErrorBars{graph(0)->keyAxis(), graph(0)->valueAxis()};
-    yErrorBars_ = new QCPErrorBars{graph(0)->keyAxis(), graph(0)->valueAxis()};
+    xErrorBars_ = new QCPErrorBars {graph(0)->keyAxis(), graph(0)->valueAxis()};
+    yErrorBars_ = new QCPErrorBars {graph(0)->keyAxis(), graph(0)->valueAxis()};
     xErrorBars_->setDataPlottable(graph(0));
     yErrorBars_->setDataPlottable(graph(0));
     xErrorBars_->setPen(pen);

@@ -20,7 +20,7 @@
 
 namespace nsx {
 
-Ellipsoid::Ellipsoid() {}
+Ellipsoid::Ellipsoid() { }
 
 Ellipsoid::Ellipsoid(const Ellipsoid& other)
 {

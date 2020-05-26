@@ -132,7 +132,7 @@ Detector::Detector(const YAML::Node& node) : Component(node)
     _minRow = node["origin_y"] ? node["origin_y"].as<double>() : 0.0;
 }
 
-Detector::~Detector() {}
+Detector::~Detector() { }
 
 DataOrder Detector::dataOrder() const
 {

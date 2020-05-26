@@ -23,18 +23,18 @@ namespace nsx {
 //! Class to remove "bad" peaks based on various critera.
 
 struct PeakFilterFlags {
-    bool selected;      //! filter by selection
-    bool masked;        //! filter by mask
-    bool predicted;     //! filter by predicted peaks
-    bool indexed;       //! filter by indexed peaks
-    bool index_tol;     //!
-    bool state;         //!
-    bool strength;      //! filter by strength (intensity/sigma)
-    bool d_range;       //! filter by detector range
-    bool extinct;       //! filter by extinction (allowed by unit cell)
-    bool sparse;        //!
-    bool significance;  //!
-    bool overlapping;   //!
+    bool selected; //! filter by selection
+    bool masked; //! filter by mask
+    bool predicted; //! filter by predicted peaks
+    bool indexed; //! filter by indexed peaks
+    bool index_tol; //!
+    bool state; //!
+    bool strength; //! filter by strength (intensity/sigma)
+    bool d_range; //! filter by detector range
+    bool extinct; //! filter by extinction (allowed by unit cell)
+    bool sparse; //!
+    bool significance; //!
+    bool overlapping; //!
     bool complementary; //!
 };
 
@@ -158,7 +158,7 @@ class PeakFilter {
     const std::array<double, 2>* strength() const { return &_strength; };
     //! Set the strength
     void setStrength(const std::array<double, 2> strength) { _strength = strength; };
-    void setStrength(double strmin, double strmax) {_strength = {strmin, strmax}; }
+    void setStrength(double strmin, double strmax) { _strength = {strmin, strmax}; }
 
     //! Return the significance
     const double* significance() const { return &_significance; };
