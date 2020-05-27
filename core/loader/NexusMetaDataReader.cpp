@@ -67,6 +67,15 @@ NexusMetaDataReader::NexusMetaDataReader(
         if (_diffractometer->name() != instr_name)
             throw std::runtime_error("Nexus: instrument name mismatch");
 
+        // get initial instrument positions
+        double omega = 0;
+        double chi = 0;
+        double phi = 0;
+        instrumentGroup.openDataSet("omega/value").read(&omega, H5::PredType::NATIVE_DOUBLE);
+        instrumentGroup.openDataSet("chi/value").read(&chi, H5::PredType::NATIVE_DOUBLE);
+        instrumentGroup.openDataSet("phi/value").read(&phi, H5::PredType::NATIVE_DOUBLE);
+
+
         // non-essential metadata fields
         char start_time[128], end_time[128];
         entryGroup.openDataSet("start_time").read(start_time, H5::StrType(0, sizeof(start_time)));
@@ -168,9 +177,21 @@ NexusMetaDataReader::NexusMetaDataReader(
 
             std::vector<double> sample_states(n_sample_gonio_axes);
             std::fill(sample_states.begin(), sample_states.end(), 0.);
-            sample_states[omega_idx] = scanned_vars[_nFrames * omega_idx + frame] * deg;
-            sample_states[phi_idx] = scanned_vars[_nFrames * phi_idx + frame] * deg;
-            sample_states[chi_idx] = scanned_vars[_nFrames * chi_idx + frame] * deg;
+
+            // initial positions
+            sample_states[omega_idx] = omega * deg;
+            sample_states[chi_idx] = chi * deg;
+            sample_states[phi_idx] = phi * deg;
+
+            // only read the values for which the scanned_axes flag is set
+            if(scanned_axes[omega_idx])
+                sample_states[omega_idx] = scanned_vars[_nFrames * omega_idx + frame] * deg;
+            if(scanned_axes[chi_idx])
+                sample_states[chi_idx] = scanned_vars[_nFrames * chi_idx + frame] * deg;
+            if(scanned_axes[phi_idx])
+                sample_states[phi_idx] = scanned_vars[_nFrames * phi_idx + frame] * deg;
+
+            //std::cout << sample_states[omega_idx] << " " << sample_states[chi_idx] << " " << sample_states[phi_idx] << std::endl;
             _sampleStates.emplace_back(std::move(sample_states));
         }
 
