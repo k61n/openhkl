@@ -19,6 +19,7 @@
 #include <functional>
 #include <map>
 #include <vector>
+#include <stdexcept>
 
 namespace nsx {
 
