@@ -23,4 +23,4 @@ PlotFactory::PlotFactory()
     registerCallback("peak", &PeakPlot::create);
 }
 
-PlotFactory::~PlotFactory() {}
+PlotFactory::~PlotFactory() { }

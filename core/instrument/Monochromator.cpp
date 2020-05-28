@@ -71,7 +71,7 @@ Monochromator& Monochromator::operator=(const Monochromator& other)
     return *this;
 }
 
-Monochromator::~Monochromator() {}
+Monochromator::~Monochromator() { }
 
 const std::string& Monochromator::name() const
 {

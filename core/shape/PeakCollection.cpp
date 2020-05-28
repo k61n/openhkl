@@ -160,7 +160,7 @@ void PeakCollection::printUnitCells()
 {
     std::vector<nsx::Peak3D*> peak_list = getPeakList();
     int i = 1;
-    for (auto peak : peak_list){
+    for (auto peak : peak_list) {
         std::cout << i << " " << peak->unitCell()->toString() << std::endl;
         i++;
     }

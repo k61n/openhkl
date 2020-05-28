@@ -20,7 +20,7 @@ MergedData::MergedData(std::vector<PeakCollection*> peak_collections, bool fried
     : _friedel(friedel), _merged_peak_set()
 {
     _peak_collections = peak_collections;
-    UnitCell* unit_cell{nullptr};
+    UnitCell* unit_cell {nullptr};
 
     for (int i = 0; i < _peak_collections.size(); ++i) {
         std::vector<Peak3D*> peaks = _peak_collections[i]->getPeakList();

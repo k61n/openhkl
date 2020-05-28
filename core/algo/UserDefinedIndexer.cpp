@@ -68,7 +68,7 @@ void UserDefinedUnitCellIndexerParameters::checkParameters() const
         throw std::runtime_error("Invalid number of q vectors. Must be in [10,500].");
 }
 
-UserDefinedUnitCellIndexer::UserDefinedUnitCellIndexer() : _parameters(), _solutions() {}
+UserDefinedUnitCellIndexer::UserDefinedUnitCellIndexer() : _parameters(), _solutions() { }
 
 UserDefinedUnitCellIndexer::UserDefinedUnitCellIndexer(
     const UserDefinedUnitCellIndexerParameters& parameters)

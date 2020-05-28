@@ -267,11 +267,8 @@ std::string UnitCell::toString()
 {
     std::ostringstream oss;
     auto c = character();
-    oss << std::fixed << std::setw(10) << std::setprecision(5) << c.a
-        << std::setw(10) << c.b
-        << std::setw(10) << c.c
-        << std::setw(10) << c.alpha / deg
-        << std::setw(10) << c.beta / deg
+    oss << std::fixed << std::setw(10) << std::setprecision(5) << c.a << std::setw(10) << c.b
+        << std::setw(10) << c.c << std::setw(10) << c.alpha / deg << std::setw(10) << c.beta / deg
         << std::setw(10) << c.gamma / deg;
     return oss.str();
 }
@@ -899,7 +896,8 @@ bool UnitCell::isSimilar(UnitCell* other, double length_tol, double angle_tol)
         return false;
     else if (std::abs(character().gamma - other->character().gamma) > angle_tol)
         return false;
-    else return true;
+    else
+        return true;
 }
 
 } // namespace nsx

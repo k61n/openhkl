@@ -36,9 +36,7 @@
 #include <QtGlobal>
 
 ShapeLibraryDialog::ShapeLibraryDialog(nsx::PeakCollection* peak_collection)
-    : QDialog()
-    , _peak_collection_model()
-    , _peak_collection_item()
+    : QDialog(), _peak_collection_model(), _peak_collection_item()
 {
     setModal(true);
     setSizePolicies();

@@ -27,6 +27,6 @@ AxisFactory::AxisFactory()
     registerCallback("translation", &TransAxis::create);
 }
 
-AxisFactory::~AxisFactory() {}
+AxisFactory::~AxisFactory() { }
 
 } // namespace nsx

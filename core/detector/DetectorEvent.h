@@ -24,7 +24,7 @@ namespace nsx {
 class DetectorEvent {
  public:
     //! Constructor
-    DetectorEvent() {}
+    DetectorEvent() { }
     //! Constructor
     DetectorEvent(double px, double py, double frame, double tof = -1);
 

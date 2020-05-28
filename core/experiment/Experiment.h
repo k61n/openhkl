@@ -127,8 +127,7 @@ class Experiment {
     //! Get the auto indexer
     nsx::AutoIndexer* autoIndexer() const { return _auto_indexer.get(); };
     //! Set the reference cell
-    void setReferenceCell(double a, double b, double c,
-                          double alpha, double beta, double gamma);
+    void setReferenceCell(double a, double b, double c, double alpha, double beta, double gamma);
     //! return a pointer to the accepted unit cell
     UnitCell* getAcceptedCell();
 
@@ -148,13 +147,12 @@ class Experiment {
     //! Load from file
     bool loadFromFile(std::string path);
 
-public: // Prediction
+ public: // Prediction
     //! Build the shape library
-    void buildShapeLibrary(PeakCollection* peaks, DataList numors,
-                           ShapeLibParameters params);
+    void buildShapeLibrary(PeakCollection* peaks, DataList numors, ShapeLibParameters params);
     //! Predict peaks
-    void predictPeaks(std::string name, DataList numors, PredictionParameters params,
-                      PeakInterpolation interpol);
+    void predictPeaks(
+        std::string name, DataList numors, PredictionParameters params, PeakInterpolation interpol);
 
  private: // private variables
     //! The name of this experiment

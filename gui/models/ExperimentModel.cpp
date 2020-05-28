@@ -15,7 +15,7 @@
 #include "gui/models/ExperimentModel.h"
 #include "gui/models/Session.h"
 
-ExperimentModel::ExperimentModel(QObject* parent) : QAbstractTableModel(parent) {}
+ExperimentModel::ExperimentModel(QObject* parent) : QAbstractTableModel(parent) { }
 
 int ExperimentModel::columnCount(const QModelIndex& /*parent*/) const
 {

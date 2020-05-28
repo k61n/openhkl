@@ -17,7 +17,7 @@
 
 namespace nsx {
 
-Profile3DIntegrator::Profile3DIntegrator() {}
+Profile3DIntegrator::Profile3DIntegrator() { }
 
 static void updateFit(
     Intensity& I, Intensity& B, const std::vector<double>& profile,

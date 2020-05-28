@@ -21,9 +21,9 @@
 #include "core/shape/PeakFilter.h"
 #include "tables/crystal/MillerIndex.h"
 
+#include <iomanip>
 #include <iostream>
 #include <string>
-#include <iomanip>
 
 namespace nsx {
 
@@ -96,8 +96,8 @@ void AutoIndexer::computeFFTSolutions(const std::vector<Peak3D*>& peaks)
     if (tvects.size() < 3) {
         if (_handler)
             _handler->log(
-                "Too few lattice planes detected to form a basis: tvects.size() = " +
-                std::to_string(tvects.size()) + " (minimum 3)");
+                "Too few lattice planes detected to form a basis: tvects.size() = "
+                + std::to_string(tvects.size()) + " (minimum 3)");
         throw std::runtime_error("Too few t-vectors to form basis");
     }
 
@@ -110,7 +110,7 @@ void AutoIndexer::computeFFTSolutions(const std::vector<Peak3D*>& peaks)
                 A.col(1) = tvects[j];
                 A.col(2) = tvects[k];
                 // Build a unit cell with direct vectors
-                std::shared_ptr<UnitCell> cell{new UnitCell{A}};
+                std::shared_ptr<UnitCell> cell {new UnitCell {A}};
 
                 // Skip this unit cell if its volume is below a user-defined minimum.
                 if (cell->volume() < _params.minUnitCellVolume)
@@ -258,22 +258,20 @@ void AutoIndexer::refineSolutions(const std::vector<Peak3D*>& peaks)
 
 void AutoIndexer::printSolutions()
 {
-    std::cout << std::setw(10) << "quality"
-              << std::setw(10) << "a"
-              << std::setw(10) << "b"
-              << std::setw(10) << "c"
-              << std::setw(10) << "alpha"
-              << std::setw(10) << "beta"
+    std::cout << std::setw(10) << "quality" << std::setw(10) << "a" << std::setw(10) << "b"
+              << std::setw(10) << "c" << std::setw(10) << "alpha" << std::setw(10) << "beta"
               << std::setw(10) << "gamma" << std::endl;
     for (auto solution : _solutions) {
-        std::cout << std::fixed << std::setw(10) << std::setprecision(3)
-                  << solution.second << solution.first->toString() << std::endl;
+        std::cout << std::fixed << std::setw(10) << std::setprecision(3) << solution.second
+                  << solution.first->toString() << std::endl;
     }
 }
 
-void AutoIndexer::acceptSolution(std::shared_ptr<UnitCell> solution, const std::vector<nsx::Peak3D*>& peaks)
+void AutoIndexer::acceptSolution(
+    std::shared_ptr<UnitCell> solution, const std::vector<nsx::Peak3D*>& peaks)
 {
-  for (auto peak : peaks) peak->setUnitCell(solution);
+    for (auto peak : peaks)
+        peak->setUnitCell(solution);
 }
 
 void AutoIndexer::setReferenceCell(UnitCell* cell)
@@ -283,8 +281,8 @@ void AutoIndexer::setReferenceCell(UnitCell* cell)
 
 bool AutoIndexer::hasSolution(double length_tol, double angle_tol)
 {
-    for (auto solution : _solutions){
-        if (solution.first->isSimilar(_reference_cell, length_tol, angle_tol)){
+    for (auto solution : _solutions) {
+        if (solution.first->isSimilar(_reference_cell, length_tol, angle_tol)) {
             _accepted_solution = solution.first.get();
             return true;
         }

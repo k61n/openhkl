@@ -134,7 +134,8 @@ void NumorProperty::onChanged()
                     col1->setData(Qt::EditRole, std::get<double>(element.second));
                 else if (std::holds_alternative<std::string>(element.second)) {
                     col1->setData(
-                        Qt::EditRole, QString::fromStdString(std::get<std::string>(element.second)));
+                        Qt::EditRole,
+                        QString::fromStdString(std::get<std::string>(element.second)));
                 } else {
                     delete col0;
                     delete col1;
