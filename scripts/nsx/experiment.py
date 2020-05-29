@@ -31,6 +31,13 @@ class Experiment:
     _found_peaks = "peaks"
     _filtered_peaks = "filtered"
     _predicted_peaks = "predicted"
+    _merged_peaks = "merged"
+    _found_collection = None
+    _filtered_collection = None
+    _predicted_collection = None
+    _merged_collection = None
+    _data_quality = None
+    _data_resolution = None
 
     def __init__(self, name, detector, params, verbose=False):
         '''
@@ -200,7 +207,6 @@ class Experiment:
         ncaught = self.filter_peaks(self._params.filter)
         self.log(f'Autoindex: {ncaught}/{npeaks} peaks caught by filter')
         self.log(f'Autoindex: {ncaught}/{npeaks} peaks caught by filter')
-
         return self.autoindex_peaks(self.filtered_collection, length_tol, angle_tol)
 
     def autoindex_peaks(self, peak_collection, length_tol, angle_tol):
@@ -218,12 +224,15 @@ class Experiment:
             self._params.autoindexer['min_vol']
         self.auto_indexer = self._expt.autoIndexer()
         self.auto_indexer.setParameters(autoindexer_params)
-        self.auto_indexer.autoIndex(peak_collection.getPeakList())
-        solutions = self.auto_indexer.solutions()
-        if self._verbose:
-            self.log(f'Autoindex: cells')
-            self.print_unit_cells()
-        return self.accept_unit_cell(peak_collection)
+        try:
+            self.auto_indexer.autoIndex(peak_collection.getPeakList())
+            solutions = self.auto_indexer.solutions()
+            if self._verbose:
+                self.log(f'Autoindex: cells')
+                self.print_unit_cells()
+            return self.accept_unit_cell(peak_collection)
+        except RuntimeError:
+            return None
 
 
     def get_accepted_cell(self):
@@ -249,6 +258,59 @@ class Experiment:
         self.accept_unit_cell(self.filtered_collection)
         self._expt.buildShapeLibrary(self.filtered_collection, data, shapelib_params)
 
+    def predict_peaks(self, data, interpolation):
+        '''
+        Predict shapes of weak peaks
+        '''
+        interpolation_types = {'None' : nsx.PeakInterpolation_NoInterpolation,
+                               'InverseDistance:': nsx.PeakInterpolation_InverseDistance,
+                               'Intensity:': nsx.PeakInterpolation_Intensity }
+        interpol = interpolation_types[interpolation]
+        prediction_params = nsx.PredictionParameters()
+        prediction_params.d_min = self._params.prediction['d_min']
+        prediction_params.d_max = self._params.prediction['d_max']
+        prediction_params.radius = self._params.prediction['radius']
+        prediction_params.frames = self._params.prediction['frames']
+        prediction_params.min_neighbours = self._params.prediction['neighbours']
+        self._expt.predictPeaks(self._predicted_peaks, data, prediction_params, interpol)
+        self._predicted_collection = self._expt.getPeakCollection(self._predicted_peaks)
+
+    def get_peak_collection(self, name):
+        return self._expt.getPeakCollection(name)
+
+    def merge_peaks(self):
+        '''
+        Merge strong peaks and predicted peaks
+        '''
+        friedel = self._params.merging['friedel']
+        self._expt.setMergedPeaks(self._filtered_collection,
+                                  self._predicted_collection, friedel)
+
+    def get_statistics(self):
+        '''
+        Calculate R-factors and CC1/2, CC*
+        '''
+        d_min = self._params.merging['d_min']
+        d_max = self._params.merging['d_max']
+        n_shells = self._params.merging['n_shells']
+        friedel = self._params.merging['friedel']
+
+        self._expt.computeQuality(d_min, d_max, n_shells,
+                                 self._predicted_collection,
+                                 self._filtered_collection,
+                                 friedel)
+        self._data_resolution = self._expt.getResolution()
+        self._data_quality = self._expt.getQuality
+        self.log(f'R_merge          = {self._data_quality.Rmerge}')
+        self.log(f'Expected R_merge = {self._data_quality.expectedRmerge}')
+        self.log(f'R_meas           = {self._data_quality.Rmeas}')
+        self.log(f'Expected R_meas  = {self._data_quality.expectedRmeas}')
+        self.log(f'R_pim            = {self._data_quality.Rpim}')
+        self.log(f'Expected R_pim   = {self._data_quality.expectedRpim}')
+        self.log(f'CC_half          = {self._data_quality.CChalf}')
+        self.log(f'CC_*             = {self._data_quality.CCstar}')
+
+
     def print_unit_cells(self):
         self.auto_indexer.printSolutions()
 
@@ -272,23 +334,19 @@ class Experiment:
             self._expt.getPeakCollection(self._filtered_peaks)
 
     def remove_peak_collection(self, name):
+        '''
+        Delete a peak collection
+        '''
         self._expt.removePeakCollection(name)
 
-    def predict_peaks(self, data, interpolation):
-        interpolation_types = {'None' : nsx.PeakInterpolation_NoInterpolation,
-                               'InverseDistance:': nsx.PeakInterpolation_InverseDistance,
-                               'Intensity:': nsx.PeakInterpolation_Intensity }
-        interpol = interpolation_types[interpolation]
-        prediction_params = nsx.PredictionParameters()
-        prediction_params.d_min = self._params.prediction['d_min']
-        prediction_params.d_max = self._params.prediction['d_max']
-        prediction_params.radius = self._params.prediction['radius']
-        prediction_params.frames = self._params.prediction['frames']
-        prediction_params.min_neighbours = self._params.prediction['neighbours']
-        self._expt.predictPeaks(self._predicted_peaks, data, prediction_params, interpol)
-
     def set_parameter(self, key, value):
+        '''
+        Set a parameter for the experiment
+        '''
         self._params.set_parameter(key, value)
 
     def log(self, message, level=logging.INFO):
+        '''
+        Write a message to the log
+        '''
         self._logger.log(level, message)

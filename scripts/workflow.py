@@ -15,19 +15,21 @@ from pdb import set_trace
 parser = argparse.ArgumentParser(description='NSXTool workflow test script')
 parser.add_argument('--name', type=str, dest='name', help='name of system', required=True)
 parser.add_argument('--files', type=str, nargs='+', dest='files',
-                    help='Data files', required=True)
+                    help='Data files')
 parser.add_argument('--dataformat', type=str, dest='dataformat',
                     help='Format of data files')
 parser.add_argument('--detector', type=str, dest='detector',
                     help='Type of detector', required=True)
 parser.add_argument('--loadnsx', action='store_true', dest='loadnsx', default=False,
                     help='load <name>.nsx')
+parser.add_argument('--predicted', action='store_true', dest='predicted', default=False,
+                    help='Saved data in .nsx has complted prediction step')
 parser.add_argument('-p', '--parameters', type=str, dest='paramfile',
                     default='parameters', help='File containing experiment paramters')
 parser.add_argument('--max_autoindex_frames', type=int, dest='max_autoindex_frames',
                     default=20, help='Maximum number of frames to use for autoindexing')
 parser.add_argument('--min_autoindex_frames', type=int, dest='min_autoindex_frames',
-                    default=7, help='Minimum number of frames to use for autoindexing')
+                    default=10, help='Minimum number of frames to use for autoindexing')
 parser.add_argument('--length_tol', type=float, dest='length_tol',
                     default=1.0, help='length tolerance (a, b, c) for autoindexing')
 parser.add_argument('--angle_tol', type=float, dest='angle_tol',
@@ -49,6 +51,8 @@ numors = []
 if not args.loadnsx:
     if not args.dataformat:
         raise RuntimeError("Command line argument --dataformat must be specified")
+    if not args.files:
+        raise RuntimeError("No data files specified (--files)")
     filenames = args.files
     expt.set_data_format(args.dataformat)
     pynsxprint("Loading data...")
@@ -102,12 +106,16 @@ if not args.loadnsx:
 else:
     expt.load()
 
-expt.print_unit_cells()
-pynsxprint("Building shape library...")
-expt.build_shape_library(numors)
-expt.save()
+if not args.predicted:
+    pynsxprint("Building shape library...")
+    expt.build_shape_library(numors)
+    pynsxprint("Predicting peaks...")
+    expt.predict_peaks(numors, 'None')
+    set_trace()
+    # expt.save()
 
-pynsxprint("Predicting peaks...")
-expt.predict_peaks(numors, 'None')
-
-pynsxprint("Integrating...")
+pynsxprint("Merging peak collection")
+peaks = expt.get_peak_collection("predicted")
+print("number of peaks = " + str(peaks.numberOfPeaks()))
+expt.merge_peaks()
+expt.get_statistics()

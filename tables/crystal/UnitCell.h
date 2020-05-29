@@ -267,6 +267,7 @@ class UnitCell {
 
     //! Return true if similar to another unit cell
     bool isSimilar(UnitCell* other, double length_tol, double angle_tol);
+    bool smallDiff(double a, double b, double tolerance);
 
 #ifndef SWIG
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW

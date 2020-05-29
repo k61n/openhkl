@@ -99,7 +99,7 @@ else:
     expt.save()
 
 pynsxprint("Testing Autoindexer...")
-# autoindex_test(expt, "n_solutions", 5, 15, 1,  args.length_tol, args.angle_tol)
-# autoindex_test(expt, "n_vertices", 1000, 5000, 500, args.length_tol, args.angle_tol)
+autoindex_test(expt, "n_solutions", 5, 15, 1, int, args.length_tol, args.angle_tol)
+autoindex_test(expt, "n_vertices", 1000, 5000, 500, int, args.length_tol, args.angle_tol)
 autoindex_test(expt, "n_subdiv", 20, 40, 1, int, args.length_tol, args.angle_tol)
 autoindex_test(expt, "indexing_tol", 0.05, 0.3, 0.05, float, args.length_tol, args.angle_tol)

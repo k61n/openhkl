@@ -23,10 +23,29 @@
 #include "core/shape/PeakFilter.h"
 #include "core/statistics/MergedData.h"
 #include "tables/crystal/UnitCell.h"
+#include "core/statistics/RFactor.h"
+#include "core/statistics/CC.h"
+#include "core/statistics/ResolutionShell.h"
 
 namespace nsx {
 
 //! Experiment class, a data type containing a diffractometer and data sets.
+
+struct DataQuality {
+    double Rmerge;         //! R-factor
+    double expectedRmerge; //! expected R-factor
+    double Rmeas;          //! multiplicity-weighted R-factor
+    double expectedRmeas;  //! expected multiplicity-weighted R-factor
+    double Rpim;           //! relative (precision-indicating) R-factor
+    double expectedRpim;   //! expected relative R-factor
+    double CChalf;         //! CC_{1/2} correlation coefficient
+    double CCstar;         //! estimate of CC_{true} derived from CC_{1/2}
+};
+
+struct DataResolution : DataQuality {
+    double dmin;           //! Lower limit of d for resolution shell
+    double dmax;           //! Upper limit of d for resolution shell
+};
 
 class Experiment {
 
@@ -92,6 +111,8 @@ class Experiment {
  public: // MergedData
     //! Set the merged peak
     void setMergedPeaks(std::vector<PeakCollection*> peak_collections, bool friedel);
+    //! Set merged peaks without the vector (mainly for SWIG)
+    void setMergedPeaks(PeakCollection* found, PeakCollection* predicted, bool friedel);
     //! Reset the merged peak
     void resetMergedPeaks();
     //! Reset the merged peak
@@ -156,6 +177,16 @@ public: // Prediction
     void predictPeaks(std::string name, DataList numors, PredictionParameters params,
                       PeakInterpolation interpol);
 
+public: // Merging
+    //! Get resolution shells for quality metrics
+    void computeQuality(double d_min, double d_max, int n_shells,
+                        PeakCollection* predicted, PeakCollection* found,
+                        bool friedel);
+    //! Return data quality resolution
+    std::vector<DataResolution>* getResolution() { return &_data_resolution; };
+    //! Return data quality for all merged data
+    DataQuality* getQuality() { return &_data_quality; };
+
  private: // private variables
     //! The name of this experiment
     std::string _name = "No_name";
@@ -183,6 +214,11 @@ public: // Prediction
     UnitCell _reference_cell;
     //! Peak shape library for prediction
     ShapeLibrary _shape_library;
+    //! Data quality metrics for all merged data
+    DataQuality _data_quality;
+    //! Data quality metrics as a function of resolution shell
+    std::vector<DataResolution> _data_resolution;
+
 };
 
 } // namespace nsx

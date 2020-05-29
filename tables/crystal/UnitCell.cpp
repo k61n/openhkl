@@ -109,7 +109,8 @@ UnitCell::UnitCell(const UnitCell& other)
 UnitCell::UnitCell(double a, double b, double c, double alpha, double beta, double gamma)
     : UnitCell()
 {
-    setParameters(a, b, c, alpha, beta, gamma);
+    // Note that constructor takes angles in degrees, but setParameters expects radians!
+    setParameters(a, b, c, alpha * deg, beta * deg, gamma * deg);
 }
 
 UnitCell& UnitCell::operator=(const UnitCell& other)
@@ -887,19 +888,19 @@ std::vector<std::string> UnitCell::compatibleSpaceGroups() const
 
 bool UnitCell::isSimilar(UnitCell* other, double length_tol, double angle_tol)
 {
-    if (std::abs(character().a - other->character().a) > length_tol)
-        return false;
-    else if (std::abs(character().b - other->character().b) > length_tol)
-        return false;
-    else if (std::abs(character().c - other->character().c) > length_tol)
-        return false;
-    else if (std::abs(character().alpha - other->character().alpha) > angle_tol)
-        return false;
-    else if (std::abs(character().beta - other->character().beta) > angle_tol)
-        return false;
-    else if (std::abs(character().gamma - other->character().gamma) > angle_tol)
-        return false;
-    else return true;
+    auto c1 = character();
+    auto c2 = other->character();
+    return (smallDiff(c1.a, c2.a, length_tol) &&
+            smallDiff(c1.b, c2.b, length_tol) &&
+            smallDiff(c1.c, c2.c, length_tol) &&
+            smallDiff(c1.alpha / deg, c2.alpha / deg, angle_tol) &&
+            smallDiff(c1.beta / deg, c2.beta / deg, angle_tol) &&
+            smallDiff(c1.gamma / deg, c2.gamma / deg, angle_tol));
+}
+
+bool UnitCell::smallDiff(double a, double b, double tolerance)
+{
+    return std::abs(a - b) < tolerance;
 }
 
 } // namespace nsx

@@ -320,6 +320,14 @@ void Experiment::setMergedPeaks(std::vector<PeakCollection*> peak_collections, b
     _merged_peaks = std::make_unique<MergedData>(peak_collections, friedel);
 }
 
+void Experiment::setMergedPeaks(PeakCollection* found, PeakCollection* predicted, bool friedel)
+{
+    std::vector<PeakCollection*> collections;
+    collections.push_back(found);
+    collections.push_back(predicted);
+    _merged_peaks = std::make_unique<MergedData>(collections, friedel);
+}
+
 void Experiment::resetMergedPeaks()
 {
     _merged_peaks.reset();
@@ -597,6 +605,48 @@ void Experiment::predictPeaks(std::string name, DataList numors, PredictionParam
     for (nsx::Peak3D* peak : predicted_peaks) // is this necessary? - zamaan
         delete peak;
     predicted_peaks.clear();
+}
+
+void Experiment::computeQuality(double d_min, double d_max, int n_shells,
+                            PeakCollection* predicted, PeakCollection* found,
+                            bool friedel)
+{
+    ResolutionShell resolution_shell = nsx::ResolutionShell(d_min, d_max, n_shells);
+    for (auto peak : found->getPeakList())
+        resolution_shell.addPeak(peak);
+    for (auto peak : predicted->getPeakList())
+        resolution_shell.addPeak(peak);
+
+    for (int i = n_shells - 1; i >= 0; --i) {
+        double d_lower = resolution_shell.shell(i).dmin;
+        double d_upper = resolution_shell.shell(i).dmax;
+
+        nsx::MergedData merged_data_per_shell(_merged_peaks->spaceGroup(), friedel);
+
+        for (auto peak : resolution_shell.shell(i).peaks)
+            merged_data_per_shell.addPeak(peak);
+
+        nsx::RFactor rf;
+        rf.calculate(&merged_data_per_shell);
+        nsx::CC cc;
+        cc.calculate(&merged_data_per_shell);
+
+        _data_resolution.push_back({{rf.Rmerge(), rf.expectedRmerge(),
+                                     rf.Rmeas(), rf.expectedRmeas(),
+                                     rf.Rpim(), rf.expectedRpim(),
+                                     cc.CChalf(), cc.CCstar()},
+                                    d_lower, d_upper});
+    }
+
+    nsx::RFactor rfactor;
+    rfactor.calculate(_merged_peaks.get());
+    nsx::CC cc;
+    cc.calculate(_merged_peaks.get());
+    _data_quality = {rfactor.Rmerge(), rfactor.expectedRmerge(),
+                     rfactor.Rmeas(), rfactor.expectedRmeas(),
+                     rfactor.Rpim(), rfactor.expectedRpim(),
+                     cc.CChalf(), cc.CCstar()};
+
 }
 
 } // namespace nsx
