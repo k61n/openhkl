@@ -34,7 +34,7 @@ IPeakIntegrator::IPeakIntegrator()
 {
 }
 
-IPeakIntegrator::~IPeakIntegrator() {}
+IPeakIntegrator::~IPeakIntegrator() { }
 
 Intensity IPeakIntegrator::meanBackground() const
 {

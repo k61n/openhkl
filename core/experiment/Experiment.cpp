@@ -506,8 +506,8 @@ bool Experiment::loadFromFile(std::string path)
     return success;
 }
 
-void Experiment::setReferenceCell(double a, double b, double c,
-                                  double alpha, double beta, double gamma)
+void Experiment::setReferenceCell(
+    double a, double b, double c, double alpha, double beta, double gamma)
 {
     _reference_cell = UnitCell(a, b, c, alpha, beta, gamma);
     _auto_indexer->setReferenceCell(&_reference_cell);
@@ -516,10 +516,11 @@ void Experiment::setReferenceCell(double a, double b, double c,
 bool Experiment::acceptUnitCell(PeakCollection* peaks, double length_tol, double angle_tol)
 {
     bool accepted = false;
-    if (_auto_indexer->hasSolution(length_tol, angle_tol)){
+    if (_auto_indexer->hasSolution(length_tol, angle_tol)) {
         _accepted_unit_cell = *_auto_indexer->getAcceptedSolution();
         std::vector<Peak3D*> peak_list = peaks->getPeakList();
-        for (auto peak : peak_list) peak->setUnitCell(&_accepted_unit_cell);
+        for (auto peak : peak_list)
+            peak->setUnitCell(&_accepted_unit_cell);
         accepted = true;
     }
     return accepted;
@@ -530,7 +531,8 @@ UnitCell* Experiment::getAcceptedCell()
     return &_accepted_unit_cell;
 }
 
-void Experiment::buildShapeLibrary(PeakCollection* peaks, DataList numors, ShapeLibParameters params)
+void Experiment::buildShapeLibrary(
+    PeakCollection* peaks, DataList numors, ShapeLibParameters params)
 {
     std::vector<Peak3D*> peak_list = peaks->getPeakList();
     std::vector<Peak3D*> fit_peaks;
@@ -553,8 +555,8 @@ void Experiment::buildShapeLibrary(PeakCollection* peaks, DataList numors, Shape
     nsx::AABB aabb;
 
     if (params.kabsch_coords) {
-        Eigen::Vector3d sigma(params.sigma_divergence, params.sigma_divergence,
-                              params.sigma_mosaicity);
+        Eigen::Vector3d sigma(
+            params.sigma_divergence, params.sigma_divergence, params.sigma_mosaicity);
         aabb.setLower(-params.peak_scale * sigma);
         aabb.setUpper(params.peak_scale * sigma);
     } else {
@@ -563,10 +565,12 @@ void Experiment::buildShapeLibrary(PeakCollection* peaks, DataList numors, Shape
         aabb.setUpper(0.5 * dx);
     }
 
-    _shape_library = nsx::ShapeLibrary(!params.kabsch_coords, params.peak_scale,
-                                       params.background_range_min, params.background_range_max);
+    _shape_library = nsx::ShapeLibrary(
+        !params.kabsch_coords, params.peak_scale, params.background_range_min,
+        params.background_range_max);
 
-    nsx::ShapeIntegrator integrator(&_shape_library, aabb, params.nbins_x, params.nbins_y, params.nbins_z);
+    nsx::ShapeIntegrator integrator(
+        &_shape_library, aabb, params.nbins_x, params.nbins_y, params.nbins_z);
     integrator.setPeakEnd(params.peak_scale);
     integrator.setBkgBegin(params.background_range_min);
     integrator.setBkgEnd(params.background_range_max);
@@ -578,20 +582,20 @@ void Experiment::buildShapeLibrary(PeakCollection* peaks, DataList numors, Shape
     // _shape_library.updateFit(1000); // This does nothing!! - zamaan
 }
 
-void Experiment::predictPeaks(std::string name, DataList numors, PredictionParameters params, PeakInterpolation interpol)
+void Experiment::predictPeaks(
+    std::string name, DataList numors, PredictionParameters params, PeakInterpolation interpol)
 {
     int current_numor = 0;
     std::vector<nsx::Peak3D*> predicted_peaks;
 
     for (auto data : numors) {
-        std::cout << "Predicting peaks for numor " << ++current_numor << " of " <<
-            numors.size() << std::endl;
+        std::cout << "Predicting peaks for numor " << ++current_numor << " of " << numors.size()
+                  << std::endl;
 
-        std::vector<nsx::Peak3D*> predicted =
-            nsx::predictPeaks(&_shape_library, data, &_accepted_unit_cell,
-                              params.detector_range_min, params.detector_range_max,
-                              params.neighbour_max_radius, params.frame_range_max,
-                              params.min_n_neighbors, interpol);
+        std::vector<nsx::Peak3D*> predicted = nsx::predictPeaks(
+            &_shape_library, data, &_accepted_unit_cell, params.detector_range_min,
+            params.detector_range_max, params.neighbour_max_radius, params.frame_range_max,
+            params.min_n_neighbors, interpol);
 
         for (nsx::Peak3D* peak : predicted)
             predicted_peaks.push_back(peak);
@@ -607,9 +611,9 @@ void Experiment::predictPeaks(std::string name, DataList numors, PredictionParam
     predicted_peaks.clear();
 }
 
-void Experiment::computeQuality(double d_min, double d_max, int n_shells,
-                            PeakCollection* predicted, PeakCollection* found,
-                            bool friedel)
+void Experiment::computeQuality(
+    double d_min, double d_max, int n_shells, PeakCollection* predicted, PeakCollection* found,
+    bool friedel)
 {
     ResolutionShell resolution_shell = nsx::ResolutionShell(d_min, d_max, n_shells);
     for (auto peak : found->getPeakList())
@@ -631,22 +635,20 @@ void Experiment::computeQuality(double d_min, double d_max, int n_shells,
         nsx::CC cc;
         cc.calculate(&merged_data_per_shell);
 
-        _data_resolution.push_back({{rf.Rmerge(), rf.expectedRmerge(),
-                                     rf.Rmeas(), rf.expectedRmeas(),
-                                     rf.Rpim(), rf.expectedRpim(),
-                                     cc.CChalf(), cc.CCstar()},
-                                    d_lower, d_upper});
+        _data_resolution.push_back(
+            {{rf.Rmerge(), rf.expectedRmerge(), rf.Rmeas(), rf.expectedRmeas(), rf.Rpim(),
+              rf.expectedRpim(), cc.CChalf(), cc.CCstar()},
+             d_lower,
+             d_upper});
     }
 
     nsx::RFactor rfactor;
     rfactor.calculate(_merged_peaks.get());
     nsx::CC cc;
     cc.calculate(_merged_peaks.get());
-    _data_quality = {rfactor.Rmerge(), rfactor.expectedRmerge(),
-                     rfactor.Rmeas(), rfactor.expectedRmeas(),
-                     rfactor.Rpim(), rfactor.expectedRpim(),
-                     cc.CChalf(), cc.CCstar()};
-
+    _data_quality = {
+        rfactor.Rmerge(), rfactor.expectedRmerge(), rfactor.Rmeas(), rfactor.expectedRmeas(),
+        rfactor.Rpim(),   rfactor.expectedRpim(),   cc.CChalf(),     cc.CCstar()};
 }
 
 } // namespace nsx

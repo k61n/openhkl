@@ -53,10 +53,10 @@ SXPlot::SXPlot(QWidget* parent) : QCustomPlot(parent)
 
 void SXPlot::addErrorBars(QCPGraph* graph, QVector<double>& error)
 {
-  errorBars = new QCPErrorBars{graph->keyAxis(), graph->valueAxis()};
-  errorBars->setErrorType(QCPErrorBars::ErrorType::etValueError);
-  errorBars->setDataPlottable(graph);
-  errorBars->setData(error);
+    errorBars = new QCPErrorBars {graph->keyAxis(), graph->valueAxis()};
+    errorBars->setErrorType(QCPErrorBars::ErrorType::etValueError);
+    errorBars->setDataPlottable(graph);
+    errorBars->setData(error);
 }
 
 void SXPlot::update(PlottableItem* item)
@@ -127,13 +127,14 @@ void SXPlot::mouseWheel(QWheelEvent* wheel_event)
 {
     QRect current_range = axisRect()->rect();
 
-    std::vector<double> edges {xAxis->pixelToCoord(current_range.x()),
-                               xAxis->pixelToCoord(current_range.x() + current_range.width()),
-                               yAxis->pixelToCoord(current_range.y()),
-                               yAxis->pixelToCoord(current_range.y() + current_range.height())};
+    std::vector<double> edges {
+        xAxis->pixelToCoord(current_range.x()),
+        xAxis->pixelToCoord(current_range.x() + current_range.width()),
+        yAxis->pixelToCoord(current_range.y()),
+        yAxis->pixelToCoord(current_range.y() + current_range.height())};
 
-    std::vector<double> mouse_pos {xAxis->pixelToCoord(wheel_event->pos().x()),
-                                   yAxis->pixelToCoord(wheel_event->pos().y())};
+    std::vector<double> mouse_pos {
+        xAxis->pixelToCoord(wheel_event->pos().x()), yAxis->pixelToCoord(wheel_event->pos().y())};
 
     double factor;
     if (wheel_event->angleDelta().y() < 0) {
@@ -142,10 +143,11 @@ void SXPlot::mouseWheel(QWheelEvent* wheel_event)
         factor = 0.9;
     }
 
-    std::vector<double> new_edges {mouse_pos[0] - (mouse_pos[0] - edges[0]) * factor,
-                                   mouse_pos[0] - (mouse_pos[0] - edges[1]) * factor,
-                                   mouse_pos[1] - (mouse_pos[1] - edges[2]) * factor,
-                                   mouse_pos[1] - (mouse_pos[1] - edges[3]) * factor};
+    std::vector<double> new_edges {
+        mouse_pos[0] - (mouse_pos[0] - edges[0]) * factor,
+        mouse_pos[0] - (mouse_pos[0] - edges[1]) * factor,
+        mouse_pos[1] - (mouse_pos[1] - edges[2]) * factor,
+        mouse_pos[1] - (mouse_pos[1] - edges[3]) * factor};
 
     if (xAxis->selectedParts().testFlag(QCPAxis::spAxis)) {
         xAxis->setRange(new_edges[0], new_edges[1]);
@@ -182,12 +184,10 @@ void SXPlot::resetZoom()
         values_x.clear();
         values_y.clear();
 
-        for (
-             QVector<QCPGraphData>::iterator it = graph_item->data()->begin();
-             it != graph_item->data()->end();
-             ++it){
-          values_x.push_back(it->key);
-          values_y.push_back(it->value);
+        for (QVector<QCPGraphData>::iterator it = graph_item->data()->begin();
+             it != graph_item->data()->end(); ++it) {
+            values_x.push_back(it->key);
+            values_y.push_back(it->value);
         }
 
         if (*(std::max_element(values_x.begin(), values_x.end())) > x_max)
@@ -203,7 +203,7 @@ void SXPlot::resetZoom()
     zoom(x_min, x_max, y_min, y_max);
 }
 
-SXPlot::~SXPlot() {}
+SXPlot::~SXPlot() { }
 
 void SXPlot::titleDoubleClick(QMouseEvent* event, QCPTextElement* title)
 {
@@ -283,7 +283,7 @@ void SXPlot::setmenuRequested(QPoint pos)
         connect(reset_zoom, &QAction::triggered, this, &SXPlot::resetZoom);
 
         // connect(
-        //     export_ASCII, &QAction::triggered, 
+        //     export_ASCII, &QAction::triggered,
         //     this, &SXPlot::exportToAscii);
     }
 }

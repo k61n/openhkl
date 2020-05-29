@@ -22,9 +22,9 @@
 
 namespace nsx {
 
-Gonio::Gonio() : _name("goniometer") {}
+Gonio::Gonio() : _name("goniometer") { }
 
-Gonio::Gonio(const std::string& name) : _name(name) {}
+Gonio::Gonio(const std::string& name) : _name(name) { }
 
 Gonio::Gonio(const Gonio& other) : _name(other._name)
 {
@@ -54,7 +54,7 @@ Gonio& Gonio::operator=(const Gonio& other)
     return *this;
 }
 
-Gonio::~Gonio() {}
+Gonio::~Gonio() { }
 
 size_t Gonio::nAxes() const
 {

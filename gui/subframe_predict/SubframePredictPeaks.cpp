@@ -643,9 +643,9 @@ void SubframePredictPeaks::updateDatasetParameters(int idx)
     _figure_spin->setMinimum(0);
 }
 
-void SubframePredictPeaks::grabPredictorParameters() {}
+void SubframePredictPeaks::grabPredictorParameters() { }
 
-void SubframePredictPeaks::setPredictorParameters() const {}
+void SubframePredictPeaks::setPredictorParameters() const { }
 
 void SubframePredictPeaks::runPrediction()
 {

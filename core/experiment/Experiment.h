@@ -21,30 +21,30 @@
 #include "core/instrument/Diffractometer.h"
 #include "core/shape/IPeakIntegrator.h"
 #include "core/shape/PeakFilter.h"
-#include "core/statistics/MergedData.h"
-#include "tables/crystal/UnitCell.h"
-#include "core/statistics/RFactor.h"
 #include "core/statistics/CC.h"
+#include "core/statistics/MergedData.h"
+#include "core/statistics/RFactor.h"
 #include "core/statistics/ResolutionShell.h"
+#include "tables/crystal/UnitCell.h"
 
 namespace nsx {
 
 //! Experiment class, a data type containing a diffractometer and data sets.
 
 struct DataQuality {
-    double Rmerge;         //! R-factor
+    double Rmerge; //! R-factor
     double expectedRmerge; //! expected R-factor
-    double Rmeas;          //! multiplicity-weighted R-factor
-    double expectedRmeas;  //! expected multiplicity-weighted R-factor
-    double Rpim;           //! relative (precision-indicating) R-factor
-    double expectedRpim;   //! expected relative R-factor
-    double CChalf;         //! CC_{1/2} correlation coefficient
-    double CCstar;         //! estimate of CC_{true} derived from CC_{1/2}
+    double Rmeas; //! multiplicity-weighted R-factor
+    double expectedRmeas; //! expected multiplicity-weighted R-factor
+    double Rpim; //! relative (precision-indicating) R-factor
+    double expectedRpim; //! expected relative R-factor
+    double CChalf; //! CC_{1/2} correlation coefficient
+    double CCstar; //! estimate of CC_{true} derived from CC_{1/2}
 };
 
 struct DataResolution : DataQuality {
-    double dmin;           //! Lower limit of d for resolution shell
-    double dmax;           //! Upper limit of d for resolution shell
+    double dmin; //! Lower limit of d for resolution shell
+    double dmax; //! Upper limit of d for resolution shell
 };
 
 class Experiment {
@@ -148,8 +148,7 @@ class Experiment {
     //! Get the auto indexer
     nsx::AutoIndexer* autoIndexer() const { return _auto_indexer.get(); };
     //! Set the reference cell
-    void setReferenceCell(double a, double b, double c,
-                          double alpha, double beta, double gamma);
+    void setReferenceCell(double a, double b, double c, double alpha, double beta, double gamma);
     //! return a pointer to the accepted unit cell
     UnitCell* getAcceptedCell();
 
@@ -169,19 +168,18 @@ class Experiment {
     //! Load from file
     bool loadFromFile(std::string path);
 
-public: // Prediction
+ public: // Prediction
     //! Build the shape library
-    void buildShapeLibrary(PeakCollection* peaks, DataList numors,
-                           ShapeLibParameters params);
+    void buildShapeLibrary(PeakCollection* peaks, DataList numors, ShapeLibParameters params);
     //! Predict peaks
-    void predictPeaks(std::string name, DataList numors, PredictionParameters params,
-                      PeakInterpolation interpol);
+    void predictPeaks(
+        std::string name, DataList numors, PredictionParameters params, PeakInterpolation interpol);
 
-public: // Merging
+ public: // Merging
     //! Get resolution shells for quality metrics
-    void computeQuality(double d_min, double d_max, int n_shells,
-                        PeakCollection* predicted, PeakCollection* found,
-                        bool friedel);
+    void computeQuality(
+        double d_min, double d_max, int n_shells, PeakCollection* predicted, PeakCollection* found,
+        bool friedel);
     //! Return data quality resolution
     std::vector<DataResolution>* getResolution() { return &_data_resolution; };
     //! Return data quality for all merged data
@@ -218,7 +216,6 @@ public: // Merging
     DataQuality _data_quality;
     //! Data quality metrics as a function of resolution shell
     std::vector<DataResolution> _data_resolution;
-
 };
 
 } // namespace nsx

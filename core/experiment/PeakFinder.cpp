@@ -112,8 +112,8 @@ PeakCollection* PeakFinder::getPeakCollection()
     return ptr;
 }
 
-void PeakFinder::setPeakCollection(const std::string name, nsx::listtype type,
-                                    std::vector<std::shared_ptr<nsx::Peak3D>> peak_list)
+void PeakFinder::setPeakCollection(
+    const std::string name, nsx::listtype type, std::vector<std::shared_ptr<nsx::Peak3D>> peak_list)
 {
     _peak_collection = PeakCollection(name, type);
     _peak_collection.populate(peak_list);

@@ -108,9 +108,9 @@ void SubframeMergedPeaks::setDShellUp()
     _d_shell_view = new QTableView;
     _shell_model = new QStandardItemModel(0, 13, this);
     _d_shell_view->setModel(_shell_model);
-    _shell_model->setHorizontalHeaderLabels({"dmax", "dmin", "nobs", "nmerge", "redundancy",
-                                             "Rmeas", "Rmeas(est.)", "Rmerge/Rsym", "Rmerge(est.)",
-                                             "Rpim", "Rpim(est.)", "CChalf", "CC*"});
+    _shell_model->setHorizontalHeaderLabels(
+        {"dmax", "dmin", "nobs", "nmerge", "redundancy", "Rmeas", "Rmeas(est.)", "Rmerge/Rsym",
+         "Rmerge(est.)", "Rpim", "Rpim(est.)", "CChalf", "CC*"});
     shell_layout->addWidget(_d_shell_view);
 
     QHBoxLayout* d_shell_down = new QHBoxLayout;
@@ -552,8 +552,7 @@ void SubframeMergedPeaks::refreshGraphTable(int column)
 
 void SubframeMergedPeaks::saveStatistics()
 {
-    QString filename =
-        QFileDialog::getSaveFileName(this, "Save the shell info", ".", "(*.txt)");
+    QString filename = QFileDialog::getSaveFileName(this, "Save the shell info", ".", "(*.txt)");
 
     if (filename.isEmpty())
         return;

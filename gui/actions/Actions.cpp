@@ -65,7 +65,7 @@ void Actions::setupData()
     // });
 }
 
-void Actions::setupExperiment() {}
+void Actions::setupExperiment() { }
 
 void Actions::setupInstrument()
 {
