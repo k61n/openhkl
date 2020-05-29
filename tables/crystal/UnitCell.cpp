@@ -109,8 +109,7 @@ UnitCell::UnitCell(const UnitCell& other)
 UnitCell::UnitCell(double a, double b, double c, double alpha, double beta, double gamma)
     : UnitCell()
 {
-    // Note that constructor takes angles in degrees, but setParameters expects radians!
-    setParameters(a, b, c, alpha * deg, beta * deg, gamma * deg);
+    setParameters(a, b, c, alpha, beta, gamma);
 }
 
 UnitCell& UnitCell::operator=(const UnitCell& other)

@@ -17,6 +17,8 @@
 #include <stdexcept>
 #include <utility>
 
+#include "base/utils/Units.h"
+
 #include "core/data/DataSet.h"
 #include "core/experiment/Experiment.h"
 #include "core/instrument/Diffractometer.h"
@@ -509,7 +511,7 @@ bool Experiment::loadFromFile(std::string path)
 void Experiment::setReferenceCell(
     double a, double b, double c, double alpha, double beta, double gamma)
 {
-    _reference_cell = UnitCell(a, b, c, alpha, beta, gamma);
+    _reference_cell = UnitCell(a, b, c, alpha * deg, beta * deg, gamma * deg);
     _auto_indexer->setReferenceCell(&_reference_cell);
 }
 
