@@ -14,6 +14,7 @@
 
 #include "base/utils/Units.h"
 #include <string>
+#include <stdexcept>
 
 namespace {
 using namespace nsx;

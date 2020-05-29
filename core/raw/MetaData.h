@@ -20,6 +20,7 @@
 #include <set>
 #include <string>
 #include <variant>
+#include <stdexcept>
 
 namespace nsx {
 
