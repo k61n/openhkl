@@ -70,6 +70,11 @@ class Parameters:
                              'neighbours'       : 400.0,
                              'frames'           : 20 }
 
+        self.merging     = { 'friedel'          : True,
+                             'n_shells'         : 10,
+                             'd_min'            : 1.0,
+                             'd_max'            : 50.0 }
+
         self._dicts = [self.cell, self.detector, self.finder, 
                        self.integration, self.filter, self.autoindexer,
                        self.shapelib]
@@ -106,3 +111,9 @@ class Parameters:
             for d in self._dicts:
                 for key in d:
                     outfile.write(f'{key}     {d[key]}\n')
+
+    def set_parameter(self, key, value):
+        for d in self._dicts:
+            if key in d:
+                d[key] = value
+                break
