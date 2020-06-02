@@ -38,6 +38,7 @@ class Experiment:
     _merged_collection = None
     _data_quality = None
     _data_resolution = None
+    _metadata = {}
 
     def __init__(self, name, detector, params, verbose=False):
         '''
@@ -45,6 +46,7 @@ class Experiment:
         '''
         self._name = name
         self._nsxfile = self._name + ".nsx"
+        self._metafile = self._name + ".meta"
         self._verbose = verbose
         self._detector = detector
         self._dataformat = "raw"
@@ -100,6 +102,9 @@ class Experiment:
         self.log(f'dataset {data_name}: nframes = {data.nFrames()}')
         self._expt.addData(data_name, data)
         self._data_sets.append(data_name)
+
+    def get_number_of_peaks(self, collection):
+        return self._expt.getPeakCollection(collection).numberOfPeaks()
 
     def read_raw_data(self, data_name, filenames):
         '''
@@ -225,7 +230,7 @@ class Experiment:
         self.auto_indexer = self._expt.autoIndexer()
         self.auto_indexer.setParameters(autoindexer_params)
         try:
-            self.auto_indexer.autoIndex(peak_collection.getPeakList())
+            self.auto_indexer.autoIndex(peak_collection)
             solutions = self.auto_indexer.solutions()
             if self._verbose:
                 self.log(f'Autoindex: cells')
@@ -255,7 +260,6 @@ class Experiment:
         shapelib_params.d_max = self._params.shapelib['d_max']
         shapelib_params.bkg_begin = self._params.shapelib['bkg_begin']
         shapelib_params.bkg_end = self._params.shapelib['bkg_end']
-        self.accept_unit_cell(self.filtered_collection)
         self._expt.buildShapeLibrary(self.filtered_collection, data, shapelib_params)
 
     def predict_peaks(self, data, interpolation):
@@ -350,3 +354,27 @@ class Experiment:
         Write a message to the log
         '''
         self._logger.log(level, message)
+
+    def add_metadata(self, key, value):
+        self._metadata[key] = value
+
+    def write_metadata(self):
+        with open(self._metafile, 'w') as outfile:
+            for key in self._metadata:
+                if isinstance(self._metadata[key], list):
+                    for item in self._metadata[key]:
+                        outfile.write(f'{key}     {item}\n')
+                else:
+                    outfile.write(f'{key}     {self._metadata[key]}\n')
+
+    def read_metadata(self):
+        with open(self._metafile, 'r') as infile:
+            for line in infile:
+                key, value = line.split()
+                if key in self._metadata:
+                    if isinstance(self._metadata[key], list):
+                        self._metadata[key].append(value)
+                    else:
+                        self._metadata[key] = [self._metadata[key], value]
+                else:
+                    self._metadata[key] = value

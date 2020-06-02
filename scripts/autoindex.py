@@ -98,7 +98,8 @@ else:
     pynsxprint("Filter caught " + str(ncaught) + " of " + str(npeaks) + " peaks")
     expt.save()
 
-pynsxprint("Testing Autoindexer...")
+npeaks = expt.get_number_of_peaks("filtered")
+logger.info(f'attempting to index using {npeaks} peaks...')
 autoindex_test(expt, "n_solutions", 5, 15, 1, int, args.length_tol, args.angle_tol)
 autoindex_test(expt, "n_vertices", 1000, 5000, 500, int, args.length_tol, args.angle_tol)
 autoindex_test(expt, "n_subdiv", 20, 40, 1, int, args.length_tol, args.angle_tol)

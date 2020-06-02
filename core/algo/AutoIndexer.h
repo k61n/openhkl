@@ -64,6 +64,8 @@ class AutoIndexer {
     void setParameters(IndexerParameters parameters) { _params = parameters; };
     //! Performs the auto-indexing
     void autoIndex(const std::vector<Peak3D*>& peaks);
+    //! Autoindex by passing a peak collection (avoid SWIG memory leak)
+    void autoIndex(PeakCollection* peaks);
     //! Returns list of the best solutions ordered by percentage of successfully indexed peaks
     const std::vector<RankedSolution>& solutions() const;
 
