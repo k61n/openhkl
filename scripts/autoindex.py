@@ -42,7 +42,7 @@ args = parser.parse_args()
 
 
 def autoindex_test(expt, param, p_min, p_max, step, dtype, length_tol, angle_tol):
-    peaks = expt.filtered_collection
+    peaks = expt.get_peak_collection("filtered")
     for p in arange(p_min, p_max, step):
         expt.set_parameter(param, dtype(p))
         cell_found = expt.autoindex_peaks(peaks, length_tol, angle_tol)
@@ -102,7 +102,7 @@ else:
 
 npeaks = expt.get_number_of_peaks("filtered")
 logger.info(f'attempting to index using {npeaks} peaks...')
-autoindex_test(expt, "n_solutions", 5, 20, 1, int, args.length_tol, args.angle_tol)
-autoindex_test(expt, "n_vertices", 100, 2500, 100, int, args.length_tol, args.angle_tol)
+autoindex_test(expt, "n_solutions", 10, 20, 1, int, args.length_tol, args.angle_tol)
+autoindex_test(expt, "n_vertices", 1000, 2500, 100, int, args.length_tol, args.angle_tol)
 autoindex_test(expt, "n_subdiv", 20, 40, 1, int, args.length_tol, args.angle_tol)
 autoindex_test(expt, "indexing_tol", 0.01, 0.2, 0.01, float, args.length_tol, args.angle_tol)

@@ -90,7 +90,6 @@ if not args.loadnsx:
         raise RuntimeError("Autoindexing Failed")
 
     pynsxprint("...autoindexing complete")
-    expt.remove_peak_collection("filtered")
 
     pynsxprint("Finding peaks...")
     expt.find_peaks(numors, 0, -1)
@@ -100,7 +99,6 @@ if not args.loadnsx:
     pynsxprint("Filtering...")
     ncaught = expt.filter_peaks(params.filter)
     pynsxprint("Filter caught " + str(ncaught) + " of " + str(npeaks) + " peaks")
-    # expt.filtered_collection.printUnitCells()
 
     expt.save()
 else:

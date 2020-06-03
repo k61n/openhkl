@@ -165,8 +165,8 @@ class Experiment:
 
         self._expt.integrateFoundPeaks(integrator_type)
         self._expt.acceptFoundPeaks(self._found_peaks)
-        self.found_collection = self._expt.getPeakCollection(self._found_peaks)
-        n_peaks = self.found_collection.numberOfPeaks()
+        self._found_collection = self._expt.getPeakCollection(self._found_peaks)
+        n_peaks = self._found_collection.numberOfPeaks()
         return n_peaks
 
     def filter_peaks(self, filter_params):
@@ -185,13 +185,13 @@ class Experiment:
         filter.setDRange(min_d_range, max_d_range)
         filter.setStrength(min_strength, max_strength)
 
-        self.found_collection = self._expt.getPeakCollection(self._found_peaks)
-        filter.resetFiltering(self.found_collection)
-        filter.filter(self.found_collection)
-        self._expt.acceptFilter(self._filtered_peaks, self.found_collection)
-        self.filtered_collection = self._expt.getPeakCollection(self._filtered_peaks)
+        self._found_collection = self._expt.getPeakCollection(self._found_peaks)
+        filter.resetFiltering(self._found_collection)
+        filter.filter(self._found_collection)
+        self._expt.acceptFilter(self._filtered_peaks, self._found_collection)
+        self._filtered_collection = self._expt.getPeakCollection(self._filtered_peaks)
 
-        n_caught = self.found_collection.numberCaughtByFilter()
+        n_caught = self._found_collection.numberCaughtByFilter()
         return n_caught
 
     def accept_unit_cell(self, peak_collection):
@@ -212,7 +212,7 @@ class Experiment:
         ncaught = self.filter_peaks(self._params.filter)
         self.log(f'Autoindex: {ncaught}/{npeaks} peaks caught by filter')
         self.log(f'Autoindex: {ncaught}/{npeaks} peaks caught by filter')
-        return self.autoindex_peaks(self.filtered_collection, length_tol, angle_tol)
+        return self.autoindex_peaks(self._filtered_collection, length_tol, angle_tol)
 
     def autoindex_peaks(self, peak_collection, length_tol, angle_tol):
         '''
@@ -240,9 +240,6 @@ class Experiment:
             return None
 
 
-    def get_accepted_cell(self):
-        return self._expt.getAcceptedCell()
-
     def build_shape_library(self, data):
         '''
         Build the shape library for predicting the weak peaks
@@ -260,7 +257,8 @@ class Experiment:
         shapelib_params.d_max = self._params.shapelib['d_max']
         shapelib_params.bkg_begin = self._params.shapelib['bkg_begin']
         shapelib_params.bkg_end = self._params.shapelib['bkg_end']
-        self._expt.buildShapeLibrary(self.filtered_collection, data, shapelib_params)
+        self._filtered_collection = self._expt.getPeakCollection(self._filtered_peaks)
+        self._expt.buildShapeLibrary(self._filtered_collection, shapelib_params)
 
     def predict_peaks(self, data, interpolation):
         '''
@@ -314,6 +312,9 @@ class Experiment:
         self.log(f'CC_half          = {self._data_quality.CChalf}')
         self.log(f'CC_*             = {self._data_quality.CCstar}')
 
+    def get_accepted_cell(self):
+        return self._expt.getUnitCell("accepted")
+
 
     def print_unit_cells(self):
         self.auto_indexer.printSolutions()
@@ -333,8 +334,8 @@ class Experiment:
         if not os.path.isfile(self._nsxfile):
             raise OSError("f{self._nsxfile} not found")
         self._expt.loadFromFile(self._nsxfile)
-        self.found_collection = self._expt.getPeakCollection(self._found_peaks)
-        self.filtered_collection = \
+        self._found_collection = self._expt.getPeakCollection(self._found_peaks)
+        self._filtered_collection = \
             self._expt.getPeakCollection(self._filtered_peaks)
 
     def remove_peak_collection(self, name):

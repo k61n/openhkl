@@ -54,9 +54,9 @@ void AutoIndexer::autoIndex(PeakCollection* peaks)
 {
     std::vector<Peak3D*> peak_list = peaks->getPeakList();
     autoIndex(peak_list);
-    for (auto peak : peak_list)
-        delete peak;
-    peak_list.clear();
+    // for (auto peak : peak_list)
+    //     delete peak;
+    // peak_list.clear();
 }
 
 void AutoIndexer::removeBad(double quality)
