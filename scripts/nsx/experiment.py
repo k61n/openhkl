@@ -257,8 +257,9 @@ class Experiment:
         shapelib_params.d_max = self._params.shapelib['d_max']
         shapelib_params.bkg_begin = self._params.shapelib['bkg_begin']
         shapelib_params.bkg_end = self._params.shapelib['bkg_end']
-        self._filtered_collection = self._expt.getPeakCollection(self._filtered_peaks)
-        self._expt.buildShapeLibrary(self._filtered_collection, shapelib_params)
+        self._found_collection = self._expt.getPeakCollection(self._found_peaks)
+        self._expt.acceptUnitCell(self._found_collection)
+        self._expt.buildShapeLibrary(self._found_collection, shapelib_params)
 
     def predict_peaks(self, data, interpolation):
         '''
@@ -379,3 +380,4 @@ class Experiment:
                         self._metadata[key] = [self._metadata[key], value]
                 else:
                     self._metadata[key] = value
+

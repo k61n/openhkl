@@ -505,6 +505,7 @@ bool Experiment::loadFromFile(std::string path)
     if (success) {
         success = importer.loadPeaks(this);
     }
+
     return success;
 }
 
@@ -519,17 +520,23 @@ void Experiment::setReferenceCell(
 
 bool Experiment::acceptUnitCell(PeakCollection* peaks, double length_tol, double angle_tol)
 {
-    bool accepted = false;
     std::string name = "accepted";
+    bool accepted = false;
     if (_auto_indexer->hasSolution(length_tol, angle_tol)) {
         auto cell = *_auto_indexer->getAcceptedSolution();
-        std::vector<Peak3D*> peak_list = peaks->getPeakList();
         addUnitCell(name, &cell);
-        for (auto peak : peak_list)
-            peak->setUnitCell(getUnitCell(name));
+        acceptUnitCell(peaks);
         accepted = true;
     }
     return accepted;
+}
+
+void Experiment::acceptUnitCell(PeakCollection* peaks)
+{
+    std::string name = "accepted";
+    std::vector<Peak3D*> peak_list = peaks->getPeakList();
+    for (auto peak : peak_list)
+        peak->setUnitCell(getUnitCell(name));
 }
 
 void Experiment::buildShapeLibrary(
@@ -552,8 +559,6 @@ void Experiment::buildShapeLibrary(
             continue;
         fit_peaks.push_back(peak);
     }
-    std::cout << "n peaks = " << peak_list.size() << std::endl;
-    std::cout << "n fit peaks = " << fit_peaks.size() << std::endl;
 
     nsx::AABB aabb;
 
@@ -585,12 +590,10 @@ void Experiment::buildShapeLibrary(
     DataList numors;
     for (auto const& [key, val] : _data)
         numors.push_back(val);
-    std::cout << "numors.size() = " << numors.size() << std::endl;
     for (auto data : numors)
         integrator.integrate(fit_peaks, &_shape_library, data);
 
     _shape_library = *integrator.library(); // why do this? - zamaan
-    std::cout << "shape library: npeaks = " << _shape_library.numberOfPeaks() << std::endl;
     peaks->setShapeLibrary(_shape_library);
     // _shape_library.updateFit(1000); // This does nothing!! - zamaan
 }

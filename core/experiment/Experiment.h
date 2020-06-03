@@ -135,6 +135,8 @@ class Experiment {
     int numUnitCells() const { return _unit_cells.size(); };
     //! Accept an autoindexer solution as the unit cell
     bool acceptUnitCell(PeakCollection* peaks, double length_tol, double angle_tol);
+    //! Assign unit cell to a peak collection
+    void acceptUnitCell(PeakCollection* peaks);
 
  public: // Peak finder
     //! Get the address of the peak finder
