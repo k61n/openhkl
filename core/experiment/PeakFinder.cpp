@@ -586,7 +586,7 @@ void PeakFinder::find(DataList numors)
     int i = 0;
     for (auto&& numor : numors) {
         if (numors.size() > 1)
-            qDebug("  numor %i\n", i);
+            qDebug("  numor %i\n", ++i);
         PeakList numor_peaks;
 
         auto dectector = numor->reader()->diffractometer()->detector();

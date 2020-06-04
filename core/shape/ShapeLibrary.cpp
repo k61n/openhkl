@@ -469,4 +469,9 @@ std::map<Peak3D*, std::pair<Profile3D, Profile1D>> ShapeLibrary::profiles() cons
     return _profiles;
 }
 
+int ShapeLibrary::numberOfPeaks()
+{
+    return _profiles.size();
+}
+
 } // namespace nsx

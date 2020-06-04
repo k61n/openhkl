@@ -505,36 +505,42 @@ bool Experiment::loadFromFile(std::string path)
     if (success) {
         success = importer.loadPeaks(this);
     }
+
     return success;
 }
 
 void Experiment::setReferenceCell(
     double a, double b, double c, double alpha, double beta, double gamma)
 {
-    _reference_cell = UnitCell(a, b, c, alpha * deg, beta * deg, gamma * deg);
-    _auto_indexer->setReferenceCell(&_reference_cell);
+    std::string name = "reference";
+    auto reference_cell = UnitCell(a, b, c, alpha * deg, beta * deg, gamma * deg);
+    addUnitCell(name, &reference_cell);
+    _auto_indexer->setReferenceCell(getUnitCell(name));
 }
 
 bool Experiment::acceptUnitCell(PeakCollection* peaks, double length_tol, double angle_tol)
 {
+    std::string name = "accepted";
     bool accepted = false;
     if (_auto_indexer->hasSolution(length_tol, angle_tol)) {
-        _accepted_unit_cell = *_auto_indexer->getAcceptedSolution();
-        std::vector<Peak3D*> peak_list = peaks->getPeakList();
-        for (auto peak : peak_list)
-            peak->setUnitCell(&_accepted_unit_cell);
+        auto cell = *_auto_indexer->getAcceptedSolution();
+        addUnitCell(name, &cell);
+        acceptUnitCell(peaks);
         accepted = true;
     }
     return accepted;
 }
 
-UnitCell* Experiment::getAcceptedCell()
+void Experiment::acceptUnitCell(PeakCollection* peaks)
 {
-    return &_accepted_unit_cell;
+    std::string name = "accepted";
+    std::vector<Peak3D*> peak_list = peaks->getPeakList();
+    for (auto peak : peak_list)
+        peak->setUnitCell(getUnitCell(name));
 }
 
 void Experiment::buildShapeLibrary(
-    PeakCollection* peaks, DataList numors, ShapeLibParameters params)
+    PeakCollection* peaks, ShapeLibParameters params)
 {
     std::vector<Peak3D*> peak_list = peaks->getPeakList();
     std::vector<Peak3D*> fit_peaks;
@@ -567,6 +573,7 @@ void Experiment::buildShapeLibrary(
         aabb.setUpper(0.5 * dx);
     }
 
+
     _shape_library = nsx::ShapeLibrary(
         !params.kabsch_coords, params.peak_scale, params.background_range_min,
         params.background_range_max);
@@ -577,10 +584,17 @@ void Experiment::buildShapeLibrary(
     integrator.setBkgBegin(params.background_range_min);
     integrator.setBkgEnd(params.background_range_max);
 
+    // TODO: (zamaan) change numors to a argument of buildShapeLibrary
+    // Right now, there is no metadata for which DataSet was used to
+    // Generate the peak collection
+    DataList numors;
+    for (auto const& [key, val] : _data)
+        numors.push_back(val);
     for (auto data : numors)
         integrator.integrate(fit_peaks, &_shape_library, data);
 
     _shape_library = *integrator.library(); // why do this? - zamaan
+    peaks->setShapeLibrary(_shape_library);
     // _shape_library.updateFit(1000); // This does nothing!! - zamaan
 }
 
@@ -589,13 +603,14 @@ void Experiment::predictPeaks(
 {
     int current_numor = 0;
     std::vector<nsx::Peak3D*> predicted_peaks;
+    UnitCell* accepted_cell = getUnitCell("accepted");
 
     for (auto data : numors) {
         std::cout << "Predicting peaks for numor " << ++current_numor << " of " << numors.size()
                   << std::endl;
 
         std::vector<nsx::Peak3D*> predicted = nsx::predictPeaks(
-            &_shape_library, data, &_accepted_unit_cell, params.detector_range_min,
+            &_shape_library, data, accepted_cell, params.detector_range_min,
             params.detector_range_max, params.neighbour_max_radius, params.frame_range_max,
             params.min_n_neighbors, interpol);
 
@@ -651,6 +666,18 @@ void Experiment::computeQuality(
     _data_quality = {
         rfactor.Rmerge(), rfactor.expectedRmerge(), rfactor.Rmeas(), rfactor.expectedRmeas(),
         rfactor.Rpim(),   rfactor.expectedRpim(),   cc.CChalf(),     cc.CCstar()};
+}
+
+UnitCell* Experiment::getAcceptedCell()
+{
+    std::string name = "accepted";
+    return getUnitCell(name);
+}
+
+UnitCell* Experiment::getReferenceCell()
+{
+    std::string name = "reference";
+    return getUnitCell(name);
 }
 
 } // namespace nsx

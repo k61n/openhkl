@@ -130,6 +130,9 @@ class ShapeLibrary {
     //! Returns the background end used for the library
     std::map<Peak3D*, std::pair<Profile3D, Profile1D>> profiles() const;
 
+    //! Return number of peaks in library
+    int numberOfPeaks();
+
  private:
     //! Predict the (detector space) covariance given the fit data
     Eigen::Matrix3d predictCovariance(const FitData& data) const;

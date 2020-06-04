@@ -38,6 +38,7 @@ class Experiment:
     _merged_collection = None
     _data_quality = None
     _data_resolution = None
+    _metadata = {}
 
     def __init__(self, name, detector, params, verbose=False):
         '''
@@ -45,6 +46,7 @@ class Experiment:
         '''
         self._name = name
         self._nsxfile = self._name + ".nsx"
+        self._metafile = self._name + ".meta"
         self._verbose = verbose
         self._detector = detector
         self._dataformat = "raw"
@@ -100,6 +102,9 @@ class Experiment:
         self.log(f'dataset {data_name}: nframes = {data.nFrames()}')
         self._expt.addData(data_name, data)
         self._data_sets.append(data_name)
+
+    def get_number_of_peaks(self, collection):
+        return self._expt.getPeakCollection(collection).numberOfPeaks()
 
     def read_raw_data(self, data_name, filenames):
         '''
@@ -160,8 +165,8 @@ class Experiment:
 
         self._expt.integrateFoundPeaks(integrator_type)
         self._expt.acceptFoundPeaks(self._found_peaks)
-        self.found_collection = self._expt.getPeakCollection(self._found_peaks)
-        n_peaks = self.found_collection.numberOfPeaks()
+        self._found_collection = self._expt.getPeakCollection(self._found_peaks)
+        n_peaks = self._found_collection.numberOfPeaks()
         return n_peaks
 
     def filter_peaks(self, filter_params):
@@ -180,13 +185,13 @@ class Experiment:
         filter.setDRange(min_d_range, max_d_range)
         filter.setStrength(min_strength, max_strength)
 
-        self.found_collection = self._expt.getPeakCollection(self._found_peaks)
-        filter.resetFiltering(self.found_collection)
-        filter.filter(self.found_collection)
-        self._expt.acceptFilter(self._filtered_peaks, self.found_collection)
-        self.filtered_collection = self._expt.getPeakCollection(self._filtered_peaks)
+        self._found_collection = self._expt.getPeakCollection(self._found_peaks)
+        filter.resetFiltering(self._found_collection)
+        filter.filter(self._found_collection)
+        self._expt.acceptFilter(self._filtered_peaks, self._found_collection)
+        self._filtered_collection = self._expt.getPeakCollection(self._filtered_peaks)
 
-        n_caught = self.found_collection.numberCaughtByFilter()
+        n_caught = self._found_collection.numberCaughtByFilter()
         return n_caught
 
     def accept_unit_cell(self, peak_collection):
@@ -207,7 +212,7 @@ class Experiment:
         ncaught = self.filter_peaks(self._params.filter)
         self.log(f'Autoindex: {ncaught}/{npeaks} peaks caught by filter')
         self.log(f'Autoindex: {ncaught}/{npeaks} peaks caught by filter')
-        return self.autoindex_peaks(self.filtered_collection, length_tol, angle_tol)
+        return self.autoindex_peaks(self._found_collection, length_tol, angle_tol)
 
     def autoindex_peaks(self, peak_collection, length_tol, angle_tol):
         '''
@@ -225,7 +230,7 @@ class Experiment:
         self.auto_indexer = self._expt.autoIndexer()
         self.auto_indexer.setParameters(autoindexer_params)
         try:
-            self.auto_indexer.autoIndex(peak_collection.getPeakList())
+            self.auto_indexer.autoIndex(peak_collection)
             solutions = self.auto_indexer.solutions()
             if self._verbose:
                 self.log(f'Autoindex: cells')
@@ -233,10 +238,6 @@ class Experiment:
             return self.accept_unit_cell(peak_collection)
         except RuntimeError:
             return None
-
-
-    def get_accepted_cell(self):
-        return self._expt.getAcceptedCell()
 
     def build_shape_library(self, data):
         '''
@@ -255,8 +256,9 @@ class Experiment:
         shapelib_params.d_max = self._params.shapelib['d_max']
         shapelib_params.bkg_begin = self._params.shapelib['bkg_begin']
         shapelib_params.bkg_end = self._params.shapelib['bkg_end']
-        self.accept_unit_cell(self.filtered_collection)
-        self._expt.buildShapeLibrary(self.filtered_collection, data, shapelib_params)
+        self._found_collection = self._expt.getPeakCollection(self._found_peaks)
+        self._expt.acceptUnitCell(self._found_collection)
+        self._expt.buildShapeLibrary(self._found_collection, shapelib_params)
 
     def predict_peaks(self, data, interpolation):
         '''
@@ -310,6 +312,9 @@ class Experiment:
         self.log(f'CC_half          = {self._data_quality.CChalf}')
         self.log(f'CC_*             = {self._data_quality.CCstar}')
 
+    def get_accepted_cell(self):
+        return self._expt.getUnitCell("accepted")
+
 
     def print_unit_cells(self):
         self.auto_indexer.printSolutions()
@@ -329,8 +334,8 @@ class Experiment:
         if not os.path.isfile(self._nsxfile):
             raise OSError("f{self._nsxfile} not found")
         self._expt.loadFromFile(self._nsxfile)
-        self.found_collection = self._expt.getPeakCollection(self._found_peaks)
-        self.filtered_collection = \
+        self._found_collection = self._expt.getPeakCollection(self._found_peaks)
+        self._filtered_collection = \
             self._expt.getPeakCollection(self._filtered_peaks)
 
     def remove_peak_collection(self, name):
@@ -350,3 +355,27 @@ class Experiment:
         Write a message to the log
         '''
         self._logger.log(level, message)
+
+    def add_metadata(self, key, value):
+        self._metadata[key] = value
+
+    def write_metadata(self):
+        with open(self._metafile, 'w') as outfile:
+            for key in self._metadata:
+                if isinstance(self._metadata[key], list):
+                    for item in self._metadata[key]:
+                        outfile.write(f'{key}     {item}\n')
+                else:
+                    outfile.write(f'{key}     {self._metadata[key]}\n')
+
+    def read_metadata(self):
+        with open(self._metafile, 'r') as infile:
+            for line in infile:
+                key, value = line.split()
+                if key in self._metadata:
+                    if isinstance(self._metadata[key], list):
+                        self._metadata[key].append(value)
+                    else:
+                        self._metadata[key] = [self._metadata[key], value]
+                else:
+                    self._metadata[key] = value

@@ -135,6 +135,8 @@ class Experiment {
     int numUnitCells() const { return _unit_cells.size(); };
     //! Accept an autoindexer solution as the unit cell
     bool acceptUnitCell(PeakCollection* peaks, double length_tol, double angle_tol);
+    //! Assign unit cell to a peak collection
+    void acceptUnitCell(PeakCollection* peaks);
 
  public: // Peak finder
     //! Get the address of the peak finder
@@ -149,8 +151,10 @@ class Experiment {
     nsx::AutoIndexer* autoIndexer() const { return _auto_indexer.get(); };
     //! Set the reference cell
     void setReferenceCell(double a, double b, double c, double alpha, double beta, double gamma);
-    //! return a pointer to the accepted unit cell
+    //! get the accepted Unit Cell
     UnitCell* getAcceptedCell();
+    //! get the reference cell
+    UnitCell* getReferenceCell();
 
  public: // Integrator
     nsx::IPeakIntegrator* getIntegrator(const std::string& name) const;
@@ -170,7 +174,9 @@ class Experiment {
 
  public: // Prediction
     //! Build the shape library
-    void buildShapeLibrary(PeakCollection* peaks, DataList numors, ShapeLibParameters params);
+    void buildShapeLibrary(PeakCollection* peaks, ShapeLibParameters params);
+    //! Get the shape library
+    ShapeLibrary* getShapeLibrary() { return &_shape_library; };
     //! Predict peaks
     void predictPeaks(
         std::string name, DataList numors, PredictionParameters params, PeakInterpolation interpol);
@@ -206,10 +212,6 @@ class Experiment {
     std::unique_ptr<nsx::AutoIndexer> _auto_indexer;
     //! The found peak integrator
     std::map<std::string, std::unique_ptr<nsx::IPeakIntegrator>> _integrator_map;
-    //! The accepted unit cell
-    UnitCell _accepted_unit_cell;
-    //! Reference unit cell
-    UnitCell _reference_cell;
     //! Peak shape library for prediction
     ShapeLibrary _shape_library;
     //! Data quality metrics for all merged data
