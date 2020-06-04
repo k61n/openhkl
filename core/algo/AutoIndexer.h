@@ -50,6 +50,9 @@ struct IndexerParameters {
     //! Indexing quality cutoff (value indicates percentage of peaks indexed by
     //! cell)
     double solutionCutoff = 10.0;
+    //! Frequency threshold: FFT peaks with 0.7 the value of the zero frequency
+    //! peak are discarded
+    double frequencyTolerance = 0.7;
 };
 
 //! Class to automatically index a set of peaks
@@ -64,6 +67,8 @@ class AutoIndexer {
     void setParameters(IndexerParameters parameters) { _params = parameters; };
     //! Performs the auto-indexing
     void autoIndex(const std::vector<Peak3D*>& peaks);
+    //! Autoindex by passing a peak collection (avoid SWIG memory leak)
+    void autoIndex(PeakCollection* peaks);
     //! Returns list of the best solutions ordered by percentage of successfully indexed peaks
     const std::vector<RankedSolution>& solutions() const;
 
