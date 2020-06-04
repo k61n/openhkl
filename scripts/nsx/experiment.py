@@ -212,7 +212,7 @@ class Experiment:
         ncaught = self.filter_peaks(self._params.filter)
         self.log(f'Autoindex: {ncaught}/{npeaks} peaks caught by filter')
         self.log(f'Autoindex: {ncaught}/{npeaks} peaks caught by filter')
-        return self.autoindex_peaks(self._filtered_collection, length_tol, angle_tol)
+        return self.autoindex_peaks(self._found_collection, length_tol, angle_tol)
 
     def autoindex_peaks(self, peak_collection, length_tol, angle_tol):
         '''
