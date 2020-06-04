@@ -239,7 +239,6 @@ class Experiment:
         except RuntimeError:
             return None
 
-
     def build_shape_library(self, data):
         '''
         Build the shape library for predicting the weak peaks
@@ -380,4 +379,3 @@ class Experiment:
                         self._metadata[key] = [self._metadata[key], value]
                 else:
                     self._metadata[key] = value
-
