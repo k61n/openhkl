@@ -74,6 +74,8 @@ class Experiment {
     const std::map<std::string, sptrDataSet>& getData() const;
     //! Gets the pointer to a given data stored in the experiment
     sptrDataSet getData(std::string name);
+    //! Return all data sets as a DataList
+    DataList getAllData();
     //! Gets the pointer to a given data stored in the experiment
     sptrDataSet dataShortName(std::string name);
     //! Get number of data
@@ -121,6 +123,9 @@ class Experiment {
  public: // Unit cells
     //! Add some data to the experiment
     void addUnitCell(const std::string& name, UnitCell* unit_cell);
+    //! Add a unit cell to the experiment via cell parameters (skip autoindexing step)
+    void addUnitCell(const std::string& name, double a, double b, double c,
+                     double alpha, double beta, double gamma);
     //! Returns true if the experiment has a data
     bool hasUnitCell(const std::string& name) const;
     //! Get a list of loaded list names
@@ -179,7 +184,8 @@ class Experiment {
     ShapeLibrary* getShapeLibrary() { return &_shape_library; };
     //! Predict peaks
     void predictPeaks(
-        std::string name, DataList numors, PredictionParameters params, PeakInterpolation interpol);
+        std::string name, PeakCollection* peaks,
+        PredictionParameters params, PeakInterpolation interpol);
 
  public: // Merging
     //! Get resolution shells for quality metrics

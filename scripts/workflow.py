@@ -34,6 +34,8 @@ parser.add_argument('--length_tol', type=float, dest='length_tol',
                     default=1.0, help='length tolerance (a, b, c) for autoindexing')
 parser.add_argument('--angle_tol', type=float, dest='angle_tol',
                     default=5.0, help='angle tolerance (alpha, beta, gamma) for autoindexing')
+parser.add_argument('--autoindex', action='store_true', dest='autoindex', default=False,
+                    help='Autoindex the data')
 args = parser.parse_args()
 
 params = Parameters()
@@ -59,37 +61,45 @@ if not args.loadnsx:
     if args.dataformat == 'raw':
         name = 'all'
         expt.add_data_set(name, filenames)
-        numors.append(expt.get_data(name))
+        numors.append(expt.get_data(data_name=name))
     elif args.dataformat == 'nexus':
         for filename in filenames:
             expt.add_data_set(filename, filename)
-            numors.append(expt.get_data(filename))
+            numors.append(expt.get_data(data_name=filename))
     pynsxprint("...data loaded\n")
-    # Find the unit cell
-    pynsxprint("Autoindexing...")
-    index = args.min_autoindex_frames
-    count = 1
-    data = numors[0]
-    while index < args.max_autoindex_frames:
-        try:
-            cell_found = expt.autoindex_dataset(data, 0, index, args.length_tol, args.angle_tol)
-        except RuntimeError: # Not enough peaks to autoindex?
-            index += 1
-            count += 1
-            continue
+    if args.autoindex:
+        # Find/add the unit cell
+        pynsxprint("Autoindexing...")
+        index = args.min_autoindex_frames
+        count = 1
+        data = numors[0]
+        while index < args.max_autoindex_frames:
+            try:
+                cell_found = expt.autoindex_dataset(data, 0, index, args.length_tol, args.angle_tol)
+            except RuntimeError: # Not enough peaks to autoindex?
+                index += 1
+                count += 1
+                continue
+            if cell_found:
+                break
+            else:
+                index += 1
+                count += 1
+
         if cell_found:
-            break
+            pynsxprint("Unit cell:")
+            pynsxprint(expt.get_accepted_cell().toString())
         else:
-            index += 1
-            count += 1
-
-    if cell_found:
-        pynsxprint("Unit cell:")
-        pynsxprint(expt.get_accepted_cell().toString())
+            raise RuntimeError("Autoindexing Failed")
+        pynsxprint("...autoindexing complete")
     else:
-        raise RuntimeError("Autoindexing Failed")
-
-    pynsxprint("...autoindexing complete")
+        a = params.cell['a']
+        b = params.cell['b']
+        c = params.cell['c']
+        alpha = params.cell['alpha']
+        beta = params.cell['beta']
+        gamma = params.cell['gamma']
+        expt.set_unit_cell(a, b, c, alpha, beta, gamma)
 
     pynsxprint("Finding peaks...")
     expt.find_peaks(numors, 0, -1)
@@ -106,11 +116,11 @@ else:
 
 if not args.predicted:
     pynsxprint("Building shape library...")
-    expt.build_shape_library(numors)
+    all_data = expt.get_data()
+    expt.build_shape_library(all_data)
     pynsxprint("Predicting peaks...")
-    expt.predict_peaks(numors, 'None')
-    set_trace()
-    # expt.save()
+    expt.predict_peaks(all_data, 'None')
+    expt.save(predicted=True) # Exporter does not  save shape library to HDF5 (yet)
 
 pynsxprint("Merging peak collection")
 peaks = expt.get_peak_collection("predicted")

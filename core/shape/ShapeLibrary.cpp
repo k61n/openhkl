@@ -89,15 +89,20 @@ std::vector<Peak3D*> predictPeaks(
         try {
             Eigen::Matrix3d cov =
                 library->meanCovariance(peak, radius, nframes, min_neighbors, interpolation);
-            // Eigen::Matrix3d cov = _library->predictCovariance(p);
             Eigen::Vector3d center = peak->shape().center();
             peak->setShape(Ellipsoid(center, cov.inverse()));
         } catch (std::exception& e) {
-            // qInfo() << e.what(); // TODO replace by less verbous reporting
+            // qInfo() << e.what(); // TODO replace by less verbose reporting
             continue;
         }
         predicted_peaks.push_back(peak);
     }
+    qDebug() << "Interpolation failed for " << library->nFailedInterp() << " peaks";
+    qDebug() << library->nNoProfile() << " peaks with no neighbouring profiles";
+    qDebug() << library->nLonelyPeaks() << " peaks with no neighbours";
+    qDebug() << library->nUnfriendlyPeaks() << " peaks with too few neighbours";
+    // TODO: suggest course of action for fixing these error (increase radius, minimum number
+    // of neighbours)
     return predicted_peaks;
 }
 
@@ -384,8 +389,10 @@ ShapeLibrary::findNeighbors(const DetectorEvent& ev, double radius, double nfram
             continue;
         neighbors.push_back(peak);
     }
-    if (neighbors.size() == 0)
+    if (neighbors.size() == 0) {
+        ++_n_no_profile;
         throw std::runtime_error("Error, no neighboring profiles found.");
+    }
     return neighbors;
 }
 
@@ -399,8 +406,13 @@ Eigen::Matrix3d ShapeLibrary::meanCovariance(
         findNeighbors(DetectorEvent(reference_peak->shape().center()), radius, nframes);
 
     if (neighbors.empty() || (neighbors.size() < min_neighbors)) {
+        ++_n_lonely_peaks;
         throw std::runtime_error(
-            "ShapeLibrary::meanCovariance(): peak has no or too few neighbors");
+            "ShapeLibrary::meanCovariance(): peak has no neighbors");
+    } else if (neighbors.size() < min_neighbors) {
+        ++_n_unfriendly_peaks;
+        throw std::runtime_error(
+            "ShapeLibrary::meanCovariance(): peak has too few neighbors");
     }
 
     PeakCoordinateSystem reference_coord(reference_peak);
@@ -429,6 +441,7 @@ Eigen::Matrix3d ShapeLibrary::meanCovariance(
                 break;
             }
             default: {
+                ++_n_failed_interp;
                 throw std::runtime_error("Invalid peak interpolation");
             }
         }
@@ -467,11 +480,6 @@ std::array<double, 6> ShapeLibrary::choleskyS() const
 std::map<Peak3D*, std::pair<Profile3D, Profile1D>> ShapeLibrary::profiles() const
 {
     return _profiles;
-}
-
-int ShapeLibrary::numberOfPeaks()
-{
-    return _profiles.size();
 }
 
 } // namespace nsx

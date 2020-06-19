@@ -44,8 +44,8 @@ struct ShapeLibParameters {
 struct PredictionParameters {
     double detector_range_min = 1.5; //! Minimum detector range (filter)
     double detector_range_max = 50.0; //! Maximum detector range (filter)
-    double neighbour_max_radius = 100.0; //! Maximum radius for neighbouring peak search
-    int min_n_neighbors = 400; //! Minimum number of neighbours required for shape library
+    double neighbour_max_radius = 400.0; //! Maximum radius for neighbouring peak search (pixels)
+    int min_n_neighbors = 20; //! Minimum number of neighbours required for shape library
     double frame_range_max = 20.0; //! Maximum angular separation of peaks in frames
 };
 
@@ -131,7 +131,19 @@ class ShapeLibrary {
     std::map<Peak3D*, std::pair<Profile3D, Profile1D>> profiles() const;
 
     //! Return number of peaks in library
-    int numberOfPeaks();
+    int numberOfPeaks() { return _profiles.size(); };
+
+    //! Return number of peaks with no neighbours
+    int nLonelyPeaks() { return _n_lonely_peaks; };
+
+    //! Return number of peaks with too few neighbours
+    int nUnfriendlyPeaks() { return _n_unfriendly_peaks; };
+
+    //! Return number of failed interpolations
+    int nFailedInterp() { return _n_failed_interp; };
+
+    //! Return number of cases of no neighbouring profiles
+    int nNoProfile() { return _n_no_profile; };
 
  private:
     //! Predict the (detector space) covariance given the fit data
@@ -161,6 +173,18 @@ class ShapeLibrary {
 
     //! The background end used by the library for integration
     double _bkgEnd;
+
+    //! Number of failed interpolations
+    mutable int _n_failed_interp = 0;
+
+    //! Number of peaks with no neighbours
+    mutable int _n_lonely_peaks = 0;
+
+    //! Number of peaks with too few neighbours
+    mutable int _n_unfriendly_peaks = 0;
+
+    //! Number of peaks with no neighbouring profiles
+    mutable int _n_no_profile = 0;
 };
 
 } // namespace nsx

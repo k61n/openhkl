@@ -115,6 +115,15 @@ const std::map<std::string, sptrDataSet>& Experiment::getData() const
     return _data;
 }
 
+DataList Experiment::getAllData()
+{
+    DataList numors;
+    for (auto const& [key, val] : _data)
+        numors.push_back(val);
+    return numors;
+
+}
+
 void Experiment::setDiffractometer(const std::string& diffractometerName)
 {
     _diffractometer.reset(Diffractometer::create(diffractometerName));
@@ -341,6 +350,13 @@ void Experiment::addUnitCell(const std::string& name, UnitCell* unit_cell)
     _unit_cells.insert(std::make_pair(name, std::move(ptr)));
 }
 
+void Experiment::addUnitCell(const std::string& name, double a, double b, double c,
+                             double alpha, double beta, double gamma)
+{
+    auto cell = UnitCell(a, b, c, alpha * deg, beta * deg, gamma * deg);
+    addUnitCell(name, &cell);
+}
+
 bool Experiment::hasUnitCell(const std::string& name) const
 {
     auto unit_cell = _unit_cells.find(name);
@@ -559,6 +575,11 @@ void Experiment::buildShapeLibrary(
             continue;
         fit_peaks.push_back(peak);
     }
+    if (fit_peaks.size() == 0)
+        throw std::runtime_error("buildShapeLibrary: no fit peaks found");
+
+    std::cout << peak_list.size() << " found peaks" << std::endl;
+    std::cout << fit_peaks.size() << " fit peaks" << std::endl;
 
     nsx::AABB aabb;
 
@@ -574,12 +595,12 @@ void Experiment::buildShapeLibrary(
     }
 
 
-    _shape_library = nsx::ShapeLibrary(
+    ShapeLibrary shape_library = ShapeLibrary(
         !params.kabsch_coords, params.peak_scale, params.background_range_min,
         params.background_range_max);
 
     nsx::ShapeIntegrator integrator(
-        &_shape_library, aabb, params.nbins_x, params.nbins_y, params.nbins_z);
+        &shape_library, aabb, params.nbins_x, params.nbins_y, params.nbins_z);
     integrator.setPeakEnd(params.peak_scale);
     integrator.setBkgBegin(params.background_range_min);
     integrator.setBkgEnd(params.background_range_max);
@@ -587,33 +608,34 @@ void Experiment::buildShapeLibrary(
     // TODO: (zamaan) change numors to a argument of buildShapeLibrary
     // Right now, there is no metadata for which DataSet was used to
     // Generate the peak collection
-    DataList numors;
-    for (auto const& [key, val] : _data)
-        numors.push_back(val);
-    for (auto data : numors)
-        integrator.integrate(fit_peaks, &_shape_library, data);
+    for (auto const& [key, data] : _data)
+        integrator.integrate(fit_peaks, &shape_library, data);
 
-    _shape_library = *integrator.library(); // why do this? - zamaan
-    peaks->setShapeLibrary(_shape_library);
-    // _shape_library.updateFit(1000); // This does nothing!! - zamaan
+    shape_library = *integrator.library();
+    peaks->setShapeLibrary(shape_library);
+    // shape_library.updateFit(1000); // This does nothing!! - zamaan
 }
 
 void Experiment::predictPeaks(
-    std::string name, DataList numors, PredictionParameters params, PeakInterpolation interpol)
+    std::string name, PeakCollection* peaks,
+    PredictionParameters params, PeakInterpolation interpol)
 {
     int current_numor = 0;
+    DataList numors = getAllData();
     std::vector<nsx::Peak3D*> predicted_peaks;
     UnitCell* accepted_cell = getUnitCell("accepted");
+    ShapeLibrary* library = peaks->shapeLibrary();
 
     for (auto data : numors) {
         std::cout << "Predicting peaks for numor " << ++current_numor << " of " << numors.size()
                   << std::endl;
 
         std::vector<nsx::Peak3D*> predicted = nsx::predictPeaks(
-            &_shape_library, data, accepted_cell, params.detector_range_min,
+            library, data, accepted_cell, params.detector_range_min,
             params.detector_range_max, params.neighbour_max_radius, params.frame_range_max,
             params.min_n_neighbors, interpol);
 
+        std::cout << "predicted.size() = " << predicted.size() << std::endl;
         for (nsx::Peak3D* peak : predicted)
             predicted_peaks.push_back(peak);
 
@@ -622,9 +644,6 @@ void Experiment::predictPeaks(
     std::cout << "Completed  peak prediction. Added " << predicted_peaks.size() << " peaks";
 
     updatePeakCollection(name, listtype::PREDICTED, predicted_peaks);
-
-    for (nsx::Peak3D* peak : predicted_peaks) // is this necessary? - zamaan
-        delete peak;
     predicted_peaks.clear();
 }
 
