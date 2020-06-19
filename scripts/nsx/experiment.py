@@ -40,12 +40,13 @@ class Experiment:
     _data_resolution = None
     _metadata = {}
 
-    def __init__(self, name, detector, params, verbose=False):
+    def __init__(self, name, detector, params, verbose=False, autoindex=False):
         '''
         Set up experiment object
         '''
         self._name = name
         self._nsxfile = self._name + ".nsx"
+        self._predictedfile = self._name + "-predicted.nsx"
         self._metafile = self._name + ".meta"
         self._verbose = verbose
         self._detector = detector
@@ -55,6 +56,7 @@ class Experiment:
         self._ref_cell = params.cell
         self._data_sets = []
         self._data_reader_factory = nsx.DataReaderFactory()
+        self._autoindex = autoindex
         self.set_reference_cell()
 
     def get_nsxfile(self):
@@ -85,8 +87,11 @@ class Experiment:
         gamma = self._params.cell['gamma']
         self._expt.setReferenceCell(a, b, c, alpha, beta, gamma)
 
-    def get_data(self, data_name):
-        return self._expt.getData(data_name)
+    def get_data(self, data_name=None):
+        if data_name:
+            return self._expt.getData(data_name)
+        else:
+            return self._expt.getAllData()
 
     def set_data_format(self, dataformat):
         self._dataformat = dataformat
@@ -239,6 +244,9 @@ class Experiment:
         except RuntimeError:
             return None
 
+    def set_unit_cell(self, a, b, c, alpha, beta, gamma):
+        self._expt.addUnitCell("accepted", a, b, c, alpha, beta, gamma)
+
     def build_shape_library(self, data):
         '''
         Build the shape library for predicting the weak peaks
@@ -252,13 +260,15 @@ class Experiment:
         shapelib_params.ny = self._params.shapelib['ny']
         shapelib_params.nz = self._params.shapelib['nz']
         shapelib_params.peak_scale = self._params.shapelib['peak_scale']
-        shapelib_params.d_min = self._params.shapelib['d_min']
-        shapelib_params.d_max = self._params.shapelib['d_max']
+        shapelib_params.d_min = self._params.shapelib['shapelib_d_min']
+        shapelib_params.d_max = self._params.shapelib['shapelib_d_max']
         shapelib_params.bkg_begin = self._params.shapelib['bkg_begin']
         shapelib_params.bkg_end = self._params.shapelib['bkg_end']
+        # self._filtered_collection = self._expt.getPeakCollection(self._found_peaks)
         self._found_collection = self._expt.getPeakCollection(self._found_peaks)
         self._expt.acceptUnitCell(self._found_collection)
         self._expt.buildShapeLibrary(self._found_collection, shapelib_params)
+        self.log('Number of profiles = ' + str(self._found_collection.shapeLibrary().numberOfPeaks()))
 
     def predict_peaks(self, data, interpolation):
         '''
@@ -269,12 +279,13 @@ class Experiment:
                                'Intensity:': nsx.PeakInterpolation_Intensity }
         interpol = interpolation_types[interpolation]
         prediction_params = nsx.PredictionParameters()
-        prediction_params.d_min = self._params.prediction['d_min']
-        prediction_params.d_max = self._params.prediction['d_max']
+        prediction_params.d_min = self._params.prediction['prediction_d_min']
+        prediction_params.d_max = self._params.prediction['prediction_d_max']
         prediction_params.radius = self._params.prediction['radius']
         prediction_params.frames = self._params.prediction['frames']
         prediction_params.min_neighbours = self._params.prediction['neighbours']
-        self._expt.predictPeaks(self._predicted_peaks, data, prediction_params, interpol)
+        self._expt.predictPeaks(self._predicted_peaks, self._found_collection,
+                                prediction_params, interpol)
         self._predicted_collection = self._expt.getPeakCollection(self._predicted_peaks)
 
     def get_peak_collection(self, name):
@@ -292,8 +303,8 @@ class Experiment:
         '''
         Calculate R-factors and CC1/2, CC*
         '''
-        d_min = self._params.merging['d_min']
-        d_max = self._params.merging['d_max']
+        d_min = self._params.merging['merging_d_min']
+        d_max = self._params.merging['merging_d_max']
         n_shells = self._params.merging['n_shells']
         friedel = self._params.merging['friedel']
 
@@ -319,21 +330,29 @@ class Experiment:
     def print_unit_cells(self):
         self.auto_indexer.printSolutions()
 
-    def save(self):
+    def save(self, predicted=False):
         '''
-        Save the experiment to self._name.nsx
+        Save the experiment to nsx file
         '''
-        self.log(f"Saving experiment to file {self._nsxfile}")
-        self._expt.saveToFile(self._nsxfile)
+        if predicted:
+            fname = self._predictedfile
+        else:
+            fname = self._nsxfile
+        self.log(f"Saving experiment to file {fname}")
+        self._expt.saveToFile(fname)
 
-    def load(self):
+    def load(self, predicted=False):
         '''
-        Load the experiment from self._name.nsx
+        Load the experiment from nsx file
         '''
-        self.log(f"Loading experiment from {self._nsxfile}")
-        if not os.path.isfile(self._nsxfile):
-            raise OSError("f{self._nsxfile} not found")
-        self._expt.loadFromFile(self._nsxfile)
+        if predicted:
+            fname = self._predictedfile
+        else:
+            fname = self._nsxfile
+        self.log(f"Loading experiment from {fname}")
+        if not os.path.isfile(fname):
+            raise OSError("f{fname} not found")
+        self._expt.loadFromFile(fname)
         self._found_collection = self._expt.getPeakCollection(self._found_peaks)
         self._filtered_collection = \
             self._expt.getPeakCollection(self._filtered_peaks)

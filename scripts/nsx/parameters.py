@@ -14,70 +14,69 @@ class Parameters:
     inserted into the correct dictionary if possible.
     '''
 
+    cell =        { 'a'                : 0.0,
+                    'b'                : 0.0,
+                    'c'                : 0.0,
+                    'alpha'            : 0.0,
+                    'beta'             : 0.0,
+                    'gamma'            : 0.0, }
+
+    detector =    { 'wavelength'       : 2.67, 
+                    'delta_omega'      : 0.32,
+                    'row_major'        : True,
+                    'swap_endian'      : True,
+                    'bpp'              : 2 }
+
+    finder =      { 'min_size'         : 30,
+                    'max_size'         : 10000,
+                    'peak_scale'       : 1.0,
+                    'threshold'        : 80.0 }
+
+    integration = { 'peak_area'        : 3.0,
+                    'background_lower' : 3.0,
+                    'background_upper' : 6.0 }
+
+    filter =      { 'min_strength'     : 1.0,
+                    'max_strength'     : 1.0e6,
+                    'min_d_range'      : 1.5,
+                    'max_d_range'      : 50 }
+
+    autoindexer = { 'max_dim'          : 200.0,
+                    'n_solutions'      : 10,
+                    'n_vertices'       : 1000,
+                    'n_subdiv'         : 30,
+                    'indexing_tol'     : 0.2,
+                    'min_vol'          : 100.0,
+                    'length_tol'       : 1.0,
+                    'angle_tol'        : 3.0 }
+
+    shapelib    = { 'peak_scale'       : 3.0,
+                    'bkg_begin'        : 3.0,
+                    'bkg_end'          : 4.5,
+                    'kabsch'           : True,
+                    'shapelib_d_min'   : 1.5,
+                    'shapelib_d_max'   : 50.0,
+                    'nx'               : 20,
+                    'ny'               : 20,
+                    'nz'               : 20,
+                    'sigma_d'          : 0.33,
+                    'sigma_m'          : 0.23 }
+
+    prediction  = { 'prediction_d_min' : 1.5,
+                    'prediction_d_max' : 50.0,
+                    'radius'           : 400.0,
+                    'neighbours'       : 400.0,
+                    'frames'           : 20 }
+
+    merging     = { 'friedel'          : True,
+                    'n_shells'         : 10,
+                    'merging_d_min'    : 1.0,
+                    'merging_d_max'    : 50.0 }
+
     def __init__(self, **kwargs):
-        self.cell =        { 'a'                : 0.0,
-                             'b'                : 0.0,
-                             'c'                : 0.0,
-                             'alpha'            : 0.0,
-                             'beta'             : 0.0,
-                             'gamma'            : 0.0, }
-
-        self.detector =    { 'wavelength'       : 2.67, 
-                             'delta_omega'      : 0.32,
-                             'row_major'        : True,
-                             'swap_endian'      : True,
-                             'bpp'              : 2 }
-
-        self.finder =      { 'min_size'         : 30,
-                             'max_size'         : 10000,
-                             'peak_scale'       : 1.0,
-                             'threshold'        : 80.0 }
-
-        self.integration = { 'peak_area'        : 3.0,
-                             'background_lower' : 3.0,
-
-                             'background_upper' : 6.0 }
-
-        self.filter =      { 'min_strength'     : 1.0,
-                             'max_strength'     : 1.0e6,
-                             'min_d_range'      : 1.5,
-                             'max_d_range'      : 50 }
-
-        self.autoindexer = { 'max_dim'          : 200.0,
-                             'n_solutions'      : 10,
-                             'n_vertices'       : 1000,
-                             'n_subdiv'         : 30,
-                             'indexing_tol'     : 0.2,
-                             'min_vol'          : 100.0,
-                             'length_tol'       : 1.0,
-                             'angle_tol'        : 3.0 }
-
-        self.shapelib    = { 'peak_scale'       : 3.0,
-                             'bkg_begin'        : 3.0,
-                             'bkg_end'          : 4.5,
-                             'kabsch'           : True,
-                             'd_min'            : 1.5,
-                             'd_max'            : 50.0,
-                             'nx'               : 20,
-                             'ny'               : 20,
-                             'nz'               : 20,
-                             'sigma_d'          : 0.33,
-                             'sigma_m'          : 0.23 }
-
-        self.prediction  = { 'd_min'            : 1.5,
-                             'd_max'            : 50.0,
-                             'radius'           : 100.0,
-                             'neighbours'       : 400.0,
-                             'frames'           : 20 }
-
-        self.merging     = { 'friedel'          : True,
-                             'n_shells'         : 10,
-                             'd_min'            : 1.0,
-                             'd_max'            : 50.0 }
-
         self._dicts = [self.cell, self.detector, self.finder, 
                        self.integration, self.filter, self.autoindexer,
-                       self.shapelib]
+                       self.shapelib, self.merging]
 
         for key in kwargs:
             for d in self._dicts:

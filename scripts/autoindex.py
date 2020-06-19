@@ -81,11 +81,11 @@ else:
     if args.dataformat == 'raw':
         name = 'all'
         expt.add_data_set(name, args.files)
-        numors.append(expt.get_data(name))
+        numors.append(expt.get_data(data_name=name))
     elif args.dataformat == 'nexus':
         for filename in args.files:
             expt.add_data_set(filename, filename)
-            numors.append(expt.get_data(filename))
+            numors.append(expt.get_data(data_name=filename))
     pynsxprint("...data loaded\n")
     pynsxprint("Finding peaks...")
     expt.find_peaks(numors, args.frames_range[0], args.frames_range[1])
@@ -102,7 +102,7 @@ else:
 
 npeaks = expt.get_number_of_peaks("filtered")
 logger.info(f'attempting to index using {npeaks} peaks...')
-autoindex_test(expt, "n_solutions", 10, 20, 1, int, args.length_tol, args.angle_tol)
-autoindex_test(expt, "n_vertices", 1000, 2500, 100, int, args.length_tol, args.angle_tol)
-autoindex_test(expt, "n_subdiv", 20, 40, 1, int, args.length_tol, args.angle_tol)
+autoindex_test(expt, "n_solutions", 1, 30, 1, int, args.length_tol, args.angle_tol)
+autoindex_test(expt, "n_vertices", 100, 3000, 100, int, args.length_tol, args.angle_tol)
+autoindex_test(expt, "n_subdiv", 1, 40, 1, int, args.length_tol, args.angle_tol)
 autoindex_test(expt, "indexing_tol", 0.01, 0.2, 0.01, float, args.length_tol, args.angle_tol)
