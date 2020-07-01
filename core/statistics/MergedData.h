@@ -18,6 +18,7 @@
 #include "core/shape/PeakCollection.h"
 #include "core/statistics/MergedPeak.h"
 
+#include <QDebug>
 #include <set>
 
 namespace nsx {
@@ -55,6 +56,8 @@ class MergedData {
     bool _friedel;
     MergedPeakSet _merged_peak_set;
     std::vector<PeakCollection*> _peak_collections;
+    //! Number of peaks with intensity NaN (not added to set)
+    int _nNaN = 0;
 };
 
 } // namespace nsx

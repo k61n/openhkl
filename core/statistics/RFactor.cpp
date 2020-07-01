@@ -23,6 +23,7 @@ namespace nsx {
 
 void RFactor::calculate(MergedData* data)
 {
+    // TODO: get rid of this auto
     auto&& peaks = data->mergedPeakSet();
 
     _Rmerge = 0;
@@ -64,7 +65,8 @@ void RFactor::calculate(MergedData* data)
         }
     }
 
-    if (I_total <= 0.0) {
+    double epsilon = 1.0e-8;
+    if (I_total < epsilon) {
         // something wrong! too few peaks?
         _Rmerge = 0.0;
         _Rmeas = 0.0;

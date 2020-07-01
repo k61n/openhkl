@@ -44,7 +44,6 @@
 %shared_ptr(nsx::HDF5MetaDataReader)
 %shared_ptr(nsx::IDataReader)
 %shared_ptr(nsx::ILLDataReader)
-%shared_ptr(nsx::Peak3D)
 %shared_ptr(nsx::ProgressHandler)
 %shared_ptr(nsx::RawDataReader)
 %shared_ptr(nsx::TiffDataReader)
@@ -331,7 +330,7 @@ ArrayExtendCRef(MillerIndex, int);
 %include "core/peak/PeakCoordinateSystem.h"
 %include "core/peak/PeakData.h"
 %include "core/peak/IntegrationRegion.h"
-%template(PeakList) std::vector<std::shared_ptr<nsx::Peak3D>>;
+%template(PeakList) std::vector<nsx::Peak3D*>;
 
 %include "core/data/DataSet.h"
 %include "core/data/DataTypes.h"
@@ -367,6 +366,8 @@ ArrayExtendCRef(MillerIndex, int);
 %include "core/algo/Refiner.h"
 %include "core/algo/FFTIndexing.h"
 %include "core/algo/AutoIndexer.h"
+
+%template(DataResolutionList) std::vector<nsx::DataResolution>;
 
 %include "core/integration/MeanBackgroundIntegrator.h"
 %include "core/integration/Profile3DIntegrator.h"
