@@ -15,6 +15,8 @@
 #ifndef CORE_PEAK_INTENSITY_H
 #define CORE_PEAK_INTENSITY_H
 
+#include <stdexcept>
+
 namespace nsx {
 
 //! Store intensity and variance of a given peak.

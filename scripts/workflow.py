@@ -23,7 +23,7 @@ parser.add_argument('--detector', type=str, dest='detector',
 parser.add_argument('--loadnsx', action='store_true', dest='loadnsx', default=False,
                     help='load <name>.nsx')
 parser.add_argument('--predicted', action='store_true', dest='predicted', default=False,
-                    help='Saved data in .nsx has complted prediction step')
+                    help='Saved data in .nsx has completed prediction step')
 parser.add_argument('-p', '--parameters', type=str, dest='paramfile',
                     default='parameters', help='File containing experiment paramters')
 parser.add_argument('--max_autoindex_frames', type=int, dest='max_autoindex_frames',
@@ -112,9 +112,12 @@ if not args.loadnsx:
 
     expt.save()
 else:
-    expt.load()
+    if not args.predicted:
+        expt.load()
 
-if not args.predicted:
+if args.predicted:
+    expt.load(predicted=args.predicted)
+else:
     pynsxprint("Building shape library...")
     all_data = expt.get_data()
     expt.build_shape_library(all_data)
@@ -122,8 +125,7 @@ if not args.predicted:
     expt.predict_peaks(all_data, 'None')
     expt.save(predicted=True) # Exporter does not  save shape library to HDF5 (yet)
 
-pynsxprint("Merging peak collection")
-peaks = expt.get_peak_collection("predicted")
-print("number of peaks = " + str(peaks.numberOfPeaks()))
+pynsxprint("Merging peak collection...")
 expt.merge_peaks()
+pynsxprint("Computing quality metrics...")
 expt.get_statistics()

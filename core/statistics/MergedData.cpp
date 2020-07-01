@@ -49,6 +49,8 @@ MergedData::MergedData(std::vector<PeakCollection*> peak_collections, bool fried
             addPeak(peaks[j]);
         }
     }
+    if (_nNaN > 0)
+        qDebug() << "MergedData: " << _nNaN << " peaks with intensity NaN";
 }
 
 MergedData::MergedData(SpaceGroup space_group, bool friedel) : _friedel(friedel), _merged_peak_set()
@@ -59,17 +61,22 @@ MergedData::MergedData(SpaceGroup space_group, bool friedel) : _friedel(friedel)
 bool MergedData::addPeak(Peak3D* peak)
 {
     MergedPeak new_peak(_group, _friedel);
-    new_peak.addPeak(peak);
-    auto it = _merged_peak_set.find(new_peak);
+    try {
+        new_peak.addPeak(peak);
+        auto it = _merged_peak_set.find(new_peak);
 
-    if (it != _merged_peak_set.end()) {
-        MergedPeak merged(*it);
-        merged.addPeak(peak);
-        _merged_peak_set.erase(it);
-        _merged_peak_set.emplace(std::move(merged));
-        return false;
+        if (it != _merged_peak_set.end()) {
+            MergedPeak merged(*it);
+            merged.addPeak(peak);
+            _merged_peak_set.erase(it);
+            _merged_peak_set.emplace(std::move(merged));
+            return false;
+        }
+        _merged_peak_set.emplace(std::move(new_peak));
     }
-    _merged_peak_set.emplace(std::move(new_peak));
+    catch(std::range_error& e) {
+        ++_nNaN;
+    }
     return true;
 }
 

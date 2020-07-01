@@ -10,7 +10,7 @@ import sys
 import os.path
 import logging
 from pdb import set_trace
-sys.path.append("/home/zamaan/codes/nsxtool/current/build/swig")
+sys.path.append("/home/zamaan/codes/nsxtool/develop/build/swig")
 sys.path.append("/G/sw/nsx/build/swig") # Joachim
 import pynsx as nsx
 
@@ -144,6 +144,7 @@ class Experiment:
         '''
         Find the peaks
         '''
+        self.log(f"Finding peaks...")
         self.finder = self._expt.peakFinder()
         self.finder.setFramesBegin(start_frame)
         self.finder.setFramesEnd(end_frame)
@@ -154,6 +155,10 @@ class Experiment:
         self.finder.setMaxSize(self._params.finder['max_size'])
         self.finder.setPeakScale(self._params.finder['peak_scale'])
         self.finder.setThreshold(self._params.finder['threshold'])
+        self.log(f"min_size = self._params.finder['min_size']")
+        self.log(f"max_size = self._params.finder['max_size']")
+        self.log(f"peak_scale = self._params.finder['peak_scale']")
+        self.log(f"threshold = self._params.finder['threshold']")
 
         self.finder.find(dataset)
 
@@ -161,12 +166,17 @@ class Experiment:
         '''
         Integrate the peaks
         '''
+        self.log(f"Integrating peaks {self._found_peaks}")
         ltype = nsx.listtype_FOUND
         integrator_type = "Pixel sum integrator"
         integrator = self._expt.getIntegrator(integrator_type)
         integrator.setPeakEnd(self._params.integration['peak_area'])
         integrator.setBkgBegin(self._params.integration['background_lower'])
         integrator.setBkgEnd(self._params.integration['background_upper'])
+        self.log(f"Integrator type: {integrator_type}")
+        self.log(f"peak_area = {self._params.integration['peak_area']}")
+        self.log(f"background_lower = {self._params.integration['background_lower']}")
+        self.log(f"background_upper = {self._params.integration['background_upper']}")
 
         self._expt.integrateFoundPeaks(integrator_type)
         self._expt.acceptFoundPeaks(self._found_peaks)
@@ -178,10 +188,15 @@ class Experiment:
         '''
         Filter the peaks
         '''
+        self.log("Filtering peaks in {self._found_peaks}")
         min_strength = filter_params['min_strength']
         max_strength = filter_params['max_strength']
         min_d_range = filter_params['min_d_range']
         max_d_range = filter_params['max_d_range']
+        self.log(f"min_strength = {filter_params['min_strength']}")
+        self.log(f"max_strength = {filter_params['max_strength']}")
+        self.log(f"d_min = {filter_params['d_min']}")
+        self.log(f"d_max = {filter_params['d_max']}")
 
         filter = self._expt.peakFilter()
         # Filter by d-range and strength
@@ -223,6 +238,7 @@ class Experiment:
         '''
         Overload autoindex to take a peak collection instead of a dataset
         '''
+        self.log(f"Autoindexing peaks...")
         autoindexer_params = nsx.IndexerParameters()
         autoindexer_params.maxdim = self._params.autoindexer['max_dim']
         autoindexer_params.nSolutions = self._params.autoindexer['n_solutions']
@@ -232,6 +248,12 @@ class Experiment:
             self._params.autoindexer['indexing_tol']
         autoindexer_params.minUnitCellVolume = \
             self._params.autoindexer['min_vol']
+        self.log(f"max_dim = {self._params.autoindexer['max_dim']}")
+        self.log(f"n_solutions = {self._params.autoindexer['n_solutions']}")
+        self.log(f"n_vertices = {self._params.autoindexer['n_vertices']}")
+        self.log(f"n_subdiv = {self._params.autoindexer['n_subdiv']}")
+        self.log(f"indexing_tol = {self._params.autoindexer['indexing_tol']}")
+        self.log(f"min_vol = {self._params.autoindexer['min_vol']}")
         self.auto_indexer = self._expt.autoIndexer()
         self.auto_indexer.setParameters(autoindexer_params)
         try:
@@ -251,6 +273,7 @@ class Experiment:
         '''
         Build the shape library for predicting the weak peaks
         '''
+        self.log(f"Building shape library...")
         shapelib_params = nsx.ShapeLibParameters()
 
         shapelib_params.kabsch = self._params.shapelib['kabsch']
@@ -264,16 +287,27 @@ class Experiment:
         shapelib_params.d_max = self._params.shapelib['shapelib_d_max']
         shapelib_params.bkg_begin = self._params.shapelib['bkg_begin']
         shapelib_params.bkg_end = self._params.shapelib['bkg_end']
-        # self._filtered_collection = self._expt.getPeakCollection(self._found_peaks)
+        self.log(f"kabsch = {self._params.shapelib['kabsch']}")
+        self.log(f"sigma_m = {self._params.shapelib['sigma_m']}")
+        self.log(f"sigma_d = {self._params.shapelib['sigma_d']}")
+        self.log(f"nx = {self._params.shapelib['nx']}")
+        self.log(f"ny = {self._params.shapelib['ny']}")
+        self.log(f"nz = {self._params.shapelib['nz']}")
+        self.log(f"peak_scale = {self._params.shapelib['peak_scale']}")
+        self.log(f"d_min = {self._params.shapelib['shapelib_d_min']}")
+        self.log(f"d_max = {self._params.shapelib['shapelib_d_max']}")
+        self.log(f"bkg_begin = {self._params.shapelib['bkg_begin']}")
+        self.log(f"bkg_end = {self._params.shapelib['bkg_end']}")
         self._found_collection = self._expt.getPeakCollection(self._found_peaks)
         self._expt.acceptUnitCell(self._found_collection)
         self._expt.buildShapeLibrary(self._found_collection, shapelib_params)
-        self.log('Number of profiles = ' + str(self._found_collection.shapeLibrary().numberOfPeaks()))
+        self.log(f'Number of profiles = ' + str(self._found_collection.shapeLibrary().numberOfPeaks()))
 
     def predict_peaks(self, data, interpolation):
         '''
         Predict shapes of weak peaks
         '''
+        self.log(f"Predicting peask...")
         interpolation_types = {'None' : nsx.PeakInterpolation_NoInterpolation,
                                'InverseDistance:': nsx.PeakInterpolation_InverseDistance,
                                'Intensity:': nsx.PeakInterpolation_Intensity }
@@ -283,6 +317,10 @@ class Experiment:
         prediction_params.d_max = self._params.prediction['prediction_d_max']
         prediction_params.radius = self._params.prediction['radius']
         prediction_params.frames = self._params.prediction['frames']
+        self.log(f"d_min = {self._params.prediction['prediction_d_min']}")
+        self.log(f"d_max = {self._params.prediction['prediction_d_max']}")
+        self.log(f"radius = {self._params.prediction['radius']}")
+        self.log(f"frames = {self._params.prediction['frames']}")
         prediction_params.min_neighbours = self._params.prediction['neighbours']
         self._expt.predictPeaks(self._predicted_peaks, self._found_collection,
                                 prediction_params, interpol)
@@ -295,25 +333,49 @@ class Experiment:
         '''
         Merge strong peaks and predicted peaks
         '''
+        self.log(f"Merging collections {self._found_peaks} and {self._predicted_peaks}...")
         friedel = self._params.merging['friedel']
-        self._expt.setMergedPeaks(self._filtered_collection,
+        self.log(f"friedel = {friedel}")
+        self._found_collection = self.get_peak_collection(self._found_peaks)
+        self._predicted_collection = self.get_peak_collection(self._predicted_peaks)
+        self._expt.setMergedPeaks(self._found_collection,
                                   self._predicted_collection, friedel)
 
     def get_statistics(self):
         '''
         Calculate R-factors and CC1/2, CC*
         '''
+        self.log(f"Computing quality metrics....")
         d_min = self._params.merging['merging_d_min']
         d_max = self._params.merging['merging_d_max']
         n_shells = self._params.merging['n_shells']
         friedel = self._params.merging['friedel']
+        self.log(f"d_min = {d_min}")
+        self.log(f"d_max = {d_max}")
+        self.log(f"n_shells = {n_shells}")
+        self.log(f"friedel = {friedel}")
 
         self._expt.computeQuality(d_min, d_max, n_shells,
                                  self._predicted_collection,
-                                 self._filtered_collection,
+                                 self._found_collection,
                                  friedel)
         self._data_resolution = self._expt.getResolution()
-        self._data_quality = self._expt.getQuality
+        self._data_quality = self._expt.getQuality()
+        self.log("Resolution shells")
+        for i, data in enumerate(self._data_resolution):
+            self.log(f'Shell {i}')
+            self.log(f'd_min            = {data.dmin}')
+            self.log(f'd_max            = {data.dmax}')
+            self.log(f'R_merge          = {data.Rmerge}')
+            self.log(f'Expected R_merge = {data.expectedRmerge}')
+            self.log(f'R_meas           = {data.Rmeas}')
+            self.log(f'Expected R_meas  = {data.expectedRmeas}')
+            self.log(f'R_pim            = {data.Rpim}')
+            self.log(f'Expected R_pim   = {data.expectedRpim}')
+            self.log(f'CC_half          = {data.CChalf}')
+            self.log(f'CC_*             = {data.CCstar}')
+
+        self.log("Overall:")
         self.log(f'R_merge          = {self._data_quality.Rmerge}')
         self.log(f'Expected R_merge = {self._data_quality.expectedRmerge}')
         self.log(f'R_meas           = {self._data_quality.Rmeas}')
@@ -349,9 +411,9 @@ class Experiment:
             fname = self._predictedfile
         else:
             fname = self._nsxfile
-        self.log(f"Loading experiment from {fname}")
         if not os.path.isfile(fname):
-            raise OSError("f{fname} not found")
+            raise OSError(f"NSX file {fname} not found")
+        self.log(f"Loading experiment from {fname}")
         self._expt.loadFromFile(fname)
         self._found_collection = self._expt.getPeakCollection(self._found_peaks)
         self._filtered_collection = \
@@ -361,6 +423,7 @@ class Experiment:
         '''
         Delete a peak collection
         '''
+        self.log("Removing peak collection {name}")
         self._expt.removePeakCollection(name)
 
     def set_parameter(self, key, value):
@@ -398,3 +461,9 @@ class Experiment:
                         self._metadata[key] = [self._metadata[key], value]
                 else:
                     self._metadata[key] = value
+
+    def get_detector(self):
+        return self._expt.diffractometer().detector()
+
+    def get_collection_names(self):
+        return self._expt.getCollectionNames()
