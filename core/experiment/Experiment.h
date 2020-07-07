@@ -109,6 +109,8 @@ class Experiment {
     int numPeakCollections() const { return _peak_collections.size(); };
     //! Accept a filtering of the peaks and process it
     void acceptFilter(const std::string name, PeakCollection* collection);
+    //! Check for unphysical peaks in all collections
+    void checkPeakCollections();
 
  public: // MergedData
     //! Set the merged peak
@@ -166,8 +168,8 @@ class Experiment {
     //! Set the found peak integrator
     void integratePeaks(std::string integrator_name, PeakCollection* peak_collection);
     //! Set the found peak integrator
-    void integratePredictedPeaks(
-        std::string integrator_name, PeakCollection* peak_collection, ShapeLibrary* shape_library);
+    void integratePredictedPeaks(std::string integrator_name, PeakCollection* peak_collection,
+                                 ShapeLibrary* shape_library, PredictionParameters& params);
     //! Set the found peak integrator
     void integrateFoundPeaks(std::string integrator);
 

@@ -292,7 +292,7 @@ void PeakFilter::filterIndexTolerance(PeakCollection* peak_collection) const
 void PeakFilter::filterUnitCell(PeakCollection* peak_collection) const
 {
     nsx::Peak3D* peak_ptr;
-    for (int i = 0; i < peak_collection->numberOfPeaks(); ++i) {
+    for (int i = 0; i < peak_collection->numberOfPeaks(); ++i) { 
         peak_ptr = peak_collection->getPeak(i);
         if (peak_ptr->unitCell()->name() == _unit_cell) {
             peak_ptr->caughtYou(true);
@@ -307,19 +307,24 @@ void PeakFilter::filterStrength(PeakCollection* peak_collection) const
     nsx::Peak3D* peak_ptr;
     for (int i = 0; i < peak_collection->numberOfPeaks(); ++i) {
         peak_ptr = peak_collection->getPeak(i);
-        auto corrected_intensity = peak_ptr->correctedIntensity();
-        double intensity = corrected_intensity.value();
-        double sigma = corrected_intensity.sigma();
+        try {
+            auto corrected_intensity = peak_ptr->correctedIntensity();
+            double intensity = corrected_intensity.value();
+            double sigma = corrected_intensity.sigma();
 
-        if (sigma < 1.0e-6) {
-            peak_ptr->rejectYou(true);
-            continue;
-        }
+            if (sigma < 1.0e-6) {
+                peak_ptr->rejectYou(true);
+                continue;
+            }
 
-        double i_over_sigma = intensity / sigma;
-        if (i_over_sigma >= _strength[0] && i_over_sigma <= _strength[1]) {
-            peak_ptr->caughtYou(true);
-        } else {
+            double i_over_sigma = intensity / sigma;
+            if (i_over_sigma >= _strength[0] && i_over_sigma <= _strength[1]) {
+                peak_ptr->caughtYou(true);
+            } else {
+                peak_ptr->rejectYou(true);
+            }
+        } catch (std::exception& e) {
+            qDebug() << "Bad peak intensity in PeakFilter::filterstrength: " << e.what();
             peak_ptr->rejectYou(true);
         }
     }

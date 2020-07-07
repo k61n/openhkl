@@ -51,6 +51,8 @@ MergedData::MergedData(std::vector<PeakCollection*> peak_collections, bool fried
     }
     if (_nNaN > 0)
         qDebug() << "MergedData: " << _nNaN << " peaks with intensity NaN";
+    if (_nZero > 0)
+        qDebug() << "MergedData: " << _nZero << " peaks with intensity zero";
 }
 
 MergedData::MergedData(SpaceGroup space_group, bool friedel) : _friedel(friedel), _merged_peak_set()
@@ -60,12 +62,15 @@ MergedData::MergedData(SpaceGroup space_group, bool friedel) : _friedel(friedel)
 
 bool MergedData::addPeak(Peak3D* peak)
 {
+    double epsilon = 1.0e-8;
     MergedPeak new_peak(_group, _friedel);
     try {
         new_peak.addPeak(peak);
         auto it = _merged_peak_set.find(new_peak);
 
         if (it != _merged_peak_set.end()) {
+            if (std::fabs(it->intensity().value()) < epsilon)
+                ++_nZero;
             MergedPeak merged(*it);
             merged.addPeak(peak);
             _merged_peak_set.erase(it);

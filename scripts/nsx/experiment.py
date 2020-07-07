@@ -10,7 +10,7 @@ import sys
 import os.path
 import logging
 from pdb import set_trace
-sys.path.append("/home/zamaan/codes/nsxtool/develop/build/swig")
+sys.path.append("/home/zamaan/codes/nsxtool/current/build/swig")
 sys.path.append("/G/sw/nsx/build/swig") # Joachim
 import pynsx as nsx
 
@@ -195,8 +195,8 @@ class Experiment:
         max_d_range = filter_params['max_d_range']
         self.log(f"min_strength = {filter_params['min_strength']}")
         self.log(f"max_strength = {filter_params['max_strength']}")
-        self.log(f"d_min = {filter_params['d_min']}")
-        self.log(f"d_max = {filter_params['d_max']}")
+        self.log(f"d_min = {filter_params['min_d_range']}")
+        self.log(f"d_max = {filter_params['max_d_range']}")
 
         filter = self._expt.peakFilter()
         # Filter by d-range and strength
@@ -307,16 +307,23 @@ class Experiment:
         '''
         Predict shapes of weak peaks
         '''
-        self.log(f"Predicting peask...")
+        self.log(f"Predicting peaks...")
+        integrator = "3d profile integrator"
         interpolation_types = {'None' : nsx.PeakInterpolation_NoInterpolation,
                                'InverseDistance:': nsx.PeakInterpolation_InverseDistance,
                                'Intensity:': nsx.PeakInterpolation_Intensity }
         interpol = interpolation_types[interpolation]
         prediction_params = nsx.PredictionParameters()
-        prediction_params.d_min = self._params.prediction['prediction_d_min']
-        prediction_params.d_max = self._params.prediction['prediction_d_max']
-        prediction_params.radius = self._params.prediction['radius']
-        prediction_params.frames = self._params.prediction['frames']
+        prediction_params.detector_range_min = self._params.prediction['prediction_d_min']
+        prediction_params.detector_range_max = self._params.prediction['prediction_d_max']
+        prediction_params.neighbour_max_radius = self._params.prediction['radius']
+        prediction_params.frame_range_max = self._params.prediction['frames']
+        prediction_params.bkg_begin = self._params.prediction['prediction_bkg_begin']
+        prediction_params.bkg_end = self._params.prediction['prediction_bkg_end']
+        prediction_params.peak_scale = self._params.prediction['prediction_scale']
+        prediction_params.set_fit_center = self._params.prediction['set_fit_center']
+        prediction_params.fit_covariance = self._params.prediction['fit_covariance']
+
         self.log(f"d_min = {self._params.prediction['prediction_d_min']}")
         self.log(f"d_max = {self._params.prediction['prediction_d_max']}")
         self.log(f"radius = {self._params.prediction['radius']}")
@@ -325,6 +332,8 @@ class Experiment:
         self._expt.predictPeaks(self._predicted_peaks, self._found_collection,
                                 prediction_params, interpol)
         self._predicted_collection = self._expt.getPeakCollection(self._predicted_peaks)
+        self._expt.integratePredictedPeaks(integrator, self._predicted_collection,
+                                           self._found_collection.shapeLibrary(), prediction_params)
 
     def get_peak_collection(self, name):
         return self._expt.getPeakCollection(name)
@@ -467,3 +476,6 @@ class Experiment:
 
     def get_collection_names(self):
         return self._expt.getCollectionNames()
+
+    def check_peak_collections(self):
+        self._expt.checkPeakCollections()

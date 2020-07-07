@@ -438,10 +438,18 @@ void Experiment::integratePeaks(std::string integrator_name, PeakCollection* pea
     }
 }
 
-void Experiment::integratePredictedPeaks(
-    std::string integrator_name, PeakCollection* peak_collection, ShapeLibrary* shape_library)
+void Experiment::integratePredictedPeaks(std::string integrator_name, PeakCollection* peak_collection,
+                                         ShapeLibrary* shape_library, PredictionParameters& params)
 {
     IPeakIntegrator* integrator = getIntegrator(integrator_name);
+    integrator->setBkgBegin(params.bkg_begin);
+    integrator->setBkgEnd(params.bkg_end);
+    integrator->setDMin(params.detector_range_min);
+    integrator->setDMax(params.detector_range_max);
+    integrator->setRadius(params.neighbour_max_radius);
+    integrator->setNFrames(params.frame_range_max);
+    integrator->setFitCenter(params.set_fit_center);
+    integrator->setFitCov(params.fit_covariance);
     nsx::PeakFilter filter;
     filter.resetFiltering(peak_collection);
     filter.setDRange(std::array<double, 2UL> {integrator->dMin(), integrator->dMax()});
@@ -697,6 +705,13 @@ UnitCell* Experiment::getReferenceCell()
 {
     std::string name = "reference";
     return getUnitCell(name);
+}
+
+void Experiment::checkPeakCollections()
+{
+    for (const auto& [name, collection] : _peak_collections) {
+        collection->checkCollection();
+    }
 }
 
 } // namespace nsx
