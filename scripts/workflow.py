@@ -106,8 +106,10 @@ if not args.loadnsx:
     pynsxprint("Integrating...")
     npeaks = expt.integrate_peaks()
 
+    found_peaks = expt.get_found_peaks()
     pynsxprint("Filtering...")
-    ncaught = expt.filter_peaks(params.filter)
+    filtered_collection_name = "filtered"
+    ncaught = expt.filter_peaks(params.filter, found_peaks, filtered_collection_name)
     pynsxprint("Filter caught " + str(ncaught) + " of " + str(npeaks) + " peaks")
 
     expt.save()

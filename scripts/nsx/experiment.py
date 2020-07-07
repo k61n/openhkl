@@ -184,7 +184,7 @@ class Experiment:
         n_peaks = self._found_collection.numberOfPeaks()
         return n_peaks
 
-    def filter_peaks(self, filter_params):
+    def filter_peaks(self, filter_params, unfiltered_collection, filtered_collection_name):
         '''
         Filter the peaks
         '''
@@ -205,13 +205,11 @@ class Experiment:
         filter.setDRange(min_d_range, max_d_range)
         filter.setStrength(min_strength, max_strength)
 
-        self._found_collection = self._expt.getPeakCollection(self._found_peaks)
-        filter.resetFiltering(self._found_collection)
-        filter.filter(self._found_collection)
-        self._expt.acceptFilter(self._filtered_peaks, self._found_collection)
-        self._filtered_collection = self._expt.getPeakCollection(self._filtered_peaks)
+        filter.resetFiltering(unfiltered_collection)
+        filter.filter(unfiltered_collection)
+        self._expt.acceptFilter(filtered_collection_name, unfiltered_collection)
 
-        n_caught = self._found_collection.numberCaughtByFilter()
+        n_caught = self._expt.getPeakCollection(filtered_collection_name).numberCaughtByFilter()
         return n_caught
 
     def accept_unit_cell(self, peak_collection):
@@ -229,7 +227,7 @@ class Experiment:
         self.angle_tol = angle_tol
         self.find_peaks([dataset], start_frame, end_frame)
         npeaks = self.integrate_peaks()
-        ncaught = self.filter_peaks(self._params.filter)
+        ncaught = self.filter_peaks(self._params.filter, self._found_collection, self._filtered_peaks)
         self.log(f'Autoindex: {ncaught}/{npeaks} peaks caught by filter')
         self.log(f'Autoindex: {ncaught}/{npeaks} peaks caught by filter')
         return self.autoindex_peaks(self._found_collection, length_tol, angle_tol)
@@ -298,10 +296,12 @@ class Experiment:
         self.log(f"d_max = {self._params.shapelib['shapelib_d_max']}")
         self.log(f"bkg_begin = {self._params.shapelib['bkg_begin']}")
         self.log(f"bkg_end = {self._params.shapelib['bkg_end']}")
-        self._found_collection = self._expt.getPeakCollection(self._found_peaks)
-        self._expt.acceptUnitCell(self._found_collection)
-        self._expt.buildShapeLibrary(self._found_collection, shapelib_params)
-        self.log(f'Number of profiles = ' + str(self._found_collection.shapeLibrary().numberOfPeaks()))
+        # self._found_collection = self._expt.getPeakCollection(self._found_peaks)
+        # self._expt.acceptUnitCell(self._found_collection)
+        self._filtered_collection = self._expt.getPeakCollection(self._filtered_peaks)
+        self._expt.acceptUnitCell(self._filtered_collection)
+        self._expt.buildShapeLibrary(self._filtered_collection, shapelib_params)
+        self.log(f'Number of profiles = ' + str(self._filtered_collection.shapeLibrary().numberOfPeaks()))
 
     def predict_peaks(self, data, interpolation):
         '''
@@ -329,11 +329,11 @@ class Experiment:
         self.log(f"radius = {self._params.prediction['radius']}")
         self.log(f"frames = {self._params.prediction['frames']}")
         prediction_params.min_neighbours = self._params.prediction['neighbours']
-        self._expt.predictPeaks(self._predicted_peaks, self._found_collection,
+        self._expt.predictPeaks(self._predicted_peaks, self._filtered_collection,
                                 prediction_params, interpol)
         self._predicted_collection = self._expt.getPeakCollection(self._predicted_peaks)
         self._expt.integratePredictedPeaks(integrator, self._predicted_collection,
-                                           self._found_collection.shapeLibrary(), prediction_params)
+                                           self._filtered_collection.shapeLibrary(), prediction_params)
 
     def get_peak_collection(self, name):
         return self._expt.getPeakCollection(name)
@@ -345,9 +345,9 @@ class Experiment:
         self.log(f"Merging collections {self._found_peaks} and {self._predicted_peaks}...")
         friedel = self._params.merging['friedel']
         self.log(f"friedel = {friedel}")
-        self._found_collection = self.get_peak_collection(self._found_peaks)
+        self._filtered_collection = self.get_peak_collection(self._filtered_peaks)
         self._predicted_collection = self.get_peak_collection(self._predicted_peaks)
-        self._expt.setMergedPeaks(self._found_collection,
+        self._expt.setMergedPeaks(self._filtered_collection,
                                   self._predicted_collection, friedel)
 
     def get_statistics(self):
@@ -366,7 +366,7 @@ class Experiment:
 
         self._expt.computeQuality(d_min, d_max, n_shells,
                                  self._predicted_collection,
-                                 self._found_collection,
+                                 self._filtered_collection,
                                  friedel)
         self._data_resolution = self._expt.getResolution()
         self._data_quality = self._expt.getQuality()
@@ -473,6 +473,9 @@ class Experiment:
 
     def get_detector(self):
         return self._expt.diffractometer().detector()
+
+    def get_found_peaks(self):
+        return self.get_peak_collection(self._found_peaks)
 
     def get_collection_names(self):
         return self._expt.getCollectionNames()
