@@ -125,6 +125,7 @@ else:
     expt.predict_peaks(all_data, 'None')
     expt.save(predicted=True) # Exporter does not  save shape library to HDF5 (yet)
 
+expt.check_peak_collections()
 pynsxprint("Merging peak collection...")
 expt.merge_peaks()
 pynsxprint("Computing quality metrics...")
