@@ -58,6 +58,8 @@ class MergedData {
     std::vector<PeakCollection*> _peak_collections;
     //! Number of peaks with intensity NaN (not added to set)
     int _nNaN = 0;
+    //! Number of peaks with zero intensity
+    int _nZero = 0;
 };
 
 } // namespace nsx

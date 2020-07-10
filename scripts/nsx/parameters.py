@@ -66,7 +66,12 @@ class Parameters:
                     'prediction_d_max' : 50.0,
                     'radius'           : 400.0,
                     'neighbours'       : 400.0,
-                    'frames'           : 20 }
+                    'frames'           : 100.0,
+                    'prediction_bkg_begin' : 3.0,
+                    'prediction_bkg_end'   : 4.5,
+                    'prediction_scale'     : 5.0,
+                    'set_fit_center'       : True,
+                    'fit_covariance'       : True }
 
     merging     = { 'friedel'          : True,
                     'n_shells'         : 10,

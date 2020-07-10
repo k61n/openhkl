@@ -73,15 +73,15 @@ class Experiment {
     //! Gets a reference to the data
     const std::map<std::string, sptrDataSet>& getData() const;
     //! Gets the pointer to a given data stored in the experiment
-    sptrDataSet getData(std::string name);
+    sptrDataSet getData(const std::string& name);
     //! Return all data sets as a DataList
     DataList getAllData();
     //! Gets the pointer to a given data stored in the experiment
-    sptrDataSet dataShortName(std::string name);
+    sptrDataSet dataShortName(const std::string& name);
     //! Get number of data
     int numData() const { return _data.size(); };
     //! Add some data to the experiment
-    void addData(std::string name, sptrDataSet data);
+    void addData(const std::string& name, sptrDataSet data);
     //! Add some data to the experiment
     void addData(sptrDataSet data);
     //! Returns true if the experiment has a data
@@ -109,6 +109,8 @@ class Experiment {
     int numPeakCollections() const { return _peak_collections.size(); };
     //! Accept a filtering of the peaks and process it
     void acceptFilter(const std::string name, PeakCollection* collection);
+    //! Check for unphysical peaks in all collections
+    void checkPeakCollections();
 
  public: // MergedData
     //! Set the merged peak
@@ -164,18 +166,18 @@ class Experiment {
  public: // Integrator
     nsx::IPeakIntegrator* getIntegrator(const std::string& name) const;
     //! Set the found peak integrator
-    void integratePeaks(std::string integrator_name, PeakCollection* peak_collection);
+    void integratePeaks(const std::string& integrator_name, PeakCollection* peak_collection);
     //! Set the found peak integrator
-    void integratePredictedPeaks(
-        std::string integrator_name, PeakCollection* peak_collection, ShapeLibrary* shape_library);
+    void integratePredictedPeaks(const std::string& integrator_name, PeakCollection* peak_collection,
+                                 ShapeLibrary* shape_library, PredictionParameters& params);
     //! Set the found peak integrator
-    void integrateFoundPeaks(std::string integrator);
+    void integrateFoundPeaks(const std::string& integrator);
 
  public: // Save load
     //! Save to file
-    bool saveToFile(std::string path) const;
+    bool saveToFile(const std::string& path) const;
     //! Load from file
-    bool loadFromFile(std::string path);
+    bool loadFromFile(const std::string& path);
 
  public: // Prediction
     //! Build the shape library
@@ -184,7 +186,7 @@ class Experiment {
     ShapeLibrary* getShapeLibrary() { return &_shape_library; };
     //! Predict peaks
     void predictPeaks(
-        std::string name, PeakCollection* peaks,
+        const std::string& name, PeakCollection* peaks,
         PredictionParameters params, PeakInterpolation interpol);
 
  public: // Merging

@@ -47,6 +47,11 @@ struct PredictionParameters {
     double neighbour_max_radius = 400.0; //! Maximum radius for neighbouring peak search (pixels)
     int min_n_neighbors = 20; //! Minimum number of neighbours required for shape library
     double frame_range_max = 20.0; //! Maximum angular separation of peaks in frames
+    double bkg_begin = 3.0;
+    double bkg_end = 4.5;
+    double peak_scale = 5.0;
+    bool set_fit_center = true;
+    bool fit_covariance = true;
 };
 
 class ShapeLibrary;
