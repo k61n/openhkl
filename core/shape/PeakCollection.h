@@ -82,6 +82,9 @@ class PeakCollection {
 
     void printUnitCells();
 
+    //! Check the collection for unphysical  peaks
+    void checkCollection() const;
+
  private:
     std::vector<std::unique_ptr<nsx::Peak3D>> _peaks;
     std::string _name;

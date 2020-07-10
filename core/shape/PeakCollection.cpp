@@ -13,6 +13,7 @@
 //  ***********************************************************************************************
 
 #include "core/shape/PeakCollection.h"
+#include <QDebug>
 
 namespace nsx {
 
@@ -164,6 +165,24 @@ void PeakCollection::printUnitCells()
         std::cout << i << " " << peak->unitCell()->toString() << std::endl;
         i++;
     }
+}
+
+void PeakCollection::checkCollection() const
+{
+    int n_nan = 0;
+    int n_zero = 0;
+    double epsilon = 1.0e-8;
+    for (Peak3D* peak : getPeakList()) {
+        double I = peak->correctedIntensity().value();
+        if (std::isnan(I))
+            ++n_nan;
+        else if (std::fabs(I) < epsilon)
+            ++n_zero;
+    }
+    qDebug() << "Peak collection " << QString::fromStdString(_name) << " contains " << numberOfPeaks()
+             << " peaks:";
+    qDebug() << n_nan << " peaks with intensity NaN";
+    qDebug() << n_zero << " peaks with intensity zero";
 }
 
 } // namespace nsx

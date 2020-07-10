@@ -726,20 +726,22 @@ void SubframePredictPeaks::runIntegration()
         if (!integrator)
             return;
 
-        integrator->setBkgBegin(_bkg_start_int->value());
-        integrator->setBkgEnd(_bkg_end_int->value());
-        integrator->setDMin(_d_min_int->value());
-        integrator->setDMax(_d_max_int->value());
-        integrator->setRadius(_radius_int->value());
-        integrator->setNFrames(_n_frames_int->value());
-        integrator->setFitCenter(_fit_center->isChecked());
-        integrator->setFitCov(_fit_covariance->isChecked());
+        nsx::PredictionParameters params;
+        params.detector_range_min = _d_min_int->value();
+        params.detector_range_max = _d_max_int->value();
+        params.bkg_begin = _bkg_start_int->value();
+        params.bkg_end = _bkg_end_int->value();
+        params.neighbour_max_radius = _radius_int->value();
+        params.frame_range_max = _n_frames_int->value();
+        params.set_fit_center = _fit_center->isChecked();
+        params.fit_covariance = _fit_covariance->isChecked();
+
         integrator->setHandler(handler);
 
         gSession->experimentAt(_exp_combo->currentIndex())
             ->experiment()
-            ->integratePredictedPeaks(
-                _integrator->currentText().toStdString(), &_peak_collection, lib);
+            ->integratePredictedPeaks(_integrator->currentText().toStdString(), &_peak_collection,
+                                      lib, params);
 
         refreshPeakTable();
 
