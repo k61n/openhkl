@@ -129,7 +129,7 @@ void Experiment::setDiffractometer(const std::string& diffractometerName)
     _diffractometer.reset(Diffractometer::create(diffractometerName));
 }
 
-sptrDataSet Experiment::getData(std::string name)
+sptrDataSet Experiment::getData(const std::string& name)
 {
     auto it = _data.find(name);
     if (it == _data.end()) {
@@ -139,7 +139,7 @@ sptrDataSet Experiment::getData(std::string name)
     return it->second;
 }
 
-sptrDataSet Experiment::dataShortName(std::string name)
+sptrDataSet Experiment::dataShortName(const std::string& name)
 {
     std::map<std::string, sptrDataSet> temp;
     for (std::map<std::string, sptrDataSet>::iterator it = _data.begin(); it != _data.end(); ++it) {
@@ -200,7 +200,7 @@ void Experiment::addData(sptrDataSet data)
     _data.insert(std::make_pair(filename, data));
 }
 
-void Experiment::addData(std::string name, sptrDataSet data)
+void Experiment::addData(const std::string& name, sptrDataSet data)
 {
     auto filename = data->filename();
 
@@ -421,7 +421,7 @@ IPeakIntegrator* Experiment::getIntegrator(const std::string& name) const
     return nullptr;
 }
 
-void Experiment::integratePeaks(std::string integrator_name, PeakCollection* peak_collection)
+void Experiment::integratePeaks(const std::string& integrator_name, PeakCollection* peak_collection)
 {
 
     IPeakIntegrator* integrator = getIntegrator(integrator_name);
@@ -438,7 +438,8 @@ void Experiment::integratePeaks(std::string integrator_name, PeakCollection* pea
     }
 }
 
-void Experiment::integratePredictedPeaks(std::string integrator_name, PeakCollection* peak_collection,
+void Experiment::integratePredictedPeaks(const std::string& integrator_name,
+                                         PeakCollection* peak_collection,
                                          ShapeLibrary* shape_library, PredictionParameters& params)
 {
     IPeakIntegrator* integrator = getIntegrator(integrator_name);
@@ -462,7 +463,7 @@ void Experiment::integratePredictedPeaks(std::string integrator_name, PeakCollec
     }
 }
 
-void Experiment::integrateFoundPeaks(std::string integrator_name)
+void Experiment::integrateFoundPeaks(const std::string& integrator_name)
 {
     IPeakIntegrator* integrator = getIntegrator(integrator_name);
 
@@ -471,7 +472,7 @@ void Experiment::integrateFoundPeaks(std::string integrator_name)
     }
 }
 
-bool Experiment::saveToFile(std::string path) const
+bool Experiment::saveToFile(const std::string& path) const
 {
     nsx::ExperimentExporter exporter;
 
@@ -512,7 +513,7 @@ bool Experiment::saveToFile(std::string path) const
     return success;
 }
 
-bool Experiment::loadFromFile(std::string path)
+bool Experiment::loadFromFile(const std::string& path)
 {
     nsx::ExperimentImporter importer;
 
@@ -625,7 +626,7 @@ void Experiment::buildShapeLibrary(
 }
 
 void Experiment::predictPeaks(
-    std::string name, PeakCollection* peaks,
+    const std::string& name, PeakCollection* peaks,
     PredictionParameters params, PeakInterpolation interpol)
 {
     int current_numor = 0;
