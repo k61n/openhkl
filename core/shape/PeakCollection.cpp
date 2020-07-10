@@ -167,13 +167,12 @@ void PeakCollection::printUnitCells()
     }
 }
 
-void PeakCollection::checkCollection()
+void PeakCollection::checkCollection() const
 {
     int n_nan = 0;
     int n_zero = 0;
     double epsilon = 1.0e-8;
-    std::vector<nsx::Peak3D*> peak_list = getPeakList();
-    for (auto peak : peak_list) {
+    for (Peak3D* peak : getPeakList()) {
         double I = peak->correctedIntensity().value();
         if (std::isnan(I))
             ++n_nan;

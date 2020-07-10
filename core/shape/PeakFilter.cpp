@@ -292,7 +292,7 @@ void PeakFilter::filterIndexTolerance(PeakCollection* peak_collection) const
 void PeakFilter::filterUnitCell(PeakCollection* peak_collection) const
 {
     nsx::Peak3D* peak_ptr;
-    for (int i = 0; i < peak_collection->numberOfPeaks(); ++i) { 
+    for (int i = 0; i < peak_collection->numberOfPeaks(); ++i) {
         peak_ptr = peak_collection->getPeak(i);
         if (peak_ptr->unitCell()->name() == _unit_cell) {
             peak_ptr->caughtYou(true);
@@ -305,6 +305,7 @@ void PeakFilter::filterUnitCell(PeakCollection* peak_collection) const
 void PeakFilter::filterStrength(PeakCollection* peak_collection) const
 {
     nsx::Peak3D* peak_ptr;
+    // Reject peaks with: i) zero sigma ii) strength (I/sigma) outside range iii) intensity NaN
     for (int i = 0; i < peak_collection->numberOfPeaks(); ++i) {
         peak_ptr = peak_collection->getPeak(i);
         try {
