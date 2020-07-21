@@ -108,9 +108,9 @@ void SubframeMergedPeaks::setDShellUp()
     _d_shell_view = new QTableView;
     _shell_model = new QStandardItemModel(0, 13, this);
     _d_shell_view->setModel(_shell_model);
-    _shell_model->setHorizontalHeaderLabels(
-        {"dmax", "dmin", "nobs", "nmerge", "redundancy", "Rmeas", "Rmeas(est.)", "Rmerge/Rsym",
-         "Rmerge(est.)", "Rpim", "Rpim(est.)", "CChalf", "CC*"});
+    _shell_model->setHorizontalHeaderLabels({"dmax", "dmin", "nobs", "nmerge", "redundancy",
+                                             "Rmeas", "Rmeas(est.)", "Rmerge/Rsym", "Rmerge(est.)",
+                                             "Rpim", "Rpim(est.)", "CChalf", "CC*"});
     shell_layout->addWidget(_d_shell_view);
 
     QHBoxLayout* d_shell_down = new QHBoxLayout;
@@ -519,7 +519,7 @@ void SubframeMergedPeaks::refreshGraphTable(int column)
     std::vector<double> shells(nshells);
     std::iota(shells.begin(), shells.end(), 0);
 
-    QVector<double> xvals{shells.begin(), shells.end()};
+    QVector<double> xvals {shells.begin(), shells.end()};
     QVector<double> yvals;
     for (int i = 0; i < nshells; ++i) {
         double val = _shell_model->item(i, column)->data(Qt::DisplayRole).value<double>();

@@ -170,7 +170,7 @@ void SubframeHome::saveCurrent()
     }
 }
 
-void SubframeHome::saveAll() { }
+void SubframeHome::saveAll() {}
 
 void SubframeHome::_switchCurrentExperiment(const QModelIndex& index) const
 {

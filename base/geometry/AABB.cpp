@@ -18,7 +18,7 @@
 
 namespace nsx {
 
-AABB::AABB() { }
+AABB::AABB() {}
 
 AABB::AABB(const AABB& other)
 {

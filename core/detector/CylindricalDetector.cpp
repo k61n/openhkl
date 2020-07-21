@@ -29,7 +29,7 @@ Detector* CylindricalDetector::create(const YAML::Node& node)
     return new CylindricalDetector(node);
 }
 
-CylindricalDetector::CylindricalDetector(const std::string& name) : Detector(name) { }
+CylindricalDetector::CylindricalDetector(const std::string& name) : Detector(name) {}
 
 CylindricalDetector::CylindricalDetector(const YAML::Node& node) : Detector(node)
 {
@@ -50,7 +50,7 @@ CylindricalDetector::CylindricalDetector(const YAML::Node& node) : Detector(node
     setHeight(height);
 }
 
-CylindricalDetector::~CylindricalDetector() { }
+CylindricalDetector::~CylindricalDetector() {}
 
 Detector* CylindricalDetector::clone() const
 {

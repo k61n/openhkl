@@ -18,9 +18,9 @@
 #include <map>
 #include <memory>
 #include <set>
+#include <stdexcept>
 #include <string>
 #include <variant>
-#include <stdexcept>
 
 namespace nsx {
 

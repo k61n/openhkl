@@ -407,12 +407,10 @@ Eigen::Matrix3d ShapeLibrary::meanCovariance(
 
     if (neighbors.empty() || (neighbors.size() < min_neighbors)) {
         ++_n_lonely_peaks;
-        throw std::runtime_error(
-            "ShapeLibrary::meanCovariance(): peak has no neighbors");
+        throw std::runtime_error("ShapeLibrary::meanCovariance(): peak has no neighbors");
     } else if (neighbors.size() < min_neighbors) {
         ++_n_unfriendly_peaks;
-        throw std::runtime_error(
-            "ShapeLibrary::meanCovariance(): peak has too few neighbors");
+        throw std::runtime_error("ShapeLibrary::meanCovariance(): peak has too few neighbors");
     }
 
     PeakCoordinateSystem reference_coord(reference_peak);

@@ -20,8 +20,7 @@
 
 namespace nsx {
 
-MillerIndex::MillerIndex(int h, int k, int l)
-    : _hkl(h, k, l), _error(Eigen::RowVector3d::Zero()) { }
+MillerIndex::MillerIndex(int h, int k, int l) : _hkl(h, k, l), _error(Eigen::RowVector3d::Zero()) {}
 
 MillerIndex::MillerIndex(const Eigen::RowVector3i& hkl)
     : _hkl(hkl), _error(Eigen::RowVector3d::Zero())

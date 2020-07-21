@@ -127,8 +127,9 @@ class Experiment {
     //! Add some data to the experiment
     void addUnitCell(const std::string& name, UnitCell* unit_cell);
     //! Add a unit cell to the experiment via cell parameters (skip autoindexing step)
-    void addUnitCell(const std::string& name, double a, double b, double c,
-                     double alpha, double beta, double gamma);
+    void addUnitCell(
+        const std::string& name, double a, double b, double c, double alpha, double beta,
+        double gamma);
     //! Returns true if the experiment has a data
     bool hasUnitCell(const std::string& name) const;
     //! Get a list of loaded list names
@@ -171,8 +172,9 @@ class Experiment {
     //! Set the found peak integrator
     void integratePeaks(const std::string& integrator_name, PeakCollection* peak_collection);
     //! Set the found peak integrator
-    void integratePredictedPeaks(const std::string& integrator_name, PeakCollection* peak_collection,
-                                 ShapeLibrary* shape_library, PredictionParameters& params);
+    void integratePredictedPeaks(
+        const std::string& integrator_name, PeakCollection* peak_collection,
+        ShapeLibrary* shape_library, PredictionParameters& params);
     //! Set the found peak integrator
     void integrateFoundPeaks(const std::string& integrator);
 

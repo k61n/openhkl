@@ -25,7 +25,7 @@ Source* Source::create(const YAML::Node& node)
     return source;
 }
 
-Source::Source() : Component("source"), _monochromators(), _selectedMonochromator(0) { }
+Source::Source() : Component("source"), _monochromators(), _selectedMonochromator(0) {}
 
 Source::Source(const Source& other)
     : Component(other)
@@ -57,7 +57,7 @@ Source* Source::clone() const
     return new Source(*this);
 }
 
-Source::~Source() { }
+Source::~Source() {}
 
 Source& Source::operator=(const Source& other)
 {

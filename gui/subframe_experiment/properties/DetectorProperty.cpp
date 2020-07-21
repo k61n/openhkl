@@ -86,7 +86,7 @@ DetectorProperty::DetectorProperty() : QWidget()
     v_box_layout->addWidget(group_2);
 }
 
-DetectorProperty::~DetectorProperty() { }
+DetectorProperty::~DetectorProperty() {}
 
 void DetectorProperty::refreshInput()
 {

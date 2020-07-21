@@ -29,8 +29,8 @@ std::vector<Eigen::RowVector3d> pointsOnSphere(unsigned int n_vertices);
 //! n_vertices and nsolutions. Note that the success of FFT indexing is very sensitive to
 //! choosing reasonable values of nSubdiva and amax.
 std::vector<Eigen::RowVector3d> findOnSphere(
-    const std::vector<ReciprocalVector>& qvects, unsigned int n_vertices,
-    unsigned int nsolutions, int nSubdiv = 25, double amax = 50.0, double freq_tol = 0.7);
+    const std::vector<ReciprocalVector>& qvects, unsigned int n_vertices, unsigned int nsolutions,
+    int nSubdiv = 25, double amax = 50.0, double freq_tol = 0.7);
 
 } // namespace algo
 

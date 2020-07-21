@@ -21,17 +21,17 @@ Axis* TransAxis::create(const YAML::Node& node)
     return new TransAxis(node);
 }
 
-TransAxis::TransAxis() : Axis("translation") { }
+TransAxis::TransAxis() : Axis("translation") {}
 
-TransAxis::TransAxis(const std::string& label) : Axis(label) { }
+TransAxis::TransAxis(const std::string& label) : Axis(label) {}
 
-TransAxis::TransAxis(const std::string& label, const Eigen::Vector3d& axis) : Axis(label, axis) { }
+TransAxis::TransAxis(const std::string& label, const Eigen::Vector3d& axis) : Axis(label, axis) {}
 
-TransAxis::TransAxis(const TransAxis& other) : Axis(other) { }
+TransAxis::TransAxis(const TransAxis& other) : Axis(other) {}
 
-TransAxis::TransAxis(const YAML::Node& node) : Axis(node) { }
+TransAxis::TransAxis(const YAML::Node& node) : Axis(node) {}
 
-TransAxis::~TransAxis() { }
+TransAxis::~TransAxis() {}
 
 TransAxis* TransAxis::clone() const
 {

@@ -18,9 +18,9 @@
 
 namespace nsx {
 
-ReciprocalVector::ReciprocalVector(double x, double y, double z) : _rvector(x, y, z) { }
+ReciprocalVector::ReciprocalVector(double x, double y, double z) : _rvector(x, y, z) {}
 
-ReciprocalVector::ReciprocalVector(const Eigen::RowVector3d& rvector) : _rvector(rvector) { }
+ReciprocalVector::ReciprocalVector(const Eigen::RowVector3d& rvector) : _rvector(rvector) {}
 
 const Eigen::RowVector3d& ReciprocalVector::rowVector() const
 {

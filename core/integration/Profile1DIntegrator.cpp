@@ -22,7 +22,7 @@
 
 namespace nsx {
 
-Profile1DIntegrator::Profile1DIntegrator() : IPeakIntegrator() { }
+Profile1DIntegrator::Profile1DIntegrator() : IPeakIntegrator() {}
 
 static void updateFit(
     Intensity& I, Intensity& B, const std::vector<double>& dp, const std::vector<double>& dM,

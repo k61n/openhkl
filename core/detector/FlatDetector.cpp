@@ -28,7 +28,7 @@ Detector* FlatDetector::create(const YAML::Node& node)
     return new FlatDetector(node);
 }
 
-FlatDetector::FlatDetector(const std::string& name) : Detector(name) { }
+FlatDetector::FlatDetector(const std::string& name) : Detector(name) {}
 
 FlatDetector::FlatDetector(const YAML::Node& node) : Detector(node)
 {
@@ -49,7 +49,7 @@ FlatDetector::FlatDetector(const YAML::Node& node) : Detector(node)
     setHeight(height);
 }
 
-FlatDetector::~FlatDetector() { }
+FlatDetector::~FlatDetector() {}
 
 Detector* FlatDetector::clone() const
 {

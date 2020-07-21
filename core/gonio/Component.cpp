@@ -21,7 +21,7 @@
 
 namespace nsx {
 
-Component::Component(const std::string& name) : _name(name), _gonio() { }
+Component::Component(const std::string& name) : _name(name), _gonio() {}
 
 Component::Component(const YAML::Node& node)
 {
@@ -36,7 +36,7 @@ Component::Component(const Component& other)
     *this = other;
 }
 
-Component::~Component() { }
+Component::~Component() {}
 
 Component& Component::operator=(const Component& other)
 {

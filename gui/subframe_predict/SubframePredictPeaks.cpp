@@ -643,9 +643,9 @@ void SubframePredictPeaks::updateDatasetParameters(int idx)
     _figure_spin->setMinimum(0);
 }
 
-void SubframePredictPeaks::grabPredictorParameters() { }
+void SubframePredictPeaks::grabPredictorParameters() {}
 
-void SubframePredictPeaks::setPredictorParameters() const { }
+void SubframePredictPeaks::setPredictorParameters() const {}
 
 void SubframePredictPeaks::runPrediction()
 {
@@ -740,8 +740,8 @@ void SubframePredictPeaks::runIntegration()
 
         gSession->experimentAt(_exp_combo->currentIndex())
             ->experiment()
-            ->integratePredictedPeaks(_integrator->currentText().toStdString(), &_peak_collection,
-                                      lib, params);
+            ->integratePredictedPeaks(
+                _integrator->currentText().toStdString(), &_peak_collection, lib, params);
 
         refreshPeakTable();
 

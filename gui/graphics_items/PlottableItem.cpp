@@ -21,7 +21,7 @@ PlottableItem::PlottableItem(QGraphicsItem* parent, bool deletable, bool movable
 {
 }
 
-PlottableItem::~PlottableItem() { }
+PlottableItem::~PlottableItem() {}
 
 bool PlottableItem::isPlottable(SXPlot* plot) const
 {

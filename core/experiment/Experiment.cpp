@@ -121,7 +121,6 @@ DataList Experiment::getAllData()
     for (auto const& [key, val] : _data)
         numors.push_back(val);
     return numors;
-
 }
 
 void Experiment::setDiffractometer(const std::string& diffractometerName)
@@ -350,8 +349,8 @@ void Experiment::addUnitCell(const std::string& name, UnitCell* unit_cell)
     _unit_cells.insert(std::make_pair(name, std::move(ptr)));
 }
 
-void Experiment::addUnitCell(const std::string& name, double a, double b, double c,
-                             double alpha, double beta, double gamma)
+void Experiment::addUnitCell(
+    const std::string& name, double a, double b, double c, double alpha, double beta, double gamma)
 {
     auto cell = UnitCell(a, b, c, alpha * deg, beta * deg, gamma * deg);
     addUnitCell(name, &cell);
@@ -438,9 +437,9 @@ void Experiment::integratePeaks(const std::string& integrator_name, PeakCollecti
     }
 }
 
-void Experiment::integratePredictedPeaks(const std::string& integrator_name,
-                                         PeakCollection* peak_collection,
-                                         ShapeLibrary* shape_library, PredictionParameters& params)
+void Experiment::integratePredictedPeaks(
+    const std::string& integrator_name, PeakCollection* peak_collection,
+    ShapeLibrary* shape_library, PredictionParameters& params)
 {
     IPeakIntegrator* integrator = getIntegrator(integrator_name);
     integrator->setBkgBegin(params.bkg_begin);
@@ -571,8 +570,7 @@ void Experiment::acceptUnitCell(PeakCollection* peaks)
         peak->setUnitCell(getUnitCell(name));
 }
 
-void Experiment::buildShapeLibrary(
-    PeakCollection* peaks, ShapeLibParameters params)
+void Experiment::buildShapeLibrary(PeakCollection* peaks, ShapeLibParameters params)
 {
     std::vector<Peak3D*> peak_list = peaks->getPeakList();
     std::vector<Peak3D*> fit_peaks;
@@ -633,8 +631,8 @@ void Experiment::buildShapeLibrary(
 }
 
 void Experiment::predictPeaks(
-    const std::string& name, PeakCollection* peaks,
-    PredictionParameters params, PeakInterpolation interpol)
+    const std::string& name, PeakCollection* peaks, PredictionParameters params,
+    PeakInterpolation interpol)
 {
     int current_numor = 0;
     DataList numors = getAllData();
@@ -647,9 +645,8 @@ void Experiment::predictPeaks(
                   << std::endl;
 
         std::vector<nsx::Peak3D*> predicted = nsx::predictPeaks(
-            library, data, accepted_cell, params.detector_range_min,
-            params.detector_range_max, params.neighbour_max_radius, params.frame_range_max,
-            params.min_n_neighbors, interpol);
+            library, data, accepted_cell, params.detector_range_min, params.detector_range_max,
+            params.neighbour_max_radius, params.frame_range_max, params.min_n_neighbors, interpol);
 
         for (nsx::Peak3D* peak : predicted)
             predicted_peaks.push_back(peak);

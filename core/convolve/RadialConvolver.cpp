@@ -16,7 +16,7 @@
 
 namespace nsx {
 
-RadialConvolver::RadialConvolver() : AtomicConvolver({{"r_in", 5}, {"r_out", 10}}) { }
+RadialConvolver::RadialConvolver() : AtomicConvolver({{"r_in", 5}, {"r_out", 10}}) {}
 
 Convolver* RadialConvolver::clone() const
 {

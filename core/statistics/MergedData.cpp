@@ -78,8 +78,7 @@ bool MergedData::addPeak(Peak3D* peak)
             return false;
         }
         _merged_peak_set.emplace(std::move(new_peak));
-    }
-    catch(std::range_error& e) {
+    } catch (std::range_error& e) {
         ++_nNaN;
     }
     return true;

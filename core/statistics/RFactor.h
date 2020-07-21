@@ -32,7 +32,7 @@ class RFactor : public IMergedPeakStatistic {
         , _expectedRpim(0.0)
     {
     }
-    ~RFactor() { }
+    ~RFactor() {}
 
     void calculate(MergedData* data);
 

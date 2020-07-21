@@ -17,15 +17,10 @@
 
 namespace nsx {
 
-PeakCollection::PeakCollection()
-    : _name{"No Name"}
-    , _type{nsx::listtype::FOUND}
-{
-}
+PeakCollection::PeakCollection() : _name {"No Name"}, _type {nsx::listtype::FOUND} {}
 
 PeakCollection::PeakCollection(const std::string& name, nsx::listtype type)
-    : _name{std::string(name)}
-    , _type{type}
+    : _name {std::string(name)}, _type {type}
 {
 }
 
@@ -171,8 +166,9 @@ void PeakCollection::checkCollection() const
 {
     int n_nan = 0;
     int n_zero = 0;
-    double epsilon = 1.0e-8;
-    for (Peak3D* peak : getPeakList()) {
+    const double epsilon = 1.0e-8;
+    const std::vector<nsx::Peak3D*>& peak_list = getPeakList();
+    for (const auto* const peak : peak_list) {
         try {
             double I = peak->correctedIntensity().value();
             if (std::fabs(I) < epsilon)
@@ -181,8 +177,8 @@ void PeakCollection::checkCollection() const
             ++n_nan;
         }
     }
-    qDebug() << "Peak collection " << QString::fromStdString(_name)
-             << " contains " << numberOfPeaks() << " peaks:";
+    qDebug() << "Peak collection " << QString::fromStdString(_name) << " contains "
+             << numberOfPeaks() << " peaks:";
     qDebug() << n_nan << " peaks with intensity NaN";
     qDebug() << n_zero << " peaks with intensity zero";
 }

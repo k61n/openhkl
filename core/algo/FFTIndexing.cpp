@@ -57,8 +57,8 @@ std::vector<Eigen::RowVector3d> algo::pointsOnSphere(unsigned int n_vertices)
 }
 
 std::vector<Eigen::RowVector3d> algo::findOnSphere(
-    const std::vector<ReciprocalVector>& qvects, unsigned int n_vertices,
-    unsigned int nsolutions, int nSubdiv, double amax, double freq_tol)
+    const std::vector<ReciprocalVector>& qvects, unsigned int n_vertices, unsigned int nsolutions,
+    int nSubdiv, double amax, double freq_tol)
 {
     std::vector<double> projs(qvects.size());
 
