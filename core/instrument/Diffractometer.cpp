@@ -71,17 +71,6 @@ Diffractometer::Diffractometer(const YAML::Node& node)
 
 Diffractometer::~Diffractometer() {}
 
-Diffractometer& Diffractometer::operator=(const Diffractometer& other)
-{
-    if (this != &other) {
-        _name = other._name;
-        _detector.reset(other._detector ? other._detector->clone() : nullptr);
-        _sample = other._sample;
-        _source = other._source;
-    }
-    return *this;
-}
-
 void Diffractometer::setDetector(std::unique_ptr<Detector> detector)
 {
     _detector = std::move(detector);

@@ -27,13 +27,6 @@ Source* Source::create(const YAML::Node& node)
 
 Source::Source() : Component("source"), _monochromators(), _selectedMonochromator(0) {}
 
-Source::Source(const Source& other)
-    : Component(other)
-    , _monochromators(other._monochromators)
-    , _selectedMonochromator(other._selectedMonochromator)
-{
-}
-
 Source::Source(const std::string& name)
     : Component(name), _monochromators(), _selectedMonochromator(0)
 {
@@ -55,18 +48,6 @@ Source::Source(const YAML::Node& node) : Component(node), _selectedMonochromator
 Source* Source::clone() const
 {
     return new Source(*this);
-}
-
-Source::~Source() {}
-
-Source& Source::operator=(const Source& other)
-{
-    if (this != &other) {
-        Component::operator=(other);
-        _selectedMonochromator = other._selectedMonochromator;
-        _monochromators = other._monochromators;
-    }
-    return *this;
 }
 
 const std::vector<Monochromator>& Source::monochromators() const

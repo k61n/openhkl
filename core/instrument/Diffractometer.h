@@ -31,7 +31,6 @@ class Diffractometer {
     virtual ~Diffractometer();
 
     Diffractometer(const Diffractometer& other);
-    Diffractometer& operator=(const Diffractometer& other);
 
     Diffractometer* clone() const;
 

@@ -29,15 +29,6 @@ SymOp::SymOp(std::string generator)
 
 SymOp::SymOp(const affineTransformation& symmetryOperation) : _matrix(symmetryOperation) {}
 
-SymOp::SymOp(const SymOp& other) : _matrix(other._matrix) {}
-
-SymOp& SymOp::operator=(const SymOp& other)
-{
-    if (this != &other)
-        _matrix = other._matrix;
-    return *this;
-}
-
 bool SymOp::operator==(const SymOp& other) const
 {
     // If the rotation part of the symmetry operator of two
@@ -55,8 +46,6 @@ bool SymOp::operator==(const SymOp& other) const
         && (std::abs(std::remainder(deltat[1], 1.0)) <= 1.0e-9)
         && (std::abs(std::remainder(deltat[2], 1.0)) <= 1.0e-9));
 }
-
-SymOp::~SymOp() {}
 
 SymOp SymOp::operator*(const SymOp& other) const
 {

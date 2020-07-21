@@ -26,17 +26,16 @@ class Source : public Component {
  public:
     //! Static constructor of a monochromatic source from a yaml tree node
     static Source* create(const YAML::Node& node);
+
     Source();
-    Source(const Source& other);
 
     //! Constructs a default source with a given name
     Source(const std::string& name);
 
     //! Constructs a source from a property tree node
     Source(const YAML::Node& node);
+
     Source* clone() const;
-    ~Source();
-    Source& operator=(const Source& other);
 
     //! Returns the monochromators registered for this Source
     const std::vector<Monochromator>& monochromators() const;

@@ -51,7 +51,6 @@ class ConvexHull {
     ~ConvexHull();
 
     ConvexHull(const ConvexHull&);
-    ConvexHull& operator=(const ConvexHull&);
 
     //! Reset, eliminate all vertices, edges and faces
     void reset();

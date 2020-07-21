@@ -31,14 +31,11 @@ class Ellipsoid; // cross dependence requires forward declaration
 
 class AABB {
  public:
-    AABB();
-    AABB(const AABB& other);
+    AABB() = default;
     //! Constructs a AABB object from two Eigen vectors representing respectively
     //! its lower and upper bound
     AABB(const Eigen::Vector3d& lb, const Eigen::Vector3d& ub);
     virtual ~AABB() = default;
-
-    AABB& operator=(const AABB& other);
 
     //! Translates the AABB.
     void translate(const Eigen::Vector3d& t);

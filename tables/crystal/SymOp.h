@@ -32,9 +32,7 @@ class SymOp {
     SymOp(std::string generator);
     //! Construct symmetry operation from an Eigen affine transformatiion
     SymOp(const affineTransformation& symmetryOperation);
-    SymOp(const SymOp& other);
-    ~SymOp();
-    SymOp& operator=(const SymOp& other);
+
     bool operator==(const SymOp& other) const;
     //! Compose symmetry operations
     SymOp operator*(const SymOp& other) const;

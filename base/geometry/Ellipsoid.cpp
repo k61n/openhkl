@@ -20,25 +20,12 @@
 
 namespace nsx {
 
-Ellipsoid::Ellipsoid() {}
-
 Ellipsoid::Ellipsoid(const Ellipsoid& other)
 {
     _center = other._center;
     _metric = other._metric;
     _inverseMetric = other._inverseMetric;
     _aabb = other._aabb;
-}
-
-Ellipsoid& Ellipsoid::operator=(const Ellipsoid& other)
-{
-    if (this != &other) {
-        _center = other._center;
-        _metric = other._metric;
-        _inverseMetric = other._inverseMetric;
-        _aabb = other._aabb;
-    }
-    return *this;
 }
 
 Ellipsoid::Ellipsoid(const Eigen::Vector3d& center, const Eigen::Matrix3d& metric)

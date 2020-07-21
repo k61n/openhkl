@@ -25,20 +25,18 @@ namespace nsx {
 
 class Ellipsoid {
  public:
-    Ellipsoid();
+    Ellipsoid() = default;
     Ellipsoid(const Ellipsoid& other);
     //! Construct directly from metric tensor
     Ellipsoid(const Eigen::Vector3d& center, const Eigen::Matrix3d& metric);
     //! Constructor for a sphere
     Ellipsoid(const Eigen::Vector3d& center, double radius);
-    //! Construct a 3-dimensional ellipsoid from its center, radii, and principal
-    //! axes ()
+    //! Construct a 3-dimensional ellipsoid from its center, radii, and principal axes ()
     Ellipsoid(
         const Eigen::Vector3d& center, const Eigen::Vector3d& radii, const Eigen::Matrix3d& axes);
     virtual ~Ellipsoid() = default;
-    //! Assignment
-    Ellipsoid& operator=(const Ellipsoid& other);
-    //! Returns true if the ellipsoid intersects an aabb.
+
+    //! Returns true if the ellipsoid intersects an AABB.
     bool collide(const AABB& other) const;
     //! Returns true if the ellipsoid intersects an ellipsoid.
     bool collide(const Ellipsoid& other) const;
