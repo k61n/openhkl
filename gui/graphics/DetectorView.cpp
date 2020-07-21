@@ -26,7 +26,7 @@ DetectorView::DetectorView(QWidget* parent) : QGraphicsView(parent), _scene(new 
 {
     setRenderHints(
         QPainter::Antialiasing | QPainter::SmoothPixmapTransform
-        | QPainter::HighQualityAntialiasing);
+        | QPainter::Antialiasing);
     setScene(_scene);
     // Make sure that first views are rescaled, especially first created one
     connect(_scene, &DetectorScene::dataChanged, this, [&]() { fitInView(_scene->sceneRect()); });

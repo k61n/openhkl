@@ -17,6 +17,8 @@ debS_clang:
     - apt-get -y install clang
     - git clone https://jugit.fz-juelich.de/mlz/libQCR.git
     - git clone https://jugit.fz-juelich.de/mlz/xsection.git
+    - cmake --version
+    - clang --version
   stage: build
   script: &scr
     - pwd && ls
@@ -47,6 +49,8 @@ debS_gcc:
     - apt-get -y install g++
     - git clone https://jugit.fz-juelich.de/mlz/libQCR.git
     - git clone https://jugit.fz-juelich.de/mlz/xsection.git
+    - cmake --version
+    - g++ --version
   stage: build
   script: *scr
 

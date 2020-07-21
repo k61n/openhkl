@@ -519,9 +519,8 @@ void SubframeMergedPeaks::refreshGraphTable(int column)
     std::vector<double> shells(nshells);
     std::iota(shells.begin(), shells.end(), 0);
 
-    QVector<double> xvals = QVector<double>::fromStdVector(shells);
+    QVector<double> xvals{shells.begin(), shells.end()};
     QVector<double> yvals;
-
     for (int i = 0; i < nshells; ++i) {
         double val = _shell_model->item(i, column)->data(Qt::DisplayRole).value<double>();
         yvals.append(val);

@@ -45,7 +45,7 @@ void EllipseMaskItem::paint(
     else
         _pen.setStyle(Qt::SolidLine);
 
-    painter->setRenderHint(QPainter::HighQualityAntialiasing);
+    painter->setRenderHint(QPainter::Antialiasing);
     painter->setPen(_pen);
     painter->drawEllipse(boundingRect());
 
