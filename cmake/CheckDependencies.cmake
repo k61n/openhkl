@@ -98,7 +98,7 @@ find_package(Blosc REQUIRED)
 include_directories(SYSTEM ${Blosc_INCLUDES})
 
 find_package(YAMLCPP REQUIRED)
-include_directories(SYSTEM ${YAML_INCLUDES})
+include_directories(SYSTEM ${YAMLCPP_INCLUDES})
 
 ###### Find TIFF
 find_package(TIFF REQUIRED)
