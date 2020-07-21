@@ -145,15 +145,17 @@ void SubframeHome::loadFromFile()
     if (file_path.isEmpty())
         return;
 
-    bool success = gSession->loadExperimentFromFile(file_path);
+    try {
+        gSession->loadExperimentFromFile(file_path);
 
-    if (success) {
         _open_experiments_model.reset();
         _open_experiments_model = std::make_unique<ExperimentModel>();
         _open_experiments_view->setModel(_open_experiments_model.get());
         _updateLastLoadedList(
             QString::fromStdString(gSession->selectedExperiment()->experiment()->name()),
             file_path);
+    } catch (...) {
+        ; // TODO: handle exception
     }
 }
 
@@ -167,7 +169,7 @@ void SubframeHome::saveCurrent()
             QString::fromStdString(gSession->selectedExperiment()->experiment()->name()),
             file_path);
     } catch (...) {
-        ;
+        ; // TODO: handle exception
     }
 }
 
@@ -222,14 +224,15 @@ void SubframeHome::_updateLastLoadedWidget()
 
 void SubframeHome::_loadSelectedItem(QListWidgetItem* item)
 {
-    bool success = gSession->loadExperimentFromFile(item->data(100).toString());
-
-    if (success) {
+    try {
+        gSession->loadExperimentFromFile(item->data(100).toString());
         _open_experiments_model.reset();
         _open_experiments_model = std::make_unique<ExperimentModel>();
         _open_experiments_view->setModel(_open_experiments_model.get());
         _updateLastLoadedList(
             QString::fromStdString(gSession->selectedExperiment()->experiment()->name()),
             item->data(100).toString());
+    } catch (...) {
+        ; // TODO: handle exception
     }
 }

@@ -182,7 +182,7 @@ class Experiment {
     //! Save to file
     void saveToFile(const std::string& path) const;
     //! Load from file
-    bool loadFromFile(const std::string& path);
+    void loadFromFile(const std::string& path);
 
  public: // Prediction
     //! Build the shape library

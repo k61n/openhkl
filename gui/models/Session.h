@@ -45,7 +45,7 @@ class Session {
     void onPeaksChanged();
     void onUnitCellChanged();
 
-    bool loadExperimentFromFile(QString filename);
+    void loadExperimentFromFile(QString filename);
 
  private:
     QList<SessionExperiment*> _experiments;

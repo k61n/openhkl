@@ -26,7 +26,7 @@
 
 namespace nsx {
 
-bool ExperimentImporter::setFilePath(std::string path, Experiment* experiment)
+void ExperimentImporter::setFilePath(std::string path, Experiment* experiment)
 {
 
     try {
@@ -50,15 +50,11 @@ bool ExperimentImporter::setFilePath(std::string path, Experiment* experiment)
     } catch (H5::Exception& e) {
         std::string what = e.getDetailMsg();
         throw std::runtime_error(what);
-        return false;
     }
-
-    return true;
 }
 
-bool ExperimentImporter::loadData(Experiment* experiment)
+void ExperimentImporter::loadData(Experiment* experiment)
 {
-
     try {
         H5::H5File file(_file_name.c_str(), H5F_ACC_RDONLY);
         H5::Group data_collections(file.openGroup("/DataCollections"));
@@ -66,11 +62,10 @@ bool ExperimentImporter::loadData(Experiment* experiment)
         hsize_t object_num = data_collections.getNumObjs();
         for (int i = 0; i < object_num; ++i) {
 
-            std::shared_ptr<nsx::IDataReader> reader =
-                std::shared_ptr<nsx::IDataReader>(new nsx::ExperimentDataReader(
-                    _file_name, data_collections.getObjnameByIdx(i), experiment->diffractometer()));
-
-            nsx::sptrDataSet data = std::shared_ptr<nsx::DataSet>(new nsx::DataSet(reader));
+            auto reader = std::make_unique<nsx::ExperimentDataReader>(
+                    _file_name, data_collections.getObjnameByIdx(i),
+                    experiment->diffractometer());
+            nsx::sptrDataSet data{new nsx::DataSet{std::move(reader)}};
 
             std::string collection_name = data_collections.getObjnameByIdx(i);
 
@@ -80,13 +75,10 @@ bool ExperimentImporter::loadData(Experiment* experiment)
     } catch (H5::Exception& e) {
         std::string what = e.getDetailMsg();
         throw std::runtime_error(what);
-        return false;
     }
-
-    return true;
 }
 
-bool ExperimentImporter::loadPeaks(Experiment* experiment)
+void ExperimentImporter::loadPeaks(Experiment* experiment)
 {
     using Eigen_double = Eigen::Matrix<double, Eigen::Dynamic, Eigen::RowMajor>;
     using Eigen_bool = Eigen::Matrix<bool, Eigen::Dynamic, Eigen::RowMajor>;
@@ -288,13 +280,10 @@ bool ExperimentImporter::loadPeaks(Experiment* experiment)
     } catch (H5::Exception& e) {
         std::string what = e.getDetailMsg();
         throw std::runtime_error(what);
-        return false;
     }
-
-    return true;
 }
 
-bool ExperimentImporter::loadUnitCells(Experiment* experiment)
+void ExperimentImporter::loadUnitCells(Experiment* experiment)
 {
     try {
         H5::H5File file(_file_name.c_str(), H5F_ACC_RDONLY);
@@ -373,21 +362,11 @@ bool ExperimentImporter::loadUnitCells(Experiment* experiment)
     } catch (H5::Exception& e) {
         std::string what = e.getDetailMsg();
         throw std::runtime_error(what);
-        return false;
     }
-
-    return true;
 }
 
-bool ExperimentImporter::finishLoad()
+void ExperimentImporter::finishLoad()
 {
-    try {
-
-    } catch (...) {
-        return false;
-    }
-
-    return true;
 }
 
 } // namespace nsx

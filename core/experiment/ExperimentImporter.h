@@ -28,15 +28,15 @@ class ExperimentImporter {
 
  public:
     //! Create the file
-    bool setFilePath(std::string path, Experiment* experiment);
+    void setFilePath(std::string path, Experiment* experiment);
     //! Write the data into the current file
-    bool loadData(Experiment* experiment);
+    void loadData(Experiment* experiment);
     //! Write the peak data into the current file
-    bool loadPeaks(Experiment* experiment);
+    void loadPeaks(Experiment* experiment);
     //! write the unit cells into current file
-    bool loadUnitCells(Experiment* experiment);
+    void loadUnitCells(Experiment* experiment);
     //! Finish writing the current file
-    bool finishLoad();
+    void finishLoad();
 
  private:
     //! The current file

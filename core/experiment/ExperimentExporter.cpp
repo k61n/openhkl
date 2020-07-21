@@ -284,10 +284,11 @@ void ExperimentExporter::writePeaks(const std::map<std::string, PeakCollection*>
             }
 
             Eigen::Vector3d temp_col = peak->shape().center();
-            center.block(i, 0, 1, 3) = Eigen::RowVector3d(temp_col(0), temp_col(1), temp_col(2));
+            center.block(i, 0, 1, 3) = Eigen::RowVector3d{temp_col(0), temp_col(1), temp_col(2)};
             metric.block(i * 3, 0, 3, 3) = peak->shape().metric();
         }
 
+        // TODO: explain! check size 2 vs 3!
         hsize_t num_peaks[1] = {static_cast<unsigned long long>(nPeaks)};
         H5::DataSpace peak_space(1, num_peaks);
         hsize_t center_peaks_h[2] = {static_cast<unsigned long long>(nPeaks), 3};

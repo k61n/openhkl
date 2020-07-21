@@ -509,25 +509,14 @@ void Experiment::saveToFile(const std::string& path) const
     exporter.finishWrite();
 }
 
-bool Experiment::loadFromFile(const std::string& path)
+void Experiment::loadFromFile(const std::string& path)
 {
     nsx::ExperimentImporter importer;
 
-    bool success = importer.setFilePath(path, this);
-
-    if (success) {
-        success = importer.loadData(this);
-    }
-
-    if (success) {
-        success = importer.loadUnitCells(this);
-    }
-
-    if (success) {
-        success = importer.loadPeaks(this);
-    }
-
-    return success;
+    importer.setFilePath(path, this);
+    importer.loadData(this);
+    importer.loadUnitCells(this);
+    importer.loadPeaks(this);
 }
 
 void Experiment::setReferenceCell(

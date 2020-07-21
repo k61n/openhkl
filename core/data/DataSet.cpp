@@ -31,14 +31,14 @@
 namespace nsx {
 
 DataSet::DataSet(std::shared_ptr<IDataReader> reader)
-    : _isOpened(false)
-    , _filename(reader->filename())
-    , _nFrames(0)
-    , _nrows(0)
-    , _ncols(0)
-    , _fileSize(0)
-    , _background(0.0)
-    , _reader(reader)
+    : _isOpened{false}
+    , _filename{reader->filename()}
+    , _nFrames{0}
+    , _nrows{0}
+    , _ncols{0}
+    , _fileSize{0}
+    , _background{0.0}
+    , _reader{std::move(reader)}
 {
     if (!fileExists(_filename))
         throw std::runtime_error("IData, file: " + _filename + " does not exist");
@@ -312,9 +312,14 @@ Eigen::MatrixXd DataSet::transformedFrame(std::size_t idx)
     return new_frame;
 }
 
-std::shared_ptr<IDataReader> DataSet::reader() const
+const IDataReader* DataSet::reader() const
 {
-    return _reader;
+    return _reader.get();
+}
+
+IDataReader* DataSet::reader()
+{
+    return _reader.get();
 }
 
 const Detector& DataSet::detector() const

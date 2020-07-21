@@ -32,7 +32,7 @@ class DataSet {
  public:
     DataSet() = delete;
 
-    DataSet(const DataSet& other) = default;
+    DataSet(const DataSet& other) = delete;
 
     //! Construct using the given data reader (allowing multiple formats)
     DataSet(std::shared_ptr<IDataReader> reader);
@@ -97,7 +97,8 @@ class DataSet {
     ReciprocalVector computeQ(const DetectorEvent& ev) const;
 
     //! Returns the data reader used to set this dataset
-    std::shared_ptr<IDataReader> reader() const;
+    const IDataReader* reader() const;
+    IDataReader* reader();
 
     const Detector& detector() const;
 
