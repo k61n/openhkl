@@ -81,7 +81,7 @@ void CutLineItem::paint(QPainter* painter, const QStyleOptionGraphicsItem* optio
         _pen.setStyle(Qt::DashLine);
     else
         _pen.setStyle(Qt::SolidLine);
-    painter->setRenderHint(QPainter::HighQualityAntialiasing);
+    painter->setRenderHint(QPainter::Antialiasing);
     painter->setPen(_pen);
     qreal w = _to.x() - _from.x();
     qreal h = _to.y() - _from.y();

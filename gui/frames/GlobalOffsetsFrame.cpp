@@ -144,8 +144,8 @@ void GlobalOffsetsFrame::fit()
         const std::vector<double> costFunction = fit_results.cost_function;
         std::vector<double> iterationsval(costFunction.size());
         std::iota(iterationsval.begin(), iterationsval.end(), 0);
-        xValues = QVector<double>::fromStdVector(iterationsval);
-        yValues = QVector<double>::fromStdVector(costFunction);
+        xValues = {iterationsval.begin(), iterationsval.end()};
+        yValues = {costFunction.begin(), costFunction.end()};
     } else if (mode_ == offsetMode::SAMPLE) {
         const nsx::Sample& sample =
             gSession->selectedExperiment()->experiment()->diffractometer()->sample();
@@ -167,8 +167,8 @@ void GlobalOffsetsFrame::fit()
         const std::vector<double>& costFunction = fit_results.cost_function;
         std::vector<double> iterationsval(costFunction.size());
         std::iota(iterationsval.begin(), iterationsval.end(), 0);
-        xValues = QVector<double>::fromStdVector(iterationsval);
-        yValues = QVector<double>::fromStdVector(costFunction);
+        xValues = {iterationsval.begin(), iterationsval.end()};
+        yValues = {costFunction.begin(), costFunction.end()};
     } else {
         // gLogger->log("[ERROR] invalide offset mode. Should be DETECTOR or SAMPLE");
         return;

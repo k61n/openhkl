@@ -1,8 +1,4 @@
-cmake_minimum_required(VERSION 3.6 FATAL_ERROR) # 3.6+ required by IFW for VS2015+
-cmake_policy(VERSION 3.6)
-if(POLICY CMP0078)
-  cmake_policy(SET CMP0078 NEW)
-endif()
+cmake_minimum_required(VERSION 3.14 FATAL_ERROR)
 
 set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake)
 include(PreventInSourceBuilds)

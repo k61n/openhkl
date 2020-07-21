@@ -4,7 +4,7 @@ endif()
 
 if((CMAKE_CXX_COMPILER_ID STREQUAL "GNU") OR (CMAKE_CXX_COMPILER_ID MATCHES "Clang"))
     # suppress warning from swig::container_owner<T>::back_reference(PyObject*, PyObject*)
-    add_compile_options(-Wno-unused-parameter)
+    add_compile_options(-Wno-unused-parameter;-Wno-deprecated-declarations;-Wno-sometimes-uninitialized;-Wno-missing-field-initializers)
 endif()
 
 set(CMAKE_SWIG_OUTDIR ${CMAKE_CURRENT_BINARY_DIR})
@@ -24,10 +24,6 @@ foreach(it ${PYNSX_INCLUDE_DIRECTORIES})
 endforeach()
 set_property(SOURCE pynsx.i PROPERTY SWIG_FLAGS ${PYNSX_SWIG_INCLUDE_DIRECTORIES})
 
-if(${CMAKE_VERSION} VERSION_GREATER 3.8)
-    swig_add_library(pynsx TYPE MODULE LANGUAGE python SOURCES pynsx.i)
-else()
-    swig_add_module(pynsx python pynsx.i)
-endif()
+swig_add_library(pynsx TYPE MODULE LANGUAGE python SOURCES pynsx.i)
 
 swig_link_libraries(pynsx ${PYTHON_LIBRARIES} nsxcore ${XSection_LIBRARIES})

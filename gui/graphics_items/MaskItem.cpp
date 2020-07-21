@@ -45,7 +45,7 @@ void MaskItem::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, 
     else
         _pen.setStyle(Qt::SolidLine);
 
-    painter->setRenderHint(QPainter::HighQualityAntialiasing);
+    painter->setRenderHint(QPainter::Antialiasing);
     painter->setPen(_pen);
     painter->drawRect(boundingRect());
 

@@ -1,10 +1,10 @@
 stages:
   - build
 
-debS_clang:
+debT_clang:
   tags: &unix
   - Linux
-  image: debian:stable
+  image: debian:testing
   before_script: &debian_clang
     - apt-get -y update
     - apt-get -y upgrade
@@ -17,6 +17,8 @@ debS_clang:
     - apt-get -y install clang
     - git clone https://jugit.fz-juelich.de/mlz/libQCR.git
     - git clone https://jugit.fz-juelich.de/mlz/xsection.git
+    - cmake --version
+    - clang --version
   stage: build
   script: &scr
     - pwd && ls
@@ -32,9 +34,9 @@ debS_clang:
     - make -j8
     - ctest -j8 --output-on-failure
 
-debS_gcc:
+debT_gcc:
   tags: *unix
-  image: debian:stable
+  image: debian:testing
   before_script: &debian_gcc
     - apt-get -y update
     - apt-get -y upgrade
@@ -47,6 +49,8 @@ debS_gcc:
     - apt-get -y install g++
     - git clone https://jugit.fz-juelich.de/mlz/libQCR.git
     - git clone https://jugit.fz-juelich.de/mlz/xsection.git
+    - cmake --version
+    - g++ --version
   stage: build
   script: *scr
 
