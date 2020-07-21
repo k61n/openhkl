@@ -18,6 +18,7 @@
 #include <QApplication>
 #include <QDebug>
 #include <QPushButton>
+#include <QTimer>
 #include <QtGlobal>
 
 ProgressView::ProgressView(QWidget* parent) : QProgressDialog(parent)
@@ -35,16 +36,10 @@ ProgressView::ProgressView(QWidget* parent) : QProgressDialog(parent)
 
     connect(this, SIGNAL(canceled()), this, SLOT(abort()));
 
-    _timer = new QTimer();
+    _timer.reset(new QTimer());
 }
 
-ProgressView::~ProgressView()
-{
-    _timer->stop();
-
-    delete _timer;
-    _timer = nullptr;
-}
+ProgressView::~ProgressView() = default;
 
 void ProgressView::watch(nsx::sptrProgressHandler handler)
 {
@@ -53,7 +48,7 @@ void ProgressView::watch(nsx::sptrProgressHandler handler)
     _timer->stop();
     _timer->setInterval(200);
 
-    connect(_timer, SIGNAL(timeout()), this, SLOT(updateProgress()));
+    connect(_timer.get(), SIGNAL(timeout()), this, SLOT(updateProgress()));
     connect(this, SIGNAL(canceled()), this, SLOT(abort()));
 
     _timer->start();

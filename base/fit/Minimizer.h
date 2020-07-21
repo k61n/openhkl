@@ -80,8 +80,7 @@ class Minimizer {
     void cleanup();
     //! Private implementation details of the GSL wrapper
     MinimizerGSL* _gsl;
-    //! GSL wrapper function. Static method because it needs access to private
-    //! members
+    //! GSL wrapper function. Static method because it needs access to private members
     static int gsl_f_wrapper(const gsl_vector*, void*, gsl_vector*);
     //! GSL wrapper function. Static method because it needs access to private members
     static int gsl_df_wrapper(const gsl_vector*, void*, gsl_matrix*);

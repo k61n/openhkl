@@ -94,6 +94,6 @@ class CrystalScene : public QGraphicsScene {
     nsx::ConvexHull* _hull;
     QPixmap _pix;
     QGraphicsTextItem* _text;
-}
+};
 
 #endif // NSX_GUI_GRAPHICS_CRYSTALSCENE_H
