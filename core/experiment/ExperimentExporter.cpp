@@ -54,10 +54,9 @@ void ExperimentExporter::writeData(const std::map<std::string, DataSet*> data)
     H5::H5File file {_file_name.c_str(), H5F_ACC_RDWR};
     file.createGroup("/DataCollections");
 
-    for (auto it = data.begin(); it != data.end(); ++it) {
+    for (const auto& it: data) {
 
-        // Write the data
-        const DataSet* data_item = it->second;
+        const DataSet* data_item = it.second;
         std::string name = data_item->name();
 
         H5::Group data_collection {file.createGroup(std::string("/DataCollections/" + name))};
@@ -213,11 +212,11 @@ void ExperimentExporter::writePeaks(const std::map<std::string, PeakCollection*>
     H5::H5File file {_file_name.c_str(), H5F_ACC_RDWR};
     file.createGroup("/PeakCollections");
 
-    for (auto it = peakCollections.begin(); it != peakCollections.end(); ++it) {
+    for (const auto& it: peakCollections) {
 
         // Write the data
-        std::string collection_name = it->first;
-        PeakCollection* collection_item = it->second;
+        std::string collection_name = it.first;
+        PeakCollection* collection_item = it.second;
 
         file.createGroup(std::string("/PeakCollections/" + collection_name));
 
@@ -256,7 +255,7 @@ void ExperimentExporter::writePeaks(const std::map<std::string, PeakCollection*>
 
         for (int i = 0; i < nPeaks; ++i) {
 
-            nsx::Peak3D* peak = collection_item->getPeak(i);
+            const nsx::Peak3D* peak = collection_item->getPeak(i);
 
             // set the values
             peak_end[i] = peak->peakEnd();
@@ -434,11 +433,11 @@ void ExperimentExporter::writeUnitCells(const std::map<std::string, UnitCell*> u
     H5::DataSpace metaSpace(H5S_SCALAR);
     H5::StrType str80(H5::PredType::C_S1, 80);
 
-    for (auto it = unit_cells.begin(); it != unit_cells.end(); ++it) {
+    for (const auto& it: unit_cells) {
 
         // Write the data
-        const std::string unit_cell_name = it->first;
-        const UnitCell* unit_cell = it->second;
+        const std::string unit_cell_name = it.first;
+        const UnitCell* unit_cell = it.second;
 
         const uint z_val = unit_cell->z();
         const double tolerance = unit_cell->indexingTolerance();
