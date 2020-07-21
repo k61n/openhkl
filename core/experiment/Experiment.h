@@ -33,19 +33,19 @@ namespace nsx {
 //! Experiment class, a data type containing a diffractometer and data sets.
 
 struct DataQuality {
-    double Rmerge; //! R-factor
-    double expectedRmerge; //! expected R-factor
-    double Rmeas; //! multiplicity-weighted R-factor
-    double expectedRmeas; //! expected multiplicity-weighted R-factor
-    double Rpim; //! relative (precision-indicating) R-factor
-    double expectedRpim; //! expected relative R-factor
-    double CChalf; //! CC_{1/2} correlation coefficient
-    double CCstar; //! estimate of CC_{true} derived from CC_{1/2}
+    double Rmerge; //!< R-factor
+    double expectedRmerge; //!< expected R-factor
+    double Rmeas; //!< multiplicity-weighted R-factor
+    double expectedRmeas; //!< expected multiplicity-weighted R-factor
+    double Rpim; //!< relative (precision-indicating) R-factor
+    double expectedRpim; //!< expected relative R-factor
+    double CChalf; //!< CC_{1/2} correlation coefficient
+    double CCstar; //!< estimate of CC_{true} derived from CC_{1/2}
 };
 
 struct DataResolution : DataQuality {
-    double dmin; //! Lower limit of d for resolution shell
-    double dmax; //! Upper limit of d for resolution shell
+    double dmin; //!< Lower limit of d for resolution shell
+    double dmax; //!< Upper limit of d for resolution shell
 };
 
 class Experiment {
