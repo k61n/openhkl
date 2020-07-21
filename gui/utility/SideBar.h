@@ -2,7 +2,7 @@
 //
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
-//! @file      gui/panels/SideBar.h
+//! @file      gui/utility/SideBar.h
 //! @brief     Defines class SideBar
 //!
 //! @homepage  ###HOMEPAGE###

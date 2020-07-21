@@ -2,7 +2,7 @@
 //
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
-//! @file      gui/frames/RefinerDialog.cpp
+//! @file      gui/dialogs/RefinerDialog.cpp
 //! @brief     Implements classes RefinerDialog, RefinerFitWidget
 //!
 //! @homepage  ###HOMEPAGE###

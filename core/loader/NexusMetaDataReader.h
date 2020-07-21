@@ -2,7 +2,7 @@
 //
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
-//! @file      core/loader/HDF5MetaDataReader.h
+//! @file      core/loader/NexusMetaDataReader.h
 //! @brief     Defines class HDF5MetaDataReader
 //!
 //! @homepage  ###HOMEPAGE###

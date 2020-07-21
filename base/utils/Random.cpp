@@ -2,7 +2,7 @@
 //
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
-//! @file      base/utils/Random.h
+//! @file      base/utils/Random.cpp
 //! @brief     Generates random numbers
 //!
 //! @homepage  ###HOMEPAGE###

@@ -2,7 +2,7 @@
 //
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
-//! @file      gui/panels/SubframeExperiment.h
+//! @file      gui/subframe_experiment/SubframeExperiment.h
 //! @brief     Defines class SubframeExperiment
 //!
 //! @homepage  ###HOMEPAGE###

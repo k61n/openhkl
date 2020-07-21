@@ -2,7 +2,7 @@
 //
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
-//! @file      gui/graphics/CutSliceItem.cpp
+//! @file      gui/graphics_tools/CutSliceItem.cpp
 //! @brief     Implements class CutSliceItem
 //!
 //! @homepage  ###HOMEPAGE###

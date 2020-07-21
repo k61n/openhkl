@@ -2,7 +2,7 @@
 //
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
-//! @file      gui/panels/LoggerPanel.cpp
+//! @file      gui/subframe_experiment/LoggerPanel.cpp
 //! @brief     Implements class LoggerPanel
 //!
 //! @homepage  ###HOMEPAGE###

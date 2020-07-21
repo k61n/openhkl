@@ -2,7 +2,7 @@
 //
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
-//! @file      gui/panels/PeakProperties.cpp
+//! @file      gui/subframe_experiment/properties/PeakProperties.cpp
 //! @brief     Implements classes ListTab, PeakProperties
 //!
 //! @homepage  ###HOMEPAGE###

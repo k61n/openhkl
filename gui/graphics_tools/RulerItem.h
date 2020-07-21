@@ -2,7 +2,7 @@
 //
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
-//! @file      gui/graphics/RulerItem.h
+//! @file      gui/graphics_tools/RulerItem.h
 //! @brief     Defines class RulerItem
 //!
 //! @homepage  ###HOMEPAGE###

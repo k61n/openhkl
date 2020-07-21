@@ -2,7 +2,7 @@
 //
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
-//! @file      gui/models/ExperimentTableView.cpp
+//! @file      gui/views/ExperimentTableView.cpp
 //! @brief     Implements classes PeaksTableModel, PeaksTableView
 //!
 //! @homepage  ###HOMEPAGE###

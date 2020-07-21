@@ -2,7 +2,7 @@
 //
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
-//! @file      gui/properties/SampleShapeProperties.h
+//! @file      gui/subframe_experiment/properties/SampleShapeProperties.h
 //! @brief     Defines class SampleShapeProperties
 //!
 //! @homepage  ###HOMEPAGE###

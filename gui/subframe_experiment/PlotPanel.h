@@ -2,7 +2,7 @@
 //
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
-//! @file      gui/panels/PlotPanel.h
+//! @file      gui/subframe_experiment/PlotPanel.h
 //! @brief     Defines class PlotPanel
 //!
 //! @homepage  ###HOMEPAGE###

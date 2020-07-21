@@ -2,7 +2,7 @@
 //
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
-//! @file      gui/graphics/PeakItem.h
+//! @file      gui/graphics_items/PeakItemGraphic.h
 //! @brief     Defines class PeakItem
 //!
 //! @homepage  ###HOMEPAGE###

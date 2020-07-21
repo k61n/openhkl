@@ -2,7 +2,7 @@
 //
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
-//! @file      gui/frames/MergedPeakInformationFrame.h
+//! @file      gui/subframe_combine/SubframeMergedPeaks.h
 //! @brief     Defines class MergedPeakInformationFrame
 //!
 //! @homepage  ###HOMEPAGE###
