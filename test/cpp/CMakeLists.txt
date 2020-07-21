@@ -1,5 +1,4 @@
 project(NSXtests)
-cmake_minimum_required(VERSION 3.6)
 
 file(GLOB_RECURSE test_sources "*/*.cpp")
 

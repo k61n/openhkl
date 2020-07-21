@@ -89,7 +89,6 @@ if(NSX_PYTHON)
     endif()
 
     # swig
-    cmake_policy(SET CMP0086 NEW)
     find_package(SWIG REQUIRED)
     include(UseSWIG)
 endif(NSX_PYTHON)
