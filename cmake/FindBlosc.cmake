@@ -1,6 +1,6 @@
-find_path(BLOSC_INCLUDE_DIR blosc.h)
+find_path(Blosc_INCLUDE_DIR blosc.h)
 
-find_library(BLOSC_LIBRARY NAMES blosc)
+find_library(Blosc_LIBRARY NAMES blosc)
 
 include(FindPackageHandleStandardArgs)
-find_package_handle_standard_args(BLOSC DEFAULT_MSG BLOSC_LIBRARY BLOSC_INCLUDE_DIR)
+find_package_handle_standard_args(Blosc DEFAULT_MSG Blosc_LIBRARY Blosc_INCLUDE_DIR)

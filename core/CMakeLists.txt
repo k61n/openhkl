@@ -15,7 +15,7 @@ target_link_libraries(${lib}
     nsxtables
     PRIVATE
     ${HDF5_LIBRARIES}
-    ${BLOSC_LIBRARY}
+    ${Blosc_LIBRARY}
     ${Boost_LIBRARIES}
     ${FFTW_LIBRARIES}
     ${TIFF_LIBRARY}
