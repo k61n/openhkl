@@ -1,10 +1,10 @@
 stages:
   - build
 
-debS_clang:
+debT_clang:
   tags: &unix
   - Linux
-  image: debian:stable
+  image: debian:testing
   before_script: &debian_clang
     - apt-get -y update
     - apt-get -y upgrade
@@ -34,9 +34,9 @@ debS_clang:
     - make -j8
     - ctest -j8 --output-on-failure
 
-debS_gcc:
+debT_gcc:
   tags: *unix
-  image: debian:stable
+  image: debian:testing
   before_script: &debian_gcc
     - apt-get -y update
     - apt-get -y upgrade
