@@ -10,7 +10,7 @@ import sys
 import os.path
 import logging
 from pdb import set_trace
-sys.path.append("/home/zamaan/codes/nsxtool/current/build/swig")
+sys.path.append("/home/zamaan/codes/nsxtool/develop/build/swig")
 sys.path.append("/G/sw/nsx/build/swig") # Joachim
 import pynsx as nsx
 
@@ -101,6 +101,8 @@ class Experiment:
             data = self.read_raw_data(data_name, filenames)
         elif self._dataformat == 'nexus':
             data = self.read_nexus_data(data_name, filenames)
+        elif self._dataformat == 'hdf5':
+            data = self.read_hdf_data(data_name, filenames)
         else:
             raise RuntimeError("No valid data reader specified")
 
@@ -140,6 +142,12 @@ class Experiment:
         extension = 'nxs'
         return self._data_reader_factory.create(extension, filename, diffractometer)
 
+    def read_hdf_data(self, data_name, filename):
+        diffractometer = nsx.Diffractometer.create(self._detector)
+        extension = 'hdf'
+        return self._data_reader_factory.create(extension, filename, diffractometer)
+
+
     def find_peaks(self, dataset, start_frame, end_frame):
         '''
         Find the peaks
@@ -155,10 +163,10 @@ class Experiment:
         self.finder.setMaxSize(self._params.finder['max_size'])
         self.finder.setPeakScale(self._params.finder['peak_scale'])
         self.finder.setThreshold(self._params.finder['threshold'])
-        self.log(f"min_size = self._params.finder['min_size']")
-        self.log(f"max_size = self._params.finder['max_size']")
-        self.log(f"peak_scale = self._params.finder['peak_scale']")
-        self.log(f"threshold = self._params.finder['threshold']")
+        self.log(f"min_size = {self._params.finder['min_size']}")
+        self.log(f"max_size = {self._params.finder['max_size']}")
+        self.log(f"peak_scale = {self._params.finder['peak_scale']}")
+        self.log(f"threshold = {self._params.finder['threshold']}")
 
         self.finder.find(dataset)
 
@@ -188,7 +196,7 @@ class Experiment:
         '''
         Filter the peaks
         '''
-        self.log("Filtering peaks in {self._found_peaks}")
+        self.log(f'Filtering peaks in {self._found_peaks}')
         min_strength = filter_params['min_strength']
         max_strength = filter_params['max_strength']
         min_d_range = filter_params['min_d_range']
@@ -199,9 +207,10 @@ class Experiment:
         self.log(f"d_max = {filter_params['max_d_range']}")
 
         filter = self._expt.peakFilter()
-        # Filter by d-range and strength
+        # Filter by d-range, strength, and allowed by space group
         filter.setFilterStrength(True)
         filter.setFilterDRange(True)
+        # filter.setFilterExtinct(True)
         filter.setDRange(min_d_range, max_d_range)
         filter.setStrength(min_strength, max_strength)
 
@@ -225,7 +234,7 @@ class Experiment:
 
         self.length_tol = length_tol
         self.angle_tol = angle_tol
-        self.find_peaks([dataset], start_frame, end_frame)
+        self.find_peaks(dataset, start_frame, end_frame)
         npeaks = self.integrate_peaks()
         ncaught = self.filter_peaks(self._params.filter, self._found_collection, self._filtered_peaks)
         self.log(f'Autoindex: {ncaught}/{npeaks} peaks caught by filter')
@@ -264,6 +273,23 @@ class Experiment:
         except RuntimeError:
             return None
 
+    def set_space_group(self):
+        correct_space_group = self._params.cell['spacegroup'].replace('_', ' ')
+        self.log(f'Correct space group: {correct_space_group}')
+        sg = self._expt.getCompatibleSpaceGroups()
+        self.log('List of space groups compatible with Bravais lattice:')
+
+        found = False
+        for group in sg:
+            self.log(f'{group}')
+            if group == correct_space_group:
+                found = True
+        cell = self.get_accepted_cell()
+        if found:
+            cell.setSpaceGroup(nsx.SpaceGroup(correct_space_group))
+        else:
+            self.log(f'WARNING: {correct_space_group} not found in list of compatible space groups')
+
     def set_unit_cell(self, a, b, c, alpha, beta, gamma):
         self._expt.addUnitCell("accepted", a, b, c, alpha, beta, gamma)
 
@@ -297,7 +323,7 @@ class Experiment:
         self.log(f"bkg_begin = {self._params.shapelib['bkg_begin']}")
         self.log(f"bkg_end = {self._params.shapelib['bkg_end']}")
         # self._found_collection = self._expt.getPeakCollection(self._found_peaks)
-        # self._expt.acceptUnitCell(self._found_collection)
+        self._expt.acceptUnitCell(self._found_collection)
         self._filtered_collection = self._expt.getPeakCollection(self._filtered_peaks)
         self._expt.acceptUnitCell(self._filtered_collection)
         self._expt.buildShapeLibrary(self._filtered_collection, shapelib_params)
@@ -366,7 +392,7 @@ class Experiment:
 
         self._expt.computeQuality(d_min, d_max, n_shells,
                                  self._predicted_collection,
-                                 self._filtered_collection,
+                                 self._found_collection,
                                  friedel)
         self._data_resolution = self._expt.getResolution()
         self._data_quality = self._expt.getQuality()
@@ -412,11 +438,13 @@ class Experiment:
         self.log(f"Saving experiment to file {fname}")
         self._expt.saveToFile(fname)
 
-    def load(self, predicted=False):
+    def load(self, filename=None, predicted=False):
         '''
         Load the experiment from nsx file
         '''
-        if predicted:
+        if filename:
+            fname = filename
+        elif predicted:
             fname = self._predictedfile
         else:
             fname = self._nsxfile
@@ -482,3 +510,6 @@ class Experiment:
 
     def check_peak_collections(self):
         self._expt.checkPeakCollections()
+
+    def refine(self, peak_collection, cell, data, n_batches):
+        self._expt.refine(peak_collection, cell, data, n_batches)

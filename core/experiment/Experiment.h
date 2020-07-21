@@ -16,6 +16,7 @@
 #define CORE_EXPERIMENT_EXPERIMENT_H
 
 #include "core/algo/AutoIndexer.h"
+#include "core/algo/Refiner.h"
 #include "core/data/DataTypes.h"
 #include "core/experiment/PeakFinder.h"
 #include "core/instrument/Diffractometer.h"
@@ -144,6 +145,8 @@ class Experiment {
     bool acceptUnitCell(PeakCollection* peaks, double length_tol, double angle_tol);
     //! Assign unit cell to a peak collection
     void acceptUnitCell(PeakCollection* peaks);
+    //! Get a vector of compatible space groups for the accepted cell
+    std::vector<std::string> getCompatibleSpaceGroups();
 
  public: // Peak finder
     //! Get the address of the peak finder
@@ -188,6 +191,7 @@ class Experiment {
     void predictPeaks(
         const std::string& name, PeakCollection* peaks,
         PredictionParameters params, PeakInterpolation interpol);
+    void refine(PeakCollection* peaks, UnitCell* cell, DataSet* data, int n_batches);
 
  public: // Merging
     //! Get resolution shells for quality metrics

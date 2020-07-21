@@ -173,11 +173,13 @@ void PeakCollection::checkCollection() const
     int n_zero = 0;
     double epsilon = 1.0e-8;
     for (Peak3D* peak : getPeakList()) {
-        double I = peak->correctedIntensity().value();
-        if (std::isnan(I))
+        try {
+            double I = peak->correctedIntensity().value();
+            if (std::fabs(I) < epsilon)
+                ++n_zero;
+        } catch (std::range_error& e) {
             ++n_nan;
-        else if (std::fabs(I) < epsilon)
-            ++n_zero;
+        }
     }
     qDebug() << "Peak collection " << QString::fromStdString(_name) << " contains " << numberOfPeaks()
              << " peaks:";

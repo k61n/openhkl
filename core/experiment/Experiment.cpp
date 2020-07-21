@@ -556,6 +556,13 @@ bool Experiment::acceptUnitCell(PeakCollection* peaks, double length_tol, double
     return accepted;
 }
 
+std::vector<std::string> Experiment::getCompatibleSpaceGroups()
+{
+    std::string cell_name = "accepted";
+    UnitCell* cell = getUnitCell(cell_name);
+    return cell->compatibleSpaceGroups();
+}
+
 void Experiment::acceptUnitCell(PeakCollection* peaks)
 {
     std::string name = "accepted";
@@ -644,16 +651,14 @@ void Experiment::predictPeaks(
             params.detector_range_max, params.neighbour_max_radius, params.frame_range_max,
             params.min_n_neighbors, interpol);
 
-        std::cout << "predicted.size() = " << predicted.size() << std::endl;
         for (nsx::Peak3D* peak : predicted)
             predicted_peaks.push_back(peak);
 
-        std::cout << "Added " << predicted.size() << " predicted peaks.";
-    }
-    std::cout << "Completed  peak prediction. Added " << predicted_peaks.size() << " peaks";
+        std::cout << "Completed  peak prediction. Added " << predicted_peaks.size() << " peaks";
 
-    updatePeakCollection(name, listtype::PREDICTED, predicted_peaks);
-    predicted_peaks.clear();
+        updatePeakCollection(name, listtype::PREDICTED, predicted_peaks);
+        predicted_peaks.clear();
+    }
 }
 
 void Experiment::computeQuality(
@@ -706,6 +711,15 @@ UnitCell* Experiment::getReferenceCell()
 {
     std::string name = "reference";
     return getUnitCell(name);
+}
+
+void Experiment::refine(PeakCollection* peaks, UnitCell* cell, DataSet* data, int n_batches)
+{
+    unsigned int max_iter = 1000;
+    std::vector<Peak3D*> peak_list = peaks->getPeakList();
+    InstrumentStateList& states = data->instrumentStates();
+    Refiner refiner(states, cell, peak_list, n_batches);
+    refiner.refine(max_iter);
 }
 
 void Experiment::checkPeakCollections()

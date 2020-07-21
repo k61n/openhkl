@@ -6,6 +6,7 @@ workflow.py
 A test script for the entire NSXTool workflow
 '''
 
+import sys
 import argparse
 import os.path
 from nsx.experiment import Experiment, pynsxprint
@@ -36,6 +37,8 @@ parser.add_argument('--angle_tol', type=float, dest='angle_tol',
                     default=5.0, help='angle tolerance (alpha, beta, gamma) for autoindexing')
 parser.add_argument('--autoindex', action='store_true', dest='autoindex', default=False,
                     help='Autoindex the data')
+parser.add_argument('-v', '--verbose', action='store_true', dest='verbose', default=False,
+                    help='Print extra output')
 args = parser.parse_args()
 
 params = Parameters()
@@ -45,10 +48,9 @@ if os.path.isfile(args.paramfile):
 else:
     raise RuntimeError("No parameters file detected")
 
-expt = Experiment(args.name, args.detector, params)
+expt = Experiment(args.name, args.detector, params, verbose=args.verbose)
 expt.set_logger()
 logger = expt.get_logger()
-numors = []
 
 if not args.loadnsx:
     if not args.dataformat:
@@ -61,18 +63,18 @@ if not args.loadnsx:
     if args.dataformat == 'raw':
         name = 'all'
         expt.add_data_set(name, filenames)
-        numors.append(expt.get_data(data_name=name))
     elif args.dataformat == 'nexus':
         for filename in filenames:
             expt.add_data_set(filename, filename)
-            numors.append(expt.get_data(data_name=filename))
+    elif args.dataformat == 'hdf5':
+        expt.add_data_set(filenames[0], filenames[0])
     pynsxprint("...data loaded\n")
+    data = expt.get_data()
     if args.autoindex:
         # Find/add the unit cell
         pynsxprint("Autoindexing...")
         index = args.min_autoindex_frames
         count = 1
-        data = numors[0]
         while index < args.max_autoindex_frames:
             try:
                 cell_found = expt.autoindex_dataset(data, 0, index, args.length_tol, args.angle_tol)
@@ -101,8 +103,9 @@ if not args.loadnsx:
         gamma = params.cell['gamma']
         expt.set_unit_cell(a, b, c, alpha, beta, gamma)
 
+    expt.set_space_group()
     pynsxprint("Finding peaks...")
-    expt.find_peaks(numors, 0, -1)
+    expt.find_peaks(data, 0, -1)
     pynsxprint("Integrating...")
     npeaks = expt.integrate_peaks()
 
@@ -126,6 +129,8 @@ else:
     pynsxprint("Predicting peaks...")
     expt.predict_peaks(all_data, 'None')
     expt.save(predicted=True) # Exporter does not  save shape library to HDF5 (yet)
+
+# expt.refine(peaks, cell, data, 1)
 
 expt.check_peak_collections()
 pynsxprint("Merging peak collection...")
