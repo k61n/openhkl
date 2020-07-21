@@ -263,7 +263,7 @@ void UnitCell::printSelf(std::ostream& os) const
     }
 }
 
-std::string UnitCell::toString()
+std::string UnitCell::toString() const
 {
     std::ostringstream oss;
     auto c = character();

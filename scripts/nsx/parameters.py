@@ -19,7 +19,8 @@ class Parameters:
                     'c'                : 0.0,
                     'alpha'            : 0.0,
                     'beta'             : 0.0,
-                    'gamma'            : 0.0, }
+                    'gamma'            : 0.0,
+                    'spacegroup'       : 'P_1' }
 
     detector =    { 'wavelength'       : 2.67, 
                     'delta_omega'      : 0.32,
@@ -66,7 +67,7 @@ class Parameters:
                     'prediction_d_max' : 50.0,
                     'radius'           : 400.0,
                     'neighbours'       : 400.0,
-                    'frames'           : 100.0,
+                    'frames'           : 20.0,
                     'prediction_bkg_begin' : 3.0,
                     'prediction_bkg_end'   : 4.5,
                     'prediction_scale'     : 5.0,
