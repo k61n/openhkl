@@ -180,7 +180,7 @@ class Experiment {
 
  public: // Save load
     //! Save to file
-    bool saveToFile(const std::string& path) const;
+    void saveToFile(const std::string& path) const;
     //! Load from file
     bool loadFromFile(const std::string& path);
 

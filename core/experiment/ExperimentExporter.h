@@ -28,17 +28,17 @@ class ExperimentExporter {
 
  public:
     //! Create the file
-    bool createFile(std::string name, std::string diffractometer, std::string path);
+    void createFile(std::string name, std::string diffractometer, std::string path);
     //! Write the data into the current file
-    bool writeData(const std::map<std::string, DataSet*> data);
+    void writeData(const std::map<std::string, DataSet*> data);
     //! Write the peak data into the current file
-    bool writeInstrument(const Diffractometer* diffractometer);
+    void writeInstrument(const Diffractometer* diffractometer);
     //! Write the peak data into the current file
-    bool writePeaks(const std::map<std::string, PeakCollection*> peakCollections);
+    void writePeaks(const std::map<std::string, PeakCollection*> peakCollections);
     //! write the unit cells into current file
-    bool writeUnitCells(const std::map<std::string, UnitCell*> unit_cells);
+    void writeUnitCells(const std::map<std::string, UnitCell*> unit_cells);
     //! Finish writing the current file
-    bool finishWrite();
+    void finishWrite();
 
  private:
     //! The current file

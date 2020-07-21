@@ -82,7 +82,7 @@ class SessionExperiment {
 
  public:
     //! The save method
-    bool saveToFile(QString path);
+    void saveToFile(QString path);
     //! Save as
     void saveAs(QString /*path*/) const { return; };
 

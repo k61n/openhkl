@@ -257,14 +257,9 @@ void SessionExperiment::onPeaksChanged()
     gGui->onPeaksChanged();
 }
 
-bool SessionExperiment::saveToFile(QString path)
+void SessionExperiment::saveToFile(QString path)
 {
-    bool success = experiment()->saveToFile(path.toStdString());
-
-    if (success) {
-        _save_path = path.toStdString();
-        _saved = true;
-    }
-
-    return success;
+    experiment()->saveToFile(path.toStdString());
+    _save_path = path.toStdString();
+    _saved = true;
 }

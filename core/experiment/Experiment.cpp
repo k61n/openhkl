@@ -471,45 +471,42 @@ void Experiment::integrateFoundPeaks(const std::string& integrator_name)
     }
 }
 
-bool Experiment::saveToFile(const std::string& path) const
+void Experiment::saveToFile(const std::string& path) const
 {
     nsx::ExperimentExporter exporter;
 
-    bool success = exporter.createFile(name(), _diffractometer->name(), path);
+    exporter.createFile(name(), _diffractometer->name(), path);
 
-    if (success) {
+    {
         std::map<std::string, DataSet*> data_sets;
         for (std::map<std::string, sptrDataSet>::const_iterator it = _data.begin();
              it != _data.end(); ++it) {
             data_sets.insert(std::make_pair(it->first, it->second.get()));
         }
-        success = exporter.writeData(data_sets);
+        exporter.writeData(data_sets);
     }
 
-    if (success) {
+    {
         std::map<std::string, PeakCollection*> peak_collections;
         for (std::map<std::string, std::unique_ptr<PeakCollection>>::const_iterator it =
                  _peak_collections.begin();
              it != _peak_collections.end(); ++it) {
             peak_collections.insert(std::make_pair(it->first, it->second.get()));
         }
-        success = exporter.writePeaks(peak_collections);
+        exporter.writePeaks(peak_collections);
     }
 
-    if (success) {
+    {
         std::map<std::string, UnitCell*> unit_cells;
         for (std::map<std::string, std::unique_ptr<UnitCell>>::const_iterator it =
                  _unit_cells.begin();
              it != _unit_cells.end(); ++it) {
             unit_cells.insert(std::make_pair(it->first, it->second.get()));
         }
-        success = exporter.writeUnitCells(unit_cells);
+        exporter.writeUnitCells(unit_cells);
     }
 
-    if (success)
-        success = exporter.finishWrite();
-
-    return success;
+    exporter.finishWrite();
 }
 
 bool Experiment::loadFromFile(const std::string& path)
