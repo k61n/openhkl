@@ -14,9 +14,9 @@
 
 #include "DataQuality.h"
 #include "core/shape/PeakCollection.h"
-#include "core/statistics/RFactor.h"
 #include "core/statistics/CC.h"
 #include "core/statistics/MergedData.h"
+#include "core/statistics/RFactor.h"
 #include "core/statistics/ResolutionShell.h"
 #include "tables/crystal/SpaceGroup.h"
 
@@ -46,9 +46,9 @@ void ShellQuality::computeQuality(MergedData& merged_peaks, double d_min, double
     dmin = d_max;
 }
 
-void DataResolution::computeQuality(double d_min, double d_max, int n_shells,
-                                    PeakCollection* predicted, PeakCollection* found,
-                                    SpaceGroup spacegroup, bool friedel)
+void DataResolution::computeQuality(
+    double d_min, double d_max, int n_shells, PeakCollection* predicted, PeakCollection* found,
+    SpaceGroup spacegroup, bool friedel)
 {
     std::vector<ShellQuality> data_resolution;
     ResolutionShell resolution_shell = nsx::ResolutionShell(d_min, d_max, n_shells);

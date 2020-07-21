@@ -192,8 +192,8 @@ class Experiment {
     ShapeLibrary* getShapeLibrary() { return &_shape_library; };
     //! Predict peaks
     void predictPeaks(
-        const std::string& name, PeakCollection* peaks,
-        PredictionParameters params, PeakInterpolation interpol);
+        const std::string& name, PeakCollection* peaks, PredictionParameters params,
+        PeakInterpolation interpol);
     void refine(PeakCollection* peaks, UnitCell* cell, DataSet* data, int n_batches);
 
  public: // Merging

@@ -54,7 +54,7 @@ void ExperimentExporter::writeData(const std::map<std::string, DataSet*> data)
     H5::H5File file {_file_name.c_str(), H5F_ACC_RDWR};
     file.createGroup("/DataCollections");
 
-    for (const auto& it: data) {
+    for (const auto& it : data) {
 
         const DataSet* data_item = it.second;
         std::string name = data_item->name();
@@ -212,7 +212,7 @@ void ExperimentExporter::writePeaks(const std::map<std::string, PeakCollection*>
     H5::H5File file {_file_name.c_str(), H5F_ACC_RDWR};
     file.createGroup("/PeakCollections");
 
-    for (const auto& it: peakCollections) {
+    for (const auto& it : peakCollections) {
 
         // Write the data
         std::string collection_name = it.first;
@@ -284,7 +284,7 @@ void ExperimentExporter::writePeaks(const std::map<std::string, PeakCollection*>
             }
 
             Eigen::Vector3d temp_col = peak->shape().center();
-            center.block(i, 0, 1, 3) = Eigen::RowVector3d{temp_col(0), temp_col(1), temp_col(2)};
+            center.block(i, 0, 1, 3) = Eigen::RowVector3d {temp_col(0), temp_col(1), temp_col(2)};
             metric.block(i * 3, 0, 3, 3) = peak->shape().metric();
         }
 
@@ -434,7 +434,7 @@ void ExperimentExporter::writeUnitCells(const std::map<std::string, UnitCell*> u
     H5::DataSpace metaSpace(H5S_SCALAR);
     H5::StrType str80(H5::PredType::C_S1, 80);
 
-    for (const auto& it: unit_cells) {
+    for (const auto& it : unit_cells) {
 
         // Write the data
         const std::string unit_cell_name = it.first;

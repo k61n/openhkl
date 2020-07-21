@@ -49,8 +49,9 @@ struct ShellQuality : DataQuality {
 struct DataResolution {
     std::vector<ShellQuality> resolution;
 
-    void computeQuality(double d_min, double d_max, int n_shells, PeakCollection* predicted,
-                        PeakCollection* found, SpaceGroup spacegroup, bool friedel);
+    void computeQuality(
+        double d_min, double d_max, int n_shells, PeakCollection* predicted, PeakCollection* found,
+        SpaceGroup spacegroup, bool friedel);
 };
 
 } // namespace nsx
