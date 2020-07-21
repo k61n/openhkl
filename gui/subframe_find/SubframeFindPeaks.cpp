@@ -481,9 +481,8 @@ void PeakFinderFrame::refreshAll()
 void PeakFinderFrame::setParametersUp()
 {
     QList<QString> exp_list = gSession->experimentNames();
-    if (exp_list.isEmpty()) {
+    if (exp_list.isEmpty())
         return;
-    }
 
     setExperimentsUp();
     refreshPeakTable();
@@ -508,9 +507,8 @@ void PeakFinderFrame::setExperimentsUp()
     QList<QString> exp_list = gSession->experimentNames();
 
     if (!exp_list.isEmpty()) {
-        for (QString exp : exp_list) {
+        for (QString exp : exp_list)
             _exp_combo->addItem(exp);
-        }
         grabFinderParameters();
         grabIntegrationParameters();
         updateDatasetList();

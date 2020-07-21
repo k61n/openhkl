@@ -73,9 +73,8 @@ nsx::Peak3D* PeakCollection::getPeak(int index)
 std::vector<nsx::Peak3D*> PeakCollection::getPeakList() const
 {
     std::vector<nsx::Peak3D*> peak_list;
-    for (int i = 0; i < _peaks.size(); i++) {
+    for (int i = 0; i < _peaks.size(); i++)
         peak_list.push_back(_peaks[i].get());
-    }
     return peak_list;
 }
 
@@ -113,9 +112,8 @@ int PeakCollection::numberCaughtByFilter() const
 {
     int caught = 0;
     for (int i = 0; i < _peaks.size(); ++i) {
-        if (_peaks.at(i)->caughtByFilter()) {
+        if (_peaks.at(i)->caughtByFilter())
             caught++;
-        }
     }
     return caught;
 }

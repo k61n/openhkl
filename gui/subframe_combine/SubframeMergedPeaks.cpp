@@ -256,9 +256,8 @@ void SubframeMergedPeaks::refreshExperimentList()
     QList<QString> exp_list = gSession->experimentNames();
 
     if (!exp_list.isEmpty()) {
-        for (QString exp : exp_list) {
+        for (QString exp : exp_list)
             _exp_drop->addItem(exp);
-        }
         _exp_drop->blockSignals(false);
 
         refreshPeakLists();

@@ -40,11 +40,11 @@ void ExperimentImporter::setFilePath(std::string path, Experiment* experiment)
             std::string value;
             attr.read(attr_type, value);
 
-            if (attr.getName() == "name") {
+            if (attr.getName() == "name")
                 experiment->setName(value);
-            } else if (attr.getName() == "diffractometer") {
+            else if (attr.getName() == "diffractometer")
                 experiment->setDiffractometer(value);
-            }
+
         }
 
     } catch (H5::Exception& e) {
@@ -101,12 +101,10 @@ void ExperimentImporter::loadPeaks(Experiment* experiment)
             for (int j = 0; j < n_meta; ++j) {
                 H5::Attribute attr = peak_collection_meta.openAttribute(j);
                 H5::DataType typ = attr.getDataType();
-                if (attr.getName() == "num_peaks") {
+                if (attr.getName() == "num_peaks")
                     attr.read(typ, &n_peaks);
-                }
-                if (attr.getName() == "Type") {
+                if (attr.getName() == "Type")
                     attr.read(typ, &type);
-                }
             }
             std::cout << "Found " << n_peaks << " to import" << std::endl;
             std::cout << "Preparing the dataspace" << std::endl;
@@ -199,9 +197,8 @@ void ExperimentImporter::loadPeaks(Experiment* experiment)
 
                 for (int ii = 0; ii < data_dims_out[0]; ++ii) {
                     std::string text;
-                    for (int jj = 0; jj < strlen(char_data_names[ii]); ++jj) {
+                    for (int jj = 0; jj < strlen(char_data_names[ii]); ++jj)
                         text.append(std::string(1, char_data_names[ii][jj]));
-                    }
                     data_names.push_back(text);
                 }
 
@@ -223,9 +220,8 @@ void ExperimentImporter::loadPeaks(Experiment* experiment)
 
                 for (int ii = 0; ii < uc_dims_out[0]; ++ii) {
                     std::string text;
-                    for (int jj = 0; jj < strlen(char_unit_cells[ii]); ++jj) {
+                    for (int jj = 0; jj < strlen(char_unit_cells[ii]); ++jj)
                         text.append(std::string(1, char_unit_cells[ii][jj]));
-                    }
                     unit_cells.push_back(text);
                 }
 
@@ -265,11 +261,10 @@ void ExperimentImporter::loadPeaks(Experiment* experiment)
             std::cout << "Finished creating the vector of peaks" << std::endl;
 
             listtype collection_type;
-            if (type == 0) {
+            if (type == 0)
                 collection_type = listtype::FOUND;
-            } else {
+            else
                 collection_type = listtype::PREDICTED;
-            }
 
             experiment->updatePeakCollection(collection_name, collection_type, peaks);
 

@@ -93,9 +93,8 @@ QStringList SessionExperiment::getPeakListNames()
     std::vector<std::string> names = _experiment->getCollectionNames();
     QStringList q_names;
 
-    for (std::string name : names) {
+    for (std::string name : names)
         q_names << QString::fromStdString(name);
-    }
     return q_names;
 }
 
@@ -104,9 +103,8 @@ QStringList SessionExperiment::getFoundNames()
     std::vector<std::string> names = _experiment->getFoundCollectionNames();
     QStringList q_names;
 
-    for (std::string name : names) {
+    for (std::string name : names)
         q_names << QString::fromStdString(name);
-    }
     return q_names;
 }
 
@@ -115,9 +113,8 @@ QStringList SessionExperiment::getPredictedNames()
     std::vector<std::string> names = _experiment->getPredictedCollectionNames();
     QStringList q_names;
 
-    for (std::string name : names) {
+    for (std::string name : names)
         q_names << QString::fromStdString(name);
-    }
     return q_names;
 }
 
@@ -237,9 +234,8 @@ QStringList SessionExperiment::getUnitCellNames()
     std::vector<std::string> names = _experiment->getUnitCellNames();
     QStringList q_names;
 
-    for (std::string name : names) {
+    for (std::string name : names)
         q_names << QString::fromStdString(name);
-    }
     return q_names;
 }
 

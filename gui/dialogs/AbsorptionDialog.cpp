@@ -150,9 +150,8 @@ void AbsorptionDialog::readInfoFile(const std::string& filename)
         std::string _instrumentName, date;
         file >> _instrumentName >> date;
         std::string diffType = _experiment->diffractometer()->name();
-        if (_instrumentName.compare(diffType) != 0) {
+        if (_instrumentName.compare(diffType) != 0)
             return;
-        }
 
         std::string line;
         // Skip one line (comment)
@@ -164,9 +163,8 @@ void AbsorptionDialog::readInfoFile(const std::string& filename)
         const nsx::Sample& sample = _experiment->diffractometer()->sample();
         const nsx::Gonio& sample_gonio = sample.gonio();
         std::size_t numberAngles = std::count(line.begin(), line.end(), ':');
-        if (numberAngles == sample_gonio.nAxes()) {
+        if (numberAngles == sample_gonio.nAxes())
             return;
-        }
 
         // Remove all occurences of ':' before reading
         line.erase(std::remove(line.begin(), line.end(), ':'), line.end());
@@ -176,9 +174,8 @@ void AbsorptionDialog::readInfoFile(const std::string& filename)
             double value;
             is >> name >> value;
             const auto& axis = sample_gonio.axis(i);
-            if (axis.name().compare(name) != 0) {
+            if (axis.name().compare(name) != 0)
                 return;
-            }
         }
 
         // Get base directory where images are stored

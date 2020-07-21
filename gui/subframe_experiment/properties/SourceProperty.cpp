@@ -51,9 +51,9 @@ SourceProperty::SourceProperty() : QWidget()
 
     QStringList list;
     int exp = gSession->selectedExperimentNum();
-    if (exp < 0) {
+    if (exp < 0)
         _monochromators->addItems(list);
-    } else {
+    else {
         const std::vector<nsx::Monochromator>& monos = gSession->selectedExperiment()
                                                            ->experiment()
                                                            ->diffractometer()
@@ -67,11 +67,10 @@ SourceProperty::SourceProperty() : QWidget()
 
 void SourceProperty::refreshInput()
 {
-    if (gSession->selectedExperimentNum() >= 0) {
+    if (gSession->selectedExperimentNum() >= 0)
         onMonoChanged(0);
-    } else {
+    else
         clear();
-    }
 }
 
 void SourceProperty::clear()

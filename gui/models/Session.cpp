@@ -81,20 +81,17 @@ QList<QString> Session::experimentNames() const
 {
     QList<QString> names;
 
-    for (int i = 0; i < _experiments.size(); i++) {
+    for (int i = 0; i < _experiments.size(); i++)
         names.append(QString::fromStdString(_experiments.at(i)->experiment()->name()));
-    }
     return names;
 }
 
 void Session::removeExperiment()
 {
-    if (_experiments.size() == 0) {
+    if (_experiments.size() == 0)
         return;
-    }
-    if (selectedExperiment_ == -1) {
+    if (selectedExperiment_ == -1)
         _experiments.removeFirst();
-    }
 
     selectedExperiment_ = _experiments.size() > 0 ? 0 : -1;
     onExperimentChanged();
@@ -148,13 +145,11 @@ void Session::loadData()
 
 void Session::removeData()
 {
-    if (selectedExperiment_ == -1) {
+    if (selectedExperiment_ == -1)
         return;
-    }
 
-    if (selectedData == -1) {
+    if (selectedData == -1)
         return;
-    }
     std::string numorname = selectedExperiment()->getData(selectedData)->filename();
     selectedExperiment()->experiment()->removeData(numorname);
     onDataChanged();

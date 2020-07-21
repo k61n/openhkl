@@ -110,11 +110,10 @@ QVariant PeakItem::peakData(const QModelIndex& index, int role, PeakDisplayModes
         case Qt::BackgroundRole: {
             switch (mode) {
                 case PeakDisplayModes::FILTER: {
-                    if (_peak->caughtByFilter()) {
+                    if (_peak->caughtByFilter())
                         return QBrush(Qt::darkGreen);
-                    } else {
+                    else
                         return QBrush(Qt::darkRed);
-                    }
                 }
                 case PeakDisplayModes::VALID: {
                     return QBrush();

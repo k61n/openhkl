@@ -720,9 +720,8 @@ void RefinerDialog::_setPeakList()
 {
     _select_peaks_list->blockSignals(true);
     QStringList peak_list = gSession->selectedExperiment()->getPeakListNames();
-    if (!peak_list.isEmpty()) {
+    if (!peak_list.isEmpty())
         _select_peaks_list->addItems(peak_list);
-    }
     _select_peaks_list->blockSignals(false);
 }
 
@@ -746,19 +745,17 @@ void RefinerDialog::_setDataDrop()
     _select_data->clear();
     QList<QListWidgetItem*> selected_data = _select_data_list->selectedItems();
     if (!selected_data.isEmpty()) {
-        for (QListWidgetItem* data_item : selected_data) {
+        for (QListWidgetItem* data_item : selected_data)
             _select_data->addItem(data_item->text());
-        }
     } else {
         return;
     }
 
     int index = _select_data->findText(last_text);
-    if (index == -1) {
+    if (index == -1)
         _select_data->setCurrentIndex(0);
-    } else {
+    else
         _select_data->setCurrentIndex(index);
-    }
     _select_data->blockSignals(false);
 
     _selectedDataChanged();
@@ -769,11 +766,10 @@ void RefinerDialog::_selectedDataChanged()
     nsx::sptrDataSet data_set = gSession->selectedExperiment()->experiment()->getData(
         _select_data->currentText().toStdString());
     _current_index_spin->setMaximum(data_set->nFrames() - 1);
-    if (_current_index_spin->value() > data_set->nFrames() - 1) {
+    if (_current_index_spin->value() > data_set->nFrames() - 1)
         _current_index_spin->setValue(data_set->nFrames() - 1);
-    } else {
+    else
         _current_index_spin->setValue(_current_index_spin->value());
-    }
 
     _setInitialValues(_current_index_spin->value());
     _setRefinedValues(_current_index_spin->value());
@@ -964,9 +960,8 @@ void RefinerDialog::_setRefinedValues(int frame)
     nsx::sptrDataSet data_set =
         gSession->selectedExperiment()->experiment()->getData(temp_text.toStdString());
 
-    if (refiners.find(data_set) == refiners.end()) {
+    if (refiners.find(data_set) == refiners.end())
         return;
-    }
 
     _sample_orientation_00_ref->setValue(_sample_orientations_ref[data_set][frame](0, 0));
     _sample_orientation_01_ref->setValue(_sample_orientations_ref[data_set][frame](0, 1));
@@ -1138,9 +1133,8 @@ void RefinerDialog::_plot()
     QList<QCheckBox*> checkboxes = _sample_layout->parentWidget()->findChildren<QCheckBox*>();
 
     foreach (QCheckBox* checkbox, checkboxes) {
-        if (checkbox->isChecked()) {
+        if (checkbox->isChecked())
             selected_text.push_back(checkbox->text().toStdString());
-        }
     }
 
     _visualise_plot->clearGraphs();

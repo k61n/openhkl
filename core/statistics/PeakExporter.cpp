@@ -77,9 +77,8 @@ void PeakExporter::saveToShelXUnmerged(std::string filename, nsx::MergedData* me
 {
     std::vector<Peak3D*> peak_vector;
     for (const nsx::MergedPeak& peak : merged_data->mergedPeakSet()) {
-        for (auto unmerged_peak : peak.peaks()) {
+        for (auto unmerged_peak : peak.peaks())
             peak_vector.push_back(unmerged_peak);
-        }
     }
 
     std::fstream file(filename, std::ios::out);
@@ -132,9 +131,8 @@ void PeakExporter::saveToFullProfUnmerged(std::string filename, nsx::MergedData*
 
     std::vector<Peak3D*> peak_vector;
     for (const nsx::MergedPeak& peak : merged_data->mergedPeakSet()) {
-        for (auto unmerged_peak : peak.peaks()) {
+        for (auto unmerged_peak : peak.peaks())
             peak_vector.push_back(unmerged_peak);
-        }
     }
 
     std::shared_ptr<nsx::DataSet> data = peak_vector.at(0)->dataSet();
@@ -174,9 +172,8 @@ void PeakExporter::saveToFullProfMerged(std::string filename, nsx::MergedData* m
 
     std::vector<Peak3D*> peak_vector;
     for (const nsx::MergedPeak& peak : merged_data->mergedPeakSet()) {
-        for (auto unmerged_peak : peak.peaks()) {
+        for (auto unmerged_peak : peak.peaks())
             peak_vector.push_back(unmerged_peak);
-        }
     }
     std::shared_ptr<nsx::DataSet> data = peak_vector[0]->dataSet();
     double wavelength = data->reader()->metadata().key<double>("wavelength");
@@ -205,9 +202,8 @@ void PeakExporter::saveToSCAUnmerged(std::string filename, nsx::MergedData* merg
 
     std::vector<Peak3D*> peak_vector;
     for (const nsx::MergedPeak& peak : merged_data->mergedPeakSet()) {
-        for (auto unmerged_peak : peak.peaks()) {
+        for (auto unmerged_peak : peak.peaks())
             peak_vector.push_back(unmerged_peak);
-        }
     }
     UnitCell* unitCell = peak_vector[0]->unitCell();
     UnitCellCharacter character = unitCell->character();
@@ -266,9 +262,8 @@ void PeakExporter::saveToSCAMerged(std::string filename, nsx::MergedData* merged
 
     std::vector<Peak3D*> peak_vector;
     for (const nsx::MergedPeak& peak : merged_data->mergedPeakSet()) {
-        for (auto unmerged_peak : peak.peaks()) {
+        for (auto unmerged_peak : peak.peaks())
             peak_vector.push_back(unmerged_peak);
-        }
     }
     UnitCell* unitCell = peak_vector.at(0)->unitCell();
     UnitCellCharacter character = unitCell->character();

@@ -131,9 +131,8 @@ sptrDataSet Experiment::getData(const std::string& name)
 sptrDataSet Experiment::dataShortName(const std::string& name)
 {
     std::map<std::string, sptrDataSet> temp;
-    for (std::map<std::string, sptrDataSet>::iterator it = _data.begin(); it != _data.end(); ++it) {
+    for (std::map<std::string, sptrDataSet>::iterator it = _data.begin(); it != _data.end(); ++it)
         temp.insert(std::make_pair(it->second->name(), it->second));
-    }
 
     auto it = temp.find(name);
     if (it == temp.end()) {
@@ -422,9 +421,8 @@ void Experiment::integratePeaks(const std::string& integrator_name, PeakCollecti
     std::vector<Peak3D*> peaks = peak_collection->getFilteredPeakList();
 
     std::map<std::string, sptrDataSet>::iterator it;
-    for (it = _data.begin(); it != _data.end(); ++it) {
+    for (it = _data.begin(); it != _data.end(); ++it)
         integrator->integrate(peaks, peak_collection->shapeLibrary(), it->second);
-    }
 }
 
 void Experiment::integratePredictedPeaks(
@@ -447,18 +445,16 @@ void Experiment::integratePredictedPeaks(
     std::vector<Peak3D*> peaks = peak_collection->getFilteredPeakList();
 
     std::map<std::string, sptrDataSet>::iterator it;
-    for (it = _data.begin(); it != _data.end(); ++it) {
+    for (it = _data.begin(); it != _data.end(); ++it)
         integrator->integrate(peaks, shape_library, it->second);
-    }
 }
 
 void Experiment::integrateFoundPeaks(const std::string& integrator_name)
 {
     IPeakIntegrator* integrator = getIntegrator(integrator_name);
 
-    for (sptrDataSet data : _peak_finder->currentData()) {
+    for (sptrDataSet data : _peak_finder->currentData())
         integrator->integrate(_peak_finder->currentPeaks(), nullptr, data);
-    }
 }
 
 void Experiment::saveToFile(const std::string& path) const
@@ -697,9 +693,8 @@ void Experiment::refine(PeakCollection* peaks, UnitCell* cell, DataSet* data, in
 
 void Experiment::checkPeakCollections()
 {
-    for (const auto& [name, collection] : _peak_collections) {
+    for (const auto& [name, collection] : _peak_collections)
         collection->checkCollection();
-    }
 }
 
 } // namespace nsx

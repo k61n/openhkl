@@ -566,9 +566,8 @@ void SubframePredictPeaks::setExperiments()
     QList<QString> exp_list = gSession->experimentNames();
 
     if (!exp_list.isEmpty()) {
-        for (QString exp : exp_list) {
+        for (QString exp : exp_list)
             _exp_combo->addItem(exp);
-        }
         _exp_combo->blockSignals(false);
 
         updatePeakList();

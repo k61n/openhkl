@@ -136,9 +136,8 @@ QString QScienceSpinBox::textFromValue(double value) const
     // convert to string -> Using exponetial display with internal decimals
     QString str = locale().toString(value, 'e', dispDecimals);
     // remove thousand sign
-    if (qAbs(value) >= 1000.0) {
+    if (qAbs(value) >= 1000.0)
         str.remove(thousand);
-    }
     return str;
 }
 
@@ -267,12 +266,10 @@ bool QScienceSpinBox::isIntermediateValue(const QString& str) const
                 return ret;
             }
         }
-        if (match != min_left) {
+        if (match != min_left)
             min_right = negative ? dec : 0;
-        }
-        if (match != max_left) {
+        if (match != max_left)
             max_right = negative ? 0 : dec;
-        }
         qint64 tmpl = negative ? max_right : min_right;
         qint64 tmpr = negative ? min_right : max_right;
         const bool ret = isIntermediateValueHelper(right, tmpl, tmpr);
@@ -324,11 +321,10 @@ QScienceSpinBox::validateAndInterpret(QString& input, int& pos, QValidator::Stat
     switch (len) {
         case 0:
             // Length 0 is always 'Intermediate', except for min=max
-            if (max != min) {
+            if (max != min)
                 state = QValidator::Intermediate;
-            } else {
+            else
                 state = QValidator::Invalid;
-            }
             goto end;
         case 1:
             // if only char is '+' or '-'
@@ -477,11 +473,10 @@ QScienceSpinBox::validateAndInterpret(QString& input, int& pos, QValidator::Stat
                 QSBDEBUG() << __FILE__ << __LINE__ << "state is set to Invalid";
             } else {
                 // invalid range, further test with 'isIntermediateValue'
-                if (isIntermediateValue(copy)) {
+                if (isIntermediateValue(copy))
                     state = QValidator::Intermediate;
-                } else {
+                else
                     state = QValidator::Invalid;
-                }
                 QSBDEBUG() << __FILE__ << __LINE__ << "state is set to "
                            << (state == QValidator::Intermediate ? "Intermediate" : "Acceptable");
             }
@@ -490,9 +485,8 @@ QScienceSpinBox::validateAndInterpret(QString& input, int& pos, QValidator::Stat
 
 end:
     // if something went wrong, set num to something valid
-    if (state != QValidator::Acceptable) {
+    if (state != QValidator::Acceptable)
         num = max > 0 ? min : max;
-    }
 
     // save (private) cache values
     cachedText = prefix() + copy + suffix();

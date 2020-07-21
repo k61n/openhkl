@@ -110,9 +110,8 @@ void DetectorScene::clearPeakItems()
     if (!_currentData)
         return;
 
-    for (PeakItemGraphic* p : _peak_graphics_items) {
+    for (PeakItemGraphic* p : _peak_graphics_items)
         removeItem(p);
-    }
 
     _peak_graphics_items.clear();
 }
