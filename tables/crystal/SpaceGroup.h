@@ -30,9 +30,6 @@ class SpaceGroup {
     //! Construct a space group from its IT symbol. Lookup in the IUCR table
     SpaceGroup(std::string symbol = "P 1");
 
-    SpaceGroup(const SpaceGroup& other) = default;
-    SpaceGroup& operator=(const SpaceGroup& other);
-
     //! Returns the IT symbol for this space group
     const std::string& symbol() const;
     //! Returns the string containing the generators (in Jones notation), separated by ";"

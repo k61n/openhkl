@@ -31,23 +31,6 @@ Component::Component(const YAML::Node& node)
     _gonio = node["goniometer"] ? Gonio(node["goniometer"]) : Gonio();
 }
 
-Component::Component(const Component& other)
-{
-    *this = other;
-}
-
-Component::~Component() {}
-
-Component& Component::operator=(const Component& other)
-{
-    if (this != &other) {
-        _name = other._name;
-        _gonio = Gonio(other._gonio);
-    }
-
-    return *this;
-}
-
 const Gonio& Component::gonio() const
 {
     return _gonio;

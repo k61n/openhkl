@@ -37,11 +37,6 @@ class Blob3D {
 
     //! Initialize a blob with a point of mass m at x,y,z
     Blob3D(double x, double y, double z, double m);
-    Blob3D(const Blob3D&);
-    Blob3D(Blob3D&&) = default;
-
-    //! Assignment
-    Blob3D& operator=(const Blob3D&);
 
     //! Add point to the Blob
     void addPoint(double x, double y, double z, double m);

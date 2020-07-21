@@ -49,11 +49,6 @@ Axis::Axis(const std::string& name, const Eigen::Vector3d& axis)
     setAxis(axis);
 }
 
-Axis::Axis(const Axis& other)
-    : _name(other._name), _axis(other._axis), _physical(other._physical), _id(other._id)
-{
-}
-
 Axis::Axis(const YAML::Node& node)
 {
     _name = node["name"] ? node["name"].as<std::string>() : "no name";

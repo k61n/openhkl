@@ -19,22 +19,6 @@ namespace nsx {
 // Static that contains all available keys.
 MetaDataKeySet MetaData::_metakeys = std::set<std::string>();
 
-MetaData::MetaData() {}
-
-MetaData::~MetaData() {}
-
-MetaData::MetaData(const MetaData& rhs)
-{
-    _map = rhs._map;
-}
-
-MetaData& MetaData::operator=(const MetaData& rhs)
-{
-    if (this != &rhs)
-        _map = rhs._map;
-    return *this;
-}
-
 const MetaDataKeySet& MetaData::keys() const
 {
     return _metakeys;

@@ -36,12 +36,8 @@ using MetaDataKeySet = std::set<std::string>;
 class MetaData {
  public:
     //! Constructor
-    MetaData();
-    ~MetaData();
-    //! Copy
-    MetaData(const MetaData&);
-    //! Assignment
-    MetaData& operator=(const MetaData&);
+    MetaData() = default;
+
     //! Add a pair of key and value.
     template <class _type> void add(const std::string& key, const _type& value);
     //! Gets the value associated with the key. User must know the return type,

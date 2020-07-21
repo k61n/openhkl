@@ -32,7 +32,7 @@ class RotAxis : public Axis {
     //! Static constructor for a RotAxis
     static Axis* create(const YAML::Node& node);
     RotAxis();
-    RotAxis(const RotAxis& other);
+
     //! Constructs an axis with a given name
     explicit RotAxis(const std::string& label);
     //! Explicit
@@ -41,8 +41,7 @@ class RotAxis : public Axis {
         Direction direction = Direction::CCW);
     //! Construct a RotAxis from a property tree node.
     RotAxis(const YAML::Node& node);
-    RotAxis& operator=(const RotAxis& other);
-    ~RotAxis();
+
     RotAxis* clone() const override;
     //! Gets rotation direction.
     void setRotationDirection(Direction);

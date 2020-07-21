@@ -24,7 +24,8 @@ namespace nsx {
 class Component {
  public:
     Component() = default;
-    Component(const Component& other);
+
+    virtual ~Component() = default;
 
     //! Constructs a component with a given name
     Component(const std::string& name);
@@ -32,10 +33,6 @@ class Component {
     //! Construct a component from a property tree node
     Component(const YAML::Node& node);
     virtual Component* clone() const = 0;
-
-    //! Destructor.
-    virtual ~Component() = 0;
-    virtual Component& operator=(const Component& other);
 
     //! Returns the name of the component.
     const std::string& name() const;

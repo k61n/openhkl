@@ -24,10 +24,9 @@ namespace nsx {
 
 class Source : public Component {
  public:
-    //! Static constructor of a monochromatic source from a yaml tree node
-    static Source* create(const YAML::Node& node);
-
     Source();
+
+    virtual ~Source() = default;
 
     //! Constructs a default source with a given name
     Source(const std::string& name);

@@ -35,24 +35,11 @@ RotAxis::RotAxis(const std::string& label, const Eigen::Vector3d& axis, Directio
 {
 }
 
-RotAxis::RotAxis(const RotAxis& other) : Axis(other), _dir(other._dir) {}
-
-RotAxis& RotAxis::operator=(const RotAxis& other)
-{
-    if (this != &other) {
-        Axis::operator=(other);
-        _dir = other._dir;
-    }
-    return *this;
-}
-
 RotAxis::RotAxis(const YAML::Node& node) : Axis(node)
 {
     bool clockwise = node["clockwise"].as<bool>();
     _dir = clockwise ? Direction::CW : Direction::CCW;
 }
-
-RotAxis::~RotAxis() {}
 
 RotAxis* RotAxis::clone() const
 {

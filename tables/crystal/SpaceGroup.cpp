@@ -363,16 +363,6 @@ SpaceGroup::SpaceGroup(std::string symbol)
     generateGroupElements();
 }
 
-SpaceGroup& SpaceGroup::operator=(const SpaceGroup& other)
-{
-    if (this != &other) {
-        _symbol = other._symbol;
-        _generators = other._generators;
-        _groupElements = other._groupElements;
-    }
-    return *this;
-}
-
 char SpaceGroup::bravaisType() const
 {
     std::vector<int> nrot(13, 0);

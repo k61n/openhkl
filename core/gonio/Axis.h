@@ -32,7 +32,6 @@ class Axis {
  public:
     static Axis* create(const YAML::Node& node);
     Axis();
-    Axis(const Axis& other);
 
     //! Contruct a default z-axis
     Axis(const std::string& name);

@@ -90,16 +90,6 @@ Experiment::Experiment(const Experiment& other)
         std::string("3d profile integrator"), std::make_unique<Profile3DIntegrator>()));
 }
 
-Experiment& Experiment::operator=(const Experiment& other)
-{
-    if (this != &other) {
-        _name = other._name;
-        _data = other._data;
-        _diffractometer.reset(other._diffractometer->clone());
-    }
-    return *this;
-}
-
 const Diffractometer* Experiment::diffractometer() const
 {
     return _diffractometer.get();

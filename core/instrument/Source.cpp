@@ -18,13 +18,6 @@
 
 namespace nsx {
 
-Source* Source::create(const YAML::Node& node)
-{
-    // Fetch the source from the factory
-    Source* source = new Source(node);
-    return source;
-}
-
 Source::Source() : Component("source"), _monochromators(), _selectedMonochromator(0) {}
 
 Source::Source(const std::string& name)

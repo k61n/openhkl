@@ -56,7 +56,8 @@ class Experiment {
     //! Construct an empty experiment from a given name and diffractometer
     Experiment(const std::string& name, const std::string& diffractometerName);
     ~Experiment() = default;
-    Experiment& operator=(const Experiment& other);
+
+    Experiment& operator=(const Experiment& other) = delete; // why did it differ from copy c'tor?
 
  public: // General
     //! Get the name of the Experiment
