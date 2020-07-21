@@ -3,7 +3,7 @@
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
 //! @file      core/experiment/ExperimentExporter.h
-//! @brief     Class to export NSXTool to file
+//! @brief     Defines class ExperimentExporter.
 //!
 //! @homepage  ###HOMEPAGE###
 //! @license   GNU General Public License v3 or higher (see COPYING)
