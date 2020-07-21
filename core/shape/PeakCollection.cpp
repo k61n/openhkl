@@ -18,15 +18,15 @@
 namespace nsx {
 
 PeakCollection::PeakCollection()
+    : _name{"No Name"}
+    , _type{nsx::listtype::FOUND}
 {
-    _name = "No Name";
-    _type = nsx::listtype::FOUND;
 }
 
 PeakCollection::PeakCollection(const std::string& name, nsx::listtype type)
+    : _name{std::string(name)}
+    , _type{type}
 {
-    _name = std::string(name);
-    _type = type;
 }
 
 void PeakCollection::populate(const std::vector<std::shared_ptr<nsx::Peak3D>> peak_list)
@@ -181,8 +181,8 @@ void PeakCollection::checkCollection() const
             ++n_nan;
         }
     }
-    qDebug() << "Peak collection " << QString::fromStdString(_name) << " contains " << numberOfPeaks()
-             << " peaks:";
+    qDebug() << "Peak collection " << QString::fromStdString(_name)
+             << " contains " << numberOfPeaks() << " peaks:";
     qDebug() << n_nan << " peaks with intensity NaN";
     qDebug() << n_zero << " peaks with intensity zero";
 }
