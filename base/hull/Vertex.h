@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef BASE_HULL_VERTEX_H
-#define BASE_HULL_VERTEX_H
+#ifndef NSX_BASE_HULL_VERTEX_H
+#define NSX_BASE_HULL_VERTEX_H
 
 #include <Eigen/Dense>
 
@@ -55,4 +55,4 @@ std::ostream& operator<<(std::ostream& os, const Vertex& vertex);
 
 } // namespace nsx
 
-#endif // BASE_HULL_VERTEX_H
+#endif // NSX_BASE_HULL_VERTEX_H

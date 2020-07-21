@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef GUI_SUBFRAME_EXPERIMENT_PROPERTIES_INSTRUMENTPROPERTY_H
-#define GUI_SUBFRAME_EXPERIMENT_PROPERTIES_INSTRUMENTPROPERTY_H
+#ifndef NSX_GUI_SUBFRAME_EXPERIMENT_PROPERTIES_INSTRUMENTPROPERTY_H
+#define NSX_GUI_SUBFRAME_EXPERIMENT_PROPERTIES_INSTRUMENTPROPERTY_H
 
 #include "gui/subframe_experiment/properties/DetectorProperty.h"
 #include "gui/subframe_experiment/properties/SampleShapeProperties.h"
@@ -37,4 +37,4 @@ class InstrumentProperty : public QTabWidget {
     SampleShapeProperties* _sample;
 };
 
-#endif // GUI_SUBFRAME_EXPERIMENT_PROPERTIES_INSTRUMENTPROPERTY_H
+#endif // NSX_GUI_SUBFRAME_EXPERIMENT_PROPERTIES_INSTRUMENTPROPERTY_H

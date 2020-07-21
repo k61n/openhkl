@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef GUI_SUBFRAME_EXPERIMENT_PROPERTIES_DETECTORPROPERTY_H
-#define GUI_SUBFRAME_EXPERIMENT_PROPERTIES_DETECTORPROPERTY_H
+#ifndef NSX_GUI_SUBFRAME_EXPERIMENT_PROPERTIES_DETECTORPROPERTY_H
+#define NSX_GUI_SUBFRAME_EXPERIMENT_PROPERTIES_DETECTORPROPERTY_H
 
 #include <QDoubleSpinBox>
 #include <QSpinBox>
@@ -38,4 +38,4 @@ class DetectorProperty : public QWidget {
     QTableWidget* _axes;
 };
 
-#endif // GUI_SUBFRAME_EXPERIMENT_PROPERTIES_DETECTORPROPERTY_H
+#endif // NSX_GUI_SUBFRAME_EXPERIMENT_PROPERTIES_DETECTORPROPERTY_H

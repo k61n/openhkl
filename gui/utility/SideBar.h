@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef GUI_PANELS_SIDEBAR_H
-#define GUI_PANELS_SIDEBAR_H
+#ifndef NSX_GUI_UTILITY_SIDEBAR_H
+#define NSX_GUI_UTILITY_SIDEBAR_H
 
 #include <QToolBar>
 
@@ -49,4 +49,4 @@ class SideBar : public QWidget {
     QAction* mOverAction;
 };
 
-#endif // GUI_PANELS_SIDEBAR_H
+#endif // NSX_GUI_UTILITY_SIDEBAR_H

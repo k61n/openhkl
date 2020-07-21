@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef GUI_GRAPHICS_PEAKPLOT_H
-#define GUI_GRAPHICS_PEAKPLOT_H
+#ifndef NSX_GUI_GRAPHICS_PEAKPLOT_H
+#define NSX_GUI_GRAPHICS_PEAKPLOT_H
 
 #include "gui/graphics/SXPlot.h"
 
@@ -31,4 +31,4 @@ class PeakPlot : public SXPlot {
 };
 
 
-#endif // GUI_GRAPHICS_PEAKPLOT_H
+#endif // NSX_GUI_GRAPHICS_PEAKPLOT_H

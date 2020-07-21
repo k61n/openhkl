@@ -13,8 +13,8 @@
 //  ***********************************************************************************************
 
 
-#ifndef CORE_OUTPUT_EXPERIMENTEXPORTER_H
-#define CORE_OUTPUT_EXPERIMENTEXPORTER_H
+#ifndef NSX_CORE_EXPERIMENT_EXPERIMENTEXPORTER_H
+#define NSX_CORE_EXPERIMENT_EXPERIMENTEXPORTER_H
 
 #include "core/instrument/Diffractometer.h"
 #include "core/shape/PeakCollection.h"
@@ -47,4 +47,4 @@ class ExperimentExporter {
 
 } // namespace nsx
 
-#endif // CORE_OUTPUT_EXPERIMENTEXPORTER_H
+#endif // NSX_CORE_EXPERIMENT_EXPERIMENTEXPORTER_H

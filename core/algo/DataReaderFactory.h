@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef CORE_ALGO_DATAREADERFACTORY_H
-#define CORE_ALGO_DATAREADERFACTORY_H
+#ifndef NSX_CORE_ALGO_DATAREADERFACTORY_H
+#define NSX_CORE_ALGO_DATAREADERFACTORY_H
 
 #include "core/data/DataSet.h"
 
@@ -42,4 +42,4 @@ class DataReaderFactory {
 
 } // namespace nsx
 
-#endif // CORE_ALGO_DATAREADERFACTORY_H
+#endif // NSX_CORE_ALGO_DATAREADERFACTORY_H

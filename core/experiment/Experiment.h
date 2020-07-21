@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef CORE_EXPERIMENT_EXPERIMENT_H
-#define CORE_EXPERIMENT_EXPERIMENT_H
+#ifndef NSX_CORE_EXPERIMENT_EXPERIMENT_H
+#define NSX_CORE_EXPERIMENT_EXPERIMENT_H
 
 #include "core/algo/AutoIndexer.h"
 #include "core/algo/Refiner.h"
@@ -237,4 +237,4 @@ class Experiment {
 
 } // namespace nsx
 
-#endif // CORE_EXPERIMENT_EXPERIMENT_H
+#endif // NSX_CORE_EXPERIMENT_EXPERIMENT_H

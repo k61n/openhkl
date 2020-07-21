@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef CORE_GONIO_ROTAXIS_H
-#define CORE_GONIO_ROTAXIS_H
+#ifndef NSX_CORE_GONIO_ROTAXIS_H
+#define NSX_CORE_GONIO_ROTAXIS_H
 
 #include "core/gonio/Axis.h"
 
@@ -67,4 +67,4 @@ class RotAxis : public Axis {
 
 } // namespace nsx
 
-#endif // CORE_GONIO_ROTAXIS_H
+#endif // NSX_CORE_GONIO_ROTAXIS_H

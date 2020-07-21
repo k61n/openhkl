@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef GUI_SUBFRAME_EXPERIMENT_LOGGER_PANEL_H
-#define GUI_SUBFRAME_EXPERIMENT_LOGGER_PANEL_H
+#ifndef NSX_GUI_SUBFRAME_EXPERIMENT_LOGGERPANEL_H
+#define NSX_GUI_SUBFRAME_EXPERIMENT_LOGGERPANEL_H
 
 #include <QTextEdit>
 
@@ -30,4 +30,4 @@ class LoggerPanel : public QWidget {
     QTextEdit* logText;
 };
 
-#endif // GUI_SUBFRAME_EXPERIMENT_LOGGER_PANEL_H
+#endif // NSX_GUI_SUBFRAME_EXPERIMENT_LOGGERPANEL_H

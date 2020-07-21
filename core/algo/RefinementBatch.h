@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef CORE_ALGO_REFINEMENTBATCH_H
-#define CORE_ALGO_REFINEMENTBATCH_H
+#ifndef NSX_CORE_ALGO_REFINEMENTBATCH_H
+#define NSX_CORE_ALGO_REFINEMENTBATCH_H
 
 #include "base/fit/FitParameters.h"
 #include "core/instrument/InstrumentStateList.h"
@@ -89,4 +89,4 @@ class RefinementBatch {
 
 } // namespace nsx
 
-#endif // CORE_ALGO_REFINEMENTBATCH_H
+#endif // NSX_CORE_ALGO_REFINEMENTBATCH_H

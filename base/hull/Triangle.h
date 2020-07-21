@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef BASE_HULL_TRIANGLE_H
-#define BASE_HULL_TRIANGLE_H
+#ifndef NSX_BASE_HULL_TRIANGLE_H
+#define NSX_BASE_HULL_TRIANGLE_H
 
 #include <Eigen/Dense>
 
@@ -48,4 +48,4 @@ struct Triangle {
 
 } // namespace nsx
 
-#endif // BASE_HULL_TRIANGLE_H
+#endif // NSX_BASE_HULL_TRIANGLE_H

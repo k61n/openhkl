@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef GUI_GRAPHICS_DETECTORSCENE_H
-#define GUI_GRAPHICS_DETECTORSCENE_H
+#ifndef NSX_GUI_GRAPHICS_DETECTORSCENE_H
+#define NSX_GUI_GRAPHICS_DETECTORSCENE_H
 
 #include "base/mask/IMask.h"
 
@@ -153,4 +153,4 @@ class DetectorScene : public QGraphicsScene {
     nsx::Peak3D* _selected_peak;
 };
 
-#endif // GUI_GRAPHICS_DETECTORSCENE_H
+#endif // NSX_GUI_GRAPHICS_DETECTORSCENE_H

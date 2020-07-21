@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef CORE_RAW_METADATA_H
-#define CORE_RAW_METADATA_H
+#ifndef NSX_CORE_RAW_METADATA_H
+#define NSX_CORE_RAW_METADATA_H
 
 #include <map>
 #include <memory>
@@ -100,4 +100,4 @@ template <typename _type> _type MetaData::key(const char* name) const
 
 } // namespace nsx
 
-#endif // CORE_RAW_METADATA_H
+#endif // NSX_CORE_RAW_METADATA_H

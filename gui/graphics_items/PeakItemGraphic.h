@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef GUI_GRAPHICS_ITEMS_PEAKITEM_H
-#define GUI_GRAPHICS_ITEMS_PEAKITEM_H
+#ifndef NSX_GUI_GRAPHICS_ITEMS_PEAKITEMGRAPHIC_H
+#define NSX_GUI_GRAPHICS_ITEMS_PEAKITEMGRAPHIC_H
 
 #include "core/peak/Peak3D.h"
 #include "gui/graphics_items/PlottableItem.h"
@@ -71,4 +71,4 @@ class PeakItemGraphic : public PlottableItem {
     QColor _color;
 };
 
-#endif // GUI_GRAPHICS_ITEMS_PEAKITEM_H
+#endif // NSX_GUI_GRAPHICS_ITEMS_PEAKITEMGRAPHIC_H

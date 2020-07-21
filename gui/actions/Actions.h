@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef GUI_ACTIONS_TRIGGERS_H
-#define GUI_ACTIONS_TRIGGERS_H
+#ifndef NSX_GUI_ACTIONS_ACTIONS_H
+#define NSX_GUI_ACTIONS_ACTIONS_H
 
 #include <QAction>
 #include <QObject>
@@ -107,4 +107,4 @@ class Actions : public QObject {
     void setupRest();
 };
 
-#endif // GUI_ACTIONS_TRIGGERS_H
+#endif // NSX_GUI_ACTIONS_ACTIONS_H

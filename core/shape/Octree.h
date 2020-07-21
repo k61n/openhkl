@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef CORE_ANALYSE_OCTREE_H
-#define CORE_ANALYSE_OCTREE_H
+#ifndef NSX_CORE_SHAPE_OCTREE_H
+#define NSX_CORE_SHAPE_OCTREE_H
 
 #include "base/geometry/AABB.h"
 #include <set>
@@ -168,4 +168,4 @@ class OctreeIterator {
 
 } // namespace nsx
 
-#endif // CORE_ANALYSE_OCTREE_H
+#endif // NSX_CORE_SHAPE_OCTREE_H

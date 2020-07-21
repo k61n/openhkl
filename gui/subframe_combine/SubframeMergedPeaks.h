@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef GUI_FRAMES_MERGEDPEAKINFORMATIONFRAME_H
-#define GUI_FRAMES_MERGEDPEAKINFORMATIONFRAME_H
+#ifndef NSX_GUI_SUBFRAME_COMBINE_SUBFRAMEMERGEDPEAKS_H
+#define NSX_GUI_SUBFRAME_COMBINE_SUBFRAMEMERGEDPEAKS_H
 
 #include "gui/graphics/DetectorView.h"
 #include "gui/graphics/SXPlot.h"
@@ -138,4 +138,4 @@ class SubframeMergedPeaks : public QWidget {
     QStandardItemModel* _unmerged_model;
 };
 
-#endif // GUI_FRAMES_MERGEDPEAKINFORMATIONFRAME_H
+#endif // NSX_GUI_SUBFRAME_COMBINE_SUBFRAMEMERGEDPEAKS_H

@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef GUI_DIALOG_REFINERDIALOG_H
-#define GUI_DIALOG_REFINERDIALOG_H
+#ifndef NSX_GUI_DIALOGS_REFINERDIALOG_H
+#define NSX_GUI_DIALOGS_REFINERDIALOG_H
 
 #include "core/algo/Refiner.h"
 #include "gui/views/PeakTableView.h"
@@ -245,4 +245,4 @@ class RefinerDialog : public QDialog {
     SXPlot* _visualise_plot;
 };
 
-#endif // GUI_FRAMES_REFINERFRAME_H
+#endif // NSX_GUI_DIALOGS_REFINERDIALOG_H

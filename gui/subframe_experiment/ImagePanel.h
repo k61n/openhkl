@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef GUI_SUBFRAME_EXPERIMENT_IMAGE_PANEL_H
-#define GUI_SUBFRAME_EXPERIMENT_IMAGE_PANEL_H
+#ifndef NSX_GUI_SUBFRAME_EXPERIMENT_IMAGEPANEL_H
+#define NSX_GUI_SUBFRAME_EXPERIMENT_IMAGEPANEL_H
 
 #include "gui/graphics/DetectorView.h"
 
@@ -41,4 +41,4 @@ class ImagePanel : public QWidget {
     QScrollBar* _scrollbar;
 };
 
-#endif // GUI_SUBFRAME_EXPERIMENT_IMAGE_PANEL_H
+#endif // NSX_GUI_SUBFRAME_EXPERIMENT_IMAGEPANEL_H

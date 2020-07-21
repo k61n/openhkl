@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef CORE_LOADER_ILLDATAREADER_H
-#define CORE_LOADER_ILLDATAREADER_H
+#ifndef NSX_CORE_LOADER_ILLDATAREADER_H
+#define NSX_CORE_LOADER_ILLDATAREADER_H
 
 #include "core/raw/IDataReader.h" // inherits from
 
@@ -79,4 +79,4 @@ class ILLDataReader : public IDataReader {
 
 } // namespace nsx
 
-#endif // CORE_LOADER_ILLDATAREADER_H
+#endif // NSX_CORE_LOADER_ILLDATAREADER_H

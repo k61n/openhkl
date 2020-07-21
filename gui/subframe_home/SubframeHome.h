@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef GUI_PANELS_SUBFRAMEHOME_H
-#define GUI_PANELS_SUBFRAMEHOME_H
+#ifndef NSX_GUI_SUBFRAME_HOME_SUBFRAMEHOME_H
+#define NSX_GUI_SUBFRAME_HOME_SUBFRAMEHOME_H
 
 #include "gui/models/ExperimentModel.h"
 #include "gui/views/ExperimentTableView.h"
@@ -76,4 +76,4 @@ class SubframeHome : public QWidget {
     QListWidget* _last_import_widget;
 };
 
-#endif // GUI_PANELS_SUBFRAMEHOME_H
+#endif // NSX_GUI_SUBFRAME_HOME_SUBFRAMEHOME_H

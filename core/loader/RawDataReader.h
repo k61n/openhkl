@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef CORE_LOADER_RAWDATAREADER_H
-#define CORE_LOADER_RAWDATAREADER_H
+#ifndef NSX_CORE_LOADER_RAWDATAREADER_H
+#define NSX_CORE_LOADER_RAWDATAREADER_H
 
 #include "core/raw/IDataReader.h" // inherits from
 
@@ -102,4 +102,4 @@ Eigen::Matrix<T_, Eigen::Dynamic, Eigen::Dynamic> RawDataReader::matrixFromData(
 
 } // namespace nsx
 
-#endif // CORE_LOADER_RAWDATAREADER_H
+#endif // NSX_CORE_LOADER_RAWDATAREADER_H

@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef CORE_GONIO_COMPONENT_H
-#define CORE_GONIO_COMPONENT_H
+#ifndef NSX_CORE_GONIO_COMPONENT_H
+#define NSX_CORE_GONIO_COMPONENT_H
 
 #include "core/gonio/Gonio.h"
 
@@ -56,4 +56,4 @@ class Component {
 
 } // namespace nsx
 
-#endif // CORE_GONIO_COMPONENT_H
+#endif // NSX_CORE_GONIO_COMPONENT_H

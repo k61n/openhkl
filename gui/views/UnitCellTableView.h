@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef GUI_VIEWS_UNITCELLTABLEVIEW_H
-#define GUI_VIEWS_UNITCELLTABLEVIEW_H
+#ifndef NSX_GUI_VIEWS_UNITCELLTABLEVIEW_H
+#define NSX_GUI_VIEWS_UNITCELLTABLEVIEW_H
 
 #include <QTableView>
 
@@ -23,4 +23,4 @@ class UnitCellTableView : public QTableView {
     explicit UnitCellTableView(QWidget* parent = 0);
 };
 
-#endif // GUI_VIEWS_UNITCELLTABLEVIEW_H
+#endif // NSX_GUI_VIEWS_UNITCELLTABLEVIEW_H

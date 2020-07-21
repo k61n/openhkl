@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef TABLES_CRYSTAL_UNITCELL_H
-#define TABLES_CRYSTAL_UNITCELL_H
+#ifndef NSX_TABLES_CRYSTAL_UNITCELL_H
+#define NSX_TABLES_CRYSTAL_UNITCELL_H
 
 #include "tables/crystal/NiggliCharacter.h"
 #include "tables/crystal/SpaceGroup.h"
@@ -307,4 +307,4 @@ using UnitCellList = std::vector<sptrUnitCell>;
 
 } // namespace nsx
 
-#endif // TABLES_CRYSTAL_UNITCELL_H
+#endif // NSX_TABLES_CRYSTAL_UNITCELL_H

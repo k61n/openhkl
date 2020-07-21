@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef CORE_STATISTICS_CC_H
-#define CORE_STATISTICS_CC_H
+#ifndef NSX_CORE_STATISTICS_CC_H
+#define NSX_CORE_STATISTICS_CC_H
 
 #include "core/statistics/MergedData.h"
 #include "core/statistics/MergedPeak.h"
@@ -44,4 +44,4 @@ class CC {
 
 } // namespace nsx
 
-#endif // CORE_STATISTICS_CC_H
+#endif // NSX_CORE_STATISTICS_CC_H

@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef CORE_ANALYSE_PEAKFILTER_H
-#define CORE_ANALYSE_PEAKFILTER_H
+#ifndef NSX_CORE_SHAPE_PEAKFILTER_H
+#define NSX_CORE_SHAPE_PEAKFILTER_H
 
 #include "core/shape/PeakCollection.h"
 #include <bitset>
@@ -184,4 +184,4 @@ class PeakFilter {
 
 } // namespace nsx
 
-#endif // CORE_ANALYSE_PEAKFILTER_H
+#endif // NSX_CORE_SHAPE_PEAKFILTER_H

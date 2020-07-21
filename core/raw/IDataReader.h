@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef CORE_RAW_IDATAREADER_H
-#define CORE_RAW_IDATAREADER_H
+#ifndef NSX_CORE_RAW_IDATAREADER_H
+#define NSX_CORE_RAW_IDATAREADER_H
 
 #include "core/instrument/InstrumentState.h"
 #include "core/raw/MetaData.h"
@@ -123,4 +123,4 @@ class IDataReader {
 
 } // namespace nsx
 
-#endif // CORE_RAW_IDATAREADER_H
+#endif // NSX_CORE_RAW_IDATAREADER_H

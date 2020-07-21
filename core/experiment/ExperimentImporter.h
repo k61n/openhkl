@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef CORE_LOADER_EXPERIMENTIMPORTER_H
-#define CORE_LOADER_EXPERIMENTIMPORTER_H
+#ifndef NSX_CORE_EXPERIMENT_EXPERIMENTIMPORTER_H
+#define NSX_CORE_EXPERIMENT_EXPERIMENTIMPORTER_H
 
 #include "core/data/DataSet.h"
 #include "core/experiment/Experiment.h"
@@ -45,4 +45,4 @@ class ExperimentImporter {
 
 } // namespace nsx
 
-#endif // CORE_OUTPUT_EXPERIMENTEXPORTER_H
+#endif // NSX_CORE_EXPERIMENT_EXPERIMENTIMPORTER_H

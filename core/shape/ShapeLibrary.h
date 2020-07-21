@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef CORE_SHAPE_SHAPELIBRARY_H
-#define CORE_SHAPE_SHAPELIBRARY_H
+#ifndef NSX_CORE_SHAPE_SHAPELIBRARY_H
+#define NSX_CORE_SHAPE_SHAPELIBRARY_H
 
 #include "core/detector/DetectorEvent.h"
 #include "core/peak/Peak3D.h"
@@ -194,4 +194,4 @@ class ShapeLibrary {
 
 } // namespace nsx
 
-#endif // CORE_SHAPE_SHAPELIBRARY_H
+#endif // NSX_CORE_SHAPE_SHAPELIBRARY_H

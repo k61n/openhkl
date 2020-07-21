@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef CORE_LOADER_TIFFDATAREADER_H
-#define CORE_LOADER_TIFFDATAREADER_H
+#ifndef NSX_CORE_LOADER_TIFFDATAREADER_H
+#define NSX_CORE_LOADER_TIFFDATAREADER_H
 
 #include <tiffio.h>
 
@@ -51,4 +51,4 @@ class TiffDataReader : public IDataReader {
 
 } // namespace nsx
 
-#endif // CORE_LOADER_TIFFDATAREADER_H
+#endif // NSX_CORE_LOADER_TIFFDATAREADER_H

@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef BASE_GEOMETRY_DIRECTVECTOR_H
-#define BASE_GEOMETRY_DIRECTVECTOR_H
+#ifndef NSX_BASE_GEOMETRY_DIRECTVECTOR_H
+#define NSX_BASE_GEOMETRY_DIRECTVECTOR_H
 
 #include <Eigen/Dense>
 
@@ -58,4 +58,4 @@ std::ostream& operator<<(std::ostream& os, const DirectVector& dvector);
 
 } // namespace nsx
 
-#endif // BASE_GEOMETRY_DIRECTVECTOR_H
+#endif // NSX_BASE_GEOMETRY_DIRECTVECTOR_H

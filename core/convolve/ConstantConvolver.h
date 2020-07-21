@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef CORE_CONVOLVE_CONSTANTCONVOLVER_H
-#define CORE_CONVOLVE_CONSTANTCONVOLVER_H
+#ifndef NSX_CORE_CONVOLVE_CONSTANTCONVOLVER_H
+#define NSX_CORE_CONVOLVE_CONSTANTCONVOLVER_H
 
 #include "core/convolve/AtomicConvolver.h" // inherits from
 
@@ -45,4 +45,4 @@ class ConstantConvolver : public AtomicConvolver {
 
 } // namespace nsx
 
-#endif // CORE_CONVOLVE_CONSTANTCONVOLVER_H
+#endif // NSX_CORE_CONVOLVE_CONSTANTCONVOLVER_H

@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef GUI_UTILITIES_SPOILER
-#define GUI_UTILITIES_SPOILER
+#ifndef NSX_GUI_UTILITY_SPOILER_H
+#define NSX_GUI_UTILITY_SPOILER_H
 
 #include <QFrame>
 #include <QGridLayout>
@@ -42,4 +42,4 @@ class Spoiler : public QGroupBox {
     int animationDuration {300};
 };
 
-#endif // GUI_UTILITIES_SPOILER
+#endif // NSX_GUI_UTILITY_SPOILER_H

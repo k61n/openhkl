@@ -12,7 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#pragma once
+#ifndef NSX_GUI_GRAPHICS_ITEMS_PINITEM_H
+#define NSX_GUI_GRAPHICS_ITEMS_PINITEM_H
 
 #include <QGraphicsItem>
 
@@ -44,3 +45,5 @@ class PinItem : public QGraphicsItem {
     double _currentangle;
     bool _calibrated;
 };
+
+#endif // NSX_GUI_GRAPHICS_ITEMS_PINITEM_H

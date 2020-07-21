@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef GUI_PANELS_TABPEAKS_H
-#define GUI_PANELS_TABPEAKS_H
+#ifndef NSX_GUI_SUBFRAME_EXPERIMENT_PROPERTIES_PEAKPROPERTIES_H
+#define NSX_GUI_SUBFRAME_EXPERIMENT_PROPERTIES_PEAKPROPERTIES_H
 
 #include "gui/views/PeakTableView.h"
 
@@ -73,4 +73,4 @@ class PeakProperties : public QWidget {
     QSizePolicy* _size_policy_fixed;
 };
 
-#endif // GUI_PANELS_TABPEAKS_H
+#endif // NSX_GUI_SUBFRAME_EXPERIMENT_PROPERTIES_PEAKPROPERTIES_H

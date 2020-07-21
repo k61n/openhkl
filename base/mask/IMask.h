@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef BASE_MASK_IMASK_H
-#define BASE_MASK_IMASK_H
+#ifndef NSX_BASE_MASK_IMASK_H
+#define NSX_BASE_MASK_IMASK_H
 
 namespace nsx {
 
@@ -39,4 +39,4 @@ class IMask {
 
 } // namespace nsx
 
-#endif // BASE_MASK_IMASK_H
+#endif // NSX_BASE_MASK_IMASK_H

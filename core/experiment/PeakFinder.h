@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef CORE_ANALYSE_PEAKFINDER_H
-#define CORE_ANALYSE_PEAKFINDER_H
+#ifndef NSX_CORE_EXPERIMENT_PEAKFINDER_H
+#define NSX_CORE_EXPERIMENT_PEAKFINDER_H
 
 #include "base/utils/ProgressHandler.h"
 #include "core/convolve/Convolver.h"
@@ -117,4 +117,4 @@ class PeakFinder {
 
 } // namespace nsx
 
-#endif // CORE_ANALYSE_PEAKFINDER_H
+#endif // NSX_CORE_EXPERIMENT_PEAKFINDER_H

@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef CORE_ANALYSE_MERGEDDATA_H
-#define CORE_ANALYSE_MERGEDDATA_H
+#ifndef NSX_CORE_STATISTICS_MERGEDDATA_H
+#define NSX_CORE_STATISTICS_MERGEDDATA_H
 
 #include "core/shape/PeakCollection.h"
 #include "core/statistics/MergedPeak.h"
@@ -64,4 +64,4 @@ class MergedData {
 
 } // namespace nsx
 
-#endif // CORE_ANALYSE_MERGEDDATA_H
+#endif // NSX_CORE_STATISTICS_MERGEDDATA_H

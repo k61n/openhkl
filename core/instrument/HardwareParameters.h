@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef CORE_INSTRUMENT_HARDWAREPARAMETERS_H
-#define CORE_INSTRUMENT_HARDWAREPARAMETERS_H
+#ifndef NSX_CORE_INSTRUMENT_HARDWAREPARAMETERS_H
+#define NSX_CORE_INSTRUMENT_HARDWAREPARAMETERS_H
 
 #include <yaml-cpp/yaml.h>
 
@@ -25,4 +25,4 @@ std::set<std::string> getResourcesName(const std::string& resource_type);
 
 } // namespace nsx
 
-#endif // CORE_INSTRUMENT_HARDWAREPARAMETERS_H
+#endif // NSX_CORE_INSTRUMENT_HARDWAREPARAMETERS_H

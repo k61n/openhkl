@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef GUI_ITEMS_PEAKITEM_H
-#define GUI_ITEMS_PEAKITEM_H
+#ifndef NSX_GUI_ITEMS_PEAKITEM_H
+#define NSX_GUI_ITEMS_PEAKITEM_H
 
 #include "core/peak/Peak3D.h"
 
@@ -64,4 +64,4 @@ class PeakItem : public QStandardItem {
     std::unique_ptr<PeakItemGraphic> _peak_graphic;
 };
 
-#endif // GUI_ITEMS_PEAKITEM_H
+#endif // NSX_GUI_ITEMS_PEAKITEM_H

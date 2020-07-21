@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef CORE_INSTRUMENT_MONOCHROMATOR_H
-#define CORE_INSTRUMENT_MONOCHROMATOR_H
+#ifndef NSX_CORE_INSTRUMENT_MONOCHROMATOR_H
+#define NSX_CORE_INSTRUMENT_MONOCHROMATOR_H
 
 #include "base/geometry/ReciprocalVector.h"
 
@@ -76,4 +76,4 @@ class Monochromator {
 
 } // namespace nsx
 
-#endif // CORE_INSTRUMENT_MONOCHROMATOR_H
+#endif // NSX_CORE_INSTRUMENT_MONOCHROMATOR_H

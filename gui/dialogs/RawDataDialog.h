@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef GUI_DIALOGS_RAWDATADIALOG_H
-#define GUI_DIALOGS_RAWDATADIALOG_H
+#ifndef NSX_GUI_DIALOGS_RAWDATADIALOG_H
+#define NSX_GUI_DIALOGS_RAWDATADIALOG_H
 
 #include <QCheckBox>
 #include <QComboBox>
@@ -45,4 +45,4 @@ class RawDataDialog : public QDialog {
     QDialogButtonBox* buttons;
 };
 
-#endif // GUI_DIALOGS_RAWDATADIALOG_H
+#endif // NSX_GUI_DIALOGS_RAWDATADIALOG_H

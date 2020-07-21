@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef BASE_UTILS_SINGLETON_H
-#define BASE_UTILS_SINGLETON_H
+#ifndef NSX_BASE_UTILS_SINGLETON_H
+#define NSX_BASE_UTILS_SINGLETON_H
 
 #include <memory>
 
@@ -54,4 +54,4 @@ template <class T> class Destructor {
 
 } // namespace nsx
 
-#endif // BASE_UTILS_SINGLETON_H
+#endif // NSX_BASE_UTILS_SINGLETON_H

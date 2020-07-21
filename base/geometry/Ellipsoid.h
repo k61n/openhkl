@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef BASE_GEOMETRY_ELLIPSOID_H
-#define BASE_GEOMETRY_ELLIPSOID_H
+#ifndef NSX_BASE_GEOMETRY_ELLIPSOID_H
+#define NSX_BASE_GEOMETRY_ELLIPSOID_H
 
 #include "base/geometry/AABB.h"
 
@@ -91,4 +91,4 @@ class Ellipsoid {
 
 } // namespace nsx
 
-#endif // BASE_GEOMETRY_ELLIPSOID_H
+#endif // NSX_BASE_GEOMETRY_ELLIPSOID_H

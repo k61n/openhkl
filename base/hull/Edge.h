@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef BASE_HULL_EDGE_H
-#define BASE_HULL_EDGE_H
+#ifndef NSX_BASE_HULL_EDGE_H
+#define NSX_BASE_HULL_EDGE_H
 
 #include <ostream>
 #include <vector>
@@ -57,4 +57,4 @@ std::ostream& operator<<(std::ostream& os, const Edge& edge);
 
 } // namespace nsx
 
-#endif // BASE_HULL_EDGE_H
+#endif // NSX_BASE_HULL_EDGE_H

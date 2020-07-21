@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef GUI_GRAPHICS_PLOTFACTORY_H
-#define GUI_GRAPHICS_PLOTFACTORY_H
+#ifndef NSX_GUI_GRAPHICS_PLOTFACTORY_H
+#define NSX_GUI_GRAPHICS_PLOTFACTORY_H
 
 #include "base/utils/Factory.h"
 #include "base/utils/Singleton.h"
@@ -29,4 +29,4 @@ class PlotFactory : public nsx::Factory<SXPlot, std::string, QWidget*>,
     friend class nsx::Destructor<PlotFactory>;
 };
 
-#endif // GUI_GRAPHICS_PLOTFACTORY_H
+#endif // NSX_GUI_GRAPHICS_PLOTFACTORY_H

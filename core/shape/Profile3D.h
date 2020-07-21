@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef CORE_SHAPE_PROFILE3D_H
-#define CORE_SHAPE_PROFILE3D_H
+#ifndef NSX_CORE_SHAPE_PROFILE3D_H
+#define NSX_CORE_SHAPE_PROFILE3D_H
 
 #include "base/geometry/AABB.h"
 
@@ -67,4 +67,4 @@ class Profile3D {
 
 } // namespace nsx
 
-#endif // CORE_SHAPE_PROFILE3D_H
+#endif // NSX_CORE_SHAPE_PROFILE3D_H

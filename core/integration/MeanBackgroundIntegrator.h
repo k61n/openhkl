@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef CORE_INTEGRATION_MEANBACKGROUNDINTEGRATOR_H
-#define CORE_INTEGRATION_MEANBACKGROUNDINTEGRATOR_H
+#ifndef NSX_CORE_INTEGRATION_MEANBACKGROUNDINTEGRATOR_H
+#define NSX_CORE_INTEGRATION_MEANBACKGROUNDINTEGRATOR_H
 
 #include "core/shape/IPeakIntegrator.h"
 
@@ -29,4 +29,4 @@ class MeanBackgroundIntegrator : public IPeakIntegrator {
 
 } // namespace nsx
 
-#endif // CORE_INTEGRATION_MEANBACKGROUNDINTEGRATOR_H
+#endif // NSX_CORE_INTEGRATION_MEANBACKGROUNDINTEGRATOR_H

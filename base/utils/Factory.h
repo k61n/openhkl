@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef BASE_UTILS_FACTORY_H
-#define BASE_UTILS_FACTORY_H
+#ifndef NSX_BASE_UTILS_FACTORY_H
+#define NSX_BASE_UTILS_FACTORY_H
 
 #include <algorithm>
 #include <functional>
@@ -110,4 +110,4 @@ bool Factory<base, keytype, args...>::hasCallback(const keytype& key)
 
 } // namespace nsx
 
-#endif // BASE_UTILS_FACTORY_H
+#endif // NSX_BASE_UTILS_FACTORY_H

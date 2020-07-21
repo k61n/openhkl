@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef GUI_SUBFRAME_PREDICT_SHAPELIBRARYDIALOG_H
-#define GUI_SUBFRAME_PREDICT_SHAPELIBRARYDIALOG_H
+#ifndef NSX_GUI_SUBFRAME_PREDICT_SHAPELIBRARYDIALOG_H
+#define NSX_GUI_SUBFRAME_PREDICT_SHAPELIBRARYDIALOG_H
 
 #include "core/shape/PeakCollection.h"
 #include "gui/models/PeakCollectionModel.h"
@@ -117,4 +117,4 @@ class ShapeLibraryDialog : public QDialog {
     QSlider* _draw_frame;
 };
 
-#endif // GUI_DIALOGS_SHAPELIBRARYDIALOG_H
+#endif // NSX_GUI_SUBFRAME_PREDICT_SHAPELIBRARYDIALOG_H

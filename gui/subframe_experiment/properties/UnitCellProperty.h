@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef GUI_SUBFRAME_EXPERIMENT_PROPERTIES_UNITCELLPROPERTY_H
-#define GUI_SUBFRAME_EXPERIMENT_PROPERTIES_UNITCELLPROPERTY_H
+#ifndef NSX_GUI_SUBFRAME_EXPERIMENT_PROPERTIES_UNITCELLPROPERTY_H
+#define NSX_GUI_SUBFRAME_EXPERIMENT_PROPERTIES_UNITCELLPROPERTY_H
 
 #include <QComboBox>
 #include <QDoubleSpinBox>
@@ -81,4 +81,4 @@ class UnitCellProperty : public QWidget {
     QSizePolicy* _size_policy_fixed;
 };
 
-#endif // GUI_SUBFRAME_EXPERIMENT_PROPERTIES_UNITCELLPROPERTY_H
+#endif // NSX_GUI_SUBFRAME_EXPERIMENT_PROPERTIES_UNITCELLPROPERTY_H

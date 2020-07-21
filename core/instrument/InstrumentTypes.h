@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef CORE_INSTRUMENT_INSTRUMENTTYPES_H
-#define CORE_INSTRUMENT_INSTRUMENTTYPES_H
+#ifndef NSX_CORE_INSTRUMENT_INSTRUMENTTYPES_H
+#define NSX_CORE_INSTRUMENT_INSTRUMENTTYPES_H
 
 #include <memory>
 
@@ -28,4 +28,4 @@ using sptrExperiment = std::shared_ptr<Experiment>;
 
 } // namespace nsx
 
-#endif // CORE_INSTRUMENT_INSTRUMENTTYPES_H
+#endif // NSX_CORE_INSTRUMENT_INSTRUMENTTYPES_H

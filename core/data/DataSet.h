@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef CORE_EXPERIMENT_DATASET_H
-#define CORE_EXPERIMENT_DATASET_H
+#ifndef NSX_CORE_DATA_DATASET_H
+#define NSX_CORE_DATA_DATASET_H
 
 #include "base/mask/IMask.h"
 #include "core/detector/Detector.h"
@@ -136,4 +136,4 @@ class DataSet {
 
 } // namespace nsx
 
-#endif // CORE_EXPERIMENT_DATASET_H
+#endif // NSX_CORE_DATA_DATASET_H

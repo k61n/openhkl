@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef GUI_UTILITIES_SPOILERCHECK
-#define GUI_UTILITIES_SPOILERCHECK
+#ifndef NSX_GUI_UTILITY_SPOILERCHECK_H
+#define NSX_GUI_UTILITY_SPOILERCHECK_H
 
 #include <QCheckBox>
 #include <QFrame>
@@ -46,4 +46,4 @@ class SpoilerCheck : public QGroupBox {
     QCheckBox select;
 };
 
-#endif // GUI_UTILITIES_SPOILERCHECK
+#endif // NSX_GUI_UTILITY_SPOILERCHECK_H

@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef GUI_DIALOGS_ABSORPTIONDIALOG_H
-#define GUI_DIALOGS_ABSORPTIONDIALOG_H
+#ifndef NSX_GUI_DIALOGS_ABSORPTIONDIALOG_H
+#define NSX_GUI_DIALOGS_ABSORPTIONDIALOG_H
 
 #include "core/instrument/InstrumentTypes.h"
 #include "gui/graphics/CrystalScene.h"
@@ -52,4 +52,4 @@ class AbsorptionDialog : public QDialog {
     QPushButton* triangulateButton;
 };
 
-#endif // GUI_DIALOGS_ABSORPTIONDIALOG_H
+#endif // NSX_GUI_DIALOGS_ABSORPTIONDIALOG_H

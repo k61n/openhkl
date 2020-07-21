@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef BASE_HULL_CONVEXHULL_H
-#define BASE_HULL_CONVEXHULL_H
+#ifndef NSX_BASE_HULL_CONVEXHULL_H
+#define NSX_BASE_HULL_CONVEXHULL_H
 
 #include "base/geometry/AABB.h"
 #include "base/hull/Triangle.h"
@@ -210,4 +210,4 @@ std::ostream& operator<<(std::ostream& os, const ConvexHull& chull);
 
 } // namespace nsx
 
-#endif // BASE_HULL_CONVEXHULL_H
+#endif // NSX_BASE_HULL_CONVEXHULL_H

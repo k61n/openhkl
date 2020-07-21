@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef CORE_STATISTICS_RESOLUTIONSHELL_H
-#define CORE_STATISTICS_RESOLUTIONSHELL_H
+#ifndef NSX_CORE_STATISTICS_RESOLUTIONSHELL_H
+#define NSX_CORE_STATISTICS_RESOLUTIONSHELL_H
 
 #include "core/peak/Peak3D.h"
 
@@ -49,4 +49,4 @@ class ResolutionShell {
 
 } // namespace nsx
 
-#endif // CORE_STATISTICS_RESOLUTIONSHELL_H
+#endif // NSX_CORE_STATISTICS_RESOLUTIONSHELL_H

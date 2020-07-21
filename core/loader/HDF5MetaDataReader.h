@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef CORE_LOADER_HDF5METADATAREADER_H
-#define CORE_LOADER_HDF5METADATAREADER_H
+#ifndef NSX_CORE_LOADER_HDF5METADATAREADER_H
+#define NSX_CORE_LOADER_HDF5METADATAREADER_H
 
 #include "core/raw/IDataReader.h" // inherits from
 
@@ -51,4 +51,4 @@ class HDF5MetaDataReader : public IDataReader {
 
 } // namespace nsx
 
-#endif // CORE_LOADER_HDF5METADATAREADER_H
+#endif // NSX_CORE_LOADER_HDF5METADATAREADER_H

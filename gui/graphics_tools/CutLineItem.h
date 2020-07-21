@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef GUI_GRAPHICS_CUTLINEITEM_H
-#define GUI_GRAPHICS_CUTLINEITEM_H
+#ifndef NSX_GUI_GRAPHICS_TOOLS_CUTLINEITEM_H
+#define NSX_GUI_GRAPHICS_TOOLS_CUTLINEITEM_H
 
 #include "gui/graphics_tools/CutterItem.h"
 
@@ -41,4 +41,4 @@ class CutLineItem : public CutterItem {
     int _nPoints;
 };
 
-#endif // GUI_GRAPHICS_CUTLINEITEM_H
+#endif // NSX_GUI_GRAPHICS_TOOLS_CUTLINEITEM_H

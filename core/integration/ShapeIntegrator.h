@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef CORE_INTEGRATION_SHAPEINTEGRATOR_H
-#define CORE_INTEGRATION_SHAPEINTEGRATOR_H
+#ifndef NSX_CORE_INTEGRATION_SHAPEINTEGRATOR_H
+#define NSX_CORE_INTEGRATION_SHAPEINTEGRATOR_H
 
 #include "core/integration/PixelSumIntegrator.h"
 
@@ -38,4 +38,4 @@ class ShapeIntegrator : public PixelSumIntegrator {
 
 } // namespace nsx
 
-#endif // CORE_INTEGRATION_SHAPEINTEGRATOR_H
+#endif // NSX_CORE_INTEGRATION_SHAPEINTEGRATOR_H

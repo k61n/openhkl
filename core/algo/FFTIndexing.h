@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef CORE_ALGO_FFTINDEXING_H
-#define CORE_ALGO_FFTINDEXING_H
+#ifndef NSX_CORE_ALGO_FFTINDEXING_H
+#define NSX_CORE_ALGO_FFTINDEXING_H
 
 #include "base/geometry/ReciprocalVector.h"
 
@@ -36,4 +36,4 @@ std::vector<Eigen::RowVector3d> findOnSphere(
 
 } // namespace nsx
 
-#endif // CORE_ALGO_FFTINDEXING_H
+#endif // NSX_CORE_ALGO_FFTINDEXING_H

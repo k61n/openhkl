@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef CORE_INSTRUMENT_INSTRUMENTSTATE_H
-#define CORE_INSTRUMENT_INSTRUMENTSTATE_H
+#ifndef NSX_CORE_INSTRUMENT_INSTRUMENTSTATE_H
+#define NSX_CORE_INSTRUMENT_INSTRUMENTSTATE_H
 
 #include "base/geometry/DirectVector.h"
 #include "base/geometry/ReciprocalVector.h"
@@ -105,4 +105,4 @@ class InstrumentState {
 
 } // namespace nsx
 
-#endif // CORE_INSTRUMENT_INSTRUMENTSTATE_H
+#endif // NSX_CORE_INSTRUMENT_INSTRUMENTSTATE_H

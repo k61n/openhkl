@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef GUI_FRAMES_PROGRESSVIEW_H
-#define GUI_FRAMES_PROGRESSVIEW_H
+#ifndef NSX_GUI_FRAMES_PROGRESSVIEW_H
+#define NSX_GUI_FRAMES_PROGRESSVIEW_H
 
 #include "base/utils/ProgressHandler.h"
 #include <QProgressDialog>
@@ -38,4 +38,4 @@ class ProgressView : public QProgressDialog {
     QTimer* _timer;
 };
 
-#endif // GUI_FRAMES_PROGRESSVIEW_H
+#endif // NSX_GUI_FRAMES_PROGRESSVIEW_H

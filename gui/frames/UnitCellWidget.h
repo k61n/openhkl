@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef GUI_FRAMES_UNITCELLWIDGET_H
-#define GUI_FRAMES_UNITCELLWIDGET_H
+#ifndef NSX_GUI_FRAMES_UNITCELLWIDGET_H
+#define NSX_GUI_FRAMES_UNITCELLWIDGET_H
 
 #include "tables/crystal/UnitCell.h"
 #include <QTableView>
@@ -36,4 +36,4 @@ class UnitCellWidget : public QWidget {
     std::string spaceGroupOne;
 };
 
-#endif // GUI_FRAMES_UNITCELLWIDGET_H
+#endif // NSX_GUI_FRAMES_UNITCELLWIDGET_H

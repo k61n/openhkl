@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef CORE_OUTPUT_PEAKEXPORTER_H
-#define CORE_OUTPUT_PEAKEXPORTER_H
+#ifndef NSX_CORE_STATISTICS_PEAKEXPORTER_H
+#define NSX_CORE_STATISTICS_PEAKEXPORTER_H
 
 #include "core/peak/Peak3D.h"
 #include "core/statistics/MergedData.h"
@@ -48,4 +48,4 @@ class PeakExporter {
 
 } // namespace nsx
 
-#endif
+#endif // NSX_CORE_STATISTICS_PEAKEXPORTER_H

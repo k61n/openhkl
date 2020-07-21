@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef GUI_GRAPHICS_DETECTORVIEW_H
-#define GUI_GRAPHICS_DETECTORVIEW_H
+#ifndef NSX_GUI_GRAPHICS_DETECTORVIEW_H
+#define NSX_GUI_GRAPHICS_DETECTORVIEW_H
 
 #include <QGraphicsView>
 
@@ -37,4 +37,4 @@ class DetectorView : public QGraphicsView {
     DetectorScene* _scene;
 };
 
-#endif // GUI_GRAPHICS_DETECTORVIEW_H
+#endif // NSX_GUI_GRAPHICS_DETECTORVIEW_H

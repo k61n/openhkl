@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef CORE_STATISTICS_RFACTOR_H
-#define CORE_STATISTICS_RFACTOR_H
+#ifndef NSX_CORE_STATISTICS_RFACTOR_H
+#define NSX_CORE_STATISTICS_RFACTOR_H
 
 #include "core/statistics/IMergedPeakStatistic.h" // inherits from
 
@@ -54,4 +54,4 @@ class RFactor : public IMergedPeakStatistic {
 
 } // namespace nsx
 
-#endif // CORE_STATISTICS_RFACTOR_H
+#endif // NSX_CORE_STATISTICS_RFACTOR_H

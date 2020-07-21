@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef CORE_INSTRUMENT_DIFFRACTOMETER_H
-#define CORE_INSTRUMENT_DIFFRACTOMETER_H
+#ifndef NSX_CORE_INSTRUMENT_DIFFRACTOMETER_H
+#define NSX_CORE_INSTRUMENT_DIFFRACTOMETER_H
 
 #include "core/detector/Detector.h"
 #include "core/instrument/Sample.h"
@@ -90,4 +90,4 @@ class Diffractometer {
 
 } // namespace nsx
 
-#endif // CORE_INSTRUMENT_DIFFRACTOMETER_H
+#endif // NSX_CORE_INSTRUMENT_DIFFRACTOMETER_H

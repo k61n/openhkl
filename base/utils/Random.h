@@ -13,8 +13,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef BASE_UTILS_RANDOM_H
-#define BASE_UTILS_RANDOM_H
+#ifndef NSX_BASE_UTILS_RANDOM_H
+#define NSX_BASE_UTILS_RANDOM_H
 
 #include <random>
 
@@ -47,4 +47,4 @@ class Random {
 
 } // namespace nsx
 
-#endif // BASE_UTILS_RANDOM_H
+#endif // NSX_BASE_UTILS_RANDOM_H

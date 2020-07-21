@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef TABLES_CRYSTAL_GRUBERREDUCTION_H
-#define TABLES_CRYSTAL_GRUBERREDUCTION_H
+#ifndef NSX_TABLES_CRYSTAL_GRUBERREDUCTION_H
+#define NSX_TABLES_CRYSTAL_GRUBERREDUCTION_H
 
 #include "tables/crystal/UnitCell.h"
 
@@ -40,4 +40,4 @@ class GruberReduction {
 
 } // namespace nsx
 
-#endif // TABLES_CRYSTAL_GRUBERREDUCTION_H
+#endif // NSX_TABLES_CRYSTAL_GRUBERREDUCTION_H

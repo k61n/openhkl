@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef CORE_GONIO_AXISFACTORY_H
-#define CORE_GONIO_AXISFACTORY_H
+#ifndef NSX_CORE_GONIO_AXISFACTORY_H
+#define NSX_CORE_GONIO_AXISFACTORY_H
 
 #include "base/utils/Factory.h"
 #include "base/utils/Singleton.h"
@@ -34,4 +34,4 @@ class AxisFactory : public Factory<Axis, std::string, const YAML::Node&>,
 
 } // namespace nsx
 
-#endif // CORE_GONIO_AXISFACTORY_H
+#endif // NSX_CORE_GONIO_AXISFACTORY_H

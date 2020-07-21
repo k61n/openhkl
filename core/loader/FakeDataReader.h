@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef CORE_LOADER_FAKEDATAREADER_H
-#define CORE_LOADER_FAKEDATAREADER_H
+#ifndef NSX_CORE_LOADER_FAKEDATAREADER_H
+#define NSX_CORE_LOADER_FAKEDATAREADER_H
 
 #include "core/loader/HDF5MetaDataReader.h"
 
@@ -49,4 +49,4 @@ class FakeDataReader : public HDF5MetaDataReader {
 
 } // namespace nsx
 
-#endif // CORE_LOADER_FAKEDATAREADER_H
+#endif // NSX_CORE_LOADER_FAKEDATAREADER_H

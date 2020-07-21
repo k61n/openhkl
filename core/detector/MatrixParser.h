@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef CORE_DETECTOR_MATRIXPARSER_H
-#define CORE_DETECTOR_MATRIXPARSER_H
+#ifndef NSX_CORE_DETECTOR_MATRIXPARSER_H
+#define NSX_CORE_DETECTOR_MATRIXPARSER_H
 
 #include <Eigen/Dense>
 
@@ -96,4 +96,4 @@ class MatrixParser {
 
 } // namespace nsx
 
-#endif // CORE_DETECTOR_MATRIXPARSER_H
+#endif // NSX_CORE_DETECTOR_MATRIXPARSER_H

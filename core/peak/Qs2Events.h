@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef CORE_ALGO_QS2EVENTS_H
-#define CORE_ALGO_QS2EVENTS_H
+#ifndef NSX_CORE_PEAK_QS2EVENTS_H
+#define NSX_CORE_PEAK_QS2EVENTS_H
 
 #include "core/detector/Detector.h"
 #include "core/instrument/InstrumentStateList.h"
@@ -31,4 +31,4 @@ std::vector<DetectorEvent> qs2events(
 
 } // namespace nsx
 
-#endif // CORE_ALGO_QS2EVENTS_H
+#endif // NSX_CORE_PEAK_QS2EVENTS_H

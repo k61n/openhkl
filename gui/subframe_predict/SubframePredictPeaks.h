@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef GUI_SUBFRAME_PREDICT_SUBFRAMEPREDICTPEAKS_H
-#define GUI_SUBFRAME_PREDICT_SUBFRAMEPREDICTPEAKS_H
+#ifndef NSX_GUI_SUBFRAME_PREDICT_SUBFRAMEPREDICTPEAKS_H
+#define NSX_GUI_SUBFRAME_PREDICT_SUBFRAMEPREDICTPEAKS_H
 
 #include "core/shape/PeakCollection.h"
 
@@ -166,4 +166,4 @@ class SubframePredictPeaks : public QWidget {
     QSizePolicy* _size_policy_fixed;
 };
 
-#endif // GUI_SUBFRAME_PREDICT_SUBFRAMEPREDICTPEAKS_H
+#endif // NSX_GUI_SUBFRAME_PREDICT_SUBFRAMEPREDICTPEAKS_H

@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef CORE_INSTRUMENT_MATRIXOPERATIONS_H
-#define CORE_INSTRUMENT_MATRIXOPERATIONS_H
+#ifndef NSX_CORE_INSTRUMENT_MATRIXOPERATIONS_H
+#define NSX_CORE_INSTRUMENT_MATRIXOPERATIONS_H
 
 #include <Eigen/Dense>
 
@@ -28,4 +28,4 @@ interpolateRotation(const Eigen::Matrix3d& U0, const Eigen::Matrix3d& U1, const 
 
 } // namespace nsx
 
-#endif // CORE_INSTRUMENT_MATRIXOPERATIONS_H
+#endif // NSX_CORE_INSTRUMENT_MATRIXOPERATIONS_H

@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef CORE_CONVOLVE_CONVOLVER_H
-#define CORE_CONVOLVE_CONVOLVER_H
+#ifndef NSX_CORE_CONVOLVE_CONVOLVER_H
+#define NSX_CORE_CONVOLVE_CONVOLVER_H
 
 #include <Eigen/Dense>
 #include <map>
@@ -61,4 +61,4 @@ class Convolver {
 
 } // namespace nsx
 
-#endif // CORE_CONVOLVE_CONVOLVER_H
+#endif // NSX_CORE_CONVOLVE_CONVOLVER_H

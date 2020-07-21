@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef CORE_ALGO_AUTOINDEXER_H
-#define CORE_ALGO_AUTOINDEXER_H
+#ifndef NSX_CORE_ALGO_AUTOINDEXER_H
+#define NSX_CORE_ALGO_AUTOINDEXER_H
 
 #include "base/utils/ProgressHandler.h"
 #include "core/shape/PeakCollection.h"
@@ -105,4 +105,4 @@ class AutoIndexer {
 
 } // namespace nsx
 
-#endif // CORE_ALGO_AUTOINDEXER_H
+#endif // NSX_CORE_ALGO_AUTOINDEXER_H

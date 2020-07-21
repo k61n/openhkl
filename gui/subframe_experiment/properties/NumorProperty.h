@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef GUI_SUBFRAME_EXPERIMENT_PROPERTIES_NUMORPROPERTY_H
-#define GUI_SUBFRAME_EXPERIMENT_PROPERTIES_NUMORPROPERTY_H
+#ifndef NSX_GUI_SUBFRAME_EXPERIMENT_PROPERTIES_NUMORPROPERTY_H
+#define NSX_GUI_SUBFRAME_EXPERIMENT_PROPERTIES_NUMORPROPERTY_H
 
 #include <QComboBox>
 #include <QPushButton>
@@ -51,4 +51,4 @@ class NumorProperty : public QWidget {
     QSizePolicy* _size_policy_fixed;
 };
 
-#endif // GUI_SUBFRAME_EXPERIMENT_PROPERTIES_NUMORPROPERTY_H
+#endif // NSX_GUI_SUBFRAME_EXPERIMENT_PROPERTIES_NUMORPROPERTY_H

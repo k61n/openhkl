@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef CORE_DETECTOR_DETECTOREVENT_H
-#define CORE_DETECTOR_DETECTOREVENT_H
+#ifndef NSX_CORE_DETECTOR_DETECTOREVENT_H
+#define NSX_CORE_DETECTOR_DETECTOREVENT_H
 
 #include <Eigen/Dense>
 
@@ -43,4 +43,4 @@ class DetectorEvent {
 
 } // namespace nsx
 
-#endif // CORE_DETECTOR_DETECTOREVENT_H
+#endif // NSX_CORE_DETECTOR_DETECTOREVENT_H

@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef GUI_SUBFRAME_EXPERIMENT_PROPERTY_PANEL_H
-#define GUI_SUBFRAME_EXPERIMENT_PROPERTY_PANEL_H
+#ifndef NSX_GUI_SUBFRAME_EXPERIMENT_PROPERTYPANEL_H
+#define NSX_GUI_SUBFRAME_EXPERIMENT_PROPERTYPANEL_H
 
 #include "gui/subframe_experiment/properties/InstrumentProperty.h"
 #include "gui/subframe_experiment/properties/NumorProperty.h"
@@ -37,4 +37,4 @@ class PropertyPanel : public QTabWidget {
     void unitCellChanged();
 };
 
-#endif // GUI_SUBFRAME_EXPERIMENT_PROPERTY_PANEL_H
+#endif // NSX_GUI_SUBFRAME_EXPERIMENT_PROPERTYPANEL_H

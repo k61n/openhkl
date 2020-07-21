@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef BASE_PARSER_PARSER_H
-#define BASE_PARSER_PARSER_H
+#ifndef NSX_BASE_PARSER_PARSER_H
+#define NSX_BASE_PARSER_PARSER_H
 
 #include <sstream>
 #include <string>
@@ -38,4 +38,4 @@ template <class T> void readNumFromChar(const char* begin, const char* end, std:
 
 } // namespace nsx
 
-#endif // BASE_PARSER_PARSER_H
+#endif // NSX_BASE_PARSER_PARSER_H

@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef CORE_EXPERIMENT_DATAQUALITY_H
-#define CORE_EXPERIMENT_DATAQUALITY_H
+#ifndef NSX_CORE_EXPERIMENT_DATAQUALITY_H
+#define NSX_CORE_EXPERIMENT_DATAQUALITY_H
 
 #include <vector>
 
@@ -56,4 +56,4 @@ struct DataResolution {
 
 } // namespace nsx
 
-#endif // CORE_EXPERIMENT_DATAQUALITY_H
+#endif // NSX_CORE_EXPERIMENT_DATAQUALITY_H

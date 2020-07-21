@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef CORE_PEAK_PEAKCOLLECTION_H
-#define CORE_PEAK_PEAKCOLLECTION_H
+#ifndef NSX_CORE_SHAPE_PEAKCOLLECTION_H
+#define NSX_CORE_SHAPE_PEAKCOLLECTION_H
 
 #include "core/shape/ShapeLibrary.h"
 
@@ -100,4 +100,4 @@ class PeakCollection {
 
 } // namespace nsx
 
-#endif // CORE_PEAK_PEAKCOLLECTION_H
+#endif // NSX_CORE_SHAPE_PEAKCOLLECTION_H

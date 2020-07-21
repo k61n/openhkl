@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef CORE_INSTRUMENT_SOURCE_H
-#define CORE_INSTRUMENT_SOURCE_H
+#ifndef NSX_CORE_INSTRUMENT_SOURCE_H
+#define NSX_CORE_INSTRUMENT_SOURCE_H
 
 #include "core/gonio/Component.h"
 #include "core/instrument/Monochromator.h"
@@ -61,4 +61,4 @@ class Source : public Component {
 
 } // namespace nsx
 
-#endif // CORE_INSTRUMENT_SOURCE_H
+#endif // NSX_CORE_INSTRUMENT_SOURCE_H

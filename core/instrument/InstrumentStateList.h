@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef CORE_INSTRUMENT_INSTRUMENTSTATELIST_H
-#define CORE_INSTRUMENT_INSTRUMENTSTATELIST_H
+#ifndef NSX_CORE_INSTRUMENT_INSTRUMENTSTATELIST_H
+#define NSX_CORE_INSTRUMENT_INSTRUMENTSTATELIST_H
 
 #include "core/instrument/InterpolatedState.h"
 #include <vector>
@@ -28,4 +28,4 @@ class InstrumentStateList : public std::vector<InstrumentState> {
 
 } // namespace nsx
 
-#endif // CORE_INSTRUMENT_INSTRUMENTSTATELIST_H
+#endif // NSX_CORE_INSTRUMENT_INSTRUMENTSTATELIST_H

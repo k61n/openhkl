@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef GUI_GRAPHICS_CUTSLICEITEM_H
-#define GUI_GRAPHICS_CUTSLICEITEM_H
+#ifndef NSX_GUI_GRAPHICS_TOOLS_CUTSLICEITEM_H
+#define NSX_GUI_GRAPHICS_TOOLS_CUTSLICEITEM_H
 
 #include "gui/graphics_tools/CutterItem.h"
 
@@ -49,4 +49,4 @@ class CutSliceItem : public CutterItem {
     bool _horizontal;
 };
 
-#endif // GUI_GRAPHICS_CUTSLICEITEM_H
+#endif // NSX_GUI_GRAPHICS_TOOLS_CUTSLICEITEM_H

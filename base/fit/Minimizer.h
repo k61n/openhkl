@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef BASE_FIT_MINIMIZER_H
-#define BASE_FIT_MINIMIZER_H
+#ifndef NSX_BASE_FIT_MINIMIZER_H
+#define NSX_BASE_FIT_MINIMIZER_H
 
 #include "base/fit/FitParameters.h"
 
@@ -115,4 +115,4 @@ class Minimizer {
 
 } // namespace nsx
 
-#endif // BASE_FIT_MINIMIZER_H
+#endif // NSX_BASE_FIT_MINIMIZER_H

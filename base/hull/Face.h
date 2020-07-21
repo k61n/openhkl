@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef BASE_HULL_FACE_H
-#define BASE_HULL_FACE_H
+#ifndef NSX_BASE_HULL_FACE_H
+#define NSX_BASE_HULL_FACE_H
 
 namespace nsx {
 
@@ -57,4 +57,4 @@ std::ostream& operator<<(std::ostream& os, const Face& face);
 
 } // namespace nsx
 
-#endif // BASE_HULL_FACE_H
+#endif // NSX_BASE_HULL_FACE_H

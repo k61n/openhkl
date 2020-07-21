@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef GUI_SUBFRAME_EXPERIMENT_PROPERTIES_SOURCEPROPERTY_H
-#define GUI_SUBFRAME_EXPERIMENT_PROPERTIES_SOURCEPROPERTY_H
+#ifndef NSX_GUI_SUBFRAME_EXPERIMENT_PROPERTIES_SOURCEPROPERTY_H
+#define NSX_GUI_SUBFRAME_EXPERIMENT_PROPERTIES_SOURCEPROPERTY_H
 
 #include <QComboBox>
 #include <QDoubleSpinBox>
@@ -40,4 +40,4 @@ class SourceProperty : public QWidget {
     QDoubleSpinBox* _FWHM;
 };
 
-#endif // GUI_SUBFRAME_EXPERIMENT_PROPERTIES_SOURCEPROPERTY_H
+#endif // NSX_GUI_SUBFRAME_EXPERIMENT_PROPERTIES_SOURCEPROPERTY_H

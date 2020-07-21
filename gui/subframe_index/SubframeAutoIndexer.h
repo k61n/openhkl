@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef GUI_SUBFRAME_INDEX_SUBFRAMEAUTOINDEXER_H
-#define GUI_SUBFRAME_INDEX_SUBFRAMEAUTOINDEXER_H
+#ifndef NSX_GUI_SUBFRAME_INDEX_SUBFRAMEAUTOINDEXER_H
+#define NSX_GUI_SUBFRAME_INDEX_SUBFRAMEAUTOINDEXER_H
 
 #include "core/shape/PeakCollection.h"
 
@@ -130,4 +130,4 @@ class SubframeAutoIndexer : public QWidget {
     UnitCellTableView* _solution_table;
 };
 
-#endif // GUI_SUBFRAME_INDEX_SUBFRAMEAUTOINDEXER_H
+#endif // NSX_GUI_SUBFRAME_INDEX_SUBFRAMEAUTOINDEXER_H

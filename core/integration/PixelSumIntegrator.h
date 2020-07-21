@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef CORE_INTEGRATION_PIXELSUMINTEGRATOR_H
-#define CORE_INTEGRATION_PIXELSUMINTEGRATOR_H
+#ifndef NSX_CORE_INTEGRATION_PIXELSUMINTEGRATOR_H
+#define NSX_CORE_INTEGRATION_PIXELSUMINTEGRATOR_H
 
 #include "core/integration/MeanBackgroundIntegrator.h"
 
@@ -34,4 +34,4 @@ class PixelSumIntegrator : public MeanBackgroundIntegrator {
 
 } // namespace nsx
 
-#endif // CORE_INTEGRATION_PIXELSUMINTEGRATOR_H
+#endif // NSX_CORE_INTEGRATION_PIXELSUMINTEGRATOR_H

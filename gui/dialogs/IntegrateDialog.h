@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef GUI_DIALOGS_INTEGRATEDIALOG_H
-#define GUI_DIALOGS_INTEGRATEDIALOG_H
+#ifndef NSX_GUI_DIALOGS_INTEGRATEDIALOG_H
+#define NSX_GUI_DIALOGS_INTEGRATEDIALOG_H
 
 #include <QCR/widgets/controls.h>
 #include <QDialog>
@@ -50,4 +50,4 @@ class IntegrateDialog : public QDialog {
     QcrDoubleSpinBox* numFrames;
 };
 
-#endif // GUI_DIALOGS_INTEGRATEDIALOG_H
+#endif // NSX_GUI_DIALOGS_INTEGRATEDIALOG_H

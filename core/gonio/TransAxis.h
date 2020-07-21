@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef CORE_GONIO_TRANSAXIS_H
-#define CORE_GONIO_TRANSAXIS_H
+#ifndef NSX_CORE_GONIO_TRANSAXIS_H
+#define NSX_CORE_GONIO_TRANSAXIS_H
 
 #include "core/gonio/Axis.h"
 
@@ -43,4 +43,4 @@ class TransAxis : public Axis {
 
 } // namespace nsx
 
-#endif // CORE_GONIO_TRANSAXIS_H
+#endif // NSX_CORE_GONIO_TRANSAXIS_H
