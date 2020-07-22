@@ -87,7 +87,7 @@ class SessionExperiment {
 
  private:
     //! Pointer to the core experiment
-    nsx::sptrExperiment _experiment;
+    std::shared_ptr<nsx::Experiment> _experiment;
     //! The list of models for the peaks
     std::vector<PeakCollectionModel*> _peak_collection_models;
     //! The list of ? TODO

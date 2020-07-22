@@ -31,7 +31,7 @@ class AbsorptionDialog : public QDialog {
     void on_button_openFile_pressed();
     void setupInitialButtons();
     //! Link to the experiment
-    nsx::sptrExperiment _experiment;
+    nsx::Experiment* _experiment;
     //! Rotation axis to collect movie
     nsx::RotAxis* _spindleAxis;
     //! Set of Roatation angle and absolute fileName for jpg image
@@ -43,7 +43,6 @@ class AbsorptionDialog : public QDialog {
     //! Pointer to the QGraphicsScene
     CrystalScene* crystalScene;
 
- private:
     QScrollBar* scrollBar;
     QPushButton* rulerButton;
     QPushButton* pickCenterButton;

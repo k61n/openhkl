@@ -24,8 +24,6 @@ class Experiment;
 class InstrumentState;
 class RotAxis;
 
-using sptrExperiment = std::shared_ptr<Experiment>;
-
 } // namespace nsx
 
 #endif // NSX_CORE_INSTRUMENT_INSTRUMENTTYPES_H
