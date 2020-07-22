@@ -572,17 +572,17 @@ void Experiment::predictPeaks(
     const std::string& name, PeakCollection* peaks, PredictionParameters params,
     PeakInterpolation interpol)
 {
-    int current_numor = 0;
-    DataList numors = getAllData();
+    const DataList numors = getAllData();
     std::vector<nsx::Peak3D*> predicted_peaks;
     UnitCell* accepted_cell = getUnitCell("accepted");
-    ShapeLibrary* library = peaks->shapeLibrary();
+    const ShapeLibrary* library = peaks->shapeLibrary();
 
+    int current_numor = 0;
     for (auto data : numors) {
         std::cout << "Predicting peaks for numor " << ++current_numor << " of " << numors.size()
                   << std::endl;
 
-        std::vector<nsx::Peak3D*> predicted = nsx::predictPeaks(
+        const std::vector<nsx::Peak3D*> predicted = nsx::predictPeaks(
             library, data, accepted_cell, params.detector_range_min, params.detector_range_max,
             params.neighbour_max_radius, params.frame_range_max, params.min_n_neighbors, interpol);
 
@@ -639,20 +639,18 @@ void Experiment::computeQuality(
 
 UnitCell* Experiment::getAcceptedCell()
 {
-    std::string name = "accepted";
-    return getUnitCell(name);
+    return getUnitCell("accepted");
 }
 
 UnitCell* Experiment::getReferenceCell()
 {
-    std::string name = "reference";
-    return getUnitCell(name);
+    return getUnitCell("reference");
 }
 
 void Experiment::refine(PeakCollection* peaks, UnitCell* cell, DataSet* data, int n_batches)
 {
-    unsigned int max_iter = 1000;
-    std::vector<Peak3D*> peak_list = peaks->getPeakList();
+    const unsigned int max_iter = 1000;
+    const std::vector<Peak3D*> peak_list = peaks->getPeakList();
     InstrumentStateList& states = data->instrumentStates();
     Refiner refiner(states, cell, peak_list, n_batches);
     refiner.refine(max_iter);
