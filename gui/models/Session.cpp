@@ -41,8 +41,8 @@ bool Session::createExperiment(QString experimentName, QString instrumentName)
             return false;
     }
 
-    SessionExperiment* experiment = new SessionExperiment(experimentName, instrumentName);
-    _experiments.append(experiment);
+    auto experiment = std::make_unique<SessionExperiment>(experimentName, instrumentName);
+    _experiments.push_back(std::move(experiment));
     selectedExperiment_ = _experiments.size() - 1;
     onExperimentChanged();
 
@@ -57,9 +57,9 @@ bool Session::createExperiment(QString experimentName)
             return false;
     }
 
-    SessionExperiment* experiment = new SessionExperiment;
+    auto experiment = std::make_unique<SessionExperiment>();
     experiment->experiment()->setName(experimentName.toStdString());
-    _experiments.append(experiment);
+    _experiments.push_back(std::move(experiment));
     selectedExperiment_ = _experiments.size() - 1;
     onExperimentChanged();
 
@@ -68,8 +68,8 @@ bool Session::createExperiment(QString experimentName)
 
 void Session::createDefaultExperiment()
 {
-    SessionExperiment* experiment = new SessionExperiment("lol", "BioDiff2500");
-    _experiments.append(experiment);
+    auto experiment = std::make_unique<SessionExperiment>("lol", "BioDiff2500");
+    _experiments.push_back(std::move(experiment));
     selectedExperiment_ = _experiments.size() - 1;
     onExperimentChanged();
 }
@@ -84,12 +84,15 @@ QList<QString> Session::experimentNames() const
 
 void Session::removeExperiment()
 {
+    std::cerr << "TODO: implement Session::removeExperiment\n";
+/*
     if (_experiments.size() == 0)
         return;
     if (selectedExperiment_ == -1)
         _experiments.removeFirst();
 
     selectedExperiment_ = _experiments.size() > 0 ? 0 : -1;
+*/
     onExperimentChanged();
 }
 

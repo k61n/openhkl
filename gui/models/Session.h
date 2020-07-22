@@ -23,16 +23,20 @@ extern class Session* gSession; //!< global handle for Session
 class Session {
  public:
     Session();
+    Session(const Session&) = delete;
 
-    SessionExperiment* selectedExperiment() { return _experiments.at(selectedExperiment_); }
+    SessionExperiment* selectedExperiment() { return _experiments.at(selectedExperiment_).get(); }
     const SessionExperiment* selectedExperiment() const {
-        return _experiments.at(selectedExperiment_); }
-    void selectExperiment(int);
+        return _experiments.at(selectedExperiment_).get(); }
+
+    SessionExperiment* experimentAt(int i) { return _experiments.at(i).get(); }
+    const SessionExperiment* experimentAt(int i) const { return _experiments.at(i).get(); }
+
     int selectedExperimentNum() const { return selectedExperiment_; }
-    SessionExperiment* experimentAt(int i) { return _experiments.at(i); }
-    const SessionExperiment* experimentAt(int i) const { return _experiments.at(i); }
     int numExperiments() const { return _experiments.size(); }
     QList<QString> experimentNames() const;
+
+    void selectExperiment(int);
 
     bool createExperiment(QString experimentName);
     bool createExperiment(QString experimentName, QString instrumentName);
@@ -51,7 +55,7 @@ class Session {
     void loadExperimentFromFile(QString filename);
 
  private:
-    QList<SessionExperiment*> _experiments;
+    std::vector<std::unique_ptr<SessionExperiment>> _experiments;
     int selectedExperiment_ = -1;
     int selectedData = -1;
     QString loadDirectory;
