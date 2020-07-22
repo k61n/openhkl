@@ -56,17 +56,6 @@ Axis::Axis(const YAML::Node& node)
     _id = node["id"] ? node["id"].as<unsigned int>() : 0;
 }
 
-Axis& Axis::operator=(const Axis& other)
-{
-    if (this != &other) {
-        _name = other._name;
-        _axis = other._axis;
-        _physical = other._physical;
-        _id = other._id;
-    }
-    return *this;
-}
-
 Axis::~Axis() {}
 
 void Axis::setName(const std::string& name)
