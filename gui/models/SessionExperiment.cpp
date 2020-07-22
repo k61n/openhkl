@@ -38,41 +38,39 @@
 #include <vector>
 
 SessionExperiment::SessionExperiment()
+    : _experiment{new nsx::Experiment{QDateTime::currentDateTime().toString().toStdString(),
+                  *nsx::getResourcesName("instruments").begin()}}
 {
-    std::string experimentName = QDateTime::currentDateTime().toString().toStdString();
-    std::set<std::string> instruments = nsx::getResourcesName("instruments");
-    nsx::sptrExperiment expPtr(new nsx::Experiment(experimentName, *instruments.begin()));
-    _experiment = expPtr;
 }
 
 SessionExperiment::SessionExperiment(QString name, QString instrument)
+    : _experiment{new nsx::Experiment{name.toStdString(), instrument.toStdString()}}
 {
-    nsx::sptrExperiment expPtr(new nsx::Experiment(name.toStdString(), instrument.toStdString()));
-    _experiment = expPtr;
 }
 
 QStringList SessionExperiment::getDataNames()
 {
-    std::map<std::string, nsx::sptrDataSet> datamap = _experiment->getData();
-    QStringList names;
-    for (auto data : datamap)
-        names.append(QString::fromStdString(data.first));
-    return names;
+    QStringList ret;
+    for (auto data : _experiment->getDataMap())
+        ret.append(QString::fromStdString(data.first));
+    return ret;
 }
 
+// TODO: move logic to core
 nsx::sptrDataSet SessionExperiment::getData(int index)
 {
     if (index == -1)
         index = dataIndex_;
 
-    if (_experiment->getData().empty())
+    if (!_experiment->numData())
         return nullptr;
 
     std::string selected = getDataNames().at(index).toStdString();
 
-    return _experiment->getData().at(selected);
+    return _experiment->getData(selected);
 }
 
+// TODO: move logic to core
 int SessionExperiment::getIndex(const QString& dataname)
 {
     QStringList liste = getDataNames();
@@ -81,41 +79,34 @@ int SessionExperiment::getIndex(const QString& dataname)
 
 QList<nsx::sptrDataSet> SessionExperiment::allData()
 {
-    std::map<std::string, nsx::sptrDataSet> map = _experiment->getData();
-    QList<nsx::sptrDataSet> list;
-    for (auto data : map)
-        list.append(data.second);
-    return list;
+    QList<nsx::sptrDataSet> ret;
+    for (auto data : _experiment->getDataMap())
+        ret.append(data.second);
+    return ret;
 }
 
 QStringList SessionExperiment::getPeakListNames()
 {
-    std::vector<std::string> names = _experiment->getCollectionNames();
-    QStringList q_names;
-
-    for (std::string name : names)
-        q_names << QString::fromStdString(name);
-    return q_names;
+    QStringList ret;
+    for (std::string name : _experiment->getCollectionNames())
+        ret << QString::fromStdString(name);
+    return ret;
 }
 
 QStringList SessionExperiment::getFoundNames()
 {
-    std::vector<std::string> names = _experiment->getFoundCollectionNames();
-    QStringList q_names;
-
-    for (std::string name : names)
-        q_names << QString::fromStdString(name);
-    return q_names;
+    QStringList ret;
+    for (std::string name : _experiment->getFoundCollectionNames())
+        ret << QString::fromStdString(name);
+    return ret;
 }
 
 QStringList SessionExperiment::getPredictedNames()
 {
-    std::vector<std::string> names = _experiment->getPredictedCollectionNames();
-    QStringList q_names;
-
-    for (std::string name : names)
-        q_names << QString::fromStdString(name);
-    return q_names;
+    QStringList ret;
+    for (std::string name : _experiment->getPredictedCollectionNames())
+        ret << QString::fromStdString(name);
+    return ret;
 }
 
 
@@ -240,7 +231,7 @@ QStringList SessionExperiment::getUnitCellNames()
 
 void SessionExperiment::changeInstrument(const QString& instrumentname)
 {
-    if (!_experiment->getData().empty())
+    if (_experiment->numData())
         return;
 
     std::string expname = _experiment->name();

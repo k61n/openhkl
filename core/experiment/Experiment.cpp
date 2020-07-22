@@ -40,7 +40,7 @@
 namespace nsx {
 
 Experiment::Experiment(const std::string& name, const std::string& diffractometerName)
-    : _name(name), _data()
+    : _name(name), _data_map()
 {
     _diffractometer.reset(Diffractometer::create(diffractometerName));
 
@@ -67,7 +67,7 @@ Experiment::Experiment(const std::string& name, const std::string& diffractomete
 Experiment::Experiment(const Experiment& other)
 {
     _name = other._name;
-    _data = other._data;
+    _data_map = other._data_map;
     _diffractometer.reset(other._diffractometer->clone());
 
     _peak_finder = std::make_unique<PeakFinder>();
@@ -100,15 +100,15 @@ Diffractometer* Experiment::diffractometer()
     return _diffractometer.get();
 }
 
-const std::map<std::string, sptrDataSet>& Experiment::getData() const
+const std::map<std::string, sptrDataSet>& Experiment::getDataMap() const
 {
-    return _data;
+    return _data_map;
 }
 
 DataList Experiment::getAllData()
 {
     DataList numors;
-    for (auto const& [key, val] : _data)
+    for (auto const& [key, val] : _data_map)
         numors.push_back(val);
     return numors;
 }
@@ -120,8 +120,8 @@ void Experiment::setDiffractometer(const std::string& diffractometerName)
 
 sptrDataSet Experiment::getData(const std::string& name)
 {
-    auto it = _data.find(name);
-    if (it == _data.end()) {
+    auto it = _data_map.find(name);
+    if (it == _data_map.end()) {
         throw std::runtime_error(
             "The data " + name + " could not be found in the experiment " + _name);
     }
@@ -131,7 +131,7 @@ sptrDataSet Experiment::getData(const std::string& name)
 sptrDataSet Experiment::dataShortName(const std::string& name)
 {
     std::map<std::string, sptrDataSet> temp;
-    for (std::map<std::string, sptrDataSet>::iterator it = _data.begin(); it != _data.end(); ++it)
+    for (std::map<std::string, sptrDataSet>::iterator it = _data_map.begin(); it != _data_map.end(); ++it)
         temp.insert(std::make_pair(it->second->name(), it->second));
 
     auto it = temp.find(name);
@@ -158,7 +158,7 @@ void Experiment::addData(sptrDataSet data)
     auto filename = data->filename();
 
     // Add the data only if it does not exist in the current data map
-    if (_data.find(filename) != _data.end())
+    if (_data_map.find(filename) != _data_map.end())
         return;
 
     const auto& metadata = data->reader()->metadata();
@@ -179,13 +179,13 @@ void Experiment::addData(sptrDataSet data)
 
     auto& mono = _diffractometer->source().selectedMonochromator();
 
-    if (_data.empty())
+    if (_data_map.empty())
         mono.setWavelength(wav);
     else {
         if (std::abs(wav - mono.wavelength()) > 1e-5)
             throw std::runtime_error("trying to mix data with different wavelengths");
     }
-    _data.insert(std::make_pair(filename, data));
+    _data_map.insert(std::make_pair(filename, data));
 }
 
 void Experiment::addData(const std::string& name, sptrDataSet data)
@@ -193,7 +193,7 @@ void Experiment::addData(const std::string& name, sptrDataSet data)
     auto filename = data->filename();
 
     // Add the data only if it does not exist in the current data map
-    if (_data.find(filename) != _data.end())
+    if (_data_map.find(filename) != _data_map.end())
         return;
 
     const auto& metadata = data->reader()->metadata();
@@ -214,7 +214,7 @@ void Experiment::addData(const std::string& name, sptrDataSet data)
 
     auto& mono = _diffractometer->source().selectedMonochromator();
 
-    if (_data.empty())
+    if (_data_map.empty())
         mono.setWavelength(wav);
     else {
         if (std::abs(wav - mono.wavelength()) > 1e-5)
@@ -222,20 +222,20 @@ void Experiment::addData(const std::string& name, sptrDataSet data)
     }
 
     data->setName(name);
-    _data.insert(std::make_pair(name, data));
+    _data_map.insert(std::make_pair(name, data));
 }
 
 bool Experiment::hasData(const std::string& name) const
 {
-    auto it = _data.find(name);
-    return (it != _data.end());
+    auto it = _data_map.find(name);
+    return (it != _data_map.end());
 }
 
 void Experiment::removeData(const std::string& name)
 {
-    auto it = _data.find(name);
-    if (it != _data.end())
-        _data.erase(it);
+    auto it = _data_map.find(name);
+    if (it != _data_map.end())
+        _data_map.erase(it);
 }
 
 void Experiment::updatePeakCollection(
@@ -417,7 +417,7 @@ void Experiment::integratePeaks(const std::string& integrator_name, PeakCollecti
     std::vector<Peak3D*> peaks = peak_collection->getFilteredPeakList();
 
     std::map<std::string, sptrDataSet>::iterator it;
-    for (it = _data.begin(); it != _data.end(); ++it)
+    for (it = _data_map.begin(); it != _data_map.end(); ++it)
         integrator->integrate(peaks, peak_collection->shapeLibrary(), it->second);
 }
 
@@ -441,7 +441,7 @@ void Experiment::integratePredictedPeaks(
     std::vector<Peak3D*> peaks = peak_collection->getFilteredPeakList();
 
     std::map<std::string, sptrDataSet>::iterator it;
-    for (it = _data.begin(); it != _data.end(); ++it)
+    for (it = _data_map.begin(); it != _data_map.end(); ++it)
         integrator->integrate(peaks, shape_library, it->second);
 }
 
@@ -461,8 +461,8 @@ void Experiment::saveToFile(const std::string& path) const
 
     {
         std::map<std::string, DataSet*> data_sets;
-        for (std::map<std::string, sptrDataSet>::const_iterator it = _data.begin();
-             it != _data.end(); ++it) {
+        for (std::map<std::string, sptrDataSet>::const_iterator it = _data_map.begin();
+             it != _data_map.end(); ++it) {
             data_sets.insert(std::make_pair(it->first, it->second.get()));
         }
         exporter.writeData(data_sets);
@@ -576,7 +576,6 @@ void Experiment::buildShapeLibrary(PeakCollection* peaks, ShapeLibParameters par
         aabb.setUpper(0.5 * dx);
     }
 
-
     ShapeLibrary shape_library = ShapeLibrary(
         !params.kabsch_coords, params.peak_scale, params.background_range_min,
         params.background_range_max);
@@ -590,7 +589,7 @@ void Experiment::buildShapeLibrary(PeakCollection* peaks, ShapeLibParameters par
     // TODO: (zamaan) change numors to a argument of buildShapeLibrary
     // Right now, there is no metadata for which DataSet was used to
     // Generate the peak collection
-    for (auto const& [key, data] : _data)
+    for (auto const& [key, data] : _data_map)
         integrator.integrate(fit_peaks, &shape_library, data);
 
     shape_library = *integrator.library();

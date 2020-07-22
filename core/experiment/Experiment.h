@@ -70,7 +70,7 @@ class Experiment {
 
  // Data sets
     //! Gets a reference to the data
-    const std::map<std::string, sptrDataSet>& getData() const;
+    const std::map<std::string, sptrDataSet>& getDataMap() const;
     //! Gets the pointer to a given data stored in the experiment
     sptrDataSet getData(const std::string& name);
     //! Return all data sets as a DataList
@@ -78,7 +78,7 @@ class Experiment {
     //! Gets the pointer to a given data stored in the experiment
     sptrDataSet dataShortName(const std::string& name);
     //! Get number of data
-    int numData() const { return _data.size(); };
+    int numData() const { return _data_map.size(); };
     //! Add some data to the experiment
     void addData(const std::string& name, sptrDataSet data);
     //! Add some data to the experiment
@@ -210,7 +210,7 @@ class Experiment {
     //! A pointer to the detector assigned to this experiment
     std::unique_ptr<Diffractometer> _diffractometer;
     //! A map of the data related to the experiment.
-    std::map<std::string, sptrDataSet> _data;
+    std::map<std::string, sptrDataSet> _data_map;
     //! A map of the peaklists with their name as index
     std::map<std::string, std::unique_ptr<PeakCollection>> _peak_collections;
     //! A map of the peaklists with their name as index
