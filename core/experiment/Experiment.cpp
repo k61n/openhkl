@@ -651,19 +651,20 @@ void Experiment::computeQuality(
         cc.calculate(&merged_data_per_shell);
 
         _data_resolution.push_back(
-            {{rf.Rmerge(), rf.expectedRmerge(), rf.Rmeas(), rf.expectedRmeas(), rf.Rpim(),
-              rf.expectedRpim(), cc.CChalf(), cc.CCstar()},
-             d_lower,
-             d_upper});
+            {d_lower,
+             d_upper,
+             {rf.Rmerge(), rf.Rmeas(), rf.Rpim(), cc.CChalf()},
+             {rf.expectedRmerge(), rf.expectedRmeas(), rf.expectedRpim(), cc.CCstar()}
+            });
     }
 
-    nsx::RFactor rfactor;
-    rfactor.calculate(_merged_peaks.get());
+    nsx::RFactor rf;
+    rf.calculate(_merged_peaks.get());
     nsx::CC cc;
     cc.calculate(_merged_peaks.get());
-    _data_quality = {
-        rfactor.Rmerge(), rfactor.expectedRmerge(), rfactor.Rmeas(), rfactor.expectedRmeas(),
-        rfactor.Rpim(),   rfactor.expectedRpim(),   cc.CChalf(),     cc.CCstar()};
+    _data_quality_current = {rf.Rmerge(), rf.Rmeas(), rf.Rpim(), cc.CChalf()};
+    _data_quality_expected =
+        {rf.expectedRmerge(), rf.expectedRmeas(), rf.expectedRpim(), cc.CCstar()};
 }
 
 UnitCell* Experiment::getAcceptedCell()
