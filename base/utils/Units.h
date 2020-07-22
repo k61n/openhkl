@@ -17,6 +17,7 @@
 
 #include <cmath>
 #include <unordered_map>
+#include <string>
 
 #include "base/utils/ISingleton.h"
 
