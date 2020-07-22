@@ -48,7 +48,6 @@ class MergedData {
     //! Clear the merged data
     void clear();
 
-    //! Clear the merged data
     SpaceGroup spaceGroup() const { return _group; };
 
  private:
