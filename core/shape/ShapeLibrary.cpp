@@ -62,7 +62,7 @@ static std::vector<Peak3D*> buildPeaksFromMillerIndices(
 }
 
 std::vector<Peak3D*> predictPeaks(
-    const ShapeLibrary* library, sptrDataSet data, UnitCell* unit_cell, double dmin, double dmax,
+    const ShapeLibrary* library, const sptrDataSet data, const UnitCell* unit_cell, double dmin, double dmax,
     double radius, double nframes, int min_neighbors, PeakInterpolation interpolation)
 {
     std::vector<Peak3D*> predicted_peaks;

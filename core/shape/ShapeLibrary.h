@@ -64,7 +64,7 @@ struct FitData;
 
 //! Helper function for predicting peaks
 std::vector<Peak3D*> predictPeaks(
-    const ShapeLibrary* library, sptrDataSet data, UnitCell* unit_cell, double dmin, double dmax,
+    const ShapeLibrary* library, const sptrDataSet data, const UnitCell* unit_cell, double dmin, double dmax,
     double radius, double nframes, int min_neighbors, PeakInterpolation interpolation);
 
 //! Store a library of peak shapes, to be used for peak prediction and integration.

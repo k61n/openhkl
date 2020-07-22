@@ -93,17 +93,12 @@ const std::vector<Intensity>& Peak3D::rockingCurve() const
     return _rockingCurve;
 }
 
-void Peak3D::setUnitCell(sptrUnitCell uc)
-{
-    _unitCell = uc.get();
-}
-
-void Peak3D::setUnitCell(UnitCell* uc)
+void Peak3D::setUnitCell(const UnitCell* uc)
 {
     _unitCell = uc;
 }
 
-UnitCell* Peak3D::unitCell() const
+const UnitCell* Peak3D::unitCell() const
 {
     return _unitCell;
 }

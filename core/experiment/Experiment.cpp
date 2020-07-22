@@ -574,7 +574,7 @@ void Experiment::predictPeaks(
 {
     const DataList numors = getAllData();
     std::vector<nsx::Peak3D*> predicted_peaks;
-    UnitCell* accepted_cell = getUnitCell("accepted");
+    const UnitCell* accepted_cell = getUnitCell("accepted");
     const ShapeLibrary* library = peaks->shapeLibrary();
 
     int current_numor = 0;

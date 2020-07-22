@@ -249,12 +249,11 @@ TEST_CASE("test/data/TestNewWorkFlow.cpp", "")
     CHECK(solution.second > 92.0);
 
     // set unit cell
-    auto cell = solution.first;
+    const auto cell = solution.first;
     cell->printSelf(std::cout);
 
-
     for (auto&& peak : filtered_peaks->getPeakList()) {
-        peak->setUnitCell(cell);
+        peak->setUnitCell(cell.get());
         // std::cout << "recip peak: " << peak->q().rowVector() << std::endl;
     }
 
@@ -277,12 +276,11 @@ TEST_CASE("test/data/TestNewWorkFlow.cpp", "")
 
         ++n_selected;
 
-        Eigen::Vector3d p0 = peak->shape().center();
+        const Eigen::Vector3d p0 = peak->shape().center();
         Eigen::Vector3d p1;
 
-        double diff = 1e200;
-
         // q could cross Ewald sphere multiple times, so find best match
+        double diff = 1e200; // going to find smaller value
         for (auto&& event : events) {
             const Eigen::Vector3d pnew = {event._px, event._py, event._frame};
             if ((pnew - p0).squaredNorm() < diff) {
@@ -291,8 +289,8 @@ TEST_CASE("test/data/TestNewWorkFlow.cpp", "")
             }
         }
 
-        Eigen::RowVector3d q0 = nsx::Peak3D(dataf, nsx::Ellipsoid(p0, 1.0)).q().rowVector();
-        Eigen::RowVector3d q1 = nsx::Peak3D(dataf, nsx::Ellipsoid(p1, 1.0)).q().rowVector();
+        const Eigen::RowVector3d q0 = nsx::Peak3D(dataf, nsx::Ellipsoid(p0, 1.0)).q().rowVector();
+        const Eigen::RowVector3d q1 = nsx::Peak3D(dataf, nsx::Ellipsoid(p1, 1.0)).q().rowVector();
 
         CHECK(p0(0) == Approx(p1(0)).epsilon(3e-2));
         CHECK(p0(1) == Approx(p1(1)).epsilon(3e-2));

@@ -53,14 +53,12 @@ void PeakFilter::filterSignificance(PeakCollection* peak_collection) const
 {
     filterHasUnitCell(peak_collection);
     filterIndexTolerance(peak_collection);
-    std::map<nsx::UnitCell*, std::vector<nsx::Peak3D*>> peaks_per_unit_cell;
-    nsx::Peak3D* peak_ptr;
+    std::map<const nsx::UnitCell*, std::vector<nsx::Peak3D*>> peaks_per_unit_cell;
     for (int i = 0; i < peak_collection->numberOfPeaks(); ++i) {
-        peak_ptr = peak_collection->getPeak(i);
+        nsx::Peak3D* peak_ptr = peak_collection->getPeak(i);
         if (peak_ptr->caughtByFilter()) {
-            auto unit_cell = peak_ptr->unitCell();
+            const UnitCell* unit_cell = peak_ptr->unitCell();
             auto it = peaks_per_unit_cell.find(unit_cell);
-
             if (it == peaks_per_unit_cell.end()) {
                 std::vector<nsx::Peak3D*> temp {peak_ptr};
                 peaks_per_unit_cell.insert(std::make_pair(unit_cell, temp));
@@ -95,9 +93,8 @@ void PeakFilter::filterSparseDataSet(PeakCollection* peak_collection) const
 {
     std::map<sptrDataSet, std::vector<nsx::Peak3D*>> peaks_per_dataset;
 
-    nsx::Peak3D* peak_ptr;
     for (int i = 0; i < peak_collection->numberOfPeaks(); ++i) {
-        peak_ptr = peak_collection->getPeak(i);
+        nsx::Peak3D* peak_ptr = peak_collection->getPeak(i);
         auto data = peak_ptr->dataSet();
         if (!data)
             continue;
@@ -126,13 +123,12 @@ void PeakFilter::filterExtincted(PeakCollection* peak_collection) const
 {
     filterHasUnitCell(peak_collection);
     filterIndexTolerance(peak_collection);
-    nsx::Peak3D* peak_ptr;
     for (int i = 0; i < peak_collection->numberOfPeaks(); ++i) {
-        peak_ptr = peak_collection->getPeak(i);
+        nsx::Peak3D* peak_ptr = peak_collection->getPeak(i);
         if (peak_ptr->caughtByFilter()) {
-            nsx::UnitCell* unit_cell = peak_ptr->unitCell();
-            SpaceGroup group(unit_cell->spaceGroup());
-            MillerIndex hkl(peak_ptr->q(), *(unit_cell));
+            const nsx::UnitCell* unit_cell = peak_ptr->unitCell();
+            const SpaceGroup group(unit_cell->spaceGroup());
+            const MillerIndex hkl(peak_ptr->q(), *(unit_cell));
             if (group.isExtinct(hkl))
                 peak_ptr->rejectYou(true);
         }
@@ -141,16 +137,14 @@ void PeakFilter::filterExtincted(PeakCollection* peak_collection) const
 
 void PeakFilter::filterOverlapping(PeakCollection* peak_collection) const
 {
-    nsx::Peak3D* peak_ptr;
     std::vector<Ellipsoid> ellipsoids;
-    std::set<Octree::collision_pair> collisions;
     Eigen::Vector3d lower(
         std::numeric_limits<double>::infinity(), std::numeric_limits<double>::infinity(),
         std::numeric_limits<double>::infinity());
     Eigen::Vector3d upper(-lower);
 
     for (int i = 0; i < peak_collection->numberOfPeaks(); ++i) {
-        peak_ptr = peak_collection->getPeak(i);
+        nsx::Peak3D* peak_ptr = peak_collection->getPeak(i);
         peak_ptr->caughtYou(true);
         auto&& ellipsoid = peak_ptr->shape();
         ellipsoids.emplace_back(ellipsoid);
@@ -165,14 +159,11 @@ void PeakFilter::filterOverlapping(PeakCollection* peak_collection) const
 
     // build octree
     Octree tree(lower, upper);
-
     for (unsigned int i = 0; i < peak_collection->numberOfPeaks(); ++i)
         tree.addData(&ellipsoids[i]);
 
-    collisions = tree.getCollisions();
-
     // handle collisions below
-    for (auto collision : collisions) {
+    for (auto collision : tree.getCollisions()) {
         unsigned int i = collision.first - &ellipsoids[0];
         unsigned int j = collision.second - &ellipsoids[0];
         peak_collection->getPeak(i)->rejectYou(true);
@@ -193,9 +184,8 @@ void PeakFilter::filterComplementary(PeakCollection* /*peak_collection*/) const
 
 void PeakFilter::filterEnabled(PeakCollection* peak_collection) const
 {
-    nsx::Peak3D* peak_ptr;
     for (int i = 0; i < peak_collection->numberOfPeaks(); ++i) {
-        peak_ptr = peak_collection->getPeak(i);
+        nsx::Peak3D* peak_ptr = peak_collection->getPeak(i);
         if (peak_ptr->enabled())
             peak_ptr->caughtYou(true);
         else
@@ -215,9 +205,8 @@ PeakFilter::filterEnabled(const std::vector<Peak3D*> input_peaks, bool flag) con
 
 void PeakFilter::filterSelected(PeakCollection* peak_collection) const
 {
-    nsx::Peak3D* peak_ptr;
     for (int i = 0; i < peak_collection->numberOfPeaks(); ++i) {
-        peak_ptr = peak_collection->getPeak(i);
+        nsx::Peak3D* peak_ptr = peak_collection->getPeak(i);
         if (peak_ptr->selected())
             peak_ptr->caughtYou(true);
         else
@@ -227,9 +216,8 @@ void PeakFilter::filterSelected(PeakCollection* peak_collection) const
 
 void PeakFilter::filterMasked(PeakCollection* peak_collection) const
 {
-    nsx::Peak3D* peak_ptr;
     for (int i = 0; i < peak_collection->numberOfPeaks(); ++i) {
-        peak_ptr = peak_collection->getPeak(i);
+        nsx::Peak3D* peak_ptr = peak_collection->getPeak(i);
         if (peak_ptr->masked())
             peak_ptr->caughtYou(true);
         else
@@ -240,12 +228,11 @@ void PeakFilter::filterMasked(PeakCollection* peak_collection) const
 void PeakFilter::filterIndexed(PeakCollection* peak_collection) const
 {
     filterHasUnitCell(peak_collection);
-    nsx::Peak3D* peak_ptr;
     for (int i = 0; i < peak_collection->numberOfPeaks(); ++i) {
-        peak_ptr = peak_collection->getPeak(i);
+        nsx::Peak3D* peak_ptr = peak_collection->getPeak(i);
         if (peak_ptr->caughtByFilter()) {
-            nsx::UnitCell* unit_cell = peak_ptr->unitCell();
-            MillerIndex hkl(peak_ptr->q(), *unit_cell);
+            const nsx::UnitCell* unit_cell = peak_ptr->unitCell();
+            const MillerIndex hkl(peak_ptr->q(), *unit_cell);
             if (hkl.indexed(_unit_cell_tolerance))
                 peak_ptr->caughtYou(true);
             else
@@ -268,9 +255,8 @@ std::vector<Peak3D*> PeakFilter::filterIndexed(
 
 void PeakFilter::filterIndexTolerance(PeakCollection* peak_collection) const
 {
-    nsx::Peak3D* peak_ptr;
     for (int i = 0; i < peak_collection->numberOfPeaks(); ++i) {
-        peak_ptr = peak_collection->getPeak(i);
+        nsx::Peak3D* peak_ptr = peak_collection->getPeak(i);
         auto cell = peak_ptr->unitCell();
         if (!cell)
             continue;
@@ -284,9 +270,8 @@ void PeakFilter::filterIndexTolerance(PeakCollection* peak_collection) const
 
 void PeakFilter::filterUnitCell(PeakCollection* peak_collection) const
 {
-    nsx::Peak3D* peak_ptr;
     for (int i = 0; i < peak_collection->numberOfPeaks(); ++i) {
-        peak_ptr = peak_collection->getPeak(i);
+        nsx::Peak3D* peak_ptr = peak_collection->getPeak(i);
         if (peak_ptr->unitCell()->name() == _unit_cell)
             peak_ptr->caughtYou(true);
         else
@@ -296,10 +281,9 @@ void PeakFilter::filterUnitCell(PeakCollection* peak_collection) const
 
 void PeakFilter::filterStrength(PeakCollection* peak_collection) const
 {
-    nsx::Peak3D* peak_ptr;
     // Reject peaks with: i) zero sigma ii) strength (I/sigma) outside range iii) intensity NaN
     for (int i = 0; i < peak_collection->numberOfPeaks(); ++i) {
-        peak_ptr = peak_collection->getPeak(i);
+        nsx::Peak3D* peak_ptr = peak_collection->getPeak(i);
         try {
             auto corrected_intensity = peak_ptr->correctedIntensity();
             double intensity = corrected_intensity.value();
@@ -324,9 +308,8 @@ void PeakFilter::filterStrength(PeakCollection* peak_collection) const
 
 void PeakFilter::filterPredicted(PeakCollection* peak_collection) const
 {
-    nsx::Peak3D* peak_ptr;
     for (int i = 0; i < peak_collection->numberOfPeaks(); ++i) {
-        peak_ptr = peak_collection->getPeak(i);
+        nsx::Peak3D* peak_ptr = peak_collection->getPeak(i);
         if (peak_ptr->predicted())
             peak_ptr->caughtYou(true);
         else
@@ -336,9 +319,8 @@ void PeakFilter::filterPredicted(PeakCollection* peak_collection) const
 
 void PeakFilter::filterDRange(PeakCollection* peak_collection) const
 {
-    nsx::Peak3D* peak_ptr;
     for (int i = 0; i < peak_collection->numberOfPeaks(); ++i) {
-        peak_ptr = peak_collection->getPeak(i);
+        nsx::Peak3D* peak_ptr = peak_collection->getPeak(i);
         auto q = peak_ptr->q();
         double d = 1.0 / q.rowVector().norm();
         if ((d >= _d_range[0] && d <= _d_range[1]))
@@ -350,9 +332,8 @@ void PeakFilter::filterDRange(PeakCollection* peak_collection) const
 
 void PeakFilter::filterHasUnitCell(PeakCollection* peak_collection) const
 {
-    nsx::Peak3D* peak_ptr;
     for (int i = 0; i < peak_collection->numberOfPeaks(); ++i) {
-        peak_ptr = peak_collection->getPeak(i);
+        nsx::Peak3D* peak_ptr = peak_collection->getPeak(i);
         auto cell = peak_ptr->unitCell();
         if (cell != nullptr)
             peak_ptr->caughtYou(true);

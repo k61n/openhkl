@@ -97,11 +97,11 @@ void PeakCollectionItem::sort(int column, Qt::SortOrder order)
     switch (column) {
         case Column::h: {
             compareFn = [&](std::unique_ptr<PeakItem>& p1, std::unique_ptr<PeakItem>& p2) {
-                nsx::UnitCell* cell_1 = p1->peak()->unitCell();
-                nsx::UnitCell* cell_2 = p2->peak()->unitCell();
+                const nsx::UnitCell* cell_1 = p1->peak()->unitCell();
+                const nsx::UnitCell* cell_2 = p2->peak()->unitCell();
                 if (cell_1 && cell_2) {
-                    nsx::MillerIndex miller_index1(p1->peak()->q(), *cell_1);
-                    nsx::MillerIndex miller_index2(p2->peak()->q(), *cell_2);
+                    const nsx::MillerIndex miller_index1(p1->peak()->q(), *cell_1);
+                    const nsx::MillerIndex miller_index2(p2->peak()->q(), *cell_2);
                     return (miller_index1[0] < miller_index2[0]);
                 } else {
                     return ((cell_1 != nullptr) < (cell_2 != nullptr));
@@ -111,11 +111,11 @@ void PeakCollectionItem::sort(int column, Qt::SortOrder order)
         }
         case Column::k: {
             compareFn = [&](std::unique_ptr<PeakItem>& p1, std::unique_ptr<PeakItem>& p2) {
-                nsx::UnitCell* cell_1 = p1->peak()->unitCell();
-                nsx::UnitCell* cell_2 = p2->peak()->unitCell();
+                const nsx::UnitCell* cell_1 = p1->peak()->unitCell();
+                const nsx::UnitCell* cell_2 = p2->peak()->unitCell();
                 if (cell_1 && cell_2) {
-                    nsx::MillerIndex miller_index1(p1->peak()->q(), *cell_1);
-                    nsx::MillerIndex miller_index2(p2->peak()->q(), *cell_2);
+                    const nsx::MillerIndex miller_index1(p1->peak()->q(), *cell_1);
+                    const nsx::MillerIndex miller_index2(p2->peak()->q(), *cell_2);
                     return (miller_index1[1] < miller_index2[1]);
                 } else {
                     return ((cell_1 != nullptr) < (cell_2 != nullptr));
@@ -125,11 +125,11 @@ void PeakCollectionItem::sort(int column, Qt::SortOrder order)
         }
         case Column::l: {
             compareFn = [](std::unique_ptr<PeakItem>& p1, std::unique_ptr<PeakItem>& p2) {
-                nsx::UnitCell* cell_1 = p1->peak()->unitCell();
-                nsx::UnitCell* cell_2 = p2->peak()->unitCell();
+                const nsx::UnitCell* cell_1 = p1->peak()->unitCell();
+                const nsx::UnitCell* cell_2 = p2->peak()->unitCell();
                 if (cell_1 && cell_2) {
-                    nsx::MillerIndex miller_index1(p1->peak()->q(), *cell_1);
-                    nsx::MillerIndex miller_index2(p2->peak()->q(), *cell_2);
+                    const nsx::MillerIndex miller_index1(p1->peak()->q(), *cell_1);
+                    const nsx::MillerIndex miller_index2(p2->peak()->q(), *cell_2);
                     return (miller_index1[2] < miller_index2[2]);
                 } else {
                     return ((cell_1 != nullptr) < (cell_2 != nullptr));
@@ -171,42 +171,42 @@ void PeakCollectionItem::sort(int column, Qt::SortOrder order)
         }
         case Column::Sigma: {
             compareFn = [](std::unique_ptr<PeakItem>& p1, std::unique_ptr<PeakItem>& p2) {
-                double sigma_intensity1 = p1->peak()->correctedIntensity().sigma();
-                double sigma_intensity2 = p2->peak()->correctedIntensity().sigma();
+                const double sigma_intensity1 = p1->peak()->correctedIntensity().sigma();
+                const double sigma_intensity2 = p2->peak()->correctedIntensity().sigma();
                 return (sigma_intensity1 < sigma_intensity2);
             };
             break;
         }
         case Column::Strength: {
             compareFn = [](std::unique_ptr<PeakItem>& p1, std::unique_ptr<PeakItem>& p2) {
-                double strength1 = p1->peak()->correctedIntensity().strength();
-                double strength2 = p2->peak()->correctedIntensity().strength();
+                const double strength1 = p1->peak()->correctedIntensity().strength();
+                const double strength2 = p2->peak()->correctedIntensity().strength();
                 return (strength1 < strength2);
             };
             break;
         }
         case Column::Numor: {
             compareFn = [&](std::unique_ptr<PeakItem>& p1, std::unique_ptr<PeakItem>& p2) {
-                int numor_1 = p1->peak()->dataSet()->reader()->metadata().key<int>("Numor");
-                int numor_2 = p2->peak()->dataSet()->reader()->metadata().key<int>("Numor");
+                const int numor_1 = p1->peak()->dataSet()->reader()->metadata().key<int>("Numor");
+                const int numor_2 = p2->peak()->dataSet()->reader()->metadata().key<int>("Numor");
                 return (numor_1 < numor_2);
             };
             break;
         }
         case Column::uc: {
             compareFn = [&](std::unique_ptr<PeakItem>& p1, std::unique_ptr<PeakItem>& p2) {
-                nsx::UnitCell* uc_1 = p1->peak()->unitCell();
-                nsx::UnitCell* uc_2 = p2->peak()->unitCell();
-                std::string uc_1Name = uc_1 ? uc_1->name() : "";
-                std::string uc_2Name = uc_2 ? uc_2->name() : "";
+                const nsx::UnitCell* uc_1 = p1->peak()->unitCell();
+                const nsx::UnitCell* uc_2 = p2->peak()->unitCell();
+                const std::string uc_1Name = uc_1 ? uc_1->name() : "";
+                const std::string uc_2Name = uc_2 ? uc_2->name() : "";
                 return (uc_2Name < uc_1Name);
             };
             break;
         }
         case Column::d: {
             compareFn = [&](std::unique_ptr<PeakItem>& p1, std::unique_ptr<PeakItem>& p2) {
-                double d_1 = 1.0 / (p1->peak()->q().rowVector().norm());
-                double d_2 = 1.0 / (p2->peak()->q().rowVector().norm());
+                const double d_1 = 1.0 / (p1->peak()->q().rowVector().norm());
+                const double d_2 = 1.0 / (p2->peak()->q().rowVector().norm());
                 return (d_1 < d_2);
             };
             break;

@@ -272,7 +272,7 @@ void ExperimentExporter::writePeaks(const std::map<std::string, PeakCollection*>
             name = peak->dataSet()->name();
             data_names.push_back(name.c_str());
 
-            UnitCell* unit_cell_ptr = peak->unitCell();
+            const UnitCell* unit_cell_ptr = peak->unitCell();
             if (unit_cell_ptr) {
                 unit_cell_name = unit_cell_ptr->name();
                 unit_cells.push_back(unit_cell_name.c_str());

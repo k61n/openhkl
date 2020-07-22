@@ -20,7 +20,7 @@
 
 namespace nsx {
 
-using RankedSolution = std::pair<sptrUnitCell, double>;
+using RankedSolution = std::pair<std::shared_ptr<UnitCell>, double>;
 
 //! Struct to store parameters used by autoindexer.
 struct IndexerParameters {
@@ -78,7 +78,7 @@ class AutoIndexer {
     //! Print solutions to stdout
     void printSolutions();
     //! Set solution to be unit cell for given peak list
-    void acceptSolution(std::shared_ptr<UnitCell> solution, const std::vector<nsx::Peak3D*>& peaks);
+    void acceptSolution(const UnitCell* solution, const std::vector<nsx::Peak3D*>& peaks);
     //! Check if list of solutions contains reference unit cell. If it does,
     //! assign it to _accepted_solution
     bool hasSolution(double length_tol, double angle_tol);

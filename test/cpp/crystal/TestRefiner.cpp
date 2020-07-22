@@ -132,7 +132,7 @@ TEST_CASE("test/crystal/TestRefiner.cpp", "")
 
 
     // set unit cell
-    auto cell = solution.first;
+    const auto cell = solution.first;
 
     // set constraints
     auto constrained_cell = cell->applyNiggliConstraints();
@@ -140,7 +140,7 @@ TEST_CASE("test/crystal/TestRefiner.cpp", "")
 
     std::vector<nsx::Peak3D*> peaks;
     for (auto&& peak : filtered_peaks->getPeakList()) {
-        peak->setUnitCell(cell);
+        peak->setUnitCell(cell.get());
         peaks.push_back(peak);
     }
 
