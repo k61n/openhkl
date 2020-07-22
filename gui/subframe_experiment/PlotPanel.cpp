@@ -18,9 +18,6 @@
 #include "gui/actions/Actions.h"
 #include "gui/graphics/PlotFactory.h"
 
-//-------------------------------------------------------------------------------------------------
-//! class PlotPanel
-
 PlotPanel::PlotPanel() : QWidget()
 {
     anchor = new QHBoxLayout(this);
@@ -33,8 +30,7 @@ void PlotPanel::plotData(QVector<double>& x, QVector<double>& y, QVector<double>
     if (plot->getType().compare("simple") != 0) {
         anchor->removeWidget(plot);
         delete plot;
-        PlotFactory* factory = PlotFactory::instance();
-        plot = factory->create("simple", centralWidget);
+        plot = PlotFactory::instance().create("simple", centralWidget);
         plot->setObjectName("1D plotter");
         plot->setFocusPolicy(Qt::StrongFocus);
         anchor->addWidget(plot);
@@ -53,8 +49,7 @@ void PlotPanel::updatePlot(PlottableItem* item)
     if (!item->isPlottable(plot)) {
         anchor->removeWidget(plot);
         delete plot;
-        PlotFactory* factory = PlotFactory::instance();
-        plot = factory->create(item->getPlotType(), centralWidget);
+        plot = PlotFactory::instance().create(item->getPlotType(), centralWidget);
         plot->setObjectName("1D plotter");
         plot->setFocusPolicy(Qt::StrongFocus);
         anchor->addWidget(plot);

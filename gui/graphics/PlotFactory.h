@@ -19,14 +19,10 @@
 #include "base/utils/ISingleton.h"
 #include "gui/graphics/SXPlot.h"
 
-//! A creator for `SXPlot`s based on nsx::Factory
-class PlotFactory : public nsx::Factory<SXPlot, std::string, QWidget*>,
-                    public nsx::Singleton<PlotFactory, nsx::Constructor, nsx::Destructor> {
- private:
+//! A creator for SXPlot%s
+class PlotFactory : public nsx::Factory<PlotFactory, SXPlot, std::string, QWidget*> {
+ public:
     PlotFactory();
-    ~PlotFactory();
-    friend class nsx::Constructor<PlotFactory>;
-    friend class nsx::Destructor<PlotFactory>;
 };
 
 #endif // NSX_GUI_GRAPHICS_PLOTFACTORY_H

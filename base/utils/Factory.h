@@ -15,6 +15,7 @@
 #ifndef NSX_BASE_UTILS_FACTORY_H
 #define NSX_BASE_UTILS_FACTORY_H
 
+#include "base/utils/ISingleton.h"
 #include <algorithm>
 #include <functional>
 #include <map>
@@ -28,7 +29,8 @@ namespace nsx {
 //! Templated on the return type, the key and accepts any number
 //! and/or type of parameters using variadic templates for the callback.
 
-template <typename returnType, typename keytype, typename... args> class Factory {
+template <typename Child, typename returnType, typename keytype, typename... args>
+class Factory : public ISingleton<Child> {
     typedef std::function<returnType*(args...)> callback;
     typedef std::map<keytype, callback> callbackmap;
 
@@ -58,8 +60,8 @@ template <typename returnType, typename keytype, typename... args> class Factory
     callbackmap _map;
 };
 
-template <typename base, typename keytype, typename... args>
-void Factory<base, keytype, args...>::registerCallback(const keytype& key, callback cb)
+template <typename Child, typename base, typename keytype, typename... args>
+void Factory<Child, base, keytype, args...>::registerCallback(const keytype& key, callback cb)
 {
     auto it = _map.find(key);
     if (it == _map.end())
@@ -68,14 +70,14 @@ void Factory<base, keytype, args...>::registerCallback(const keytype& key, callb
         throw std::invalid_argument("Callback key already in use.");
 }
 
-template <typename base, typename keytype, typename... args>
-void Factory<base, keytype, args...>::clear()
+template <typename Child, typename base, typename keytype, typename... args>
+void Factory<Child, base, keytype, args...>::clear()
 {
     _map.clear();
 }
 
-template <typename base, typename keytype, typename... args>
-base* Factory<base, keytype, args...>::create(const keytype& key, args... arg)
+template <typename Child, typename base, typename keytype, typename... args>
+base* Factory<Child, base, keytype, args...>::create(const keytype& key, args... arg)
 {
     auto it = _map.find(key);
     if (it != _map.end())
@@ -84,8 +86,8 @@ base* Factory<base, keytype, args...>::create(const keytype& key, args... arg)
         throw std::invalid_argument("Factory error: callback not registered for " + key + " class");
 }
 
-template <typename base, typename keytype, typename... args>
-std::vector<keytype> Factory<base, keytype, args...>::list() const
+template <typename Child, typename base, typename keytype, typename... args>
+std::vector<keytype> Factory<Child, base, keytype, args...>::list() const
 {
     std::vector<keytype> keys;
     keys.reserve(_map.size());
@@ -95,14 +97,14 @@ std::vector<keytype> Factory<base, keytype, args...>::list() const
     return keys;
 }
 
-template <typename base, typename keytype, typename... args>
-std::size_t Factory<base, keytype, args...>::unregisterCallback(const keytype& key)
+template <typename Child, typename base, typename keytype, typename... args>
+std::size_t Factory<Child, base, keytype, args...>::unregisterCallback(const keytype& key)
 {
     return _map.erase(key);
 }
 
-template <typename base, typename keytype, typename... args>
-bool Factory<base, keytype, args...>::hasCallback(const keytype& key)
+template <typename Child, typename base, typename keytype, typename... args>
+bool Factory<Child, base, keytype, args...>::hasCallback(const keytype& key)
 {
     auto it = _map.find(key);
     return (it != _map.end());

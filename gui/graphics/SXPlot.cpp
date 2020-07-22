@@ -150,7 +150,7 @@ void SXPlot::mouseWheel(QWheelEvent* wheel_event)
         xAxis->setRange(new_edges[0], new_edges[1]);
     else if (yAxis->selectedParts().testFlag(QCPAxis::spAxis))
         yAxis->setRange(new_edges[2], new_edges[3]);
- else {
+    else {
         xAxis->setRange(new_edges[0], new_edges[1]);
         yAxis->setRange(new_edges[2], new_edges[3]);
     }

@@ -22,5 +22,3 @@ PlotFactory::PlotFactory()
     registerCallback("simple", &SimplePlot::create);
     registerCallback("peak", &PeakPlot::create);
 }
-
-PlotFactory::~PlotFactory() {}

@@ -24,16 +24,9 @@ namespace nsx {
 
 Axis* Axis::create(const YAML::Node& node)
 {
-    // Create an instance of the source factory
-    AxisFactory* axisFactory = AxisFactory::instance();
-
-    // Gets the axis type
     std::string axisType = node["type"].as<std::string>();
 
-    // Fetch the axis from the factory
-    Axis* axis = axisFactory->create(axisType, node);
-
-    return axis;
+    return AxisFactory::instance().create(axisType, node);
 }
 
 Axis::Axis() : _name("axis"), _axis(Eigen::Vector3d(0.0, 0.0, 1.0)), _physical(true), _id(0) {}
