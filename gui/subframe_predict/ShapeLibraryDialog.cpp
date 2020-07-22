@@ -400,7 +400,7 @@ void ShapeLibraryDialog::drawFrame(int value)
 
 void ShapeLibraryDialog::selectTargetPeak(int row)
 {
-    nsx::Peak3D* selected_peak = _peak_collection_item.peakCollection()->getPeak(row);
+    const nsx::Peak3D* selected_peak = _peak_collection_item.peakCollection()->getPeak(row);
 
     const Eigen::Vector3d& center = selected_peak->shape().center();
 

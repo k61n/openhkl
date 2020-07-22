@@ -65,11 +65,6 @@ void PeakCollection::reset()
     _peaks.clear();
 }
 
-nsx::Peak3D* PeakCollection::getPeak(int index)
-{
-    return _peaks.at(index).get();
-}
-
 std::vector<nsx::Peak3D*> PeakCollection::getPeakList() const
 {
     std::vector<nsx::Peak3D*> peak_list;
@@ -86,11 +81,6 @@ std::vector<nsx::Peak3D*> PeakCollection::getFilteredPeakList() const
             peak_list.push_back(_peaks[i].get());
     }
     return peak_list;
-}
-
-int PeakCollection::numberOfPeaks() const
-{
-    return _peaks.size();
 }
 
 int PeakCollection::numberOfValid() const

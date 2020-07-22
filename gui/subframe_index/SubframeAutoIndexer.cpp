@@ -337,7 +337,7 @@ void SubframeAutoIndexer::refreshPeakTable()
     if (_peak_list.isEmpty() || _exp_combo->count() < 1)
         return;
 
-    nsx::PeakCollection* collection =
+    const nsx::PeakCollection* collection =
         gSession->experimentAt(_exp_combo->currentIndex())
             ->experiment()
             ->getPeakCollection(_peak_combo->currentText().toStdString());
@@ -396,7 +396,7 @@ void SubframeAutoIndexer::runAutoIndexer()
 
     nsx::AutoIndexer* auto_indexer =
         gSession->experimentAt(_exp_combo->currentIndex())->experiment()->autoIndexer();
-    nsx::PeakCollection* collection =
+    const nsx::PeakCollection* collection =
         gSession->experimentAt(_exp_combo->currentIndex())
             ->experiment()
             ->getPeakCollection(_peak_combo->currentText().toStdString());
@@ -438,11 +438,11 @@ void SubframeAutoIndexer::buildSolutionsTable()
 
     // Display solutions
     for (unsigned int i = 0; i < _solutions.size(); ++i) {
-        nsx::sptrUnitCell cell = _solutions[i].first;
-        double quality = _solutions[i].second;
+        const nsx::sptrUnitCell cell = _solutions[i].first;
+        const double quality = _solutions[i].second;
 
-        nsx::UnitCellCharacter ch = cell->character();
-        nsx::UnitCellCharacter sigma = cell->characterSigmas();
+        const nsx::UnitCellCharacter ch = cell->character();
+        const nsx::UnitCellCharacter sigma = cell->characterSigmas();
 
         QStandardItem* col1 = new QStandardItem(
             QString::number(ch.a, 'f', 3) + "(" + QString::number(sigma.a * 1000, 'f', 0) + ")");
@@ -478,7 +478,7 @@ void SubframeAutoIndexer::buildSolutionsTable()
 
 void SubframeAutoIndexer::selectSolutionTable()
 {
-    QItemSelectionModel* select = _solution_table->selectionModel();
+    const QItemSelectionModel* select = _solution_table->selectionModel();
     QModelIndexList indices = select->selectedRows();
     if (!indices.isEmpty())
         selectSolutionHeader(indices[0].row());
@@ -489,7 +489,7 @@ void SubframeAutoIndexer::selectSolutionHeader(int index)
     _selected_unit_cell = _solutions[index].first;
     _selected_unit_cell->printSelf(std::cout);
 
-    nsx::PeakCollection* collection =
+    const nsx::PeakCollection* collection =
         gSession->experimentAt(_exp_combo->currentIndex())
             ->experiment()
             ->getPeakCollection(_peak_combo->currentText().toStdString());
@@ -515,7 +515,7 @@ void SubframeAutoIndexer::acceptSolution()
                 ->addUnitCell(dlg->listName().toStdString(), _selected_unit_cell.get());
             gSession->onUnitCellChanged();
 
-            nsx::PeakCollection* collection =
+            const nsx::PeakCollection* collection =
                 gSession->experimentAt(_exp_combo->currentIndex())
                     ->experiment()
                     ->getPeakCollection(_peak_combo->currentText().toStdString());
