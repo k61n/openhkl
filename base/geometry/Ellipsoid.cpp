@@ -13,20 +13,11 @@
 //  ***********************************************************************************************
 
 #include "base/geometry/Ellipsoid.h"
-
 #include "base/geometry/AABB.h"
 
 #include <array>
 
 namespace nsx {
-
-Ellipsoid::Ellipsoid(const Ellipsoid& other)
-{
-    _center = other._center;
-    _metric = other._metric;
-    _inverseMetric = other._inverseMetric;
-    _aabb = other._aabb;
-}
 
 Ellipsoid::Ellipsoid(const Eigen::Vector3d& center, const Eigen::Matrix3d& metric)
     : _center(center), _metric(metric), _inverseMetric(metric.inverse()), _aabb()

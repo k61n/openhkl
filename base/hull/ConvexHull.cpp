@@ -23,92 +23,81 @@
 
 namespace nsx {
 
-ConvexHull::ConvexHull()
-    : _initialized(false)
-    , _vertices()
-    , _edges()
-    , _faces()
-    , _planes()
-    , _innerR2(0.0)
-    , _outerR2(0.0)
-    , _vertex_id(0)
-    , _edge_id(0)
-    , _face_id(0)
-{
-}
-
-ConvexHull::~ConvexHull()
-{
-    reset();
-}
-
 ConvexHull::ConvexHull(const ConvexHull& other)
 {
-    for (auto p : other._vertices) {
-        Vertex* other_vertex = p.second;
-        Vertex* new_vertex = new Vertex(other_vertex->_id, other_vertex->_coords);
-        new_vertex->_onHull = other_vertex->_onHull;
-        new_vertex->_mark = other_vertex->_mark;
-        _vertices.emplace(new_vertex->_id, new_vertex);
+    *this = other;
+}
+
+ConvexHull& ConvexHull::operator=(const ConvexHull& other)
+{
+    if (this != &other) {
+        for (auto p : other._vertices) {
+            Vertex* other_vertex = p.second;
+            Vertex* new_vertex = new Vertex(other_vertex->_id, other_vertex->_coords);
+            new_vertex->_onHull = other_vertex->_onHull;
+            new_vertex->_mark = other_vertex->_mark;
+            _vertices.emplace(new_vertex->_id, new_vertex);
+        }
+
+        for (auto p : other._edges) {
+            Edge* other_edge = p.second;
+            Edge* new_edge = new Edge(other_edge->_id);
+            new_edge->_delete = other_edge->_delete;
+            _edges.emplace(new_edge->_id, new_edge);
+        }
+
+        for (auto p : other._faces) {
+            Face* other_face = p.second;
+            Face* new_face = new Face(other_face->_id);
+            new_face->_visible = other_face->_visible;
+            _faces.emplace(new_face->_id, new_face);
+        }
+
+        for (auto p : _vertices) {
+            Vertex* new_vertex = p.second;
+            Vertex* other_vertex = other._vertices.at(p.first);
+            new_vertex->_duplicate =
+                other_vertex->_duplicate ? _edges[other_vertex->_duplicate->_id] : nullptr;
+        }
+
+        for (auto p : _edges) {
+            Edge* new_edge = p.second;
+            Edge* other_edge = other._edges.at(p.first);
+
+            new_edge->_newFace = other_edge->_newFace ? _faces[other_edge->_newFace->_id] : nullptr;
+
+            new_edge->_faces[0] = _faces[other_edge->_faces[0]->_id];
+            new_edge->_faces[1] = _faces[other_edge->_faces[1]->_id];
+
+            new_edge->_vertices[0] = _vertices[other_edge->_vertices[0]->_id];
+            new_edge->_vertices[1] = _vertices[other_edge->_vertices[1]->_id];
+        }
+
+        for (auto p : _faces) {
+            Face* new_face = p.second;
+            Face* other_face = other._faces.at(p.first);
+
+            new_face->_edges[0] = _edges[other_face->_edges[0]->_id];
+            new_face->_edges[1] = _edges[other_face->_edges[1]->_id];
+            new_face->_edges[2] = _edges[other_face->_edges[2]->_id];
+
+            new_face->_vertices[0] = _vertices[other_face->_vertices[0]->_id];
+            new_face->_vertices[1] = _vertices[other_face->_vertices[1]->_id];
+            new_face->_vertices[2] = _vertices[other_face->_vertices[2]->_id];
+        }
+
+        _initialized = other._initialized;
+
+        _planes = other._planes;
+
+        _innerR2 = other._innerR2;
+        _outerR2 = other._outerR2;
+
+        _face_id = other._face_id;
+        _edge_id = other._edge_id;
+        _vertex_id = other._vertex_id;
     }
-
-    for (auto p : other._edges) {
-        Edge* other_edge = p.second;
-        Edge* new_edge = new Edge(other_edge->_id);
-        new_edge->_delete = other_edge->_delete;
-        _edges.emplace(new_edge->_id, new_edge);
-    }
-
-    for (auto p : other._faces) {
-        Face* other_face = p.second;
-        Face* new_face = new Face(other_face->_id);
-        new_face->_visible = other_face->_visible;
-        _faces.emplace(new_face->_id, new_face);
-    }
-
-    for (auto p : _vertices) {
-        Vertex* new_vertex = p.second;
-        Vertex* other_vertex = other._vertices.at(p.first);
-        new_vertex->_duplicate =
-            other_vertex->_duplicate ? _edges[other_vertex->_duplicate->_id] : nullptr;
-    }
-
-    for (auto p : _edges) {
-        Edge* new_edge = p.second;
-        Edge* other_edge = other._edges.at(p.first);
-
-        new_edge->_newFace = other_edge->_newFace ? _faces[other_edge->_newFace->_id] : nullptr;
-
-        new_edge->_faces[0] = _faces[other_edge->_faces[0]->_id];
-        new_edge->_faces[1] = _faces[other_edge->_faces[1]->_id];
-
-        new_edge->_vertices[0] = _vertices[other_edge->_vertices[0]->_id];
-        new_edge->_vertices[1] = _vertices[other_edge->_vertices[1]->_id];
-    }
-
-    for (auto p : _faces) {
-        Face* new_face = p.second;
-        Face* other_face = other._faces.at(p.first);
-
-        new_face->_edges[0] = _edges[other_face->_edges[0]->_id];
-        new_face->_edges[1] = _edges[other_face->_edges[1]->_id];
-        new_face->_edges[2] = _edges[other_face->_edges[2]->_id];
-
-        new_face->_vertices[0] = _vertices[other_face->_vertices[0]->_id];
-        new_face->_vertices[1] = _vertices[other_face->_vertices[1]->_id];
-        new_face->_vertices[2] = _vertices[other_face->_vertices[2]->_id];
-    }
-
-    _initialized = other._initialized;
-
-    _planes = other._planes;
-
-    _innerR2 = other._innerR2;
-    _outerR2 = other._outerR2;
-
-    _face_id = other._face_id;
-    _edge_id = other._edge_id;
-    _vertex_id = other._vertex_id;
+    return *this;
 }
 
 void ConvexHull::reset()
@@ -136,6 +125,25 @@ bool ConvexHull::isCoplanar(Vertex* v0, Vertex* v1, Vertex* v2)
     double norm = va.cross(vb).norm();
 
     return (norm < 1.0e-9);
+}
+
+ConvexHull::ConvexHull()
+    : _initialized(false)
+    , _vertices()
+    , _edges()
+    , _faces()
+    , _planes()
+    , _innerR2(0.0)
+    , _outerR2(0.0)
+    , _vertex_id(0)
+    , _edge_id(0)
+    , _face_id(0)
+{
+}
+
+ConvexHull::~ConvexHull()
+{
+    reset();
 }
 
 Vertex* ConvexHull::addVertex(const Eigen::Vector3d& coords)

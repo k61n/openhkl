@@ -26,7 +26,6 @@ namespace nsx {
 class Ellipsoid {
  public:
     Ellipsoid() = default;
-    Ellipsoid(const Ellipsoid& other);
     //! Construct directly from metric tensor
     Ellipsoid(const Eigen::Vector3d& center, const Eigen::Matrix3d& metric);
     //! Constructor for a sphere
