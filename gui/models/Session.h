@@ -24,11 +24,14 @@ class Session {
  public:
     Session();
 
-    SessionExperiment* selectedExperiment();
+    SessionExperiment* selectedExperiment() { return _experiments.at(selectedExperiment_); }
+    const SessionExperiment* selectedExperiment() const {
+        return _experiments.at(selectedExperiment_); }
     void selectExperiment(int);
-    int selectedExperimentNum() { return selectedExperiment_; }
+    int selectedExperimentNum() const { return selectedExperiment_; }
     SessionExperiment* experimentAt(int i) { return _experiments.at(i); }
-    int numExperiments() { return _experiments.size(); }
+    const SessionExperiment* experimentAt(int i) const { return _experiments.at(i); }
+    int numExperiments() const { return _experiments.size(); }
     QList<QString> experimentNames() const;
 
     bool createExperiment(QString experimentName);
