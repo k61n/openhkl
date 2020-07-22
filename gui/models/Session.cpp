@@ -36,8 +36,7 @@ Session::Session()
 bool Session::createExperiment(QString experimentName, QString instrumentName)
 {
     QList<QString> temp = experimentNames();
-    QList<QString>::iterator it;
-    for (it = temp.begin(); it != temp.end(); ++it) {
+    for (QList<QString>::iterator it = temp.begin(); it != temp.end(); ++it) {
         if (*it == experimentName)
             return false;
     }
@@ -53,8 +52,7 @@ bool Session::createExperiment(QString experimentName, QString instrumentName)
 bool Session::createExperiment(QString experimentName)
 {
     QList<QString> temp = experimentNames();
-    QList<QString>::iterator it;
-    for (it = temp.begin(); it != temp.end(); ++it) {
+    for (QList<QString>::iterator it = temp.begin(); it != temp.end(); ++it) {
         if (*it == experimentName)
             return false;
     }

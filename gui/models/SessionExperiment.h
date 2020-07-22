@@ -35,7 +35,7 @@ class SessionExperiment {
 
  public:
     const nsx::Experiment* experiment() const { return _experiment.get(); }
-    nsx::Experiment* experiment() { return _experiment.get(); } // TODO can we get rid of this?
+    nsx::Experiment* experiment() { return _experiment.get(); }
     QStringList getDataNames() const;
     nsx::sptrDataSet getData(int index = -1) const;
     QList<nsx::sptrDataSet> allData() const;
