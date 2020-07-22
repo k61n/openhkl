@@ -16,20 +16,16 @@
 #define NSX_CORE_GONIO_AXISFACTORY_H
 
 #include "base/utils/Factory.h"
-#include "base/utils/Singleton.h"
+#include "base/utils/ISingleton.h"
 #include "core/gonio/Axis.h"
 
 namespace nsx {
 
 //! Factory to create axes (rotational, translational).
 
-class AxisFactory : public Factory<Axis, std::string, const YAML::Node&>,
-                    public Singleton<AxisFactory, Constructor, Destructor> {
- private:
-    friend class Constructor<AxisFactory>;
-    friend class Destructor<AxisFactory>;
+class AxisFactory : public Factory<AxisFactory, Axis, std::string, const YAML::Node&> {
+ public:
     AxisFactory();
-    ~AxisFactory();
 };
 
 } // namespace nsx

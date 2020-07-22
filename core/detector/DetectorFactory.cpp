@@ -27,6 +27,4 @@ DetectorFactory::DetectorFactory()
     registerCallback("cylindrical", &CylindricalDetector::create);
 }
 
-DetectorFactory::~DetectorFactory() {}
-
 } // namespace nsx

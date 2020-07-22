@@ -18,7 +18,7 @@
 #include <cmath>
 #include <unordered_map>
 
-#include "base/utils/Singleton.h"
+#include "base/utils/ISingleton.h"
 
 namespace nsx {
 
@@ -36,7 +36,7 @@ namespace nsx {
 //! Singleton class to map the symbol of a Unit with its value in the internal
 //! reference system. This is used for example when parsing values from input XML files.
 
-class UnitsManager : public Singleton<UnitsManager, Constructor, Destructor> {
+class UnitsManager : public ISingleton<UnitsManager> {
  public:
     //! Gets the value of a given unit with respect to the internal reference unit.
     //! Throws std::invalid_argument if not present

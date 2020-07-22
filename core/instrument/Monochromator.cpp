@@ -31,23 +31,22 @@ Monochromator::Monochromator(const YAML::Node& node)
 {
     _name = node["name"].as<std::string>();
 
-    UnitsManager* um = UnitsManager::Instance();
+    const UnitsManager& um = UnitsManager::instance();
 
     // Sets the source slit width from the yaml tree node
     auto&& widthNode = node["width"];
-    _width = widthNode["value"].as<double>() * um->get(widthNode["units"].as<std::string>());
+    _width = widthNode["value"].as<double>() * um.get(widthNode["units"].as<std::string>());
 
     // Sets the source slit height from the yaml tree node
     auto&& heightNode = node["height"];
-    _height = heightNode["value"].as<double>() * um->get(heightNode["units"].as<std::string>());
+    _height = heightNode["value"].as<double>() * um.get(heightNode["units"].as<std::string>());
 
     auto&& wavelengthNode = node["wavelength"];
     _wavelength = wavelengthNode["value"].as<double>()
-        * um->get(wavelengthNode["units"].as<std::string>()) / nsx::ang;
+        * um.get(wavelengthNode["units"].as<std::string>()) / nsx::ang;
 
     auto&& fwhmNode = node["fwhm"];
-    _fwhm =
-        fwhmNode["value"].as<double>() * um->get(fwhmNode["units"].as<std::string>()) / nsx::ang;
+    _fwhm = fwhmNode["value"].as<double>() * um.get(fwhmNode["units"].as<std::string>()) / nsx::ang;
 }
 
 const std::string& Monochromator::name() const

@@ -43,7 +43,7 @@ struct Vertex;
 //! their corresponding edges) that has been completety "buried" by the hull growth.
 
 class ConvexHull {
-public:
+ public:
     //! Checks whether three vertices are coplanar
     static bool isCoplanar(Vertex* v0, Vertex* v1, Vertex* v2);
     ConvexHull();
@@ -126,7 +126,7 @@ public:
     //! Gets AABB of the convex hull
     AABB aabb() const;
 
-private:
+ private:
     //! Initializes the hull. The initialization consists in defines two triangles
     //! with opposite orientations that will serve as seeds for the faces of the
     //! hull to be built later
@@ -173,7 +173,7 @@ private:
     //! anymore
     void cleanUp();
 
-private:
+ private:
     //! A boolean that indicates whether or not the two seed-triangles of the hull
     //! have been already created
     bool _initialized;

@@ -16,19 +16,14 @@
 #define NSX_CORE_DETECTOR_DETECTORFACTORY_H
 
 #include "base/utils/Factory.h"
-#include "base/utils/Singleton.h"
 
 namespace nsx {
 
-//! Factory that gives access to `Detector`s of different geometries.
+//! Factory that gives access to Detector%s of different geometries.
 
-class DetectorFactory : public Factory<Detector, std::string, const YAML::Node&>,
-                        public Singleton<DetectorFactory, Constructor, Destructor> {
- private:
-    friend class Constructor<DetectorFactory>;
-    friend class Destructor<DetectorFactory>;
+class DetectorFactory : public Factory<DetectorFactory, Detector, std::string, const YAML::Node&> {
+ public:
     DetectorFactory();
-    ~DetectorFactory();
 };
 
 } // namespace nsx

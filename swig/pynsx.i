@@ -91,7 +91,7 @@ using Eigen::Quaterniond;
 #include "base/utils/Factory.h"
 #include "base/utils/Path.h"
 #include "base/utils/ProgressHandler.h"
-#include "base/utils/Singleton.h"
+#include "base/utils/ISingleton.h"
 #include "base/utils/Units.h"
 
 #include "tables/crystal/MillerIndex.h"
