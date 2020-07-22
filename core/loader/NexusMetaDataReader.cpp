@@ -2,7 +2,7 @@
 //
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
-//! @file      core/loader/HDF5MetaDataReader.cpp
+//! @file      core/loader/NexusMetaDataReader.cpp
 //! @brief     Implements class HDF5MetaDataReader
 //!
 //! @homepage  ###HOMEPAGE###
@@ -27,7 +27,6 @@
 #include <stdexcept>
 
 namespace nsx {
-
 
 NexusMetaDataReader::NexusMetaDataReader(
     const std::string& filename, Diffractometer* diffractometer)
@@ -184,14 +183,15 @@ NexusMetaDataReader::NexusMetaDataReader(
             sample_states[phi_idx] = phi * deg;
 
             // only read the values for which the scanned_axes flag is set
-            if(scanned_axes[omega_idx])
+            if (scanned_axes[omega_idx])
                 sample_states[omega_idx] = scanned_vars[_nFrames * omega_idx + frame] * deg;
-            if(scanned_axes[chi_idx])
+            if (scanned_axes[chi_idx])
                 sample_states[chi_idx] = scanned_vars[_nFrames * chi_idx + frame] * deg;
-            if(scanned_axes[phi_idx])
+            if (scanned_axes[phi_idx])
                 sample_states[phi_idx] = scanned_vars[_nFrames * phi_idx + frame] * deg;
 
-            //std::cout << sample_states[omega_idx] << " " << sample_states[chi_idx] << " " << sample_states[phi_idx] << std::endl;
+            // std::cout << sample_states[omega_idx] << " " << sample_states[chi_idx] << " " <<
+            // sample_states[phi_idx] << std::endl;
             _sampleStates.emplace_back(std::move(sample_states));
         }
 

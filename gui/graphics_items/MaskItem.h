@@ -2,7 +2,7 @@
 //
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
-//! @file      gui/graphics/MaskItem.h
+//! @file      gui/graphics_items/MaskItem.h
 //! @brief     Defines class MaskItem
 //!
 //! @homepage  ###HOMEPAGE###
@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef GUI_GRAPHICS_ITEMS_MASKITEM_H
-#define GUI_GRAPHICS_ITEMS_MASKITEM_H
+#ifndef NSX_GUI_GRAPHICS_ITEMS_MASKITEM_H
+#define NSX_GUI_GRAPHICS_ITEMS_MASKITEM_H
 
 #include "base/geometry/AABB.h"
 #include "core/data/DataTypes.h"
@@ -68,4 +68,4 @@ class MaskItem : public SXGraphicsItem {
     void updateAABB();
 };
 
-#endif // GUI_GRAPHICS_ITEMS_MASKITEM_H
+#endif // NSX_GUI_GRAPHICS_ITEMS_MASKITEM_H

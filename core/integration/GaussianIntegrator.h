@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef CORE_INTEGRATION_GAUSSIANINTEGRATOR_H
-#define CORE_INTEGRATION_GAUSSIANINTEGRATOR_H
+#ifndef NSX_CORE_INTEGRATION_GAUSSIANINTEGRATOR_H
+#define NSX_CORE_INTEGRATION_GAUSSIANINTEGRATOR_H
 
 #include "core/shape/IPeakIntegrator.h"
 
@@ -32,4 +32,4 @@ class GaussianIntegrator : public IPeakIntegrator {
 
 } // namespace nsx
 
-#endif // CORE_INTEGRATION_GAUSSIANINTEGRATOR_H
+#endif // NSX_CORE_INTEGRATION_GAUSSIANINTEGRATOR_H

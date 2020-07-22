@@ -2,7 +2,7 @@
 //
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
-//! @file      gui/graphics/SXGraphicsItem.cpp
+//! @file      gui/graphics_items/SXGraphicsItem.cpp
 //! @brief     Implements class SXGraphicsItem
 //!
 //! @homepage  ###HOMEPAGE###
@@ -38,7 +38,7 @@ SXGraphicsItem::SXGraphicsItem(QGraphicsItem* parent, bool deletable, bool movab
     setAcceptHoverEvents(true);
 }
 
-SXGraphicsItem::~SXGraphicsItem() { }
+SXGraphicsItem::~SXGraphicsItem() {}
 
 void SXGraphicsItem::hoverEnterEvent(QGraphicsSceneHoverEvent* event)
 {

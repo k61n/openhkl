@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef GUI_FRAMES_GLOBALOFFSETSFRAME_H
-#define GUI_FRAMES_GLOBALOFFSETSFRAME_H
+#ifndef NSX_GUI_FRAMES_GLOBALOFFSETSFRAME_H
+#define NSX_GUI_FRAMES_GLOBALOFFSETSFRAME_H
 
 #include "gui/graphics/SXPlot.h"
 
@@ -45,4 +45,4 @@ class GlobalOffsetsFrame : public QFrame {
     SXPlot* plot;
 };
 
-#endif // GUI_FRAMES_GLOBALOFFSETSFRAME_H
+#endif // NSX_GUI_FRAMES_GLOBALOFFSETSFRAME_H

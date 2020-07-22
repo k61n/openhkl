@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef CORE_LOADER_EXPERIMENTDATAREADER_H
-#define CORE_LOADER_EXPERIMENTDATAREADER_H
+#ifndef NSX_CORE_LOADER_EXPERIMENTDATAREADER_H
+#define NSX_CORE_LOADER_EXPERIMENTDATAREADER_H
 
 #include "core/loader/ExperimentMetaReader.h" // inherits from
 
@@ -40,4 +40,4 @@ class ExperimentDataReader : public ExperimentMetaReader {
 
 } // namespace nsx
 
-#endif // CORE_LOADER_EXPERIMENTDATAREADER_H
+#endif // NSX_CORE_LOADER_EXPERIMENTDATAREADER_H

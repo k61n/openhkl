@@ -110,9 +110,8 @@ void DetectorScene::clearPeakItems()
     if (!_currentData)
         return;
 
-    for (PeakItemGraphic* p : _peak_graphics_items) {
+    for (PeakItemGraphic* p : _peak_graphics_items)
         removeItem(p);
-    }
 
     _peak_graphics_items.clear();
 }
@@ -420,7 +419,6 @@ void DetectorScene::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
 
             // nsx::Peak3D* peak = peak_item->peak();
             // gSession->onSelectedPeakChanged(peak);
-
         } else if (_mode == ZOOM) {
             qreal top = _zoomrect->rect().top();
             qreal bot = _zoomrect->rect().bottom();

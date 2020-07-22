@@ -12,7 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#pragma once
+#ifndef NSX_GUI_GRAPHICS_CRYSTALFACEITEM_H
+#define NSX_GUI_GRAPHICS_CRYSTALFACEITEM_H
 
 #include <Eigen/Dense>
 
@@ -31,3 +32,5 @@ class CrystalFaceItem : public QGraphicsItem {
     double nz;
     QPointF* _points;
 };
+
+#endif // NSX_GUI_GRAPHICS_CRYSTALFACEITEM_H

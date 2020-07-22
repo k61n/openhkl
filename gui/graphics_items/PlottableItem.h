@@ -2,7 +2,7 @@
 //
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
-//! @file      gui/graphics/PlottableItem.h
+//! @file      gui/graphics_items/PlottableItem.h
 //! @brief     Defines class PlottableItem
 //!
 //! @homepage  ###HOMEPAGE###
@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef GUI_GRAPHICS_ITEMS_PLOTTABLEITEM_H
-#define GUI_GRAPHICS_ITEMS_PLOTTABLEITEM_H
+#ifndef NSX_GUI_GRAPHICS_ITEMS_PLOTTABLEITEM_H
+#define NSX_GUI_GRAPHICS_ITEMS_PLOTTABLEITEM_H
 
 #include "gui/graphics_items/SXGraphicsItem.h"
 
@@ -37,4 +37,4 @@ class PlottableItem : public SXGraphicsItem {
     bool isPlottable(SXPlot* plot) const;
 };
 
-#endif // GUI_GRAPHICS_PLOTTABLEITEM_H
+#endif // NSX_GUI_GRAPHICS_ITEMS_PLOTTABLEITEM_H

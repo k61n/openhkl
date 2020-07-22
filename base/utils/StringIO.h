@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef BASE_UTILS_STRINGIO_H
-#define BASE_UTILS_STRINGIO_H
+#ifndef NSX_BASE_UTILS_STRINGIO_H
+#define NSX_BASE_UTILS_STRINGIO_H
 
 namespace nsx {
 
@@ -29,4 +29,4 @@ std::vector<std::string> split(const std::string& input_string, const std::strin
 
 } // namespace nsx
 
-#endif // BASE_UTILS_STRINGIO_H
+#endif // NSX_BASE_UTILS_STRINGIO_H

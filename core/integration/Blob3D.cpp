@@ -34,29 +34,6 @@ Blob3D::Blob3D()
 {
 }
 
-Blob3D::Blob3D(const Blob3D& b)
-    : _m0(b._m0)
-    , _m1(b._m1)
-    , _m2(b._m2)
-    , _npoints(b._npoints)
-    , _minValue(b._minValue)
-    , _maxValue(b._maxValue)
-{
-}
-
-Blob3D& Blob3D::operator=(const Blob3D& b)
-{
-    if (this != &b) {
-        _m0 = b._m0;
-        _m1 = b._m1;
-        _m2 = b._m2;
-        _npoints = b._npoints;
-        _minValue = b._minValue;
-        _maxValue = b._maxValue;
-    }
-    return *this;
-}
-
 Blob3D::Blob3D(double x, double y, double z, double m)
 {
     Eigen::Vector3d v(x, y, z);

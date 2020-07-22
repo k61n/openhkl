@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef BASE_UTILS_CSV_H
-#define BASE_UTILS_CSV_H
+#ifndef NSX_BASE_UTILS_CSV_H
+#define NSX_BASE_UTILS_CSV_H
 
 #include <iostream>
 #include <vector>
@@ -38,4 +38,4 @@ class CSV {
 
 } // namespace nsx
 
-#endif // BASE_UTILS_CSV_H
+#endif // NSX_BASE_UTILS_CSV_H

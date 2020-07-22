@@ -39,7 +39,6 @@
 #include "core/shape/PeakFilter.h"
 #include "core/shape/ShapeLibrary.h"
 
-
 //#define OUTPUT_INTERMEDIATE 1
 
 

@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef GUI_MODELS_SESSIONEXPERIMENT_H
-#define GUI_MODELS_SESSIONEXPERIMENT_H
+#ifndef NSX_GUI_MODELS_SESSIONEXPERIMENT_H
+#define NSX_GUI_MODELS_SESSIONEXPERIMENT_H
 
 #include "core/experiment/Experiment.h"
 #include "core/instrument/InstrumentTypes.h"
@@ -29,7 +29,6 @@
 
 //! Controls and handles the Experiment and its Peaks and UnitCells
 class SessionExperiment {
-
  public:
     SessionExperiment();
     SessionExperiment(QString name, QString instrument);
@@ -82,7 +81,7 @@ class SessionExperiment {
 
  public:
     //! The save method
-    bool saveToFile(QString path);
+    void saveToFile(QString path);
     //! Save as
     void saveAs(QString /*path*/) const { return; };
 
@@ -103,4 +102,4 @@ class SessionExperiment {
     int dataIndex_ = -1;
 };
 
-#endif // GUI_MODELS_SESSIONEXPERIMENT_H
+#endif // NSX_GUI_MODELS_SESSIONEXPERIMENT_H

@@ -2,7 +2,7 @@
 //
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
-//! @file      gui/properties/NumorProperty.h
+//! @file      gui/subframe_experiment/properties/NumorProperty.h
 //! @brief     Defines class NumorProperty
 //!
 //! @homepage  ###HOMEPAGE###
@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef GUI_SUBFRAME_EXPERIMENT_PROPERTIES_NUMORPROPERTY_H
-#define GUI_SUBFRAME_EXPERIMENT_PROPERTIES_NUMORPROPERTY_H
+#ifndef NSX_GUI_SUBFRAME_EXPERIMENT_PROPERTIES_NUMORPROPERTY_H
+#define NSX_GUI_SUBFRAME_EXPERIMENT_PROPERTIES_NUMORPROPERTY_H
 
 #include <QComboBox>
 #include <QPushButton>
@@ -21,7 +21,6 @@
 
 //! Property widget of the numor
 class NumorProperty : public QWidget {
-
  public:
     //! The constructor
     NumorProperty();
@@ -51,4 +50,4 @@ class NumorProperty : public QWidget {
     QSizePolicy* _size_policy_fixed;
 };
 
-#endif // GUI_SUBFRAME_EXPERIMENT_PROPERTIES_NUMORPROPERTY_H
+#endif // NSX_GUI_SUBFRAME_EXPERIMENT_PROPERTIES_NUMORPROPERTY_H

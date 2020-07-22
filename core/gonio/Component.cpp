@@ -21,7 +21,7 @@
 
 namespace nsx {
 
-Component::Component(const std::string& name) : _name(name), _gonio() { }
+Component::Component(const std::string& name) : _name(name), _gonio() {}
 
 Component::Component(const YAML::Node& node)
 {
@@ -29,23 +29,6 @@ Component::Component(const YAML::Node& node)
     _name = node["name"].as<std::string>();
 
     _gonio = node["goniometer"] ? Gonio(node["goniometer"]) : Gonio();
-}
-
-Component::Component(const Component& other)
-{
-    *this = other;
-}
-
-Component::~Component() { }
-
-Component& Component::operator=(const Component& other)
-{
-    if (this != &other) {
-        _name = other._name;
-        _gonio = Gonio(other._gonio);
-    }
-
-    return *this;
 }
 
 const Gonio& Component::gonio() const

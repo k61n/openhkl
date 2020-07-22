@@ -19,12 +19,12 @@
 #include <iostream>
 #include <vector>
 
-#include "core/algo/DataReaderFactory.h"
-#include "core/data/DataSet.h"
-#include "core/instrument/Diffractometer.h"
-#include "core/experiment/Experiment.h"
 #include "base/utils/ProgressHandler.h"
+#include "core/algo/DataReaderFactory.h"
 #include "core/convolve/ConvolverFactory.h"
+#include "core/data/DataSet.h"
+#include "core/experiment/Experiment.h"
+#include "core/instrument/Diffractometer.h"
 
 
 #define OUTPUT_INTERMEDIATE
@@ -41,10 +41,12 @@ TEST_CASE("test/data/TestNexusData.cpp", "")
     });
 
 
-
-    std::cout << "\n--------------------------------------------------------------------------------" << std::endl;
+    std::cout
+        << "\n--------------------------------------------------------------------------------"
+        << std::endl;
     std::cout << "Loading files..." << std::endl;
-    std::cout << "--------------------------------------------------------------------------------" << std::endl;
+    std::cout << "--------------------------------------------------------------------------------"
+              << std::endl;
 
     nsx::DataReaderFactory factory;
     nsx::DataList numors;
@@ -76,22 +78,21 @@ TEST_CASE("test/data/TestNexusData.cpp", "")
 
         std::shared_ptr<nsx::DataSet> datafile = factory.create("nxs", file, diffractometer);
         datafile->open();
-        //std::cout << datafile->nFrames() << std::endl;
+        // std::cout << datafile->nFrames() << std::endl;
 
         std::cout << "Number of frames: " << datafile->nFrames() << std::endl;
         numframes += datafile->nFrames();
-        for(std::size_t frame=0; frame<datafile->nFrames(); ++frame)
-        {
+        for (std::size_t frame = 0; frame < datafile->nFrames(); ++frame) {
             std::cout << "sample angles: ";
-            for(std::size_t gonio=0; gonio<diffractometer->sample().gonio().nAxes(); ++gonio)
-            {
+            for (std::size_t gonio = 0; gonio < diffractometer->sample().gonio().nAxes(); ++gonio) {
                 Eigen::MatrixXi M = datafile->frame(frame);
                 CHECK((M.rows() == 256 && M.cols() == 640));
 
-                std::cout << (datafile->reader()->sampleStates()[frame][gonio] / M_PI * 180.) << ", ";
+                std::cout << (datafile->reader()->sampleStates()[frame][gonio] / M_PI * 180.)
+                          << ", ";
             }
             std::cout << std::endl;
-            break;  // only check first in loop
+            break; // only check first in loop
         }
 
         numors.push_back(datafile);
@@ -103,14 +104,17 @@ TEST_CASE("test/data/TestNexusData.cpp", "")
     }
 
     std::cout << "Total number of frames: " << numframes << std::endl;
-    std::cout << "--------------------------------------------------------------------------------\n" << std::endl;
+    std::cout
+        << "--------------------------------------------------------------------------------\n"
+        << std::endl;
 
 
-
-
-    std::cout << "\n--------------------------------------------------------------------------------" << std::endl;
+    std::cout
+        << "\n--------------------------------------------------------------------------------"
+        << std::endl;
     std::cout << "Finding peaks..." << std::endl;
-    std::cout << "--------------------------------------------------------------------------------" << std::endl;
+    std::cout << "--------------------------------------------------------------------------------"
+              << std::endl;
 
     nsx::ConvolverFactory convolver_factory;
     auto convolver = convolver_factory.create("annular", {});
@@ -144,14 +148,17 @@ TEST_CASE("test/data/TestNexusData.cpp", "")
         std::cout << "intensity: " << intensity.value() << " +- " << intensity.sigma() << std::endl;
     }
 #endif
-    std::cout << "--------------------------------------------------------------------------------\n" << std::endl;
+    std::cout
+        << "--------------------------------------------------------------------------------\n"
+        << std::endl;
 
 
-
-
-    std::cout << "\n--------------------------------------------------------------------------------" << std::endl;
+    std::cout
+        << "\n--------------------------------------------------------------------------------"
+        << std::endl;
     std::cout << "Integrating peaks..." << std::endl;
-    std::cout << "--------------------------------------------------------------------------------" << std::endl;
+    std::cout << "--------------------------------------------------------------------------------"
+              << std::endl;
 
     nsx::IPeakIntegrator* integrator = exp.getIntegrator(std::string("Pixel sum integrator"));
     integrator->setPeakEnd(3.0);
@@ -162,21 +169,24 @@ TEST_CASE("test/data/TestNexusData.cpp", "")
     exp.acceptFoundPeaks("found_peaks");
     nsx::PeakCollection* found_collection = exp.getPeakCollection("found_peaks");
 
-    for(int i=0; i<found_collection->numberOfPeaks(); ++i) {
+    for (int i = 0; i < found_collection->numberOfPeaks(); ++i) {
         nsx::Peak3D* peak_ptr = found_collection->getPeak(i);
         double d = 1.0 / peak_ptr->q().rowVector().norm();
 
         std::cout << "Found peak " << i << ": d = " << d << std::endl;
     }
 
-    std::cout << "--------------------------------------------------------------------------------\n" << std::endl;
+    std::cout
+        << "--------------------------------------------------------------------------------\n"
+        << std::endl;
 
 
-
-
-    std::cout << "\n--------------------------------------------------------------------------------" << std::endl;
+    std::cout
+        << "\n--------------------------------------------------------------------------------"
+        << std::endl;
     std::cout << "Filtering peaks..." << std::endl;
-    std::cout << "--------------------------------------------------------------------------------" << std::endl;
+    std::cout << "--------------------------------------------------------------------------------"
+              << std::endl;
 
     nsx::PeakFilter* peak_filter = exp.peakFilter();
     peak_filter->setFilterDRange(true);
@@ -208,21 +218,23 @@ TEST_CASE("test/data/TestNexusData.cpp", "")
     }
 
 
-    for(int i=0; i<filtered_collection->numberOfPeaks(); ++i) {
+    for (int i = 0; i < filtered_collection->numberOfPeaks(); ++i) {
         nsx::Peak3D* peak_ptr = filtered_collection->getPeak(i);
         double d = 1.0 / peak_ptr->q().rowVector().norm();
 
         std::cout << "Filtered peak " << i << ": d = " << d << std::endl;
     }
-    std::cout << "--------------------------------------------------------------------------------\n" << std::endl;
+    std::cout
+        << "--------------------------------------------------------------------------------\n"
+        << std::endl;
 
 
-
-
-
-    std::cout << "\n--------------------------------------------------------------------------------" << std::endl;
+    std::cout
+        << "\n--------------------------------------------------------------------------------"
+        << std::endl;
     std::cout << "Indexing peaks..." << std::endl;
-    std::cout << "--------------------------------------------------------------------------------" << std::endl;
+    std::cout << "--------------------------------------------------------------------------------"
+              << std::endl;
 
     nsx::AutoIndexer* auto_indexer = exp.autoIndexer();
     nsx::IndexerParameters parameters;
@@ -236,13 +248,14 @@ TEST_CASE("test/data/TestNexusData.cpp", "")
     std::cout << "gruberTolerance = " << parameters.gruberTolerance << ", ";
     std::cout << "niggliReduction = " << parameters.niggliReduction << ", ";
     std::cout << "minUnitCellVolume = " << parameters.minUnitCellVolume << ", ";
-    std::cout << "unitCellEquivalenceTolerance = " << parameters.unitCellEquivalenceTolerance << ", ";
+    std::cout << "unitCellEquivalenceTolerance = " << parameters.unitCellEquivalenceTolerance
+              << ", ";
     std::cout << "solutionCutoff = " << parameters.solutionCutoff << std::endl;
 
-    //parameters.minUnitCellVolume = 1.;
-    //parameters.maxdim = 500.;
-    //parameters.nVertices = 1000;
-    //parameters.solutionCutoff = 5.;
+    // parameters.minUnitCellVolume = 1.;
+    // parameters.maxdim = 500.;
+    // parameters.nVertices = 1000;
+    // parameters.solutionCutoff = 5.;
     auto_indexer->setParameters(parameters);
 
     auto peaksToIndex = filtered_collection->getPeakList();
@@ -267,6 +280,7 @@ TEST_CASE("test/data/TestNexusData.cpp", "")
     }
 
     auto solution = auto_indexer->solutions().front();
-    std::cout << "--------------------------------------------------------------------------------\n" << std::endl;
-
+    std::cout
+        << "--------------------------------------------------------------------------------\n"
+        << std::endl;
 }

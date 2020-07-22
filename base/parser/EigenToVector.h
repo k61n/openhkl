@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef BASE_PARSER_EIGENTOVECTOR_H
-#define BASE_PARSER_EIGENTOVECTOR_H
+#ifndef NSX_BASE_PARSER_EIGENTOVECTOR_H
+#define NSX_BASE_PARSER_EIGENTOVECTOR_H
 
 #include <vector>
 
@@ -25,4 +25,4 @@ std::vector<double> eigenToVector(const Eigen::VectorXd& ev);
 
 } // namespace nsx
 
-#endif // BASE_PARSER_EIGENTOVECTOR_H
+#endif // NSX_BASE_PARSER_EIGENTOVECTOR_H

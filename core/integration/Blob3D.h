@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef CORE_ANALYSE_BLOB3D_H
-#define CORE_ANALYSE_BLOB3D_H
+#ifndef NSX_CORE_INTEGRATION_BLOB3D_H
+#define NSX_CORE_INTEGRATION_BLOB3D_H
 
 #include <Eigen/Dense>
 #include <iostream> // needed in no-swig case (?)
@@ -37,11 +37,6 @@ class Blob3D {
 
     //! Initialize a blob with a point of mass m at x,y,z
     Blob3D(double x, double y, double z, double m);
-    Blob3D(const Blob3D&);
-    Blob3D(Blob3D&&) = default;
-
-    //! Assignment
-    Blob3D& operator=(const Blob3D&);
 
     //! Add point to the Blob
     void addPoint(double x, double y, double z, double m);
@@ -101,4 +96,4 @@ std::ostream& operator<<(std::ostream& os, const Blob3D& b);
 
 } // namespace nsx
 
-#endif // CORE_ANALYSE_BLOB3D_H
+#endif // NSX_CORE_INTEGRATION_BLOB3D_H

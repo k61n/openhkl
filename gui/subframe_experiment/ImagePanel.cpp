@@ -2,7 +2,7 @@
 //
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
-//! @file      gui/panels/SubframeImage.cpp
+//! @file      gui/subframe_experiment/ImagePanel.cpp
 //! @brief     Implements classes ImagePanel, SubframeImage
 //!
 //! @homepage  ###HOMEPAGE###
@@ -53,9 +53,8 @@ ImagePanel::ImagePanel() : QWidget()
     _slider->setOrientation(Qt::Vertical);
     _slider->setTickPosition(QSlider::TicksRight);
 
-    _mode->addItems(QStringList {
-        "selection", "zoom", "line plot", "horizontal slice", "vertical slice", "rectangular mask",
-        "ellipsoidal mask"});
+    _mode->addItems(QStringList {"selection", "zoom", "line plot", "horizontal slice",
+                                 "vertical slice", "rectangular mask", "ellipsoidal mask"});
 
     _frame->setSizePolicy(QSizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed));
 

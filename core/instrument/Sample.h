@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef CORE_INSTRUMENT_SAMPLE_H
-#define CORE_INSTRUMENT_SAMPLE_H
+#ifndef NSX_CORE_INSTRUMENT_SAMPLE_H
+#define NSX_CORE_INSTRUMENT_SAMPLE_H
 
 #include "base/hull/ConvexHull.h"
 #include "core/gonio/Component.h" // inheriting from
@@ -53,4 +53,4 @@ class Sample : public Component {
 
 } // namespace nsx
 
-#endif // CORE_INSTRUMENT_SAMPLE_H
+#endif // NSX_CORE_INSTRUMENT_SAMPLE_H

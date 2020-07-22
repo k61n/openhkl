@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef TABLES_CRYSTAL_BRILLOUINZONE_H
-#define TABLES_CRYSTAL_BRILLOUINZONE_H
+#ifndef NSX_TABLES_CRYSTAL_BRILLOUINZONE_H
+#define NSX_TABLES_CRYSTAL_BRILLOUINZONE_H
 
 #include "base/hull/ConvexHull.h"
 
@@ -70,4 +70,4 @@ class BrillouinZone {
 
 } // namespace nsx
 
-#endif // TABLES_CRYSTAL_BRILLOUINZONE_H
+#endif // NSX_TABLES_CRYSTAL_BRILLOUINZONE_H

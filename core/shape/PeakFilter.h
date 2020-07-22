@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef CORE_ANALYSE_PEAKFILTER_H
-#define CORE_ANALYSE_PEAKFILTER_H
+#ifndef NSX_CORE_SHAPE_PEAKFILTER_H
+#define NSX_CORE_SHAPE_PEAKFILTER_H
 
 #include "core/shape/PeakCollection.h"
 #include <bitset>
@@ -23,15 +23,15 @@ namespace nsx {
 //! Class to remove "bad" peaks based on various critera.
 
 struct PeakFilterFlags {
-    bool selected; //! filter by selection
-    bool masked; //! filter by mask
-    bool predicted; //! filter by predicted peaks
-    bool indexed; //! filter by indexed peaks
+    bool selected; //!< filter by selection
+    bool masked; //!< filter by mask
+    bool predicted; //!< filter by predicted peaks
+    bool indexed; //!< filter by indexed peaks
     bool index_tol; //!
     bool state; //!
-    bool strength; //! filter by strength (intensity/sigma)
-    bool d_range; //! filter by detector range
-    bool extinct; //! filter by extinction (allowed by unit cell)
+    bool strength; //!< filter by strength (intensity/sigma)
+    bool d_range; //!< filter by detector range
+    bool extinct; //!< filter by extinction (allowed by unit cell)
     bool sparse; //!
     bool significance; //!
     bool overlapping; //!
@@ -39,7 +39,6 @@ struct PeakFilterFlags {
 };
 
 class PeakFilter {
-
  public:
     //! Constructor
     PeakFilter();
@@ -184,4 +183,4 @@ class PeakFilter {
 
 } // namespace nsx
 
-#endif // CORE_ANALYSE_PEAKFILTER_H
+#endif // NSX_CORE_SHAPE_PEAKFILTER_H

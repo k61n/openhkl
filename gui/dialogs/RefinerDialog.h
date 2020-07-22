@@ -2,7 +2,7 @@
 //
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
-//! @file      gui/frames/RefinerFrame.h
+//! @file      gui/dialogs/RefinerDialog.h
 //! @brief     Defines classes RefinerFrame, RefinerFitWidget
 //!
 //! @homepage  ###HOMEPAGE###
@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef GUI_DIALOG_REFINERDIALOG_H
-#define GUI_DIALOG_REFINERDIALOG_H
+#ifndef NSX_GUI_DIALOGS_REFINERDIALOG_H
+#define NSX_GUI_DIALOGS_REFINERDIALOG_H
 
 #include "core/algo/Refiner.h"
 #include "gui/views/PeakTableView.h"
@@ -33,7 +33,6 @@
 
 //! Frame which shows the settings for the refiner
 class RefinerDialog : public QDialog {
-
  public:
     RefinerDialog(nsx::UnitCell* unit_cell);
 
@@ -245,4 +244,4 @@ class RefinerDialog : public QDialog {
     SXPlot* _visualise_plot;
 };
 
-#endif // GUI_FRAMES_REFINERFRAME_H
+#endif // NSX_GUI_DIALOGS_REFINERDIALOG_H

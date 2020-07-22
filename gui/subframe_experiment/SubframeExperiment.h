@@ -2,7 +2,7 @@
 //
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
-//! @file      gui/panels/SubframeExperiment.h
+//! @file      gui/subframe_experiment/SubframeExperiment.h
 //! @brief     Defines class SubframeExperiment
 //!
 //! @homepage  ###HOMEPAGE###
@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef GUI_SUBFRAME_EXPERIMENT_SUBFRAME_EXPERIMENT_H
-#define GUI_SUBFRAME_EXPERIMENT_SUBFRAME_EXPERIMENT_H
+#ifndef NSX_GUI_SUBFRAME_EXPERIMENT_SUBFRAMEEXPERIMENT_H
+#define NSX_GUI_SUBFRAME_EXPERIMENT_SUBFRAMEEXPERIMENT_H
 
 #include "gui/subframe_experiment/ImagePanel.h"
 #include "gui/subframe_experiment/LoggerPanel.h"
@@ -23,7 +23,6 @@
 #include <QWidget>
 
 class SubframeExperiment : public QWidget {
-
  public:
     SubframeExperiment();
 
@@ -39,4 +38,4 @@ class SubframeExperiment : public QWidget {
     PropertyPanel* _properties;
 };
 
-#endif // GUI_SUBFRAME_EXPERIMENT_SUBFRAME_EXPERIMENT_H
+#endif // NSX_GUI_SUBFRAME_EXPERIMENT_SUBFRAMEEXPERIMENT_H

@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef CORE_LOADER_EXPERIMENTIMPORTER_H
-#define CORE_LOADER_EXPERIMENTIMPORTER_H
+#ifndef NSX_CORE_EXPERIMENT_EXPERIMENTIMPORTER_H
+#define NSX_CORE_EXPERIMENT_EXPERIMENTIMPORTER_H
 
 #include "core/data/DataSet.h"
 #include "core/experiment/Experiment.h"
@@ -25,18 +25,17 @@ namespace nsx {
 
 //! Manages the import of peak information to file.
 class ExperimentImporter {
-
  public:
     //! Create the file
-    bool setFilePath(std::string path, Experiment* experiment);
+    void setFilePath(std::string path, Experiment* experiment);
     //! Write the data into the current file
-    bool loadData(Experiment* experiment);
+    void loadData(Experiment* experiment);
     //! Write the peak data into the current file
-    bool loadPeaks(Experiment* experiment);
+    void loadPeaks(Experiment* experiment);
     //! write the unit cells into current file
-    bool loadUnitCells(Experiment* experiment);
+    void loadUnitCells(Experiment* experiment);
     //! Finish writing the current file
-    bool finishLoad();
+    void finishLoad();
 
  private:
     //! The current file
@@ -45,4 +44,4 @@ class ExperimentImporter {
 
 } // namespace nsx
 
-#endif // CORE_OUTPUT_EXPERIMENTEXPORTER_H
+#endif // NSX_CORE_EXPERIMENT_EXPERIMENTIMPORTER_H

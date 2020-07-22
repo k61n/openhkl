@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef CORE_PEAK_INTENSITY_H
-#define CORE_PEAK_INTENSITY_H
+#ifndef NSX_CORE_PEAK_INTENSITY_H
+#define NSX_CORE_PEAK_INTENSITY_H
 
 #include <stdexcept>
 
@@ -65,4 +65,4 @@ class Intensity {
 
 } // namespace nsx
 
-#endif // CORE_PEAK_INTENSITY_H
+#endif // NSX_CORE_PEAK_INTENSITY_H

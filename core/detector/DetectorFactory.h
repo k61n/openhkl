@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef CORE_DETECTOR_DETECTORFACTORY_H
-#define CORE_DETECTOR_DETECTORFACTORY_H
+#ifndef NSX_CORE_DETECTOR_DETECTORFACTORY_H
+#define NSX_CORE_DETECTOR_DETECTORFACTORY_H
 
 #include "base/utils/Factory.h"
 #include "base/utils/Singleton.h"
@@ -33,4 +33,4 @@ class DetectorFactory : public Factory<Detector, std::string, const YAML::Node&>
 
 } // namespace nsx
 
-#endif // CORE_DETECTOR_DETECTORFACTORY_H
+#endif // NSX_CORE_DETECTOR_DETECTORFACTORY_H

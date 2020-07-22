@@ -26,9 +26,8 @@
 
 namespace nsx {
 
-bool ExperimentImporter::setFilePath(std::string path, Experiment* experiment)
+void ExperimentImporter::setFilePath(std::string path, Experiment* experiment)
 {
-
     try {
         _file_name = path;
         H5::H5File file(_file_name.c_str(), H5F_ACC_RDONLY);
@@ -40,53 +39,40 @@ bool ExperimentImporter::setFilePath(std::string path, Experiment* experiment)
             std::string value;
             attr.read(attr_type, value);
 
-            if (attr.getName() == "name") {
+            if (attr.getName() == "name")
                 experiment->setName(value);
-            } else if (attr.getName() == "diffractometer") {
+            else if (attr.getName() == "diffractometer")
                 experiment->setDiffractometer(value);
-            }
         }
-
     } catch (H5::Exception& e) {
         std::string what = e.getDetailMsg();
         throw std::runtime_error(what);
-        return false;
     }
-
-    return true;
 }
 
-bool ExperimentImporter::loadData(Experiment* experiment)
+void ExperimentImporter::loadData(Experiment* experiment)
 {
-
     try {
         H5::H5File file(_file_name.c_str(), H5F_ACC_RDONLY);
         H5::Group data_collections(file.openGroup("/DataCollections"));
 
         hsize_t object_num = data_collections.getNumObjs();
         for (int i = 0; i < object_num; ++i) {
-
-            std::shared_ptr<nsx::IDataReader> reader =
-                std::shared_ptr<nsx::IDataReader>(new nsx::ExperimentDataReader(
-                    _file_name, data_collections.getObjnameByIdx(i), experiment->diffractometer()));
-
-            nsx::sptrDataSet data = std::shared_ptr<nsx::DataSet>(new nsx::DataSet(reader));
+            auto reader = std::make_unique<nsx::ExperimentDataReader>(
+                _file_name, data_collections.getObjnameByIdx(i), experiment->diffractometer());
+            nsx::sptrDataSet data {new nsx::DataSet {std::move(reader)}};
 
             std::string collection_name = data_collections.getObjnameByIdx(i);
 
             experiment->addData(collection_name, data);
         }
-
     } catch (H5::Exception& e) {
         std::string what = e.getDetailMsg();
         throw std::runtime_error(what);
-        return false;
     }
-
-    return true;
 }
 
-bool ExperimentImporter::loadPeaks(Experiment* experiment)
+void ExperimentImporter::loadPeaks(Experiment* experiment)
 {
     using Eigen_double = Eigen::Matrix<double, Eigen::Dynamic, Eigen::RowMajor>;
     using Eigen_bool = Eigen::Matrix<bool, Eigen::Dynamic, Eigen::RowMajor>;
@@ -97,7 +83,6 @@ bool ExperimentImporter::loadPeaks(Experiment* experiment)
 
         hsize_t object_num = peak_collections.getNumObjs();
         for (int i = 0; i < object_num; ++i) {
-
             std::string collection_name = peak_collections.getObjnameByIdx(i);
             H5::Group peak_collection(file.openGroup("/PeakCollections/" + collection_name));
 
@@ -110,12 +95,10 @@ bool ExperimentImporter::loadPeaks(Experiment* experiment)
             for (int j = 0; j < n_meta; ++j) {
                 H5::Attribute attr = peak_collection_meta.openAttribute(j);
                 H5::DataType typ = attr.getDataType();
-                if (attr.getName() == "num_peaks") {
+                if (attr.getName() == "num_peaks")
                     attr.read(typ, &n_peaks);
-                }
-                if (attr.getName() == "Type") {
+                if (attr.getName() == "Type")
                     attr.read(typ, &type);
-                }
             }
             std::cout << "Found " << n_peaks << " to import" << std::endl;
             std::cout << "Preparing the dataspace" << std::endl;
@@ -208,9 +191,8 @@ bool ExperimentImporter::loadPeaks(Experiment* experiment)
 
                 for (int ii = 0; ii < data_dims_out[0]; ++ii) {
                     std::string text;
-                    for (int jj = 0; jj < strlen(char_data_names[ii]); ++jj) {
+                    for (int jj = 0; jj < strlen(char_data_names[ii]); ++jj)
                         text.append(std::string(1, char_data_names[ii][jj]));
-                    }
                     data_names.push_back(text);
                 }
 
@@ -232,9 +214,8 @@ bool ExperimentImporter::loadPeaks(Experiment* experiment)
 
                 for (int ii = 0; ii < uc_dims_out[0]; ++ii) {
                     std::string text;
-                    for (int jj = 0; jj < strlen(char_unit_cells[ii]); ++jj) {
+                    for (int jj = 0; jj < strlen(char_unit_cells[ii]); ++jj)
                         text.append(std::string(1, char_unit_cells[ii][jj]));
-                    }
                     unit_cells.push_back(text);
                 }
 
@@ -250,7 +231,6 @@ bool ExperimentImporter::loadPeaks(Experiment* experiment)
             Eigen::Matrix3d local_metric;
 
             for (int k = 0; k < n_peaks; ++k) {
-
                 local_center = Eigen::Vector3d(center(k, 0), center(k, 1), center(k, 2));
                 local_metric = metric.block(k * 3, 0, 3, 3);
 
@@ -274,27 +254,22 @@ bool ExperimentImporter::loadPeaks(Experiment* experiment)
             std::cout << "Finished creating the vector of peaks" << std::endl;
 
             listtype collection_type;
-            if (type == 0) {
+            if (type == 0)
                 collection_type = listtype::FOUND;
-            } else {
+            else
                 collection_type = listtype::PREDICTED;
-            }
 
             experiment->updatePeakCollection(collection_name, collection_type, peaks);
 
             std::cout << "Created the peak collection" << std::endl;
         }
-
     } catch (H5::Exception& e) {
         std::string what = e.getDetailMsg();
         throw std::runtime_error(what);
-        return false;
     }
-
-    return true;
 }
 
-bool ExperimentImporter::loadUnitCells(Experiment* experiment)
+void ExperimentImporter::loadUnitCells(Experiment* experiment)
 {
     try {
         H5::H5File file(_file_name.c_str(), H5F_ACC_RDONLY);
@@ -302,7 +277,6 @@ bool ExperimentImporter::loadUnitCells(Experiment* experiment)
 
         hsize_t object_num = unit_cells.getNumObjs();
         for (int i = 0; i < object_num; ++i) {
-
             double rec_00 = 1;
             double rec_01 = 0;
             double rec_02 = 0;
@@ -369,25 +343,12 @@ bool ExperimentImporter::loadUnitCells(Experiment* experiment)
             temp_cell.printSelf(std::cout);
             experiment->addUnitCell(cell_name, &temp_cell);
         }
-
     } catch (H5::Exception& e) {
         std::string what = e.getDetailMsg();
         throw std::runtime_error(what);
-        return false;
     }
-
-    return true;
 }
 
-bool ExperimentImporter::finishLoad()
-{
-    try {
-
-    } catch (...) {
-        return false;
-    }
-
-    return true;
-}
+void ExperimentImporter::finishLoad() {}
 
 } // namespace nsx

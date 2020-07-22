@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef BASE_GEOMETRY_ELLIPSOID_H
-#define BASE_GEOMETRY_ELLIPSOID_H
+#ifndef NSX_BASE_GEOMETRY_ELLIPSOID_H
+#define NSX_BASE_GEOMETRY_ELLIPSOID_H
 
 #include "base/geometry/AABB.h"
 
@@ -25,20 +25,17 @@ namespace nsx {
 
 class Ellipsoid {
  public:
-    Ellipsoid();
-    Ellipsoid(const Ellipsoid& other);
+    Ellipsoid() = default;
     //! Construct directly from metric tensor
     Ellipsoid(const Eigen::Vector3d& center, const Eigen::Matrix3d& metric);
     //! Constructor for a sphere
     Ellipsoid(const Eigen::Vector3d& center, double radius);
-    //! Construct a 3-dimensional ellipsoid from its center, radii, and principal
-    //! axes ()
+    //! Construct a 3-dimensional ellipsoid from its center, radii, and principal axes ()
     Ellipsoid(
         const Eigen::Vector3d& center, const Eigen::Vector3d& radii, const Eigen::Matrix3d& axes);
     virtual ~Ellipsoid() = default;
-    //! Assignment
-    Ellipsoid& operator=(const Ellipsoid& other);
-    //! Returns true if the ellipsoid intersects an aabb.
+
+    //! Returns true if the ellipsoid intersects an AABB.
     bool collide(const AABB& other) const;
     //! Returns true if the ellipsoid intersects an ellipsoid.
     bool collide(const Ellipsoid& other) const;
@@ -93,4 +90,4 @@ class Ellipsoid {
 
 } // namespace nsx
 
-#endif // BASE_GEOMETRY_ELLIPSOID_H
+#endif // NSX_BASE_GEOMETRY_ELLIPSOID_H

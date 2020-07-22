@@ -2,7 +2,7 @@
 //
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
-//! @file      gui/dialogs/ShapeLibraryDialog.h
+//! @file      gui/subframe_predict/ShapeLibraryDialog.h
 //! @brief     Defines class ShapeLibraryDialog
 //!
 //! @homepage  ###HOMEPAGE###
@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef GUI_SUBFRAME_PREDICT_SHAPELIBRARYDIALOG_H
-#define GUI_SUBFRAME_PREDICT_SHAPELIBRARYDIALOG_H
+#ifndef NSX_GUI_SUBFRAME_PREDICT_SHAPELIBRARYDIALOG_H
+#define NSX_GUI_SUBFRAME_PREDICT_SHAPELIBRARYDIALOG_H
 
 #include "core/shape/PeakCollection.h"
 #include "gui/models/PeakCollectionModel.h"
@@ -43,7 +43,6 @@
 
 //! Dialog for building the shape library
 class ShapeLibraryDialog : public QDialog {
-
  public:
     ShapeLibraryDialog(nsx::PeakCollection* peak_collection);
 
@@ -117,4 +116,4 @@ class ShapeLibraryDialog : public QDialog {
     QSlider* _draw_frame;
 };
 
-#endif // GUI_DIALOGS_SHAPELIBRARYDIALOG_H
+#endif // NSX_GUI_SUBFRAME_PREDICT_SHAPELIBRARYDIALOG_H

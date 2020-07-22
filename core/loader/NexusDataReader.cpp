@@ -2,7 +2,7 @@
 //
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
-//! @file      core/loader/HDF5DataReader.cpp
+//! @file      core/loader/NexusDataReader.cpp
 //! @brief     Implements class HDF5DataReader
 //!
 //! @homepage  ###HOMEPAGE###

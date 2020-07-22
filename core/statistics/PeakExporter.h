@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef CORE_OUTPUT_PEAKEXPORTER_H
-#define CORE_OUTPUT_PEAKEXPORTER_H
+#ifndef NSX_CORE_STATISTICS_PEAKEXPORTER_H
+#define NSX_CORE_STATISTICS_PEAKEXPORTER_H
 
 #include "core/peak/Peak3D.h"
 #include "core/statistics/MergedData.h"
@@ -24,7 +24,6 @@ namespace nsx {
 
 //! Manages the export of peak information to file.
 class PeakExporter {
-
  public:
     //! Saves the shell information to file.
     void saveStatistics(
@@ -48,4 +47,4 @@ class PeakExporter {
 
 } // namespace nsx
 
-#endif
+#endif // NSX_CORE_STATISTICS_PEAKEXPORTER_H

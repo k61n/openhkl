@@ -2,7 +2,7 @@
 //
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
-//! @file      gui/models/PeakTableView.h
+//! @file      gui/views/PeakTableView.h
 //! @brief     Defines classes PeaksTableModel and PeaksTableView
 //!
 //! @homepage  ###HOMEPAGE###
@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef GUI_MODELS_PEAKTABLEVIEW_H
-#define GUI_MODELS_PEAKTABLEVIEW_H
+#ifndef NSX_GUI_VIEWS_PEAKTABLEVIEW_H
+#define NSX_GUI_VIEWS_PEAKTABLEVIEW_H
 
 #include <QTableView>
 
@@ -51,4 +51,4 @@ class PeaksTableView : public QTableView {
     //     void constructTable();
 };
 
-#endif // GUI_MODELS_PEAKSTABLE_H
+#endif // NSX_GUI_VIEWS_PEAKTABLEVIEW_H

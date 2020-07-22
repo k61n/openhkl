@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef TABLES_CRYSTAL_NIGGLICHARACTER_H
-#define TABLES_CRYSTAL_NIGGLICHARACTER_H
+#ifndef NSX_TABLES_CRYSTAL_NIGGLICHARACTER_H
+#define NSX_TABLES_CRYSTAL_NIGGLICHARACTER_H
 
 #include <Eigen/Dense>
 
@@ -63,4 +63,4 @@ struct NiggliCharacter {
 
 } // namespace nsx
 
-#endif // TABLES_CRYSTAL_NIGGLICHARACTER_H
+#endif // NSX_TABLES_CRYSTAL_NIGGLICHARACTER_H

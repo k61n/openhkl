@@ -2,7 +2,7 @@
 //
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
-//! @file      gui/graphics/MaskItem.cpp
+//! @file      gui/graphics_items/MaskItem.cpp
 //! @brief     Implements class MaskItem
 //!
 //! @homepage  ###HOMEPAGE###
@@ -31,7 +31,7 @@ MaskItem::MaskItem(nsx::sptrDataSet data, nsx::AABB* aabb)
     _text->setParentItem(this);
 }
 
-MaskItem::~MaskItem() { }
+MaskItem::~MaskItem() {}
 
 void MaskItem::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget)
 {

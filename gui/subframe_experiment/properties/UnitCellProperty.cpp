@@ -2,7 +2,7 @@
 //
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
-//! @file      gui/properties/UnitCellProperty.cpp
+//! @file      gui/subframe_experiment/properties/UnitCellProperty.cpp
 //! @brief     Implements class UnitCellProperty
 //!
 //! @homepage  ###HOMEPAGE###
@@ -232,11 +232,10 @@ void UnitCellProperty::refreshInput()
     unitcells->blockSignals(false);
 
     bool state;
-    if (gSession->selectedExperiment()->experiment()->getUnitCellNames().size() == 0) {
+    if (gSession->selectedExperiment()->experiment()->getUnitCellNames().size() == 0)
         state = false;
-    } else {
+    else
         state = true;
-    }
 
     resetFields();
     setInputEnabled(state);
@@ -358,9 +357,8 @@ void UnitCellProperty::addUnitCell()
 
     int i = 0;
     for (std::string value : gSession->selectedExperiment()->experiment()->getUnitCellNames()) {
-        if (value == "New unit cell") {
+        if (value == "New unit cell")
             selectedCellChanged(i);
-        }
         ++i;
     }
 }

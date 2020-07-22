@@ -2,7 +2,7 @@
 //
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
-//! @file      gui/graphics/SXGraphicsItem.h
+//! @file      gui/graphics_items/SXGraphicsItem.h
 //! @brief     Defines class SXGraphicsItem
 //!
 //! @homepage  ###HOMEPAGE###
@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef GUI_GRAPHICS_ITEMS_SXGRAPHICSITEM_H
-#define GUI_GRAPHICS_ITEMS_SXGRAPHICSITEM_H
+#ifndef NSX_GUI_GRAPHICS_ITEMS_SXGRAPHICSITEM_H
+#define NSX_GUI_GRAPHICS_ITEMS_SXGRAPHICSITEM_H
 
 #include <QGraphicsItem>
 #include <QPen>
@@ -66,4 +66,4 @@ class SXGraphicsItem : public QGraphicsItem {
     QGraphicsTextItem* _label_gi;
 };
 
-#endif // GUI_GRAPHICS_SXGRAPHICSITEM_H
+#endif // NSX_GUI_GRAPHICS_ITEMS_SXGRAPHICSITEM_H

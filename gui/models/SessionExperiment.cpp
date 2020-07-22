@@ -93,9 +93,8 @@ QStringList SessionExperiment::getPeakListNames()
     std::vector<std::string> names = _experiment->getCollectionNames();
     QStringList q_names;
 
-    for (std::string name : names) {
+    for (std::string name : names)
         q_names << QString::fromStdString(name);
-    }
     return q_names;
 }
 
@@ -104,9 +103,8 @@ QStringList SessionExperiment::getFoundNames()
     std::vector<std::string> names = _experiment->getFoundCollectionNames();
     QStringList q_names;
 
-    for (std::string name : names) {
+    for (std::string name : names)
         q_names << QString::fromStdString(name);
-    }
     return q_names;
 }
 
@@ -115,9 +113,8 @@ QStringList SessionExperiment::getPredictedNames()
     std::vector<std::string> names = _experiment->getPredictedCollectionNames();
     QStringList q_names;
 
-    for (std::string name : names) {
+    for (std::string name : names)
         q_names << QString::fromStdString(name);
-    }
     return q_names;
 }
 
@@ -218,7 +215,6 @@ PeakCollectionModel* SessionExperiment::peakModel(int i)
 std::vector<nsx::Peak3D*>
 SessionExperiment::getPeaks(const QString& peakListName, int /*upperindex*/, int /*lowerindex*/)
 {
-
     if (!_experiment->hasPeakCollection(peakListName.toStdString())) {
         std::vector<nsx::Peak3D*> peaks;
         return peaks;
@@ -237,9 +233,8 @@ QStringList SessionExperiment::getUnitCellNames()
     std::vector<std::string> names = _experiment->getUnitCellNames();
     QStringList q_names;
 
-    for (std::string name : names) {
+    for (std::string name : names)
         q_names << QString::fromStdString(name);
-    }
     return q_names;
 }
 
@@ -257,14 +252,9 @@ void SessionExperiment::onPeaksChanged()
     gGui->onPeaksChanged();
 }
 
-bool SessionExperiment::saveToFile(QString path)
+void SessionExperiment::saveToFile(QString path)
 {
-    bool success = experiment()->saveToFile(path.toStdString());
-
-    if (success) {
-        _save_path = path.toStdString();
-        _saved = true;
-    }
-
-    return success;
+    experiment()->saveToFile(path.toStdString());
+    _save_path = path.toStdString();
+    _saved = true;
 }

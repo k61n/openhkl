@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef GUI_FRAMES_PEAKFINDERFRAME_H
-#define GUI_FRAMES_PEAKFINDERFRAME_H
+#ifndef NSX_GUI_SUBFRAME_FIND_SUBFRAMEFINDPEAKS_H
+#define NSX_GUI_SUBFRAME_FIND_SUBFRAMEFINDPEAKS_H
 
 #include "core/shape/PeakCollection.h"
 
@@ -157,4 +157,4 @@ class PeakFinderFrame : public QWidget {
     QSizePolicy* _size_policy_fixed;
 };
 
-#endif // GUI_FRAMES_PEAKFINDERFRAME_H
+#endif // NSX_GUI_SUBFRAME_FIND_SUBFRAMEFINDPEAKS_H

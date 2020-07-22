@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef CORE_INTEGRATION_PROFILE1DINTEGRATOR_H
-#define CORE_INTEGRATION_PROFILE1DINTEGRATOR_H
+#ifndef NSX_CORE_INTEGRATION_PROFILE1DINTEGRATOR_H
+#define NSX_CORE_INTEGRATION_PROFILE1DINTEGRATOR_H
 
 #include "core/shape/IPeakIntegrator.h"
 #include "core/shape/ShapeLibrary.h"
@@ -34,4 +34,4 @@ class Profile1DIntegrator : public IPeakIntegrator {
 
 } // namespace nsx
 
-#endif // CORE_INTEGRATION_PROFILE1DINTEGRATOR_H
+#endif // NSX_CORE_INTEGRATION_PROFILE1DINTEGRATOR_H

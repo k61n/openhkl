@@ -2,7 +2,7 @@
 //
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
-//! @file      gui/properties/SampleShapeProperties.cpp
+//! @file      gui/subframe_experiment/properties/SampleShapeProperties.cpp
 //! @brief     Implements class SampleShapeProperties
 //!
 //! @homepage  ###HOMEPAGE###
@@ -101,7 +101,6 @@ void SampleShapeProperties::refreshInput()
         _faces->setText(QString::number(hull.nFaces()));
         _edges->setText(QString::number(hull.nEdges()));
         _vertices->setText(QString::number(hull.nVertices()));
-
     } else {
         // SampleProperty
         sampleGoniometer->removeColumn(1);

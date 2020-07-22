@@ -2,7 +2,7 @@
 //
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
-//! @file      gui/graphics/PinItem.h
+//! @file      gui/graphics_items/PinItem.h
 //! @brief     Defines class PinItem
 //!
 //! @homepage  ###HOMEPAGE###
@@ -12,7 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#pragma once
+#ifndef NSX_GUI_GRAPHICS_ITEMS_PINITEM_H
+#define NSX_GUI_GRAPHICS_ITEMS_PINITEM_H
 
 #include <QGraphicsItem>
 
@@ -44,3 +45,5 @@ class PinItem : public QGraphicsItem {
     double _currentangle;
     bool _calibrated;
 };
+
+#endif // NSX_GUI_GRAPHICS_ITEMS_PINITEM_H

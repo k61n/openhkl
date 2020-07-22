@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef GUI_DIALOGS_HDF5CONVERTERDIALOG_H
-#define GUI_DIALOGS_HDF5CONVERTERDIALOG_H
+#ifndef NSX_GUI_DIALOGS_HDF5CONVERTERDIALOG_H
+#define NSX_GUI_DIALOGS_HDF5CONVERTERDIALOG_H
 
 #include <QDialog>
 #include <QDialogButtonBox>
@@ -36,4 +36,4 @@ class HDF5ConverterDialog : public QDialog {
     QDialogButtonBox* buttons;
 };
 
-#endif // GUI_DIALOGS_HDF5CONVERTERDIALOG_H
+#endif // NSX_GUI_DIALOGS_HDF5CONVERTERDIALOG_H

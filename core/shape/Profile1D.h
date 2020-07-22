@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef CORE_SHAPE_PROFILE1D_H
-#define CORE_SHAPE_PROFILE1D_H
+#ifndef NSX_CORE_SHAPE_PROFILE1D_H
+#define NSX_CORE_SHAPE_PROFILE1D_H
 
 #include <vector>
 
@@ -52,4 +52,4 @@ class Profile1D {
 
 } // namespace nsx
 
-#endif // CORE_SHAPE_PROFILE1D_H
+#endif // NSX_CORE_SHAPE_PROFILE1D_H

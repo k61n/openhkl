@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef TABLES_CRYSTAL_SPACEGROUP_H
-#define TABLES_CRYSTAL_SPACEGROUP_H
+#ifndef NSX_TABLES_CRYSTAL_SPACEGROUP_H
+#define NSX_TABLES_CRYSTAL_SPACEGROUP_H
 
 #include "tables/crystal/MillerIndex.h"
 #include "tables/crystal/SymOp.h"
@@ -29,9 +29,6 @@ class SpaceGroup {
 
     //! Construct a space group from its IT symbol. Lookup in the IUCR table
     SpaceGroup(std::string symbol = "P 1");
-
-    SpaceGroup(const SpaceGroup& other) = default;
-    SpaceGroup& operator=(const SpaceGroup& other);
 
     //! Returns the IT symbol for this space group
     const std::string& symbol() const;
@@ -76,4 +73,4 @@ std::ostream& operator<<(std::ostream& os, const SpaceGroup& sg);
 
 } // namespace nsx
 
-#endif // TABLES_CRYSTAL_SPACEGROUP_H
+#endif // NSX_TABLES_CRYSTAL_SPACEGROUP_H

@@ -15,8 +15,7 @@
 *.spl
 
 build/
-build_2/
-mybuild/
+debug/
 qbuild/
 
 Testing/

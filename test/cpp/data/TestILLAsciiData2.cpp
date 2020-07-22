@@ -19,7 +19,6 @@
 #include "core/loader/ILLDataReader.h"
 #include "test/cpp/catch.hpp"
 
-
 TEST_CASE(__FILE__, "")
 {
     try {

@@ -2,7 +2,7 @@
 //
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
-//! @file      gui/properties/SampleShapeProperties.h
+//! @file      gui/subframe_experiment/properties/SampleShapeProperties.h
 //! @brief     Defines class SampleShapeProperties
 //!
 //! @homepage  ###HOMEPAGE###
@@ -12,17 +12,15 @@
 //
 //  ***********************************************************************************************
 
-#ifndef GUI_SUBFRAME_EXPERIMENT_PROPERTIES_SAMPLESHAPEPROPERTIES_H
-#define GUI_SUBFRAME_EXPERIMENT_PROPERTIES_SAMPLESHAPEPROPERTIES_H
+#ifndef NSX_GUI_SUBFRAME_EXPERIMENT_PROPERTIES_SAMPLESHAPEPROPERTIES_H
+#define NSX_GUI_SUBFRAME_EXPERIMENT_PROPERTIES_SAMPLESHAPEPROPERTIES_H
 
 
 #include <QLineEdit>
 #include <QTableWidget>
 
-
 //! Property widget for the sample and its shape
 class SampleShapeProperties : public QWidget {
-
  public:
     SampleShapeProperties();
 
@@ -47,4 +45,4 @@ class SampleShapeProperties : public QWidget {
     QTableWidget* sampleGoniometer;
 };
 
-#endif // GUI_SUBFRAME_EXPERIMENT_PROPERTIES_SAMPLESHAPEPROPERTIES_H
+#endif // NSX_GUI_SUBFRAME_EXPERIMENT_PROPERTIES_SAMPLESHAPEPROPERTIES_H

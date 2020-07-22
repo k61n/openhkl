@@ -304,9 +304,8 @@ void SubframeAutoIndexer::setExperiments()
     QList<QString> exp_list = gSession->experimentNames();
 
     if (!exp_list.isEmpty()) {
-        for (QString exp : exp_list) {
+        for (QString exp : exp_list)
             _exp_combo->addItem(exp);
-        }
         _exp_combo->blockSignals(false);
 
         updatePeakList();
@@ -507,7 +506,6 @@ void SubframeAutoIndexer::acceptSolution()
         return;
 
     if (_selected_unit_cell) {
-
         std::unique_ptr<ListNameDialog> dlg(new ListNameDialog());
         dlg->exec();
         if (!dlg->listName().isEmpty()) {

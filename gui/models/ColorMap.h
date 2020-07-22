@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef GUI_MODELS_COLORMAP_H
-#define GUI_MODELS_COLORMAP_H
+#ifndef NSX_GUI_MODELS_COLORMAP_H
+#define NSX_GUI_MODELS_COLORMAP_H
 
 #include <Eigen/Dense>
 #include <QImage>
@@ -55,4 +55,4 @@ class ColorMap {
     std::vector<double> _log_rgb;
 };
 
-#endif // GUI_MODELS_COLORMAP_H
+#endif // NSX_GUI_MODELS_COLORMAP_H

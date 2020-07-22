@@ -2,7 +2,7 @@
 //
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
-//! @file      gui/panels/LoggerPanel.h
+//! @file      gui/subframe_experiment/LoggerPanel.h
 //! @brief     Defines class LoggerPanel
 //!
 //! @homepage  ###HOMEPAGE###
@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef GUI_SUBFRAME_EXPERIMENT_LOGGER_PANEL_H
-#define GUI_SUBFRAME_EXPERIMENT_LOGGER_PANEL_H
+#ifndef NSX_GUI_SUBFRAME_EXPERIMENT_LOGGERPANEL_H
+#define NSX_GUI_SUBFRAME_EXPERIMENT_LOGGERPANEL_H
 
 #include <QTextEdit>
 
@@ -30,4 +30,4 @@ class LoggerPanel : public QWidget {
     QTextEdit* logText;
 };
 
-#endif // GUI_SUBFRAME_EXPERIMENT_LOGGER_PANEL_H
+#endif // NSX_GUI_SUBFRAME_EXPERIMENT_LOGGERPANEL_H

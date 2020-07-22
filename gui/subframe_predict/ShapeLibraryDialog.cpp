@@ -2,7 +2,7 @@
 //
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
-//! @file      gui/dialogs/ShapeLibraryDialog.cpp
+//! @file      gui/subframe_predict/ShapeLibraryDialog.cpp
 //! @brief     Implements class ShapeLibraryDialog
 //!
 //! @homepage  ###HOMEPAGE###

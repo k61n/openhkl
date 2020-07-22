@@ -17,7 +17,6 @@
 #include <cstring>
 #include <iostream>
 
-
 TEST_CASE(__FILE__, "")
 {
     // check parsing of ints

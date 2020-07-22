@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef CORE_INSTRUMENT_SOURCE_H
-#define CORE_INSTRUMENT_SOURCE_H
+#ifndef NSX_CORE_INSTRUMENT_SOURCE_H
+#define NSX_CORE_INSTRUMENT_SOURCE_H
 
 #include "core/gonio/Component.h"
 #include "core/instrument/Monochromator.h"
@@ -24,19 +24,17 @@ namespace nsx {
 
 class Source : public Component {
  public:
-    //! Static constructor of a monochromatic source from a yaml tree node
-    static Source* create(const YAML::Node& node);
     Source();
-    Source(const Source& other);
+
+    virtual ~Source() = default;
 
     //! Constructs a default source with a given name
     Source(const std::string& name);
 
     //! Constructs a source from a property tree node
     Source(const YAML::Node& node);
+
     Source* clone() const;
-    ~Source();
-    Source& operator=(const Source& other);
 
     //! Returns the monochromators registered for this Source
     const std::vector<Monochromator>& monochromators() const;
@@ -63,4 +61,4 @@ class Source : public Component {
 
 } // namespace nsx
 
-#endif // CORE_INSTRUMENT_SOURCE_H
+#endif // NSX_CORE_INSTRUMENT_SOURCE_H

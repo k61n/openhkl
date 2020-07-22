@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef CORE_ALGO_USERDEFINEDINDEXER_H
-#define CORE_ALGO_USERDEFINEDINDEXER_H
+#ifndef NSX_CORE_ALGO_USERDEFINEDINDEXER_H
+#define NSX_CORE_ALGO_USERDEFINEDINDEXER_H
 
 #include "base/utils/Units.h"
 #include "core/peak/Peak3D.h"
@@ -98,4 +98,4 @@ class UserDefinedUnitCellIndexer {
 
 } // namespace nsx
 
-#endif // CORE_ALGO_USERDEFINEDINDEXER_H
+#endif // NSX_CORE_ALGO_USERDEFINEDINDEXER_H

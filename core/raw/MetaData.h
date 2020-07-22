@@ -12,15 +12,15 @@
 //
 //  ***********************************************************************************************
 
-#ifndef CORE_RAW_METADATA_H
-#define CORE_RAW_METADATA_H
+#ifndef NSX_CORE_RAW_METADATA_H
+#define NSX_CORE_RAW_METADATA_H
 
 #include <map>
 #include <memory>
 #include <set>
+#include <stdexcept>
 #include <string>
 #include <variant>
-#include <stdexcept>
 
 namespace nsx {
 
@@ -36,12 +36,8 @@ using MetaDataKeySet = std::set<std::string>;
 class MetaData {
  public:
     //! Constructor
-    MetaData();
-    ~MetaData();
-    //! Copy
-    MetaData(const MetaData&);
-    //! Assignment
-    MetaData& operator=(const MetaData&);
+    MetaData() = default;
+
     //! Add a pair of key and value.
     template <class _type> void add(const std::string& key, const _type& value);
     //! Gets the value associated with the key. User must know the return type,
@@ -104,4 +100,4 @@ template <typename _type> _type MetaData::key(const char* name) const
 
 } // namespace nsx
 
-#endif // CORE_RAW_METADATA_H
+#endif // NSX_CORE_RAW_METADATA_H

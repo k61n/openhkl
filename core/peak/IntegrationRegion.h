@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef CORE_PEAK_INTEGRATIONREGION_H
-#define CORE_PEAK_INTEGRATIONREGION_H
+#ifndef NSX_CORE_PEAK_INTEGRATIONREGION_H
+#define NSX_CORE_PEAK_INTEGRATIONREGION_H
 
 #include "base/hull/ConvexHull.h"
 #include "core/peak/PeakData.h"
@@ -68,4 +68,4 @@ class IntegrationRegion {
 
 } // namespace nsx
 
-#endif // CORE_PEAK_INTEGRATIONREGION_H
+#endif // NSX_CORE_PEAK_INTEGRATIONREGION_H

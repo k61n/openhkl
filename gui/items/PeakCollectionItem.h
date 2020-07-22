@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef GUI_ITEMS_PEAKCOLLECTIONITEM_H
-#define GUI_ITEMS_PEAKCOLLECTIONITEM_H
+#ifndef NSX_GUI_ITEMS_PEAKCOLLECTIONITEM_H
+#define NSX_GUI_ITEMS_PEAKCOLLECTIONITEM_H
 
 #include "core/peak/Peak3D.h"
 #include "core/shape/PeakCollection.h"
@@ -21,7 +21,6 @@
 #include <QStandardItem>
 
 class PeakCollectionItem {
-
  public:
     PeakCollectionItem();
     PeakCollectionItem(nsx::PeakCollection* peak_collection);
@@ -65,4 +64,4 @@ class PeakCollectionItem {
     PeakDisplayModes _mode;
 };
 
-#endif // GUI_ITEMS_PEAKCOLLECTIONITEM_H
+#endif // NSX_GUI_ITEMS_PEAKCOLLECTIONITEM_H

@@ -2,7 +2,7 @@
 //
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
-//! @file      gui/subframe_find/SubframeFindPeaks.cpp
+//! @file      gui/subframe_predict/SubframePredictPeaks.cpp
 //! @brief     Implements classes FoundPeaks, SubframePredictPeaks
 //!
 //! @homepage  ###HOMEPAGE###
@@ -566,9 +566,8 @@ void SubframePredictPeaks::setExperiments()
     QList<QString> exp_list = gSession->experimentNames();
 
     if (!exp_list.isEmpty()) {
-        for (QString exp : exp_list) {
+        for (QString exp : exp_list)
             _exp_combo->addItem(exp);
-        }
         _exp_combo->blockSignals(false);
 
         updatePeakList();
@@ -643,9 +642,9 @@ void SubframePredictPeaks::updateDatasetParameters(int idx)
     _figure_spin->setMinimum(0);
 }
 
-void SubframePredictPeaks::grabPredictorParameters() { }
+void SubframePredictPeaks::grabPredictorParameters() {}
 
-void SubframePredictPeaks::setPredictorParameters() const { }
+void SubframePredictPeaks::setPredictorParameters() const {}
 
 void SubframePredictPeaks::runPrediction()
 {
@@ -698,7 +697,6 @@ void SubframePredictPeaks::runPrediction()
         _peak_collection_item.setPeakCollection(&_peak_collection);
         _peak_collection_model.setRoot(&_peak_collection_item);
         refreshPeakTable();
-
     } catch (std::exception& e) {
         return;
     }
@@ -740,11 +738,10 @@ void SubframePredictPeaks::runIntegration()
 
         gSession->experimentAt(_exp_combo->currentIndex())
             ->experiment()
-            ->integratePredictedPeaks(_integrator->currentText().toStdString(), &_peak_collection,
-                                      lib, params);
+            ->integratePredictedPeaks(
+                _integrator->currentText().toStdString(), &_peak_collection, lib, params);
 
         refreshPeakTable();
-
     } catch (std::exception& e) {
         return;
     }

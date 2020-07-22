@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef CORE_INSTRUMENT_INSTRUMENTSTATE_H
-#define CORE_INSTRUMENT_INSTRUMENTSTATE_H
+#ifndef NSX_CORE_INSTRUMENT_INSTRUMENTSTATE_H
+#define NSX_CORE_INSTRUMENT_INSTRUMENTSTATE_H
 
 #include "base/geometry/DirectVector.h"
 #include "base/geometry/ReciprocalVector.h"
@@ -33,7 +33,7 @@ class InstrumentState {
  public:
     //! default value needed for SWIG (note: nullptr does _not_ work)
     InstrumentState(Diffractometer* diffractometer = nullptr);
-    virtual ~InstrumentState() { }
+    virtual ~InstrumentState() {}
 
     //! Takes a direct vector in detector coordinates and returns kf in lab coordinates
     ReciprocalVector kfLab(const DirectVector& detector_position) const;
@@ -105,4 +105,4 @@ class InstrumentState {
 
 } // namespace nsx
 
-#endif // CORE_INSTRUMENT_INSTRUMENTSTATE_H
+#endif // NSX_CORE_INSTRUMENT_INSTRUMENTSTATE_H

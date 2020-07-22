@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef CORE_PEAK_IPEAKINTEGRATOR_H
-#define CORE_PEAK_IPEAKINTEGRATOR_H
+#ifndef NSX_CORE_SHAPE_IPEAKINTEGRATOR_H
+#define NSX_CORE_SHAPE_IPEAKINTEGRATOR_H
 
 #include "base/utils/ProgressHandler.h"
 #include "core/peak/IntegrationRegion.h"
@@ -123,4 +123,4 @@ class IPeakIntegrator {
 
 } // namespace nsx
 
-#endif // CORE_PEAK_IPEAKINTEGRATOR_H
+#endif // NSX_CORE_SHAPE_IPEAKINTEGRATOR_H

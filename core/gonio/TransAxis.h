@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef CORE_GONIO_TRANSAXIS_H
-#define CORE_GONIO_TRANSAXIS_H
+#ifndef NSX_CORE_GONIO_TRANSAXIS_H
+#define NSX_CORE_GONIO_TRANSAXIS_H
 
 #include "core/gonio/Axis.h"
 
@@ -26,17 +26,15 @@ class TransAxis : public Axis {
     //! Static constructor for a TransAxis
     static Axis* create(const YAML::Node& node);
     TransAxis();
-    TransAxis(const TransAxis& other);
+
     //! Constructs a translation axis with a given label
     TransAxis(const std::string& label);
     //! Constructs a translation axis with a given label and axis
     TransAxis(const std::string& label, const Eigen::Vector3d& axis);
     //! Construct a TransAxis from a property tree node.
     TransAxis(const YAML::Node& node);
-    // Destructor
-    ~TransAxis() override;
+
     TransAxis* clone() const override;
-    TransAxis& operator=(const TransAxis& other);
 
     Eigen::Transform<double, 3, Eigen::Affine> affineMatrix(double value) const override;
 
@@ -45,4 +43,4 @@ class TransAxis : public Axis {
 
 } // namespace nsx
 
-#endif // CORE_GONIO_TRANSAXIS_H
+#endif // NSX_CORE_GONIO_TRANSAXIS_H

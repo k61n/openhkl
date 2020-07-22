@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef CORE_DETECTOR_DATAORDER_H
-#define CORE_DETECTOR_DATAORDER_H
+#ifndef NSX_CORE_DETECTOR_DATAORDER_H
+#define NSX_CORE_DETECTOR_DATAORDER_H
 
 namespace nsx {
 
@@ -32,4 +32,4 @@ enum class DataOrder : size_t {
 
 } // namespace nsx
 
-#endif // CORE_DETECTOR_DATAORDER_H
+#endif // NSX_CORE_DETECTOR_DATAORDER_H

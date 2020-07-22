@@ -52,7 +52,6 @@ SpoilerCheck::SpoilerCheck(const QString& title, const int animationDuration, QW
 
 void SpoilerCheck::setContentLayout(QLayout& contentLayout, bool toggled)
 {
-
     delete contentArea.layout();
     contentArea.setLayout(&contentLayout);
 
@@ -108,9 +107,8 @@ void SpoilerCheck::checker(const int state)
 
 bool SpoilerCheck::checked() const
 {
-    if (select.checkState() == 0) {
+    if (select.checkState() == 0)
         return false;
-    } else {
+    else
         return true;
-    }
 }

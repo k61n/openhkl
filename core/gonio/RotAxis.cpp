@@ -26,24 +26,13 @@ Axis* RotAxis::create(const YAML::Node& node)
     return new RotAxis(node);
 }
 
-RotAxis::RotAxis() : Axis("rotation"), _dir(Direction::CCW) { }
+RotAxis::RotAxis() : Axis("rotation"), _dir(Direction::CCW) {}
 
-RotAxis::RotAxis(const std::string& label) : Axis(label), _dir(Direction::CCW) { }
+RotAxis::RotAxis(const std::string& label) : Axis(label), _dir(Direction::CCW) {}
 
 RotAxis::RotAxis(const std::string& label, const Eigen::Vector3d& axis, Direction direction)
     : Axis(label, axis), _dir(direction)
 {
-}
-
-RotAxis::RotAxis(const RotAxis& other) : Axis(other), _dir(other._dir) { }
-
-RotAxis& RotAxis::operator=(const RotAxis& other)
-{
-    if (this != &other) {
-        Axis::operator=(other);
-        _dir = other._dir;
-    }
-    return *this;
 }
 
 RotAxis::RotAxis(const YAML::Node& node) : Axis(node)
@@ -51,8 +40,6 @@ RotAxis::RotAxis(const YAML::Node& node) : Axis(node)
     bool clockwise = node["clockwise"].as<bool>();
     _dir = clockwise ? Direction::CW : Direction::CCW;
 }
-
-RotAxis::~RotAxis() { }
 
 RotAxis* RotAxis::clone() const
 {

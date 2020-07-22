@@ -78,7 +78,7 @@ MainWin::MainWin()
     show();
 }
 
-MainWin::~MainWin() { }
+MainWin::~MainWin() {}
 
 void MainWin::onDataChanged()
 {

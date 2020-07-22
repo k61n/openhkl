@@ -2,7 +2,7 @@
 //
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
-//! @file      gui/graphics/PlottableItem.cpp
+//! @file      gui/graphics_items/PlottableItem.cpp
 //! @brief     Implements class PlottableItem
 //!
 //! @homepage  ###HOMEPAGE###
@@ -21,7 +21,7 @@ PlottableItem::PlottableItem(QGraphicsItem* parent, bool deletable, bool movable
 {
 }
 
-PlottableItem::~PlottableItem() { }
+PlottableItem::~PlottableItem() {}
 
 bool PlottableItem::isPlottable(SXPlot* plot) const
 {

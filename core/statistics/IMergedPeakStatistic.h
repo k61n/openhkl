@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef CORE_STATISTICS_IMERGEDPEAKSTATISTIC_H
-#define CORE_STATISTICS_IMERGEDPEAKSTATISTIC_H
+#ifndef NSX_CORE_STATISTICS_IMERGEDPEAKSTATISTIC_H
+#define NSX_CORE_STATISTICS_IMERGEDPEAKSTATISTIC_H
 
 namespace nsx {
 
@@ -32,4 +32,4 @@ class IMergedPeakStatistic {
 
 } // namespace nsx
 
-#endif // CORE_STATISTICS_IMERGEDPEAKSTATISTIC_H
+#endif // NSX_CORE_STATISTICS_IMERGEDPEAKSTATISTIC_H

@@ -18,25 +18,8 @@
 
 namespace nsx {
 
-AABB::AABB() { }
-
-AABB::AABB(const AABB& other)
-{
-    _lowerBound = other._lowerBound;
-    _upperBound = other._upperBound;
-}
-
 AABB::AABB(const Eigen::Vector3d& lb, const Eigen::Vector3d& ub) : _lowerBound(lb), _upperBound(ub)
 {
-}
-
-AABB& AABB::operator=(const AABB& other)
-{
-    if (this != &other) {
-        _lowerBound = other._lowerBound;
-        _upperBound = other._upperBound;
-    }
-    return *this;
 }
 
 bool AABB::isInside(const Eigen::Vector3d& point) const

@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef BASE_GEOMETRY_AABB_H
-#define BASE_GEOMETRY_AABB_H
+#ifndef NSX_BASE_GEOMETRY_AABB_H
+#define NSX_BASE_GEOMETRY_AABB_H
 
 #include <Eigen/Dense>
 #include <vector>
@@ -31,14 +31,11 @@ class Ellipsoid; // cross dependence requires forward declaration
 
 class AABB {
  public:
-    AABB();
-    AABB(const AABB& other);
+    AABB() = default;
     //! Constructs a AABB object from two Eigen vectors representing respectively
     //! its lower and upper bound
     AABB(const Eigen::Vector3d& lb, const Eigen::Vector3d& ub);
     virtual ~AABB() = default;
-
-    AABB& operator=(const AABB& other);
 
     //! Translates the AABB.
     void translate(const Eigen::Vector3d& t);
@@ -90,4 +87,4 @@ std::ostream& operator<<(std::ostream& os, const AABB& aabb);
 
 } // namespace nsx
 
-#endif // BASE_GEOMETRY_AABB_H
+#endif // NSX_BASE_GEOMETRY_AABB_H

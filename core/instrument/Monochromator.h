@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef CORE_INSTRUMENT_MONOCHROMATOR_H
-#define CORE_INSTRUMENT_MONOCHROMATOR_H
+#ifndef NSX_CORE_INSTRUMENT_MONOCHROMATOR_H
+#define NSX_CORE_INSTRUMENT_MONOCHROMATOR_H
 
 #include "base/geometry/ReciprocalVector.h"
 
@@ -26,16 +26,8 @@ namespace nsx {
 class Monochromator {
  public:
     Monochromator();
-
     Monochromator(const std::string& name);
-
-    ~Monochromator();
-
-    Monochromator(const Monochromator& other);
-
     Monochromator(const YAML::Node& node);
-
-    Monochromator& operator=(const Monochromator& other);
 
     //! Returns the name for this monochromator
     const std::string& name() const;
@@ -76,16 +68,12 @@ class Monochromator {
 
  private:
     std::string _name;
-
     double _wavelength;
-
     double _fwhm;
-
     double _width;
-
     double _height;
 };
 
 } // namespace nsx
 
-#endif // CORE_INSTRUMENT_MONOCHROMATOR_H
+#endif // NSX_CORE_INSTRUMENT_MONOCHROMATOR_H

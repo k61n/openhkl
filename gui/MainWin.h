@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef GUI_MAINWIN_H
-#define GUI_MAINWIN_H
+#ifndef NSX_GUI_MAINWIN_H
+#define NSX_GUI_MAINWIN_H
 
 #include "gui/graphics/DetectorScene.h"
 #include "gui/subframe_combine/SubframeMergedPeaks.h"
@@ -88,4 +88,4 @@ class MainWin : public QMainWindow {
     friend class SideBar;
 };
 
-#endif // GUI_MAINWIN_H
+#endif // NSX_GUI_MAINWIN_H

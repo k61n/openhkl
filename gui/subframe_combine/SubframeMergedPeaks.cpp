@@ -2,7 +2,7 @@
 //
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
-//! @file      gui/frames/SubframeMergedPeaks.cpp
+//! @file      gui/subframe_combine/SubframeMergedPeaks.cpp
 //! @brief     Implements class SubframeMergedPeaks
 //!
 //! @homepage  ###HOMEPAGE###
@@ -108,9 +108,9 @@ void SubframeMergedPeaks::setDShellUp()
     _d_shell_view = new QTableView;
     _shell_model = new QStandardItemModel(0, 13, this);
     _d_shell_view->setModel(_shell_model);
-    _shell_model->setHorizontalHeaderLabels(
-        {"dmax", "dmin", "nobs", "nmerge", "redundancy", "Rmeas", "Rmeas(est.)", "Rmerge/Rsym",
-         "Rmerge(est.)", "Rpim", "Rpim(est.)", "CChalf", "CC*"});
+    _shell_model->setHorizontalHeaderLabels({"dmax", "dmin", "nobs", "nmerge", "redundancy",
+                                             "Rmeas", "Rmeas(est.)", "Rmerge/Rsym", "Rmerge(est.)",
+                                             "Rpim", "Rpim(est.)", "CChalf", "CC*"});
     shell_layout->addWidget(_d_shell_view);
 
     QHBoxLayout* d_shell_down = new QHBoxLayout;
@@ -256,9 +256,8 @@ void SubframeMergedPeaks::refreshExperimentList()
     QList<QString> exp_list = gSession->experimentNames();
 
     if (!exp_list.isEmpty()) {
-        for (QString exp : exp_list) {
+        for (QString exp : exp_list)
             _exp_drop->addItem(exp);
-        }
         _exp_drop->blockSignals(false);
 
         refreshPeakLists();
@@ -519,7 +518,7 @@ void SubframeMergedPeaks::refreshGraphTable(int column)
     std::vector<double> shells(nshells);
     std::iota(shells.begin(), shells.end(), 0);
 
-    QVector<double> xvals{shells.begin(), shells.end()};
+    QVector<double> xvals {shells.begin(), shells.end()};
     QVector<double> yvals;
     for (int i = 0; i < nshells; ++i) {
         double val = _shell_model->item(i, column)->data(Qt::DisplayRole).value<double>();
@@ -594,7 +593,6 @@ void SubframeMergedPeaks::saveMergedPeaks()
             return;
 
         exporter.saveToShelXMerged(filename.toStdString(), _merged_data);
-
     } else if (format.compare("FullProf") == 0) {
         QString filename = QFileDialog::getSaveFileName(
             this, "Save peaks to FullProf", ".", "FullProf hkl file (*.hkl)");
@@ -603,7 +601,6 @@ void SubframeMergedPeaks::saveMergedPeaks()
             return;
 
         exporter.saveToFullProfMerged(filename.toStdString(), _merged_data);
-
     } else if (format.compare("Phenix") == 0) {
         QString filename = QFileDialog::getSaveFileName(
             this, "Save peaks to Phenix sca", ".", "Phenix sca file (*.sca)");
@@ -627,7 +624,6 @@ void SubframeMergedPeaks::saveUnmergedPeaks()
             return;
 
         exporter.saveToShelXUnmerged(filename.toStdString(), _merged_data);
-
     } else if (format.compare("FullProf") == 0) {
         QString filename = QFileDialog::getSaveFileName(
             this, "Save peaks to FullProf", ".", "ShelX hkl file (*.hkl)");
@@ -636,7 +632,6 @@ void SubframeMergedPeaks::saveUnmergedPeaks()
             return;
 
         exporter.saveToFullProfUnmerged(filename.toStdString(), _merged_data);
-
     } else if (format.compare("Phenix") == 0) {
         QString filename = QFileDialog::getSaveFileName(
             this, "Save peaks to Phenix sca", ".", "Phenix sca file (*.sca)");

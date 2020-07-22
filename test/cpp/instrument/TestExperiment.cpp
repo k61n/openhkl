@@ -33,9 +33,10 @@ TEST_CASE("test/instrument/TestExperiment.cpp", "")
     CHECK(exp.name() == "toto");
 
     // Add some data
+    const std::string data_name = "D10_ascii_example";
     try {
-        data = nsx::sptrDataSet(
-            nsx::DataReaderFactory().create("", "D10_ascii_example", exp.diffractometer()));
+        data =
+            nsx::sptrDataSet(nsx::DataReaderFactory().create("", data_name, exp.diffractometer()));
     } catch (std::exception& e) {
         FAIL(std::string("caught exception: ") + e.what());
     } catch (...) {
@@ -49,8 +50,8 @@ TEST_CASE("test/instrument/TestExperiment.cpp", "")
     exp.addData(data);
     exp.addData(data);
 
-    CHECK(exp.getData("D10_ascii_example")->filename() == "D10_ascii_example");
+    CHECK(exp.getData(data_name)->filename() == data_name);
 
     // Remove the data from the experiment
-    exp.removeData("D10_ascii_example");
+    exp.removeData(data_name);
 }

@@ -45,9 +45,8 @@ MergedData::MergedData(std::vector<PeakCollection*> peak_collections, bool fried
 
     for (int i = 0; i < _peak_collections.size(); ++i) {
         std::vector<Peak3D*> peaks = _peak_collections[i]->getPeakList();
-        for (int j = 0; j < peaks.size(); ++j) {
+        for (int j = 0; j < peaks.size(); ++j)
             addPeak(peaks[j]);
-        }
     }
     if (_nNaN > 0)
         qDebug() << "MergedData: " << _nNaN << " peaks with intensity NaN";
@@ -78,8 +77,7 @@ bool MergedData::addPeak(Peak3D* peak)
             return false;
         }
         _merged_peak_set.emplace(std::move(new_peak));
-    }
-    catch(std::range_error& e) {
+    } catch (std::range_error& e) {
         ++_nNaN;
     }
     return true;

@@ -2,7 +2,7 @@
 //
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
-//! @file      gui/panels/TabPeaks.h
+//! @file      gui/subframe_experiment/properties/PeakProperties.h
 //! @brief     Defines classes ListTab, TabPeaks
 //!
 //! @homepage  ###HOMEPAGE###
@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef GUI_PANELS_TABPEAKS_H
-#define GUI_PANELS_TABPEAKS_H
+#ifndef NSX_GUI_SUBFRAME_EXPERIMENT_PROPERTIES_PEAKPROPERTIES_H
+#define NSX_GUI_SUBFRAME_EXPERIMENT_PROPERTIES_PEAKPROPERTIES_H
 
 #include "gui/views/PeakTableView.h"
 
@@ -23,7 +23,6 @@
 
 //! Tab of the SubframeSetup which contains the different peak collections
 class PeakProperties : public QWidget {
-
  public:
     //! Constructor
     PeakProperties();
@@ -73,4 +72,4 @@ class PeakProperties : public QWidget {
     QSizePolicy* _size_policy_fixed;
 };
 
-#endif // GUI_PANELS_TABPEAKS_H
+#endif // NSX_GUI_SUBFRAME_EXPERIMENT_PROPERTIES_PEAKPROPERTIES_H

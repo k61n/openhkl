@@ -2,7 +2,7 @@
 //
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
-//! @file      gui/panels/SubframeExperiment.cpp
+//! @file      gui/subframe_experiment/SubframeExperiment.cpp
 //! @brief     Implements class SubframeExperiment
 //!
 //! @homepage  ###HOMEPAGE###
@@ -21,7 +21,6 @@
 
 SubframeExperiment::SubframeExperiment() : QWidget()
 {
-
     QSizePolicy left_size_policy;
     left_size_policy.setHorizontalPolicy(QSizePolicy::Minimum);
     left_size_policy.setVerticalPolicy(QSizePolicy::Expanding);

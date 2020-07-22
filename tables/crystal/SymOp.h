@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef TABLES_CRYSTAL_SYMOP_H
-#define TABLES_CRYSTAL_SYMOP_H
+#ifndef NSX_TABLES_CRYSTAL_SYMOP_H
+#define NSX_TABLES_CRYSTAL_SYMOP_H
 
 #include <Eigen/Dense>
 #include <vector>
@@ -32,9 +32,7 @@ class SymOp {
     SymOp(std::string generator);
     //! Construct symmetry operation from an Eigen affine transformatiion
     SymOp(const affineTransformation& symmetryOperation);
-    SymOp(const SymOp& other);
-    ~SymOp();
-    SymOp& operator=(const SymOp& other);
+
     bool operator==(const SymOp& other) const;
     //! Compose symmetry operations
     SymOp operator*(const SymOp& other) const;
@@ -70,4 +68,4 @@ using SymOpList = std::vector<SymOp>;
 
 } // namespace nsx
 
-#endif // TABLES_CRYSTAL_SYMOP_H
+#endif // NSX_TABLES_CRYSTAL_SYMOP_H

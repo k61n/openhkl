@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef GUI_MODELS_META_H
-#define GUI_MODELS_META_H
+#ifndef NSX_GUI_MODELS_META_H
+#define NSX_GUI_MODELS_META_H
 
 #include "core/data/DataTypes.h"
 #include "core/peak/Peak3D.h"
@@ -24,4 +24,4 @@ Q_DECLARE_METATYPE(nsx::PeakList)
 Q_DECLARE_METATYPE(nsx::sptrUnitCell)
 Q_DECLARE_METATYPE(nsx::sptrDataSet)
 
-#endif // GUI_MODELS_META_H
+#endif // NSX_GUI_MODELS_META_H

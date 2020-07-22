@@ -2,7 +2,7 @@
 //
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
-//! @file      gui/graphics/CutterItem.h
+//! @file      gui/graphics_tools/CutterItem.h
 //! @brief     Defines class CutterItem
 //!
 //! @homepage  ###HOMEPAGE###
@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef GUI_GRAPHICS_CUTTERITEM_H
-#define GUI_GRAPHICS_CUTTERITEM_H
+#ifndef NSX_GUI_GRAPHICS_TOOLS_CUTTERITEM_H
+#define NSX_GUI_GRAPHICS_TOOLS_CUTTERITEM_H
 
 #include "core/data/DataTypes.h"
 #include "gui/graphics_items/PlottableItem.h"
@@ -57,4 +57,4 @@ class CutterItem : public PlottableItem {
     QPointF _to;
 };
 
-#endif // GUI_GRAPHICS_CUTTERITEM_H
+#endif // NSX_GUI_GRAPHICS_TOOLS_CUTTERITEM_H

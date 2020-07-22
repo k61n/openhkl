@@ -27,6 +27,14 @@
 #include <QDebug>
 #include <QtGlobal>
 
+namespace {
+bool smallDiff(double a, double b, double tolerance)
+{
+    return std::abs(a - b) < tolerance;
+}
+
+} // namespace
+
 namespace nsx {
 
 UnitCellCharacter::UnitCellCharacter()
@@ -882,7 +890,7 @@ std::vector<std::string> UnitCell::compatibleSpaceGroups() const
     return compatible_space_groups;
 }
 
-bool UnitCell::isSimilar(UnitCell* other, double length_tol, double angle_tol)
+bool UnitCell::isSimilar(UnitCell* other, double length_tol, double angle_tol) const
 {
     auto c1 = character();
     auto c2 = other->character();
@@ -891,11 +899,6 @@ bool UnitCell::isSimilar(UnitCell* other, double length_tol, double angle_tol)
         && smallDiff(c1.c, c2.c, length_tol) && smallDiff(c1.alpha / deg, c2.alpha / deg, angle_tol)
         && smallDiff(c1.beta / deg, c2.beta / deg, angle_tol)
         && smallDiff(c1.gamma / deg, c2.gamma / deg, angle_tol));
-}
-
-bool UnitCell::smallDiff(double a, double b, double tolerance)
-{
-    return std::abs(a - b) < tolerance;
 }
 
 } // namespace nsx

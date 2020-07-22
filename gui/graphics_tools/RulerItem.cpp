@@ -2,7 +2,7 @@
 //
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
-//! @file      gui/graphics/RulerItem.cpp
+//! @file      gui/graphics_tools/RulerItem.cpp
 //! @brief     Implements class RulerItem
 //!
 //! @homepage  ###HOMEPAGE###
@@ -42,7 +42,7 @@ RulerItem::RulerItem(QGraphicsItem* parent) : QGraphicsItem(parent)
     _displaydistance = true;
 }
 
-RulerItem::~RulerItem() { }
+RulerItem::~RulerItem() {}
 
 QRectF RulerItem::boundingRect() const
 {

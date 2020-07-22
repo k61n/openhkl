@@ -90,16 +90,6 @@ Experiment::Experiment(const Experiment& other)
         std::string("3d profile integrator"), std::make_unique<Profile3DIntegrator>()));
 }
 
-Experiment& Experiment::operator=(const Experiment& other)
-{
-    if (this != &other) {
-        _name = other._name;
-        _data = other._data;
-        _diffractometer.reset(other._diffractometer->clone());
-    }
-    return *this;
-}
-
 const Diffractometer* Experiment::diffractometer() const
 {
     return _diffractometer.get();
@@ -121,7 +111,6 @@ DataList Experiment::getAllData()
     for (auto const& [key, val] : _data)
         numors.push_back(val);
     return numors;
-
 }
 
 void Experiment::setDiffractometer(const std::string& diffractometerName)
@@ -142,9 +131,8 @@ sptrDataSet Experiment::getData(const std::string& name)
 sptrDataSet Experiment::dataShortName(const std::string& name)
 {
     std::map<std::string, sptrDataSet> temp;
-    for (std::map<std::string, sptrDataSet>::iterator it = _data.begin(); it != _data.end(); ++it) {
+    for (std::map<std::string, sptrDataSet>::iterator it = _data.begin(); it != _data.end(); ++it)
         temp.insert(std::make_pair(it->second->name(), it->second));
-    }
 
     auto it = temp.find(name);
     if (it == temp.end()) {
@@ -283,7 +271,6 @@ void Experiment::removePeakCollection(const std::string& name)
 
 std::vector<std::string> Experiment::getCollectionNames() const
 {
-
     std::vector<std::string> names;
     for (std::map<std::string, std::unique_ptr<PeakCollection>>::const_iterator it =
              _peak_collections.begin();
@@ -295,7 +282,6 @@ std::vector<std::string> Experiment::getCollectionNames() const
 
 std::vector<std::string> Experiment::getFoundCollectionNames() const
 {
-
     std::vector<std::string> names;
     for (std::map<std::string, std::unique_ptr<PeakCollection>>::const_iterator it =
              _peak_collections.begin();
@@ -308,7 +294,6 @@ std::vector<std::string> Experiment::getFoundCollectionNames() const
 
 std::vector<std::string> Experiment::getPredictedCollectionNames() const
 {
-
     std::vector<std::string> names;
     for (std::map<std::string, std::unique_ptr<PeakCollection>>::const_iterator it =
              _peak_collections.begin();
@@ -350,8 +335,8 @@ void Experiment::addUnitCell(const std::string& name, UnitCell* unit_cell)
     _unit_cells.insert(std::make_pair(name, std::move(ptr)));
 }
 
-void Experiment::addUnitCell(const std::string& name, double a, double b, double c,
-                             double alpha, double beta, double gamma)
+void Experiment::addUnitCell(
+    const std::string& name, double a, double b, double c, double alpha, double beta, double gamma)
 {
     auto cell = UnitCell(a, b, c, alpha * deg, beta * deg, gamma * deg);
     addUnitCell(name, &cell);
@@ -423,7 +408,6 @@ IPeakIntegrator* Experiment::getIntegrator(const std::string& name) const
 
 void Experiment::integratePeaks(const std::string& integrator_name, PeakCollection* peak_collection)
 {
-
     IPeakIntegrator* integrator = getIntegrator(integrator_name);
 
     nsx::PeakFilter filter;
@@ -433,14 +417,13 @@ void Experiment::integratePeaks(const std::string& integrator_name, PeakCollecti
     std::vector<Peak3D*> peaks = peak_collection->getFilteredPeakList();
 
     std::map<std::string, sptrDataSet>::iterator it;
-    for (it = _data.begin(); it != _data.end(); ++it) {
+    for (it = _data.begin(); it != _data.end(); ++it)
         integrator->integrate(peaks, peak_collection->shapeLibrary(), it->second);
-    }
 }
 
-void Experiment::integratePredictedPeaks(const std::string& integrator_name,
-                                         PeakCollection* peak_collection,
-                                         ShapeLibrary* shape_library, PredictionParameters& params)
+void Experiment::integratePredictedPeaks(
+    const std::string& integrator_name, PeakCollection* peak_collection,
+    ShapeLibrary* shape_library, PredictionParameters& params)
 {
     IPeakIntegrator* integrator = getIntegrator(integrator_name);
     integrator->setBkgBegin(params.bkg_begin);
@@ -458,80 +441,64 @@ void Experiment::integratePredictedPeaks(const std::string& integrator_name,
     std::vector<Peak3D*> peaks = peak_collection->getFilteredPeakList();
 
     std::map<std::string, sptrDataSet>::iterator it;
-    for (it = _data.begin(); it != _data.end(); ++it) {
+    for (it = _data.begin(); it != _data.end(); ++it)
         integrator->integrate(peaks, shape_library, it->second);
-    }
 }
 
 void Experiment::integrateFoundPeaks(const std::string& integrator_name)
 {
     IPeakIntegrator* integrator = getIntegrator(integrator_name);
 
-    for (sptrDataSet data : _peak_finder->currentData()) {
+    for (sptrDataSet data : _peak_finder->currentData())
         integrator->integrate(_peak_finder->currentPeaks(), nullptr, data);
-    }
 }
 
-bool Experiment::saveToFile(const std::string& path) const
+void Experiment::saveToFile(const std::string& path) const
 {
     nsx::ExperimentExporter exporter;
 
-    bool success = exporter.createFile(name(), _diffractometer->name(), path);
+    exporter.createFile(name(), _diffractometer->name(), path);
 
-    if (success) {
+    {
         std::map<std::string, DataSet*> data_sets;
         for (std::map<std::string, sptrDataSet>::const_iterator it = _data.begin();
              it != _data.end(); ++it) {
             data_sets.insert(std::make_pair(it->first, it->second.get()));
         }
-        success = exporter.writeData(data_sets);
+        exporter.writeData(data_sets);
     }
 
-    if (success) {
+    {
         std::map<std::string, PeakCollection*> peak_collections;
         for (std::map<std::string, std::unique_ptr<PeakCollection>>::const_iterator it =
                  _peak_collections.begin();
              it != _peak_collections.end(); ++it) {
             peak_collections.insert(std::make_pair(it->first, it->second.get()));
         }
-        success = exporter.writePeaks(peak_collections);
+        exporter.writePeaks(peak_collections);
     }
 
-    if (success) {
+    {
         std::map<std::string, UnitCell*> unit_cells;
         for (std::map<std::string, std::unique_ptr<UnitCell>>::const_iterator it =
                  _unit_cells.begin();
              it != _unit_cells.end(); ++it) {
             unit_cells.insert(std::make_pair(it->first, it->second.get()));
         }
-        success = exporter.writeUnitCells(unit_cells);
+        exporter.writeUnitCells(unit_cells);
     }
 
-    if (success)
-        success = exporter.finishWrite();
-
-    return success;
+    exporter.finishWrite();
 }
 
-bool Experiment::loadFromFile(const std::string& path)
+void Experiment::loadFromFile(const std::string& path)
 {
     nsx::ExperimentImporter importer;
 
-    bool success = importer.setFilePath(path, this);
-
-    if (success) {
-        success = importer.loadData(this);
-    }
-
-    if (success) {
-        success = importer.loadUnitCells(this);
-    }
-
-    if (success) {
-        success = importer.loadPeaks(this);
-    }
-
-    return success;
+    importer.setFilePath(path, this);
+    importer.loadData(this);
+    importer.loadUnitCells(this);
+    importer.loadPeaks(this);
 }
 
 void Experiment::setReferenceCell(
@@ -571,8 +538,7 @@ void Experiment::acceptUnitCell(PeakCollection* peaks)
         peak->setUnitCell(getUnitCell(name));
 }
 
-void Experiment::buildShapeLibrary(
-    PeakCollection* peaks, ShapeLibParameters params)
+void Experiment::buildShapeLibrary(PeakCollection* peaks, ShapeLibParameters params)
 {
     std::vector<Peak3D*> peak_list = peaks->getPeakList();
     std::vector<Peak3D*> fit_peaks;
@@ -633,8 +599,8 @@ void Experiment::buildShapeLibrary(
 }
 
 void Experiment::predictPeaks(
-    const std::string& name, PeakCollection* peaks,
-    PredictionParameters params, PeakInterpolation interpol)
+    const std::string& name, PeakCollection* peaks, PredictionParameters params,
+    PeakInterpolation interpol)
 {
     int current_numor = 0;
     DataList numors = getAllData();
@@ -647,9 +613,8 @@ void Experiment::predictPeaks(
                   << std::endl;
 
         std::vector<nsx::Peak3D*> predicted = nsx::predictPeaks(
-            library, data, accepted_cell, params.detector_range_min,
-            params.detector_range_max, params.neighbour_max_radius, params.frame_range_max,
-            params.min_n_neighbors, interpol);
+            library, data, accepted_cell, params.detector_range_min, params.detector_range_max,
+            params.neighbour_max_radius, params.frame_range_max, params.min_n_neighbors, interpol);
 
         for (nsx::Peak3D* peak : predicted)
             predicted_peaks.push_back(peak);
@@ -724,9 +689,8 @@ void Experiment::refine(PeakCollection* peaks, UnitCell* cell, DataSet* data, in
 
 void Experiment::checkPeakCollections()
 {
-    for (const auto& [name, collection] : _peak_collections) {
+    for (const auto& [name, collection] : _peak_collections)
         collection->checkCollection();
-    }
 }
 
 } // namespace nsx

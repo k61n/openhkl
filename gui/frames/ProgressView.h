@@ -12,12 +12,14 @@
 //
 //  ***********************************************************************************************
 
-#ifndef GUI_FRAMES_PROGRESSVIEW_H
-#define GUI_FRAMES_PROGRESSVIEW_H
+#ifndef NSX_GUI_FRAMES_PROGRESSVIEW_H
+#define NSX_GUI_FRAMES_PROGRESSVIEW_H
 
 #include "base/utils/ProgressHandler.h"
 #include <QProgressDialog>
-#include <QTimer>
+#include <memory>
+
+class QTimer;
 
 //! Dialog which shows the current progress of a task
 class ProgressView : public QProgressDialog {
@@ -35,7 +37,7 @@ class ProgressView : public QProgressDialog {
 
  private:
     nsx::sptrProgressHandler _handler;
-    QTimer* _timer;
+    std::unique_ptr<QTimer> _timer;
 };
 
-#endif // GUI_FRAMES_PROGRESSVIEW_H
+#endif // NSX_GUI_FRAMES_PROGRESSVIEW_H

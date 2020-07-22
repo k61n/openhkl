@@ -1,5 +1,5 @@
-#ifndef GUI_UTILITY_COLORBUTTON_H
-#define GUI_UTILITY_COLORBUTTON_H
+#ifndef NSX_GUI_UTILITY_COLORBUTTON_H
+#define NSX_GUI_UTILITY_COLORBUTTON_H
 
 #include <QPushButton>
 #include <QtGui>
@@ -22,4 +22,4 @@ class ColorButton : public QPushButton {
     QColor currentColor;
 };
 
-#endif // GUI_UTILITY_COLORBUTTON_H
+#endif // NSX_GUI_UTILITY_COLORBUTTON_H

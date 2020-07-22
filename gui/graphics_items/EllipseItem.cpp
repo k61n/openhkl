@@ -2,7 +2,7 @@
 //
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
-//! @file      gui/graphics/EllipseItem.cpp
+//! @file      gui/graphics_items/EllipseItem.cpp
 //! @brief     Implements class EllipseMaskItem
 //!
 //! @homepage  ###HOMEPAGE###
@@ -30,7 +30,7 @@ EllipseMaskItem::EllipseMaskItem(nsx::sptrDataSet data, nsx::AABB* aabb)
     _text->setParentItem(this);
 }
 
-EllipseMaskItem::~EllipseMaskItem() { }
+EllipseMaskItem::~EllipseMaskItem() {}
 
 void EllipseMaskItem::paint(
     QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget)

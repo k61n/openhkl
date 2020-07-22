@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef BASE_MASK_ELLIPSEMASK_H
-#define BASE_MASK_ELLIPSEMASK_H
+#ifndef NSX_BASE_MASK_ELLIPSEMASK_H
+#define NSX_BASE_MASK_ELLIPSEMASK_H
 
 #include "base/geometry/Ellipsoid.h"
 #include "base/mask/IMask.h"
@@ -44,4 +44,4 @@ class EllipseMask : public IMask {
 
 } // namespace nsx
 
-#endif // BASE_MASK_ELLIPSEMASK_H
+#endif // NSX_BASE_MASK_ELLIPSEMASK_H

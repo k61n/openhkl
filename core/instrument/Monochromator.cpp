@@ -27,15 +27,6 @@ Monochromator::Monochromator(const std::string& name)
 {
 }
 
-Monochromator::Monochromator(const Monochromator& other)
-    : _name(other._name)
-    , _wavelength(other._wavelength)
-    , _fwhm(other._fwhm)
-    , _width(other._width)
-    , _height(other._height)
-{
-}
-
 Monochromator::Monochromator(const YAML::Node& node)
 {
     _name = node["name"].as<std::string>();
@@ -58,20 +49,6 @@ Monochromator::Monochromator(const YAML::Node& node)
     _fwhm =
         fwhmNode["value"].as<double>() * um->get(fwhmNode["units"].as<std::string>()) / nsx::ang;
 }
-
-Monochromator& Monochromator::operator=(const Monochromator& other)
-{
-    if (this != &other) {
-        _name = other._name;
-        _wavelength = other._wavelength;
-        _fwhm = other._fwhm;
-        _width = other._width;
-        _height = other._height;
-    }
-    return *this;
-}
-
-Monochromator::~Monochromator() { }
 
 const std::string& Monochromator::name() const
 {

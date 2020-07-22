@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef CORE_ANALYSE_MERGEDPEAK_H
-#define CORE_ANALYSE_MERGEDPEAK_H
+#ifndef NSX_CORE_STATISTICS_MERGEDPEAK_H
+#define NSX_CORE_STATISTICS_MERGEDPEAK_H
 
 #include "core/peak/Intensity.h"
 #include "core/peak/Peak3D.h"
@@ -74,4 +74,4 @@ bool operator<(const MergedPeak& p, const MergedPeak& q);
 
 } // namespace nsx
 
-#endif // CORE_ANALYSE_MERGEDPEAK_H
+#endif // NSX_CORE_STATISTICS_MERGEDPEAK_H

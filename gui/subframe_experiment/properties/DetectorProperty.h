@@ -2,7 +2,7 @@
 //
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
-//! @file      gui/properties/DetectorProperty.h
+//! @file      gui/subframe_experiment/properties/DetectorProperty.h
 //! @brief     Defines class DetectorProperty
 //!
 //! @homepage  ###HOMEPAGE###
@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef GUI_SUBFRAME_EXPERIMENT_PROPERTIES_DETECTORPROPERTY_H
-#define GUI_SUBFRAME_EXPERIMENT_PROPERTIES_DETECTORPROPERTY_H
+#ifndef NSX_GUI_SUBFRAME_EXPERIMENT_PROPERTIES_DETECTORPROPERTY_H
+#define NSX_GUI_SUBFRAME_EXPERIMENT_PROPERTIES_DETECTORPROPERTY_H
 
 #include <QDoubleSpinBox>
 #include <QSpinBox>
@@ -21,7 +21,6 @@
 
 //! Property widget of the detector
 class DetectorProperty : public QWidget {
-
  public:
     DetectorProperty();
     ~DetectorProperty();
@@ -38,4 +37,4 @@ class DetectorProperty : public QWidget {
     QTableWidget* _axes;
 };
 
-#endif // GUI_SUBFRAME_EXPERIMENT_PROPERTIES_DETECTORPROPERTY_H
+#endif // NSX_GUI_SUBFRAME_EXPERIMENT_PROPERTIES_DETECTORPROPERTY_H

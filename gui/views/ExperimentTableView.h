@@ -2,7 +2,7 @@
 //
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
-//! @file      gui/models/ExperimentTableView.h
+//! @file      gui/views/ExperimentTableView.h
 //! @brief     Defines classes PeaksTableModel and PeaksTableView
 //!
 //! @homepage  ###HOMEPAGE###
@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef GUI_MODELS_EXPERIMENTTABLEVIEW_H
-#define GUI_MODELS_EXPERIMENTTABLEVIEW_H
+#ifndef NSX_GUI_VIEWS_EXPERIMENTTABLEVIEW_H
+#define NSX_GUI_VIEWS_EXPERIMENTTABLEVIEW_H
 
 #include <QTableView>
 
@@ -23,4 +23,4 @@ class ExperimentTableView : public QTableView {
     explicit ExperimentTableView(QWidget* parent = 0);
 };
 
-#endif // GUI_MODELS_EXPERIMENTTABLEVIEW_H
+#endif // NSX_GUI_VIEWS_EXPERIMENTTABLEVIEW_H

@@ -2,7 +2,7 @@
 //
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
-//! @file      gui/panels/PlotPanel.h
+//! @file      gui/subframe_experiment/PlotPanel.h
 //! @brief     Defines class PlotPanel
 //!
 //! @homepage  ###HOMEPAGE###
@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef GUI_SUBFRAME_EXPERIMENT_PLOT_PANEL_H
-#define GUI_SUBFRAME_EXPERIMENT_PLOT_PANEL_H
+#ifndef NSX_GUI_SUBFRAME_EXPERIMENT_PLOTPANEL_H
+#define NSX_GUI_SUBFRAME_EXPERIMENT_PLOTPANEL_H
 
 #include "gui/graphics_items/PlottableItem.h"
 #include <QHBoxLayout>
@@ -33,4 +33,4 @@ class PlotPanel : public QWidget {
     QWidget* centralWidget;
 };
 
-#endif // GUI_SUBFRAME_EXPERIMENT_PLOT_PANEL_H
+#endif // NSX_GUI_SUBFRAME_EXPERIMENT_PLOTPANEL_H

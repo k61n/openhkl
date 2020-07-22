@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef CORE_PEAK_PEAK3D_H
-#define CORE_PEAK_PEAK3D_H
+#ifndef NSX_CORE_PEAK_PEAK3D_H
+#define NSX_CORE_PEAK_PEAK3D_H
 
 #include "base/geometry/Ellipsoid.h"
 #include "core/data/DataTypes.h"
@@ -171,4 +171,4 @@ using sptrPeakList = std::shared_ptr<PeakList>;
 
 } // namespace nsx
 
-#endif // CORE_PEAK_PEAK3D_H
+#endif // NSX_CORE_PEAK_PEAK3D_H

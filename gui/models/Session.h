@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef GUI_MODELS_SESSION_H
-#define GUI_MODELS_SESSION_H
+#ifndef NSX_GUI_MODELS_SESSION_H
+#define NSX_GUI_MODELS_SESSION_H
 
 #include "gui/models/SessionExperiment.h"
 
@@ -45,7 +45,7 @@ class Session {
     void onPeaksChanged();
     void onUnitCellChanged();
 
-    bool loadExperimentFromFile(QString filename);
+    void loadExperimentFromFile(QString filename);
 
  private:
     QList<SessionExperiment*> _experiments;
@@ -54,4 +54,4 @@ class Session {
     QString loadDirectory;
 };
 
-#endif // GUI_MODELS_SESSION_H
+#endif // NSX_GUI_MODELS_SESSION_H

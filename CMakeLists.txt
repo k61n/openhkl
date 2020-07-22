@@ -87,7 +87,8 @@ set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 set(DEFAULT_BUILD_SHARED_LIBS ON)
 
 if(COVERAGE)
-    include(CheckCoverage)
+    include(CoverageFunction)
+    include(NSXCoverage)
 endif()
 
 ###################################################################################################

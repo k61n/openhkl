@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef BASE_HULL_TRIANGLE_H
-#define BASE_HULL_TRIANGLE_H
+#ifndef NSX_BASE_HULL_TRIANGLE_H
+#define NSX_BASE_HULL_TRIANGLE_H
 
 #include <Eigen/Dense>
 
@@ -23,7 +23,7 @@ namespace nsx {
 struct Triangle {
     Triangle() = delete;
     Triangle(const Eigen::Vector3d& p1, const Eigen::Vector3d& p2, const Eigen::Vector3d& p3);
-    ~Triangle() { }
+    ~Triangle() {}
     //! Test whether a ray generated in the xz plane and with direction y positive
     //! hits the bounding box of this triangle. Return false if inside the box.
     inline bool isOutsideBB(double px, double pz) const
@@ -48,4 +48,4 @@ struct Triangle {
 
 } // namespace nsx
 
-#endif // BASE_HULL_TRIANGLE_H
+#endif // NSX_BASE_HULL_TRIANGLE_H

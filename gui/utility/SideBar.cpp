@@ -2,7 +2,7 @@
 //
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
-//! @file      gui/panels/SideBar.cpp
+//! @file      gui/utility/SideBar.cpp
 //! @brief     Implements class SideBar
 //!
 //! @homepage  ###HOMEPAGE###
@@ -61,16 +61,13 @@ void SideBar::paintEvent(QPaintEvent* event)
     int action_y = 0;
     // p.fillRect(rect(), QColor(100, 100, 100));
     for (auto action : mActions) {
-
         QRect actionRect(0, action_y, event->rect().width(), action_height);
 
-        if (action->isChecked()) {
+        if (action->isChecked())
             p.fillRect(actionRect, QColor(35, 35, 35));
-        }
 
-        if (action == mOverAction) {
+        if (action == mOverAction)
             p.fillRect(actionRect, QColor(150, 150, 150));
-        }
 
         p.setPen(QColor(255, 255, 255));
         QSize size = p.fontMetrics().size(Qt::TextSingleLine, action->text());

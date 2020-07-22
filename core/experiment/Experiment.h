@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef CORE_EXPERIMENT_EXPERIMENT_H
-#define CORE_EXPERIMENT_EXPERIMENT_H
+#ifndef NSX_CORE_EXPERIMENT_EXPERIMENT_H
+#define NSX_CORE_EXPERIMENT_EXPERIMENT_H
 
 #include "core/algo/AutoIndexer.h"
 #include "core/algo/Refiner.h"
@@ -33,30 +33,30 @@ namespace nsx {
 //! Experiment class, a data type containing a diffractometer and data sets.
 
 struct DataQuality {
-    double Rmerge; //! R-factor
-    double expectedRmerge; //! expected R-factor
-    double Rmeas; //! multiplicity-weighted R-factor
-    double expectedRmeas; //! expected multiplicity-weighted R-factor
-    double Rpim; //! relative (precision-indicating) R-factor
-    double expectedRpim; //! expected relative R-factor
-    double CChalf; //! CC_{1/2} correlation coefficient
-    double CCstar; //! estimate of CC_{true} derived from CC_{1/2}
+    double Rmerge; //!< R-factor
+    double expectedRmerge; //!< expected R-factor
+    double Rmeas; //!< multiplicity-weighted R-factor
+    double expectedRmeas; //!< expected multiplicity-weighted R-factor
+    double Rpim; //!< relative (precision-indicating) R-factor
+    double expectedRpim; //!< expected relative R-factor
+    double CChalf; //!< CC_{1/2} correlation coefficient
+    double CCstar; //!< estimate of CC_{true} derived from CC_{1/2}
 };
 
 struct DataResolution : DataQuality {
-    double dmin; //! Lower limit of d for resolution shell
-    double dmax; //! Upper limit of d for resolution shell
+    double dmin; //!< Lower limit of d for resolution shell
+    double dmax; //!< Upper limit of d for resolution shell
 };
 
 class Experiment {
-
  public:
     Experiment() = delete;
     Experiment(const Experiment& other);
     //! Construct an empty experiment from a given name and diffractometer
     Experiment(const std::string& name, const std::string& diffractometerName);
     ~Experiment() = default;
-    Experiment& operator=(const Experiment& other);
+
+    Experiment& operator=(const Experiment& other) = delete; // why did it differ from copy c'tor?
 
  public: // General
     //! Get the name of the Experiment
@@ -127,8 +127,9 @@ class Experiment {
     //! Add some data to the experiment
     void addUnitCell(const std::string& name, UnitCell* unit_cell);
     //! Add a unit cell to the experiment via cell parameters (skip autoindexing step)
-    void addUnitCell(const std::string& name, double a, double b, double c,
-                     double alpha, double beta, double gamma);
+    void addUnitCell(
+        const std::string& name, double a, double b, double c, double alpha, double beta,
+        double gamma);
     //! Returns true if the experiment has a data
     bool hasUnitCell(const std::string& name) const;
     //! Get a list of loaded list names
@@ -171,16 +172,17 @@ class Experiment {
     //! Set the found peak integrator
     void integratePeaks(const std::string& integrator_name, PeakCollection* peak_collection);
     //! Set the found peak integrator
-    void integratePredictedPeaks(const std::string& integrator_name, PeakCollection* peak_collection,
-                                 ShapeLibrary* shape_library, PredictionParameters& params);
+    void integratePredictedPeaks(
+        const std::string& integrator_name, PeakCollection* peak_collection,
+        ShapeLibrary* shape_library, PredictionParameters& params);
     //! Set the found peak integrator
     void integrateFoundPeaks(const std::string& integrator);
 
  public: // Save load
     //! Save to file
-    bool saveToFile(const std::string& path) const;
+    void saveToFile(const std::string& path) const;
     //! Load from file
-    bool loadFromFile(const std::string& path);
+    void loadFromFile(const std::string& path);
 
  public: // Prediction
     //! Build the shape library
@@ -189,8 +191,8 @@ class Experiment {
     ShapeLibrary* getShapeLibrary() { return &_shape_library; };
     //! Predict peaks
     void predictPeaks(
-        const std::string& name, PeakCollection* peaks,
-        PredictionParameters params, PeakInterpolation interpol);
+        const std::string& name, PeakCollection* peaks, PredictionParameters params,
+        PeakInterpolation interpol);
     void refine(PeakCollection* peaks, UnitCell* cell, DataSet* data, int n_batches);
 
  public: // Merging
@@ -234,4 +236,4 @@ class Experiment {
 
 } // namespace nsx
 
-#endif // CORE_EXPERIMENT_EXPERIMENT_H
+#endif // NSX_CORE_EXPERIMENT_EXPERIMENT_H

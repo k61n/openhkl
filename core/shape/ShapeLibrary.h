@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef CORE_SHAPE_SHAPELIBRARY_H
-#define CORE_SHAPE_SHAPELIBRARY_H
+#ifndef NSX_CORE_SHAPE_SHAPELIBRARY_H
+#define NSX_CORE_SHAPE_SHAPELIBRARY_H
 
 #include "core/detector/DetectorEvent.h"
 #include "core/peak/Peak3D.h"
@@ -26,27 +26,27 @@ namespace nsx {
 
 //! Parameters for building the shape library
 struct ShapeLibParameters {
-    double detector_range_min = 1.5; //! Minimum detector range (filter)
-    double detector_range_max = 50.0; //! Maximum detector range (filter)
+    double detector_range_min = 1.5; //!< Minimum detector range (filter)
+    double detector_range_max = 50.0; //!< Maximum detector range (filter)
     double peak_scale = 3.0; //!
-    double background_range_min = 3.0; //! Start of background range in sigmas
-    double background_range_max = 4.5; //! End of background range in sigmas
-    double strength_min = 1.0; //! Minimum peak strength I/sigma (filter)
-    bool kabsch_coords = true; //! Are we using Kabsch or detector coordinates?
-    int nbins_x = 20; //! Number of x histogram bins for peak
-    int nbins_y = 20; //! Number of y histogram bins for peak
-    int nbins_z = 20; //! Number of z histogram bins for peak
-    double sigma_divergence = 0.33; //! variance arising from beam divergence
-    double sigma_mosaicity = 0.23; //! variance arising from crystal mosaicity
+    double background_range_min = 3.0; //!< Start of background range in sigmas
+    double background_range_max = 4.5; //!< End of background range in sigmas
+    double strength_min = 1.0; //!< Minimum peak strength I/sigma (filter)
+    bool kabsch_coords = true; //!< Are we using Kabsch or detector coordinates?
+    int nbins_x = 20; //!< Number of x histogram bins for peak
+    int nbins_y = 20; //!< Number of y histogram bins for peak
+    int nbins_z = 20; //!< Number of z histogram bins for peak
+    double sigma_divergence = 0.33; //!< variance arising from beam divergence
+    double sigma_mosaicity = 0.23; //!< variance arising from crystal mosaicity
 };
 
 //! Parameters for peak prediction
 struct PredictionParameters {
-    double detector_range_min = 1.5; //! Minimum detector range (filter)
-    double detector_range_max = 50.0; //! Maximum detector range (filter)
-    double neighbour_max_radius = 400.0; //! Maximum radius for neighbouring peak search (pixels)
-    int min_n_neighbors = 20; //! Minimum number of neighbours required for shape library
-    double frame_range_max = 20.0; //! Maximum angular separation of peaks in frames
+    double detector_range_min = 1.5; //!< Minimum detector range (filter)
+    double detector_range_max = 50.0; //!< Maximum detector range (filter)
+    double neighbour_max_radius = 400.0; //!< Maximum radius for neighbouring peak search (pixels)
+    int min_n_neighbors = 20; //!< Minimum number of neighbours required for shape library
+    double frame_range_max = 20.0; //!< Maximum angular separation of peaks in frames
     double bkg_begin = 3.0;
     double bkg_end = 4.5;
     double peak_scale = 5.0;
@@ -194,4 +194,4 @@ class ShapeLibrary {
 
 } // namespace nsx
 
-#endif // CORE_SHAPE_SHAPELIBRARY_H
+#endif // NSX_CORE_SHAPE_SHAPELIBRARY_H

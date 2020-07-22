@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef GUI_DIALOGS_EXPERIMENTDIALOG_H
-#define GUI_DIALOGS_EXPERIMENTDIALOG_H
+#ifndef NSX_GUI_DIALOGS_EXPERIMENTDIALOG_H
+#define NSX_GUI_DIALOGS_EXPERIMENTDIALOG_H
 
 #include <QComboBox>
 #include <QDialog>
@@ -31,4 +31,4 @@ class ExperimentDialog : public QDialog {
     QLineEdit* experiment;
 };
 
-#endif // GUI_DIALOGS_EXPERIMENTDIALOG_H
+#endif // NSX_GUI_DIALOGS_EXPERIMENTDIALOG_H

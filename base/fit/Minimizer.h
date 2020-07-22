@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef BASE_FIT_MINIMIZER_H
-#define BASE_FIT_MINIMIZER_H
+#ifndef NSX_BASE_FIT_MINIMIZER_H
+#define NSX_BASE_FIT_MINIMIZER_H
 
 #include "base/fit/FitParameters.h"
 
@@ -80,8 +80,7 @@ class Minimizer {
     void cleanup();
     //! Private implementation details of the GSL wrapper
     MinimizerGSL* _gsl;
-    //! GSL wrapper function. Static method because it needs access to private
-    //! members
+    //! GSL wrapper function. Static method because it needs access to private members
     static int gsl_f_wrapper(const gsl_vector*, void*, gsl_vector*);
     //! GSL wrapper function. Static method because it needs access to private members
     static int gsl_df_wrapper(const gsl_vector*, void*, gsl_matrix*);
@@ -115,4 +114,4 @@ class Minimizer {
 
 } // namespace nsx
 
-#endif // BASE_FIT_MINIMIZER_H
+#endif // NSX_BASE_FIT_MINIMIZER_H

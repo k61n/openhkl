@@ -2,7 +2,7 @@
 //
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
-//! @file      gui/actions/Triggers.cpp
+//! @file      gui/actions/Actions.cpp
 //! @brief     Implements class Actions
 //!
 //! @homepage  ###HOMEPAGE###
@@ -50,8 +50,6 @@ void Actions::setupFiles()
 
 void Actions::setupData()
 {
-
-
     // loadData.setTriggerHook([]() { gSession->loadData(); });
     // removeData.setTriggerHook([]() { gSession->removeData(); });
     // importRaw.setTriggerHook([]() { gSession->loadRawData(); });
@@ -65,7 +63,7 @@ void Actions::setupData()
     // });
 }
 
-void Actions::setupExperiment() { }
+void Actions::setupExperiment() {}
 
 void Actions::setupInstrument()
 {

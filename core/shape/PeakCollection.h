@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef CORE_PEAK_PEAKCOLLECTION_H
-#define CORE_PEAK_PEAKCOLLECTION_H
+#ifndef NSX_CORE_SHAPE_PEAKCOLLECTION_H
+#define NSX_CORE_SHAPE_PEAKCOLLECTION_H
 
 #include "core/shape/ShapeLibrary.h"
 
@@ -23,7 +23,6 @@ enum class listtype { FOUND, FILTERED, PREDICTED };
 
 //! Container for a peaklist and its metadata
 class PeakCollection {
-
  public:
     //! Default contructor
     PeakCollection();
@@ -100,4 +99,4 @@ class PeakCollection {
 
 } // namespace nsx
 
-#endif // CORE_PEAK_PEAKCOLLECTION_H
+#endif // NSX_CORE_SHAPE_PEAKCOLLECTION_H

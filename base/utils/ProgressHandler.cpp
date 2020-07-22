@@ -26,7 +26,7 @@ ProgressHandler::ProgressHandler()
     _callback = nullptr;
 }
 
-ProgressHandler::~ProgressHandler() { }
+ProgressHandler::~ProgressHandler() {}
 
 void ProgressHandler::setCallback(std::function<void()> callback)
 {

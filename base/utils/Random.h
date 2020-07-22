@@ -13,13 +13,12 @@
 //
 //  ***********************************************************************************************
 
-#ifndef BASE_UTILS_RANDOM_H
-#define BASE_UTILS_RANDOM_H
+#ifndef NSX_BASE_UTILS_RANDOM_H
+#define NSX_BASE_UTILS_RANDOM_H
 
 #include <random>
 
 namespace nsx {
-
 
 //! Random numbers
 
@@ -44,7 +43,6 @@ class Random {
     static std::mt19937 _rng; // random number generator
 };
 
-
 } // namespace nsx
 
-#endif // BASE_UTILS_RANDOM_H
+#endif // NSX_BASE_UTILS_RANDOM_H

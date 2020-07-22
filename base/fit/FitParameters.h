@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef BASE_FIT_FITPARAMETERS_H
-#define BASE_FIT_FITPARAMETERS_H
+#ifndef NSX_BASE_FIT_FITPARAMETERS_H
+#define NSX_BASE_FIT_FITPARAMETERS_H
 
 #include <gsl/gsl_vector.h>
 
@@ -69,4 +69,4 @@ class FitParameters {
 
 } // namespace nsx
 
-#endif // BASE_FIT_FITPARAMETERS_H
+#endif // NSX_BASE_FIT_FITPARAMETERS_H

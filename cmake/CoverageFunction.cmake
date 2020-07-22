@@ -1,6 +1,6 @@
-# CheckCoverage.cmake
+# CoverageFunction.cmake
 #
-# description: add custom target 'coverage' which generates a code coverage report
+# description: find coverage tools and provide function add_coverage_target
 #
 # usage: from build directory
 #
@@ -11,10 +11,9 @@
 # author: Jonathan Fisher
 #         j.fisher@fz-juelich.de, jonathan.m.fisher@gmail.com
 #
-# copyright: 2016 scientific computing group, Forschungszentrum Juelich GmbH
+# copyright: 2016 Scientific Computing Group, Forschungszentrum Juelich GmbH
 #
 # license: see LICENSE
-#
 
 find_program(GCOV_COMMAND gcov)
 find_program(LCOV_COMMAND lcov)
@@ -52,17 +51,17 @@ endif()
 
 # function to add a coverage target
 # it will scan the working directory for coverage info, ignoring the directories in ignore_directories
-function(add_coverage_target targetname ignore_directories)
+function(add_coverage_target targetname ignore_directories html_dir)
 
-    if(NOT CMAKE_GCOV_FOUND)
+    if (NOT CMAKE_GCOV_FOUND)
         message(FATAL_ERROR "gcov not found! aborting")
     endif()
 
-    if(NOT CMAKE_LCOV_FOUND)
+    if (NOT CMAKE_LCOV_FOUND)
         message(FATAL_ERROR "lcov not found! aborting")
     endif()
 
-    if(NOT CMAKE_GENHTML_FOUND)
+    if (NOT CMAKE_GENHTML_FOUND)
         message(FATAL_ERROR "genhtml not found! aborting")
     endif()
 
@@ -82,7 +81,7 @@ function(add_coverage_target targetname ignore_directories)
     endforeach()
 
     add_custom_command(TARGET ${targetname} POST_BUILD
-        COMMAND ${GENHTML_COMMAND} ${lcov_output} -o coverage
+        COMMAND ${GENHTML_COMMAND} ${lcov_output} --output-directory ${html_dir}
         COMMENT "open index.html in your webbrowser to see the code coverage report.")
 
 endfunction()

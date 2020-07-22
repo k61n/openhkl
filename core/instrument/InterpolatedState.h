@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef CORE_INSTRUMENT_INTERPOLATEDSTATE_H
-#define CORE_INSTRUMENT_INTERPOLATEDSTATE_H
+#ifndef NSX_CORE_INSTRUMENT_INTERPOLATEDSTATE_H
+#define NSX_CORE_INSTRUMENT_INTERPOLATEDSTATE_H
 
 #include "core/instrument/InstrumentState.h"
 
@@ -47,4 +47,4 @@ class InterpolatedState : public InstrumentState {
 
 } // namespace nsx
 
-#endif // CORE_INSTRUMENT_INTERPOLATEDSTATE_H
+#endif // NSX_CORE_INSTRUMENT_INTERPOLATEDSTATE_H

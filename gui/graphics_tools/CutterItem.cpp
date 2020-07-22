@@ -2,7 +2,7 @@
 //
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
-//! @file      gui/graphics/CutterItem.cpp
+//! @file      gui/graphics_tools/CutterItem.cpp
 //! @brief     Implements class CutterItem
 //!
 //! @homepage  ###HOMEPAGE###
@@ -27,7 +27,7 @@ CutterItem::CutterItem(nsx::sptrDataSet data)
     _pen.setStyle(Qt::SolidLine);
 }
 
-CutterItem::~CutterItem() { }
+CutterItem::~CutterItem() {}
 
 void CutterItem::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
 {

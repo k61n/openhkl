@@ -18,9 +18,9 @@
 
 namespace nsx {
 
-CSV::CSV(char delim, char quotchar) : _delim(delim), _quotchar(quotchar) { }
+CSV::CSV(char delim, char quotchar) : _delim(delim), _quotchar(quotchar) {}
 
-CSV::~CSV() { }
+CSV::~CSV() {}
 
 std::vector<std::string> CSV::getRow(std::istream& stream)
 {

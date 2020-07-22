@@ -12,7 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#pragma once
+#ifndef NSX_GUI_GRAPHICS_CRYSTALSCENE_H
+#define NSX_GUI_GRAPHICS_CRYSTALSCENE_H
 
 #include <QGraphicsScene>
 #include <QGraphicsSceneMouseEvent>
@@ -94,3 +95,5 @@ class CrystalScene : public QGraphicsScene {
     QPixmap _pix;
     QGraphicsTextItem* _text;
 };
+
+#endif // NSX_GUI_GRAPHICS_CRYSTALSCENE_H

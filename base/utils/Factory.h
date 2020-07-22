@@ -12,14 +12,14 @@
 //
 //  ***********************************************************************************************
 
-#ifndef BASE_UTILS_FACTORY_H
-#define BASE_UTILS_FACTORY_H
+#ifndef NSX_BASE_UTILS_FACTORY_H
+#define NSX_BASE_UTILS_FACTORY_H
 
 #include <algorithm>
 #include <functional>
 #include <map>
-#include <vector>
 #include <stdexcept>
+#include <vector>
 
 namespace nsx {
 
@@ -33,8 +33,8 @@ template <typename returnType, typename keytype, typename... args> class Factory
     typedef std::map<keytype, callback> callbackmap;
 
  public:
-    Factory() { }
-    virtual ~Factory() { }
+    Factory() {}
+    virtual ~Factory() {}
 
     //! register a new callback for constructing an object of type returnType
     //! @param key : key representing how the callback will be stored
@@ -110,4 +110,4 @@ bool Factory<base, keytype, args...>::hasCallback(const keytype& key)
 
 } // namespace nsx
 
-#endif // BASE_UTILS_FACTORY_H
+#endif // NSX_BASE_UTILS_FACTORY_H

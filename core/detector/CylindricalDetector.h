@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef CORE_DETECTOR_CYLINDRICALDETECTOR_H
-#define CORE_DETECTOR_CYLINDRICALDETECTOR_H
+#ifndef NSX_CORE_DETECTOR_CYLINDRICALDETECTOR_H
+#define NSX_CORE_DETECTOR_CYLINDRICALDETECTOR_H
 
 #include "core/detector/Detector.h"
 
@@ -63,4 +63,4 @@ class CylindricalDetector : public Detector {
 
 } // namespace nsx
 
-#endif // CORE_DETECTOR_CYLINDRICALDETECTOR_H
+#endif // NSX_CORE_DETECTOR_CYLINDRICALDETECTOR_H

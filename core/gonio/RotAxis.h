@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef CORE_GONIO_ROTAXIS_H
-#define CORE_GONIO_ROTAXIS_H
+#ifndef NSX_CORE_GONIO_ROTAXIS_H
+#define NSX_CORE_GONIO_ROTAXIS_H
 
 #include "core/gonio/Axis.h"
 
@@ -32,7 +32,7 @@ class RotAxis : public Axis {
     //! Static constructor for a RotAxis
     static Axis* create(const YAML::Node& node);
     RotAxis();
-    RotAxis(const RotAxis& other);
+
     //! Constructs an axis with a given name
     explicit RotAxis(const std::string& label);
     //! Explicit
@@ -41,8 +41,7 @@ class RotAxis : public Axis {
         Direction direction = Direction::CCW);
     //! Construct a RotAxis from a property tree node.
     RotAxis(const YAML::Node& node);
-    RotAxis& operator=(const RotAxis& other);
-    ~RotAxis();
+
     RotAxis* clone() const override;
     //! Gets rotation direction.
     void setRotationDirection(Direction);
@@ -68,4 +67,4 @@ class RotAxis : public Axis {
 
 } // namespace nsx
 
-#endif // CORE_GONIO_ROTAXIS_H
+#endif // NSX_CORE_GONIO_ROTAXIS_H

@@ -29,10 +29,9 @@ struct Vertex;
 
 //! Convex hull, used for various purposes (?)
 
-//! This class implements an object-oriented adaptation of the 3D
-//! incremental convex hull algorithm whose implementation in C has been
-//! described in: o'Rourke, Joseph. Computational geometry in C. Cambridge
-//! university press, 1998. 115-144.
+//! This class implements an object-oriented adaptation of the 3D incremental
+//! convex hull algorithm whose implementation in C has been described in:
+//! O'Rourke, Joseph: Computational geometry. Cambridge University Press, 1998, pp 115-144.
 //!
 //! Basically, the algorithm works on the same way than for the 2D case. It
 //! works by building counter clockwise oriented faces (triangles) of the hull
@@ -44,7 +43,7 @@ struct Vertex;
 //! their corresponding edges) that has been completety "buried" by the hull growth.
 
 class ConvexHull {
- public:
+public:
     //! Checks whether three vertices are coplanar
     static bool isCoplanar(Vertex* v0, Vertex* v1, Vertex* v2);
     ConvexHull();
@@ -127,7 +126,7 @@ class ConvexHull {
     //! Gets AABB of the convex hull
     AABB aabb() const;
 
- private:
+private:
     //! Initializes the hull. The initialization consists in defines two triangles
     //! with opposite orientations that will serve as seeds for the faces of the
     //! hull to be built later
@@ -174,7 +173,7 @@ class ConvexHull {
     //! anymore
     void cleanUp();
 
- private:
+private:
     //! A boolean that indicates whether or not the two seed-triangles of the hull
     //! have been already created
     bool _initialized;

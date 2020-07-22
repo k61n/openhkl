@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef CORE_CONVOLVE_DELTACONVOLVER_H
-#define CORE_CONVOLVE_DELTACONVOLVER_H
+#ifndef NSX_CORE_CONVOLVE_DELTACONVOLVER_H
+#define NSX_CORE_CONVOLVE_DELTACONVOLVER_H
 
 #include "core/convolve/AtomicConvolver.h" // inherits from
 
@@ -43,4 +43,4 @@ class DeltaConvolver : public AtomicConvolver {
 
 } // namespace nsx
 
-#endif // CORE_CONVOLVE_DELTACONVOLVER_H
+#endif // NSX_CORE_CONVOLVE_DELTACONVOLVER_H

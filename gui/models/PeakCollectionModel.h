@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef GUI_MODELS_PEAKCOLLECTIONMODEL_H
-#define GUI_MODELS_PEAKCOLLECTIONMODEL_H
+#ifndef NSX_GUI_MODELS_PEAKCOLLECTIONMODEL_H
+#define NSX_GUI_MODELS_PEAKCOLLECTIONMODEL_H
 
 #include "gui/items/PeakCollectionItem.h"
 #include <QAbstractTableModel>
@@ -56,4 +56,4 @@ class PeakCollectionModel : public QAbstractTableModel {
     std::string _name;
 };
 
-#endif // GUI_MODELS_PEAKCOLLECTIONMODEL_H
+#endif // NSX_GUI_MODELS_PEAKCOLLECTIONMODEL_H

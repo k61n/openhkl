@@ -58,7 +58,7 @@ Intensity Intensity::operator-(const Intensity& other) const
 
 Intensity& Intensity::operator*=(double s)
 {
-    _value *=  s;
+    _value *= s;
     _sigma2 *= s * s;
     return *this;
 }

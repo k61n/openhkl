@@ -2,7 +2,7 @@
 //
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
-//! @file      gui/properties/UnitCellProperty.h
+//! @file      gui/subframe_experiment/properties/UnitCellProperty.h
 //! @brief     Defines class UnitCellProperty
 //!
 //! @homepage  ###HOMEPAGE###
@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef GUI_SUBFRAME_EXPERIMENT_PROPERTIES_UNITCELLPROPERTY_H
-#define GUI_SUBFRAME_EXPERIMENT_PROPERTIES_UNITCELLPROPERTY_H
+#ifndef NSX_GUI_SUBFRAME_EXPERIMENT_PROPERTIES_UNITCELLPROPERTY_H
+#define NSX_GUI_SUBFRAME_EXPERIMENT_PROPERTIES_UNITCELLPROPERTY_H
 
 #include <QComboBox>
 #include <QDoubleSpinBox>
@@ -24,7 +24,6 @@
 
 //! Property widget for unit cell
 class UnitCellProperty : public QWidget {
-
  public:
     //! Constructor
     UnitCellProperty();
@@ -81,4 +80,4 @@ class UnitCellProperty : public QWidget {
     QSizePolicy* _size_policy_fixed;
 };
 
-#endif // GUI_SUBFRAME_EXPERIMENT_PROPERTIES_UNITCELLPROPERTY_H
+#endif // NSX_GUI_SUBFRAME_EXPERIMENT_PROPERTIES_UNITCELLPROPERTY_H

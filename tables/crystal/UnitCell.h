@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef TABLES_CRYSTAL_UNITCELL_H
-#define TABLES_CRYSTAL_UNITCELL_H
+#ifndef NSX_TABLES_CRYSTAL_UNITCELL_H
+#define NSX_TABLES_CRYSTAL_UNITCELL_H
 
 #include "tables/crystal/NiggliCharacter.h"
 #include "tables/crystal/SpaceGroup.h"
@@ -266,9 +266,7 @@ class UnitCell {
     std::vector<std::string> compatibleSpaceGroups() const;
 
     //! Return true if similar to another unit cell
-    bool isSimilar(UnitCell* other, double length_tol, double angle_tol);
-	//! Return true if difference between two numbers is small
-    bool smallDiff(double a, double b, double tolerance);
+    bool isSimilar(UnitCell* other, double length_tol, double angle_tol) const;
 
 #ifndef SWIG
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
@@ -309,4 +307,4 @@ using UnitCellList = std::vector<sptrUnitCell>;
 
 } // namespace nsx
 
-#endif // TABLES_CRYSTAL_UNITCELL_H
+#endif // NSX_TABLES_CRYSTAL_UNITCELL_H

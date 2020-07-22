@@ -2,7 +2,7 @@
 //
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
-//! @file      gui/graphics/EllipseItem.h
+//! @file      gui/graphics_items/EllipseItem.h
 //! @brief     Defines class EllipseMaskItem
 //!
 //! @homepage  ###HOMEPAGE###
@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef GUI_GRAPHICS_ITEMS_ELLIPSEITEM_H
-#define GUI_GRAPHICS_ITEMS_ELLIPSEITEM_H
+#ifndef NSX_GUI_GRAPHICS_ITEMS_ELLIPSEITEM_H
+#define NSX_GUI_GRAPHICS_ITEMS_ELLIPSEITEM_H
 
 #include "base/geometry/AABB.h"
 #include "core/data/DataTypes.h"
@@ -68,4 +68,4 @@ class EllipseMaskItem : public SXGraphicsItem {
     void updateAABB();
 };
 
-#endif // GUI_GRAPHICS_ITEMS_ELLIPSEITEM_H
+#endif // NSX_GUI_GRAPHICS_ITEMS_ELLIPSEITEM_H

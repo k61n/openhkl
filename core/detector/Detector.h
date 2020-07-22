@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef CORE_DETECTOR_DETECTOR_H
-#define CORE_DETECTOR_DETECTOR_H
+#ifndef NSX_CORE_DETECTOR_DETECTOR_H
+#define NSX_CORE_DETECTOR_DETECTOR_H
 
 #include "core/gonio/Component.h" // inheriting from
 
@@ -140,4 +140,4 @@ class Detector : public Component {
 
 } // namespace nsx
 
-#endif // CORE_DETECTOR_DETECTOR_H
+#endif // NSX_CORE_DETECTOR_DETECTOR_H

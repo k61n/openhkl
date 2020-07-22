@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef TABLES_CRYSTAL_DOUBLETOFRACTION_H
-#define TABLES_CRYSTAL_DOUBLETOFRACTION_H
+#ifndef NSX_TABLES_CRYSTAL_DOUBLETOFRACTION_H
+#define NSX_TABLES_CRYSTAL_DOUBLETOFRACTION_H
 
 namespace nsx {
 
@@ -22,4 +22,4 @@ void doubleToFraction(double number, int nmax, long& nom, long& dnom);
 
 } // namespace nsx
 
-#endif // TABLES_CRYSTAL_DOUBLETOFRACTION_H
+#endif // NSX_TABLES_CRYSTAL_DOUBLETOFRACTION_H

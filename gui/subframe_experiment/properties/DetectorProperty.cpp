@@ -2,7 +2,7 @@
 //
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
-//! @file      gui/properties/DetectorProperty.cpp
+//! @file      gui/subframe_experiment/properties/DetectorProperty.cpp
 //! @brief     Implements class DetectorProperty
 //!
 //! @homepage  ###HOMEPAGE###
@@ -86,7 +86,7 @@ DetectorProperty::DetectorProperty() : QWidget()
     v_box_layout->addWidget(group_2);
 }
 
-DetectorProperty::~DetectorProperty() { }
+DetectorProperty::~DetectorProperty() {}
 
 void DetectorProperty::refreshInput()
 {

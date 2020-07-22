@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef CORE_EXPERIMENT_DATATYPES_H
-#define CORE_EXPERIMENT_DATATYPES_H
+#ifndef NSX_CORE_DATA_DATATYPES_H
+#define NSX_CORE_DATA_DATATYPES_H
 
 #include <memory>
 #include <vector>
@@ -26,4 +26,4 @@ using DataList = std::vector<sptrDataSet>;
 
 } // namespace nsx
 
-#endif // CORE_EXPERIMENT_DATATYPES_H
+#endif // NSX_CORE_DATA_DATATYPES_H

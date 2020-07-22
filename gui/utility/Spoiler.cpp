@@ -37,7 +37,6 @@ Spoiler::Spoiler(const QString& title, const int animationDuration, QWidget* par
 
 void Spoiler::setContentLayout(QLayout& contentLayout, bool toggled)
 {
-
     delete contentArea.layout();
     contentArea.setLayout(&contentLayout);
 

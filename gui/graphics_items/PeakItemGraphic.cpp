@@ -2,7 +2,7 @@
 //
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
-//! @file      gui/graphics/PeakItemGraphic.cpp
+//! @file      gui/graphics_items/PeakItemGraphic.cpp
 //! @brief     Implements class PeakItemGraphic
 //!
 //! @homepage  ###HOMEPAGE###
@@ -48,7 +48,6 @@ PeakItemGraphic::PeakItemGraphic(nsx::Peak3D* peak)
 
 void PeakItemGraphic::redraw()
 {
-
     QString peak_label;
     nsx::UnitCell* unit_cell = _peak->unitCell();
     if (unit_cell) {

@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef CORE_GONIO_AXIS_H
-#define CORE_GONIO_AXIS_H
+#ifndef NSX_CORE_GONIO_AXIS_H
+#define NSX_CORE_GONIO_AXIS_H
 
 #include <Eigen/Geometry>
 #include <yaml-cpp/yaml.h>
@@ -32,7 +32,6 @@ class Axis {
  public:
     static Axis* create(const YAML::Node& node);
     Axis();
-    Axis(const Axis& other);
 
     //! Contruct a default z-axis
     Axis(const std::string& name);
@@ -95,4 +94,4 @@ std::ostream& operator<<(std::ostream& os, const Axis& axis);
 
 } // namespace nsx
 
-#endif // CORE_GONIO_AXIS_H
+#endif // NSX_CORE_GONIO_AXIS_H

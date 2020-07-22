@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef GUI_SUBFRAME_FILTER_SUBFRAMEFILTERPEAKS_H
-#define GUI_SUBFRAME_FILTER_SUBFRAMEFILTERPEAKS_H
+#ifndef NSX_GUI_SUBFRAME_FILTER_SUBFRAMEFILTERPEAKS_H
+#define NSX_GUI_SUBFRAME_FILTER_SUBFRAMEFILTERPEAKS_H
 
 #include "core/shape/PeakCollection.h"
 
@@ -166,4 +166,4 @@ class SubframeFilterPeaks : public QWidget {
 };
 
 
-#endif // GUI_SUBFRAME_FILTER_SUBFRAMEFILTERPEAKS_H
+#endif // NSX_GUI_SUBFRAME_FILTER_SUBFRAMEFILTERPEAKS_H

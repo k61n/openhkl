@@ -26,7 +26,6 @@
 #include "tables/crystal/MillerIndex.h"
 #include "tables/crystal/UnitCell.h"
 
-
 PeakCollectionItem::PeakCollectionItem()
 {
     _peak_collection = nullptr;
@@ -69,9 +68,8 @@ std::string PeakCollectionItem::name() const
 
 int PeakCollectionItem::childCount() const
 {
-    if (_peak_collection == nullptr) {
+    if (_peak_collection == nullptr)
         return 0;
-    }
 
     return _peak_items.size();
 }
@@ -238,9 +236,8 @@ void PeakCollectionItem::setFilterMode()
 std::vector<PeakItem*> PeakCollectionItem::peakItems() const
 {
     std::vector<PeakItem*> output;
-    for (int i = 0; i < _peak_items.size(); ++i) {
+    for (int i = 0; i < _peak_items.size(); ++i)
         output.push_back(_peak_items.at(i).get());
-    }
 
     return output;
 }
