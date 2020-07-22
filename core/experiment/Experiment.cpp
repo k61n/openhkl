@@ -121,20 +121,19 @@ void Experiment::setDiffractometer(const std::string& diffractometerName)
 sptrDataSet Experiment::getData(const std::string& name)
 {
     auto it = _data_map.find(name);
-    if (it == _data_map.end()) {
+    if (it == _data_map.end())
         throw std::runtime_error(
             "The data " + name + " could not be found in the experiment " + _name);
-    }
     return it->second;
 }
 
 sptrDataSet Experiment::dataShortName(const std::string& name)
 {
     std::map<std::string, sptrDataSet> temp;
-    for (std::map<std::string, sptrDataSet>::iterator it = _data_map.begin(); it != _data_map.end(); ++it)
-        temp.insert(std::make_pair(it->second->name(), it->second));
+    for (const auto& it: _data_map)
+        temp.insert(std::make_pair(it.second->name(), it.second));
 
-    auto it = temp.find(name);
+    const auto it = temp.find(name);
     if (it == temp.end()) {
         throw std::runtime_error(
             "The data " + name + " could not be found in the experiment " + _name);
@@ -227,8 +226,7 @@ void Experiment::addData(const std::string& name, sptrDataSet data)
 
 bool Experiment::hasData(const std::string& name) const
 {
-    auto it = _data_map.find(name);
-    return (it != _data_map.end());
+    return (_data_map.find(name) != _data_map.end());
 }
 
 void Experiment::removeData(const std::string& name)
@@ -262,51 +260,45 @@ PeakCollection* Experiment::getPeakCollection(const std::string name)
 
 void Experiment::removePeakCollection(const std::string& name)
 {
-    if (hasPeakCollection(name)) {
-        auto peak_collection = _peak_collections.find(name);
-        peak_collection->second.reset();
-        _peak_collections.erase(peak_collection);
-    }
+    if (!hasPeakCollection(name))
+        return;
+
+    auto peak_collection = _peak_collections.find(name);
+    peak_collection->second.reset();
+    _peak_collections.erase(peak_collection);
 }
 
 std::vector<std::string> Experiment::getCollectionNames() const
 {
-    std::vector<std::string> names;
-    for (std::map<std::string, std::unique_ptr<PeakCollection>>::const_iterator it =
-             _peak_collections.begin();
-         it != _peak_collections.end(); ++it) {
-        names.push_back(it->second->name());
-    }
-    return names;
+    std::vector<std::string> ret;
+    for (const auto& it: _peak_collections)
+        ret.push_back(it.second->name());
+    return ret;
 }
 
 std::vector<std::string> Experiment::getFoundCollectionNames() const
 {
-    std::vector<std::string> names;
-    for (std::map<std::string, std::unique_ptr<PeakCollection>>::const_iterator it =
-             _peak_collections.begin();
-         it != _peak_collections.end(); ++it) {
-        if (it->second->type() == listtype::FOUND)
-            names.push_back(it->second->name());
+    std::vector<std::string> ret;
+    for (const auto& it : _peak_collections) {
+        if (it.second->type() == listtype::FOUND)
+            ret.push_back(it.second->name());
     }
-    return names;
+    return ret;
 }
 
 std::vector<std::string> Experiment::getPredictedCollectionNames() const
 {
-    std::vector<std::string> names;
-    for (std::map<std::string, std::unique_ptr<PeakCollection>>::const_iterator it =
-             _peak_collections.begin();
-         it != _peak_collections.end(); ++it) {
-        if (it->second->type() == listtype::PREDICTED)
-            names.push_back(it->second->name());
+    std::vector<std::string> ret;
+    for (const auto& it : _peak_collections) {
+        if (it.second->type() == listtype::PREDICTED)
+            ret.push_back(it.second->name());
     }
-    return names;
+    return ret;
 }
 
 void Experiment::acceptFilter(std::string name, PeakCollection* collection)
 {
-    std::unique_ptr<PeakCollection> ptr(new PeakCollection(name, collection->type()));
+    auto ptr = std::make_unique<PeakCollection>(name, collection->type());
     ptr->populateFromFiltered(collection);
     _peak_collections.insert_or_assign(name, std::move(ptr));
 }
@@ -331,8 +323,8 @@ void Experiment::resetMergedPeaks()
 
 void Experiment::addUnitCell(const std::string& name, UnitCell* unit_cell)
 {
-    std::unique_ptr<UnitCell> ptr(new UnitCell(*unit_cell));
-    _unit_cells.insert(std::make_pair(name, std::move(ptr)));
+    auto ptr = std::make_unique<UnitCell>(*unit_cell);
+    _unit_cells.insert({name, std::move(ptr)});
 }
 
 void Experiment::addUnitCell(
@@ -350,13 +342,10 @@ bool Experiment::hasUnitCell(const std::string& name) const
 
 std::vector<std::string> Experiment::getUnitCellNames() const
 {
-    std::vector<std::string> names;
-    for (std::map<std::string, std::unique_ptr<nsx::UnitCell>>::const_iterator it =
-             _unit_cells.begin();
-         it != _unit_cells.end(); ++it) {
-        names.push_back(it->second->name());
-    }
-    return names;
+    std::vector<std::string> ret;
+    for (const auto& it: _unit_cells)
+        ret.push_back(it.second->name());
+    return ret;
 }
 
 UnitCell* Experiment::getUnitCell(const std::string& name)
@@ -380,9 +369,8 @@ void Experiment::swapUnitCells(const std::string& old_cell_name, const std::stri
     UnitCell* old_cell = getUnitCell(old_cell_name);
     UnitCell* new_cell = getUnitCell(new_cell_name);
 
-    std::map<std::string, std::unique_ptr<PeakCollection>>::const_iterator it;
-    for (it = _peak_collections.begin(); it != _peak_collections.end(); ++it) {
-        std::vector<Peak3D*> peaks = it->second.get()->getPeakList();
+    for (const auto& it: _peak_collections) {
+        std::vector<Peak3D*> peaks = it.second.get()->getPeakList();
         for (Peak3D* peak : peaks) {
             if (peak->unitCell() == old_cell)
                 peak->setUnitCell(new_cell);
@@ -398,10 +386,9 @@ void Experiment::acceptFoundPeaks(const std::string& name)
 
 IPeakIntegrator* Experiment::getIntegrator(const std::string& name) const
 {
-    std::map<std::string, std::unique_ptr<IPeakIntegrator>>::const_iterator it;
-    for (it = _integrator_map.begin(); it != _integrator_map.end(); ++it) {
-        if (it->first == name)
-            return it->second.get();
+    for (const auto& it: _integrator_map) {
+        if (it.first == name)
+            return it.second.get();
     }
     return nullptr;
 }
@@ -416,9 +403,8 @@ void Experiment::integratePeaks(const std::string& integrator_name, PeakCollecti
     filter.filterDRange(peak_collection);
     std::vector<Peak3D*> peaks = peak_collection->getFilteredPeakList();
 
-    std::map<std::string, sptrDataSet>::iterator it;
-    for (it = _data_map.begin(); it != _data_map.end(); ++it)
-        integrator->integrate(peaks, peak_collection->shapeLibrary(), it->second);
+    for (const auto& it: _data_map)
+        integrator->integrate(peaks, peak_collection->shapeLibrary(), it.second);
 }
 
 void Experiment::integratePredictedPeaks(
@@ -440,9 +426,8 @@ void Experiment::integratePredictedPeaks(
     filter.filterDRange(peak_collection);
     std::vector<Peak3D*> peaks = peak_collection->getFilteredPeakList();
 
-    std::map<std::string, sptrDataSet>::iterator it;
-    for (it = _data_map.begin(); it != _data_map.end(); ++it)
-        integrator->integrate(peaks, shape_library, it->second);
+    for (const auto& it: _data_map)
+        integrator->integrate(peaks, shape_library, it.second);
 }
 
 void Experiment::integrateFoundPeaks(const std::string& integrator_name)
@@ -459,34 +444,20 @@ void Experiment::saveToFile(const std::string& path) const
 
     exporter.createFile(name(), _diffractometer->name(), path);
 
-    {
-        std::map<std::string, DataSet*> data_sets;
-        for (std::map<std::string, sptrDataSet>::const_iterator it = _data_map.begin();
-             it != _data_map.end(); ++it) {
-            data_sets.insert(std::make_pair(it->first, it->second.get()));
-        }
-        exporter.writeData(data_sets);
-    }
+    std::map<std::string, DataSet*> data_sets;
+    for (const auto& it: _data_map)
+        data_sets.insert(std::make_pair(it.first, it.second.get()));
+    exporter.writeData(data_sets);
 
-    {
-        std::map<std::string, PeakCollection*> peak_collections;
-        for (std::map<std::string, std::unique_ptr<PeakCollection>>::const_iterator it =
-                 _peak_collections.begin();
-             it != _peak_collections.end(); ++it) {
-            peak_collections.insert(std::make_pair(it->first, it->second.get()));
-        }
-        exporter.writePeaks(peak_collections);
-    }
+    std::map<std::string, PeakCollection*> peak_collections;
+    for (const auto& it: _peak_collections)
+        peak_collections.insert(std::make_pair(it.first, it.second.get()));
+    exporter.writePeaks(peak_collections);
 
-    {
-        std::map<std::string, UnitCell*> unit_cells;
-        for (std::map<std::string, std::unique_ptr<UnitCell>>::const_iterator it =
-                 _unit_cells.begin();
-             it != _unit_cells.end(); ++it) {
-            unit_cells.insert(std::make_pair(it->first, it->second.get()));
-        }
-        exporter.writeUnitCells(unit_cells);
-    }
+    std::map<std::string, UnitCell*> unit_cells;
+    for (const auto& it: _unit_cells)
+        unit_cells.insert(std::make_pair(it.first, it.second.get()));
+    exporter.writeUnitCells(unit_cells);
 
     exporter.finishWrite();
 }
