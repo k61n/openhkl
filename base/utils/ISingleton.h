@@ -2,7 +2,7 @@
 //
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
-//! @file      base/utils/Singleton.h
+//! @file      base/utils/ISingleton.h
 //! @brief     Defines classes Singleton, Constructor, Destructor
 //!
 //! @homepage  ###HOMEPAGE###
@@ -32,7 +32,7 @@ template <typename T, template <class> class Constructor, template <class> class
 class Singleton {
  public:
     //! return an instance of the class to be singletonized
-    static T* Instance()
+    static T* instance()
     {
         static std::unique_ptr<T, Destructor<T>> ptr(Constructor<T>::construct());
         // static std::unique_ptr<T> ptr(Constructor<T>::construct());

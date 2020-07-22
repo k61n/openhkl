@@ -33,7 +33,7 @@ CylindricalDetector::CylindricalDetector(const std::string& name) : Detector(nam
 
 CylindricalDetector::CylindricalDetector(const YAML::Node& node) : Detector(node)
 {
-    UnitsManager* um = UnitsManager::Instance();
+    UnitsManager* um = UnitsManager::instance();
 
     // Sets the detector angular width from the property tree node
     auto&& angularWidthNode = node["angular_width"];

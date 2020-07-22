@@ -18,7 +18,7 @@
 #include <cmath>
 #include <unordered_map>
 
-#include "base/utils/Singleton.h"
+#include "base/utils/ISingleton.h"
 
 namespace nsx {
 

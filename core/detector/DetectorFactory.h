@@ -16,7 +16,7 @@
 #define NSX_CORE_DETECTOR_DETECTORFACTORY_H
 
 #include "base/utils/Factory.h"
-#include "base/utils/Singleton.h"
+#include "base/utils/ISingleton.h"
 
 namespace nsx {
 

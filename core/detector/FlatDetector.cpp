@@ -32,7 +32,7 @@ FlatDetector::FlatDetector(const std::string& name) : Detector(name) {}
 
 FlatDetector::FlatDetector(const YAML::Node& node) : Detector(node)
 {
-    UnitsManager* um = UnitsManager::Instance();
+    UnitsManager* um = UnitsManager::instance();
 
     // Sets the detector width from the property tree node
     auto&& widthNode = node["width"];

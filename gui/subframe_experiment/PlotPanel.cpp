@@ -33,7 +33,7 @@ void PlotPanel::plotData(QVector<double>& x, QVector<double>& y, QVector<double>
     if (plot->getType().compare("simple") != 0) {
         anchor->removeWidget(plot);
         delete plot;
-        PlotFactory* factory = PlotFactory::Instance();
+        PlotFactory* factory = PlotFactory::instance();
         plot = factory->create("simple", centralWidget);
         plot->setObjectName("1D plotter");
         plot->setFocusPolicy(Qt::StrongFocus);
@@ -53,7 +53,7 @@ void PlotPanel::updatePlot(PlottableItem* item)
     if (!item->isPlottable(plot)) {
         anchor->removeWidget(plot);
         delete plot;
-        PlotFactory* factory = PlotFactory::Instance();
+        PlotFactory* factory = PlotFactory::instance();
         plot = factory->create(item->getPlotType(), centralWidget);
         plot->setObjectName("1D plotter");
         plot->setFocusPolicy(Qt::StrongFocus);

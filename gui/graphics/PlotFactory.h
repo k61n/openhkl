@@ -16,7 +16,7 @@
 #define NSX_GUI_GRAPHICS_PLOTFACTORY_H
 
 #include "base/utils/Factory.h"
-#include "base/utils/Singleton.h"
+#include "base/utils/ISingleton.h"
 #include "gui/graphics/SXPlot.h"
 
 //! A creator for `SXPlot`s based on nsx::Factory

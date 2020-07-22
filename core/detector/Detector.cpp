@@ -24,7 +24,7 @@ namespace nsx {
 Detector* Detector::create(const YAML::Node& node)
 {
     // Create an instance of the detector factory
-    DetectorFactory* detectorFactory = DetectorFactory::Instance();
+    DetectorFactory* detectorFactory = DetectorFactory::instance();
 
     // Gets the detector type
     std::string detectorType = node["type"].as<std::string>();
@@ -112,7 +112,7 @@ Detector::Detector(const YAML::Node& node) : Component(node)
             "Detector class: Data ordering mode not valid, can not build detector");
     }
 
-    UnitsManager* um = UnitsManager::Instance();
+    UnitsManager* um = UnitsManager::instance();
 
     // Sets the detector to sample distance from the property tree node
     auto&& distanceNode = node["sample_distance"];
