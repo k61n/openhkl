@@ -39,7 +39,6 @@ struct PeakFilterFlags {
 };
 
 class PeakFilter {
-
  public:
     //! Constructor
     PeakFilter();

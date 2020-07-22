@@ -306,6 +306,4 @@ void PeakExporter::saveToSCAMerged(std::string filename, nsx::MergedData* merged
     }
     file.close();
 }
-
-
 }

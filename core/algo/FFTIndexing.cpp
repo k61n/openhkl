@@ -86,7 +86,6 @@ std::vector<Eigen::RowVector3d> algo::findOnSphere(
     vectorWithQuality.reserve(n_vertices);
 
     for (const Eigen::RowVector3d q_direction : pointsOnSphere(n_vertices)) {
-
         std::vector<double> hist(nPoints, 0); // reciprocal space histogram
         for (const auto& vect : qvects) {
             const Eigen::RowVector3d& q_vector = vect.rowVector();

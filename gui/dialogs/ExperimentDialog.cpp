@@ -22,7 +22,6 @@
 #include <QGridLayout>
 #include <QHBoxLayout>
 
-
 namespace {
 QStringList allInstrumentNames()
 {

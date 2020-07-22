@@ -101,7 +101,6 @@ void SampleShapeProperties::refreshInput()
         _faces->setText(QString::number(hull.nFaces()));
         _edges->setText(QString::number(hull.nEdges()));
         _vertices->setText(QString::number(hull.nVertices()));
-
     } else {
         // SampleProperty
         sampleGoniometer->removeColumn(1);

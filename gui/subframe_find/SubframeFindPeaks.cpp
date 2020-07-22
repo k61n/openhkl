@@ -581,7 +581,6 @@ void PeakFinderFrame::grabFinderParameters()
     _kernel_para_table->setColumnCount(2);
     int currentRow = 0;
     for (mapIterator it = params.begin(); it != params.end(); ++it) {
-
         _kernel_para_table->insertRow(currentRow);
 
         QString name = QString::fromStdString(it->first);
@@ -647,7 +646,6 @@ void PeakFinderFrame::updateConvolutionParameters()
     _kernel_para_table->setColumnCount(2);
     int currentRow = 0;
     for (mapIterator it = params.begin(); it != params.end(); ++it) {
-
         _kernel_para_table->insertRow(currentRow);
 
         QString name = QString::fromStdString(it->first);
@@ -691,7 +689,6 @@ void PeakFinderFrame::find()
     try {
         finder->find(data_list);
         refreshPeakTable();
-
     } catch (std::exception& e) {
         return;
     }

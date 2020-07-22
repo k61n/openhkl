@@ -19,10 +19,8 @@
 #include <QLineEdit>
 #include <QTableWidget>
 
-
 //! Property widget for the sample and its shape
 class SampleShapeProperties : public QWidget {
-
  public:
     SampleShapeProperties();
 

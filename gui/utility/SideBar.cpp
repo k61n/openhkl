@@ -61,7 +61,6 @@ void SideBar::paintEvent(QPaintEvent* event)
     int action_y = 0;
     // p.fillRect(rect(), QColor(100, 100, 100));
     for (auto action : mActions) {
-
         QRect actionRect(0, action_y, event->rect().width(), action_height);
 
         if (action->isChecked())

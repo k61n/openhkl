@@ -21,7 +21,6 @@
 
 //! Property widget of the numor
 class NumorProperty : public QWidget {
-
  public:
     //! The constructor
     NumorProperty();

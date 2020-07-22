@@ -33,7 +33,6 @@
 
 //! Frame which shows the settings for the refiner
 class RefinerDialog : public QDialog {
-
  public:
     RefinerDialog(nsx::UnitCell* unit_cell);
 

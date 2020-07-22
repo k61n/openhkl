@@ -48,7 +48,6 @@ PeakItemGraphic::PeakItemGraphic(nsx::Peak3D* peak)
 
 void PeakItemGraphic::redraw()
 {
-
     QString peak_label;
     nsx::UnitCell* unit_cell = _peak->unitCell();
     if (unit_cell) {

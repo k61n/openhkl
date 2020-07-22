@@ -21,7 +21,6 @@
 
 SubframeExperiment::SubframeExperiment() : QWidget()
 {
-
     QSizePolicy left_size_policy;
     left_size_policy.setHorizontalPolicy(QSizePolicy::Minimum);
     left_size_policy.setVerticalPolicy(QSizePolicy::Expanding);

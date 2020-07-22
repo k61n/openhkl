@@ -17,7 +17,6 @@
 
 namespace nsx {
 
-
 std::random_device Random::_randdev;
 std::mt19937 Random::_rng(Random::_randdev()); // random number generator
 
@@ -71,6 +70,5 @@ int Random::poisson(double mean)
 {
     return std::poisson_distribution<int>(mean)(Random::_rng);
 }
-
 
 } // namespace nsx

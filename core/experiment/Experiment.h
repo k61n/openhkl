@@ -49,7 +49,6 @@ struct DataResolution : DataQuality {
 };
 
 class Experiment {
-
  public:
     Experiment() = delete;
     Experiment(const Experiment& other);

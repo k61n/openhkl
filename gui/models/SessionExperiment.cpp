@@ -215,7 +215,6 @@ PeakCollectionModel* SessionExperiment::peakModel(int i)
 std::vector<nsx::Peak3D*>
 SessionExperiment::getPeaks(const QString& peakListName, int /*upperindex*/, int /*lowerindex*/)
 {
-
     if (!_experiment->hasPeakCollection(peakListName.toStdString())) {
         std::vector<nsx::Peak3D*> peaks;
         return peaks;

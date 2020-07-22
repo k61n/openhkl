@@ -33,7 +33,6 @@
 #include <QTabWidget>
 #include <QVBoxLayout>
 
-
 RefinerDialog::RefinerDialog(nsx::UnitCell* unit_cell) : QDialog(), _current_frame(0)
 {
     _unit_cell = unit_cell;
@@ -898,7 +897,6 @@ void RefinerDialog::_fetchAllRefinedValues()
 
 void RefinerDialog::_setInitialValues(int frame)
 {
-
     QString temp_text = _select_data->currentText();
 
     if (temp_text.isEmpty())
@@ -1036,7 +1034,6 @@ void RefinerDialog::refine()
     refiners.clear();
 
     for (QListWidgetItem* data_item : selected_data) {
-
         std::string data_name = data_item->text().toStdString();
         nsx::sptrDataSet data = gSession->selectedExperiment()->experiment()->getData(data_name);
         std::vector<nsx::Peak3D*> reference_peaks;
@@ -1045,7 +1042,6 @@ void RefinerDialog::refine()
         // Keep the peak that belong to this data and split them
         // between the found and predicted ones
         for (QListWidgetItem* peak_collection_item : selected_peaks) {
-
             std::string peak_name = peak_collection_item->text().toStdString();
             nsx::PeakCollection* peak_collection =
                 gSession->selectedExperiment()->experiment()->getPeakCollection(peak_name);
@@ -1119,7 +1115,6 @@ void RefinerDialog::accept()
 
 void RefinerDialog::_plot()
 {
-
     QString temp_text = _select_data->currentText();
 
     if (temp_text.isEmpty())

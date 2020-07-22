@@ -57,7 +57,6 @@ struct IndexerParameters {
 
 //! Class to automatically index a set of peaks
 class AutoIndexer {
-
  public:
     //! Constructor
     AutoIndexer();

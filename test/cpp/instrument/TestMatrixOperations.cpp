@@ -15,7 +15,6 @@
 #include "core/instrument/MatrixOperations.h"
 #include "test/cpp/catch.hpp"
 
-
 /*
  * test matrix element removal
  */

@@ -55,7 +55,6 @@ void ExperimentExporter::writeData(const std::map<std::string, DataSet*> data)
     file.createGroup("/DataCollections");
 
     for (const auto& it : data) {
-
         const DataSet* data_item = it.second;
         std::string name = data_item->name();
 
@@ -213,7 +212,6 @@ void ExperimentExporter::writePeaks(const std::map<std::string, PeakCollection*>
     file.createGroup("/PeakCollections");
 
     for (const auto& it : peakCollections) {
-
         // Write the data
         std::string collection_name = it.first;
         PeakCollection* collection_item = it.second;
@@ -254,7 +252,6 @@ void ExperimentExporter::writePeaks(const std::map<std::string, PeakCollection*>
         std::string unit_cell_name;
 
         for (int i = 0; i < nPeaks; ++i) {
-
             const nsx::Peak3D* peak = collection_item->getPeak(i);
 
             // set the values
@@ -435,7 +432,6 @@ void ExperimentExporter::writeUnitCells(const std::map<std::string, UnitCell*> u
     H5::StrType str80(H5::PredType::C_S1, 80);
 
     for (const auto& it : unit_cells) {
-
         // Write the data
         const std::string unit_cell_name = it.first;
         const UnitCell* unit_cell = it.second;

@@ -26,7 +26,6 @@
 #include "tables/crystal/MillerIndex.h"
 #include "tables/crystal/UnitCell.h"
 
-
 PeakCollectionItem::PeakCollectionItem()
 {
     _peak_collection = nullptr;

@@ -271,7 +271,6 @@ void Experiment::removePeakCollection(const std::string& name)
 
 std::vector<std::string> Experiment::getCollectionNames() const
 {
-
     std::vector<std::string> names;
     for (std::map<std::string, std::unique_ptr<PeakCollection>>::const_iterator it =
              _peak_collections.begin();
@@ -283,7 +282,6 @@ std::vector<std::string> Experiment::getCollectionNames() const
 
 std::vector<std::string> Experiment::getFoundCollectionNames() const
 {
-
     std::vector<std::string> names;
     for (std::map<std::string, std::unique_ptr<PeakCollection>>::const_iterator it =
              _peak_collections.begin();
@@ -296,7 +294,6 @@ std::vector<std::string> Experiment::getFoundCollectionNames() const
 
 std::vector<std::string> Experiment::getPredictedCollectionNames() const
 {
-
     std::vector<std::string> names;
     for (std::map<std::string, std::unique_ptr<PeakCollection>>::const_iterator it =
              _peak_collections.begin();
@@ -411,7 +408,6 @@ IPeakIntegrator* Experiment::getIntegrator(const std::string& name) const
 
 void Experiment::integratePeaks(const std::string& integrator_name, PeakCollection* peak_collection)
 {
-
     IPeakIntegrator* integrator = getIntegrator(integrator_name);
 
     nsx::PeakFilter filter;

@@ -50,8 +50,6 @@ void Actions::setupFiles()
 
 void Actions::setupData()
 {
-
-
     // loadData.setTriggerHook([]() { gSession->loadData(); });
     // removeData.setTriggerHook([]() { gSession->removeData(); });
     // importRaw.setTriggerHook([]() { gSession->loadRawData(); });

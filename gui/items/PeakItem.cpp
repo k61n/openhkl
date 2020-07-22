@@ -11,6 +11,7 @@
 //! @authors   see CITATION, MAINTAINER
 //
 //  ***********************************************************************************************
+
 #include "gui/items/PeakItem.h"
 
 #include "base/geometry/ReciprocalVector.h"
@@ -33,7 +34,6 @@ PeakItem::PeakItem(nsx::Peak3D* peak) : QStandardItem()
 
 QVariant PeakItem::peakData(const QModelIndex& index, int role, PeakDisplayModes mode) const
 {
-
     int col = index.column();
 
     Eigen::RowVector3i hkl = {0, 0, 0};

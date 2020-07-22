@@ -506,7 +506,6 @@ void SubframeAutoIndexer::acceptSolution()
         return;
 
     if (_selected_unit_cell) {
-
         std::unique_ptr<ListNameDialog> dlg(new ListNameDialog());
         dlg->exec();
         if (!dlg->listName().isEmpty()) {

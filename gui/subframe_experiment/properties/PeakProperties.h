@@ -23,7 +23,6 @@
 
 //! Tab of the SubframeSetup which contains the different peak collections
 class PeakProperties : public QWidget {
-
  public:
     //! Constructor
     PeakProperties();

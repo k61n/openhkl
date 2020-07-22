@@ -21,7 +21,6 @@
 #include <QStandardItem>
 
 class PeakCollectionItem {
-
  public:
     PeakCollectionItem();
     PeakCollectionItem(nsx::PeakCollection* peak_collection);

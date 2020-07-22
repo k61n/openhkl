@@ -41,7 +41,6 @@ SubframeFilterPeaks::SubframeFilterPeaks()
     , _peak_collection_item()
     , _peak_collection_model()
 {
-
     setSizePolicies();
     _main_layout = new QHBoxLayout(this);
     _right_element = new QSplitter(Qt::Vertical, this);

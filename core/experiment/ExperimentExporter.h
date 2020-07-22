@@ -12,7 +12,6 @@
 //
 //  ***********************************************************************************************
 
-
 #ifndef NSX_CORE_EXPERIMENT_EXPERIMENTEXPORTER_H
 #define NSX_CORE_EXPERIMENT_EXPERIMENTEXPORTER_H
 
@@ -25,7 +24,6 @@ namespace nsx {
 
 //! Manages the export of peak information to file.
 class ExperimentExporter {
-
  public:
     //! Create the file
     void createFile(std::string name, std::string diffractometer, std::string path);

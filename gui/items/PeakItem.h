@@ -40,7 +40,6 @@ enum Column {
 enum PeakDisplayModes { VALID, FILTER };
 
 class PeakItem : public QStandardItem {
-
  public:
     PeakItem(nsx::Peak3D* peak);
     ~PeakItem() = default;

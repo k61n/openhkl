@@ -52,7 +52,6 @@ SpoilerCheck::SpoilerCheck(const QString& title, const int animationDuration, QW
 
 void SpoilerCheck::setContentLayout(QLayout& contentLayout, bool toggled)
 {
-
     delete contentArea.layout();
     contentArea.setLayout(&contentLayout);
 

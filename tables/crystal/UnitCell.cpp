@@ -28,7 +28,6 @@
 #include <QtGlobal>
 
 namespace {
-
 bool smallDiff(double a, double b, double tolerance)
 {
     return std::abs(a - b) < tolerance;

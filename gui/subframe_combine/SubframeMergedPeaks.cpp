@@ -593,7 +593,6 @@ void SubframeMergedPeaks::saveMergedPeaks()
             return;
 
         exporter.saveToShelXMerged(filename.toStdString(), _merged_data);
-
     } else if (format.compare("FullProf") == 0) {
         QString filename = QFileDialog::getSaveFileName(
             this, "Save peaks to FullProf", ".", "FullProf hkl file (*.hkl)");
@@ -602,7 +601,6 @@ void SubframeMergedPeaks::saveMergedPeaks()
             return;
 
         exporter.saveToFullProfMerged(filename.toStdString(), _merged_data);
-
     } else if (format.compare("Phenix") == 0) {
         QString filename = QFileDialog::getSaveFileName(
             this, "Save peaks to Phenix sca", ".", "Phenix sca file (*.sca)");
@@ -626,7 +624,6 @@ void SubframeMergedPeaks::saveUnmergedPeaks()
             return;
 
         exporter.saveToShelXUnmerged(filename.toStdString(), _merged_data);
-
     } else if (format.compare("FullProf") == 0) {
         QString filename = QFileDialog::getSaveFileName(
             this, "Save peaks to FullProf", ".", "ShelX hkl file (*.hkl)");
@@ -635,7 +632,6 @@ void SubframeMergedPeaks::saveUnmergedPeaks()
             return;
 
         exporter.saveToFullProfUnmerged(filename.toStdString(), _merged_data);
-
     } else if (format.compare("Phenix") == 0) {
         QString filename = QFileDialog::getSaveFileName(
             this, "Save peaks to Phenix sca", ".", "Phenix sca file (*.sca)");

@@ -23,7 +23,6 @@ enum class listtype { FOUND, FILTERED, PREDICTED };
 
 //! Container for a peaklist and its metadata
 class PeakCollection {
-
  public:
     //! Default contructor
     PeakCollection();

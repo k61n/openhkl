@@ -23,7 +23,6 @@
 #include <QWidget>
 
 class SubframeExperiment : public QWidget {
-
  public:
     SubframeExperiment();
 

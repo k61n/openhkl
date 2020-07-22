@@ -21,7 +21,6 @@
 
 //! Property widget of the detector
 class DetectorProperty : public QWidget {
-
  public:
     DetectorProperty();
     ~DetectorProperty();

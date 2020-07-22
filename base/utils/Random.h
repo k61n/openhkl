@@ -20,7 +20,6 @@
 
 namespace nsx {
 
-
 //! Random numbers
 
 class Random {
@@ -43,7 +42,6 @@ class Random {
     static std::random_device _randdev;
     static std::mt19937 _rng; // random number generator
 };
-
 
 } // namespace nsx
 

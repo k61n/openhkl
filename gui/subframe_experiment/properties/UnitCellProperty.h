@@ -24,7 +24,6 @@
 
 //! Property widget for unit cell
 class UnitCellProperty : public QWidget {
-
  public:
     //! Constructor
     UnitCellProperty();

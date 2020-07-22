@@ -24,7 +24,6 @@
 
 //! Part of the main window that contains the detector view
 class ImagePanel : public QWidget {
-
  public:
     ImagePanel();
     void dataChanged();

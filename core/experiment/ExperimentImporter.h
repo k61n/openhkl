@@ -25,7 +25,6 @@ namespace nsx {
 
 //! Manages the import of peak information to file.
 class ExperimentImporter {
-
  public:
     //! Create the file
     void setFilePath(std::string path, Experiment* experiment);

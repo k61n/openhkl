@@ -162,7 +162,6 @@ void AutoIndexer::refineSolutions(const std::vector<Peak3D*>& peaks)
 {
     // TODO: candidate for easy parallelization
     for (auto&& soln : _solutions) {
-
         auto cell = soln.first;
         cell->setIndexingTolerance(_params.indexingTolerance);
         Eigen::Matrix3d B = cell->reciprocalBasis();

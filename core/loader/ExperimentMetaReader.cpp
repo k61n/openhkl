@@ -44,7 +44,6 @@ ExperimentMetaReader::ExperimentMetaReader(
 
         _metadata.add<std::string>("real_path", file_name);
         _metadata.add<std::string>("group_name", group_name);
-
     } catch (H5::Exception& e) {
         std::string what = e.getDetailMsg();
         throw std::runtime_error(what);
@@ -239,6 +238,5 @@ void ExperimentMetaReader::close()
 
     _isOpened = false;
 }
-
 
 } // namespace nsx

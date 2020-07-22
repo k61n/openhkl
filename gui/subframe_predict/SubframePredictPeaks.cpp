@@ -697,7 +697,6 @@ void SubframePredictPeaks::runPrediction()
         _peak_collection_item.setPeakCollection(&_peak_collection);
         _peak_collection_model.setRoot(&_peak_collection_item);
         refreshPeakTable();
-
     } catch (std::exception& e) {
         return;
     }
@@ -743,7 +742,6 @@ void SubframePredictPeaks::runIntegration()
                 _integrator->currentText().toStdString(), &_peak_collection, lib, params);
 
         refreshPeakTable();
-
     } catch (std::exception& e) {
         return;
     }

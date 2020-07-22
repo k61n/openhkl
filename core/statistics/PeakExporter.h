@@ -24,7 +24,6 @@ namespace nsx {
 
 //! Manages the export of peak information to file.
 class PeakExporter {
-
  public:
     //! Saves the shell information to file.
     void saveStatistics(

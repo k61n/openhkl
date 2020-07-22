@@ -29,7 +29,6 @@
 
 //! Controls and handles the Experiment and its Peaks and UnitCells
 class SessionExperiment {
-
  public:
     SessionExperiment();
     SessionExperiment(QString name, QString instrument);

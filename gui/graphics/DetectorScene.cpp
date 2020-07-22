@@ -419,7 +419,6 @@ void DetectorScene::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
 
             // nsx::Peak3D* peak = peak_item->peak();
             // gSession->onSelectedPeakChanged(peak);
-
         } else if (_mode == ZOOM) {
             qreal top = _zoomrect->rect().top();
             qreal bot = _zoomrect->rect().bottom();

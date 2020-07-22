@@ -43,7 +43,6 @@
 
 //! Dialog for building the shape library
 class ShapeLibraryDialog : public QDialog {
-
  public:
     ShapeLibraryDialog(nsx::PeakCollection* peak_collection);
 

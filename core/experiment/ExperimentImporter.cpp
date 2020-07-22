@@ -28,7 +28,6 @@ namespace nsx {
 
 void ExperimentImporter::setFilePath(std::string path, Experiment* experiment)
 {
-
     try {
         _file_name = path;
         H5::H5File file(_file_name.c_str(), H5F_ACC_RDONLY);
@@ -44,9 +43,7 @@ void ExperimentImporter::setFilePath(std::string path, Experiment* experiment)
                 experiment->setName(value);
             else if (attr.getName() == "diffractometer")
                 experiment->setDiffractometer(value);
-
         }
-
     } catch (H5::Exception& e) {
         std::string what = e.getDetailMsg();
         throw std::runtime_error(what);
@@ -61,7 +58,6 @@ void ExperimentImporter::loadData(Experiment* experiment)
 
         hsize_t object_num = data_collections.getNumObjs();
         for (int i = 0; i < object_num; ++i) {
-
             auto reader = std::make_unique<nsx::ExperimentDataReader>(
                 _file_name, data_collections.getObjnameByIdx(i), experiment->diffractometer());
             nsx::sptrDataSet data {new nsx::DataSet {std::move(reader)}};
@@ -70,7 +66,6 @@ void ExperimentImporter::loadData(Experiment* experiment)
 
             experiment->addData(collection_name, data);
         }
-
     } catch (H5::Exception& e) {
         std::string what = e.getDetailMsg();
         throw std::runtime_error(what);
@@ -88,7 +83,6 @@ void ExperimentImporter::loadPeaks(Experiment* experiment)
 
         hsize_t object_num = peak_collections.getNumObjs();
         for (int i = 0; i < object_num; ++i) {
-
             std::string collection_name = peak_collections.getObjnameByIdx(i);
             H5::Group peak_collection(file.openGroup("/PeakCollections/" + collection_name));
 
@@ -237,7 +231,6 @@ void ExperimentImporter::loadPeaks(Experiment* experiment)
             Eigen::Matrix3d local_metric;
 
             for (int k = 0; k < n_peaks; ++k) {
-
                 local_center = Eigen::Vector3d(center(k, 0), center(k, 1), center(k, 2));
                 local_metric = metric.block(k * 3, 0, 3, 3);
 
@@ -270,7 +263,6 @@ void ExperimentImporter::loadPeaks(Experiment* experiment)
 
             std::cout << "Created the peak collection" << std::endl;
         }
-
     } catch (H5::Exception& e) {
         std::string what = e.getDetailMsg();
         throw std::runtime_error(what);
@@ -285,7 +277,6 @@ void ExperimentImporter::loadUnitCells(Experiment* experiment)
 
         hsize_t object_num = unit_cells.getNumObjs();
         for (int i = 0; i < object_num; ++i) {
-
             double rec_00 = 1;
             double rec_01 = 0;
             double rec_02 = 0;
@@ -352,7 +343,6 @@ void ExperimentImporter::loadUnitCells(Experiment* experiment)
             temp_cell.printSelf(std::cout);
             experiment->addUnitCell(cell_name, &temp_cell);
         }
-
     } catch (H5::Exception& e) {
         std::string what = e.getDetailMsg();
         throw std::runtime_error(what);

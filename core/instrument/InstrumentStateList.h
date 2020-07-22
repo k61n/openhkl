@@ -25,7 +25,6 @@ class InstrumentStateList : public std::vector<InstrumentState> {
     InterpolatedState interpolate(const double frame) const;
 };
 
-
 } // namespace nsx
 
 #endif // NSX_CORE_INSTRUMENT_INSTRUMENTSTATELIST_H

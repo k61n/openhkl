@@ -12,7 +12,6 @@
 #endif
 
 namespace {
-
 // modified from qspinbox.cpp
 bool isIntermediateValueHelper(qint64 num, qint64 min, qint64 max, qint64* match = 0)
 {
@@ -132,7 +131,6 @@ void QScienceSpinBox::stepUp()
  */
 QString QScienceSpinBox::textFromValue(double value) const
 {
-
     // convert to string -> Using exponetial display with internal decimals
     QString str = locale().toString(value, 'e', dispDecimals);
     // remove thousand sign
