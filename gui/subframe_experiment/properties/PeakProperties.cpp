@@ -114,7 +114,7 @@ void PeakProperties::refreshInput()
 void PeakProperties::selectedPeaksChanged()
 {
     PeakCollectionModel* model =
-        gSession->selectedExperiment()->peakModel(_peak_list_combo->currentIndex());
+        gSession->selectedExperiment()->peakModelAt(_peak_list_combo->currentIndex());
     _peak_table->setModel(model);
 
     if (!model) {

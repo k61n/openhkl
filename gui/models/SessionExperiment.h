@@ -62,9 +62,9 @@ class SessionExperiment {
     //! Generate a peak model based on the Peak collection in the core
     void removePeakModel(const QString& name);
     //! Get the peaklist model by name
-    PeakCollectionModel* peakModel(const QString& name) const;
+    const PeakCollectionModel* peakModel(const QString& name) const;
     //! Get the peaklist model by number
-    PeakCollectionModel* peakModel(int i) const;
+    PeakCollectionModel* peakModelAt(int i);
     //! Tell the gui that peaks have changed
     void onPeaksChanged();
 
@@ -90,7 +90,7 @@ class SessionExperiment {
     nsx::sptrExperiment _experiment;
     //! The list of models for the peaks
     std::vector<PeakCollectionModel*> _peak_collection_models;
-    //! The list of models for the peaks
+    //! The list of ? TODO
     std::vector<PeakCollectionItem*> _peak_collection_items;
     //! Is this session experiment saved
     bool _saved = false;

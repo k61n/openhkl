@@ -186,7 +186,7 @@ void SessionExperiment::removePeakModel(const QString& name)
     _experiment->removePeakCollection(std_name);
 }
 
-PeakCollectionModel* SessionExperiment::peakModel(const QString& name) const
+const PeakCollectionModel* SessionExperiment::peakModel(const QString& name) const
 {
     std::string std_name = name.toStdString();
     for (int i = 0; i < _peak_collection_models.size(); ++i) {
@@ -196,7 +196,7 @@ PeakCollectionModel* SessionExperiment::peakModel(const QString& name) const
     return nullptr;
 }
 
-PeakCollectionModel* SessionExperiment::peakModel(int i) const
+PeakCollectionModel* SessionExperiment::peakModelAt(int i)
 {
     if (i >= _peak_collection_models.size())
         return nullptr;
