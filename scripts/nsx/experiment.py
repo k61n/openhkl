@@ -394,11 +394,9 @@ class Experiment:
                                  self._predicted_collection,
                                  self._found_collection,
                                  friedel)
-        self._data_resolution = self._expt.getResolution()
-        self._data_quality_current = self._expt.getQualityCurrent()
-        self._data_quality_expected = self._expt.getQualityExpected()
+        data_resolution = self._expt.getResolution()
         self.log("Resolution shells")
-        for i, data in enumerate(self._data_resolution):
+        for i, data in enumerate(data_resolution):
             self.log(f'Shell {i}')
             self.log(f'd_min            = {data.dmin}')
             self.log(f'd_max            = {data.dmax}')
@@ -411,15 +409,17 @@ class Experiment:
             self.log(f'CC_half          = {data.currentQuality.CChalf}')
             self.log(f'CC_*             = {data.currentQuality.CChalf}')
 
+        data_quality_current = self._expt.getQualityCurrent()
+        data_quality_expected = self._expt.getQualityExpected()
         self.log("Overall:")
-        self.log(f'R_merge          = {self._data_quality_current.Rmerge}')
-        self.log(f'Expected R_merge = {self._data_quality_expected.Rmerge}')
-        self.log(f'R_meas           = {self._data_quality_current.Rmeas}')
-        self.log(f'Expected R_meas  = {self._data_quality_expected.Rmeas}')
-        self.log(f'R_pim            = {self._data_quality_current.Rpim}')
-        self.log(f'Expected R_pim   = {self._data_quality_expected.Rpim}')
-        self.log(f'CC_half          = {self._data_quality_current.CChalf}')
-        self.log(f'CC_*             = {self._data_quality_expected.CChalf}')
+        self.log(f'R_merge          = {data_quality_current.Rmerge}')
+        self.log(f'Expected R_merge = {data_quality_expected.Rmerge}')
+        self.log(f'R_meas           = {data_quality_current.Rmeas}')
+        self.log(f'Expected R_meas  = {data_quality_expected.Rmeas}')
+        self.log(f'R_pim            = {data_quality_current.Rpim}')
+        self.log(f'Expected R_pim   = {data_quality_expected.Rpim}')
+        self.log(f'CC_half          = {data_quality_current.CChalf}')
+        self.log(f'CC_*             = {data_quality_expected.CChalf}')
 
     def get_accepted_cell(self):
         return self._expt.getUnitCell("accepted")
