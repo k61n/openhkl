@@ -28,8 +28,9 @@
 //! Controls and handles the Experiment and its Peaks and UnitCells
 class SessionExperiment {
  public:
-    SessionExperiment();
+    SessionExperiment() = delete;
     SessionExperiment(QString name, QString instrument);
+    SessionExperiment(const SessionExperiment&) = delete;
 
  public:
     const nsx::Experiment* experiment() const { return _experiment.get(); }

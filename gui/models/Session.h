@@ -38,9 +38,8 @@ class Session {
 
     void selectExperiment(int);
 
-    bool createExperiment(QString experimentName);
-    bool createExperiment(QString experimentName, QString instrumentName);
-    void createDefaultExperiment();
+    bool createExperiment(QString experimentName="new_experiment",
+                          QString instrumentName="unknown_instrument");
     void removeExperiment();
 
     void loadData();

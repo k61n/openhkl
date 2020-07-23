@@ -47,29 +47,6 @@ bool Session::createExperiment(QString experimentName, QString instrumentName)
     return true;
 }
 
-bool Session::createExperiment(QString experimentName)
-{
-    for (const QString& name: experimentNames())
-        if (name == experimentName)
-            return false;
-
-    auto experiment = std::make_unique<SessionExperiment>();
-    experiment->experiment()->setName(experimentName.toStdString());
-    _experiments.push_back(std::move(experiment));
-    _selectedExperiment = _experiments.size() - 1;
-    onExperimentChanged();
-
-    return true;
-}
-
-void Session::createDefaultExperiment()
-{
-    auto experiment = std::make_unique<SessionExperiment>("lol", "BioDiff2500");
-    _experiments.push_back(std::move(experiment));
-    _selectedExperiment = _experiments.size() - 1;
-    onExperimentChanged();
-}
-
 std::vector<QString> Session::experimentNames() const
 {
     std::vector<QString> ret;
@@ -112,7 +89,7 @@ void Session::loadData()
     _loadDirectory = info.absolutePath();
 
     if (_selectedExperiment < 0)
-        createDefaultExperiment();
+        createExperiment();
 
     for (QString filename : filenames) {
         QFileInfo fileinfo(filename);
@@ -148,7 +125,7 @@ void Session::removeData()
 void Session::loadRawData()
 {
     if (_selectedExperiment < 0)
-        createDefaultExperiment();
+        createExperiment();
 
     QStringList qfilenames = QFileDialog::getOpenFileNames();
     if (qfilenames.empty())

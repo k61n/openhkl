@@ -30,17 +30,10 @@
 #include "gui/items/PeakCollectionItem.h"
 #include "gui/models/Session.h"
 
-#include <QDateTime>
 #include <QDebug>
 #include <QStringList>
 #include <iostream>
 #include <vector>
-
-SessionExperiment::SessionExperiment()
-    : _experiment{new nsx::Experiment{QDateTime::currentDateTime().toString().toStdString(),
-                  *nsx::getResourcesName("instruments").begin()}}
-{
-}
 
 SessionExperiment::SessionExperiment(QString name, QString instrument)
     : _experiment{new nsx::Experiment{name.toStdString(), instrument.toStdString()}}
