@@ -64,32 +64,6 @@ Experiment::Experiment(const std::string& name, const std::string& diffractomete
         std::string("3d profile integrator"), std::make_unique<Profile3DIntegrator>()));
 }
 
-Experiment::Experiment(const Experiment& other)
-{
-    _name = other._name;
-    _data_map = other._data_map;
-    _diffractometer.reset(other._diffractometer->clone());
-
-    _peak_finder = std::make_unique<PeakFinder>();
-    _peak_filter = std::make_unique<PeakFilter>();
-    _auto_indexer = std::make_unique<AutoIndexer>();
-
-    _integrator_map.insert(std::make_pair(
-        std::string("Pixel sum integrator"), std::make_unique<PixelSumIntegrator>(true, true)));
-
-    _integrator_map.insert(std::make_pair(
-        std::string("Gaussian integrator"), std::make_unique<GaussianIntegrator>(true, true)));
-
-    _integrator_map.insert(
-        std::make_pair(std::string("I/Sigma integrator"), std::make_unique<ISigmaIntegrator>()));
-
-    _integrator_map.insert(std::make_pair(
-        std::string("1d profile integrator"), std::make_unique<Profile1DIntegrator>()));
-
-    _integrator_map.insert(std::make_pair(
-        std::string("3d profile integrator"), std::make_unique<Profile3DIntegrator>()));
-}
-
 const Diffractometer* Experiment::diffractometer() const
 {
     return _diffractometer.get();

@@ -52,8 +52,7 @@ class Experiment {
     Experiment(const std::string& name, const std::string& diffractometerName);
     ~Experiment() = default;
 
-    Experiment(const Experiment& other);
-    Experiment& operator=(const Experiment& other) = delete; // why did it differ from copy c'tor?
+    Experiment(const Experiment& other) = delete;
 
     // General
     const std::string& name() const;
@@ -154,7 +153,7 @@ class Experiment {
     const DataQuality& getQualityExpected() { return _data_quality_expected; };
 
  private: // private variables
-    std::string _name = "No_name"; //!< The name of this experiment
+    std::string _name; //!< The name of this experiment
     std::unique_ptr<Diffractometer> _diffractometer;
     std::map<std::string, sptrDataSet> _data_map;
 
