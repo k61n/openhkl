@@ -101,7 +101,7 @@ class SubframePredictPeaks : public QWidget {
     //! The temporary collection
     PeakCollectionModel _peak_collection_model;
     //! The loaded data list
-    QList<nsx::sptrDataSet> _data_list;
+    std::vector<nsx::sptrDataSet> _data_list;
     //! The loaded peak list
     QStringList _peak_list;
     //! The loaded peak list

@@ -96,7 +96,7 @@ class RefinerDialog : public QDialog {
 
  private:
     nsx::UnitCell* _unit_cell;
-    QList<nsx::sptrDataSet> _data_list;
+    std::vector<nsx::sptrDataSet> _data_list;
 
     std::map<nsx::sptrDataSet, std::vector<Eigen::Matrix3d>> _sample_orientations;
     std::map<nsx::sptrDataSet, std::vector<Eigen::Matrix3d>> _detector_orientations;

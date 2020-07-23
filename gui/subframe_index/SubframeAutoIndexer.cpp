@@ -299,18 +299,18 @@ void SubframeAutoIndexer::refreshAll()
 void SubframeAutoIndexer::setExperiments()
 {
     _exp_combo->blockSignals(true);
-
     _exp_combo->clear();
-    QList<QString> exp_list = gSession->experimentNames();
 
-    if (!exp_list.isEmpty()) {
-        for (QString exp : exp_list)
-            _exp_combo->addItem(exp);
-        _exp_combo->blockSignals(false);
+    if (gSession->experimentNames().empty())
+        return;
 
-        updatePeakList();
-        grabIndexerParameters();
-    }
+    for (QString exp : gSession->experimentNames())
+        _exp_combo->addItem(exp);
+
+    _exp_combo->blockSignals(false);
+
+    updatePeakList();
+    grabIndexerParameters();
 }
 
 void SubframeAutoIndexer::updatePeakList()

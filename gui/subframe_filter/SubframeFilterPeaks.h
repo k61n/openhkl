@@ -110,7 +110,7 @@ class SubframeFilterPeaks : public QWidget {
     //! The loaded data list
     QStringList _peak_list;
     //! The loaded data list
-    QList<nsx::sptrDataSet> _data_list;
+    std::vector<nsx::sptrDataSet> _data_list;
 
  private:
     QHBoxLayout* _main_layout;

@@ -251,17 +251,15 @@ void SubframeMergedPeaks::refreshAll()
 void SubframeMergedPeaks::refreshExperimentList()
 {
     _exp_drop->blockSignals(true);
-
     _exp_drop->clear();
-    QList<QString> exp_list = gSession->experimentNames();
 
-    if (!exp_list.isEmpty()) {
-        for (QString exp : exp_list)
-            _exp_drop->addItem(exp);
-        _exp_drop->blockSignals(false);
+    if (gSession->experimentNames().empty())
+        return;
 
-        refreshPeakLists();
-    }
+    for (const QString& exp : gSession->experimentNames())
+        _exp_drop->addItem(exp);
+    _exp_drop->blockSignals(false);
+    refreshPeakLists();
 }
 
 void SubframeMergedPeaks::refreshPeakLists()

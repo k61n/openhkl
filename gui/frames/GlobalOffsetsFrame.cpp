@@ -48,7 +48,7 @@ void GlobalOffsetsFrame::layout()
     QHBoxLayout* above = new QHBoxLayout;
     QVBoxLayout* left = new QVBoxLayout;
     selectedData = new QListWidget;
-    QList<nsx::sptrDataSet> all_data = gSession->selectedExperiment()->allData();
+    std::vector<nsx::sptrDataSet> all_data = gSession->selectedExperiment()->allData();
     for (nsx::sptrDataSet data : all_data) {
         QFileInfo fileinfo(QString::fromStdString(data->filename()));
 

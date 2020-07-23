@@ -35,11 +35,9 @@ Session::Session()
 
 bool Session::createExperiment(QString experimentName, QString instrumentName)
 {
-    QList<QString> temp = experimentNames();
-    for (QList<QString>::iterator it = temp.begin(); it != temp.end(); ++it) {
-        if (*it == experimentName)
+    for (const QString& name: experimentNames())
+        if (name == experimentName)
             return false;
-    }
 
     auto experiment = std::make_unique<SessionExperiment>(experimentName, instrumentName);
     _experiments.push_back(std::move(experiment));
@@ -51,11 +49,9 @@ bool Session::createExperiment(QString experimentName, QString instrumentName)
 
 bool Session::createExperiment(QString experimentName)
 {
-    QList<QString> temp = experimentNames();
-    for (QList<QString>::iterator it = temp.begin(); it != temp.end(); ++it) {
-        if (*it == experimentName)
+    for (const QString& name: experimentNames())
+        if (name == experimentName)
             return false;
-    }
 
     auto experiment = std::make_unique<SessionExperiment>();
     experiment->experiment()->setName(experimentName.toStdString());
@@ -74,11 +70,11 @@ void Session::createDefaultExperiment()
     onExperimentChanged();
 }
 
-QList<QString> Session::experimentNames() const
+std::vector<QString> Session::experimentNames() const
 {
-    QList<QString> ret;
+    std::vector<QString> ret;
     for (int i = 0; i < _experiments.size(); i++)
-        ret.append(QString::fromStdString(_experiments.at(i)->experiment()->name()));
+        ret.push_back(QString::fromStdString(_experiments.at(i)->experiment()->name()));
     return ret;
 }
 

@@ -480,8 +480,7 @@ void PeakFinderFrame::refreshAll()
 
 void PeakFinderFrame::setParametersUp()
 {
-    QList<QString> exp_list = gSession->experimentNames();
-    if (exp_list.isEmpty())
+    if (gSession->experimentNames().empty())
         return;
 
     setExperimentsUp();
@@ -502,12 +501,10 @@ void PeakFinderFrame::setParametersUp()
 void PeakFinderFrame::setExperimentsUp()
 {
     _exp_combo->blockSignals(true);
-
     _exp_combo->clear();
-    QList<QString> exp_list = gSession->experimentNames();
 
-    if (!exp_list.isEmpty()) {
-        for (QString exp : exp_list)
+    if (!gSession->experimentNames().empty()) {
+        for (QString exp : gSession->experimentNames())
             _exp_combo->addItem(exp);
         grabFinderParameters();
         grabIntegrationParameters();
@@ -522,8 +519,8 @@ void PeakFinderFrame::updateDatasetList()
     _data_combo->clear();
     _data_list = gSession->experimentAt(_exp_combo->currentIndex())->allData();
 
-    if (!_data_list.isEmpty()) {
-        for (nsx::sptrDataSet data : _data_list) {
+    if (!_data_list.empty()) {
+        for (const nsx::sptrDataSet& data : _data_list) {
             QFileInfo fileinfo(QString::fromStdString(data->filename()));
             _data_combo->addItem(fileinfo.baseName());
         }
@@ -535,7 +532,7 @@ void PeakFinderFrame::updateDatasetList()
 
 void PeakFinderFrame::updateDatasetParameters(int idx)
 {
-    if (_data_list.isEmpty() || idx < 0)
+    if (_data_list.empty() || idx < 0)
         return;
 
     nsx::sptrDataSet data = _data_list.at(idx);

@@ -728,7 +728,7 @@ void RefinerDialog::_setDataList()
 {
     _select_data_list->blockSignals(true);
     _data_list = gSession->selectedExperiment()->allData();
-    if (!_data_list.isEmpty()) {
+    if (!_data_list.empty()) {
         for (nsx::sptrDataSet data : _data_list) {
             QFileInfo fileinfo(QString::fromStdString(data->filename()));
             _select_data_list->addItem(fileinfo.baseName());
@@ -790,7 +790,7 @@ void RefinerDialog::_fetchAllInitialValues()
     if (!unit_cell)
         return;
 
-    QList<nsx::sptrDataSet> data_set_list = gSession->selectedExperiment()->allData();
+    std::vector<nsx::sptrDataSet> data_set_list = gSession->selectedExperiment()->allData();
 
     for (nsx::sptrDataSet data_set : data_set_list) {
         const nsx::InstrumentStateList& instrument_states = data_set->instrumentStates();
@@ -848,7 +848,7 @@ void RefinerDialog::_fetchAllRefinedValues()
 
     nsx::sptrDataSet data_set = gSession->selectedExperiment()->experiment()->getData(
         _select_data->currentText().toStdString());
-    QList<nsx::sptrDataSet> data_set_list = gSession->selectedExperiment()->allData();
+    std::vector<nsx::sptrDataSet> data_set_list = gSession->selectedExperiment()->allData();
 
     if (!unit_cell)
         return;

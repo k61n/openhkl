@@ -106,7 +106,7 @@ class PeakFinderFrame : public QWidget {
     //! The temporary collection
     PeakCollectionModel _peak_collection_model;
     //! The loaded data list
-    QList<nsx::sptrDataSet> _data_list;
+    std::vector<nsx::sptrDataSet> _data_list;
 
  private:
     QHBoxLayout* _main_layout;

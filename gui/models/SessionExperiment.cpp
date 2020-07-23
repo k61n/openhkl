@@ -77,11 +77,11 @@ int SessionExperiment::getIndex(const QString& dataname) const
     return liste.indexOf(dataname);
 }
 
-QList<nsx::sptrDataSet> SessionExperiment::allData() const
+std::vector<nsx::sptrDataSet> SessionExperiment::allData() const
 {
-    QList<nsx::sptrDataSet> ret;
+    std::vector<nsx::sptrDataSet> ret;
     for (auto data : _experiment->getDataMap())
-        ret.append(data.second);
+        ret.push_back(data.second);
     return ret;
 }
 

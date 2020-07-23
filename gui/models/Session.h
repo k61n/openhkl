@@ -34,7 +34,7 @@ class Session {
 
     int selectedExperimentNum() const { return selectedExperiment_; }
     int numExperiments() const { return _experiments.size(); }
-    QList<QString> experimentNames() const;
+    std::vector<QString> experimentNames() const;
 
     void selectExperiment(int);
 

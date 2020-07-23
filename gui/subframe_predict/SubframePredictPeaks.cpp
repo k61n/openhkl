@@ -561,27 +561,27 @@ void SubframePredictPeaks::refreshAll()
 void SubframePredictPeaks::setExperiments()
 {
     _exp_combo->blockSignals(true);
-
     _exp_combo->clear();
-    QList<QString> exp_list = gSession->experimentNames();
 
-    if (!exp_list.isEmpty()) {
-        for (QString exp : exp_list)
-            _exp_combo->addItem(exp);
-        _exp_combo->blockSignals(false);
+    if (gSession->experimentNames().empty())
+        return;
 
-        updatePeakList();
-        updateUnitCellList();
-        updateDatasetList();
-        grabPredictorParameters();
-    }
+    for (QString exp : gSession->experimentNames())
+        _exp_combo->addItem(exp);
+
+    _exp_combo->blockSignals(false);
+
+    updatePeakList();
+    updateUnitCellList();
+    updateDatasetList();
+    grabPredictorParameters();
 }
 
 void SubframePredictPeaks::updatePeakList()
 {
     _peak_combo->blockSignals(true);
-
     _peak_combo->clear();
+
     _peak_list = gSession->experimentAt(_exp_combo->currentIndex())->getPeakListNames();
 
     if (!_peak_list.isEmpty()) {
@@ -595,8 +595,8 @@ void SubframePredictPeaks::updatePeakList()
 void SubframePredictPeaks::updateUnitCellList()
 {
     _unit_cells->blockSignals(true);
-
     _unit_cells->clear();
+
     _unit_cell_list = gSession->experimentAt(_exp_combo->currentIndex())->getUnitCellNames();
 
     if (!_unit_cell_list.isEmpty()) {
@@ -610,10 +610,11 @@ void SubframePredictPeaks::updateDatasetList()
 {
     _data_combo->blockSignals(true);
     _data_combo->clear();
+
     _data_list = gSession->experimentAt(_exp_combo->currentIndex())->allData();
 
-    if (!_data_list.isEmpty()) {
-        for (nsx::sptrDataSet data : _data_list) {
+    if (!_data_list.empty()) {
+        for (const nsx::sptrDataSet& data : _data_list) {
             QFileInfo fileinfo(QString::fromStdString(data->filename()));
             _data_combo->addItem(fileinfo.baseName());
         }
@@ -625,20 +626,20 @@ void SubframePredictPeaks::updateDatasetList()
 
 void SubframePredictPeaks::updateDatasetParameters(int idx)
 {
-    if (_data_list.isEmpty() || idx < 0)
+    if (_data_list.empty() || idx < 0)
         return;
 
-    nsx::sptrDataSet data = _data_list.at(idx);
+    const int nFrames = _data_list.at(idx)->nFrames();
 
     _figure_view->getScene()->slotChangeSelectedData(_data_list.at(idx), 0);
     _figure_view->getScene()->setMaxIntensity(3000);
     emit _figure_view->getScene()->dataChanged();
     _figure_view->getScene()->update();
 
-    _figure_scroll->setMaximum(data->nFrames());
+    _figure_scroll->setMaximum(nFrames);
     _figure_scroll->setMinimum(0);
 
-    _figure_spin->setMaximum(data->nFrames());
+    _figure_spin->setMaximum(nFrames);
     _figure_spin->setMinimum(0);
 }
 
@@ -651,7 +652,7 @@ void SubframePredictPeaks::runPrediction()
     try {
         qDebug() << "Starting peak prediction...";
 
-        QList<nsx::sptrDataSet> data = gSession->selectedExperiment()->allData();
+        const std::vector<nsx::sptrDataSet>& data = gSession->selectedExperiment()->allData();
 
         nsx::sptrProgressHandler handler(new nsx::ProgressHandler);
         ProgressView progressView(nullptr);

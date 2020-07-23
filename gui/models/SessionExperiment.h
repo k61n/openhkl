@@ -36,7 +36,7 @@ class SessionExperiment {
     nsx::Experiment* experiment() { return _experiment.get(); }
     QStringList getDataNames() const;
     nsx::sptrDataSet getData(int index = -1) const;
-    QList<nsx::sptrDataSet> allData() const;
+    std::vector<nsx::sptrDataSet> allData() const;
     int getIndex(const QString&) const;
     void selectData(int selected) { dataIndex_ = selected; }
     void changeInstrument(const QString& instrumentname);
@@ -95,7 +95,7 @@ class SessionExperiment {
     //! Save path variable
     std::string _save_path;
     //! TODO update
-    QList<nsx::sptrUnitCell> unitCells_;
+    std::vector<nsx::sptrUnitCell> unitCells_;
     QString selectedList_;
     int dataIndex_ = -1;
 };
