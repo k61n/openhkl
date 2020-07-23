@@ -25,8 +25,6 @@
 #include "core/shape/PeakCollection.h"
 #include "gui/models/PeakCollectionModel.h"
 
-#include <QStandardItemModel>
-
 //! Controls and handles the Experiment and its Peaks and UnitCells
 class SessionExperiment {
  public:
