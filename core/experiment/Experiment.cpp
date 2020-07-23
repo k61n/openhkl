@@ -126,47 +126,13 @@ void Experiment::setName(const std::string& name)
     _name = name;
 }
 
-void Experiment::addData(sptrDataSet data)
+void Experiment::addData(sptrDataSet data, std::string name)
 {
-    const std::string& filename = data->filename();
+    if (name=="")
+        name = data->filename();
 
     // Add the data only if it does not exist in the current data map
-    if (_data_map.find(filename) != _data_map.end())
-        return;
-
-    const auto& metadata = data->reader()->metadata();
-
-    const std::string diffName = metadata.key<std::string>("Instrument");
-
-    if (!(diffName.compare(_diffractometer->name()) == 0)) {
-        throw std::runtime_error("Mismatch between the diffractometer assigned to "
-                                 "the experiment and the data");
-    }
-    const double wav = metadata.key<double>("wavelength");
-
-    // ensure that there is at least one monochromator!
-    if (_diffractometer->source().nMonochromators() == 0) {
-        Monochromator mono("mono");
-        _diffractometer->source().addMonochromator(mono);
-    }
-
-    auto& mono = _diffractometer->source().selectedMonochromator();
-
-    if (_data_map.empty())
-        mono.setWavelength(wav);
-    else {
-        if (std::abs(wav - mono.wavelength()) > 1e-5)
-            throw std::runtime_error("trying to mix data with different wavelengths");
-    }
-    _data_map.insert(std::make_pair(filename, data));
-}
-
-void Experiment::addData(const std::string& name, sptrDataSet data)
-{
-    const std::string& filename = data->filename();
-
-    // Add the data only if it does not exist in the current data map
-    if (_data_map.find(filename) != _data_map.end())
+    if (_data_map.find(name) != _data_map.end())
         return;
 
     const auto& metadata = data->reader()->metadata();

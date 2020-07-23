@@ -62,9 +62,9 @@ void ExperimentImporter::loadData(Experiment* experiment)
                 _file_name, data_collections.getObjnameByIdx(i), experiment->diffractometer());
             nsx::sptrDataSet data{new nsx::DataSet{std::move(reader)}};
 
-            std::string collection_name = data_collections.getObjnameByIdx(i);
+            const std::string collection_name = data_collections.getObjnameByIdx(i);
 
-            experiment->addData(collection_name, data);
+            experiment->addData(data, collection_name);
         }
     } catch (H5::Exception& e) {
         std::string what = e.getDetailMsg();
@@ -83,7 +83,7 @@ void ExperimentImporter::loadPeaks(Experiment* experiment)
 
         hsize_t object_num = peak_collections.getNumObjs();
         for (int i = 0; i < object_num; ++i) {
-            std::string collection_name = peak_collections.getObjnameByIdx(i);
+            const std::string collection_name = peak_collections.getObjnameByIdx(i);
             H5::Group peak_collection(file.openGroup("/PeakCollections/" + collection_name));
 
             H5::Group peak_collection_meta(

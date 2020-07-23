@@ -68,8 +68,7 @@ class Experiment {
     DataList getAllData();
     sptrDataSet dataShortName(const std::string& name);
     int numData() const { return _data_map.size(); };
-    void addData(const std::string& name, sptrDataSet data);
-    void addData(sptrDataSet data);
+    void addData(sptrDataSet data, std::string name="");
     bool hasData(const std::string& name) const;
     void removeData(const std::string& name);
 
