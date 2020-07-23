@@ -36,13 +36,11 @@ Refiner::Refiner(
     filtered_peaks = peak_filter.filterEnabled(peaks, true);
     filtered_peaks = peak_filter.filterIndexed(filtered_peaks, *cell, cell->indexingTolerance());
 
-    auto sort_peaks_by_frame = [](Peak3D* p1, Peak3D* p2) -> bool {
+    std::sort(filtered_peaks.begin(), filtered_peaks.end(), [](Peak3D* p1, Peak3D* p2) -> bool {
         auto&& c1 = p1->shape().center();
         auto&& c2 = p2->shape().center();
         return c1[2] < c2[2];
-    };
-
-    std::sort(filtered_peaks.begin(), filtered_peaks.end(), sort_peaks_by_frame);
+    });
 
     double batch_size = filtered_peaks.size() / double(nbatches);
     size_t current_batch = 0;
