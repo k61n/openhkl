@@ -26,14 +26,14 @@ class Session {
     Session();
     Session(const Session&) = delete;
 
-    Project* currentProject() { return _projects.at(_currentProject).get(); }
-    const Project* currentProject() const { return _projects.at(_currentProject).get(); }
+    Project* currentProject();
+    const Project* currentProject() const;
 
-    Project* experimentAt(int i) { return _projects.at(i).get(); }
-    const Project* experimentAt(int i) const { return _projects.at(i).get(); }
+    Project* experimentAt(int i);
+    const Project* experimentAt(int i) const;
 
-    int currentProjectNum() const { return _currentProject; }
-    int numExperiments() const { return _projects.size(); }
+    int currentProjectNum() const;
+    int numExperiments() const;
     std::vector<QString> experimentNames() const;
 
     void selectExperiment(int);
