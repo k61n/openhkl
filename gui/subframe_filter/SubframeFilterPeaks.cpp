@@ -578,8 +578,8 @@ void SubframeFilterPeaks::setFilterParameters() const
     if (_merge_box->checked())
         filter->setFilterSignificance(true);
 
-    const std::array<double, 2> d_range {_d_range_min->value(), _d_range_max->value()};
-    const std::array<double, 2> strength {_strength_min->value(), _strength_max->value()};
+    const std::array<double, 2> d_range{_d_range_min->value(), _d_range_max->value()};
+    const std::array<double, 2> strength{_strength_min->value(), _strength_max->value()};
 
     filter->setUnitCellTolerance(_tolerance->value());
     filter->setSignificance(_significance_level->value());

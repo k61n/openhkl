@@ -1,4 +1,4 @@
-# for use with clang-format version 6 or higher
+# for use with clang-format version 9 or higher
 
 # put this in the root source directory, then call: clang-format -i -style=file <sources>
 
@@ -16,6 +16,7 @@ AllowShortBlocksOnASingleLine: true
 AllowShortCaseLabelsOnASingleLine : true
 AllowShortFunctionsOnASingleLine: Inline
 AllowShortIfStatementsOnASingleLine: false
+AllowShortLambdasOnASingleLine: All
 AllowShortLoopsOnASingleLine: false
 AlwaysBreakAfterReturnType: None
 BinPackArguments: true
@@ -24,6 +25,8 @@ BreakBeforeBinaryOperators: NonAssignment
 BreakBeforeBraces: Custom
 BreakConstructorInitializers: BeforeComma
 BraceWrapping:
+    AfterCaseLabel: false
+    AfterEnum: false
     AfterFunction: true
     SplitEmptyFunction: true
 ColumnLimit: 100
@@ -39,6 +42,7 @@ IndentWrappedFunctionNames: false
 MaxEmptyLinesToKeep: 2
 NamespaceIndentation: None
 PointerAlignment: Left
+SpaceBeforeCpp11BracedList: false
 SpaceBeforeParens: ControlStatements
 SpaceInEmptyParentheses: false
 SpacesBeforeTrailingComments: 1

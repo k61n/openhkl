@@ -21,7 +21,7 @@
 
 int main(int argc, char* argv[])
 {
-    QApplication app {argc, argv};
+    QApplication app{argc, argv};
 
     app.setApplicationName("NSXTool");
     app.setApplicationVersion("1.0");
@@ -30,7 +30,7 @@ int main(int argc, char* argv[])
     QLoggingCategory::setFilterRules("*.debug=true\nqt.*.debug=false\nqt.qpa*=false");
     Session session;
 
-    new MainWin {};
+    new MainWin{};
 
     return app.exec();
 }

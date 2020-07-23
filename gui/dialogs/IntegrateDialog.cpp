@@ -17,7 +17,7 @@
 #include <QDialogButtonBox>
 #include <QFormLayout>
 
-IntegrateDialog::IntegrateDialog() : QDialog {}
+IntegrateDialog::IntegrateDialog() : QDialog{}
 {
     layout = new QFormLayout(this);
     fitCen = new QcrCheckBox(

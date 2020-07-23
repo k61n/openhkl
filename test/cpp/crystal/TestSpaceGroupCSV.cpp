@@ -43,6 +43,6 @@ TEST_CASE("test/crystal/TestSpaceGroupCSV.cpp", "")
 
         std::cout << row[0] << std::endl;
 
-        CHECK_NOTHROW(nsx::SpaceGroup {row[0]});
+        CHECK_NOTHROW(nsx::SpaceGroup{row[0]});
     }
 }

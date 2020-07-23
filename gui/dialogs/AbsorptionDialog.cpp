@@ -22,7 +22,7 @@
 #include <QVBoxLayout>
 #include <fstream>
 
-AbsorptionDialog::AbsorptionDialog() : QDialog {}
+AbsorptionDialog::AbsorptionDialog() : QDialog{}
 {
     setAttribute(Qt::WA_DeleteOnClose);
     resize(900, 650);

@@ -21,7 +21,7 @@
 #include <QVBoxLayout>
 #include <xsection/IsotopeDatabaseManager.h>
 
-IsotopesDatabaseDialog::IsotopesDatabaseDialog() : QDialog {}
+IsotopesDatabaseDialog::IsotopesDatabaseDialog() : QDialog{}
 {
     QVBoxLayout* grid = new QVBoxLayout(this);
     isotopeDatabaseView = new QTableView;

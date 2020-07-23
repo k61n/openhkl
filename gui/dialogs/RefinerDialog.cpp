@@ -804,9 +804,9 @@ void RefinerDialog::_fetchAllInitialValues()
         }
 
         const nsx::UnitCellCharacter unitcharacter = unit_cell->character();
-        uc_dims_temp = Eigen::Vector3d {unitcharacter.a, unitcharacter.b, unitcharacter.c};
+        uc_dims_temp = Eigen::Vector3d{unitcharacter.a, unitcharacter.b, unitcharacter.c};
         uc_angles_temp =
-            Eigen::Vector3d {unitcharacter.alpha, unitcharacter.beta, unitcharacter.gamma};
+            Eigen::Vector3d{unitcharacter.alpha, unitcharacter.beta, unitcharacter.gamma};
 
         _sample_orientations.emplace(data_set, sample_orientations_temp);
         _detector_orientations.emplace(data_set, detector_orientations_temp);
@@ -865,9 +865,9 @@ void RefinerDialog::_fetchAllRefinedValues()
         }
 
         const nsx::UnitCellCharacter unitcharacter = unit_cell->character();
-        uc_dims_temp = Eigen::Vector3d {unitcharacter.a, unitcharacter.b, unitcharacter.c};
+        uc_dims_temp = Eigen::Vector3d{unitcharacter.a, unitcharacter.b, unitcharacter.c};
         uc_angles_temp =
-            Eigen::Vector3d {unitcharacter.alpha, unitcharacter.beta, unitcharacter.gamma};
+            Eigen::Vector3d{unitcharacter.alpha, unitcharacter.beta, unitcharacter.gamma};
 
         _sample_orientations_ref.emplace(data_set, sample_orientations_temp);
         _detector_orientations_ref.emplace(data_set, detector_orientations_temp);
@@ -1120,10 +1120,10 @@ void RefinerDialog::_plot()
 
     int graph_num = 0;
 
-    std::vector<QColor> colors {Qt::black,     Qt::blue,        Qt::red,
-                                Qt::darkGreen, Qt::darkMagenta, Qt::darkYellow};
+    std::vector<QColor> colors{Qt::black,     Qt::blue,        Qt::red,
+                               Qt::darkGreen, Qt::darkMagenta, Qt::darkYellow};
 
-    std::vector<std::string> position_names {"Position X:", "Position Y:", "Position Z:"};
+    std::vector<std::string> position_names{"Position X:", "Position Y:", "Position Z:"};
 
     // Positions
     for (int index = 0; index < position_names.size(); ++index) {
@@ -1169,7 +1169,7 @@ void RefinerDialog::_plot()
         }
     }
 
-    std::vector<std::string> orientation_names {
+    std::vector<std::string> orientation_names{
         "Orientation X-X:", "Orientation X-Y:", "Orientation X-Z:",
         "Orientation Y-X:", "Orientation Y-Y:", "Orientation Y-Z:",
         "Orientation Z-X:", "Orientation Z-Y:", "Orientation Z-Z:"};

@@ -406,7 +406,7 @@ void Experiment::integratePeaks(const std::string& integrator_name, PeakCollecti
 
     nsx::PeakFilter filter;
     filter.resetFiltering(peak_collection);
-    filter.setDRange(std::array<double, 2UL> {integrator->dMin(), integrator->dMax()});
+    filter.setDRange(std::array<double, 2UL>{integrator->dMin(), integrator->dMax()});
     filter.filterDRange(peak_collection);
     std::vector<Peak3D*> peaks = peak_collection->getFilteredPeakList();
 
@@ -429,7 +429,7 @@ void Experiment::integratePredictedPeaks(
     integrator->setFitCov(params.fit_covariance);
     nsx::PeakFilter filter;
     filter.resetFiltering(peak_collection);
-    filter.setDRange(std::array<double, 2UL> {integrator->dMin(), integrator->dMax()});
+    filter.setDRange(std::array<double, 2UL>{integrator->dMin(), integrator->dMax()});
     filter.filterDRange(peak_collection);
     std::vector<Peak3D*> peaks = peak_collection->getFilteredPeakList();
 

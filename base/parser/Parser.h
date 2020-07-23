@@ -26,7 +26,7 @@ template <class T> void readNumFromChar(const char* begin, const char* end, std:
 {
     std::istringstream istr(std::string(begin, end));
     while (!istr.eof()) {
-        T num {};
+        T num{};
         istr >> num;
 
         if (istr.fail())

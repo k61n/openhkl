@@ -181,12 +181,12 @@ void Session::loadRawData()
     parameters.bpp = dialog.bpp();
     try {
         nsx::Diffractometer* diff = exp->diffractometer();
-        auto reader {std::make_unique<nsx::RawDataReader>(filenames[0], diff)};
+        auto reader{std::make_unique<nsx::RawDataReader>(filenames[0], diff)};
         for (size_t i = 1; i < filenames.size(); ++i)
             reader->addFrame(filenames[i]);
         reader->setParameters(parameters);
         reader->end();
-        auto data {std::make_shared<nsx::DataSet>(std::move(reader))};
+        auto data{std::make_shared<nsx::DataSet>(std::move(reader))};
         exp->addData(data);
     } catch (std::exception& e) {
         return;

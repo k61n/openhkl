@@ -53,7 +53,7 @@ SXPlot::SXPlot(QWidget* parent) : QCustomPlot(parent)
 
 void SXPlot::addErrorBars(QCPGraph* graph, QVector<double>& error)
 {
-    errorBars = new QCPErrorBars {graph->keyAxis(), graph->valueAxis()};
+    errorBars = new QCPErrorBars{graph->keyAxis(), graph->valueAxis()};
     errorBars->setErrorType(QCPErrorBars::ErrorType::etValueError);
     errorBars->setDataPlottable(graph);
     errorBars->setData(error);
@@ -127,13 +127,13 @@ void SXPlot::mouseWheel(QWheelEvent* wheel_event)
 {
     QRect current_range = axisRect()->rect();
 
-    std::vector<double> edges {xAxis->pixelToCoord(current_range.x()),
-                               xAxis->pixelToCoord(current_range.x() + current_range.width()),
-                               yAxis->pixelToCoord(current_range.y()),
-                               yAxis->pixelToCoord(current_range.y() + current_range.height())};
+    std::vector<double> edges{xAxis->pixelToCoord(current_range.x()),
+                              xAxis->pixelToCoord(current_range.x() + current_range.width()),
+                              yAxis->pixelToCoord(current_range.y()),
+                              yAxis->pixelToCoord(current_range.y() + current_range.height())};
 
-    std::vector<double> mouse_pos {xAxis->pixelToCoord(wheel_event->pos().x()),
-                                   yAxis->pixelToCoord(wheel_event->pos().y())};
+    std::vector<double> mouse_pos{xAxis->pixelToCoord(wheel_event->pos().x()),
+                                  yAxis->pixelToCoord(wheel_event->pos().y())};
 
     double factor;
     if (wheel_event->angleDelta().y() < 0)
@@ -141,10 +141,10 @@ void SXPlot::mouseWheel(QWheelEvent* wheel_event)
     else
         factor = 0.9;
 
-    std::vector<double> new_edges {mouse_pos[0] - (mouse_pos[0] - edges[0]) * factor,
-                                   mouse_pos[0] - (mouse_pos[0] - edges[1]) * factor,
-                                   mouse_pos[1] - (mouse_pos[1] - edges[2]) * factor,
-                                   mouse_pos[1] - (mouse_pos[1] - edges[3]) * factor};
+    std::vector<double> new_edges{mouse_pos[0] - (mouse_pos[0] - edges[0]) * factor,
+                                  mouse_pos[0] - (mouse_pos[0] - edges[1]) * factor,
+                                  mouse_pos[1] - (mouse_pos[1] - edges[2]) * factor,
+                                  mouse_pos[1] - (mouse_pos[1] - edges[3]) * factor};
 
     if (xAxis->selectedParts().testFlag(QCPAxis::spAxis))
         xAxis->setRange(new_edges[0], new_edges[1]);

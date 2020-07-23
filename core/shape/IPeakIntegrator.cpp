@@ -28,9 +28,9 @@ IPeakIntegrator::IPeakIntegrator()
     , _integratedIntensity()
     , _rockingCurve()
     , _handler(nullptr)
-    , _peak_end {3.0}
-    , _bkg_begin {3.0}
-    , _bkg_end {6.0}
+    , _peak_end{3.0}
+    , _bkg_begin{3.0}
+    , _bkg_end{6.0}
 {
 }
 

@@ -96,7 +96,7 @@ PeakFinder::PeakFinder()
 
     , _framesEnd(-1)
 {
-    _convolver.reset(ConvolverFactory {}.create("annular", {{"r1", 5.}, {"r2", 10.}, {"r3", 15.}}));
+    _convolver.reset(ConvolverFactory{}.create("annular", {{"r1", 5.}, {"r2", 10.}, {"r3", 15.}}));
 }
 
 std::vector<Peak3D*> PeakFinder::currentPeaks()

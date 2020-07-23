@@ -60,7 +60,7 @@ void ExperimentImporter::loadData(Experiment* experiment)
         for (int i = 0; i < object_num; ++i) {
             auto reader = std::make_unique<nsx::ExperimentDataReader>(
                 _file_name, data_collections.getObjnameByIdx(i), experiment->diffractometer());
-            nsx::sptrDataSet data {new nsx::DataSet {std::move(reader)}};
+            nsx::sptrDataSet data{new nsx::DataSet{std::move(reader)}};
 
             std::string collection_name = data_collections.getObjnameByIdx(i);
 
@@ -264,7 +264,7 @@ void ExperimentImporter::loadPeaks(Experiment* experiment)
             std::cout << "Created the peak collection" << std::endl;
         }
     } catch (H5::Exception& e) {
-        throw std::runtime_error {e.getDetailMsg()};
+        throw std::runtime_error{e.getDetailMsg()};
     }
 }
 

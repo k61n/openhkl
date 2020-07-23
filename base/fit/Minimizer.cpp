@@ -65,7 +65,7 @@ struct MinimizerGSL {
     gsl_vector* wt;
 
     MinimizerGSL()
-        : workspace(nullptr), jacobian(nullptr), covariance(nullptr), x(nullptr), wt(nullptr) {};
+        : workspace(nullptr), jacobian(nullptr), covariance(nullptr), x(nullptr), wt(nullptr){};
 };
 
 //! Convert a GSL matrix to an Eigen matrix

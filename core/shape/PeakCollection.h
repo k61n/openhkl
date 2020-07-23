@@ -89,7 +89,7 @@ class PeakCollection {
     std::vector<std::unique_ptr<nsx::Peak3D>> _peaks;
     std::string _name;
 
-    nsx::listtype _type {listtype::FOUND};
+    nsx::listtype _type{listtype::FOUND};
     std::map<std::string, float> _meta;
 
     std::string _file_name;

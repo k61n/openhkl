@@ -28,7 +28,7 @@
 #include <QVBoxLayout>
 
 UnitCellWidget::UnitCellWidget(nsx::sptrUnitCell cell, const QString& /*name*/)
-    : QWidget(), unitCell_ {cell}, wasSpaceGroupSet {false}
+    : QWidget(), unitCell_{cell}, wasSpaceGroupSet{false}
 {
     nsx::UnitCellCharacter character = unitCell_->character();
     // layout...

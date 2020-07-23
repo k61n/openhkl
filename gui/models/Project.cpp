@@ -22,7 +22,7 @@
 #include <vector>
 
 Project::Project(QString name, QString instrument)
-    : _experiment {new nsx::Experiment {name.toStdString(), instrument.toStdString()}}
+    : _experiment{new nsx::Experiment{name.toStdString(), instrument.toStdString()}}
 {
 }
 
@@ -229,7 +229,7 @@ void Project::changeInstrument(const QString& instrumentname)
 {
     if (_experiment->numData())
         return;
-    _experiment.reset(new nsx::Experiment {_experiment->name(), instrumentname.toStdString()});
+    _experiment.reset(new nsx::Experiment{_experiment->name(), instrumentname.toStdString()});
 }
 
 void Project::onPeaksChanged()

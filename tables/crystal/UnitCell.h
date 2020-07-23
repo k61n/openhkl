@@ -280,7 +280,7 @@ class UnitCell {
     //! _NP is the transformation such that _A*_NP.inverse() is the Niggli cell
     Eigen::Matrix3d _NP;
 
-    std::unique_ptr<xsection::Material> _material {nullptr};
+    std::unique_ptr<xsection::Material> _material{nullptr};
 
     LatticeCentring _centring;
 

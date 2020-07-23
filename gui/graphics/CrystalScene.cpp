@@ -235,7 +235,7 @@ void CrystalScene::triangulate()
         if (temp) {
             double x, y, z;
             temp->getCoordinates(x, y, z);
-            _hull->addVertex(Eigen::Vector3d {x * aspectratio, y * aspectratio, z * aspectratio});
+            _hull->addVertex(Eigen::Vector3d{x * aspectratio, y * aspectratio, z * aspectratio});
         }
     }
 

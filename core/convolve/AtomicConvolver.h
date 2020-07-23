@@ -50,14 +50,14 @@ class AtomicConvolver : public Convolver {
     void reset();
 
  protected:
-    int _n_rows {0};
-    int _n_cols {0};
+    int _n_rows{0};
+    int _n_cols{0};
     int _halfCols;
 
     fftw_plan _forwardPlan;
     fftw_plan _backwardPlan;
 
-    double* _realData {nullptr};
+    double* _realData{nullptr};
     fftw_complex* _transformedData;
 
     std::vector<std::complex<double>> _transformedKernel;
