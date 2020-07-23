@@ -22,9 +22,7 @@
 #include "core/instrument/Diffractometer.h"
 #include "core/shape/IPeakIntegrator.h"
 #include "core/shape/PeakFilter.h"
-#include "core/statistics/CC.h"
 #include "core/statistics/MergedData.h"
-#include "core/statistics/RFactor.h"
 #include "core/statistics/ResolutionShell.h"
 #include "tables/crystal/UnitCell.h"
 

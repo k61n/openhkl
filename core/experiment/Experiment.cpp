@@ -18,18 +18,17 @@
 #include <utility>
 
 #include "base/utils/Units.h"
-
 #include "core/data/DataSet.h"
 #include "core/experiment/Experiment.h"
+#include "core/experiment/ExperimentExporter.h"
+#include "core/experiment/ExperimentImporter.h"
 #include "core/instrument/Diffractometer.h"
 #include "core/instrument/Monochromator.h"
 #include "core/instrument/Source.h"
 #include "core/raw/IDataReader.h"
 #include "core/raw/MetaData.h"
-
-#include "core/experiment/ExperimentExporter.h"
-#include "core/experiment/ExperimentImporter.h"
-
+#include "core/statistics/CC.h"
+#include "core/statistics/RFactor.h"
 #include "core/integration/GaussianIntegrator.h"
 #include "core/integration/ISigmaIntegrator.h"
 #include "core/integration/PixelSumIntegrator.h"
@@ -115,7 +114,6 @@ sptrDataSet Experiment::dataShortName(const std::string& name)
     return it->second;
 }
 
-
 const std::string& Experiment::name() const
 {
     return _name;
@@ -186,8 +184,7 @@ void Experiment::updatePeakCollection(
 
 bool Experiment::hasPeakCollection(const std::string& name) const
 {
-    auto peaks = _peak_collections.find(name);
-    return (peaks != _peak_collections.end());
+    return _peak_collections.find(name) != _peak_collections.end();
 }
 
 PeakCollection* Experiment::getPeakCollection(const std::string name)
@@ -202,7 +199,6 @@ void Experiment::removePeakCollection(const std::string& name)
 {
     if (!hasPeakCollection(name))
         return;
-
     auto peak_collection = _peak_collections.find(name);
     peak_collection->second.reset();
     _peak_collections.erase(peak_collection);
@@ -219,20 +215,18 @@ std::vector<std::string> Experiment::getCollectionNames() const
 std::vector<std::string> Experiment::getFoundCollectionNames() const
 {
     std::vector<std::string> ret;
-    for (const auto& it : _peak_collections) {
+    for (const auto& it : _peak_collections)
         if (it.second->type() == listtype::FOUND)
             ret.push_back(it.second->name());
-    }
     return ret;
 }
 
 std::vector<std::string> Experiment::getPredictedCollectionNames() const
 {
     std::vector<std::string> ret;
-    for (const auto& it : _peak_collections) {
+    for (const auto& it : _peak_collections)
         if (it.second->type() == listtype::PREDICTED)
             ret.push_back(it.second->name());
-    }
     return ret;
 }
 
@@ -430,30 +424,23 @@ void Experiment::setReferenceCell(
 
 bool Experiment::acceptUnitCell(PeakCollection* peaks, double length_tol, double angle_tol)
 {
-    std::string name = "accepted";
-    bool accepted = false;
-    if (_auto_indexer->hasSolution(length_tol, angle_tol)) {
-        auto cell = *_auto_indexer->getAcceptedSolution();
-        addUnitCell(name, &cell);
-        acceptUnitCell(peaks);
-        accepted = true;
-    }
-    return accepted;
-}
-
-std::vector<std::string> Experiment::getCompatibleSpaceGroups() const
-{
-    std::string cell_name = "accepted";
-    const UnitCell* cell = getUnitCell(cell_name);
-    return cell->compatibleSpaceGroups();
+    if (!_auto_indexer->hasSolution(length_tol, angle_tol))
+        return false;
+    auto cell = *_auto_indexer->getAcceptedSolution();
+    addUnitCell("accepted", &cell);
+    acceptUnitCell(peaks);
+    return true;
 }
 
 void Experiment::acceptUnitCell(PeakCollection* peaks)
 {
-    std::string name = "accepted";
-    std::vector<Peak3D*> peak_list = peaks->getPeakList();
-    for (auto peak : peak_list)
-        peak->setUnitCell(getUnitCell(name));
+    for (auto peak : peaks->getPeakList())
+        peak->setUnitCell(getUnitCell("accepted"));
+}
+
+std::vector<std::string> Experiment::getCompatibleSpaceGroups() const
+{
+    return getUnitCell("accepted")->compatibleSpaceGroups();
 }
 
 void Experiment::buildShapeLibrary(PeakCollection* peaks, ShapeLibParameters params)
@@ -464,14 +451,15 @@ void Experiment::buildShapeLibrary(PeakCollection* peaks, ShapeLibParameters par
     for (nsx::Peak3D* peak : peak_list) {
         if (!peak->enabled())
             continue;
+
         const double d = 1.0 / peak->q().rowVector().norm();
         if (d > params.detector_range_max || d < params.detector_range_min)
             continue;
 
         const nsx::Intensity& intensity = peak->correctedIntensity();
-
         if (intensity.value() <= params.strength_min * intensity.sigma())
             continue;
+
         fit_peaks.push_back(peak);
     }
     if (fit_peaks.size() == 0)

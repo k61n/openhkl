@@ -13,7 +13,6 @@
 //  ***********************************************************************************************
 
 #include "core/experiment/ExperimentImporter.h"
-
 #include "base/geometry/Ellipsoid.h"
 #include "core/data/DataSet.h"
 #include "core/data/DataTypes.h"
@@ -21,7 +20,6 @@
 #include "core/peak/Intensity.h"
 #include "core/peak/Peak3D.h"
 #include "core/raw/IDataReader.h"
-
 #include <Eigen/Dense>
 
 namespace nsx {
