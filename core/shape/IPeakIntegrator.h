@@ -28,8 +28,8 @@ class IPeakIntegrator {
     IPeakIntegrator();
     virtual ~IPeakIntegrator();
     //! Compute the integrated intensity of the peak given the integration region.
-    virtual bool
-    compute(Peak3D* peak, ShapeLibrary* shape_library, const IntegrationRegion& region) = 0;
+    virtual bool compute(
+        Peak3D* peak, ShapeLibrary* shape_library, const IntegrationRegion& region) = 0;
     //! Integrate all peaks in the list which are contained in the specified data set.
     //! @param peak_end Peak boundary (in sigma)
     //! @param bkg_begin Background beginning (in sigma)

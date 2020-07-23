@@ -80,13 +80,15 @@ AbsorptionDialog::AbsorptionDialog() : QDialog{}
         });
     });
 
-    connect(
-        rulerButton, &QPushButton::clicked, [=]() { crystalScene->activateCalibrateDistance(); });
+    connect(rulerButton, &QPushButton::clicked, [=]() {
+        crystalScene->activateCalibrateDistance();
+    });
 
     connect(pickCenterButton, &QPushButton::clicked, [=]() { crystalScene->activatePickCenter(); });
 
-    connect(
-        pickPointButton, &QPushButton::clicked, [=]() { crystalScene->activatePickingPoints(); });
+    connect(pickPointButton, &QPushButton::clicked, [=]() {
+        crystalScene->activatePickingPoints();
+    });
 
     connect(removePointButton, &QPushButton::clicked, [=]() {
         crystalScene->activateRemovingPoints();

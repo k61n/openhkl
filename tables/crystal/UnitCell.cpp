@@ -287,8 +287,8 @@ std::ostream& operator<<(std::ostream& os, const UnitCell& uc)
     return os;
 }
 
-std::vector<MillerIndex>
-UnitCell::generateReflectionsInShell(double dmin, double dmax, double wavelength) const
+std::vector<MillerIndex> UnitCell::generateReflectionsInShell(
+    double dmin, double dmax, double wavelength) const
 {
     Eigen::SelfAdjointEigenSolver<Eigen::Matrix3d> eigen_solver;
     std::vector<MillerIndex> hkls;

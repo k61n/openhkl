@@ -285,8 +285,8 @@ bool QScienceSpinBox::isIntermediateValue(const QString& str) const
     as.
 */
 // reimplemented function, copied from QDoubleSpinBoxPrivate::validateAndInterpret
-QVariant
-QScienceSpinBox::validateAndInterpret(QString& input, int& pos, QValidator::State& state) const
+QVariant QScienceSpinBox::validateAndInterpret(
+    QString& input, int& pos, QValidator::State& state) const
 {
     /*! return 'cachedText' if
      *   input = cachedText, or input Empty

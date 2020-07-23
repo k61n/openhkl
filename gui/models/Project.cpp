@@ -199,8 +199,8 @@ PeakCollectionModel* Project::peakModelAt(int i)
     return _peak_collection_models.at(i);
 }
 
-std::vector<nsx::Peak3D*>
-Project::getPeaks(const QString& peakListName, int /*upperindex*/, int /*lowerindex*/) const
+std::vector<nsx::Peak3D*> Project::getPeaks(
+    const QString& peakListName, int /*upperindex*/, int /*lowerindex*/) const
 {
     if (!_experiment->hasPeakCollection(peakListName.toStdString()))
         return {};

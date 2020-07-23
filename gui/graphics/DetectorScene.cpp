@@ -774,8 +774,8 @@ void DetectorScene::resetScene()
     _lastClickedGI = nullptr;
 }
 
-std::vector<std::pair<QGraphicsItem*, nsx::IMask*>>::iterator
-DetectorScene::findMask(QGraphicsItem* item)
+std::vector<std::pair<QGraphicsItem*, nsx::IMask*>>::iterator DetectorScene::findMask(
+    QGraphicsItem* item)
 {
     return std::find_if(
         _masks.begin(), _masks.end(),

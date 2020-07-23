@@ -41,6 +41,12 @@ IndentCaseLabels: true
 IndentWrappedFunctionNames: false
 MaxEmptyLinesToKeep: 2
 NamespaceIndentation: None
+PenaltyBreakAssignment: 10
+PenaltyBreakBeforeFirstCallParameter: 33
+PenaltyBreakFirstLessLess: 3
+PenaltyBreakString: 120
+PenaltyBreakTemplateDeclaration: 0
+PenaltyReturnTypeOnItsOwnLine: 1000
 PointerAlignment: Left
 SpaceBeforeCpp11BracedList: false
 SpaceBeforeParens: ControlStatements

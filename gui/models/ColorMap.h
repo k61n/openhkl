@@ -41,8 +41,8 @@ class ColorMap {
         return qRgb(_log_rgb[3 * i + 0], _log_rgb[3 * i + 1], _log_rgb[3 * i + 2]);
     }
 
-    QImage
-    matToImage(const Eigen::ArrayXXd& source, const QRect& rect, double colorMax, bool log = false);
+    QImage matToImage(
+        const Eigen::ArrayXXd& source, const QRect& rect, double colorMax, bool log = false);
 
     //! Returns a specific ColorMap
     //! @param name : the name of the ColorMap that is to be returned

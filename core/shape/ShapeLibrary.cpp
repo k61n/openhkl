@@ -353,8 +353,8 @@ Profile3D ShapeLibrary::meanProfile(const DetectorEvent& ev, double radius, doub
     return mean;
 }
 
-std::vector<Intensity>
-ShapeLibrary::meanProfile1D(const DetectorEvent& ev, double radius, double nframes) const
+std::vector<Intensity> ShapeLibrary::meanProfile1D(
+    const DetectorEvent& ev, double radius, double nframes) const
 {
     std::vector<Peak3D*> neighbors = findNeighbors(ev, radius, nframes);
     std::vector<Intensity> mean_profile;
@@ -372,8 +372,8 @@ ShapeLibrary::meanProfile1D(const DetectorEvent& ev, double radius, double nfram
     return mean_profile;
 }
 
-std::vector<Peak3D*>
-ShapeLibrary::findNeighbors(const DetectorEvent& ev, double radius, double nframes) const
+std::vector<Peak3D*> ShapeLibrary::findNeighbors(
+    const DetectorEvent& ev, double radius, double nframes) const
 {
     std::vector<Peak3D*> neighbors;
     Eigen::Vector3d center(ev._px, ev._py, ev._frame);

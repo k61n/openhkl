@@ -47,8 +47,8 @@ class Project {
     void changeInstrument(const QString& instrumentname);
     bool saved() const { return _saved; };
 
-    std::vector<nsx::Peak3D*>
-    getPeaks(const QString& peakListName, int upperindex = -1, int lowerindex = -1) const;
+    std::vector<nsx::Peak3D*> getPeaks(
+        const QString& peakListName, int upperindex = -1, int lowerindex = -1) const;
 
     QStringList getPeakListNames() const;
     QStringList getFoundNames() const;

@@ -102,8 +102,8 @@ class ShapeLibrary {
     Profile3D meanProfile(const DetectorEvent& ev, double radius, double nframes) const;
 
     //! Returns the average peak profile near the given detector event
-    std::vector<Intensity>
-    meanProfile1D(const DetectorEvent& ev, double radius, double nframes) const;
+    std::vector<Intensity> meanProfile1D(
+        const DetectorEvent& ev, double radius, double nframes) const;
 
     //! Returns the average peak covariance near the given detector event
     Eigen::Matrix3d meanCovariance(
@@ -111,8 +111,8 @@ class ShapeLibrary {
         PeakInterpolation interpolation) const;
 
     //! Find neighbors of a given peak
-    std::vector<Peak3D*>
-    findNeighbors(const DetectorEvent& ev, double radius, double nframes) const;
+    std::vector<Peak3D*> findNeighbors(
+        const DetectorEvent& ev, double radius, double nframes) const;
 
     //! Returns the peak scale used for the library
     double peakScale() const;

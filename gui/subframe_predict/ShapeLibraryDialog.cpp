@@ -93,8 +93,9 @@ void ShapeLibraryDialog::setUpParametrization(nsx::PeakCollection* peak_collecti
     _table->setSelectionMode(QAbstractItemView::SelectionMode::SingleSelection);
 
     connect(_draw_frame, &QSlider::valueChanged, this, &ShapeLibraryDialog::drawFrame);
-    connect(
-        _table, &QTableView::clicked, [this](QModelIndex index) { selectTargetPeak(index.row()); });
+    connect(_table, &QTableView::clicked, [this](QModelIndex index) {
+        selectTargetPeak(index.row());
+    });
     connect(
         _table->verticalHeader(), &QHeaderView::sectionClicked, this,
         &ShapeLibraryDialog::selectTargetPeak);

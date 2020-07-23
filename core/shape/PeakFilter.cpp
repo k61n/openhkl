@@ -193,8 +193,8 @@ void PeakFilter::filterEnabled(PeakCollection* peak_collection) const
     }
 }
 
-std::vector<Peak3D*>
-PeakFilter::filterEnabled(const std::vector<Peak3D*> input_peaks, bool flag) const
+std::vector<Peak3D*> PeakFilter::filterEnabled(
+    const std::vector<Peak3D*> input_peaks, bool flag) const
 {
     std::vector<Peak3D*> filtered_peaks;
     std::copy_if(
