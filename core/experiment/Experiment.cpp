@@ -128,7 +128,7 @@ void Experiment::setName(const std::string& name)
 
 void Experiment::addData(sptrDataSet data)
 {
-    auto filename = data->filename();
+    const std::string& filename = data->filename();
 
     // Add the data only if it does not exist in the current data map
     if (_data_map.find(filename) != _data_map.end())
@@ -136,13 +136,13 @@ void Experiment::addData(sptrDataSet data)
 
     const auto& metadata = data->reader()->metadata();
 
-    std::string diffName = metadata.key<std::string>("Instrument");
+    const std::string diffName = metadata.key<std::string>("Instrument");
 
     if (!(diffName.compare(_diffractometer->name()) == 0)) {
         throw std::runtime_error("Mismatch between the diffractometer assigned to "
                                  "the experiment and the data");
     }
-    double wav = metadata.key<double>("wavelength");
+    const double wav = metadata.key<double>("wavelength");
 
     // ensure that there is at least one monochromator!
     if (_diffractometer->source().nMonochromators() == 0) {
@@ -163,7 +163,7 @@ void Experiment::addData(sptrDataSet data)
 
 void Experiment::addData(const std::string& name, sptrDataSet data)
 {
-    auto filename = data->filename();
+    const std::string& filename = data->filename();
 
     // Add the data only if it does not exist in the current data map
     if (_data_map.find(filename) != _data_map.end())
@@ -171,13 +171,13 @@ void Experiment::addData(const std::string& name, sptrDataSet data)
 
     const auto& metadata = data->reader()->metadata();
 
-    std::string diffName = metadata.key<std::string>("Instrument");
+    const std::string diffName = metadata.key<std::string>("Instrument");
 
     if (!(diffName.compare(_diffractometer->name()) == 0)) {
         throw std::runtime_error("Mismatch between the diffractometer assigned to "
                                  "the experiment and the data");
     }
-    double wav = metadata.key<double>("wavelength");
+    const double wav = metadata.key<double>("wavelength");
 
     // ensure that there is at least one monochromator!
     if (_diffractometer->source().nMonochromators() == 0) {
