@@ -3,6 +3,7 @@
 
 #include "core/data/DataSet.h"
 #include "gui/MainWin.h"
+#include "gui/models/Project.h"
 #include "gui/models/Session.h"
 #include <QDir>
 #include <QFileDialog>

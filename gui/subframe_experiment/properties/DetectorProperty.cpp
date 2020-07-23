@@ -13,10 +13,9 @@
 //  ***********************************************************************************************
 
 #include "gui/subframe_experiment/properties/DetectorProperty.h"
-
 #include "core/detector/Detector.h"
+#include "gui/models/Project.h"
 #include "gui/models/Session.h"
-
 #include <QGridLayout>
 #include <QGroupBox>
 #include <QHeaderView>

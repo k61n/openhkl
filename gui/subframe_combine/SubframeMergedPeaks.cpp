@@ -19,6 +19,7 @@
 #include "core/statistics/MergedPeak.h"
 #include "core/statistics/RFactor.h"
 #include "core/statistics/ResolutionShell.h"
+#include "gui/models/Project.h"
 #include "gui/models/Session.h"
 
 #include <QDialogButtonBox>

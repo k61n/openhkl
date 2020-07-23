@@ -13,10 +13,9 @@
 //  ***********************************************************************************************
 
 #include "gui/subframe_home/SubframeHome.h"
-
 #include "gui/dialogs/ExperimentDialog.h"
+#include "gui/models/Project.h"
 #include "gui/models/Session.h"
-
 #include <QFileDialog>
 #include <QSettings>
 #include <QSpacerItem>

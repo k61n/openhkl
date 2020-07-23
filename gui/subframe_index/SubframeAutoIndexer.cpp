@@ -13,14 +13,13 @@
 //  ***********************************************************************************************
 
 #include "gui/subframe_index/SubframeAutoIndexer.h"
-
 #include "base/utils/ProgressHandler.h"
 #include "base/utils/Units.h"
 #include "core/algo/AutoIndexer.h"
 #include "gui/dialogs/ListNameDialog.h"
 #include "gui/frames/UnitCellWidget.h"
+#include "gui/models/Project.h"
 #include "gui/models/Session.h"
-
 #include <QHeaderView>
 #include <QLabel>
 

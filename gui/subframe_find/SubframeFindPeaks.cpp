@@ -13,23 +13,20 @@
 //  ***********************************************************************************************
 
 #include "gui/subframe_find/SubframeFindPeaks.h"
-
 #include "core/convolve/ConvolverFactory.h"
 #include "core/data/DataSet.h"
 #include "core/experiment/PeakFinder.h"
 #include "core/integration/PixelSumIntegrator.h"
 #include "core/peak/Peak3D.h"
 #include "core/raw/IDataReader.h"
-
 #include "gui/dialogs/ListNameDialog.h"
 #include "gui/frames/ProgressView.h"
 #include "gui/graphics/DetectorScene.h"
-
 #include "gui/items/PeakItem.h"
 #include "gui/models/Meta.h"
+#include "gui/models/Project.h"
 #include "gui/models/Session.h"
 #include "gui/utility/Spoiler.h"
-
 #include <QFileInfo>
 #include <QGridLayout>
 #include <QGroupBox>

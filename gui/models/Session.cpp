@@ -19,6 +19,7 @@
 #include "core/raw/IDataReader.h"
 #include "gui/MainWin.h"
 #include "gui/dialogs/RawDataDialog.h"
+#include "gui/models/Project.h"
 
 Session* gSession;
 

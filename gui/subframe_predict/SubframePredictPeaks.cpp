@@ -14,23 +14,19 @@
 
 #include "gui/subframe_predict/SubframePredictPeaks.h"
 #include "gui/subframe_predict/ShapeLibraryDialog.h"
-
 #include "core/data/DataSet.h"
 #include "core/peak/Peak3D.h"
 #include "core/raw/IDataReader.h"
 #include "core/shape/IPeakIntegrator.h"
-
 #include "core/shape/ShapeLibrary.h"
 #include "tables/crystal/UnitCell.h"
-
 #include "gui/dialogs/ListNameDialog.h"
 #include "gui/frames/ProgressView.h"
 #include "gui/graphics/DetectorScene.h"
-
 #include "gui/items/PeakItem.h"
 #include "gui/models/Meta.h"
+#include "gui/models/Project.h"
 #include "gui/models/Session.h"
-
 #include <QFileInfo>
 #include <QGridLayout>
 #include <QGroupBox>

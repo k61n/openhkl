@@ -13,10 +13,9 @@
 //  ***********************************************************************************************
 
 #include "gui/subframe_experiment/properties/SourceProperty.h"
-
 #include "base/utils/Units.h"
+#include "gui/models/Project.h"
 #include "gui/models/Session.h"
-
 #include <QFormLayout>
 
 SourceProperty::SourceProperty() : QWidget()

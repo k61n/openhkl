@@ -13,13 +13,12 @@
 //  ***********************************************************************************************
 
 #include "gui/subframe_experiment/properties/UnitCellProperty.h"
-
 #include "base/utils/Units.h"
 #include "gui/dialogs/RefinerDialog.h"
+#include "gui/models/Project.h"
 #include "gui/models/Session.h"
 #include "tables/crystal/SpaceGroup.h"
 #include "tables/crystal/UnitCell.h"
-
 #include <QCompleter>
 #include <QDebug>
 #include <QFormLayout>

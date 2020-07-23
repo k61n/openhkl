@@ -13,10 +13,9 @@
 //  ***********************************************************************************************
 
 #include "gui/subframe_experiment/properties/SampleShapeProperties.h"
-
 #include "base/utils/Units.h"
+#include "gui/models/Project.h"
 #include "gui/models/Session.h"
-
 #include <QFormLayout>
 #include <QGroupBox>
 #include <QHeaderView>

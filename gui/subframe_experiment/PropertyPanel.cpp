@@ -13,7 +13,7 @@
 //  ***********************************************************************************************
 
 #include "gui/subframe_experiment/PropertyPanel.h"
-
+#include "gui/models/Project.h"
 #include "gui/models/Session.h"
 
 namespace {
