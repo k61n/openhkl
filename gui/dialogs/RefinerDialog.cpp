@@ -377,10 +377,8 @@ void RefinerDialog::_setSampleUp()
     _sample_layout->addWidget(_sample_orientation_21_ref, 11, 2, 1, 1);
     _sample_layout->addWidget(_sample_orientation_22_ref, 12, 2, 1, 1);
 
-    QList<QScienceSpinBox*> spin_boxes =
-        _sample_layout->parentWidget()->findChildren<QScienceSpinBox*>();
-
-    foreach (QScienceSpinBox* spin_box, spin_boxes) {
+    for (QScienceSpinBox* spin_box:
+             _sample_layout->parentWidget()->findChildren<QScienceSpinBox*>()) {
         spin_box->setSizePolicy(*_size_policy_fixed);
         spin_box->setButtonSymbols(QAbstractSpinBox::NoButtons);
         spin_box->setReadOnly(true);
@@ -389,11 +387,8 @@ void RefinerDialog::_setSampleUp()
         // spin_box->setMaximum(1e6);
     }
 
-    QList<QCheckBox*> checkboxes = _sample_layout->parentWidget()->findChildren<QCheckBox*>();
-
-    foreach (QCheckBox* checkbox, checkboxes) {
+    for (QCheckBox* checkbox: _sample_layout->parentWidget()->findChildren<QCheckBox*>())
         connect(checkbox, &QCheckBox::stateChanged, this, &RefinerDialog::_plot);
-    }
 }
 
 void RefinerDialog::_setDetectorUp()
@@ -524,10 +519,8 @@ void RefinerDialog::_setDetectorUp()
     _detector_layout->addWidget(_detector_orientation_21_ref, 11, 2, 1, 1);
     _detector_layout->addWidget(_detector_orientation_22_ref, 12, 2, 1, 1);
 
-    QList<QScienceSpinBox*> spin_boxes =
-        _detector_layout->parentWidget()->findChildren<QScienceSpinBox*>();
-
-    foreach (QScienceSpinBox* spin_box, spin_boxes) {
+    for (QScienceSpinBox* spin_box:
+             _detector_layout->parentWidget()->findChildren<QScienceSpinBox*>()) {
         spin_box->setSizePolicy(*_size_policy_fixed);
         spin_box->setButtonSymbols(QAbstractSpinBox::NoButtons);
         spin_box->setReadOnly(true);
@@ -608,10 +601,7 @@ void RefinerDialog::_setUnitCellUp()
     _uc_layout->addWidget(_uc_beta_ref, 5, 2, 1, 1);
     _uc_layout->addWidget(_uc_gamma_ref, 6, 2, 1, 1);
 
-    QList<QScienceSpinBox*> spin_boxes =
-        _uc_layout->parentWidget()->findChildren<QScienceSpinBox*>();
-
-    foreach (QScienceSpinBox* spin_box, spin_boxes) {
+    for (QScienceSpinBox* spin_box: _uc_layout->parentWidget()->findChildren<QScienceSpinBox*>()) {
         spin_box->setSizePolicy(*_size_policy_fixed);
         spin_box->setButtonSymbols(QAbstractSpinBox::NoButtons);
         spin_box->setReadOnly(true);
@@ -681,10 +671,8 @@ void RefinerDialog::_setInstrumentUp()
     _instrument_layout->addWidget(_wavelength_ref, 4, 2, 1, 1);
     _instrument_layout->addWidget(_wavelength_offset_ref, 5, 2, 1, 1);
 
-    QList<QScienceSpinBox*> spin_boxes =
-        _instrument_layout->parentWidget()->findChildren<QScienceSpinBox*>();
-
-    foreach (QScienceSpinBox* spin_box, spin_boxes) {
+    for (QScienceSpinBox* spin_box:
+             _instrument_layout->parentWidget()->findChildren<QScienceSpinBox*>()) {
         spin_box->setSizePolicy(*_size_policy_fixed);
         spin_box->setButtonSymbols(QAbstractSpinBox::NoButtons);
         spin_box->setReadOnly(true);
@@ -1116,7 +1104,6 @@ void RefinerDialog::accept()
 void RefinerDialog::_plot()
 {
     QString temp_text = _select_data->currentText();
-
     if (temp_text.isEmpty())
         return;
 
@@ -1124,10 +1111,7 @@ void RefinerDialog::_plot()
         gSession->selectedExperiment()->experiment()->getData(temp_text.toStdString());
 
     std::vector<std::string> selected_text;
-
-    QList<QCheckBox*> checkboxes = _sample_layout->parentWidget()->findChildren<QCheckBox*>();
-
-    foreach (QCheckBox* checkbox, checkboxes) {
+    for (QCheckBox* checkbox: _sample_layout->parentWidget()->findChildren<QCheckBox*>()) {
         if (checkbox->isChecked())
             selected_text.push_back(checkbox->text().toStdString());
     }
