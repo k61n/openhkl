@@ -110,7 +110,6 @@ void Actions::setupPeaks()
 {
     // autoIndexer.setTriggerHook([]() { new SubframeAutoIndexer; });
     // filterPeaks.setTriggerHook([]() { new PeakFilterDialog; });
-    // userDefinedIndexer.setTriggerHook([]() { new UserDefinedUnitCellIndexerFrame; });
     // assignUnitCell.setTriggerHook([]() {
     //     if (gSession->selectedExperimentNum() < 0) {
     //         gLogger->log("[ERROR] No experiment selected");
