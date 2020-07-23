@@ -26,7 +26,7 @@ class TestHDF5IO(unittest.TestCase):
         frames = []
         i = 0
         for i in range(0,dataf.nFrames()):
-            frames.push_back(dataf.frame(i))
+            frames.append(dataf.frame(i))
 
         dataf.saveHDF5("D10_hdf5_example.h5")
         dataf.close()
