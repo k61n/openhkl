@@ -1023,8 +1023,7 @@ void RefinerDialog::refine()
 
     for (QListWidgetItem* data_item : selected_data) {
         const std::string data_name = data_item->text().toStdString();
-        const nsx::sptrDataSet data =
-            gSession->currentProject()->experiment()->getData(data_name);
+        const nsx::sptrDataSet data = gSession->currentProject()->experiment()->getData(data_name);
         std::vector<nsx::Peak3D*> reference_peaks;
         std::vector<nsx::Peak3D*> predicted_peaks;
 

@@ -26,8 +26,14 @@ Project::Project(QString name, QString instrument)
 {
 }
 
-const nsx::Experiment* Project::experiment() const { return _experiment.get(); }
-nsx::Experiment* Project::experiment() { return _experiment.get(); }
+const nsx::Experiment* Project::experiment() const
+{
+    return _experiment.get();
+}
+nsx::Experiment* Project::experiment()
+{
+    return _experiment.get();
+}
 
 QStringList Project::getDataNames() const
 {
@@ -58,7 +64,10 @@ int Project::getIndex(const QString& dataname) const
     return liste.indexOf(dataname);
 }
 
-void Project::selectData(int selected) { _dataIndex = selected; }
+void Project::selectData(int selected)
+{
+    _dataIndex = selected;
+}
 
 std::vector<nsx::sptrDataSet> Project::allData() const
 {
@@ -92,7 +101,10 @@ QStringList Project::getPredictedNames() const
     return ret;
 }
 
-int Project::numPeakCollections() const { return _experiment->numPeakCollections(); }
+int Project::numPeakCollections() const
+{
+    return _experiment->numPeakCollections();
+}
 
 void Project::generatePeakModel(const QString& peakListName)
 {
@@ -208,13 +220,16 @@ QStringList Project::getUnitCellNames() const
     return ret;
 }
 
-int Project::numUnitCells() const { return _experiment->numUnitCells(); }
+int Project::numUnitCells() const
+{
+    return _experiment->numUnitCells();
+}
 
 void Project::changeInstrument(const QString& instrumentname)
 {
     if (_experiment->numData())
         return;
-    _experiment.reset(new nsx::Experiment{_experiment->name(), instrumentname.toStdString()});
+    _experiment.reset(new nsx::Experiment {_experiment->name(), instrumentname.toStdString()});
 }
 
 void Project::onPeaksChanged()

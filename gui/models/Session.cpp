@@ -30,14 +30,32 @@ Session::Session()
     _loadDirectory = QDir::homePath();
 }
 
-Project* Session::currentProject() { return _projects.at(_currentProject).get(); }
-const Project* Session::currentProject() const { return _projects.at(_currentProject).get(); }
+Project* Session::currentProject()
+{
+    return _projects.at(_currentProject).get();
+}
+const Project* Session::currentProject() const
+{
+    return _projects.at(_currentProject).get();
+}
 
-Project* Session::experimentAt(int i) { return _projects.at(i).get(); }
-const Project* Session::experimentAt(int i) const { return _projects.at(i).get(); }
+Project* Session::experimentAt(int i)
+{
+    return _projects.at(i).get();
+}
+const Project* Session::experimentAt(int i) const
+{
+    return _projects.at(i).get();
+}
 
-int Session::currentProjectNum() const { return _currentProject; }
-int Session::numExperiments() const { return _projects.size(); }
+int Session::currentProjectNum() const
+{
+    return _currentProject;
+}
+int Session::numExperiments() const
+{
+    return _projects.size();
+}
 
 bool Session::createExperiment(QString experimentName, QString instrumentName)
 {
@@ -56,8 +74,8 @@ bool Session::createExperiment(QString experimentName, QString instrumentName)
 std::vector<QString> Session::experimentNames() const
 {
     std::vector<QString> ret;
-    for (int i = 0; i < _projects.size(); i++)
-        ret.push_back(QString::fromStdString(_projects.at(i)->experiment()->name()));
+    for (const auto& project : _projects)
+        ret.push_back(QString::fromStdString(project->experiment()->name()));
     return ret;
 }
 

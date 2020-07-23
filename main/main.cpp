@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#include "gui/MainWin.h"
 #include "core/experiment/Experiment.h" // needed to instatiate Session()
+#include "gui/MainWin.h"
 #include "gui/models/Project.h" // needed to instantiate vector<unique_ptr<Project>> in Session()
 #include "gui/models/Session.h"
 #include <QApplication>

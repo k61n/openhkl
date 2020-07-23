@@ -152,8 +152,7 @@ void SubframeHome::loadFromFile()
         _open_experiments_model = std::make_unique<ExperimentModel>();
         _open_experiments_view->setModel(_open_experiments_model.get());
         _updateLastLoadedList(
-            QString::fromStdString(gSession->currentProject()->experiment()->name()),
-            file_path);
+            QString::fromStdString(gSession->currentProject()->experiment()->name()), file_path);
     } catch (...) {
         ; // TODO: handle exception
     }
@@ -166,8 +165,7 @@ void SubframeHome::saveCurrent()
             this, "Save the current experiment", "", "NSXTool file (*.nsx)");
         gSession->currentProject()->saveToFile(file_path);
         _updateLastLoadedList(
-            QString::fromStdString(gSession->currentProject()->experiment()->name()),
-            file_path);
+            QString::fromStdString(gSession->currentProject()->experiment()->name()), file_path);
     } catch (...) {
         ; // TODO: handle exception
     }
