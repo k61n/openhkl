@@ -74,17 +74,17 @@ class Experiment {
     void updatePeakCollection(
         const std::string& name, const listtype type, const std::vector<nsx::Peak3D*> peaks);
     bool hasPeakCollection(const std::string& name) const;
-    PeakCollection* getPeakCollection(const std::string name);
+    PeakCollection* getPeakCollection(const std::string& name);
     void removePeakCollection(const std::string& name);
     std::vector<std::string> getCollectionNames() const;
     std::vector<std::string> getFoundCollectionNames() const;
     std::vector<std::string> getPredictedCollectionNames() const;
     int numPeakCollections() const { return _peak_collections.size(); };
-    void acceptFilter(const std::string name, PeakCollection* collection);
+    void acceptFilter(const std::string& name, PeakCollection* collection);
     void checkPeakCollections();
 
     // MergedData
-    void setMergedPeaks(std::vector<PeakCollection*> peak_collections, bool friedel);
+    void setMergedPeaks(const std::vector<PeakCollection*>& peak_collections, bool friedel);
     // ditto without the vector (mainly for SWIG):
     void setMergedPeaks(PeakCollection* found, PeakCollection* predicted, bool friedel);
     void resetMergedPeaks();

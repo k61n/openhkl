@@ -187,7 +187,7 @@ bool Experiment::hasPeakCollection(const std::string& name) const
     return _peak_collections.find(name) != _peak_collections.end();
 }
 
-PeakCollection* Experiment::getPeakCollection(const std::string name)
+PeakCollection* Experiment::getPeakCollection(const std::string& name)
 {
     std::cout << hasPeakCollection(name) << " " << name << std::endl;
     if (hasPeakCollection(name))
@@ -230,14 +230,14 @@ std::vector<std::string> Experiment::getPredictedCollectionNames() const
     return ret;
 }
 
-void Experiment::acceptFilter(std::string name, PeakCollection* collection)
+void Experiment::acceptFilter(const std::string& name, PeakCollection* collection)
 {
     auto ptr = std::make_unique<PeakCollection>(name, collection->type());
     ptr->populateFromFiltered(collection);
     _peak_collections.insert_or_assign(name, std::move(ptr));
 }
 
-void Experiment::setMergedPeaks(std::vector<PeakCollection*> peak_collections, bool friedel)
+void Experiment::setMergedPeaks(const std::vector<PeakCollection*>& peak_collections, bool friedel)
 {
     _merged_peaks = std::make_unique<MergedData>(peak_collections, friedel);
 }
@@ -270,8 +270,7 @@ void Experiment::addUnitCell(
 
 bool Experiment::hasUnitCell(const std::string& name) const
 {
-    auto unit_cell = _unit_cells.find(name);
-    return (unit_cell != _unit_cells.end());
+    return _unit_cells.find(name) != _unit_cells.end();
 }
 
 std::vector<std::string> Experiment::getUnitCellNames() const
