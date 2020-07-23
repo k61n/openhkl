@@ -30,7 +30,7 @@ Session* gSession;
 Session::Session()
 {
     gSession = this;
-    loadDirectory = QDir::homePath();
+    _loadDirectory = QDir::homePath();
 }
 
 bool Session::createExperiment(QString experimentName, QString instrumentName)
@@ -41,7 +41,7 @@ bool Session::createExperiment(QString experimentName, QString instrumentName)
 
     auto experiment = std::make_unique<SessionExperiment>(experimentName, instrumentName);
     _experiments.push_back(std::move(experiment));
-    selectedExperiment_ = _experiments.size() - 1;
+    _selectedExperiment = _experiments.size() - 1;
     onExperimentChanged();
 
     return true;
@@ -56,7 +56,7 @@ bool Session::createExperiment(QString experimentName)
     auto experiment = std::make_unique<SessionExperiment>();
     experiment->experiment()->setName(experimentName.toStdString());
     _experiments.push_back(std::move(experiment));
-    selectedExperiment_ = _experiments.size() - 1;
+    _selectedExperiment = _experiments.size() - 1;
     onExperimentChanged();
 
     return true;
@@ -66,7 +66,7 @@ void Session::createDefaultExperiment()
 {
     auto experiment = std::make_unique<SessionExperiment>("lol", "BioDiff2500");
     _experiments.push_back(std::move(experiment));
-    selectedExperiment_ = _experiments.size() - 1;
+    _selectedExperiment = _experiments.size() - 1;
     onExperimentChanged();
 }
 
@@ -84,10 +84,10 @@ void Session::removeExperiment()
 /*
     if (_experiments.size() == 0)
         return;
-    if (selectedExperiment_ == -1)
+    if (_selectedExperiment == -1)
         _experiments.removeFirst();
 
-    selectedExperiment_ = _experiments.size() > 0 ? 0 : -1;
+    _selectedExperiment = _experiments.size() > 0 ? 0 : -1;
 */
     onExperimentChanged();
 }
@@ -95,23 +95,23 @@ void Session::removeExperiment()
 void Session::selectExperiment(int select)
 {
     if (select < _experiments.size() && select >= 0)
-        selectedExperiment_ = select;
+        _selectedExperiment = select;
     onExperimentChanged();
 }
 
 void Session::loadData()
 {
     QStringList filenames = QFileDialog::getOpenFileNames(
-        gGui, "import data", loadDirectory,
+        gGui, "import data", _loadDirectory,
         "Data files(*.h5 *.hdf5 *.hdf *.fake *.nxs *.raw *.tif *.tiff);;all files (*.* *)");
 
     if (filenames.empty())
         return;
 
     QFileInfo info(filenames.at(0));
-    loadDirectory = info.absolutePath();
+    _loadDirectory = info.absolutePath();
 
-    if (selectedExperiment_ < 0)
+    if (_selectedExperiment < 0)
         createDefaultExperiment();
 
     for (QString filename : filenames) {
@@ -135,19 +135,19 @@ void Session::loadData()
 
 void Session::removeData()
 {
-    if (selectedExperiment_ == -1)
+    if (_selectedExperiment == -1)
         return;
-    if (selectedData == -1)
+    if (_selectedData == -1)
         return;
 
-    std::string numorname = selectedExperiment()->getData(selectedData)->filename();
+    std::string numorname = selectedExperiment()->getData(_selectedData)->filename();
     selectedExperiment()->experiment()->removeData(numorname);
     onDataChanged();
 }
 
 void Session::loadRawData()
 {
-    if (selectedExperiment_ < 0)
+    if (_selectedExperiment < 0)
         createDefaultExperiment();
 
     QStringList qfilenames = QFileDialog::getOpenFileNames();
@@ -155,7 +155,7 @@ void Session::loadRawData()
         return;
 
     QFileInfo info(qfilenames.at(0));
-    loadDirectory = info.absolutePath();
+    _loadDirectory = info.absolutePath();
 
     std::vector<std::string> filenames;
     for (QString filename : qfilenames)
@@ -192,7 +192,7 @@ void Session::loadRawData()
     } catch (...) {
         return;
     }
-    // selectedData = selectedExperiment()->getIndex(qfilenames.at(0));
+    // _selectedData = selectedExperiment()->getIndex(qfilenames.at(0));
     onDataChanged();
 }
 

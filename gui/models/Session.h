@@ -25,14 +25,14 @@ class Session {
     Session();
     Session(const Session&) = delete;
 
-    SessionExperiment* selectedExperiment() { return _experiments.at(selectedExperiment_).get(); }
+    SessionExperiment* selectedExperiment() { return _experiments.at(_selectedExperiment).get(); }
     const SessionExperiment* selectedExperiment() const {
-        return _experiments.at(selectedExperiment_).get(); }
+        return _experiments.at(_selectedExperiment).get(); }
 
     SessionExperiment* experimentAt(int i) { return _experiments.at(i).get(); }
     const SessionExperiment* experimentAt(int i) const { return _experiments.at(i).get(); }
 
-    int selectedExperimentNum() const { return selectedExperiment_; }
+    int selectedExperimentNum() const { return _selectedExperiment; }
     int numExperiments() const { return _experiments.size(); }
     std::vector<QString> experimentNames() const;
 
@@ -56,9 +56,9 @@ class Session {
 
  private:
     std::vector<std::unique_ptr<SessionExperiment>> _experiments;
-    int selectedExperiment_ = -1;
-    int selectedData = -1;
-    QString loadDirectory;
+    int _selectedExperiment = -1;
+    int _selectedData = -1;
+    QString _loadDirectory;
 };
 
 #endif // NSX_GUI_MODELS_SESSION_H
