@@ -90,8 +90,8 @@ class SubframeAutoIndexer : public QWidget {
     //! The loaded peak list
     QStringList _peak_list;
 
-    std::vector<std::pair<nsx::sptrPeak3D, std::shared_ptr<nsx::UnitCell>>> _defaults;
-    std::vector<std::pair<nsx::sptrUnitCell, double>> _solutions;
+    std::vector<std::pair<nsx::sptrPeak3D, std::shared_ptr<const nsx::UnitCell>>> _defaults;
+    std::vector<std::pair<std::shared_ptr<nsx::UnitCell>, double>> _solutions;
 
     nsx::sptrUnitCell _selected_unit_cell;
 

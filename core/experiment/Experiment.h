@@ -34,18 +34,16 @@ namespace nsx {
 
 struct DataQuality {
     double Rmerge; //!< R-factor
-    double expectedRmerge; //!< expected R-factor
     double Rmeas; //!< multiplicity-weighted R-factor
-    double expectedRmeas; //!< expected multiplicity-weighted R-factor
     double Rpim; //!< relative (precision-indicating) R-factor
-    double expectedRpim; //!< expected relative R-factor
     double CChalf; //!< CC_{1/2} correlation coefficient
-    double CCstar; //!< estimate of CC_{true} derived from CC_{1/2}
 };
 
-struct DataResolution : DataQuality {
+struct DataResolution {
     double dmin; //!< Lower limit of d for resolution shell
     double dmax; //!< Upper limit of d for resolution shell
+    DataQuality currentQuality;
+    DataQuality expectedQuality;
 };
 
 class Experiment {
@@ -58,7 +56,7 @@ class Experiment {
 
     Experiment& operator=(const Experiment& other) = delete; // why did it differ from copy c'tor?
 
- public: // General
+ // General
     //! Get the name of the Experiment
     const std::string& name() const;
     //! Sets the name of the experiment
@@ -70,9 +68,9 @@ class Experiment {
     //! Set the diffractometer accordingly
     void setDiffractometer(const std::string& diffractometerName);
 
- public: // Data sets
+ // Data sets
     //! Gets a reference to the data
-    const std::map<std::string, sptrDataSet>& getData() const;
+    const std::map<std::string, sptrDataSet>& getDataMap() const;
     //! Gets the pointer to a given data stored in the experiment
     sptrDataSet getData(const std::string& name);
     //! Return all data sets as a DataList
@@ -80,7 +78,7 @@ class Experiment {
     //! Gets the pointer to a given data stored in the experiment
     sptrDataSet dataShortName(const std::string& name);
     //! Get number of data
-    int numData() const { return _data.size(); };
+    int numData() const { return _data_map.size(); };
     //! Add some data to the experiment
     void addData(const std::string& name, sptrDataSet data);
     //! Add some data to the experiment
@@ -90,7 +88,7 @@ class Experiment {
     //! Remove a data from the experiment
     void removeData(const std::string& name);
 
- public: // Peak Collection
+ // Peak Collection
     //! Add a peak collection
     void updatePeakCollection(
         const std::string& name, const listtype type, const std::vector<nsx::Peak3D*> peaks);
@@ -113,7 +111,7 @@ class Experiment {
     //! Check for unphysical peaks in all collections
     void checkPeakCollections();
 
- public: // MergedData
+ // MergedData
     //! Set the merged peak
     void setMergedPeaks(std::vector<PeakCollection*> peak_collections, bool friedel);
     //! Set merged peaks without the vector (mainly for SWIG)
@@ -123,7 +121,7 @@ class Experiment {
     //! Reset the merged peak
     MergedData* getMergedPeaks() const { return _merged_peaks.get(); };
 
- public: // Unit cells
+ // Unit cells
     //! Add some data to the experiment
     void addUnitCell(const std::string& name, UnitCell* unit_cell);
     //! Add a unit cell to the experiment via cell parameters (skip autoindexing step)
@@ -149,7 +147,7 @@ class Experiment {
     //! Get a vector of compatible space groups for the accepted cell
     std::vector<std::string> getCompatibleSpaceGroups();
 
- public: // Peak finder
+ // Peak finder
     //! Get the address of the peak finder
     nsx::PeakFinder* peakFinder() const { return _peak_finder.get(); };
     //! Transfer current peaks as collection
@@ -157,7 +155,7 @@ class Experiment {
     //! Get the found peak integrator
     nsx::PeakFilter* peakFilter() { return _peak_filter.get(); };
 
- public: // Autoindexer
+ // Autoindexer
     //! Get the auto indexer
     nsx::AutoIndexer* autoIndexer() const { return _auto_indexer.get(); };
     //! Set the reference cell
@@ -167,7 +165,7 @@ class Experiment {
     //! get the reference cell
     UnitCell* getReferenceCell();
 
- public: // Integrator
+ // Integrator
     nsx::IPeakIntegrator* getIntegrator(const std::string& name) const;
     //! Set the found peak integrator
     void integratePeaks(const std::string& integrator_name, PeakCollection* peak_collection);
@@ -178,13 +176,13 @@ class Experiment {
     //! Set the found peak integrator
     void integrateFoundPeaks(const std::string& integrator);
 
- public: // Save load
+ // Save load
     //! Save to file
     void saveToFile(const std::string& path) const;
     //! Load from file
     void loadFromFile(const std::string& path);
 
- public: // Prediction
+ // Prediction
     //! Build the shape library
     void buildShapeLibrary(PeakCollection* peaks, ShapeLibParameters params);
     //! Get the shape library
@@ -195,7 +193,7 @@ class Experiment {
         PeakInterpolation interpol);
     void refine(PeakCollection* peaks, UnitCell* cell, DataSet* data, int n_batches);
 
- public: // Merging
+ // Merging
     //! Get resolution shells for quality metrics
     void computeQuality(
         double d_min, double d_max, int n_shells, PeakCollection* predicted, PeakCollection* found,
@@ -203,7 +201,8 @@ class Experiment {
     //! Return data quality resolution
     std::vector<DataResolution>* getResolution() { return &_data_resolution; };
     //! Return data quality for all merged data
-    DataQuality* getQuality() { return &_data_quality; };
+    const DataQuality& getQualityCurrent() { return _data_quality_current; };
+    const DataQuality& getQualityExpected() { return _data_quality_expected; };
 
  private: // private variables
     //! The name of this experiment
@@ -211,7 +210,7 @@ class Experiment {
     //! A pointer to the detector assigned to this experiment
     std::unique_ptr<Diffractometer> _diffractometer;
     //! A map of the data related to the experiment.
-    std::map<std::string, sptrDataSet> _data;
+    std::map<std::string, sptrDataSet> _data_map;
     //! A map of the peaklists with their name as index
     std::map<std::string, std::unique_ptr<PeakCollection>> _peak_collections;
     //! A map of the peaklists with their name as index
@@ -229,7 +228,9 @@ class Experiment {
     //! Peak shape library for prediction
     ShapeLibrary _shape_library;
     //! Data quality metrics for all merged data
-    DataQuality _data_quality;
+    DataQuality _data_quality_current;
+    //! Expected data quality metrics for all merged data
+    DataQuality _data_quality_expected;
     //! Data quality metrics as a function of resolution shell
     std::vector<DataResolution> _data_resolution;
 };

@@ -28,7 +28,7 @@ class ShapeIntegrator : public PixelSumIntegrator {
     bool
     compute(Peak3D* peak, ShapeLibrary* shape_library, const IntegrationRegion& region) override;
     //! Returns the library of cached peak shapes
-    ShapeLibrary* library() const;
+    const ShapeLibrary* library() const;
 
  private:
     ShapeLibrary* _library;

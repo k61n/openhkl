@@ -34,25 +34,25 @@ class SessionExperiment {
     SessionExperiment(QString name, QString instrument);
 
  public:
-    nsx::sptrExperiment experiment() { return _experiment; }
-    QStringList getDataNames();
-    nsx::sptrDataSet getData(int index = -1);
-    QList<nsx::sptrDataSet> allData();
-    int getIndex(const QString&);
+    const nsx::Experiment* experiment() const { return _experiment.get(); }
+    nsx::Experiment* experiment() { return _experiment.get(); }
+    QStringList getDataNames() const;
+    nsx::sptrDataSet getData(int index = -1) const;
+    QList<nsx::sptrDataSet> allData() const;
+    int getIndex(const QString&) const;
     void selectData(int selected) { dataIndex_ = selected; }
     void changeInstrument(const QString& instrumentname);
     bool saved() const { return _saved; };
 
- public:
     //! Get the associated peaks
     std::vector<nsx::Peak3D*>
-    getPeaks(const QString& peakListName, int upperindex = -1, int lowerindex = -1);
+    getPeaks(const QString& peakListName, int upperindex = -1, int lowerindex = -1) const;
     //! Get the names of peaks present in the core
-    QStringList getPeakListNames();
+    QStringList getPeakListNames() const;
     //! Get the names of peaks present in the core
-    QStringList getFoundNames();
+    QStringList getFoundNames() const;
     //! Get the names of peaks present in the core
-    QStringList getPredictedNames();
+    QStringList getPredictedNames() const;
     //! Get the number of peak lists
     int numPeakCollections() const { return _experiment->numPeakCollections(); };
     //! Generate a peak model based on the Peak collection in the core
@@ -62,9 +62,9 @@ class SessionExperiment {
     //! Generate a peak model based on the Peak collection in the core
     void removePeakModel(const QString& name);
     //! Get the peaklist model by name
-    PeakCollectionModel* peakModel(const QString& name);
+    const PeakCollectionModel* peakModel(const QString& name) const;
     //! Get the peaklist model by number
-    PeakCollectionModel* peakModel(int i);
+    PeakCollectionModel* peakModelAt(int i);
     //! Tell the gui that peaks have changed
     void onPeaksChanged();
 
@@ -75,7 +75,7 @@ class SessionExperiment {
         _experiment->addUnitCell(name, unit_cell);
     }
     //! Get the names of the Unit cells
-    QStringList getUnitCellNames();
+    QStringList getUnitCellNames() const;
     //! Get the number of unit cells
     int numUnitCells() const { return _experiment->numUnitCells(); };
 
@@ -87,10 +87,10 @@ class SessionExperiment {
 
  private:
     //! Pointer to the core experiment
-    nsx::sptrExperiment _experiment;
+    std::shared_ptr<nsx::Experiment> _experiment;
     //! The list of models for the peaks
     std::vector<PeakCollectionModel*> _peak_collection_models;
-    //! The list of models for the peaks
+    //! The list of ? TODO
     std::vector<PeakCollectionItem*> _peak_collection_items;
     //! Is this session experiment saved
     bool _saved = false;

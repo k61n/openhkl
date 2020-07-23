@@ -38,84 +38,75 @@
 #include <vector>
 
 SessionExperiment::SessionExperiment()
+    : _experiment{new nsx::Experiment{QDateTime::currentDateTime().toString().toStdString(),
+                  *nsx::getResourcesName("instruments").begin()}}
 {
-    std::string experimentName = QDateTime::currentDateTime().toString().toStdString();
-    std::set<std::string> instruments = nsx::getResourcesName("instruments");
-    nsx::sptrExperiment expPtr(new nsx::Experiment(experimentName, *instruments.begin()));
-    _experiment = expPtr;
 }
 
 SessionExperiment::SessionExperiment(QString name, QString instrument)
+    : _experiment{new nsx::Experiment{name.toStdString(), instrument.toStdString()}}
 {
-    nsx::sptrExperiment expPtr(new nsx::Experiment(name.toStdString(), instrument.toStdString()));
-    _experiment = expPtr;
 }
 
-QStringList SessionExperiment::getDataNames()
+QStringList SessionExperiment::getDataNames() const
 {
-    std::map<std::string, nsx::sptrDataSet> datamap = _experiment->getData();
-    QStringList names;
-    for (auto data : datamap)
-        names.append(QString::fromStdString(data.first));
-    return names;
+    QStringList ret;
+    for (auto data : _experiment->getDataMap())
+        ret.append(QString::fromStdString(data.first));
+    return ret;
 }
 
-nsx::sptrDataSet SessionExperiment::getData(int index)
+// TODO: move logic to core
+nsx::sptrDataSet SessionExperiment::getData(int index) const
 {
     if (index == -1)
         index = dataIndex_;
 
-    if (_experiment->getData().empty())
+    if (!_experiment->numData())
         return nullptr;
 
     std::string selected = getDataNames().at(index).toStdString();
 
-    return _experiment->getData().at(selected);
+    return _experiment->getData(selected);
 }
 
-int SessionExperiment::getIndex(const QString& dataname)
+// TODO: move logic to core
+int SessionExperiment::getIndex(const QString& dataname) const
 {
     QStringList liste = getDataNames();
     return liste.indexOf(dataname);
 }
 
-QList<nsx::sptrDataSet> SessionExperiment::allData()
+QList<nsx::sptrDataSet> SessionExperiment::allData() const
 {
-    std::map<std::string, nsx::sptrDataSet> map = _experiment->getData();
-    QList<nsx::sptrDataSet> list;
-    for (auto data : map)
-        list.append(data.second);
-    return list;
+    QList<nsx::sptrDataSet> ret;
+    for (auto data : _experiment->getDataMap())
+        ret.append(data.second);
+    return ret;
 }
 
-QStringList SessionExperiment::getPeakListNames()
+QStringList SessionExperiment::getPeakListNames() const
 {
-    std::vector<std::string> names = _experiment->getCollectionNames();
-    QStringList q_names;
-
-    for (std::string name : names)
-        q_names << QString::fromStdString(name);
-    return q_names;
+    QStringList ret;
+    for (std::string name : _experiment->getCollectionNames())
+        ret << QString::fromStdString(name);
+    return ret;
 }
 
-QStringList SessionExperiment::getFoundNames()
+QStringList SessionExperiment::getFoundNames() const
 {
-    std::vector<std::string> names = _experiment->getFoundCollectionNames();
-    QStringList q_names;
-
-    for (std::string name : names)
-        q_names << QString::fromStdString(name);
-    return q_names;
+    QStringList ret;
+    for (std::string name : _experiment->getFoundCollectionNames())
+        ret << QString::fromStdString(name);
+    return ret;
 }
 
-QStringList SessionExperiment::getPredictedNames()
+QStringList SessionExperiment::getPredictedNames() const
 {
-    std::vector<std::string> names = _experiment->getPredictedCollectionNames();
-    QStringList q_names;
-
-    for (std::string name : names)
-        q_names << QString::fromStdString(name);
-    return q_names;
+    QStringList ret;
+    for (std::string name : _experiment->getPredictedCollectionNames())
+        ret << QString::fromStdString(name);
+    return ret;
 }
 
 
@@ -195,7 +186,7 @@ void SessionExperiment::removePeakModel(const QString& name)
     _experiment->removePeakCollection(std_name);
 }
 
-PeakCollectionModel* SessionExperiment::peakModel(const QString& name)
+const PeakCollectionModel* SessionExperiment::peakModel(const QString& name) const
 {
     std::string std_name = name.toStdString();
     for (int i = 0; i < _peak_collection_models.size(); ++i) {
@@ -205,7 +196,7 @@ PeakCollectionModel* SessionExperiment::peakModel(const QString& name)
     return nullptr;
 }
 
-PeakCollectionModel* SessionExperiment::peakModel(int i)
+PeakCollectionModel* SessionExperiment::peakModelAt(int i)
 {
     if (i >= _peak_collection_models.size())
         return nullptr;
@@ -213,38 +204,27 @@ PeakCollectionModel* SessionExperiment::peakModel(int i)
 }
 
 std::vector<nsx::Peak3D*>
-SessionExperiment::getPeaks(const QString& peakListName, int /*upperindex*/, int /*lowerindex*/)
+SessionExperiment::getPeaks(const QString& peakListName, int /*upperindex*/, int /*lowerindex*/) const
 {
-    if (!_experiment->hasPeakCollection(peakListName.toStdString())) {
-        std::vector<nsx::Peak3D*> peaks;
-        return peaks;
-    }
-
-    nsx::PeakCollection* peakCollection =
-        _experiment->getPeakCollection(peakListName.toStdString());
-
-    std::vector<nsx::Peak3D*> peaks = peakCollection->getPeakList();
-
-    return peaks;
+    if (!_experiment->hasPeakCollection(peakListName.toStdString()))
+        return {};
+    return _experiment->getPeakCollection(peakListName.toStdString())->getPeakList();
 }
 
-QStringList SessionExperiment::getUnitCellNames()
+QStringList SessionExperiment::getUnitCellNames() const
 {
-    std::vector<std::string> names = _experiment->getUnitCellNames();
-    QStringList q_names;
-
-    for (std::string name : names)
-        q_names << QString::fromStdString(name);
-    return q_names;
+    QStringList ret;
+    for (std::string name : _experiment->getUnitCellNames())
+        ret << QString::fromStdString(name);
+    return ret;
 }
 
 void SessionExperiment::changeInstrument(const QString& instrumentname)
 {
-    if (!_experiment->getData().empty())
+    if (_experiment->numData())
         return;
-
-    std::string expname = _experiment->name();
-    _experiment = std::make_shared<nsx::Experiment>(expname, instrumentname.toStdString());
+    _experiment = std::make_shared<nsx::Experiment>(
+        _experiment->name(), instrumentname.toStdString());
 }
 
 void SessionExperiment::onPeaksChanged()

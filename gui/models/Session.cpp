@@ -36,14 +36,13 @@ Session::Session()
 bool Session::createExperiment(QString experimentName, QString instrumentName)
 {
     QList<QString> temp = experimentNames();
-    QList<QString>::iterator it;
-    for (it = temp.begin(); it != temp.end(); ++it) {
+    for (QList<QString>::iterator it = temp.begin(); it != temp.end(); ++it) {
         if (*it == experimentName)
             return false;
     }
 
-    SessionExperiment* experiment = new SessionExperiment(experimentName, instrumentName);
-    _experiments.append(experiment);
+    auto experiment = std::make_unique<SessionExperiment>(experimentName, instrumentName);
+    _experiments.push_back(std::move(experiment));
     selectedExperiment_ = _experiments.size() - 1;
     onExperimentChanged();
 
@@ -53,15 +52,14 @@ bool Session::createExperiment(QString experimentName, QString instrumentName)
 bool Session::createExperiment(QString experimentName)
 {
     QList<QString> temp = experimentNames();
-    QList<QString>::iterator it;
-    for (it = temp.begin(); it != temp.end(); ++it) {
+    for (QList<QString>::iterator it = temp.begin(); it != temp.end(); ++it) {
         if (*it == experimentName)
             return false;
     }
 
-    SessionExperiment* experiment = new SessionExperiment;
+    auto experiment = std::make_unique<SessionExperiment>();
     experiment->experiment()->setName(experimentName.toStdString());
-    _experiments.append(experiment);
+    _experiments.push_back(std::move(experiment));
     selectedExperiment_ = _experiments.size() - 1;
     onExperimentChanged();
 
@@ -70,29 +68,31 @@ bool Session::createExperiment(QString experimentName)
 
 void Session::createDefaultExperiment()
 {
-    SessionExperiment* experiment = new SessionExperiment("lol", "BioDiff2500");
-    _experiments.append(experiment);
+    auto experiment = std::make_unique<SessionExperiment>("lol", "BioDiff2500");
+    _experiments.push_back(std::move(experiment));
     selectedExperiment_ = _experiments.size() - 1;
     onExperimentChanged();
 }
 
 QList<QString> Session::experimentNames() const
 {
-    QList<QString> names;
-
+    QList<QString> ret;
     for (int i = 0; i < _experiments.size(); i++)
-        names.append(QString::fromStdString(_experiments.at(i)->experiment()->name()));
-    return names;
+        ret.append(QString::fromStdString(_experiments.at(i)->experiment()->name()));
+    return ret;
 }
 
 void Session::removeExperiment()
 {
+    std::cerr << "TODO: implement Session::removeExperiment\n";
+/*
     if (_experiments.size() == 0)
         return;
     if (selectedExperiment_ == -1)
         _experiments.removeFirst();
 
     selectedExperiment_ = _experiments.size() > 0 ? 0 : -1;
+*/
     onExperimentChanged();
 }
 
@@ -101,11 +101,6 @@ void Session::selectExperiment(int select)
     if (select < _experiments.size() && select >= 0)
         selectedExperiment_ = select;
     onExperimentChanged();
-}
-
-SessionExperiment* Session::selectedExperiment()
-{
-    return _experiments.at(selectedExperiment_);
 }
 
 void Session::loadData()
@@ -125,7 +120,7 @@ void Session::loadData()
 
     for (QString filename : filenames) {
         QFileInfo fileinfo(filename);
-        nsx::sptrExperiment exp = selectedExperiment()->experiment();
+        nsx::Experiment* exp = selectedExperiment()->experiment();
 
         // If the experiment already stores the current numor, skip it
         if (exp->hasData(filename.toStdString()))
@@ -146,9 +141,9 @@ void Session::removeData()
 {
     if (selectedExperiment_ == -1)
         return;
-
     if (selectedData == -1)
         return;
+
     std::string numorname = selectedExperiment()->getData(selectedData)->filename();
     selectedExperiment()->experiment()->removeData(numorname);
     onDataChanged();
@@ -160,7 +155,6 @@ void Session::loadRawData()
         createDefaultExperiment();
 
     QStringList qfilenames = QFileDialog::getOpenFileNames();
-
     if (qfilenames.empty())
         return;
 
@@ -168,15 +162,13 @@ void Session::loadRawData()
     loadDirectory = info.absolutePath();
 
     std::vector<std::string> filenames;
-
     for (QString filename : qfilenames)
         filenames.push_back(filename.toStdString());
 
     RawDataDialog dialog;
-
     if (!dialog.exec())
         return;
-    nsx::sptrExperiment exp = selectedExperiment()->experiment();
+    nsx::Experiment* exp = selectedExperiment()->experiment();
 
     // If the experience already stores the current numor, skip it
     if (exp->hasData(filenames[0]))

@@ -71,7 +71,7 @@ bool ShapeIntegrator::compute(
     return true;
 }
 
-ShapeLibrary* ShapeIntegrator::library() const
+const ShapeLibrary* ShapeIntegrator::library() const
 {
     return _library;
 }

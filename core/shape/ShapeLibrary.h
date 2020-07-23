@@ -64,7 +64,7 @@ struct FitData;
 
 //! Helper function for predicting peaks
 std::vector<Peak3D*> predictPeaks(
-    ShapeLibrary* library, sptrDataSet data, UnitCell* unit_cell, double dmin, double dmax,
+    const ShapeLibrary* library, const sptrDataSet data, const UnitCell* unit_cell, double dmin, double dmax,
     double radius, double nframes, int min_neighbors, PeakInterpolation interpolation);
 
 //! Store a library of peak shapes, to be used for peak prediction and integration.
@@ -136,19 +136,19 @@ class ShapeLibrary {
     std::map<Peak3D*, std::pair<Profile3D, Profile1D>> profiles() const;
 
     //! Return number of peaks in library
-    int numberOfPeaks() { return _profiles.size(); };
+    int numberOfPeaks() const { return _profiles.size(); };
 
     //! Return number of peaks with no neighbours
-    int nLonelyPeaks() { return _n_lonely_peaks; };
+    int nLonelyPeaks() const { return _n_lonely_peaks; };
 
     //! Return number of peaks with too few neighbours
-    int nUnfriendlyPeaks() { return _n_unfriendly_peaks; };
+    int nUnfriendlyPeaks() const { return _n_unfriendly_peaks; };
 
     //! Return number of failed interpolations
-    int nFailedInterp() { return _n_failed_interp; };
+    int nFailedInterp() const { return _n_failed_interp; };
 
     //! Return number of cases of no neighbouring profiles
-    int nNoProfile() { return _n_no_profile; };
+    int nNoProfile() const { return _n_no_profile; };
 
  private:
     //! Predict the (detector space) covariance given the fit data

@@ -49,9 +49,9 @@ PeakItemGraphic::PeakItemGraphic(nsx::Peak3D* peak)
 void PeakItemGraphic::redraw()
 {
     QString peak_label;
-    nsx::UnitCell* unit_cell = _peak->unitCell();
+    const nsx::UnitCell* unit_cell = _peak->unitCell();
     if (unit_cell) {
-        nsx::MillerIndex miller_index(_peak->q(), *unit_cell);
+        const nsx::MillerIndex miller_index(_peak->q(), *unit_cell);
         if (miller_index.indexed(unit_cell->indexingTolerance())) {
             peak_label =
                 QString("%1,%2,%3").arg(miller_index[0]).arg(miller_index[1]).arg(miller_index[2]);
@@ -187,7 +187,7 @@ void PeakItemGraphic::plot(SXPlot* plot)
     QVector<double> q_error(N);
 
     // Copy the data
-    double center = std::round(_peak->shape().center()(2));
+    const double center = std::round(_peak->shape().center()(2));
 
     for (int i = 0; i < N; ++i) {
         q_frames[i] = center - i / 2.0;
@@ -200,8 +200,8 @@ void PeakItemGraphic::plot(SXPlot* plot)
     // Now update text info:
     QString info;
 
-    if (nsx::UnitCell* cell = _peak->unitCell()) {
-        nsx::MillerIndex miller_index(_peak->q(), *cell);
+    if (const nsx::UnitCell* cell = _peak->unitCell()) {
+        const nsx::MillerIndex miller_index(_peak->q(), *cell);
         if (miller_index.indexed(cell->indexingTolerance())) {
             info = "(h,k,l):" + QString::number(miller_index[0]) + ","
                 + QString::number(miller_index[1]) + "," + QString::number(miller_index[2]);
@@ -213,25 +213,23 @@ void PeakItemGraphic::plot(SXPlot* plot)
     }
 
     const Eigen::Vector3d c = _peak->shape().center();
-    nsx::InterpolatedState state = _peak->dataSet()->instrumentStates().interpolate(c[2]);
-    nsx::DirectVector position =
+    const nsx::InterpolatedState state = _peak->dataSet()->instrumentStates().interpolate(c[2]);
+    const nsx::DirectVector position =
         _peak->dataSet()->reader()->diffractometer()->detector()->pixelPosition(c[0], c[1]);
-    double g = state.gamma(position);
-    double n = state.nu(position);
-    g /= nsx::deg;
-    n /= nsx::deg;
+    const double g = state.gamma(position) / nsx::deg;
+    const double n = state.nu(position) / nsx::deg;
     info += " " + QString(QChar(0x03B3)) + "," + QString(QChar(0x03BD)) + ":"
         + QString::number(g, 'f', 2) + "," + QString::number(n, 'f', 2) + "\n";
-    nsx::Intensity corr_int = _peak->correctedIntensity();
-    double intensity = corr_int.value();
-    double sI = corr_int.sigma();
+    const nsx::Intensity corr_int = _peak->correctedIntensity();
+    const double intensity = corr_int.value();
+    const double sI = corr_int.sigma();
     info += "Intensity (" + QString(QChar(0x03C3)) + "I): " + QString::number(intensity) + " ("
         + QString::number(sI, 'f', 2) + ")\n";
     info += "Cor. int. (" + QString(QChar(0x03C3)) + "I): " + QString::number(intensity, 'f', 2)
         + " (" + QString::number(sI, 'f', 2) + ")\n";
 
-    double scale = _peak->scale();
-    double monitor = _peak->dataSet()->reader()->metadata().key<double>("monitor");
+    const double scale = _peak->scale();
+    const double monitor = _peak->dataSet()->reader()->metadata().key<double>("monitor");
     info += "Monitor " + QString::number(monitor * scale) + " counts";
     QCPTextElement* title = dynamic_cast<QCPTextElement*>(p->plotLayout()->element(0, 0));
     if (title != nullptr)

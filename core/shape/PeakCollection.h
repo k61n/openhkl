@@ -46,7 +46,8 @@ class PeakCollection {
     //! Reset the peaks
     void reset();
     //! Returns the peak with the given index
-    nsx::Peak3D* getPeak(int index);
+    const nsx::Peak3D* getPeak(int index) const { return _peaks.at(index).get(); }
+    nsx::Peak3D* getPeak(int index) { return _peaks.at(index).get(); }
 
     //! Returns the peak with index
     std::vector<nsx::Peak3D*> getPeakList() const;
@@ -59,7 +60,7 @@ class PeakCollection {
     void setType(listtype type) { _type = type; };
 
     //! Returns the amount of peaks
-    int numberOfPeaks() const;
+    int numberOfPeaks() const { return _peaks.size(); }
     //! Returns the amount of valid peaks
     int numberOfValid() const;
     //! Returns the amount of invalid peaks

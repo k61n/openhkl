@@ -39,20 +39,20 @@ QVariant PeakItem::peakData(const QModelIndex& index, int role, PeakDisplayModes
     Eigen::RowVector3i hkl = {0, 0, 0};
     Eigen::RowVector3d hkl_error = {0.0, 0.0, 0.0};
 
-    nsx::UnitCell* cell = _peak->unitCell();
+    const nsx::UnitCell* cell = _peak->unitCell();
 
     if (cell) {
-        nsx::MillerIndex miller_index(_peak->q(), *cell);
+        const nsx::MillerIndex miller_index(_peak->q(), *cell);
         if (miller_index.indexed(cell->indexingTolerance())) {
             hkl = miller_index.rowVector();
             hkl_error = miller_index.error();
         }
     }
 
-    double peak_d = 1.0 / (_peak->q().rowVector().norm());
-    double intensity = _peak->correctedIntensity().value();
-    double sigma_intensity = _peak->correctedIntensity().sigma();
-    double strength = _peak->correctedIntensity().strength();
+    const double peak_d = 1.0 / (_peak->q().rowVector().norm());
+    const double intensity = _peak->correctedIntensity().value();
+    const double sigma_intensity = _peak->correctedIntensity().sigma();
+    const double strength = _peak->correctedIntensity().strength();
     const Eigen::Vector3d& peak_center = _peak->shape().center();
 
     switch (role) {
@@ -90,7 +90,7 @@ QVariant PeakItem::peakData(const QModelIndex& index, int role, PeakDisplayModes
                     return _peak->dataSet()->reader()->metadata().key<int>("Numor");
                 }
                 case Column::uc: {
-                    nsx::UnitCell* unit_cell = _peak->unitCell();
+                    const nsx::UnitCell* unit_cell = _peak->unitCell();
                     if (unit_cell)
                         return QString::fromStdString(unit_cell->name());
                     else

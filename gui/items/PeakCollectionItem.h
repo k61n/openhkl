@@ -23,12 +23,12 @@
 class PeakCollectionItem {
  public:
     PeakCollectionItem();
-    PeakCollectionItem(nsx::PeakCollection* peak_collection);
+    PeakCollectionItem(const nsx::PeakCollection* peak_collection);
     ~PeakCollectionItem() = default;
 
  public:
     //! Set the peak collection
-    void setPeakCollection(nsx::PeakCollection* peak_collection);
+    void setPeakCollection(const nsx::PeakCollection* peak_collection);
     //! Retrieve the name of the collection if present
     std::string name() const;
     //! Retrieve the number of children of this item
@@ -38,7 +38,7 @@ class PeakCollectionItem {
     //! Retrieve the data of column and row
     QVariant data(const QModelIndex& index, int role = Qt::DisplayRole) const;
     //! Get the peak collection pointer
-    nsx::PeakCollection* peakCollection() const { return _peak_collection; };
+    const nsx::PeakCollection* peakCollection() const { return _peak_collection; };
     //! Get the peak items pointer
     std::vector<PeakItem*> peakItems() const;
     //! Returns the peak item at a given row
@@ -59,7 +59,7 @@ class PeakCollectionItem {
     int numberOfPeaks(void) const;
 
  private:
-    nsx::PeakCollection* _peak_collection;
+    const nsx::PeakCollection* _peak_collection;
     std::vector<std::unique_ptr<PeakItem>> _peak_items;
     PeakDisplayModes _mode;
 };

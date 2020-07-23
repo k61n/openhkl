@@ -89,10 +89,9 @@ class Peak3D {
     double transmission() const;
 
     //! Add a unit cell to the peak, optionally make it the active cell
-    void setUnitCell(sptrUnitCell uc);
-    void setUnitCell(UnitCell* uc);
+    void setUnitCell(const UnitCell* uc);
     //! Returns the active unit cell
-    UnitCell* unitCell() const;
+    const UnitCell* unitCell() const;
 
     //! Sets whether the peak is observed or predicted
     void setPredicted(bool predicted);
@@ -144,7 +143,7 @@ class Peak3D {
     //! Shape scale factor for end of background
     double _bkgEnd;
 
-    UnitCell* _unitCell;
+    const UnitCell* _unitCell;
 
     double _scale;
     bool _selected;
