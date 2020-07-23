@@ -35,7 +35,7 @@ RefinementBatch::RefinementBatch(
     , _cell(uc)
     , _peaks(peaks)
 {
-    for (auto peak : peaks) {
+    for (const auto* peak : peaks) {
         const double z = peak->shape().center()[2];
         _fmin = std::min(z, std::floor(_fmin));
         _fmax = std::max(z, std::ceil(_fmax));
@@ -46,14 +46,14 @@ RefinementBatch::RefinementBatch(
     _fmax += g_eps;
 
     _hkls.reserve(_peaks.size());
-    for (auto peak : _peaks) {
+    for (const auto* peak : _peaks) {
         MillerIndex hkl(peak->q(), *_cell);
         _hkls.push_back(hkl.rowVector().cast<double>());
 
         Eigen::Vector3d c = peak->shape().center();
         Eigen::Matrix3d M = peak->shape().metric();
-        auto state = peak->dataSet()->instrumentStates().interpolate(c[2]);
-        Eigen::Matrix3d J = state.jacobianQ(c[0], c[1]);
+        Eigen::Matrix3d J =
+            peak->dataSet()->instrumentStates().interpolate(c[2]).jacobianQ(c[0], c[1]);
         Eigen::Matrix3d JI = J.inverse();
         Eigen::Matrix3d A = JI.transpose() * M * JI;
         Eigen::SelfAdjointEigenSolver<Eigen::Matrix3d> solver(A);
@@ -159,7 +159,7 @@ bool RefinementBatch::refine(unsigned int max_iter)
     min.set_f([&](Eigen::VectorXd& fvec) { return residuals(fvec); });
     bool success = min.fit(max_iter);
 
-    for (auto state : _states)
+    for (const auto state : _states)
         state.get().refined = success;
 
     _cell->updateParameters(_u0, _uOffsets, _cellParameters);
@@ -216,10 +216,10 @@ Eigen::MatrixXd RefinementBatch::constraintKernel() const
     std::vector<std::vector<double>> columns;
 
     // columns corresponding to the constrained parameters
-    for (auto&& constraint : _constraints) {
+    for (const std::vector<int>& constraint : _constraints) {
         std::vector<double> column(nparams, 0.0);
 
-        for (auto idx : constraint) {
+        for (const int idx : constraint) {
             column[idx] = 1.0;
             is_free[idx] = false;
         }
@@ -228,7 +228,7 @@ Eigen::MatrixXd RefinementBatch::constraintKernel() const
     }
 
     // columns corresponding to the free parameters
-    for (auto idx = 0; idx < nparams; ++idx) {
+    for (int idx = 0; idx < nparams; ++idx) {
         if (!is_free[idx])
             continue;
         std::vector<double> column(nparams, 0.0);
