@@ -16,14 +16,14 @@
 #define NSX_GUI_MODELS_SESSIONEXPERIMENT_H
 
 #include "core/experiment/Experiment.h"
-#include "core/instrument/InstrumentTypes.h"
 
-#include "core/shape/ShapeLibrary.h"
-#include "tables/crystal/UnitCell.h"
-
-#include "core/peak/Peak3D.h"
-#include "core/shape/PeakCollection.h"
-#include "gui/models/PeakCollectionModel.h"
+namespace nsx {
+class Peak3D;
+class PeakCollection;
+class UnitCell;
+}
+class PeakCollectionItem;
+class PeakCollectionModel;
 
 //! Controls and handles the Experiment and its Peaks and UnitCells
 class SessionExperiment {

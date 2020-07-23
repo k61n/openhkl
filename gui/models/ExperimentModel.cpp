@@ -14,6 +14,7 @@
 
 #include "gui/models/ExperimentModel.h"
 #include "gui/models/Session.h"
+#include <QColor>
 
 ExperimentModel::ExperimentModel(QObject* parent) : QAbstractTableModel(parent) {}
 

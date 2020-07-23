@@ -13,23 +13,8 @@
 //  ***********************************************************************************************
 
 #include "gui/models/SessionExperiment.h"
-
 #include "core/data/DataSet.h"
-#include "core/instrument/HardwareParameters.h"
-#include "core/integration/GaussianIntegrator.h"
-#include "core/integration/ISigmaIntegrator.h"
-#include "core/integration/MeanBackgroundIntegrator.h"
-#include "core/integration/PixelSumIntegrator.h"
-#include "core/integration/Profile1DIntegrator.h"
-#include "core/integration/Profile3DIntegrator.h"
-#include "core/shape/PeakFilter.h"
-
 #include "gui/MainWin.h"
-#include "gui/dialogs/IntegrateDialog.h"
-#include "gui/frames/ProgressView.h"
-#include "gui/items/PeakCollectionItem.h"
-#include "gui/models/Session.h"
-
 #include <QDebug>
 #include <QStringList>
 #include <iostream>

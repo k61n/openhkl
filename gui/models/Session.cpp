@@ -16,14 +16,11 @@
 
 #include "core/algo/DataReaderFactory.h"
 #include "core/data/DataSet.h"
-#include "core/instrument/HardwareParameters.h"
 #include "core/loader/RawDataReader.h"
 #include "core/raw/IDataReader.h"
 
 #include "gui/MainWin.h"
-#include "gui/dialogs/ExperimentDialog.h"
 #include "gui/dialogs/RawDataDialog.h"
-#include "gui/graphics/DetectorScene.h"
 
 Session* gSession;
 
