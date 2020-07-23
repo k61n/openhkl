@@ -67,7 +67,7 @@ class Project {
     void saveAs(QString /*path*/) const { return; };
 
  private:
-    std::shared_ptr<nsx::Experiment> _experiment;
+    std::unique_ptr<nsx::Experiment> _experiment;
 
     std::vector<PeakCollectionModel*> _peak_collection_models;
     std::vector<PeakCollectionItem*> _peak_collection_items;

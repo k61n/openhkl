@@ -205,8 +205,7 @@ void Project::changeInstrument(const QString& instrumentname)
 {
     if (_experiment->numData())
         return;
-    _experiment =
-        std::make_shared<nsx::Experiment>(_experiment->name(), instrumentname.toStdString());
+    _experiment.reset(new nsx::Experiment{_experiment->name(), instrumentname.toStdString()});
 }
 
 void Project::onPeaksChanged()
