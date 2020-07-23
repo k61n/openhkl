@@ -10,8 +10,8 @@ import sys
 import os.path
 import logging
 from pdb import set_trace
-sys.path.push_back("/home/zamaan/codes/nsxtool/develop/build/swig")
-sys.path.push_back("/G/sw/nsx/build/swig") # Joachim
+sys.path.append("/home/zamaan/codes/nsxtool/develop/build/swig")
+sys.path.append("/G/sw/nsx/build/swig") # Joachim
 import pynsx as nsx
 
 
@@ -108,7 +108,7 @@ class Experiment:
 
         self.log(f'dataset {data_name}: nframes = {data.nFrames()}')
         self._expt.addData(data_name, data)
-        self._data_sets.push_back(data_name)
+        self._data_sets.append(data_name)
 
     def get_number_of_peaks(self, collection):
         return self._expt.getPeakCollection(collection).numberOfPeaks()
