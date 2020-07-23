@@ -15,9 +15,14 @@
 #ifndef NSX_GUI_MODELS_SESSIONEXPERIMENT_H
 #define NSX_GUI_MODELS_SESSIONEXPERIMENT_H
 
-#include "core/experiment/Experiment.h"
+#include <QStringList>
+#include <memory>
+#include <string>
+#include <vector>
 
 namespace nsx {
+class DataSet;
+class Experiment;
 class Peak3D;
 class PeakCollection;
 class UnitCell;
@@ -32,13 +37,13 @@ class Project {
     Project(QString name, QString instrument);
     Project(const Project&) = delete;
 
-    const nsx::Experiment* experiment() const { return _experiment.get(); }
-    nsx::Experiment* experiment() { return _experiment.get(); }
+    const nsx::Experiment* experiment() const;
+    nsx::Experiment* experiment();
     QStringList getDataNames() const;
-    nsx::sptrDataSet getData(int index = -1) const;
-    std::vector<nsx::sptrDataSet> allData() const;
+    std::shared_ptr<nsx::DataSet> getData(int index = -1) const;
+    std::vector<std::shared_ptr<nsx::DataSet>> allData() const;
     int getIndex(const QString&) const;
-    void selectData(int selected) { _dataIndex = selected; }
+    void selectData(int selected);
     void changeInstrument(const QString& instrumentname);
     bool saved() const { return _saved; };
 
@@ -49,7 +54,7 @@ class Project {
     QStringList getFoundNames() const;
     QStringList getPredictedNames() const;
 
-    int numPeakCollections() const { return _experiment->numPeakCollections(); };
+    int numPeakCollections() const;
 
     void generatePeakModel(const QString& peakListName);
     void generatePeakModels();
@@ -61,7 +66,7 @@ class Project {
 
     void addUnitCell(std::string& name, nsx::UnitCell* unit_cell);
     QStringList getUnitCellNames() const;
-    int numUnitCells() const { return _experiment->numUnitCells(); };
+    int numUnitCells() const;
 
     void saveToFile(QString path);
     void saveAs(QString /*path*/) const { return; };

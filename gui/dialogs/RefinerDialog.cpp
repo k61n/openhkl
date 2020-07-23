@@ -13,14 +13,13 @@
 //  ***********************************************************************************************
 
 #include "gui/dialogs/RefinerDialog.h"
-
 #include "core/algo/Refiner.h"
 #include "core/data/DataSet.h"
 #include "core/data/DataTypes.h"
+#include "core/experiment/Experiment.h"
 #include "core/peak/Peak3D.h"
 #include "gui/models/Meta.h"
 #include "gui/models/Session.h"
-
 #include <QDebug>
 #include <QFileInfo>
 #include <QGridLayout>

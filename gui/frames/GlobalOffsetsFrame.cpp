@@ -13,10 +13,10 @@
 //  ***********************************************************************************************
 
 #include "gui/frames/GlobalOffsetsFrame.h"
-
 #include "base/utils/Units.h"
 #include "core/algo/GonioFit.h"
 #include "core/data/DataSet.h"
+#include "core/experiment/Experiment.h"
 #include "gui/models/Meta.h"
 #include "gui/models/Session.h"
 #include <QFileInfo>

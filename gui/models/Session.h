@@ -16,6 +16,7 @@
 #define NSX_GUI_MODELS_SESSION_H
 
 #include "gui/models/Project.h"
+#include "core/experiment/Experiment.h"
 
 extern class Session* gSession; //!< global handle for Session
 

@@ -13,7 +13,7 @@
 //  ***********************************************************************************************
 
 #include "gui/dialogs/AbsorptionDialog.h"
-
+#include "core/experiment/Experiment.h"
 #include "gui/models/Session.h"
 #include <QFileDialog>
 #include <QGraphicsView>

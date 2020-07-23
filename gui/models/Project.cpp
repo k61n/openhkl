@@ -14,6 +14,7 @@
 
 #include "gui/models/Project.h"
 #include "core/data/DataSet.h"
+#include "core/experiment/Experiment.h"
 #include "gui/MainWin.h"
 #include <QDebug>
 #include <QStringList>
@@ -24,6 +25,9 @@ Project::Project(QString name, QString instrument)
     : _experiment {new nsx::Experiment {name.toStdString(), instrument.toStdString()}}
 {
 }
+
+const nsx::Experiment* Project::experiment() const { return _experiment.get(); }
+nsx::Experiment* Project::experiment() { return _experiment.get(); }
 
 QStringList Project::getDataNames() const
 {
@@ -53,6 +57,8 @@ int Project::getIndex(const QString& dataname) const
     QStringList liste = getDataNames();
     return liste.indexOf(dataname);
 }
+
+void Project::selectData(int selected) { _dataIndex = selected; }
 
 std::vector<nsx::sptrDataSet> Project::allData() const
 {
@@ -86,6 +92,7 @@ QStringList Project::getPredictedNames() const
     return ret;
 }
 
+int Project::numPeakCollections() const { return _experiment->numPeakCollections(); }
 
 void Project::generatePeakModel(const QString& peakListName)
 {
@@ -200,6 +207,8 @@ QStringList Project::getUnitCellNames() const
         ret << QString::fromStdString(name);
     return ret;
 }
+
+int Project::numUnitCells() const { return _experiment->numUnitCells(); }
 
 void Project::changeInstrument(const QString& instrumentname)
 {

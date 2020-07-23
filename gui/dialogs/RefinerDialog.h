@@ -17,10 +17,8 @@
 
 #include "core/algo/Refiner.h"
 #include "gui/views/PeakTableView.h"
-
 #include "gui/graphics/SXPlot.h"
 #include "gui/utility/QScienceSpinBox.h"
-
 #include <QCheckBox>
 #include <QComboBox>
 #include <QDialog>
