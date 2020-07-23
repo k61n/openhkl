@@ -53,7 +53,7 @@ TEST_CASE("test/crystal/TestRefiner.cpp", "")
 
     auto callback = [progressHandler]() {
         auto log = progressHandler->getLog();
-        for (auto&& msg : log)
+        for (const auto& msg : log)
             std::cout << msg << std::endl;
     };
 
@@ -139,7 +139,7 @@ TEST_CASE("test/crystal/TestRefiner.cpp", "")
     CHECK(std::abs((cell->reciprocalBasis() - constrained_cell.reciprocalBasis()).norm()) < 1e-6);
 
     std::vector<nsx::Peak3D*> peaks;
-    for (auto&& peak : filtered_peaks->getPeakList()) {
+    for (const auto& peak : filtered_peaks->getPeakList()) {
         peak->setUnitCell(cell.get());
         peaks.push_back(peak);
     }
@@ -149,7 +149,7 @@ TEST_CASE("test/crystal/TestRefiner.cpp", "")
 
     CHECK(refiner.batches().size() == 1);
 
-    for (auto&& batch : refiner.batches())
+    for (const auto& batch : refiner.batches())
         CHECK(batch.peaks().size() > 200);
 
     refiner.refineUB();

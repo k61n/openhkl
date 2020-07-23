@@ -107,7 +107,7 @@ void UserDefinedUnitCellIndexer::index()
     // // Compute the dmin and dmax form the input q vectors
     // double dmin(std::numeric_limits<double>::infinity());
     // double dmax(-std::numeric_limits<double>::infinity());
-    // for (auto&& p : q_vectors_mmap) {
+    // for (const auto& p : q_vectors_mmap) {
     //     const double d = 1.0 / p.first;
     //     dmin = std::min(d, dmin);
     //     dmax = std::max(d, dmax);

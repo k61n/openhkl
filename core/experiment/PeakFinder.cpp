@@ -447,7 +447,7 @@ void PeakFinder::findCollisions(
 
     std::vector<const Ellipsoid*> xyz_sorted_ellipsoids;
     xyz_sorted_ellipsoids.reserve(boxes.size());
-    for (auto&& it : boxes)
+    for (const auto& it : boxes)
         xyz_sorted_ellipsoids.push_back(it.first);
 
     // Sort the ellipsoid by increasing x, y and z
@@ -477,7 +477,7 @@ void PeakFinder::findCollisions(
     for (auto it : xyz_sorted_ellipsoids)
         oct.addData(it);
 
-    auto collisions = oct.getCollisions();
+    const std::set<std::pair<const Ellipsoid*, const Ellipsoid*>>& collisions = oct.getCollisions();
 
     // dummies used to help progress handler
     dummy = 0;
@@ -487,8 +487,8 @@ void PeakFinder::findCollisions(
         magic = 1;
 
     for (auto&& it = collisions.begin(); it != collisions.end(); ++it) {
-        auto&& bit1 = boxes.find(it->first);
-        auto&& bit2 = boxes.find(it->second);
+        const auto& bit1 = boxes.find(it->first);
+        const auto& bit2 = boxes.find(it->second);
         registerEquivalence(bit1->second, bit2->second, equivalences);
 
         // update progress handler
@@ -508,7 +508,7 @@ void PeakFinder::findCollisions(
     }
 
     // free memory stored in unordered map
-    for (auto&& it : boxes)
+    for (const auto& it : boxes)
         delete it.first;
 }
 
@@ -584,7 +584,7 @@ void PeakFinder::find(DataList numors)
     _current_data = numors;
 
     int i = 0;
-    for (auto&& numor : numors) {
+    for (const auto& numor : numors) {
         if (numors.size() > 1)
             qDebug("  numor %i\n", ++i);
         PeakList numor_peaks;
@@ -625,7 +625,7 @@ void PeakFinder::find(DataList numors)
 
         qDebug("PeakFinder::find: blob loop");
         // merge the blobs into the global set
-        for (auto&& blob : local_blobs)
+        for (const auto& blob : local_blobs)
             blobs.insert(blob);
 
         mergeCollidingBlobs(*numor, blobs);

@@ -49,9 +49,9 @@ void collision_test()
 
     // check that the data was inserted correctly
     unsigned int numChambers = 0;
-    for (auto&& chamber : tree) {
+    for (const auto& chamber : tree) {
         numChambers += 1;
-        for (auto&& ellipsoid : chamber.getData())
+        for (const auto& ellipsoid : chamber.getData())
             test_set.insert(ellipsoid);
     }
 
@@ -107,9 +107,9 @@ void collision_test_2()
 
     // check that the data was inserted correctly
     unsigned int numChambers = 0;
-    for (auto&& chamber : tree) {
+    for (const auto& chamber : tree) {
         numChambers += 1;
-        for (auto&& ellipsoid : chamber.getData())
+        for (const auto& ellipsoid : chamber.getData())
             test_set.insert(ellipsoid);
     }
 
@@ -158,21 +158,21 @@ void split_test()
     ellipsoids.emplace_back(new nsx::Ellipsoid(Eigen::Vector3d(37.5, 37.5, 12.5), vals, vects));
     ellipsoids.emplace_back(new nsx::Ellipsoid(Eigen::Vector3d(37.5, 37.5, 37.5), vals, vects));
 
-    for (auto&& ellipsoid : ellipsoids)
+    for (const auto& ellipsoid : ellipsoids)
         tree.addData(ellipsoid);
 
     // check that it split properly
     CHECK(tree.numChambers() == 8);
 
     // check that the data was inserted correctly
-    for (auto&& chamber : tree)
+    for (const auto& chamber : tree)
         CHECK(chamber.getData().size() == 1);
 
     // check that the collisions with chambers make sense
-    for (auto&& ellipsoid : ellipsoids) {
+    for (const auto& ellipsoid : ellipsoids) {
         unsigned int num_intercept = 0;
 
-        for (auto&& chamber : tree) {
+        for (const auto& chamber : tree) {
             CHECK(ellipsoid->collide(chamber) == chamber.collide(*ellipsoid));
 
             if (ellipsoid->collide(chamber)) {

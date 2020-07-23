@@ -287,7 +287,7 @@ void DataSet::maskPeaks(PeakList& peaks) const
             continue;
 
         peak->setMasked(false);
-        for (auto&& m : _masks) {
+        for (const auto& m : _masks) {
             // If the background of the peak intercept the mask, unselected the peak
             if (m->collide(peak->shape())) {
                 peak->setMasked(true);

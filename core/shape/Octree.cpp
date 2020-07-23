@@ -111,7 +111,7 @@ std::set<Octree::collision_pair> Octree::getCollisions() const
     std::set<collision_pair> collisions;
 
     // loop over chambers of the ndtree
-    for (auto&& chamber : *this) {
+    for (const auto& chamber : *this) {
         // loop over ellipsoids in the chamber
         for (size_t i = 0; i < chamber._data.size(); ++i) {
             for (size_t j = i + 1; j < chamber._data.size(); ++j) {
@@ -147,13 +147,13 @@ std::set<const Ellipsoid*> Octree::getCollisions(const Ellipsoid& given) const
 
         // tree has children
         if (tree->hasChildren()) {
-            for (auto&& child : tree->_children)
+            for (const auto& child : tree->_children)
                 recursiveCollisions(&child, collisions);
             return;
         }
 
         // otherwise, tree has no children
-        for (auto&& ellipsoid : tree->_data) {
+        for (const auto& ellipsoid : tree->_data) {
             if (ellipsoid->collide(given))
                 collisions.emplace(ellipsoid);
         }
@@ -163,7 +163,7 @@ std::set<const Ellipsoid*> Octree::getCollisions(const Ellipsoid& given) const
     return collisions;
 }
 
-bool Octree::isInsideObject(const Eigen::Vector3d& vector)
+bool Octree::isInsideObject(const Eigen::Vector3d& vector) const
 {
     // chamber's box does not intercept tree
     if (!isInside(vector))
@@ -171,7 +171,7 @@ bool Octree::isInsideObject(const Eigen::Vector3d& vector)
 
     // tree has children
     if (hasChildren()) {
-        for (auto&& child : _children) {
+        for (const auto& child : _children) {
             if (child.isInsideObject(vector))
                 return true;
         }
@@ -179,7 +179,7 @@ bool Octree::isInsideObject(const Eigen::Vector3d& vector)
     }
 
     // otherwise, tree has no children
-    for (auto&& ellipsoid : _data) {
+    for (const auto& ellipsoid : _data) {
         if (ellipsoid->isInside(vector))
             return true;
     }
@@ -188,7 +188,7 @@ bool Octree::isInsideObject(const Eigen::Vector3d& vector)
     return false;
 }
 
-void Octree::getVoxels(std::vector<AABB*>& voxels)
+void Octree::getVoxels(std::vector<AABB*>& voxels) // TODO make this const
 {
     voxels.push_back(this);
     if (hasChildren()) {
@@ -343,7 +343,7 @@ unsigned int Octree::numChambers() const
 {
     if (hasChildren()) {
         unsigned int count = 0;
-        for (auto&& child : _children)
+        for (const auto& child : _children)
             count += child.numChambers();
         return count;
     }

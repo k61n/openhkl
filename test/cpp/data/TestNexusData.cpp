@@ -36,7 +36,7 @@ TEST_CASE("test/data/TestNexusData.cpp", "")
     nsx::sptrProgressHandler progressHandler(new nsx::ProgressHandler);
     progressHandler->setCallback([progressHandler]() {
         auto log = progressHandler->getLog();
-        for (auto&& msg : log)
+        for (const auto& msg : log)
             std::cerr << msg << std::endl;
     });
 

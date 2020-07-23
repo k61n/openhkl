@@ -369,7 +369,7 @@ char SpaceGroup::bravaisType() const
     int nPureTrans(0);
     const int isCentro = isCentrosymmetric() ? 2 : 1;
 
-    for (auto&& g : _groupElements) {
+    for (const auto& g : _groupElements) {
         assert(g.getAxisOrder() + 6 >= 0);
         size_t idx = size_t(g.getAxisOrder() + 6);
         ++nrot[idx];
@@ -405,7 +405,7 @@ double SpaceGroup::fractionExtinct(const MillerIndexList& hkls) const
     unsigned int extinct = 0;
     unsigned int total = hkls.size();
 
-    for (auto&& hkl : hkls) {
+    for (const auto& hkl : hkls) {
         if (isExtinct(hkl)) {
             ++extinct;
         }
@@ -433,7 +433,7 @@ int SpaceGroup::id() const
 
 bool SpaceGroup::isCentrosymmetric() const
 {
-    for (auto&& g : _groupElements) {
+    for (const auto& g : _groupElements) {
         if (g.getAxisOrder() == -1)
             return true;
     }
@@ -463,7 +463,7 @@ void SpaceGroup::generateGroupElements()
     generators.reserve(gens.size() + 1);
     generators.emplace_back(SymOp(affineTransformation::Identity()));
 
-    for (auto&& g : gens) {
+    for (const auto& g : gens) {
         auto&& gen = SymOp(g);
         generators.emplace_back(gen);
     }
@@ -474,7 +474,7 @@ void SpaceGroup::generateGroupElements()
     while (oldSize != _groupElements.size()) {
         oldSize = _groupElements.size();
         for (unsigned int i = 0; i < _groupElements.size(); ++i) {
-            for (auto&& g : generators) {
+            for (const auto& g : generators) {
                 auto newElement = _groupElements[i] * g;
                 auto it = std::find(_groupElements.begin(), _groupElements.end(), newElement);
                 if (it == _groupElements.end())
@@ -492,7 +492,7 @@ bool SpaceGroup::isExtinct(const MillerIndex& hkl) const
 
     Eigen::Vector3d hkld = hkl.rowVector().transpose().cast<double>();
 
-    for (auto&& element : _groupElements) {
+    for (const auto& element : _groupElements) {
         if (element.hasTranslation()) {
             Eigen::Vector3d t = element.getTranslationPart();
             double scalar = t.dot(hkld);
@@ -514,7 +514,7 @@ bool SpaceGroup::isExtinct(const MillerIndex& hkl) const
 void SpaceGroup::print(std::ostream& os) const
 {
     os << "Symmetry elements of space group " << _symbol << std::endl;
-    for (auto&& g : _groupElements)
+    for (const auto& g : _groupElements)
         os << g << " ; ";
     os << std::endl;
 }
@@ -540,7 +540,7 @@ bool SpaceGroup::isEquivalent(const MillerIndex& hkl1, const MillerIndex& hkl2, 
     if (std::abs(norm_1 - norm_2) > eps)
         return false;
 
-    for (auto&& element : elements) {
+    for (const auto& element : elements) {
         // todo(jonathan): check that this edit is correct!
         const Eigen::Matrix3d rotation = element.getRotationPart().transpose();
         const Eigen::RowVector3d rotated = hkl1d * rotation;

@@ -76,7 +76,7 @@ void MergedPeak::determineRepresentativeHKL()
     Eigen::RowVector3d best_hkl = _hkl.rowVector().cast<double>();
     std::vector<Eigen::RowVector3d> equivs;
 
-    for (auto&& g : _grp.groupElements()) {
+    for (const auto& g : _grp.groupElements()) {
         const Eigen::Matrix3d rotation = g.getRotationPart().transpose();
         equivs.emplace_back(best_hkl * rotation);
 
@@ -159,7 +159,7 @@ double MergedPeak::chi2() const
 
     double chi_sq = 0.0;
 
-    for (auto&& peak : _peaks) {
+    for (const auto& peak : _peaks) {
         auto&& I = peak->correctedIntensity();
         const double std = I.sigma();
         const double x = (I.value() - I_merge) / (std * std);

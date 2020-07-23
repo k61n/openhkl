@@ -881,7 +881,7 @@ std::vector<std::string> UnitCell::compatibleSpaceGroups() const
 
     auto cell_bravais_type = bravaisTypeSymbol();
 
-    for (auto&& symbol : SpaceGroup::symbols()) {
+    for (const auto& symbol : SpaceGroup::symbols()) {
         SpaceGroup sg(symbol);
         if (sg.bravaisTypeSymbol().compare(cell_bravais_type) == 0)
             compatible_space_groups.push_back(symbol);

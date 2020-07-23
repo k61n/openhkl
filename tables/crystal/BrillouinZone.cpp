@@ -79,7 +79,7 @@ bool BrillouinZone::inside(const Eigen::RowVector3d& q) const
         return false;
 
     // second-pass check: the point is inside the convex hull
-    for (auto&& q1 : _qs) {
+    for (const auto& q1 : _qs) {
         if (std::fabs(q1.dot(q) / q1.dot(q1)) > 0.5 + _eps)
             return false;
     }
@@ -175,7 +175,7 @@ void BrillouinZone::compute_vertices()
     std::vector<Eigen::RowVector3d> normals = _qs;
 
     // add reflections, necessary for the code below
-    for (auto&& q : _qs)
+    for (const auto& q : _qs)
         normals.emplace_back(-q);
 
     const auto n = normals.size();
