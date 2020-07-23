@@ -24,7 +24,46 @@
 #include "tables/crystal/MillerIndex.h"
 #include "tables/crystal/UnitCell.h"
 
+namespace {
+
 static const double g_eps = 1e-5;
+
+//! Returns the matrix of parameter constraints.
+Eigen::MatrixXd constraintKernel(int nparams, const std::vector<std::vector<int>>& constraints)
+{
+    std::vector<bool> is_free(nparams, true);
+    std::vector<std::vector<double>> columns;
+
+    // columns corresponding to the constrained parameters
+    for (const std::vector<int>& constraint : constraints) {
+        std::vector<double> column(nparams, 0.0);
+        for (const int idx : constraint) {
+            column[idx] = 1.0;
+            is_free[idx] = false;
+        }
+        columns.push_back(column);
+    }
+
+    // columns corresponding to the free parameters
+    for (int idx = 0; idx < nparams; ++idx) {
+        if (!is_free[idx])
+            continue;
+        std::vector<double> column(nparams, 0.0);
+        column[idx] = 1.0;
+        columns.push_back(column);
+    }
+
+    // pack columns into a matrix
+    Eigen::MatrixXd K(nparams, columns.size());
+    for (size_t j = 0; j < columns.size(); ++j) {
+        for (auto i = 0; i < nparams; ++i)
+            K(i, j) = columns[j][i];
+    }
+
+    return K;
+}
+
+} // namespace
 
 namespace nsx {
 
@@ -150,7 +189,8 @@ bool RefinementBatch::refine(unsigned int max_iter)
     min.setgTol(1e-10);
 
     if (_constraints.size() > 0)
-        _params.setKernel(constraintKernel());
+        _params.setKernel(
+            constraintKernel(_params.nparams(), _constraints));
 
     _cost_function.clear();
     _cost_function.shrink_to_fit();
@@ -194,11 +234,6 @@ int RefinementBatch::residuals(Eigen::VectorXd& fvec)
     return 0;
 }
 
-const std::vector<double>& RefinementBatch::costFunction() const
-{
-    return _cost_function;
-}
-
 std::vector<const nsx::Peak3D*> RefinementBatch::peaks() const
 {
     return _peaks;
@@ -207,44 +242,6 @@ std::vector<const nsx::Peak3D*> RefinementBatch::peaks() const
 UnitCell* RefinementBatch::cell() const
 {
     return _cell;
-}
-
-Eigen::MatrixXd RefinementBatch::constraintKernel() const
-{
-    const int nparams = _params.nparams();
-    std::vector<bool> is_free(nparams, true);
-    std::vector<std::vector<double>> columns;
-
-    // columns corresponding to the constrained parameters
-    for (const std::vector<int>& constraint : _constraints) {
-        std::vector<double> column(nparams, 0.0);
-
-        for (const int idx : constraint) {
-            column[idx] = 1.0;
-            is_free[idx] = false;
-        }
-
-        columns.push_back(column);
-    }
-
-    // columns corresponding to the free parameters
-    for (int idx = 0; idx < nparams; ++idx) {
-        if (!is_free[idx])
-            continue;
-        std::vector<double> column(nparams, 0.0);
-        column[idx] = 1.0;
-        columns.push_back(column);
-    }
-
-    // pack columns into a matrix
-    Eigen::MatrixXd K(nparams, columns.size());
-
-    for (size_t j = 0; j < columns.size(); ++j) {
-        for (auto i = 0; i < nparams; ++i)
-            K(i, j) = columns[j][i];
-    }
-
-    return K;
 }
 
 bool RefinementBatch::contains(double f) const
