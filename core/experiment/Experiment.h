@@ -191,7 +191,7 @@ class Experiment {
     void predictPeaks(
         const std::string& name, PeakCollection* peaks, PredictionParameters params,
         PeakInterpolation interpol);
-    void refine(PeakCollection* peaks, UnitCell* cell, DataSet* data, int n_batches);
+    void refine(const PeakCollection* peaks, UnitCell* cell, DataSet* data, int n_batches);
 
  // Merging
     //! Get resolution shells for quality metrics

@@ -578,7 +578,7 @@ void Experiment::predictPeaks(
     const ShapeLibrary* library = peaks->shapeLibrary();
 
     int current_numor = 0;
-    for (auto data : numors) {
+    for (const sptrDataSet& data : numors) {
         std::cout << "Predicting peaks for numor " << ++current_numor << " of " << numors.size()
                   << std::endl;
 
@@ -601,9 +601,9 @@ void Experiment::computeQuality(
     bool friedel)
 {
     ResolutionShell resolution_shell = nsx::ResolutionShell(d_min, d_max, n_shells);
-    for (auto peak : found->getPeakList())
+    for (const auto& peak : found->getPeakList())
         resolution_shell.addPeak(peak);
-    for (auto peak : predicted->getPeakList())
+    for (const auto& peak : predicted->getPeakList())
         resolution_shell.addPeak(peak);
 
     for (int i = n_shells - 1; i >= 0; --i) {
@@ -612,7 +612,7 @@ void Experiment::computeQuality(
 
         nsx::MergedData merged_data_per_shell(_merged_peaks->spaceGroup(), friedel);
 
-        for (auto peak : resolution_shell.shell(i).peaks)
+        for (const auto& peak : resolution_shell.shell(i).peaks)
             merged_data_per_shell.addPeak(peak);
 
         nsx::RFactor rf;
@@ -647,7 +647,7 @@ UnitCell* Experiment::getReferenceCell()
     return getUnitCell("reference");
 }
 
-void Experiment::refine(PeakCollection* peaks, UnitCell* cell, DataSet* data, int n_batches)
+void Experiment::refine(const PeakCollection* peaks, UnitCell* cell, DataSet* data, int n_batches)
 {
     const unsigned int max_iter = 1000;
     const std::vector<Peak3D*> peak_list = peaks->getPeakList();
