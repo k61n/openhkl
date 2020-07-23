@@ -376,12 +376,6 @@ void ShapeLibraryDialog::drawFrame(int value)
     }
 
     const Eigen::Vector3i shape = _profile.shape();
-    QGraphicsScene* scene = _graphics->scene();
-
-    if (!scene) {
-        scene = new QGraphicsScene();
-        _graphics->setScene(scene);
-    }
 
     QImage img(shape[0], shape[1], QImage::Format_ARGB32);
 
@@ -392,9 +386,13 @@ void ShapeLibraryDialog::drawFrame(int value)
             img.setPixel(i, j, color);
         }
     }
-    scene->clear();
-    scene->setSceneRect(QRectF(0, 0, shape[0], shape[1]));
-    scene->addPixmap(QPixmap::fromImage(img));
+
+    if (!_graphics->scene())
+        _graphics->setScene(new QGraphicsScene());
+    _graphics->scene()->clear();
+    _graphics->scene()->setSceneRect(QRectF(0, 0, shape[0], shape[1]));
+    _graphics->scene()->addPixmap(QPixmap::fromImage(img));
+
     _graphics->fitInView(0, 0, shape[0], shape[1]);
 }
 
