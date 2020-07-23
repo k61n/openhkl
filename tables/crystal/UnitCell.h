@@ -266,7 +266,7 @@ class UnitCell {
     std::vector<std::string> compatibleSpaceGroups() const;
 
     //! Return true if similar to another unit cell
-    bool isSimilar(UnitCell* other, double length_tol, double angle_tol) const;
+    bool isSimilar(const UnitCell* other, double length_tol, double angle_tol) const;
 
 #ifndef SWIG
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW

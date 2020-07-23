@@ -50,14 +50,15 @@ class Experiment {
  public:
     Experiment() = delete;
     Experiment(const std::string& name, const std::string& diffractometerName);
-    Experiment(const Experiment& other);
     ~Experiment() = default;
 
+    Experiment(const Experiment& other);
     Experiment& operator=(const Experiment& other) = delete; // why did it differ from copy c'tor?
 
  // General
     const std::string& name() const;
     void setName(const std::string& name);
+
     Diffractometer* diffractometer();
     const Diffractometer* diffractometer() const;
     void setDiffractometer(const std::string& diffractometerName);
@@ -101,24 +102,25 @@ class Experiment {
         double gamma);
     bool hasUnitCell(const std::string& name) const;
     std::vector<std::string> getUnitCellNames() const;
+    const UnitCell* getUnitCell(const std::string& name) const;
     UnitCell* getUnitCell(const std::string& name);
     void removeUnitCell(const std::string& name);
     void swapUnitCells(const std::string& old_cell, const std::string& new_cell);
     int numUnitCells() const { return _unit_cells.size(); };
     bool acceptUnitCell(PeakCollection* peaks, double length_tol, double angle_tol);
     void acceptUnitCell(PeakCollection* peaks);
-    std::vector<std::string> getCompatibleSpaceGroups();
+    std::vector<std::string> getCompatibleSpaceGroups() const;
 
  // Peak finder
-    nsx::PeakFinder* peakFinder() const { return _peak_finder.get(); };
+    nsx::PeakFinder* peakFinder() { return _peak_finder.get(); };
     void acceptFoundPeaks(const std::string& name);
     nsx::PeakFilter* peakFilter() { return _peak_filter.get(); };
 
  // Autoindexer
     nsx::AutoIndexer* autoIndexer() const { return _auto_indexer.get(); };
     void setReferenceCell(double a, double b, double c, double alpha, double beta, double gamma);
-    UnitCell* getAcceptedCell();
-    UnitCell* getReferenceCell();
+    const UnitCell* getAcceptedCell() const;
+    const UnitCell* getReferenceCell() const;
 
  // Integrator
     nsx::IPeakIntegrator* getIntegrator(const std::string& name) const;

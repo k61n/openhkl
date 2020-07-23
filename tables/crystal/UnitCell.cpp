@@ -890,7 +890,7 @@ std::vector<std::string> UnitCell::compatibleSpaceGroups() const
     return compatible_space_groups;
 }
 
-bool UnitCell::isSimilar(UnitCell* other, double length_tol, double angle_tol) const
+bool UnitCell::isSimilar(const UnitCell* other, double length_tol, double angle_tol) const
 {
     auto c1 = character();
     auto c2 = other->character();

@@ -283,7 +283,7 @@ void AutoIndexer::acceptSolution(
         peak->setUnitCell(solution);
 }
 
-void AutoIndexer::setReferenceCell(UnitCell* cell)
+void AutoIndexer::setReferenceCell(const UnitCell* cell)
 {
     _reference_cell = cell;
 }
@@ -299,7 +299,7 @@ bool AutoIndexer::hasSolution(double length_tol, double angle_tol)
     return false;
 }
 
-UnitCell* AutoIndexer::getAcceptedSolution()
+const UnitCell* AutoIndexer::getAcceptedSolution() const
 {
     return _accepted_solution;
 }

@@ -83,9 +83,9 @@ class AutoIndexer {
     //! assign it to _accepted_solution
     bool hasSolution(double length_tol, double angle_tol);
     //! Set the reference cell
-    void setReferenceCell(UnitCell* cell);
+    void setReferenceCell(const UnitCell* cell);
     //! return the accepted solution
-    UnitCell* getAcceptedSolution();
+    const UnitCell* getAcceptedSolution() const;
 
  private:
     void computeFFTSolutions(const std::vector<Peak3D*>& peaks);
@@ -98,7 +98,7 @@ class AutoIndexer {
     std::vector<RankedSolution> _solutions;
     std::shared_ptr<ProgressHandler> _handler;
 
-    UnitCell* _reference_cell;
+    const UnitCell* _reference_cell;
     UnitCell* _accepted_solution;
 };
 
