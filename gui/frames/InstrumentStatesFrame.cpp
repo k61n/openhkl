@@ -26,11 +26,11 @@
 
 InstrumentStatesFrame::InstrumentStatesFrame() : QFrame()
 {
-    if (gSession->selectedExperimentNum() < 0) {
+    if (gSession->currentProjectNum() < 0) {
         // gLogger->log("[ERROR] No experiment selected");
         return;
     }
-    std::vector<nsx::sptrDataSet> datalist = gSession->selectedExperiment()->allData();
+    std::vector<nsx::sptrDataSet> datalist = gSession->currentProject()->allData();
     if (datalist.empty()) {
         // gLogger->log("[ERROR] No dataset found");
         return;

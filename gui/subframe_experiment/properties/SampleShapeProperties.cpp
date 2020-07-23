@@ -60,10 +60,10 @@ SampleShapeProperties::SampleShapeProperties() : QWidget()
 
 void SampleShapeProperties::refreshInput()
 {
-    if (gSession->selectedExperimentNum() >= 0) {
+    if (gSession->currentProjectNum() >= 0) {
         // SampleProperty
         const nsx::Sample& sample =
-            gSession->selectedExperiment()->experiment()->diffractometer()->sample();
+            gSession->currentProject()->experiment()->diffractometer()->sample();
         const nsx::Gonio& sample_gonio = sample.gonio();
         size_t n_sample_gonio_axes = sample_gonio.nAxes();
 

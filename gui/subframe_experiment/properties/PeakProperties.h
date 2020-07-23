@@ -29,7 +29,7 @@ class PeakProperties : public QWidget {
     //! Inform that the selected peak has changed
     void selectedPeaksChanged();
     //! Inform that the selected experiment has changed
-    void selectedExperimentChanged();
+    void currentProjectChanged();
     //! Refresh the input of the input fields
     void refreshInput();
     //! Set up the GUI size policies

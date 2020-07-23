@@ -42,7 +42,7 @@ void HDF5ConverterDialog::browseDirectory()
 
 void HDF5ConverterDialog::convert()
 {
-    QStringList numors = gSession->selectedExperiment()->getDataNames();
+    QStringList numors = gSession->currentProject()->getDataNames();
     if (numors.empty()) {
         // gLogger->log("[ERROR] No numors selected, conversion aborted");
         return;
@@ -65,7 +65,7 @@ void HDF5ConverterDialog::convert()
         }
 
         try {
-            gSession->selectedExperiment()->getData(comp)->saveHDF5(hdfFilename);
+            gSession->currentProject()->getData(comp)->saveHDF5(hdfFilename);
         } catch (...) {
             // gLogger->log(
             //     "[ERROR] The filename " + QString::fromStdString(hdfFilename)

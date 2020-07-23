@@ -693,8 +693,7 @@ void PeakFinderFrame::find()
 
 void PeakFinderFrame::integrate()
 {
-    nsx::Experiment* experiment =
-        gSession->experimentAt(_exp_combo->currentIndex())->experiment();
+    nsx::Experiment* experiment = gSession->experimentAt(_exp_combo->currentIndex())->experiment();
 
     nsx::IPeakIntegrator* integrator = experiment->getIntegrator("Pixel sum integrator");
 

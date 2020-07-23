@@ -15,7 +15,7 @@
 #ifndef NSX_GUI_MODELS_SESSION_H
 #define NSX_GUI_MODELS_SESSION_H
 
-#include "gui/models/SessionExperiment.h"
+#include "gui/models/Project.h"
 
 extern class Session* gSession; //!< global handle for Session
 
@@ -25,21 +25,20 @@ class Session {
     Session();
     Session(const Session&) = delete;
 
-    SessionExperiment* selectedExperiment() { return _experiments.at(_selectedExperiment).get(); }
-    const SessionExperiment* selectedExperiment() const {
-        return _experiments.at(_selectedExperiment).get(); }
+    Project* currentProject() { return _projects.at(_currentProject).get(); }
+    const Project* currentProject() const { return _projects.at(_currentProject).get(); }
 
-    SessionExperiment* experimentAt(int i) { return _experiments.at(i).get(); }
-    const SessionExperiment* experimentAt(int i) const { return _experiments.at(i).get(); }
+    Project* experimentAt(int i) { return _projects.at(i).get(); }
+    const Project* experimentAt(int i) const { return _projects.at(i).get(); }
 
-    int selectedExperimentNum() const { return _selectedExperiment; }
-    int numExperiments() const { return _experiments.size(); }
+    int currentProjectNum() const { return _currentProject; }
+    int numExperiments() const { return _projects.size(); }
     std::vector<QString> experimentNames() const;
 
     void selectExperiment(int);
 
-    bool createExperiment(QString experimentName="new_experiment",
-                          QString instrumentName="unknown_instrument");
+    bool createExperiment(
+        QString experimentName = "new_experiment", QString instrumentName = "unknown_instrument");
     void removeExperiment();
 
     void loadData();
@@ -54,8 +53,8 @@ class Session {
     void loadExperimentFromFile(QString filename);
 
  private:
-    std::vector<std::unique_ptr<SessionExperiment>> _experiments;
-    int _selectedExperiment = -1;
+    std::vector<std::unique_ptr<Project>> _projects;
+    int _currentProject = -1;
     int _selectedData = -1;
     QString _loadDirectory;
 };

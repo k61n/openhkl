@@ -264,7 +264,7 @@ void ExperimentImporter::loadPeaks(Experiment* experiment)
             std::cout << "Created the peak collection" << std::endl;
         }
     } catch (H5::Exception& e) {
-        throw std::runtime_error{e.getDetailMsg()};
+        throw std::runtime_error {e.getDetailMsg()};
     }
 }
 

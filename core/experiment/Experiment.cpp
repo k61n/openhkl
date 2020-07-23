@@ -130,7 +130,7 @@ sptrDataSet Experiment::getData(const std::string& name)
 sptrDataSet Experiment::dataShortName(const std::string& name)
 {
     std::map<std::string, sptrDataSet> temp;
-    for (const auto& it: _data_map)
+    for (const auto& it : _data_map)
         temp.insert(std::make_pair(it.second->name(), it.second));
 
     const auto it = temp.find(name);
@@ -271,7 +271,7 @@ void Experiment::removePeakCollection(const std::string& name)
 std::vector<std::string> Experiment::getCollectionNames() const
 {
     std::vector<std::string> ret;
-    for (const auto& it: _peak_collections)
+    for (const auto& it : _peak_collections)
         ret.push_back(it.second->name());
     return ret;
 }
@@ -343,7 +343,7 @@ bool Experiment::hasUnitCell(const std::string& name) const
 std::vector<std::string> Experiment::getUnitCellNames() const
 {
     std::vector<std::string> ret;
-    for (const auto& it: _unit_cells)
+    for (const auto& it : _unit_cells)
         ret.push_back(it.second->name());
     return ret;
 }
@@ -376,7 +376,7 @@ void Experiment::swapUnitCells(const std::string& old_cell_name, const std::stri
     const UnitCell* old_cell = getUnitCell(old_cell_name);
     const UnitCell* new_cell = getUnitCell(new_cell_name);
 
-    for (const auto& it: _peak_collections) {
+    for (const auto& it : _peak_collections) {
         std::vector<Peak3D*> peaks = it.second.get()->getPeakList();
         for (Peak3D* peak : peaks) {
             if (peak->unitCell() == old_cell)
@@ -393,7 +393,7 @@ void Experiment::acceptFoundPeaks(const std::string& name)
 
 IPeakIntegrator* Experiment::getIntegrator(const std::string& name) const
 {
-    for (const auto& it: _integrator_map) {
+    for (const auto& it : _integrator_map) {
         if (it.first == name)
             return it.second.get();
     }
@@ -410,7 +410,7 @@ void Experiment::integratePeaks(const std::string& integrator_name, PeakCollecti
     filter.filterDRange(peak_collection);
     std::vector<Peak3D*> peaks = peak_collection->getFilteredPeakList();
 
-    for (const auto& it: _data_map)
+    for (const auto& it : _data_map)
         integrator->integrate(peaks, peak_collection->shapeLibrary(), it.second);
 }
 
@@ -433,7 +433,7 @@ void Experiment::integratePredictedPeaks(
     filter.filterDRange(peak_collection);
     std::vector<Peak3D*> peaks = peak_collection->getFilteredPeakList();
 
-    for (const auto& it: _data_map)
+    for (const auto& it : _data_map)
         integrator->integrate(peaks, shape_library, it.second);
 }
 
@@ -452,17 +452,17 @@ void Experiment::saveToFile(const std::string& path) const
     exporter.createFile(name(), _diffractometer->name(), path);
 
     std::map<std::string, DataSet*> data_sets;
-    for (const auto& it: _data_map)
+    for (const auto& it : _data_map)
         data_sets.insert(std::make_pair(it.first, it.second.get()));
     exporter.writeData(data_sets);
 
     std::map<std::string, PeakCollection*> peak_collections;
-    for (const auto& it: _peak_collections)
+    for (const auto& it : _peak_collections)
         peak_collections.insert(std::make_pair(it.first, it.second.get()));
     exporter.writePeaks(peak_collections);
 
     std::map<std::string, UnitCell*> unit_cells;
-    for (const auto& it: _unit_cells)
+    for (const auto& it : _unit_cells)
         unit_cells.insert(std::make_pair(it.first, it.second.get()));
     exporter.writeUnitCells(unit_cells);
 
@@ -631,8 +631,7 @@ void Experiment::computeQuality(
             {d_lower,
              d_upper,
              {rf.Rmerge(), rf.Rmeas(), rf.Rpim(), cc.CChalf()},
-             {rf.expectedRmerge(), rf.expectedRmeas(), rf.expectedRpim(), cc.CCstar()}
-            });
+             {rf.expectedRmerge(), rf.expectedRmeas(), rf.expectedRpim(), cc.CCstar()}});
     }
 
     nsx::RFactor rf;
@@ -640,8 +639,8 @@ void Experiment::computeQuality(
     nsx::CC cc;
     cc.calculate(_merged_peaks.get());
     _data_quality_current = {rf.Rmerge(), rf.Rmeas(), rf.Rpim(), cc.CChalf()};
-    _data_quality_expected =
-        {rf.expectedRmerge(), rf.expectedRmeas(), rf.expectedRpim(), cc.CCstar()};
+    _data_quality_expected = {rf.expectedRmerge(), rf.expectedRmeas(), rf.expectedRpim(),
+                              cc.CCstar()};
 }
 
 const UnitCell* Experiment::getAcceptedCell() const

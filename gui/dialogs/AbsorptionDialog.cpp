@@ -68,7 +68,7 @@ AbsorptionDialog::AbsorptionDialog() : QDialog {}
     verticalLayout2->addWidget(triangulateButton);
 
     crystalScene = new CrystalScene(
-        &gSession->selectedExperiment()->experiment()->diffractometer()->sample().shape());
+        &gSession->currentProject()->experiment()->diffractometer()->sample().shape());
     crystalView->setScene(crystalScene);
 
     connect(scrollBar, &QScrollBar::valueChanged, [=](int i) {

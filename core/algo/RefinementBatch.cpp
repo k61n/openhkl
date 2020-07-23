@@ -189,8 +189,7 @@ bool RefinementBatch::refine(unsigned int max_iter)
     min.setgTol(1e-10);
 
     if (_constraints.size() > 0)
-        _params.setKernel(
-            constraintKernel(_params.nparams(), _constraints));
+        _params.setKernel(constraintKernel(_params.nparams(), _constraints));
 
     _cost_function.clear();
     _cost_function.shrink_to_fit();

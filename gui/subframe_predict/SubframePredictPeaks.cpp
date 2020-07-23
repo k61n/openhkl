@@ -652,7 +652,7 @@ void SubframePredictPeaks::runPrediction()
     try {
         qDebug() << "Starting peak prediction...";
 
-        const std::vector<nsx::sptrDataSet>& data = gSession->selectedExperiment()->allData();
+        const std::vector<nsx::sptrDataSet>& data = gSession->currentProject()->allData();
 
         nsx::sptrProgressHandler handler(new nsx::ProgressHandler);
         ProgressView progressView(nullptr);
@@ -662,7 +662,7 @@ void SubframePredictPeaks::runPrediction()
                                      ->experiment()
                                      ->getPeakCollection(_peak_combo->currentText().toStdString())
                                      ->shapeLibrary();
-        nsx::UnitCell* cell = gSession->selectedExperiment()->experiment()->getUnitCell(
+        nsx::UnitCell* cell = gSession->currentProject()->experiment()->getUnitCell(
             _unit_cells->currentText().toStdString());
 
         double d_min = _d_min->value();

@@ -101,8 +101,8 @@ void ImagePanel::dataChanged()
 
     _image_view->getScene()->resetScene();
 
-    if (gSession->selectedExperimentNum() >= 0) {
-        nsx::sptrDataSet dataset = gSession->selectedExperiment()->getData(0);
+    if (gSession->currentProjectNum() >= 0) {
+        nsx::sptrDataSet dataset = gSession->currentProject()->getData(0);
         if (dataset) {
             _mode->setEnabled(true);
             _slider->setEnabled(true);

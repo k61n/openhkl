@@ -99,10 +99,10 @@ void NumorProperty::refreshInput()
 {
     _numor_selector->blockSignals(true);
     _numor_selector->clear();
-    _numor_selector->addItems(gSession->selectedExperiment()->getDataNames());
+    _numor_selector->addItems(gSession->currentProject()->getDataNames());
     _numor_selector->blockSignals(false);
 
-    if (!gSession->selectedExperiment()->getDataNames().empty())
+    if (!gSession->currentProject()->getDataNames().empty())
         onChanged();
 }
 
@@ -110,8 +110,8 @@ void NumorProperty::onChanged()
 {
     clear();
 
-    if (gSession->selectedExperimentNum() >= 0) {
-        SessionExperiment* exp = gSession->selectedExperiment();
+    if (gSession->currentProjectNum() >= 0) {
+        Project* exp = gSession->currentProject();
         nsx::sptrDataSet data = exp->getData(_numor_selector->currentIndex());
 
         if (data) {

@@ -43,7 +43,7 @@ QVariant ExperimentModel::data(const QModelIndex& index, int role) const
             return formatOutput(index);
         }
         case Qt::BackgroundRole: {
-            if (row == gSession->selectedExperimentNum())
+            if (row == gSession->currentProjectNum())
                 return QColor(Qt::gray);
             return QVariant();
         }

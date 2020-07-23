@@ -55,7 +55,7 @@ class Experiment {
     Experiment(const Experiment& other);
     Experiment& operator=(const Experiment& other) = delete; // why did it differ from copy c'tor?
 
- // General
+    // General
     const std::string& name() const;
     void setName(const std::string& name);
 
@@ -63,7 +63,7 @@ class Experiment {
     const Diffractometer* diffractometer() const;
     void setDiffractometer(const std::string& diffractometerName);
 
- // Data sets
+    // Data sets
     const std::map<std::string, sptrDataSet>& getDataMap() const;
     sptrDataSet getData(const std::string& name);
     DataList getAllData();
@@ -74,7 +74,7 @@ class Experiment {
     bool hasData(const std::string& name) const;
     void removeData(const std::string& name);
 
- // Peak Collection
+    // Peak Collection
     void updatePeakCollection(
         const std::string& name, const listtype type, const std::vector<nsx::Peak3D*> peaks);
     bool hasPeakCollection(const std::string& name) const;
@@ -87,14 +87,14 @@ class Experiment {
     void acceptFilter(const std::string name, PeakCollection* collection);
     void checkPeakCollections();
 
- // MergedData
+    // MergedData
     void setMergedPeaks(std::vector<PeakCollection*> peak_collections, bool friedel);
     // ditto without the vector (mainly for SWIG):
     void setMergedPeaks(PeakCollection* found, PeakCollection* predicted, bool friedel);
     void resetMergedPeaks();
     MergedData* getMergedPeaks() const { return _merged_peaks.get(); };
 
- // Unit cells
+    // Unit cells
     void addUnitCell(const std::string& name, UnitCell* unit_cell);
     //! Add a unit cell to the experiment via cell parameters (skip autoindexing step)
     void addUnitCell(
@@ -111,18 +111,18 @@ class Experiment {
     void acceptUnitCell(PeakCollection* peaks);
     std::vector<std::string> getCompatibleSpaceGroups() const;
 
- // Peak finder
+    // Peak finder
     nsx::PeakFinder* peakFinder() { return _peak_finder.get(); };
     void acceptFoundPeaks(const std::string& name);
     nsx::PeakFilter* peakFilter() { return _peak_filter.get(); };
 
- // Autoindexer
+    // Autoindexer
     nsx::AutoIndexer* autoIndexer() const { return _auto_indexer.get(); };
     void setReferenceCell(double a, double b, double c, double alpha, double beta, double gamma);
     const UnitCell* getAcceptedCell() const;
     const UnitCell* getReferenceCell() const;
 
- // Integrator
+    // Integrator
     nsx::IPeakIntegrator* getIntegrator(const std::string& name) const;
     void integratePeaks(const std::string& integrator_name, PeakCollection* peak_collection);
     void integratePredictedPeaks(
@@ -130,11 +130,11 @@ class Experiment {
         ShapeLibrary* shape_library, PredictionParameters& params);
     void integrateFoundPeaks(const std::string& integrator);
 
- // Save load
+    // Save load
     void saveToFile(const std::string& path) const;
     void loadFromFile(const std::string& path);
 
- // Prediction
+    // Prediction
     void buildShapeLibrary(PeakCollection* peaks, ShapeLibParameters params);
     ShapeLibrary* getShapeLibrary() { return &_shape_library; };
     void predictPeaks(
@@ -142,7 +142,7 @@ class Experiment {
         PeakInterpolation interpol);
     void refine(const PeakCollection* peaks, UnitCell* cell, DataSet* data, int n_batches);
 
- // Merging
+    // Merging
     //! Get resolution shells for quality metrics
     void computeQuality(
         double d_min, double d_max, int n_shells, PeakCollection* predicted, PeakCollection* found,

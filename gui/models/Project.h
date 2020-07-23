@@ -2,8 +2,8 @@
 //
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
-//! @file      gui/models/SessionExperiment.h
-//! @brief     Defines class SessionExperiment
+//! @file      gui/models/Project.h
+//! @brief     Defines class Project
 //!
 //! @homepage  ###HOMEPAGE###
 //! @license   GNU General Public License v3 or higher (see COPYING)
@@ -26,11 +26,11 @@ class PeakCollectionItem;
 class PeakCollectionModel;
 
 //! Controls and handles the Experiment and its Peaks and UnitCells
-class SessionExperiment {
+class Project {
  public:
-    SessionExperiment() = delete;
-    SessionExperiment(QString name, QString instrument);
-    SessionExperiment(const SessionExperiment&) = delete;
+    Project() = delete;
+    Project(QString name, QString instrument);
+    Project(const Project&) = delete;
 
     const nsx::Experiment* experiment() const { return _experiment.get(); }
     nsx::Experiment* experiment() { return _experiment.get(); }

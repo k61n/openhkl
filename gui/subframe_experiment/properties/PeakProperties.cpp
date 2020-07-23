@@ -104,17 +104,17 @@ void PeakProperties::refreshInput()
 {
     _peak_list_combo->blockSignals(true);
     _peak_list_combo->clear();
-    _peak_list_combo->addItems(gSession->selectedExperiment()->getPeakListNames());
+    _peak_list_combo->addItems(gSession->currentProject()->getPeakListNames());
     _peak_list_combo->blockSignals(false);
 
-    if (!gSession->selectedExperiment()->getPeakListNames().empty())
+    if (!gSession->currentProject()->getPeakListNames().empty())
         selectedPeaksChanged();
 }
 
 void PeakProperties::selectedPeaksChanged()
 {
     PeakCollectionModel* model =
-        gSession->selectedExperiment()->peakModelAt(_peak_list_combo->currentIndex());
+        gSession->currentProject()->peakModelAt(_peak_list_combo->currentIndex());
     _peak_table->setModel(model);
 
     if (!model) {
@@ -146,9 +146,9 @@ void PeakProperties::selectedPeaksChanged()
     _non_valid->setText(QString::number(model->root()->peakCollection()->numberOfInvalid()));
 }
 
-void PeakProperties::selectedExperimentChanged()
+void PeakProperties::currentProjectChanged()
 {
-    if (gSession->selectedExperimentNum() < 0)
+    if (gSession->currentProjectNum() < 0)
         return;
 
     selectedPeaksChanged();
@@ -187,6 +187,6 @@ void PeakProperties::deleteCollection()
 {
     _peak_table->setModel(nullptr);
 
-    gSession->selectedExperiment()->removePeakModel(_peak_list_combo->currentText());
+    gSession->currentProject()->removePeakModel(_peak_list_combo->currentText());
     refreshInput();
 }
