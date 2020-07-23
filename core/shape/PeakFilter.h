@@ -59,19 +59,19 @@ class PeakFilter {
     void setFilterOverlapping(bool val) { _filter_flags.overlapping = val; };
     void setFilterComplementary(bool val) { _filter_flags.complementary = val; };
 
-    bool getFilterSelected() { return _filter_flags.selected; };
-    bool getFilterMasked() { return _filter_flags.masked; };
-    bool getFilterPredicted() { return _filter_flags.predicted; };
-    bool getFilterIndexed() { return _filter_flags.indexed; };
-    bool getFilterIndexTol() { return _filter_flags.index_tol; };
-    bool getFilterState() { return _filter_flags.state; };
-    bool getFilterStrength() { return _filter_flags.strength; };
-    bool getFilterDRange() { return _filter_flags.d_range; };
-    bool getFilterExtinct() { return _filter_flags.extinct; };
-    bool getFilterSparse() { return _filter_flags.sparse; };
-    bool getFilterSignificance() { return _filter_flags.significance; };
-    bool getFilterOverlapping() { return _filter_flags.overlapping; };
-    bool getFilterComplementary() { return _filter_flags.complementary; };
+    bool getFilterSelected() const { return _filter_flags.selected; };
+    bool getFilterMasked() const { return _filter_flags.masked; };
+    bool getFilterPredicted() const { return _filter_flags.predicted; };
+    bool getFilterIndexed() const { return _filter_flags.indexed; };
+    bool getFilterIndexTol() const { return _filter_flags.index_tol; };
+    bool getFilterState() const { return _filter_flags.state; };
+    bool getFilterStrength() const { return _filter_flags.strength; };
+    bool getFilterDRange() const { return _filter_flags.d_range; };
+    bool getFilterExtinct() const { return _filter_flags.extinct; };
+    bool getFilterSparse() const { return _filter_flags.sparse; };
+    bool getFilterSignificance() const { return _filter_flags.significance; };
+    bool getFilterOverlapping() const { return _filter_flags.overlapping; };
+    bool getFilterComplementary() const { return _filter_flags.complementary; };
 
     //! set filter parameters to default
     void resetFilterFlags();

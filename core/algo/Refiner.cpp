@@ -31,21 +31,23 @@ Refiner::Refiner(
     InstrumentStateList& states, UnitCell* cell, std::vector<nsx::Peak3D*> peaks, int nbatches)
     : _cell(cell), _batches()
 {
-    PeakFilter peak_filter;
+    const PeakFilter peak_filter;
     std::vector<nsx::Peak3D*> filtered_peaks = peaks;
     filtered_peaks = peak_filter.filterEnabled(peaks, true);
     filtered_peaks = peak_filter.filterIndexed(filtered_peaks, *cell, cell->indexingTolerance());
 
-    std::sort(filtered_peaks.begin(), filtered_peaks.end(), [](Peak3D* p1, Peak3D* p2) -> bool {
-        auto&& c1 = p1->shape().center();
-        auto&& c2 = p2->shape().center();
-        return c1[2] < c2[2];
-    });
+    std::sort(
+        filtered_peaks.begin(), filtered_peaks.end(),
+        [](const Peak3D* p1, const Peak3D* p2) -> bool {
+            auto&& c1 = p1->shape().center();
+            auto&& c2 = p2->shape().center();
+            return c1[2] < c2[2];
+        });
 
-    double batch_size = filtered_peaks.size() / double(nbatches);
+    const double batch_size = filtered_peaks.size() / double(nbatches);
     size_t current_batch = 0;
 
-    std::vector<nsx::Peak3D*> peaks_subset;
+    std::vector<const nsx::Peak3D*> peaks_subset;
 
     for (size_t i = 0; i < filtered_peaks.size(); ++i) {
         peaks_subset.push_back(filtered_peaks[i]);
@@ -108,7 +110,7 @@ const std::vector<RefinementBatch>& Refiner::batches() const
 
 int Refiner::updatePredictions(std::vector<Peak3D*> peaks) const
 {
-    PeakFilter peak_filter;
+    const PeakFilter peak_filter;
     std::vector<nsx::Peak3D*> filtered_peaks = peaks;
     filtered_peaks = peak_filter.filterEnabled(peaks, true);
     filtered_peaks = peak_filter.filterIndexed(filtered_peaks, *_cell, _cell->indexingTolerance());
@@ -130,7 +132,7 @@ int Refiner::updatePredictions(std::vector<Peak3D*> peaks) const
         if (b == nullptr)
             continue;
 
-        auto batch_cell = b->cell();
+        const auto* batch_cell = b->cell();
 
         // update the position
         const MillerIndex hkl(peak->q(), *batch_cell);
