@@ -37,7 +37,7 @@ QStringList allInstrumentNames()
 
     QStringList list;
     for (std::string res : resources_name)
-        list.append(QString::fromStdString(res));
+        list.push_back(QString::fromStdString(res));
 
     return list;
 }

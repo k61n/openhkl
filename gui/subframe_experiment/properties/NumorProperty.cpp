@@ -102,7 +102,7 @@ void NumorProperty::refreshInput()
     _numor_selector->addItems(gSession->selectedExperiment()->getDataNames());
     _numor_selector->blockSignals(false);
 
-    if (!gSession->selectedExperiment()->getDataNames().isEmpty())
+    if (!gSession->selectedExperiment()->getDataNames().empty())
         onChanged();
 }
 

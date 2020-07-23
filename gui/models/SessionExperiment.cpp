@@ -52,7 +52,7 @@ QStringList SessionExperiment::getDataNames() const
 {
     QStringList ret;
     for (auto data : _experiment->getDataMap())
-        ret.append(QString::fromStdString(data.first));
+        ret.push_back(QString::fromStdString(data.first));
     return ret;
 }
 

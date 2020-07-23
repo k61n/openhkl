@@ -26,7 +26,6 @@
 #include <QDialog>
 #include <QDialogButtonBox>
 #include <QGridLayout>
-#include <QList>
 #include <QListWidget>
 #include <QPushButton>
 #include <QSizePolicy>

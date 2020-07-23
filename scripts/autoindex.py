@@ -81,11 +81,11 @@ else:
     if args.dataformat == 'raw':
         name = 'all'
         expt.add_data_set(name, args.files)
-        numors.append(expt.get_data(data_name=name))
+        numors.push_back(expt.get_data(data_name=name))
     elif args.dataformat == 'nexus':
         for filename in args.files:
             expt.add_data_set(filename, filename)
-            numors.append(expt.get_data(data_name=filename))
+            numors.push_back(expt.get_data(data_name=filename))
     pynsxprint("...data loaded\n")
     pynsxprint("Finding peaks...")
     expt.find_peaks(numors, args.frames_range[0], args.frames_range[1])

@@ -21,7 +21,7 @@ class PeakPlot:
     def add_peak(self, peak, datakey):
         coords = peak.shape().center()
         if datakey in self._peaks:
-            self._peaks[datakey].append((coords[0], coords[1], coords[2]))
+            self._peaks[datakey].push_back((coords[0], coords[1], coords[2]))
         else:
             self._peaks[datakey] = [(coords[0], coords[1], coords[2]),]
 

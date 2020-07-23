@@ -240,7 +240,7 @@ void UnitCellProperty::refreshInput()
     resetFields();
     setInputEnabled(state);
 
-    if (!gSession->selectedExperiment()->getUnitCellNames().isEmpty())
+    if (!gSession->selectedExperiment()->getUnitCellNames().empty())
         selectedCellChanged(0);
 }
 

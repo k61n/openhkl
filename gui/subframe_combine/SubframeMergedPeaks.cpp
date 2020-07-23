@@ -160,7 +160,7 @@ void SubframeMergedPeaks::setDShellUp()
     QStringList selection_stats;
     for (int i = 0; i < _shell_model->columnCount(); ++i) {
         QStandardItem* header_item = _shell_model->horizontalHeaderItem(i);
-        selection_stats.append(header_item->text());
+        selection_stats.push_back(header_item->text());
     }
     _plottable_statistics->addItems(selection_stats);
 
@@ -276,7 +276,7 @@ void SubframeMergedPeaks::refreshFoundPeakList()
     _found_drop->clear();
     _found_list = gSession->experimentAt(_exp_drop->currentIndex())->getFoundNames();
 
-    if (!_found_list.isEmpty()) {
+    if (!_found_list.empty()) {
         _found_drop->addItems(_found_list);
         _found_drop->setCurrentIndex(0);
     }
@@ -290,7 +290,7 @@ void SubframeMergedPeaks::refreshPredictedPeakList()
     _predicted_drop->clear();
     _predicted_list = gSession->experimentAt(_exp_drop->currentIndex())->getPredictedNames();
 
-    if (!_predicted_list.isEmpty()) {
+    if (!_predicted_list.empty()) {
         _predicted_drop->addItems(_predicted_list);
         _predicted_drop->setCurrentIndex(0);
     }
@@ -299,7 +299,7 @@ void SubframeMergedPeaks::refreshPredictedPeakList()
 
 void SubframeMergedPeaks::processMerge()
 {
-    if (_found_list.isEmpty() || _predicted_list.isEmpty()) {
+    if (_found_list.empty() || _predicted_list.empty()) {
         gSession->experimentAt(_exp_drop->currentIndex())->experiment()->resetMergedPeaks();
         _merged_data = nullptr;
     } else {
@@ -375,20 +375,20 @@ void SubframeMergedPeaks::refreshDShellTable()
         rfactor.calculate(&merged_data_per_shell);
 
         QList<QStandardItem*> row;
-        row.append(new QStandardItem(QString::number(d_upper)));
-        row.append(new QStandardItem(QString::number(d_lower)));
-        row.append(new QStandardItem(QString::number(merged_data_per_shell.totalSize())));
-        row.append(
+        row.push_back(new QStandardItem(QString::number(d_upper)));
+        row.push_back(new QStandardItem(QString::number(d_lower)));
+        row.push_back(new QStandardItem(QString::number(merged_data_per_shell.totalSize())));
+        row.push_back(
             new QStandardItem(QString::number(merged_data_per_shell.mergedPeakSet().size())));
-        row.append(new QStandardItem(QString::number(merged_data_per_shell.redundancy())));
-        row.append(new QStandardItem(QString::number(rfactor.Rmeas())));
-        row.append(new QStandardItem(QString::number(rfactor.expectedRmeas())));
-        row.append(new QStandardItem(QString::number(rfactor.Rmerge())));
-        row.append(new QStandardItem(QString::number(rfactor.expectedRmerge())));
-        row.append(new QStandardItem(QString::number(rfactor.Rpim())));
-        row.append(new QStandardItem(QString::number(rfactor.expectedRpim())));
-        row.append(new QStandardItem(QString::number(cc.CChalf())));
-        row.append(new QStandardItem(QString::number(cc.CCstar())));
+        row.push_back(new QStandardItem(QString::number(merged_data_per_shell.redundancy())));
+        row.push_back(new QStandardItem(QString::number(rfactor.Rmeas())));
+        row.push_back(new QStandardItem(QString::number(rfactor.expectedRmeas())));
+        row.push_back(new QStandardItem(QString::number(rfactor.Rmerge())));
+        row.push_back(new QStandardItem(QString::number(rfactor.expectedRmerge())));
+        row.push_back(new QStandardItem(QString::number(rfactor.Rpim())));
+        row.push_back(new QStandardItem(QString::number(rfactor.expectedRpim())));
+        row.push_back(new QStandardItem(QString::number(cc.CChalf())));
+        row.push_back(new QStandardItem(QString::number(cc.CCstar())));
 
         model->appendRow(row);
     }
@@ -400,19 +400,19 @@ void SubframeMergedPeaks::refreshDShellTable()
     cc.calculate(_merged_data);
 
     QList<QStandardItem*> row;
-    row.append(new QStandardItem(QString::number(max)));
-    row.append(new QStandardItem(QString::number(min)));
-    row.append(new QStandardItem(QString::number(_merged_data->totalSize())));
-    row.append(new QStandardItem(QString::number(_merged_data->mergedPeakSet().size())));
-    row.append(new QStandardItem(QString::number(_merged_data->redundancy())));
-    row.append(new QStandardItem(QString::number(rfactor.Rmeas())));
-    row.append(new QStandardItem(QString::number(rfactor.expectedRmeas())));
-    row.append(new QStandardItem(QString::number(rfactor.Rmerge())));
-    row.append(new QStandardItem(QString::number(rfactor.expectedRmerge())));
-    row.append(new QStandardItem(QString::number(rfactor.Rpim())));
-    row.append(new QStandardItem(QString::number(rfactor.expectedRpim())));
-    row.append(new QStandardItem(QString::number(cc.CChalf())));
-    row.append(new QStandardItem(QString::number(cc.CCstar())));
+    row.push_back(new QStandardItem(QString::number(max)));
+    row.push_back(new QStandardItem(QString::number(min)));
+    row.push_back(new QStandardItem(QString::number(_merged_data->totalSize())));
+    row.push_back(new QStandardItem(QString::number(_merged_data->mergedPeakSet().size())));
+    row.push_back(new QStandardItem(QString::number(_merged_data->redundancy())));
+    row.push_back(new QStandardItem(QString::number(rfactor.Rmeas())));
+    row.push_back(new QStandardItem(QString::number(rfactor.expectedRmeas())));
+    row.push_back(new QStandardItem(QString::number(rfactor.Rmerge())));
+    row.push_back(new QStandardItem(QString::number(rfactor.expectedRmerge())));
+    row.push_back(new QStandardItem(QString::number(rfactor.Rpim())));
+    row.push_back(new QStandardItem(QString::number(rfactor.expectedRpim())));
+    row.push_back(new QStandardItem(QString::number(cc.CChalf())));
+    row.push_back(new QStandardItem(QString::number(cc.CCstar())));
     for (auto v : row) {
         QFont font(v->font());
         font.setBold(true);
@@ -445,14 +445,14 @@ void SubframeMergedPeaks::refreshMergedTable()
         const double p = peak.pValue();
 
         QList<QStandardItem*> row;
-        row.append(new QStandardItem(QString::number(h)));
-        row.append(new QStandardItem(QString::number(k)));
-        row.append(new QStandardItem(QString::number(l)));
-        row.append(new QStandardItem(QString::number(intensity)));
-        row.append(new QStandardItem(QString::number(sigma)));
-        row.append(new QStandardItem(QString::number(nobs)));
-        row.append(new QStandardItem(QString::number(chi2)));
-        row.append(new QStandardItem(QString::number(p)));
+        row.push_back(new QStandardItem(QString::number(h)));
+        row.push_back(new QStandardItem(QString::number(k)));
+        row.push_back(new QStandardItem(QString::number(l)));
+        row.push_back(new QStandardItem(QString::number(intensity)));
+        row.push_back(new QStandardItem(QString::number(sigma)));
+        row.push_back(new QStandardItem(QString::number(nobs)));
+        row.push_back(new QStandardItem(QString::number(chi2)));
+        row.push_back(new QStandardItem(QString::number(p)));
 
         _merged_model->appendRow(row);
     }
@@ -486,15 +486,15 @@ void SubframeMergedPeaks::refreshUnmergedTable()
             const QFileInfo fileinfo(QString::fromStdString(numor));
 
             QList<QStandardItem*> row;
-            row.append(new QStandardItem(QString::number(h)));
-            row.append(new QStandardItem(QString::number(k)));
-            row.append(new QStandardItem(QString::number(l)));
-            row.append(new QStandardItem(QString::number(intensity)));
-            row.append(new QStandardItem(QString::number(sigma)));
-            row.append(new QStandardItem(QString::number(c[0])));
-            row.append(new QStandardItem(QString::number(c[1])));
-            row.append(new QStandardItem(QString::number(c[2])));
-            row.append(new QStandardItem(fileinfo.baseName()));
+            row.push_back(new QStandardItem(QString::number(h)));
+            row.push_back(new QStandardItem(QString::number(k)));
+            row.push_back(new QStandardItem(QString::number(l)));
+            row.push_back(new QStandardItem(QString::number(intensity)));
+            row.push_back(new QStandardItem(QString::number(sigma)));
+            row.push_back(new QStandardItem(QString::number(c[0])));
+            row.push_back(new QStandardItem(QString::number(c[1])));
+            row.push_back(new QStandardItem(QString::number(c[2])));
+            row.push_back(new QStandardItem(fileinfo.baseName()));
 
             _unmerged_model->appendRow(row);
         }
@@ -520,7 +520,7 @@ void SubframeMergedPeaks::refreshGraphTable(int column)
     QVector<double> yvals;
     for (int i = 0; i < nshells; ++i) {
         double val = _shell_model->item(i, column)->data(Qt::DisplayRole).value<double>();
-        yvals.append(val);
+        yvals.push_back(val);
     }
 
     QPen pen;

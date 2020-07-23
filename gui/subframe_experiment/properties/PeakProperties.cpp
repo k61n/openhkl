@@ -107,7 +107,7 @@ void PeakProperties::refreshInput()
     _peak_list_combo->addItems(gSession->selectedExperiment()->getPeakListNames());
     _peak_list_combo->blockSignals(false);
 
-    if (!gSession->selectedExperiment()->getPeakListNames().isEmpty())
+    if (!gSession->selectedExperiment()->getPeakListNames().empty())
         selectedPeaksChanged();
 }
 

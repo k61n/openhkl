@@ -584,7 +584,7 @@ void SubframePredictPeaks::updatePeakList()
 
     _peak_list = gSession->experimentAt(_exp_combo->currentIndex())->getPeakListNames();
 
-    if (!_peak_list.isEmpty()) {
+    if (!_peak_list.empty()) {
         _peak_combo->addItems(_peak_list);
         _peak_combo->setCurrentIndex(0);
     }
@@ -599,7 +599,7 @@ void SubframePredictPeaks::updateUnitCellList()
 
     _unit_cell_list = gSession->experimentAt(_exp_combo->currentIndex())->getUnitCellNames();
 
-    if (!_unit_cell_list.isEmpty()) {
+    if (!_unit_cell_list.empty()) {
         _unit_cells->addItems(_unit_cell_list);
         _unit_cells->setCurrentIndex(0);
     }
@@ -766,7 +766,7 @@ void SubframePredictPeaks::refreshPeakShapeStatus()
 {
     bool shape_library_present = true;
 
-    if (_peak_list.isEmpty() || _exp_combo->count() < 1)
+    if (_peak_list.empty() || _exp_combo->count() < 1)
         shape_library_present = false;
 
     if (shape_library_present) {
@@ -785,7 +785,7 @@ void SubframePredictPeaks::refreshPeakShapeStatus()
 
 void SubframePredictPeaks::refreshPeakTable()
 {
-    if (_peak_list.isEmpty() || _exp_combo->count() < 1)
+    if (_peak_list.empty() || _exp_combo->count() < 1)
         return;
 
     _figure_view->getScene()->clearPeakItems();

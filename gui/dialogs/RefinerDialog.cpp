@@ -696,7 +696,7 @@ void RefinerDialog::_setUnitCellDrop()
 {
     _select_uc->blockSignals(true);
     QStringList uc_list = gSession->selectedExperiment()->getUnitCellNames();
-    if (!uc_list.isEmpty()) {
+    if (!uc_list.empty()) {
         _select_uc->addItems(uc_list);
         _select_uc->setCurrentIndex(0);
     }
@@ -707,7 +707,7 @@ void RefinerDialog::_setPeakList()
 {
     _select_peaks_list->blockSignals(true);
     QStringList peak_list = gSession->selectedExperiment()->getPeakListNames();
-    if (!peak_list.isEmpty())
+    if (!peak_list.empty())
         _select_peaks_list->addItems(peak_list);
     _select_peaks_list->blockSignals(false);
 }
@@ -731,7 +731,7 @@ void RefinerDialog::_setDataDrop()
     QString last_text = _select_data->currentText();
     _select_data->clear();
     QList<QListWidgetItem*> selected_data = _select_data_list->selectedItems();
-    if (!selected_data.isEmpty()) {
+    if (!selected_data.empty()) {
         for (QListWidgetItem* data_item : selected_data)
             _select_data->addItem(data_item->text());
     } else {
@@ -1004,12 +1004,12 @@ void RefinerDialog::refine()
         return;
     }
 
-    if (selected_peaks.isEmpty()) {
+    if (selected_peaks.empty()) {
         qDebug() << "[ERROR] No peaks selected";
         return;
     }
 
-    if (selected_data.isEmpty()) {
+    if (selected_data.empty()) {
         qDebug() << "[ERROR] No data selected";
         return;
     }

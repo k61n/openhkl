@@ -60,7 +60,7 @@ SourceProperty::SourceProperty() : QWidget()
                                                            ->source()
                                                            .monochromators();
         for (nsx::Monochromator m : monos)
-            list.append(QString::fromStdString(m.name()));
+            list.push_back(QString::fromStdString(m.name()));
         _monochromators->addItems(list);
     }
 }

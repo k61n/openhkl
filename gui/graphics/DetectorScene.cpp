@@ -390,7 +390,7 @@ void DetectorScene::mousePressEvent(QGraphicsSceneMouseEvent* event)
             // Remove the last zoom area stored in the stack
             _zoomStack.pop();
             // If not root, then update the scene
-            if (!_zoomStack.isEmpty()) {
+            if (!_zoomStack.empty()) {
                 setSceneRect(_zoomStack.top());
                 emit dataChanged();
             }
@@ -540,7 +540,7 @@ void DetectorScene::keyPressEvent(QKeyEvent* event)
             // if (PeakItemGraphic* p = dynamic_cast<PeakItemGraphic*>(item))
             //     p->peak()->setSelected(false);
             // // If the item is a mask graphics item, remove its corresponding mask from
-            // // the data, update the QList of mask graphics items and update the scene
+            // // the data, update the std::vector of mask graphics items and update the scene
             // else if (MaskItem* p = dynamic_cast<MaskItem*>(item)) {
             //     auto it = findMask(p);
             //     // if (it != _masks.end()) {

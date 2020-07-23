@@ -456,7 +456,7 @@ void SubframeFilterPeaks::updatePeakList()
     _peak_combo->clear();
     _peak_list = gSession->experimentAt(_exp_combo->currentIndex())->getPeakListNames();
 
-    if (!_peak_list.isEmpty()) {
+    if (!_peak_list.empty()) {
         _peak_combo->addItems(_peak_list);
         _peak_combo->setCurrentIndex(0);
 
@@ -512,7 +512,7 @@ void SubframeFilterPeaks::updateDatasetParameters(int idx)
 
 void SubframeFilterPeaks::grabFilterParameters()
 {
-    if (_peak_list.isEmpty() || _exp_combo->count() < 1)
+    if (_peak_list.empty() || _exp_combo->count() < 1)
         return;
 
     nsx::PeakFilter* filter =
@@ -543,7 +543,7 @@ void SubframeFilterPeaks::grabFilterParameters()
 
 void SubframeFilterPeaks::setFilterParameters() const
 {
-    if (_peak_list.isEmpty() || _exp_combo->count() < 1)
+    if (_peak_list.empty() || _exp_combo->count() < 1)
         return;
 
     nsx::PeakFilter* filter =
@@ -590,7 +590,7 @@ void SubframeFilterPeaks::setFilterParameters() const
 
 void SubframeFilterPeaks::filterPeaks()
 {
-    if (_peak_list.isEmpty() || _exp_combo->count() < 1)
+    if (_peak_list.empty() || _exp_combo->count() < 1)
         return;
 
     setFilterParameters();
@@ -618,7 +618,7 @@ void SubframeFilterPeaks::filterPeaks()
 
 void SubframeFilterPeaks::accept()
 {
-    if (_peak_list.isEmpty() || _exp_combo->count() < 1)
+    if (_peak_list.empty() || _exp_combo->count() < 1)
         return;
     nsx::PeakCollection* collection =
         gSession->experimentAt(_exp_combo->currentIndex())
@@ -637,7 +637,7 @@ void SubframeFilterPeaks::accept()
 
 void SubframeFilterPeaks::refreshPeakTable()
 {
-    if (_peak_list.isEmpty() || _exp_combo->count() < 1)
+    if (_peak_list.empty() || _exp_combo->count() < 1)
         return;
 
     _figure_view->getScene()->clearPeakItems();
