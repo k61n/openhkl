@@ -32,18 +32,16 @@ class SessionExperiment {
     SessionExperiment(QString name, QString instrument);
     SessionExperiment(const SessionExperiment&) = delete;
 
- public:
     const nsx::Experiment* experiment() const { return _experiment.get(); }
     nsx::Experiment* experiment() { return _experiment.get(); }
     QStringList getDataNames() const;
     nsx::sptrDataSet getData(int index = -1) const;
     std::vector<nsx::sptrDataSet> allData() const;
     int getIndex(const QString&) const;
-    void selectData(int selected) { dataIndex_ = selected; }
+    void selectData(int selected) { _dataIndex = selected; }
     void changeInstrument(const QString& instrumentname);
     bool saved() const { return _saved; };
 
-    //! Get the associated peaks
     std::vector<nsx::Peak3D*>
     getPeaks(const QString& peakListName, int upperindex = -1, int lowerindex = -1) const;
 
@@ -61,38 +59,22 @@ class SessionExperiment {
 
     void onPeaksChanged();
 
- public:
-    //! Add a unit cell to the experiment
-    void addUnitCell(std::string& name, nsx::UnitCell* unit_cell)
-    {
-        _experiment->addUnitCell(name, unit_cell);
-    }
-    //! Get the names of the Unit cells
+    void addUnitCell(std::string& name, nsx::UnitCell* unit_cell);
     QStringList getUnitCellNames() const;
-    //! Get the number of unit cells
     int numUnitCells() const { return _experiment->numUnitCells(); };
 
- public:
-    //! The save method
     void saveToFile(QString path);
-    //! Save as
     void saveAs(QString /*path*/) const { return; };
 
  private:
-    //! Pointer to the core experiment
     std::shared_ptr<nsx::Experiment> _experiment;
-    //! The list of models for the peaks
+
     std::vector<PeakCollectionModel*> _peak_collection_models;
-    //! The list of ? TODO
     std::vector<PeakCollectionItem*> _peak_collection_items;
-    //! Is this session experiment saved
+
     bool _saved = false;
-    //! Save path variable
     std::string _save_path;
-    //! TODO update
-    std::vector<nsx::sptrUnitCell> unitCells_;
-    QString selectedList_;
-    int dataIndex_ = -1;
+    int _dataIndex = -1;
 };
 
 #endif // NSX_GUI_MODELS_SESSIONEXPERIMENT_H

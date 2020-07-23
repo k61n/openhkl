@@ -52,7 +52,7 @@ QStringList SessionExperiment::getDataNames() const
 nsx::sptrDataSet SessionExperiment::getData(int index) const
 {
     if (index == -1)
-        index = dataIndex_;
+        index = _dataIndex;
 
     if (!_experiment->numData())
         return nullptr;
@@ -201,6 +201,11 @@ SessionExperiment::getPeaks(const QString& peakListName, int /*upperindex*/, int
     if (!_experiment->hasPeakCollection(peakListName.toStdString()))
         return {};
     return _experiment->getPeakCollection(peakListName.toStdString())->getPeakList();
+}
+
+void SessionExperiment::addUnitCell(std::string& name, nsx::UnitCell* unit_cell)
+{
+    _experiment->addUnitCell(name, unit_cell);
 }
 
 QStringList SessionExperiment::getUnitCellNames() const
