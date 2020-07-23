@@ -282,9 +282,9 @@ void ShapeLibraryDialog::build()
         fit_peaks.push_back(peak);
     }
 
-    int nx_val = _nx->value();
-    int ny_val = _ny->value();
-    int nz_val = _nz->value();
+    const int nx_val = _nx->value();
+    const int ny_val = _ny->value();
+    const int nz_val = _nz->value();
 
     // update the frame slider if necessary
     if (_draw_frame->maximum() != nz_val)
@@ -313,8 +313,8 @@ void ShapeLibraryDialog::build()
     ProgressView view(this);
     view.watch(handler);
 
-    double bkg_begin_val = _background_begin->value();
-    double bkg_end_val = _background_end->value();
+    const double bkg_begin_val = _background_begin->value();
+    const double bkg_end_val = _background_end->value();
     _library = nsx::ShapeLibrary(!kabsch_coords, peak_scale_val, bkg_begin_val, bkg_end_val);
 
     nsx::ShapeIntegrator integrator(&_library, aabb, nx_val, ny_val, nz_val);
@@ -340,9 +340,9 @@ void ShapeLibraryDialog::build()
 
 void ShapeLibraryDialog::calculate()
 {
-    int nx_val = _nx->value();
-    int ny_val = _ny->value();
-    int nz_val = _nz->value();
+    const int nx_val = _nx->value();
+    const int ny_val = _ny->value();
+    const int nz_val = _nz->value();
 
     nsx::DetectorEvent ev(_x->value(), _y->value(), _frame->value());
     // update maximum value, used for drawing
