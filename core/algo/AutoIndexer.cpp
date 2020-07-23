@@ -162,7 +162,7 @@ void AutoIndexer::refineSolutions(const std::vector<Peak3D*>& peaks)
 {
     // TODO: candidate for easy parallelization
     for (auto&& soln : _solutions) {
-        auto cell = soln.first;
+        UnitCell* cell = soln.first.get();
         cell->setIndexingTolerance(_params.indexingTolerance);
         Eigen::Matrix3d B = cell->reciprocalBasis();
         std::vector<Eigen::RowVector3d> hkls;
@@ -283,7 +283,7 @@ void AutoIndexer::acceptSolution(
         peak->setUnitCell(solution);
 }
 
-void AutoIndexer::setReferenceCell(UnitCell* cell)
+void AutoIndexer::setReferenceCell(const UnitCell* cell)
 {
     _reference_cell = cell;
 }
@@ -299,7 +299,7 @@ bool AutoIndexer::hasSolution(double length_tol, double angle_tol)
     return false;
 }
 
-UnitCell* AutoIndexer::getAcceptedSolution()
+const UnitCell* AutoIndexer::getAcceptedSolution() const
 {
     return _accepted_solution;
 }

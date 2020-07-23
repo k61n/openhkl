@@ -234,19 +234,19 @@ void ExperimentImporter::loadPeaks(Experiment* experiment)
                 local_center = Eigen::Vector3d(center(k, 0), center(k, 1), center(k, 2));
                 local_metric = metric.block(k * 3, 0, 3, 3);
 
-                nsx::Ellipsoid ellipsoid(local_center, local_metric);
+                const nsx::Ellipsoid ellipsoid(local_center, local_metric);
 
                 sptrDataSet data_pointer = experiment->dataShortName(std::string(data_names[k]));
                 nsx::Peak3D* peak = new nsx::Peak3D(data_pointer, ellipsoid);
 
-                nsx::Intensity peak_intensity(intensity[k], sigma[k]);
-                nsx::Intensity peak_mean_bkg(mean_bkg_val[k], mean_bkg_sig[k]);
+                const nsx::Intensity peak_intensity(intensity[k], sigma[k]);
+                const nsx::Intensity peak_mean_bkg(mean_bkg_val[k], mean_bkg_sig[k]);
 
                 peak->setManually(
                     peak_intensity, peak_end[k], bkg_begin[k], bkg_end[k], scale[k],
                     transmission[k], peak_mean_bkg, predicted[k], selected[k], masked[k]);
 
-                UnitCell* unit_cell_pointer = experiment->getUnitCell(unit_cells[k]);
+                const UnitCell* unit_cell_pointer = experiment->getUnitCell(unit_cells[k]);
                 peak->setUnitCell(unit_cell_pointer);
 
                 peaks.push_back(peak);
@@ -264,8 +264,7 @@ void ExperimentImporter::loadPeaks(Experiment* experiment)
             std::cout << "Created the peak collection" << std::endl;
         }
     } catch (H5::Exception& e) {
-        std::string what = e.getDetailMsg();
-        throw std::runtime_error(what);
+        throw std::runtime_error{e.getDetailMsg()};
     }
 }
 
@@ -275,7 +274,7 @@ void ExperimentImporter::loadUnitCells(Experiment* experiment)
         H5::H5File file(_file_name.c_str(), H5F_ACC_RDONLY);
         H5::Group unit_cells(file.openGroup("/UnitCells"));
 
-        hsize_t object_num = unit_cells.getNumObjs();
+        const hsize_t object_num = unit_cells.getNumObjs();
         for (int i = 0; i < object_num; ++i) {
             double rec_00 = 1;
             double rec_01 = 0;
@@ -286,7 +285,6 @@ void ExperimentImporter::loadUnitCells(Experiment* experiment)
             double rec_20 = 0;
             double rec_21 = 0;
             double rec_22 = 1;
-
             double indexing_tolerance = 0.2;
             uint z = 1;
             std::string bravais = "aP";

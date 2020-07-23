@@ -29,7 +29,7 @@ Gonio::Gonio(const std::string& name) : _name(name) {}
 Gonio::Gonio(const Gonio& other) : _name(other._name)
 {
     _axes.reserve(other._axes.size());
-    for (auto&& ax : other._axes)
+    for (const auto& ax : other._axes)
         _axes.emplace_back(std::unique_ptr<Axis>(ax->clone()));
 }
 
@@ -38,7 +38,7 @@ Gonio::Gonio(const YAML::Node& node)
     _name = node["name"] ? node["name"].as<std::string>() : "";
 
     // Sets the axis of the detector goniometer from the XML node
-    for (auto&& axisItem : node["axis"])
+    for (const auto& axisItem : node["axis"])
         _axes.emplace_back(std::unique_ptr<Axis>(Axis::create(axisItem)));
 }
 
@@ -47,7 +47,7 @@ Gonio& Gonio::operator=(const Gonio& other)
     if (this != &other) {
         _name = other._name;
         _axes.reserve(other._axes.size());
-        for (auto&& ax : other._axes)
+        for (const auto& ax : other._axes)
             _axes.emplace_back(std::unique_ptr<Axis>(ax->clone()));
     }
 

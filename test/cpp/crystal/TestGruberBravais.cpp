@@ -113,7 +113,7 @@ TEST_CASE("test/crystal/TestGruberBravais.cpp", "")
 
     int condition = 1;
 
-    for (auto&& test_case : test_cases) {
+    for (const auto& test_case : test_cases) {
         std::default_random_engine generator;
         std::uniform_real_distribution<double> distribution(
             -0.1 * gruber_tolerance, 0.1 * gruber_tolerance);

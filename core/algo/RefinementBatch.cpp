@@ -24,18 +24,57 @@
 #include "tables/crystal/MillerIndex.h"
 #include "tables/crystal/UnitCell.h"
 
+namespace {
+
 static const double g_eps = 1e-5;
+
+//! Returns the matrix of parameter constraints.
+Eigen::MatrixXd constraintKernel(int nparams, const std::vector<std::vector<int>>& constraints)
+{
+    std::vector<bool> is_free(nparams, true);
+    std::vector<std::vector<double>> columns;
+
+    // columns corresponding to the constrained parameters
+    for (const std::vector<int>& constraint : constraints) {
+        std::vector<double> column(nparams, 0.0);
+        for (const int idx : constraint) {
+            column[idx] = 1.0;
+            is_free[idx] = false;
+        }
+        columns.push_back(column);
+    }
+
+    // columns corresponding to the free parameters
+    for (int idx = 0; idx < nparams; ++idx) {
+        if (!is_free[idx])
+            continue;
+        std::vector<double> column(nparams, 0.0);
+        column[idx] = 1.0;
+        columns.push_back(column);
+    }
+
+    // pack columns into a matrix
+    Eigen::MatrixXd K(nparams, columns.size());
+    for (size_t j = 0; j < columns.size(); ++j) {
+        for (auto i = 0; i < nparams; ++i)
+            K(i, j) = columns[j][i];
+    }
+
+    return K;
+}
+
+} // namespace
 
 namespace nsx {
 
 RefinementBatch::RefinementBatch(
-    InstrumentStateList& states, UnitCell* uc, std::vector<nsx::Peak3D*> peaks)
+    InstrumentStateList& states, UnitCell* uc, std::vector<const nsx::Peak3D*> peaks)
     : _fmin(std::numeric_limits<double>().max())
     , _fmax(std::numeric_limits<double>().lowest())
     , _cell(uc)
     , _peaks(peaks)
 {
-    for (auto peak : peaks) {
+    for (const auto* peak : peaks) {
         const double z = peak->shape().center()[2];
         _fmin = std::min(z, std::floor(_fmin));
         _fmax = std::max(z, std::ceil(_fmax));
@@ -46,14 +85,14 @@ RefinementBatch::RefinementBatch(
     _fmax += g_eps;
 
     _hkls.reserve(_peaks.size());
-    for (auto peak : _peaks) {
+    for (const auto* peak : _peaks) {
         MillerIndex hkl(peak->q(), *_cell);
         _hkls.push_back(hkl.rowVector().cast<double>());
 
         Eigen::Vector3d c = peak->shape().center();
         Eigen::Matrix3d M = peak->shape().metric();
-        auto state = peak->dataSet()->instrumentStates().interpolate(c[2]);
-        Eigen::Matrix3d J = state.jacobianQ(c[0], c[1]);
+        Eigen::Matrix3d J =
+            peak->dataSet()->instrumentStates().interpolate(c[2]).jacobianQ(c[0], c[1]);
         Eigen::Matrix3d JI = J.inverse();
         Eigen::Matrix3d A = JI.transpose() * M * JI;
         Eigen::SelfAdjointEigenSolver<Eigen::Matrix3d> solver(A);
@@ -150,7 +189,8 @@ bool RefinementBatch::refine(unsigned int max_iter)
     min.setgTol(1e-10);
 
     if (_constraints.size() > 0)
-        _params.setKernel(constraintKernel());
+        _params.setKernel(
+            constraintKernel(_params.nparams(), _constraints));
 
     _cost_function.clear();
     _cost_function.shrink_to_fit();
@@ -159,7 +199,7 @@ bool RefinementBatch::refine(unsigned int max_iter)
     min.set_f([&](Eigen::VectorXd& fvec) { return residuals(fvec); });
     bool success = min.fit(max_iter);
 
-    for (auto state : _states)
+    for (const auto state : _states)
         state.get().refined = success;
 
     _cell->updateParameters(_u0, _uOffsets, _cellParameters);
@@ -194,12 +234,7 @@ int RefinementBatch::residuals(Eigen::VectorXd& fvec)
     return 0;
 }
 
-const std::vector<double>& RefinementBatch::costFunction() const
-{
-    return _cost_function;
-}
-
-std::vector<nsx::Peak3D*> RefinementBatch::peaks() const
+std::vector<const nsx::Peak3D*> RefinementBatch::peaks() const
 {
     return _peaks;
 }
@@ -207,44 +242,6 @@ std::vector<nsx::Peak3D*> RefinementBatch::peaks() const
 UnitCell* RefinementBatch::cell() const
 {
     return _cell;
-}
-
-Eigen::MatrixXd RefinementBatch::constraintKernel() const
-{
-    const int nparams = _params.nparams();
-    std::vector<bool> is_free(nparams, true);
-    std::vector<std::vector<double>> columns;
-
-    // columns corresponding to the constrained parameters
-    for (auto&& constraint : _constraints) {
-        std::vector<double> column(nparams, 0.0);
-
-        for (auto idx : constraint) {
-            column[idx] = 1.0;
-            is_free[idx] = false;
-        }
-
-        columns.push_back(column);
-    }
-
-    // columns corresponding to the free parameters
-    for (auto idx = 0; idx < nparams; ++idx) {
-        if (!is_free[idx])
-            continue;
-        std::vector<double> column(nparams, 0.0);
-        column[idx] = 1.0;
-        columns.push_back(column);
-    }
-
-    // pack columns into a matrix
-    Eigen::MatrixXd K(nparams, columns.size());
-
-    for (size_t j = 0; j < columns.size(); ++j) {
-        for (auto i = 0; i < nparams; ++i)
-            K(i, j) = columns[j][i];
-    }
-
-    return K;
 }
 
 bool RefinementBatch::contains(double f) const

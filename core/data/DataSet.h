@@ -24,49 +24,34 @@
 namespace nsx {
 
 //! Class used to manage loading detector images and metadata from disk.
-//! Note that this class does not contain any actual data! Only metadata! - Zamaan
+//!
+//! Note that this class does not contain any actual data,
+//! just a few metadata and a link to the data reader.
 
 class DataSet {
     friend class UnitTest_DataSet;
 
  public:
     DataSet() = delete;
-
-    DataSet(const DataSet& other) = delete;
-
-    //! Construct using the given data reader (allowing multiple formats)
     DataSet(std::shared_ptr<IDataReader> reader);
     ~DataSet();
+
+    DataSet(const DataSet& other) = delete;
     DataSet& operator=(const DataSet& other) = delete;
 
-    //! Gets the data filename
     const std::string& filename() const;
-
-    //! Returns the number of frames
     std::size_t nFrames() const;
 
-    //! Returns the number of rows in each detector image
-    std::size_t nRows() const;
+    std::size_t nRows() const; //!< The number of rows in each detector image
+    std::size_t nCols() const; //!<The number of columns in each detector image
 
-    //! Returns the number of columns in each detector image
-    std::size_t nCols() const;
-
-    //! Gets the the sample states
-    InstrumentStateList& instrumentStates();
-
-    //! Gets the the sample states
+    InstrumentStateList& instrumentStates(); // TODO: rm if possible
     const InstrumentStateList& instrumentStates() const;
 
-    //! Add a new mask to the data
     void addMask(IMask* mask);
-
-    //! Remove a mask from the data, by reference
     void removeMask(IMask* mask);
+    const std::set<IMask*>& masks() const;
 
-    //! Returns the list of masks
-    const std::set<IMask*>& masks();
-
-    //! Mask a given peak
     void maskPeaks(PeakList& peaks) const;
 
     //! Returns the intensity at point x,y,z.
@@ -84,13 +69,10 @@ class DataSet {
     //! Close file and release handle
     void close();
 
-    //! True if file is open
-    bool isOpened() const;
+    bool isOpened() const; //!< True if file is open
 
-    //! Returns total size of file
     std::size_t fileSize() const;
 
-    //! Export dataset to HDF5 format
     void saveHDF5(const std::string& filename);
 
     //! Returns the sample-space q vector corresponding to a detector event
@@ -102,35 +84,21 @@ class DataSet {
 
     const Detector& detector() const;
 
-    //! Return the name of the dataset
     std::string name() const;
-    //! Set the name of the dataset
-    void setName(std::string name) { _name = name; };
+    void setName(std::string name);
 
  private:
     bool _isOpened;
-
     std::string _filename;
-
     std::string _name;
-
     unsigned int _nFrames;
-
     unsigned int _nrows;
-
     unsigned int _ncols;
-
     std::vector<Eigen::MatrixXi> _data;
-
     InstrumentStateList _states;
-
     std::size_t _fileSize;
-
-    //! The set of masks bound to the data
     std::set<IMask*> _masks;
-
     double _background;
-
     std::shared_ptr<IDataReader> _reader;
 };
 

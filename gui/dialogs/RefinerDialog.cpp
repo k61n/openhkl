@@ -784,7 +784,7 @@ void RefinerDialog::_fetchAllInitialValues()
     _nis.clear();
     _wavelengths.clear();
 
-    nsx::UnitCell* unit_cell = gSession->selectedExperiment()->experiment()->getUnitCell(
+    const nsx::UnitCell* unit_cell = gSession->selectedExperiment()->experiment()->getUnitCell(
         _select_uc->currentText().toStdString());
 
     if (!unit_cell)
@@ -815,7 +815,7 @@ void RefinerDialog::_fetchAllInitialValues()
             wavelength_offsets_temp.push_back(state.wavelength * (state.ni.norm() - 1.0));
         }
 
-        nsx::UnitCellCharacter unitcharacter = unit_cell->character();
+        const nsx::UnitCellCharacter unitcharacter = unit_cell->character();
         uc_dims_temp = Eigen::Vector3d {unitcharacter.a, unitcharacter.b, unitcharacter.c};
         uc_angles_temp =
             Eigen::Vector3d {unitcharacter.alpha, unitcharacter.beta, unitcharacter.gamma};
@@ -843,7 +843,7 @@ void RefinerDialog::_fetchAllRefinedValues()
     _nis_ref.clear();
     _wavelengths_ref.clear();
 
-    nsx::UnitCell* unit_cell = gSession->selectedExperiment()->experiment()->getUnitCell(
+    const nsx::UnitCell* unit_cell = gSession->selectedExperiment()->experiment()->getUnitCell(
         _select_uc->currentText().toStdString());
 
     nsx::sptrDataSet data_set = gSession->selectedExperiment()->experiment()->getData(
@@ -876,7 +876,7 @@ void RefinerDialog::_fetchAllRefinedValues()
             wavelength_offsets_temp.push_back(state.wavelength * (state.ni.norm() - 1.0));
         }
 
-        nsx::UnitCellCharacter unitcharacter = unit_cell->character();
+        const nsx::UnitCellCharacter unitcharacter = unit_cell->character();
         uc_dims_temp = Eigen::Vector3d {unitcharacter.a, unitcharacter.b, unitcharacter.c};
         uc_angles_temp =
             Eigen::Vector3d {unitcharacter.alpha, unitcharacter.beta, unitcharacter.gamma};
@@ -1034,8 +1034,8 @@ void RefinerDialog::refine()
     refiners.clear();
 
     for (QListWidgetItem* data_item : selected_data) {
-        std::string data_name = data_item->text().toStdString();
-        nsx::sptrDataSet data = gSession->selectedExperiment()->experiment()->getData(data_name);
+        const std::string data_name = data_item->text().toStdString();
+        const nsx::sptrDataSet data = gSession->selectedExperiment()->experiment()->getData(data_name);
         std::vector<nsx::Peak3D*> reference_peaks;
         std::vector<nsx::Peak3D*> predicted_peaks;
 

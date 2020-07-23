@@ -114,7 +114,7 @@ TEST_CASE("test/data/TestNewWorkFlow.cpp", "")
 
     auto callback = [progressHandler]() {
         auto log = progressHandler->getLog();
-        for (auto&& msg : log)
+        for (const auto& msg : log)
             std::cout << msg << std::endl;
     };
 
@@ -252,7 +252,7 @@ TEST_CASE("test/data/TestNewWorkFlow.cpp", "")
     const auto cell = solution.first;
     cell->printSelf(std::cout);
 
-    for (auto&& peak : filtered_peaks->getPeakList()) {
+    for (const auto& peak : filtered_peaks->getPeakList()) {
         peak->setUnitCell(cell.get());
         // std::cout << "recip peak: " << peak->q().rowVector() << std::endl;
     }
@@ -281,7 +281,7 @@ TEST_CASE("test/data/TestNewWorkFlow.cpp", "")
 
         // q could cross Ewald sphere multiple times, so find best match
         double diff = 1e200; // going to find smaller value
-        for (auto&& event : events) {
+        for (const auto& event : events) {
             const Eigen::Vector3d pnew = {event._px, event._py, event._frame};
             if ((pnew - p0).squaredNorm() < diff) {
                 diff = (pnew - p0).squaredNorm();

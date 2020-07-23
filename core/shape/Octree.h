@@ -83,7 +83,7 @@ class Octree : public AABB {
     std::set<const Ellipsoid*> getCollisions(const Ellipsoid& given) const;
 
     //! Returns true if the point is contained in any object of the octree
-    bool isInsideObject(const Eigen::Vector3d& vector);
+    bool isInsideObject(const Eigen::Vector3d& vector) const;
 
     //! Gets the voxels of the tree
     void getVoxels(std::vector<AABB*>& voxels);

@@ -22,7 +22,7 @@ void CC::calculate(MergedData* data)
 {
     std::vector<MergedPeak> peaks;
 
-    for (auto&& peak : data->mergedPeakSet())
+    for (const auto& peak : data->mergedPeakSet())
         peaks.push_back(peak);
     calculate(peaks);
 }
@@ -33,7 +33,7 @@ void CC::calculate(std::vector<MergedPeak> peaks)
     xx = xy = yy = x = y = 0.0;
     _nPeaks = 0;
 
-    for (auto&& peak : peaks) {
+    for (const auto& peak : peaks) {
         if (peak.redundancy() < 2)
             continue;
 

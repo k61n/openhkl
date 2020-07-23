@@ -491,7 +491,7 @@ void PeakFinderFrame::setParametersUp()
 
     _kernel_combo->clear();
     nsx::ConvolverFactory convolver_factory;
-    for (auto&& convolution_kernel_combo : convolver_factory.callbacks())
+    for (const auto& convolution_kernel_combo : convolver_factory.callbacks())
         _kernel_combo->addItem(QString::fromStdString(convolution_kernel_combo.first));
 
     _kernel_combo->blockSignals(false);

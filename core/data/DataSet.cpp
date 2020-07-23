@@ -274,7 +274,7 @@ void DataSet::removeMask(IMask* mask)
         _masks.erase(mask);
 }
 
-const std::set<IMask*>& DataSet::masks()
+const std::set<IMask*>& DataSet::masks() const
 {
     return _masks;
 }
@@ -287,7 +287,7 @@ void DataSet::maskPeaks(PeakList& peaks) const
             continue;
 
         peak->setMasked(false);
-        for (auto&& m : _masks) {
+        for (const auto& m : _masks) {
             // If the background of the peak intercept the mask, unselected the peak
             if (m->collide(peak->shape())) {
                 peak->setMasked(true);
@@ -325,6 +325,11 @@ IDataReader* DataSet::reader()
 const Detector& DataSet::detector() const
 {
     return *_reader->diffractometer()->detector();
+}
+
+void DataSet::setName(std::string name)
+{
+    _name = name;
 }
 
 std::string DataSet::name() const

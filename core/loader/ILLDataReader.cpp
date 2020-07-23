@@ -167,7 +167,7 @@ ILLDataReader::ILLDataReader(const std::string& filename, Diffractometer* diffra
     std::map<unsigned int, std::vector<double>> gonioValues;
 
     // Loop over the physical axis of the instrument
-    for (auto&& p : instrument_axis) {
+    for (const auto& p : instrument_axis) {
         // Case of a physical axis that is also a scanned axis
         // Prepare a vector that will be further set with the corresponding values
         auto it = std::find(scannedAxisId.begin(), scannedAxisId.end(), p.first);

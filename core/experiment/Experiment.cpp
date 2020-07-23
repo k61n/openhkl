@@ -348,26 +348,33 @@ std::vector<std::string> Experiment::getUnitCellNames() const
     return ret;
 }
 
+const UnitCell* Experiment::getUnitCell(const std::string& name) const
+{
+    if (hasUnitCell(name))
+        return _unit_cells.at(name).get();
+    return nullptr;
+}
+
 UnitCell* Experiment::getUnitCell(const std::string& name)
 {
     if (hasUnitCell(name))
-        return _unit_cells[name].get();
+        return _unit_cells.at(name).get();
     return nullptr;
 }
 
 void Experiment::removeUnitCell(const std::string& name)
 {
-    if (hasUnitCell(name)) {
-        auto unit_cell = _unit_cells.find(name);
-        unit_cell->second.reset();
-        _unit_cells.erase(unit_cell);
-    }
+    if (!hasUnitCell(name))
+        return;
+    auto unit_cell = _unit_cells.find(name);
+    unit_cell->second.reset();
+    _unit_cells.erase(unit_cell);
 }
 
 void Experiment::swapUnitCells(const std::string& old_cell_name, const std::string& new_cell_name)
 {
-    UnitCell* old_cell = getUnitCell(old_cell_name);
-    UnitCell* new_cell = getUnitCell(new_cell_name);
+    const UnitCell* old_cell = getUnitCell(old_cell_name);
+    const UnitCell* new_cell = getUnitCell(new_cell_name);
 
     for (const auto& it: _peak_collections) {
         std::vector<Peak3D*> peaks = it.second.get()->getPeakList();
@@ -494,10 +501,10 @@ bool Experiment::acceptUnitCell(PeakCollection* peaks, double length_tol, double
     return accepted;
 }
 
-std::vector<std::string> Experiment::getCompatibleSpaceGroups()
+std::vector<std::string> Experiment::getCompatibleSpaceGroups() const
 {
     std::string cell_name = "accepted";
-    UnitCell* cell = getUnitCell(cell_name);
+    const UnitCell* cell = getUnitCell(cell_name);
     return cell->compatibleSpaceGroups();
 }
 
@@ -578,7 +585,7 @@ void Experiment::predictPeaks(
     const ShapeLibrary* library = peaks->shapeLibrary();
 
     int current_numor = 0;
-    for (auto data : numors) {
+    for (const sptrDataSet& data : numors) {
         std::cout << "Predicting peaks for numor " << ++current_numor << " of " << numors.size()
                   << std::endl;
 
@@ -601,9 +608,9 @@ void Experiment::computeQuality(
     bool friedel)
 {
     ResolutionShell resolution_shell = nsx::ResolutionShell(d_min, d_max, n_shells);
-    for (auto peak : found->getPeakList())
+    for (const auto& peak : found->getPeakList())
         resolution_shell.addPeak(peak);
-    for (auto peak : predicted->getPeakList())
+    for (const auto& peak : predicted->getPeakList())
         resolution_shell.addPeak(peak);
 
     for (int i = n_shells - 1; i >= 0; --i) {
@@ -612,7 +619,7 @@ void Experiment::computeQuality(
 
         nsx::MergedData merged_data_per_shell(_merged_peaks->spaceGroup(), friedel);
 
-        for (auto peak : resolution_shell.shell(i).peaks)
+        for (const auto& peak : resolution_shell.shell(i).peaks)
             merged_data_per_shell.addPeak(peak);
 
         nsx::RFactor rf;
@@ -637,17 +644,17 @@ void Experiment::computeQuality(
         {rf.expectedRmerge(), rf.expectedRmeas(), rf.expectedRpim(), cc.CCstar()};
 }
 
-UnitCell* Experiment::getAcceptedCell()
+const UnitCell* Experiment::getAcceptedCell() const
 {
     return getUnitCell("accepted");
 }
 
-UnitCell* Experiment::getReferenceCell()
+const UnitCell* Experiment::getReferenceCell() const
 {
     return getUnitCell("reference");
 }
 
-void Experiment::refine(PeakCollection* peaks, UnitCell* cell, DataSet* data, int n_batches)
+void Experiment::refine(const PeakCollection* peaks, UnitCell* cell, DataSet* data, int n_batches)
 {
     const unsigned int max_iter = 1000;
     const std::vector<Peak3D*> peak_list = peaks->getPeakList();

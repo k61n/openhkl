@@ -37,7 +37,7 @@ void RFactor::calculate(MergedData* data)
     double I_total = 0.0;
 
     // go through each equivalence class of peaks
-    for (auto&& peak : peaks) {
+    for (const auto& peak : peaks) {
         const double n = double(peak.redundancy());
 
         // skip if there are fewer than two peaks
@@ -50,7 +50,7 @@ void RFactor::calculate(MergedData* data)
 
         I_total += std::fabs(Iave) * peak.redundancy();
 
-        for (auto&& p : peak.peaks()) {
+        for (const auto& p : peak.peaks()) {
             auto I = p->correctedIntensity();
 
             double diff = std::fabs(I.value() - Iave);

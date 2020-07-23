@@ -61,7 +61,7 @@ TEST_CASE("test/crystal/TestQShape.cpp", "")
 
     auto callback = [progressHandler]() {
         auto log = progressHandler->getLog();
-        for (auto&& msg : log)
+        for (const auto& msg : log)
             std::cout << msg << std::endl;
     };
 

@@ -37,6 +37,7 @@ using RealMatrix = Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::
 //  ***********************************************************************************************
 
 namespace {
+
 void registerEquivalence(int a, int b, nsx::EquivalenceList& equivalences)
 {
     if (a < b)
@@ -101,7 +102,7 @@ PeakFinder::PeakFinder()
 std::vector<Peak3D*> PeakFinder::currentPeaks()
 {
     std::vector<Peak3D*> output;
-    for (sptrPeak3D peak : _current_peaks)
+    for (const sptrPeak3D peak : _current_peaks)
         output.push_back(peak.get());
     return output;
 }
@@ -113,7 +114,7 @@ PeakCollection* PeakFinder::getPeakCollection()
 }
 
 void PeakFinder::setPeakCollection(
-    const std::string name, nsx::listtype type, std::vector<std::shared_ptr<nsx::Peak3D>> peak_list)
+    const std::string name, const nsx::listtype type, std::vector<std::shared_ptr<nsx::Peak3D>> peak_list)
 {
     _peak_collection = PeakCollection(name, type);
     _peak_collection.populate(peak_list);
@@ -434,10 +435,10 @@ void PeakFinder::findCollisions(
         }
     }
 
-    auto dectector = data.reader()->diffractometer()->detector();
-    int nrows = dectector->nRows();
-    int ncols = dectector->nCols();
-    int nframes = data.nFrames();
+    const auto& dectector = data.reader()->diffractometer()->detector();
+    const int nrows = dectector->nRows();
+    const int ncols = dectector->nCols();
+    const int nframes = data.nFrames();
 
     Octree oct(
         Eigen::Vector3d(0.0, 0.0, 0.0),
@@ -447,7 +448,7 @@ void PeakFinder::findCollisions(
 
     std::vector<const Ellipsoid*> xyz_sorted_ellipsoids;
     xyz_sorted_ellipsoids.reserve(boxes.size());
-    for (auto&& it : boxes)
+    for (const auto& it : boxes)
         xyz_sorted_ellipsoids.push_back(it.first);
 
     // Sort the ellipsoid by increasing x, y and z
@@ -474,10 +475,10 @@ void PeakFinder::findCollisions(
     };
     std::sort(xyz_sorted_ellipsoids.begin(), xyz_sorted_ellipsoids.end(), cmp);
 
-    for (auto it : xyz_sorted_ellipsoids)
+    for (const auto& it : xyz_sorted_ellipsoids)
         oct.addData(it);
 
-    auto collisions = oct.getCollisions();
+    const std::set<std::pair<const Ellipsoid*, const Ellipsoid*>>& collisions = oct.getCollisions();
 
     // dummies used to help progress handler
     dummy = 0;
@@ -487,8 +488,8 @@ void PeakFinder::findCollisions(
         magic = 1;
 
     for (auto&& it = collisions.begin(); it != collisions.end(); ++it) {
-        auto&& bit1 = boxes.find(it->first);
-        auto&& bit2 = boxes.find(it->second);
+        const auto& bit1 = boxes.find(it->first);
+        const auto& bit2 = boxes.find(it->second);
         registerEquivalence(bit1->second, bit2->second, equivalences);
 
         // update progress handler
@@ -508,7 +509,7 @@ void PeakFinder::findCollisions(
     }
 
     // free memory stored in unordered map
-    for (auto&& it : boxes)
+    for (const auto& it : boxes)
         delete it.first;
 }
 
@@ -535,10 +536,10 @@ void PeakFinder::mergeEquivalentBlobs(
         magic = 1;
 
     // Iterate on blobs and merge equivalences
-    for (auto it = blobs.begin(); it != blobs.end();) {
+    for (auto&& it = blobs.begin(); it != blobs.end();) {
         ++dummy;
 
-        auto match = mequiv.find(it->first);
+        const auto match = mequiv.find(it->first);
         if (match == mequiv.end()) {
             // Nothing is found get to the next blob
             it++;
@@ -577,22 +578,22 @@ void PeakFinder::mergeEquivalentBlobs(
  * merge colliding blobs
  *
  */
-void PeakFinder::find(DataList numors)
+void PeakFinder::find(const DataList numors)
 {
     qDebug() << "PeakFinder::find ... with " << numors.size() << " numors";
     _current_peaks.clear();
     _current_data = numors;
 
     int i = 0;
-    for (auto&& numor : numors) {
+    for (const auto& numor : numors) {
         if (numors.size() > 1)
             qDebug("  numor %i\n", ++i);
         PeakList numor_peaks;
 
-        auto dectector = numor->reader()->diffractometer()->detector();
-        int nrows = dectector->nRows();
-        int ncols = dectector->nCols();
-        int nframes = numor->nFrames();
+        const auto& dectector = numor->reader()->diffractometer()->detector();
+        const int nrows = dectector->nRows();
+        const int ncols = dectector->nCols();
+        const int nframes = numor->nFrames();
 
         // The blobs found for this numor
         std::map<int, Blob3D> blobs;
@@ -625,7 +626,7 @@ void PeakFinder::find(DataList numors)
 
         qDebug("PeakFinder::find: blob loop");
         // merge the blobs into the global set
-        for (auto&& blob : local_blobs)
+        for (const auto& blob : local_blobs)
             blobs.insert(blob);
 
         mergeCollidingBlobs(*numor, blobs);
@@ -645,9 +646,9 @@ void PeakFinder::find(DataList numors)
 
         int count = 0;
 
-        auto&& kernel_size = _convolver->kernelSize();
-        auto&& x_offset = kernel_size.first;
-        auto&& y_offset = kernel_size.second;
+        const auto& kernel_size = _convolver->kernelSize();
+        const auto& x_offset = kernel_size.first;
+        const auto& y_offset = kernel_size.second;
 
         // AABB used for rejecting peaks which overlaps with detector boundaries
         AABB dAABB(
@@ -704,8 +705,7 @@ void PeakFinder::find(DataList numors)
         _handler->setStatus("Peak finding completed.");
         _handler->setProgress(100);
     }
-    std::string name = "Found peaks";
-    setPeakCollection(name, nsx::listtype::FOUND, _current_peaks);
+    setPeakCollection("Found peaks", nsx::listtype::FOUND, _current_peaks);
     qDebug("exit PeakFinder::find\n");
 }
 

@@ -106,7 +106,7 @@ GonioFit fitSampleGonioOffsets(
     minimizer.setfTol(tolerance);
     minimizer.setgTol(tolerance);
 
-    auto success = minimizer.fit(n_iterations);
+    const bool success = minimizer.fit(n_iterations);
 
     if (!success) {
         qWarning() << "Failed to fit sample orientation offsets";
@@ -150,10 +150,10 @@ GonioFit fitDetectorGonioOffsets(
     std::vector<std::vector<double>> selected_states;
     selected_states.reserve(n_selected_states);
 
-    for (auto data : dataset) {
-        auto&& states = data->instrumentStates();
+    for (const auto& data : dataset) {
+        const auto& states = data->instrumentStates();
         for (size_t i = 0; i < states.size(); ++i) {
-            auto state = states[i];
+            const auto& state = states[i];
             if (state.refined)
                 myorientations.push_back(state.ni.normalized());
         }
@@ -184,7 +184,7 @@ GonioFit fitDetectorGonioOffsets(
 
     // Pass by address the parameters to be fitted to the parameter store
     nsx::FitParameters parameters;
-    for (auto& v : fitted_offsets)
+    for (double v : fitted_offsets)
         parameters.addParameter(&v);
 
     // Sets the Minimizer with the parameters store and the size of the residual vector
@@ -196,7 +196,7 @@ GonioFit fitDetectorGonioOffsets(
     minimizer.setfTol(tolerance);
     minimizer.setgTol(tolerance);
 
-    auto success = minimizer.fit(n_iterations);
+    const bool success = minimizer.fit(n_iterations);
 
     if (!success) {
         qWarning() << "Failed to fit detector orientation offsets";

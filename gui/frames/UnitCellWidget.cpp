@@ -211,7 +211,7 @@ void UnitCellWidget::evaluateSpaceGroups()
     // unsigned int row = 0;
 
     // // Display solutions
-    // for (auto&& item : groups) {
+    // for (const auto& item : groups) {
     //     const std::string& symbol = std::get<0>(item);
     //     double agreement = std::get<1>(item);
     //     nsx::SpaceGroup grp(symbol);
