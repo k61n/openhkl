@@ -32,7 +32,6 @@
 
 #include <QDateTime>
 #include <QDebug>
-#include <QStandardItem>
 #include <QStringList>
 #include <iostream>
 #include <vector>

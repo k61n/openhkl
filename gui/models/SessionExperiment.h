@@ -45,25 +45,19 @@ class SessionExperiment {
     //! Get the associated peaks
     std::vector<nsx::Peak3D*>
     getPeaks(const QString& peakListName, int upperindex = -1, int lowerindex = -1) const;
-    //! Get the names of peaks present in the core
+
     QStringList getPeakListNames() const;
-    //! Get the names of peaks present in the core
     QStringList getFoundNames() const;
-    //! Get the names of peaks present in the core
     QStringList getPredictedNames() const;
-    //! Get the number of peak lists
+
     int numPeakCollections() const { return _experiment->numPeakCollections(); };
-    //! Generate a peak model based on the Peak collection in the core
+
     void generatePeakModel(const QString& peakListName);
-    //! Generate a peak model based on the Peak collection in the core
     void generatePeakModels();
-    //! Generate a peak model based on the Peak collection in the core
     void removePeakModel(const QString& name);
-    //! Get the peaklist model by name
     const PeakCollectionModel* peakModel(const QString& name) const;
-    //! Get the peaklist model by number
     PeakCollectionModel* peakModelAt(int i);
-    //! Tell the gui that peaks have changed
+
     void onPeaksChanged();
 
  public:
