@@ -524,12 +524,11 @@ void Experiment::buildShapeLibrary(PeakCollection* peaks, ShapeLibParameters par
     for (nsx::Peak3D* peak : peak_list) {
         if (!peak->enabled())
             continue;
-        double d = 1.0 / peak->q().rowVector().norm();
-
+        const double d = 1.0 / peak->q().rowVector().norm();
         if (d > params.detector_range_max || d < params.detector_range_min)
             continue;
 
-        nsx::Intensity intensity = peak->correctedIntensity();
+        const nsx::Intensity& intensity = peak->correctedIntensity();
 
         if (intensity.value() <= params.strength_min * intensity.sigma())
             continue;
@@ -544,12 +543,12 @@ void Experiment::buildShapeLibrary(PeakCollection* peaks, ShapeLibParameters par
     nsx::AABB aabb;
 
     if (params.kabsch_coords) {
-        Eigen::Vector3d sigma(
+        const Eigen::Vector3d sigma(
             params.sigma_divergence, params.sigma_divergence, params.sigma_mosaicity);
         aabb.setLower(-params.peak_scale * sigma);
         aabb.setUpper(params.peak_scale * sigma);
     } else {
-        Eigen::Vector3d dx(params.nbins_x, params.nbins_y, params.nbins_z);
+        const Eigen::Vector3d dx(params.nbins_x, params.nbins_y, params.nbins_z);
         aabb.setLower(-0.5 * dx);
         aabb.setUpper(0.5 * dx);
     }
