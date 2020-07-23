@@ -23,27 +23,32 @@ namespace nsx {
 
 class Refiner {
  public:
-    //! Construct an instance to refine the given cell based on the given peak
-    //! list, using the given number of frame batches. The peaks must belong to
-    //! the same dataset.
+    //! Construct an instance to refine the given cell based on the given peak list,
+    //! using the given number of frame batches. The peaks must belong to the same dataset.
     Refiner(
         InstrumentStateList& states, UnitCell* cell, std::vector<nsx::Peak3D*> peaks, int nbatches);
+
     //! Sets the lattice B matrix to be refined.
     void refineUB();
+
     //! Sets detector offsets in the given list of instrument states to be refined.
     void refineDetectorOffset();
-    //! Sets the sample position in the given list of instrument states to be
-    //! refined.
+
+    //! Sets the sample position in the given list of instrument states to be refined.
     void refineSamplePosition();
-    //! Sets the sample orientation in the given list of instrument states to be
-    //! refined.
+
+    //! Sets the sample orientation in the given list of instrument states to be refined.
     void refineSampleOrientation();
+
     //! Sets the source ki in the given list of instrument states to be refined.
     void refineKi();
+
     //! Perform the refinement with the maximum number of iterations as given.
     bool refine(unsigned int max_iter = 100);
+
     //! Update the centers of predicted peaks, after refinement.
     int updatePredictions(std::vector<Peak3D*> peaks) const;
+
     //! Returns the individual peak/frame batches used during refinement.
     const std::vector<RefinementBatch>& batches() const;
 
