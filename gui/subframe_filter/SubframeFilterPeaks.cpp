@@ -101,7 +101,7 @@ void SubframeFilterPeaks::setSizePolicies()
 
 void SubframeFilterPeaks::setInputUp()
 {
-    _input_box = new Spoiler(QString::fromStdString("Input"));
+    _input_box = new Spoiler("Input");
 
     QGridLayout* _input_grid = new QGridLayout();
 

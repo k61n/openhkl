@@ -294,7 +294,7 @@ void UnitCellProperty::selectedCellChanged(int cell)
     name->setText(QString::fromStdString(selected_cell->name()));
     xsection::Material* material = selected_cell->material();
     if (!material)
-        chemicalFormula->setText(QString::fromStdString(""));
+        chemicalFormula->setText("");
     else
         chemicalFormula->setText(QString::fromStdString(selected_cell->material()->formula()));
     spaceGroup->setText(QString::fromStdString(selected_cell->spaceGroup().symbol()));

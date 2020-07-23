@@ -97,7 +97,7 @@ void PeakFinderFrame::setSizePolicies()
 
 void PeakFinderFrame::setDataUp()
 {
-    Spoiler* _data_box = new Spoiler(QString::fromStdString("1. Input Data"));
+    Spoiler* _data_box = new Spoiler("1. Input Data");
 
     QGridLayout* _data_grid = new QGridLayout();
 
@@ -147,7 +147,7 @@ void PeakFinderFrame::setDataUp()
 
 void PeakFinderFrame::setBlobUp()
 {
-    Spoiler* blob_para = new Spoiler(QString::fromStdString("2. Peak search parameters"));
+    Spoiler* blob_para = new Spoiler("2. Peak search parameters");
 
     QGridLayout* blob_grid = new QGridLayout();
 
@@ -254,7 +254,7 @@ void PeakFinderFrame::setBlobUp()
 
 void PeakFinderFrame::setIntegrateUp()
 {
-    Spoiler* integration_para = new Spoiler(QString::fromStdString("3. Integration parameters"));
+    Spoiler* integration_para = new Spoiler("3. Integration parameters");
 
     QGridLayout* integGrid = new QGridLayout();
 
@@ -311,7 +311,7 @@ void PeakFinderFrame::setIntegrateUp()
 
 void PeakFinderFrame::setPreviewUp()
 {
-    Spoiler* preview_box = new Spoiler(QString::fromStdString("4. View and save"));
+    Spoiler* preview_box = new Spoiler("4. View and save");
 
     QGridLayout* _preview_grid = new QGridLayout();
 

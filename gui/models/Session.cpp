@@ -222,7 +222,7 @@ void Session::onUnitCellChanged()
 
 void Session::loadExperimentFromFile(QString filename)
 {
-    createExperiment(QString::fromStdString("default"));
+    createExperiment("default");
     currentProject()->experiment()->loadFromFile(filename.toStdString());
     currentProject()->generatePeakModels();
     onExperimentChanged();

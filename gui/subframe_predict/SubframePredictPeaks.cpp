@@ -91,7 +91,7 @@ void SubframePredictPeaks::setSizePolicies()
 
 void SubframePredictPeaks::setInputUp()
 {
-    _input_box = new Spoiler(QString::fromStdString("1. Select Shape Library"));
+    _input_box = new Spoiler("1. Select Shape Library");
 
     QGridLayout* _input_grid = new QGridLayout();
 
@@ -138,7 +138,7 @@ void SubframePredictPeaks::setInputUp()
 
 void SubframePredictPeaks::setParametersUp()
 {
-    _para_box = new Spoiler(QString::fromStdString("2. Predict peaks"));
+    _para_box = new Spoiler("2. Predict peaks");
 
     QGridLayout* para_grid = new QGridLayout();
 
@@ -250,7 +250,7 @@ void SubframePredictPeaks::setParametersUp()
 
 void SubframePredictPeaks::setIntegrateUp()
 {
-    _integrate_box = new Spoiler(QString::fromStdString("3. Integrate peaks"));
+    _integrate_box = new Spoiler("3. Integrate peaks");
 
     QGridLayout* integrate_grid = new QGridLayout();
 
@@ -387,7 +387,7 @@ void SubframePredictPeaks::setIntegrateUp()
 }
 void SubframePredictPeaks::setPreviewUp()
 {
-    _preview_box = new Spoiler(QString::fromStdString("4. View and save"));
+    _preview_box = new Spoiler("4. View and save");
 
     QGridLayout* _preview_grid = new QGridLayout();
 

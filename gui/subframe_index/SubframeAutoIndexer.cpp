@@ -84,7 +84,7 @@ void SubframeAutoIndexer::setSizePolicies()
 
 void SubframeAutoIndexer::setInputUp()
 {
-    _input_box = new Spoiler(QString::fromStdString("Input"));
+    _input_box = new Spoiler("Input");
 
     QGridLayout* _input_grid = new QGridLayout();
 
@@ -125,7 +125,7 @@ void SubframeAutoIndexer::setInputUp()
 
 void SubframeAutoIndexer::setParametersUp()
 {
-    _para_box = new Spoiler(QString::fromStdString("Parameters"));
+    _para_box = new Spoiler("Parameters");
 
     QGridLayout* para_grid = new QGridLayout();
 
