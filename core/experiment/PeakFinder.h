@@ -32,13 +32,13 @@ class PeakFinder {
  public:
     PeakFinder();
 
-    void find(DataList numors);
+    void find(const DataList numors);
 
     std::vector<Peak3D*> currentPeaks();
 
     PeakCollection* getPeakCollection();
     void setPeakCollection(
-        const std::string name, nsx::listtype type,
+        const std::string name, const nsx::listtype type,
         std::vector<std::shared_ptr<nsx::Peak3D>> peak_list);
 
     DataList currentData() { return _current_data; };
