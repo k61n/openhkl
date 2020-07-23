@@ -14,6 +14,7 @@
 
 #include "gui/subframe_experiment/properties/SourceProperty.h"
 #include "base/utils/Units.h"
+#include "core/experiment/Experiment.h"
 #include "gui/models/Project.h"
 #include "gui/models/Session.h"
 #include <QFormLayout>

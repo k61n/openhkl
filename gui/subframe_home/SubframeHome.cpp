@@ -13,6 +13,7 @@
 //  ***********************************************************************************************
 
 #include "gui/subframe_home/SubframeHome.h"
+#include "core/experiment/Experiment.h"
 #include "gui/dialogs/ExperimentDialog.h"
 #include "gui/models/Project.h"
 #include "gui/models/Session.h"

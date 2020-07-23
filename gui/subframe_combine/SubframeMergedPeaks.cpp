@@ -13,15 +13,14 @@
 //  ***********************************************************************************************
 
 #include "gui/subframe_combine/SubframeMergedPeaks.h"
-
 #include "core/data/DataSet.h"
+#include "core/experiment/Experiment.h"
 #include "core/statistics/CC.h"
 #include "core/statistics/MergedPeak.h"
 #include "core/statistics/RFactor.h"
 #include "core/statistics/ResolutionShell.h"
 #include "gui/models/Project.h"
 #include "gui/models/Session.h"
-
 #include <QDialogButtonBox>
 #include <QFormLayout>
 #include <QHBoxLayout>

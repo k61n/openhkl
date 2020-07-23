@@ -15,6 +15,7 @@
 #include "gui/models/Session.h"
 #include "core/algo/DataReaderFactory.h"
 #include "core/data/DataSet.h"
+#include "core/experiment/Experiment.h"
 #include "core/loader/RawDataReader.h"
 #include "core/raw/IDataReader.h"
 #include "gui/MainWin.h"

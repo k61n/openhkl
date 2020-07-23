@@ -15,6 +15,7 @@
 #include "gui/subframe_find/SubframeFindPeaks.h"
 #include "core/convolve/ConvolverFactory.h"
 #include "core/data/DataSet.h"
+#include "core/experiment/Experiment.h"
 #include "core/experiment/PeakFinder.h"
 #include "core/integration/PixelSumIntegrator.h"
 #include "core/peak/Peak3D.h"

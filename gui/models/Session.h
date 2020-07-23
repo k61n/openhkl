@@ -15,7 +15,9 @@
 #ifndef NSX_GUI_MODELS_SESSION_H
 #define NSX_GUI_MODELS_SESSION_H
 
-#include "core/experiment/Experiment.h"
+#include <QString>
+#include <memory>
+#include <vector>
 
 class Project;
 

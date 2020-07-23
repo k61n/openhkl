@@ -15,6 +15,7 @@
 #include "gui/subframe_predict/SubframePredictPeaks.h"
 #include "gui/subframe_predict/ShapeLibraryDialog.h"
 #include "core/data/DataSet.h"
+#include "core/experiment/Experiment.h"
 #include "core/peak/Peak3D.h"
 #include "core/raw/IDataReader.h"
 #include "core/shape/IPeakIntegrator.h"

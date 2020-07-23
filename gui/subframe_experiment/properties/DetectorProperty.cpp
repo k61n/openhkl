@@ -14,6 +14,7 @@
 
 #include "gui/subframe_experiment/properties/DetectorProperty.h"
 #include "core/detector/Detector.h"
+#include "core/experiment/Experiment.h"
 #include "gui/models/Project.h"
 #include "gui/models/Session.h"
 #include <QGridLayout>

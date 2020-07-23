@@ -13,6 +13,7 @@
 //  ***********************************************************************************************
 
 #include "gui/subframe_filter/SubframeFilterPeaks.h"
+#include "core/experiment/Experiment.h"
 #include "core/shape/PeakCollection.h"
 #include "core/shape/PeakFilter.h"
 #include "gui/MainWin.h"

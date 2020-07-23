@@ -14,6 +14,7 @@
 
 #include "gui/subframe_experiment/properties/UnitCellProperty.h"
 #include "base/utils/Units.h"
+#include "core/experiment/Experiment.h"
 #include "gui/dialogs/RefinerDialog.h"
 #include "gui/models/Project.h"
 #include "gui/models/Session.h"
