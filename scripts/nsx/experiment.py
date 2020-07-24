@@ -107,7 +107,7 @@ class Experiment:
             raise RuntimeError("No valid data reader specified")
 
         self.log(f'dataset {data_name}: nframes = {data.nFrames()}')
-        self._expt.addData(data_name, data)
+        self._expt.addData(data, data_name)
         self._data_sets.append(data_name)
 
     def get_number_of_peaks(self, collection):
@@ -324,9 +324,9 @@ class Experiment:
         self.log(f"bkg_begin = {self._params.shapelib['bkg_begin']}")
         self.log(f"bkg_end = {self._params.shapelib['bkg_end']}")
         # self._found_collection = self._expt.getPeakCollection(self._found_peaks)
-        self._expt.acceptUnitCell(self._found_collection)
+        self._expt.assignUnitCell(self._found_collection)
         self._filtered_collection = self._expt.getPeakCollection(self._filtered_peaks)
-        self._expt.acceptUnitCell(self._filtered_collection)
+        self._expt.assignUnitCell(self._filtered_collection)
         self._expt.buildShapeLibrary(self._filtered_collection, shapelib_params)
         self.log(f'Number of profiles = ' + str(self._filtered_collection.shapeLibrary().numberOfPeaks()))
 
