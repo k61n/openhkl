@@ -512,7 +512,7 @@ void SubframeAutoIndexer::acceptSolution()
             _selected_unit_cell->setName(dlg->listName().toStdString());
             gSession->experimentAt(_exp_combo->currentIndex())
                 ->experiment()
-                ->addUnitCell(dlg->listName().toStdString(), _selected_unit_cell.get());
+                ->addUnitCell(dlg->listName().toStdString(), *_selected_unit_cell.get());
             gSession->onUnitCellChanged();
 
             const nsx::PeakCollection* collection =

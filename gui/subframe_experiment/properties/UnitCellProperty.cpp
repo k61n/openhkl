@@ -169,7 +169,7 @@ UnitCellProperty::UnitCellProperty() : QWidget()
             return;
 
         gSession->currentProject()->experiment()->addUnitCell(
-            new_name, gSession->currentProject()->experiment()->getUnitCell(old_name));
+            new_name, *gSession->currentProject()->experiment()->getUnitCell(old_name));
         gSession->currentProject()->experiment()->getUnitCell(new_name)->setName(new_name);
         gSession->currentProject()->experiment()->swapUnitCells(old_name, new_name);
         gSession->currentProject()->experiment()->removeUnitCell(old_name);
@@ -348,10 +348,10 @@ void UnitCellProperty::addUnitCell()
     if (gSession->currentProjectNum() == -1)
         return;
 
-    nsx::UnitCell uc = nsx::UnitCell();
+    nsx::UnitCell uc;
     uc.setName("New unit cell");
 
-    gSession->currentProject()->experiment()->addUnitCell("New unit cell", &uc);
+    gSession->currentProject()->experiment()->addUnitCell("New unit cell", uc);
 
     refreshInput();
 
