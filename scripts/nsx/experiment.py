@@ -222,9 +222,10 @@ class Experiment:
         return n_caught
 
     def accept_unit_cell(self, peak_collection):
-        length_tol = self._params.autoindexer['length_tol']
-        angle_tol = self._params.autoindexer['angle_tol']
-        return self._expt.acceptUnitCell(peak_collection, length_tol, angle_tol)
+        return self._expt.checkAndAssignUnitCell(
+            peak_collection,
+            self._params.autoindexer['length_tol'],
+            self._params.autoindexer['angle_tol'])
 
     def autoindex_dataset(self, dataset, start_frame, end_frame, length_tol, angle_tol):
         '''

@@ -91,7 +91,7 @@ class Experiment {
     MergedData* getMergedPeaks() const { return _merged_peaks.get(); };
 
     // Unit cells
-    void addUnitCell(const std::string& name, UnitCell* unit_cell);
+    void addUnitCell(const std::string& name, const UnitCell* unit_cell);
     //! Add a unit cell to the experiment via cell parameters (skip autoindexing step)
     void addUnitCell(
         const std::string& name, double a, double b, double c, double alpha, double beta,
@@ -103,8 +103,8 @@ class Experiment {
     void removeUnitCell(const std::string& name);
     void swapUnitCells(const std::string& old_cell, const std::string& new_cell);
     int numUnitCells() const { return _unit_cells.size(); };
-    bool acceptUnitCell(PeakCollection* peaks, double length_tol, double angle_tol);
-    void acceptUnitCell(PeakCollection* peaks);
+    bool checkAndAssignUnitCell(PeakCollection* peaks, double length_tol, double angle_tol);
+    void assignUnitCell(PeakCollection* peaks);
     std::vector<std::string> getCompatibleSpaceGroups() const;
 
     // Peak finder
