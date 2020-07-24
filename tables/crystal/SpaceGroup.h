@@ -55,8 +55,8 @@ class SpaceGroup {
         const MillerIndex& miller_index1, const MillerIndex& miller_index2,
         bool friedel = false) const;
     //! Returns whether two sets of indices are related by a symmetry up to Friedel reflection
-    bool
-    isFriedelEquivalent(const MillerIndex& miller_index1, const MillerIndex& miller_index2) const;
+    bool isFriedelEquivalent(
+        const MillerIndex& miller_index1, const MillerIndex& miller_index2) const;
 
  private:
     void generateGroupElements();

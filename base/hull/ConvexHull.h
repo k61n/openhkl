@@ -117,8 +117,8 @@ class ConvexHull {
     //! rotated by the rotation matrix: rotation Triangles objects are very light
     //! object that can be used for further analysis such as Monte-Carlo based
     //! absorption correction.
-    std::vector<Triangle>
-    createFaceCache(const Eigen::Matrix3d& rotation = Eigen::Matrix3d::Identity()) const;
+    std::vector<Triangle> createFaceCache(
+        const Eigen::Matrix3d& rotation = Eigen::Matrix3d::Identity()) const;
 
     //! Returns whether a vertex is contained in the hull
     bool contains(const Eigen::Vector3d& v) const;

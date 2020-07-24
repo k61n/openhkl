@@ -42,8 +42,8 @@ ColorMap::ColorMap() : ColorMap(getColorMapNames().front()) {}
 
 ColorMap::~ColorMap() {}
 
-QImage
-ColorMap::matToImage(const Eigen::ArrayXXd& source, const QRect& rect, double colorMax, bool log)
+QImage ColorMap::matToImage(
+    const Eigen::ArrayXXd& source, const QRect& rect, double colorMax, bool log)
 {
     // invalid rectangle: early return
     if (rect.left() < 0 || rect.top() < 0)

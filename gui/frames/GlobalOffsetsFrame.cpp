@@ -13,11 +13,12 @@
 //  ***********************************************************************************************
 
 #include "gui/frames/GlobalOffsetsFrame.h"
-
 #include "base/utils/Units.h"
 #include "core/algo/GonioFit.h"
 #include "core/data/DataSet.h"
+#include "core/experiment/Experiment.h"
 #include "gui/models/Meta.h"
+#include "gui/models/Project.h"
 #include "gui/models/Session.h"
 #include <QFileInfo>
 #include <QFormLayout>
@@ -27,11 +28,11 @@
 
 GlobalOffsetsFrame::GlobalOffsetsFrame(offsetMode mode) : QFrame()
 {
-    if (gSession->selectedExperimentNum() < 0) {
+    if (gSession->currentProjectNum() < 0) {
         // gLogger->log("[ERROR] No experiment selected");
         return;
     }
-    if (gSession->selectedExperiment()->getDataNames().empty()) {
+    if (gSession->currentProject()->getDataNames().empty()) {
         // gLogger->log("[ERROR] No data loaded to selected experiment");
         return;
     }
@@ -48,7 +49,7 @@ void GlobalOffsetsFrame::layout()
     QHBoxLayout* above = new QHBoxLayout;
     QVBoxLayout* left = new QVBoxLayout;
     selectedData = new QListWidget;
-    QList<nsx::sptrDataSet> all_data = gSession->selectedExperiment()->allData();
+    std::vector<nsx::sptrDataSet> all_data = gSession->currentProject()->allData();
     for (nsx::sptrDataSet data : all_data) {
         QFileInfo fileinfo(QString::fromStdString(data->filename()));
 
@@ -78,7 +79,7 @@ void GlobalOffsetsFrame::layout()
     offsets = new QTableWidget;
     offsets->setColumnCount(2);
     nsx::Gonio& detector_gonio =
-        gSession->selectedExperiment()->experiment()->diffractometer()->detector()->gonio();
+        gSession->currentProject()->experiment()->diffractometer()->detector()->gonio();
     size_t n_axes = detector_gonio.nAxes();
     offsets->setRowCount(n_axes);
     for (size_t i = 0; i < n_axes; ++i) {
@@ -125,7 +126,7 @@ void GlobalOffsetsFrame::fit()
     if (mode_ == offsetMode::DETECTOR) {
         // Fit the detector offsets with the selected data
         const nsx::Detector* detector =
-            gSession->selectedExperiment()->experiment()->diffractometer()->detector();
+            gSession->currentProject()->experiment()->diffractometer()->detector();
         const nsx::GonioFit fit_results = nsx::fitDetectorGonioOffsets(
             detector->gonio(), selected_data, iterations->value(), tolerance->value());
 
@@ -148,7 +149,7 @@ void GlobalOffsetsFrame::fit()
         yValues = {costFunction.begin(), costFunction.end()};
     } else if (mode_ == offsetMode::SAMPLE) {
         const nsx::Sample& sample =
-            gSession->selectedExperiment()->experiment()->diffractometer()->sample();
+            gSession->currentProject()->experiment()->diffractometer()->sample();
         nsx::GonioFit fit_results = nsx::fitSampleGonioOffsets(
             sample.gonio(), selected_data, iterations->value(), tolerance->value());
 

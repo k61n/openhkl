@@ -56,7 +56,7 @@ void Actions::setupData()
     // findPeaks.setTriggerHook([]() { new PeakFinderFrame; });
     // instrumentStates.setTriggerHook([]() { new InstrumentStatesFrame; });
     // convertHDF5.setTriggerHook([]() {
-    //     if (gSession->selectedExperimentNum() < 0)
+    //     if (gSession->currentProjectNum() < 0)
     //         return;
     //     HDF5ConverterDialog* dlg = new HDF5ConverterDialog;
     //     dlg->exec();
@@ -74,7 +74,7 @@ void Actions::setupInstrument()
     //     iso->exec();
     // });
     // shapeLoadMovie.setTriggerHook([]() {
-    //     if (gSession->selectedExperimentNum() < 0) {
+    //     if (gSession->currentProjectNum() < 0) {
     //         qWarning() << "No selected experiment";
     //         return;
     //     }
@@ -111,24 +111,24 @@ void Actions::setupPeaks()
     // autoIndexer.setTriggerHook([]() { new SubframeAutoIndexer; });
     // filterPeaks.setTriggerHook([]() { new PeakFilterDialog; });
     // assignUnitCell.setTriggerHook([]() {
-    //     if (gSession->selectedExperimentNum() < 0) {
+    //     if (gSession->currentProjectNum() < 0) {
     //         gLogger->log("[ERROR] No experiment selected");
     //         return;
     //     }
-    //     if (gSession->selectedExperiment()->getPeakListNames().empty()) {
+    //     if (gSession->currentProject()->getPeakListNames().empty()) {
     //         gLogger->log("[ERROR] No peaks in selected experiment");
     //         return;
     //     }
-    // gSession->selectedExperiment()->autoAssignUnitCell();
+    // gSession->currentProject()->autoAssignUnitCell();
     // });
     // buildShapeLibrary.setTriggerHook([]() { new ShapeLibraryDialog; });
     // refine.setTriggerHook([]() { new RefinerFrame; });
     // normalize.setTriggerHook([]() {
-    //     if (gSession->selectedExperimentNum() < 0)
+    //     if (gSession->currentProjectNum() < 0)
     //         return;
-    //     // gSession->selectedExperiment()->normalizeToMonitor();
+    //     // gSession->currentProject()->normalizeToMonitor();
     // });
-    // integratepeaks.setTriggerHook([]() { gSession->selectedExperiment()->integratePeaks(); });
+    // integratepeaks.setTriggerHook([]() { gSession->currentProject()->integratePeaks(); });
     // predictPeaks.setTriggerHook([]() {
     //     PredictPeaksDialog* dgl = new PredictPeaksDialog;
     //     if (!dgl->exec()) {
@@ -138,20 +138,20 @@ void Actions::setupPeaks()
     //     dgl->deleteLater();
     // });
     // statistics.setTriggerHook([]() {
-    //     if (gSession->selectedExperimentNum() < 0)
+    //     if (gSession->currentProjectNum() < 0)
     //         return;
-    //     if (gSession->selectedExperiment()->getUnitCellNames().empty())
+    //     if (gSession->currentProject()->getUnitCellNames().empty())
     //         return;
-    //     // nsx::sptrUnitCell cell = gSession->selectedExperiment()->getUnitCell();
+    //     // nsx::sptrUnitCell cell = gSession->currentProject()->getUnitCell();
     //     // nsx::SpaceGroup group = cell->spaceGroup();
-    //     // nsx::PeakList list = gSession->selectedExperiment()->getUnitCell(cell);
+    //     // nsx::PeakList list = gSession->currentProject()->getUnitCell(cell);
     //     // qDebug() << "Space Group symbol: " << QString::fromStdString(group.symbol());
     //     // new MergedPeakInformationFrame(group, list);
     // });
     // correctAbsorption.setTriggerHook([]() {
-    //     if (gSession->selectedExperimentNum() < 0)
+    //     if (gSession->currentProjectNum() < 0)
     //         return;
-    //     if (gSession->selectedExperiment()->getUnitCellNames().empty())
+    //     if (gSession->currentProject()->getUnitCellNames().empty())
     //         return;
     //     new MCAbsorptionDialog;
     // });

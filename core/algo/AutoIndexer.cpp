@@ -80,7 +80,7 @@ void AutoIndexer::computeFFTSolutions(const std::vector<Peak3D*>& peaks)
 
     // Store the q-vectors of the peaks for auto-indexing
     std::vector<ReciprocalVector> qvects;
-    const std::vector<Peak3D*> filtered_peaks = PeakFilter {}.filterEnabled(peaks, true);
+    const std::vector<Peak3D*> filtered_peaks = PeakFilter{}.filterEnabled(peaks, true);
     for (const Peak3D* peak : filtered_peaks) {
         auto q = peak->q().rowVector();
         qvects.push_back(ReciprocalVector(q));
@@ -120,7 +120,7 @@ void AutoIndexer::computeFFTSolutions(const std::vector<Peak3D*>& peaks)
                 A.col(1) = tvects[j];
                 A.col(2) = tvects[k];
                 // Build a unit cell with direct vectors
-                std::shared_ptr<UnitCell> cell {new UnitCell {A}};
+                std::shared_ptr<UnitCell> cell{new UnitCell{A}};
 
                 // Skip this unit cell if its volume is below a user-defined minimum.
                 if (cell->volume() < _params.minUnitCellVolume)
@@ -276,8 +276,7 @@ void AutoIndexer::printSolutions()
     }
 }
 
-void AutoIndexer::acceptSolution(
-    const UnitCell* solution, const std::vector<nsx::Peak3D*>& peaks)
+void AutoIndexer::acceptSolution(const UnitCell* solution, const std::vector<nsx::Peak3D*>& peaks)
 {
     for (auto peak : peaks)
         peak->setUnitCell(solution);

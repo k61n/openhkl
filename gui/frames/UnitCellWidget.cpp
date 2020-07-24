@@ -28,7 +28,7 @@
 #include <QVBoxLayout>
 
 UnitCellWidget::UnitCellWidget(nsx::sptrUnitCell cell, const QString& /*name*/)
-    : QWidget(), unitCell_ {cell}, wasSpaceGroupSet {false}
+    : QWidget(), unitCell_{cell}, wasSpaceGroupSet{false}
 {
     nsx::UnitCellCharacter character = unitCell_->character();
     // layout...
@@ -163,7 +163,7 @@ void UnitCellWidget::evaluateSpaceGroups()
     // nsx::PeakList list;
     // nsx::PeakFilter filter;
 
-    // // list = filter.enabled(gSession->selectedExperiment()->getUnitCell(unitCell_), true);
+    // // list = filter.enabled(gSession->currentProject()->getUnitCell(unitCell_), true);
     // list = filter.indexed(list, *unitCell_, unitCell_->indexingTolerance());
 
     // nsx::MillerIndexList hkls;

@@ -96,7 +96,7 @@ PeakFinder::PeakFinder()
 
     , _framesEnd(-1)
 {
-    _convolver.reset(ConvolverFactory {}.create("annular", {{"r1", 5.}, {"r2", 10.}, {"r3", 15.}}));
+    _convolver.reset(ConvolverFactory{}.create("annular", {{"r1", 5.}, {"r2", 10.}, {"r3", 15.}}));
 }
 
 std::vector<Peak3D*> PeakFinder::currentPeaks()
@@ -114,7 +114,8 @@ PeakCollection* PeakFinder::getPeakCollection()
 }
 
 void PeakFinder::setPeakCollection(
-    const std::string name, const nsx::listtype type, std::vector<std::shared_ptr<nsx::Peak3D>> peak_list)
+    const std::string name, const nsx::listtype type,
+    std::vector<std::shared_ptr<nsx::Peak3D>> peak_list)
 {
     _peak_collection = PeakCollection(name, type);
     _peak_collection.populate(peak_list);

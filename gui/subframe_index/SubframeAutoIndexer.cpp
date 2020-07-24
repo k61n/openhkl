@@ -13,14 +13,14 @@
 //  ***********************************************************************************************
 
 #include "gui/subframe_index/SubframeAutoIndexer.h"
-
 #include "base/utils/ProgressHandler.h"
 #include "base/utils/Units.h"
 #include "core/algo/AutoIndexer.h"
+#include "core/experiment/Experiment.h"
 #include "gui/dialogs/ListNameDialog.h"
 #include "gui/frames/UnitCellWidget.h"
+#include "gui/models/Project.h"
 #include "gui/models/Session.h"
-
 #include <QHeaderView>
 #include <QLabel>
 
@@ -84,7 +84,7 @@ void SubframeAutoIndexer::setSizePolicies()
 
 void SubframeAutoIndexer::setInputUp()
 {
-    _input_box = new Spoiler(QString::fromStdString("Input"));
+    _input_box = new Spoiler("Input");
 
     QGridLayout* _input_grid = new QGridLayout();
 
@@ -125,7 +125,7 @@ void SubframeAutoIndexer::setInputUp()
 
 void SubframeAutoIndexer::setParametersUp()
 {
-    _para_box = new Spoiler(QString::fromStdString("Parameters"));
+    _para_box = new Spoiler("Parameters");
 
     QGridLayout* para_grid = new QGridLayout();
 
@@ -299,18 +299,18 @@ void SubframeAutoIndexer::refreshAll()
 void SubframeAutoIndexer::setExperiments()
 {
     _exp_combo->blockSignals(true);
-
     _exp_combo->clear();
-    QList<QString> exp_list = gSession->experimentNames();
 
-    if (!exp_list.isEmpty()) {
-        for (QString exp : exp_list)
-            _exp_combo->addItem(exp);
-        _exp_combo->blockSignals(false);
+    if (gSession->experimentNames().empty())
+        return;
 
-        updatePeakList();
-        grabIndexerParameters();
-    }
+    for (QString exp : gSession->experimentNames())
+        _exp_combo->addItem(exp);
+
+    _exp_combo->blockSignals(false);
+
+    updatePeakList();
+    grabIndexerParameters();
 }
 
 void SubframeAutoIndexer::updatePeakList()
@@ -320,7 +320,7 @@ void SubframeAutoIndexer::updatePeakList()
     _peak_combo->clear();
     _peak_list = gSession->experimentAt(_exp_combo->currentIndex())->getPeakListNames();
 
-    if (!_peak_list.isEmpty()) {
+    if (!_peak_list.empty()) {
         _peak_combo->addItems(_peak_list);
         _peak_combo->setCurrentIndex(0);
 
@@ -334,7 +334,7 @@ void SubframeAutoIndexer::updatePeakList()
 
 void SubframeAutoIndexer::refreshPeakTable()
 {
-    if (_peak_list.isEmpty() || _exp_combo->count() < 1)
+    if (_peak_list.empty() || _exp_combo->count() < 1)
         return;
 
     const nsx::PeakCollection* collection =
@@ -347,7 +347,7 @@ void SubframeAutoIndexer::refreshPeakTable()
 
 void SubframeAutoIndexer::grabIndexerParameters()
 {
-    if (_peak_list.isEmpty() || _exp_combo->count() < 1)
+    if (_peak_list.empty() || _exp_combo->count() < 1)
         return;
 
     nsx::AutoIndexer* auto_indexer =
@@ -367,7 +367,7 @@ void SubframeAutoIndexer::grabIndexerParameters()
 
 void SubframeAutoIndexer::setIndexerParameters() const
 {
-    if (_peak_list.isEmpty() || _exp_combo->count() < 1)
+    if (_peak_list.empty() || _exp_combo->count() < 1)
         return;
 
     nsx::AutoIndexer* auto_indexer =
@@ -389,7 +389,7 @@ void SubframeAutoIndexer::setIndexerParameters() const
 
 void SubframeAutoIndexer::runAutoIndexer()
 {
-    if (_peak_list.isEmpty() || _exp_combo->count() < 1)
+    if (_peak_list.empty() || _exp_combo->count() < 1)
         return;
 
     setIndexerParameters();
@@ -480,7 +480,7 @@ void SubframeAutoIndexer::selectSolutionTable()
 {
     const QItemSelectionModel* select = _solution_table->selectionModel();
     QModelIndexList indices = select->selectedRows();
-    if (!indices.isEmpty())
+    if (!indices.empty())
         selectSolutionHeader(indices[0].row());
 }
 
@@ -502,7 +502,7 @@ void SubframeAutoIndexer::selectSolutionHeader(int index)
 
 void SubframeAutoIndexer::acceptSolution()
 {
-    if (_peak_list.isEmpty() || _exp_combo->count() < 1)
+    if (_peak_list.empty() || _exp_combo->count() < 1)
         return;
 
     if (_selected_unit_cell) {

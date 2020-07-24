@@ -15,7 +15,11 @@
 #ifndef NSX_GUI_MODELS_SESSION_H
 #define NSX_GUI_MODELS_SESSION_H
 
-#include "gui/models/SessionExperiment.h"
+#include <QString>
+#include <memory>
+#include <vector>
+
+class Project;
 
 extern class Session* gSession; //!< global handle for Session
 
@@ -25,22 +29,20 @@ class Session {
     Session();
     Session(const Session&) = delete;
 
-    SessionExperiment* selectedExperiment() { return _experiments.at(selectedExperiment_).get(); }
-    const SessionExperiment* selectedExperiment() const {
-        return _experiments.at(selectedExperiment_).get(); }
+    Project* currentProject();
+    const Project* currentProject() const;
 
-    SessionExperiment* experimentAt(int i) { return _experiments.at(i).get(); }
-    const SessionExperiment* experimentAt(int i) const { return _experiments.at(i).get(); }
+    Project* experimentAt(int i);
+    const Project* experimentAt(int i) const;
 
-    int selectedExperimentNum() const { return selectedExperiment_; }
-    int numExperiments() const { return _experiments.size(); }
-    QList<QString> experimentNames() const;
+    int currentProjectNum() const;
+    int numExperiments() const;
+    std::vector<QString> experimentNames() const;
 
     void selectExperiment(int);
 
-    bool createExperiment(QString experimentName);
-    bool createExperiment(QString experimentName, QString instrumentName);
-    void createDefaultExperiment();
+    bool createExperiment(
+        QString experimentName = "new_experiment", QString instrumentName = "unknown_instrument");
     void removeExperiment();
 
     void loadData();
@@ -55,10 +57,10 @@ class Session {
     void loadExperimentFromFile(QString filename);
 
  private:
-    std::vector<std::unique_ptr<SessionExperiment>> _experiments;
-    int selectedExperiment_ = -1;
-    int selectedData = -1;
-    QString loadDirectory;
+    std::vector<std::unique_ptr<Project>> _projects;
+    int _currentProject = -1;
+    int _selectedData = -1;
+    QString _loadDirectory;
 };
 
 #endif // NSX_GUI_MODELS_SESSION_H

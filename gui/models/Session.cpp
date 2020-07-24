@@ -13,114 +13,111 @@
 //  ***********************************************************************************************
 
 #include "gui/models/Session.h"
-
 #include "core/algo/DataReaderFactory.h"
 #include "core/data/DataSet.h"
-#include "core/instrument/HardwareParameters.h"
+#include "core/experiment/Experiment.h"
 #include "core/loader/RawDataReader.h"
 #include "core/raw/IDataReader.h"
-
 #include "gui/MainWin.h"
-#include "gui/dialogs/ExperimentDialog.h"
 #include "gui/dialogs/RawDataDialog.h"
-#include "gui/graphics/DetectorScene.h"
+#include "gui/models/Project.h"
 
 Session* gSession;
 
 Session::Session()
 {
     gSession = this;
-    loadDirectory = QDir::homePath();
+    _loadDirectory = QDir::homePath();
+}
+
+Project* Session::currentProject()
+{
+    return _projects.at(_currentProject).get();
+}
+const Project* Session::currentProject() const
+{
+    return _projects.at(_currentProject).get();
+}
+
+Project* Session::experimentAt(int i)
+{
+    return _projects.at(i).get();
+}
+const Project* Session::experimentAt(int i) const
+{
+    return _projects.at(i).get();
+}
+
+int Session::currentProjectNum() const
+{
+    return _currentProject;
+}
+int Session::numExperiments() const
+{
+    return _projects.size();
 }
 
 bool Session::createExperiment(QString experimentName, QString instrumentName)
 {
-    QList<QString> temp = experimentNames();
-    for (QList<QString>::iterator it = temp.begin(); it != temp.end(); ++it) {
-        if (*it == experimentName)
+    for (const QString& name : experimentNames())
+        if (name == experimentName)
             return false;
-    }
 
-    auto experiment = std::make_unique<SessionExperiment>(experimentName, instrumentName);
-    _experiments.push_back(std::move(experiment));
-    selectedExperiment_ = _experiments.size() - 1;
+    auto experiment = std::make_unique<Project>(experimentName, instrumentName);
+    _projects.push_back(std::move(experiment));
+    _currentProject = _projects.size() - 1;
     onExperimentChanged();
 
     return true;
 }
 
-bool Session::createExperiment(QString experimentName)
+std::vector<QString> Session::experimentNames() const
 {
-    QList<QString> temp = experimentNames();
-    for (QList<QString>::iterator it = temp.begin(); it != temp.end(); ++it) {
-        if (*it == experimentName)
-            return false;
-    }
-
-    auto experiment = std::make_unique<SessionExperiment>();
-    experiment->experiment()->setName(experimentName.toStdString());
-    _experiments.push_back(std::move(experiment));
-    selectedExperiment_ = _experiments.size() - 1;
-    onExperimentChanged();
-
-    return true;
-}
-
-void Session::createDefaultExperiment()
-{
-    auto experiment = std::make_unique<SessionExperiment>("lol", "BioDiff2500");
-    _experiments.push_back(std::move(experiment));
-    selectedExperiment_ = _experiments.size() - 1;
-    onExperimentChanged();
-}
-
-QList<QString> Session::experimentNames() const
-{
-    QList<QString> ret;
-    for (int i = 0; i < _experiments.size(); i++)
-        ret.append(QString::fromStdString(_experiments.at(i)->experiment()->name()));
+    std::vector<QString> ret;
+    for (const auto& project : _projects)
+        ret.push_back(QString::fromStdString(project->experiment()->name()));
     return ret;
 }
 
 void Session::removeExperiment()
 {
     std::cerr << "TODO: implement Session::removeExperiment\n";
-/*
-    if (_experiments.size() == 0)
-        return;
-    if (selectedExperiment_ == -1)
-        _experiments.removeFirst();
+    /*
+        if (_projects.size() == 0)
+            return;
+        if (_currentProject == -1)
+            _projects.removeFirst();
 
-    selectedExperiment_ = _experiments.size() > 0 ? 0 : -1;
-*/
+        _currentProject = _projects.size() > 0 ? 0 : -1;
+    */
     onExperimentChanged();
 }
 
 void Session::selectExperiment(int select)
 {
-    if (select < _experiments.size() && select >= 0)
-        selectedExperiment_ = select;
+    if (select < _projects.size() && select >= 0)
+        _currentProject = select;
     onExperimentChanged();
 }
 
 void Session::loadData()
 {
     QStringList filenames = QFileDialog::getOpenFileNames(
-        gGui, "import data", loadDirectory,
+        gGui, "import data", _loadDirectory,
         "Data files(*.h5 *.hdf5 *.hdf *.fake *.nxs *.raw *.tif *.tiff);;all files (*.* *)");
 
     if (filenames.empty())
         return;
 
     QFileInfo info(filenames.at(0));
-    loadDirectory = info.absolutePath();
+    _loadDirectory = info.absolutePath();
 
-    if (selectedExperiment_ < 0)
-        createDefaultExperiment();
+    if (_currentProject < 0)
+        createExperiment();
 
     for (QString filename : filenames) {
         QFileInfo fileinfo(filename);
-        nsx::Experiment* exp = selectedExperiment()->experiment();
+        nsx::Experiment* exp = currentProject()->experiment();
 
         // If the experiment already stores the current numor, skip it
         if (exp->hasData(filename.toStdString()))
@@ -133,33 +130,33 @@ void Session::loadData()
             extension, filename.toStdString(), exp->diffractometer());
         exp->addData(data_ptr);
     }
-    selectedExperiment()->selectData(selectedExperiment()->getIndex(filenames.at(0)));
+    currentProject()->selectData(currentProject()->getIndex(filenames.at(0)));
     onDataChanged();
 }
 
 void Session::removeData()
 {
-    if (selectedExperiment_ == -1)
+    if (_currentProject == -1)
         return;
-    if (selectedData == -1)
+    if (_selectedData == -1)
         return;
 
-    std::string numorname = selectedExperiment()->getData(selectedData)->filename();
-    selectedExperiment()->experiment()->removeData(numorname);
+    std::string numorname = currentProject()->getData(_selectedData)->filename();
+    currentProject()->experiment()->removeData(numorname);
     onDataChanged();
 }
 
 void Session::loadRawData()
 {
-    if (selectedExperiment_ < 0)
-        createDefaultExperiment();
+    if (_currentProject < 0)
+        createExperiment();
 
     QStringList qfilenames = QFileDialog::getOpenFileNames();
     if (qfilenames.empty())
         return;
 
     QFileInfo info(qfilenames.at(0));
-    loadDirectory = info.absolutePath();
+    _loadDirectory = info.absolutePath();
 
     std::vector<std::string> filenames;
     for (QString filename : qfilenames)
@@ -168,7 +165,7 @@ void Session::loadRawData()
     RawDataDialog dialog;
     if (!dialog.exec())
         return;
-    nsx::Experiment* exp = selectedExperiment()->experiment();
+    nsx::Experiment* exp = currentProject()->experiment();
 
     // If the experience already stores the current numor, skip it
     if (exp->hasData(filenames[0]))
@@ -184,19 +181,19 @@ void Session::loadRawData()
     parameters.bpp = dialog.bpp();
     try {
         nsx::Diffractometer* diff = exp->diffractometer();
-        auto reader {std::make_unique<nsx::RawDataReader>(filenames[0], diff)};
+        auto reader{std::make_unique<nsx::RawDataReader>(filenames[0], diff)};
         for (size_t i = 1; i < filenames.size(); ++i)
             reader->addFrame(filenames[i]);
         reader->setParameters(parameters);
         reader->end();
-        auto data {std::make_shared<nsx::DataSet>(std::move(reader))};
+        auto data{std::make_shared<nsx::DataSet>(std::move(reader))};
         exp->addData(data);
     } catch (std::exception& e) {
         return;
     } catch (...) {
         return;
     }
-    // selectedData = selectedExperiment()->getIndex(qfilenames.at(0));
+    // _selectedData = currentProject()->getIndex(qfilenames.at(0));
     onDataChanged();
 }
 
@@ -225,8 +222,8 @@ void Session::onUnitCellChanged()
 
 void Session::loadExperimentFromFile(QString filename)
 {
-    createExperiment(QString::fromStdString("default"));
-    selectedExperiment()->experiment()->loadFromFile(filename.toStdString());
-    selectedExperiment()->generatePeakModels();
+    createExperiment("default");
+    currentProject()->experiment()->loadFromFile(filename.toStdString());
+    currentProject()->generatePeakModels();
     onExperimentChanged();
 }

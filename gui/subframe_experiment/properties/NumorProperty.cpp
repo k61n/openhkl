@@ -13,13 +13,12 @@
 //  ***********************************************************************************************
 
 #include "gui/subframe_experiment/properties/NumorProperty.h"
-
 #include "core/data/DataSet.h"
 #include "core/data/DataTypes.h"
 #include "core/raw/IDataReader.h"
 #include "gui/MainWin.h"
+#include "gui/models/Project.h"
 #include "gui/models/Session.h"
-
 #include <QFormLayout>
 #include <QHBoxLayout>
 #include <QHeaderView>
@@ -99,10 +98,10 @@ void NumorProperty::refreshInput()
 {
     _numor_selector->blockSignals(true);
     _numor_selector->clear();
-    _numor_selector->addItems(gSession->selectedExperiment()->getDataNames());
+    _numor_selector->addItems(gSession->currentProject()->getDataNames());
     _numor_selector->blockSignals(false);
 
-    if (!gSession->selectedExperiment()->getDataNames().isEmpty())
+    if (!gSession->currentProject()->getDataNames().empty())
         onChanged();
 }
 
@@ -110,8 +109,8 @@ void NumorProperty::onChanged()
 {
     clear();
 
-    if (gSession->selectedExperimentNum() >= 0) {
-        SessionExperiment* exp = gSession->selectedExperiment();
+    if (gSession->currentProjectNum() >= 0) {
+        Project* exp = gSession->currentProject();
         nsx::sptrDataSet data = exp->getData(_numor_selector->currentIndex());
 
         if (data) {

@@ -46,7 +46,7 @@ class TestWorkFlow(unittest.TestCase):
 
         for peak in peaks:
             if peak.enabled():
-                selected_peaks.append(peak)
+                selected_peaks.push_back(peak)
 
         self.assertTrue(len(peaks) > 800)
         self.assertTrue(len(selected_peaks) > 650)

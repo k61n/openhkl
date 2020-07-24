@@ -21,7 +21,7 @@
 #include <QMenu>
 
 //! Initialize the menu bar.
-Menus::Menus(QMenuBar* menu_bar) : _menu_bar {menu_bar}
+Menus::Menus(QMenuBar* menu_bar) : _menu_bar{menu_bar}
 {
     Actions* actions = gGui->triggers;
 
@@ -116,14 +116,14 @@ Menus::Menus(QMenuBar* menu_bar) : _menu_bar {menu_bar}
 
 QAction* Menus::separator() const
 {
-    QAction* ret = new QAction {_menu_bar};
+    QAction* ret = new QAction{_menu_bar};
     ret->setSeparator(true);
     return ret;
 }
 
 QMenu* Menus::actionsToMenu(const char* menuName, QList<QAction*> actions)
 {
-    QMenu* menu = new QMenu {menuName};
+    QMenu* menu = new QMenu{menuName};
     _menu_bar->addMenu(menu);
     menu->addActions(actions);
     QString prefix = QString("%1: ").arg(menu->title().remove('&'));

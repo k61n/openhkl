@@ -194,9 +194,9 @@ def fit_residual(params, predicted_qs, npeaks):
         q_obs = indexed_peaks[i].q().rowVector()
         #print(q_pred, q_obs)
         dq = (q_pred-q_obs)
-        res.append(dq[0,0])
-        res.append(dq[0,1])
-        res.append(dq[0,2])
+        res.push_back(dq[0,0])
+        res.push_back(dq[0,1])
+        res.push_back(dq[0,2])
 
     return res
 
@@ -212,7 +212,7 @@ def refine_geometry(indexed_peaks):
         hkl = nsx.MillerIndex(indexed_peaks[i].q(), uc)
         q_pred = hkl.rowVector().dot(BU)
         #print(indexed_peaks[i].q().rowVector(), q_pred)
-        predicted_qs.append(q_pred)
+        predicted_qs.push_back(q_pred)
 
 
     #params0 = detector.distance(), detector.width(), detector.height()
@@ -250,15 +250,15 @@ heights = []
 abc = []
 
 for i in range(10):
-    widths.append(detector.width())
-    heights.append(detector.height())
+    widths.push_back(detector.width())
+    heights.push_back(detector.height())
     uc = autoindex(peaks)  # UB
     indexed_peaks = reindex(uc, peaks)
     refiner = refine(indexed_peaks)          # sample offset and orientation
     refine_geometry(indexed_peaks) # detector width and height
     for b in refiner.batches():
         ch = b.cell().character()
-        abc.append([ch.a, ch.b, ch.c])
+        abc.push_back([ch.a, ch.b, ch.c])
 
 # plt.plot(range(len(widths)), widths)
 # plt.show()
@@ -393,7 +393,7 @@ if simplePlotInstalled:
     points = [2000,2001,2002]
     # for i in range(2000,3000):
     #     if predicted_peaks[i].selected():
-    #         points.append(i)
+    #         points.push_back(i)
     #         if len(points) > 50:
     #             break
 
@@ -458,10 +458,10 @@ if simplePlotInstalled:
                 base[int(lower[1][0]) - int(center[1][0] - x_range): -(int(center[1][0]+x_range)-int(upper[1][0])),
                     int(lower[0][0]) - int(center[0][0] - y_range): -(int(center[0][0]+y_range)-int(upper[0][0]))] = np.amin(to_plot)
 
-                z_min.append(np.amin(to_plot))
-                z_max.append(np.amax(to_plot))
-                z_min_base.append(np.amin(base))
-                z_max_base.append(np.amin(to_plot))
+                z_min.push_back(np.amin(to_plot))
+                z_max.push_back(np.amax(to_plot))
+                z_min_base.push_back(np.amin(base))
+                z_max_base.push_back(np.amin(to_plot))
 
                 x = (np.array([i + (int(lower[1][0])-int(center[1][0]-x_range)) for i in range(to_plot.shape[0]+1)]))*x_scale + x_offset
                 y = (np.array([i + (int(lower[0][0])-int(center[0][0]-x_range)) for i in range(to_plot.shape[1]+1)]))*y_scale + y_offset
@@ -469,14 +469,14 @@ if simplePlotInstalled:
                 x_base = (np.array([i for i in range(base.shape[0])]))*x_scale + x_offset
                 y_base = (np.array([i for i in range(base.shape[1])]))*y_scale + y_offset
 
-                surfaces.append(ax.addPlot(
+                surfaces.push_back(ax.addPlot(
                     'Surface',
                     x = x,
                     y = y,
                     z = to_plot ,
                     Name = 'bin'))
 
-                surfaces_base.append(ax.addPlot(
+                surfaces_base.push_back(ax.addPlot(
                     'Surface',
                     x = x_base,
                     y = y_base,
@@ -572,7 +572,7 @@ print("... compute shell information, loop done")
 
 for i in range(nshells):
     shell = shells.shell(i)
-    stats.append(compute_statistics(shell.peaks, nsx.SpaceGroup("P 21 21 21"), True))
+    stats.push_back(compute_statistics(shell.peaks, nsx.SpaceGroup("P 21 21 21"), True))
 
 def print_stats():
     print(" n      dmin     dmax     Rmeas    Rmerge   Rpim     CChalf   CCtrue")
@@ -691,11 +691,11 @@ for peak in merged_data.mergedPeakSet():
 
     # generate row
     row = []
-    row.append(str(h))
-    row.append(str(k))
-    row.append(str(l))
-    row.append(intensity)
-    row.append(sigma)
+    row.push_back(str(h))
+    row.push_back(str(k))
+    row.push_back(str(l))
+    row.push_back(intensity)
+    row.push_back(sigma)
 
     # generate the text
     temp = ''
@@ -711,7 +711,7 @@ for peak in merged_data.mergedPeakSet():
                 num = str(round(row[i],1))
             temp += ' ' + ''.join([' ']*(length - 1 - len(num))) + num
 
-    sca_data.append(temp)
+    sca_data.push_back(temp)
 
 print("... prepare phenix output, loop done")
 

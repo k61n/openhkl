@@ -3,13 +3,14 @@
 
 #include "core/data/DataSet.h"
 #include "gui/MainWin.h"
+#include "gui/models/Project.h"
 #include "gui/models/Session.h"
 #include <QDir>
 #include <QFileDialog>
 #include <QHBoxLayout>
 #include <QVBoxLayout>
 
-HDF5ConverterDialog::HDF5ConverterDialog() : QDialog {}
+HDF5ConverterDialog::HDF5ConverterDialog() : QDialog{}
 {
     QVBoxLayout* wholeLayout = new QVBoxLayout(this);
     QHBoxLayout* firstLine = new QHBoxLayout;
@@ -42,7 +43,7 @@ void HDF5ConverterDialog::browseDirectory()
 
 void HDF5ConverterDialog::convert()
 {
-    QStringList numors = gSession->selectedExperiment()->getDataNames();
+    QStringList numors = gSession->currentProject()->getDataNames();
     if (numors.empty()) {
         // gLogger->log("[ERROR] No numors selected, conversion aborted");
         return;
@@ -65,7 +66,7 @@ void HDF5ConverterDialog::convert()
         }
 
         try {
-            gSession->selectedExperiment()->getData(comp)->saveHDF5(hdfFilename);
+            gSession->currentProject()->getData(comp)->saveHDF5(hdfFilename);
         } catch (...) {
             // gLogger->log(
             //     "[ERROR] The filename " + QString::fromStdString(hdfFilename)

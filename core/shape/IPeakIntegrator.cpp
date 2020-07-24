@@ -28,9 +28,9 @@ IPeakIntegrator::IPeakIntegrator()
     , _integratedIntensity()
     , _rockingCurve()
     , _handler(nullptr)
-    , _peak_end {3.0}
-    , _bkg_begin {3.0}
-    , _bkg_end {6.0}
+    , _peak_end{3.0}
+    , _bkg_begin{3.0}
+    , _bkg_end{6.0}
 {
 }
 
@@ -56,8 +56,9 @@ void IPeakIntegrator::integrate(
 {
     qDebug() << "IPeakIntegrator::integrate start";
     // integrate only those peaks that belong to the specified dataset
-    auto it = std::remove_if(
-        peaks.begin(), peaks.end(), [&](const Peak3D* peak) { return peak->dataSet() != data; });
+    auto it = std::remove_if(peaks.begin(), peaks.end(), [&](const Peak3D* peak) {
+        return peak->dataSet() != data;
+    });
     peaks.erase(it, peaks.end());
 
     std::string status = "Integrating " + std::to_string(peaks.size()) + " peaks...";
@@ -99,8 +100,9 @@ void IPeakIntegrator::integrate(
 
     // only integrate the peaks with valid integration regions
     qDebug() << "IPeakIntegrator::integrate remove invalid regions";
-    it = std::remove_if(
-        peaks.begin(), peaks.end(), [&](Peak3D*& p) { return regions.find(p) == regions.end(); });
+    it = std::remove_if(peaks.begin(), peaks.end(), [&](Peak3D*& p) {
+        return regions.find(p) == regions.end();
+    });
     peaks.erase(it, peaks.end());
 
     qDebug() << "IPeakIntegrator::integrate frames loop";

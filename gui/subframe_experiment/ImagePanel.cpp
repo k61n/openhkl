@@ -13,13 +13,12 @@
 //  ***********************************************************************************************
 
 #include "gui/subframe_experiment/ImagePanel.h"
-
 #include "core/data/DataSet.h"
 #include "gui/MainWin.h"
 #include "gui/actions/Actions.h"
 #include "gui/graphics/DetectorScene.h"
+#include "gui/models/Project.h"
 #include "gui/models/Session.h"
-
 #include <QGraphicsView>
 #include <QGridLayout>
 #include <QHBoxLayout>
@@ -53,8 +52,8 @@ ImagePanel::ImagePanel() : QWidget()
     _slider->setOrientation(Qt::Vertical);
     _slider->setTickPosition(QSlider::TicksRight);
 
-    _mode->addItems(QStringList {"selection", "zoom", "line plot", "horizontal slice",
-                                 "vertical slice", "rectangular mask", "ellipsoidal mask"});
+    _mode->addItems(QStringList{"selection", "zoom", "line plot", "horizontal slice",
+                                "vertical slice", "rectangular mask", "ellipsoidal mask"});
 
     _frame->setSizePolicy(QSizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed));
 
@@ -101,8 +100,8 @@ void ImagePanel::dataChanged()
 
     _image_view->getScene()->resetScene();
 
-    if (gSession->selectedExperimentNum() >= 0) {
-        nsx::sptrDataSet dataset = gSession->selectedExperiment()->getData(0);
+    if (gSession->currentProjectNum() >= 0) {
+        nsx::sptrDataSet dataset = gSession->currentProject()->getData(0);
         if (dataset) {
             _mode->setEnabled(true);
             _slider->setEnabled(true);

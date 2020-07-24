@@ -12,14 +12,16 @@
 //
 //  ***********************************************************************************************
 
+#include "core/experiment/Experiment.h" // needed to instatiate Session()
 #include "gui/MainWin.h"
+#include "gui/models/Project.h" // needed to instantiate vector<unique_ptr<Project>> in Session()
 #include "gui/models/Session.h"
 #include <QApplication>
 #include <QLoggingCategory>
 
 int main(int argc, char* argv[])
 {
-    QApplication app {argc, argv};
+    QApplication app{argc, argv};
 
     app.setApplicationName("NSXTool");
     app.setApplicationVersion("1.0");
@@ -28,7 +30,7 @@ int main(int argc, char* argv[])
     QLoggingCategory::setFilterRules("*.debug=true\nqt.*.debug=false\nqt.qpa*=false");
     Session session;
 
-    new MainWin {};
+    new MainWin{};
 
     return app.exec();
 }

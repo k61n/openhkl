@@ -390,7 +390,7 @@ void DetectorScene::mousePressEvent(QGraphicsSceneMouseEvent* event)
             // Remove the last zoom area stored in the stack
             _zoomStack.pop();
             // If not root, then update the scene
-            if (!_zoomStack.isEmpty()) {
+            if (!_zoomStack.empty()) {
                 setSceneRect(_zoomStack.top());
                 emit dataChanged();
             }
@@ -460,7 +460,7 @@ void DetectorScene::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
             delete _zoomrect;
             emit dataChanged();
         } // else {
-          // nsx::PeakList peaks = gSession->selectedExperiment()->getPeaks(0, 0)->peaks_;
+          // nsx::PeakList peaks = gSession->currentProject()->getPeaks(0, 0)->peaks_;
 
         // if (CutterItem* p = dynamic_cast<CutterItem*>(_lastClickedGI)) {
         //     // delete p....
@@ -540,13 +540,13 @@ void DetectorScene::keyPressEvent(QKeyEvent* event)
             // if (PeakItemGraphic* p = dynamic_cast<PeakItemGraphic*>(item))
             //     p->peak()->setSelected(false);
             // // If the item is a mask graphics item, remove its corresponding mask from
-            // // the data, update the QList of mask graphics items and update the scene
+            // // the data, update the std::vector of mask graphics items and update the scene
             // else if (MaskItem* p = dynamic_cast<MaskItem*>(item)) {
             //     auto it = findMask(p);
             //     // if (it != _masks.end()) {
             //     //     _currentData->removeMask(it->second);
             //     //     _masks.erase(it);
-            //     //     nsx::PeakList peaks = gSession->selectedExperiment()->getPeaks(0,
+            //     //     nsx::PeakList peaks = gSession->currentProject()->getPeaks(0,
             //     0)->peaks_;
             //     //     _currentData->maskPeaks(peaks);
             //     //     update();
@@ -558,7 +558,7 @@ void DetectorScene::keyPressEvent(QKeyEvent* event)
             //     // if (it != _masks.end()) {
             //     //     _currentData->removeMask(it->second);
             //     //     _masks.erase(it);
-            //     //     nsx::PeakList peaks = gSession->selectedExperiment()->getPeaks(0,
+            //     //     nsx::PeakList peaks = gSession->currentProject()->getPeaks(0,
             //     0)->peaks_;
             //     //     _currentData->maskPeaks(peaks);
             //     //     update();
@@ -630,7 +630,7 @@ void DetectorScene::createToolTipText(QGraphicsSceneMouseEvent* event)
             break;
         }
         case MILLER_INDICES: {
-            SessionExperiment* experiment_item = gSession->selectedExperiment();
+            Project* experiment_item = gSession->currentProject();
             if (!experiment_item)
                 ttip = QString("No experiment found");
             else {
@@ -687,7 +687,7 @@ void DetectorScene::loadCurrentImage()
     //     const int nrows = _currentData->nRows();
     //     Eigen::MatrixXi mask(nrows, ncols);
     //     mask.setConstant(int(EventType::EXCLUDED));
-    //     nsx::PeakList peaks = gSession->selectedExperiment()->getPeaks(0, 0)->peaks_;
+    //     nsx::PeakList peaks = gSession->currentProject()->getPeaks(0, 0)->peaks_;
     //     for (nsx::Peak3D* peak : peaks) {
     //         if (peak_item->peak()->enabled()) {
     //             // IntegrationRegion constructor can throw if the region is invalid
@@ -774,8 +774,8 @@ void DetectorScene::resetScene()
     _lastClickedGI = nullptr;
 }
 
-std::vector<std::pair<QGraphicsItem*, nsx::IMask*>>::iterator
-DetectorScene::findMask(QGraphicsItem* item)
+std::vector<std::pair<QGraphicsItem*, nsx::IMask*>>::iterator DetectorScene::findMask(
+    QGraphicsItem* item)
 {
     return std::find_if(
         _masks.begin(), _masks.end(),

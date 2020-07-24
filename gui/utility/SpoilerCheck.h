@@ -42,7 +42,7 @@ class SpoilerCheck : public QGroupBox {
     QToolButton toggleButton;
     QFrame headerLine;
     QParallelAnimationGroup toggleAnimation;
-    int animationDuration {300};
+    int animationDuration{300};
     QCheckBox select;
 };
 

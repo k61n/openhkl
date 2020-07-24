@@ -13,23 +13,21 @@
 //  ***********************************************************************************************
 
 #include "gui/subframe_find/SubframeFindPeaks.h"
-
 #include "core/convolve/ConvolverFactory.h"
 #include "core/data/DataSet.h"
+#include "core/experiment/Experiment.h"
 #include "core/experiment/PeakFinder.h"
 #include "core/integration/PixelSumIntegrator.h"
 #include "core/peak/Peak3D.h"
 #include "core/raw/IDataReader.h"
-
 #include "gui/dialogs/ListNameDialog.h"
 #include "gui/frames/ProgressView.h"
 #include "gui/graphics/DetectorScene.h"
-
 #include "gui/items/PeakItem.h"
 #include "gui/models/Meta.h"
+#include "gui/models/Project.h"
 #include "gui/models/Session.h"
 #include "gui/utility/Spoiler.h"
-
 #include <QFileInfo>
 #include <QGridLayout>
 #include <QGroupBox>
@@ -99,7 +97,7 @@ void PeakFinderFrame::setSizePolicies()
 
 void PeakFinderFrame::setDataUp()
 {
-    Spoiler* _data_box = new Spoiler(QString::fromStdString("1. Input Data"));
+    Spoiler* _data_box = new Spoiler("1. Input Data");
 
     QGridLayout* _data_grid = new QGridLayout();
 
@@ -149,7 +147,7 @@ void PeakFinderFrame::setDataUp()
 
 void PeakFinderFrame::setBlobUp()
 {
-    Spoiler* blob_para = new Spoiler(QString::fromStdString("2. Peak search parameters"));
+    Spoiler* blob_para = new Spoiler("2. Peak search parameters");
 
     QGridLayout* blob_grid = new QGridLayout();
 
@@ -256,7 +254,7 @@ void PeakFinderFrame::setBlobUp()
 
 void PeakFinderFrame::setIntegrateUp()
 {
-    Spoiler* integration_para = new Spoiler(QString::fromStdString("3. Integration parameters"));
+    Spoiler* integration_para = new Spoiler("3. Integration parameters");
 
     QGridLayout* integGrid = new QGridLayout();
 
@@ -313,7 +311,7 @@ void PeakFinderFrame::setIntegrateUp()
 
 void PeakFinderFrame::setPreviewUp()
 {
-    Spoiler* preview_box = new Spoiler(QString::fromStdString("4. View and save"));
+    Spoiler* preview_box = new Spoiler("4. View and save");
 
     QGridLayout* _preview_grid = new QGridLayout();
 
@@ -480,8 +478,7 @@ void PeakFinderFrame::refreshAll()
 
 void PeakFinderFrame::setParametersUp()
 {
-    QList<QString> exp_list = gSession->experimentNames();
-    if (exp_list.isEmpty())
+    if (gSession->experimentNames().empty())
         return;
 
     setExperimentsUp();
@@ -502,12 +499,10 @@ void PeakFinderFrame::setParametersUp()
 void PeakFinderFrame::setExperimentsUp()
 {
     _exp_combo->blockSignals(true);
-
     _exp_combo->clear();
-    QList<QString> exp_list = gSession->experimentNames();
 
-    if (!exp_list.isEmpty()) {
-        for (QString exp : exp_list)
+    if (!gSession->experimentNames().empty()) {
+        for (QString exp : gSession->experimentNames())
             _exp_combo->addItem(exp);
         grabFinderParameters();
         grabIntegrationParameters();
@@ -522,8 +517,8 @@ void PeakFinderFrame::updateDatasetList()
     _data_combo->clear();
     _data_list = gSession->experimentAt(_exp_combo->currentIndex())->allData();
 
-    if (!_data_list.isEmpty()) {
-        for (nsx::sptrDataSet data : _data_list) {
+    if (!_data_list.empty()) {
+        for (const nsx::sptrDataSet& data : _data_list) {
             QFileInfo fileinfo(QString::fromStdString(data->filename()));
             _data_combo->addItem(fileinfo.baseName());
         }
@@ -535,7 +530,7 @@ void PeakFinderFrame::updateDatasetList()
 
 void PeakFinderFrame::updateDatasetParameters(int idx)
 {
-    if (_data_list.isEmpty() || idx < 0)
+    if (_data_list.empty() || idx < 0)
         return;
 
     nsx::sptrDataSet data = _data_list.at(idx);
@@ -696,8 +691,7 @@ void PeakFinderFrame::find()
 
 void PeakFinderFrame::integrate()
 {
-    nsx::Experiment* experiment =
-        gSession->experimentAt(_exp_combo->currentIndex())->experiment();
+    nsx::Experiment* experiment = gSession->experimentAt(_exp_combo->currentIndex())->experiment();
 
     nsx::IPeakIntegrator* integrator = experiment->getIntegrator("Pixel sum integrator");
 

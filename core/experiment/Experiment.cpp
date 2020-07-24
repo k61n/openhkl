@@ -18,18 +18,17 @@
 #include <utility>
 
 #include "base/utils/Units.h"
-
 #include "core/data/DataSet.h"
 #include "core/experiment/Experiment.h"
+#include "core/experiment/ExperimentExporter.h"
+#include "core/experiment/ExperimentImporter.h"
 #include "core/instrument/Diffractometer.h"
 #include "core/instrument/Monochromator.h"
 #include "core/instrument/Source.h"
 #include "core/raw/IDataReader.h"
 #include "core/raw/MetaData.h"
-
-#include "core/experiment/ExperimentExporter.h"
-#include "core/experiment/ExperimentImporter.h"
-
+#include "core/statistics/CC.h"
+#include "core/statistics/RFactor.h"
 #include "core/integration/GaussianIntegrator.h"
 #include "core/integration/ISigmaIntegrator.h"
 #include "core/integration/PixelSumIntegrator.h"
@@ -43,32 +42,6 @@ Experiment::Experiment(const std::string& name, const std::string& diffractomete
     : _name(name), _data_map()
 {
     _diffractometer.reset(Diffractometer::create(diffractometerName));
-
-    _peak_finder = std::make_unique<PeakFinder>();
-    _peak_filter = std::make_unique<PeakFilter>();
-    _auto_indexer = std::make_unique<AutoIndexer>();
-
-    _integrator_map.insert(std::make_pair(
-        std::string("Pixel sum integrator"), std::make_unique<PixelSumIntegrator>(true, true)));
-
-    _integrator_map.insert(std::make_pair(
-        std::string("Gaussian integrator"), std::make_unique<GaussianIntegrator>(true, true)));
-
-    _integrator_map.insert(
-        std::make_pair(std::string("I/Sigma integrator"), std::make_unique<ISigmaIntegrator>()));
-
-    _integrator_map.insert(std::make_pair(
-        std::string("1d profile integrator"), std::make_unique<Profile1DIntegrator>()));
-
-    _integrator_map.insert(std::make_pair(
-        std::string("3d profile integrator"), std::make_unique<Profile3DIntegrator>()));
-}
-
-Experiment::Experiment(const Experiment& other)
-{
-    _name = other._name;
-    _data_map = other._data_map;
-    _diffractometer.reset(other._diffractometer->clone());
 
     _peak_finder = std::make_unique<PeakFinder>();
     _peak_filter = std::make_unique<PeakFilter>();
@@ -130,7 +103,7 @@ sptrDataSet Experiment::getData(const std::string& name)
 sptrDataSet Experiment::dataShortName(const std::string& name)
 {
     std::map<std::string, sptrDataSet> temp;
-    for (const auto& it: _data_map)
+    for (const auto& it : _data_map)
         temp.insert(std::make_pair(it.second->name(), it.second));
 
     const auto it = temp.find(name);
@@ -140,7 +113,6 @@ sptrDataSet Experiment::dataShortName(const std::string& name)
     }
     return it->second;
 }
-
 
 const std::string& Experiment::name() const
 {
@@ -152,58 +124,24 @@ void Experiment::setName(const std::string& name)
     _name = name;
 }
 
-void Experiment::addData(sptrDataSet data)
+void Experiment::addData(sptrDataSet data, std::string name)
 {
-    auto filename = data->filename();
+    if (name=="")
+        name = data->filename();
 
     // Add the data only if it does not exist in the current data map
-    if (_data_map.find(filename) != _data_map.end())
+    if (_data_map.find(name) != _data_map.end())
         return;
 
     const auto& metadata = data->reader()->metadata();
 
-    std::string diffName = metadata.key<std::string>("Instrument");
+    const std::string diffName = metadata.key<std::string>("Instrument");
 
     if (!(diffName.compare(_diffractometer->name()) == 0)) {
         throw std::runtime_error("Mismatch between the diffractometer assigned to "
                                  "the experiment and the data");
     }
-    double wav = metadata.key<double>("wavelength");
-
-    // ensure that there is at least one monochromator!
-    if (_diffractometer->source().nMonochromators() == 0) {
-        Monochromator mono("mono");
-        _diffractometer->source().addMonochromator(mono);
-    }
-
-    auto& mono = _diffractometer->source().selectedMonochromator();
-
-    if (_data_map.empty())
-        mono.setWavelength(wav);
-    else {
-        if (std::abs(wav - mono.wavelength()) > 1e-5)
-            throw std::runtime_error("trying to mix data with different wavelengths");
-    }
-    _data_map.insert(std::make_pair(filename, data));
-}
-
-void Experiment::addData(const std::string& name, sptrDataSet data)
-{
-    auto filename = data->filename();
-
-    // Add the data only if it does not exist in the current data map
-    if (_data_map.find(filename) != _data_map.end())
-        return;
-
-    const auto& metadata = data->reader()->metadata();
-
-    std::string diffName = metadata.key<std::string>("Instrument");
-
-    if (!(diffName.compare(_diffractometer->name()) == 0)) {
-        throw std::runtime_error("Mismatch between the diffractometer assigned to "
-                                 "the experiment and the data");
-    }
-    double wav = metadata.key<double>("wavelength");
+    const double wav = metadata.key<double>("wavelength");
 
     // ensure that there is at least one monochromator!
     if (_diffractometer->source().nMonochromators() == 0) {
@@ -246,11 +184,10 @@ void Experiment::updatePeakCollection(
 
 bool Experiment::hasPeakCollection(const std::string& name) const
 {
-    auto peaks = _peak_collections.find(name);
-    return (peaks != _peak_collections.end());
+    return _peak_collections.find(name) != _peak_collections.end();
 }
 
-PeakCollection* Experiment::getPeakCollection(const std::string name)
+PeakCollection* Experiment::getPeakCollection(const std::string& name)
 {
     std::cout << hasPeakCollection(name) << " " << name << std::endl;
     if (hasPeakCollection(name))
@@ -262,7 +199,6 @@ void Experiment::removePeakCollection(const std::string& name)
 {
     if (!hasPeakCollection(name))
         return;
-
     auto peak_collection = _peak_collections.find(name);
     peak_collection->second.reset();
     _peak_collections.erase(peak_collection);
@@ -271,7 +207,7 @@ void Experiment::removePeakCollection(const std::string& name)
 std::vector<std::string> Experiment::getCollectionNames() const
 {
     std::vector<std::string> ret;
-    for (const auto& it: _peak_collections)
+    for (const auto& it : _peak_collections)
         ret.push_back(it.second->name());
     return ret;
 }
@@ -279,31 +215,29 @@ std::vector<std::string> Experiment::getCollectionNames() const
 std::vector<std::string> Experiment::getFoundCollectionNames() const
 {
     std::vector<std::string> ret;
-    for (const auto& it : _peak_collections) {
+    for (const auto& it : _peak_collections)
         if (it.second->type() == listtype::FOUND)
             ret.push_back(it.second->name());
-    }
     return ret;
 }
 
 std::vector<std::string> Experiment::getPredictedCollectionNames() const
 {
     std::vector<std::string> ret;
-    for (const auto& it : _peak_collections) {
+    for (const auto& it : _peak_collections)
         if (it.second->type() == listtype::PREDICTED)
             ret.push_back(it.second->name());
-    }
     return ret;
 }
 
-void Experiment::acceptFilter(std::string name, PeakCollection* collection)
+void Experiment::acceptFilter(const std::string& name, PeakCollection* collection)
 {
     auto ptr = std::make_unique<PeakCollection>(name, collection->type());
     ptr->populateFromFiltered(collection);
     _peak_collections.insert_or_assign(name, std::move(ptr));
 }
 
-void Experiment::setMergedPeaks(std::vector<PeakCollection*> peak_collections, bool friedel)
+void Experiment::setMergedPeaks(const std::vector<PeakCollection*>& peak_collections, bool friedel)
 {
     _merged_peaks = std::make_unique<MergedData>(peak_collections, friedel);
 }
@@ -336,14 +270,13 @@ void Experiment::addUnitCell(
 
 bool Experiment::hasUnitCell(const std::string& name) const
 {
-    auto unit_cell = _unit_cells.find(name);
-    return (unit_cell != _unit_cells.end());
+    return _unit_cells.find(name) != _unit_cells.end();
 }
 
 std::vector<std::string> Experiment::getUnitCellNames() const
 {
     std::vector<std::string> ret;
-    for (const auto& it: _unit_cells)
+    for (const auto& it : _unit_cells)
         ret.push_back(it.second->name());
     return ret;
 }
@@ -376,7 +309,7 @@ void Experiment::swapUnitCells(const std::string& old_cell_name, const std::stri
     const UnitCell* old_cell = getUnitCell(old_cell_name);
     const UnitCell* new_cell = getUnitCell(new_cell_name);
 
-    for (const auto& it: _peak_collections) {
+    for (const auto& it : _peak_collections) {
         std::vector<Peak3D*> peaks = it.second.get()->getPeakList();
         for (Peak3D* peak : peaks) {
             if (peak->unitCell() == old_cell)
@@ -393,7 +326,7 @@ void Experiment::acceptFoundPeaks(const std::string& name)
 
 IPeakIntegrator* Experiment::getIntegrator(const std::string& name) const
 {
-    for (const auto& it: _integrator_map) {
+    for (const auto& it : _integrator_map) {
         if (it.first == name)
             return it.second.get();
     }
@@ -406,11 +339,11 @@ void Experiment::integratePeaks(const std::string& integrator_name, PeakCollecti
 
     nsx::PeakFilter filter;
     filter.resetFiltering(peak_collection);
-    filter.setDRange(std::array<double, 2UL> {integrator->dMin(), integrator->dMax()});
+    filter.setDRange(std::array<double, 2UL>{integrator->dMin(), integrator->dMax()});
     filter.filterDRange(peak_collection);
     std::vector<Peak3D*> peaks = peak_collection->getFilteredPeakList();
 
-    for (const auto& it: _data_map)
+    for (const auto& it : _data_map)
         integrator->integrate(peaks, peak_collection->shapeLibrary(), it.second);
 }
 
@@ -429,11 +362,11 @@ void Experiment::integratePredictedPeaks(
     integrator->setFitCov(params.fit_covariance);
     nsx::PeakFilter filter;
     filter.resetFiltering(peak_collection);
-    filter.setDRange(std::array<double, 2UL> {integrator->dMin(), integrator->dMax()});
+    filter.setDRange(std::array<double, 2UL>{integrator->dMin(), integrator->dMax()});
     filter.filterDRange(peak_collection);
     std::vector<Peak3D*> peaks = peak_collection->getFilteredPeakList();
 
-    for (const auto& it: _data_map)
+    for (const auto& it : _data_map)
         integrator->integrate(peaks, shape_library, it.second);
 }
 
@@ -452,17 +385,17 @@ void Experiment::saveToFile(const std::string& path) const
     exporter.createFile(name(), _diffractometer->name(), path);
 
     std::map<std::string, DataSet*> data_sets;
-    for (const auto& it: _data_map)
+    for (const auto& it : _data_map)
         data_sets.insert(std::make_pair(it.first, it.second.get()));
     exporter.writeData(data_sets);
 
     std::map<std::string, PeakCollection*> peak_collections;
-    for (const auto& it: _peak_collections)
+    for (const auto& it : _peak_collections)
         peak_collections.insert(std::make_pair(it.first, it.second.get()));
     exporter.writePeaks(peak_collections);
 
     std::map<std::string, UnitCell*> unit_cells;
-    for (const auto& it: _unit_cells)
+    for (const auto& it : _unit_cells)
         unit_cells.insert(std::make_pair(it.first, it.second.get()));
     exporter.writeUnitCells(unit_cells);
 
@@ -490,30 +423,23 @@ void Experiment::setReferenceCell(
 
 bool Experiment::acceptUnitCell(PeakCollection* peaks, double length_tol, double angle_tol)
 {
-    std::string name = "accepted";
-    bool accepted = false;
-    if (_auto_indexer->hasSolution(length_tol, angle_tol)) {
-        auto cell = *_auto_indexer->getAcceptedSolution();
-        addUnitCell(name, &cell);
-        acceptUnitCell(peaks);
-        accepted = true;
-    }
-    return accepted;
-}
-
-std::vector<std::string> Experiment::getCompatibleSpaceGroups() const
-{
-    std::string cell_name = "accepted";
-    const UnitCell* cell = getUnitCell(cell_name);
-    return cell->compatibleSpaceGroups();
+    if (!_auto_indexer->hasSolution(length_tol, angle_tol))
+        return false;
+    auto cell = *_auto_indexer->getAcceptedSolution();
+    addUnitCell("accepted", &cell);
+    acceptUnitCell(peaks);
+    return true;
 }
 
 void Experiment::acceptUnitCell(PeakCollection* peaks)
 {
-    std::string name = "accepted";
-    std::vector<Peak3D*> peak_list = peaks->getPeakList();
-    for (auto peak : peak_list)
-        peak->setUnitCell(getUnitCell(name));
+    for (auto peak : peaks->getPeakList())
+        peak->setUnitCell(getUnitCell("accepted"));
+}
+
+std::vector<std::string> Experiment::getCompatibleSpaceGroups() const
+{
+    return getUnitCell("accepted")->compatibleSpaceGroups();
 }
 
 void Experiment::buildShapeLibrary(PeakCollection* peaks, ShapeLibParameters params)
@@ -524,15 +450,15 @@ void Experiment::buildShapeLibrary(PeakCollection* peaks, ShapeLibParameters par
     for (nsx::Peak3D* peak : peak_list) {
         if (!peak->enabled())
             continue;
-        double d = 1.0 / peak->q().rowVector().norm();
 
+        const double d = 1.0 / peak->q().rowVector().norm();
         if (d > params.detector_range_max || d < params.detector_range_min)
             continue;
 
-        nsx::Intensity intensity = peak->correctedIntensity();
-
+        const nsx::Intensity& intensity = peak->correctedIntensity();
         if (intensity.value() <= params.strength_min * intensity.sigma())
             continue;
+
         fit_peaks.push_back(peak);
     }
     if (fit_peaks.size() == 0)
@@ -544,12 +470,12 @@ void Experiment::buildShapeLibrary(PeakCollection* peaks, ShapeLibParameters par
     nsx::AABB aabb;
 
     if (params.kabsch_coords) {
-        Eigen::Vector3d sigma(
+        const Eigen::Vector3d sigma(
             params.sigma_divergence, params.sigma_divergence, params.sigma_mosaicity);
         aabb.setLower(-params.peak_scale * sigma);
         aabb.setUpper(params.peak_scale * sigma);
     } else {
-        Eigen::Vector3d dx(params.nbins_x, params.nbins_y, params.nbins_z);
+        const Eigen::Vector3d dx(params.nbins_x, params.nbins_y, params.nbins_z);
         aabb.setLower(-0.5 * dx);
         aabb.setUpper(0.5 * dx);
     }
@@ -631,8 +557,7 @@ void Experiment::computeQuality(
             {d_lower,
              d_upper,
              {rf.Rmerge(), rf.Rmeas(), rf.Rpim(), cc.CChalf()},
-             {rf.expectedRmerge(), rf.expectedRmeas(), rf.expectedRpim(), cc.CCstar()}
-            });
+             {rf.expectedRmerge(), rf.expectedRmeas(), rf.expectedRpim(), cc.CCstar()}});
     }
 
     nsx::RFactor rf;
@@ -640,8 +565,8 @@ void Experiment::computeQuality(
     nsx::CC cc;
     cc.calculate(_merged_peaks.get());
     _data_quality_current = {rf.Rmerge(), rf.Rmeas(), rf.Rpim(), cc.CChalf()};
-    _data_quality_expected =
-        {rf.expectedRmerge(), rf.expectedRmeas(), rf.expectedRpim(), cc.CCstar()};
+    _data_quality_expected = {rf.expectedRmerge(), rf.expectedRmeas(), rf.expectedRpim(),
+                              cc.CCstar()};
 }
 
 const UnitCell* Experiment::getAcceptedCell() const

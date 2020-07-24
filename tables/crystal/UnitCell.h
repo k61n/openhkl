@@ -108,8 +108,8 @@ class UnitCell {
     std::string bravaisTypeSymbol() const;
 
     //! Returns a list of reflections with d value in the range [dmin, dmax]
-    std::vector<MillerIndex>
-    generateReflectionsInShell(double dmin, double dmax, double wavelength) const;
+    std::vector<MillerIndex> generateReflectionsInShell(
+        double dmin, double dmax, double wavelength) const;
 
     //! Returns the angle in radians between two reflections hkl1 and hkl2
     double angle(const Eigen::RowVector3d& hkl1, const Eigen::RowVector3d& hkl2) const;
@@ -280,7 +280,7 @@ class UnitCell {
     //! _NP is the transformation such that _A*_NP.inverse() is the Niggli cell
     Eigen::Matrix3d _NP;
 
-    std::unique_ptr<xsection::Material> _material {nullptr};
+    std::unique_ptr<xsection::Material> _material{nullptr};
 
     LatticeCentring _centring;
 

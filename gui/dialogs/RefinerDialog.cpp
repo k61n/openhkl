@@ -13,14 +13,14 @@
 //  ***********************************************************************************************
 
 #include "gui/dialogs/RefinerDialog.h"
-
 #include "core/algo/Refiner.h"
 #include "core/data/DataSet.h"
 #include "core/data/DataTypes.h"
+#include "core/experiment/Experiment.h"
 #include "core/peak/Peak3D.h"
 #include "gui/models/Meta.h"
+#include "gui/models/Project.h"
 #include "gui/models/Session.h"
-
 #include <QDebug>
 #include <QFileInfo>
 #include <QGridLayout>
@@ -377,10 +377,8 @@ void RefinerDialog::_setSampleUp()
     _sample_layout->addWidget(_sample_orientation_21_ref, 11, 2, 1, 1);
     _sample_layout->addWidget(_sample_orientation_22_ref, 12, 2, 1, 1);
 
-    QList<QScienceSpinBox*> spin_boxes =
-        _sample_layout->parentWidget()->findChildren<QScienceSpinBox*>();
-
-    foreach (QScienceSpinBox* spin_box, spin_boxes) {
+    for (QScienceSpinBox* spin_box :
+         _sample_layout->parentWidget()->findChildren<QScienceSpinBox*>()) {
         spin_box->setSizePolicy(*_size_policy_fixed);
         spin_box->setButtonSymbols(QAbstractSpinBox::NoButtons);
         spin_box->setReadOnly(true);
@@ -389,11 +387,8 @@ void RefinerDialog::_setSampleUp()
         // spin_box->setMaximum(1e6);
     }
 
-    QList<QCheckBox*> checkboxes = _sample_layout->parentWidget()->findChildren<QCheckBox*>();
-
-    foreach (QCheckBox* checkbox, checkboxes) {
+    for (QCheckBox* checkbox : _sample_layout->parentWidget()->findChildren<QCheckBox*>())
         connect(checkbox, &QCheckBox::stateChanged, this, &RefinerDialog::_plot);
-    }
 }
 
 void RefinerDialog::_setDetectorUp()
@@ -524,10 +519,8 @@ void RefinerDialog::_setDetectorUp()
     _detector_layout->addWidget(_detector_orientation_21_ref, 11, 2, 1, 1);
     _detector_layout->addWidget(_detector_orientation_22_ref, 12, 2, 1, 1);
 
-    QList<QScienceSpinBox*> spin_boxes =
-        _detector_layout->parentWidget()->findChildren<QScienceSpinBox*>();
-
-    foreach (QScienceSpinBox* spin_box, spin_boxes) {
+    for (QScienceSpinBox* spin_box :
+         _detector_layout->parentWidget()->findChildren<QScienceSpinBox*>()) {
         spin_box->setSizePolicy(*_size_policy_fixed);
         spin_box->setButtonSymbols(QAbstractSpinBox::NoButtons);
         spin_box->setReadOnly(true);
@@ -608,10 +601,7 @@ void RefinerDialog::_setUnitCellUp()
     _uc_layout->addWidget(_uc_beta_ref, 5, 2, 1, 1);
     _uc_layout->addWidget(_uc_gamma_ref, 6, 2, 1, 1);
 
-    QList<QScienceSpinBox*> spin_boxes =
-        _uc_layout->parentWidget()->findChildren<QScienceSpinBox*>();
-
-    foreach (QScienceSpinBox* spin_box, spin_boxes) {
+    for (QScienceSpinBox* spin_box : _uc_layout->parentWidget()->findChildren<QScienceSpinBox*>()) {
         spin_box->setSizePolicy(*_size_policy_fixed);
         spin_box->setButtonSymbols(QAbstractSpinBox::NoButtons);
         spin_box->setReadOnly(true);
@@ -681,10 +671,8 @@ void RefinerDialog::_setInstrumentUp()
     _instrument_layout->addWidget(_wavelength_ref, 4, 2, 1, 1);
     _instrument_layout->addWidget(_wavelength_offset_ref, 5, 2, 1, 1);
 
-    QList<QScienceSpinBox*> spin_boxes =
-        _instrument_layout->parentWidget()->findChildren<QScienceSpinBox*>();
-
-    foreach (QScienceSpinBox* spin_box, spin_boxes) {
+    for (QScienceSpinBox* spin_box :
+         _instrument_layout->parentWidget()->findChildren<QScienceSpinBox*>()) {
         spin_box->setSizePolicy(*_size_policy_fixed);
         spin_box->setButtonSymbols(QAbstractSpinBox::NoButtons);
         spin_box->setReadOnly(true);
@@ -707,8 +695,8 @@ void RefinerDialog::_setGraphUp()
 void RefinerDialog::_setUnitCellDrop()
 {
     _select_uc->blockSignals(true);
-    QStringList uc_list = gSession->selectedExperiment()->getUnitCellNames();
-    if (!uc_list.isEmpty()) {
+    QStringList uc_list = gSession->currentProject()->getUnitCellNames();
+    if (!uc_list.empty()) {
         _select_uc->addItems(uc_list);
         _select_uc->setCurrentIndex(0);
     }
@@ -718,8 +706,8 @@ void RefinerDialog::_setUnitCellDrop()
 void RefinerDialog::_setPeakList()
 {
     _select_peaks_list->blockSignals(true);
-    QStringList peak_list = gSession->selectedExperiment()->getPeakListNames();
-    if (!peak_list.isEmpty())
+    QStringList peak_list = gSession->currentProject()->getPeakListNames();
+    if (!peak_list.empty())
         _select_peaks_list->addItems(peak_list);
     _select_peaks_list->blockSignals(false);
 }
@@ -727,8 +715,8 @@ void RefinerDialog::_setPeakList()
 void RefinerDialog::_setDataList()
 {
     _select_data_list->blockSignals(true);
-    _data_list = gSession->selectedExperiment()->allData();
-    if (!_data_list.isEmpty()) {
+    _data_list = gSession->currentProject()->allData();
+    if (!_data_list.empty()) {
         for (nsx::sptrDataSet data : _data_list) {
             QFileInfo fileinfo(QString::fromStdString(data->filename()));
             _select_data_list->addItem(fileinfo.baseName());
@@ -743,7 +731,7 @@ void RefinerDialog::_setDataDrop()
     QString last_text = _select_data->currentText();
     _select_data->clear();
     QList<QListWidgetItem*> selected_data = _select_data_list->selectedItems();
-    if (!selected_data.isEmpty()) {
+    if (!selected_data.empty()) {
         for (QListWidgetItem* data_item : selected_data)
             _select_data->addItem(data_item->text());
     } else {
@@ -762,7 +750,7 @@ void RefinerDialog::_setDataDrop()
 
 void RefinerDialog::_selectedDataChanged()
 {
-    nsx::sptrDataSet data_set = gSession->selectedExperiment()->experiment()->getData(
+    nsx::sptrDataSet data_set = gSession->currentProject()->experiment()->getData(
         _select_data->currentText().toStdString());
     _current_index_spin->setMaximum(data_set->nFrames() - 1);
     if (_current_index_spin->value() > data_set->nFrames() - 1)
@@ -784,13 +772,13 @@ void RefinerDialog::_fetchAllInitialValues()
     _nis.clear();
     _wavelengths.clear();
 
-    const nsx::UnitCell* unit_cell = gSession->selectedExperiment()->experiment()->getUnitCell(
+    const nsx::UnitCell* unit_cell = gSession->currentProject()->experiment()->getUnitCell(
         _select_uc->currentText().toStdString());
 
     if (!unit_cell)
         return;
 
-    QList<nsx::sptrDataSet> data_set_list = gSession->selectedExperiment()->allData();
+    std::vector<nsx::sptrDataSet> data_set_list = gSession->currentProject()->allData();
 
     for (nsx::sptrDataSet data_set : data_set_list) {
         const nsx::InstrumentStateList& instrument_states = data_set->instrumentStates();
@@ -816,9 +804,9 @@ void RefinerDialog::_fetchAllInitialValues()
         }
 
         const nsx::UnitCellCharacter unitcharacter = unit_cell->character();
-        uc_dims_temp = Eigen::Vector3d {unitcharacter.a, unitcharacter.b, unitcharacter.c};
+        uc_dims_temp = Eigen::Vector3d{unitcharacter.a, unitcharacter.b, unitcharacter.c};
         uc_angles_temp =
-            Eigen::Vector3d {unitcharacter.alpha, unitcharacter.beta, unitcharacter.gamma};
+            Eigen::Vector3d{unitcharacter.alpha, unitcharacter.beta, unitcharacter.gamma};
 
         _sample_orientations.emplace(data_set, sample_orientations_temp);
         _detector_orientations.emplace(data_set, detector_orientations_temp);
@@ -843,12 +831,12 @@ void RefinerDialog::_fetchAllRefinedValues()
     _nis_ref.clear();
     _wavelengths_ref.clear();
 
-    const nsx::UnitCell* unit_cell = gSession->selectedExperiment()->experiment()->getUnitCell(
+    const nsx::UnitCell* unit_cell = gSession->currentProject()->experiment()->getUnitCell(
         _select_uc->currentText().toStdString());
 
-    nsx::sptrDataSet data_set = gSession->selectedExperiment()->experiment()->getData(
+    nsx::sptrDataSet data_set = gSession->currentProject()->experiment()->getData(
         _select_data->currentText().toStdString());
-    QList<nsx::sptrDataSet> data_set_list = gSession->selectedExperiment()->allData();
+    std::vector<nsx::sptrDataSet> data_set_list = gSession->currentProject()->allData();
 
     if (!unit_cell)
         return;
@@ -877,9 +865,9 @@ void RefinerDialog::_fetchAllRefinedValues()
         }
 
         const nsx::UnitCellCharacter unitcharacter = unit_cell->character();
-        uc_dims_temp = Eigen::Vector3d {unitcharacter.a, unitcharacter.b, unitcharacter.c};
+        uc_dims_temp = Eigen::Vector3d{unitcharacter.a, unitcharacter.b, unitcharacter.c};
         uc_angles_temp =
-            Eigen::Vector3d {unitcharacter.alpha, unitcharacter.beta, unitcharacter.gamma};
+            Eigen::Vector3d{unitcharacter.alpha, unitcharacter.beta, unitcharacter.gamma};
 
         _sample_orientations_ref.emplace(data_set, sample_orientations_temp);
         _detector_orientations_ref.emplace(data_set, detector_orientations_temp);
@@ -903,7 +891,7 @@ void RefinerDialog::_setInitialValues(int frame)
         return;
 
     nsx::sptrDataSet data_set =
-        gSession->selectedExperiment()->experiment()->getData(temp_text.toStdString());
+        gSession->currentProject()->experiment()->getData(temp_text.toStdString());
 
     _sample_orientation_00->setValue(_sample_orientations[data_set][frame](0, 0));
     _sample_orientation_01->setValue(_sample_orientations[data_set][frame](0, 1));
@@ -956,7 +944,7 @@ void RefinerDialog::_setRefinedValues(int frame)
         return;
 
     nsx::sptrDataSet data_set =
-        gSession->selectedExperiment()->experiment()->getData(temp_text.toStdString());
+        gSession->currentProject()->experiment()->getData(temp_text.toStdString());
 
     if (refiners.find(data_set) == refiners.end())
         return;
@@ -1008,7 +996,7 @@ void RefinerDialog::refine()
     int n_batches = _number_of_batches->value();
     QList<QListWidgetItem*> selected_peaks = _select_peaks_list->selectedItems();
     QList<QListWidgetItem*> selected_data = _select_data_list->selectedItems();
-    nsx::UnitCell* unit_cell = gSession->selectedExperiment()->experiment()->getUnitCell(
+    nsx::UnitCell* unit_cell = gSession->currentProject()->experiment()->getUnitCell(
         _select_uc->currentText().toStdString());
 
     if (n_batches == 0) {
@@ -1016,12 +1004,12 @@ void RefinerDialog::refine()
         return;
     }
 
-    if (selected_peaks.isEmpty()) {
+    if (selected_peaks.empty()) {
         qDebug() << "[ERROR] No peaks selected";
         return;
     }
 
-    if (selected_data.isEmpty()) {
+    if (selected_data.empty()) {
         qDebug() << "[ERROR] No data selected";
         return;
     }
@@ -1035,7 +1023,7 @@ void RefinerDialog::refine()
 
     for (QListWidgetItem* data_item : selected_data) {
         const std::string data_name = data_item->text().toStdString();
-        const nsx::sptrDataSet data = gSession->selectedExperiment()->experiment()->getData(data_name);
+        const nsx::sptrDataSet data = gSession->currentProject()->experiment()->getData(data_name);
         std::vector<nsx::Peak3D*> reference_peaks;
         std::vector<nsx::Peak3D*> predicted_peaks;
 
@@ -1044,7 +1032,7 @@ void RefinerDialog::refine()
         for (QListWidgetItem* peak_collection_item : selected_peaks) {
             std::string peak_name = peak_collection_item->text().toStdString();
             nsx::PeakCollection* peak_collection =
-                gSession->selectedExperiment()->experiment()->getPeakCollection(peak_name);
+                gSession->currentProject()->experiment()->getPeakCollection(peak_name);
             std::vector<nsx::Peak3D*> temp_peaks = peak_collection->getPeakList();
 
             for (nsx::Peak3D* peak : temp_peaks) {
@@ -1116,18 +1104,14 @@ void RefinerDialog::accept()
 void RefinerDialog::_plot()
 {
     QString temp_text = _select_data->currentText();
-
     if (temp_text.isEmpty())
         return;
 
     nsx::sptrDataSet data_set =
-        gSession->selectedExperiment()->experiment()->getData(temp_text.toStdString());
+        gSession->currentProject()->experiment()->getData(temp_text.toStdString());
 
     std::vector<std::string> selected_text;
-
-    QList<QCheckBox*> checkboxes = _sample_layout->parentWidget()->findChildren<QCheckBox*>();
-
-    foreach (QCheckBox* checkbox, checkboxes) {
+    for (QCheckBox* checkbox : _sample_layout->parentWidget()->findChildren<QCheckBox*>()) {
         if (checkbox->isChecked())
             selected_text.push_back(checkbox->text().toStdString());
     }
@@ -1136,10 +1120,10 @@ void RefinerDialog::_plot()
 
     int graph_num = 0;
 
-    std::vector<QColor> colors {Qt::black,     Qt::blue,        Qt::red,
-                                Qt::darkGreen, Qt::darkMagenta, Qt::darkYellow};
+    std::vector<QColor> colors{Qt::black,     Qt::blue,        Qt::red,
+                               Qt::darkGreen, Qt::darkMagenta, Qt::darkYellow};
 
-    std::vector<std::string> position_names {"Position X:", "Position Y:", "Position Z:"};
+    std::vector<std::string> position_names{"Position X:", "Position Y:", "Position Z:"};
 
     // Positions
     for (int index = 0; index < position_names.size(); ++index) {
@@ -1185,7 +1169,7 @@ void RefinerDialog::_plot()
         }
     }
 
-    std::vector<std::string> orientation_names {
+    std::vector<std::string> orientation_names{
         "Orientation X-X:", "Orientation X-Y:", "Orientation X-Z:",
         "Orientation Y-X:", "Orientation Y-Y:", "Orientation Y-Z:",
         "Orientation Z-X:", "Orientation Z-Y:", "Orientation Z-Z:"};

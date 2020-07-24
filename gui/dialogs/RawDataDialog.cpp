@@ -29,8 +29,8 @@ RawDataDialog::RawDataDialog() : QDialog()
     buttons =
         new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, Qt::Horizontal, this);
 
-    dataArrangement->addItems(QStringList {"Column major", "Row major"});
-    dataFormat->addItems(QStringList {"8 bit integer", "16 bit integer", "32 bit integer"});
+    dataArrangement->addItems(QStringList{"Column major", "Row major"});
+    dataFormat->addItems(QStringList{"8 bit integer", "16 bit integer", "32 bit integer"});
     chi->setDecimals(3);
     phi->setDecimals(3);
     omega->setDecimals(3);

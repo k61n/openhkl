@@ -36,7 +36,7 @@ def read_data(experiment, datasets, **kwargs):
         # Add the data to the experiment
         experiment.addData(dset)
 
-        data.append(dset)
+        data.push_back(dset)
 
     if not data:
         raise RuntimeError("Empty data list")
@@ -135,11 +135,11 @@ def find_unit_cells(peaks):
         beta  = np.rad2deg(uc.character().beta)
         gamma = np.rad2deg(uc.character().gamma)
 
-        cell_parameters.append((idx,a,b,c,alpha,beta,gamma,score))
+        cell_parameters.push_back((idx,a,b,c,alpha,beta,gamma,score))
 
         print("idx: {0:3d} --- a = {1:6.2f}  b = {2:6.2f}  c = {3:6.2f}  alpha = {4:6.2f}  beta = {5:6.2f}  gamma = {6:6.2f} --- % indexed = {7:5.2f}".format(*(cell_parameters[-1])))
 
-        unit_cells.append((uc,score))
+        unit_cells.push_back((uc,score))
 
     return unit_cells
 
@@ -155,7 +155,7 @@ def find_space_group(peaks, unit_cell):
     space_groups = []
     for idx,symbol in enumerate(compatible_space_groups):
         sg = nsx.SpaceGroup(symbol)
-        space_groups.append((idx,symbol,100.0*(1.0-sg.fractionExtinct(hkls))))
+        space_groups.push_back((idx,symbol,100.0*(1.0-sg.fractionExtinct(hkls))))
         print("idx: {0:3d} --- symbol = {1:10s}  --- % non-extincted peaks = {2:6.2f}".format(*(space_groups[-1])))
 
     return space_groups   
@@ -186,7 +186,7 @@ def refine_offsets(data, peaks, unit_cell, **kwargs):
         
         success = refiner.refine(n_iterations)
         
-        refinements.append([dataset, refiner, success])
+        refinements.push_back([dataset, refiner, success])
 
         print("refinement successful:", success)
 
@@ -233,7 +233,7 @@ def predict_peaks(peaks, dataset, unit_cell, batches):
                 
             p.setShape(shape)                
             p.addUnitCell(bcell, True)
-            predicted_peaks.append(p)
+            predicted_peaks.push_back(p)
     
     return predicted_peaks
 
@@ -329,8 +329,8 @@ def plot_I_vs_q(peak_list):
     for peak in peak_list:
         q = np.linalg.norm(peak.getQ().rowVector())
         I = peak.correctedIntensity().value()
-        qs.append(q)
-        Is.append(I)
+        qs.push_back(q)
+        Is.push_back(I)
     
     plt.figure(figsize=(10,10))
     plt.scatter(qs, Is)
@@ -344,8 +344,8 @@ def plot_Isigma_vs_q(peak_list):
         q = np.linalg.norm(peak.getQ().rowVector())
         I = peak.correctedIntensity().value()
         sigma = peak.correctedIntensity().sigma()
-        qs.append(q)
-        Is.append(I/sigma)
+        qs.push_back(q)
+        Is.push_back(I/sigma)
     
     plt.figure(figsize=(10,10))
     plt.scatter(qs, Is)
@@ -364,8 +364,8 @@ def plot_dq_vs_frame(peak_list):
         pred_q = hkl.rowVector().dot(bu)
         dq = np.linalg.norm(pred_q-obs_q)
         
-        dqs.append(dq)
-        frames.append(peak.getShape().center()[2])
+        dqs.push_back(dq)
+        frames.push_back(peak.getShape().center()[2])
         
     plt.figure(figsize=(10,10))
     plt.scatter(frames, dqs)
@@ -398,8 +398,8 @@ def plot_dx_vs_frame(peak_list, outlier=20):
             peak.setSelected(False)
             continue
         
-        dxs.append(dx)
-        frames.append(peak.getShape().center()[2])
+        dxs.push_back(dx)
+        frames.push_back(peak.getShape().center()[2])
 
     plt.figure(figsize=(10,10))
     plt.scatter(frames, dxs)
@@ -435,7 +435,7 @@ def reindex(peak_list, batches):
             continue
 
         peak.addUnitCell(uc, True)
-        new_peaks.append(peak)
+        new_peaks.push_back(peak)
             
     return new_peaks
 

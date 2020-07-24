@@ -13,10 +13,10 @@
 //  ***********************************************************************************************
 
 #include "gui/subframe_experiment/properties/DetectorProperty.h"
-
 #include "core/detector/Detector.h"
+#include "core/experiment/Experiment.h"
+#include "gui/models/Project.h"
 #include "gui/models/Session.h"
-
 #include <QGridLayout>
 #include <QGroupBox>
 #include <QHeaderView>
@@ -90,9 +90,9 @@ DetectorProperty::~DetectorProperty() {}
 
 void DetectorProperty::refreshInput()
 {
-    if (gSession->selectedExperimentNum() >= 0) {
+    if (gSession->currentProjectNum() >= 0) {
         nsx::Detector* detector =
-            gSession->selectedExperiment()->experiment()->diffractometer()->detector();
+            gSession->currentProject()->experiment()->diffractometer()->detector();
 
         _width->setValue(detector->width());
         _height->setValue(detector->height());

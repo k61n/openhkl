@@ -179,7 +179,7 @@ TEST_CASE("test/data/TestNewWorkFlow.cpp", "")
     // Filter the peaks
     nsx::PeakFilter* peak_filter = experiment.peakFilter();
     peak_filter->setFilterDRange(true);
-    const std::array<double, 2> d_range {1.5, 50};
+    const std::array<double, 2> d_range{1.5, 50};
     peak_filter->setDRange(d_range);
 
     nsx::PeakCollection* found_collection = experiment.getPeakCollection("found_peaks");

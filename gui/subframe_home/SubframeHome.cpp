@@ -13,10 +13,10 @@
 //  ***********************************************************************************************
 
 #include "gui/subframe_home/SubframeHome.h"
-
+#include "core/experiment/Experiment.h"
 #include "gui/dialogs/ExperimentDialog.h"
+#include "gui/models/Project.h"
 #include "gui/models/Session.h"
-
 #include <QFileDialog>
 #include <QSettings>
 #include <QSpacerItem>
@@ -152,8 +152,7 @@ void SubframeHome::loadFromFile()
         _open_experiments_model = std::make_unique<ExperimentModel>();
         _open_experiments_view->setModel(_open_experiments_model.get());
         _updateLastLoadedList(
-            QString::fromStdString(gSession->selectedExperiment()->experiment()->name()),
-            file_path);
+            QString::fromStdString(gSession->currentProject()->experiment()->name()), file_path);
     } catch (...) {
         ; // TODO: handle exception
     }
@@ -164,10 +163,9 @@ void SubframeHome::saveCurrent()
     try {
         QString file_path = QFileDialog::getSaveFileName(
             this, "Save the current experiment", "", "NSXTool file (*.nsx)");
-        gSession->selectedExperiment()->saveToFile(file_path);
+        gSession->currentProject()->saveToFile(file_path);
         _updateLastLoadedList(
-            QString::fromStdString(gSession->selectedExperiment()->experiment()->name()),
-            file_path);
+            QString::fromStdString(gSession->currentProject()->experiment()->name()), file_path);
     } catch (...) {
         ; // TODO: handle exception
     }
@@ -230,7 +228,7 @@ void SubframeHome::_loadSelectedItem(QListWidgetItem* item)
         _open_experiments_model = std::make_unique<ExperimentModel>();
         _open_experiments_view->setModel(_open_experiments_model.get());
         _updateLastLoadedList(
-            QString::fromStdString(gSession->selectedExperiment()->experiment()->name()),
+            QString::fromStdString(gSession->currentProject()->experiment()->name()),
             item->data(100).toString());
     } catch (...) {
         ; // TODO: handle exception

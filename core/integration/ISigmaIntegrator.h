@@ -25,8 +25,8 @@ namespace nsx {
 class ISigmaIntegrator : public PixelSumIntegrator {
  public:
     ISigmaIntegrator();
-    bool
-    compute(Peak3D* peak, ShapeLibrary* shape_library, const IntegrationRegion& region) override;
+    bool compute(
+        Peak3D* peak, ShapeLibrary* shape_library, const IntegrationRegion& region) override;
 };
 
 } // namespace nsx

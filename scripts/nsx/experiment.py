@@ -494,7 +494,7 @@ class Experiment:
                 key, value = line.split()
                 if key in self._metadata:
                     if isinstance(self._metadata[key], list):
-                        self._metadata[key].append(value)
+                        self._metadata[key].push_back(value)
                     else:
                         self._metadata[key] = [self._metadata[key], value]
                 else:

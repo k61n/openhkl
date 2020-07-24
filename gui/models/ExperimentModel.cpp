@@ -13,7 +13,10 @@
 //  ***********************************************************************************************
 
 #include "gui/models/ExperimentModel.h"
+#include "core/experiment/Experiment.h"
+#include "gui/models/Project.h"
 #include "gui/models/Session.h"
+#include <QColor>
 
 ExperimentModel::ExperimentModel(QObject* parent) : QAbstractTableModel(parent) {}
 
@@ -42,7 +45,7 @@ QVariant ExperimentModel::data(const QModelIndex& index, int role) const
             return formatOutput(index);
         }
         case Qt::BackgroundRole: {
-            if (row == gSession->selectedExperimentNum())
+            if (row == gSession->currentProjectNum())
                 return QColor(Qt::gray);
             return QVariant();
         }

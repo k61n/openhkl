@@ -13,14 +13,14 @@
 //  ***********************************************************************************************
 
 #include "gui/subframe_filter/SubframeFilterPeaks.h"
-
+#include "core/experiment/Experiment.h"
 #include "core/shape/PeakCollection.h"
 #include "core/shape/PeakFilter.h"
 #include "gui/MainWin.h"
 #include "gui/dialogs/ListNameDialog.h"
 #include "gui/models/Meta.h"
+#include "gui/models/Project.h"
 #include "gui/models/Session.h"
-
 #include <QFileInfo>
 #include <QGridLayout>
 #include <QGroupBox>
@@ -101,7 +101,7 @@ void SubframeFilterPeaks::setSizePolicies()
 
 void SubframeFilterPeaks::setInputUp()
 {
-    _input_box = new Spoiler(QString::fromStdString("Input"));
+    _input_box = new Spoiler("Input");
 
     QGridLayout* _input_grid = new QGridLayout();
 
@@ -436,18 +436,17 @@ void SubframeFilterPeaks::setParametersUp()
 void SubframeFilterPeaks::setExperimentsUp()
 {
     _exp_combo->blockSignals(true);
-
     _exp_combo->clear();
-    QList<QString> exp_list = gSession->experimentNames();
 
-    if (!exp_list.isEmpty()) {
-        for (QString exp : exp_list)
-            _exp_combo->addItem(exp);
-        _exp_combo->blockSignals(false);
+    if (gSession->experimentNames().empty())
+        return;
 
-        updatePeakList();
-        grabFilterParameters();
-    }
+    for (const QString& exp : gSession->experimentNames())
+        _exp_combo->addItem(exp);
+
+    _exp_combo->blockSignals(false);
+    updatePeakList();
+    grabFilterParameters();
 }
 
 void SubframeFilterPeaks::updatePeakList()
@@ -457,7 +456,7 @@ void SubframeFilterPeaks::updatePeakList()
     _peak_combo->clear();
     _peak_list = gSession->experimentAt(_exp_combo->currentIndex())->getPeakListNames();
 
-    if (!_peak_list.isEmpty()) {
+    if (!_peak_list.empty()) {
         _peak_combo->addItems(_peak_list);
         _peak_combo->setCurrentIndex(0);
 
@@ -481,8 +480,8 @@ void SubframeFilterPeaks::updateDatasetList()
     _data_combo->clear();
     _data_list = gSession->experimentAt(_exp_combo->currentIndex())->allData();
 
-    if (!_data_list.isEmpty()) {
-        for (nsx::sptrDataSet data : _data_list) {
+    if (!_data_list.empty()) {
+        for (const nsx::sptrDataSet& data : _data_list) {
             QFileInfo fileinfo(QString::fromStdString(data->filename()));
             _data_combo->addItem(fileinfo.baseName());
         }
@@ -494,7 +493,7 @@ void SubframeFilterPeaks::updateDatasetList()
 
 void SubframeFilterPeaks::updateDatasetParameters(int idx)
 {
-    if (_data_list.isEmpty() || idx < 0)
+    if (_data_list.empty() || idx < 0)
         return;
 
     nsx::sptrDataSet data = _data_list.at(idx);
@@ -513,7 +512,7 @@ void SubframeFilterPeaks::updateDatasetParameters(int idx)
 
 void SubframeFilterPeaks::grabFilterParameters()
 {
-    if (_peak_list.isEmpty() || _exp_combo->count() < 1)
+    if (_peak_list.empty() || _exp_combo->count() < 1)
         return;
 
     nsx::PeakFilter* filter =
@@ -544,7 +543,7 @@ void SubframeFilterPeaks::grabFilterParameters()
 
 void SubframeFilterPeaks::setFilterParameters() const
 {
-    if (_peak_list.isEmpty() || _exp_combo->count() < 1)
+    if (_peak_list.empty() || _exp_combo->count() < 1)
         return;
 
     nsx::PeakFilter* filter =
@@ -579,8 +578,8 @@ void SubframeFilterPeaks::setFilterParameters() const
     if (_merge_box->checked())
         filter->setFilterSignificance(true);
 
-    const std::array<double, 2> d_range {_d_range_min->value(), _d_range_max->value()};
-    const std::array<double, 2> strength {_strength_min->value(), _strength_max->value()};
+    const std::array<double, 2> d_range{_d_range_min->value(), _d_range_max->value()};
+    const std::array<double, 2> strength{_strength_min->value(), _strength_max->value()};
 
     filter->setUnitCellTolerance(_tolerance->value());
     filter->setSignificance(_significance_level->value());
@@ -591,7 +590,7 @@ void SubframeFilterPeaks::setFilterParameters() const
 
 void SubframeFilterPeaks::filterPeaks()
 {
-    if (_peak_list.isEmpty() || _exp_combo->count() < 1)
+    if (_peak_list.empty() || _exp_combo->count() < 1)
         return;
 
     setFilterParameters();
@@ -619,7 +618,7 @@ void SubframeFilterPeaks::filterPeaks()
 
 void SubframeFilterPeaks::accept()
 {
-    if (_peak_list.isEmpty() || _exp_combo->count() < 1)
+    if (_peak_list.empty() || _exp_combo->count() < 1)
         return;
     nsx::PeakCollection* collection =
         gSession->experimentAt(_exp_combo->currentIndex())
@@ -638,7 +637,7 @@ void SubframeFilterPeaks::accept()
 
 void SubframeFilterPeaks::refreshPeakTable()
 {
-    if (_peak_list.isEmpty() || _exp_combo->count() < 1)
+    if (_peak_list.empty() || _exp_combo->count() < 1)
         return;
 
     _figure_view->getScene()->clearPeakItems();

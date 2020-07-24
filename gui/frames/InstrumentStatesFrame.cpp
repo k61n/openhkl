@@ -16,6 +16,7 @@
 
 #include "core/data/DataSet.h"
 #include "gui/models/Meta.h"
+#include "gui/models/Project.h"
 #include "gui/models/Session.h"
 #include <QDialogButtonBox>
 #include <QFileInfo>
@@ -26,11 +27,11 @@
 
 InstrumentStatesFrame::InstrumentStatesFrame() : QFrame()
 {
-    if (gSession->selectedExperimentNum() < 0) {
+    if (gSession->currentProjectNum() < 0) {
         // gLogger->log("[ERROR] No experiment selected");
         return;
     }
-    QList<nsx::sptrDataSet> datalist = gSession->selectedExperiment()->allData();
+    std::vector<nsx::sptrDataSet> datalist = gSession->currentProject()->allData();
     if (datalist.empty()) {
         // gLogger->log("[ERROR] No dataset found");
         return;

@@ -13,7 +13,8 @@
 //  ***********************************************************************************************
 
 #include "gui/dialogs/AbsorptionDialog.h"
-
+#include "core/experiment/Experiment.h"
+#include "gui/models/Project.h"
 #include "gui/models/Session.h"
 #include <QFileDialog>
 #include <QGraphicsView>
@@ -21,7 +22,7 @@
 #include <QVBoxLayout>
 #include <fstream>
 
-AbsorptionDialog::AbsorptionDialog() : QDialog {}
+AbsorptionDialog::AbsorptionDialog() : QDialog{}
 {
     setAttribute(Qt::WA_DeleteOnClose);
     resize(900, 650);
@@ -68,7 +69,7 @@ AbsorptionDialog::AbsorptionDialog() : QDialog {}
     verticalLayout2->addWidget(triangulateButton);
 
     crystalScene = new CrystalScene(
-        &gSession->selectedExperiment()->experiment()->diffractometer()->sample().shape());
+        &gSession->currentProject()->experiment()->diffractometer()->sample().shape());
     crystalView->setScene(crystalScene);
 
     connect(scrollBar, &QScrollBar::valueChanged, [=](int i) {
@@ -79,13 +80,15 @@ AbsorptionDialog::AbsorptionDialog() : QDialog {}
         });
     });
 
-    connect(
-        rulerButton, &QPushButton::clicked, [=]() { crystalScene->activateCalibrateDistance(); });
+    connect(rulerButton, &QPushButton::clicked, [=]() {
+        crystalScene->activateCalibrateDistance();
+    });
 
     connect(pickCenterButton, &QPushButton::clicked, [=]() { crystalScene->activatePickCenter(); });
 
-    connect(
-        pickPointButton, &QPushButton::clicked, [=]() { crystalScene->activatePickingPoints(); });
+    connect(pickPointButton, &QPushButton::clicked, [=]() {
+        crystalScene->activatePickingPoints();
+    });
 
     connect(removePointButton, &QPushButton::clicked, [=]() {
         crystalScene->activateRemovingPoints();

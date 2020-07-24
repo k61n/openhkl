@@ -190,7 +190,7 @@ TEST_CASE("test/data/TestNexusData.cpp", "")
 
     nsx::PeakFilter* peak_filter = exp.peakFilter();
     peak_filter->setFilterDRange(true);
-    const std::array<double, 2> d_range {0.5, 10.0};
+    const std::array<double, 2> d_range{0.5, 10.0};
     peak_filter->setDRange(d_range);
 
     peak_filter->resetFiltering(found_collection);

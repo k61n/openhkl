@@ -13,24 +13,21 @@
 //  ***********************************************************************************************
 
 #include "gui/subframe_predict/SubframePredictPeaks.h"
-#include "gui/subframe_predict/ShapeLibraryDialog.h"
-
 #include "core/data/DataSet.h"
+#include "core/experiment/Experiment.h"
 #include "core/peak/Peak3D.h"
 #include "core/raw/IDataReader.h"
 #include "core/shape/IPeakIntegrator.h"
-
 #include "core/shape/ShapeLibrary.h"
-#include "tables/crystal/UnitCell.h"
-
 #include "gui/dialogs/ListNameDialog.h"
 #include "gui/frames/ProgressView.h"
 #include "gui/graphics/DetectorScene.h"
-
 #include "gui/items/PeakItem.h"
 #include "gui/models/Meta.h"
+#include "gui/models/Project.h"
 #include "gui/models/Session.h"
-
+#include "gui/subframe_predict/ShapeLibraryDialog.h"
+#include "tables/crystal/UnitCell.h"
 #include <QFileInfo>
 #include <QGridLayout>
 #include <QGroupBox>
@@ -94,7 +91,7 @@ void SubframePredictPeaks::setSizePolicies()
 
 void SubframePredictPeaks::setInputUp()
 {
-    _input_box = new Spoiler(QString::fromStdString("1. Select Shape Library"));
+    _input_box = new Spoiler("1. Select Shape Library");
 
     QGridLayout* _input_grid = new QGridLayout();
 
@@ -141,7 +138,7 @@ void SubframePredictPeaks::setInputUp()
 
 void SubframePredictPeaks::setParametersUp()
 {
-    _para_box = new Spoiler(QString::fromStdString("2. Predict peaks"));
+    _para_box = new Spoiler("2. Predict peaks");
 
     QGridLayout* para_grid = new QGridLayout();
 
@@ -253,7 +250,7 @@ void SubframePredictPeaks::setParametersUp()
 
 void SubframePredictPeaks::setIntegrateUp()
 {
-    _integrate_box = new Spoiler(QString::fromStdString("3. Integrate peaks"));
+    _integrate_box = new Spoiler("3. Integrate peaks");
 
     QGridLayout* integrate_grid = new QGridLayout();
 
@@ -390,7 +387,7 @@ void SubframePredictPeaks::setIntegrateUp()
 }
 void SubframePredictPeaks::setPreviewUp()
 {
-    _preview_box = new Spoiler(QString::fromStdString("4. View and save"));
+    _preview_box = new Spoiler("4. View and save");
 
     QGridLayout* _preview_grid = new QGridLayout();
 
@@ -561,30 +558,30 @@ void SubframePredictPeaks::refreshAll()
 void SubframePredictPeaks::setExperiments()
 {
     _exp_combo->blockSignals(true);
-
     _exp_combo->clear();
-    QList<QString> exp_list = gSession->experimentNames();
 
-    if (!exp_list.isEmpty()) {
-        for (QString exp : exp_list)
-            _exp_combo->addItem(exp);
-        _exp_combo->blockSignals(false);
+    if (gSession->experimentNames().empty())
+        return;
 
-        updatePeakList();
-        updateUnitCellList();
-        updateDatasetList();
-        grabPredictorParameters();
-    }
+    for (QString exp : gSession->experimentNames())
+        _exp_combo->addItem(exp);
+
+    _exp_combo->blockSignals(false);
+
+    updatePeakList();
+    updateUnitCellList();
+    updateDatasetList();
+    grabPredictorParameters();
 }
 
 void SubframePredictPeaks::updatePeakList()
 {
     _peak_combo->blockSignals(true);
-
     _peak_combo->clear();
+
     _peak_list = gSession->experimentAt(_exp_combo->currentIndex())->getPeakListNames();
 
-    if (!_peak_list.isEmpty()) {
+    if (!_peak_list.empty()) {
         _peak_combo->addItems(_peak_list);
         _peak_combo->setCurrentIndex(0);
     }
@@ -595,11 +592,11 @@ void SubframePredictPeaks::updatePeakList()
 void SubframePredictPeaks::updateUnitCellList()
 {
     _unit_cells->blockSignals(true);
-
     _unit_cells->clear();
+
     _unit_cell_list = gSession->experimentAt(_exp_combo->currentIndex())->getUnitCellNames();
 
-    if (!_unit_cell_list.isEmpty()) {
+    if (!_unit_cell_list.empty()) {
         _unit_cells->addItems(_unit_cell_list);
         _unit_cells->setCurrentIndex(0);
     }
@@ -610,10 +607,11 @@ void SubframePredictPeaks::updateDatasetList()
 {
     _data_combo->blockSignals(true);
     _data_combo->clear();
+
     _data_list = gSession->experimentAt(_exp_combo->currentIndex())->allData();
 
-    if (!_data_list.isEmpty()) {
-        for (nsx::sptrDataSet data : _data_list) {
+    if (!_data_list.empty()) {
+        for (const nsx::sptrDataSet& data : _data_list) {
             QFileInfo fileinfo(QString::fromStdString(data->filename()));
             _data_combo->addItem(fileinfo.baseName());
         }
@@ -625,20 +623,20 @@ void SubframePredictPeaks::updateDatasetList()
 
 void SubframePredictPeaks::updateDatasetParameters(int idx)
 {
-    if (_data_list.isEmpty() || idx < 0)
+    if (_data_list.empty() || idx < 0)
         return;
 
-    nsx::sptrDataSet data = _data_list.at(idx);
+    const int nFrames = _data_list.at(idx)->nFrames();
 
     _figure_view->getScene()->slotChangeSelectedData(_data_list.at(idx), 0);
     _figure_view->getScene()->setMaxIntensity(3000);
     emit _figure_view->getScene()->dataChanged();
     _figure_view->getScene()->update();
 
-    _figure_scroll->setMaximum(data->nFrames());
+    _figure_scroll->setMaximum(nFrames);
     _figure_scroll->setMinimum(0);
 
-    _figure_spin->setMaximum(data->nFrames());
+    _figure_spin->setMaximum(nFrames);
     _figure_spin->setMinimum(0);
 }
 
@@ -651,7 +649,7 @@ void SubframePredictPeaks::runPrediction()
     try {
         qDebug() << "Starting peak prediction...";
 
-        QList<nsx::sptrDataSet> data = gSession->selectedExperiment()->allData();
+        const std::vector<nsx::sptrDataSet>& data = gSession->currentProject()->allData();
 
         nsx::sptrProgressHandler handler(new nsx::ProgressHandler);
         ProgressView progressView(nullptr);
@@ -661,7 +659,7 @@ void SubframePredictPeaks::runPrediction()
                                      ->experiment()
                                      ->getPeakCollection(_peak_combo->currentText().toStdString())
                                      ->shapeLibrary();
-        nsx::UnitCell* cell = gSession->selectedExperiment()->experiment()->getUnitCell(
+        nsx::UnitCell* cell = gSession->currentProject()->experiment()->getUnitCell(
             _unit_cells->currentText().toStdString());
 
         double d_min = _d_min->value();
@@ -765,7 +763,7 @@ void SubframePredictPeaks::refreshPeakShapeStatus()
 {
     bool shape_library_present = true;
 
-    if (_peak_list.isEmpty() || _exp_combo->count() < 1)
+    if (_peak_list.empty() || _exp_combo->count() < 1)
         shape_library_present = false;
 
     if (shape_library_present) {
@@ -784,7 +782,7 @@ void SubframePredictPeaks::refreshPeakShapeStatus()
 
 void SubframePredictPeaks::refreshPeakTable()
 {
-    if (_peak_list.isEmpty() || _exp_combo->count() < 1)
+    if (_peak_list.empty() || _exp_combo->count() < 1)
         return;
 
     _figure_view->getScene()->clearPeakItems();

@@ -92,7 +92,7 @@ class SubframeMergedPeaks : public QWidget {
 
  private:
     //! The loaded data list
-    QList<nsx::sptrDataSet> _data_list;
+    std::vector<nsx::sptrDataSet> _data_list;
     //! The loaded peak list
     QStringList _found_list;
     //! The loaded peak list

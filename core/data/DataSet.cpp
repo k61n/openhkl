@@ -31,14 +31,14 @@
 namespace nsx {
 
 DataSet::DataSet(std::shared_ptr<IDataReader> reader)
-    : _isOpened {false}
-    , _filename {reader->filename()}
-    , _nFrames {0}
-    , _nrows {0}
-    , _ncols {0}
-    , _fileSize {0}
-    , _background {0.0}
-    , _reader {std::move(reader)}
+    : _isOpened{false}
+    , _filename{reader->filename()}
+    , _nFrames{0}
+    , _nrows{0}
+    , _ncols{0}
+    , _fileSize{0}
+    , _background{0.0}
+    , _reader{std::move(reader)}
 {
     if (!fileExists(_filename))
         throw std::runtime_error("IData, file: " + _filename + " does not exist");

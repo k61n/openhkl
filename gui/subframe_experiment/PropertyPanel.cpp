@@ -13,7 +13,7 @@
 //  ***********************************************************************************************
 
 #include "gui/subframe_experiment/PropertyPanel.h"
-
+#include "gui/models/Project.h"
 #include "gui/models/Session.h"
 
 namespace {
@@ -39,23 +39,23 @@ void PropertyPanel::setCurrent(int index)
 
 void PropertyPanel::dataChanged()
 {
-    // bool enabled = gSession->selectedExperimentNum() >= 0;
+    // bool enabled = gSession->currentProjectNum() >= 0;
     // if (enabled)
-    //     enabled = !gSession->selectedExperiment()->getDataNames().empty();
+    //     enabled = !gSession->currentProject()->getDataNames().empty();
     // setTabEnabled((int)tab::DATA, enabled);
-    if (!gSession->selectedExperiment()->getDataNames().empty())
+    if (!gSession->currentProject()->getDataNames().empty())
         _data->refreshInput();
 }
 
 void PropertyPanel::experimentChanged()
 {
-    _peaks->selectedExperimentChanged();
+    _peaks->currentProjectChanged();
     _instrument->refreshInput();
 }
 
 void PropertyPanel::peaksChanged()
 {
-    bool enabled = gSession->selectedExperimentNum() >= 0;
+    bool enabled = gSession->currentProjectNum() >= 0;
     if (enabled)
         _peaks->refreshInput();
     _peaks->selectedPeaksChanged();
@@ -63,7 +63,7 @@ void PropertyPanel::peaksChanged()
 
 void PropertyPanel::unitCellChanged()
 {
-    bool enabled = gSession->selectedExperimentNum() >= 0;
+    bool enabled = gSession->currentProjectNum() >= 0;
     if (enabled)
         _unitcells->refreshInput();
 }

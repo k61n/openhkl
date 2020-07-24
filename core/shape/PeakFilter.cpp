@@ -60,7 +60,7 @@ void PeakFilter::filterSignificance(PeakCollection* peak_collection) const
             const UnitCell* unit_cell = peak_ptr->unitCell();
             auto it = peaks_per_unit_cell.find(unit_cell);
             if (it == peaks_per_unit_cell.end()) {
-                std::vector<nsx::Peak3D*> temp {peak_ptr};
+                std::vector<nsx::Peak3D*> temp{peak_ptr};
                 peaks_per_unit_cell.insert(std::make_pair(unit_cell, temp));
             } else {
                 it->second.push_back(peak_ptr);
@@ -101,7 +101,7 @@ void PeakFilter::filterSparseDataSet(PeakCollection* peak_collection) const
 
         auto it = peaks_per_dataset.find(data);
         if (it == peaks_per_dataset.end()) {
-            std::vector<nsx::Peak3D*> temp {peak_ptr};
+            std::vector<nsx::Peak3D*> temp{peak_ptr};
             peaks_per_dataset.insert(std::make_pair(data, temp));
         } else {
             it->second.push_back(peak_ptr);
@@ -193,8 +193,8 @@ void PeakFilter::filterEnabled(PeakCollection* peak_collection) const
     }
 }
 
-std::vector<Peak3D*>
-PeakFilter::filterEnabled(const std::vector<Peak3D*> input_peaks, bool flag) const
+std::vector<Peak3D*> PeakFilter::filterEnabled(
+    const std::vector<Peak3D*> input_peaks, bool flag) const
 {
     std::vector<Peak3D*> filtered_peaks;
     std::copy_if(
