@@ -255,9 +255,9 @@ void Experiment::resetMergedPeaks()
     _merged_peaks.reset();
 }
 
-void Experiment::addUnitCell(const std::string& name, const UnitCell* unit_cell)
+void Experiment::addUnitCell(const std::string& name, const UnitCell& unit_cell)
 {
-    auto ptr = std::make_unique<UnitCell>(*unit_cell);
+    auto ptr = std::make_unique<UnitCell>(unit_cell);
     _unit_cells.insert({name, std::move(ptr)});
 }
 
@@ -415,17 +415,15 @@ void Experiment::loadFromFile(const std::string& path)
 void Experiment::setReferenceCell(
     double a, double b, double c, double alpha, double beta, double gamma)
 {
-    std::string name = "reference";
-    auto reference_cell = UnitCell(a, b, c, alpha * deg, beta * deg, gamma * deg);
-    addUnitCell(name, &reference_cell);
-    _auto_indexer->setReferenceCell(getUnitCell(name));
+    addUnitCell("reference", {a, b, c, alpha * deg, beta * deg, gamma * deg});
+    _auto_indexer->setReferenceCell(getUnitCell("reference"));
 }
 
 bool Experiment::checkAndAssignUnitCell(PeakCollection* peaks, double length_tol, double angle_tol)
 {
     if (!_auto_indexer->hasSolution(length_tol, angle_tol))
         return false;
-    addUnitCell("accepted", _auto_indexer->getAcceptedSolution());
+    addUnitCell("accepted", *_auto_indexer->getAcceptedSolution());
     assignUnitCell(peaks);
     return true;
 }

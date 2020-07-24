@@ -337,7 +337,7 @@ void ExperimentImporter::loadUnitCells(Experiment* experiment)
             temp_cell.setZ(z);
             temp_cell.setLatticeCentring(LatticeCentring(bravais[1]));
             temp_cell.printSelf(std::cout);
-            experiment->addUnitCell(cell_name, &temp_cell);
+            experiment->addUnitCell(cell_name, temp_cell);
         }
     } catch (H5::Exception& e) {
         std::string what = e.getDetailMsg();

@@ -207,7 +207,7 @@ std::vector<nsx::Peak3D*> Project::getPeaks(
     return _experiment->getPeakCollection(peakListName.toStdString())->getPeakList();
 }
 
-void Project::addUnitCell(std::string& name, nsx::UnitCell* unit_cell)
+void Project::addUnitCell(const std::string& name, const nsx::UnitCell& unit_cell)
 {
     _experiment->addUnitCell(name, unit_cell);
 }

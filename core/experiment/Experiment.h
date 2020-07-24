@@ -91,7 +91,7 @@ class Experiment {
     MergedData* getMergedPeaks() const { return _merged_peaks.get(); };
 
     // Unit cells
-    void addUnitCell(const std::string& name, const UnitCell* unit_cell);
+    void addUnitCell(const std::string& name, const UnitCell& unit_cell);
     //! Add a unit cell to the experiment via cell parameters (skip autoindexing step)
     void addUnitCell(
         const std::string& name, double a, double b, double c, double alpha, double beta,

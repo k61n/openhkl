@@ -64,7 +64,7 @@ class Project {
 
     void onPeaksChanged();
 
-    void addUnitCell(std::string& name, nsx::UnitCell* unit_cell);
+    void addUnitCell(const std::string& name, const nsx::UnitCell& unit_cell);
     QStringList getUnitCellNames() const;
     int numUnitCells() const;
 
