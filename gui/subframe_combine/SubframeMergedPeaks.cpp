@@ -513,12 +513,11 @@ void SubframeMergedPeaks::refreshGraphTable(int column)
 
     QStandardItemModel* _shell_model = dynamic_cast<QStandardItemModel*>(_d_shell_view->model());
     int nshells = _shell_model->rowCount() - 1;
-    std::vector<double> shells(nshells);
-    std::iota(shells.begin(), shells.end(), 0);
 
-    QVector<double> xvals{shells.begin(), shells.end()};
+    QVector<double> xvals;
     QVector<double> yvals;
     for (int i = 0; i < nshells; ++i) {
+        xvals.push_back(double(i));
         double val = _shell_model->item(i, column)->data(Qt::DisplayRole).value<double>();
         yvals.push_back(val);
     }
