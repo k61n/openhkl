@@ -142,11 +142,12 @@ void GlobalOffsetsFrame::fit()
             offset_item->setData(Qt::DisplayRole, offset / nsx::deg);
             offsets->setItem(comp++, 1, offset_item);
         }
-        const std::vector<double> costFunction = fit_results.cost_function;
-        std::vector<double> iterationsval(costFunction.size());
-        std::iota(iterationsval.begin(), iterationsval.end(), 0);
-        xValues = {iterationsval.begin(), iterationsval.end()};
-        yValues = {costFunction.begin(), costFunction.end()};
+        std::copy(
+            fit_results.cost_function.begin(), fit_results.cost_function.end(),
+            std::back_insert_iterator(yValues));
+
+        xValues.resize(yValues.size());
+        std::iota(xValues.begin(), xValues.end(), 0);
     } else if (mode_ == offsetMode::SAMPLE) {
         const nsx::Sample& sample =
             gSession->currentProject()->experiment()->diffractometer()->sample();
@@ -165,11 +166,11 @@ void GlobalOffsetsFrame::fit()
             offset_item->setData(Qt::DisplayRole, offset / nsx::deg);
             offsets->setItem(comp++, 1, offset_item);
         }
-        const std::vector<double>& costFunction = fit_results.cost_function;
-        std::vector<double> iterationsval(costFunction.size());
-        std::iota(iterationsval.begin(), iterationsval.end(), 0);
-        xValues = {iterationsval.begin(), iterationsval.end()};
-        yValues = {costFunction.begin(), costFunction.end()};
+        std::copy(
+            fit_results.cost_function.begin(), fit_results.cost_function.end(),
+            std::back_insert_iterator(yValues));
+        xValues.resize(yValues.size());
+        std::iota(xValues.begin(), xValues.end(), 0);
     } else {
         // gLogger->log("[ERROR] invalide offset mode. Should be DETECTOR or SAMPLE");
         return;
