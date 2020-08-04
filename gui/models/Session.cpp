@@ -127,7 +127,7 @@ void Session::loadData()
 
         std::string extension = fileinfo.completeSuffix().toStdString();
         data_ptr = nsx::DataReaderFactory().create(
-            extension, filename.toStdString(), exp->diffractometer());
+            extension, filename.toStdString(), exp->getDiffractometer());
         exp->addData(data_ptr);
     }
     currentProject()->selectData(currentProject()->getIndex(filenames.at(0)));
@@ -180,7 +180,7 @@ void Session::loadRawData()
     parameters.swap_endian = dialog.swapEndian();
     parameters.bpp = dialog.bpp();
     try {
-        nsx::Diffractometer* diff = exp->diffractometer();
+        nsx::Diffractometer* diff = exp->getDiffractometer();
         auto reader{std::make_unique<nsx::RawDataReader>(filenames[0], diff)};
         for (size_t i = 1; i < filenames.size(); ++i)
             reader->addFrame(filenames[i]);

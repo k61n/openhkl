@@ -57,7 +57,7 @@ void ExperimentImporter::loadData(Experiment* experiment)
         hsize_t object_num = data_collections.getNumObjs();
         for (int i = 0; i < object_num; ++i) {
             auto reader = std::make_unique<nsx::ExperimentDataReader>(
-                _file_name, data_collections.getObjnameByIdx(i), experiment->diffractometer());
+                _file_name, data_collections.getObjnameByIdx(i), experiment->getDiffractometer());
             nsx::sptrDataSet data{new nsx::DataSet{std::move(reader)}};
 
             const std::string collection_name = data_collections.getObjnameByIdx(i);
@@ -345,6 +345,6 @@ void ExperimentImporter::loadUnitCells(Experiment* experiment)
     }
 }
 
-void ExperimentImporter::finishLoad() {}
+void ExperimentImporter::finishLoad() { }
 
 } // namespace nsx

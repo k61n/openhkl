@@ -79,7 +79,7 @@ void GlobalOffsetsFrame::layout()
     offsets = new QTableWidget;
     offsets->setColumnCount(2);
     nsx::Gonio& detector_gonio =
-        gSession->currentProject()->experiment()->diffractometer()->detector()->gonio();
+        gSession->currentProject()->experiment()->getDiffractometer()->detector()->gonio();
     size_t n_axes = detector_gonio.nAxes();
     offsets->setRowCount(n_axes);
     for (size_t i = 0; i < n_axes; ++i) {
@@ -126,7 +126,7 @@ void GlobalOffsetsFrame::fit()
     if (mode_ == offsetMode::DETECTOR) {
         // Fit the detector offsets with the selected data
         const nsx::Detector* detector =
-            gSession->currentProject()->experiment()->diffractometer()->detector();
+            gSession->currentProject()->experiment()->getDiffractometer()->detector();
         const nsx::GonioFit fit_results = nsx::fitDetectorGonioOffsets(
             detector->gonio(), selected_data, iterations->value(), tolerance->value());
 
@@ -150,7 +150,7 @@ void GlobalOffsetsFrame::fit()
         std::iota(xValues.begin(), xValues.end(), 0);
     } else if (mode_ == offsetMode::SAMPLE) {
         const nsx::Sample& sample =
-            gSession->currentProject()->experiment()->diffractometer()->sample();
+            gSession->currentProject()->experiment()->getDiffractometer()->sample();
         nsx::GonioFit fit_results = nsx::fitSampleGonioOffsets(
             sample.gonio(), selected_data, iterations->value(), tolerance->value());
 

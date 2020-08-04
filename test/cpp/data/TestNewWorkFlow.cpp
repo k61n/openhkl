@@ -47,7 +47,7 @@ TEST_CASE("test/data/TestNewWorkFlow.cpp", "")
     nsx::DataReaderFactory factory;
 
     nsx::Experiment experiment("test", "BioDiff2500");
-    nsx::sptrDataSet dataf(factory.create("hdf", "gal3.hdf", experiment.diffractometer()));
+    nsx::sptrDataSet dataf(factory.create("hdf", "gal3.hdf", experiment.getDiffractometer()));
 
     std::cout << "Dataset columns: " << dataf->nCols() << ", rows: " << dataf->nRows()
               << ", frames: " << dataf->nFrames() << std::endl;
@@ -73,7 +73,7 @@ TEST_CASE("test/data/TestNewWorkFlow.cpp", "")
     }
 #endif
 
-    nsx::Detector* detector = experiment.diffractometer()->detector();
+    nsx::Detector* detector = experiment.getDiffractometer()->detector();
     std::cout << "Detector distance: " << detector->distance() << ", "
               << "width: " << detector->width() << ", height: " << detector->height() << std::endl;
 
@@ -81,7 +81,7 @@ TEST_CASE("test/data/TestNewWorkFlow.cpp", "")
 
 
     // output sample angles for each frame
-    const auto& sample_gonio = experiment.diffractometer()->sample().gonio();
+    const auto& sample_gonio = experiment.getDiffractometer()->sample().gonio();
     size_t n_sample_gonio_axes = sample_gonio.nAxes();
 
     std::cout << "\nSample angles for each frame:" << std::endl;
@@ -95,7 +95,7 @@ TEST_CASE("test/data/TestNewWorkFlow.cpp", "")
     }
 
     // output detector angles for each frame
-    const auto& detector_gonio = experiment.diffractometer()->detector()->gonio();
+    const auto& detector_gonio = experiment.getDiffractometer()->detector()->gonio();
     size_t n_detector_gonio_axes = detector_gonio.nAxes();
 
     std::cout << "\nDetector angles for each frame:" << std::endl;

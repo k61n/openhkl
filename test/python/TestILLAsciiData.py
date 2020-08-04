@@ -23,7 +23,7 @@ class TestILLAscii(unittest.TestCase):
 
         experiment = nsx.Experiment("exp","D19");
         factory = nsx.DataReaderFactory()
-        dataf = factory.create("", "D10_ascii_example", experiment.diffractometer())
+        dataf = factory.create("", "D10_ascii_example", experiment.getDiffractometer())
         metadata = dataf.reader().metadata()
         dataf.open()
         v = dataf.frame(0)

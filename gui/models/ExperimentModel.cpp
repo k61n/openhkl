@@ -95,7 +95,7 @@ QVariant ExperimentModel::valueOutput(const QModelIndex& index) const
         }
         case 1: {
             return QString::fromStdString(
-                gSession->experimentAt(row)->experiment()->diffractometer()->name());
+                gSession->experimentAt(row)->experiment()->getDiffractometer()->name());
         }
         case 2: {
             return QVariant(gSession->experimentAt(row)->experiment()->numData());

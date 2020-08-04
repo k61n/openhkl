@@ -18,6 +18,7 @@
 #include "core/algo/AutoIndexer.h"
 #include "core/algo/Refiner.h"
 #include "core/data/DataTypes.h"
+#include "core/experiment/DataQuality.h"
 #include "core/experiment/PeakFinder.h"
 #include "core/instrument/Diffractometer.h"
 #include "core/shape/IPeakIntegrator.h"
@@ -28,27 +29,19 @@
 
 namespace nsx {
 
+class DataHandler;
+class PeakHandler;
+class UnitCellHandler;
+class IntegrationHandler;
+
+using DataMap = std::map<std::string, sptrDataSet>;
+
 //! Experiment class, a data type containing a diffractometer and data sets.
-
-struct DataQuality {
-    double Rmerge; //!< R-factor
-    double Rmeas; //!< multiplicity-weighted R-factor
-    double Rpim; //!< relative (precision-indicating) R-factor
-    double CChalf; //!< CC_{1/2} correlation coefficient
-};
-
-struct DataResolution {
-    double dmin; //!< Lower limit of d for resolution shell
-    double dmax; //!< Upper limit of d for resolution shell
-    DataQuality currentQuality;
-    DataQuality expectedQuality;
-};
-
 class Experiment {
  public:
     Experiment() = delete;
     Experiment(const std::string& name, const std::string& diffractometerName);
-    ~Experiment() = default;
+    ~Experiment();
 
     Experiment(const Experiment& other) = delete;
 
@@ -56,127 +49,160 @@ class Experiment {
     const std::string& name() const;
     void setName(const std::string& name);
 
-    Diffractometer* diffractometer();
-    const Diffractometer* diffractometer() const;
+    // Data handler
+    //! Get a pointer to the diffractometer contained in the DataHandler object
+    Diffractometer* getDiffractometer();
+    const Diffractometer* getDiffractometer() const;
+    //! Set the named diffractometer from the instrument file
     void setDiffractometer(const std::string& diffractometerName);
-
-    // Data sets
-    const std::map<std::string, sptrDataSet>& getDataMap() const;
-    sptrDataSet getData(const std::string& name);
+    //! Get maps of data sets from handler
+    const DataMap* getDataMap() const;
+    //! Get shared pointer to named data set
+    sptrDataSet getData(const std::string& name) const;
+    //! Get a vector containing shared pointers to all data sets
     DataList getAllData();
     sptrDataSet dataShortName(const std::string& name);
-    int numData() const { return _data_map.size(); };
-    void addData(sptrDataSet data, std::string name="");
+    //! Return number of data sets
+    int numData() const;
+    //! Add a data set to the handler
+    void addData(sptrDataSet data, std::string name = "");
+    //! Check whether the handler has named data set
     bool hasData(const std::string& name) const;
+    //! Remove data set from handler
     void removeData(const std::string& name);
 
-    // Peak Collection
+    // Peak handler
+    //! Create a new PeakCollection from a vector of peaks
     void updatePeakCollection(
-        const std::string& name, const listtype type, const std::vector<nsx::Peak3D*> peaks);
-    bool hasPeakCollection(const std::string& name) const;
-    PeakCollection* getPeakCollection(const std::string& name);
+        const std::string& name, const listtype type, std::vector<Peak3D*> peaks);
+    //! Check if the handler has the named peak collection
+    bool hasPeakCollection(const std::string& name);
+    //! Get a pointer to the named peak collection
+    PeakCollection* getPeakCollection(const std::string name);
+    //! Remove the named peak collection
     void removePeakCollection(const std::string& name);
+    //! Get a vector of peak collection names
     std::vector<std::string> getCollectionNames() const;
+    //! Get a vector of names of peak collections of listtype::FOUND
     std::vector<std::string> getFoundCollectionNames() const;
+    //! Get a vector of names of peak collections of listtype::PREDICTD
     std::vector<std::string> getPredictedCollectionNames() const;
-    int numPeakCollections() const { return _peak_collections.size(); };
-    void acceptFilter(const std::string& name, PeakCollection* collection);
+    //! Get the number of peak collections
+    int numPeakCollections() const;
+    //! Create a new peak collection from peaks caught by a filter
+    void acceptFilter(std::string name, PeakCollection* collection);
+    //! Check for unphysical peaks in all collections
     void checkPeakCollections();
-
-    // MergedData
-    void setMergedPeaks(const std::vector<PeakCollection*>& peak_collections, bool friedel);
-    // ditto without the vector (mainly for SWIG):
+    //! Merge a vector of PeakCollection objects
+    void setMergedPeaks(std::vector<PeakCollection*> peak_collections, bool friedel);
+    //! Merge two PeakCollection objects (mainly for SWIG)
     void setMergedPeaks(PeakCollection* found, PeakCollection* predicted, bool friedel);
+    //! Reset the merged peak collection
     void resetMergedPeaks();
-    MergedData* getMergedPeaks() const { return _merged_peaks.get(); };
+    //! Get the merged peak collection
+    MergedData* getMergedPeaks() const;
 
     // Unit cells
+    //! Add a unit cell to the experiment
     void addUnitCell(const std::string& name, const UnitCell& unit_cell);
     //! Add a unit cell to the experiment via cell parameters (skip autoindexing step)
     void addUnitCell(
         const std::string& name, double a, double b, double c, double alpha, double beta,
         double gamma);
+    //! Returns true if the experiment has a data
     bool hasUnitCell(const std::string& name) const;
+    //! Get a list of loaded list names
     std::vector<std::string> getUnitCellNames() const;
-    const UnitCell* getUnitCell(const std::string& name) const;
-    UnitCell* getUnitCell(const std::string& name);
+    //! Return a pointer to the named unit cell
+    UnitCell* getUnitCell(const std::string& name) const;
+    //! Remove a unit cell from the experiment
     void removeUnitCell(const std::string& name);
+    //! Swap two unit cells in the map contained by the handler
     void swapUnitCells(const std::string& old_cell, const std::string& new_cell);
-    int numUnitCells() const { return _unit_cells.size(); };
+    //! Get the number of unit cells in the map
+    int numUnitCells() const;
+    //! Check solution against reference cell and accept if within tolerances
     bool checkAndAssignUnitCell(PeakCollection* peaks, double length_tol, double angle_tol);
+    //! Assign unit cell to a peak collection
     void assignUnitCell(PeakCollection* peaks);
+    //! Set the reference cell
+    void setReferenceCell(double a, double b, double c, double alpha, double beta, double gamma);
+    //! Get space groups compatible with unit cell
     std::vector<std::string> getCompatibleSpaceGroups() const;
 
     // Peak finder
+    //! Return a pointer to the PeakFinder object
     nsx::PeakFinder* peakFinder() { return _peak_finder.get(); };
+    //! Create a new peak collection from the peaks found by the peak finder
     void acceptFoundPeaks(const std::string& name);
+
+    // Peak Filter
+    //! Return a pointer to the PeakFilter object
     nsx::PeakFilter* peakFilter() { return _peak_filter.get(); };
 
     // Autoindexer
+    //! Get a pointer to the AutoIndexer object
     nsx::AutoIndexer* autoIndexer() const { return _auto_indexer.get(); };
-    void setReferenceCell(double a, double b, double c, double alpha, double beta, double gamma);
+    //! Get a pointer to the accepted/assigned unit cell
     const UnitCell* getAcceptedCell() const;
+    //! Get a pointer to the reference unit cell
     const UnitCell* getReferenceCell() const;
 
-    // Integrator
-    nsx::IPeakIntegrator* getIntegrator(const std::string& name) const;
+    // Integration handler
+    //! get the named integrator
+    IPeakIntegrator* getIntegrator(const std::string& name) const;
+    //! Integrate the given peak collection with the named integrator
     void integratePeaks(const std::string& integrator_name, PeakCollection* peak_collection);
+    //! Integrate predicted peaks, fitting shappes from given shape library
     void integratePredictedPeaks(
         const std::string& integrator_name, PeakCollection* peak_collection,
         ShapeLibrary* shape_library, PredictionParameters& params);
+    //! Integrate peaks found by _peak_finder
     void integrateFoundPeaks(const std::string& integrator);
 
     // Save load
+    //! Save the current experiment state to hdf5
     void saveToFile(const std::string& path) const;
+    //! Load the current experiment state to hdf5
     void loadFromFile(const std::string& path);
 
     // Prediction
+    //! Construct the library used to fit the shapes of predicted peaks
     void buildShapeLibrary(PeakCollection* peaks, ShapeLibParameters params);
-    ShapeLibrary* getShapeLibrary() { return &_shape_library; };
+    //! Predict peaks from unit cell
     void predictPeaks(
         const std::string& name, PeakCollection* peaks, PredictionParameters params,
         PeakInterpolation interpol);
+    //! Refine unit cell and instrument parameters
     void refine(const PeakCollection* peaks, UnitCell* cell, DataSet* data, int n_batches);
 
-    // Merging
     //! Get resolution shells for quality metrics
     void computeQuality(
         double d_min, double d_max, int n_shells, PeakCollection* predicted, PeakCollection* found,
         bool friedel);
     //! Return data quality resolution
-    std::vector<DataResolution>* getResolution() { return &_data_resolution; };
+    DataResolution* getResolution() { return &_data_resolution; };
     // Return data quality structs for all merged data:
-    const DataQuality& getQualityCurrent() { return _data_quality_current; };
-    const DataQuality& getQualityExpected() { return _data_quality_expected; };
+    const DataQuality& getQuality() { return _data_quality; };
 
  private: // private variables
     std::string _name; //!< The name of this experiment
     std::unique_ptr<Diffractometer> _diffractometer;
-    std::map<std::string, sptrDataSet> _data_map;
 
-    //! A map of the peaklists with their name as index
-    std::map<std::string, std::unique_ptr<PeakCollection>> _peak_collections;
+    // Handlers for peak collections and unit cells
+    std::shared_ptr<DataHandler> _data_handler; // shared because IntegrationHandler needs access
+    std::unique_ptr<PeakHandler> _peak_handler;
+    std::unique_ptr<UnitCellHandler> _cell_handler;
+    std::unique_ptr<IntegrationHandler> _integration_handler;
 
-    //! A map of the peaklists with their name as index
-    std::unique_ptr<MergedData> _merged_peaks;
-
-    //! A map of the unit cells with their name as index
-    std::map<std::string, std::unique_ptr<UnitCell>> _unit_cells;
-
+    // Objects that do the number crunching
     std::unique_ptr<nsx::PeakFinder> _peak_finder;
     std::unique_ptr<nsx::PeakFilter> _peak_filter;
     std::unique_ptr<nsx::AutoIndexer> _auto_indexer;
 
-    //! The found peak integrator
-    std::map<std::string, std::unique_ptr<nsx::IPeakIntegrator>> _integrator_map;
-
-    //! Peak shape library for prediction
-    ShapeLibrary _shape_library;
-
-    DataQuality _data_quality_current;
-    DataQuality _data_quality_expected;
-
-    std::vector<DataResolution> _data_resolution; //!< Data quality per resolution shell
+    // Objects containing quality metrics
+    DataQuality _data_quality;
+    DataResolution _data_resolution; //!< Data quality per resolution shell
 };
 
 } // namespace nsx
