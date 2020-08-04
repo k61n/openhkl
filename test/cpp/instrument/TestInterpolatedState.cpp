@@ -35,7 +35,7 @@ void run_test(const char* filename, const char* instrument)
     nsx::DataReaderFactory factory;
 
     nsx::Experiment experiment("test", instrument);
-    auto diffractometer = experiment.diffractometer();
+    auto diffractometer = experiment.getDiffractometer();
     const auto* detector = diffractometer->detector();
     nsx::sptrDataSet dataf(factory.create("hdf", filename, diffractometer));
 

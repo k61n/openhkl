@@ -35,7 +35,7 @@ int nsx::UnitTest_DataSet::run()
 
     nsx::Experiment experiment("test", "BioDiff2500");
 
-    nsx::sptrDataSet dataf(factory.create("hdf", "gal3.hdf", experiment.diffractometer()));
+    nsx::sptrDataSet dataf(factory.create("hdf", "gal3.hdf", experiment.getDiffractometer()));
 
     experiment.addData(dataf);
 

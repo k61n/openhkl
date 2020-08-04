@@ -38,8 +38,8 @@ nsx::Experiment* Project::experiment()
 QStringList Project::getDataNames() const
 {
     QStringList ret;
-    for (auto data : _experiment->getDataMap())
-        ret.push_back(QString::fromStdString(data.first));
+    for (auto const& [key, value] : *_experiment->getDataMap())
+        ret.push_back(QString::fromStdString(key));
     return ret;
 }
 
@@ -72,8 +72,8 @@ void Project::selectData(int selected)
 std::vector<nsx::sptrDataSet> Project::allData() const
 {
     std::vector<nsx::sptrDataSet> ret;
-    for (auto data : _experiment->getDataMap())
-        ret.push_back(data.second);
+    for (auto const& [key, value] : *_experiment->getDataMap())
+        ret.push_back(value);
     return ret;
 }
 

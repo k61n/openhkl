@@ -166,6 +166,7 @@ using Eigen::Quaterniond;
 #include "core/statistics/CC.h"
 #include "core/statistics/RFactor.h"
 #include "core/statistics/ResolutionShell.h"
+#include "core/experiment/DataQuality.h"
 
 #include "core/statistics/PeakExporter.h"
 
@@ -358,6 +359,7 @@ ArrayExtendCRef(MillerIndex, int);
 %include "core/shape/PeakFilter.h"
 %include "core/statistics/MergedData.h"
 %include "core/experiment/PeakFinder.h"
+%include "core/experiment/DataQuality.h"
 %template(MergedPeakSet) std::set<nsx::MergedPeak>;
 
 %include "core/experiment/Experiment.h"
@@ -366,8 +368,6 @@ ArrayExtendCRef(MillerIndex, int);
 %include "core/algo/Refiner.h"
 %include "core/algo/FFTIndexing.h"
 %include "core/algo/AutoIndexer.h"
-
-%template(DataResolutionList) std::vector<nsx::DataResolution>;
 
 %include "core/integration/MeanBackgroundIntegrator.h"
 %include "core/integration/Profile3DIntegrator.h"
@@ -381,6 +381,8 @@ ArrayExtendCRef(MillerIndex, int);
 %include "core/statistics/ResolutionShell.h"
 %include "core/statistics/RFactor.h"
 %include "core/statistics/CC.h"
+
+%template(DataResolutionList) std::vector<nsx::ShellQuality>;
 
 %include "core/statistics/PeakExporter.h"
 

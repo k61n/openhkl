@@ -29,7 +29,7 @@ TEST_CASE("test/peak_find/TestPeakFinder.cpp", "")
     nsx::DataList numors;
 
     nsx::DataReaderFactory factory;
-    auto dataf = factory.create("", "D10_ascii_example", experiment.diffractometer());
+    auto dataf = factory.create("", "D10_ascii_example", experiment.getDiffractometer());
     const auto& metadata = dataf->reader()->metadata();
     nsx::sptrProgressHandler handler(new nsx::ProgressHandler);
 

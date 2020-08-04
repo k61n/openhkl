@@ -43,7 +43,7 @@ void ShellQuality::computeQuality(MergedData& merged_peaks, double d_min, double
 {
     DataQuality::computeQuality(merged_peaks);
     dmin = d_min;
-    dmin = d_max;
+    dmax = d_max;
 }
 
 void DataResolution::computeQuality(

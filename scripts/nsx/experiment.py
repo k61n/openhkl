@@ -10,7 +10,7 @@ import sys
 import os.path
 import logging
 from pdb import set_trace
-sys.path.append("/home/zamaan/codes/nsxtool/develop/build/swig")
+sys.path.append("/home/zamaan/codes/nsxtool/tmp/nsxtool/build/swig")
 sys.path.append("/G/sw/nsx/build/swig") # Joachim
 import pynsx as nsx
 
@@ -125,7 +125,7 @@ class Experiment:
         data_params.swap_endian = self._params.detector['swap_endian']
         data_params.bpp = self._params.detector['bpp']
 
-        reader = nsx.RawDataReader(filenames[0], self._expt.diffractometer())
+        reader = nsx.RawDataReader(filenames[0], self._expt.getDiffractometer())
         reader.setParameters(data_params)
 
         for filename in filenames[1:]:
@@ -381,6 +381,7 @@ class Experiment:
         '''
         Calculate R-factors and CC1/2, CC*
         '''
+
         self.log(f"Computing quality metrics....")
         d_min = self._params.merging['merging_d_min']
         d_max = self._params.merging['merging_d_max']
@@ -395,32 +396,32 @@ class Experiment:
                                  self._predicted_collection,
                                  self._found_collection,
                                  friedel)
+
         data_resolution = self._expt.getResolution()
         self.log("Resolution shells")
-        for i, data in enumerate(data_resolution):
+        for i, data in enumerate(data_resolution.resolution):
             self.log(f'Shell {i}')
             self.log(f'd_min            = {data.dmin}')
             self.log(f'd_max            = {data.dmax}')
-            self.log(f'R_merge          = {data.currentQuality.Rmerge}')
-            self.log(f'Expected R_merge = {data.expectedQuality.Rmerge}')
-            self.log(f'R_meas           = {data.currentQuality.Rmeas}')
-            self.log(f'Expected R_meas  = {data.expectedQuality.Rmeas}')
-            self.log(f'R_pim            = {data.currentQuality.Rpim}')
-            self.log(f'Expected R_pim   = {data.expectedQuality.Rpim}')
-            self.log(f'CC_half          = {data.currentQuality.CChalf}')
-            self.log(f'CC_*             = {data.currentQuality.CChalf}')
+            self.log(f'R_merge          = {data.Rmerge}')
+            self.log(f'Expected R_merge = {data.expectedRmerge}')
+            self.log(f'R_meas           = {data.Rmeas}')
+            self.log(f'Expected R_meas  = {data.expectedRmeas}')
+            self.log(f'R_pim            = {data.Rpim}')
+            self.log(f'Expected R_pim   = {data.expectedRpim}')
+            self.log(f'CC_half          = {data.CChalf}')
+            self.log(f'CC_*             = {data.CChalf}')
 
-        data_quality_current = self._expt.getQualityCurrent()
-        data_quality_expected = self._expt.getQualityExpected()
+        data_quality = self._expt.getQuality()
         self.log("Overall:")
-        self.log(f'R_merge          = {data_quality_current.Rmerge}')
-        self.log(f'Expected R_merge = {data_quality_expected.Rmerge}')
-        self.log(f'R_meas           = {data_quality_current.Rmeas}')
-        self.log(f'Expected R_meas  = {data_quality_expected.Rmeas}')
-        self.log(f'R_pim            = {data_quality_current.Rpim}')
-        self.log(f'Expected R_pim   = {data_quality_expected.Rpim}')
-        self.log(f'CC_half          = {data_quality_current.CChalf}')
-        self.log(f'CC_*             = {data_quality_expected.CChalf}')
+        self.log(f'R_merge          = {data_quality.Rmerge}')
+        self.log(f'Expected R_merge = {data_quality.expectedRmerge}')
+        self.log(f'R_meas           = {data_quality.Rmeas}')
+        self.log(f'Expected R_meas  = {data_quality.expectedRmeas}')
+        self.log(f'R_pim            = {data_quality.Rpim}')
+        self.log(f'Expected R_pim   = {data_quality.expectedRpim}')
+        self.log(f'CC_half          = {data_quality.CChalf}')
+        self.log(f'CC_*             = {data_quality.CChalf}')
 
     def get_accepted_cell(self):
         return self._expt.getUnitCell("accepted")
@@ -502,7 +503,7 @@ class Experiment:
                     self._metadata[key] = value
 
     def get_detector(self):
-        return self._expt.diffractometer().detector()
+        return self._expt.getDiffractometer().detector()
 
     def get_found_peaks(self):
         return self.get_peak_collection(self._found_peaks)

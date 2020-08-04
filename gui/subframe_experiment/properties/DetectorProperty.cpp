@@ -92,7 +92,7 @@ void DetectorProperty::refreshInput()
 {
     if (gSession->currentProjectNum() >= 0) {
         nsx::Detector* detector =
-            gSession->currentProject()->experiment()->diffractometer()->detector();
+            gSession->currentProject()->experiment()->getDiffractometer()->detector();
 
         _width->setValue(detector->width());
         _height->setValue(detector->height());

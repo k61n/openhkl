@@ -63,7 +63,7 @@ void SampleShapeProperties::refreshInput()
     if (gSession->currentProjectNum() >= 0) {
         // SampleProperty
         const nsx::Sample& sample =
-            gSession->currentProject()->experiment()->diffractometer()->sample();
+            gSession->currentProject()->experiment()->getDiffractometer()->sample();
         const nsx::Gonio& sample_gonio = sample.gonio();
         size_t n_sample_gonio_axes = sample_gonio.nAxes();
 

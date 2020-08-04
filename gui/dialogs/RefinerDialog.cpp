@@ -772,7 +772,7 @@ void RefinerDialog::_fetchAllInitialValues()
     _nis.clear();
     _wavelengths.clear();
 
-    const nsx::UnitCell* unit_cell = gSession->currentProject()->experiment()->getUnitCell(
+    nsx::UnitCell* unit_cell = gSession->currentProject()->experiment()->getUnitCell(
         _select_uc->currentText().toStdString());
 
     if (!unit_cell)

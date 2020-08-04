@@ -36,7 +36,7 @@ TEST_CASE("test/instrument/TestExperiment.cpp", "")
     const std::string data_name = "D10_ascii_example";
     try {
         data =
-            nsx::sptrDataSet(nsx::DataReaderFactory().create("", data_name, exp.diffractometer()));
+            nsx::sptrDataSet(nsx::DataReaderFactory().create("", data_name, exp.getDiffractometer()));
     } catch (std::exception& e) {
         FAIL(std::string("caught exception: ") + e.what());
     } catch (...) {

@@ -69,7 +69,7 @@ AbsorptionDialog::AbsorptionDialog() : QDialog{}
     verticalLayout2->addWidget(triangulateButton);
 
     crystalScene = new CrystalScene(
-        &gSession->currentProject()->experiment()->diffractometer()->sample().shape());
+        &gSession->currentProject()->experiment()->getDiffractometer()->sample().shape());
     crystalView->setScene(crystalScene);
 
     connect(scrollBar, &QScrollBar::valueChanged, [=](int i) {
@@ -152,7 +152,7 @@ void AbsorptionDialog::readInfoFile(const std::string& filename)
         // First read instrument name and validate with diffractometer name
         std::string _instrumentName, date;
         file >> _instrumentName >> date;
-        std::string diffType = _experiment->diffractometer()->name();
+        std::string diffType = _experiment->getDiffractometer()->name();
         if (_instrumentName.compare(diffType) != 0)
             return;
 
@@ -163,7 +163,7 @@ void AbsorptionDialog::readInfoFile(const std::string& filename)
         // Read line with goniometer angles
         getline(file, line);
         // Cout number of axes, validate with goniometer definition
-        const nsx::Sample& sample = _experiment->diffractometer()->sample();
+        const nsx::Sample& sample = _experiment->getDiffractometer()->sample();
         const nsx::Gonio& sample_gonio = sample.gonio();
         std::size_t numberAngles = std::count(line.begin(), line.end(), ':');
         if (numberAngles == sample_gonio.nAxes())
