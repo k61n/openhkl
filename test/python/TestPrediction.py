@@ -3,7 +3,7 @@ import glob
 import unittest
 import pynsx as nsx
 
-class TestAutoIndexer(unittest.TestCase):
+class TestPrediction(unittest.TestCase):
 
     def test(self):
         # Initialise the experiment
@@ -54,5 +54,4 @@ class TestAutoIndexer(unittest.TestCase):
 
 
 if __name__ == "__main__":
-    # test()
     unittest.main()
