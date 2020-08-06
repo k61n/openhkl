@@ -33,7 +33,7 @@ class TestPrediction(unittest.TestCase):
         shapelib_params.bkg_end = 6.0
         expt.buildShapeLibrary(filtered_peaks, shapelib_params)
         nprofiles = filtered_peaks.shapeLibrary().numberOfPeaks()
-        assert(nprofiles == 63)
+        self.assertEqual(nprofiles, 63)
 
         # predict the peaks
         prediction_params = nsx.PredictionParameters()
@@ -53,7 +53,7 @@ class TestPrediction(unittest.TestCase):
         expt.integratePredictedPeaks('1d profile integrator', predicted_peaks,
                                     filtered_peaks.shapeLibrary(), prediction_params)
 
-        assert(predicted_peaks.numberOfPeaks() == 7)
+        self.assertEqual(predicted_peaks.numberOfPeaks(), 7)
         # N.B. These results are not meaningful! The data set is too small to
         # produce a big enough shape library to integrate the predicted peaks,
         # so only a few predicted peaks are added. This should be changed in

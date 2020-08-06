@@ -32,12 +32,12 @@ class TestExperimentFileIO(unittest.TestCase):
         nframes_test = expt_test.getAllData()[0].nFrames()
 
         # compare peak collections
-        assert(npeaks_test == npeaks_ref)
-        assert(ncaught_test == ncaught_ref)
+        self.assertEqual(npeaks_test, npeaks_ref)
+        self.assertEqual(ncaught_test, ncaught_ref)
         # compare unit cells
-        assert(unitcell_test.isSimilar(unitcell_ref, 0.01, 0.01))
+        self.assertTrue(unitcell_test.isSimilar(unitcell_ref, 0.01, 0.01))
         # compare data sets
-        assert(nframes_test == nframes_ref)
+        self.assertEqual(nframes_test, nframes_ref)
 
 if __name__ == "__main__":
     unittest.main()

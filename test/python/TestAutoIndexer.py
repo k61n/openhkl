@@ -14,7 +14,7 @@ class TestAutoIndexer(unittest.TestCase):
         expt.loadFromFile("FutA.nsx")
         found_peaks = expt.getPeakCollection("found")
         n_peaks = found_peaks.numberOfPeaks()
-        assert(n_peaks == 269)
+        self.assertEqual(n_peaks, 269)
 
         # Filter the peaks
         filter = expt.peakFilter()
@@ -26,7 +26,7 @@ class TestAutoIndexer(unittest.TestCase):
         expt.acceptFilter("filtered", found_peaks)
         filtered_peaks = expt.getPeakCollection("filtered")
         n_caught = filtered_peaks.numberCaughtByFilter()
-        assert(n_caught == 202)
+        self.assertEqual(n_caught, 202)
         print(f'Autoindex: {n_caught}/{n_peaks} peaks caught by filter')
 
         # Autoindex the peaks
@@ -41,7 +41,7 @@ class TestAutoIndexer(unittest.TestCase):
         autoindexer_params.minUnitCellVolume = 100.0
         autoindexer.setParameters(autoindexer_params)
         autoindexer.autoIndex(filtered_peaks)
-        assert(expt.checkAndAssignUnitCell(filtered_peaks, 0.5, 0.5))  # boolean return value
+        self.assertTrue(expt.checkAndAssignUnitCell(filtered_peaks, 0.5, 0.5))  # boolean return value
 
 if __name__ == "__main__":
     unittest.main()
