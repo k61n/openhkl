@@ -350,12 +350,12 @@ class Experiment:
         prediction_params.peak_scale = self._params.prediction['prediction_scale']
         prediction_params.set_fit_center = self._params.prediction['set_fit_center']
         prediction_params.fit_covariance = self._params.prediction['fit_covariance']
+        prediction_params.min_neighbours = self._params.prediction['neighbours']
 
         self.log(f"d_min = {self._params.prediction['prediction_d_min']}")
         self.log(f"d_max = {self._params.prediction['prediction_d_max']}")
         self.log(f"radius = {self._params.prediction['radius']}")
         self.log(f"frames = {self._params.prediction['frames']}")
-        prediction_params.min_neighbours = self._params.prediction['neighbours']
         self._expt.predictPeaks(self._predicted_peaks, self._filtered_collection,
                                 prediction_params, interpol)
         self._predicted_collection = self._expt.getPeakCollection(self._predicted_peaks)
