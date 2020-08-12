@@ -16,6 +16,7 @@
 
 #include "base/fit/FitParameters.h"
 #include "base/fit/Minimizer.h"
+#include "base/utils/Logger.h"
 #include "core/algo/FFTIndexing.h"
 #include "core/data/DataSet.h" // peak->data()->interpolatedState
 #include "core/shape/PeakFilter.h"
@@ -52,11 +53,9 @@ void AutoIndexer::autoIndex(const std::vector<Peak3D*>& peaks)
 
 void AutoIndexer::autoIndex(PeakCollection* peaks)
 {
+    nsxlog(Level::Info, "AutoIndexer::autoindex: indexing PeakCollection", peaks->name());
     std::vector<Peak3D*> peak_list = peaks->getPeakList();
     autoIndex(peak_list);
-    // for (auto peak : peak_list)
-    //     delete peak;
-    // peak_list.clear();
 }
 
 void AutoIndexer::removeBad(double quality)

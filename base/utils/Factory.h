@@ -35,8 +35,8 @@ class Factory : public ISingleton<Child> {
     typedef std::map<keytype, callback> callbackmap;
 
  public:
-    Factory() {}
-    virtual ~Factory() {}
+    Factory() { }
+    virtual ~Factory() { }
 
     //! register a new callback for constructing an object of type returnType
     //! @param key : key representing how the callback will be stored

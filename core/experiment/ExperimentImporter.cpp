@@ -14,6 +14,7 @@
 
 #include "core/experiment/ExperimentImporter.h"
 #include "base/geometry/Ellipsoid.h"
+#include "base/utils/Logger.h"
 #include "core/data/DataSet.h"
 #include "core/data/DataTypes.h"
 #include "core/loader/ExperimentDataReader.h"
@@ -98,8 +99,8 @@ void ExperimentImporter::loadPeaks(Experiment* experiment)
                 if (attr.getName() == "Type")
                     attr.read(typ, &type);
             }
-            std::cout << "Found " << n_peaks << " to import" << std::endl;
-            std::cout << "Preparing the dataspace" << std::endl;
+            nsxlog(Level::Debug, "ExperimentImporter::loadPeaks: found", n_peaks, "to import");
+            nsxlog(Level::Debug, "Preparing the dataspace");
             // prepare the loading
             Eigen_double bkg_begin(n_peaks);
             Eigen_double bkg_end(n_peaks);
@@ -139,7 +140,7 @@ void ExperimentImporter::loadPeaks(Experiment* experiment)
             std::vector<std::string> data_names;
             std::vector<std::string> unit_cells;
 
-            std::cout << "Loading doubles" << std::endl;
+            nsxlog(Level::Debug, "Loading doubles");
             // Load all doubles
             for (std::map<std::string, Eigen_double*>::iterator it = double_keys.begin();
                  it != double_keys.end(); it++) {
@@ -148,7 +149,7 @@ void ExperimentImporter::loadPeaks(Experiment* experiment)
                 data_set.read(it->second->data(), H5::PredType::NATIVE_DOUBLE, space, space);
             }
 
-            std::cout << "Loading booleans" << std::endl;
+            nsxlog(Level::Debug, "Loading booleans");
             // Load all booleans
             for (std::map<std::string, Eigen_bool*>::iterator it = bool_keys.begin();
                  it != bool_keys.end(); it++) {
@@ -158,7 +159,7 @@ void ExperimentImporter::loadPeaks(Experiment* experiment)
                 data_set.read(item->data(), H5::PredType::NATIVE_HBOOL, space, space);
             }
 
-            std::cout << "Loading centers" << std::endl;
+            nsxlog(Level::Debug, "Loading centers");
             // Load the centers
             {
                 H5::DataSet data_set = peak_collection.openDataSet("Center");
@@ -166,7 +167,7 @@ void ExperimentImporter::loadPeaks(Experiment* experiment)
                 data_set.read(center.data(), H5::PredType::NATIVE_DOUBLE, space, space);
             }
 
-            std::cout << "Loading metric" << std::endl;
+            nsxlog(Level::Debug, "Loading metric");
             // Load the metrics
             {
                 H5::DataSet data_set = peak_collection.openDataSet("Metric");
@@ -174,7 +175,7 @@ void ExperimentImporter::loadPeaks(Experiment* experiment)
                 data_set.read(metric.data(), H5::PredType::NATIVE_DOUBLE, space, space);
             }
 
-            std::cout << "Loading data-set names" << std::endl;
+            nsxlog(Level::Debug, "Loading DataSet names");
             // Load the data_names
             {
                 H5::DataSet data_set = peak_collection.openDataSet("DataNames");
@@ -197,7 +198,7 @@ void ExperimentImporter::loadPeaks(Experiment* experiment)
                 delete[] char_data_names;
             }
 
-            std::cout << "Loading unit-cell names" << std::endl;
+            nsxlog(Level::Debug, "Loading UnitCell names");
             // Load the unit cell strings
             {
                 H5::DataSet uc_data_set = peak_collection.openDataSet("UnitCells");
@@ -220,9 +221,8 @@ void ExperimentImporter::loadPeaks(Experiment* experiment)
                 delete[] char_unit_cells;
             }
 
-            std::cout << "Finished reading data from file" << std::endl;
-
-            std::cout << "Creating the vector of peaks" << std::endl;
+            nsxlog(Level::Debug, "Finished reading data from file");
+            nsxlog(Level::Debug, "Creating the vector of peaks");
             std::vector<nsx::Peak3D*> peaks;
 
             Eigen::Vector3d local_center;
@@ -249,7 +249,7 @@ void ExperimentImporter::loadPeaks(Experiment* experiment)
 
                 peaks.push_back(peak);
             }
-            std::cout << "Finished creating the vector of peaks" << std::endl;
+            nsxlog(Level::Debug, "Finished creating the vector of peaks");
 
             listtype collection_type;
             if (type == 0)
@@ -257,9 +257,9 @@ void ExperimentImporter::loadPeaks(Experiment* experiment)
             else
                 collection_type = listtype::PREDICTED;
 
-            experiment->updatePeakCollection(collection_name, collection_type, peaks);
+            experiment->addPeakCollection(collection_name, collection_type, peaks);
 
-            std::cout << "Created the peak collection" << std::endl;
+            nsxlog(Level::Debug, "Created the peak collection");
         }
     } catch (H5::Exception& e) {
         throw std::runtime_error{e.getDetailMsg()};
@@ -336,7 +336,6 @@ void ExperimentImporter::loadUnitCells(Experiment* experiment)
             temp_cell.setSpaceGroup(SpaceGroup(space_group));
             temp_cell.setZ(z);
             temp_cell.setLatticeCentring(LatticeCentring(bravais[1]));
-            temp_cell.printSelf(std::cout);
             experiment->addUnitCell(cell_name, temp_cell);
         }
     } catch (H5::Exception& e) {

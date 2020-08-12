@@ -16,7 +16,7 @@
 
 namespace nsx {
 
-CC::CC() : _CChalf(0), _CCstar(0) {}
+CC::CC() : _CChalf(0), _CCstar(0) { }
 
 void CC::calculate(MergedData* data)
 {

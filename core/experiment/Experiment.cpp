@@ -17,14 +17,15 @@
 #include <stdexcept>
 #include <utility>
 
+#include "base/utils/Logger.h"
 #include "base/utils/Units.h"
 #include "core/data/DataSet.h"
 #include "core/experiment/DataHandler.h"
-#include "core/experiment/PeakHandler.h"
 #include "core/experiment/Experiment.h"
 #include "core/experiment/ExperimentExporter.h"
 #include "core/experiment/ExperimentImporter.h"
 #include "core/experiment/IntegrationHandler.h"
+#include "core/experiment/PeakHandler.h"
 #include "core/experiment/UnitCellHandler.h"
 #include "core/instrument/Diffractometer.h"
 #include "core/instrument/Monochromator.h"
@@ -49,11 +50,13 @@ Experiment::Experiment(const std::string& name, const std::string& diffractomete
     _peak_finder = std::make_unique<PeakFinder>();
     _peak_filter = std::make_unique<PeakFilter>();
     _auto_indexer = std::make_unique<AutoIndexer>();
-
     _data_handler = std::make_shared<DataHandler>(_name, diffractometerName);
     _peak_handler = std::make_unique<PeakHandler>();
     _cell_handler = std::make_unique<UnitCellHandler>();
     _integration_handler = std::make_unique<IntegrationHandler>(_data_handler);
+
+    std::string logfile = "nsx.log";
+    Logger::instance().start(logfile, Level::Info);
 }
 
 const std::string& Experiment::name() const
@@ -69,12 +72,13 @@ void Experiment::setName(const std::string& name)
 void Experiment::acceptFoundPeaks(const std::string& name)
 {
     std::vector<Peak3D*> peaks = _peak_finder->currentPeaks();
-    updatePeakCollection(name, listtype::FOUND, peaks);
+    addPeakCollection(name, listtype::FOUND, peaks);
 }
 
 void Experiment::saveToFile(const std::string& path) const
 {
     nsx::ExperimentExporter exporter;
+    nsxlog(Level::Info, "Saving experiment to file: ", path);
 
     exporter.createFile(name(), getDiffractometer()->name(), path);
 
@@ -99,6 +103,7 @@ void Experiment::saveToFile(const std::string& path) const
 void Experiment::loadFromFile(const std::string& path)
 {
     nsx::ExperimentImporter importer;
+    nsxlog(Level::Info, "Loading experiment from file: ", path);
 
     importer.setFilePath(path, this);
     importer.loadData(this);
@@ -128,8 +133,9 @@ void Experiment::buildShapeLibrary(PeakCollection* peaks, ShapeLibParameters par
     if (fit_peaks.size() == 0)
         throw std::runtime_error("buildShapeLibrary: no fit peaks found");
 
-    std::cout << peak_list.size() << " found peaks" << std::endl;
-    std::cout << fit_peaks.size() << " fit peaks" << std::endl;
+    nsxlog(
+        Level::Info, "Experiment::buildShapeLibrary:", peak_list.size(), "/", fit_peaks.size(),
+        "fit peaks");
 
     nsx::AABB aabb;
 
@@ -166,8 +172,9 @@ void Experiment::predictPeaks(
 
     int current_numor = 0;
     for (const sptrDataSet& data : numors) {
-        std::cout << "Predicting peaks for numor " << ++current_numor << " of " << numors.size()
-                  << std::endl;
+        nsxlog(
+            Level::Info, "predictPeaks: predicting peaks for numor", ++current_numor, "of",
+            numors.size());
 
         const std::vector<nsx::Peak3D*> predicted = nsx::predictPeaks(
             library, data, accepted_cell, params.detector_range_min, params.detector_range_max,
@@ -176,9 +183,11 @@ void Experiment::predictPeaks(
         for (nsx::Peak3D* peak : predicted)
             predicted_peaks.push_back(peak);
 
-        std::cout << "Completed  peak prediction. Added " << predicted_peaks.size() << " peaks";
+        nsxlog(
+            Level::Info, "predictPeaks: completed peak prediciton. Added", predicted_peaks.size(),
+            "peaks");
 
-        updatePeakCollection(name, listtype::PREDICTED, predicted_peaks);
+        addPeakCollection(name, listtype::PREDICTED, predicted_peaks);
         predicted_peaks.clear();
     }
 }
@@ -270,10 +279,10 @@ void Experiment::removeData(const std::string& name)
 }
 
 // Peak handler methods
-void Experiment::updatePeakCollection(
+void Experiment::addPeakCollection(
     const std::string& name, const listtype type, std::vector<Peak3D*> peaks)
 {
-    _peak_handler->updatePeakCollection(name, type, peaks);
+    _peak_handler->addPeakCollection(name, type, peaks);
 }
 
 bool Experiment::hasPeakCollection(const std::string& name)
@@ -348,8 +357,7 @@ void Experiment::addUnitCell(const std::string& name, const UnitCell& unit_cell)
 }
 
 void Experiment::addUnitCell(
-    const std::string& name, double a, double b, double c, double alpha, double beta,
-    double gamma)
+    const std::string& name, double a, double b, double c, double alpha, double beta, double gamma)
 {
     _cell_handler->addUnitCell(name, a, b, c, alpha, beta, gamma);
 }
@@ -394,8 +402,8 @@ void Experiment::assignUnitCell(PeakCollection* peaks)
     _cell_handler->assignUnitCell(peaks);
 }
 
-void Experiment::setReferenceCell(double a, double b, double c, double alpha, double beta,
-                                  double gamma)
+void Experiment::setReferenceCell(
+    double a, double b, double c, double alpha, double beta, double gamma)
 {
     _cell_handler->setReferenceCell(a, b, c, alpha, beta, gamma, _auto_indexer.get());
 }

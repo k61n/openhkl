@@ -16,6 +16,7 @@
 
 #include "base/fit/Minimizer.h"
 #include "base/geometry/Ellipsoid.h"
+#include "base/utils/Logger.h"
 #include "core/data/DataSet.h"
 #include "core/detector/Detector.h"
 #include "core/instrument/Diffractometer.h"
@@ -25,8 +26,6 @@
 #include "core/peak/Qs2Events.h"
 #include "core/raw/IDataReader.h"
 #include "tables/crystal/UnitCell.h"
-#include <QDebug>
-#include <QtGlobal>
 
 #include <stdexcept>
 
@@ -76,9 +75,9 @@ std::vector<Peak3D*> predictPeaks(
 
     std::vector<Peak3D*> peaks =
         buildPeaksFromMillerIndices(data, predicted_hkls, unit_cell->reciprocalBasis());
-    qDebug() << "Computing shapes of " << peaks.size() << " calculated peaks...";
 
-
+    nsxlog(
+        Level::Info, "algo::predictPeaks: Computing shapes of", peaks.size(), "calculated peaks");
     for (auto peak : peaks) {
         peak->setUnitCell(unit_cell);
         peak->setPredicted(true);
@@ -97,10 +96,17 @@ std::vector<Peak3D*> predictPeaks(
         }
         predicted_peaks.push_back(peak);
     }
-    qDebug() << "Interpolation failed for " << library->nFailedInterp() << " peaks";
-    qDebug() << library->nNoProfile() << " peaks with no neighbouring profiles";
-    qDebug() << library->nLonelyPeaks() << " peaks with no neighbours";
-    qDebug() << library->nUnfriendlyPeaks() << " peaks with too few neighbours";
+    nsxlog(
+        Level::Info, "algo::predictPeaks: Interpolation failed for", library->nFailedInterp(),
+        "peaks");
+    nsxlog(
+        Level::Debug, "algo::predictPeaks:", library->nNoProfile(),
+        "peaks with no neighbouring profiles");
+    nsxlog(
+        Level::Debug, "algo::predictPeaks:", library->nLonelyPeaks(), "peaks with no neighbours");
+    nsxlog(
+        Level::Debug, "algo::predictPeaks:", library->nUnfriendlyPeaks(),
+        "peaks with too few neighbours");
     // TODO: suggest course of action for fixing these error (increase radius, minimum number
     // of neighbours)
     return predicted_peaks;

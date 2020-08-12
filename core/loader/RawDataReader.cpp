@@ -85,9 +85,9 @@ void RawDataReader::addFrame(const std::string& filename)
     _sampleStates.emplace_back(std::move(sample_states));
 }
 
-void RawDataReader::open() {}
+void RawDataReader::open() { }
 
-void RawDataReader::close() {}
+void RawDataReader::close() { }
 
 void RawDataReader::end()
 {

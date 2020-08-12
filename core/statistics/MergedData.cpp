@@ -13,6 +13,7 @@
 //  ***********************************************************************************************
 
 #include "core/statistics/MergedData.h"
+#include "base/utils/Logger.h"
 
 namespace nsx {
 
@@ -49,9 +50,9 @@ MergedData::MergedData(std::vector<PeakCollection*> peak_collections, bool fried
             addPeak(peaks[j]);
     }
     if (_nNaN > 0)
-        qDebug() << "MergedData: " << _nNaN << " peaks with intensity NaN";
+        nsxlog(Level::Info, "MergedData::MergedData:", _nNaN, "peaks with intensity NaN");
     if (_nZero > 0)
-        qDebug() << "MergedData: " << _nZero << " peaks with intensity zero";
+        nsxlog(Level::Info, "MergedData::MergedData:", _nZero, "peaks with intensity zero");
 }
 
 MergedData::MergedData(SpaceGroup space_group, bool friedel) : _friedel(friedel), _merged_peak_set()

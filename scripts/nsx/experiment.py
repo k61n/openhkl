@@ -10,7 +10,7 @@ import sys
 import os.path
 import logging
 from pdb import set_trace
-sys.path.append("/home/zamaan/codes/nsxtool/tmp/nsxtool/build/swig")
+sys.path.append("/home/zamaan/codes/nsxtool/logger/build/swig")
 sys.path.append("/G/sw/nsx/build/swig") # Joachim
 import pynsx as nsx
 
@@ -68,7 +68,7 @@ class Experiment:
         else:
             if not format:
                 format = '%(name)s - %(levelname)s - %(message)s'
-            logging.basicConfig(filename='nsx.log', filemode='w',
+            logging.basicConfig(filename='pynsx.log', filemode='w',
                                 level=logging.INFO, format=format)
             self._logger = logging.getLogger("expt_logger")
 

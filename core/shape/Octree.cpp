@@ -275,7 +275,7 @@ std::ostream& operator<<(std::ostream& os, const Octree& tree)
     return os;
 }
 
-OctreeIterator::OctreeIterator() : _node(nullptr) {}
+OctreeIterator::OctreeIterator() : _node(nullptr) { }
 
 OctreeIterator::OctreeIterator(const Octree& node) : _node(&node)
 {

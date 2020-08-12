@@ -13,8 +13,9 @@
 //  ***********************************************************************************************
 
 #include "core/experiment/UnitCellHandler.h"
-#include "core/experiment/PeakHandler.h"
+#include "base/utils/Logger.h"
 #include "core/algo/AutoIndexer.h"
+#include "core/experiment/PeakHandler.h"
 #include "core/shape/PeakCollection.h"
 #include "tables/crystal/UnitCell.h"
 #include <QDebug>
@@ -37,6 +38,7 @@ const CellMap* UnitCellHandler::getCellMap() const
 
 void UnitCellHandler::addUnitCell(const std::string& name, const UnitCell& unit_cell)
 {
+    nsxlog(Level::Info, "UnitCellHandler::addUnitCell:", name, ":", unit_cell.toString());
     std::unique_ptr<UnitCell> ptr(new UnitCell(unit_cell));
     _unit_cells.insert_or_assign(name, std::move(ptr));
 }
