@@ -29,7 +29,7 @@ Axis* Axis::create(const YAML::Node& node)
     return AxisFactory::instance().create(axisType, node);
 }
 
-Axis::Axis() : _name("axis"), _axis(Eigen::Vector3d(0.0, 0.0, 1.0)), _physical(true), _id(0) {}
+Axis::Axis() : _name("axis"), _axis(Eigen::Vector3d(0.0, 0.0, 1.0)), _physical(true), _id(0) { }
 
 Axis::Axis(const std::string& name)
     : _name(name), _axis(Eigen::Vector3d(0.0, 0.0, 1.0)), _physical(true), _id(0)
@@ -56,7 +56,7 @@ Axis::Axis(const YAML::Node& node)
     _id = node["id"] ? node["id"].as<unsigned int>() : 0;
 }
 
-Axis::~Axis() {}
+Axis::~Axis() { }
 
 void Axis::setName(const std::string& name)
 {

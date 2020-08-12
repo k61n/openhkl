@@ -36,7 +36,7 @@ class PeakHandler {
     //! Get a pointer to the map of peak collections
     const PeakCollectionMap* getPeakCollectionMap() const;
     //! Add a peak collection
-    void updatePeakCollection(
+    void addPeakCollection(
         const std::string& name, const listtype type, const std::vector<nsx::Peak3D*> peaks);
     //! Returns true if the experiment has named peak collection
     bool hasPeakCollection(const std::string& name) const;

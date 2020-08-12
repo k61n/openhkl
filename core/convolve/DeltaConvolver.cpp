@@ -16,7 +16,7 @@
 
 namespace nsx {
 
-DeltaConvolver::DeltaConvolver() : AtomicConvolver() {}
+DeltaConvolver::DeltaConvolver() : AtomicConvolver() { }
 
 DeltaConvolver::DeltaConvolver(const std::map<std::string, double>& parameters) : DeltaConvolver()
 {

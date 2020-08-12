@@ -14,12 +14,11 @@
 
 #include "core/shape/IPeakIntegrator.h"
 
+#include "base/utils/Logger.h"
 #include "core/data/DataSet.h"
 #include "core/peak/Intensity.h"
 #include "core/peak/Peak3D.h"
 #include "tables/crystal/UnitCell.h"
-#include <QDebug>
-#include <QtGlobal>
 
 namespace nsx {
 
@@ -34,7 +33,7 @@ IPeakIntegrator::IPeakIntegrator()
 {
 }
 
-IPeakIntegrator::~IPeakIntegrator() {}
+IPeakIntegrator::~IPeakIntegrator() { }
 
 Intensity IPeakIntegrator::meanBackground() const
 {
@@ -54,15 +53,13 @@ const std::vector<Intensity>& IPeakIntegrator::rockingCurve() const
 void IPeakIntegrator::integrate(
     std::vector<nsx::Peak3D*> peaks, ShapeLibrary* shape_library, sptrDataSet data)
 {
-    qDebug() << "IPeakIntegrator::integrate start";
     // integrate only those peaks that belong to the specified dataset
     auto it = std::remove_if(peaks.begin(), peaks.end(), [&](const Peak3D* peak) {
         return peak->dataSet() != data;
     });
     peaks.erase(it, peaks.end());
-
     std::string status = "Integrating " + std::to_string(peaks.size()) + " peaks...";
-    qDebug() << QString::fromStdString(status);
+    nsxlog(Level::Info, "IPeakIntegrator::integrate: integrating", peaks.size(), "peaks");
     if (_handler) {
         _handler->setStatus(status.c_str());
         _handler->setProgress(0);
@@ -99,13 +96,14 @@ void IPeakIntegrator::integrate(
     }
 
     // only integrate the peaks with valid integration regions
-    qDebug() << "IPeakIntegrator::integrate remove invalid regions";
+    nsxlog(Level::Debug, "IPeakIntegrator::integrate: remove invalid regions");
     it = std::remove_if(peaks.begin(), peaks.end(), [&](Peak3D*& p) {
         return regions.find(p) == regions.end();
     });
     peaks.erase(it, peaks.end());
 
-    qDebug() << "IPeakIntegrator::integrate frames loop";
+    nsxlog(Level::Debug, "IPeakIntegrator::integrate: frames loop");
+    int nfailures = 0;
     for (idx = 0; idx < data->nFrames(); ++idx) {
         Eigen::MatrixXd current_frame;
         Eigen::MatrixXi mask;
@@ -138,7 +136,9 @@ void IPeakIntegrator::integrate(
                     }
                 } catch (std::exception& e) {
                     // integration failed...
-                    qDebug() << "integration failed: " << e.what();
+                    nsxlog(
+                        Level::Debug, "IPeakIntegrator::integrate: integration failed", e.what());
+                    ++nfailures;
                     peak->setSelected(false);
                 }
                 // free memory (important!!)
@@ -153,6 +153,7 @@ void IPeakIntegrator::integrate(
             _handler->setProgress(progress);
         }
     }
+    nsxlog(Level::Info, "IPeakIntegrator::integrate: end;", nfailures, "failures");
 }
 
 void IPeakIntegrator::setHandler(sptrProgressHandler handler)

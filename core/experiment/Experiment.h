@@ -73,7 +73,7 @@ class Experiment {
 
     // Peak handler
     //! Create a new PeakCollection from a vector of peaks
-    void updatePeakCollection(
+    void addPeakCollection(
         const std::string& name, const listtype type, std::vector<Peak3D*> peaks);
     //! Check if the handler has the named peak collection
     bool hasPeakCollection(const std::string& name);

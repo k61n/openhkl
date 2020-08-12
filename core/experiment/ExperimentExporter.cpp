@@ -15,6 +15,7 @@
 #include "core/experiment/ExperimentExporter.h"
 
 #include "base/parser/BloscFilter.h"
+#include "base/utils/Logger.h"
 #include "base/utils/Units.h" // deg
 #include "core/data/DataSet.h"
 #include "core/detector/Detector.h"
@@ -34,8 +35,6 @@ namespace nsx {
 
 void ExperimentExporter::createFile(std::string name, std::string diffractometer, std::string path)
 {
-    std::cout << "Creating the file ... " << std::endl;
-
     H5::H5File file{path.c_str(), H5F_ACC_TRUNC};
     _file_name = path;
 
@@ -164,10 +163,9 @@ void ExperimentExporter::writeData(const std::map<std::string, DataSet*> data)
                 H5::Attribute intAtt(info_group.createAttribute(item.first, str80, metaSpace));
                 intAtt.write(str80, info);
             } catch (const std::exception& ex) {
-                std::cerr << "Exception in " << __PRETTY_FUNCTION__ << ": " << ex.what()
-                          << std::endl;
+                nsxlog(Level::Debug, "Exception in", __PRETTY_FUNCTION__, ":", ex.what());
             } catch (...) {
-                std::cerr << "Uncaught exception in " << __PRETTY_FUNCTION__ << std::endl;
+                nsxlog(Level::Error, "Uncaught exception in", __PRETTY_FUNCTION__);
             }
         }
 
@@ -190,10 +188,9 @@ void ExperimentExporter::writeData(const std::map<std::string, DataSet*> data)
                         item.first, H5::PredType::NATIVE_DOUBLE, metaSpace));
                     intAtt.write(H5::PredType::NATIVE_DOUBLE, &d_value);
                 } catch (const std::exception& ex) {
-                    std::cerr << "Exception in " << __PRETTY_FUNCTION__ << ": " << ex.what()
-                              << std::endl;
+                    nsxlog(Level::Debug, "Exception in", __PRETTY_FUNCTION__, ":", ex.what());
                 } catch (...) {
-                    std::cerr << "Uncaught exception in " << __PRETTY_FUNCTION__ << std::endl;
+                    nsxlog(Level::Error, "Uncaught exception in", __PRETTY_FUNCTION__);
                 }
             }
         }
@@ -391,10 +388,9 @@ void ExperimentExporter::writePeaks(const std::map<std::string, PeakCollection*>
                     item.first, H5::PredType::NATIVE_INT32, metaSpace));
                 intAtt.write(H5::PredType::NATIVE_INT32, &value);
             } catch (const std::exception& ex) {
-                std::cerr << "Exception in " << __PRETTY_FUNCTION__ << ": " << ex.what()
-                          << std::endl;
+                nsxlog(Level::Debug, "Exception in", __PRETTY_FUNCTION__, ":", ex.what());
             } catch (...) {
-                std::cerr << "Uncaught exception in " << __PRETTY_FUNCTION__ << std::endl;
+                nsxlog(Level::Error, "Uncaught exception in", __PRETTY_FUNCTION__);
             }
         }
 

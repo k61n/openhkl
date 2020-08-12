@@ -13,6 +13,7 @@
 //  ***********************************************************************************************
 
 #include "core/experiment/DataHandler.h"
+#include "base/utils/Logger.h"
 #include "core/data/DataSet.h"
 #include "core/instrument/Diffractometer.h"
 #include <iostream>
@@ -110,6 +111,8 @@ void DataHandler::addData(sptrDataSet data, std::string name)
     }
 
     data->setName(name);
+    nsxlog(
+        Level::Info, "DataHandler::addData: adding DataSet ", name, ":", data->nFrames(), "frames");
     _data_map.insert(std::make_pair(name, data));
 }
 
@@ -119,8 +122,7 @@ sptrDataSet DataHandler::dataShortName(std::string name) const
         if (it->second->name() == name)
             return it->second;
     }
-    throw std::runtime_error(
-        "The data " + name + " could not be found in the experiment " + _name);
+    throw std::runtime_error("The data " + name + " could not be found in the experiment " + _name);
 }
 
 bool DataHandler::hasData(const std::string& name) const

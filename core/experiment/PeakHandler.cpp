@@ -12,8 +12,9 @@
 //
 //  ***********************************************************************************************
 
-#include "core/peak/Peak3D.h"
 #include "core/experiment/PeakHandler.h"
+#include "base/utils/Logger.h"
+#include "core/peak/Peak3D.h"
 #include "core/statistics/MergedData.h"
 
 namespace nsx {
@@ -26,9 +27,10 @@ const PeakCollectionMap* PeakHandler::getPeakCollectionMap() const
 }
 
 
-void PeakHandler::updatePeakCollection(
+void PeakHandler::addPeakCollection(
     const std::string& name, const listtype type, const std::vector<nsx::Peak3D*> peaks)
 {
+    nsxlog(Level::Info, "PeakHandler::addPeakCollection:", name, ":", peaks.size(), "peaks");
     std::unique_ptr<PeakCollection> ptr(new PeakCollection(name, type));
     ptr->populate(peaks);
     _peak_collections.insert_or_assign(name, std::move(ptr));
