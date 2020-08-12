@@ -24,7 +24,7 @@
 
 namespace nsx {
 
-AtomicConvolver::AtomicConvolver() : Convolver() {}
+AtomicConvolver::AtomicConvolver() : Convolver() { }
 
 AtomicConvolver::AtomicConvolver(const std::map<std::string, double>& parameters)
     : Convolver(parameters)

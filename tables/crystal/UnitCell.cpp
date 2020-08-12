@@ -20,12 +20,11 @@
 #include "base/fit/Minimizer.h"
 #include "base/geometry/ReciprocalVector.h"
 #include "base/utils/Units.h"
+#include "base/utils/Logger.h"
 #include "tables/crystal/GruberReduction.h"
 #include "tables/crystal/MillerIndex.h"
 #include "tables/crystal/NiggliReduction.h"
 #include "tables/crystal/UnitCell.h"
-#include <QDebug>
-#include <QtGlobal>
 
 namespace {
 bool smallDiff(double a, double b, double tolerance)
@@ -332,7 +331,8 @@ std::vector<MillerIndex> UnitCell::generateReflectionsInShell(
         }
     }
 
-    qDebug() << "Generated " << hkls.size() << " hkl in [" << dmin << "," << dmax << "] range";
+    nsxlog(Level::Info, "UnitCell::generateReflectionsInShell: generated", hkls.size(),
+           "hkl in d-range [", dmin, ",", dmax, "]");
 
     return hkls;
 }

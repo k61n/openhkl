@@ -18,7 +18,7 @@
 
 namespace nsx {
 
-Source::Source() : Component("source"), _monochromators(), _selectedMonochromator(0) {}
+Source::Source() : Component("source"), _monochromators(), _selectedMonochromator(0) { }
 
 Source::Source(const std::string& name)
     : Component(name), _monochromators(), _selectedMonochromator(0)

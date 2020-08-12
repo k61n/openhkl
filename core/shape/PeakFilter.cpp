@@ -19,6 +19,7 @@
 #include <set>
 
 #include "base/geometry/ReciprocalVector.h"
+#include "base/utils/Logger.h"
 #include "core/data/DataSet.h"
 #include "core/instrument/Diffractometer.h"
 #include "core/instrument/Sample.h"
@@ -300,7 +301,7 @@ void PeakFilter::filterStrength(PeakCollection* peak_collection) const
             else
                 peak_ptr->rejectYou(true);
         } catch (std::exception& e) {
-            qDebug() << "Bad peak intensity in PeakFilter::filterstrength: " << e.what();
+            nsxlog(Level::Debug, "PeakFilter::filterStrength:", e.what());
             peak_ptr->rejectYou(true);
         }
     }
@@ -332,6 +333,7 @@ void PeakFilter::filterDRange(PeakCollection* peak_collection) const
 
 void PeakFilter::filterHasUnitCell(PeakCollection* peak_collection) const
 {
+    nsxlog(Level::Info, "Filtering out peaks without unit cell");
     for (int i = 0; i < peak_collection->numberOfPeaks(); ++i) {
         nsx::Peak3D* peak_ptr = peak_collection->getPeak(i);
         auto cell = peak_ptr->unitCell();
@@ -344,43 +346,69 @@ void PeakFilter::filterHasUnitCell(PeakCollection* peak_collection) const
 
 void PeakFilter::filter(PeakCollection* peak_collection) const
 {
+    nsxlog(Level::Info, "PeakFilter::filter: filtering peaks");
     if (_filter_flags.state) {
-        if (_filter_flags.selected)
+        if (_filter_flags.selected) {
+            nsxlog(Level::Info, "Filtering out unselected peaks");
             filterSelected(peak_collection);
-        if (_filter_flags.masked)
+        }
+        if (_filter_flags.masked) {
+            nsxlog(Level::Info, "Filtering out unmasked peaks");
             filterMasked(peak_collection);
-        if (_filter_flags.predicted)
+        }
+        if (_filter_flags.predicted) {
+            nsxlog(Level::Info, "Filtering by prediction");
             filterPredicted(peak_collection);
+        }
     }
 
-    if (_filter_flags.indexed)
+    if (_filter_flags.indexed) {
+        nsxlog(Level::Info, "Filtering out unindexed peaks");
         filterIndexed(peak_collection);
+    }
 
     if (_filter_flags.index_tol) {
-        if (!(_unit_cell == ""))
+        if (!(_unit_cell == "")) {
+            nsxlog(Level::Info, "Filtering by Miller index tolerance");
             filterIndexTolerance(peak_collection);
+        }
     }
 
-    if (_filter_flags.strength)
+    if (_filter_flags.strength) {
+        nsxlog(Level::Info, "Filtering by peak strength (I/sigma)");
         filterStrength(peak_collection);
+    }
 
-    if (_filter_flags.d_range)
+    if (_filter_flags.d_range) {
+        nsxlog(Level::Info, "Filtering by D-range");
         filterDRange(peak_collection);
+    }
 
-    if (_filter_flags.extinct)
+    if (_filter_flags.extinct) {
+        nsxlog(Level::Info, "Filtering out extinct peaks");
         filterExtincted(peak_collection);
+    }
 
-    if (_filter_flags.sparse)
+    if (_filter_flags.sparse) {
+        nsxlog(Level::Info, "Filtering sparse data set");
         filterSparseDataSet(peak_collection);
+    }
 
-    if (_filter_flags.significance)
+    if (_filter_flags.significance) {
+        nsxlog(Level::Info, "Filtering by significance");
         filterSignificance(peak_collection);
+    }
 
-    if (_filter_flags.overlapping)
+    if (_filter_flags.overlapping) {
+        nsxlog(Level::Info, "Filtering out overlapping peaks");
         filterOverlapping(peak_collection);
+    }
 
-    if (_filter_flags.complementary)
+    if (_filter_flags.complementary) // this does nothing
         filterComplementary(peak_collection);
+    nsxlog(
+        Level::Info, "PeakFilter::filter:", peak_collection->numberCaughtByFilter(), "/",
+        peak_collection->numberOfPeaks(), "peaks caught by filter");
 }
 
 void PeakFilter::resetFiltering(PeakCollection* peak_collection) const

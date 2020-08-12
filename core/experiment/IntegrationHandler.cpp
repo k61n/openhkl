@@ -13,6 +13,7 @@
 //  ***********************************************************************************************
 
 #include "core/experiment/IntegrationHandler.h"
+#include "base/utils/Logger.h"
 #include "core/experiment/DataHandler.h"
 #include "core/experiment/PeakFinder.h"
 #include "core/integration/GaussianIntegrator.h"
@@ -78,6 +79,9 @@ IPeakIntegrator* IntegrationHandler::getIntegrator(const std::string& name) cons
 void IntegrationHandler::integratePeaks(
     std::string integrator_name, PeakCollection* peak_collection)
 {
+    nsxlog(
+        Level::Info, "IntegrationHandler::integratePeaks: integrating PeakCollection",
+        peak_collection);
     IPeakIntegrator* integrator = getIntegrator(integrator_name);
 
     nsx::PeakFilter filter;
@@ -96,6 +100,7 @@ void IntegrationHandler::integratePredictedPeaks(
     std::string integrator_name, PeakCollection* peak_collection, ShapeLibrary* shape_library,
     PredictionParameters& params)
 {
+    nsxlog(Level::Info, "IntegrationHandler::integratePredictedPeaks");
     IPeakIntegrator* integrator = getIntegrator(integrator_name);
     integrator->setBkgBegin(params.bkg_begin);
     integrator->setBkgEnd(params.bkg_end);
@@ -119,6 +124,7 @@ void IntegrationHandler::integratePredictedPeaks(
 
 void IntegrationHandler::integrateFoundPeaks(std::string integrator_name, PeakFinder* peak_finder)
 {
+    nsxlog(Level::Info, "IntegrationHandler::integrateFoundPeaks");
     IPeakIntegrator* integrator = getIntegrator(integrator_name);
 
     for (sptrDataSet data : peak_finder->currentData()) {
@@ -130,6 +136,7 @@ ShapeLibrary& IntegrationHandler::integrateShapeLibrary(
     std::vector<Peak3D*>& fit_peaks, ShapeLibrary* shape_library, const AABB& aabb,
     const ShapeLibParameters& params)
 {
+    nsxlog(Level::Info, "IntegrationHandler::integrateShapeLibrary");
     ShapeIntegrator integrator{shape_library, aabb, params.nbins_x, params.nbins_y, params.nbins_z};
     integrator.setPeakEnd(params.peak_scale);
     integrator.setBkgBegin(params.background_range_min);
