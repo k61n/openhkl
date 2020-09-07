@@ -22,14 +22,20 @@
 
 namespace nsx {
 
+void IntegrationParameters::log(const Level& level) const
+{
+    nsxlog(level, "Integration parameters:");
+    nsxlog(level, "peak_end               =", peak_end);
+    nsxlog(level, "bkg_begin              =", bkg_begin);
+    nsxlog(level, "bkg_end                =", bkg_end);
+    nsxlog(level, "neighbour_range_pixels =", neighbour_range_pixels);
+    nsxlog(level, "neighbour_range_frames =", neighbour_range_frames);
+    nsxlog(level, "fit_center             =", fit_center);
+    nsxlog(level, "fit_cov                =", fit_cov);
+}
+
 IPeakIntegrator::IPeakIntegrator()
-    : _meanBackground()
-    , _integratedIntensity()
-    , _rockingCurve()
-    , _handler(nullptr)
-    , _peak_end{3.0}
-    , _bkg_begin{3.0}
-    , _bkg_end{6.0}
+    : _meanBackground(), _integratedIntensity(), _rockingCurve(), _handler(nullptr), _params{}
 {
 }
 
@@ -74,8 +80,9 @@ void IPeakIntegrator::integrate(
     for (auto peak : peaks) {
         try {
             // IntegrationRegion constructor may throw (e.g. peak on boundary of image)
-            regions.emplace(
-                std::make_pair(peak, IntegrationRegion(peak, _peak_end, _bkg_begin, _bkg_end)));
+            regions.emplace(std::make_pair(
+                peak,
+                IntegrationRegion(peak, _params.peak_end, _params.bkg_begin, _params.bkg_end)));
             integrated.emplace(std::make_pair(peak, false));
         } catch (...) {
             peak->setSelected(false);
@@ -129,8 +136,8 @@ void IPeakIntegrator::integrate(
                 try {
                     if (compute(peak, shape_library, regions[peak])) {
                         peak->updateIntegration(
-                            rockingCurve(), meanBackground(), integratedIntensity(), _peak_end,
-                            _bkg_begin, _bkg_end);
+                            rockingCurve(), meanBackground(), integratedIntensity(),
+                            _params.peak_end, _params.bkg_begin, _params.bkg_end);
                     } else {
                         peak->setSelected(false);
                     }
@@ -159,6 +166,12 @@ void IPeakIntegrator::integrate(
 void IPeakIntegrator::setHandler(sptrProgressHandler handler)
 {
     _handler = handler;
+}
+
+void IPeakIntegrator::setParameters(const IntegrationParameters& params)
+{
+    _params = params;
+    _params.log(Level::Info);
 }
 
 } // namespace nsx

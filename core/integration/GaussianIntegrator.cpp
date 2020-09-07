@@ -28,8 +28,8 @@ namespace nsx {
 
 GaussianIntegrator::GaussianIntegrator(bool fit_center, bool fit_cov) : IPeakIntegrator()
 {
-    setFitCenter(fit_center);
-    setFitCov(fit_cov);
+    _params.fit_center = fit_center;
+    _params.fit_cov = fit_cov;
 }
 
 static Eigen::Matrix3d from_cholesky(const Eigen::VectorXd a)

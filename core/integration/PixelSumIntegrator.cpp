@@ -25,8 +25,8 @@ namespace nsx {
 PixelSumIntegrator::PixelSumIntegrator(bool fit_center, bool fit_covariance)
     : MeanBackgroundIntegrator()
 {
-    setFitCenter(fit_center);
-    setFitCov(fit_covariance);
+    _params.fit_center = fit_center;
+    _params.fit_cov = fit_covariance;
 }
 
 PixelSumIntegrator::~PixelSumIntegrator() { }

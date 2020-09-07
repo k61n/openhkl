@@ -695,9 +695,11 @@ void PeakFinderFrame::integrate()
 
     nsx::IPeakIntegrator* integrator = experiment->getIntegrator("Pixel sum integrator");
 
-    integrator->setPeakEnd(_peak_area->value());
-    integrator->setBkgBegin(_bkg_lower->value());
-    integrator->setBkgEnd(_bkg_upper->value());
+    nsx::IntegrationParameters params{};
+    params.peak_end = _peak_area->value();
+    params.bkg_begin = _bkg_lower->value();
+    params.bkg_end = _bkg_upper->value();
+    integrator->setParameters(params);
 
     experiment->integrateFoundPeaks("Pixel sum integrator");
 
