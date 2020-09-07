@@ -152,7 +152,9 @@ class Experiment {
     //! get the named integrator
     IPeakIntegrator* getIntegrator(const std::string& name) const;
     //! Integrate the given peak collection with the named integrator
-    void integratePeaks(const std::string& integrator_name, PeakCollection* peak_collection);
+    void integratePeaks(
+        const std::string& integrator_name, PeakCollection* peak_collection, double d_min,
+        double d_max);
     //! Integrate predicted peaks, fitting shappes from given shape library
     void integratePredictedPeaks(
         const std::string& integrator_name, PeakCollection* peak_collection,
@@ -168,10 +170,10 @@ class Experiment {
 
     // Prediction
     //! Construct the library used to fit the shapes of predicted peaks
-    void buildShapeLibrary(PeakCollection* peaks, ShapeLibParameters params);
+    void buildShapeLibrary(PeakCollection* peaks, const ShapeLibParameters& params);
     //! Predict peaks from unit cell
     void predictPeaks(
-        const std::string& name, PeakCollection* peaks, PredictionParameters params,
+        const std::string& name, PeakCollection* peaks, const PredictionParameters& params,
         PeakInterpolation interpol);
     //! Refine unit cell and instrument parameters
     void refine(const PeakCollection* peaks, UnitCell* cell, DataSet* data, int n_batches);
@@ -184,6 +186,13 @@ class Experiment {
     DataResolution* getResolution() { return &_data_resolution; };
     // Return data quality structs for all merged data:
     const DataQuality& getQuality() { return _data_quality; };
+
+    // Objects containing integration parameters. If I construct these on their own in Python,
+    // they get destroyed when passed to Experiment, hence the kludgy option of making them
+    // public - zamaan
+    IntegrationParameters int_params;
+    ShapeLibParameters shape_params;
+    PredictionParameters predict_params;
 
  private: // private variables
     std::string _name; //!< The name of this experiment
@@ -203,6 +212,7 @@ class Experiment {
     // Objects containing quality metrics
     DataQuality _data_quality;
     DataResolution _data_resolution; //!< Data quality per resolution shell
+
 };
 
 } // namespace nsx

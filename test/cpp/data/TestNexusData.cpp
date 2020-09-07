@@ -161,9 +161,11 @@ TEST_CASE("test/data/TestNexusData.cpp", "")
               << std::endl;
 
     nsx::IPeakIntegrator* integrator = exp.getIntegrator(std::string("Pixel sum integrator"));
-    integrator->setPeakEnd(3.0);
-    integrator->setBkgBegin(3.5);
-    integrator->setBkgEnd(4.5);
+    nsx::IntegrationParameters params{};
+    params.peak_end = 3.0;
+    params.bkg_begin = 3.5;
+    params.bkg_end = 4.5;
+    integrator->setParameters(params);
     integrator->setHandler(progressHandler);
     exp.integrateFoundPeaks("Pixel sum integrator");
     exp.acceptFoundPeaks("found_peaks");

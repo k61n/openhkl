@@ -22,6 +22,8 @@ namespace nsx {
 
 using RankedSolution = std::pair<std::shared_ptr<UnitCell>, double>;
 
+enum class Level;
+
 //! Struct to store parameters used by autoindexer.
 struct IndexerParameters {
     //! Expected maximum dimension of the unit cell, in angstroms
@@ -53,6 +55,8 @@ struct IndexerParameters {
     //! Frequency threshold: FFT peaks with 0.7 the value of the zero frequency
     //! peak are discarded
     double frequencyTolerance = 0.7;
+
+    void log(const Level& level);
 };
 
 //! Class to automatically index a set of peaks

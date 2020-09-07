@@ -91,10 +91,11 @@ TEST_CASE("test/crystal/TestRefiner.cpp", "")
 
     nsx::IPeakIntegrator* integrator =
         experiment.getIntegrator(std::string("Pixel sum integrator"));
-
-    integrator->setPeakEnd(2.7);
-    integrator->setBkgBegin(3.5);
-    integrator->setBkgEnd(4.0);
+    nsx::IntegrationParameters params{};
+    params.peak_end = 2.7;
+    params.bkg_begin = 3.5;
+    params.bkg_end = 4.0;
+    integrator->setParameters(params);
     integrator->setHandler(progressHandler);
     experiment.integrateFoundPeaks("Pixel sum integrator");
     experiment.acceptFoundPeaks("found_peaks");

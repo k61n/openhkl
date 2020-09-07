@@ -19,6 +19,7 @@
 #include "base/utils/Logger.h"
 #include "core/data/DataSet.h"
 #include "core/detector/Detector.h"
+#include "core/detector/DetectorEvent.h"
 #include "core/instrument/Diffractometer.h"
 #include "core/instrument/Source.h"
 #include "core/peak/Peak3D.h"
@@ -32,6 +33,30 @@
 #include <Eigen/Dense>
 
 namespace nsx {
+
+void ShapeLibParameters::log(const Level& level) const
+{
+    IntegrationParameters::log(level);
+    nsxlog(level, "Shape library parameters:");
+    nsxlog(level, "detector_range_min     =", detector_range_min);
+    nsxlog(level, "detector_range_max     =", detector_range_max);
+    nsxlog(level, "strength_min           =", strength_min);
+    nsxlog(level, "kabsch_coords          =", kabsch_coords);
+    nsxlog(level, "nbins_x                =", nbins_x);
+    nsxlog(level, "nbins_y                =", nbins_y);
+    nsxlog(level, "nbins_z                =", nbins_z);
+    nsxlog(level, "sigma_divergence       =", sigma_divergence);
+    nsxlog(level, "sigma_mosaicity        =", sigma_mosaicity);
+}
+
+void PredictionParameters::log(const Level& level) const
+{
+    IntegrationParameters::log(level);
+    nsxlog(level, "Peak prediction parameters:");
+    nsxlog(level, "detector_range_min     =", detector_range_min);
+    nsxlog(level, "detector_range_max     =", detector_range_max);
+    nsxlog(level, "min_n_neighbors        =", min_n_neighbors);
+}
 
 static std::vector<Peak3D*> buildPeaksFromMillerIndices(
     sptrDataSet data, const std::vector<MillerIndex>& hkls, const Eigen::Matrix3d& BU)
@@ -61,8 +86,8 @@ static std::vector<Peak3D*> buildPeaksFromMillerIndices(
 }
 
 std::vector<Peak3D*> predictPeaks(
-    const ShapeLibrary* library, const sptrDataSet data, const UnitCell* unit_cell, double dmin,
-    double dmax, double radius, double nframes, int min_neighbors, PeakInterpolation interpolation)
+    const ShapeLibrary* library, const sptrDataSet data, const UnitCell* unit_cell,
+    PeakInterpolation interpolation, const PredictionParameters& params)
 {
     std::vector<Peak3D*> predicted_peaks;
 
@@ -71,7 +96,8 @@ std::vector<Peak3D*> predictPeaks(
 
     const double wavelength = mono.wavelength();
 
-    auto predicted_hkls = unit_cell->generateReflectionsInShell(dmin, dmax, wavelength);
+    auto predicted_hkls = unit_cell->generateReflectionsInShell(
+        params.detector_range_min, params.detector_range_max, wavelength);
 
     std::vector<Peak3D*> peaks =
         buildPeaksFromMillerIndices(data, predicted_hkls, unit_cell->reciprocalBasis());
@@ -86,8 +112,9 @@ std::vector<Peak3D*> predictPeaks(
         // Skip the peak if any error occur when computing its mean covariance (e.g.
         // too few or no neighbouring peaks found)
         try {
-            Eigen::Matrix3d cov =
-                library->meanCovariance(peak, radius, nframes, min_neighbors, interpolation);
+            Eigen::Matrix3d cov = library->meanCovariance(
+                peak, params.neighbour_range_pixels, params.neighbour_range_frames,
+                params.min_n_neighbors, interpolation);
             Eigen::Vector3d center = peak->shape().center();
             peak->setShape(Ellipsoid(center, cov.inverse()));
         } catch (std::exception& e) {

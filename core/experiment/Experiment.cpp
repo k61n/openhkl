@@ -111,8 +111,9 @@ void Experiment::loadFromFile(const std::string& path)
     importer.loadPeaks(this);
 }
 
-void Experiment::buildShapeLibrary(PeakCollection* peaks, ShapeLibParameters params)
+void Experiment::buildShapeLibrary(PeakCollection* peaks, const ShapeLibParameters& params)
 {
+    params.log(Level::Info);
     std::vector<Peak3D*> peak_list = peaks->getPeakList();
     std::vector<Peak3D*> fit_peaks;
 
@@ -134,7 +135,7 @@ void Experiment::buildShapeLibrary(PeakCollection* peaks, ShapeLibParameters par
         throw std::runtime_error("buildShapeLibrary: no fit peaks found");
 
     nsxlog(
-        Level::Info, "Experiment::buildShapeLibrary:", peak_list.size(), "/", fit_peaks.size(),
+        Level::Info, "Experiment::buildShapeLibrary:", fit_peaks.size(), "/", peak_list.size(),
         "fit peaks");
 
     nsx::AABB aabb;
@@ -142,17 +143,16 @@ void Experiment::buildShapeLibrary(PeakCollection* peaks, ShapeLibParameters par
     if (params.kabsch_coords) {
         const Eigen::Vector3d sigma(
             params.sigma_divergence, params.sigma_divergence, params.sigma_mosaicity);
-        aabb.setLower(-params.peak_scale * sigma);
-        aabb.setUpper(params.peak_scale * sigma);
+        aabb.setLower(-params.peak_end * sigma);
+        aabb.setUpper(params.peak_end * sigma);
     } else {
         const Eigen::Vector3d dx(params.nbins_x, params.nbins_y, params.nbins_z);
         aabb.setLower(-0.5 * dx);
         aabb.setUpper(0.5 * dx);
     }
 
-    ShapeLibrary shape_library = ShapeLibrary(
-        !params.kabsch_coords, params.peak_scale, params.background_range_min,
-        params.background_range_max);
+    ShapeLibrary shape_library =
+        ShapeLibrary(!params.kabsch_coords, params.peak_end, params.bkg_begin, params.bkg_end);
 
     shape_library =
         _integration_handler->integrateShapeLibrary(fit_peaks, &shape_library, aabb, params);
@@ -162,7 +162,7 @@ void Experiment::buildShapeLibrary(PeakCollection* peaks, ShapeLibParameters par
 }
 
 void Experiment::predictPeaks(
-    const std::string& name, PeakCollection* peaks, PredictionParameters params,
+    const std::string& name, PeakCollection* peaks, const PredictionParameters& params,
     PeakInterpolation interpol)
 {
     const DataList numors = getAllData();
@@ -176,9 +176,8 @@ void Experiment::predictPeaks(
             Level::Info, "predictPeaks: predicting peaks for numor", ++current_numor, "of",
             numors.size());
 
-        const std::vector<nsx::Peak3D*> predicted = nsx::predictPeaks(
-            library, data, accepted_cell, params.detector_range_min, params.detector_range_max,
-            params.neighbour_max_radius, params.frame_range_max, params.min_n_neighbors, interpol);
+        const std::vector<nsx::Peak3D*> predicted =
+            nsx::predictPeaks(library, data, accepted_cell, interpol, params);
 
         for (nsx::Peak3D* peak : predicted)
             predicted_peaks.push_back(peak);
@@ -419,9 +418,10 @@ IPeakIntegrator* Experiment::getIntegrator(const std::string& name) const
     return _integration_handler->getIntegrator(name);
 }
 
-void Experiment::integratePeaks(const std::string& integrator_name, PeakCollection* peak_collection)
+void Experiment::integratePeaks(
+    const std::string& integrator_name, PeakCollection* peak_collection, double d_min, double d_max)
 {
-    _integration_handler->integratePeaks(integrator_name, peak_collection);
+    _integration_handler->integratePeaks(integrator_name, peak_collection, d_min, d_max);
 }
 
 void Experiment::integratePredictedPeaks(

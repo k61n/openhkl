@@ -17,12 +17,26 @@
 
 #include "base/utils/ProgressHandler.h"
 #include "core/peak/IntegrationRegion.h"
-#include "core/shape/PeakCollection.h"
 
 namespace nsx {
 
-//! Handles per-frame integration of a peak.
+enum class Level;
 
+struct IntegrationParameters {
+    double peak_end = 3.0; //!< End of peak region (sigmas) (same as peak_scale? - zamaan)
+    double bkg_begin = 3.0; //!< Beginning of background region (sigmas)
+    double bkg_end = 6.0; //!< End of background region (sigmas)
+    double neighbour_range_pixels = 400.0; //!< Search radius for neighbouring peaks (pixels)
+    double neighbour_range_frames = 20.0; //!< Search radius for neighbouring peaks (frames)
+    bool fit_center = true; //!< Whether to fit the peak centre
+    bool fit_cov = true; //!< Whether to fit the peak covariance
+
+    void log(const Level& level) const;
+};
+
+class ShapeLibrary;
+
+//! Handles per-frame integration of a peak.
 class IPeakIntegrator {
  public:
     IPeakIntegrator();
@@ -54,71 +68,19 @@ class IPeakIntegrator {
     std::vector<Intensity> _rockingCurve;
     //! Optional pointer to progress handler.
     sptrProgressHandler _handler;
-
- private:
-    //! The integrator values
-    double _scale;
-    //! The integrator values
-    double _peak_end;
-    //! The integrator values
-    double _bkg_begin;
-    //! The integrator values
-    double _bkg_end;
-    //! The integrator values
-    double _d_min;
-    //! The integrator values
-    double _d_max;
-    //! The integrator values
-    double _radius;
-    //! The integrator values
-    double _n_frames;
-    //! The integrator values
-    bool _fit_center;
-    //! The integrator values
-    bool _fit_cov;
+    //! Container for user-defined integration parameters
+    IntegrationParameters _params;
 
  public:
-    //! get the value
-    double scale() const { return _scale; };
-    //! get the value
-    double peakEnd() const { return _peak_end; };
-    //! get the value
-    double backBegin() const { return _bkg_begin; };
-    //! get the value
-    double backEnd() const { return _bkg_end; };
-    //! get the value
-    double dMin() const { return _d_min; };
-    //! get the value
-    double dMax() const { return _d_max; };
-    //! get the value
-    double radius() const { return _radius; };
-    //! get the value
-    double nFrames() const { return _n_frames; };
-    //! get the value
-    bool fitCenter() const { return _fit_center; };
-    //! get the value
-    bool fitCov() const { return _fit_cov; };
+    double peakEnd() const { return _params.peak_end; };
+    double backBegin() const { return _params.bkg_begin; };
+    double backEnd() const { return _params.bkg_end; };
+    double radius() const { return _params.neighbour_range_pixels; };
+    double nFrames() const { return _params.neighbour_range_frames; };
+    bool fitCenter() const { return _params.fit_center; };
+    bool fitCov() const { return _params.fit_cov; };
 
-    //! get the value
-    void setScale(double scale) { _scale = scale; };
-    //! get the value
-    void setPeakEnd(double peak_end) { _peak_end = peak_end; };
-    //! get the value
-    void setBkgBegin(double bkg_begin) { _bkg_begin = bkg_begin; };
-    //! get the value
-    void setBkgEnd(double bkg_end) { _bkg_end = bkg_end; };
-    //! get the value
-    void setDMin(double d_min) { _d_min = d_min; };
-    //! get the value
-    void setDMax(double d_max) { _d_max = d_max; };
-    //! get the value
-    void setRadius(double radius) { _radius = radius; };
-    //! get the value
-    void setNFrames(double n_frames) { _n_frames = n_frames; };
-    //! get the value
-    void setFitCenter(bool fit_center) { _fit_center = fit_center; };
-    //! get the value
-    void setFitCov(bool fit_cov) { _fit_cov = fit_cov; };
+    void setParameters(const IntegrationParameters& params);
 };
 
 } // namespace nsx

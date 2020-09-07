@@ -15,8 +15,7 @@
 #ifndef NSX_CORE_SHAPE_SHAPELIBRARY_H
 #define NSX_CORE_SHAPE_SHAPELIBRARY_H
 
-#include "core/detector/DetectorEvent.h"
-#include "core/peak/Peak3D.h"
+#include "core/shape/IPeakIntegrator.h"
 #include "core/shape/Profile1D.h"
 #include "core/shape/Profile3D.h"
 
@@ -24,13 +23,14 @@
 
 namespace nsx {
 
+class DetectorEvent;
+class Peak3D;
+enum class Level;
+
 //! Parameters for building the shape library
-struct ShapeLibParameters {
+struct ShapeLibParameters : public IntegrationParameters {
     double detector_range_min = 1.5; //!< Minimum detector range (filter)
     double detector_range_max = 50.0; //!< Maximum detector range (filter)
-    double peak_scale = 3.0; //!
-    double background_range_min = 3.0; //!< Start of background range in sigmas
-    double background_range_max = 4.5; //!< End of background range in sigmas
     double strength_min = 1.0; //!< Minimum peak strength I/sigma (filter)
     bool kabsch_coords = true; //!< Are we using Kabsch or detector coordinates?
     int nbins_x = 20; //!< Number of x histogram bins for peak
@@ -38,20 +38,17 @@ struct ShapeLibParameters {
     int nbins_z = 20; //!< Number of z histogram bins for peak
     double sigma_divergence = 0.33; //!< variance arising from beam divergence
     double sigma_mosaicity = 0.23; //!< variance arising from crystal mosaicity
+
+    void log(const Level& level) const;
 };
 
 //! Parameters for peak prediction
-struct PredictionParameters {
+struct PredictionParameters : public IntegrationParameters {
     double detector_range_min = 1.5; //!< Minimum detector range (filter)
     double detector_range_max = 50.0; //!< Maximum detector range (filter)
-    double neighbour_max_radius = 400.0; //!< Maximum radius for neighbouring peak search (pixels)
     int min_n_neighbors = 20; //!< Minimum number of neighbours required for shape library
-    double frame_range_max = 20.0; //!< Maximum angular separation of peaks in frames
-    double bkg_begin = 3.0;
-    double bkg_end = 4.5;
-    double peak_scale = 5.0;
-    bool set_fit_center = true;
-    bool fit_covariance = true;
+
+    void log(const Level& level) const;
 };
 
 class ShapeLibrary;
@@ -63,9 +60,8 @@ enum class PeakInterpolation { NoInterpolation = 0, InverseDistance = 1, Intensi
 struct FitData;
 
 //! Helper function for predicting peaks
-std::vector<Peak3D*> predictPeaks(
-    const ShapeLibrary* library, const sptrDataSet data, const UnitCell* unit_cell, double dmin,
-    double dmax, double radius, double nframes, int min_neighbors, PeakInterpolation interpolation);
+std::vector<Peak3D*> predictPeaks(const ShapeLibrary* library, const sptrDataSet data,
+    const UnitCell* unit_cell, PeakInterpolation interpolation, const PredictionParameters& params);
 
 //! Store a library of peak shapes, to be used for peak prediction and integration.
 
@@ -149,6 +145,9 @@ class ShapeLibrary {
 
     //! Return number of cases of no neighbouring profiles
     int nNoProfile() const { return _n_no_profile; };
+
+    //! Shape library parameters
+    ShapeLibParameters params;
 
  private:
     //! Predict the (detector space) covariance given the fit data

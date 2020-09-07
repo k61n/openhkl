@@ -77,7 +77,7 @@ IPeakIntegrator* IntegrationHandler::getIntegrator(const std::string& name) cons
 }
 
 void IntegrationHandler::integratePeaks(
-    std::string integrator_name, PeakCollection* peak_collection)
+    std::string integrator_name, PeakCollection* peak_collection, double d_min, double d_max)
 {
     nsxlog(
         Level::Info, "IntegrationHandler::integratePeaks: integrating PeakCollection",
@@ -86,7 +86,7 @@ void IntegrationHandler::integratePeaks(
 
     nsx::PeakFilter filter;
     filter.resetFiltering(peak_collection);
-    filter.setDRange(std::array<double, 2UL>{integrator->dMin(), integrator->dMax()});
+    filter.setDRange(std::array<double, 2UL>{d_min, d_max});
     filter.filterDRange(peak_collection);
     std::vector<Peak3D*> peaks = peak_collection->getFilteredPeakList();
 
@@ -102,17 +102,11 @@ void IntegrationHandler::integratePredictedPeaks(
 {
     nsxlog(Level::Info, "IntegrationHandler::integratePredictedPeaks");
     IPeakIntegrator* integrator = getIntegrator(integrator_name);
-    integrator->setBkgBegin(params.bkg_begin);
-    integrator->setBkgEnd(params.bkg_end);
-    integrator->setDMin(params.detector_range_min);
-    integrator->setDMax(params.detector_range_max);
-    integrator->setRadius(params.neighbour_max_radius);
-    integrator->setNFrames(params.frame_range_max);
-    integrator->setFitCenter(params.set_fit_center);
-    integrator->setFitCov(params.fit_covariance);
+    integrator->setParameters(params);
+    params.log(Level::Debug);
     nsx::PeakFilter filter;
     filter.resetFiltering(peak_collection);
-    filter.setDRange(std::array<double, 2UL>{integrator->dMin(), integrator->dMax()});
+    filter.setDRange(std::array<double, 2UL>{params.detector_range_min, params.detector_range_max});
     filter.filterDRange(peak_collection);
     std::vector<Peak3D*> peaks = peak_collection->getFilteredPeakList();
 
@@ -138,9 +132,7 @@ ShapeLibrary& IntegrationHandler::integrateShapeLibrary(
 {
     nsxlog(Level::Info, "IntegrationHandler::integrateShapeLibrary");
     ShapeIntegrator integrator{shape_library, aabb, params.nbins_x, params.nbins_y, params.nbins_z};
-    integrator.setPeakEnd(params.peak_scale);
-    integrator.setBkgBegin(params.background_range_min);
-    integrator.setBkgEnd(params.background_range_max);
+    integrator.setParameters(params);
 
     const DataMap* data = _data_handler->getDataMap();
     // TODO: (zamaan) change numors to a argument of buildShapeLibrary
