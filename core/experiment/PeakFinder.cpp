@@ -611,7 +611,17 @@ void PeakFinder::find(const DataList numors)
         if (loop_begin == -1)
             loop_begin = 0;
         if (loop_end == -1)
-            loop_end = numor->nFrames();
+            loop_end = nframes;
+
+        // keep frame indices in bounds for current numor
+        if(loop_begin < 0)
+            loop_begin = 0;
+        if(loop_begin > nframes)
+            loop_begin = nframes;
+        if(loop_end < 0)
+            loop_end = 0;
+        if(loop_end > nframes)
+            loop_end = nframes;
 
         std::map<int, Blob3D> local_blobs = {{}};
         nsx::EquivalenceList local_equivalences;

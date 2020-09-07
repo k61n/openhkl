@@ -15,6 +15,7 @@
 #include "test/cpp/catch.hpp"
 
 #include <Eigen/Dense>
+#include <iostream>
 
 #include "core/algo/DataReaderFactory.h"
 #include "core/experiment/Experiment.h"
@@ -22,6 +23,12 @@
 
 TEST_CASE("test/crystal/TestFFTIndexing.cpp", "")
 {
+    auto logger = std::make_shared<nsx::ProgressHandler>();
+    logger->setCallback([logger]() {
+        for (const auto& log : logger->getLog())
+            std::cout << log << std::endl;
+    });
+
     nsx::IndexerParameters params;
     params.maxdim = 70.0;
     params.nSolutions = 10;
@@ -35,17 +42,23 @@ TEST_CASE("test/crystal/TestFFTIndexing.cpp", "")
     params.unitCellEquivalenceTolerance = 0.05;
     params.solutionCutoff = 10.0;
 
-    Eigen::Matrix3d M;
-    M << 45.0, 1.0, -2.0, -1.5, 36.0, -2.2, 1.25, -3, 50.0;
-    nsx::UnitCell C(M);
-    C.reduce(params.niggliReduction, params.niggliTolerance, params.gruberTolerance);
-    const nsx::UnitCell uc = C.applyNiggliConstraints();
+    // real basis of unit cell
+    Eigen::Matrix3d basis;
+    basis << 45.0, 1.0, -2.0, 
+        -1.5, 36.0, -2.2, 
+        1.25, -3, 50.0;
+    nsx::UnitCell uc(basis);
+    uc.reduce(params.niggliReduction, params.niggliTolerance, params.gruberTolerance);
+    uc = uc.applyNiggliConstraints();
+    std::cout << "Basis:\n" << uc.basis() << std::endl;
 
     std::vector<nsx::ReciprocalVector> qs;
-    const Eigen::Matrix3d BU = uc.reciprocalBasis();
     const auto reflections = uc.generateReflectionsInShell(0.5, 100, 2.67);
     for (const nsx::MillerIndex& index : reflections)
-        qs.emplace_back(index.rowVector().cast<double>() * BU);
+    {
+        //std::cout << "reflection: " << index << std::endl;
+        qs.emplace_back(index.rowVector().cast<double>() * uc.reciprocalBasis());
+    }
 
     nsx::Experiment experiment("test", "BioDiff2500");
     const nsx::sptrDataSet data(
@@ -55,8 +68,12 @@ TEST_CASE("test/crystal/TestFFTIndexing.cpp", "")
     nsx::PeakCollection peak_collection;
     const auto events = nsx::algo::qs2events(qs, data->instrumentStates(), data->detector());
     for (const nsx::DetectorEvent& event : events) {
+        //std::cout << "event x=" << event._px << " y=" << event._py 
+        //    << " frame=" << event._frame << " tof=" << event._tof 
+        //    << std::endl;
         nsx::Peak3D peak(data);
         const Eigen::Vector3d center = {event._px, event._py, event._frame};
+
         // dummy shape
         try {
             peak.setShape(nsx::Ellipsoid(center, 1.0));
@@ -69,7 +86,8 @@ TEST_CASE("test/crystal/TestFFTIndexing.cpp", "")
     }
     CHECK(peak_collection.numberOfPeaks() >= 5900);
 
-    nsx::AutoIndexer* const auto_indexer = experiment.autoIndexer();
+    nsx::AutoIndexer* auto_indexer = experiment.autoIndexer();
+    auto_indexer->setHandler(logger);
     auto_indexer->setParameters(params);
     auto_indexer->autoIndex(peak_collection.getPeakList());
 
@@ -78,8 +96,10 @@ TEST_CASE("test/crystal/TestFFTIndexing.cpp", "")
     CHECK(solutions.front().second > 99.9);
 
     const Eigen::Matrix3d autoBasis = solutions.front().first->basis();
-    const Eigen::Matrix3d E = autoBasis.inverse() * uc.basis();
+    std::cout << "Basis:\n" << autoBasis << std::endl;
 
+    // check for identity
+    const Eigen::Matrix3d E = autoBasis.inverse() * uc.basis();
     // square because of the orientation issue
     CHECK((E * E - Eigen::Matrix3d::Identity()).norm() < 1e-10);
 }
