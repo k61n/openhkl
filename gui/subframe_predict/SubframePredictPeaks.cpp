@@ -662,11 +662,15 @@ void SubframePredictPeaks::runPrediction()
         nsx::UnitCell* cell = gSession->currentProject()->experiment()->getUnitCell(
             _unit_cells->currentText().toStdString());
 
-        double d_min = _d_min->value();
-        double d_max = _d_max->value();
-        double radius = _radius->value();
-        double n_frames = _n_frames->value();
-        int neighbors = _min_neighbors->value();
+        nsx::PredictionParameters params;
+        params.detector_range_min = _d_min_int->value();
+        params.detector_range_max = _d_max_int->value();
+        params.bkg_begin = _bkg_start_int->value();
+        params.bkg_end = _bkg_end_int->value();
+        params.neighbour_range_pixels = _radius_int->value();
+        params.neighbour_range_frames = _n_frames_int->value();
+        params.fit_center = _fit_center->isChecked();
+        params.fit_cov = _fit_covariance->isChecked();
         int interpol = _interpolation->currentIndex();
 
         nsx::PeakInterpolation peak_interpolation = static_cast<nsx::PeakInterpolation>(interpol);
@@ -678,7 +682,7 @@ void SubframePredictPeaks::runPrediction()
             qDebug() << "Predicting peaks for numor " << ++current_numor << " of " << data.size();
 
             std::vector<nsx::Peak3D*> predicted = nsx::predictPeaks(
-                lib, d, cell, d_min, d_max, radius, n_frames, neighbors, peak_interpolation);
+                lib, d, cell, peak_interpolation, params);
 
             for (nsx::Peak3D* peak : predicted)
                 predicted_peaks.push_back(peak);
@@ -727,10 +731,10 @@ void SubframePredictPeaks::runIntegration()
         params.detector_range_max = _d_max_int->value();
         params.bkg_begin = _bkg_start_int->value();
         params.bkg_end = _bkg_end_int->value();
-        params.neighbour_max_radius = _radius_int->value();
-        params.frame_range_max = _n_frames_int->value();
-        params.set_fit_center = _fit_center->isChecked();
-        params.fit_covariance = _fit_covariance->isChecked();
+        params.neighbour_range_pixels = _radius_int->value();
+        params.neighbour_range_frames = _n_frames_int->value();
+        params.fit_center = _fit_center->isChecked();
+        params.fit_cov = _fit_covariance->isChecked();
 
         integrator->setHandler(handler);
 

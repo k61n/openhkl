@@ -89,6 +89,7 @@ using Eigen::Quaterniond;
 #include "base/parser/Parser.h"
 #include "base/utils/CSV.h"
 #include "base/utils/Factory.h"
+#include "base/utils/Logger.h"
 #include "base/utils/Path.h"
 #include "base/utils/ProgressHandler.h"
 #include "base/utils/ISingleton.h"
@@ -283,6 +284,7 @@ ArrayExtendCRef(ReciprocalVector, double);
 ArrayExtendVal (MillerIndex, int);
 ArrayExtendCRef(MillerIndex, int);
 
+%include "base/utils/Logger.h"
 %include "tables/crystal/SpaceGroup.h"
 %include "tables/crystal/NiggliReduction.h"
 %include "tables/crystal/UnitCell.h"
@@ -337,8 +339,8 @@ ArrayExtendCRef(MillerIndex, int);
 %include "core/data/DataTypes.h"
 %template(DataList) std::vector<std::shared_ptr<nsx::DataSet>>;
 
-%include "core/shape/ShapeLibrary.h"
 %include "core/shape/IPeakIntegrator.h"
+%include "core/shape/ShapeLibrary.h"
 
 %template(ConvolverParameters) std::map<std::string,double>;
 %include "core/convolve/Convolver.h"

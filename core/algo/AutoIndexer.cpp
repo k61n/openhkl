@@ -28,6 +28,23 @@
 
 namespace nsx {
 
+void IndexerParameters::log(const Level& level)
+{
+    nsxlog(level, "Autoindexer parameters:");
+    nsxlog(level, "maxdim             =", maxdim);
+    nsxlog(level, "nSolutions         =", nSolutions);
+    nsxlog(level, "nVertices          =", nVertices);
+    nsxlog(level, "subdiv             =", subdiv);
+    nsxlog(level, "indexingTolerance  =", indexingTolerance);
+    nsxlog(level, "niggliTolerance    =", niggliTolerance);
+    nsxlog(level, "gruberTolerance    =", gruberTolerance);
+    nsxlog(level, "niggliReduction    =", niggliReduction);
+    nsxlog(level, "minUnitCellVolume  =", minUnitCellVolume);
+    nsxlog(level, "unitCellEquivalenceTolerance =", unitCellEquivalenceTolerance);
+    nsxlog(level, "solutionCutoff     =", solutionCutoff);
+    nsxlog(level, "frequencyTolerance =", frequencyTolerance);
+}
+
 AutoIndexer::AutoIndexer() : _solutions(), _handler(nullptr)
 {
     _params = IndexerParameters();
@@ -54,6 +71,7 @@ void AutoIndexer::autoIndex(const std::vector<Peak3D*>& peaks)
 void AutoIndexer::autoIndex(PeakCollection* peaks)
 {
     nsxlog(Level::Info, "AutoIndexer::autoindex: indexing PeakCollection", peaks->name());
+    _params.log(Level::Info);
     std::vector<Peak3D*> peak_list = peaks->getPeakList();
     autoIndex(peak_list);
 }

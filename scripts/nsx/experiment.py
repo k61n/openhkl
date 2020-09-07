@@ -178,9 +178,10 @@ class Experiment:
         ltype = nsx.listtype_FOUND
         integrator_type = "Pixel sum integrator"
         integrator = self._expt.getIntegrator(integrator_type)
-        integrator.setPeakEnd(self._params.integration['peak_area'])
-        integrator.setBkgBegin(self._params.integration['background_lower'])
-        integrator.setBkgEnd(self._params.integration['background_upper'])
+        integrator_params = self._expt.int_params
+        integrator_params.peak_end = self._params.integration['peak_area']
+        integrator_params.bkg_begin = self._params.integration['background_lower']
+        integrator_params.bkg_end = self._params.integration['background_upper']
         self.log(f"Integrator type: {integrator_type}")
         self.log(f"peak_area = {self._params.integration['peak_area']}")
         self.log(f"background_lower = {self._params.integration['background_lower']}")
@@ -299,19 +300,19 @@ class Experiment:
         Build the shape library for predicting the weak peaks
         '''
         self.log(f"Building shape library...")
-        shapelib_params = nsx.ShapeLibParameters()
+        params = self._expt.shape_params
 
-        shapelib_params.kabsch = self._params.shapelib['kabsch']
-        shapelib_params.sigma_m = self._params.shapelib['sigma_m']
-        shapelib_params.sigma_d = self._params.shapelib['sigma_d']
-        shapelib_params.nx = self._params.shapelib['nx']
-        shapelib_params.ny = self._params.shapelib['ny']
-        shapelib_params.nz = self._params.shapelib['nz']
-        shapelib_params.peak_scale = self._params.shapelib['peak_scale']
-        shapelib_params.d_min = self._params.shapelib['shapelib_d_min']
-        shapelib_params.d_max = self._params.shapelib['shapelib_d_max']
-        shapelib_params.bkg_begin = self._params.shapelib['bkg_begin']
-        shapelib_params.bkg_end = self._params.shapelib['bkg_end']
+        params.kabsch = self._params.shapelib['kabsch']
+        params.sigma_m = self._params.shapelib['sigma_m']
+        params.sigma_d = self._params.shapelib['sigma_d']
+        params.nbins_x = self._params.shapelib['nx']
+        params.nbins_y = self._params.shapelib['ny']
+        params.nbins_z = self._params.shapelib['nz']
+        params.peak_end = self._params.shapelib['peak_scale']
+        params.detector_range_min = self._params.shapelib['shapelib_d_min']
+        params.detector_range_max = self._params.shapelib['shapelib_d_max']
+        params.bkg_begin = self._params.shapelib['bkg_begin']
+        params.bkg_end = self._params.shapelib['bkg_end']
         self.log(f"kabsch = {self._params.shapelib['kabsch']}")
         self.log(f"sigma_m = {self._params.shapelib['sigma_m']}")
         self.log(f"sigma_d = {self._params.shapelib['sigma_d']}")
@@ -323,11 +324,12 @@ class Experiment:
         self.log(f"d_max = {self._params.shapelib['shapelib_d_max']}")
         self.log(f"bkg_begin = {self._params.shapelib['bkg_begin']}")
         self.log(f"bkg_end = {self._params.shapelib['bkg_end']}")
+        params.log(1)
         # self._found_collection = self._expt.getPeakCollection(self._found_peaks)
         self._expt.assignUnitCell(self._found_collection)
         self._filtered_collection = self._expt.getPeakCollection(self._filtered_peaks)
         self._expt.assignUnitCell(self._filtered_collection)
-        self._expt.buildShapeLibrary(self._filtered_collection, shapelib_params)
+        self._expt.buildShapeLibrary(self._filtered_collection, params)
         self.log(f'Number of profiles = ' + str(self._filtered_collection.shapeLibrary().numberOfPeaks()))
 
     def predict_peaks(self, data, interpolation):
@@ -340,27 +342,27 @@ class Experiment:
                                'InverseDistance:': nsx.PeakInterpolation_InverseDistance,
                                'Intensity:': nsx.PeakInterpolation_Intensity }
         interpol = interpolation_types[interpolation]
-        prediction_params = nsx.PredictionParameters()
-        prediction_params.detector_range_min = self._params.prediction['prediction_d_min']
-        prediction_params.detector_range_max = self._params.prediction['prediction_d_max']
-        prediction_params.neighbour_max_radius = self._params.prediction['radius']
-        prediction_params.frame_range_max = self._params.prediction['frames']
-        prediction_params.bkg_begin = self._params.prediction['prediction_bkg_begin']
-        prediction_params.bkg_end = self._params.prediction['prediction_bkg_end']
-        prediction_params.peak_scale = self._params.prediction['prediction_scale']
-        prediction_params.set_fit_center = self._params.prediction['set_fit_center']
-        prediction_params.fit_covariance = self._params.prediction['fit_covariance']
-        prediction_params.min_neighbours = self._params.prediction['neighbours']
+        params = self._expt.predict_params
+        params.detector_range_min = self._params.prediction['prediction_d_min']
+        params.detector_range_max = self._params.prediction['prediction_d_max']
+        params.neighbour_range_pixels = self._params.prediction['radius']
+        params.neighbour_range_frames = self._params.prediction['frames']
+        params.bkg_begin = self._params.prediction['prediction_bkg_begin']
+        params.bkg_end = self._params.prediction['prediction_bkg_end']
+        params.peak_end = self._params.prediction['prediction_scale']
+        params.set_fit_center = self._params.prediction['set_fit_center']
+        params.fit_covariance = self._params.prediction['fit_covariance']
 
         self.log(f"d_min = {self._params.prediction['prediction_d_min']}")
         self.log(f"d_max = {self._params.prediction['prediction_d_max']}")
         self.log(f"radius = {self._params.prediction['radius']}")
         self.log(f"frames = {self._params.prediction['frames']}")
+        params.min_neighbours = self._params.prediction['neighbours']
         self._expt.predictPeaks(self._predicted_peaks, self._filtered_collection,
-                                prediction_params, interpol)
+                                params, interpol)
         self._predicted_collection = self._expt.getPeakCollection(self._predicted_peaks)
         self._expt.integratePredictedPeaks(integrator, self._predicted_collection,
-                                           self._filtered_collection.shapeLibrary(), prediction_params)
+                                           self._filtered_collection.shapeLibrary(), params)
 
     def get_peak_collection(self, name):
         return self._expt.getPeakCollection(name)

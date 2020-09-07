@@ -320,9 +320,11 @@ void ShapeLibraryDialog::build()
 
     nsx::ShapeIntegrator integrator(&_library, aabb, nx_val, ny_val, nz_val);
     integrator.setHandler(handler);
-    integrator.setPeakEnd(peak_scale_val);
-    integrator.setBkgBegin(bkg_begin_val);
-    integrator.setBkgEnd(bkg_end_val);
+    nsx::IntegrationParameters params{};
+    params.peak_end = peak_scale_val;
+    params.bkg_begin = bkg_begin_val;
+    params.bkg_end = bkg_end_val;
+    integrator.setParameters(params);
 
     for (nsx::sptrDataSet data : _data) {
         // gLogger->log(

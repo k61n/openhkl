@@ -77,9 +77,11 @@ TEST_CASE("test/integrate/Test_6_12_38.cpp", "")
     std::vector<nsx::Peak3D*> peaks;
     peaks.push_back(&peak);
     nsx::PixelSumIntegrator integrator(false, false);
-    integrator.setPeakEnd(2.7);
-    integrator.setPeakEnd(3.0);
-    integrator.setPeakEnd(4.0);
+    nsx::IntegrationParameters params{};
+    params.peak_end = 2.7;
+    params.bkg_begin = 3.0;
+    params.bkg_end = 4.0;
+    integrator.setParameters(params);
     integrator.integrate(peaks, nullptr, dataf);
 
     CHECK(peak.enabled() == true);
