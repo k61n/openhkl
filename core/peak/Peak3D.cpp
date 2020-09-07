@@ -17,6 +17,7 @@
 #include "core/data/DataSet.h"
 #include "core/instrument/Diffractometer.h"
 #include "core/raw/IDataReader.h"
+#include "tables/crystal/MillerIndex.h"
 
 #include <algorithm>
 #include <cmath>
@@ -285,6 +286,16 @@ double Peak3D::bkgBegin() const
 double Peak3D::bkgEnd() const
 {
     return _bkgEnd;
+}
+
+const MillerIndex& Peak3D::hkl() const
+{
+    return _hkl;
+}
+
+void Peak3D::setMillerIndices()
+{
+    _hkl = MillerIndex(q(), *_unitCell);
 }
 
 } // namespace nsx

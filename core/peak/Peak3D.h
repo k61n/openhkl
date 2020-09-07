@@ -23,6 +23,7 @@
 namespace nsx {
 
 class IPeakIntegrator;
+class MillerIndex;
 
 //! Stores integrated peaks, including their shape and location.
 
@@ -124,6 +125,10 @@ class Peak3D {
     void setRawIntensity(const Intensity& i);
     //! Returns peak center at the given frame
     // unused --- DetectorEvent predictCenter(double frame) const;
+    //! Get the Miller indices for this peak
+    const MillerIndex& hkl() const;
+    //! Set the Miller indices given the q-vector and unit cell
+    void setMillerIndices();
 
 #ifndef SWIG
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
@@ -142,6 +147,8 @@ class Peak3D {
     double _bkgBegin;
     //! Shape scale factor for end of background
     double _bkgEnd;
+    //! Miller indices calculated during autoindexing
+    MillerIndex _hkl;
 
     const UnitCell* _unitCell;
 

@@ -126,8 +126,10 @@ void UnitCellHandler::assignUnitCell(PeakCollection* peaks)
 {
     std::string name = "accepted";
     std::vector<Peak3D*> peak_list = peaks->getPeakList();
-    for (auto peak : peak_list)
+    for (auto peak : peak_list) {
         peak->setUnitCell(getUnitCell(name));
+        peak->setMillerIndices();
+    }
 }
 
 std::vector<std::string> UnitCellHandler::getCompatibleSpaceGroups() const

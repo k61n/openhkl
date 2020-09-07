@@ -18,7 +18,7 @@
 #include "gui/models/Session.h"
 #include <QColor>
 
-ExperimentModel::ExperimentModel(QObject* parent) : QAbstractTableModel(parent) {}
+ExperimentModel::ExperimentModel(QObject* parent) : QAbstractTableModel(parent) { }
 
 int ExperimentModel::columnCount(const QModelIndex& /*parent*/) const
 {

@@ -640,9 +640,9 @@ void SubframePredictPeaks::updateDatasetParameters(int idx)
     _figure_spin->setMinimum(0);
 }
 
-void SubframePredictPeaks::grabPredictorParameters() {}
+void SubframePredictPeaks::grabPredictorParameters() { }
 
-void SubframePredictPeaks::setPredictorParameters() const {}
+void SubframePredictPeaks::setPredictorParameters() const { }
 
 void SubframePredictPeaks::runPrediction()
 {
@@ -681,8 +681,8 @@ void SubframePredictPeaks::runPrediction()
         for (nsx::sptrDataSet d : data) {
             qDebug() << "Predicting peaks for numor " << ++current_numor << " of " << data.size();
 
-            std::vector<nsx::Peak3D*> predicted = nsx::predictPeaks(
-                lib, d, cell, peak_interpolation, params);
+            std::vector<nsx::Peak3D*> predicted =
+                nsx::predictPeaks(lib, d, cell, peak_interpolation, params);
 
             for (nsx::Peak3D* peak : predicted)
                 predicted_peaks.push_back(peak);

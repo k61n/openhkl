@@ -27,7 +27,7 @@ SymOp::SymOp(std::string generator)
     _matrix = parseJonesSymbol(generator);
 }
 
-SymOp::SymOp(const affineTransformation& symmetryOperation) : _matrix(symmetryOperation) {}
+SymOp::SymOp(const affineTransformation& symmetryOperation) : _matrix(symmetryOperation) { }
 
 bool SymOp::operator==(const SymOp& other) const
 {

@@ -127,10 +127,8 @@ void PeakFilter::filterExtincted(PeakCollection* peak_collection) const
     for (int i = 0; i < peak_collection->numberOfPeaks(); ++i) {
         nsx::Peak3D* peak_ptr = peak_collection->getPeak(i);
         if (peak_ptr->caughtByFilter()) {
-            const nsx::UnitCell* unit_cell = peak_ptr->unitCell();
-            const SpaceGroup group(unit_cell->spaceGroup());
-            const MillerIndex hkl(peak_ptr->q(), *(unit_cell));
-            if (group.isExtinct(hkl))
+            const SpaceGroup group(peak_ptr->unitCell()->spaceGroup());
+            if (group.isExtinct(peak_ptr->hkl()))
                 peak_ptr->rejectYou(true);
         }
     }
@@ -232,9 +230,7 @@ void PeakFilter::filterIndexed(PeakCollection* peak_collection) const
     for (int i = 0; i < peak_collection->numberOfPeaks(); ++i) {
         nsx::Peak3D* peak_ptr = peak_collection->getPeak(i);
         if (peak_ptr->caughtByFilter()) {
-            const nsx::UnitCell* unit_cell = peak_ptr->unitCell();
-            const MillerIndex hkl(peak_ptr->q(), *unit_cell);
-            if (hkl.indexed(_unit_cell_tolerance))
+            if (peak_ptr->hkl().indexed(_unit_cell_tolerance))
                 peak_ptr->caughtYou(true);
             else
                 peak_ptr->rejectYou(true);
@@ -261,8 +257,7 @@ void PeakFilter::filterIndexTolerance(PeakCollection* peak_collection) const
         auto cell = peak_ptr->unitCell();
         if (!cell)
             continue;
-        MillerIndex miller_index(peak_ptr->q(), *cell);
-        if (miller_index.indexed(cell->indexingTolerance()))
+        if (peak_ptr->hkl().indexed(cell->indexingTolerance()))
             peak_ptr->caughtYou(true);
         else
             peak_ptr->rejectYou(true);

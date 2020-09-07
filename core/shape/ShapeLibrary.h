@@ -60,8 +60,9 @@ enum class PeakInterpolation { NoInterpolation = 0, InverseDistance = 1, Intensi
 struct FitData;
 
 //! Helper function for predicting peaks
-std::vector<Peak3D*> predictPeaks(const ShapeLibrary* library, const sptrDataSet data,
-    const UnitCell* unit_cell, PeakInterpolation interpolation, const PredictionParameters& params);
+std::vector<Peak3D*> predictPeaks(
+    const ShapeLibrary* library, const sptrDataSet data, const UnitCell* unit_cell,
+    PeakInterpolation interpolation, const PredictionParameters& params);
 
 //! Store a library of peak shapes, to be used for peak prediction and integration.
 
