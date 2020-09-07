@@ -54,8 +54,11 @@ SourceProperty::SourceProperty() : QWidget()
     if (exp < 0)
         _monochromators->addItems(list);
     else {
-        const std::vector<nsx::Monochromator>& monos =
-            gSession->currentProject()->experiment()->getDiffractometer()->source().monochromators();
+        const std::vector<nsx::Monochromator>& monos = gSession->currentProject()
+                                                           ->experiment()
+                                                           ->getDiffractometer()
+                                                           ->source()
+                                                           .monochromators();
         for (nsx::Monochromator m : monos)
             list.push_back(QString::fromStdString(m.name()));
         _monochromators->addItems(list);

@@ -100,9 +100,7 @@ void PeakCollectionItem::sort(int column, Qt::SortOrder order)
                 const nsx::UnitCell* cell_1 = p1->peak()->unitCell();
                 const nsx::UnitCell* cell_2 = p2->peak()->unitCell();
                 if (cell_1 && cell_2) {
-                    const nsx::MillerIndex miller_index1(p1->peak()->q(), *cell_1);
-                    const nsx::MillerIndex miller_index2(p2->peak()->q(), *cell_2);
-                    return (miller_index1[0] < miller_index2[0]);
+                    return (p1->peak()->hkl().h() < p2->peak()->hkl().h());
                 } else {
                     return ((cell_1 != nullptr) < (cell_2 != nullptr));
                 }
@@ -114,9 +112,7 @@ void PeakCollectionItem::sort(int column, Qt::SortOrder order)
                 const nsx::UnitCell* cell_1 = p1->peak()->unitCell();
                 const nsx::UnitCell* cell_2 = p2->peak()->unitCell();
                 if (cell_1 && cell_2) {
-                    const nsx::MillerIndex miller_index1(p1->peak()->q(), *cell_1);
-                    const nsx::MillerIndex miller_index2(p2->peak()->q(), *cell_2);
-                    return (miller_index1[1] < miller_index2[1]);
+                    return (p1->peak()->hkl().k() < p2->peak()->hkl().k());
                 } else {
                     return ((cell_1 != nullptr) < (cell_2 != nullptr));
                 }
@@ -128,9 +124,7 @@ void PeakCollectionItem::sort(int column, Qt::SortOrder order)
                 const nsx::UnitCell* cell_1 = p1->peak()->unitCell();
                 const nsx::UnitCell* cell_2 = p2->peak()->unitCell();
                 if (cell_1 && cell_2) {
-                    const nsx::MillerIndex miller_index1(p1->peak()->q(), *cell_1);
-                    const nsx::MillerIndex miller_index2(p2->peak()->q(), *cell_2);
-                    return (miller_index1[2] < miller_index2[2]);
+                    return (p1->peak()->hkl().l() < p2->peak()->hkl().l());
                 } else {
                     return ((cell_1 != nullptr) < (cell_2 != nullptr));
                 }

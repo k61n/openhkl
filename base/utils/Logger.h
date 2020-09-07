@@ -38,8 +38,7 @@ class Logger {
     //! Add timestamped messages to log. Variadic function takes int or Level as first
     //! argument (the print level), followed by a list of messages of arbitrary type that
     //! can be added to an ofstream (the messages)
-    template <typename... T>
-    void log(const Level& verbosity, const T&... messages)
+    template <typename... T> void log(const Level& verbosity, const T&... messages)
     {
         if (verbosity <= _max_print_level) {
             _ofs << time() << " " << static_cast<int>(verbosity) << " ";
@@ -63,8 +62,7 @@ class Logger {
 
 //! Global logger function (prefixed with "nsx" to facilitate grepping)
 //! Usage: nsxlog(Level::Warning, "your message", 1, 3.14, "test")
-template <typename... T>
-inline void nsxlog(const Level& level, const T&... messages)
+template <typename... T> inline void nsxlog(const Level& level, const T&... messages)
 {
     Logger::instance().log(level, messages...);
 }

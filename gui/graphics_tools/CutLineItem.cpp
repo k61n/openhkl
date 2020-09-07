@@ -18,9 +18,9 @@
 #include "gui/graphics/SimplePlot.h"
 #include <Eigen/Dense>
 
-CutLineItem::CutLineItem(nsx::sptrDataSet data) : CutterItem(data), _nPoints(10) {}
+CutLineItem::CutLineItem(nsx::sptrDataSet data) : CutterItem(data), _nPoints(10) { }
 
-CutLineItem::~CutLineItem() {}
+CutLineItem::~CutLineItem() { }
 
 void CutLineItem::plot(SXPlot* plot)
 {

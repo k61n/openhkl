@@ -51,10 +51,9 @@ void PeakItemGraphic::redraw()
     QString peak_label;
     const nsx::UnitCell* unit_cell = _peak->unitCell();
     if (unit_cell) {
-        const nsx::MillerIndex miller_index(_peak->q(), *unit_cell);
-        if (miller_index.indexed(unit_cell->indexingTolerance())) {
-            peak_label =
-                QString("%1,%2,%3").arg(miller_index[0]).arg(miller_index[1]).arg(miller_index[2]);
+        nsx::MillerIndex hkl = _peak->hkl();
+        if (hkl.indexed(unit_cell->indexingTolerance())) {
+            peak_label = QString("%1,%2,%3").arg(hkl.h()).arg(hkl.k()).arg(hkl.l());
         } else {
             peak_label = "not indexed";
         }
@@ -201,10 +200,10 @@ void PeakItemGraphic::plot(SXPlot* plot)
     QString info;
 
     if (const nsx::UnitCell* cell = _peak->unitCell()) {
-        const nsx::MillerIndex miller_index(_peak->q(), *cell);
-        if (miller_index.indexed(cell->indexingTolerance())) {
-            info = "(h,k,l):" + QString::number(miller_index[0]) + ","
-                + QString::number(miller_index[1]) + "," + QString::number(miller_index[2]);
+        nsx::MillerIndex hkl = _peak->hkl();
+        if (hkl.indexed(cell->indexingTolerance())) {
+            info = "(h,k,l):" + QString::number(hkl.h()) + "," + QString::number(hkl.k()) + ","
+                + QString::number(hkl.l());
         } else {
             info = "unindexed";
         }
