@@ -123,7 +123,7 @@ class Experiment {
     int numUnitCells() const;
     //! Check solution against reference cell and accept if within tolerances
     bool checkAndAssignUnitCell(PeakCollection* peaks, double length_tol, double angle_tol);
-    //! Assign unit cell to a peak collection
+    //! Assign unit cell to a peak collection, compute Miller indices from q and cell
     void assignUnitCell(PeakCollection* peaks);
     //! Set the reference cell
     void setReferenceCell(double a, double b, double c, double alpha, double beta, double gamma);
@@ -212,7 +212,6 @@ class Experiment {
     // Objects containing quality metrics
     DataQuality _data_quality;
     DataResolution _data_resolution; //!< Data quality per resolution shell
-
 };
 
 } // namespace nsx

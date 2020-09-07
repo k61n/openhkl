@@ -103,7 +103,7 @@ void IntegrationHandler::integratePredictedPeaks(
     nsxlog(Level::Info, "IntegrationHandler::integratePredictedPeaks");
     IPeakIntegrator* integrator = getIntegrator(integrator_name);
     integrator->setParameters(params);
-    params.log(Level::Debug);
+    params.log(Level::Info);
     nsx::PeakFilter filter;
     filter.resetFiltering(peak_collection);
     filter.setDRange(std::array<double, 2UL>{params.detector_range_min, params.detector_range_max});

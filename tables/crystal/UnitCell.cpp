@@ -19,8 +19,8 @@
 
 #include "base/fit/Minimizer.h"
 #include "base/geometry/ReciprocalVector.h"
-#include "base/utils/Units.h"
 #include "base/utils/Logger.h"
+#include "base/utils/Units.h"
 #include "tables/crystal/GruberReduction.h"
 #include "tables/crystal/MillerIndex.h"
 #include "tables/crystal/NiggliReduction.h"
@@ -331,8 +331,9 @@ std::vector<MillerIndex> UnitCell::generateReflectionsInShell(
         }
     }
 
-    nsxlog(Level::Info, "UnitCell::generateReflectionsInShell: generated", hkls.size(),
-           "hkl in d-range [", dmin, ",", dmax, "]");
+    nsxlog(
+        Level::Info, "UnitCell::generateReflectionsInShell: generated", hkls.size(),
+        "hkl in d-range [", dmin, ",", dmax, "]");
 
     return hkls;
 }

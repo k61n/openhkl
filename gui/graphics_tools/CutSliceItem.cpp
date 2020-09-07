@@ -28,7 +28,7 @@ CutSliceItem::CutSliceItem(nsx::sptrDataSet data, bool horizontal)
 {
 }
 
-CutSliceItem::~CutSliceItem() {}
+CutSliceItem::~CutSliceItem() { }
 
 void CutSliceItem::plot(SXPlot* plot)
 {
