@@ -1,5 +1,3 @@
-include(ExternalData)
-
 configure_file(../cpp/crystal/lattices.dat lattices.dat COPYONLY)
 configure_file(../cpp/crystal/niggli_lattices.dat niggli_lattices.dat COPYONLY)
 configure_file(../cpp/crystal/CsOsO_15K.raf CsOsO_15K.raf COPYONLY)
