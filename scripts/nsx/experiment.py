@@ -324,8 +324,6 @@ class Experiment:
         self.log(f"d_max = {self._params.shapelib['shapelib_d_max']}")
         self.log(f"bkg_begin = {self._params.shapelib['bkg_begin']}")
         self.log(f"bkg_end = {self._params.shapelib['bkg_end']}")
-        params.log(1)
-        # self._found_collection = self._expt.getPeakCollection(self._found_peaks)
         self._expt.assignUnitCell(self._found_collection)
         self._filtered_collection = self._expt.getPeakCollection(self._filtered_peaks)
         self._expt.assignUnitCell(self._filtered_collection)

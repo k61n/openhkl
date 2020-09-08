@@ -1,5 +1,3 @@
-include(ExternalData)
-
 configure_file(../cpp/crystal/lattices.dat lattices.dat COPYONLY)
 configure_file(../cpp/crystal/niggli_lattices.dat niggli_lattices.dat COPYONLY)
 configure_file(../cpp/crystal/CsOsO_15K.raf CsOsO_15K.raf COPYONLY)
@@ -26,26 +24,21 @@ configure_file(../cpp/crystal/crystal_database.csv crystal_database.csv COPYONLY
 configure_file(../cpp/crystal/crystallography.tsv crystallography.tsv COPYONLY)
 configure_file(../cpp/crystal/714898.hdf 714898.hdf COPYONLY)
 
-configure_file(../python/data/md5/FutA.nsx.md5 md5/FutA.nsx.md5 COPYONLY)
-configure_file(../python/data/md5/FutA-indexed.nsx.md5 md5/FutA-indexed.nsx.md5 COPYONLY)
-configure_file(../python/data/md5/p16106_00029299.tiff.md5 md5/p16106_00029299.tiff.md5 COPYONLY)
-configure_file(../python/data/md5/p16106_00029300.tiff.md5 md5/p16106_00029300.tiff.md5 COPYONLY)
-configure_file(../python/data/md5/p16106_00029301.tiff.md5 md5/p16106_00029301.tiff.md5 COPYONLY)
-configure_file(../python/data/md5/p16106_00029302.tiff.md5 md5/p16106_00029302.tiff.md5 COPYONLY)
-configure_file(../python/data/md5/p16106_00029303.tiff.md5 md5/p16106_00029303.tiff.md5 COPYONLY)
-configure_file(../python/data/md5/p16106_00029304.tiff.md5 md5/p16106_00029304.tiff.md5 COPYONLY)
-configure_file(../python/data/md5/p16106_00029305.tiff.md5 md5/p16106_00029305.tiff.md5 COPYONLY)
-
-message("start downloading")
-set(algo md5)
-message("%(algo)")
-set(ExternalData_URL_TEMPLATES
-    "file:///%(algo)/%(hash)"
-    "http://apps.jcns.fz-juelich.de/datasamples/nsxtool/BioDiff/FutA/crystal9/%(hash)"
-)
-ExternalData_Add_Test(TestAutoIndexerData
-	NAME TestAutoIndexer
-	COMMAND TestAutoIndexer.py --input DATA{md5/FutA.nsx} -t
-)
-ExternalData_Add_Target(TestAutoIndexerData)
-message("end downloading")
+# Dealing with large test data files -- zamaan
+set(test_data_url http://apps.jcns.fz-juelich.de/datasamples/nsxtool/BioDiff/FutA/crystal9)
+set(test_data_dir test/data)
+set(test_files p16106_00029299.tiff 
+               p16106_00029300.tiff 
+               p16106_00029301.tiff 
+               p16106_00029302.tiff 
+               p16106_00029303.tiff 
+               p16106_00029304.tiff 
+               p16106_00029305.tiff
+               FutA.nsx
+               FutA-indexed.nsx)
+foreach(test_file ${test_files})
+  if(NOT EXISTS ${test_data_dir}/${test_file})
+    message(STATUS "Downloading test data ${test_data_url}/${test_file}")
+    file(DOWNLOAD ${test_data_url}/${test_file} ${test_data_dir}/${test_file})
+  endif()
+endforeach()

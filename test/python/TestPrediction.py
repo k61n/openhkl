@@ -19,7 +19,7 @@ class TestPrediction(unittest.TestCase):
 
         # build the shape library
         data = expt.getAllData()
-        shapelib_params = nsx.ShapeLibParameters()
+        shapelib_params = expt.shape_params
         shapelib_params.kabsch = True
         shapelib_params.sigma_m = 0.23
         shapelib_params.sigma_d = 0.33
@@ -36,7 +36,7 @@ class TestPrediction(unittest.TestCase):
         self.assertEqual(nprofiles, 63)
 
         # predict the peaks
-        prediction_params = nsx.PredictionParameters()
+        prediction_params = expt.predict_params
         prediction_params.detector_range_min = 1.5
         prediction_params.detector_range_max = 50.0
         prediction_params.neighbour_max_radius = 400.0

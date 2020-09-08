@@ -40,9 +40,11 @@ class TestPeakFinder(unittest.TestCase):
 
         # Integrate the peaks
         integrator = expt.getIntegrator("Pixel sum integrator")
-        integrator.setPeakEnd(3.0)
-        integrator.setBkgBegin(3.0)
-        integrator.setBkgEnd(6.0)
+        integrator_params = expt.int_params
+        integrator_params.peak_end = 3.0
+        integrator_params.bkg_begin = 3.0
+        integrator_params.bkg_end = 6.0
+        integrator.setParameters(integrator_params)
         expt.integrateFoundPeaks("Pixel sum integrator")
         expt.acceptFoundPeaks("found")
         found_peaks = expt.getPeakCollection("found")
