@@ -21,6 +21,7 @@
 #include "core/experiment/DataQuality.h"
 #include "core/experiment/PeakFinder.h"
 #include "core/instrument/Diffractometer.h"
+#include "core/loader/RawDataReader.h"
 #include "core/shape/IPeakIntegrator.h"
 #include "core/shape/PeakFilter.h"
 #include "core/statistics/MergedData.h"
@@ -193,6 +194,8 @@ class Experiment {
     IntegrationParameters int_params;
     ShapeLibParameters shape_params;
     PredictionParameters predict_params;
+    RawDataReaderParameters data_params;
+    IndexerParameters indexer_params;
 
  private: // private variables
     std::string _name; //!< The name of this experiment

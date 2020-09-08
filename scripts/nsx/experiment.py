@@ -10,7 +10,7 @@ import sys
 import os.path
 import logging
 from pdb import set_trace
-sys.path.append("/home/zamaan/codes/nsxtool/logger/build/swig")
+sys.path.append("/home/zamaan/codes/nsxtool/develop/build/swig")
 sys.path.append("/G/sw/nsx/build/swig") # Joachim
 import pynsx as nsx
 
@@ -117,7 +117,7 @@ class Experiment:
         '''
         Load raw datafiles (.tiff)
         '''
-        data_params = nsx.RawDataReaderParameters()
+        data_params = self._expt.data_params
 
         data_params.wavelength = self._params.detector['wavelength']
         data_params.delta_omega = self._params.detector['delta_omega']
@@ -248,7 +248,7 @@ class Experiment:
         Overload autoindex to take a peak collection instead of a dataset
         '''
         self.log(f"Autoindexing peaks...")
-        autoindexer_params = nsx.IndexerParameters()
+        autoindexer_params = self._expt.indexer_params
         autoindexer_params.maxdim = self._params.autoindexer['max_dim']
         autoindexer_params.nSolutions = self._params.autoindexer['n_solutions']
         autoindexer_params.nVertices = self._params.autoindexer['n_vertices']
