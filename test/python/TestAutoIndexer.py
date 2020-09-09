@@ -35,12 +35,16 @@ class TestAutoIndexer(unittest.TestCase):
         autoindexer_params = nsx.IndexerParameters()
         autoindexer_params.maxdim = 200.0
         autoindexer_params.nSolutions = 15
-        autoindexer_params.nVertices = 2500
+        autoindexer_params.nVertices = 2300
         autoindexer_params.subdiv = 30
         autoindexer_params.indexingTolerance = 0.2
         autoindexer_params.minUnitCellVolume = 100.0
         autoindexer.setParameters(autoindexer_params)
         autoindexer.autoIndex(filtered_peaks)
+        # reference_cell = expt.getReferenceCell()
+        # accepted_cell = expt.getAcceptedCell()
+        # print("Reference cell = " + reference_cell.toString())
+        # autoindexer.printSolutions()
         self.assertTrue(expt.checkAndAssignUnitCell(filtered_peaks, 0.5, 0.5))  # boolean return value
 
 if __name__ == "__main__":
