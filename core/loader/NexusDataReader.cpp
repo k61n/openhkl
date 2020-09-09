@@ -29,12 +29,8 @@ NexusDataReader::NexusDataReader(const std::string& filename, Diffractometer* in
 
 Eigen::MatrixXi NexusDataReader::data(size_t frame)
 {
-    //std::cout << "NexusDataReader::data, this=" << std::hex << (void*)this << ", frame=" << std::dec << frame << std::endl;
     if (!_isOpened)
         open();
-
-    if(frame >= _nFrames)
-        throw std::runtime_error("Requested invalid frame " + std::to_string(frame));
 
     Eigen::Matrix<int, Eigen::Dynamic, Eigen::Dynamic, Eigen::ColMajor> m(_nRows, _nCols);
 

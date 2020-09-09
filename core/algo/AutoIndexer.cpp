@@ -110,8 +110,8 @@ void AutoIndexer::computeFFTSolutions(const std::vector<Peak3D*>& peaks)
     }
     if (_handler)
         _handler->log(
-            "Searching direct lattice vectors using " + std::to_string(qvects.size())
-            + " peaks defined on numors.");
+            "Searching direct lattice vectors using" + std::to_string(qvects.size())
+            + "peaks defined on numors:");
 
     // Find the best vectors via FFT
     std::vector<Eigen::RowVector3d> tvects = algo::findOnSphere(

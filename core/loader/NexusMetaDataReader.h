@@ -19,7 +19,6 @@
 
 #include <H5Cpp.h>
 
-
 namespace nsx {
 
 //! IDataReader for Nexus files. Base class for NexusDataReader and FakeDataReader.
