@@ -364,12 +364,12 @@ ArrayExtendCRef(MillerIndex, int);
 %include "core/experiment/DataQuality.h"
 %template(MergedPeakSet) std::set<nsx::MergedPeak>;
 
+%include "core/algo/AutoIndexer.h"
 %include "core/experiment/Experiment.h"
 %include "core/algo/DataReaderFactory.h"
 %include "core/algo/RefinementBatch.h"
 %include "core/algo/Refiner.h"
 %include "core/algo/FFTIndexing.h"
-%include "core/algo/AutoIndexer.h"
 
 %include "core/integration/MeanBackgroundIntegrator.h"
 %include "core/integration/Profile3DIntegrator.h"

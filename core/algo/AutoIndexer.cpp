@@ -12,11 +12,10 @@
 //
 //  ***********************************************************************************************
 
-#include "core/algo/AutoIndexer.h"
-
 #include "base/fit/FitParameters.h"
 #include "base/fit/Minimizer.h"
 #include "base/utils/Logger.h"
+#include "core/algo/AutoIndexer.h"
 #include "core/algo/FFTIndexing.h"
 #include "core/data/DataSet.h" // peak->data()->interpolatedState
 #include "core/shape/PeakFilter.h"
