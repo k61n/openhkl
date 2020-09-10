@@ -12,11 +12,10 @@
 //
 //  ***********************************************************************************************
 
-#include "core/algo/AutoIndexer.h"
-
 #include "base/fit/FitParameters.h"
 #include "base/fit/Minimizer.h"
 #include "base/utils/Logger.h"
+#include "core/algo/AutoIndexer.h"
 #include "core/algo/FFTIndexing.h"
 #include "core/data/DataSet.h" // peak->data()->interpolatedState
 #include "core/shape/PeakFilter.h"
@@ -111,8 +110,8 @@ void AutoIndexer::computeFFTSolutions(const std::vector<Peak3D*>& peaks)
     }
     if (_handler)
         _handler->log(
-            "Searching direct lattice vectors using " + std::to_string(qvects.size())
-            + " peaks defined on numors.");
+            "Searching direct lattice vectors using" + std::to_string(qvects.size())
+            + "peaks defined on numors:");
 
     // Find the best vectors via FFT
     std::vector<Eigen::RowVector3d> tvects = algo::findOnSphere(

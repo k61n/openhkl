@@ -117,7 +117,7 @@ class Experiment:
         '''
         Load raw datafiles (.tiff)
         '''
-        data_params = nsx.RawDataReaderParameters()
+        data_params = self._expt.data_params
 
         data_params.wavelength = self._params.detector['wavelength']
         data_params.delta_omega = self._params.detector['delta_omega']
@@ -248,7 +248,7 @@ class Experiment:
         Overload autoindex to take a peak collection instead of a dataset
         '''
         self.log(f"Autoindexing peaks...")
-        autoindexer_params = nsx.IndexerParameters()
+        autoindexer_params = self._expt.indexer_params
         autoindexer_params.maxdim = self._params.autoindexer['max_dim']
         autoindexer_params.nSolutions = self._params.autoindexer['n_solutions']
         autoindexer_params.nVertices = self._params.autoindexer['n_vertices']
@@ -324,8 +324,6 @@ class Experiment:
         self.log(f"d_max = {self._params.shapelib['shapelib_d_max']}")
         self.log(f"bkg_begin = {self._params.shapelib['bkg_begin']}")
         self.log(f"bkg_end = {self._params.shapelib['bkg_end']}")
-        params.log(1)
-        # self._found_collection = self._expt.getPeakCollection(self._found_peaks)
         self._expt.assignUnitCell(self._found_collection)
         self._filtered_collection = self._expt.getPeakCollection(self._filtered_peaks)
         self._expt.assignUnitCell(self._filtered_collection)
