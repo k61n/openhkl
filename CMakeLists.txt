@@ -52,11 +52,6 @@ if((CMAKE_CXX_COMPILER_ID STREQUAL "GNU") OR (CMAKE_CXX_COMPILER_ID MATCHES "Cla
                 " (older than 7.0) is not tested,"
                 " and not expected to work because of insufficient support for C++17")
         endif()
-
-        if(CMAKE_BUILD_TYPE MATCHES Debug)
-            add_compile_options(-ggdb -rdynamic)
-        endif()
-
         if(BUILD_OPTIMIZED_DEBUG)
             add_compile_options(-Og)
         endif()
