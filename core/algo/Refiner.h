@@ -58,6 +58,7 @@ class Refiner {
     void logChange();
 
  private:
+    UnitCell _unrefined_cell;
     UnitCell* _cell;
     std::vector<RefinementBatch> _batches;
 };

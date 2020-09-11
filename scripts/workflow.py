@@ -76,6 +76,7 @@ if not args.loadnsx:
         index = args.min_autoindex_frames
         count = 1
         while index < args.max_autoindex_frames:
+            cell_found = False
             try:
                 cell_found = expt.autoindex_dataset(data, 0, index, args.length_tol, args.angle_tol)
             except RuntimeError: # Not enough peaks to autoindex?
