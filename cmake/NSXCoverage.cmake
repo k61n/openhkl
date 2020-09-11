@@ -5,7 +5,6 @@
 set(coverage_ignore_dirs "'/usr/*'")
 list(APPEND coverage_ignore_dirs "'*/auto/*'")
 list(APPEND coverage_ignore_dirs "'*/test/*'")
-list(APPEND coverage_ignore_dirs "'*/3rdparty/*'")
 list(APPEND coverage_ignore_dirs "'*/build/*'")
 list(APPEND coverage_ignore_dirs "'*/build_server/*'")
 list(APPEND coverage_ignore_dirs "'*/debug/*'")
