@@ -458,6 +458,9 @@ class Experiment:
         self._found_collection = self._expt.getPeakCollection(self._found_peaks)
         self._filtered_collection = \
             self._expt.getPeakCollection(self._filtered_peaks)
+        if predicted:
+            self._predicted_collection = \
+                self._expt.getPeakCollection(self._filtered_peaks)
 
     def remove_peak_collection(self, name):
         '''
@@ -514,6 +517,9 @@ class Experiment:
     def check_peak_collections(self):
         self._expt.checkPeakCollections()
 
-    def refine(self, peak_collection, cell, data, n_batches):
+    def refine(self, n_batches):
+        peak_collection = self.get_peak_collection(self._filtered_peaks)
+        cell = self.get_accepted_cell()
+        data = self.get_data()[0]
         peaks = self.get_peak_collection(self._predicted_peaks)
         self._expt.refine(peak_collection, peaks, cell, data, n_batches)
