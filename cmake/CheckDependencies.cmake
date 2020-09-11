@@ -19,7 +19,7 @@ if(BUILD_WITH_OPENMP)
 endif()
 
 ###### Find Eigen3
-include_directories(SYSTEM ${CMAKE_SOURCE_DIR}/3rdparty/eigen3)
+include_directories(SYSTEM ${EIGEN3_INCLUDE_DIR})
 
 ###### Find HDF5
 find_package(HDF5 COMPONENTS CXX REQUIRED)

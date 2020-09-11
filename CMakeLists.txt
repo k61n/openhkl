@@ -117,6 +117,10 @@ message(STATUS "libQCustomPlot: FOUND=${QCustomPlot_FOUND},
         VERSION=${QCustomPlot_VERSION}, LIB=${QCustomPlot_LIBRARIES},
         INCLUDE_DIR=${QCustomPlot_INCLUDE_DIR}")
 
+find_package(Eigen3 MODULE REQUIRED)
+message(STATUS "Eigen3: FOUND=${EIGEN3_FOUND},
+        VERSION=${EIGEN3_VERSION}, INCLUDE_DIR=${EIGEN3_INCLUDE_DIR}")
+
 include(CheckDependencies)
 
 ###################################################################################################
