@@ -61,6 +61,9 @@ class RefinementBatch {
     //! Determine if a given frame number is part of this batch.
     bool contains(double f) const;
 
+    //! Generate a name from the minimum/maximum frame
+    std::string name() const;
+
  private:
     double _fmin;
     double _fmax;

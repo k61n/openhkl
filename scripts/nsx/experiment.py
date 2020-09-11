@@ -515,4 +515,5 @@ class Experiment:
         self._expt.checkPeakCollections()
 
     def refine(self, peak_collection, cell, data, n_batches):
-        self._expt.refine(peak_collection, cell, data, n_batches)
+        peaks = self.get_peak_collection(self._predicted_peaks)
+        self._expt.refine(peak_collection, peaks, cell, data, n_batches)

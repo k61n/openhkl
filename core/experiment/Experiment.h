@@ -177,7 +177,9 @@ class Experiment {
         const std::string& name, PeakCollection* peaks, const PredictionParameters& params,
         PeakInterpolation interpol);
     //! Refine unit cell and instrument parameters
-    void refine(const PeakCollection* peaks, UnitCell* cell, DataSet* data, int n_batches);
+    void refine(
+        const PeakCollection* peaks, const PeakCollection* predicted_peaks, UnitCell* cell,
+        DataSet* data, int n_batches);
 
     //! Get resolution shells for quality metrics
     void computeQuality(

@@ -15,6 +15,7 @@
 #include <algorithm>
 #include <iterator>
 
+#include "base/utils/Logger.h"
 #include "core/algo/Refiner.h"
 #include "core/data/DataSet.h"
 #include "core/detector/DetectorEvent.h"
@@ -156,6 +157,15 @@ int Refiner::updatePredictions(std::vector<Peak3D*> peaks) const
         }
     }
     return updated;
+}
+
+void Refiner::logChange()
+{
+    nsxlog(Level::Info, "Original cell:", _cell->toString());
+    nsxlog(Level::Info, "Batch/Refined cell(s):");
+    for (const auto& batch : _batches) {
+        nsxlog(Level::Info, batch.name(), batch.cell()->toString());
+    }
 }
 
 } // namespace nsx

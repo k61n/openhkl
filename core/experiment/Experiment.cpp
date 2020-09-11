@@ -211,13 +211,30 @@ const UnitCell* Experiment::getReferenceCell() const
     return getUnitCell("reference");
 }
 
-void Experiment::refine(const PeakCollection* peaks, UnitCell* cell, DataSet* data, int n_batches)
+void Experiment::refine(
+    const PeakCollection* peaks, const PeakCollection* predicted_peaks, UnitCell* cell,
+    DataSet* data, int n_batches)
 {
+    nsxlog(Level::Info, "Refining peak collection", peaks->name());
     const unsigned int max_iter = 1000;
-    const std::vector<Peak3D*> peak_list = peaks->getPeakList();
+    std::vector<Peak3D*> peak_list = peaks->getPeakList();
     InstrumentStateList& states = data->instrumentStates();
     Refiner refiner(states, cell, peak_list, n_batches);
-    refiner.refine(max_iter);
+    refiner.refineUB();
+    refiner.refineSamplePosition();
+    refiner.refineSampleOrientation();
+    refiner.refineKi();
+    bool success = refiner.refine(max_iter);
+    if (success) {
+        nsxlog(Level::Info, "Refinement succeeded");
+        refiner.logChange();
+        peak_list = predicted_peaks->getPeakList();
+        int update = refiner.updatePredictions(peak_list);
+        nsxlog(Level::Info, update, "peaks updated");
+    } else {
+        nsxlog(Level::Info, "Refinement failed");
+    }
+
 }
 
 // Data handler methods
