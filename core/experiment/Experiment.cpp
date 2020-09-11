@@ -199,6 +199,8 @@ void Experiment::computeQuality(
     _data_resolution.computeQuality(
         d_min, d_max, n_shells, predicted, found, _peak_handler->getMergedPeaks()->spaceGroup(),
         friedel);
+    _data_quality.log();
+    _data_resolution.log();
 }
 
 const UnitCell* Experiment::getAcceptedCell() const
