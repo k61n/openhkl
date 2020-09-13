@@ -10,7 +10,6 @@ target_include_directories(${app}
     PRIVATE
     ${CMAKE_BINARY_DIR} # for manifest.h
     ${CMAKE_SOURCE_DIR}
-    ${CMAKE_SOURCE_DIR}/3rdparty
     ${Qt5Widgets_INCLUDE_DIRS}
     )
 
