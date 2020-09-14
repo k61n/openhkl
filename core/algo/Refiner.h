@@ -43,7 +43,9 @@ class Refiner {
     //! Sets the source ki in the given list of instrument states to be refined.
     void refineKi();
 
-    //! Perform the refinement with the maximum number of iterations as given.
+    //! Perform the refinement with the maximum number of iterations as given. N.B. the four
+    //! previous funcitons set the number of free parameters and at least one must be run
+    //! *before* refine
     bool refine(unsigned int max_iter = 100);
 
     //! Update the centers of predicted peaks, after refinement.
@@ -52,7 +54,11 @@ class Refiner {
     //! Returns the individual peak/frame batches used during refinement.
     const std::vector<RefinementBatch>& batches() const;
 
+    //! Write the initial and final cells to the log
+    void logChange();
+
  private:
+    UnitCell _unrefined_cell;
     UnitCell* _cell;
     std::vector<RefinementBatch> _batches;
 };

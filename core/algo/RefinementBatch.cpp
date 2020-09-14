@@ -13,6 +13,7 @@
 //  ***********************************************************************************************
 
 #include <algorithm>
+#include <iostream>
 #include <limits>
 
 #include "base/fit/Minimizer.h"
@@ -246,6 +247,13 @@ UnitCell* RefinementBatch::cell() const
 bool RefinementBatch::contains(double f) const
 {
     return (f > _fmin) && (f < _fmax);
+}
+
+std::string RefinementBatch::name() const
+{
+    std::ostringstream oss;
+    oss << _fmin << "-" << _fmax;
+    return oss.str();
 }
 
 } // namespace nsx

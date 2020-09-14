@@ -39,6 +39,8 @@ parser.add_argument('--autoindex', action='store_true', dest='autoindex', defaul
                     help='Autoindex the data')
 parser.add_argument('-v', '--verbose', action='store_true', dest='verbose', default=False,
                     help='Print extra output')
+parser.add_argument('--batches', action='store', dest='nbatches', type=int, default=20,
+                    help='Number of batches for refinement')
 args = parser.parse_args()
 
 params = Parameters()
@@ -76,6 +78,7 @@ if not args.loadnsx:
         index = args.min_autoindex_frames
         count = 1
         while index < args.max_autoindex_frames:
+            cell_found = False
             try:
                 cell_found = expt.autoindex_dataset(data, 0, index, args.length_tol, args.angle_tol)
             except RuntimeError: # Not enough peaks to autoindex?
@@ -122,6 +125,7 @@ else:
 
 if args.predicted:
     expt.load(predicted=args.predicted)
+    expt.set_space_group()
 else:
     pynsxprint("Building shape library...")
     all_data = expt.get_data()
@@ -130,8 +134,7 @@ else:
     expt.predict_peaks(all_data, 'None')
     expt.save(predicted=True) # Exporter does not  save shape library to HDF5 (yet)
 
-# expt.refine(peaks, cell, data, 1)
-
+expt.refine(args.nbatches)
 expt.check_peak_collections()
 pynsxprint("Merging peak collection...")
 expt.merge_peaks()

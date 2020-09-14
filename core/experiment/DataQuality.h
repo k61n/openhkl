@@ -37,6 +37,8 @@ struct DataQuality {
     double CCstar; //!< estimate of CC_{true} derived from CC_{1/2}
 
     void computeQuality(MergedData& merged_peaks);
+    virtual std::string toString() const;
+    void log() const;
 };
 
 struct ShellQuality : DataQuality {
@@ -44,6 +46,7 @@ struct ShellQuality : DataQuality {
     double dmax; //!< Upper limit of d for resolution shell
 
     void computeQuality(MergedData& merged_peaks, double d_min, double d_max);
+    std::string toString() const;
 };
 
 struct DataResolution {
@@ -52,6 +55,7 @@ struct DataResolution {
     void computeQuality(
         double d_min, double d_max, int n_shells, PeakCollection* predicted, PeakCollection* found,
         SpaceGroup spacegroup, bool friedel);
+    void log() const;
 };
 
 } // namespace nsx

@@ -21,6 +21,8 @@
 #include "base/geometry/ReciprocalVector.h"
 #include "base/utils/Logger.h"
 #include "base/utils/Units.h"
+#include "base/utils/Logger.h"
+#include "base/utils/Units.h"
 #include "tables/crystal/GruberReduction.h"
 #include "tables/crystal/MillerIndex.h"
 #include "tables/crystal/NiggliReduction.h"

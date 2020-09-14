@@ -38,7 +38,7 @@ class InstrumentState {
     //! Takes a direct vector in detector coordinates and returns kf in lab coordinates
     ReciprocalVector kfLab(const DirectVector& detector_position) const;
 
-    //! Returns source ki
+    //! Returns source wavevector k_i
     ReciprocalVector ki() const;
 
     //! Takes direct vector in detector coordinates and returns q in sample coordinates
