@@ -16,6 +16,7 @@
 #define NSX_CORE_EXPERIMENT_DATAQUALITY_H
 
 #include <vector>
+#include <string>
 
 namespace nsx {
 
@@ -37,7 +38,7 @@ struct DataQuality {
     double CCstar; //!< estimate of CC_{true} derived from CC_{1/2}
 
     void computeQuality(MergedData& merged_peaks);
-    virtual std::string toString() const;
+    std::string toString() const;
     void log() const;
 };
 

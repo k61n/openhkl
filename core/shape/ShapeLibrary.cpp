@@ -45,8 +45,6 @@ void ShapeLibParameters::log(const Level& level) const
     nsxlog(level, "nbins_x                =", nbins_x);
     nsxlog(level, "nbins_y                =", nbins_y);
     nsxlog(level, "nbins_z                =", nbins_z);
-    nsxlog(level, "sigma_divergence       =", sigma_divergence);
-    nsxlog(level, "sigma_mosaicity        =", sigma_mosaicity);
 }
 
 void PredictionParameters::log(const Level& level) const

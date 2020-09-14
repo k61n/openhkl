@@ -217,7 +217,6 @@ class Experiment {
     // Objects containing quality metrics
     DataQuality _data_quality;
     DataResolution _data_resolution; //!< Data quality per resolution shell
-
 };
 
 } // namespace nsx

@@ -303,8 +303,6 @@ class Experiment:
         params = self._expt.shape_params
 
         params.kabsch = self._params.shapelib['kabsch']
-        params.sigma_m = self._params.shapelib['sigma_m']
-        params.sigma_d = self._params.shapelib['sigma_d']
         params.nbins_x = self._params.shapelib['nx']
         params.nbins_y = self._params.shapelib['ny']
         params.nbins_z = self._params.shapelib['nz']
@@ -314,8 +312,6 @@ class Experiment:
         params.bkg_begin = self._params.shapelib['bkg_begin']
         params.bkg_end = self._params.shapelib['bkg_end']
         self.log(f"kabsch = {self._params.shapelib['kabsch']}")
-        self.log(f"sigma_m = {self._params.shapelib['sigma_m']}")
-        self.log(f"sigma_d = {self._params.shapelib['sigma_d']}")
         self.log(f"nx = {self._params.shapelib['nx']}")
         self.log(f"ny = {self._params.shapelib['ny']}")
         self.log(f"nz = {self._params.shapelib['nz']}")
