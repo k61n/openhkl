@@ -59,9 +59,7 @@ class Parameters:
                     'shapelib_d_max'   : 50.0,
                     'nx'               : 20,
                     'ny'               : 20,
-                    'nz'               : 20,
-                    'sigma_d'          : 0.33,
-                    'sigma_m'          : 0.23 }
+                    'nz'               : 20 }
 
     prediction  = { 'prediction_d_min' : 1.5,
                     'prediction_d_max' : 50.0,

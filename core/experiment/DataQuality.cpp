@@ -12,16 +12,16 @@
 //
 //  ***********************************************************************************************
 
-#include <iostream>
-#include <iomanip>
-#include "base/utils/Logger.h"
 #include "core/experiment/DataQuality.h"
+#include "base/utils/Logger.h"
 #include "core/shape/PeakCollection.h"
 #include "core/statistics/CC.h"
 #include "core/statistics/MergedData.h"
 #include "core/statistics/RFactor.h"
 #include "core/statistics/ResolutionShell.h"
 #include "tables/crystal/SpaceGroup.h"
+#include <iomanip>
+#include <iostream>
 
 namespace nsx {
 
@@ -111,7 +111,7 @@ void DataResolution::log() const
         << std::setw(8) << "eRmer" << std::setw(8) << "Rmea" << std::setw(8) << "eRmea"
         << std::setw(8) << "Rpim" << std::setw(8) << "eRpim" << std::setw(8) << "CChalf"
         << std::setw(8) << "Cstar";
-    for (auto shell : resolution){
+    for (auto shell : resolution) {
         oss << std::endl << shell.toString();
     }
     nsxlog(Level::Info, oss.str());

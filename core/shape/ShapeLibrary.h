@@ -36,8 +36,6 @@ struct ShapeLibParameters : public IntegrationParameters {
     int nbins_x = 20; //!< Number of x histogram bins for peak
     int nbins_y = 20; //!< Number of y histogram bins for peak
     int nbins_z = 20; //!< Number of z histogram bins for peak
-    double sigma_divergence = 0.33; //!< variance arising from beam divergence
-    double sigma_mosaicity = 0.23; //!< variance arising from crystal mosaicity
 
     void log(const Level& level) const;
 };

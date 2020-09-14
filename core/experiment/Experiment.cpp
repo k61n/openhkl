@@ -36,6 +36,7 @@
 #include "core/integration/Profile1DIntegrator.h"
 #include "core/integration/Profile3DIntegrator.h"
 #include "core/integration/ShapeIntegrator.h"
+#include "core/peak/PeakCoordinateSystem.h"
 #include "core/raw/IDataReader.h"
 #include "core/raw/MetaData.h"
 #include "core/statistics/CC.h"
@@ -117,6 +118,23 @@ void Experiment::buildShapeLibrary(PeakCollection* peaks, const ShapeLibParamete
     std::vector<Peak3D*> peak_list = peaks->getPeakList();
     std::vector<Peak3D*> fit_peaks;
 
+    // compute sigma_m and sigma_d
+    Eigen::Matrix3d cov;
+    cov.setZero();
+    for (auto peak : peak_list) {
+        PeakCoordinateSystem coord{peak};
+        Ellipsoid shape = peak->shape();
+        Eigen::Matrix3d J = coord.jacobian();
+        cov += J * shape.inverseMetric() * J.transpose();
+    }
+    cov /= peak_list.size();
+    double sigma_d = std::sqrt(0.5 * (cov(0, 0) + cov(1, 1)));
+    double sigma_m = std::sqrt(cov(2, 2));
+    nsxlog(
+        Level::Info, "Experiment::buildShapeLibrary: Beam divergence sigma and mosaicity sigma:");
+    nsxlog(Level::Info, "sigma_d = ", sigma_d);
+    nsxlog(Level::Info, "sigma_m = ", sigma_m);
+
     for (nsx::Peak3D* peak : peak_list) {
         if (!peak->enabled())
             continue;
@@ -141,8 +159,7 @@ void Experiment::buildShapeLibrary(PeakCollection* peaks, const ShapeLibParamete
     nsx::AABB aabb;
 
     if (params.kabsch_coords) {
-        const Eigen::Vector3d sigma(
-            params.sigma_divergence, params.sigma_divergence, params.sigma_mosaicity);
+        const Eigen::Vector3d sigma(sigma_d, sigma_d, sigma_m);
         aabb.setLower(-params.peak_end * sigma);
         aabb.setUpper(params.peak_end * sigma);
     } else {
@@ -236,7 +253,6 @@ void Experiment::refine(
     } else {
         nsxlog(Level::Info, "Refinement failed");
     }
-
 }
 
 // Data handler methods
