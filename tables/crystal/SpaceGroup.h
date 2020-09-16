@@ -57,6 +57,8 @@ class SpaceGroup {
     //! Returns whether two sets of indices are related by a symmetry up to Friedel reflection
     bool isFriedelEquivalent(
         const MillerIndex& miller_index1, const MillerIndex& miller_index2) const;
+    //! Return the symbol as a string
+    std::string toString() const;
 
  private:
     void generateGroupElements();

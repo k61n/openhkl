@@ -578,4 +578,9 @@ bool SpaceGroup::isFriedelEquivalent(const MillerIndex& hkl1, const MillerIndex&
     return false;
 }
 
+std::string SpaceGroup::toString() const
+{
+    return _symbol;
+}
+
 } // namespace nsx
