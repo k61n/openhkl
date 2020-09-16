@@ -40,7 +40,8 @@ class Parameters:
     filter =      { 'min_strength'     : 1.0,
                     'max_strength'     : 1.0e6,
                     'min_d_range'      : 1.5,
-                    'max_d_range'      : 50 }
+                    'max_d_range'      : 50,
+                    'extinct'          : False }
 
     autoindexer = { 'max_dim'          : 200.0,
                     'n_solutions'      : 10,

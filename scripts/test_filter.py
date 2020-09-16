@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 
 '''
-plotdetector.py
+test_filter.py
 
-Load data from a NSX HDF5 file, plot the peaks in the detector coordinate system
+Test the peak filter for NSXTool
 '''
 
 import argparse
@@ -14,17 +14,14 @@ from nsx.peakplot import PeakPlot
 from pdb import set_trace
 
 parser = argparse.ArgumentParser(description='NSXTool unit cell/instrument parameters refinement script')
-parser.add_argument('-n', '--name', type=str, dest='name',
-                    help='name of system', required=True)
+parser.add_argument('-n', '--name', type=str, dest='name', help='name of system', required=True)
 parser.add_argument('-d', '--detector', type=str, dest='detector',
                     help='Type of detector', required=True)
 parser.add_argument('-p', '--parameters', type=str, dest='paramfile',
                     default='parameters', help='File containing experiment paramters')
-parser.add_argument('--predicted', action='store_true', dest='predicted', default=False,
+parser.add_argument('--predicted', action='store_true', dest='predicted',
                     help='Saved data in .nsx has completed prediction step')
-parser.add_argument('--frames', type=int, nargs=2, dest='frame_reange', default=[0.10],
-                    help='Frames to using for refinement')
-parser.add_argument('-b', '--batches', type=int, dest='batches', default=1, required=True,
+parser.add_argument('-b', '--batches', type=int, dest='batches', default=10,
                     help='Number of batches of frames')
 
 args = parser.parse_args()
@@ -41,9 +38,13 @@ expt.set_logger()
 logger = expt.get_logger()
 expt.load(predicted=args.predicted)
 expt.set_space_group()
+found_peaks = expt.get_peak_collection('peaks')
 
-collection_name = "peaks"
-data = expt.get_data()[0]
-refinement_collection = expt.get_peak_collection(collection_name)
-cell = expt.get_accepted_cell()
-expt.refine(refinement_collection, cell, data, args.batches)
+npeaks = found_peaks.numberOfPeaks()
+params.filter['extinct'] = True
+ncaught = expt.filter_peaks(params.filter, found_peaks, 'filtered')
+pynsxprint("Filter caught " + str(ncaught) + " of " + str(npeaks) + " peaks")
+expt.refine(args.batches)
+npeaks = found_peaks.numberOfPeaks()
+ncaught = expt.filter_peaks(params.filter, found_peaks, 'filtered')
+pynsxprint("Filter caught " + str(ncaught) + " of " + str(npeaks) + " peaks")
