@@ -75,14 +75,19 @@ const std::string ProgressHandler::getStatus()
 
 void ProgressHandler::log(const std::string& message)
 {
-    std::lock_guard<std::mutex> lock(_mutex);
-    _log.push_back(message);
+    {
+        std::lock_guard<std::mutex> lock(_mutex);
+        _log.push_back(message);
+    }
+
+    // without this the logs are not shown unless setProgress is called
+    if (_callback)
+        _callback();
 }
 
 void ProgressHandler::log(const char* message)
 {
-    std::lock_guard<std::mutex> lock(_mutex);
-    _log.push_back(message);
+    log(std::string{message});
 }
 
 std::vector<std::string> ProgressHandler::getLog()
