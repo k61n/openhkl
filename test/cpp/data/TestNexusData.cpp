@@ -28,7 +28,7 @@
 
 
 #define OUTPUT_INTERMEDIATE
-#define ONLY_FIRST_FILE
+//#define ONLY_FIRST_FILE
 
 
 TEST_CASE("test/data/TestNexusData.cpp", "")
@@ -51,23 +51,25 @@ TEST_CASE("test/data/TestNexusData.cpp", "")
     nsx::DataReaderFactory factory;
     nsx::DataList numors;
 
+    std::string dir = "/users/tw/tmp/nsx-data/dkdp/nexus/";
     std::vector<std::string> files = {
-        "/home/tw/tmp/nsx/internal-192/501168.nxs", "/home/tw/tmp/nsx/internal-192/501169.nxs",
-        "/home/tw/tmp/nsx/internal-192/501170.nxs", "/home/tw/tmp/nsx/internal-192/501171.nxs",
-        "/home/tw/tmp/nsx/internal-192/501172.nxs", "/home/tw/tmp/nsx/internal-192/501173.nxs",
-        "/home/tw/tmp/nsx/internal-192/501174.nxs", "/home/tw/tmp/nsx/internal-192/501175.nxs",
-        "/home/tw/tmp/nsx/internal-192/501176.nxs", "/home/tw/tmp/nsx/internal-192/501177.nxs",
-        "/home/tw/tmp/nsx/internal-192/501178.nxs", "/home/tw/tmp/nsx/internal-192/501179.nxs",
-        "/home/tw/tmp/nsx/internal-192/501180.nxs", "/home/tw/tmp/nsx/internal-192/501181.nxs",
-        "/home/tw/tmp/nsx/internal-192/501182.nxs", "/home/tw/tmp/nsx/internal-192/501183.nxs",
-        "/home/tw/tmp/nsx/internal-192/501184.nxs", "/home/tw/tmp/nsx/internal-192/501185.nxs",
+        "501168.nxs", "501169.nxs",
+        /*      "501170.nxs", "501171.nxs",
+                "501172.nxs", "501173.nxs",
+                "501174.nxs", "501175.nxs",
+                "501176.nxs", "501177.nxs",
+                "501178.nxs", "501179.nxs",
+                "501180.nxs", "501181.nxs",
+                "501182.nxs", "501183.nxs",
+                "501184.nxs", "501185.nxs", */
     };
 
     nsx::Diffractometer* diffractometer = nsx::Diffractometer::create("D19");
     nsx::Experiment exp("test", diffractometer->name());
 
     std::size_t numframes = 0;
-    for (const std::string& file : files) {
+    for (const std::string& _file : files) {
+        std::string file = dir + _file;
         std::cout << "Loading " << file << "..." << std::endl;
 
         std::ifstream ifstr(file);
@@ -240,6 +242,13 @@ TEST_CASE("test/data/TestNexusData.cpp", "")
 
     nsx::AutoIndexer* auto_indexer = exp.autoIndexer();
     nsx::IndexerParameters parameters;
+    // parameters for FFTIndexing
+    parameters.nVertices = 5000; // points on the direction sphere
+    parameters.subdiv = 50; // number of bins
+    parameters.frequencyTolerance = 0.5; // peaks to discard
+    parameters.maxdim = 500.; // unit cell length
+    parameters.nSolutions = 20;
+
     std::cout << "AutoIndexer parameters: ";
     std::cout << "maxdim = " << parameters.maxdim << ", ";
     std::cout << "nSolutions = " << parameters.nSolutions << ", ";
@@ -254,10 +263,6 @@ TEST_CASE("test/data/TestNexusData.cpp", "")
               << ", ";
     std::cout << "solutionCutoff = " << parameters.solutionCutoff << std::endl;
 
-    // parameters.minUnitCellVolume = 1.;
-    // parameters.maxdim = 500.;
-    // parameters.nVertices = 1000;
-    // parameters.solutionCutoff = 5.;
     auto_indexer->setParameters(parameters);
 
     auto peaksToIndex = filtered_collection->getPeakList();
