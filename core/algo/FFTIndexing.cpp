@@ -27,6 +27,7 @@
 #include "base/utils/Units.h"
 #include "core/algo/FFTIndexing.h"
 
+//#define RANDOMISE_FFTINDEXING_SPHERE
 //#define DEBUG_HISTOGRAMS
 
 
@@ -41,15 +42,20 @@ std::vector<Eigen::RowVector3d> algo::pointsOnSphere(unsigned int n_vertices)
     std::vector<Eigen::RowVector3d> result;
     result.reserve(n_vertices);
 
+#ifdef RANDOMISE_FFTINDEXING_SPHERE
     // random number generator, seeded with ms since epoch
     static auto epoch = std::chrono::system_clock::now().time_since_epoch();
     static std::mt19937 generator(
         std::chrono::duration_cast<std::chrono::milliseconds>(epoch).count());
     std::uniform_real_distribution<double> distribution(0.0, 1.0);
+    
+    const double rnd(distribution(generator));
+#else
+    const double rnd(0.);
+#endif
 
     // We use the Fibonacci sphere algorithm, which is simple, and just good enough.
     // See https://stackoverflow.com/questions/9600801/evenly-distributing-n-points-on-a-sphere.
-    const double rnd(distribution(generator));
     const double offset = 2.0 / n_vertices;
     const double increment = M_PI * (3. - sqrt(5.));
 
