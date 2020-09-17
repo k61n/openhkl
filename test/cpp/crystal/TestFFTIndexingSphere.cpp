@@ -14,8 +14,8 @@
 
 #include "test/cpp/catch.hpp"
 
-#include <iostream>
 #include <fstream>
+#include <iostream>
 
 #include "core/algo/FFTIndexing.h"
 
@@ -25,11 +25,11 @@ TEST_CASE("test/crystal/TestFFTIndexingSphere.cpp", "")
     unsigned int n_vertices = 128;
     std::vector<Eigen::RowVector3d> points = nsx::algo::pointsOnSphere(n_vertices);
 
-    // plot these points with: gnuplot -p -e "set xyplane 0; splot \"sphere.dat\" u 1:2:3 w points pt 7"
+    // plot these points with: 
+    // gnuplot -p -e "set xyplane 0; splot \"sphere.dat\" u 1:2:3 w points pt 7
     std::ofstream ofstrdat("sphere.dat");
 
-    for(const Eigen::RowVector3d& vec : points)
-    {
+    for (const Eigen::RowVector3d& vec : points) {
         ofstrdat << vec[0] << " " << vec[1] << " " << vec[2] << std::endl;
     }
 

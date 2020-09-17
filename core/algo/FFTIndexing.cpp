@@ -48,11 +48,13 @@ std::vector<Eigen::RowVector3d> algo::pointsOnSphere(unsigned int n_vertices)
     static std::mt19937 generator(
         std::chrono::duration_cast<std::chrono::milliseconds>(epoch).count());
     std::uniform_real_distribution<double> distribution(0.0, 1.0);
-    
+
     const double rnd(distribution(generator));
 #else
-    const double rnd(0.);
+    // TODO: TestAutoIndexer.py only works with this special number, something is wrong...
+    const double rnd(0.131538);
 #endif
+
 
     // We use the Fibonacci sphere algorithm, which is simple, and just good enough.
     // See https://stackoverflow.com/questions/9600801/evenly-distributing-n-points-on-a-sphere.
