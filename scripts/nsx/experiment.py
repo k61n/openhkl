@@ -211,7 +211,7 @@ class Experiment:
         # Filter by d-range, strength, and allowed by space group
         filter.setFilterStrength(True)
         filter.setFilterDRange(True)
-        # filter.setFilterExtinct(True)
+        filter.setFilterExtinct(filter_params['extinct'])
         filter.setDRange(min_d_range, max_d_range)
         filter.setStrength(min_strength, max_strength)
 
@@ -227,6 +227,10 @@ class Experiment:
             peak_collection,
             self._params.autoindexer['length_tol'],
             self._params.autoindexer['angle_tol'])
+
+    def assign_unit_cell(self, peak_collection):
+        cell = self.get_accepted_cell()
+        self._expt.assignUnitCell(peak_collection)
 
     def autoindex_dataset(self, dataset, start_frame, end_frame, length_tol, angle_tol):
         '''
@@ -290,10 +294,12 @@ class Experiment:
         if found:
             cell.setSpaceGroup(nsx.SpaceGroup(correct_space_group))
         else:
+            cell.setSpaceGroup(nsx.SpaceGroup(correct_space_group))
             self.log(f'WARNING: {correct_space_group} not found in list of compatible space groups')
 
     def set_unit_cell(self, a, b, c, alpha, beta, gamma):
         self._expt.addUnitCell("accepted", a, b, c, alpha, beta, gamma)
+        self.set_space_group()
 
     def build_shape_library(self, data):
         '''
@@ -331,7 +337,7 @@ class Experiment:
         Predict shapes of weak peaks
         '''
         self.log(f"Predicting peaks...")
-        integrator = "3d profile integrator"
+        integrator = "1d profile integrator"
         interpolation_types = {'None' : nsx.PeakInterpolation_NoInterpolation,
                                'InverseDistance:': nsx.PeakInterpolation_InverseDistance,
                                'Intensity:': nsx.PeakInterpolation_Intensity }
@@ -451,12 +457,16 @@ class Experiment:
             raise OSError(f"NSX file {fname} not found")
         self.log(f"Loading experiment from {fname}")
         self._expt.loadFromFile(fname)
+        self.set_space_group()
         self._found_collection = self._expt.getPeakCollection(self._found_peaks)
         self._filtered_collection = \
             self._expt.getPeakCollection(self._filtered_peaks)
+        self._expt.assignUnitCell(self._found_collection)
+        self._expt.assignUnitCell(self._filtered_collection)
         if predicted:
             self._predicted_collection = \
-                self._expt.getPeakCollection(self._filtered_peaks)
+                self._expt.getPeakCollection(self._predicted_peaks)
+            self._expt.assignUnitCell(self._predicted_collection)
 
     def remove_peak_collection(self, name):
         '''

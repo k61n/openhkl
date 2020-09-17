@@ -106,7 +106,6 @@ if not args.loadnsx:
         gamma = params.cell['gamma']
         expt.set_unit_cell(a, b, c, alpha, beta, gamma)
 
-    expt.set_space_group()
     pynsxprint("Finding peaks...")
     expt.find_peaks(data, 0, -1)
     pynsxprint("Integrating...")
@@ -115,6 +114,8 @@ if not args.loadnsx:
     found_peaks = expt.get_found_peaks()
     pynsxprint("Filtering...")
     filtered_collection_name = "filtered"
+    params.filter['extinct'] = True
+    expt.assign_unit_cell(found_peaks)
     ncaught = expt.filter_peaks(params.filter, found_peaks, filtered_collection_name)
     pynsxprint("Filter caught " + str(ncaught) + " of " + str(npeaks) + " peaks")
 
@@ -125,14 +126,13 @@ else:
 
 if args.predicted:
     expt.load(predicted=args.predicted)
-    expt.set_space_group()
 else:
     pynsxprint("Building shape library...")
     all_data = expt.get_data()
     expt.build_shape_library(all_data)
     pynsxprint("Predicting peaks...")
     expt.predict_peaks(all_data, 'None')
-    expt.save(predicted=True) # Exporter does not  save shape library to HDF5 (yet)
+    expt.save(predicted=True)
 
 expt.refine(args.nbatches)
 expt.check_peak_collections()
