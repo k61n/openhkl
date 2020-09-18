@@ -10,7 +10,7 @@ import sys
 import os.path
 import logging
 from pdb import set_trace
-sys.path.append("/home/zamaan/codes/nsxtool/develop/build/swig")
+sys.path.append("/home/zamaan/codes/nsxtool/current/build/swig")
 sys.path.append("/G/sw/nsx/build/swig") # Joachim
 import pynsx as nsx
 
@@ -430,7 +430,7 @@ class Experiment:
 
 
     def print_unit_cells(self):
-        self.auto_indexer.printSolutions()
+        pynsxprint(self.auto_indexer.solutionsToString())
 
     def save(self, predicted=False):
         '''
@@ -467,6 +467,14 @@ class Experiment:
             self._predicted_collection = \
                 self._expt.getPeakCollection(self._predicted_peaks)
             self._expt.assignUnitCell(self._predicted_collection)
+
+    def loadpeaks(self):
+        fname = self._nsxfile
+        if not os.path.isfile(fname):
+            raise OSError(f"NSX file {fname} not found")
+        self.log(f"Loading experiment from {fname}")
+        self._expt.loadFromFile(fname)
+        self._found_collection = self._expt.getPeakCollection(self._found_peaks)
 
     def remove_peak_collection(self, name):
         '''
@@ -529,3 +537,7 @@ class Experiment:
         data = self.get_data()[0]
         peaks = self.get_peak_collection(self._predicted_peaks)
         self._expt.refine(peak_collection, peaks, cell, data, n_batches)
+
+    def run_auto_indexer(self, peaks, length_tol, angle_tol, frame_min, frame_max):
+        params = self._expt.indexer_params
+        return self._expt.runAutoIndexer(peaks, params, length_tol, angle_tol, frame_min, frame_max)

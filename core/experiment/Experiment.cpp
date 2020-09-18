@@ -112,6 +112,50 @@ void Experiment::loadFromFile(const std::string& path)
     importer.loadPeaks(this);
 }
 
+void Experiment::autoIndex(PeakCollection* peaks, const IndexerParameters& params)
+{
+    std::string collection_name = "autoindexing";
+    _peak_filter->resetFiltering(peaks);
+    _peak_filter->resetFilterFlags();
+    _peak_filter->setFilterStrength(true);
+    _peak_filter->setFilterDRange(true);
+    _peak_filter->setFilterFrames(true);
+    _peak_filter->setDRange(params.d_min, params.d_max);
+    _peak_filter->setStrength(params.strength_min, params.strength_max);
+    _peak_filter->setFrameRange(params.first_frame, params.last_frame);
+    nsxlog(Level::Info, "Experiment::autoIndex: attempting with frames",
+           params.first_frame, "-", params.last_frame);
+    _peak_filter->filter(peaks);
+    double npeaks = peaks->numberOfPeaks();
+    double ncaught = peaks->numberCaughtByFilter();
+    nsxlog(Level::Info, "Indexing using", ncaught, "/", npeaks, "peaks"); _peak_handler->acceptFilter(collection_name, peaks);
+    _auto_indexer->setParameters(params);
+    PeakCollection* indexing_collection = getPeakCollection(collection_name);
+    return _auto_indexer->autoIndex(indexing_collection);
+}
+
+bool Experiment::runAutoIndexer(
+    PeakCollection* peaks, IndexerParameters& params, const double& length_tol,
+    const double& angle_tol, const double& frame_min, const double& frame_max)
+{
+    nsxlog(Level::Info, "Experiment::runAutoIndexer: start");
+    double frame = frame_min;
+    while(frame <= frame_max) {
+        params.last_frame = frame;
+        autoIndex(peaks, params);
+        nsxlog(Level::Info, "Solutions:");
+        nsxlog(Level::Info, _auto_indexer->solutionsToString());
+        if (checkAndAssignUnitCell(peaks, length_tol, angle_tol)) {
+            nsxlog(Level::Info, "Experiment::runAutoIndexer: success");
+            return true;
+        }
+        frame += 1.0;
+    }
+    nsxlog(Level::Info, "Experiment::runAutoIndexer: failure");
+    return false;
+}
+
+
 void Experiment::buildShapeLibrary(PeakCollection* peaks, const ShapeLibParameters& params)
 {
     params.log(Level::Info);
@@ -439,7 +483,7 @@ void Experiment::assignUnitCell(PeakCollection* peaks)
 void Experiment::setReferenceCell(
     double a, double b, double c, double alpha, double beta, double gamma)
 {
-    _cell_handler->setReferenceCell(a, b, c, alpha, beta, gamma, _auto_indexer.get());
+    _cell_handler->setReferenceCell(a, b, c, alpha, beta, gamma);
 }
 
 std::vector<std::string> Experiment::getCompatibleSpaceGroups() const

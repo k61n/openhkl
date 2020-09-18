@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
 
 '''
-test_refiner.py
+test_data.py
 
-Test the cell parameter/instrument state refinement
-Reads an intermediate hdf5 format .nsx file.
+Script for checking data values
 '''
 
 import argparse
@@ -23,10 +22,6 @@ parser.add_argument('-p', '--parameters', type=str, dest='paramfile',
                     default='parameters', help='File containing experiment paramters')
 parser.add_argument('--predicted', action='store_true', dest='predicted', default=False,
                     help='Saved data in .nsx has completed prediction step')
-parser.add_argument('--frames', type=int, nargs=2, dest='frame_reange', default=[0.10],
-                    help='Frames to using for refinement')
-parser.add_argument('-b', '--batches', type=int, dest='batches', default=1, required=True,
-                    help='Number of batches of frames')
 
 args = parser.parse_args()
 
@@ -41,10 +36,9 @@ expt = Experiment(args.name, args.detector, params)
 expt.set_logger()
 logger = expt.get_logger()
 expt.load(predicted=args.predicted)
-expt.set_space_group()
 
-collection_name = "peaks"
-data = expt.get_data()[0]
-refinement_collection = expt.get_peak_collection(collection_name)
-cell = expt.get_accepted_cell()
-expt.refine(refinement_collection, cell, data, args.batches)
+found_peaks = expt.get_peak_collection("peaks")
+peak_list = found_peaks.getPeakList()
+for peak in peak_list:
+    frame = peak.shape().center()[2]
+    print(frame)
