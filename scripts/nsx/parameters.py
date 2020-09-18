@@ -49,8 +49,8 @@ class Parameters:
                     'n_subdiv'         : 30,
                     'indexing_tol'     : 0.2,
                     'min_vol'          : 100.0,
-                    'length_tol'       : 1.0,
-                    'angle_tol'        : 3.0 }
+                    'length_tol'       : 0.5,
+                    'angle_tol'        : 0.5 }
 
     shapelib    = { 'peak_scale'       : 3.0,
                     'bkg_begin'        : 3.0,
