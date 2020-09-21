@@ -195,8 +195,8 @@ void SubframeAutoIndexer::setParametersUp()
     _max_cell_dimension->setMaximum(100000);
     _max_cell_dimension->setDecimals(6);
 
-    _number_vertices->setMaximumWidth(1000);
-    _number_vertices->setMaximum(1000);
+    _number_vertices->setMaximumWidth(10000);
+    _number_vertices->setMaximum(10000);
 
     _number_subdivisions->setMaximumWidth(1000);
 
