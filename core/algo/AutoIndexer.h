@@ -21,6 +21,7 @@
 namespace nsx {
 
 using RankedSolution = std::pair<std::shared_ptr<UnitCell>, double>;
+    using SolutionList = std::vector<RankedSolution>;
 
 enum class Level;
 
@@ -55,6 +56,18 @@ struct IndexerParameters {
     //! Frequency threshold: FFT peaks with 0.7 the value of the zero frequency
     //! peak are discarded
     double frequencyTolerance = 0.7;
+    //! Frame from which to start autoindexing
+    double first_frame = 0.0;
+    //! Last frame of autoindexing set
+    double last_frame = 10.0;
+    //! Minimum detector range
+    double d_min = 1.5;
+    //! Maximum detector range
+    double d_max = 50.0;
+    //! Minimum peak strength
+    double strength_min = 1.0;
+    //! Maximum peak strength
+    double strength_max = 1.0e7;
 
     void log(const Level& level);
 };
@@ -79,17 +92,13 @@ class AutoIndexer {
     void setHandler(std::shared_ptr<ProgressHandler> handler) { _handler = handler; };
     //! Set the handler
     void unsetHandler() { _handler = nullptr; };
-    //! Print solutions to stdout
-    void printSolutions();
+    //! Dump SolutionList as a string
+    std::string solutionsToString() const;
     //! Set solution to be unit cell for given peak list
     void acceptSolution(const UnitCell* solution, const std::vector<nsx::Peak3D*>& peaks);
     //! Check if list of solutions contains reference unit cell. If it does,
-    //! assign it to _accepted_solution
-    bool hasSolution(double length_tol, double angle_tol);
-    //! Set the reference cell
-    void setReferenceCell(const UnitCell* cell);
-    //! return the accepted solution
-    const UnitCell* getAcceptedSolution() const;
+    //! return a pointer, otherwise return nullptr
+    UnitCell* goodSolution(UnitCell* ref_cell, double length_tol, double angle_tol);
 
  private:
     void computeFFTSolutions(const std::vector<Peak3D*>& peaks);
@@ -101,9 +110,6 @@ class AutoIndexer {
     IndexerParameters _params;
     std::vector<RankedSolution> _solutions;
     std::shared_ptr<ProgressHandler> _handler;
-
-    const UnitCell* _reference_cell;
-    UnitCell* _accepted_solution;
 };
 
 } // namespace nsx

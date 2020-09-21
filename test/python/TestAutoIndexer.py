@@ -44,7 +44,7 @@ class TestAutoIndexer(unittest.TestCase):
         # reference_cell = expt.getReferenceCell()
         # accepted_cell = expt.getAcceptedCell()
         # print("Reference cell = " + reference_cell.toString())
-        # autoindexer.printSolutions()
+        # print(autoindexer.solutionsToString())
         self.assertTrue(expt.checkAndAssignUnitCell(filtered_peaks, 0.5, 0.5))  # boolean return value
 
 if __name__ == "__main__":

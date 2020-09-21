@@ -47,7 +47,7 @@ PeakFilter::PeakFilter()
 void PeakFilter::resetFilterFlags()
 {
     _filter_flags = {true,  false, false, false, false, false, false,
-                     false, false, false, false, false, false};
+        false, false, false, false, false, false, false};
 }
 
 void PeakFilter::filterSignificance(PeakCollection* peak_collection) const
@@ -319,7 +319,7 @@ void PeakFilter::filterDRange(PeakCollection* peak_collection) const
         nsx::Peak3D* peak_ptr = peak_collection->getPeak(i);
         auto q = peak_ptr->q();
         double d = 1.0 / q.rowVector().norm();
-        if ((d >= _d_range[0] && d <= _d_range[1]))
+        if (d >= _d_range[0] && d <= _d_range[1])
             peak_ptr->caughtYou(true);
         else
             peak_ptr->rejectYou(true);
@@ -333,6 +333,18 @@ void PeakFilter::filterHasUnitCell(PeakCollection* peak_collection) const
         nsx::Peak3D* peak_ptr = peak_collection->getPeak(i);
         auto cell = peak_ptr->unitCell();
         if (cell != nullptr)
+            peak_ptr->caughtYou(true);
+        else
+            peak_ptr->rejectYou(true);
+    }
+}
+
+void PeakFilter::filterFrameRange(PeakCollection* peak_collection) const
+{
+    for (int i = 0; i < peak_collection->numberOfPeaks(); ++i) {
+        nsx::Peak3D* peak_ptr = peak_collection->getPeak(i);
+        auto c = peak_ptr->shape().center();
+        if (c[2] >= _frameRange[0] && c[2] <= _frameRange[1])
             peak_ptr->caughtYou(true);
         else
             peak_ptr->rejectYou(true);
@@ -399,11 +411,17 @@ void PeakFilter::filter(PeakCollection* peak_collection) const
         filterOverlapping(peak_collection);
     }
 
-    if (_filter_flags.complementary) // this does nothing
+    if (_filter_flags.complementary) {// this does nothing
         filterComplementary(peak_collection);
-    nsxlog(
-        Level::Info, "PeakFilter::filter:", peak_collection->numberCaughtByFilter(), "/",
-        peak_collection->numberOfPeaks(), "peaks caught by filter");
+        nsxlog(Level::Info, "Filtering complementary");
+    }
+
+    if (_filter_flags.frames) {
+        filterFrameRange(peak_collection);
+        nsxlog(
+            Level::Info, "Filtering peaks from frames in range",
+            _frameRange[0], "-", _frameRange[1]);
+    }
 }
 
 void PeakFilter::resetFiltering(PeakCollection* peak_collection) const

@@ -36,6 +36,7 @@ struct PeakFilterFlags {
     bool significance; //!
     bool overlapping; //!
     bool complementary; //!
+    bool frames; //! catch peaks in a specifed frame range
 };
 
 class PeakFilter {
@@ -58,6 +59,7 @@ class PeakFilter {
     void setFilterSignificance(bool val) { _filter_flags.significance = val; };
     void setFilterOverlapping(bool val) { _filter_flags.overlapping = val; };
     void setFilterComplementary(bool val) { _filter_flags.complementary = val; };
+    void setFilterFrames(bool val) { _filter_flags.frames = val; };
 
     bool getFilterSelected() const { return _filter_flags.selected; };
     bool getFilterMasked() const { return _filter_flags.masked; };
@@ -72,6 +74,7 @@ class PeakFilter {
     bool getFilterSignificance() const { return _filter_flags.significance; };
     bool getFilterOverlapping() const { return _filter_flags.overlapping; };
     bool getFilterComplementary() const { return _filter_flags.complementary; };
+    bool getFilterFrames() const { return _filter_flags.frames; };
 
     //! set filter parameters to default
     void resetFilterFlags();
@@ -122,7 +125,9 @@ class PeakFilter {
     //! Remove peaks which belongs to datasets containing too few peaks
     void filterSparseDataSet(PeakCollection* peak_collection) const;
 
- public:
+    //! Remove peaks outside the specified frame range
+    void filterFrameRange(PeakCollection* peak_collection) const;
+
     //! Filter only enabled on a peak vector
     std::vector<Peak3D*> filterEnabled(const std::vector<Peak3D*> peaks_ptr, bool flag) const;
 
@@ -130,7 +135,6 @@ class PeakFilter {
     std::vector<Peak3D*> filterIndexed(
         const std::vector<Peak3D*> peaks_ptr, const UnitCell& cell, double tolerance) const;
 
- public:
     //! Run the filtering
     void filter(PeakCollection* peak_collection) const;
 
@@ -157,17 +161,20 @@ class PeakFilter {
     const std::array<double, 2>* strength() const { return &_strength; };
     //! Set the strength
     void setStrength(const std::array<double, 2> strength) { _strength = strength; };
-    void setStrength(double strmin, double strmax) { _strength = {strmin, strmax}; }
+    void setStrength(double strmin, double strmax) { _strength = {strmin, strmax}; };
 
     //! Return the significance
     const double* significance() const { return &_significance; };
     //! Set the significance
     void setSignificance(const double significance) { _significance = significance; };
 
+    //! Set the frame range
+    void setFrameRange(const double f0, const double f1) { _frameRange = {f0, f1}; };
+
  private:
     //! booleans for filtering
     PeakFilterFlags _filter_flags;
-    //! The values for range
+    //! Detector range
     std::array<double, 2> _d_range;
     //! The unit cell name
     std::string _unit_cell;
@@ -179,6 +186,8 @@ class PeakFilter {
     double _significance;
     //! number of peaks in dataset to be kept
     double _sparse;
+    //! Frame range
+    std::array<double, 2> _frameRange;
 };
 
 } // namespace nsx

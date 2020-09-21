@@ -144,6 +144,12 @@ class Experiment {
     // Autoindexer
     //! Get a pointer to the AutoIndexer object
     nsx::AutoIndexer* autoIndexer() const { return _auto_indexer.get(); };
+    //! attempt to autoindex the data
+    void autoIndex(PeakCollection* peaks, const IndexerParameters& params);
+    //! Run the autoindexer over the dataset, vary number of frames in attempt to find cell
+    bool runAutoIndexer(
+        PeakCollection* peaks, IndexerParameters& params, const double& length_tol,
+        const double& angle_tol, const double& frame_min, const double& frame_max);
     //! Get a pointer to the accepted/assigned unit cell
     const UnitCell* getAcceptedCell() const;
     //! Get a pointer to the reference unit cell

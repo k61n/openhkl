@@ -42,6 +42,12 @@ void IndexerParameters::log(const Level& level)
     nsxlog(level, "unitCellEquivalenceTolerance =", unitCellEquivalenceTolerance);
     nsxlog(level, "solutionCutoff     =", solutionCutoff);
     nsxlog(level, "frequencyTolerance =", frequencyTolerance);
+    nsxlog(level, "first_frame        =", first_frame);
+    nsxlog(level, "last_frame         =", last_frame);
+    nsxlog(level, "d_min              =", d_min);
+    nsxlog(level, "d_max              =", d_max);
+    nsxlog(level, "strength_min       =", strength_min);
+    nsxlog(level, "strength_max       =", strength_max);
 }
 
 AutoIndexer::AutoIndexer() : _solutions(), _handler(nullptr)
@@ -281,15 +287,17 @@ void AutoIndexer::refineSolutions(const std::vector<Peak3D*>& peaks)
     }
 }
 
-void AutoIndexer::printSolutions()
+std::string AutoIndexer::solutionsToString() const
 {
-    std::cout << std::setw(10) << "quality" << std::setw(10) << "a" << std::setw(10) << "b"
-              << std::setw(10) << "c" << std::setw(10) << "alpha" << std::setw(10) << "beta"
-              << std::setw(10) << "gamma" << std::endl;
+    std::ostringstream oss;
+    oss << std::endl << std::setw(10) << "quality" << std::setw(10) << "a" << std::setw(10)
+        << "b" << std::setw(10) << "c" << std::setw(10) << "alpha" << std::setw(10) << "beta"
+        << std::setw(10) << "gamma";
     for (auto solution : _solutions) {
-        std::cout << std::fixed << std::setw(10) << std::setprecision(3) << solution.second
-                  << solution.first->toString() << std::endl;
+        oss << std::endl << std::fixed << std::setw(10) << std::setprecision(3) << solution.second
+            << solution.first->toString();
     }
+    return oss.str();
 }
 
 void AutoIndexer::acceptSolution(const UnitCell* solution, const std::vector<nsx::Peak3D*>& peaks)
@@ -298,25 +306,14 @@ void AutoIndexer::acceptSolution(const UnitCell* solution, const std::vector<nsx
         peak->setUnitCell(solution);
 }
 
-void AutoIndexer::setReferenceCell(const UnitCell* cell)
-{
-    _reference_cell = cell;
-}
-
-bool AutoIndexer::hasSolution(double length_tol, double angle_tol)
+UnitCell* AutoIndexer::goodSolution(UnitCell* reference_cell, double length_tol, double angle_tol)
 {
     for (auto solution : _solutions) {
-        if (solution.first->isSimilar(_reference_cell, length_tol, angle_tol)) {
-            _accepted_solution = solution.first.get();
-            return true;
+        if (solution.first->isSimilar(reference_cell, length_tol, angle_tol)) {
+            return solution.first.get();
         }
     }
-    return false;
-}
-
-const UnitCell* AutoIndexer::getAcceptedSolution() const
-{
-    return _accepted_solution;
+    return nullptr;
 }
 
 } // namespace nsx

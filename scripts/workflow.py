@@ -27,16 +27,14 @@ parser.add_argument('--predicted', action='store_true', dest='predicted', defaul
                     help='Saved data in .nsx has completed prediction step')
 parser.add_argument('-p', '--parameters', type=str, dest='paramfile',
                     default='parameters', help='File containing experiment paramters')
-parser.add_argument('--max_autoindex_frames', type=int, dest='max_autoindex_frames',
+parser.add_argument('--max_autoindex_frames', type=int, dest='frames_max',
                     default=20, help='Maximum number of frames to use for autoindexing')
-parser.add_argument('--min_autoindex_frames', type=int, dest='min_autoindex_frames',
+parser.add_argument('--min_autoindex_frames', type=int, dest='frames_min',
                     default=10, help='Minimum number of frames to use for autoindexing')
 parser.add_argument('--length_tol', type=float, dest='length_tol',
-                    default=1.0, help='length tolerance (a, b, c) for autoindexing')
+                    default=0.5, help='length tolerance (a, b, c) for autoindexing')
 parser.add_argument('--angle_tol', type=float, dest='angle_tol',
-                    default=5.0, help='angle tolerance (alpha, beta, gamma) for autoindexing')
-parser.add_argument('--autoindex', action='store_true', dest='autoindex', default=False,
-                    help='Autoindex the data')
+                    default=0.5, help='angle tolerance (alpha, beta, gamma) for autoindexing')
 parser.add_argument('-v', '--verbose', action='store_true', dest='verbose', default=False,
                     help='Print extra output')
 parser.add_argument('--batches', action='store', dest='nbatches', type=int, default=20,
@@ -70,63 +68,40 @@ if not args.loadnsx:
             expt.add_data_set(filename, filename)
     elif args.dataformat == 'hdf5':
         expt.add_data_set(filenames[0], filenames[0])
-    pynsxprint("...data loaded\n")
     data = expt.get_data()
-    if args.autoindex:
-        # Find/add the unit cell
-        pynsxprint("Autoindexing...")
-        index = args.min_autoindex_frames
-        count = 1
-        while index < args.max_autoindex_frames:
-            cell_found = False
-            try:
-                cell_found = expt.autoindex_dataset(data, 0, index, args.length_tol, args.angle_tol)
-            except RuntimeError: # Not enough peaks to autoindex?
-                index += 1
-                count += 1
-                continue
-            if cell_found:
-                break
-            else:
-                index += 1
-                count += 1
-
-        if cell_found:
-            pynsxprint("Unit cell:")
-            pynsxprint(expt.get_accepted_cell().toString())
-        else:
-            raise RuntimeError("Autoindexing Failed")
-        pynsxprint("...autoindexing complete")
-    else:
-        a = params.cell['a']
-        b = params.cell['b']
-        c = params.cell['c']
-        alpha = params.cell['alpha']
-        beta = params.cell['beta']
-        gamma = params.cell['gamma']
-        expt.set_unit_cell(a, b, c, alpha, beta, gamma)
 
     pynsxprint("Finding peaks...")
     expt.find_peaks(data, 0, -1)
     pynsxprint("Integrating...")
     npeaks = expt.integrate_peaks()
 
-    found_peaks = expt.get_found_peaks()
-    pynsxprint("Filtering...")
-    filtered_collection_name = "filtered"
-    params.filter['extinct'] = True
-    expt.assign_unit_cell(found_peaks)
-    ncaught = expt.filter_peaks(params.filter, found_peaks, filtered_collection_name)
-    pynsxprint("Filter caught " + str(ncaught) + " of " + str(npeaks) + " peaks")
+    peaks = expt.get_found_peaks()
 
+    # Autoindex
+    pynsxprint("Autoindexing...")
+    success = expt.run_auto_indexer(peaks, args.length_tol, args.angle_tol,
+                                    args.frames_min, args.frames_max)
+    pynsxprint("Autoindexing successful")
+    if not success:
+        raise RuntimeError("AutoIndexer failed")
     expt.save()
 else:
     if not args.predicted:
+        pynsxprint("Loading data...")
         expt.load()
 
 if args.predicted:
+    pynsxprint("Loading data...")
     expt.load(predicted=args.predicted)
 else:
+    pynsxprint("Filtering...")
+    filtered_collection_name = "filtered"
+    peaks = expt.get_found_peaks()
+    expt.assign_unit_cell(peaks)
+    params.filter['extinct'] = True
+    npeaks = peaks.numberOfPeaks()
+    ncaught = expt.filter_peaks(params.filter, peaks, filtered_collection_name)
+    pynsxprint("Filter caught " + str(ncaught) + " of " + str(npeaks) + " peaks")
     pynsxprint("Building shape library...")
     all_data = expt.get_data()
     expt.build_shape_library(all_data)

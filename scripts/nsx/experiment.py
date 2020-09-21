@@ -10,7 +10,7 @@ import sys
 import os.path
 import logging
 from pdb import set_trace
-sys.path.append("/home/zamaan/codes/nsxtool/develop/build/swig")
+sys.path.append("/home/zamaan/codes/nsxtool/current/build/swig")
 sys.path.append("/G/sw/nsx/build/swig") # Joachim
 import pynsx as nsx
 
@@ -28,6 +28,7 @@ class Experiment:
     the data input simplified.
     '''
 
+    _indexed = False
     _found_peaks = "peaks"
     _filtered_peaks = "filtered"
     _predicted_peaks = "predicted"
@@ -40,7 +41,7 @@ class Experiment:
     _data_resolution = None
     _metadata = {}
 
-    def __init__(self, name, detector, params, verbose=False, autoindex=False):
+    def __init__(self, name, detector, params, verbose=False):
         '''
         Set up experiment object
         '''
@@ -56,7 +57,6 @@ class Experiment:
         self._ref_cell = params.cell
         self._data_sets = []
         self._data_reader_factory = nsx.DataReaderFactory()
-        self._autoindex = autoindex
         self.set_reference_cell()
 
     def get_nsxfile(self):
@@ -208,6 +208,7 @@ class Experiment:
         self.log(f"d_max = {filter_params['max_d_range']}")
 
         filter = self._expt.peakFilter()
+        filter.resetFilterFlags()
         # Filter by d-range, strength, and allowed by space group
         filter.setFilterStrength(True)
         filter.setFilterDRange(True)
@@ -231,53 +232,6 @@ class Experiment:
     def assign_unit_cell(self, peak_collection):
         cell = self.get_accepted_cell()
         self._expt.assignUnitCell(peak_collection)
-
-    def autoindex_dataset(self, dataset, start_frame, end_frame, length_tol, angle_tol):
-        '''
-        Compute the unit cells from the peaks most a given dataset.
-        Returns True if unit cell found.
-        '''
-
-        self.length_tol = length_tol
-        self.angle_tol = angle_tol
-        self.find_peaks(dataset, start_frame, end_frame)
-        npeaks = self.integrate_peaks()
-        ncaught = self.filter_peaks(self._params.filter, self._found_collection, self._filtered_peaks)
-        self.log(f'Autoindex: {ncaught}/{npeaks} peaks caught by filter')
-        self.log(f'Autoindex: {ncaught}/{npeaks} peaks caught by filter')
-        return self.autoindex_peaks(self._found_collection, length_tol, angle_tol)
-
-    def autoindex_peaks(self, peak_collection, length_tol, angle_tol):
-        '''
-        Overload autoindex to take a peak collection instead of a dataset
-        '''
-        self.log(f"Autoindexing peaks...")
-        autoindexer_params = self._expt.indexer_params
-        autoindexer_params.maxdim = self._params.autoindexer['max_dim']
-        autoindexer_params.nSolutions = self._params.autoindexer['n_solutions']
-        autoindexer_params.nVertices = self._params.autoindexer['n_vertices']
-        autoindexer_params.subdiv = self._params.autoindexer['n_subdiv']
-        autoindexer_params.indexingTolerance = \
-            self._params.autoindexer['indexing_tol']
-        autoindexer_params.minUnitCellVolume = \
-            self._params.autoindexer['min_vol']
-        self.log(f"max_dim = {self._params.autoindexer['max_dim']}")
-        self.log(f"n_solutions = {self._params.autoindexer['n_solutions']}")
-        self.log(f"n_vertices = {self._params.autoindexer['n_vertices']}")
-        self.log(f"n_subdiv = {self._params.autoindexer['n_subdiv']}")
-        self.log(f"indexing_tol = {self._params.autoindexer['indexing_tol']}")
-        self.log(f"min_vol = {self._params.autoindexer['min_vol']}")
-        self.auto_indexer = self._expt.autoIndexer()
-        self.auto_indexer.setParameters(autoindexer_params)
-        try:
-            self.auto_indexer.autoIndex(peak_collection)
-            solutions = self.auto_indexer.solutions()
-            if self._verbose:
-                self.log(f'Autoindex: cells')
-                self.print_unit_cells()
-            return self.accept_unit_cell(peak_collection)
-        except RuntimeError:
-            return None
 
     def set_space_group(self):
         correct_space_group = self._params.cell['spacegroup'].replace('_', ' ')
@@ -430,7 +384,7 @@ class Experiment:
 
 
     def print_unit_cells(self):
-        self.auto_indexer.printSolutions()
+        pynsxprint(self.auto_indexer.solutionsToString())
 
     def save(self, predicted=False):
         '''
@@ -457,16 +411,26 @@ class Experiment:
             raise OSError(f"NSX file {fname} not found")
         self.log(f"Loading experiment from {fname}")
         self._expt.loadFromFile(fname)
-        self.set_space_group()
         self._found_collection = self._expt.getPeakCollection(self._found_peaks)
-        self._filtered_collection = \
-            self._expt.getPeakCollection(self._filtered_peaks)
-        self._expt.assignUnitCell(self._found_collection)
-        self._expt.assignUnitCell(self._filtered_collection)
+        if self._expt.hasUnitCell("accepted"):
+            self._indexed = True
+            self.set_space_group()
+            self._expt.assignUnitCell(self._found_collection)
         if predicted:
+            self._filtered_collection = \
+                self._expt.getPeakCollection(self._filtered_peaks)
             self._predicted_collection = \
                 self._expt.getPeakCollection(self._predicted_peaks)
+            self._expt.assignUnitCell(self._filtered_collection)
             self._expt.assignUnitCell(self._predicted_collection)
+
+    def loadpeaks(self):
+        fname = self._nsxfile
+        if not os.path.isfile(fname):
+            raise OSError(f"NSX file {fname} not found")
+        self.log(f"Loading experiment from {fname}")
+        self._expt.loadFromFile(fname)
+        self._found_collection = self._expt.getPeakCollection(self._found_peaks)
 
     def remove_peak_collection(self, name):
         '''
@@ -529,3 +493,29 @@ class Experiment:
         data = self.get_data()[0]
         peaks = self.get_peak_collection(self._predicted_peaks)
         self._expt.refine(peak_collection, peaks, cell, data, n_batches)
+
+    def run_auto_indexer(self, peaks, length_tol, angle_tol, frame_min, frame_max):
+        if self._expt.hasUnitCell("accepted"):
+            return True;
+        self.log(f"Autoindexing...")
+
+        params = self._expt.indexer_params
+        params.maxdim = self._params.autoindexer['max_dim']
+        params.nSolutions = self._params.autoindexer['n_solutions']
+        params.nVertices = self._params.autoindexer['n_vertices']
+        params.subdiv = self._params.autoindexer['n_subdiv']
+        params.indexingTolerance = \
+            self._params.autoindexer['indexing_tol']
+        params.minUnitCellVolume = \
+            self._params.autoindexer['min_vol']
+        params.length_tol = self._params.autoindexer['length_tol']
+        params.angle_tol = self._params.autoindexer['angle_tol']
+        self.log(f"max_dim = {self._params.autoindexer['max_dim']}")
+        self.log(f"n_solutions = {self._params.autoindexer['n_solutions']}")
+        self.log(f"n_vertices = {self._params.autoindexer['n_vertices']}")
+        self.log(f"n_subdiv = {self._params.autoindexer['n_subdiv']}")
+        self.log(f"indexing_tol = {self._params.autoindexer['indexing_tol']}")
+        self.log(f"min_vol = {self._params.autoindexer['min_vol']}")
+        auto_indexer = self._expt.autoIndexer()
+        auto_indexer.setParameters(params)
+        return self._expt.runAutoIndexer(peaks, params, length_tol, angle_tol, frame_min, frame_max)

@@ -99,23 +99,23 @@ void UnitCellHandler::swapUnitCells(
 }
 
 void UnitCellHandler::setReferenceCell(
-    double a, double b, double c, double alpha, double beta, double gamma,
-    AutoIndexer* auto_indexer)
+    double a, double b, double c, double alpha, double beta, double gamma)
 {
     std::string name = "reference";
     UnitCell reference_cell{a, b, c, alpha * deg, beta * deg, gamma * deg};
     addUnitCell(name, reference_cell);
-    auto_indexer->setReferenceCell(getUnitCell(name));
 }
 
 bool UnitCellHandler::checkAndAssignUnitCell(
     PeakCollection* peaks, AutoIndexer* auto_indexer, double length_tol, double angle_tol)
 {
     std::string name = "accepted";
+    std::string ref_name = "reference";
+    UnitCell* ref_cell = getUnitCell(ref_name);
     bool accepted = false;
-    if (auto_indexer->hasSolution(length_tol, angle_tol)) {
-        auto cell = *auto_indexer->getAcceptedSolution();
-        addUnitCell(name, cell);
+    UnitCell* good_cell = auto_indexer->goodSolution(ref_cell, length_tol, angle_tol);
+    if (good_cell) {
+        addUnitCell(name, *good_cell);
         assignUnitCell(peaks);
         accepted = true;
     }
