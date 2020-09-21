@@ -305,7 +305,7 @@ void SubframeFilterPeaks::setFrameRangeUp()
     _frame_min = new QDoubleSpinBox();
     _frame_min->setMaximum(100);
     _frame_min->setDecimals(0);
-    _frame_min->setValue(1.0000);
+    _frame_min->setValue(0.0000);
 
     _frame_max = new QDoubleSpinBox();
     _frame_max->setMaximum(100);
