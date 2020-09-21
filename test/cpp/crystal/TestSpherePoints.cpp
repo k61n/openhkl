@@ -20,7 +20,7 @@
 #include "core/algo/FFTIndexing.h"
 
 
-TEST_CASE("test/crystal/TestFFTIndexingSphere.cpp", "")
+TEST_CASE("test/crystal/TestSpherePoints.cpp", "")
 {
     unsigned int n_vertices = 128;
     std::vector<Eigen::RowVector3d> points = nsx::algo::pointsOnSphere(n_vertices);
