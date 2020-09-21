@@ -39,6 +39,7 @@ PeakFilter::PeakFilter()
     _unit_cell_tolerance = 0.2;
     _strength = {1.0, 1000000.};
     _d_range = {1.5, 50.0};
+    _frameRange = {1.0, 10.0};
     _significance = 0.9900;
     _sparse = 100;
     resetFilterFlags();
