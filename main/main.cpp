@@ -27,7 +27,7 @@ int main(int argc, char* argv[])
     app.setApplicationVersion("1.0");
     app.setOrganizationName("nsx");
 
-    QLoggingCategory::setFilterRules("*.debug=true\nqt.*.debug=false\nqt.qpa*=false");
+    QLoggingCategory::setFilterRules("*.debug=true\nqt.*.debug=false\nqt.qpa*=false\nkf.*=false");
     Session session;
 
     new MainWin{};
