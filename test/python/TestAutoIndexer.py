@@ -26,7 +26,7 @@ class TestAutoIndexer(unittest.TestCase):
         expt.acceptFilter("filtered", found_peaks)
         filtered_peaks = expt.getPeakCollection("filtered")
         n_caught = filtered_peaks.numberCaughtByFilter()
-        self.assertEqual(n_caught, 202)
+        self.assertEqual(n_caught, 164)
         print(f'Autoindex: {n_caught}/{n_peaks} peaks caught by filter')
 
         # Autoindex the peaks

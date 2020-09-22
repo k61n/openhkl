@@ -36,7 +36,7 @@ std::vector<DetectorEvent> algo::qs2events(
         const Eigen::RowVector3d& q_vect = sample_q.rowVector();
 
         double f0 = 0.0;
-        double f1 = states.size() - 1;
+        double f1 = states.size() - 2;
 
         InterpolatedState state0 = states.interpolate(f0);
         InterpolatedState state1 = states.interpolate(f1);

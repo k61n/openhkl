@@ -81,7 +81,7 @@ TEST_CASE("test/crystal/TestFFTIndexing.cpp", "")
             // invalid shape, nothing to do
         }
     }
-    CHECK(peak_collection.numberOfPeaks() >= 5900);
+    CHECK(peak_collection.numberOfPeaks() >= 5700);
 
     nsx::AutoIndexer* auto_indexer = experiment.autoIndexer();
     auto_indexer->setHandler(logger);

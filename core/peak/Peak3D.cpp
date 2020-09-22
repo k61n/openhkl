@@ -295,7 +295,11 @@ const MillerIndex& Peak3D::hkl() const
 
 void Peak3D::setMillerIndices()
 {
-    _hkl = MillerIndex(q(), *_unitCell);
+    try {
+        _hkl = MillerIndex(q(), *_unitCell);
+    } catch(std::range_error& e) {
+        _selected = false;
+    }
 }
 
 } // namespace nsx

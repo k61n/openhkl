@@ -32,6 +32,7 @@ struct ShapeLibParameters : public IntegrationParameters {
     double detector_range_min = 1.5; //!< Minimum detector range (filter)
     double detector_range_max = 50.0; //!< Maximum detector range (filter)
     double strength_min = 1.0; //!< Minimum peak strength I/sigma (filter)
+    double strength_max = 1.0e7; //!< Maximum peak strength I/sigma (filter)
     bool kabsch_coords = true; //!< Are we using Kabsch or detector coordinates?
     int nbins_x = 20; //!< Number of x histogram bins for peak
     int nbins_y = 20; //!< Number of y histogram bins for peak

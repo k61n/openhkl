@@ -101,7 +101,12 @@ TEST_CASE("test/crystal/TestQShape.cpp", "")
         if (!peak->enabled())
             continue;
 
-        auto qshape = peak->qShape();
+        nsx::Ellipsoid qshape;
+        try {
+            qshape = peak->qShape();
+        } catch (std::range_error& e) {
+            continue;
+        }
         nsx::Ellipsoid new_shape;
         try {
             new_shape = toDetectorSpace(qshape, dataf);

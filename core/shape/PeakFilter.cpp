@@ -280,25 +280,27 @@ void PeakFilter::filterStrength(PeakCollection* peak_collection) const
     // Reject peaks with: i) zero sigma ii) strength (I/sigma) outside range iii) intensity NaN
     for (int i = 0; i < peak_collection->numberOfPeaks(); ++i) {
         nsx::Peak3D* peak_ptr = peak_collection->getPeak(i);
+        Intensity corrected_intensity;
         try {
-            auto corrected_intensity = peak_ptr->correctedIntensity();
-            double intensity = corrected_intensity.value();
-            double sigma = corrected_intensity.sigma();
-
-            if (sigma < 1.0e-6) {
-                peak_ptr->rejectYou(true);
-                continue;
-            }
-
-            double i_over_sigma = intensity / sigma;
-            if (i_over_sigma >= _strength[0] && i_over_sigma <= _strength[1])
-                peak_ptr->caughtYou(true);
-            else
-                peak_ptr->rejectYou(true);
-        } catch (std::exception& e) {
-            nsxlog(Level::Debug, "PeakFilter::filterStrength:", e.what());
+            corrected_intensity = peak_ptr->correctedIntensity();
+        } catch (std::range_error& e) {
+            nsxlog(Level::Debug, "PeakFilter::filterStrength: bad peak intensity;", e.what());
             peak_ptr->rejectYou(true);
+            continue;
         }
+        double intensity = corrected_intensity.value();
+        double sigma = corrected_intensity.sigma();
+
+        if (sigma < 1.0e-6) {
+            peak_ptr->rejectYou(true);
+            continue;
+        }
+
+        double i_over_sigma = intensity / sigma;
+        if (i_over_sigma >= _strength[0] && i_over_sigma <= _strength[1])
+            peak_ptr->caughtYou(true);
+        else
+            peak_ptr->rejectYou(true);
     }
 }
 
@@ -317,12 +319,17 @@ void PeakFilter::filterDRange(PeakCollection* peak_collection) const
 {
     for (int i = 0; i < peak_collection->numberOfPeaks(); ++i) {
         nsx::Peak3D* peak_ptr = peak_collection->getPeak(i);
-        auto q = peak_ptr->q();
-        double d = 1.0 / q.rowVector().norm();
-        if (d >= _d_range[0] && d <= _d_range[1])
-            peak_ptr->caughtYou(true);
-        else
+        try {
+            auto q = peak_ptr->q();
+            double d = 1.0 / q.rowVector().norm();
+            if ((d >= _d_range[0] && d <= _d_range[1]))
+                peak_ptr->caughtYou(true);
+            else
+                peak_ptr->rejectYou(true);
+        } catch (std::range_error& e) {
+            nsxlog(Level::Debug, "PeakFilter::filterDRange: bad peak intensity;", e.what());
             peak_ptr->rejectYou(true);
+        }
     }
 }
 
