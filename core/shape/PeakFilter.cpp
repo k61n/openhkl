@@ -47,7 +47,7 @@ PeakFilter::PeakFilter()
 void PeakFilter::resetFilterFlags()
 {
     _filter_flags = {true,  false, false, false, false, false, false,
-        false, false, false, false, false, false, false};
+                     false, false, false, false, false, false, false};
 }
 
 void PeakFilter::filterSignificance(PeakCollection* peak_collection) const
@@ -418,7 +418,7 @@ void PeakFilter::filter(PeakCollection* peak_collection) const
         filterOverlapping(peak_collection);
     }
 
-    if (_filter_flags.complementary) {// this does nothing
+    if (_filter_flags.complementary) { // this does nothing
         filterComplementary(peak_collection);
         nsxlog(Level::Info, "Filtering complementary");
     }
@@ -426,8 +426,8 @@ void PeakFilter::filter(PeakCollection* peak_collection) const
     if (_filter_flags.frames) {
         filterFrameRange(peak_collection);
         nsxlog(
-            Level::Info, "Filtering peaks from frames in range",
-            _frameRange[0], "-", _frameRange[1]);
+            Level::Info, "Filtering peaks from frames in range", _frameRange[0], "-",
+            _frameRange[1]);
     }
 }
 

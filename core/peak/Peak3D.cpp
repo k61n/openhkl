@@ -297,7 +297,7 @@ void Peak3D::setMillerIndices()
 {
     try {
         _hkl = MillerIndex(q(), *_unitCell);
-    } catch(std::range_error& e) {
+    } catch (std::range_error& e) {
         _selected = false;
     }
 }

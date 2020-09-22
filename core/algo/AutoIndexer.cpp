@@ -208,7 +208,7 @@ void AutoIndexer::refineSolutions(const std::vector<Peak3D*>& peaks)
             InterpolatedState state;
             try {
                 state = peak->dataSet()->instrumentStates().interpolate(c[2]);
-            } catch(...) {
+            } catch (...) {
                 continue;
             }
             Eigen::Matrix3d J = state.jacobianQ(c[0], c[1]);
@@ -295,11 +295,13 @@ void AutoIndexer::refineSolutions(const std::vector<Peak3D*>& peaks)
 std::string AutoIndexer::solutionsToString() const
 {
     std::ostringstream oss;
-    oss << std::endl << std::setw(10) << "quality" << std::setw(10) << "a" << std::setw(10)
-        << "b" << std::setw(10) << "c" << std::setw(10) << "alpha" << std::setw(10) << "beta"
+    oss << std::endl
+        << std::setw(10) << "quality" << std::setw(10) << "a" << std::setw(10) << "b"
+        << std::setw(10) << "c" << std::setw(10) << "alpha" << std::setw(10) << "beta"
         << std::setw(10) << "gamma";
     for (auto solution : _solutions) {
-        oss << std::endl << std::fixed << std::setw(10) << std::setprecision(3) << solution.second
+        oss << std::endl
+            << std::fixed << std::setw(10) << std::setprecision(3) << solution.second
             << solution.first->toString();
     }
     return oss.str();

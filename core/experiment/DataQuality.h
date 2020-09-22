@@ -15,8 +15,8 @@
 #ifndef NSX_CORE_EXPERIMENT_DATAQUALITY_H
 #define NSX_CORE_EXPERIMENT_DATAQUALITY_H
 
-#include <vector>
 #include <string>
+#include <vector>
 
 namespace nsx {
 

@@ -123,8 +123,9 @@ void Experiment::autoIndex(PeakCollection* peaks, const IndexerParameters& param
     _peak_filter->setDRange(params.d_min, params.d_max);
     _peak_filter->setStrength(params.strength_min, params.strength_max);
     _peak_filter->setFrameRange(params.first_frame, params.last_frame);
-    nsxlog(Level::Info, "Experiment::autoIndex: attempting with frames",
-           params.first_frame, "-", params.last_frame);
+    nsxlog(
+        Level::Info, "Experiment::autoIndex: attempting with frames", params.first_frame, "-",
+        params.last_frame);
     _peak_filter->filter(peaks);
     double npeaks = peaks->numberOfPeaks();
     double ncaught = peaks->numberCaughtByFilter();
@@ -141,7 +142,7 @@ bool Experiment::runAutoIndexer(
 {
     nsxlog(Level::Info, "Experiment::runAutoIndexer: start");
     double frame = frame_min;
-    while(frame <= frame_max) {
+    while (frame <= frame_max) {
         params.last_frame = frame;
         autoIndex(peaks, params);
         nsxlog(Level::Info, "Solutions:");
@@ -170,7 +171,7 @@ void Experiment::buildShapeLibrary(PeakCollection* peaks, const ShapeLibParamete
             Ellipsoid shape = peak->shape();
             Eigen::Matrix3d J = coord.jacobian();
             cov += J * shape.inverseMetric() * J.transpose();
-        } catch(std::range_error& e) {
+        } catch (std::range_error& e) {
             nan_peaks += 1;
             continue;
         }
@@ -180,7 +181,7 @@ void Experiment::buildShapeLibrary(PeakCollection* peaks, const ShapeLibParamete
     double sigma_d = std::sqrt(0.5 * (cov(0, 0) + cov(1, 1)));
     double sigma_m = std::sqrt(cov(2, 2));
     nsxlog(
-           Level::Info, "Experiment::buildShapeLibrary: Beam divergence sigma and mosaicity sigma:");
+        Level::Info, "Experiment::buildShapeLibrary: Beam divergence sigma and mosaicity sigma:");
     nsxlog(Level::Info, "sigma_d = ", sigma_d);
     nsxlog(Level::Info, "sigma_m = ", sigma_m);
 
