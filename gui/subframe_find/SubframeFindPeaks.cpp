@@ -718,7 +718,6 @@ std::map<std::string, double> PeakFinderFrame::convolutionParameters()
         std::string pname = _kernel_para_table->item(i, 0)->text().toStdString();
         double pvalue = _kernel_para_table->item(i, 1)->text().toDouble();
         parameters.insert(std::make_pair(pname, pvalue));
-        qDebug() << "5." << i;
     }
     return parameters;
 }
