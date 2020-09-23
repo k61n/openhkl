@@ -12,9 +12,6 @@ top of `scripts/nsx/workflow.py`:
 sys.path.append("path/to/build/swig")
 ```
 
-here, build is the cmake build directory.
-
-
 In lieu of entering calculation parameters via a GUI, these scripts read them
 from a file called `parameters`, which should be placed in the same directory as
 the data files. It will look something like this:
@@ -52,18 +49,17 @@ This script contains the entire NSXTool workflow in a largely automated form. It
 will perform the following steps:
 
 1. Load detector image data from raw(.tiff)/nexus/HDF5 files.
-2. Autoindexing to find the unit cell and sample orientation:
-  * Find peaks in the first few (default 10) frames of the dataset
-  * Integrate the found peaks
-  * Filter the peaks to remove any that are not sensible
-  * Use a Fourier transform method to compute potential lattice vectors
-  * Select the best solution by comparing with the given lattice parameters
-3. Find all peaks in the data set
-4. Integrate all peaks
+2. Find all peaks in the data set
+3. Integrate all peaks
+4. Autoindexing to find the unit cell and sample orientation:
+   * Filter peaks in a limited range of continguous frames
+   * Attempt to compute lattice vectors via FFT method
+   * Select the best solution by comparing with the given lattice parameters
+   * If no solution matches the reference cell, increase the frame range by one and retry
 5. Filter peaks to remove any that are:
    * Too close to the beam or to far from it
    * Too strong or too weak
-   * Forbidden by symmetry considerations (N.B. not working yet)
+   * Forbidden by symmetry considerations
 6. Build a library of peak shapes from the strong peaks
 7. Predict peaks from unit cell and symmetry
 8. Fit strong peak shapes to weak and predicted peaks
@@ -71,11 +67,10 @@ will perform the following steps:
 10. Merge found and predicted peaks,and compute quality metrics
 
 ```
-usage: workflow.py [-h] --name NAME [--files FILES [FILES ...]] [--dataformat DATAFORMAT] --detector
-                   DETECTOR [--loadnsx] [--predicted] [-p PARAMFILE]
-                   [--max_autoindex_frames MAX_AUTOINDEX_FRAMES]
-                   [--min_autoindex_frames MIN_AUTOINDEX_FRAMES] [--length_tol LENGTH_TOL]
-                   [--angle_tol ANGLE_TOL] [--autoindex] [-v]
+usage: workflow.py [-h] --name NAME [--files FILES [FILES ...]] [--dataformat DATAFORMAT] --detector DETECTOR
+                   [--loadnsx] [--predicted] [-p PARAMFILE] [--max_autoindex_frames FRAMES_MAX]
+                   [--min_autoindex_frames FRAMES_MIN] [--length_tol LENGTH_TOL] [--angle_tol ANGLE_TOL] [-v]
+                   [--batches NBATCHES]
 
 NSXTool workflow test script
 
@@ -91,28 +86,29 @@ optional arguments:
   --predicted           Saved data in .nsx has completed prediction step
   -p PARAMFILE, --parameters PARAMFILE
                         File containing experiment paramters
-  --max_autoindex_frames MAX_AUTOINDEX_FRAMES
+  --max_autoindex_frames FRAMES_MAX
                         Maximum number of frames to use for autoindexing
-  --min_autoindex_frames MIN_AUTOINDEX_FRAMES
+  --min_autoindex_frames FRAMES_MIN
                         Minimum number of frames to use for autoindexing
   --length_tol LENGTH_TOL
                         length tolerance (a, b, c) for autoindexing
   --angle_tol ANGLE_TOL
                         angle tolerance (alpha, beta, gamma) for autoindexing
-  --autoindex           Autoindex the data
   -v, --verbose         Print extra output
+  --batches NBATCHES    Number of batches for refinement
+
 ```
 
 The script can be invoked as follows from the directory containing the data and
 `parameters` files:
 ```
 # for a single HDF5 file
-/path/to/workflow.py --name trypsin --detector BioDiff2500 --files trypsin.hdf --dataformat hdf5 --autoindex
+/path/to/workflow.py --name trypsin --detector BioDiff2500 --files trypsin.hdf --dataformat hdf5
 # for a collection of .tiff files
-/path/to/workflow.py --name strep --detector BioDiff5000 --files *.tiff --dataformat raw --autoindex
+/path/to/workflow.py --name strep --detector BioDiff5000 --files *.tiff --dataformat raw
 ```
 
-The calculation is saved at two intermediate points, after steps 4 and 9 on the
+The calculation is saved at two intermediate points, after steps 3 and 9 on the
 list above. The calculation can then be restarted from the intermediate state
 which contains all relevant data, including peak collections, unit cells and
 data sets, using:
@@ -122,7 +118,7 @@ data sets, using:
 /path/to/workflow.py --name trypsin --detector BioDiff2500 --loadnsx --predicted
 ```
 
-the former will load a calculation at step 4, and the latter at step 9.
+the former will load a calculation at step 3, and the latter at step 9.
 
 All relevant information, including data quality metrics (CC, R-factors) is
 written to the log file `nsx.log`.
