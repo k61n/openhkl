@@ -208,7 +208,7 @@ void AutoIndexer::refineSolutions(const std::vector<Peak3D*>& peaks)
             InterpolatedState state;
             try {
                 state = peak->dataSet()->instrumentStates().interpolate(c[2]);
-            } catch (...) {
+            } catch (std::range_error& e) {
                 continue;
             }
             Eigen::Matrix3d J = state.jacobianQ(c[0], c[1]);
