@@ -695,11 +695,16 @@ void PeakFinderFrame::integrate()
 
     nsx::IPeakIntegrator* integrator = experiment->getIntegrator("Pixel sum integrator");
 
+    nsx::sptrProgressHandler handler(new nsx::ProgressHandler);
+    ProgressView progressView(nullptr);
+    progressView.watch(handler);
+
     nsx::IntegrationParameters params{};
     params.peak_end = _peak_area->value();
     params.bkg_begin = _bkg_lower->value();
     params.bkg_end = _bkg_upper->value();
     integrator->setParameters(params);
+    integrator->setHandler(handler);
 
     experiment->integrateFoundPeaks("Pixel sum integrator");
 
@@ -713,7 +718,6 @@ std::map<std::string, double> PeakFinderFrame::convolutionParameters()
         std::string pname = _kernel_para_table->item(i, 0)->text().toStdString();
         double pvalue = _kernel_para_table->item(i, 1)->text().toDouble();
         parameters.insert(std::make_pair(pname, pvalue));
-        qDebug() << "5." << i;
     }
     return parameters;
 }

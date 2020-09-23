@@ -59,6 +59,7 @@ SubframeFilterPeaks::SubframeFilterPeaks()
     setUnitCellUp();
     setStrengthUp();
     setRangeUp();
+    setFrameRangeUp();
     setSparseUp();
     setMergeUp();
     setProceedUp();
@@ -285,6 +286,43 @@ void SubframeFilterPeaks::setRangeUp()
     _d_range_box->contentArea.setSizePolicy(*_size_policy_box);
 
     _left_layout->addWidget(_d_range_box);
+}
+
+void SubframeFilterPeaks::setFrameRangeUp()
+{
+    _frame_range_box = new SpoilerCheck("Frame range");
+
+    QGridLayout* frame_range_layout = new QGridLayout();
+
+    QLabel* min_label = new QLabel("Minimum:");
+    min_label->setAlignment(Qt::AlignRight);
+    frame_range_layout->addWidget(min_label, 0, 0, 1, 1);
+
+    QLabel* max_label = new QLabel("Maximum:");
+    max_label->setAlignment(Qt::AlignRight);
+    frame_range_layout->addWidget(max_label, 1, 0, 1, 1);
+
+    _frame_min = new QDoubleSpinBox();
+    _frame_min->setMaximum(100);
+    _frame_min->setDecimals(0);
+    _frame_min->setValue(0.0000);
+
+    _frame_max = new QDoubleSpinBox();
+    _frame_max->setMaximum(100);
+    _frame_max->setDecimals(0);
+    _frame_max->setValue(10.00000);
+
+    _frame_min->setSizePolicy(*_size_policy_widgets);
+    _frame_max->setSizePolicy(*_size_policy_widgets);
+
+    frame_range_layout->addWidget(_frame_min, 0, 1, 1, 1);
+    frame_range_layout->addWidget(_frame_max, 1, 1, 1, 1);
+
+    _frame_range_box->setContentLayout(*frame_range_layout);
+    _frame_range_box->setSizePolicy(*_size_policy_box);
+    _frame_range_box->contentArea.setSizePolicy(*_size_policy_box);
+
+    _left_layout->addWidget(_frame_range_box);
 }
 
 void SubframeFilterPeaks::setSparseUp()
@@ -523,6 +561,8 @@ void SubframeFilterPeaks::grabFilterParameters()
     _strength_max->setValue(filter->strength()->at(1));
     _d_range_min->setValue(filter->dRange()->at(0));
     _d_range_max->setValue(filter->dRange()->at(1));
+    _frame_min->setValue(filter->frameRange()->at(0));
+    _frame_max->setValue(filter->frameRange()->at(1));
     _significance_level->setValue(*(filter->significance()));
 
     _selected->setChecked(filter->getFilterSelected());
@@ -537,6 +577,7 @@ void SubframeFilterPeaks::grabFilterParameters()
     _unit_cell_box->checker(filter->getFilterIndexTol());
     _strength_box->checker(filter->getFilterStrength());
     _d_range_box->checker(filter->getFilterDRange());
+    _frame_range_box->checker(filter->getFilterFrames());
     _sparse_box->checker(filter->getFilterSparse());
     _merge_box->checker(filter->getFilterSignificance());
 }
@@ -573,6 +614,8 @@ void SubframeFilterPeaks::setFilterParameters() const
         filter->setFilterStrength(true);
     if (_d_range_box->checked())
         filter->setFilterDRange(true);
+    if (_frame_range_box->checked())
+        filter->setFilterFrames(true);
     if (_sparse_box->checked())
         filter->setFilterSparse(true);
     if (_merge_box->checked())
@@ -580,10 +623,12 @@ void SubframeFilterPeaks::setFilterParameters() const
 
     const std::array<double, 2> d_range{_d_range_min->value(), _d_range_max->value()};
     const std::array<double, 2> strength{_strength_min->value(), _strength_max->value()};
+    const std::array<double, 2> frame_range{_frame_min->value(), _frame_max->value()};
 
     filter->setUnitCellTolerance(_tolerance->value());
     filter->setSignificance(_significance_level->value());
     filter->setDRange(d_range);
+    filter->setFrameRange(frame_range);
     filter->setStrength(strength);
     filter->setUnitCellName(_unit_cell->currentText().toStdString());
 }

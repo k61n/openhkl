@@ -63,6 +63,8 @@ class SubframeFilterPeaks : public QWidget {
     void setStrengthUp();
     //! Build the range
     void setRangeUp();
+    //! Build the frame range
+    void setFrameRangeUp();
     //! Build the sparse
     void setSparseUp();
     //! Build the merge
@@ -131,6 +133,8 @@ class SubframeFilterPeaks : public QWidget {
     QDoubleSpinBox* _strength_max;
     QDoubleSpinBox* _d_range_min;
     QDoubleSpinBox* _d_range_max;
+    QDoubleSpinBox* _frame_min;
+    QDoubleSpinBox* _frame_max;
     QDoubleSpinBox* _significance_level;
 
     QSpinBox* _min_number_peaks;
@@ -140,6 +144,7 @@ class SubframeFilterPeaks : public QWidget {
     SpoilerCheck* _unit_cell_box;
     SpoilerCheck* _strength_box;
     SpoilerCheck* _d_range_box;
+    SpoilerCheck* _frame_range_box;
     SpoilerCheck* _sparse_box;
     SpoilerCheck* _merge_box;
 

@@ -170,6 +170,9 @@ class PeakFilter {
 
     //! Set the frame range
     void setFrameRange(const double f0, const double f1) { _frameRange = {f0, f1}; };
+    void setFrameRange(const std::array<double, 2> frames) { _frameRange = frames; };
+    //! Return the frame range
+    const std::array<double, 2>*  frameRange() { return &_frameRange; };
 
  private:
     //! booleans for filtering
