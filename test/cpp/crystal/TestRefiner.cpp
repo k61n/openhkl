@@ -34,6 +34,7 @@
 #include "core/algo/Refiner.h"
 #include "core/experiment/Experiment.h"
 #include "core/experiment/PeakFinder.h"
+#include "core/experiment/UnitCellHandler.h"
 #include "core/gonio/Gonio.h"
 #include "core/instrument/InstrumentState.h"
 #include "core/instrument/Sample.h"
@@ -146,7 +147,8 @@ TEST_CASE("test/crystal/TestRefiner.cpp", "")
     }
 
     auto&& states = dataf->instrumentStates();
-    nsx::Refiner refiner(states, cell.get(), peaks, 1);
+    nsx::UnitCellHandler* cell_handler = experiment.getCellHandler();
+    nsx::Refiner refiner(states, cell.get(), peaks, 1, cell_handler);
 
     CHECK(refiner.batches().size() == 1);
 

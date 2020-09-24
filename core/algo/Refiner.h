@@ -19,14 +19,16 @@
 
 namespace nsx {
 
-//! Used to refine lattice and instrument parameters.
+class UnitCellHandler;
 
+//! Used to refine lattice and instrument parameters.
 class Refiner {
  public:
     //! Construct an instance to refine the given cell based on the given peak list,
     //! using the given number of frame batches. The peaks must belong to the same dataset.
     Refiner(
-        InstrumentStateList& states, UnitCell* cell, std::vector<nsx::Peak3D*> peaks, int nbatches);
+        InstrumentStateList& states, UnitCell* cell, std::vector<nsx::Peak3D*> peaks,
+        int nbatches, UnitCellHandler* cell_handler);
 
     //! Sets the lattice B matrix to be refined.
     void refineUB();
@@ -58,6 +60,7 @@ class Refiner {
     void logChange();
 
  private:
+    UnitCellHandler* _cell_handler;
     UnitCell _unrefined_cell;
     UnitCell* _cell;
     std::vector<RefinementBatch> _batches;

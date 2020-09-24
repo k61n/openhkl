@@ -130,6 +130,8 @@ class Experiment {
     void setReferenceCell(double a, double b, double c, double alpha, double beta, double gamma);
     //! Get space groups compatible with unit cell
     std::vector<std::string> getCompatibleSpaceGroups() const;
+    //! Get the cell handler
+    UnitCellHandler* getCellHandler() const;
 
     // Peak finder
     //! Return a pointer to the PeakFinder object

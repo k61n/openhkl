@@ -282,7 +282,7 @@ void Experiment::refine(
     const unsigned int max_iter = 1000;
     std::vector<Peak3D*> peak_list = peaks->getPeakList();
     InstrumentStateList& states = data->instrumentStates();
-    Refiner refiner(states, cell, peak_list, n_batches);
+    Refiner refiner(states, cell, peak_list, n_batches, _cell_handler.get());
     refiner.refineUB();
     refiner.refineSamplePosition();
     refiner.refineSampleOrientation();
@@ -489,6 +489,11 @@ void Experiment::setReferenceCell(
 std::vector<std::string> Experiment::getCompatibleSpaceGroups() const
 {
     return _cell_handler->getCompatibleSpaceGroups();
+}
+
+UnitCellHandler* Experiment::getCellHandler() const
+{
+    return _cell_handler.get();
 }
 
 // Integration handler methods
