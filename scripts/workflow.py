@@ -75,15 +75,6 @@ if not args.loadnsx:
     pynsxprint("Integrating...")
     npeaks = expt.integrate_peaks()
 
-    peaks = expt.get_found_peaks()
-
-    # Autoindex
-    pynsxprint("Autoindexing...")
-    success = expt.run_auto_indexer(peaks, args.length_tol, args.angle_tol,
-                                    args.frames_min, args.frames_max)
-    pynsxprint("Autoindexing successful")
-    if not success:
-        raise RuntimeError("AutoIndexer failed")
     expt.save()
 else:
     if not args.predicted:
@@ -94,6 +85,14 @@ if args.predicted:
     pynsxprint("Loading data...")
     expt.load(predicted=args.predicted)
 else:
+    # Autoindex
+    pynsxprint("Autoindexing...")
+    peaks = expt.get_found_peaks()
+    success = expt.run_auto_indexer(peaks, args.length_tol, args.angle_tol,
+                                    args.frames_min, args.frames_max)
+    pynsxprint("Autoindexing successful")
+    if not success:
+        raise RuntimeError("AutoIndexer failed")
     pynsxprint("Filtering...")
     filtered_collection_name = "filtered"
     peaks = expt.get_found_peaks()

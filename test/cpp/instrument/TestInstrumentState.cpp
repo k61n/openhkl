@@ -42,11 +42,22 @@ int nsx::UnitTest_DataSet::run()
     auto detectorStates = dataf->_reader->detectorStates();
     auto sampleStates = dataf->_reader->sampleStates();
 
+    int good_states = 0;
+    int total_states = 0;
     for (size_t i = 0; i < 100 * (dataf->nFrames() - 1); ++i) {
         double frame = double(i) / 100.0;
-        auto state = dataf->instrumentStates().interpolate(frame);
+        ++total_states;
+        try {
+            auto state = dataf->instrumentStates().interpolate(frame);
+            ++good_states;
+        } catch(std::range_error& e) {
+            std::cout << e.what() << std::endl;
+            continue;
+        }
         // auto lframe = std::lround(std::floor(frame));
     }
+    std::cout << good_states << "/" << total_states << " good states" << std::endl;
+    CHECK(good_states == 2901);
     return 0;
 }
 

@@ -123,12 +123,14 @@ void Experiment::autoIndex(PeakCollection* peaks, const IndexerParameters& param
     _peak_filter->setDRange(params.d_min, params.d_max);
     _peak_filter->setStrength(params.strength_min, params.strength_max);
     _peak_filter->setFrameRange(params.first_frame, params.last_frame);
-    nsxlog(Level::Info, "Experiment::autoIndex: attempting with frames",
-           params.first_frame, "-", params.last_frame);
+    nsxlog(
+        Level::Info, "Experiment::autoIndex: attempting with frames", params.first_frame, "-",
+        params.last_frame);
     _peak_filter->filter(peaks);
     double npeaks = peaks->numberOfPeaks();
     double ncaught = peaks->numberCaughtByFilter();
-    nsxlog(Level::Info, "Indexing using", ncaught, "/", npeaks, "peaks"); _peak_handler->acceptFilter(collection_name, peaks);
+    nsxlog(Level::Info, "Indexing using", ncaught, "/", npeaks, "peaks");
+    _peak_handler->acceptFilter(collection_name, peaks);
     _auto_indexer->setParameters(params);
     PeakCollection* indexing_collection = getPeakCollection(collection_name);
     return _auto_indexer->autoIndex(indexing_collection);
@@ -140,7 +142,7 @@ bool Experiment::runAutoIndexer(
 {
     nsxlog(Level::Info, "Experiment::runAutoIndexer: start");
     double frame = frame_min;
-    while(frame <= frame_max) {
+    while (frame <= frame_max) {
         params.last_frame = frame;
         autoIndex(peaks, params);
         nsxlog(Level::Info, "Solutions:");
@@ -159,19 +161,23 @@ bool Experiment::runAutoIndexer(
 void Experiment::buildShapeLibrary(PeakCollection* peaks, const ShapeLibParameters& params)
 {
     params.log(Level::Info);
-    std::vector<Peak3D*> peak_list = peaks->getPeakList();
-    std::vector<Peak3D*> fit_peaks;
-
     // compute sigma_m and sigma_d
     Eigen::Matrix3d cov;
     cov.setZero();
-    for (auto peak : peak_list) {
-        PeakCoordinateSystem coord{peak};
-        Ellipsoid shape = peak->shape();
-        Eigen::Matrix3d J = coord.jacobian();
-        cov += J * shape.inverseMetric() * J.transpose();
+    int nan_peaks = 0;
+    for (auto peak : peaks->getPeakList()) {
+        try {
+            PeakCoordinateSystem coord{peak};
+            Ellipsoid shape = peak->shape();
+            Eigen::Matrix3d J = coord.jacobian();
+            cov += J * shape.inverseMetric() * J.transpose();
+        } catch (std::range_error& e) {
+            nan_peaks += 1;
+            continue;
+        }
     }
-    cov /= peak_list.size();
+    nsxlog(Level::Debug, nan_peaks, "peaks with intensity NaN");
+    cov /= peaks->numberOfPeaks();
     double sigma_d = std::sqrt(0.5 * (cov(0, 0) + cov(1, 1)));
     double sigma_m = std::sqrt(cov(2, 2));
     nsxlog(
@@ -179,26 +185,23 @@ void Experiment::buildShapeLibrary(PeakCollection* peaks, const ShapeLibParamete
     nsxlog(Level::Info, "sigma_d = ", sigma_d);
     nsxlog(Level::Info, "sigma_m = ", sigma_m);
 
-    for (nsx::Peak3D* peak : peak_list) {
-        if (!peak->enabled())
-            continue;
+    _peak_filter->resetFiltering(peaks);
+    _peak_filter->resetFilterFlags();
+    _peak_filter->setFilterStrength(true);
+    _peak_filter->setFilterDRange(true);
+    _peak_filter->setDRange(params.detector_range_min, params.detector_range_max);
+    _peak_filter->setStrength(params.strength_min, params.strength_max);
+    _peak_filter->filter(peaks);
+    std::string collection_name = "fit";
+    _peak_handler->acceptFilter(collection_name, peaks);
+    PeakCollection* fit_peaks = getPeakCollection(collection_name);
 
-        const double d = 1.0 / peak->q().rowVector().norm();
-        if (d > params.detector_range_max || d < params.detector_range_min)
-            continue;
-
-        const nsx::Intensity& intensity = peak->correctedIntensity();
-        if (intensity.value() <= params.strength_min * intensity.sigma())
-            continue;
-
-        fit_peaks.push_back(peak);
-    }
-    if (fit_peaks.size() == 0)
+    if (fit_peaks->numberOfPeaks() == 0)
         throw std::runtime_error("buildShapeLibrary: no fit peaks found");
 
     nsxlog(
-        Level::Info, "Experiment::buildShapeLibrary:", fit_peaks.size(), "/", peak_list.size(),
-        "fit peaks");
+        Level::Info, "Experiment::buildShapeLibrary:", fit_peaks->numberOfPeaks(), "/",
+        peaks->numberOfPeaks(), "fit peaks");
 
     nsx::AABB aabb;
 
@@ -215,8 +218,9 @@ void Experiment::buildShapeLibrary(PeakCollection* peaks, const ShapeLibParamete
     ShapeLibrary shape_library =
         ShapeLibrary(!params.kabsch_coords, params.peak_end, params.bkg_begin, params.bkg_end);
 
+    std::vector<Peak3D*> fit_peak_list = fit_peaks->getPeakList();
     shape_library =
-        _integration_handler->integrateShapeLibrary(fit_peaks, &shape_library, aabb, params);
+        _integration_handler->integrateShapeLibrary(fit_peak_list, &shape_library, aabb, params);
 
     peaks->setShapeLibrary(shape_library);
     // shape_library.updateFit(1000); // This does nothing!! - zamaan

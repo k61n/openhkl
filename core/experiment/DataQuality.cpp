@@ -56,9 +56,11 @@ void DataResolution::computeQuality(
     std::vector<ShellQuality> data_resolution;
     ResolutionShell resolution_shell = nsx::ResolutionShell(d_min, d_max, n_shells);
     for (auto peak : found->getPeakList())
-        resolution_shell.addPeak(peak);
+        if (peak->enabled())
+            resolution_shell.addPeak(peak);
     for (auto peak : predicted->getPeakList())
-        resolution_shell.addPeak(peak);
+        if (peak->enabled())
+            resolution_shell.addPeak(peak);
 
     for (int i = n_shells - 1; i >= 0; --i) {
         double d_lower = resolution_shell.shell(i).dmin;

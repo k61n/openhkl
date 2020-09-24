@@ -59,8 +59,7 @@ class UnitCellHandler {
     void swapUnitCells(
         const std::string& old_cell, const std::string& new_cell, PeakHandler* peak_handler);
     //! Set the reference cell
-    void setReferenceCell(
-        double a, double b, double c, double alpha, double beta, double gamma);
+    void setReferenceCell(double a, double b, double c, double alpha, double beta, double gamma);
     //! Get the number of peak lists
     int numUnitCells() const { return _unit_cells.size(); };
     //! Accept an autoindexer solution as the unit cell

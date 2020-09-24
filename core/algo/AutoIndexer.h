@@ -21,7 +21,7 @@
 namespace nsx {
 
 using RankedSolution = std::pair<std::shared_ptr<UnitCell>, double>;
-    using SolutionList = std::vector<RankedSolution>;
+using SolutionList = std::vector<RankedSolution>;
 
 enum class Level;
 
