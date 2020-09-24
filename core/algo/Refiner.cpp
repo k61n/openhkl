@@ -53,7 +53,7 @@ Refiner::Refiner(
 
     std::vector<const nsx::Peak3D*> peaks_subset;
 
-    int n_batch = 1;
+    int n_batch = 0;
     for (size_t i = 0; i < filtered_peaks.size(); ++i) {
         peaks_subset.push_back(filtered_peaks[i]);
 
@@ -177,6 +177,6 @@ void Refiner::logChange()
     for (const auto& batch : _batches) {
         nsxlog(Level::Info, batch.name(), batch.cell()->toString());
     }
-}
+
 
 } // namespace nsx
