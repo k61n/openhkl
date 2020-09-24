@@ -177,6 +177,6 @@ void Refiner::logChange()
     for (const auto& batch : _batches) {
         nsxlog(Level::Info, batch.name(), batch.cell()->toString());
     }
-
+}
 
 } // namespace nsx
