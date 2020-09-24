@@ -44,7 +44,7 @@ struct IndexerParameters {
     double gruberTolerance = 4e-2;
     //! Use _only_ Niggli reduction (i.e., no subsequent Gruber reduction) if set
     //! true
-    bool niggliReduction = false;
+    bool niggliReduction = true;
     //! Lower bound of expected unit cell volume, used to reject candidate unit
     //! cells
     double minUnitCellVolume = 20.0;
