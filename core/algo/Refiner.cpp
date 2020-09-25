@@ -19,6 +19,7 @@
 #include "core/algo/Refiner.h"
 #include "core/data/DataSet.h"
 #include "core/detector/DetectorEvent.h"
+#include "core/experiment/UnitCellHandler.h"
 #include "core/instrument/InstrumentState.h"
 #include "core/peak/Peak3D.h"
 #include "core/peak/Qs2Events.h"
@@ -29,8 +30,9 @@
 namespace nsx {
 
 Refiner::Refiner(
-    InstrumentStateList& states, UnitCell* cell, std::vector<nsx::Peak3D*> peaks, int nbatches)
-    : _cell(cell), _batches()
+    InstrumentStateList& states, UnitCell* cell, std::vector<nsx::Peak3D*> peaks,
+    int nbatches, UnitCellHandler* cell_handler)
+    : _cell_handler(cell_handler), _cell(cell), _batches()
 {
     _unrefined_cell = *_cell;
     const PeakFilter peak_filter;
@@ -51,11 +53,19 @@ Refiner::Refiner(
 
     std::vector<const nsx::Peak3D*> peaks_subset;
 
+    int n_batch = 0;
     for (size_t i = 0; i < filtered_peaks.size(); ++i) {
         peaks_subset.push_back(filtered_peaks[i]);
 
         if (i + 1.1 >= (current_batch + 1) * batch_size) {
-            RefinementBatch b(states, cell, peaks_subset);
+
+            // Make a new unit cell for this batch
+            std::ostringstream oss;
+            oss << "batch" << ++n_batch;
+            std::string name = oss.str();
+            _cell_handler->addUnitCell(name, _unrefined_cell);
+ 
+            RefinementBatch b(states, _cell_handler->getUnitCell(name), peaks_subset);
             _batches.emplace_back(std::move(b));
             peaks_subset.clear();
             ++current_batch;

@@ -17,6 +17,7 @@
 #include "core/data/DataSet.h"
 #include "core/data/DataTypes.h"
 #include "core/experiment/Experiment.h"
+#include "core/experiment/UnitCellHandler.h"
 #include "core/peak/Peak3D.h"
 #include "gui/models/Meta.h"
 #include "gui/models/Project.h"
@@ -1050,7 +1051,9 @@ void RefinerDialog::refine()
 
         nsx::InstrumentStateList& states = data->instrumentStates();
 
-        nsx::Refiner refiner(states, unit_cell, reference_peaks, n_batches);
+        nsx::UnitCellHandler* cell_handler =
+            gSession->currentProject()->experiment()->getCellHandler();
+        nsx::Refiner refiner(states, unit_cell, reference_peaks, n_batches, cell_handler);
 
         if (_refine_lattice->isChecked()) {
             refiner.refineUB();

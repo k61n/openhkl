@@ -41,7 +41,7 @@ class MillerIndex {
     // MillerIndex(const ReciprocalVector &q, const UnitCell &unit_cell);
 
     //! (Python) Construct from a given q vector and unit cell
-    MillerIndex(const ReciprocalVector q, const UnitCell unit_cell);
+    MillerIndex(const ReciprocalVector q, const UnitCell& unit_cell);
 
     //! Construct a MillerIndex from an Eigen row vector of integer
     explicit MillerIndex(const Eigen::RowVector3i& hkl);

@@ -252,7 +252,7 @@ bool RefinementBatch::contains(double f) const
 std::string RefinementBatch::name() const
 {
     std::ostringstream oss;
-    oss << _fmin << "-" << _fmax;
+    oss << int(_fmin) << "-" << int(_fmax);
     return oss.str();
 }
 
