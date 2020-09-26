@@ -205,7 +205,9 @@ void Session::onDataChanged()
 
 void Session::onExperimentChanged()
 {
-    gGui->onExperimentChanged();
+    if (currentProject()->experiment()->getDiffractometer()){
+        gGui->onExperimentChanged();
+    }
     onDataChanged();
     onUnitCellChanged();
 }
