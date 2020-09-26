@@ -90,7 +90,8 @@ DetectorProperty::~DetectorProperty() { }
 
 void DetectorProperty::refreshInput()
 {
-    if (gSession->currentProjectNum() >= 0) {
+    if ((gSession->currentProjectNum() >= 0) && 
+		gSession->currentProject()->experiment()->getDiffractometer()) {
         nsx::Detector* detector =
             gSession->currentProject()->experiment()->getDiffractometer()->detector();
 

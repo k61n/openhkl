@@ -22,18 +22,28 @@ namespace nsx {
 
 DataHandler::DataHandler(const std::string& name, const std::string& diffractometerName)
 {
-    _diffractometer.reset(Diffractometer::create(diffractometerName));
+    _diffractometer = nullptr;
+    if (!(diffractometerName == std::string("unknown_instrument")))
+        _diffractometer.reset(Diffractometer::create(diffractometerName));
     _name = name;
 }
 
 const Diffractometer* DataHandler::getDiffractometer() const
 {
-    return _diffractometer.get();
+    if (!_diffractometer) {
+        return _diffractometer.get();
+    } else {
+        throw std::runtime_error("No diffractometer found");
+    }
 }
 
 Diffractometer* DataHandler::getDiffractometer()
 {
-    return _diffractometer.get();
+    if (_diffractometer) {
+        return _diffractometer.get();
+    } else {
+        throw std::runtime_error("No diffractometer found");
+    }
 }
 
 void DataHandler::setDiffractometer(const std::string& diffractometerName)
@@ -110,7 +120,6 @@ void DataHandler::addData(sptrDataSet data, std::string name)
             throw std::runtime_error("trying to mix data with different wavelengths");
     }
 
-    data->setName(name);
     nsxlog(
         Level::Info, "DataHandler::addData: adding DataSet ", name, ":", data->nFrames(), "frames");
     _data_map.insert(std::make_pair(name, data));

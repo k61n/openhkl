@@ -36,9 +36,11 @@ set(test_files p16106_00029299.tiff
                p16106_00029305.tiff
                FutA.nsx
                FutA-indexed.nsx)
+list(LENGTH test_files nfiles)
+message(STATUS "Downloading ${nfiles} test data files...")
 foreach(test_file ${test_files})
   if(NOT EXISTS ${test_data_dir}/${test_file})
-    message(STATUS "Downloading test data ${test_data_url}/${test_file}")
+    message("${test_data_url}/${test_file}")
     file(DOWNLOAD ${test_data_url}/${test_file} ${test_data_dir}/${test_file})
   endif()
 endforeach()
