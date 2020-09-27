@@ -161,29 +161,7 @@ bool Experiment::runAutoIndexer(
 void Experiment::buildShapeLibrary(PeakCollection* peaks, const ShapeLibParameters& params)
 {
     params.log(Level::Info);
-    // compute sigma_m and sigma_d
-    Eigen::Matrix3d cov;
-    cov.setZero();
-    int nan_peaks = 0;
-    for (auto peak : peaks->getPeakList()) {
-        try {
-            PeakCoordinateSystem coord{peak};
-            Ellipsoid shape = peak->shape();
-            Eigen::Matrix3d J = coord.jacobian();
-            cov += J * shape.inverseMetric() * J.transpose();
-        } catch (std::range_error& e) {
-            nan_peaks += 1;
-            continue;
-        }
-    }
-    nsxlog(Level::Debug, nan_peaks, "peaks with intensity NaN");
-    cov /= peaks->numberOfPeaks();
-    double sigma_d = std::sqrt(0.5 * (cov(0, 0) + cov(1, 1)));
-    double sigma_m = std::sqrt(cov(2, 2));
-    nsxlog(
-        Level::Info, "Experiment::buildShapeLibrary: Beam divergence sigma and mosaicity sigma:");
-    nsxlog(Level::Info, "sigma_d = ", sigma_d);
-    nsxlog(Level::Info, "sigma_m = ", sigma_m);
+    peaks->computeSigmas();
 
     _peak_filter->resetFiltering(peaks);
     _peak_filter->resetFilterFlags();
@@ -206,7 +184,7 @@ void Experiment::buildShapeLibrary(PeakCollection* peaks, const ShapeLibParamete
     nsx::AABB aabb;
 
     if (params.kabsch_coords) {
-        const Eigen::Vector3d sigma(sigma_d, sigma_d, sigma_m);
+        const Eigen::Vector3d sigma(peaks->sigmaD(), peaks->sigmaD(), peaks->sigmaM());
         aabb.setLower(-params.peak_end * sigma);
         aabb.setUpper(params.peak_end * sigma);
     } else {
