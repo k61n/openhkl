@@ -27,6 +27,10 @@ namespace nsx {
 
 void DataQuality::computeQuality(MergedData& merged_peaks)
 {
+    nobserved = merged_peaks.totalSize();
+    nunique = merged_peaks.mergedPeakSet().size();
+    redundancy = merged_peaks.redundancy();
+
     nsx::RFactor rfactor;
     rfactor.calculate(&merged_peaks);
     nsx::CC cc;
@@ -73,7 +77,7 @@ void DataResolution::computeQuality(
 
         ShellQuality quality;
         quality.computeQuality(merged_data_per_shell, d_lower, d_upper);
-        resolution.push_back(quality);
+        shells.push_back(quality);
     }
 }
 
@@ -113,7 +117,7 @@ void DataResolution::log() const
         << std::setw(8) << "eRmer" << std::setw(8) << "Rmea" << std::setw(8) << "eRmea"
         << std::setw(8) << "Rpim" << std::setw(8) << "eRpim" << std::setw(8) << "CChalf"
         << std::setw(8) << "Cstar";
-    for (auto shell : resolution) {
+    for (auto shell : shells) {
         oss << std::endl << shell.toString();
     }
     nsxlog(Level::Info, oss.str());

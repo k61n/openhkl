@@ -72,18 +72,9 @@ void ShapeLibraryDialog::setUpParametrization(nsx::PeakCollection* peak_collecti
     for (nsx::Peak3D* peak : _peaks)
         _data.insert(peak->dataSet());
 
-    Eigen::Matrix3d cov;
-    cov.setZero();
-
-    for (nsx::Peak3D* peak : _peaks) {
-        nsx::PeakCoordinateSystem coord(peak);
-        const nsx::Ellipsoid& shape = peak->shape();
-        Eigen::Matrix3d J = coord.jacobian();
-        cov += J * shape.inverseMetric() * J.transpose();
-    }
-    cov /= _peaks.size();
-    _sigma_D->setValue(std::sqrt(0.5 * (cov(0, 0) + cov(1, 1))));
-    _sigma_M->setValue(std::sqrt(cov(2, 2)));
+    peak_collection->computeSigmas();
+    _sigma_D->setValue(peak_collection->sigmaD());
+    _sigma_M->setValue(peak_collection->sigmaM());
 
     _peak_collection_item.setPeakCollection(peak_collection);
     _peak_collection_model.setRoot(&_peak_collection_item);

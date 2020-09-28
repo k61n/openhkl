@@ -59,6 +59,13 @@ class PeakCollection {
     //! Returns the peak with index
     void setType(listtype type) { _type = type; };
 
+    //! compute beam divergence and mosaicity sigmas
+    void computeSigmas();
+    //! Return beam divergence sigma
+    double sigmaD();
+    //! Return mosaicity sigma
+    double sigmaM();
+
     //! Returns the amount of peaks
     int numberOfPeaks() const { return _peaks.size(); }
     //! Returns the amount of valid peaks
@@ -96,6 +103,11 @@ class PeakCollection {
     std::string _parent;
 
     std::unique_ptr<ShapeLibrary> _shape_library;
+
+    //! Beam divergence sigma
+    double _sigma_d;
+    //! Mosaicity sigma
+    double _sigma_m;
 };
 
 } // namespace nsx

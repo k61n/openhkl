@@ -171,4 +171,38 @@ void PeakCollection::checkCollection() const
     nsxlog(Level::Info, n_zero, "peaks with intensity zero");
 }
 
+void PeakCollection::computeSigmas()
+{
+    Eigen::Matrix3d cov;
+    cov.setZero();
+    int npeaks = 0;
+    for (auto peak : getPeakList()) {
+        if (peak->enabled()) {
+            PeakCoordinateSystem coord{peak};
+            Ellipsoid shape = peak->shape();
+            Eigen::Matrix3d J = coord.jacobian();
+            cov += J * shape.inverseMetric() * J.transpose();
+            ++npeaks;
+        }
+    }
+    cov /= npeaks;
+    _sigma_d = std::sqrt(0.5 * (cov(0, 0) + cov(1, 1)));
+    _sigma_m = std::sqrt(cov(2, 2));
+    nsxlog(
+        Level::Info, "PeakCollection::computeSigmas: Beam divergence sigma and mosaicity sigma:");
+    nsxlog(Level::Info, "PeakCollection: ", _name);
+    nsxlog(Level::Info, "sigma_d = ", _sigma_d);
+    nsxlog(Level::Info, "sigma_m = ", _sigma_m);
+}
+
+double PeakCollection::sigmaD()
+{
+    return _sigma_d;
+}
+
+double PeakCollection::sigmaM()
+{
+    return _sigma_m;
+}
+
 } // namespace nsx
