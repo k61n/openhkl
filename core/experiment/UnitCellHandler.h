@@ -66,7 +66,7 @@ class UnitCellHandler {
     bool checkAndAssignUnitCell(
         PeakCollection* peaks, AutoIndexer* auto_indexer, double length_tol, double angle_tol);
     //! Assign unit cell to a peak collection, compute Miller indices from q and cell
-    void assignUnitCell(PeakCollection* peaks);
+    void assignUnitCell(PeakCollection* peaks, std::string cellName="accepted");
     //! Get space groups compatible with unit cell
     std::vector<std::string> getCompatibleSpaceGroups() const;
 

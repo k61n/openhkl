@@ -122,12 +122,11 @@ bool UnitCellHandler::checkAndAssignUnitCell(
     return accepted;
 }
 
-void UnitCellHandler::assignUnitCell(PeakCollection* peaks)
+void UnitCellHandler::assignUnitCell(PeakCollection* peaks, std::string cellName)
 {
-    std::string name = "accepted";
     std::vector<Peak3D*> peak_list = peaks->getPeakList();
     for (auto peak : peak_list) {
-        peak->setUnitCell(getUnitCell(name));
+        peak->setUnitCell(getUnitCell(cellName));
         peak->setMillerIndices();
     }
 }
