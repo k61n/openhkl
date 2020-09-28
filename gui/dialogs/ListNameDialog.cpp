@@ -29,7 +29,7 @@ ListNameDialog::ListNameDialog() : QDialog()
     QVBoxLayout* whole = new QVBoxLayout(this);
     QHBoxLayout* line = new QHBoxLayout;
     name_ = new QLineEdit();
-    line->addWidget(new QLabel("Peaklist name: "));
+    line->addWidget(new QLabel("Peak collection name: "));
     line->addWidget(name_);
     whole->addLayout(line);
     QDialogButtonBox* buttonbox =
@@ -43,6 +43,6 @@ ListNameDialog::ListNameDialog() : QDialog()
 QString ListNameDialog::listName()
 {
     if (name_->text() == "")
-        return "no name peaklist";
+        return "unnamed peak collection";
     return name_->text();
 }

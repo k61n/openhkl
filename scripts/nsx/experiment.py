@@ -355,7 +355,7 @@ class Experiment:
 
         data_resolution = self._expt.getResolution()
         self.log("Resolution shells")
-        for i, data in enumerate(data_resolution.resolution):
+        for i, data in enumerate(data_resolution.shells):
             self.log(f'Shell {i}')
             self.log(f'd_min            = {data.dmin}')
             self.log(f'd_max            = {data.dmax}')

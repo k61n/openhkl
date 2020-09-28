@@ -1,0 +1,34 @@
+//  ***********************************************************************************************
+//
+//  NSXTool: data reduction for neutron single-crystal diffraction
+//
+//! @file      gui/dialogs/UnitCellDialog.h
+//! @brief     Defines class UnitCellDialog
+//!
+//! @homepage  ###HOMEPAGE###
+//! @license   GNU General Public License v3 or higher (see COPYING)
+//! @copyright Institut Laue-Langevin and Forschungszentrum Jülich GmbH 2016-
+//! @authors   see CITATION, MAINTAINER
+//
+//  ***********************************************************************************************
+
+#ifndef NSX_GUI_DIALOGS_UNITCELLDIALOG_H
+#define NSX_GUI_DIALOGS_UNITCELLDIALOG_H
+
+#include <QComboBox>
+#include <QDialog>
+#include <QLineEdit>
+
+//! Dialog to assign a unit cell to a peak collection
+class UnitCellDialog : public QDialog {
+ public:
+    UnitCellDialog(std::vector<std::string> collectionNames);
+    QString unitCellName();
+    QString peakCollectionName();
+
+ private:
+    QComboBox* peakCollections;
+    QLineEdit* cellName;
+};
+
+#endif // NSX_GUI_DIALOGS_UNITCELLDIALOG_H

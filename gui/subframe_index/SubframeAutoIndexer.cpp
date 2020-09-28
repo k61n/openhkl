@@ -17,7 +17,7 @@
 #include "base/utils/Units.h"
 #include "core/algo/AutoIndexer.h"
 #include "core/experiment/Experiment.h"
-#include "gui/dialogs/ListNameDialog.h"
+#include "gui/dialogs/UnitCellDialog.h"
 #include "gui/frames/UnitCellWidget.h"
 #include "gui/models/Project.h"
 #include "gui/models/Session.h"
@@ -240,11 +240,11 @@ void SubframeAutoIndexer::setParametersUp()
 
 void SubframeAutoIndexer::setProceedUp()
 {
-    _solve_button = new QPushButton("Find Unit Cells");
+    _solve_button = new QPushButton("Find unit cells");
     _solve_button->setSizePolicy(*_size_policy_widgets);
     _left_layout->addWidget(_solve_button);
 
-    _save_button = new QPushButton("Accept Solution");
+    _save_button = new QPushButton("Assign selected unit cell");
     _save_button->setSizePolicy(*_size_policy_widgets);
     _left_layout->addWidget(_save_button);
 
@@ -506,25 +506,20 @@ void SubframeAutoIndexer::acceptSolution()
         return;
 
     if (_selected_unit_cell) {
-        std::unique_ptr<ListNameDialog> dlg(new ListNameDialog());
+        nsx::Experiment* expt = gSession->experimentAt(_exp_combo->currentIndex())->experiment();
+        std::vector<std::string> collections = expt->getCollectionNames();
+        std::unique_ptr<UnitCellDialog> dlg(new UnitCellDialog(collections));
         dlg->exec();
-        if (!dlg->listName().isEmpty()) {
-            _selected_unit_cell->setName(dlg->listName().toStdString());
-            gSession->experimentAt(_exp_combo->currentIndex())
-                ->experiment()
-                ->addUnitCell(dlg->listName().toStdString(), *_selected_unit_cell.get());
+        if (!dlg->unitCellName().isEmpty()) {
+            std::string cellName = dlg->unitCellName().toStdString();
+            _selected_unit_cell->setName(cellName);
+            expt->addUnitCell(dlg->unitCellName().toStdString(), *_selected_unit_cell.get());
             gSession->onUnitCellChanged();
 
-            const nsx::PeakCollection* collection =
-                gSession->experimentAt(_exp_combo->currentIndex())
-                    ->experiment()
-                    ->getPeakCollection(_peak_combo->currentText().toStdString());
+            nsx::PeakCollection* collection =
+                expt->getPeakCollection(dlg->peakCollectionName().toStdString());
 
-            std::vector<nsx::Peak3D*> peaks = collection->getPeakList();
-            for (nsx::Peak3D* peak : peaks)
-                peak->setUnitCell(gSession->experimentAt(_exp_combo->currentIndex())
-                                      ->experiment()
-                                      ->getUnitCell(dlg->listName().toStdString()));
+            expt->assignUnitCell(collection, cellName);
         }
     }
 }

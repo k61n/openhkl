@@ -457,9 +457,9 @@ bool Experiment::checkAndAssignUnitCell(PeakCollection* peaks, double length_tol
     return _cell_handler->checkAndAssignUnitCell(peaks, _auto_indexer.get(), length_tol, angle_tol);
 }
 
-void Experiment::assignUnitCell(PeakCollection* peaks)
+void Experiment::assignUnitCell(PeakCollection* peaks, std::string name)
 {
-    _cell_handler->assignUnitCell(peaks);
+    _cell_handler->assignUnitCell(peaks, name);
 }
 
 void Experiment::setReferenceCell(
