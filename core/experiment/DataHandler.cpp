@@ -39,11 +39,7 @@ const Diffractometer* DataHandler::getDiffractometer() const
 
 Diffractometer* DataHandler::getDiffractometer()
 {
-    if (_diffractometer) {
-        return _diffractometer.get();
-    } else {
-        throw std::runtime_error("No diffractometer found");
-    }
+    return _diffractometer.get();
 }
 
 void DataHandler::setDiffractometer(const std::string& diffractometerName)
