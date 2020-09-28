@@ -14,6 +14,7 @@
 
 #include "gui/subframe_combine/SubframeMergedPeaks.h"
 #include "core/data/DataSet.h"
+#include "core/experiment/DataQuality.h"
 #include "core/experiment/Experiment.h"
 #include "core/statistics/CC.h"
 #include "core/statistics/MergedPeak.h"
@@ -354,65 +355,48 @@ void SubframeMergedPeaks::refreshDShellTable()
             ->experiment()
             ->getPeakCollection(_predicted_drop->currentText().toStdString());
 
-    nsx::ResolutionShell resolutionShell(min, max, shells);
-    for (nsx::Peak3D* peak : found->getPeakList())
-        resolutionShell.addPeak(peak);
-    for (nsx::Peak3D* peak : predicted->getPeakList())
-        resolutionShell.addPeak(peak);
 
-    for (int i = shells - 1; i >= 0; --i) {
-        const double d_lower = resolutionShell.shell(i).dmin;
-        const double d_upper = resolutionShell.shell(i).dmax;
+    nsx::DataQuality quality;
+    nsx::DataResolution resolution;
+    quality.computeQuality(*_merged_data);
+    resolution.computeQuality(
+       min, max, shells, predicted, found, _merged_data->spaceGroup(), inclFriedel);
+    quality.log();
+    resolution.log();
 
-        nsx::MergedData merged_data_per_shell(_merged_data->spaceGroup(), inclFriedel);
-
-        for (nsx::Peak3D* peak : resolutionShell.shell(i).peaks)
-            merged_data_per_shell.addPeak(peak);
-
-        nsx::CC cc;
-        cc.calculate(&merged_data_per_shell);
-        nsx::RFactor rfactor;
-        rfactor.calculate(&merged_data_per_shell);
-
+    for (auto shell : resolution.shells) {
         QList<QStandardItem*> row;
-        row.push_back(new QStandardItem(QString::number(d_upper)));
-        row.push_back(new QStandardItem(QString::number(d_lower)));
-        row.push_back(new QStandardItem(QString::number(merged_data_per_shell.totalSize())));
-        row.push_back(
-            new QStandardItem(QString::number(merged_data_per_shell.mergedPeakSet().size())));
-        row.push_back(new QStandardItem(QString::number(merged_data_per_shell.redundancy())));
-        row.push_back(new QStandardItem(QString::number(rfactor.Rmeas())));
-        row.push_back(new QStandardItem(QString::number(rfactor.expectedRmeas())));
-        row.push_back(new QStandardItem(QString::number(rfactor.Rmerge())));
-        row.push_back(new QStandardItem(QString::number(rfactor.expectedRmerge())));
-        row.push_back(new QStandardItem(QString::number(rfactor.Rpim())));
-        row.push_back(new QStandardItem(QString::number(rfactor.expectedRpim())));
-        row.push_back(new QStandardItem(QString::number(cc.CChalf())));
-        row.push_back(new QStandardItem(QString::number(cc.CCstar())));
+        row.push_back(new QStandardItem(QString::number(shell.dmin)));
+        row.push_back(new QStandardItem(QString::number(shell.dmax)));
+        row.push_back(new QStandardItem(QString::number(shell.nobserved)));
+        row.push_back(new QStandardItem(QString::number(shell.nunique)));
+        row.push_back(new QStandardItem(QString::number(shell.redundancy)));
+        row.push_back(new QStandardItem(QString::number(shell.Rmeas)));
+        row.push_back(new QStandardItem(QString::number(shell.expectedRmeas)));
+        row.push_back(new QStandardItem(QString::number(shell.Rmerge)));
+        row.push_back(new QStandardItem(QString::number(shell.expectedRmerge)));
+        row.push_back(new QStandardItem(QString::number(shell.Rpim)));
+        row.push_back(new QStandardItem(QString::number(shell.expectedRpim)));
+        row.push_back(new QStandardItem(QString::number(shell.CChalf)));
+        row.push_back(new QStandardItem(QString::number(shell.CCstar)));
 
         model->appendRow(row);
     }
 
-    nsx::RFactor rfactor;
-    rfactor.calculate(_merged_data);
-
-    nsx::CC cc;
-    cc.calculate(_merged_data);
-
     QList<QStandardItem*> row;
     row.push_back(new QStandardItem(QString::number(max)));
     row.push_back(new QStandardItem(QString::number(min)));
-    row.push_back(new QStandardItem(QString::number(_merged_data->totalSize())));
-    row.push_back(new QStandardItem(QString::number(_merged_data->mergedPeakSet().size())));
-    row.push_back(new QStandardItem(QString::number(_merged_data->redundancy())));
-    row.push_back(new QStandardItem(QString::number(rfactor.Rmeas())));
-    row.push_back(new QStandardItem(QString::number(rfactor.expectedRmeas())));
-    row.push_back(new QStandardItem(QString::number(rfactor.Rmerge())));
-    row.push_back(new QStandardItem(QString::number(rfactor.expectedRmerge())));
-    row.push_back(new QStandardItem(QString::number(rfactor.Rpim())));
-    row.push_back(new QStandardItem(QString::number(rfactor.expectedRpim())));
-    row.push_back(new QStandardItem(QString::number(cc.CChalf())));
-    row.push_back(new QStandardItem(QString::number(cc.CCstar())));
+    row.push_back(new QStandardItem(QString::number(quality.nobserved)));
+    row.push_back(new QStandardItem(QString::number(quality.nunique)));
+    row.push_back(new QStandardItem(QString::number(quality.redundancy)));
+    row.push_back(new QStandardItem(QString::number(quality.Rmeas)));
+    row.push_back(new QStandardItem(QString::number(quality.expectedRmeas)));
+    row.push_back(new QStandardItem(QString::number(quality.Rmerge)));
+    row.push_back(new QStandardItem(QString::number(quality.expectedRmerge)));
+
+    row.push_back(new QStandardItem(QString::number(quality.expectedRpim)));
+    row.push_back(new QStandardItem(QString::number(quality.CChalf)));
+    row.push_back(new QStandardItem(QString::number(quality.CCstar)));
     for (auto v : row) {
         QFont font(v->font());
         font.setBold(true);
