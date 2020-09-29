@@ -33,6 +33,7 @@ SideBar::SideBar(QWidget* parent) : QWidget(parent), mCheckedAction(NULL), mOver
     QAction* filter = addAction(QIcon(":/images/filterIcon.svg"), "Peak Filter");
     QAction* indexer = addAction(QIcon(":/images/uni_cell.svg"), "Indexer");
     QAction* predictor = addAction(QIcon(":/images/predict_peaks.svg"), "Predictor");
+    QAction* refiner = addAction(QIcon(":/images/predict_peaks.svg"), "Refiner");
     QAction* info = addAction(QIcon(":/images/merge.svg"), "Merger");
 
     QAction* tempAction = mActions.at(0);
@@ -47,6 +48,7 @@ SideBar::SideBar(QWidget* parent) : QWidget(parent), mCheckedAction(NULL), mOver
     connect(filter, &QAction::triggered, this, &SideBar::onFilterPeaks);
     connect(indexer, &QAction::triggered, this, &SideBar::onIndexer);
     connect(predictor, &QAction::triggered, this, &SideBar::onPredictor);
+    connect(refiner, &QAction::triggered, this, &SideBar::onRefiner);
     connect(info, &QAction::triggered, this, &SideBar::onMerger);
 }
 
@@ -205,9 +207,15 @@ void SideBar::onPredictor()
     gGui->predictor->refreshAll();
 }
 
-void SideBar::onMerger()
+void SideBar::onRefiner()
 {
     gGui->_layout_stack->setCurrentIndex(6);
+    gGui->refiner->refreshAll();
+}
+
+void SideBar::onMerger()
+{
+    gGui->_layout_stack->setCurrentIndex(7);
     gGui->merger->refreshAll();
 }
 

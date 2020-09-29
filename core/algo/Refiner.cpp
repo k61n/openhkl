@@ -75,36 +75,42 @@ Refiner::Refiner(
 
 void Refiner::refineDetectorOffset()
 {
+    nsxlog(Level::Info, "Refining detector offset");
     for (auto&& batch : _batches)
         batch.refineDetectorOffset();
 }
 
 void Refiner::refineSamplePosition()
 {
+    nsxlog(Level::Info, "Refining sample position");
     for (auto&& batch : _batches)
         batch.refineSamplePosition();
 }
 
 void Refiner::refineSampleOrientation()
 {
+    nsxlog(Level::Info, "Refining sample orientation");
     for (auto&& batch : _batches)
         batch.refineSampleOrientation();
 }
 
 void Refiner::refineKi()
 {
+    nsxlog(Level::Info, "Refining wavevector k_i");
     for (auto&& batch : _batches)
         batch.refineKi();
 }
 
 void Refiner::refineUB()
 {
+    nsxlog(Level::Info, "Refining lattice vectors");
     for (auto&& batch : _batches)
         batch.refineUB();
 }
 
 bool Refiner::refine(unsigned int max_iter)
 {
+    nsxlog(Level::Info, "Refiner::refine:", _batches.size(), "batches");
     if (_batches.size() == 0)
         return false;
 
@@ -112,6 +118,7 @@ bool Refiner::refine(unsigned int max_iter)
         if (!batch.refine(max_iter))
             return false;
     }
+    logChange();
     return true;
 }
 
@@ -122,6 +129,7 @@ const std::vector<RefinementBatch>& Refiner::batches() const
 
 int Refiner::updatePredictions(std::vector<Peak3D*> peaks) const
 {
+    nsxlog(Level::Info, "Refiner::updatePredictions");
     const PeakFilter peak_filter;
     std::vector<nsx::Peak3D*> filtered_peaks = peaks;
     filtered_peaks = peak_filter.filterEnabled(peaks, true);
@@ -167,11 +175,13 @@ int Refiner::updatePredictions(std::vector<Peak3D*> peaks) const
             peak->setSelected(false);
         }
     }
+    nsxlog(Level::Info, updated, "peaks updated");
     return updated;
 }
 
 void Refiner::logChange()
 {
+    nsxlog(Level::Info, "Refinement succeeded");
     nsxlog(Level::Info, "Original cell:", _unrefined_cell.toString());
     nsxlog(Level::Info, "Batch/Refined cell(s):");
     for (const auto& batch : _batches) {
