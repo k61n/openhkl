@@ -13,7 +13,6 @@
 //  ***********************************************************************************************
 
 #include "gui/subframe_refiner/SubframeRefiner.h"
-#include "core/algo/Refiner.h"
 #include "core/experiment/Experiment.h"
 #include "core/shape/PeakCollection.h"
 #include "core/shape/PeakFilter.h"
@@ -36,11 +35,6 @@
 
 SubframeRefiner::SubframeRefiner()
     : QWidget()
-    ,
-    // _pixmap(nullptr),
-    _peak_collection("temp", nsx::listtype::FOUND)
-    , _peak_collection_item()
-    , _peak_collection_model()
 {
     setSizePolicies();
     _main_layout = new QHBoxLayout(this);
@@ -57,7 +51,7 @@ SubframeRefiner::SubframeRefiner()
 
     setInputUp();
     setRefinerFlagsUp();
-    setRefineUp();
+    setUpdateUp();
 
     _left_layout->addItem(new QSpacerItem(20, 40, QSizePolicy::Minimum, QSizePolicy::Expanding));
     _right_element->setSizePolicy(*_size_policy_right);
@@ -172,7 +166,7 @@ void SubframeRefiner::setRefinerFlagsUp()
     _refineUB = new QCheckBox("Cell vectors");
     _refineSamplePosition = new QCheckBox("Sample position");
     _refineSampleOrientation = new QCheckBox("Sample orientation");
-    _refineDetectorOrientation = new QCheckBox("Detector Orientation");
+    _refineDetectorOrientation = new QCheckBox("Detector orientation");
     _refineKi = new QCheckBox("Incident wavevector");
 
     _refineUB->setMaximumWidth(1000);
@@ -187,11 +181,15 @@ void SubframeRefiner::setRefinerFlagsUp()
     _refineDetectorOrientation->setSizePolicy(*_size_policy_widgets);
     _refineKi->setSizePolicy(*_size_policy_widgets);
 
+    _refine_button = new QPushButton("Refine");
+    _refine_button->setSizePolicy(*_size_policy_widgets);
+
     refiner_flags_layout->addWidget(_refineUB, 0, 0, 1, 2);
     refiner_flags_layout->addWidget(_refineSamplePosition, 1, 0, 1, 2);
     refiner_flags_layout->addWidget(_refineSampleOrientation, 2, 0, 1, 2);
     refiner_flags_layout->addWidget(_refineDetectorOrientation, 3, 0, 1, 2);
     refiner_flags_layout->addWidget(_refineKi, 4, 0, 1, 2);
+    refiner_flags_layout->addWidget(_refine_button, 5, 0, 1, 2);
 
     _refiner_flags_box->setContentLayout(*refiner_flags_layout);
     _refiner_flags_box->setSizePolicy(*_size_policy_box);
@@ -202,6 +200,9 @@ void SubframeRefiner::setRefinerFlagsUp()
     _refineSampleOrientation->setChecked(true);
     _refineDetectorOrientation->setChecked(true);
     _refineKi->setChecked(true);
+
+
+    connect(_refine_button, &QPushButton::clicked, this, &SubframeRefiner::refine);
 
     _left_layout->addWidget(_refiner_flags_box);
 }
@@ -281,6 +282,8 @@ void SubframeRefiner::updatePeakList()
         _peak_combo->setCurrentIndex(0);
     }
     _peak_combo->blockSignals(false);
+
+    updatePredictedList();
 }
 
 void SubframeRefiner::updateUnitCellList()
@@ -304,15 +307,6 @@ void SubframeRefiner::setBatchesUp()
     _n_batches_spin->setMaximum(dataset->nFrames());
 }
 
-void SubframeRefiner::setRefineUp()
-{
-    _refine_button = new QPushButton("Refine");
-    _refine_button->setSizePolicy(*_size_policy_widgets);
-    _left_layout->addWidget(_refine_button);
-
-    connect(_refine_button, &QPushButton::clicked, this, &SubframeRefiner::refine);
-}
-
 void SubframeRefiner::refine()
 {
     auto expt = gSession->experimentAt(_exp_combo->currentIndex())->experiment();
@@ -324,29 +318,83 @@ void SubframeRefiner::refine()
     int n_batches = _n_batches_spin->value();
     auto states = data->instrumentStates();
     const unsigned int max_iter = 1000;
-    nsx::Refiner refiner(states, cell, peak_list, n_batches, cell_handler);
+    _refiner = std::make_unique<nsx::Refiner>(states, cell, peak_list, n_batches, cell_handler);
     int n_checked = 0;
     if (_refineUB->isChecked()) {
-        refiner.refineUB();
+        _refiner->refineUB();
         ++n_checked;
     }
     if (_refineSamplePosition->isChecked()) {
-        refiner.refineSamplePosition();
+        _refiner->refineSamplePosition();
         ++n_checked;
     }
     if (_refineSampleOrientation->isChecked()) {
-        refiner.refineSampleOrientation();
+        _refiner->refineSampleOrientation();
         ++n_checked;
     }
     if (_refineDetectorOrientation->isChecked()) {
-        refiner.refineDetectorOffset();
+        _refiner->refineDetectorOffset();
         ++n_checked;
     }
     if (_refineKi->isChecked()) {
-        refiner.refineKi();
+        _refiner->refineKi();
         ++n_checked;
     }
     if (n_checked > 0) {
-        bool success = refiner.refine(max_iter);
+        bool success = _refiner->refine(max_iter);
     }
+}
+
+void SubframeRefiner::setUpdateUp()
+{
+    _update_box = new Spoiler("Update predictions");
+
+    QGridLayout* update_grid = new QGridLayout();
+    QLabel* peaks_label = new QLabel("Peaks");
+    _predicted_combo = new QComboBox();
+    _update_button = new QPushButton("Update");
+
+    peaks_label->setAlignment(Qt::AlignRight);
+    peaks_label->setSizePolicy(*_size_policy_widgets);
+
+    _predicted_combo->setMaximumWidth(1000);
+    _predicted_combo->setSizePolicy(*_size_policy_widgets);
+
+    _update_button->setMaximumWidth(1000);
+    _update_button->setSizePolicy(*_size_policy_widgets);
+
+    update_grid->addWidget(peaks_label, 0, 0, 1, 1);
+    update_grid->addWidget(_predicted_combo, 0, 1, 1, 1);
+    update_grid->addWidget(_update_button, 1, 0, 1, 2);
+
+    _update_box->setContentLayout(*update_grid, true);
+    _update_box->setSizePolicy(*_size_policy_box);
+    _update_box->contentArea.setSizePolicy(*_size_policy_box);
+
+    _left_layout->addWidget(_update_box);
+
+    connect(_update_button, &QPushButton::clicked, this, &SubframeRefiner::updatePredictions);
+}
+
+void SubframeRefiner::updatePredictedList()
+{
+    _predicted_combo->blockSignals(true);
+    _predicted_combo->clear();
+
+    _predicted_list =
+        gSession->experimentAt(_exp_combo->currentIndex())->getPredictedNames();
+
+    if (!_predicted_list.empty()) {
+        _predicted_combo->addItems(_peak_list);
+        _predicted_combo->setCurrentIndex(0);
+    }
+    _predicted_combo->blockSignals(false);
+}
+
+void SubframeRefiner::updatePredictions()
+{
+    auto expt = gSession->experimentAt(_exp_combo->currentIndex())->experiment();
+    auto peaks = expt->getPeakCollection(_predicted_combo->currentText().toStdString());
+    auto peak_list = peaks->getPeakList();
+    _n_updated = _refiner->updatePredictions(peak_list);
 }

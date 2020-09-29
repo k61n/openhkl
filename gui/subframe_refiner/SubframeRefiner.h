@@ -16,6 +16,7 @@
 #define NSX_GUI_SUBFRAME_REFINER_SUBFRAMEREFINER_H
 
 #include "core/shape/PeakCollection.h"
+#include "core/algo/Refiner.h"
 
 #include "gui/graphics/DetectorView.h"
 #include "gui/models/PeakCollectionModel.h"
@@ -55,8 +56,8 @@ class SubframeRefiner : public QWidget {
     void setInputUp();
     //! Set the refiner flags and constraints
     void setRefinerFlagsUp();
-    //! Refine button
-    void setRefineUp();
+    //! Update the predicted peaks
+    void setUpdateUp();
     //! Construct the table
     void setRefinerTableUp();
 
@@ -78,6 +79,8 @@ class SubframeRefiner : public QWidget {
     void updateUnitCellList();
     //! set parameters for _n_batches spin box
     void setBatchesUp();
+    //! Update list of predicted peak collections
+    void updatePredictedList();
 
     //! Refresh the found peaks list
     void refreshTable();
@@ -86,16 +89,16 @@ class SubframeRefiner : public QWidget {
 
     //! Do the refinement
     void refine();
+    //! Update predicted peaks
+    void updatePredictions();
 
  private:
-    //! The model for the found peaks
-    nsx::PeakCollection _peak_collection;
-    //! The temporary collection
-    PeakCollectionItem _peak_collection_item;
-    //! The temporary collection
-    PeakCollectionModel _peak_collection_model;
+    //! The refiner
+    std::unique_ptr<nsx::Refiner> _refiner;
     //! The loaded data list
     std::vector<nsx::sptrDataSet> _data_list;
+    //! Number of peaks updated
+    int _n_updated;
 
  private:
     QHBoxLayout* _main_layout;
@@ -118,13 +121,11 @@ class SubframeRefiner : public QWidget {
     QCheckBox* _refineDetectorOrientation;
     QCheckBox* _refineKi;
 
-    SpoilerCheck* _UB_box;
-    SpoilerCheck* _sample_position_box;
-    SpoilerCheck* _sample_orientation_box;
-    SpoilerCheck* _ki_box;
-
     QPushButton* _refine_button;
-    QPushButton* _save_button;
+
+    Spoiler* _update_box;
+    QComboBox* _predicted_combo;
+    QPushButton* _update_button;
 
     QSizePolicy* _size_policy_widgets;
     QSizePolicy* _size_policy_box;
@@ -133,6 +134,7 @@ class SubframeRefiner : public QWidget {
 
     QStringList _peak_list;
     QStringList _cell_list;
+    QStringList _predicted_list;
 };
 
 
