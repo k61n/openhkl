@@ -20,6 +20,7 @@
 
 #include "gui/graphics/DetectorView.h"
 #include "gui/models/PeakCollectionModel.h"
+#include "gui/subframe_refiner/RefinerTables.h"
 #include "gui/utility/ColorButton.h"
 #include "gui/views/PeakTableView.h"
 
@@ -58,8 +59,6 @@ class SubframeRefiner : public QWidget {
     void setRefinerFlagsUp();
     //! Update the predicted peaks
     void setUpdateUp();
-    //! Construct the table
-    void setRefinerTableUp();
 
  private:
     //! Grab the refiner parameters
@@ -83,9 +82,7 @@ class SubframeRefiner : public QWidget {
     void updatePredictedList();
 
     //! Refresh the found peaks list
-    void refreshTable();
-    //! Refresh the found peaks visual properties
-    void refreshVisual();
+    void refreshTables();
 
     //! Do the refinement
     void refine();
@@ -139,15 +136,7 @@ class SubframeRefiner : public QWidget {
     QStringList _cell_list;
     QStringList _predicted_list;
 
-    QTabWidget* _main_tab_widget;
-    QWidget* _lattice_tab;
-    QWidget* _sample_position_tab;
-    QWidget* _sample_orientation_tab;
-    QWidget* _detector_orientation_tab;
-    QWidget* _ki_tab;
-
-    QTableView* _lattice_view;
-    QStandardItemModel* _lattice_model;
+    RefinerTables* _main_tab_widget;
 };
 
 

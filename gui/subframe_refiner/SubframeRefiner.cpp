@@ -32,12 +32,13 @@
 #include <QScrollArea>
 #include <QScrollBar>
 #include <QSpacerItem>
-#include <QTableWidgetItem>
 #include <sstream>
 
 SubframeRefiner::SubframeRefiner()
     : QWidget()
 {
+    _refiner = nullptr;
+
     setSizePolicies();
     _main_layout = new QHBoxLayout(this);
     _right_element = new QSplitter(Qt::Vertical, this);
@@ -50,19 +51,8 @@ SubframeRefiner::SubframeRefiner()
     scroll_area->setWidgetResizable(true);
     scroll_area->setWidget(scroll_widget);
 
-    _main_tab_widget = new QTabWidget();
-
-    _lattice_tab = new QWidget();
-    _sample_position_tab = new QWidget();
-    _sample_orientation_tab = new QWidget();
-    _detector_orientation_tab = new QWidget();
-    _ki_tab = new QWidget();
-
-    _main_tab_widget->addTab(_lattice_tab, "Lattice vectors");
-    _main_tab_widget->addTab(_sample_position_tab, "Sample position");
-    _main_tab_widget->addTab(_sample_orientation_tab, "Sample orientation");
-    _main_tab_widget->addTab(_detector_orientation_tab, "Detector_orientation");
-    _main_tab_widget->addTab(_ki_tab, "Incident wavevector");
+    _main_tab_widget = new RefinerTables();
+    _main_tab_widget->setSizePolicy(*_size_policy_right);
 
     setInputUp();
     setRefinerFlagsUp();
@@ -72,8 +62,6 @@ SubframeRefiner::SubframeRefiner()
 
     _right_element->setSizePolicy(*_size_policy_right);
     _right_element->addWidget(_main_tab_widget);
-
-    setLatticeTableUp();
 
     _main_layout->addWidget(scroll_area);
     _main_layout->addWidget(_right_element);
@@ -138,7 +126,7 @@ void SubframeRefiner::setInputUp()
     _cell_combo = new QComboBox();
     _n_batches_spin = new QSpinBox();
 
-    _n_batches_spin->setValue(1);
+    _n_batches_spin->setValue(10);
     _n_batches_spin->setMinimum(1);
     _n_batches_spin->setMaximum(1000); // updated on setBatchesUp
 
@@ -166,15 +154,13 @@ void SubframeRefiner::setInputUp()
     connect(
         _peak_combo, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this,
         &SubframeRefiner::updateDatasetList);
-    // connect(_data_combo)
-    // connect(_peak_combo)
-    // connect(_cell_combo)
 
     _input_box->setContentLayout(*_input_grid, true);
     _input_box->setSizePolicy(*_size_policy_box);
     _input_box->contentArea.setSizePolicy(*_size_policy_box);
 
     _left_layout->addWidget(_input_box);
+    _input_box->toggler(true);
 }
 
 void SubframeRefiner::setRefinerFlagsUp()
@@ -222,31 +208,21 @@ void SubframeRefiner::setRefinerFlagsUp()
 
 
     connect(_refine_button, &QPushButton::clicked, this, &SubframeRefiner::refine);
+    // connect(_refine_button, &QPushButton::clicked, this, &SubframeRefiner::refreshTables);
 
     _left_layout->addWidget(_refiner_flags_box);
-}
-
-
-void SubframeRefiner::setRefinerTableUp()
-{
-    QGroupBox* peak_group = new QGroupBox("Refiner");
-    // QGridLayout* peak_grid = new QGridLayout(peak_group);
-
-    // _preview_panel = peak_group;
-    // peak_group->setSizePolicy(*_size_policy_right);
-
-    // _peak_table = new PeaksTableView(this);
-    // _peak_collection_model.setRoot(&_peak_collection_item);
-    // _peak_table->setModel(&_peak_collection_model);
-
-    // peak_grid->addWidget(_peak_table, 0, 0, 0, 0);
-
-    // _right_element->addWidget(peak_group);
+    _refiner_flags_box->toggler(true);
 }
 
 void SubframeRefiner::refreshAll()
 {
     updateExptList();
+    // refreshTables();
+}
+
+void SubframeRefiner::refreshTables()
+{
+    _main_tab_widget->refreshTables(_refiner.get());
 }
 
 void SubframeRefiner::setParametersUp()
@@ -362,6 +338,7 @@ void SubframeRefiner::refine()
     if (n_checked > 0) {
         bool success = _refiner->refine(max_iter);
     }
+    _main_tab_widget->refreshTables(_refiner.get());
 }
 
 void SubframeRefiner::setUpdateUp()
@@ -393,6 +370,7 @@ void SubframeRefiner::setUpdateUp()
     _left_layout->addWidget(_update_box);
 
     connect(_update_button, &QPushButton::clicked, this, &SubframeRefiner::updatePredictions);
+    _update_box->toggler(true);
 }
 
 void SubframeRefiner::updatePredictedList()
@@ -416,17 +394,4 @@ void SubframeRefiner::updatePredictions()
     auto peaks = expt->getPeakCollection(_predicted_combo->currentText().toStdString());
     auto peak_list = peaks->getPeakList();
     _n_updated = _refiner->updatePredictions(peak_list);
-}
-
-void SubframeRefiner::setLatticeTableUp()
-{
-    QVBoxLayout* lattice_layout = new QVBoxLayout(_lattice_tab);
-
-    _lattice_view = new QTableView;
-    _lattice_model = new QStandardItemModel(0, 8, this);
-    _lattice_view->setModel(_lattice_model);
-    _lattice_model->setHorizontalHeaderLabels(
-        {"fmin", "fmax", "a", "b", "c", QString((QChar)0x03B1), QString((QChar)0x03B2),
-         QString((QChar)0x03B3)});
-    lattice_layout->addWidget(_lattice_view);
 }

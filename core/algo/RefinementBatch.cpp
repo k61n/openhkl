@@ -244,6 +244,16 @@ UnitCell* RefinementBatch::cell() const
     return _cell;
 }
 
+int RefinementBatch::fmin() const
+{
+    return _fmin;
+}
+
+int RefinementBatch::fmax() const
+{
+    return _fmax;
+}
+
 bool RefinementBatch::contains(double f) const
 {
     return (f > _fmin) && (f < _fmax);

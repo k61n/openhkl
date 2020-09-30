@@ -58,6 +58,12 @@ class RefinementBatch {
     //! Returns the refined unit cell.
     UnitCell* cell() const;
 
+    //! Return the lower frame bound
+    int fmin() const;
+
+    //! Return the upper frame bound
+    int fmax() const;
+
     //! Determine if a given frame number is part of this batch.
     bool contains(double f) const;
 
