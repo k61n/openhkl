@@ -92,6 +92,9 @@ class SubframeRefiner : public QWidget {
     //! Update predicted peaks
     void updatePredictions();
 
+    //! Set up the lattice parameter table
+    void setLatticeTableUp();
+
  private:
     //! The refiner
     std::unique_ptr<nsx::Refiner> _refiner;
@@ -135,6 +138,16 @@ class SubframeRefiner : public QWidget {
     QStringList _peak_list;
     QStringList _cell_list;
     QStringList _predicted_list;
+
+    QTabWidget* _main_tab_widget;
+    QWidget* _lattice_tab;
+    QWidget* _sample_position_tab;
+    QWidget* _sample_orientation_tab;
+    QWidget* _detector_orientation_tab;
+    QWidget* _ki_tab;
+
+    QTableView* _lattice_view;
+    QStandardItemModel* _lattice_model;
 };
 
 

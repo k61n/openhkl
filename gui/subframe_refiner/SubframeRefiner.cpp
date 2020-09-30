@@ -12,15 +12,17 @@
 //
 //  ***********************************************************************************************
 
-#include "gui/subframe_refiner/SubframeRefiner.h"
 #include "core/experiment/Experiment.h"
 #include "core/shape/PeakCollection.h"
 #include "core/shape/PeakFilter.h"
+
+#include "gui/subframe_refiner/SubframeRefiner.h"
 #include "gui/MainWin.h"
 #include "gui/dialogs/ListNameDialog.h"
 #include "gui/models/Meta.h"
 #include "gui/models/Project.h"
 #include "gui/models/Session.h"
+
 #include <QFileInfo>
 #include <QGridLayout>
 #include <QGroupBox>
@@ -42,19 +44,36 @@ SubframeRefiner::SubframeRefiner()
 
     QScrollArea* scroll_area = new QScrollArea(this);
     QWidget* scroll_widget = new QWidget();
-
     scroll_area->setSizePolicy(*_size_policy_box);
     scroll_widget->setSizePolicy(*_size_policy_box);
     _left_layout = new QVBoxLayout(scroll_widget);
     scroll_area->setWidgetResizable(true);
     scroll_area->setWidget(scroll_widget);
 
+    _main_tab_widget = new QTabWidget();
+
+    _lattice_tab = new QWidget();
+    _sample_position_tab = new QWidget();
+    _sample_orientation_tab = new QWidget();
+    _detector_orientation_tab = new QWidget();
+    _ki_tab = new QWidget();
+
+    _main_tab_widget->addTab(_lattice_tab, "Lattice vectors");
+    _main_tab_widget->addTab(_sample_position_tab, "Sample position");
+    _main_tab_widget->addTab(_sample_orientation_tab, "Sample orientation");
+    _main_tab_widget->addTab(_detector_orientation_tab, "Detector_orientation");
+    _main_tab_widget->addTab(_ki_tab, "Incident wavevector");
+
     setInputUp();
     setRefinerFlagsUp();
     setUpdateUp();
 
     _left_layout->addItem(new QSpacerItem(20, 40, QSizePolicy::Minimum, QSizePolicy::Expanding));
+
     _right_element->setSizePolicy(*_size_policy_right);
+    _right_element->addWidget(_main_tab_widget);
+
+    setLatticeTableUp();
 
     _main_layout->addWidget(scroll_area);
     _main_layout->addWidget(_right_element);
@@ -397,4 +416,17 @@ void SubframeRefiner::updatePredictions()
     auto peaks = expt->getPeakCollection(_predicted_combo->currentText().toStdString());
     auto peak_list = peaks->getPeakList();
     _n_updated = _refiner->updatePredictions(peak_list);
+}
+
+void SubframeRefiner::setLatticeTableUp()
+{
+    QVBoxLayout* lattice_layout = new QVBoxLayout(_lattice_tab);
+
+    _lattice_view = new QTableView;
+    _lattice_model = new QStandardItemModel(0, 8, this);
+    _lattice_view->setModel(_lattice_model);
+    _lattice_model->setHorizontalHeaderLabels(
+        {"fmin", "fmax", "a", "b", "c", QString((QChar)0x03B1), QString((QChar)0x03B2),
+         QString((QChar)0x03B3)});
+    lattice_layout->addWidget(_lattice_view);
 }
