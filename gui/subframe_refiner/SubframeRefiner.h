@@ -19,6 +19,7 @@
 #include "core/algo/Refiner.h"
 
 #include "gui/graphics/DetectorView.h"
+#include "gui/graphics/SXPlot.h"
 #include "gui/models/PeakCollectionModel.h"
 #include "gui/subframe_refiner/RefinerTables.h"
 #include "gui/utility/ColorButton.h"
@@ -118,7 +119,7 @@ class SubframeRefiner : public QWidget {
     QCheckBox* _refineUB;
     QCheckBox* _refineSamplePosition;
     QCheckBox* _refineSampleOrientation;
-    QCheckBox* _refineDetectorOrientation;
+    QCheckBox* _refineDetectorPosition;
     QCheckBox* _refineKi;
 
     QPushButton* _refine_button;
@@ -137,6 +138,8 @@ class SubframeRefiner : public QWidget {
     QStringList _predicted_list;
 
     RefinerTables* _main_tab_widget;
+
+    SXPlot* _plot_widget;
 };
 
 

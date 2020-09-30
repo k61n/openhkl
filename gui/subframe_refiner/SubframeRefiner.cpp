@@ -63,6 +63,10 @@ SubframeRefiner::SubframeRefiner()
     _right_element->setSizePolicy(*_size_policy_right);
     _right_element->addWidget(_main_tab_widget);
 
+    _plot_widget = new SXPlot;
+    _plot_widget->setSizePolicy(*_size_policy_right);
+    _right_element->addWidget(_plot_widget);
+
     _main_layout->addWidget(scroll_area);
     _main_layout->addWidget(_right_element);
 }
@@ -171,19 +175,19 @@ void SubframeRefiner::setRefinerFlagsUp()
     _refineUB = new QCheckBox("Cell vectors");
     _refineSamplePosition = new QCheckBox("Sample position");
     _refineSampleOrientation = new QCheckBox("Sample orientation");
-    _refineDetectorOrientation = new QCheckBox("Detector orientation");
+    _refineDetectorPosition = new QCheckBox("Detector position");
     _refineKi = new QCheckBox("Incident wavevector");
 
     _refineUB->setMaximumWidth(1000);
     _refineSamplePosition->setMaximumWidth(1000);
     _refineSampleOrientation->setMaximumWidth(1000);
-    _refineDetectorOrientation->setMaximumWidth(1000);
+    _refineDetectorPosition->setMaximumWidth(1000);
     _refineKi->setMaximumWidth(1000);
 
     _refineUB->setSizePolicy(*_size_policy_widgets);
     _refineSamplePosition->setSizePolicy(*_size_policy_widgets);
     _refineSampleOrientation->setSizePolicy(*_size_policy_widgets);
-    _refineDetectorOrientation->setSizePolicy(*_size_policy_widgets);
+    _refineDetectorPosition->setSizePolicy(*_size_policy_widgets);
     _refineKi->setSizePolicy(*_size_policy_widgets);
 
     _refine_button = new QPushButton("Refine");
@@ -192,7 +196,7 @@ void SubframeRefiner::setRefinerFlagsUp()
     refiner_flags_layout->addWidget(_refineUB, 0, 0, 1, 2);
     refiner_flags_layout->addWidget(_refineSamplePosition, 1, 0, 1, 2);
     refiner_flags_layout->addWidget(_refineSampleOrientation, 2, 0, 1, 2);
-    refiner_flags_layout->addWidget(_refineDetectorOrientation, 3, 0, 1, 2);
+    refiner_flags_layout->addWidget(_refineDetectorPosition, 3, 0, 1, 2);
     refiner_flags_layout->addWidget(_refineKi, 4, 0, 1, 2);
     refiner_flags_layout->addWidget(_refine_button, 5, 0, 1, 2);
 
@@ -203,7 +207,7 @@ void SubframeRefiner::setRefinerFlagsUp()
     _refineUB->setChecked(true);
     _refineSamplePosition->setChecked(true);
     _refineSampleOrientation->setChecked(true);
-    _refineDetectorOrientation->setChecked(true);
+    _refineDetectorPosition->setChecked(true);
     _refineKi->setChecked(true);
 
 
@@ -222,7 +226,9 @@ void SubframeRefiner::refreshAll()
 
 void SubframeRefiner::refreshTables()
 {
-    _main_tab_widget->refreshTables(_refiner.get());
+    auto expt = gSession->experimentAt(_exp_combo->currentIndex())->experiment();
+    auto data = expt->getData(_data_combo->currentText().toStdString());
+    _main_tab_widget->refreshTables(_refiner.get(), data.get());
 }
 
 void SubframeRefiner::setParametersUp()
@@ -327,7 +333,7 @@ void SubframeRefiner::refine()
         _refiner->refineSampleOrientation();
         ++n_checked;
     }
-    if (_refineDetectorOrientation->isChecked()) {
+    if (_refineDetectorPosition->isChecked()) {
         _refiner->refineDetectorOffset();
         ++n_checked;
     }
@@ -338,7 +344,7 @@ void SubframeRefiner::refine()
     if (n_checked > 0) {
         bool success = _refiner->refine(max_iter);
     }
-    _main_tab_widget->refreshTables(_refiner.get());
+    _main_tab_widget->refreshTables(_refiner.get(), data.get());
 }
 
 void SubframeRefiner::setUpdateUp()

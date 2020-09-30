@@ -64,8 +64,11 @@ class RefinementBatch {
     //! Return the upper frame bound
     int fmax() const;
 
-    //! Determine if a given frame number is part of this batch.
+    //! Determine if a given frame number is part of this batch (there is an overlap).
     bool contains(double f) const;
+
+    //! Determine if a given frame number is part of *only* this batch
+    bool onlyContains(double f) const;
 
     //! Generate a name from the minimum/maximum frame
     std::string name() const;

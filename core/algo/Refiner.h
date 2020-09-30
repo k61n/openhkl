@@ -48,7 +48,7 @@ class Refiner {
     //! Perform the refinement with the maximum number of iterations as given. N.B. the four
     //! previous funcitons set the number of free parameters and at least one must be run
     //! *before* refine
-    bool refine(unsigned int max_iter = 100);
+    bool refine(unsigned int max_iter = 1000);
 
     //! Update the centers of predicted peaks, after refinement.
     int updatePredictions(std::vector<Peak3D*> peaks) const;
@@ -56,14 +56,25 @@ class Refiner {
     //! Returns the individual peak/frame batches used during refinement.
     const std::vector<RefinementBatch>& batches() const;
 
+    //! Return the unrefined cell
+    UnitCell* unrefinedCell();
+
+    //! Return the unrefined states
+    InstrumentStateList* unrefinedStates();
+
+    //! Return number of frames
+    int nframes() const;
+
     //! Write the initial and final cells to the log
     void logChange();
 
  private:
     UnitCellHandler* _cell_handler;
     UnitCell _unrefined_cell;
+    InstrumentStateList _unrefined_states;
     UnitCell* _cell;
     std::vector<RefinementBatch> _batches;
+    int _nframes;
 };
 
 } // namespace nsx

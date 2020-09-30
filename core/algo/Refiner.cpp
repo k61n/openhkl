@@ -34,7 +34,10 @@ Refiner::Refiner(
     int nbatches, UnitCellHandler* cell_handler)
     : _cell_handler(cell_handler), _cell(cell), _batches()
 {
+    for (InstrumentState state : states)
+        _unrefined_states.push_back(state);
     _unrefined_cell = *_cell;
+    _nframes = states.size();
     const PeakFilter peak_filter;
     std::vector<nsx::Peak3D*> filtered_peaks = peaks;
     filtered_peaks = peak_filter.filterEnabled(peaks, true);
@@ -177,6 +180,21 @@ int Refiner::updatePredictions(std::vector<Peak3D*> peaks) const
     }
     nsxlog(Level::Info, updated, "peaks updated");
     return updated;
+}
+
+UnitCell* Refiner::unrefinedCell()
+{
+    return &_unrefined_cell;
+}
+
+InstrumentStateList* Refiner::unrefinedStates()
+{
+    return &_unrefined_states;
+}
+
+int Refiner::nframes() const
+{
+    return _nframes;
 }
 
 void Refiner::logChange()
