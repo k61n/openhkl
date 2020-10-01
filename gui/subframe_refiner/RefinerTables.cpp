@@ -32,7 +32,7 @@ RefinerTables::RefinerTables()
     addTab(_lattice_tab, "Unit cell");
     addTab(_sample_pos_tab, "Sample position");
     addTab(_sample_orn_tab, "Sample orientation");
-    addTab(_detector_pos_tab, "Detector_orientation");
+    addTab(_detector_pos_tab, "Detector position");
     addTab(_ki_tab, "Incident wavevector");
 
     setLatticeTableUp();
@@ -235,14 +235,12 @@ void RefinerTables::setDetectorPosTableUp()
     _original_detector_pos_model = new QStandardItemModel(0, 8, this);
     _original_detector_pos_view->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Minimum);
     _original_detector_pos_view->setModel(_original_detector_pos_model);
-    _original_detector_pos_model->setHorizontalHeaderLabels(
-        {"fmin", "fmax", "xx", "yy", "zz", "xy", "xz", "yz"});
+    _original_detector_pos_model->setHorizontalHeaderLabels({"frame", "x", "y", "z"});
     _detector_pos_view = new QTableView;
     _detector_pos_model = new QStandardItemModel(0, 8, this);
     _original_detector_pos_view->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
     _detector_pos_view->setModel(_detector_pos_model);
-    _detector_pos_model->setHorizontalHeaderLabels(
-        {"fmin", "fmax", "xx", "yy", "zz", "xy", "xz", "yz"});
+    _detector_pos_model->setHorizontalHeaderLabels({"frame", "x", "y", "z"});
     detector_pos_layout->addWidget(_original_detector_pos_view);
     detector_pos_layout->addWidget(_detector_pos_view);
 }
