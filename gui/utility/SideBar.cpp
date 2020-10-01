@@ -33,7 +33,7 @@ SideBar::SideBar(QWidget* parent) : QWidget(parent), mCheckedAction(NULL), mOver
     QAction* filter = addAction(QIcon(":/images/filterIcon.svg"), "Peak Filter");
     QAction* indexer = addAction(QIcon(":/images/uni_cell.svg"), "Indexer");
     QAction* predictor = addAction(QIcon(":/images/predict_peaks.svg"), "Predictor");
-    QAction* refiner = addAction(QIcon(":/images/predict_peaks.svg"), "Refiner");
+    QAction* refiner = addAction(QIcon(":/images/filterIcon.svg"), "Refiner");
     QAction* info = addAction(QIcon(":/images/merge.svg"), "Merger");
 
     QAction* tempAction = mActions.at(0);

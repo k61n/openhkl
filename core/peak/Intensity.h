@@ -59,6 +59,7 @@ class Intensity {
     Intensity operator/(const Intensity& other) const;
 
  private:
+    static constexpr double _eps = 1.0e-8;
     double _value;
     double _sigma2;
 };
