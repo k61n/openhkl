@@ -145,7 +145,7 @@ int Refiner::updatePredictions(std::vector<Peak3D*> peaks) const
         const RefinementBatch* b = nullptr;
         const double z = peak->shape().center()[2];
         for (const auto& batch : _batches) {
-            if (batch.contains(z)) {
+            if (batch.onlyContains(z)) {
                 b = &batch;
                 break;
             }
