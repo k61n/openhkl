@@ -103,8 +103,8 @@ void RefinerTables::refreshLatticeTable(nsx::Refiner* refiner)
     for (auto batch : batches) {
         QList<QStandardItem*> row;
         auto c = batch.cell()->character();
-        row.push_back(new QStandardItem(QString::number(batch.fmin())));
-        row.push_back(new QStandardItem(QString::number(batch.fmax() - 2)));
+        row.push_back(new QStandardItem(QString::number(batch.first_frame())));
+        row.push_back(new QStandardItem(QString::number(batch.last_frame() - 2)));
         row.push_back(new QStandardItem(QString::number(c.a)));
         row.push_back(new QStandardItem(QString::number(c.b)));
         row.push_back(new QStandardItem(QString::number(c.c)));

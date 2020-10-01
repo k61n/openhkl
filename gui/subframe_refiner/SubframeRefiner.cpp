@@ -209,9 +209,7 @@ void SubframeRefiner::setRefinerFlagsUp()
     _refineDetectorPosition->setChecked(true);
     _refineKi->setChecked(true);
 
-
     connect(_refine_button, &QPushButton::clicked, this, &SubframeRefiner::refine);
-    // connect(_refine_button, &QPushButton::clicked, this, &SubframeRefiner::refreshTables);
 
     _left_layout->addWidget(_refiner_flags_box);
     _refiner_flags_box->toggler(true);
@@ -225,8 +223,8 @@ void SubframeRefiner::refreshAll()
 
 void SubframeRefiner::refreshTables()
 {
-    auto expt = gSession->experimentAt(_exp_combo->currentIndex())->experiment();
-    auto data = expt->getData(_data_combo->currentText().toStdString());
+    const auto expt = gSession->experimentAt(_exp_combo->currentIndex())->experiment();
+    const auto data = expt->getData(_data_combo->currentText().toStdString());
     _main_tab_widget->refreshTables(_refiner.get(), data.get());
 }
 
@@ -302,7 +300,7 @@ void SubframeRefiner::updateUnitCellList()
 
 void SubframeRefiner::setBatchesUp()
 {
-    auto dataset =
+    const auto dataset =
         gSession->experimentAt(_exp_combo->currentIndex())->getData(_data_combo->currentIndex());
     _n_batches_spin->setMaximum(dataset->nFrames());
 }
@@ -310,11 +308,11 @@ void SubframeRefiner::setBatchesUp()
 void SubframeRefiner::refine()
 {
     auto expt = gSession->experimentAt(_exp_combo->currentIndex())->experiment();
-    auto data = expt->getData(_data_combo->currentText().toStdString());
-    auto peaks = expt->getPeakCollection(_peak_combo->currentText().toStdString());
-    auto cell = expt->getUnitCell(_cell_combo->currentText().toStdString());
-    auto cell_handler = expt->getCellHandler();
-    auto peak_list = peaks->getPeakList();
+    const auto data = expt->getData(_data_combo->currentText().toStdString());
+    const auto peaks = expt->getPeakCollection(_peak_combo->currentText().toStdString());
+    const auto cell = expt->getUnitCell(_cell_combo->currentText().toStdString());
+    const auto cell_handler = expt->getCellHandler();
+    const auto peak_list = peaks->getPeakList();
     int n_batches = _n_batches_spin->value();
     auto states = data->instrumentStates();
     const unsigned int max_iter = 1000;

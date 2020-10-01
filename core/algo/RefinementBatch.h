@@ -59,10 +59,10 @@ class RefinementBatch {
     UnitCell* cell() const;
 
     //! Return the lower frame bound
-    int fmin() const;
+    int first_frame() const;
 
     //! Return the upper frame bound
-    int fmax() const;
+    int last_frame() const;
 
     //! Determine if a given frame number is part of this batch (there is an overlap).
     bool contains(double f) const;

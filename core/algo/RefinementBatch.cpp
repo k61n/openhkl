@@ -244,12 +244,12 @@ UnitCell* RefinementBatch::cell() const
     return _cell;
 }
 
-int RefinementBatch::fmin() const
+int RefinementBatch::first_frame() const
 {
     return _fmin;
 }
 
-int RefinementBatch::fmax() const
+int RefinementBatch::last_frame() const
 {
     return _fmax;
 }

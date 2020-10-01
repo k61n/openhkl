@@ -27,8 +27,8 @@ class Refiner {
     //! Construct an instance to refine the given cell based on the given peak list,
     //! using the given number of frame batches. The peaks must belong to the same dataset.
     Refiner(
-        InstrumentStateList& states, UnitCell* cell, std::vector<nsx::Peak3D*> peaks, int nbatches,
-        UnitCellHandler* cell_handler);
+        InstrumentStateList& states, UnitCell* cell, const std::vector<nsx::Peak3D*>& peaks,
+        int nbatches, UnitCellHandler* cell_handler);
 
     //! Sets the lattice B matrix to be refined.
     void refineUB();
@@ -51,7 +51,7 @@ class Refiner {
     bool refine(unsigned int max_iter = 1000);
 
     //! Update the centers of predicted peaks, after refinement.
-    int updatePredictions(std::vector<Peak3D*> peaks) const;
+    int updatePredictions(std::vector<Peak3D*>& peaks) const;
 
     //! Returns the individual peak/frame batches used during refinement.
     const std::vector<RefinementBatch>& batches() const;

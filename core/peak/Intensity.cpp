@@ -43,10 +43,9 @@ double Intensity::variance() const
 
 double Intensity::strength() const
 {
-    if ((std::abs(_value) > _eps) && (std::abs(_sigma2) > _eps))
-        return _value / sigma();
-    else
+    if ((std::abs(_value) < _eps) && (std::abs(_sigma2) < _eps))
         return 0.0;
+    return _value / sigma();
 }
 
 Intensity Intensity::operator+(const Intensity& other) const

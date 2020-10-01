@@ -30,8 +30,8 @@
 namespace nsx {
 
 Refiner::Refiner(
-    InstrumentStateList& states, UnitCell* cell, std::vector<nsx::Peak3D*> peaks, int nbatches,
-    UnitCellHandler* cell_handler)
+    InstrumentStateList& states, UnitCell* cell, const std::vector<nsx::Peak3D*>& peaks,
+    int nbatches, UnitCellHandler* cell_handler)
     : _cell_handler(cell_handler), _cell(cell), _batches()
 {
     for (InstrumentState state : states)
@@ -130,7 +130,7 @@ const std::vector<RefinementBatch>& Refiner::batches() const
     return _batches;
 }
 
-int Refiner::updatePredictions(std::vector<Peak3D*> peaks) const
+int Refiner::updatePredictions(std::vector<Peak3D*>& peaks) const
 {
     nsxlog(Level::Info, "Refiner::updatePredictions");
     const PeakFilter peak_filter;
