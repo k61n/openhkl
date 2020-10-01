@@ -27,7 +27,7 @@ class Refiner {
     //! Construct an instance to refine the given cell based on the given peak list,
     //! using the given number of frame batches. The peaks must belong to the same dataset.
     Refiner(
-        InstrumentStateList& states, UnitCell* cell, std::vector<nsx::Peak3D*> peaks,
+        InstrumentStateList& states, UnitCell* cell, const std::vector<nsx::Peak3D*>& peaks,
         int nbatches, UnitCellHandler* cell_handler);
 
     //! Sets the lattice B matrix to be refined.
@@ -48,13 +48,22 @@ class Refiner {
     //! Perform the refinement with the maximum number of iterations as given. N.B. the four
     //! previous funcitons set the number of free parameters and at least one must be run
     //! *before* refine
-    bool refine(unsigned int max_iter = 100);
+    bool refine(unsigned int max_iter = 1000);
 
     //! Update the centers of predicted peaks, after refinement.
-    int updatePredictions(std::vector<Peak3D*> peaks) const;
+    int updatePredictions(std::vector<Peak3D*>& peaks) const;
 
     //! Returns the individual peak/frame batches used during refinement.
     const std::vector<RefinementBatch>& batches() const;
+
+    //! Return the unrefined cell
+    UnitCell* unrefinedCell();
+
+    //! Return the unrefined states
+    InstrumentStateList* unrefinedStates();
+
+    //! Return number of frames
+    int nframes() const;
 
     //! Write the initial and final cells to the log
     void logChange();
@@ -62,8 +71,10 @@ class Refiner {
  private:
     UnitCellHandler* _cell_handler;
     UnitCell _unrefined_cell;
+    InstrumentStateList _unrefined_states;
     UnitCell* _cell;
     std::vector<RefinementBatch> _batches;
+    int _nframes;
 };
 
 } // namespace nsx

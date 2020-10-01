@@ -32,6 +32,7 @@ class SideBar : public QWidget {
     void onFilterPeaks();
     void onIndexer();
     void onPredictor();
+    void onRefiner();
     void onMerger();
 
  protected:

@@ -59,6 +59,7 @@ MainWin::MainWin()
     filter = new SubframeFilterPeaks;
     indexer = new SubframeAutoIndexer;
     predictor = new SubframePredictPeaks;
+    refiner = new SubframeRefiner;
     merger = new SubframeMergedPeaks;
 
     _layout_stack = new QStackedWidget(main_widget);
@@ -68,6 +69,7 @@ MainWin::MainWin()
     _layout_stack->addWidget(filter);
     _layout_stack->addWidget(indexer);
     _layout_stack->addWidget(predictor);
+    _layout_stack->addWidget(refiner);
     _layout_stack->addWidget(merger);
     _layout_stack->setCurrentIndex(0);
 

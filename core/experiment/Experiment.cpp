@@ -260,7 +260,7 @@ void Experiment::refine(
     const PeakCollection* peaks, const PeakCollection* predicted_peaks, UnitCell* cell,
     DataSet* data, int n_batches)
 {
-    nsxlog(Level::Info, "Refining peak collection", peaks->name());
+    nsxlog(Level::Info, "Experiment::refine: Refining peak collection", peaks->name());
     const unsigned int max_iter = 1000;
     std::vector<Peak3D*> peak_list = peaks->getPeakList();
     InstrumentStateList& states = data->instrumentStates();
@@ -268,11 +268,10 @@ void Experiment::refine(
     refiner.refineUB();
     refiner.refineSamplePosition();
     refiner.refineSampleOrientation();
+    refiner.refineDetectorOffset();
     refiner.refineKi();
     bool success = refiner.refine(max_iter);
     if (success) {
-        nsxlog(Level::Info, "Refinement succeeded");
-        refiner.logChange();
         peak_list = predicted_peaks->getPeakList();
         int update = refiner.updatePredictions(peak_list);
         nsxlog(Level::Info, update, "peaks updated");

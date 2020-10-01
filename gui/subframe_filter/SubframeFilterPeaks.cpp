@@ -561,8 +561,8 @@ void SubframeFilterPeaks::grabFilterParameters()
     _strength_max->setValue(filter->strength()->at(1));
     _d_range_min->setValue(filter->dRange()->at(0));
     _d_range_max->setValue(filter->dRange()->at(1));
-    _frame_min->setValue(filter->frameRange()->at(0));
-    _frame_max->setValue(filter->frameRange()->at(1));
+    _frame_min->setValue(filter->frameRange().at(0));
+    _frame_max->setValue(filter->frameRange().at(1));
     _significance_level->setValue(*(filter->significance()));
 
     _selected->setChecked(filter->getFilterSelected());

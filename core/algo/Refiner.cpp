@@ -30,11 +30,14 @@
 namespace nsx {
 
 Refiner::Refiner(
-    InstrumentStateList& states, UnitCell* cell, std::vector<nsx::Peak3D*> peaks,
+    InstrumentStateList& states, UnitCell* cell, const std::vector<nsx::Peak3D*>& peaks,
     int nbatches, UnitCellHandler* cell_handler)
     : _cell_handler(cell_handler), _cell(cell), _batches()
 {
+    for (InstrumentState state : states)
+        _unrefined_states.push_back(state);
     _unrefined_cell = *_cell;
+    _nframes = states.size();
     const PeakFilter peak_filter;
     std::vector<nsx::Peak3D*> filtered_peaks = peaks;
     filtered_peaks = peak_filter.filterEnabled(peaks, true);
@@ -64,7 +67,7 @@ Refiner::Refiner(
             oss << "batch" << ++n_batch;
             std::string name = oss.str();
             _cell_handler->addUnitCell(name, _unrefined_cell);
- 
+
             RefinementBatch b(states, _cell_handler->getUnitCell(name), peaks_subset);
             _batches.emplace_back(std::move(b));
             peaks_subset.clear();
@@ -75,36 +78,42 @@ Refiner::Refiner(
 
 void Refiner::refineDetectorOffset()
 {
+    nsxlog(Level::Info, "Refining detector offset");
     for (auto&& batch : _batches)
         batch.refineDetectorOffset();
 }
 
 void Refiner::refineSamplePosition()
 {
+    nsxlog(Level::Info, "Refining sample position");
     for (auto&& batch : _batches)
         batch.refineSamplePosition();
 }
 
 void Refiner::refineSampleOrientation()
 {
+    nsxlog(Level::Info, "Refining sample orientation");
     for (auto&& batch : _batches)
         batch.refineSampleOrientation();
 }
 
 void Refiner::refineKi()
 {
+    nsxlog(Level::Info, "Refining wavevector k_i");
     for (auto&& batch : _batches)
         batch.refineKi();
 }
 
 void Refiner::refineUB()
 {
+    nsxlog(Level::Info, "Refining lattice vectors");
     for (auto&& batch : _batches)
         batch.refineUB();
 }
 
 bool Refiner::refine(unsigned int max_iter)
 {
+    nsxlog(Level::Info, "Refiner::refine:", _batches.size(), "batches");
     if (_batches.size() == 0)
         return false;
 
@@ -112,6 +121,7 @@ bool Refiner::refine(unsigned int max_iter)
         if (!batch.refine(max_iter))
             return false;
     }
+    logChange();
     return true;
 }
 
@@ -120,8 +130,9 @@ const std::vector<RefinementBatch>& Refiner::batches() const
     return _batches;
 }
 
-int Refiner::updatePredictions(std::vector<Peak3D*> peaks) const
+int Refiner::updatePredictions(std::vector<Peak3D*>& peaks) const
 {
+    nsxlog(Level::Info, "Refiner::updatePredictions");
     const PeakFilter peak_filter;
     std::vector<nsx::Peak3D*> filtered_peaks = peaks;
     filtered_peaks = peak_filter.filterEnabled(peaks, true);
@@ -134,7 +145,7 @@ int Refiner::updatePredictions(std::vector<Peak3D*> peaks) const
         const RefinementBatch* b = nullptr;
         const double z = peak->shape().center()[2];
         for (const auto& batch : _batches) {
-            if (batch.contains(z)) {
+            if (batch.onlyContains(z)) {
                 b = &batch;
                 break;
             }
@@ -167,11 +178,28 @@ int Refiner::updatePredictions(std::vector<Peak3D*> peaks) const
             peak->setSelected(false);
         }
     }
+    nsxlog(Level::Info, updated, "peaks updated");
     return updated;
+}
+
+UnitCell* Refiner::unrefinedCell()
+{
+    return &_unrefined_cell;
+}
+
+InstrumentStateList* Refiner::unrefinedStates()
+{
+    return &_unrefined_states;
+}
+
+int Refiner::nframes() const
+{
+    return _nframes;
 }
 
 void Refiner::logChange()
 {
+    nsxlog(Level::Info, "Refinement succeeded");
     nsxlog(Level::Info, "Original cell:", _unrefined_cell.toString());
     nsxlog(Level::Info, "Batch/Refined cell(s):");
     for (const auto& batch : _batches) {

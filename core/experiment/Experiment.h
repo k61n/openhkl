@@ -125,7 +125,7 @@ class Experiment {
     //! Check solution against reference cell and accept if within tolerances
     bool checkAndAssignUnitCell(PeakCollection* peaks, double length_tol, double angle_tol);
     //! Assign unit cell to a peak collection, compute Miller indices from q and cell
-    void assignUnitCell(PeakCollection* peaks, std::string cellName="accepted");
+    void assignUnitCell(PeakCollection* peaks, std::string cellName = "accepted");
     //! Set the reference cell
     void setReferenceCell(double a, double b, double c, double alpha, double beta, double gamma);
     //! Get space groups compatible with unit cell

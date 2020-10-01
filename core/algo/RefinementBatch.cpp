@@ -244,9 +244,24 @@ UnitCell* RefinementBatch::cell() const
     return _cell;
 }
 
+int RefinementBatch::first_frame() const
+{
+    return _fmin;
+}
+
+int RefinementBatch::last_frame() const
+{
+    return _fmax;
+}
+
 bool RefinementBatch::contains(double f) const
 {
     return (f > _fmin) && (f < _fmax);
+}
+
+bool RefinementBatch::onlyContains(double f) const
+{
+    return (f >= _fmin) && (f < _fmax - 2.0);
 }
 
 std::string RefinementBatch::name() const

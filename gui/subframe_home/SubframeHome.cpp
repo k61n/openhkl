@@ -196,8 +196,10 @@ void SubframeHome::readSettings()
 void SubframeHome::_updateLastLoadedList(QString name, QString file_path)
 {
     QStringList temp = {name, file_path};
-    _last_imports.prepend(temp);
-
+    if (_last_imports.size() == 0)
+        _last_imports.prepend(temp);
+    else if (!(_last_imports[0][0] == name))
+        _last_imports.prepend(temp);
     if (_last_imports.size() > 5)
         _last_imports.removeLast();
 

@@ -58,8 +58,17 @@ class RefinementBatch {
     //! Returns the refined unit cell.
     UnitCell* cell() const;
 
-    //! Determine if a given frame number is part of this batch.
+    //! Return the lower frame bound
+    int first_frame() const;
+
+    //! Return the upper frame bound
+    int last_frame() const;
+
+    //! Determine if a given frame number is part of this batch (there is an overlap).
     bool contains(double f) const;
+
+    //! Determine if a given frame number is part of *only* this batch
+    bool onlyContains(double f) const;
 
     //! Generate a name from the minimum/maximum frame
     std::string name() const;

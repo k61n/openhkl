@@ -23,6 +23,7 @@
 #include "gui/subframe_home/SubframeHome.h"
 #include "gui/subframe_index/SubframeAutoIndexer.h"
 #include "gui/subframe_predict/SubframePredictPeaks.h"
+#include "gui/subframe_refiner/SubframeRefiner.h"
 #include "gui/utility/SideBar.h"
 
 #include <QStackedWidget>
@@ -77,6 +78,7 @@ class MainWin : public QMainWindow {
     SubframeFilterPeaks* filter;
     SubframeAutoIndexer* indexer;
     SubframePredictPeaks* predictor;
+    SubframeRefiner* refiner;
     SubframeMergedPeaks* merger;
 
  private:
