@@ -18,8 +18,8 @@
 
 #include "gui/subframe_refiner/RefinerTables.h"
 
-#include <QVBoxLayout>
 #include <QDebug>
+#include <QVBoxLayout>
 
 RefinerTables::RefinerTables()
 {
@@ -37,7 +37,8 @@ RefinerTables::RefinerTables()
 
     setLatticeTableUp();
     setSamplePosTableUp();
-    setSampleOrnTableUp(); setDetectorPosTableUp();
+    setSampleOrnTableUp();
+    setDetectorPosTableUp();
     setKiTableUp();
 }
 
@@ -60,14 +61,14 @@ void RefinerTables::setLatticeTableUp()
     _original_lattice_view->setModel(_original_lattice_model);
     _original_lattice_model->setHorizontalHeaderLabels(
         {"fmin", "fmax", "a", "b", "c", QString((QChar)0x03B1), QString((QChar)0x03B2),
-        QString((QChar)0x03B3)});
+         QString((QChar)0x03B3)});
     _lattice_view = new QTableView;
     _lattice_model = new QStandardItemModel(0, 8, this);
     _original_lattice_view->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
     _lattice_view->setModel(_lattice_model);
     _lattice_model->setHorizontalHeaderLabels(
         {"fmin", "fmax", "a", "b", "c", QString((QChar)0x03B1), QString((QChar)0x03B2),
-        QString((QChar)0x03B3)});
+         QString((QChar)0x03B3)});
     lattice_layout->addWidget(_original_lattice_view);
     lattice_layout->addWidget(_lattice_view);
 }
@@ -103,7 +104,7 @@ void RefinerTables::refreshLatticeTable(nsx::Refiner* refiner)
         QList<QStandardItem*> row;
         auto c = batch.cell()->character();
         row.push_back(new QStandardItem(QString::number(batch.fmin())));
-        row.push_back(new QStandardItem(QString::number(batch.fmax()-2)));
+        row.push_back(new QStandardItem(QString::number(batch.fmax() - 2)));
         row.push_back(new QStandardItem(QString::number(c.a)));
         row.push_back(new QStandardItem(QString::number(c.b)));
         row.push_back(new QStandardItem(QString::number(c.c)));
@@ -178,14 +179,12 @@ void RefinerTables::setSampleOrnTableUp()
     _original_sample_orn_model = new QStandardItemModel(0, 4, this);
     _original_sample_orn_view->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Minimum);
     _original_sample_orn_view->setModel(_original_sample_orn_model);
-    _original_sample_orn_model->setHorizontalHeaderLabels(
-        {"frame", "xy", "xz", "yz"});
+    _original_sample_orn_model->setHorizontalHeaderLabels({"frame", "xy", "xz", "yz"});
     _sample_orn_view = new QTableView;
     _sample_orn_model = new QStandardItemModel(0, 4, this);
     _original_sample_orn_view->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
     _sample_orn_view->setModel(_sample_orn_model);
-    _sample_orn_model->setHorizontalHeaderLabels(
-        {"frame", "xy", "xz", "yz"});
+    _sample_orn_model->setHorizontalHeaderLabels({"frame", "xy", "xz", "yz"});
     sample_orn_layout->addWidget(_original_sample_orn_view);
     sample_orn_layout->addWidget(_sample_orn_view);
 }
@@ -202,9 +201,9 @@ void RefinerTables::refreshSampleOrnTable(nsx::Refiner* refiner, nsx::DataSet* d
         QList<QStandardItem*> row;
         auto mat = state.sampleOrientationMatrix();
         row.push_back(new QStandardItem(QString::number(frame)));
-        row.push_back(new QStandardItem(QString::number(mat(0,1))));
-        row.push_back(new QStandardItem(QString::number(mat(0,2))));
-        row.push_back(new QStandardItem(QString::number(mat(1,2))));
+        row.push_back(new QStandardItem(QString::number(mat(0, 1))));
+        row.push_back(new QStandardItem(QString::number(mat(0, 2))));
+        row.push_back(new QStandardItem(QString::number(mat(1, 2))));
         m0->appendRow(row);
         ++frame;
     }
@@ -220,9 +219,9 @@ void RefinerTables::refreshSampleOrnTable(nsx::Refiner* refiner, nsx::DataSet* d
         QList<QStandardItem*> row;
         auto mat = state.sampleOrientationMatrix();
         row.push_back(new QStandardItem(QString::number(frame)));
-        row.push_back(new QStandardItem(QString::number(mat(0,1))));
-        row.push_back(new QStandardItem(QString::number(mat(0,2))));
-        row.push_back(new QStandardItem(QString::number(mat(1,2))));
+        row.push_back(new QStandardItem(QString::number(mat(0, 1))));
+        row.push_back(new QStandardItem(QString::number(mat(0, 2))));
+        row.push_back(new QStandardItem(QString::number(mat(1, 2))));
         model->appendRow(row);
         ++frame;
     }
@@ -250,7 +249,8 @@ void RefinerTables::setDetectorPosTableUp()
 
 void RefinerTables::refreshDetectorPosTable(nsx::Refiner* refiner, nsx::DataSet* data)
 {
-    QStandardItemModel* m0 = dynamic_cast<QStandardItemModel*>(_original_detector_pos_view->model());
+    QStandardItemModel* m0 =
+        dynamic_cast<QStandardItemModel*>(_original_detector_pos_view->model());
     QStandardItemModel* model = dynamic_cast<QStandardItemModel*>(_detector_pos_view->model());
     m0->removeRows(0, m0->rowCount());
     model->removeRows(0, model->rowCount());

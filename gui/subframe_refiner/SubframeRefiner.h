@@ -15,8 +15,8 @@
 #ifndef NSX_GUI_SUBFRAME_REFINER_SUBFRAMEREFINER_H
 #define NSX_GUI_SUBFRAME_REFINER_SUBFRAMEREFINER_H
 
-#include "core/shape/PeakCollection.h"
 #include "core/algo/Refiner.h"
+#include "core/shape/PeakCollection.h"
 
 #include "gui/graphics/DetectorView.h"
 #include "gui/graphics/SXPlot.h"

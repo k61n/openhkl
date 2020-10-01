@@ -16,12 +16,12 @@
 #include "core/shape/PeakCollection.h"
 #include "core/shape/PeakFilter.h"
 
-#include "gui/subframe_refiner/SubframeRefiner.h"
 #include "gui/MainWin.h"
 #include "gui/dialogs/ListNameDialog.h"
 #include "gui/models/Meta.h"
 #include "gui/models/Project.h"
 #include "gui/models/Session.h"
+#include "gui/subframe_refiner/SubframeRefiner.h"
 
 #include <QFileInfo>
 #include <QGridLayout>
@@ -34,8 +34,7 @@
 #include <QSpacerItem>
 #include <sstream>
 
-SubframeRefiner::SubframeRefiner()
-    : QWidget()
+SubframeRefiner::SubframeRefiner() : QWidget()
 {
     _refiner = nullptr;
 
@@ -384,8 +383,7 @@ void SubframeRefiner::updatePredictedList()
     _predicted_combo->blockSignals(true);
     _predicted_combo->clear();
 
-    _predicted_list =
-        gSession->experimentAt(_exp_combo->currentIndex())->getPredictedNames();
+    _predicted_list = gSession->experimentAt(_exp_combo->currentIndex())->getPredictedNames();
 
     if (!_predicted_list.empty()) {
         _predicted_combo->addItems(_peak_list);

@@ -30,8 +30,8 @@
 namespace nsx {
 
 Refiner::Refiner(
-    InstrumentStateList& states, UnitCell* cell, std::vector<nsx::Peak3D*> peaks,
-    int nbatches, UnitCellHandler* cell_handler)
+    InstrumentStateList& states, UnitCell* cell, std::vector<nsx::Peak3D*> peaks, int nbatches,
+    UnitCellHandler* cell_handler)
     : _cell_handler(cell_handler), _cell(cell), _batches()
 {
     for (InstrumentState state : states)
@@ -67,7 +67,7 @@ Refiner::Refiner(
             oss << "batch" << ++n_batch;
             std::string name = oss.str();
             _cell_handler->addUnitCell(name, _unrefined_cell);
- 
+
             RefinementBatch b(states, _cell_handler->getUnitCell(name), peaks_subset);
             _batches.emplace_back(std::move(b));
             peaks_subset.clear();

@@ -360,7 +360,7 @@ void SubframeMergedPeaks::refreshDShellTable()
     nsx::DataResolution resolution;
     quality.computeQuality(*_merged_data);
     resolution.computeQuality(
-       min, max, shells, predicted, found, _merged_data->spaceGroup(), inclFriedel);
+        min, max, shells, predicted, found, _merged_data->spaceGroup(), inclFriedel);
     quality.log();
     resolution.log();
 
