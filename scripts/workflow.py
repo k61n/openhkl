@@ -100,7 +100,6 @@ else:
     params.filter['extinct'] = True
     npeaks = peaks.numberOfPeaks()
     ncaught = expt.filter_peaks(params.filter, peaks, filtered_collection_name)
-    pynsxprint("Filter caught " + str(ncaught) + " of " + str(npeaks) + " peaks")
     pynsxprint("Building shape library...")
     all_data = expt.get_data()
     expt.build_shape_library(all_data)
