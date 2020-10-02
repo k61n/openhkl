@@ -53,9 +53,10 @@ TEST_CASE("test/data/TestNexusData.cpp", "")
 
     std::string dir = "/users/tw/tmp/nsx-data/dkdp/nexus/";
     std::vector<std::string> files = {
+//	"501141.nxs",	// test invalid data file
         "501168.nxs", "501169.nxs",
-        /*      "501170.nxs", "501171.nxs",
-                "501172.nxs", "501173.nxs",
+        "501170.nxs", "501171.nxs",
+        /*      "501172.nxs", "501173.nxs",
                 "501174.nxs", "501175.nxs",
                 "501176.nxs", "501177.nxs",
                 "501178.nxs", "501179.nxs",
@@ -123,13 +124,13 @@ TEST_CASE("test/data/TestNexusData.cpp", "")
 
     nsx::PeakFinder* peak_finder = exp.peakFinder();
     peak_finder->setFramesBegin(0);
-    peak_finder->setFramesEnd(numframes);
+    peak_finder->setFramesEnd(-1);
     peak_finder->setMaxFrames(numframes);
 
     peak_finder->setMinSize(30);
     peak_finder->setMaxSize(10000);
     peak_finder->setPeakScale(1.0);
-    peak_finder->setThreshold(10);
+    peak_finder->setThreshold(50.0);
     peak_finder->setConvolver(std::unique_ptr<nsx::Convolver>(convolver));
     peak_finder->setHandler(progressHandler);
     peak_finder->find(numors);
@@ -194,7 +195,7 @@ TEST_CASE("test/data/TestNexusData.cpp", "")
 
     nsx::PeakFilter* peak_filter = exp.peakFilter();
     peak_filter->setFilterDRange(true);
-    const std::array<double, 2> d_range{0.5, 10.0};
+    const std::array<double, 2> d_range{1.5, 50.0};
     peak_filter->setDRange(d_range);
 
     peak_filter->resetFiltering(found_collection);
@@ -246,7 +247,7 @@ TEST_CASE("test/data/TestNexusData.cpp", "")
     parameters.nVertices = 5000; // points on the direction sphere
     parameters.subdiv = 50; // number of bins
     parameters.frequencyTolerance = 0.5; // peaks to discard
-    parameters.maxdim = 500.; // unit cell length
+    parameters.maxdim = 10.; // unit cell length
     parameters.nSolutions = 20;
 
     std::cout << "AutoIndexer parameters: ";
