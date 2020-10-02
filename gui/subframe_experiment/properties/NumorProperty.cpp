@@ -85,7 +85,7 @@ void NumorProperty::addMenuRequested()
     QMenu* menu = new QMenu(_add);
 
     QAction* add_from_raw = menu->addAction("Add raw data...");
-    QAction* add_from_HDF5 = menu->addAction("Add hdf5 data...");
+    QAction* add_from_HDF5 = menu->addAction("Add hdf5 or nexus data...");
 
     connect(add_from_raw, &QAction::triggered, []() { gSession->loadRawData(); });
 
