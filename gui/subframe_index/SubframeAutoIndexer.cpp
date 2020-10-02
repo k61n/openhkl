@@ -508,7 +508,8 @@ void SubframeAutoIndexer::acceptSolution()
     if (_selected_unit_cell) {
         nsx::Experiment* expt = gSession->experimentAt(_exp_combo->currentIndex())->experiment();
         std::vector<std::string> collections = expt->getCollectionNames();
-        std::unique_ptr<UnitCellDialog> dlg(new UnitCellDialog(collections));
+        std::vector<std::string> compatible_sg = _selected_unit_cell->compatibleSpaceGroups();
+        std::unique_ptr<UnitCellDialog> dlg(new UnitCellDialog(collections, compatible_sg));
         dlg->exec();
         if (!dlg->unitCellName().isEmpty()) {
             std::string cellName = dlg->unitCellName().toStdString();
@@ -518,8 +519,9 @@ void SubframeAutoIndexer::acceptSolution()
 
             nsx::PeakCollection* collection =
                 expt->getPeakCollection(dlg->peakCollectionName().toStdString());
-
             expt->assignUnitCell(collection, cellName);
+            nsx::UnitCell* cell = expt->getUnitCell(cellName);
+            cell->setSpaceGroup(dlg->spaceGroup().toStdString());
         }
     }
 }
