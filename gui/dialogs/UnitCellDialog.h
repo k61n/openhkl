@@ -22,13 +22,15 @@
 //! Dialog to assign a unit cell to a peak collection
 class UnitCellDialog : public QDialog {
  public:
-    UnitCellDialog(std::vector<std::string> collectionNames);
+    UnitCellDialog(std::vector<std::string> collectionNames, std::vector<std::string> spaceGroups);
     QString unitCellName();
     QString peakCollectionName();
+    QString spaceGroup();
 
  private:
-    QComboBox* peakCollections;
-    QLineEdit* cellName;
+    QComboBox* _peak_collections;
+    QComboBox* _space_group;
+    QLineEdit* _cell_name;
 };
 
 #endif // NSX_GUI_DIALOGS_UNITCELLDIALOG_H
