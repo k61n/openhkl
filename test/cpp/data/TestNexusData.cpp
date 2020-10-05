@@ -127,10 +127,10 @@ TEST_CASE("test/data/TestNexusData.cpp", "")
     peak_finder->setFramesEnd(-1);
     peak_finder->setMaxFrames(numframes);
 
-    peak_finder->setMinSize(30);
+    peak_finder->setMinSize(5);
     peak_finder->setMaxSize(10000);
     peak_finder->setPeakScale(1.0);
-    peak_finder->setThreshold(50.0);
+    peak_finder->setThreshold(5.0);
     peak_finder->setConvolver(std::unique_ptr<nsx::Convolver>(convolver));
     peak_finder->setHandler(progressHandler);
     peak_finder->find(numors);
