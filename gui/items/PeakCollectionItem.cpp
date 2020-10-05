@@ -35,6 +35,7 @@ PeakCollectionItem::PeakCollectionItem()
 PeakCollectionItem::PeakCollectionItem(const nsx::PeakCollection* peak_collection)
 {
     _peak_collection = peak_collection;
+    _peak_collection->setMillerIndices();
     _mode = PeakDisplayModes::VALID;
 
     std::vector<nsx::Peak3D*> peak_list = _peak_collection->getPeakList();
@@ -47,6 +48,7 @@ PeakCollectionItem::PeakCollectionItem(const nsx::PeakCollection* peak_collectio
 void PeakCollectionItem::setPeakCollection(const nsx::PeakCollection* peak_collection)
 {
     _peak_collection = peak_collection;
+    _peak_collection->setMillerIndices();
 
     std::vector<nsx::Peak3D*> peak_list = _peak_collection->getPeakList();
     _peak_items.clear();

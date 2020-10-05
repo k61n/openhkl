@@ -64,6 +64,7 @@ Peak3D::Peak3D(std::shared_ptr<nsx::Peak3D> peak)
     _rockingCurve = peak->rockingCurve();
     _meanBackground = peak->meanBackground();
     _rawIntensity = peak->rawIntensity();
+    _hkl = peak->hkl();
 
     _caught_by_filter = false;
     _rejected_by_filter = false;
@@ -295,9 +296,14 @@ const MillerIndex& Peak3D::hkl() const
 
 void Peak3D::setMillerIndices()
 {
-    try {
-        _hkl = MillerIndex(q(), *_unitCell);
-    } catch (std::range_error& e) {
+    if (_unitCell) {
+        try {
+            _hkl = MillerIndex(q(), *_unitCell);
+        } catch (std::range_error& e) { // Catch interpolation error for last frame
+            _hkl = {0, 0, 0};
+            _selected = false;
+        }
+    } else {
         _selected = false;
     }
 }

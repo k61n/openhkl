@@ -205,4 +205,10 @@ double PeakCollection::sigmaM()
     return _sigma_m;
 }
 
+void PeakCollection::setMillerIndices() const
+{
+    for (auto peak : getPeakList())
+        peak->setMillerIndices();
+}
+
 } // namespace nsx
