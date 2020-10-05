@@ -45,6 +45,10 @@ class PeakItem : public QStandardItem {
     ~PeakItem() = default;
 
  public:
+    double peak_d() const;
+    double intensity() const;
+    double sigma_intensity() const;
+    double strength() const;
     //! Retrieve the data of column and row
     QVariant peakData(const QModelIndex& index, int role, PeakDisplayModes mode) const;
     //! Get the peak pointer

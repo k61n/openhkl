@@ -66,6 +66,9 @@ class PeakCollection {
     //! Return mosaicity sigma
     double sigmaM();
 
+    //! Set Miller indices of peaks for those with an assigned unit cell
+    void setMillerIndices() const;
+
     //! Returns the amount of peaks
     int numberOfPeaks() const { return _peaks.size(); }
     //! Returns the amount of valid peaks

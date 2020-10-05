@@ -32,28 +32,50 @@ PeakItem::PeakItem(nsx::Peak3D* peak) : QStandardItem()
     _peak_graphic = std::unique_ptr<PeakItemGraphic>(new PeakItemGraphic(peak));
 }
 
+double PeakItem::peak_d() const
+{
+    try {
+        return 1.0 /(_peak->q().rowVector().norm());
+    } catch (std::range_error& e) {
+        return 0.0;
+    }
+}
+
+double PeakItem::intensity() const
+{
+    try {
+        return _peak->correctedIntensity().value();
+    } catch (std::range_error& e) {
+        return 0.0;
+    }
+}
+
+double PeakItem::sigma_intensity() const
+{
+    try {
+        return _peak->correctedIntensity().sigma();
+    } catch (std::range_error& e) {
+        return 0.0;
+    }
+}
+
+double PeakItem::strength() const
+{
+    try {
+        return _peak->correctedIntensity().strength();
+    } catch (std::range_error& e) {
+        return 0.0;
+    }
+}
+
 QVariant PeakItem::peakData(const QModelIndex& index, int role, PeakDisplayModes mode) const
 {
     int col = index.column();
 
-    Eigen::RowVector3i hkl = {0, 0, 0};
-    Eigen::RowVector3d hkl_error = {0.0, 0.0, 0.0};
-
-    const nsx::UnitCell* cell = _peak->unitCell();
-
-    if (cell) {
-        const nsx::MillerIndex miller_index(_peak->q(), *cell);
-        if (miller_index.indexed(cell->indexingTolerance())) {
-            hkl = miller_index.rowVector();
-            hkl_error = miller_index.error();
-        }
-    }
-
-    const double peak_d = 1.0 / (_peak->q().rowVector().norm());
-    const double intensity = _peak->correctedIntensity().value();
-    const double sigma_intensity = _peak->correctedIntensity().sigma();
-    const double strength = _peak->correctedIntensity().strength();
     const Eigen::Vector3d& peak_center = _peak->shape().center();
+    const nsx::MillerIndex miller_index = _peak->hkl();
+    Eigen::RowVector3i hkl = miller_index.rowVector();
+    Eigen::RowVector3d hkl_error = miller_index.error();
 
     switch (role) {
         case Qt::DisplayRole:
@@ -78,13 +100,13 @@ QVariant PeakItem::peakData(const QModelIndex& index, int role, PeakDisplayModes
                     return peak_center(2);
                 }
                 case Column::Intensity: {
-                    return intensity;
+                    return intensity();
                 }
                 case Column::Sigma: {
-                    return sigma_intensity;
+                    return sigma_intensity();
                 }
                 case Column::Strength: {
-                    return strength;
+                    return strength();
                 }
                 case Column::Numor: {
                     return _peak->dataSet()->reader()->metadata().key<int>("Numor");
@@ -97,7 +119,7 @@ QVariant PeakItem::peakData(const QModelIndex& index, int role, PeakDisplayModes
                         return QString("not set");
                 }
                 case Column::d: {
-                    return peak_d;
+                    return peak_d();
                 }
             }
             break;
