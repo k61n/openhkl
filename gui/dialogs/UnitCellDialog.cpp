@@ -21,30 +21,47 @@
 #include <QGridLayout>
 #include <QHBoxLayout>
 
-UnitCellDialog::UnitCellDialog(std::vector<std::string> collectionNames) : QDialog()
+UnitCellDialog::UnitCellDialog(
+    std::vector<std::string> collectionNames, std::vector<std::string> spaceGroups) : QDialog()
 {
-    QStringList list;
+    QStringList peak_names;
     for (auto name : collectionNames)
-        list.push_back(QString::fromStdString(name));
+        peak_names.push_back(QString::fromStdString(name));
+
+    QStringList space_groups;
+    for (auto name : spaceGroups)
+        space_groups.push_back(QString::fromStdString(name));
 
     setModal(true);
-    resize(500, 130);
-    setMinimumSize(500, 130);
-    setMaximumSize(500, 130);
+    resize(600, 130);
+    setMinimumSize(600, 130);
+    setMaximumSize(600, 130);
+
     QGridLayout* gridLayout = new QGridLayout(this);
     QHBoxLayout* horizontalLayout = new QHBoxLayout;
+
     horizontalLayout->addWidget(new QLabel("Unit cell name:"));
-    cellName = new QLineEdit("");
-    cellName->setMaximumSize(200, 30);
-    horizontalLayout->addWidget(cellName);
+    _cell_name = new QLineEdit("");
+    _cell_name->setMaximumSize(200, 30);
+    horizontalLayout->addWidget(_cell_name);
     gridLayout->addLayout(horizontalLayout, 0, 0, 1, 1);
+
     QHBoxLayout* horizontalLayout_2 = new QHBoxLayout;
     horizontalLayout_2->addWidget(new QLabel("Peak collection:"));
-    peakCollections = new QComboBox();
-    peakCollections->addItems(list);
-    peakCollections->setInsertPolicy(QComboBox::InsertAlphabetically);
-    horizontalLayout_2->addWidget(peakCollections);
+    _peak_collections = new QComboBox();
+    _peak_collections->addItems(peak_names);
+    _peak_collections->setInsertPolicy(QComboBox::InsertAlphabetically);
+    horizontalLayout_2->addWidget(_peak_collections);
     gridLayout->addLayout(horizontalLayout_2, 0, 1, 1, 1);
+
+    QHBoxLayout* horizontalLayout_3 = new QHBoxLayout;
+    horizontalLayout_2->addWidget(new QLabel("Space group:"));
+    _space_group = new QComboBox();
+    _space_group->addItems(space_groups);
+    _space_group->setInsertPolicy(QComboBox::InsertAlphabetically);
+    horizontalLayout_3->addWidget(_space_group);
+    gridLayout->addLayout(horizontalLayout_3, 0, 2, 1, 1);
+
     QDialogButtonBox* buttonBox = new QDialogButtonBox(this);
     buttonBox->setOrientation(Qt::Horizontal);
     buttonBox->setStandardButtons(QDialogButtonBox::Cancel | QDialogButtonBox::Ok);
@@ -57,10 +74,15 @@ UnitCellDialog::UnitCellDialog(std::vector<std::string> collectionNames) : QDial
 
 QString UnitCellDialog::unitCellName()
 {
-    return cellName->text();
+    return _cell_name->text();
 }
 
 QString UnitCellDialog::peakCollectionName()
 {
-    return peakCollections->currentText();
+    return _peak_collections->currentText();
+}
+
+QString UnitCellDialog::spaceGroup()
+{
+    return _space_group->currentText();
 }

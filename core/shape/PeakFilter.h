@@ -120,7 +120,7 @@ class PeakFilter {
     void filterOverlapping(PeakCollection* peak_collection) const;
 
     //! Remove space-group extincted peaks
-    void filterExtincted(PeakCollection* peak_collection) const;
+    void filterExtinct(PeakCollection* peak_collection) const;
 
     //! Remove peaks which belongs to datasets containing too few peaks
     void filterSparseDataSet(PeakCollection* peak_collection) const;

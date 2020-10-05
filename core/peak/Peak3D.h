@@ -148,9 +148,9 @@ class Peak3D {
     //! Shape scale factor for end of background
     double _bkgEnd;
     //! Miller indices calculated during autoindexing
-    MillerIndex _hkl;
+    MillerIndex _hkl = {0, 0, 0};
 
-    const UnitCell* _unitCell;
+    const UnitCell* _unitCell = nullptr;
 
     double _scale;
     bool _selected;
