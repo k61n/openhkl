@@ -540,7 +540,7 @@ void PeakFinderFrame::updateDatasetParameters(int idx)
     _start_frame_spin->setMaximum(data->nFrames());
 
     _figure_view->getScene()->slotChangeSelectedData(_data_list.at(idx), 0);
-    _figure_view->getScene()->setMaxIntensity(3000);
+    //_figure_view->getScene()->setMaxIntensity(3000);
     emit _figure_view->getScene()->dataChanged();
     _figure_view->getScene()->update();
 

@@ -46,6 +46,9 @@ class SubframePredictPeaks : public QWidget {
     void runIntegration();
     //! Refresh all the panels
     void refreshAll();
+    //! detector view
+    DetectorView* getDetectorView() { return _figure_view; }
+
 
  private:
     //! Set up the GUI size policies
