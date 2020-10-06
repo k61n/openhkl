@@ -31,6 +31,8 @@ class ImagePanel : public QWidget {
 
     DetectorView* getView() { return _image_view; };
 
+    QSlider* getMaxIntensitySlider() { return _slider; }
+
  private:
     DetectorView* _image_view;
 

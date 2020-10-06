@@ -49,6 +49,8 @@ class SubframeFilterPeaks : public QWidget {
     void filterPeaks();
     //! Refresh all th einputs
     void refreshAll();
+    //! detector view
+    DetectorView* getDetectorView() { return _figure_view; }
 
  private:
     //! Set up the GUI size policies
