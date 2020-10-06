@@ -629,7 +629,7 @@ void SubframePredictPeaks::updateDatasetParameters(int idx)
     const int nFrames = _data_list.at(idx)->nFrames();
 
     _figure_view->getScene()->slotChangeSelectedData(_data_list.at(idx), 0);
-    _figure_view->getScene()->setMaxIntensity(3000);
+    //_figure_view->getScene()->setMaxIntensity(3000);
     emit _figure_view->getScene()->dataChanged();
     _figure_view->getScene()->update();
 

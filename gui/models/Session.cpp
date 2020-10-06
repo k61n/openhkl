@@ -123,12 +123,20 @@ void Session::loadData()
         if (exp->hasData(filename.toStdString()))
             return; // nullptr;
 
-        nsx::sptrDataSet data_ptr;
+        try {
+            nsx::sptrDataSet data_ptr;
 
-        std::string extension = fileinfo.completeSuffix().toStdString();
-        data_ptr = nsx::DataReaderFactory().create(
-            extension, filename.toStdString(), exp->getDiffractometer());
-        exp->addData(data_ptr);
+            std::string extension = fileinfo.completeSuffix().toStdString();
+            data_ptr = nsx::DataReaderFactory().create(
+                extension, filename.toStdString(), exp->getDiffractometer());
+            exp->addData(data_ptr);
+        }
+        catch(const std::exception& ex) {
+            QString msg = QString("Loading file \"") + filename +
+                QString("\" failed with error: ") + QString(ex.what()) + QString(".");
+
+            QMessageBox::critical(nullptr, "Error", msg);
+        }
     }
     currentProject()->selectData(currentProject()->getIndex(filenames.at(0)));
     onDataChanged();

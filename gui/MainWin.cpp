@@ -73,6 +73,25 @@ MainWin::MainWin()
     _layout_stack->addWidget(merger);
     _layout_stack->setCurrentIndex(0);
 
+    // set initial max. intensities
+    finder->getDetectorView()->getScene()->setMaxIntensity(
+        experiment->getImage()->getMaxIntensitySlider()->value());
+    filter->getDetectorView()->getScene()->setMaxIntensity(
+        experiment->getImage()->getMaxIntensitySlider()->value());
+    predictor->getDetectorView()->getScene()->setMaxIntensity(
+        experiment->getImage()->getMaxIntensitySlider()->value());
+
+    // sync the max. intensity slider with all other image plots
+    connect(
+        experiment->getImage()->getMaxIntensitySlider(), &QSlider::valueChanged,
+        finder->getDetectorView()->getScene(), &DetectorScene::setMaxIntensity);
+    connect(
+        experiment->getImage()->getMaxIntensitySlider(), &QSlider::valueChanged,
+        filter->getDetectorView()->getScene(), &DetectorScene::setMaxIntensity);
+    connect(
+        experiment->getImage()->getMaxIntensitySlider(), &QSlider::valueChanged,
+        predictor->getDetectorView()->getScene(), &DetectorScene::setMaxIntensity);
+
     main_layout->addWidget(_layout_stack);
     main_widget->setLayout(main_layout);
     setCentralWidget(main_widget);
