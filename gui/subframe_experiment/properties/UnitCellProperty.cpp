@@ -180,7 +180,6 @@ UnitCellProperty::UnitCellProperty() : QWidget()
             QString::fromStdString(new_name));
         unitcells->setCurrentIndex(idx);
 
-        printAllInformation();
     });
 
     connect(chemicalFormula, &QLineEdit::editingFinished, [=]() {
@@ -192,7 +191,6 @@ UnitCellProperty::UnitCellProperty() : QWidget()
             ->getUnitCell(unitcells->currentText().toStdString())
             ->setMaterial(std::make_unique<xsection::Material>(formula));
         setMassDensity();
-        printAllInformation();
     });
 
     connect(_add, &QPushButton::clicked, this, &UnitCellProperty::addUnitCell);
@@ -307,7 +305,6 @@ void UnitCellProperty::selectedCellChanged(int cell)
     alpha->setValue(unitcharacter.alpha);
     beta->setValue(unitcharacter.beta);
     gamma->setValue(unitcharacter.gamma);
-    printAllInformation();
 }
 
 void UnitCellProperty::setMassDensity() const

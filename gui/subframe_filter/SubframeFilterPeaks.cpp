@@ -713,12 +713,14 @@ void SubframeFilterPeaks::refreshPeakVisual()
         if (caught) {
             graphic->showArea(true);
             graphic->showLabel(false);
+            graphic->showBox(true);
             graphic->setSize(10);
             graphic->setColor(Qt::darkGreen);
             graphic->setOutlineColor(Qt::transparent);
         } else {
             graphic->showArea(true);
             graphic->showLabel(false);
+            graphic->showBox(false);
             graphic->setSize(10);
             graphic->setColor(Qt::darkRed);
             graphic->setOutlineColor(Qt::transparent);
