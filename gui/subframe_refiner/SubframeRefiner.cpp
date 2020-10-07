@@ -260,7 +260,7 @@ void SubframeRefiner::updateDatasetList()
     if (!_data_list.empty()) {
         for (const nsx::sptrDataSet& data : _data_list) {
             QFileInfo fileinfo(QString::fromStdString(data->filename()));
-            _data_combo->addItem(fileinfo.baseName());
+            _data_combo->addItem(fileinfo.baseName() /*absoluteFilePath()*/);
         }
         _data_combo->setCurrentIndex(0);
     }
@@ -307,41 +307,45 @@ void SubframeRefiner::setBatchesUp()
 
 void SubframeRefiner::refine()
 {
-    auto expt = gSession->experimentAt(_exp_combo->currentIndex())->experiment();
-    const auto data = expt->getData(_data_combo->currentText().toStdString());
-    const auto peaks = expt->getPeakCollection(_peak_combo->currentText().toStdString());
-    const auto cell = expt->getUnitCell(_cell_combo->currentText().toStdString());
-    const auto cell_handler = expt->getCellHandler();
-    const auto peak_list = peaks->getPeakList();
-    int n_batches = _n_batches_spin->value();
-    auto states = data->instrumentStates();
-    const unsigned int max_iter = 1000;
-    _refiner = std::make_unique<nsx::Refiner>(states, cell, peak_list, n_batches, cell_handler);
-    int n_checked = 0;
-    if (_refineUB->isChecked()) {
-        _refiner->refineUB();
-        ++n_checked;
+    try {
+        auto expt = gSession->experimentAt(_exp_combo->currentIndex())->experiment();
+        const auto data = expt->getData(_data_combo->currentText().toStdString());
+        const auto peaks = expt->getPeakCollection(_peak_combo->currentText().toStdString());
+        const auto cell = expt->getUnitCell(_cell_combo->currentText().toStdString());
+        const auto cell_handler = expt->getCellHandler();
+        const auto peak_list = peaks->getPeakList();
+        int n_batches = _n_batches_spin->value();
+        auto states = data->instrumentStates();
+        const unsigned int max_iter = 1000;
+        _refiner = std::make_unique<nsx::Refiner>(states, cell, peak_list, n_batches, cell_handler);
+        int n_checked = 0;
+        if (_refineUB->isChecked()) {
+            _refiner->refineUB();
+            ++n_checked;
+        }
+        if (_refineSamplePosition->isChecked()) {
+            _refiner->refineSamplePosition();
+            ++n_checked;
+        }
+        if (_refineSampleOrientation->isChecked()) {
+            _refiner->refineSampleOrientation();
+            ++n_checked;
+        }
+        if (_refineDetectorPosition->isChecked()) {
+            _refiner->refineDetectorOffset();
+            ++n_checked;
+        }
+        if (_refineKi->isChecked()) {
+            _refiner->refineKi();
+            ++n_checked;
+        }
+        if (n_checked > 0) {
+            bool success = _refiner->refine(max_iter);
+        }
+        _main_tab_widget->refreshTables(_refiner.get(), data.get());
+    } catch (const std::exception& ex) {
+        QMessageBox::critical(this, "Error", QString(ex.what()));
     }
-    if (_refineSamplePosition->isChecked()) {
-        _refiner->refineSamplePosition();
-        ++n_checked;
-    }
-    if (_refineSampleOrientation->isChecked()) {
-        _refiner->refineSampleOrientation();
-        ++n_checked;
-    }
-    if (_refineDetectorPosition->isChecked()) {
-        _refiner->refineDetectorOffset();
-        ++n_checked;
-    }
-    if (_refineKi->isChecked()) {
-        _refiner->refineKi();
-        ++n_checked;
-    }
-    if (n_checked > 0) {
-        bool success = _refiner->refine(max_iter);
-    }
-    _main_tab_widget->refreshTables(_refiner.get(), data.get());
 }
 
 void SubframeRefiner::setUpdateUp()

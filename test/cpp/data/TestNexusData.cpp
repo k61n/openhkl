@@ -28,7 +28,7 @@
 
 
 #define OUTPUT_INTERMEDIATE
-//#define ONLY_FIRST_FILE
+#define ONLY_FIRST_FILE
 
 
 TEST_CASE("test/data/TestNexusData.cpp", "")
@@ -53,16 +53,10 @@ TEST_CASE("test/data/TestNexusData.cpp", "")
 
     std::string dir = "/users/tw/tmp/nsx-data/dkdp/nexus/";
     std::vector<std::string> files = {
-//	"501141.nxs",	// test invalid data file
-        "501168.nxs", "501169.nxs",
-        "501170.nxs", "501171.nxs",
-        /*      "501172.nxs", "501173.nxs",
-                "501174.nxs", "501175.nxs",
-                "501176.nxs", "501177.nxs",
-                "501178.nxs", "501179.nxs",
-                "501180.nxs", "501181.nxs",
-                "501182.nxs", "501183.nxs",
-                "501184.nxs", "501185.nxs", */
+        //	"501141.nxs",	// test invalid data file
+        "501168.nxs", "501169.nxs", "501170.nxs", "501171.nxs", "501172.nxs", "501173.nxs",
+        "501174.nxs", "501175.nxs", "501176.nxs", "501177.nxs", "501178.nxs", "501179.nxs",
+        "501180.nxs", "501181.nxs", "501182.nxs", "501183.nxs", "501184.nxs", "501185.nxs",
     };
 
     nsx::Diffractometer* diffractometer = nsx::Diffractometer::create("D19");
@@ -126,7 +120,6 @@ TEST_CASE("test/data/TestNexusData.cpp", "")
     peak_finder->setFramesBegin(0);
     peak_finder->setFramesEnd(-1);
     peak_finder->setMaxFrames(numframes);
-
     peak_finder->setMinSize(5);
     peak_finder->setMaxSize(10000);
     peak_finder->setPeakScale(1.0);
@@ -244,11 +237,11 @@ TEST_CASE("test/data/TestNexusData.cpp", "")
     nsx::AutoIndexer* auto_indexer = exp.autoIndexer();
     nsx::IndexerParameters parameters;
     // parameters for FFTIndexing
-    parameters.nVertices = 5000; // points on the direction sphere
+    parameters.nVertices = 10000; // points on the direction sphere
     parameters.subdiv = 50; // number of bins
-    parameters.frequencyTolerance = 0.5; // peaks to discard
-    parameters.maxdim = 10.; // unit cell length
-    parameters.nSolutions = 20;
+    parameters.frequencyTolerance = 0.2; // peaks to discard
+    parameters.maxdim = 8.; // unit cell length
+    parameters.nSolutions = 25;
 
     std::cout << "AutoIndexer parameters: ";
     std::cout << "maxdim = " << parameters.maxdim << ", ";
