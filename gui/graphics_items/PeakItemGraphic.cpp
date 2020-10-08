@@ -103,7 +103,7 @@ void PeakItemGraphic::redraw()
 
     _bounding_box = new QGraphicsRectItem(boundingRect());
     _bounding_box->setPen(box_pen);
-    _bounding_box->setParentItem(_center_gi);
+    _bounding_box->setParentItem(this);
     _bounding_box->setAcceptHoverEvents(false);
     _bounding_box->setZValue(20);
     _bounding_box->setPos(_center_gi->pos());

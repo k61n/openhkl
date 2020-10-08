@@ -167,6 +167,8 @@ class SubframeFilterPeaks : public QWidget {
     QSpinBox* _figure_spin;
     QScrollBar* _figure_scroll;
     PeaksTableView* _peak_table;
+    QCheckBox* _show_peaks_check;
+    QCheckBox* _show_boxes_check;
 
     // For modifying the title of peak_group
     QGroupBox* _preview_panel;

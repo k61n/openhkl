@@ -424,18 +424,32 @@ void SubframeFilterPeaks::setFigureUp()
 
     _figure_scroll = new QScrollBar(this);
     _figure_scroll->setOrientation(Qt::Horizontal);
-    _figure_scroll->setSizePolicy(*_size_policy_widgets);
+    _figure_scroll->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
     figure_grid->addWidget(_figure_scroll, 1, 1, 1, 1);
+
+    _show_peaks_check = new QCheckBox("Peaks");
+    _show_peaks_check->setChecked(true);
+    _show_peaks_check->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Preferred);
+    figure_grid->addWidget(_show_peaks_check, 1, 2, 1, 1);
+
+    _show_boxes_check = new QCheckBox("Boxes");
+    _show_boxes_check->setChecked(false);
+    _show_boxes_check->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Preferred);
+    figure_grid->addWidget(_show_boxes_check, 1, 3, 1, 1);
 
     _figure_spin = new QSpinBox(this);
     _figure_spin->setSizePolicy(*_size_policy_fixed);
-    figure_grid->addWidget(_figure_spin, 1, 2, 1, 1);
+    figure_grid->addWidget(_figure_spin, 1, 4, 1, 1);
 
     connect(
         _figure_scroll, SIGNAL(valueChanged(int)), _figure_view->getScene(),
         SLOT(slotChangeSelectedFrame(int)));
 
     connect(_figure_scroll, SIGNAL(valueChanged(int)), _figure_spin, SLOT(setValue(int)));
+    connect(
+        _show_peaks_check, &QCheckBox::stateChanged, this, &SubframeFilterPeaks::refreshPeakVisual);
+    connect(
+        _show_boxes_check, &QCheckBox::stateChanged, this, &SubframeFilterPeaks::refreshPeakVisual);
 
     connect(
         _figure_view->getScene(), &DetectorScene::signalSelectedPeakItemChanged, this,
@@ -711,19 +725,19 @@ void SubframeFilterPeaks::refreshPeakVisual()
         caught = peak->peak()->caughtByFilter();
 
         if (caught) {
-            graphic->showArea(true);
+            graphic->showArea(_show_peaks_check->isChecked());
             graphic->showLabel(false);
-            graphic->showBox(true);
+            graphic->showBox(_show_boxes_check->isChecked());
             graphic->setSize(10);
-            graphic->setColor(Qt::darkGreen);
-            graphic->setOutlineColor(Qt::transparent);
+            graphic->setColor(Qt::transparent);
+            graphic->setOutlineColor(Qt::darkGreen);
         } else {
-            graphic->showArea(true);
+            graphic->showArea(_show_peaks_check->isChecked());
             graphic->showLabel(false);
-            graphic->showBox(false);
+            graphic->showBox(_show_boxes_check->isChecked());
             graphic->setSize(10);
-            graphic->setColor(Qt::darkRed);
-            graphic->setOutlineColor(Qt::transparent);
+            graphic->setColor(Qt::transparent);
+            graphic->setOutlineColor(Qt::darkRed);
         }
     }
     _figure_view->getScene()->update();
