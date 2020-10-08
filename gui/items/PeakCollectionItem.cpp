@@ -159,24 +159,54 @@ void PeakCollectionItem::sort(int column, Qt::SortOrder order)
         }
         case Column::Intensity: {
             compareFn = [](std::unique_ptr<PeakItem>& p1, std::unique_ptr<PeakItem>& p2) {
-                double intensity1 = p1->peak()->correctedIntensity().value();
-                double intensity2 = p2->peak()->correctedIntensity().value();
+                double intensity1 = 0.0;
+                double intensity2 = 0.0;
+                try {
+                    intensity1 = p1->peak()->correctedIntensity().value();
+                } catch (std::range_error& e) {
+                    // interpolation error
+                }
+                try {
+                    intensity2 = p2->peak()->correctedIntensity().value();
+                } catch (std::range_error& e) {
+                    // interpolation error
+                }
                 return (intensity1 < intensity2);
             };
             break;
         }
         case Column::Sigma: {
             compareFn = [](std::unique_ptr<PeakItem>& p1, std::unique_ptr<PeakItem>& p2) {
-                const double sigma_intensity1 = p1->peak()->correctedIntensity().sigma();
-                const double sigma_intensity2 = p2->peak()->correctedIntensity().sigma();
+                double sigma_intensity1 = 0.0;
+                double sigma_intensity2 = 0.0;
+                try {
+                    sigma_intensity1 = p1->peak()->correctedIntensity().sigma();
+                } catch (std::range_error& e) {
+                    // interpolation error
+                }
+                try {
+                    sigma_intensity2 = p2->peak()->correctedIntensity().sigma();
+                } catch (std::range_error& e) {
+                    // interpolation error
+                }
                 return (sigma_intensity1 < sigma_intensity2);
             };
             break;
         }
         case Column::Strength: {
             compareFn = [](std::unique_ptr<PeakItem>& p1, std::unique_ptr<PeakItem>& p2) {
-                const double strength1 = p1->peak()->correctedIntensity().strength();
-                const double strength2 = p2->peak()->correctedIntensity().strength();
+                double strength1 = 0.0;
+                double strength2 = 0.0;
+                try {
+                    strength1 = p1->peak()->correctedIntensity().strength();
+                } catch (std::range_error& e) {
+                    // interpolation error
+                }
+                try {
+                    strength2 = p2->peak()->correctedIntensity().strength();
+                } catch (std::range_error& e) {
+                    // interpolation error
+                }
                 return (strength1 < strength2);
             };
             break;
@@ -201,8 +231,18 @@ void PeakCollectionItem::sort(int column, Qt::SortOrder order)
         }
         case Column::d: {
             compareFn = [&](std::unique_ptr<PeakItem>& p1, std::unique_ptr<PeakItem>& p2) {
-                const double d_1 = 1.0 / (p1->peak()->q().rowVector().norm());
-                const double d_2 = 1.0 / (p2->peak()->q().rowVector().norm());
+                double d_1 = 0.0;
+                double d_2 = 0.0;
+                try {
+                    d_1 = 1.0 / (p1->peak()->q().rowVector().norm());
+                } catch (std::range_error& e) {
+                    // interpolation error
+                }
+                try {
+                    d_2 = 1.0 / (p2->peak()->q().rowVector().norm());
+                } catch (std::range_error& e) {
+                    // interpolation error
+                }
                 return (d_1 < d_2);
             };
             break;
