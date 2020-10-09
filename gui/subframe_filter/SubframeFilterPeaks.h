@@ -24,6 +24,7 @@
 
 #include "gui/utility/Spoiler.h"
 #include "gui/utility/SpoilerCheck.h"
+#include "gui/widgets/PeakViewWidget.h"
 
 #include <QCheckBox>
 #include <QComboBox>
@@ -154,6 +155,9 @@ class SubframeFilterPeaks : public QWidget {
     QComboBox* _peak_combo;
     QComboBox* _data_combo;
 
+    Spoiler* _show_hide_peaks;
+    PeakViewWidget* _peak_view_widget;
+
     QPushButton* _filter_button;
     QPushButton* _save_button;
 
@@ -167,8 +171,6 @@ class SubframeFilterPeaks : public QWidget {
     QSpinBox* _figure_spin;
     QScrollBar* _figure_scroll;
     PeaksTableView* _peak_table;
-    QCheckBox* _show_peaks_check;
-    QCheckBox* _show_boxes_check;
 
     // For modifying the title of peak_group
     QGroupBox* _preview_panel;

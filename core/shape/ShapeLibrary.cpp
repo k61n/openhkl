@@ -105,6 +105,7 @@ std::vector<Peak3D*> predictPeaks(
     for (auto peak : peaks) {
         peak->setUnitCell(unit_cell);
         peak->setPredicted(true);
+        peak->setMasked(true);
         peak->setSelected(true);
 
         // Skip the peak if any error occur when computing its mean covariance (e.g.

@@ -441,7 +441,7 @@ void SubframePredictPeaks::setPreviewUp()
 
 void SubframePredictPeaks::setSaveUp()
 {
-    _save_button = new QPushButton("Save peak collection");
+    _save_button = new QPushButton("Create peak collection");
     _save_button->setMaximumWidth(1000);
     _save_button->setSizePolicy(*_size_policy_widgets);
     _left_layout->addWidget(_save_button);
@@ -760,10 +760,8 @@ void SubframePredictPeaks::refreshPeakVisual()
         valid = peak->peak()->enabled();
 
         if (valid) {
-            graphic->showArea(
-                _peak_view_widget->drawPeaks1()->checkState() == Qt::CheckState::Checked);
-            graphic->showBox(
-                _peak_view_widget->drawBoxes1()->checkState() == Qt::CheckState::Checked);
+            graphic->showArea(_peak_view_widget->drawPeaks1()->isChecked());
+            graphic->showBox(_peak_view_widget->drawBoxes1()->isChecked());
             graphic->showLabel(false);
             graphic->setSize(_peak_view_widget->peakSize1()->value());
             graphic->setColor(Qt::transparent);
@@ -771,10 +769,8 @@ void SubframePredictPeaks::refreshPeakVisual()
             graphic->setBoxSize(_peak_view_widget->boxSize1()->value());
             graphic->setBoxColor(_peak_view_widget->boxColor1()->getColor());
         } else {
-            graphic->showArea(
-                _peak_view_widget->drawPeaks2()->checkState() == Qt::CheckState::Checked);
-            graphic->showBox(
-                _peak_view_widget->drawBoxes2()->checkState() == Qt::CheckState::Checked);
+            graphic->showArea(_peak_view_widget->drawPeaks2()->isChecked());
+            graphic->showBox(_peak_view_widget->drawBoxes2()->isChecked());
             graphic->showLabel(false);
             graphic->setSize(_peak_view_widget->peakSize2()->value());
             graphic->setColor(Qt::transparent);

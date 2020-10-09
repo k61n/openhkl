@@ -146,6 +146,7 @@ class SubframePredictPeaks : public QWidget {
     QComboBox* _peak_combo;
     QComboBox* _data_combo;
 
+    Spoiler* _show_hide_peaks;
     PeakViewWidget* _peak_view_widget;
 
     DetectorView* _figure_view;
