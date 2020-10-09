@@ -20,6 +20,7 @@
 #include "gui/graphics/DetectorView.h"
 #include "gui/models/PeakCollectionModel.h"
 #include "gui/utility/ColorButton.h"
+#include "gui/widgets/PeakViewWidget.h"
 #include "gui/utility/Spoiler.h"
 #include "gui/views/PeakTableView.h"
 
@@ -65,8 +66,10 @@ class SubframePredictPeaks : public QWidget {
     void setPeakTableUp();
     //! Set up the detector figure up
     void setFigureUp();
-    //! Set the parameters values up
+    //! Set the controls to show/hide peaks in detector scene
     void setPreviewUp();
+    //! Set the save button up
+    void setSaveUp();
 
  private:
     //! Set the experiments
@@ -143,6 +146,7 @@ class SubframePredictPeaks : public QWidget {
     QComboBox* _peak_combo;
     QComboBox* _data_combo;
 
+    PeakViewWidget* _peak_view_widget;
     QCheckBox* _draw_active;
     QCheckBox* _draw_inactive;
     QSpinBox* _width_active;

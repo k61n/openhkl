@@ -135,6 +135,15 @@ void PeakItemGraphic::setColor(QColor color)
     _center_gi->setBrush(QBrush(_color));
 }
 
+void PeakItemGraphic::setBoxSize(int size)
+{
+}
+
+void PeakItemGraphic::setBoxColor(QColor color)
+{
+    _bounding_box->setPen(QPen(color));
+}
+
 void PeakItemGraphic::setOutlineColor(QColor color)
 {
     _center_gi->setPen(QPen(color));
