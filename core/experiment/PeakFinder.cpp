@@ -687,7 +687,6 @@ void PeakFinder::find(const DataList numors)
                 p->setSelected(false);
 
             p->setPredicted(false);
-            p->setMasked(true);
             numor_peaks.push_back(p);
             _current_peaks.push_back(p);
 

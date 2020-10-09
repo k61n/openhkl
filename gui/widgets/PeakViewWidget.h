@@ -15,13 +15,13 @@
 #ifndef NSX_GUI_UTILITY_PEAKVIEWWIDGET_H
 #define NSX_GUI_UTILITY_PEAKVIEWWIDGET_H
 
-#include "gui/utility/ColorButton.h"
-
 #include <QPushButton>
 #include <QSizePolicy>
 #include <QCheckBox>
 #include <QSpinBox>
 #include <QGridLayout>
+
+class ColorButton;
 
 class PeakViewWidget : public QGridLayout {
 
