@@ -147,13 +147,6 @@ class SubframePredictPeaks : public QWidget {
     QComboBox* _data_combo;
 
     PeakViewWidget* _peak_view_widget;
-    QCheckBox* _draw_active;
-    QCheckBox* _draw_inactive;
-    QSpinBox* _width_active;
-    QSpinBox* _width_inactive;
-    ColorButton* _color_active;
-    ColorButton* _color_inactive;
-    QCheckBox* _live_check;
 
     DetectorView* _figure_view;
     QGraphicsPixmapItem* _pixmap;
