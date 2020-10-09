@@ -46,10 +46,16 @@ class PeakItemGraphic : public PlottableItem {
     void showLabel(bool flag);
     //! Show the peak area
     void showArea(bool flag);
+    //! Show the bounding box
+    void showBox(bool flag);
     //! Change the peak size
     void setSize(int size);
     //! Change the peak color
     void setColor(QColor color);
+    //! Change the bounding box size
+    void setBoxSize(int size);
+    //! Change the bounding box color
+    void setBoxColor(QColor color);
     void setOutlineColor(QColor color);
 
  private:
@@ -59,8 +65,12 @@ class PeakItemGraphic : public PlottableItem {
     bool _show_label;
     //! Flag to show the area
     bool _show_center;
+    //! Flag to show the bounding box
+    bool _show_box;
     //! The area item
     QGraphicsEllipseItem* _center_gi;
+    //! The bounding box
+    QGraphicsRectItem* _bounding_box;
     //! Lower boundaries
     Eigen::Vector3d _lower;
     //! Upper boundaries

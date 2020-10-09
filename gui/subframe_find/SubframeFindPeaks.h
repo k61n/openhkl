@@ -21,6 +21,7 @@
 #include "gui/models/PeakCollectionModel.h"
 #include "gui/utility/ColorButton.h"
 #include "gui/views/PeakTableView.h"
+#include "gui/widgets/PeakViewWidget.h"
 
 #include <QCheckBox>
 #include <QComboBox>
@@ -58,6 +59,8 @@ class PeakFinderFrame : public QWidget {
     void setBlobUp();
     //! Set up the Preview GUI
     void setPreviewUp();
+    //! Set up the save button
+    void setSaveUp();
     //! Set up the Preview GUI
     void setIntegrateUp();
     //! Set up the detector figure up
@@ -130,12 +133,7 @@ class PeakFinderFrame : public QWidget {
     QSpinBox* _start_frame_spin;
     QSpinBox* _end_frame_spin;
 
-    QCheckBox* _draw_active;
-    QCheckBox* _draw_inactive;
-    QSpinBox* _width_active;
-    QSpinBox* _width_inactive;
-    ColorButton* _color_active;
-    ColorButton* _color_inactive;
+    PeakViewWidget* _peak_view_widget;
     QCheckBox* _live_check;
 
     QDoubleSpinBox* _peak_area;
