@@ -312,7 +312,7 @@ void PeakFinderFrame::setIntegrateUp()
 
 void PeakFinderFrame::setPreviewUp()
 {
-    Spoiler* show_hide_box = new Spoiler("4. Show/hide peaks");
+    Spoiler* preview_spoiler = new Spoiler("4. Show/hide peaks");
     _peak_view_widget = new PeakViewWidget("Valid peaks", "Invalid Peaks");
 
     connect(
@@ -356,16 +356,17 @@ void PeakFinderFrame::setPreviewUp()
         _peak_view_widget->boxColor2(), &ColorButton::colorChanged, this,
         &PeakFinderFrame::refreshPeakVisual);
 
-    show_hide_box->setContentLayout(*_peak_view_widget);
-    show_hide_box->setSizePolicy(*_size_policy_box);
-    show_hide_box->contentArea.setSizePolicy(*_size_policy_box);
-
-    _left_layout->addWidget(show_hide_box);
+    preview_spoiler->setContentLayout(*_peak_view_widget);
+    preview_spoiler->setSizePolicy(*_size_policy_box);
+    preview_spoiler->contentArea.setSizePolicy(*_size_policy_box);
 
     _live_check = new QCheckBox("Apply threshold to preview");
     _live_check->setMaximumWidth(1000);
     _live_check->setSizePolicy(*_size_policy_widgets);
-    _left_layout->addWidget(_live_check);
+    _peak_view_widget->addWidget(_live_check, 8, 0, 1, 3);
+    // Not sure what the _live_check widget does - zamaan
+
+    _left_layout->addWidget(preview_spoiler);
 }
 
 void PeakFinderFrame::setSaveUp()
