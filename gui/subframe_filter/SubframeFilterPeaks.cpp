@@ -592,10 +592,10 @@ void SubframeFilterPeaks::updateDatasetParameters(int idx)
     emit _figure_view->getScene()->dataChanged();
     _figure_view->getScene()->update();
 
-    _figure_scroll->setMaximum(data->nFrames());
+    _figure_scroll->setMaximum(data->nFrames()-1);
     _figure_scroll->setMinimum(0);
 
-    _figure_spin->setMaximum(data->nFrames());
+    _figure_spin->setMaximum(data->nFrames()-1);
     _figure_spin->setMinimum(0);
 }
 
