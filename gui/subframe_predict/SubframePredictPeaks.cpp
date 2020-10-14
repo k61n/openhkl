@@ -480,6 +480,8 @@ void SubframePredictPeaks::setFigureUp()
 
     connect(_figure_scroll, SIGNAL(valueChanged(int)), _figure_spin, SLOT(setValue(int)));
 
+    connect(_figure_spin, SIGNAL(valueChanged(int)), _figure_scroll, SLOT(setValue(int)));
+
     connect(
         _figure_view->getScene(), &DetectorScene::signalSelectedPeakItemChanged, this,
         &SubframePredictPeaks::changeSelected);
@@ -585,10 +587,10 @@ void SubframePredictPeaks::updateDatasetParameters(int idx)
     emit _figure_view->getScene()->dataChanged();
     _figure_view->getScene()->update();
 
-    _figure_scroll->setMaximum(nFrames);
+    _figure_scroll->setMaximum(nFrames-1);
     _figure_scroll->setMinimum(0);
 
-    _figure_spin->setMaximum(nFrames);
+    _figure_spin->setMaximum(nFrames-1);
     _figure_spin->setMinimum(0);
 }
 
