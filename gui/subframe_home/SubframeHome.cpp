@@ -35,9 +35,9 @@ SubframeHome::SubframeHome() : QWidget()
     _setLeftLayout(sub_layout);
     _setRightLayout(sub_layout);
 
-    QSpacerItem* spacer_right =
-        new QSpacerItem(10, 10, QSizePolicy::Expanding, QSizePolicy::Minimum);
-    sub_layout->addSpacerItem(spacer_right);
+    // QSpacerItem* spacer_right =
+    //     new QSpacerItem(10, 10, QSizePolicy::Minimum, QSizePolicy::Minimum);
+    // sub_layout->addSpacerItem(spacer_right);
     main_layout->addLayout(sub_layout);
 
     QSpacerItem* spacer_bot = new QSpacerItem(10, 50, QSizePolicy::Minimum, QSizePolicy::Fixed);
@@ -71,7 +71,7 @@ void SubframeHome::_setLeftLayout(QHBoxLayout* main_layout)
     left->addLayout(left_top);
 
     _last_import_widget = new QListWidget(this);
-    _last_import_widget->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
+    _last_import_widget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
     _last_import_widget->setStyleSheet("background-color: transparent;");
     connect(_last_import_widget, &QListWidget::itemClicked, this, &SubframeHome::_loadSelectedItem);
 
@@ -213,8 +213,11 @@ void SubframeHome::_updateLastLoadedWidget()
 
     QList<QStringList>::iterator it;
     for (it = _last_imports.begin(); it != _last_imports.end(); ++it) {
+        std::ostringstream oss;
+        oss << (*it).at(0).toStdString() << " (" << (*it).at(1).toStdString() << ")";
+        QString fullname = QString::fromStdString(oss.str());
         QListWidgetItem* item =
-            new QListWidgetItem(QIcon(":/images/experimentIcon.png"), (*it).at(0));
+            new QListWidgetItem(QIcon(":/images/experimentIcon.png"), fullname);
         item->setData(100, (*it).at(1));
         _last_import_widget->addItem(item);
     }
