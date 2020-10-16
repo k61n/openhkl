@@ -62,6 +62,7 @@ PeakFinderFrame::PeakFinderFrame()
     setBlobUp();
     setIntegrateUp();
     setPreviewUp();
+    setSaveUp();
     setFigureUp();
     setPeakTableUp();
 
@@ -311,110 +312,71 @@ void PeakFinderFrame::setIntegrateUp()
 
 void PeakFinderFrame::setPreviewUp()
 {
-    Spoiler* preview_box = new Spoiler("4. View and save");
+    Spoiler* preview_spoiler = new Spoiler("4. Show/hide peaks");
+    _peak_view_widget = new PeakViewWidget("Valid peaks", "Invalid Peaks");
 
-    QGridLayout* _preview_grid = new QGridLayout();
+    connect(
+        _peak_view_widget->drawPeaks1(), &QCheckBox::stateChanged, this,
+        &PeakFinderFrame::refreshPeakVisual);
+    connect(
+        _peak_view_widget->drawPeaks2(), &QCheckBox::stateChanged, this,
+        &PeakFinderFrame::refreshPeakVisual);
+    connect(
+        _peak_view_widget->drawBoxes1(), &QCheckBox::stateChanged, this,
+        &PeakFinderFrame::refreshPeakVisual);
+    connect(
+        _peak_view_widget->drawBoxes2(), &QCheckBox::stateChanged, this,
+        &PeakFinderFrame::refreshPeakVisual);
+    connect(
+        _peak_view_widget->peakSize1(),
+        static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged), this,
+        &PeakFinderFrame::refreshPeakVisual);
+    connect(
+        _peak_view_widget->peakSize2(),
+        static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged), this,
+        &PeakFinderFrame::refreshPeakVisual);
+    connect(
+        _peak_view_widget->boxSize1(),
+        static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged), this,
+        &PeakFinderFrame::refreshPeakVisual);
+    connect(
+        _peak_view_widget->boxSize2(),
+        static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged), this,
+        &PeakFinderFrame::refreshPeakVisual);
+    connect(
+        _peak_view_widget->peakColor1(), &ColorButton::colorChanged, this,
+        &PeakFinderFrame::refreshPeakVisual);
+    connect(
+        _peak_view_widget->peakColor2(), &ColorButton::colorChanged, this,
+        &PeakFinderFrame::refreshPeakVisual);
+    connect(
+        _peak_view_widget->boxColor1(), &ColorButton::colorChanged, this,
+        &PeakFinderFrame::refreshPeakVisual);
+    connect(
+        _peak_view_widget->boxColor2(), &ColorButton::colorChanged, this,
+        &PeakFinderFrame::refreshPeakVisual);
 
-    QLabel* active_label = new QLabel("View behaviour valid:");
-    active_label->setAlignment(Qt::AlignLeft);
-    _preview_grid->addWidget(active_label, 0, 0, 1, 2);
-
-    QLabel* active_size_label = new QLabel("Size:");
-    active_size_label->setAlignment(Qt::AlignRight);
-    _preview_grid->addWidget(active_size_label, 2, 0, 1, 1);
-
-    QLabel* active_color_label = new QLabel("Color:");
-    active_color_label->setAlignment(Qt::AlignRight);
-    _preview_grid->addWidget(active_color_label, 3, 0, 1, 1);
-
-    QLabel* inactive_label = new QLabel("View behaviour invalid:");
-    inactive_label->setAlignment(Qt::AlignLeft);
-    _preview_grid->addWidget(inactive_label, 4, 0, 1, 2);
-
-    QLabel* inactive_size_label = new QLabel("Size:");
-    inactive_size_label->setAlignment(Qt::AlignRight);
-    _preview_grid->addWidget(inactive_size_label, 6, 0, 1, 1);
-
-    QLabel* inactive_color_label = new QLabel("Color:");
-    inactive_color_label->setAlignment(Qt::AlignRight);
-    _preview_grid->addWidget(inactive_color_label, 7, 0, 1, 1);
-
-    // QLabel* frame_label = new QLabel("Current data");
-    // frame_label->setAlignment(Qt::AlignRight);
-    // _preview_grid->addWidget(frame_label, 8, 0, 1, 1);
-
-    _draw_active = new QCheckBox("Show");
-    _draw_active->setCheckState(Qt::CheckState::Checked);
-
-    _width_active = new QSpinBox();
-    _width_active->setValue(10);
-
-    _color_active = new ColorButton();
-    _color_active->changeColor(Qt::black);
-
-    _draw_inactive = new QCheckBox("show");
-    _draw_inactive->setCheckState(Qt::CheckState::Checked);
-
-    _width_inactive = new QSpinBox();
-    _width_inactive->setValue(10);
-
-    _color_inactive = new ColorButton();
-    _color_inactive->changeColor(Qt::red);
+    preview_spoiler->setContentLayout(*_peak_view_widget);
+    preview_spoiler->setSizePolicy(*_size_policy_box);
+    preview_spoiler->contentArea.setSizePolicy(*_size_policy_box);
 
     _live_check = new QCheckBox("Apply threshold to preview");
-    _save_button = new QPushButton("Save");
-
-    _draw_active->setMaximumWidth(1000);
-    _width_active->setMaximumWidth(1000);
-    _color_active->setMaximumWidth(1000);
-    _draw_inactive->setMaximumWidth(1000);
-    _width_inactive->setMaximumWidth(1000);
-    _color_inactive->setMaximumWidth(1000);
     _live_check->setMaximumWidth(1000);
-    _save_button->setMaximumWidth(1000);
-
-    _draw_active->setSizePolicy(*_size_policy_widgets);
-    _width_active->setSizePolicy(*_size_policy_widgets);
-    _color_active->setSizePolicy(*_size_policy_widgets);
-    _draw_inactive->setSizePolicy(*_size_policy_widgets);
-    _width_inactive->setSizePolicy(*_size_policy_widgets);
-    _color_inactive->setSizePolicy(*_size_policy_widgets);
     _live_check->setSizePolicy(*_size_policy_widgets);
+    _peak_view_widget->addWidget(_live_check, 8, 0, 1, 3);
+    // Not sure what the _live_check widget does - zamaan
+
+    _left_layout->addWidget(preview_spoiler);
+}
+
+void PeakFinderFrame::setSaveUp()
+{
+    _save_button = new QPushButton("Create peak collection");
+    _save_button->setMaximumWidth(1000);
     _save_button->setSizePolicy(*_size_policy_widgets);
-
-    _preview_grid->addWidget(_draw_active, 1, 1, 1, 1);
-    _preview_grid->addWidget(_width_active, 2, 1, 1, 1);
-    _preview_grid->addWidget(_color_active, 3, 1, 1, 1);
-    _preview_grid->addWidget(_draw_inactive, 5, 1, 1, 1);
-    _preview_grid->addWidget(_width_inactive, 6, 1, 1, 1);
-    _preview_grid->addWidget(_color_inactive, 7, 1, 1, 1);
-    _preview_grid->addWidget(_live_check, 8, 0, 1, 2);
-    _preview_grid->addWidget(_save_button, 9, 0, 1, 2);
-
-    connect(_save_button, &QPushButton::clicked, this, &PeakFinderFrame::accept);
-
-    connect(_draw_active, &QCheckBox::stateChanged, this, &PeakFinderFrame::refreshPeakVisual);
-
-    connect(
-        _width_active, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged), this,
-        &PeakFinderFrame::refreshPeakVisual);
-
-    connect(_color_active, &ColorButton::colorChanged, this, &PeakFinderFrame::refreshPeakVisual);
-
-    connect(_draw_inactive, &QCheckBox::stateChanged, this, &PeakFinderFrame::refreshPeakVisual);
-
-    connect(
-        _width_inactive, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged), this,
-        &PeakFinderFrame::refreshPeakVisual);
-
-    connect(_color_inactive, &ColorButton::colorChanged, this, &PeakFinderFrame::refreshPeakVisual);
-
-    preview_box->setContentLayout(*_preview_grid);
-    preview_box->setSizePolicy(*_size_policy_box);
-    preview_box->contentArea.setSizePolicy(*_size_policy_box);
-
-    _left_layout->addWidget(preview_box);
+    _left_layout->addWidget(_save_button);
     _left_layout->addItem(new QSpacerItem(20, 40, QSizePolicy::Minimum, QSizePolicy::Expanding));
+    connect(_save_button, &QPushButton::clicked, this, &PeakFinderFrame::accept);
 }
 
 void PeakFinderFrame::setFigureUp()
@@ -443,6 +405,8 @@ void PeakFinderFrame::setFigureUp()
         SLOT(slotChangeSelectedFrame(int)));
 
     connect(_figure_scroll, SIGNAL(valueChanged(int)), _figure_spin, SLOT(setValue(int)));
+
+    connect(_figure_spin, SIGNAL(valueChanged(int)), _figure_scroll, SLOT(setValue(int)));
 
     connect(
         _figure_view->getScene(), &DetectorScene::signalSelectedPeakItemChanged, this,
@@ -544,10 +508,10 @@ void PeakFinderFrame::updateDatasetParameters(int idx)
     emit _figure_view->getScene()->dataChanged();
     _figure_view->getScene()->update();
 
-    _figure_scroll->setMaximum(data->nFrames());
+    _figure_scroll->setMaximum(data->nFrames()-1);
     _figure_scroll->setMinimum(0);
 
-    _figure_spin->setMaximum(data->nFrames());
+    _figure_spin->setMaximum(data->nFrames()-1);
     _figure_spin->setMinimum(0);
 }
 
@@ -806,15 +770,23 @@ void PeakFinderFrame::refreshPeakVisual()
         valid = peak->peak()->enabled();
 
         if (valid) {
-            graphic->showArea((_draw_active->checkState() == Qt::CheckState::Checked));
             graphic->showLabel(false);
-            graphic->setSize(_width_active->value());
-            graphic->setColor(_color_active->getColor());
+            graphic->showArea(_peak_view_widget->drawPeaks1()->isChecked());
+            graphic->setSize(_peak_view_widget->peakSize1()->value());
+            graphic->setColor(Qt::transparent);
+            graphic->setOutlineColor(_peak_view_widget->peakColor1()->getColor());
+            graphic->showBox(_peak_view_widget->drawBoxes1()->isChecked());
+            graphic->setBoxSize(_peak_view_widget->boxSize1()->value());
+            graphic->setBoxColor(_peak_view_widget->boxColor1()->getColor());
         } else {
-            graphic->showArea((_draw_inactive->checkState() == Qt::CheckState::Checked));
             graphic->showLabel(false);
-            graphic->setSize(_width_inactive->value());
-            graphic->setColor(_color_inactive->getColor());
+            graphic->showArea(_peak_view_widget->drawPeaks2()->isChecked());
+            graphic->setSize(_peak_view_widget->peakSize2()->value());
+            graphic->setColor(Qt::transparent);
+            graphic->setOutlineColor(_peak_view_widget->peakColor2()->getColor());
+            graphic->showBox(_peak_view_widget->drawBoxes2()->isChecked());
+            graphic->setBoxSize(_peak_view_widget->boxSize2()->value());
+            graphic->setBoxColor(_peak_view_widget->boxColor2()->getColor());
         }
     }
     _figure_view->getScene()->update();

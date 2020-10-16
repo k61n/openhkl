@@ -43,6 +43,7 @@ PeakItemGraphic::PeakItemGraphic(nsx::Peak3D* peak)
     _color = Qt::red;
     _show_label = false;
     _show_center = true;
+    _show_box = false;
     redraw();
 }
 
@@ -91,10 +92,22 @@ void PeakItemGraphic::redraw()
     const nsx::AABB& aabb = peak_ellipsoid.aabb();
 
     _lower = aabb.lower();
-
     _upper = aabb.upper();
 
     setBoundingRegionGranularity(0.0);
+
+    QPen box_pen;
+    box_pen.setCosmetic(true);
+    box_pen.setColor(Qt::darkGreen);
+    box_pen.setStyle(Qt::SolidLine);
+
+    _bounding_box = new QGraphicsRectItem(boundingRect());
+    _bounding_box->setPen(box_pen);
+    _bounding_box->setParentItem(this);
+    _bounding_box->setAcceptHoverEvents(false);
+    _bounding_box->setZValue(20);
+    _bounding_box->setPos(_center_gi->pos());
+    _bounding_box->setVisible(_show_box);
 
     // A peak item is always put on foreground of the scene
     setZValue(2);
@@ -122,6 +135,15 @@ void PeakItemGraphic::setColor(QColor color)
     _center_gi->setBrush(QBrush(_color));
 }
 
+void PeakItemGraphic::setBoxSize(int size)
+{
+}
+
+void PeakItemGraphic::setBoxColor(QColor color)
+{
+    _bounding_box->setPen(QPen(color));
+}
+
 void PeakItemGraphic::setOutlineColor(QColor color)
 {
     _center_gi->setPen(QPen(color));
@@ -134,10 +156,8 @@ nsx::Peak3D* PeakItemGraphic::peak() const
 
 QRectF PeakItemGraphic::boundingRect() const
 {
-    double width = _upper[0] - _lower[0];
-
+    double width = _upper[0] - _lower[0]; // determined from AABB in constructor
     double height = _upper[1] - _lower[1];
-
     return QRectF(-width / 2.0, -height / 2.0, width, height);
 }
 
@@ -169,6 +189,12 @@ void PeakItemGraphic::showArea(bool flag)
 {
     _show_center = flag;
     _center_gi->setVisible(_show_center);
+}
+
+void PeakItemGraphic::showBox(bool flag)
+{
+    _show_box = flag;
+    _bounding_box->setVisible(_show_box);
 }
 
 void PeakItemGraphic::plot(SXPlot* plot)

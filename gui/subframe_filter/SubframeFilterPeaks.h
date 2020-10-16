@@ -24,6 +24,7 @@
 
 #include "gui/utility/Spoiler.h"
 #include "gui/utility/SpoilerCheck.h"
+#include "gui/widgets/PeakViewWidget.h"
 
 #include <QCheckBox>
 #include <QComboBox>
@@ -153,6 +154,9 @@ class SubframeFilterPeaks : public QWidget {
     QComboBox* _exp_combo;
     QComboBox* _peak_combo;
     QComboBox* _data_combo;
+
+    Spoiler* _show_hide_peaks;
+    PeakViewWidget* _peak_view_widget;
 
     QPushButton* _filter_button;
     QPushButton* _save_button;

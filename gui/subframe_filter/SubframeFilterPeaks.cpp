@@ -397,7 +397,56 @@ void SubframeFilterPeaks::setProceedUp()
     _filter_button->setSizePolicy(*_size_policy_widgets);
     _left_layout->addWidget(_filter_button);
 
-    _save_button = new QPushButton("Save");
+    _show_hide_peaks = new Spoiler("Show/hide peaks");
+    _peak_view_widget = new PeakViewWidget("Peaks caught by filter", "Peaks rejected by filter");
+    _show_hide_peaks->setContentLayout(*_peak_view_widget);
+    _show_hide_peaks->setSizePolicy(*_size_policy_widgets);
+    // _show_hide_peaks->toggler(true);
+
+    connect(
+        _peak_view_widget->drawPeaks1(), &QCheckBox::stateChanged, this,
+        &SubframeFilterPeaks::refreshPeakVisual);
+    connect(
+        _peak_view_widget->drawPeaks2(), &QCheckBox::stateChanged, this,
+        &SubframeFilterPeaks::refreshPeakVisual);
+    connect(
+        _peak_view_widget->drawBoxes1(), &QCheckBox::stateChanged, this,
+        &SubframeFilterPeaks::refreshPeakVisual);
+    connect(
+        _peak_view_widget->drawBoxes2(), &QCheckBox::stateChanged, this,
+        &SubframeFilterPeaks::refreshPeakVisual);
+    connect(
+        _peak_view_widget->peakSize1(),
+        static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged), this,
+        &SubframeFilterPeaks::refreshPeakVisual);
+    connect(
+        _peak_view_widget->peakSize2(),
+        static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged), this,
+        &SubframeFilterPeaks::refreshPeakVisual);
+    connect(
+        _peak_view_widget->boxSize1(),
+        static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged), this,
+        &SubframeFilterPeaks::refreshPeakVisual);
+    connect(
+        _peak_view_widget->boxSize2(),
+        static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged), this,
+        &SubframeFilterPeaks::refreshPeakVisual);
+    connect(
+        _peak_view_widget->peakColor1(), &ColorButton::colorChanged, this,
+        &SubframeFilterPeaks::refreshPeakVisual);
+    connect(
+        _peak_view_widget->peakColor2(), &ColorButton::colorChanged, this,
+        &SubframeFilterPeaks::refreshPeakVisual);
+    connect(
+        _peak_view_widget->boxColor1(), &ColorButton::colorChanged, this,
+        &SubframeFilterPeaks::refreshPeakVisual);
+    connect(
+        _peak_view_widget->boxColor2(), &ColorButton::colorChanged, this,
+        &SubframeFilterPeaks::refreshPeakVisual);
+
+    _left_layout->addWidget(_show_hide_peaks);
+
+    _save_button = new QPushButton("Create peak collection");
     _save_button->setSizePolicy(*_size_policy_widgets);
     _left_layout->addWidget(_save_button);
 
@@ -424,7 +473,7 @@ void SubframeFilterPeaks::setFigureUp()
 
     _figure_scroll = new QScrollBar(this);
     _figure_scroll->setOrientation(Qt::Horizontal);
-    _figure_scroll->setSizePolicy(*_size_policy_widgets);
+    _figure_scroll->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
     figure_grid->addWidget(_figure_scroll, 1, 1, 1, 1);
 
     _figure_spin = new QSpinBox(this);
@@ -436,6 +485,8 @@ void SubframeFilterPeaks::setFigureUp()
         SLOT(slotChangeSelectedFrame(int)));
 
     connect(_figure_scroll, SIGNAL(valueChanged(int)), _figure_spin, SLOT(setValue(int)));
+
+    connect(_figure_spin, SIGNAL(valueChanged(int)), _figure_scroll, SLOT(setValue(int)));
 
     connect(
         _figure_view->getScene(), &DetectorScene::signalSelectedPeakItemChanged, this,
@@ -541,10 +592,10 @@ void SubframeFilterPeaks::updateDatasetParameters(int idx)
     emit _figure_view->getScene()->dataChanged();
     _figure_view->getScene()->update();
 
-    _figure_scroll->setMaximum(data->nFrames());
+    _figure_scroll->setMaximum(data->nFrames()-1);
     _figure_scroll->setMinimum(0);
 
-    _figure_spin->setMaximum(data->nFrames());
+    _figure_spin->setMaximum(data->nFrames()-1);
     _figure_spin->setMinimum(0);
 }
 
@@ -711,17 +762,23 @@ void SubframeFilterPeaks::refreshPeakVisual()
         caught = peak->peak()->caughtByFilter();
 
         if (caught) {
-            graphic->showArea(true);
             graphic->showLabel(false);
-            graphic->setSize(10);
-            graphic->setColor(Qt::darkGreen);
-            graphic->setOutlineColor(Qt::transparent);
+            graphic->showArea(_peak_view_widget->drawPeaks1()->isChecked());
+            graphic->setSize(_peak_view_widget->peakSize1()->value());
+            graphic->setColor(Qt::transparent);
+            graphic->setOutlineColor(_peak_view_widget->peakColor1()->getColor());
+            graphic->showBox(_peak_view_widget->drawBoxes1()->isChecked());
+            graphic->setBoxSize(_peak_view_widget->boxSize1()->value());
+            graphic->setBoxColor(_peak_view_widget->boxColor1()->getColor());
         } else {
-            graphic->showArea(true);
             graphic->showLabel(false);
-            graphic->setSize(10);
-            graphic->setColor(Qt::darkRed);
-            graphic->setOutlineColor(Qt::transparent);
+            graphic->showArea(_peak_view_widget->drawPeaks2()->isChecked());
+            graphic->setSize(_peak_view_widget->peakSize2()->value());
+            graphic->setColor(Qt::transparent);
+            graphic->setOutlineColor(_peak_view_widget->peakColor2()->getColor());
+            graphic->showBox(_peak_view_widget->drawBoxes2()->isChecked());
+            graphic->setBoxSize(_peak_view_widget->boxSize2()->value());
+            graphic->setBoxColor(_peak_view_widget->boxColor2()->getColor());
         }
     }
     _figure_view->getScene()->update();
