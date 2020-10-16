@@ -78,7 +78,7 @@ class PeakFinder {
 
     void findPrimaryBlobs(
         const DataSet& data, std::map<int, Blob3D>& blobs, EquivalenceList& equivalences,
-        size_t begin, size_t end);
+        size_t begin, size_t end, int n_numor);
 
     void findCollisions(
         const DataSet& data, std::map<int, Blob3D>& blobs, EquivalenceList& equivalences) const;

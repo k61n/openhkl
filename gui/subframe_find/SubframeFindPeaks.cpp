@@ -129,7 +129,6 @@ void PeakFinderFrame::setDataUp()
     connect(
         _exp_combo, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this,
         [=]() {
-            qDebug() << "PeakFinderFrame::_exp_combo currentIndexChanged";
             grabFinderParameters();
             grabIntegrationParameters();
             updateDatasetList();
@@ -562,7 +561,6 @@ void PeakFinderFrame::grabFinderParameters()
 
 void PeakFinderFrame::setFinderParameters()
 {
-    qDebug() << "PeakFinderFrame::setFinderParameters";
     nsx::PeakFinder* finder =
         gSession->experimentAt(_exp_combo->currentIndex())->experiment()->peakFinder();
 

@@ -317,19 +317,14 @@ void ShapeLibraryDialog::build()
     params.bkg_end = bkg_end_val;
     integrator.setParameters(params);
 
+    int n_numor = 1;
     for (nsx::sptrDataSet data : _data) {
-        // gLogger->log(
-        //     "[INFO]Fitting profiles in dataset " + QString::fromStdString(data->filename()));
-
-        integrator.integrate(fit_peaks, &_library, data);
+        integrator.integrate(fit_peaks, &_library, data, n_numor);
+        ++n_numor;
     }
-    // gLogger->log("[INFO]Done fitting profiles");
 
     _library = *integrator.library();
-
-    // gLogger->log("[INFO]Updating peak shape model...");
     _library.updateFit(1000); // This does nothing!! - zamaan
-    // gLogger->log("[INFO]Done, mean pearson is " + QString::number(_library.meanPearson()));
 }
 
 void ShapeLibraryDialog::calculate()
