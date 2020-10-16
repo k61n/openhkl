@@ -665,6 +665,10 @@ void PeakFinder::find(const DataList numors)
             Eigen::Vector3d(x_offset, y_offset, 0),
             Eigen::Vector3d(ncols - x_offset, nrows - y_offset, nframes - 1));
 
+        std::size_t numPeaksTooSmallOrLarge = 0;
+        std::size_t numPeaksOutsideFrames = 0;
+        std::size_t numPeaksNotInDetArea = 0;
+
         for (auto& blob : blobs) {
             Eigen::Vector3d center, eigenvalues;
             Eigen::Matrix3d eigenvectors;
@@ -676,15 +680,21 @@ void PeakFinder::find(const DataList numors)
             const auto extents = p->shape().aabb().extents();
 
             // peak too small or too large
-            if (extents.maxCoeff() > 1e5 || extents.minCoeff() < 1e-5)
+            if (extents.maxCoeff() > 1e5 || extents.minCoeff() < 1e-5) {
                 p->setSelected(false);
+                ++numPeaksTooSmallOrLarge;
+            }
 
-            if (extents(2) > _maxFrames)
+            if (extents(2) > _maxFrames) {
                 p->setSelected(false);
+                ++numPeaksOutsideFrames;
+            }
 
             // peak's bounding box not completely contained in detector image
-            if (!dAABB.contains(p->shape().aabb()))
+            if (!dAABB.contains(p->shape().aabb())) {
                 p->setSelected(false);
+                ++numPeaksNotInDetArea;
+            }
 
             p->setPredicted(false);
             numor_peaks.push_back(p);
@@ -703,7 +713,10 @@ void PeakFinder::find(const DataList numors)
                 ("Integrating " + std::to_string(numor_peaks.size()) + " peaks...").c_str());
             _handler->setProgress(0);
         }
-        nsxlog(Level::Info, "PeakFinder::find:", numor_peaks.size(), "peaks found");
+        nsxlog(Level::Info, "PeakFinder::find:", numor_peaks.size(), "peaks found,",
+            numPeaksTooSmallOrLarge, "peaks too small,",
+            numPeaksOutsideFrames, "peaks outside frame range,",
+            numPeaksNotInDetArea, "peaks not fully on detector.");
         numor->close();
         if (_handler)
             _handler->log("Found " + std::to_string(numor_peaks.size()) + " peaks.");

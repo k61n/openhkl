@@ -304,7 +304,7 @@ void Peak3D::setMillerIndices()
             _selected = false;
         }
     } else {
-        _selected = false;
+        //_selected = false;
     }
 }
 
