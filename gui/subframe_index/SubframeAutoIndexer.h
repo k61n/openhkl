@@ -111,6 +111,7 @@ class SubframeAutoIndexer : public QWidget {
     QDoubleSpinBox* _max_cell_dimension;
     QDoubleSpinBox* _min_cell_volume;
     QDoubleSpinBox* _indexing_tolerance;
+    QDoubleSpinBox* _frequency_tolerance;
 
     QSpinBox* _number_vertices;
     QSpinBox* _number_solutions;

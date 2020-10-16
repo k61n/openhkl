@@ -258,7 +258,7 @@ void PeakFinder::findPrimaryBlobs(
 {
     int n_numors = _current_data.size();
     std::ostringstream oss;
-    oss << "Finding blobs for numor " << n_numor << " of " << n_numors;
+    oss << "Finding blobs for numor " << n_numor+1 << " of " << n_numors;
 
     // update via handler if necessary
     if (_handler) {
