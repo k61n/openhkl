@@ -254,11 +254,15 @@ void PeakFinder::mergeCollidingBlobs(const DataSet& data, std::map<int, Blob3D>&
 
 void PeakFinder::findPrimaryBlobs(
     const DataSet& data, std::map<int, Blob3D>& blobs, nsx::EquivalenceList& equivalences,
-    size_t begin, size_t end)
+    size_t begin, size_t end, int n_numor)
 {
+    int n_numors = _current_data.size();
+    std::ostringstream oss;
+    oss << "Finding blobs for numor " << n_numor << " of " << n_numors;
+
     // update via handler if necessary
     if (_handler) {
-        _handler->setStatus("Finding blobs...");
+        _handler->setStatus(oss.str().c_str());
         _handler->setProgress(0);
     }
 
@@ -628,7 +632,7 @@ void PeakFinder::find(const DataList numors)
 
         // find blobs within the current frame range
         nsxlog(Level::Debug, "PeakFinder::find: findPrimary from", loop_begin, "to", loop_end);
-        findPrimaryBlobs(*numor, local_blobs, local_equivalences, loop_begin, loop_end);
+        findPrimaryBlobs(*numor, local_blobs, local_equivalences, loop_begin, loop_end, i);
 
         // merge adjacent blobs
         nsxlog(Level::Debug, "PeakFinder::find: mergeBlobs");

@@ -48,7 +48,8 @@ class IPeakIntegrator {
     //! @param peak_end Peak boundary (in sigma)
     //! @param bkg_begin Background beginning (in sigma)
     //! @param bkg_end Background end (in sigma)
-    void integrate(std::vector<nsx::Peak3D*> peaks, ShapeLibrary* shape_library, sptrDataSet data);
+    void integrate(std::vector<nsx::Peak3D*> peaks, ShapeLibrary* shape_library,
+        sptrDataSet data, int n_numor);
     //! Returns the mean background.
     Intensity meanBackground() const;
     //! Returns the integrated intensity.
@@ -57,6 +58,8 @@ class IPeakIntegrator {
     const std::vector<Intensity>& rockingCurve() const;
     //! Sets the progress handler.
     void setHandler(sptrProgressHandler handler);
+    //! Set the number of numors for progress handler
+    void setNNumors(int n_numors);
 
  protected:
     //! Mean local background of peak. The uncertainty is the uncertainty of the
@@ -70,6 +73,8 @@ class IPeakIntegrator {
     sptrProgressHandler _handler;
     //! Container for user-defined integration parameters
     IntegrationParameters _params;
+    //! Number of numors in the dataset to be integrated
+    int _n_numors;
 
  public:
     double peakEnd() const { return _params.peak_end; };
