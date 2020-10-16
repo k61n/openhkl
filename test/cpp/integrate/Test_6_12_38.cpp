@@ -82,7 +82,7 @@ TEST_CASE("test/integrate/Test_6_12_38.cpp", "")
     params.bkg_begin = 3.0;
     params.bkg_end = 4.0;
     integrator.setParameters(params);
-    integrator.integrate(peaks, nullptr, dataf);
+    integrator.integrate(peaks, nullptr, dataf, 1);
 
     CHECK(peak.enabled() == true);
 }

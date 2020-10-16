@@ -110,7 +110,7 @@ void SubframeFilterPeaks::setInputUp()
     exp_label->setAlignment(Qt::AlignRight);
     _input_grid->addWidget(exp_label, 0, 0, 1, 1);
 
-    QLabel* list_label = new QLabel("Data-set");
+    QLabel* list_label = new QLabel("Peak collection");
     list_label->setAlignment(Qt::AlignRight);
     _input_grid->addWidget(list_label, 1, 0, 1, 1);
 
@@ -303,12 +303,12 @@ void SubframeFilterPeaks::setFrameRangeUp()
     frame_range_layout->addWidget(max_label, 1, 0, 1, 1);
 
     _frame_min = new QDoubleSpinBox();
-    _frame_min->setMaximum(100);
+    _frame_min->setMaximum(10000);
     _frame_min->setDecimals(0);
     _frame_min->setValue(0.0000);
 
     _frame_max = new QDoubleSpinBox();
-    _frame_max->setMaximum(100);
+    _frame_max->setMaximum(10000);
     _frame_max->setDecimals(0);
     _frame_max->setValue(10.00000);
 
@@ -706,7 +706,6 @@ void SubframeFilterPeaks::filterPeaks()
     std::ostringstream oss;
     oss << n_caught << " of " << n_peaks << " peaks caught by filter";
     QString new_title = QString::fromUtf8(oss.str().c_str());
-    std::cout << n_caught << " of " << n_peaks << " peaks caught by filter" << std::endl;
     _preview_panel->setTitle(new_title);
 
     refreshPeakTable();

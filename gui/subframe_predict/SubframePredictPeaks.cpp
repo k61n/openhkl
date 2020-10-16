@@ -100,7 +100,7 @@ void SubframePredictPeaks::setInputUp()
     exp_label->setAlignment(Qt::AlignRight);
     _input_grid->addWidget(exp_label, 0, 0, 1, 1);
 
-    QLabel* list_label = new QLabel("Data-set");
+    QLabel* list_label = new QLabel("Peak collection");
     list_label->setAlignment(Qt::AlignRight);
     _input_grid->addWidget(list_label, 1, 0, 1, 1);
 

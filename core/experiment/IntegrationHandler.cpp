@@ -91,8 +91,11 @@ void IntegrationHandler::integratePeaks(
     std::vector<Peak3D*> peaks = peak_collection->getFilteredPeakList();
 
     const DataMap* data = _data_handler->getDataMap();
+    integrator->setNNumors(data->size());
+    int n_numor = 1;
     for (DataMap::const_iterator it = data->begin(); it != data->end(); ++it) {
-        integrator->integrate(peaks, peak_collection->shapeLibrary(), it->second);
+        integrator->integrate(peaks, peak_collection->shapeLibrary(), it->second, n_numor);
+        ++n_numor;
     }
 }
 
@@ -111,8 +114,11 @@ void IntegrationHandler::integratePredictedPeaks(
     std::vector<Peak3D*> peaks = peak_collection->getFilteredPeakList();
 
     const DataMap* data = _data_handler->getDataMap();
+    integrator->setNNumors(data->size());
+    int n_numor = 1;
     for (DataMap::const_iterator it = data->begin(); it != data->end(); ++it) {
-        integrator->integrate(peaks, shape_library, it->second);
+        integrator->integrate(peaks, shape_library, it->second, n_numor);
+        ++n_numor;
     }
 }
 
@@ -120,9 +126,13 @@ void IntegrationHandler::integrateFoundPeaks(std::string integrator_name, PeakFi
 {
     nsxlog(Level::Info, "IntegrationHandler::integrateFoundPeaks");
     IPeakIntegrator* integrator = getIntegrator(integrator_name);
+    const DataMap* data = _data_handler->getDataMap();
+    integrator->setNNumors(data->size());
 
+    int n_numor = 1;
     for (sptrDataSet data : peak_finder->currentData()) {
-        integrator->integrate(peak_finder->currentPeaks(), nullptr, data);
+        integrator->integrate(peak_finder->currentPeaks(), nullptr, data, n_numor);
+        ++n_numor;
     }
 }
 
@@ -135,11 +145,15 @@ ShapeLibrary& IntegrationHandler::integrateShapeLibrary(
     integrator.setParameters(params);
 
     const DataMap* data = _data_handler->getDataMap();
+    integrator.setNNumors(data->size());
     // TODO: (zamaan) change numors to a argument of buildShapeLibrary
     // Right now, there is no metadata for which DataSet was used to
     // Generate the peak collection
-    for (auto const& [key, data] : *data)
-        integrator.integrate(fit_peaks, shape_library, data);
+    int n_numor = 1;
+    for (auto const& [key, data] : *data) {
+        integrator.integrate(fit_peaks, shape_library, data, n_numor);
+        ++n_numor;
+    }
 
     return *shape_library;
 }
