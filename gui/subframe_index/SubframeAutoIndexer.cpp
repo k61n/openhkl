@@ -408,7 +408,7 @@ void SubframeAutoIndexer::runAutoIndexer()
 {
     if (_peak_list.empty() || _exp_combo->count() < 1)
     {
-        QMessageBox::critical(this, "Error", "No peaks or experiment defined.");
+        QMessageBox::critical(this, "Error", "No peaks or experiments defined.");
         return;
     }
 
