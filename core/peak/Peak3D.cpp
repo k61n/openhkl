@@ -303,8 +303,6 @@ void Peak3D::setMillerIndices()
             _hkl = {0, 0, 0};
             _selected = false;
         }
-    } else {
-        _selected = false;
     }
 }
 
