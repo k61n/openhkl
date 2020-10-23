@@ -135,9 +135,7 @@ void PeakItemGraphic::setColor(QColor color)
     _center_gi->setBrush(QBrush(_color));
 }
 
-void PeakItemGraphic::setBoxSize(int size)
-{
-}
+void PeakItemGraphic::setBoxSize(int size) { }
 
 void PeakItemGraphic::setBoxColor(QColor color)
 {

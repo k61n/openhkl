@@ -258,7 +258,7 @@ void PeakFinder::findPrimaryBlobs(
 {
     int n_numors = _current_data.size();
     std::ostringstream oss;
-    oss << "Finding blobs for numor " << n_numor+1 << " of " << n_numors;
+    oss << "Finding blobs for numor " << n_numor + 1 << " of " << n_numors;
 
     // update via handler if necessary
     if (_handler) {
@@ -591,7 +591,7 @@ void PeakFinder::find(const DataList numors)
     int i = 0;
     for (const auto& numor : numors) {
         if (numors.size() > 1)
-            nsxlog(Level::Debug, "PeakFinder::find: starting numor", i+1);
+            nsxlog(Level::Debug, "PeakFinder::find: starting numor", i + 1);
         PeakList numor_peaks;
 
         const auto& dectector = numor->reader()->diffractometer()->detector();

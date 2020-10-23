@@ -214,7 +214,7 @@ void PeakCollection::setMillerIndices() const
 int PeakCollection::countSelected() const
 {
     int nselected = 0;
-    for (auto peak : getPeakList()){
+    for (auto peak : getPeakList()) {
         if (peak->selected())
             ++nselected;
     }
@@ -224,7 +224,7 @@ int PeakCollection::countSelected() const
 int PeakCollection::countEnabled() const
 {
     int nenabled = 0;
-    for (auto peak : getPeakList()){
+    for (auto peak : getPeakList()) {
         if (peak->enabled())
             ++nenabled;
     }

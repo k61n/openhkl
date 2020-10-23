@@ -179,7 +179,6 @@ UnitCellProperty::UnitCellProperty() : QWidget()
         int idx = gSession->currentProject()->getUnitCellNames().indexOf(
             QString::fromStdString(new_name));
         unitcells->setCurrentIndex(idx);
-
     });
 
     connect(chemicalFormula, &QLineEdit::editingFinished, [=]() {

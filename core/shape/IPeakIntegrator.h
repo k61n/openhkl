@@ -48,8 +48,9 @@ class IPeakIntegrator {
     //! @param peak_end Peak boundary (in sigma)
     //! @param bkg_begin Background beginning (in sigma)
     //! @param bkg_end Background end (in sigma)
-    void integrate(std::vector<nsx::Peak3D*> peaks, ShapeLibrary* shape_library,
-        sptrDataSet data, int n_numor);
+    void integrate(
+        std::vector<nsx::Peak3D*> peaks, ShapeLibrary* shape_library, sptrDataSet data,
+        int n_numor);
     //! Returns the mean background.
     Intensity meanBackground() const;
     //! Returns the integrated intensity.

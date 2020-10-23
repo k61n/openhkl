@@ -58,7 +58,22 @@ class PeakItem : public QStandardItem {
     //! Get the graphical representation
     PeakItemGraphic* peakGraphic() { return _peak_graphic.get(); };
     //! The column enumerators
-    enum Column { h, k, l, px, py, Frame, Intensity, Sigma, Strength, Numor, uc, d, Selected, Count};
+    enum Column {
+        h,
+        k,
+        l,
+        px,
+        py,
+        Frame,
+        Intensity,
+        Sigma,
+        Strength,
+        Numor,
+        uc,
+        d,
+        Selected,
+        Count
+    };
     //! Whether the peak was caught by the filter
     bool caughtByFilter(void) const;
 

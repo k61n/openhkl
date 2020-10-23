@@ -476,7 +476,7 @@ void SubframeAutoIndexer::runAutoIndexer()
     nsx::Experiment* expt = gSession->experimentAt(_exp_combo->currentIndex())->experiment();
     nsx::AutoIndexer* auto_indexer = expt->autoIndexer();
     nsx::PeakCollection* collection =
-            expt->getPeakCollection(_peak_combo->currentText().toStdString());
+        expt->getPeakCollection(_peak_combo->currentText().toStdString());
 
     std::shared_ptr<nsx::ProgressHandler> handler(new nsx::ProgressHandler());
     auto_indexer->setHandler(handler);

@@ -35,7 +35,7 @@ PeakItem::PeakItem(nsx::Peak3D* peak) : QStandardItem()
 double PeakItem::peak_d() const
 {
     try {
-        return 1.0 /(_peak->q().rowVector().norm());
+        return 1.0 / (_peak->q().rowVector().norm());
     } catch (std::range_error& e) {
         return 0.0;
     }
