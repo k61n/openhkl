@@ -112,6 +112,9 @@ QVariant PeakCollectionModel::headerData(int section, Qt::Orientation orientatio
             case Column::d: {
                 return QString("d");
             }
+            case Column::Selected: {
+                return QString("Selected");
+            }
             default: return QVariant();
         }
     } else {

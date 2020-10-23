@@ -211,4 +211,24 @@ void PeakCollection::setMillerIndices() const
         peak->setMillerIndices();
 }
 
+int PeakCollection::countSelected() const
+{
+    int nselected = 0;
+    for (auto peak : getPeakList()){
+        if (peak->selected())
+            ++nselected;
+    }
+    return nselected;
+}
+
+int PeakCollection::countEnabled() const
+{
+    int nenabled = 0;
+    for (auto peak : getPeakList()){
+        if (peak->enabled())
+            ++nenabled;
+    }
+    return nenabled;
+}
+
 } // namespace nsx

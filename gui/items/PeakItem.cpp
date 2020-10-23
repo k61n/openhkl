@@ -68,6 +68,11 @@ double PeakItem::strength() const
     }
 }
 
+bool PeakItem::selected() const
+{
+    return _peak->selected();
+}
+
 QVariant PeakItem::peakData(const QModelIndex& index, int role, PeakDisplayModes mode) const
 {
     int col = index.column();
@@ -121,11 +126,14 @@ QVariant PeakItem::peakData(const QModelIndex& index, int role, PeakDisplayModes
                 case Column::d: {
                     return peak_d();
                 }
+                case Column::Selected: {
+                    return selected();
+                }
             }
             break;
 
         case Qt::ForegroundRole: {
-            if (!_peak->enabled())
+            if (!_peak->selected())
                 return QBrush(Qt::red);
             break;
         }
