@@ -20,9 +20,9 @@
 #include "gui/graphics/DetectorView.h"
 #include "gui/models/PeakCollectionModel.h"
 #include "gui/utility/ColorButton.h"
-#include "gui/widgets/PeakViewWidget.h"
 #include "gui/utility/Spoiler.h"
 #include "gui/views/PeakTableView.h"
+#include "gui/widgets/PeakViewWidget.h"
 
 #include <QCheckBox>
 #include <QComboBox>

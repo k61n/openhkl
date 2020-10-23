@@ -78,7 +78,7 @@ int PeakCollectionItem::childCount() const
 
 int PeakCollectionItem::columnCount() const
 {
-    return 11;
+    return static_cast<int>(Column::Count);
 }
 
 QVariant PeakCollectionItem::data(const QModelIndex& index, int role) const
@@ -244,6 +244,14 @@ void PeakCollectionItem::sort(int column, Qt::SortOrder order)
                     // interpolation error
                 }
                 return (d_1 < d_2);
+            };
+            break;
+        }
+        case Column::Selected: {
+            compareFn = [&](std::unique_ptr<PeakItem>& p1, std::unique_ptr<PeakItem>& p2) {
+                bool s_1 = p1->peak()->selected();
+                bool s_2 = p2->peak()->selected();
+                return (s_1 < s_2);
             };
             break;
         }

@@ -216,8 +216,7 @@ void SubframeHome::_updateLastLoadedWidget()
         std::ostringstream oss;
         oss << (*it).at(0).toStdString() << " (" << (*it).at(1).toStdString() << ")";
         QString fullname = QString::fromStdString(oss.str());
-        QListWidgetItem* item =
-            new QListWidgetItem(QIcon(":/images/experimentIcon.png"), fullname);
+        QListWidgetItem* item = new QListWidgetItem(QIcon(":/images/experimentIcon.png"), fullname);
         item->setData(100, (*it).at(1));
         _last_import_widget->addItem(item);
     }

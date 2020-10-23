@@ -35,7 +35,7 @@ PeakItem::PeakItem(nsx::Peak3D* peak) : QStandardItem()
 double PeakItem::peak_d() const
 {
     try {
-        return 1.0 /(_peak->q().rowVector().norm());
+        return 1.0 / (_peak->q().rowVector().norm());
     } catch (std::range_error& e) {
         return 0.0;
     }
@@ -66,6 +66,11 @@ double PeakItem::strength() const
     } catch (std::range_error& e) {
         return 0.0;
     }
+}
+
+bool PeakItem::selected() const
+{
+    return _peak->selected();
 }
 
 QVariant PeakItem::peakData(const QModelIndex& index, int role, PeakDisplayModes mode) const
@@ -121,11 +126,14 @@ QVariant PeakItem::peakData(const QModelIndex& index, int role, PeakDisplayModes
                 case Column::d: {
                     return peak_d();
                 }
+                case Column::Selected: {
+                    return selected();
+                }
             }
             break;
 
         case Qt::ForegroundRole: {
-            if (!_peak->enabled())
+            if (!_peak->selected())
                 return QBrush(Qt::red);
             break;
         }

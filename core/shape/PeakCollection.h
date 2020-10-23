@@ -95,6 +95,11 @@ class PeakCollection {
     //! Check the collection for unphysical  peaks
     void checkCollection() const;
 
+    //! Count selected peaks
+    int countSelected() const;
+    //! Count enabled peaks
+    int countEnabled() const;
+
  private:
     std::vector<std::unique_ptr<nsx::Peak3D>> _peaks;
     std::string _name;

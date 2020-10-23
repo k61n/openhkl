@@ -15,6 +15,7 @@
 #ifndef NSX_GUI_SUBFRAME_INDEX_SUBFRAMEAUTOINDEXER_H
 #define NSX_GUI_SUBFRAME_INDEX_SUBFRAMEAUTOINDEXER_H
 
+#include "core/algo/AutoIndexer.h"
 #include "core/shape/PeakCollection.h"
 
 #include "gui/graphics/DetectorView.h"
@@ -72,7 +73,7 @@ class SubframeAutoIndexer : public QWidget {
     //! Get the parameters of the indexer
     void grabIndexerParameters();
     //! Get the parameters of the indexer
-    void setIndexerParameters() const;
+    void setIndexerParameters();
     //! Select a solution
     void selectSolutionHeader(int index);
     //! Select a solution
@@ -89,6 +90,8 @@ class SubframeAutoIndexer : public QWidget {
     PeakCollectionModel _peak_collection_model;
     //! The loaded peak list
     QStringList _peak_list;
+    //! Indexing parameters
+    nsx::IndexerParameters _params;
 
     std::vector<std::pair<nsx::sptrPeak3D, std::shared_ptr<const nsx::UnitCell>>> _defaults;
     std::vector<std::pair<std::shared_ptr<nsx::UnitCell>, double>> _solutions;
@@ -106,6 +109,12 @@ class SubframeAutoIndexer : public QWidget {
     QComboBox* _exp_combo;
     QComboBox* _peak_combo;
 
+    QSpinBox* _min_frame;
+    QSpinBox* _max_frame;
+    QDoubleSpinBox* _d_min;
+    QDoubleSpinBox* _d_max;
+    QDoubleSpinBox* _str_min;
+    QDoubleSpinBox* _str_max;
     QDoubleSpinBox* _gruber;
     QDoubleSpinBox* _niggli;
     QDoubleSpinBox* _max_cell_dimension;

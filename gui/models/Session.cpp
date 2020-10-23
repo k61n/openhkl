@@ -130,10 +130,9 @@ void Session::loadData()
             data_ptr = nsx::DataReaderFactory().create(
                 extension, filename.toStdString(), exp->getDiffractometer());
             exp->addData(data_ptr);
-        }
-        catch(const std::exception& ex) {
-            QString msg = QString("Loading file \"") + filename +
-                QString("\" failed with error: ") + QString(ex.what()) + QString(".");
+        } catch (const std::exception& ex) {
+            QString msg = QString("Loading file \"") + filename + QString("\" failed with error: ")
+                + QString(ex.what()) + QString(".");
 
             QMessageBox::critical(nullptr, "Error", msg);
         }
