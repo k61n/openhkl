@@ -632,7 +632,7 @@ void PeakFinder::find(const DataList numors)
 
         // find blobs within the current frame range
         nsxlog(Level::Debug, "PeakFinder::find: findPrimary from", loop_begin, "to", loop_end);
-        findPrimaryBlobs(*numor, local_blobs, local_equivalences, loop_begin, loop_end, i);
+        findPrimaryBlobs(*numor, local_blobs, local_equivalences, loop_begin, loop_end, i++);
 
         // merge adjacent blobs
         nsxlog(Level::Debug, "PeakFinder::find: mergeBlobs");
