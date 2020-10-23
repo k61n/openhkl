@@ -591,7 +591,7 @@ void PeakFinder::find(const DataList numors)
     int i = 0;
     for (const auto& numor : numors) {
         if (numors.size() > 1)
-            nsxlog(Level::Debug, "PeakFinder::find: starting numor", ++i);
+            nsxlog(Level::Debug, "PeakFinder::find: starting numor", i+1);
         PeakList numor_peaks;
 
         const auto& dectector = numor->reader()->diffractometer()->detector();
