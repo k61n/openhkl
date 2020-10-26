@@ -428,8 +428,10 @@ void DetectorScene::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
             // If the user just clicked on the left mouse button with holding it, skip
             // the event
             if (qAbs(top - bot) <= 1 || qAbs(left - right) <= 1) {
-                removeItem(_zoomrect);
-                delete _zoomrect;
+                if (!_zoomrect) {
+                    removeItem(_zoomrect);
+                    delete _zoomrect;
+                }
                 return;
             }
 
@@ -456,8 +458,10 @@ void DetectorScene::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
             _zoomrect->setRect(left, top, right - left, bot - top);
             _zoomStack.push_back(_zoomrect->rect().toRect());
             setSceneRect(_zoomrect->rect());
-            removeItem(_zoomrect);
-            delete _zoomrect;
+            if (!_zoomrect) {
+                removeItem(_zoomrect);
+                delete _zoomrect;
+            }
             emit dataChanged();
         } // else {
           // nsx::PeakList peaks = gSession->currentProject()->getPeaks(0, 0)->peaks_;
