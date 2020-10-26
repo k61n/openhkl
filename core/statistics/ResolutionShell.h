@@ -15,9 +15,9 @@
 #ifndef NSX_CORE_STATISTICS_RESOLUTIONSHELL_H
 #define NSX_CORE_STATISTICS_RESOLUTIONSHELL_H
 
-#include "core/peak/Peak3D.h"
-
 namespace nsx {
+
+class Peak3D;
 
 //! Utility structure to store a list of peaks with resolution in the range [dmin, dmax].
 struct DShell {

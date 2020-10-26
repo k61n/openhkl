@@ -15,10 +15,11 @@
 #ifndef NSX_CORE_STATISTICS_CC_H
 #define NSX_CORE_STATISTICS_CC_H
 
-#include "core/statistics/MergedData.h"
 #include "core/statistics/MergedPeak.h"
 
 namespace nsx {
+
+class MergedData;
 
 //! Calculates correlation coefficients (CChalf and CC*).
 

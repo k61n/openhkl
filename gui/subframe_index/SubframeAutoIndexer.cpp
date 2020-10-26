@@ -22,6 +22,9 @@
 #include "gui/frames/UnitCellWidget.h"
 #include "gui/models/Project.h"
 #include "gui/models/Session.h"
+#include "gui/utility/Spoiler.h"
+#include "gui/views/PeakTableView.h"
+#include "gui/views/UnitCellTableView.h"
 
 #include <QHeaderView>
 #include <QLabel>

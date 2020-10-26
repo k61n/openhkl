@@ -24,11 +24,15 @@
 #include "gui/dialogs/ListNameDialog.h"
 #include "gui/frames/ProgressView.h"
 #include "gui/graphics/DetectorScene.h"
+#include "gui/graphics/DetectorView.h"
 #include "gui/items/PeakItem.h"
 #include "gui/models/Meta.h"
 #include "gui/models/Project.h"
 #include "gui/models/Session.h"
+#include "gui/utility/ColorButton.h"
 #include "gui/utility/Spoiler.h"
+#include "gui/views/PeakTableView.h"
+#include "gui/widgets/PeakViewWidget.h"
 
 #include <QFileInfo>
 #include <QGridLayout>

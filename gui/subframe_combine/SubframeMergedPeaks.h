@@ -16,6 +16,7 @@
 #define NSX_GUI_SUBFRAME_COMBINE_SUBFRAMEMERGEDPEAKS_H
 
 #include "core/statistics/PeakExporter.h"
+#include "core/data/DataTypes.h"
 
 #include <QCheckBox>
 #include <QComboBox>

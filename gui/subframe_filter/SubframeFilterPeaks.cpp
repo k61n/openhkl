@@ -19,10 +19,14 @@
 #include "core/shape/PeakFilter.h"
 #include "gui/MainWin.h"
 #include "gui/dialogs/ListNameDialog.h"
+#include "gui/graphics/DetectorView.h"
 #include "gui/graphics/DetectorScene.h"
 #include "gui/models/Meta.h"
 #include "gui/models/Project.h"
 #include "gui/models/Session.h"
+#include "gui/utility/Spoiler.h"
+#include "gui/utility/SpoilerCheck.h"
+#include "gui/widgets/PeakViewWidget.h"
 
 #include <QFileInfo>
 #include <QGridLayout>

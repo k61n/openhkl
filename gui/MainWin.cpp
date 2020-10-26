@@ -17,6 +17,7 @@
 #include "gui/actions/Actions.h"
 #include "gui/actions/Menus.h"
 #include "gui/graphics/DetectorScene.h"
+#include "gui/graphics/DetectorView.h"
 #include "gui/graphics_items/PlottableItem.h"
 #include "gui/utility/SideBar.h"
 #include "gui/utility/SideBar.h"

@@ -14,6 +14,8 @@
 
 #include "gui/models/PeakCollectionModel.h"
 
+#include "gui/items/PeakCollectionItem.h"
+
 PeakCollectionModel::PeakCollectionModel() : QAbstractTableModel()
 {
     _root_item = nullptr;

@@ -16,6 +16,7 @@
 #define NSX_GUI_SUBFRAME_PREDICT_SUBFRAMEPREDICTPEAKS_H
 
 #include "core/shape/PeakCollection.h"
+#include "gui/items/PeakCollectionItem.h"
 #include "gui/models/PeakCollectionModel.h"
 
 #include <QCheckBox>
@@ -32,6 +33,7 @@
 #include <QWidget>
 
 class DetectorView;
+class PeakItemGraphic;
 class PeakTableView;
 class PeakViewWidget;
 class Spoiler;

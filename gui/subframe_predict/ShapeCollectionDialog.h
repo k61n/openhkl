@@ -16,13 +16,14 @@
 #define NSX_GUI_SUBFRAME_PREDICT_SHAPECOLLECTIONDIALOG_H
 
 #include "core/shape/PeakCollection.h"
-#include "gui/models/PeakCollectionModel.h"
 
 #include "core/data/DataTypes.h"
 #include "core/peak/Peak3D.h"
 #include "core/shape/Profile3D.h"
 #include "core/shape/ShapeCollection.h"
+#include "gui/items/PeakCollectionItem.h"
 #include "gui/models/ColorMap.h"
+#include "gui/models/PeakCollectionModel.h"
 
 #include <QGraphicsView>
 #include <QTableView>

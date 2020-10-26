@@ -13,6 +13,8 @@
 //  ***********************************************************************************************
 
 #include "gui/subframe_experiment/properties/PeakProperties.h"
+
+#include "gui/items/PeakCollectionItem.h"
 #include "gui/MainWin.h"
 #include "gui/models/PeakCollectionModel.h"
 #include "gui/models/Project.h"

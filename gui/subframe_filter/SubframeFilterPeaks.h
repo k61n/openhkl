@@ -15,16 +15,10 @@
 #ifndef NSX_GUI_SUBFRAME_FILTER_SUBFRAMEFILTERPEAKS_H
 #define NSX_GUI_SUBFRAME_FILTER_SUBFRAMEFILTERPEAKS_H
 
-#include "core/shape/PeakCollection.h"
-
-#include "gui/graphics/DetectorView.h"
+#include "gui/items/PeakCollectionItem.h"
 #include "gui/models/PeakCollectionModel.h"
 #include "gui/utility/ColorButton.h"
 #include "gui/views/PeakTableView.h"
-
-#include "gui/utility/Spoiler.h"
-#include "gui/utility/SpoilerCheck.h"
-#include "gui/widgets/PeakViewWidget.h"
 
 #include <QCheckBox>
 #include <QComboBox>
@@ -38,6 +32,12 @@
 #include <QTableWidget>
 #include <QVBoxLayout>
 #include <QWidget>
+
+class DetectorView;
+class PeakItemGraphic;
+class Spoiler;
+class SpoilerCheck;
+class PeakViewWidget;
 
 //! Dialog to filter a peak list
 class SubframeFilterPeaks : public QWidget {
@@ -175,6 +175,5 @@ class SubframeFilterPeaks : public QWidget {
     // For modifying the title of peak_group
     QGroupBox* _preview_panel;
 };
-
 
 #endif // NSX_GUI_SUBFRAME_FILTER_SUBFRAMEFILTERPEAKS_H
