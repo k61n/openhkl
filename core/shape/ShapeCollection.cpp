@@ -128,7 +128,8 @@ std::vector<Peak3D*> predictPeaks(
         Level::Debug, "algo::predictPeaks:", collection->nNoProfile(),
         "peaks with no neighbouring profiles");
     nsxlog(
-        Level::Debug, "algo::predictPeaks:", collection->nLonelyPeaks(), "peaks with no neighbours");
+        Level::Debug, "algo::predictPeaks:", collection->nLonelyPeaks(),
+        "peaks with no neighbours");
     nsxlog(
         Level::Debug, "algo::predictPeaks:", collection->nUnfriendlyPeaks(),
         "peaks with too few neighbours");
@@ -215,7 +216,8 @@ ShapeCollection::ShapeCollection()
     _choleskyS.fill(1e-6);
 }
 
-ShapeCollection::ShapeCollection(bool detector_coords, double peakScale, double bkgBegin, double bkgEnd)
+ShapeCollection::ShapeCollection(
+    bool detector_coords, double peakScale, double bkgBegin, double bkgEnd)
     : _profiles()
     , _choleskyD()
     , _choleskyM()

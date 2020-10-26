@@ -15,8 +15,8 @@
 #ifndef NSX_GUI_MAINWIN_H
 #define NSX_GUI_MAINWIN_H
 
-#include <QStackedWidget>
 #include <QMainWindow>
+#include <QStackedWidget>
 
 class DetectorScene;
 class PlottableItem;

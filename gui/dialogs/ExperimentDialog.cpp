@@ -19,9 +19,9 @@
 #include "gui/MainWin.h"
 
 #include <QDialogButtonBox>
+#include <QDir>
 #include <QGridLayout>
 #include <QHBoxLayout>
-#include <QDir>
 #include <QLabel>
 
 namespace {

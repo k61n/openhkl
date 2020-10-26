@@ -141,7 +141,8 @@ ShapeCollection& IntegrationHandler::integrateShapeCollection(
     const ShapeCollectionParameters& params)
 {
     nsxlog(Level::Info, "IntegrationHandler::integrateShapeCollection");
-    ShapeIntegrator integrator{shape_collection, aabb, params.nbins_x, params.nbins_y, params.nbins_z};
+    ShapeIntegrator integrator{
+        shape_collection, aabb, params.nbins_x, params.nbins_y, params.nbins_z};
     integrator.setParameters(params);
 
     const DataMap* data = _data_handler->getDataMap();

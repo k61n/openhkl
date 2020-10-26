@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#include "core/detector/Detector.h"
 #include "core/data/DataSet.h"
+#include "core/detector/Detector.h"
 
 #include "base/parser/BloscFilter.h"
 #include "base/utils/Path.h"

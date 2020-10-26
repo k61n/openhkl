@@ -28,11 +28,11 @@
 #include "gui/models/Session.h"
 
 #include <QDialogButtonBox>
+#include <QFileDialog>
 #include <QFormLayout>
 #include <QHBoxLayout>
-#include <QVBoxLayout>
 #include <QLabel>
-#include <QFileDialog>
+#include <QVBoxLayout>
 
 #include <fstream>
 #include <iomanip>

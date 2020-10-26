@@ -31,8 +31,8 @@
 #include "gui/subframe_predict/ShapeCollectionDialog.h"
 #include "gui/utility/ColorButton.h"
 #include "gui/utility/Spoiler.h"
-#include "gui/widgets/PeakViewWidget.h"
 #include "gui/views/PeakTableView.h"
+#include "gui/widgets/PeakViewWidget.h"
 #include "tables/crystal/UnitCell.h"
 
 #include <QFileInfo>
@@ -616,10 +616,11 @@ void SubframePredictPeaks::runPrediction()
         ProgressView progressView(nullptr);
         progressView.watch(handler);
 
-        nsx::ShapeCollection* lib = gSession->experimentAt(_exp_combo->currentIndex())
-                                     ->experiment()
-                                     ->getPeakCollection(_peak_combo->currentText().toStdString())
-                                     ->shapeCollection();
+        nsx::ShapeCollection* lib =
+            gSession->experimentAt(_exp_combo->currentIndex())
+                ->experiment()
+                ->getPeakCollection(_peak_combo->currentText().toStdString())
+                ->shapeCollection();
         nsx::UnitCell* cell = gSession->currentProject()->experiment()->getUnitCell(
             _unit_cells->currentText().toStdString());
 
@@ -679,10 +680,11 @@ void SubframePredictPeaks::runIntegration()
                 ->experiment()
                 ->getIntegrator(_integrator->currentText().toStdString());
 
-        nsx::ShapeCollection* lib = gSession->experimentAt(_exp_combo->currentIndex())
-                                     ->experiment()
-                                     ->getPeakCollection(_peak_combo->currentText().toStdString())
-                                     ->shapeCollection();
+        nsx::ShapeCollection* lib =
+            gSession->experimentAt(_exp_combo->currentIndex())
+                ->experiment()
+                ->getPeakCollection(_peak_combo->currentText().toStdString())
+                ->shapeCollection();
 
         if (!integrator)
             return;

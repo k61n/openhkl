@@ -8,8 +8,8 @@
 #include <QDir>
 #include <QFileDialog>
 #include <QHBoxLayout>
-#include <QVBoxLayout>
 #include <QLabel>
+#include <QVBoxLayout>
 
 HDF5ConverterDialog::HDF5ConverterDialog() : QDialog{}
 {

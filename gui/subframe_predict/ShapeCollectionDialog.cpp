@@ -234,7 +234,8 @@ void ShapeCollectionDialog::setPreviewUp()
     left->addLayout(left_up);
 
     _calculate_mean_profile = new QPushButton("Calculate Profile");
-    connect(_calculate_mean_profile, &QPushButton::clicked, this, &ShapeCollectionDialog::calculate);
+    connect(
+        _calculate_mean_profile, &QPushButton::clicked, this, &ShapeCollectionDialog::calculate);
 
     left->addWidget(_calculate_mean_profile);
     horizontal->addLayout(left);

@@ -156,7 +156,8 @@ bool Experiment::runAutoIndexer(
 }
 
 
-void Experiment::buildShapeCollection(PeakCollection* peaks, const ShapeCollectionParameters& params)
+void Experiment::buildShapeCollection(
+    PeakCollection* peaks, const ShapeCollectionParameters& params)
 {
     params.log(Level::Info);
     peaks->computeSigmas();
@@ -195,8 +196,8 @@ void Experiment::buildShapeCollection(PeakCollection* peaks, const ShapeCollecti
         ShapeCollection(!params.kabsch_coords, params.peak_end, params.bkg_begin, params.bkg_end);
 
     std::vector<Peak3D*> fit_peak_list = fit_peaks->getPeakList();
-    shape_collection =
-        _integration_handler->integrateShapeCollection(fit_peak_list, &shape_collection, aabb, params);
+    shape_collection = _integration_handler->integrateShapeCollection(
+        fit_peak_list, &shape_collection, aabb, params);
 
     peaks->setShapeCollection(shape_collection);
     // shape_collection.updateFit(1000); // This does nothing!! - zamaan

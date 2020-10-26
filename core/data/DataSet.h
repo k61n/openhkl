@@ -22,7 +22,7 @@
 
 namespace nsx {
 
-    class Detector;
+class Detector;
 
 //! Class used to manage loading detector images and metadata from disk.
 //!

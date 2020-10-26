@@ -15,8 +15,8 @@
 #ifndef NSX_GUI_SUBFRAME_COMBINE_SUBFRAMEMERGEDPEAKS_H
 #define NSX_GUI_SUBFRAME_COMBINE_SUBFRAMEMERGEDPEAKS_H
 
-#include "core/statistics/PeakExporter.h"
 #include "core/data/DataTypes.h"
+#include "core/statistics/PeakExporter.h"
 
 #include <QCheckBox>
 #include <QComboBox>
@@ -26,12 +26,12 @@
 #include <QSizePolicy>
 #include <QSpinBox>
 #include <QSplitter>
+#include <QStandardItemModel>
 #include <QTabWidget>
 #include <QTableView>
 #include <QTableWidget>
 #include <QVBoxLayout>
 #include <QWidget>
-#include <QStandardItemModel>
 
 class MergedData;
 class SXPlot;
