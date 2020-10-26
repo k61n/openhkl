@@ -102,16 +102,16 @@ void NumorProperty::refreshInput()
     _numor_selector->blockSignals(false);
 
     if (!gSession->currentProject()->getDataNames().empty())
-        onChanged();
+        onChanged(0);
 }
 
-void NumorProperty::onChanged()
+void NumorProperty::onChanged(int curIdx)
 {
     clear();
 
     if (gSession->currentProjectNum() >= 0) {
         Project* exp = gSession->currentProject();
-        nsx::sptrDataSet data = exp->getData(_numor_selector->currentIndex());
+        nsx::sptrDataSet data = exp->getData(curIdx);
 
         if (data) {
             const nsx::MetaData& metadata = data->reader()->metadata();
@@ -146,6 +146,11 @@ void NumorProperty::onChanged()
             _table->horizontalHeader()->setStretchLastSection(true);
         }
     }
+}
+
+QComboBox* NumorProperty::numorSelector()
+{
+    return _numor_selector;
 }
 
 void NumorProperty::clear()

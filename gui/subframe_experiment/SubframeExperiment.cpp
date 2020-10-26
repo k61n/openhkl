@@ -62,4 +62,10 @@ SubframeExperiment::SubframeExperiment() : QWidget()
     splitter->setChildrenCollapsible(false);
 
     layout->addWidget(splitter);
+
+    // ensure that correct numor is plotted
+    connect(
+        _properties->_data->numorSelector(),
+        static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), _image,
+        &ImagePanel::dataChanged);
 }

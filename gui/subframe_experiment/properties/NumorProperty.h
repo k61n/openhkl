@@ -29,9 +29,11 @@ class NumorProperty : public QWidget {
     //! Set up the GUI size policies
     void setSizePolicies();
 
+    QComboBox* numorSelector();
+
  private:
     //! Refresh when changed
-    void onChanged();
+    void onChanged(int curIdx);
     //! Clear content
     void clear();
     //! load selector

@@ -26,7 +26,7 @@
 class ImagePanel : public QWidget {
  public:
     ImagePanel();
-    void dataChanged();
+    void dataChanged(int numor = 0);
     void changeView(int option);
 
     DetectorView* getView() { return _image_view; };
