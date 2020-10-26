@@ -13,8 +13,8 @@
 //
 //  ***********************************************************************************************
 
-#include "gui/utility/ColorButton.h"
 #include "gui/widgets/PeakViewWidget.h"
+#include "gui/utility/ColorButton.h"
 
 #include <QLabel>
 

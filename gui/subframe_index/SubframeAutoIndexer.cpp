@@ -16,7 +16,6 @@
 #include "base/utils/Logger.h"
 #include "base/utils/ProgressHandler.h"
 #include "base/utils/Units.h"
-#include "base/utils/Logger.h"
 #include "core/algo/AutoIndexer.h"
 #include "core/experiment/Experiment.h"
 #include "gui/dialogs/UnitCellDialog.h"
@@ -134,51 +133,76 @@ void SubframeAutoIndexer::setParametersUp()
 
     QLabel* label_ptr;
 
+    label_ptr = new QLabel("Frames:");
+    label_ptr->setAlignment(Qt::AlignRight);
+    para_grid->addWidget(label_ptr, 0, 0, 1, 2);
+    label_ptr->setSizePolicy(*_size_policy_widgets);
+
+    label_ptr = new QLabel("D range:");
+    label_ptr->setAlignment(Qt::AlignRight);
+    para_grid->addWidget(label_ptr, 1, 0, 1, 2);
+    label_ptr->setSizePolicy(*_size_policy_widgets);
+
+    label_ptr = new QLabel("Strength:");
+    label_ptr->setAlignment(Qt::AlignRight);
+    para_grid->addWidget(label_ptr, 2, 0, 1, 2);
+    label_ptr->setSizePolicy(*_size_policy_widgets);
+
     label_ptr = new QLabel("Gruber tol.:");
     label_ptr->setAlignment(Qt::AlignRight);
-    para_grid->addWidget(label_ptr, 0, 0, 1, 1);
+    para_grid->addWidget(label_ptr, 3, 0, 1, 2);
     label_ptr->setSizePolicy(*_size_policy_widgets);
 
     label_ptr = new QLabel("Niggli tol.:");
     label_ptr->setAlignment(Qt::AlignRight);
-    para_grid->addWidget(label_ptr, 1, 0, 1, 1);
+    para_grid->addWidget(label_ptr, 4, 0, 1, 2);
     label_ptr->setSizePolicy(*_size_policy_widgets);
 
     label_ptr = new QLabel("Max. Cell dim.:");
     label_ptr->setAlignment(Qt::AlignRight);
-    para_grid->addWidget(label_ptr, 3, 0, 1, 1);
+    para_grid->addWidget(label_ptr, 6, 0, 1, 2);
     label_ptr->setSizePolicy(*_size_policy_widgets);
 
     label_ptr = new QLabel("Q Vertices:");
     label_ptr->setAlignment(Qt::AlignRight);
-    para_grid->addWidget(label_ptr, 4, 0, 1, 1);
+    para_grid->addWidget(label_ptr, 7, 0, 1, 2);
     label_ptr->setSizePolicy(*_size_policy_widgets);
 
     label_ptr = new QLabel("Subdivisions:");
     label_ptr->setAlignment(Qt::AlignRight);
-    para_grid->addWidget(label_ptr, 5, 0, 1, 1);
+    para_grid->addWidget(label_ptr, 8, 0, 1, 2);
     label_ptr->setSizePolicy(*_size_policy_widgets);
 
     label_ptr = new QLabel("Solutions:");
     label_ptr->setAlignment(Qt::AlignRight);
-    para_grid->addWidget(label_ptr, 6, 0, 1, 1);
+    para_grid->addWidget(label_ptr, 9, 0, 1, 2);
     label_ptr->setSizePolicy(*_size_policy_widgets);
 
     label_ptr = new QLabel("Min. Volume:");
     label_ptr->setAlignment(Qt::AlignRight);
-    para_grid->addWidget(label_ptr, 7, 0, 1, 1);
+    para_grid->addWidget(label_ptr, 10, 0, 1, 2);
     label_ptr->setSizePolicy(*_size_policy_widgets);
 
     label_ptr = new QLabel("Indexing tol.:");
     label_ptr->setAlignment(Qt::AlignRight);
-    para_grid->addWidget(label_ptr, 8, 0, 1, 1);
+    para_grid->addWidget(label_ptr, 11, 0, 1, 2);
     label_ptr->setSizePolicy(*_size_policy_widgets);
 
     label_ptr = new QLabel("Frequency tol.:");
     label_ptr->setAlignment(Qt::AlignRight);
-    para_grid->addWidget(label_ptr, 9, 0, 1, 1);
+    para_grid->addWidget(label_ptr, 12, 0, 1, 2);
     label_ptr->setSizePolicy(*_size_policy_widgets);
 
+    QHBoxLayout* frames = new QHBoxLayout();
+    QHBoxLayout* drange = new QHBoxLayout();
+    QHBoxLayout* strength = new QHBoxLayout();
+
+    _min_frame = new QSpinBox();
+    _max_frame = new QSpinBox();
+    _d_min = new QDoubleSpinBox();
+    _d_max = new QDoubleSpinBox();
+    _str_min = new QDoubleSpinBox();
+    _str_max = new QDoubleSpinBox();
     _gruber = new QDoubleSpinBox();
     _niggli = new QDoubleSpinBox();
     _only_niggli = new QCheckBox("Find Niggli cell only");
@@ -189,6 +213,28 @@ void SubframeAutoIndexer::setParametersUp()
     _min_cell_volume = new QDoubleSpinBox();
     _indexing_tolerance = new QDoubleSpinBox();
     _frequency_tolerance = new QDoubleSpinBox();
+
+    _min_frame->setMaximumWidth(1000);
+    _min_frame->setMaximum(1000);
+
+    _max_frame->setMaximumWidth(1000);
+    _max_frame->setMaximum(1000);
+
+    _d_min->setMaximumWidth(1000);
+    _d_min->setMaximum(100);
+    _d_min->setDecimals(6);
+
+    _str_min->setMaximumWidth(1000);
+    _str_min->setMaximum(100);
+    _str_min->setDecimals(6);
+
+    _str_max->setMaximumWidth(1000);
+    _str_max->setMaximum(10000000);
+    _str_max->setDecimals(6);
+
+    _d_max->setMaximumWidth(1000);
+    _d_max->setMaximum(100);
+    _d_max->setDecimals(6);
 
     _gruber->setMaximumWidth(1000);
     _gruber->setMaximum(100000);
@@ -224,6 +270,12 @@ void SubframeAutoIndexer::setParametersUp()
     _frequency_tolerance->setMaximum(1);
     _frequency_tolerance->setDecimals(3);
 
+    _min_frame->setSizePolicy(*_size_policy_widgets);
+    _max_frame->setSizePolicy(*_size_policy_widgets);
+    _d_min->setSizePolicy(*_size_policy_widgets);
+    _d_max->setSizePolicy(*_size_policy_widgets);
+    _str_min->setSizePolicy(*_size_policy_widgets);
+    _str_max->setSizePolicy(*_size_policy_widgets);
     _gruber->setSizePolicy(*_size_policy_widgets);
     _niggli->setSizePolicy(*_size_policy_widgets);
     _only_niggli->setSizePolicy(*_size_policy_widgets);
@@ -235,16 +287,26 @@ void SubframeAutoIndexer::setParametersUp()
     _indexing_tolerance->setSizePolicy(*_size_policy_widgets);
     _frequency_tolerance->setSizePolicy(*_size_policy_widgets);
 
-    para_grid->addWidget(_gruber, 0, 1, 1, 1);
-    para_grid->addWidget(_niggli, 1, 1, 1, 1);
-    para_grid->addWidget(_only_niggli, 2, 1, 1, 1);
-    para_grid->addWidget(_max_cell_dimension, 3, 1, 1, 1);
-    para_grid->addWidget(_number_vertices, 4, 1, 1, 1);
-    para_grid->addWidget(_number_subdivisions, 5, 1, 1, 1);
-    para_grid->addWidget(_number_solutions, 6, 1, 1, 1);
-    para_grid->addWidget(_min_cell_volume, 7, 1, 1, 1);
-    para_grid->addWidget(_indexing_tolerance, 8, 1, 1, 1);
-    para_grid->addWidget(_frequency_tolerance, 9, 1, 1, 1);
+    frames->addWidget(_min_frame);
+    frames->addWidget(_max_frame);
+    drange->addWidget(_d_min);
+    drange->addWidget(_d_max);
+    strength->addWidget(_str_min);
+    strength->addWidget(_str_max);
+
+    para_grid->addLayout(frames, 0, 3, 1, 3);
+    para_grid->addLayout(drange, 1, 3, 1, 3);
+    para_grid->addLayout(strength, 2, 3, 1, 3);
+    para_grid->addWidget(_gruber, 3, 3, 1, 3);
+    para_grid->addWidget(_niggli, 4, 3, 1, 3);
+    para_grid->addWidget(_only_niggli, 5, 3, 1, 3);
+    para_grid->addWidget(_max_cell_dimension, 6, 3, 1, 3);
+    para_grid->addWidget(_number_vertices, 7, 3, 1, 3);
+    para_grid->addWidget(_number_subdivisions, 8, 3, 1, 3);
+    para_grid->addWidget(_number_solutions, 9, 3, 1, 3);
+    para_grid->addWidget(_min_cell_volume, 10, 3, 1, 3);
+    para_grid->addWidget(_indexing_tolerance, 11, 3, 1, 3);
+    para_grid->addWidget(_frequency_tolerance, 12, 3, 1, 3);
 
     _para_box->setContentLayout(*para_grid, true);
     _para_box->setSizePolicy(*_size_policy_box);
@@ -365,43 +427,45 @@ void SubframeAutoIndexer::grabIndexerParameters()
     if (_peak_list.empty() || _exp_combo->count() < 1)
         return;
 
-    nsx::AutoIndexer* auto_indexer =
-        gSession->experimentAt(_exp_combo->currentIndex())->experiment()->autoIndexer();
-    nsx::IndexerParameters parameters = auto_indexer->parameters();
-
-    _niggli->setValue(parameters.niggliTolerance);
-    _only_niggli->setChecked(parameters.niggliReduction);
-    _gruber->setValue(parameters.gruberTolerance);
-    _number_vertices->setValue(parameters.nVertices);
-    _number_subdivisions->setValue(parameters.subdiv);
-    _number_solutions->setValue(parameters.nSolutions);
-    _max_cell_dimension->setValue(parameters.maxdim);
-    _indexing_tolerance->setValue(parameters.indexingTolerance);
-    _frequency_tolerance->setValue(parameters.frequencyTolerance);
-    _min_cell_volume->setValue(parameters.minUnitCellVolume);
+    _min_frame->setValue(_params.first_frame);
+    _max_frame->setValue(_params.last_frame);
+    _d_min->setValue(_params.d_min);
+    _d_max->setValue(_params.d_max);
+    _str_min->setValue(_params.strength_min);
+    _str_max->setValue(_params.strength_max);
+    _niggli->setValue(_params.niggliTolerance);
+    _only_niggli->setChecked(_params.niggliReduction);
+    _gruber->setValue(_params.gruberTolerance);
+    _number_vertices->setValue(_params.nVertices);
+    _number_subdivisions->setValue(_params.subdiv);
+    _number_solutions->setValue(_params.nSolutions);
+    _max_cell_dimension->setValue(_params.maxdim);
+    _indexing_tolerance->setValue(_params.indexingTolerance);
+    _frequency_tolerance->setValue(_params.frequencyTolerance);
+    _min_cell_volume->setValue(_params.minUnitCellVolume);
 }
 
-void SubframeAutoIndexer::setIndexerParameters() const
+void SubframeAutoIndexer::setIndexerParameters()
 {
     if (_peak_list.empty() || _exp_combo->count() < 1)
         return;
 
-    nsx::AutoIndexer* auto_indexer =
-        gSession->experimentAt(_exp_combo->currentIndex())->experiment()->autoIndexer();
-
-    nsx::IndexerParameters parameters;
-    parameters.niggliTolerance = _niggli->value();
-    parameters.niggliReduction = _only_niggli->isChecked();
-    parameters.gruberTolerance = _gruber->value();
-    parameters.nVertices = _number_vertices->value();
-    parameters.subdiv = _number_subdivisions->value();
-    parameters.nSolutions = _number_solutions->value();
-    parameters.maxdim = _max_cell_dimension->value();
-    parameters.indexingTolerance = _indexing_tolerance->value();
-    parameters.frequencyTolerance = _frequency_tolerance->value();
-    parameters.minUnitCellVolume = _min_cell_volume->value();
-
-    auto_indexer->setParameters(parameters);
+    _params.first_frame = _min_frame->value();
+    _params.last_frame = _max_frame->value();
+    _params.d_min = _d_min->value();
+    _params.d_max = _d_max->value();
+    _params.strength_min = _str_min->value();
+    _params.strength_max = _str_max->value();
+    _params.niggliTolerance = _niggli->value();
+    _params.niggliReduction = _only_niggli->isChecked();
+    _params.gruberTolerance = _gruber->value();
+    _params.nVertices = _number_vertices->value();
+    _params.subdiv = _number_subdivisions->value();
+    _params.nSolutions = _number_solutions->value();
+    _params.maxdim = _max_cell_dimension->value();
+    _params.indexingTolerance = _indexing_tolerance->value();
+    _params.frequencyTolerance = _frequency_tolerance->value();
+    _params.minUnitCellVolume = _min_cell_volume->value();
 }
 
 void SubframeAutoIndexer::runAutoIndexer()
@@ -414,13 +478,10 @@ void SubframeAutoIndexer::runAutoIndexer()
 
     setIndexerParameters();
 
-    nsx::AutoIndexer* auto_indexer =
-        gSession->experimentAt(_exp_combo->currentIndex())->experiment()->autoIndexer();
-    const nsx::PeakCollection* collection =
-        gSession->experimentAt(_exp_combo->currentIndex())
-            ->experiment()
-            ->getPeakCollection(_peak_combo->currentText().toStdString());
-
+    nsx::Experiment* expt = gSession->experimentAt(_exp_combo->currentIndex())->experiment();
+    nsx::AutoIndexer* auto_indexer = expt->autoIndexer();
+    nsx::PeakCollection* collection =
+        expt->getPeakCollection(_peak_combo->currentText().toStdString());
 
     std::shared_ptr<nsx::ProgressHandler> handler(new nsx::ProgressHandler());
     auto_indexer->setHandler(handler);
@@ -428,7 +489,7 @@ void SubframeAutoIndexer::runAutoIndexer()
     _solutions.clear();
 
     try {
-        auto_indexer->autoIndex(collection->getPeakList());
+        expt->autoIndex(collection, _params);
     } catch (const std::exception& e) {
         nsx::nsxlog(nsx::Level::Error, "Autoindexer:", e.what());
         QMessageBox::critical(this, "Indexing Error", e.what());

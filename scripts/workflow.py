@@ -8,7 +8,7 @@ A test script for the entire NSXTool workflow
 
 import sys
 import argparse
-import os.path
+from pathlib import Path
 from nsx.experiment import Experiment, pynsxprint
 from nsx.parameters import Parameters
 from pdb import set_trace
@@ -42,8 +42,8 @@ parser.add_argument('--batches', action='store', dest='nbatches', type=int, defa
 args = parser.parse_args()
 
 params = Parameters()
-if os.path.isfile(args.paramfile):
-    pynsxprint(f"Reading parameters from {args.paramfile}")
+if Path(args.paramfile).is_file():
+    pynsxprint(str(f"Reading parameters from {args.paramfile}"))
     params.load(args.paramfile)
 else:
     raise RuntimeError("No parameters file detected")
@@ -57,17 +57,9 @@ if not args.loadnsx:
         raise RuntimeError("Command line argument --dataformat must be specified")
     if not args.files:
         raise RuntimeError("No data files specified (--files)")
-    filenames = args.files
-    expt.set_data_format(args.dataformat)
+    filenames = [Path(file) for file in args.files]
     pynsxprint("Loading data...")
-    if args.dataformat == 'raw':
-        name = 'all'
-        expt.add_data_set(name, filenames)
-    elif args.dataformat == 'nexus':
-        for filename in filenames:
-            expt.add_data_set(filename, filename)
-    elif args.dataformat == 'hdf5':
-        expt.add_data_set(filenames[0], filenames[0])
+    expt.add_data_set(filenames, args.dataformat)
     data = expt.get_data()
 
     pynsxprint("Finding peaks...")

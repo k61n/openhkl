@@ -22,7 +22,8 @@
 #include <QHBoxLayout>
 
 UnitCellDialog::UnitCellDialog(
-    std::vector<std::string> collectionNames, std::vector<std::string> spaceGroups) : QDialog()
+    std::vector<std::string> collectionNames, std::vector<std::string> spaceGroups)
+    : QDialog()
 {
     QStringList peak_names;
     for (auto name : collectionNames)

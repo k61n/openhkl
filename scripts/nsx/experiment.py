@@ -7,8 +7,8 @@ Generalised wrapper for Python/C++ (Swig) NSXTool interface.
 '''
 
 import sys
-import os.path
 import logging
+from pathlib import Path
 from pdb import set_trace
 sys.path.append("/home/zamaan/codes/nsxtool/current/build/swig")
 sys.path.append("/G/sw/nsx/build/swig") # Joachim
@@ -51,11 +51,9 @@ class Experiment:
         self._metafile = self._name + ".meta"
         self._verbose = verbose
         self._detector = detector
-        self._dataformat = "raw"
         self._expt = nsx.Experiment(name, detector)
         self._params = params
         self._ref_cell = params.cell
-        self._data_sets = []
         self._data_reader_factory = nsx.DataReaderFactory()
         self.set_reference_cell()
 
@@ -93,22 +91,24 @@ class Experiment:
         else:
             return self._expt.getAllData()
 
-    def set_data_format(self, dataformat):
-        self._dataformat = dataformat
-
-    def add_data_set(self, data_name, filenames):
-        if self._dataformat == 'raw':
-            data = self.read_raw_data(data_name, filenames)
-        elif self._dataformat == 'nexus':
-            data = self.read_nexus_data(data_name, filenames)
-        elif self._dataformat == 'hdf5':
-            data = self.read_hdf_data(data_name, filenames)
+    def add_data_set(self, filenames, dataformat):
+        '''
+        Read data file(s) and add them to the experiment as DataSet objects.
+        filenames is a list of pathlib Path objects.
+        Pass the *absolute path* to nsx.Experiment to ensure GUI compatibility.
+        '''
+        paths = [str(file.absolute()) for file in filenames]
+        if dataformat == 'raw':
+            data = self.read_raw_data('all', paths)
+        elif dataformat == 'nexus':
+            data = self.read_nexus_data(paths)
+        elif dataformat == 'hdf5':
+            data = self.read_hdf_data(paths[0])
         else:
             raise RuntimeError("No valid data reader specified")
 
-        self.log(f'dataset {data_name}: nframes = {data.nFrames()}')
-        self._expt.addData(data, data_name)
-        self._data_sets.append(data_name)
+        self.log(f'dataset: nframes = {data.nFrames()}')
+        self._expt.addData(data)
 
     def get_number_of_peaks(self, collection):
         return self._expt.getPeakCollection(collection).numberOfPeaks()
@@ -134,7 +134,7 @@ class Experiment:
         data = nsx.DataSet(reader)
         return data
 
-    def read_nexus_data(self, data_name, filename):
+    def read_nexus_data(self, filename):
         '''
         Load ILL Nexus datafiles (.nxs)
         '''
@@ -142,7 +142,7 @@ class Experiment:
         extension = 'nxs'
         return self._data_reader_factory.create(extension, filename, diffractometer)
 
-    def read_hdf_data(self, data_name, filename):
+    def read_hdf_data(self, filename):
         diffractometer = nsx.Diffractometer.create(self._detector)
         extension = 'hdf'
         return self._data_reader_factory.create(extension, filename, diffractometer)
@@ -315,6 +315,7 @@ class Experiment:
         self._expt.predictPeaks(self._predicted_peaks, self._filtered_collection,
                                 params, interpol)
         self._predicted_collection = self._expt.getPeakCollection(self._predicted_peaks)
+        self.log(f"Integrating predicted peaks...")
         self._expt.integratePredictedPeaks(integrator, self._predicted_collection,
                                            self._filtered_collection.shapeLibrary(), params)
 
@@ -407,8 +408,8 @@ class Experiment:
             fname = self._predictedfile
         else:
             fname = self._nsxfile
-        if not os.path.isfile(fname):
-            raise OSError(f"NSX file {fname} not found")
+        if not Path(fname).is_file():
+            raise OSError(str(f"NSX file {fname} not found"))
         self.log(f"Loading experiment from {fname}")
         self._expt.loadFromFile(fname)
         self._found_collection = self._expt.getPeakCollection(self._found_peaks)
@@ -426,8 +427,8 @@ class Experiment:
 
     def loadpeaks(self):
         fname = self._nsxfile
-        if not os.path.isfile(fname):
-            raise OSError(f"NSX file {fname} not found")
+        if not Path(fname).is_file():
+            raise OSError(str(f"NSX file {fname} not found"))
         self.log(f"Loading experiment from {fname}")
         self._expt.loadFromFile(fname)
         self._found_collection = self._expt.getPeakCollection(self._found_peaks)

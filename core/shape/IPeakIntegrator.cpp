@@ -57,8 +57,7 @@ const std::vector<Intensity>& IPeakIntegrator::rockingCurve() const
 }
 
 void IPeakIntegrator::integrate(
-    std::vector<nsx::Peak3D*> peaks, ShapeLibrary* shape_library, sptrDataSet data,
-    int n_numor)
+    std::vector<nsx::Peak3D*> peaks, ShapeLibrary* shape_library, sptrDataSet data, int n_numor)
 {
     // integrate only those peaks that belong to the specified dataset
     auto it = std::remove_if(peaks.begin(), peaks.end(), [&](const Peak3D* peak) {
@@ -67,8 +66,7 @@ void IPeakIntegrator::integrate(
     peaks.erase(it, peaks.end());
     std::ostringstream oss;
     std::string status = "Integrating " + std::to_string(peaks.size()) + " peaks...";
-    oss << "Integrating " << peaks.size() << " peaks in numor "<< n_numor
-        << " of " << _n_numors;
+    oss << "Integrating " << peaks.size() << " peaks in numor " << n_numor << " of " << _n_numors;
     nsxlog(Level::Info, "IPeakIntegrator::integrate: integrating", peaks.size(), "peaks");
     if (_handler) {
         _handler->setStatus(oss.str().c_str());

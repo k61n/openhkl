@@ -133,7 +133,7 @@ void Experiment::autoIndex(PeakCollection* peaks, const IndexerParameters& param
     _peak_handler->acceptFilter(collection_name, peaks);
     _auto_indexer->setParameters(params);
     PeakCollection* indexing_collection = getPeakCollection(collection_name);
-    return _auto_indexer->autoIndex(indexing_collection);
+    _auto_indexer->autoIndex(indexing_collection);
 }
 
 bool Experiment::runAutoIndexer(
@@ -145,8 +145,6 @@ bool Experiment::runAutoIndexer(
     while (frame <= frame_max) {
         params.last_frame = frame;
         autoIndex(peaks, params);
-        nsxlog(Level::Info, "Solutions:");
-        nsxlog(Level::Info, _auto_indexer->solutionsToString());
         if (checkAndAssignUnitCell(peaks, length_tol, angle_tol)) {
             nsxlog(Level::Info, "Experiment::runAutoIndexer: success");
             return true;

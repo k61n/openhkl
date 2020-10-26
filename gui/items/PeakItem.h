@@ -34,7 +34,8 @@ enum Column {
     numor,
     unitCell,
     d,
-    count
+    Selected,
+    Count
 };
 
 enum PeakDisplayModes { VALID, FILTER };
@@ -49,6 +50,7 @@ class PeakItem : public QStandardItem {
     double intensity() const;
     double sigma_intensity() const;
     double strength() const;
+    bool selected() const;
     //! Retrieve the data of column and row
     QVariant peakData(const QModelIndex& index, int role, PeakDisplayModes mode) const;
     //! Get the peak pointer
@@ -56,7 +58,22 @@ class PeakItem : public QStandardItem {
     //! Get the graphical representation
     PeakItemGraphic* peakGraphic() { return _peak_graphic.get(); };
     //! The column enumerators
-    enum Column { h, k, l, px, py, Frame, Intensity, Sigma, Strength, Numor, uc, d, Count };
+    enum Column {
+        h,
+        k,
+        l,
+        px,
+        py,
+        Frame,
+        Intensity,
+        Sigma,
+        Strength,
+        Numor,
+        uc,
+        d,
+        Selected,
+        Count
+    };
     //! Whether the peak was caught by the filter
     bool caughtByFilter(void) const;
 
