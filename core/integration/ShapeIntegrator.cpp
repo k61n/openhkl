@@ -20,17 +20,17 @@
 #include "core/peak/PeakCoordinateSystem.h"
 #include "core/shape/Profile1D.h"
 #include "core/shape/Profile3D.h"
-#include "core/shape/ShapeLibrary.h"
+#include "core/shape/ShapeCollection.h"
 
 namespace nsx {
 
-ShapeIntegrator::ShapeIntegrator(ShapeLibrary* lib, const AABB& aabb, int nx, int ny, int nz)
-    : PixelSumIntegrator(false, false), _library(lib), _aabb(aabb), _nx(nx), _ny(ny), _nz(nz)
+ShapeIntegrator::ShapeIntegrator(ShapeCollection* lib, const AABB& aabb, int nx, int ny, int nz)
+    : PixelSumIntegrator(false, false), _collection(lib), _aabb(aabb), _nx(nx), _ny(ny), _nz(nz)
 {
 }
 
 bool ShapeIntegrator::compute(
-    Peak3D* peak, ShapeLibrary* shape_library, const IntegrationRegion& region)
+    Peak3D* peak, ShapeCollection* shape_collection, const IntegrationRegion& region)
 {
     auto uc = peak->unitCell();
     auto data = peak->dataSet();
@@ -40,7 +40,7 @@ bool ShapeIntegrator::compute(
     if (!data)
         throw std::runtime_error("ShapeIntegrator: Peak must have data set attached");
 
-    PixelSumIntegrator::compute(peak, shape_library, region);
+    PixelSumIntegrator::compute(peak, shape_collection, region);
 
     const double mean_bkg = _meanBackground.value();
     const auto& events = region.peakData().events();
@@ -60,7 +60,7 @@ bool ShapeIntegrator::compute(
         // todo: variance here assumes Poisson (no gain or baseline)
         integrated_profile.addPoint(e.r2(x), counts[i]);
 
-        if (_library->detectorCoords()) {
+        if (_collection->detectorCoords()) {
             x -= peak->shape().center();
             profile.addValue(x, dI);
         } else {
@@ -68,13 +68,13 @@ bool ShapeIntegrator::compute(
         }
     }
     if (profile.normalize())
-        _library->addPeak(peak, std::move(profile), std::move(integrated_profile));
+        _collection->addPeak(peak, std::move(profile), std::move(integrated_profile));
     return true;
 }
 
-const ShapeLibrary* ShapeIntegrator::library() const
+const ShapeCollection* ShapeIntegrator::collection() const
 {
-    return _library;
+    return _collection;
 }
 
 } // namespace nsx

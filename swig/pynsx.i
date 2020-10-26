@@ -165,7 +165,7 @@ using Eigen::Quaterniond;
 #include "core/raw/MetaData.h"
 #include "core/shape/Profile1D.h"
 #include "core/shape/Profile3D.h"
-#include "core/shape/ShapeLibrary.h"
+#include "core/shape/ShapeCollection.h"
 #include "core/statistics/CC.h"
 #include "core/statistics/RFactor.h"
 #include "core/statistics/ResolutionShell.h"
@@ -343,7 +343,7 @@ ArrayExtendCRef(MillerIndex, int);
 %template(DataList) std::vector<std::shared_ptr<nsx::DataSet>>;
 
 %include "core/shape/IPeakIntegrator.h"
-%include "core/shape/ShapeLibrary.h"
+%include "core/shape/ShapeCollection.h"
 
 %template(ConvolverParameters) std::map<std::string,double>;
 %include "core/convolve/Convolver.h"

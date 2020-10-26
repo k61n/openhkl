@@ -17,6 +17,7 @@
 #include "base/utils/Logger.h"
 #include "core/data/DataSet.h"
 #include "core/data/DataTypes.h"
+#include "core/experiment/Experiment.h"
 #include "core/loader/ExperimentDataReader.h"
 #include "core/peak/Intensity.h"
 #include "core/peak/Peak3D.h"

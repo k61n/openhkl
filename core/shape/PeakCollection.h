@@ -15,7 +15,7 @@
 #ifndef NSX_CORE_SHAPE_PEAKCOLLECTION_H
 #define NSX_CORE_SHAPE_PEAKCOLLECTION_H
 
-#include "core/shape/ShapeLibrary.h"
+#include "core/shape/ShapeCollection.h"
 
 namespace nsx {
 
@@ -83,12 +83,12 @@ class PeakCollection {
     //! Returns a fresh generated pointer to meta
     std::map<std::string, float>* meta();
 
-    //! Set the shape library needed for the peak prediction
-    void setShapeLibrary(ShapeLibrary shape_library);
-    //! Reset the shape library
-    void resetShapeLibrary() { _shape_library.reset(nullptr); };
-    //! Get the shape library
-    ShapeLibrary* shapeLibrary() const { return _shape_library.get(); };
+    //! Set the shape collection needed for the peak prediction
+    void setShapeCollection(ShapeCollection shape_collection);
+    //! Reset the shape collection
+    void resetShapeCollection() { _shape_collection.reset(nullptr); };
+    //! Get the shape collection
+    ShapeCollection* shapeCollection() const { return _shape_collection.get(); };
 
     void printUnitCells();
 
@@ -110,7 +110,7 @@ class PeakCollection {
     std::string _file_name;
     std::string _parent;
 
-    std::unique_ptr<ShapeLibrary> _shape_library;
+    std::unique_ptr<ShapeCollection> _shape_collection;
 
     //! Beam divergence sigma
     double _sigma_d;

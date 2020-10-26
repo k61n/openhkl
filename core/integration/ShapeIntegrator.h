@@ -19,21 +19,21 @@
 
 namespace nsx {
 
-class ShapeLibrary;
+class ShapeCollection;
 
-//! Peak integrator class used to build a shape library for profile fitting.
+//! Peak integrator class used to build a shape collection for profile fitting.
 
 class ShapeIntegrator : public PixelSumIntegrator {
  public:
-    //! Construct the integrator with the given shape library, bounding box, and box shape.
-    ShapeIntegrator(ShapeLibrary* lib, const AABB& aabb, int nx, int ny, int nz);
+    //! Construct the integrator with the given shape collection, bounding box, and box shape.
+    ShapeIntegrator(ShapeCollection* lib, const AABB& aabb, int nx, int ny, int nz);
     bool compute(
-        Peak3D* peak, ShapeLibrary* shape_library, const IntegrationRegion& region) override;
-    //! Returns the library of cached peak shapes
-    const ShapeLibrary* library() const;
+        Peak3D* peak, ShapeCollection* shape_collection, const IntegrationRegion& region) override;
+    //! Returns the collection of cached peak shapes
+    const ShapeCollection* collection() const;
 
  private:
-    ShapeLibrary* _library;
+    ShapeCollection* _collection;
     AABB _aabb;
     int _nx, _ny, _nz;
 };

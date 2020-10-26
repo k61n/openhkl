@@ -27,7 +27,7 @@ class PeakTableView : public QTableView {
     //     void plotData(const QVector<double>&, const QVector<double>&, const QVector<double>&);
     //     void plotPeak(nsx::sptrPeak3D);
     //     void autoIndexed();
-    //     void updateShapeLibrary(nsx::sptrShapeLibrary);
+    //     void updateShapeCollection(nsx::sptrShapeCollection);
     //  public slots:
     //     //! Normalize to monitor.
     //     void normalizeToMonitor();

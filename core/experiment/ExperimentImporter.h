@@ -15,13 +15,11 @@
 #ifndef NSX_CORE_EXPERIMENT_EXPERIMENTIMPORTER_H
 #define NSX_CORE_EXPERIMENT_EXPERIMENTIMPORTER_H
 
-#include "core/data/DataSet.h"
-#include "core/experiment/Experiment.h"
-#include "core/shape/PeakCollection.h"
-
 #include <H5Cpp.h>
 
 namespace nsx {
+
+class Experiment;
 
 //! Manages the import of peak information to file.
 class ExperimentImporter {

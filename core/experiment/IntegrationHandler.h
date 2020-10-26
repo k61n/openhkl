@@ -54,14 +54,14 @@ class IntegrationHandler {
         std::string integrator_name, PeakCollection* peak_collection, double d_min, double d_max);
     //! Set the found peak integrator
     void integratePredictedPeaks(
-        std::string integrator_name, PeakCollection* peak_collection, ShapeLibrary* shape_library,
+        std::string integrator_name, PeakCollection* peak_collection, ShapeCollection* shape_collection,
         PredictionParameters& params);
     //! Integrate peaks found by _peak_finder
     void integrateFoundPeaks(std::string integrator, PeakFinder* peak_finder);
-    //! Integrate the shape library
-    ShapeLibrary& integrateShapeLibrary(
-        std::vector<Peak3D*>& peaks, ShapeLibrary* shape_library, const AABB& aabb,
-        const ShapeLibParameters& params);
+    //! Integrate the shape collection
+    ShapeCollection& integrateShapeCollection(
+        std::vector<Peak3D*>& peaks, ShapeCollection* shape_collection, const AABB& aabb,
+        const ShapeCollectionParameters& params);
 
  private:
     IntegratorMap _integrator_map;

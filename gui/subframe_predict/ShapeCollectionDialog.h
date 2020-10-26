@@ -2,8 +2,8 @@
 //
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
-//! @file      gui/subframe_predict/ShapeLibraryDialog.h
-//! @brief     Defines class ShapeLibraryDialog
+//! @file      gui/subframe_predict/ShapeCollectionDialog.h
+//! @brief     Defines class ShapeCollectionDialog
 //!
 //! @homepage  ###HOMEPAGE###
 //! @license   GNU General Public License v3 or higher (see COPYING)
@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_GUI_SUBFRAME_PREDICT_SHAPELIBRARYDIALOG_H
-#define NSX_GUI_SUBFRAME_PREDICT_SHAPELIBRARYDIALOG_H
+#ifndef NSX_GUI_SUBFRAME_PREDICT_SHAPECOLLECTIONDIALOG_H
+#define NSX_GUI_SUBFRAME_PREDICT_SHAPECOLLECTIONDIALOG_H
 
 #include "core/shape/PeakCollection.h"
 #include "gui/models/PeakCollectionModel.h"
@@ -21,7 +21,7 @@
 #include "core/data/DataTypes.h"
 #include "core/peak/Peak3D.h"
 #include "core/shape/Profile3D.h"
-#include "core/shape/ShapeLibrary.h"
+#include "core/shape/ShapeCollection.h"
 #include "gui/models/ColorMap.h"
 
 #include <QGraphicsView>
@@ -41,10 +41,10 @@
 #include <QVBoxLayout>
 #include <QWidget>
 
-//! Dialog for building the shape library
-class ShapeLibraryDialog : public QDialog {
+//! Dialog for building the shape collection
+class ShapeCollectionDialog : public QDialog {
  public:
-    ShapeLibraryDialog(nsx::PeakCollection* peak_collection);
+    ShapeCollectionDialog(nsx::PeakCollection* peak_collection);
 
  private:
     void calculate();
@@ -70,7 +70,7 @@ class ShapeLibraryDialog : public QDialog {
     //! The temporary collection
     PeakCollectionItem _peak_collection_item;
 
-    nsx::ShapeLibrary _library;
+    nsx::ShapeCollection _collection;
     nsx::sptrUnitCell _unitCell;
     std::vector<nsx::Peak3D*> _peaks;
     std::set<nsx::sptrDataSet> _data;
@@ -101,7 +101,7 @@ class ShapeLibraryDialog : public QDialog {
     QDoubleSpinBox* _background_begin;
     QDoubleSpinBox* _background_end;
 
-    QPushButton* _build_library;
+    QPushButton* _build_collection;
 
     QTableView* _table;
     QDoubleSpinBox* _x;
@@ -116,4 +116,4 @@ class ShapeLibraryDialog : public QDialog {
     QSlider* _draw_frame;
 };
 
-#endif // NSX_GUI_SUBFRAME_PREDICT_SHAPELIBRARYDIALOG_H
+#endif // NSX_GUI_SUBFRAME_PREDICT_SHAPECOLLECTIONDIALOG_H

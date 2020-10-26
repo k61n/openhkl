@@ -122,7 +122,7 @@ void Actions::setupPeaks()
     //     }
     // gSession->currentProject()->autoAssignUnitCell();
     // });
-    // buildShapeLibrary.setTriggerHook([]() { new ShapeLibraryDialog; });
+    // buildShapeCollection.setTriggerHook([]() { new ShapeCollectionDialog; });
     // refine.setTriggerHook([]() { new RefinerFrame; });
     // normalize.setTriggerHook([]() {
     //     if (gSession->currentProjectNum() < 0)

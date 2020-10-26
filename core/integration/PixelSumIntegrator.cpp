@@ -32,9 +32,9 @@ PixelSumIntegrator::PixelSumIntegrator(bool fit_center, bool fit_covariance)
 PixelSumIntegrator::~PixelSumIntegrator() { }
 
 bool PixelSumIntegrator::compute(
-    Peak3D* peak, ShapeLibrary* shape_library, const IntegrationRegion& region)
+    Peak3D* peak, ShapeCollection* shape_collection, const IntegrationRegion& region)
 {
-    MeanBackgroundIntegrator::compute(peak, shape_library, region);
+    MeanBackgroundIntegrator::compute(peak, shape_collection, region);
     PeakCoordinateSystem frame(peak);
 
     const auto& events = region.peakData().events();

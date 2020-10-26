@@ -16,7 +16,7 @@
 
 #include "base/utils/Logger.h"
 #include "core/data/DataSet.h"
-#include "core/peak/Intensity.h"
+#include "core/peak/IntegrationRegion.h"
 #include "core/peak/Peak3D.h"
 #include "tables/crystal/UnitCell.h"
 
@@ -57,7 +57,7 @@ const std::vector<Intensity>& IPeakIntegrator::rockingCurve() const
 }
 
 void IPeakIntegrator::integrate(
-    std::vector<nsx::Peak3D*> peaks, ShapeLibrary* shape_library, sptrDataSet data, int n_numor)
+    std::vector<nsx::Peak3D*> peaks, ShapeCollection* shape_collection, sptrDataSet data, int n_numor)
 {
     // integrate only those peaks that belong to the specified dataset
     auto it = std::remove_if(peaks.begin(), peaks.end(), [&](const Peak3D* peak) {
@@ -136,7 +136,7 @@ void IPeakIntegrator::integrate(
             if (result && !integrated[peak]) {
                 regions[peak].peakData().computeStandard();
                 try {
-                    if (compute(peak, shape_library, regions[peak])) {
+                    if (compute(peak, shape_collection, regions[peak])) {
                         peak->updateIntegration(
                             rockingCurve(), meanBackground(), integratedIntensity(),
                             _params.peak_end, _params.bkg_begin, _params.bkg_end);
