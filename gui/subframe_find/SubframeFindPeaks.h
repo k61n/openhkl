@@ -3,7 +3,7 @@
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
 //! @file      gui/subframe_find/SubframeFindPeaks.h
-//! @brief     Defines classes FoundPeaks, PeakFinderFrame
+//! @brief     Defines classes FoundPeaks, SubframeFindPeaks
 //!
 //! @homepage  ###HOMEPAGE###
 //! @license   GNU General Public License v3 or higher (see COPYING)
@@ -16,7 +16,6 @@
 #define NSX_GUI_SUBFRAME_FIND_SUBFRAMEFINDPEAKS_H
 
 #include "core/shape/PeakCollection.h"
-
 #include "gui/graphics/DetectorView.h"
 #include "gui/models/PeakCollectionModel.h"
 #include "gui/utility/ColorButton.h"
@@ -36,9 +35,9 @@
 #include <QWidget>
 
 //! Frame which shows the settings to find peaks
-class PeakFinderFrame : public QWidget {
+class SubframeFindPeaks : public QWidget {
  public:
-    PeakFinderFrame();
+    SubframeFindPeaks();
     //! Change the convolution parameters
     void updateConvolutionParameters();
     //! Find peaks
@@ -145,7 +144,7 @@ class PeakFinderFrame : public QWidget {
     QSpinBox* _figure_spin;
     QScrollBar* _figure_scroll;
 
-    PeaksTableView* _peak_table;
+    PeakTableView* _peak_table;
 
     QPushButton* _find_button;
     QPushButton* _integrate_button;

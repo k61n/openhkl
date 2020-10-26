@@ -52,7 +52,7 @@ class PeakProperties : public QWidget {
 
  private:
     QComboBox* _peak_list_combo;
-    PeaksTableView* _peak_table;
+    PeakTableView* _peak_table;
 
     QLabel* _type;
     QLabel* _file_name;

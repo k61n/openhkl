@@ -3,7 +3,7 @@
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
 //! @file      gui/subframe_find/SubframeFindPeaks.cpp
-//! @brief     Implements classes FoundPeaks, PeakFinderFrame
+//! @brief     Implements classes FoundPeaks, SubframeFindPeaks
 //!
 //! @homepage  ###HOMEPAGE###
 //! @license   GNU General Public License v3 or higher (see COPYING)
@@ -13,6 +13,7 @@
 //  ***********************************************************************************************
 
 #include "gui/subframe_find/SubframeFindPeaks.h"
+
 #include "core/convolve/ConvolverFactory.h"
 #include "core/data/DataSet.h"
 #include "core/experiment/Experiment.h"
@@ -28,6 +29,7 @@
 #include "gui/models/Project.h"
 #include "gui/models/Session.h"
 #include "gui/utility/Spoiler.h"
+
 #include <QFileInfo>
 #include <QGridLayout>
 #include <QGroupBox>
@@ -39,7 +41,7 @@
 #include <QSpacerItem>
 #include <QTableWidgetItem>
 
-PeakFinderFrame::PeakFinderFrame()
+SubframeFindPeaks::SubframeFindPeaks()
     : QWidget()
     , _peak_collection("temp", nsx::listtype::FOUND)
     , _peak_collection_item()
@@ -77,7 +79,7 @@ PeakFinderFrame::PeakFinderFrame()
     });
 }
 
-void PeakFinderFrame::setSizePolicies()
+void SubframeFindPeaks::setSizePolicies()
 {
     _size_policy_widgets = new QSizePolicy();
     _size_policy_widgets->setHorizontalPolicy(QSizePolicy::Preferred);
@@ -96,7 +98,7 @@ void PeakFinderFrame::setSizePolicies()
     _size_policy_fixed->setVerticalPolicy(QSizePolicy::Fixed);
 }
 
-void PeakFinderFrame::setDataUp()
+void SubframeFindPeaks::setDataUp()
 {
     Spoiler* _data_box = new Spoiler("1. Input Data");
 
@@ -136,7 +138,7 @@ void PeakFinderFrame::setDataUp()
 
     connect(
         _data_combo, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this,
-        &PeakFinderFrame::updateDatasetParameters);
+        &SubframeFindPeaks::updateDatasetParameters);
 
     _data_box->setContentLayout(*_data_grid);
     _data_box->setSizePolicy(*_size_policy_box);
@@ -145,7 +147,7 @@ void PeakFinderFrame::setDataUp()
     _left_layout->addWidget(_data_box);
 }
 
-void PeakFinderFrame::setBlobUp()
+void SubframeFindPeaks::setBlobUp()
 {
     Spoiler* blob_para = new Spoiler("2. Peak search parameters");
 
@@ -243,7 +245,7 @@ void PeakFinderFrame::setBlobUp()
     blob_grid->addWidget(_end_frame_spin, 8, 1, 1, 1);
     blob_grid->addWidget(_find_button, 9, 0, 1, 2);
 
-    connect(_find_button, &QPushButton::clicked, this, &PeakFinderFrame::find);
+    connect(_find_button, &QPushButton::clicked, this, &SubframeFindPeaks::find);
 
     blob_para->setContentLayout(*blob_grid, true);
     blob_para->setSizePolicy(*_size_policy_box);
@@ -252,7 +254,7 @@ void PeakFinderFrame::setBlobUp()
     _left_layout->addWidget(blob_para);
 }
 
-void PeakFinderFrame::setIntegrateUp()
+void SubframeFindPeaks::setIntegrateUp()
 {
     Spoiler* integration_para = new Spoiler("3. Integration parameters");
 
@@ -300,7 +302,7 @@ void PeakFinderFrame::setIntegrateUp()
     integGrid->addWidget(_bkg_upper, 3, 1, 1, 1);
     integGrid->addWidget(_integrate_button, 4, 0, 1, 2);
 
-    connect(_integrate_button, &QPushButton::clicked, this, &PeakFinderFrame::integrate);
+    connect(_integrate_button, &QPushButton::clicked, this, &SubframeFindPeaks::integrate);
 
     integration_para->setContentLayout(*integGrid);
     integration_para->setSizePolicy(*_size_policy_box);
@@ -309,51 +311,51 @@ void PeakFinderFrame::setIntegrateUp()
     _left_layout->addWidget(integration_para);
 }
 
-void PeakFinderFrame::setPreviewUp()
+void SubframeFindPeaks::setPreviewUp()
 {
     Spoiler* preview_spoiler = new Spoiler("4. Show/hide peaks");
     _peak_view_widget = new PeakViewWidget("Valid peaks", "Invalid Peaks");
 
     connect(
         _peak_view_widget->drawPeaks1(), &QCheckBox::stateChanged, this,
-        &PeakFinderFrame::refreshPeakVisual);
+        &SubframeFindPeaks::refreshPeakVisual);
     connect(
         _peak_view_widget->drawPeaks2(), &QCheckBox::stateChanged, this,
-        &PeakFinderFrame::refreshPeakVisual);
+        &SubframeFindPeaks::refreshPeakVisual);
     connect(
         _peak_view_widget->drawBoxes1(), &QCheckBox::stateChanged, this,
-        &PeakFinderFrame::refreshPeakVisual);
+        &SubframeFindPeaks::refreshPeakVisual);
     connect(
         _peak_view_widget->drawBoxes2(), &QCheckBox::stateChanged, this,
-        &PeakFinderFrame::refreshPeakVisual);
+        &SubframeFindPeaks::refreshPeakVisual);
     connect(
         _peak_view_widget->peakSize1(),
         static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged), this,
-        &PeakFinderFrame::refreshPeakVisual);
+        &SubframeFindPeaks::refreshPeakVisual);
     connect(
         _peak_view_widget->peakSize2(),
         static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged), this,
-        &PeakFinderFrame::refreshPeakVisual);
+        &SubframeFindPeaks::refreshPeakVisual);
     connect(
         _peak_view_widget->boxSize1(),
         static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged), this,
-        &PeakFinderFrame::refreshPeakVisual);
+        &SubframeFindPeaks::refreshPeakVisual);
     connect(
         _peak_view_widget->boxSize2(),
         static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged), this,
-        &PeakFinderFrame::refreshPeakVisual);
+        &SubframeFindPeaks::refreshPeakVisual);
     connect(
         _peak_view_widget->peakColor1(), &ColorButton::colorChanged, this,
-        &PeakFinderFrame::refreshPeakVisual);
+        &SubframeFindPeaks::refreshPeakVisual);
     connect(
         _peak_view_widget->peakColor2(), &ColorButton::colorChanged, this,
-        &PeakFinderFrame::refreshPeakVisual);
+        &SubframeFindPeaks::refreshPeakVisual);
     connect(
         _peak_view_widget->boxColor1(), &ColorButton::colorChanged, this,
-        &PeakFinderFrame::refreshPeakVisual);
+        &SubframeFindPeaks::refreshPeakVisual);
     connect(
         _peak_view_widget->boxColor2(), &ColorButton::colorChanged, this,
-        &PeakFinderFrame::refreshPeakVisual);
+        &SubframeFindPeaks::refreshPeakVisual);
 
     preview_spoiler->setContentLayout(*_peak_view_widget);
     preview_spoiler->setSizePolicy(*_size_policy_box);
@@ -368,17 +370,17 @@ void PeakFinderFrame::setPreviewUp()
     _left_layout->addWidget(preview_spoiler);
 }
 
-void PeakFinderFrame::setSaveUp()
+void SubframeFindPeaks::setSaveUp()
 {
     _save_button = new QPushButton("Create peak collection");
     _save_button->setMaximumWidth(1000);
     _save_button->setSizePolicy(*_size_policy_widgets);
     _left_layout->addWidget(_save_button);
     _left_layout->addItem(new QSpacerItem(20, 40, QSizePolicy::Minimum, QSizePolicy::Expanding));
-    connect(_save_button, &QPushButton::clicked, this, &PeakFinderFrame::accept);
+    connect(_save_button, &QPushButton::clicked, this, &SubframeFindPeaks::accept);
 }
 
-void PeakFinderFrame::setFigureUp()
+void SubframeFindPeaks::setFigureUp()
 {
     QGroupBox* figure_group = new QGroupBox("Preview");
     QGridLayout* figure_grid = new QGridLayout(figure_group);
@@ -409,19 +411,19 @@ void PeakFinderFrame::setFigureUp()
 
     connect(
         _figure_view->getScene(), &DetectorScene::signalSelectedPeakItemChanged, this,
-        &PeakFinderFrame::changeSelected);
+        &SubframeFindPeaks::changeSelected);
 
     _right_element->addWidget(figure_group);
 }
 
-void PeakFinderFrame::setPeakTableUp()
+void SubframeFindPeaks::setPeakTableUp()
 {
     QGroupBox* peak_group = new QGroupBox("Peaks");
     QGridLayout* peak_grid = new QGridLayout(peak_group);
 
     peak_group->setSizePolicy(*_size_policy_right);
 
-    _peak_table = new PeaksTableView(this);
+    _peak_table = new PeakTableView(this);
     _peak_collection_model.setRoot(&_peak_collection_item);
     _peak_table->setModel(&_peak_collection_model);
 
@@ -434,12 +436,12 @@ void PeakFinderFrame::setPeakTableUp()
     _right_element->addWidget(peak_group);
 }
 
-void PeakFinderFrame::refreshAll()
+void SubframeFindPeaks::refreshAll()
 {
     setParametersUp();
 }
 
-void PeakFinderFrame::setParametersUp()
+void SubframeFindPeaks::setParametersUp()
 {
     if (gSession->experimentNames().empty())
         return;
@@ -459,7 +461,7 @@ void PeakFinderFrame::setParametersUp()
     _kernel_combo->setCurrentText("annular");
 }
 
-void PeakFinderFrame::setExperimentsUp()
+void SubframeFindPeaks::setExperimentsUp()
 {
     _exp_combo->blockSignals(true);
     _exp_combo->clear();
@@ -474,7 +476,7 @@ void PeakFinderFrame::setExperimentsUp()
     _exp_combo->blockSignals(false);
 }
 
-void PeakFinderFrame::updateDatasetList()
+void SubframeFindPeaks::updateDatasetList()
 {
     _data_combo->blockSignals(true);
     _data_combo->clear();
@@ -491,7 +493,7 @@ void PeakFinderFrame::updateDatasetList()
     _data_combo->blockSignals(false);
 }
 
-void PeakFinderFrame::updateDatasetParameters(int idx)
+void SubframeFindPeaks::updateDatasetParameters(int idx)
 {
     if (_data_list.empty() || idx < 0)
         return;
@@ -514,7 +516,7 @@ void PeakFinderFrame::updateDatasetParameters(int idx)
     _figure_spin->setMinimum(0);
 }
 
-void PeakFinderFrame::grabFinderParameters()
+void SubframeFindPeaks::grabFinderParameters()
 {
     nsx::PeakFinder* finder =
         gSession->experimentAt(_exp_combo->currentIndex())->experiment()->peakFinder();
@@ -559,7 +561,7 @@ void PeakFinderFrame::grabFinderParameters()
     _kernel_para_table->resizeColumnsToContents();
 }
 
-void PeakFinderFrame::setFinderParameters()
+void SubframeFindPeaks::setFinderParameters()
 {
     nsx::PeakFinder* finder =
         gSession->experimentAt(_exp_combo->currentIndex())->experiment()->peakFinder();
@@ -579,7 +581,7 @@ void PeakFinderFrame::setFinderParameters()
     finder->setConvolver(std::unique_ptr<nsx::Convolver>(convolver));
 }
 
-void PeakFinderFrame::grabIntegrationParameters()
+void SubframeFindPeaks::grabIntegrationParameters()
 {
     nsx::IPeakIntegrator* integrator = gSession->experimentAt(_exp_combo->currentIndex())
                                            ->experiment()
@@ -590,7 +592,7 @@ void PeakFinderFrame::grabIntegrationParameters()
     _bkg_upper->setValue(integrator->backEnd());
 }
 
-void PeakFinderFrame::updateConvolutionParameters()
+void SubframeFindPeaks::updateConvolutionParameters()
 {
     std::string kernelName = _kernel_combo->currentText().toStdString();
     nsx::ConvolverFactory _kernel_comboFactory;
@@ -623,7 +625,7 @@ void PeakFinderFrame::updateConvolutionParameters()
     _kernel_para_table->resizeColumnsToContents();
 }
 
-void PeakFinderFrame::find()
+void SubframeFindPeaks::find()
 {
     nsx::DataList data_list;
 
@@ -651,7 +653,7 @@ void PeakFinderFrame::find()
     }
 }
 
-void PeakFinderFrame::integrate()
+void SubframeFindPeaks::integrate()
 {
     nsx::Experiment* experiment = gSession->experimentAt(_exp_combo->currentIndex())->experiment();
 
@@ -673,7 +675,7 @@ void PeakFinderFrame::integrate()
     refreshPeakTable();
 }
 
-std::map<std::string, double> PeakFinderFrame::convolutionParameters()
+std::map<std::string, double> SubframeFindPeaks::convolutionParameters()
 {
     std::map<std::string, double> parameters;
     for (int i = 0; i < _kernel_para_table->rowCount(); ++i) {
@@ -684,7 +686,7 @@ std::map<std::string, double> PeakFinderFrame::convolutionParameters()
     return parameters;
 }
 
-void PeakFinderFrame::accept()
+void SubframeFindPeaks::accept()
 {
     nsx::PeakFinder* finder =
         gSession->experimentAt(_exp_combo->currentIndex())->experiment()->peakFinder();
@@ -701,7 +703,7 @@ void PeakFinderFrame::accept()
     }
 }
 
-void PeakFinderFrame::refreshPreview()
+void SubframeFindPeaks::refreshPreview()
 {
     nsx::sptrDataSet dataset = _data_combo->currentData().value<nsx::sptrDataSet>();
     int selected = 0;
@@ -735,7 +737,7 @@ void PeakFinderFrame::refreshPreview()
     _figure_view->fitInView(_figure_view->scene()->sceneRect());
 }
 
-void PeakFinderFrame::refreshPeakTable()
+void SubframeFindPeaks::refreshPeakTable()
 {
     std::vector<nsx::Peak3D*> peaks = gSession->experimentAt(_exp_combo->currentIndex())
                                           ->experiment()
@@ -754,7 +756,7 @@ void PeakFinderFrame::refreshPeakTable()
     refreshPeakVisual();
 }
 
-void PeakFinderFrame::refreshPeakVisual()
+void SubframeFindPeaks::refreshPeakVisual()
 {
     if (_peak_collection_item.childCount() == 0)
         return;
@@ -791,7 +793,7 @@ void PeakFinderFrame::refreshPeakVisual()
     _figure_view->getScene()->drawPeakitems();
 }
 
-void PeakFinderFrame::changeSelected(PeakItemGraphic* peak_graphic)
+void SubframeFindPeaks::changeSelected(PeakItemGraphic* peak_graphic)
 {
     int row = _peak_collection_item.returnRowOfVisualItem(peak_graphic);
     QModelIndex index = _peak_collection_model.index(row, 0);

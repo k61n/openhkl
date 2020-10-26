@@ -13,6 +13,7 @@
 //  ***********************************************************************************************
 
 #include "gui/subframe_index/SubframeAutoIndexer.h"
+
 #include "base/utils/Logger.h"
 #include "base/utils/ProgressHandler.h"
 #include "base/utils/Units.h"
@@ -21,6 +22,7 @@
 #include "gui/frames/UnitCellWidget.h"
 #include "gui/models/Project.h"
 #include "gui/models/Session.h"
+
 #include <QHeaderView>
 #include <QLabel>
 
@@ -335,7 +337,7 @@ void SubframeAutoIndexer::setPeakTableUp()
 
     peak_group->setSizePolicy(*_size_policy_right);
 
-    _peak_table = new PeaksTableView(this);
+    _peak_table = new PeakTableView(this);
     _peak_collection_model.setRoot(&_peak_collection_item);
     _peak_table->setModel(&_peak_collection_model);
 

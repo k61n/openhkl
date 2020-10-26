@@ -21,6 +21,8 @@
 #include <QDialogButtonBox>
 #include <QGridLayout>
 #include <QHBoxLayout>
+#include <QDir>
+#include <QLabel>
 
 namespace {
 QStringList allInstrumentNames()

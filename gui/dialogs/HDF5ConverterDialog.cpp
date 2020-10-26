@@ -9,6 +9,7 @@
 #include <QFileDialog>
 #include <QHBoxLayout>
 #include <QVBoxLayout>
+#include <QLabel>
 
 HDF5ConverterDialog::HDF5ConverterDialog() : QDialog{}
 {

@@ -17,6 +17,7 @@
 #include "gui/MainWin.h"
 #include "gui/actions/Actions.h"
 #include <QTreeView>
+#include <QVBoxLayout>
 
 LoggerPanel::LoggerPanel() : QWidget()
 {

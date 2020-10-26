@@ -13,6 +13,7 @@
 //  ***********************************************************************************************
 
 #include "gui/subframe_predict/SubframePredictPeaks.h"
+
 #include "core/data/DataSet.h"
 #include "core/experiment/Experiment.h"
 #include "core/peak/Peak3D.h"
@@ -22,12 +23,18 @@
 #include "gui/dialogs/ListNameDialog.h"
 #include "gui/frames/ProgressView.h"
 #include "gui/graphics/DetectorScene.h"
+#include "gui/graphics/DetectorView.h"
 #include "gui/items/PeakItem.h"
 #include "gui/models/Meta.h"
 #include "gui/models/Project.h"
 #include "gui/models/Session.h"
 #include "gui/subframe_predict/ShapeLibraryDialog.h"
+#include "gui/utility/ColorButton.h"
+#include "gui/utility/Spoiler.h"
+#include "gui/widgets/PeakViewWidget.h"
+#include "gui/views/PeakTableView.h"
 #include "tables/crystal/UnitCell.h"
+
 #include <QFileInfo>
 #include <QGridLayout>
 #include <QGroupBox>
@@ -496,7 +503,7 @@ void SubframePredictPeaks::setPeakTableUp()
 
     peak_group->setSizePolicy(*_size_policy_right);
 
-    _peak_table = new PeaksTableView(this);
+    _peak_table = new PeakTableView(this);
     _peak_collection_model.setRoot(&_peak_collection_item);
     _peak_table->setModel(&_peak_collection_model);
 

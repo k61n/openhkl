@@ -14,11 +14,21 @@
 
 #include "gui/MainWin.h"
 #include "gui/models/Session.h"
+#include "gui/subframe_home/SubframeHome.h"
+#include "gui/subframe_experiment/SubframeExperiment.h"
+#include "gui/subframe_find/SubframeFindPeaks.h"
+#include "gui/subframe_filter/SubframeFilterPeaks.h"
+#include "gui/subframe_index/SubframeAutoIndexer.h"
+#include "gui/subframe_refiner/SubframeRefiner.h"
+#include "gui/subframe_predict/SubframePredictPeaks.h"
+#include "gui/subframe_combine/SubframeMergedPeaks.h"
+#include "gui/utility/SideBar.h"
 
 #include <QDebug>
 #include <QEvent>
 #include <QPaintEvent>
 #include <QPainter>
+#include <QLabel>
 
 #define action_height 100
 

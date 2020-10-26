@@ -16,16 +16,24 @@
 #include "core/data/DataSet.h"
 #include "core/experiment/DataQuality.h"
 #include "core/experiment/Experiment.h"
+#include "core/peak/Peak3D.h"
+#include "core/shape/PeakCollection.h"
 #include "core/statistics/CC.h"
+#include "core/statistics/MergedData.h"
 #include "core/statistics/MergedPeak.h"
 #include "core/statistics/RFactor.h"
 #include "core/statistics/ResolutionShell.h"
+#include "gui/graphics/SXPlot.h"
 #include "gui/models/Project.h"
 #include "gui/models/Session.h"
+
 #include <QDialogButtonBox>
 #include <QFormLayout>
 #include <QHBoxLayout>
 #include <QVBoxLayout>
+#include <QLabel>
+#include <QFileDialog>
+
 #include <fstream>
 #include <iomanip>
 

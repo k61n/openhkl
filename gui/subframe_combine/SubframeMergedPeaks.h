@@ -15,19 +15,7 @@
 #ifndef NSX_GUI_SUBFRAME_COMBINE_SUBFRAMEMERGEDPEAKS_H
 #define NSX_GUI_SUBFRAME_COMBINE_SUBFRAMEMERGEDPEAKS_H
 
-#include "gui/graphics/DetectorView.h"
-#include "gui/graphics/SXPlot.h"
-#include "gui/models/PeakCollectionModel.h"
-#include "gui/utility/ColorButton.h"
-#include "gui/utility/Spoiler.h"
-#include "gui/views/PeakTableView.h"
-
-#include "core/peak/Peak3D.h"
-#include "core/shape/PeakCollection.h"
-#include "core/statistics/MergedData.h"
 #include "core/statistics/PeakExporter.h"
-
-#include "tables/crystal/SpaceGroup.h"
 
 #include <QCheckBox>
 #include <QComboBox>
@@ -42,6 +30,10 @@
 #include <QTableWidget>
 #include <QVBoxLayout>
 #include <QWidget>
+#include <QStandardItemModel>
+
+class MergedData;
+class SXPlot;
 
 class SubframeMergedPeaks : public QWidget {
  public:

@@ -12,12 +12,16 @@
 //
 //  ***********************************************************************************************
 
+#include "gui/MainWin.h"
+#include "gui/items/PeakCollectionItem.h"
+#include "gui/models/PeakCollectionModel.h"
 #include "gui/models/Project.h"
 #include "core/data/DataSet.h"
 #include "core/experiment/Experiment.h"
-#include "gui/MainWin.h"
+
 #include <QDebug>
 #include <QStringList>
+
 #include <iostream>
 #include <vector>
 

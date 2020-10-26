@@ -13,8 +13,13 @@
 //  ***********************************************************************************************
 
 #include "gui/subframe_experiment/PropertyPanel.h"
+
 #include "gui/models/Project.h"
 #include "gui/models/Session.h"
+#include "gui/subframe_experiment/properties/InstrumentProperty.h"
+#include "gui/subframe_experiment/properties/NumorProperty.h"
+#include "gui/subframe_experiment/properties/PeakProperties.h"
+#include "gui/subframe_experiment/properties/UnitCellProperty.h"
 
 namespace {
 enum class tab { INSTRUMENT, DATA, UNITCELLS, PEAKS };

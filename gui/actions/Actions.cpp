@@ -16,6 +16,7 @@
 
 #include "gui/MainWin.h" // for gGui
 #include "gui/models/Session.h" //for gSession
+#include "gui/subframe_home/SubframeHome.h"
 
 Actions::Actions() : QObject()
 {
@@ -53,7 +54,7 @@ void Actions::setupData()
     // loadData.setTriggerHook([]() { gSession->loadData(); });
     // removeData.setTriggerHook([]() { gSession->removeData(); });
     // importRaw.setTriggerHook([]() { gSession->loadRawData(); });
-    // findPeaks.setTriggerHook([]() { new PeakFinderFrame; });
+    // findPeaks.setTriggerHook([]() { new SubframeFindPeaks; });
     // instrumentStates.setTriggerHook([]() { new InstrumentStatesFrame; });
     // convertHDF5.setTriggerHook([]() {
     //     if (gSession->currentProjectNum() < 0)

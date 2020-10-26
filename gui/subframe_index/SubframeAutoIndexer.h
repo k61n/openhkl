@@ -17,7 +17,6 @@
 
 #include "core/algo/AutoIndexer.h"
 #include "core/shape/PeakCollection.h"
-
 #include "gui/graphics/DetectorView.h"
 #include "gui/models/PeakCollectionModel.h"
 #include "gui/utility/ColorButton.h"
@@ -138,7 +137,7 @@ class SubframeAutoIndexer : public QWidget {
     QSizePolicy* _size_policy_right;
     QSizePolicy* _size_policy_fixed;
 
-    PeaksTableView* _peak_table;
+    PeakTableView* _peak_table;
     UnitCellTableView* _solution_table;
 };
 

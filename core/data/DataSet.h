@@ -16,12 +16,13 @@
 #define NSX_CORE_DATA_DATASET_H
 
 #include "base/mask/IMask.h"
-#include "core/detector/Detector.h"
 #include "core/instrument/InstrumentStateList.h"
 #include "core/peak/Peak3D.h"
 #include "core/raw/IDataReader.h"
 
 namespace nsx {
+
+    class Detector;
 
 //! Class used to manage loading detector images and metadata from disk.
 //!

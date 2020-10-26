@@ -16,13 +16,7 @@
 #define NSX_GUI_SUBFRAME_PREDICT_SUBFRAMEPREDICTPEAKS_H
 
 #include "core/shape/PeakCollection.h"
-
-#include "gui/graphics/DetectorView.h"
 #include "gui/models/PeakCollectionModel.h"
-#include "gui/utility/ColorButton.h"
-#include "gui/utility/Spoiler.h"
-#include "gui/views/PeakTableView.h"
-#include "gui/widgets/PeakViewWidget.h"
 
 #include <QCheckBox>
 #include <QComboBox>
@@ -36,6 +30,11 @@
 #include <QTableWidget>
 #include <QVBoxLayout>
 #include <QWidget>
+
+class DetectorView;
+class PeakTableView;
+class PeakViewWidget;
+class Spoiler;
 
 //! Frame which shows the settings to find peaks
 class SubframePredictPeaks : public QWidget {
@@ -154,7 +153,7 @@ class SubframePredictPeaks : public QWidget {
     QSpinBox* _figure_spin;
     QScrollBar* _figure_scroll;
 
-    PeaksTableView* _peak_table;
+    PeakTableView* _peak_table;
 
     QPushButton* _build_shape_lib;
     QPushButton* _run_prediction;

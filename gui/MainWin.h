@@ -15,18 +15,20 @@
 #ifndef NSX_GUI_MAINWIN_H
 #define NSX_GUI_MAINWIN_H
 
-#include "gui/graphics/DetectorScene.h"
-#include "gui/subframe_combine/SubframeMergedPeaks.h"
-#include "gui/subframe_experiment/SubframeExperiment.h"
-#include "gui/subframe_filter/SubframeFilterPeaks.h"
-#include "gui/subframe_find/SubframeFindPeaks.h"
-#include "gui/subframe_home/SubframeHome.h"
-#include "gui/subframe_index/SubframeAutoIndexer.h"
-#include "gui/subframe_predict/SubframePredictPeaks.h"
-#include "gui/subframe_refiner/SubframeRefiner.h"
-#include "gui/utility/SideBar.h"
-
 #include <QStackedWidget>
+#include <QMainWindow>
+
+class DetectorScene;
+class PlottableItem;
+class SideBar;
+class SubframeHome;
+class SubframeExperiment;
+class SubframeFindPeaks;
+class SubframeFilterPeaks;
+class SubframeAutoIndexer;
+class SubframeMergedPeaks;
+class SubframeRefiner;
+class SubframePredictPeaks;
 
 extern class MainWin* gGui; //!< global pointer to the main window
 
@@ -50,18 +52,15 @@ class MainWin : public QMainWindow {
     //! Refreshes the parts of the main window that depend on the peaks
     void onUnitCellChanged();
     //! change the detector image view
-    void changeView(int option) { experiment->getImage()->changeView(option); }
+    void changeView(int option);
     //! update the plot, plot the plottable item p
-    void updatePlot(PlottableItem* p) { experiment->getPlot()->updatePlot(p); }
+    void updatePlot(PlottableItem* p);
     //! change the cursor tooltip on the detector scene
-    void cursormode(int i) { experiment->getImage()->getView()->getScene()->changeCursorMode(i); }
+    void cursormode(int i);
     //! export current plot to ASCII
-    void exportPlot() { experiment->getPlot()->exportPlot(); }
+    void exportPlot();
     //! plot the x and y data, e is the error to y
-    void plotData(QVector<double>& x, QVector<double>& y, QVector<double>& e)
-    {
-        experiment->getPlot()->plotData(x, y, e);
-    }
+    void plotData(QVector<double>& x, QVector<double>& y, QVector<double>& e);
 
     //! Get the Sidebar
     SideBar* sideBar() { return _side_bar; };
@@ -74,7 +73,7 @@ class MainWin : public QMainWindow {
  public:
     SubframeExperiment* experiment;
     SubframeHome* home;
-    PeakFinderFrame* finder;
+    SubframeFindPeaks* finder;
     SubframeFilterPeaks* filter;
     SubframeAutoIndexer* indexer;
     SubframePredictPeaks* predictor;

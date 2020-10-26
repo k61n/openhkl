@@ -17,6 +17,8 @@
 #include "gui/MainWin.h"
 #include "gui/actions/Actions.h"
 #include "gui/graphics/PlotFactory.h"
+#include "gui/graphics/SXPlot.h"
+#include "gui/graphics_items/PlottableItem.h"
 
 PlotPanel::PlotPanel() : QWidget()
 {

@@ -18,6 +18,7 @@
 #include <QDialogButtonBox>
 #include <QHBoxLayout>
 #include <QVBoxLayout>
+#include <QLabel>
 
 ListNameDialog::ListNameDialog() : QDialog()
 {

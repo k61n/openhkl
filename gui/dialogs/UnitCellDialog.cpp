@@ -20,6 +20,7 @@
 #include <QDialogButtonBox>
 #include <QGridLayout>
 #include <QHBoxLayout>
+#include <QLabel>
 
 UnitCellDialog::UnitCellDialog(
     std::vector<std::string> collectionNames, std::vector<std::string> spaceGroups)

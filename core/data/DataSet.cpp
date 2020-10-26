@@ -12,6 +12,7 @@
 //
 //  ***********************************************************************************************
 
+#include "core/detector/Detector.h"
 #include "core/data/DataSet.h"
 
 #include "base/parser/BloscFilter.h"
