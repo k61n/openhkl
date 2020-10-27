@@ -18,6 +18,7 @@
 #include "gui/subframe_experiment/LoggerPanel.h"
 #include "gui/subframe_experiment/PlotPanel.h"
 #include "gui/subframe_experiment/PropertyPanel.h"
+#include "gui/subframe_experiment/properties/NumorProperty.h"
 
 #include <QHBoxLayout>
 #include <QSplitter>

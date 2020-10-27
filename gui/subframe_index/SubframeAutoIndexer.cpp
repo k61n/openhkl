@@ -475,8 +475,7 @@ void SubframeAutoIndexer::setIndexerParameters()
 
 void SubframeAutoIndexer::runAutoIndexer()
 {
-    if (_peak_list.empty() || _exp_combo->count() < 1)
-    {
+    if (_peak_list.empty() || _exp_combo->count() < 1) {
         QMessageBox::critical(this, "Error", "No peaks or experiments defined.");
         return;
     }
@@ -502,7 +501,7 @@ void SubframeAutoIndexer::runAutoIndexer()
     }
 
     _solutions = auto_indexer->solutions();
-    if(_solutions.size() == 0)
+    if (_solutions.size() == 0)
         QMessageBox::warning(this, "Warning", "No solution found.");
 
     buildSolutionsTable();

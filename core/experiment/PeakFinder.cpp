@@ -670,6 +670,9 @@ void PeakFinder::find(const DataList numors)
             Eigen::Vector3d(x_offset, y_offset, 0),
             Eigen::Vector3d(ncols - x_offset, nrows - y_offset, nframes - 1));
 
+        static const double peaksTooLargeLimit = 1e5;
+        static const double peaksTooSmallLimit = 1e-5;
+
         std::size_t numPeaksTooSmallOrLarge = 0;
         std::size_t numPeaksOutsideFrames = 0;
         std::size_t numPeaksNotInDetArea = 0;
@@ -685,7 +688,7 @@ void PeakFinder::find(const DataList numors)
             const auto extents = p->shape().aabb().extents();
 
             // peak too small or too large
-            if (extents.maxCoeff() > 1e5 || extents.minCoeff() < 1e-5) {
+            if (extents.maxCoeff() > peaksTooLargeLimit || extents.minCoeff() < peaksTooSmallLimit) {
                 p->setSelected(false);
                 ++numPeaksTooSmallOrLarge;
             }
@@ -712,16 +715,21 @@ void PeakFinder::find(const DataList numors)
                 _handler->setProgress(progress);
             }
         }
+
         nsxlog(Level::Debug, "PeakFinder::find: blob loop done");
+
         if (_handler) {
             _handler->setStatus(
                 ("Integrating " + std::to_string(numor_peaks.size()) + " peaks...").c_str());
             _handler->setProgress(0);
         }
-        nsxlog(Level::Info, "PeakFinder::find:", numor_peaks.size(), "peaks found,",
-            numPeaksTooSmallOrLarge, "peaks too small,",
-            numPeaksOutsideFrames, "peaks outside frame range,",
-            numPeaksNotInDetArea, "peaks not fully on detector.");
+
+        nsxlog(Level::Info, "PeakFinder::find:", 
+                numor_peaks.size(), "peaks found,",
+                numPeaksTooSmallOrLarge, "peaks too small,", 
+                numPeaksOutsideFrames, "peaks outside frame range,", 
+                numPeaksNotInDetArea, "peaks not fully on detector.");
+
         numor->close();
         if (_handler)
             _handler->log("Found " + std::to_string(numor_peaks.size()) + " peaks.");
