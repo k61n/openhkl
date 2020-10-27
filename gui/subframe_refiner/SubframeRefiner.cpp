@@ -392,7 +392,7 @@ void SubframeRefiner::updatePredictedList()
     _predicted_list = gSession->experimentAt(_exp_combo->currentIndex())->getPredictedNames();
 
     if (!_predicted_list.empty()) {
-        _predicted_combo->addItems(_peak_list);
+        _predicted_combo->addItems(_predicted_list);
         _predicted_combo->setCurrentIndex(0);
     }
     _predicted_combo->blockSignals(false);
