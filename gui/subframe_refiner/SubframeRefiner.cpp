@@ -12,16 +12,20 @@
 //
 //  ***********************************************************************************************
 
+#include "gui/subframe_refiner/SubframeRefiner.h"
+
 #include "core/experiment/Experiment.h"
 #include "core/shape/PeakCollection.h"
 #include "core/shape/PeakFilter.h"
-
 #include "gui/MainWin.h"
 #include "gui/dialogs/ListNameDialog.h"
+#include "gui/graphics/SXPlot.h"
 #include "gui/models/Meta.h"
 #include "gui/models/Project.h"
 #include "gui/models/Session.h"
-#include "gui/subframe_refiner/SubframeRefiner.h"
+#include "gui/subframe_refiner/RefinerTables.h"
+#include "gui/utility/ColorButton.h"
+#include "gui/utility/Spoiler.h"
 
 #include <QFileInfo>
 #include <QGridLayout>

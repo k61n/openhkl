@@ -15,12 +15,12 @@
 #ifndef NSX_GUI_SUBFRAME_EXPERIMENT_IMAGEPANEL_H
 #define NSX_GUI_SUBFRAME_EXPERIMENT_IMAGEPANEL_H
 
-#include "gui/graphics/DetectorView.h"
-
 #include <QComboBox>
 #include <QFrame>
 #include <QScrollBar>
 #include <QSpinBox>
+
+class DetectorView;
 
 //! Part of the main window that contains the detector view
 class ImagePanel : public QWidget {

@@ -16,7 +16,6 @@
 #define NSX_CORE_SHAPE_PEAKFILTER_H
 
 #include "core/shape/PeakCollection.h"
-#include <bitset>
 
 namespace nsx {
 

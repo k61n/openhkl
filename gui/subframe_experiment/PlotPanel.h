@@ -15,9 +15,11 @@
 #ifndef NSX_GUI_SUBFRAME_EXPERIMENT_PLOTPANEL_H
 #define NSX_GUI_SUBFRAME_EXPERIMENT_PLOTPANEL_H
 
-#include "gui/graphics_items/PlottableItem.h"
 #include <QHBoxLayout>
 #include <QWidget>
+
+class PlottableItem;
+class SXPlot;
 
 //! Part of the main window that contains the plot
 class PlotPanel : public QWidget {

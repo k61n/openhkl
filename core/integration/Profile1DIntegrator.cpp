@@ -18,7 +18,7 @@
 #include "core/peak/Intensity.h"
 #include "core/peak/Peak3D.h"
 #include "core/peak/PeakCoordinateSystem.h"
-#include "core/shape/ShapeLibrary.h"
+#include "core/shape/ShapeCollection.h"
 
 namespace nsx {
 
@@ -76,9 +76,9 @@ static void updateFit(
 }
 
 bool Profile1DIntegrator::compute(
-    Peak3D* peak, ShapeLibrary* shape_library, const IntegrationRegion& region)
+    Peak3D* peak, ShapeCollection* shape_collection, const IntegrationRegion& region)
 {
-    if (!shape_library)
+    if (!shape_collection)
         return false;
 
     if (!peak)
@@ -99,7 +99,7 @@ bool Profile1DIntegrator::compute(
 
     try {
         // throws if there are no neighboring peaks within the bounds
-        mean_profile = shape_library->meanProfile1D(DetectorEvent(c), radius(), nFrames());
+        mean_profile = shape_collection->meanProfile1D(DetectorEvent(c), radius(), nFrames());
     } catch (...) {
         return false;
     }

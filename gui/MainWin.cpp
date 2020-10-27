@@ -16,7 +16,23 @@
 
 #include "gui/actions/Actions.h"
 #include "gui/actions/Menus.h"
+#include "gui/graphics/DetectorScene.h"
+#include "gui/graphics/DetectorView.h"
+#include "gui/graphics_items/PlottableItem.h"
+#include "gui/subframe_combine/SubframeMergedPeaks.h"
+#include "gui/subframe_experiment/ImagePanel.h"
+#include "gui/subframe_experiment/LoggerPanel.h"
+#include "gui/subframe_experiment/PlotPanel.h"
+#include "gui/subframe_experiment/PropertyPanel.h"
+#include "gui/subframe_experiment/SubframeExperiment.h"
+#include "gui/subframe_filter/SubframeFilterPeaks.h"
+#include "gui/subframe_find/SubframeFindPeaks.h"
+#include "gui/subframe_home/SubframeHome.h"
+#include "gui/subframe_index/SubframeAutoIndexer.h"
+#include "gui/subframe_predict/SubframePredictPeaks.h"
+#include "gui/subframe_refiner/SubframeRefiner.h"
 #include "gui/utility/SideBar.h"
+
 #include <QApplication>
 #include <QCloseEvent>
 #include <QHBoxLayout>
@@ -55,7 +71,7 @@ MainWin::MainWin()
 
     home = new SubframeHome;
     experiment = new SubframeExperiment;
-    finder = new PeakFinderFrame;
+    finder = new SubframeFindPeaks;
     filter = new SubframeFilterPeaks;
     indexer = new SubframeAutoIndexer;
     predictor = new SubframePredictPeaks;
@@ -120,6 +136,31 @@ void MainWin::onPeaksChanged()
 void MainWin::onUnitCellChanged()
 {
     experiment->getProperty()->unitCellChanged();
+}
+
+void MainWin::changeView(int option)
+{
+    experiment->getImage()->changeView(option);
+}
+
+void MainWin::updatePlot(PlottableItem* p)
+{
+    experiment->getPlot()->updatePlot(p);
+}
+
+void MainWin::cursormode(int i)
+{
+    experiment->getImage()->getView()->getScene()->changeCursorMode(i);
+}
+
+void MainWin::exportPlot()
+{
+    experiment->getPlot()->exportPlot();
+}
+
+void MainWin::plotData(QVector<double>& x, QVector<double>& y, QVector<double>& e)
+{
+    experiment->getPlot()->plotData(x, y, e);
 }
 
 void MainWin::resetViews()

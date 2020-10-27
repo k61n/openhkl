@@ -19,6 +19,7 @@
 #include <QDialogButtonBox>
 #include <QLineEdit>
 #include <QProgressBar>
+#include <QPushButton>
 
 //! Dialog to convert selected numors to HDF5 format
 class HDF5ConverterDialog : public QDialog {

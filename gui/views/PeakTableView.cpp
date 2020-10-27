@@ -3,7 +3,7 @@
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
 //! @file      gui/views/PeakTableView.cpp
-//! @brief     Implements classes PeaksTableModel, PeaksTableView
+//! @brief     Implements classes PeaksTableModel, PeakTableView
 //!
 //! @homepage  ###HOMEPAGE###
 //! @license   GNU General Public License v3 or higher (see COPYING)
@@ -16,7 +16,7 @@
 
 #include <QHeaderView>
 
-PeaksTableView::PeaksTableView(QWidget* parent) : QTableView(parent)
+PeakTableView::PeakTableView(QWidget* parent) : QTableView(parent)
 {
     // setEditTriggers(QAbstractItemView::SelectedClicked);
 
@@ -35,7 +35,7 @@ PeaksTableView::PeaksTableView(QWidget* parent) : QTableView(parent)
     // SLOT(togglePeakSelection(QModelIndex)));
 }
 
-// void PeaksTableView::selectPeak(QModelIndex index)
+// void PeakTableView::selectPeak(QModelIndex index)
 // {
 //     if (!index.isValid())
 //         return;
@@ -45,7 +45,7 @@ PeaksTableView::PeaksTableView(QWidget* parent) : QTableView(parent)
 //     peaks_model->selectPeak(index);
 // }
 
-// void PeaksTableView::keyPressEvent(QKeyEvent* event)
+// void PeakTableView::keyPressEvent(QKeyEvent* event)
 // {
 //     QModelIndex previous_index = currentIndex();
 
@@ -69,7 +69,7 @@ PeaksTableView::PeaksTableView(QWidget* parent) : QTableView(parent)
 //     }
 // }
 
-// void PeaksTableView::togglePeakSelection(QModelIndex index)
+// void PeakTableView::togglePeakSelection(QModelIndex index)
 // {
 //     PeaksTableModel* peaks_model = dynamic_cast<PeaksTableModel*>(model());
 //     if (peaks_model == nullptr)
@@ -78,7 +78,7 @@ PeaksTableView::PeaksTableView(QWidget* parent) : QTableView(parent)
 //     peaks_model->togglePeakSelection(index);
 // }
 
-// void PeaksTableView::contextMenuEvent(QContextMenuEvent* event)
+// void PeakTableView::contextMenuEvent(QContextMenuEvent* event)
 // {
 //     PeaksTableModel* peaksModel = dynamic_cast<PeaksTableModel*>(model());
 //     if (peaksModel == nullptr)
@@ -142,7 +142,7 @@ PeaksTableView::PeaksTableView(QWidget* parent) : QTableView(parent)
 //     connect(togglePeaksSelection, SIGNAL(triggered()), this, SLOT(togglePeaksSelection()));
 // }
 
-// void PeaksTableView::normalizeToMonitor()
+// void PeakTableView::normalizeToMonitor()
 // {
 //     bool ok;
 //     double factor =
@@ -173,7 +173,7 @@ PeaksTableView::PeaksTableView(QWidget* parent) : QTableView(parent)
 //     emit plotPeak(peak);
 // }
 
-// void PeaksTableView::plotAs(const std::string& key)
+// void PeakTableView::plotAs(const std::string& key)
 // {
 //     QModelIndexList indexList = selectionModel()->selectedIndexes();
 //     if (!indexList.size())
@@ -202,7 +202,7 @@ PeaksTableView::PeaksTableView(QWidget* parent) : QTableView(parent)
 //     // gGui->plotData(x, y, e);
 // }
 
-// void PeaksTableView::selectUnindexedPeaks()
+// void PeakTableView::selectUnindexedPeaks()
 // {
 //     PeaksTableModel* peaksModel = dynamic_cast<PeaksTableModel*>(model());
 //     if (peaksModel == nullptr)
@@ -213,7 +213,7 @@ PeaksTableView::PeaksTableView(QWidget* parent) : QTableView(parent)
 //         selectRow(index.row());
 // }
 
-// void PeaksTableView::togglePeaksSelection()
+// void PeakTableView::togglePeaksSelection()
 // {
 //     QItemSelectionModel* selection = selectionModel();
 
@@ -223,7 +223,7 @@ PeaksTableView::PeaksTableView(QWidget* parent) : QTableView(parent)
 //     }
 // }
 
-// void PeaksTableView::selectValidPeaks()
+// void PeakTableView::selectValidPeaks()
 // {
 //     PeaksTableModel* peaksModel = dynamic_cast<PeaksTableModel*>(model());
 //     if (peaksModel == nullptr)

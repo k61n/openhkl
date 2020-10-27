@@ -19,8 +19,10 @@
 #include "gui/MainWin.h"
 
 #include <QDialogButtonBox>
+#include <QDir>
 #include <QGridLayout>
 #include <QHBoxLayout>
+#include <QLabel>
 
 namespace {
 QStringList allInstrumentNames()

@@ -14,6 +14,9 @@
 
 #include "core/statistics/CC.h"
 
+#include "core/statistics/MergedData.h"
+#include "core/statistics/MergedPeak.h"
+
 namespace nsx {
 
 CC::CC() : _CChalf(0), _CCstar(0) { }

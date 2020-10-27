@@ -16,7 +16,7 @@
 #define NSX_CORE_INTEGRATION_ISIGMAINTEGRATOR_H
 
 #include "core/integration/PixelSumIntegrator.h"
-#include "core/shape/ShapeLibrary.h"
+#include "core/shape/ShapeCollection.h"
 
 namespace nsx {
 
@@ -26,7 +26,7 @@ class ISigmaIntegrator : public PixelSumIntegrator {
  public:
     ISigmaIntegrator();
     bool compute(
-        Peak3D* peak, ShapeLibrary* shape_library, const IntegrationRegion& region) override;
+        Peak3D* peak, ShapeCollection* shape_collection, const IntegrationRegion& region) override;
 };
 
 } // namespace nsx

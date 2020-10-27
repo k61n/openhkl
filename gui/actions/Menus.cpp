@@ -73,7 +73,8 @@ Menus::Menus(QMenuBar* menu_bar) : _menu_bar{menu_bar}
     // QMenu* peaks = new QMenu {"&Peaks"};
     // peaks->addActions({&actions->findPeaks, &actions->filterPeaks});
     // peaks->addMenu(indexing);
-    // peaks->addActions({&actions->refine, &actions->buildShapeLibrary, &actions->integratepeaks,
+    // peaks->addActions({&actions->refine, &actions->buildShapeCollection,
+    // &actions->integratepeaks,
     //                    &actions->normalize, &actions->correctAbsorption, &actions->predictPeaks,
     //                    &actions->statistics, &actions->show3d, &actions->peaksProperties});
     // experiment_ = mbar_->addMenu("&Experiment");

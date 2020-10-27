@@ -13,12 +13,15 @@
 //  ***********************************************************************************************
 
 #include "gui/subframe_experiment/ImagePanel.h"
+
 #include "core/data/DataSet.h"
 #include "gui/MainWin.h"
 #include "gui/actions/Actions.h"
 #include "gui/graphics/DetectorScene.h"
+#include "gui/graphics/DetectorView.h"
 #include "gui/models/Project.h"
 #include "gui/models/Session.h"
+
 #include <QGraphicsView>
 #include <QGridLayout>
 #include <QHBoxLayout>

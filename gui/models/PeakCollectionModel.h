@@ -15,8 +15,9 @@
 #ifndef NSX_GUI_MODELS_PEAKCOLLECTIONMODEL_H
 #define NSX_GUI_MODELS_PEAKCOLLECTIONMODEL_H
 
-#include "gui/items/PeakCollectionItem.h"
 #include <QAbstractTableModel>
+
+class PeakCollectionItem;
 
 class PeakCollectionModel : public QAbstractTableModel {
     Q_OBJECT
