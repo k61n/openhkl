@@ -18,6 +18,7 @@
 #include "gui/subframe_experiment/LoggerPanel.h"
 #include "gui/subframe_experiment/PlotPanel.h"
 #include "gui/subframe_experiment/PropertyPanel.h"
+#include "gui/subframe_experiment/properties/NumorProperty.h"
 
 #include <QHBoxLayout>
 #include <QSplitter>
@@ -67,4 +68,10 @@ SubframeExperiment::SubframeExperiment() : QWidget()
     splitter->setChildrenCollapsible(false);
 
     layout->addWidget(splitter);
+
+    // ensure that correct numor is plotted
+    connect(
+        _properties->_data->numorSelector(),
+        static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), _image,
+        &ImagePanel::dataChanged);
 }

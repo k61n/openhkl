@@ -95,7 +95,7 @@ ImagePanel::ImagePanel() : QWidget()
         [=](int i) { _image_view->getScene()->changeInteractionMode(i); });
 }
 
-void ImagePanel::dataChanged()
+void ImagePanel::dataChanged(int numor)
 {
     _mode->setEnabled(false);
     _slider->setEnabled(false);
@@ -105,7 +105,7 @@ void ImagePanel::dataChanged()
     _image_view->getScene()->resetScene();
 
     if (gSession->currentProjectNum() >= 0) {
-        nsx::sptrDataSet dataset = gSession->currentProject()->getData(0);
+        nsx::sptrDataSet dataset = gSession->currentProject()->getData(numor);
         if (dataset) {
             _mode->setEnabled(true);
             _slider->setEnabled(true);

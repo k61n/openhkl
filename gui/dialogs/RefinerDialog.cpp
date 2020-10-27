@@ -720,7 +720,7 @@ void RefinerDialog::_setDataList()
     if (!_data_list.empty()) {
         for (nsx::sptrDataSet data : _data_list) {
             QFileInfo fileinfo(QString::fromStdString(data->filename()));
-            _select_data_list->addItem(fileinfo.baseName());
+            _select_data_list->addItem(fileinfo.baseName() /*absoluteFilePath()*/);
         }
     }
     _select_data_list->blockSignals(false);
@@ -751,17 +751,21 @@ void RefinerDialog::_setDataDrop()
 
 void RefinerDialog::_selectedDataChanged()
 {
-    nsx::sptrDataSet data_set = gSession->currentProject()->experiment()->getData(
-        _select_data->currentText().toStdString());
-    _current_index_spin->setMaximum(data_set->nFrames() - 1);
-    if (_current_index_spin->value() > data_set->nFrames() - 1)
-        _current_index_spin->setValue(data_set->nFrames() - 1);
-    else
-        _current_index_spin->setValue(_current_index_spin->value());
+    try {
+        nsx::sptrDataSet data_set = gSession->currentProject()->experiment()->getData(
+            _select_data->currentText().toStdString());
+        _current_index_spin->setMaximum(data_set->nFrames() - 1);
+        if (_current_index_spin->value() > data_set->nFrames() - 1)
+            _current_index_spin->setValue(data_set->nFrames() - 1);
+        else
+            _current_index_spin->setValue(_current_index_spin->value());
 
-    _setInitialValues(_current_index_spin->value());
-    _setRefinedValues(_current_index_spin->value());
-    _plot();
+        _setInitialValues(_current_index_spin->value());
+        _setRefinedValues(_current_index_spin->value());
+        _plot();
+    } catch (const std::exception& ex) {
+        QMessageBox::critical(nullptr, "Error", QString(ex.what()));
+    }
 }
 
 void RefinerDialog::_fetchAllInitialValues()
@@ -894,33 +898,45 @@ void RefinerDialog::_setInitialValues(int frame)
     nsx::sptrDataSet data_set =
         gSession->currentProject()->experiment()->getData(temp_text.toStdString());
 
-    _sample_orientation_00->setValue(_sample_orientations[data_set][frame](0, 0));
-    _sample_orientation_01->setValue(_sample_orientations[data_set][frame](0, 1));
-    _sample_orientation_02->setValue(_sample_orientations[data_set][frame](0, 2));
-    _sample_orientation_10->setValue(_sample_orientations[data_set][frame](1, 0));
-    _sample_orientation_11->setValue(_sample_orientations[data_set][frame](1, 1));
-    _sample_orientation_12->setValue(_sample_orientations[data_set][frame](1, 2));
-    _sample_orientation_20->setValue(_sample_orientations[data_set][frame](2, 0));
-    _sample_orientation_21->setValue(_sample_orientations[data_set][frame](2, 1));
-    _sample_orientation_22->setValue(_sample_orientations[data_set][frame](2, 2));
+    auto sample_orient = _sample_orientations.find(data_set);
+    if (sample_orient != _sample_orientations.end() && sample_orient->second.size() < frame) {
+        _sample_orientation_00->setValue(sample_orient->second[frame](0, 0));
+        _sample_orientation_01->setValue(sample_orient->second[frame](0, 1));
+        _sample_orientation_02->setValue(sample_orient->second[frame](0, 2));
+        _sample_orientation_10->setValue(sample_orient->second[frame](1, 0));
+        _sample_orientation_11->setValue(sample_orient->second[frame](1, 1));
+        _sample_orientation_12->setValue(sample_orient->second[frame](1, 2));
+        _sample_orientation_20->setValue(sample_orient->second[frame](2, 0));
+        _sample_orientation_21->setValue(sample_orient->second[frame](2, 1));
+        _sample_orientation_22->setValue(sample_orient->second[frame](2, 2));
+    }
 
-    _detector_orientation_00->setValue(_detector_orientations[data_set][frame](0, 0));
-    _detector_orientation_01->setValue(_detector_orientations[data_set][frame](0, 1));
-    _detector_orientation_02->setValue(_detector_orientations[data_set][frame](0, 2));
-    _detector_orientation_10->setValue(_detector_orientations[data_set][frame](1, 0));
-    _detector_orientation_11->setValue(_detector_orientations[data_set][frame](1, 1));
-    _detector_orientation_12->setValue(_detector_orientations[data_set][frame](1, 2));
-    _detector_orientation_20->setValue(_detector_orientations[data_set][frame](2, 0));
-    _detector_orientation_21->setValue(_detector_orientations[data_set][frame](2, 1));
-    _detector_orientation_22->setValue(_detector_orientations[data_set][frame](2, 2));
+    auto det_orient = _detector_orientations.find(data_set);
+    if (det_orient != _detector_orientations.end() && det_orient->second.size() < frame) {
+        _detector_orientation_00->setValue(det_orient->second[frame](0, 0));
+        _detector_orientation_01->setValue(det_orient->second[frame](0, 1));
+        _detector_orientation_02->setValue(det_orient->second[frame](0, 2));
+        _detector_orientation_10->setValue(det_orient->second[frame](1, 0));
+        _detector_orientation_11->setValue(det_orient->second[frame](1, 1));
+        _detector_orientation_12->setValue(det_orient->second[frame](1, 2));
+        _detector_orientation_20->setValue(det_orient->second[frame](2, 0));
+        _detector_orientation_21->setValue(det_orient->second[frame](2, 1));
+        _detector_orientation_22->setValue(det_orient->second[frame](2, 2));
+    }
 
-    _sample_position_X->setValue(_sample_positions[data_set][frame][0]);
-    _sample_position_Y->setValue(_sample_positions[data_set][frame][1]);
-    _sample_position_Z->setValue(_sample_positions[data_set][frame][2]);
+    auto sample_pos = _sample_positions.find(data_set);
+    if (sample_pos != _sample_positions.end() && sample_pos->second.size() < frame) {
+        _sample_position_X->setValue(sample_pos->second[frame][0]);
+        _sample_position_Y->setValue(sample_pos->second[frame][1]);
+        _sample_position_Z->setValue(sample_pos->second[frame][2]);
+    }
 
-    _detector_position_X->setValue(_detector_positions[data_set][frame][0]);
-    _detector_position_Y->setValue(_detector_positions[data_set][frame][1]);
-    _detector_position_Z->setValue(_detector_positions[data_set][frame][2]);
+    auto det_pos = _detector_positions.find(data_set);
+    if (det_pos != _detector_positions.end() && det_pos->second.size() < frame) {
+        _detector_position_X->setValue(det_pos->second[frame][0]);
+        _detector_position_Y->setValue(det_pos->second[frame][1]);
+        _detector_position_Z->setValue(det_pos->second[frame][2]);
+    }
 
     _ni_X->setValue(_nis[data_set][frame][0]);
     _ni_Y->setValue(_nis[data_set][frame][1]);
@@ -950,33 +966,45 @@ void RefinerDialog::_setRefinedValues(int frame)
     if (refiners.find(data_set) == refiners.end())
         return;
 
-    _sample_orientation_00_ref->setValue(_sample_orientations_ref[data_set][frame](0, 0));
-    _sample_orientation_01_ref->setValue(_sample_orientations_ref[data_set][frame](0, 1));
-    _sample_orientation_02_ref->setValue(_sample_orientations_ref[data_set][frame](0, 2));
-    _sample_orientation_10_ref->setValue(_sample_orientations_ref[data_set][frame](1, 0));
-    _sample_orientation_11_ref->setValue(_sample_orientations_ref[data_set][frame](1, 1));
-    _sample_orientation_12_ref->setValue(_sample_orientations_ref[data_set][frame](1, 2));
-    _sample_orientation_20_ref->setValue(_sample_orientations_ref[data_set][frame](2, 0));
-    _sample_orientation_21_ref->setValue(_sample_orientations_ref[data_set][frame](2, 1));
-    _sample_orientation_22_ref->setValue(_sample_orientations_ref[data_set][frame](2, 2));
+    auto sample_orient = _sample_orientations_ref.find(data_set);
+    if (sample_orient != _sample_orientations_ref.end() && sample_orient->second.size() < frame) {
+        _sample_orientation_00_ref->setValue(sample_orient->second[frame](0, 0));
+        _sample_orientation_01_ref->setValue(sample_orient->second[frame](0, 1));
+        _sample_orientation_02_ref->setValue(sample_orient->second[frame](0, 2));
+        _sample_orientation_10_ref->setValue(sample_orient->second[frame](1, 0));
+        _sample_orientation_11_ref->setValue(sample_orient->second[frame](1, 1));
+        _sample_orientation_12_ref->setValue(sample_orient->second[frame](1, 2));
+        _sample_orientation_20_ref->setValue(sample_orient->second[frame](2, 0));
+        _sample_orientation_21_ref->setValue(sample_orient->second[frame](2, 1));
+        _sample_orientation_22_ref->setValue(sample_orient->second[frame](2, 2));
+    }
 
-    _detector_orientation_00_ref->setValue(_detector_orientations_ref[data_set][frame](0, 0));
-    _detector_orientation_01_ref->setValue(_detector_orientations_ref[data_set][frame](0, 1));
-    _detector_orientation_02_ref->setValue(_detector_orientations_ref[data_set][frame](0, 2));
-    _detector_orientation_10_ref->setValue(_detector_orientations_ref[data_set][frame](1, 0));
-    _detector_orientation_11_ref->setValue(_detector_orientations_ref[data_set][frame](1, 1));
-    _detector_orientation_12_ref->setValue(_detector_orientations_ref[data_set][frame](1, 2));
-    _detector_orientation_20_ref->setValue(_detector_orientations_ref[data_set][frame](2, 0));
-    _detector_orientation_21_ref->setValue(_detector_orientations_ref[data_set][frame](2, 1));
-    _detector_orientation_22_ref->setValue(_detector_orientations_ref[data_set][frame](2, 2));
+    auto det_orient = _detector_orientations_ref.find(data_set);
+    if (det_orient != _detector_orientations_ref.end() && det_orient->second.size() < frame) {
+        _detector_orientation_00_ref->setValue(det_orient->second[frame](0, 0));
+        _detector_orientation_01_ref->setValue(det_orient->second[frame](0, 1));
+        _detector_orientation_02_ref->setValue(det_orient->second[frame](0, 2));
+        _detector_orientation_10_ref->setValue(det_orient->second[frame](1, 0));
+        _detector_orientation_11_ref->setValue(det_orient->second[frame](1, 1));
+        _detector_orientation_12_ref->setValue(det_orient->second[frame](1, 2));
+        _detector_orientation_20_ref->setValue(det_orient->second[frame](2, 0));
+        _detector_orientation_21_ref->setValue(det_orient->second[frame](2, 1));
+        _detector_orientation_22_ref->setValue(det_orient->second[frame](2, 2));
+    }
 
-    _sample_position_X_ref->setValue(_sample_positions_ref[data_set][frame][0]);
-    _sample_position_Y_ref->setValue(_sample_positions_ref[data_set][frame][1]);
-    _sample_position_Z_ref->setValue(_sample_positions_ref[data_set][frame][2]);
+    auto sample_pos = _sample_positions_ref.find(data_set);
+    if (sample_pos != _sample_positions_ref.end() && sample_pos->second.size() < frame) {
+        _sample_position_X_ref->setValue(sample_pos->second[frame][0]);
+        _sample_position_Y_ref->setValue(sample_pos->second[frame][1]);
+        _sample_position_Z_ref->setValue(sample_pos->second[frame][2]);
+    }
 
-    _detector_position_X_ref->setValue(_detector_positions_ref[data_set][frame][0]);
-    _detector_position_Y_ref->setValue(_detector_positions_ref[data_set][frame][1]);
-    _detector_position_Z_ref->setValue(_detector_positions_ref[data_set][frame][2]);
+    auto det_pos = _detector_positions_ref.find(data_set);
+    if (det_pos != _detector_positions_ref.end() && det_pos->second.size() < frame) {
+        _detector_position_X_ref->setValue(det_pos->second[frame][0]);
+        _detector_position_Y_ref->setValue(det_pos->second[frame][1]);
+        _detector_position_Z_ref->setValue(det_pos->second[frame][2]);
+    }
 
     _ni_X_ref->setValue(_nis_ref[data_set][frame][0]);
     _ni_Y_ref->setValue(_nis_ref[data_set][frame][1]);

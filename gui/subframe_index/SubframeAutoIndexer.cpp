@@ -17,6 +17,7 @@
 #include "base/utils/Logger.h"
 #include "base/utils/ProgressHandler.h"
 #include "base/utils/Units.h"
+#include "core/algo/AutoIndexer.h"
 #include "core/experiment/Experiment.h"
 #include "gui/dialogs/UnitCellDialog.h"
 #include "gui/frames/UnitCellWidget.h"
@@ -28,6 +29,7 @@
 
 #include <QHeaderView>
 #include <QLabel>
+#include <QMessageBox>
 
 SubframeAutoIndexer::SubframeAutoIndexer()
     : QWidget()
@@ -473,8 +475,10 @@ void SubframeAutoIndexer::setIndexerParameters()
 
 void SubframeAutoIndexer::runAutoIndexer()
 {
-    if (_peak_list.empty() || _exp_combo->count() < 1)
+    if (_peak_list.empty() || _exp_combo->count() < 1) {
+        QMessageBox::critical(this, "Error", "No peaks or experiments defined.");
         return;
+    }
 
     setIndexerParameters();
 
@@ -491,11 +495,14 @@ void SubframeAutoIndexer::runAutoIndexer()
     try {
         expt->autoIndex(collection, _params);
     } catch (const std::exception& e) {
-        nsx::nsxlog(nsx::Level::Info, e.what());
+        nsx::nsxlog(nsx::Level::Error, "Autoindexer:", e.what());
+        QMessageBox::critical(this, "Indexing Error", e.what());
         return;
     }
 
     _solutions = auto_indexer->solutions();
+    if (_solutions.size() == 0)
+        QMessageBox::warning(this, "Warning", "No solution found.");
 
     buildSolutionsTable();
 
