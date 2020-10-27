@@ -21,6 +21,11 @@
 #include "tables/crystal/MillerIndex.h"
 #include "tables/crystal/UnitCell.h"
 
+#include "core/peak/Peak3D.h"
+#include "core/statistics/MergedData.h"
+#include "core/statistics/ResolutionShell.h"
+#include "tables/crystal/SpaceGroup.h"
+
 #include <fstream>
 #include <iomanip>
 

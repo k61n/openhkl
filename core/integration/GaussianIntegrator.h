@@ -25,7 +25,7 @@ class GaussianIntegrator : public IPeakIntegrator {
  public:
     GaussianIntegrator(bool fit_center, bool fit_cov);
     bool compute(
-        Peak3D* peak, ShapeLibrary* shape_library, const IntegrationRegion& region) override;
+        Peak3D* peak, ShapeCollection* shape_collection, const IntegrationRegion& region) override;
     //! Returns the analytic profile computed over the given integration region
     std::vector<double> profile(Peak3D* peak, const IntegrationRegion& region);
 };

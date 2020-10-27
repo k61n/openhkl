@@ -2,8 +2,8 @@
 //
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
-//! @file      gui/subframe_predict/ShapeLibraryDialog.cpp
-//! @brief     Implements class ShapeLibraryDialog
+//! @file      gui/subframe_predict/ShapeCollectionDialog.cpp
+//! @brief     Implements class ShapeCollectionDialog
 //!
 //! @homepage  ###HOMEPAGE###
 //! @license   GNU General Public License v3 or higher (see COPYING)
@@ -12,7 +12,7 @@
 //
 //  ***********************************************************************************************
 
-#include "gui/subframe_predict/ShapeLibraryDialog.h"
+#include "gui/subframe_predict/ShapeCollectionDialog.h"
 
 #include "core/data/DataSet.h"
 #include "core/integration/ShapeIntegrator.h"
@@ -21,7 +21,7 @@
 #include "core/shape/PeakCollection.h"
 #include "core/shape/PeakFilter.h"
 #include "core/shape/Profile3D.h"
-#include "core/shape/ShapeLibrary.h"
+#include "core/shape/ShapeCollection.h"
 #include "gui/frames/ProgressView.h"
 #include "gui/models/ColorMap.h"
 #include "gui/models/Session.h"
@@ -35,7 +35,7 @@
 #include <QVBoxLayout>
 #include <QtGlobal>
 
-ShapeLibraryDialog::ShapeLibraryDialog(nsx::PeakCollection* peak_collection)
+ShapeCollectionDialog::ShapeCollectionDialog(nsx::PeakCollection* peak_collection)
     : QDialog(), _peak_collection_model(), _peak_collection_item()
 {
     setModal(true);
@@ -59,12 +59,12 @@ ShapeLibraryDialog::ShapeLibraryDialog(nsx::PeakCollection* peak_collection)
     button_layout->addWidget(reject_button);
     main_layout->addLayout(button_layout);
 
-    connect(accept_button, &QPushButton::clicked, this, &ShapeLibraryDialog::accept);
+    connect(accept_button, &QPushButton::clicked, this, &ShapeCollectionDialog::accept);
 
-    connect(reject_button, &QPushButton::clicked, this, &ShapeLibraryDialog::rejected);
+    connect(reject_button, &QPushButton::clicked, this, &ShapeCollectionDialog::rejected);
 }
 
-void ShapeLibraryDialog::setUpParametrization(nsx::PeakCollection* peak_collection)
+void ShapeCollectionDialog::setUpParametrization(nsx::PeakCollection* peak_collection)
 {
     _collection_ptr = peak_collection;
 
@@ -83,23 +83,23 @@ void ShapeLibraryDialog::setUpParametrization(nsx::PeakCollection* peak_collecti
     _table->setSelectionBehavior(QAbstractItemView::SelectionBehavior::SelectRows);
     _table->setSelectionMode(QAbstractItemView::SelectionMode::SingleSelection);
 
-    connect(_draw_frame, &QSlider::valueChanged, this, &ShapeLibraryDialog::drawFrame);
+    connect(_draw_frame, &QSlider::valueChanged, this, &ShapeCollectionDialog::drawFrame);
     connect(_table, &QTableView::clicked, [this](QModelIndex index) {
         selectTargetPeak(index.row());
     });
     connect(
         _table->verticalHeader(), &QHeaderView::sectionClicked, this,
-        &ShapeLibraryDialog::selectTargetPeak);
+        &ShapeCollectionDialog::selectTargetPeak);
 }
 
-void ShapeLibraryDialog::setSizePolicies()
+void ShapeCollectionDialog::setSizePolicies()
 {
     _size_policy_widgets = new QSizePolicy();
     _size_policy_widgets->setHorizontalPolicy(QSizePolicy::Expanding);
     _size_policy_widgets->setVerticalPolicy(QSizePolicy::Fixed);
 }
 
-void ShapeLibraryDialog::setParametersUp()
+void ShapeCollectionDialog::setParametersUp()
 {
     // Set up the parameters
     _parameter_widget = new QWidget();
@@ -170,8 +170,8 @@ void ShapeLibraryDialog::setParametersUp()
     _background_end->setValue(4.5);
     _background_end->setSizePolicy(*_size_policy_widgets);
 
-    _build_library = new QPushButton("Build Library");
-    _build_library->setSizePolicy(*_size_policy_widgets);
+    _build_collection = new QPushButton("Build shape collection");
+    _build_collection->setSizePolicy(*_size_policy_widgets);
 
     form->addRow("Number along x:", _nx);
     form->addRow("Number along y:", _ny);
@@ -185,12 +185,12 @@ void ShapeLibraryDialog::setParametersUp()
     form->addRow("Peak scale:", _peak_scale);
     form->addRow("Background begin:", _background_begin);
     form->addRow("Background end:", _background_end);
-    form->addRow(_build_library);
+    form->addRow(_build_collection);
 
-    connect(_build_library, &QPushButton::clicked, this, &ShapeLibraryDialog::build);
+    connect(_build_collection, &QPushButton::clicked, this, &ShapeCollectionDialog::build);
 }
 
-void ShapeLibraryDialog::setPreviewUp()
+void ShapeCollectionDialog::setPreviewUp()
 {
     // Set up the preview
     _preview_widget = new QWidget();
@@ -234,7 +234,8 @@ void ShapeLibraryDialog::setPreviewUp()
     left->addLayout(left_up);
 
     _calculate_mean_profile = new QPushButton("Calculate Profile");
-    connect(_calculate_mean_profile, &QPushButton::clicked, this, &ShapeLibraryDialog::calculate);
+    connect(
+        _calculate_mean_profile, &QPushButton::clicked, this, &ShapeCollectionDialog::calculate);
 
     left->addWidget(_calculate_mean_profile);
     horizontal->addLayout(left);
@@ -255,7 +256,7 @@ void ShapeLibraryDialog::setPreviewUp()
     vertical->addLayout(horizontal);
 }
 
-void ShapeLibraryDialog::build()
+void ShapeCollectionDialog::build()
 {
     std::vector<nsx::Peak3D*> fit_peaks;
 
@@ -300,16 +301,16 @@ void ShapeLibraryDialog::build()
         aabb.setUpper(0.5 * dx);
     }
 
-    // free memory of old library
+    // free memory of old collection
     nsx::sptrProgressHandler handler(new nsx::ProgressHandler);
     ProgressView view(this);
     view.watch(handler);
 
     const double bkg_begin_val = _background_begin->value();
     const double bkg_end_val = _background_end->value();
-    _library = nsx::ShapeLibrary(!kabsch_coords, peak_scale_val, bkg_begin_val, bkg_end_val);
+    _collection = nsx::ShapeCollection(!kabsch_coords, peak_scale_val, bkg_begin_val, bkg_end_val);
 
-    nsx::ShapeIntegrator integrator(&_library, aabb, nx_val, ny_val, nz_val);
+    nsx::ShapeIntegrator integrator(&_collection, aabb, nx_val, ny_val, nz_val);
     integrator.setHandler(handler);
     nsx::IntegrationParameters params{};
     params.peak_end = peak_scale_val;
@@ -319,15 +320,15 @@ void ShapeLibraryDialog::build()
 
     int n_numor = 1;
     for (nsx::sptrDataSet data : _data) {
-        integrator.integrate(fit_peaks, &_library, data, n_numor);
+        integrator.integrate(fit_peaks, &_collection, data, n_numor);
         ++n_numor;
     }
 
-    _library = *integrator.library();
-    _library.updateFit(1000); // This does nothing!! - zamaan
+    _collection = *integrator.collection();
+    _collection.updateFit(1000); // This does nothing!! - zamaan
 }
 
-void ShapeLibraryDialog::calculate()
+void ShapeCollectionDialog::calculate()
 {
     const int nx_val = _nx->value();
     const int ny_val = _ny->value();
@@ -335,7 +336,7 @@ void ShapeLibraryDialog::calculate()
 
     nsx::DetectorEvent ev(_x->value(), _y->value(), _frame->value());
     // update maximum value, used for drawing
-    _profile = _library.meanProfile(ev, _radius->value(), _n_frames->value());
+    _profile = _collection.meanProfile(ev, _radius->value(), _n_frames->value());
     _maximum = 0;
 
     for (int i = 0; i < nx_val; ++i) {
@@ -356,7 +357,7 @@ void ShapeLibraryDialog::calculate()
     drawFrame(_draw_frame->value());
 }
 
-void ShapeLibraryDialog::drawFrame(int value)
+void ShapeCollectionDialog::drawFrame(int value)
 {
     if (value < 0 || value >= _profile.shape()[2]) {
         qInfo() << "SLD: drawFrame(): value = " << value;
@@ -385,7 +386,7 @@ void ShapeLibraryDialog::drawFrame(int value)
     _graphics->fitInView(0, 0, shape[0], shape[1]);
 }
 
-void ShapeLibraryDialog::selectTargetPeak(int row)
+void ShapeCollectionDialog::selectTargetPeak(int row)
 {
     const nsx::Peak3D* selected_peak = _peak_collection_item.peakCollection()->getPeak(row);
 
@@ -396,8 +397,8 @@ void ShapeLibraryDialog::selectTargetPeak(int row)
     _frame->setValue(center[2]);
 }
 
-void ShapeLibraryDialog::accept()
+void ShapeCollectionDialog::accept()
 {
-    _collection_ptr->setShapeLibrary(_library);
+    _collection_ptr->setShapeCollection(_collection);
     QDialog::accept();
 }

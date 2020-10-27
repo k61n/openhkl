@@ -17,6 +17,7 @@
 #include "gui/MainWin.h"
 #include <QDialogButtonBox>
 #include <QHBoxLayout>
+#include <QLabel>
 #include <QVBoxLayout>
 
 ListNameDialog::ListNameDialog() : QDialog()

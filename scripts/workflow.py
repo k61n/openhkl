@@ -92,9 +92,9 @@ else:
     params.filter['extinct'] = True
     npeaks = peaks.numberOfPeaks()
     ncaught = expt.filter_peaks(params.filter, peaks, filtered_collection_name)
-    pynsxprint("Building shape library...")
+    pynsxprint("Building shape collection...")
     all_data = expt.get_data()
-    expt.build_shape_library(all_data)
+    expt.build_shape_collection(all_data)
     pynsxprint("Predicting peaks...")
     expt.predict_peaks(all_data, 'None')
     expt.save(predicted=True)

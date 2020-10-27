@@ -16,7 +16,7 @@
 #define NSX_CORE_INTEGRATION_PROFILE1DINTEGRATOR_H
 
 #include "core/shape/IPeakIntegrator.h"
-#include "core/shape/ShapeLibrary.h"
+#include "core/shape/ShapeCollection.h"
 
 namespace nsx {
 
@@ -29,7 +29,7 @@ class Profile1DIntegrator : public IPeakIntegrator {
 
     //! Compute the integrated intensity of the given peakd
     bool compute(
-        Peak3D* peak, ShapeLibrary* shape_library, const IntegrationRegion& region) override;
+        Peak3D* peak, ShapeCollection* shape_collection, const IntegrationRegion& region) override;
 };
 
 } // namespace nsx

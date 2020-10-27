@@ -20,6 +20,7 @@
 
 namespace nsx {
 
+class IntegrationRegion;
 enum class Level;
 
 struct IntegrationParameters {
@@ -34,7 +35,7 @@ struct IntegrationParameters {
     void log(const Level& level) const;
 };
 
-class ShapeLibrary;
+class ShapeCollection;
 
 //! Handles per-frame integration of a peak.
 class IPeakIntegrator {
@@ -43,13 +44,13 @@ class IPeakIntegrator {
     virtual ~IPeakIntegrator();
     //! Compute the integrated intensity of the peak given the integration region.
     virtual bool compute(
-        Peak3D* peak, ShapeLibrary* shape_library, const IntegrationRegion& region) = 0;
+        Peak3D* peak, ShapeCollection* shape_collection, const IntegrationRegion& region) = 0;
     //! Integrate all peaks in the list which are contained in the specified data set.
     //! @param peak_end Peak boundary (in sigma)
     //! @param bkg_begin Background beginning (in sigma)
     //! @param bkg_end Background end (in sigma)
     void integrate(
-        std::vector<nsx::Peak3D*> peaks, ShapeLibrary* shape_library, sptrDataSet data,
+        std::vector<nsx::Peak3D*> peaks, ShapeCollection* shape_collection, sptrDataSet data,
         int n_numor);
     //! Returns the mean background.
     Intensity meanBackground() const;

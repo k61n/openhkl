@@ -16,17 +16,6 @@
 #define NSX_GUI_SUBFRAME_REFINER_SUBFRAMEREFINER_H
 
 #include "core/algo/Refiner.h"
-#include "core/shape/PeakCollection.h"
-
-#include "gui/graphics/DetectorView.h"
-#include "gui/graphics/SXPlot.h"
-#include "gui/models/PeakCollectionModel.h"
-#include "gui/subframe_refiner/RefinerTables.h"
-#include "gui/utility/ColorButton.h"
-#include "gui/views/PeakTableView.h"
-
-#include "gui/utility/Spoiler.h"
-#include "gui/utility/SpoilerCheck.h"
 
 #include <QCheckBox>
 #include <QComboBox>
@@ -40,6 +29,10 @@
 #include <QTableWidget>
 #include <QVBoxLayout>
 #include <QWidget>
+
+class RefinerTables;
+class Spoiler;
+class SXPlot;
 
 //! Dialog to refine unit cell and instrument state
 class SubframeRefiner : public QWidget {

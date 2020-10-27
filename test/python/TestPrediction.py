@@ -31,8 +31,8 @@ class TestPrediction(unittest.TestCase):
         shapelib_params.d_max = 50.0
         shapelib_params.bkg_begin = 3.0
         shapelib_params.bkg_end = 6.0
-        expt.buildShapeLibrary(filtered_peaks, shapelib_params)
-        nprofiles = filtered_peaks.shapeLibrary().numberOfPeaks()
+        expt.buildShapeCollection(filtered_peaks, shapelib_params)
+        nprofiles = filtered_peaks.shapeCollection().numberOfPeaks()
         self.assertEqual(nprofiles, 159)
 
         # predict the peaks
@@ -51,7 +51,7 @@ class TestPrediction(unittest.TestCase):
                         nsx.PeakInterpolation_NoInterpolation)
         predicted_peaks = expt.getPeakCollection("predicted")
         expt.integratePredictedPeaks('1d profile integrator', predicted_peaks,
-                                    filtered_peaks.shapeLibrary(), prediction_params)
+                                    filtered_peaks.shapeCollection(), prediction_params)
 
         self.assertEqual(predicted_peaks.numberOfPeaks(), 127)
         # N.B. These results are not meaningful! The data set is too small to

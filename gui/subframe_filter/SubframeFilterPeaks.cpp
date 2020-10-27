@@ -13,14 +13,21 @@
 //  ***********************************************************************************************
 
 #include "gui/subframe_filter/SubframeFilterPeaks.h"
+
 #include "core/experiment/Experiment.h"
 #include "core/shape/PeakCollection.h"
 #include "core/shape/PeakFilter.h"
 #include "gui/MainWin.h"
 #include "gui/dialogs/ListNameDialog.h"
+#include "gui/graphics/DetectorScene.h"
+#include "gui/graphics/DetectorView.h"
 #include "gui/models/Meta.h"
 #include "gui/models/Project.h"
 #include "gui/models/Session.h"
+#include "gui/utility/Spoiler.h"
+#include "gui/utility/SpoilerCheck.h"
+#include "gui/widgets/PeakViewWidget.h"
+
 #include <QFileInfo>
 #include <QGridLayout>
 #include <QGroupBox>
@@ -31,6 +38,7 @@
 #include <QScrollBar>
 #include <QSpacerItem>
 #include <QTableWidgetItem>
+
 #include <sstream>
 
 SubframeFilterPeaks::SubframeFilterPeaks()
@@ -503,7 +511,7 @@ void SubframeFilterPeaks::setPeakTableUp()
     _preview_panel = peak_group;
     peak_group->setSizePolicy(*_size_policy_right);
 
-    _peak_table = new PeaksTableView(this);
+    _peak_table = new PeakTableView(this);
     _peak_collection_model.setRoot(&_peak_collection_item);
     _peak_table->setModel(&_peak_collection_model);
 

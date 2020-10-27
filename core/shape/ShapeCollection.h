@@ -2,8 +2,8 @@
 //
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
-//! @file      core/shape/ShapeLibrary.h
-//! @brief     Defines classes PeakInterpolation, ShapeLibrary
+//! @file      core/shape/ShapeCollection.h
+//! @brief     Defines classes PeakInterpolation, ShapeCollection
 //!
 //! @homepage  ###HOMEPAGE###
 //! @license   GNU General Public License v3 or higher (see COPYING)
@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_CORE_SHAPE_SHAPELIBRARY_H
-#define NSX_CORE_SHAPE_SHAPELIBRARY_H
+#ifndef NSX_CORE_SHAPE_SHAPECOLLECTION_H
+#define NSX_CORE_SHAPE_SHAPECOLLECTION_H
 
 #include "core/shape/IPeakIntegrator.h"
 #include "core/shape/Profile1D.h"
@@ -27,8 +27,8 @@ class DetectorEvent;
 class Peak3D;
 enum class Level;
 
-//! Parameters for building the shape library
-struct ShapeLibParameters : public IntegrationParameters {
+//! Parameters for building the shape collection
+struct ShapeCollectionParameters : public IntegrationParameters {
     double detector_range_min = 1.5; //!< Minimum detector range (filter)
     double detector_range_max = 50.0; //!< Maximum detector range (filter)
     double strength_min = 1.0; //!< Minimum peak strength I/sigma (filter)
@@ -45,14 +45,14 @@ struct ShapeLibParameters : public IntegrationParameters {
 struct PredictionParameters : public IntegrationParameters {
     double detector_range_min = 1.5; //!< Minimum detector range (filter)
     double detector_range_max = 50.0; //!< Maximum detector range (filter)
-    int min_n_neighbors = 20; //!< Minimum number of neighbours required for shape library
+    int min_n_neighbors = 20; //!< Minimum number of neighbours required for shape collection
 
     void log(const Level& level) const;
 };
 
-class ShapeLibrary;
+class ShapeCollection;
 
-using sptrShapeLibrary = std::shared_ptr<ShapeLibrary>;
+using sptrShapeCollection = std::shared_ptr<ShapeCollection>;
 
 enum class PeakInterpolation { NoInterpolation = 0, InverseDistance = 1, Intensity = 2 };
 
@@ -60,29 +60,29 @@ struct FitData;
 
 //! Helper function for predicting peaks
 std::vector<Peak3D*> predictPeaks(
-    const ShapeLibrary* library, const sptrDataSet data, const UnitCell* unit_cell,
+    const ShapeCollection* collection, const sptrDataSet data, const UnitCell* unit_cell,
     PeakInterpolation interpolation, const PredictionParameters& params);
 
-//! Store a library of peak shapes, to be used for peak prediction and integration.
+//! Store a collection of peak shapes, to be used for peak prediction and integration.
 
-//! The library stores a list of reference peaks. For each reference peak, the
-//! library stores the covariance matrix of the intensity distribution, as well
+//! The collection stores a list of reference peaks. For each reference peak, the
+//! collection stores the covariance matrix of the intensity distribution, as well
 //! as 3d- and 1d- integrated profiles. The covariance matrices are used to
 //! roughly predict the shapes of weak peaks, and the integrated profiles are
 //! used in the profile-fitting integration methods.
 
-class ShapeLibrary {
+class ShapeCollection {
  public:
-    //! Construct an empty library.
+    //! Construct an empty collection.
     //! @param detector_coords if true, store profiles in detector coordinates;
     //! otherwise store in Kabsch coordinates
-    ShapeLibrary();
-    ShapeLibrary(bool detector_coords, double peakScale, double bkgBegin, double bkgEnd);
+    ShapeCollection();
+    ShapeCollection(bool detector_coords, double peakScale, double bkgBegin, double bkgEnd);
 
-    //! Returns whether the library is stored in detector coords or Kabsch coords
+    //! Returns whether the collection is stored in detector coords or Kabsch coords
     bool detectorCoords() const;
 
-    //! Add a reference peak to the library
+    //! Add a reference peak to the collection
     bool addPeak(Peak3D* peak, Profile3D&& profile, Profile1D&& integrated_profile);
 
     //! Update the fitted covariances
@@ -110,28 +110,28 @@ class ShapeLibrary {
     std::vector<Peak3D*> findNeighbors(
         const DetectorEvent& ev, double radius, double nframes) const;
 
-    //! Returns the peak scale used for the library
+    //! Returns the peak scale used for the collection
     double peakScale() const;
 
-    //! Returns the background begin used for the library
+    //! Returns the background begin used for the collection
     double bkgBegin() const;
 
-    //! Returns the background end used for the library
+    //! Returns the background end used for the collection
     double bkgEnd() const;
 
-    //! Returns the background end used for the library
+    //! Returns the background end used for the collection
     std::array<double, 6> choleskyD() const;
 
-    //! Returns the background end used for the library
+    //! Returns the background end used for the collection
     std::array<double, 6> choleskyM() const;
 
-    //! Returns the background end used for the library
+    //! Returns the background end used for the collection
     std::array<double, 6> choleskyS() const;
 
-    //! Returns the background end used for the library
+    //! Returns the background end used for the collection
     std::map<Peak3D*, std::pair<Profile3D, Profile1D>> profiles() const;
 
-    //! Return number of peaks in library
+    //! Return number of peaks in collection
     int numberOfPeaks() const { return _profiles.size(); };
 
     //! Return number of peaks with no neighbours
@@ -146,8 +146,8 @@ class ShapeLibrary {
     //! Return number of cases of no neighbouring profiles
     int nNoProfile() const { return _n_no_profile; };
 
-    //! Shape library parameters
-    ShapeLibParameters params;
+    //! Shape collection parameters
+    ShapeCollectionParameters params;
 
  private:
     //! Predict the (detector space) covariance given the fit data
@@ -169,13 +169,13 @@ class ShapeLibrary {
     //! for Kabsch coords
     bool _detectorCoords;
 
-    //! The peak scale used by the library for integration
+    //! The peak scale used by the collection for integration
     double _peakScale;
 
-    //! The background begin used by the library for integration
+    //! The background begin used by the collection for integration
     double _bkgBegin;
 
-    //! The background end used by the library for integration
+    //! The background end used by the collection for integration
     double _bkgEnd;
 
     //! Number of failed interpolations
@@ -193,4 +193,4 @@ class ShapeLibrary {
 
 } // namespace nsx
 
-#endif // NSX_CORE_SHAPE_SHAPELIBRARY_H
+#endif // NSX_CORE_SHAPE_SHAPECOLLECTION_H

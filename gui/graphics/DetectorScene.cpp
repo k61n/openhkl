@@ -19,7 +19,6 @@
 #include "base/mask/BoxMask.h"
 #include "base/mask/EllipseMask.h"
 #include "base/utils/Units.h"
-
 #include "core/data/DataSet.h"
 #include "core/detector/Detector.h"
 #include "core/gonio/Gonio.h"
@@ -30,20 +29,19 @@
 #include "core/peak/IntegrationRegion.h"
 #include "core/peak/Peak3D.h"
 #include "core/raw/IDataReader.h"
-
 #include "gui/MainWin.h"
-#include "gui/graphics_tools/CutLineItem.h"
-#include "gui/graphics_tools/CutSliceItem.h"
-#include "gui/graphics_tools/CutterItem.h"
-
 #include "gui/graphics_items/EllipseItem.h"
 #include "gui/graphics_items/MaskItem.h"
 #include "gui/graphics_items/PeakItemGraphic.h"
 #include "gui/graphics_items/PlottableItem.h"
 #include "gui/graphics_items/SXGraphicsItem.h"
-
+#include "gui/graphics_tools/CutLineItem.h"
+#include "gui/graphics_tools/CutSliceItem.h"
+#include "gui/graphics_tools/CutterItem.h"
+#include "gui/items/PeakCollectionItem.h"
+#include "gui/items/PeakItem.h"
+#include "gui/models/PeakCollectionModel.h"
 #include "gui/models/Session.h"
-
 #include "tables/crystal/MillerIndex.h"
 #include "tables/crystal/SpaceGroup.h"
 #include "tables/crystal/UnitCell.h"

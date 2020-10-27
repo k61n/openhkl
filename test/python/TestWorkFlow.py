@@ -83,7 +83,7 @@ class TestWorkFlow(unittest.TestCase):
 
         #todo: fix up the library test
 
-        library = nsx.ShapeLibrary()
+        library = nsx.ShapeCollection()
 
         library_size = 0
 

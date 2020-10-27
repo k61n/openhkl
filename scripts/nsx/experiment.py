@@ -255,11 +255,11 @@ class Experiment:
         self._expt.addUnitCell("accepted", a, b, c, alpha, beta, gamma)
         self.set_space_group()
 
-    def build_shape_library(self, data):
+    def build_shape_collection(self, data):
         '''
-        Build the shape library for predicting the weak peaks
+        Build the shape collection for predicting the weak peaks
         '''
-        self.log(f"Building shape library...")
+        self.log(f"Building shape collection...")
         params = self._expt.shape_params
 
         params.kabsch = self._params.shapelib['kabsch']
@@ -283,8 +283,8 @@ class Experiment:
         self._expt.assignUnitCell(self._found_collection)
         self._filtered_collection = self._expt.getPeakCollection(self._filtered_peaks)
         self._expt.assignUnitCell(self._filtered_collection)
-        self._expt.buildShapeLibrary(self._filtered_collection, params)
-        self.log(f'Number of profiles = ' + str(self._filtered_collection.shapeLibrary().numberOfPeaks()))
+        self._expt.buildShapeCollection(self._filtered_collection, params)
+        self.log(f'Number of profiles = ' + str(self._filtered_collection.shapeCollection().numberOfPeaks()))
 
     def predict_peaks(self, data, interpolation):
         '''
@@ -317,7 +317,7 @@ class Experiment:
         self._predicted_collection = self._expt.getPeakCollection(self._predicted_peaks)
         self.log(f"Integrating predicted peaks...")
         self._expt.integratePredictedPeaks(integrator, self._predicted_collection,
-                                           self._filtered_collection.shapeLibrary(), params)
+                                           self._filtered_collection.shapeCollection(), params)
 
     def get_peak_collection(self, name):
         return self._expt.getPeakCollection(name)

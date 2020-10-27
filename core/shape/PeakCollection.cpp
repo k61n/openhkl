@@ -123,9 +123,9 @@ std::map<std::string, float>* PeakCollection::meta()
     return &_meta;
 }
 
-void PeakCollection::setShapeLibrary(ShapeLibrary shape_library)
+void PeakCollection::setShapeCollection(ShapeCollection shape_collection)
 {
-    _shape_library = std::make_unique<ShapeLibrary>(shape_library);
+    _shape_collection = std::make_unique<ShapeCollection>(shape_collection);
 }
 
 void PeakCollection::setName(const std::string& name)
