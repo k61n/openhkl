@@ -19,14 +19,14 @@
 
 namespace nsx {
 
-enum class listtype { FOUND, FILTERED, PREDICTED };
+enum class listtype { FOUND, FILTERED, PREDICTED, INDEXING };
 
 //! Container for a peaklist and its metadata
 class PeakCollection {
  public:
     //! Default contructor
     PeakCollection();
-    PeakCollection(const std::string& name, nsx::listtype type);
+    PeakCollection(const std::string& name, listtype type);
 
     //! Sets name of the unit cell
     void setName(const std::string& name);

@@ -84,14 +84,13 @@ class Experiment {
     void removePeakCollection(const std::string& name);
     //! Get a vector of peak collection names
     std::vector<std::string> getCollectionNames() const;
-    //! Get a vector of names of peak collections of listtype::FOUND
-    std::vector<std::string> getFoundCollectionNames() const;
-    //! Get a vector of names of peak collections of listtype::PREDICTD
-    std::vector<std::string> getPredictedCollectionNames() const;
+    //! Get a vector of peak collection names of a give listtype
+    std::vector<std::string> getCollectionNames(listtype lt) const;
     //! Get the number of peak collections
     int numPeakCollections() const;
     //! Create a new peak collection from peaks caught by a filter
-    void acceptFilter(std::string name, PeakCollection* collection);
+    void acceptFilter(
+        std::string name, PeakCollection* collection, listtype lt = listtype::FILTERED);
     //! Check for unphysical peaks in all collections
     void checkPeakCollections();
     //! Merge a vector of PeakCollection objects

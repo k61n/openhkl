@@ -130,7 +130,7 @@ void Experiment::autoIndex(PeakCollection* peaks, const IndexerParameters& param
     double npeaks = peaks->numberOfPeaks();
     double ncaught = peaks->numberCaughtByFilter();
     nsxlog(Level::Info, "Indexing using", ncaught, "/", npeaks, "peaks");
-    _peak_handler->acceptFilter(collection_name, peaks);
+    _peak_handler->acceptFilter(collection_name, peaks, listtype::INDEXING);
     _auto_indexer->setParameters(params);
     PeakCollection* indexing_collection = getPeakCollection(collection_name);
     _auto_indexer->autoIndex(indexing_collection);
@@ -170,7 +170,7 @@ void Experiment::buildShapeCollection(
     _peak_filter->setStrength(params.strength_min, params.strength_max);
     _peak_filter->filter(peaks);
     std::string collection_name = "fit";
-    _peak_handler->acceptFilter(collection_name, peaks);
+    _peak_handler->acceptFilter(collection_name, peaks, listtype::FILTERED);
     PeakCollection* fit_peaks = getPeakCollection(collection_name);
 
     if (fit_peaks->numberOfPeaks() == 0)
@@ -363,14 +363,9 @@ std::vector<std::string> Experiment::getCollectionNames() const
     return _peak_handler->getCollectionNames();
 }
 
-std::vector<std::string> Experiment::getFoundCollectionNames() const
+std::vector<std::string> Experiment::getCollectionNames(listtype lt) const
 {
-    return _peak_handler->getFoundCollectionNames();
-}
-
-std::vector<std::string> Experiment::getPredictedCollectionNames() const
-{
-    return _peak_handler->getPredictedCollectionNames();
+    return _peak_handler->getCollectionNames(lt);
 }
 
 int Experiment::numPeakCollections() const
@@ -378,9 +373,9 @@ int Experiment::numPeakCollections() const
     return _peak_handler->numPeakCollections();
 }
 
-void Experiment::acceptFilter(std::string name, PeakCollection* collection)
+void Experiment::acceptFilter(std::string name, PeakCollection* collection, listtype lt)
 {
-    _peak_handler->acceptFilter(name, collection);
+    _peak_handler->acceptFilter(name, collection, lt);
 }
 
 void Experiment::checkPeakCollections()

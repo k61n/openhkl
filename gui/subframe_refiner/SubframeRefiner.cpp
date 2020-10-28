@@ -276,15 +276,24 @@ void SubframeRefiner::updatePeakList()
 {
     _peak_combo->blockSignals(true);
     _peak_combo->clear();
+    _peak_list.clear();
 
-    _peak_list = gSession->experimentAt(_exp_combo->currentIndex())->getPeakListNames();
+    QStringList tmp =
+        gSession->experimentAt(_exp_combo->currentIndex())->
+        getPeakCollectionNames(nsx::listtype::FOUND);
+    _peak_list.append(tmp);
+    tmp.clear();
+    tmp =
+        gSession->experimentAt(_exp_combo->currentIndex())->
+        getPeakCollectionNames(nsx::listtype::FILTERED);
+    _peak_list.append(tmp);
 
     if (!_peak_list.empty()) {
         _peak_combo->addItems(_peak_list);
         _peak_combo->setCurrentIndex(0);
     }
-    _peak_combo->blockSignals(false);
 
+    _peak_combo->blockSignals(false);
     updatePredictedList();
 }
 
@@ -389,7 +398,9 @@ void SubframeRefiner::updatePredictedList()
     _predicted_combo->blockSignals(true);
     _predicted_combo->clear();
 
-    _predicted_list = gSession->experimentAt(_exp_combo->currentIndex())->getPredictedNames();
+    _predicted_list =
+        gSession->experimentAt(_exp_combo->currentIndex())->
+        getPeakCollectionNames(nsx::listtype::PREDICTED);
 
     if (!_predicted_list.empty()) {
         _predicted_combo->addItems(_predicted_list);

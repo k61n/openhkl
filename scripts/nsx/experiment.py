@@ -218,7 +218,7 @@ class Experiment:
 
         filter.resetFiltering(unfiltered_collection)
         filter.filter(unfiltered_collection)
-        self._expt.acceptFilter(filtered_collection_name, unfiltered_collection)
+        self._expt.acceptFilter(filtered_collection_name, unfiltered_collection, nsx.listtype_FILTERED)
 
         n_caught = self._expt.getPeakCollection(filtered_collection_name).numberCaughtByFilter()
         return n_caught

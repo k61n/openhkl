@@ -46,14 +46,13 @@ class PeakHandler {
     void removePeakCollection(const std::string& name);
     //! Get a vector of peak collection names from the handler
     std::vector<std::string> getCollectionNames() const;
-    //! Get a vector of peak collections with listtype::FOUND
-    std::vector<std::string> getFoundCollectionNames() const;
-    //! Get a vector of peak collections with listtype::PREDICTED
-    std::vector<std::string> getPredictedCollectionNames() const;
+    //! Get a vector of peak collections with specific listtypes
+    std::vector<std::string> getCollectionNames(listtype lt) const;
     //! Get the number of peak collections
     int numPeakCollections() const { return _peak_collections.size(); };
     //! Create a new collection of peaks caught by _peak_filter
-    void acceptFilter(const std::string name, PeakCollection* collection);
+    void acceptFilter(
+        const std::string name, PeakCollection* collection, listtype lt = listtype::FILTERED);
     //! Merge a vector of peak collections
     void setMergedPeaks(std::vector<PeakCollection*> peak_collections, bool friedel);
     //! Merge two peak collections (mainly for SWIG)
