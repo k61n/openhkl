@@ -89,18 +89,10 @@ QStringList Project::getPeakListNames() const
     return ret;
 }
 
-QStringList Project::getFoundNames() const
+QStringList Project::getPeakCollectionNames(nsx::listtype lt) const
 {
     QStringList ret;
-    for (std::string name : _experiment->getFoundCollectionNames())
-        ret << QString::fromStdString(name);
-    return ret;
-}
-
-QStringList Project::getPredictedNames() const
-{
-    QStringList ret;
-    for (std::string name : _experiment->getPredictedCollectionNames())
+    for (std::string name : _experiment->getCollectionNames(lt))
         ret << QString::fromStdString(name);
     return ret;
 }

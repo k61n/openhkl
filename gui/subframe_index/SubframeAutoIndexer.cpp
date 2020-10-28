@@ -178,7 +178,7 @@ void SubframeAutoIndexer::setParametersUp()
     para_grid->addWidget(label_ptr, 8, 0, 1, 2);
     label_ptr->setSizePolicy(*_size_policy_widgets);
 
-    label_ptr = new QLabel("Solutions:");
+    label_ptr = new QLabel("Unit Cells:");
     label_ptr->setAlignment(Qt::AlignRight);
     para_grid->addWidget(label_ptr, 9, 0, 1, 2);
     label_ptr->setSizePolicy(*_size_policy_widgets);
@@ -401,6 +401,22 @@ void SubframeAutoIndexer::updatePeakList()
 
     _peak_combo->clear();
     _peak_list = gSession->experimentAt(_exp_combo->currentIndex())->getPeakListNames();
+    _peak_list.clear();
+
+    QStringList tmp =
+        gSession->experimentAt(_exp_combo->currentIndex())->
+        getPeakCollectionNames(nsx::listtype::FOUND);
+    _peak_list.append(tmp);
+    tmp.clear();
+    tmp =
+        gSession->experimentAt(_exp_combo->currentIndex())->
+        getPeakCollectionNames(nsx::listtype::FILTERED);
+    _peak_list.append(tmp);
+    tmp.clear();
+    tmp =
+        gSession->experimentAt(_exp_combo->currentIndex())->
+        getPeakCollectionNames(nsx::listtype::INDEXING);
+    _peak_list.append(tmp);
 
     if (!_peak_list.empty()) {
         _peak_combo->addItems(_peak_list);

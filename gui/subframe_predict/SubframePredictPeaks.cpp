@@ -19,6 +19,7 @@
 #include "core/peak/Peak3D.h"
 #include "core/raw/IDataReader.h"
 #include "core/shape/IPeakIntegrator.h"
+#include "core/shape/PeakCollection.h"
 #include "core/shape/ShapeCollection.h"
 #include "gui/dialogs/ListNameDialog.h"
 #include "gui/frames/ProgressView.h"
@@ -99,7 +100,7 @@ void SubframePredictPeaks::setSizePolicies()
 
 void SubframePredictPeaks::setInputUp()
 {
-    _input_box = new Spoiler("1. Select Shape Library");
+    _input_box = new Spoiler("1. Shape collection");
 
     QGridLayout* _input_grid = new QGridLayout();
 
@@ -113,7 +114,7 @@ void SubframePredictPeaks::setInputUp()
 
     _exp_combo = new QComboBox();
     _peak_combo = new QComboBox();
-    _build_shape_lib = new QPushButton("Build Library");
+    _build_shape_lib = new QPushButton("Build shape collection");
 
     _exp_combo->setMaximumWidth(1000);
     _peak_combo->setMaximumWidth(1000);
@@ -539,8 +540,17 @@ void SubframePredictPeaks::updatePeakList()
 {
     _peak_combo->blockSignals(true);
     _peak_combo->clear();
+    _peak_list.clear();
 
-    _peak_list = gSession->experimentAt(_exp_combo->currentIndex())->getPeakListNames();
+    QStringList tmp =
+        gSession->experimentAt(_exp_combo->currentIndex())->
+        getPeakCollectionNames(nsx::listtype::FOUND);
+    _peak_list.append(tmp);
+    tmp.clear();
+    tmp =
+        gSession->experimentAt(_exp_combo->currentIndex())->
+        getPeakCollectionNames(nsx::listtype::FILTERED);
+    _peak_list.append(tmp);
 
     if (!_peak_list.empty()) {
         _peak_combo->addItems(_peak_list);
@@ -608,8 +618,6 @@ void SubframePredictPeaks::setPredictorParameters() const { }
 void SubframePredictPeaks::runPrediction()
 {
     try {
-        qDebug() << "Starting peak prediction...";
-
         const std::vector<nsx::sptrDataSet>& data = gSession->currentProject()->allData();
 
         nsx::sptrProgressHandler handler(new nsx::ProgressHandler);
@@ -636,22 +644,15 @@ void SubframePredictPeaks::runPrediction()
         int interpol = _interpolation->currentIndex();
 
         nsx::PeakInterpolation peak_interpolation = static_cast<nsx::PeakInterpolation>(interpol);
-
-        int current_numor = 0;
         std::vector<nsx::Peak3D*> predicted_peaks;
 
         for (nsx::sptrDataSet d : data) {
-            qDebug() << "Predicting peaks for numor " << ++current_numor << " of " << data.size();
-
             std::vector<nsx::Peak3D*> predicted =
                 nsx::predictPeaks(lib, d, cell, peak_interpolation, params);
 
             for (nsx::Peak3D* peak : predicted)
                 predicted_peaks.push_back(peak);
-
-            qDebug() << "Added " << predicted.size() << " predicted peaks.";
         }
-        qDebug() << "Completed  peak prediction. Added " << predicted_peaks.size() << " peaks";
 
         _peak_collection.populate(predicted_peaks);
         for (nsx::Peak3D* peak : predicted_peaks)
@@ -669,8 +670,6 @@ void SubframePredictPeaks::runPrediction()
 void SubframePredictPeaks::runIntegration()
 {
     try {
-        qDebug() << "Starting peak prediction...";
-
         nsx::sptrProgressHandler handler(new nsx::ProgressHandler);
         ProgressView progressView(nullptr);
         progressView.watch(handler);
