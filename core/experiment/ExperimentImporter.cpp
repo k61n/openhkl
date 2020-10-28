@@ -252,12 +252,7 @@ void ExperimentImporter::loadPeaks(Experiment* experiment)
             }
             nsxlog(Level::Debug, "Finished creating the vector of peaks");
 
-            listtype collection_type;
-            if (type == 0)
-                collection_type = listtype::FOUND;
-            else
-                collection_type = listtype::PREDICTED;
-
+            listtype collection_type = static_cast<listtype>(type);
             experiment->addPeakCollection(collection_name, collection_type, peaks);
 
             nsxlog(Level::Debug, "Created the peak collection");
