@@ -187,11 +187,11 @@ void SubframeFindPeaks::setBlobUp()
 
     QLabel* start_frame_label = new QLabel("Start frame");
     start_frame_label->setAlignment(Qt::AlignRight);
-    blob_grid->addWidget(start_frame_label, 7, 0, 1, 1);
+    blob_grid->addWidget(start_frame_label, 8, 0, 1, 1);
 
     QLabel* end_frame_label = new QLabel("End frame");
     end_frame_label->setAlignment(Qt::AlignRight);
-    blob_grid->addWidget(end_frame_label, 8, 0, 1, 1);
+    blob_grid->addWidget(end_frame_label, 9, 0, 1, 1);
 
     _threshold_spin = new QSpinBox();
     _scale_spin = new QDoubleSpinBox();
@@ -244,10 +244,10 @@ void SubframeFindPeaks::setBlobUp()
     blob_grid->addWidget(_max_size_spin, 3, 1, 1, 1);
     blob_grid->addWidget(_max_width_spin, 4, 1, 1, 1);
     blob_grid->addWidget(_kernel_combo, 5, 1, 1, 1);
-    blob_grid->addWidget(_kernel_para_table, 6, 1, 1, 1);
-    blob_grid->addWidget(_start_frame_spin, 7, 1, 1, 1);
-    blob_grid->addWidget(_end_frame_spin, 8, 1, 1, 1);
-    blob_grid->addWidget(_find_button, 9, 0, 1, 2);
+    blob_grid->addWidget(_kernel_para_table, 7, 0, 1, 2);
+    blob_grid->addWidget(_start_frame_spin, 8, 1, 1, 1);
+    blob_grid->addWidget(_end_frame_spin, 9, 1, 1, 1);
+    blob_grid->addWidget(_find_button, 10, 0, 1, 2);
 
     connect(_find_button, &QPushButton::clicked, this, &SubframeFindPeaks::find);
 
