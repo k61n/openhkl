@@ -141,11 +141,18 @@ void SubframeHome::createNew()
 
 void SubframeHome::loadFromFile()
 {
+    QSettings s;
+    s.beginGroup("RecentDirectories");
+    QString loadDirectory = s.value("experiment", QDir::homePath()).toString();
+
     QString file_path = QFileDialog::getOpenFileName(
-        this, "Load the current experiment", "", "NSXTool file (*.nsx)");
+        this, "Load the current experiment", loadDirectory, "NSXTool file (*.nsx)");
 
     if (file_path.isEmpty())
         return;
+
+    QFileInfo info(file_path);
+    s.setValue("experiment", info.absolutePath());
 
     try {
         gSession->loadExperimentFromFile(file_path);
@@ -162,9 +169,20 @@ void SubframeHome::loadFromFile()
 
 void SubframeHome::saveCurrent()
 {
+    QSettings s;
+    s.beginGroup("RecentDirectories");
+    QString loadDirectory = s.value("experiment", QDir::homePath()).toString();
+
     try {
         QString file_path = QFileDialog::getSaveFileName(
-            this, "Save the current experiment", "", "NSXTool file (*.nsx)");
+            this, "Save the current experiment", loadDirectory, "NSXTool file (*.nsx)");
+
+        if (file_path.isEmpty())
+            return;
+
+        QFileInfo info(file_path);
+        s.setValue("experiment", info.absolutePath());
+
         gSession->currentProject()->saveToFile(file_path);
         _updateLastLoadedList(
             QString::fromStdString(gSession->currentProject()->experiment()->name()), file_path);
@@ -183,16 +201,18 @@ void SubframeHome::_switchCurrentExperiment(const QModelIndex& index) const
 
 void SubframeHome::saveSettings() const
 {
-    qRegisterMetaTypeStreamOperators<QList<QStringList>>("last_loaded.ini");
-    QSettings setting("last_loaded.ini", QSettings::IniFormat);
-    setting.setValue("lastLoaded", QVariant::fromValue(_last_imports));
+    qRegisterMetaTypeStreamOperators<QList<QStringList>>("last_loaded");
+    QSettings s;
+    s.beginGroup("RecentFiles");
+    s.setValue("last_loaded", QVariant::fromValue(_last_imports));
 }
 
 void SubframeHome::readSettings()
 {
-    qRegisterMetaTypeStreamOperators<QList<QStringList>>("last_loaded.ini");
-    QSettings setting("last_loaded.ini", QSettings::IniFormat);
-    _last_imports = setting.value("lastLoaded").value<QList<QStringList>>();
+    qRegisterMetaTypeStreamOperators<QList<QStringList>>("last_loaded");
+    QSettings s;
+    s.beginGroup("RecentFiles");
+    _last_imports = s.value("last_loaded").value<QList<QStringList>>();
 }
 
 void SubframeHome::_updateLastLoadedList(QString name, QString file_path)

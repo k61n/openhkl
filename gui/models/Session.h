@@ -60,7 +60,6 @@ class Session {
     std::vector<std::unique_ptr<Project>> _projects;
     int _currentProject = -1;
     int _selectedData = -1;
-    QString _loadDirectory;
 };
 
 #endif // NSX_GUI_MODELS_SESSION_H
