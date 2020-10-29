@@ -201,16 +201,18 @@ void SubframeHome::_switchCurrentExperiment(const QModelIndex& index) const
 
 void SubframeHome::saveSettings() const
 {
-    qRegisterMetaTypeStreamOperators<QList<QStringList>>("last_loaded.ini");
-    QSettings setting("last_loaded.ini", QSettings::IniFormat);
-    setting.setValue("lastLoaded", QVariant::fromValue(_last_imports));
+    qRegisterMetaTypeStreamOperators<QList<QStringList>>("last_loaded");
+    QSettings s;
+    s.beginGroup("RecentFiles");
+    s.setValue("last_loaded", QVariant::fromValue(_last_imports));
 }
 
 void SubframeHome::readSettings()
 {
-    qRegisterMetaTypeStreamOperators<QList<QStringList>>("last_loaded.ini");
-    QSettings setting("last_loaded.ini", QSettings::IniFormat);
-    _last_imports = setting.value("lastLoaded").value<QList<QStringList>>();
+    qRegisterMetaTypeStreamOperators<QList<QStringList>>("last_loaded");
+    QSettings s;
+    s.beginGroup("RecentFiles");
+    _last_imports = s.value("last_loaded").value<QList<QStringList>>();
 }
 
 void SubframeHome::_updateLastLoadedList(QString name, QString file_path)
