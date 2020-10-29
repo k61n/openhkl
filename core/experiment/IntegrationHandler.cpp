@@ -23,7 +23,7 @@
 #include "core/integration/Profile3DIntegrator.h"
 #include "core/integration/ShapeIntegrator.h"
 #include "core/shape/PeakCollection.h"
-#include "core/shape/ShapeLibrary.h"
+#include "core/shape/ShapeCollection.h"
 
 namespace nsx {
 
@@ -94,13 +94,13 @@ void IntegrationHandler::integratePeaks(
     integrator->setNNumors(data->size());
     int n_numor = 1;
     for (DataMap::const_iterator it = data->begin(); it != data->end(); ++it) {
-        integrator->integrate(peaks, peak_collection->shapeLibrary(), it->second, n_numor);
+        integrator->integrate(peaks, peak_collection->shapeCollection(), it->second, n_numor);
         ++n_numor;
     }
 }
 
 void IntegrationHandler::integratePredictedPeaks(
-    std::string integrator_name, PeakCollection* peak_collection, ShapeLibrary* shape_library,
+    std::string integrator_name, PeakCollection* peak_collection, ShapeCollection* shape_collection,
     PredictionParameters& params)
 {
     nsxlog(Level::Info, "IntegrationHandler::integratePredictedPeaks");
@@ -117,7 +117,7 @@ void IntegrationHandler::integratePredictedPeaks(
     integrator->setNNumors(data->size());
     int n_numor = 1;
     for (DataMap::const_iterator it = data->begin(); it != data->end(); ++it) {
-        integrator->integrate(peaks, shape_library, it->second, n_numor);
+        integrator->integrate(peaks, shape_collection, it->second, n_numor);
         ++n_numor;
     }
 }
@@ -136,26 +136,27 @@ void IntegrationHandler::integrateFoundPeaks(std::string integrator_name, PeakFi
     }
 }
 
-ShapeLibrary& IntegrationHandler::integrateShapeLibrary(
-    std::vector<Peak3D*>& fit_peaks, ShapeLibrary* shape_library, const AABB& aabb,
-    const ShapeLibParameters& params)
+ShapeCollection& IntegrationHandler::integrateShapeCollection(
+    std::vector<Peak3D*>& fit_peaks, ShapeCollection* shape_collection, const AABB& aabb,
+    const ShapeCollectionParameters& params)
 {
-    nsxlog(Level::Info, "IntegrationHandler::integrateShapeLibrary");
-    ShapeIntegrator integrator{shape_library, aabb, params.nbins_x, params.nbins_y, params.nbins_z};
+    nsxlog(Level::Info, "IntegrationHandler::integrateShapeCollection");
+    ShapeIntegrator integrator{
+        shape_collection, aabb, params.nbins_x, params.nbins_y, params.nbins_z};
     integrator.setParameters(params);
 
     const DataMap* data = _data_handler->getDataMap();
     integrator.setNNumors(data->size());
-    // TODO: (zamaan) change numors to a argument of buildShapeLibrary
+    // TODO: (zamaan) change numors to a argument of buildShapeCollection
     // Right now, there is no metadata for which DataSet was used to
     // Generate the peak collection
     int n_numor = 1;
     for (auto const& [key, data] : *data) {
-        integrator.integrate(fit_peaks, shape_library, data, n_numor);
+        integrator.integrate(fit_peaks, shape_collection, data, n_numor);
         ++n_numor;
     }
 
-    return *shape_library;
+    return *shape_collection;
 }
 
 } // namespace nsx

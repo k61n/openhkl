@@ -13,6 +13,8 @@
 //  ***********************************************************************************************
 
 #include "base/utils/Units.h" // deg
+#include "core/algo/Refiner.h"
+#include "core/data/DataSet.h"
 #include "core/instrument/InstrumentState.h"
 #include "core/instrument/InstrumentStateList.h"
 

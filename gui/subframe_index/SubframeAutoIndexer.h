@@ -17,13 +17,8 @@
 
 #include "core/algo/AutoIndexer.h"
 #include "core/shape/PeakCollection.h"
-
-#include "gui/graphics/DetectorView.h"
+#include "gui/items/PeakCollectionItem.h"
 #include "gui/models/PeakCollectionModel.h"
-#include "gui/utility/ColorButton.h"
-#include "gui/utility/Spoiler.h"
-#include "gui/views/PeakTableView.h"
-#include "gui/views/UnitCellTableView.h"
 
 #include <QCheckBox>
 #include <QComboBox>
@@ -36,6 +31,10 @@
 #include <QTableWidget>
 #include <QVBoxLayout>
 #include <QWidget>
+
+class PeakTableView;
+class UnitCellTableView;
+class Spoiler;
 
 //! Frame which shows the settings for the AutoIndexer
 class SubframeAutoIndexer : public QWidget {
@@ -138,7 +137,7 @@ class SubframeAutoIndexer : public QWidget {
     QSizePolicy* _size_policy_right;
     QSizePolicy* _size_policy_fixed;
 
-    PeaksTableView* _peak_table;
+    PeakTableView* _peak_table;
     UnitCellTableView* _solution_table;
 };
 

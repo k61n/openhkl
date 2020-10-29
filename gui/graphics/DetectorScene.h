@@ -16,19 +16,16 @@
 #define NSX_GUI_GRAPHICS_DETECTORSCENE_H
 
 #include "base/mask/IMask.h"
-
 #include "core/data/DataTypes.h"
 #include "core/peak/Peak3D.h"
-
-#include "gui/items/PeakItem.h"
 #include "gui/models/ColorMap.h"
-#include "gui/models/PeakCollectionModel.h"
 
 #include <QGraphicsPixmapItem>
 #include <QGraphicsScene>
 #include <QStack>
 
 class PeakItemGraphic;
+class PeakCollectionModel;
 class SXGraphicsItem;
 
 // For the plotting part, better to have RowMajor matrix to use QImage scanline

@@ -15,12 +15,14 @@
 #ifndef NSX_CORE_STATISTICS_PEAKEXPORTER_H
 #define NSX_CORE_STATISTICS_PEAKEXPORTER_H
 
-#include "core/peak/Peak3D.h"
-#include "core/statistics/MergedData.h"
-#include "core/statistics/ResolutionShell.h"
-#include "tables/crystal/SpaceGroup.h"
+#include <string>
 
 namespace nsx {
+
+class Peak3D;
+class MergedData;
+class ResolutionShell;
+class SpaceGroup;
 
 //! Manages the export of peak information to file.
 class PeakExporter {

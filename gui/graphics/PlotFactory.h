@@ -16,8 +16,9 @@
 #define NSX_GUI_GRAPHICS_PLOTFACTORY_H
 
 #include "base/utils/Factory.h"
-#include "base/utils/ISingleton.h"
 #include "gui/graphics/SXPlot.h"
+
+class SXPlot;
 
 //! A creator for SXPlot%s
 class PlotFactory : public nsx::Factory<PlotFactory, SXPlot, std::string, QWidget*> {

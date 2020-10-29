@@ -13,6 +13,7 @@
 //  ***********************************************************************************************
 
 #include "gui/subframe_index/SubframeAutoIndexer.h"
+
 #include "base/utils/Logger.h"
 #include "base/utils/ProgressHandler.h"
 #include "base/utils/Units.h"
@@ -22,6 +23,10 @@
 #include "gui/frames/UnitCellWidget.h"
 #include "gui/models/Project.h"
 #include "gui/models/Session.h"
+#include "gui/utility/Spoiler.h"
+#include "gui/views/PeakTableView.h"
+#include "gui/views/UnitCellTableView.h"
+
 #include <QHeaderView>
 #include <QLabel>
 #include <QMessageBox>
@@ -173,7 +178,7 @@ void SubframeAutoIndexer::setParametersUp()
     para_grid->addWidget(label_ptr, 8, 0, 1, 2);
     label_ptr->setSizePolicy(*_size_policy_widgets);
 
-    label_ptr = new QLabel("Solutions:");
+    label_ptr = new QLabel("Unit Cells:");
     label_ptr->setAlignment(Qt::AlignRight);
     para_grid->addWidget(label_ptr, 9, 0, 1, 2);
     label_ptr->setSizePolicy(*_size_policy_widgets);
@@ -337,7 +342,7 @@ void SubframeAutoIndexer::setPeakTableUp()
 
     peak_group->setSizePolicy(*_size_policy_right);
 
-    _peak_table = new PeaksTableView(this);
+    _peak_table = new PeakTableView(this);
     _peak_collection_model.setRoot(&_peak_collection_item);
     _peak_table->setModel(&_peak_collection_model);
 
@@ -396,6 +401,22 @@ void SubframeAutoIndexer::updatePeakList()
 
     _peak_combo->clear();
     _peak_list = gSession->experimentAt(_exp_combo->currentIndex())->getPeakListNames();
+    _peak_list.clear();
+
+    QStringList tmp =
+        gSession->experimentAt(_exp_combo->currentIndex())->
+        getPeakCollectionNames(nsx::listtype::FOUND);
+    _peak_list.append(tmp);
+    tmp.clear();
+    tmp =
+        gSession->experimentAt(_exp_combo->currentIndex())->
+        getPeakCollectionNames(nsx::listtype::FILTERED);
+    _peak_list.append(tmp);
+    tmp.clear();
+    tmp =
+        gSession->experimentAt(_exp_combo->currentIndex())->
+        getPeakCollectionNames(nsx::listtype::INDEXING);
+    _peak_list.append(tmp);
 
     if (!_peak_list.empty()) {
         _peak_combo->addItems(_peak_list);
@@ -470,8 +491,7 @@ void SubframeAutoIndexer::setIndexerParameters()
 
 void SubframeAutoIndexer::runAutoIndexer()
 {
-    if (_peak_list.empty() || _exp_combo->count() < 1)
-    {
+    if (_peak_list.empty() || _exp_combo->count() < 1) {
         QMessageBox::critical(this, "Error", "No peaks or experiments defined.");
         return;
     }
@@ -497,7 +517,7 @@ void SubframeAutoIndexer::runAutoIndexer()
     }
 
     _solutions = auto_indexer->solutions();
-    if(_solutions.size() == 0)
+    if (_solutions.size() == 0)
         QMessageBox::warning(this, "Warning", "No solution found.");
 
     buildSolutionsTable();

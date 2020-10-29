@@ -3,7 +3,7 @@
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
 //! @file      gui/views/PeakTableView.h
-//! @brief     Defines classes PeaksTableModel and PeaksTableView
+//! @brief     Defines classes PeaksTableModel and PeakTableView
 //!
 //! @homepage  ###HOMEPAGE###
 //! @license   GNU General Public License v3 or higher (see COPYING)
@@ -17,17 +17,17 @@
 
 #include <QTableView>
 
-class PeaksTableView : public QTableView {
+class PeakTableView : public QTableView {
     Q_OBJECT
  public:
-    explicit PeaksTableView(QWidget* parent = 0);
+    explicit PeakTableView(QWidget* parent = 0);
     //  void contextMenuEvent(QContextMenuEvent*) override;
     //     virtual void keyPressEvent(QKeyEvent* event) override;
     //  signals:
     //     void plotData(const QVector<double>&, const QVector<double>&, const QVector<double>&);
     //     void plotPeak(nsx::sptrPeak3D);
     //     void autoIndexed();
-    //     void updateShapeLibrary(nsx::sptrShapeLibrary);
+    //     void updateShapeCollection(nsx::sptrShapeCollection);
     //  public slots:
     //     //! Normalize to monitor.
     //     void normalizeToMonitor();

@@ -70,31 +70,21 @@ std::vector<std::string> PeakHandler::getCollectionNames() const
     return names;
 }
 
-std::vector<std::string> PeakHandler::getFoundCollectionNames() const
+    std::vector<std::string> PeakHandler::getCollectionNames(
+        listtype lt /* = listtype::FILTERED */) const
 {
     std::vector<std::string> names;
     for (PeakCollectionMap::const_iterator it = _peak_collections.begin();
          it != _peak_collections.end(); ++it) {
-        if (it->second->type() == listtype::FOUND)
+        if (it->second->type() == lt)
             names.push_back(it->second->name());
     }
     return names;
 }
 
-std::vector<std::string> PeakHandler::getPredictedCollectionNames() const
+void PeakHandler::acceptFilter(std::string name, PeakCollection* collection, listtype lt)
 {
-    std::vector<std::string> names;
-    for (PeakCollectionMap::const_iterator it = _peak_collections.begin();
-         it != _peak_collections.end(); ++it) {
-        if (it->second->type() == listtype::PREDICTED)
-            names.push_back(it->second->name());
-    }
-    return names;
-}
-
-void PeakHandler::acceptFilter(std::string name, PeakCollection* collection)
-{
-    std::unique_ptr<PeakCollection> ptr(new PeakCollection(name, collection->type()));
+    std::unique_ptr<PeakCollection> ptr(new PeakCollection(name, lt));
     ptr->populateFromFiltered(collection);
     _peak_collections.insert_or_assign(name, std::move(ptr));
 }

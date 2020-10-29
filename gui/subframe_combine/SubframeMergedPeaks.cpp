@@ -16,16 +16,24 @@
 #include "core/data/DataSet.h"
 #include "core/experiment/DataQuality.h"
 #include "core/experiment/Experiment.h"
+#include "core/peak/Peak3D.h"
+#include "core/shape/PeakCollection.h"
 #include "core/statistics/CC.h"
+#include "core/statistics/MergedData.h"
 #include "core/statistics/MergedPeak.h"
 #include "core/statistics/RFactor.h"
 #include "core/statistics/ResolutionShell.h"
+#include "gui/graphics/SXPlot.h"
 #include "gui/models/Project.h"
 #include "gui/models/Session.h"
+
 #include <QDialogButtonBox>
+#include <QFileDialog>
 #include <QFormLayout>
 #include <QHBoxLayout>
+#include <QLabel>
 #include <QVBoxLayout>
+
 #include <fstream>
 #include <iomanip>
 
@@ -273,9 +281,18 @@ void SubframeMergedPeaks::refreshPeakLists()
 void SubframeMergedPeaks::refreshFoundPeakList()
 {
     _found_drop->blockSignals(true);
-
     _found_drop->clear();
-    _found_list = gSession->experimentAt(_exp_drop->currentIndex())->getFoundNames();
+    _found_list.clear();
+
+    QStringList tmp =
+        gSession->experimentAt(_exp_drop->currentIndex())->
+        getPeakCollectionNames(nsx::listtype::FOUND);
+    _found_list.append(tmp);
+    tmp.clear();
+    tmp =
+        gSession->experimentAt(_exp_drop->currentIndex())->
+        getPeakCollectionNames(nsx::listtype::FILTERED);
+    _found_list.append(tmp);
 
     if (!_found_list.empty()) {
         _found_drop->addItems(_found_list);
@@ -289,7 +306,9 @@ void SubframeMergedPeaks::refreshPredictedPeakList()
     _predicted_drop->blockSignals(true);
 
     _predicted_drop->clear();
-    _predicted_list = gSession->experimentAt(_exp_drop->currentIndex())->getPredictedNames();
+    _predicted_list =
+        gSession->experimentAt(_exp_drop->currentIndex())->
+        getPeakCollectionNames(nsx::listtype::PREDICTED);
 
     if (!_predicted_list.empty()) {
         _predicted_drop->addItems(_predicted_list);

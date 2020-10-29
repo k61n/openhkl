@@ -15,10 +15,12 @@
 #ifndef NSX_GUI_SUBFRAME_EXPERIMENT_PROPERTYPANEL_H
 #define NSX_GUI_SUBFRAME_EXPERIMENT_PROPERTYPANEL_H
 
-#include "gui/subframe_experiment/properties/InstrumentProperty.h"
-#include "gui/subframe_experiment/properties/NumorProperty.h"
-#include "gui/subframe_experiment/properties/PeakProperties.h"
-#include "gui/subframe_experiment/properties/UnitCellProperty.h"
+#include <QTabWidget>
+
+class InstrumentProperty;
+class NumorProperty;
+class PeakProperties;
+class UnitCellProperty;
 
 //! Part of the main window that contains the property tabs
 class PropertyPanel : public QTabWidget {

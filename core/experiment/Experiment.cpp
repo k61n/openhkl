@@ -130,7 +130,7 @@ void Experiment::autoIndex(PeakCollection* peaks, const IndexerParameters& param
     double npeaks = peaks->numberOfPeaks();
     double ncaught = peaks->numberCaughtByFilter();
     nsxlog(Level::Info, "Indexing using", ncaught, "/", npeaks, "peaks");
-    _peak_handler->acceptFilter(collection_name, peaks);
+    _peak_handler->acceptFilter(collection_name, peaks, listtype::INDEXING);
     _auto_indexer->setParameters(params);
     PeakCollection* indexing_collection = getPeakCollection(collection_name);
     _auto_indexer->autoIndex(indexing_collection);
@@ -156,7 +156,8 @@ bool Experiment::runAutoIndexer(
 }
 
 
-void Experiment::buildShapeLibrary(PeakCollection* peaks, const ShapeLibParameters& params)
+void Experiment::buildShapeCollection(
+    PeakCollection* peaks, const ShapeCollectionParameters& params)
 {
     params.log(Level::Info);
     peaks->computeSigmas();
@@ -169,14 +170,14 @@ void Experiment::buildShapeLibrary(PeakCollection* peaks, const ShapeLibParamete
     _peak_filter->setStrength(params.strength_min, params.strength_max);
     _peak_filter->filter(peaks);
     std::string collection_name = "fit";
-    _peak_handler->acceptFilter(collection_name, peaks);
+    _peak_handler->acceptFilter(collection_name, peaks, listtype::FILTERED);
     PeakCollection* fit_peaks = getPeakCollection(collection_name);
 
     if (fit_peaks->numberOfPeaks() == 0)
-        throw std::runtime_error("buildShapeLibrary: no fit peaks found");
+        throw std::runtime_error("buildShapeCollection: no fit peaks found");
 
     nsxlog(
-        Level::Info, "Experiment::buildShapeLibrary:", fit_peaks->numberOfPeaks(), "/",
+        Level::Info, "Experiment::buildShapeCollection:", fit_peaks->numberOfPeaks(), "/",
         peaks->numberOfPeaks(), "fit peaks");
 
     nsx::AABB aabb;
@@ -191,15 +192,15 @@ void Experiment::buildShapeLibrary(PeakCollection* peaks, const ShapeLibParamete
         aabb.setUpper(0.5 * dx);
     }
 
-    ShapeLibrary shape_library =
-        ShapeLibrary(!params.kabsch_coords, params.peak_end, params.bkg_begin, params.bkg_end);
+    ShapeCollection shape_collection =
+        ShapeCollection(!params.kabsch_coords, params.peak_end, params.bkg_begin, params.bkg_end);
 
     std::vector<Peak3D*> fit_peak_list = fit_peaks->getPeakList();
-    shape_library =
-        _integration_handler->integrateShapeLibrary(fit_peak_list, &shape_library, aabb, params);
+    shape_collection = _integration_handler->integrateShapeCollection(
+        fit_peak_list, &shape_collection, aabb, params);
 
-    peaks->setShapeLibrary(shape_library);
-    // shape_library.updateFit(1000); // This does nothing!! - zamaan
+    peaks->setShapeCollection(shape_collection);
+    // shape_collection.updateFit(1000); // This does nothing!! - zamaan
 }
 
 void Experiment::predictPeaks(
@@ -209,7 +210,7 @@ void Experiment::predictPeaks(
     const DataList numors = getAllData();
     std::vector<nsx::Peak3D*> predicted_peaks;
     const UnitCell* accepted_cell = getUnitCell("accepted");
-    const ShapeLibrary* library = peaks->shapeLibrary();
+    const ShapeCollection* shape_collection = peaks->shapeCollection();
 
     int current_numor = 0;
     for (const sptrDataSet& data : numors) {
@@ -218,7 +219,7 @@ void Experiment::predictPeaks(
             numors.size());
 
         const std::vector<nsx::Peak3D*> predicted =
-            nsx::predictPeaks(library, data, accepted_cell, interpol, params);
+            nsx::predictPeaks(shape_collection, data, accepted_cell, interpol, params);
 
         for (nsx::Peak3D* peak : predicted)
             predicted_peaks.push_back(peak);
@@ -362,14 +363,9 @@ std::vector<std::string> Experiment::getCollectionNames() const
     return _peak_handler->getCollectionNames();
 }
 
-std::vector<std::string> Experiment::getFoundCollectionNames() const
+std::vector<std::string> Experiment::getCollectionNames(listtype lt) const
 {
-    return _peak_handler->getFoundCollectionNames();
-}
-
-std::vector<std::string> Experiment::getPredictedCollectionNames() const
-{
-    return _peak_handler->getPredictedCollectionNames();
+    return _peak_handler->getCollectionNames(lt);
 }
 
 int Experiment::numPeakCollections() const
@@ -377,9 +373,9 @@ int Experiment::numPeakCollections() const
     return _peak_handler->numPeakCollections();
 }
 
-void Experiment::acceptFilter(std::string name, PeakCollection* collection)
+void Experiment::acceptFilter(std::string name, PeakCollection* collection, listtype lt)
 {
-    _peak_handler->acceptFilter(name, collection);
+    _peak_handler->acceptFilter(name, collection, lt);
 }
 
 void Experiment::checkPeakCollections()
@@ -489,10 +485,10 @@ void Experiment::integratePeaks(
 
 void Experiment::integratePredictedPeaks(
     const std::string& integrator_name, PeakCollection* peak_collection,
-    ShapeLibrary* shape_library, PredictionParameters& params)
+    ShapeCollection* shape_collection, PredictionParameters& params)
 {
     _integration_handler->integratePredictedPeaks(
-        integrator_name, peak_collection, shape_library, params);
+        integrator_name, peak_collection, shape_collection, params);
 }
 
 void Experiment::integrateFoundPeaks(const std::string& integrator)

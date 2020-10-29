@@ -84,14 +84,13 @@ class Experiment {
     void removePeakCollection(const std::string& name);
     //! Get a vector of peak collection names
     std::vector<std::string> getCollectionNames() const;
-    //! Get a vector of names of peak collections of listtype::FOUND
-    std::vector<std::string> getFoundCollectionNames() const;
-    //! Get a vector of names of peak collections of listtype::PREDICTD
-    std::vector<std::string> getPredictedCollectionNames() const;
+    //! Get a vector of peak collection names of a give listtype
+    std::vector<std::string> getCollectionNames(listtype lt) const;
     //! Get the number of peak collections
     int numPeakCollections() const;
     //! Create a new peak collection from peaks caught by a filter
-    void acceptFilter(std::string name, PeakCollection* collection);
+    void acceptFilter(
+        std::string name, PeakCollection* collection, listtype lt = listtype::FILTERED);
     //! Check for unphysical peaks in all collections
     void checkPeakCollections();
     //! Merge a vector of PeakCollection objects
@@ -164,10 +163,10 @@ class Experiment {
     void integratePeaks(
         const std::string& integrator_name, PeakCollection* peak_collection, double d_min,
         double d_max);
-    //! Integrate predicted peaks, fitting shappes from given shape library
+    //! Integrate predicted peaks, fitting shapes from given shape collection
     void integratePredictedPeaks(
         const std::string& integrator_name, PeakCollection* peak_collection,
-        ShapeLibrary* shape_library, PredictionParameters& params);
+        ShapeCollection* shape_collection, PredictionParameters& params);
     //! Integrate peaks found by _peak_finder
     void integrateFoundPeaks(const std::string& integrator);
 
@@ -178,8 +177,8 @@ class Experiment {
     void loadFromFile(const std::string& path);
 
     // Prediction
-    //! Construct the library used to fit the shapes of predicted peaks
-    void buildShapeLibrary(PeakCollection* peaks, const ShapeLibParameters& params);
+    //! Construct the collection used to fit the shapes of predicted peaks
+    void buildShapeCollection(PeakCollection* peaks, const ShapeCollectionParameters& params);
     //! Predict peaks from unit cell
     void predictPeaks(
         const std::string& name, PeakCollection* peaks, const PredictionParameters& params,
@@ -202,7 +201,7 @@ class Experiment {
     // they get destroyed when passed to Experiment, hence the kludgy option of making them
     // public - zamaan
     IntegrationParameters int_params;
-    ShapeLibParameters shape_params;
+    ShapeCollectionParameters shape_params;
     PredictionParameters predict_params;
     RawDataReaderParameters data_params;
     IndexerParameters indexer_params;

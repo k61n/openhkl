@@ -16,6 +16,7 @@
 #define NSX_GUI_GRAPHICS_PEAKPLOT_H
 
 #include "gui/graphics/SXPlot.h"
+class SXPlot;
 
 //! Specific plot type of SXPlot
 class PeakPlot : public SXPlot {

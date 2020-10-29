@@ -12,14 +12,14 @@
 //
 //  ***********************************************************************************************
 
-#include "core/algo/Refiner.h"
-#include "core/data/DataSet.h"
-
 #include <QStandardItemModel>
 #include <QTableWidgetItem>
 
 #ifndef NSX_GUI_SUBFRAME_REFINER_REFINERTABLES_H
 #define NSX_GUI_SUBFRAME_REFINER_TABLES_REFINERTABLES_H
+
+class DataSet;
+class Refiner;
 
 class RefinerTables : public QTabWidget {
 

@@ -17,6 +17,7 @@
 #include "base/utils/Logger.h"
 #include "core/data/DataSet.h"
 #include "core/data/DataTypes.h"
+#include "core/experiment/Experiment.h"
 #include "core/loader/ExperimentDataReader.h"
 #include "core/peak/Intensity.h"
 #include "core/peak/Peak3D.h"
@@ -251,12 +252,7 @@ void ExperimentImporter::loadPeaks(Experiment* experiment)
             }
             nsxlog(Level::Debug, "Finished creating the vector of peaks");
 
-            listtype collection_type;
-            if (type == 0)
-                collection_type = listtype::FOUND;
-            else
-                collection_type = listtype::PREDICTED;
-
+            listtype collection_type = static_cast<listtype>(type);
             experiment->addPeakCollection(collection_name, collection_type, peaks);
 
             nsxlog(Level::Debug, "Created the peak collection");

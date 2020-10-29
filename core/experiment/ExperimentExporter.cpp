@@ -396,13 +396,8 @@ void ExperimentExporter::writePeaks(const std::map<std::string, PeakCollection*>
 
         H5::Attribute type_att(
             meta_peak_group.createAttribute("Type", H5::PredType::NATIVE_INT32, metaSpace));
-        if (collection_item->type() == listtype::FOUND) {
-            int num = 0;
-            type_att.write(H5::PredType::NATIVE_INT32, &num);
-        } else {
-            int num = 1;
-            type_att.write(H5::PredType::NATIVE_INT32, &num);
-        }
+        int listtype_int = static_cast<int>(collection_item->type());
+        type_att.write(H5::PredType::NATIVE_INT32, &listtype_int);
 
         delete[] peak_end;
         delete[] bkg_begin;

@@ -2,8 +2,8 @@
 //
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
-//! @file      core/shape/ShapeLibrary.cpp
-//! @brief     Implements classes PeakInterpolation, ShapeLibrary
+//! @file      core/shape/ShapeCollection.cpp
+//! @brief     Implements classes PeakInterpolation, ShapeCollection
 //!
 //! @homepage  ###HOMEPAGE###
 //! @license   GNU General Public License v3 or higher (see COPYING)
@@ -12,7 +12,7 @@
 //
 //  ***********************************************************************************************
 
-#include "core/shape/ShapeLibrary.h"
+#include "core/shape/ShapeCollection.h"
 
 #include "base/fit/Minimizer.h"
 #include "base/geometry/Ellipsoid.h"
@@ -34,10 +34,10 @@
 
 namespace nsx {
 
-void ShapeLibParameters::log(const Level& level) const
+void ShapeCollectionParameters::log(const Level& level) const
 {
     IntegrationParameters::log(level);
-    nsxlog(level, "Shape library parameters:");
+    nsxlog(level, "Shape Collection parameters:");
     nsxlog(level, "detector_range_min     =", detector_range_min);
     nsxlog(level, "detector_range_max     =", detector_range_max);
     nsxlog(level, "strength_min           =", strength_min);
@@ -84,7 +84,7 @@ static std::vector<Peak3D*> buildPeaksFromMillerIndices(
 }
 
 std::vector<Peak3D*> predictPeaks(
-    const ShapeLibrary* library, const sptrDataSet data, const UnitCell* unit_cell,
+    const ShapeCollection* collection, const sptrDataSet data, const UnitCell* unit_cell,
     PeakInterpolation interpolation, const PredictionParameters& params)
 {
     std::vector<Peak3D*> predicted_peaks;
@@ -110,7 +110,7 @@ std::vector<Peak3D*> predictPeaks(
         // Skip the peak if any error occur when computing its mean covariance (e.g.
         // too few or no neighbouring peaks found)
         try {
-            Eigen::Matrix3d cov = library->meanCovariance(
+            Eigen::Matrix3d cov = collection->meanCovariance(
                 peak, params.neighbour_range_pixels, params.neighbour_range_frames,
                 params.min_n_neighbors, interpolation);
             Eigen::Vector3d center = peak->shape().center();
@@ -122,15 +122,16 @@ std::vector<Peak3D*> predictPeaks(
         predicted_peaks.push_back(peak);
     }
     nsxlog(
-        Level::Info, "algo::predictPeaks: Interpolation failed for", library->nFailedInterp(),
+        Level::Info, "algo::predictPeaks: Interpolation failed for", collection->nFailedInterp(),
         "peaks");
     nsxlog(
-        Level::Debug, "algo::predictPeaks:", library->nNoProfile(),
+        Level::Debug, "algo::predictPeaks:", collection->nNoProfile(),
         "peaks with no neighbouring profiles");
     nsxlog(
-        Level::Debug, "algo::predictPeaks:", library->nLonelyPeaks(), "peaks with no neighbours");
+        Level::Debug, "algo::predictPeaks:", collection->nLonelyPeaks(),
+        "peaks with no neighbours");
     nsxlog(
-        Level::Debug, "algo::predictPeaks:", library->nUnfriendlyPeaks(),
+        Level::Debug, "algo::predictPeaks:", collection->nUnfriendlyPeaks(),
         "peaks with too few neighbours");
     // TODO: suggest course of action for fixing these error (increase radius, minimum number
     // of neighbours)
@@ -151,7 +152,7 @@ static Eigen::Matrix3d from_cholesky(const std::array<double, 6>& components)
     return L * L.transpose();
 }
 
-//! Helper struct used internally by the shape library.
+//! Helper struct used internally by the shape collection.
 struct FitData {
     //! Sample orientation matrix
     Eigen::Matrix3d Rs;
@@ -200,7 +201,7 @@ struct FitData {
     }
 };
 
-ShapeLibrary::ShapeLibrary()
+ShapeCollection::ShapeCollection()
     : _profiles()
     , _choleskyD()
     , _choleskyM()
@@ -215,7 +216,8 @@ ShapeLibrary::ShapeLibrary()
     _choleskyS.fill(1e-6);
 }
 
-ShapeLibrary::ShapeLibrary(bool detector_coords, double peakScale, double bkgBegin, double bkgEnd)
+ShapeCollection::ShapeCollection(
+    bool detector_coords, double peakScale, double bkgBegin, double bkgEnd)
     : _profiles()
     , _choleskyD()
     , _choleskyM()
@@ -257,22 +259,22 @@ static void covariance_helper(
     result = Jd * cov * Jd.transpose();
 }
 
-double ShapeLibrary::peakScale() const
+double ShapeCollection::peakScale() const
 {
     return _peakScale;
 }
 
-double ShapeLibrary::bkgBegin() const
+double ShapeCollection::bkgBegin() const
 {
     return _bkgBegin;
 }
 
-double ShapeLibrary::bkgEnd() const
+double ShapeCollection::bkgEnd() const
 {
     return _bkgEnd;
 }
 
-bool ShapeLibrary::addPeak(Peak3D* peak, Profile3D&& profile, Profile1D&& integrated_profile)
+bool ShapeCollection::addPeak(Peak3D* peak, Profile3D&& profile, Profile1D&& integrated_profile)
 {
     Eigen::Matrix3d A = peak->shape().inverseMetric();
     Eigen::Matrix3d cov = 0.5 * (A + A.transpose());
@@ -287,7 +289,7 @@ bool ShapeLibrary::addPeak(Peak3D* peak, Profile3D&& profile, Profile1D&& integr
     return true;
 }
 
-void ShapeLibrary::updateFit(int /*num_iterations*/)
+void ShapeCollection::updateFit(int /*num_iterations*/)
 {
 #if 0 // TODO restore
 
@@ -340,13 +342,13 @@ void ShapeLibrary::updateFit(int /*num_iterations*/)
 #endif
 }
 
-Eigen::Matrix3d ShapeLibrary::predictCovariance(Peak3D* peak) const
+Eigen::Matrix3d ShapeCollection::predictCovariance(Peak3D* peak) const
 {
     FitData f(peak);
     return predictCovariance(f);
 }
 
-Eigen::Matrix3d ShapeLibrary::predictCovariance(const FitData& f) const
+Eigen::Matrix3d ShapeCollection::predictCovariance(const FitData& f) const
 {
     Eigen::Matrix3d result;
     Eigen::Matrix3d sigmaM = from_cholesky(_choleskyM);
@@ -356,7 +358,7 @@ Eigen::Matrix3d ShapeLibrary::predictCovariance(const FitData& f) const
     return result;
 }
 
-double ShapeLibrary::meanPearson() const
+double ShapeCollection::meanPearson() const
 {
     double sum_pearson = 0;
 
@@ -369,7 +371,7 @@ double ShapeLibrary::meanPearson() const
     return sum_pearson / _profiles.size();
 }
 
-Profile3D ShapeLibrary::meanProfile(const DetectorEvent& ev, double radius, double nframes) const
+Profile3D ShapeCollection::meanProfile(const DetectorEvent& ev, double radius, double nframes) const
 {
     Profile3D mean;
     std::vector<Peak3D*> neighbors = findNeighbors(ev, radius, nframes);
@@ -384,7 +386,7 @@ Profile3D ShapeLibrary::meanProfile(const DetectorEvent& ev, double radius, doub
     return mean;
 }
 
-std::vector<Intensity> ShapeLibrary::meanProfile1D(
+std::vector<Intensity> ShapeCollection::meanProfile1D(
     const DetectorEvent& ev, double radius, double nframes) const
 {
     std::vector<Peak3D*> neighbors = findNeighbors(ev, radius, nframes);
@@ -403,7 +405,7 @@ std::vector<Intensity> ShapeLibrary::meanProfile1D(
     return mean_profile;
 }
 
-std::vector<Peak3D*> ShapeLibrary::findNeighbors(
+std::vector<Peak3D*> ShapeCollection::findNeighbors(
     const DetectorEvent& ev, double radius, double nframes) const
 {
     std::vector<Peak3D*> neighbors;
@@ -427,7 +429,7 @@ std::vector<Peak3D*> ShapeLibrary::findNeighbors(
     return neighbors;
 }
 
-Eigen::Matrix3d ShapeLibrary::meanCovariance(
+Eigen::Matrix3d ShapeCollection::meanCovariance(
     Peak3D* reference_peak, double radius, double nframes, size_t min_neighbors,
     PeakInterpolation interpolation) const
 {
@@ -438,10 +440,10 @@ Eigen::Matrix3d ShapeLibrary::meanCovariance(
 
     if (neighbors.empty() || (neighbors.size() < min_neighbors)) {
         ++_n_lonely_peaks;
-        throw std::runtime_error("ShapeLibrary::meanCovariance(): peak has no neighbors");
+        throw std::runtime_error("ShapeCollection::meanCovariance(): peak has no neighbors");
     } else if (neighbors.size() < min_neighbors) {
         ++_n_unfriendly_peaks;
-        throw std::runtime_error("ShapeLibrary::meanCovariance(): peak has too few neighbors");
+        throw std::runtime_error("ShapeCollection::meanCovariance(): peak has too few neighbors");
     }
 
     PeakCoordinateSystem reference_coord(reference_peak);
@@ -486,27 +488,27 @@ Eigen::Matrix3d ShapeLibrary::meanCovariance(
     return JI * cov * JI.transpose();
 }
 
-bool ShapeLibrary::detectorCoords() const
+bool ShapeCollection::detectorCoords() const
 {
     return _detectorCoords;
 }
 
-std::array<double, 6> ShapeLibrary::choleskyD() const
+std::array<double, 6> ShapeCollection::choleskyD() const
 {
     return _choleskyD;
 }
 
-std::array<double, 6> ShapeLibrary::choleskyM() const
+std::array<double, 6> ShapeCollection::choleskyM() const
 {
     return _choleskyM;
 }
 
-std::array<double, 6> ShapeLibrary::choleskyS() const
+std::array<double, 6> ShapeCollection::choleskyS() const
 {
     return _choleskyS;
 }
 
-std::map<Peak3D*, std::pair<Profile3D, Profile1D>> ShapeLibrary::profiles() const
+std::map<Peak3D*, std::pair<Profile3D, Profile1D>> ShapeCollection::profiles() const
 {
     return _profiles;
 }

@@ -12,16 +12,20 @@
 //
 //  ***********************************************************************************************
 
+#include "gui/subframe_refiner/SubframeRefiner.h"
+
 #include "core/experiment/Experiment.h"
 #include "core/shape/PeakCollection.h"
 #include "core/shape/PeakFilter.h"
-
 #include "gui/MainWin.h"
 #include "gui/dialogs/ListNameDialog.h"
+#include "gui/graphics/SXPlot.h"
 #include "gui/models/Meta.h"
 #include "gui/models/Project.h"
 #include "gui/models/Session.h"
-#include "gui/subframe_refiner/SubframeRefiner.h"
+#include "gui/subframe_refiner/RefinerTables.h"
+#include "gui/utility/ColorButton.h"
+#include "gui/utility/Spoiler.h"
 
 #include <QFileInfo>
 #include <QGridLayout>
@@ -272,15 +276,24 @@ void SubframeRefiner::updatePeakList()
 {
     _peak_combo->blockSignals(true);
     _peak_combo->clear();
+    _peak_list.clear();
 
-    _peak_list = gSession->experimentAt(_exp_combo->currentIndex())->getPeakListNames();
+    QStringList tmp =
+        gSession->experimentAt(_exp_combo->currentIndex())->
+        getPeakCollectionNames(nsx::listtype::FOUND);
+    _peak_list.append(tmp);
+    tmp.clear();
+    tmp =
+        gSession->experimentAt(_exp_combo->currentIndex())->
+        getPeakCollectionNames(nsx::listtype::FILTERED);
+    _peak_list.append(tmp);
 
     if (!_peak_list.empty()) {
         _peak_combo->addItems(_peak_list);
         _peak_combo->setCurrentIndex(0);
     }
-    _peak_combo->blockSignals(false);
 
+    _peak_combo->blockSignals(false);
     updatePredictedList();
 }
 
@@ -385,10 +398,12 @@ void SubframeRefiner::updatePredictedList()
     _predicted_combo->blockSignals(true);
     _predicted_combo->clear();
 
-    _predicted_list = gSession->experimentAt(_exp_combo->currentIndex())->getPredictedNames();
+    _predicted_list =
+        gSession->experimentAt(_exp_combo->currentIndex())->
+        getPeakCollectionNames(nsx::listtype::PREDICTED);
 
     if (!_predicted_list.empty()) {
-        _predicted_combo->addItems(_peak_list);
+        _predicted_combo->addItems(_predicted_list);
         _predicted_combo->setCurrentIndex(0);
     }
     _predicted_combo->blockSignals(false);

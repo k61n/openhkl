@@ -17,9 +17,11 @@
 
 #include "core/peak/Peak3D.h"
 #include "gui/graphics_items/PlottableItem.h"
-#include <Eigen/Dense>
 
+#include <Eigen/Dense>
 #include <QColor>
+
+class Peak3D;
 
 //! Plottable graphics item that represents a peak in the detector image
 class PeakItemGraphic : public PlottableItem {

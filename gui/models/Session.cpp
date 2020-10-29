@@ -22,6 +22,10 @@
 #include "gui/dialogs/RawDataDialog.h"
 #include "gui/models/Project.h"
 
+#include <QDir>
+#include <QFileDialog>
+#include <QMessageBox>
+
 Session* gSession;
 
 Session::Session()

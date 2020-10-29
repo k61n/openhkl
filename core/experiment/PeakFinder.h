@@ -15,16 +15,19 @@
 #ifndef NSX_CORE_EXPERIMENT_PEAKFINDER_H
 #define NSX_CORE_EXPERIMENT_PEAKFINDER_H
 
-#include "base/utils/ProgressHandler.h"
 #include "core/convolve/Convolver.h"
 #include "core/data/DataSet.h"
-#include "core/integration/Blob3D.h"
 #include "core/shape/PeakCollection.h"
 
 namespace nsx {
 
 using EquivalencePair = std::pair<int, int>;
 using EquivalenceList = std::vector<EquivalencePair>;
+
+class Blob3D;
+class ProgressHandler;
+
+using sptrProgressHandler = std::shared_ptr<ProgressHandler>;
 
 //! Class to handle peak search in datasets
 

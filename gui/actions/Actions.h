@@ -53,7 +53,7 @@ class Actions : public QObject {
 
     //  QAction monochromaticSourceProperties;//{"monochramtic properties", "properties"};
     //  // Experiments/Peaks:
-    //  QAction buildShapeLibrary;//{"build shape library", "build shape library"};
+    //  QAction buildShapeCollection;//{"build shape library", "build shape library"};
     //  QAction correctAbsorption;//{"correct", "correct for absorption"};
     //  QAction filterPeaks;//{"filter peaks", "filter peaks"};
     //  QAction integratepeaks;//{"integrate peaks", "integrate peaks"};

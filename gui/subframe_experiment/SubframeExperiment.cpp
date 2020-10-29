@@ -14,6 +14,12 @@
 
 #include "gui/subframe_experiment/SubframeExperiment.h"
 
+#include "gui/subframe_experiment/ImagePanel.h"
+#include "gui/subframe_experiment/LoggerPanel.h"
+#include "gui/subframe_experiment/PlotPanel.h"
+#include "gui/subframe_experiment/PropertyPanel.h"
+#include "gui/subframe_experiment/properties/NumorProperty.h"
+
 #include <QHBoxLayout>
 #include <QSplitter>
 #include <QVBoxLayout>

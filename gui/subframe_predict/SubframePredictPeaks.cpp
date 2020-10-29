@@ -13,21 +13,29 @@
 //  ***********************************************************************************************
 
 #include "gui/subframe_predict/SubframePredictPeaks.h"
+
 #include "core/data/DataSet.h"
 #include "core/experiment/Experiment.h"
 #include "core/peak/Peak3D.h"
 #include "core/raw/IDataReader.h"
 #include "core/shape/IPeakIntegrator.h"
-#include "core/shape/ShapeLibrary.h"
+#include "core/shape/PeakCollection.h"
+#include "core/shape/ShapeCollection.h"
 #include "gui/dialogs/ListNameDialog.h"
 #include "gui/frames/ProgressView.h"
 #include "gui/graphics/DetectorScene.h"
+#include "gui/graphics/DetectorView.h"
 #include "gui/items/PeakItem.h"
 #include "gui/models/Meta.h"
 #include "gui/models/Project.h"
 #include "gui/models/Session.h"
-#include "gui/subframe_predict/ShapeLibraryDialog.h"
+#include "gui/subframe_predict/ShapeCollectionDialog.h"
+#include "gui/utility/ColorButton.h"
+#include "gui/utility/Spoiler.h"
+#include "gui/views/PeakTableView.h"
+#include "gui/widgets/PeakViewWidget.h"
 #include "tables/crystal/UnitCell.h"
+
 #include <QFileInfo>
 #include <QGridLayout>
 #include <QGroupBox>
@@ -92,7 +100,7 @@ void SubframePredictPeaks::setSizePolicies()
 
 void SubframePredictPeaks::setInputUp()
 {
-    _input_box = new Spoiler("1. Select Shape Library");
+    _input_box = new Spoiler("1. Shape collection");
 
     QGridLayout* _input_grid = new QGridLayout();
 
@@ -106,7 +114,7 @@ void SubframePredictPeaks::setInputUp()
 
     _exp_combo = new QComboBox();
     _peak_combo = new QComboBox();
-    _build_shape_lib = new QPushButton("Build Library");
+    _build_shape_lib = new QPushButton("Build shape collection");
 
     _exp_combo->setMaximumWidth(1000);
     _peak_combo->setMaximumWidth(1000);
@@ -496,7 +504,7 @@ void SubframePredictPeaks::setPeakTableUp()
 
     peak_group->setSizePolicy(*_size_policy_right);
 
-    _peak_table = new PeaksTableView(this);
+    _peak_table = new PeakTableView(this);
     _peak_collection_model.setRoot(&_peak_collection_item);
     _peak_table->setModel(&_peak_collection_model);
 
@@ -532,8 +540,17 @@ void SubframePredictPeaks::updatePeakList()
 {
     _peak_combo->blockSignals(true);
     _peak_combo->clear();
+    _peak_list.clear();
 
-    _peak_list = gSession->experimentAt(_exp_combo->currentIndex())->getPeakListNames();
+    QStringList tmp =
+        gSession->experimentAt(_exp_combo->currentIndex())->
+        getPeakCollectionNames(nsx::listtype::FOUND);
+    _peak_list.append(tmp);
+    tmp.clear();
+    tmp =
+        gSession->experimentAt(_exp_combo->currentIndex())->
+        getPeakCollectionNames(nsx::listtype::FILTERED);
+    _peak_list.append(tmp);
 
     if (!_peak_list.empty()) {
         _peak_combo->addItems(_peak_list);
@@ -601,18 +618,17 @@ void SubframePredictPeaks::setPredictorParameters() const { }
 void SubframePredictPeaks::runPrediction()
 {
     try {
-        qDebug() << "Starting peak prediction...";
-
         const std::vector<nsx::sptrDataSet>& data = gSession->currentProject()->allData();
 
         nsx::sptrProgressHandler handler(new nsx::ProgressHandler);
         ProgressView progressView(nullptr);
         progressView.watch(handler);
 
-        nsx::ShapeLibrary* lib = gSession->experimentAt(_exp_combo->currentIndex())
-                                     ->experiment()
-                                     ->getPeakCollection(_peak_combo->currentText().toStdString())
-                                     ->shapeLibrary();
+        nsx::ShapeCollection* lib =
+            gSession->experimentAt(_exp_combo->currentIndex())
+                ->experiment()
+                ->getPeakCollection(_peak_combo->currentText().toStdString())
+                ->shapeCollection();
         nsx::UnitCell* cell = gSession->currentProject()->experiment()->getUnitCell(
             _unit_cells->currentText().toStdString());
 
@@ -628,22 +644,15 @@ void SubframePredictPeaks::runPrediction()
         int interpol = _interpolation->currentIndex();
 
         nsx::PeakInterpolation peak_interpolation = static_cast<nsx::PeakInterpolation>(interpol);
-
-        int current_numor = 0;
         std::vector<nsx::Peak3D*> predicted_peaks;
 
         for (nsx::sptrDataSet d : data) {
-            qDebug() << "Predicting peaks for numor " << ++current_numor << " of " << data.size();
-
             std::vector<nsx::Peak3D*> predicted =
                 nsx::predictPeaks(lib, d, cell, peak_interpolation, params);
 
             for (nsx::Peak3D* peak : predicted)
                 predicted_peaks.push_back(peak);
-
-            qDebug() << "Added " << predicted.size() << " predicted peaks.";
         }
-        qDebug() << "Completed  peak prediction. Added " << predicted_peaks.size() << " peaks";
 
         _peak_collection.populate(predicted_peaks);
         for (nsx::Peak3D* peak : predicted_peaks)
@@ -661,8 +670,6 @@ void SubframePredictPeaks::runPrediction()
 void SubframePredictPeaks::runIntegration()
 {
     try {
-        qDebug() << "Starting peak prediction...";
-
         nsx::sptrProgressHandler handler(new nsx::ProgressHandler);
         ProgressView progressView(nullptr);
         progressView.watch(handler);
@@ -672,10 +679,11 @@ void SubframePredictPeaks::runIntegration()
                 ->experiment()
                 ->getIntegrator(_integrator->currentText().toStdString());
 
-        nsx::ShapeLibrary* lib = gSession->experimentAt(_exp_combo->currentIndex())
-                                     ->experiment()
-                                     ->getPeakCollection(_peak_combo->currentText().toStdString())
-                                     ->shapeLibrary();
+        nsx::ShapeCollection* lib =
+            gSession->experimentAt(_exp_combo->currentIndex())
+                ->experiment()
+                ->getPeakCollection(_peak_combo->currentText().toStdString())
+                ->shapeCollection();
 
         if (!integrator)
             return;
@@ -719,23 +727,23 @@ void SubframePredictPeaks::accept()
 
 void SubframePredictPeaks::refreshPeakShapeStatus()
 {
-    bool shape_library_present = true;
+    bool shape_collection_present = true;
 
     if (_peak_list.empty() || _exp_combo->count() < 1)
-        shape_library_present = false;
+        shape_collection_present = false;
 
-    if (shape_library_present) {
+    if (shape_collection_present) {
         nsx::PeakCollection* collection =
             gSession->experimentAt(_exp_combo->currentIndex())
                 ->experiment()
                 ->getPeakCollection(_peak_combo->currentText().toStdString());
-        if (collection->shapeLibrary() == nullptr)
-            shape_library_present = false;
+        if (collection->shapeCollection() == nullptr)
+            shape_collection_present = false;
     }
 
-    _para_box->setEnabled(shape_library_present);
-    _integrate_box->setEnabled(shape_library_present);
-    _preview_box->setEnabled(shape_library_present);
+    _para_box->setEnabled(shape_collection_present);
+    _integrate_box->setEnabled(shape_collection_present);
+    _preview_box->setEnabled(shape_collection_present);
 }
 
 void SubframePredictPeaks::refreshPeakTable()
@@ -800,7 +808,7 @@ void SubframePredictPeaks::openShapeBuilder()
             ->experiment()
             ->getPeakCollection(_peak_combo->currentText().toStdString());
 
-    std::unique_ptr<ShapeLibraryDialog> dialog(new ShapeLibraryDialog(peak_collection));
+    std::unique_ptr<ShapeCollectionDialog> dialog(new ShapeCollectionDialog(peak_collection));
 
     dialog->exec();
     refreshPeakShapeStatus();

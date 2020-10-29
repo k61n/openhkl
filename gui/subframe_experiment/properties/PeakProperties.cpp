@@ -13,9 +13,13 @@
 //  ***********************************************************************************************
 
 #include "gui/subframe_experiment/properties/PeakProperties.h"
+
 #include "gui/MainWin.h"
+#include "gui/items/PeakCollectionItem.h"
+#include "gui/models/PeakCollectionModel.h"
 #include "gui/models/Project.h"
 #include "gui/models/Session.h"
+#include "gui/utility/SideBar.h"
 #include <QFormLayout>
 #include <QHBoxLayout>
 #include <QMenu>
@@ -29,7 +33,7 @@ PeakProperties::PeakProperties() : QWidget()
 
     _peak_list_combo = new QComboBox();
 
-    _peak_table = new PeaksTableView;
+    _peak_table = new PeakTableView;
     _add = new QPushButton();
     _filter = new QPushButton();
     _remove = new QPushButton();
