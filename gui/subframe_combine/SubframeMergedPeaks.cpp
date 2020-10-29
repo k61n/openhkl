@@ -32,6 +32,7 @@
 #include <QFormLayout>
 #include <QHBoxLayout>
 #include <QLabel>
+#include <QSettings>
 #include <QVBoxLayout>
 
 #include <fstream>
@@ -284,14 +285,12 @@ void SubframeMergedPeaks::refreshFoundPeakList()
     _found_drop->clear();
     _found_list.clear();
 
-    QStringList tmp =
-        gSession->experimentAt(_exp_drop->currentIndex())->
-        getPeakCollectionNames(nsx::listtype::FOUND);
+    QStringList tmp = gSession->experimentAt(_exp_drop->currentIndex())
+                          ->getPeakCollectionNames(nsx::listtype::FOUND);
     _found_list.append(tmp);
     tmp.clear();
-    tmp =
-        gSession->experimentAt(_exp_drop->currentIndex())->
-        getPeakCollectionNames(nsx::listtype::FILTERED);
+    tmp = gSession->experimentAt(_exp_drop->currentIndex())
+              ->getPeakCollectionNames(nsx::listtype::FILTERED);
     _found_list.append(tmp);
 
     if (!_found_list.empty()) {
@@ -306,9 +305,8 @@ void SubframeMergedPeaks::refreshPredictedPeakList()
     _predicted_drop->blockSignals(true);
 
     _predicted_drop->clear();
-    _predicted_list =
-        gSession->experimentAt(_exp_drop->currentIndex())->
-        getPeakCollectionNames(nsx::listtype::PREDICTED);
+    _predicted_list = gSession->experimentAt(_exp_drop->currentIndex())
+                          ->getPeakCollectionNames(nsx::listtype::PREDICTED);
 
     if (!_predicted_list.empty()) {
         _predicted_drop->addItems(_predicted_list);
@@ -550,10 +548,18 @@ void SubframeMergedPeaks::refreshGraphTable(int column)
 
 void SubframeMergedPeaks::saveStatistics()
 {
-    QString filename = QFileDialog::getSaveFileName(this, "Save the shell info", ".", "(*.txt)");
+    QSettings s;
+    s.beginGroup("RecentDirectories");
+    QString loadDirectory = s.value("merged", QDir::homePath()).toString();
+
+    QString filename =
+        QFileDialog::getSaveFileName(this, "Save the shell info", loadDirectory, "(*.txt)");
 
     if (filename.isEmpty())
         return;
+
+    QFileInfo info(filename);
+    s.setValue("merged", info.absolutePath());
 
     double min = _d_min->value();
     double max = _d_max->value();
@@ -585,60 +591,76 @@ void SubframeMergedPeaks::saveMergedPeaks()
 {
     QString format = _merged_save_type->currentText();
 
+    QSettings s;
+    s.beginGroup("RecentDirectories");
+    QString loadDirectory = s.value("merged", QDir::homePath()).toString();
+
+    QString filename;
     if (format.compare("ShelX") == 0) {
-        QString filename = QFileDialog::getSaveFileName(
-            this, "Save peaks to ShelX", ".", "ShelX hkl file (*.hkl)");
+        filename = QFileDialog::getSaveFileName(
+            this, "Save peaks to ShelX", loadDirectory, "ShelX hkl file (*.hkl)");
 
         if (filename.isEmpty())
             return;
 
         exporter.saveToShelXMerged(filename.toStdString(), _merged_data);
     } else if (format.compare("FullProf") == 0) {
-        QString filename = QFileDialog::getSaveFileName(
-            this, "Save peaks to FullProf", ".", "FullProf hkl file (*.hkl)");
+        filename = QFileDialog::getSaveFileName(
+            this, "Save peaks to FullProf", loadDirectory, "FullProf hkl file (*.hkl)");
 
         if (filename.isEmpty())
             return;
 
         exporter.saveToFullProfMerged(filename.toStdString(), _merged_data);
     } else if (format.compare("Phenix") == 0) {
-        QString filename = QFileDialog::getSaveFileName(
-            this, "Save peaks to Phenix sca", ".", "Phenix sca file (*.sca)");
+        filename = QFileDialog::getSaveFileName(
+            this, "Save peaks to Phenix sca", loadDirectory, "Phenix sca file (*.sca)");
 
         if (filename.isEmpty())
             return;
 
         exporter.saveToSCAMerged(filename.toStdString(), _merged_data);
     }
+
+    QFileInfo info(filename);
+    s.setValue("merged", info.absolutePath());
 }
 
 void SubframeMergedPeaks::saveUnmergedPeaks()
 {
     QString format = _merged_save_type->currentText();
 
+    QSettings s;
+    s.beginGroup("RecentDirectories");
+    QString loadDirectory = s.value("merged", QDir::homePath()).toString();
+
+    QString filename;
     if (format.compare("ShelX") == 0) {
-        QString filename = QFileDialog::getSaveFileName(
-            this, "Save peaks to ShelX", ".", "ShelX hkl file (*.hkl)");
+        filename = QFileDialog::getSaveFileName(
+            this, "Save peaks to ShelX", loadDirectory, "ShelX hkl file (*.hkl)");
 
         if (filename.isEmpty())
             return;
 
         exporter.saveToShelXUnmerged(filename.toStdString(), _merged_data);
     } else if (format.compare("FullProf") == 0) {
-        QString filename = QFileDialog::getSaveFileName(
-            this, "Save peaks to FullProf", ".", "ShelX hkl file (*.hkl)");
+        filename = QFileDialog::getSaveFileName(
+            this, "Save peaks to FullProf", loadDirectory, "ShelX hkl file (*.hkl)");
 
         if (filename.isEmpty())
             return;
 
         exporter.saveToFullProfUnmerged(filename.toStdString(), _merged_data);
     } else if (format.compare("Phenix") == 0) {
-        QString filename = QFileDialog::getSaveFileName(
-            this, "Save peaks to Phenix sca", ".", "Phenix sca file (*.sca)");
+        filename = QFileDialog::getSaveFileName(
+            this, "Save peaks to Phenix sca", loadDirectory, "Phenix sca file (*.sca)");
 
         if (filename.isEmpty())
             return;
 
         exporter.saveToSCAUnmerged(filename.toStdString(), _merged_data);
     }
+
+    QFileInfo info(filename);
+    s.setValue("merged", info.absolutePath());
 }

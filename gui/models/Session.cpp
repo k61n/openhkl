@@ -25,13 +25,13 @@
 #include <QDir>
 #include <QFileDialog>
 #include <QMessageBox>
+#include <QSettings>
 
 Session* gSession;
 
 Session::Session()
 {
     gSession = this;
-    _loadDirectory = QDir::homePath();
 }
 
 Project* Session::currentProject()
@@ -106,15 +106,20 @@ void Session::selectExperiment(int select)
 
 void Session::loadData()
 {
+    QSettings s;
+    s.beginGroup("RecentDirectories");
+    QString loadDirectory = s.value("data", QDir::homePath()).toString();
+
     QStringList filenames = QFileDialog::getOpenFileNames(
-        gGui, "import data", _loadDirectory,
+        gGui, "import data", loadDirectory,
         "Data files(*.h5 *.hdf5 *.hdf *.fake *.nxs *.raw *.tif *.tiff);;all files (*.* *)");
 
     if (filenames.empty())
         return;
 
     QFileInfo info(filenames.at(0));
-    _loadDirectory = info.absolutePath();
+    loadDirectory = info.absolutePath();
+    s.setValue("data", loadDirectory);
 
     if (_currentProject < 0)
         createExperiment();
@@ -162,12 +167,17 @@ void Session::loadRawData()
     if (_currentProject < 0)
         createExperiment();
 
-    QStringList qfilenames = QFileDialog::getOpenFileNames();
+    QSettings s;
+    s.beginGroup("RecentDirectories");
+    QString loadDirectory = s.value("data_raw", QDir::homePath()).toString();
+
+    QStringList qfilenames = QFileDialog::getOpenFileNames(gGui, "import raw data", loadDirectory);
     if (qfilenames.empty())
         return;
 
     QFileInfo info(qfilenames.at(0));
-    _loadDirectory = info.absolutePath();
+    loadDirectory = info.absolutePath();
+    s.setValue("data_raw", loadDirectory);
 
     std::vector<std::string> filenames;
     for (QString filename : qfilenames)

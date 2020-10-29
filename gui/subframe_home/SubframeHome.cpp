@@ -141,11 +141,18 @@ void SubframeHome::createNew()
 
 void SubframeHome::loadFromFile()
 {
+    QSettings s;
+    s.beginGroup("RecentDirectories");
+    QString loadDirectory = s.value("experiment", QDir::homePath()).toString();
+
     QString file_path = QFileDialog::getOpenFileName(
-        this, "Load the current experiment", "", "NSXTool file (*.nsx)");
+        this, "Load the current experiment", loadDirectory, "NSXTool file (*.nsx)");
 
     if (file_path.isEmpty())
         return;
+
+    QFileInfo info(file_path);
+    s.setValue("experiment", info.absolutePath());
 
     try {
         gSession->loadExperimentFromFile(file_path);
@@ -162,9 +169,20 @@ void SubframeHome::loadFromFile()
 
 void SubframeHome::saveCurrent()
 {
+    QSettings s;
+    s.beginGroup("RecentDirectories");
+    QString loadDirectory = s.value("experiment", QDir::homePath()).toString();
+
     try {
         QString file_path = QFileDialog::getSaveFileName(
-            this, "Save the current experiment", "", "NSXTool file (*.nsx)");
+            this, "Save the current experiment", loadDirectory, "NSXTool file (*.nsx)");
+
+        if (file_path.isEmpty())
+            return;
+
+        QFileInfo info(file_path);
+        s.setValue("experiment", info.absolutePath());
+
         gSession->currentProject()->saveToFile(file_path);
         _updateLastLoadedList(
             QString::fromStdString(gSession->currentProject()->experiment()->name()), file_path);

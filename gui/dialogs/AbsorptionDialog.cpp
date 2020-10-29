@@ -19,6 +19,7 @@
 #include <QFileDialog>
 #include <QGraphicsView>
 #include <QPushButton>
+#include <QSettings>
 #include <QVBoxLayout>
 #include <fstream>
 
@@ -100,10 +101,18 @@ AbsorptionDialog::AbsorptionDialog() : QDialog{}
         QFileDialog dialog(this);
         dialog.setFileMode(QFileDialog::ExistingFile);
 
+        QSettings s;
+        s.beginGroup("RecentDirectories");
+        QString loadDirectory = s.value("absorption", QDir::homePath()).toString();
+
         QString fileName =
-            dialog.getOpenFileName(this, "Select video file", "", "Video file (*.info)");
+            dialog.getOpenFileName(this, "Select video file", loadDirectory, "Video file (*.info)");
         if (fileName.isEmpty())
             return;
+
+        QFileInfo info(fileName);
+        s.setValue("absorption", info.absolutePath());
+
         readInfoFile(fileName.toStdString());
     });
 
