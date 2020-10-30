@@ -161,7 +161,7 @@ void RefinerTables::refreshSamplePosTable(nsx::Refiner* refiner, nsx::DataSet* d
         return;
 
     frame = 1;
-    for (const nsx::InstrumentState& state : data->instrumentStates()) {
+    for (const nsx::InstrumentState& state : *refiner->refinedStates()) {
         QList<QStandardItem*> row;
         auto pos = state.samplePosition;
         row.push_back(new QStandardItem(QString::number(frame)));
@@ -217,7 +217,7 @@ void RefinerTables::refreshSampleOrnTable(nsx::Refiner* refiner, nsx::DataSet* d
         return;
 
     frame = 1;
-    for (const nsx::InstrumentState& state : data->instrumentStates()) {
+    for (const nsx::InstrumentState& state : *refiner->refinedStates()) {
         QList<QStandardItem*> row;
         auto mat = state.sampleOrientationMatrix();
         row.push_back(new QStandardItem(QString::number(frame)));
@@ -274,7 +274,7 @@ void RefinerTables::refreshDetectorPosTable(nsx::Refiner* refiner, nsx::DataSet*
         return;
 
     frame = 1;
-    for (const nsx::InstrumentState& state : data->instrumentStates()) {
+    for (const nsx::InstrumentState& state : *refiner->refinedStates()) {
         QList<QStandardItem*> row;
         auto pos = state.detectorPositionOffset;
         row.push_back(new QStandardItem(QString::number(frame)));
@@ -314,11 +314,11 @@ void RefinerTables::refreshKiTable(nsx::Refiner* refiner, nsx::DataSet* data)
     int frame = 1;
     for (const nsx::InstrumentState& state : *refiner->unrefinedStates()) {
         QList<QStandardItem*> row;
-        auto ki = state.ki();
+        auto ki = state.ki().rowVector();
         row.push_back(new QStandardItem(QString::number(frame)));
-        row.push_back(new QStandardItem(QString::number(ki[0])));
-        row.push_back(new QStandardItem(QString::number(ki[1])));
-        row.push_back(new QStandardItem(QString::number(ki[2])));
+        row.push_back(new QStandardItem(QString::number(ki[0], 'g', 6)));
+        row.push_back(new QStandardItem(QString::number(ki[1], 'g', 6)));
+        row.push_back(new QStandardItem(QString::number(ki[2], 'g', 6)));
         m0->appendRow(row);
         ++frame;
     }
@@ -330,13 +330,13 @@ void RefinerTables::refreshKiTable(nsx::Refiner* refiner, nsx::DataSet* data)
         return;
 
     frame = 1;
-    for (const nsx::InstrumentState& state : data->instrumentStates()) {
+    for (const nsx::InstrumentState& state : *refiner->refinedStates()) {
         QList<QStandardItem*> row;
-        auto ki = state.ki();
+        auto ki = state.ki().rowVector();
         row.push_back(new QStandardItem(QString::number(frame)));
-        row.push_back(new QStandardItem(QString::number(ki[0])));
-        row.push_back(new QStandardItem(QString::number(ki[1])));
-        row.push_back(new QStandardItem(QString::number(ki[2])));
+        row.push_back(new QStandardItem(QString::number(ki[0], 'g', 6)));
+        row.push_back(new QStandardItem(QString::number(ki[1], 'g', 6)));
+        row.push_back(new QStandardItem(QString::number(ki[2], 'g', 6)));
         model->appendRow(row);
         ++frame;
     }

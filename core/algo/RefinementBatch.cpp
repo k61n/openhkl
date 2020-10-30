@@ -133,7 +133,7 @@ void RefinementBatch::refineDetectorOffset()
             ids.push_back(id);
         }
         // record the constraints
-        _constraints.push_back(ids);
+        // _constraints.push_back(ids);
     }
 }
 
@@ -146,7 +146,7 @@ void RefinementBatch::refineSamplePosition()
             ids.push_back(id);
         }
         // record the constraints
-        _constraints.push_back(ids);
+        // _constraints.push_back(ids);
     }
 }
 
@@ -161,7 +161,7 @@ void RefinementBatch::refineSampleOrientation()
             ids.push_back(id);
         }
         // record the constraints
-        _constraints.push_back(ids);
+        // _constraints.push_back(ids);
     }
 }
 
@@ -177,8 +177,8 @@ void RefinementBatch::refineKi()
     }
 
     // record the constraints
-    _constraints.push_back(x_ids);
-    _constraints.push_back(z_ids);
+    // _constraints.push_back(x_ids);
+    // _constraints.push_back(z_ids);
 }
 
 bool RefinementBatch::refine(unsigned int max_iter)

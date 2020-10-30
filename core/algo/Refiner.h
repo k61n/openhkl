@@ -59,6 +59,9 @@ class Refiner {
     //! Return the unrefined cell
     UnitCell* unrefinedCell();
 
+    //! Return the refined states
+    InstrumentStateList* refinedStates();
+
     //! Return the unrefined states
     InstrumentStateList* unrefinedStates();
 
@@ -75,6 +78,7 @@ class Refiner {
     UnitCell* _cell;
     std::vector<RefinementBatch> _batches;
     int _nframes;
+    InstrumentStateList* _states;
 };
 
 } // namespace nsx
