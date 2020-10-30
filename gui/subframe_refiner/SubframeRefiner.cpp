@@ -157,10 +157,13 @@ void SubframeRefiner::setInputUp()
 
     connect(
         _exp_combo, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this,
-        &SubframeRefiner::updatePeakList);
-    connect(
-        _peak_combo, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this,
         &SubframeRefiner::updateDatasetList);
+    connect(
+        _exp_combo, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this,
+        &SubframeRefiner::updateUnitCellList);
+    connect(
+        _exp_combo, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this,
+        &SubframeRefiner::updatePeakList);
 
     _input_box->setContentLayout(*_input_grid, true);
     _input_box->setSizePolicy(*_size_policy_box);
@@ -322,7 +325,7 @@ void SubframeRefiner::refine()
 {
     try {
         auto expt = gSession->experimentAt(_exp_combo->currentIndex())->experiment();
-        const auto data = expt->getData(_data_combo->currentText().toStdString());
+        const auto data = expt->dataShortName(_data_combo->currentText().toStdString());
         const auto peaks = expt->getPeakCollection(_peak_combo->currentText().toStdString());
         const auto cell = expt->getUnitCell(_cell_combo->currentText().toStdString());
         const auto cell_handler = expt->getCellHandler();
