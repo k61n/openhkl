@@ -410,7 +410,7 @@ void SubframeMergedPeaks::refreshDShellTable()
     row.push_back(new QStandardItem(QString::number(quality.expectedRmeas)));
     row.push_back(new QStandardItem(QString::number(quality.Rmerge)));
     row.push_back(new QStandardItem(QString::number(quality.expectedRmerge)));
-
+    row.push_back(new QStandardItem(QString::number(quality.Rpim)));
     row.push_back(new QStandardItem(QString::number(quality.expectedRpim)));
     row.push_back(new QStandardItem(QString::number(quality.CChalf)));
     row.push_back(new QStandardItem(QString::number(quality.CCstar)));
