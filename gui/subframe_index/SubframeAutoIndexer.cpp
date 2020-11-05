@@ -611,9 +611,13 @@ void SubframeAutoIndexer::acceptSolution()
 
     if (_selected_unit_cell) {
         nsx::Experiment* expt = gSession->experimentAt(_exp_combo->currentIndex())->experiment();
-        std::vector<std::string> collections = expt->getCollectionNames();
-        std::vector<std::string> compatible_sg = _selected_unit_cell->compatibleSpaceGroups();
-        std::unique_ptr<UnitCellDialog> dlg(new UnitCellDialog(collections, compatible_sg));
+        QStringList collections =
+            gSession->experimentAt(_exp_combo->currentIndex())->
+            getPeakCollectionNames(nsx::listtype::FOUND);
+        QStringList space_groups;
+        for (std::string name : _selected_unit_cell->compatibleSpaceGroups())
+            space_groups.push_back(QString::fromStdString(name));
+        std::unique_ptr<UnitCellDialog> dlg(new UnitCellDialog(collections, space_groups));
         dlg->exec();
         if (!dlg->unitCellName().isEmpty()) {
             std::string cellName = dlg->unitCellName().toStdString();
