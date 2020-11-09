@@ -39,7 +39,15 @@ parser.add_argument('-v', '--verbose', action='store_true', dest='verbose', defa
                     help='Print extra output')
 parser.add_argument('--batches', action='store', dest='nbatches', type=int, default=20,
                     help='Number of batches for refinement')
+parser.add_argument('--integrator', action='store', dest='integrator', type=str,
+                    default="Profile3D", help="Integrator to use")
 args = parser.parse_args()
+
+integrators = {"Profile1D": "1d profile integrator",
+               "Profile3D": "3d profile integrator",
+               "PixelSum": "Pixel sum integrator",
+               "Gaussian": "Gaussian integrator",
+               "ISigma": "I/Sigma integrator"}
 
 params = Parameters()
 if Path(args.paramfile).is_file():
@@ -65,7 +73,7 @@ if not args.loadnsx:
     pynsxprint("Finding peaks...")
     expt.find_peaks(data, 0, -1)
     pynsxprint("Integrating...")
-    npeaks = expt.integrate_peaks()
+    npeaks = expt.integrate_peaks(integrators["PixelSum"])
 
     expt.save()
 else:
@@ -96,10 +104,14 @@ else:
     all_data = expt.get_data()
     expt.build_shape_collection(all_data)
     pynsxprint("Predicting peaks...")
-    expt.predict_peaks(all_data, 'None')
+    if not args.integrator in integrators:
+        raise RuntimeError(f'{args.integrator} is not a valid integrator')
+    pynsxprint("Integrating predicted peaks...")
+    expt.predict_peaks(all_data, integrators[args.integrator], 'None')
     expt.save(predicted=True)
 
-expt.refine(args.nbatches)
+pynsxprint("Refining cell and instrument states...")
+expt.refine(args.nbatches, integrators[args.integrator])
 expt.check_peak_collections()
 pynsxprint("Merging peak collection...")
 expt.merge_peaks()

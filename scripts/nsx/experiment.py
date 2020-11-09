@@ -10,7 +10,7 @@ import sys
 import logging
 from pathlib import Path
 from pdb import set_trace
-sys.path.append("/home/zamaan/codes/nsxtool/current/build/swig")
+sys.path.append("/home/zamaan/codes/nsxtool/tmp/build/swig")
 sys.path.append("/G/sw/nsx/build/swig") # Joachim
 import pynsx as nsx
 
@@ -170,13 +170,12 @@ class Experiment:
 
         self.finder.find(dataset)
 
-    def integrate_peaks(self):
+    def integrate_peaks(self, integrator_type):
         '''
         Integrate the peaks
         '''
         self.log(f"Integrating peaks {self._found_peaks}")
         ltype = nsx.listtype_FOUND
-        integrator_type = "Pixel sum integrator"
         integrator = self._expt.getIntegrator(integrator_type)
         integrator_params = self._expt.int_params
         integrator_params.peak_end = self._params.integration['peak_area']
@@ -286,12 +285,11 @@ class Experiment:
         self._expt.buildShapeCollection(self._filtered_collection, params)
         self.log(f'Number of profiles = ' + str(self._filtered_collection.shapeCollection().numberOfPeaks()))
 
-    def predict_peaks(self, data, interpolation):
+    def predict_peaks(self, data, integrator, interpolation):
         '''
         Predict shapes of weak peaks
         '''
         self.log(f"Predicting peaks...")
-        integrator = "1d profile integrator"
         interpolation_types = {'None' : nsx.PeakInterpolation_NoInterpolation,
                                'InverseDistance:': nsx.PeakInterpolation_InverseDistance,
                                'Intensity:': nsx.PeakInterpolation_Intensity }
@@ -488,12 +486,25 @@ class Experiment:
     def check_peak_collections(self):
         self._expt.checkPeakCollections()
 
-    def refine(self, n_batches):
+    def refine(self, n_batches, integrator_name):
+        self.log(f"Refining...")
         peak_collection = self.get_peak_collection(self._filtered_peaks)
         cell = self.get_accepted_cell()
         data = self.get_data()[0]
         peaks = self.get_peak_collection(self._predicted_peaks)
         self._expt.refine(peak_collection, peaks, cell, data, n_batches)
+        # Reintegrate found and predicted peaks
+        integrator = self._expt.getIntegrator(integrator_name)
+        integrator_params = self._expt.int_params
+        prediction_params = self._expt.predict_params
+        self.log(f"Integrating found peaks...")
+        self._found_collection = self._expt.getPeakCollection(self._found_peaks)
+        self._expt.integratePeaks(integrator, self._found_collection,
+                                  integrator_params, self._filtered_collection.shapeCollection())
+        self.log(f"Integrating predicted peaks...")
+        self._predicted_collection = self._expt.getPeakCollection(self._predicted_peaks)
+        self._expt.integratePeaks(integrator, self._predicted_collection,
+                                  prediction_params, self._filtered_collection.shapeCollection())
 
     def run_auto_indexer(self, peaks, length_tol, angle_tol, frame_min, frame_max):
         if self._expt.hasUnitCell("accepted"):

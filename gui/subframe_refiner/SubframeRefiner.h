@@ -30,6 +30,9 @@
 #include <QVBoxLayout>
 #include <QWidget>
 
+namespace nsx {
+    class PeakCollection;
+}
 class RefinerTables;
 class Spoiler;
 class SXPlot;
@@ -74,6 +77,14 @@ class SubframeRefiner : public QWidget {
     void setBatchesUp();
     //! Update list of predicted peak collections
     void updatePredictedList();
+    //! Set up reintegration spoiler
+    void setReintegrateUp();
+    //! Wrapper for reintegration
+    void runReintegration(nsx::PeakCollection* peaks);
+    //! Reintegrate found peaks
+    void reintegrateFound();
+    //! Reintegrate predicted peaks
+    void reintegratePredicted();
 
     //! Refresh the found peaks list
     void refreshTables();
@@ -120,6 +131,20 @@ class SubframeRefiner : public QWidget {
     Spoiler* _update_box;
     QComboBox* _predicted_combo;
     QPushButton* _update_button;
+
+    Spoiler* _reintegrate_box;
+    QComboBox* _integrator_combo;
+    QDoubleSpinBox* _radius;
+    QDoubleSpinBox* _n_frames;
+    QDoubleSpinBox* _peak_scale_int;
+    QDoubleSpinBox* _bkg_start_int;
+    QDoubleSpinBox* _bkg_end_int;
+    QDoubleSpinBox* _radius_int;
+    QDoubleSpinBox* _n_frames_int;
+    QCheckBox* _fit_center;
+    QCheckBox* _fit_covariance;
+    QPushButton* _reintegrate_found;
+    QPushButton* _reintegrate_predicted;
 
     QSizePolicy* _size_policy_widgets;
     QSizePolicy* _size_policy_box;

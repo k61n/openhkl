@@ -99,6 +99,21 @@ void IntegrationHandler::integratePeaks(
     }
 }
 
+void IntegrationHandler::integratePeaks(
+    IPeakIntegrator* integrator, PeakCollection* peaks, IntegrationParameters* params,
+    ShapeCollection* shapes)
+{
+    nsxlog(Level::Info, "IntegrationHandler::integratePeaks: integrating PeakCollection", peaks);
+    const DataMap* data = _data_handler->getDataMap();
+    integrator->setNNumors(data->size());
+    integrator->setParameters(*params);
+    int n_numor = 1;
+    for (DataMap::const_iterator it = data->begin(); it != data->end(); ++it) {
+        integrator->integrate(peaks->getPeakList(), shapes, it->second, n_numor);
+        ++n_numor;
+    }
+}
+
 void IntegrationHandler::integratePredictedPeaks(
     std::string integrator_name, PeakCollection* peak_collection, ShapeCollection* shape_collection,
     PredictionParameters& params)
@@ -143,6 +158,7 @@ ShapeCollection& IntegrationHandler::integrateShapeCollection(
     nsxlog(Level::Info, "IntegrationHandler::integrateShapeCollection");
     ShapeIntegrator integrator{
         shape_collection, aabb, params.nbins_x, params.nbins_y, params.nbins_z};
+    integrator.setNNumors(1);
     integrator.setParameters(params);
 
     const DataMap* data = _data_handler->getDataMap();

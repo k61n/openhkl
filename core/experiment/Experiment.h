@@ -163,6 +163,10 @@ class Experiment {
     void integratePeaks(
         const std::string& integrator_name, PeakCollection* peak_collection, double d_min,
         double d_max);
+    //! Integrate peaks given full parameter set (for reintegration after prediction/refinement)
+    void integratePeaks(
+        IPeakIntegrator* integrator, PeakCollection* peaks, IntegrationParameters* params,
+        ShapeCollection* shapes);
     //! Integrate predicted peaks, fitting shapes from given shape collection
     void integratePredictedPeaks(
         const std::string& integrator_name, PeakCollection* peak_collection,

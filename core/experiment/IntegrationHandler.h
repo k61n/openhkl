@@ -52,6 +52,10 @@ class IntegrationHandler {
     //! Set the found peak integrator
     void integratePeaks(
         std::string integrator_name, PeakCollection* peak_collection, double d_min, double d_max);
+    //! Integrate a peak collection
+    void integratePeaks(
+        IPeakIntegrator* integrator, PeakCollection* peaks, IntegrationParameters* params,
+        ShapeCollection* shapes);
     //! Set the found peak integrator
     void integratePredictedPeaks(
         std::string integrator_name, PeakCollection* peak_collection,
