@@ -482,6 +482,12 @@ void Experiment::integratePeaks(
 {
     _integration_handler->integratePeaks(integrator_name, peak_collection, d_min, d_max);
 }
+void Experiment::integratePeaks(
+    IPeakIntegrator* integrator, PeakCollection* peaks, IntegrationParameters* params,
+    ShapeCollection* shapes)
+{
+    _integration_handler->integratePeaks(integrator, peaks, params, shapes);
+}
 
 void Experiment::integratePredictedPeaks(
     const std::string& integrator_name, PeakCollection* peak_collection,
