@@ -312,6 +312,7 @@ void ShapeCollectionDialog::build()
 
     nsx::ShapeIntegrator integrator(&_collection, aabb, nx_val, ny_val, nz_val);
     integrator.setHandler(handler);
+    integrator.setNNumors(1);
     nsx::IntegrationParameters params{};
     params.peak_end = peak_scale_val;
     params.bkg_begin = bkg_begin_val;
