@@ -143,6 +143,10 @@ void PeakProperties::selectedPeaksChanged()
             _type->setText("Predicted");
             break;
         }
+        case nsx::listtype::INDEXING: {
+            _type->setText("Indexing");
+            break;
+        }
     }
 
     _peak_num->setText(QString::number(model->root()->peakCollection()->numberOfPeaks()));

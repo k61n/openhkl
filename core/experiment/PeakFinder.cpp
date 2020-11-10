@@ -102,7 +102,7 @@ PeakFinder::PeakFinder()
 std::vector<Peak3D*> PeakFinder::currentPeaks()
 {
     std::vector<Peak3D*> output;
-    for (const sptrPeak3D peak : _current_peaks)
+    for (const sptrPeak3D& peak : _current_peaks)
         output.push_back(peak.get());
     return output;
 }

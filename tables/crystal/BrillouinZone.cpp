@@ -35,10 +35,10 @@ void remove_duplicates(std::vector<Eigen::RowVector3d>& q_vectors, bool reflect,
     const double eps2 = eps * eps;
     std::vector<Eigen::RowVector3d> unique_q_vectors;
 
-    for (const auto v : q_vectors) {
+    for (const auto& v : q_vectors) {
         bool duplicate = false;
 
-        for (const auto w : unique_q_vectors) {
+        for (const auto& w : unique_q_vectors) {
             if ((v - w).squaredNorm() < eps2 || (reflect && (v + w).squaredNorm() < eps2)) {
                 duplicate = true;
                 break;
