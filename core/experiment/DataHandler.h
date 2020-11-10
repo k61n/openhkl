@@ -33,7 +33,7 @@ class DataHandler {
     DataHandler() = default;
     ~DataHandler() = default;
     DataHandler(const DataHandler& other);
-    DataHandler& operator=(const DataHandler& other) = default;
+    DataHandler& operator=(const DataHandler& other);
     DataHandler(const std::string& name, const std::string& diffractometerName);
 
  public: // Handling data sets
