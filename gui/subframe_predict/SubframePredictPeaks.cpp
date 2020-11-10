@@ -358,7 +358,7 @@ void SubframePredictPeaks::setIntegrateUp()
     _n_frames_int->setMaximumWidth(1000);
     _n_frames_int->setMaximum(100000);
     _n_frames_int->setDecimals(6);
-    _n_frames_int->setValue(100);
+    _n_frames_int->setValue(10);
 
     _run_integration->setMaximumWidth(1000);
 
