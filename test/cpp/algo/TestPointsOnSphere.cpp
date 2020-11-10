@@ -24,6 +24,6 @@ TEST_CASE("test/algo/TestPointsOnSphere.cpp", "")
 {
     int nVertices = 10000;
     std::vector<Eigen::RowVector3d> points = nsx::algo::pointsOnSphere(nVertices);
-    for (const Eigen::RowVector3d point : points)
+    for (const Eigen::RowVector3d& point : points)
         std::cout << point[0] << " " << point[1] << " " << point[2] << "\n";
 }
