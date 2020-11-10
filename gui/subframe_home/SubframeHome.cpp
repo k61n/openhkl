@@ -20,6 +20,7 @@
 #include "gui/models/Session.h"
 
 #include <QFileDialog>
+#include <QMessageBox>
 #include <QSettings>
 #include <QSpacerItem>
 
@@ -162,8 +163,8 @@ void SubframeHome::loadFromFile()
         _open_experiments_view->setModel(_open_experiments_model.get());
         _updateLastLoadedList(
             QString::fromStdString(gSession->currentProject()->experiment()->name()), file_path);
-    } catch (...) {
-        ; // TODO: handle exception
+    } catch (const std::exception& e) {
+        QMessageBox::critical(this, "Error", QString(e.what()));
     }
 }
 
@@ -186,8 +187,8 @@ void SubframeHome::saveCurrent()
         gSession->currentProject()->saveToFile(file_path);
         _updateLastLoadedList(
             QString::fromStdString(gSession->currentProject()->experiment()->name()), file_path);
-    } catch (...) {
-        ; // TODO: handle exception
+    } catch (const std::exception& e) {
+        QMessageBox::critical(this, "Error", QString(e.what()));
     }
 }
 
@@ -256,7 +257,7 @@ void SubframeHome::_loadSelectedItem(QListWidgetItem* item)
         _updateLastLoadedList(
             QString::fromStdString(gSession->currentProject()->experiment()->name()),
             item->data(100).toString());
-    } catch (...) {
-        ; // TODO: handle exception
+    } catch (const std::exception& e) {
+        QMessageBox::critical(this, "Error", QString(e.what()));
     }
 }
