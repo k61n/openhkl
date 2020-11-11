@@ -317,25 +317,19 @@ void SubframeMergedPeaks::refreshPredictedPeakList()
 
 void SubframeMergedPeaks::processMerge()
 {
+    auto expt = gSession->experimentAt(_exp_drop->currentIndex())->experiment();
+    expt->resetMergedPeaks();
     if (_found_list.empty() || _predicted_list.empty()) {
-        gSession->experimentAt(_exp_drop->currentIndex())->experiment()->resetMergedPeaks();
         _merged_data = nullptr;
     } else {
         std::vector<nsx::PeakCollection*> peak_collections;
         peak_collections.push_back(
-            gSession->experimentAt(_exp_drop->currentIndex())
-                ->experiment()
-                ->getPeakCollection(_found_drop->currentText().toStdString()));
+            expt->getPeakCollection(_found_drop->currentText().toStdString()));
         peak_collections.push_back(
-            gSession->experimentAt(_exp_drop->currentIndex())
-                ->experiment()
-                ->getPeakCollection(_predicted_drop->currentText().toStdString()));
+            expt->getPeakCollection(_predicted_drop->currentText().toStdString()));
 
-        gSession->experimentAt(_exp_drop->currentIndex())
-            ->experiment()
-            ->setMergedPeaks(peak_collections, _friedel->isChecked());
-        _merged_data =
-            gSession->experimentAt(_exp_drop->currentIndex())->experiment()->getMergedPeaks();
+        expt->setMergedPeaks(peak_collections, _friedel->isChecked());
+        _merged_data = expt->getMergedPeaks();
     }
     refreshTables();
 }
@@ -364,24 +358,15 @@ void SubframeMergedPeaks::refreshDShellTable()
     if (_merged_data->totalSize() == 0)
         return;
 
-    nsx::PeakCollection* found = gSession->experimentAt(_exp_drop->currentIndex())
-                                     ->experiment()
-                                     ->getPeakCollection(_found_drop->currentText().toStdString());
+    nsx::Experiment* expt = gSession->experimentAt(_exp_drop->currentIndex())->experiment();
+    nsx::PeakCollection* found = expt->getPeakCollection(_found_drop->currentText().toStdString());
     nsx::PeakCollection* predicted =
-        gSession->experimentAt(_exp_drop->currentIndex())
-            ->experiment()
-            ->getPeakCollection(_predicted_drop->currentText().toStdString());
+        expt->getPeakCollection(_predicted_drop->currentText().toStdString());
+    expt->computeQuality(min, max, shells, predicted, found, inclFriedel);
+    nsx::DataQuality quality = expt->getQuality();
+    nsx::DataResolution* resolution = expt->getResolution();
 
-
-    nsx::DataQuality quality;
-    nsx::DataResolution resolution;
-    quality.computeQuality(*_merged_data);
-    resolution.computeQuality(
-        min, max, shells, predicted, found, _merged_data->spaceGroup(), inclFriedel);
-    quality.log();
-    resolution.log();
-
-    for (auto shell : resolution.shells) {
+    for (auto shell : resolution->shells) {
         QList<QStandardItem*> row;
         row.push_back(new QStandardItem(QString::number(shell.dmin)));
         row.push_back(new QStandardItem(QString::number(shell.dmax)));
