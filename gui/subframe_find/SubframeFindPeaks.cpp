@@ -40,6 +40,7 @@
 #include <QHeaderView>
 #include <QItemDelegate>
 #include <QLabel>
+#include <QMessageBox>
 #include <QScrollArea>
 #include <QScrollBar>
 #include <QSpacerItem>
@@ -653,7 +654,7 @@ void SubframeFindPeaks::find()
         finder->find(data_list);
         refreshPeakTable();
     } catch (std::exception& e) {
-        return;
+        QMessageBox::critical(this, "Error", QString(e.what()));
     }
 }
 

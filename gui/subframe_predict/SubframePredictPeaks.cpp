@@ -41,6 +41,7 @@
 #include <QGroupBox>
 #include <QHeaderView>
 #include <QItemDelegate>
+#include <QMessageBox>
 #include <QScrollArea>
 #include <QScrollBar>
 #include <QSpacerItem>
@@ -662,8 +663,8 @@ void SubframePredictPeaks::runPrediction()
         _peak_collection_item.setPeakCollection(&_peak_collection);
         _peak_collection_model.setRoot(&_peak_collection_item);
         refreshPeakTable();
-    } catch (std::exception& e) {
-        return;
+    } catch (const std::exception& e) {
+        QMessageBox::critical(this, "Error", QString(e.what()));
     }
 }
 
@@ -706,8 +707,8 @@ void SubframePredictPeaks::runIntegration()
                 _integrator->currentText().toStdString(), &_peak_collection, lib, params);
 
         refreshPeakTable();
-    } catch (std::exception& e) {
-        return;
+    } catch (const std::exception& e) {
+        QMessageBox::critical(this, "Error", QString(e.what()));
     }
 }
 

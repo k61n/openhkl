@@ -84,8 +84,8 @@ void DataResolution::computeQuality(
 std::string DataQuality::toString() const
 {
     std::ostringstream oss;
-    oss << std::fixed << std::setprecision(4) << std::setw(8) << Rmerge << std::setw(8)
-        << expectedRmerge << std::setw(8) << Rmeas << std::setw(8) << expectedRmeas << std::setw(8)
+    oss << std::fixed << std::setprecision(4) << std::setw(8) << Rmeas << std::setw(8)
+        << expectedRmeas << std::setw(8) << Rmerge << std::setw(8) << expectedRmerge << std::setw(8)
         << Rpim << std::setw(8) << expectedRpim << std::setw(8) << CChalf << std::setw(8) << CCstar;
     return oss.str();
 }
@@ -102,8 +102,8 @@ void DataQuality::log() const
 {
     std::ostringstream oss;
     oss << "Data quality metrics (overall):" << std::endl;
-    oss << std::setw(8) << "Rmer" << std::setw(8) << "eRmer" << std::setw(8) << "Rmea"
-        << std::setw(8) << "eRmea" << std::setw(8) << "Rpim" << std::setw(8) << "eRpim"
+    oss << std::setw(8) << "Rmea"<< std::setw(8) << "eRmea" << std::setw(8)  << "Rmer"
+        << std::setw(8) << "eRmer" << std::setw(8) << "Rpim" << std::setw(8) << "eRpim"
         << std::setw(8) << "CChalf" << std::setw(8) << "Cstar";
     oss << std::endl << toString();
     nsxlog(Level::Info, oss.str());
@@ -113,8 +113,8 @@ void DataResolution::log() const
 {
     std::ostringstream oss;
     oss << "Data quality metrics (per resolution shell):" << std::endl;
-    oss << std::setw(8) << "dmin" << std::setw(8) << "dmax" << std::setw(8) << "Rmer"
-        << std::setw(8) << "eRmer" << std::setw(8) << "Rmea" << std::setw(8) << "eRmea"
+    oss << std::setw(8) << "dmin" << std::setw(8) << "dmax" << std::setw(8) << "Rmea"
+        << std::setw(8) << "eRmea" << std::setw(8) << "Rmer" << std::setw(8) << "eRmer"
         << std::setw(8) << "Rpim" << std::setw(8) << "eRpim" << std::setw(8) << "CChalf"
         << std::setw(8) << "Cstar";
     for (auto shell : shells) {
