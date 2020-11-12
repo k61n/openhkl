@@ -14,7 +14,6 @@
 
 #include "core/peak/IntegrationRegion.h"
 #include "base/geometry/Ellipsoid.h"
-#include "base/hull/ConvexHull.h"
 #include "core/detector/Detector.h"
 #include "core/instrument/Diffractometer.h"
 #include "core/peak/Peak3D.h"

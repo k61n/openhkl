@@ -15,7 +15,7 @@
 #ifndef NSX_CORE_INSTRUMENT_SAMPLE_H
 #define NSX_CORE_INSTRUMENT_SAMPLE_H
 
-#include "base/hull/ConvexHull.h"
+#include "base/geometry/ConvexHull.h"
 #include "core/gonio/Component.h" // inheriting from
 
 namespace nsx {

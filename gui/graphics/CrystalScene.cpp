@@ -20,7 +20,6 @@
 #include <QMouseEvent>
 #include <QWidget>
 
-#include "base/hull/Triangle.h"
 #include "base/utils/Units.h"
 
 //#include "apps/dialogs/DialogCalibrateDistance.h"
@@ -245,6 +244,8 @@ void CrystalScene::triangulate()
         QMessageBox::critical(nullptr, "NSXTool", e.what());
         return;
     }
+
+/* TODO: adapt to new hull code
     const std::vector<nsx::Triangle>& tcache = _hull->createFaceCache();
     std::vector<nsx::Triangle>::const_iterator it;
     double yc, zc;
@@ -263,6 +264,7 @@ void CrystalScene::triangulate()
         temp->rotate(_rotationAngle, yc);
         addItem(temp);
     }
+*/
     update();
 }
 

@@ -80,11 +80,7 @@ using Eigen::Quaterniond;
 #include "base/geometry/DirectVector.h"
 #include "base/geometry/Ellipsoid.h"
 #include "base/geometry/ReciprocalVector.h"
-#include "base/hull/ConvexHull.h"
-#include "base/hull/Edge.h"
-#include "base/hull/Face.h"
-#include "base/hull/Triangle.h"
-#include "base/hull/Vertex.h"
+#include "base/geometry/ConvexHull.h"
 #include "base/parser/BloscFilter.h"
 #include "base/parser/EigenToVector.h"
 #include "base/parser/Parser.h"
@@ -263,12 +259,7 @@ ArrayExtendCRef(ReciprocalVector, double);
 
 %include "base/geometry/AABB.h"
 %include "base/geometry/Ellipsoid.h"
-
-%include "base/hull/ConvexHull.h"
-%include "base/hull/Edge.h"
-%include "base/hull/Vertex.h"
-%include "base/hull/Triangle.h"
-%include "base/hull/Face.h"
+%include "base/geometry/ConvexHull.h"
 
 %include "base/parser/BloscFilter.h"
 %include "base/parser/EigenToVector.h"
