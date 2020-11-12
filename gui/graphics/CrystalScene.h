@@ -20,7 +20,7 @@
 #include <QPixmap>
 #include <QString>
 
-#include "base/hull/ConvexHull.h"
+#include "base/geometry/ConvexHull.h"
 #include "core/shape/ShapeCollection.h"
 
 class QGraphicsPixmapItem;

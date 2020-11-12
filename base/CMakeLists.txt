@@ -8,4 +8,5 @@ target_link_libraries(nsxbase
     PRIVATE
     ${YAMLCPP_LIBRARIES}
     ${GSL_LIBRARIES}
+    ${QHULL_LIBRARIES}
     )

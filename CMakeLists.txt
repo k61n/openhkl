@@ -126,6 +126,10 @@ find_package(Eigen3 MODULE REQUIRED)
 message(STATUS "Eigen3: FOUND=${EIGEN3_FOUND},
         VERSION=${EIGEN3_VERSION}, INCLUDE_DIR=${EIGEN3_INCLUDE_DIR}")
 
+find_package(Qhull MODULE REQUIRED)
+message(STATUS "QHull: FOUND=${QHULL_FOUND},
+        INCLUDE_DIR=${QHULL_INCLUDE_DIR}")
+
 include(CheckDependencies)
 
 ###################################################################################################
