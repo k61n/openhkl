@@ -14,6 +14,8 @@
 
 #include "base/geometry/ConvexHull.h"
 
+#include <memory>
+
 #include <libqhullcpp/Qhull.h>
 #include <libqhullcpp/QhullFacetList.h>
 #include <libqhullcpp/QhullVertexSet.h>
