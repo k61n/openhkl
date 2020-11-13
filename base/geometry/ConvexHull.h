@@ -15,17 +15,16 @@
 #ifndef NSX_BASE_HULL_H
 #define NSX_BASE_HULL_H
 
-#include <vector>
 #include <Eigen/Core>
+#include <vector>
 
 #include "base/geometry/AABB.h"
 
 
 namespace nsx {
 
-class ConvexHull
-{
-public:
+class ConvexHull {
+ public:
     ConvexHull();
     ~ConvexHull();
 
@@ -37,13 +36,13 @@ public:
 
     //! Adds a new vertex to the list of points to be processed later when calling
     //! updateHull method.
-    bool addVertex(const Eigen::Vector3d& coords, double tolerance=1e-6);
+    bool addVertex(const Eigen::Vector3d& coords, double tolerance = 1e-6);
 
     //! Remove vertex
-    bool removeVertex(const Eigen::Vector3d& coords, double tolerance=1e-6);
+    bool removeVertex(const Eigen::Vector3d& coords, double tolerance = 1e-6);
 
     //! Updates the hull.
-    bool updateHull(double tolerance=1e-6);
+    bool updateHull(double tolerance = 1e-6);
 
     //! Returns whether a vertex is contained in the hull
     bool contains(const Eigen::Vector3d& v) const;
@@ -56,12 +55,12 @@ public:
     const Eigen::Vector3d& center() const { return _center; }
     double volume() const { return _volume; }
 
-private:
+ private:
     // hull vertices
     std::vector<Eigen::Vector3d> _vertices;
 
     // hull faces
- 	std::vector<std::vector<Eigen::Vector3d>> _faces;
+    std::vector<std::vector<Eigen::Vector3d>> _faces;
 
     // hull plane normals and distances
     std::vector<Eigen::Vector3d> _normals;
