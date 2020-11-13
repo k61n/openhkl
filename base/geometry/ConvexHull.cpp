@@ -20,7 +20,6 @@
 #include <libqhullcpp/QhullFacetList.h>
 #include <libqhullcpp/QhullVertexSet.h>
 
-
 namespace nsx {
 
 using namespace orgQhull;
@@ -45,6 +44,8 @@ ConvexHull& ConvexHull::operator=(const ConvexHull& other)
     this->_normals = other._normals;
     this->_dists = other._dists;
 
+    this->_volume = other._volume;
+
     this->_center = other._center;
     this->_innerR2 = other._innerR2;
     this->_outerR2 = other._outerR2;
@@ -64,6 +65,8 @@ void ConvexHull::reset()
 
     _center = Eigen::Vector3d(0., 0., 0.);
 
+    _volume = 0.;
+
     double inf = std::numeric_limits<double>::infinity();
     _innerR2 = inf;
     _outerR2 = -_innerR2;
@@ -73,34 +76,46 @@ void ConvexHull::reset()
     _aabb = AABB(aabblower, aabbupper);
 }
 
-void ConvexHull::addVertex(const Eigen::Vector3d& coords, double tolerance)
+bool ConvexHull::addVertex(const Eigen::Vector3d& coords, double tolerance)
 {
     // test if the vertex is duplicate and ignore it in that case
     for (const auto& v : _vertices) {
-        if((coords - v).norm() / coords.norm() < tolerance) {
-            //throw std::runtime_error("Duplicate vertex (within tolerance).");
-            return;
+        if(v.isApprox(coords, tolerance)) {
+            return false;
         }
     }
 
     _vertices.push_back(coords);
+    return true;
 }
 
 bool ConvexHull::removeVertex(const Eigen::Vector3d& coords, double tolerance)
 {
     for (auto it = _vertices.begin(); it != _vertices.end(); ++it) {
         const auto&  v = *it;
-        if ((v - coords).squaredNorm() < tolerance)
+        if(v.isApprox(coords, tolerance)) {
             _vertices.erase(it);
-        return true;
+            return true;
+        }
     }
     return false;
 }
 
 // Convex hull calculation using qhull,
 // code from Takin2/tlibs2 (doi: 10.5281/zenodo.4117437).
-bool ConvexHull::updateHull()
+bool ConvexHull::updateHull(double tolerance)
 {
+    if(_vertices.size() < 4)
+        return false;
+
+    if(_vertices.size() == 4) {
+        Eigen::Matrix3d mat;
+        mat << _vertices[1]-_vertices[0], _vertices[2]-_vertices[0], _vertices[3]-_vertices[0];
+        // do the vectors all lie on a plane?
+        if(std::abs(mat.determinant()) < tolerance)
+            return false;
+    }
+
     try
     {
         std::unique_ptr<double[]> mem{new double[_vertices.size()*3]};
@@ -114,11 +129,16 @@ bool ConvexHull::updateHull()
         }
 
         // calculate convex hull
-        Qhull qhull{"tlibs2", 3, int(_vertices.size()), mem.get(), ""};
+        Qhull qhull;
+        qhull.setFactorEpsilon(tolerance);
+        qhull.setErrorStream(&std::cerr);
+        qhull.runQhull("tlibs2", 3, int(_vertices.size()), mem.get(), "");
         QhullVertexList vertices = qhull.vertexList();
         QhullFacetList facets = qhull.facetList();
 
         reset();
+
+        _volume = qhull.volume();
 
         // get hull vertices and bounding sphere center
         for(auto iter=vertices.begin(); iter!=vertices.end(); ++iter)

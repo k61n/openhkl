@@ -37,7 +37,7 @@ class IntegrationRegion {
     //! zones)
     void updateMask(Eigen::MatrixXi& mask, double frame) const;
     //! Returns the bounding box of the region
-    const AABB aabb() const;
+    const AABB& aabb() const;
     //! Returns the bounding box of the peak region
     const AABB peakBB() const;
     //! Classify a detector event (peak, background, forbidden, etc.)
