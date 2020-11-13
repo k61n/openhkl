@@ -52,7 +52,7 @@ DetectorProperty::DetectorProperty() : QWidget()
     _rows->setButtonSymbols(symbols);
     _rows->setReadOnly(true);
 
-    _columns->setMaximum(1000);
+    _columns->setMaximum(10000);
     _columns->setButtonSymbols(symbols);
     _columns->setReadOnly(true);
 
