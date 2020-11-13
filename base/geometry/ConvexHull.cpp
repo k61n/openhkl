@@ -25,11 +25,9 @@ namespace nsx {
 using namespace orgQhull;
 
 
-ConvexHull::ConvexHull()
-{}
+ConvexHull::ConvexHull() { }
 
-ConvexHull::~ConvexHull()
-{}
+ConvexHull::~ConvexHull() { }
 
 ConvexHull::ConvexHull(const ConvexHull& other)
 {
@@ -80,7 +78,7 @@ bool ConvexHull::addVertex(const Eigen::Vector3d& coords, double tolerance)
 {
     // test if the vertex is duplicate and ignore it in that case
     for (const auto& v : _vertices) {
-        if(v.isApprox(coords, tolerance)) {
+        if (v.isApprox(coords, tolerance)) {
             return false;
         }
     }
@@ -92,8 +90,8 @@ bool ConvexHull::addVertex(const Eigen::Vector3d& coords, double tolerance)
 bool ConvexHull::removeVertex(const Eigen::Vector3d& coords, double tolerance)
 {
     for (auto it = _vertices.begin(); it != _vertices.end(); ++it) {
-        const auto&  v = *it;
-        if(v.isApprox(coords, tolerance)) {
+        const auto& v = *it;
+        if (v.isApprox(coords, tolerance)) {
             _vertices.erase(it);
             return true;
         }
@@ -105,24 +103,23 @@ bool ConvexHull::removeVertex(const Eigen::Vector3d& coords, double tolerance)
 // code from Takin2/tlibs2 (doi: 10.5281/zenodo.4117437).
 bool ConvexHull::updateHull(double tolerance)
 {
-    if(_vertices.size() < 4)
+    if (_vertices.size() < 4)
         return false;
 
-    if(_vertices.size() == 4) {
+    if (_vertices.size() == 4) {
         Eigen::Matrix3d mat;
-        mat << _vertices[1]-_vertices[0], _vertices[2]-_vertices[0], _vertices[3]-_vertices[0];
+        mat << _vertices[1] - _vertices[0], _vertices[2] - _vertices[0],
+            _vertices[3] - _vertices[0];
         // do the vectors all lie on a plane?
-        if(std::abs(mat.determinant()) < tolerance)
+        if (std::abs(mat.determinant()) < tolerance)
             return false;
     }
 
-    try
-    {
-        std::unique_ptr<double[]> mem{new double[_vertices.size()*3]};
+    try {
+        std::unique_ptr<double[]> mem{new double[_vertices.size() * 3]};
 
         std::size_t i = 0;
-        for(const Eigen::Vector3d& vert : _vertices)
-        {
+        for (const Eigen::Vector3d& vert : _vertices) {
             mem[i++] = vert[0];
             mem[i++] = vert[1];
             mem[i++] = vert[2];
@@ -141,8 +138,7 @@ bool ConvexHull::updateHull(double tolerance)
         _volume = qhull.volume();
 
         // get hull vertices and bounding sphere center
-        for(auto iter=vertices.begin(); iter!=vertices.end(); ++iter)
-        {
+        for (auto iter = vertices.begin(); iter != vertices.end(); ++iter) {
             QhullPoint point = (*iter).point();
             Eigen::Vector3d vert(point[0], point[1], point[2]);
             _center += vert;
@@ -153,8 +149,7 @@ bool ConvexHull::updateHull(double tolerance)
         // get bounding sphere and aabb
         Eigen::Vector3d aabblower = _aabb.lower();
         Eigen::Vector3d aabbupper = _aabb.upper();
-        for(const auto& vert : _vertices)
-        {
+        for (const auto& vert : _vertices) {
             double r2 = (vert - _center).squaredNorm();
             _outerR2 = std::max(_outerR2, r2);
             _innerR2 = std::min(_innerR2, r2);
@@ -171,15 +166,13 @@ bool ConvexHull::updateHull(double tolerance)
         _aabb.setUpper(aabbupper);
 
         // get polygons for the hull faces
-        for(auto iter=facets.begin(); iter!=facets.end(); ++iter)
-        {
-            if(iter->isUpperDelaunay())
+        for (auto iter = facets.begin(); iter != facets.end(); ++iter) {
+            if (iter->isUpperDelaunay())
                 continue;
 
             std::vector<Eigen::Vector3d> face;
             QhullVertexSet vertices = iter->vertices();
-            for(auto iterVertex=vertices.begin(); iterVertex!=vertices.end(); ++iterVertex)
-            {
+            for (auto iterVertex = vertices.begin(); iterVertex != vertices.end(); ++iterVertex) {
                 QhullPoint point = (*iterVertex).point();
                 face.emplace_back(Eigen::Vector3d(point[0], point[1], point[2]));
             }
@@ -194,9 +187,7 @@ bool ConvexHull::updateHull(double tolerance)
         }
 
         return true;
-    }
-    catch(const std::exception& ex)
-    {
+    } catch (const std::exception& ex) {
         return false;
     }
 }
@@ -205,20 +196,20 @@ bool ConvexHull::updateHull(double tolerance)
 // Make changes with caution, and remember to profile!
 bool ConvexHull::contains(const Eigen::Vector3d& v) const
 {
-    const double r2 = (v-_center).squaredNorm();
+    const double r2 = (v - _center).squaredNorm();
 
     // point inside bounding sphere?
     if (r2 > _outerR2)
         return false;
-    //if (r2 < _innerR2)
+    // if (r2 < _innerR2)
     //    return true;
 
     // point inside aabb?
-    if(!_aabb.isInside(v))
+    if (!_aabb.isInside(v))
         return false;
 
     // directly check against face planes
-    for(std::size_t normidx=0; normidx<_normals.size(); ++normidx) {
+    for (std::size_t normidx = 0; normidx < _normals.size(); ++normidx) {
         if (v.dot(_normals[normidx]) <= _dists[normidx])
             return false;
     }
