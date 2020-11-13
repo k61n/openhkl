@@ -77,7 +77,7 @@ class ShapeCollection {
     //! @param detector_coords if true, store profiles in detector coordinates;
     //! otherwise store in Kabsch coordinates
     ShapeCollection();
-    ShapeCollection(bool detector_coords, double peakScale, double bkgBegin, double bkgEnd);
+    ShapeCollection(bool detector_coords, double peakEnd, double bkgBegin, double bkgEnd);
 
     //! Returns whether the collection is stored in detector coords or Kabsch coords
     bool detectorCoords() const;
@@ -111,7 +111,7 @@ class ShapeCollection {
         const DetectorEvent& ev, double radius, double nframes) const;
 
     //! Returns the peak scale used for the collection
-    double peakScale() const;
+    double peakEnd() const;
 
     //! Returns the background begin used for the collection
     double bkgBegin() const;
@@ -170,7 +170,7 @@ class ShapeCollection {
     bool _detectorCoords;
 
     //! The peak scale used by the collection for integration
-    double _peakScale;
+    double _peakEnd;
 
     //! The background begin used by the collection for integration
     double _bkgBegin;

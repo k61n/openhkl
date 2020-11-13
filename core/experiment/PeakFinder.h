@@ -48,8 +48,8 @@ class PeakFinder {
 
     void setHandler(const sptrProgressHandler& handler);
 
-    void setPeakScale(double scale) { _peakScale = scale; }
-    double peakScale() const { return _peakScale; }
+    void setPeakEnd(double scale) { _peakEnd = scale; }
+    double peakEnd() const { return _peakEnd; }
 
     void setMinSize(int minComp);
     int minSize() const;
@@ -97,7 +97,7 @@ class PeakFinder {
 
     double _threshold;
 
-    double _peakScale;
+    double _peakEnd;
 
     int _current_label;
 

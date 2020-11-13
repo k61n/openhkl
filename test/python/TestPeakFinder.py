@@ -34,7 +34,7 @@ class TestPeakFinder(unittest.TestCase):
         finder.setConvolver(nsx.AnnularConvolver())
         finder.setMinSize(30)
         finder.setMaxSize(10000)
-        finder.setPeakScale(1.0)
+        finder.setPeakEnd(1.0)
         finder.setThreshold(80.0)
         finder.find(expt.getAllData())
 

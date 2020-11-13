@@ -26,7 +26,7 @@ class TestPrediction(unittest.TestCase):
         shapelib_params.nx = 20
         shapelib_params.ny = 20
         shapelib_params.nz = 20
-        shapelib_params.peak_scale = 3.0
+        shapelib_params.peak_end = 3.0
         shapelib_params.d_min = 1.5
         shapelib_params.d_max = 50.0
         shapelib_params.bkg_begin = 3.0
@@ -43,7 +43,7 @@ class TestPrediction(unittest.TestCase):
         prediction_params.frame_range_max = 20.0
         prediction_params.bkg_begin = 3.0
         prediction_params.bkg_end = 4.5
-        prediction_params.peak_scale = 5.0
+        prediction_params.peak_end = 5.0
         prediction_params.set_fit_center = True
         prediction_params.fit_covariance = True
         prediction_params.min_neighbours = 400.0

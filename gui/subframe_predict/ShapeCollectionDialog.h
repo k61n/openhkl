@@ -98,7 +98,7 @@ class ShapeCollectionDialog : public QDialog {
     QDoubleSpinBox* _min_I_sigma;
     QDoubleSpinBox* _min_d;
     QDoubleSpinBox* _max_d;
-    QDoubleSpinBox* _peak_scale;
+    QDoubleSpinBox* _peak_end;
     QDoubleSpinBox* _background_begin;
     QDoubleSpinBox* _background_end;
 

@@ -24,7 +24,7 @@ class IntegrationRegion;
 enum class Level;
 
 struct IntegrationParameters {
-    double peak_end = 3.0; //!< End of peak region (sigmas) (same as peak_scale? - zamaan)
+    double peak_end = 3.0; //!< End of peak region (sigmas)
     double bkg_begin = 3.0; //!< Beginning of background region (sigmas)
     double bkg_end = 6.0; //!< End of background region (sigmas)
     double neighbour_range_pixels = 400.0; //!< Search radius for neighbouring peaks (pixels)

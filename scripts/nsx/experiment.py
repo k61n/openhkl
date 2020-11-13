@@ -10,7 +10,7 @@ import sys
 import logging
 from pathlib import Path
 from pdb import set_trace
-sys.path.append("/home/zamaan/codes/nsxtool/tmp/build/swig")
+sys.path.append("/home/zamaan/codes/nsxtool/current/build/swig")
 sys.path.append("/G/sw/nsx/build/swig") # Joachim
 import pynsx as nsx
 
@@ -161,11 +161,11 @@ class Experiment:
 
         self.finder.setMinSize(self._params.finder['min_size'])
         self.finder.setMaxSize(self._params.finder['max_size'])
-        self.finder.setPeakScale(self._params.finder['peak_scale'])
+        self.finder.setPeakEnd(self._params.finder['peak_end'])
         self.finder.setThreshold(self._params.finder['threshold'])
         self.log(f"min_size = {self._params.finder['min_size']}")
         self.log(f"max_size = {self._params.finder['max_size']}")
-        self.log(f"peak_scale = {self._params.finder['peak_scale']}")
+        self.log(f"peak_end = {self._params.finder['peak_end']}")
         self.log(f"threshold = {self._params.finder['threshold']}")
 
         self.finder.find(dataset)
@@ -265,7 +265,7 @@ class Experiment:
         params.nbins_x = self._params.shapelib['nx']
         params.nbins_y = self._params.shapelib['ny']
         params.nbins_z = self._params.shapelib['nz']
-        params.peak_end = self._params.shapelib['peak_scale']
+        params.peak_end = self._params.shapelib['peak_end']
         params.detector_range_min = self._params.shapelib['shapelib_d_min']
         params.detector_range_max = self._params.shapelib['shapelib_d_max']
         params.bkg_begin = self._params.shapelib['bkg_begin']
@@ -274,7 +274,7 @@ class Experiment:
         self.log(f"nx = {self._params.shapelib['nx']}")
         self.log(f"ny = {self._params.shapelib['ny']}")
         self.log(f"nz = {self._params.shapelib['nz']}")
-        self.log(f"peak_scale = {self._params.shapelib['peak_scale']}")
+        self.log(f"peak_end = {self._params.shapelib['peak_end']}")
         self.log(f"d_min = {self._params.shapelib['shapelib_d_min']}")
         self.log(f"d_max = {self._params.shapelib['shapelib_d_max']}")
         self.log(f"bkg_begin = {self._params.shapelib['bkg_begin']}")
