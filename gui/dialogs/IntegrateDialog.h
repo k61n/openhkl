@@ -26,7 +26,7 @@ class IntegrateDialog : public QDialog {
 
     double backgroundBegin() { return bkgBegin->value(); }
     double backgroundScale() { return bkgScale->value(); }
-    double peakScale() { return shapeScale->value(); }
+    double peakEnd() { return shapeScale->value(); }
     double minimumD() { return minD->value(); }
     double maximumD() { return maxD->value(); }
     double radius() { return searchRadius->value(); }

@@ -155,10 +155,10 @@ void ShapeCollectionDialog::setParametersUp()
     _max_d->setValue(50);
     _max_d->setSizePolicy(*_size_policy_widgets);
 
-    _peak_scale = new QDoubleSpinBox();
-    _peak_scale->setMaximum(10000);
-    _peak_scale->setValue(3);
-    _peak_scale->setSizePolicy(*_size_policy_widgets);
+    _peak_end = new QDoubleSpinBox();
+    _peak_end->setMaximum(10000);
+    _peak_end->setValue(3);
+    _peak_end->setSizePolicy(*_size_policy_widgets);
 
     _background_begin = new QDoubleSpinBox();
     _background_begin->setMaximum(10000);
@@ -182,7 +182,7 @@ void ShapeCollectionDialog::setParametersUp()
     form->addRow("Minimum I/Sigma:", _min_I_sigma);
     form->addRow("Minimum d:", _min_d);
     form->addRow("Maximum d:", _max_d);
-    form->addRow("Peak scale:", _peak_scale);
+    form->addRow("Peak scale:", _peak_end);
     form->addRow("Background begin:", _background_begin);
     form->addRow("Background end:", _background_end);
     form->addRow(_build_collection);
@@ -287,14 +287,14 @@ void ShapeCollectionDialog::build()
 
     bool kabsch_coords = _kabsch->isChecked();
 
-    double peak_scale_val = _peak_scale->value();
+    double peak_end_val = _peak_end->value();
 
     if (kabsch_coords) {
         double sigma_d_val = _sigma_D->value();
         double sigma_m_val = _sigma_M->value();
         Eigen::Vector3d sigma(sigma_d_val, sigma_d_val, sigma_m_val);
-        aabb.setLower(-peak_scale_val * sigma);
-        aabb.setUpper(peak_scale_val * sigma);
+        aabb.setLower(-peak_end_val * sigma);
+        aabb.setUpper(peak_end_val * sigma);
     } else {
         Eigen::Vector3d dx(nx_val, ny_val, nz_val);
         aabb.setLower(-0.5 * dx);
@@ -308,13 +308,13 @@ void ShapeCollectionDialog::build()
 
     const double bkg_begin_val = _background_begin->value();
     const double bkg_end_val = _background_end->value();
-    _collection = nsx::ShapeCollection(!kabsch_coords, peak_scale_val, bkg_begin_val, bkg_end_val);
+    _collection = nsx::ShapeCollection(!kabsch_coords, peak_end_val, bkg_begin_val, bkg_end_val);
 
     nsx::ShapeIntegrator integrator(&_collection, aabb, nx_val, ny_val, nz_val);
     integrator.setHandler(handler);
     integrator.setNNumors(1);
     nsx::IntegrationParameters params{};
-    params.peak_end = peak_scale_val;
+    params.peak_end = peak_end_val;
     params.bkg_begin = bkg_begin_val;
     params.bkg_end = bkg_end_val;
     integrator.setParameters(params);

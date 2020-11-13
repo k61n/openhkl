@@ -87,7 +87,7 @@ namespace nsx {
 PeakFinder::PeakFinder()
     : _handler(nullptr)
     , _threshold(80.0)
-    , _peakScale(1.0)
+    , _peakEnd(1.0)
     , _current_label(0)
     , _minSize(30)
     , _maxSize(10000)
@@ -413,7 +413,7 @@ void PeakFinder::findCollisions(
 
         try {
             // toEllipsoid throws exception if mass is too small
-            it->second.toEllipsoid(_peakScale, center, extents, axis);
+            it->second.toEllipsoid(_peakEnd, center, extents, axis);
         } catch (...) {
             it = blobs.erase(it);
             continue;
@@ -606,7 +606,7 @@ void PeakFinder::find(const DataList numors)
         if (_handler) {
             _handler->log("min comp is " + std::to_string(_minSize));
             _handler->log("max comp is " + std::to_string(_maxSize));
-            _handler->log("search scale is " + std::to_string(_peakScale));
+            _handler->log("search scale is " + std::to_string(_peakEnd));
         }
 
         _current_label = 0;

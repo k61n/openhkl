@@ -71,7 +71,7 @@ TEST_CASE("test/crystal/TestRefiner.cpp", "")
     nsx::PeakFinder* peak_finder = experiment.peakFinder();
     peak_finder->setMinSize(30);
     peak_finder->setMaxSize(10000);
-    peak_finder->setPeakScale(1.0);
+    peak_finder->setPeakEnd(1.0);
     peak_finder->setMaxFrames(10);
     peak_finder->setFramesBegin(0);
     peak_finder->setFramesEnd(dataf->nFrames());
