@@ -22,6 +22,7 @@ git clone https://jugit.fz-juelich.de/mlz/nsxtool.git
     10. GSL
     11. FFTW3
     12. Blosc
+    13. QHull (esp. libqhullcpp)
 
 3. Install local dependencies. Assuming here that they are being installed in `~/Software`, which contains the directories `include` and `lib` with various headers and libraries installed.
     1. XSection (https://jugit.fz-juelich.de/mlz/xsection)
