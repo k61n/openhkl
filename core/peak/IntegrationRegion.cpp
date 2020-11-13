@@ -48,7 +48,7 @@ IntegrationRegion::IntegrationRegion(
     _hull.updateHull();
 }
 
-const AABB IntegrationRegion::aabb() const
+const AABB& IntegrationRegion::aabb() const
 {
     return _hull.aabb();
 }

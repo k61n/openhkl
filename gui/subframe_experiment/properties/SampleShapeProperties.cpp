@@ -97,11 +97,10 @@ void SampleShapeProperties::refreshInput()
 
         // Shape
         const nsx::ConvexHull& hull = sample.shape();
-	    // TODO: adapt to new hull code
-        //_volume->setText(QString::number(hull.volume() / nsx::mm3) + " mm^3");
+        _volume->setText(QString::number(hull.volume() / nsx::mm3) + " mm^3");
         _faces->setText(QString::number(hull.normals().size()));
-        //_edges->setText(QString::number(hull.edges().size()));
         _vertices->setText(QString::number(hull.vertices().size()));
+        //_edges->setText(QString::number(hull.edges().size()));
     } else {
         // SampleProperty
         sampleGoniometer->removeColumn(1);

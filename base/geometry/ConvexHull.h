@@ -37,13 +37,13 @@ public:
 
     //! Adds a new vertex to the list of points to be processed later when calling
     //! updateHull method.
-    void addVertex(const Eigen::Vector3d& coords, double tolerance=1e-6);
+    bool addVertex(const Eigen::Vector3d& coords, double tolerance=1e-6);
 
     //! Remove vertex
     bool removeVertex(const Eigen::Vector3d& coords, double tolerance=1e-6);
 
     //! Updates the hull.
-    bool updateHull();
+    bool updateHull(double tolerance=1e-6);
 
     //! Returns whether a vertex is contained in the hull
     bool contains(const Eigen::Vector3d& v) const;
@@ -54,6 +54,7 @@ public:
     const std::vector<Eigen::Vector3d>& normals() const { return _normals; }
     const std::vector<double>& distances() const { return _dists; }
     const Eigen::Vector3d& center() const { return _center; }
+    double volume() const { return _volume; }
 
 private:
     // hull vertices
@@ -72,6 +73,8 @@ private:
     // hull bounding radii
     double _innerR2 = -1.;
     double _outerR2 = -1.;
+
+    double _volume = 0.;
 
     AABB _aabb;
 };
