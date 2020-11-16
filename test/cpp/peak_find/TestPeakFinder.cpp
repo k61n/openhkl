@@ -41,7 +41,7 @@ TEST_CASE("test/peak_find/TestPeakFinder.cpp", "")
 
     nsx::PeakFinder peakFinder;
     peakFinder.setHandler(handler);
-    peakFinder.setPeakScale(1.0);
+    peakFinder.setPeakEnd(1.0);
     peakFinder.setThreshold(10);
     peakFinder.setMinSize(10);
     peakFinder.setMaxSize(10000);

@@ -80,7 +80,7 @@ TEST_CASE("test/crystal/TestQShape.cpp", "")
     peakFinder.setConvolver(std::unique_ptr<nsx::Convolver>(convolver));
 
     peakFinder.setThreshold(15.0);
-    peakFinder.setPeakScale(1.0);
+    peakFinder.setPeakEnd(1.0);
 
     peakFinder.setHandler(progressHandler);
 

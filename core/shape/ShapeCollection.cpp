@@ -207,7 +207,7 @@ ShapeCollection::ShapeCollection()
     , _choleskyM()
     , _choleskyS()
     , _detectorCoords(true)
-    , _peakScale(1)
+    , _peakEnd(1)
     , _bkgBegin(3)
     , _bkgEnd(4)
 {
@@ -217,13 +217,13 @@ ShapeCollection::ShapeCollection()
 }
 
 ShapeCollection::ShapeCollection(
-    bool detector_coords, double peakScale, double bkgBegin, double bkgEnd)
+    bool detector_coords, double peakEnd, double bkgBegin, double bkgEnd)
     : _profiles()
     , _choleskyD()
     , _choleskyM()
     , _choleskyS()
     , _detectorCoords(detector_coords)
-    , _peakScale(peakScale)
+    , _peakEnd(peakEnd)
     , _bkgBegin(bkgBegin)
     , _bkgEnd(bkgEnd)
 {
@@ -259,9 +259,9 @@ static void covariance_helper(
     result = Jd * cov * Jd.transpose();
 }
 
-double ShapeCollection::peakScale() const
+double ShapeCollection::peakEnd() const
 {
-    return _peakScale;
+    return _peakEnd;
 }
 
 double ShapeCollection::bkgBegin() const

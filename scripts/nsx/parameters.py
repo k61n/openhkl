@@ -30,7 +30,7 @@ class Parameters:
 
     finder =      { 'min_size'         : 30,
                     'max_size'         : 10000,
-                    'peak_scale'       : 1.0,
+                    'peak_end'       : 1.0,
                     'threshold'        : 80.0 }
 
     integration = { 'peak_area'        : 3.0,
@@ -52,7 +52,7 @@ class Parameters:
                     'length_tol'       : 0.5,
                     'angle_tol'        : 0.5 }
 
-    shapelib    = { 'peak_scale'       : 3.0,
+    shapelib    = { 'peak_end'       : 3.0,
                     'bkg_begin'        : 3.0,
                     'bkg_end'          : 4.5,
                     'kabsch'           : True,

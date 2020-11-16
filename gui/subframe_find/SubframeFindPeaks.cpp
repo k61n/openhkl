@@ -528,7 +528,7 @@ void SubframeFindPeaks::grabFinderParameters()
 
     _min_size_spin->setValue(finder->minSize());
     _max_size_spin->setValue(finder->maxSize());
-    _scale_spin->setValue(finder->peakScale());
+    _scale_spin->setValue(finder->peakEnd());
     _max_width_spin->setValue(finder->maxFrames());
     _start_frame_spin->setValue(finder->framesBegin());
     _end_frame_spin->setValue(finder->framesEnd());
@@ -573,7 +573,7 @@ void SubframeFindPeaks::setFinderParameters()
 
     finder->setMinSize(_min_size_spin->value());
     finder->setMaxSize(_max_size_spin->value());
-    finder->setPeakScale(_scale_spin->value());
+    finder->setPeakEnd(_scale_spin->value());
     finder->setMaxFrames(_max_width_spin->value());
     finder->setFramesBegin(_start_frame_spin->value());
     finder->setFramesEnd(_end_frame_spin->value());
