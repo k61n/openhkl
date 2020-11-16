@@ -193,19 +193,20 @@ bool ConvexHull::contains(const Eigen::Vector3d& v) const
 {
     const double r2 = (v - _center).squaredNorm();
 
-    // point inside bounding sphere?
+    // point outside bounding sphere?
     if (r2 > _outerR2)
         return false;
 
-    // point inside aabb?
+    // point outside bounding box?
     if (!_aabb.isInside(v))
         return false;
 
-    // directly check against face planes
+    // directly check against face planes of the hull
     for (std::size_t normidx = 0; normidx < _normals.size(); ++normidx) {
         if (v.dot(_normals[normidx]) <= _dists[normidx])
             return false;
     }
+
     return true;
 }
 
