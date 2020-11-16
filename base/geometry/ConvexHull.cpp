@@ -45,9 +45,7 @@ ConvexHull& ConvexHull::operator=(const ConvexHull& other)
     this->_volume = other._volume;
 
     this->_center = other._center;
-    this->_innerR2 = other._innerR2;
     this->_outerR2 = other._outerR2;
-
     this->_aabb = other._aabb;
 
     return *this;
@@ -64,11 +62,9 @@ void ConvexHull::reset()
     _center = Eigen::Vector3d(0., 0., 0.);
 
     _volume = 0.;
+    _outerR2 = -1.;
 
-    double inf = std::numeric_limits<double>::infinity();
-    _innerR2 = inf;
-    _outerR2 = -_innerR2;
-
+    const double inf = std::numeric_limits<double>::infinity();
     Eigen::Vector3d aabblower(inf, inf, inf);
     Eigen::Vector3d aabbupper = -aabblower;
     _aabb = AABB(aabblower, aabbupper);
@@ -152,7 +148,6 @@ bool ConvexHull::updateHull(double tolerance)
         for (const auto& vert : _vertices) {
             double r2 = (vert - _center).squaredNorm();
             _outerR2 = std::max(_outerR2, r2);
-            _innerR2 = std::min(_innerR2, r2);
 
             aabblower(0) = std::min(aabblower(0), vert(0));
             aabblower(1) = std::min(aabblower(1), vert(1));
@@ -201,8 +196,6 @@ bool ConvexHull::contains(const Eigen::Vector3d& v) const
     // point inside bounding sphere?
     if (r2 > _outerR2)
         return false;
-    // if (r2 < _innerR2)
-    //    return true;
 
     // point inside aabb?
     if (!_aabb.isInside(v))
