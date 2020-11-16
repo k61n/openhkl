@@ -15,7 +15,7 @@
 #ifndef NSX_CORE_PEAK_INTEGRATIONREGION_H
 #define NSX_CORE_PEAK_INTEGRATIONREGION_H
 
-#include "base/hull/ConvexHull.h"
+#include "base/geometry/ConvexHull.h"
 #include "core/peak/PeakData.h"
 
 namespace nsx {
@@ -37,7 +37,7 @@ class IntegrationRegion {
     //! zones)
     void updateMask(Eigen::MatrixXi& mask, double frame) const;
     //! Returns the bounding box of the region
-    const AABB aabb() const;
+    const AABB& aabb() const;
     //! Returns the bounding box of the peak region
     const AABB peakBB() const;
     //! Classify a detector event (peak, background, forbidden, etc.)

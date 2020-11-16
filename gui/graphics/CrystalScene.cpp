@@ -20,7 +20,6 @@
 #include <QMouseEvent>
 #include <QWidget>
 
-#include "base/hull/Triangle.h"
 #include "base/utils/Units.h"
 
 //#include "apps/dialogs/DialogCalibrateDistance.h"
@@ -245,8 +244,7 @@ void CrystalScene::triangulate()
         QMessageBox::critical(nullptr, "NSXTool", e.what());
         return;
     }
-    const std::vector<nsx::Triangle>& tcache = _hull->createFaceCache();
-    std::vector<nsx::Triangle>::const_iterator it;
+
     double yc, zc;
     _pin->getCenter(yc, zc, _rotationAngle);
     for (QList<QGraphicsItem*>::iterator it = list.begin(); it != list.end(); it++) {
@@ -254,15 +252,18 @@ void CrystalScene::triangulate()
         if (temp2)
             removeItem(temp2);
     }
-    for (it = tcache.begin(); it != tcache.end(); ++it) {
-        const Eigen::Vector3d& a = it->_A;
-        const Eigen::Vector3d& ab = it->_AB;
-        const Eigen::Vector3d& ac = it->_AC;
+
+    for(const auto& face : _hull->faces()) {
+        const Eigen::Vector3d& a = face[0];
+        const Eigen::Vector3d& b = face[1];
+        const Eigen::Vector3d& c = face[2];
+
         CrystalFaceItem* temp = new CrystalFaceItem();
-        temp->set(a / aspectratio, (ab + a) / aspectratio, (ac + a) / aspectratio);
+        temp->set(a / aspectratio, b / aspectratio, c / aspectratio);
         temp->rotate(_rotationAngle, yc);
         addItem(temp);
     }
+
     update();
 }
 

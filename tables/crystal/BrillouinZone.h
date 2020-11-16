@@ -15,7 +15,7 @@
 #ifndef NSX_TABLES_CRYSTAL_BRILLOUINZONE_H
 #define NSX_TABLES_CRYSTAL_BRILLOUINZONE_H
 
-#include "base/hull/ConvexHull.h"
+#include "base/geometry/ConvexHull.h"
 
 namespace nsx {
 
