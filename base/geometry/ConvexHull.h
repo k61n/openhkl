@@ -69,11 +69,10 @@ class ConvexHull {
     // center of hull polyhedron
     Eigen::Vector3d _center;
 
-    // hull bounding radii
-    double _innerR2 = -1.;
-    double _outerR2 = -1.;
-
     double _volume = 0.;
+
+    // hull bounding radius
+    double _outerR2 = -1.;
 
     AABB _aabb;
 };

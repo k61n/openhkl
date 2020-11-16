@@ -63,4 +63,10 @@ TEST_CASE("test/geometry/TestConvexHull.cpp", "")
             std::cout << "\t" << vert.transpose() << std::endl;
         std::cout << "\tnormal: " << norm.transpose() << ", dist: " << dist << std::endl;
     }
+    std::cout << std::endl;
+
+    for (std::size_t vertidx = 0; vertidx < hull.vertices().size(); ++vertidx) {
+        const auto& vert = hull.vertices()[vertidx];
+        std::cout << "vertex " << vertidx << ": " << vert.transpose() << std::endl;
+    }
 }
