@@ -67,9 +67,6 @@ void AutoIndexer::autoIndex(const std::vector<Peak3D*>& peaks)
     // refine the constrained unit cells in order to get the uncertainties
     // refineConstraints();
 
-    if (_handler)
-        _handler->log("Done refining solutions, building solution table.");
-
     // finally, rank the solutions
     rankSolutions();
 }
@@ -110,14 +107,8 @@ void AutoIndexer::computeFFTSolutions(const std::vector<Peak3D*>& peaks)
 
     // Check that a minimum number of peaks have been selected for indexing
     if (qvects.size() < 10) {
-        if (_handler)
-            _handler->log("AutoIndexer: too few peaks to index!");
         throw std::runtime_error("Too few peaks to autoindex");
     }
-    if (_handler)
-        _handler->log(
-            "Searching direct lattice vectors using " + std::to_string(qvects.size())
-            + " peaks defined on numors.");
 
     // Find the best vectors via FFT
     std::vector<Eigen::RowVector3d> tvects = algo::findOnSphere(
@@ -125,13 +116,8 @@ void AutoIndexer::computeFFTSolutions(const std::vector<Peak3D*>& peaks)
         _params.frequencyTolerance);
 
     // Need at least 3 t-vectors to form a basis
-    if (tvects.size() < 3) {
-        if (_handler)
-            _handler->log(
-                "Too few lattice planes detected to form a basis: tvects.size() = "
-                + std::to_string(tvects.size()) + " (minimum 3)");
+    if (tvects.size() < 3)
         throw std::runtime_error("Too few t-vectors to form basis");
-    }
 
     for (int i = 0; i < _params.nSolutions; ++i) {
         for (int j = i + 1; j < _params.nSolutions; ++j) {
@@ -272,8 +258,6 @@ void AutoIndexer::refineSolutions(const std::vector<Peak3D*>& peaks)
             cell->reduce(_params.niggliReduction, _params.niggliTolerance, _params.gruberTolerance);
             *cell = cell->applyNiggliConstraints();
         } catch (std::exception& e) {
-            if (_handler)
-                _handler->log("exception: " + std::string(e.what()));
             continue;
         }
 
