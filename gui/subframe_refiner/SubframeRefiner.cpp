@@ -597,3 +597,169 @@ void SubframeRefiner::reintegratePredicted()
         expt->getPeakCollection(_predicted_combo->currentText().toStdString());
     runReintegration(predicted_peaks);
 }
+
+void SubframeRefiner::setReintegrateUp()
+{
+    _reintegrate_box = new Spoiler("4. Reintegrate peaks");
+
+    QGridLayout* reintegrate_grid = new QGridLayout();
+    QLabel* label_ptr;
+
+    label_ptr = new QLabel("Peak end:");
+    label_ptr->setAlignment(Qt::AlignRight);
+    reintegrate_grid->addWidget(label_ptr, 3, 0, 1, 1);
+    label_ptr->setSizePolicy(*_size_policy_widgets);
+
+    label_ptr = new QLabel("Bkg begin:");
+    label_ptr->setAlignment(Qt::AlignRight);
+    reintegrate_grid->addWidget(label_ptr, 4, 0, 1, 1);
+    label_ptr->setSizePolicy(*_size_policy_widgets);
+
+    label_ptr = new QLabel("Bkg end:");
+    label_ptr->setAlignment(Qt::AlignRight);
+    reintegrate_grid->addWidget(label_ptr, 5, 0, 1, 1);
+    label_ptr->setSizePolicy(*_size_policy_widgets);
+
+    label_ptr = new QLabel("Search radius:");
+    label_ptr->setAlignment(Qt::AlignRight);
+    reintegrate_grid->addWidget(label_ptr, 6, 0, 1, 1);
+    label_ptr->setSizePolicy(*_size_policy_widgets);
+
+    label_ptr = new QLabel("N. of frames:");
+    label_ptr->setAlignment(Qt::AlignRight);
+    reintegrate_grid->addWidget(label_ptr, 7, 0, 1, 1);
+    label_ptr->setSizePolicy(*_size_policy_widgets);
+
+    _integrator_combo = new QComboBox();
+    _fit_center = new QCheckBox("Fit the center");
+    _fit_covariance = new QCheckBox("Fit the covariance");
+    _peak_end_int = new QDoubleSpinBox();
+    _bkg_start_int = new QDoubleSpinBox();
+    _bkg_end_int = new QDoubleSpinBox();
+    _radius_int = new QDoubleSpinBox();
+    _n_frames_int = new QDoubleSpinBox();
+    _reintegrate_found = new QPushButton("Reintegrate found peaks");
+    _reintegrate_predicted = new QPushButton("Reintegrate predicted peaks");
+
+    _integrator_combo->setMaximumWidth(1000);
+    _integrator_combo->addItem("Pixel sum integrator");
+    _integrator_combo->addItem("Gaussian integrator");
+    _integrator_combo->addItem("I/Sigma integrator");
+    _integrator_combo->addItem("1d profile integrator");
+    _integrator_combo->addItem("3d profile integrator");
+    _integrator_combo->setSizePolicy(*_size_policy_widgets);
+
+    _fit_center->setMaximumWidth(1000);
+    _fit_center->setChecked(true);
+
+    _fit_covariance->setMaximumWidth(1000);
+    _fit_covariance->setChecked(true);
+
+    _peak_end_int->setMaximumWidth(1000);
+    _peak_end_int->setMaximum(100000);
+    _peak_end_int->setDecimals(6);
+    _peak_end_int->setValue(5);
+
+    _bkg_start_int->setMaximumWidth(1000);
+    _bkg_start_int->setMaximum(100000);
+    _bkg_start_int->setDecimals(6);
+    _bkg_start_int->setValue(3.0);
+
+    _bkg_end_int->setMaximumWidth(1000);
+    _bkg_end_int->setMaximum(100000);
+    _bkg_end_int->setDecimals(6);
+    _bkg_end_int->setValue(4.5);
+
+    _radius_int->setMaximumWidth(1000);
+    _radius_int->setMaximum(100000);
+    _radius_int->setDecimals(6);
+    _radius_int->setValue(400.);
+
+    _n_frames_int->setMaximumWidth(1000);
+    _n_frames_int->setMaximum(100000);
+    _n_frames_int->setDecimals(6);
+    _n_frames_int->setValue(10);
+
+    _reintegrate_found->setMaximumWidth(1000);
+
+    _reintegrate_predicted->setMaximumWidth(1000);
+
+    _integrator_combo->setSizePolicy(*_size_policy_widgets);
+    _fit_center->setSizePolicy(*_size_policy_widgets);
+    _fit_covariance->setSizePolicy(*_size_policy_widgets);
+    _peak_end_int->setSizePolicy(*_size_policy_widgets);
+    _bkg_start_int->setSizePolicy(*_size_policy_widgets);
+    _bkg_end_int->setSizePolicy(*_size_policy_widgets);
+    _radius_int->setSizePolicy(*_size_policy_widgets);
+    _n_frames_int->setSizePolicy(*_size_policy_widgets);
+    _reintegrate_found->setSizePolicy(*_size_policy_widgets);
+    _reintegrate_predicted->setSizePolicy(*_size_policy_widgets);
+
+    reintegrate_grid->addWidget(_integrator_combo, 0, 0, 1, 2);
+    reintegrate_grid->addWidget(_fit_center, 1, 0, 1, 2);
+    reintegrate_grid->addWidget(_fit_covariance, 2, 0, 1, 2);
+    reintegrate_grid->addWidget(_peak_end_int, 3, 1, 1, 1);
+    reintegrate_grid->addWidget(_bkg_start_int, 4, 1, 1, 1);
+    reintegrate_grid->addWidget(_bkg_end_int, 5, 1, 1, 1);
+    reintegrate_grid->addWidget(_radius_int, 6, 1, 1, 1);
+    reintegrate_grid->addWidget(_n_frames_int, 7, 1, 1, 1);
+    reintegrate_grid->addWidget(_reintegrate_found, 8, 0, 1, 2);
+    reintegrate_grid->addWidget(_reintegrate_predicted, 9, 0, 1, 2);
+
+    _reintegrate_box->setContentLayout(*reintegrate_grid, true);
+    _reintegrate_box->setSizePolicy(*_size_policy_box);
+    _reintegrate_box->contentArea.setSizePolicy(*_size_policy_box);
+
+    connect(_reintegrate_found, &QPushButton::clicked, this, &SubframeRefiner::reintegrateFound);
+    connect(
+            _reintegrate_predicted, &QPushButton::clicked, this, &SubframeRefiner::reintegratePredicted);
+    _reintegrate_box->toggler(true);
+
+    _left_layout->addWidget(_reintegrate_box);
+}
+
+
+void SubframeRefiner::runReintegration(nsx::PeakCollection* peaks)
+{
+    try {
+        nsx::sptrProgressHandler handler(new nsx::ProgressHandler);
+        ProgressView progressView(nullptr);
+        progressView.watch(handler);
+
+        nsx::Experiment* expt = gSession->experimentAt(_exp_combo->currentIndex())->experiment();
+        nsx::IPeakIntegrator* integrator =
+            expt->getIntegrator(_integrator_combo->currentText().toStdString());
+        nsx::PeakCollection* found_peaks =
+            expt->getPeakCollection(_peak_combo->currentText().toStdString());
+        nsx::ShapeCollection* shapes = found_peaks->shapeCollection();
+
+        nsx::IntegrationParameters params;
+        params.bkg_begin = _bkg_start_int->value();
+        params.bkg_end = _bkg_end_int->value();
+        params.neighbour_range_pixels = _radius_int->value();
+        params.neighbour_range_frames = _n_frames_int->value();
+        params.fit_center = _fit_center->isChecked();
+        params.fit_cov = _fit_covariance->isChecked();
+
+        integrator->setHandler(handler);
+        expt->integratePeaks(integrator, peaks, &params, shapes);
+    } catch (std::exception& e) {
+        QMessageBox::critical(this, "Error", QString(e.what()));
+    }
+}
+
+void SubframeRefiner::reintegrateFound()
+{
+    nsx::Experiment* expt = gSession->experimentAt(_exp_combo->currentIndex())->experiment();
+    nsx::PeakCollection* found_peaks =
+        expt->getPeakCollection(_peak_combo->currentText().toStdString());
+    runReintegration(found_peaks);
+}
+
+void SubframeRefiner::reintegratePredicted()
+{
+    nsx::Experiment* expt = gSession->experimentAt(_exp_combo->currentIndex())->experiment();
+    nsx::PeakCollection* predicted_peaks =
+        expt->getPeakCollection(_predicted_combo->currentText().toStdString());
+    runReintegration(predicted_peaks);
+}
