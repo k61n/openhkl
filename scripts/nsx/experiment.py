@@ -492,19 +492,31 @@ class Experiment:
         cell = self.get_accepted_cell()
         data = self.get_data()[0]
         peaks = self.get_peak_collection(self._predicted_peaks)
-        self._expt.refine(peak_collection, peaks, cell, data, n_batches)
-        # Reintegrate found and predicted peaks
-        integrator = self._expt.getIntegrator(integrator_name)
-        integrator_params = self._expt.int_params
-        prediction_params = self._expt.predict_params
-        self.log(f"Integrating found peaks...")
-        self._found_collection = self._expt.getPeakCollection(self._found_peaks)
-        self._expt.integratePeaks(integrator, self._found_collection,
-                                  integrator_params, self._filtered_collection.shapeCollection())
-        self.log(f"Integrating predicted peaks...")
-        self._predicted_collection = self._expt.getPeakCollection(self._predicted_peaks)
-        self._expt.integratePeaks(integrator, self._predicted_collection,
-                                  prediction_params, self._filtered_collection.shapeCollection())
+        params = self._expt.refiner_params
+        params.refine_ub = True
+        params.refine_ki = True
+        params.refine_sample_position = True
+        params.refine_sample_orientation = True
+        params.refine_detector_offset = True
+        params.nbatches = n_batches
+        success = self._expt.refine(peak_collection, cell, data, params)
+        self.log(f"Refinement succeeded")
+        if success:
+            self._expt.updatePredictions(peaks)
+            # Reintegrate found and predicted peaks
+            integrator = self._expt.getIntegrator(integrator_name)
+            integrator_params = self._expt.int_params
+            prediction_params = self._expt.predict_params
+            self.log(f"Integrating found peaks...")
+            self._found_collection = self._expt.getPeakCollection(self._found_peaks)
+            self._expt.integratePeaks(integrator, self._found_collection,
+                                    integrator_params, self._filtered_collection.shapeCollection())
+            self.log(f"Integrating predicted peaks...")
+            self._predicted_collection = self._expt.getPeakCollection(self._predicted_peaks)
+            self._expt.integratePeaks(integrator, self._predicted_collection,
+                                    prediction_params, self._filtered_collection.shapeCollection())
+        else:
+            self.log(f"Refinement failed")
 
     def run_auto_indexer(self, peaks, length_tol, angle_tol, frame_min, frame_max):
         if self._expt.hasUnitCell("accepted"):

@@ -1028,25 +1028,14 @@ void RefinerDialog::refine()
     nsx::UnitCell* unit_cell = gSession->currentProject()->experiment()->getUnitCell(
         _select_uc->currentText().toStdString());
 
-    if (n_batches == 0) {
-        qDebug() << "[ERROR] 0 batch number";
+    if (n_batches == 0)
         return;
-    }
 
-    if (selected_peaks.empty()) {
-        qDebug() << "[ERROR] No peaks selected";
+    if (selected_peaks.empty())
         return;
-    }
 
-    if (selected_data.empty()) {
-        qDebug() << "[ERROR] No data selected";
+    if (!unit_cell)
         return;
-    }
-
-    if (!unit_cell) {
-        qDebug() << "[ERROR] No unit cell set for the selected peaks";
-        return;
-    }
 
     refiners.clear();
 
@@ -1074,51 +1063,41 @@ void RefinerDialog::refine()
             }
         }
 
-        qDebug() << "[INFO] " + QString::number(reference_peaks.size()) + " splitted into "
-                + QString::number(n_batches) + "refining batches.";
-
         nsx::InstrumentStateList& states = data->instrumentStates();
 
         nsx::UnitCellHandler* cell_handler =
             gSession->currentProject()->experiment()->getCellHandler();
-        nsx::Refiner refiner(states, unit_cell, reference_peaks, n_batches, cell_handler);
 
-        if (_refine_lattice->isChecked()) {
-            refiner.refineUB();
-            qDebug() << "[INFO] Refining UB matrix";
-        }
+        nsx::RefinerParameters params;
+        params.nbatches = n_batches;
+        params.refine_ub = false;
+        params.refine_sample_position = false;
+        params.refine_detector_offset = false;
+        params.refine_sample_orientation = false;
+        params.refine_ki = false;
 
-        if (_refine_sample_position->isChecked()) {
-            refiner.refineSamplePosition();
-            qDebug() << "[INFO] Refinining sample position";
-        }
+        nsx::Refiner refiner(states, unit_cell, reference_peaks, params, cell_handler);
 
-        if (_refine_detector_position->isChecked()) {
-            refiner.refineDetectorOffset();
-            qDebug() << "[INFO] Refinining detector position";
-        }
+        if (_refine_lattice->isChecked())
+            params.refine_ub = true;
 
-        if (_refine_sample_orientation->isChecked()) {
-            refiner.refineSampleOrientation();
-            qDebug() << "[INFO] Refinining sample orientation";
-        }
+        if (_refine_sample_position->isChecked())
+            params.refine_sample_position = true;
 
-        if (_refine_ki->isChecked()) {
-            refiner.refineKi();
-            qDebug() << "[INFO] Refining Ki";
-        }
+        if (_refine_detector_position->isChecked())
+            params.refine_detector_offset = true;
+
+        if (_refine_sample_orientation->isChecked())
+            params.refine_sample_orientation = true;
+
+        if (_refine_ki->isChecked())
+            params.refine_ki = true;
 
         bool success = refiner.refine();
 
         if (success) {
-            qDebug() << "[INFO] Successfully refined parameters for numor "
-                    + QString::fromStdString(data->filename());
             int updated = refiner.updatePredictions(predicted_peaks);
             refiners.emplace(data, std::move(refiner));
-            qDebug() << "[INFO] done; updated " + QString::number(updated) + " peaks";
-        } else {
-            qDebug() << "[INFO] Failed to refine parameters for numor "
-                    + QString::fromStdString(data->filename());
         }
     }
 

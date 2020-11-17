@@ -187,10 +187,13 @@ class Experiment {
     void predictPeaks(
         const std::string& name, PeakCollection* peaks, const PredictionParameters& params,
         PeakInterpolation interpol);
+    //! Get a pointer to the refiner
+    Refiner* refiner() { return _refiner.get(); };
     //! Refine unit cell and instrument parameters
-    void refine(
-        const PeakCollection* peaks, const PeakCollection* predicted_peaks, UnitCell* cell,
-        DataSet* data, int n_batches);
+    bool refine(
+        PeakCollection* peaks, UnitCell* cell, DataSet* data, const RefinerParameters& params);
+    //! Update the predicted peaks post-refinement
+    void updatePredictions(PeakCollection* predicted_peaks);
 
     //! Get resolution shells for quality metrics
     void computeQuality(
@@ -209,6 +212,7 @@ class Experiment {
     PredictionParameters predict_params;
     RawDataReaderParameters data_params;
     IndexerParameters indexer_params;
+    RefinerParameters refiner_params;
 
  private: // private variables
     std::string _name; //!< The name of this experiment
@@ -221,9 +225,10 @@ class Experiment {
     std::unique_ptr<IntegrationHandler> _integration_handler;
 
     // Objects that do the number crunching
-    std::unique_ptr<nsx::PeakFinder> _peak_finder;
-    std::unique_ptr<nsx::PeakFilter> _peak_filter;
-    std::unique_ptr<nsx::AutoIndexer> _auto_indexer;
+    std::unique_ptr<PeakFinder> _peak_finder;
+    std::unique_ptr<PeakFilter> _peak_filter;
+    std::unique_ptr<AutoIndexer> _auto_indexer;
+    std::unique_ptr<Refiner> _refiner;
 
     // Objects containing quality metrics
     DataQuality _data_quality;

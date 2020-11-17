@@ -59,14 +59,14 @@ void RefinerTables::setLatticeTableUp()
 
     _original_lattice_view = new QTableView;
     _original_lattice_model = new QStandardItemModel(0, 8, this);
-    _original_lattice_view->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Minimum);
+    _original_lattice_view->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Preferred);
     _original_lattice_view->setModel(_original_lattice_model);
     _original_lattice_model->setHorizontalHeaderLabels(
         {"fmin", "fmax", "a", "b", "c", QString((QChar)0x03B1), QString((QChar)0x03B2),
          QString((QChar)0x03B3)});
     _lattice_view = new QTableView;
     _lattice_model = new QStandardItemModel(0, 8, this);
-    _original_lattice_view->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
+    _lattice_view->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
     _lattice_view->setModel(_lattice_model);
     _lattice_model->setHorizontalHeaderLabels(
         {"fmin", "fmax", "a", "b", "c", QString((QChar)0x03B1), QString((QChar)0x03B2),
@@ -119,7 +119,7 @@ void RefinerTables::refreshLatticeTable(nsx::Refiner* refiner)
 
 void RefinerTables::setSamplePosTableUp()
 {
-    QVBoxLayout* sample_pos_layout = new QVBoxLayout(_sample_pos_tab);
+    QHBoxLayout* sample_pos_layout = new QHBoxLayout(_sample_pos_tab);
 
     _original_sample_pos_view = new QTableView;
     _original_sample_pos_model = new QStandardItemModel(0, 1, this);
@@ -128,7 +128,7 @@ void RefinerTables::setSamplePosTableUp()
     _original_sample_pos_model->setHorizontalHeaderLabels({"frame", "x", "y", "z"});
     _sample_pos_view = new QTableView;
     _sample_pos_model = new QStandardItemModel(0, 1, this);
-    _original_sample_pos_view->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
+    _sample_pos_view->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
     _sample_pos_view->setModel(_sample_pos_model);
     _sample_pos_model->setHorizontalHeaderLabels({"frame", "x", "y", "z"});
     sample_pos_layout->addWidget(_original_sample_pos_view);
@@ -175,7 +175,7 @@ void RefinerTables::refreshSamplePosTable(nsx::Refiner* refiner, nsx::DataSet* d
 
 void RefinerTables::setSampleOrnTableUp()
 {
-    QVBoxLayout* sample_orn_layout = new QVBoxLayout(_sample_orn_tab);
+    QHBoxLayout* sample_orn_layout = new QHBoxLayout(_sample_orn_tab);
 
     _original_sample_orn_view = new QTableView;
     _original_sample_orn_model = new QStandardItemModel(0, 4, this);
@@ -184,7 +184,7 @@ void RefinerTables::setSampleOrnTableUp()
     _original_sample_orn_model->setHorizontalHeaderLabels({"frame", "xy", "xz", "yz"});
     _sample_orn_view = new QTableView;
     _sample_orn_model = new QStandardItemModel(0, 4, this);
-    _original_sample_orn_view->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
+    _sample_orn_view->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
     _sample_orn_view->setModel(_sample_orn_model);
     _sample_orn_model->setHorizontalHeaderLabels({"frame", "xy", "xz", "yz"});
     sample_orn_layout->addWidget(_original_sample_orn_view);
@@ -231,16 +231,16 @@ void RefinerTables::refreshSampleOrnTable(nsx::Refiner* refiner, nsx::DataSet* d
 
 void RefinerTables::setDetectorPosTableUp()
 {
-    QVBoxLayout* detector_pos_layout = new QVBoxLayout(_detector_pos_tab);
+    QHBoxLayout* detector_pos_layout = new QHBoxLayout(_detector_pos_tab);
 
     _original_detector_pos_view = new QTableView;
-    _original_detector_pos_model = new QStandardItemModel(0, 8, this);
+    _original_detector_pos_model = new QStandardItemModel(0, 4, this);
     _original_detector_pos_view->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Minimum);
     _original_detector_pos_view->setModel(_original_detector_pos_model);
     _original_detector_pos_model->setHorizontalHeaderLabels({"frame", "x", "y", "z"});
     _detector_pos_view = new QTableView;
-    _detector_pos_model = new QStandardItemModel(0, 8, this);
-    _original_detector_pos_view->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
+    _detector_pos_model = new QStandardItemModel(0, 4, this);
+    _detector_pos_view->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
     _detector_pos_view->setModel(_detector_pos_model);
     _detector_pos_model->setHorizontalHeaderLabels({"frame", "x", "y", "z"});
     detector_pos_layout->addWidget(_original_detector_pos_view);
@@ -288,7 +288,7 @@ void RefinerTables::refreshDetectorPosTable(nsx::Refiner* refiner, nsx::DataSet*
 
 void RefinerTables::setKiTableUp()
 {
-    QVBoxLayout* ki_layout = new QVBoxLayout(_ki_tab);
+    QHBoxLayout* ki_layout = new QHBoxLayout(_ki_tab);
 
     _original_ki_view = new QTableView;
     _original_ki_model = new QStandardItemModel(0, 4, this);
@@ -297,7 +297,7 @@ void RefinerTables::setKiTableUp()
     _original_ki_model->setHorizontalHeaderLabels({"frame", "x", "y", "z"});
     _ki_view = new QTableView;
     _ki_model = new QStandardItemModel(0, 4, this);
-    _original_ki_view->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
+    _ki_view->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
     _ki_view->setModel(_ki_model);
     _ki_model->setHorizontalHeaderLabels({"frame", "x", "y", "z"});
     ki_layout->addWidget(_original_ki_view);

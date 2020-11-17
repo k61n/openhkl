@@ -41,8 +41,6 @@
 
 SubframeRefiner::SubframeRefiner() : QWidget()
 {
-    _refiner = nullptr;
-
     setSizePolicies();
     _main_layout = new QHBoxLayout(this);
     _right_element = new QSplitter(Qt::Vertical, this);
@@ -234,7 +232,8 @@ void SubframeRefiner::refreshTables()
 {
     const auto expt = gSession->experimentAt(_exp_combo->currentIndex())->experiment();
     const auto data = expt->getData(_data_combo->currentText().toStdString());
-    _main_tab_widget->refreshTables(_refiner.get(), data.get());
+    const auto refiner = expt->refiner();
+    _main_tab_widget->refreshTables(refiner, data.get());
 }
 
 void SubframeRefiner::setParametersUp()
@@ -330,37 +329,45 @@ void SubframeRefiner::refine()
         const auto data = expt->dataShortName(_data_combo->currentText().toStdString());
         const auto peaks = expt->getPeakCollection(_peak_combo->currentText().toStdString());
         const auto cell = expt->getUnitCell(_cell_combo->currentText().toStdString());
-        const auto cell_handler = expt->getCellHandler();
         const auto peak_list = peaks->getPeakList();
-        int n_batches = _n_batches_spin->value();
         auto states = data->instrumentStates();
-        const unsigned int max_iter = 1000;
-        _refiner = std::make_unique<nsx::Refiner>(states, cell, peak_list, n_batches, cell_handler);
+
+        nsx::RefinerParameters params{};
+        params.nbatches = _n_batches_spin->value();
+        params.refine_ub = false;
+        params.refine_sample_position = false;
+        params.refine_detector_offset = false;
+        params.refine_sample_orientation = false;
+        params.refine_ki = false;
+
         int n_checked = 0;
         if (_refineUB->isChecked()) {
-            _refiner->refineUB();
+            params.refine_ub = true;
             ++n_checked;
         }
         if (_refineSamplePosition->isChecked()) {
-            _refiner->refineSamplePosition();
+            params.refine_sample_position = true;
             ++n_checked;
         }
         if (_refineSampleOrientation->isChecked()) {
-            _refiner->refineSampleOrientation();
+            params.refine_sample_orientation = true;
             ++n_checked;
         }
         if (_refineDetectorPosition->isChecked()) {
-            _refiner->refineDetectorOffset();
+            params.refine_detector_offset = true;
             ++n_checked;
         }
         if (_refineKi->isChecked()) {
-            _refiner->refineKi();
+            params.refine_ki = true;
             ++n_checked;
         }
+
         if (n_checked > 0) {
-            bool success = _refiner->refine(max_iter);
+            _refine_success = expt->refine(peaks, cell, data.get(), params);
         }
-        _main_tab_widget->refreshTables(_refiner.get(), data.get());
+
+        const auto refiner = expt->refiner();
+        _main_tab_widget->refreshTables(refiner, data.get());
     } catch (const std::exception& ex) {
         QMessageBox::critical(this, "Error", QString(ex.what()));
     }
@@ -416,10 +423,13 @@ void SubframeRefiner::updatePredictedList()
 
 void SubframeRefiner::updatePredictions()
 {
-    auto expt = gSession->experimentAt(_exp_combo->currentIndex())->experiment();
-    auto peaks = expt->getPeakCollection(_predicted_combo->currentText().toStdString());
-    auto peak_list = peaks->getPeakList();
-    _n_updated = _refiner->updatePredictions(peak_list);
+    if (_refine_success) {
+        auto expt = gSession->experimentAt(_exp_combo->currentIndex())->experiment();
+        auto peaks = expt->getPeakCollection(_predicted_combo->currentText().toStdString());
+        expt->updatePredictions(peaks);
+    } else {
+        QMessageBox::critical(this, "Error", "Cannot update predictions: refinement failed");
+    }
 }
 
 void SubframeRefiner::setReintegrateUp()
