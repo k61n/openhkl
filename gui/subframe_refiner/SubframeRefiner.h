@@ -98,12 +98,12 @@ class SubframeRefiner : public QWidget {
     void setLatticeTableUp();
 
  private:
-    //! The refiner
-    std::unique_ptr<nsx::Refiner> _refiner;
     //! The loaded data list
     std::vector<nsx::sptrDataSet> _data_list;
     //! Number of peaks updated
     int _n_updated;
+    //! Whether the refinement succeeded
+    bool _refine_success;
 
  private:
     QHBoxLayout* _main_layout;

@@ -224,10 +224,8 @@ void PeakFinder::eliminateBlobs(std::map<int, Blob3D>& blobs) const
         }
     }
 
-    if (_handler) {
-        _handler->log("After elimination, " + std::to_string(blobs.size()) + " blobs remain");
+    if (_handler)
         _handler->setProgress(100);
-    }
 }
 
 void PeakFinder::mergeCollidingBlobs(const DataSet& data, std::map<int, Blob3D>& blobs) const
@@ -238,9 +236,6 @@ void PeakFinder::mergeCollidingBlobs(const DataSet& data, std::map<int, Blob3D>&
     do {
         nsx::EquivalenceList equivalences;
         num_blobs = blobs.size();
-
-        if (_handler)
-            _handler->log("number of blobs is " + std::to_string(num_blobs));
 
         // determine which additional blobs should be merged due to collisions /
         // intersection
@@ -377,10 +372,8 @@ void PeakFinder::findPrimaryBlobs(
             _handler->setProgress(100.0 * nframes / (end - begin + 1));
     }
 
-    if (_handler) {
-        _handler->log("Found " + std::to_string(blobs.size()) + " blobs");
+    if (_handler)
         _handler->setProgress(100);
-    }
 }
 
 void PeakFinder::findCollisions(
@@ -436,7 +429,6 @@ void PeakFinder::findCollisions(
             double current_dist = std::distance(blobs.begin(), it);
             double progress = 100.0 * current_dist / total_dist;
             _handler->setProgress(0.5 * progress);
-            _handler->log("blob loop: " + std::to_string(progress));
         }
     }
 
@@ -508,10 +500,8 @@ void PeakFinder::findCollisions(
     }
 
     // calculation complete
-    if (_handler) {
-        _handler->log("Found " + std::to_string(equivalences.size()) + " equivalences");
+    if (_handler)
         _handler->setProgress(100);
-    }
 
     // free memory stored in unordered map
     for (const auto& it : boxes)
@@ -565,10 +555,6 @@ void PeakFinder::mergeEquivalentBlobs(
             _handler->setProgress(progress);
         }
     }
-
-    // finalize update handler
-    if (_handler)
-        _handler->log("After merging, " + std::to_string(blobs.size()) + " blobs remain.");
 }
 
 /*
@@ -602,12 +588,6 @@ void PeakFinder::find(const DataList numors)
 
         // The blobs found for this numor
         std::map<int, Blob3D> blobs;
-
-        if (_handler) {
-            _handler->log("min comp is " + std::to_string(_minSize));
-            _handler->log("max comp is " + std::to_string(_maxSize));
-            _handler->log("search scale is " + std::to_string(_peakEnd));
-        }
 
         _current_label = 0;
 
@@ -648,9 +628,6 @@ void PeakFinder::find(const DataList numors)
         nsxlog(Level::Debug, "PeakFinder::find: found blob collisions");
 
         if (_handler) {
-            _handler->setStatus("Blob finding complete.");
-            _handler->log("Blob finding complete.");
-            _handler->log("Found " + std::to_string(blobs.size()) + " blobs");
             _handler->setProgress(100);
         }
 
@@ -731,8 +708,6 @@ void PeakFinder::find(const DataList numors)
                 numPeaksNotInDetArea, "peaks not fully on detector.");
 
         numor->close();
-        if (_handler)
-            _handler->log("Found " + std::to_string(numor_peaks.size()) + " peaks.");
     }
 
     if (_handler) {

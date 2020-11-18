@@ -20,6 +20,20 @@
 namespace nsx {
 
 class UnitCellHandler;
+ enum class Level;
+
+//! Parameters for refinement
+struct RefinerParameters {
+    bool refine_ub = true;
+    bool refine_ki = true;
+    bool refine_sample_position = true;
+    bool refine_sample_orientation = true;
+    bool refine_detector_offset = true;
+    int nbatches = 10;
+    unsigned int max_iter = 1000;
+
+    void log(const Level& level) const;
+};
 
 //! Used to refine lattice and instrument parameters.
 class Refiner {
@@ -28,7 +42,7 @@ class Refiner {
     //! using the given number of frame batches. The peaks must belong to the same dataset.
     Refiner(
         InstrumentStateList& states, UnitCell* cell, const std::vector<nsx::Peak3D*>& peaks,
-        int nbatches, UnitCellHandler* cell_handler);
+        const RefinerParameters& params, UnitCellHandler* cell_handler);
 
     //! Sets the lattice B matrix to be refined.
     void refineUB();
@@ -59,6 +73,9 @@ class Refiner {
     //! Return the unrefined cell
     UnitCell* unrefinedCell();
 
+    //! Return the refined states
+    InstrumentStateList* refinedStates();
+
     //! Return the unrefined states
     InstrumentStateList* unrefinedStates();
 
@@ -68,6 +85,9 @@ class Refiner {
     //! Write the initial and final cells to the log
     void logChange();
 
+    // set the refiner parameters
+    void setParameters(const RefinerParameters& params);
+
  private:
     UnitCellHandler* _cell_handler;
     UnitCell _unrefined_cell;
@@ -75,6 +95,8 @@ class Refiner {
     UnitCell* _cell;
     std::vector<RefinementBatch> _batches;
     int _nframes;
+    InstrumentStateList* _states;
+    RefinerParameters _params;
 };
 
 } // namespace nsx

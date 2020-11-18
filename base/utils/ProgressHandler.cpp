@@ -44,8 +44,6 @@ void ProgressHandler::setProgress(int progress)
     progress = progress < 0 ? 0 : progress;
 
     if (progress != _progress) {
-        // ad-hoc reporting to command-line interface
-        std::cout << progress << " %\r" << std::flush;
         _progress = progress;
     }
 
