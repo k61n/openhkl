@@ -22,6 +22,7 @@
 
 #include <QDebug>
 #include <QVBoxLayout>
+#include <QScrollBar>
 
 RefinerTables::RefinerTables()
 {
@@ -133,6 +134,11 @@ void RefinerTables::setSamplePosTableUp()
     _sample_pos_model->setHorizontalHeaderLabels({"frame", "x", "y", "z"});
     sample_pos_layout->addWidget(_original_sample_pos_view);
     sample_pos_layout->addWidget(_sample_pos_view);
+
+    auto scroll_unrefined = _original_sample_pos_view->verticalScrollBar();
+    auto scroll_refined = _sample_pos_view->verticalScrollBar();
+    connect(scroll_unrefined, SIGNAL(valueChanged(int)), scroll_refined, SLOT(setValue(int)));
+    connect(scroll_refined, SIGNAL(valueChanged(int)), scroll_unrefined, SLOT(setValue(int)));
 }
 
 void RefinerTables::refreshSamplePosTable(nsx::Refiner* refiner, nsx::DataSet* data)
@@ -191,6 +197,15 @@ void RefinerTables::setSampleOrnTableUp()
       "frame", "xx", "xy", "xz", "yx", "yy", "yz", "zx", "zy", "zz"});
     sample_orn_layout->addWidget(_original_sample_orn_view);
     sample_orn_layout->addWidget(_sample_orn_view);
+
+    auto vscroll_unrefined = _original_sample_orn_view->verticalScrollBar();
+    auto vscroll_refined = _sample_orn_view->verticalScrollBar();
+    auto hscroll_unrefined = _original_sample_orn_view->horizontalScrollBar();
+    auto hscroll_refined = _sample_orn_view->horizontalScrollBar();
+    connect(vscroll_unrefined, SIGNAL(valueChanged(int)), vscroll_refined, SLOT(setValue(int)));
+    connect(vscroll_refined, SIGNAL(valueChanged(int)), vscroll_unrefined, SLOT(setValue(int)));
+    connect(hscroll_unrefined, SIGNAL(valueChanged(int)), hscroll_refined, SLOT(setValue(int)));
+    connect(hscroll_refined, SIGNAL(valueChanged(int)), hscroll_unrefined, SLOT(setValue(int)));
 }
 
 void RefinerTables::refreshSampleOrnTable(nsx::Refiner* refiner, nsx::DataSet* data)
@@ -259,6 +274,11 @@ void RefinerTables::setDetectorPosTableUp()
     _detector_pos_model->setHorizontalHeaderLabels({"frame", "x", "y", "z"});
     detector_pos_layout->addWidget(_original_detector_pos_view);
     detector_pos_layout->addWidget(_detector_pos_view);
+
+    auto scroll_unrefined = _original_detector_pos_view->verticalScrollBar();
+    auto scroll_refined = _detector_pos_view->verticalScrollBar();
+    connect(scroll_unrefined, SIGNAL(valueChanged(int)), scroll_refined, SLOT(setValue(int)));
+    connect(scroll_refined, SIGNAL(valueChanged(int)), scroll_unrefined, SLOT(setValue(int)));
 }
 
 void RefinerTables::refreshDetectorPosTable(nsx::Refiner* refiner, nsx::DataSet* data)
@@ -316,6 +336,11 @@ void RefinerTables::setKiTableUp()
     _ki_model->setHorizontalHeaderLabels({"frame", "x", "y", "z"});
     ki_layout->addWidget(_original_ki_view);
     ki_layout->addWidget(_ki_view);
+
+    auto scroll_unrefined = _original_ki_view->verticalScrollBar();
+    auto scroll_refined = _ki_view->verticalScrollBar();
+    connect(scroll_unrefined, SIGNAL(valueChanged(int)), scroll_refined, SLOT(setValue(int)));
+    connect(scroll_refined, SIGNAL(valueChanged(int)), scroll_unrefined, SLOT(setValue(int)));
 }
 
 void RefinerTables::refreshKiTable(nsx::Refiner* refiner, nsx::DataSet* data)
