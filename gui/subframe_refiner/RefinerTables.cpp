@@ -178,15 +178,17 @@ void RefinerTables::setSampleOrnTableUp()
     QHBoxLayout* sample_orn_layout = new QHBoxLayout(_sample_orn_tab);
 
     _original_sample_orn_view = new QTableView;
-    _original_sample_orn_model = new QStandardItemModel(0, 4, this);
+    _original_sample_orn_model = new QStandardItemModel(0, 10, this);
     _original_sample_orn_view->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Minimum);
     _original_sample_orn_view->setModel(_original_sample_orn_model);
-    _original_sample_orn_model->setHorizontalHeaderLabels({"frame", "xy", "xz", "yz"});
+    _original_sample_orn_model->setHorizontalHeaderLabels({
+        "frame", "xx", "xy", "xz", "yx", "yy", "yz", "zx", "zy", "zz"});
     _sample_orn_view = new QTableView;
-    _sample_orn_model = new QStandardItemModel(0, 4, this);
+    _sample_orn_model = new QStandardItemModel(0, 10, this);
     _sample_orn_view->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
     _sample_orn_view->setModel(_sample_orn_model);
-    _sample_orn_model->setHorizontalHeaderLabels({"frame", "xy", "xz", "yz"});
+    _sample_orn_model->setHorizontalHeaderLabels({
+      "frame", "xx", "xy", "xz", "yx", "yy", "yz", "zx", "zy", "zz"});
     sample_orn_layout->addWidget(_original_sample_orn_view);
     sample_orn_layout->addWidget(_sample_orn_view);
 }
@@ -203,9 +205,15 @@ void RefinerTables::refreshSampleOrnTable(nsx::Refiner* refiner, nsx::DataSet* d
         QList<QStandardItem*> row;
         auto mat = state.sampleOrientationMatrix();
         row.push_back(new QStandardItem(QString::number(frame)));
+        row.push_back(new QStandardItem(QString::number(mat(0, 0))));
         row.push_back(new QStandardItem(QString::number(mat(0, 1))));
         row.push_back(new QStandardItem(QString::number(mat(0, 2))));
+        row.push_back(new QStandardItem(QString::number(mat(1, 0))));
+        row.push_back(new QStandardItem(QString::number(mat(1, 1))));
         row.push_back(new QStandardItem(QString::number(mat(1, 2))));
+        row.push_back(new QStandardItem(QString::number(mat(2, 0))));
+        row.push_back(new QStandardItem(QString::number(mat(2, 1))));
+        row.push_back(new QStandardItem(QString::number(mat(2, 2))));
         m0->appendRow(row);
         ++frame;
     }
@@ -221,9 +229,15 @@ void RefinerTables::refreshSampleOrnTable(nsx::Refiner* refiner, nsx::DataSet* d
         QList<QStandardItem*> row;
         auto mat = state.sampleOrientationMatrix();
         row.push_back(new QStandardItem(QString::number(frame)));
+        row.push_back(new QStandardItem(QString::number(mat(0, 0))));
         row.push_back(new QStandardItem(QString::number(mat(0, 1))));
         row.push_back(new QStandardItem(QString::number(mat(0, 2))));
+        row.push_back(new QStandardItem(QString::number(mat(1, 0))));
+        row.push_back(new QStandardItem(QString::number(mat(1, 1))));
         row.push_back(new QStandardItem(QString::number(mat(1, 2))));
+        row.push_back(new QStandardItem(QString::number(mat(2, 0))));
+        row.push_back(new QStandardItem(QString::number(mat(2, 1))));
+        row.push_back(new QStandardItem(QString::number(mat(2, 2))));
         model->appendRow(row);
         ++frame;
     }
