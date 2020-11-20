@@ -58,6 +58,7 @@ SubframeRefiner::SubframeRefiner() : QWidget()
 
     setInputUp();
     setRefinerFlagsUp();
+    setPlotUp();
     setUpdateUp();
     setReintegrateUp();
 
@@ -90,7 +91,7 @@ void SubframeRefiner::setSizePolicies()
 
     _size_policy_box = new QSizePolicy();
     _size_policy_box->setHorizontalPolicy(QSizePolicy::Preferred);
-    _size_policy_box->setVerticalPolicy(QSizePolicy::Preferred);
+    _size_policy_box->setVerticalPolicy(QSizePolicy::Expanding);
 
     _size_policy_right = new QSizePolicy();
     _size_policy_right->setHorizontalPolicy(QSizePolicy::Expanding);
@@ -373,9 +374,173 @@ void SubframeRefiner::refine()
     }
 }
 
+void SubframeRefiner::setPlotUp()
+{
+    _plot_box = new Spoiler("3. Plot");
+    QVBoxLayout* plot_layout = new QVBoxLayout();
+
+    QGroupBox* lattice_checks = new QGroupBox("Cell parameters");
+    QGridLayout* lattice_grid = new QGridLayout();
+    _plot_a = new QCheckBox("a");
+    _plot_b = new QCheckBox("b");
+    _plot_c = new QCheckBox("c");
+    _plot_alpha = new QCheckBox(QString((QChar)0x03B1));
+    _plot_beta = new QCheckBox(QString((QChar)0x03B2));
+    _plot_gamma = new QCheckBox(QString((QChar)0x03B3));
+
+    _plot_a->setMaximumWidth(1000);
+    _plot_b->setMaximumWidth(1000);
+    _plot_c->setMaximumWidth(1000);
+    _plot_alpha->setMaximumWidth(1000);
+    _plot_beta->setMaximumWidth(1000);
+    _plot_gamma->setMaximumWidth(1000);
+
+    _plot_a->setSizePolicy(*_size_policy_widgets);
+    _plot_b->setSizePolicy(*_size_policy_widgets);
+    _plot_c->setSizePolicy(*_size_policy_widgets);
+    _plot_alpha->setSizePolicy(*_size_policy_widgets);
+    _plot_beta->setSizePolicy(*_size_policy_widgets);
+    _plot_gamma->setSizePolicy(*_size_policy_widgets);
+
+    lattice_grid->addWidget(_plot_a, 0, 0, 1, 1);
+    lattice_grid->addWidget(_plot_b, 0, 1, 1, 1);
+    lattice_grid->addWidget(_plot_c, 0, 2, 1, 1);
+    lattice_grid->addWidget(_plot_alpha, 1, 0, 1, 1);
+    lattice_grid->addWidget(_plot_beta, 1, 1, 1, 1);
+    lattice_grid->addWidget(_plot_gamma, 1, 2, 1, 1);
+
+    lattice_checks->setLayout(lattice_grid);
+    lattice_checks->setSizePolicy(*_size_policy_box);
+
+    QGroupBox* sample_pos_checks = new QGroupBox("Sample position");
+    QGridLayout* sample_pos_grid = new QGridLayout();
+
+    _plot_sample_pos_x = new QCheckBox("x");
+    _plot_sample_pos_y = new QCheckBox("y");
+    _plot_sample_pos_z = new QCheckBox("z");
+
+    _plot_sample_pos_x->setMaximumWidth(1000);
+    _plot_sample_pos_y->setMaximumWidth(1000);
+    _plot_sample_pos_z->setMaximumWidth(1000);
+
+    _plot_sample_pos_x->setSizePolicy(*_size_policy_widgets);
+    _plot_sample_pos_y->setSizePolicy(*_size_policy_widgets);
+    _plot_sample_pos_z->setSizePolicy(*_size_policy_widgets);
+
+    sample_pos_grid->addWidget(_plot_sample_pos_x, 1, 1, 1, 1);
+    sample_pos_grid->addWidget(_plot_sample_pos_y, 1, 2, 1, 1);
+    sample_pos_grid->addWidget(_plot_sample_pos_z, 1, 3, 1, 1);
+
+    sample_pos_checks->setLayout(sample_pos_grid);
+    sample_pos_checks->setSizePolicy(*_size_policy_box);
+
+    QGroupBox* sample_orn_checks = new QGroupBox("Sample orientation");
+    QGridLayout* sample_orn_grid = new QGridLayout();
+
+    _plot_sample_orn_xx = new QCheckBox("xx");
+    _plot_sample_orn_xy = new QCheckBox("xy");
+    _plot_sample_orn_xz = new QCheckBox("xz");
+    _plot_sample_orn_yx = new QCheckBox("yx");
+    _plot_sample_orn_yy = new QCheckBox("yy");
+    _plot_sample_orn_yz = new QCheckBox("yz");
+    _plot_sample_orn_zx = new QCheckBox("zx");
+    _plot_sample_orn_zy = new QCheckBox("zy");
+    _plot_sample_orn_zz = new QCheckBox("zz");
+
+    _plot_sample_orn_xx->setMaximumWidth(1000);
+    _plot_sample_orn_xy->setMaximumWidth(1000);
+    _plot_sample_orn_xz->setMaximumWidth(1000);
+    _plot_sample_orn_yx->setMaximumWidth(1000);
+    _plot_sample_orn_yy->setMaximumWidth(1000);
+    _plot_sample_orn_yz->setMaximumWidth(1000);
+    _plot_sample_orn_zx->setMaximumWidth(1000);
+    _plot_sample_orn_zy->setMaximumWidth(1000);
+    _plot_sample_orn_zz->setMaximumWidth(1000);
+
+    _plot_sample_orn_xx->setSizePolicy(*_size_policy_widgets);
+    _plot_sample_orn_xy->setSizePolicy(*_size_policy_widgets);
+    _plot_sample_orn_xz->setSizePolicy(*_size_policy_widgets);
+    _plot_sample_orn_yx->setSizePolicy(*_size_policy_widgets);
+    _plot_sample_orn_yy->setSizePolicy(*_size_policy_widgets);
+    _plot_sample_orn_yz->setSizePolicy(*_size_policy_widgets);
+    _plot_sample_orn_zx->setSizePolicy(*_size_policy_widgets);
+    _plot_sample_orn_zy->setSizePolicy(*_size_policy_widgets);
+    _plot_sample_orn_zz->setSizePolicy(*_size_policy_widgets);
+
+    sample_orn_grid->addWidget(_plot_sample_orn_xx, 0, 0, 1, 1);
+    sample_orn_grid->addWidget(_plot_sample_orn_xy, 0, 1, 1, 1);
+    sample_orn_grid->addWidget(_plot_sample_orn_xz, 0, 2, 1, 1);
+    sample_orn_grid->addWidget(_plot_sample_orn_yx, 1, 0, 1, 1);
+    sample_orn_grid->addWidget(_plot_sample_orn_yy, 1, 1, 1, 1);
+    sample_orn_grid->addWidget(_plot_sample_orn_yz, 1, 2, 1, 1);
+    sample_orn_grid->addWidget(_plot_sample_orn_zx, 2, 0, 1, 1);
+    sample_orn_grid->addWidget(_plot_sample_orn_zy, 2, 1, 1, 1);
+    sample_orn_grid->addWidget(_plot_sample_orn_zz, 2, 2, 1, 1);
+
+    sample_orn_checks->setLayout(sample_orn_grid);
+    sample_orn_checks->setSizePolicy(*_size_policy_box);
+
+    QGroupBox* detector_pos_checks = new QGroupBox("Detector offset");
+    QGridLayout* detector_pos_grid = new QGridLayout();
+
+    _plot_detector_pos_x = new QCheckBox("x");
+    _plot_detector_pos_y = new QCheckBox("y");
+    _plot_detector_pos_z = new QCheckBox("z");
+
+    _plot_detector_pos_x->setMaximumWidth(1000);
+    _plot_detector_pos_y->setMaximumWidth(1000);
+    _plot_detector_pos_z->setMaximumWidth(1000);
+
+    _plot_detector_pos_x->setSizePolicy(*_size_policy_widgets);
+    _plot_detector_pos_y->setSizePolicy(*_size_policy_widgets);
+    _plot_detector_pos_z->setSizePolicy(*_size_policy_widgets);
+
+    detector_pos_grid->addWidget(_plot_detector_pos_x, 1, 1, 1, 1);
+    detector_pos_grid->addWidget(_plot_detector_pos_y, 1, 2, 1, 1);
+    detector_pos_grid->addWidget(_plot_detector_pos_z, 1, 3, 1, 1);
+
+    detector_pos_checks->setLayout(detector_pos_grid);
+    detector_pos_checks->setSizePolicy(*_size_policy_box);
+
+    QGroupBox* ki_checks = new QGroupBox("Incident wavevector");
+    QGridLayout* ki_grid = new QGridLayout();
+
+    _plot_ki_x = new QCheckBox("x");
+    _plot_ki_y = new QCheckBox("y");
+    _plot_ki_z = new QCheckBox("z");
+
+    _plot_ki_x->setMaximumWidth(1000);
+    _plot_ki_y->setMaximumWidth(1000);
+    _plot_ki_z->setMaximumWidth(1000);
+
+    _plot_ki_x->setSizePolicy(*_size_policy_widgets);
+    _plot_ki_y->setSizePolicy(*_size_policy_widgets);
+    _plot_ki_z->setSizePolicy(*_size_policy_widgets);
+
+    ki_grid->addWidget(_plot_ki_x, 1, 1, 1, 1);
+    ki_grid->addWidget(_plot_ki_y, 1, 2, 1, 1);
+    ki_grid->addWidget(_plot_ki_z, 1, 3, 1, 1);
+
+    ki_checks->setLayout(ki_grid);
+    ki_checks->setSizePolicy(*_size_policy_box);
+
+    plot_layout->addWidget(lattice_checks);
+    plot_layout->addWidget(sample_pos_checks);
+    plot_layout->addWidget(sample_orn_checks);
+    plot_layout->addWidget(detector_pos_checks);
+    plot_layout->addWidget(ki_checks);
+
+    _plot_box->setContentLayout(*plot_layout, true);
+    _plot_box->setSizePolicy(*_size_policy_box);
+    _plot_box->contentArea.setSizePolicy(*_size_policy_box);
+
+    _left_layout->addWidget(_plot_box);
+    _plot_box->toggler(true);
+}
+
 void SubframeRefiner::setUpdateUp()
 {
-    _update_box = new Spoiler("3. Update predictions");
+    _update_box = new Spoiler("4. Update predictions");
 
     QGridLayout* update_grid = new QGridLayout();
     QLabel* peaks_label = new QLabel("Predicted peaks");
@@ -434,7 +599,7 @@ void SubframeRefiner::updatePredictions()
 
 void SubframeRefiner::setReintegrateUp()
 {
-    _reintegrate_box = new Spoiler("4. Reintegrate peaks");
+    _reintegrate_box = new Spoiler("5. Reintegrate peaks");
 
     QGridLayout* reintegrate_grid = new QGridLayout();
     QLabel* label_ptr;

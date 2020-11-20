@@ -75,6 +75,8 @@ class SubframeRefiner : public QWidget {
     void updateUnitCellList();
     //! set parameters for _n_batches spin box
     void setBatchesUp();
+    //! set up the variables to plot
+    void setPlotUp();
     //! Update list of predicted peak collections
     void updatePredictedList();
     //! Set up reintegration spoiler
@@ -110,6 +112,7 @@ class SubframeRefiner : public QWidget {
     QVBoxLayout* _left_layout;
     QSplitter* _right_element;
 
+    // data selection
     Spoiler* _input_box;
 
     QComboBox* _exp_combo;
@@ -118,6 +121,7 @@ class SubframeRefiner : public QWidget {
     QComboBox* _cell_combo;
     QSpinBox* _n_batches_spin;
 
+    // refinement flags
     Spoiler* _refiner_flags_box;
 
     QCheckBox* _refineUB;
@@ -126,12 +130,46 @@ class SubframeRefiner : public QWidget {
     QCheckBox* _refineDetectorPosition;
     QCheckBox* _refineKi;
 
+    // plot widget
+    Spoiler* _plot_box;
+
+    QCheckBox* _plot_a;
+    QCheckBox* _plot_b;
+    QCheckBox* _plot_c;
+    QCheckBox* _plot_alpha;
+    QCheckBox* _plot_beta;
+    QCheckBox* _plot_gamma;
+
+    QCheckBox* _plot_sample_pos_x;
+    QCheckBox* _plot_sample_pos_y;
+    QCheckBox* _plot_sample_pos_z;
+
+    QCheckBox* _plot_sample_orn_xx;
+    QCheckBox* _plot_sample_orn_xy;
+    QCheckBox* _plot_sample_orn_xz;
+    QCheckBox* _plot_sample_orn_yx;
+    QCheckBox* _plot_sample_orn_yy;
+    QCheckBox* _plot_sample_orn_yz;
+    QCheckBox* _plot_sample_orn_zx;
+    QCheckBox* _plot_sample_orn_zy;
+    QCheckBox* _plot_sample_orn_zz;
+
+    QCheckBox* _plot_detector_pos_x;
+    QCheckBox* _plot_detector_pos_y;
+    QCheckBox* _plot_detector_pos_z;
+
+    QCheckBox* _plot_ki_x;
+    QCheckBox* _plot_ki_y;
+    QCheckBox* _plot_ki_z;
+
+    // update prediction
     QPushButton* _refine_button;
 
     Spoiler* _update_box;
     QComboBox* _predicted_combo;
     QPushButton* _update_button;
 
+    // reintegration
     Spoiler* _reintegrate_box;
     QComboBox* _integrator_combo;
     QDoubleSpinBox* _radius;
