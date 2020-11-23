@@ -24,10 +24,14 @@ class PlotCheckBox : public QCheckBox {
     PlotCheckBox();
     PlotCheckBox(const QString& text, TableType table, int column);
 
+    //! Get the table type
     TableType getTable() const;
+    //! Get the column index
     int getColumn() const;
+    //! Get the column header
     QString getHeader() const;
-
+    //! Get the axis label
+    QString getLabel() const;
 
  private:
     TableType _table;

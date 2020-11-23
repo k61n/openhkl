@@ -586,7 +586,7 @@ void SubframeRefiner::refreshPlot()
             _plot_widget->addGraph();
             _plot_widget->graph()->setPen(pen);
             _plot_widget->graph()->addData(xvals, yvals);
-            _plot_widget->graph()->setName(check->getHeader());
+            _plot_widget->graph()->setName(check->getLabel());
         }
     }
     _plot_widget->rescaleAxes();

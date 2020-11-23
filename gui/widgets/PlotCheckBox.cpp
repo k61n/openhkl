@@ -39,3 +39,32 @@ QString PlotCheckBox::getHeader() const
 {
     return _header;
 }
+
+QString PlotCheckBox::getLabel() const
+{
+    QString label;
+    switch(_table) {
+    case TableType::Lattice : {
+        label = "Cell ";
+        break;
+    }
+    case TableType::SamplePos : {
+        label = "Sample position ";
+        break;
+    }
+    case TableType::SampleOrn : {
+        label = "Sample orientation ";
+        break;
+    }
+    case TableType::DetectorPos : {
+        label = "Detector offset ";
+        break;
+    }
+    case TableType::Ki : {
+        label = "incident wavevector ";
+        break;
+    }
+    default : break;
+    }
+    return label + getHeader();
+}
