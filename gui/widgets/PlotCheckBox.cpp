@@ -61,7 +61,7 @@ QString PlotCheckBox::getLabel() const
         break;
     }
     case TableType::Ki : {
-        label = "incident wavevector ";
+        label = "Incident wavevector ";
         break;
     }
     default : break;
