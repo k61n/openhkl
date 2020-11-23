@@ -200,6 +200,7 @@ void Session::loadRawData()
     parameters.row_major = dialog.rowMajor();
     parameters.swap_endian = dialog.swapEndian();
     parameters.bpp = dialog.bpp();
+    double eps = 1e-8;
     try {
         nsx::Diffractometer* diff = exp->getDiffractometer();
         auto reader{std::make_unique<nsx::RawDataReader>(filenames[0], diff)};
@@ -207,9 +208,12 @@ void Session::loadRawData()
             reader->addFrame(filenames[i]);
         reader->setParameters(parameters);
         reader->end();
+        if (parameters.wavelength < eps)
+            throw std::runtime_error("Wavelength not set");
         auto data{std::make_shared<nsx::DataSet>(std::move(reader))};
         exp->addData(data);
     } catch (std::exception& e) {
+        QMessageBox::critical(nullptr, "Error", QString(e.what()));
         return;
     } catch (...) {
         return;
