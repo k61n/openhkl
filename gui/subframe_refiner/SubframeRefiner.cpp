@@ -574,7 +574,6 @@ void SubframeRefiner::refreshPlot()
     _plot_widget->setInteractions(
         QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectAxes | QCP::iSelectLegend
         | QCP::iSelectPlottables);
-    _plot_widget->rescaleAxes();
 
     for (PlotCheckBox* check : _plot_check_boxes) {
         if (check->isChecked()) {
@@ -585,9 +584,9 @@ void SubframeRefiner::refreshPlot()
             pen.setColor(color);
 
             _plot_widget->addGraph();
-            _plot_widget->graph(0)->setPen(pen);
-            _plot_widget->graph(0)->addData(xvals, yvals);
-            _plot_widget->graph(0)->setName(check->getHeader());
+            _plot_widget->graph()->setPen(pen);
+            _plot_widget->graph()->addData(xvals, yvals);
+            _plot_widget->graph()->setName(check->getHeader());
         }
     }
     _plot_widget->rescaleAxes();
