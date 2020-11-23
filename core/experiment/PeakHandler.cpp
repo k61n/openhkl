@@ -70,8 +70,8 @@ std::vector<std::string> PeakHandler::getCollectionNames() const
     return names;
 }
 
-    std::vector<std::string> PeakHandler::getCollectionNames(
-        listtype lt /* = listtype::FILTERED */) const
+std::vector<std::string> PeakHandler::getCollectionNames(
+    listtype lt /* = listtype::FILTERED */) const
 {
     std::vector<std::string> names;
     for (PeakCollectionMap::const_iterator it = _peak_collections.begin();

@@ -17,10 +17,12 @@
 #include "core/data/DataSet.h"
 #include "core/instrument/InstrumentState.h"
 #include "core/instrument/InstrumentStateList.h"
+#include "gui/widgets/PlotCheckBox.h"
 
 #include "gui/subframe_refiner/RefinerTables.h"
 
-#include <QDebug>
+#include <QException>
+#include <QScrollBar>
 #include <QVBoxLayout>
 
 RefinerTables::RefinerTables()
@@ -42,10 +44,16 @@ RefinerTables::RefinerTables()
     setSampleOrnTableUp();
     setDetectorPosTableUp();
     setKiTableUp();
+
+    _nframes = 0;
 }
 
 void RefinerTables::refreshTables(nsx::Refiner* refiner, nsx::DataSet* data)
 {
+    _nframes = refiner->nframes();
+    _x_vals.clear();
+    for (int i = 0; i < _nframes; ++i)
+        _x_vals.push_back(i);
     refreshLatticeTable(refiner);
     refreshSamplePosTable(refiner, data);
     refreshSampleOrnTable(refiner, data);
@@ -55,24 +63,33 @@ void RefinerTables::refreshTables(nsx::Refiner* refiner, nsx::DataSet* data)
 
 void RefinerTables::setLatticeTableUp()
 {
-    QVBoxLayout* lattice_layout = new QVBoxLayout(_lattice_tab);
+    QHBoxLayout* lattice_layout = new QHBoxLayout(_lattice_tab);
 
     _original_lattice_view = new QTableView;
-    _original_lattice_model = new QStandardItemModel(0, 8, this);
+    _original_lattice_model = new QStandardItemModel(0, 7, this);
     _original_lattice_view->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Preferred);
     _original_lattice_view->setModel(_original_lattice_model);
     _original_lattice_model->setHorizontalHeaderLabels(
-        {"fmin", "fmax", "a", "b", "c", QString((QChar)0x03B1), QString((QChar)0x03B2),
+        {"frame", "a", "b", "c", QString((QChar)0x03B1), QString((QChar)0x03B2),
          QString((QChar)0x03B3)});
     _lattice_view = new QTableView;
-    _lattice_model = new QStandardItemModel(0, 8, this);
+    _lattice_model = new QStandardItemModel(0, 7, this);
     _lattice_view->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
     _lattice_view->setModel(_lattice_model);
     _lattice_model->setHorizontalHeaderLabels(
-        {"fmin", "fmax", "a", "b", "c", QString((QChar)0x03B1), QString((QChar)0x03B2),
+        {"frame", "a", "b", "c", QString((QChar)0x03B1), QString((QChar)0x03B2),
          QString((QChar)0x03B3)});
     lattice_layout->addWidget(_original_lattice_view);
     lattice_layout->addWidget(_lattice_view);
+
+    auto vscroll_unrefined = _original_lattice_view->verticalScrollBar();
+    auto vscroll_refined = _lattice_view->verticalScrollBar();
+    auto hscroll_unrefined = _original_lattice_view->horizontalScrollBar();
+    auto hscroll_refined = _lattice_view->horizontalScrollBar();
+    connect(vscroll_unrefined, SIGNAL(valueChanged(int)), vscroll_refined, SLOT(setValue(int)));
+    connect(vscroll_refined, SIGNAL(valueChanged(int)), vscroll_unrefined, SLOT(setValue(int)));
+    connect(hscroll_unrefined, SIGNAL(valueChanged(int)), hscroll_refined, SLOT(setValue(int)));
+    connect(hscroll_refined, SIGNAL(valueChanged(int)), hscroll_unrefined, SLOT(setValue(int)));
 }
 
 void RefinerTables::refreshLatticeTable(nsx::Refiner* refiner)
@@ -82,17 +99,18 @@ void RefinerTables::refreshLatticeTable(nsx::Refiner* refiner)
     m0->removeRows(0, m0->rowCount());
     model->removeRows(0, model->rowCount());
 
-    QList<QStandardItem*> row;
-    auto c = refiner->unrefinedCell()->character();
-    row.push_back(new QStandardItem(QString::number(1)));
-    row.push_back(new QStandardItem(QString::number(refiner->nframes())));
-    row.push_back(new QStandardItem(QString::number(c.a)));
-    row.push_back(new QStandardItem(QString::number(c.b)));
-    row.push_back(new QStandardItem(QString::number(c.c)));
-    row.push_back(new QStandardItem(QString::number(c.alpha / nsx::deg)));
-    row.push_back(new QStandardItem(QString::number(c.beta / nsx::deg)));
-    row.push_back(new QStandardItem(QString::number(c.gamma / nsx::deg)));
-    m0->appendRow(row);
+    for (int i = 0; i < refiner->nframes(); ++i) {
+        QList<QStandardItem*> row;
+        auto c = refiner->unrefinedCell()->character();
+        row.push_back(new QStandardItem(QString::number(i)));
+        row.push_back(new QStandardItem(QString::number(c.a)));
+        row.push_back(new QStandardItem(QString::number(c.b)));
+        row.push_back(new QStandardItem(QString::number(c.c)));
+        row.push_back(new QStandardItem(QString::number(c.alpha / nsx::deg)));
+        row.push_back(new QStandardItem(QString::number(c.beta / nsx::deg)));
+        row.push_back(new QStandardItem(QString::number(c.gamma / nsx::deg)));
+        m0->appendRow(row);
+    }
 
     if (refiner == nullptr)
         return;
@@ -103,17 +121,18 @@ void RefinerTables::refreshLatticeTable(nsx::Refiner* refiner)
         return;
 
     for (auto batch : batches) {
-        QList<QStandardItem*> row;
-        auto c = batch.cell()->character();
-        row.push_back(new QStandardItem(QString::number(batch.first_frame())));
-        row.push_back(new QStandardItem(QString::number(batch.last_frame() - 2)));
-        row.push_back(new QStandardItem(QString::number(c.a)));
-        row.push_back(new QStandardItem(QString::number(c.b)));
-        row.push_back(new QStandardItem(QString::number(c.c)));
-        row.push_back(new QStandardItem(QString::number(c.alpha / nsx::deg)));
-        row.push_back(new QStandardItem(QString::number(c.beta / nsx::deg)));
-        row.push_back(new QStandardItem(QString::number(c.gamma / nsx::deg)));
-        model->appendRow(row);
+        for (int i = batch.first_frame(); i < batch.last_frame() - 2; ++i) {
+            QList<QStandardItem*> row;
+            auto c = batch.cell()->character();
+            row.push_back(new QStandardItem(QString::number(i)));
+            row.push_back(new QStandardItem(QString::number(c.a)));
+            row.push_back(new QStandardItem(QString::number(c.b)));
+            row.push_back(new QStandardItem(QString::number(c.c)));
+            row.push_back(new QStandardItem(QString::number(c.alpha / nsx::deg)));
+            row.push_back(new QStandardItem(QString::number(c.beta / nsx::deg)));
+            row.push_back(new QStandardItem(QString::number(c.gamma / nsx::deg)));
+            model->appendRow(row);
+        }
     }
 }
 
@@ -133,6 +152,11 @@ void RefinerTables::setSamplePosTableUp()
     _sample_pos_model->setHorizontalHeaderLabels({"frame", "x", "y", "z"});
     sample_pos_layout->addWidget(_original_sample_pos_view);
     sample_pos_layout->addWidget(_sample_pos_view);
+
+    auto scroll_unrefined = _original_sample_pos_view->verticalScrollBar();
+    auto scroll_refined = _sample_pos_view->verticalScrollBar();
+    connect(scroll_unrefined, SIGNAL(valueChanged(int)), scroll_refined, SLOT(setValue(int)));
+    connect(scroll_refined, SIGNAL(valueChanged(int)), scroll_unrefined, SLOT(setValue(int)));
 }
 
 void RefinerTables::refreshSamplePosTable(nsx::Refiner* refiner, nsx::DataSet* data)
@@ -178,17 +202,28 @@ void RefinerTables::setSampleOrnTableUp()
     QHBoxLayout* sample_orn_layout = new QHBoxLayout(_sample_orn_tab);
 
     _original_sample_orn_view = new QTableView;
-    _original_sample_orn_model = new QStandardItemModel(0, 4, this);
+    _original_sample_orn_model = new QStandardItemModel(0, 10, this);
     _original_sample_orn_view->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Minimum);
     _original_sample_orn_view->setModel(_original_sample_orn_model);
-    _original_sample_orn_model->setHorizontalHeaderLabels({"frame", "xy", "xz", "yz"});
+    _original_sample_orn_model->setHorizontalHeaderLabels(
+        {"frame", "xx", "xy", "xz", "yx", "yy", "yz", "zx", "zy", "zz"});
     _sample_orn_view = new QTableView;
-    _sample_orn_model = new QStandardItemModel(0, 4, this);
+    _sample_orn_model = new QStandardItemModel(0, 10, this);
     _sample_orn_view->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
     _sample_orn_view->setModel(_sample_orn_model);
-    _sample_orn_model->setHorizontalHeaderLabels({"frame", "xy", "xz", "yz"});
+    _sample_orn_model->setHorizontalHeaderLabels(
+        {"frame", "xx", "xy", "xz", "yx", "yy", "yz", "zx", "zy", "zz"});
     sample_orn_layout->addWidget(_original_sample_orn_view);
     sample_orn_layout->addWidget(_sample_orn_view);
+
+    auto vscroll_unrefined = _original_sample_orn_view->verticalScrollBar();
+    auto vscroll_refined = _sample_orn_view->verticalScrollBar();
+    auto hscroll_unrefined = _original_sample_orn_view->horizontalScrollBar();
+    auto hscroll_refined = _sample_orn_view->horizontalScrollBar();
+    connect(vscroll_unrefined, SIGNAL(valueChanged(int)), vscroll_refined, SLOT(setValue(int)));
+    connect(vscroll_refined, SIGNAL(valueChanged(int)), vscroll_unrefined, SLOT(setValue(int)));
+    connect(hscroll_unrefined, SIGNAL(valueChanged(int)), hscroll_refined, SLOT(setValue(int)));
+    connect(hscroll_refined, SIGNAL(valueChanged(int)), hscroll_unrefined, SLOT(setValue(int)));
 }
 
 void RefinerTables::refreshSampleOrnTable(nsx::Refiner* refiner, nsx::DataSet* data)
@@ -203,9 +238,15 @@ void RefinerTables::refreshSampleOrnTable(nsx::Refiner* refiner, nsx::DataSet* d
         QList<QStandardItem*> row;
         auto mat = state.sampleOrientationMatrix();
         row.push_back(new QStandardItem(QString::number(frame)));
+        row.push_back(new QStandardItem(QString::number(mat(0, 0))));
         row.push_back(new QStandardItem(QString::number(mat(0, 1))));
         row.push_back(new QStandardItem(QString::number(mat(0, 2))));
+        row.push_back(new QStandardItem(QString::number(mat(1, 0))));
+        row.push_back(new QStandardItem(QString::number(mat(1, 1))));
         row.push_back(new QStandardItem(QString::number(mat(1, 2))));
+        row.push_back(new QStandardItem(QString::number(mat(2, 0))));
+        row.push_back(new QStandardItem(QString::number(mat(2, 1))));
+        row.push_back(new QStandardItem(QString::number(mat(2, 2))));
         m0->appendRow(row);
         ++frame;
     }
@@ -221,9 +262,15 @@ void RefinerTables::refreshSampleOrnTable(nsx::Refiner* refiner, nsx::DataSet* d
         QList<QStandardItem*> row;
         auto mat = state.sampleOrientationMatrix();
         row.push_back(new QStandardItem(QString::number(frame)));
+        row.push_back(new QStandardItem(QString::number(mat(0, 0))));
         row.push_back(new QStandardItem(QString::number(mat(0, 1))));
         row.push_back(new QStandardItem(QString::number(mat(0, 2))));
+        row.push_back(new QStandardItem(QString::number(mat(1, 0))));
+        row.push_back(new QStandardItem(QString::number(mat(1, 1))));
         row.push_back(new QStandardItem(QString::number(mat(1, 2))));
+        row.push_back(new QStandardItem(QString::number(mat(2, 0))));
+        row.push_back(new QStandardItem(QString::number(mat(2, 1))));
+        row.push_back(new QStandardItem(QString::number(mat(2, 2))));
         model->appendRow(row);
         ++frame;
     }
@@ -245,6 +292,11 @@ void RefinerTables::setDetectorPosTableUp()
     _detector_pos_model->setHorizontalHeaderLabels({"frame", "x", "y", "z"});
     detector_pos_layout->addWidget(_original_detector_pos_view);
     detector_pos_layout->addWidget(_detector_pos_view);
+
+    auto scroll_unrefined = _original_detector_pos_view->verticalScrollBar();
+    auto scroll_refined = _detector_pos_view->verticalScrollBar();
+    connect(scroll_unrefined, SIGNAL(valueChanged(int)), scroll_refined, SLOT(setValue(int)));
+    connect(scroll_refined, SIGNAL(valueChanged(int)), scroll_unrefined, SLOT(setValue(int)));
 }
 
 void RefinerTables::refreshDetectorPosTable(nsx::Refiner* refiner, nsx::DataSet* data)
@@ -302,6 +354,11 @@ void RefinerTables::setKiTableUp()
     _ki_model->setHorizontalHeaderLabels({"frame", "x", "y", "z"});
     ki_layout->addWidget(_original_ki_view);
     ki_layout->addWidget(_ki_view);
+
+    auto scroll_unrefined = _original_ki_view->verticalScrollBar();
+    auto scroll_refined = _ki_view->verticalScrollBar();
+    connect(scroll_unrefined, SIGNAL(valueChanged(int)), scroll_refined, SLOT(setValue(int)));
+    connect(scroll_refined, SIGNAL(valueChanged(int)), scroll_unrefined, SLOT(setValue(int)));
 }
 
 void RefinerTables::refreshKiTable(nsx::Refiner* refiner, nsx::DataSet* data)
@@ -340,4 +397,56 @@ void RefinerTables::refreshKiTable(nsx::Refiner* refiner, nsx::DataSet* data)
         model->appendRow(row);
         ++frame;
     }
+}
+
+QVector<double> RefinerTables::getXVals() const
+{
+    return _x_vals;
+}
+
+QVector<double> RefinerTables::getYVals(TableType table, int column) const
+{
+    QStandardItemModel* refined_model = nullptr;
+    QStandardItemModel* unrefined_model = nullptr;
+    switch (table) {
+        case TableType::Lattice: {
+            unrefined_model = _original_lattice_model;
+            refined_model = _lattice_model;
+            break;
+        }
+        case TableType::SamplePos: {
+            unrefined_model = _original_sample_pos_model;
+            refined_model = _sample_pos_model;
+            break;
+        }
+        case TableType::SampleOrn: {
+            unrefined_model = _original_sample_orn_model;
+            refined_model = _sample_orn_model;
+            break;
+        }
+        case TableType::DetectorPos: {
+            unrefined_model = _original_detector_pos_model;
+            refined_model = _detector_pos_model;
+            break;
+        }
+        case TableType::Ki: {
+            unrefined_model = _original_ki_model;
+            refined_model = _ki_model;
+            break;
+        }
+        default: break;
+    }
+
+    QVector<double> yvals;
+    int ncols = refined_model->rowCount();
+    for (int i = 0; i < _nframes; ++i) {
+        double val0 = unrefined_model->item(i, column)->data(Qt::DisplayRole).value<double>();
+        if (i >= ncols) { // Todo (zamaan): better assigment of unit cells to frames?
+            yvals.push_back(yvals.last());
+            continue;
+        }
+        double val1 = refined_model->item(i, column)->data(Qt::DisplayRole).value<double>();
+        yvals.push_back(val1 - val0);
+    }
+    return yvals;
 }

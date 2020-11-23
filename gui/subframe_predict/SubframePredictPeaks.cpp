@@ -543,14 +543,12 @@ void SubframePredictPeaks::updatePeakList()
     _peak_combo->clear();
     _peak_list.clear();
 
-    QStringList tmp =
-        gSession->experimentAt(_exp_combo->currentIndex())->
-        getPeakCollectionNames(nsx::listtype::FOUND);
+    QStringList tmp = gSession->experimentAt(_exp_combo->currentIndex())
+                          ->getPeakCollectionNames(nsx::listtype::FOUND);
     _peak_list.append(tmp);
     tmp.clear();
-    tmp =
-        gSession->experimentAt(_exp_combo->currentIndex())->
-        getPeakCollectionNames(nsx::listtype::FILTERED);
+    tmp = gSession->experimentAt(_exp_combo->currentIndex())
+              ->getPeakCollectionNames(nsx::listtype::FILTERED);
     _peak_list.append(tmp);
 
     if (!_peak_list.empty()) {

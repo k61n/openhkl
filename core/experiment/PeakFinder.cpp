@@ -665,7 +665,8 @@ void PeakFinder::find(const DataList numors)
             const auto extents = p->shape().aabb().extents();
 
             // peak too small or too large
-            if (extents.maxCoeff() > peaksTooLargeLimit || extents.minCoeff() < peaksTooSmallLimit) {
+            if (extents.maxCoeff() > peaksTooLargeLimit
+                || extents.minCoeff() < peaksTooSmallLimit) {
                 p->setSelected(false);
                 ++numPeaksTooSmallOrLarge;
             }
@@ -701,11 +702,10 @@ void PeakFinder::find(const DataList numors)
             _handler->setProgress(0);
         }
 
-        nsxlog(Level::Info, "PeakFinder::find:", 
-                numor_peaks.size(), "peaks found,",
-                numPeaksTooSmallOrLarge, "peaks too small,", 
-                numPeaksOutsideFrames, "peaks outside frame range,", 
-                numPeaksNotInDetArea, "peaks not fully on detector.");
+        nsxlog(
+            Level::Info, "PeakFinder::find:", numor_peaks.size(), "peaks found,",
+            numPeaksTooSmallOrLarge, "peaks too small,", numPeaksOutsideFrames,
+            "peaks outside frame range,", numPeaksNotInDetArea, "peaks not fully on detector.");
 
         numor->close();
     }

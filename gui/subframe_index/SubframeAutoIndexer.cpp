@@ -403,19 +403,16 @@ void SubframeAutoIndexer::updatePeakList()
     _peak_list = gSession->experimentAt(_exp_combo->currentIndex())->getPeakListNames();
     _peak_list.clear();
 
-    QStringList tmp =
-        gSession->experimentAt(_exp_combo->currentIndex())->
-        getPeakCollectionNames(nsx::listtype::FOUND);
+    QStringList tmp = gSession->experimentAt(_exp_combo->currentIndex())
+                          ->getPeakCollectionNames(nsx::listtype::FOUND);
     _peak_list.append(tmp);
     tmp.clear();
-    tmp =
-        gSession->experimentAt(_exp_combo->currentIndex())->
-        getPeakCollectionNames(nsx::listtype::FILTERED);
+    tmp = gSession->experimentAt(_exp_combo->currentIndex())
+              ->getPeakCollectionNames(nsx::listtype::FILTERED);
     _peak_list.append(tmp);
     tmp.clear();
-    tmp =
-        gSession->experimentAt(_exp_combo->currentIndex())->
-        getPeakCollectionNames(nsx::listtype::INDEXING);
+    tmp = gSession->experimentAt(_exp_combo->currentIndex())
+              ->getPeakCollectionNames(nsx::listtype::INDEXING);
     _peak_list.append(tmp);
 
     if (!_peak_list.empty()) {
@@ -610,9 +607,8 @@ void SubframeAutoIndexer::acceptSolution()
 
     if (_selected_unit_cell) {
         nsx::Experiment* expt = gSession->experimentAt(_exp_combo->currentIndex())->experiment();
-        QStringList collections =
-            gSession->experimentAt(_exp_combo->currentIndex())->
-            getPeakCollectionNames(nsx::listtype::FOUND);
+        QStringList collections = gSession->experimentAt(_exp_combo->currentIndex())
+                                      ->getPeakCollectionNames(nsx::listtype::FOUND);
         QStringList space_groups;
         for (std::string name : _selected_unit_cell->compatibleSpaceGroups())
             space_groups.push_back(QString::fromStdString(name));

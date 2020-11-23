@@ -20,7 +20,7 @@
 namespace nsx {
 
 class UnitCellHandler;
- enum class Level;
+enum class Level;
 
 //! Parameters for refinement
 struct RefinerParameters {

@@ -23,6 +23,7 @@
 #include <QGroupBox>
 #include <QHBoxLayout>
 #include <QPushButton>
+#include <QRandomGenerator>
 #include <QSizePolicy>
 #include <QSpinBox>
 #include <QSplitter>
@@ -31,11 +32,12 @@
 #include <QWidget>
 
 namespace nsx {
-    class PeakCollection;
+class PeakCollection;
 }
 class RefinerTables;
 class Spoiler;
 class SXPlot;
+class PlotCheckBox;
 
 //! Dialog to refine unit cell and instrument state
 class SubframeRefiner : public QWidget {
@@ -75,6 +77,8 @@ class SubframeRefiner : public QWidget {
     void updateUnitCellList();
     //! set parameters for _n_batches spin box
     void setBatchesUp();
+    //! set up the variables to plot
+    void setPlotUp();
     //! Update list of predicted peak collections
     void updatePredictedList();
     //! Set up reintegration spoiler
@@ -110,6 +114,7 @@ class SubframeRefiner : public QWidget {
     QVBoxLayout* _left_layout;
     QSplitter* _right_element;
 
+    // data selection
     Spoiler* _input_box;
 
     QComboBox* _exp_combo;
@@ -118,6 +123,7 @@ class SubframeRefiner : public QWidget {
     QComboBox* _cell_combo;
     QSpinBox* _n_batches_spin;
 
+    // refinement flags
     Spoiler* _refiner_flags_box;
 
     QCheckBox* _refineUB;
@@ -126,12 +132,19 @@ class SubframeRefiner : public QWidget {
     QCheckBox* _refineDetectorPosition;
     QCheckBox* _refineKi;
 
+    // plot widget
+    Spoiler* _plot_box;
+
+    QVector<PlotCheckBox*> _plot_check_boxes;
+
+    // update prediction
     QPushButton* _refine_button;
 
     Spoiler* _update_box;
     QComboBox* _predicted_combo;
     QPushButton* _update_button;
 
+    // reintegration
     Spoiler* _reintegrate_box;
     QComboBox* _integrator_combo;
     QDoubleSpinBox* _radius;
@@ -155,9 +168,13 @@ class SubframeRefiner : public QWidget {
     QStringList _cell_list;
     QStringList _predicted_list;
 
-    RefinerTables* _main_tab_widget;
+    RefinerTables* _tables_widget;
 
     SXPlot* _plot_widget;
+
+    QRandomGenerator _rng;
+
+    void refreshPlot();
 };
 
 

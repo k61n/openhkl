@@ -126,7 +126,7 @@ class SubframeAutoIndexer : public QWidget {
     QSpinBox* _number_subdivisions;
 
     // unused
-    //QComboBox* _space_group;
+    // QComboBox* _space_group;
 
     QCheckBox* _only_niggli;
 
