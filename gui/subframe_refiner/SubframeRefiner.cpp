@@ -286,14 +286,12 @@ void SubframeRefiner::updatePeakList()
     _peak_combo->clear();
     _peak_list.clear();
 
-    QStringList tmp =
-        gSession->experimentAt(_exp_combo->currentIndex())->
-        getPeakCollectionNames(nsx::listtype::FOUND);
+    QStringList tmp = gSession->experimentAt(_exp_combo->currentIndex())
+                          ->getPeakCollectionNames(nsx::listtype::FOUND);
     _peak_list.append(tmp);
     tmp.clear();
-    tmp =
-        gSession->experimentAt(_exp_combo->currentIndex())->
-        getPeakCollectionNames(nsx::listtype::FILTERED);
+    tmp = gSession->experimentAt(_exp_combo->currentIndex())
+              ->getPeakCollectionNames(nsx::listtype::FILTERED);
     _peak_list.append(tmp);
 
     if (!_peak_list.empty()) {
@@ -554,7 +552,6 @@ void SubframeRefiner::setPlotUp()
     // refresh the plot whenever a PlotCheckBox state changes
     for (auto checkbox : _plot_check_boxes)
         connect(checkbox, &QCheckBox::stateChanged, this, &SubframeRefiner::refreshPlot);
-
 }
 
 void SubframeRefiner::refreshPlot()
@@ -630,9 +627,8 @@ void SubframeRefiner::updatePredictedList()
     _predicted_combo->blockSignals(true);
     _predicted_combo->clear();
 
-    _predicted_list =
-        gSession->experimentAt(_exp_combo->currentIndex())->
-        getPeakCollectionNames(nsx::listtype::PREDICTED);
+    _predicted_list = gSession->experimentAt(_exp_combo->currentIndex())
+                          ->getPeakCollectionNames(nsx::listtype::PREDICTED);
 
     if (!_predicted_list.empty()) {
         _predicted_combo->addItems(_predicted_list);
@@ -766,7 +762,8 @@ void SubframeRefiner::setReintegrateUp()
 
     connect(_reintegrate_found, &QPushButton::clicked, this, &SubframeRefiner::reintegrateFound);
     connect(
-            _reintegrate_predicted, &QPushButton::clicked, this, &SubframeRefiner::reintegratePredicted);
+        _reintegrate_predicted, &QPushButton::clicked, this,
+        &SubframeRefiner::reintegratePredicted);
     _reintegrate_box->toggler(true);
 
     _left_layout->addWidget(_reintegrate_box);

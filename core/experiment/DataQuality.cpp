@@ -102,7 +102,7 @@ void DataQuality::log() const
 {
     std::ostringstream oss;
     oss << "Data quality metrics (overall):" << std::endl;
-    oss << std::setw(8) << "Rmea"<< std::setw(8) << "eRmea" << std::setw(8)  << "Rmer"
+    oss << std::setw(8) << "Rmea" << std::setw(8) << "eRmea" << std::setw(8) << "Rmer"
         << std::setw(8) << "eRmer" << std::setw(8) << "Rpim" << std::setw(8) << "eRpim"
         << std::setw(8) << "CChalf" << std::setw(8) << "Cstar";
     oss << std::endl << toString();

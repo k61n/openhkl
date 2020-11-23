@@ -237,28 +237,28 @@ void Refiner::logChange()
     }
     Eigen::IOFormat vec3(6, 0, ", ", "\n", "[", "]");
     nsxlog(Level::Info, "Frame/k_i:");
-    for (int i=0; i<_states->size(); ++i) {
+    for (int i = 0; i < _states->size(); ++i) {
         Eigen::Vector3d k_i_change =
             _unrefined_states[i].ki().rowVector() - (*_states)[i].ki().rowVector();
-        nsxlog(Level::Info, i+1, k_i_change.transpose().format(vec3));
+        nsxlog(Level::Info, i + 1, k_i_change.transpose().format(vec3));
     }
     nsxlog(Level::Info, "Frame/Detector position:");
-    for (int i=0; i<_states->size(); ++i) {
+    for (int i = 0; i < _states->size(); ++i) {
         Eigen::Vector3d detector_pos_change =
             _unrefined_states[i].detectorPositionOffset - (*_states)[i].detectorPositionOffset;
-        nsxlog(Level::Info, i+1, detector_pos_change.transpose().format(vec3));
+        nsxlog(Level::Info, i + 1, detector_pos_change.transpose().format(vec3));
     }
     nsxlog(Level::Info, "Frame/Sample position:");
-    for (int i=0; i<_states->size(); ++i) {
+    for (int i = 0; i < _states->size(); ++i) {
         Eigen::Vector3d sample_pos_change =
             _unrefined_states[i].samplePosition - (*_states)[i].samplePosition;
-        nsxlog(Level::Info, i+1, sample_pos_change.transpose().format(vec3));
+        nsxlog(Level::Info, i + 1, sample_pos_change.transpose().format(vec3));
     }
     nsxlog(Level::Info, "Frame/Sample orienation:");
-    for (int i=0; i<_states->size(); ++i) {
-        Eigen::Matrix3d sample_orientation_change =
-            _unrefined_states[i].sampleOrientationMatrix() - (*_states)[i].sampleOrientationMatrix();
-        nsxlog(Level::Info, i+1, "\n", sample_orientation_change.transpose().format(vec3));
+    for (int i = 0; i < _states->size(); ++i) {
+        Eigen::Matrix3d sample_orientation_change = _unrefined_states[i].sampleOrientationMatrix()
+            - (*_states)[i].sampleOrientationMatrix();
+        nsxlog(Level::Info, i + 1, "\n", sample_orientation_change.transpose().format(vec3));
     }
 }
 

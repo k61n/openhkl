@@ -17,7 +17,7 @@
 
 #include <QCheckBox>
 
-enum class TableType { Lattice, SamplePos, SampleOrn, DetectorPos, Ki, Count};
+enum class TableType { Lattice, SamplePos, SampleOrn, DetectorPos, Ki, Count };
 
 class PlotCheckBox : public QCheckBox {
  public:

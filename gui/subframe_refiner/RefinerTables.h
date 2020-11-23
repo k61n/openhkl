@@ -61,7 +61,8 @@ class RefinerTables : public QTabWidget {
     QStandardItemModel* _original_lattice_model;
     QStandardItemModel* _lattice_model;
 
-    QTableView* _original_sample_pos_view; QTableView* _sample_pos_view;
+    QTableView* _original_sample_pos_view;
+    QTableView* _sample_pos_view;
     QStandardItemModel* _original_sample_pos_model;
     QStandardItemModel* _sample_pos_model;
 

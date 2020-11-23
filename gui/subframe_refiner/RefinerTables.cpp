@@ -22,8 +22,8 @@
 #include "gui/subframe_refiner/RefinerTables.h"
 
 #include <QException>
-#include <QVBoxLayout>
 #include <QScrollBar>
+#include <QVBoxLayout>
 
 RefinerTables::RefinerTables()
 {
@@ -52,7 +52,7 @@ void RefinerTables::refreshTables(nsx::Refiner* refiner, nsx::DataSet* data)
 {
     _nframes = refiner->nframes();
     _x_vals.clear();
-    for (int i=0; i<_nframes; ++i)
+    for (int i = 0; i < _nframes; ++i)
         _x_vals.push_back(i);
     refreshLatticeTable(refiner);
     refreshSamplePosTable(refiner, data);
@@ -99,7 +99,7 @@ void RefinerTables::refreshLatticeTable(nsx::Refiner* refiner)
     m0->removeRows(0, m0->rowCount());
     model->removeRows(0, model->rowCount());
 
-    for (int i=0; i<refiner->nframes(); ++i) {
+    for (int i = 0; i < refiner->nframes(); ++i) {
         QList<QStandardItem*> row;
         auto c = refiner->unrefinedCell()->character();
         row.push_back(new QStandardItem(QString::number(i)));
@@ -121,7 +121,7 @@ void RefinerTables::refreshLatticeTable(nsx::Refiner* refiner)
         return;
 
     for (auto batch : batches) {
-        for (int i=batch.first_frame(); i < batch.last_frame()-2; ++i){
+        for (int i = batch.first_frame(); i < batch.last_frame() - 2; ++i) {
             QList<QStandardItem*> row;
             auto c = batch.cell()->character();
             row.push_back(new QStandardItem(QString::number(i)));
@@ -205,14 +205,14 @@ void RefinerTables::setSampleOrnTableUp()
     _original_sample_orn_model = new QStandardItemModel(0, 10, this);
     _original_sample_orn_view->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Minimum);
     _original_sample_orn_view->setModel(_original_sample_orn_model);
-    _original_sample_orn_model->setHorizontalHeaderLabels({
-        "frame", "xx", "xy", "xz", "yx", "yy", "yz", "zx", "zy", "zz"});
+    _original_sample_orn_model->setHorizontalHeaderLabels(
+        {"frame", "xx", "xy", "xz", "yx", "yy", "yz", "zx", "zy", "zz"});
     _sample_orn_view = new QTableView;
     _sample_orn_model = new QStandardItemModel(0, 10, this);
     _sample_orn_view->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
     _sample_orn_view->setModel(_sample_orn_model);
-    _sample_orn_model->setHorizontalHeaderLabels({
-      "frame", "xx", "xy", "xz", "yx", "yy", "yz", "zx", "zy", "zz"});
+    _sample_orn_model->setHorizontalHeaderLabels(
+        {"frame", "xx", "xy", "xz", "yx", "yy", "yz", "zx", "zy", "zz"});
     sample_orn_layout->addWidget(_original_sample_orn_view);
     sample_orn_layout->addWidget(_sample_orn_view);
 
@@ -408,45 +408,45 @@ QVector<double> RefinerTables::getYVals(TableType table, int column) const
 {
     QStandardItemModel* refined_model = nullptr;
     QStandardItemModel* unrefined_model = nullptr;
-    switch(table) {
-        case TableType::Lattice : {
+    switch (table) {
+        case TableType::Lattice: {
             unrefined_model = _original_lattice_model;
             refined_model = _lattice_model;
             break;
         }
-        case TableType::SamplePos : {
+        case TableType::SamplePos: {
             unrefined_model = _original_sample_pos_model;
             refined_model = _sample_pos_model;
             break;
         }
-        case TableType::SampleOrn : {
+        case TableType::SampleOrn: {
             unrefined_model = _original_sample_orn_model;
             refined_model = _sample_orn_model;
             break;
         }
-        case TableType::DetectorPos : {
+        case TableType::DetectorPos: {
             unrefined_model = _original_detector_pos_model;
             refined_model = _detector_pos_model;
             break;
         }
-        case TableType::Ki : {
+        case TableType::Ki: {
             unrefined_model = _original_ki_model;
             refined_model = _ki_model;
             break;
         }
-        default : break;
+        default: break;
     }
 
     QVector<double> yvals;
     int ncols = refined_model->rowCount();
-    for (int i=0; i<_nframes; ++i) {
+    for (int i = 0; i < _nframes; ++i) {
         double val0 = unrefined_model->item(i, column)->data(Qt::DisplayRole).value<double>();
         if (i >= ncols) { // Todo (zamaan): better assigment of unit cells to frames?
             yvals.push_back(yvals.last());
             continue;
         }
         double val1 = refined_model->item(i, column)->data(Qt::DisplayRole).value<double>();
-        yvals.push_back(val1-val0);
+        yvals.push_back(val1 - val0);
     }
     return yvals;
 }

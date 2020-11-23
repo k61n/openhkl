@@ -14,12 +14,10 @@
 
 #include "gui/widgets/PlotCheckBox.h"
 
-PlotCheckBox::PlotCheckBox() : QCheckBox()
-{
-}
+PlotCheckBox::PlotCheckBox() : QCheckBox() { }
 
-PlotCheckBox::PlotCheckBox(const QString& text, TableType table, int column) :
-    QCheckBox(text), _table(table), _column(column)
+PlotCheckBox::PlotCheckBox(const QString& text, TableType table, int column)
+    : QCheckBox(text), _table(table), _column(column)
 {
     _header = text;
 }
@@ -43,28 +41,28 @@ QString PlotCheckBox::getHeader() const
 QString PlotCheckBox::getLabel() const
 {
     QString label;
-    switch(_table) {
-    case TableType::Lattice : {
-        label = "Cell ";
-        break;
-    }
-    case TableType::SamplePos : {
-        label = "Sample position ";
-        break;
-    }
-    case TableType::SampleOrn : {
-        label = "Sample orientation ";
-        break;
-    }
-    case TableType::DetectorPos : {
-        label = "Detector offset ";
-        break;
-    }
-    case TableType::Ki : {
-        label = "Incident wavevector ";
-        break;
-    }
-    default : break;
+    switch (_table) {
+        case TableType::Lattice: {
+            label = "Cell ";
+            break;
+        }
+        case TableType::SamplePos: {
+            label = "Sample position ";
+            break;
+        }
+        case TableType::SampleOrn: {
+            label = "Sample orientation ";
+            break;
+        }
+        case TableType::DetectorPos: {
+            label = "Detector offset ";
+            break;
+        }
+        case TableType::Ki: {
+            label = "Incident wavevector ";
+            break;
+        }
+        default: break;
     }
     return label + getHeader();
 }

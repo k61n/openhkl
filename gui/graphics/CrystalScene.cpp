@@ -253,7 +253,7 @@ void CrystalScene::triangulate()
             removeItem(temp2);
     }
 
-    for(const auto& face : _hull->faces()) {
+    for (const auto& face : _hull->faces()) {
         const Eigen::Vector3d& a = face[0];
         const Eigen::Vector3d& b = face[1];
         const Eigen::Vector3d& c = face[2];

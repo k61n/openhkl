@@ -32,7 +32,7 @@
 #include <QWidget>
 
 namespace nsx {
-    class PeakCollection;
+class PeakCollection;
 }
 class RefinerTables;
 class Spoiler;
