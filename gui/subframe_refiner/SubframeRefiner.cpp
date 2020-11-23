@@ -27,6 +27,7 @@
 #include "gui/subframe_refiner/RefinerTables.h"
 #include "gui/utility/ColorButton.h"
 #include "gui/utility/Spoiler.h"
+#include "gui/widgets/PlotCheckBox.h"
 
 #include <QFileInfo>
 #include <QGridLayout>
@@ -53,8 +54,8 @@ SubframeRefiner::SubframeRefiner() : QWidget()
     scroll_area->setWidgetResizable(true);
     scroll_area->setWidget(scroll_widget);
 
-    _main_tab_widget = new RefinerTables();
-    _main_tab_widget->setSizePolicy(*_size_policy_right);
+    _tables_widget = new RefinerTables();
+    _tables_widget->setSizePolicy(*_size_policy_right);
 
     setInputUp();
     setRefinerFlagsUp();
@@ -65,7 +66,7 @@ SubframeRefiner::SubframeRefiner() : QWidget()
     _left_layout->addItem(new QSpacerItem(20, 40, QSizePolicy::Minimum, QSizePolicy::Expanding));
 
     _right_element->setSizePolicy(*_size_policy_right);
-    _right_element->addWidget(_main_tab_widget);
+    _right_element->addWidget(_tables_widget);
 
     _plot_widget = new SXPlot;
     _plot_widget->setSizePolicy(*_size_policy_right);
@@ -73,6 +74,8 @@ SubframeRefiner::SubframeRefiner() : QWidget()
 
     _main_layout->addWidget(scroll_area);
     _main_layout->addWidget(_right_element);
+
+    QRandomGenerator _rng(0);
 }
 
 SubframeRefiner::~SubframeRefiner()
@@ -234,7 +237,7 @@ void SubframeRefiner::refreshTables()
     const auto expt = gSession->experimentAt(_exp_combo->currentIndex())->experiment();
     const auto data = expt->getData(_data_combo->currentText().toStdString());
     const auto refiner = expt->refiner();
-    _main_tab_widget->refreshTables(refiner, data.get());
+    _tables_widget->refreshTables(refiner, data.get());
 }
 
 void SubframeRefiner::setParametersUp()
@@ -368,7 +371,7 @@ void SubframeRefiner::refine()
         }
 
         const auto refiner = expt->refiner();
-        _main_tab_widget->refreshTables(refiner, data.get());
+        _tables_widget->refreshTables(refiner, data.get());
     } catch (const std::exception& ex) {
         QMessageBox::critical(this, "Error", QString(ex.what()));
     }
@@ -378,36 +381,41 @@ void SubframeRefiner::setPlotUp()
 {
     _plot_box = new Spoiler("3. Plot");
     QVBoxLayout* plot_layout = new QVBoxLayout();
+    PlotCheckBox* check_ptr;
 
     QGroupBox* lattice_checks = new QGroupBox("Cell parameters");
     QGridLayout* lattice_grid = new QGridLayout();
-    _plot_a = new QCheckBox("a");
-    _plot_b = new QCheckBox("b");
-    _plot_c = new QCheckBox("c");
-    _plot_alpha = new QCheckBox(QString((QChar)0x03B1));
-    _plot_beta = new QCheckBox(QString((QChar)0x03B2));
-    _plot_gamma = new QCheckBox(QString((QChar)0x03B3));
 
-    _plot_a->setMaximumWidth(1000);
-    _plot_b->setMaximumWidth(1000);
-    _plot_c->setMaximumWidth(1000);
-    _plot_alpha->setMaximumWidth(1000);
-    _plot_beta->setMaximumWidth(1000);
-    _plot_gamma->setMaximumWidth(1000);
-
-    _plot_a->setSizePolicy(*_size_policy_widgets);
-    _plot_b->setSizePolicy(*_size_policy_widgets);
-    _plot_c->setSizePolicy(*_size_policy_widgets);
-    _plot_alpha->setSizePolicy(*_size_policy_widgets);
-    _plot_beta->setSizePolicy(*_size_policy_widgets);
-    _plot_gamma->setSizePolicy(*_size_policy_widgets);
-
-    lattice_grid->addWidget(_plot_a, 0, 0, 1, 1);
-    lattice_grid->addWidget(_plot_b, 0, 1, 1, 1);
-    lattice_grid->addWidget(_plot_c, 0, 2, 1, 1);
-    lattice_grid->addWidget(_plot_alpha, 1, 0, 1, 1);
-    lattice_grid->addWidget(_plot_beta, 1, 1, 1, 1);
-    lattice_grid->addWidget(_plot_gamma, 1, 2, 1, 1);
+    check_ptr = new PlotCheckBox("a", TableType::Lattice, 1);
+    check_ptr->setMaximumWidth(1000);
+    check_ptr->setSizePolicy(*_size_policy_widgets);
+    lattice_grid->addWidget(check_ptr, 0, 0, 1, 1);
+    _plot_check_boxes.push_back(check_ptr);
+    check_ptr = new PlotCheckBox("b", TableType::Lattice, 2);
+    check_ptr->setMaximumWidth(1000);
+    check_ptr->setSizePolicy(*_size_policy_widgets);
+    lattice_grid->addWidget(check_ptr, 0, 1, 1, 1);
+    _plot_check_boxes.push_back(check_ptr);
+    check_ptr = new PlotCheckBox("c", TableType::Lattice, 3);
+    check_ptr->setMaximumWidth(1000);
+    check_ptr->setSizePolicy(*_size_policy_widgets);
+    lattice_grid->addWidget(check_ptr, 0, 2, 1, 1);
+    _plot_check_boxes.push_back(check_ptr);
+    check_ptr = new PlotCheckBox(QString((QChar)0x03B1), TableType::Lattice, 4);
+    check_ptr->setMaximumWidth(1000);
+    check_ptr->setSizePolicy(*_size_policy_widgets);
+    lattice_grid->addWidget(check_ptr, 1, 0, 1, 1);
+    _plot_check_boxes.push_back(check_ptr);
+    check_ptr = new PlotCheckBox(QString((QChar)0x03B2), TableType::Lattice, 5);
+    check_ptr->setMaximumWidth(1000);
+    check_ptr->setSizePolicy(*_size_policy_widgets);
+    lattice_grid->addWidget(check_ptr, 1, 1, 1, 1);
+    _plot_check_boxes.push_back(check_ptr);
+    check_ptr = new PlotCheckBox(QString((QChar)0x03B3), TableType::Lattice, 6);
+    check_ptr->setMaximumWidth(1000);
+    check_ptr->setSizePolicy(*_size_policy_widgets);
+    lattice_grid->addWidget(check_ptr, 1, 2, 1, 1);
+    _plot_check_boxes.push_back(check_ptr);
 
     lattice_checks->setLayout(lattice_grid);
     lattice_checks->setSizePolicy(*_size_policy_box);
@@ -415,21 +423,21 @@ void SubframeRefiner::setPlotUp()
     QGroupBox* sample_pos_checks = new QGroupBox("Sample position");
     QGridLayout* sample_pos_grid = new QGridLayout();
 
-    _plot_sample_pos_x = new QCheckBox("x");
-    _plot_sample_pos_y = new QCheckBox("y");
-    _plot_sample_pos_z = new QCheckBox("z");
-
-    _plot_sample_pos_x->setMaximumWidth(1000);
-    _plot_sample_pos_y->setMaximumWidth(1000);
-    _plot_sample_pos_z->setMaximumWidth(1000);
-
-    _plot_sample_pos_x->setSizePolicy(*_size_policy_widgets);
-    _plot_sample_pos_y->setSizePolicy(*_size_policy_widgets);
-    _plot_sample_pos_z->setSizePolicy(*_size_policy_widgets);
-
-    sample_pos_grid->addWidget(_plot_sample_pos_x, 1, 1, 1, 1);
-    sample_pos_grid->addWidget(_plot_sample_pos_y, 1, 2, 1, 1);
-    sample_pos_grid->addWidget(_plot_sample_pos_z, 1, 3, 1, 1);
+    check_ptr = new PlotCheckBox("x", TableType::SamplePos, 1);
+    check_ptr->setMaximumWidth(1000);
+    check_ptr->setSizePolicy(*_size_policy_widgets);
+    sample_pos_grid->addWidget(check_ptr, 0, 0, 1, 1);
+    _plot_check_boxes.push_back(check_ptr);
+    check_ptr = new PlotCheckBox("y", TableType::SamplePos, 2);
+    check_ptr->setMaximumWidth(1000);
+    check_ptr->setSizePolicy(*_size_policy_widgets);
+    sample_pos_grid->addWidget(check_ptr, 0, 1, 1, 1);
+    _plot_check_boxes.push_back(check_ptr);
+    check_ptr = new PlotCheckBox("z", TableType::SamplePos, 3);
+    check_ptr->setMaximumWidth(1000);
+    check_ptr->setSizePolicy(*_size_policy_widgets);
+    sample_pos_grid->addWidget(check_ptr, 0, 2, 1, 1);
+    _plot_check_boxes.push_back(check_ptr);
 
     sample_pos_checks->setLayout(sample_pos_grid);
     sample_pos_checks->setSizePolicy(*_size_policy_box);
@@ -437,45 +445,51 @@ void SubframeRefiner::setPlotUp()
     QGroupBox* sample_orn_checks = new QGroupBox("Sample orientation");
     QGridLayout* sample_orn_grid = new QGridLayout();
 
-    _plot_sample_orn_xx = new QCheckBox("xx");
-    _plot_sample_orn_xy = new QCheckBox("xy");
-    _plot_sample_orn_xz = new QCheckBox("xz");
-    _plot_sample_orn_yx = new QCheckBox("yx");
-    _plot_sample_orn_yy = new QCheckBox("yy");
-    _plot_sample_orn_yz = new QCheckBox("yz");
-    _plot_sample_orn_zx = new QCheckBox("zx");
-    _plot_sample_orn_zy = new QCheckBox("zy");
-    _plot_sample_orn_zz = new QCheckBox("zz");
-
-    _plot_sample_orn_xx->setMaximumWidth(1000);
-    _plot_sample_orn_xy->setMaximumWidth(1000);
-    _plot_sample_orn_xz->setMaximumWidth(1000);
-    _plot_sample_orn_yx->setMaximumWidth(1000);
-    _plot_sample_orn_yy->setMaximumWidth(1000);
-    _plot_sample_orn_yz->setMaximumWidth(1000);
-    _plot_sample_orn_zx->setMaximumWidth(1000);
-    _plot_sample_orn_zy->setMaximumWidth(1000);
-    _plot_sample_orn_zz->setMaximumWidth(1000);
-
-    _plot_sample_orn_xx->setSizePolicy(*_size_policy_widgets);
-    _plot_sample_orn_xy->setSizePolicy(*_size_policy_widgets);
-    _plot_sample_orn_xz->setSizePolicy(*_size_policy_widgets);
-    _plot_sample_orn_yx->setSizePolicy(*_size_policy_widgets);
-    _plot_sample_orn_yy->setSizePolicy(*_size_policy_widgets);
-    _plot_sample_orn_yz->setSizePolicy(*_size_policy_widgets);
-    _plot_sample_orn_zx->setSizePolicy(*_size_policy_widgets);
-    _plot_sample_orn_zy->setSizePolicy(*_size_policy_widgets);
-    _plot_sample_orn_zz->setSizePolicy(*_size_policy_widgets);
-
-    sample_orn_grid->addWidget(_plot_sample_orn_xx, 0, 0, 1, 1);
-    sample_orn_grid->addWidget(_plot_sample_orn_xy, 0, 1, 1, 1);
-    sample_orn_grid->addWidget(_plot_sample_orn_xz, 0, 2, 1, 1);
-    sample_orn_grid->addWidget(_plot_sample_orn_yx, 1, 0, 1, 1);
-    sample_orn_grid->addWidget(_plot_sample_orn_yy, 1, 1, 1, 1);
-    sample_orn_grid->addWidget(_plot_sample_orn_yz, 1, 2, 1, 1);
-    sample_orn_grid->addWidget(_plot_sample_orn_zx, 2, 0, 1, 1);
-    sample_orn_grid->addWidget(_plot_sample_orn_zy, 2, 1, 1, 1);
-    sample_orn_grid->addWidget(_plot_sample_orn_zz, 2, 2, 1, 1);
+    check_ptr = new PlotCheckBox("xx", TableType::SampleOrn, 1);
+    check_ptr->setMaximumWidth(1000);
+    check_ptr->setSizePolicy(*_size_policy_widgets);
+    sample_orn_grid->addWidget(check_ptr, 0, 0, 1, 1);
+    _plot_check_boxes.push_back(check_ptr);
+    check_ptr = new PlotCheckBox("xy", TableType::SampleOrn, 2);
+    check_ptr->setMaximumWidth(1000);
+    check_ptr->setSizePolicy(*_size_policy_widgets);
+    sample_orn_grid->addWidget(check_ptr, 0, 1, 1, 1);
+    _plot_check_boxes.push_back(check_ptr);
+    check_ptr = new PlotCheckBox("xz", TableType::SampleOrn, 3);
+    check_ptr->setMaximumWidth(1000);
+    check_ptr->setSizePolicy(*_size_policy_widgets);
+    sample_orn_grid->addWidget(check_ptr, 0, 2, 1, 1);
+    _plot_check_boxes.push_back(check_ptr);
+    check_ptr = new PlotCheckBox("yx", TableType::SampleOrn, 4);
+    check_ptr->setMaximumWidth(1000);
+    check_ptr->setSizePolicy(*_size_policy_widgets);
+    sample_orn_grid->addWidget(check_ptr, 1, 0, 1, 1);
+    _plot_check_boxes.push_back(check_ptr);
+    check_ptr = new PlotCheckBox("yy", TableType::SampleOrn, 5);
+    check_ptr->setMaximumWidth(1000);
+    check_ptr->setSizePolicy(*_size_policy_widgets);
+    sample_orn_grid->addWidget(check_ptr, 1, 1, 1, 1);
+    _plot_check_boxes.push_back(check_ptr);
+    check_ptr = new PlotCheckBox("yz", TableType::SampleOrn, 6);
+    check_ptr->setMaximumWidth(1000);
+    check_ptr->setSizePolicy(*_size_policy_widgets);
+    sample_orn_grid->addWidget(check_ptr, 1, 2, 1, 1);
+    _plot_check_boxes.push_back(check_ptr);
+    check_ptr = new PlotCheckBox("zx", TableType::SampleOrn, 7);
+    check_ptr->setMaximumWidth(1000);
+    check_ptr->setSizePolicy(*_size_policy_widgets);
+    sample_orn_grid->addWidget(check_ptr, 2, 0, 1, 1);
+    _plot_check_boxes.push_back(check_ptr);
+    check_ptr = new PlotCheckBox("zy", TableType::SampleOrn, 8);
+    check_ptr->setMaximumWidth(1000);
+    check_ptr->setSizePolicy(*_size_policy_widgets);
+    sample_orn_grid->addWidget(check_ptr, 2, 1, 1, 1);
+    _plot_check_boxes.push_back(check_ptr);
+    check_ptr = new PlotCheckBox("zz", TableType::SampleOrn, 9);
+    check_ptr->setMaximumWidth(1000);
+    check_ptr->setSizePolicy(*_size_policy_widgets);
+    sample_orn_grid->addWidget(check_ptr, 2, 2, 1, 1);
+    _plot_check_boxes.push_back(check_ptr);
 
     sample_orn_checks->setLayout(sample_orn_grid);
     sample_orn_checks->setSizePolicy(*_size_policy_box);
@@ -483,21 +497,21 @@ void SubframeRefiner::setPlotUp()
     QGroupBox* detector_pos_checks = new QGroupBox("Detector offset");
     QGridLayout* detector_pos_grid = new QGridLayout();
 
-    _plot_detector_pos_x = new QCheckBox("x");
-    _plot_detector_pos_y = new QCheckBox("y");
-    _plot_detector_pos_z = new QCheckBox("z");
-
-    _plot_detector_pos_x->setMaximumWidth(1000);
-    _plot_detector_pos_y->setMaximumWidth(1000);
-    _plot_detector_pos_z->setMaximumWidth(1000);
-
-    _plot_detector_pos_x->setSizePolicy(*_size_policy_widgets);
-    _plot_detector_pos_y->setSizePolicy(*_size_policy_widgets);
-    _plot_detector_pos_z->setSizePolicy(*_size_policy_widgets);
-
-    detector_pos_grid->addWidget(_plot_detector_pos_x, 1, 1, 1, 1);
-    detector_pos_grid->addWidget(_plot_detector_pos_y, 1, 2, 1, 1);
-    detector_pos_grid->addWidget(_plot_detector_pos_z, 1, 3, 1, 1);
+    check_ptr = new PlotCheckBox("x", TableType::DetectorPos, 1);
+    check_ptr->setMaximumWidth(1000);
+    check_ptr->setSizePolicy(*_size_policy_widgets);
+    detector_pos_grid->addWidget(check_ptr, 0, 0, 1, 1);
+    _plot_check_boxes.push_back(check_ptr);
+    check_ptr = new PlotCheckBox("y", TableType::DetectorPos, 2);
+    check_ptr->setMaximumWidth(1000);
+    check_ptr->setSizePolicy(*_size_policy_widgets);
+    detector_pos_grid->addWidget(check_ptr, 0, 1, 1, 1);
+    _plot_check_boxes.push_back(check_ptr);
+    check_ptr = new PlotCheckBox("z", TableType::DetectorPos, 3);
+    check_ptr->setMaximumWidth(1000);
+    check_ptr->setSizePolicy(*_size_policy_widgets);
+    detector_pos_grid->addWidget(check_ptr, 0, 2, 1, 1);
+    _plot_check_boxes.push_back(check_ptr);
 
     detector_pos_checks->setLayout(detector_pos_grid);
     detector_pos_checks->setSizePolicy(*_size_policy_box);
@@ -505,21 +519,21 @@ void SubframeRefiner::setPlotUp()
     QGroupBox* ki_checks = new QGroupBox("Incident wavevector");
     QGridLayout* ki_grid = new QGridLayout();
 
-    _plot_ki_x = new QCheckBox("x");
-    _plot_ki_y = new QCheckBox("y");
-    _plot_ki_z = new QCheckBox("z");
-
-    _plot_ki_x->setMaximumWidth(1000);
-    _plot_ki_y->setMaximumWidth(1000);
-    _plot_ki_z->setMaximumWidth(1000);
-
-    _plot_ki_x->setSizePolicy(*_size_policy_widgets);
-    _plot_ki_y->setSizePolicy(*_size_policy_widgets);
-    _plot_ki_z->setSizePolicy(*_size_policy_widgets);
-
-    ki_grid->addWidget(_plot_ki_x, 1, 1, 1, 1);
-    ki_grid->addWidget(_plot_ki_y, 1, 2, 1, 1);
-    ki_grid->addWidget(_plot_ki_z, 1, 3, 1, 1);
+    check_ptr = new PlotCheckBox("x", TableType::Ki, 1);
+    check_ptr->setMaximumWidth(1000);
+    check_ptr->setSizePolicy(*_size_policy_widgets);
+    ki_grid->addWidget(check_ptr, 0, 0, 1, 1);
+    _plot_check_boxes.push_back(check_ptr);
+    check_ptr = new PlotCheckBox("y", TableType::Ki, 2);
+    check_ptr->setMaximumWidth(1000);
+    check_ptr->setSizePolicy(*_size_policy_widgets);
+    ki_grid->addWidget(check_ptr, 0, 1, 1, 1);
+    _plot_check_boxes.push_back(check_ptr);
+    check_ptr = new PlotCheckBox("z", TableType::Ki, 3);
+    check_ptr->setMaximumWidth(1000);
+    check_ptr->setSizePolicy(*_size_policy_widgets);
+    ki_grid->addWidget(check_ptr, 0, 2, 1, 1);
+    _plot_check_boxes.push_back(check_ptr);
 
     ki_checks->setLayout(ki_grid);
     ki_checks->setSizePolicy(*_size_policy_box);
@@ -534,8 +548,50 @@ void SubframeRefiner::setPlotUp()
     _plot_box->setSizePolicy(*_size_policy_box);
     _plot_box->contentArea.setSizePolicy(*_size_policy_box);
 
-    _left_layout->addWidget(_plot_box);
     _plot_box->toggler(true);
+    _left_layout->addWidget(_plot_box);
+
+    // refresh the plot whenever a PlotCheckBox state changes
+    for (auto checkbox : _plot_check_boxes)
+        connect(checkbox, &QCheckBox::stateChanged, this, &SubframeRefiner::refreshPlot);
+
+}
+
+void SubframeRefiner::refreshPlot()
+{
+    _plot_widget->clearGraphs();
+    _plot_widget->xAxis->setLabel("frame");
+    _plot_widget->yAxis->setLabel(QString(QChar(0x0394)));
+    _plot_widget->setNotAntialiasedElements(QCP::aeAll);
+
+    QPen pen;
+    pen.setWidth(2.0);
+
+    QFont font;
+    font.setStyleStrategy(QFont::NoAntialias);
+    _plot_widget->xAxis->setTickLabelFont(font);
+    _plot_widget->yAxis->setTickLabelFont(font);
+    _plot_widget->setInteractions(
+        QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectAxes | QCP::iSelectLegend
+        | QCP::iSelectPlottables);
+    _plot_widget->rescaleAxes();
+
+    for (PlotCheckBox* check : _plot_check_boxes) {
+        if (check->isChecked()) {
+            QVector<double> xvals = _tables_widget->getXVals();
+            QVector<double> yvals = _tables_widget->getYVals(check->getTable(), check->getColumn());
+
+            QColor color(_rng.bounded(256), _rng.bounded(256), _rng.bounded(256));
+            pen.setColor(color);
+
+            _plot_widget->addGraph();
+            _plot_widget->graph(0)->setPen(pen);
+            _plot_widget->graph(0)->addData(xvals, yvals);
+            _plot_widget->graph(0)->setName(check->getHeader());
+        }
+    }
+    _plot_widget->rescaleAxes();
+    _plot_widget->replot();
 }
 
 void SubframeRefiner::setUpdateUp()

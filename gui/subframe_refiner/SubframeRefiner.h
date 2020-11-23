@@ -23,6 +23,7 @@
 #include <QGroupBox>
 #include <QHBoxLayout>
 #include <QPushButton>
+#include <QRandomGenerator>
 #include <QSizePolicy>
 #include <QSpinBox>
 #include <QSplitter>
@@ -36,6 +37,7 @@ namespace nsx {
 class RefinerTables;
 class Spoiler;
 class SXPlot;
+class PlotCheckBox;
 
 //! Dialog to refine unit cell and instrument state
 class SubframeRefiner : public QWidget {
@@ -133,34 +135,7 @@ class SubframeRefiner : public QWidget {
     // plot widget
     Spoiler* _plot_box;
 
-    QCheckBox* _plot_a;
-    QCheckBox* _plot_b;
-    QCheckBox* _plot_c;
-    QCheckBox* _plot_alpha;
-    QCheckBox* _plot_beta;
-    QCheckBox* _plot_gamma;
-
-    QCheckBox* _plot_sample_pos_x;
-    QCheckBox* _plot_sample_pos_y;
-    QCheckBox* _plot_sample_pos_z;
-
-    QCheckBox* _plot_sample_orn_xx;
-    QCheckBox* _plot_sample_orn_xy;
-    QCheckBox* _plot_sample_orn_xz;
-    QCheckBox* _plot_sample_orn_yx;
-    QCheckBox* _plot_sample_orn_yy;
-    QCheckBox* _plot_sample_orn_yz;
-    QCheckBox* _plot_sample_orn_zx;
-    QCheckBox* _plot_sample_orn_zy;
-    QCheckBox* _plot_sample_orn_zz;
-
-    QCheckBox* _plot_detector_pos_x;
-    QCheckBox* _plot_detector_pos_y;
-    QCheckBox* _plot_detector_pos_z;
-
-    QCheckBox* _plot_ki_x;
-    QCheckBox* _plot_ki_y;
-    QCheckBox* _plot_ki_z;
+    QVector<PlotCheckBox*> _plot_check_boxes;
 
     // update prediction
     QPushButton* _refine_button;
@@ -193,9 +168,13 @@ class SubframeRefiner : public QWidget {
     QStringList _cell_list;
     QStringList _predicted_list;
 
-    RefinerTables* _main_tab_widget;
+    RefinerTables* _tables_widget;
 
     SXPlot* _plot_widget;
+
+    QRandomGenerator _rng;
+
+    void refreshPlot();
 };
 
 

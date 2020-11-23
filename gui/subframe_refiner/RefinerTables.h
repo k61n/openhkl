@@ -20,12 +20,16 @@
 
 class DataSet;
 class Refiner;
+enum class TableType;
 
 class RefinerTables : public QTabWidget {
 
  public:
     RefinerTables();
     void refreshTables(nsx::Refiner* refiner, nsx::DataSet* data);
+
+    QVector<double> getXVals() const;
+    QVector<double> getYVals(TableType table, int column) const;
 
  private:
     //! construct the tables
@@ -57,8 +61,7 @@ class RefinerTables : public QTabWidget {
     QStandardItemModel* _original_lattice_model;
     QStandardItemModel* _lattice_model;
 
-    QTableView* _original_sample_pos_view;
-    QTableView* _sample_pos_view;
+    QTableView* _original_sample_pos_view; QTableView* _sample_pos_view;
     QStandardItemModel* _original_sample_pos_model;
     QStandardItemModel* _sample_pos_model;
 
@@ -76,6 +79,9 @@ class RefinerTables : public QTabWidget {
     QTableView* _ki_view;
     QStandardItemModel* _original_ki_model;
     QStandardItemModel* _ki_model;
+
+    int _nframes;
+    QVector<double> _x_vals;
 };
 
 #endif // NSX_GUI_SUBFRAME_REFINER_TABLES_REFINERTABLES_H

@@ -17,10 +17,11 @@
 #include "core/data/DataSet.h"
 #include "core/instrument/InstrumentState.h"
 #include "core/instrument/InstrumentStateList.h"
+#include "gui/widgets/PlotCheckBox.h"
 
 #include "gui/subframe_refiner/RefinerTables.h"
 
-#include <QDebug>
+#include <QException>
 #include <QVBoxLayout>
 #include <QScrollBar>
 
@@ -43,10 +44,16 @@ RefinerTables::RefinerTables()
     setSampleOrnTableUp();
     setDetectorPosTableUp();
     setKiTableUp();
+
+    _nframes = 0;
 }
 
 void RefinerTables::refreshTables(nsx::Refiner* refiner, nsx::DataSet* data)
 {
+    _nframes = refiner->nframes();
+    _x_vals.clear();
+    for (int i=0; i<_nframes; ++i)
+        _x_vals.push_back(i);
     refreshLatticeTable(refiner);
     refreshSamplePosTable(refiner, data);
     refreshSampleOrnTable(refiner, data);
@@ -390,4 +397,56 @@ void RefinerTables::refreshKiTable(nsx::Refiner* refiner, nsx::DataSet* data)
         model->appendRow(row);
         ++frame;
     }
+}
+
+QVector<double> RefinerTables::getXVals() const
+{
+    return _x_vals;
+}
+
+QVector<double> RefinerTables::getYVals(TableType table, int column) const
+{
+    QStandardItemModel* refined_model = nullptr;
+    QStandardItemModel* unrefined_model = nullptr;
+    switch(table) {
+        case TableType::Lattice : {
+            unrefined_model = _original_lattice_model;
+            refined_model = _lattice_model;
+            break;
+        }
+        case TableType::SamplePos : {
+            unrefined_model = _original_sample_pos_model;
+            refined_model = _sample_pos_model;
+            break;
+        }
+        case TableType::SampleOrn : {
+            unrefined_model = _original_sample_orn_model;
+            refined_model = _sample_orn_model;
+            break;
+        }
+        case TableType::DetectorPos : {
+            unrefined_model = _original_detector_pos_model;
+            refined_model = _detector_pos_model;
+            break;
+        }
+        case TableType::Ki : {
+            unrefined_model = _original_ki_model;
+            refined_model = _ki_model;
+            break;
+        }
+        default : break;
+    }
+
+    QVector<double> yvals;
+    int ncols = refined_model->rowCount();
+    for (int i=0; i<_nframes; ++i) {
+        double val0 = unrefined_model->item(i, column)->data(Qt::DisplayRole).value<double>();
+        if (i >= ncols) { // Todo (zamaan): better assigment of unit cells to frames?
+            yvals.push_back(yvals.last());
+            continue;
+        }
+        double val1 = refined_model->item(i, column)->data(Qt::DisplayRole).value<double>();
+        yvals.push_back(val1-val0);
+    }
+    return yvals;
 }
