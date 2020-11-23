@@ -53,8 +53,6 @@ class UnitCellProperty : public QWidget {
     void resetFields();
     //! Reset the values
     void setInputEnabled(bool state);
-    //! Launch the refinement tool
-    void launchRefiner();
 
  private:
     QComboBox* unitcells;
@@ -72,7 +70,6 @@ class UnitCellProperty : public QWidget {
 
     QPushButton* _add;
     QPushButton* _remove;
-    QPushButton* _refine;
 
     QSizePolicy* _size_policy_widgets;
     QSizePolicy* _size_policy_box;

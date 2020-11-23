@@ -15,7 +15,6 @@
 #include "gui/subframe_experiment/properties/UnitCellProperty.h"
 #include "base/utils/Units.h"
 #include "core/experiment/Experiment.h"
-#include "gui/dialogs/RefinerDialog.h"
 #include "gui/models/Project.h"
 #include "gui/models/Session.h"
 #include "tables/crystal/SpaceGroup.h"
@@ -83,7 +82,6 @@ UnitCellProperty::UnitCellProperty() : QWidget()
     _remove = new QPushButton();
     _add->setIcon(QIcon(":/images/Add_item.svg"));
     _remove->setIcon(QIcon(":/images/Delete_item.svg"));
-    _refine = new QPushButton("Refine parameters");
 
     unitcells->setSizePolicy(*_size_policy_widgets);
 
@@ -152,7 +150,6 @@ UnitCellProperty::UnitCellProperty() : QWidget()
     grid->addWidget(new QLabel(QString((QChar)0x03B1)), 0, 2, 1, 1);
     grid->addWidget(new QLabel(QString((QChar)0x03B2)), 1, 2, 1, 1);
     grid->addWidget(new QLabel(QString((QChar)0x03B3)), 2, 2, 1, 1);
-    grid->addWidget(_refine, 3, 0, 1, 4);
 
     overallLayout->addWidget(cellParameters);
     overallLayout->addStretch();
@@ -195,8 +192,6 @@ UnitCellProperty::UnitCellProperty() : QWidget()
     connect(_add, &QPushButton::clicked, this, &UnitCellProperty::addUnitCell);
 
     connect(_remove, &QPushButton::clicked, this, &UnitCellProperty::removeUnitCell);
-
-    connect(_refine, &QPushButton::clicked, this, &UnitCellProperty::launchRefiner);
 
     resetFields();
     setInputEnabled(false);
@@ -366,13 +361,4 @@ void UnitCellProperty::removeUnitCell()
     gSession->currentProject()->experiment()->removeUnitCell(name->text().toStdString());
     refreshInput();
     selectedCellChanged(0);
-}
-
-void UnitCellProperty::launchRefiner()
-{
-    std::unique_ptr<RefinerDialog> dialog(
-        new RefinerDialog(gSession->currentProject()->experiment()->getUnitCell(
-            unitcells->currentText().toStdString())));
-
-    dialog->exec();
 }
