@@ -785,6 +785,7 @@ void SubframeRefiner::runReintegration(nsx::PeakCollection* peaks)
         nsx::ShapeCollection* shapes = found_peaks->shapeCollection();
 
         nsx::IntegrationParameters params;
+        params.peak_end = _peak_end_int->value();
         params.bkg_begin = _bkg_start_int->value();
         params.bkg_end = _bkg_end_int->value();
         params.neighbour_range_pixels = _radius_int->value();
