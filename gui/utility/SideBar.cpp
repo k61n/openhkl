@@ -16,6 +16,7 @@
 #include "gui/MainWin.h"
 #include "gui/models/Session.h"
 #include "gui/subframe_combine/SubframeMergedPeaks.h"
+#include "gui/subframe_experiment/PropertyPanel.h"
 #include "gui/subframe_experiment/SubframeExperiment.h"
 #include "gui/subframe_filter/SubframeFilterPeaks.h"
 #include "gui/subframe_find/SubframeFindPeaks.h"
@@ -191,6 +192,10 @@ void SideBar::onHome()
 void SideBar::onExperiment()
 {
     gGui->_layout_stack->setCurrentIndex(1);
+    gGui->experiment->getProperty()->unitCellChanged();
+    gGui->experiment->getProperty()->peaksChanged();
+    gGui->experiment->getProperty()->experimentChanged();
+    gGui->experiment->getProperty()->dataChanged();
 }
 
 void SideBar::onFindPeaks()
