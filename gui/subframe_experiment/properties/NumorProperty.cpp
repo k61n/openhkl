@@ -84,12 +84,17 @@ void NumorProperty::addMenuRequested()
 {
     QMenu* menu = new QMenu(_add);
 
-    QAction* add_from_raw = menu->addAction("Add raw data...");
-    QAction* add_from_HDF5 = menu->addAction("Add hdf5 or nexus data...");
+    QAction* add_from_raw = menu->addAction("Raw/Tiff");
+    QAction* add_from_HDF5 = menu->addAction("HDF5");
+    QAction* add_from_nexus = menu->addAction("Nexus");
 
     connect(add_from_raw, &QAction::triggered, []() { gSession->loadRawData(); });
-
-    connect(add_from_HDF5, &QAction::triggered, []() { gSession->loadData(); });
+    connect(add_from_HDF5, &QAction::triggered, []() {
+        gSession->loadData(nsx::DataFormat::HDF5);
+    });
+    connect(add_from_nexus, &QAction::triggered, []() {
+        gSession->loadData(nsx::DataFormat::NEXUS);
+    });
 
     menu->popup(mapToGlobal(_add->geometry().bottomLeft()));
 }

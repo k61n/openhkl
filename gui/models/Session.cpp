@@ -15,6 +15,7 @@
 #include "gui/models/Session.h"
 #include "core/algo/DataReaderFactory.h"
 #include "core/data/DataSet.h"
+#include "core/data/DataTypes.h"
 #include "core/experiment/Experiment.h"
 #include "core/loader/RawDataReader.h"
 #include "core/raw/IDataReader.h"
@@ -104,15 +105,30 @@ void Session::selectExperiment(int select)
     onExperimentChanged();
 }
 
-void Session::loadData()
+void Session::loadData(nsx::DataFormat format)
 {
     QSettings s;
     s.beginGroup("RecentDirectories");
     QString loadDirectory = s.value("data", QDir::homePath()).toString();
 
-    QStringList filenames = QFileDialog::getOpenFileNames(
-        gGui, "import data", loadDirectory,
-        "Data files(*.h5 *.hdf5 *.hdf *.fake *.nxs *.raw *.tif *.tiff);;all files (*.* *)");
+    QString format_string;
+    switch (format) {
+        case nsx::DataFormat::HDF5: {
+            format_string = QString("Data files(*.h5 *.hdf5 *.hdf);;all files (*.* *)");
+            break;
+        }
+        case nsx::DataFormat::NEXUS: {
+            format_string = QString("Data files(*.nxs);;all files (*.* *)");
+            break;
+        }
+        default: {
+            throw std::range_error("Session::LoadData can only load HDF5 or Nexus data files");
+            break;
+        }
+    }
+
+    QStringList filenames =
+        QFileDialog::getOpenFileNames(gGui, "import data", loadDirectory, format_string);
 
     if (filenames.empty())
         return;

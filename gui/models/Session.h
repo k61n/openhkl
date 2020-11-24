@@ -20,6 +20,9 @@
 #include <vector>
 
 class Project;
+namespace nsx {
+enum class DataFormat;
+}
 
 extern class Session* gSession; //!< global handle for Session
 
@@ -45,7 +48,7 @@ class Session {
         QString experimentName = "new_experiment", QString instrumentName = "unknown_instrument");
     void removeExperiment();
 
-    void loadData();
+    void loadData(nsx::DataFormat format);
     void loadRawData();
     void removeData();
 
