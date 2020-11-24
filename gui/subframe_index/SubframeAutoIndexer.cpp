@@ -27,6 +27,7 @@
 #include "gui/views/PeakTableView.h"
 #include "gui/views/UnitCellTableView.h"
 
+#include <QFileInfo>
 #include <QHeaderView>
 #include <QLabel>
 #include <QMessageBox>
@@ -99,21 +100,29 @@ void SubframeAutoIndexer::setInputUp()
     exp_label->setAlignment(Qt::AlignRight);
     _input_grid->addWidget(exp_label, 0, 0, 1, 1);
 
+    QLabel* data_label = new QLabel("Data set");
+    data_label->setAlignment(Qt::AlignRight);
+    _input_grid->addWidget(data_label, 1, 0, 1, 1);
+
     QLabel* list_label = new QLabel("Peak collection");
     list_label->setAlignment(Qt::AlignRight);
-    _input_grid->addWidget(list_label, 1, 0, 1, 1);
+    _input_grid->addWidget(list_label, 2, 0, 1, 1);
 
     _exp_combo = new QComboBox();
+    _data_combo = new QComboBox();
     _peak_combo = new QComboBox();
 
     _exp_combo->setMaximumWidth(1000);
+    _data_combo->setMaximumWidth(1000);
     _peak_combo->setMaximumWidth(1000);
 
     _exp_combo->setSizePolicy(*_size_policy_widgets);
+    _data_combo->setSizePolicy(*_size_policy_widgets);
     _peak_combo->setSizePolicy(*_size_policy_widgets);
 
     _input_grid->addWidget(_exp_combo, 0, 1, 1, 1);
-    _input_grid->addWidget(_peak_combo, 1, 1, 1, 1);
+    _input_grid->addWidget(_data_combo, 1, 1, 1, 1);
+    _input_grid->addWidget(_peak_combo, 2, 1, 1, 1);
 
     connect(
         _exp_combo, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this,
@@ -376,6 +385,9 @@ void SubframeAutoIndexer::setSolutionTableUp()
 void SubframeAutoIndexer::refreshAll()
 {
     setExperiments();
+    const auto dataset =
+        gSession->experimentAt(_exp_combo->currentIndex())->getData(_data_combo->currentIndex());
+    _max_frame->setMaximum(dataset->nFrames()-1);
 }
 
 void SubframeAutoIndexer::setExperiments()
@@ -392,7 +404,25 @@ void SubframeAutoIndexer::setExperiments()
     _exp_combo->blockSignals(false);
 
     updatePeakList();
+    updateDatasetList();
     grabIndexerParameters();
+}
+
+void SubframeAutoIndexer::updateDatasetList()
+{
+    _data_combo->blockSignals(true);
+    _data_combo->clear();
+
+    auto data_list = gSession->experimentAt(_exp_combo->currentIndex())->allData();
+
+    if (!data_list.empty()) {
+        for (const nsx::sptrDataSet& data : data_list) {
+            QFileInfo fileinfo(QString::fromStdString(data->filename()));
+            _data_combo->addItem(fileinfo.baseName() /*absoluteFilePath()*/);
+        }
+        _data_combo->setCurrentIndex(0);
+    }
+    _data_combo->blockSignals(false);
 }
 
 void SubframeAutoIndexer::updatePeakList()
