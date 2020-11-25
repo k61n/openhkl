@@ -632,6 +632,7 @@ void SubframePredictPeaks::runPrediction()
             _unit_cells->currentText().toStdString());
 
         nsx::PredictionParameters params;
+        params.peak_end = _peak_end_int->value();
         params.detector_range_min = _d_min_int->value();
         params.detector_range_max = _d_max_int->value();
         params.bkg_begin = _bkg_start_int->value();
