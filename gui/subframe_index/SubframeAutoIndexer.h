@@ -65,6 +65,8 @@ class SubframeAutoIndexer : public QWidget {
     void buildSolutionsTable();
     //! Set the experiments
     void setExperiments();
+    //! Update the list of data sets
+    void updateDatasetList();
     //! Update the peak list
     void updatePeakList();
     //! Refresh the peak table
@@ -106,6 +108,7 @@ class SubframeAutoIndexer : public QWidget {
     Spoiler* _para_box;
 
     QComboBox* _exp_combo;
+    QComboBox* _data_combo;
     QComboBox* _peak_combo;
 
     QSpinBox* _min_frame;
