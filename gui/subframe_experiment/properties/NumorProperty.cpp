@@ -23,6 +23,7 @@
 #include <QHBoxLayout>
 #include <QHeaderView>
 #include <QMenu>
+#include <QMessageBox>
 
 NumorProperty::NumorProperty() : QWidget()
 {
@@ -88,7 +89,7 @@ void NumorProperty::addMenuRequested()
     QAction* add_from_HDF5 = menu->addAction("HDF5");
     QAction* add_from_nexus = menu->addAction("Nexus");
 
-    connect(add_from_raw, &QAction::triggered, []() { gSession->loadRawData(); });
+    connect(add_from_raw, &QAction::triggered, this, &NumorProperty::addFromRaw);
     connect(add_from_HDF5, &QAction::triggered, []() {
         gSession->loadData(nsx::DataFormat::HDF5);
     });
@@ -97,6 +98,15 @@ void NumorProperty::addMenuRequested()
     });
 
     menu->popup(mapToGlobal(_add->geometry().bottomLeft()));
+}
+
+void NumorProperty::addFromRaw()
+{
+    try {
+        gSession->loadRawData();
+    } catch (std::exception& e) {
+        QMessageBox::critical(nullptr, "Error", QString(e.what()));
+    }
 }
 
 void NumorProperty::refreshInput()
