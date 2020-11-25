@@ -229,7 +229,6 @@ void Session::loadRawData()
         auto data{std::make_shared<nsx::DataSet>(std::move(reader))};
         exp->addData(data);
     } catch (std::exception& e) {
-        QMessageBox::critical(nullptr, "Error", QString(e.what()));
         return;
     } catch (...) {
         return;

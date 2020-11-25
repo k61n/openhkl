@@ -38,6 +38,8 @@ class NumorProperty : public QWidget {
     void clear();
     //! load selector
     void addMenuRequested();
+    //! Wrapper for loading raw data to allow error handling
+    void addFromRaw();
 
  private:
     QTableWidget* _table;
