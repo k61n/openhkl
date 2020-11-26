@@ -192,10 +192,12 @@ void SideBar::onHome()
 void SideBar::onExperiment()
 {
     gGui->_layout_stack->setCurrentIndex(1);
-    gGui->experiment->getProperty()->unitCellChanged();
-    gGui->experiment->getProperty()->peaksChanged();
-    gGui->experiment->getProperty()->experimentChanged();
-    gGui->experiment->getProperty()->dataChanged();
+    if (gSession->currentProjectNum() != -1) {
+        gGui->experiment->getProperty()->unitCellChanged();
+        gGui->experiment->getProperty()->peaksChanged();
+        gGui->experiment->getProperty()->experimentChanged();
+        gGui->experiment->getProperty()->dataChanged();
+    }
 }
 
 void SideBar::onFindPeaks()
@@ -213,7 +215,8 @@ void SideBar::onFilterPeaks()
 void SideBar::onIndexer()
 {
     gGui->_layout_stack->setCurrentIndex(4);
-    gGui->indexer->refreshAll();
+    if (gSession->currentProjectNum() != -1)
+        gGui->indexer->refreshAll();
 }
 
 void SideBar::onPredictor()
