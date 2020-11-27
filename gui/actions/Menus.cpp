@@ -29,12 +29,11 @@ Menus::Menus(QMenuBar* menu_bar) : _menu_bar{menu_bar}
 
     _file_menu = _menu_bar->addMenu("File");
     _edit_menu = _menu_bar->addMenu("Edit");
+    _view_menu = _menu_bar->addMenu("View");
     _data_menu = _menu_bar->addMenu("Data");
     _peaks_menu = _menu_bar->addMenu("Peaks");
-    _view_menu = _menu_bar->addMenu("View");
     _help_menu = _menu_bar->addMenu("Help");
 
-    // The file part
     _file_menu->addAction(actions->new_experiment);
     _file_menu->addAction(actions->load_experiment);
     _file_menu->addSeparator();
@@ -43,6 +42,8 @@ Menus::Menus(QMenuBar* menu_bar) : _menu_bar{menu_bar}
     _file_menu->addSeparator();
     _file_menu->addAction(actions->remove_experiment);
     _file_menu->addAction(actions->quit);
+
+    _view_menu->addAction(actions->detector_window);
 
 
     // actionsToMenu(

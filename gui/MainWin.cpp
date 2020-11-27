@@ -16,6 +16,7 @@
 
 #include "gui/actions/Actions.h"
 #include "gui/actions/Menus.h"
+#include "gui/detector_window/DetectorWindow.h"
 #include "gui/graphics/DetectorScene.h"
 #include "gui/graphics/DetectorView.h"
 #include "gui/graphics_items/PlottableItem.h"
@@ -78,6 +79,8 @@ MainWin::MainWin()
     refiner = new SubframeRefiner;
     merger = new SubframeMergedPeaks;
 
+    detector_window = new DetectorWindow(this);
+
     _layout_stack = new QStackedWidget(main_widget);
     _layout_stack->addWidget(home);
     _layout_stack->addWidget(experiment);
@@ -95,6 +98,8 @@ MainWin::MainWin()
     filter->getDetectorView()->getScene()->setMaxIntensity(
         experiment->getImage()->getMaxIntensitySlider()->value());
     predictor->getDetectorView()->getScene()->setMaxIntensity(
+        experiment->getImage()->getMaxIntensitySlider()->value());
+    detector_window->getDetectorView()->getScene()->setMaxIntensity(
         experiment->getImage()->getMaxIntensitySlider()->value());
 
     // sync the max. intensity slider with all other image plots
