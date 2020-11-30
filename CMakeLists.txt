@@ -1,6 +1,9 @@
 cmake_minimum_required(VERSION 3.14 FATAL_ERROR)
 
 set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake)
+if(APPLE)
+    list(APPEND CMAKE_MODULE_PATH /usr/local/opt/share/cmake)
+endif()
 include(PreventInSourceBuilds)
 
 project(NSXTool VERSION 0.1.0)
