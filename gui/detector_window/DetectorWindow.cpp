@@ -51,6 +51,7 @@ DetectorWindow::DetectorWindow(QWidget* parent)
     setPeakTableUp();
     setInputUp();
     setPlotUp();
+    _control_layout->addItem(new QSpacerItem(20, 40, QSizePolicy::Minimum, QSizePolicy::Expanding));
 
     _main_layout->addWidget(scroll_area);
     _main_layout->addWidget(_right_element);
