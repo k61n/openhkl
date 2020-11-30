@@ -34,9 +34,6 @@ DetectorWindow::DetectorWindow(QWidget* parent)
     , _peak_collection_item()
     , _peak_collection_model()
 {
-    resize(parent->size());
-    // setGeometry(parent->x()-10, parent->y()-10, parent->width(), parent->height());
-
     setSizePolicies();
 
     _main_layout = new QHBoxLayout(this);
@@ -59,6 +56,12 @@ DetectorWindow::DetectorWindow(QWidget* parent)
     _main_layout->addWidget(_right_element);
 }
 
+void DetectorWindow::showEvent(QShowEvent* event)
+{
+    QWidget::showEvent(event);
+    setGeometry(gGui->x()+40, gGui->y()+80, gGui->width(), gGui->height());
+}
+
 void DetectorWindow::setSizePolicies()
 {
     _size_policy_widgets = new QSizePolicy();
@@ -67,7 +70,7 @@ void DetectorWindow::setSizePolicies()
 
     _size_policy_box = new QSizePolicy();
     _size_policy_box->setHorizontalPolicy(QSizePolicy::Fixed);
-    _size_policy_box->setVerticalPolicy(QSizePolicy::Preferred);
+    _size_policy_box->setVerticalPolicy(QSizePolicy::Expanding);
 
     _size_policy_right = new QSizePolicy();
     _size_policy_right->setHorizontalPolicy(QSizePolicy::Expanding);
@@ -284,7 +287,6 @@ void DetectorWindow::refreshPeakTable()
 void DetectorWindow::refreshAll()
 {
     updateExptList();
-    refreshPeakTable();
 }
 
 void DetectorWindow::updateExptList()
@@ -297,6 +299,7 @@ void DetectorWindow::updateExptList()
             _exp_combo->addItem(exp);
         updateDatasetList();
         updatePeakList();
+        refreshPeakTable();
     }
     _exp_combo->blockSignals(false);
 }
@@ -326,7 +329,6 @@ void DetectorWindow::updateDatasetParameters(int idx)
     nsx::sptrDataSet data = _data_list.at(idx);
 
     _detector_view->getScene()->slotChangeSelectedData(_data_list.at(idx), 0);
-    //_detector_view->getScene()->setMaxIntensity(3000);
     emit _detector_view->getScene()->dataChanged();
     _detector_view->getScene()->update();
 

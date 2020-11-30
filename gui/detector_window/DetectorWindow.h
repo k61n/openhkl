@@ -36,6 +36,8 @@ class DetectorWindow : public QDialog {
  public:
     DetectorWindow(QWidget* parent = nullptr);
 
+    void showEvent(QShowEvent* event);
+
     void setSizePolicies();
     void setDetectorViewUp();
     void setPeakTableUp();
