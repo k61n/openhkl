@@ -13,12 +13,26 @@ mac:
   stage: build
   script: &scr
     - pwd && ls
-    - cd libQCR && mkdir build && cd build
-    - cmake .. -DCMAKE_PREFIX_PATH=/usr/local/opt/qt && make && ctest && make install
-    - cd ../.. && pwd && ls
-    - cd xsection && mkdir build && cd build
-    - cmake .. && make -j3 && ctest && make install
-    - cd ../.. && pwd && ls
+    - cd libQCR
+    - mkdir build
+    - cd build
+    - cmake .. -DCMAKE_PREFIX_PATH=/usr/local/opt/qt
+    - make
+    - ctest
+    - make install
+    - cd ../..
+    - pwd
+    - ls
+    - cd xsection
+    - mkdir build
+    - cd build
+    - cmake ..
+    - make -j3
+    - ctest
+    - make install
+    - cd ../..
+    - pwd
+    - ls
     - mkdir build
     - cd build
     - cmake .. -DCMAKE_PREFIX_PATH=/usr/local/opt/qt -DGSL_ROOT_DIR=/usr/local
