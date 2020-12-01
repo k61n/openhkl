@@ -117,10 +117,13 @@ set(CMAKE_AUTOUIC OFF)
 #  Other dependences
 ###################################################################################################
 
-find_package(QCustomPlot MODULE REQUIRED)
-message(STATUS "libQCustomPlot: FOUND=${QCustomPlot_FOUND},
-        VERSION=${QCustomPlot_VERSION}, LIB=${QCustomPlot_LIBRARIES},
-        INCLUDE_DIR=${QCustomPlot_INCLUDE_DIR}")
+# QCustomPlot: As long as there is no homebrew package for MacOS, we provide it as 3rdparty code:
+add_subdirectory(3rdparty/qcustomplot)
+set(QCustomPlot_LIBRARIES qcustomplot)
+#find_package(QCustomPlot MODULE REQUIRED)
+#message(STATUS "libQCustomPlot: FOUND=${QCustomPlot_FOUND},
+#        VERSION=${QCustomPlot_VERSION}, LIB=${QCustomPlot_LIBRARIES},
+#        INCLUDE_DIR=${QCustomPlot_INCLUDE_DIR}")
 
 find_package(Eigen3 MODULE REQUIRED)
 message(STATUS "Eigen3: FOUND=${EIGEN3_FOUND},
