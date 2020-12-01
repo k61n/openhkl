@@ -37,7 +37,7 @@ class PeakItemGraphic : public PlottableItem {
     void plot(SXPlot* plot) override;
 
     QRectF boundingRect() const override;
-    QRectF boundingRect(const nsx::AABB& aabb);
+    QRectF boundingRect(const nsx::AABB& aabb) const;
 
     void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget) override;
 

@@ -101,13 +101,15 @@ void PeakItemGraphic::redraw()
     box_pen.setColor(_peak_color);
     box_pen.setStyle(Qt::SolidLine);
 
-    _bounding_box = new QGraphicsRectItem(boundingRect());
-    _bounding_box->setPen(box_pen);
-    _bounding_box->setParentItem(this);
-    _bounding_box->setAcceptHoverEvents(false);
-    _bounding_box->setZValue(20);
-    _bounding_box->setPos(_center_gi->pos());
-    _bounding_box->setVisible(_show_box);
+    if (_show_box) {
+        _bounding_box = new QGraphicsRectItem(boundingRect());
+        _bounding_box->setPen(box_pen);
+        _bounding_box->setParentItem(this);
+        _bounding_box->setAcceptHoverEvents(false);
+        _bounding_box->setZValue(20);
+        _bounding_box->setPos(_center_gi->pos());
+        _bounding_box->setVisible(_show_box);
+    }
 
     QPen bkg_pen;
     bkg_pen.setCosmetic(true);
@@ -115,15 +117,17 @@ void PeakItemGraphic::redraw()
     bkg_pen.setStyle(Qt::SolidLine);
 
     try {
-        nsx::IntegrationRegion int_region(_peak, _peak->peakEnd(), _peak->bkgBegin(), _peak->bkgEnd());
-
-        _bkg_box = new QGraphicsRectItem(boundingRect(int_region.aabb()));
-        _bkg_box->setPen(bkg_pen);
-        _bkg_box->setParentItem(this);
-        _bkg_box->setAcceptHoverEvents(false);
-        _bkg_box->setZValue(20);
-        _bkg_box->setPos(_center_gi->pos());
-        _bkg_box->setVisible(_show_bkg);
+        if (_show_bkg) {
+            nsx::IntegrationRegion int_region(
+                _peak, _peak->peakEnd(), _peak->bkgBegin(), _peak->bkgEnd());
+            _bkg_box = new QGraphicsRectItem(boundingRect(int_region.aabb()));
+            _bkg_box->setPen(bkg_pen);
+            _bkg_box->setParentItem(this);
+            _bkg_box->setAcceptHoverEvents(false);
+            _bkg_box->setZValue(20);
+            _bkg_box->setPos(_center_gi->pos());
+            _bkg_box->setVisible(_show_bkg);
+        }
     } catch (std::range_error& e) { }
 
     // A peak item is always put on foreground of the scene
@@ -179,7 +183,7 @@ QRectF PeakItemGraphic::boundingRect() const
     return QRectF(-width / 2.0, -height / 2.0, width, height);
 }
 
-QRectF PeakItemGraphic::boundingRect(const nsx::AABB& aabb)
+QRectF PeakItemGraphic::boundingRect(const nsx::AABB& aabb) const
 {
     Eigen::Vector3d lower = aabb.lower();
     Eigen::Vector3d upper = aabb.upper();
@@ -227,7 +231,7 @@ void PeakItemGraphic::showBox(bool flag)
 void PeakItemGraphic::showBkg(bool flag)
 {
     _show_bkg = flag;
-    _bkg_box->setVisible(_show_box);
+    _bkg_box->setVisible(_show_bkg);
 }
 
 void PeakItemGraphic::plot(SXPlot* plot)
