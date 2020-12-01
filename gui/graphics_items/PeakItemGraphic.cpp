@@ -22,6 +22,7 @@
 #include "core/detector/Detector.h"
 #include "core/instrument/Diffractometer.h"
 #include "core/instrument/InstrumentState.h"
+#include "core/peak/IntegrationRegion.h"
 #include "core/raw/IDataReader.h"
 #include "core/raw/MetaData.h"
 
@@ -39,10 +40,13 @@ PeakItemGraphic::PeakItemGraphic(nsx::Peak3D* peak)
 {
     setVisible(true);
     _size = Eigen::Vector2d(10, 10);
-    _color = Qt::red;
+    _center_color = Qt::red;
+    _peak_color = Qt::red;
+    _bkg_color = Qt::red;
     _show_label = false;
     _show_center = true;
     _show_box = false;
+    _show_bkg = false;
     redraw();
 }
 
@@ -72,24 +76,21 @@ void PeakItemGraphic::redraw()
 
     QPen center_pen;
     center_pen.setCosmetic(true);
-    center_pen.setColor(_color);
+    center_pen.setColor(_center_color);
     center_pen.setStyle(Qt::SolidLine);
 
     _center_gi = new QGraphicsEllipseItem(this);
     _center_gi->setPen(center_pen);
     _center_gi->setRect(-_size[0] / 2, -_size[1] / 2, _size[0], _size[1]);
     _center_gi->setParentItem(this);
-    _center_gi->setBrush(QBrush(_color));
+    _center_gi->setBrush(QBrush(_center_color));
     _center_gi->setAcceptHoverEvents(false);
     _center_gi->setZValue(10);
     _center_gi->setVisible(_show_center);
 
     nsx::Ellipsoid peak_ellipsoid = _peak->shape();
-
     peak_ellipsoid.scale(_peak->peakEnd());
-
     const nsx::AABB& aabb = peak_ellipsoid.aabb();
-
     _lower = aabb.lower();
     _upper = aabb.upper();
 
@@ -97,7 +98,7 @@ void PeakItemGraphic::redraw()
 
     QPen box_pen;
     box_pen.setCosmetic(true);
-    box_pen.setColor(Qt::darkGreen);
+    box_pen.setColor(_peak_color);
     box_pen.setStyle(Qt::SolidLine);
 
     _bounding_box = new QGraphicsRectItem(boundingRect());
@@ -107,6 +108,23 @@ void PeakItemGraphic::redraw()
     _bounding_box->setZValue(20);
     _bounding_box->setPos(_center_gi->pos());
     _bounding_box->setVisible(_show_box);
+
+    QPen bkg_pen;
+    bkg_pen.setCosmetic(true);
+    bkg_pen.setColor(_bkg_color);
+    bkg_pen.setStyle(Qt::SolidLine);
+
+    try {
+        nsx::IntegrationRegion int_region(_peak, _peak->peakEnd(), _peak->bkgBegin(), _peak->bkgEnd());
+
+        _bkg_box = new QGraphicsRectItem(boundingRect(int_region.aabb()));
+        _bkg_box->setPen(bkg_pen);
+        _bkg_box->setParentItem(this);
+        _bkg_box->setAcceptHoverEvents(false);
+        _bkg_box->setZValue(20);
+        _bkg_box->setPos(_center_gi->pos());
+        _bkg_box->setVisible(_show_bkg);
+    } catch (std::range_error& e) { }
 
     // A peak item is always put on foreground of the scene
     setZValue(2);
@@ -130,11 +148,9 @@ void PeakItemGraphic::setSize(int size)
 
 void PeakItemGraphic::setColor(QColor color)
 {
-    _color = color;
-    _center_gi->setBrush(QBrush(_color));
+    _center_color = color;
+    _center_gi->setBrush(QBrush(_center_color));
 }
-
-void PeakItemGraphic::setBoxSize(int size) { }
 
 void PeakItemGraphic::setBoxColor(QColor color)
 {
@@ -146,6 +162,11 @@ void PeakItemGraphic::setOutlineColor(QColor color)
     _center_gi->setPen(QPen(color));
 }
 
+void PeakItemGraphic::setBkgColor(QColor color)
+{
+    _bkg_box->setPen(QPen(color));
+}
+
 nsx::Peak3D* PeakItemGraphic::peak() const
 {
     return _peak;
@@ -155,6 +176,15 @@ QRectF PeakItemGraphic::boundingRect() const
 {
     double width = _upper[0] - _lower[0]; // determined from AABB in constructor
     double height = _upper[1] - _lower[1];
+    return QRectF(-width / 2.0, -height / 2.0, width, height);
+}
+
+QRectF PeakItemGraphic::boundingRect(const nsx::AABB& aabb)
+{
+    Eigen::Vector3d lower = aabb.lower();
+    Eigen::Vector3d upper = aabb.upper();
+    double width = upper[0] - lower[0];
+    double height = upper[1] - lower[1];
     return QRectF(-width / 2.0, -height / 2.0, width, height);
 }
 
@@ -192,6 +222,12 @@ void PeakItemGraphic::showBox(bool flag)
 {
     _show_box = flag;
     _bounding_box->setVisible(_show_box);
+}
+
+void PeakItemGraphic::showBkg(bool flag)
+{
+    _show_bkg = flag;
+    _bkg_box->setVisible(_show_box);
 }
 
 void PeakItemGraphic::plot(SXPlot* plot)

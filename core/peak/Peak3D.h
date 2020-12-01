@@ -129,6 +129,10 @@ class Peak3D {
     const MillerIndex& hkl() const;
     //! Set the Miller indices given the q-vector and unit cell
     void setMillerIndices();
+    //! Return the integration variables
+    double getPeakEnd() { return _peakEnd; };
+    double getBkgBegin() { return _bkgBegin; };
+    double getBkgEnd() { return _bkgEnd; };
 
 #ifndef SWIG
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
