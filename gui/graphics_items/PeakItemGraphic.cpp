@@ -101,6 +101,7 @@ void PeakItemGraphic::redraw()
     box_pen.setColor(_peak_color);
     box_pen.setStyle(Qt::SolidLine);
 
+    _bounding_box = new QGraphicsRectItem(boundingRect());
     if (_show_box) {
         _bounding_box = new QGraphicsRectItem(boundingRect());
         _bounding_box->setPen(box_pen);
@@ -116,6 +117,7 @@ void PeakItemGraphic::redraw()
     bkg_pen.setColor(_bkg_color);
     bkg_pen.setStyle(Qt::SolidLine);
 
+    _bkg_box = new QGraphicsRectItem();
     try {
         if (_show_bkg) {
             nsx::IntegrationRegion int_region(
