@@ -21,7 +21,7 @@ mac:
     - cd ../.. && pwd && ls
     - mkdir build
     - cd build
-    - cmake .. -DCMAKE_PREFIX_PATH=/usr/local/opt/qt
+    - cmake ..
     - make -j8
     - ctest -j8 --output-on-failure
 
