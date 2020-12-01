@@ -14,7 +14,7 @@ mac:
   script: &scr
     - pwd && ls
     - cd libQCR && mkdir build && cd build
-    - cmake .. && make && ctest && make install
+    - cmake .. -DCMAKE_PREFIX_PATH=/usr/local/opt/qt && make && ctest && make install
     - cd ../.. && pwd && ls
     - cd xsection && mkdir build && cd build
     - cmake .. && make -j3 && ctest && make install
