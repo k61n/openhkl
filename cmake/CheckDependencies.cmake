@@ -108,7 +108,11 @@ find_package(FFTW REQUIRED)
 include_directories(SYSTEM ${FFTW_INCLUDE_DIR})
 
 ###### Find GSL
-find_package(GSL REQUIRED HINTS /opt/local/ /opt/local/lib /opt/local/include ) # minimum 2.3?
+if (APPLE)
+    find_package(GSL REQUIRED HINTS /opt/local/ /opt/local/lib /opt/local/include)
+else()
+    find_package(GSL 2.3 REQUIRED)
+endif()
 include_directories(SYSTEM ${GSL_INCLUDE_DIR})
 
 find_package(XSection REQUIRED)
