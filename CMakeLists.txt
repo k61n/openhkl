@@ -128,6 +128,7 @@ set(CMAKE_AUTOUIC OFF)
 # QCustomPlot: As long as there is no homebrew package for MacOS, we provide it as 3rdparty code:
 add_subdirectory(3rdparty/qcustomplot)
 set(QCustomPlot_LIBRARIES qcustomplot)
+set(QCustomPlot_INCLUDE_DIRS 3rdparty/qcustomplot)
 #find_package(QCustomPlot MODULE REQUIRED)
 #message(STATUS "libQCustomPlot: FOUND=${QCustomPlot_FOUND},
 #        VERSION=${QCustomPlot_VERSION}, LIB=${QCustomPlot_LIBRARIES},
