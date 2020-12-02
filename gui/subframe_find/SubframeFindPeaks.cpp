@@ -373,7 +373,7 @@ void SubframeFindPeaks::setPreviewUp()
     _live_check = new QCheckBox("Apply threshold to preview");
     _live_check->setMaximumWidth(1000);
     _live_check->setSizePolicy(*_size_policy_widgets);
-    _peak_view_widget->addWidget(_live_check, 8, 0, 1, 3);
+    // _peak_view_widget->addWidget(_live_check, 8, 0, 1, 3);
     // Not sure what the _live_check widget does - zamaan
 
     _left_layout->addWidget(preview_spoiler);
