@@ -59,7 +59,7 @@ class PeakItemGraphic : public PlottableItem {
     void setColor(QColor color);
     //! Change the bounding box color
     void setBoxColor(QColor color);
-    void setOutlineColor(QColor color);
+    void setCenterColor(QColor color);
     //! Change the background box color
     void setBkgColor(QColor color);
     void setBkgOutlineColor(QColor color);

@@ -783,7 +783,7 @@ void SubframeFindPeaks::refreshPeakVisual()
             graphic->showArea(_peak_view_widget->drawPeaks1()->isChecked());
             graphic->setSize(_peak_view_widget->peakSize1()->value());
             graphic->setColor(Qt::transparent);
-            graphic->setOutlineColor(_peak_view_widget->peakColor1()->getColor());
+            graphic->setCenterColor(_peak_view_widget->peakColor1()->getColor());
             graphic->showBox(_peak_view_widget->drawBoxes1()->isChecked());
             graphic->setBoxColor(_peak_view_widget->boxColor1()->getColor());
             graphic->showBkg(_peak_view_widget->drawBoxes1()->isChecked());
@@ -793,7 +793,7 @@ void SubframeFindPeaks::refreshPeakVisual()
             graphic->showArea(_peak_view_widget->drawPeaks2()->isChecked());
             graphic->setSize(_peak_view_widget->peakSize2()->value());
             graphic->setColor(Qt::transparent);
-            graphic->setOutlineColor(_peak_view_widget->peakColor2()->getColor());
+            graphic->setCenterColor(_peak_view_widget->peakColor2()->getColor());
             graphic->showBox(_peak_view_widget->drawBoxes2()->isChecked());
             graphic->setBoxColor(_peak_view_widget->boxColor2()->getColor());
             graphic->showBkg(_peak_view_widget->drawBoxes2()->isChecked());

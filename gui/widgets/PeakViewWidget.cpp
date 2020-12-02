@@ -99,7 +99,7 @@ PeakViewWidget::PeakViewWidget(std::string type1, std::string type2)
     _color_bbox_1->changeColor(Qt::darkGreen);
 
     _color_bkg_1 = new ColorButton();
-    _color_bbox_1->changeColor(Qt::darkGreen);
+    _color_bkg_1->changeColor(Qt::darkGreen);
 
     _draw_peaks_2 = new QCheckBox("Centres");
     _draw_peaks_2->setCheckState(Qt::CheckState::Checked);

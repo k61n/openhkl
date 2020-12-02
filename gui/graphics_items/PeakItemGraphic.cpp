@@ -74,13 +74,7 @@ void PeakItemGraphic::redraw()
     _label_gi->setPos(3, 3);
     _label_gi->setVisible(_show_label);
 
-    QPen center_pen;
-    center_pen.setCosmetic(true);
-    center_pen.setColor(_center_color);
-    center_pen.setStyle(Qt::SolidLine);
-
     _center_gi = new QGraphicsEllipseItem(this);
-    _center_gi->setPen(center_pen);
     _center_gi->setRect(-_size[0] / 2, -_size[1] / 2, _size[0], _size[1]);
     _center_gi->setParentItem(this);
     _center_gi->setBrush(QBrush(_center_color));
@@ -96,41 +90,36 @@ void PeakItemGraphic::redraw()
 
     setBoundingRegionGranularity(0.0);
 
-    QPen box_pen;
-    box_pen.setCosmetic(true);
-    box_pen.setColor(_peak_color);
-    box_pen.setStyle(Qt::SolidLine);
-
     _bounding_box = new QGraphicsRectItem(boundingRect());
-    if (_show_box) {
-        _bounding_box = new QGraphicsRectItem(boundingRect());
-        _bounding_box->setPen(box_pen);
-        _bounding_box->setParentItem(this);
-        _bounding_box->setAcceptHoverEvents(false);
-        _bounding_box->setZValue(20);
-        _bounding_box->setPos(_center_gi->pos());
-        _bounding_box->setVisible(_show_box);
-    }
-
-    QPen bkg_pen;
-    bkg_pen.setCosmetic(true);
-    bkg_pen.setColor(_bkg_color);
-    bkg_pen.setStyle(Qt::SolidLine);
+    _bounding_box->setParentItem(this);
+    _bounding_box->setAcceptHoverEvents(false);
+    _bounding_box->setZValue(20);
+    _bounding_box->setPos(_center_gi->pos());
+    _bounding_box->setVisible(_show_box);
 
     _bkg_box = new QGraphicsRectItem();
     try {
-        if (_show_bkg) {
-            nsx::IntegrationRegion int_region(
-                _peak, _peak->peakEnd(), _peak->bkgBegin(), _peak->bkgEnd());
-            _bkg_box = new QGraphicsRectItem(boundingRect(int_region.aabb()));
-            _bkg_box->setPen(bkg_pen);
-            _bkg_box->setParentItem(this);
-            _bkg_box->setAcceptHoverEvents(false);
-            _bkg_box->setZValue(20);
-            _bkg_box->setPos(_center_gi->pos());
-            _bkg_box->setVisible(_show_bkg);
-        }
+        nsx::IntegrationRegion int_region(
+            _peak, _peak->peakEnd(), _peak->bkgBegin(), _peak->bkgEnd());
+        _bkg_box = new QGraphicsRectItem(boundingRect(int_region.aabb()));
+        _bkg_box->setParentItem(this);
+        _bkg_box->setAcceptHoverEvents(false);
+        _bkg_box->setZValue(20);
+        _bkg_box->setPos(_center_gi->pos());
+        _bkg_box->setVisible(_show_bkg);
     } catch (std::range_error& e) { }
+
+    if (peak()->enabled()) {
+        setColor(Qt::darkGreen);
+        setCenterColor(Qt::darkGreen);
+        setBoxColor(Qt::darkGreen);
+        setBkgColor(Qt::darkGreen);
+    } else {
+        setColor(Qt::red);
+        setCenterColor(Qt::red);
+        setBoxColor(Qt::red);
+        setBkgColor(Qt::red);
+    }
 
     // A peak item is always put on foreground of the scene
     setZValue(2);
@@ -160,17 +149,32 @@ void PeakItemGraphic::setColor(QColor color)
 
 void PeakItemGraphic::setBoxColor(QColor color)
 {
-    _bounding_box->setPen(QPen(color));
+    _peak_color = color;
+    QPen box_pen;
+    box_pen.setCosmetic(true);
+    box_pen.setColor(_peak_color);
+    box_pen.setStyle(Qt::SolidLine);
+    _bounding_box->setPen(box_pen);
 }
 
-void PeakItemGraphic::setOutlineColor(QColor color)
+void PeakItemGraphic::setCenterColor(QColor color)
 {
-    _center_gi->setPen(QPen(color));
+    _center_color = color;
+    QPen center_pen;
+    center_pen.setCosmetic(true);
+    center_pen.setColor(_center_color);
+    center_pen.setStyle(Qt::SolidLine);
+    _center_gi->setPen(center_pen);
 }
 
 void PeakItemGraphic::setBkgColor(QColor color)
 {
-    _bkg_box->setPen(QPen(color));
+    _bkg_color = color;
+    QPen bkg_pen;
+    bkg_pen.setCosmetic(true);
+    bkg_pen.setColor(_bkg_color);
+    bkg_pen.setStyle(Qt::SolidLine);
+    _bkg_box->setPen(bkg_pen);
 }
 
 nsx::Peak3D* PeakItemGraphic::peak() const
