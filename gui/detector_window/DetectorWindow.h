@@ -32,13 +32,16 @@ class DetectorView;
 class PeakViewWidget;
 class PeakTableView;
 
+//! Modeless dialog containing a non-contextual detector scene (open via Menu)
 class DetectorWindow : public QDialog {
  public:
     DetectorWindow(QWidget* parent = nullptr);
 
+    //! Overload QDialog::showEvent to resize window at runtime
     void showEvent(QShowEvent* event);
 
     void setSizePolicies();
+    //! Set up control panel widgets
     void setDetectorViewUp();
     void setPeakTableUp();
     void setInputUp();
@@ -46,13 +49,19 @@ class DetectorWindow : public QDialog {
 
     void refreshDetectorView();
     void refreshPeakTable();
+    //! Refresh the whole dialog
     void refreshAll();
 
+    //! Update experiment QComboBoxes
     void updateExptList();
+    //! Update data set QComboBoxes
     void updateDatasetList();
+    //! Update metadata extracted from selected data set
     void updateDatasetParameters(int idx);
+    //! Update peak collection QComboBoxes
     void updatePeakList();
 
+    //! Get a pointer to the DetectorView
     DetectorView* getDetectorView() { return _detector_view; };
 
  private:
@@ -65,6 +74,7 @@ class DetectorWindow : public QDialog {
     QComboBox* _data_combo;
     QComboBox* _peak_combo;
 
+    // the widget for plotting elements on the detector scene
     PeakViewWidget* _peak_view_widget;
 
     // Detector elements
