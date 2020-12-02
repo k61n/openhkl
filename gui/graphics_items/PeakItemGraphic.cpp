@@ -107,7 +107,8 @@ void PeakItemGraphic::redraw()
         _bkg_box->setZValue(20);
         _bkg_box->setPos(_center_gi->pos());
         _bkg_box->setVisible(_show_bkg);
-    } catch (std::range_error& e) { }
+    } catch (std::range_error& e) {
+    }
 
     if (peak()->enabled()) {
         setColor(Qt::darkGreen);

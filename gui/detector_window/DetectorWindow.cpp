@@ -20,19 +20,17 @@
 #include "gui/models/Project.h"
 #include "gui/utility/ColorButton.h"
 #include "gui/utility/Spoiler.h"
-#include "gui/widgets/PeakViewWidget.h"
 #include "gui/views/PeakTableView.h"
+#include "gui/widgets/PeakViewWidget.h"
 
+#include <QFileInfo>
 #include <QGridLayout>
 #include <QGroupBox>
-#include <QScrollArea>
 #include <QLabel>
-#include <QFileInfo>
+#include <QScrollArea>
 
 DetectorWindow::DetectorWindow(QWidget* parent)
-    : QDialog(parent)
-    , _peak_collection_item()
-    , _peak_collection_model()
+    : QDialog(parent), _peak_collection_item(), _peak_collection_model()
 {
     setSizePolicies();
 
@@ -60,7 +58,7 @@ DetectorWindow::DetectorWindow(QWidget* parent)
 void DetectorWindow::showEvent(QShowEvent* event)
 {
     QWidget::showEvent(event);
-    setGeometry(gGui->x()+40, gGui->y()+80, gGui->width(), gGui->height());
+    setGeometry(gGui->x() + 40, gGui->y() + 80, gGui->width(), gGui->height());
 }
 
 void DetectorWindow::setSizePolicies()

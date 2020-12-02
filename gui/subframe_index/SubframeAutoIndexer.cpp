@@ -387,7 +387,7 @@ void SubframeAutoIndexer::refreshAll()
     setExperiments();
     const auto dataset =
         gSession->experimentAt(_exp_combo->currentIndex())->getData(_data_combo->currentIndex());
-    _max_frame->setMaximum(dataset->nFrames()-1);
+    _max_frame->setMaximum(dataset->nFrames() - 1);
 }
 
 void SubframeAutoIndexer::setExperiments()

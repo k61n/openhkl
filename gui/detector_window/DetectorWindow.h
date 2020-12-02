@@ -19,13 +19,13 @@
 #include "gui/items/PeakCollectionItem.h"
 #include "gui/models/PeakCollectionModel.h"
 
+#include <QComboBox>
 #include <QDialog>
+#include <QHBoxLayout>
 #include <QScrollBar>
 #include <QSpinBox>
-#include <QHBoxLayout>
-#include <QVBoxLayout>
 #include <QSplitter>
-#include <QComboBox>
+#include <QVBoxLayout>
 
 class DetectorScene;
 class DetectorView;
@@ -93,4 +93,3 @@ class DetectorWindow : public QDialog {
 };
 
 #endif // NSX_GUI_DETECTOR_WINDOW_DETECTORWINDOW_H
-

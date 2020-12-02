@@ -64,7 +64,7 @@ PeakViewWidget::PeakViewWidget(std::string type1, std::string type2)
     label_ptr->setAlignment(Qt::AlignRight);
     addWidget(label_ptr, 9, 0, 1, 1);
 
-        label_ptr = new QLabel("Colour:");
+    label_ptr = new QLabel("Colour:");
     label_ptr->setAlignment(Qt::AlignRight);
     addWidget(label_ptr, 10, 0, 1, 1);
 
