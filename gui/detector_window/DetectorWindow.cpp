@@ -261,8 +261,8 @@ void DetectorWindow::refreshDetectorView()
             graphic->setCenterColor(_peak_view_widget->peakColor1()->getColor());
             graphic->showBox(_peak_view_widget->drawBoxes1()->isChecked());
             graphic->setBoxColor(_peak_view_widget->boxColor1()->getColor());
-            graphic->showBox(_peak_view_widget->drawBkg1()->isChecked());
-            graphic->setBoxColor(_peak_view_widget->bkgColor1()->getColor());
+            graphic->showBkg(_peak_view_widget->drawBkg1()->isChecked());
+            graphic->setBkgColor(_peak_view_widget->bkgColor1()->getColor());
         } else {
             graphic->showLabel(false);
             graphic->showArea(_peak_view_widget->drawPeaks2()->isChecked());
@@ -271,8 +271,8 @@ void DetectorWindow::refreshDetectorView()
             graphic->setCenterColor(_peak_view_widget->peakColor2()->getColor());
             graphic->showBox(_peak_view_widget->drawBoxes2()->isChecked());
             graphic->setBoxColor(_peak_view_widget->boxColor2()->getColor());
-            graphic->showBox(_peak_view_widget->drawBkg2()->isChecked());
-            graphic->setBoxColor(_peak_view_widget->bkgColor2()->getColor());
+            graphic->showBkg(_peak_view_widget->drawBkg2()->isChecked());
+            graphic->setBkgColor(_peak_view_widget->bkgColor2()->getColor());
         }
     }
     _detector_view->getScene()->update();
