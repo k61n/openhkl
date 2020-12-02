@@ -1,6 +1,9 @@
 cmake_minimum_required(VERSION 3.14 FATAL_ERROR)
 
 set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake)
+if(APPLE)
+    list(APPEND CMAKE_MODULE_PATH /usr/local/opt/share/cmake)
+endif()
 include(PreventInSourceBuilds)
 
 project(NSXTool VERSION 0.1.0)
@@ -107,7 +110,12 @@ message(STATUS "Found OpenGL:")
 message(STATUS "  libraries: ${OPENGL_LIBRARIES}")
 message(STATUS "  headers: ${OPENGL_INCLUDE_DIR}")
 
-find_package(Qt5 COMPONENTS Core Gui Widgets OpenGL PrintSupport REQUIRED)
+if (APPLE)
+    find_package(Qt5 COMPONENTS Core Gui Widgets OpenGL PrintSupport REQUIRED
+        HINTS /opt/local/ /opt/local/lib /opt/local/include)
+else()
+    find_package(Qt5 COMPONENTS Core Gui Widgets OpenGL PrintSupport REQUIRED)
+endif()
 
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
@@ -120,6 +128,7 @@ set(CMAKE_AUTOUIC OFF)
 # QCustomPlot: As long as there is no homebrew package for MacOS, we provide it as 3rdparty code:
 add_subdirectory(3rdparty/qcustomplot)
 set(QCustomPlot_LIBRARIES qcustomplot)
+set(QCustomPlot_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/3rdparty/qcustomplot)
 #find_package(QCustomPlot MODULE REQUIRED)
 #message(STATUS "libQCustomPlot: FOUND=${QCustomPlot_FOUND},
 #        VERSION=${QCustomPlot_VERSION}, LIB=${QCustomPlot_LIBRARIES},
