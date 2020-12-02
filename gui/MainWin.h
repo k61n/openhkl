@@ -19,6 +19,7 @@
 #include <QStackedWidget>
 
 class DetectorScene;
+class DetectorWindow;
 class PlottableItem;
 class SideBar;
 class SubframeHome;
@@ -71,6 +72,7 @@ class MainWin : public QMainWindow {
     void closeEvent(QCloseEvent* event) override;
 
  public:
+    // main window widgets
     SubframeExperiment* experiment;
     SubframeHome* home;
     SubframeFindPeaks* finder;
@@ -79,6 +81,9 @@ class MainWin : public QMainWindow {
     SubframePredictPeaks* predictor;
     SubframeRefiner* refiner;
     SubframeMergedPeaks* merger;
+
+    // modeless detector dialog
+    DetectorWindow* detector_window;
 
  private:
     QStackedWidget* _layout_stack;

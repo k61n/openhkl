@@ -22,38 +22,75 @@ PeakViewWidget::PeakViewWidget(std::string type1, std::string type2)
 {
     setSizePolicies();
 
-    QLabel* show_label = new QLabel("Show:");
-    show_label->setAlignment(Qt::AlignRight);
+    QLabel* label_ptr;
 
-    QLabel* type1_label = new QLabel(QString::fromStdString(type1));
-    type1_label->setAlignment(Qt::AlignLeft);
+    label_ptr = new QLabel(QString::fromStdString(type1));
+    label_ptr->setAlignment(Qt::AlignLeft);
+    addWidget(label_ptr, 0, 0, 1, 2);
 
-    QLabel* type1_size_label = new QLabel("Size:");
-    type1_size_label->setAlignment(Qt::AlignRight);
+    label_ptr = new QLabel("Show:");
+    label_ptr->setAlignment(Qt::AlignRight);
+    addWidget(label_ptr, 1, 0, 1, 1);
 
-    QLabel* type1_color_label = new QLabel("Colour:");
-    type1_color_label->setAlignment(Qt::AlignRight);
+    label_ptr = new QLabel("Size:");
+    label_ptr->setAlignment(Qt::AlignRight);
+    addWidget(label_ptr, 2, 0, 1, 1);
 
-    QLabel* type2_label = new QLabel(QString::fromStdString(type2));
-    type2_label->setAlignment(Qt::AlignLeft);
+    label_ptr = new QLabel("Colour:");
+    label_ptr->setAlignment(Qt::AlignRight);
+    addWidget(label_ptr, 3, 0, 1, 1);
 
-    QLabel* type2_size_label = new QLabel("Size:");
-    type2_size_label->setAlignment(Qt::AlignRight);
+    label_ptr = new QLabel("Bounding boxes:");
+    label_ptr->setAlignment(Qt::AlignLeft);
+    addWidget(label_ptr, 4, 0, 1, 3);
 
-    QLabel* type2_color_label = new QLabel("Colour:");
-    type2_color_label->setAlignment(Qt::AlignRight);
+    label_ptr = new QLabel("Show:");
+    label_ptr->setAlignment(Qt::AlignLeft);
+    addWidget(label_ptr, 5, 0, 1, 1);
 
-    _draw_peaks_1 = new QCheckBox("Peaks");
+    label_ptr = new QLabel("Colour:");
+    label_ptr->setAlignment(Qt::AlignLeft);
+    addWidget(label_ptr, 6, 0, 1, 1);
+
+    label_ptr = new QLabel(QString::fromStdString(type2));
+    label_ptr->setAlignment(Qt::AlignLeft);
+    addWidget(label_ptr, 7, 0, 1, 2);
+
+    label_ptr = new QLabel("Show:");
+    label_ptr->setAlignment(Qt::AlignRight);
+    addWidget(label_ptr, 8, 0, 1, 1);
+
+    label_ptr = new QLabel("Size:");
+    label_ptr->setAlignment(Qt::AlignRight);
+    addWidget(label_ptr, 9, 0, 1, 1);
+
+    label_ptr = new QLabel("Colour:");
+    label_ptr->setAlignment(Qt::AlignRight);
+    addWidget(label_ptr, 10, 0, 1, 1);
+
+    label_ptr = new QLabel("Bounding boxes:");
+    label_ptr->setAlignment(Qt::AlignLeft);
+    addWidget(label_ptr, 11, 0, 1, 3);
+
+    label_ptr = new QLabel("Show:");
+    label_ptr->setAlignment(Qt::AlignLeft);
+    addWidget(label_ptr, 12, 0, 1, 1);
+
+    label_ptr = new QLabel("Colour:");
+    label_ptr->setAlignment(Qt::AlignLeft);
+    addWidget(label_ptr, 13, 0, 1, 1);
+
+    _draw_peaks_1 = new QCheckBox("Centres");
     _draw_peaks_1->setCheckState(Qt::CheckState::Checked);
 
-    _draw_bbox_1 = new QCheckBox("Boxes");
+    _draw_bbox_1 = new QCheckBox("Peak");
     _draw_bbox_1->setCheckState(Qt::CheckState::Unchecked);
+
+    _draw_bkg_1 = new QCheckBox("Background");
+    _draw_bkg_1->setCheckState(Qt::CheckState::Unchecked);
 
     _width_peaks_1 = new QSpinBox();
     _width_peaks_1->setValue(10);
-
-    _width_bbox_1 = new QSpinBox();
-    _width_bbox_1->setValue(10);
 
     _color_peaks_1 = new ColorButton();
     _color_peaks_1->changeColor(Qt::darkGreen);
@@ -61,17 +98,20 @@ PeakViewWidget::PeakViewWidget(std::string type1, std::string type2)
     _color_bbox_1 = new ColorButton();
     _color_bbox_1->changeColor(Qt::darkGreen);
 
-    _draw_peaks_2 = new QCheckBox("Peaks");
+    _color_bkg_1 = new ColorButton();
+    _color_bkg_1->changeColor(Qt::darkGreen);
+
+    _draw_peaks_2 = new QCheckBox("Centres");
     _draw_peaks_2->setCheckState(Qt::CheckState::Checked);
 
-    _draw_bbox_2 = new QCheckBox("Boxes");
+    _draw_bbox_2 = new QCheckBox("Peak");
     _draw_bbox_2->setCheckState(Qt::CheckState::Unchecked);
+
+    _draw_bkg_2 = new QCheckBox("Background");
+    _draw_bkg_2->setCheckState(Qt::CheckState::Unchecked);
 
     _width_peaks_2 = new QSpinBox();
     _width_peaks_2->setValue(10);
-
-    _width_bbox_2 = new QSpinBox();
-    _width_bbox_2->setValue(10);
 
     _color_peaks_2 = new ColorButton();
     _color_peaks_2->changeColor(Qt::red);
@@ -79,53 +119,54 @@ PeakViewWidget::PeakViewWidget(std::string type1, std::string type2)
     _color_bbox_2 = new ColorButton();
     _color_bbox_2->changeColor(Qt::red);
 
+    _color_bkg_2 = new ColorButton();
+    _color_bkg_2->changeColor(Qt::red);
+
     _draw_peaks_1->setMaximumWidth(1000);
     _draw_peaks_2->setMaximumWidth(1000);
     _draw_bbox_1->setMaximumWidth(1000);
     _draw_bbox_2->setMaximumWidth(1000);
+    _draw_bkg_1->setMaximumWidth(1000);
+    _draw_bkg_2->setMaximumWidth(1000);
     _width_peaks_1->setMaximumWidth(1000);
     _width_peaks_2->setMaximumWidth(1000);
-    _width_bbox_1->setMaximumWidth(1000);
-    _width_bbox_2->setMaximumWidth(1000);
     _color_peaks_1->setMaximumWidth(1000);
     _color_peaks_2->setMaximumWidth(1000);
     _color_bbox_1->setMaximumWidth(1000);
     _color_bbox_2->setMaximumWidth(1000);
+    _color_bkg_1->setMaximumWidth(1000);
+    _color_bkg_2->setMaximumWidth(1000);
 
     _draw_peaks_1->setSizePolicy(*_size_policy_widgets);
     _draw_peaks_2->setSizePolicy(*_size_policy_widgets);
     _draw_bbox_1->setSizePolicy(*_size_policy_widgets);
     _draw_bbox_2->setSizePolicy(*_size_policy_widgets);
+    _draw_bkg_1->setSizePolicy(*_size_policy_widgets);
+    _draw_bkg_2->setSizePolicy(*_size_policy_widgets);
     _width_peaks_1->setSizePolicy(*_size_policy_widgets);
     _width_peaks_2->setSizePolicy(*_size_policy_widgets);
-    _width_bbox_1->setSizePolicy(*_size_policy_widgets);
-    _width_bbox_2->setSizePolicy(*_size_policy_widgets);
     _color_peaks_1->setSizePolicy(*_size_policy_widgets);
     _color_peaks_2->setSizePolicy(*_size_policy_widgets);
     _color_bbox_1->setSizePolicy(*_size_policy_widgets);
     _color_bbox_2->setSizePolicy(*_size_policy_widgets);
+    _color_bkg_1->setSizePolicy(*_size_policy_widgets);
+    _color_bkg_2->setSizePolicy(*_size_policy_widgets);
 
-    addWidget(type1_label, 0, 0, 1, 2);
-    addWidget(show_label, 1, 0, 1, 1);
     addWidget(_draw_peaks_1, 1, 1, 1, 1);
-    addWidget(_draw_bbox_1, 1, 2, 1, 1);
-    addWidget(type1_size_label, 2, 0, 1, 1);
     addWidget(_width_peaks_1, 2, 1, 1, 1);
-    addWidget(_width_bbox_1, 2, 2, 1, 1);
-    addWidget(type1_color_label, 3, 0, 1, 1);
     addWidget(_color_peaks_1, 3, 1, 1, 1);
-    addWidget(_color_bbox_1, 3, 2, 1, 1);
+    addWidget(_draw_bbox_1, 5, 1, 1, 1);
+    addWidget(_draw_bkg_1, 5, 2, 1, 1);
+    addWidget(_color_bbox_1, 6, 1, 1, 1);
+    addWidget(_color_bkg_1, 6, 2, 1, 1);
 
-    addWidget(type2_label, 4, 0, 1, 2);
-    addWidget(show_label, 5, 0, 1, 1);
-    addWidget(_draw_peaks_2, 5, 1, 1, 1);
-    addWidget(_draw_bbox_2, 5, 2, 1, 1);
-    addWidget(type2_size_label, 6, 0, 1, 1);
-    addWidget(_width_peaks_2, 6, 1, 1, 1);
-    addWidget(_width_bbox_2, 6, 2, 1, 1);
-    addWidget(type2_color_label, 7, 0, 1, 1);
-    addWidget(_color_peaks_2, 7, 1, 1, 1);
-    addWidget(_color_bbox_2, 7, 2, 1, 1);
+    addWidget(_draw_peaks_2, 8, 1, 1, 1);
+    addWidget(_width_peaks_2, 9, 1, 1, 1);
+    addWidget(_color_peaks_2, 10, 1, 1, 1);
+    addWidget(_draw_bbox_2, 12, 1, 1, 1);
+    addWidget(_draw_bkg_2, 12, 2, 1, 1);
+    addWidget(_color_bbox_2, 13, 1, 1, 1);
+    addWidget(_color_bkg_2, 13, 2, 1, 1);
 }
 
 void PeakViewWidget::setSizePolicies()
@@ -133,64 +174,4 @@ void PeakViewWidget::setSizePolicies()
     _size_policy_widgets = new QSizePolicy();
     _size_policy_widgets->setHorizontalPolicy(QSizePolicy::Preferred);
     _size_policy_widgets->setVerticalPolicy(QSizePolicy::Fixed);
-}
-
-QCheckBox* PeakViewWidget::drawPeaks1()
-{
-    return _draw_peaks_1;
-}
-
-QCheckBox* PeakViewWidget::drawBoxes1()
-{
-    return _draw_bbox_1;
-}
-
-QCheckBox* PeakViewWidget::drawPeaks2()
-{
-    return _draw_peaks_2;
-}
-
-QCheckBox* PeakViewWidget::drawBoxes2()
-{
-    return _draw_bbox_2;
-}
-
-ColorButton* PeakViewWidget::peakColor1()
-{
-    return _color_peaks_1;
-}
-
-ColorButton* PeakViewWidget::boxColor1()
-{
-    return _color_bbox_1;
-}
-
-ColorButton* PeakViewWidget::peakColor2()
-{
-    return _color_peaks_2;
-}
-
-ColorButton* PeakViewWidget::boxColor2()
-{
-    return _color_bbox_2;
-}
-
-QSpinBox* PeakViewWidget::peakSize1()
-{
-    return _width_peaks_1;
-}
-
-QSpinBox* PeakViewWidget::boxSize1()
-{
-    return _width_bbox_1;
-}
-
-QSpinBox* PeakViewWidget::peakSize2()
-{
-    return _width_peaks_2;
-}
-
-QSpinBox* PeakViewWidget::boxSize2()
-{
-    return _width_bbox_2;
 }

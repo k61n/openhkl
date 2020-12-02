@@ -33,6 +33,9 @@ class Actions : public QObject {
     QAction* remove_experiment;
     QAction* quit;
 
+    // View:
+    QAction* detector_window;
+
     //  // Experiment/Data:
     //  QAction convertHDF5;// {"convert", "convert to HDF5"};
     //  QAction dataProperties;// {"data properties", "properties"};
@@ -99,6 +102,7 @@ class Actions : public QObject {
 
  private:
     void setupFiles();
+    void setupView();
     void setupData();
     void setupInstrument();
     void setupPeaks();

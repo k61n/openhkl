@@ -334,19 +334,17 @@ void SubframeFindPeaks::setPreviewUp()
         _peak_view_widget->drawBoxes2(), &QCheckBox::stateChanged, this,
         &SubframeFindPeaks::refreshPeakVisual);
     connect(
+        _peak_view_widget->drawBkg1(), &QCheckBox::stateChanged, this,
+        &SubframeFindPeaks::refreshPeakVisual);
+    connect(
+        _peak_view_widget->drawBkg2(), &QCheckBox::stateChanged, this,
+        &SubframeFindPeaks::refreshPeakVisual);
+    connect(
         _peak_view_widget->peakSize1(),
         static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged), this,
         &SubframeFindPeaks::refreshPeakVisual);
     connect(
         _peak_view_widget->peakSize2(),
-        static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged), this,
-        &SubframeFindPeaks::refreshPeakVisual);
-    connect(
-        _peak_view_widget->boxSize1(),
-        static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged), this,
-        &SubframeFindPeaks::refreshPeakVisual);
-    connect(
-        _peak_view_widget->boxSize2(),
         static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged), this,
         &SubframeFindPeaks::refreshPeakVisual);
     connect(
@@ -361,6 +359,12 @@ void SubframeFindPeaks::setPreviewUp()
     connect(
         _peak_view_widget->boxColor2(), &ColorButton::colorChanged, this,
         &SubframeFindPeaks::refreshPeakVisual);
+    connect(
+        _peak_view_widget->bkgColor1(), &ColorButton::colorChanged, this,
+        &SubframeFindPeaks::refreshPeakVisual);
+    connect(
+        _peak_view_widget->bkgColor2(), &ColorButton::colorChanged, this,
+        &SubframeFindPeaks::refreshPeakVisual);
 
     preview_spoiler->setContentLayout(*_peak_view_widget);
     preview_spoiler->setSizePolicy(*_size_policy_box);
@@ -369,7 +373,7 @@ void SubframeFindPeaks::setPreviewUp()
     _live_check = new QCheckBox("Apply threshold to preview");
     _live_check->setMaximumWidth(1000);
     _live_check->setSizePolicy(*_size_policy_widgets);
-    _peak_view_widget->addWidget(_live_check, 8, 0, 1, 3);
+    // _peak_view_widget->addWidget(_live_check, 8, 0, 1, 3);
     // Not sure what the _live_check widget does - zamaan
 
     _left_layout->addWidget(preview_spoiler);
@@ -779,19 +783,21 @@ void SubframeFindPeaks::refreshPeakVisual()
             graphic->showArea(_peak_view_widget->drawPeaks1()->isChecked());
             graphic->setSize(_peak_view_widget->peakSize1()->value());
             graphic->setColor(Qt::transparent);
-            graphic->setOutlineColor(_peak_view_widget->peakColor1()->getColor());
+            graphic->setCenterColor(_peak_view_widget->peakColor1()->getColor());
             graphic->showBox(_peak_view_widget->drawBoxes1()->isChecked());
-            graphic->setBoxSize(_peak_view_widget->boxSize1()->value());
             graphic->setBoxColor(_peak_view_widget->boxColor1()->getColor());
+            graphic->showBkg(_peak_view_widget->drawBoxes1()->isChecked());
+            graphic->setBkgColor(_peak_view_widget->bkgColor1()->getColor());
         } else {
             graphic->showLabel(false);
             graphic->showArea(_peak_view_widget->drawPeaks2()->isChecked());
             graphic->setSize(_peak_view_widget->peakSize2()->value());
             graphic->setColor(Qt::transparent);
-            graphic->setOutlineColor(_peak_view_widget->peakColor2()->getColor());
+            graphic->setCenterColor(_peak_view_widget->peakColor2()->getColor());
             graphic->showBox(_peak_view_widget->drawBoxes2()->isChecked());
-            graphic->setBoxSize(_peak_view_widget->boxSize2()->value());
             graphic->setBoxColor(_peak_view_widget->boxColor2()->getColor());
+            graphic->showBkg(_peak_view_widget->drawBoxes2()->isChecked());
+            graphic->setBkgColor(_peak_view_widget->bkgColor2()->getColor());
         }
     }
     _figure_view->getScene()->update();
