@@ -15,6 +15,7 @@
 #ifndef NSX_CORE_SHAPE_SHAPECOLLECTION_H
 #define NSX_CORE_SHAPE_SHAPECOLLECTION_H
 
+#include "base/utils/ProgressHandler.h"
 #include "core/shape/IPeakIntegrator.h"
 #include "core/shape/Profile1D.h"
 #include "core/shape/Profile3D.h"
@@ -61,7 +62,8 @@ struct FitData;
 //! Helper function for predicting peaks
 std::vector<Peak3D*> predictPeaks(
     const ShapeCollection* collection, const sptrDataSet data, const UnitCell* unit_cell,
-    PeakInterpolation interpolation, const PredictionParameters& params);
+    PeakInterpolation interpolation, const PredictionParameters& params,
+    sptrProgressHandler handler = nullptr);
 
 //! Store a collection of peak shapes, to be used for peak prediction and integration.
 

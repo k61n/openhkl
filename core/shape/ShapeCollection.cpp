@@ -85,7 +85,8 @@ static std::vector<Peak3D*> buildPeaksFromMillerIndices(
 
 std::vector<Peak3D*> predictPeaks(
     const ShapeCollection* collection, const sptrDataSet data, const UnitCell* unit_cell,
-    PeakInterpolation interpolation, const PredictionParameters& params)
+    PeakInterpolation interpolation, const PredictionParameters& params,
+    sptrProgressHandler handler)
 {
     std::vector<Peak3D*> predicted_peaks;
 
@@ -102,6 +103,16 @@ std::vector<Peak3D*> predictPeaks(
 
     nsxlog(
         Level::Info, "algo::predictPeaks: Computing shapes of", peaks.size(), "calculated peaks");
+
+    int count = 0;
+    int npeaks = peaks.size();
+    std::ostringstream oss;
+    oss << "Predicting " << npeaks << " peaks";
+    if (handler) {
+        handler->setStatus(oss.str().c_str());
+        handler->setProgress(0);
+    }
+
     for (auto peak : peaks) {
         peak->setUnitCell(unit_cell);
         peak->setPredicted(true);
@@ -117,9 +128,19 @@ std::vector<Peak3D*> predictPeaks(
             peak->setShape(Ellipsoid(center, cov.inverse()));
         } catch (std::exception& e) {
             // qInfo() << e.what(); // TODO replace by less verbose reporting
+            if (handler) {
+                --npeaks;
+                std::ostringstream oss;
+                oss << "Predicting " << npeaks << " peaks";
+                handler->setStatus(oss.str().c_str());
+            }
             continue;
         }
         predicted_peaks.push_back(peak);
+        if (handler) {
+            double progress = ++count * 100.0 / npeaks;
+            handler->setProgress(progress);
+        }
     }
     nsxlog(
         Level::Info, "algo::predictPeaks: Interpolation failed for", collection->nFailedInterp(),

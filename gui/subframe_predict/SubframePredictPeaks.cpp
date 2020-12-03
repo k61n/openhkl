@@ -652,7 +652,7 @@ void SubframePredictPeaks::runPrediction()
 
         for (nsx::sptrDataSet d : data) {
             std::vector<nsx::Peak3D*> predicted =
-                nsx::predictPeaks(lib, d, cell, peak_interpolation, params);
+                nsx::predictPeaks(lib, d, cell, peak_interpolation, params, handler);
 
             for (nsx::Peak3D* peak : predicted)
                 predicted_peaks.push_back(peak);
