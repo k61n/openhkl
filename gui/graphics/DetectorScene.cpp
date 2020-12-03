@@ -418,49 +418,55 @@ void DetectorScene::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
             // nsx::Peak3D* peak = peak_item->peak();
             // gSession->onSelectedPeakChanged(peak);
         } else if (_mode == ZOOM) {
-            qreal top = _zoomrect->rect().top();
-            qreal bot = _zoomrect->rect().bottom();
-            qreal left = _zoomrect->rect().left();
-            qreal right = _zoomrect->rect().right();
+            if (_zoomrect) {
+                qreal top = _zoomrect->rect().top();
+                qreal bot = _zoomrect->rect().bottom();
+                qreal left = _zoomrect->rect().left();
+                qreal right = _zoomrect->rect().right();
 
-            // If the user just clicked on the left mouse button with holding it, skip
-            // the event
-            if (qAbs(top - bot) <= 1 || qAbs(left - right) <= 1) {
-                if (!_zoomrect) {
+                // If the user just clicked on the left mouse button with holding it, skip
+                // the event
+                if (qAbs(top - bot) <= 1 || qAbs(left - right) <= 1) {
+                    // _zoomrect->setVisible(false);
+                    if (_zoomrect) {
+                        removeItem(_zoomrect);
+                        delete _zoomrect;
+                        _zoomrect = nullptr;
+                    }
+                    return;
+                }
+
+                if (top > bot)
+                    std::swap(top, bot);
+
+                if (right < left)
+                    std::swap(left, right);
+
+                QRect max = _zoomStack.front();
+
+                if (top < max.top())
+                    top = max.top();
+
+                if (bot > max.bottom())
+                    bot = max.bottom() + 1;
+
+                if (left < max.left())
+                    left = max.left();
+
+                if (right > max.right())
+                    right = max.right() + 1;
+
+                _zoomrect->setRect(left, top, right - left, bot - top);
+                _zoomStack.push_back(_zoomrect->rect().toRect());
+                setSceneRect(_zoomrect->rect());
+                // _zoomrect->setVisible(false);
+                if (_zoomrect) {
                     removeItem(_zoomrect);
                     delete _zoomrect;
+                    _zoomrect = nullptr;
                 }
-                return;
+                emit dataChanged();
             }
-
-            if (top > bot)
-                std::swap(top, bot);
-
-            if (right < left)
-                std::swap(left, right);
-
-            QRect max = _zoomStack.front();
-
-            if (top < max.top())
-                top = max.top();
-
-            if (bot > max.bottom())
-                bot = max.bottom() + 1;
-
-            if (left < max.left())
-                left = max.left();
-
-            if (right > max.right())
-                right = max.right() + 1;
-
-            _zoomrect->setRect(left, top, right - left, bot - top);
-            _zoomStack.push_back(_zoomrect->rect().toRect());
-            setSceneRect(_zoomrect->rect());
-            if (!_zoomrect) {
-                removeItem(_zoomrect);
-                delete _zoomrect;
-            }
-            emit dataChanged();
         } // else {
           // nsx::PeakList peaks = gSession->currentProject()->getPeaks(0, 0)->peaks_;
 
