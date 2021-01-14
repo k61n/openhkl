@@ -99,10 +99,7 @@ the criterion described in **TODO: find literature**.
    +-------------------+----------------+-------------------------------+
    | **Parameters**    |                | parameters                    |
    |                   |                | :math:`r_1, r_2, r_3` for the |
-   |                   |                | pixel sum integrator (see     |
-   |                   |                | section                       |
-   |                   |                | `[sec:                        |
-   |                   |                | pixelsum] <#sec:pixelsum>`__) |
+   |                   |                | :ref:`sec_pixelsum`           |
    +-------------------+----------------+-------------------------------+
    | **Start frame**   | frame          | Initial frame in range for    |
    |                   |                | peak finding                  |
@@ -111,11 +108,10 @@ the criterion described in **TODO: find literature**.
    |                   |                | finding                       |
    +-------------------+----------------+-------------------------------+
 
-At this stage in the workflow, there are no available profiles to
-perform an accurate integration. The found peaks are integrated at this
-stage using the somewhat na"̈ive pixel sum integrator (see section
-`[sec:pixelsum] <#sec:pixelsum>`__ for details). The profiles are
-gennerated and accurate integration performed in subsequent steps.
+At this stage in the workflow, there are no available profiles to perform an
+accurate integration. The found peaks are integrated at this stage using 
+somewhat naive :ref:`sec_pixelsum` . The profiles are gennerated and accurate
+integration performed in subsequent steps.
 
 .. table:: Integration parameters
 
@@ -293,13 +289,12 @@ Predict peaks
 Shape collection
 ~~~~~~~~~~~~~~~~
 
-The shape collection is the set of “profiles” alluded to in section
-`[sec:3dprofile] <#sec:3dprofile>`__ — i.e. strong peaks with a
-well-defined shapes that are used to fit the weak peaks. In practice
-this is simply a collection of integrated strong peaks. During profile
-fitting integration of a weak peak, the integrator will compute a mean
-of all profiles in the shape collection within a given radius of the
-weak peak coordinates to use as the fitting profile in that instance.
+The shape collection is the set of “profiles” alluded to in :ref:`sec_3dprofile`
+— i.e. strong peaks with a well-defined shapes that are used to fit the weak
+peaks. In practice this is simply a collection of integrated strong peaks.
+During profile fitting integration of a weak peak, the integrator will compute a
+mean of all profiles in the shape collection within a given radius of the weak
+peak coordinates to use as the fitting profile in that instance.
 
 The ``Build shape collection`` button simply filters out weak peaks and
 integrates the shape collection. The ``Calculate profile button`` uses

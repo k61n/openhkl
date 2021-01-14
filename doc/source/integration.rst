@@ -35,7 +35,7 @@ uses the Lehman-Larsen :math:`sigma/I` criterion to distinguish the peak
 and background regions. Finally, the Gaussian integrator assumes a
 Gaussian profile shape.
 
-.. _sec:pixelsum:
+.. _sec_pixelsum:
 
 Pixel sum integration
 ---------------------
@@ -69,7 +69,7 @@ fitting, and is used only to get a rough estimate of intensities. The
 final integration should be performed using a more rigorous integrator
 (see below).
 
-.. _sec:3dprofile:
+.. _sec_3dprofile
 
 3D Profile integration
 ----------------------
