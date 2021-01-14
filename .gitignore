@@ -18,6 +18,8 @@ build/
 debug/
 qbuild/
 
+docs/build
+
 Testing/
 
 html/
