@@ -320,10 +320,10 @@ is visible.
    |                        |                | Profile 3D and Profile  |
    |                        |                | 1D integrators)         |
    +------------------------+----------------+-------------------------+
-   | **:math:`\sigma_D`**   |                | Peak variance due to    |
+   | :math:`\sigma_D`       |                | Peak variance due to    |
    |                        |                | beam divergence         |
    +------------------------+----------------+-------------------------+
-   | **:math:`\sigma_M`**   |                | Peak variance due to    |
+   | :math:`\sigma_M`       |                | Peak variance due to    |
    |                        |                | crystal mosaicity       |
    +------------------------+----------------+-------------------------+
    | **Minimum strength**   |                | Exclude weak peaks with |
@@ -404,20 +404,38 @@ The peaks are integrated, ideally using a profile-fitting method
 (althought the pixel sum integrator is available) to compute intensities
 and sigmas.
 
-| l l X **Parameters** & Unit & Description
-| **Fit the center** & T/F &
-| **Fit the covariance** & T/F &
-| **Peak end** & :math:`\sigma` & End of peak region in detector
-  coordinates
-| **Bkg begin** & :math:`\sigma` & Beginning of background region in
-  detector coordinates
-| **Bkg end** & :math:`\sigma` & End of background region in detector
-  **Minimum d** & Å & Only include peaks above this d value
-| **Maximum d** & Å & Only include peaks below this d value
-| **Search radius** & pixels & Detector image radius for neighbour
-  search for computing mean profile
-| **N. of frames** & frame & Detector image radius in frames for
-  neighbour search for computing mean profile
+.. table:: Integration parameters
+
+   +------------------------+----------------+----------------------------------+
+   | **Parameters**         | Unit           | Description                      |
+   +========================+================+==================================+
+   | **Fit the center**     | T/F            | Whether to fit the peak center   |
+   +------------------------+----------------+----------------------------------+
+   | **Fit the covariance** | T/F            | Whether to fit the covariance    |
+   +------------------------+----------------+----------------------------------+
+   | **Peak end**           | :math:`\sigma` | End of peak region in detector   |
+   |                        |                | coordinates                      |
+   +------------------------+----------------+----------------------------------+
+   | **Bkg begin**          | :math:`\sigma` | Beginning of background region in|
+   |                        |                | detector coordinates             |
+   +------------------------+----------------+----------------------------------+
+   | **Bkg end**            | :math:`\sigma` | End of background region in      |
+   |                        |                | detector coordinates             |
+   +------------------------+----------------+----------------------------------+
+   | **Minimum d**          | Å              | Only include peaks               |
+   |                        |                | above this d value               |
+   +------------------------+----------------+----------------------------------+
+   | **Maximum d**          | Å              | Only include peaks               |
+   |                        |                | below this d value               |
+   +------------------------+----------------+----------------------------------+
+   | **Search radius**      | pixels         | Detector image radius in pixels  | 
+   |                        |                | for neighbour search for         |
+   |                        |                | computing mean profile           |
+   +------------------------+----------------+----------------------------------+
+   | **N. of frames**       | frame          | Detector image radius in frames  |
+   |                        |                | for neighbour search for         |
+   |                        |                | computing mean profile           |
+   +------------------------+----------------+----------------------------------+
 
 Refine
 ------
