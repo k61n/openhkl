@@ -3,9 +3,6 @@
 Theory
 ========
 
-Kabsch’s Coordinate System
---------------------------
-
 .. _peak-prediction:
 
 Shape Prediction
@@ -155,7 +152,8 @@ and totally obscure**
 
 .. _kabschs-coordinate-system-1:
 
-Kabsch’s Coordinate System
+
+absch’s Coordinate System
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 In :cite:`t-Kabsch1988` Kabsch introduced a per-peak

@@ -69,7 +69,7 @@ fitting, and is used only to get a rough estimate of intensities. The
 final integration should be performed using a more rigorous integrator
 (see below).
 
-.. _sec_3dprofile
+.. _sec_3dprofile:
 
 3D Profile integration
 ----------------------

@@ -397,6 +397,8 @@ symmetry-forbidden reflections can be removed from this collection.
    |                  |        | profile                                |
    +------------------+--------+----------------------------------------+
 
+.. _sec_integration:
+
 Integrate peaks
 ~~~~~~~~~~~~~~~
 
@@ -440,20 +442,28 @@ and sigmas.
 Refine
 ------
 
-Input
-~~~~~
+In this tab, nonlinear least-squares minimsation is used to find the unit cell
+and instrument states that best fit the given peak collection. The instrument
+states optimised are the detector position offset, the sample position offset,
+the sample orientation offset and the incident wavevector.
 
-Parameters to refine
-~~~~~~~~~~~~~~~~~~~~
+Since detector images are generated over a period of time as well as over an
+angular range, the conditions of the experiment may have changed between the
+first frame and the last, for example, the temperature, which would affect the
+unit cell. As such the peaks are refined in batches, each encompassing a few
+frames in a limited subset of the angular range of the experiment. For example,
+if we specify 10 batches for an experiment with 100 frames (detector images), we
+will get 10 sets of peaks in partially overlapping but distinct angular ranges.
 
-Plot
-~~~~
+The change in each of these quantities can be plotted as a function of frame (or
+equivalently angle) in the bottom panel. The per-frame values for the unit cell
+and each instrument state before and after refinement are visible in the tables.
 
-Update predictions
-~~~~~~~~~~~~~~~~~~
-
-Reintegrate peaks
-~~~~~~~~~~~~~~~~~
+After refinement, clicking `Update` in the ``Update predictions'' panel will
+update the peak centre coordiates that changed as a result of unit cell and
+instruement state refinement. Both the found and predicted peaks should then be
+reintegrated using a profile fitting method, and the same parameters as in
+:ref:`sec_integration`.
 
 Merge peaks
 -----------

@@ -12,6 +12,7 @@ statistics.
 * :doc:`workflow`
 * :doc:`integration`
 * :doc:`theory`
+* :doc:`dataquality`
 
 .. toctree::
    :maxdepth: 2
@@ -19,6 +20,7 @@ statistics.
 
    workflow
    integration
+   dataquality
    theory
 
 
