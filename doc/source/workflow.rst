@@ -38,6 +38,51 @@ existing experiment state.
 Experiment
 ----------
 
+Most information on the experiment can be found in this panel, including
+settings for the instrument, the raw data sets, any computed unit cells and the
+peak collections.
+
+Raw data is loaded from this screen, by going to the "data" tab, clicking on the
+green "+" and selecting the relevant data format. The file dialogue box can be
+used to select multiple images if necessary, and these will be loaded in the
+order they are sorted by the OS (normally numerically, but some care is
+required). In the case of the raw data format (`.tiff` and `.nxs`), some
+additional metadata is requested in a prompt dialogue.
+
+.. table:: Raw data loader parameters
+
+   +-------------------+----------------+-------------------------------+
+   | **Parameters**    | Unit           | Description                   |
+   +===================+================+===============================+
+   | **Data**          | Row/column     | Specifies whether rows or     |
+   | **arrangement**   | Major          | columns are contiguous in     |
+   |                   | Major          | memory                        |
+   +-------------------+----------------+-------------------------------+
+   | **Data format**   | 8/16/32 bit    | Number of bits per pixel      |
+   |                   |                | in raw images                 |
+   +-------------------+----------------+-------------------------------+
+   | **Swap endian**   | T/F            | Toggle endianness of data     |
+   |                   |                | (big endian/little endian)    |
+   +-------------------+----------------+-------------------------------+
+   | **delta chi**     | degrees        | Angular stepping for sample   |
+   |                   |                | angle :math:`\chi`            |
+   +-------------------+----------------+-------------------------------+
+   | **delta omega**   | degrees        | Angular stepping for sample   |
+   |                   |                | angle :math:`\omega`          |
+   +-------------------+----------------+-------------------------------+
+   | **delta phi**     | degrees        | Angular stepping for sample   |
+   |                   |                | angle :math:`\phi`            |
+   +-------------------+----------------+-------------------------------+
+   | **wavelength**    | Å              | Incident wavelength           |
+   +-------------------+----------------+-------------------------------+
+
+The detector image serves three purposes:
+
+1. To adjust the intensity colour scale via the slider on the right
+2. To mask regions of the image such as the beam stop or specific peaks, to
+   exclude them from further processing
+3. To plot intensity profiles along a line in the plotting panel at the bottom.
+
 Find peaks
 ----------
 
@@ -283,8 +328,15 @@ substantial effect on the success (or otherwise) of the procedure:
    reciprocal lattice vector whose amplitude is less than this fraction
    of the zeroth Fourier frequency. Use with care!
 
-Predict peaks
--------------
+The closest unit cell can then be selected as a row from the table of solutions
+and assigned to a peak collection (usually the collection of *found* peaks. Note
+that it is important to find the cell with the correct centering (Bravais type)
+or the correct space group may not be visible in the list in the `Assign unit
+cell` dialogue box. This may require additional experimentation with the
+parameters.
+
+Predictor
+---------
 
 Shape collection
 ~~~~~~~~~~~~~~~~
@@ -404,7 +456,9 @@ Integrate peaks
 
 The peaks are integrated, ideally using a profile-fitting method
 (althought the pixel sum integrator is available) to compute intensities
-and sigmas.
+and sigmas. Note that only the parameters `Peak end`, `Bkg begin` and `Bkg end`
+apply to pixel sum integraiton;the rest are specific to profile fitting
+integration.
 
 .. table:: Integration parameters
 
@@ -459,7 +513,7 @@ The change in each of these quantities can be plotted as a function of frame (or
 equivalently angle) in the bottom panel. The per-frame values for the unit cell
 and each instrument state before and after refinement are visible in the tables.
 
-After refinement, clicking `Update` in the ``Update predictions'' panel will
+After refinement, clicking `Update` in the "Update predictions" panel will
 update the peak centre coordiates that changed as a result of unit cell and
 instruement state refinement. Both the found and predicted peaks should then be
 reintegrated using a profile fitting method, and the same parameters as in
@@ -468,6 +522,10 @@ reintegrated using a profile fitting method, and the same parameters as in
 Merge peaks
 -----------
 
+The data quality metrics described in :ref:`dataquality` are computed under the
+"Merger" tab, and tabulated as a function of resolution shell (including a row
+for the whole resolution range). These measures can be plotted as a function of
+resolution in the panel at the bottom.
 
 .. bibliography:: references.bib
     :cited:

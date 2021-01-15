@@ -10,15 +10,17 @@ pattern based on the unit cell, refine the input data and compute quality
 statistics.
 
 * :doc:`workflow`
+* :doc:`detectorview`
 * :doc:`integration`
-* :doc:`theory`
 * :doc:`dataquality`
+* :doc:`theory`
 
 .. toctree::
    :maxdepth: 2
    :caption: Contents
 
    workflow
+   detectorview
    integration
    dataquality
    theory
