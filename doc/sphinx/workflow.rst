@@ -496,7 +496,7 @@ integration.
 Refine
 ------
 
-In this tab, nonlinear least-squares minimsation is used to find the unit cell
+In this tab, nonlinear least-squares minimisation is used to find the unit cell
 and instrument states that best fit the given peak collection. The instrument
 states optimised are the detector position offset, the sample position offset,
 the sample orientation offset and the incident wavevector.
