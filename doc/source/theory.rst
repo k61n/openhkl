@@ -12,52 +12,52 @@ Rotating the beam profile
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 
 We make a simplifying assumption, that for a *perfect plane wave*
-:math:`{\bm{{k}}}_\text{i}`, the observed scattering function has the
+:math:`{\mathbf{{k}}}_\text{i}`, the observed scattering function has the
 form
 
 .. math::
 
    \sum_{hkl}
-   I_{hkl} f({\bm{{q}}}- {\bm{{q}}}_{hkl}),
+   I_{hkl} f({\mathbf{{q}}}- {\mathbf{{q}}}_{hkl}),
 
 \ i.e. that the peak shape is independent of its intensity and Miller
-index, specified by a single function :math:`f({\bm{{q}}})`.
+index, specified by a single function :math:`f({\mathbf{{q}}})`.
 
 Now suppose that the incoming plane wave actually has momentum
-:math:`{\bm{{k}}}_\text{i}+ \delta
-{\bm{{k}}}_\text{i}`, with :math:`\delta {\bm{{k}}}_\text{i}` sampled
+:math:`{\mathbf{{k}}}_\text{i}+ \delta
+{\mathbf{{k}}}_\text{i}`, with :math:`\delta {\mathbf{{k}}}_\text{i}` sampled
 from a probability distribution :math:`P(\delta
-{\bm{{k}}}_\text{i})`. Let :math:`\bm{{u}}` be the unit vector pointing
+{\mathbf{{k}}}_\text{i})`. Let :math:`\mathbf{{u}}` be the unit vector pointing
 from the sample origin to a given detector pixel. As we only consider
 elastic scattering, we can write the wavenumber as
-:math:`K\coloneqq k_\text{i}= k_\text{f}`. Then the outgoing momentum
+:math:`K:= k_\text{i}= k_\text{f}`. Then the outgoing momentum
 associated with this pixel is
 
 .. math::
 
    \begin{aligned}
-     |{\bm{{k}}}_\text{i}+ \delta {\bm{{k}}}_\text{i}| \bm{{u}}&= \bm{{u}}\sqrt{K^2 + 2 {\bm{{k}}}_\text{i}\cdot \delta {\bm{{k}}}_\text{i}+
-   (\delta {\bm{{k}}}_\text{i})^2 } \\ &\doteq \bm{{u}}\sqrt{K^2 + 2 {\bm{{k}}}_\text{i}\cdot \delta {\bm{{k}}}_\text{i}} \\
-   &= \bm{{u}}K\sqrt{1+ 2\frac{{\bm{{k}}}_\text{i}\cdot \delta {\bm{{k}}}_\text{i}}{K^2}} \\ &\doteq \bm{{u}}K
-   \left(1 + \frac{{\bm{{k}}}_\text{i}\cdot \delta {\bm{{k}}}_\text{i}}{K^2}\right) \\ &= {\bm{{k}}}_\text{f}+ \delta
-   {\bm{{k}}}_\text{f},\end{aligned}
+     |{\mathbf{{k}}}_\text{i}+ \delta {\mathbf{{k}}}_\text{i}| \mathbf{{u}}&= \mathbf{{u}}\sqrt{K^2 + 2 {\mathbf{{k}}}_\text{i}\cdot \delta {\mathbf{{k}}}_\text{i}+
+   (\delta {\mathbf{{k}}}_\text{i})^2 } \\ &\doteq \mathbf{{u}}\sqrt{K^2 + 2 {\mathbf{{k}}}_\text{i}\cdot \delta {\mathbf{{k}}}_\text{i}} \\
+   &= \mathbf{{u}}K\sqrt{1+ 2\frac{{\mathbf{{k}}}_\text{i}\cdot \delta {\mathbf{{k}}}_\text{i}}{K^2}} \\ &\doteq \mathbf{{u}}K
+   \left(1 + \frac{{\mathbf{{k}}}_\text{i}\cdot \delta {\mathbf{{k}}}_\text{i}}{K^2}\right) \\ &= {\mathbf{{k}}}_\text{f}+ \delta
+   {\mathbf{{k}}}_\text{f},\end{aligned}
 
-where :math:`{\bm{{k}}}_\text{f}= \bm{{u}}K` and
-:math:`\delta {\bm{{k}}}_\text{f}= \bm{{u}}({\bm{{k}}}_\text{i}\cdot \delta {\bm{{k}}}_\text{i}) /
+where :math:`{\mathbf{{k}}}_\text{f}= \mathbf{{u}}K` and
+:math:`\delta {\mathbf{{k}}}_\text{f}= \mathbf{{u}}({\mathbf{{k}}}_\text{i}\cdot \delta {\mathbf{{k}}}_\text{i}) /
 K`. Therefore, we have
 
 .. math::
 
-   \delta{\bm{{q}}}= \delta {\bm{{k}}}_\text{f}- \delta {\bm{{k}}}_\text{i}= \bm{{u}}({\bm{{k}}}_\text{i}\cdot \delta {\bm{{k}}}_\text{i}) / K
-   - \delta {\bm{{k}}}_\text{i}= \bm{{A}} \delta {\bm{{k}}}_\text{i},
+   \delta{\mathbf{{q}}}= \delta {\mathbf{{k}}}_\text{f}- \delta {\mathbf{{k}}}_\text{i}= \mathbf{{u}}({\mathbf{{k}}}_\text{i}\cdot \delta {\mathbf{{k}}}_\text{i}) / K
+   - \delta {\mathbf{{k}}}_\text{i}= \mathbf{{A}} \delta {\mathbf{{k}}}_\text{i},
 
-where :math:`\bm{{A}}` is the matrix
+where :math:`\mathbf{{A}}` is the matrix
 
-.. math:: \bm{{A}} \coloneqq K^{-1} \bm{{u}}{\bm{{k}}}_\text{i}^\intercal- \bm{{1}} = K^{-2} {\bm{{k}}}_\text{f}{\bm{{k}}}_\text{i}^\intercal- \bm{{1}}.
+.. math:: \mathbf{{A}} := K^{-1} \mathbf{{u}}{\mathbf{{k}}}_\text{i}^\intercal- \mathbf{{1}} = K^{-2} {\mathbf{{k}}}_\text{f}{\mathbf{{k}}}_\text{i}^\intercal- \mathbf{{1}}.
 
-Note that :math:`\bm{{A}} {\bm{{k}}}_\text{i}= {\bm{{q}}}` and therefore
-:math:`{\bm{{q}}}+ \delta {\bm{{q}}}= \bm{{A}}({\bm{{k}}}_\text{i}+
-\delta {\bm{{k}}}_\text{i})`.
+Note that :math:`\mathbf{{A}} {\mathbf{{k}}}_\text{i}= {\mathbf{{q}}}` and therefore
+:math:`{\mathbf{{q}}}+ \delta {\mathbf{{q}}}= \mathbf{{A}}({\mathbf{{k}}}_\text{i}+
+\delta {\mathbf{{k}}}_\text{i})`.
 
 Therefore, the observed intensity at detector position :math:`(x,y)`
 should be proportional to
@@ -65,66 +65,66 @@ should be proportional to
 .. math::
 
    \begin{aligned}
-     &= \int f({\bm{{q}}}- {\bm{{q}}}_{hkl} + \delta {\bm{{q}}}) P(\delta {\bm{{k}}}_\text{i}) d(\delta {\bm{{k}}}_\text{i}) \\
-     &= \int f({\bm{{q}}}- {\bm{{q}}}_{hkl} + \bm{{R}}\bm{{A}} \delta {\bm{{k}}}_\text{i}) P(\delta {\bm{{k}}}_\text{i}) d(\delta {\bm{{k}}}_\text{i})\end{aligned}
+     &= \int f({\mathbf{{q}}}- {\mathbf{{q}}}_{hkl} + \delta {\mathbf{{q}}}) P(\delta {\mathbf{{k}}}_\text{i}) d(\delta {\mathbf{{k}}}_\text{i}) \\
+     &= \int f({\mathbf{{q}}}- {\mathbf{{q}}}_{hkl} + \mathbf{{R}}\mathbf{{A}} \delta {\mathbf{{k}}}_\text{i}) P(\delta {\mathbf{{k}}}_\text{i}) d(\delta {\mathbf{{k}}}_\text{i})\end{aligned}
 
-where :math:`\bm{{R}}` is the rotation matrix taking lab coordinates to
-sample-fixed coordinates. The matrix :math:`\bm{{A}}` has
-:math:`\det \bm{{A}} = -\frac{1}{2}{\bm{{q}}}^2` and therefore is
+where :math:`\mathbf{{R}}` is the rotation matrix taking lab coordinates to
+sample-fixed coordinates. The matrix :math:`\mathbf{{A}}` has
+:math:`\det \mathbf{{A}} = -\frac{1}{2}{\mathbf{{q}}}^2` and therefore is
 invertible. [1]_ So we have
-:math:`\delta {\bm{{k}}}_\text{i}= A^{-1} \delta {\bm{{q}}}` and
-:math:`d(\delta {\bm{{k}}}_\text{i}) = |\det \bm{{A}}|^{-1}
-d(\delta {\bm{{q}}})`. Let :math:`\bm{{\Sigma}}_M` denote the
+:math:`\delta {\mathbf{{k}}}_\text{i}= A^{-1} \delta {\mathbf{{q}}}` and
+:math:`d(\delta {\mathbf{{k}}}_\text{i}) = |\det \mathbf{{A}}|^{-1}
+d(\delta {\mathbf{{q}}})`. Let :math:`\mathbf{{\Sigma}}_M` denote the
 variance-covariance matrix of the profile shape :math:`f` and let
-:math:`\bm{{\Sigma}}_D` denote the variance-covariance matrix of the
-beam divergence :math:`\delta {\bm{{k}}}_\text{i}`. Then from the above
+:math:`\mathbf{{\Sigma}}_D` denote the variance-covariance matrix of the
+beam divergence :math:`\delta {\mathbf{{k}}}_\text{i}`. Then from the above
 formula we see that the *observed* profile shape will have (in
 sample-fixed q-space) a variance-covariance matrix given by
 
 .. math::
+     :label: ESigmaMD
 
-   \label{ESigmaMD}
-     \bm{{\Sigma}}_M + \bm{{R}} \bm{{A}} \bm{{\Sigma}}_D \bm{{A}}^\intercal\bm{{R}}^\intercal,
+     \mathbf{{\Sigma}}_M + \mathbf{{R}} \mathbf{{A}} \mathbf{{\Sigma}}_D \mathbf{{A}}^\intercal\mathbf{{R}}^\intercal,
 
 where :math:`R` is the rotation matrix from lab space to sample space
-and :math:`\bm{{A}} =
-K^{-2} {\bm{{k}}}_\text{f}{\bm{{k}}}_\text{i}^\intercal- \bm{{1}}`. Note
-that the matrix :math:`\bm{{A}}` depends only on
-:math:`{\bm{{k}}}_\text{f}`, i.e. on the detector pixel location, and
-the matrix :math:`\bm{{R}}` depends on the sample orientation, i.e. the
+and :math:`\mathbf{{A}} =
+K^{-2} {\mathbf{{k}}}_\text{f}{\mathbf{{k}}}_\text{i}^\intercal- \mathbf{{1}}`. Note
+that the matrix :math:`\mathbf{{A}}` depends only on
+:math:`{\mathbf{{k}}}_\text{f}`, i.e. on the detector pixel location, and
+the matrix :math:`\mathbf{{R}}` depends on the sample orientation, i.e. the
 frame number.
 
 Now make a simplifying assumption,
-:math:`\bm{{\Sigma}}_M = \sigma_M^2 \bm{{1}}` and :math:`\bm{{\Sigma}}_D
-= \sigma_D^2 \bm{{1}}` so that the expected variance-covariance matrix
-(`[ESigmaMD] <#ESigmaMD>`__) becomes
+:math:`\mathbf{{\Sigma}}_M = \sigma_M^2 \mathbf{{1}}` and :math:`\mathbf{{\Sigma}}_D
+= \sigma_D^2 \mathbf{{1}}` so that the expected variance-covariance matrix
+:eq:`ESigmaMD` becomes
 
 .. math::
+   :label: ESigmaMD2
 
-   \label{ESigmaMD2}
-     \bm{{\Sigma}}(\sigma_M,\sigma_D) = \bm{{\Sigma}}_M + \bm{{R}} \bm{{A}} \bm{{A}}^\intercal\bm{{R}}^\intercal,
+     \mathbf{{\Sigma}}(\sigma_M,\sigma_D) = \mathbf{{\Sigma}}_M + \mathbf{{R}} \mathbf{{A}} \mathbf{{A}}^\intercal\mathbf{{R}}^\intercal,
 
 Consider :math:`N` observed blobs parameterized by
-:math:`(\bm{{\Sigma}}_b, \bm{{R}}_b, \bm{{A}}_b)`. Write
-:math:`\bm{{S}}_b\coloneqq\bm{{R}}_b\bm{{A}}_b`. Form the penalty
+:math:`(\mathbf{{\Sigma}}_b, \mathbf{{R}}_b, \mathbf{{A}}_b)`. Write
+:math:`\mathbf{{S}}_b:=\mathbf{{R}}_b\mathbf{{A}}_b`. Form the penalty
 function
 
 .. math::
 
    L(\sigma_M^2, \sigma_D^2)
      = \sum_{b=1}^N
-       \left|\sigma_M^2\bm{{1}} + \sigma_D^2 (\bm{{S}}_b)(\bm{{S}}_b)^\intercal- \bm{{\Sigma}}_b\right|^2
+       \left|\sigma_M^2\mathbf{{1}} + \sigma_D^2 (\mathbf{{S}}_b)(\mathbf{{S}}_b)^\intercal- \mathbf{{\Sigma}}_b\right|^2
 
 Determine :math:`\sigma_M^2` and :math:`\sigma_D^2` by minimizing the
-difference between the empirical :math:`\bm{{\Sigma}}_b` and the
-expectation (`[ESigmaMD2] <#ESigmaMD2>`__). Set
-:math:`\bm{{\nabla }}L = 0` to obtain the 2x2 system of linear equations
+difference between the empirical :math:`\mathbf{{\Sigma}}_b` and the
+expectation :eq:`ESigmaMD2`. Set
+:math:`\mathbf{{\nabla }}L = 0` to obtain the 2x2 system of linear equations
 
 .. math::
 
    \begin{bmatrix}
-       3N & \sum_b \mathrm{tr}( (\bm{{S}}_b)(\bm{{S}}_b)^\intercal) \\
-       \sum_b \mathrm{tr}((\bm{{S}}_b)^\intercal(\bm{{S}}_b)) & \sum_b \mathrm{tr}(((\bm{{S}}_b)^\intercal(\bm{{S}}_b))^2)
+       3N & \sum_b \mathrm{tr}( (\mathbf{{S}}_b)(\mathbf{{S}}_b)^\intercal) \\
+       \sum_b \mathrm{tr}((\mathbf{{S}}_b)^\intercal(\mathbf{{S}}_b)) & \sum_b \mathrm{tr}(((\mathbf{{S}}_b)^\intercal(\mathbf{{S}}_b))^2)
      \end{bmatrix}
      \begin{bmatrix}
        \sigma_M^2 \\
@@ -132,28 +132,28 @@ expectation (`[ESigmaMD2] <#ESigmaMD2>`__). Set
      \end{bmatrix}
      =
      \begin{bmatrix}
-       \sum_b \mathrm{tr}(\bm{{\Sigma}}_b) \\
-       \sum_b \mathrm{tr}((\bm{{S}}_b)^\intercal\bm{{\Sigma}}_b (\bm{{S}}_b))
+       \sum_b \mathrm{tr}(\mathbf{{\Sigma}}_b) \\
+       \sum_b \mathrm{tr}((\mathbf{{S}}_b)^\intercal\mathbf{{\Sigma}}_b (\mathbf{{S}}_b))
      \end{bmatrix},
 
 which is easily solved. One can also solve for the the full covariance
-matrices :math:`\bm{{\Sigma}}_M, \bm{{\Sigma}}_D` via gradient descent,
+matrices :math:`\mathbf{{\Sigma}}_M, \mathbf{{\Sigma}}_D` via gradient descent,
 since the gradient is easily computed analytically. [Here Jonathan says
 he tested “this” out in Python, and it seemed to work pretty well, so
 the assumptions may be justified. But we ignore whether “this” refers to
-the simplified :math:`\bm{{\Sigma }}= \sigma^2 \bm{{1}}` or to the full
-computation with arbitrary :math:`\bm{{\Sigma}}`.]
+the simplified :math:`\mathbf{{\Sigma }}= \sigma^2 \mathbf{{1}}` or to the full
+computation with arbitrary :math:`\mathbf{{\Sigma}}`.]
 
 Now, if we work in lab-based q-space, under the simplifying assumptions
 above, we find a covariance matrix **TODO: this is notationally wrong
 and totally obscure**
 
-.. math:: \bm{{\Sigma }}= \sigma_M^2 \bm{{1}} + \sigma_D^2 \bm{{A}}_b \bm{{A}}_b^\intercal
+.. math:: \mathbf{{\Sigma }}= \sigma_M^2 \mathbf{{1}} + \sigma_D^2 \mathbf{{A}}_b \mathbf{{A}}_b^\intercal
 
 .. _kabschs-coordinate-system-1:
 
 
-absch’s Coordinate System
+Kabsch’s Coordinate System
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 In :cite:`t-Kabsch1988` Kabsch introduced a per-peak
@@ -165,18 +165,18 @@ the following:
 .. math::
 
    \begin{aligned}
-     {\bm{{e}}}_1 &= ({\bm{{q}}}\times {\bm{{k}}}_\text{i}) / |{\bm{{q}}}\times {\bm{{k}}}_\text{i}| \\
-     {\bm{{e}}}_2 &= ({\bm{{q}}}\times {\bm{{e}}}_1) / |{\bm{{q}}}\times {\bm{{e}}}_1| \\
-     {\bm{{e}}}_3 &= ({\bm{{k}}}_\text{f}+ {\bm{{k}}}_\text{i}) / |{\bm{{k}}}_\text{f}+ {\bm{{k}}}_\text{i}|\end{aligned}
+     {\mathbf{{e}}}_1 &= ({\mathbf{{q}}}\times {\mathbf{{k}}}_\text{i}) / |{\mathbf{{q}}}\times {\mathbf{{k}}}_\text{i}| \\
+     {\mathbf{{e}}}_2 &= ({\mathbf{{q}}}\times {\mathbf{{e}}}_1) / |{\mathbf{{q}}}\times {\mathbf{{e}}}_1| \\
+     {\mathbf{{e}}}_3 &= ({\mathbf{{k}}}_\text{f}+ {\mathbf{{k}}}_\text{i}) / |{\mathbf{{k}}}_\text{f}+ {\mathbf{{k}}}_\text{i}|\end{aligned}
 
 with corresponding coordinates
 
 .. math::
 
    \begin{aligned}
-     \epsilon_1 &= {\bm{{e}}}_1 \cdot ({\bm{{k}}}_\text{f}'-{\bm{{k}}}_\text{f}) / |{\bm{{k}}}_\text{f}| \\
-     \epsilon_2 &= {\bm{{e}}}_2 \cdot ({\bm{{k}}}_\text{f}'-{\bm{{k}}}_\text{f}) / |{\bm{{k}}}_\text{f}| \\
-     \epsilon_3 &= {\bm{{e}}}_3 \cdot (\bm{{R}}_{\phi'-\phi}{\bm{{q}}}-{\bm{{q}}}) / |{\bm{{q}}}|\end{aligned}
+     \epsilon_1 &= {\mathbf{{e}}}_1 \cdot ({\mathbf{{k}}}_\text{f}'-{\mathbf{{k}}}_\text{f}) / |{\mathbf{{k}}}_\text{f}| \\
+     \epsilon_2 &= {\mathbf{{e}}}_2 \cdot ({\mathbf{{k}}}_\text{f}'-{\mathbf{{k}}}_\text{f}) / |{\mathbf{{k}}}_\text{f}| \\
+     \epsilon_3 &= {\mathbf{{e}}}_3 \cdot (\mathbf{{R}}_{\phi'-\phi}{\mathbf{{q}}}-{\mathbf{{q}}}) / |{\mathbf{{q}}}|\end{aligned}
 
 The coordinates :math:`\epsilon_1, \epsilon_2` correspond to the angular
 distribution (in radians) of the peak, as if it were measured on the
@@ -185,31 +185,31 @@ the intensity distribution as
 :math:`\exp(-(\epsilon_1^2 + \epsilon_2^2)/2 \sigma_D^2)`.
 
 To understand the last coordinate, consider the following. Take a peak
-with center :math:`{\bm{{q}}}` and consider a nearby point
-:math:`{\bm{{q}}}'`. We project :math:`{\bm{{q}}}'` back to the Ewald
-sphere by rotating along the axis :math:`{\bm{{e}}}_1` (which is the
-normal of the plane containing :math:`{\bm{{k}}}_\text{f}` and
-:math:`{\bm{{k}}}_\text{i}`). The velocity of :math:`q` when it crosses
+with center :math:`{\mathbf{{q}}}` and consider a nearby point
+:math:`{\mathbf{{q}}}'`. We project :math:`{\mathbf{{q}}}'` back to the Ewald
+sphere by rotating along the axis :math:`{\mathbf{{e}}}_1` (which is the
+normal of the plane containing :math:`{\mathbf{{k}}}_\text{f}` and
+:math:`{\mathbf{{k}}}_\text{i}`). The velocity of :math:`q` when it crosses
 the Ewald sphere by rotating along this axis is
-:math:`{\bm{{e}}}_1 \times {\bm{{q}}}`. It is easy to verify that
+:math:`{\mathbf{{e}}}_1 \times {\mathbf{{q}}}`. It is easy to verify that
 
-.. math:: {\bm{{e}}}_1 \times {\bm{{q}}}= q {\bm{{e}}}_3
+.. math:: {\mathbf{{e}}}_1 \times {\mathbf{{q}}}= q {\mathbf{{e}}}_3
 
 and therefore the coordinate :math:`\epsilon_3` may be interpreted as
 (approximately) and angular distance from the Ewald sphere.
 
-To better understand :math:`{\bm{{e}}}_3`, consider the following: we
-want to find the axis :math:`\bm{{a}}` such that :math:`{\bm{{q}}}`
+To better understand :math:`{\mathbf{{e}}}_3`, consider the following: we
+want to find the axis :math:`\mathbf{{a}}` such that :math:`{\mathbf{{q}}}`
 passes through the Ewald sphere as fast as possible. Hence, we want to
-maximize :math:`(\bm{{a}}\times {\bm{{q}}}) \cdot {\bm{{k}}}_\text{f}`
-subject to the constraint :math:`\bm{{a}}\cdot \bm{{a}}= 1`. Now
-:math:`(\bm{{a}}\times {\bm{{q}}}) \cdots {\bm{{k}}}_\text{f}) = \bm{{a}}\cdot (\bm{{a}}\times
-{\bm{{k}}}_\text{f}) = \bm{{a}}\cdot
-({\bm{{k}}}_\text{f}\times {\bm{{k}}}_\text{i})`, so by the method of
+maximize :math:`(\mathbf{{a}}\times {\mathbf{{q}}}) \cdot {\mathbf{{k}}}_\text{f}`
+subject to the constraint :math:`\mathbf{{a}}\cdot \mathbf{{a}}= 1`. Now
+:math:`(\mathbf{{a}}\times {\mathbf{{q}}}) \cdots {\mathbf{{k}}}_\text{f}) = \mathbf{{a}}\cdot (\mathbf{{a}}\times
+{\mathbf{{k}}}_\text{f}) = \mathbf{{a}}\cdot
+({\mathbf{{k}}}_\text{f}\times {\mathbf{{k}}}_\text{i})`, so by the method of
 Langrange multipliers we must solve
-:math:`{\bm{{k}}}_\text{f}\times {\bm{{k}}}_\text{i}= \lambda \bm{{a}}`,
+:math:`{\mathbf{{k}}}_\text{f}\times {\mathbf{{k}}}_\text{i}= \lambda \mathbf{{a}}`,
 which tells us immediately that the axis is in the direction of
-:math:`{\bm{{e}}}_1`.
+:math:`{\mathbf{{e}}}_1`.
 
 Least squares integration
 -------------------------
@@ -234,8 +234,8 @@ of peak and background points. Assume that we know the resolution
 function :math:`R_i`, normalized as
 
 .. math::
+   :label: Eresnor
 
-   \label{Eresnor}
      \sum_p R_p = 1.
 
 We model the observed intensities :math:`M_p` as
@@ -287,16 +287,16 @@ do not change within some given convergence criterion.
 probable values of :math:`B,I` from the conditional probability
 
 .. math::
+   :label: Ebayes
 
-   \label{Ebayes}
      P(B,I|M) \propto P(M|B,I) P(B) P(I).
 
 Count statistics of the single pixels are independent of each other,
 hence
 
 .. math::
+   :label: Ec2p
 
-   \label{Ec2p}
      P(M|B,I) = \prod_p\, c(M_p|B,I;R_p)
 
 with the single-pixel count probability distribution given by Poisson
@@ -306,12 +306,12 @@ statistics,
 
 with :math:`\lambda=B+Ir`.
 
-Rewrite (`[Ebayes] <#Ebayes>`__) as
+Rewrite :eq:`Ebayes` as
 
 .. math:: \ln P(B,I|M) = \sum_p\Big\{M_p\ln(B+IR_p)-(B+IR_p)\Big\} +\ln P(B) + \ln P(I) + \mathrm{const}.
 
 Let :math:`N` pixels contribute to the sum. Use the
-normalization (`[Eresnor] <#Eresnor>`__). Then
+normalization :eq:`Eresnor`. Then
 
 .. math:: \ln P(B,I|M) = \sum_p\Big\{M_p\ln(B+IR_p)\Big\}-(NB+I) +\ln P(B) + \ln P(I) + \mathrm{const}.
 
@@ -342,12 +342,12 @@ described in detail in :cite:`t-Wilkinson1988`. In the article
 :cite:`t-Prince1997` there is a detailed comparison between
 this method and profile fitting. For a given peak with mean background
 :math:`\mu_b`, center :math:`x_0`, and covariance matrix
-:math:`\bm{{\Sigma}}`, define
+:math:`\mathbf{{\Sigma}}`, define
 
 .. math::
 
    \begin{aligned}
-     X_s &= \{ x \ | \ (x-x_0)^\intercal\bm{{\Sigma}}^{-1}(x-x_0) \leq s^2\} \\
+     X_s &= \{ x \ | \ (x-x_0)^\intercal\mathbf{{\Sigma}}^{-1}(x-x_0) \leq s^2\} \\
      I_s &= \sum_{X_\sigma} I_x\end{aligned}
 
 Then the error of :math:`I_\sigma` can be estimated (assuming Poisson
@@ -454,14 +454,14 @@ The fitted intensity is then defined to be
 
 .. [1]
    The determinant of a matrix is the product of all eigenvalues. Guess
-   three eigenvectors of :math:`\bm{{A}}`: :math:`{\bm{{k}}}_\text{f}`,
-   :math:`K^2{\bm{{k}}}_\text{f}-({\bm{{k}}}_\text{f}{\bm{{k}}}_\text{i}){\bm{{k}}}_\text{i}`,
-   :math:`{\bm{{k}}}_\text{f}\times{\bm{{k}}}_\text{i}`. Obtain the
+   three eigenvectors of :math:`\mathbf{{A}}`: :math:`{\mathbf{{k}}}_\text{f}`,
+   :math:`K^2{\mathbf{{k}}}_\text{f}-({\mathbf{{k}}}_\text{f}{\mathbf{{k}}}_\text{i}){\mathbf{{k}}}_\text{i}`,
+   :math:`{\mathbf{{k}}}_\text{f}\times{\mathbf{{k}}}_\text{i}`. Obtain the
    eigenvalues
-   :math:`{\bm{{\hat{\mathbf{k}}}}}_\text{f}{\bm{{\hat{\mathbf{k}}}}}_\text{i}-1,-1,-1`.
+   :math:`{\mathbf{{\hat{\mathbf{k}}}}}_\text{f}{\mathbf{{\hat{\mathbf{k}}}}}_\text{i}-1,-1,-1`.
    To evaluate
-   :math:`{\bm{{\hat{\mathbf{k}}}}}_\text{f}{\bm{{\hat{\mathbf{k}}}}}_\text{i}`,
-   use :math:`{\bm{{k}}}_\text{f}^2=({\bm{{k}}}_\text{i}+{\bm{{q}}})^2`.
+   :math:`{\mathbf{{\hat{\mathbf{k}}}}}_\text{f}{\mathbf{{\hat{\mathbf{k}}}}}_\text{i}`,
+   use :math:`{\mathbf{{k}}}_\text{f}^2=({\mathbf{{k}}}_\text{i}+{\mathbf{{q}}})^2`.
 
 .. bibliography:: references.bib
     :cited:
