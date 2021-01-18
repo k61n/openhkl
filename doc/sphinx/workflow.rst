@@ -435,7 +435,7 @@ symmetry-forbidden reflections can be removed from this collection.
    +==================+========+========================================+
    | **Unit cell**    |        | Unit cell to predict peaks from        |
    +------------------+--------+----------------------------------------+
-   | **Interpolaton** |        |                                        |
+   | **Interpolation** |        |                                        |
    +------------------+--------+----------------------------------------+
    | **d min**        | Å      | Only include peaks above this d value  |
    +------------------+--------+----------------------------------------+
