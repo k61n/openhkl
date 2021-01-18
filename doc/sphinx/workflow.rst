@@ -5,11 +5,11 @@ Workflow
 
 The workflow in NSXTool approximately follows the order of the icons in
 the sidebar: find peaks, filter, autoindex, predict, refine, merge. The
-‘\ ``Home``\ tab enables experiment creation and loading/saving, while
+``Home`` tab enables experiment creation and loading/saving, while
 the ``Experiment`` tab allows inspection and editing of various aspects
 of the physical experiment.
 
-The virutual “experiment” is the highest level object, and contains all
+The virtual “experiment” is the highest level object, and contains all
 information from the physical experiment (the data sets), plus any
 derived/reduced data, such as the unit cell, peaks, indices, and merged
 data statistics. This object can be saved at any stage in the workflow
