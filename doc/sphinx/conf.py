@@ -34,7 +34,12 @@ extensions = ['sphinx.ext.todo',
     'sphinx.ext.mathjax',
     'sphinx.ext.githubpages',
     'sphinx.ext.autosectionlabel',
-    'sphinxcontrib.bibtex']
+    'sphinxcontrib.bibtex',
+    'breathe']
+
+# Breathe for incorporating Doxygen documentation
+breathe_projects = {"NSXTool" : "../build/doxygen/xml"}
+breathe_default_project = "NSXTool"
 
 # Bibtex reference file
 bibtex_bibfiles = ['references.bib']

@@ -14,6 +14,7 @@ statistics.
 * :doc:`integration`
 * :doc:`dataquality`
 * :doc:`theory`
+* :doc:`coderef`
 
 .. toctree::
    :maxdepth: 2
@@ -24,8 +25,7 @@ statistics.
    integration
    dataquality
    theory
-
-
+   coderef
 
 
 Indices and tables

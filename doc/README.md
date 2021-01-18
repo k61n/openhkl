@@ -6,7 +6,7 @@ docs](https://readthedocs.org). The prerequisite Python modules can be installed
 via the Python package management tool Pip:
     
 ```
-pip install sphinx sphinx-contrib-bibtex sphinx-rtd-theme
+pip install sphinx sphinx-contrib-bibtex sphinx-rtd-theme breathe
 ```
 
 The documents can then be compiled with by running `make html` from the `doc`
