@@ -1,3 +1,10 @@
+if(NOT DOXYGEN_FOUND)
+  message (FATAL_ERROR "Could not find doxygen")
+endif()
+if(NOT SPHINX_FOUND)
+  message (FATAL_ERROR "Could not find sphinx-build")
+endif()
+
 set(DOXYGEN_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/doxygen/)
 set(DOXYGEN_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/doxygen/)
 set(DOXYGEN_XML_DIR ${DOXYGEN_OUTPUT_DIRECTORY}/xml)
