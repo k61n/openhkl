@@ -1,0 +1,27 @@
+project(NSXDocs)
+
+set(DOXYGEN_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/doxygen/)
+set(DOXYGEN_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/doxygen/)
+
+configure_file(${DOXYGEN_SOURCE_DIR}/Doxyfile ${DOXYGEN_OUTPUT_DIRECTORY}/Doxyfile)
+
+set(SPHINX_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/sphinx/)
+set(SPHINX_BUILD_DIR ${CMAKE_CURRENT_BINARY_DIR}/sphinx/)
+set(SPHINX_BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR}/_binary/)
+set(SPHINX_CACHE_DIR ${CMAKE_CURRENT_BINARY_DIR}/sphinx/_doctrees/)
+set(SPHINX_HTML_DIR ${CMAKE_CURRENT_BINARY_DIR}/sphinx/html/)
+
+configure_file(${SPHINX_SOURCE_DIR}/conf.py ${SPHINX_BUILD_DIR}/conf.py)
+
+set(SPHINX_COMMAND "${SPHINX_EXECUTABLE} -q -b html
+  -d ${SPHINX_CACHE_DIR} ${SPHINX_SOURCE_DIR} ${SPHINX_HTML_DIR}")
+
+add_custom_target(
+  docs
+  COMMAND doxygen ${DOXYGEN_OUTPUT_DIRECTORY}/Doxyfile
+  COMMAND ${SPHINX_EXECUTABLE}
+    -q -b html
+    -d "${SPHINX_CACHE_DIR}"
+    "${SPHINX_SOURCE_DIR}"
+    "${SPHINX_HTML_DIR}"
+  COMMENT "Building HTML documentation with Doxygen and Sphinx")

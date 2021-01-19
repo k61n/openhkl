@@ -25,6 +25,7 @@ option(NSX_VALGRIND "Run tests with valgrind" OFF)
 option(NSX_SANITIZE "Compile with clang's -fsanitize (must also set NSX_SANITIZER variable)" OFF)
 option(NSX_PYTHON "Generate Python bindings" ON)
 option(BUILD_TESTING "Build the tests" ON)
+option(BUILD_DOCUMENTATION "Build Sphinx/Doxygen documentation" ON)
 
 ###################################################################################################
 #  Build type and compiler flags
@@ -163,9 +164,19 @@ if(NSX_PYTHON AND NOT MSVC AND BUILD_TESTING)
 endif()
 
 ###################################################################################################
-#  Build components
+#  Build documentation
 ###################################################################################################
 
+if(BUILD_DOCUMENTATION)
+    find_package(Doxygen)
+    message(STATUS "Doxygen: FOUND=${DOXYGEN_FOUND}, VERSION=${DOXYGEN_VERSION}")
+    find_package(Sphinx)
+    message(STATUS "SPHINX: FOUND=${SPHINX_FOUND}, SPHINX_EXECUTABLE=${SPHINX_EXECUTABLE}")
+endif()
+
+###################################################################################################
+#  Build components
+###################################################################################################
 add_subdirectory(base)
 add_subdirectory(tables)
 add_subdirectory(core)
@@ -190,4 +201,8 @@ if(NSX_PYTHON)
     if(BUILD_TESTING)
         add_subdirectory(test/python)
     endif()
+endif()
+
+if(BUILD_DOCUMENTATION)
+    add_subdirectory(doc)
 endif()
