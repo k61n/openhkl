@@ -8,7 +8,6 @@
 #   - SPHINX_EXECUTABLE     .. full path to library
 #
 
-
 find_program(SPHINX_EXECUTABLE
              NAMES sphinx-build sphinx-build2
              DOC "Path to sphinx-build executable")

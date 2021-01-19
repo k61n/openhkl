@@ -136,12 +136,10 @@ set(QCustomPlot_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/3rdparty/qcustomplot)
 #        INCLUDE_DIR=${QCustomPlot_INCLUDE_DIR}")
 
 find_package(Eigen3 MODULE REQUIRED)
-message(STATUS "Eigen3: FOUND=${EIGEN3_FOUND},
-        VERSION=${EIGEN3_VERSION}, INCLUDE_DIR=${EIGEN3_INCLUDE_DIR}")
+message(STATUS "Found Eigen3: QHULL_VERSION=${EIGEN3_VERSION}, QHULL_INCLUDE_DIR=${EIGEN3_INCLUDE_DIR}")
 
 find_package(Qhull MODULE REQUIRED)
-message(STATUS "QHull: FOUND=${QHULL_FOUND},
-        INCLUDE_DIR=${QHULL_INCLUDE_DIR}")
+message(STATUS "Found QHull: QHULL_INCLUDE_DIR=${QHULL_INCLUDE_DIR}")
 
 include(CheckDependencies)
 
@@ -169,9 +167,8 @@ endif()
 
 if(BUILD_DOCUMENTATION)
     find_package(Doxygen)
-    message(STATUS "Doxygen: FOUND=${DOXYGEN_FOUND}, VERSION=${DOXYGEN_VERSION}")
     find_package(Sphinx)
-    message(STATUS "SPHINX: FOUND=${SPHINX_FOUND}, SPHINX_EXECUTABLE=${SPHINX_EXECUTABLE}")
+    message(STATUS "Found Sphinx: SPHINX_EXECUTABLE=${SPHINX_EXECUTABLE}")
 endif()
 
 ###################################################################################################
@@ -183,7 +180,7 @@ add_subdirectory(core)
 
 if(BUILD_NSX_GUI)
     find_package(QCR MODULE REQUIRED)
-    message(STATUS "libQCR: FOUND=${QCR_FOUND}, VERSION=${QCR_VERSION}, LIB=${QCR_LIBRARIES}")
+    message(STATUS "Found libQCR: VERSION=${QCR_VERSION}, LIB=${QCR_LIBRARIES}")
     add_subdirectory(gui)
     add_subdirectory(main)
     if(BUILD_NSX_OLD_APPS)

@@ -38,7 +38,7 @@ extensions = ['sphinx.ext.todo',
     'breathe']
 
 # Breathe for incorporating Doxygen documentation
-breathe_projects = {"NSXTool" : "../build/doxygen/xml"}
+breathe_projects = {"NSXTool" : "@DOXYGEN_XML_DIR@"}
 breathe_default_project = "NSXTool"
 
 # Bibtex reference file

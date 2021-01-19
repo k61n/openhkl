@@ -1,7 +1,6 @@
-project(NSXDocs)
-
 set(DOXYGEN_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/doxygen/)
 set(DOXYGEN_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/doxygen/)
+set(DOXYGEN_XML_DIR ${DOXYGEN_OUTPUT_DIRECTORY}/xml)
 
 configure_file(${DOXYGEN_SOURCE_DIR}/Doxyfile ${DOXYGEN_OUTPUT_DIRECTORY}/Doxyfile)
 
@@ -11,7 +10,7 @@ set(SPHINX_BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR}/_binary/)
 set(SPHINX_CACHE_DIR ${CMAKE_CURRENT_BINARY_DIR}/sphinx/_doctrees/)
 set(SPHINX_HTML_DIR ${CMAKE_CURRENT_BINARY_DIR}/sphinx/html/)
 
-configure_file(${SPHINX_SOURCE_DIR}/conf.py ${SPHINX_BUILD_DIR}/conf.py)
+configure_file(${SPHINX_SOURCE_DIR}/conf.py ${SPHINX_BINARY_DIR}/conf.py @ONLY)
 
 set(SPHINX_COMMAND "${SPHINX_EXECUTABLE} -q -b html
   -d ${SPHINX_CACHE_DIR} ${SPHINX_SOURCE_DIR} ${SPHINX_HTML_DIR}")
@@ -21,6 +20,7 @@ add_custom_target(
   COMMAND doxygen ${DOXYGEN_OUTPUT_DIRECTORY}/Doxyfile
   COMMAND ${SPHINX_EXECUTABLE}
     -q -b html
+    -c "${SPHINX_BINARY_DIR}"
     -d "${SPHINX_CACHE_DIR}"
     "${SPHINX_SOURCE_DIR}"
     "${SPHINX_HTML_DIR}"
