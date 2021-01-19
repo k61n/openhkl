@@ -25,6 +25,7 @@ option(NSX_VALGRIND "Run tests with valgrind" OFF)
 option(NSX_SANITIZE "Compile with clang's -fsanitize (must also set NSX_SANITIZER variable)" OFF)
 option(NSX_PYTHON "Generate Python bindings" ON)
 option(BUILD_TESTING "Build the tests" ON)
+option(BUILD_DOCUMENTATION "Build Sphinx/Doxygen documentation" ON)
 
 ###################################################################################################
 #  Build type and compiler flags
@@ -135,12 +136,10 @@ set(QCustomPlot_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/3rdparty/qcustomplot)
 #        INCLUDE_DIR=${QCustomPlot_INCLUDE_DIR}")
 
 find_package(Eigen3 MODULE REQUIRED)
-message(STATUS "Eigen3: FOUND=${EIGEN3_FOUND},
-        VERSION=${EIGEN3_VERSION}, INCLUDE_DIR=${EIGEN3_INCLUDE_DIR}")
+message(STATUS "Found Eigen3: QHULL_VERSION=${EIGEN3_VERSION}, QHULL_INCLUDE_DIR=${EIGEN3_INCLUDE_DIR}")
 
 find_package(Qhull MODULE REQUIRED)
-message(STATUS "QHull: FOUND=${QHULL_FOUND},
-        INCLUDE_DIR=${QHULL_INCLUDE_DIR}")
+message(STATUS "Found QHull: QHULL_INCLUDE_DIR=${QHULL_INCLUDE_DIR}")
 
 include(CheckDependencies)
 
@@ -163,16 +162,25 @@ if(NSX_PYTHON AND NOT MSVC AND BUILD_TESTING)
 endif()
 
 ###################################################################################################
-#  Build components
+#  Build documentation
 ###################################################################################################
 
+if(BUILD_DOCUMENTATION)
+    find_package(Doxygen)
+    find_package(Sphinx)
+    message(STATUS "Found Sphinx: SPHINX_EXECUTABLE=${SPHINX_EXECUTABLE}")
+endif()
+
+###################################################################################################
+#  Build components
+###################################################################################################
 add_subdirectory(base)
 add_subdirectory(tables)
 add_subdirectory(core)
 
 if(BUILD_NSX_GUI)
     find_package(QCR MODULE REQUIRED)
-    message(STATUS "libQCR: FOUND=${QCR_FOUND}, VERSION=${QCR_VERSION}, LIB=${QCR_LIBRARIES}")
+    message(STATUS "Found libQCR: VERSION=${QCR_VERSION}, LIB=${QCR_LIBRARIES}")
     add_subdirectory(gui)
     add_subdirectory(main)
     if(BUILD_NSX_OLD_APPS)
@@ -190,4 +198,8 @@ if(NSX_PYTHON)
     if(BUILD_TESTING)
         add_subdirectory(test/python)
     endif()
+endif()
+
+if(BUILD_DOCUMENTATION)
+    add_subdirectory(doc)
 endif()
