@@ -72,25 +72,36 @@ struct IndexerParameters {
     void log(const Level& level);
 };
 
-//! Class to automatically index a set of peaks
+/*! \brief Class to automatically index a set of peaks
+ *
+ *  This class uses 1D Fourier transform algorithm to generate a list of
+ *  candidate unit cells (I. Steller et al., J. Appl. Cryst., 30:1036, 1997.
+ *  doi:10.1107/S0021889897008777).
+ *
+ *  A set of random q vectors is generated on the unit sphere, and project the
+ *  peak q vectors onto each direction; if the direction corresponds to a
+ *  lattice plane, the Fourier transform will be strongly periodic, and the
+ *  first non-zero frequency corresponds to the lattice plane. Each peak is
+ *  assigned a set of Miller indices and the unit cell determined from these.
+ */
 class AutoIndexer {
  public:
     //! Constructor
     AutoIndexer();
-    //! Return the parameters
+    //! Return the autoindexing parameters
     IndexerParameters parameters() const { return _params; };
-    //! Set the parameters
+    //! Set the autoindexing parameters
     void setParameters(IndexerParameters parameters) { _params = parameters; };
-    //! Performs the auto-indexing
+    //! Perform the autoindexing
     void autoIndex(const std::vector<Peak3D*>& peaks);
     //! Autoindex by passing a peak collection (avoid SWIG memory leak)
     void autoIndex(PeakCollection* peaks);
-    //! Returns list of the best solutions ordered by percentage of successfully indexed peaks
+    //! Return a list of the best solutions ordered by percentage of successfully indexed peaks
     const std::vector<RankedSolution>& solutions() const;
 
-    //! Set the handler
+    //! Set the progress handler
     void setHandler(std::shared_ptr<ProgressHandler> handler) { _handler = handler; };
-    //! Set the handler
+    //! Remove the progress handler
     void unsetHandler() { _handler = nullptr; };
     //! Dump SolutionList as a string
     std::string solutionsToString() const;
@@ -101,10 +112,15 @@ class AutoIndexer {
     UnitCell* goodSolution(UnitCell* ref_cell, double length_tol, double angle_tol);
 
  private:
+    //! Get a vector of candidate unit cells from a list of peaks using the
+    //! Fourier transform method
     void computeFFTSolutions(const std::vector<Peak3D*>& peaks);
+    //! Do least squares minimisation to refine candidate unit cells
     void refineSolutions(const std::vector<Peak3D*>& peaks);
+    //! Rand solutions by quality (percentage of peak indexed)
     void rankSolutions();
-    void refineConstraints();
+    // Unused - void refineConstraints();
+    //! Remove bad candidate unit cells
     void removeBad(double quality);
 
     IndexerParameters _params;
