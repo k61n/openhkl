@@ -21,7 +21,7 @@ namespace nsx {
 
 enum class listtype { FOUND, FILTERED, PREDICTED, INDEXING };
 
-//! Container for a peaklist and its metadata
+//! Container for a collection of peaks and its metadata
 class PeakCollection {
  public:
     //! Default contructor

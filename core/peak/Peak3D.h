@@ -25,7 +25,15 @@ namespace nsx {
 class IPeakIntegrator;
 class MillerIndex;
 
-//! Stores integrated peaks, including their shape and location.
+/*! \brief A peak object storing real-space information on the peak
+ *
+ *  This object stores the real-space shape as an Ellipsoid object, including
+ *  center of the detector spot in 3D (x, y, frame). The frame does not have to
+ *  be an integer value, as the reflexis center is generally between two frames.
+
+ *  Also implements integration and reciprocal space transformation, as well as
+ *  storing various metadata.
+ */
 
 class Peak3D {
  public:
@@ -47,91 +55,88 @@ class Peak3D {
 
     //! Compute the shape in q-space. May throw if there is no valid q-space ellipsoid.
     Ellipsoid qShape() const;
-    //! Returns the shape of the peak as an ellipsoid in detector coordinates
+    //! Return the shape of the peak as an ellipsoid in detector coordinates
     const Ellipsoid& shape() const;
 
-    //! Returns the intensity, after scaling, transmission, and Lorentz factor corrections
+    //! Return the intensity, after scaling, transmission, and Lorentz factor corrections
     Intensity correctedIntensity() const;
-    //! Returns the raw intensity of the peak.
+    //! Return the raw intensity of the peak.
     Intensity rawIntensity() const;
-
-    //! Returns mean background of the peak
+    //! Return mean background of the peak
     Intensity meanBackground() const;
 
-    //! Returns shape scale used to define peak region
+    //! Return shape scale used to define peak region
     double peakEnd() const;
-    //! Returns shape scale used to define beginning of background region
+    //! Return shape scale used to define beginning of background region
     double bkgBegin() const;
-    //! Returns shape scale used to define end of background region
+    //! Return shape scale used to define end of background region
     double bkgEnd() const;
 
     //! Returns the scaling factor.
     double scale() const;
-    //! Sets the scaling factor.
+    //! Set the scaling factor.
     void setScale(double factor);
 
-    //! Sets the peak selection state
-    void setSelected(bool);
-
-    //! Returns the peak selection state
+    //! Is the peak selected? Selected peaks are "valid", and have not been
+    //! automatically rejected by the integrator.
     bool selected() const;
-
-    //! Sets the peak masking state
-    void setMasked(bool masked);
-    //! Return the peak masking state
+    //! Set the peak selection state
+    void setSelected(bool);
+    //! Is the peak masked? Masked peaks are "invalid", and have been manually
+    //! deselected via a selection box in a DetectorScene.
     bool masked() const;
+    //! Return the peak masking state
+    void setMasked(bool masked);
 
-    //! Returns true if peak is enable (selected and not masked)
+    //! Is the peak enabled (selected and not masked)?
     bool enabled() const;
 
-    //! Sets the transmission factor
+    //! Set the transmission factor
     void setTransmission(double transmission);
-    //! Returns the transmission factor
+    //! Return the transmission factor
     double transmission() const;
 
-    //! Add a unit cell to the peak, optionally make it the active cell
+    //! Assign a unit cell to the peak
     void setUnitCell(const UnitCell* uc);
-    //! Returns the active unit cell
+    //! Returns the unit cell
     const UnitCell* unitCell() const;
 
-    //! Sets whether the peak is observed or predicted
+    //! Designates the peak as predicted (true) or observed (false)
     void setPredicted(bool predicted);
-    //! Returns if the peak is predicted
+    //! Is the peak predicted (as opposed to observed)?
     bool predicted() const;
 
-    //! Sets whether the peak is observed or predicted
+    //! Designates the peak as "caught" by a filter
     void caughtYou(bool caught);
-    //! Sets whether the peak is observed or predicted
+    //! Designates the peak as "rejected" by a filter
     void rejectYou(bool reject);
-    //! Returns if the peak is predicted
+    //! Has the peak been caught by a filter?
     bool caughtByFilter() const;
 
-    //! Update the integration of the peak
+    //! Manually set the integration parameters for this peak
     void setManually(
         Intensity intensity, double peakEnd, double bkgBegin, double bkgEnd, double scale,
         double transmission, Intensity mean_bkg, bool predicted, bool selected, bool masked);
 
-    //! Update the integration of the peak
+    //! Update the integration parameters for this peak
     void updateIntegration(
         const std::vector<Intensity>& rockingCurve, const Intensity& meanBackground,
         const Intensity& integratedIntensity, double peakEnd, double bkgBegin, double bkgEnd);
-    //! Returns the q vector of the peak, transformed into sample coordinates.
+    //! Return the q vector of the peak, transformed into sample coordinates.
     ReciprocalVector q() const;
-    //! Returns the predicted q vector of the peak, based on Miller index.
-    // unused --- ReciprocalVector qPredicted() const;
-    //! Returns the data set to which this peak belongs
+    //! Return the data set to which this peak belongs
     sptrDataSet dataSet() const { return _data; }
-    //! Sets raw intensity count (from image), with no corrections
+    //! Set the raw intensity count (from image), with no corrections
     void setRawIntensity(const Intensity& i);
-    //! Returns peak center at the given frame
-    // unused --- DetectorEvent predictCenter(double frame) const;
     //! Get the Miller indices for this peak
     const MillerIndex& hkl() const;
     //! Set the Miller indices given the q-vector and unit cell
     void setMillerIndices();
-    //! Return the integration variables
+    //! Return the peak scale
     double getPeakEnd() { return _peakEnd; };
+    //! Return the beginniing of the background region (in peak scales)
     double getBkgBegin() { return _bkgBegin; };
+    //! Return the end of the background region (in peak scales)
     double getBkgEnd() { return _bkgEnd; };
 
 #ifndef SWIG
@@ -154,16 +159,24 @@ class Peak3D {
     //! Miller indices calculated during autoindexing
     MillerIndex _hkl = {0, 0, 0};
 
+    //! Unit celll assigned to this peak
     const UnitCell* _unitCell = nullptr;
 
     double _scale;
+    //! Whether this peak is selected (valid)
     bool _selected;
+    //! Whether this peak has been masked (invalid)
     bool _masked;
+    //! Whether this peak has been predicted (as opposed to observed)
     bool _predicted;
+    //! Whether this peak has been caught by a filter
     bool _caught_by_filter;
+    //! Whether this peak has been rejected by a filter
     bool _rejected_by_filter;
+    //! The transmission factor
     double _transmission;
 
+    //! Pointer to the dataset from which this peak is derived
     sptrDataSet _data;
     //! Peak profile along frame (rotation) axis
     std::vector<Intensity> _rockingCurve;
