@@ -28,35 +28,36 @@ class PeakCollection {
     PeakCollection();
     PeakCollection(const std::string& name, listtype type);
 
-    //! Sets name of the unit cell
+    //! Sets name of the PeakCollection
     void setName(const std::string& name);
-    //! Returns the name
+    //! Returns the name of the PeakCollection
     std::string name() const;
 
-    //! Populate the peaks
+    //! Populate the PeakCollection with a vector of shared pointers to peaks
     void populate(const std::vector<std::shared_ptr<nsx::Peak3D>> peak_list);
-    //! Populate the peaks
+    //! Populate the PeakCollection with a vector of raw pointers to peaks
     void populate(const std::vector<nsx::Peak3D*> peak_list);
-    //! Append one peak
+    //! Append one peak to the PeakCollection
     void push_back(const nsx::Peak3D& peak);
-    //! Append one peak
+    //! Append one peak to the PeakCollection
     void addPeak(const std::shared_ptr<nsx::Peak3D>& peak);
-    //! Populate the peaks
+    //! Populate from another collection, taking only peaks caughtByFilter
     void populateFromFiltered(PeakCollection* collection);
-    //! Reset the peaks
+    //! Remove all peaks from the PeakCollection
     void reset();
-    //! Returns the peak with the given index
+    //! Return the peak with the given index
     const nsx::Peak3D* getPeak(int index) const { return _peaks.at(index).get(); }
+    //! Return the peak with the given index
     nsx::Peak3D* getPeak(int index) { return _peaks.at(index).get(); }
 
-    //! Returns the peak with index
+    //! Return a std::vector of pointers to peaks
     std::vector<nsx::Peak3D*> getPeakList() const;
-    //! Returns the peak with index
+    //! Return a std::vector of pointers to peaks caughtByFilter
     std::vector<nsx::Peak3D*> getFilteredPeakList() const;
 
-    //! Returns the peak with index
+    //! Return the listtype of the PeakCollection (FOUND, PREDICTED, etc.)
     nsx::listtype type() const { return _type; };
-    //! Returns the peak with index
+    //! Set the listtype of the PeakCollection (FOUND, PREDICTED, etc.)
     void setType(listtype type) { _type = type; };
 
     //! compute beam divergence and mosaicity sigmas
@@ -69,23 +70,23 @@ class PeakCollection {
     //! Set Miller indices of peaks for those with an assigned unit cell
     void setMillerIndices() const;
 
-    //! Returns the amount of peaks
+    //! Get the number of peaks int he PeakCollection
     int numberOfPeaks() const { return _peaks.size(); }
-    //! Returns the amount of valid peaks
+    //! Return the number of valid peaks
     int numberOfValid() const;
-    //! Returns the amount of invalid peaks
+    //! Return the number of invalid peaks
     int numberOfInvalid() const;
-    // Returns number of peaks caught by filter
+    // Return number of peaks caught by filters
     int numberCaughtByFilter() const;
-    // Returns number of peaks rejected by filter
+    // Return number of peaks rejected by filters
     int numberRejectedByFilter() const;
 
-    //! Returns a fresh generated pointer to meta
+    //! Return a fresh generated pointer to meta
     std::map<std::string, float>* meta();
 
-    //! Set the shape collection needed for the peak prediction
+    //! Set the shape collection needed for profile integration
     void setShapeCollection(ShapeCollection shape_collection);
-    //! Reset the shape collection
+    //! Clear the shape collection
     void resetShapeCollection() { _shape_collection.reset(nullptr); };
     //! Get the shape collection
     ShapeCollection* shapeCollection() const { return _shape_collection.get(); };

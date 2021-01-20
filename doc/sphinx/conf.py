@@ -18,8 +18,8 @@
 # -- Project information -----------------------------------------------------
 
 project = 'NSXTool'
-copyright = '2021, Zamaan Raza'
-author = 'Zamaan Raza'
+copyright = '2021, NSXTool authors'
+author = 'NSXTool authors'
 
 # The full version, including alpha/beta/rc tags
 release = '0.1'
