@@ -29,7 +29,6 @@ class ProgressHandler;
 
 using sptrProgressHandler = std::shared_ptr<ProgressHandler>;
 
-//! Class to handle peak search in datasets
 /*! \brief Perform image recognition on detector images to find peaks
  *
  *  Given a "DataSet" (set of detector images from one experimental run),

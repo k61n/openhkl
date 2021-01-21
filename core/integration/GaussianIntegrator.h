@@ -19,17 +19,21 @@
 
 namespace nsx {
 
-//! Compute integrated intensity by fitting to an analytic 3d Gaussian.
+/*! \addtogroup integration
+ *  @{*/
 
+/*! \brief Compute integrated intensity by fitting to an analytic 3D Gaussian.*/
 class GaussianIntegrator : public IPeakIntegrator {
  public:
     GaussianIntegrator(bool fit_center, bool fit_cov);
+    //! Integrate a peak
     bool compute(
         Peak3D* peak, ShapeCollection* shape_collection, const IntegrationRegion& region) override;
     //! Returns the analytic profile computed over the given integration region
     std::vector<double> profile(Peak3D* peak, const IntegrationRegion& region);
 };
 
+/*! @}*/
 } // namespace nsx
 
 #endif // NSX_CORE_INTEGRATION_GAUSSIANINTEGRATOR_H

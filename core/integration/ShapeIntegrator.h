@@ -21,12 +21,15 @@ namespace nsx {
 
 class ShapeCollection;
 
-//! Peak integrator class used to build a shape collection for profile fitting.
+/*! \addtogroup integration
+ *  @{*/
 
+/*! \brief Integrate a peak to generate a profile for ShapeCollection*/
 class ShapeIntegrator : public PixelSumIntegrator {
  public:
     //! Construct the integrator with the given shape collection, bounding box, and box shape.
     ShapeIntegrator(ShapeCollection* lib, const AABB& aabb, int nx, int ny, int nz);
+    //! Integrate a peak
     bool compute(
         Peak3D* peak, ShapeCollection* shape_collection, const IntegrationRegion& region) override;
     //! Returns the collection of cached peak shapes
@@ -38,6 +41,7 @@ class ShapeIntegrator : public PixelSumIntegrator {
     int _nx, _ny, _nz;
 };
 
+/*! @}*/
 } // namespace nsx
 
 #endif // NSX_CORE_INTEGRATION_SHAPEINTEGRATOR_H

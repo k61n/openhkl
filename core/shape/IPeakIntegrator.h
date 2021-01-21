@@ -23,21 +23,28 @@ namespace nsx {
 class IntegrationRegion;
 enum class Level;
 
+/*! \addtogroup integration
+ *  @{*/
+
+//! Structure containing parameters for all integrators
 struct IntegrationParameters {
     double peak_end = 3.0; //!< End of peak region (sigmas)
     double bkg_begin = 3.0; //!< Beginning of background region (sigmas)
     double bkg_end = 6.0; //!< End of background region (sigmas)
     double neighbour_range_pixels = 400.0; //!< Search radius for neighbouring peaks (pixels)
     double neighbour_range_frames = 20.0; //!< Search radius for neighbouring peaks (frames)
-    bool fit_center = true; //!< Whether to fit the peak centre
-    bool fit_cov = true; //!< Whether to fit the peak covariance
+    bool fit_center = true; //!< Whether to update the peak centre after integration
+    bool fit_cov = true; //!< Whether to update the peak covariance after integration
 
     void log(const Level& level) const;
 };
 
 class ShapeCollection;
 
-//! Handles per-frame integration of a peak.
+/*! Base class for integrators. Handles per-frame integration of a peak.
+ *
+ *  All integrators inherit from this class.
+ */
 class IPeakIntegrator {
  public:
     IPeakIntegrator();
@@ -46,19 +53,16 @@ class IPeakIntegrator {
     virtual bool compute(
         Peak3D* peak, ShapeCollection* shape_collection, const IntegrationRegion& region) = 0;
     //! Integrate all peaks in the list which are contained in the specified data set.
-    //! @param peak_end Peak boundary (in sigma)
-    //! @param bkg_begin Background beginning (in sigma)
-    //! @param bkg_end Background end (in sigma)
     void integrate(
         std::vector<nsx::Peak3D*> peaks, ShapeCollection* shape_collection, sptrDataSet data,
         int n_numor);
-    //! Returns the mean background.
+    //! Return the mean background.
     Intensity meanBackground() const;
-    //! Returns the integrated intensity.
+    //! Return the integrated intensity.
     Intensity integratedIntensity() const;
-    //! Returns the peak rocking curve.
+    //! Return the peak rocking curve.
     const std::vector<Intensity>& rockingCurve() const;
-    //! Sets the progress handler.
+    //! Set the progress handler.
     void setHandler(sptrProgressHandler handler);
     //! Set the number of numors for progress handler
     void setNNumors(int n_numors);
@@ -79,17 +83,26 @@ class IPeakIntegrator {
     int _n_numors;
 
  public:
+    //! Return the peak scale
     double peakEnd() const { return _params.peak_end; };
+    //! Return the beginning of the background region in peak scales
     double backBegin() const { return _params.bkg_begin; };
+    //! Return the end of the background region in peak scales
     double backEnd() const { return _params.bkg_end; };
+    //! Return the neighbour search radius in pixels (profile integration)
     double radius() const { return _params.neighbour_range_pixels; };
+    //! Return the neighbour search radius in frames (profile integration)
     double nFrames() const { return _params.neighbour_range_frames; };
+    //! Update the peak center as part of integration
     bool fitCenter() const { return _params.fit_center; };
+    //! Update the peak shape covariance matrix as part of integration
     bool fitCov() const { return _params.fit_cov; };
 
+    //! Assign a parameter set to the integrator
     void setParameters(const IntegrationParameters& params);
 };
 
+/*! @}*/
 } // namespace nsx
 
 #endif // NSX_CORE_SHAPE_IPEAKINTEGRATOR_H
