@@ -332,7 +332,7 @@ Now, compute the most probable parameter values from
      \partial \ln P(B,I|M) / \partial I = 0.
      \end{array}
 
-.. _sec:app_isigma:
+.. _sec_isigma:
 
 :math:`I/\sigma` Integration
 ----------------------------
