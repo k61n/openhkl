@@ -20,18 +20,29 @@
 
 namespace nsx {
 
-//! Class to integrate peaks using 1d profile fitting.
+/*! \addtogroup integration
+ *  @{*/
 
+/*! \brief Peak integrator using 1D profile fitting.
+ *
+ *  Described in:
+ *  - W. Kabsch, J. Appl. Crystallography, 21:916, 1988. doi:10.1107/S0021889888007903
+ *  - W. Kabsch, Acta Crystallographica D, 66:133, 2010. doi:10.1107/s0907444909047374
+ *
+ *  The implementation is identical to the Profile3DIntegrator, except the
+ *  susbscripts \f$i\f$ refer to elements of a 1D profile instead of a 3D
+ *  profile.
+ */
 class Profile1DIntegrator : public IPeakIntegrator {
  public:
-    //! Construct integrator with given library, peak search radius, and frame bound
+    //! Construct integrator
     Profile1DIntegrator();
-
-    //! Compute the integrated intensity of the given peakd
+    //! Integrate a peak
     bool compute(
         Peak3D* peak, ShapeCollection* shape_collection, const IntegrationRegion& region) override;
 };
 
+/*! @}*/
 } // namespace nsx
 
 #endif // NSX_CORE_INTEGRATION_PROFILE1DINTEGRATOR_H

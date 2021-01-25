@@ -21,24 +21,28 @@
 
 namespace nsx {
 
-//! Produces a histogram of 1d-integrated intensity profiles,
+/*! \addtogroup integration
+ *  @{*/
 
-//! For use in the sigma/I integration method.
-
+/*! \brief A 1D peak profile used for profile-fitting integration
+ *
+ *  A profile is the average of many peaks. This class allows profiles to be
+ *  summed and normalised for use in integration.
+ */
 class Profile1D {
  public:
     //! Constructor. sigma_max indicates maximum number of standard deviations
     Profile1D(const Intensity& mean_background = {}, double sigma_max = 4.0, size_t num = 200);
     //! Add a data point to the bins.
-    //! Parameter r2 should be equal to (x-x0).dot(A*(x-x0)) where A is the
-    //! inverse covariance matrix of the peak. Parameter M is the total count (no
-    //! background correction)
+    //! @param r2 : equal to \f$(x-x0)\cdot A\cdot (x-x0)\f$ where \f$A\f$ is the inverse
+    //! covariance matrix of the peak.
+    //! @param M : the total count (no background correction)
     void addPoint(double r2, double M);
     //! Returns the vector of integrated counts values
     const std::vector<double>& counts() const;
     //! Returns the number of points in each bin
     const std::vector<int>& npoints() const;
-    //! Returns the profile I(s) / I(smax)
+    //! Returns the profile \f$I(s) / I(s_{max})\f$
     std::vector<Intensity> profile() const;
     //! Reset the profile to zero
     void reset();
@@ -50,6 +54,7 @@ class Profile1D {
     Intensity _meanBkg;
 };
 
+/*! @}*/
 } // namespace nsx
 
 #endif // NSX_CORE_SHAPE_PROFILE1D_H

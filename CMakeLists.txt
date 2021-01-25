@@ -26,6 +26,7 @@ option(NSX_SANITIZE "Compile with clang's -fsanitize (must also set NSX_SANITIZE
 option(NSX_PYTHON "Generate Python bindings" ON)
 option(BUILD_TESTING "Build the tests" ON)
 option(BUILD_DOCUMENTATION "Build Sphinx/Doxygen documentation" ON)
+option(BUILD_PDF_DOCUMENTATION "Build Sphinx documentation using LaTeX" ON)
 
 ###################################################################################################
 #  Build type and compiler flags
@@ -169,6 +170,8 @@ if(BUILD_DOCUMENTATION)
     find_package(Doxygen)
     find_package(Sphinx)
     message(STATUS "Found Sphinx: SPHINX_EXECUTABLE=${SPHINX_EXECUTABLE}")
+    find_package(LATEX COMPONENTS PDFLATEX BIBTEX)
+    message(STATUS "PDFLATEX_COMPILER=${PDFLATEX_COMPILER} BIBTEX_COMPILER=${BIBTEX_COMPILER}")
 endif()
 
 ###################################################################################################

@@ -19,15 +19,19 @@
 
 namespace nsx {
 
-//! Compute the mean background near a peak.
+/*! \addtogroup integration
+ *  @{*/
 
+/*!  \brief Compute the mean background near a peak. */
 class MeanBackgroundIntegrator : public IPeakIntegrator {
  public:
     MeanBackgroundIntegrator();
+    //! Integrate a peak
     bool compute(
         Peak3D*, ShapeCollection* shape_collection, const IntegrationRegion& region) override;
 };
 
+/*! @}*/
 } // namespace nsx
 
 #endif // NSX_CORE_INTEGRATION_MEANBACKGROUNDINTEGRATOR_H

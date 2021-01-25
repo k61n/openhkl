@@ -37,7 +37,14 @@ class IntegrationHandler;
 
 using DataMap = std::map<std::string, sptrDataSet>;
 
-//! Experiment class, a data type containing a diffractometer and data sets.
+/*! \brief Top level core object wrapping all other core objects
+ *
+ *  The Experiment object contains organises and controls almost all other core
+ *  classes. It is a container for DataSets, PeakCollections and UnitCells.
+ *  These objects are managed via their handlers, DataHandler, PeakHandler and
+ *  CellHandler. It also calls the principal algorithms for finding peaks,
+ *  integration, autoindexing, refining and merging peak collections.
+ */
 class Experiment {
  public:
     Experiment() = delete;
@@ -46,17 +53,19 @@ class Experiment {
 
     Experiment(const Experiment& other) = delete;
 
-    // General
+    //! Get the name of the Experiment
     const std::string& name() const;
+    //! Set the name of the Experiment
     void setName(const std::string& name);
 
     // Data handler
     //! Get a pointer to the diffractometer contained in the DataHandler object
     Diffractometer* getDiffractometer();
+    //! Get a pointer to the diffractometer contained in the DataHandler object
     const Diffractometer* getDiffractometer() const;
-    //! Set the named diffractometer from the instrument file
+    //! Set the named diffractometer from the relevant YAML instrument file
     void setDiffractometer(const std::string& diffractometerName);
-    //! Get maps of data sets from handler
+    //! Get the map of data sets from the handler
     const DataMap* getDataMap() const;
     //! Get shared pointer to named data set
     sptrDataSet getData(const std::string& name) const;
@@ -207,16 +216,22 @@ class Experiment {
     // Objects containing integration parameters. If I construct these on their own in Python,
     // they get destroyed when passed to Experiment, hence the kludgy option of making them
     // public - zamaan
+    //! Container for integration parameters
     IntegrationParameters int_params;
+    //! Container for Shape (profile) collection parameters
     ShapeCollectionParameters shape_params;
+    //! Container for peak prediction parameters
     PredictionParameters predict_params;
+    //! Container for metadata for reading raw data files
     RawDataReaderParameters data_params;
+    //! Container for autoindexer parameters
     IndexerParameters indexer_params;
+    //! Container for refiner parameters
     RefinerParameters refiner_params;
 
  private: // private variables
     std::string _name; //!< The name of this experiment
-    std::unique_ptr<Diffractometer> _diffractometer;
+    std::unique_ptr<Diffractometer> _diffractometer; //!< The diffractometer
 
     // Handlers for peak collections and unit cells
     std::shared_ptr<DataHandler> _data_handler; // shared because IntegrationHandler needs access
@@ -231,7 +246,7 @@ class Experiment {
     std::unique_ptr<Refiner> _refiner;
 
     // Objects containing quality metrics
-    DataQuality _data_quality;
+    DataQuality _data_quality; //!< Data quality for whole resolution range
     DataResolution _data_resolution; //!< Data quality per resolution shell
 };
 

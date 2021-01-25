@@ -19,8 +19,11 @@
 
 namespace nsx {
 
-//! Peak integration using naive background estimation and subtraction.
+/*! \addtogroup integration
+ *  @{*/
 
+/*! \brief Peak integration using naive background estimation and subtraction.
+ */
 class PixelSumIntegrator : public MeanBackgroundIntegrator {
  public:
     //! Construct the pixel sum integrator
@@ -28,10 +31,12 @@ class PixelSumIntegrator : public MeanBackgroundIntegrator {
     //! @param fit_covariance update the peak shape covariance matrix as part of integration
     PixelSumIntegrator(bool fit_center, bool fit_covariance);
     ~PixelSumIntegrator();
+    //! Integrate a peak
     bool compute(
         Peak3D* peak, ShapeCollection* shape_collection, const IntegrationRegion& region) override;
 };
 
+/*! @}*/
 } // namespace nsx
 
 #endif // NSX_CORE_INTEGRATION_PIXELSUMINTEGRATOR_H
