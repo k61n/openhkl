@@ -27,6 +27,9 @@ release = '0.1'
 
 # -- General configuration ---------------------------------------------------
 
+# The master toctree document.
+master_doc = 'index'
+
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
@@ -36,6 +39,8 @@ extensions = ['sphinx.ext.todo',
     'sphinx.ext.autosectionlabel',
     'sphinxcontrib.bibtex',
     'breathe']
+
+# -- Options for Doxygen output -------------------------------------------------
 
 # Breathe for incorporating Doxygen documentation
 breathe_projects = {"NSXTool" : "@DOXYGEN_XML_DIR@"}
@@ -64,3 +69,55 @@ html_theme = 'sphinx_rtd_theme'
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
 html_static_path = ['_static']
+
+# -- Options for LaTeX output ---------------------------------------------
+
+latex_elements = {
+    # The paper size ('letterpaper' or 'a4paper').
+    #
+    # 'papersize': 'letterpaper',
+
+    # The font size ('10pt', '11pt' or '12pt').
+    #
+    # 'pointsize': '10pt',
+
+    # Additional stuff for the LaTeX preamble.
+    #
+    # 'preamble': '',
+
+    # Latex figure (float) alignment
+    #
+    # 'figure_align': 'htbp',
+}
+
+# Grouping the document tree into LaTeX files. List of tuples
+# (source start file, target name, title,
+#  author, documentclass [howto, manual, or own class]).
+latex_documents = [
+    (master_doc, 'nsxtool.tex', u'NSXTool Documentation',
+     u'NSXTool Developers', 'manual'),
+]
+
+
+# -- Options for manual page output ---------------------------------------
+
+# One entry per manual page. List of tuples
+# (source start file, name, description, authors, manual section).
+man_pages = [
+    (master_doc, 'nsxtool', u'NSXTool Documentation',
+     [author], 1)
+]
+
+
+# -- Options for Texinfo output -------------------------------------------
+
+# Grouping the document tree into Texinfo files. List of tuples
+# (source start file, target name, title, author,
+#  dir menu entry, description, category)
+texinfo_documents = [
+    (master_doc, 'NSXTool', u'NSXTool Documentation',
+     'NSXTool Developers', 'NSXTool',
+     'NSXTool: Neutron scattering single crystal data reduction',
+     'Miscellaneous'),
+]
+

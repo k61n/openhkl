@@ -9,6 +9,7 @@ set(SPHINX_BUILD_DIR ${CMAKE_CURRENT_BINARY_DIR}/sphinx/)
 set(SPHINX_BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR}/_binary/)
 set(SPHINX_CACHE_DIR ${CMAKE_CURRENT_BINARY_DIR}/sphinx/_doctrees/)
 set(SPHINX_HTML_DIR ${CMAKE_CURRENT_BINARY_DIR}/sphinx/html/)
+set(SPHINX_LATEX_DIR ${CMAKE_CURRENT_BINARY_DIR}/sphinx/latex/)
 
 configure_file(${SPHINX_SOURCE_DIR}/conf.py ${SPHINX_BINARY_DIR}/conf.py @ONLY)
 
@@ -25,3 +26,13 @@ add_custom_target(
     "${SPHINX_SOURCE_DIR}"
     "${SPHINX_HTML_DIR}"
   COMMENT "Building HTML documentation with Doxygen and Sphinx")
+
+add_custom_target(
+  pdf
+  COMMAND ${SPHINX_EXECUTABLE}
+    -b latex
+    -c "${SPHINX_BINARY_DIR}"
+    -d "${SPHINX_CACHE_DIR}"
+    "${SPHINX_SOURCE_DIR}"
+    "${SPHINX_LATEX_DIR}"
+  COMMENT "Compile ${SPHINX_LATEX_DIR}/nsxtool.tex using pdflatex")
