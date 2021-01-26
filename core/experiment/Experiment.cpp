@@ -386,7 +386,6 @@ void Experiment::checkPeakCollections()
 void Experiment::clonePeakCollection(std::string name, std::string new_name)
 {
     _peak_handler->clonePeakCollection(name, new_name);
-    _peak_handler->checkPeakCollections();
 }
 
 void Experiment::setMergedPeaks(std::vector<PeakCollection*> peak_collections, bool friedel)
