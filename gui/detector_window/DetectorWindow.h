@@ -45,7 +45,7 @@ class DetectorWindow : public QDialog {
     void setDetectorViewUp();
     void setPeakTableUp();
     void setInputUp();
-    void setPlotUp();
+    void setPlotUp(PeakViewWidget* peak_widget, QString name);
 
     void refreshDetectorView();
     void refreshPeakTable();
@@ -72,10 +72,12 @@ class DetectorWindow : public QDialog {
     // Control panel elements
     QComboBox* _exp_combo;
     QComboBox* _data_combo;
-    QComboBox* _peak_combo;
+    QComboBox* _peak_combo_1;
+    QComboBox* _peak_combo_2;
 
     // the widget for plotting elements on the detector scene
-    PeakViewWidget* _peak_view_widget;
+    PeakViewWidget* _peak_view_widget_1;
+    PeakViewWidget* _peak_view_widget_2;
 
     // Detector elements
     DetectorScene* _detector_scene;
@@ -87,9 +89,12 @@ class DetectorWindow : public QDialog {
     PeakTableView* _peak_table;
 
     // Data model
-    nsx::PeakCollection* _peak_collection;
-    PeakCollectionItem _peak_collection_item;
-    PeakCollectionModel _peak_collection_model;
+    nsx::PeakCollection* _peak_collection_1;
+    PeakCollectionItem _peak_collection_item_1;
+    PeakCollectionModel _peak_collection_model_1;
+    nsx::PeakCollection* _peak_collection_2 = nullptr;
+    PeakCollectionItem _peak_collection_item_2;
+    PeakCollectionModel _peak_collection_model_2;
 
     QSizePolicy* _size_policy_widgets;
     QSizePolicy* _size_policy_box;

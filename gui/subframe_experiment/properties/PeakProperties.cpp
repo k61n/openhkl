@@ -14,6 +14,7 @@
 
 #include "gui/subframe_experiment/properties/PeakProperties.h"
 
+#include "gui/dialogs/ClonePeakDialog.h"
 #include "gui/MainWin.h"
 #include "gui/items/PeakCollectionItem.h"
 #include "gui/models/PeakCollectionModel.h"
@@ -106,9 +107,10 @@ void PeakProperties::setSizePolicies()
 
 void PeakProperties::refreshInput()
 {
+    _peak_list = gSession->currentProject()->getPeakListNames();
     _peak_list_combo->blockSignals(true);
     _peak_list_combo->clear();
-    _peak_list_combo->addItems(gSession->currentProject()->getPeakListNames());
+    _peak_list_combo->addItems(_peak_list);
     _peak_list_combo->blockSignals(false);
 
     if (!gSession->currentProject()->getPeakListNames().empty())
@@ -166,12 +168,15 @@ void PeakProperties::addMenuRequested()
 {
     QMenu* menu = new QMenu(_add);
 
-    QAction* add_from_finder = menu->addAction("Add from peak finder ...");
-    QAction* add_from_predictor = menu->addAction("Add from peak predictor ...");
+    QAction* add_from_finder = menu->addAction("Add from peak finder");
+    QAction* add_from_predictor = menu->addAction("Add from peak predictor");
+    QAction* clone_collection = menu->addAction("Clone peak collection");
 
     connect(add_from_finder, &QAction::triggered, this, &PeakProperties::jumpToFinder);
 
     connect(add_from_predictor, &QAction::triggered, this, &PeakProperties::jumpToPredictor);
+
+    connect(clone_collection, &QAction::triggered, this, &PeakProperties::clonePeakCollection);
 
     menu->popup(mapToGlobal(_add->geometry().bottomLeft()));
 }
@@ -189,6 +194,20 @@ void PeakProperties::jumpToPredictor()
 void PeakProperties::jumpToFilter()
 {
     gGui->sideBar()->manualSelect(3);
+}
+
+void PeakProperties::clonePeakCollection()
+{
+    if (!_peak_list.empty()) {
+        std::unique_ptr<ClonePeakDialog> dlg(new ClonePeakDialog(_peak_list));
+        dlg->exec();
+        if (!dlg->clonedCollectionName().isEmpty()) {
+            QString original = dlg->originalCollectionName();
+            QString cloned = dlg->clonedCollectionName();
+            gSession->currentProject()->clonePeakCollection(original, cloned);
+        }
+    }
+    refreshInput();
 }
 
 void PeakProperties::deleteCollection()

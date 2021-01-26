@@ -102,6 +102,8 @@ class Experiment {
         std::string name, PeakCollection* collection, listtype lt = listtype::FILTERED);
     //! Check for unphysical peaks in all collections
     void checkPeakCollections();
+    //! Duplicate a peak collection (deep copy) for comparison after some process
+    void clonePeakCollection(std::string name, std::string new_name);
     //! Merge a vector of PeakCollection objects
     void setMergedPeaks(std::vector<PeakCollection*> peak_collections, bool friedel);
     //! Merge two PeakCollection objects (mainly for SWIG)
