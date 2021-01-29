@@ -14,7 +14,6 @@
 //  ***********************************************************************************************
 
 #include "gui/widgets/PeakViewWidget.h"
-#include "gui/utility/ColorButton.h"
 
 #include <QLabel>
 
@@ -114,13 +113,13 @@ PeakViewWidget::PeakViewWidget(std::string type1, std::string type2)
     _width_peaks_2->setValue(10);
 
     _color_peaks_2 = new ColorButton();
-    _color_peaks_2->changeColor(Qt::red);
+    _color_peaks_2->changeColor(Qt::darkRed);
 
     _color_bbox_2 = new ColorButton();
-    _color_bbox_2->changeColor(Qt::red);
+    _color_bbox_2->changeColor(Qt::darkRed);
 
     _color_bkg_2 = new ColorButton();
-    _color_bkg_2->changeColor(Qt::red);
+    _color_bkg_2->changeColor(Qt::darkRed);
 
     _draw_peaks_1->setMaximumWidth(1000);
     _draw_peaks_2->setMaximumWidth(1000);

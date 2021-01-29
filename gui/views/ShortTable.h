@@ -30,7 +30,6 @@ class ShortTable : public PeakTableView {
 
  private:
     int _default_height;
-
 };
 
 #endif // NSX_GUI_VIEWS_SHORTTABLE_H

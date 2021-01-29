@@ -69,7 +69,7 @@ class DetectorScene : public QGraphicsScene {
     //! Set the peak model pointer
     void linkPeakModel(PeakCollectionModel* source);
     //! Get the peak model pointer
-    PeakCollectionModel* peakModel() const;
+    std::vector<PeakCollectionModel*> peakModels() const;
     //! Set the peak model pointer to null
     void unlinkPeakModel();
     //! Refresh the model data
@@ -133,7 +133,8 @@ class DetectorScene : public QGraphicsScene {
     QStack<QRect> _zoomStack;
 
     //! The current peak model
-    PeakCollectionModel* _peak_model = nullptr;
+    /* PeakCollectionModel* _peak_model = nullptr; */
+    std::vector<PeakCollectionModel*> _peak_models;
     //! std vector of the peakItems
     std::vector<PeakItemGraphic*> _peak_graphics_items;
 

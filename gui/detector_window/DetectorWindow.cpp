@@ -47,6 +47,12 @@ DetectorWindow::DetectorWindow(QWidget* parent)
     _control_layout = new QVBoxLayout(scroll_widget);
     _peak_view_widget_1 = new PeakViewWidget("Valid peaks", "Invalid Peaks");
     _peak_view_widget_2 = new PeakViewWidget("Valid peaks", "Invalid Peaks");
+    _peak_view_widget_2->setPeakColor1(Qt::green);
+    _peak_view_widget_2->setPeakColor2(Qt::red);
+    _peak_view_widget_2->setBoxColor1(Qt::green);
+    _peak_view_widget_2->setBoxColor2(Qt::red);
+    _peak_view_widget_2->setBkgColor1(Qt::green);
+    _peak_view_widget_2->setBkgColor2(Qt::red);
 
     setDetectorViewUp();
     setPeakTableUp();
@@ -95,6 +101,7 @@ void DetectorWindow::setDetectorViewUp()
 
     _detector_view = new DetectorView();
     _detector_view->getScene()->linkPeakModel(&_peak_collection_model_1);
+    _detector_view->getScene()->linkPeakModel(&_peak_collection_model_2);
     _detector_view->scale(1, -1);
     detector_grid->addWidget(_detector_view, 0, 0, 1, 2);
 
