@@ -37,12 +37,14 @@ class PeakProperties : public QWidget {
 
     //! Set up the GUI size policies
     void addMenuRequested();
-    //! Set up the GUI size policies
+    //! Jump to the peak finder subframe
     void jumpToFinder();
-    //! Set up the GUI size policies
+    //! Jump to the peak predictor subframe
     void jumpToPredictor();
-    //! Set up the GUI size policies
+    //! Jump to the peak filter subframe
     void jumpToFilter();
+    //! Clone a peak collection (for comparison in detector window)
+    void clonePeakCollection();
     //! Set up the GUI size policies
     void deleteCollection();
 
@@ -70,6 +72,8 @@ class PeakProperties : public QWidget {
     QSizePolicy* _size_policy_box;
     QSizePolicy* _size_policy_right;
     QSizePolicy* _size_policy_fixed;
+
+    QStringList _peak_list;
 };
 
 #endif // NSX_GUI_SUBFRAME_EXPERIMENT_PROPERTIES_PEAKPROPERTIES_H

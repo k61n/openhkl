@@ -80,21 +80,21 @@ DetectorScene::DetectorScene(QObject* parent)
 
 void DetectorScene::linkPeakModel(PeakCollectionModel* source)
 {
-    if (!(_peak_model == nullptr))
-        unlinkPeakModel();
-    _peak_model = source;
+    _peak_models.push_back(source);
     connect(
-        _peak_model, &PeakCollectionModel::dataChanged, this, &DetectorScene::peakModelDataChanged);
+        _peak_models.back(), &PeakCollectionModel::dataChanged, this,
+        &DetectorScene::peakModelDataChanged);
+
 }
 
-PeakCollectionModel* DetectorScene::peakModel() const
+std::vector<PeakCollectionModel*> DetectorScene::peakModels() const
 {
-    return _peak_model;
+    return _peak_models;
 }
 
 void DetectorScene::unlinkPeakModel()
 {
-    _peak_model = nullptr;
+    _peak_models.clear();
 }
 
 void DetectorScene::peakModelDataChanged()
@@ -116,28 +116,33 @@ void DetectorScene::clearPeakItems()
 
 void DetectorScene::drawPeakitems()
 {
-    if (_peak_model == nullptr || _peak_model->root() == nullptr)
+    if (_peak_models.empty())
         return;
 
     clearPeakItems();
+    for (auto model : _peak_models) {
+        if (model == nullptr || model->root() == nullptr)
+            return;
 
-    std::vector<PeakItem*> peak_items = _peak_model->root()->peakItems();
 
-    for (PeakItem* peak_item : peak_items) {
-        nsx::Ellipsoid peak_ellipsoid = peak_item->peak()->shape();
-        peak_ellipsoid.scale(peak_item->peak()->peakEnd());
-        const nsx::AABB& aabb = peak_ellipsoid.aabb();
-        Eigen::Vector3d lower = aabb.lower();
-        Eigen::Vector3d upper = aabb.upper();
+        std::vector<PeakItem*> peak_items = model->root()->peakItems();
 
-        // If the current frame of the scene is out of the peak bounds do not paint it
-        if (_currentFrameIndex < lower[2] || _currentFrameIndex > upper[2])
-            continue;
+        for (PeakItem* peak_item : peak_items) {
+            nsx::Ellipsoid peak_ellipsoid = peak_item->peak()->shape();
+            peak_ellipsoid.scale(peak_item->peak()->peakEnd());
+            const nsx::AABB& aabb = peak_ellipsoid.aabb();
+            Eigen::Vector3d lower = aabb.lower();
+            Eigen::Vector3d upper = aabb.upper();
 
-        PeakItemGraphic* peak_graphic = peak_item->peakGraphic();
-        peak_graphic->setCenter(_currentFrameIndex);
-        _peak_graphics_items.push_back(peak_graphic);
-        addItem(peak_graphic);
+            // If the current frame of the scene is out of the peak bounds do not paint it
+            if (_currentFrameIndex < lower[2] || _currentFrameIndex > upper[2])
+                continue;
+
+            PeakItemGraphic* peak_graphic = peak_item->peakGraphic();
+            peak_graphic->setCenter(_currentFrameIndex);
+            _peak_graphics_items.push_back(peak_graphic);
+            addItem(peak_graphic);
+        }
     }
 
     // if (_selected_peak_gi) {

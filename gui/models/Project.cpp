@@ -195,6 +195,15 @@ PeakCollectionModel* Project::peakModelAt(int i)
     return _peak_collection_models.at(i);
 }
 
+void Project::clonePeakCollection(const QString& name, const QString& new_name)
+{
+    if (_experiment->hasPeakCollection(name.toStdString())) {
+        _experiment->clonePeakCollection(name.toStdString(), new_name.toStdString());
+        generatePeakModels();
+    }
+
+}
+
 std::vector<nsx::Peak3D*> Project::getPeaks(
     const QString& peakListName, int /*upperindex*/, int /*lowerindex*/) const
 {

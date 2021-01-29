@@ -21,6 +21,8 @@
 #include <QSizePolicy>
 #include <QSpinBox>
 
+#include "gui/utility/ColorButton.h"
+
 class ColorButton;
 
 class PeakViewWidget : public QGridLayout {
@@ -42,6 +44,12 @@ class PeakViewWidget : public QGridLayout {
     ColorButton* bkgColor2() { return _color_bkg_2; };
     QSpinBox* peakSize1() { return _width_peaks_1; };
     QSpinBox* peakSize2() { return _width_peaks_1; };
+    void setPeakColor1(QColor color) { _color_peaks_1->changeColor(color); };
+    void setPeakColor2(QColor color) { _color_peaks_2->changeColor(color); };
+    void setBoxColor1(QColor color) { _color_bbox_1->changeColor(color); };
+    void setBoxColor2(QColor color) { _color_bbox_2->changeColor(color); };
+    void setBkgColor1(QColor color) { _color_bkg_1->changeColor(color); };
+    void setBkgColor2(QColor color) { _color_bkg_2->changeColor(color); };
 
  private:
     //! Set up the GUI size policies
