@@ -20,7 +20,7 @@
 #include "gui/models/Project.h"
 #include "gui/utility/ColorButton.h"
 #include "gui/utility/Spoiler.h"
-#include "gui/views/PeakTableView.h"
+#include "gui/views/ShortTable.h"
 #include "gui/widgets/PeakViewWidget.h"
 
 #include <QFileInfo>
@@ -82,6 +82,10 @@ void DetectorWindow::setSizePolicies()
     _size_policy_fixed = new QSizePolicy();
     _size_policy_fixed->setHorizontalPolicy(QSizePolicy::Fixed);
     _size_policy_fixed->setVerticalPolicy(QSizePolicy::Fixed);
+
+    _size_policy_min = new QSizePolicy();
+    _size_policy_min->setHorizontalPolicy(QSizePolicy::Fixed);
+    _size_policy_min->setVerticalPolicy(QSizePolicy::Minimum);
 }
 
 void DetectorWindow::setDetectorViewUp()
@@ -120,18 +124,23 @@ void DetectorWindow::setDetectorViewUp()
 
 void DetectorWindow::setPeakTableUp()
 {
-    QGroupBox* peak_group = new QGroupBox("Peaks");
-    QGridLayout* peak_grid = new QGridLayout(peak_group);
+    QVBoxLayout* table_layout = new QVBoxLayout();
 
-    peak_group->setSizePolicy(*_size_policy_right);
-
-    _peak_table = new PeakTableView(this);
+    _peak_table_1 = new ShortTable(this);
     _peak_collection_model_1.setRoot(&_peak_collection_item_1);
-    _peak_table->setModel(&_peak_collection_model_1);
+    _peak_table_1->setModel(&_peak_collection_model_1);
+    _peak_table_1->setSizePolicy(*_size_policy_min);
 
-    peak_grid->addWidget(_peak_table, 0, 0, 0, 0);
+    _peak_table_2 = new ShortTable(this, _peak_table_1->height());
+    _peak_collection_model_2.setRoot(&_peak_collection_item_2);
+    _peak_table_2->setModel(&_peak_collection_model_2);
+    _peak_table_2->setSizePolicy(*_size_policy_min);
 
-    _right_element->addWidget(peak_group);
+    table_layout->addWidget(_peak_table_1);
+    table_layout->addWidget(_peak_table_2);
+
+    _right_element->addWidget(_peak_table_1);
+    _right_element->addWidget(_peak_table_2);
 }
 
 void DetectorWindow::setInputUp()
@@ -288,6 +297,35 @@ void DetectorWindow::refreshDetectorView()
             graphic->setBkgColor(_peak_view_widget_1->bkgColor2()->getColor());
         }
     }
+
+    for (int i = 0; i < _peak_collection_item_2.childCount(); i++) {
+        PeakItem* peak = _peak_collection_item_2.peakItemAt(i);
+        graphic = peak->peakGraphic();
+        valid = peak->peak()->enabled();
+
+        if (valid) {
+            graphic->showLabel(false);
+            graphic->showArea(_peak_view_widget_2->drawPeaks1()->isChecked());
+            graphic->setSize(_peak_view_widget_2->peakSize1()->value());
+            graphic->setColor(Qt::transparent);
+            graphic->setCenterColor(_peak_view_widget_2->peakColor1()->getColor());
+            graphic->showBox(_peak_view_widget_2->drawBoxes1()->isChecked());
+            graphic->setBoxColor(_peak_view_widget_2->boxColor1()->getColor());
+            graphic->showBkg(_peak_view_widget_2->drawBkg1()->isChecked());
+            graphic->setBkgColor(_peak_view_widget_2->bkgColor1()->getColor());
+        } else {
+            graphic->showLabel(false);
+            graphic->showArea(_peak_view_widget_2->drawPeaks2()->isChecked());
+            graphic->setSize(_peak_view_widget_2->peakSize2()->value());
+            graphic->setColor(Qt::transparent);
+            graphic->setCenterColor(_peak_view_widget_2->peakColor2()->getColor());
+            graphic->showBox(_peak_view_widget_2->drawBoxes2()->isChecked());
+            graphic->setBoxColor(_peak_view_widget_2->boxColor2()->getColor());
+            graphic->showBkg(_peak_view_widget_2->drawBkg2()->isChecked());
+            graphic->setBkgColor(_peak_view_widget_2->bkgColor2()->getColor());
+        }
+    }
+
     _detector_view->getScene()->update();
     _detector_view->getScene()->drawPeakitems();
 }
@@ -393,8 +431,13 @@ void DetectorWindow::updatePeakList()
 
 void DetectorWindow::changeSelected(PeakItemGraphic* peak_graphic)
 {
-    int row = _peak_collection_item_1.returnRowOfVisualItem(peak_graphic);
-    QModelIndex index = _peak_collection_model_1.index(row, 0);
-    _peak_table->selectRow(row);
-    _peak_table->scrollTo(index, QAbstractItemView::PositionAtTop);
+    int row_1 = _peak_collection_item_1.returnRowOfVisualItem(peak_graphic);
+    QModelIndex index_1 = _peak_collection_model_1.index(row_1, 0);
+    _peak_table_1->selectRow(row_1);
+    _peak_table_1->scrollTo(index_1, QAbstractItemView::PositionAtTop);
+
+    int row_2 = _peak_collection_item_2.returnRowOfVisualItem(peak_graphic);
+    QModelIndex index_2 = _peak_collection_model_2.index(row_2, 0);
+    _peak_table_2->selectRow(row_2);
+    _peak_table_2->scrollTo(index_2, QAbstractItemView::PositionAtTop);
 }

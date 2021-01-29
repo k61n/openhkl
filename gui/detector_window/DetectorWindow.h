@@ -30,7 +30,7 @@
 class DetectorScene;
 class DetectorView;
 class PeakViewWidget;
-class PeakTableView;
+class ShortTable;
 
 //! Modeless dialog containing a non-contextual detector scene (open via Menu)
 class DetectorWindow : public QDialog {
@@ -86,7 +86,8 @@ class DetectorWindow : public QDialog {
     QSpinBox* _detector_spin;
 
     // Peak table elements
-    PeakTableView* _peak_table;
+    ShortTable* _peak_table_1;
+    ShortTable* _peak_table_2;
 
     // Data model
     nsx::PeakCollection* _peak_collection_1;
@@ -100,6 +101,7 @@ class DetectorWindow : public QDialog {
     QSizePolicy* _size_policy_box;
     QSizePolicy* _size_policy_right;
     QSizePolicy* _size_policy_fixed;
+    QSizePolicy* _size_policy_min;
 
     std::vector<nsx::sptrDataSet> _data_list;
     QStringList _peak_list;
