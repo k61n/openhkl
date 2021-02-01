@@ -291,16 +291,17 @@ void DetectorScene::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
         QPointF lastPos = event->lastScenePos();
         QPoint point = lastPos.toPoint();
         QTransform trans;
-        QGraphicsItem* gItem = itemAt(point, trans);
-        if (!gItem)
-            return;
 
-        PeakItemGraphic* p = dynamic_cast<PeakItemGraphic*>(gItem);
+        QList<QGraphicsItem*> gItemList =
+            items(point, Qt::IntersectsItemShape, Qt::DescendingOrder, trans);
+        for (auto gItem : gItemList) {
+            if (!gItem)
+                continue;
 
-        if (p) {
-            emit signalSelectedPeakItemChanged(p);
-            // gGui->updatePlot(p);
-            // QGraphicsScene::mouseMoveEvent(event);
+            PeakItemGraphic* p = dynamic_cast<PeakItemGraphic*>(gItem);
+
+            if (p)
+                emit signalSelectedPeakItemChanged(p);
         }
     }
 }
