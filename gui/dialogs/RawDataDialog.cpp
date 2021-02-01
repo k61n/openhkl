@@ -36,6 +36,11 @@ RawDataDialog::RawDataDialog() : QDialog()
     omega->setDecimals(3);
     wave->setDecimals(3);
 
+    // default to Row major/16 bit
+    dataArrangement->setCurrentIndex(1);
+    dataFormat->setCurrentIndex(1);
+    swapEndianness->setCheckState(Qt::Checked);
+
     layout->addRow("Data arrangement", dataArrangement);
     layout->addRow("Data format", dataFormat);
     layout->addRow(swapEndianness);
