@@ -342,6 +342,9 @@ void DetectorWindow::refreshPeakTable()
     auto expt = gSession->experimentAt(_exp_combo->currentIndex())->experiment();
     _peak_collection_1 = expt->getPeakCollection(_peak_combo_1->currentText().toStdString());
 
+    if (!_peak_collection_1)
+        return;
+
     _detector_view->getScene()->clearPeakItems();
     _peak_collection_item_1.setPeakCollection(_peak_collection_1);
     _peak_collection_model_1.setRoot(&_peak_collection_item_1);
