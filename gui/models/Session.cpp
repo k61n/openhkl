@@ -23,6 +23,7 @@
 #include "gui/dialogs/RawDataDialog.h"
 #include "gui/models/Project.h"
 
+#include <QCollator>
 #include <QDir>
 #include <QFileDialog>
 #include <QMessageBox>
@@ -190,6 +191,18 @@ void Session::loadRawData()
     QStringList qfilenames = QFileDialog::getOpenFileNames(gGui, "import raw data", loadDirectory);
     if (qfilenames.empty())
         return;
+
+    // Don't leave sorting the files to the OS. Use QCollator + std::sortto sort naturally
+    // (numerically)
+    QCollator collator;
+    collator.setNumericMode(true);
+    std::sort(
+        qfilenames.begin(),
+        qfilenames.end(),
+        [&collator](const QString &file1, const QString& file2)
+            {
+                return collator.compare(file1, file2) < 0;
+            });
 
     QFileInfo info(qfilenames.at(0));
     loadDirectory = info.absolutePath();
