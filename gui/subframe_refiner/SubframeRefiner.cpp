@@ -115,7 +115,7 @@ void SubframeRefiner::setInputUp()
     exp_label->setAlignment(Qt::AlignRight);
     _input_grid->addWidget(exp_label, 0, 0, 1, 1);
 
-    QLabel* peak_label = new QLabel("Found peaks");
+    QLabel* peak_label = new QLabel("Peaks");
     peak_label->setAlignment(Qt::AlignRight);
     _input_grid->addWidget(peak_label, 1, 0, 1, 1);
 
@@ -288,6 +288,10 @@ void SubframeRefiner::updatePeakList()
 
     QStringList tmp = gSession->experimentAt(_exp_combo->currentIndex())
                           ->getPeakCollectionNames(nsx::listtype::FOUND);
+    _peak_list.append(tmp);
+    tmp.clear();
+    tmp = gSession->experimentAt(_exp_combo->currentIndex())
+        ->getPeakCollectionNames(nsx::listtype::PREDICTED);
     _peak_list.append(tmp);
     tmp.clear();
     tmp = gSession->experimentAt(_exp_combo->currentIndex())
