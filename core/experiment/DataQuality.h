@@ -30,7 +30,7 @@ class SpaceGroup;
 struct DataQuality {
     int nobserved; //!< Total number of observations including redundant
     int nunique; //!< Total number of observations excluding redundant
-    int redundancy; //!< observations / symmetry unique peaks
+    double redundancy; //!< observations / symmetry unique peaks
     double Rmerge; //!< R-factor
     double expectedRmerge; //!< expected R-factor
     double Rmeas; //!< multiplicity-weighted R-factor
