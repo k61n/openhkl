@@ -563,10 +563,20 @@ void SubframeMergedPeaks::saveStatistics()
             ->getPeakCollection(_predicted_drop->currentText().toStdString());
 
     nsx::ResolutionShell resolutionShell(min, max, shells);
-    for (nsx::Peak3D* peak : found->getPeakList())
-        resolutionShell.addPeak(peak);
-    for (nsx::Peak3D* peak : predicted->getPeakList())
-        resolutionShell.addPeak(peak);
+    for (nsx::Peak3D* peak : found->getPeakList()) {
+        try {
+            resolutionShell.addPeak(peak);
+        } catch (const std::exception& e) {
+            continue;
+        }
+    }
+    for (nsx::Peak3D* peak : predicted->getPeakList()) {
+        try {
+            resolutionShell.addPeak(peak);
+        } catch (const std::exception& e) {
+            continue;
+        }
+    }
 
     exporter.saveStatistics(
         filename.toStdString(), resolutionShell, _merged_data->spaceGroup(), inclFriedel);
