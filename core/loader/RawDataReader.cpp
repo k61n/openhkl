@@ -42,10 +42,6 @@ RawDataReader::RawDataReader(const std::string& filename, Diffractometer* diffra
         Monochromator mono("mono");
         _diffractometer->source().addMonochromator(mono);
     }
-
-    setParameters(_parameters);
-
-    addFrame(filename);
 }
 
 void RawDataReader::addFrame(const std::string& filename)

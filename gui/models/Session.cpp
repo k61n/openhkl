@@ -234,7 +234,7 @@ void Session::loadRawData()
         nsx::Diffractometer* diff = exp->getDiffractometer();
         auto reader{std::make_unique<nsx::RawDataReader>(filenames[0], diff)};
         reader->setParameters(parameters);
-        for (size_t i = 1; i < filenames.size(); ++i)
+        for (size_t i = 0; i < filenames.size(); ++i)
             reader->addFrame(filenames[i]);
         reader->end();
         if (parameters.wavelength < eps)
