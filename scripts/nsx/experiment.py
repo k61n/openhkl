@@ -128,7 +128,7 @@ class Experiment:
         reader = nsx.RawDataReader(filenames[0], self._expt.getDiffractometer())
         reader.setParameters(data_params)
 
-        for filename in filenames[1:]:
+        for filename in filenames:
             reader.addFrame(filename)
         reader.end()
         data = nsx.DataSet(reader)
