@@ -233,9 +233,9 @@ void Session::loadRawData()
     try {
         nsx::Diffractometer* diff = exp->getDiffractometer();
         auto reader{std::make_unique<nsx::RawDataReader>(filenames[0], diff)};
+        reader->setParameters(parameters);
         for (size_t i = 1; i < filenames.size(); ++i)
             reader->addFrame(filenames[i]);
-        reader->setParameters(parameters);
         reader->end();
         if (parameters.wavelength < eps)
             throw std::runtime_error("Wavelength not set");
