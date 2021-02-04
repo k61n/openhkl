@@ -39,64 +39,81 @@ stages:
 #     - make -j8
 #     - ctest -j8 --output-on-failure
 
-debT_clang:
-  tags: &unix
-  - Linux
-  image: debian:testing
+native_Debian_clang:
+  tags: &native
+  - Debian
   before_script: &debian_clang
-    - apt-get -y update
-    - apt-get -y upgrade
-    - apt-get -y install cmake swig git
-    - apt-get -y install qtbase5-dev libqcustomplot-dev
-    - apt-get -y install libblosc-dev libgsl-dev libfftw3-dev libeigen3-dev
-    - apt-get -y install libhdf5-dev libyaml-cpp-dev libtiff-dev
-    - apt-get -y install libboost-dev
-    - apt-get -y install libqhull-dev
-    - apt-get -y install python3 python3-distutils libpython3-dev
-    - apt-get -y install python3-numpy python3-unittest2 python3-random2
-    - apt-get -y install clang
-    - apt-get -y install g++ # needed for libstdc++
     - export CC=clang; export CXX=clang++
-    - git clone https://jugit.fz-juelich.de/mlz/libQCR.git
-    - git clone https://jugit.fz-juelich.de/mlz/xsection.git
     - cmake --version
     - clang --version
   stage: build
-  script: &scr
+  script: &native_scr
     - pwd && ls
-    - cd libQCR && mkdir build && cd build
-    - cmake .. && make && ctest && make install
-    - cd ../.. && pwd && ls
-    - cd xsection && mkdir build && cd build
-    - cmake .. && make -j3 && ctest && make install
-    - cd ../.. && pwd && ls
     - mkdir build
     - cd build
     - cmake ..
     - make -j8
     - ctest -j8 --output-on-failure
 
-debT_gcc:
-  tags: *unix
-  image: debian:testing
-  before_script: &debian_gcc
-    - apt-get -y update
-    - apt-get -y upgrade
-    - apt-get -y install cmake swig git
-    - apt-get -y install qtbase5-dev libqcustomplot-dev
-    - apt-get -y install libblosc-dev libgsl-dev libfftw3-dev libeigen3-dev
-    - apt-get -y install libhdf5-dev libyaml-cpp-dev libtiff-dev
-    - apt-get -y install libboost-dev
-    - apt-get -y install libqhull-dev
-    - apt-get -y install python3 python3-distutils libpython3-dev
-    - apt-get -y install python3-numpy python3-unittest2 python3-random2
-    - apt-get -y install g++
-    - git clone https://jugit.fz-juelich.de/mlz/libQCR.git
-    - git clone https://jugit.fz-juelich.de/mlz/xsection.git
-    - cmake --version
-    - g++ --version
-  stage: build
-  script: *scr
+# debT disabled while scgbuild out of
+# debT_clang:
+#   tags: &unix
+#   - Linux
+#   image: debian:testing
+#   before_script: &debian_clang
+#     - apt-get -y update
+#     - apt-get -y upgrade
+#     - apt-get -y install cmake swig git
+#     - apt-get -y install qtbase5-dev libqcustomplot-dev
+#     - apt-get -y install libblosc-dev libgsl-dev libfftw3-dev libeigen3-dev
+#     - apt-get -y install libhdf5-dev libyaml-cpp-dev libtiff-dev
+#     - apt-get -y install libboost-dev
+#     - apt-get -y install libqhull-dev
+#     - apt-get -y install python3 python3-distutils libpython3-dev
+#     - apt-get -y install python3-numpy python3-unittest2 python3-random2
+#     - apt-get -y install clang
+#     - apt-get -y install g++ # needed for libstdc++
+#     - export CC=clang; export CXX=clang++
+#     - git clone https://jugit.fz-juelich.de/mlz/libQCR.git
+#     - git clone https://jugit.fz-juelich.de/mlz/xsection.git
+#     - cmake --version
+#     - clang --version
+#   stage: build
+#   script: &scr
+#     - pwd && ls
+#     - cd libQCR && mkdir build && cd build
+#     - cmake .. && make && ctest && make install
+#     - cd ../.. && pwd && ls
+#     - cd xsection && mkdir build && cd build
+#     - cmake .. && make -j3 && ctest && make install
+#     - cd ../.. && pwd && ls
+#     - mkdir build
+#     - cd build
+#     - cmake ..
+#     - make -j8
+#     - ctest -j8 --output-on-failure
+#
+# debT_gcc:
+#   tags: *unix
+#   image: debian:testing
+#   before_script: &debian_gcc
+#     - apt-get -y update
+#     - apt-get -y upgrade
+#     - apt-get -y install cmake swig git
+#     - apt-get -y install qtbase5-dev libqcustomplot-dev
+#     - apt-get -y install libblosc-dev libgsl-dev libfftw3-dev libeigen3-dev
+#     - apt-get -y install libhdf5-dev libyaml-cpp-dev libtiff-dev
+#     - apt-get -y install libboost-dev
+#     - apt-get -y install libqhull-dev
+#     - apt-get -y install python3 python3-distutils libpython3-dev
+#     - apt-get -y install python3-numpy python3-unittest2 python3-random2
+#     - apt-get -y install g++
+#     - git clone https://jugit.fz-juelich.de/mlz/libQCR.git
+#     - git clone https://jugit.fz-juelich.de/mlz/xsection.git
+#     - cmake --version
+#     - g++ --version
+#   stage: build
+#   script: *scr
 
 # suse_clang:
 #
