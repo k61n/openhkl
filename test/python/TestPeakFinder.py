@@ -22,7 +22,7 @@ class TestPeakFinder(unittest.TestCase):
         data_params.bpp = 2
         reader = nsx.RawDataReader(files[0], expt.getDiffractometer())
         reader.setParameters(data_params)
-        for filename in files[1:]:
+        for filename in files[0:]:
             reader.addFrame(filename)
         reader.end()
         expt.addData(nsx.DataSet(reader), name)

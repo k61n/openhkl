@@ -25,7 +25,7 @@ configure_file(../cpp/crystal/crystallography.tsv crystallography.tsv COPYONLY)
 configure_file(../cpp/crystal/714898.hdf 714898.hdf COPYONLY)
 
 # Dealing with large test data files -- zamaan
-set(test_data_url http://apps.jcns.fz-juelich.de/datasamples/nsxtool/BioDiff/FutA/crystal9)
+set(test_data_url https://iffcloud.fz-juelich.de/s/MypDgfTyj43WPYZ/download?path=%2F&files=)
 set(test_data_dir test/data)
 set(test_files p16106_00029299.tiff 
                p16106_00029300.tiff 
