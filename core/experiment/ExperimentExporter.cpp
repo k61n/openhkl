@@ -240,8 +240,10 @@ void ExperimentExporter::writePeaks(const std::map<std::string, PeakCollection*>
         bool* predicted = new bool[nPeaks];
 
         // initialize the datanames
-        std::vector<const char*> data_names;
-        std::vector<const char*> unit_cells;
+        std::vector<std::string> data_names;
+        std::vector<const char*> data_name_pointers;
+        std::vector<std::string> unit_cells;
+        std::vector<const char*> unit_cell_pointers;
 
         std::string name;
         std::string ext;
@@ -266,15 +268,14 @@ void ExperimentExporter::writePeaks(const std::map<std::string, PeakCollection*>
             masked[i] = peak->masked();
             predicted[i] = peak->predicted();
 
-            name = peak->dataSet()->name();
-            data_names.push_back(name.c_str());
+            data_names.push_back(peak->dataSet()->name());
 
             const UnitCell* unit_cell_ptr = peak->unitCell();
             if (unit_cell_ptr) {
                 unit_cell_name = unit_cell_ptr->name();
-                unit_cells.push_back(unit_cell_name.c_str());
+                unit_cells.push_back(unit_cell_name);
             } else {
-                unit_cells.push_back(temp.c_str());
+                unit_cells.push_back(temp);
             }
 
             Eigen::Vector3d temp_col = peak->shape().center();
@@ -360,17 +361,21 @@ void ExperimentExporter::writePeaks(const std::map<std::string, PeakCollection*>
             H5::PredType::NATIVE_HBOOL, peak_space));
         predicted_H5.write(predicted, H5::PredType::NATIVE_HBOOL, peak_space, peak_space);
 
+        for (int i=0; i<nPeaks; ++i)
+            data_name_pointers.push_back(data_names[i].c_str());
         H5::StrType data_str_type(H5::PredType::C_S1, H5T_VARIABLE);
         H5::DataSet data_H5(file.createDataSet(
             std::string("/PeakCollections/" + collection_name + "/DataNames"), data_str_type,
             peak_space));
-        data_H5.write(data_names.data(), data_str_type, peak_space, peak_space);
+        data_H5.write(data_name_pointers.data(), data_str_type, peak_space, peak_space);
 
+        for (int i=0; i<nPeaks; ++i)
+            unit_cell_pointers.push_back(unit_cells[i].c_str());
         H5::StrType uc_str_type(H5::PredType::C_S1, H5T_VARIABLE);
         H5::DataSet unit_cell_H5(file.createDataSet(
             std::string("/PeakCollections/" + collection_name + "/UnitCells"), uc_str_type,
             peak_space));
-        unit_cell_H5.write(unit_cells.data(), uc_str_type, peak_space, peak_space);
+        unit_cell_H5.write(unit_cell_pointers.data(), uc_str_type, peak_space, peak_space);
 
         // Write all other metadata (int and double) into the "Experiment" Group
         H5::Group meta_peak_group(
