@@ -23,7 +23,7 @@ mac:
   script:
     - mkdir build
     - cd build
-    - cmake ..
+    - cmake .. -DCMAKE_PREFIX_PATH=/usr/local/opt/qt
     - make -j3
     - ctest -j3 --output-on-failure
 
