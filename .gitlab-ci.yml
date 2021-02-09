@@ -1,43 +1,31 @@
 stages:
   - build
 
-# mac:
-#   tags: &unix
-#   - MacOS
-#   image: debian:testing
-#   before_script:
-#     - git clone https://jugit.fz-juelich.de/mlz/libQCR.git
-#     - git clone https://jugit.fz-juelich.de/mlz/xsection.git
-#     - cmake --version
-#     - clang --version
+# windows:
+#   tags:
+#   - Windows
 #   stage: build
-#   script: &scr
-#     - pwd && ls
-#     - cd libQCR
-#     - mkdir build
+#   script:
+#     - New-Item -ItemType "directory" -Confirm:$false -Force:$true -Name "build"
 #     - cd build
-#     - cmake .. -DQt5_DIR=/usr/local/Cellar/qt/5.15.1/lib/cmake/Qt5
-#     - make
-#     - ctest
-#     - make install
-#     - cd ../..
-#     - pwd
-#     - ls
-#     - cd xsection
-#     - mkdir build
-#     - cd build
-#     - cmake ..
-#     - make -j3
-#     - ctest
-#     - make install
-#     - cd ../..
-#     - pwd
-#     - ls
-#     - mkdir build
-#     - cd build
-#     - cmake .. -DCMAKE_PREFIX_PATH=/usr/local/opt/qt -DGSL_ROOT_DIR=/usr/local
-#     - make -j8
-#     - ctest -j8 --output-on-failure
+#     - cmd.exe "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvars64.bat"
+#     - cmake -G "Visual Studio 16 2019" -A x64 -T host=x64 -DLIB_MAN=OFF -DLIB_INSTALL=OFF -B. ..
+#     - cmake --build . --config Release
+#     - Get-Location
+#     - dir
+#     - dir Release
+#     - ctest -C Release --output-on-failure
+
+mac:
+  tags:
+  - MacOS
+  stage: build
+  script:
+    - mkdir build
+    - cd build
+    - cmake .. -DCMAKE_PREFIX_PATH=/usr/local/opt/qt
+    - make -j3
+    - ctest -j3 --output-on-failure
 
 native_Debian_clang:
   tags: &native
@@ -52,10 +40,11 @@ native_Debian_clang:
     - mkdir build
     - cd build
     - cmake ..
-    - make -j8
-    - ctest -j8 --output-on-failure
+    - make -j6
+    - ctest -j6 --output-on-failure
 
-# debT disabled while scgbuild out of
+# ## Dockerized:
+#
 # debT_clang:
 #   tags: &unix
 #   - Linux
@@ -137,44 +126,3 @@ native_Debian_clang:
 #     - git clone https://jugit.fz-juelich.de/mlz/xsection.git
 #   stage: build
 #   script: *scr
-
-## Centos7 permanently disabled because it does not fully support C++11
-##
-##centos7_clang:
-##
-##  NOTE [JWu21jun19]:
-##  We suspend Centos because the compiler is too old (clang 3.4.2),
-##    and is not able to compile the CMake simple test program.
-##
-##  tags: *unix
-##  image: centos:centos7
-##  before_script:
-##    - yum -y update
-##    - yum -y install epel-release
-##    - yum repolist
-##    - yum -y install make git cmake3 clang pkgconf libqt5-qtbase-devel blosc-devel gsl-devel fftw3-devel eigen3-devel hdf5-devel yaml-cpp-devel libtiff-devel boost-devel python3 python3-numpy python3-unittest2 python3-random2 python36-distutils-extra python3-devel swig
-##    - cmake3 --version
-##    - ctest3 --version
-##    - cpack3 --version
-##    - ln -s /usr/bin/cmake3 /usr/bin/cmake
-##    - ln -s /usr/bin/ctest3 /usr/bin/ctest
-##    - ln -s /usr/bin/cpack3 /usr/bin/cpack
-##    - git clone https://jugit.fz-juelich.de/mlz/libQCR.git
-##    - git clone https://jugit.fz-juelich.de/mlz/xsection.git
-##  stage: build
-##  script: *scr
-
-# windows:
-#   tags:
-#   - Windows
-#   stage: build
-#   script:
-#     - New-Item -ItemType "directory" -Confirm:$false -Force:$true -Name "build"
-#     - cd build
-#     - cmd.exe "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvars64.bat"
-#     - cmake -G "Visual Studio 16 2019" -A x64 -T host=x64 -DLIB_MAN=OFF -DLIB_INSTALL=OFF -B. ..
-#     - cmake --build . --config Release
-#     - Get-Location
-#     - dir
-#     - dir Release
-#     - ctest -C Release --output-on-failure
