@@ -240,7 +240,8 @@ void ExperimentExporter::writePeaks(const std::map<std::string, PeakCollection*>
         bool* predicted = new bool[nPeaks];
 
         // initialize the datanames
-        std::vector<const char*> data_names;
+        std::vector<std::string> data_names;
+        std::vector<const char*> data_name_pointers;
         std::vector<const char*> unit_cells;
 
         std::string name;
@@ -266,8 +267,8 @@ void ExperimentExporter::writePeaks(const std::map<std::string, PeakCollection*>
             masked[i] = peak->masked();
             predicted[i] = peak->predicted();
 
-            name = peak->dataSet()->name();
-            data_names.push_back(name.c_str());
+            data_names.push_back(peak->dataSet()->name());
+            data_name_pointers.push_back(data_names.back().c_str());
 
             const UnitCell* unit_cell_ptr = peak->unitCell();
             if (unit_cell_ptr) {
@@ -364,7 +365,7 @@ void ExperimentExporter::writePeaks(const std::map<std::string, PeakCollection*>
         H5::DataSet data_H5(file.createDataSet(
             std::string("/PeakCollections/" + collection_name + "/DataNames"), data_str_type,
             peak_space));
-        data_H5.write(data_names.data(), data_str_type, peak_space, peak_space);
+        data_H5.write(data_name_pointers.data(), data_str_type, peak_space, peak_space);
 
         H5::StrType uc_str_type(H5::PredType::C_S1, H5T_VARIABLE);
         H5::DataSet unit_cell_H5(file.createDataSet(
