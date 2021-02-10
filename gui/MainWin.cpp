@@ -112,6 +112,9 @@ MainWin::MainWin()
     connect(
         experiment->getImage()->getMaxIntensitySlider(), &QSlider::valueChanged,
         predictor->getDetectorView()->getScene(), &DetectorScene::setMaxIntensity);
+    connect(
+        experiment->getImage()->getMaxIntensitySlider(), &QSlider::valueChanged,
+        detector_window->getDetectorView()->getScene(), &DetectorScene::setMaxIntensity);
 
     main_layout->addWidget(_layout_stack);
     main_widget->setLayout(main_layout);
