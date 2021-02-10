@@ -57,6 +57,7 @@ void DataResolution::computeQuality(
     double d_min, double d_max, int n_shells, PeakCollection* predicted, PeakCollection* found,
     SpaceGroup spacegroup, bool friedel)
 {
+    shells.clear();
     std::vector<ShellQuality> data_resolution;
     ResolutionShell resolution_shell = nsx::ResolutionShell(d_min, d_max, n_shells);
     for (auto peak : found->getPeakList())
