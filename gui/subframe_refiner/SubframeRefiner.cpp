@@ -24,6 +24,7 @@
 #include "gui/models/Meta.h"
 #include "gui/models/Project.h"
 #include "gui/models/Session.h"
+#include "gui/subframe_predict/ShapeCollectionDialog.h"
 #include "gui/subframe_refiner/RefinerTables.h"
 #include "gui/utility/ColorButton.h"
 #include "gui/utility/Spoiler.h"
@@ -305,6 +306,7 @@ void SubframeRefiner::updatePeakList()
 
     _peak_combo->blockSignals(false);
     updatePredictedList();
+    refreshPeakShapeStatus();
 }
 
 void SubframeRefiner::updateUnitCellList()
@@ -602,6 +604,7 @@ void SubframeRefiner::setUpdateUp()
     QLabel* peaks_label = new QLabel("Predicted peaks");
     _predicted_combo = new QComboBox();
     _update_button = new QPushButton("Update");
+    _build_shape_lib = new QPushButton("Build shape collection");
 
     peaks_label->setAlignment(Qt::AlignRight);
     peaks_label->setSizePolicy(*_size_policy_widgets);
@@ -612,9 +615,13 @@ void SubframeRefiner::setUpdateUp()
     _update_button->setMaximumWidth(1000);
     _update_button->setSizePolicy(*_size_policy_widgets);
 
+    _build_shape_lib->setMaximumWidth(1000);
+    _build_shape_lib->setSizePolicy(*_size_policy_widgets);
+
     update_grid->addWidget(peaks_label, 0, 0, 1, 1);
     update_grid->addWidget(_predicted_combo, 0, 1, 1, 1);
     update_grid->addWidget(_update_button, 1, 0, 1, 2);
+    update_grid->addWidget(_build_shape_lib, 2, 0, 1, 2);
 
     _update_box->setContentLayout(*update_grid, true);
     _update_box->setSizePolicy(*_size_policy_box);
@@ -623,6 +630,7 @@ void SubframeRefiner::setUpdateUp()
     _left_layout->addWidget(_update_box);
 
     connect(_update_button, &QPushButton::clicked, this, &SubframeRefiner::updatePredictions);
+    connect(_build_shape_lib, &QPushButton::clicked, this, &SubframeRefiner::openShapeBuilder);
     _update_box->toggler(true);
 }
 
@@ -818,4 +826,37 @@ void SubframeRefiner::reintegratePredicted()
     nsx::PeakCollection* predicted_peaks =
         expt->getPeakCollection(_predicted_combo->currentText().toStdString());
     runReintegration(predicted_peaks);
+}
+
+void SubframeRefiner::openShapeBuilder()
+{
+    nsx::PeakCollection* peak_collection =
+        gSession->experimentAt(_exp_combo->currentIndex())
+        ->experiment()
+        ->getPeakCollection(_peak_combo->currentText().toStdString());
+
+    std::unique_ptr<ShapeCollectionDialog> dialog(new ShapeCollectionDialog(peak_collection));
+
+    dialog->exec();
+    refreshPeakShapeStatus();
+}
+
+
+void SubframeRefiner::refreshPeakShapeStatus()
+{
+    bool shape_collection_present = true;
+
+    if (_peak_list.empty() || _exp_combo->count() < 1)
+        shape_collection_present = false;
+
+    if (shape_collection_present) {
+        nsx::PeakCollection* collection =
+            gSession->experimentAt(_exp_combo->currentIndex())
+            ->experiment()
+            ->getPeakCollection(_peak_combo->currentText().toStdString());
+        if (collection->shapeCollection() == nullptr)
+            shape_collection_present = false;
+    }
+
+    _reintegrate_box->setEnabled(shape_collection_present);
 }

@@ -83,6 +83,10 @@ class SubframeRefiner : public QWidget {
     void updatePredictedList();
     //! Set up reintegration spoiler
     void setReintegrateUp();
+    //! Open the shape builder dialog
+    void openShapeBuilder();
+    //! Update the peak collection with the shape collection
+    void refreshPeakShapeStatus();
     //! Wrapper for reintegration
     void runReintegration(nsx::PeakCollection* peaks);
     //! Reintegrate found peaks
@@ -146,6 +150,7 @@ class SubframeRefiner : public QWidget {
 
     // reintegration
     Spoiler* _reintegrate_box;
+    QPushButton* _build_shape_lib;
     QComboBox* _integrator_combo;
     QDoubleSpinBox* _radius;
     QDoubleSpinBox* _n_frames;
