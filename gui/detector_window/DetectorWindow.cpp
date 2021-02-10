@@ -443,11 +443,13 @@ void DetectorWindow::changeSelected(PeakItemGraphic* peak_graphic)
 {
     int row_1 = _peak_collection_item_1.returnRowOfVisualItem(peak_graphic);
     QModelIndex index_1 = _peak_collection_model_1.index(row_1, 0);
-    _peak_table_1->selectRow(row_1);
-    _peak_table_1->scrollTo(index_1, QAbstractItemView::PositionAtTop);
-
     int row_2 = _peak_collection_item_2.returnRowOfVisualItem(peak_graphic);
     QModelIndex index_2 = _peak_collection_model_2.index(row_2, 0);
-    _peak_table_2->selectRow(row_2);
-    _peak_table_2->scrollTo(index_2, QAbstractItemView::PositionAtTop);
+    if (row_1 > 0 && row_2 == 0) {
+        _peak_table_1->selectRow(row_1);
+        _peak_table_1->scrollTo(index_1, QAbstractItemView::PositionAtTop);
+    } else if (row_1 == 0 && row_2 > 0) {
+        _peak_table_2->selectRow(row_2);
+        _peak_table_2->scrollTo(index_2, QAbstractItemView::PositionAtTop);
+    }
 }
