@@ -79,7 +79,7 @@ MainWin::MainWin()
     refiner = new SubframeRefiner;
     merger = new SubframeMergedPeaks;
 
-    detector_window = new DetectorWindow(this);
+    detector_window = new DetectorWindow();
 
     _layout_stack = new QStackedWidget(main_widget);
     _layout_stack->addWidget(home);
