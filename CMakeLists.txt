@@ -28,7 +28,7 @@ option(BUILD_TESTING "Build the tests" ON)
 option(BUILD_DOCUMENTATION "Build Sphinx/Doxygen documentation" ON)
 option(BUILD_PDF_DOCUMENTATION "Build Sphinx documentation using LaTeX" ON)
 
-set(NSX_TESTDATA_DIR test/data CACHE STRING)
+set(NSX_TESTDATA_DIR test/data CACHE STRING "Directory where to cache test data")
 
 ###################################################################################################
 #  Build type and compiler flags
