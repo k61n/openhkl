@@ -13,6 +13,7 @@ class TestPeakFinder(unittest.TestCase):
 
         # Read the data
         files = glob.glob('p16106_00029*.tiff')
+        self.assertEqual(len(files), 7)
         data_params = nsx.RawDataReaderParameters()
         # instrument and file parameters
         data_params.wavelength = 3.1
@@ -49,7 +50,7 @@ class TestPeakFinder(unittest.TestCase):
         expt.acceptFoundPeaks("found")
         found_peaks = expt.getPeakCollection("found")
         n_peaks = found_peaks.numberOfPeaks()
-        self.assertTrue(n_peaks >= 210)
+        self.assertTrue(n_peaks >= 210, f"found only {n_peaks} peaks")
 
 if __name__ == "__main__":
     unittest.main()

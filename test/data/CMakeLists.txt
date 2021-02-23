@@ -50,6 +50,7 @@ function(check_file expected_hash fname)
         message(STATUS "- File ${fname} not found or corrupted")
         set(files_ok FALSE PARENT_SCOPE)
     endif()
+    configure_file(${NSX_TESTDATA_DIR}/${fname} ${fname} COPYONLY)
 endfunction()
 
 set(files_ok TRUE)
