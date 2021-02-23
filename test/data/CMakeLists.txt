@@ -25,21 +25,22 @@ configure_file(../cpp/crystal/crystallography.tsv crystallography.tsv COPYONLY)
 configure_file(../cpp/crystal/714898.hdf 714898.hdf COPYONLY)
 
 # Dealing with large test data files -- zamaan
-set(test_data_url https://iffcloud.fz-juelich.de/s/MypDgfTyj43WPYZ/download?path=%2F&files=)
-set(test_files p16106_00029299.tiff
-               p16106_00029300.tiff
-               p16106_00029301.tiff
-               p16106_00029302.tiff
-               p16106_00029303.tiff
-               p16106_00029304.tiff
-               p16106_00029305.tiff
-               FutA.nsx
-               FutA-indexed.nsx)
+set(test_data_url https://computing.mlz-garching.de/download/testdata/nsx)
+set(test_files
+    p16106_00029299.tiff
+    p16106_00029300.tiff
+    p16106_00029301.tiff
+    p16106_00029302.tiff
+    p16106_00029303.tiff
+    p16106_00029304.tiff
+    p16106_00029305.tiff
+    FutA.nsx
+    FutA-indexed.nsx)
 list(LENGTH test_files nfiles)
-message(STATUS "Downloading ${nfiles} test data files...")
+message(STATUS "If necessary, downloading ${nfiles} test data files to ${NSX_TESTDATA_DIR}")
 foreach(test_file ${test_files})
-  if(NOT EXISTS ${NSX_TESTDATA_DIR}/${test_file})
-    message("${test_data_url}/${test_file}")
-    file(DOWNLOAD ${test_data_url}/${test_file} ${NSX_TESTDATA_DIR}/${test_file})
-  endif()
+    if(NOT EXISTS ${NSX_TESTDATA_DIR}/${test_file})
+        message("${test_data_url}/${test_file}")
+        file(DOWNLOAD ${test_data_url}/${test_file} ${NSX_TESTDATA_DIR}/${test_file})
+    endif()
 endforeach()
