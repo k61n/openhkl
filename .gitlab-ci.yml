@@ -23,7 +23,7 @@ mac:
   script:
     - mkdir build
     - cd build
-    - cmake .. -DCMAKE_PREFIX_PATH=/usr/local/opt/qt
+    - cmake .. -D CMAKE_PREFIX_PATH=/usr/local/opt/qt -D CMAKE_CXX_COMPILER_LAUNCHER=ccache -D NSX_TESTDATA_DIR=/Users/admin/testdata/nsx
     - make -j3
     - ctest -j3 --output-on-failure
 
@@ -39,7 +39,7 @@ native_Debian_clang:
     - pwd && ls
     - mkdir build
     - cd build
-    - cmake ..
+    - cmake .. -D CMAKE_CXX_COMPILER_LAUNCHER=ccache -D NSX_TESTDATA_DIR=/home/build/testdata/nsx
     - make -j6
     - ctest -j6 --output-on-failure
 

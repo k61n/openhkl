@@ -26,21 +26,20 @@ configure_file(../cpp/crystal/714898.hdf 714898.hdf COPYONLY)
 
 # Dealing with large test data files -- zamaan
 set(test_data_url https://iffcloud.fz-juelich.de/s/MypDgfTyj43WPYZ/download?path=%2F&files=)
-set(test_data_dir test/data)
-set(test_files p16106_00029299.tiff 
-               p16106_00029300.tiff 
-               p16106_00029301.tiff 
-               p16106_00029302.tiff 
-               p16106_00029303.tiff 
-               p16106_00029304.tiff 
+set(test_files p16106_00029299.tiff
+               p16106_00029300.tiff
+               p16106_00029301.tiff
+               p16106_00029302.tiff
+               p16106_00029303.tiff
+               p16106_00029304.tiff
                p16106_00029305.tiff
                FutA.nsx
                FutA-indexed.nsx)
 list(LENGTH test_files nfiles)
 message(STATUS "Downloading ${nfiles} test data files...")
 foreach(test_file ${test_files})
-  if(NOT EXISTS ${test_data_dir}/${test_file})
+  if(NOT EXISTS ${NSX_TESTDATA_DIR}/${test_file})
     message("${test_data_url}/${test_file}")
-    file(DOWNLOAD ${test_data_url}/${test_file} ${test_data_dir}/${test_file})
+    file(DOWNLOAD ${test_data_url}/${test_file} ${NSX_TESTDATA_DIR}/${test_file})
   endif()
 endforeach()
