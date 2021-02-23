@@ -1,3 +1,7 @@
+###################################################################################################
+#  Short test data files are part of the source tree
+###################################################################################################
+
 configure_file(../cpp/crystal/lattices.dat lattices.dat COPYONLY)
 configure_file(../cpp/crystal/niggli_lattices.dat niggli_lattices.dat COPYONLY)
 configure_file(../cpp/crystal/CsOsO_15K.raf CsOsO_15K.raf COPYONLY)
@@ -24,7 +28,10 @@ configure_file(../cpp/crystal/crystal_database.csv crystal_database.csv COPYONLY
 configure_file(../cpp/crystal/crystallography.tsv crystallography.tsv COPYONLY)
 configure_file(../cpp/crystal/714898.hdf 714898.hdf COPYONLY)
 
-# Dealing with large test data files -- zamaan
+###################################################################################################
+#  Long test data files must have been downloaded to directory NSX_TESTDATA_DIR
+###################################################################################################
+
 set(test_data_url https://computing.mlz-garching.de/download/testdata/nsx)
 set(test_files
     p16106_00029299.tiff
@@ -39,14 +46,16 @@ set(test_files
 
 function(check_file expected_hash fname)
     file(SHA384 ${NSX_TESTDATA_DIR}/${fname} found_hash)
-    if(NOT ${found_hash} STREQUAL ${expected_hash})
-        message(STATUS "File ${fname} not found or corrupted")
-        set(files_ok FALSE)
+    if(NOT (${found_hash} STREQUAL ${expected_hash}))
+        message(STATUS "- File ${fname} not found or corrupted")
+        set(files_ok FALSE PARENT_SCOPE)
     endif()
 endfunction()
 
 set(files_ok TRUE)
 
+list(LENGTH test_files nfiles)
+message(STATUS "Checking ${nfiles} test data files in directory ${NSX_TESTDATA_DIR}:")
 check_file(5de32c0ca9c309dcd1562a43b7a36f4c991aa76250c0b02affdc7f098354ad1c0036a1a7c55ec3408769069c8327d744  FutA-indexed.nsx)
 check_file(49d11468dece18eebd1171f5e93c5d9c80c276176a36d80af396b0a630cb0a6a373ec6c8c3777697b3b4be012f0bda22  FutA.nsx)
 check_file(6f9c5b7e053a7f1e8b30f7b3ee39876e96fc1c70e6f1ebd5db61d35395e87b44426aa87cd0735a795179395c6e426742  p16106_00029299.tiff)
@@ -58,8 +67,9 @@ check_file(4752be16363af29ff6066879f990f4f0d29cb8a59e1c8328cf1c569c82cc471982354
 check_file(ad70d1b3adbdaa94dc96070daa7b206e5114097009b9dc0b2fa8cec9d0fcc5b66d9b2144ef76b93bbfe1e52ccd275f61  p16106_00029305.tiff)
 
 if(NOT files_ok)
-    message(FATAL "Some testdata not found. Make sure that variable NSX_TESTDATA_DIR (currently ${NSX_TESTDATA_DIR}) points to a directory that contains all test data files from ${test_data_url}")
+    message(FATAL "\nSome test data files not found or corrupted, as listed just above.\n"
+        "Make sure that variable NSX_TESTDATA_DIR (currently ${NSX_TESTDATA_DIR})\n"
+        "points to a directory that contains all test data files from ${test_data_url}")
 else()
-    list(LENGTH test_files nfiles)
-    message(STATUS "Found ${nfiles} test data files in directory ${NSX_TESTDATA_DIR}")
+    message(STATUS "- ok, all test data files present with correct checksum")
 endif()
