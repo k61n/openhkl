@@ -13,7 +13,8 @@ class TestPeakFinder(unittest.TestCase):
 
         # Read the data
         files = glob.glob('p16106_00029*.tiff')
-        self.assertEqual(len(files), 7)
+        if len(files) != 7:
+            raise Exception(f"Found {len(files)} tiff files while expecting 7")
         data_params = nsx.RawDataReaderParameters()
         # instrument and file parameters
         data_params.wavelength = 3.1
