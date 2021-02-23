@@ -36,11 +36,30 @@ set(test_files
     p16106_00029305.tiff
     FutA.nsx
     FutA-indexed.nsx)
-list(LENGTH test_files nfiles)
-message(STATUS "If necessary, downloading ${nfiles} test data files to ${NSX_TESTDATA_DIR}")
-foreach(test_file ${test_files})
-    if(NOT EXISTS ${NSX_TESTDATA_DIR}/${test_file})
-        message("${test_data_url}/${test_file}")
-        file(DOWNLOAD ${test_data_url}/${test_file} ${NSX_TESTDATA_DIR}/${test_file})
+
+function(check_file expected_hash fname)
+    file(SHA384 ${NSX_TESTDATA_DIR}/${fname} found_hash)
+    if(NOT ${found_hash} STREQUAL ${expected_hash})
+        message(STATUS "File ${fname} not found or corrupted")
+        set(files_ok FALSE)
     endif()
-endforeach()
+endfunction()
+
+set(files_ok TRUE)
+
+check_file(5de32c0ca9c309dcd1562a43b7a36f4c991aa76250c0b02affdc7f098354ad1c0036a1a7c55ec3408769069c8327d744  FutA-indexed.nsx)
+check_file(49d11468dece18eebd1171f5e93c5d9c80c276176a36d80af396b0a630cb0a6a373ec6c8c3777697b3b4be012f0bda22  FutA.nsx)
+check_file(6f9c5b7e053a7f1e8b30f7b3ee39876e96fc1c70e6f1ebd5db61d35395e87b44426aa87cd0735a795179395c6e426742  p16106_00029299.tiff)
+check_file(bcb8d97ffba00141a13025d476349d3d6849fc6f4ede5eb7d5c3bc830c717097869fb65fbb704034d4e85abed16fc5b9  p16106_00029300.tiff)
+check_file(b7634e3f97de7a3532d0dc4f11c1acba897fac209b59bcb4ef0c4a07523a760486cdb31009e69d3c831713e9170698b2  p16106_00029301.tiff)
+check_file(d7551c196a513853575f5f79f755e64cfa263fc1cb381780e86fc3d6c5d8b531e77e0d055fc88dad0bfb6103e4748b46  p16106_00029302.tiff)
+check_file(b44f01e8154c91e8ff821c0818982e1643931f9f124e2a7463cd0b940f06c9312f570ac2c80715cd519ddd7a92e6bd87  p16106_00029303.tiff)
+check_file(4752be16363af29ff6066879f990f4f0d29cb8a59e1c8328cf1c569c82cc471982354b712970ea1f120ca855b2d48224  p16106_00029304.tiff)
+check_file(ad70d1b3adbdaa94dc96070daa7b206e5114097009b9dc0b2fa8cec9d0fcc5b66d9b2144ef76b93bbfe1e52ccd275f61  p16106_00029305.tiff)
+
+if(NOT files_ok)
+    message(FATAL "Some testdata not found. Make sure that variable NSX_TESTDATA_DIR (currently ${NSX_TESTDATA_DIR}) points to a directory that contains all test data files from ${test_data_url}")
+else()
+    list(LENGTH test_files nfiles)
+    message(STATUS "Found ${nfiles} test data files in directory ${NSX_TESTDATA_DIR}")
+endif()
