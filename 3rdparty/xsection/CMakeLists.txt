@@ -1,37 +1,15 @@
-
-###########################################################################
-# Options
-###########################################################################
-
-if(NOT DEFINED BUILD_SHARED_LIBS)
-    option(BUILD_SHARED_LIBS "Build as shared library" ON)
-endif()
-
 ###########################################################################
 # Compiler settings
 ###########################################################################
-set(CMAKE_CXX_STANDARD 11)
+#set(CMAKE_CXX_STANDARD 11)
 
 if(MSVC)
     set(CTEST_CONFIGURATION_TYPE "${JOB_BUILD_CONFIGURATION}")
-    if(BUILD_SHARED_LIBS)
-        set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
-    endif()
+    set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
     set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
     set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
 else()
-    option(PEDANTIC "Compile with pedantic warnings" ON)
-    option(WERROR "Treat warnings as errors" OFF)
-    message("Note for maintainer: replace overlong string literal") # TODO
     add_compile_options(-Wno-overlength-strings)
-    if(PEDANTIC)
-        add_compile_options(-pedantic -Wall)
-    endif()
-    if(WERROR)
-        add_compile_options(-Werror)
-    endif()
-    set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS} ${DEB_FLAGS} -O0 -g")
-    set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS} -O3 -w")
 endif()
 
 ###########################################################################
@@ -53,7 +31,7 @@ elseif(NOT Boost_FOUND)
     message(FATAL_ERROR "Unable to find correct Boost version. Did you set BOOST_ROOT?")
 endif()
 
-find_package(YAMLCPP REQUIRED)
+#find_package(YAMLCPP REQUIRED)
 
 include(CTest)
 
@@ -63,7 +41,7 @@ include(CTest)
 
 set(destination ${CMAKE_INSTALL_PREFIX})
 
-add_subdirectory(lib)
-add_subdirectory(test)
+#add_subdirectory(lib)
+#add_subdirectory(test)
 
 set(XSection_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIRECTORY}/lib PARENT_SCOPE)

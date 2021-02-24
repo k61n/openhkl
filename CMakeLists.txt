@@ -152,7 +152,7 @@ find_package(Qhull MODULE REQUIRED)
 message(STATUS "Found QHull: QHULL_INCLUDE_DIR=${QHULL_INCLUDE_DIR}")
 
 include(CheckDependencies)
-add_subdirectory(3rdparty/xsection)
+add_subdirectory(3rdparty/xsection/lib)
 
 ###################################################################################################
 #  Prepare for tests; static code analysis
