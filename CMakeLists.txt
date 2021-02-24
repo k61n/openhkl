@@ -184,8 +184,6 @@ add_subdirectory(tables)
 add_subdirectory(core)
 
 if(BUILD_NSX_GUI)
-    find_package(QCR MODULE REQUIRED)
-    message(STATUS "Found libQCR: VERSION=${QCR_VERSION}, LIB=${QCR_LIBRARIES}")
     add_subdirectory(gui)
     add_subdirectory(main)
     if(BUILD_NSX_OLD_APPS)
