@@ -80,7 +80,6 @@ class DetectorWindow : public QDialog {
     PeakViewWidget* _peak_view_widget_2;
 
     // Detector elements
-    DetectorScene* _detector_scene;
     DetectorView* _detector_view;
     QScrollBar* _detector_scroll;
     QSpinBox* _detector_spin;
