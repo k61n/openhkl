@@ -1,10 +1,3 @@
-cmake_minimum_required(VERSION 3.1 FATAL_ERROR)
-cmake_policy(SET CMP0048 NEW)
-
-list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake)
-include(PreventInSourceBuilds)
-
-project(XSection VERSION 0.1 LANGUAGES CXX)
 
 ###########################################################################
 # Options
@@ -72,3 +65,5 @@ set(destination ${CMAKE_INSTALL_PREFIX})
 
 add_subdirectory(lib)
 add_subdirectory(test)
+
+set(XSection_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIRECTORY}/lib PARENT_SCOPE)
