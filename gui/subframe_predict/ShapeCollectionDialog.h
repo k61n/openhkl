@@ -53,7 +53,6 @@ class ShapeCollectionDialog : public QDialog {
     void drawFrame(int value);
     void selectTargetPeak(int row);
     void accept();
-    const nsx::Profile3D& profile() { return _profile; }
 
  private:
     //! Set up the GUI size policies
