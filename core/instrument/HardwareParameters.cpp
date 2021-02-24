@@ -16,6 +16,8 @@
 
 #include <map>
 
+namespace {
+
 std::map<std::string, const char*> database = {
     {
         "BioDiff2500",
@@ -54,6 +56,8 @@ std::map<std::string, const char*> database = {
 #include "data/instruments/I16.yml2c"
     },
 };
+
+} // namespace
 
 namespace nsx {
 

@@ -19,9 +19,11 @@
 
 #include <stdexcept>
 
+namespace {
 const char* database =
 #include "isotopes.yml2c"
     ;
+} // namespace
 
 namespace xsection {
 
