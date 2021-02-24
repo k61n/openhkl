@@ -4,8 +4,9 @@ add_library(nsxtables ${sources})
 
 target_include_directories(
     nsxtables
-    PRIVATE
+    PUBLIC
     ${XSection_INCLUDE_DIR}
+    PRIVATE
     ${CMAKE_SOURCE_DIR})
 
 target_link_libraries(nsxtables

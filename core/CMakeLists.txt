@@ -5,6 +5,8 @@ file(GLOB_RECURSE sources *.cpp)
 add_library(${lib} ${sources})
 
 target_include_directories(${lib}
+    PUBLIC
+    ${XSection_INCLUDE_DIR}
     PRIVATE
     ${CMAKE_SOURCE_DIR}
     )

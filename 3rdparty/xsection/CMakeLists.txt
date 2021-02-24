@@ -1,45 +1,31 @@
-###########################################################################
-# Compiler settings
-###########################################################################
-#set(CMAKE_CXX_STANDARD 11)
+set(lib XSection)
 
-if(MSVC)
-    set(CTEST_CONFIGURATION_TYPE "${JOB_BUILD_CONFIGURATION}")
-    set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
-    set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
-    set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
-else()
-    add_compile_options(-Wno-overlength-strings)
-endif()
+file(GLOB sources *.cpp)
 
-###########################################################################
-# Dependences
-###########################################################################
+set(installable_includes
+    ChemicalFormulaParser.h IsotopeDatabaseManager.h Material.h Variant.h ISingleton.h)
 
-set(Boost_USE_MULTITHREADED ON)
-# We need the Boost libraries fusion, phoenix, and spirit.
-# They all are header only.
-# Therefore the following find_package command goes without "COMPONENTS".
-find_package(Boost 1.53.0 REQUIRED)
-if(Boost_FOUND)
-    include_directories(SYSTEM "${Boost_INCLUDE_DIRS}")
-    message(STATUS "Found boost:")
-    message(STATUS "  version: ${Boost_MAJOR_VERSION}.${Boost_MINOR_VERSION}")
-    message(STATUS "  libraries: ${Boost_LIBRARIES}")
-    message(STATUS "  headers: ${Boost_INCLUDE_DIRS}")
-elseif(NOT Boost_FOUND)
-    message(FATAL_ERROR "Unable to find correct Boost version. Did you set BOOST_ROOT?")
-endif()
+add_library(${lib} ${sources})
 
-#find_package(YAMLCPP REQUIRED)
+target_include_directories(${lib} PRIVATE ${CMAKE_SOURCE_DIR} ${Boost_INCLUDE_DIRS})
 
-include(CTest)
+target_link_libraries(${lib} PRIVATE ${YAMLCPP_LIBRARIES})
 
-###########################################################################
-# Finalize
-###########################################################################
+set_target_properties(
+    ${lib} PROPERTIES
+    OUTPUT_NAME ${lib}
+    VERSION ${PROJECT_VERSION}
+    SOVERSION ${PROJECT_VERSION_MAJOR})
 
-set(destination ${CMAKE_INSTALL_PREFIX})
+install(
+    TARGETS ${lib} LIBRARY
+    DESTINATION ${destination}/lib
+    COMPONENT Libraries)
+install(
+    FILES ${installable_includes}
+    DESTINATION ${destination}/include/xsection
+    COMPONENT Headers)
 
-#add_subdirectory(lib)
-#add_subdirectory(test)
+
+set(XSection_LIBRARIES XSection PARENT_SCOPE)
+set(XSection_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/3rdparty PARENT_SCOPE)
