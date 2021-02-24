@@ -1,0 +1,10 @@
+prefix=@destination@
+exec_prefix=${prefix}
+libdir=${prefix}/lib
+includedir=${prefix}/include
+
+Name: xsection
+Description: Cross sections for neutron and x-ray scattering
+Version: @xsection_VERSION@
+Libs: -L${libdir} -lxsection
+Cflags: -I${includedir}
