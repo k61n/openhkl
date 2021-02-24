@@ -35,7 +35,14 @@ set(NSX_TESTDATA_DIR test/data CACHE PATH "Directory where to cache test data")
 ###################################################################################################
 
 if(UNIX AND NOT APPLE)
+    set(ARCHITECTURE linux)
     set(LINUX TRUE)
+elseif(APPLE)
+    set(ARCHITECTURE macos)
+elseif(WIN32)
+    set(ARCHITECTURE windows)
+else()
+    message(FATAL "Unsupported architecture")
 endif()
 
 # Set a default build type if none was specified
@@ -145,6 +152,7 @@ find_package(Qhull MODULE REQUIRED)
 message(STATUS "Found QHull: QHULL_INCLUDE_DIR=${QHULL_INCLUDE_DIR}")
 
 include(CheckDependencies)
+add_subdirectory(3rdparty/xsection)
 
 ###################################################################################################
 #  Prepare for tests; static code analysis
@@ -206,3 +214,9 @@ endif()
 if(BUILD_DOCUMENTATION)
     add_subdirectory(doc)
 endif()
+
+###################################################################################################
+#  Pack
+###################################################################################################
+
+#include(Pack)
