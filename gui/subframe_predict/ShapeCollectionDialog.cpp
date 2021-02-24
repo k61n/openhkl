@@ -31,6 +31,7 @@
 #include <QGroupBox>
 #include <QHBoxLayout>
 #include <QHeaderView>
+#include <QMessageBox>
 #include <QStatusBar>
 #include <QVBoxLayout>
 #include <QtGlobal>
@@ -282,6 +283,7 @@ void ShapeCollectionDialog::build()
     // update the frame slider if necessary
     if (_draw_frame->maximum() != nz_val)
         _draw_frame->setMaximum(nz_val - 1);
+    _draw_frame->setValue(nz_val/2);
 
     nsx::AABB aabb;
 
@@ -337,32 +339,25 @@ void ShapeCollectionDialog::calculate()
 
     nsx::DetectorEvent ev(_x->value(), _y->value(), _frame->value());
     // update maximum value, used for drawing
-    _profile = _collection.meanProfile(ev, _radius->value(), _n_frames->value());
-    _maximum = 0;
+    try {
+        _profile = _collection.meanProfile(ev, _radius->value(), _n_frames->value());
+        _maximum = 0;
 
-    for (int i = 0; i < nx_val; ++i) {
-        for (int j = 0; j < ny_val; ++j) {
-            for (int k = 0; k < nz_val; ++k)
-                _maximum = std::max(_maximum, _profile(i, j, k));
+        for (int i = 0; i < nx_val; ++i) {
+            for (int j = 0; j < ny_val; ++j) {
+                for (int k = 0; k < nz_val; ++k)
+                    _maximum = std::max(_maximum, _profile(i, j, k));
+            }
         }
+        drawFrame(_draw_frame->value()); // draw the updated frame
+    } catch(std::runtime_error& e) {
+        QMessageBox::critical(this, "Error", QString(e.what()));
     }
-
-    nsx::Ellipsoid e = _profile.ellipsoid();
-
-    qDebug() << "Mean profile has inertia tensor";
-    std::ostringstream os;
-    os << e.inverseMetric();
-    qDebug() << QString::fromStdString(os.str());
-
-    // draw the updated frame
-    drawFrame(_draw_frame->value());
 }
 
 void ShapeCollectionDialog::drawFrame(int value)
 {
     if (value < 0 || value >= _profile.shape()[2]) {
-        qInfo() << "SLD: drawFrame(): value = " << value;
-        qInfo() << "SLD: drawFrame(): _profile.shape()[2] = " << _profile.shape()[2];
         return;
     }
 
