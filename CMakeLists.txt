@@ -35,7 +35,14 @@ set(NSX_TESTDATA_DIR test/data CACHE PATH "Directory where to cache test data")
 ###################################################################################################
 
 if(UNIX AND NOT APPLE)
+    set(ARCHITECTURE linux)
     set(LINUX TRUE)
+elseif(APPLE)
+    set(ARCHITECTURE macos)
+elseif(WIN32)
+    set(ARCHITECTURE windows)
+else()
+    message(FATAL "Unsupported architecture")
 endif()
 
 # Set a default build type if none was specified
@@ -69,6 +76,7 @@ if((CMAKE_CXX_COMPILER_ID STREQUAL "GNU") OR (CMAKE_CXX_COMPILER_ID MATCHES "Cla
         endif()
     endif()
     add_compile_options(-Wall -Wextra -Wpedantic -Wno-sign-compare)
+    add_compile_options(-Wno-overlength-strings) # WAITING for xsection to remove overlong strings
     # exception for swig-generated code:
     #add_compile_options(-Wno-error=sometimes-uninitialized)
     add_compile_options($<$<COMPILE_LANGUAGE:CXX>:-Werror=delete-incomplete>)
@@ -145,6 +153,7 @@ find_package(Qhull MODULE REQUIRED)
 message(STATUS "Found QHull: QHULL_INCLUDE_DIR=${QHULL_INCLUDE_DIR}")
 
 include(CheckDependencies)
+add_subdirectory(3rdparty/xsection)
 
 ###################################################################################################
 #  Prepare for tests; static code analysis
@@ -206,3 +215,9 @@ endif()
 if(BUILD_DOCUMENTATION)
     add_subdirectory(doc)
 endif()
+
+###################################################################################################
+#  Pack
+###################################################################################################
+
+#include(Pack)
