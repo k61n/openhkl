@@ -76,6 +76,7 @@ if((CMAKE_CXX_COMPILER_ID STREQUAL "GNU") OR (CMAKE_CXX_COMPILER_ID MATCHES "Cla
         endif()
     endif()
     add_compile_options(-Wall -Wextra -Wpedantic -Wno-sign-compare)
+    add_compile_options(-Wno-overlength-strings) # WAITING for xsection to remove overlong strings
     # exception for swig-generated code:
     #add_compile_options(-Wno-error=sometimes-uninitialized)
     add_compile_options($<$<COMPILE_LANGUAGE:CXX>:-Werror=delete-incomplete>)

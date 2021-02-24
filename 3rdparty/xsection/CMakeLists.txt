@@ -43,5 +43,3 @@ set(destination ${CMAKE_INSTALL_PREFIX})
 
 #add_subdirectory(lib)
 #add_subdirectory(test)
-
-set(XSection_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIRECTORY}/lib PARENT_SCOPE)
