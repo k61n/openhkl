@@ -57,7 +57,8 @@ endfunction()
 set(files_ok TRUE)
 
 list(LENGTH test_files nfiles)
-message(STATUS "Checking ${nfiles} test data files in directory ${NSX_TESTDATA_DIR}:")
+message(STATUS
+    "Checking ${nfiles} test data files in directory NSX_TESTDATA_DIR=${NSX_TESTDATA_DIR}:")
 check_file(5de32c0ca9c309dcd1562a43b7a36f4c991aa76250c0b02affdc7f098354ad1c0036a1a7c55ec3408769069c8327d744  FutA-indexed.nsx)
 check_file(49d11468dece18eebd1171f5e93c5d9c80c276176a36d80af396b0a630cb0a6a373ec6c8c3777697b3b4be012f0bda22  FutA.nsx)
 check_file(6f9c5b7e053a7f1e8b30f7b3ee39876e96fc1c70e6f1ebd5db61d35395e87b44426aa87cd0735a795179395c6e426742  p16106_00029299.tiff)
@@ -70,8 +71,8 @@ check_file(ad70d1b3adbdaa94dc96070daa7b206e5114097009b9dc0b2fa8cec9d0fcc5b66d9b2
 
 if(NOT files_ok)
     message(FATAL "\nSome test data files not found or corrupted, as listed just above.\n"
-        "Make sure that variable NSX_TESTDATA_DIR (currently ${NSX_TESTDATA_DIR})\n"
-        "points to a directory that contains all test data files from ${test_data_url}")
+        "Invoke CMake with -D NSX_TESTDATA_DIR=<directory> to indicate a directory\n"
+        "that contains all test data files from ${test_data_url}")
 else()
     message(STATUS "- ok, all test data files present with correct checksum")
 endif()
