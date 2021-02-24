@@ -27,7 +27,5 @@ foreach(source_file ${test_sources})
 
 endforeach(source_file)
 
-add_custom_target(check COMMAND ${CMAKE_CTEST_COMMAND})
-
 # valgrind suppressions
 configure_file(valgrind/suppressions suppressions COPYONLY)
