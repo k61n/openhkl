@@ -199,7 +199,7 @@ bool RefinementBatch::refine(unsigned int max_iter)
     min.set_f([&](Eigen::VectorXd& fvec) { return residuals(fvec); });
     bool success = min.fit(max_iter);
 
-    for (const auto state : _states)
+    for (const auto& state : _states)
         state.get().refined = success;
 
     _cell->updateParameters(_u0, _uOffsets, _cellParameters);

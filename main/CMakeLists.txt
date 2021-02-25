@@ -2,6 +2,8 @@ set(app NSXTool)
 
 if(WIN32)
     add_executable(${app} WIN32 main.cpp resources.qrc)
+elseif(APPLE)
+    add_executable(${app} MACOSX_BUNDLE main.cpp resources.qrc)
 else()
     add_executable(${app} main.cpp resources.qrc)
 endif()
