@@ -154,6 +154,8 @@ message(STATUS "Found QHull: QHULL_INCLUDE_DIR=${QHULL_INCLUDE_DIR}")
 
 include(CheckDependencies)
 add_subdirectory(3rdparty/xsection)
+set(XSection_LIBRARIES XSection)
+set(XSection_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/3rdparty/xsection)
 
 ###################################################################################################
 #  Prepare for tests; static code analysis
@@ -220,4 +222,13 @@ endif()
 #  Pack
 ###################################################################################################
 
-#include(Pack)
+if (APPLE)
+  install(TARGETS NSXTool DESTINATION .)
+  include(Pack)
+elseif(WIN32)
+  # TODO
+else()
+  set_property(TARGET NSXTool PROPERTY INSTALL_RPATH_USE_LINK_PATH TRUE)
+  set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib")
+  install(TARGETS NSXTool DESTINATION ${CMAKE_INSTALL_PREFIX}/bin)
+endif()
