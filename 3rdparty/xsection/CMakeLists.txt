@@ -17,15 +17,5 @@ set_target_properties(
     VERSION ${PROJECT_VERSION}
     SOVERSION ${PROJECT_VERSION_MAJOR})
 
-install(
-    TARGETS ${lib} LIBRARY
-    DESTINATION ${destination}/lib
-    COMPONENT Libraries)
-install(
-    FILES ${installable_includes}
-    DESTINATION ${destination}/include/xsection
-    COMPONENT Headers)
-
-
 set(XSection_LIBRARIES XSection PARENT_SCOPE)
 set(XSection_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/3rdparty PARENT_SCOPE)

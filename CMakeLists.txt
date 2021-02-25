@@ -224,7 +224,6 @@ endif()
 
 if (APPLE)
   install(TARGETS NSXTool DESTINATION .)
-  include(Pack)
 elseif(WIN32)
   # TODO
 else()
@@ -232,3 +231,5 @@ else()
   set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib")
   install(TARGETS NSXTool DESTINATION ${CMAKE_INSTALL_PREFIX}/bin)
 endif()
+
+include(Pack)
