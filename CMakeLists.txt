@@ -59,6 +59,9 @@ enable_language(C)
 
 set(CMAKE_CXX_STANDARD 17)
 
+if(APPLE)
+    add_compile_options(-mmacosx-version-min=10.14)
+endif()
 if((CMAKE_CXX_COMPILER_ID STREQUAL "GNU") OR (CMAKE_CXX_COMPILER_ID MATCHES "Clang"))
     if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
         if(CMAKE_CXX_COMPILER_VERSION VERSION_LESS 7)
