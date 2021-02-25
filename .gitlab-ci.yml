@@ -26,6 +26,11 @@ mac:
     - cmake .. -D CMAKE_PREFIX_PATH=/usr/local/opt/qt -D CMAKE_CXX_COMPILER_LAUNCHER=ccache -D NSX_TESTDATA_DIR=/Users/admin/testdata/nsx
     - make -j3
     - ctest -j3 --output-on-failure
+    - cpack -V
+  artifacts:
+    paths:
+    - build/NSXTool-*.dmg
+    expire_in: 10 days
 
 native_Debian_clang:
   tags: &native
