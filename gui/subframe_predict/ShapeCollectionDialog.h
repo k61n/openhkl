@@ -46,6 +46,8 @@
 class ShapeCollectionDialog : public QDialog {
  public:
     ShapeCollectionDialog(nsx::PeakCollection* peak_collection);
+    double getDMin() { return _min_d->value(); };
+    double getDMax() { return _max_d->value(); };
 
  private:
     void calculate();

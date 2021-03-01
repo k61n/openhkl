@@ -815,5 +815,9 @@ void SubframePredictPeaks::openShapeBuilder()
     std::unique_ptr<ShapeCollectionDialog> dialog(new ShapeCollectionDialog(peak_collection));
 
     dialog->exec();
+    _d_min->setValue(dialog->getDMin());
+    _d_max->setValue(dialog->getDMax());
+    _d_min_int->setValue(dialog->getDMin());
+    _d_max_int->setValue(dialog->getDMax());
     refreshPeakShapeStatus();
 }
