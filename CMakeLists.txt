@@ -157,8 +157,8 @@ message(STATUS "Found QHull: QHULL_INCLUDE_DIR=${QHULL_INCLUDE_DIR}")
 
 include(CheckDependencies)
 add_subdirectory(3rdparty/xsection)
-set(XSection_LIBRARIES XSection)
-set(XSection_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/3rdparty/xsection)
+#set(XSection_LIBRARIES XSection)
+#set(XSection_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/3rdparty/xsection)
 
 ###################################################################################################
 #  Prepare for tests; static code analysis
