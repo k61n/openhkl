@@ -206,23 +206,23 @@ void SubframePredictPeaks::setParametersUp()
 
     _d_min->setMaximumWidth(1000);
     _d_min->setMaximum(100000);
-    _d_min->setDecimals(6);
+    _d_min->setDecimals(2);
     _d_min->setValue(1.5);
 
     _d_max->setMaximumWidth(1000);
     _d_max->setMaximum(100000);
-    _d_max->setDecimals(6);
+    _d_max->setDecimals(2);
     _d_max->setValue(50);
 
     _radius->setMaximumWidth(1000);
     _radius->setMaximum(100000);
-    _radius->setDecimals(6);
+    _radius->setDecimals(2);
     _radius->setValue(400.);
 
     _n_frames->setMaximumWidth(1000);
     _n_frames->setMaximum(100000);
-    _n_frames->setDecimals(6);
-    _n_frames->setValue(100);
+    _n_frames->setDecimals(2);
+    _n_frames->setValue(10.0);
 
     _min_neighbors->setMaximumWidth(1000);
     _min_neighbors->setMaximum(100000);
@@ -243,9 +243,9 @@ void SubframePredictPeaks::setParametersUp()
     para_grid->addWidget(_interpolation, 1, 1, 1, 1);
     para_grid->addWidget(_d_min, 2, 1, 1, 1);
     para_grid->addWidget(_d_max, 3, 1, 1, 1);
-    para_grid->addWidget(_radius, 4, 1, 1, 1);
-    para_grid->addWidget(_n_frames, 5, 1, 1, 1);
-    para_grid->addWidget(_min_neighbors, 6, 1, 1, 1);
+    para_grid->addWidget(_min_neighbors, 4, 1, 1, 1);
+    para_grid->addWidget(_radius, 5, 1, 1, 1);
+    para_grid->addWidget(_n_frames, 6, 1, 1, 1);
     para_grid->addWidget(_run_prediction, 7, 0, 1, 2);
 
     _para_box->setContentLayout(*para_grid, true);
@@ -636,13 +636,11 @@ void SubframePredictPeaks::runPrediction()
             _unit_cells->currentText().toStdString());
 
         nsx::PredictionParameters params;
-        params.peak_end = _peak_end_int->value();
-        params.detector_range_min = _d_min_int->value();
-        params.detector_range_max = _d_max_int->value();
-        params.bkg_begin = _bkg_start_int->value();
-        params.bkg_end = _bkg_end_int->value();
-        params.neighbour_range_pixels = _radius_int->value();
-        params.neighbour_range_frames = _n_frames_int->value();
+        params.detector_range_min = _d_min->value();
+        params.detector_range_max = _d_max->value();
+        params.neighbour_range_pixels = _radius->value();
+        params.neighbour_range_frames = _n_frames->value();
+        params.min_n_neighbors = _min_neighbors->value();
         params.fit_center = _fit_center->isChecked();
         params.fit_cov = _fit_covariance->isChecked();
         int interpol = _interpolation->currentIndex();

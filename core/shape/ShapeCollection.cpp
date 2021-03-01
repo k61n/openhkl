@@ -146,13 +146,13 @@ std::vector<Peak3D*> predictPeaks(
         Level::Info, "algo::predictPeaks: Interpolation failed for", collection->nFailedInterp(),
         "peaks");
     nsxlog(
-        Level::Debug, "algo::predictPeaks:", collection->nNoProfile(),
+        Level::Info, "algo::predictPeaks:", collection->nNoProfile(),
         "peaks with no neighbouring profiles");
     nsxlog(
-        Level::Debug, "algo::predictPeaks:", collection->nLonelyPeaks(),
+        Level::Info, "algo::predictPeaks:", collection->nLonelyPeaks(),
         "peaks with no neighbours");
     nsxlog(
-        Level::Debug, "algo::predictPeaks:", collection->nUnfriendlyPeaks(),
+        Level::Info, "algo::predictPeaks:", collection->nUnfriendlyPeaks(),
         "peaks with too few neighbours");
     // TODO: suggest course of action for fixing these error (increase radius, minimum number
     // of neighbours)
