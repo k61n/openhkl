@@ -207,26 +207,21 @@ void SubframePredictPeaks::setParametersUp()
     _d_min->setMaximumWidth(1000);
     _d_min->setMaximum(100000);
     _d_min->setDecimals(2);
-    _d_min->setValue(1.5);
 
     _d_max->setMaximumWidth(1000);
     _d_max->setMaximum(100000);
     _d_max->setDecimals(2);
-    _d_max->setValue(50);
 
     _radius->setMaximumWidth(1000);
     _radius->setMaximum(100000);
     _radius->setDecimals(2);
-    _radius->setValue(400.);
 
     _n_frames->setMaximumWidth(1000);
     _n_frames->setMaximum(100000);
     _n_frames->setDecimals(2);
-    _n_frames->setValue(10.0);
 
     _min_neighbors->setMaximumWidth(1000);
     _min_neighbors->setMaximum(100000);
-    _min_neighbors->setValue(20);
 
     _run_prediction->setMaximumWidth(1000);
 
@@ -256,7 +251,6 @@ void SubframePredictPeaks::setParametersUp()
 
     _left_layout->addWidget(_para_box);
 }
-
 
 void SubframePredictPeaks::setIntegrateUp()
 {
@@ -321,45 +315,36 @@ void SubframePredictPeaks::setIntegrateUp()
     _integrator->addItem("3d profile integrator");
 
     _fit_center->setMaximumWidth(1000);
-    _fit_center->setChecked(true);
 
     _fit_covariance->setMaximumWidth(1000);
-    _fit_covariance->setChecked(true);
 
     _peak_end_int->setMaximumWidth(1000);
     _peak_end_int->setMaximum(100000);
-    _peak_end_int->setDecimals(6);
-    _peak_end_int->setValue(5);
+    _peak_end_int->setDecimals(2);
 
     _bkg_start_int->setMaximumWidth(1000);
     _bkg_start_int->setMaximum(100000);
-    _bkg_start_int->setDecimals(6);
-    _bkg_start_int->setValue(3.0);
+    _bkg_start_int->setDecimals(2);
 
     _bkg_end_int->setMaximumWidth(1000);
     _bkg_end_int->setMaximum(100000);
-    _bkg_end_int->setDecimals(6);
-    _bkg_end_int->setValue(4.5);
+    _bkg_end_int->setDecimals(2);
 
     _d_min_int->setMaximumWidth(1000);
     _d_min_int->setMaximum(100000);
-    _d_min_int->setDecimals(6);
-    _d_min_int->setValue(1.5);
+    _d_min_int->setDecimals(2);
 
     _d_max_int->setMaximumWidth(1000);
     _d_max_int->setMaximum(100000);
-    _d_max_int->setDecimals(6);
-    _d_max_int->setValue(50);
+    _d_max_int->setDecimals(2);
 
     _radius_int->setMaximumWidth(1000);
     _radius_int->setMaximum(100000);
-    _radius_int->setDecimals(6);
-    _radius_int->setValue(400.);
+    _radius_int->setDecimals(2);
 
     _n_frames_int->setMaximumWidth(1000);
     _n_frames_int->setMaximum(100000);
-    _n_frames_int->setDecimals(6);
-    _n_frames_int->setValue(10);
+    _n_frames_int->setDecimals(2);
 
     _run_integration->setMaximumWidth(1000);
 
@@ -614,7 +599,27 @@ void SubframePredictPeaks::updateDatasetParameters(int idx)
     _figure_spin->setMinimum(0);
 }
 
-void SubframePredictPeaks::grabPredictorParameters() { }
+void SubframePredictPeaks::grabPredictorParameters() {
+    _params = gSession->experimentAt(_exp_combo->currentIndex())->experiment()->predict_params;
+    _shape_params = gSession->experimentAt(_exp_combo->currentIndex())->experiment()->shape_params;
+
+    // Prediction parameters
+    _d_min->setValue(_params.detector_range_min);
+    _d_max->setValue(_params.detector_range_max);
+    _radius->setValue(_params.neighbour_range_pixels);
+    _n_frames->setValue(_params.neighbour_range_frames);
+    _min_neighbors->setValue(_params.min_n_neighbors);
+
+    //Integration parameters
+    _d_min_int->setValue(_params.detector_range_min);
+    _d_max_int->setValue(_params.detector_range_max);
+    _bkg_start_int->setValue(_params.bkg_begin);
+    _bkg_end_int->setValue(_params.bkg_end);
+    _radius_int->setValue(_params.neighbour_range_pixels);
+    _n_frames_int->setValue(_params.neighbour_range_frames);
+    _fit_center->setChecked(_params.fit_center);
+    _fit_covariance->setChecked(_params.fit_cov);
+}
 
 void SubframePredictPeaks::setPredictorParameters() const { }
 
@@ -812,7 +817,7 @@ void SubframePredictPeaks::openShapeBuilder()
             ->experiment()
             ->getPeakCollection(_peak_combo->currentText().toStdString());
 
-    std::unique_ptr<ShapeCollectionDialog> dialog(new ShapeCollectionDialog(peak_collection));
+    std::unique_ptr<ShapeCollectionDialog> dialog(new ShapeCollectionDialog(peak_collection, _shape_params));
 
     dialog->exec();
     _d_min->setValue(dialog->getDMin());

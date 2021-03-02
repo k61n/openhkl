@@ -32,7 +32,7 @@ struct IntegrationParameters {
     double bkg_begin = 3.0; //!< Beginning of background region (sigmas)
     double bkg_end = 6.0; //!< End of background region (sigmas)
     double neighbour_range_pixels = 400.0; //!< Search radius for neighbouring peaks (pixels)
-    double neighbour_range_frames = 20.0; //!< Search radius for neighbouring peaks (frames)
+    double neighbour_range_frames = 10.0; //!< Search radius for neighbouring peaks (frames)
     bool fit_center = true; //!< Whether to update the peak centre after integration
     bool fit_cov = true; //!< Whether to update the peak covariance after integration
 

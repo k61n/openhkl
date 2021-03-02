@@ -45,7 +45,7 @@
 //! Dialog for building the shape collection
 class ShapeCollectionDialog : public QDialog {
  public:
-    ShapeCollectionDialog(nsx::PeakCollection* peak_collection);
+    ShapeCollectionDialog(nsx::PeakCollection* peak_collection, nsx::ShapeCollectionParameters params);
     double getDMin() { return _min_d->value(); };
     double getDMax() { return _max_d->value(); };
 
@@ -78,6 +78,7 @@ class ShapeCollectionDialog : public QDialog {
     std::set<nsx::sptrDataSet> _data;
     nsx::Profile3D _profile;
     nsx::PeakCollection* _collection_ptr;
+    nsx::ShapeCollectionParameters _params;
     double _maximum;
     ColorMap _cmap;
 

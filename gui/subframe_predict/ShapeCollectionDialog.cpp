@@ -36,8 +36,9 @@
 #include <QVBoxLayout>
 #include <QtGlobal>
 
-ShapeCollectionDialog::ShapeCollectionDialog(nsx::PeakCollection* peak_collection)
-    : QDialog(), _peak_collection_model(), _peak_collection_item()
+ShapeCollectionDialog::ShapeCollectionDialog(
+    nsx::PeakCollection* peak_collection, nsx::ShapeCollectionParameters params)
+    : QDialog(), _peak_collection_model(), _peak_collection_item(), _params(params)
 {
     setModal(true);
     setSizePolicies();
@@ -143,32 +144,32 @@ void ShapeCollectionDialog::setParametersUp()
 
     _min_I_sigma = new QDoubleSpinBox();
     _min_I_sigma->setMaximum(10000);
-    _min_I_sigma->setValue(1);
+    _min_I_sigma->setValue(_params.strength_min);
     _min_I_sigma->setSizePolicy(*_size_policy_widgets);
 
     _min_d = new QDoubleSpinBox();
     _min_d->setMaximum(10000);
-    _min_d->setValue(1.5);
+    _min_d->setValue(_params.detector_range_min);
     _min_d->setSizePolicy(*_size_policy_widgets);
 
     _max_d = new QDoubleSpinBox();
     _max_d->setMaximum(10000);
-    _max_d->setValue(50);
+    _max_d->setValue(_params.detector_range_max);
     _max_d->setSizePolicy(*_size_policy_widgets);
 
     _peak_end = new QDoubleSpinBox();
     _peak_end->setMaximum(10000);
-    _peak_end->setValue(3);
+    _peak_end->setValue(_params.peak_end);
     _peak_end->setSizePolicy(*_size_policy_widgets);
 
     _background_begin = new QDoubleSpinBox();
     _background_begin->setMaximum(10000);
-    _background_begin->setValue(3);
+    _background_begin->setValue(_params.bkg_begin);
     _background_begin->setSizePolicy(*_size_policy_widgets);
 
     _background_end = new QDoubleSpinBox();
     _background_end->setMaximum(10000);
-    _background_end->setValue(4.5);
+    _background_end->setValue(_params.bkg_end);
     _background_end->setSizePolicy(*_size_policy_widgets);
 
     _build_collection = new QPushButton("Build shape collection");

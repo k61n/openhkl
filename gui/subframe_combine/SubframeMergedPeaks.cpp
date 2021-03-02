@@ -256,6 +256,14 @@ void SubframeMergedPeaks::setUnmergedUp()
 void SubframeMergedPeaks::refreshAll()
 {
     refreshExperimentList();
+    double d_min;
+    if (_exp_drop->currentIndex() >=0) {
+        d_min = gSession->experimentAt(_exp_drop->currentIndex())->
+            experiment()->shape_params.detector_range_min;
+    } else {
+        d_min = 1.5;
+    }
+    _d_min->setValue(d_min);
 }
 
 void SubframeMergedPeaks::refreshExperimentList()

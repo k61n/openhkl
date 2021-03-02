@@ -38,6 +38,11 @@ class PeakTableView;
 class PeakViewWidget;
 class Spoiler;
 
+namespace nsx {
+    struct PredictionParameters;
+    struct ShapeCollectionParameters;
+}
+
 //! Frame which shows the settings to find peaks
 class SubframePredictPeaks : public QWidget {
  public:
@@ -113,6 +118,10 @@ class SubframePredictPeaks : public QWidget {
     QStringList _peak_list;
     //! The loaded peak list
     QStringList _unit_cell_list;
+    //! Parameters for shape collection
+    nsx::ShapeCollectionParameters _shape_params;
+    //! Parameters for peak prediction
+    nsx::PredictionParameters _params;
 
  private:
     QHBoxLayout* _main_layout;

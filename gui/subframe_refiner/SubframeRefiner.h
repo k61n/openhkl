@@ -16,6 +16,7 @@
 #define NSX_GUI_SUBFRAME_REFINER_SUBFRAMEREFINER_H
 
 #include "core/algo/Refiner.h"
+#include "core/shape/ShapeCollection.h"
 
 #include <QCheckBox>
 #include <QComboBox>
@@ -112,6 +113,12 @@ class SubframeRefiner : public QWidget {
     int _n_updated;
     //! Whether the refinement succeeded
     bool _refine_success;
+    //! Parameters for refinement/reintegration
+    nsx::RefinerParameters _refiner_params;
+    //! Parameters for shape library
+    nsx::ShapeCollectionParameters _shape_params;
+    //! Parameters for reintegration
+    nsx::IntegrationParameters _integration_params;
 
  private:
     QHBoxLayout* _main_layout;

@@ -60,6 +60,7 @@ SubframeRefiner::SubframeRefiner() : QWidget()
 
     setInputUp();
     setRefinerFlagsUp();
+    setParametersUp();
     setPlotUp();
     setUpdateUp();
     setReintegrateUp();
@@ -138,7 +139,7 @@ void SubframeRefiner::setInputUp()
     _cell_combo = new QComboBox();
     _n_batches_spin = new QSpinBox();
 
-    _n_batches_spin->setValue(10);
+    _n_batches_spin->setValue(_refiner_params.nbatches);
     _n_batches_spin->setMinimum(1);
     _n_batches_spin->setMaximum(1000); // updated on setBatchesUp
 
@@ -215,11 +216,11 @@ void SubframeRefiner::setRefinerFlagsUp()
     _refiner_flags_box->setSizePolicy(*_size_policy_box);
     _refiner_flags_box->contentArea.setSizePolicy(*_size_policy_box);
 
-    _refineUB->setChecked(true);
-    _refineSamplePosition->setChecked(true);
-    _refineSampleOrientation->setChecked(true);
-    _refineDetectorPosition->setChecked(true);
-    _refineKi->setChecked(true);
+    _refineUB->setChecked(_refiner_params.refine_ub);
+    _refineSamplePosition->setChecked(_refiner_params.refine_sample_position);
+    _refineSampleOrientation->setChecked(_refiner_params.refine_sample_orientation);
+    _refineDetectorPosition->setChecked(_refiner_params.refine_detector_offset);
+    _refineKi->setChecked(_refiner_params.refine_ki);
 
     connect(_refine_button, &QPushButton::clicked, this, &SubframeRefiner::refine);
 
@@ -261,6 +262,8 @@ void SubframeRefiner::updateExptList()
     updateDatasetList();
     updatePeakList();
     updateUnitCellList();
+    _refiner_params = gSession->experimentAt(_exp_combo->currentIndex())->experiment()->refiner_params;
+    _shape_params = gSession->experimentAt(_exp_combo->currentIndex())->experiment()->shape_params;
 }
 
 void SubframeRefiner::updateDatasetList()
@@ -712,35 +715,35 @@ void SubframeRefiner::setReintegrateUp()
     _integrator_combo->setSizePolicy(*_size_policy_widgets);
 
     _fit_center->setMaximumWidth(1000);
-    _fit_center->setChecked(true);
+    _fit_center->setChecked(_refiner_params.fit_center);
 
     _fit_covariance->setMaximumWidth(1000);
-    _fit_covariance->setChecked(true);
+    _fit_covariance->setChecked(_refiner_params.fit_cov);
 
     _peak_end_int->setMaximumWidth(1000);
     _peak_end_int->setMaximum(100000);
-    _peak_end_int->setDecimals(6);
-    _peak_end_int->setValue(5);
+    _peak_end_int->setDecimals(2);
+    _peak_end_int->setValue(_refiner_params.peak_end);
 
     _bkg_start_int->setMaximumWidth(1000);
     _bkg_start_int->setMaximum(100000);
-    _bkg_start_int->setDecimals(6);
-    _bkg_start_int->setValue(3.0);
+    _bkg_start_int->setDecimals(2);
+    _bkg_start_int->setValue(_refiner_params.bkg_begin);
 
     _bkg_end_int->setMaximumWidth(1000);
     _bkg_end_int->setMaximum(100000);
-    _bkg_end_int->setDecimals(6);
-    _bkg_end_int->setValue(4.5);
+    _bkg_end_int->setDecimals(2);
+    _bkg_end_int->setValue(_refiner_params.bkg_end);
 
     _radius_int->setMaximumWidth(1000);
     _radius_int->setMaximum(100000);
-    _radius_int->setDecimals(6);
-    _radius_int->setValue(400.);
+    _radius_int->setDecimals(2);
+    _radius_int->setValue(_refiner_params.neighbour_range_pixels);
 
     _n_frames_int->setMaximumWidth(1000);
     _n_frames_int->setMaximum(100000);
-    _n_frames_int->setDecimals(6);
-    _n_frames_int->setValue(10);
+    _n_frames_int->setDecimals(2);
+    _n_frames_int->setValue(_refiner_params.neighbour_range_frames);
 
     _reintegrate_found->setMaximumWidth(1000);
 
@@ -835,7 +838,7 @@ void SubframeRefiner::openShapeBuilder()
         ->experiment()
         ->getPeakCollection(_peak_combo->currentText().toStdString());
 
-    std::unique_ptr<ShapeCollectionDialog> dialog(new ShapeCollectionDialog(peak_collection));
+    std::unique_ptr<ShapeCollectionDialog> dialog(new ShapeCollectionDialog(peak_collection, _shape_params));
 
     dialog->exec();
     refreshPeakShapeStatus();
