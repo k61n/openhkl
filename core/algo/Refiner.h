@@ -16,6 +16,7 @@
 #define NSX_CORE_ALGO_REFINER_H
 
 #include "core/algo/RefinementBatch.h"
+#include "core/shape/IPeakIntegrator.h"
 
 namespace nsx {
 
@@ -23,7 +24,7 @@ class UnitCellHandler;
 enum class Level;
 
 //! Parameters for refinement
-struct RefinerParameters {
+struct RefinerParameters : public IntegrationParameters {
     bool refine_ub = true;
     bool refine_ki = true;
     bool refine_sample_position = true;

@@ -70,6 +70,16 @@ void Experiment::setName(const std::string& name)
     _name = name;
 }
 
+void Experiment::setDefaultDMin()
+{
+    double lambda = getDiffractometer()->source().selectedMonochromator().wavelength();
+    double d_min = lambda/2.0;
+    shape_params.detector_range_min = d_min;
+    predict_params.detector_range_min = d_min;
+    indexer_params.d_min = d_min;
+    _peak_filter->setDRange(d_min, 50.0);
+}
+
 void Experiment::acceptFoundPeaks(const std::string& name)
 {
     std::vector<Peak3D*> peaks = _peak_finder->currentPeaks();
@@ -110,6 +120,7 @@ void Experiment::loadFromFile(const std::string& path)
     importer.loadData(this);
     importer.loadUnitCells(this);
     importer.loadPeaks(this);
+    setDefaultDMin();
 }
 
 void Experiment::autoIndex(PeakCollection* peaks, const IndexerParameters& params)
@@ -324,6 +335,7 @@ int Experiment::numData() const
 void Experiment::addData(sptrDataSet data, std::string name)
 {
     _data_handler->addData(data, name);
+    setDefaultDMin();
 }
 
 bool Experiment::hasData(const std::string& name) const

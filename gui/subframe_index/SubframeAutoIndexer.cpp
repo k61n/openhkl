@@ -236,19 +236,19 @@ void SubframeAutoIndexer::setParametersUp()
 
     _d_min->setMaximumWidth(1000);
     _d_min->setMaximum(100);
-    _d_min->setDecimals(6);
+    _d_min->setDecimals(2);
 
     _str_min->setMaximumWidth(1000);
     _str_min->setMaximum(100);
-    _str_min->setDecimals(6);
+    _str_min->setDecimals(2);
 
     _str_max->setMaximumWidth(1000);
     _str_max->setMaximum(10000000);
-    _str_max->setDecimals(6);
+    _str_max->setDecimals(2);
 
     _d_max->setMaximumWidth(1000);
     _d_max->setMaximum(100);
-    _d_max->setDecimals(6);
+    _d_max->setDecimals(2);
 
     _gruber->setMaximumWidth(1000);
     _gruber->setMaximum(100000);
@@ -262,7 +262,7 @@ void SubframeAutoIndexer::setParametersUp()
 
     _max_cell_dimension->setMaximumWidth(1000);
     _max_cell_dimension->setMaximum(100000);
-    _max_cell_dimension->setDecimals(6);
+    _max_cell_dimension->setDecimals(2);
 
     _number_vertices->setMaximumWidth(10000);
     _number_vertices->setMaximum(10000);
@@ -274,7 +274,7 @@ void SubframeAutoIndexer::setParametersUp()
 
     _min_cell_volume->setMaximumWidth(1000);
     _min_cell_volume->setMaximum(100000);
-    _min_cell_volume->setDecimals(6);
+    _min_cell_volume->setDecimals(2);
 
     _indexing_tolerance->setMaximumWidth(1000);
     _indexing_tolerance->setMaximum(100000);
@@ -475,6 +475,7 @@ void SubframeAutoIndexer::grabIndexerParameters()
     if (_peak_list.empty() || _exp_combo->count() < 1)
         return;
 
+    _params = gSession->experimentAt(_exp_combo->currentIndex())->experiment()->indexer_params;
     _min_frame->setValue(_params.first_frame);
     _max_frame->setValue(_params.last_frame);
     _d_min->setValue(_params.d_min);

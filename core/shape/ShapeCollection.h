@@ -46,7 +46,7 @@ struct ShapeCollectionParameters : public IntegrationParameters {
 struct PredictionParameters : public IntegrationParameters {
     double detector_range_min = 1.5; //!< Minimum detector range (filter)
     double detector_range_max = 50.0; //!< Maximum detector range (filter)
-    int min_n_neighbors = 20; //!< Minimum number of neighbours required for shape collection
+    int min_n_neighbors = 10; //!< Minimum number of neighbours required for shape collection
 
     void log(const Level& level) const;
 };

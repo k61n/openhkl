@@ -31,6 +31,7 @@ namespace nsx {
 
 void RefinerParameters::log(const Level& level) const
 {
+    IntegrationParameters::log(level);
     nsxlog(level, "Refiner parameters:");
     nsxlog(level, "nbatches               =", nbatches);
     nsxlog(level, "max_iter               =", max_iter);
