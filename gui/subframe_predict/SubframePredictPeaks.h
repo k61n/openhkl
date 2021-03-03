@@ -145,8 +145,6 @@ class SubframePredictPeaks : public QWidget {
     QDoubleSpinBox* _peak_end_int;
     QDoubleSpinBox* _bkg_start_int;
     QDoubleSpinBox* _bkg_end_int;
-    QDoubleSpinBox* _d_min_int;
-    QDoubleSpinBox* _d_max_int;
     QDoubleSpinBox* _radius_int;
     QDoubleSpinBox* _n_frames_int;
     QCheckBox* _fit_center;
