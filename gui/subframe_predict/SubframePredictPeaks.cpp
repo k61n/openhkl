@@ -275,24 +275,14 @@ void SubframePredictPeaks::setIntegrateUp()
     integrate_grid->addWidget(label_ptr, 5, 0, 1, 1);
     label_ptr->setSizePolicy(*_size_policy_widgets);
 
-    label_ptr = new QLabel("Minimum d:");
+    label_ptr = new QLabel("Search radius:");
     label_ptr->setAlignment(Qt::AlignRight);
     integrate_grid->addWidget(label_ptr, 6, 0, 1, 1);
     label_ptr->setSizePolicy(*_size_policy_widgets);
 
-    label_ptr = new QLabel("Maximum d:");
-    label_ptr->setAlignment(Qt::AlignRight);
-    integrate_grid->addWidget(label_ptr, 7, 0, 1, 1);
-    label_ptr->setSizePolicy(*_size_policy_widgets);
-
-    label_ptr = new QLabel("Search radius:");
-    label_ptr->setAlignment(Qt::AlignRight);
-    integrate_grid->addWidget(label_ptr, 8, 0, 1, 1);
-    label_ptr->setSizePolicy(*_size_policy_widgets);
-
     label_ptr = new QLabel("N. of frames:");
     label_ptr->setAlignment(Qt::AlignRight);
-    integrate_grid->addWidget(label_ptr, 9, 0, 1, 1);
+    integrate_grid->addWidget(label_ptr, 7, 0, 1, 1);
     label_ptr->setSizePolicy(*_size_policy_widgets);
 
     _integrator = new QComboBox();
@@ -301,8 +291,6 @@ void SubframePredictPeaks::setIntegrateUp()
     _peak_end_int = new QDoubleSpinBox();
     _bkg_start_int = new QDoubleSpinBox();
     _bkg_end_int = new QDoubleSpinBox();
-    _d_min_int = new QDoubleSpinBox();
-    _d_max_int = new QDoubleSpinBox();
     _radius_int = new QDoubleSpinBox();
     _n_frames_int = new QDoubleSpinBox();
     _run_integration = new QPushButton("Integrate");
@@ -330,14 +318,6 @@ void SubframePredictPeaks::setIntegrateUp()
     _bkg_end_int->setMaximum(100000);
     _bkg_end_int->setDecimals(2);
 
-    _d_min_int->setMaximumWidth(1000);
-    _d_min_int->setMaximum(100000);
-    _d_min_int->setDecimals(2);
-
-    _d_max_int->setMaximumWidth(1000);
-    _d_max_int->setMaximum(100000);
-    _d_max_int->setDecimals(2);
-
     _radius_int->setMaximumWidth(1000);
     _radius_int->setMaximum(100000);
     _radius_int->setDecimals(2);
@@ -354,8 +334,6 @@ void SubframePredictPeaks::setIntegrateUp()
     _peak_end_int->setSizePolicy(*_size_policy_widgets);
     _bkg_start_int->setSizePolicy(*_size_policy_widgets);
     _bkg_end_int->setSizePolicy(*_size_policy_widgets);
-    _d_min_int->setSizePolicy(*_size_policy_widgets);
-    _d_max_int->setSizePolicy(*_size_policy_widgets);
     _radius_int->setSizePolicy(*_size_policy_widgets);
     _n_frames_int->setSizePolicy(*_size_policy_widgets);
     _run_integration->setSizePolicy(*_size_policy_widgets);
@@ -366,11 +344,9 @@ void SubframePredictPeaks::setIntegrateUp()
     integrate_grid->addWidget(_peak_end_int, 3, 1, 1, 1);
     integrate_grid->addWidget(_bkg_start_int, 4, 1, 1, 1);
     integrate_grid->addWidget(_bkg_end_int, 5, 1, 1, 1);
-    integrate_grid->addWidget(_d_min_int, 6, 1, 1, 1);
-    integrate_grid->addWidget(_d_max_int, 7, 1, 1, 1);
-    integrate_grid->addWidget(_radius_int, 8, 1, 1, 1);
-    integrate_grid->addWidget(_n_frames_int, 9, 1, 1, 1);
-    integrate_grid->addWidget(_run_integration, 10, 0, 1, 2);
+    integrate_grid->addWidget(_radius_int, 6, 1, 1, 1);
+    integrate_grid->addWidget(_n_frames_int, 7, 1, 1, 1);
+    integrate_grid->addWidget(_run_integration, 8, 0, 1, 2);
 
     _integrate_box->setContentLayout(*integrate_grid, true);
     _integrate_box->setSizePolicy(*_size_policy_box);
@@ -611,8 +587,7 @@ void SubframePredictPeaks::grabPredictorParameters() {
     _min_neighbors->setValue(_params.min_n_neighbors);
 
     //Integration parameters
-    _d_min_int->setValue(_params.detector_range_min);
-    _d_max_int->setValue(_params.detector_range_max);
+    _peak_end_int->setValue(_params.peak_end);
     _bkg_start_int->setValue(_params.bkg_begin);
     _bkg_end_int->setValue(_params.bkg_end);
     _radius_int->setValue(_params.neighbour_range_pixels);
@@ -696,8 +671,6 @@ void SubframePredictPeaks::runIntegration()
             return;
 
         nsx::PredictionParameters params;
-        params.detector_range_min = _d_min_int->value();
-        params.detector_range_max = _d_max_int->value();
         params.bkg_begin = _bkg_start_int->value();
         params.bkg_end = _bkg_end_int->value();
         params.neighbour_range_pixels = _radius_int->value();
@@ -822,7 +795,5 @@ void SubframePredictPeaks::openShapeBuilder()
     dialog->exec();
     _d_min->setValue(dialog->getDMin());
     _d_max->setValue(dialog->getDMax());
-    _d_min_int->setValue(dialog->getDMin());
-    _d_max_int->setValue(dialog->getDMax());
     refreshPeakShapeStatus();
 }
