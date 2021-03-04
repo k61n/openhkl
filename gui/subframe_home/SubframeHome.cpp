@@ -54,6 +54,7 @@ void SubframeHome::_setLeftLayout(QHBoxLayout* main_layout)
 {
     QVBoxLayout* left = new QVBoxLayout;
     QHBoxLayout* left_top = new QHBoxLayout();
+    QString tooltip;
 
     _new_exp = new QPushButton();
     _new_exp->setIcon(QIcon(":/images/create_new.svg"));
@@ -66,6 +67,8 @@ void SubframeHome::_setLeftLayout(QHBoxLayout* main_layout)
     _old_exp->setText("Load from file");
     _old_exp->setMinimumWidth(_new_exp->sizeHint().width());
     _old_exp->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
+    tooltip = "Load an existing experiment from a hdf5 (.nsx) file";
+    _old_exp->setToolTip(tooltip);
     connect(_old_exp, &QPushButton::clicked, this, &SubframeHome::loadFromFile);
 
     left_top->addWidget(_new_exp);
@@ -90,6 +93,7 @@ void SubframeHome::_setLeftLayout(QHBoxLayout* main_layout)
 void SubframeHome::_setRightLayout(QHBoxLayout* main_layout)
 {
     QVBoxLayout* right = new QVBoxLayout;
+    QString tooltip;
 
     _open_experiments_model = std::make_unique<ExperimentModel>();
     _open_experiments_view = new ExperimentTableView();
@@ -106,6 +110,8 @@ void SubframeHome::_setRightLayout(QHBoxLayout* main_layout)
     _save_current->setIcon(QIcon(":/images/save.svg"));
     _save_current->setText("Save current");
     _save_current->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
+    tooltip = "Save current experiment to hdf5 (.nsx) file";
+    _save_current->setToolTip(tooltip);
     connect(_save_current, &QPushButton::clicked, this, &SubframeHome::saveCurrent);
 
     _save_all = new QPushButton();
@@ -113,6 +119,8 @@ void SubframeHome::_setRightLayout(QHBoxLayout* main_layout)
     _save_all->setText("Save all");
     _save_all->setMinimumWidth(_save_current->sizeHint().width());
     _save_all->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
+    tooltip = "Save all experiments to hdf5 (.nsx) files";
+    _save_all->setToolTip(tooltip);
 
     right_bot->addWidget(_save_current);
     right_bot->addWidget(_save_all);
