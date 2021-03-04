@@ -116,6 +116,10 @@ void SubframePredictPeaks::setInputUp()
     _exp_combo = new QComboBox();
     _peak_combo = new QComboBox();
     _build_shape_lib = new QPushButton("Build shape collection");
+    QString tooltip = "<font>A shape collection is a collection of averaged peaks attached to a peak"
+        "collection. A shape is the averaged peak shape of a peak and its neighbours within a "
+        "specified cutoff.</font>"; // Rich text to force line break in tooltip
+    _build_shape_lib->setToolTip(tooltip);
 
     _exp_combo->setMaximumWidth(1000);
     _peak_combo->setMaximumWidth(1000);
@@ -153,6 +157,7 @@ void SubframePredictPeaks::setParametersUp()
     QGridLayout* para_grid = new QGridLayout();
 
     QLabel* label_ptr;
+    QString tooltip;
 
     label_ptr = new QLabel("Unit cell:");
     label_ptr->setAlignment(Qt::AlignRight);
@@ -164,30 +169,40 @@ void SubframePredictPeaks::setParametersUp()
     para_grid->addWidget(label_ptr, 1, 0, 1, 1);
     label_ptr->setSizePolicy(*_size_policy_widgets);
 
-    label_ptr = new QLabel("d min (A):");
+    label_ptr = new QLabel("d min:");
     label_ptr->setAlignment(Qt::AlignRight);
     para_grid->addWidget(label_ptr, 2, 0, 1, 1);
     label_ptr->setSizePolicy(*_size_policy_widgets);
+    tooltip = QString::fromUtf8("(\u212B) - minimum d (Bragg's law)");
+    label_ptr->setToolTip(tooltip);
 
-    label_ptr = new QLabel("d max (A):");
+    label_ptr = new QLabel("d max:");
     label_ptr->setAlignment(Qt::AlignRight);
     para_grid->addWidget(label_ptr, 3, 0, 1, 1);
     label_ptr->setSizePolicy(*_size_policy_widgets);
+    tooltip = QString::fromUtf8("(\u212B) - maximum d (Bragg's law)");
+    label_ptr->setToolTip(tooltip);
 
     label_ptr = new QLabel("Min. neighbors:");
     label_ptr->setAlignment(Qt::AlignRight);
     para_grid->addWidget(label_ptr, 4, 0, 1, 1);
     label_ptr->setSizePolicy(*_size_policy_widgets);
+    tooltip = "Minimum number of neighbours to average over for one peak";
+    label_ptr->setToolTip(tooltip);
 
     label_ptr = new QLabel("Search radius:");
     label_ptr->setAlignment(Qt::AlignRight);
     para_grid->addWidget(label_ptr, 5, 0, 1, 1);
     label_ptr->setSizePolicy(*_size_policy_widgets);
+    tooltip = "(pixels) - neighbour search radius in pixels";
+    label_ptr->setToolTip(tooltip);
 
     label_ptr = new QLabel("Frames:");
     label_ptr->setAlignment(Qt::AlignRight);
     para_grid->addWidget(label_ptr, 6, 0, 1, 1);
     label_ptr->setSizePolicy(*_size_policy_widgets);
+    tooltip = "(frames) - neighbour search radius in frames";
+    label_ptr->setToolTip(tooltip);
 
     _unit_cells = new QComboBox();
     _interpolation = new QComboBox();
@@ -259,31 +274,42 @@ void SubframePredictPeaks::setIntegrateUp()
     QGridLayout* integrate_grid = new QGridLayout();
 
     QLabel* label_ptr;
+    QString tooltip;
 
     label_ptr = new QLabel("Peak end:");
     label_ptr->setAlignment(Qt::AlignRight);
     integrate_grid->addWidget(label_ptr, 3, 0, 1, 1);
     label_ptr->setSizePolicy(*_size_policy_widgets);
+    tooltip = "(sigmas) - scaling factor for peak region";
+    label_ptr->setToolTip(tooltip);
 
     label_ptr = new QLabel("Bkg begin:");
     label_ptr->setAlignment(Qt::AlignRight);
     integrate_grid->addWidget(label_ptr, 4, 0, 1, 1);
     label_ptr->setSizePolicy(*_size_policy_widgets);
+    tooltip = "(sigmas) - scaling factor for lower limit of background";
+    label_ptr->setToolTip(tooltip);
 
     label_ptr = new QLabel("Bkg end:");
     label_ptr->setAlignment(Qt::AlignRight);
     integrate_grid->addWidget(label_ptr, 5, 0, 1, 1);
     label_ptr->setSizePolicy(*_size_policy_widgets);
+    tooltip = "(sigmas) - scaling factor for upper limit of background";
+    label_ptr->setToolTip(tooltip);
 
     label_ptr = new QLabel("Search radius:");
     label_ptr->setAlignment(Qt::AlignRight);
     integrate_grid->addWidget(label_ptr, 6, 0, 1, 1);
     label_ptr->setSizePolicy(*_size_policy_widgets);
+    tooltip = "(pixels) - neighbour search radius in pixels";
+    label_ptr->setToolTip(tooltip);
 
-    label_ptr = new QLabel("N. of frames:");
+    label_ptr = new QLabel("Frames:");
     label_ptr->setAlignment(Qt::AlignRight);
     integrate_grid->addWidget(label_ptr, 7, 0, 1, 1);
     label_ptr->setSizePolicy(*_size_policy_widgets);
+    tooltip = "(frames) - neighbour search radius in frames";
+    label_ptr->setToolTip(tooltip);
 
     _integrator = new QComboBox();
     _fit_center = new QCheckBox("Fit the center");
@@ -347,6 +373,11 @@ void SubframePredictPeaks::setIntegrateUp()
     integrate_grid->addWidget(_radius_int, 6, 1, 1, 1);
     integrate_grid->addWidget(_n_frames_int, 7, 1, 1, 1);
     integrate_grid->addWidget(_run_integration, 8, 0, 1, 2);
+
+    tooltip = "Allow the peak center to move during integration";
+    _fit_center->setToolTip(tooltip);
+    tooltip = "Allow the peak covariance matrix to vary during integration";
+    _fit_covariance->setToolTip(tooltip);
 
     _integrate_box->setContentLayout(*integrate_grid, true);
     _integrate_box->setSizePolicy(*_size_policy_box);

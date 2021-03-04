@@ -157,42 +157,61 @@ void SubframeFindPeaks::setBlobUp()
     Spoiler* blob_para = new Spoiler("2. Peak search parameters");
 
     QGridLayout* blob_grid = new QGridLayout();
+    QString tooltip;
 
     QLabel* threshold_label = new QLabel("Threshold");
     threshold_label->setAlignment(Qt::AlignRight);
     blob_grid->addWidget(threshold_label, 0, 0, 1, 1);
+    tooltip = "(counts) - pixels with fewer counts than the threshold are discarded";
+    threshold_label->setToolTip(tooltip);
 
     QLabel* scale_label = new QLabel("Merging scale");
     scale_label->setAlignment(Qt::AlignRight);
     blob_grid->addWidget(scale_label, 1, 0, 1, 1);
+    tooltip = "(sigmas) - blob scaling factor to detect collisions";
+    scale_label->setToolTip(tooltip);
 
     QLabel* min_size_label = new QLabel("Minimum size");
     min_size_label->setAlignment(Qt::AlignRight);
     blob_grid->addWidget(min_size_label, 2, 0, 1, 1);
+    tooltip = "(integer) - blobs containing fewer points than this count are discarded";
+    min_size_label->setToolTip(tooltip);
 
     QLabel* max_size_label = new QLabel("Maximum size");
     max_size_label->setAlignment(Qt::AlignRight);
     blob_grid->addWidget(max_size_label, 3, 0, 1, 1);
+    tooltip = "(integer) - blobs containing more points than this count are discarded";
+    max_size_label->setToolTip(tooltip);
 
     QLabel* max_width_label = new QLabel("Maximum width");
     max_width_label->setAlignment(Qt::AlignRight);
     blob_grid->addWidget(max_width_label, 4, 0, 1, 1);
+    tooltip = "(frames) - blob is discarded if it spans more frames than this value";
+    max_width_label->setToolTip(tooltip);
 
     QLabel* kernel_label = new QLabel("Kernel");
     kernel_label->setAlignment(Qt::AlignRight);
     blob_grid->addWidget(kernel_label, 5, 0, 1, 1);
+    tooltip = "Convolution kernel for peak search";
+    kernel_label->setToolTip(tooltip);
 
     QLabel* kernel_para_label = new QLabel("Parameters");
     kernel_para_label->setAlignment(Qt::AlignRight | Qt::AlignTop);
     blob_grid->addWidget(kernel_para_label, 6, 0, 1, 1);
+    tooltip = "r1, r2, r3 parameters for pixel sum integration";
+    kernel_para_label->setToolTip(tooltip);
 
     QLabel* start_frame_label = new QLabel("Start frame");
     start_frame_label->setAlignment(Qt::AlignRight);
     blob_grid->addWidget(start_frame_label, 8, 0, 1, 1);
+    tooltip = "(frame) - start frame for peak finding";
+    start_frame_label->setToolTip(tooltip);
 
     QLabel* end_frame_label = new QLabel("End frame");
     end_frame_label->setAlignment(Qt::AlignRight);
     blob_grid->addWidget(end_frame_label, 9, 0, 1, 1);
+    tooltip = "(frame) - end frame for peak finding";
+    end_frame_label->setToolTip(tooltip);
 
     _threshold_spin = new QSpinBox();
     _scale_spin = new QDoubleSpinBox();
@@ -264,22 +283,25 @@ void SubframeFindPeaks::setIntegrateUp()
     Spoiler* integration_para = new Spoiler("3. Integration parameters");
 
     QGridLayout* integGrid = new QGridLayout();
+    QString tooltip;
 
-    QLabel* area_label = new QLabel("Peak area");
+    QLabel* area_label = new QLabel("Peak end");
     area_label->setAlignment(Qt::AlignRight);
     integGrid->addWidget(area_label, 0, 0, 1, 1);
+    tooltip = "(sigmas) - scaling factor for peak region";
+    area_label->setToolTip(tooltip);
 
-    QLabel* bck_label = new QLabel("Background:");
-    bck_label->setAlignment(Qt::AlignRight);
-    integGrid->addWidget(bck_label, 1, 0, 1, 1);
-
-    QLabel* bck_lower_label = new QLabel("Lower limit");
+    QLabel* bck_lower_label = new QLabel("Bkg. begin");
     bck_lower_label->setAlignment(Qt::AlignRight);
-    integGrid->addWidget(bck_lower_label, 2, 0, 1, 1);
+    integGrid->addWidget(bck_lower_label, 1, 0, 1, 1);
+    tooltip = "(sigmas) - scaling factor for lower limit of background";
+    bck_lower_label->setToolTip(tooltip);
 
-    QLabel* bck_upper_label = new QLabel("Upper limit");
+    QLabel* bck_upper_label = new QLabel("Bkg. end");
     bck_upper_label->setAlignment(Qt::AlignRight);
-    integGrid->addWidget(bck_upper_label, 3, 0, 1, 1);
+    integGrid->addWidget(bck_upper_label, 2, 0, 1, 1);
+    tooltip = "(sigmas) - scaling factor for upper limit of background";
+    bck_upper_label->setToolTip(tooltip);
 
     _peak_area = new QDoubleSpinBox();
     _bkg_lower = new QDoubleSpinBox();
@@ -303,9 +325,9 @@ void SubframeFindPeaks::setIntegrateUp()
     _bkg_upper->setSizePolicy(*_size_policy_widgets);
 
     integGrid->addWidget(_peak_area, 0, 1, 1, 1);
-    integGrid->addWidget(_bkg_lower, 2, 1, 1, 1);
-    integGrid->addWidget(_bkg_upper, 3, 1, 1, 1);
-    integGrid->addWidget(_integrate_button, 4, 0, 1, 2);
+    integGrid->addWidget(_bkg_lower, 1, 1, 1, 1);
+    integGrid->addWidget(_bkg_upper, 2, 1, 1, 1);
+    integGrid->addWidget(_integrate_button, 3, 0, 1, 2);
 
     connect(_integrate_button, &QPushButton::clicked, this, &SubframeFindPeaks::integrate);
 

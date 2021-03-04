@@ -146,56 +146,79 @@ void SubframeAutoIndexer::setParametersUp()
     QGridLayout* para_grid = new QGridLayout();
 
     QLabel* label_ptr;
+    QString tooltip;
 
     label_ptr = new QLabel("Frames:");
     label_ptr->setAlignment(Qt::AlignRight);
     para_grid->addWidget(label_ptr, 0, 0, 1, 2);
     label_ptr->setSizePolicy(*_size_policy_widgets);
+    tooltip = "(frames) - range of frames over which to index";
+    label_ptr->setToolTip(tooltip);
 
-    label_ptr = new QLabel("D range:");
+    label_ptr = new QLabel("d range:");
     label_ptr->setAlignment(Qt::AlignRight);
     para_grid->addWidget(label_ptr, 1, 0, 1, 2);
     label_ptr->setSizePolicy(*_size_policy_widgets);
+    tooltip = QString::fromUtf8(
+        "(\u212B) - only attempt to index peaks over this d (Bragg's law) range ");
+    label_ptr->setToolTip(tooltip);
 
     label_ptr = new QLabel("Strength:");
     label_ptr->setAlignment(Qt::AlignRight);
     para_grid->addWidget(label_ptr, 2, 0, 1, 2);
     label_ptr->setSizePolicy(*_size_policy_widgets);
+    tooltip = QString::fromUtf8("(I/\u03C3) - only attempt to index peaks in this strength range");
+    label_ptr->setToolTip(tooltip);
 
     label_ptr = new QLabel("Gruber tol.:");
     label_ptr->setAlignment(Qt::AlignRight);
     para_grid->addWidget(label_ptr, 3, 0, 1, 2);
     label_ptr->setSizePolicy(*_size_policy_widgets);
+    tooltip = "Tolerance for Gruber reduction";
+    label_ptr->setToolTip(tooltip);
 
     label_ptr = new QLabel("Niggli tol.:");
     label_ptr->setAlignment(Qt::AlignRight);
     para_grid->addWidget(label_ptr, 4, 0, 1, 2);
     label_ptr->setSizePolicy(*_size_policy_widgets);
+    tooltip = "Tolerance for Niggli reduction";
+    label_ptr->setToolTip(tooltip);
 
     label_ptr = new QLabel("Max. Cell dim.:");
     label_ptr->setAlignment(Qt::AlignRight);
     para_grid->addWidget(label_ptr, 6, 0, 1, 2);
     label_ptr->setSizePolicy(*_size_policy_widgets);
+    tooltip = QString::fromUtf8("(\u212B) - maximum length of any lattice vector");
+    label_ptr->setToolTip(tooltip);
 
     label_ptr = new QLabel("Q Vertices:");
     label_ptr->setAlignment(Qt::AlignRight);
     para_grid->addWidget(label_ptr, 7, 0, 1, 2);
     label_ptr->setSizePolicy(*_size_policy_widgets);
+    tooltip =
+        "Number of points on reciprocal space unit sphere to test against candidate lattice vector";
+    label_ptr->setToolTip(tooltip);
 
     label_ptr = new QLabel("Subdivisions:");
     label_ptr->setAlignment(Qt::AlignRight);
     para_grid->addWidget(label_ptr, 8, 0, 1, 2);
     label_ptr->setSizePolicy(*_size_policy_widgets);
+    tooltip = "Number of histogram bins for FFT";
+    label_ptr->setToolTip(tooltip);
 
     label_ptr = new QLabel("Unit Cells:");
     label_ptr->setAlignment(Qt::AlignRight);
     para_grid->addWidget(label_ptr, 9, 0, 1, 2);
     label_ptr->setSizePolicy(*_size_policy_widgets);
+    tooltip = "Number of unit cell solutions to find";
+    label_ptr->setToolTip(tooltip);
 
     label_ptr = new QLabel("Min. Volume:");
     label_ptr->setAlignment(Qt::AlignRight);
     para_grid->addWidget(label_ptr, 10, 0, 1, 2);
     label_ptr->setSizePolicy(*_size_policy_widgets);
+    tooltip = QString::fromUtf8("(\u212B^3) - discard candidate cells below this volume");
+    label_ptr->setToolTip(tooltip);
 
     label_ptr = new QLabel("Indexing tol.:");
     label_ptr->setAlignment(Qt::AlignRight);
@@ -206,6 +229,8 @@ void SubframeAutoIndexer::setParametersUp()
     label_ptr->setAlignment(Qt::AlignRight);
     para_grid->addWidget(label_ptr, 12, 0, 1, 2);
     label_ptr->setSizePolicy(*_size_policy_widgets);
+    tooltip = "Minimum fraction of amplitude of the zeroth Fourier frequency to accept as a candidate lattice vector";
+    label_ptr->setToolTip(tooltip);
 
     QHBoxLayout* frames = new QHBoxLayout();
     QHBoxLayout* drange = new QHBoxLayout();

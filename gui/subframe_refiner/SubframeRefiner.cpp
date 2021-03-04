@@ -601,6 +601,7 @@ void SubframeRefiner::refreshPlot()
 
 void SubframeRefiner::setUpdateUp()
 {
+    QString tooltip;
     _update_box = new Spoiler("4. Update predictions");
 
     QGridLayout* update_grid = new QGridLayout();
@@ -617,9 +618,16 @@ void SubframeRefiner::setUpdateUp()
 
     _update_button->setMaximumWidth(1000);
     _update_button->setSizePolicy(*_size_policy_widgets);
+    tooltip = "Update peak positions given refined unit cell";
+    _update_button->setToolTip(tooltip);
 
     _build_shape_lib->setMaximumWidth(1000);
     _build_shape_lib->setSizePolicy(*_size_policy_widgets);
+    _build_shape_lib = new QPushButton("Build shape collection");
+    tooltip = "<font>A shape collection is a collection of averaged peaks attached to a peak"
+        "collection. A shape is the averaged peak shape of a peak and its neighbours within a "
+        "specified cutoff.</font>"; // Rich text to force line break in tooltip
+    _build_shape_lib->setToolTip(tooltip);
 
     update_grid->addWidget(peaks_label, 0, 0, 1, 1);
     update_grid->addWidget(_predicted_combo, 0, 1, 1, 1);
@@ -669,31 +677,42 @@ void SubframeRefiner::setReintegrateUp()
 
     QGridLayout* reintegrate_grid = new QGridLayout();
     QLabel* label_ptr;
+    QString tooltip;
 
     label_ptr = new QLabel("Peak end:");
     label_ptr->setAlignment(Qt::AlignRight);
     reintegrate_grid->addWidget(label_ptr, 3, 0, 1, 1);
     label_ptr->setSizePolicy(*_size_policy_widgets);
+    tooltip = "(sigmas) - scaling factor for peak region";
+    label_ptr->setToolTip(tooltip);
 
     label_ptr = new QLabel("Bkg begin:");
     label_ptr->setAlignment(Qt::AlignRight);
     reintegrate_grid->addWidget(label_ptr, 4, 0, 1, 1);
     label_ptr->setSizePolicy(*_size_policy_widgets);
+    tooltip = "(sigmas) - scaling factor for lower limit of background";
+    label_ptr->setToolTip(tooltip);
 
     label_ptr = new QLabel("Bkg end:");
     label_ptr->setAlignment(Qt::AlignRight);
     reintegrate_grid->addWidget(label_ptr, 5, 0, 1, 1);
     label_ptr->setSizePolicy(*_size_policy_widgets);
+    tooltip = "(sigmas) - scaling factor for upper limit of background";
+    label_ptr->setToolTip(tooltip);
 
     label_ptr = new QLabel("Search radius:");
     label_ptr->setAlignment(Qt::AlignRight);
     reintegrate_grid->addWidget(label_ptr, 6, 0, 1, 1);
     label_ptr->setSizePolicy(*_size_policy_widgets);
+    tooltip = "(pixels) - neighbour search radius in pixels";
+    label_ptr->setToolTip(tooltip);
 
     label_ptr = new QLabel("N. of frames:");
     label_ptr->setAlignment(Qt::AlignRight);
     reintegrate_grid->addWidget(label_ptr, 7, 0, 1, 1);
     label_ptr->setSizePolicy(*_size_policy_widgets);
+    tooltip = "(frames) - neighbour search radius in frames";
+    label_ptr->setToolTip(tooltip);
 
     _integrator_combo = new QComboBox();
     _fit_center = new QCheckBox("Fit the center");
@@ -716,9 +735,13 @@ void SubframeRefiner::setReintegrateUp()
 
     _fit_center->setMaximumWidth(1000);
     _fit_center->setChecked(_refiner_params.fit_center);
+    tooltip = "Allow the peak center to move during integration";
+    _fit_center->setToolTip(tooltip);
 
     _fit_covariance->setMaximumWidth(1000);
     _fit_covariance->setChecked(_refiner_params.fit_cov);
+    tooltip = "Allow the peak covariance matrix to vary during integration";
+    _fit_covariance->setToolTip(tooltip);
 
     _peak_end_int->setMaximumWidth(1000);
     _peak_end_int->setMaximum(100000);

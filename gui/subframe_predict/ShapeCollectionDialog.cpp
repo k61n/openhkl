@@ -106,6 +106,7 @@ void ShapeCollectionDialog::setParametersUp()
     // Set up the parameters
     _parameter_widget = new QWidget();
     QFormLayout* form = new QFormLayout(_parameter_widget);
+    QString tooltip;
 
     _nx = new QSpinBox();
     _nx->setMinimum(5);
@@ -113,6 +114,8 @@ void ShapeCollectionDialog::setParametersUp()
     _nx->setMaximumWidth(10000);
     _nx->setValue(20);
     _nx->setSizePolicy(*_size_policy_widgets);
+    tooltip = "Number of histogram bins in x direction";
+    _nx->setToolTip(tooltip);
 
     _ny = new QSpinBox();
     _ny->setMinimum(5);
@@ -120,6 +123,8 @@ void ShapeCollectionDialog::setParametersUp()
     _ny->setMaximumWidth(10000);
     _ny->setValue(20);
     _ny->setSizePolicy(*_size_policy_widgets);
+    tooltip = "Number of histogram bins in y direction";
+    _ny->setToolTip(tooltip);
 
     _nz = new QSpinBox();
     _nz->setMinimum(5);
@@ -127,53 +132,77 @@ void ShapeCollectionDialog::setParametersUp()
     _nz->setMaximumWidth(10000);
     _nz->setValue(20);
     _nz->setSizePolicy(*_size_policy_widgets);
+    tooltip = "Number of histogram bins in z (frame) direction";
+    _nz->setToolTip(tooltip);
 
     _kabsch = new QGroupBox("Kabsch coordinates");
     _kabsch->setSizePolicy(*_size_policy_widgets);
     _kabsch->setCheckable(true);
+    tooltip = "Toggle between Kabsch and detector coordinates";
+    _kabsch->setToolTip(tooltip);
 
     QFormLayout* kabschform = new QFormLayout(_kabsch);
 
     _sigma_D = new QDoubleSpinBox();
     _sigma_D->setMaximum(10000);
     _sigma_D->setSizePolicy(*_size_policy_widgets);
+    tooltip = "Variance due to beam divergence";
+    _sigma_D->setToolTip(tooltip);
 
     _sigma_M = new QDoubleSpinBox();
     _sigma_M->setMaximum(10000);
     _sigma_M->setSizePolicy(*_size_policy_widgets);
+    tooltip = "Variance due to crystal mosaicity";
+    _sigma_M->setToolTip(tooltip);
 
     _min_I_sigma = new QDoubleSpinBox();
     _min_I_sigma->setMaximum(10000);
     _min_I_sigma->setValue(_params.strength_min);
     _min_I_sigma->setSizePolicy(*_size_policy_widgets);
+    tooltip = QString::fromUtf8("Minimum strength (I/\u03C3) of peak to include in average");
+    _min_I_sigma->setToolTip(tooltip);
 
     _min_d = new QDoubleSpinBox();
     _min_d->setMaximum(10000);
     _min_d->setValue(_params.detector_range_min);
     _min_d->setSizePolicy(*_size_policy_widgets);
+    tooltip = QString::fromUtf8("Minimum d (I/\u212B) of peak to include in average");
+    _min_d->setToolTip(tooltip);
 
     _max_d = new QDoubleSpinBox();
     _max_d->setMaximum(10000);
     _max_d->setValue(_params.detector_range_max);
     _max_d->setSizePolicy(*_size_policy_widgets);
+    tooltip = QString::fromUtf8("Maximum d (I/\u212B) of peak to include in average");
+    _max_d->setToolTip(tooltip);
 
     _peak_end = new QDoubleSpinBox();
     _peak_end->setMaximum(10000);
     _peak_end->setValue(_params.peak_end);
     _peak_end->setSizePolicy(*_size_policy_widgets);
+    tooltip = "(sigmas) - scaling factor for peak region";
+    _peak_end->setToolTip(tooltip);
 
     _background_begin = new QDoubleSpinBox();
     _background_begin->setMaximum(10000);
     _background_begin->setValue(_params.bkg_begin);
     _background_begin->setSizePolicy(*_size_policy_widgets);
+    tooltip = "(sigmas) - scaling factor for lower limit of background";
+    _background_begin->setToolTip(tooltip);
 
     _background_end = new QDoubleSpinBox();
     _background_end->setMaximum(10000);
     _background_end->setValue(_params.bkg_end);
     _background_end->setSizePolicy(*_size_policy_widgets);
+    tooltip = "(sigmas) - scaling factor for upper limit of background";
+    _background_begin->setToolTip(tooltip);
 
     _build_collection = new QPushButton("Build shape collection");
     _build_collection->setSizePolicy(*_size_policy_widgets);
+    tooltip = "A shape collection is a collection of averaged peaks attached to a peak \
+        collection. A shape is the averaged peak shape of a peak and its neighbours within a \
+        specified cutoff.";
+    _build_collection->setToolTip(tooltip);
 
     form->addRow("Number along x:", _nx);
     form->addRow("Number along y:", _ny);
@@ -197,6 +226,7 @@ void ShapeCollectionDialog::setPreviewUp()
     // Set up the preview
     _preview_widget = new QWidget();
     QVBoxLayout* vertical = new QVBoxLayout(_preview_widget);
+    QString tooltip;
 
     _table = new QTableView;
     vertical->addWidget(_table);
@@ -208,24 +238,34 @@ void ShapeCollectionDialog::setPreviewUp()
     _x = new QDoubleSpinBox();
     _x->setMaximum(10000);
     _x->setValue(500);
+    tooltip = "(pixels) x coordinate of peak shape to preview";
+    _x->setToolTip(tooltip);
 
     _y = new QDoubleSpinBox();
     _y->setMaximum(10000);
     _y->setValue(700);
+    tooltip = "(pixels) y coordinate of peak shape to preview";
+    _y->setToolTip(tooltip);
 
     _frame = new QDoubleSpinBox();
     _frame->setMaximum(10000);
     _frame->setValue(5);
+    tooltip = "(pixels) frame coordinate of peak shape to preview";
+    _frame->setToolTip(tooltip);
 
     _radius = new QDoubleSpinBox();
     _radius->setMaximum(10000);
     _radius->setMinimum(1);
     _radius->setValue(500);
+    tooltip = "(pixels) - radius for neighbour search in pixels";
+    _radius->setToolTip(tooltip);
 
     _n_frames = new QDoubleSpinBox();
     _n_frames->setMaximum(10000);
     _n_frames->setMinimum(1);
     _n_frames->setValue(5.0);
+    tooltip = "(frames) - radius for neighbour search in frames";
+    _n_frames->setToolTip(tooltip);
 
     left_up->addRow("x:", _x);
     left_up->addRow("y:", _y);
