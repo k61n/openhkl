@@ -29,7 +29,6 @@
 PeakItem::PeakItem(nsx::Peak3D* peak) : QStandardItem()
 {
     _peak = peak;
-    _peak_graphic = std::unique_ptr<PeakItemGraphic>(new PeakItemGraphic(peak));
 }
 
 double PeakItem::peak_d() const
@@ -165,4 +164,9 @@ QVariant PeakItem::peakData(const QModelIndex& index, int role, PeakDisplayModes
 bool PeakItem::caughtByFilter(void) const
 {
     return _peak->caughtByFilter();
+}
+
+PeakItemGraphic* PeakItem::peakGraphic()
+{
+    return new PeakItemGraphic(_peak);
 }

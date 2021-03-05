@@ -19,7 +19,7 @@ namespace nsx {
 
 InterpolatedState InstrumentStateList::interpolate(const double frame) const
 {
-    if (std::size_t(frame) > (size() - 2) || frame < 0)
+    if (frame > (size() - 2) || frame < 0)
         throw std::range_error(
             "Error when interpolating state: invalid frame value: " + std::to_string(frame) +
             ", size: " + std::to_string(size()));

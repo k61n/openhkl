@@ -113,7 +113,7 @@ void DetectorScene::clearPeakItems()
         if(p)
         {
             removeItem(p);
-            //delete p;
+            delete p;
         }
     }
 
