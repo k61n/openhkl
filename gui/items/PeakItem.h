@@ -56,7 +56,7 @@ class PeakItem : public QStandardItem {
     //! Get the peak pointer
     nsx::Peak3D* peak() { return _peak; };
     //! Get the graphical representation
-	PeakItemGraphic* peakGraphic();
+    PeakItemGraphic* peakGraphic();
     //! The column enumerators
     enum Column {
         h,
