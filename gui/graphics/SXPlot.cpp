@@ -133,9 +133,15 @@ void SXPlot::mouseWheel(QWheelEvent* wheel_event)
         yAxis->pixelToCoord(current_range.y()),
         yAxis->pixelToCoord(current_range.y() + current_range.height())};
 
+#if QT_VERSION < QT_VERSION_CHECK(5,14,0)
+    QPointF localPt = wheel_event->pos();
+#else
+    QPointF localPt = wheel_event->position();
+#endif
+
     std::vector<double> mouse_pos{
-        xAxis->pixelToCoord(wheel_event->position().x()),
-        yAxis->pixelToCoord(wheel_event->position().y())};
+        xAxis->pixelToCoord(localPt.x()),
+        yAxis->pixelToCoord(localPt.y())};
 
     double factor;
     if (wheel_event->angleDelta().y() < 0)
