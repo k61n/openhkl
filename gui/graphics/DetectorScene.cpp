@@ -108,8 +108,11 @@ void DetectorScene::clearPeakItems()
     if (!_currentData)
         return;
 
-    for (PeakItemGraphic* p : _peak_graphics_items)
-        removeItem(p);
+    // _peak_graphics_items can be out of sync (pointer may get deleted outside). Therefore 
+    // do not use it for removing items from the scene (may cause crash)
+    for (auto item : items())
+        if (dynamic_cast<PeakItemGraphic*>(item) != nullptr)
+            removeItem(item);
 
     _peak_graphics_items.clear();
 }
