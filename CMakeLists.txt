@@ -28,7 +28,14 @@ option(BUILD_TESTING "Build the tests" ON)
 option(BUILD_DOCUMENTATION "Build Sphinx/Doxygen documentation" ON)
 option(BUILD_PDF_DOCUMENTATION "Build Sphinx documentation using LaTeX" ON)
 
-set(NSX_TESTDATA_DIR test/data CACHE PATH "Directory where to cache test data")
+if(NOT DEFINED NSX_TESTDATA_DIR)
+    message(FATAL_ERROR "Missing -DNSX_TESTDATA_DIR=<path>"
+             " where <path> should point to directory that contains copy of"
+             " https://computing.mlz-garching.de/download/testdata/nsx/")
+else()
+    message(STATUS "Test data expected in NSX_TESTDATA_DIR=${NSX_TESTDATA_DIR}")
+endif()
+set(NSX_TESTDATA_DIR /testdata CACHE PATH "Directory where to cache test data")
 
 ###################################################################################################
 #  Build type and compiler flags
