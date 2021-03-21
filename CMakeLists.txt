@@ -28,6 +28,7 @@ option(BUILD_TESTING "Build the tests" ON)
 option(BUILD_DOCUMENTATION "Build Sphinx/Doxygen documentation" ON)
 option(BUILD_PDF_DOCUMENTATION "Build Sphinx documentation using LaTeX" ON)
 
+# Path to test data directory must provided via -DNSX_TESTDATA_DIR or from cache.
 if(NOT DEFINED NSX_TESTDATA_DIR)
     message(FATAL_ERROR "Missing -DNSX_TESTDATA_DIR=<path>"
              " where <path> should point to directory that contains copy of"
@@ -37,6 +38,7 @@ elseif(NOT IS_DIRECTORY ${NSX_TESTDATA_DIR})
 else()
     message(STATUS "Test data expected in NSX_TESTDATA_DIR=${NSX_TESTDATA_DIR}")
 endif()
+# Cache the variable. The default value, required by set(..CACHE..) syntax,  will never be used.
 set(NSX_TESTDATA_DIR /testdata CACHE PATH "Directory where to cache test data")
 
 ###################################################################################################
