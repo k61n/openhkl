@@ -72,6 +72,5 @@ if(NOT files_ok)
     message(FATAL "\nSome test data files not found or corrupted, as listed just above.\n"
         "Invoke CMake with -D NSX_TESTDATA_DIR=<directory> to indicate a directory\n"
         "that contains all test data files from ${NSX_TESTDATA_URL}")
-else()
-    message(STATUS "- ok, all test data files present with correct checksum")
 endif()
+message(STATUS "- ok, all test data files present with correct checksum")
