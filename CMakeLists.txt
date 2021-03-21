@@ -32,6 +32,8 @@ if(NOT DEFINED NSX_TESTDATA_DIR)
     message(FATAL_ERROR "Missing -DNSX_TESTDATA_DIR=<path>"
              " where <path> should point to directory that contains copy of"
              " https://computing.mlz-garching.de/download/testdata/nsx/")
+elseif(NOT IS_DIRECTORY ${NSX_TESTDATA_DIR})
+    message(FATAL_ERROR "Directory NSX_TESTDATA_DIR=${NSX_TESTDATA_DIR} does not exist")
 else()
     message(STATUS "Test data expected in NSX_TESTDATA_DIR=${NSX_TESTDATA_DIR}")
 endif()
