@@ -24,7 +24,8 @@ mac:
     - mkdir build
     - cd build
     - export QTDIR=/usr/local/opt/qt5
-    - cmake .. -D CMAKE_PREFIX_PATH=$QTDIR -D CMAKE_CXX_COMPILER_LAUNCHER=ccache -D NSX_TESTDATA_DIR=/Users/admin/wuttke/nsx
+    - export TESTDATA=/Users/wuttke/testdata/nsx
+    - cmake .. -D CMAKE_PREFIX_PATH=$QTDIR -D CMAKE_CXX_COMPILER_LAUNCHER=ccache -D NSX_TESTDATA_DIR=$TESTDATA
     - make -j3
     - ctest -j3 --output-on-failure
     - cpack -V
