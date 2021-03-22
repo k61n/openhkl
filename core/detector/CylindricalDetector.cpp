@@ -33,18 +33,16 @@ CylindricalDetector::CylindricalDetector(const std::string& name) : Detector(nam
 
 CylindricalDetector::CylindricalDetector(const YAML::Node& node) : Detector(node)
 {
-    const UnitsManager& um = UnitsManager::instance();
-
     // Sets the detector angular width from the property tree node
     auto&& angularWidthNode = node["angular_width"];
-    double units = um.get(angularWidthNode["units"].as<std::string>());
+    double units = UnitsManager::get(angularWidthNode["units"].as<std::string>());
     double angularWidth = angularWidthNode["value"].as<double>();
     angularWidth *= units;
     setAngularWidth(angularWidth);
 
     // Sets the detector height from the property tree node
     auto&& heightNode = node["height"];
-    units = um.get(heightNode["units"].as<std::string>());
+    units = UnitsManager::get(heightNode["units"].as<std::string>());
     double height = heightNode["value"].as<double>();
     height *= units;
     setHeight(height);

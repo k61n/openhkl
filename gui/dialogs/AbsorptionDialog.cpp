@@ -105,8 +105,8 @@ AbsorptionDialog::AbsorptionDialog() : QDialog{}
         s.beginGroup("RecentDirectories");
         QString loadDirectory = s.value("absorption", QDir::homePath()).toString();
 
-        QString fileName =
-            dialog.getOpenFileName(this, "Select video file", loadDirectory, "Video file (*.info)");
+        QString fileName = QFileDialog::getOpenFileName(
+            this, "Select video file", loadDirectory, "Video file (*.info)");
         if (fileName.isEmpty())
             return;
 

@@ -23,14 +23,14 @@ int main(int argc, char* argv[])
 {
     QApplication app{argc, argv};
 
-    app.setApplicationName("NSXTool");
-    app.setApplicationVersion("1.0");
-    app.setOrganizationName("nsx");
+    QApplication::setApplicationName("NSXTool");
+    QApplication::setApplicationVersion("1.0");
+    QApplication::setOrganizationName("nsx");
 
     QLoggingCategory::setFilterRules("*.debug=true\nqt.*.debug=false\nqt.qpa*=false\nkf.*=false");
     Session session;
 
     MainWin mainWindow;
 
-    return app.exec();
+    return QApplication::exec();
 }

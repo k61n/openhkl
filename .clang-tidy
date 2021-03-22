@@ -58,7 +58,7 @@ Checks: '*,
 -SectionComment_Incompatible_with_Qt,
 
 -bugprone-suspicious-include,
-
+-llvm-namespace-comment,
 
 -SectionComment_Incompatible_with_Other_3rd_Party_Dependences,
 
@@ -76,6 +76,7 @@ Checks: '*,
 -*UnixAPI,
 -*CallAndMessage,
 
+-cert-err34-c,
 -cert-oop54-cpp,
 -cppcoreguidelines-owning-memory,
 -readability-use-anyofallof,
@@ -111,8 +112,6 @@ Checks: '*,
 -*-use-equals-default,
 -bugprone-misplaced-widening-cast,
 -bugprone-parent-virtual-call,
--cert-err34-c,
--cert-dcl21-cpp,
 -cppcoreguidelines-pro-type-const-cast,
 -cppcoreguidelines-pro-type-static-cast-downcast,
 -cppcoreguidelines-slicing,
@@ -126,7 +125,6 @@ Checks: '*,
 -modernize-make-unique,
 -modernize-pass-by-value,
 -modernize-use-default-member-init,
--modernize-use-using,
 -performance-for-range-copy,
 -performance-inefficient-vector-operation,
 -performance-unnecessary-copy-initialization,
@@ -136,10 +134,7 @@ Checks: '*,
 -readability-inconsistent-declaration-parameter-name,
 -readability-redundant-member-init,
 -readability-simplify-boolean-expr,
-
--readability-static-accessed-through-instance,
 -readability-string-compare,
--clang-analyzer-core.DivideZero,
 
 '
 # end of Checks string

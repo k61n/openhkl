@@ -565,7 +565,7 @@ void SubframeFindPeaks::grabFinderParameters()
     _kernel_combo->setCurrentText(QString::fromStdString(convolverType));
 
     const std::map<std::string, double>& params = convolver->parameters();
-    typedef std::map<std::string, double>::const_iterator mapIterator;
+    using mapIterator = std::map<std::string, double>::const_iterator;
 
     _kernel_para_table->clear();
     _kernel_para_table->setRowCount(0);
@@ -630,7 +630,7 @@ void SubframeFindPeaks::updateConvolutionParameters()
     nsx::Convolver* kernel = _kernel_comboFactory.create(kernelName, {});
 
     const std::map<std::string, double>& params = kernel->parameters();
-    typedef std::map<std::string, double>::const_iterator mapIterator;
+    using mapIterator = std::map<std::string, double>::const_iterator;
 
     _kernel_para_table->setRowCount(0);
     _kernel_para_table->setColumnCount(2);

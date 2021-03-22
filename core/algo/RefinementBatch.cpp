@@ -70,8 +70,8 @@ namespace nsx {
 
 RefinementBatch::RefinementBatch(
     InstrumentStateList& states, UnitCell* uc, std::vector<const nsx::Peak3D*> peaks)
-    : _fmin(std::numeric_limits<double>().max())
-    , _fmax(std::numeric_limits<double>().lowest())
+    : _fmin(std::numeric_limits<double>::max())
+    , _fmax(std::numeric_limits<double>::lowest())
     , _cell(uc)
     , _peaks(peaks)
 {

@@ -160,8 +160,6 @@ class OctreeIterator {
 
     OctreeIterator& operator++();
 
-    OctreeIterator operator++(int);
-
  private:
     const Octree* _node;
 };

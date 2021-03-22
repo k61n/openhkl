@@ -65,7 +65,7 @@ class PeakCollection {
     //! Return beam divergence sigma
     double sigmaD() const;
     //! Return mosaicity sigma
-    double sigmaM() const ;
+    double sigmaM() const;
 
     //! Set Miller indices of peaks for those with an assigned unit cell
     void setMillerIndices() const;

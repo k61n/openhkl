@@ -92,9 +92,8 @@ Eigen::MatrixXi TiffDataReader::data(std::size_t /*frame*/)
         return data16.cast<int>();
     }
 
-    assert(_bits==32);
-    Eigen::Matrix<uint32, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor> data32(
-        _nRows, _nCols);
+    assert(_bits == 32);
+    Eigen::Matrix<uint32, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor> data32(_nRows, _nCols);
     // Read line per line
     for (size_t i = 0; i < _nRows; ++i)
         TIFFReadScanline(_file, (char*)&data32(i, 0), i);

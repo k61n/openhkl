@@ -332,13 +332,6 @@ OctreeIterator& OctreeIterator::operator++()
     return ++(*this);
 }
 
-OctreeIterator OctreeIterator::operator++(int)
-{
-    OctreeIterator tmp(*this);
-    ++(*this);
-    return (tmp);
-}
-
 unsigned int Octree::numChambers() const
 {
     if (hasChildren()) {
