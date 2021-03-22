@@ -27,6 +27,7 @@ option(NSX_PYTHON "Generate Python bindings" ON)
 option(BUILD_TESTING "Build the tests" ON)
 option(BUILD_DOCUMENTATION "Build Sphinx/Doxygen documentation" ON)
 option(BUILD_PDF_DOCUMENTATION "Build Sphinx documentation using LaTeX" ON)
+option(NSX_TIDY "Upon 'make', clang-tidy will print warnings as specified in .clang-tidy" OFF)
 
 # Path to test data directory must provided via -DNSX_TESTDATA_DIR or from cache.
 set(NSX_TESTDATA_URL https://computing.mlz-garching.de/download/testdata/nsx)
@@ -42,6 +43,11 @@ if (BUILD_TESTING)
 endif()
 # Cache the variable. The default value, required by set(..CACHE..) syntax,  will never be used.
 set(NSX_TESTDATA_DIR /testdata CACHE PATH "Directory where to cache test data")
+
+# Check compatibility of options
+if(NSX_TIDY AND NSX_PYTHON)
+    message(FATAL_ERROR "NSX_TIDY is incompatible with NSX_PYTHON")
+endif()
 
 ###################################################################################################
 #  Build type and compiler flags
@@ -206,6 +212,13 @@ endif()
 ###################################################################################################
 #  Build components
 ###################################################################################################
+
+# from here on our own code, occasionally scrutinized by clang-tidy
+if(NSX_TIDY)
+    set(CMAKE_CXX_CLANG_TIDY "clang-tidy") # has effect only if compiler is clang; uses .clang-tidy
+endif()
+
+
 add_subdirectory(base)
 add_subdirectory(tables)
 add_subdirectory(core)
