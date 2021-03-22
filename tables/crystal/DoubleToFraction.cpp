@@ -89,8 +89,6 @@ void doubleToFraction(double number, int nmax, long& nom, long& dnom)
         nom *= -1.0;
         dnom *= -1.0;
     }
-
-    return;
 }
 
 } // namespace nsx

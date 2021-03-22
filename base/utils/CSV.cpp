@@ -36,7 +36,7 @@ std::vector<std::string> CSV::getRow(std::istream& stream)
 
 std::string CSV::getToken(std::istream& stream, char& delim)
 {
-    std::string tok("");
+    std::string tok;
     char curr, eof, n1, n2;
     bool in_string(false);
     bool done(false);

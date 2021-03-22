@@ -153,12 +153,6 @@ Checks: '*,
 -google-readability-namespace-comments,
 -*-deprecated-headers,
 -clang-analyzer-core.DivideZero,
--readability-redundant-control-flow,
--readability-redundant-string-init,
--cert-dcl16-c,
--bugprone-too-small-loop-variable,
--clang-analyzer-deadcode.DeadStores,
--performance-faster-string-find,
 
 '
 # end of Checks string

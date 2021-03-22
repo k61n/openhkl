@@ -18,7 +18,7 @@
 namespace nsx {
 
 Monochromator::Monochromator()
-    : _name(""), _wavelength(1.0), _fwhm(0.1), _width(0.01), _height(0.01)
+    : _wavelength(1.0), _fwhm(0.1), _width(0.01), _height(0.01)
 {
 }
 

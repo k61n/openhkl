@@ -39,7 +39,7 @@ Diffractometer* Diffractometer::create(const std::string& name)
     return diffractometer;
 }
 
-Diffractometer::Diffractometer() : _name(""), _detector(nullptr), _sample(), _source() { }
+Diffractometer::Diffractometer() : _detector(nullptr), _sample(), _source() { }
 
 Diffractometer::Diffractometer(const Diffractometer& other)
     : _name(other._name)

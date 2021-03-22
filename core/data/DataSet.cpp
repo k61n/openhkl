@@ -343,7 +343,7 @@ std::string DataSet::name() const
     if (sep != std::string::npos)
         data_name = data_name.substr(sep + 1, data_name.size() - sep - 1);
 
-    size_t dot = data_name.find_last_of(".");
+    size_t dot = data_name.find_last_of('.');
     if (dot != std::string::npos) {
         name = data_name.substr(0, dot);
         ext = data_name.substr(dot, data_name.size() - dot);
