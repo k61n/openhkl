@@ -31,14 +31,14 @@ option(BUILD_PDF_DOCUMENTATION "Build Sphinx documentation using LaTeX" ON)
 # Path to test data directory must provided via -DNSX_TESTDATA_DIR or from cache.
 set(NSX_TESTDATA_URL https://computing.mlz-garching.de/download/testdata/nsx)
 if (BUILD_TESTING)
-	if(NOT DEFINED NSX_TESTDATA_DIR)
-		message(FATAL_ERROR "Missing -DNSX_TESTDATA_DIR=<path>"
-				 " where <path> should point to directory that contains copy of ${NSX_TESTDATA_URL}")
-	elseif(NOT IS_DIRECTORY ${NSX_TESTDATA_DIR})
-		message(FATAL_ERROR "Directory NSX_TESTDATA_DIR=${NSX_TESTDATA_DIR} does not exist")
-	else()
-		message(STATUS "Test data expected in NSX_TESTDATA_DIR=${NSX_TESTDATA_DIR}")
-	endif()
+    if(NOT DEFINED NSX_TESTDATA_DIR)
+        message(FATAL_ERROR "Missing -DNSX_TESTDATA_DIR=<path>"
+              " where <path> should point to directory that contains copy of ${NSX_TESTDATA_URL}")
+    elseif(NOT IS_DIRECTORY ${NSX_TESTDATA_DIR})
+        message(FATAL_ERROR "Directory NSX_TESTDATA_DIR=${NSX_TESTDATA_DIR} does not exist")
+    else()
+        message(STATUS "Test data expected in NSX_TESTDATA_DIR=${NSX_TESTDATA_DIR}")
+    endif()
 endif()
 # Cache the variable. The default value, required by set(..CACHE..) syntax,  will never be used.
 set(NSX_TESTDATA_DIR /testdata CACHE PATH "Directory where to cache test data")
