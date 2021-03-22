@@ -84,7 +84,6 @@ void DetectorScene::linkPeakModel(PeakCollectionModel* source)
     connect(
         _peak_models.back(), &PeakCollectionModel::dataChanged, this,
         &DetectorScene::peakModelDataChanged);
-
 }
 
 std::vector<PeakCollectionModel*> DetectorScene::peakModels() const
@@ -108,7 +107,7 @@ void DetectorScene::clearPeakItems()
     if (!_currentData)
         return;
 
-    // _peak_graphics_items can be out of sync (pointer may get deleted outside). Therefore 
+    // _peak_graphics_items can be out of sync (pointer may get deleted outside). Therefore
     // do not use it for removing items from the scene (may cause crash)
     for (auto item : items())
         if (dynamic_cast<PeakItemGraphic*>(item) != nullptr)

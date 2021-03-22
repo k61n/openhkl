@@ -52,7 +52,7 @@ void validate_zone(const Eigen::Matrix3d& B, int nverts, int nfaces)
         CHECK(zone.inside(-1.01 * v) == false);
     }
 
-    //CHECK(hull.volume() == Approx(std::fabs(B.determinant())).epsilon(1e-8));
+    // CHECK(hull.volume() == Approx(std::fabs(B.determinant())).epsilon(1e-8));
 }
 
 TEST_CASE("test/geometry/TestBrillouinZone.cpp", "")

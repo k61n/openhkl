@@ -39,9 +39,9 @@ namespace nsx {
  *   \begin{bmatrix} \sum c_i/v_i^2 \\ \sum c_ip_i/v_i^2 \end{bmatrix}
  * \f]
  *
- *  Where \f$c_i\f$, \f$b_i\f$, \f$v_i\f$ and \f$p_i\f$ are the counts, background, variance and profile
- *  respectively, and I and B are the computed intensity and background
- *  respectively. These are solved via the following procedure:
+ *  Where \f$c_i\f$, \f$b_i\f$, \f$v_i\f$ and \f$p_i\f$ are the counts, background, variance and
+ * profile respectively, and I and B are the computed intensity and background respectively. These
+ * are solved via the following procedure:
  *  1. Set \f$v_i = b_i\f$ as an initial guess
  *  2. Solve the linear equations by matrix inversion
  *  3. Compute updated \f$v_i = b_i - I p_i\f$

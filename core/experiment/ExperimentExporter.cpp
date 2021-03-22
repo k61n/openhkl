@@ -361,7 +361,7 @@ void ExperimentExporter::writePeaks(const std::map<std::string, PeakCollection*>
             H5::PredType::NATIVE_HBOOL, peak_space));
         predicted_H5.write(predicted, H5::PredType::NATIVE_HBOOL, peak_space, peak_space);
 
-        for (int i=0; i<nPeaks; ++i)
+        for (int i = 0; i < nPeaks; ++i)
             data_name_pointers.push_back(data_names[i].c_str());
         H5::StrType data_str_type(H5::PredType::C_S1, H5T_VARIABLE);
         H5::DataSet data_H5(file.createDataSet(
@@ -369,7 +369,7 @@ void ExperimentExporter::writePeaks(const std::map<std::string, PeakCollection*>
             peak_space));
         data_H5.write(data_name_pointers.data(), data_str_type, peak_space, peak_space);
 
-        for (int i=0; i<nPeaks; ++i)
+        for (int i = 0; i < nPeaks; ++i)
             unit_cell_pointers.push_back(unit_cells[i].c_str());
         H5::StrType uc_str_type(H5::PredType::C_S1, H5T_VARIABLE);
         H5::DataSet unit_cell_H5(file.createDataSet(

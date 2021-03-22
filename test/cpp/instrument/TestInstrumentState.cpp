@@ -50,7 +50,7 @@ int nsx::UnitTest_DataSet::run()
         try {
             auto state = dataf->instrumentStates().interpolate(frame);
             ++good_states;
-        } catch(std::range_error& e) {
+        } catch (std::range_error& e) {
             std::cout << e.what() << std::endl;
             continue;
         }

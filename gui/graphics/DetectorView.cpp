@@ -28,7 +28,9 @@ DetectorView::DetectorView(QWidget* parent) : QGraphicsView(parent), _scene(new 
         QPainter::Antialiasing | QPainter::SmoothPixmapTransform | QPainter::Antialiasing);
     setScene(_scene);
     // Make sure that first views are rescaled, especially first created one
-    connect(_scene, &DetectorScene::dataChanged, this, [&]() { fitInView(_scene->sceneRect(), Qt::KeepAspectRatio); });
+    connect(_scene, &DetectorScene::dataChanged, this, [&]() {
+        fitInView(_scene->sceneRect(), Qt::KeepAspectRatio);
+    });
     setMouseTracking(true);
     viewport()->setMouseTracking(true);
     setInteractive(true);

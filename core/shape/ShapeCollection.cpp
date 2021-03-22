@@ -149,8 +149,7 @@ std::vector<Peak3D*> predictPeaks(
         Level::Info, "algo::predictPeaks:", collection->nNoProfile(),
         "peaks with no neighbouring profiles");
     nsxlog(
-        Level::Info, "algo::predictPeaks:", collection->nLonelyPeaks(),
-        "peaks with no neighbours");
+        Level::Info, "algo::predictPeaks:", collection->nLonelyPeaks(), "peaks with no neighbours");
     nsxlog(
         Level::Info, "algo::predictPeaks:", collection->nUnfriendlyPeaks(),
         "peaks with too few neighbours");

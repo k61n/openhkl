@@ -73,7 +73,7 @@ void Experiment::setName(const std::string& name)
 void Experiment::setDefaultDMin()
 {
     double lambda = getDiffractometer()->source().selectedMonochromator().wavelength();
-    double d_min = lambda/2.0;
+    double d_min = lambda / 2.0;
     shape_params.detector_range_min = d_min;
     predict_params.detector_range_min = d_min;
     indexer_params.d_min = d_min;

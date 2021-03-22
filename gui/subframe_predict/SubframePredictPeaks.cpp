@@ -116,7 +116,8 @@ void SubframePredictPeaks::setInputUp()
     _exp_combo = new QComboBox();
     _peak_combo = new QComboBox();
     _build_shape_lib = new QPushButton("Build shape collection");
-    QString tooltip = "<font>A shape collection is a collection of averaged peaks attached to a peak"
+    QString tooltip =
+        "<font>A shape collection is a collection of averaged peaks attached to a peak"
         "collection. A shape is the averaged peak shape of a peak and its neighbours within a "
         "specified cutoff.</font>"; // Rich text to force line break in tooltip
     _build_shape_lib->setToolTip(tooltip);
@@ -606,7 +607,8 @@ void SubframePredictPeaks::updateDatasetParameters(int idx)
     _figure_spin->setMinimum(0);
 }
 
-void SubframePredictPeaks::grabPredictorParameters() {
+void SubframePredictPeaks::grabPredictorParameters()
+{
     _params = gSession->experimentAt(_exp_combo->currentIndex())->experiment()->predict_params;
     _shape_params = gSession->experimentAt(_exp_combo->currentIndex())->experiment()->shape_params;
 
@@ -617,7 +619,7 @@ void SubframePredictPeaks::grabPredictorParameters() {
     _n_frames->setValue(_params.neighbour_range_frames);
     _min_neighbors->setValue(_params.min_n_neighbors);
 
-    //Integration parameters
+    // Integration parameters
     _peak_end_int->setValue(_params.peak_end);
     _bkg_start_int->setValue(_params.bkg_begin);
     _bkg_end_int->setValue(_params.bkg_end);
@@ -821,7 +823,8 @@ void SubframePredictPeaks::openShapeBuilder()
             ->experiment()
             ->getPeakCollection(_peak_combo->currentText().toStdString());
 
-    std::unique_ptr<ShapeCollectionDialog> dialog(new ShapeCollectionDialog(peak_collection, _shape_params));
+    std::unique_ptr<ShapeCollectionDialog> dialog(
+        new ShapeCollectionDialog(peak_collection, _shape_params));
 
     dialog->exec();
     _d_min->setValue(dialog->getDMin());

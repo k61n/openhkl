@@ -262,7 +262,8 @@ void SubframeRefiner::updateExptList()
     updateDatasetList();
     updatePeakList();
     updateUnitCellList();
-    _refiner_params = gSession->experimentAt(_exp_combo->currentIndex())->experiment()->refiner_params;
+    _refiner_params =
+        gSession->experimentAt(_exp_combo->currentIndex())->experiment()->refiner_params;
     _shape_params = gSession->experimentAt(_exp_combo->currentIndex())->experiment()->shape_params;
 }
 
@@ -295,7 +296,7 @@ void SubframeRefiner::updatePeakList()
     _peak_list.append(tmp);
     tmp.clear();
     tmp = gSession->experimentAt(_exp_combo->currentIndex())
-        ->getPeakCollectionNames(nsx::listtype::PREDICTED);
+              ->getPeakCollectionNames(nsx::listtype::PREDICTED);
     _peak_list.append(tmp);
     tmp.clear();
     tmp = gSession->experimentAt(_exp_combo->currentIndex())
@@ -624,7 +625,8 @@ void SubframeRefiner::setUpdateUp()
     _build_shape_lib->setMaximumWidth(1000);
     _build_shape_lib->setSizePolicy(*_size_policy_widgets);
     _build_shape_lib = new QPushButton("Build shape collection");
-    tooltip = "<font>A shape collection is a collection of averaged peaks attached to a peak"
+    tooltip =
+        "<font>A shape collection is a collection of averaged peaks attached to a peak"
         "collection. A shape is the averaged peak shape of a peak and its neighbours within a "
         "specified cutoff.</font>"; // Rich text to force line break in tooltip
     _build_shape_lib->setToolTip(tooltip);
@@ -858,10 +860,11 @@ void SubframeRefiner::openShapeBuilder()
 {
     nsx::PeakCollection* peak_collection =
         gSession->experimentAt(_exp_combo->currentIndex())
-        ->experiment()
-        ->getPeakCollection(_peak_combo->currentText().toStdString());
+            ->experiment()
+            ->getPeakCollection(_peak_combo->currentText().toStdString());
 
-    std::unique_ptr<ShapeCollectionDialog> dialog(new ShapeCollectionDialog(peak_collection, _shape_params));
+    std::unique_ptr<ShapeCollectionDialog> dialog(
+        new ShapeCollectionDialog(peak_collection, _shape_params));
 
     dialog->exec();
     refreshPeakShapeStatus();
@@ -878,8 +881,8 @@ void SubframeRefiner::refreshPeakShapeStatus()
     if (shape_collection_present) {
         nsx::PeakCollection* collection =
             gSession->experimentAt(_exp_combo->currentIndex())
-            ->experiment()
-            ->getPeakCollection(_peak_combo->currentText().toStdString());
+                ->experiment()
+                ->getPeakCollection(_peak_combo->currentText().toStdString());
         if (collection->shapeCollection() == nullptr)
             shape_collection_present = false;
     }
