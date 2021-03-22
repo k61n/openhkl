@@ -32,7 +32,6 @@ configure_file(../cpp/crystal/714898.hdf 714898.hdf COPYONLY)
 #  Long test data files must have been downloaded to directory NSX_TESTDATA_DIR
 ###################################################################################################
 
-set(test_data_url https://computing.mlz-garching.de/download/testdata/nsx)
 set(test_files
     p16106_00029299.tiff
     p16106_00029300.tiff
@@ -72,7 +71,6 @@ check_file(ad70d1b3adbdaa94dc96070daa7b206e5114097009b9dc0b2fa8cec9d0fcc5b66d9b2
 if(NOT files_ok)
     message(FATAL "\nSome test data files not found or corrupted, as listed just above.\n"
         "Invoke CMake with -D NSX_TESTDATA_DIR=<directory> to indicate a directory\n"
-        "that contains all test data files from ${test_data_url}")
-else()
-    message(STATUS "- ok, all test data files present with correct checksum")
+        "that contains all test data files from ${NSX_TESTDATA_URL}")
 endif()
+message(STATUS "- ok, all test data files present with correct checksum")
