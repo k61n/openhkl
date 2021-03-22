@@ -37,7 +37,6 @@ extern class MainWin* gGui; //!< global pointer to the main window
 class MainWin : public QMainWindow {
  public:
     MainWin();
-    ~MainWin();
 
     class Actions* triggers;
     class GuiState* state;

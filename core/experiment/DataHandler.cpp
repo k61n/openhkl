@@ -56,7 +56,7 @@ const DataMap* DataHandler::getDataMap() const
     return &_data_map;
 }
 
-const std::string DataHandler::getName() const
+std::string DataHandler::getName() const
 {
     return _name;
 }

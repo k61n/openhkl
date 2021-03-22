@@ -50,7 +50,7 @@ CrystalScene::CrystalScene(nsx::ConvexHull* hull, QWidget* parent)
     _pinCreated = false;
 }
 
-CrystalScene::~CrystalScene() { }
+CrystalScene::~CrystalScene() = default;
 
 void CrystalScene::loadImage(QString filename)
 {

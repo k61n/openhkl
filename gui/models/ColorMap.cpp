@@ -40,8 +40,6 @@ ColorMap::ColorMap(const std::string& name) : ColorMap(getColorMap(name)) { }
 
 ColorMap::ColorMap() : ColorMap(getColorMapNames().front()) { }
 
-ColorMap::~ColorMap() { }
-
 QImage ColorMap::matToImage(
     const Eigen::ArrayXXd& source, const QRect& rect, double colorMax, bool log)
 {

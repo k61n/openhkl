@@ -47,8 +47,6 @@ FlatDetector::FlatDetector(const YAML::Node& node) : Detector(node)
     setHeight(height);
 }
 
-FlatDetector::~FlatDetector() { }
-
 Detector* FlatDetector::clone() const
 {
     return new FlatDetector(*this);

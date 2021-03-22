@@ -54,7 +54,7 @@ Gonio& Gonio::operator=(const Gonio& other)
     return *this;
 }
 
-Gonio::~Gonio() { }
+Gonio::~Gonio() = default;
 
 size_t Gonio::nAxes() const
 {

@@ -25,7 +25,7 @@ Convolver::Convolver(const parameters_map& parameters)
     _parameters = parameters;
 }
 
-Convolver::~Convolver() { }
+Convolver::~Convolver() = default;
 
 std::map<std::string, double>& Convolver::parameters()
 {

@@ -207,7 +207,7 @@ TEST_CASE("test/geometry/TestOctree.cpp", "")
         Eigen::Vector3d v1(d1(gen), d1(gen), d1(gen));
         Eigen::Matrix3d mat;
         mat << 1, 0, 0, 0, 1, 0, 0, 0, 1;
-        ellipsoids.push_back(nsx::Ellipsoid(v1, mat));
+        ellipsoids.emplace_back(nsx::Ellipsoid(v1, mat));
         // Test: the root node has no children until it is not splitted
         CHECK(!tree.hasChildren());
         tree.addData(&ellipsoids[i]);

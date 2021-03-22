@@ -56,7 +56,7 @@ Axis::Axis(const YAML::Node& node)
     _id = node["id"] ? node["id"].as<unsigned int>() : 0;
 }
 
-Axis::~Axis() { }
+Axis::~Axis() = default;
 
 void Axis::setName(const std::string& name)
 {

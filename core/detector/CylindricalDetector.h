@@ -36,7 +36,7 @@ class CylindricalDetector : public Detector {
     CylindricalDetector(const YAML::Node& node);
     //! Returns a pointer to a copy of a CylindricalDetector
     Detector* clone() const override;
-    virtual ~CylindricalDetector();
+
     CylindricalDetector& operator=(const CylindricalDetector& other) = default;
 
     //! Sets the height of the detector (meters)

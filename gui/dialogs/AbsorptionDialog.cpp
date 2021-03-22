@@ -23,7 +23,7 @@
 #include <QVBoxLayout>
 #include <fstream>
 
-AbsorptionDialog::AbsorptionDialog() : QDialog{}
+AbsorptionDialog::AbsorptionDialog()
 {
     setAttribute(Qt::WA_DeleteOnClose);
     resize(900, 650);
@@ -204,7 +204,7 @@ void AbsorptionDialog::readInfoFile(const std::string& filename)
             std::string name, jpgfile;
             double value;
             is >> name >> value >> jpgfile;
-            _imageList.push_back(std::pair<double, std::string>(value, _filepath + "/" + jpgfile));
+            _imageList.emplace_back(std::pair<double, std::string>(value, _filepath + "/" + jpgfile));
             getline(file, line);
         }
         file.close();

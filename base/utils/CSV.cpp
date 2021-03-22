@@ -20,8 +20,6 @@ namespace nsx {
 
 CSV::CSV(char delim, char quotchar) : _delim(delim), _quotchar(quotchar) { }
 
-CSV::~CSV() { }
-
 std::vector<std::string> CSV::getRow(std::istream& stream)
 {
     char delim(0);

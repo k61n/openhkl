@@ -51,7 +51,7 @@ class MergedPeak {
     double pValue() const;
 
     //! Returns vector of peaks used to compute the merged peak.
-    const std::vector<Peak3D*> peaks() const;
+    std::vector<Peak3D*> peaks() const;
 
     //! split the merged peak randomly into two, for calculation of CC
     std::pair<MergedPeak, MergedPeak> split() const;

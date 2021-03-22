@@ -39,7 +39,7 @@ class IntegrationRegion {
     //! Returns the bounding box of the region
     const AABB& aabb() const;
     //! Returns the bounding box of the peak region
-    const AABB peakBB() const;
+    AABB peakBB() const;
     //! Classify a detector event (peak, background, forbidden, etc.)
     EventType classify(const DetectorEvent& ev) const;
     //! Update the region with the next frame

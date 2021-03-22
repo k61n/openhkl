@@ -86,7 +86,7 @@ DetectorProperty::DetectorProperty()
     v_box_layout->addWidget(group_2);
 }
 
-DetectorProperty::~DetectorProperty() { }
+DetectorProperty::~DetectorProperty() = default;
 
 void DetectorProperty::refreshInput()
 {

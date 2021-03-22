@@ -22,7 +22,7 @@
 #include <QHBoxLayout>
 #include <QLabel>
 
-UnitCellDialog::UnitCellDialog(QStringList collectionNames, QStringList spaceGroups) : QDialog()
+UnitCellDialog::UnitCellDialog(QStringList collectionNames, QStringList spaceGroups)
 {
     setModal(true);
     resize(600, 130);

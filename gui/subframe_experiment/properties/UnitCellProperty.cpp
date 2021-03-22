@@ -218,21 +218,17 @@ void UnitCellProperty::setSizePolicies()
 
 void UnitCellProperty::refreshInput()
 {
+    const auto* prj = gSession->currentProject();
     unitcells->blockSignals(true);
     unitcells->clear();
-    unitcells->addItems(gSession->currentProject()->getUnitCellNames());
+    unitcells->addItems(prj->getUnitCellNames());
     unitcells->blockSignals(false);
 
-    bool state;
-    if (gSession->currentProject()->experiment()->getUnitCellNames().size() == 0)
-        state = false;
-    else
-        state = true;
-
+    const bool state = prj->experiment()->getUnitCellNames().size() != 0;
     resetFields();
     setInputEnabled(state);
 
-    if (!gSession->currentProject()->getUnitCellNames().empty())
+    if (!prj->getUnitCellNames().empty())
         selectedCellChanged(0);
 }
 

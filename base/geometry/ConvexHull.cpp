@@ -25,31 +25,12 @@ namespace nsx {
 using namespace orgQhull;
 
 
-ConvexHull::ConvexHull() { }
-
-ConvexHull::~ConvexHull() { }
-
 ConvexHull::ConvexHull(const ConvexHull& other)
 {
     *this = other;
 }
 
-ConvexHull& ConvexHull::operator=(const ConvexHull& other)
-{
-    this->_vertices = other._vertices;
-    this->_faces = other._faces;
-
-    this->_normals = other._normals;
-    this->_dists = other._dists;
-
-    this->_volume = other._volume;
-
-    this->_center = other._center;
-    this->_outerR2 = other._outerR2;
-    this->_aabb = other._aabb;
-
-    return *this;
-}
+ConvexHull& ConvexHull::operator=(const ConvexHull& other) = default;
 
 void ConvexHull::reset()
 {

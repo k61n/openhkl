@@ -26,7 +26,7 @@
 
 namespace nsx {
 
-GaussianIntegrator::GaussianIntegrator(bool fit_center, bool fit_cov) : IPeakIntegrator()
+GaussianIntegrator::GaussianIntegrator(bool fit_center, bool fit_cov)
 {
     _params.fit_center = fit_center;
     _params.fit_cov = fit_cov;

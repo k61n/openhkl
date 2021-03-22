@@ -192,7 +192,7 @@ struct FitData {
     Eigen::Vector3d q;
 
     //! Construct a FitData instance directly from a peak.
-    FitData(Peak3D* peak)
+    explicit FitData(Peak3D* peak)
     {
         const auto* detector = peak->dataSet()->reader()->diffractometer()->detector();
         const Eigen::Vector3d center = peak->shape().center();

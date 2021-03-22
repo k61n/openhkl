@@ -25,7 +25,7 @@ namespace nsx {
 /*!  \brief Compute the mean background near a peak. */
 class MeanBackgroundIntegrator : public IPeakIntegrator {
  public:
-    MeanBackgroundIntegrator();
+    MeanBackgroundIntegrator() = default;
     //! Integrate a peak
     bool compute(
         Peak3D*, ShapeCollection* shape_collection, const IntegrationRegion& region) override;

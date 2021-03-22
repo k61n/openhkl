@@ -27,7 +27,7 @@ CutterItem::CutterItem(nsx::sptrDataSet data)
     _pen.setStyle(Qt::SolidLine);
 }
 
-CutterItem::~CutterItem() { }
+CutterItem::~CutterItem() = default;
 
 void CutterItem::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
 {

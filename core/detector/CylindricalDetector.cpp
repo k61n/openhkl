@@ -48,8 +48,6 @@ CylindricalDetector::CylindricalDetector(const YAML::Node& node) : Detector(node
     setHeight(height);
 }
 
-CylindricalDetector::~CylindricalDetector() { }
-
 Detector* CylindricalDetector::clone() const
 {
     return new CylindricalDetector(*this);

@@ -105,11 +105,9 @@ Detector::Detector(const YAML::Node& node) : Component(node)
             "Detector class: Data ordering mode not valid, can not build detector");
     }
 
-    const UnitsManager& um = UnitsManager::instance();
-
     // Sets the detector to sample distance from the property tree node
     auto&& distanceNode = node["sample_distance"];
-    double units = um.get(distanceNode["units"].as<std::string>());
+    double units = UnitsManager::get(distanceNode["units"].as<std::string>());
     double distance = distanceNode["value"].as<double>();
     distance *= units;
     setDistance(distance);
@@ -125,7 +123,7 @@ Detector::Detector(const YAML::Node& node) : Component(node)
     _minRow = node["origin_y"] ? node["origin_y"].as<double>() : 0.0;
 }
 
-Detector::~Detector() { }
+Detector::~Detector() = default;
 
 DataOrder Detector::dataOrder() const
 {

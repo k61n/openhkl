@@ -70,7 +70,7 @@ DetectorWindow::DetectorWindow(QWidget* parent)
 
 void DetectorWindow::showEvent(QShowEvent* event)
 {
-    QWidget::showEvent(event);
+    QDialog::showEvent(event);
     setGeometry(gGui->x() + 40, gGui->y() + 80, gGui->width(), gGui->height());
 }
 

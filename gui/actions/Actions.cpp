@@ -19,7 +19,7 @@
 #include "gui/models/Session.h" //for gSession
 #include "gui/subframe_home/SubframeHome.h"
 
-Actions::Actions() : QObject()
+Actions::Actions()
 {
     setupData();
     setupExperiment();

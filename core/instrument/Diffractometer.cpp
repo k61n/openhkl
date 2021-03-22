@@ -69,7 +69,7 @@ Diffractometer::Diffractometer(const YAML::Node& node)
     _source = Source(node["source"]);
 }
 
-Diffractometer::~Diffractometer() { }
+Diffractometer::~Diffractometer() = default;
 
 void Diffractometer::setDetector(std::unique_ptr<Detector> detector)
 {

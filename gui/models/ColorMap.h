@@ -24,7 +24,7 @@ class ColorMap {
     ColorMap(const std::string& name);
     ColorMap();
     ColorMap(const double* rgb);
-    ~ColorMap();
+    ~ColorMap() = default;
 
     inline QRgb color(double v, double vmax)
     {

@@ -203,7 +203,7 @@ void SXPlot::resetZoom()
     zoom(x_min, x_max, y_min, y_max);
 }
 
-SXPlot::~SXPlot() { }
+SXPlot::~SXPlot() = default;
 
 void SXPlot::titleDoubleClick(QMouseEvent* event, QCPTextElement* title)
 {

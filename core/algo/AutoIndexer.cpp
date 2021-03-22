@@ -102,7 +102,7 @@ void AutoIndexer::computeFFTSolutions(const std::vector<Peak3D*>& peaks)
     const std::vector<Peak3D*> filtered_peaks = PeakFilter{}.filterEnabled(peaks, true);
     for (const Peak3D* peak : filtered_peaks) {
         auto q = peak->q().rowVector();
-        qvects.push_back(ReciprocalVector(q));
+        qvects.emplace_back(ReciprocalVector(q));
     }
 
     // Check that a minimum number of peaks have been selected for indexing

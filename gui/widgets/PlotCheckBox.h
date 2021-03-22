@@ -21,7 +21,7 @@ enum class TableType { Lattice, SamplePos, SampleOrn, DetectorPos, Ki, Count };
 
 class PlotCheckBox : public QCheckBox {
  public:
-    PlotCheckBox();
+    PlotCheckBox() = delete;
     PlotCheckBox(const QString& text, TableType table, int column);
 
     //! Get the table type

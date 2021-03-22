@@ -46,7 +46,7 @@ QStringList allInstrumentNames()
 
 } // namespace
 
-ExperimentDialog::ExperimentDialog() : QDialog()
+ExperimentDialog::ExperimentDialog()
 {
     setModal(true);
     resize(500, 130);

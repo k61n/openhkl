@@ -25,7 +25,6 @@ namespace nsx {
 class CSV {
  public:
     CSV(char delim = ',', char quotchar = '"');
-    ~CSV();
 
     std::vector<std::string> getRow(std::istream& stream);
 

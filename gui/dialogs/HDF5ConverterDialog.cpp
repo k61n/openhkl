@@ -11,7 +11,7 @@
 #include <QLabel>
 #include <QVBoxLayout>
 
-HDF5ConverterDialog::HDF5ConverterDialog() : QDialog{}
+HDF5ConverterDialog::HDF5ConverterDialog()
 {
     QVBoxLayout* wholeLayout = new QVBoxLayout(this);
     QHBoxLayout* firstLine = new QHBoxLayout;

@@ -99,12 +99,7 @@ bool ISigmaIntegrator::compute(
 
     double sigma = _integratedIntensity.sigma();
 
-    if (std::isnan(sigma) || sigma <= 0.0)
-        return false;
-
-    // TODO: rocking curve!
-
-    return true;
+    return !std::isnan(sigma) && sigma > 0;
 }
 
 } // namespace nsx

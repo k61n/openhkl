@@ -123,8 +123,6 @@ MainWin::MainWin()
     show();
 }
 
-MainWin::~MainWin() { }
-
 void MainWin::onDataChanged() const
 {
     experiment->getImage()->dataChanged();

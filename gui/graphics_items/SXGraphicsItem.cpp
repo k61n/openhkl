@@ -38,8 +38,6 @@ SXGraphicsItem::SXGraphicsItem(QGraphicsItem* parent, bool deletable, bool movab
     setAcceptHoverEvents(true);
 }
 
-SXGraphicsItem::~SXGraphicsItem() { }
-
 void SXGraphicsItem::hoverEnterEvent(QGraphicsSceneHoverEvent* event)
 {
     Q_UNUSED(event);

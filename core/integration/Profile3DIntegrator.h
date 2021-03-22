@@ -49,7 +49,7 @@ namespace nsx {
  */
 class Profile3DIntegrator : public IPeakIntegrator {
  public:
-    Profile3DIntegrator();
+    Profile3DIntegrator() = default;
     //! Do the integration
     bool compute(
         Peak3D* peak, ShapeCollection* shape_collection, const IntegrationRegion& region) override;
