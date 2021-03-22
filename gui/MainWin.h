@@ -45,23 +45,23 @@ class MainWin : public QMainWindow {
     //! reset window geometry to initial state
     void resetViews();
     //! Refreshes the parts of the main window that depend on the data
-    void onDataChanged();
+    void onDataChanged() const;
     //! Refreshes the parts of the main window that depend on the experiment
-    void onExperimentChanged();
+    void onExperimentChanged() const;
     //! Refreshes the parts of the main window that depend on the peaks
-    void onPeaksChanged();
+    void onPeaksChanged() const;
     //! Refreshes the parts of the main window that depend on the peaks
-    void onUnitCellChanged();
+    void onUnitCellChanged() const;
     //! change the detector image view
-    void changeView(int option);
+    void changeView(int option) const;
     //! update the plot, plot the plottable item p
-    void updatePlot(PlottableItem* p);
+    void updatePlot(PlottableItem* p) const;
     //! change the cursor tooltip on the detector scene
-    void cursormode(int i);
+    void cursormode(int i) const;
     //! export current plot to ASCII
-    void exportPlot();
+    void exportPlot() const;
     //! plot the x and y data, e is the error to y
-    void plotData(QVector<double>& x, QVector<double>& y, QVector<double>& e);
+    void plotData(QVector<double>& x, QVector<double>& y, QVector<double>& e) const;
 
     //! Get the Sidebar
     SideBar* sideBar() { return _side_bar; };

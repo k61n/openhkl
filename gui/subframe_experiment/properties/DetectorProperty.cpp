@@ -107,13 +107,13 @@ void DetectorProperty::refreshInput()
         _axes->setRowCount(n_detector_gonio_axes);
         _axes->setColumnCount(2);
 
-        QTableWidgetItem* __qtablewidgetitem = new QTableWidgetItem();
-        __qtablewidgetitem->setText("Name");
-        _axes->setHorizontalHeaderItem(0, __qtablewidgetitem);
+        auto* tablewidgetitem = new QTableWidgetItem();
+        tablewidgetitem->setText("Name");
+        _axes->setHorizontalHeaderItem(0, tablewidgetitem);
 
-        QTableWidgetItem* __qtablewidgetitem1 = new QTableWidgetItem();
-        __qtablewidgetitem1->setText("Type");
-        _axes->setHorizontalHeaderItem(1, __qtablewidgetitem1);
+        auto* tablewidgetitem1 = new QTableWidgetItem();
+        tablewidgetitem1->setText("Type");
+        _axes->setHorizontalHeaderItem(1, tablewidgetitem1);
         _axes->horizontalHeader()->setStretchLastSection(true);
         _axes->verticalHeader()->setVisible(false);
         for (size_t i = 0; i < n_detector_gonio_axes; ++i) {

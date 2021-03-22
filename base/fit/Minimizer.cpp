@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#include <stdio.h>
-#include <stdlib.h>
+#include <cstdio>
+#include <cstdlib>
 
 #include <gsl/gsl_blas.h>
 #include <gsl/gsl_matrix.h>

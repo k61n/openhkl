@@ -72,7 +72,7 @@ bool PinItem::iscalibrated() const
     return _calibrated;
 }
 
-void PinItem::getCenter(double& y, double& z, double angle)
+void PinItem::getCenter(double& y, double& z, double angle) const
 {
     double anglerad = (angle - _angle) * M_PI / 180.0;
     y = 0.5 * (_p1y + _p2y) + 0.5 * (_p1y - _p2y) * cos(anglerad);

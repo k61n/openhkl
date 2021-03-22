@@ -63,9 +63,9 @@ class PeakCollection {
     //! compute beam divergence and mosaicity sigmas
     void computeSigmas();
     //! Return beam divergence sigma
-    double sigmaD();
+    double sigmaD() const;
     //! Return mosaicity sigma
-    double sigmaM();
+    double sigmaM() const ;
 
     //! Set Miller indices of peaks for those with an assigned unit cell
     void setMillerIndices() const;
@@ -91,7 +91,7 @@ class PeakCollection {
     //! Get the shape collection
     ShapeCollection* shapeCollection() const { return _shape_collection.get(); };
 
-    void printUnitCells();
+    void printUnitCells() const;
 
     //! Check the collection for unphysical  peaks
     void checkCollection() const;

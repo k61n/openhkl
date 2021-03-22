@@ -69,7 +69,7 @@ struct IndexerParameters {
     //! Maximum peak strength
     double strength_max = 1.0e7;
 
-    void log(const Level& level);
+    void log(const Level& level) const;
 };
 
 /*! \brief Class to automatically index a set of peaks

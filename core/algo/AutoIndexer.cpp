@@ -27,7 +27,7 @@
 
 namespace nsx {
 
-void IndexerParameters::log(const Level& level)
+void IndexerParameters::log(const Level& level) const
 {
     nsxlog(level, "Autoindexer parameters:");
     nsxlog(level, "maxdim             =", maxdim);
@@ -161,8 +161,7 @@ void AutoIndexer::rankSolutions()
         [](const RankedSolution& s1, const RankedSolution& s2) -> bool {
             if (s1.second == s2.second)
                 return (s1.first->volume() < s2.first->volume());
-            else
-                return (s1.second > s2.second);
+            return (s1.second > s2.second);
         });
 }
 
@@ -184,7 +183,7 @@ void AutoIndexer::refineSolutions(const std::vector<Peak3D*>& peaks)
             peak_filter.filterIndexed(enabled_peaks, *cell, cell->indexingTolerance());
 
         int success = filtered_peaks.size();
-        for (auto peak : filtered_peaks) {
+        for (const auto* peak : filtered_peaks) {
             MillerIndex hkld(peak->q(), *cell);
             hkls.emplace_back(hkld.rowVector().cast<double>());
             qs.emplace_back(peak->q().rowVector());
@@ -293,13 +292,13 @@ std::string AutoIndexer::solutionsToString() const
 
 void AutoIndexer::acceptSolution(const UnitCell* solution, const std::vector<nsx::Peak3D*>& peaks)
 {
-    for (auto peak : peaks)
+    for (auto* peak : peaks)
         peak->setUnitCell(solution);
 }
 
 UnitCell* AutoIndexer::goodSolution(UnitCell* reference_cell, double length_tol, double angle_tol)
 {
-    for (auto solution : _solutions) {
+    for (const auto& solution : _solutions) {
         if (solution.first->isSimilar(reference_cell, length_tol, angle_tol)) {
             return solution.first.get();
         }

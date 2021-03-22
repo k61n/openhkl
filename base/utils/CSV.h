@@ -33,7 +33,7 @@ class CSV {
     char _delim;
     char _quotchar;
 
-    std::string getToken(std::istream& stream, char& delim);
+    std::string getToken(std::istream& stream, char& delim) const;
 };
 
 } // namespace nsx

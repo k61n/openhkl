@@ -56,13 +56,13 @@ class DataSet {
     void maskPeaks(PeakList& peaks) const;
 
     //! Returns the intensity at point x,y,z.
-    int dataAt(unsigned int x = 0, unsigned int y = 0, unsigned int z = 0);
+    int dataAt(unsigned int x = 0, unsigned int y = 0, unsigned int z = 0) const;
 
     //! Read a single frame
     Eigen::MatrixXi frame(std::size_t idx) const;
 
     //! Returns frame after transforming to account for detector gain and baseline
-    Eigen::MatrixXd transformedFrame(std::size_t idx);
+    Eigen::MatrixXd transformedFrame(std::size_t idx) const;
 
     //! Gets the file handle.
     void open();

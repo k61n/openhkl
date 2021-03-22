@@ -67,7 +67,7 @@ class Axis {
     virtual Eigen::Transform<double, 3, Eigen::Affine> affineMatrix(double value) const = 0;
 
     //! Transform vector
-    Eigen::Vector3d transform(const Eigen::Vector3d& v, double value);
+    Eigen::Vector3d transform(const Eigen::Vector3d& v, double value) const;
 
     //! Sets the axis to physical (true) or virtual (true)
     void setPhysical(bool physical);

@@ -140,7 +140,7 @@ std::string PeakCollection::name() const
     return std::string(_name);
 }
 
-void PeakCollection::printUnitCells()
+void PeakCollection::printUnitCells() const
 {
     std::vector<nsx::Peak3D*> peak_list = getPeakList();
     int i = 1;
@@ -195,12 +195,12 @@ void PeakCollection::computeSigmas()
     nsxlog(Level::Info, "sigma_m = ", _sigma_m);
 }
 
-double PeakCollection::sigmaD()
+double PeakCollection::sigmaD() const
 {
     return _sigma_d;
 }
 
-double PeakCollection::sigmaM()
+double PeakCollection::sigmaM() const
 {
     return _sigma_m;
 }

@@ -94,17 +94,17 @@ void Experiment::saveToFile(const std::string& path) const
     exporter.createFile(name(), getDiffractometer()->name(), path);
 
     std::map<std::string, DataSet*> data_sets;
-    for (const auto& it : *_data_handler.get()->getDataMap())
+    for (const auto& it : *_data_handler->getDataMap())
         data_sets.insert(std::make_pair(it.first, it.second.get()));
     exporter.writeData(data_sets);
 
     std::map<std::string, PeakCollection*> peak_collections;
-    for (const auto& it : *_peak_handler.get()->getPeakCollectionMap())
+    for (const auto& it : *_peak_handler->getPeakCollectionMap())
         peak_collections.insert(std::make_pair(it.first, it.second.get()));
     exporter.writePeaks(peak_collections);
 
     std::map<std::string, UnitCell*> unit_cells;
-    for (const auto& it : *_cell_handler.get()->getCellMap())
+    for (const auto& it : *_cell_handler->getCellMap())
         unit_cells.insert(std::make_pair(it.first, it.second.get()));
     exporter.writeUnitCells(unit_cells);
 

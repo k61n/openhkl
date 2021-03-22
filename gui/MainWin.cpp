@@ -125,48 +125,48 @@ MainWin::MainWin()
 
 MainWin::~MainWin() { }
 
-void MainWin::onDataChanged()
+void MainWin::onDataChanged() const
 {
     experiment->getImage()->dataChanged();
     experiment->getProperty()->dataChanged();
 }
 
-void MainWin::onExperimentChanged()
+void MainWin::onExperimentChanged() const
 {
     experiment->getProperty()->experimentChanged();
 }
 
-void MainWin::onPeaksChanged()
+void MainWin::onPeaksChanged() const
 {
     experiment->getProperty()->peaksChanged();
 }
 
-void MainWin::onUnitCellChanged()
+void MainWin::onUnitCellChanged() const
 {
     experiment->getProperty()->unitCellChanged();
 }
 
-void MainWin::changeView(int option)
+void MainWin::changeView(int option) const
 {
     experiment->getImage()->changeView(option);
 }
 
-void MainWin::updatePlot(PlottableItem* p)
+void MainWin::updatePlot(PlottableItem* p) const
 {
     experiment->getPlot()->updatePlot(p);
 }
 
-void MainWin::cursormode(int i)
+void MainWin::cursormode(int i) const
 {
     experiment->getImage()->getView()->getScene()->changeCursorMode(i);
 }
 
-void MainWin::exportPlot()
+void MainWin::exportPlot() const
 {
     experiment->getPlot()->exportPlot();
 }
 
-void MainWin::plotData(QVector<double>& x, QVector<double>& y, QVector<double>& e)
+void MainWin::plotData(QVector<double>& x, QVector<double>& y, QVector<double>& e) const
 {
     experiment->getPlot()->plotData(x, y, e);
 }

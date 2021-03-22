@@ -33,10 +33,10 @@ class PropertyPanel : public QTabWidget {
     InstrumentProperty* _instrument;
 
     void setCurrent(int);
-    void dataChanged();
-    void experimentChanged();
-    void peaksChanged();
-    void unitCellChanged();
+    void dataChanged() const;
+    void experimentChanged() const;
+    void peaksChanged() const;
+    void unitCellChanged() const;
 };
 
 #endif // NSX_GUI_SUBFRAME_EXPERIMENT_PROPERTYPANEL_H

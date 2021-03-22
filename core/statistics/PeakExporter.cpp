@@ -84,7 +84,7 @@ void PeakExporter::saveToShelXUnmerged(std::string filename, nsx::MergedData* me
 {
     std::vector<Peak3D*> peak_vector;
     for (const nsx::MergedPeak& peak : merged_data->mergedPeakSet()) {
-        for (auto unmerged_peak : peak.peaks())
+        for (auto* unmerged_peak : peak.peaks())
             peak_vector.push_back(unmerged_peak);
     }
 
@@ -138,7 +138,7 @@ void PeakExporter::saveToFullProfUnmerged(std::string filename, nsx::MergedData*
 
     std::vector<Peak3D*> peak_vector;
     for (const nsx::MergedPeak& peak : merged_data->mergedPeakSet()) {
-        for (auto unmerged_peak : peak.peaks())
+        for (auto* unmerged_peak : peak.peaks())
             peak_vector.push_back(unmerged_peak);
     }
 
@@ -179,7 +179,7 @@ void PeakExporter::saveToFullProfMerged(std::string filename, nsx::MergedData* m
 
     std::vector<Peak3D*> peak_vector;
     for (const nsx::MergedPeak& peak : merged_data->mergedPeakSet()) {
-        for (auto unmerged_peak : peak.peaks())
+        for (auto* unmerged_peak : peak.peaks())
             peak_vector.push_back(unmerged_peak);
     }
     std::shared_ptr<nsx::DataSet> data = peak_vector[0]->dataSet();
@@ -209,7 +209,7 @@ void PeakExporter::saveToSCAUnmerged(std::string filename, nsx::MergedData* merg
 
     std::vector<Peak3D*> peak_vector;
     for (const nsx::MergedPeak& peak : merged_data->mergedPeakSet()) {
-        for (auto unmerged_peak : peak.peaks())
+        for (auto* unmerged_peak : peak.peaks())
             peak_vector.push_back(unmerged_peak);
     }
     const UnitCell* unitCell = peak_vector[0]->unitCell();
@@ -267,9 +267,9 @@ void PeakExporter::saveToSCAMerged(std::string filename, nsx::MergedData* merged
 {
     std::fstream file(filename, std::ios::out);
 
-    std::vector<Peak3D*> peak_vector;
+    std::vector<const Peak3D*> peak_vector;
     for (const nsx::MergedPeak& peak : merged_data->mergedPeakSet()) {
-        for (auto unmerged_peak : peak.peaks())
+        for (const Peak3D* unmerged_peak : peak.peaks())
             peak_vector.push_back(unmerged_peak);
     }
     const UnitCell* unitCell = peak_vector.at(0)->unitCell();
@@ -314,4 +314,4 @@ void PeakExporter::saveToSCAMerged(std::string filename, nsx::MergedData* merged
     file.close();
 }
 
-} // nsx
+} // namespace nsx

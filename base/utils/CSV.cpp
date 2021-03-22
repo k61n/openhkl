@@ -34,7 +34,7 @@ std::vector<std::string> CSV::getRow(std::istream& stream)
     return row;
 }
 
-std::string CSV::getToken(std::istream& stream, char& delim)
+std::string CSV::getToken(std::istream& stream, char& delim) const
 {
     std::string tok;
     char curr, eof, n1, n2;

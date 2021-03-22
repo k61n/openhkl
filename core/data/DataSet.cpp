@@ -63,7 +63,7 @@ DataSet::~DataSet()
     blosc_destroy();
 }
 
-int DataSet::dataAt(unsigned int x, unsigned int y, unsigned int z)
+int DataSet::dataAt(unsigned int x, unsigned int y, unsigned int z) const
 {
     // Check that the voxel is inside the limit of the data
     if (z >= _nFrames || y >= _ncols || x >= _nrows)
@@ -305,7 +305,7 @@ ReciprocalVector DataSet::computeQ(const DetectorEvent& ev) const
     return state.sampleQ(detector_position);
 }
 
-Eigen::MatrixXd DataSet::transformedFrame(std::size_t idx)
+Eigen::MatrixXd DataSet::transformedFrame(std::size_t idx) const
 {
     Eigen::ArrayXXd new_frame = frame(idx).cast<double>();
     new_frame -= detector().baseline();

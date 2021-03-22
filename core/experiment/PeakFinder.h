@@ -84,12 +84,12 @@ class PeakFinder {
     void setMaxFrames(int maxComp);
 
     //! Return the frame at which peak finding begins
-    int framesBegin();
+    int framesBegin() const;
     //! Set the frame at which peak finding begins
     void setFramesBegin(int framesBegin);
 
     //! Return the frame at which peak finding ends
-    int framesEnd();
+    int framesEnd() const;
     //! Set the frame at which peak finding ends
     void setFramesEnd(int framesEnd);
 

@@ -42,7 +42,7 @@ void PropertyPanel::setCurrent(int index)
     QTabWidget::setCurrentIndex(index);
 }
 
-void PropertyPanel::dataChanged()
+void PropertyPanel::dataChanged() const
 {
     // bool enabled = gSession->currentProjectNum() >= 0;
     // if (enabled)
@@ -52,13 +52,13 @@ void PropertyPanel::dataChanged()
         _data->refreshInput();
 }
 
-void PropertyPanel::experimentChanged()
+void PropertyPanel::experimentChanged() const
 {
     _peaks->currentProjectChanged();
     _instrument->refreshInput();
 }
 
-void PropertyPanel::peaksChanged()
+void PropertyPanel::peaksChanged() const
 {
     bool enabled = gSession->currentProjectNum() >= 0;
     if (enabled)
@@ -66,7 +66,7 @@ void PropertyPanel::peaksChanged()
     _peaks->selectedPeaksChanged();
 }
 
-void PropertyPanel::unitCellChanged()
+void PropertyPanel::unitCellChanged() const
 {
     bool enabled = gSession->currentProjectNum() >= 0;
     if (enabled)

@@ -144,14 +144,9 @@ Checks: '*,
 -llvm-namespace-comment,
 -modernize-redundant-void-arg,
 -hicpp-noexcept-move,-performance-noexcept-move-constructor,
--bugprone-reserved-identifier,-cert-dcl37-c,-cert-dcl51-cpp,
 
 -readability-static-accessed-through-instance,
--readability-redundant-smartptr-get,
--readability-make-member-function-const,
 -readability-string-compare,
--google-readability-namespace-comments,
--*-deprecated-headers,
 -clang-analyzer-core.DivideZero,
 
 '

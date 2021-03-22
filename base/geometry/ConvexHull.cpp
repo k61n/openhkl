@@ -210,4 +210,4 @@ bool ConvexHull::contains(const Eigen::Vector3d& v) const
     return true;
 }
 
-}
+} // namespace nsx
