@@ -57,18 +57,19 @@ int register_blosc(char** version, char** date)
     int retval;
 
 #if H5Z_16API
-    H5Z_class_t filter_class = {(H5Z_filter_t)(FILTER_BLOSC), "blosc", NULL,
-                                (H5Z_set_local_func_t)(blosc_set_local),
-                                (H5Z_func_t)(blosc_filter)};
+    H5Z_class_t filter_class = {
+        (H5Z_filter_t)(FILTER_BLOSC), "blosc", NULL, (H5Z_set_local_func_t)(blosc_set_local),
+        (H5Z_func_t)(blosc_filter)};
 #else
-    H5Z_class_t filter_class = {H5Z_CLASS_T_VERS,
-                                (H5Z_filter_t)(FILTER_BLOSC),
-                                1,
-                                1,
-                                "blosc",
-                                NULL,
-                                (H5Z_set_local_func_t)(blosc_set_local),
-                                (H5Z_func_t)(blosc_filter)};
+    H5Z_class_t filter_class = {
+        H5Z_CLASS_T_VERS,
+        (H5Z_filter_t)(FILTER_BLOSC),
+        1,
+        1,
+        "blosc",
+        NULL,
+        (H5Z_set_local_func_t)(blosc_set_local),
+        (H5Z_func_t)(blosc_filter)};
 #endif
 
     retval = H5Zregister(&filter_class);

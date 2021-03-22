@@ -229,7 +229,8 @@ void SubframeAutoIndexer::setParametersUp()
     label_ptr->setAlignment(Qt::AlignRight);
     para_grid->addWidget(label_ptr, 12, 0, 1, 2);
     label_ptr->setSizePolicy(*_size_policy_widgets);
-    tooltip = "Minimum fraction of amplitude of the zeroth Fourier frequency to accept as a candidate lattice vector";
+    tooltip = "Minimum fraction of amplitude of the zeroth Fourier frequency to accept as a "
+              "candidate lattice vector";
     label_ptr->setToolTip(tooltip);
 
     QHBoxLayout* frames = new QHBoxLayout();

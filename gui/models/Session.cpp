@@ -197,12 +197,10 @@ void Session::loadRawData()
     QCollator collator;
     collator.setNumericMode(true);
     std::sort(
-        qfilenames.begin(),
-        qfilenames.end(),
-        [&collator](const QString &file1, const QString& file2)
-            {
-                return collator.compare(file1, file2) < 0;
-            });
+        qfilenames.begin(), qfilenames.end(),
+        [&collator](const QString& file1, const QString& file2) {
+            return collator.compare(file1, file2) < 0;
+        });
 
     QFileInfo info(qfilenames.at(0));
     loadDirectory = info.absolutePath();

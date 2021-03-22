@@ -201,7 +201,6 @@ void Project::clonePeakCollection(const QString& name, const QString& new_name)
         _experiment->clonePeakCollection(name.toStdString(), new_name.toStdString());
         generatePeakModels();
     }
-
 }
 
 std::vector<nsx::Peak3D*> Project::getPeaks(

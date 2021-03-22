@@ -27,7 +27,7 @@ QSize ShortTable::minimumSizeHint() const
 {
     int nrows = 5;
     int w = PeakTableView::sizeHint().width();
-    int h = PeakTableView::rowHeight(0)*nrows;
+    int h = PeakTableView::rowHeight(0) * nrows;
     if (_default_height > 0)
         h = _default_height;
     return QSize(w, h);

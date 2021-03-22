@@ -324,7 +324,7 @@ void ShapeCollectionDialog::build()
     // update the frame slider if necessary
     if (_draw_frame->maximum() != nz_val)
         _draw_frame->setMaximum(nz_val - 1);
-    _draw_frame->setValue(nz_val/2);
+    _draw_frame->setValue(nz_val / 2);
 
     nsx::AABB aabb;
 
@@ -391,7 +391,7 @@ void ShapeCollectionDialog::calculate()
             }
         }
         drawFrame(_draw_frame->value()); // draw the updated frame
-    } catch(std::runtime_error& e) {
+    } catch (std::runtime_error& e) {
         QMessageBox::critical(this, "Error", QString(e.what()));
     }
 }

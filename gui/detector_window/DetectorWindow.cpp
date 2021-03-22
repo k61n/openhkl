@@ -30,8 +30,11 @@
 #include <QScrollArea>
 
 DetectorWindow::DetectorWindow(QWidget* parent)
-    : QDialog(parent), _peak_collection_item_1(), _peak_collection_model_1(),
-      _peak_collection_item_2(), _peak_collection_model_2()
+    : QDialog(parent)
+    , _peak_collection_item_1()
+    , _peak_collection_model_1()
+    , _peak_collection_item_2()
+    , _peak_collection_model_2()
 {
     setSizePolicies();
 
@@ -235,13 +238,11 @@ void DetectorWindow::setPlotUp(PeakViewWidget* peak_widget, QString name)
         peak_widget->drawBkg2(), &QCheckBox::stateChanged, this,
         &DetectorWindow::refreshDetectorView);
     connect(
-        peak_widget->peakSize1(),
-        static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged), this,
-        &DetectorWindow::refreshDetectorView);
+        peak_widget->peakSize1(), static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged),
+        this, &DetectorWindow::refreshDetectorView);
     connect(
-        peak_widget->peakSize2(),
-        static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged), this,
-        &DetectorWindow::refreshDetectorView);
+        peak_widget->peakSize2(), static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged),
+        this, &DetectorWindow::refreshDetectorView);
     connect(
         peak_widget->peakColor1(), &ColorButton::colorChanged, this,
         &DetectorWindow::refreshDetectorView);

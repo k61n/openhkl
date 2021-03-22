@@ -39,8 +39,8 @@ class PeakViewWidget;
 class Spoiler;
 
 namespace nsx {
-    struct PredictionParameters;
-    struct ShapeCollectionParameters;
+struct PredictionParameters;
+struct ShapeCollectionParameters;
 }
 
 //! Frame which shows the settings to find peaks
