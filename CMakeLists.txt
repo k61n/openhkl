@@ -27,7 +27,7 @@ option(NSX_PYTHON "Generate Python bindings" ON)
 option(BUILD_TESTING "Build the tests" ON)
 option(BUILD_DOCUMENTATION "Build Sphinx/Doxygen documentation" ON)
 option(BUILD_PDF_DOCUMENTATION "Build Sphinx documentation using LaTeX" ON)
-option(NSX_TIDY "Invokes clang-tidy" OFF)
+option(NSX_TIDY "Upon 'make', clang-tidy will print warnings as specified in .clang-tidy" OFF)
 
 # Path to test data directory must provided via -DNSX_TESTDATA_DIR or from cache.
 set(NSX_TESTDATA_URL https://computing.mlz-garching.de/download/testdata/nsx)
