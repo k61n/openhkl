@@ -28,7 +28,7 @@
 #include <QLabel>
 #include <QVBoxLayout>
 
-UnitCellProperty::UnitCellProperty() : QWidget()
+UnitCellProperty::UnitCellProperty()
 {
     setSizePolicies();
     setSizePolicy(*_size_policy_box);

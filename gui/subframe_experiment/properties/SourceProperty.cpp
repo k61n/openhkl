@@ -19,7 +19,7 @@
 #include "gui/models/Session.h"
 #include <QFormLayout>
 
-SourceProperty::SourceProperty() : QWidget()
+SourceProperty::SourceProperty()
 {
     QFormLayout* form = new QFormLayout(this);
 

@@ -25,7 +25,7 @@
 #include <QVBoxLayout>
 #include <QWidget>
 
-SubframeExperiment::SubframeExperiment() : QWidget()
+SubframeExperiment::SubframeExperiment()
 {
     QSizePolicy left_size_policy;
     left_size_policy.setHorizontalPolicy(QSizePolicy::Minimum);

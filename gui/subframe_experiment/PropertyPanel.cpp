@@ -26,7 +26,7 @@ enum class tab { INSTRUMENT, DATA, UNITCELLS, PEAKS };
 
 } // namespace
 
-PropertyPanel::PropertyPanel() : QTabWidget()
+PropertyPanel::PropertyPanel()
 {
     setTabPosition(QTabWidget::North);
     setMinimumSize(270, 320);

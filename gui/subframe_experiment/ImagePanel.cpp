@@ -29,7 +29,7 @@
 #include <QSplitter>
 #include <QTreeView>
 
-ImagePanel::ImagePanel() : QWidget()
+ImagePanel::ImagePanel()
 {
     QGridLayout* main_layout = new QGridLayout(this);
     QGridLayout* top_layout = new QGridLayout;

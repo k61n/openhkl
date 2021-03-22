@@ -24,7 +24,7 @@
 #include <QSettings>
 #include <QSpacerItem>
 
-SubframeHome::SubframeHome() : QWidget()
+SubframeHome::SubframeHome()
 {
     QVBoxLayout* main_layout = new QVBoxLayout(this);
 

@@ -14,7 +14,7 @@
 
 #include "gui/subframe_experiment/properties/InstrumentProperty.h"
 
-InstrumentProperty::InstrumentProperty() : QTabWidget()
+InstrumentProperty::InstrumentProperty()
 {
     addTab((_detector = new DetectorProperty), "Detector");
     addTab((_monoSource = new SourceProperty), "Monochromatic source");

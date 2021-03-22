@@ -23,7 +23,7 @@
 #include <QLabel>
 #include <QVBoxLayout>
 
-SampleShapeProperties::SampleShapeProperties() : QWidget()
+SampleShapeProperties::SampleShapeProperties()
 {
     QVBoxLayout* overallLayout = new QVBoxLayout(this);
     // SampleProperty

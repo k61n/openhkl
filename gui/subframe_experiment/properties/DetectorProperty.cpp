@@ -23,7 +23,7 @@
 #include <QLabel>
 #include <QTableWidget>
 
-DetectorProperty::DetectorProperty() : QWidget()
+DetectorProperty::DetectorProperty()
 {
     QAbstractSpinBox::ButtonSymbols symbols = QAbstractSpinBox::NoButtons;
 

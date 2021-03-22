@@ -41,7 +41,7 @@
 #include <QSpacerItem>
 #include <sstream>
 
-SubframeRefiner::SubframeRefiner() : QWidget()
+SubframeRefiner::SubframeRefiner()
 {
     setSizePolicies();
     _main_layout = new QHBoxLayout(this);

@@ -28,7 +28,7 @@
 #include <QTreeView>
 #include <QVBoxLayout>
 
-PeakProperties::PeakProperties() : QWidget()
+PeakProperties::PeakProperties()
 {
     setSizePolicies();
 
