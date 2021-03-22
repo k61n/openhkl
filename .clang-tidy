@@ -3,7 +3,7 @@
 # This is the configuration for clang-tidy.
 #
 # To invoke clang-tidy, run
-#   cmake -DNSX_TIDY=ON -DNSX_PYTHON=OFF -DBUILD_NSX_GUI=OFF ..
+#   cmake .. -DNSX_TIDY=ON -DNSX_PYTHON=OFF -DNSX_TESTDATA_DIR=...
 #   make
 #
 # Below, we select all checks ('*'), then deselect quite a number of them.
@@ -136,14 +136,6 @@ Checks: '*,
 -readability-inconsistent-declaration-parameter-name,
 -readability-redundant-member-init,
 -readability-simplify-boolean-expr,
-
--*-uppercase-literal-suffix,
--*-else-after-return,
--*-use-nullptr,
--clang-analyzer-cplusplus.NewDeleteLeaks,
--llvm-namespace-comment,
--modernize-redundant-void-arg,
--hicpp-noexcept-move,-performance-noexcept-move-constructor,
 
 -readability-static-accessed-through-instance,
 -readability-string-compare,

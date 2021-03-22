@@ -37,7 +37,7 @@ bool MetaData::isKey(const std::string& key) const
         return false;
 
     auto it2 = _map.find(key);
-    return (it2 != _map.end());
+    return it2 != _map.end();
 }
 
 std::variant<int, double, std::string> MetaData::key(const std::string& key) const
@@ -48,10 +48,9 @@ std::variant<int, double, std::string> MetaData::key(const std::string& key) con
         throw std::runtime_error("Could not locate key " + key + " in the set of available keys");
 
     auto it2 = _map.find(key);
-    if (it2 != _map.end())
-        return it2->second;
-    else
+    if (it2 == _map.end())
         throw std::runtime_error("Could not locate key " + key + " in the set of available keys");
+    return it2->second;
 }
 
 const MetaDataMap& MetaData::map() const

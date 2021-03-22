@@ -461,7 +461,8 @@ Eigen::Matrix3d ShapeCollection::meanCovariance(
     if (neighbors.empty() || (neighbors.size() < min_neighbors)) {
         ++_n_lonely_peaks;
         throw std::runtime_error("ShapeCollection::meanCovariance(): peak has no neighbors");
-    } else if (neighbors.size() < min_neighbors) {
+    }
+    if (neighbors.size() < min_neighbors) {
         ++_n_unfriendly_peaks;
         throw std::runtime_error("ShapeCollection::meanCovariance(): peak has too few neighbors");
     }

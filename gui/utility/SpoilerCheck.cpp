@@ -107,8 +107,5 @@ void SpoilerCheck::checker(const int state)
 
 bool SpoilerCheck::checked() const
 {
-    if (select.checkState() == 0)
-        return false;
-    else
-        return true;
+    return !select.checkState();
 }

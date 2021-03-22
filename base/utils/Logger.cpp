@@ -19,7 +19,7 @@
 
 namespace nsx {
 
-Logger* Logger::m_logger = 0;
+Logger* Logger::m_logger = nullptr;
 
 void Logger::start(const std::string& filename, const Level& level)
 {

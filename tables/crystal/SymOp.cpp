@@ -196,15 +196,15 @@ Eigen::Matrix3d SymOp::getRotationPart() const
 int SymOp::translationIsIntegralMultiple(const SymOp& other) const
 {
     const double epsilon = 1e-3;
-    int n = 0;
 
     // return true only for non-zero multiple
     if (!other.hasTranslation() || !this->hasTranslation())
         return false;
 
-    Eigen::Vector3d myTranslation = this->getTranslationPart();
-    Eigen::Vector3d otherTranslation = other.getTranslationPart();
+    const Eigen::Vector3d myTranslation = this->getTranslationPart();
+    const Eigen::Vector3d otherTranslation = other.getTranslationPart();
 
+    int n = 0;
     for (unsigned int i = 0; i < 3; ++i) {
         if (std::abs(myTranslation[i]) > epsilon) {
             n = int(std::lround(otherTranslation[i] / myTranslation[i]));
@@ -212,13 +212,12 @@ int SymOp::translationIsIntegralMultiple(const SymOp& other) const
         }
     }
 
-    Eigen::Vector3d difference = n * myTranslation - otherTranslation;
-    double norm = double(difference.adjoint() * difference);
+    const Eigen::Vector3d difference = n * myTranslation - otherTranslation;
+    const double norm = double(difference.adjoint() * difference);
 
     if (norm < epsilon)
         return n;
-    else
-        return 0;
+    return 0;
 }
 
 } // namespace nsx

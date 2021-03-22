@@ -28,15 +28,6 @@ DataHandler::DataHandler(const std::string& name, const std::string& diffractome
     _name = name;
 }
 
-const Diffractometer* DataHandler::getDiffractometer() const
-{
-    if (!_diffractometer) {
-        return _diffractometer.get();
-    } else {
-        throw std::runtime_error("No diffractometer found");
-    }
-}
-
 Diffractometer* DataHandler::getDiffractometer()
 {
     return _diffractometer.get();

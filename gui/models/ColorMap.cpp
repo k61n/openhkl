@@ -28,7 +28,7 @@ ColorMap::ColorMap(const double* rgb) : _rgb(256 * 3, 0), _log_rgb(256 * 3, 0)
         const double t = (1.0 + i / 256.0);
         const double x = std::log(t) * ilog2 * 255.0;
         const unsigned int a = static_cast<unsigned int>(x);
-        const unsigned int b = std::min(a + 1, 255u);
+        const unsigned int b = std::min(a + 1, 255U);
         const double eps = t - a;
 
         for (unsigned int j = 0; j < 3; ++j)

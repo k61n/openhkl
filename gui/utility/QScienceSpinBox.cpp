@@ -13,7 +13,7 @@
 
 namespace {
 // modified from qspinbox.cpp
-bool isIntermediateValueHelper(qint64 num, qint64 min, qint64 max, qint64* match = 0)
+bool isIntermediateValueHelper(qint64 num, qint64 min, qint64 max, qint64* match = nullptr)
 {
     QSBDEBUG("%lld %lld %lld", num, min, max);
 
@@ -252,17 +252,17 @@ bool QScienceSpinBox::isIntermediateValue(const QString& str) const
                     qAbs(left), negative ? max_right : min_right, negative ? min_right : max_right);
                 QSBDEBUG() << __FILE__ << __LINE__ << "returns" << ret;
                 return ret;
-            } else if (qAbs(max_left - min_left) == 1) {
+            }
+            if (qAbs(max_left - min_left) == 1) {
                 const bool ret =
                     isIntermediateValueHelper(qAbs(left), min_right, negative ? 0 : dec)
                     || isIntermediateValueHelper(qAbs(left), negative ? dec : 0, max_right);
                 QSBDEBUG() << __FILE__ << __LINE__ << "returns" << ret;
                 return ret;
-            } else {
-                const bool ret = isIntermediateValueHelper(qAbs(left), 0, dec);
-                QSBDEBUG() << __FILE__ << __LINE__ << "returns" << ret;
-                return ret;
             }
+            const bool ret = isIntermediateValueHelper(qAbs(left), 0, dec);
+            QSBDEBUG() << __FILE__ << __LINE__ << "returns" << ret;
+            return ret;
         }
         if (match != min_left)
             min_right = negative ? dec : 0;

@@ -286,35 +286,21 @@ const std::vector<std::pair<std::string, std::string>> symmetry_table = {
 void reduceSymbol(std::string& symbol)
 {
     // Only in the following cases we keep the "1"s:
-    if (symbol == "P 1")
-        return;
-    else if (symbol == "P 3 1 m")
-        return;
-    else if (symbol == "P 3 m 1")
-        return;
-    else if (symbol == "P -3 1 m")
-        return;
-    else if (symbol == "P -3 m 1")
-        return;
-    else if (symbol == "P 3 1 c")
-        return;
-    else if (symbol == "P 3 c 1")
-        return;
-    else if (symbol == "P -3 1 c")
-        return;
-    else if (symbol == "P -3 c 1")
-        return;
-    else if (symbol == "P 32 2 1")
-        return;
-    else if (symbol == "P 32 1 2")
-        return;
-    else if (symbol == "P 31 1 2")
-        return;
-    else if (symbol == "P 31 2 1")
-        return;
-    else if (symbol == "P 3 1 2")
-        return;
-    else if (symbol == "P 3 2 1")
+    if (symbol == "P 1"
+      || symbol == "P 3 1 m"
+      || symbol == "P 3 m 1"
+      || symbol == "P -3 1 m"
+      || symbol == "P -3 m 1"
+      || symbol == "P 3 1 c"
+      || symbol == "P 3 c 1"
+      || symbol == "P -3 1 c"
+      || symbol == "P -3 c 1"
+      || symbol == "P 32 2 1"
+      || symbol == "P 32 1 2"
+      || symbol == "P 31 1 2"
+      || symbol == "P 31 2 1"
+      || symbol == "P 3 1 2"
+      || symbol == "P 3 2 1")
         return;
 
     // Otherwise throw away every "1" to produce the short name for Bravais

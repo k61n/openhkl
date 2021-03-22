@@ -44,7 +44,7 @@ class Octree : public AABB {
     //! Pair of Ellipsoid*
     using collision_pair = std::pair<const Ellipsoid*, const Ellipsoid*>;
 
-    Octree(Octree&& other);
+    Octree(Octree&& other) noexcept;
     Octree(const Octree& other) = delete;
 
     //! Constructor from two Eigen3 vectors, throw invalid_argument if lb < ub

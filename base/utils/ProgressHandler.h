@@ -53,7 +53,7 @@ class ProgressHandler {
 
     std::atomic_bool _aborted;
 
-    std::function<void(void)> _callback;
+    std::function<void()> _callback;
 };
 
 using sptrProgressHandler = std::shared_ptr<ProgressHandler>;

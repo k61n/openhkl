@@ -21,12 +21,9 @@ PlottableItem::PlottableItem(QGraphicsItem* parent, bool deletable, bool movable
 {
 }
 
-PlottableItem::~PlottableItem() { }
-
 bool PlottableItem::isPlottable(SXPlot* plot) const
 {
     if (!plot)
         return false;
-    else
-        return (getPlotType().compare(plot->getType()) == 0);
+    return (getPlotType().compare(plot->getType()) == 0);
 }

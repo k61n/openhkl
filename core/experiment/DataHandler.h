@@ -38,7 +38,6 @@ class DataHandler {
 
  public: // Handling data sets
     //! Get the diffractometer
-    const Diffractometer* getDiffractometer() const;
     Diffractometer* getDiffractometer();
     //! Set the diffractometer
     void setDiffractometer(const std::string& diffractometerName);

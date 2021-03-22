@@ -23,7 +23,7 @@ class SXPlot;
 class PlottableItem : public SXGraphicsItem {
  public:
     PlottableItem(QGraphicsItem* parent = 0, bool deletable = true, bool movable = false);
-    virtual ~PlottableItem();
+    virtual ~PlottableItem() = default;
 
     virtual void plot(SXPlot* plot) = 0;
 

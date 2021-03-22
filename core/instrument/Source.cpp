@@ -55,30 +55,25 @@ int Source::nMonochromators() const
 
 void Source::setSelectedMonochromator(size_t i)
 {
-    if (i < _monochromators.size())
-        _selectedMonochromator = i;
-    else
+    if (i >= _monochromators.size())
         throw std::runtime_error("setSelectedMonochromator(): index i is out of range");
+    _selectedMonochromator = i;
 }
 
 Monochromator& Source::selectedMonochromator()
 {
-    if (_selectedMonochromator < _monochromators.size())
-        return _monochromators[_selectedMonochromator];
-    else {
+    if (_selectedMonochromator >= _monochromators.size())
         throw std::runtime_error(
             "getSelectedMonochromator(): selected monochromator does not exist");
-    }
+    return _monochromators[_selectedMonochromator];
 }
 
 const Monochromator& Source::selectedMonochromator() const
 {
-    if (_selectedMonochromator < _monochromators.size())
-        return _monochromators[_selectedMonochromator];
-    else {
+    if (_selectedMonochromator >= _monochromators.size())
         throw std::runtime_error(
             "getSelectedMonochromator(): selected monochromator does not exist");
-    }
+    return _monochromators[_selectedMonochromator];
 }
 
 void Source::addMonochromator(Monochromator mono)

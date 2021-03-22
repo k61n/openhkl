@@ -27,7 +27,7 @@ std::vector<unsigned int> Octree::createPowers()
     return p;
 }
 
-Octree::Octree(Octree&& other)
+Octree::Octree(Octree&& other) noexcept
     : _MAX_DEPTH(other._MAX_DEPTH)
     , _MAX_STORAGE(other._MAX_STORAGE)
     , _MULTIPLICITY(other._MULTIPLICITY)

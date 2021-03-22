@@ -75,7 +75,7 @@ class PeakItem : public QStandardItem {
         Count
     };
     //! Whether the peak was caught by the filter
-    bool caughtByFilter(void) const;
+    bool caughtByFilter() const;
 
  private:
     //! pointer to the data

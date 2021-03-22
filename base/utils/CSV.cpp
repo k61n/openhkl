@@ -82,11 +82,10 @@ std::string CSV::getToken(std::istream& stream, char& delim) const
                         tok += _quotchar;
                         tok += _quotchar;
                         continue;
-                    } else {
-                        in_string = false;
-                        stream.seekg(pos);
-                        assert(pos == stream.tellg());
                     }
+                    in_string = false;
+                    stream.seekg(pos);
+                    assert(pos == stream.tellg());
                 }
             }
         }
