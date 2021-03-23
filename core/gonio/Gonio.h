@@ -54,8 +54,7 @@ class Gonio {
 
     //! Returns the homogeneous matrix corresponding to this set of parameters.
     //! Throw if angles outside limits.
-    Eigen::Transform<double, 3, Eigen::Affine> affineMatrix(
-        const std::vector<double>& state) const;
+    Eigen::Transform<double, 3, Eigen::Affine> affineMatrix(const std::vector<double>& state) const;
 
     //! Transform a point in 3D space, given a vector of parameters
     DirectVector transform(const DirectVector& v, const std::vector<double>& state) const;

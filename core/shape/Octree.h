@@ -54,7 +54,6 @@ class Octree : public AABB {
     Octree(const Octree& other) = delete;
 
 
-
     //! Add a new AABB object to the deepest leaf.
     //! If the leaf has reached capacity of _MAX_STORAGE, then it will be split
     //! into 2^D sub-Octree, unless _MAX_DEPTH is reached, in which case data will

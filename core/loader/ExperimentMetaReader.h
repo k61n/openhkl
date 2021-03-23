@@ -27,7 +27,8 @@ class ExperimentMetaReader : public IDataReader {
     ExperimentMetaReader(const ExperimentMetaReader& other) = delete;
 
     ExperimentMetaReader(
-        const std::string& file_name, const std::string& group_name, Diffractometer* diffractometer);
+        const std::string& file_name, const std::string& group_name,
+        Diffractometer* diffractometer);
 
     ~ExperimentMetaReader() override = default;
 
