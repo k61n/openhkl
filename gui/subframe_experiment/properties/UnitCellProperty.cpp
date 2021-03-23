@@ -224,11 +224,10 @@ void UnitCellProperty::refreshInput()
     unitcells->addItems(prj->getUnitCellNames());
     unitcells->blockSignals(false);
 
-    const bool state = prj->experiment()->getUnitCellNames().size() != 0;
+    const bool hasCells = !prj->experiment()->getUnitCellNames().empty();
     resetFields();
-    setInputEnabled(state);
-
-    if (!prj->getUnitCellNames().empty())
+    setInputEnabled(hasCells);
+    if (hasCells)
         selectedCellChanged(0);
 }
 
