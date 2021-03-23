@@ -27,7 +27,7 @@ class NexusMetaDataReader : public IDataReader {
  public:
     NexusMetaDataReader() = delete;
     NexusMetaDataReader(const NexusMetaDataReader& other) = delete;
-    NexusMetaDataReader(const std::string& filename, Diffractometer* instrument);
+    NexusMetaDataReader(const std::string& filename, Diffractometer* diffractometer);
     ~NexusMetaDataReader() override = default;
 
     NexusMetaDataReader& operator=(const NexusMetaDataReader& other) = delete;

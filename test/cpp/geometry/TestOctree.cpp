@@ -60,7 +60,7 @@ void collision_test()
     CHECK(test_set.size() == 19 * 19 * 19);
 
     // check that they don't intersect!
-    CHECK(tree.getCollisions().size() == 0);
+    CHECK(tree.getCollisions().empty());
 
     // add some spheres which will intersect
     center = Eigen::Vector3d(1.5, 1.5, 1.5);

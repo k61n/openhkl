@@ -49,12 +49,12 @@ Refiner::Refiner(
 {
     _params = params;
     _states = &states;
-    for (InstrumentState state : states)
+    for (const InstrumentState& state : states)
         _unrefined_states.push_back(state);
     _unrefined_cell = *_cell;
     _nframes = states.size();
-    const PeakFilter peak_filter;
     std::vector<nsx::Peak3D*> filtered_peaks = peaks;
+    PeakFilter peak_filter;
     filtered_peaks = peak_filter.filterEnabled(peaks, true);
     filtered_peaks = peak_filter.filterIndexed(filtered_peaks, *cell, cell->indexingTolerance());
 
@@ -140,7 +140,7 @@ bool Refiner::refine(unsigned int max_iter)
         refineDetectorOffset();
 
     nsxlog(Level::Info, "Refiner::refine:", _batches.size(), "batches");
-    if (_batches.size() == 0)
+    if (_batches.empty())
         return false;
 
     for (auto&& batch : _batches) {

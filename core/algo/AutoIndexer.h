@@ -109,7 +109,7 @@ class AutoIndexer {
     void acceptSolution(const UnitCell* solution, const std::vector<nsx::Peak3D*>& peaks);
     //! Check if list of solutions contains reference unit cell. If it does,
     //! return a pointer, otherwise return nullptr
-    UnitCell* goodSolution(UnitCell* ref_cell, double length_tol, double angle_tol);
+    UnitCell* goodSolution(UnitCell* reference_cell, double length_tol, double angle_tol);
 
  private:
     //! Get a vector of candidate unit cells from a list of peaks using the

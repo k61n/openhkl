@@ -228,7 +228,7 @@ void BrillouinZone::compute_vertices()
     // now compute the radii
     _r2 = 0.0;
 
-    for (auto v : _vertices) {
+    for (const auto& v : _vertices) {
         const double v2 = v.squaredNorm();
         _r2 = std::max(_r2, v2);
     }
@@ -256,8 +256,7 @@ ConvexHull BrillouinZone::convexHull() const
 double BrillouinZone::innerRadius() const
 {
     double r2 = _qs[0].squaredNorm();
-
-    for (auto q : _qs)
+    for (const auto& q : _qs)
         r2 = std::min(r2, q.squaredNorm());
     return std::sqrt(r2 / 4.0);
 }

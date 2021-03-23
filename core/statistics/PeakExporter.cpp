@@ -52,21 +52,21 @@ void PeakExporter::saveStatistics(
         const double d_lower = resolutionShell.shell(i).dmin;
         const double d_upper = resolutionShell.shell(i).dmax;
 
-        nsx::MergedData merged_data_per_shell(spaceGroup, inclFriedel);
+        nsx::MergedData mergedData_per_shell(spaceGroup, inclFriedel);
 
         for (Peak3D* peak : resolutionShell.shell(i).peaks)
-            merged_data_per_shell.addPeak(peak);
+            mergedData_per_shell.addPeak(peak);
 
         nsx::CC cc;
-        cc.calculate(&merged_data_per_shell);
+        cc.calculate(&mergedData_per_shell);
         nsx::RFactor rFactor;
-        rFactor.calculate(&merged_data_per_shell);
+        rFactor.calculate(&mergedData_per_shell);
 
         file << std::fixed << std::setw(10) << std::setprecision(2) << d_upper << std::fixed
              << std::setw(10) << std::setprecision(2) << d_lower << std::fixed << std::setw(10)
-             << merged_data_per_shell.totalSize() << std::fixed << std::setw(10)
-             << merged_data_per_shell.mergedPeakSet().size() << std::fixed << std::setw(11)
-             << std::setprecision(3) << merged_data_per_shell.redundancy() << std::fixed
+             << mergedData_per_shell.totalSize() << std::fixed << std::setw(10)
+             << mergedData_per_shell.mergedPeakSet().size() << std::fixed << std::setw(11)
+             << std::setprecision(3) << mergedData_per_shell.redundancy() << std::fixed
              << std::setw(10) << std::setprecision(3) << rFactor.Rmeas() << std::fixed
              << std::setw(12) << std::setprecision(3) << rFactor.expectedRmeas() << std::fixed
              << std::setw(11) << std::setprecision(3) << rFactor.Rmerge() << std::fixed
@@ -80,10 +80,10 @@ void PeakExporter::saveStatistics(
     file.close();
 }
 
-void PeakExporter::saveToShelXUnmerged(std::string filename, nsx::MergedData* merged_data)
+void PeakExporter::saveToShelXUnmerged(const std::string& filename, nsx::MergedData* mergedData)
 {
     std::vector<Peak3D*> peak_vector;
-    for (const nsx::MergedPeak& peak : merged_data->mergedPeakSet()) {
+    for (const nsx::MergedPeak& peak : mergedData->mergedPeakSet()) {
         for (auto* unmerged_peak : peak.peaks())
             peak_vector.push_back(unmerged_peak);
     }
@@ -112,10 +112,10 @@ void PeakExporter::saveToShelXUnmerged(std::string filename, nsx::MergedData* me
     file.close();
 }
 
-void PeakExporter::saveToShelXMerged(std::string filename, nsx::MergedData* merged_data)
+void PeakExporter::saveToShelXMerged(const std::string& filename, nsx::MergedData* mergedData)
 {
     std::fstream file(filename, std::ios::out);
-    for (const nsx::MergedPeak& peak : merged_data->mergedPeakSet()) {
+    for (const nsx::MergedPeak& peak : mergedData->mergedPeakSet()) {
         const auto hkl = peak.index();
         nsx::Intensity I = peak.intensity();
         const double intensity = I.value();
@@ -129,7 +129,7 @@ void PeakExporter::saveToShelXMerged(std::string filename, nsx::MergedData* merg
     file.close();
 }
 
-void PeakExporter::saveToFullProfUnmerged(std::string filename, nsx::MergedData* merged_data)
+void PeakExporter::saveToFullProfUnmerged(const std::string& filename, nsx::MergedData* mergedData)
 {
     std::fstream file(filename, std::ios::out);
 
@@ -137,7 +137,7 @@ void PeakExporter::saveToFullProfUnmerged(std::string filename, nsx::MergedData*
     file << "(3i4,2F14.4,i5,4f8.2)\n";
 
     std::vector<Peak3D*> peak_vector;
-    for (const nsx::MergedPeak& peak : merged_data->mergedPeakSet()) {
+    for (const nsx::MergedPeak& peak : mergedData->mergedPeakSet()) {
         for (auto* unmerged_peak : peak.peaks())
             peak_vector.push_back(unmerged_peak);
     }
@@ -170,7 +170,7 @@ void PeakExporter::saveToFullProfUnmerged(std::string filename, nsx::MergedData*
     file.close();
 }
 
-void PeakExporter::saveToFullProfMerged(std::string filename, nsx::MergedData* merged_data)
+void PeakExporter::saveToFullProfMerged(const std::string& filename, nsx::MergedData* mergedData)
 {
     std::fstream file(filename, std::ios::out);
 
@@ -178,7 +178,7 @@ void PeakExporter::saveToFullProfMerged(std::string filename, nsx::MergedData* m
     file << "(3i4,2F14.4,i5,4f8.2)\n";
 
     std::vector<Peak3D*> peak_vector;
-    for (const nsx::MergedPeak& peak : merged_data->mergedPeakSet()) {
+    for (const nsx::MergedPeak& peak : mergedData->mergedPeakSet()) {
         for (auto* unmerged_peak : peak.peaks())
             peak_vector.push_back(unmerged_peak);
     }
@@ -187,7 +187,7 @@ void PeakExporter::saveToFullProfMerged(std::string filename, nsx::MergedData* m
     file << std::fixed << std::setw(8) << std::setprecision(3) << wavelength;
     file << " 0 0" << std::endl;
 
-    for (const nsx::MergedPeak& peak : merged_data->mergedPeakSet()) {
+    for (const nsx::MergedPeak& peak : mergedData->mergedPeakSet()) {
         const auto hkl = peak.index();
         nsx::Intensity I = peak.intensity();
         const double intensity = I.value();
@@ -203,12 +203,12 @@ void PeakExporter::saveToFullProfMerged(std::string filename, nsx::MergedData* m
     file.close();
 }
 
-void PeakExporter::saveToSCAUnmerged(std::string filename, nsx::MergedData* merged_data)
+void PeakExporter::saveToSCAUnmerged(const std::string& filename, nsx::MergedData* mergedData)
 {
     std::fstream file(filename, std::ios::out);
 
     std::vector<Peak3D*> peak_vector;
-    for (const nsx::MergedPeak& peak : merged_data->mergedPeakSet()) {
+    for (const nsx::MergedPeak& peak : mergedData->mergedPeakSet()) {
         for (auto* unmerged_peak : peak.peaks())
             peak_vector.push_back(unmerged_peak);
     }
@@ -263,12 +263,12 @@ void PeakExporter::saveToSCAUnmerged(std::string filename, nsx::MergedData* merg
     file.close();
 }
 
-void PeakExporter::saveToSCAMerged(std::string filename, nsx::MergedData* merged_data)
+void PeakExporter::saveToSCAMerged(const std::string& filename, nsx::MergedData* mergedData)
 {
     std::fstream file(filename, std::ios::out);
 
     std::vector<const Peak3D*> peak_vector;
-    for (const nsx::MergedPeak& peak : merged_data->mergedPeakSet()) {
+    for (const nsx::MergedPeak& peak : mergedData->mergedPeakSet()) {
         for (const Peak3D* unmerged_peak : peak.peaks())
             peak_vector.push_back(unmerged_peak);
     }
@@ -288,7 +288,7 @@ void PeakExporter::saveToSCAMerged(std::string filename, nsx::MergedData* merged
          << std::setprecision(3) << character.gamma * (180.0 / 3.141592653589793238463) << " "
          << symbol << std::endl;
 
-    for (const nsx::MergedPeak& peak : merged_data->mergedPeakSet()) {
+    for (const nsx::MergedPeak& peak : mergedData->mergedPeakSet()) {
         const auto hkl = peak.index();
         nsx::Intensity I = peak.intensity();
         const double intensity = I.value();

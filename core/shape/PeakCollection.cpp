@@ -27,7 +27,7 @@ PeakCollection::PeakCollection(const std::string& name, nsx::listtype type)
 void PeakCollection::populate(const std::vector<std::shared_ptr<nsx::Peak3D>> peak_list)
 {
     reset();
-    for (std::shared_ptr<nsx::Peak3D> peak : peak_list)
+    for (const auto& peak : peak_list)
         push_back(*peak);
 }
 
@@ -67,9 +67,9 @@ void PeakCollection::reset()
 
 std::vector<nsx::Peak3D*> PeakCollection::getPeakList() const
 {
-    std::vector<nsx::Peak3D*> peak_list;
+    std::vector<nsx::Peak3D*> peak_list(_peaks.size());
     for (int i = 0; i < _peaks.size(); i++)
-        peak_list.push_back(_peaks[i].get());
+        peak_list[i] = _peaks[i].get();
     return peak_list;
 }
 

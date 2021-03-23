@@ -108,8 +108,7 @@ bool PixelSumIntegrator::compute(
 
     // shape is not too small or too large
     Eigen::SelfAdjointEigenSolver<Eigen::Matrix3d> solver(cov);
-    auto w = solver.eigenvalues();
-
+    const auto& w = solver.eigenvalues();
     if (w.minCoeff() < 0.1 || w.maxCoeff() > 100)
         return false;
 
@@ -124,9 +123,9 @@ bool PixelSumIntegrator::compute(
 
     for (auto i = 0; i < counts.size(); ++i) {
         const auto& ev = events[i];
-        auto ev_type = region.classify(ev);
+        const auto& ev_type = region.classify(ev);
 
-        int bin = ev._frame - f_min;
+        const int bin = ev._frame - f_min;
 
         if (ev_type == IntegrationRegion::EventType::PEAK) {
             intensity_per_frame[bin] += counts[i];
@@ -136,7 +135,8 @@ bool PixelSumIntegrator::compute(
     }
 
     for (int i = 0; i < nframes; ++i) {
-        double corrected_intensity = intensity_per_frame[i] - n_peak_points_per_frame[i] * mean_bkg;
+        const double corrected_intensity =
+            intensity_per_frame[i] - n_peak_points_per_frame[i] * mean_bkg;
         _rockingCurve[i] = Intensity(corrected_intensity, sqrt(corrected_intensity));
     }
 

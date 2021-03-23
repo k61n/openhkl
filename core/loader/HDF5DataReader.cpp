@@ -21,8 +21,8 @@
 
 namespace nsx {
 
-HDF5DataReader::HDF5DataReader(const std::string& filename, Diffractometer* instrument)
-    : HDF5MetaDataReader(filename, instrument)
+HDF5DataReader::HDF5DataReader(const std::string& filename, Diffractometer* diffractometer)
+    : HDF5MetaDataReader(filename, diffractometer)
 {
 }
 

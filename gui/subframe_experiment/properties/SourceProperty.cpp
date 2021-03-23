@@ -59,7 +59,8 @@ SourceProperty::SourceProperty()
                                                            ->getDiffractometer()
                                                            ->source()
                                                            .monochromators();
-        for (nsx::Monochromator m : monos)
+        list.reserve(monos.size());
+        for (const nsx::Monochromator& m : monos)
             list.push_back(QString::fromStdString(m.name()));
         _monochromators->addItems(list);
     }

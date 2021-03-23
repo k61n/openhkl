@@ -189,7 +189,7 @@ bool RefinementBatch::refine(unsigned int max_iter)
     min.setfTol(1e-10);
     min.setgTol(1e-10);
 
-    if (_constraints.size() > 0)
+    if (!_constraints.empty())
         _params.setKernel(constraintKernel(_params.nparams(), _constraints));
 
     _cost_function.clear();
@@ -210,7 +210,7 @@ bool RefinementBatch::refine(unsigned int max_iter)
 int RefinementBatch::residuals(Eigen::VectorXd& fvec)
 {
     UnitCell uc = _cell->fromParameters(_u0, _uOffsets, _cellParameters);
-    Eigen::Matrix3d UB = uc.reciprocalBasis();
+    const Eigen::Matrix3d& UB = uc.reciprocalBasis();
 
     //#pragma omp parallel for
     for (unsigned int i = 0; i < _peaks.size(); ++i) {

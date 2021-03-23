@@ -204,7 +204,8 @@ void AbsorptionDialog::readInfoFile(const std::string& filename)
             std::string name, jpgfile;
             double value;
             is >> name >> value >> jpgfile;
-            _imageList.emplace_back(std::pair<double, std::string>(value, _filepath + "/" + jpgfile));
+            _imageList.emplace_back(
+                std::pair<double, std::string>(value, _filepath + "/" + jpgfile));
             getline(file, line);
         }
         file.close();

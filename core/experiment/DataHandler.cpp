@@ -81,7 +81,7 @@ sptrDataSet DataHandler::getData(std::string name) const
 
 void DataHandler::addData(sptrDataSet data, std::string name)
 {
-    if (name == "")
+    if (name.empty())
         name = data->filename();
 
     // Add the data only if it does not exist in the current data map

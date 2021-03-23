@@ -371,7 +371,7 @@ void DetectorWindow::updateExptList()
     _exp_combo->clear();
 
     if (!gSession->experimentNames().empty()) {
-        for (QString exp : gSession->experimentNames())
+        for (const QString& exp : gSession->experimentNames())
             _exp_combo->addItem(exp);
         updateDatasetList();
         updatePeakList();

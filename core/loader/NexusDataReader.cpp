@@ -21,8 +21,8 @@
 
 namespace nsx {
 
-NexusDataReader::NexusDataReader(const std::string& filename, Diffractometer* instrument)
-    : NexusMetaDataReader(filename, instrument)
+NexusDataReader::NexusDataReader(const std::string& filename, Diffractometer* diffractometer)
+    : NexusMetaDataReader(filename, diffractometer)
 {
 }
 

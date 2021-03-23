@@ -36,7 +36,7 @@ TEST_CASE("test/instrument/TestCylindricalDetector.cpp", "")
     const nsx::DirectVector pixel_position = d.pixelPosition(319.5, 127.5);
 
     // This should be the center of the detector at rest at (0,0.764,0)
-    const Eigen::Vector3d center = pixel_position.vector();
+    const Eigen::Vector3d& center = pixel_position.vector();
     CHECK(std::abs(center[0]) < tolerance);
     CHECK(center[1] == Approx(0.764).epsilon(tolerance));
     CHECK(std::abs(center[2]) < tolerance);

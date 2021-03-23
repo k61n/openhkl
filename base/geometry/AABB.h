@@ -41,7 +41,7 @@ class AABB {
     void translate(const Eigen::Vector3d& t);
 
     //! Returns true if a point given as Homogeneous coordinate is inside the AABB.
-    bool isInside(const Eigen::Vector3d& vector) const;
+    bool isInside(const Eigen::Vector3d& point) const;
 
     //! Returns true if the AABB intersects an ellipsoid.
     bool collide(const AABB& aabb) const;

@@ -228,9 +228,8 @@ void DataSet::saveHDF5(const std::string& filename) // const
     for (const auto& item : map) {
         try {
             if (std::holds_alternative<std::string>(item.second)) {
-                std::string info = std::get<std::string>(item.second);
                 H5::Attribute intAtt(infogroup.createAttribute(item.first, str80, metaSpace));
-                intAtt.write(str80, info);
+                intAtt.write(str80, std::get<std::string>(item.second));
             }
         } catch (const std::exception& ex) {
             std::cerr << "Exception in " << __PRETTY_FUNCTION__ << ": " << ex.what() << std::endl;
@@ -245,12 +244,12 @@ void DataSet::saveHDF5(const std::string& filename) // const
     for (const auto& item : map) {
         try {
             if (std::holds_alternative<int>(item.second)) {
-                int value = std::get<int>(item.second);
+                const int value = std::get<int>(item.second);
                 H5::Attribute intAtt(metadatagroup.createAttribute(
                     item.first, H5::PredType::NATIVE_INT32, metaSpace));
                 intAtt.write(H5::PredType::NATIVE_INT, &value);
             } else if (std::holds_alternative<double>(item.second)) {
-                double dvalue = std::get<double>(item.second);
+                const double dvalue = std::get<double>(item.second);
                 H5::Attribute intAtt(metadatagroup.createAttribute(
                     item.first, H5::PredType::NATIVE_DOUBLE, metaSpace));
                 intAtt.write(H5::PredType::NATIVE_DOUBLE, &dvalue);
@@ -282,7 +281,7 @@ const std::set<IMask*>& DataSet::masks() const
 
 void DataSet::maskPeaks(PeakList& peaks) const
 {
-    for (auto peak : peaks) {
+    for (const auto& peak : peaks) {
         // peak belongs to another dataset
         if (peak->dataSet().get() != this)
             continue;
@@ -352,7 +351,7 @@ std::string DataSet::name() const
         ext = "";
     }
 
-    if (!(_name == ""))
+    if (!_name.empty())
         return _name;
     return name;
 }

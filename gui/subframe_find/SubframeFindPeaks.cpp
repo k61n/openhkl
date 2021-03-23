@@ -498,7 +498,7 @@ void SubframeFindPeaks::setExperimentsUp()
     _exp_combo->clear();
 
     if (!gSession->experimentNames().empty()) {
-        for (QString exp : gSession->experimentNames())
+        for (const QString& exp : gSession->experimentNames())
             _exp_combo->addItem(exp);
         grabFinderParameters();
         grabIntegrationParameters();

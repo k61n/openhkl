@@ -523,7 +523,7 @@ void SubframePredictPeaks::setExperiments()
     if (gSession->experimentNames().empty())
         return;
 
-    for (QString exp : gSession->experimentNames())
+    for (const QString& exp : gSession->experimentNames())
         _exp_combo->addItem(exp);
 
     _exp_combo->blockSignals(false);
@@ -661,7 +661,7 @@ void SubframePredictPeaks::runPrediction()
         nsx::PeakInterpolation peak_interpolation = static_cast<nsx::PeakInterpolation>(interpol);
         std::vector<nsx::Peak3D*> predicted_peaks;
 
-        for (nsx::sptrDataSet d : data) {
+        for (const nsx::sptrDataSet& d : data) {
             std::vector<nsx::Peak3D*> predicted =
                 nsx::predictPeaks(lib, d, cell, peak_interpolation, params, handler);
 

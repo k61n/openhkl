@@ -106,9 +106,8 @@ void AutoIndexer::computeFFTSolutions(const std::vector<Peak3D*>& peaks)
     }
 
     // Check that a minimum number of peaks have been selected for indexing
-    if (qvects.size() < 10) {
+    if (qvects.size() < 10)
         throw std::runtime_error("Too few peaks to autoindex");
-    }
 
     // Find the best vectors via FFT
     std::vector<Eigen::RowVector3d> tvects = algo::findOnSphere(
@@ -136,7 +135,7 @@ void AutoIndexer::computeFFTSolutions(const std::vector<Peak3D*>& peaks)
 
                 // Skip this unit cell if there is already an equivalent one.
                 bool equivalent = false;
-                for (auto solution : _solutions) {
+                for (const auto& solution : _solutions) {
                     if (cell->equivalent(*solution.first, _params.unitCellEquivalenceTolerance)) {
                         equivalent = true;
                         break;
@@ -282,7 +281,7 @@ std::string AutoIndexer::solutionsToString() const
         << std::setw(10) << "quality" << std::setw(10) << "a" << std::setw(10) << "b"
         << std::setw(10) << "c" << std::setw(10) << "alpha" << std::setw(10) << "beta"
         << std::setw(10) << "gamma";
-    for (auto solution : _solutions) {
+    for (const auto& solution : _solutions) {
         oss << std::endl
             << std::fixed << std::setw(10) << std::setprecision(3) << solution.second
             << solution.first->toString();

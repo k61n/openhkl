@@ -61,6 +61,7 @@ Checks: '*,
 -bugprone-suspicious-include,
 -llvm-namespace-comment,
 
+
 -SectionComment_Incompatible_with_Other_3rd_Party_Dependences,
 
 -cppcoreguidelines-no-malloc,
@@ -99,17 +100,12 @@ Checks: '*,
 -fuchsia-statically-constructed-objects,
 
 
--SectionComment_Temporarily_disabled_checks__We_need_to_investigate_them_one_by_one,
-
--cppcoreguidelines-pro-bounds-array-to-pointer-decay, -hicpp-no-array-decay,
--modernize-use-transparent-functors,
-
-
 -SectionComment_TODO,
 
 -*-qualified-auto,
 -*-use-auto,
 -bugprone-misplaced-widening-cast,
+-cppcoreguidelines-pro-bounds-array-to-pointer-decay, -hicpp-no-array-decay,
 -cppcoreguidelines-pro-type-const-cast,
 -cppcoreguidelines-pro-type-static-cast-downcast,
 -cppcoreguidelines-slicing,
@@ -117,12 +113,8 @@ Checks: '*,
 -modernize-make-shared,
 -modernize-make-unique,
 -modernize-pass-by-value,
-+performance-for-range-copy,
-+performance-inefficient-vector-operation,
-+performance-unnecessary-copy-initialization,
--readability-container-size-empty,
+-modernize-use-transparent-functors,
 -readability-static-definition-in-anonymous-namespace,
--readability-inconsistent-declaration-parameter-name,
 -readability-string-compare,
 
 -hicpp-member-init,

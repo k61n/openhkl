@@ -112,15 +112,15 @@ void RefinerTables::refreshLatticeTable(nsx::Refiner* refiner)
         m0->appendRow(row);
     }
 
-    if (refiner == nullptr)
+    if (!refiner)
         return;
 
     auto batches = refiner->batches();
 
-    if (batches.size() == 0)
+    if (batches.empty())
         return;
 
-    for (auto batch : batches) {
+    for (const auto& batch : batches) {
         for (int i = batch.first_frame(); i < batch.last_frame() - 2; ++i) {
             QList<QStandardItem*> row;
             auto c = batch.cell()->character();

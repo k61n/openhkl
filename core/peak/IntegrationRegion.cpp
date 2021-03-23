@@ -34,8 +34,8 @@ IntegrationRegion::IntegrationRegion(
     bkg.scale(_bkgEnd);
     auto aabb = bkg.aabb();
 
-    Eigen::Vector3d lo = aabb.lower();
-    Eigen::Vector3d dx = aabb.upper() - aabb.lower();
+    const Eigen::Vector3d& lo = aabb.lower();
+    const Eigen::Vector3d& dx = aabb.upper() - aabb.lower();
 
     _hull.addVertex(lo);
     _hull.addVertex(lo + Eigen::Vector3d(0, 0, dx[2]));

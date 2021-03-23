@@ -56,8 +56,8 @@ void HDF5ConverterDialog::convert()
     }
     progress->setMaximum(numors.size());
     progress->setValue(0);
-    int comp(0);
-    for (QString numor : numors) {
+    int comp = 0;
+    for (const QString& numor : numors) {
         std::string numor_filename = numor.toStdString();
         std::string hdfFilename =
             QDir(outputDirectory).filePath(filename->text() + ".h5").toStdString();

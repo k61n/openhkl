@@ -81,14 +81,14 @@ std::string fileDirname(const std::string& input_path)
 
 void makeDirectory(const std::string& path, int mode)
 {
-    auto components = split(path, fileSeparator());
+    const std::vector<std::string> components = split(path, fileSeparator());
 
     std::vector<std::string> intermediate_paths;
     intermediate_paths.reserve(components.size());
 
-    for (auto comp : components) {
+    for (const std::string& comp : components) {
         intermediate_paths.push_back(comp);
-        auto inner_path = join(intermediate_paths, fileSeparator());
+        const std::string inner_path = join(intermediate_paths, fileSeparator());
 #if defined(_WIN32)
         _mkdir(inner_path.c_str());
 #else

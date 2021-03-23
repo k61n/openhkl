@@ -135,9 +135,9 @@ TEST_CASE("test/data/TestNexusData.cpp", "")
         if (!pk->enabled())
             continue;
 
-        nsx::Ellipsoid elli_real = pk->shape();
-        nsx::Ellipsoid elli_recip = pk->qShape();
-        nsx::Intensity intensity = pk->rawIntensity();
+        const nsx::Ellipsoid& elli_real = pk->shape();
+        const nsx::Ellipsoid& elli_recip = pk->qShape();
+        const nsx::Intensity intensity = pk->rawIntensity();
 
         std::cout << "real peak: " << elli_real.center().transpose() << ", ";
         std::cout << "recip peak: " << elli_recip.center().transpose() << ", ";
@@ -203,10 +203,10 @@ TEST_CASE("test/data/TestNexusData.cpp", "")
         if (!pk->enabled())
             continue;
 
-        nsx::Ellipsoid elli_real = pk->shape();
-        nsx::Ellipsoid elli_recip = pk->qShape();
-        nsx::Intensity intensity = pk->rawIntensity();
-        nsx::Intensity background = pk->meanBackground();
+        const nsx::Ellipsoid& elli_real = pk->shape();
+        const nsx::Ellipsoid& elli_recip = pk->qShape();
+        const nsx::Intensity intensity = pk->rawIntensity();
+        const nsx::Intensity background = pk->meanBackground();
 
         std::cout << "real peak: " << elli_real.center().transpose() << ", ";
         std::cout << "recip peak: " << elli_recip.center().transpose() << ", ";

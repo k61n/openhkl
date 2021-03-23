@@ -61,8 +61,8 @@ bool Ellipsoid::collide(const AABB& aabb) const
         Eigen::Vector3d(0, 0, 1),
     };
 
-    const auto lb = aabb.lower();
-    const auto ub = aabb.upper();
+    const auto& lb = aabb.lower();
+    const auto& ub = aabb.upper();
     const auto dx = ub - lb;
 
     // calculate vertices and check for collision with each of the 6 faces of the

@@ -424,7 +424,7 @@ void SubframeAutoIndexer::setExperiments()
     if (gSession->experimentNames().empty())
         return;
 
-    for (QString exp : gSession->experimentNames())
+    for (const QString& exp : gSession->experimentNames())
         _exp_combo->addItem(exp);
 
     _exp_combo->blockSignals(false);
@@ -571,7 +571,7 @@ void SubframeAutoIndexer::runAutoIndexer()
     }
 
     _solutions = auto_indexer->solutions();
-    if (_solutions.size() == 0)
+    if (_solutions.empty())
         QMessageBox::warning(this, "Warning", "No solution found.");
 
     buildSolutionsTable();
@@ -667,7 +667,7 @@ void SubframeAutoIndexer::acceptSolution()
         QStringList collections = gSession->experimentAt(_exp_combo->currentIndex())
                                       ->getPeakCollectionNames(nsx::listtype::FOUND);
         QStringList space_groups;
-        for (std::string name : _selected_unit_cell->compatibleSpaceGroups())
+        for (const std::string& name : _selected_unit_cell->compatibleSpaceGroups())
             space_groups.push_back(QString::fromStdString(name));
         std::unique_ptr<UnitCellDialog> dlg(new UnitCellDialog(collections, space_groups));
         dlg->exec();
