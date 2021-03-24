@@ -305,12 +305,12 @@ void ShapeCollectionDialog::build()
     for (nsx::Peak3D* peak : _peaks) {
         if (!peak->enabled())
             continue;
-        double d = 1.0 / peak->q().rowVector().norm();
+        const double d = 1.0 / peak->q().rowVector().norm();
 
         if (d > _max_d->value() || d < _min_d->value())
             continue;
 
-        nsx::Intensity intensity = peak->correctedIntensity();
+        const nsx::Intensity intensity = peak->correctedIntensity();
 
         if (intensity.value() <= _min_I_sigma->value() * intensity.sigma())
             continue;
@@ -328,18 +328,18 @@ void ShapeCollectionDialog::build()
 
     nsx::AABB aabb;
 
-    bool kabsch_coords = _kabsch->isChecked();
+    const bool kabsch_coords = _kabsch->isChecked();
 
-    double peak_end_val = _peak_end->value();
+    const double peak_end_val = _peak_end->value();
 
     if (kabsch_coords) {
-        double sigma_d_val = _sigma_D->value();
-        double sigma_m_val = _sigma_M->value();
-        Eigen::Vector3d sigma(sigma_d_val, sigma_d_val, sigma_m_val);
+        const double sigma_d_val = _sigma_D->value();
+        const double sigma_m_val = _sigma_M->value();
+        const Eigen::Vector3d sigma(sigma_d_val, sigma_d_val, sigma_m_val);
         aabb.setLower(-peak_end_val * sigma);
         aabb.setUpper(peak_end_val * sigma);
     } else {
-        Eigen::Vector3d dx(nx_val, ny_val, nz_val);
+        const Eigen::Vector3d dx(nx_val, ny_val, nz_val);
         aabb.setLower(-0.5 * dx);
         aabb.setUpper(0.5 * dx);
     }
@@ -363,7 +363,7 @@ void ShapeCollectionDialog::build()
     integrator.setParameters(params);
 
     int n_numor = 1;
-    for (nsx::sptrDataSet data : _data) {
+    for (const nsx::sptrDataSet& data : _data) {
         integrator.integrate(fit_peaks, &_collection, data, n_numor);
         ++n_numor;
     }
@@ -378,7 +378,7 @@ void ShapeCollectionDialog::calculate()
     const int ny_val = _ny->value();
     const int nz_val = _nz->value();
 
-    nsx::DetectorEvent ev(_x->value(), _y->value(), _frame->value());
+    const nsx::DetectorEvent ev(_x->value(), _y->value(), _frame->value());
     // update maximum value, used for drawing
     try {
         _profile = _collection.meanProfile(ev, _radius->value(), _n_frames->value());

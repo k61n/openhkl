@@ -19,6 +19,8 @@
 #include <string>
 #include <vector>
 
+namespace {
+
 static double g_BlueWhite_rgb[256 * 3] = {
     255.0,
     255.0,
@@ -17240,6 +17242,8 @@ static double g_CMRmap_rgb[256 * 3] = {
     255.0,
 };
 
+} // namespace
+
 ColorMap ColorMap::getColorMap(const std::string& name)
 {
     if (name == "BlueWhite")
@@ -17294,28 +17298,28 @@ ColorMap ColorMap::getColorMap(const std::string& name)
 std::vector<std::string> ColorMap::getColorMapNames()
 {
     std::vector<std::string> names;
-    names.push_back("BlueWhite");
-    names.push_back("Blues");
-    names.push_back("viridis");
-    names.push_back("inferno");
-    names.push_back("plasma");
-    names.push_back("magma");
-    names.push_back("afmhot");
-    names.push_back("cool");
-    names.push_back("copper");
-    names.push_back("gist_heat");
-    names.push_back("hot");
-    names.push_back("summer");
-    names.push_back("winter");
-    names.push_back("gist_earth");
-    names.push_back("ocean");
-    names.push_back("brg");
-    names.push_back("gnuplot");
-    names.push_back("rainbow");
-    names.push_back("jet");
-    names.push_back("hsv");
-    names.push_back("gist_rainbow");
-    names.push_back("nipy_spectral");
-    names.push_back("CMRmap");
+    names.emplace_back("BlueWhite");
+    names.emplace_back("Blues");
+    names.emplace_back("viridis");
+    names.emplace_back("inferno");
+    names.emplace_back("plasma");
+    names.emplace_back("magma");
+    names.emplace_back("afmhot");
+    names.emplace_back("cool");
+    names.emplace_back("copper");
+    names.emplace_back("gist_heat");
+    names.emplace_back("hot");
+    names.emplace_back("summer");
+    names.emplace_back("winter");
+    names.emplace_back("gist_earth");
+    names.emplace_back("ocean");
+    names.emplace_back("brg");
+    names.emplace_back("gnuplot");
+    names.emplace_back("rainbow");
+    names.emplace_back("jet");
+    names.emplace_back("hsv");
+    names.emplace_back("gist_rainbow");
+    names.emplace_back("nipy_spectral");
+    names.emplace_back("CMRmap");
     return names;
 }

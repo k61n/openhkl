@@ -25,7 +25,6 @@ namespace nsx {
 class CSV {
  public:
     CSV(char delim = ',', char quotchar = '"');
-    ~CSV();
 
     std::vector<std::string> getRow(std::istream& stream);
 
@@ -33,7 +32,7 @@ class CSV {
     char _delim;
     char _quotchar;
 
-    std::string getToken(std::istream& stream, char& delim);
+    std::string getToken(std::istream& stream, char& delim) const;
 };
 
 } // namespace nsx

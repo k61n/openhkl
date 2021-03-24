@@ -32,7 +32,7 @@ Sample* Sample::clone() const
     return new Sample(*this);
 }
 
-Sample::~Sample() { }
+Sample::~Sample() = default;
 
 void Sample::setShape(const ConvexHull& shape)
 {

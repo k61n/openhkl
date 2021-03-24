@@ -32,17 +32,17 @@ class PeakExporter {
         std::string filename, nsx::ResolutionShell resolutionShell, nsx::SpaceGroup spaceGroup,
         bool inclFriedel);
     //! Saves the peak information to ShelX file format given a peak list.
-    void saveToShelXMerged(std::string filename, nsx::MergedData* mergedData);
+    void saveToShelXMerged(const std::string& filename, nsx::MergedData* mergedData);
     //! Saves the peak information to ShelX file format given a merged peak list.
-    void saveToFullProfMerged(std::string filename, nsx::MergedData* mergedData);
+    void saveToFullProfMerged(const std::string& filename, nsx::MergedData* mergedData);
     //! Saves the peak information to FullProf file format given a peak list.
-    void saveToSCAMerged(std::string filename, nsx::MergedData* mergedData);
+    void saveToSCAMerged(const std::string& filename, nsx::MergedData* mergedData);
     //! Saves the peak information to FullProf file format given a merged peak list.
-    void saveToShelXUnmerged(std::string filename, nsx::MergedData* mergedData);
+    void saveToShelXUnmerged(const std::string& filename, nsx::MergedData* mergedData);
     //! Saves the peak information to .sca file format given a peak list.
-    void saveToFullProfUnmerged(std::string filename, nsx::MergedData* mergedData);
+    void saveToFullProfUnmerged(const std::string& filename, nsx::MergedData* mergedData);
     //! Saves the peak information to .sca file format given a merged peak list.
-    void saveToSCAUnmerged(std::string filename, nsx::MergedData* mergedData);
+    void saveToSCAUnmerged(const std::string& filename, nsx::MergedData* mergedData);
 
  private:
 };

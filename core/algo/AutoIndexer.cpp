@@ -27,7 +27,7 @@
 
 namespace nsx {
 
-void IndexerParameters::log(const Level& level)
+void IndexerParameters::log(const Level& level) const
 {
     nsxlog(level, "Autoindexer parameters:");
     nsxlog(level, "maxdim             =", maxdim);
@@ -102,13 +102,12 @@ void AutoIndexer::computeFFTSolutions(const std::vector<Peak3D*>& peaks)
     const std::vector<Peak3D*> filtered_peaks = PeakFilter{}.filterEnabled(peaks, true);
     for (const Peak3D* peak : filtered_peaks) {
         auto q = peak->q().rowVector();
-        qvects.push_back(ReciprocalVector(q));
+        qvects.emplace_back(ReciprocalVector(q));
     }
 
     // Check that a minimum number of peaks have been selected for indexing
-    if (qvects.size() < 10) {
+    if (qvects.size() < 10)
         throw std::runtime_error("Too few peaks to autoindex");
-    }
 
     // Find the best vectors via FFT
     std::vector<Eigen::RowVector3d> tvects = algo::findOnSphere(
@@ -136,7 +135,7 @@ void AutoIndexer::computeFFTSolutions(const std::vector<Peak3D*>& peaks)
 
                 // Skip this unit cell if there is already an equivalent one.
                 bool equivalent = false;
-                for (auto solution : _solutions) {
+                for (const auto& solution : _solutions) {
                     if (cell->equivalent(*solution.first, _params.unitCellEquivalenceTolerance)) {
                         equivalent = true;
                         break;
@@ -161,8 +160,7 @@ void AutoIndexer::rankSolutions()
         [](const RankedSolution& s1, const RankedSolution& s2) -> bool {
             if (s1.second == s2.second)
                 return (s1.first->volume() < s2.first->volume());
-            else
-                return (s1.second > s2.second);
+            return (s1.second > s2.second);
         });
 }
 
@@ -184,7 +182,7 @@ void AutoIndexer::refineSolutions(const std::vector<Peak3D*>& peaks)
             peak_filter.filterIndexed(enabled_peaks, *cell, cell->indexingTolerance());
 
         int success = filtered_peaks.size();
-        for (auto peak : filtered_peaks) {
+        for (const auto* peak : filtered_peaks) {
             MillerIndex hkld(peak->q(), *cell);
             hkls.emplace_back(hkld.rowVector().cast<double>());
             qs.emplace_back(peak->q().rowVector());
@@ -283,7 +281,7 @@ std::string AutoIndexer::solutionsToString() const
         << std::setw(10) << "quality" << std::setw(10) << "a" << std::setw(10) << "b"
         << std::setw(10) << "c" << std::setw(10) << "alpha" << std::setw(10) << "beta"
         << std::setw(10) << "gamma";
-    for (auto solution : _solutions) {
+    for (const auto& solution : _solutions) {
         oss << std::endl
             << std::fixed << std::setw(10) << std::setprecision(3) << solution.second
             << solution.first->toString();
@@ -293,13 +291,13 @@ std::string AutoIndexer::solutionsToString() const
 
 void AutoIndexer::acceptSolution(const UnitCell* solution, const std::vector<nsx::Peak3D*>& peaks)
 {
-    for (auto peak : peaks)
+    for (auto* peak : peaks)
         peak->setUnitCell(solution);
 }
 
 UnitCell* AutoIndexer::goodSolution(UnitCell* reference_cell, double length_tol, double angle_tol)
 {
-    for (auto solution : _solutions) {
+    for (const auto& solution : _solutions) {
         if (solution.first->isSimilar(reference_cell, length_tol, angle_tol)) {
             return solution.first.get();
         }

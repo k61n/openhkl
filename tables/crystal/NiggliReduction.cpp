@@ -194,7 +194,6 @@ void NiggliReduction::updateParameters()
         _n = -1;
     else if (_zeta > _epsilon)
         _n = 1;
-    return;
 }
 
 void NiggliReduction::transformG()
@@ -202,7 +201,6 @@ void NiggliReduction::transformG()
     _P = _P * _CMat;
     // Transform to new tensor G'=(CMat^T). G. CMat
     _g = _CMat.transpose() * _g * _CMat;
-    return;
 }
 
 } // namespace nsx

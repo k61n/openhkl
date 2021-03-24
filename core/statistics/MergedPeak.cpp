@@ -30,7 +30,7 @@
 namespace nsx {
 
 MergedPeak::MergedPeak(const SpaceGroup& grp, bool friedel)
-    : _hkl(), _intensitySum(0.0, 0.0), _peaks(), _grp(grp), _friedel(friedel)
+    : _intensitySum(0.0, 0.0), _grp(grp), _friedel(friedel)
 {
 }
 
@@ -99,7 +99,7 @@ void MergedPeak::determineRepresentativeHKL()
         _hkl(i) = int(std::lround(best_hkl(i)));
 }
 
-const std::vector<Peak3D*> MergedPeak::peaks() const
+std::vector<Peak3D*> MergedPeak::peaks() const
 {
     return _peaks;
 }

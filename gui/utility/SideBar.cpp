@@ -34,7 +34,7 @@
 #define action_height 100
 
 
-SideBar::SideBar(QWidget* parent) : QWidget(parent), mCheckedAction(NULL), mOverAction(NULL)
+SideBar::SideBar(QWidget* parent) : QWidget(parent), mCheckedAction(nullptr), mOverAction(nullptr)
 {
     setMouseTracking(true);
 
@@ -127,7 +127,7 @@ void SideBar::manualSelect(int index)
     if (mCheckedAction)
         mCheckedAction->setChecked(false);
     if (mOverAction == tempAction)
-        mOverAction = NULL;
+        mOverAction = nullptr;
     mCheckedAction = tempAction;
     mCheckedAction->trigger();
     tempAction->setChecked(true);
@@ -137,12 +137,12 @@ void SideBar::manualSelect(int index)
 void SideBar::mousePressEvent(QMouseEvent* event)
 {
     QAction* tempAction = actionAt(event->pos());
-    if (tempAction == NULL || tempAction->isChecked())
+    if (tempAction == nullptr || tempAction->isChecked())
         return;
     if (mCheckedAction)
         mCheckedAction->setChecked(false);
     if (mOverAction == tempAction)
-        mOverAction = NULL;
+        mOverAction = nullptr;
     mCheckedAction = tempAction;
     mCheckedAction->trigger();
     tempAction->setChecked(true);
@@ -153,8 +153,8 @@ void SideBar::mousePressEvent(QMouseEvent* event)
 void SideBar::mouseMoveEvent(QMouseEvent* event)
 {
     QAction* tempAction = actionAt(event->pos());
-    if (tempAction == NULL) {
-        mOverAction = NULL;
+    if (tempAction == nullptr) {
+        mOverAction = nullptr;
         update();
         return;
     }
@@ -167,7 +167,7 @@ void SideBar::mouseMoveEvent(QMouseEvent* event)
 
 void SideBar::leaveEvent(QEvent* event)
 {
-    mOverAction = NULL;
+    mOverAction = nullptr;
     update();
     QWidget::leaveEvent(event);
 }
@@ -181,7 +181,7 @@ QAction* SideBar::actionAt(const QPoint& at)
             return action;
         action_y += actionRect.height();
     }
-    return NULL;
+    return nullptr;
 }
 
 void SideBar::onHome()

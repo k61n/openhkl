@@ -37,7 +37,7 @@ class PinItem : public QGraphicsItem {
     //! Methiod called when the frame is rotated to a new angle
     void rotate(double angle);
     bool iscalibrated() const;
-    void getCenter(double& y, double& z, double angle);
+    void getCenter(double& y, double& z, double angle) const;
 
  private:
     double _p1y, _p2y;

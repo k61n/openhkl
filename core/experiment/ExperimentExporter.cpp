@@ -241,9 +241,7 @@ void ExperimentExporter::writePeaks(const std::map<std::string, PeakCollection*>
 
         // initialize the datanames
         std::vector<std::string> data_names;
-        std::vector<const char*> data_name_pointers;
         std::vector<std::string> unit_cells;
-        std::vector<const char*> unit_cell_pointers;
 
         std::string name;
         std::string ext;
@@ -292,94 +290,98 @@ void ExperimentExporter::writePeaks(const std::map<std::string, PeakCollection*>
         H5::DataSpace metric_space(2, metric_peaks_h);
 
         H5::DataSet peak_end_H5(file.createDataSet(
-            std::string("/PeakCollections/" + collection_name + "/PeakEnd"),
-            H5::PredType::NATIVE_DOUBLE, peak_space));
+            "/PeakCollections/" + collection_name + "/PeakEnd", H5::PredType::NATIVE_DOUBLE,
+            peak_space));
         peak_end_H5.write(peak_end, H5::PredType::NATIVE_DOUBLE, peak_space, peak_space);
 
         H5::DataSet bkg_begin_H5(file.createDataSet(
-            std::string("/PeakCollections/" + collection_name + "/BkgBegin"),
-            H5::PredType::NATIVE_DOUBLE, peak_space));
+            "/PeakCollections/" + collection_name + "/BkgBegin", H5::PredType::NATIVE_DOUBLE,
+            peak_space));
         bkg_begin_H5.write(bkg_begin, H5::PredType::NATIVE_DOUBLE, peak_space, peak_space);
 
         H5::DataSet bkg_end_H5(file.createDataSet(
-            std::string("/PeakCollections/" + collection_name + "/BkgEnd"),
-            H5::PredType::NATIVE_DOUBLE, peak_space));
+            "/PeakCollections/" + collection_name + "/BkgEnd", H5::PredType::NATIVE_DOUBLE,
+            peak_space));
         bkg_end_H5.write(bkg_end, H5::PredType::NATIVE_DOUBLE, peak_space, peak_space);
 
         H5::DataSet scale_H5(file.createDataSet(
-            std::string("/PeakCollections/" + collection_name + "/Scale"),
-            H5::PredType::NATIVE_DOUBLE, peak_space));
+            "/PeakCollections/" + collection_name + "/Scale", H5::PredType::NATIVE_DOUBLE,
+            peak_space));
         scale_H5.write(scale, H5::PredType::NATIVE_DOUBLE, peak_space, peak_space);
 
         H5::DataSet transmission_H5(file.createDataSet(
-            std::string("/PeakCollections/" + collection_name + "/Transmission"),
-            H5::PredType::NATIVE_DOUBLE, peak_space));
+            "/PeakCollections/" + collection_name + "/Transmission", H5::PredType::NATIVE_DOUBLE,
+            peak_space));
         transmission_H5.write(transmission, H5::PredType::NATIVE_DOUBLE, peak_space, peak_space);
 
         H5::DataSet intensity_H5(file.createDataSet(
-            std::string("/PeakCollections/" + collection_name + "/Intensity"),
-            H5::PredType::NATIVE_DOUBLE, peak_space));
+            "/PeakCollections/" + collection_name + "/Intensity", H5::PredType::NATIVE_DOUBLE,
+            peak_space));
         intensity_H5.write(intensity, H5::PredType::NATIVE_DOUBLE, peak_space, peak_space);
 
         H5::DataSet sigma_H5(file.createDataSet(
-            std::string("/PeakCollections/" + collection_name + "/Sigma"),
-            H5::PredType::NATIVE_DOUBLE, peak_space));
+            "/PeakCollections/" + collection_name + "/Sigma", H5::PredType::NATIVE_DOUBLE,
+            peak_space));
         sigma_H5.write(sigma, H5::PredType::NATIVE_DOUBLE, peak_space, peak_space);
 
         H5::DataSet mean_bkg_val_H5(file.createDataSet(
-            std::string("/PeakCollections/" + collection_name + "/BkgIntensity"),
-            H5::PredType::NATIVE_DOUBLE, peak_space));
+            "/PeakCollections/" + collection_name + "/BkgIntensity", H5::PredType::NATIVE_DOUBLE,
+            peak_space));
         mean_bkg_val_H5.write(mean_bkg_val, H5::PredType::NATIVE_DOUBLE, peak_space, peak_space);
 
         H5::DataSet mean_bkg_sig_H5(file.createDataSet(
-            std::string("/PeakCollections/" + collection_name + "/BkgSigma"),
-            H5::PredType::NATIVE_DOUBLE, peak_space));
+            "/PeakCollections/" + collection_name + "/BkgSigma", H5::PredType::NATIVE_DOUBLE,
+            peak_space));
         mean_bkg_sig_H5.write(mean_bkg_sig, H5::PredType::NATIVE_DOUBLE, peak_space, peak_space);
 
         H5::DataSet center_H5(file.createDataSet(
-            std::string("/PeakCollections/" + collection_name + "/Center"),
-            H5::PredType::NATIVE_DOUBLE, center_space));
+            "/PeakCollections/" + collection_name + "/Center", H5::PredType::NATIVE_DOUBLE,
+            center_space));
         center_H5.write(center.data(), H5::PredType::NATIVE_DOUBLE, center_space, center_space);
 
         H5::DataSet metric_H5(file.createDataSet(
-            std::string("/PeakCollections/" + collection_name + "/Metric"),
-            H5::PredType::NATIVE_DOUBLE, metric_space));
+            "/PeakCollections/" + collection_name + "/Metric", H5::PredType::NATIVE_DOUBLE,
+            metric_space));
         metric_H5.write(metric.data(), H5::PredType::NATIVE_DOUBLE, metric_space, metric_space);
 
         H5::DataSet selected_H5(file.createDataSet(
-            std::string("/PeakCollections/" + collection_name + "/Selected"),
-            H5::PredType::NATIVE_HBOOL, peak_space));
+            "/PeakCollections/" + collection_name + "/Selected", H5::PredType::NATIVE_HBOOL,
+            peak_space));
         selected_H5.write(selected, H5::PredType::NATIVE_HBOOL, peak_space, peak_space);
 
         H5::DataSet masked_H5(file.createDataSet(
-            std::string("/PeakCollections/" + collection_name + "/Masked"),
-            H5::PredType::NATIVE_HBOOL, peak_space));
+            "/PeakCollections/" + collection_name + "/Masked", H5::PredType::NATIVE_HBOOL,
+            peak_space));
         masked_H5.write(masked, H5::PredType::NATIVE_HBOOL, peak_space, peak_space);
 
         H5::DataSet predicted_H5(file.createDataSet(
-            std::string("/PeakCollections/" + collection_name + "/Predicted"),
-            H5::PredType::NATIVE_HBOOL, peak_space));
+            "/PeakCollections/" + collection_name + "/Predicted", H5::PredType::NATIVE_HBOOL,
+            peak_space));
         predicted_H5.write(predicted, H5::PredType::NATIVE_HBOOL, peak_space, peak_space);
 
-        for (int i = 0; i < nPeaks; ++i)
-            data_name_pointers.push_back(data_names[i].c_str());
-        H5::StrType data_str_type(H5::PredType::C_S1, H5T_VARIABLE);
-        H5::DataSet data_H5(file.createDataSet(
-            std::string("/PeakCollections/" + collection_name + "/DataNames"), data_str_type,
-            peak_space));
-        data_H5.write(data_name_pointers.data(), data_str_type, peak_space, peak_space);
+        {
+            std::vector<const char*> data_name_pointers(nPeaks);
+            for (int i = 0; i < nPeaks; ++i)
+                data_name_pointers[i] = data_names[i].c_str();
+            H5::StrType data_str_type(H5::PredType::C_S1, H5T_VARIABLE);
+            H5::DataSet data_H5(file.createDataSet(
+                "/PeakCollections/" + collection_name + "/DataNames", data_str_type, peak_space));
+            data_H5.write(data_name_pointers.data(), data_str_type, peak_space, peak_space);
+        }
 
-        for (int i = 0; i < nPeaks; ++i)
-            unit_cell_pointers.push_back(unit_cells[i].c_str());
-        H5::StrType uc_str_type(H5::PredType::C_S1, H5T_VARIABLE);
-        H5::DataSet unit_cell_H5(file.createDataSet(
-            std::string("/PeakCollections/" + collection_name + "/UnitCells"), uc_str_type,
-            peak_space));
-        unit_cell_H5.write(unit_cell_pointers.data(), uc_str_type, peak_space, peak_space);
+        {
+            std::vector<const char*> unit_cell_pointers(nPeaks);
+            for (int i = 0; i < nPeaks; ++i)
+                unit_cell_pointers[i] = unit_cells[i].c_str();
+            H5::StrType uc_str_type(H5::PredType::C_S1, H5T_VARIABLE);
+            H5::DataSet unit_cell_H5(file.createDataSet(
+                "/PeakCollections/" + collection_name + "/UnitCells", uc_str_type, peak_space));
+            unit_cell_H5.write(unit_cell_pointers.data(), uc_str_type, peak_space, peak_space);
+        }
 
         // Write all other metadata (int and double) into the "Experiment" Group
         H5::Group meta_peak_group(
-            file.createGroup(std::string("/PeakCollections/" + collection_name + "/Meta")));
+            file.createGroup("/PeakCollections/" + collection_name + "/Meta"));
 
         std::map<std::string, float>* map = collection_item->meta();
         H5::DataSpace metaSpace(H5S_SCALAR);

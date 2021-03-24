@@ -25,8 +25,7 @@ namespace nsx {
 
 class ConvexHull {
  public:
-    ConvexHull();
-    ~ConvexHull();
+    ConvexHull() = default;
 
     ConvexHull(const ConvexHull&);
     ConvexHull& operator=(const ConvexHull&);

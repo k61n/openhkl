@@ -20,7 +20,7 @@
 #include "gui/graphics/SXPlot.h"
 #include "gui/graphics_items/PlottableItem.h"
 
-PlotPanel::PlotPanel() : QWidget()
+PlotPanel::PlotPanel()
 {
     anchor = new QHBoxLayout(this);
     plot = new SXPlot(this);

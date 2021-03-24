@@ -153,7 +153,7 @@ class ShapeCollection {
 
  private:
     //! Predict the (detector space) covariance given the fit data
-    Eigen::Matrix3d predictCovariance(const FitData& data) const;
+    Eigen::Matrix3d predictCovariance(const FitData&) const;
 
     //! List of reference peak profiles
     std::map<Peak3D*, std::pair<Profile3D, Profile1D>> _profiles;

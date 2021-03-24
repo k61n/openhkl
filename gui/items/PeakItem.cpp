@@ -26,7 +26,7 @@
 #include "tables/crystal/MillerIndex.h"
 #include "tables/crystal/UnitCell.h"
 
-PeakItem::PeakItem(nsx::Peak3D* peak) : QStandardItem()
+PeakItem::PeakItem(nsx::Peak3D* peak)
 {
     _peak = peak;
     _peak_graphic = std::unique_ptr<PeakItemGraphic>(new PeakItemGraphic(peak));
@@ -118,10 +118,9 @@ QVariant PeakItem::peakData(const QModelIndex& index, int role, PeakDisplayModes
                 }
                 case Column::uc: {
                     const nsx::UnitCell* unit_cell = _peak->unitCell();
-                    if (unit_cell)
-                        return QString::fromStdString(unit_cell->name());
-                    else
+                    if (!unit_cell)
                         return QString("not set");
+                    return QString::fromStdString(unit_cell->name());
                 }
                 case Column::d: {
                     return peak_d();
@@ -142,8 +141,7 @@ QVariant PeakItem::peakData(const QModelIndex& index, int role, PeakDisplayModes
                 case PeakDisplayModes::FILTER: {
                     if (_peak->caughtByFilter())
                         return QBrush(Qt::darkGreen);
-                    else
-                        return QBrush(Qt::darkRed);
+                    return QBrush(Qt::darkRed);
                 }
                 case PeakDisplayModes::VALID: {
                     return QBrush();
@@ -162,7 +160,7 @@ QVariant PeakItem::peakData(const QModelIndex& index, int role, PeakDisplayModes
     return QVariant::Invalid;
 }
 
-bool PeakItem::caughtByFilter(void) const
+bool PeakItem::caughtByFilter() const
 {
     return _peak->caughtByFilter();
 }

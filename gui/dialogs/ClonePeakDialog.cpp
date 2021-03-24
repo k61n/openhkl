@@ -22,7 +22,7 @@
 #include <QHBoxLayout>
 #include <QLabel>
 
-ClonePeakDialog::ClonePeakDialog(QStringList collectionNames) : QDialog()
+ClonePeakDialog::ClonePeakDialog(QStringList collectionNames)
 {
     setModal(true);
     resize(600, 130);
@@ -56,12 +56,12 @@ ClonePeakDialog::ClonePeakDialog(QStringList collectionNames) : QDialog()
     QObject::connect(buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
 }
 
-const QString ClonePeakDialog::originalCollectionName()
+QString ClonePeakDialog::originalCollectionName()
 {
     return _peak_collections->currentText();
 }
 
-const QString ClonePeakDialog::clonedCollectionName()
+QString ClonePeakDialog::clonedCollectionName()
 {
     return _new_collection_name->text();
 }

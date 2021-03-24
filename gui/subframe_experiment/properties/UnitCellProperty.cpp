@@ -28,7 +28,7 @@
 #include <QLabel>
 #include <QVBoxLayout>
 
-UnitCellProperty::UnitCellProperty() : QWidget()
+UnitCellProperty::UnitCellProperty()
 {
     setSizePolicies();
     setSizePolicy(*_size_policy_box);
@@ -218,21 +218,16 @@ void UnitCellProperty::setSizePolicies()
 
 void UnitCellProperty::refreshInput()
 {
+    const auto* prj = gSession->currentProject();
     unitcells->blockSignals(true);
     unitcells->clear();
-    unitcells->addItems(gSession->currentProject()->getUnitCellNames());
+    unitcells->addItems(prj->getUnitCellNames());
     unitcells->blockSignals(false);
 
-    bool state;
-    if (gSession->currentProject()->experiment()->getUnitCellNames().size() == 0)
-        state = false;
-    else
-        state = true;
-
+    const bool hasCells = !prj->experiment()->getUnitCellNames().empty();
     resetFields();
-    setInputEnabled(state);
-
-    if (!gSession->currentProject()->getUnitCellNames().empty())
+    setInputEnabled(hasCells);
+    if (hasCells)
         selectedCellChanged(0);
 }
 
@@ -277,7 +272,7 @@ void UnitCellProperty::setZValue(int z)
 
 void UnitCellProperty::selectedCellChanged(int cell)
 {
-    if (gSession->currentProject()->experiment()->getUnitCellNames().size() == 0)
+    if (gSession->currentProject()->experiment()->getUnitCellNames().empty())
         return;
 
     nsx::UnitCell* selected_cell = gSession->currentProject()->experiment()->getUnitCell(
@@ -347,7 +342,7 @@ void UnitCellProperty::addUnitCell()
     refreshInput();
 
     int i = 0;
-    for (std::string value : gSession->currentProject()->experiment()->getUnitCellNames()) {
+    for (const std::string& value : gSession->currentProject()->experiment()->getUnitCellNames()) {
         if (value == "New unit cell")
             selectedCellChanged(i);
         ++i;

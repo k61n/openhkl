@@ -20,8 +20,6 @@
 
 namespace nsx {
 
-MeanBackgroundIntegrator::MeanBackgroundIntegrator() : IPeakIntegrator() { }
-
 bool MeanBackgroundIntegrator::compute(
     Peak3D* /*peak*/, ShapeCollection* /*shape_collection*/, const IntegrationRegion& region)
 {

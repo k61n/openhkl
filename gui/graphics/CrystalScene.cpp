@@ -30,7 +30,12 @@
 #include "gui/graphics_tools/RulerItem.h"
 
 CrystalScene::CrystalScene(nsx::ConvexHull* hull, QWidget* parent)
-    : QGraphicsScene(parent), pixmapitem(0), _ruler(0), _pin(0), _hull(hull), _text(nullptr)
+    : QGraphicsScene(parent)
+    , pixmapitem(nullptr)
+    , _ruler(nullptr)
+    , _pin(nullptr)
+    , _hull(hull)
+    , _text(nullptr)
 {
     distance = 1.0;
     //    _distancedialog = new DialogCalibrateDistance();
@@ -45,7 +50,7 @@ CrystalScene::CrystalScene(nsx::ConvexHull* hull, QWidget* parent)
     _pinCreated = false;
 }
 
-CrystalScene::~CrystalScene() { }
+CrystalScene::~CrystalScene() = default;
 
 void CrystalScene::loadImage(QString filename)
 {

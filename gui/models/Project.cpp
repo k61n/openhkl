@@ -84,7 +84,7 @@ std::vector<nsx::sptrDataSet> Project::allData() const
 QStringList Project::getPeakListNames() const
 {
     QStringList ret;
-    for (std::string name : _experiment->getCollectionNames())
+    for (const std::string& name : _experiment->getCollectionNames())
         ret << QString::fromStdString(name);
     return ret;
 }
@@ -92,7 +92,7 @@ QStringList Project::getPeakListNames() const
 QStringList Project::getPeakCollectionNames(nsx::listtype lt) const
 {
     QStringList ret;
-    for (std::string name : _experiment->getCollectionNames(lt))
+    for (const std::string& name : _experiment->getCollectionNames(lt))
         ret << QString::fromStdString(name);
     return ret;
 }
@@ -121,9 +121,9 @@ void Project::generatePeakModel(const QString& peakListName)
 void Project::generatePeakModels()
 {
     _peak_collection_models.clear();
-    std::vector<std::string> names = _experiment->getCollectionNames();
+    const std::vector<std::string> names = _experiment->getCollectionNames();
 
-    for (std::string name : names) {
+    for (const std::string& name : names) {
         nsx::PeakCollection* peak_collection = _experiment->getPeakCollection(name);
 
         PeakCollectionItem* peak_collection_item = new PeakCollectionItem(peak_collection);
@@ -137,11 +137,8 @@ void Project::generatePeakModels()
 
 void Project::removePeakModel(const QString& name)
 {
-    std::string std_name = name.toStdString();
-
-    nsx::PeakCollection* peak_collection = _experiment->getPeakCollection(std_name);
-
-    if (!peak_collection)
+    const std::string std_name = name.toStdString();
+    if (!_experiment->getPeakCollection(std_name))
         return;
 
     int item_index = 0;
@@ -219,7 +216,7 @@ void Project::addUnitCell(const std::string& name, const nsx::UnitCell& unit_cel
 QStringList Project::getUnitCellNames() const
 {
     QStringList ret;
-    for (std::string name : _experiment->getUnitCellNames())
+    for (const std::string& name : _experiment->getUnitCellNames())
         ret << QString::fromStdString(name);
     return ret;
 }

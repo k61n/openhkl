@@ -12,6 +12,8 @@
 //
 //  ***********************************************************************************************
 
+#include <stdexcept>
+
 /*
 ** find rational approximation to given real number
 ** David Eppstein / UC Irvine / 8 Aug 1993
@@ -72,6 +74,8 @@ void doubleToFraction(double number, int nmax, long& nom, long& dnom)
     double n1 = m[0][0], d1 = m[1][0];
 
     /* now try other possibility */
+    if (m[1][0] == 0)
+        throw std::runtime_error("Unexpected division by zero in doubleToFraction");
     ai = (maxden - m[1][1]) / m[1][0];
     m[0][0] = m[0][0] * ai + m[0][1];
     m[1][0] = m[1][0] * ai + m[1][1];
@@ -89,8 +93,6 @@ void doubleToFraction(double number, int nmax, long& nom, long& dnom)
         nom *= -1.0;
         dnom *= -1.0;
     }
-
-    return;
 }
 
 } // namespace nsx

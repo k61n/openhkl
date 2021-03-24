@@ -89,7 +89,7 @@ class DetectorScene : public QGraphicsScene {
  public slots:
     void resetScene();
     void setMaxIntensity(int);
-    void slotChangeSelectedData(nsx::sptrDataSet peak, int frame);
+    void slotChangeSelectedData(nsx::sptrDataSet data, int frame);
     void slotChangeSelectedFrame(int frame);
     void slotChangeSelectedPeak(nsx::Peak3D* peak);
     void slotChangeEnabledPeak(nsx::Peak3D*) { loadCurrentImage(); }

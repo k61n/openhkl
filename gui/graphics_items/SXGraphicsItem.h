@@ -26,7 +26,7 @@ class SXGraphicsItem : public QGraphicsItem {
     // Construct a SX graphics item
     SXGraphicsItem(QGraphicsItem* parent = 0, bool deletable = false, bool movable = false);
     // Destructor
-    virtual ~SXGraphicsItem();
+    virtual ~SXGraphicsItem() = default;
 
     virtual void hoverEnterEvent(QGraphicsSceneHoverEvent* event) override;
 

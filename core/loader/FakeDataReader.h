@@ -30,7 +30,7 @@ class FakeDataReader : public HDF5MetaDataReader {
     //! Constructor. Behaves as if it is loaded from filename (which must exist!),
     //! but the frame values may be overwritten arbitrarily (without modifying the
     //! file on disk).
-    FakeDataReader(const std::string& filename, Diffractometer* instrument);
+    FakeDataReader(const std::string& filename, Diffractometer* diffractometer);
 
     ~FakeDataReader() = default;
 

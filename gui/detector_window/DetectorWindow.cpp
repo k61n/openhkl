@@ -70,7 +70,7 @@ DetectorWindow::DetectorWindow(QWidget* parent)
 
 void DetectorWindow::showEvent(QShowEvent* event)
 {
-    QWidget::showEvent(event);
+    QDialog::showEvent(event);
     setGeometry(gGui->x() + 40, gGui->y() + 80, gGui->width(), gGui->height());
 }
 
@@ -371,7 +371,7 @@ void DetectorWindow::updateExptList()
     _exp_combo->clear();
 
     if (!gSession->experimentNames().empty()) {
-        for (QString exp : gSession->experimentNames())
+        for (const QString& exp : gSession->experimentNames())
             _exp_combo->addItem(exp);
         updateDatasetList();
         updatePeakList();

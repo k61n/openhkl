@@ -26,8 +26,6 @@ ProgressHandler::ProgressHandler()
     _callback = nullptr;
 }
 
-ProgressHandler::~ProgressHandler() { }
-
 void ProgressHandler::setCallback(std::function<void()> callback)
 {
     _callback = callback;
@@ -64,7 +62,7 @@ void ProgressHandler::setStatus(const char* status)
     _status = std::string(status);
 }
 
-const std::string ProgressHandler::getStatus()
+std::string ProgressHandler::getStatus()
 {
     std::lock_guard<std::mutex> lock(_mutex);
     std::string status = _status;

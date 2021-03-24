@@ -23,8 +23,8 @@
 class ClonePeakDialog : public QDialog {
  public:
     ClonePeakDialog(QStringList collectionNames);
-    const QString originalCollectionName();
-    const QString clonedCollectionName();
+    QString originalCollectionName();
+    QString clonedCollectionName();
 
  private:
     QComboBox* _peak_collections;

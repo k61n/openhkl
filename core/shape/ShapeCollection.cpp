@@ -59,15 +59,14 @@ void PredictionParameters::log(const Level& level) const
 static std::vector<Peak3D*> buildPeaksFromMillerIndices(
     sptrDataSet data, const std::vector<MillerIndex>& hkls, const Eigen::Matrix3d& BU)
 {
-    std::vector<ReciprocalVector> qs;
-    std::vector<Peak3D*> peaks;
-
-    for (auto idx : hkls)
+    std::vector<ReciprocalVector> qs(hkls.size());
+    for (const auto& idx : hkls)
         qs.emplace_back(idx.rowVector().cast<double>() * BU);
 
     const std::vector<DetectorEvent> events =
         algo::qs2events(qs, data->instrumentStates(), data->detector());
 
+    std::vector<Peak3D*> peaks;
     for (auto event : events) {
         Peak3D* peak(new Peak3D(data));
         Eigen::Vector3d center = {event._px, event._py, event._frame};
@@ -192,7 +191,7 @@ struct FitData {
     Eigen::Vector3d q;
 
     //! Construct a FitData instance directly from a peak.
-    FitData(Peak3D* peak)
+    explicit FitData(Peak3D* peak)
     {
         const auto* detector = peak->dataSet()->reader()->diffractometer()->detector();
         const Eigen::Vector3d center = peak->shape().center();
@@ -416,7 +415,7 @@ std::vector<Intensity> ShapeCollection::meanProfile1D(
     for (auto peak : neighbors) {
         const auto& profile = _profiles.find(peak)->second.second.profile();
 
-        if (mean_profile.size() == 0)
+        if (mean_profile.empty())
             mean_profile.resize(profile.size());
 
         for (size_t i = 0; i < mean_profile.size(); ++i)
@@ -442,7 +441,7 @@ std::vector<Peak3D*> ShapeCollection::findNeighbors(
             continue;
         neighbors.push_back(peak);
     }
-    if (neighbors.size() == 0) {
+    if (neighbors.empty()) {
         ++_n_no_profile;
         throw std::runtime_error("Error, no neighboring profiles found.");
     }
@@ -461,7 +460,8 @@ Eigen::Matrix3d ShapeCollection::meanCovariance(
     if (neighbors.empty() || (neighbors.size() < min_neighbors)) {
         ++_n_lonely_peaks;
         throw std::runtime_error("ShapeCollection::meanCovariance(): peak has no neighbors");
-    } else if (neighbors.size() < min_neighbors) {
+    }
+    if (neighbors.size() < min_neighbors) {
         ++_n_unfriendly_peaks;
         throw std::runtime_error("ShapeCollection::meanCovariance(): peak has too few neighbors");
     }

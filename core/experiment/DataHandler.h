@@ -38,7 +38,6 @@ class DataHandler {
 
  public: // Handling data sets
     //! Get the diffractometer
-    const Diffractometer* getDiffractometer() const;
     Diffractometer* getDiffractometer();
     //! Set the diffractometer
     void setDiffractometer(const std::string& diffractometerName);
@@ -47,7 +46,7 @@ class DataHandler {
     //! Gets the pointer to a given data stored in the experiment
     sptrDataSet getData(std::string name) const;
     //! Get the name of the experiment
-    const std::string getName() const;
+    std::string getName() const;
     //! Return all data sets as a DataList
     DataList getAllData() const;
     //! Gets the pointer to a given data stored in the experiment

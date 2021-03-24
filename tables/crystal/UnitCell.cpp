@@ -93,7 +93,6 @@ UnitCell::UnitCell()
     , _Z(1)
     , _name("uc")
     , _indexingTolerance(0.2)
-    , _niggli()
 {
 }
 
@@ -225,7 +224,7 @@ std::string UnitCell::bravaisTypeSymbol() const
     return os.str();
 }
 
-double UnitCell::d(int h, int k, int l)
+double UnitCell::d(int h, int k, int l) const
 {
     auto q = fromIndex(Eigen::RowVector3d(h, k, l));
     return 1.0 / q.norm();
@@ -884,7 +883,7 @@ std::vector<std::string> UnitCell::compatibleSpaceGroups() const
 
     for (const auto& symbol : SpaceGroup::symbols()) {
         SpaceGroup sg(symbol);
-        if (sg.bravaisTypeSymbol().compare(cell_bravais_type) == 0)
+        if (sg.bravaisTypeSymbol() == cell_bravais_type)
             compatible_space_groups.push_back(symbol);
     }
 

@@ -41,7 +41,6 @@ IsotopesDatabaseDialog::IsotopesDatabaseDialog() : QDialog{}
         headerItem->setTextAlignment(Qt::AlignLeft);
         model->setHorizontalHeaderItem(comp++, headerItem);
     }
-    const auto& unitsMgr = nsx::UnitsManager::instance();
     const std::map<std::string, xsection::isotopeProperties>& isotopes =
         isotopesManager->isotopes();
     unsigned int isotopeCount(0);
@@ -65,14 +64,14 @@ IsotopesDatabaseDialog::IsotopesDatabaseDialog() : QDialog{}
                     }
                     case xsection::ChemicalPropertyType::Double: {
                         double value = isotopesManager->property<double>(isotopeName, pName)
-                            / unitsMgr.get(pUnit);
+                            / nsx::UnitsManager::get(pUnit);
                         item->setText(QString::number(value));
                         break;
                     }
                     case xsection::ChemicalPropertyType::Complex: {
                         std::complex<double> value =
                             isotopesManager->property<std::complex<double>>(isotopeName, pName)
-                            / unitsMgr.get(pUnit);
+                            / nsx::UnitsManager::get(pUnit);
                         std::ostringstream os;
                         os << value;
                         item->setText(QString::fromStdString(os.str()));

@@ -26,7 +26,7 @@ namespace nsx {
 GonioFit fitSampleGonioOffsets(
     const Gonio& gonio, const DataList& dataset, size_t n_iterations, double tolerance)
 {
-    size_t n_axes = gonio.nAxes();
+    const size_t n_axes = gonio.nAxes();
     std::vector<double> fitted_offsets(n_axes, 0);
 
     // No data provided, return zero offsets
@@ -36,9 +36,8 @@ GonioFit fitSampleGonioOffsets(
     }
 
     size_t n_selected_states(0);
-    for (auto data : dataset) {
-        auto&& states = data->instrumentStates();
-        for (auto state : states) {
+    for (const auto& data : dataset) {
+        for (const auto& state : data->instrumentStates()) {
             if (!state.refined)
                 continue;
             ++n_selected_states;
@@ -57,7 +56,7 @@ GonioFit fitSampleGonioOffsets(
     std::vector<std::vector<double>> selected_states;
     selected_states.reserve(n_selected_states);
 
-    for (auto data : dataset) {
+    for (const auto& data : dataset) {
         auto&& states = data->instrumentStates();
         auto&& sample_states = data->reader()->sampleStates();
         for (size_t i = 0; i < states.size(); ++i) {
@@ -119,8 +118,7 @@ GonioFit fitSampleGonioOffsets(
 GonioFit fitDetectorGonioOffsets(
     const Gonio& gonio, const DataList& dataset, size_t n_iterations, double tolerance)
 {
-    size_t n_axes = gonio.nAxes();
-
+    const size_t n_axes = gonio.nAxes();
     std::vector<double> fitted_offsets(n_axes, 0.0);
 
     // No data provided, return zero offsets
@@ -129,10 +127,10 @@ GonioFit fitDetectorGonioOffsets(
         return {false, std::move(fitted_offsets), {}};
     }
 
-    size_t n_selected_states(0);
-    for (auto data : dataset) {
+    size_t n_selected_states = 0;
+    for (const auto& data : dataset) {
         auto&& states = data->instrumentStates();
-        for (auto state : states) {
+        for (const auto& state : states) {
             if (!state.refined)
                 continue;
             ++n_selected_states;

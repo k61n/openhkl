@@ -70,16 +70,13 @@ void PeakFilter::filterSignificance(PeakCollection* peak_collection) const
         }
     }
 
-    for (auto p : peaks_per_unit_cell) {
-        auto unit_cell = p.first;
+    for (const auto& p : peaks_per_unit_cell) {
         std::vector<PeakCollection*> collection_vector;
         collection_vector.push_back(peak_collection);
+        const std::vector<Peak3D*> filtered_peaks = peak_collection->getFilteredPeakList();
 
-        SpaceGroup group(unit_cell->spaceGroup());
         MergedData merged(collection_vector, true);
-        std::vector<Peak3D*> filtered_peaks = peak_collection->getFilteredPeakList();
-
-        for (auto peak : filtered_peaks)
+        for (const auto& peak : filtered_peaks)
             merged.addPeak(peak);
 
         for (const auto& merged_peak : merged.mergedPeakSet()) {
@@ -97,7 +94,7 @@ void PeakFilter::filterSparseDataSet(PeakCollection* peak_collection) const
 
     for (int i = 0; i < peak_collection->numberOfPeaks(); ++i) {
         nsx::Peak3D* peak_ptr = peak_collection->getPeak(i);
-        auto data = peak_ptr->dataSet();
+        const auto& data = peak_ptr->dataSet();
         if (!data)
             continue;
 
@@ -111,7 +108,7 @@ void PeakFilter::filterSparseDataSet(PeakCollection* peak_collection) const
     }
 
     int nrejected = 0;
-    for (auto p : peaks_per_dataset) {
+    for (const auto& p : peaks_per_dataset) {
         if (p.second.size() > _sparse) {
             for (auto peak : p.second)
                 peak->caughtYou(true);
@@ -264,10 +261,10 @@ void PeakFilter::filterIndexed(PeakCollection* peak_collection) const
 }
 
 std::vector<Peak3D*> PeakFilter::filterIndexed(
-    const std::vector<Peak3D*> input_peaks, const UnitCell& cell, double tolerance) const
+    const std::vector<Peak3D*> peaks, const UnitCell& cell, double tolerance) const
 {
     std::vector<Peak3D*> filtered_peaks;
-    for (auto peak : input_peaks) {
+    for (auto peak : peaks) {
         MillerIndex miller_index(peak->q(), cell);
         if (miller_index.indexed(tolerance))
             filtered_peaks.push_back(peak);
@@ -438,7 +435,7 @@ void PeakFilter::filter(PeakCollection* peak_collection) const
     }
 
     if (_filter_flags.index_tol) {
-        if (!(_unit_cell == "")) {
+        if (!_unit_cell.empty()) {
             nsxlog(Level::Info, "Filtering by Miller index tolerance");
             filterIndexTolerance(peak_collection);
         }

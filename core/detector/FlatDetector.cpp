@@ -32,24 +32,20 @@ FlatDetector::FlatDetector(const std::string& name) : Detector(name) { }
 
 FlatDetector::FlatDetector(const YAML::Node& node) : Detector(node)
 {
-    const UnitsManager& um = UnitsManager::instance();
-
     // Sets the detector width from the property tree node
     auto&& widthNode = node["width"];
-    double units = um.get(widthNode["units"].as<std::string>());
+    double units = UnitsManager::get(widthNode["units"].as<std::string>());
     double width = widthNode["value"].as<double>();
     width *= units;
     setWidth(width);
 
     // Sets the detector height from the property tree node
     auto&& heightNode = node["height"];
-    units = um.get(heightNode["units"].as<std::string>());
+    units = UnitsManager::get(heightNode["units"].as<std::string>());
     double height = heightNode["value"].as<double>();
     height *= units;
     setHeight(height);
 }
-
-FlatDetector::~FlatDetector() { }
 
 Detector* FlatDetector::clone() const
 {

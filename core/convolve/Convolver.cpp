@@ -25,7 +25,7 @@ Convolver::Convolver(const parameters_map& parameters)
     _parameters = parameters;
 }
 
-Convolver::~Convolver() { }
+Convolver::~Convolver() = default;
 
 std::map<std::string, double>& Convolver::parameters()
 {
@@ -39,7 +39,7 @@ const std::map<std::string, double>& Convolver::parameters() const
 
 void Convolver::setParameters(const std::map<std::string, double>& parameters)
 {
-    for (auto p : parameters) {
+    for (const auto& p : parameters) {
         auto it = _parameters.find(p.first);
         if (it != _parameters.end())
             it->second = p.second;

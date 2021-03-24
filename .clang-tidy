@@ -3,7 +3,7 @@
 # This is the configuration for clang-tidy.
 #
 # To invoke clang-tidy, run
-#   cmake -DNSX_TIDY=ON -DNSX_PYTHON=OFF -DBUILD_NSX_GUI=OFF ..
+#   cmake .. -DNSX_TIDY=ON -DNSX_PYTHON=OFF -DNSX_TESTDATA_DIR=...
 #   make
 #
 # Below, we select all checks ('*'), then deselect quite a number of them.
@@ -41,6 +41,7 @@ Checks: '*,
 -google-readability-casting,
 -google-readability-todo,
 -google-runtime-int,
+-google-runtime-references,
 -hicpp-multiway-paths-covered,
 -hicpp-signed-bitwise,
 -hicpp-vararg,
@@ -58,6 +59,7 @@ Checks: '*,
 -SectionComment_Incompatible_with_Qt,
 
 -bugprone-suspicious-include,
+-llvm-namespace-comment,
 
 
 -SectionComment_Incompatible_with_Other_3rd_Party_Dependences,
@@ -75,7 +77,10 @@ Checks: '*,
 -*VirtualCall,
 -*UnixAPI,
 -*CallAndMessage,
+-*-avoid-goto,
+-*-avoid-c-arrays,
 
+-cert-err34-c,
 -cert-oop54-cpp,
 -cppcoreguidelines-owning-memory,
 -readability-use-anyofallof,
@@ -83,6 +88,7 @@ Checks: '*,
 
 -SectionComment_Occasionally_useful_but_will_never_fully_satisfied,
 
+-*-use-emplace,
 -*-narrowing-conversions,
 -bugprone-branch-clone,
 -bugprone-unused-return-value,
@@ -91,74 +97,29 @@ Checks: '*,
 -cppcoreguidelines-avoid-non-const-global-variables,
 -cppcoreguidelines-init-variables,
 -cppcoreguidelines-macro-usage,
-
-
--SectionComment_Temporarily_disabled_checks__We_need_to_investigate_them_one_by_one,
-
--cppcoreguidelines-pro-bounds-array-to-pointer-decay, -hicpp-no-array-decay,
--modernize-use-transparent-functors,
+-fuchsia-statically-constructed-objects,
 
 
 -SectionComment_TODO,
 
--*-avoid-c-arrays,
--*-avoid-goto,
--*-explicit-constructor,
--*-move-const-arg,
 -*-qualified-auto,
 -*-use-auto,
--*-use-emplace,
--*-use-equals-default,
 -bugprone-misplaced-widening-cast,
--bugprone-parent-virtual-call,
--cert-err34-c,
--cert-dcl21-cpp,
+-cppcoreguidelines-pro-bounds-array-to-pointer-decay, -hicpp-no-array-decay,
 -cppcoreguidelines-pro-type-const-cast,
 -cppcoreguidelines-pro-type-static-cast-downcast,
 -cppcoreguidelines-slicing,
--fuchsia-statically-constructed-objects,
--google-runtime-references,
--hicpp-explicit-conversions,
--hicpp-member-init,
--misc-redundant-expression,
 -modernize-loop-convert,
 -modernize-make-shared,
 -modernize-make-unique,
 -modernize-pass-by-value,
--modernize-use-default-member-init,
--modernize-use-using,
--performance-for-range-copy,
--performance-inefficient-vector-operation,
--performance-unnecessary-copy-initialization,
--readability-const-return-type,
--readability-container-size-empty,
+-modernize-use-transparent-functors,
 -readability-static-definition-in-anonymous-namespace,
--readability-inconsistent-declaration-parameter-name,
--readability-redundant-member-init,
--readability-simplify-boolean-expr,
-
--*-uppercase-literal-suffix,
--*-else-after-return,
--*-use-nullptr,
--clang-analyzer-cplusplus.NewDeleteLeaks,
--llvm-namespace-comment,
--modernize-redundant-void-arg,
--hicpp-noexcept-move,-performance-noexcept-move-constructor,
--bugprone-reserved-identifier,-cert-dcl37-c,-cert-dcl51-cpp,
-
--readability-static-accessed-through-instance,
--readability-redundant-smartptr-get,
--readability-make-member-function-const,
 -readability-string-compare,
--google-readability-namespace-comments,
--*-deprecated-headers,
--clang-analyzer-core.DivideZero,
--readability-redundant-control-flow,
--readability-redundant-string-init,
--cert-dcl16-c,
--bugprone-too-small-loop-variable,
--clang-analyzer-deadcode.DeadStores,
--performance-faster-string-find,
+
+-hicpp-member-init,
+-modernize-use-default-member-init,
+-readability-redundant-member-init,
 
 '
 # end of Checks string

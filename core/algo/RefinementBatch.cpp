@@ -70,8 +70,8 @@ namespace nsx {
 
 RefinementBatch::RefinementBatch(
     InstrumentStateList& states, UnitCell* uc, std::vector<const nsx::Peak3D*> peaks)
-    : _fmin(std::numeric_limits<double>().max())
-    , _fmax(std::numeric_limits<double>().lowest())
+    : _fmin(std::numeric_limits<double>::max())
+    , _fmax(std::numeric_limits<double>::lowest())
     , _cell(uc)
     , _peaks(peaks)
 {
@@ -88,7 +88,7 @@ RefinementBatch::RefinementBatch(
     _hkls.reserve(_peaks.size());
     for (const auto* peak : _peaks) {
         MillerIndex hkl(peak->q(), *_cell);
-        _hkls.push_back(hkl.rowVector().cast<double>());
+        _hkls.emplace_back(hkl.rowVector().cast<double>());
 
         Eigen::Vector3d c = peak->shape().center();
         Eigen::Matrix3d M = peak->shape().metric();
@@ -114,7 +114,7 @@ RefinementBatch::RefinementBatch(
     for (size_t i = 0; i < states.size(); ++i) {
         if (!contains(i))
             continue;
-        _states.push_back(states[i]);
+        _states.emplace_back(states[i]);
     }
 }
 
@@ -189,7 +189,7 @@ bool RefinementBatch::refine(unsigned int max_iter)
     min.setfTol(1e-10);
     min.setgTol(1e-10);
 
-    if (_constraints.size() > 0)
+    if (!_constraints.empty())
         _params.setKernel(constraintKernel(_params.nparams(), _constraints));
 
     _cost_function.clear();
@@ -210,7 +210,7 @@ bool RefinementBatch::refine(unsigned int max_iter)
 int RefinementBatch::residuals(Eigen::VectorXd& fvec)
 {
     UnitCell uc = _cell->fromParameters(_u0, _uOffsets, _cellParameters);
-    Eigen::Matrix3d UB = uc.reciprocalBasis();
+    const Eigen::Matrix3d& UB = uc.reciprocalBasis();
 
     //#pragma omp parallel for
     for (unsigned int i = 0; i < _peaks.size(); ++i) {

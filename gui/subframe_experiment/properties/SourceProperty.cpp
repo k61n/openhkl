@@ -19,7 +19,7 @@
 #include "gui/models/Session.h"
 #include <QFormLayout>
 
-SourceProperty::SourceProperty() : QWidget()
+SourceProperty::SourceProperty()
 {
     QFormLayout* form = new QFormLayout(this);
 
@@ -59,7 +59,8 @@ SourceProperty::SourceProperty() : QWidget()
                                                            ->getDiffractometer()
                                                            ->source()
                                                            .monochromators();
-        for (nsx::Monochromator m : monos)
+        list.reserve(monos.size());
+        for (const nsx::Monochromator& m : monos)
             list.push_back(QString::fromStdString(m.name()));
         _monochromators->addItems(list);
     }

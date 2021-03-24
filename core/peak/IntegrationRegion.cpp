@@ -34,8 +34,8 @@ IntegrationRegion::IntegrationRegion(
     bkg.scale(_bkgEnd);
     auto aabb = bkg.aabb();
 
-    Eigen::Vector3d lo = aabb.lower();
-    Eigen::Vector3d dx = aabb.upper() - aabb.lower();
+    const Eigen::Vector3d& lo = aabb.lower();
+    const Eigen::Vector3d& dx = aabb.upper() - aabb.lower();
 
     _hull.addVertex(lo);
     _hull.addVertex(lo + Eigen::Vector3d(0, 0, dx[2]));
@@ -53,7 +53,7 @@ const AABB& IntegrationRegion::aabb() const
     return _hull.aabb();
 }
 
-const AABB IntegrationRegion::peakBB() const
+AABB IntegrationRegion::peakBB() const
 {
     Ellipsoid peakShape = _shape;
     peakShape.scale(_peakEnd);
@@ -74,8 +74,8 @@ void IntegrationRegion::updateMask(Eigen::MatrixXi& mask, double z) const
     long xmax = std::lround(std::ceil(upper[0]) + 1);
     long ymax = std::lround(std::ceil(upper[1]) + 1);
 
-    xmin = std::max(0l, xmin);
-    ymin = std::max(0l, ymin);
+    xmin = std::max(0L, xmin);
+    ymin = std::max(0L, ymin);
 
     xmax = std::min(xmax, long(mask.cols()));
     ymax = std::min(ymax, long(mask.rows()));

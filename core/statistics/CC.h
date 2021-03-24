@@ -40,7 +40,7 @@ class CC {
  private:
     double _CChalf;
     double _CCstar;
-    unsigned int _nPeaks;
+    unsigned int _nPeaks{0};
 };
 
 } // namespace nsx

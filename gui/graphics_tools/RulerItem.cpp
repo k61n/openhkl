@@ -42,7 +42,7 @@ RulerItem::RulerItem(QGraphicsItem* parent) : QGraphicsItem(parent)
     _displaydistance = true;
 }
 
-RulerItem::~RulerItem() { }
+RulerItem::~RulerItem() = default;
 
 QRectF RulerItem::boundingRect() const
 {

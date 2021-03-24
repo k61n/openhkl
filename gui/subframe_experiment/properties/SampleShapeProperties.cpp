@@ -23,7 +23,7 @@
 #include <QLabel>
 #include <QVBoxLayout>
 
-SampleShapeProperties::SampleShapeProperties() : QWidget()
+SampleShapeProperties::SampleShapeProperties()
 {
     QVBoxLayout* overallLayout = new QVBoxLayout(this);
     // SampleProperty
@@ -71,13 +71,13 @@ void SampleShapeProperties::refreshInput()
         sampleGoniometer->setRowCount(n_sample_gonio_axes);
         sampleGoniometer->setColumnCount(2);
 
-        QTableWidgetItem* __qtablewidgetitem = new QTableWidgetItem();
-        __qtablewidgetitem->setText("Name");
-        sampleGoniometer->setHorizontalHeaderItem(0, __qtablewidgetitem);
+        auto* tablewidgetitem = new QTableWidgetItem();
+        tablewidgetitem->setText("Name");
+        sampleGoniometer->setHorizontalHeaderItem(0, tablewidgetitem);
 
-        QTableWidgetItem* __qtablewidgetitem1 = new QTableWidgetItem();
-        __qtablewidgetitem1->setText("Type");
-        sampleGoniometer->setHorizontalHeaderItem(1, __qtablewidgetitem1);
+        auto* tablewidgetitem1 = new QTableWidgetItem();
+        tablewidgetitem1->setText("Type");
+        sampleGoniometer->setHorizontalHeaderItem(1, tablewidgetitem1);
         sampleGoniometer->horizontalHeader()->setStretchLastSection(true);
         sampleGoniometer->verticalHeader()->setVisible(false);
 

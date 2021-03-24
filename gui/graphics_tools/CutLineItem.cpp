@@ -20,7 +20,7 @@
 
 CutLineItem::CutLineItem(nsx::sptrDataSet data) : CutterItem(data), _nPoints(10) { }
 
-CutLineItem::~CutLineItem() { }
+CutLineItem::~CutLineItem() = default;
 
 void CutLineItem::plot(SXPlot* plot)
 {

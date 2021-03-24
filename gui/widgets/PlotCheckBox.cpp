@@ -14,8 +14,6 @@
 
 #include "gui/widgets/PlotCheckBox.h"
 
-PlotCheckBox::PlotCheckBox() : QCheckBox() { }
-
 PlotCheckBox::PlotCheckBox(const QString& text, TableType table, int column)
     : QCheckBox(text), _table(table), _column(column)
 {

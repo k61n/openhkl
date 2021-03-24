@@ -75,7 +75,7 @@ void ProgressView::updateProgress()
 
     std::vector<std::string> log = _handler->getLog();
 
-    for (std::string msg : log)
+    for (const std::string& msg : log)
         qDebug() << msg.c_str();
 }
 

@@ -197,10 +197,10 @@ TEST_CASE("test/data/TestNewWorkFlow.cpp", "")
         if (!pk->enabled())
             continue;
 
-        nsx::Ellipsoid elli_real = pk->shape();
-        nsx::Ellipsoid elli_recip = pk->qShape();
-        nsx::Intensity intensity = pk->rawIntensity();
-        nsx::Intensity background = pk->meanBackground();
+        const nsx::Ellipsoid& elli_real = pk->shape();
+        const nsx::Ellipsoid& elli_recip = pk->qShape();
+        const nsx::Intensity intensity = pk->rawIntensity();
+        const nsx::Intensity background = pk->meanBackground();
 
         std::cout << "real peak: " << elli_real.center().transpose() << ", ";
         std::cout << "recip peak: " << elli_recip.center().transpose() << ", ";
@@ -274,7 +274,7 @@ TEST_CASE("test/data/TestNewWorkFlow.cpp", "")
         q_vectors.push_back(peak->q());
         auto events = nsx::algo::qs2events(q_vectors, dataf->instrumentStates(), dataf->detector());
 
-        if (events.size() == 0)
+        if (events.empty())
             continue;
 
         ++n_selected;

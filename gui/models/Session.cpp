@@ -141,7 +141,7 @@ void Session::loadData(nsx::DataFormat format)
     if (_currentProject < 0)
         createExperiment();
 
-    for (QString filename : filenames) {
+    for (const QString& filename : filenames) {
         QFileInfo fileinfo(filename);
         nsx::Experiment* exp = currentProject()->experiment();
 
@@ -207,7 +207,7 @@ void Session::loadRawData()
     s.setValue("data_raw", loadDirectory);
 
     std::vector<std::string> filenames;
-    for (QString filename : qfilenames)
+    for (const QString& filename : qfilenames)
         filenames.push_back(filename.toStdString());
 
     RawDataDialog dialog;

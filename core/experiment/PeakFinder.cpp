@@ -161,7 +161,7 @@ void PeakFinder::setFramesBegin(int framesBegin)
     _framesBegin = framesBegin;
 }
 
-int PeakFinder::framesBegin()
+int PeakFinder::framesBegin() const
 {
     return _framesBegin;
 }
@@ -171,7 +171,7 @@ void PeakFinder::setFramesEnd(int framesEnd)
     _framesEnd = framesEnd;
 }
 
-int PeakFinder::framesEnd()
+int PeakFinder::framesEnd() const
 {
     return _framesEnd;
 }

@@ -15,7 +15,7 @@
 #include "gui/dialogs/RawDataDialog.h"
 #include <QFormLayout>
 
-RawDataDialog::RawDataDialog() : QDialog()
+RawDataDialog::RawDataDialog()
 {
     QFormLayout* layout = new QFormLayout(this);
 

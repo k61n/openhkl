@@ -27,7 +27,7 @@
 namespace nsx {
 
 IDataReader::IDataReader(const std::string& filename, Diffractometer* diffractometer)
-    : _diffractometer(std::move(diffractometer))
+    : _diffractometer(diffractometer)
     , _nFrames(0)
     , _sampleStates()
     , _detectorStates()
@@ -40,7 +40,7 @@ IDataReader::IDataReader(const std::string& filename, Diffractometer* diffractom
     _nCols = _diffractometer->detector()->nCols();
 }
 
-IDataReader::~IDataReader() { }
+IDataReader::~IDataReader() = default;
 
 size_t IDataReader::nFrames() const
 {

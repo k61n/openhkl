@@ -44,13 +44,15 @@ class Octree : public AABB {
     //! Pair of Ellipsoid*
     using collision_pair = std::pair<const Ellipsoid*, const Ellipsoid*>;
 
-    Octree(Octree&& other);
-    Octree(const Octree& other) = delete;
-
     //! Constructor from two Eigen3 vectors, throw invalid_argument if lb < ub
     Octree(const Eigen::Vector3d& lb, const Eigen::Vector3d& ub);
-
+    Octree(const Octree* parent, unsigned int sector);
     ~Octree() = default;
+
+
+    Octree(Octree&& other) noexcept;
+    Octree(const Octree& other) = delete;
+
 
     //! Add a new AABB object to the deepest leaf.
     //! If the leaf has reached capacity of _MAX_STORAGE, then it will be split
@@ -96,8 +98,6 @@ class Octree : public AABB {
     iterator end() const;
 
     const std::vector<const Ellipsoid*>& getData() const { return _data; }
-
-    Octree(const Octree* parent, unsigned int i);
 
     unsigned int numChambers() const;
 
@@ -147,20 +147,15 @@ class OctreeIterator {
     //! The default constructor. Used only for end condition.
     OctreeIterator();
 
-    //! The constructor from a reference to the Octree to be iterated.
-    OctreeIterator(const Octree& tree);
+    //! Copy constructor, used for iteration(?)
+    OctreeIterator(const Octree& node);
 
     bool operator==(const OctreeIterator& other) const;
-
     bool operator!=(const OctreeIterator& other) const;
 
     const Octree& operator*() const;
-
     const Octree* operator->() const;
-
     OctreeIterator& operator++();
-
-    OctreeIterator operator++(int);
 
  private:
     const Octree* _node;

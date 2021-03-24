@@ -17,8 +17,6 @@
 
 namespace nsx {
 
-Profile3DIntegrator::Profile3DIntegrator() { }
-
 static void updateFit(
     Intensity& I, Intensity& B, const std::vector<double>& profile,
     const std::vector<double>& counts)
@@ -135,12 +133,7 @@ bool Profile3DIntegrator::compute(
 
     double sigma = _integratedIntensity.sigma();
 
-    if (std::isnan(sigma) || sigma <= 0.0)
-        return false;
-
-    // TODO: rocking curve!
-
-    return true;
+    return !std::isnan(sigma) && sigma > 0;
 }
 
 } // namespace nsx

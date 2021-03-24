@@ -25,7 +25,7 @@
 #include <QMenu>
 #include <QMessageBox>
 
-NumorProperty::NumorProperty() : QWidget()
+NumorProperty::NumorProperty()
 {
     setSizePolicies();
 

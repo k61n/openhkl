@@ -31,7 +31,7 @@ InstrumentStatesFrame::InstrumentStatesFrame() : QFrame()
         // gLogger->log("[ERROR] No experiment selected");
         return;
     }
-    std::vector<nsx::sptrDataSet> datalist = gSession->currentProject()->allData();
+    const std::vector<nsx::sptrDataSet> datalist = gSession->currentProject()->allData();
     if (datalist.empty()) {
         // gLogger->log("[ERROR] No dataset found");
         return;
@@ -47,7 +47,7 @@ InstrumentStatesFrame::InstrumentStatesFrame() : QFrame()
     QHBoxLayout* horizLayout = new QHBoxLayout;
     QVBoxLayout* vertical_1 = new QVBoxLayout;
     data = new QListWidget(this);
-    for (nsx::sptrDataSet d : datalist) {
+    for (const nsx::sptrDataSet& d : datalist) {
         QFileInfo fileinfo(QString::fromStdString(d->filename()));
         QListWidgetItem* item = new QListWidgetItem(fileinfo.baseName());
         item->setData(Qt::UserRole, QVariant::fromValue(d));

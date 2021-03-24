@@ -65,7 +65,7 @@ size_t FitParameters::nfree() const
 {
     if (!_constrained)
         return _params.size();
-    return _params.size() == 0 ? 0 : _K.cols();
+    return _params.empty() ? 0 : _K.cols();
 }
 
 void FitParameters::setConstraint(const Eigen::SparseMatrix<double>& C_input)

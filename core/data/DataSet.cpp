@@ -63,7 +63,7 @@ DataSet::~DataSet()
     blosc_destroy();
 }
 
-int DataSet::dataAt(unsigned int x, unsigned int y, unsigned int z)
+int DataSet::dataAt(unsigned int x, unsigned int y, unsigned int z) const
 {
     // Check that the voxel is inside the limit of the data
     if (z >= _nFrames || y >= _ncols || x >= _nrows)
@@ -228,9 +228,8 @@ void DataSet::saveHDF5(const std::string& filename) // const
     for (const auto& item : map) {
         try {
             if (std::holds_alternative<std::string>(item.second)) {
-                std::string info = std::get<std::string>(item.second);
                 H5::Attribute intAtt(infogroup.createAttribute(item.first, str80, metaSpace));
-                intAtt.write(str80, info);
+                intAtt.write(str80, std::get<std::string>(item.second));
             }
         } catch (const std::exception& ex) {
             std::cerr << "Exception in " << __PRETTY_FUNCTION__ << ": " << ex.what() << std::endl;
@@ -245,12 +244,12 @@ void DataSet::saveHDF5(const std::string& filename) // const
     for (const auto& item : map) {
         try {
             if (std::holds_alternative<int>(item.second)) {
-                int value = std::get<int>(item.second);
+                const int value = std::get<int>(item.second);
                 H5::Attribute intAtt(metadatagroup.createAttribute(
                     item.first, H5::PredType::NATIVE_INT32, metaSpace));
                 intAtt.write(H5::PredType::NATIVE_INT, &value);
             } else if (std::holds_alternative<double>(item.second)) {
-                double dvalue = std::get<double>(item.second);
+                const double dvalue = std::get<double>(item.second);
                 H5::Attribute intAtt(metadatagroup.createAttribute(
                     item.first, H5::PredType::NATIVE_DOUBLE, metaSpace));
                 intAtt.write(H5::PredType::NATIVE_DOUBLE, &dvalue);
@@ -282,7 +281,7 @@ const std::set<IMask*>& DataSet::masks() const
 
 void DataSet::maskPeaks(PeakList& peaks) const
 {
-    for (auto peak : peaks) {
+    for (const auto& peak : peaks) {
         // peak belongs to another dataset
         if (peak->dataSet().get() != this)
             continue;
@@ -305,7 +304,7 @@ ReciprocalVector DataSet::computeQ(const DetectorEvent& ev) const
     return state.sampleQ(detector_position);
 }
 
-Eigen::MatrixXd DataSet::transformedFrame(std::size_t idx)
+Eigen::MatrixXd DataSet::transformedFrame(std::size_t idx) const
 {
     Eigen::ArrayXXd new_frame = frame(idx).cast<double>();
     new_frame -= detector().baseline();
@@ -343,7 +342,7 @@ std::string DataSet::name() const
     if (sep != std::string::npos)
         data_name = data_name.substr(sep + 1, data_name.size() - sep - 1);
 
-    size_t dot = data_name.find_last_of(".");
+    size_t dot = data_name.find_last_of('.');
     if (dot != std::string::npos) {
         name = data_name.substr(0, dot);
         ext = data_name.substr(dot, data_name.size() - dot);
@@ -352,7 +351,7 @@ std::string DataSet::name() const
         ext = "";
     }
 
-    if (!(_name == ""))
+    if (!_name.empty())
         return _name;
     return name;
 }

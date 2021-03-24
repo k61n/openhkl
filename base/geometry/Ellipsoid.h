@@ -36,7 +36,7 @@ class Ellipsoid {
     virtual ~Ellipsoid() = default;
 
     //! Returns true if the ellipsoid intersects an AABB.
-    bool collide(const AABB& other) const;
+    bool collide(const AABB& aabb) const;
     //! Returns true if the ellipsoid intersects an ellipsoid.
     bool collide(const Ellipsoid& other) const;
     //! Returns true if ellipsoid collides with segment from a to b

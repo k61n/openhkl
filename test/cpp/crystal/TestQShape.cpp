@@ -113,7 +113,7 @@ TEST_CASE("test/crystal/TestQShape.cpp", "")
         } catch (...) {
             continue;
         }
-        auto old_shape = peak->shape();
+        const auto& old_shape = peak->shape();
 
         // note: some blobs are invalid, so we skip them
         if (!(old_shape.metric().norm() < 1e3))

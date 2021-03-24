@@ -70,26 +70,26 @@ class PeakFinder {
     //! Return the minimum blob size. Blob is discarded if it contains fewer pixels.
     int minSize() const;
     //! Set the minimum blob size
-    void setMinSize(int minComp);
+    void setMinSize(int size);
 
     //! Return the maximum blob size. Blob is discarded if it contains more pixels.
     int maxSize() const;
     //! Set the maximum blob size
-    void setMaxSize(int maxComp);
+    void setMaxSize(int size);
 
     //! Return the maximum number of frames for a blob. Blob is discarded if it is
     //! spread over more frames.
     int maxFrames() const;
     //! Set the maximum number of frames for a blob
-    void setMaxFrames(int maxComp);
+    void setMaxFrames(int maxFrames);
 
     //! Return the frame at which peak finding begins
-    int framesBegin();
+    int framesBegin() const;
     //! Set the frame at which peak finding begins
     void setFramesBegin(int framesBegin);
 
     //! Return the frame at which peak finding ends
-    int framesEnd();
+    int framesEnd() const;
     //! Set the frame at which peak finding ends
     void setFramesEnd(int framesEnd);
 

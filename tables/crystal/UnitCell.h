@@ -130,7 +130,7 @@ class UnitCell {
     UnitCell applyNiggliConstraints() const;
 
     //! Returns d of the Bragg condition for the given reflection
-    double d(int h, int k, int l);
+    double d(int h, int k, int l) const;
 
     //! Print into a stream
     void printSelf(std::ostream& os) const;

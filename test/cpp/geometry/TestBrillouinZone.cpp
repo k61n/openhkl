@@ -33,7 +33,7 @@ void validate_zone(const Eigen::Matrix3d& B, int nverts, int nfaces)
     CHECK(zone.vertices().size() == nverts);
     CHECK(2 * zone.normals().size() == nfaces);
 
-    for (auto n : zone.normals()) {
+    for (const auto& n : zone.normals()) {
         CHECK(zone.inside(0.5 * n));
         CHECK(zone.inside(-0.5 * n));
 
@@ -44,7 +44,7 @@ void validate_zone(const Eigen::Matrix3d& B, int nverts, int nfaces)
         CHECK(zone.inside(-0.51 * n) == false);
     }
 
-    for (auto v : zone.vertices()) {
+    for (const auto& v : zone.vertices()) {
         CHECK(zone.inside(v));
         CHECK(zone.inside(-v));
 

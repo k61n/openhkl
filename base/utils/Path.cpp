@@ -81,14 +81,14 @@ std::string fileDirname(const std::string& input_path)
 
 void makeDirectory(const std::string& path, int mode)
 {
-    auto components = split(path, fileSeparator());
+    const std::vector<std::string> components = split(path, fileSeparator());
 
     std::vector<std::string> intermediate_paths;
     intermediate_paths.reserve(components.size());
 
-    for (auto comp : components) {
+    for (const std::string& comp : components) {
         intermediate_paths.push_back(comp);
-        auto inner_path = join(intermediate_paths, fileSeparator());
+        const std::string inner_path = join(intermediate_paths, fileSeparator());
 #if defined(_WIN32)
         _mkdir(inner_path.c_str());
 #else
@@ -104,27 +104,24 @@ std::string homeDirectory()
     // Build the home directory from HOME environment variable
     if (home_envvar)
         return std::string(home_envvar);
+
     // If HOME is not defined (on Windows it may happen) define the home
     // directory from USERPROFILE environment variable
-    else {
-        home_envvar = getenv("USERPROFILE");
-        if (home_envvar)
-            return std::string(home_envvar);
-        // If the USERPROFILE environment variable is not defined try to build
-        // a home directory from the HOMEDRIVE and HOMEPATH environment variable
-        else {
-            char const* hdrive = getenv("HOMEDRIVE");
-            char const* hpath = getenv("HOMEPATH");
-            if (hdrive && hpath) {
-                std::string home(hdrive);
-                home += fileSeparator();
-                home += hpath;
-                return home;
-            }
-        }
-    }
-    // Otherwise throw and error
-    throw std::runtime_error("The home directory could not be defined");
+    home_envvar = getenv("USERPROFILE");
+    if (home_envvar)
+        return std::string(home_envvar);
+
+    // If the USERPROFILE environment variable is not defined try to build
+    // a home directory from the HOMEDRIVE and HOMEPATH environment variable
+    char const* hdrive = getenv("HOMEDRIVE");
+    char const* hpath = getenv("HOMEPATH");
+    if (!hdrive || !hpath)
+        throw std::runtime_error("The home directory could not be defined");
+
+    std::string home(hdrive);
+    home += fileSeparator();
+    home += hpath;
+    return home;
 }
 
 std::string buildPath(const std::vector<std::string>& paths, const std::string& root)
@@ -133,8 +130,7 @@ std::string buildPath(const std::vector<std::string>& paths, const std::string& 
 
     if (root.empty())
         return path;
-    else
-        return root + fileSeparator() + path;
+    return root + fileSeparator() + path;
 }
 
 std::string applicationDataPath()

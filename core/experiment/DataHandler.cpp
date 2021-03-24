@@ -28,15 +28,6 @@ DataHandler::DataHandler(const std::string& name, const std::string& diffractome
     _name = name;
 }
 
-const Diffractometer* DataHandler::getDiffractometer() const
-{
-    if (!_diffractometer) {
-        return _diffractometer.get();
-    } else {
-        throw std::runtime_error("No diffractometer found");
-    }
-}
-
 Diffractometer* DataHandler::getDiffractometer()
 {
     return _diffractometer.get();
@@ -65,7 +56,7 @@ const DataMap* DataHandler::getDataMap() const
     return &_data_map;
 }
 
-const std::string DataHandler::getName() const
+std::string DataHandler::getName() const
 {
     return _name;
 }
@@ -90,7 +81,7 @@ sptrDataSet DataHandler::getData(std::string name) const
 
 void DataHandler::addData(sptrDataSet data, std::string name)
 {
-    if (name == "")
+    if (name.empty())
         name = data->filename();
 
     // Add the data only if it does not exist in the current data map

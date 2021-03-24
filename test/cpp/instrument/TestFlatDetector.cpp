@@ -37,7 +37,7 @@ TEST_CASE("test/instrument/TestFlatDetector.cpp", "")
     // This should be the center of the detector at rest at (0,0.764,0)
     const nsx::DirectVector pixel_position = d.pixelPosition(15.5, 15.5);
 
-    const Eigen::Vector3d center = pixel_position.vector();
+    const Eigen::Vector3d& center = pixel_position.vector();
     CHECK(std::abs(center[0]) < tolerance);
     CHECK(center[1] == Approx(0.380).epsilon(tolerance));
     CHECK(std::abs(center[2]) < tolerance);

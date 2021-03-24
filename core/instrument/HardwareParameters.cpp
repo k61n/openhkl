@@ -66,9 +66,8 @@ YAML::Node findResource(const std::string& instrumentName)
     return YAML::Load(database.at(instrumentName));
 }
 
-std::set<std::string> getResourcesName(const std::string& resource_type)
+std::set<std::string> getResourcesName(const std::string& /* resourceType */)
 {
-    (void)resource_type; // Set to ignore warning
     std::set<std::string> ret;
     for (auto it = database.begin(); it != database.end(); ++it)
         ret.insert(it->first);

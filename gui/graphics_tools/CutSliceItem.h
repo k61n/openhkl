@@ -23,7 +23,7 @@ class CutSliceItem : public CutterItem {
     //! Construct a data slicer
     CutSliceItem(nsx::sptrDataSet, bool horizontal = true);
     //! The destructor
-    ~CutSliceItem();
+    ~CutSliceItem() = default;
 
     // Events
 

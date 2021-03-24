@@ -39,7 +39,7 @@ Diffractometer* Diffractometer::create(const std::string& name)
     return diffractometer;
 }
 
-Diffractometer::Diffractometer() : _name(""), _detector(nullptr), _sample(), _source() { }
+Diffractometer::Diffractometer() : _detector(nullptr), _sample(), _source() { }
 
 Diffractometer::Diffractometer(const Diffractometer& other)
     : _name(other._name)
@@ -69,7 +69,7 @@ Diffractometer::Diffractometer(const YAML::Node& node)
     _source = Source(node["source"]);
 }
 
-Diffractometer::~Diffractometer() { }
+Diffractometer::~Diffractometer() = default;
 
 void Diffractometer::setDetector(std::unique_ptr<Detector> detector)
 {

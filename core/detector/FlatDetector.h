@@ -36,7 +36,7 @@ class FlatDetector : public Detector {
     FlatDetector(const YAML::Node& node);
     //! Returns a pointer to a copy of a FlatDetector
     Detector* clone() const override;
-    virtual ~FlatDetector();
+
     FlatDetector& operator=(const FlatDetector& other) = default;
 
     //! Sets the height of the detector (meters)

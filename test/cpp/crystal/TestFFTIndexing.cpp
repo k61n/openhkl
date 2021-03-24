@@ -50,8 +50,8 @@ TEST_CASE("test/crystal/TestFFTIndexing.cpp", "")
     uc = uc.applyNiggliConstraints();
     std::cout << "Basis:\n" << uc.basis() << std::endl;
 
-    std::vector<nsx::ReciprocalVector> qs;
     const auto reflections = uc.generateReflectionsInShell(0.5, 100, 2.67);
+    std::vector<nsx::ReciprocalVector> qs(reflections.size());
     for (const nsx::MillerIndex& index : reflections) {
         // std::cout << "reflection: " << index << std::endl;
         qs.emplace_back(index.rowVector().cast<double>() * uc.reciprocalBasis());

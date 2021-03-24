@@ -48,7 +48,7 @@ class CrystalNodeItem : public QGraphicsItem {
     //! Methiod called when the frame is rotated to a new angle
     void rotate(double angle, double yc);
     //! Get the position coordinates of this node
-    void getCoordinates(double& x, double& y, double& z);
+    void getCoordinates(double& x, double& y, double& z) const;
  signals:
 
  public slots:

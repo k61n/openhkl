@@ -30,7 +30,7 @@ EllipseMaskItem::EllipseMaskItem(nsx::sptrDataSet data, nsx::AABB* aabb)
     _text->setParentItem(this);
 }
 
-EllipseMaskItem::~EllipseMaskItem() { }
+EllipseMaskItem::~EllipseMaskItem() = default;
 
 void EllipseMaskItem::paint(
     QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget)

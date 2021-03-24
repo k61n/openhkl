@@ -59,7 +59,7 @@ void CrystalNodeItem::rotate(double angle, double yc)
     setPos(_p1x, yc + newy);
 }
 
-void CrystalNodeItem::getCoordinates(double& x, double& y, double& z)
+void CrystalNodeItem::getCoordinates(double& x, double& y, double& z) const
 {
     double anglerad = -_angle * M_PI / 180.0;
     x = _p1x;

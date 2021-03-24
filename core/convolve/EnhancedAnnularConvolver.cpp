@@ -12,7 +12,7 @@
 //
 //  ***********************************************************************************************
 
-#include <math.h>
+#include <cmath>
 
 #include "core/convolve/EnhancedAnnularConvolver.h"
 #include "core/convolve/RadialConvolver.h"

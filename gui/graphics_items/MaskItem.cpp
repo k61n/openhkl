@@ -31,7 +31,7 @@ MaskItem::MaskItem(nsx::sptrDataSet data, nsx::AABB* aabb)
     _text->setParentItem(this);
 }
 
-MaskItem::~MaskItem() { }
+MaskItem::~MaskItem() = default;
 
 void MaskItem::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget)
 {

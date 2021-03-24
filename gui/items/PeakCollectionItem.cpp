@@ -103,9 +103,8 @@ void PeakCollectionItem::sort(int column, Qt::SortOrder order)
                 const nsx::UnitCell* cell_2 = p2->peak()->unitCell();
                 if (cell_1 && cell_2) {
                     return (p1->peak()->hkl().h() < p2->peak()->hkl().h());
-                } else {
-                    return ((cell_1 != nullptr) < (cell_2 != nullptr));
                 }
+                return ((cell_1 != nullptr) < (cell_2 != nullptr));
             };
             break;
         }
@@ -115,9 +114,8 @@ void PeakCollectionItem::sort(int column, Qt::SortOrder order)
                 const nsx::UnitCell* cell_2 = p2->peak()->unitCell();
                 if (cell_1 && cell_2) {
                     return (p1->peak()->hkl().k() < p2->peak()->hkl().k());
-                } else {
-                    return ((cell_1 != nullptr) < (cell_2 != nullptr));
                 }
+                return ((cell_1 != nullptr) < (cell_2 != nullptr));
             };
             break;
         }
@@ -127,9 +125,8 @@ void PeakCollectionItem::sort(int column, Qt::SortOrder order)
                 const nsx::UnitCell* cell_2 = p2->peak()->unitCell();
                 if (cell_1 && cell_2) {
                     return (p1->peak()->hkl().l() < p2->peak()->hkl().l());
-                } else {
-                    return ((cell_1 != nullptr) < (cell_2 != nullptr));
                 }
+                return ((cell_1 != nullptr) < (cell_2 != nullptr));
             };
             break;
         }
@@ -279,30 +276,28 @@ void PeakCollectionItem::setFilterMode()
 
 std::vector<PeakItem*> PeakCollectionItem::peakItems() const
 {
-    std::vector<PeakItem*> output;
+    std::vector<PeakItem*> output(_peak_items.size());
     for (int i = 0; i < _peak_items.size(); ++i)
-        output.push_back(_peak_items.at(i).get());
-
+        output[i] = _peak_items.at(i).get();
     return output;
 }
 
-int PeakCollectionItem::numberOfPeaks(void) const
+int PeakCollectionItem::numberOfPeaks() const
 {
     return _peak_items.size();
 }
 
-int PeakCollectionItem::numberCaughtByFilter(void) const
+int PeakCollectionItem::numberCaughtByFilter() const
 {
     int n_caught = 0;
     for (int i = 0; i < _peak_items.size(); ++i) {
-        if (_peak_items.at(i)->caughtByFilter()) {
+        if (_peak_items.at(i)->caughtByFilter())
             ++n_caught;
-        }
     }
     return n_caught;
 }
 
-int PeakCollectionItem::numberRejectedByFilter(void) const
+int PeakCollectionItem::numberRejectedByFilter() const
 {
     return _peak_items.size() - numberCaughtByFilter();
 }

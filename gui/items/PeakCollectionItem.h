@@ -67,11 +67,11 @@ class PeakCollectionItem {
     //! Set the visual to filter mode
     void setFilterMode();
     //! Return number of peaks caught by filter
-    int numberCaughtByFilter(void) const;
+    int numberCaughtByFilter() const;
     //! Return number of peaks rejected by filter
-    int numberRejectedByFilter(void) const;
+    int numberRejectedByFilter() const;
     //! Return number of peaks
-    int numberOfPeaks(void) const;
+    int numberOfPeaks() const;
 
  private:
     const nsx::PeakCollection* _peak_collection;

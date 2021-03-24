@@ -42,7 +42,7 @@ std::vector<DetectorEvent> algo::qs2events(
         InterpolatedState state1 = states.interpolate(f1);
 
         bool s0 = compute_sign(q_vect, state0);
-        bool s1 = compute_sign(q_vect, state1);
+        const bool s1 = compute_sign(q_vect, state1);
 
         // does not cross Ewald sphere, or crosses more than once
         if (s0 == s1)
@@ -59,7 +59,6 @@ std::vector<DetectorEvent> algo::qs2events(
                 state0 = state;
                 f0 = f;
             } else { // branch left
-                s1 = sign;
                 state1 = state;
                 f1 = f;
             }

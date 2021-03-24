@@ -38,7 +38,7 @@
 #include <fstream>
 #include <iomanip>
 
-SubframeMergedPeaks::SubframeMergedPeaks() : QWidget()
+SubframeMergedPeaks::SubframeMergedPeaks()
 {
     setSizePolicies();
 

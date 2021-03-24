@@ -19,7 +19,7 @@
 #include <QTreeView>
 #include <QVBoxLayout>
 
-LoggerPanel::LoggerPanel() : QWidget()
+LoggerPanel::LoggerPanel()
 {
     logText = new QTextEdit;
 

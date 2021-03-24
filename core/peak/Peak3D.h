@@ -48,7 +48,7 @@ class Peak3D {
     friend bool operator<(const Peak3D& p1, const Peak3D& p2);
 
     //! Sets the Peak region. Peak shaped is owned after setting
-    void setShape(const Ellipsoid& peak);
+    void setShape(const Ellipsoid& shape);
 
     //! Gets the projection of total data in the bounding box.
     const std::vector<Intensity>& rockingCurve() const;

@@ -56,7 +56,7 @@ Axis::Axis(const YAML::Node& node)
     _id = node["id"] ? node["id"].as<unsigned int>() : 0;
 }
 
-Axis::~Axis() { }
+Axis::~Axis() = default;
 
 void Axis::setName(const std::string& name)
 {
@@ -91,7 +91,7 @@ unsigned int Axis::id() const
     return _id;
 }
 
-Eigen::Vector3d Axis::transform(const Eigen::Vector3d& v, double value)
+Eigen::Vector3d Axis::transform(const Eigen::Vector3d& v, double value) const
 {
     Eigen::Transform<double, 3, Eigen::Affine> hom = affineMatrix(value);
     return (hom * v.homogeneous());

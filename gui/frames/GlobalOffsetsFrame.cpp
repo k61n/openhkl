@@ -50,7 +50,7 @@ void GlobalOffsetsFrame::layout()
     QVBoxLayout* left = new QVBoxLayout;
     selectedData = new QListWidget;
     std::vector<nsx::sptrDataSet> all_data = gSession->currentProject()->allData();
-    for (nsx::sptrDataSet data : all_data) {
+    for (const nsx::sptrDataSet& data : all_data) {
         QFileInfo fileinfo(QString::fromStdString(data->filename()));
 
         QListWidgetItem* item = new QListWidgetItem(fileinfo.baseName());

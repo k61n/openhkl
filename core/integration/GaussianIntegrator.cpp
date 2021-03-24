@@ -26,7 +26,7 @@
 
 namespace nsx {
 
-GaussianIntegrator::GaussianIntegrator(bool fit_center, bool fit_cov) : IPeakIntegrator()
+GaussianIntegrator::GaussianIntegrator(bool fit_center, bool fit_cov)
 {
     _params.fit_center = fit_center;
     _params.fit_cov = fit_cov;
@@ -181,14 +181,11 @@ bool GaussianIntegrator::compute(
     Eigen::VectorXd r(N);
     residuals(r, B, I, x0, a, x, counts, &pearson);
 
-    if (pearson > 0.75) {
-        // update peak shape
-        peak->setShape({x0, from_cholesky(a)});
-        // TODO: rocking curve!
-        return true;
-    } else {
+    if (pearson <= 0.75)
         return false;
-    }
+
+    peak->setShape({x0, from_cholesky(a)});
+    return true;
 }
 
 std::vector<double> GaussianIntegrator::profile(Peak3D* peak, const IntegrationRegion& region)
@@ -197,8 +194,8 @@ std::vector<double> GaussianIntegrator::profile(Peak3D* peak, const IntegrationR
     const Eigen::Matrix3d A = peak->shape().metric();
     const Eigen::Vector3d x0 = peak->shape().center();
     const double factor = std::sqrt(A.determinant() / 8.0 / M_PI / M_PI / M_PI);
-    std::vector<double> result(events.size(), 0.0);
 
+    std::vector<double> result(events.size(), 0.0);
     for (size_t i = 0; i < events.size(); ++i) {
         const DetectorEvent& ev = events[i];
         Eigen::Vector3d dx(ev._px, ev._py, ev._frame);

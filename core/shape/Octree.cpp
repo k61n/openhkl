@@ -17,34 +17,6 @@
 
 namespace nsx {
 
-std::vector<unsigned int> Octree::createPowers()
-{
-    std::vector<unsigned int> p(3);
-    int i = 0;
-    // Powers of 2
-    std::generate(p.begin(), p.end(), [&i]() { return std::pow(2, i++); });
-
-    return p;
-}
-
-Octree::Octree(Octree&& other)
-    : _MAX_DEPTH(other._MAX_DEPTH)
-    , _MAX_STORAGE(other._MAX_STORAGE)
-    , _MULTIPLICITY(other._MULTIPLICITY)
-    , _POWERS(std::move(other._POWERS))
-    , _children(std::move(other._children))
-    , _data(std::move(other._data))
-    , _depth(other._depth)
-    , _parent(other._parent)
-    , _idx(other._idx)
-{
-}
-
-void Octree::nullifyChildren()
-{
-    _children.clear();
-}
-
 Octree::Octree() : AABB(), _depth(0), _parent(nullptr)
 {
     nullifyChildren();
@@ -78,6 +50,34 @@ Octree::Octree(const Octree* parent, unsigned int sector)
     }
 }
 
+Octree::Octree(Octree&& other) noexcept
+    : _MAX_DEPTH(other._MAX_DEPTH)
+    , _MAX_STORAGE(other._MAX_STORAGE)
+    , _MULTIPLICITY(other._MULTIPLICITY)
+    , _POWERS(std::move(other._POWERS))
+    , _children(std::move(other._children))
+    , _data(std::move(other._data))
+    , _depth(other._depth)
+    , _parent(other._parent)
+    , _idx(other._idx)
+{
+}
+
+std::vector<unsigned int> Octree::createPowers()
+{
+    std::vector<unsigned int> p(3);
+    int i = 0;
+    // Powers of 2
+    std::generate(p.begin(), p.end(), [&i]() { return std::pow(2, i++); });
+
+    return p;
+}
+
+void Octree::nullifyChildren()
+{
+    _children.clear();
+}
+
 bool Octree::addData(const Ellipsoid* ellipsoid)
 {
     // Ellipsoid does not overlap with this branch
@@ -98,12 +98,12 @@ bool Octree::addData(const Ellipsoid* ellipsoid)
 
 bool Octree::hasChildren() const
 {
-    return (!_children.empty());
+    return !_children.empty();
 }
 
 bool Octree::hasData() const
 {
-    return (_data.size() != 0);
+    return !_data.empty();
 }
 
 std::set<Octree::collision_pair> Octree::getCollisions() const
@@ -275,6 +275,10 @@ std::ostream& operator<<(std::ostream& os, const Octree& tree)
     return os;
 }
 
+//  ***********************************************************************************************
+//  class OctreeIterator
+//  ***********************************************************************************************
+
 OctreeIterator::OctreeIterator() : _node(nullptr) { }
 
 OctreeIterator::OctreeIterator(const Octree& node) : _node(&node)
@@ -330,13 +334,6 @@ OctreeIterator& OctreeIterator::operator++()
         _node = nullptr;
 
     return ++(*this);
-}
-
-OctreeIterator OctreeIterator::operator++(int)
-{
-    OctreeIterator tmp(*this);
-    ++(*this);
-    return (tmp);
 }
 
 unsigned int Octree::numChambers() const

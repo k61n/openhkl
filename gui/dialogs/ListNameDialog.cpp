@@ -20,7 +20,7 @@
 #include <QLabel>
 #include <QVBoxLayout>
 
-ListNameDialog::ListNameDialog() : QDialog()
+ListNameDialog::ListNameDialog()
 {
     setModal(true);
     resize(500, 130);

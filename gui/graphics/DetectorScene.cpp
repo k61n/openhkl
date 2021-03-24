@@ -765,7 +765,7 @@ void DetectorScene::showPeakAreas(bool flag)
 void DetectorScene::drawIntegrationRegion(bool flag)
 {
     // clear the background if necessary
-    if (_integrationRegion && flag == false) {
+    if (_integrationRegion && !flag) {
         removeItem(_integrationRegion);
         delete _integrationRegion;
         _integrationRegion = nullptr;

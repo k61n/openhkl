@@ -56,7 +56,7 @@ TEST_CASE("test/utils/TestPath.cpp", "")
 #else
     CHECK(ext_splitted_filename.first == "/usr/local/file");
 #endif
-    CHECK(ext_splitted_filename.second == "");
+    CHECK(ext_splitted_filename.second.empty());
 
     // Test nsx::fileBasename function for getting the basename from a path
     auto basename = nsx::fileBasename(path);

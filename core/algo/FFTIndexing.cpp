@@ -167,12 +167,11 @@ std::vector<Eigen::RowVector3d> algo::findOnSphere(
 
             if (current < freq_tol * FZero)
                 continue;
-
-            if (current > value) {
-                value = current;
-                pos_max = i;
-            } else
+            if (current <= value)
                 break;
+
+            value = current;
+            pos_max = i;
         }
 
         if (pos_max > 2)

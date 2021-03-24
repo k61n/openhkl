@@ -82,15 +82,16 @@ void UnitCellHandler::removeUnitCell(const std::string& name)
 }
 
 void UnitCellHandler::swapUnitCells(
-    const std::string& old_cell_name, const std::string& new_cell_name, PeakHandler* peak_handler)
+    const std::string& old_cell_name, const std::string& new_cell_name,
+    PeakHandler* peak_handler) const
 {
     UnitCell* old_cell = getUnitCell(old_cell_name);
     UnitCell* new_cell = getUnitCell(new_cell_name);
-    auto peak_collections = peak_handler->getPeakCollectionMap();
+    const auto* peak_collections = peak_handler->getPeakCollectionMap();
 
     std::map<std::string, std::unique_ptr<PeakCollection>>::const_iterator it;
     for (it = peak_collections->begin(); it != peak_collections->end(); ++it) {
-        std::vector<Peak3D*> peaks = it->second.get()->getPeakList();
+        std::vector<Peak3D*> peaks = it->second->getPeakList();
         for (Peak3D* peak : peaks) {
             if (peak->unitCell() == old_cell)
                 peak->setUnitCell(new_cell);
@@ -122,10 +123,10 @@ bool UnitCellHandler::checkAndAssignUnitCell(
     return accepted;
 }
 
-void UnitCellHandler::assignUnitCell(PeakCollection* peaks, std::string cellName)
+void UnitCellHandler::assignUnitCell(PeakCollection* peaks, std::string cellName) const
 {
     std::vector<Peak3D*> peak_list = peaks->getPeakList();
-    for (auto peak : peak_list) {
+    for (auto* peak : peak_list) {
         peak->setUnitCell(getUnitCell(cellName));
         peak->setMillerIndices();
     }

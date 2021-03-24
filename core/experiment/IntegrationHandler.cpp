@@ -145,7 +145,7 @@ void IntegrationHandler::integrateFoundPeaks(std::string integrator_name, PeakFi
     integrator->setNNumors(data->size());
 
     int n_numor = 1;
-    for (sptrDataSet data : peak_finder->currentData()) {
+    for (const sptrDataSet& data : peak_finder->currentData()) {
         integrator->integrate(peak_finder->currentPeaks(), nullptr, data, n_numor);
         ++n_numor;
     }

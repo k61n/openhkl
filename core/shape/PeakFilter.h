@@ -128,11 +128,11 @@ class PeakFilter {
     void filterFrameRange(PeakCollection* peak_collection) const;
 
     //! Filter only enabled on a peak vector
-    std::vector<Peak3D*> filterEnabled(const std::vector<Peak3D*> peaks_ptr, bool flag) const;
+    std::vector<Peak3D*> filterEnabled(const std::vector<Peak3D*> peaks, bool flag) const;
 
     //! Filter only enabled on a peak vector
     std::vector<Peak3D*> filterIndexed(
-        const std::vector<Peak3D*> peaks_ptr, const UnitCell& cell, double tolerance) const;
+        const std::vector<Peak3D*> peaks, const UnitCell& cell, double tolerance) const;
 
     //! Run the filtering
     void filter(PeakCollection* peak_collection) const;

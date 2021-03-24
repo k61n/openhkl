@@ -45,7 +45,7 @@ TEST_CASE("test/utils/TestProgressHandler.cpp", "")
     CHECK(log[0] == "progress handler log 1");
     CHECK(log[1] == "progress handler log 2");
 
-    CHECK(handler.getLog().size() == 0);
+    CHECK(handler.getLog().empty());
 
     handler.log(std::string("string log"));
     CHECK(handler.getLog()[0] == "string log");
