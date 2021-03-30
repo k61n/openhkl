@@ -15,35 +15,12 @@
 #ifndef NSX_GUI_UTILITY_SPOILERCHECK_H
 #define NSX_GUI_UTILITY_SPOILERCHECK_H
 
-#include <QCheckBox>
-#include <QFrame>
-#include <QGridLayout>
-#include <QGroupBox>
-#include <QParallelAnimationGroup>
-#include <QScrollArea>
-#include <QToolButton>
+#include "gui/utility/Spoiler.h"
 
-class SpoilerCheck : public QGroupBox {
-    Q_OBJECT
+class SpoilerCheck : public Spoiler {
 
  public:
-    QScrollArea contentArea;
-    explicit SpoilerCheck(
-        const QString& title = "", const int animationDuration = 100, QWidget* parent = 0);
-    void setContentLayout(QLayout& contentLayout, bool toggled = false);
-    bool checked() const;
-
- public slots:
-    void toggler(const bool check);
-    void checker(const int state);
-
- private:
-    QGridLayout mainLayout;
-    QToolButton toggleButton;
-    QFrame headerLine;
-    QParallelAnimationGroup toggleAnimation;
-    int animationDuration{300};
-    QCheckBox select;
+    explicit SpoilerCheck(const QString& title);
 };
 
 #endif // NSX_GUI_UTILITY_SPOILERCHECK_H

@@ -15,30 +15,44 @@
 #ifndef NSX_GUI_UTILITY_SPOILER_H
 #define NSX_GUI_UTILITY_SPOILER_H
 
-#include <QFrame>
-#include <QGridLayout>
 #include <QGroupBox>
 #include <QParallelAnimationGroup>
-#include <QScrollArea>
-#include <QToolButton>
+
+class QGridLayout;
+class QToolButton;
+class QCheckBox;
 
 class Spoiler : public QGroupBox {
     Q_OBJECT
 
  public:
-    QScrollArea contentArea;
-    explicit Spoiler(
-        const QString& title = "", const int animationDuration = 100, QWidget* parent = 0);
-    void setContentLayout(QLayout& contentLayout, bool expanded = false);
-    void setExpanded(bool expand);
+    QWidget contentArea; // #nsxUI move to private; ptr!!!
+    explicit Spoiler(const QString& title, bool isCheckable = false);
+    void setContentLayout(QLayout& contentLayout, bool expanded = false); // #nsxUI ptr instead ref
+    QLayout* contentLayout();
 
- public slots:
+    void setExpanded(bool expand);
+    bool isExpanded() const;
+
+    bool isChecked() const;
+    void setChecked(bool checked);
+
+
+ public:
     void toggler(const bool check); // #nsxUI make private; use setExpanded instead
 
- private:
-    QGridLayout _mainLayout;
-    QToolButton _toggleButton;
-    QFrame _headerLine;
+    void checker(const int state); // #nsxUI make private or remove; use setChecked instead
+    bool checked() { return isChecked(); } // #nsxUI remove; use isChecked instead
+
+ private slots:
+    void showEvent(QShowEvent* event);
+    void onAnimationFinished();
+
+ protected:
+    QGridLayout* _mainLayout = nullptr;
+    QToolButton* _toggleButton = nullptr;
+    QCheckBox* _select = nullptr;
+
     QParallelAnimationGroup _toggleAnimation;
     int _animationDuration{300};
 };
