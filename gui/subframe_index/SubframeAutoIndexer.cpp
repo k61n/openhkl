@@ -31,6 +31,7 @@
 #include <QHeaderView>
 #include <QLabel>
 #include <QMessageBox>
+#include <QScrollArea>
 
 SubframeAutoIndexer::SubframeAutoIndexer()
     : QWidget()
