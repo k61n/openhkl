@@ -21,7 +21,6 @@
 #include <QLabel>
 #include <QSpinBox>
 
-
 GridFiller::GridFiller(QGridLayout* gridLayout)
     : _mainLayout(gridLayout), _spoiler(nullptr), _nextRow(0)
 {
@@ -37,7 +36,6 @@ GridFiller::GridFiller(Spoiler* spoiler, bool expanded)
         spoiler->setContentLayout(*_mainLayout, expanded);
     }
 }
-
 
  GridFiller::~GridFiller() { 
      if (_spoiler != nullptr)

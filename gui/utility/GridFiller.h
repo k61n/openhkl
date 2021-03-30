@@ -60,7 +60,7 @@ class GridFiller {
     //! Add a row with the given widget. The widget is inserted in the given column with the given
     //! column span (-1 => to the right edge).
     //! The internal row counter will be increased.
-    void addWidget(QWidget* w, int col, int colspan = -1);
+    void addWidget(QWidget* w, int col = 0, int colspan = -1);
 
  private:
     //! Add a label in the current row. The row will not be increased.
