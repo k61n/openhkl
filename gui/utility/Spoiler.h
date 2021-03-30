@@ -35,11 +35,11 @@ class Spoiler : public QGroupBox {
     void toggler(const bool check);
 
  private:
-    QGridLayout mainLayout;
-    QToolButton toggleButton;
-    QFrame headerLine;
-    QParallelAnimationGroup toggleAnimation;
-    int animationDuration{300};
+    QGridLayout _mainLayout;
+    QToolButton _toggleButton;
+    QFrame _headerLine;
+    QParallelAnimationGroup _toggleAnimation;
+    int _animationDuration{300};
 };
 
 #endif // NSX_GUI_UTILITY_SPOILER_H
