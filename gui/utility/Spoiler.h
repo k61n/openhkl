@@ -29,10 +29,11 @@ class Spoiler : public QGroupBox {
     QScrollArea contentArea;
     explicit Spoiler(
         const QString& title = "", const int animationDuration = 100, QWidget* parent = 0);
-    void setContentLayout(QLayout& contentLayout, bool toggled = false);
+    void setContentLayout(QLayout& contentLayout, bool expanded = false);
+    void setExpanded(bool expand);
 
  public slots:
-    void toggler(const bool check);
+    void toggler(const bool check); // #nsxUI make private; use setExpanded instead
 
  private:
     QGridLayout _mainLayout;
