@@ -19,6 +19,8 @@
 #include "gui/graphics/DetectorView.cpp"
 #include "gui/models/Project.h"
 #include "gui/utility/ColorButton.h"
+#include "gui/utility/GridFiller.h"
+#include "gui/utility/PropertyScrollArea.h"
 #include "gui/utility/Spoiler.h"
 #include "gui/views/ShortTable.h"
 #include "gui/widgets/PeakViewWidget.h"
@@ -36,18 +38,10 @@ DetectorWindow::DetectorWindow(QWidget* parent)
     , _peak_collection_item_2()
     , _peak_collection_model_2()
 {
-    setSizePolicies();
-
-    _main_layout = new QHBoxLayout(this);
+    auto main_layout = new QHBoxLayout(this);
     _right_element = new QSplitter(Qt::Vertical, this);
 
-    QScrollArea* scroll_area = new QScrollArea(this);
-    QWidget* scroll_widget = new QWidget();
-    scroll_widget->setSizePolicy(*_size_policy_box);
-    scroll_area->setSizePolicy(*_size_policy_box);
-    scroll_area->setWidgetResizable(true);
-    scroll_area->setWidget(scroll_widget);
-    _control_layout = new QVBoxLayout(scroll_widget);
+    _control_layout = new QVBoxLayout();
     _peak_view_widget_1 = new PeakViewWidget("Valid peaks", "Invalid Peaks");
     _peak_view_widget_2 = new PeakViewWidget("Valid peaks", "Invalid Peaks");
     _peak_view_widget_2->setPeakColor1(Qt::green);
@@ -61,40 +55,18 @@ DetectorWindow::DetectorWindow(QWidget* parent)
     setPeakTableUp();
     setInputUp();
     setPlotUp(_peak_view_widget_1, "Show/hide peak collection 1");
-    setPlotUp(_peak_view_widget_2, "Show/hide peak colleciton 2");
-    _control_layout->addItem(new QSpacerItem(20, 40, QSizePolicy::Minimum, QSizePolicy::Expanding));
+    setPlotUp(_peak_view_widget_2, "Show/hide peak collection 2");
 
-    _main_layout->addWidget(scroll_area);
-    _main_layout->addWidget(_right_element);
+    auto propertyScrollArea = new PropertyScrollArea(this);
+    propertyScrollArea->setContentLayout(_control_layout);
+    main_layout->addWidget(propertyScrollArea);
+    main_layout->addWidget(_right_element);
 }
 
 void DetectorWindow::showEvent(QShowEvent* event)
 {
     QDialog::showEvent(event);
     setGeometry(gGui->x() + 40, gGui->y() + 80, gGui->width(), gGui->height());
-}
-
-void DetectorWindow::setSizePolicies()
-{
-    _size_policy_widgets = new QSizePolicy();
-    _size_policy_widgets->setHorizontalPolicy(QSizePolicy::Preferred);
-    _size_policy_widgets->setVerticalPolicy(QSizePolicy::Fixed);
-
-    _size_policy_box = new QSizePolicy();
-    _size_policy_box->setHorizontalPolicy(QSizePolicy::Fixed);
-    _size_policy_box->setVerticalPolicy(QSizePolicy::Expanding);
-
-    _size_policy_right = new QSizePolicy();
-    _size_policy_right->setHorizontalPolicy(QSizePolicy::Expanding);
-    _size_policy_right->setVerticalPolicy(QSizePolicy::Expanding);
-
-    _size_policy_fixed = new QSizePolicy();
-    _size_policy_fixed->setHorizontalPolicy(QSizePolicy::Fixed);
-    _size_policy_fixed->setVerticalPolicy(QSizePolicy::Fixed);
-
-    _size_policy_min = new QSizePolicy();
-    _size_policy_min->setHorizontalPolicy(QSizePolicy::Fixed);
-    _size_policy_min->setVerticalPolicy(QSizePolicy::Minimum);
 }
 
 void DetectorWindow::setDetectorViewUp()
@@ -110,11 +82,11 @@ void DetectorWindow::setDetectorViewUp()
 
     _detector_scroll = new QScrollBar();
     _detector_scroll->setOrientation(Qt::Horizontal);
-    _detector_scroll->setSizePolicy(*_size_policy_widgets);
+    _detector_scroll->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
     detector_grid->addWidget(_detector_scroll, 1, 0, 1, 1);
 
     _detector_spin = new QSpinBox();
-    _detector_spin->setSizePolicy(*_size_policy_fixed);
+    _detector_spin->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     detector_grid->addWidget(_detector_spin, 1, 1, 1, 1);
 
     connect(
@@ -139,12 +111,12 @@ void DetectorWindow::setPeakTableUp()
     _peak_table_1 = new ShortTable(this);
     _peak_collection_model_1.setRoot(&_peak_collection_item_1);
     _peak_table_1->setModel(&_peak_collection_model_1);
-    _peak_table_1->setSizePolicy(*_size_policy_min);
+    _peak_table_1->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Minimum);
 
     _peak_table_2 = new ShortTable(this, _peak_table_1->height());
     _peak_collection_model_2.setRoot(&_peak_collection_item_2);
     _peak_table_2->setModel(&_peak_collection_model_2);
-    _peak_table_2->setSizePolicy(*_size_policy_min);
+    _peak_table_2->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Minimum);
 
     table_layout->addWidget(_peak_table_1);
     table_layout->addWidget(_peak_table_2);
@@ -156,48 +128,12 @@ void DetectorWindow::setPeakTableUp()
 void DetectorWindow::setInputUp()
 {
     Spoiler* input_spoiler = new Spoiler("Input Data");
+    GridFiller f(input_spoiler, true);
 
-    QGridLayout* input_grid = new QGridLayout();
-
-    QLabel* exp_label = new QLabel("Experiment");
-    exp_label->setAlignment(Qt::AlignRight);
-    input_grid->addWidget(exp_label, 0, 0, 1, 1);
-
-    QLabel* data_label = new QLabel("Data set");
-    data_label->setAlignment(Qt::AlignRight);
-    input_grid->addWidget(data_label, 1, 0, 1, 1);
-
-    QLabel* peak_label = new QLabel("Peak collection 1");
-    data_label->setAlignment(Qt::AlignRight);
-    input_grid->addWidget(peak_label, 2, 0, 1, 1);
-
-    peak_label = new QLabel("Peak collection 2");
-    data_label->setAlignment(Qt::AlignRight);
-    input_grid->addWidget(peak_label, 3, 0, 1, 1);
-
-    _exp_combo = new QComboBox();
-    _data_combo = new QComboBox();
-    _peak_combo_1 = new QComboBox();
-    _peak_combo_2 = new QComboBox();
-
-    _exp_combo->setMaximumWidth(1000);
-    _data_combo->setMaximumWidth(1000);
-    _peak_combo_1->setMaximumWidth(1000);
-    _peak_combo_2->setMaximumWidth(1000);
-
-    _exp_combo->setSizePolicy(*_size_policy_widgets);
-    _data_combo->setSizePolicy(*_size_policy_widgets);
-    _peak_combo_1->setSizePolicy(*_size_policy_widgets);
-    _peak_combo_2->setSizePolicy(*_size_policy_widgets);
-
-    input_grid->addWidget(_exp_combo, 0, 1, 1, 1);
-    input_grid->addWidget(_data_combo, 1, 1, 1, 1);
-    input_grid->addWidget(_peak_combo_1, 2, 1, 1, 1);
-    input_grid->addWidget(_peak_combo_2, 3, 1, 1, 1);
-
-    input_spoiler->setContentLayout(*input_grid);
-    input_spoiler->setSizePolicy(*_size_policy_box);
-    input_spoiler->contentArea.setSizePolicy(*_size_policy_box);
+    _exp_combo = f.addCombo("Experiment:");
+    _data_combo = f.addCombo("Data set:");
+    _peak_combo_1 = f.addCombo("Peak collection 1:");
+    _peak_combo_2 = f.addCombo("Peak collection 2:");
 
     connect(
         _exp_combo, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this,
@@ -212,7 +148,6 @@ void DetectorWindow::setInputUp()
         &DetectorWindow::refreshPeakTable);
 
     _control_layout->addWidget(input_spoiler);
-    input_spoiler->toggler(true);
 }
 
 void DetectorWindow::setPlotUp(PeakViewWidget* peak_widget, QString name)
@@ -262,12 +197,9 @@ void DetectorWindow::setPlotUp(PeakViewWidget* peak_widget, QString name)
         peak_widget->bkgColor2(), &ColorButton::colorChanged, this,
         &DetectorWindow::refreshDetectorView);
 
-    preview_spoiler->setContentLayout(*peak_widget);
-    preview_spoiler->setSizePolicy(*_size_policy_box);
-    preview_spoiler->contentArea.setSizePolicy(*_size_policy_box);
+    preview_spoiler->setContentLayout(*peak_widget, true);
 
     _control_layout->addWidget(preview_spoiler);
-    preview_spoiler->toggler(true);
 }
 
 void DetectorWindow::refreshDetectorView()
