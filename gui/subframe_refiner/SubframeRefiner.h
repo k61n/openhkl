@@ -44,7 +44,6 @@ class PlotCheckBox;
 class SubframeRefiner : public QWidget {
  public:
     SubframeRefiner();
-    ~SubframeRefiner();
 
  public:
     //! Refresh all the inputs
@@ -106,6 +105,12 @@ class SubframeRefiner : public QWidget {
     //! Set up the lattice parameter table
     void setLatticeTableUp();
 
+    //! Returns all plot check boxes
+    QList<PlotCheckBox*> plotCheckBoxes() const;
+
+    //! Refresh the plot (e.g. after changes of plot check boxes)
+    void refreshPlot();
+
  private:
     //! The loaded data list
     std::vector<nsx::sptrDataSet> _data_list;
@@ -121,13 +126,9 @@ class SubframeRefiner : public QWidget {
     nsx::IntegrationParameters _integration_params;
 
  private:
-    QHBoxLayout* _main_layout;
     QVBoxLayout* _left_layout;
-    QSplitter* _right_element;
 
     // data selection
-    Spoiler* _input_box;
-
     QComboBox* _exp_combo;
     QComboBox* _peak_combo;
     QComboBox* _data_combo;
@@ -135,8 +136,6 @@ class SubframeRefiner : public QWidget {
     QSpinBox* _n_batches_spin;
 
     // refinement flags
-    Spoiler* _refiner_flags_box;
-
     QCheckBox* _refineUB;
     QCheckBox* _refineSamplePosition;
     QCheckBox* _refineSampleOrientation;
@@ -146,18 +145,11 @@ class SubframeRefiner : public QWidget {
     // plot widget
     Spoiler* _plot_box;
 
-    QVector<PlotCheckBox*> _plot_check_boxes;
-
     // update prediction
-    QPushButton* _refine_button;
-
-    Spoiler* _update_box;
     QComboBox* _predicted_combo;
-    QPushButton* _update_button;
 
     // reintegration
     Spoiler* _reintegrate_box;
-    QPushButton* _build_shape_lib;
     QComboBox* _integrator_combo;
     QDoubleSpinBox* _radius;
     QDoubleSpinBox* _n_frames;
@@ -168,13 +160,6 @@ class SubframeRefiner : public QWidget {
     QDoubleSpinBox* _n_frames_int;
     QCheckBox* _fit_center;
     QCheckBox* _fit_covariance;
-    QPushButton* _reintegrate_found;
-    QPushButton* _reintegrate_predicted;
-
-    QSizePolicy* _size_policy_widgets;
-    QSizePolicy* _size_policy_box;
-    QSizePolicy* _size_policy_right;
-    QSizePolicy* _size_policy_fixed;
 
     QStringList _peak_list;
     QStringList _cell_list;
@@ -185,8 +170,6 @@ class SubframeRefiner : public QWidget {
     SXPlot* _plot_widget;
 
     QRandomGenerator _rng;
-
-    void refreshPlot();
 };
 
 
