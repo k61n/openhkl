@@ -25,6 +25,7 @@ class QSpinBox;
 class QDoubleSpinBox;
 class QWidget;
 class QCheckBox;
+class QPushButton;
 
 //! Helps to fill a grid layout according to the standards used all over NSX (e.g. labels are right
 //! aligned).
@@ -35,12 +36,17 @@ class GridFiller {
     GridFiller(Spoiler* spoiler, bool expanded = false);
     ~GridFiller();
 
-    //! Add a row with a label and a combo box.
-    QComboBox* addCombo(const QString& labelText, const QString& labelTooltip = QString());
+    //! Add a row with a label and a combo box. If labelText is empty, then no label is created, and
+    //! the tooltip is set on the created combo box directly.
+    QComboBox* addCombo(const QString& labelText = QString(), const QString& tooltip = QString());
 
     //! Add a row with a check box. The check box is placed in the given column, with span to the
     //! right edge.
     QCheckBox* addCheckBox(const QString& title, int col = 0);
+
+    //! Add a row with a check box. The check box is placed in the given column, with span to the
+    //! right edge.
+    QCheckBox* addCheckBox(const QString& title, const QString& tooltip, int col = 0);
 
     //! Add a row with a label, a tooltip for the label and a spin box.
     QSpinBox* addSpinBox(const QString& labelText, const QString& labelTooltip = QString());
@@ -56,6 +62,9 @@ class GridFiller {
     //! Add a row with a label, a tooltip for the label and two double spin boxes.
     std::tuple<QDoubleSpinBox*, QDoubleSpinBox*> addDoubleSpinBoxPair(
         const QString& labelText, const QString& labelTooltip = QString());
+
+    //! Add a row containing a pushbutton which covers the whole row.
+    QPushButton* addButton(const QString& text, const QString& tooltip = QString());
 
     //! Add a row with the given widget. The widget is inserted in the given column with the given
     //! column span (-1 => to the right edge).

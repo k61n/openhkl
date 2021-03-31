@@ -19,6 +19,7 @@
 #include <QComboBox>
 #include <QGridLayout>
 #include <QLabel>
+#include <QPushButton>
 #include <QSpinBox>
 
 GridFiller::GridFiller(QGridLayout* gridLayout)
@@ -37,19 +38,24 @@ GridFiller::GridFiller(Spoiler* spoiler, bool expanded)
     }
 }
 
- GridFiller::~GridFiller() { 
-     if (_spoiler != nullptr)
-         _spoiler->setContentLayout(*_mainLayout, _spoiler->isExpanded());
- }
+GridFiller::~GridFiller()
+{
+    if (_spoiler != nullptr)
+        _spoiler->setContentLayout(*_mainLayout, _spoiler->isExpanded());
+}
 
-QComboBox* GridFiller::addCombo(const QString& labelText, const QString& labelTooltip)
- {
-    addLabel(labelText, labelTooltip);
+QComboBox* GridFiller::addCombo(const QString& labelText, const QString& tooltip)
+{
+    const bool createLabel = !labelText.isEmpty();
+    if (createLabel)
+        addLabel(labelText, tooltip);
 
     QComboBox* comboBox = new QComboBox();
+    if (!createLabel)
+        comboBox->setToolTip(tooltip);
     comboBox->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
     comboBox->setSizeAdjustPolicy(QComboBox::AdjustToContents);
-    _mainLayout->addWidget(comboBox, _nextRow, 1, 1, -1);
+    _mainLayout->addWidget(comboBox, _nextRow, createLabel ? 1 : 0, 1, -1);
 
     _nextRow++;
 
@@ -58,7 +64,13 @@ QComboBox* GridFiller::addCombo(const QString& labelText, const QString& labelTo
 
 QCheckBox* GridFiller::addCheckBox(const QString& title, int col)
 {
+    return addCheckBox(title, QString(), col);
+}
+
+QCheckBox* GridFiller::addCheckBox(const QString& title, const QString& tooltip, int col)
+{
     auto checkBox = new QCheckBox(title);
+    checkBox->setToolTip(tooltip);
     _mainLayout->addWidget(checkBox, _nextRow, col, 1, -1);
     _nextRow++;
 
@@ -115,6 +127,16 @@ std::tuple<QDoubleSpinBox*, QDoubleSpinBox*> GridFiller::addDoubleSpinBoxPair(
 
     _nextRow++;
     return std::make_tuple(spinBox1, spinBox2);
+}
+
+QPushButton* GridFiller::addButton(const QString& text, const QString& tooltip)
+{
+    auto button = new QPushButton(text);
+    button->setToolTip(tooltip);
+    _mainLayout->addWidget(button, _nextRow, 0, 1, -1);
+
+    _nextRow++;
+    return button;
 }
 
 void GridFiller::addWidget(QWidget* w, int col, int colspan)
