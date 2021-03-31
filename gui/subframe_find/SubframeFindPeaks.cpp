@@ -140,8 +140,7 @@ void SubframeFindPeaks::setBlobUp()
 
     _end_frame_spin = f.addSpinBox("End frame", "(frame) - end frame for peak finding");
 
-    auto find_button = new QPushButton("Find peaks");
-    f.addWidget(find_button, 0);
+    auto find_button = f.addButton("Find peaks");
 
     _threshold_spin->setMaximum(10000000);
     _scale_spin->setMaximum(10000000);
@@ -167,13 +166,13 @@ void SubframeFindPeaks::setIntegrateUp()
     _bkg_upper =
         f.addDoubleSpinBox("Bkg. end", "(sigmas) - scaling factor for upper limit of background");
 
+    auto integrate_button = f.addButton("Integrate");
+
     _peak_area->setMaximum(10000000);
     _bkg_lower->setMaximum(10000000);
     _bkg_upper->setMaximum(10000000);
 
-    auto integrate_button = new QPushButton("Integrate");
     connect(integrate_button, &QPushButton::clicked, this, &SubframeFindPeaks::integrate);
-    f.addWidget(integrate_button, 0);
 
     _left_layout->addWidget(integration_para);
 }
