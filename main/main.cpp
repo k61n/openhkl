@@ -30,7 +30,7 @@ int main(int argc, char* argv[])
     QLoggingCategory::setFilterRules("*.debug=true\nqt.*.debug=false\nqt.qpa*=false\nkf.*=false");
     Session session;
 
-    new MainWin{};
-
+    MainWin mainWindow;
+    
     return QApplication::exec();
 }
