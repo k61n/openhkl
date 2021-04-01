@@ -26,7 +26,6 @@ class Spoiler : public QGroupBox {
     Q_OBJECT
 
  public:
-    QWidget contentArea; // #nsxUI move to private; ptr!!!
     explicit Spoiler(const QString& title, bool isCheckable = false);
     void setContentLayout(QLayout& contentLayout, bool expanded = false); // #nsxUI ptr instead ref
     QLayout* contentLayout();
@@ -37,21 +36,19 @@ class Spoiler : public QGroupBox {
     bool isChecked() const;
     void setChecked(bool checked);
 
-
  public:
     void toggler(const bool check); // #nsxUI make private; use setExpanded instead
 
-    void checker(const int state); // #nsxUI make private or remove; use setChecked instead
-    bool checked() { return isChecked(); } // #nsxUI remove; use isChecked instead
-
  private slots:
+    void checker(const int state);
     void showEvent(QShowEvent* event);
     void onAnimationFinished();
 
- protected:
+ private:
     QGridLayout* _mainLayout = nullptr;
     QToolButton* _toggleButton = nullptr;
     QCheckBox* _select = nullptr;
+    QWidget* _contentArea = nullptr;
 
     QParallelAnimationGroup _toggleAnimation;
     int _animationDuration{300};
