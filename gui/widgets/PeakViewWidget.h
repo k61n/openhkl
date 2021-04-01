@@ -43,7 +43,7 @@ class PeakViewWidget : public QGridLayout {
     ColorButton* boxColor2() { return _color_bbox_2; };
     ColorButton* bkgColor2() { return _color_bkg_2; };
     QSpinBox* peakSize1() { return _width_peaks_1; };
-    QSpinBox* peakSize2() { return _width_peaks_1; };
+    QSpinBox* peakSize2() { return _width_peaks_2; };
     void setPeakColor1(QColor color) { _color_peaks_1->changeColor(color); };
     void setPeakColor2(QColor color) { _color_peaks_2->changeColor(color); };
     void setBoxColor1(QColor color) { _color_bbox_1->changeColor(color); };
