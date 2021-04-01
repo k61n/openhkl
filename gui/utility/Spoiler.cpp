@@ -112,12 +112,9 @@ void Spoiler::setContentLayout(QLayout& contentLayout, bool expanded)
     addAnimation(_contentArea, "maximumHeight", 0, contentHeight);
 
     // this is necessary if widgets on the spoiler are resized while collapsed (tableView). It
-    // increases the layout, and therefore the spoiler title gets "compressed" different solution:
-    // the title NEVER can be compressed.
-    // #nsxUI ++ appeared in SubframeFindPeaks::setBlobUp() when called with "false" (collapsed)
+    // increases the layout, and therefore the spoiler title gets "compressed"
     if (!expanded)
-        _contentArea
-            ->hide(); // #nsxUI negative: the width is now different, if the spoiler is collapsed
+        _contentArea->hide();
 
     if (_select != nullptr)
         setChecked(expanded);

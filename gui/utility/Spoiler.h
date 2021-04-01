@@ -22,27 +22,38 @@ class QGridLayout;
 class QToolButton;
 class QCheckBox;
 
+//! A group box which can be collapsed/expanded.
 class Spoiler : public QGroupBox {
     Q_OBJECT
 
  public:
+    //! If the group box shall be checkable, the headline contains a checkbox. If this checkbox is
+    //! unchecked, all the contents will be disabled.
     explicit Spoiler(const QString& title, bool isCheckable = false);
     void setContentLayout(QLayout& contentLayout, bool expanded = false); // #nsxUI ptr instead ref
     QLayout* contentLayout();
 
+    //! Set the expanded state.
     void setExpanded(bool expand);
+
+    //! True if expanded
     bool isExpanded() const;
 
+    //! If the spoiler is checkable (see constructor), then this returns the checked-state. Returns
+    //! false if not checkable at all.
     bool isChecked() const;
-    void setChecked(bool checked);
 
- public:
-    void toggler(const bool check); // #nsxUI make private; use setExpanded instead
+    //! If the spoiler is checkable (see constructor), set the checked state.
+    //! No effect if not checkable at all.
+    void setChecked(bool checked);
 
  private slots:
     void checker(const int state);
     void showEvent(QShowEvent* event);
     void onAnimationFinished();
+
+ private:
+    void toggler(const bool check);
 
  private:
     QGridLayout* _mainLayout = nullptr;

@@ -18,13 +18,17 @@
 #include <QEvent>
 #include <QScrollArea>
 
-// #nsxUI add docu
-
+//! Scroll area used as the pane where the properties are shown/edited.
+//! This QScrollBar derived class prevents the horizontal scrollbar from appearing ever, and takes
+//! care of proper resizing when the contents sizes change, the main window size changes or the
+//! vertical scrollbars appears/disappears. It accepts only a layout instead of a widget (in
+//! opposite to QScrollBar).
 class PropertyScrollArea : public QScrollArea {
 
  public:
     PropertyScrollArea(QWidget* parent);
 
+    //! Set the layout which shall be contained in this instance.
     void setContentLayout(QLayout* layout);
 
  protected:
