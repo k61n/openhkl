@@ -1,4 +1,16 @@
-
+//  ***********************************************************************************************
+//
+//  NSXTool: data reduction for neutron single-crystal diffraction
+//
+//! @file      gui/utility/ColorButton.cpp
+//! @brief     Implements class ColorButton
+//!
+//! @homepage  ###HOMEPAGE###
+//! @license   GNU General Public License v3 or higher (see COPYING)
+//! @copyright Institut Laue-Langevin and Forschungszentrum Jülich GmbH 2016-
+//! @authors   see CITATION, MAINTAINER
+//
+//  ***********************************************************************************************
 
 #include "gui/utility/ColorButton.h"
 
@@ -6,26 +18,26 @@
 
 ColorButton::ColorButton(const QColor& color, QWidget* parent) : QPushButton(parent)
 {
-    this->setMinimumWidth(50);
-    currentColor = color;
-    connect(this, SIGNAL(clicked()), this, SLOT(chooseColor()));
+    setMinimumWidth(50);
+    _currentColor = color;
+    connect(this, &ColorButton::clicked, this, &ColorButton::chooseColor);
 }
 
 QColor ColorButton::getColor()
 {
-    return currentColor;
+    return _currentColor;
 }
 
 void ColorButton::changeColor(const QColor& color)
 {
-    currentColor = color;
-    colorChanged(currentColor);
+    _currentColor = color;
+    colorChanged(_currentColor);
 }
 
 void ColorButton::chooseColor()
 {
-    QColor color = QColorDialog::getColor(currentColor, this);
-    if (color.isValid())
+    QColor color = QColorDialog::getColor(_currentColor, this);
+    if (color.isValid() && color != _currentColor)
         changeColor(color);
 }
 
@@ -33,11 +45,10 @@ void ColorButton::paintEvent(QPaintEvent* event)
 {
     QPushButton::paintEvent(event);
 
-    int colorPadding = 5;
+    const int padding = 5;
 
     QPainter painter(this);
-    painter.setBrush(QBrush(currentColor));
+    painter.setBrush(QBrush(_currentColor));
     painter.setPen("#CECECE");
-    painter.drawRect(
-        rect().adjusted(colorPadding, colorPadding, -1 - colorPadding, -1 - colorPadding));
+    painter.drawRect(rect().adjusted(padding, padding, -1 - padding, -1 - padding));
 }
