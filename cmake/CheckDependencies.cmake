@@ -97,6 +97,10 @@ endif(NSX_PYTHON)
 find_package(Blosc REQUIRED)
 include_directories(SYSTEM ${Blosc_INCLUDES})
 
+message("Blosc_INCLUDE_DIR: ${Blosc_INCLUDE_DIR}")
+message("Blosc_INCLUDE_DIRS: ${Blosc_INCLUDE_DIRS}")
+message("Blosc_INCLUDES: ${Blosc_INCLUDES}")
+
 find_package(YAMLCPP REQUIRED)
 include_directories(SYSTEM ${YAMLCPP_INCLUDES})
 
