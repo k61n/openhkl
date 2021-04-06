@@ -80,8 +80,6 @@ void SubframeRefiner::setInputUp()
     auto input_box = new Spoiler("1. Input");
     GridFiller f(input_box, true);
 
-    QGridLayout* _input_grid = new QGridLayout();
-
     _exp_combo = f.addCombo("Experiment");
     _peak_combo = f.addCombo("Peaks");
     _data_combo = f.addCombo("Data set");
