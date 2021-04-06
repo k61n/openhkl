@@ -166,66 +166,25 @@ void DetectorWindow::setPlotUp(PeakViewWidget* peak_widget, QString name)
 
 void DetectorWindow::refreshDetectorView()
 {
-    if (_peak_collection_item_1.childCount() == 0)
+    if (_peak_collection_item_1.childCount() == 0)  // #nsxAudit Really? what if _peak_collection_item_2.childCount() is not empty?
         return;
-
-    bool valid;
-    PeakItemGraphic* graphic;
 
     for (int i = 0; i < _peak_collection_item_1.childCount(); i++) {
         PeakItem* peak = _peak_collection_item_1.peakItemAt(i);
-        graphic = peak->peakGraphic();
-        valid = peak->peak()->enabled();
+        auto graphic = peak->peakGraphic();
 
-        if (valid) {
-            graphic->showLabel(false);
-            graphic->showArea(_peak_view_widget_1->drawPeaks1->isChecked());
-            graphic->setSize(_peak_view_widget_1->sizePeaks1->value());
-            graphic->setColor(Qt::transparent);
-            graphic->setCenterColor(_peak_view_widget_1->colorPeaks1->color());
-            graphic->showBox(_peak_view_widget_1->drawBoxes1->isChecked());
-            graphic->setBoxColor(_peak_view_widget_1->colorBoxes1->color());
-            graphic->showBkg(_peak_view_widget_1->drawBkg1->isChecked());
-            graphic->setBkgColor(_peak_view_widget_1->colorBkg1->color());
-        } else {
-            graphic->showLabel(false);
-            graphic->showArea(_peak_view_widget_1->drawPeaks2->isChecked());
-            graphic->setSize(_peak_view_widget_1->sizePeaks2->value());
-            graphic->setColor(Qt::transparent);
-            graphic->setCenterColor(_peak_view_widget_1->colorPeaks2->color());
-            graphic->showBox(_peak_view_widget_1->drawBoxes2->isChecked());
-            graphic->setBoxColor(_peak_view_widget_1->colorBoxes2->color());
-            graphic->showBkg(_peak_view_widget_1->drawBkg2->isChecked());
-            graphic->setBkgColor(_peak_view_widget_1->colorBkg2->color());
-        }
+        graphic->showLabel(false);
+        graphic->setColor(Qt::transparent);
+        graphic->initFromPeakViewWidget(_peak_view_widget_1, peak->peak()->enabled());
     }
 
     for (int i = 0; i < _peak_collection_item_2.childCount(); i++) {
         PeakItem* peak = _peak_collection_item_2.peakItemAt(i);
-        graphic = peak->peakGraphic();
-        valid = peak->peak()->enabled();
+        auto graphic = peak->peakGraphic();
 
-        if (valid) {
-            graphic->showLabel(false);
-            graphic->showArea(_peak_view_widget_2->drawPeaks1->isChecked());
-            graphic->setSize(_peak_view_widget_2->sizePeaks1->value());
-            graphic->setColor(Qt::transparent);
-            graphic->setCenterColor(_peak_view_widget_2->colorPeaks1->color());
-            graphic->showBox(_peak_view_widget_2->drawBoxes1->isChecked());
-            graphic->setBoxColor(_peak_view_widget_2->colorBoxes1->color());
-            graphic->showBkg(_peak_view_widget_2->drawBkg1->isChecked());
-            graphic->setBkgColor(_peak_view_widget_2->colorBkg1->color());
-        } else {
-            graphic->showLabel(false);
-            graphic->showArea(_peak_view_widget_2->drawPeaks2->isChecked());
-            graphic->setSize(_peak_view_widget_2->sizePeaks2->value());
-            graphic->setColor(Qt::transparent);
-            graphic->setCenterColor(_peak_view_widget_2->colorPeaks2->color());
-            graphic->showBox(_peak_view_widget_2->drawBoxes2->isChecked());
-            graphic->setBoxColor(_peak_view_widget_2->colorBoxes2->color());
-            graphic->showBkg(_peak_view_widget_2->drawBkg2->isChecked());
-            graphic->setBkgColor(_peak_view_widget_2->colorBkg2->color());
-        }
+        graphic->showLabel(false);
+        graphic->setColor(Qt::transparent);
+        graphic->initFromPeakViewWidget(_peak_view_widget_2, peak->peak()->enabled());
     }
 
     _detector_view->getScene()->update();

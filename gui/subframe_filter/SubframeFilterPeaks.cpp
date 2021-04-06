@@ -540,35 +540,13 @@ void SubframeFilterPeaks::refreshPeakVisual()
     if (_peak_collection_item.childCount() == 0)
         return;
 
-    bool caught;
-    PeakItemGraphic* graphic;
-
     for (int i = 0; i < _peak_collection_item.childCount(); ++i) {
         PeakItem* peak = _peak_collection_item.peakItemAt(i);
-        graphic = peak->peakGraphic();
-        caught = peak->peak()->caughtByFilter();
+        auto graphic = peak->peakGraphic();
 
-        if (caught) {
-            graphic->showLabel(false);
-            graphic->showArea(_peak_view_widget->drawPeaks1->isChecked());
-            graphic->setSize(_peak_view_widget->sizePeaks1->value());
-            graphic->setColor(Qt::transparent);
-            graphic->setCenterColor(_peak_view_widget->colorPeaks1->color());
-            graphic->showBox(_peak_view_widget->drawBoxes1->isChecked());
-            graphic->setBoxColor(_peak_view_widget->colorBoxes1->color());
-            graphic->showBkg(_peak_view_widget->drawBkg1->isChecked());
-            graphic->setBkgColor(_peak_view_widget->colorBkg1->color());
-        } else {
-            graphic->showLabel(false);
-            graphic->showArea(_peak_view_widget->drawPeaks2->isChecked());
-            graphic->setSize(_peak_view_widget->sizePeaks2->value());
-            graphic->setColor(Qt::transparent);
-            graphic->setCenterColor(_peak_view_widget->colorPeaks2->color());
-            graphic->showBox(_peak_view_widget->drawBoxes2->isChecked());
-            graphic->setBoxColor(_peak_view_widget->colorBoxes1->color());
-            graphic->showBkg(_peak_view_widget->drawBkg2->isChecked());
-            graphic->setBkgColor(_peak_view_widget->colorBkg2->color());
-        }
+        graphic->showLabel(false);
+        graphic->setColor(Qt::transparent);
+        graphic->initFromPeakViewWidget(_peak_view_widget, peak->peak()->caughtByFilter());
     }
     _figure_view->getScene()->update();
     _figure_view->getScene()->drawPeakitems();
