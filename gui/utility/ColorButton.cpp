@@ -19,26 +19,26 @@
 ColorButton::ColorButton(const QColor& color, QWidget* parent) : QPushButton(parent)
 {
     setMinimumWidth(50);
-    _currentColor = color;
+    _color = color;
     connect(this, &ColorButton::clicked, this, &ColorButton::chooseColor);
 }
 
-QColor ColorButton::getColor()
+QColor ColorButton::color()
 {
-    return _currentColor;
+    return _color;
 }
 
-void ColorButton::changeColor(const QColor& color)
+void ColorButton::setColor(const QColor& color)
 {
-    _currentColor = color;
-    colorChanged(_currentColor);
+    _color = color;
+    colorChanged(_color);
 }
 
 void ColorButton::chooseColor()
 {
-    QColor color = QColorDialog::getColor(_currentColor, this);
-    if (color.isValid() && color != _currentColor)
-        changeColor(color);
+    QColor color = QColorDialog::getColor(_color, this);
+    if (color.isValid() && color != _color)
+        setColor(color);
 }
 
 void ColorButton::paintEvent(QPaintEvent* event)
@@ -48,7 +48,7 @@ void ColorButton::paintEvent(QPaintEvent* event)
     const int padding = 5;
 
     QPainter painter(this);
-    painter.setBrush(QBrush(_currentColor));
+    painter.setBrush(QBrush(_color));
     painter.setPen("#CECECE");
     painter.drawRect(rect().adjusted(padding, padding, -1 - padding, -1 - padding));
 }

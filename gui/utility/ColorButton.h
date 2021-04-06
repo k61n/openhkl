@@ -22,20 +22,27 @@ class ColorButton : public QPushButton {
     Q_OBJECT
  public:
     explicit ColorButton(const QColor& color = Qt::black, QWidget* parent = 0);
-    QColor getColor();
+
+    //! The current color
+    QColor color();
 
  signals:
+    //! Emitted whenever the color changes (either by dialog or by direct call to setColor)
     void colorChanged(QColor);
 
  public slots:
-    void changeColor(const QColor&);
+    //! Set the color
+    void setColor(const QColor& color);
+
+ private:
+    //! Open the color chooser Dialog
     void chooseColor();
 
  protected:
     virtual void paintEvent(QPaintEvent* event) override;
 
  private:
-    QColor _currentColor;
+    QColor _color;
 };
 
 #endif // NSX_GUI_UTILITY_COLORBUTTON_H

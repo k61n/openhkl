@@ -14,8 +14,13 @@
 //  ***********************************************************************************************
 
 #include "gui/widgets/PeakViewWidget.h"
+#include "gui/utility/ColorButton.h"
 
+#include <QCheckBox>
 #include <QLabel>
+#include <QPushButton>
+#include <QSizePolicy>
+#include <QSpinBox>
 
 PeakViewWidget::PeakViewWidget(const QString& type1, const QString& type2)
 {
@@ -77,51 +82,71 @@ PeakViewWidget::PeakViewWidget(const QString& type1, const QString& type2)
     label_ptr->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
     addWidget(label_ptr, 13, 0, 1, 1);
 
-    _draw_peaks_1 = new QCheckBox("Centres");
-    _draw_peaks_1->setCheckState(Qt::CheckState::Checked);
+    drawPeaks1 = new QCheckBox("Centres");
+    drawPeaks1->setCheckState(Qt::CheckState::Checked);
 
-    _draw_bbox_1 = new QCheckBox("Peak");
-    _draw_bbox_1->setCheckState(Qt::CheckState::Unchecked);
+    drawBoxes1 = new QCheckBox("Peak");
+    drawBoxes1->setCheckState(Qt::CheckState::Unchecked);
 
-    _draw_bkg_1 = new QCheckBox("Background");
-    _draw_bkg_1->setCheckState(Qt::CheckState::Unchecked);
+    drawBkg1 = new QCheckBox("Background");
+    drawBkg1->setCheckState(Qt::CheckState::Unchecked);
 
-    _width_peaks_1 = new QSpinBox();
-    _width_peaks_1->setValue(10);
+    sizePeaks1 = new QSpinBox();
+    sizePeaks1->setValue(10);
 
-    _color_peaks_1 = new ColorButton(Qt::darkGreen);
-    _color_bbox_1 = new ColorButton(Qt::darkGreen);
-    _color_bkg_1 = new ColorButton(Qt::darkGreen);
+    colorPeaks1 = new ColorButton(Qt::darkGreen);
+    colorBoxes1 = new ColorButton(Qt::darkGreen);
+    colorBkg1 = new ColorButton(Qt::darkGreen);
 
-    _draw_peaks_2 = new QCheckBox("Centres");
-    _draw_peaks_2->setCheckState(Qt::CheckState::Checked);
+    drawPeaks2 = new QCheckBox("Centres");
+    drawPeaks2->setCheckState(Qt::CheckState::Checked);
 
-    _draw_bbox_2 = new QCheckBox("Peak");
-    _draw_bbox_2->setCheckState(Qt::CheckState::Unchecked);
+    drawBoxes2 = new QCheckBox("Peak");
+    drawBoxes2->setCheckState(Qt::CheckState::Unchecked);
 
-    _draw_bkg_2 = new QCheckBox("Background");
-    _draw_bkg_2->setCheckState(Qt::CheckState::Unchecked);
+    drawBkg2 = new QCheckBox("Background");
+    drawBkg2->setCheckState(Qt::CheckState::Unchecked);
 
-    _width_peaks_2 = new QSpinBox();
-    _width_peaks_2->setValue(10);
+    sizePeaks2 = new QSpinBox();
+    sizePeaks2->setValue(10);
 
-    _color_peaks_2 = new ColorButton(Qt::darkRed);
-    _color_bbox_2 = new ColorButton(Qt::darkRed);
-    _color_bkg_2 = new ColorButton(Qt::darkRed);
+    colorPeaks2 = new ColorButton(Qt::darkRed);
+    colorBoxes2 = new ColorButton(Qt::darkRed);
+    colorBkg2 = new ColorButton(Qt::darkRed);
 
-    addWidget(_draw_peaks_1, 1, 1, 1, 2);
-    addWidget(_width_peaks_1, 2, 1, 1, 1);
-    addWidget(_color_peaks_1, 3, 1, 1, 1);
-    addWidget(_draw_bbox_1, 5, 1, 1, 1);
-    addWidget(_draw_bkg_1, 5, 2, 1, 1);
-    addWidget(_color_bbox_1, 6, 1, 1, 1);
-    addWidget(_color_bkg_1, 6, 2, 1, 1);
+    addWidget(drawPeaks1, 1, 1, 1, 2);
+    addWidget(sizePeaks1, 2, 1, 1, 1);
+    addWidget(colorPeaks1, 3, 1, 1, 1);
+    addWidget(drawBoxes1, 5, 1, 1, 1);
+    addWidget(drawBkg1, 5, 2, 1, 1);
+    addWidget(colorBoxes1, 6, 1, 1, 1);
+    addWidget(colorBkg1, 6, 2, 1, 1);
 
-    addWidget(_draw_peaks_2, 8, 1, 1, 2);
-    addWidget(_width_peaks_2, 9, 1, 1, 1);
-    addWidget(_color_peaks_2, 10, 1, 1, 1);
-    addWidget(_draw_bbox_2, 12, 1, 1, 1);
-    addWidget(_draw_bkg_2, 12, 2, 1, 1);
-    addWidget(_color_bbox_2, 13, 1, 1, 1);
-    addWidget(_color_bkg_2, 13, 2, 1, 1);
+    addWidget(drawPeaks2, 8, 1, 1, 2);
+    addWidget(sizePeaks2, 9, 1, 1, 1);
+    addWidget(colorPeaks2, 10, 1, 1, 1);
+    addWidget(drawBoxes2, 12, 1, 1, 1);
+    addWidget(drawBkg2, 12, 2, 1, 1);
+    addWidget(colorBoxes2, 13, 1, 1, 1);
+    addWidget(colorBkg2, 13, 2, 1, 1);
+
+    connect(drawPeaks1, &QCheckBox::stateChanged, this, &PeakViewWidget::settingsChanged);
+    connect(drawPeaks2, &QCheckBox::stateChanged, this, &PeakViewWidget::settingsChanged);
+    connect(drawBoxes1, &QCheckBox::stateChanged, this, &PeakViewWidget::settingsChanged);
+    connect(drawBoxes2, &QCheckBox::stateChanged, this, &PeakViewWidget::settingsChanged);
+    connect(drawBkg1, &QCheckBox::stateChanged, this, &PeakViewWidget::settingsChanged);
+    connect(drawBkg2, &QCheckBox::stateChanged, this, &PeakViewWidget::settingsChanged);
+    connect(colorPeaks1, &ColorButton::colorChanged, this, &PeakViewWidget::settingsChanged);
+    connect(colorPeaks2, &ColorButton::colorChanged, this, &PeakViewWidget::settingsChanged);
+    connect(colorBoxes1, &ColorButton::colorChanged, this, &PeakViewWidget::settingsChanged);
+    connect(colorBoxes2, &ColorButton::colorChanged, this, &PeakViewWidget::settingsChanged);
+    connect(colorBkg1, &ColorButton::colorChanged, this, &PeakViewWidget::settingsChanged);
+    connect(colorBkg2, &ColorButton::colorChanged, this, &PeakViewWidget::settingsChanged);
+
+    connect(
+        sizePeaks1, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged), this,
+        &PeakViewWidget::settingsChanged);
+    connect(
+        sizePeaks2, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged), this,
+        &PeakViewWidget::settingsChanged);
 }
