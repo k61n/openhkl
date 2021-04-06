@@ -95,7 +95,7 @@ endif(NSX_PYTHON)
 
 ###### Find C-Blosc
 find_package(Blosc REQUIRED)
-include_directories(SYSTEM ${Blosc_INCLUDES})
+include_directories(SYSTEM ${Blosc_INCLUDE_DIRS})
 
 find_package(YAMLCPP REQUIRED)
 include_directories(SYSTEM ${YAMLCPP_INCLUDES})
