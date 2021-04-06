@@ -35,7 +35,6 @@
 
 class DetectorView;
 class PeakItemGraphic;
-class Spoiler;
 class SpoilerCheck;
 class PeakViewWidget;
 
@@ -43,19 +42,16 @@ class PeakViewWidget;
 class SubframeFilterPeaks : public QWidget {
  public:
     SubframeFilterPeaks();
-    ~SubframeFilterPeaks();
 
  public:
     //! Run the filtering method
     void filterPeaks();
-    //! Refresh all th einputs
+    //! Refresh all the inputs
     void refreshAll();
     //! detector view
     DetectorView* getDetectorView() { return _figure_view; }
 
  private:
-    //! Set up the GUI size policies
-    void setSizePolicies();
     //! Build the input
     void setInputUp();
     //! Build the state
@@ -142,7 +138,6 @@ class SubframeFilterPeaks : public QWidget {
 
     QSpinBox* _min_number_peaks;
 
-    Spoiler* _input_box;
     SpoilerCheck* _state_box;
     SpoilerCheck* _unit_cell_box;
     SpoilerCheck* _strength_box;
@@ -155,19 +150,11 @@ class SubframeFilterPeaks : public QWidget {
     QComboBox* _peak_combo;
     QComboBox* _data_combo;
 
-    Spoiler* _show_hide_peaks;
     PeakViewWidget* _peak_view_widget;
 
-    QPushButton* _filter_button;
-    QPushButton* _save_button;
-
-    QSizePolicy* _size_policy_widgets;
-    QSizePolicy* _size_policy_box;
-    QSizePolicy* _size_policy_right;
-    QSizePolicy* _size_policy_fixed;
+    QSizePolicy _size_policy_right;
 
     DetectorView* _figure_view;
-    // QGraphicsPixmapItem* _pixmap;
     QSpinBox* _figure_spin;
     QScrollBar* _figure_scroll;
     PeakTableView* _peak_table;

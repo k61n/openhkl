@@ -52,8 +52,6 @@ class SubframeFindPeaks : public QWidget {
     DetectorView* getDetectorView() { return _figure_view; }
 
  private:
-    //! Set up the GUI size policies
-    void setSizePolicies();
     //! Set up the data selection GUI
     void setDataUp();
     //! Set up the blob finding GUI
@@ -115,8 +113,6 @@ class SubframeFindPeaks : public QWidget {
     std::vector<nsx::sptrDataSet> _data_list;
 
  private:
-    QHBoxLayout* _main_layout;
-
     QVBoxLayout* _left_layout;
     QSplitter* _right_element;
 
@@ -148,14 +144,7 @@ class SubframeFindPeaks : public QWidget {
 
     PeakTableView* _peak_table;
 
-    QPushButton* _find_button;
-    QPushButton* _integrate_button;
-    QPushButton* _save_button;
-
-    QSizePolicy* _size_policy_widgets;
-    QSizePolicy* _size_policy_box;
-    QSizePolicy* _size_policy_right;
-    QSizePolicy* _size_policy_fixed;
+    QSizePolicy _size_policy_right;
 };
 
 #endif // NSX_GUI_SUBFRAME_FIND_SUBFRAMEFINDPEAKS_H

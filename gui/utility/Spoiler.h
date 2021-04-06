@@ -15,31 +15,54 @@
 #ifndef NSX_GUI_UTILITY_SPOILER_H
 #define NSX_GUI_UTILITY_SPOILER_H
 
-#include <QFrame>
-#include <QGridLayout>
 #include <QGroupBox>
 #include <QParallelAnimationGroup>
-#include <QScrollArea>
-#include <QToolButton>
 
+class QGridLayout;
+class QToolButton;
+class QCheckBox;
+
+//! A group box which can be collapsed/expanded.
 class Spoiler : public QGroupBox {
     Q_OBJECT
 
  public:
-    QScrollArea contentArea;
-    explicit Spoiler(
-        const QString& title = "", const int animationDuration = 100, QWidget* parent = 0);
-    void setContentLayout(QLayout& contentLayout, bool toggled = false);
+    //! If the group box shall be checkable, the headline contains a checkbox. If this checkbox is
+    //! unchecked, all the contents will be disabled.
+    explicit Spoiler(const QString& title, bool isCheckable = false);
+    void setContentLayout(QLayout& contentLayout, bool expanded = false); // #nsxUI ptr instead ref
+    QLayout* contentLayout();
 
- public slots:
+    //! Set the expanded state.
+    void setExpanded(bool expand);
+
+    //! True if expanded
+    bool isExpanded() const;
+
+    //! If the spoiler is checkable (see constructor), then this returns the checked-state. Returns
+    //! false if not checkable at all.
+    bool isChecked() const;
+
+    //! If the spoiler is checkable (see constructor), set the checked state.
+    //! No effect if not checkable at all.
+    void setChecked(bool checked);
+
+ private slots:
+    void checker(const int state);
+    void showEvent(QShowEvent* event);
+    void onAnimationFinished();
+
+ private:
     void toggler(const bool check);
 
  private:
-    QGridLayout mainLayout;
-    QToolButton toggleButton;
-    QFrame headerLine;
-    QParallelAnimationGroup toggleAnimation;
-    int animationDuration{300};
+    QGridLayout* _mainLayout = nullptr;
+    QToolButton* _toggleButton = nullptr;
+    QCheckBox* _select = nullptr;
+    QWidget* _contentArea = nullptr;
+
+    QParallelAnimationGroup _toggleAnimation;
+    int _animationDuration{300};
 };
 
 #endif // NSX_GUI_UTILITY_SPOILER_H

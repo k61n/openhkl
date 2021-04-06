@@ -58,8 +58,6 @@ class SubframePredictPeaks : public QWidget {
 
 
  private:
-    //! Set up the GUI size policies
-    void setSizePolicies();
     //! Build the input
     void setInputUp();
     //! Set the parameters values up
@@ -124,12 +122,9 @@ class SubframePredictPeaks : public QWidget {
     nsx::PredictionParameters _params;
 
  private:
-    QHBoxLayout* _main_layout;
-
     QVBoxLayout* _left_layout;
     QSplitter* _right_element;
 
-    Spoiler* _input_box;
     Spoiler* _para_box;
     Spoiler* _integrate_box;
     Spoiler* _preview_box;
@@ -154,25 +149,15 @@ class SubframePredictPeaks : public QWidget {
     QComboBox* _peak_combo;
     QComboBox* _data_combo;
 
-    Spoiler* _show_hide_peaks;
     PeakViewWidget* _peak_view_widget;
 
     DetectorView* _figure_view;
-    QGraphicsPixmapItem* _pixmap;
     QSpinBox* _figure_spin;
     QScrollBar* _figure_scroll;
 
     PeakTableView* _peak_table;
 
-    QPushButton* _build_shape_lib;
-    QPushButton* _run_prediction;
-    QPushButton* _save_button;
-    QPushButton* _run_integration;
-
-    QSizePolicy* _size_policy_widgets;
-    QSizePolicy* _size_policy_box;
-    QSizePolicy* _size_policy_right;
-    QSizePolicy* _size_policy_fixed;
+    QSizePolicy _size_policy_right;
 };
 
 #endif // NSX_GUI_SUBFRAME_PREDICT_SUBFRAMEPREDICTPEAKS_H

@@ -20,35 +20,30 @@
 #include "gui/items/PeakCollectionItem.h"
 #include "gui/models/PeakCollectionModel.h"
 
-#include <QCheckBox>
-#include <QComboBox>
-#include <QDoubleSpinBox>
-#include <QHBoxLayout>
-#include <QPushButton>
 #include <QSizePolicy>
-#include <QSpinBox>
-#include <QSplitter>
-#include <QTableWidget>
-#include <QVBoxLayout>
 #include <QWidget>
 
 class PeakTableView;
 class UnitCellTableView;
 class Spoiler;
+class QVBoxLayout;
+class QSplitter;
+class QSpinBox;
+class QCheckBox;
+class QComboBox;
+class QDoubleSpinBox;
 
 //! Frame which shows the settings for the AutoIndexer
 class SubframeAutoIndexer : public QWidget {
  public:
     SubframeAutoIndexer();
-    ~SubframeAutoIndexer();
+
     //! run the auto indexing
     void runAutoIndexer();
     //! Refresh all the panels
     void refreshAll();
 
  private:
-    //! Set up the GUI size policies
-    void setSizePolicies();
     //! Build the input
     void setInputUp();
     //! Set the parameters values up
@@ -100,12 +95,8 @@ class SubframeAutoIndexer : public QWidget {
     nsx::sptrUnitCell _selected_unit_cell;
 
  private:
-    QHBoxLayout* _main_layout;
     QVBoxLayout* _left_layout;
     QSplitter* _right_element;
-
-    Spoiler* _input_box;
-    Spoiler* _para_box;
 
     QComboBox* _exp_combo;
     QComboBox* _data_combo;
@@ -128,18 +119,9 @@ class SubframeAutoIndexer : public QWidget {
     QSpinBox* _number_solutions;
     QSpinBox* _number_subdivisions;
 
-    // unused
-    // QComboBox* _space_group;
-
     QCheckBox* _only_niggli;
 
-    QPushButton* _solve_button;
-    QPushButton* _save_button;
-
-    QSizePolicy* _size_policy_widgets;
-    QSizePolicy* _size_policy_box;
-    QSizePolicy* _size_policy_right;
-    QSizePolicy* _size_policy_fixed;
+    QSizePolicy _size_policy_right;
 
     PeakTableView* _peak_table;
     UnitCellTableView* _solution_table;

@@ -60,7 +60,6 @@ MainWin::MainWin()
     menus_ = new Menus(menuBar());
 
     setTabPosition(Qt::AllDockWidgetAreas, QTabWidget::North);
-    setAttribute(Qt::WA_DeleteOnClose, true);
 
     // layout
     setContentsMargins(5, 5, 5, 5);

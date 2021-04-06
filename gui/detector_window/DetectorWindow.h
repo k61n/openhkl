@@ -40,7 +40,6 @@ class DetectorWindow : public QDialog {
     //! Overload QDialog::showEvent to resize window at runtime
     void showEvent(QShowEvent* event);
 
-    void setSizePolicies();
     //! Set up control panel widgets
     void setDetectorViewUp();
     void setPeakTableUp();
@@ -65,7 +64,9 @@ class DetectorWindow : public QDialog {
     DetectorView* getDetectorView() { return _detector_view; };
 
  private:
-    QHBoxLayout* _main_layout;
+    void changeSelected(PeakItemGraphic* peak_graphic);
+
+ private:
     QVBoxLayout* _control_layout;
     QSplitter* _right_element;
 
@@ -96,16 +97,8 @@ class DetectorWindow : public QDialog {
     PeakCollectionItem _peak_collection_item_2;
     PeakCollectionModel _peak_collection_model_2;
 
-    QSizePolicy* _size_policy_widgets;
-    QSizePolicy* _size_policy_box;
-    QSizePolicy* _size_policy_right;
-    QSizePolicy* _size_policy_fixed;
-    QSizePolicy* _size_policy_min;
-
     std::vector<nsx::sptrDataSet> _data_list;
     QStringList _peak_list;
-
-    void changeSelected(PeakItemGraphic* peak_graphic);
 };
 
 #endif // NSX_GUI_DETECTOR_WINDOW_DETECTORWINDOW_H

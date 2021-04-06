@@ -30,6 +30,8 @@
 #include "gui/models/Project.h"
 #include "gui/models/Session.h"
 #include "gui/utility/ColorButton.h"
+#include "gui/utility/GridFiller.h"
+#include "gui/utility/PropertyScrollArea.h"
 #include "gui/utility/Spoiler.h"
 #include "gui/views/PeakTableView.h"
 #include "gui/widgets/PeakViewWidget.h"
@@ -52,18 +54,12 @@ SubframeFindPeaks::SubframeFindPeaks()
     , _peak_collection_item()
     , _peak_collection_model()
     , _pixmap(nullptr)
+    , _size_policy_right(QSizePolicy::Expanding, QSizePolicy::Expanding)
 {
-    setSizePolicies();
-    _main_layout = new QHBoxLayout(this);
+    auto main_layout = new QHBoxLayout(this);
     _right_element = new QSplitter(Qt::Vertical, this);
 
-    QScrollArea* scroll_area = new QScrollArea(this);
-    QWidget* scroll_widget = new QWidget();
-    scroll_area->setSizePolicy(*_size_policy_box);
-    scroll_widget->setSizePolicy(*_size_policy_box);
-    _left_layout = new QVBoxLayout(scroll_widget);
-    scroll_area->setWidgetResizable(true);
-    scroll_area->setWidget(scroll_widget);
+    _left_layout = new QVBoxLayout(this);
 
     setDataUp();
     setBlobUp();
@@ -73,10 +69,12 @@ SubframeFindPeaks::SubframeFindPeaks()
     setFigureUp();
     setPeakTableUp();
 
-    _right_element->setSizePolicy(*_size_policy_right);
+    _right_element->setSizePolicy(_size_policy_right);
 
-    _main_layout->addWidget(scroll_area);
-    _main_layout->addWidget(_right_element);
+    auto propertyScrollArea = new PropertyScrollArea(this);
+    propertyScrollArea->setContentLayout(_left_layout);
+    main_layout->addWidget(propertyScrollArea);
+    main_layout->addWidget(_right_element);
 
     connect(_kernel_combo, &QComboBox::currentTextChanged, [=](QString) {
         updateConvolutionParameters();
@@ -84,54 +82,14 @@ SubframeFindPeaks::SubframeFindPeaks()
     });
 }
 
-void SubframeFindPeaks::setSizePolicies()
-{
-    _size_policy_widgets = new QSizePolicy();
-    _size_policy_widgets->setHorizontalPolicy(QSizePolicy::Preferred);
-    _size_policy_widgets->setVerticalPolicy(QSizePolicy::Fixed);
-
-    _size_policy_box = new QSizePolicy();
-    _size_policy_box->setHorizontalPolicy(QSizePolicy::Preferred);
-    _size_policy_box->setVerticalPolicy(QSizePolicy::Preferred);
-
-    _size_policy_right = new QSizePolicy();
-    _size_policy_right->setHorizontalPolicy(QSizePolicy::Expanding);
-    _size_policy_right->setVerticalPolicy(QSizePolicy::Expanding);
-
-    _size_policy_fixed = new QSizePolicy();
-    _size_policy_fixed->setHorizontalPolicy(QSizePolicy::Fixed);
-    _size_policy_fixed->setVerticalPolicy(QSizePolicy::Fixed);
-}
-
 void SubframeFindPeaks::setDataUp()
 {
     Spoiler* _data_box = new Spoiler("1. Input Data");
+    GridFiller f(_data_box);
 
-    QGridLayout* _data_grid = new QGridLayout();
-
-    QLabel* exp_label = new QLabel("Experiment");
-    exp_label->setAlignment(Qt::AlignRight);
-    _data_grid->addWidget(exp_label, 0, 0, 1, 1);
-
-    QLabel* data_label = new QLabel("Data-set");
-    data_label->setAlignment(Qt::AlignRight);
-    _data_grid->addWidget(data_label, 1, 0, 1, 1);
-
-    _exp_combo = new QComboBox();
-    _data_combo = new QComboBox();
-    _all_data = new QCheckBox("Search all");
-
-    _exp_combo->setMaximumWidth(1000);
-    _data_combo->setMaximumWidth(1000);
-    _all_data->setMaximumWidth(1000);
-
-    _exp_combo->setSizePolicy(*_size_policy_widgets);
-    _data_combo->setSizePolicy(*_size_policy_widgets);
-    _all_data->setSizePolicy(*_size_policy_widgets);
-
-    _data_grid->addWidget(_exp_combo, 0, 1, 1, 1);
-    _data_grid->addWidget(_data_combo, 1, 1, 1, 1);
-    _data_grid->addWidget(_all_data, 2, 1, 1, 2);
+    _exp_combo = f.addCombo("Experiment");
+    _data_combo = f.addCombo("Data-set");
+    _all_data = f.addCheckBox("Search all", 1);
 
     connect(
         _exp_combo, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this,
@@ -145,84 +103,44 @@ void SubframeFindPeaks::setDataUp()
         _data_combo, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this,
         &SubframeFindPeaks::updateDatasetParameters);
 
-    _data_box->setContentLayout(*_data_grid);
-    _data_box->setSizePolicy(*_size_policy_box);
-    _data_box->contentArea.setSizePolicy(*_size_policy_box);
-
     _left_layout->addWidget(_data_box);
 }
 
 void SubframeFindPeaks::setBlobUp()
 {
     Spoiler* blob_para = new Spoiler("2. Peak search parameters");
+    GridFiller f(blob_para, true);
 
-    QGridLayout* blob_grid = new QGridLayout();
-    QString tooltip;
+    _threshold_spin = f.addSpinBox(
+        "Threshold", "(counts) - pixels with fewer counts than the threshold are discarded");
 
-    QLabel* threshold_label = new QLabel("Threshold");
-    threshold_label->setAlignment(Qt::AlignRight);
-    blob_grid->addWidget(threshold_label, 0, 0, 1, 1);
-    tooltip = "(counts) - pixels with fewer counts than the threshold are discarded";
-    threshold_label->setToolTip(tooltip);
+    _scale_spin =
+        f.addDoubleSpinBox("Merging scale", "(sigmas) - blob scaling factor to detect collisions");
 
-    QLabel* scale_label = new QLabel("Merging scale");
-    scale_label->setAlignment(Qt::AlignRight);
-    blob_grid->addWidget(scale_label, 1, 0, 1, 1);
-    tooltip = "(sigmas) - blob scaling factor to detect collisions";
-    scale_label->setToolTip(tooltip);
+    _min_size_spin = f.addSpinBox(
+        "Minimum size", "(integer) - blobs containing fewer points than this count are discarded");
 
-    QLabel* min_size_label = new QLabel("Minimum size");
-    min_size_label->setAlignment(Qt::AlignRight);
-    blob_grid->addWidget(min_size_label, 2, 0, 1, 1);
-    tooltip = "(integer) - blobs containing fewer points than this count are discarded";
-    min_size_label->setToolTip(tooltip);
+    _max_size_spin = f.addSpinBox(
+        "Maximum size", "(integer) - blobs containing more points than this count are discarded");
 
-    QLabel* max_size_label = new QLabel("Maximum size");
-    max_size_label->setAlignment(Qt::AlignRight);
-    blob_grid->addWidget(max_size_label, 3, 0, 1, 1);
-    tooltip = "(integer) - blobs containing more points than this count are discarded";
-    max_size_label->setToolTip(tooltip);
+    _max_width_spin = f.addSpinBox(
+        "Maximum width", "(frames) - blob is discarded if it spans more frames than this value");
 
-    QLabel* max_width_label = new QLabel("Maximum width");
-    max_width_label->setAlignment(Qt::AlignRight);
-    blob_grid->addWidget(max_width_label, 4, 0, 1, 1);
-    tooltip = "(frames) - blob is discarded if it spans more frames than this value";
-    max_width_label->setToolTip(tooltip);
+    _kernel_combo = f.addCombo("Kernel", "Convolution kernel for peak search");
 
-    QLabel* kernel_label = new QLabel("Kernel");
-    kernel_label->setAlignment(Qt::AlignRight);
-    blob_grid->addWidget(kernel_label, 5, 0, 1, 1);
-    tooltip = "Convolution kernel for peak search";
-    kernel_label->setToolTip(tooltip);
+    QLabel* kernel_para_label = new QLabel("Parameters:");
+    kernel_para_label->setAlignment(Qt::AlignLeft | Qt::AlignTop);
+    kernel_para_label->setToolTip("r1, r2, r3 parameters for pixel sum integration");
+    f.addWidget(kernel_para_label, 0);
 
-    QLabel* kernel_para_label = new QLabel("Parameters");
-    kernel_para_label->setAlignment(Qt::AlignRight | Qt::AlignTop);
-    blob_grid->addWidget(kernel_para_label, 6, 0, 1, 1);
-    tooltip = "r1, r2, r3 parameters for pixel sum integration";
-    kernel_para_label->setToolTip(tooltip);
-
-    QLabel* start_frame_label = new QLabel("Start frame");
-    start_frame_label->setAlignment(Qt::AlignRight);
-    blob_grid->addWidget(start_frame_label, 8, 0, 1, 1);
-    tooltip = "(frame) - start frame for peak finding";
-    start_frame_label->setToolTip(tooltip);
-
-    QLabel* end_frame_label = new QLabel("End frame");
-    end_frame_label->setAlignment(Qt::AlignRight);
-    blob_grid->addWidget(end_frame_label, 9, 0, 1, 1);
-    tooltip = "(frame) - end frame for peak finding";
-    end_frame_label->setToolTip(tooltip);
-
-    _threshold_spin = new QSpinBox();
-    _scale_spin = new QDoubleSpinBox();
-    _min_size_spin = new QSpinBox();
-    _max_size_spin = new QSpinBox();
-    _max_width_spin = new QSpinBox();
-    _kernel_combo = new QComboBox;
     _kernel_para_table = new QTableWidget(this);
-    _start_frame_spin = new QSpinBox();
-    _end_frame_spin = new QSpinBox();
-    _find_button = new QPushButton("Find peaks");
+    f.addWidget(_kernel_para_table, 0);
+
+    _start_frame_spin = f.addSpinBox("Start frame", "(frame) - start frame for peak finding");
+
+    _end_frame_spin = f.addSpinBox("End frame", "(frame) - end frame for peak finding");
+
+    auto find_button = f.addButton("Find peaks");
 
     _threshold_spin->setMaximum(10000000);
     _scale_spin->setMaximum(10000000);
@@ -230,50 +148,7 @@ void SubframeFindPeaks::setBlobUp()
     _max_size_spin->setMaximum(10000000);
     _max_width_spin->setMaximum(10000000);
 
-    _threshold_spin->setMaximumWidth(1000);
-    _scale_spin->setMaximumWidth(1000);
-    _min_size_spin->setMaximumWidth(1000);
-    _max_size_spin->setMaximumWidth(1000);
-    _max_width_spin->setMaximumWidth(1000);
-    _kernel_combo->setMaximumWidth(1000);
-    _kernel_para_table->setMaximumWidth(1000);
-    _start_frame_spin->setMaximumWidth(1000);
-    _end_frame_spin->setMaximumWidth(1000);
-
-    _threshold_spin->setAlignment(Qt::AlignLeft);
-    _scale_spin->setAlignment(Qt::AlignLeft);
-    _min_size_spin->setAlignment(Qt::AlignLeft);
-    _max_size_spin->setAlignment(Qt::AlignLeft);
-    _max_width_spin->setAlignment(Qt::AlignLeft);
-    _start_frame_spin->setAlignment(Qt::AlignLeft);
-    _end_frame_spin->setAlignment(Qt::AlignLeft);
-
-    _threshold_spin->setSizePolicy(*_size_policy_widgets);
-    _scale_spin->setSizePolicy(*_size_policy_widgets);
-    _min_size_spin->setSizePolicy(*_size_policy_widgets);
-    _max_size_spin->setSizePolicy(*_size_policy_widgets);
-    _max_width_spin->setSizePolicy(*_size_policy_widgets);
-    _kernel_combo->setSizePolicy(*_size_policy_widgets);
-    _kernel_para_table->setSizePolicy(*_size_policy_widgets);
-    _start_frame_spin->setSizePolicy(*_size_policy_widgets);
-    _end_frame_spin->setSizePolicy(*_size_policy_widgets);
-
-    blob_grid->addWidget(_threshold_spin, 0, 1, 1, 1);
-    blob_grid->addWidget(_scale_spin, 1, 1, 1, 1);
-    blob_grid->addWidget(_min_size_spin, 2, 1, 1, 1);
-    blob_grid->addWidget(_max_size_spin, 3, 1, 1, 1);
-    blob_grid->addWidget(_max_width_spin, 4, 1, 1, 1);
-    blob_grid->addWidget(_kernel_combo, 5, 1, 1, 1);
-    blob_grid->addWidget(_kernel_para_table, 7, 0, 1, 2);
-    blob_grid->addWidget(_start_frame_spin, 8, 1, 1, 1);
-    blob_grid->addWidget(_end_frame_spin, 9, 1, 1, 1);
-    blob_grid->addWidget(_find_button, 10, 0, 1, 2);
-
-    connect(_find_button, &QPushButton::clicked, this, &SubframeFindPeaks::find);
-
-    blob_para->setContentLayout(*blob_grid, true);
-    blob_para->setSizePolicy(*_size_policy_box);
-    blob_para->contentArea.setSizePolicy(*_size_policy_box);
+    connect(find_button, &QPushButton::clicked, this, &SubframeFindPeaks::find);
 
     _left_layout->addWidget(blob_para);
 }
@@ -281,59 +156,23 @@ void SubframeFindPeaks::setBlobUp()
 void SubframeFindPeaks::setIntegrateUp()
 {
     Spoiler* integration_para = new Spoiler("3. Integration parameters");
+    GridFiller f(integration_para);
 
-    QGridLayout* integGrid = new QGridLayout();
-    QString tooltip;
+    _peak_area = f.addDoubleSpinBox("Peak end", "(sigmas) - scaling factor for peak region");
 
-    QLabel* area_label = new QLabel("Peak end");
-    area_label->setAlignment(Qt::AlignRight);
-    integGrid->addWidget(area_label, 0, 0, 1, 1);
-    tooltip = "(sigmas) - scaling factor for peak region";
-    area_label->setToolTip(tooltip);
+    _bkg_lower =
+        f.addDoubleSpinBox("Bkg. begin", "(sigmas) - scaling factor for lower limit of background");
 
-    QLabel* bck_lower_label = new QLabel("Bkg. begin");
-    bck_lower_label->setAlignment(Qt::AlignRight);
-    integGrid->addWidget(bck_lower_label, 1, 0, 1, 1);
-    tooltip = "(sigmas) - scaling factor for lower limit of background";
-    bck_lower_label->setToolTip(tooltip);
+    _bkg_upper =
+        f.addDoubleSpinBox("Bkg. end", "(sigmas) - scaling factor for upper limit of background");
 
-    QLabel* bck_upper_label = new QLabel("Bkg. end");
-    bck_upper_label->setAlignment(Qt::AlignRight);
-    integGrid->addWidget(bck_upper_label, 2, 0, 1, 1);
-    tooltip = "(sigmas) - scaling factor for upper limit of background";
-    bck_upper_label->setToolTip(tooltip);
-
-    _peak_area = new QDoubleSpinBox();
-    _bkg_lower = new QDoubleSpinBox();
-    _bkg_upper = new QDoubleSpinBox();
-    _integrate_button = new QPushButton("Integrate");
+    auto integrate_button = f.addButton("Integrate");
 
     _peak_area->setMaximum(10000000);
     _bkg_lower->setMaximum(10000000);
     _bkg_upper->setMaximum(10000000);
 
-    _peak_area->setMaximumWidth(1000);
-    _bkg_lower->setMaximumWidth(1000);
-    _bkg_upper->setMaximumWidth(1000);
-
-    _peak_area->setAlignment(Qt::AlignLeft);
-    _bkg_lower->setAlignment(Qt::AlignLeft);
-    _bkg_upper->setAlignment(Qt::AlignLeft);
-
-    _peak_area->setSizePolicy(*_size_policy_widgets);
-    _bkg_lower->setSizePolicy(*_size_policy_widgets);
-    _bkg_upper->setSizePolicy(*_size_policy_widgets);
-
-    integGrid->addWidget(_peak_area, 0, 1, 1, 1);
-    integGrid->addWidget(_bkg_lower, 1, 1, 1, 1);
-    integGrid->addWidget(_bkg_upper, 2, 1, 1, 1);
-    integGrid->addWidget(_integrate_button, 3, 0, 1, 2);
-
-    connect(_integrate_button, &QPushButton::clicked, this, &SubframeFindPeaks::integrate);
-
-    integration_para->setContentLayout(*integGrid);
-    integration_para->setSizePolicy(*_size_policy_box);
-    integration_para->contentArea.setSizePolicy(*_size_policy_box);
+    connect(integrate_button, &QPushButton::clicked, this, &SubframeFindPeaks::integrate);
 
     _left_layout->addWidget(integration_para);
 }
@@ -388,27 +227,20 @@ void SubframeFindPeaks::setPreviewUp()
         _peak_view_widget->bkgColor2(), &ColorButton::colorChanged, this,
         &SubframeFindPeaks::refreshPeakVisual);
 
-    preview_spoiler->setContentLayout(*_peak_view_widget);
-    preview_spoiler->setSizePolicy(*_size_policy_box);
-    preview_spoiler->contentArea.setSizePolicy(*_size_policy_box);
-
     _live_check = new QCheckBox("Apply threshold to preview");
-    _live_check->setMaximumWidth(1000);
-    _live_check->setSizePolicy(*_size_policy_widgets);
     // _peak_view_widget->addWidget(_live_check, 8, 0, 1, 3);
     // Not sure what the _live_check widget does - zamaan
+
+    preview_spoiler->setContentLayout(*_peak_view_widget);
 
     _left_layout->addWidget(preview_spoiler);
 }
 
 void SubframeFindPeaks::setSaveUp()
 {
-    _save_button = new QPushButton("Create peak collection");
-    _save_button->setMaximumWidth(1000);
-    _save_button->setSizePolicy(*_size_policy_widgets);
-    _left_layout->addWidget(_save_button);
-    _left_layout->addItem(new QSpacerItem(20, 40, QSizePolicy::Minimum, QSizePolicy::Expanding));
-    connect(_save_button, &QPushButton::clicked, this, &SubframeFindPeaks::accept);
+    auto save_button = new QPushButton("Create peak collection");
+    _left_layout->addWidget(save_button);
+    connect(save_button, &QPushButton::clicked, this, &SubframeFindPeaks::accept);
 }
 
 void SubframeFindPeaks::setFigureUp()
@@ -416,7 +248,7 @@ void SubframeFindPeaks::setFigureUp()
     QGroupBox* figure_group = new QGroupBox("Preview");
     QGridLayout* figure_grid = new QGridLayout(figure_group);
 
-    figure_group->setSizePolicy(*_size_policy_right);
+    figure_group->setSizePolicy(_size_policy_right);
 
     _figure_view = new DetectorView(this);
     _figure_view->getScene()->linkPeakModel(&_peak_collection_model);
@@ -425,11 +257,11 @@ void SubframeFindPeaks::setFigureUp()
 
     _figure_scroll = new QScrollBar(this);
     _figure_scroll->setOrientation(Qt::Horizontal);
-    _figure_scroll->setSizePolicy(*_size_policy_widgets);
+    _figure_scroll->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
     figure_grid->addWidget(_figure_scroll, 1, 0, 1, 1);
 
     _figure_spin = new QSpinBox(this);
-    _figure_spin->setSizePolicy(*_size_policy_fixed);
+    _figure_spin->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     figure_grid->addWidget(_figure_spin, 1, 1, 1, 1);
 
     connect(
@@ -452,7 +284,7 @@ void SubframeFindPeaks::setPeakTableUp()
     QGroupBox* peak_group = new QGroupBox("Peaks");
     QGridLayout* peak_grid = new QGridLayout(peak_group);
 
-    peak_group->setSizePolicy(*_size_policy_right);
+    peak_group->setSizePolicy(_size_policy_right);
 
     _peak_table = new PeakTableView(this);
     _peak_collection_model.setRoot(&_peak_collection_item);

@@ -24,6 +24,8 @@
 #include "gui/models/Meta.h"
 #include "gui/models/Project.h"
 #include "gui/models/Session.h"
+#include "gui/utility/GridFiller.h"
+#include "gui/utility/PropertyScrollArea.h"
 #include "gui/utility/Spoiler.h"
 #include "gui/utility/SpoilerCheck.h"
 #include "gui/widgets/PeakViewWidget.h"
@@ -43,24 +45,15 @@
 
 SubframeFilterPeaks::SubframeFilterPeaks()
     : QWidget()
-    ,
-    // _pixmap(nullptr),
-    _peak_collection("temp", nsx::listtype::FOUND)
+    , _peak_collection("temp", nsx::listtype::FOUND)
     , _peak_collection_item()
     , _peak_collection_model()
+    , _size_policy_right(QSizePolicy::Expanding, QSizePolicy::Expanding)
 {
-    setSizePolicies();
     _main_layout = new QHBoxLayout(this);
     _right_element = new QSplitter(Qt::Vertical, this);
 
-    QScrollArea* scroll_area = new QScrollArea(this);
-    QWidget* scroll_widget = new QWidget();
-
-    scroll_area->setSizePolicy(*_size_policy_box);
-    scroll_widget->setSizePolicy(*_size_policy_box);
-    _left_layout = new QVBoxLayout(scroll_widget);
-    scroll_area->setWidgetResizable(true);
-    scroll_area->setWidget(scroll_widget);
+    _left_layout = new QVBoxLayout(this);
 
     setInputUp();
     setStateUp();
@@ -74,65 +67,22 @@ SubframeFilterPeaks::SubframeFilterPeaks()
     setFigureUp();
     setPeakTableUp();
 
-    _left_layout->addItem(new QSpacerItem(20, 40, QSizePolicy::Minimum, QSizePolicy::Expanding));
-    _right_element->setSizePolicy(*_size_policy_right);
+    _right_element->setSizePolicy(_size_policy_right);
 
-    _main_layout->addWidget(scroll_area);
+    auto propertyScrollArea = new PropertyScrollArea(this);
+    propertyScrollArea->setContentLayout(_left_layout);
+
+    _main_layout->addWidget(propertyScrollArea);
     _main_layout->addWidget(_right_element);
-}
-
-SubframeFilterPeaks::~SubframeFilterPeaks()
-{
-    delete _size_policy_widgets;
-    delete _size_policy_box;
-    delete _size_policy_right;
-    delete _size_policy_fixed;
-}
-
-void SubframeFilterPeaks::setSizePolicies()
-{
-    _size_policy_widgets = new QSizePolicy();
-    _size_policy_widgets->setHorizontalPolicy(QSizePolicy::Preferred);
-    _size_policy_widgets->setVerticalPolicy(QSizePolicy::Fixed);
-
-    _size_policy_box = new QSizePolicy();
-    _size_policy_box->setHorizontalPolicy(QSizePolicy::Preferred);
-    _size_policy_box->setVerticalPolicy(QSizePolicy::Preferred);
-
-    _size_policy_right = new QSizePolicy();
-    _size_policy_right->setHorizontalPolicy(QSizePolicy::Expanding);
-    _size_policy_right->setVerticalPolicy(QSizePolicy::Expanding);
-
-    _size_policy_fixed = new QSizePolicy();
-    _size_policy_fixed->setHorizontalPolicy(QSizePolicy::Fixed);
-    _size_policy_fixed->setVerticalPolicy(QSizePolicy::Fixed);
 }
 
 void SubframeFilterPeaks::setInputUp()
 {
-    _input_box = new Spoiler("Input");
+    auto input_box = new Spoiler("Input");
+    GridFiller f(input_box, true);
 
-    QGridLayout* _input_grid = new QGridLayout();
-
-    QLabel* exp_label = new QLabel("Experiment");
-    exp_label->setAlignment(Qt::AlignRight);
-    _input_grid->addWidget(exp_label, 0, 0, 1, 1);
-
-    QLabel* list_label = new QLabel("Peak collection");
-    list_label->setAlignment(Qt::AlignRight);
-    _input_grid->addWidget(list_label, 1, 0, 1, 1);
-
-    _exp_combo = new QComboBox();
-    _peak_combo = new QComboBox();
-
-    _exp_combo->setMaximumWidth(1000);
-    _peak_combo->setMaximumWidth(1000);
-
-    _exp_combo->setSizePolicy(*_size_policy_widgets);
-    _peak_combo->setSizePolicy(*_size_policy_widgets);
-
-    _input_grid->addWidget(_exp_combo, 0, 1, 1, 1);
-    _input_grid->addWidget(_peak_combo, 1, 1, 1, 1);
+    _exp_combo = f.addCombo("Experiment");
+    _peak_combo = f.addCombo("Peak collection");
 
     connect(
         _exp_combo, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this,
@@ -148,42 +98,18 @@ void SubframeFilterPeaks::setInputUp()
             refreshPeakTable();
         });
 
-    _input_box->setContentLayout(*_input_grid, true);
-    _input_box->setSizePolicy(*_size_policy_box);
-    _input_box->contentArea.setSizePolicy(*_size_policy_box);
-
-    _left_layout->addWidget(_input_box);
+    _left_layout->addWidget(input_box);
 }
 
 void SubframeFilterPeaks::setStateUp()
 {
     _state_box = new SpoilerCheck("State");
+    GridFiller f(_state_box);
 
-    QGridLayout* _state_box_layout = new QGridLayout();
-
-    _selected = new QCheckBox("Selected");
-    _masked = new QCheckBox("Masked");
-    _predicted = new QCheckBox("Predicted");
-    _indexed_peaks = new QCheckBox("Indexed peak");
-
-    _selected->setMaximumWidth(1000);
-    _masked->setMaximumWidth(1000);
-    _predicted->setMaximumWidth(1000);
-    _indexed_peaks->setMaximumWidth(1000);
-
-    _selected->setSizePolicy(*_size_policy_widgets);
-    _masked->setSizePolicy(*_size_policy_widgets);
-    _predicted->setSizePolicy(*_size_policy_widgets);
-    _indexed_peaks->setSizePolicy(*_size_policy_widgets);
-
-    _state_box_layout->addWidget(_selected, 0, 0, 1, 2);
-    _state_box_layout->addWidget(_masked, 1, 0, 1, 2);
-    _state_box_layout->addWidget(_predicted, 2, 0, 1, 2);
-    _state_box_layout->addWidget(_indexed_peaks, 3, 0, 1, 2);
-
-    _state_box->setContentLayout(*_state_box_layout);
-    _state_box->setSizePolicy(*_size_policy_box);
-    _state_box->contentArea.setSizePolicy(*_size_policy_box);
+    _selected = f.addCheckBox("Selected");
+    _masked = f.addCheckBox("Masked");
+    _predicted = f.addCheckBox("Predicted");
+    _indexed_peaks = f.addCheckBox("Indexed peak");
 
     _left_layout->addWidget(_state_box);
 }
@@ -191,33 +117,14 @@ void SubframeFilterPeaks::setStateUp()
 void SubframeFilterPeaks::setUnitCellUp()
 {
     _unit_cell_box = new SpoilerCheck("Indexed peaks by unit cell");
+    GridFiller f(_unit_cell_box);
 
-    QGridLayout* _unit_cell_layout = new QGridLayout();
+    _unit_cell = f.addCombo("Unit cell:");
+    _tolerance = f.addDoubleSpinBox("Tolerance:");
 
-    QLabel* unit_cell_label = new QLabel("Unit cell:");
-    unit_cell_label->setAlignment(Qt::AlignRight);
-    _unit_cell_layout->addWidget(unit_cell_label, 0, 0, 1, 1);
-
-    QLabel* tolerance_label = new QLabel("Tolerance:");
-    tolerance_label->setAlignment(Qt::AlignRight);
-    _unit_cell_layout->addWidget(tolerance_label, 1, 0, 1, 1);
-
-    _unit_cell = new QComboBox();
-
-    _tolerance = new QDoubleSpinBox();
     _tolerance->setValue(0.2);
     _tolerance->setMaximum(1000);
     _tolerance->setDecimals(6);
-
-    _unit_cell->setSizePolicy(*_size_policy_widgets);
-    _tolerance->setSizePolicy(*_size_policy_widgets);
-
-    _unit_cell_layout->addWidget(_unit_cell, 0, 1, 1, 1);
-    _unit_cell_layout->addWidget(_tolerance, 1, 1, 1, 1);
-
-    _unit_cell_box->setContentLayout(*_unit_cell_layout);
-    _unit_cell_box->setSizePolicy(*_size_policy_box);
-    _unit_cell_box->contentArea.setSizePolicy(*_size_policy_box);
 
     _left_layout->addWidget(_unit_cell_box);
 }
@@ -225,36 +132,17 @@ void SubframeFilterPeaks::setUnitCellUp()
 void SubframeFilterPeaks::setStrengthUp()
 {
     _strength_box = new SpoilerCheck("Strength (I/sigma)");
+    GridFiller f(_strength_box);
 
-    QGridLayout* strength_layout = new QGridLayout();
-
-    QLabel* min_label = new QLabel("Minimum:");
-    min_label->setAlignment(Qt::AlignRight);
-    strength_layout->addWidget(min_label, 0, 0, 1, 1);
-
-    QLabel* max_label = new QLabel("Maximum:");
-    max_label->setAlignment(Qt::AlignRight);
-    strength_layout->addWidget(max_label, 1, 0, 1, 1);
-
-    _strength_min = new QDoubleSpinBox();
+    _strength_min = f.addDoubleSpinBox("Minimum:");
     _strength_min->setValue(1.00000);
     _strength_min->setMaximum(100000);
     _strength_min->setDecimals(6);
 
-    _strength_max = new QDoubleSpinBox();
+    _strength_max = f.addDoubleSpinBox("Maximum:");
     _strength_max->setValue(3.00000);
     _strength_max->setMaximum(1e10);
     _strength_max->setDecimals(6);
-
-    _strength_min->setSizePolicy(*_size_policy_widgets);
-    _strength_max->setSizePolicy(*_size_policy_widgets);
-
-    strength_layout->addWidget(_strength_min, 0, 1, 1, 1);
-    strength_layout->addWidget(_strength_max, 1, 1, 1, 1);
-
-    _strength_box->setContentLayout(*strength_layout);
-    _strength_box->setSizePolicy(*_size_policy_box);
-    _strength_box->contentArea.setSizePolicy(*_size_policy_box);
 
     _left_layout->addWidget(_strength_box);
 }
@@ -262,36 +150,17 @@ void SubframeFilterPeaks::setStrengthUp()
 void SubframeFilterPeaks::setRangeUp()
 {
     _d_range_box = new SpoilerCheck("d range");
+    GridFiller f(_d_range_box);
 
-    QGridLayout* d_range_layout = new QGridLayout();
-
-    QLabel* min_label = new QLabel("Minimum:");
-    min_label->setAlignment(Qt::AlignRight);
-    d_range_layout->addWidget(min_label, 0, 0, 1, 1);
-
-    QLabel* max_label = new QLabel("Maximum:");
-    max_label->setAlignment(Qt::AlignRight);
-    d_range_layout->addWidget(max_label, 1, 0, 1, 1);
-
-    _d_range_min = new QDoubleSpinBox();
+    _d_range_min = f.addDoubleSpinBox("Minimum:");
     _d_range_min->setMaximum(1000);
     _d_range_min->setDecimals(6);
     _d_range_min->setValue(0.0000);
 
-    _d_range_max = new QDoubleSpinBox();
+    _d_range_max = f.addDoubleSpinBox("Maximum:");
     _d_range_max->setMaximum(1000);
     _d_range_max->setDecimals(6);
     _d_range_max->setValue(100.00000);
-
-    _d_range_min->setSizePolicy(*_size_policy_widgets);
-    _d_range_max->setSizePolicy(*_size_policy_widgets);
-
-    d_range_layout->addWidget(_d_range_min, 0, 1, 1, 1);
-    d_range_layout->addWidget(_d_range_max, 1, 1, 1, 1);
-
-    _d_range_box->setContentLayout(*d_range_layout);
-    _d_range_box->setSizePolicy(*_size_policy_box);
-    _d_range_box->contentArea.setSizePolicy(*_size_policy_box);
 
     _left_layout->addWidget(_d_range_box);
 }
@@ -299,36 +168,17 @@ void SubframeFilterPeaks::setRangeUp()
 void SubframeFilterPeaks::setFrameRangeUp()
 {
     _frame_range_box = new SpoilerCheck("Frame range");
+    GridFiller f(_frame_range_box);
 
-    QGridLayout* frame_range_layout = new QGridLayout();
-
-    QLabel* min_label = new QLabel("Minimum:");
-    min_label->setAlignment(Qt::AlignRight);
-    frame_range_layout->addWidget(min_label, 0, 0, 1, 1);
-
-    QLabel* max_label = new QLabel("Maximum:");
-    max_label->setAlignment(Qt::AlignRight);
-    frame_range_layout->addWidget(max_label, 1, 0, 1, 1);
-
-    _frame_min = new QDoubleSpinBox();
+    _frame_min = f.addDoubleSpinBox("Minimum:");
     _frame_min->setMaximum(10000);
     _frame_min->setDecimals(0);
     _frame_min->setValue(0.0000);
 
-    _frame_max = new QDoubleSpinBox();
+    _frame_max = f.addDoubleSpinBox("Maximum:");
     _frame_max->setMaximum(10000);
     _frame_max->setDecimals(0);
     _frame_max->setValue(10.00000);
-
-    _frame_min->setSizePolicy(*_size_policy_widgets);
-    _frame_max->setSizePolicy(*_size_policy_widgets);
-
-    frame_range_layout->addWidget(_frame_min, 0, 1, 1, 1);
-    frame_range_layout->addWidget(_frame_max, 1, 1, 1, 1);
-
-    _frame_range_box->setContentLayout(*frame_range_layout);
-    _frame_range_box->setSizePolicy(*_size_policy_box);
-    _frame_range_box->contentArea.setSizePolicy(*_size_policy_box);
 
     _left_layout->addWidget(_frame_range_box);
 }
@@ -336,24 +186,11 @@ void SubframeFilterPeaks::setFrameRangeUp()
 void SubframeFilterPeaks::setSparseUp()
 {
     _sparse_box = new SpoilerCheck("Sparse dataset");
+    GridFiller f(_sparse_box);
 
-    QGridLayout* sparse_layout = new QGridLayout();
-
-    QLabel* min_label = new QLabel("Minimum number of peaks:");
-    min_label->setAlignment(Qt::AlignRight);
-    sparse_layout->addWidget(min_label, 0, 0, 1, 1);
-
-    _min_number_peaks = new QSpinBox();
+    _min_number_peaks = f.addSpinBox("Minimum number of peaks:");
     _min_number_peaks->setValue(0);
     _min_number_peaks->setMaximum(1000);
-
-    _min_number_peaks->setSizePolicy(*_size_policy_widgets);
-
-    sparse_layout->addWidget(_min_number_peaks, 0, 1, 1, 1);
-
-    _sparse_box->setContentLayout(*sparse_layout);
-    _sparse_box->setSizePolicy(*_size_policy_box);
-    _sparse_box->contentArea.setSizePolicy(*_size_policy_box);
 
     _left_layout->addWidget(_sparse_box);
 }
@@ -361,25 +198,12 @@ void SubframeFilterPeaks::setSparseUp()
 void SubframeFilterPeaks::setMergeUp()
 {
     _merge_box = new SpoilerCheck("Merged peak significance");
+    GridFiller f(_merge_box);
 
-    QGridLayout* merge_layout = new QGridLayout();
-
-    QLabel* significance_label = new QLabel("Significant level:");
-    significance_label->setAlignment(Qt::AlignRight);
-    merge_layout->addWidget(significance_label, 0, 0, 1, 1);
-
-    _significance_level = new QDoubleSpinBox();
+    _significance_level = f.addDoubleSpinBox("Significant level:");
     _significance_level->setValue(0.990000);
     _significance_level->setMaximum(1000);
     _significance_level->setDecimals(6);
-
-    _significance_level->setSizePolicy(*_size_policy_widgets);
-
-    merge_layout->addWidget(_significance_level, 0, 1, 1, 1);
-
-    _merge_box->setContentLayout(*merge_layout);
-    _merge_box->setSizePolicy(*_size_policy_box);
-    _merge_box->contentArea.setSizePolicy(*_size_policy_box);
 
     _left_layout->addWidget(_merge_box);
 }
@@ -388,28 +212,22 @@ void SubframeFilterPeaks::setProceedUp()
 {
     _remove_overlaping = new QCheckBox("Remove overlapping peaks");
     _remove_overlaping->setChecked(false);
-    _remove_overlaping->setSizePolicy(*_size_policy_widgets);
     _left_layout->addWidget(_remove_overlaping);
 
     _extinct_spacegroup = new QCheckBox("Remove extinct from spacegroup");
     _extinct_spacegroup->setChecked(false);
-    _extinct_spacegroup->setSizePolicy(*_size_policy_widgets);
     _left_layout->addWidget(_extinct_spacegroup);
 
     _keep_complementary = new QCheckBox("Keep the complementary selection");
     _keep_complementary->setChecked(false);
-    _keep_complementary->setSizePolicy(*_size_policy_widgets);
     _left_layout->addWidget(_keep_complementary);
 
-    _filter_button = new QPushButton("Filter");
-    _filter_button->setSizePolicy(*_size_policy_widgets);
-    _left_layout->addWidget(_filter_button);
+    auto filter_button = new QPushButton("Filter");
+    _left_layout->addWidget(filter_button);
 
-    _show_hide_peaks = new Spoiler("Show/hide peaks");
+    auto show_hide_peaks = new Spoiler("Show/hide peaks");
     _peak_view_widget = new PeakViewWidget("Peaks caught by filter", "Peaks rejected by filter");
-    _show_hide_peaks->setContentLayout(*_peak_view_widget);
-    _show_hide_peaks->setSizePolicy(*_size_policy_widgets);
-    // _show_hide_peaks->toggler(true);
+    show_hide_peaks->setContentLayout(*_peak_view_widget);
 
     connect(
         _peak_view_widget->drawPeaks1(), &QCheckBox::stateChanged, this,
@@ -456,15 +274,14 @@ void SubframeFilterPeaks::setProceedUp()
         _peak_view_widget->bkgColor2(), &ColorButton::colorChanged, this,
         &SubframeFilterPeaks::refreshPeakVisual);
 
-    _left_layout->addWidget(_show_hide_peaks);
+    _left_layout->addWidget(show_hide_peaks);
 
-    _save_button = new QPushButton("Create peak collection");
-    _save_button->setSizePolicy(*_size_policy_widgets);
-    _left_layout->addWidget(_save_button);
+    auto save_button = new QPushButton("Create peak collection");
+    _left_layout->addWidget(save_button);
 
-    connect(_filter_button, &QPushButton::clicked, this, &SubframeFilterPeaks::filterPeaks);
+    connect(filter_button, &QPushButton::clicked, this, &SubframeFilterPeaks::filterPeaks);
 
-    connect(_save_button, &QPushButton::clicked, this, &SubframeFilterPeaks::accept);
+    connect(save_button, &QPushButton::clicked, this, &SubframeFilterPeaks::accept);
 }
 
 void SubframeFilterPeaks::setFigureUp()
@@ -472,7 +289,7 @@ void SubframeFilterPeaks::setFigureUp()
     QGroupBox* figure_group = new QGroupBox("Preview");
     QGridLayout* figure_grid = new QGridLayout(figure_group);
 
-    figure_group->setSizePolicy(*_size_policy_right);
+    figure_group->setSizePolicy(_size_policy_right);
 
     _figure_view = new DetectorView(this);
     _figure_view->getScene()->linkPeakModel(&_peak_collection_model);
@@ -480,7 +297,7 @@ void SubframeFilterPeaks::setFigureUp()
     figure_grid->addWidget(_figure_view, 0, 0, 1, 3);
 
     _data_combo = new QComboBox(this);
-    _data_combo->setSizePolicy(*_size_policy_widgets);
+    _data_combo->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
     figure_grid->addWidget(_data_combo, 1, 0, 1, 1);
 
     _figure_scroll = new QScrollBar(this);
@@ -489,7 +306,7 @@ void SubframeFilterPeaks::setFigureUp()
     figure_grid->addWidget(_figure_scroll, 1, 1, 1, 1);
 
     _figure_spin = new QSpinBox(this);
-    _figure_spin->setSizePolicy(*_size_policy_fixed);
+    _figure_spin->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     figure_grid->addWidget(_figure_spin, 1, 2, 1, 1);
 
     connect(
@@ -513,7 +330,7 @@ void SubframeFilterPeaks::setPeakTableUp()
     QGridLayout* peak_grid = new QGridLayout(peak_group);
 
     _preview_panel = peak_group;
-    peak_group->setSizePolicy(*_size_policy_right);
+    peak_group->setSizePolicy(_size_policy_right);
 
     _peak_table = new PeakTableView(this);
     _peak_collection_model.setRoot(&_peak_collection_item);
@@ -636,13 +453,13 @@ void SubframeFilterPeaks::grabFilterParameters()
     _remove_overlaping->setChecked(filter->getFilterOverlapping());
     _keep_complementary->setChecked(filter->getFilterComplementary());
 
-    _state_box->checker(filter->getFilterState());
-    _unit_cell_box->checker(filter->getFilterIndexTol());
-    _strength_box->checker(filter->getFilterStrength());
-    _d_range_box->checker(filter->getFilterDRange());
-    _frame_range_box->checker(filter->getFilterFrames());
-    _sparse_box->checker(filter->getFilterSparse());
-    _merge_box->checker(filter->getFilterSignificance());
+    _state_box->setChecked(filter->getFilterState());
+    _unit_cell_box->setChecked(filter->getFilterIndexTol());
+    _strength_box->setChecked(filter->getFilterStrength());
+    _d_range_box->setChecked(filter->getFilterDRange());
+    _frame_range_box->setChecked(filter->getFilterFrames());
+    _sparse_box->setChecked(filter->getFilterSparse());
+    _merge_box->setChecked(filter->getFilterSignificance());
 }
 
 void SubframeFilterPeaks::setFilterParameters() const
@@ -669,19 +486,19 @@ void SubframeFilterPeaks::setFilterParameters() const
     if (_keep_complementary->isChecked())
         filter->setFilterComplementary(true);
 
-    if (_state_box->checked())
+    if (_state_box->isChecked())
         filter->setFilterState(true);
-    if (_unit_cell_box->checked())
+    if (_unit_cell_box->isChecked())
         filter->setFilterIndexTol(true);
-    if (_strength_box->checked())
+    if (_strength_box->isChecked())
         filter->setFilterStrength(true);
-    if (_d_range_box->checked())
+    if (_d_range_box->isChecked())
         filter->setFilterDRange(true);
-    if (_frame_range_box->checked())
+    if (_frame_range_box->isChecked())
         filter->setFilterFrames(true);
-    if (_sparse_box->checked())
+    if (_sparse_box->isChecked())
         filter->setFilterSparse(true);
-    if (_merge_box->checked())
+    if (_merge_box->isChecked())
         filter->setFilterSignificance(true);
 
     const std::array<double, 2> d_range{_d_range_min->value(), _d_range_max->value()};

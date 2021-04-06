@@ -23,106 +23,56 @@
 #include "gui/frames/UnitCellWidget.h"
 #include "gui/models/Project.h"
 #include "gui/models/Session.h"
+#include "gui/utility/GridFiller.h"
+#include "gui/utility/PropertyScrollArea.h"
 #include "gui/utility/Spoiler.h"
 #include "gui/views/PeakTableView.h"
 #include "gui/views/UnitCellTableView.h"
 
+#include <QCheckBox>
+#include <QDoubleSpinBox>
 #include <QFileInfo>
+#include <QHBoxLayout>
 #include <QHeaderView>
 #include <QLabel>
 #include <QMessageBox>
+#include <QPushButton>
+#include <QSpinBox>
+#include <QSplitter>
+
 
 SubframeAutoIndexer::SubframeAutoIndexer()
     : QWidget()
     , _peak_collection("temp", nsx::listtype::FOUND)
     , _peak_collection_item()
     , _peak_collection_model()
+    , _size_policy_right(QSizePolicy::Expanding, QSizePolicy::Expanding)
 {
-    setSizePolicies();
-    _main_layout = new QHBoxLayout(this);
+    QHBoxLayout* main_layout = new QHBoxLayout(this);
     _right_element = new QSplitter(Qt::Vertical, this);
-
-    QScrollArea* scroll_area = new QScrollArea(this);
-    QWidget* scroll_widget = new QWidget();
-
-    scroll_area->setSizePolicy(*_size_policy_box);
-    scroll_widget->setSizePolicy(*_size_policy_box);
-    _left_layout = new QVBoxLayout(scroll_widget);
-    scroll_area->setWidgetResizable(true);
-    scroll_area->setWidget(scroll_widget);
+    _left_layout = new QVBoxLayout();
 
     setInputUp();
     setParametersUp();
     setProceedUp();
     setPeakTableUp();
     setSolutionTableUp();
-    _left_layout->addItem(new QSpacerItem(20, 40, QSizePolicy::Minimum, QSizePolicy::Expanding));
-    _right_element->setSizePolicy(*_size_policy_right);
+    _right_element->setSizePolicy(_size_policy_right);
 
-    _main_layout->addWidget(scroll_area);
-    _main_layout->addWidget(_right_element);
-}
-
-SubframeAutoIndexer::~SubframeAutoIndexer()
-{
-    delete _size_policy_widgets;
-    delete _size_policy_box;
-    delete _size_policy_right;
-    delete _size_policy_fixed;
-}
-
-void SubframeAutoIndexer::setSizePolicies()
-{
-    _size_policy_widgets = new QSizePolicy();
-    _size_policy_widgets->setHorizontalPolicy(QSizePolicy::Preferred);
-    _size_policy_widgets->setVerticalPolicy(QSizePolicy::Fixed);
-
-    _size_policy_box = new QSizePolicy();
-    _size_policy_box->setHorizontalPolicy(QSizePolicy::Preferred);
-    _size_policy_box->setVerticalPolicy(QSizePolicy::Preferred);
-
-    _size_policy_right = new QSizePolicy();
-    _size_policy_right->setHorizontalPolicy(QSizePolicy::Expanding);
-    _size_policy_right->setVerticalPolicy(QSizePolicy::Expanding);
-
-    _size_policy_fixed = new QSizePolicy();
-    _size_policy_fixed->setHorizontalPolicy(QSizePolicy::Fixed);
-    _size_policy_fixed->setVerticalPolicy(QSizePolicy::Fixed);
+    auto propertyScrollArea = new PropertyScrollArea(this);
+    propertyScrollArea->setContentLayout(_left_layout);
+    main_layout->addWidget(propertyScrollArea);
+    main_layout->addWidget(_right_element);
 }
 
 void SubframeAutoIndexer::setInputUp()
 {
-    _input_box = new Spoiler("Input");
+    Spoiler* input_box = new Spoiler("Input");
+    GridFiller f(input_box, true);
 
-    QGridLayout* _input_grid = new QGridLayout();
-
-    QLabel* exp_label = new QLabel("Experiment");
-    exp_label->setAlignment(Qt::AlignRight);
-    _input_grid->addWidget(exp_label, 0, 0, 1, 1);
-
-    QLabel* data_label = new QLabel("Data set");
-    data_label->setAlignment(Qt::AlignRight);
-    _input_grid->addWidget(data_label, 1, 0, 1, 1);
-
-    QLabel* list_label = new QLabel("Peak collection");
-    list_label->setAlignment(Qt::AlignRight);
-    _input_grid->addWidget(list_label, 2, 0, 1, 1);
-
-    _exp_combo = new QComboBox();
-    _data_combo = new QComboBox();
-    _peak_combo = new QComboBox();
-
-    _exp_combo->setMaximumWidth(1000);
-    _data_combo->setMaximumWidth(1000);
-    _peak_combo->setMaximumWidth(1000);
-
-    _exp_combo->setSizePolicy(*_size_policy_widgets);
-    _data_combo->setSizePolicy(*_size_policy_widgets);
-    _peak_combo->setSizePolicy(*_size_policy_widgets);
-
-    _input_grid->addWidget(_exp_combo, 0, 1, 1, 1);
-    _input_grid->addWidget(_data_combo, 1, 1, 1, 1);
-    _input_grid->addWidget(_peak_combo, 2, 1, 1, 1);
+    _exp_combo = f.addCombo("Experiment");
+    _data_combo = f.addCombo("Data set");
+    _peak_combo = f.addCombo("Peak collection");
 
     connect(
         _exp_combo, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this,
@@ -132,242 +82,105 @@ void SubframeAutoIndexer::setInputUp()
         _peak_combo, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this,
         &SubframeAutoIndexer::refreshPeakTable);
 
-    _input_box->setContentLayout(*_input_grid, true);
-    _input_box->setSizePolicy(*_size_policy_box);
-    _input_box->contentArea.setSizePolicy(*_size_policy_box);
-
-    _left_layout->addWidget(_input_box);
+    _left_layout->addWidget(input_box);
 }
 
 void SubframeAutoIndexer::setParametersUp()
 {
-    _para_box = new Spoiler("Parameters");
+    Spoiler* para_box = new Spoiler("Parameters");
+    GridFiller f(para_box, true);
 
-    QGridLayout* para_grid = new QGridLayout();
+    std::tie(_min_frame, _max_frame) =
+        f.addSpinBoxPair("Frames:", "(frames) - range of frames over which to index");
 
-    QLabel* label_ptr;
-    QString tooltip;
+    std::tie(_d_min, _d_max) = f.addDoubleSpinBoxPair(
+        "d range:",
+        QString::fromUtf8(
+            "(\u212B) - only attempt to index peaks over this d (Bragg's law) range "));
 
-    label_ptr = new QLabel("Frames:");
-    label_ptr->setAlignment(Qt::AlignRight);
-    para_grid->addWidget(label_ptr, 0, 0, 1, 2);
-    label_ptr->setSizePolicy(*_size_policy_widgets);
-    tooltip = "(frames) - range of frames over which to index";
-    label_ptr->setToolTip(tooltip);
+    std::tie(_str_min, _str_max) = f.addDoubleSpinBoxPair(
+        "Strength:",
+        QString::fromUtf8("(I/\u03C3) - only attempt to index peaks in this strength range"));
 
-    label_ptr = new QLabel("d range:");
-    label_ptr->setAlignment(Qt::AlignRight);
-    para_grid->addWidget(label_ptr, 1, 0, 1, 2);
-    label_ptr->setSizePolicy(*_size_policy_widgets);
-    tooltip = QString::fromUtf8(
-        "(\u212B) - only attempt to index peaks over this d (Bragg's law) range ");
-    label_ptr->setToolTip(tooltip);
+    _gruber = f.addDoubleSpinBox("Gruber tol.:", "Tolerance for Gruber reduction");
 
-    label_ptr = new QLabel("Strength:");
-    label_ptr->setAlignment(Qt::AlignRight);
-    para_grid->addWidget(label_ptr, 2, 0, 1, 2);
-    label_ptr->setSizePolicy(*_size_policy_widgets);
-    tooltip = QString::fromUtf8("(I/\u03C3) - only attempt to index peaks in this strength range");
-    label_ptr->setToolTip(tooltip);
+    _niggli = f.addDoubleSpinBox("Niggli tol.:", "Tolerance for Niggli reduction");
 
-    label_ptr = new QLabel("Gruber tol.:");
-    label_ptr->setAlignment(Qt::AlignRight);
-    para_grid->addWidget(label_ptr, 3, 0, 1, 2);
-    label_ptr->setSizePolicy(*_size_policy_widgets);
-    tooltip = "Tolerance for Gruber reduction";
-    label_ptr->setToolTip(tooltip);
+    _only_niggli = f.addCheckBox("Find Niggli cell only", 1);
 
-    label_ptr = new QLabel("Niggli tol.:");
-    label_ptr->setAlignment(Qt::AlignRight);
-    para_grid->addWidget(label_ptr, 4, 0, 1, 2);
-    label_ptr->setSizePolicy(*_size_policy_widgets);
-    tooltip = "Tolerance for Niggli reduction";
-    label_ptr->setToolTip(tooltip);
+    _max_cell_dimension = f.addDoubleSpinBox(
+        "Max. Cell dim.:", QString::fromUtf8("(\u212B) - maximum length of any lattice vector"));
 
-    label_ptr = new QLabel("Max. Cell dim.:");
-    label_ptr->setAlignment(Qt::AlignRight);
-    para_grid->addWidget(label_ptr, 6, 0, 1, 2);
-    label_ptr->setSizePolicy(*_size_policy_widgets);
-    tooltip = QString::fromUtf8("(\u212B) - maximum length of any lattice vector");
-    label_ptr->setToolTip(tooltip);
+    _number_vertices = f.addSpinBox(
+        "Q Vertices:",
+        "Number of points on reciprocal space unit sphere to test against candidate lattice "
+        "vector");
 
-    label_ptr = new QLabel("Q Vertices:");
-    label_ptr->setAlignment(Qt::AlignRight);
-    para_grid->addWidget(label_ptr, 7, 0, 1, 2);
-    label_ptr->setSizePolicy(*_size_policy_widgets);
-    tooltip =
-        "Number of points on reciprocal space unit sphere to test against candidate lattice vector";
-    label_ptr->setToolTip(tooltip);
+    _number_subdivisions = f.addSpinBox("Subdivisions:", "Number of histogram bins for FFT");
 
-    label_ptr = new QLabel("Subdivisions:");
-    label_ptr->setAlignment(Qt::AlignRight);
-    para_grid->addWidget(label_ptr, 8, 0, 1, 2);
-    label_ptr->setSizePolicy(*_size_policy_widgets);
-    tooltip = "Number of histogram bins for FFT";
-    label_ptr->setToolTip(tooltip);
+    _number_solutions = f.addSpinBox("Unit Cells:", "Number of unit cell solutions to find");
 
-    label_ptr = new QLabel("Unit Cells:");
-    label_ptr->setAlignment(Qt::AlignRight);
-    para_grid->addWidget(label_ptr, 9, 0, 1, 2);
-    label_ptr->setSizePolicy(*_size_policy_widgets);
-    tooltip = "Number of unit cell solutions to find";
-    label_ptr->setToolTip(tooltip);
+    _min_cell_volume = f.addDoubleSpinBox(
+        "Min. Volume:",
+        QString::fromUtf8("(\u212B^3) - discard candidate cells below this volume"));
 
-    label_ptr = new QLabel("Min. Volume:");
-    label_ptr->setAlignment(Qt::AlignRight);
-    para_grid->addWidget(label_ptr, 10, 0, 1, 2);
-    label_ptr->setSizePolicy(*_size_policy_widgets);
-    tooltip = QString::fromUtf8("(\u212B^3) - discard candidate cells below this volume");
-    label_ptr->setToolTip(tooltip);
+    _indexing_tolerance = f.addDoubleSpinBox("Indexing tol.:");
 
-    label_ptr = new QLabel("Indexing tol.:");
-    label_ptr->setAlignment(Qt::AlignRight);
-    para_grid->addWidget(label_ptr, 11, 0, 1, 2);
-    label_ptr->setSizePolicy(*_size_policy_widgets);
+    _frequency_tolerance = f.addDoubleSpinBox(
+        "Frequency tol.:",
+        "Minimum fraction of amplitude of the zeroth Fourier frequency to accept as a candidate "
+        "lattice vector");
 
-    label_ptr = new QLabel("Frequency tol.:");
-    label_ptr->setAlignment(Qt::AlignRight);
-    para_grid->addWidget(label_ptr, 12, 0, 1, 2);
-    label_ptr->setSizePolicy(*_size_policy_widgets);
-    tooltip = "Minimum fraction of amplitude of the zeroth Fourier frequency to accept as a "
-              "candidate lattice vector";
-    label_ptr->setToolTip(tooltip);
-
-    QHBoxLayout* frames = new QHBoxLayout();
-    QHBoxLayout* drange = new QHBoxLayout();
-    QHBoxLayout* strength = new QHBoxLayout();
-
-    _min_frame = new QSpinBox();
-    _max_frame = new QSpinBox();
-    _d_min = new QDoubleSpinBox();
-    _d_max = new QDoubleSpinBox();
-    _str_min = new QDoubleSpinBox();
-    _str_max = new QDoubleSpinBox();
-    _gruber = new QDoubleSpinBox();
-    _niggli = new QDoubleSpinBox();
-    _only_niggli = new QCheckBox("Find Niggli cell only");
-    _max_cell_dimension = new QDoubleSpinBox();
-    _number_vertices = new QSpinBox();
-    _number_solutions = new QSpinBox();
-    _number_subdivisions = new QSpinBox();
-    _min_cell_volume = new QDoubleSpinBox();
-    _indexing_tolerance = new QDoubleSpinBox();
-    _frequency_tolerance = new QDoubleSpinBox();
-
-    _min_frame->setMaximumWidth(1000);
     _min_frame->setMaximum(1000);
-
-    _max_frame->setMaximumWidth(1000);
     _max_frame->setMaximum(1000);
 
-    _d_min->setMaximumWidth(1000);
     _d_min->setMaximum(100);
     _d_min->setDecimals(2);
 
-    _str_min->setMaximumWidth(1000);
-    _str_min->setMaximum(100);
-    _str_min->setDecimals(2);
-
-    _str_max->setMaximumWidth(1000);
-    _str_max->setMaximum(10000000);
-    _str_max->setDecimals(2);
-
-    _d_max->setMaximumWidth(1000);
     _d_max->setMaximum(100);
     _d_max->setDecimals(2);
 
-    _gruber->setMaximumWidth(1000);
+    _str_min->setMaximum(100);
+    _str_min->setDecimals(2);
+
+    _str_max->setMaximum(10000000);
+    _str_max->setDecimals(2);
+
     _gruber->setMaximum(100000);
     _gruber->setDecimals(6);
 
-    _niggli->setMaximumWidth(1000);
     _niggli->setMaximum(100000);
     _niggli->setDecimals(6);
 
-    _only_niggli->setMaximumWidth(1000);
-
-    _max_cell_dimension->setMaximumWidth(1000);
     _max_cell_dimension->setMaximum(100000);
     _max_cell_dimension->setDecimals(2);
 
-    _number_vertices->setMaximumWidth(10000);
     _number_vertices->setMaximum(10000);
 
-    _number_subdivisions->setMaximumWidth(1000);
-
-    _number_solutions->setMaximumWidth(1000);
     _number_solutions->setMaximum(100000);
 
-    _min_cell_volume->setMaximumWidth(1000);
     _min_cell_volume->setMaximum(100000);
     _min_cell_volume->setDecimals(2);
 
-    _indexing_tolerance->setMaximumWidth(1000);
     _indexing_tolerance->setMaximum(100000);
     _indexing_tolerance->setDecimals(6);
 
-    _frequency_tolerance->setMaximumWidth(1000);
     _frequency_tolerance->setMaximum(1);
     _frequency_tolerance->setDecimals(3);
 
-    _min_frame->setSizePolicy(*_size_policy_widgets);
-    _max_frame->setSizePolicy(*_size_policy_widgets);
-    _d_min->setSizePolicy(*_size_policy_widgets);
-    _d_max->setSizePolicy(*_size_policy_widgets);
-    _str_min->setSizePolicy(*_size_policy_widgets);
-    _str_max->setSizePolicy(*_size_policy_widgets);
-    _gruber->setSizePolicy(*_size_policy_widgets);
-    _niggli->setSizePolicy(*_size_policy_widgets);
-    _only_niggli->setSizePolicy(*_size_policy_widgets);
-    _max_cell_dimension->setSizePolicy(*_size_policy_widgets);
-    _number_vertices->setSizePolicy(*_size_policy_widgets);
-    _number_solutions->setSizePolicy(*_size_policy_widgets);
-    _number_subdivisions->setSizePolicy(*_size_policy_widgets);
-    _min_cell_volume->setSizePolicy(*_size_policy_widgets);
-    _indexing_tolerance->setSizePolicy(*_size_policy_widgets);
-    _frequency_tolerance->setSizePolicy(*_size_policy_widgets);
-
-    frames->addWidget(_min_frame);
-    frames->addWidget(_max_frame);
-    drange->addWidget(_d_min);
-    drange->addWidget(_d_max);
-    strength->addWidget(_str_min);
-    strength->addWidget(_str_max);
-
-    para_grid->addLayout(frames, 0, 3, 1, 3);
-    para_grid->addLayout(drange, 1, 3, 1, 3);
-    para_grid->addLayout(strength, 2, 3, 1, 3);
-    para_grid->addWidget(_gruber, 3, 3, 1, 3);
-    para_grid->addWidget(_niggli, 4, 3, 1, 3);
-    para_grid->addWidget(_only_niggli, 5, 3, 1, 3);
-    para_grid->addWidget(_max_cell_dimension, 6, 3, 1, 3);
-    para_grid->addWidget(_number_vertices, 7, 3, 1, 3);
-    para_grid->addWidget(_number_subdivisions, 8, 3, 1, 3);
-    para_grid->addWidget(_number_solutions, 9, 3, 1, 3);
-    para_grid->addWidget(_min_cell_volume, 10, 3, 1, 3);
-    para_grid->addWidget(_indexing_tolerance, 11, 3, 1, 3);
-    para_grid->addWidget(_frequency_tolerance, 12, 3, 1, 3);
-
-    _para_box->setContentLayout(*para_grid, true);
-    _para_box->setSizePolicy(*_size_policy_box);
-    _para_box->contentArea.setSizePolicy(*_size_policy_box);
-
-    _left_layout->addWidget(_para_box);
+    _left_layout->addWidget(para_box);
 }
 
 void SubframeAutoIndexer::setProceedUp()
 {
-    _solve_button = new QPushButton("Find unit cells");
-    _solve_button->setSizePolicy(*_size_policy_widgets);
-    _left_layout->addWidget(_solve_button);
+    QPushButton* solve_button = new QPushButton("Find unit cells");
+    _left_layout->addWidget(solve_button);
 
-    _save_button = new QPushButton("Assign selected unit cell");
-    _save_button->setSizePolicy(*_size_policy_widgets);
-    _left_layout->addWidget(_save_button);
+    QPushButton* save_button = new QPushButton("Assign selected unit cell");
+    _left_layout->addWidget(save_button);
 
-    connect(_solve_button, &QPushButton::clicked, this, &SubframeAutoIndexer::runAutoIndexer);
-
-    connect(_save_button, &QPushButton::clicked, this, &SubframeAutoIndexer::acceptSolution);
+    connect(solve_button, &QPushButton::clicked, this, &SubframeAutoIndexer::runAutoIndexer);
+    connect(save_button, &QPushButton::clicked, this, &SubframeAutoIndexer::acceptSolution);
 }
 
 void SubframeAutoIndexer::setPeakTableUp()
@@ -375,7 +188,7 @@ void SubframeAutoIndexer::setPeakTableUp()
     QGroupBox* peak_group = new QGroupBox("Peaks");
     QGridLayout* peak_grid = new QGridLayout(peak_group);
 
-    peak_group->setSizePolicy(*_size_policy_right);
+    peak_group->setSizePolicy(_size_policy_right);
 
     _peak_table = new PeakTableView(this);
     _peak_collection_model.setRoot(&_peak_collection_item);
@@ -391,7 +204,7 @@ void SubframeAutoIndexer::setSolutionTableUp()
     QGroupBox* solution_group = new QGroupBox("Solutions");
     QGridLayout* solution_grid = new QGridLayout(solution_group);
 
-    solution_group->setSizePolicy(*_size_policy_right);
+    solution_group->setSizePolicy(_size_policy_right);
 
     _solution_table = new UnitCellTableView(this);
 

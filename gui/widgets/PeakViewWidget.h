@@ -28,7 +28,7 @@ class ColorButton;
 class PeakViewWidget : public QGridLayout {
 
  public:
-    PeakViewWidget(std::string type1, std::string type2);
+    PeakViewWidget(const QString& type1, const QString& type2);
 
     QCheckBox* drawPeaks1() { return _draw_peaks_1; };
     QCheckBox* drawBoxes1() { return _draw_bbox_1; };
@@ -43,7 +43,7 @@ class PeakViewWidget : public QGridLayout {
     ColorButton* boxColor2() { return _color_bbox_2; };
     ColorButton* bkgColor2() { return _color_bkg_2; };
     QSpinBox* peakSize1() { return _width_peaks_1; };
-    QSpinBox* peakSize2() { return _width_peaks_1; };
+    QSpinBox* peakSize2() { return _width_peaks_2; };
     void setPeakColor1(QColor color) { _color_peaks_1->changeColor(color); };
     void setPeakColor2(QColor color) { _color_peaks_2->changeColor(color); };
     void setBoxColor1(QColor color) { _color_bbox_1->changeColor(color); };
@@ -52,11 +52,6 @@ class PeakViewWidget : public QGridLayout {
     void setBkgColor2(QColor color) { _color_bkg_2->changeColor(color); };
 
  private:
-    //! Set up the GUI size policies
-    void setSizePolicies();
-
-    QSizePolicy* _size_policy_widgets;
-
     QCheckBox* _draw_peaks_1;
     QCheckBox* _draw_bbox_1;
     QCheckBox* _draw_bkg_1;

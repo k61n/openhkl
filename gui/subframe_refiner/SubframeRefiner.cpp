@@ -27,6 +27,8 @@
 #include "gui/subframe_predict/ShapeCollectionDialog.h"
 #include "gui/subframe_refiner/RefinerTables.h"
 #include "gui/utility/ColorButton.h"
+#include "gui/utility/GridFiller.h"
+#include "gui/utility/PropertyScrollArea.h"
 #include "gui/utility/Spoiler.h"
 #include "gui/widgets/PlotCheckBox.h"
 
@@ -43,20 +45,13 @@
 
 SubframeRefiner::SubframeRefiner()
 {
-    setSizePolicies();
-    _main_layout = new QHBoxLayout(this);
-    _right_element = new QSplitter(Qt::Vertical, this);
+    auto main_layout = new QHBoxLayout(this);
+    auto right_element = new QSplitter(Qt::Vertical, this);
 
-    QScrollArea* scroll_area = new QScrollArea(this);
-    QWidget* scroll_widget = new QWidget();
-    scroll_area->setSizePolicy(*_size_policy_box);
-    scroll_widget->setSizePolicy(*_size_policy_box);
-    _left_layout = new QVBoxLayout(scroll_widget);
-    scroll_area->setWidgetResizable(true);
-    scroll_area->setWidget(scroll_widget);
+    _left_layout = new QVBoxLayout(this);
 
     _tables_widget = new RefinerTables();
-    _tables_widget->setSizePolicy(*_size_policy_right);
+    _tables_widget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
     setInputUp();
     setRefinerFlagsUp();
@@ -65,101 +60,37 @@ SubframeRefiner::SubframeRefiner()
     setUpdateUp();
     setReintegrateUp();
 
-    _left_layout->addItem(new QSpacerItem(20, 40, QSizePolicy::Minimum, QSizePolicy::Expanding));
-
-    _right_element->setSizePolicy(*_size_policy_right);
-    _right_element->addWidget(_tables_widget);
+    right_element->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    right_element->addWidget(_tables_widget);
 
     _plot_widget = new SXPlot;
-    _plot_widget->setSizePolicy(*_size_policy_right);
-    _right_element->addWidget(_plot_widget);
+    _plot_widget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    right_element->addWidget(_plot_widget);
 
-    _main_layout->addWidget(scroll_area);
-    _main_layout->addWidget(_right_element);
+    auto propertyScrollArea = new PropertyScrollArea(this);
+    propertyScrollArea->setContentLayout(_left_layout);
+    main_layout->addWidget(propertyScrollArea);
+    main_layout->addWidget(right_element);
 
     QRandomGenerator _rng(0);
 }
 
-SubframeRefiner::~SubframeRefiner()
-{
-    delete _size_policy_widgets;
-    delete _size_policy_box;
-    delete _size_policy_right;
-    delete _size_policy_fixed;
-}
-
-void SubframeRefiner::setSizePolicies()
-{
-    _size_policy_widgets = new QSizePolicy();
-    _size_policy_widgets->setHorizontalPolicy(QSizePolicy::Preferred);
-    _size_policy_widgets->setVerticalPolicy(QSizePolicy::Fixed);
-
-    _size_policy_box = new QSizePolicy();
-    _size_policy_box->setHorizontalPolicy(QSizePolicy::Preferred);
-    _size_policy_box->setVerticalPolicy(QSizePolicy::Expanding);
-
-    _size_policy_right = new QSizePolicy();
-    _size_policy_right->setHorizontalPolicy(QSizePolicy::Expanding);
-    _size_policy_right->setVerticalPolicy(QSizePolicy::Expanding);
-
-    _size_policy_fixed = new QSizePolicy();
-    _size_policy_fixed->setHorizontalPolicy(QSizePolicy::Fixed);
-    _size_policy_fixed->setVerticalPolicy(QSizePolicy::Fixed);
-}
-
 void SubframeRefiner::setInputUp()
 {
-    _input_box = new Spoiler("1. Input");
+    auto input_box = new Spoiler("1. Input");
+    GridFiller f(input_box, true);
 
     QGridLayout* _input_grid = new QGridLayout();
 
-    QLabel* exp_label = new QLabel("Experiment");
-    exp_label->setAlignment(Qt::AlignRight);
-    _input_grid->addWidget(exp_label, 0, 0, 1, 1);
-
-    QLabel* peak_label = new QLabel("Peaks");
-    peak_label->setAlignment(Qt::AlignRight);
-    _input_grid->addWidget(peak_label, 1, 0, 1, 1);
-
-    QLabel* data_label = new QLabel("Data set");
-    data_label->setAlignment(Qt::AlignRight);
-    _input_grid->addWidget(data_label, 2, 0, 1, 1);
-
-    QLabel* cell_label = new QLabel("Unit cell");
-    cell_label->setAlignment(Qt::AlignRight);
-    _input_grid->addWidget(cell_label, 3, 0, 1, 1);
-
-    QLabel* nbatches_label = new QLabel("Number of batches");
-    nbatches_label->setAlignment(Qt::AlignRight);
-    _input_grid->addWidget(nbatches_label, 4, 0, 1, 1);
-
-    _exp_combo = new QComboBox();
-    _peak_combo = new QComboBox();
-    _data_combo = new QComboBox();
-    _cell_combo = new QComboBox();
-    _n_batches_spin = new QSpinBox();
+    _exp_combo = f.addCombo("Experiment");
+    _peak_combo = f.addCombo("Peaks");
+    _data_combo = f.addCombo("Data set");
+    _cell_combo = f.addCombo("Unit cell");
+    _n_batches_spin = f.addSpinBox("Number of batches");
 
     _n_batches_spin->setValue(_refiner_params.nbatches);
     _n_batches_spin->setMinimum(1);
     _n_batches_spin->setMaximum(1000); // updated on setBatchesUp
-
-    _exp_combo->setMaximumWidth(1000);
-    _data_combo->setMaximumWidth(1000);
-    _peak_combo->setMaximumWidth(1000);
-    _cell_combo->setMaximumWidth(1000);
-    _n_batches_spin->setMaximum(1000);
-
-    _exp_combo->setSizePolicy(*_size_policy_widgets);
-    _peak_combo->setSizePolicy(*_size_policy_widgets);
-    _data_combo->setSizePolicy(*_size_policy_widgets);
-    _cell_combo->setSizePolicy(*_size_policy_widgets);
-    _n_batches_spin->setSizePolicy(*_size_policy_widgets);
-
-    _input_grid->addWidget(_exp_combo, 0, 1, 1, 1);
-    _input_grid->addWidget(_peak_combo, 1, 1, 1, 1);
-    _input_grid->addWidget(_data_combo, 2, 1, 1, 1);
-    _input_grid->addWidget(_cell_combo, 3, 1, 1, 1);
-    _input_grid->addWidget(_n_batches_spin, 4, 1, 1, 1);
 
     connect(
         _exp_combo, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this,
@@ -171,50 +102,20 @@ void SubframeRefiner::setInputUp()
         _exp_combo, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this,
         &SubframeRefiner::updatePeakList);
 
-    _input_box->setContentLayout(*_input_grid, true);
-    _input_box->setSizePolicy(*_size_policy_box);
-    _input_box->contentArea.setSizePolicy(*_size_policy_box);
-
-    _left_layout->addWidget(_input_box);
-    _input_box->toggler(true);
+    _left_layout->addWidget(input_box);
 }
 
 void SubframeRefiner::setRefinerFlagsUp()
 {
-    _refiner_flags_box = new Spoiler("2. Parameters to refine");
+    auto refiner_flags_box = new Spoiler("2. Parameters to refine");
+    GridFiller f(refiner_flags_box, true);
 
-    QGridLayout* refiner_flags_layout = new QGridLayout();
-    _refineUB = new QCheckBox("Cell vectors");
-    _refineSamplePosition = new QCheckBox("Sample position");
-    _refineSampleOrientation = new QCheckBox("Sample orientation");
-    _refineDetectorPosition = new QCheckBox("Detector position");
-    _refineKi = new QCheckBox("Incident wavevector");
-
-    _refineUB->setMaximumWidth(1000);
-    _refineSamplePosition->setMaximumWidth(1000);
-    _refineSampleOrientation->setMaximumWidth(1000);
-    _refineDetectorPosition->setMaximumWidth(1000);
-    _refineKi->setMaximumWidth(1000);
-
-    _refineUB->setSizePolicy(*_size_policy_widgets);
-    _refineSamplePosition->setSizePolicy(*_size_policy_widgets);
-    _refineSampleOrientation->setSizePolicy(*_size_policy_widgets);
-    _refineDetectorPosition->setSizePolicy(*_size_policy_widgets);
-    _refineKi->setSizePolicy(*_size_policy_widgets);
-
-    _refine_button = new QPushButton("Refine");
-    _refine_button->setSizePolicy(*_size_policy_widgets);
-
-    refiner_flags_layout->addWidget(_refineUB, 0, 0, 1, 2);
-    refiner_flags_layout->addWidget(_refineSamplePosition, 1, 0, 1, 2);
-    refiner_flags_layout->addWidget(_refineSampleOrientation, 2, 0, 1, 2);
-    refiner_flags_layout->addWidget(_refineDetectorPosition, 3, 0, 1, 2);
-    refiner_flags_layout->addWidget(_refineKi, 4, 0, 1, 2);
-    refiner_flags_layout->addWidget(_refine_button, 5, 0, 1, 2);
-
-    _refiner_flags_box->setContentLayout(*refiner_flags_layout);
-    _refiner_flags_box->setSizePolicy(*_size_policy_box);
-    _refiner_flags_box->contentArea.setSizePolicy(*_size_policy_box);
+    _refineUB = f.addCheckBox("Cell vectors");
+    _refineSamplePosition = f.addCheckBox("Sample position");
+    _refineSampleOrientation = f.addCheckBox("Sample orientation");
+    _refineDetectorPosition = f.addCheckBox("Detector position");
+    _refineKi = f.addCheckBox("Incident wavevector");
+    auto refine_button = f.addButton("Refine");
 
     _refineUB->setChecked(_refiner_params.refine_ub);
     _refineSamplePosition->setChecked(_refiner_params.refine_sample_position);
@@ -222,10 +123,9 @@ void SubframeRefiner::setRefinerFlagsUp()
     _refineDetectorPosition->setChecked(_refiner_params.refine_detector_offset);
     _refineKi->setChecked(_refiner_params.refine_ki);
 
-    connect(_refine_button, &QPushButton::clicked, this, &SubframeRefiner::refine);
+    connect(refine_button, &QPushButton::clicked, this, &SubframeRefiner::refine);
 
-    _left_layout->addWidget(_refiner_flags_box);
-    _refiner_flags_box->toggler(true);
+    _left_layout->addWidget(refiner_flags_box);
 }
 
 void SubframeRefiner::refreshAll()
@@ -387,180 +287,69 @@ void SubframeRefiner::refine()
 
 void SubframeRefiner::setPlotUp()
 {
+    // Shortener for creating PlotCheckBox
+    const auto cb = [](const QString& text, TableType table, int column) {
+        return new PlotCheckBox(text, table, column);
+    };
+
     _plot_box = new Spoiler("3. Plot");
     QVBoxLayout* plot_layout = new QVBoxLayout();
-    PlotCheckBox* check_ptr;
 
-    QGroupBox* lattice_checks = new QGroupBox("Cell parameters");
-    QGridLayout* lattice_grid = new QGridLayout();
+    // Create group & gridlayout for checkboxes. Add it already to the main layout
+    // and return its grid layout
+    const auto addGroup = [&](const QString& title) -> QGridLayout* {
+        QGroupBox* group = new QGroupBox(title);
+        QGridLayout* grid = new QGridLayout(group);
+        group->setLayout(grid);
+        plot_layout->addWidget(group);
+        return grid;
+    };
 
-    check_ptr = new PlotCheckBox("a", TableType::Lattice, 1);
-    check_ptr->setMaximumWidth(1000);
-    check_ptr->setSizePolicy(*_size_policy_widgets);
-    lattice_grid->addWidget(check_ptr, 0, 0, 1, 1);
-    _plot_check_boxes.push_back(check_ptr);
-    check_ptr = new PlotCheckBox("b", TableType::Lattice, 2);
-    check_ptr->setMaximumWidth(1000);
-    check_ptr->setSizePolicy(*_size_policy_widgets);
-    lattice_grid->addWidget(check_ptr, 0, 1, 1, 1);
-    _plot_check_boxes.push_back(check_ptr);
-    check_ptr = new PlotCheckBox("c", TableType::Lattice, 3);
-    check_ptr->setMaximumWidth(1000);
-    check_ptr->setSizePolicy(*_size_policy_widgets);
-    lattice_grid->addWidget(check_ptr, 0, 2, 1, 1);
-    _plot_check_boxes.push_back(check_ptr);
-    check_ptr = new PlotCheckBox(QString((QChar)0x03B1), TableType::Lattice, 4);
-    check_ptr->setMaximumWidth(1000);
-    check_ptr->setSizePolicy(*_size_policy_widgets);
-    lattice_grid->addWidget(check_ptr, 1, 0, 1, 1);
-    _plot_check_boxes.push_back(check_ptr);
-    check_ptr = new PlotCheckBox(QString((QChar)0x03B2), TableType::Lattice, 5);
-    check_ptr->setMaximumWidth(1000);
-    check_ptr->setSizePolicy(*_size_policy_widgets);
-    lattice_grid->addWidget(check_ptr, 1, 1, 1, 1);
-    _plot_check_boxes.push_back(check_ptr);
-    check_ptr = new PlotCheckBox(QString((QChar)0x03B3), TableType::Lattice, 6);
-    check_ptr->setMaximumWidth(1000);
-    check_ptr->setSizePolicy(*_size_policy_widgets);
-    lattice_grid->addWidget(check_ptr, 1, 2, 1, 1);
-    _plot_check_boxes.push_back(check_ptr);
+    // -- Lattice checks group
+    auto lattice_grid = addGroup("Cell parameters");
+    lattice_grid->addWidget(cb("a", TableType::Lattice, 1), 0, 0);
+    lattice_grid->addWidget(cb("b", TableType::Lattice, 2), 0, 1);
+    lattice_grid->addWidget(cb("c", TableType::Lattice, 3), 0, 2);
+    lattice_grid->addWidget(cb(QString((QChar)0x03B1), TableType::Lattice, 4), 1, 0);
+    lattice_grid->addWidget(cb(QString((QChar)0x03B2), TableType::Lattice, 5), 1, 1);
+    lattice_grid->addWidget(cb(QString((QChar)0x03B3), TableType::Lattice, 6), 1, 2);
 
-    lattice_checks->setLayout(lattice_grid);
-    lattice_checks->setSizePolicy(*_size_policy_box);
+    // -- Sample position checks group
+    auto sample_pos_grid = addGroup("Sample position");
+    sample_pos_grid->addWidget(cb("x", TableType::SamplePos, 1), 0, 0);
+    sample_pos_grid->addWidget(cb("y", TableType::SamplePos, 2), 0, 1);
+    sample_pos_grid->addWidget(cb("z", TableType::SamplePos, 3), 0, 2);
 
-    QGroupBox* sample_pos_checks = new QGroupBox("Sample position");
-    QGridLayout* sample_pos_grid = new QGridLayout();
+    // -- Sample orientation checks group
+    auto sample_orn_grid = addGroup("Sample orientation");
+    sample_orn_grid->addWidget(cb("xx", TableType::SampleOrn, 1), 0, 0);
+    sample_orn_grid->addWidget(cb("xy", TableType::SampleOrn, 2), 0, 1);
+    sample_orn_grid->addWidget(cb("xz", TableType::SampleOrn, 3), 0, 2);
+    sample_orn_grid->addWidget(cb("yx", TableType::SampleOrn, 4), 1, 0);
+    sample_orn_grid->addWidget(cb("yy", TableType::SampleOrn, 5), 1, 1);
+    sample_orn_grid->addWidget(cb("yz", TableType::SampleOrn, 6), 1, 2);
+    sample_orn_grid->addWidget(cb("zx", TableType::SampleOrn, 7), 2, 0);
+    sample_orn_grid->addWidget(cb("zy", TableType::SampleOrn, 8), 2, 1);
+    sample_orn_grid->addWidget(cb("zz", TableType::SampleOrn, 9), 2, 2);
 
-    check_ptr = new PlotCheckBox("x", TableType::SamplePos, 1);
-    check_ptr->setMaximumWidth(1000);
-    check_ptr->setSizePolicy(*_size_policy_widgets);
-    sample_pos_grid->addWidget(check_ptr, 0, 0, 1, 1);
-    _plot_check_boxes.push_back(check_ptr);
-    check_ptr = new PlotCheckBox("y", TableType::SamplePos, 2);
-    check_ptr->setMaximumWidth(1000);
-    check_ptr->setSizePolicy(*_size_policy_widgets);
-    sample_pos_grid->addWidget(check_ptr, 0, 1, 1, 1);
-    _plot_check_boxes.push_back(check_ptr);
-    check_ptr = new PlotCheckBox("z", TableType::SamplePos, 3);
-    check_ptr->setMaximumWidth(1000);
-    check_ptr->setSizePolicy(*_size_policy_widgets);
-    sample_pos_grid->addWidget(check_ptr, 0, 2, 1, 1);
-    _plot_check_boxes.push_back(check_ptr);
+    // - Detector offset checks group
+    auto detector_pos_grid = addGroup("Detector offset");
+    detector_pos_grid->addWidget(cb("x", TableType::DetectorPos, 1), 0, 0);
+    detector_pos_grid->addWidget(cb("y", TableType::DetectorPos, 2), 0, 1);
+    detector_pos_grid->addWidget(cb("z", TableType::DetectorPos, 3), 0, 2);
 
-    sample_pos_checks->setLayout(sample_pos_grid);
-    sample_pos_checks->setSizePolicy(*_size_policy_box);
-
-    QGroupBox* sample_orn_checks = new QGroupBox("Sample orientation");
-    QGridLayout* sample_orn_grid = new QGridLayout();
-
-    check_ptr = new PlotCheckBox("xx", TableType::SampleOrn, 1);
-    check_ptr->setMaximumWidth(1000);
-    check_ptr->setSizePolicy(*_size_policy_widgets);
-    sample_orn_grid->addWidget(check_ptr, 0, 0, 1, 1);
-    _plot_check_boxes.push_back(check_ptr);
-    check_ptr = new PlotCheckBox("xy", TableType::SampleOrn, 2);
-    check_ptr->setMaximumWidth(1000);
-    check_ptr->setSizePolicy(*_size_policy_widgets);
-    sample_orn_grid->addWidget(check_ptr, 0, 1, 1, 1);
-    _plot_check_boxes.push_back(check_ptr);
-    check_ptr = new PlotCheckBox("xz", TableType::SampleOrn, 3);
-    check_ptr->setMaximumWidth(1000);
-    check_ptr->setSizePolicy(*_size_policy_widgets);
-    sample_orn_grid->addWidget(check_ptr, 0, 2, 1, 1);
-    _plot_check_boxes.push_back(check_ptr);
-    check_ptr = new PlotCheckBox("yx", TableType::SampleOrn, 4);
-    check_ptr->setMaximumWidth(1000);
-    check_ptr->setSizePolicy(*_size_policy_widgets);
-    sample_orn_grid->addWidget(check_ptr, 1, 0, 1, 1);
-    _plot_check_boxes.push_back(check_ptr);
-    check_ptr = new PlotCheckBox("yy", TableType::SampleOrn, 5);
-    check_ptr->setMaximumWidth(1000);
-    check_ptr->setSizePolicy(*_size_policy_widgets);
-    sample_orn_grid->addWidget(check_ptr, 1, 1, 1, 1);
-    _plot_check_boxes.push_back(check_ptr);
-    check_ptr = new PlotCheckBox("yz", TableType::SampleOrn, 6);
-    check_ptr->setMaximumWidth(1000);
-    check_ptr->setSizePolicy(*_size_policy_widgets);
-    sample_orn_grid->addWidget(check_ptr, 1, 2, 1, 1);
-    _plot_check_boxes.push_back(check_ptr);
-    check_ptr = new PlotCheckBox("zx", TableType::SampleOrn, 7);
-    check_ptr->setMaximumWidth(1000);
-    check_ptr->setSizePolicy(*_size_policy_widgets);
-    sample_orn_grid->addWidget(check_ptr, 2, 0, 1, 1);
-    _plot_check_boxes.push_back(check_ptr);
-    check_ptr = new PlotCheckBox("zy", TableType::SampleOrn, 8);
-    check_ptr->setMaximumWidth(1000);
-    check_ptr->setSizePolicy(*_size_policy_widgets);
-    sample_orn_grid->addWidget(check_ptr, 2, 1, 1, 1);
-    _plot_check_boxes.push_back(check_ptr);
-    check_ptr = new PlotCheckBox("zz", TableType::SampleOrn, 9);
-    check_ptr->setMaximumWidth(1000);
-    check_ptr->setSizePolicy(*_size_policy_widgets);
-    sample_orn_grid->addWidget(check_ptr, 2, 2, 1, 1);
-    _plot_check_boxes.push_back(check_ptr);
-
-    sample_orn_checks->setLayout(sample_orn_grid);
-    sample_orn_checks->setSizePolicy(*_size_policy_box);
-
-    QGroupBox* detector_pos_checks = new QGroupBox("Detector offset");
-    QGridLayout* detector_pos_grid = new QGridLayout();
-
-    check_ptr = new PlotCheckBox("x", TableType::DetectorPos, 1);
-    check_ptr->setMaximumWidth(1000);
-    check_ptr->setSizePolicy(*_size_policy_widgets);
-    detector_pos_grid->addWidget(check_ptr, 0, 0, 1, 1);
-    _plot_check_boxes.push_back(check_ptr);
-    check_ptr = new PlotCheckBox("y", TableType::DetectorPos, 2);
-    check_ptr->setMaximumWidth(1000);
-    check_ptr->setSizePolicy(*_size_policy_widgets);
-    detector_pos_grid->addWidget(check_ptr, 0, 1, 1, 1);
-    _plot_check_boxes.push_back(check_ptr);
-    check_ptr = new PlotCheckBox("z", TableType::DetectorPos, 3);
-    check_ptr->setMaximumWidth(1000);
-    check_ptr->setSizePolicy(*_size_policy_widgets);
-    detector_pos_grid->addWidget(check_ptr, 0, 2, 1, 1);
-    _plot_check_boxes.push_back(check_ptr);
-
-    detector_pos_checks->setLayout(detector_pos_grid);
-    detector_pos_checks->setSizePolicy(*_size_policy_box);
-
-    QGroupBox* ki_checks = new QGroupBox("Incident wavevector");
-    QGridLayout* ki_grid = new QGridLayout();
-
-    check_ptr = new PlotCheckBox("x", TableType::Ki, 1);
-    check_ptr->setMaximumWidth(1000);
-    check_ptr->setSizePolicy(*_size_policy_widgets);
-    ki_grid->addWidget(check_ptr, 0, 0, 1, 1);
-    _plot_check_boxes.push_back(check_ptr);
-    check_ptr = new PlotCheckBox("y", TableType::Ki, 2);
-    check_ptr->setMaximumWidth(1000);
-    check_ptr->setSizePolicy(*_size_policy_widgets);
-    ki_grid->addWidget(check_ptr, 0, 1, 1, 1);
-    _plot_check_boxes.push_back(check_ptr);
-    check_ptr = new PlotCheckBox("z", TableType::Ki, 3);
-    check_ptr->setMaximumWidth(1000);
-    check_ptr->setSizePolicy(*_size_policy_widgets);
-    ki_grid->addWidget(check_ptr, 0, 2, 1, 1);
-    _plot_check_boxes.push_back(check_ptr);
-
-    ki_checks->setLayout(ki_grid);
-    ki_checks->setSizePolicy(*_size_policy_box);
-
-    plot_layout->addWidget(lattice_checks);
-    plot_layout->addWidget(sample_pos_checks);
-    plot_layout->addWidget(sample_orn_checks);
-    plot_layout->addWidget(detector_pos_checks);
-    plot_layout->addWidget(ki_checks);
+    // -- Incident wavevector checks group
+    auto ki_grid = addGroup("Incident wavevector");
+    ki_grid->addWidget(cb("x", TableType::Ki, 1), 0, 0);
+    ki_grid->addWidget(cb("y", TableType::Ki, 2), 0, 1);
+    ki_grid->addWidget(cb("z", TableType::Ki, 3), 0, 2);
 
     _plot_box->setContentLayout(*plot_layout, true);
-    _plot_box->setSizePolicy(*_size_policy_box);
-    _plot_box->contentArea.setSizePolicy(*_size_policy_box);
 
-    _plot_box->toggler(true);
     _left_layout->addWidget(_plot_box);
 
     // refresh the plot whenever a PlotCheckBox state changes
-    for (auto checkbox : _plot_check_boxes)
+    for (auto checkbox : plotCheckBoxes())
         connect(checkbox, &QCheckBox::stateChanged, this, &SubframeRefiner::refreshPlot);
 }
 
@@ -582,7 +371,7 @@ void SubframeRefiner::refreshPlot()
         QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectAxes | QCP::iSelectLegend
         | QCP::iSelectPlottables);
 
-    for (PlotCheckBox* check : _plot_check_boxes) {
+    for (PlotCheckBox* check : plotCheckBoxes()) {
         if (check->isChecked()) {
             QVector<double> xvals = _tables_widget->getXVals();
             QVector<double> yvals = _tables_widget->getYVals(check->getTable(), check->getColumn());
@@ -602,49 +391,23 @@ void SubframeRefiner::refreshPlot()
 
 void SubframeRefiner::setUpdateUp()
 {
-    QString tooltip;
-    _update_box = new Spoiler("4. Update predictions");
+    auto update_box = new Spoiler("4. Update predictions");
+    GridFiller f(update_box, true);
 
-    QGridLayout* update_grid = new QGridLayout();
-    QLabel* peaks_label = new QLabel("Predicted peaks");
-    _predicted_combo = new QComboBox();
-    _update_button = new QPushButton("Update");
-    _build_shape_lib = new QPushButton("Build shape collection");
+    _predicted_combo = f.addCombo("Predicted peaks");
 
-    peaks_label->setAlignment(Qt::AlignRight);
-    peaks_label->setSizePolicy(*_size_policy_widgets);
+    auto update_button = f.addButton("Update", "Update peak positions given refined unit cell");
 
-    _predicted_combo->setMaximumWidth(1000);
-    _predicted_combo->setSizePolicy(*_size_policy_widgets);
-
-    _update_button->setMaximumWidth(1000);
-    _update_button->setSizePolicy(*_size_policy_widgets);
-    tooltip = "Update peak positions given refined unit cell";
-    _update_button->setToolTip(tooltip);
-
-    _build_shape_lib->setMaximumWidth(1000);
-    _build_shape_lib->setSizePolicy(*_size_policy_widgets);
-    _build_shape_lib = new QPushButton("Build shape collection");
-    tooltip =
+    auto build_shape_lib = f.addButton(
+        "Build shape collection",
         "<font>A shape collection is a collection of averaged peaks attached to a peak"
         "collection. A shape is the averaged peak shape of a peak and its neighbours within a "
-        "specified cutoff.</font>"; // Rich text to force line break in tooltip
-    _build_shape_lib->setToolTip(tooltip);
+        "specified cutoff.</font>"); // Rich text to force line break in tooltip
 
-    update_grid->addWidget(peaks_label, 0, 0, 1, 1);
-    update_grid->addWidget(_predicted_combo, 0, 1, 1, 1);
-    update_grid->addWidget(_update_button, 1, 0, 1, 2);
-    update_grid->addWidget(_build_shape_lib, 2, 0, 1, 2);
+    _left_layout->addWidget(update_box);
 
-    _update_box->setContentLayout(*update_grid, true);
-    _update_box->setSizePolicy(*_size_policy_box);
-    _update_box->contentArea.setSizePolicy(*_size_policy_box);
-
-    _left_layout->addWidget(_update_box);
-
-    connect(_update_button, &QPushButton::clicked, this, &SubframeRefiner::updatePredictions);
-    connect(_build_shape_lib, &QPushButton::clicked, this, &SubframeRefiner::openShapeBuilder);
-    _update_box->toggler(true);
+    connect(update_button, &QPushButton::clicked, this, &SubframeRefiner::updatePredictions);
+    connect(build_shape_lib, &QPushButton::clicked, this, &SubframeRefiner::openShapeBuilder);
 }
 
 void SubframeRefiner::updatePredictedList()
@@ -673,142 +436,79 @@ void SubframeRefiner::updatePredictions()
     }
 }
 
+QList<PlotCheckBox*> SubframeRefiner::plotCheckBoxes() const
+{
+    return _plot_box->findChildren<PlotCheckBox*>();
+}
+
 void SubframeRefiner::setReintegrateUp()
 {
     _reintegrate_box = new Spoiler("5. Reintegrate peaks");
+    GridFiller f(_reintegrate_box, true);
 
-    QGridLayout* reintegrate_grid = new QGridLayout();
-    QLabel* label_ptr;
-    QString tooltip;
+    // -- Create controls
+    _integrator_combo = f.addCombo();
 
-    label_ptr = new QLabel("Peak end:");
-    label_ptr->setAlignment(Qt::AlignRight);
-    reintegrate_grid->addWidget(label_ptr, 3, 0, 1, 1);
-    label_ptr->setSizePolicy(*_size_policy_widgets);
-    tooltip = "(sigmas) - scaling factor for peak region";
-    label_ptr->setToolTip(tooltip);
+    _fit_center =
+        f.addCheckBox("Fit the center", "Allow the peak center to move during integration");
 
-    label_ptr = new QLabel("Bkg begin:");
-    label_ptr->setAlignment(Qt::AlignRight);
-    reintegrate_grid->addWidget(label_ptr, 4, 0, 1, 1);
-    label_ptr->setSizePolicy(*_size_policy_widgets);
-    tooltip = "(sigmas) - scaling factor for lower limit of background";
-    label_ptr->setToolTip(tooltip);
+    _fit_covariance = f.addCheckBox(
+        "Fit the covariance", "Allow the peak covariance matrix to vary during integration");
 
-    label_ptr = new QLabel("Bkg end:");
-    label_ptr->setAlignment(Qt::AlignRight);
-    reintegrate_grid->addWidget(label_ptr, 5, 0, 1, 1);
-    label_ptr->setSizePolicy(*_size_policy_widgets);
-    tooltip = "(sigmas) - scaling factor for upper limit of background";
-    label_ptr->setToolTip(tooltip);
+    _peak_end_int = f.addDoubleSpinBox("Peak end", "(sigmas) - scaling factor for peak region");
 
-    label_ptr = new QLabel("Search radius:");
-    label_ptr->setAlignment(Qt::AlignRight);
-    reintegrate_grid->addWidget(label_ptr, 6, 0, 1, 1);
-    label_ptr->setSizePolicy(*_size_policy_widgets);
-    tooltip = "(pixels) - neighbour search radius in pixels";
-    label_ptr->setToolTip(tooltip);
+    _bkg_start_int =
+        f.addDoubleSpinBox("Bkg begin:", "(sigmas) - scaling factor for lower limit of background");
 
-    label_ptr = new QLabel("N. of frames:");
-    label_ptr->setAlignment(Qt::AlignRight);
-    reintegrate_grid->addWidget(label_ptr, 7, 0, 1, 1);
-    label_ptr->setSizePolicy(*_size_policy_widgets);
-    tooltip = "(frames) - neighbour search radius in frames";
-    label_ptr->setToolTip(tooltip);
+    _bkg_end_int =
+        f.addDoubleSpinBox("Bkg end:", "(sigmas) - scaling factor for upper limit of background");
 
-    _integrator_combo = new QComboBox();
-    _fit_center = new QCheckBox("Fit the center");
-    _fit_covariance = new QCheckBox("Fit the covariance");
-    _peak_end_int = new QDoubleSpinBox();
-    _bkg_start_int = new QDoubleSpinBox();
-    _bkg_end_int = new QDoubleSpinBox();
-    _radius_int = new QDoubleSpinBox();
-    _n_frames_int = new QDoubleSpinBox();
-    _reintegrate_found = new QPushButton("Reintegrate found peaks");
-    _reintegrate_predicted = new QPushButton("Reintegrate predicted peaks");
+    _radius_int =
+        f.addDoubleSpinBox("Search radius:", "(pixels) - neighbour search radius in pixels");
 
-    _integrator_combo->setMaximumWidth(1000);
+    _n_frames_int =
+        f.addDoubleSpinBox("N. of frames:", "(frames) - neighbour search radius in frames");
+
+    auto reintegrate_found = f.addButton("Reintegrate found peaks");
+    auto reintegrate_predicted = f.addButton("Reintegrate predicted peaks");
+
+    // -- Initialize controls
     _integrator_combo->addItem("Pixel sum integrator");
     _integrator_combo->addItem("Gaussian integrator");
     _integrator_combo->addItem("I/Sigma integrator");
     _integrator_combo->addItem("1d profile integrator");
     _integrator_combo->addItem("3d profile integrator");
-    _integrator_combo->setSizePolicy(*_size_policy_widgets);
 
-    _fit_center->setMaximumWidth(1000);
     _fit_center->setChecked(_refiner_params.fit_center);
-    tooltip = "Allow the peak center to move during integration";
-    _fit_center->setToolTip(tooltip);
 
-    _fit_covariance->setMaximumWidth(1000);
     _fit_covariance->setChecked(_refiner_params.fit_cov);
-    tooltip = "Allow the peak covariance matrix to vary during integration";
-    _fit_covariance->setToolTip(tooltip);
 
-    _peak_end_int->setMaximumWidth(1000);
     _peak_end_int->setMaximum(100000);
     _peak_end_int->setDecimals(2);
     _peak_end_int->setValue(_refiner_params.peak_end);
 
-    _bkg_start_int->setMaximumWidth(1000);
     _bkg_start_int->setMaximum(100000);
     _bkg_start_int->setDecimals(2);
     _bkg_start_int->setValue(_refiner_params.bkg_begin);
 
-    _bkg_end_int->setMaximumWidth(1000);
     _bkg_end_int->setMaximum(100000);
     _bkg_end_int->setDecimals(2);
     _bkg_end_int->setValue(_refiner_params.bkg_end);
 
-    _radius_int->setMaximumWidth(1000);
     _radius_int->setMaximum(100000);
     _radius_int->setDecimals(2);
     _radius_int->setValue(_refiner_params.neighbour_range_pixels);
 
-    _n_frames_int->setMaximumWidth(1000);
     _n_frames_int->setMaximum(100000);
     _n_frames_int->setDecimals(2);
     _n_frames_int->setValue(_refiner_params.neighbour_range_frames);
 
-    _reintegrate_found->setMaximumWidth(1000);
-
-    _reintegrate_predicted->setMaximumWidth(1000);
-
-    _integrator_combo->setSizePolicy(*_size_policy_widgets);
-    _fit_center->setSizePolicy(*_size_policy_widgets);
-    _fit_covariance->setSizePolicy(*_size_policy_widgets);
-    _peak_end_int->setSizePolicy(*_size_policy_widgets);
-    _bkg_start_int->setSizePolicy(*_size_policy_widgets);
-    _bkg_end_int->setSizePolicy(*_size_policy_widgets);
-    _radius_int->setSizePolicy(*_size_policy_widgets);
-    _n_frames_int->setSizePolicy(*_size_policy_widgets);
-    _reintegrate_found->setSizePolicy(*_size_policy_widgets);
-    _reintegrate_predicted->setSizePolicy(*_size_policy_widgets);
-
-    reintegrate_grid->addWidget(_integrator_combo, 0, 0, 1, 2);
-    reintegrate_grid->addWidget(_fit_center, 1, 0, 1, 2);
-    reintegrate_grid->addWidget(_fit_covariance, 2, 0, 1, 2);
-    reintegrate_grid->addWidget(_peak_end_int, 3, 1, 1, 1);
-    reintegrate_grid->addWidget(_bkg_start_int, 4, 1, 1, 1);
-    reintegrate_grid->addWidget(_bkg_end_int, 5, 1, 1, 1);
-    reintegrate_grid->addWidget(_radius_int, 6, 1, 1, 1);
-    reintegrate_grid->addWidget(_n_frames_int, 7, 1, 1, 1);
-    reintegrate_grid->addWidget(_reintegrate_found, 8, 0, 1, 2);
-    reintegrate_grid->addWidget(_reintegrate_predicted, 9, 0, 1, 2);
-
-    _reintegrate_box->setContentLayout(*reintegrate_grid, true);
-    _reintegrate_box->setSizePolicy(*_size_policy_box);
-    _reintegrate_box->contentArea.setSizePolicy(*_size_policy_box);
-
-    connect(_reintegrate_found, &QPushButton::clicked, this, &SubframeRefiner::reintegrateFound);
+    connect(reintegrate_found, &QPushButton::clicked, this, &SubframeRefiner::reintegrateFound);
     connect(
-        _reintegrate_predicted, &QPushButton::clicked, this,
-        &SubframeRefiner::reintegratePredicted);
-    _reintegrate_box->toggler(true);
+        reintegrate_predicted, &QPushButton::clicked, this, &SubframeRefiner::reintegratePredicted);
 
     _left_layout->addWidget(_reintegrate_box);
 }
-
 
 void SubframeRefiner::runReintegration(nsx::PeakCollection* peaks)
 {
@@ -842,6 +542,7 @@ void SubframeRefiner::runReintegration(nsx::PeakCollection* peaks)
 
 void SubframeRefiner::reintegrateFound()
 {
+    // #nsxAudit Crash if no experiment existing. Disable btn if no experiment loaded?
     nsx::Experiment* expt = gSession->experimentAt(_exp_combo->currentIndex())->experiment();
     nsx::PeakCollection* found_peaks =
         expt->getPeakCollection(_peak_combo->currentText().toStdString());
@@ -850,6 +551,7 @@ void SubframeRefiner::reintegrateFound()
 
 void SubframeRefiner::reintegratePredicted()
 {
+    // #nsxAudit Crash if no experiment existing. Disable btn if no experiment loaded?
     nsx::Experiment* expt = gSession->experimentAt(_exp_combo->currentIndex())->experiment();
     nsx::PeakCollection* predicted_peaks =
         expt->getPeakCollection(_predicted_combo->currentText().toStdString());
@@ -858,6 +560,7 @@ void SubframeRefiner::reintegratePredicted()
 
 void SubframeRefiner::openShapeBuilder()
 {
+    // #nsxAudit Crash if no experiment existing. Disable btn if no experiment loaded?
     nsx::PeakCollection* peak_collection =
         gSession->experimentAt(_exp_combo->currentIndex())
             ->experiment()
