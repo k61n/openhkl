@@ -22,6 +22,7 @@
 #include <QColor>
 
 class Peak3D;
+class PeakViewWidget;
 
 //! Plottable graphics item that represents a peak in the detector image
 class PeakItemGraphic : public PlottableItem {
@@ -63,6 +64,12 @@ class PeakItemGraphic : public PlottableItem {
     //! Change the background box color
     void setBkgColor(QColor color);
     void setBkgOutlineColor(QColor color);
+
+    //! Init properties from controls on \a peakViewWidget, use set 1
+    void initFromPeakViewWidgetSet1(PeakViewWidget* peakViewWidget);
+
+    //! Init properties from controls on \a peakViewWidget, use set 2
+    void initFromPeakViewWidgetSet2(PeakViewWidget* peakViewWidget);
 
  private:
     //! Pointer to the Peak3D object
