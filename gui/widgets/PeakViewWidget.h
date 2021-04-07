@@ -18,8 +18,6 @@
 #include <QGridLayout>
 
 class QCheckBox;
-class QPushButton;
-class QSizePolicy;
 class QSpinBox;
 class ColorButton;
 
@@ -31,6 +29,13 @@ class PeakViewWidget : public QGridLayout {
 
  signals:
     void settingsChanged();
+
+ private:
+    void addHeadline(int row, const QString& type);
+    void addLabel(int row, const QString& text);
+    QCheckBox* addCheckBox(int row, int col, const QString& text, Qt::CheckState state);
+    QSpinBox* addSpinBox(int row, int value);
+    ColorButton* addColorButton(int row, int col, const QColor& color);
 
  public:
     QCheckBox* drawPeaks1;
