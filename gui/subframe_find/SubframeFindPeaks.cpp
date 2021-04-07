@@ -589,7 +589,10 @@ void SubframeFindPeaks::refreshPeakVisual()
 
         graphic->showLabel(false);
         graphic->setColor(Qt::transparent);
-        graphic->initFromPeakViewWidget(_peak_view_widget, peak->peak()->enabled());
+        if (peak->peak()->enabled())
+            graphic->initFromPeakViewWidgetSet1(_peak_view_widget);
+        else
+            graphic->initFromPeakViewWidgetSet2(_peak_view_widget);
     }
     _figure_view->getScene()->update();
     _figure_view->getScene()->drawPeakitems();

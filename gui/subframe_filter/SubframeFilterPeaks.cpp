@@ -546,7 +546,10 @@ void SubframeFilterPeaks::refreshPeakVisual()
 
         graphic->showLabel(false);
         graphic->setColor(Qt::transparent);
-        graphic->initFromPeakViewWidget(_peak_view_widget, peak->peak()->caughtByFilter());
+        if (peak->peak()->caughtByFilter())
+            graphic->initFromPeakViewWidgetSet1(_peak_view_widget);
+        else
+            graphic->initFromPeakViewWidgetSet2(_peak_view_widget);
     }
     _figure_view->getScene()->update();
     _figure_view->getScene()->drawPeakitems();

@@ -65,9 +65,11 @@ class PeakItemGraphic : public PlottableItem {
     void setBkgColor(QColor color);
     void setBkgOutlineColor(QColor color);
 
-    //! Init properties from controls on \a peakViewWidget. Use set 1, if set1 is true, otherwise
-    //! use set 2.
-    void initFromPeakViewWidget(PeakViewWidget* peakViewWidget, bool set1);
+    //! Init properties from controls on \a peakViewWidget, use set 1
+    void initFromPeakViewWidgetSet1(PeakViewWidget* peakViewWidget);
+
+    //! Init properties from controls on \a peakViewWidget, use set 2
+    void initFromPeakViewWidgetSet2(PeakViewWidget* peakViewWidget);
 
  private:
     //! Pointer to the Peak3D object

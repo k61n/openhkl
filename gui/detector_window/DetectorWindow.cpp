@@ -175,7 +175,10 @@ void DetectorWindow::refreshDetectorView()
 
         graphic->showLabel(false);
         graphic->setColor(Qt::transparent);
-        graphic->initFromPeakViewWidget(_peak_view_widget_1, peak->peak()->enabled());
+        if (peak->peak()->enabled())
+            graphic->initFromPeakViewWidgetSet1(_peak_view_widget_1);
+        else
+            graphic->initFromPeakViewWidgetSet2(_peak_view_widget_1);
     }
 
     for (int i = 0; i < _peak_collection_item_2.childCount(); i++) {
@@ -184,7 +187,10 @@ void DetectorWindow::refreshDetectorView()
 
         graphic->showLabel(false);
         graphic->setColor(Qt::transparent);
-        graphic->initFromPeakViewWidget(_peak_view_widget_2, peak->peak()->enabled());
+        if (peak->peak()->enabled())
+            graphic->initFromPeakViewWidgetSet1(_peak_view_widget_2);
+        else
+            graphic->initFromPeakViewWidgetSet2(_peak_view_widget_2);
     }
 
     _detector_view->getScene()->update();
