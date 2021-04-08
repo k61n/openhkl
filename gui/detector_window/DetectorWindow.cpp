@@ -25,12 +25,12 @@
 #include "gui/views/ShortTable.h"
 #include "gui/widgets/PeakViewWidget.h"
 
+#include <QCheckBox>
 #include <QFileInfo>
 #include <QGridLayout>
 #include <QGroupBox>
 #include <QLabel>
 #include <QScrollArea>
-#include <QCheckBox>
 
 DetectorWindow::DetectorWindow(QWidget* parent)
     : QDialog(parent)
@@ -45,12 +45,8 @@ DetectorWindow::DetectorWindow(QWidget* parent)
     _control_layout = new QVBoxLayout();
     _peak_view_widget_1 = new PeakViewWidget("Valid peaks", "Invalid Peaks");
     _peak_view_widget_2 = new PeakViewWidget("Valid peaks", "Invalid Peaks");
-    _peak_view_widget_2->colorPeaks1->setColor(Qt::green);
-    _peak_view_widget_2->colorPeaks2->setColor(Qt::red);
-    _peak_view_widget_2->colorBoxes1->setColor(Qt::green);
-    _peak_view_widget_2->colorBoxes2->setColor(Qt::red);
-    _peak_view_widget_2->colorBkg1->setColor(Qt::green);
-    _peak_view_widget_2->colorBkg2->setColor(Qt::red);
+    _peak_view_widget_2->set1.setColor(Qt::green);
+    _peak_view_widget_2->set2.setColor(Qt::red);
 
     setDetectorViewUp();
     setPeakTableUp();
@@ -156,8 +152,7 @@ void DetectorWindow::setPlotUp(PeakViewWidget* peak_widget, QString name)
     Spoiler* preview_spoiler = new Spoiler(name);
 
     connect(
-        peak_widget, &PeakViewWidget::settingsChanged, this,
-        &DetectorWindow::refreshDetectorView);
+        peak_widget, &PeakViewWidget::settingsChanged, this, &DetectorWindow::refreshDetectorView);
 
     preview_spoiler->setContentLayout(*peak_widget, true);
 
@@ -175,10 +170,8 @@ void DetectorWindow::refreshDetectorView()
 
         graphic->showLabel(false);
         graphic->setColor(Qt::transparent);
-        if (peak->peak()->enabled())
-            graphic->initFromPeakViewWidgetSet1(_peak_view_widget_1);
-        else
-            graphic->initFromPeakViewWidgetSet2(_peak_view_widget_1);
+        graphic->initFromPeakViewWidget(
+            peak->peak()->enabled() ? _peak_view_widget_1->set1 : _peak_view_widget_1->set2);
     }
 
     for (int i = 0; i < _peak_collection_item_2.childCount(); i++) {
@@ -187,10 +180,8 @@ void DetectorWindow::refreshDetectorView()
 
         graphic->showLabel(false);
         graphic->setColor(Qt::transparent);
-        if (peak->peak()->enabled())
-            graphic->initFromPeakViewWidgetSet1(_peak_view_widget_2);
-        else
-            graphic->initFromPeakViewWidgetSet2(_peak_view_widget_2);
+        graphic->initFromPeakViewWidget(
+            peak->peak()->enabled() ? _peak_view_widget_2->set1 : _peak_view_widget_2->set2);
     }
 
     _detector_view->getScene()->update();

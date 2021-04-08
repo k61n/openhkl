@@ -17,12 +17,12 @@
 
 #include "core/peak/Peak3D.h"
 #include "gui/graphics_items/PlottableItem.h"
+#include "gui/widgets/PeakViewWidget.h"
 
 #include <Eigen/Dense>
 #include <QColor>
 
 class Peak3D;
-class PeakViewWidget;
 
 //! Plottable graphics item that represents a peak in the detector image
 class PeakItemGraphic : public PlottableItem {
@@ -65,11 +65,8 @@ class PeakItemGraphic : public PlottableItem {
     void setBkgColor(QColor color);
     void setBkgOutlineColor(QColor color);
 
-    //! Init properties from controls on \a peakViewWidget, use set 1
-    void initFromPeakViewWidgetSet1(PeakViewWidget* peakViewWidget);
-
-    //! Init properties from controls on \a peakViewWidget, use set 2
-    void initFromPeakViewWidgetSet2(PeakViewWidget* peakViewWidget);
+    //! Init properties from a set of controls on \a peakViewWidget
+    void initFromPeakViewWidget(const PeakViewWidget::Set& set);
 
  private:
     //! Pointer to the Peak3D object
