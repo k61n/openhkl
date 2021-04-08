@@ -28,7 +28,6 @@
 
 #include "gui/graphics/PeakPlot.h"
 #include "gui/utility/ColorButton.h"
-#include "gui/widgets/PeakViewWidget.h"
 
 #include "tables/crystal/MillerIndex.h"
 #include "tables/crystal/UnitCell.h"
@@ -180,26 +179,15 @@ void PeakItemGraphic::setBkgColor(QColor color)
     _bkg_box->setPen(bkg_pen);
 }
 
-void PeakItemGraphic::initFromPeakViewWidgetSet1(PeakViewWidget* peakViewWidget)
+void PeakItemGraphic::initFromPeakViewWidget(const PeakViewWidget::Set& set)
 {
-    showArea(peakViewWidget->drawPeaks1->isChecked());
-    setSize(peakViewWidget->sizePeaks1->value());
-    setCenterColor(peakViewWidget->colorPeaks1->color());
-    showBox(peakViewWidget->drawBoxes1->isChecked());
-    setBoxColor(peakViewWidget->colorBoxes1->color());
-    showBkg(peakViewWidget->drawBkg1->isChecked());
-    setBkgColor(peakViewWidget->colorBkg1->color());
-}
-
-void PeakItemGraphic::initFromPeakViewWidgetSet2(PeakViewWidget* peakViewWidget)
-{
-    showArea(peakViewWidget->drawPeaks2->isChecked());
-    setSize(peakViewWidget->sizePeaks2->value());
-    setCenterColor(peakViewWidget->colorPeaks2->color());
-    showBox(peakViewWidget->drawBoxes2->isChecked());
-    setBoxColor(peakViewWidget->colorBoxes2->color());
-    showBkg(peakViewWidget->drawBkg2->isChecked());
-    setBkgColor(peakViewWidget->colorBkg2->color());
+    showArea(set.drawPeaks->isChecked());
+    setSize(set.sizePeaks->value());
+    setCenterColor(set.colorPeaks->color());
+    showBox(set.drawBoxes->isChecked());
+    setBoxColor(set.colorBoxes->color());
+    showBkg(set.drawBkg->isChecked());
+    setBkgColor(set.colorBkg->color());
 }
 
 nsx::Peak3D* PeakItemGraphic::peak() const

@@ -25,34 +25,33 @@ class PeakViewWidget : public QGridLayout {
     Q_OBJECT
 
  public:
-    PeakViewWidget(const QString& type1, const QString& type2);
+    PeakViewWidget(const QString& titleSet1, const QString& titleSet2);
+
+    struct Set {
+        QCheckBox* drawPeaks;
+        QCheckBox* drawBoxes;
+        QCheckBox* drawBkg;
+        QSpinBox* sizePeaks;
+        ColorButton* colorPeaks;
+        ColorButton* colorBoxes;
+        ColorButton* colorBkg;
+
+        //! Set the color of all three color buttons at once
+        void setColor(const QColor& color);
+
+    } set1, set2;
 
  signals:
+    //! Emitted whenever any of the settings changed
     void settingsChanged();
 
  private:
+    void createSet(Set& set, const QString& title, const QColor& btnColor);
     void addHeadline(int row, const QString& type);
     void addLabel(int row, const QString& text);
     QCheckBox* addCheckBox(int row, int col, const QString& text, Qt::CheckState state);
     QSpinBox* addSpinBox(int row, int value);
     ColorButton* addColorButton(int row, int col, const QColor& color);
-
- public:
-    QCheckBox* drawPeaks1;
-    QCheckBox* drawBoxes1;
-    QCheckBox* drawBkg1;
-    QSpinBox* sizePeaks1;
-    ColorButton* colorPeaks1;
-    ColorButton* colorBoxes1;
-    ColorButton* colorBkg1;
-
-    QCheckBox* drawPeaks2;
-    QCheckBox* drawBoxes2;
-    QCheckBox* drawBkg2;
-    QSpinBox* sizePeaks2;
-    ColorButton* colorPeaks2;
-    ColorButton* colorBoxes2;
-    ColorButton* colorBkg2;
 };
 
 #endif // NSX_GUI_UTILITY_PEAKVIEWWIDGET_H
