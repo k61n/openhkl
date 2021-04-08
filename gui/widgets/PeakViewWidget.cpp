@@ -62,26 +62,6 @@ PeakViewWidget::PeakViewWidget(const QString& type1, const QString& type2)
     addLabel(13, "Colour:");
     colorBoxes2 = addColorButton(13, 1, Qt::darkRed);
     colorBkg2 = addColorButton(13, 2, Qt::darkRed);
-
-    connect(drawPeaks1, &QCheckBox::stateChanged, this, &PeakViewWidget::settingsChanged);
-    connect(drawPeaks2, &QCheckBox::stateChanged, this, &PeakViewWidget::settingsChanged);
-    connect(drawBoxes1, &QCheckBox::stateChanged, this, &PeakViewWidget::settingsChanged);
-    connect(drawBoxes2, &QCheckBox::stateChanged, this, &PeakViewWidget::settingsChanged);
-    connect(drawBkg1, &QCheckBox::stateChanged, this, &PeakViewWidget::settingsChanged);
-    connect(drawBkg2, &QCheckBox::stateChanged, this, &PeakViewWidget::settingsChanged);
-    connect(colorPeaks1, &ColorButton::colorChanged, this, &PeakViewWidget::settingsChanged);
-    connect(colorPeaks2, &ColorButton::colorChanged, this, &PeakViewWidget::settingsChanged);
-    connect(colorBoxes1, &ColorButton::colorChanged, this, &PeakViewWidget::settingsChanged);
-    connect(colorBoxes2, &ColorButton::colorChanged, this, &PeakViewWidget::settingsChanged);
-    connect(colorBkg1, &ColorButton::colorChanged, this, &PeakViewWidget::settingsChanged);
-    connect(colorBkg2, &ColorButton::colorChanged, this, &PeakViewWidget::settingsChanged);
-
-    connect(
-        sizePeaks1, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged), this,
-        &PeakViewWidget::settingsChanged);
-    connect(
-        sizePeaks2, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged), this,
-        &PeakViewWidget::settingsChanged);
 }
 
 void PeakViewWidget::addHeadline(int row, const QString& type)
@@ -103,6 +83,7 @@ QCheckBox* PeakViewWidget::addCheckBox(int row, int col, const QString& text, Qt
     auto checkbox = new QCheckBox(text);
     checkbox->setCheckState(state);
     addWidget(checkbox, row, col);
+    connect(checkbox, &QCheckBox::stateChanged, this, &PeakViewWidget::settingsChanged);
     return checkbox;
 }
 
@@ -111,6 +92,10 @@ QSpinBox* PeakViewWidget::addSpinBox(int row, int value)
     auto spinbox = new QSpinBox();
     spinbox->setValue(10);
     addWidget(spinbox, row, 1, 1, 1);
+    connect(
+        spinbox, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged), this,
+        &PeakViewWidget::settingsChanged);
+
     return spinbox;
 }
 
@@ -119,5 +104,6 @@ ColorButton* PeakViewWidget::addColorButton(int row, int col, const QColor& colo
     auto btn = new ColorButton(color);
     btn->setFixedSize(btn->sizeHint().height() * 2, btn->sizeHint().height());
     addWidget(btn, row, col, 1, 1);
+    connect(btn, &ColorButton::colorChanged, this, &PeakViewWidget::settingsChanged);
     return btn;
 }
