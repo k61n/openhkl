@@ -18,6 +18,7 @@
 #include <QGridLayout>
 
 class QCheckBox;
+class QDoubleSpinBox;
 class QSpinBox;
 class ColorButton;
 
@@ -31,13 +32,18 @@ class PeakViewWidget : public QGridLayout {
         QCheckBox* drawPeaks;
         QCheckBox* drawBoxes;
         QCheckBox* drawBkg;
+        QCheckBox* drawIntegrationRegion;
         QSpinBox* sizePeaks;
+        QDoubleSpinBox* alphaIntegrationRegion;
         ColorButton* colorPeaks;
         ColorButton* colorBoxes;
         ColorButton* colorBkg;
+        ColorButton* colorIntPeak;
+        ColorButton* colorIntBkg;
 
         //! Set the color of all three color buttons at once
         void setColor(const QColor& color);
+        void setIntegrationRegionColors(const QColor& peak, const QColor& bkg, double alpha);
 
     } set1, set2;
 
@@ -47,10 +53,12 @@ class PeakViewWidget : public QGridLayout {
 
  private:
     void createSet(Set& set, const QString& title, const QColor& btnColor);
+    void addIntegrationRegion(Set& set, const QColor& peak, const QColor& bkg);
     void addHeadline(int row, const QString& type);
     void addLabel(int row, const QString& text);
     QCheckBox* addCheckBox(int row, int col, const QString& text, Qt::CheckState state);
     QSpinBox* addSpinBox(int row, int value);
+    QDoubleSpinBox* addDoubleSpinBox(int row, double value);
     ColorButton* addColorButton(int row, int col, const QColor& color);
 };
 
