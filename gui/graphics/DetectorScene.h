@@ -63,7 +63,8 @@ class DetectorScene : public QGraphicsScene {
     }
     //! Load image from current Data and frame
     void loadCurrentImage();
-
+    //! Set colours for integration region
+    void setIntegrationRegionColors(QColor peak, QColor bkg);
 
  public:
     //! Set the peak model pointer
@@ -147,6 +148,11 @@ class DetectorScene : public QGraphicsScene {
     std::unique_ptr<ColorMap> _colormap;
     QGraphicsPixmapItem* _integrationRegion;
     QGraphicsRectItem* _selected_peak_gi;
+
+    //! Colour of peak pixels in integration region
+    QColor _peakPxColor;
+    //! Colour of background pixels in integration region
+    QColor _bkgPxColor;
 
     nsx::Peak3D* _selected_peak;
 };
