@@ -17,6 +17,7 @@
 
 #include "base/mask/IMask.h"
 #include "core/data/DataTypes.h"
+#include "core/peak/IntegrationRegion.h"
 #include "core/peak/Peak3D.h"
 #include "gui/models/ColorMap.h"
 
@@ -27,6 +28,8 @@
 class PeakItemGraphic;
 class PeakCollectionModel;
 class SXGraphicsItem;
+
+using EventType = nsx::IntegrationRegion::EventType;
 
 // For the plotting part, better to have RowMajor matrix to use QImage scanline
 // function and optimize cache hit.
@@ -69,6 +72,7 @@ class DetectorScene : public QGraphicsScene {
     void refreshIntegrationOverlay();
     //! Generate a mask of integration regions
     void getIntegrationMask(PeakCollectionModel* model, Eigen::MatrixXi& mask);
+    QImage* getIntegrationRegionImage(const Eigen::MatrixXi& mask, QColor& peak, QColor& bkg);
 
  public:
     //! Set the peak model pointer

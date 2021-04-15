@@ -26,7 +26,6 @@
 #include "core/instrument/InstrumentState.h"
 #include "core/instrument/Sample.h"
 #include "core/instrument/Source.h"
-#include "core/peak/IntegrationRegion.h"
 #include "core/peak/Peak3D.h"
 #include "core/raw/IDataReader.h"
 #include "gui/MainWin.h"
@@ -708,39 +707,42 @@ void DetectorScene::loadCurrentImage()
 
 void DetectorScene::refreshIntegrationOverlay()
 {
-    using EventType = nsx::IntegrationRegion::EventType;
-
-    const int ncols = _currentData->nCols();
-    const int nrows = _currentData->nRows();
-    Eigen::MatrixXi mask(nrows, ncols);
+    Eigen::MatrixXi mask(_currentData->nRows(), _currentData->nCols());
     mask.setConstant(int(EventType::EXCLUDED));
 
     for (auto model : _peak_models) {
         getIntegrationMask(model, mask);
-        QImage region_img(ncols, nrows, QImage::Format_ARGB32);
-
-        for (int c = 0; c < ncols; ++c) {
-            for (int r = 0; r < nrows; ++r) {
-                EventType ev = EventType(mask(r, c));
-                QColor color;
-
-                switch (ev) {
-                case EventType::PEAK: color = _peakPxColor; break;
-                case EventType::BACKGROUND: color = _bkgPxColor; break;
-                default: color = Qt::transparent; break;
-                }
-
-                // todo: what about unselected peaks?
-                region_img.setPixelColor(QPoint(c, r), color);
-            }
-        }
+        QImage* region_img = getIntegrationRegionImage(mask, _peakPxColor, _bkgPxColor);
         if (!_integrationRegion) {
-            _integrationRegion = addPixmap(QPixmap::fromImage(region_img));
+            _integrationRegion = addPixmap(QPixmap::fromImage(*region_img));
             _integrationRegion->setZValue(-1);
         } else {
-            _integrationRegion->setPixmap(QPixmap::fromImage(region_img));
+            _integrationRegion->setPixmap(QPixmap::fromImage(*region_img));
         }
     }
+}
+
+QImage* DetectorScene::getIntegrationRegionImage(
+    const Eigen::MatrixXi& mask, QColor& peak, QColor& bkg)
+{
+    QImage* region_img = new QImage(mask.cols(), mask.rows(), QImage::Format_ARGB32);
+
+    for (int c = 0; c < mask.cols(); ++c) {
+        for (int r = 0; r < mask.rows(); ++r) {
+            EventType ev = EventType(mask(r, c));
+            QColor color;
+
+            switch (ev) {
+            case EventType::PEAK: color = peak; break;
+            case EventType::BACKGROUND: color = bkg; break;
+            default: color = Qt::transparent; break;
+            }
+
+            // todo: what about unselected peaks?
+            region_img->setPixelColor(QPoint(c, r), color);
+        }
+    }
+    return region_img;
 }
 
 void DetectorScene::getIntegrationMask(PeakCollectionModel* model, Eigen::MatrixXi& mask)
