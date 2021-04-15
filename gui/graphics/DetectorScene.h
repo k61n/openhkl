@@ -65,6 +65,8 @@ class DetectorScene : public QGraphicsScene {
     void loadCurrentImage();
     //! Set colours for integration region
     void setIntegrationRegionColors(QColor peak, QColor bkg);
+    //! Refresh the overlay displaying integration regions
+    void refreshIntegrationOverlay();
 
  public:
     //! Set the peak model pointer

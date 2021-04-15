@@ -681,8 +681,6 @@ void DetectorScene::loadCurrentImage()
     if (!_currentData)
         return;
 
-    using EventType = nsx::IntegrationRegion::EventType;
-
     // Full image size, front of the stack
     QRect& full = _zoomStack.front();
     if (_currentFrameIndex >= _currentData->nFrames())
@@ -698,63 +696,70 @@ void DetectorScene::loadCurrentImage()
     }
 
     // update the integration region pixmap
-    if (_drawIntegrationRegion) {
-        const int ncols = _currentData->nCols();
-        const int nrows = _currentData->nRows();
-        Eigen::MatrixXi mask(nrows, ncols);
-        mask.setConstant(int(EventType::EXCLUDED));
+    if (_drawIntegrationRegion) 
+        refreshIntegrationOverlay();
 
-        for (auto model : _peak_models) {
-            if (model == nullptr || model->root() == nullptr)
-                return;
-
-
-            std::vector<PeakItem*> peak_items = model->root()->peakItems();
-
-            for (PeakItem* peak_item : peak_items) {
-                nsx::Peak3D* peak = peak_item->peak();
-                if (peak_item->peak()->enabled()) {
-                    // IntegrationRegion constructor can throw if the region is invalid
-                    try {
-                        nsx::IntegrationRegion region(
-                            peak, peak_item->peak()->peakEnd(), peak_item->peak()->bkgBegin(),
-                            peak_item->peak()->bkgEnd());
-                        region.updateMask(mask, _currentFrameIndex);
-                    } catch (...) {
-                        peak_item->peak()->setSelected(false);
-                    }
-                }
-            }
-            QImage region_img(ncols, nrows, QImage::Format_ARGB32);
-
-            for (int c = 0; c < ncols; ++c) {
-                for (int r = 0; r < nrows; ++r) {
-                    EventType ev = EventType(mask(r, c));
-                    QColor color;
-
-                    switch (ev) {
-                    case EventType::PEAK: color = _peakPxColor; break;
-                    case EventType::BACKGROUND: color = _bkgPxColor; break;
-                    default: color = Qt::transparent; break;
-                    }
-
-                    // todo: what about unselected peaks?
-                    region_img.setPixelColor(QPoint(c, r), color);
-                }
-            }
-            if (!_integrationRegion) {
-                _integrationRegion = addPixmap(QPixmap::fromImage(region_img));
-                _integrationRegion->setZValue(-1);
-            } else {
-                _integrationRegion->setPixmap(QPixmap::fromImage(region_img));
-            }
-        }
-    }
     setSceneRect(_zoomStack.back());
     emit dataChanged();
 
     if (PlottableItem* p = dynamic_cast<PlottableItem*>(_lastClickedGI))
         gGui->updatePlot(p);
+}
+
+void DetectorScene::refreshIntegrationOverlay()
+{
+    using EventType = nsx::IntegrationRegion::EventType;
+
+    const int ncols = _currentData->nCols();
+    const int nrows = _currentData->nRows();
+    Eigen::MatrixXi mask(nrows, ncols);
+    mask.setConstant(int(EventType::EXCLUDED));
+
+    for (auto model : _peak_models) {
+        if (model == nullptr || model->root() == nullptr)
+            return;
+
+
+        std::vector<PeakItem*> peak_items = model->root()->peakItems();
+
+        for (PeakItem* peak_item : peak_items) {
+            nsx::Peak3D* peak = peak_item->peak();
+            if (peak_item->peak()->enabled()) {
+                // IntegrationRegion constructor can throw if the region is invalid
+                try {
+                    nsx::IntegrationRegion region(
+                        peak, peak_item->peak()->peakEnd(), peak_item->peak()->bkgBegin(),
+                        peak_item->peak()->bkgEnd());
+                    region.updateMask(mask, _currentFrameIndex);
+                } catch (...) {
+                    peak_item->peak()->setSelected(false);
+                }
+            }
+        }
+        QImage region_img(ncols, nrows, QImage::Format_ARGB32);
+
+        for (int c = 0; c < ncols; ++c) {
+            for (int r = 0; r < nrows; ++r) {
+                EventType ev = EventType(mask(r, c));
+                QColor color;
+
+                switch (ev) {
+                case EventType::PEAK: color = _peakPxColor; break;
+                case EventType::BACKGROUND: color = _bkgPxColor; break;
+                default: color = Qt::transparent; break;
+                }
+
+                // todo: what about unselected peaks?
+                region_img.setPixelColor(QPoint(c, r), color);
+            }
+        }
+        if (!_integrationRegion) {
+            _integrationRegion = addPixmap(QPixmap::fromImage(region_img));
+            _integrationRegion->setZValue(-1);
+        } else {
+            _integrationRegion->setPixmap(QPixmap::fromImage(region_img));
+        }
+    }
 }
 
 void DetectorScene::setIntegrationRegionColors(QColor peak, QColor bkg)
