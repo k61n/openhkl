@@ -716,26 +716,7 @@ void DetectorScene::refreshIntegrationOverlay()
     mask.setConstant(int(EventType::EXCLUDED));
 
     for (auto model : _peak_models) {
-        if (model == nullptr || model->root() == nullptr)
-            return;
-
-
-        std::vector<PeakItem*> peak_items = model->root()->peakItems();
-
-        for (PeakItem* peak_item : peak_items) {
-            nsx::Peak3D* peak = peak_item->peak();
-            if (peak_item->peak()->enabled()) {
-                // IntegrationRegion constructor can throw if the region is invalid
-                try {
-                    nsx::IntegrationRegion region(
-                        peak, peak_item->peak()->peakEnd(), peak_item->peak()->bkgBegin(),
-                        peak_item->peak()->bkgEnd());
-                    region.updateMask(mask, _currentFrameIndex);
-                } catch (...) {
-                    peak_item->peak()->setSelected(false);
-                }
-            }
-        }
+        getIntegrationMask(model, mask);
         QImage region_img(ncols, nrows, QImage::Format_ARGB32);
 
         for (int c = 0; c < ncols; ++c) {
@@ -758,6 +739,29 @@ void DetectorScene::refreshIntegrationOverlay()
             _integrationRegion->setZValue(-1);
         } else {
             _integrationRegion->setPixmap(QPixmap::fromImage(region_img));
+        }
+    }
+}
+
+void DetectorScene::getIntegrationMask(PeakCollectionModel* model, Eigen::MatrixXi& mask)
+{
+    if (model == nullptr || model->root() == nullptr)
+        return;
+
+    std::vector<PeakItem*> peak_items = model->root()->peakItems();
+
+    for (PeakItem* peak_item : peak_items) {
+        nsx::Peak3D* peak = peak_item->peak();
+        if (peak_item->peak()->enabled()) {
+            // IntegrationRegion constructor can throw if the region is invalid
+            try {
+                nsx::IntegrationRegion region(
+                    peak, peak_item->peak()->peakEnd(), peak_item->peak()->bkgBegin(),
+                    peak_item->peak()->bkgEnd());
+                region.updateMask(mask, _currentFrameIndex);
+            } catch (...) {
+                peak_item->peak()->setSelected(false);
+            }
         }
     }
 }

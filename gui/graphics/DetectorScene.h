@@ -67,6 +67,8 @@ class DetectorScene : public QGraphicsScene {
     void setIntegrationRegionColors(QColor peak, QColor bkg);
     //! Refresh the overlay displaying integration regions
     void refreshIntegrationOverlay();
+    //! Generate a mask of integration regions
+    void getIntegrationMask(PeakCollectionModel* model, Eigen::MatrixXi& mask);
 
  public:
     //! Set the peak model pointer
