@@ -81,8 +81,8 @@ DetectorScene::DetectorScene(QObject* parent)
     , _integrationRegion2(nullptr)
     , _peakPxColor1(QColor(0, 255, 0, 128)) // green, alpha = 0.5
     , _bkgPxColor1(QColor(255, 255, 0, 128)) // yellow, alpha = 0.5
-    , _peakPxColor2(QColor(0, 100, 0, 128)) // green, alpha = 0.5
-    , _bkgPxColor2(QColor(251, 163, 0, 128)) // yellow, alpha = 0.5
+    , _peakPxColor2(QColor(0, 100, 0, 128)) // dark green, alpha = 0.5
+    , _bkgPxColor2(QColor(251, 163, 0, 128)) // dark yellow, alpha = 0.5
     , _selected_peak_gi(nullptr)
     , _selected_peak(nullptr)
 {
