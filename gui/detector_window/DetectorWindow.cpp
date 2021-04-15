@@ -45,8 +45,9 @@ DetectorWindow::DetectorWindow(QWidget* parent)
     _control_layout = new QVBoxLayout();
     _peak_view_widget_1 = new PeakViewWidget("Valid peaks", "Invalid Peaks");
     _peak_view_widget_2 = new PeakViewWidget("Valid peaks", "Invalid Peaks");
-    _peak_view_widget_2->set1.setColor(Qt::green);
-    _peak_view_widget_2->set2.setColor(Qt::red);
+    _peak_view_widget_2->set1.setColor(Qt::darkGreen);
+    _peak_view_widget_2->set2.setColor(Qt::darkRed);
+    _peak_view_widget_2->set1.setIntegrationRegionColors(Qt::darkGreen, Qt::darkYellow, 0.5);
 
     setDetectorViewUp();
     setPeakTableUp();
@@ -185,6 +186,8 @@ void DetectorWindow::refreshDetectorView()
     }
 
     _detector_view->getScene()->update();
+    _detector_view->getScene()->initIntRegionFromPeakWidget(_peak_view_widget_1->set1);
+    _detector_view->getScene()->initIntRegionFromPeakWidget(_peak_view_widget_2->set1, true);
     _detector_view->getScene()->drawPeakitems();
 }
 

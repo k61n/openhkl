@@ -20,6 +20,7 @@
 #include "core/peak/IntegrationRegion.h"
 #include "core/peak/Peak3D.h"
 #include "gui/models/ColorMap.h"
+#include "gui/widgets/PeakViewWidget.h"
 
 #include <QGraphicsPixmapItem>
 #include <QGraphicsScene>
@@ -67,12 +68,13 @@ class DetectorScene : public QGraphicsScene {
     //! Load image from current Data and frame
     void loadCurrentImage();
     //! Set colours for integration region
-    void setIntegrationRegionColors(QColor peak, QColor bkg);
+    void initIntRegionFromPeakWidget(const PeakViewWidget::Set& set, bool alt = false);
     //! Refresh the overlay displaying integration regions
     void refreshIntegrationOverlay();
     //! Generate a mask of integration regions
     void getIntegrationMask(PeakCollectionModel* model, Eigen::MatrixXi& mask);
     QImage* getIntegrationRegionImage(const Eigen::MatrixXi& mask, QColor& peak, QColor& bkg);
+    void clearIntegrationRegion();
 
  public:
     //! Set the peak model pointer

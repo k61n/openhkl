@@ -41,11 +41,14 @@
 #include "gui/items/PeakItem.h"
 #include "gui/models/PeakCollectionModel.h"
 #include "gui/models/Session.h"
+#include "gui/utility/ColorButton.h"
 #include "tables/crystal/MillerIndex.h"
 #include "tables/crystal/SpaceGroup.h"
 #include "tables/crystal/UnitCell.h"
 
+#include <QCheckBox>
 #include <QDebug>
+#include <QDoubleSpinBox>
 #include <QGraphicsSceneMouseEvent>
 #include <QKeyEvent>
 #include <QMenu>
@@ -699,8 +702,10 @@ void DetectorScene::loadCurrentImage()
     }
 
     // update the integration region pixmap
-    if (_drawIntegrationRegion1 || _drawIntegrationRegion2) 
+    clearIntegrationRegion();
+    if (_drawIntegrationRegion1 || _drawIntegrationRegion2)  {
         refreshIntegrationOverlay();
+    }
 
     setSceneRect(_zoomStack.back());
     emit dataChanged();
@@ -787,13 +792,22 @@ void DetectorScene::getIntegrationMask(PeakCollectionModel* model, Eigen::Matrix
     }
 }
 
-void DetectorScene::setIntegrationRegionColors(QColor peak, QColor bkg)
+void DetectorScene::initIntRegionFromPeakWidget(
+    const PeakViewWidget::Set& set, bool alt /* = false */)
 {
-    _peakPxColor1 = peak;
-    _bkgPxColor1 = bkg;
-    _peakPxColor1.setAlphaF(0.5);
-    _bkgPxColor1.setAlphaF(0.5);
-    loadCurrentImage();
+    if (!alt) {
+        _drawIntegrationRegion1 = set.drawIntegrationRegion->isChecked();
+        _peakPxColor1 = set.colorIntPeak->color();
+        _bkgPxColor1 = set.colorIntBkg->color();
+        _peakPxColor1.setAlphaF(set.alphaIntegrationRegion->value());
+        _bkgPxColor1.setAlphaF(set.alphaIntegrationRegion->value());
+    } else { // alternative colour scheme for second overlay
+        _drawIntegrationRegion2 = set.drawIntegrationRegion->isChecked();
+        _peakPxColor2 = set.colorIntPeak->color();
+        _bkgPxColor2 = set.colorIntBkg->color();
+        _peakPxColor2.setAlphaF(set.alphaIntegrationRegion->value());
+        _bkgPxColor2.setAlphaF(set.alphaIntegrationRegion->value());
+    }
 }
 
 void DetectorScene::showPeakLabels(bool flag)
@@ -828,6 +842,21 @@ void DetectorScene::drawIntegrationRegion(bool flag)
     _drawIntegrationRegion2 = flag;
 
     loadCurrentImage();
+}
+
+void DetectorScene::clearIntegrationRegion()
+{
+    if (_integrationRegion1) {
+        removeItem(_integrationRegion1);
+        delete _integrationRegion1;
+        _integrationRegion1 = nullptr;
+    }
+
+    if (_integrationRegion2) {
+        removeItem(_integrationRegion2);
+        delete _integrationRegion2;
+        _integrationRegion2 = nullptr;
+    }
 }
 
 void DetectorScene::resetScene()

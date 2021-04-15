@@ -130,3 +130,11 @@ void PeakViewWidget::Set::setColor(const QColor& color)
     colorBoxes->setColor(color);
     colorBkg->setColor(color);
 }
+
+void PeakViewWidget::Set::setIntegrationRegionColors(
+    const QColor& peak, const QColor& bkg, double alpha)
+{
+    colorIntPeak->setColor(peak);
+    colorIntBkg->setColor(bkg);
+    alphaIntegrationRegion->setValue(alpha);
+}
