@@ -17,13 +17,15 @@
 #include "gui/utility/ColorButton.h"
 
 #include <QCheckBox>
+#include <QDoubleSpinBox>
 #include <QLabel>
 #include <QSpinBox>
 
 PeakViewWidget::PeakViewWidget(const QString& titleSet1, const QString& titleSet2)
 {
-    createSet(set1, titleSet1, Qt::darkGreen);
-    createSet(set2, titleSet2, Qt::darkRed);
+    createSet(set1, titleSet1, Qt::green);
+    addIntegrationRegion(set1, Qt::green, Qt::yellow);
+    createSet(set2, titleSet2, Qt::red);
 }
 
 void PeakViewWidget::addHeadline(int row, const QString& type)
@@ -52,10 +54,22 @@ QCheckBox* PeakViewWidget::addCheckBox(int row, int col, const QString& text, Qt
 QSpinBox* PeakViewWidget::addSpinBox(int row, int value)
 {
     auto spinbox = new QSpinBox();
-    spinbox->setValue(10);
+    spinbox->setValue(value);
     addWidget(spinbox, row, 1, 1, 1);
     connect(
         spinbox, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged), this,
+        &PeakViewWidget::settingsChanged);
+
+    return spinbox;
+}
+
+QDoubleSpinBox* PeakViewWidget::addDoubleSpinBox(int row, double value)
+{
+    auto spinbox = new QDoubleSpinBox();
+    spinbox->setValue(value);
+    addWidget(spinbox, row, 1, 1, 1);
+    connect(
+        spinbox, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged), this,
         &PeakViewWidget::settingsChanged);
 
     return spinbox;
@@ -95,9 +109,32 @@ void PeakViewWidget::createSet(Set& set, const QString& title, const QColor& btn
     set.colorBkg = addColorButton(row, 2, btnColor);
 }
 
+void PeakViewWidget::addIntegrationRegion(Set& set, const QColor& peak, const QColor& bkg)
+{
+    int row = rowCount();
+    addHeadline(row++, "Integration regions");
+
+    addLabel(row, "Show:");
+    set.drawIntegrationRegion =
+        addCheckBox(row++, 1, "Integration region", Qt::CheckState::Unchecked);
+    addLabel(row, "Alpha");
+    set.alphaIntegrationRegion = addDoubleSpinBox(row++, 0.5);
+    addLabel(row, "Colour");
+    set.colorIntPeak = addColorButton(row, 1, peak);
+    set.colorIntBkg = addColorButton(row++, 2, bkg);
+}
+
 void PeakViewWidget::Set::setColor(const QColor& color)
 {
     colorPeaks->setColor(color);
     colorBoxes->setColor(color);
     colorBkg->setColor(color);
+}
+
+void PeakViewWidget::Set::setIntegrationRegionColors(
+    const QColor& peak, const QColor& bkg, double alpha)
+{
+    colorIntPeak->setColor(peak);
+    colorIntBkg->setColor(bkg);
+    alphaIntegrationRegion->setValue(alpha);
 }

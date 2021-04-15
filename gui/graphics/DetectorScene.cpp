@@ -26,7 +26,6 @@
 #include "core/instrument/InstrumentState.h"
 #include "core/instrument/Sample.h"
 #include "core/instrument/Source.h"
-#include "core/peak/IntegrationRegion.h"
 #include "core/peak/Peak3D.h"
 #include "core/raw/IDataReader.h"
 #include "gui/MainWin.h"
@@ -42,11 +41,14 @@
 #include "gui/items/PeakItem.h"
 #include "gui/models/PeakCollectionModel.h"
 #include "gui/models/Session.h"
+#include "gui/utility/ColorButton.h"
 #include "tables/crystal/MillerIndex.h"
 #include "tables/crystal/SpaceGroup.h"
 #include "tables/crystal/UnitCell.h"
 
+#include <QCheckBox>
 #include <QDebug>
+#include <QDoubleSpinBox>
 #include <QGraphicsSceneMouseEvent>
 #include <QKeyEvent>
 #include <QMenu>
@@ -65,39 +67,66 @@ DetectorScene::DetectorScene(QObject* parent)
     , _zoomend(0, 0)
     , _zoomrect(nullptr)
     , _zoomStack()
+    , _peak_model_1(nullptr)
+    , _peak_model_2(nullptr)
     , _peak_graphics_items()
     , _itemSelected(false)
     , _image(nullptr)
     , _lastClickedGI(nullptr)
     , _logarithmic(false)
-    , _drawIntegrationRegion(false)
+    , _drawIntegrationRegion1(true)
+    , _drawIntegrationRegion2(true)
     , _colormap(new ColorMap())
-    , _integrationRegion(nullptr)
+    , _integrationRegion1(nullptr)
+    , _integrationRegion2(nullptr)
     , _selected_peak_gi(nullptr)
+    , _peakPxColor1(QColor(0, 255, 0, 128)) // green, alpha = 0.5
+    , _peakPxColor2(QColor(0, 100, 0, 128)) // dark green, alpha = 0.5
+    , _bkgPxColor1(QColor(255, 255, 0, 128)) // yellow, alpha = 0.5
+    , _bkgPxColor2(QColor(251, 163, 0, 128)) // dark yellow, alpha = 0.5
     , _selected_peak(nullptr)
 {
 }
 
-void DetectorScene::linkPeakModel(PeakCollectionModel* source)
+void DetectorScene::linkPeakModel1(PeakCollectionModel* source)
 {
-    _peak_models.push_back(source);
+    _peak_model_1 = source;
     connect(
-        _peak_models.back(), &PeakCollectionModel::dataChanged, this,
+        _peak_model_1, &PeakCollectionModel::dataChanged, this,
         &DetectorScene::peakModelDataChanged);
 }
 
-std::vector<PeakCollectionModel*> DetectorScene::peakModels() const
+void DetectorScene::linkPeakModel2(PeakCollectionModel* source)
 {
-    return _peak_models;
+    _peak_model_2 = source;
+    connect(
+        _peak_model_2, &PeakCollectionModel::dataChanged, this,
+        &DetectorScene::peakModelDataChanged);
 }
 
-void DetectorScene::unlinkPeakModel()
+PeakCollectionModel* DetectorScene::peakModel1() const
 {
-    _peak_models.clear();
+    return _peak_model_1;
+}
+
+PeakCollectionModel* DetectorScene::peakModel2() const
+{
+    return _peak_model_2;
+}
+
+void DetectorScene::unlinkPeakModel1()
+{
+    _peak_model_1 = nullptr;
+}
+
+void DetectorScene::unlinkPeakModel2()
+{
+    _peak_model_2 = nullptr;
 }
 
 void DetectorScene::peakModelDataChanged()
 {
+    loadCurrentImage();
     drawPeakitems();
     update();
 }
@@ -118,34 +147,12 @@ void DetectorScene::clearPeakItems()
 
 void DetectorScene::drawPeakitems()
 {
-    if (_peak_models.empty())
-        return;
-
     clearPeakItems();
-    for (auto model : _peak_models) {
-        if (model == nullptr || model->root() == nullptr)
-            return;
-
-
-        std::vector<PeakItem*> peak_items = model->root()->peakItems();
-
-        for (PeakItem* peak_item : peak_items) {
-            nsx::Ellipsoid peak_ellipsoid = peak_item->peak()->shape();
-            peak_ellipsoid.scale(peak_item->peak()->peakEnd());
-            const nsx::AABB& aabb = peak_ellipsoid.aabb();
-            Eigen::Vector3d lower = aabb.lower();
-            Eigen::Vector3d upper = aabb.upper();
-
-            // If the current frame of the scene is out of the peak bounds do not paint it
-            if (_currentFrameIndex < lower[2] || _currentFrameIndex > upper[2])
-                continue;
-
-            PeakItemGraphic* peak_graphic = peak_item->peakGraphic();
-            peak_graphic->setCenter(_currentFrameIndex);
-            _peak_graphics_items.push_back(peak_graphic);
-            addItem(peak_graphic);
-        }
-    }
+    if (_peak_model_1)
+        drawPeakModelItems(_peak_model_1);
+    if (_peak_model_2)
+        drawPeakModelItems(_peak_model_2);
+    loadCurrentImage();
 
     // if (_selected_peak_gi) {
     //     removeItem(_selected_peak_gi);
@@ -184,6 +191,31 @@ void DetectorScene::drawPeakitems()
     //         addItem(_selected_peak_gi);
     //     }
     // }
+}
+
+void DetectorScene::drawPeakModelItems(PeakCollectionModel* model)
+{
+    if (model == nullptr || model->root() == nullptr)
+        return;
+
+    std::vector<PeakItem*> peak_items = model->root()->peakItems();
+
+    for (PeakItem* peak_item : peak_items) {
+        nsx::Ellipsoid peak_ellipsoid = peak_item->peak()->shape();
+        peak_ellipsoid.scale(peak_item->peak()->peakEnd());
+        const nsx::AABB& aabb = peak_ellipsoid.aabb();
+        Eigen::Vector3d lower = aabb.lower();
+        Eigen::Vector3d upper = aabb.upper();
+
+        // If the current frame of the scene is out of the peak bounds do not paint it
+        if (_currentFrameIndex < lower[2] || _currentFrameIndex > upper[2])
+            continue;
+
+        PeakItemGraphic* peak_graphic = peak_item->peakGraphic();
+        peak_graphic->setCenter(_currentFrameIndex);
+        _peak_graphics_items.push_back(peak_graphic);
+        addItem(peak_graphic);
+    }
 }
 
 void DetectorScene::slotChangeSelectedData(nsx::sptrDataSet data, int frame)
@@ -677,12 +709,6 @@ void DetectorScene::loadCurrentImage()
     if (!_currentData)
         return;
 
-    // const unsigned int green = (128u << 24) | (255u << 8);
-    // const unsigned int yellow = (128u << 24) | (255u << 16) | (255u << 8);
-    // const unsigned int transparent = 0;
-
-    // using EventType = nsx::IntegrationRegion::EventType;
-
     // Full image size, front of the stack
     QRect& full = _zoomStack.front();
     if (_currentFrameIndex >= _currentData->nFrames())
@@ -698,54 +724,112 @@ void DetectorScene::loadCurrentImage()
     }
 
     // update the integration region pixmap
-    // if (_drawIntegrationRegion) {
-    //     const int ncols = _currentData->nCols();
-    //     const int nrows = _currentData->nRows();
-    //     Eigen::MatrixXi mask(nrows, ncols);
-    //     mask.setConstant(int(EventType::EXCLUDED));
-    //     nsx::PeakList peaks = gSession->currentProject()->getPeaks(0, 0)->peaks_;
-    //     for (nsx::Peak3D* peak : peaks) {
-    //         if (peak_item->peak()->enabled()) {
-    //             // IntegrationRegion constructor can throw if the region is invalid
-    //             try {
-    //                 nsx::IntegrationRegion region(
-    //                     peak, peak_item->peak()->peakEnd(), peak_item->peak()->bkgBegin(),
-    //                     peak_item->peak()->bkgEnd());
-    //                 region.updateMask(mask, _currentFrameIndex);
-    //             } catch (...) {
-    //                 peak_item->peak()->setSelected(false);
-    //             }
-    //         }
-    //     }
-    //     QImage region_img(ncols, nrows, QImage::Format_ARGB32);
+    clearIntegrationRegion();
+    if (_drawIntegrationRegion1 || _drawIntegrationRegion2) {
+        refreshIntegrationOverlay();
+    }
 
-    //     for (int c = 0; c < ncols; ++c) {
-    //         for (int r = 0; r < nrows; ++r) {
-    //             EventType ev = EventType(mask(r, c));
-    //             unsigned int color;
+    setSceneRect(_zoomStack.back());
+    emit dataChanged();
 
-    //             switch (ev) {
-    //                 case EventType::PEAK: color = green; break;
-    //                 case EventType::BACKGROUND: color = yellow; break;
-    //                 default: color = transparent; break;
-    //             }
+    if (PlottableItem* p = dynamic_cast<PlottableItem*>(_lastClickedGI))
+        gGui->updatePlot(p);
+}
 
-    //             // todo: what about unselected peaks?
-    //             region_img.setPixel(c, r, color);
-    //         }
-    //     }
-    //     if (!_integrationRegion) {
-    //         _integrationRegion = addPixmap(QPixmap::fromImage(region_img));
-    //         _integrationRegion->setZValue(-1);
-    //     } else {
-    //         _integrationRegion->setPixmap(QPixmap::fromImage(region_img));
-    //     }
-    // }
-    // setSceneRect(_zoomStack.back());
-    // emit dataChanged();
+void DetectorScene::refreshIntegrationOverlay()
+{
+    if (!_peak_model_1 && !_peak_model_2)
+        return;
 
-    // if (PlottableItem* p = dynamic_cast<PlottableItem*>(_lastClickedGI))
-    //     gGui->updatePlot(p);
+    Eigen::MatrixXi mask(_currentData->nRows(), _currentData->nCols());
+    mask.setConstant(int(EventType::EXCLUDED));
+
+    if (_peak_model_1 && _drawIntegrationRegion1) {
+        getIntegrationMask(_peak_model_1, mask);
+        QImage* region_img = getIntegrationRegionImage(mask, _peakPxColor1, _bkgPxColor1);
+        if (!_integrationRegion1) {
+            _integrationRegion1 = addPixmap(QPixmap::fromImage(*region_img));
+            _integrationRegion1->setZValue(-1);
+        } else {
+            _integrationRegion1->setPixmap(QPixmap::fromImage(*region_img));
+        }
+    }
+
+    if (_peak_model_2 && _drawIntegrationRegion2) {
+        mask.setConstant(int(EventType::EXCLUDED));
+        getIntegrationMask(_peak_model_2, mask);
+        QImage* region_img = getIntegrationRegionImage(mask, _peakPxColor2, _bkgPxColor2);
+        if (!_integrationRegion2) {
+            _integrationRegion2 = addPixmap(QPixmap::fromImage(*region_img));
+            _integrationRegion2->setZValue(-1);
+        } else {
+            _integrationRegion2->setPixmap(QPixmap::fromImage(*region_img));
+        }
+    }
+}
+
+QImage* DetectorScene::getIntegrationRegionImage(
+    const Eigen::MatrixXi& mask, QColor& peak, QColor& bkg)
+{
+    QImage* region_img = new QImage(mask.cols(), mask.rows(), QImage::Format_ARGB32);
+
+    for (int c = 0; c < mask.cols(); ++c) {
+        for (int r = 0; r < mask.rows(); ++r) {
+            EventType ev = EventType(mask(r, c));
+            QColor color;
+
+            switch (ev) {
+                case EventType::PEAK: color = peak; break;
+                case EventType::BACKGROUND: color = bkg; break;
+                default: color = Qt::transparent; break;
+            }
+
+            // todo: what about unselected peaks?
+            region_img->setPixelColor(QPoint(c, r), color);
+        }
+    }
+    return region_img;
+}
+
+void DetectorScene::getIntegrationMask(PeakCollectionModel* model, Eigen::MatrixXi& mask)
+{
+    if (model == nullptr || model->root() == nullptr)
+        return;
+
+    std::vector<PeakItem*> peak_items = model->root()->peakItems();
+
+    for (PeakItem* peak_item : peak_items) {
+        nsx::Peak3D* peak = peak_item->peak();
+        if (peak_item->peak()->enabled()) {
+            // IntegrationRegion constructor can throw if the region is invalid
+            try {
+                nsx::IntegrationRegion region(
+                    peak, peak_item->peak()->peakEnd(), peak_item->peak()->bkgBegin(),
+                    peak_item->peak()->bkgEnd());
+                region.updateMask(mask, _currentFrameIndex);
+            } catch (...) {
+                peak_item->peak()->setSelected(false);
+            }
+        }
+    }
+}
+
+void DetectorScene::initIntRegionFromPeakWidget(
+    const PeakViewWidget::Set& set, bool alt /* = false */)
+{
+    if (!alt) {
+        _drawIntegrationRegion1 = set.drawIntegrationRegion->isChecked();
+        _peakPxColor1 = set.colorIntPeak->color();
+        _bkgPxColor1 = set.colorIntBkg->color();
+        _peakPxColor1.setAlphaF(set.alphaIntegrationRegion->value());
+        _bkgPxColor1.setAlphaF(set.alphaIntegrationRegion->value());
+    } else { // alternative colour scheme for second overlay
+        _drawIntegrationRegion2 = set.drawIntegrationRegion->isChecked();
+        _peakPxColor2 = set.colorIntPeak->color();
+        _bkgPxColor2 = set.colorIntBkg->color();
+        _peakPxColor2.setAlphaF(set.alphaIntegrationRegion->value());
+        _bkgPxColor2.setAlphaF(set.alphaIntegrationRegion->value());
+    }
 }
 
 void DetectorScene::showPeakLabels(bool flag)
@@ -765,15 +849,36 @@ void DetectorScene::showPeakAreas(bool flag)
 void DetectorScene::drawIntegrationRegion(bool flag)
 {
     // clear the background if necessary
-    if (_integrationRegion && !flag) {
-        removeItem(_integrationRegion);
-        delete _integrationRegion;
-        _integrationRegion = nullptr;
+    if (_integrationRegion1 && !flag) {
+        removeItem(_integrationRegion1);
+        delete _integrationRegion1;
+        _integrationRegion1 = nullptr;
+    }
+    if (_integrationRegion2 && !flag) {
+        removeItem(_integrationRegion2);
+        delete _integrationRegion2;
+        _integrationRegion2 = nullptr;
     }
 
-    _drawIntegrationRegion = flag;
+    _drawIntegrationRegion1 = flag;
+    _drawIntegrationRegion2 = flag;
 
     loadCurrentImage();
+}
+
+void DetectorScene::clearIntegrationRegion()
+{
+    if (_integrationRegion1) {
+        removeItem(_integrationRegion1);
+        delete _integrationRegion1;
+        _integrationRegion1 = nullptr;
+    }
+
+    if (_integrationRegion2) {
+        removeItem(_integrationRegion2);
+        delete _integrationRegion2;
+        _integrationRegion2 = nullptr;
+    }
 }
 
 void DetectorScene::resetScene()
@@ -785,7 +890,8 @@ void DetectorScene::resetScene()
     _zoomrect = nullptr;
     _zoomStack.clear();
     _image = nullptr;
-    _integrationRegion = nullptr;
+    _integrationRegion1 = nullptr;
+    _integrationRegion2 = nullptr;
     _masks.clear();
     _lastClickedGI = nullptr;
 }

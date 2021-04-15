@@ -45,8 +45,9 @@ DetectorWindow::DetectorWindow(QWidget* parent)
     _control_layout = new QVBoxLayout();
     _peak_view_widget_1 = new PeakViewWidget("Valid peaks", "Invalid Peaks");
     _peak_view_widget_2 = new PeakViewWidget("Valid peaks", "Invalid Peaks");
-    _peak_view_widget_2->set1.setColor(Qt::green);
-    _peak_view_widget_2->set2.setColor(Qt::red);
+    _peak_view_widget_2->set1.setColor(Qt::darkGreen);
+    _peak_view_widget_2->set2.setColor(Qt::darkRed);
+    _peak_view_widget_2->set1.setIntegrationRegionColors(Qt::darkGreen, Qt::darkYellow, 0.5);
 
     setDetectorViewUp();
     setPeakTableUp();
@@ -72,8 +73,8 @@ void DetectorWindow::setDetectorViewUp()
     QGridLayout* detector_grid = new QGridLayout(detector_group);
 
     _detector_view = new DetectorView();
-    _detector_view->getScene()->linkPeakModel(&_peak_collection_model_1);
-    _detector_view->getScene()->linkPeakModel(&_peak_collection_model_2);
+    _detector_view->getScene()->linkPeakModel1(&_peak_collection_model_1);
+    _detector_view->getScene()->linkPeakModel2(&_peak_collection_model_2);
     _detector_view->scale(1, -1);
     detector_grid->addWidget(_detector_view, 0, 0, 1, 2);
 
@@ -161,7 +162,8 @@ void DetectorWindow::setPlotUp(PeakViewWidget* peak_widget, QString name)
 
 void DetectorWindow::refreshDetectorView()
 {
-    if (_peak_collection_item_1.childCount() == 0)  // #nsxAudit Really? what if _peak_collection_item_2.childCount() is not empty?
+    if (_peak_collection_item_1.childCount()
+        == 0) // #nsxAudit Really? what if _peak_collection_item_2.childCount() is not empty?
         return;
 
     for (int i = 0; i < _peak_collection_item_1.childCount(); i++) {
@@ -185,6 +187,8 @@ void DetectorWindow::refreshDetectorView()
     }
 
     _detector_view->getScene()->update();
+    _detector_view->getScene()->initIntRegionFromPeakWidget(_peak_view_widget_1->set1);
+    _detector_view->getScene()->initIntRegionFromPeakWidget(_peak_view_widget_2->set1, true);
     _detector_view->getScene()->drawPeakitems();
 }
 

@@ -4,7 +4,4 @@
 
 #include "SpoilerCheck.h"
 
-SpoilerCheck::SpoilerCheck(const QString& title)
-    : Spoiler(title, true)
-{
-}
+SpoilerCheck::SpoilerCheck(const QString& title) : Spoiler(title, true) { }

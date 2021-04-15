@@ -17,8 +17,10 @@
 
 #include "base/mask/IMask.h"
 #include "core/data/DataTypes.h"
+#include "core/peak/IntegrationRegion.h"
 #include "core/peak/Peak3D.h"
 #include "gui/models/ColorMap.h"
+#include "gui/widgets/PeakViewWidget.h"
 
 #include <QGraphicsPixmapItem>
 #include <QGraphicsScene>
@@ -27,6 +29,8 @@
 class PeakItemGraphic;
 class PeakCollectionModel;
 class SXGraphicsItem;
+
+using EventType = nsx::IntegrationRegion::EventType;
 
 // For the plotting part, better to have RowMajor matrix to use QImage scanline
 // function and optimize cache hit.
@@ -63,19 +67,36 @@ class DetectorScene : public QGraphicsScene {
     }
     //! Load image from current Data and frame
     void loadCurrentImage();
-
+    //! Set colours for integration region
+    void initIntRegionFromPeakWidget(const PeakViewWidget::Set& set, bool alt = false);
+    //! Refresh the overlay displaying integration regions
+    void refreshIntegrationOverlay();
+    //! Generate a mask of integration regions (a matrix of integers classifying pixels)
+    void getIntegrationMask(PeakCollectionModel* model, Eigen::MatrixXi& mask);
+    //! Convert the mask to a QImage with the given colours
+    QImage* getIntegrationRegionImage(const Eigen::MatrixXi& mask, QColor& peak, QColor& bkg);
+    //! Remove integration overlays from the DetectorScene
+    void clearIntegrationRegion();
 
  public:
-    //! Set the peak model pointer
-    void linkPeakModel(PeakCollectionModel* source);
-    //! Get the peak model pointer
-    std::vector<PeakCollectionModel*> peakModels() const;
-    //! Set the peak model pointer to null
-    void unlinkPeakModel();
+    //! Set the first peak model pointer
+    void linkPeakModel1(PeakCollectionModel* source);
+    //! Set the second peak model pointer
+    void linkPeakModel2(PeakCollectionModel* source);
+    //! Get the first peak model pointer
+    PeakCollectionModel* peakModel1() const;
+    //! Get the second peak model pointer
+    PeakCollectionModel* peakModel2() const;
+    //! Set the first peak model pointer to null
+    void unlinkPeakModel1();
+    //! Set the second peak model pointer to null
+    void unlinkPeakModel2();
     //! Refresh the model data
     void peakModelDataChanged();
     //! Draw the peaks
     void drawPeakitems();
+    //! Draw peaks for one model
+    void drawPeakModelItems(PeakCollectionModel* model);
     //! Remove all the peak elements
     void clearPeakItems();
 
@@ -133,8 +154,9 @@ class DetectorScene : public QGraphicsScene {
     QStack<QRect> _zoomStack;
 
     //! The current peak model
-    /* PeakCollectionModel* _peak_model = nullptr; */
-    std::vector<PeakCollectionModel*> _peak_models;
+    PeakCollectionModel* _peak_model_1;
+    //! The second peak model (optional, mainly for DetectorWindow)
+    PeakCollectionModel* _peak_model_2;
     //! std vector of the peakItems
     std::vector<PeakItemGraphic*> _peak_graphics_items;
 
@@ -143,10 +165,21 @@ class DetectorScene : public QGraphicsScene {
     std::vector<std::pair<QGraphicsItem*, nsx::IMask*>> _masks;
     SXGraphicsItem* _lastClickedGI;
     bool _logarithmic;
-    bool _drawIntegrationRegion;
+    bool _drawIntegrationRegion1;
+    bool _drawIntegrationRegion2;
     std::unique_ptr<ColorMap> _colormap;
-    QGraphicsPixmapItem* _integrationRegion;
+    QGraphicsPixmapItem* _integrationRegion1;
+    QGraphicsPixmapItem* _integrationRegion2;
     QGraphicsRectItem* _selected_peak_gi;
+
+    //! Colour of peak pixels in integration region (first overlay)
+    QColor _peakPxColor1;
+    //! Colour of peak pixels in integration region (second overlay)
+    QColor _peakPxColor2;
+    //! Colour of background pixels in integration region (first overlay)
+    QColor _bkgPxColor1;
+    //! Colour of background pixels in integration region (second overlay)
+    QColor _bkgPxColor2;
 
     nsx::Peak3D* _selected_peak;
 };
