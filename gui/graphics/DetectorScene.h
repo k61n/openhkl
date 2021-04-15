@@ -71,20 +71,25 @@ class DetectorScene : public QGraphicsScene {
     void initIntRegionFromPeakWidget(const PeakViewWidget::Set& set, bool alt = false);
     //! Refresh the overlay displaying integration regions
     void refreshIntegrationOverlay();
-    //! Generate a mask of integration regions
+    //! Generate a mask of integration regions (a matrix of integers classifying pixels)
     void getIntegrationMask(PeakCollectionModel* model, Eigen::MatrixXi& mask);
+    //! Convert the mask to a QImage with the given colours
     QImage* getIntegrationRegionImage(const Eigen::MatrixXi& mask, QColor& peak, QColor& bkg);
+    //! Remove integration overlays from the DetectorScene
     void clearIntegrationRegion();
 
  public:
-    //! Set the peak model pointer
+    //! Set the first peak model pointer
     void linkPeakModel1(PeakCollectionModel* source);
+    //! Set the second peak model pointer
     void linkPeakModel2(PeakCollectionModel* source);
-    //! Get the peak model pointer
+    //! Get the first peak model pointer
     PeakCollectionModel* peakModel1() const;
+    //! Get the second peak model pointer
     PeakCollectionModel* peakModel2() const;
-    //! Set the peak model pointer to null
+    //! Set the first peak model pointer to null
     void unlinkPeakModel1();
+    //! Set the second peak model pointer to null
     void unlinkPeakModel2();
     //! Refresh the model data
     void peakModelDataChanged();
@@ -150,6 +155,7 @@ class DetectorScene : public QGraphicsScene {
 
     //! The current peak model
     PeakCollectionModel* _peak_model_1;
+    //! The second peak model (optional, mainly for DetectorWindow)
     PeakCollectionModel* _peak_model_2;
     //! std vector of the peakItems
     std::vector<PeakItemGraphic*> _peak_graphics_items;
@@ -166,11 +172,13 @@ class DetectorScene : public QGraphicsScene {
     QGraphicsPixmapItem* _integrationRegion2;
     QGraphicsRectItem* _selected_peak_gi;
 
-    //! Colour of peak pixels in integration region
+    //! Colour of peak pixels in integration region (first overlay)
     QColor _peakPxColor1;
+    //! Colour of peak pixels in integration region (second overlay)
     QColor _peakPxColor2;
-    //! Colour of background pixels in integration region
+    //! Colour of background pixels in integration region (first overlay)
     QColor _bkgPxColor1;
+    //! Colour of background pixels in integration region (second overlay)
     QColor _bkgPxColor2;
 
     nsx::Peak3D* _selected_peak;
