@@ -79,9 +79,9 @@ DetectorScene::DetectorScene(QObject* parent)
     , _colormap(new ColorMap())
     , _integrationRegion1(nullptr)
     , _integrationRegion2(nullptr)
-    , _peakPxColor1(QColor(0, 255, 0, 128))  // green, alpha = 0.5
+    , _peakPxColor1(QColor(0, 255, 0, 128)) // green, alpha = 0.5
     , _bkgPxColor1(QColor(255, 255, 0, 128)) // yellow, alpha = 0.5
-    , _peakPxColor2(QColor(0, 100, 0, 128))  // green, alpha = 0.5
+    , _peakPxColor2(QColor(0, 100, 0, 128)) // green, alpha = 0.5
     , _bkgPxColor2(QColor(251, 163, 0, 128)) // yellow, alpha = 0.5
     , _selected_peak_gi(nullptr)
     , _selected_peak(nullptr)
@@ -725,7 +725,7 @@ void DetectorScene::loadCurrentImage()
 
     // update the integration region pixmap
     clearIntegrationRegion();
-    if (_drawIntegrationRegion1 || _drawIntegrationRegion2)  {
+    if (_drawIntegrationRegion1 || _drawIntegrationRegion2) {
         refreshIntegrationOverlay();
     }
 
@@ -779,9 +779,9 @@ QImage* DetectorScene::getIntegrationRegionImage(
             QColor color;
 
             switch (ev) {
-            case EventType::PEAK: color = peak; break;
-            case EventType::BACKGROUND: color = bkg; break;
-            default: color = Qt::transparent; break;
+                case EventType::PEAK: color = peak; break;
+                case EventType::BACKGROUND: color = bkg; break;
+                default: color = Qt::transparent; break;
             }
 
             // todo: what about unselected peaks?

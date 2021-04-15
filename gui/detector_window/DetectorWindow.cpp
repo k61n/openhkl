@@ -162,7 +162,8 @@ void DetectorWindow::setPlotUp(PeakViewWidget* peak_widget, QString name)
 
 void DetectorWindow::refreshDetectorView()
 {
-    if (_peak_collection_item_1.childCount() == 0)  // #nsxAudit Really? what if _peak_collection_item_2.childCount() is not empty?
+    if (_peak_collection_item_1.childCount()
+        == 0) // #nsxAudit Really? what if _peak_collection_item_2.childCount() is not empty?
         return;
 
     for (int i = 0; i < _peak_collection_item_1.childCount(); i++) {

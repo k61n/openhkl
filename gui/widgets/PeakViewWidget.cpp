@@ -17,8 +17,8 @@
 #include "gui/utility/ColorButton.h"
 
 #include <QCheckBox>
-#include <QLabel>
 #include <QDoubleSpinBox>
+#include <QLabel>
 #include <QSpinBox>
 
 PeakViewWidget::PeakViewWidget(const QString& titleSet1, const QString& titleSet2)
@@ -115,8 +115,8 @@ void PeakViewWidget::addIntegrationRegion(Set& set, const QColor& peak, const QC
     addHeadline(row++, "Integration regions");
 
     addLabel(row, "Show:");
-    set.drawIntegrationRegion = addCheckBox(
-        row++, 1, "Integration region", Qt::CheckState::Unchecked);
+    set.drawIntegrationRegion =
+        addCheckBox(row++, 1, "Integration region", Qt::CheckState::Unchecked);
     addLabel(row, "Alpha");
     set.alphaIntegrationRegion = addDoubleSpinBox(row++, 0.5);
     addLabel(row, "Colour");
