@@ -538,6 +538,7 @@ void SubframePredictPeaks::refreshPeakVisual()
             peak->peak()->enabled() ? _peak_view_widget->set1 : _peak_view_widget->set2);
     }
     _figure_view->getScene()->update();
+    _figure_view->getScene()->initIntRegionFromPeakWidget(_peak_view_widget->set1);
     _figure_view->getScene()->drawPeakitems();
 }
 
