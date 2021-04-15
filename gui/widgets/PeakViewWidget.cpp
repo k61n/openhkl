@@ -117,7 +117,9 @@ void PeakViewWidget::addIntegrationRegion(Set& set, const QColor& peak, const QC
     addLabel(row, "Show:");
     set.drawIntegrationRegion = addCheckBox(
         row++, 1, "Integration region", Qt::CheckState::Unchecked);
+    addLabel(row, "Alpha");
     set.alphaIntegrationRegion = addDoubleSpinBox(row++, 0.5);
+    addLabel(row, "Colour");
     set.colorIntPeak = addColorButton(row, 1, peak);
     set.colorIntBkg = addColorButton(row++, 2, bkg);
 }
