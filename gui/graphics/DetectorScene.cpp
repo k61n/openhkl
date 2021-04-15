@@ -72,6 +72,8 @@ DetectorScene::DetectorScene(QObject* parent)
     , _image(nullptr)
     , _lastClickedGI(nullptr)
     , _logarithmic(false)
+    , _peak_model_1(nullptr)
+    , _peak_model_2(nullptr)
     , _drawIntegrationRegion1(true)
     , _drawIntegrationRegion2(true)
     , _colormap(new ColorMap())
@@ -86,22 +88,40 @@ DetectorScene::DetectorScene(QObject* parent)
 {
 }
 
-void DetectorScene::linkPeakModel(PeakCollectionModel* source)
+void DetectorScene::linkPeakModel1(PeakCollectionModel* source)
 {
-    _peak_models.push_back(source);
+    _peak_model_1 = source;
     connect(
-        _peak_models.back(), &PeakCollectionModel::dataChanged, this,
+        _peak_model_1, &PeakCollectionModel::dataChanged, this,
         &DetectorScene::peakModelDataChanged);
 }
 
-std::vector<PeakCollectionModel*> DetectorScene::peakModels() const
+void DetectorScene::linkPeakModel2(PeakCollectionModel* source)
 {
-    return _peak_models;
+    _peak_model_2 = source;
+    connect(
+        _peak_model_2, &PeakCollectionModel::dataChanged, this,
+        &DetectorScene::peakModelDataChanged);
 }
 
-void DetectorScene::unlinkPeakModel()
+PeakCollectionModel* DetectorScene::peakModel1() const
 {
-    _peak_models.clear();
+    return _peak_model_1;
+}
+
+PeakCollectionModel* DetectorScene::peakModel2() const
+{
+    return _peak_model_2;
+}
+
+void DetectorScene::unlinkPeakModel1()
+{
+    _peak_model_1 = nullptr;
+}
+
+void DetectorScene::unlinkPeakModel2()
+{
+    _peak_model_2 = nullptr;
 }
 
 void DetectorScene::peakModelDataChanged()
@@ -127,34 +147,11 @@ void DetectorScene::clearPeakItems()
 
 void DetectorScene::drawPeakitems()
 {
-    if (_peak_models.empty())
-        return;
-
     clearPeakItems();
-    for (auto model : _peak_models) {
-        if (model == nullptr || model->root() == nullptr)
-            return;
-
-
-        std::vector<PeakItem*> peak_items = model->root()->peakItems();
-
-        for (PeakItem* peak_item : peak_items) {
-            nsx::Ellipsoid peak_ellipsoid = peak_item->peak()->shape();
-            peak_ellipsoid.scale(peak_item->peak()->peakEnd());
-            const nsx::AABB& aabb = peak_ellipsoid.aabb();
-            Eigen::Vector3d lower = aabb.lower();
-            Eigen::Vector3d upper = aabb.upper();
-
-            // If the current frame of the scene is out of the peak bounds do not paint it
-            if (_currentFrameIndex < lower[2] || _currentFrameIndex > upper[2])
-                continue;
-
-            PeakItemGraphic* peak_graphic = peak_item->peakGraphic();
-            peak_graphic->setCenter(_currentFrameIndex);
-            _peak_graphics_items.push_back(peak_graphic);
-            addItem(peak_graphic);
-        }
-    }
+    if (_peak_model_1)
+        drawPeakModelItems(_peak_model_1);
+    if (_peak_model_2)
+        drawPeakModelItems(_peak_model_2);
     loadCurrentImage();
 
     // if (_selected_peak_gi) {
@@ -194,6 +191,31 @@ void DetectorScene::drawPeakitems()
     //         addItem(_selected_peak_gi);
     //     }
     // }
+}
+
+void DetectorScene::drawPeakModelItems(PeakCollectionModel* model)
+{
+    if (model == nullptr || model->root() == nullptr)
+        return;
+
+    std::vector<PeakItem*> peak_items = model->root()->peakItems();
+
+    for (PeakItem* peak_item : peak_items) {
+        nsx::Ellipsoid peak_ellipsoid = peak_item->peak()->shape();
+        peak_ellipsoid.scale(peak_item->peak()->peakEnd());
+        const nsx::AABB& aabb = peak_ellipsoid.aabb();
+        Eigen::Vector3d lower = aabb.lower();
+        Eigen::Vector3d upper = aabb.upper();
+
+        // If the current frame of the scene is out of the peak bounds do not paint it
+        if (_currentFrameIndex < lower[2] || _currentFrameIndex > upper[2])
+            continue;
+
+        PeakItemGraphic* peak_graphic = peak_item->peakGraphic();
+        peak_graphic->setCenter(_currentFrameIndex);
+        _peak_graphics_items.push_back(peak_graphic);
+        addItem(peak_graphic);
+    }
 }
 
 void DetectorScene::slotChangeSelectedData(nsx::sptrDataSet data, int frame)
@@ -716,27 +738,27 @@ void DetectorScene::loadCurrentImage()
 
 void DetectorScene::refreshIntegrationOverlay()
 {
-    if (_peak_models.size() < 1)
+    if (!_peak_model_1 && !_peak_model_2)
         return;
 
     Eigen::MatrixXi mask(_currentData->nRows(), _currentData->nCols());
     mask.setConstant(int(EventType::EXCLUDED));
 
-    PeakCollectionModel* model = _peak_models[0];
-    getIntegrationMask(model, mask);
-    QImage* region_img = getIntegrationRegionImage(mask, _peakPxColor1, _bkgPxColor1);
-    if (!_integrationRegion1) {
-        _integrationRegion1 = addPixmap(QPixmap::fromImage(*region_img));
-        _integrationRegion1->setZValue(-1);
-    } else {
-        _integrationRegion1->setPixmap(QPixmap::fromImage(*region_img));
+    if (_peak_model_1 && _drawIntegrationRegion1) {
+        getIntegrationMask(_peak_model_1, mask);
+        QImage* region_img = getIntegrationRegionImage(mask, _peakPxColor1, _bkgPxColor1);
+        if (!_integrationRegion1) {
+            _integrationRegion1 = addPixmap(QPixmap::fromImage(*region_img));
+            _integrationRegion1->setZValue(-1);
+        } else {
+            _integrationRegion1->setPixmap(QPixmap::fromImage(*region_img));
+        }
     }
 
-    if (_peak_models.size() > 1) {
-        model = _peak_models[1];
+    if (_peak_model_2 && _drawIntegrationRegion2) {
         mask.setConstant(int(EventType::EXCLUDED));
-        getIntegrationMask(model, mask);
-        region_img = getIntegrationRegionImage(mask, _peakPxColor2, _bkgPxColor2);
+        getIntegrationMask(_peak_model_2, mask);
+        QImage* region_img = getIntegrationRegionImage(mask, _peakPxColor2, _bkgPxColor2);
         if (!_integrationRegion2) {
             _integrationRegion2 = addPixmap(QPixmap::fromImage(*region_img));
             _integrationRegion2->setZValue(-1);

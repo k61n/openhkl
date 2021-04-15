@@ -78,15 +78,20 @@ class DetectorScene : public QGraphicsScene {
 
  public:
     //! Set the peak model pointer
-    void linkPeakModel(PeakCollectionModel* source);
+    void linkPeakModel1(PeakCollectionModel* source);
+    void linkPeakModel2(PeakCollectionModel* source);
     //! Get the peak model pointer
-    std::vector<PeakCollectionModel*> peakModels() const;
+    PeakCollectionModel* peakModel1() const;
+    PeakCollectionModel* peakModel2() const;
     //! Set the peak model pointer to null
-    void unlinkPeakModel();
+    void unlinkPeakModel1();
+    void unlinkPeakModel2();
     //! Refresh the model data
     void peakModelDataChanged();
     //! Draw the peaks
     void drawPeakitems();
+    //! Draw peaks for one model
+    void drawPeakModelItems(PeakCollectionModel* model);
     //! Remove all the peak elements
     void clearPeakItems();
 
@@ -144,8 +149,8 @@ class DetectorScene : public QGraphicsScene {
     QStack<QRect> _zoomStack;
 
     //! The current peak model
-    /* PeakCollectionModel* _peak_model = nullptr; */
-    std::vector<PeakCollectionModel*> _peak_models;
+    PeakCollectionModel* _peak_model_1;
+    PeakCollectionModel* _peak_model_2;
     //! std vector of the peakItems
     std::vector<PeakItemGraphic*> _peak_graphics_items;
 

@@ -210,7 +210,7 @@ void SubframeFindPeaks::setFigureUp()
     figure_group->setSizePolicy(_size_policy_right);
 
     _figure_view = new DetectorView(this);
-    _figure_view->getScene()->linkPeakModel(&_peak_collection_model);
+    _figure_view->getScene()->linkPeakModel1(&_peak_collection_model);
     _figure_view->scale(1, -1);
     figure_grid->addWidget(_figure_view, 0, 0, 1, 2);
 

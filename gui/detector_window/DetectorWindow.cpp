@@ -73,8 +73,8 @@ void DetectorWindow::setDetectorViewUp()
     QGridLayout* detector_grid = new QGridLayout(detector_group);
 
     _detector_view = new DetectorView();
-    _detector_view->getScene()->linkPeakModel(&_peak_collection_model_1);
-    _detector_view->getScene()->linkPeakModel(&_peak_collection_model_2);
+    _detector_view->getScene()->linkPeakModel1(&_peak_collection_model_1);
+    _detector_view->getScene()->linkPeakModel2(&_peak_collection_model_2);
     _detector_view->scale(1, -1);
     detector_grid->addWidget(_detector_view, 0, 0, 1, 2);
 
