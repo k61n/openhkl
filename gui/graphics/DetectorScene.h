@@ -152,15 +152,19 @@ class DetectorScene : public QGraphicsScene {
     std::vector<std::pair<QGraphicsItem*, nsx::IMask*>> _masks;
     SXGraphicsItem* _lastClickedGI;
     bool _logarithmic;
-    bool _drawIntegrationRegion;
+    bool _drawIntegrationRegion1;
+    bool _drawIntegrationRegion2;
     std::unique_ptr<ColorMap> _colormap;
-    QGraphicsPixmapItem* _integrationRegion;
+    QGraphicsPixmapItem* _integrationRegion1;
+    QGraphicsPixmapItem* _integrationRegion2;
     QGraphicsRectItem* _selected_peak_gi;
 
     //! Colour of peak pixels in integration region
-    QColor _peakPxColor;
+    QColor _peakPxColor1;
+    QColor _peakPxColor2;
     //! Colour of background pixels in integration region
-    QColor _bkgPxColor;
+    QColor _bkgPxColor1;
+    QColor _bkgPxColor2;
 
     nsx::Peak3D* _selected_peak;
 };

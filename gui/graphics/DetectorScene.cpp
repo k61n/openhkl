@@ -69,11 +69,15 @@ DetectorScene::DetectorScene(QObject* parent)
     , _image(nullptr)
     , _lastClickedGI(nullptr)
     , _logarithmic(false)
-    , _drawIntegrationRegion(true)
+    , _drawIntegrationRegion1(true)
+    , _drawIntegrationRegion2(true)
     , _colormap(new ColorMap())
-    , _integrationRegion(nullptr)
-    , _peakPxColor(QColor(0, 255, 0, 128))  // green, alpha = 0.5
-    , _bkgPxColor(QColor(255, 255, 0, 128)) // yellow, alpha = 0.5
+    , _integrationRegion1(nullptr)
+    , _integrationRegion2(nullptr)
+    , _peakPxColor1(QColor(0, 255, 0, 128))  // green, alpha = 0.5
+    , _bkgPxColor1(QColor(255, 255, 0, 128)) // yellow, alpha = 0.5
+    , _peakPxColor2(QColor(0, 100, 0, 128))  // green, alpha = 0.5
+    , _bkgPxColor2(QColor(251, 163, 0, 128)) // yellow, alpha = 0.5
     , _selected_peak_gi(nullptr)
     , _selected_peak(nullptr)
 {
@@ -695,7 +699,7 @@ void DetectorScene::loadCurrentImage()
     }
 
     // update the integration region pixmap
-    if (_drawIntegrationRegion) 
+    if (_drawIntegrationRegion1 || _drawIntegrationRegion2) 
         refreshIntegrationOverlay();
 
     setSceneRect(_zoomStack.back());
@@ -707,17 +711,32 @@ void DetectorScene::loadCurrentImage()
 
 void DetectorScene::refreshIntegrationOverlay()
 {
+    if (_peak_models.size() < 1)
+        return;
+
     Eigen::MatrixXi mask(_currentData->nRows(), _currentData->nCols());
     mask.setConstant(int(EventType::EXCLUDED));
 
-    for (auto model : _peak_models) {
+    PeakCollectionModel* model = _peak_models[0];
+    getIntegrationMask(model, mask);
+    QImage* region_img = getIntegrationRegionImage(mask, _peakPxColor1, _bkgPxColor1);
+    if (!_integrationRegion1) {
+        _integrationRegion1 = addPixmap(QPixmap::fromImage(*region_img));
+        _integrationRegion1->setZValue(-1);
+    } else {
+        _integrationRegion1->setPixmap(QPixmap::fromImage(*region_img));
+    }
+
+    if (_peak_models.size() > 1) {
+        model = _peak_models[1];
+        mask.setConstant(int(EventType::EXCLUDED));
         getIntegrationMask(model, mask);
-        QImage* region_img = getIntegrationRegionImage(mask, _peakPxColor, _bkgPxColor);
-        if (!_integrationRegion) {
-            _integrationRegion = addPixmap(QPixmap::fromImage(*region_img));
-            _integrationRegion->setZValue(-1);
+        region_img = getIntegrationRegionImage(mask, _peakPxColor2, _bkgPxColor2);
+        if (!_integrationRegion2) {
+            _integrationRegion2 = addPixmap(QPixmap::fromImage(*region_img));
+            _integrationRegion2->setZValue(-1);
         } else {
-            _integrationRegion->setPixmap(QPixmap::fromImage(*region_img));
+            _integrationRegion2->setPixmap(QPixmap::fromImage(*region_img));
         }
     }
 }
@@ -770,10 +789,10 @@ void DetectorScene::getIntegrationMask(PeakCollectionModel* model, Eigen::Matrix
 
 void DetectorScene::setIntegrationRegionColors(QColor peak, QColor bkg)
 {
-    _peakPxColor = peak;
-    _bkgPxColor = bkg;
-    _peakPxColor.setAlphaF(0.5);
-    _bkgPxColor.setAlphaF(0.5);
+    _peakPxColor1 = peak;
+    _bkgPxColor1 = bkg;
+    _peakPxColor1.setAlphaF(0.5);
+    _bkgPxColor1.setAlphaF(0.5);
     loadCurrentImage();
 }
 
@@ -794,13 +813,19 @@ void DetectorScene::showPeakAreas(bool flag)
 void DetectorScene::drawIntegrationRegion(bool flag)
 {
     // clear the background if necessary
-    if (_integrationRegion && !flag) {
-        removeItem(_integrationRegion);
-        delete _integrationRegion;
-        _integrationRegion = nullptr;
+    if (_integrationRegion1 && !flag) {
+        removeItem(_integrationRegion1);
+        delete _integrationRegion1;
+        _integrationRegion1 = nullptr;
+    }
+    if (_integrationRegion2 && !flag) {
+        removeItem(_integrationRegion2);
+        delete _integrationRegion2;
+        _integrationRegion2 = nullptr;
     }
 
-    _drawIntegrationRegion = flag;
+    _drawIntegrationRegion1 = flag;
+    _drawIntegrationRegion2 = flag;
 
     loadCurrentImage();
 }
@@ -814,7 +839,8 @@ void DetectorScene::resetScene()
     _zoomrect = nullptr;
     _zoomStack.clear();
     _image = nullptr;
-    _integrationRegion = nullptr;
+    _integrationRegion1 = nullptr;
+    _integrationRegion2 = nullptr;
     _masks.clear();
     _lastClickedGI = nullptr;
 }
