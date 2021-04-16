@@ -342,7 +342,7 @@ void DetectorWindow::changeSelected(PeakItemGraphic* peak_graphic)
 
 void DetectorWindow::setUnitCell()
 {
-    if (_unit_cell_combo->count() < 1) {
+    if (_unit_cell_combo->count() > 0) {
         nsx::UnitCell* cell = gSession->currentProject()->experiment()->getUnitCell(
             _unit_cell_combo->currentText().toStdString());
         _detector_view->getScene()->setUnitCell(cell);
