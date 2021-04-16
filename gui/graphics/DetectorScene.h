@@ -26,6 +26,9 @@
 #include <QGraphicsScene>
 #include <QStack>
 
+namespace nsx {
+class UnitCell;
+}
 class PeakItemGraphic;
 class PeakCollectionModel;
 class SXGraphicsItem;
@@ -54,7 +57,14 @@ class DetectorScene : public QGraphicsScene {
     };
 
     //! Which mode is the cursor diplaying
-    enum CURSORMODE { PIXEL = 0, THETA = 1, GAMMA_NU = 2, D_SPACING = 3, MILLER_INDICES = 4 };
+    enum CURSORMODE {
+        CURSOR = 0, // apparanetly can't have two members named "SELECT" in enums here
+        PIXEL = 1,
+        THETA = 2,
+        GAMMA_NU = 3,
+        D_SPACING = 4,
+        MILLER_INDICES = 5
+    };
 
     explicit DetectorScene(QObject* parent = 0);
 
@@ -99,6 +109,8 @@ class DetectorScene : public QGraphicsScene {
     void drawPeakModelItems(PeakCollectionModel* model);
     //! Remove all the peak elements
     void clearPeakItems();
+    //! Set unit cell for Miller Index computation
+    void setUnitCell(nsx::UnitCell* cell);
 
  protected:
     void mousePressEvent(QGraphicsSceneMouseEvent* event);
@@ -182,6 +194,8 @@ class DetectorScene : public QGraphicsScene {
     QColor _bkgPxColor2;
 
     nsx::Peak3D* _selected_peak;
+
+    nsx::UnitCell* _unit_cell;
 };
 
 #endif // NSX_GUI_GRAPHICS_DETECTORSCENE_H

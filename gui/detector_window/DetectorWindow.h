@@ -59,9 +59,14 @@ class DetectorWindow : public QDialog {
     void updateDatasetParameters(int idx);
     //! Update peak collection QComboBoxes
     void updatePeakList();
+    //! Update unit cell QComboBox
+    void updateUnitCellList();
 
     //! Get a pointer to the DetectorView
     DetectorView* getDetectorView() { return _detector_view; };
+
+ public slots:
+     void setUnitCell();
 
  private:
     void changeSelected(PeakItemGraphic* peak_graphic);
@@ -75,6 +80,7 @@ class DetectorWindow : public QDialog {
     QComboBox* _data_combo;
     QComboBox* _peak_combo_1;
     QComboBox* _peak_combo_2;
+    QComboBox* _unit_cell_combo;
 
     // the widget for plotting elements on the detector scene
     PeakViewWidget* _peak_view_widget_1;
@@ -84,6 +90,7 @@ class DetectorWindow : public QDialog {
     DetectorView* _detector_view;
     QScrollBar* _detector_scroll;
     QSpinBox* _detector_spin;
+    QComboBox* _cursor_mode;
 
     // Peak table elements
     ShortTable* _peak_table_1;
@@ -99,6 +106,7 @@ class DetectorWindow : public QDialog {
 
     std::vector<nsx::sptrDataSet> _data_list;
     QStringList _peak_list;
+    QStringList _cell_list;
 };
 
 #endif // NSX_GUI_DETECTOR_WINDOW_DETECTORWINDOW_H

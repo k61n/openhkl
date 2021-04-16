@@ -85,6 +85,7 @@ DetectorScene::DetectorScene(QObject* parent)
     , _bkgPxColor1(QColor(255, 255, 0, 128)) // yellow, alpha = 0.5
     , _bkgPxColor2(QColor(251, 163, 0, 128)) // dark yellow, alpha = 0.5
     , _selected_peak(nullptr)
+    , _unit_cell(nullptr)
 {
 }
 
@@ -678,28 +679,24 @@ void DetectorScene::createToolTipText(QGraphicsSceneMouseEvent* event)
             break;
         }
         case MILLER_INDICES: {
-            Project* experiment_item = gSession->currentProject();
-            if (!experiment_item)
-                ttip = QString("No experiment found");
-            else {
-                // nsx::sptrUnitCell selectedUnitCell = experiment_item->experimentgetUnitCell(0);
-                // if (selectedUnitCell) {
-                //     nsx::ReciprocalVector q = state.sampleQ(pos);
-                //     nsx::MillerIndex miller_indices(q, *selectedUnitCell);
+            if (_unit_cell) {
+                nsx::ReciprocalVector q = state.sampleQ(pos);
+                nsx::MillerIndex miller_indices(q, *_unit_cell);
 
-                //     Eigen::RowVector3d hkl =
-                //         miller_indices.rowVector().cast<double>() + miller_indices.error();
-                //     ttip = QString("(%1,%2,%3) I: %4")
-                //                .arg(hkl[0], 0, 'f', 2)
-                //                .arg(hkl[1], 0, 'f', 2)
-                //                .arg(hkl[2], 0, 'f', 2)
-                //                .arg(intensity);
-                // } else {
-                //     ttip = QString("No unit cell selected");
-                // }
+                Eigen::RowVector3d hkl =
+                    miller_indices.rowVector().cast<double>() + miller_indices.error();
+                ttip = QString("(%1,%2,%3) I: %4")
+                            .arg(hkl[0], 0, 'f', 2)
+                            .arg(hkl[1], 0, 'f', 2)
+                            .arg(hkl[2], 0, 'f', 2)
+                            .arg(intensity);
+            } else {
+                ttip = QString("No unit cell selected");
             }
             break;
         }
+        default:
+            break;
     }
     QToolTip::showText(event->screenPos(), ttip);
 }
@@ -902,4 +899,9 @@ std::vector<std::pair<QGraphicsItem*, nsx::IMask*>>::iterator DetectorScene::fin
     return std::find_if(
         _masks.begin(), _masks.end(),
         [item](const std::pair<QGraphicsItem*, nsx::IMask*>& x) { return x.first == item; });
+}
+
+void DetectorScene::setUnitCell(nsx::UnitCell* cell)
+{
+    _unit_cell = cell;
 }

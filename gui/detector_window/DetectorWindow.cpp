@@ -76,7 +76,7 @@ void DetectorWindow::setDetectorViewUp()
     _detector_view->getScene()->linkPeakModel1(&_peak_collection_model_1);
     _detector_view->getScene()->linkPeakModel2(&_peak_collection_model_2);
     _detector_view->scale(1, -1);
-    detector_grid->addWidget(_detector_view, 0, 0, 1, 2);
+    detector_grid->addWidget(_detector_view, 0, 0, 1, 3);
 
     _detector_scroll = new QScrollBar();
     _detector_scroll->setOrientation(Qt::Horizontal);
@@ -86,6 +86,12 @@ void DetectorWindow::setDetectorViewUp()
     _detector_spin = new QSpinBox();
     _detector_spin->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     detector_grid->addWidget(_detector_spin, 1, 1, 1, 1);
+
+    _cursor_mode = new QComboBox(this);
+    _cursor_mode->addItems(QStringList{
+            "Cursor mode", "Pixel", "\u03B8", "\u03B3/\u03BD", "d", "Miller Indices"});
+    _cursor_mode->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+    detector_grid->addWidget(_cursor_mode, 1, 2, 1, 1);
 
     connect(
         _detector_scroll, SIGNAL(valueChanged(int)), _detector_view->getScene(),
@@ -98,6 +104,10 @@ void DetectorWindow::setDetectorViewUp()
     connect(
         _detector_view->getScene(), &DetectorScene::signalSelectedPeakItemChanged, this,
         &DetectorWindow::changeSelected);
+
+    connect(
+        _cursor_mode, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
+        [=](int i) { _detector_view->getScene()->changeCursorMode(i); });
 
     _right_element->addWidget(detector_group);
 }
@@ -132,6 +142,7 @@ void DetectorWindow::setInputUp()
     _data_combo = f.addCombo("Data set:");
     _peak_combo_1 = f.addCombo("Peak collection 1:");
     _peak_combo_2 = f.addCombo("Peak collection 2:");
+    _unit_cell_combo = f.addCombo("Unit cell");
 
     connect(
         _exp_combo, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this,
@@ -144,6 +155,10 @@ void DetectorWindow::setInputUp()
     connect(
         _peak_combo_2, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this,
         &DetectorWindow::refreshPeakTable);
+
+    connect(
+        _unit_cell_combo, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this,
+        &DetectorWindow::setUnitCell);
 
     _control_layout->addWidget(input_spoiler);
 }
@@ -229,6 +244,7 @@ void DetectorWindow::updateExptList()
             _exp_combo->addItem(exp);
         updateDatasetList();
         updatePeakList();
+        updateUnitCellList();
         refreshPeakTable();
     }
     _exp_combo->blockSignals(false);
@@ -294,6 +310,21 @@ void DetectorWindow::updatePeakList()
     _peak_combo_2->blockSignals(false);
 }
 
+void DetectorWindow::updateUnitCellList()
+{
+    _unit_cell_combo->blockSignals(true);
+    _unit_cell_combo->clear();
+
+    _cell_list = gSession->experimentAt(_exp_combo->currentIndex())->getUnitCellNames();
+
+    if (!_cell_list.empty()) {
+        _unit_cell_combo->addItems(_cell_list);
+        _unit_cell_combo->setCurrentIndex(0);
+    }
+    _unit_cell_combo->blockSignals(false);
+    setUnitCell();
+}
+
 void DetectorWindow::changeSelected(PeakItemGraphic* peak_graphic)
 {
     int row_1 = _peak_collection_item_1.returnRowOfVisualItem(peak_graphic);
@@ -306,5 +337,14 @@ void DetectorWindow::changeSelected(PeakItemGraphic* peak_graphic)
     } else if (row_1 == 0 && row_2 > 0) {
         _peak_table_2->selectRow(row_2);
         _peak_table_2->scrollTo(index_2, QAbstractItemView::PositionAtTop);
+    }
+}
+
+void DetectorWindow::setUnitCell()
+{
+    if (_unit_cell_combo->count() > 0) {
+        nsx::UnitCell* cell = gSession->currentProject()->experiment()->getUnitCell(
+            _unit_cell_combo->currentText().toStdString());
+        _detector_view->getScene()->setUnitCell(cell);
     }
 }
