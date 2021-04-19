@@ -644,9 +644,6 @@ void DetectorScene::createToolTipText(QGraphicsSceneMouseEvent* event)
         return;
     const int intensity = _currentFrame(row, col);
 
-    const nsx::InstrumentState state =
-        _currentData->instrumentStates().interpolate(_currentFrameIndex);
-
     const nsx::Monochromator& mono = instr->source().selectedMonochromator();
     double wave = mono.wavelength();
 
@@ -654,9 +651,19 @@ void DetectorScene::createToolTipText(QGraphicsSceneMouseEvent* event)
 
     nsx::DirectVector pos = _currentData->detector().pixelPosition(col, row);
 
-    double gamma = state.gamma(pos);
-    double nu = state.nu(pos);
-    double th2 = state.twoTheta(pos);
+
+    bool has_state = true;
+    nsx::InstrumentState state;
+    try {
+        state = _currentData->instrumentStates().interpolate(_currentFrameIndex);
+    } catch (std::range_error &e) {
+        // May get an interpolation error on the last frame of the set. Skip the tooltip if we
+        // need an interpolated state in this instance.
+        if (!(_cursorMode == PIXEL))
+            has_state = false;
+    }
+    if (!has_state)
+        return;
 
     switch (_cursorMode) {
         case PIXEL: {
@@ -664,6 +671,8 @@ void DetectorScene::createToolTipText(QGraphicsSceneMouseEvent* event)
             break;
         }
         case GAMMA_NU: {
+            double gamma = state.gamma(pos);
+            double nu = state.nu(pos);
             ttip = QString("(%1,%2) I: %3")
                        .arg(gamma / nsx::deg, 0, 'f', 3)
                        .arg(nu / nsx::deg, 0, 'f', 3)
@@ -671,10 +680,12 @@ void DetectorScene::createToolTipText(QGraphicsSceneMouseEvent* event)
             break;
         }
         case THETA: {
+            double th2 = state.twoTheta(pos);
             ttip = QString("(%1) I: %2").arg(th2 / nsx::deg, 0, 'f', 3).arg(intensity);
             break;
         }
         case D_SPACING: {
+            double th2 = state.twoTheta(pos);
             ttip = QString("(%1) I: %2").arg(wave / (2 * sin(0.5 * th2)), 0, 'f', 3).arg(intensity);
             break;
         }
