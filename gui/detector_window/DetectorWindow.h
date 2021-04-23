@@ -44,6 +44,8 @@ class DetectorWindow : public QDialog {
     void setDetectorViewUp();
     void setPeakTableUp();
     void setInputUp();
+    void set3rdPartyPeaksUp();
+    void load3rdPartyPeaks();
     void setPlotUp(PeakViewWidget* peak_widget, QString name);
 
     void refreshDetectorView();

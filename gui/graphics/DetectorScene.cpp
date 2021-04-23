@@ -26,6 +26,7 @@
 #include "core/instrument/InstrumentState.h"
 #include "core/instrument/Sample.h"
 #include "core/instrument/Source.h"
+#include "core/loader/XFileHandler.h"
 #include "core/peak/Peak3D.h"
 #include "core/raw/IDataReader.h"
 #include "gui/MainWin.h"
@@ -76,6 +77,7 @@ DetectorScene::DetectorScene(QObject* parent)
     , _logarithmic(false)
     , _drawIntegrationRegion1(true)
     , _drawIntegrationRegion2(true)
+    , _draw3rdParty(false)
     , _colormap(new ColorMap())
     , _integrationRegion1(nullptr)
     , _integrationRegion2(nullptr)
@@ -120,6 +122,15 @@ void DetectorScene::unlinkPeakModel1()
     _peak_model_1 = nullptr;
 }
 
+void DetectorScene::link3rdPartyPeaks(nsx::XFileHandler* xfh)
+{
+    _peak_center_items.clear();
+    for (Eigen::Vector3d vector : xfh->getPeakCentres()) {
+        // PeakCenterGraphic* center = new PeakCenterGraphic(vector);
+        _peak_center_items.emplace_back(std::make_shared<PeakCenterGraphic>(vector));
+    }
+}
+
 void DetectorScene::unlinkPeakModel2()
 {
     _peak_model_2 = nullptr;
@@ -139,9 +150,12 @@ void DetectorScene::clearPeakItems()
 
     // _peak_graphics_items can be out of sync (pointer may get deleted outside). Therefore
     // do not use it for removing items from the scene (may cause crash)
-    for (auto item : items())
+    for (auto item : items()) {
         if (dynamic_cast<PeakItemGraphic*>(item) != nullptr)
             removeItem(item);
+        if (dynamic_cast<PeakCenterGraphic*>(item) != nullptr) // Remove 3rd party centers
+            removeItem(item);
+    }
 
     _peak_graphics_items.clear();
 }
@@ -153,6 +167,8 @@ void DetectorScene::drawPeakitems()
         drawPeakModelItems(_peak_model_1);
     if (_peak_model_2)
         drawPeakModelItems(_peak_model_2);
+    if (_draw3rdParty)
+        draw3rdPartyItems();
     loadCurrentImage();
 
     // if (_selected_peak_gi) {
@@ -217,6 +233,15 @@ void DetectorScene::drawPeakModelItems(PeakCollectionModel* model)
         _peak_graphics_items.push_back(peak_graphic);
         addItem(peak_graphic);
     }
+}
+
+void DetectorScene::draw3rdPartyItems()
+{
+    if (_peak_center_items.empty())
+        return;
+
+    for (auto peak : _peak_center_items)
+        addItem(peak.get());
 }
 
 void DetectorScene::slotChangeSelectedData(nsx::sptrDataSet data, int frame)
