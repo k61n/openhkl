@@ -337,7 +337,8 @@ void SubframeMergedPeaks::processMerge()
         peak_collections.push_back(
             expt->getPeakCollection(_predicted_drop->currentText().toStdString()));
 
-        expt->setMergedPeaks(peak_collections, _friedel->isChecked());
+        expt->setMergedPeaks(
+            peak_collections, _friedel->isChecked(), _d_min->value(), _d_max->value());
         _merged_data = expt->getMergedPeaks();
     }
     refreshTables();

@@ -400,14 +400,16 @@ void Experiment::clonePeakCollection(std::string name, std::string new_name)
     _peak_handler->clonePeakCollection(name, new_name);
 }
 
-void Experiment::setMergedPeaks(std::vector<PeakCollection*> peak_collections, bool friedel)
+void Experiment::setMergedPeaks(
+    std::vector<PeakCollection*> peak_collections, bool friedel, double dmin, double dmax)
 {
-    _peak_handler->setMergedPeaks(peak_collections, friedel);
+    _peak_handler->setMergedPeaks(peak_collections, friedel, dmin, dmax);
 }
 
-void Experiment::setMergedPeaks(PeakCollection* found, PeakCollection* predicted, bool friedel)
+void Experiment::setMergedPeaks(
+    PeakCollection* found, PeakCollection* predicted, bool friedel, double dmin, double dmax)
 {
-    _peak_handler->setMergedPeaks(found, predicted, friedel);
+    _peak_handler->setMergedPeaks(found, predicted, friedel, dmin, dmax);
 }
 
 void Experiment::resetMergedPeaks()

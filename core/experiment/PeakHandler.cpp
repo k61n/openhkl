@@ -95,17 +95,19 @@ void PeakHandler::acceptFilter(std::string name, PeakCollection* collection, lis
     _peak_collections.insert_or_assign(name, std::move(ptr));
 }
 
-void PeakHandler::setMergedPeaks(std::vector<PeakCollection*> peak_collections, bool friedel)
+void PeakHandler::setMergedPeaks(
+    std::vector<PeakCollection*> peak_collections, bool friedel, double dmin, double dmax)
 {
-    _merged_peaks = std::make_unique<MergedData>(peak_collections, friedel);
+    _merged_peaks = std::make_unique<MergedData>(peak_collections, friedel, dmin, dmax);
 }
 
-void PeakHandler::setMergedPeaks(PeakCollection* found, PeakCollection* predicted, bool friedel)
+void PeakHandler::setMergedPeaks(
+    PeakCollection* found, PeakCollection* predicted, bool friedel, double dmin, double dmax)
 {
     std::vector<PeakCollection*> collections;
     collections.push_back(found);
     collections.push_back(predicted);
-    _merged_peaks = std::make_unique<MergedData>(collections, friedel);
+    _merged_peaks = std::make_unique<MergedData>(collections, friedel, dmin, dmax);
 }
 
 void PeakHandler::resetMergedPeaks()

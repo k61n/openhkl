@@ -17,7 +17,8 @@
 
 namespace nsx {
 
-MergedData::MergedData(std::vector<PeakCollection*> peak_collections, bool friedel)
+MergedData::MergedData(
+    std::vector<PeakCollection*> peak_collections, bool friedel, double dmin, double dmax)
     : _friedel(friedel), _merged_peak_set()
 {
     _peak_collections = peak_collections;
@@ -46,8 +47,15 @@ MergedData::MergedData(std::vector<PeakCollection*> peak_collections, bool fried
 
     for (int i = 0; i < _peak_collections.size(); ++i) {
         std::vector<Peak3D*> peaks = _peak_collections[i]->getPeakList();
-        for (int j = 0; j < peaks.size(); ++j)
-            addPeak(peaks[j]);
+        for (auto peak : peaks) {
+            try {
+                const double d = 1.0 / peak->q().rowVector().norm();
+                if (d >= dmin && d <= dmax)
+                    addPeak(peak);
+            } catch (std::range_error& e) {
+                continue;
+            }
+        }
     }
     if (_nNaN > 0)
         nsxlog(Level::Info, "MergedData::MergedData:", _nNaN, "peaks with intensity NaN");
