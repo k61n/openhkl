@@ -15,6 +15,7 @@
 #include "gui/detector_window/DetectorWindow.h"
 
 #include "core/experiment/Experiment.h"
+#include "core/loader/XFileHandler.h"
 #include "gui/graphics/DetectorScene.cpp"
 #include "gui/graphics/DetectorView.cpp"
 #include "gui/models/Project.h"
@@ -26,11 +27,13 @@
 #include "gui/widgets/PeakViewWidget.h"
 
 #include <QCheckBox>
+#include <QFileDialog>
 #include <QFileInfo>
 #include <QGridLayout>
 #include <QGroupBox>
 #include <QLabel>
 #include <QScrollArea>
+#include <QSettings>
 
 DetectorWindow::DetectorWindow(QWidget* parent)
     : QDialog(parent)
@@ -52,6 +55,7 @@ DetectorWindow::DetectorWindow(QWidget* parent)
     setDetectorViewUp();
     setPeakTableUp();
     setInputUp();
+    set3rdPartyPeaksUp();
     setPlotUp(_peak_view_widget_1, "Show/hide peak collection 1");
     setPlotUp(_peak_view_widget_2, "Show/hide peak collection 2");
 
@@ -161,6 +165,38 @@ void DetectorWindow::setInputUp()
         &DetectorWindow::setUnitCell);
 
     _control_layout->addWidget(input_spoiler);
+}
+
+void DetectorWindow::set3rdPartyPeaksUp()
+{
+    Spoiler* third_party_spoiler = new Spoiler("Plot 3rd party peaks");
+    GridFiller f(third_party_spoiler, false);
+
+    auto load_peaks = f.addButton(
+        "Load 3rd party peaks",
+        "<font>Load a set of peak centres computed from a 3rd party code (e.g. DENZO .x file)</font>");
+    connect(load_peaks, &QPushButton::clicked, this, &DetectorWindow::load3rdPartyPeaks);
+
+    _control_layout->addWidget(third_party_spoiler);
+}
+
+void DetectorWindow::load3rdPartyPeaks()
+{
+    QSettings s;
+    s.beginGroup("RecentDirectories");
+    QString loadDirectory = s.value("experiment", QDir::homePath()).toString();
+
+    QString file_path = QFileDialog::getOpenFileName(
+        this, "Load 3rd party peaks file", loadDirectory, "3rd party output (*.x)");
+
+    if (file_path.isEmpty())
+        return;
+
+    // _detector_view->getScene()->clearPeakItems();
+    nsx::XFileHandler xfh(file_path.toStdString());
+    xfh.readXFile(double(_detector_view->getScene()->currentFrame()));
+    _detector_view->getScene()->link3rdPartyPeaks(&xfh);
+
 }
 
 void DetectorWindow::setPlotUp(PeakViewWidget* peak_widget, QString name)
