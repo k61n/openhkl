@@ -67,9 +67,20 @@ void XFileHandler::readXFile(double frame)
     _u(1,2) = std::stod(tokens[3]);
     _u(2,2) = std::stod(tokens[4]);
 
-    while (true) {
-        if (!std::getline(ifs, line))
-            break;
+    // Other metadata (line 5)
+    std::getline(ifs, line);
+    tokens = tokenize(line);
+    _osc_start = std::stod(tokens[0]);
+    _osc_end = std::stod(tokens[1]);
+    _dist_pixels = std::stod(tokens[2]);
+    _wavelength = std::stod(tokens[3]);
+    _rotz = std::stod(tokens[4]);
+    _roty = std::stod(tokens[5]);
+    _rotx = std::stod(tokens[6]);
+    _mosaicity = std::stod(tokens[7]);
+
+    // Peak centres
+    while (std::getline(ifs, line)) {
         Reflection refl;
         bool stop = refl.parse(line);
         if (stop) {
@@ -80,13 +91,14 @@ void XFileHandler::readXFile(double frame)
         }
     }
 
-    for (int j = 0; j < _mask.rows(); ++j) {
-        std::getline(ifs, line);
-        tokens = tokenize(line);
-        for (int i = 0; i < _mask.cols(); ++i) {
-            _mask(i, j) = std::stoi(tokens[i]);
-        }
-    }
+    // The integration mask
+    // for (int j = 0; j < _mask.rows(); ++j) {
+    //     std::getline(ifs, line);
+    //     tokens = tokenize(line);
+    //     for (int i = 0; i < _mask.cols(); ++i) {
+    //         _mask(i, j) = std::stoi(tokens[i]);
+    //     }
+    // }
     // TODO: rest of the restart metadata? I think this stuff is mainly for restarting a DENZO run.
 }
 
@@ -106,22 +118,30 @@ bool XFileHandler::Reflection::parse(std::string line)
     if (tokens[0] == stop_flag){
         maskx = std::stoi(tokens[1]);
         masky = std::stoi(tokens[2]);
-        return false;
+        return true;
     }
     h = std::stoi(tokens[0]);
     k = std::stoi(tokens[1]);
     l = std::stoi(tokens[2]);
-    partial = bool(std::stoi(tokens[3]));
-    I_profile = std::stod(tokens[4]);
-    I_summation = std::stod(tokens[5]);
-    chisq = std::stod(tokens[6]);
-    sigma = std::stod(tokens[7]);
-    cos_detector_angle = std::stod(tokens[8]);
-    px = std::stod(tokens[9]);
-    py = std::stod(tokens[10]);
-    obliquity = std::stod(tokens[11]);
-    strength = std::stod(tokens[12]);
-    return true;
+    if (tokens.size() == 13) {
+        px = std::stod(tokens[9]);
+        py = std::stod(tokens[10]);
+    } else if (tokens.size() == 12) {
+        // BioDiff does not count neutrons; has a photomultiplier of ~30. Therefore columns
+        // Might start to overlap
+        px = std::stod(tokens[8]);
+        py = std::stod(tokens[9]);
+    } else if (tokens.size() == 11) {
+        px = std::stod(tokens[7]);
+        py = std::stod(tokens[8]);
+    } else if (tokens.size() == 10) {
+        px = std::stod(tokens[6]);
+        py = std::stod(tokens[7]);
+    } else {
+        throw std::runtime_error("Malformed .x file");
+    }
+
+    return false;
 }
 
 } // namespace nsx

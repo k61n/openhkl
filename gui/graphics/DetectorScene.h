@@ -145,7 +145,7 @@ class DetectorScene : public QGraphicsScene {
     //! Signal emitted for all changes of the image
     void dataChanged();
     void signalChangeSelectedData(nsx::sptrDataSet data);
-    void signalChangeSelectedFrame(int selected_frame);
+    void signalChangeSelectedFrame();
     void signalChangeSelectedPeak(nsx::Peak3D* peak);
     void signalSelectedPeakItemChanged(PeakItemGraphic* peak);
 
