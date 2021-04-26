@@ -35,8 +35,8 @@ TEST_CASE("test/data/TestXFileReader.cpp", "")
     std::vector<Eigen::Vector3d> peaks = xfh.getPeakCentres();
 
     CHECK(peaks.size() == n_peaks);
-    CHECK(peaks[0][0] - x_0 < eps);
-    CHECK(peaks[0][1] - y_0 < eps);
-    CHECK(peaks[2140][0] - x_2140 < eps);
-    CHECK(peaks[2140][1] - y_2140 < eps);
+    CHECK(peaks[0][1] - x_0 < eps);
+    CHECK(peaks[0][0] - y_0 < eps);
+    CHECK(peaks[2140][1] - x_2140 < eps);
+    CHECK(peaks[2140][0] - y_2140 < eps);
 }
