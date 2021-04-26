@@ -77,7 +77,7 @@ DetectorScene::DetectorScene(QObject* parent)
     , _logarithmic(false)
     , _drawIntegrationRegion1(true)
     , _drawIntegrationRegion2(true)
-    , _draw3rdParty(false)
+    , _draw3rdParty(true)
     , _colormap(new ColorMap())
     , _integrationRegion1(nullptr)
     , _integrationRegion2(nullptr)
@@ -129,9 +129,7 @@ void DetectorScene::link3rdPartyPeaks(nsx::XFileHandler* xfh)
         // PeakCenterGraphic* center = new PeakCenterGraphic(vector);
         _peak_center_items.emplace_back(std::make_shared<PeakCenterGraphic>(vector));
     }
-    connect(
-        this, &DetectorScene::signalChangeSelectedFrame, this,
-        &DetectorScene::peakModelDataChanged);
+    drawPeakitems();
 }
 
 void DetectorScene::unlinkPeakModel2()
@@ -245,7 +243,6 @@ void DetectorScene::draw3rdPartyItems()
 
     for (auto peak : _peak_center_items)
         addItem(peak.get());
-    emit signalChangeSelectedFrame();
 }
 
 void DetectorScene::slotChangeSelectedData(nsx::sptrDataSet data, int frame)
