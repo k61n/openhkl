@@ -27,9 +27,9 @@ PeakCenterGraphic::PeakCenterGraphic(Eigen::Vector3d center) : _center(center)
 {
     setVisible(true);
     _size = Eigen::Vector2d(10, 10);
-    _center_color = Qt::red;
     _show_label = false;
     _show_center = true;
+    _center_color = Qt::black;
     redraw();
 }
 
@@ -56,7 +56,7 @@ void PeakCenterGraphic::redraw()
 
     setBoundingRegionGranularity(0.0);
 
-    setColor(Qt::black);
+    // setColor(_center_color);
     setZValue(1);
 }
 

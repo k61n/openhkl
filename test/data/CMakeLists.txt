@@ -15,6 +15,7 @@ configure_file(../cpp/data/gal3.hdf gal3.hdf COPYONLY)
 configure_file(../cpp/data/d19_test.hdf d19_test.hdf COPYONLY)
 configure_file(../cpp/data/H5_example.hdf H5_example.hdf COPYONLY)
 configure_file(../cpp/data/blank.hdf blank.hdf COPYONLY)
+configure_file(../cpp/data/soak_9_d2_I_scanI_9483.x soak_9_d2_I_scanI_9483.x COPYONLY)
 
 configure_file(../cpp/geometry/convex_hull_faces.xyz convex_hull_faces.xyz COPYONLY)
 configure_file(../cpp/geometry/convex_hull_vertices.xyz convex_hull_vertices.xyz COPYONLY)
