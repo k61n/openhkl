@@ -23,9 +23,10 @@
 #include <QStyleOptionGraphicsItem>
 #include <QWidget>
 
-PeakCenterGraphic::PeakCenterGraphic(Eigen::Vector3d center) : _center(center)
+PeakCenterGraphic::PeakCenterGraphic(Eigen::Vector3d center)
 {
     setVisible(true);
+    setCenter(center);
     _size = Eigen::Vector2d(10, 10);
     _show_label = false;
     _show_center = true;
@@ -49,7 +50,6 @@ void PeakCenterGraphic::redraw()
     _center_gi = new QGraphicsEllipseItem(this);
     _center_gi->setRect(-_size[0] / 2, -_size[1] / 2, _size[0], _size[1]);
     _center_gi->setParentItem(this);
-    _center_gi->setBrush(QBrush(_center_color));
     _center_gi->setAcceptHoverEvents(false);
     _center_gi->setZValue(10);
     _center_gi->setVisible(_show_center);
@@ -62,7 +62,6 @@ void PeakCenterGraphic::redraw()
 
 void PeakCenterGraphic::setCenter(Eigen::Vector3d center)
 {
-    _center = center;
     setPos(center[0], center[1]);
 }
 
@@ -82,7 +81,11 @@ QRectF PeakCenterGraphic::boundingRect() const
 void PeakCenterGraphic::setColor(QColor color)
 {
     _center_color = color;
-    _center_gi->setBrush(QBrush(_center_color));
+    QPen center_pen;
+    center_pen.setCosmetic(true);
+    center_pen.setColor(_center_color);
+    center_pen.setStyle(Qt::SolidLine);
+    _center_gi->setPen(center_pen);
 }
 
 void PeakCenterGraphic::paint(

@@ -49,8 +49,6 @@ class PeakCenterGraphic : public QGraphicsItem {
     QGraphicsEllipseItem* _center_gi;
     //! The peak label
     QGraphicsTextItem* _label_gi;
-    //! The peak centre
-    Eigen::Vector3d _center;
     //! Flag to show the label
     bool _show_label;
     //! Flag to show the area

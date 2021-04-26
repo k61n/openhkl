@@ -124,19 +124,19 @@ bool XFileHandler::Reflection::parse(std::string line)
     k = std::stoi(tokens[1]);
     l = std::stoi(tokens[2]);
     if (tokens.size() == 13) {
-        px = std::stod(tokens[9]);
-        py = std::stod(tokens[10]);
+        py = std::stod(tokens[9]);
+        px = std::stod(tokens[10]);
     } else if (tokens.size() == 12) {
         // BioDiff does not count neutrons; has a photomultiplier of ~30. Therefore columns
         // Might start to overlap
-        px = std::stod(tokens[8]);
-        py = std::stod(tokens[9]);
-    } else if (tokens.size() == 11) {
-        px = std::stod(tokens[7]);
         py = std::stod(tokens[8]);
-    } else if (tokens.size() == 10) {
-        px = std::stod(tokens[6]);
+        px = std::stod(tokens[9]);
+    } else if (tokens.size() == 11) {
         py = std::stod(tokens[7]);
+        px = std::stod(tokens[8]);
+    } else if (tokens.size() == 10) {
+        py = std::stod(tokens[6]);
+        px = std::stod(tokens[7]);
     } else {
         throw std::runtime_error("Malformed .x file");
     }
