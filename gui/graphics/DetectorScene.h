@@ -178,7 +178,7 @@ class DetectorScene : public QGraphicsScene {
     //! std vector of the peakItems
     std::vector<PeakItemGraphic*> _peak_graphics_items;
     //! std vector of peak centres from 3rd party software
-    std::vector<std::shared_ptr<PeakCenterGraphic>> _peak_center_items;
+    std::vector<PeakCenterGraphic*> _peak_center_items;
 
     bool _itemSelected;
     QGraphicsPixmapItem* _image;

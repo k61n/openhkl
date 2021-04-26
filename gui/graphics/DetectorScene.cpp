@@ -126,8 +126,8 @@ void DetectorScene::link3rdPartyPeaks(nsx::XFileHandler* xfh)
 {
     _peak_center_items.clear();
     for (Eigen::Vector3d vector : xfh->getPeakCentres()) {
-        // PeakCenterGraphic* center = new PeakCenterGraphic(vector);
-        _peak_center_items.emplace_back(std::make_shared<PeakCenterGraphic>(vector));
+        PeakCenterGraphic* center = new PeakCenterGraphic(vector);
+        _peak_center_items.emplace_back(center);
     }
     drawPeakitems();
 }
@@ -241,8 +241,9 @@ void DetectorScene::draw3rdPartyItems()
     if (_peak_center_items.empty())
         return;
 
-    for (auto peak : _peak_center_items)
-        addItem(peak.get());
+    for (auto peak : _peak_center_items) {
+        addItem(peak);
+    }
 }
 
 void DetectorScene::slotChangeSelectedData(nsx::sptrDataSet data, int frame)
