@@ -15,6 +15,7 @@
 #ifndef NSX_GUI_DETECTOR_WINDOW_DETECTORWINDOW_H
 #define NSX_GUI_DETECTOR_WINDOW_DETECTORWINDOW_H
 
+#include "core/loader/XFileHandler.h"
 #include "core/shape/PeakCollection.h"
 #include "gui/items/PeakCollectionItem.h"
 #include "gui/models/PeakCollectionModel.h"
@@ -27,6 +28,7 @@
 #include <QSplitter>
 #include <QVBoxLayout>
 
+class ColorButton;
 class DetectorScene;
 class DetectorView;
 class PeakViewWidget;
@@ -44,6 +46,8 @@ class DetectorWindow : public QDialog {
     void setDetectorViewUp();
     void setPeakTableUp();
     void setInputUp();
+    void set3rdPartyPeaksUp();
+    void load3rdPartyPeaks();
     void setPlotUp(PeakViewWidget* peak_widget, QString name);
 
     void refreshDetectorView();
@@ -72,6 +76,8 @@ class DetectorWindow : public QDialog {
     void changeSelected(PeakItemGraphic* peak_graphic);
 
  private:
+    int _nframes;
+
     QVBoxLayout* _control_layout;
     QSplitter* _right_element;
 
@@ -81,6 +87,12 @@ class DetectorWindow : public QDialog {
     QComboBox* _peak_combo_1;
     QComboBox* _peak_combo_2;
     QComboBox* _unit_cell_combo;
+
+    // 3rd party peak plotting elements
+    QCheckBox* _draw_3rdparty;
+    ColorButton* _3rdparty_color;
+    QSpinBox* _3rdparty_size;
+    /* QSpinBox* _3rdparty_start_frame; */
 
     // the widget for plotting elements on the detector scene
     PeakViewWidget* _peak_view_widget_1;
@@ -107,6 +119,8 @@ class DetectorWindow : public QDialog {
     std::vector<nsx::sptrDataSet> _data_list;
     QStringList _peak_list;
     QStringList _cell_list;
+
+    nsx::PeakCenterDataSet _peakCenterData;
 };
 
 #endif // NSX_GUI_DETECTOR_WINDOW_DETECTORWINDOW_H

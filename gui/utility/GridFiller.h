@@ -16,8 +16,9 @@
 #define NSX_GUI_UTILITY_GRIDFILLER_H
 
 #include <QString>
+#include <QColor>
 
-
+class ColorButton;
 class Spoiler;
 class QGridLayout;
 class QComboBox;
@@ -65,6 +66,10 @@ class GridFiller {
 
     //! Add a row containing a pushbutton which covers the whole row.
     QPushButton* addButton(const QString& text, const QString& tooltip = QString());
+
+    //! Add a row containing a ColorButton
+    ColorButton* addColorButton(
+        const QColor& color, const QString& labelText, const QString& labelTooltip = QString());
 
     //! Add a row with the given widget. The widget is inserted in the given column with the given
     //! column span (-1 => to the right edge).

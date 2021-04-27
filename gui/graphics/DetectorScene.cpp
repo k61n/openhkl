@@ -26,6 +26,7 @@
 #include "core/instrument/InstrumentState.h"
 #include "core/instrument/Sample.h"
 #include "core/instrument/Source.h"
+#include "core/loader/XFileHandler.h"
 #include "core/peak/Peak3D.h"
 #include "core/raw/IDataReader.h"
 #include "gui/MainWin.h"
@@ -76,6 +77,7 @@ DetectorScene::DetectorScene(QObject* parent)
     , _logarithmic(false)
     , _drawIntegrationRegion1(true)
     , _drawIntegrationRegion2(true)
+    , _draw3rdParty(true)
     , _colormap(new ColorMap())
     , _integrationRegion1(nullptr)
     , _integrationRegion2(nullptr)
@@ -84,8 +86,11 @@ DetectorScene::DetectorScene(QObject* parent)
     , _peakPxColor2(QColor(0, 100, 0, 128)) // dark green, alpha = 0.5
     , _bkgPxColor1(QColor(255, 255, 0, 128)) // yellow, alpha = 0.5
     , _bkgPxColor2(QColor(251, 163, 0, 128)) // dark yellow, alpha = 0.5
+    , _3rdparty_color(Qt::black)
+    , _3rdparty_size(10)
     , _selected_peak(nullptr)
     , _unit_cell(nullptr)
+    , _peak_center_data(nullptr)
 {
 }
 
@@ -118,6 +123,15 @@ PeakCollectionModel* DetectorScene::peakModel2() const
 void DetectorScene::unlinkPeakModel1()
 {
     _peak_model_1 = nullptr;
+    connect(
+        this, &DetectorScene::signalChangeSelectedFrame, this,
+        &DetectorScene::peakModelDataChanged);
+}
+
+void DetectorScene::link3rdPartyPeaks(nsx::PeakCenterDataSet* pcd)
+{
+    _peak_center_data = pcd;
+    drawPeakitems();
 }
 
 void DetectorScene::unlinkPeakModel2()
@@ -139,9 +153,12 @@ void DetectorScene::clearPeakItems()
 
     // _peak_graphics_items can be out of sync (pointer may get deleted outside). Therefore
     // do not use it for removing items from the scene (may cause crash)
-    for (auto item : items())
+    for (auto item : items()) {
         if (dynamic_cast<PeakItemGraphic*>(item) != nullptr)
             removeItem(item);
+        if (dynamic_cast<PeakCenterGraphic*>(item) != nullptr) // Remove 3rd party centers
+            removeItem(item);
+    }
 
     _peak_graphics_items.clear();
 }
@@ -153,6 +170,8 @@ void DetectorScene::drawPeakitems()
         drawPeakModelItems(_peak_model_1);
     if (_peak_model_2)
         drawPeakModelItems(_peak_model_2);
+    if (_draw3rdParty)
+        draw3rdPartyItems();
     loadCurrentImage();
 
     // if (_selected_peak_gi) {
@@ -217,6 +236,30 @@ void DetectorScene::drawPeakModelItems(PeakCollectionModel* model)
         _peak_graphics_items.push_back(peak_graphic);
         addItem(peak_graphic);
     }
+}
+
+void DetectorScene::draw3rdPartyItems()
+{
+    if (!_peak_center_data)
+        return;
+    _peak_center_items.clear();
+    nsx::XFileHandler* xfh = _peak_center_data->getFrame(_currentFrameIndex);
+
+    if ( !xfh)
+        return;
+
+    for (Eigen::Vector3d vector : xfh->getPeakCenters()) {
+        PeakCenterGraphic* center = new PeakCenterGraphic(vector);
+        center->setColor(_3rdparty_color);
+        center->setSize(_3rdparty_size);
+        _peak_center_items.emplace_back(center);
+    }
+
+    if (_peak_center_items.empty())
+        return;
+
+    for (auto peak : _peak_center_items)
+        addItem(peak);
 }
 
 void DetectorScene::slotChangeSelectedData(nsx::sptrDataSet data, int frame)
@@ -915,4 +958,11 @@ std::vector<std::pair<QGraphicsItem*, nsx::IMask*>>::iterator DetectorScene::fin
 void DetectorScene::setUnitCell(nsx::UnitCell* cell)
 {
     _unit_cell = cell;
+}
+
+void DetectorScene::setup3rdPartyPeaks(bool draw, const QColor& color, int size)
+{
+    _draw3rdParty = draw;
+    _3rdparty_color = color;
+    _3rdparty_size = size;
 }

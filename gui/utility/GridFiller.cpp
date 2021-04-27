@@ -13,6 +13,8 @@
 //  ***********************************************************************************************
 
 #include "gui/utility/GridFiller.h"
+
+#include "gui/utility/ColorButton.h"
 #include "gui/utility/Spoiler.h"
 
 #include <QCheckBox>
@@ -69,7 +71,7 @@ QCheckBox* GridFiller::addCheckBox(const QString& title, int col)
 
 QCheckBox* GridFiller::addCheckBox(const QString& title, const QString& tooltip, int col)
 {
-    auto checkBox = new QCheckBox(title);
+    auto* checkBox = new QCheckBox(title);
     checkBox->setToolTip(tooltip);
     _mainLayout->addWidget(checkBox, _nextRow, col, 1, -1);
     _nextRow++;
@@ -104,10 +106,10 @@ std::tuple<QSpinBox*, QSpinBox*> GridFiller::addSpinBoxPair(
 {
     addLabel(labelText, labelTooltip);
 
-    auto spinBox1 = new QSpinBox();
+    auto* spinBox1 = new QSpinBox();
     _mainLayout->addWidget(spinBox1, _nextRow, 1, 1, 1);
 
-    auto spinBox2 = new QSpinBox();
+    auto* spinBox2 = new QSpinBox();
     _mainLayout->addWidget(spinBox2, _nextRow, 2, 1, 1);
 
     _nextRow++;
@@ -119,10 +121,10 @@ std::tuple<QDoubleSpinBox*, QDoubleSpinBox*> GridFiller::addDoubleSpinBoxPair(
 {
     addLabel(labelText, labelTooltip);
 
-    auto spinBox1 = new QDoubleSpinBox();
+    auto* spinBox1 = new QDoubleSpinBox();
     _mainLayout->addWidget(spinBox1, _nextRow, 1, 1, 1);
 
-    auto spinBox2 = new QDoubleSpinBox();
+    auto* spinBox2 = new QDoubleSpinBox();
     _mainLayout->addWidget(spinBox2, _nextRow, 2, 1, 1);
 
     _nextRow++;
@@ -131,12 +133,24 @@ std::tuple<QDoubleSpinBox*, QDoubleSpinBox*> GridFiller::addDoubleSpinBoxPair(
 
 QPushButton* GridFiller::addButton(const QString& text, const QString& tooltip)
 {
-    auto button = new QPushButton(text);
+    auto* button = new QPushButton(text);
     button->setToolTip(tooltip);
-    _mainLayout->addWidget(button, _nextRow, 0, 1, -1);
+    _mainLayout->addWidget(button, _nextRow, 1, 1, -1);
 
     _nextRow++;
     return button;
+}
+
+ColorButton* GridFiller::addColorButton(
+    const QColor& color, const QString& labelText, const QString& labelTooltip /* = QString() */)
+{
+    addLabel(labelText, labelTooltip);
+    auto* btn = new ColorButton(color);
+    btn->setFixedSize(btn->sizeHint().height() * 2, btn->sizeHint().height());
+    _mainLayout->addWidget(btn, _nextRow, 1, 1, -1);
+
+    _nextRow++;
+    return btn;
 }
 
 void GridFiller::addWidget(QWidget* w, int col, int colspan)

@@ -19,6 +19,7 @@
 #include "core/data/DataTypes.h"
 #include "core/peak/IntegrationRegion.h"
 #include "core/peak/Peak3D.h"
+#include "gui/graphics_items/PeakCenterGraphic.h"
 #include "gui/models/ColorMap.h"
 #include "gui/widgets/PeakViewWidget.h"
 
@@ -28,6 +29,7 @@
 
 namespace nsx {
 class UnitCell;
+class PeakCenterDataSet;
 }
 class PeakItemGraphic;
 class PeakCollectionModel;
@@ -97,6 +99,8 @@ class DetectorScene : public QGraphicsScene {
     PeakCollectionModel* peakModel1() const;
     //! Get the second peak model pointer
     PeakCollectionModel* peakModel2() const;
+    //! Populate vector of 3rd party peak centers
+    void link3rdPartyPeaks(nsx::PeakCenterDataSet* pcd);
     //! Set the first peak model pointer to null
     void unlinkPeakModel1();
     //! Set the second peak model pointer to null
@@ -107,10 +111,14 @@ class DetectorScene : public QGraphicsScene {
     void drawPeakitems();
     //! Draw peaks for one model
     void drawPeakModelItems(PeakCollectionModel* model);
+    //! Draw peak centers from 3rd party software
+    void draw3rdPartyItems();
     //! Remove all the peak elements
     void clearPeakItems();
     //! Set unit cell for Miller Index computation
     void setUnitCell(nsx::UnitCell* cell);
+    //! Plot settings for 3rd party peak centres
+    void setup3rdPartyPeaks(bool draw, const QColor& color, int size);
 
  protected:
     void mousePressEvent(QGraphicsSceneMouseEvent* event);
@@ -171,6 +179,8 @@ class DetectorScene : public QGraphicsScene {
     PeakCollectionModel* _peak_model_2;
     //! std vector of the peakItems
     std::vector<PeakItemGraphic*> _peak_graphics_items;
+    //! std vector of peak centres from 3rd party software
+    std::vector<PeakCenterGraphic*> _peak_center_items;
 
     bool _itemSelected;
     QGraphicsPixmapItem* _image;
@@ -179,6 +189,7 @@ class DetectorScene : public QGraphicsScene {
     bool _logarithmic;
     bool _drawIntegrationRegion1;
     bool _drawIntegrationRegion2;
+    bool _draw3rdParty;
     std::unique_ptr<ColorMap> _colormap;
     QGraphicsPixmapItem* _integrationRegion1;
     QGraphicsPixmapItem* _integrationRegion2;
@@ -193,9 +204,16 @@ class DetectorScene : public QGraphicsScene {
     //! Colour of background pixels in integration region (second overlay)
     QColor _bkgPxColor2;
 
+    //! Colour of 3rd party peaks
+    QColor _3rdparty_color;
+    //! Size of 3rd party peaks
+    int _3rdparty_size;
+
     nsx::Peak3D* _selected_peak;
 
     nsx::UnitCell* _unit_cell;
+
+    nsx::PeakCenterDataSet* _peak_center_data;
 };
 
 #endif // NSX_GUI_GRAPHICS_DETECTORSCENE_H
