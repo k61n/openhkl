@@ -29,7 +29,7 @@
 
 namespace nsx {
 class UnitCell;
-class XFileHandler;
+class PeakCenterDataSet;
 }
 class PeakItemGraphic;
 class PeakCollectionModel;
@@ -100,7 +100,7 @@ class DetectorScene : public QGraphicsScene {
     //! Get the second peak model pointer
     PeakCollectionModel* peakModel2() const;
     //! Populate vector of 3rd party peak centers
-    void link3rdPartyPeaks(nsx::XFileHandler* xfh);
+    void link3rdPartyPeaks(nsx::PeakCenterDataSet* pcd);
     //! Set the first peak model pointer to null
     void unlinkPeakModel1();
     //! Set the second peak model pointer to null
@@ -205,6 +205,8 @@ class DetectorScene : public QGraphicsScene {
     nsx::Peak3D* _selected_peak;
 
     nsx::UnitCell* _unit_cell;
+
+    nsx::PeakCenterDataSet* _peak_center_data;
 };
 
 #endif // NSX_GUI_GRAPHICS_DETECTORSCENE_H

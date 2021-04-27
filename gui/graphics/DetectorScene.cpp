@@ -88,6 +88,7 @@ DetectorScene::DetectorScene(QObject* parent)
     , _bkgPxColor2(QColor(251, 163, 0, 128)) // dark yellow, alpha = 0.5
     , _selected_peak(nullptr)
     , _unit_cell(nullptr)
+    , _peak_center_data(nullptr)
 {
 }
 
@@ -120,15 +121,14 @@ PeakCollectionModel* DetectorScene::peakModel2() const
 void DetectorScene::unlinkPeakModel1()
 {
     _peak_model_1 = nullptr;
+    connect(
+        this, &DetectorScene::signalChangeSelectedFrame, this,
+        &DetectorScene::peakModelDataChanged);
 }
 
-void DetectorScene::link3rdPartyPeaks(nsx::XFileHandler* xfh)
+void DetectorScene::link3rdPartyPeaks(nsx::PeakCenterDataSet* pcd)
 {
-    _peak_center_items.clear();
-    for (Eigen::Vector3d vector : xfh->getPeakCentres()) {
-        PeakCenterGraphic* center = new PeakCenterGraphic(vector);
-        _peak_center_items.emplace_back(center);
-    }
+    _peak_center_data = pcd;
     drawPeakitems();
 }
 
@@ -238,12 +238,24 @@ void DetectorScene::drawPeakModelItems(PeakCollectionModel* model)
 
 void DetectorScene::draw3rdPartyItems()
 {
+    if (!_peak_center_data)
+        return;
+    _peak_center_items.clear();
+    nsx::XFileHandler* xfh = _peak_center_data->getFrame(_currentFrameIndex);
+
+    if ( !xfh)
+        return;
+
+    for (Eigen::Vector3d vector : xfh->getPeakCenters()) {
+        PeakCenterGraphic* center = new PeakCenterGraphic(vector);
+        _peak_center_items.emplace_back(center);
+    }
+
     if (_peak_center_items.empty())
         return;
 
-    for (auto peak : _peak_center_items) {
+    for (auto peak : _peak_center_items)
         addItem(peak);
-    }
 }
 
 void DetectorScene::slotChangeSelectedData(nsx::sptrDataSet data, int frame)
