@@ -92,7 +92,7 @@ class DetectorWindow : public QDialog {
     QCheckBox* _draw_3rdparty;
     ColorButton* _3rdparty_color;
     QSpinBox* _3rdparty_size;
-    QSpinBox* _3rdparty_start_frame;
+    /* QSpinBox* _3rdparty_start_frame; */
 
     // the widget for plotting elements on the detector scene
     PeakViewWidget* _peak_view_widget_1;
