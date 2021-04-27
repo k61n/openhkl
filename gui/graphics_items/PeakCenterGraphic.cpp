@@ -23,7 +23,7 @@
 #include <QStyleOptionGraphicsItem>
 #include <QWidget>
 
-PeakCenterGraphic::PeakCenterGraphic(Eigen::Vector3d center)
+PeakCenterGraphic::PeakCenterGraphic(const Eigen::Vector3d& center)
 {
     setVisible(true);
     setCenter(center);
@@ -60,7 +60,7 @@ void PeakCenterGraphic::redraw()
     setZValue(1);
 }
 
-void PeakCenterGraphic::setCenter(Eigen::Vector3d center)
+void PeakCenterGraphic::setCenter(const Eigen::Vector3d& center)
 {
     setPos(center[0], center[1]);
 }
@@ -92,13 +92,8 @@ void PeakCenterGraphic::paint(
     QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget)
 {
     Q_UNUSED(widget)
-
     Q_UNUSED(option)
-
     Q_UNUSED(painter)
-
-    // _label_gi->setVisible(_hovered || _show_label);
-    // _center_gi->setVisible(_hovered || _show_center);
 }
 
 void PeakCenterGraphic::showLabel(bool flag)
