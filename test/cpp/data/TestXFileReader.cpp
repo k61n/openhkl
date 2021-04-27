@@ -32,7 +32,7 @@ TEST_CASE("test/data/TestXFileReader.cpp", "")
 
     nsx::XFileHandler xfh(xfile_name);
     xfh.readXFile(0);
-    std::vector<Eigen::Vector3d> peaks = xfh.getPeakCentres();
+    std::vector<Eigen::Vector3d> peaks = xfh.getPeakCenters();
 
     CHECK(peaks.size() == n_peaks);
     CHECK(peaks[0][1] - x_0 < eps);

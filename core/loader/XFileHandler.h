@@ -16,11 +16,11 @@
 #define NSX_CORE_LOADER_XFILEHANDLER_H
 
 #include <Eigen/Dense>
+#include <memory>
 
 namespace nsx {
 
 std::vector<std::string> tokenize(const std::string& s);
-
 
 class XFileHandler {
  public:
@@ -29,9 +29,11 @@ class XFileHandler {
     //! Set the filename
     void setName(std::string filename) { _filename = filename; };
     //! Parse the .x file
-    void readXFile(double frame);
+    void readXFile(int frame);
     //! Return a list of peak centres for plotting
-    std::vector<Eigen::Vector3d> getPeakCentres();
+    std::vector<Eigen::Vector3d> getPeakCenters();
+    //! Return the frame number
+    int frame() { return _frame; };
     /* void writeXFile(); */
 
     struct Reflection {
@@ -74,7 +76,7 @@ class XFileHandler {
     //! .x file name
     std::string _filename;
     //! Frame number of .x file
-    double _frame;
+    int _frame;
     //! Material name
     std::string _name;
     //! a matrix orientation
@@ -101,7 +103,18 @@ class XFileHandler {
     std::vector<Reflection> _reflections;
     //! Integration mask
     Eigen::MatrixXi _mask;
+};
 
+// TODO: generalise to other data fomrats?
+class PeakCenterDataSet {
+public:
+    PeakCenterDataSet() = default;
+
+    void init(int nframes);
+    XFileHandler* getFrame(int frame);
+    void addFrame(std::string filename, int frame);
+private:
+    std::vector<std::unique_ptr<XFileHandler>> _xfiles;
 };
 
 } // namespace nsx

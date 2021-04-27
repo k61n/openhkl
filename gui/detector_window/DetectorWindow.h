@@ -15,6 +15,7 @@
 #ifndef NSX_GUI_DETECTOR_WINDOW_DETECTORWINDOW_H
 #define NSX_GUI_DETECTOR_WINDOW_DETECTORWINDOW_H
 
+#include "core/loader/XFileHandler.h"
 #include "core/shape/PeakCollection.h"
 #include "gui/items/PeakCollectionItem.h"
 #include "gui/models/PeakCollectionModel.h"
@@ -74,6 +75,8 @@ class DetectorWindow : public QDialog {
     void changeSelected(PeakItemGraphic* peak_graphic);
 
  private:
+    int _nframes;
+
     QVBoxLayout* _control_layout;
     QSplitter* _right_element;
 
@@ -109,6 +112,8 @@ class DetectorWindow : public QDialog {
     std::vector<nsx::sptrDataSet> _data_list;
     QStringList _peak_list;
     QStringList _cell_list;
+
+    nsx::PeakCenterDataSet _peakCenterData;
 };
 
 #endif // NSX_GUI_DETECTOR_WINDOW_DETECTORWINDOW_H

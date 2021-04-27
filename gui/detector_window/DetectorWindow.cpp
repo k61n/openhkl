@@ -15,7 +15,6 @@
 #include "gui/detector_window/DetectorWindow.h"
 
 #include "core/experiment/Experiment.h"
-#include "core/loader/XFileHandler.h"
 #include "gui/graphics/DetectorScene.cpp"
 #include "gui/graphics/DetectorView.cpp"
 #include "gui/models/Project.h"
@@ -32,6 +31,7 @@
 #include <QGridLayout>
 #include <QGroupBox>
 #include <QLabel>
+#include <QMessageBox>
 #include <QScrollArea>
 #include <QSettings>
 
@@ -186,16 +186,28 @@ void DetectorWindow::load3rdPartyPeaks()
     s.beginGroup("RecentDirectories");
     QString loadDirectory = s.value("experiment", QDir::homePath()).toString();
 
-    QString file_path = QFileDialog::getOpenFileName(
+    QStringList files = QFileDialog::getOpenFileNames(
         this, "Load 3rd party peaks file", loadDirectory, "3rd party output (*.x)");
 
-    if (file_path.isEmpty())
+    int current_frame = _detector_view->getScene()->currentFrame();
+
+    if (files.empty())
         return;
 
+    if (files.size() > _nframes)
+        QMessageBox::critical(this, "Error", QString("More .x files than frames in this data set"));
+
+    if (files.size() > _nframes - current_frame)
+        QMessageBox::critical(this, "Error", QString("Too many .x files selected"));
+
+    _peakCenterData.init(_nframes);
     // _detector_view->getScene()->clearPeakItems();
-    nsx::XFileHandler xfh(file_path.toStdString());
-    xfh.readXFile(double(_detector_view->getScene()->currentFrame()));
-    _detector_view->getScene()->link3rdPartyPeaks(&xfh);
+    for (int i = current_frame; i < (current_frame + files.size()); ++i)
+        _peakCenterData.addFrame(files[i].toStdString(), i);
+
+    // nsx::XFileHandler xfh(file_path.toStdString());
+    // xfh.readXFile(double(_detector_view->getScene()->currentFrame()));
+    _detector_view->getScene()->link3rdPartyPeaks(&_peakCenterData);
 
 }
 
@@ -309,6 +321,8 @@ void DetectorWindow::updateDatasetParameters(int idx)
         return;
 
     nsx::sptrDataSet data = _data_list.at(idx);
+    _nframes = data->nFrames();
+    _peakCenterData.init(_nframes);
 
     _detector_view->getScene()->slotChangeSelectedData(_data_list.at(idx), 0);
     emit _detector_view->getScene()->dataChanged();
