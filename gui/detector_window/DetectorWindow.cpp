@@ -172,6 +172,24 @@ void DetectorWindow::set3rdPartyPeaksUp()
     Spoiler* third_party_spoiler = new Spoiler("Plot 3rd party peaks");
     GridFiller f(third_party_spoiler, false);
 
+
+    _draw_3rdparty = f.addCheckBox("Plot 3rd party peak centres", 1);
+    _draw_3rdparty->setCheckState(Qt::Checked);
+    connect(_draw_3rdparty, &QCheckBox::stateChanged, this, &DetectorWindow::refreshDetectorView);
+
+    _3rdparty_size = f.addSpinBox("Size");
+    _3rdparty_size->setValue(10);
+    connect(
+        _3rdparty_size,
+        static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged), this,
+        &DetectorWindow::refreshDetectorView);
+
+    _3rdparty_color = f.addColorButton(Qt::black, "Color", "3rd party peak color");
+    connect(_3rdparty_color, &ColorButton::colorChanged, this, &DetectorWindow::refreshDetectorView);
+
+    // _3rdparty_start_frame = f.addSpinBox("Start frame");
+    // _3rdparty_start_frame->setValue(0);
+
     auto load_peaks = f.addButton(
         "Load 3rd party peaks",
         "<font>Load a set of peak centres computed from a 3rd party code (e.g. DENZO .x file)</font>");
@@ -194,11 +212,15 @@ void DetectorWindow::load3rdPartyPeaks()
     if (files.empty())
         return;
 
-    if (files.size() > _nframes)
+    if (files.size() > _nframes) {
         QMessageBox::critical(this, "Error", QString("More .x files than frames in this data set"));
+        return;
+    }
 
-    if (files.size() > _nframes - current_frame)
+    if (files.size() > _nframes - current_frame) {
         QMessageBox::critical(this, "Error", QString("Too many .x files selected"));
+        return;
+    }
 
     _peakCenterData.init(_nframes);
     // _detector_view->getScene()->clearPeakItems();
@@ -252,6 +274,8 @@ void DetectorWindow::refreshDetectorView()
     _detector_view->getScene()->update();
     _detector_view->getScene()->initIntRegionFromPeakWidget(_peak_view_widget_1->set1);
     _detector_view->getScene()->initIntRegionFromPeakWidget(_peak_view_widget_2->set1, true);
+    _detector_view->getScene()->setup3rdPartyPeaks(
+        _draw_3rdparty->isChecked(), _3rdparty_color->color(), _3rdparty_size->value());
     _detector_view->getScene()->drawPeakitems();
 }
 

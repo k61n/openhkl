@@ -116,6 +116,7 @@ std::vector<Eigen::Vector3d> XFileHandler::getPeakCenters()
 
 bool XFileHandler::Reflection::parse(std::string line)
 {
+    // TODO: read this in fixed format, only the px/py columns
     std::vector<std::string> tokens = tokenize(line);
     if (tokens[0] == stop_flag){
         maskx = std::stoi(tokens[1]);

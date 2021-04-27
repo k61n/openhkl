@@ -86,6 +86,8 @@ DetectorScene::DetectorScene(QObject* parent)
     , _peakPxColor2(QColor(0, 100, 0, 128)) // dark green, alpha = 0.5
     , _bkgPxColor1(QColor(255, 255, 0, 128)) // yellow, alpha = 0.5
     , _bkgPxColor2(QColor(251, 163, 0, 128)) // dark yellow, alpha = 0.5
+    , _3rdparty_color(Qt::black)
+    , _3rdparty_size(10)
     , _selected_peak(nullptr)
     , _unit_cell(nullptr)
     , _peak_center_data(nullptr)
@@ -248,6 +250,8 @@ void DetectorScene::draw3rdPartyItems()
 
     for (Eigen::Vector3d vector : xfh->getPeakCenters()) {
         PeakCenterGraphic* center = new PeakCenterGraphic(vector);
+        center->setColor(_3rdparty_color);
+        center->setSize(_3rdparty_size);
         _peak_center_items.emplace_back(center);
     }
 
@@ -954,4 +958,11 @@ std::vector<std::pair<QGraphicsItem*, nsx::IMask*>>::iterator DetectorScene::fin
 void DetectorScene::setUnitCell(nsx::UnitCell* cell)
 {
     _unit_cell = cell;
+}
+
+void DetectorScene::setup3rdPartyPeaks(bool draw, const QColor& color, int size)
+{
+    _draw3rdParty = draw;
+    _3rdparty_color = color;
+    _3rdparty_size = size;
 }

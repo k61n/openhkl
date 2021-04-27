@@ -13,6 +13,8 @@
 //  ***********************************************************************************************
 
 #include "gui/utility/GridFiller.h"
+
+#include "gui/utility/ColorButton.h"
 #include "gui/utility/Spoiler.h"
 
 #include <QCheckBox>
@@ -133,10 +135,22 @@ QPushButton* GridFiller::addButton(const QString& text, const QString& tooltip)
 {
     auto button = new QPushButton(text);
     button->setToolTip(tooltip);
-    _mainLayout->addWidget(button, _nextRow, 0, 1, -1);
+    _mainLayout->addWidget(button, _nextRow, 1, 1, -1);
 
     _nextRow++;
     return button;
+}
+
+ColorButton* GridFiller::addColorButton(
+    const QColor& color, const QString& labelText, const QString& labelTooltip /* = QString() */)
+{
+    addLabel(labelText, labelTooltip);
+    auto btn = new ColorButton(color);
+    btn->setFixedSize(btn->sizeHint().height() * 2, btn->sizeHint().height());
+    _mainLayout->addWidget(btn, _nextRow, 1, 1, -1);
+
+    _nextRow++;
+    return btn;
 }
 
 void GridFiller::addWidget(QWidget* w, int col, int colspan)

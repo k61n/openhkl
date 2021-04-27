@@ -117,6 +117,8 @@ class DetectorScene : public QGraphicsScene {
     void clearPeakItems();
     //! Set unit cell for Miller Index computation
     void setUnitCell(nsx::UnitCell* cell);
+    //! Plot settings for 3rd party peak centres
+    void setup3rdPartyPeaks(bool draw, const QColor& color, int size);
 
  protected:
     void mousePressEvent(QGraphicsSceneMouseEvent* event);
@@ -201,6 +203,11 @@ class DetectorScene : public QGraphicsScene {
     QColor _bkgPxColor1;
     //! Colour of background pixels in integration region (second overlay)
     QColor _bkgPxColor2;
+
+    //! Colour of 3rd party peaks
+    QColor _3rdparty_color;
+    //! Size of 3rd party peaks
+    int _3rdparty_size;
 
     nsx::Peak3D* _selected_peak;
 
