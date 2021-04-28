@@ -266,8 +266,8 @@ class Experiment:
         params.nbins_y = self._params.shapelib['ny']
         params.nbins_z = self._params.shapelib['nz']
         params.peak_end = self._params.shapelib['peak_end']
-        params.detector_range_min = self._params.shapelib['shapelib_d_min']
-        params.detector_range_max = self._params.shapelib['shapelib_d_max']
+        params.d_min = self._params.shapelib['shapelib_d_min']
+        params.d_max = self._params.shapelib['shapelib_d_max']
         params.bkg_begin = self._params.shapelib['bkg_begin']
         params.bkg_end = self._params.shapelib['bkg_end']
         self.log(f"kabsch = {self._params.shapelib['kabsch']}")
@@ -295,8 +295,8 @@ class Experiment:
                                'Intensity:': nsx.PeakInterpolation_Intensity }
         interpol = interpolation_types[interpolation]
         params = self._expt.predict_params
-        params.detector_range_min = self._params.prediction['prediction_d_min']
-        params.detector_range_max = self._params.prediction['prediction_d_max']
+        params.d_min = self._params.prediction['prediction_d_min']
+        params.d_max = self._params.prediction['prediction_d_max']
         params.neighbour_range_pixels = self._params.prediction['radius']
         params.neighbour_range_frames = self._params.prediction['frames']
         params.bkg_begin = self._params.prediction['prediction_bkg_begin']

@@ -367,8 +367,8 @@ void SubframePredictPeaks::grabPredictorParameters()
     _shape_params = gSession->experimentAt(_exp_combo->currentIndex())->experiment()->shape_params;
 
     // Prediction parameters
-    _d_min->setValue(_params.detector_range_min);
-    _d_max->setValue(_params.detector_range_max);
+    _d_min->setValue(_params.d_min);
+    _d_max->setValue(_params.d_max);
     _radius->setValue(_params.neighbour_range_pixels);
     _n_frames->setValue(_params.neighbour_range_frames);
     _min_neighbors->setValue(_params.min_n_neighbors);
@@ -403,8 +403,8 @@ void SubframePredictPeaks::runPrediction()
             _unit_cells->currentText().toStdString());
 
         nsx::PredictionParameters params;
-        params.detector_range_min = _d_min->value();
-        params.detector_range_max = _d_max->value();
+        params.d_min = _d_min->value();
+        params.d_max = _d_max->value();
         params.neighbour_range_pixels = _radius->value();
         params.neighbour_range_frames = _n_frames->value();
         params.min_n_neighbors = _min_neighbors->value();

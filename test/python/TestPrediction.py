@@ -37,8 +37,8 @@ class TestPrediction(unittest.TestCase):
 
         # predict the peaks
         prediction_params = expt.predict_params
-        prediction_params.detector_range_min = 1.5
-        prediction_params.detector_range_max = 50.0
+        prediction_params.d_min = 1.5
+        prediction_params.d_max = 50.0
         prediction_params.neighbour_max_radius = 400.0
         prediction_params.frame_range_max = 20.0
         prediction_params.bkg_begin = 3.0

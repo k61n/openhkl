@@ -164,14 +164,14 @@ void ShapeCollectionDialog::setParametersUp()
 
     _min_d = new QDoubleSpinBox();
     _min_d->setMaximum(10000);
-    _min_d->setValue(_params.detector_range_min);
+    _min_d->setValue(_params.d_min);
     _min_d->setSizePolicy(*_size_policy_widgets);
     tooltip = QString::fromUtf8("Minimum d (I/\u212B) of peak to include in average");
     _min_d->setToolTip(tooltip);
 
     _max_d = new QDoubleSpinBox();
     _max_d->setMaximum(10000);
-    _max_d->setValue(_params.detector_range_max);
+    _max_d->setValue(_params.d_max);
     _max_d->setSizePolicy(*_size_policy_widgets);
     tooltip = QString::fromUtf8("Maximum d (I/\u212B) of peak to include in average");
     _max_d->setToolTip(tooltip);

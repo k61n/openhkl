@@ -74,8 +74,8 @@ void Experiment::setDefaultDMin()
 {
     double lambda = getDiffractometer()->source().selectedMonochromator().wavelength();
     double d_min = lambda / 2.0;
-    shape_params.detector_range_min = d_min;
-    predict_params.detector_range_min = d_min;
+    shape_params.d_min = d_min;
+    predict_params.d_min = d_min;
     indexer_params.d_min = d_min;
     _peak_filter->setDRange(d_min, 50.0);
 }
@@ -177,7 +177,7 @@ void Experiment::buildShapeCollection(
     _peak_filter->resetFilterFlags();
     _peak_filter->setFilterStrength(true);
     _peak_filter->setFilterDRange(true);
-    _peak_filter->setDRange(params.detector_range_min, params.detector_range_max);
+    _peak_filter->setDRange(params.d_min, params.d_max);
     _peak_filter->setStrength(params.strength_min, params.strength_max);
     _peak_filter->filter(peaks);
     std::string collection_name = "fit";

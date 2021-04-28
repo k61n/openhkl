@@ -30,8 +30,8 @@ enum class Level;
 
 //! Parameters for building the shape collection
 struct ShapeCollectionParameters : public IntegrationParameters {
-    double detector_range_min = 1.5; //!< Minimum detector range (filter)
-    double detector_range_max = 50.0; //!< Maximum detector range (filter)
+    double d_min = 1.5; //!< Minimum d (filter)
+    double d_max = 50.0; //!< Maximum d (filter)
     double strength_min = 1.0; //!< Minimum peak strength I/sigma (filter)
     double strength_max = 1.0e7; //!< Maximum peak strength I/sigma (filter)
     bool kabsch_coords = true; //!< Are we using Kabsch or detector coordinates?
@@ -44,8 +44,8 @@ struct ShapeCollectionParameters : public IntegrationParameters {
 
 //! Parameters for peak prediction
 struct PredictionParameters : public IntegrationParameters {
-    double detector_range_min = 1.5; //!< Minimum detector range (filter)
-    double detector_range_max = 50.0; //!< Maximum detector range (filter)
+    double d_min = 1.5; //!< Minimum detector range (filter)
+    double d_max = 50.0; //!< Maximum detector range (filter)
     int min_n_neighbors = 10; //!< Minimum number of neighbours required for shape collection
 
     void log(const Level& level) const;
