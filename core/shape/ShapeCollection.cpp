@@ -38,8 +38,8 @@ void ShapeCollectionParameters::log(const Level& level) const
 {
     IntegrationParameters::log(level);
     nsxlog(level, "Shape Collection parameters:");
-    nsxlog(level, "detector_range_min     =", detector_range_min);
-    nsxlog(level, "detector_range_max     =", detector_range_max);
+    nsxlog(level, "d_min     =", d_min);
+    nsxlog(level, "d_max     =", d_max);
     nsxlog(level, "strength_min           =", strength_min);
     nsxlog(level, "kabsch_coords          =", kabsch_coords);
     nsxlog(level, "nbins_x                =", nbins_x);
@@ -51,8 +51,8 @@ void PredictionParameters::log(const Level& level) const
 {
     IntegrationParameters::log(level);
     nsxlog(level, "Peak prediction parameters:");
-    nsxlog(level, "detector_range_min     =", detector_range_min);
-    nsxlog(level, "detector_range_max     =", detector_range_max);
+    nsxlog(level, "d_min     =", d_min);
+    nsxlog(level, "d_max     =", d_max);
     nsxlog(level, "min_n_neighbors        =", min_n_neighbors);
 }
 
@@ -95,7 +95,7 @@ std::vector<Peak3D*> predictPeaks(
     const double wavelength = mono.wavelength();
 
     auto predicted_hkls = unit_cell->generateReflectionsInShell(
-        params.detector_range_min, params.detector_range_max, wavelength);
+        params.d_min, params.d_max, wavelength);
 
     std::vector<Peak3D*> peaks =
         buildPeaksFromMillerIndices(data, predicted_hkls, unit_cell->reciprocalBasis());
