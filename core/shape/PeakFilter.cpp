@@ -75,7 +75,7 @@ void PeakFilter::filterSignificance(PeakCollection* peak_collection) const
         collection_vector.push_back(peak_collection);
         const std::vector<Peak3D*> filtered_peaks = peak_collection->getFilteredPeakList();
 
-        MergedData merged(collection_vector, true, _d_range[0], _d_range[1]);
+        MergedData merged(collection_vector, true);
         for (const auto& peak : filtered_peaks)
             merged.addPeak(peak);
 

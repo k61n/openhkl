@@ -107,11 +107,9 @@ class Experiment {
     //! Duplicate a peak collection (deep copy) for comparison after some process
     void clonePeakCollection(std::string name, std::string new_name);
     //! Merge a vector of PeakCollection objects
-    void setMergedPeaks(
-        std::vector<PeakCollection*> peak_collections, bool friedel, double dmin, double dmax);
+    void setMergedPeaks(std::vector<PeakCollection*> peak_collections, bool friedel);
     //! Merge two PeakCollection objects (mainly for SWIG)
-    void setMergedPeaks(
-        PeakCollection* found, PeakCollection* predicted, bool friedel, double dmin, double dmax);
+    void setMergedPeaks(PeakCollection* found, PeakCollection* predicted, bool friedel);
     //! Reset the merged peak collection
     void resetMergedPeaks();
     //! Get the merged peak collection

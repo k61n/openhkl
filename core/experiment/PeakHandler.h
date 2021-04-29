@@ -58,11 +58,9 @@ class PeakHandler {
     void acceptFilter(
         const std::string name, PeakCollection* collection, listtype lt = listtype::FILTERED);
     //! Merge a vector of peak collections
-    void setMergedPeaks(
-        std::vector<PeakCollection*> peak_collections, bool friedel, double dmin, double  dmax);
+    void setMergedPeaks(std::vector<PeakCollection*> peak_collections, bool friedel);
     //! Merge two peak collections (mainly for SWIG)
-    void setMergedPeaks(
-        PeakCollection* found, PeakCollection* predicted, bool friedel, double dmin, double dmax);
+    void setMergedPeaks(PeakCollection* found, PeakCollection* predicted, bool friedel);
     //! Reset the merged peak collection
     void resetMergedPeaks();
     //! Get the merged peak collection
