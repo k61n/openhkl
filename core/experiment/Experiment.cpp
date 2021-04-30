@@ -248,7 +248,9 @@ void Experiment::computeQuality(
     double d_min, double d_max, int n_shells, PeakCollection* predicted, PeakCollection* found,
     bool friedel)
 {
-    _data_quality.computeQuality(*_peak_handler->getMergedPeaks());
+    _data_quality.computeQuality(
+        d_min, d_max, 1, predicted, found, _peak_handler->getMergedPeaks()->spaceGroup(),
+        friedel);
     _data_resolution.computeQuality(
         d_min, d_max, n_shells, predicted, found, _peak_handler->getMergedPeaks()->spaceGroup(),
         friedel);
@@ -400,16 +402,14 @@ void Experiment::clonePeakCollection(std::string name, std::string new_name)
     _peak_handler->clonePeakCollection(name, new_name);
 }
 
-void Experiment::setMergedPeaks(
-    std::vector<PeakCollection*> peak_collections, bool friedel, double dmin, double dmax)
+void Experiment::setMergedPeaks(std::vector<PeakCollection*> peak_collections, bool friedel)
 {
-    _peak_handler->setMergedPeaks(peak_collections, friedel, dmin, dmax);
+    _peak_handler->setMergedPeaks(peak_collections, friedel);
 }
 
-void Experiment::setMergedPeaks(
-    PeakCollection* found, PeakCollection* predicted, bool friedel, double dmin, double dmax)
+void Experiment::setMergedPeaks(PeakCollection* found, PeakCollection* predicted, bool friedel)
 {
-    _peak_handler->setMergedPeaks(found, predicted, friedel, dmin, dmax);
+    _peak_handler->setMergedPeaks(found, predicted, friedel);
 }
 
 void Experiment::resetMergedPeaks()

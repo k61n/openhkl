@@ -107,11 +107,9 @@ class Experiment {
     //! Duplicate a peak collection (deep copy) for comparison after some process
     void clonePeakCollection(std::string name, std::string new_name);
     //! Merge a vector of PeakCollection objects
-    void setMergedPeaks(
-        std::vector<PeakCollection*> peak_collections, bool friedel, double dmin, double dmax);
+    void setMergedPeaks(std::vector<PeakCollection*> peak_collections, bool friedel);
     //! Merge two PeakCollection objects (mainly for SWIG)
-    void setMergedPeaks(
-        PeakCollection* found, PeakCollection* predicted, bool friedel, double dmin, double dmax);
+    void setMergedPeaks(PeakCollection* found, PeakCollection* predicted, bool friedel);
     //! Reset the merged peak collection
     void resetMergedPeaks();
     //! Get the merged peak collection
@@ -217,7 +215,7 @@ class Experiment {
     //! Return data quality resolution
     DataResolution* getResolution() { return &_data_resolution; };
     // Return data quality structs for all merged data:
-    const DataQuality& getQuality() { return _data_quality; };
+    DataResolution* getQuality() { return &_data_quality; };
 
     // Objects containing integration parameters. If I construct these on their own in Python,
     // they get destroyed when passed to Experiment, hence the kludgy option of making them
@@ -252,7 +250,7 @@ class Experiment {
     std::unique_ptr<Refiner> _refiner;
 
     // Objects containing quality metrics
-    DataQuality _data_quality; //!< Data quality for whole resolution range
+    DataResolution _data_quality; //!< Data quality for whole resolution range
     DataResolution _data_resolution; //!< Data quality per resolution shell
 };
 
