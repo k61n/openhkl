@@ -18,6 +18,7 @@
 #include "core/shape/PeakCollection.h"
 #include "core/shape/PeakFilter.h"
 #include "gui/MainWin.h"
+#include "gui/detector_window/DetectorWindow.h"
 #include "gui/dialogs/ListNameDialog.h"
 #include "gui/graphics/DetectorScene.h"
 #include "gui/graphics/DetectorView.h"
@@ -516,6 +517,7 @@ void SubframeFilterPeaks::accept()
             ->acceptFilter(dlg->listName().toStdString(), collection);
         gSession->experimentAt(_exp_combo->currentIndex())->generatePeakModel(dlg->listName());
     }
+    emit gGui->detectorWindow()->combosChanged();
 }
 
 void SubframeFilterPeaks::refreshPeakTable()

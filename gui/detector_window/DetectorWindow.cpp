@@ -13,7 +13,6 @@
 //  ***********************************************************************************************
 
 #include "gui/detector_window/DetectorWindow.h"
-
 #include "core/experiment/Experiment.h"
 #include "gui/graphics/DetectorScene.cpp"
 #include "gui/graphics/DetectorView.cpp"
@@ -163,6 +162,8 @@ void DetectorWindow::setInputUp()
     connect(
         _unit_cell_combo, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this,
         &DetectorWindow::setUnitCell);
+
+    connect(this, &DetectorWindow::combosChanged, this, &DetectorWindow::refreshAll);
 
     _control_layout->addWidget(input_spoiler);
 }
