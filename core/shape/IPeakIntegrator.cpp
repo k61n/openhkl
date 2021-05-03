@@ -89,6 +89,7 @@ void IPeakIntegrator::integrate(
             integrated.emplace(std::make_pair(peak, false));
         } catch (...) {
             peak->setSelected(false);
+            peak->setRejectionFlag(RejectionFlag::InvalidRegion);
             continue;
         }
 
@@ -98,11 +99,15 @@ void IPeakIntegrator::integrate(
         auto lo = bb.lower();
         auto hi = bb.upper();
 
-        if (lo[0] < 0 || lo[1] < 0 || lo[2] < 0)
+        if (lo[0] < 0 || lo[1] < 0 || lo[2] < 0) {
             peak->setSelected(false);
+            peak->setRejectionFlag(RejectionFlag::InvalidRegion);
+        }
 
-        if (hi[0] >= data->nCols() || hi[1] >= data->nRows() || hi[2] >= data->nFrames())
+        if (hi[0] >= data->nCols() || hi[1] >= data->nRows() || hi[2] >= data->nFrames()) {
             peak->setSelected(false);
+            peak->setRejectionFlag(RejectionFlag::InvalidRegion);
+        }
     }
 
     // only integrate the peaks with valid integration regions
@@ -143,6 +148,8 @@ void IPeakIntegrator::integrate(
                             _params.peak_end, _params.bkg_begin, _params.bkg_end);
                     } else {
                         peak->setSelected(false);
+                        if (peak->rejectionFlag() != RejectionFlag::NotRejected)
+                            peak->setRejectionFlag(RejectionFlag::IntegrationFailure);
                     }
                 } catch (std::exception& e) {
                     // integration failed...
@@ -150,6 +157,8 @@ void IPeakIntegrator::integrate(
                         Level::Debug, "IPeakIntegrator::integrate: integration failed", e.what());
                     ++nfailures;
                     peak->setSelected(false);
+                    if (peak->rejectionFlag() != RejectionFlag::NotRejected)
+                        peak->setRejectionFlag(RejectionFlag::IntegrationFailure);
                 }
                 // free memory (important!!)
                 regions[peak].reset();

@@ -38,6 +38,7 @@ Peak3D::Peak3D(sptrDataSet data)
     , _caught_by_filter(false)
     , _rejected_by_filter(false)
     , _transmission(1.0)
+    , _rejection_flag(RejectionFlag::NotRejected)
     , _data(data)
     , _rockingCurve()
 {
@@ -302,8 +303,15 @@ void Peak3D::setMillerIndices()
         } catch (std::range_error& e) { // Catch interpolation error for last frame
             _hkl = {0, 0, 0};
             _selected = false;
+            _rejection_flag = RejectionFlag::InterpolationFailure;
         }
     }
+}
+
+void Peak3D::setRejectionFlag(RejectionFlag flag)
+{
+    if (_rejection_flag == RejectionFlag::NotRejected)
+        _rejection_flag = flag;
 }
 
 } // namespace nsx

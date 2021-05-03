@@ -25,6 +25,15 @@ namespace nsx {
 class IPeakIntegrator;
 class MillerIndex;
 
+enum class RejectionFlag {
+    NotRejected,
+    Masked,
+    OutsideThreshold, OutsideFrames, OutsideDetector, // from PeakFinder
+    IntegrationFailure, TooFewPoints, TooFewNeighbours, NoUnitCell, NoDataSet, InvalidRegion, // from integrator
+    InterpolationFailure,
+    Count
+};
+
 /*! \brief A peak object storing real-space information on the peak
  *
  *  This object stores the real-space shape as an Ellipsoid object, including
@@ -138,6 +147,11 @@ class Peak3D {
     double getBkgBegin() { return _bkgBegin; };
     //! Return the end of the background region (in peak scales)
     double getBkgEnd() { return _bkgEnd; };
+    //! Set the reason for this peak being rejected (unselected)
+    void setRejectionFlag(RejectionFlag flag);
+    //! Return the rejection flag
+    RejectionFlag rejectionFlag() { return _rejection_flag; };
+
 
 #ifndef SWIG
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
@@ -175,6 +189,8 @@ class Peak3D {
     bool _rejected_by_filter;
     //! The transmission factor
     double _transmission;
+    //! Reason for rejection
+    nsx::RejectionFlag _rejection_flag;
 
     //! Pointer to the dataset from which this peak is derived
     sptrDataSet _data;

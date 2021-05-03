@@ -42,8 +42,10 @@ bool ISigmaIntegrator::compute(
     const auto& counts = region.peakData().counts();
 
     // TODO: should this be hard-coded??
-    if (events.size() < 29)
+    if (events.size() < 29) {
+        peak->setRejectionFlag(RejectionFlag::TooFewPoints);
         throw std::runtime_error("ISigmaIntegrator::compute(): too few data points in peak");
+    }
 
     std::vector<Intensity> mean_profile;
     Profile1D profile;
@@ -55,6 +57,7 @@ bool ISigmaIntegrator::compute(
         // throws if there are no neighboring peaks within the bounds
         mean_profile = shape_collection->meanProfile1D(DetectorEvent(c), radius(), nFrames());
     } catch (...) {
+        peak->setRejectionFlag(RejectionFlag::TooFewNeighbours);
         return false;
     }
 
