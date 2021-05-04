@@ -217,6 +217,14 @@ QString PeakItem::rejectionReason(nsx::RejectionFlag flag) const
         reason = "Interpolation failed";
         break;
     }
+    case nsx::RejectionFlag::InvalidShape: {
+        reason = "Invalid shape post-refinement"; // TODO: clarify
+        break;
+    }
+    case nsx::RejectionFlag::PredictionUpdateFailure: {
+        reason = "Failure updating prediction"; // TODO: clarify
+        break;
+    }
     default: {
         reason = "";
         break;

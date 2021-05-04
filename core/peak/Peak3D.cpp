@@ -158,6 +158,7 @@ bool Peak3D::selected() const
 void Peak3D::setMasked(bool masked)
 {
     _masked = masked;
+    _rejection_flag = RejectionFlag::Masked;
 }
 
 bool Peak3D::masked() const
@@ -312,7 +313,7 @@ void Peak3D::setMillerIndices()
 
 void Peak3D::setRejectionFlag(RejectionFlag flag)
 {
-    if (_rejection_flag == RejectionFlag::NotRejected)
+    if (_rejection_flag == RejectionFlag::NotRejected) // Only record the intial rejection
         _rejection_flag = flag;
 }
 

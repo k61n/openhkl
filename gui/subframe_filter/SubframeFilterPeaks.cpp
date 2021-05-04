@@ -294,6 +294,7 @@ void SubframeFilterPeaks::setPeakTableUp()
     _peak_table = new PeakTableView(this);
     _peak_collection_model.setRoot(&_peak_collection_item);
     _peak_table->setModel(&_peak_collection_model);
+    _peak_table->resizeColumnsToContents();
 
     peak_grid->addWidget(_peak_table, 0, 0, 0, 0);
 
@@ -531,6 +532,7 @@ void SubframeFilterPeaks::refreshPeakTable()
     _peak_collection_item.setPeakCollection(collection);
     _peak_collection_item.setFilterMode();
     _peak_collection_model.setRoot(&_peak_collection_item);
+    _peak_table->resizeColumnsToContents();
 
     refreshPeakVisual();
 }

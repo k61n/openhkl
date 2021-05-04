@@ -193,6 +193,7 @@ int Refiner::updatePredictions(std::vector<Peak3D*>& peaks) const
         // something wrong with new prediction...
         if (events.size() != 1) {
             peak->setSelected(false);
+            peak->setRejectionFlag(RejectionFlag::PredictionUpdateFailure);
             continue;
         }
 
@@ -202,6 +203,7 @@ int Refiner::updatePredictions(std::vector<Peak3D*>& peaks) const
             ++updated;
         } catch (...) {
             peak->setSelected(false);
+            peak->setRejectionFlag(RejectionFlag::InvalidShape);
         }
     }
     nsxlog(Level::Info, updated, "peaks updated");
