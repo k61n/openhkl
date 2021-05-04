@@ -12,7 +12,7 @@ class TestExperimentFileIO(unittest.TestCase):
 
         # Reference data
         expt_ref = nsx.Experiment(name, detector)
-        expt_ref.loadFromFile("FutA-indexed.nsx")
+        expt_ref.loadFromFile("FutA.nsx")
         expt_ref.saveToFile("test.nsx") # test ExperimentExporter
         found_peaks_ref = expt_ref.getPeakCollection("found")
         filtered_peaks_ref = expt_ref.getPeakCollection("filtered")

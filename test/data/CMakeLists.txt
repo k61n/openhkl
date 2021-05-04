@@ -41,8 +41,7 @@ set(test_files
     p16106_00029303.tiff
     p16106_00029304.tiff
     p16106_00029305.tiff
-    FutA.nsx
-    FutA-indexed.nsx)
+    FutA.nsx)
 
 function(check_file expected_hash fname)
     file(SHA384 ${NSX_TESTDATA_DIR}/${fname} found_hash)
@@ -59,8 +58,7 @@ set(files_ok TRUE)
 list(LENGTH test_files nfiles)
 message(STATUS
     "Checking ${nfiles} test data files in directory NSX_TESTDATA_DIR=${NSX_TESTDATA_DIR}:")
-check_file(5de32c0ca9c309dcd1562a43b7a36f4c991aa76250c0b02affdc7f098354ad1c0036a1a7c55ec3408769069c8327d744  FutA-indexed.nsx)
-check_file(49d11468dece18eebd1171f5e93c5d9c80c276176a36d80af396b0a630cb0a6a373ec6c8c3777697b3b4be012f0bda22  FutA.nsx)
+  check_file(730799d9a70730e396d6755e82c0054e40e96fe5c44a9d27e9a92dde52b12d9a735f1dd4e6bd0cc5426d84ed5ee8151b FutA.nsx)
 check_file(6f9c5b7e053a7f1e8b30f7b3ee39876e96fc1c70e6f1ebd5db61d35395e87b44426aa87cd0735a795179395c6e426742  p16106_00029299.tiff)
 check_file(bcb8d97ffba00141a13025d476349d3d6849fc6f4ede5eb7d5c3bc830c717097869fb65fbb704034d4e85abed16fc5b9  p16106_00029300.tiff)
 check_file(b7634e3f97de7a3532d0dc4f11c1acba897fac209b59bcb4ef0c4a07523a760486cdb31009e69d3c831713e9170698b2  p16106_00029301.tiff)
