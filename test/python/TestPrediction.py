@@ -53,7 +53,7 @@ class TestPrediction(unittest.TestCase):
         expt.integratePredictedPeaks('1d profile integrator', predicted_peaks,
                                     filtered_peaks.shapeCollection(), prediction_params)
 
-        self.assertEqual(predicted_peaks.numberOfPeaks(), 253)
+        self.assertEqual(predicted_peaks.numberOfPeaks(), 985)
         # N.B. These results are not meaningful! The data set is too small to
         # produce a big enough shape library to integrate the predicted peaks,
         # so only a few predicted peaks are added. This should be changed in
