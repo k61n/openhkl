@@ -234,6 +234,9 @@ void ExperimentExporter::writePeaks(const std::map<std::string, PeakCollection*>
         center.setZero(nPeaks, 3);
         metric.setZero(3 * nPeaks, 3);
 
+        // initialize integers
+        int* rejection_flag = new int[nPeaks];
+
         // initialize the booleans
         bool* selected = new bool[nPeaks];
         bool* masked = new bool[nPeaks];
@@ -261,6 +264,8 @@ void ExperimentExporter::writePeaks(const std::map<std::string, PeakCollection*>
             sigma[i] = peak->rawIntensity().sigma();
             mean_bkg_val[i] = peak->meanBackground().value();
             mean_bkg_val[i] = peak->meanBackground().sigma();
+
+            rejection_flag[i] = static_cast<int>(peak->rejectionFlag());
 
             selected[i] = peak->selected();
             masked[i] = peak->masked();
@@ -333,6 +338,11 @@ void ExperimentExporter::writePeaks(const std::map<std::string, PeakCollection*>
             "/PeakCollections/" + collection_name + "/BkgSigma", H5::PredType::NATIVE_DOUBLE,
             peak_space));
         mean_bkg_sig_H5.write(mean_bkg_sig, H5::PredType::NATIVE_DOUBLE, peak_space, peak_space);
+
+        H5::DataSet rejection_H5(file.createDataSet(
+            "/PeakCollections/" + collection_name + "/Rejection", H5::PredType::NATIVE_INT32,
+            peak_space));
+        rejection_H5.write(rejection_flag, H5::PredType::NATIVE_INT32, peak_space, peak_space);
 
         H5::DataSet center_H5(file.createDataSet(
             "/PeakCollections/" + collection_name + "/Center", H5::PredType::NATIVE_DOUBLE,
@@ -415,6 +425,8 @@ void ExperimentExporter::writePeaks(const std::map<std::string, PeakCollection*>
         delete[] sigma;
         delete[] mean_bkg_val;
         delete[] mean_bkg_sig;
+
+        delete[] rejection_flag;
 
         delete[] selected;
         delete[] masked;

@@ -75,6 +75,7 @@ void ExperimentImporter::loadData(Experiment* experiment)
 void ExperimentImporter::loadPeaks(Experiment* experiment)
 {
     using Eigen_double = Eigen::Matrix<double, Eigen::Dynamic, Eigen::RowMajor>;
+    using Eigen_int = Eigen::Matrix<int, Eigen::Dynamic, Eigen::RowMajor>;
     using Eigen_bool = Eigen::Matrix<bool, Eigen::Dynamic, Eigen::RowMajor>;
 
     try {
@@ -113,6 +114,8 @@ void ExperimentImporter::loadPeaks(Experiment* experiment)
             Eigen_double mean_bkg_val(n_peaks);
             Eigen_double mean_bkg_sig(n_peaks);
 
+            Eigen_int rejection_flag(n_peaks);
+
             std::map<std::string, Eigen_double*> double_keys;
             double_keys.insert(std::make_pair("BkgBegin", &bkg_begin));
             double_keys.insert(std::make_pair("BkgEnd", &bkg_end));
@@ -123,6 +126,9 @@ void ExperimentImporter::loadPeaks(Experiment* experiment)
             double_keys.insert(std::make_pair("Sigma", &sigma));
             double_keys.insert(std::make_pair("BkgIntensity", &mean_bkg_val));
             double_keys.insert(std::make_pair("BkgSigma", &mean_bkg_sig));
+
+            std::map<std::string, Eigen_int*> int_keys;
+            int_keys.insert(std::make_pair("Rejection", &rejection_flag));
 
             Eigen_bool predicted(n_peaks);
             Eigen_bool masked(n_peaks);
@@ -148,6 +154,15 @@ void ExperimentImporter::loadPeaks(Experiment* experiment)
                 H5::DataSet data_set = peak_collection.openDataSet(it->first);
                 H5::DataSpace space(data_set.getSpace());
                 data_set.read(it->second->data(), H5::PredType::NATIVE_DOUBLE, space, space);
+            }
+
+            nsxlog(Level::Debug, "Loading integers");
+            // Load all ints
+            for (std::map<std::string, Eigen_int*>::iterator it = int_keys.begin();
+                 it != int_keys.end(); it++) {
+                H5::DataSet data_set = peak_collection.openDataSet(it->first);
+                H5::DataSpace space(data_set.getSpace());
+                data_set.read(it->second->data(), H5::PredType::NATIVE_INT, space, space);
             }
 
             nsxlog(Level::Debug, "Loading booleans");
@@ -243,7 +258,8 @@ void ExperimentImporter::loadPeaks(Experiment* experiment)
 
                 peak->setManually(
                     peak_intensity, peak_end[k], bkg_begin[k], bkg_end[k], scale[k],
-                    transmission[k], peak_mean_bkg, predicted[k], selected[k], masked[k]);
+                    transmission[k], peak_mean_bkg, predicted[k], selected[k], masked[k],
+                    rejection_flag[k]);
 
                 const UnitCell* unit_cell_pointer = experiment->getUnitCell(unit_cells[k]);
                 peak->setUnitCell(unit_cell_pointer);

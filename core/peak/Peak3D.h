@@ -125,7 +125,8 @@ class Peak3D {
     //! Manually set the integration parameters for this peak
     void setManually(
         Intensity intensity, double peakEnd, double bkgBegin, double bkgEnd, double scale,
-        double transmission, Intensity mean_bkg, bool predicted, bool selected, bool masked);
+        double transmission, Intensity mean_bkg, bool predicted, bool selected, bool masked,
+        int rejection_flag);
 
     //! Update the integration parameters for this peak
     void updateIntegration(
@@ -150,7 +151,7 @@ class Peak3D {
     //! Set the reason for this peak being rejected (unselected)
     void setRejectionFlag(RejectionFlag flag);
     //! Return the rejection flag
-    RejectionFlag rejectionFlag() { return _rejection_flag; };
+    RejectionFlag rejectionFlag() const { return _rejection_flag; };
 
 
 #ifndef SWIG
