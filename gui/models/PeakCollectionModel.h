@@ -61,11 +61,10 @@ class PeakCollectionModel : public QAbstractTableModel {
         Numor,
         uc,
         d,
-        Selected,
         Rejection,
         Count,
     };
-    //! The sorthing of the peaks
+    //! The sorting of the peaks
     void sort(int column, Qt::SortOrder order) override;
 
  public:
