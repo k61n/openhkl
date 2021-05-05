@@ -154,6 +154,8 @@ class Peak3D {
     void setRejectionFlag(RejectionFlag flag);
     //! Return the rejection flag
     RejectionFlag rejectionFlag() const { return _rejection_flag; };
+    //! Return a string explaining the rejection
+    std::string rejectionString() const;
 
 
 #ifndef SWIG
@@ -199,6 +201,9 @@ class Peak3D {
     sptrDataSet _data;
     //! Peak profile along frame (rotation) axis
     std::vector<Intensity> _rockingCurve;
+
+    //! Map of rejection flag descriptions
+    static const std::map<RejectionFlag, std::string> _rejection_map;
 };
 
 using sptrPeak3D = std::shared_ptr<Peak3D>;

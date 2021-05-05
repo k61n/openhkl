@@ -25,6 +25,23 @@
 
 namespace nsx {
 
+const std::map<RejectionFlag, std::string> Peak3D::_rejection_map {
+    {RejectionFlag::NotRejected, "Not rejected"},
+    {RejectionFlag::Masked, "Masked by user"},
+    {RejectionFlag::OutsideThreshold, "Too many or few detector counts"},
+    {RejectionFlag::OutsideFrames, "Peak centre outside frame range"},
+    {RejectionFlag::OutsideDetector, "Peak centre outside detector image"},
+    {RejectionFlag::IntegrationFailure, "Integration failed"},
+    {RejectionFlag::TooFewPoints, "Too few points to integrate"},
+    {RejectionFlag::TooFewNeighbours, "Too few neighbouring profiles for profile integration"},
+    {RejectionFlag::NoUnitCell, "No unit cell assigned"},
+    {RejectionFlag::NoDataSet, "No associated data set"},
+    {RejectionFlag::InvalidRegion, "Invalid integration region"},
+    {RejectionFlag::InterpolationFailure, "Frame interpolation failed"},
+    {RejectionFlag::InvalidShape, "Invalid shape post-refinement"},
+    {RejectionFlag::PredictionUpdateFailure, "Failure updating prediction post-refinement"}
+};
+
 Peak3D::Peak3D(sptrDataSet data)
     : _shape()
     , _peakEnd(4.0)
@@ -315,6 +332,11 @@ void Peak3D::setRejectionFlag(RejectionFlag flag)
 {
     if (_rejection_flag == RejectionFlag::NotRejected) // Only record the intial rejection
         _rejection_flag = flag;
+}
+
+std::string Peak3D::rejectionString() const
+{
+    return _rejection_map.find(_rejection_flag)->second;
 }
 
 } // namespace nsx
