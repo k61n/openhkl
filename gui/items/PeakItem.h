@@ -21,6 +21,23 @@
 
 #include <QStandardItem>
 
+enum Column {
+    h,
+    k,
+    l,
+    px,
+    py,
+    frame,
+    intensity,
+    sigmaIntensity,
+    strength,
+    numor,
+    unitCell,
+    d,
+    Selected,
+    Count
+};
+
 enum PeakDisplayModes { VALID, FILTER };
 
 class PeakItem : public QStandardItem {
