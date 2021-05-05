@@ -36,8 +36,8 @@ const std::map<RejectionFlag, std::string> Peak3D::_rejection_map {
     {RejectionFlag::TooFewNeighbours, "Too few neighbouring profiles for profile integration"},
     {RejectionFlag::NoUnitCell, "No unit cell assigned"},
     {RejectionFlag::NoDataSet, "No associated data set"},
-    {RejectionFlag::InvalidRegion, "Invalid integration region"},
-    {RejectionFlag::InterpolationFailure, "Frame interpolation failed"},
+    {RejectionFlag::InvalidRegion, "Integration region extends beyond image/frame range"},
+    {RejectionFlag::InterpolationFailure, "Frame coordinate interpolation failed"},
     {RejectionFlag::InvalidShape, "Invalid shape post-refinement"},
     {RejectionFlag::PredictionUpdateFailure, "Failure updating prediction post-refinement"}
 };
