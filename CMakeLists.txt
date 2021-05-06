@@ -33,8 +33,9 @@ option(NSX_TIDY "Upon 'make', clang-tidy will print warnings as specified in .cl
 set(NSX_TESTDATA_URL https://computing.mlz-garching.de/download/testdata/nsx)
 if (BUILD_TESTING)
     if(NOT DEFINED NSX_TESTDATA_DIR)
-        message(FATAL_ERROR "Missing -DNSX_TESTDATA_DIR=<path>"
-              " where <path> should point to directory that contains copy of ${NSX_TESTDATA_URL}")
+        set(NSX_TESTDATA_DIR "test/data")
+        # message(FATAL_ERROR "Missing -DNSX_TESTDATA_DIR=<path>"
+        #       " where <path> should point to directory that contains copy of ${NSX_TESTDATA_URL}")
     elseif(NOT IS_DIRECTORY ${NSX_TESTDATA_DIR})
         message(FATAL_ERROR "Directory NSX_TESTDATA_DIR=${NSX_TESTDATA_DIR} does not exist")
     else()
@@ -42,7 +43,7 @@ if (BUILD_TESTING)
     endif()
 endif()
 # Cache the variable. The default value, required by set(..CACHE..) syntax,  will never be used.
-set(NSX_TESTDATA_DIR /testdata CACHE PATH "Directory where to cache test data")
+# set(NSX_TESTDATA_DIR /testdata CACHE PATH "Directory where to cache test data")
 
 # Check compatibility of options
 if(NSX_TIDY AND NSX_PYTHON)
