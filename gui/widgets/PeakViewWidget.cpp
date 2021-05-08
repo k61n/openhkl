@@ -67,6 +67,7 @@ QDoubleSpinBox* PeakViewWidget::addDoubleSpinBox(int row, double value)
 {
     auto spinbox = new QDoubleSpinBox();
     spinbox->setValue(value);
+    spinbox->setSingleStep(0.1);
     addWidget(spinbox, row, 1, 1, 1);
     connect(
         spinbox, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged), this,

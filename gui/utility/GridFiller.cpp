@@ -84,6 +84,7 @@ QDoubleSpinBox* GridFiller::addDoubleSpinBox(const QString& labelText, const QSt
     addLabel(labelText, labelTooltip);
 
     auto* spinBox = new QDoubleSpinBox();
+    spinBox->setSingleStep(0.1);
     _mainLayout->addWidget(spinBox, _nextRow, 1, 1, -1);
 
     _nextRow++;

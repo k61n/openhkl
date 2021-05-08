@@ -156,7 +156,9 @@ void SubframeMergedPeaks::setDShellUp()
     _save_shell = new QPushButton("Save");
 
     _d_min->setValue(1.5);
+    _d_min->setSingleStep(0.1);
     _d_max->setValue(50);
+    _d_max->setSingleStep(0.1);
     _d_shells->setValue(10);
     _friedel->setChecked(true);
 
