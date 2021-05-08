@@ -44,17 +44,24 @@ set(test_files
     FutA.nsx
     FutA-indexed.nsx)
 
+set(NSX_TESTDATA_URL https://computing.mlz-garching.de/download/testdata/nsx)
+
 function(check_file expected_hash fname)
-    file(SHA384 ${NSX_TESTDATA_DIR}/${fname} found_hash)
-    if(NOT (${found_hash} STREQUAL ${expected_hash}))
-        message(STATUS "- File ${fname} not found or corrupted")
-        set(files_ok FALSE PARENT_SCOPE)
+    if(NOT EXISTS ${NSX_TESTDATA_DIR}/${fname})
+        message(STATUS "File ${fname} not found, downloading...")
+        file(DOWNLOAD ${NSX_TESTDATA_URL}/${fname} ${NSX_TESTDATA_DIR}/${fname})
     else()
-        configure_file(${NSX_TESTDATA_DIR}/${fname} ${fname} COPYONLY)
+        file(SHA384 ${NSX_TESTDATA_DIR}/${fname} found_hash)
+        if(NOT (${found_hash} STREQUAL ${expected_hash}))
+            message(STATUS "- File ${fname} corrupted, downloading...")
+            file(DOWNLOAD ${NSX_TESTDATA_URL}/${fname} ${NSX_TESTDATA_DIR}/${fname})
+        else()
+            if (NOT ${NSX_TESTDATA_DIR} STREQUAL "test/data")
+                configure_file(${NSX_TESTDATA_DIR}/${fname} ${fname} COPYONLY)
+            endif()
+        endif()
     endif()
 endfunction()
-
-set(files_ok TRUE)
 
 list(LENGTH test_files nfiles)
 message(STATUS
@@ -68,10 +75,3 @@ check_file(d7551c196a513853575f5f79f755e64cfa263fc1cb381780e86fc3d6c5d8b531e77e0
 check_file(b44f01e8154c91e8ff821c0818982e1643931f9f124e2a7463cd0b940f06c9312f570ac2c80715cd519ddd7a92e6bd87  p16106_00029303.tiff)
 check_file(4752be16363af29ff6066879f990f4f0d29cb8a59e1c8328cf1c569c82cc471982354b712970ea1f120ca855b2d48224  p16106_00029304.tiff)
 check_file(ad70d1b3adbdaa94dc96070daa7b206e5114097009b9dc0b2fa8cec9d0fcc5b66d9b2144ef76b93bbfe1e52ccd275f61  p16106_00029305.tiff)
-
-if(NOT files_ok)
-    message(FATAL "\nSome test data files not found or corrupted, as listed just above.\n"
-        "Invoke CMake with -D NSX_TESTDATA_DIR=<directory> to indicate a directory\n"
-        "that contains all test data files from ${NSX_TESTDATA_URL}")
-endif()
-message(STATUS "- ok, all test data files present with correct checksum")
