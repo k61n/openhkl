@@ -74,9 +74,6 @@ class DetectorWindow : public QDialog {
  public slots:
      void setUnitCell();
 
- signals:
-    void combosChanged();
-
  private:
     void changeSelected(PeakItemGraphic* peak_graphic);
 

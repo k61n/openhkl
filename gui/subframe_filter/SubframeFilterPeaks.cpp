@@ -517,7 +517,7 @@ void SubframeFilterPeaks::accept()
             ->acceptFilter(dlg->listName().toStdString(), collection);
         gSession->experimentAt(_exp_combo->currentIndex())->generatePeakModel(dlg->listName());
     }
-    emit gGui->detectorWindow()->combosChanged();
+    gGui->detectorWindow()->refreshAll();
 }
 
 void SubframeFilterPeaks::refreshPeakTable()

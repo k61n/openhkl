@@ -163,8 +163,6 @@ void DetectorWindow::setInputUp()
         _unit_cell_combo, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this,
         &DetectorWindow::setUnitCell);
 
-    connect(this, &DetectorWindow::combosChanged, this, &DetectorWindow::refreshAll);
-
     _control_layout->addWidget(input_spoiler);
 }
 
