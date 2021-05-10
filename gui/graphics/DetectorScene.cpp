@@ -849,14 +849,25 @@ void DetectorScene::getIntegrationMask(PeakCollectionModel* model, Eigen::Matrix
 
     std::vector<PeakItem*> peak_items = model->root()->peakItems();
 
+    double peak_end, bkg_begin, bkg_end;
     for (PeakItem* peak_item : peak_items) {
         nsx::Peak3D* peak = peak_item->peak();
         if (peak_item->peak()->enabled()) {
-            // IntegrationRegion constructor can throw if the region is invalid
-            try {
-                nsx::IntegrationRegion region(
-                    peak, peak_item->peak()->peakEnd(), peak_item->peak()->bkgBegin(),
-                    peak_item->peak()->bkgEnd());
+            if (_preview_int_regions_1 && model == _peak_model_1) {
+                peak_end = _peak_end_1;
+                bkg_begin = _bkg_begin_1;
+                bkg_end = _bkg_end_1;
+            } else if (_preview_int_regions_2 && model == _peak_model_2) {
+                peak_end = _peak_end_2;
+                bkg_begin = _bkg_begin_2;
+                bkg_end = _bkg_end_2;
+            } else {
+                peak_end = peak_item->peak()->peakEnd();
+                bkg_begin = peak_item->peak()->bkgBegin();
+                bkg_end = peak_item->peak()->bkgEnd();
+            }
+            try { // IntegrationRegion constructor can throw if the region is invalid
+                nsx::IntegrationRegion region(peak, peak_end, bkg_begin, bkg_end);
                 region.updateMask(mask, _currentFrameIndex);
             } catch (...) {
                 peak_item->peak()->setSelected(false);
@@ -869,12 +880,20 @@ void DetectorScene::initIntRegionFromPeakWidget(
     const PeakViewWidget::Set& set, bool alt /* = false */)
 {
     if (!alt) {
+        _preview_int_regions_1 = set.previewIntRegion->isChecked();
+        _peak_end_1 = set.peakEnd->value();
+        _bkg_begin_1 = set.bkgBegin->value();
+        _bkg_end_1 = set.bkgEnd->value();
         _drawIntegrationRegion1 = set.drawIntegrationRegion->isChecked();
         _peakPxColor1 = set.colorIntPeak->color();
         _bkgPxColor1 = set.colorIntBkg->color();
         _peakPxColor1.setAlphaF(set.alphaIntegrationRegion->value());
         _bkgPxColor1.setAlphaF(set.alphaIntegrationRegion->value());
     } else { // alternative colour scheme for second overlay
+        _preview_int_regions_2 = set.previewIntRegion->isChecked();
+        _peak_end_2 = set.peakEnd->value();
+        _bkg_begin_2 = set.bkgBegin->value();
+        _bkg_end_2 = set.bkgEnd->value();
         _drawIntegrationRegion2 = set.drawIntegrationRegion->isChecked();
         _peakPxColor2 = set.colorIntPeak->color();
         _bkgPxColor2 = set.colorIntBkg->color();

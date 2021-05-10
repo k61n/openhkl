@@ -21,7 +21,8 @@
 #include <QLabel>
 #include <QSpinBox>
 
-PeakViewWidget::PeakViewWidget(const QString& titleSet1, const QString& titleSet2)
+PeakViewWidget::PeakViewWidget(const QString& titleSet1, const QString& titleSet2) :
+    _peak_end(3.0), _bkg_begin(3.0), _bkg_end(6.0)
 {
     createSet(set1, titleSet1, Qt::green);
     addIntegrationRegion(set1, Qt::green, Qt::yellow);
@@ -123,6 +124,14 @@ void PeakViewWidget::addIntegrationRegion(Set& set, const QColor& peak, const QC
     addLabel(row, "Colour");
     set.colorIntPeak = addColorButton(row, 1, peak);
     set.colorIntBkg = addColorButton(row++, 2, bkg);
+    set.previewIntRegion =
+        addCheckBox(row++, 1, "Preview Integration Region", Qt::CheckState::Unchecked);
+    addLabel(row, "Peak end");
+    set.peakEnd = addDoubleSpinBox(row++, _peak_end);
+    addLabel(row, "Background begin");
+    set.bkgBegin = addDoubleSpinBox(row++, _bkg_begin);
+    addLabel(row, "Background end");
+    set.bkgEnd = addDoubleSpinBox(row++, _bkg_end);
 }
 
 void PeakViewWidget::Set::setColor(const QColor& color)
@@ -138,4 +147,11 @@ void PeakViewWidget::Set::setIntegrationRegionColors(
     colorIntPeak->setColor(peak);
     colorIntBkg->setColor(bkg);
     alphaIntegrationRegion->setValue(alpha);
+}
+
+void PeakViewWidget::Set::setIntegrationBounds(double peak_end, double bkg_begin, double bkg_end)
+{
+    peakEnd->setValue(peak_end);
+    bkgBegin->setValue(bkg_begin);
+    bkgEnd->setValue(bkg_end);
 }

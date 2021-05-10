@@ -203,11 +203,23 @@ class DetectorScene : public QGraphicsScene {
     QColor _bkgPxColor1;
     //! Colour of background pixels in integration region (second overlay)
     QColor _bkgPxColor2;
+    //! Toggle preview of integration region rather than using regions defined from peaks
+    bool _preview_int_regions_1;
+    bool _preview_int_regions_2;
+    //! Integration Region bounds
+    double _peak_end_1;
+    double _bkg_begin_1;
+    double _bkg_end_1;
+    double _peak_end_2;
+    double _bkg_begin_2;
+    double _bkg_end_2;
 
     //! Colour of 3rd party peaks
     QColor _3rdparty_color;
     //! Size of 3rd party peaks
     int _3rdparty_size;
+
+
 
     nsx::Peak3D* _selected_peak;
 

@@ -197,6 +197,18 @@ void SubframePredictPeaks::setPreviewUp()
         _peak_view_widget, &PeakViewWidget::settingsChanged, this,
         &SubframePredictPeaks::refreshPeakVisual);
 
+    connect(
+        _peak_view_widget->set1.peakEnd, qOverload<double>(&QDoubleSpinBox::valueChanged),
+        _peak_end_int, &QDoubleSpinBox::setValue);
+
+    connect(
+        _peak_view_widget->set1.bkgBegin, qOverload<double>(&QDoubleSpinBox::valueChanged),
+        _bkg_start_int, &QDoubleSpinBox::setValue);
+
+    connect(
+        _peak_view_widget->set1.bkgEnd, qOverload<double>(&QDoubleSpinBox::valueChanged),
+        _bkg_end_int, &QDoubleSpinBox::setValue);
+
     _preview_box->setContentLayout(*_peak_view_widget);
 
     _left_layout->addWidget(_preview_box);

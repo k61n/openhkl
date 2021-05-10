@@ -186,6 +186,18 @@ void SubframeFindPeaks::setPreviewUp()
         _peak_view_widget, &PeakViewWidget::settingsChanged, this,
         &SubframeFindPeaks::refreshPeakVisual);
 
+    connect(
+        _peak_view_widget->set1.peakEnd, qOverload<double>(&QDoubleSpinBox::valueChanged),
+        _peak_area, &QDoubleSpinBox::setValue);
+
+    connect(
+        _peak_view_widget->set1.bkgBegin, qOverload<double>(&QDoubleSpinBox::valueChanged),
+        _bkg_lower, &QDoubleSpinBox::setValue);
+
+    connect(
+        _peak_view_widget->set1.bkgEnd, qOverload<double>(&QDoubleSpinBox::valueChanged),
+        _bkg_upper, &QDoubleSpinBox::setValue);
+
     _live_check = new QCheckBox("Apply threshold to preview");
     // _peak_view_widget->addWidget(_live_check, 8, 0, 1, 3);
     // Not sure what the _live_check widget does - zamaan

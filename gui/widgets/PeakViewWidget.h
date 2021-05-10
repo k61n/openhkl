@@ -40,10 +40,15 @@ class PeakViewWidget : public QGridLayout {
         ColorButton* colorBkg;
         ColorButton* colorIntPeak;
         ColorButton* colorIntBkg;
+        QCheckBox* previewIntRegion;
+        QDoubleSpinBox* peakEnd;
+        QDoubleSpinBox* bkgBegin;
+        QDoubleSpinBox* bkgEnd;
 
         //! Set the color of all three color buttons at once
         void setColor(const QColor& color);
         void setIntegrationRegionColors(const QColor& peak, const QColor& bkg, double alpha);
+        void setIntegrationBounds(double peak_end, double bkg_begin, double bkg_end);
 
     } set1, set2;
 
@@ -60,6 +65,10 @@ class PeakViewWidget : public QGridLayout {
     QSpinBox* addSpinBox(int row, int value);
     QDoubleSpinBox* addDoubleSpinBox(int row, double value);
     ColorButton* addColorButton(int row, int col, const QColor& color);
+
+    double _peak_end;
+    double _bkg_begin;
+    double _bkg_end;
 };
 
 #endif // NSX_GUI_UTILITY_PEAKVIEWWIDGET_H
