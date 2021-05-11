@@ -25,6 +25,23 @@
 
 namespace nsx {
 
+const std::map<RejectionFlag, std::string> Peak3D::_rejection_map {
+    {RejectionFlag::NotRejected, "Not rejected"},
+    {RejectionFlag::Masked, "Masked by user"},
+    {RejectionFlag::OutsideThreshold, "Too many or few detector counts"},
+    {RejectionFlag::OutsideFrames, "Peak centre outside frame range"},
+    {RejectionFlag::OutsideDetector, "Peak centre outside detector image"},
+    {RejectionFlag::IntegrationFailure, "Integration failed"},
+    {RejectionFlag::TooFewPoints, "Too few points to integrate"},
+    {RejectionFlag::TooFewNeighbours, "Too few neighbouring profiles for profile integration"},
+    {RejectionFlag::NoUnitCell, "No unit cell assigned"},
+    {RejectionFlag::NoDataSet, "No associated data set"},
+    {RejectionFlag::InvalidRegion, "Integration region extends beyond image/frame range"},
+    {RejectionFlag::InterpolationFailure, "Frame coordinate interpolation failed"},
+    {RejectionFlag::InvalidShape, "Invalid shape post-refinement"},
+    {RejectionFlag::PredictionUpdateFailure, "Failure updating prediction post-refinement"}
+};
+
 Peak3D::Peak3D(sptrDataSet data)
     : _shape()
     , _peakEnd(4.0)
@@ -38,6 +55,7 @@ Peak3D::Peak3D(sptrDataSet data)
     , _caught_by_filter(false)
     , _rejected_by_filter(false)
     , _transmission(1.0)
+    , _rejection_flag(RejectionFlag::NotRejected)
     , _data(data)
     , _rockingCurve()
 {
@@ -157,6 +175,7 @@ bool Peak3D::selected() const
 void Peak3D::setMasked(bool masked)
 {
     _masked = masked;
+    _rejection_flag = RejectionFlag::Masked;
 }
 
 bool Peak3D::masked() const
@@ -254,7 +273,8 @@ void Peak3D::rejectYou(bool reject)
 
 void Peak3D::setManually(
     Intensity intensity, double peakEnd, double bkgBegin, double bkgEnd, double scale,
-    double transmission, Intensity mean_bkg, bool predicted, bool selected, bool masked)
+    double transmission, Intensity mean_bkg, bool predicted, bool selected, bool masked,
+    int rejection_flag)
 {
     _peakEnd = peakEnd;
     _bkgBegin = bkgBegin;
@@ -266,6 +286,7 @@ void Peak3D::setManually(
     _transmission = transmission;
     _meanBackground = mean_bkg;
     _rawIntensity = intensity;
+    _rejection_flag = static_cast<RejectionFlag>(rejection_flag);
 }
 
 
@@ -302,8 +323,20 @@ void Peak3D::setMillerIndices()
         } catch (std::range_error& e) { // Catch interpolation error for last frame
             _hkl = {0, 0, 0};
             _selected = false;
+            _rejection_flag = RejectionFlag::InterpolationFailure;
         }
     }
+}
+
+void Peak3D::setRejectionFlag(RejectionFlag flag)
+{
+    if (_rejection_flag == RejectionFlag::NotRejected) // Only record the intial rejection
+        _rejection_flag = flag;
+}
+
+std::string Peak3D::rejectionString() const
+{
+    return _rejection_map.find(_rejection_flag)->second;
 }
 
 } // namespace nsx

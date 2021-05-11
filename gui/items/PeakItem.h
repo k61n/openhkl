@@ -28,7 +28,6 @@ class PeakItem : public QStandardItem {
     PeakItem(nsx::Peak3D* peak);
     ~PeakItem() = default;
 
- public:
     double peak_d() const;
     double intensity() const;
     double sigma_intensity() const;
@@ -54,11 +53,12 @@ class PeakItem : public QStandardItem {
         Numor,
         uc,
         d,
-        Selected,
+        Rejection,
         Count
     };
     //! Whether the peak was caught by the filter
     bool caughtByFilter() const;
+    QString rejectionReason(nsx::RejectionFlag flag) const;
 
  private:
     //! pointer to the data

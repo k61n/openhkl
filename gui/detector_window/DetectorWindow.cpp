@@ -123,11 +123,13 @@ void DetectorWindow::setPeakTableUp()
     _peak_table_1 = new ShortTable(this);
     _peak_collection_model_1.setRoot(&_peak_collection_item_1);
     _peak_table_1->setModel(&_peak_collection_model_1);
+    _peak_table_1->resizeColumnsToContents();
     _peak_table_1->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Minimum);
 
     _peak_table_2 = new ShortTable(this, _peak_table_1->height());
     _peak_collection_model_2.setRoot(&_peak_collection_item_2);
     _peak_table_2->setModel(&_peak_collection_model_2);
+    _peak_table_2->resizeColumnsToContents();
     _peak_table_2->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Minimum);
 
     table_layout->addWidget(_peak_table_1);
@@ -290,12 +292,14 @@ void DetectorWindow::refreshPeakTable()
     _detector_view->getScene()->clearPeakItems();
     _peak_collection_item_1.setPeakCollection(_peak_collection_1);
     _peak_collection_model_1.setRoot(&_peak_collection_item_1);
+    _peak_table_1->resizeColumnsToContents();
 
     QString collection_2 = _peak_combo_2->currentText();
     if (!collection_2.isEmpty()) {
         _peak_collection_2 = expt->getPeakCollection(collection_2.toStdString());
         _peak_collection_item_2.setPeakCollection(_peak_collection_2);
         _peak_collection_model_2.setRoot(&_peak_collection_item_2);
+        _peak_table_2->resizeColumnsToContents();
     }
 
     refreshDetectorView();

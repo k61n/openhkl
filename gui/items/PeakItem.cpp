@@ -125,8 +125,8 @@ QVariant PeakItem::peakData(const QModelIndex& index, int role, PeakDisplayModes
                 case Column::d: {
                     return peak_d();
                 }
-                case Column::Selected: {
-                    return selected();
+                case Column::Rejection: {
+                    return QString::fromStdString(_peak->rejectionString());
                 }
             }
             break;
@@ -163,4 +163,64 @@ QVariant PeakItem::peakData(const QModelIndex& index, int role, PeakDisplayModes
 bool PeakItem::caughtByFilter() const
 {
     return _peak->caughtByFilter();
+}
+
+QString PeakItem::rejectionReason(nsx::RejectionFlag flag) const
+{
+    std::string reason;
+    switch (flag) {
+    case nsx::RejectionFlag::NotRejected: {
+        reason = "Not rejected";
+        break;
+    }
+    case nsx::RejectionFlag::Masked: {
+        reason = "Masked by user";
+        break;
+    }
+    case nsx::RejectionFlag::OutsideThreshold: {
+        reason = "Too many or few detector counts";
+        break;
+    }
+    case nsx::RejectionFlag::OutsideFrames: {
+        reason = "Peak centre outside frame range";
+        break;
+    }
+    case nsx::RejectionFlag::OutsideDetector: {
+        reason = "Peak centre outside detector image";
+        break;
+    }
+    case nsx::RejectionFlag::IntegrationFailure: {
+        reason = "Integration failed";
+        break;
+    }
+    case nsx::RejectionFlag::TooFewPoints: {
+        reason = "Too few points to integrate";
+        break;
+    }
+    case nsx::RejectionFlag::TooFewNeighbours: {
+        reason = "Too few neighbouring profiles for profile integration";
+        break;
+    }
+    case nsx::RejectionFlag::NoUnitCell: {
+        reason = "No unit cell";
+        break;
+    }
+    case nsx::RejectionFlag::NoDataSet: {
+        reason = "No data set associated";
+        break;
+    }
+    case nsx::RejectionFlag::InvalidRegion: {
+        reason = "Invalid integration region";
+        break;
+    }
+    case nsx::RejectionFlag::InterpolationFailure: {
+        reason = "Interpolation failed";
+        break;
+    }
+    default: {
+        reason = "";
+        break;
+    }
+    }
+    return QString::fromStdString(reason);
 }

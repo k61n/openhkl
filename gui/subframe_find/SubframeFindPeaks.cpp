@@ -260,6 +260,7 @@ void SubframeFindPeaks::setPeakTableUp()
     _peak_table = new PeakTableView(this);
     _peak_collection_model.setRoot(&_peak_collection_item);
     _peak_table->setModel(&_peak_collection_model);
+    _peak_table->resizeColumnsToContents();
 
     _peak_table->setColumnHidden(0, true);
     _peak_table->setColumnHidden(1, true);
@@ -582,6 +583,7 @@ void SubframeFindPeaks::refreshPeakTable()
     _peak_collection.populate(peaks);
     _peak_collection_item.setPeakCollection(&_peak_collection);
     _peak_collection_model.setRoot(&_peak_collection_item);
+    _peak_table->resizeColumnsToContents();
 
     _peak_table->setColumnHidden(0, true);
     _peak_table->setColumnHidden(1, true);

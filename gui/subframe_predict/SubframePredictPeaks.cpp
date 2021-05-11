@@ -271,6 +271,7 @@ void SubframePredictPeaks::setPeakTableUp()
     _peak_table = new PeakTableView(this);
     _peak_collection_model.setRoot(&_peak_collection_item);
     _peak_table->setModel(&_peak_collection_model);
+    _peak_table->resizeColumnsToContents();
 
     peak_grid->addWidget(_peak_table, 0, 0, 0, 0);
     _right_element->addWidget(peak_group);
@@ -532,6 +533,7 @@ void SubframePredictPeaks::refreshPeakTable()
 
     _figure_view->getScene()->clearPeakItems();
     _peak_collection_model.setRoot(&_peak_collection_item);
+    _peak_table->resizeColumnsToContents();
     refreshPeakVisual();
 }
 

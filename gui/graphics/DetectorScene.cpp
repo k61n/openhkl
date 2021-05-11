@@ -870,7 +870,7 @@ void DetectorScene::getIntegrationMask(PeakCollectionModel* model, Eigen::Matrix
                 nsx::IntegrationRegion region(peak, peak_end, bkg_begin, bkg_end);
                 region.updateMask(mask, _currentFrameIndex);
             } catch (...) {
-                peak_item->peak()->setSelected(false);
+                continue;
             }
         }
     }

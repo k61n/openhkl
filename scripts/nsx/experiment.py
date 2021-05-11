@@ -302,7 +302,7 @@ class Experiment:
         params.bkg_begin = self._params.prediction['prediction_bkg_begin']
         params.bkg_end = self._params.prediction['prediction_bkg_end']
         params.peak_end = self._params.prediction['prediction_scale']
-        params.set_fit_center = self._params.prediction['set_fit_center']
+        params.fit_center = self._params.prediction['fit_center']
         params.fit_covariance = self._params.prediction['fit_covariance']
 
         self.log(f"d_min = {self._params.prediction['prediction_d_min']}")

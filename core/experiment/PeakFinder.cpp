@@ -668,17 +668,20 @@ void PeakFinder::find(const DataList numors)
             if (extents.maxCoeff() > peaksTooLargeLimit
                 || extents.minCoeff() < peaksTooSmallLimit) {
                 p->setSelected(false);
+                p->setRejectionFlag(RejectionFlag::OutsideThreshold);
                 ++numPeaksTooSmallOrLarge;
             }
 
             if (extents(2) > _maxFrames) {
                 p->setSelected(false);
+                p->setRejectionFlag(RejectionFlag::OutsideFrames);
                 ++numPeaksOutsideFrames;
             }
 
             // peak's bounding box not completely contained in detector image
             if (!dAABB.contains(p->shape().aabb())) {
                 p->setSelected(false);
+                p->setRejectionFlag(RejectionFlag::OutsideDetector);
                 ++numPeaksNotInDetArea;
             }
 

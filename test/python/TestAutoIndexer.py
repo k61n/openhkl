@@ -11,8 +11,8 @@ class TestAutoIndexer(unittest.TestCase):
         detector = "BioDiff5000"
         expt = nsx.Experiment(name, detector)
 
-        expt.loadFromFile("FutA.nsx")
-        found_peaks = expt.getPeakCollection("found")
+        expt.loadFromFile("FutA-2.nsx")
+        found_peaks = expt.getPeakCollection("peaks")
         n_peaks = found_peaks.numberOfPeaks()
         self.assertEqual(n_peaks, 269)
 
@@ -20,8 +20,8 @@ class TestAutoIndexer(unittest.TestCase):
         filter = expt.peakFilter()
         filter.setFilterStrength(True)
         filter.setFilterDRange(True)
-        filter.setDRange(1.5, 50.0)
-        filter.setStrength(5.0, 1.0e7)
+        filter.setDRange(1.55, 50.0)
+        filter.setStrength(1.0, 1.0e7)
         filter.filter(found_peaks)
         expt.acceptFilter("filtered", found_peaks)
         filtered_peaks = expt.getPeakCollection("filtered")
@@ -31,7 +31,7 @@ class TestAutoIndexer(unittest.TestCase):
 
         # Autoindex the peaks
         autoindexer = expt.autoIndexer()
-        expt.setReferenceCell(39.544, 78.325, 47.894, 90.0, 97.358, 90.0)
+        expt.setReferenceCell(39.66, 78.19, 47.02, 90.0, 97.358, 90.0)
         autoindexer_params = nsx.IndexerParameters()
         autoindexer_params.maxdim = 200.0
         autoindexer_params.nSolutions = 15
@@ -45,7 +45,7 @@ class TestAutoIndexer(unittest.TestCase):
         # accepted_cell = expt.getAcceptedCell()
         # print("Reference cell = " + reference_cell.toString())
         # print(autoindexer.solutionsToString())
-        self.assertTrue(expt.checkAndAssignUnitCell(filtered_peaks, 0.5, 0.5))  # boolean return value
+        self.assertTrue(expt.checkAndAssignUnitCell(filtered_peaks, 1.0, 1.0))  # boolean return value
 
 if __name__ == "__main__":
     unittest.main()

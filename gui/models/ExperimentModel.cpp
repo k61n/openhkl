@@ -124,10 +124,10 @@ QVariant ExperimentModel::headerData(int section, Qt::Orientation orientation, i
                 return QString("Instrument");
             }
             case 2: {
-                return QString("Data");
+                return QString("Data sets");
             }
             case 3: {
-                return QString("Peaks");
+                return QString("Peak collections");
             }
             case 4: {
                 return QString("Unit cells");

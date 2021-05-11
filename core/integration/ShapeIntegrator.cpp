@@ -35,10 +35,14 @@ bool ShapeIntegrator::compute(
     auto uc = peak->unitCell();
     auto data = peak->dataSet();
 
-    if (!uc)
+    if (!uc) {
+        peak->setRejectionFlag(RejectionFlag::NoUnitCell);
         throw std::runtime_error("ShapeIntegrator: Peak must have unit cell attached");
-    if (!data)
+    }
+    if (!data) {
+        peak->setRejectionFlag(RejectionFlag::NoDataSet);
         throw std::runtime_error("ShapeIntegrator: Peak must have data set attached");
+    }
 
     PixelSumIntegrator::compute(peak, shape_collection, region);
 

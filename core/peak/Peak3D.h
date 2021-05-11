@@ -25,6 +25,17 @@ namespace nsx {
 class IPeakIntegrator;
 class MillerIndex;
 
+enum class RejectionFlag {
+    NotRejected,
+    Masked,
+    OutsideThreshold, OutsideFrames, OutsideDetector, // from PeakFinder
+    IntegrationFailure, TooFewPoints, TooFewNeighbours, NoUnitCell, NoDataSet, InvalidRegion,
+    // from integrator
+    InterpolationFailure,
+    InvalidShape, PredictionUpdateFailure, // from refiner
+    Count
+};
+
 /*! \brief A peak object storing real-space information on the peak
  *
  *  This object stores the real-space shape as an Ellipsoid object, including
@@ -116,7 +127,8 @@ class Peak3D {
     //! Manually set the integration parameters for this peak
     void setManually(
         Intensity intensity, double peakEnd, double bkgBegin, double bkgEnd, double scale,
-        double transmission, Intensity mean_bkg, bool predicted, bool selected, bool masked);
+        double transmission, Intensity mean_bkg, bool predicted, bool selected, bool masked,
+        int rejection_flag);
 
     //! Update the integration parameters for this peak
     void updateIntegration(
@@ -138,6 +150,13 @@ class Peak3D {
     double getBkgBegin() { return _bkgBegin; };
     //! Return the end of the background region (in peak scales)
     double getBkgEnd() { return _bkgEnd; };
+    //! Set the reason for this peak being rejected (unselected)
+    void setRejectionFlag(RejectionFlag flag);
+    //! Return the rejection flag
+    RejectionFlag rejectionFlag() const { return _rejection_flag; };
+    //! Return a string explaining the rejection
+    std::string rejectionString() const;
+
 
 #ifndef SWIG
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
@@ -175,11 +194,16 @@ class Peak3D {
     bool _rejected_by_filter;
     //! The transmission factor
     double _transmission;
+    //! Reason for rejection
+    nsx::RejectionFlag _rejection_flag;
 
     //! Pointer to the dataset from which this peak is derived
     sptrDataSet _data;
     //! Peak profile along frame (rotation) axis
     std::vector<Intensity> _rockingCurve;
+
+    //! Map of rejection flag descriptions
+    static const std::map<RejectionFlag, std::string> _rejection_map;
 };
 
 using sptrPeak3D = std::shared_ptr<Peak3D>;

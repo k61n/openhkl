@@ -68,8 +68,10 @@ bool Profile3DIntegrator::compute(
     const auto& counts = region.peakData().counts();
 
     // TODO: should this be hard-coded??
-    if (events.size() < 29)
+    if (events.size() < 29) {
+        peak->setRejectionFlag(RejectionFlag::TooFewPoints);
         throw std::runtime_error("Profile3DIntegrator::compute(): too few data points in peak");
+    }
 
     // dummy value for initial guess
     _meanBackground = Intensity(1.0, 1.0);
@@ -90,6 +92,7 @@ bool Profile3DIntegrator::compute(
         // throws if there are no neighboring peaks within the bounds
         model_profile = shape_collection->meanProfile(event, radius(), nFrames());
     } catch (...) {
+        peak->setRejectionFlag(RejectionFlag::TooFewNeighbours);
         return false;
     }
 
