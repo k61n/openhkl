@@ -11,8 +11,8 @@ class TestAutoIndexer(unittest.TestCase):
         detector = "BioDiff5000"
         expt = nsx.Experiment(name, detector)
 
-        expt.loadFromFile("FutA.nsx")
-        found_peaks = expt.getPeakCollection("found")
+        expt.loadFromFile("FutA-2.nsx")
+        found_peaks = expt.getPeakCollection("peaks")
         n_peaks = found_peaks.numberOfPeaks()
         self.assertEqual(n_peaks, 269)
 

@@ -33,7 +33,7 @@ namespace nsx {
 
 DataSet::DataSet(std::shared_ptr<IDataReader> reader)
     : _isOpened{false}
-    , _filename{reader->basename()}
+    , _filename{reader->filename()}
     , _nFrames{0}
     , _nrows{0}
     , _ncols{0}

@@ -49,8 +49,8 @@ class Parameters:
                     'n_subdiv'         : 30,
                     'indexing_tol'     : 0.2,
                     'min_vol'          : 100.0,
-                    'length_tol'       : 0.5,
-                    'angle_tol'        : 0.5 }
+                    'length_tol'       : 1.0,
+                    'angle_tol'        : 1.0 }
 
     shapelib    = { 'peak_end'       : 3.0,
                     'bkg_begin'        : 3.0,
@@ -65,12 +65,12 @@ class Parameters:
     prediction  = { 'prediction_d_min' : 1.5,
                     'prediction_d_max' : 50.0,
                     'radius'           : 400.0,
-                    'neighbours'       : 400.0,
-                    'frames'           : 20.0,
+                    'neighbours'       : 10,
+                    'frames'           : 10.0,
                     'prediction_bkg_begin' : 3.0,
-                    'prediction_bkg_end'   : 4.5,
-                    'prediction_scale'     : 5.0,
-                    'set_fit_center'       : True,
+                    'prediction_bkg_end'   : 3.0,
+                    'prediction_scale'     : 6.0,
+                    'fit_center'       : True,
                     'fit_covariance'       : True }
 
     merging     = { 'friedel'          : True,

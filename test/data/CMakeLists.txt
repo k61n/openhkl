@@ -41,7 +41,7 @@ set(test_files
     p16106_00029303.tiff
     p16106_00029304.tiff
     p16106_00029305.tiff
-    FutA.nsx)
+    FutA-2.nsx)
 
 set(NSX_TESTDATA_URL https://computing.mlz-garching.de/download/testdata/nsx)
 
@@ -65,7 +65,7 @@ endfunction()
 list(LENGTH test_files nfiles)
 message(STATUS
     "Checking ${nfiles} test data files in directory NSX_TESTDATA_DIR=${NSX_TESTDATA_DIR}:")
-check_file(9b10bb9042b0026e4b2a725913c1d60807ea31cf21a6c6c83fed741755461ec4166664bfdc16a098936815471ceb74b1 FutA.nsx)
+  check_file(69900a3d9bbaeda2302421530c3b2954777de85bff5fb8ff8c4609373565d98e280f0ca9f9bcd8d917da9949279cf810 FutA-2.nsx)
 check_file(6f9c5b7e053a7f1e8b30f7b3ee39876e96fc1c70e6f1ebd5db61d35395e87b44426aa87cd0735a795179395c6e426742  p16106_00029299.tiff)
 check_file(bcb8d97ffba00141a13025d476349d3d6849fc6f4ede5eb7d5c3bc830c717097869fb65fbb704034d4e85abed16fc5b9  p16106_00029300.tiff)
 check_file(b7634e3f97de7a3532d0dc4f11c1acba897fac209b59bcb4ef0c4a07523a760486cdb31009e69d3c831713e9170698b2  p16106_00029301.tiff)
