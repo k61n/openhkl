@@ -41,9 +41,6 @@ DataSet::DataSet(std::shared_ptr<IDataReader> reader)
     , _background{0.0}
     , _reader{std::move(reader)}
 {
-    if (!fileExists(_filename))
-        throw std::runtime_error("IData, file: " + _filename + " does not exist");
-
     _nrows = detector().nRows();
     _ncols = detector().nCols();
     _nFrames = _reader->metadata().key<int>("npdone");
