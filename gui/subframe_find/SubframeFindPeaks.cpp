@@ -299,11 +299,13 @@ void SubframeFindPeaks::setParametersUp()
 void SubframeFindPeaks::setExperimentsUp()
 {
     _exp_combo->blockSignals(true);
+    QString current_exp = _exp_combo->currentText();
     _exp_combo->clear();
 
     if (!gSession->experimentNames().empty()) {
         for (const QString& exp : gSession->experimentNames())
             _exp_combo->addItem(exp);
+        _exp_combo->setCurrentText(current_exp);
         grabFinderParameters();
         grabIntegrationParameters();
         updateDatasetList();
@@ -314,6 +316,7 @@ void SubframeFindPeaks::setExperimentsUp()
 void SubframeFindPeaks::updateDatasetList()
 {
     _data_combo->blockSignals(true);
+    QString current_data = _data_combo->currentText();
     _data_combo->clear();
     _data_list = gSession->experimentAt(_exp_combo->currentIndex())->allData();
 
@@ -322,8 +325,8 @@ void SubframeFindPeaks::updateDatasetList()
             QFileInfo fileinfo(QString::fromStdString(data->filename()));
             _data_combo->addItem(fileinfo.baseName());
         }
-        _data_combo->setCurrentIndex(0);
-        updateDatasetParameters(0);
+        _data_combo->setCurrentText(current_data);
+        updateDatasetParameters(_data_combo->currentIndex());
     }
     _data_combo->blockSignals(false);
 }
@@ -339,7 +342,7 @@ void SubframeFindPeaks::updateDatasetParameters(int idx)
     _end_frame_spin->setValue(data->nFrames());
     _start_frame_spin->setMaximum(data->nFrames());
 
-    _figure_view->getScene()->slotChangeSelectedData(_data_list.at(idx), 0);
+    _figure_view->getScene()->slotChangeSelectedData(_data_list.at(idx), _figure_spin->value());
     //_figure_view->getScene()->setMaxIntensity(3000);
     emit _figure_view->getScene()->dataChanged();
     _figure_view->getScene()->update();

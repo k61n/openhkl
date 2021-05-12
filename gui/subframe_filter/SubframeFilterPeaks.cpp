@@ -314,6 +314,7 @@ void SubframeFilterPeaks::setParametersUp()
 void SubframeFilterPeaks::setExperimentsUp()
 {
     _exp_combo->blockSignals(true);
+    QString current_exp = _exp_combo->currentText();
     _exp_combo->clear();
 
     if (gSession->experimentNames().empty())
@@ -322,6 +323,7 @@ void SubframeFilterPeaks::setExperimentsUp()
     for (const QString& exp : gSession->experimentNames())
         _exp_combo->addItem(exp);
 
+    _exp_combo->setCurrentText(current_exp);
     _exp_combo->blockSignals(false);
     updatePeakList();
     grabFilterParameters();
@@ -331,12 +333,13 @@ void SubframeFilterPeaks::updatePeakList()
 {
     _peak_combo->blockSignals(true);
 
+    QString current_peaks = _peak_combo->currentText();
     _peak_combo->clear();
     _peak_list = gSession->experimentAt(_exp_combo->currentIndex())->getPeakListNames();
 
     if (!_peak_list.empty()) {
         _peak_combo->addItems(_peak_list);
-        _peak_combo->setCurrentIndex(0);
+        _peak_combo->setCurrentText(current_peaks);
 
         nsx::PeakFilter* filter =
             gSession->experimentAt(_exp_combo->currentIndex())->experiment()->peakFilter();
@@ -355,6 +358,7 @@ void SubframeFilterPeaks::updatePeakList()
 void SubframeFilterPeaks::updateDatasetList()
 {
     _data_combo->blockSignals(true);
+    QString current_data = _data_combo->currentText();
     _data_combo->clear();
     _data_list = gSession->experimentAt(_exp_combo->currentIndex())->allData();
 
@@ -363,8 +367,8 @@ void SubframeFilterPeaks::updateDatasetList()
             QFileInfo fileinfo(QString::fromStdString(data->filename()));
             _data_combo->addItem(fileinfo.baseName());
         }
-        _data_combo->setCurrentIndex(0);
-        updateDatasetParameters(0);
+        _data_combo->setCurrentText(current_data);
+        updateDatasetParameters(_data_combo->currentIndex());
     }
     _data_combo->blockSignals(false);
 }
@@ -376,7 +380,7 @@ void SubframeFilterPeaks::updateDatasetParameters(int idx)
 
     nsx::sptrDataSet data = _data_list.at(idx);
 
-    _figure_view->getScene()->slotChangeSelectedData(_data_list.at(idx), 0);
+    _figure_view->getScene()->slotChangeSelectedData(_data_list.at(idx), _figure_spin->value());
     //_figure_view->getScene()->setMaxIntensity(3000);
     emit _figure_view->getScene()->dataChanged();
     _figure_view->getScene()->update();
