@@ -288,6 +288,7 @@ void DataSet::maskPeaks(std::vector<Peak3D*>& peaks) const
             // If the background of the peak intercept the mask, unselected the peak
             if (m->collide(peak->shape())) {
                 peak->setMasked(true);
+                peak->setRejectionFlag(RejectionFlag::Masked);
                 break;
             }
         }
