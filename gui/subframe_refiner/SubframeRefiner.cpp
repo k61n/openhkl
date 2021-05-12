@@ -148,6 +148,7 @@ void SubframeRefiner::setParametersUp()
 void SubframeRefiner::updateExptList()
 {
     _exp_combo->blockSignals(true);
+    QString current_exp = _exp_combo->currentText();
     _exp_combo->clear();
 
     if (gSession->experimentNames().empty())
@@ -155,6 +156,7 @@ void SubframeRefiner::updateExptList()
 
     for (const QString& exp : gSession->experimentNames())
         _exp_combo->addItem(exp);
+    _exp_combo->setCurrentText(current_exp);
 
     _exp_combo->blockSignals(false);
     updateDatasetList();
@@ -168,6 +170,7 @@ void SubframeRefiner::updateExptList()
 void SubframeRefiner::updateDatasetList()
 {
     _data_combo->blockSignals(true);
+    QString current_data = _data_combo->currentText();
     _data_combo->clear();
 
     _data_list = gSession->experimentAt(_exp_combo->currentIndex())->allData();
@@ -177,7 +180,7 @@ void SubframeRefiner::updateDatasetList()
             QFileInfo fileinfo(QString::fromStdString(data->filename()));
             _data_combo->addItem(fileinfo.baseName() /*absoluteFilePath()*/);
         }
-        _data_combo->setCurrentIndex(0);
+        _data_combo->setCurrentText(current_data);
     }
     _data_combo->blockSignals(false);
     setBatchesUp();
@@ -186,6 +189,7 @@ void SubframeRefiner::updateDatasetList()
 void SubframeRefiner::updatePeakList()
 {
     _peak_combo->blockSignals(true);
+    QString current_peaks = _peak_combo->currentText();
     _peak_combo->clear();
     _peak_list.clear();
 
@@ -203,7 +207,7 @@ void SubframeRefiner::updatePeakList()
 
     if (!_peak_list.empty()) {
         _peak_combo->addItems(_peak_list);
-        _peak_combo->setCurrentIndex(0);
+        _peak_combo->setCurrentText(current_peaks);
     }
 
     _peak_combo->blockSignals(false);
@@ -214,13 +218,14 @@ void SubframeRefiner::updatePeakList()
 void SubframeRefiner::updateUnitCellList()
 {
     _cell_combo->blockSignals(true);
+    QString current_cell = _cell_combo->currentText();
     _cell_combo->clear();
 
     _cell_list = gSession->experimentAt(_exp_combo->currentIndex())->getUnitCellNames();
 
     if (!_cell_list.empty()) {
         _cell_combo->addItems(_cell_list);
-        _cell_combo->setCurrentIndex(0);
+        _cell_combo->setCurrentText(current_cell);
     }
     _cell_combo->blockSignals(false);
 }

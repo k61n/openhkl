@@ -232,6 +232,7 @@ void SubframeAutoIndexer::refreshAll()
 void SubframeAutoIndexer::setExperiments()
 {
     _exp_combo->blockSignals(true);
+    QString current_exp = _exp_combo->currentText();
     _exp_combo->clear();
 
     if (gSession->experimentNames().empty())
@@ -239,6 +240,7 @@ void SubframeAutoIndexer::setExperiments()
 
     for (const QString& exp : gSession->experimentNames())
         _exp_combo->addItem(exp);
+    _exp_combo->setCurrentText(current_exp);
 
     _exp_combo->blockSignals(false);
 
@@ -250,6 +252,7 @@ void SubframeAutoIndexer::setExperiments()
 void SubframeAutoIndexer::updateDatasetList()
 {
     _data_combo->blockSignals(true);
+    QString current_data = _data_combo->currentText();
     _data_combo->clear();
 
     auto data_list = gSession->experimentAt(_exp_combo->currentIndex())->allData();
@@ -259,7 +262,7 @@ void SubframeAutoIndexer::updateDatasetList()
             QFileInfo fileinfo(QString::fromStdString(data->filename()));
             _data_combo->addItem(fileinfo.baseName() /*absoluteFilePath()*/);
         }
-        _data_combo->setCurrentIndex(0);
+        _data_combo->setCurrentText(current_data);
     }
     _data_combo->blockSignals(false);
 }
@@ -268,6 +271,7 @@ void SubframeAutoIndexer::updatePeakList()
 {
     _peak_combo->blockSignals(true);
 
+    QString current_peaks = _peak_combo->currentText();
     _peak_combo->clear();
     _peak_list = gSession->experimentAt(_exp_combo->currentIndex())->getPeakListNames();
     _peak_list.clear();
@@ -286,7 +290,7 @@ void SubframeAutoIndexer::updatePeakList()
 
     if (!_peak_list.empty()) {
         _peak_combo->addItems(_peak_list);
-        _peak_combo->setCurrentIndex(0);
+        _peak_combo->setCurrentText(current_peaks);
 
         refreshPeakTable();
         _solution_table->setModel(nullptr);

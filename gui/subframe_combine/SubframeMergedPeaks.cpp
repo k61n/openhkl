@@ -272,6 +272,7 @@ void SubframeMergedPeaks::refreshAll()
 void SubframeMergedPeaks::refreshExperimentList()
 {
     _exp_drop->blockSignals(true);
+    QString current_exp = _exp_drop->currentText();
     _exp_drop->clear();
 
     if (gSession->experimentNames().empty())
@@ -279,6 +280,7 @@ void SubframeMergedPeaks::refreshExperimentList()
 
     for (const QString& exp : gSession->experimentNames())
         _exp_drop->addItem(exp);
+    _exp_drop->setCurrentText(current_exp);
     _exp_drop->blockSignals(false);
     refreshPeakLists();
 }
@@ -293,6 +295,7 @@ void SubframeMergedPeaks::refreshPeakLists()
 void SubframeMergedPeaks::refreshFoundPeakList()
 {
     _found_drop->blockSignals(true);
+    QString current_found = _found_drop->currentText();
     _found_drop->clear();
     _found_list.clear();
 
@@ -306,7 +309,7 @@ void SubframeMergedPeaks::refreshFoundPeakList()
 
     if (!_found_list.empty()) {
         _found_drop->addItems(_found_list);
-        _found_drop->setCurrentIndex(0);
+        _found_drop->setCurrentText(current_found);
     }
     _found_drop->blockSignals(false);
 }
@@ -314,14 +317,14 @@ void SubframeMergedPeaks::refreshFoundPeakList()
 void SubframeMergedPeaks::refreshPredictedPeakList()
 {
     _predicted_drop->blockSignals(true);
-
+    QString current_predicted = _predicted_drop->currentText();
     _predicted_drop->clear();
     _predicted_list = gSession->experimentAt(_exp_drop->currentIndex())
                           ->getPeakCollectionNames(nsx::listtype::PREDICTED);
 
     if (!_predicted_list.empty()) {
         _predicted_drop->addItems(_predicted_list);
-        _predicted_drop->setCurrentIndex(0);
+        _predicted_drop->setCurrentText(current_predicted);
     }
     _predicted_drop->blockSignals(false);
 }

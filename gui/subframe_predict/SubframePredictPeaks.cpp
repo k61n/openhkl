@@ -285,6 +285,7 @@ void SubframePredictPeaks::refreshAll()
 void SubframePredictPeaks::setExperiments()
 {
     _exp_combo->blockSignals(true);
+    QString current_exp = _exp_combo->currentText();
     _exp_combo->clear();
 
     if (gSession->experimentNames().empty())
@@ -292,6 +293,7 @@ void SubframePredictPeaks::setExperiments()
 
     for (const QString& exp : gSession->experimentNames())
         _exp_combo->addItem(exp);
+    _exp_combo->setCurrentText(current_exp);
 
     _exp_combo->blockSignals(false);
 
@@ -304,6 +306,7 @@ void SubframePredictPeaks::setExperiments()
 void SubframePredictPeaks::updatePeakList()
 {
     _peak_combo->blockSignals(true);
+    QString current_peaks = _peak_combo->currentText();
     _peak_combo->clear();
     _peak_list.clear();
 
@@ -317,7 +320,7 @@ void SubframePredictPeaks::updatePeakList()
 
     if (!_peak_list.empty()) {
         _peak_combo->addItems(_peak_list);
-        _peak_combo->setCurrentIndex(0);
+        _peak_combo->setCurrentText(current_peaks);
     }
     refreshPeakShapeStatus();
     _peak_combo->blockSignals(false);
@@ -326,13 +329,14 @@ void SubframePredictPeaks::updatePeakList()
 void SubframePredictPeaks::updateUnitCellList()
 {
     _unit_cells->blockSignals(true);
+    QString current_cell = _unit_cells->currentText();
     _unit_cells->clear();
 
     _unit_cell_list = gSession->experimentAt(_exp_combo->currentIndex())->getUnitCellNames();
 
     if (!_unit_cell_list.empty()) {
         _unit_cells->addItems(_unit_cell_list);
-        _unit_cells->setCurrentIndex(0);
+        _unit_cells->setCurrentText(current_cell);
     }
     _unit_cells->blockSignals(false);
 }
@@ -340,6 +344,7 @@ void SubframePredictPeaks::updateUnitCellList()
 void SubframePredictPeaks::updateDatasetList()
 {
     _data_combo->blockSignals(true);
+    QString current_data = _data_combo->currentText();
     _data_combo->clear();
 
     _data_list = gSession->experimentAt(_exp_combo->currentIndex())->allData();
@@ -349,8 +354,8 @@ void SubframePredictPeaks::updateDatasetList()
             QFileInfo fileinfo(QString::fromStdString(data->filename()));
             _data_combo->addItem(fileinfo.baseName());
         }
-        _data_combo->setCurrentIndex(0);
-        updateDatasetParameters(0);
+        _data_combo->setCurrentText(current_data);
+        updateDatasetParameters(_data_combo->currentIndex());
     }
     _data_combo->blockSignals(false);
 }
@@ -362,7 +367,7 @@ void SubframePredictPeaks::updateDatasetParameters(int idx)
 
     const int nFrames = _data_list.at(idx)->nFrames();
 
-    _figure_view->getScene()->slotChangeSelectedData(_data_list.at(idx), 0);
+    _figure_view->getScene()->slotChangeSelectedData(_data_list.at(idx), _figure_spin->value());
     //_figure_view->getScene()->setMaxIntensity(3000);
     emit _figure_view->getScene()->dataChanged();
     _figure_view->getScene()->update();
