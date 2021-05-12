@@ -653,6 +653,7 @@ void PeakFinder::find(const DataList numors)
         std::size_t numPeaksTooSmallOrLarge = 0;
         std::size_t numPeaksOutsideFrames = 0;
         std::size_t numPeaksNotInDetArea = 0;
+        std::size_t numPeaksMasked = 0;
 
         for (auto& blob : blobs) {
             Eigen::Vector3d center, eigenvalues;
@@ -664,22 +665,31 @@ void PeakFinder::find(const DataList numors)
             auto p = sptrPeak3D(new Peak3D(numor, shape));
             const auto extents = p->shape().aabb().extents();
 
+            // peak overlaps with mask
+            for (IMask* mask : numor->masks()) {
+                if (mask->collide(p->shape())) {
+                    p->setMasked(true);
+                    p->setRejectionFlag(RejectionFlag::Masked);
+                    ++numPeaksMasked;
+                }
+            }
+
             // peak too small or too large
-            if (extents.maxCoeff() > peaksTooLargeLimit
-                || extents.minCoeff() < peaksTooSmallLimit) {
+            if ((extents.maxCoeff() > peaksTooLargeLimit || extents.minCoeff() < peaksTooSmallLimit)
+                && !p->enabled()) {
                 p->setSelected(false);
                 p->setRejectionFlag(RejectionFlag::OutsideThreshold);
                 ++numPeaksTooSmallOrLarge;
             }
 
-            if (extents(2) > _maxFrames) {
+            if (extents(2) > _maxFrames && !p->enabled()) {
                 p->setSelected(false);
                 p->setRejectionFlag(RejectionFlag::OutsideFrames);
                 ++numPeaksOutsideFrames;
             }
 
             // peak's bounding box not completely contained in detector image
-            if (!dAABB.contains(p->shape().aabb())) {
+            if (!dAABB.contains(p->shape().aabb()) && !p->enabled()) {
                 p->setSelected(false);
                 p->setRejectionFlag(RejectionFlag::OutsideDetector);
                 ++numPeaksNotInDetArea;
@@ -709,6 +719,7 @@ void PeakFinder::find(const DataList numors)
             Level::Info, "PeakFinder::find:", numor_peaks.size(), "peaks found,",
             numPeaksTooSmallOrLarge, "peaks too small,", numPeaksOutsideFrames,
             "peaks outside frame range,", numPeaksNotInDetArea, "peaks not fully on detector.");
+        nsxlog(Level::Info, "PeakFinder::find:", numPeaksMasked, "peaks masked");
 
         numor->close();
     }

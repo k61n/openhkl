@@ -276,7 +276,7 @@ const std::set<IMask*>& DataSet::masks() const
     return _masks;
 }
 
-void DataSet::maskPeaks(PeakList& peaks) const
+void DataSet::maskPeaks(std::vector<Peak3D*>& peaks) const
 {
     for (const auto& peak : peaks) {
         // peak belongs to another dataset

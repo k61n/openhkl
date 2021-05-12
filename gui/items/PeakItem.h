@@ -58,7 +58,6 @@ class PeakItem : public QStandardItem {
     };
     //! Whether the peak was caught by the filter
     bool caughtByFilter() const;
-    QString rejectionReason(nsx::RejectionFlag flag) const;
 
  private:
     //! pointer to the data

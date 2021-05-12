@@ -17,6 +17,7 @@
 
 #include "base/geometry/Ellipsoid.h"
 #include "base/mask/IMask.h"
+#include "base/utils/Logger.h"
 
 namespace nsx {
 
