@@ -551,40 +551,66 @@ void DetectorScene::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
                 }
                 emit dataChanged();
             }
-        } // else {
-          // nsx::PeakList peaks = gSession->currentProject()->getPeaks(0, 0)->peaks_;
-
-        // if (CutterItem* p = dynamic_cast<CutterItem*>(_lastClickedGI)) {
-        //     // delete p....
-        //     _lastClickedGI = nullptr;
-        //     removeItem(p);
-        // } else if (PlottableItem* p = dynamic_cast<PlottableItem*>(_lastClickedGI))
-        //     gGui->updatePlot(p);
-        // else if (MaskItem* p = dynamic_cast<MaskItem*>(_lastClickedGI)) {
-        //     // add a new mask
-        //     auto it = findMask(p);
-        //     if (it != _masks.end()) {
-        //         it->second = new nsx::BoxMask(*p->getAABB());
-        //         _currentData->addMask(it->second);
-        //         _lastClickedGI = nullptr;
-        //     }
-        //     _currentData->maskPeaks(peaks);
-        //     update();
-        //     updateMasks();
-        //     //                gSession->onMaskedPeaksChanged(peaks);
-        // } else if (EllipseMaskItem* p = dynamic_cast<EllipseMaskItem*>(_lastClickedGI)) {
-        //     auto it = findMask(p);
-        //     if (it != _masks.end()) {
-        //         it->second = new nsx::EllipseMask(*p->getAABB());
-        //         _currentData->addMask(it->second);
-        //         _lastClickedGI = nullptr;
-        //     }
-        //     _currentData->maskPeaks(peaks);
-        //     update();
-        //     updateMasks();
-        //     //                gSession->onMaskedPeaksChanged(peaks);
-        // }
-        // }
+        } else {
+            if (_peak_model_1) {
+                // _peak_model_2 is only relevant in DetectorWindow, ignore here.
+                std::vector<nsx::Peak3D*> peaks =
+                    _peak_model_1->root()->peakCollection()->getPeakList();
+                if (CutterItem* p = dynamic_cast<CutterItem*>(_lastClickedGI)) {
+                    // delete p....
+                    _lastClickedGI = nullptr;
+                    removeItem(p);
+                } else if (PlottableItem* p = dynamic_cast<PlottableItem*>(_lastClickedGI))
+                    gGui->updatePlot(p);
+                else if (MaskItem* p = dynamic_cast<MaskItem*>(_lastClickedGI)) {
+                    // add a new mask
+                    auto it = findMask(p);
+                    if (it != _masks.end()) {
+                        it->second = new nsx::BoxMask(*p->getAABB());
+                        _currentData->addMask(it->second);
+                        _lastClickedGI = nullptr;
+                    }
+                    _currentData->maskPeaks(peaks);
+                    update();
+                    updateMasks();
+                    //                gSession->onMaskedPeaksChanged(peaks);
+                } else if (EllipseMaskItem* p = dynamic_cast<EllipseMaskItem*>(_lastClickedGI)) {
+                    auto it = findMask(p);
+                    if (it != _masks.end()) {
+                        it->second = new nsx::EllipseMask(*p->getAABB());
+                        _currentData->addMask(it->second);
+                        _lastClickedGI = nullptr;
+                    }
+                    _currentData->maskPeaks(peaks);
+                    update();
+                    updateMasks();
+                    //                gSession->onMaskedPeaksChanged(peaks);
+                }
+            } else {
+                if (MaskItem* p = dynamic_cast<MaskItem*>(_lastClickedGI)) {
+                    // add a new mask
+                    auto it = findMask(p);
+                    if (it != _masks.end()) {
+                        it->second = new nsx::BoxMask(*p->getAABB());
+                        _currentData->addMask(it->second);
+                        _lastClickedGI = nullptr;
+                    }
+                    update();
+                    updateMasks();
+                    //                gSession->onMaskedPeaksChanged(peaks);
+                } else if (EllipseMaskItem* p = dynamic_cast<EllipseMaskItem*>(_lastClickedGI)) {
+                    auto it = findMask(p);
+                    if (it != _masks.end()) {
+                        it->second = new nsx::EllipseMask(*p->getAABB());
+                        _currentData->addMask(it->second);
+                        _lastClickedGI = nullptr;
+                    }
+                    update();
+                    updateMasks();
+                    //                gSession->onMaskedPeaksChanged(peaks);
+                }
+            }
+        }
     }
 }
 

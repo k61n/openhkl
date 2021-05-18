@@ -53,7 +53,7 @@ class DataSet {
     void removeMask(IMask* mask);
     const std::set<IMask*>& masks() const;
 
-    void maskPeaks(PeakList& peaks) const;
+    void maskPeaks(std::vector<Peak3D*>& peaks) const;
 
     //! Returns the intensity at point x,y,z.
     int dataAt(unsigned int x = 0, unsigned int y = 0, unsigned int z = 0) const;
