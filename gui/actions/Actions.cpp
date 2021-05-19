@@ -14,8 +14,11 @@
 
 #include "gui/actions/Actions.h"
 
+#include "core/experiment/Experiment.h"
+#include "gui/dialogs/ComboDialog.h"
 #include "gui/MainWin.h" // for gGui
 #include "gui/detector_window/DetectorWindow.h"
+#include "gui/models/Project.h"
 #include "gui/models/Session.h" //for gSession
 #include "gui/subframe_home/SubframeHome.h"
 #include "gui/utility/SideBar.h"
@@ -76,6 +79,22 @@ void Actions::setupData()
     connect(add_raw, &QAction::triggered, []() { gGui->sideBar()->refreshAll(); });
     connect(add_hdf5, &QAction::triggered, []() { gGui->sideBar()->refreshAll(); });
     connect(add_nexus, &QAction::triggered, []() { gGui->sideBar()->refreshAll(); });
+
+    connect(remove_data, &QAction::triggered, this, &Actions::removeData);
+}
+
+void Actions::removeData()
+{
+    QString description{"Data set to remove"};
+    QStringList data_list = gSession->currentProject()->getDataNames();
+    std::unique_ptr<ComboDialog> dlg(new ComboDialog(data_list, description));
+    dlg->exec();
+    if (!dlg->itemName().isEmpty()) {
+        std::string data_name = dlg->itemName().toStdString();
+        gSession->currentProject()->experiment()->removeData(data_name);
+        gSession->onDataChanged();
+        gGui->sideBar()->refreshAll();
+    }
 }
 
 void Actions::setupExperiment()

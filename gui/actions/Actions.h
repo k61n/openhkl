@@ -25,6 +25,8 @@ class Actions : public QObject {
  public:
     Actions();
 
+    void removeData();
+
     // Files:
     QAction* new_experiment;
     QAction* load_experiment;
