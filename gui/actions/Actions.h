@@ -36,6 +36,24 @@ class Actions : public QObject {
     // View:
     QAction* detector_window;
 
+    // Data
+    QAction* add_data;
+    QAction* remove_data;
+    QAction* add_raw;
+    QAction* add_hdf5;
+    QAction* add_nexus;
+
+    // Peaks
+    QAction* add_peaks;
+    QAction* remove_peaks;
+
+    // Unit Cells
+    QAction* add_cell;
+    QAction* remove_cell;
+
+    // Help
+    QAction* about; 
+
     //  // Experiment/Data:
     //  QAction convertHDF5;// {"convert", "convert to HDF5"};
     //  QAction dataProperties;// {"data properties", "properties"};
@@ -109,6 +127,7 @@ class Actions : public QObject {
     void setupExperiment();
     void setupOptions();
     void setupRest();
+    void setupCell();
 };
 
 #endif // NSX_GUI_ACTIONS_ACTIONS_H

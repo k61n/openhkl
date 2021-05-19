@@ -32,6 +32,7 @@ Menus::Menus(QMenuBar* menu_bar) : _menu_bar{menu_bar}
     _view_menu = _menu_bar->addMenu("View");
     _data_menu = _menu_bar->addMenu("Data");
     _peaks_menu = _menu_bar->addMenu("Peaks");
+    _cells_menu = _menu_bar->addMenu("Cells");
     _help_menu = _menu_bar->addMenu("Help");
 
     _file_menu->addAction(actions->new_experiment);
@@ -44,6 +45,20 @@ Menus::Menus(QMenuBar* menu_bar) : _menu_bar{menu_bar}
     _file_menu->addAction(actions->quit);
 
     _view_menu->addAction(actions->detector_window);
+
+    QMenu* _data_sub = _data_menu->addMenu("Add data set");
+    _data_sub->addAction(actions->add_raw);
+    _data_sub->addAction(actions->add_hdf5);
+    _data_sub->addAction(actions->add_nexus);
+    _data_menu->addAction(actions->remove_data);
+
+    _peaks_menu->addAction(actions->add_peaks);
+    _peaks_menu->addAction(actions->remove_peaks);
+
+    _cells_menu->addAction(actions->add_cell);
+    _cells_menu->addAction(actions->remove_cell);
+
+    _help_menu->addAction(actions->about);
 
 
     // actionsToMenu(

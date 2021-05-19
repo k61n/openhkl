@@ -237,4 +237,20 @@ void SideBar::onMerger()
     gGui->merger->refreshAll();
 }
 
+void SideBar::refreshAll()
+{
+    if (gSession->currentProjectNum() != -1) {
+        gGui->experiment->getProperty()->unitCellChanged();
+        gGui->experiment->getProperty()->peaksChanged();
+        gGui->experiment->getProperty()->experimentChanged();
+        gGui->experiment->getProperty()->dataChanged();
+    }
+    gGui->finder->refreshAll();
+    gGui->filter->refreshAll();
+    gGui->indexer->refreshAll();
+    gGui->predictor->refreshAll();
+    gGui->refiner->refreshAll();
+    gGui->merger->refreshAll();
+}
+
 #undef action_height

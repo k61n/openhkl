@@ -25,6 +25,8 @@ class SideBar : public QWidget {
     QSize minimumSizeHint() const;
     void manualSelect(int index);
 
+    void refreshAll();
+
  private:
     void onHome();
     void onExperiment();
