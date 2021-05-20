@@ -16,12 +16,14 @@
 
 #include "core/experiment/Experiment.h"
 #include "gui/dialogs/ComboDialog.h"
+#include "gui/dialogs/NewCellDialog.h"
 #include "gui/MainWin.h" // for gGui
 #include "gui/detector_window/DetectorWindow.h"
 #include "gui/models/Project.h"
 #include "gui/models/Session.h" //for gSession
 #include "gui/subframe_home/SubframeHome.h"
 #include "gui/utility/SideBar.h"
+#include "tables/crystal/SpaceGroup.h"
 
 Actions::Actions()
 {
@@ -100,7 +102,6 @@ void Actions::removeData()
 void Actions::setupExperiment()
 {
 }
-
 void Actions::setupInstrument()
 {
 }
@@ -124,4 +125,38 @@ void Actions::setupCell()
 {
     add_cell = new QAction("Add unit cell");
     remove_cell = new QAction("Remove unit cell");
+
+    connect(add_cell, &QAction::triggered, this, &Actions::addCell);
+    connect(remove_cell, &QAction::triggered, this, &Actions::removeCell);
+}
+
+void Actions::addCell()
+{
+    QStringList space_groups;
+    for (const auto& symbol : nsx::SpaceGroup::symbols())
+        space_groups.push_back(QString::fromStdString(symbol));
+    std::unique_ptr<NewCellDialog> dlg(new NewCellDialog(space_groups));
+    dlg->exec();
+    if (!dlg->unitCellName().isEmpty()) {
+        nsx::Experiment* expt = gSession->currentProject()->experiment();
+        expt->addUnitCell(
+            dlg->unitCellName().toStdString(), dlg->a(), dlg->b(), dlg->c(),
+            dlg->alpha(), dlg->beta(), dlg->gamma(), dlg->spaceGroup().toStdString());
+        gGui->onUnitCellChanged();
+        gGui->sideBar()->refreshAll();
+    }
+}
+
+void Actions::removeCell()
+{
+    QString description{"Unit cell to remove"};
+    QStringList cell_list = gSession->currentProject()->getUnitCellNames();
+    std::unique_ptr<ComboDialog> dlg(new ComboDialog(cell_list, description));
+    dlg->exec();
+    if (!dlg->itemName().isEmpty()) {
+        std::string data_name = dlg->itemName().toStdString();
+        gSession->currentProject()->experiment()->removeUnitCell(data_name);
+        gGui->onUnitCellChanged();
+        gGui->sideBar()->refreshAll();
+    }
 }

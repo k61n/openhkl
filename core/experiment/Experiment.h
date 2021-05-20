@@ -122,6 +122,10 @@ class Experiment {
     void addUnitCell(
         const std::string& name, double a, double b, double c, double alpha, double beta,
         double gamma);
+    //! Add a user-defined unit cell including space group
+    void addUnitCell(
+        const std::string& name, double a, double b, double c, double alpha, double beta, double gamma,
+        const std::string& space_group);
     //! Returns true if the experiment has a data
     bool hasUnitCell(const std::string& name) const;
     //! Get a list of loaded list names

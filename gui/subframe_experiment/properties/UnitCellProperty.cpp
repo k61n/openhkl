@@ -291,9 +291,9 @@ void UnitCellProperty::selectedCellChanged(int cell)
     a->setValue(unitcharacter.a);
     b->setValue(unitcharacter.b);
     c->setValue(unitcharacter.c);
-    alpha->setValue(unitcharacter.alpha);
-    beta->setValue(unitcharacter.beta);
-    gamma->setValue(unitcharacter.gamma);
+    alpha->setValue(unitcharacter.alpha / nsx::deg);
+    beta->setValue(unitcharacter.beta / nsx::deg);
+    gamma->setValue(unitcharacter.gamma / nsx::deg);
 }
 
 void UnitCellProperty::setMassDensity() const

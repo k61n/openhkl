@@ -51,6 +51,15 @@ void UnitCellHandler::addUnitCell(
     addUnitCell(name, cell);
 }
 
+void UnitCellHandler::addUnitCell(
+    const std::string& name, double a, double b, double c, double alpha, double beta, double gamma,
+    const std::string& space_group)
+{
+    UnitCell cell{a, b, c, alpha * deg, beta * deg, gamma * deg};
+    cell.setSpaceGroup(space_group);
+    addUnitCell(name, cell);
+}
+
 bool UnitCellHandler::hasUnitCell(const std::string& name) const
 {
     return _unit_cells.find(name) != _unit_cells.end();
