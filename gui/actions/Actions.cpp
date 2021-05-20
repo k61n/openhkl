@@ -16,6 +16,7 @@
 
 #include "core/experiment/Experiment.h"
 #include "gui/dialogs/ComboDialog.h"
+#include "gui/dialogs/Messages.h"
 #include "gui/dialogs/NewCellDialog.h"
 #include "gui/MainWin.h" // for gGui
 #include "gui/detector_window/DetectorWindow.h"
@@ -121,6 +122,8 @@ void Actions::setupPeaks()
 void Actions::setupRest()
 {
     about = new QAction("About");
+
+    connect(about, &QAction::triggered, this, &Actions::aboutBox);
 }
 
 void Actions::setupCell()
@@ -175,4 +178,10 @@ void Actions::removePeaks()
         gGui->onPeaksChanged();
         gGui->sideBar()->refreshAll();
     }
+}
+
+void Actions::aboutBox()
+{
+    std::unique_ptr<AboutBox> dlg(new AboutBox());
+    dlg->exec();
 }
