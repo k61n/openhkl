@@ -22,6 +22,7 @@
 #include <QVBoxLayout>
 #include <QLabel>
 #include <QDialogButtonBox>
+#include <QToolTip>
 
 AboutBox::AboutBox() : QDialog{gGui, Qt::Dialog}
 {
