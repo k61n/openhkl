@@ -114,6 +114,8 @@ void Actions::setupPeaks()
 {
     add_peaks = new QAction("Add peak collection");
     remove_peaks = new QAction("Remove peak collection");
+
+    connect(remove_peaks, &QAction::triggered, this, &Actions::removePeaks);
 }
 
 void Actions::setupRest()
@@ -157,6 +159,20 @@ void Actions::removeCell()
         std::string data_name = dlg->itemName().toStdString();
         gSession->currentProject()->experiment()->removeUnitCell(data_name);
         gGui->onUnitCellChanged();
+        gGui->sideBar()->refreshAll();
+    }
+}
+
+void Actions::removePeaks()
+{
+    QString description{"Peak collection to remove"};
+    QStringList peaks_list = gSession->currentProject()->getPeakListNames();
+    std::unique_ptr<ComboDialog> dlg(new ComboDialog(peaks_list, description));
+    dlg->exec();
+    if (!dlg->itemName().isEmpty()) {
+        QString peaks_name = dlg->itemName();
+        gSession->currentProject()->removePeakModel(peaks_name);
+        gGui->onPeaksChanged();
         gGui->sideBar()->refreshAll();
     }
 }

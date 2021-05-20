@@ -68,6 +68,7 @@ class Actions : public QObject {
     void setupCell();
     void addCell();
     void removeCell();
+    void removePeaks();
 };
 
 #endif // NSX_GUI_ACTIONS_ACTIONS_H
