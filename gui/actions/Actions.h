@@ -46,7 +46,6 @@ class Actions : public QObject {
     QAction* add_nexus;
 
     // Peaks
-    QAction* add_peaks;
     QAction* remove_peaks;
 
     // Unit Cells

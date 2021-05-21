@@ -109,7 +109,6 @@ void Actions::setupOptions()
 
 void Actions::setupPeaks()
 {
-    // add_peaks = new QAction("Add peak collection");
     remove_peaks = new QAction("Remove peak collection");
 
     connect(remove_peaks, &QAction::triggered, this, &Actions::removePeaks);

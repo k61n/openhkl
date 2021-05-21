@@ -24,7 +24,6 @@ class Menus {
     Menus(QMenuBar*);
 
     QMenu* _expt_menu;
-    QMenu* _edit_menu;
     QMenu* _data_menu;
     QMenu* _peaks_menu;
     QMenu* _cells_menu;
