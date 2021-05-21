@@ -26,6 +26,14 @@ DataHandler::DataHandler(const std::string& name, const std::string& diffractome
     if (!(diffractometerName == std::string("unknown_instrument")))
         _diffractometer.reset(Diffractometer::create(diffractometerName));
     _name = name;
+
+    // For all data-readers, a valid diffractometer instrument is needed;
+    // `_diffractometer` must not be null; otherwise undefined behaviour might occur
+    if (!_diffractometer) {
+        std::ostringstream msg;
+        msg << "DataHandler: Instrument '" << diffractometerName << "' is not valid";
+        throw std::logic_error(msg.str());
+    }
 }
 
 Diffractometer* DataHandler::getDiffractometer()

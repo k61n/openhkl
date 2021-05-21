@@ -138,8 +138,16 @@ void Session::loadData(nsx::DataFormat format)
     loadDirectory = info.absolutePath();
     s.setValue("data", loadDirectory);
 
-    if (_currentProject < 0)
-        createExperiment();
+    if (_currentProject < 0) {
+	try {
+	    createExperiment();
+	} catch (const std::exception& ex) {
+            QString msg = QString("Loading file(s) failed with error: ")
+                + QString(ex.what()) + QString(".");
+            QMessageBox::critical(nullptr, "Error", msg);
+        }
+	return;
+    }
 
     for (const QString& filename : filenames) {
         QFileInfo fileinfo(filename);

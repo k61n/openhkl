@@ -29,6 +29,8 @@ namespace nsx {
 IDataReader::IDataReader(const std::string& filename, Diffractometer* diffractometer)
     : _diffractometer(diffractometer)
     , _nFrames(0)
+    , _nRows(0)
+    , _nCols(0)
     , _sampleStates()
     , _detectorStates()
     , _fileSize(0)
