@@ -23,7 +23,7 @@ class Menus {
     Menus() = delete;
     Menus(QMenuBar*);
 
-    QMenu* _file_menu;
+    QMenu* _expt_menu;
     QMenu* _edit_menu;
     QMenu* _data_menu;
     QMenu* _peaks_menu;

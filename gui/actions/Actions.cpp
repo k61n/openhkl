@@ -28,10 +28,9 @@
 
 Actions::Actions()
 {
-    setupData();
     setupExperiment();
+    setupData();
     setupPeaks();
-    setupFiles();
     setupView();
     setupInstrument();
     setupOptions();
@@ -39,7 +38,7 @@ Actions::Actions()
     setupCell();
 }
 
-void Actions::setupFiles()
+void Actions::setupExperiment()
 {
     new_experiment = new QAction("New experiment");
     load_experiment = new QAction("Load experiment");
@@ -100,9 +99,6 @@ void Actions::removeData()
     }
 }
 
-void Actions::setupExperiment()
-{
-}
 void Actions::setupInstrument()
 {
 }
@@ -113,7 +109,7 @@ void Actions::setupOptions()
 
 void Actions::setupPeaks()
 {
-    add_peaks = new QAction("Add peak collection");
+    // add_peaks = new QAction("Add peak collection");
     remove_peaks = new QAction("Remove peak collection");
 
     connect(remove_peaks, &QAction::triggered, this, &Actions::removePeaks);

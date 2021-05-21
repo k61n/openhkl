@@ -27,22 +27,22 @@ Menus::Menus(QMenuBar* menu_bar) : _menu_bar{menu_bar}
 
     _menu_bar->setNativeMenuBar(true);
 
-    _file_menu = _menu_bar->addMenu("File");
-    _edit_menu = _menu_bar->addMenu("Edit");
+    _expt_menu = _menu_bar->addMenu("Experiment");
+    // _edit_menu = _menu_bar->addMenu("Edit");
     _view_menu = _menu_bar->addMenu("View");
     _data_menu = _menu_bar->addMenu("Data");
     _peaks_menu = _menu_bar->addMenu("Peaks");
     _cells_menu = _menu_bar->addMenu("Cells");
     _help_menu = _menu_bar->addMenu("Help");
 
-    _file_menu->addAction(actions->new_experiment);
-    _file_menu->addAction(actions->load_experiment);
-    _file_menu->addSeparator();
-    _file_menu->addAction(actions->save_experiment);
-    _file_menu->addAction(actions->save_all_experiment);
-    _file_menu->addSeparator();
-    _file_menu->addAction(actions->remove_experiment);
-    _file_menu->addAction(actions->quit);
+    _expt_menu->addAction(actions->new_experiment);
+    _expt_menu->addAction(actions->load_experiment);
+    _expt_menu->addSeparator();
+    _expt_menu->addAction(actions->save_experiment);
+    _expt_menu->addAction(actions->save_all_experiment);
+    _expt_menu->addSeparator();
+    _expt_menu->addAction(actions->remove_experiment);
+    _expt_menu->addAction(actions->quit);
 
     _view_menu->addAction(actions->detector_window);
 
@@ -52,7 +52,7 @@ Menus::Menus(QMenuBar* menu_bar) : _menu_bar{menu_bar}
     _data_sub->addAction(actions->add_nexus);
     _data_menu->addAction(actions->remove_data);
 
-    _peaks_menu->addAction(actions->add_peaks);
+    // _peaks_menu->addAction(actions->add_peaks);
     _peaks_menu->addAction(actions->remove_peaks);
 
     _cells_menu->addAction(actions->add_cell);

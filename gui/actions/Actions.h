@@ -57,12 +57,11 @@ class Actions : public QObject {
     QAction* about; 
 
  private:
-    void setupFiles();
+    void setupExperiment();
     void setupView();
     void setupData();
     void setupInstrument();
     void setupPeaks();
-    void setupExperiment();
     void setupOptions();
     void setupRest();
     void setupCell();
