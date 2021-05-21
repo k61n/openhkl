@@ -14,24 +14,31 @@
 
 #include "gui/actions/Actions.h"
 
+#include "core/experiment/Experiment.h"
 #include "gui/MainWin.h" // for gGui
 #include "gui/detector_window/DetectorWindow.h"
+#include "gui/dialogs/ComboDialog.h"
+#include "gui/dialogs/Messages.h"
+#include "gui/dialogs/NewCellDialog.h"
+#include "gui/models/Project.h"
 #include "gui/models/Session.h" //for gSession
 #include "gui/subframe_home/SubframeHome.h"
+#include "gui/utility/SideBar.h"
+#include "tables/crystal/SpaceGroup.h"
 
 Actions::Actions()
 {
-    setupData();
     setupExperiment();
+    setupData();
     setupPeaks();
-    setupFiles();
     setupView();
     setupInstrument();
     setupOptions();
     setupRest();
+    setupCell();
 }
 
-void Actions::setupFiles()
+void Actions::setupExperiment()
 {
     new_experiment = new QAction("New experiment");
     load_experiment = new QAction("Load experiment");
@@ -41,13 +48,13 @@ void Actions::setupFiles()
     quit = new QAction("Quit");
 
     connect(new_experiment, &QAction::triggered, []() { gGui->home->createNew(); });
+    connect(new_experiment, &QAction::triggered, []() { gGui->sideBar()->refreshAll(); });
     connect(load_experiment, &QAction::triggered, []() { gGui->home->loadFromFile(); });
+    connect(load_experiment, &QAction::triggered, []() { gGui->sideBar()->refreshAll(); });
     connect(save_experiment, &QAction::triggered, []() { gGui->home->saveCurrent(); });
     connect(save_all_experiment, &QAction::triggered, []() { gGui->home->saveAll(); });
-    //    connect(
-    //        remove_experiment, &QAction::triggered,
-    //        [](){gGui->home->remo();}
-    //     );
+    connect(remove_experiment, &QAction::triggered, this, &Actions::removeExperiment);
+
     connect(quit, &QAction::triggered, []() { gGui->close(); });
 }
 
@@ -63,157 +70,129 @@ void Actions::setupView()
 
 void Actions::setupData()
 {
-    // loadData.setTriggerHook([]() { gSession->loadData(); });
-    // removeData.setTriggerHook([]() { gSession->removeData(); });
-    // importRaw.setTriggerHook([]() { gSession->loadRawData(); });
-    // findPeaks.setTriggerHook([]() { new SubframeFindPeaks; });
-    // instrumentStates.setTriggerHook([]() { new InstrumentStatesFrame; });
-    // convertHDF5.setTriggerHook([]() {
-    //     if (gSession->currentProjectNum() < 0)
-    //         return;
-    //     HDF5ConverterDialog* dlg = new HDF5ConverterDialog;
-    //     dlg->exec();
-    // });
+    add_data = new QAction("Add data set");
+    remove_data = new QAction("Remove data set");
+    add_raw = new QAction("Add raw/tiff data");
+    add_hdf5 = new QAction("Add HDF5 data");
+    add_nexus = new QAction("Add Nexus data");
+
+    connect(add_raw, &QAction::triggered, []() { gSession->loadRawData(); });
+    connect(add_hdf5, &QAction::triggered, []() { gSession->loadData(nsx::DataFormat::HDF5); });
+    connect(add_hdf5, &QAction::triggered, []() { gSession->loadData(nsx::DataFormat::NEXUS); });
+    connect(add_raw, &QAction::triggered, []() { gGui->sideBar()->refreshAll(); });
+    connect(add_hdf5, &QAction::triggered, []() { gGui->sideBar()->refreshAll(); });
+    connect(add_nexus, &QAction::triggered, []() { gGui->sideBar()->refreshAll(); });
+
+    connect(remove_data, &QAction::triggered, this, &Actions::removeData);
 }
 
-void Actions::setupExperiment() { }
-
-void Actions::setupInstrument()
+void Actions::removeExperiment()
 {
-    // goniometer.setTriggerHook([]() { new GlobalOffsetsFrame(offsetMode::DETECTOR); });
-    // sampleGoniometer.setTriggerHook([]() { new GlobalOffsetsFrame(offsetMode::SAMPLE); });
-    // isotopesDatabase.setTriggerHook([]() {
-    //     IsotopesDatabaseDialog* iso = new IsotopesDatabaseDialog;
-    //     iso->exec();
-    // });
-    // shapeLoadMovie.setTriggerHook([]() {
-    //     if (gSession->currentProjectNum() < 0) {
-    //         qWarning() << "No selected experiment";
-    //         return;
-    //     }
+    QString description{"Experiment to remove"};
 
-    //     new AbsorptionDialog;
-    // });
+    QStringList expt_list;
+
+    for (int expt_idx = 0; expt_idx < gSession->numExperiments(); ++expt_idx) {
+        std::string name = gSession->experimentAt(expt_idx)->experiment()->name();
+        expt_list.push_back(QString::fromStdString(name));
+    }
+    std::unique_ptr<ComboDialog> dlg(new ComboDialog(expt_list, description));
+    dlg->exec();
+    if (!dlg->itemName().isEmpty()) {
+        gSession->removeExperiment(dlg->itemName());
+        gSession->onExperimentChanged();
+        gGui->sideBar()->refreshAll();
+    }
 }
 
-void Actions::setupOptions()
+void Actions::removeData()
 {
-    // fromSample.setTriggerHook([]() { gGui->changeView(1); });
-    // behindDetector.setTriggerHook([]() { gGui->changeView(0); });
-    // pixelPosition.setTriggerHook([]() { gGui->cursormode(0); });
-    // twoTheta.setTriggerHook([]() { gGui->cursormode(1); });
-    // gammaNu.setTriggerHook([]() { gGui->cursormode(2); });
-    // dSpacing.setTriggerHook([]() { gGui->cursormode(3); });
-    // millerIndices.setTriggerHook([]() { gGui->cursormode(4); });
-    // logarithmicScale.setHook([](bool checked) {
-    //     gGui->_experiment->getImage()->getView()->getScene()->setLogarithmic(checked);
-    // });
-    // showLabels.setHook([](bool checked) {
-    //     gGui->_experiment->getImage()->getView()->getScene()->showPeakLabels(checked);
-    // });
-    // showAreas.setHook([](bool checked) {
-    //     gGui->_experiment->getImage()->getView()->getScene()->showPeakAreas(checked);
-    // });
-    // drawPeakArea.setHook([](bool checked) {
-    //     gGui->_experiment->getImage()->getView()->getScene()->drawIntegrationRegion(checked);
-    // });
+    QString description{"Data set to remove"};
+    QStringList data_list = gSession->currentProject()->getDataNames();
+    std::unique_ptr<ComboDialog> dlg(new ComboDialog(data_list, description));
+    dlg->exec();
+    if (!dlg->itemName().isEmpty()) {
+        std::string data_name = dlg->itemName().toStdString();
+        gSession->currentProject()->experiment()->removeData(data_name);
+        gSession->onDataChanged();
+        gGui->sideBar()->refreshAll();
+    }
 }
+
+void Actions::setupInstrument() { }
+
+void Actions::setupOptions() { }
 
 void Actions::setupPeaks()
 {
-    // autoIndexer.setTriggerHook([]() { new SubframeAutoIndexer; });
-    // filterPeaks.setTriggerHook([]() { new PeakFilterDialog; });
-    // assignUnitCell.setTriggerHook([]() {
-    //     if (gSession->currentProjectNum() < 0) {
-    //         gLogger->log("[ERROR] No experiment selected");
-    //         return;
-    //     }
-    //     if (gSession->currentProject()->getPeakListNames().empty()) {
-    //         gLogger->log("[ERROR] No peaks in selected experiment");
-    //         return;
-    //     }
-    // gSession->currentProject()->autoAssignUnitCell();
-    // });
-    // buildShapeCollection.setTriggerHook([]() { new ShapeCollectionDialog; });
-    // refine.setTriggerHook([]() { new RefinerFrame; });
-    // normalize.setTriggerHook([]() {
-    //     if (gSession->currentProjectNum() < 0)
-    //         return;
-    //     // gSession->currentProject()->normalizeToMonitor();
-    // });
-    // integratepeaks.setTriggerHook([]() { gSession->currentProject()->integratePeaks(); });
-    // predictPeaks.setTriggerHook([]() {
-    //     PredictPeaksDialog* dgl = new PredictPeaksDialog;
-    //     if (!dgl->exec()) {
-    //         dgl->deleteLater();
-    //         return;
-    //     }
-    //     dgl->deleteLater();
-    // });
-    // statistics.setTriggerHook([]() {
-    //     if (gSession->currentProjectNum() < 0)
-    //         return;
-    //     if (gSession->currentProject()->getUnitCellNames().empty())
-    //         return;
-    //     // nsx::sptrUnitCell cell = gSession->currentProject()->getUnitCell();
-    //     // nsx::SpaceGroup group = cell->spaceGroup();
-    //     // nsx::PeakList list = gSession->currentProject()->getUnitCell(cell);
-    //     // qDebug() << "Space Group symbol: " << QString::fromStdString(group.symbol());
-    //     // new MergedPeakInformationFrame(group, list);
-    // });
-    // correctAbsorption.setTriggerHook([]() {
-    //     if (gSession->currentProjectNum() < 0)
-    //         return;
-    //     if (gSession->currentProject()->getUnitCellNames().empty())
-    //         return;
-    //     new MCAbsorptionDialog;
-    // });
+    remove_peaks = new QAction("Remove peak collection");
+
+    connect(remove_peaks, &QAction::triggered, this, &Actions::removePeaks);
 }
 
 void Actions::setupRest()
 {
-    // reset.setTriggerHook([]() { gGui->resetViews(); });
-    // exportPlot.setTriggerHook([]() { gGui->exportPlot(); });
-    // about.setTriggerHook([]() {
-    //     QMessageBox::about(
-    //         gGui, "About NSXTool",
-    //         QString("<h4>%1 version %2</h4>"
-    //                 "<p>Copyright: Forschungszentrum Jülich GmbH %3</p>"
-    //                 "<p>NSXTool is work in progress.<br>"
-    //                 "It must not be used in production without consent of the developers."
-    //                 "<br>Information on the proper form of citation will follow.<br></p>"
-    //                 "<p>The initial authors were Laurent Chapon (ILL),"
-    //                 " Eric Pellegrini (ILL) and Jonathan M. Fisher (FZJ JCNS MLZ).</p>"
-    //                 "<p>Current development team is done by Janike Katter, "
-    //                 "Alexander Schober, Joachim Wuttke (all FZJ JCNS MLZ).</p>")
-    //             .arg(qApp->applicationName())
-    //             .arg(qApp->applicationVersion())
-    //             .arg(QDate::currentDate().toString("yyyy")));
-    // });
-    // helpExperiment.setTriggerHook([]() {
-    //     QMessageBox::information(
-    //         gGui, "Experiment Help",
-    //         QString("<h4>Experiments</h4>"
-    //                 "<p>Before loading your data, it is possible to create an "
-    //                 "experiment in the <i>Start</i> menu.<br>"
-    //                 "If you do not want to create an experiment before loading "
-    //                 "the data, a default experiment with date and time as name "
-    //                 "and the BioDiff 2500 as instrument will be created.</p>"));
-    // });
-    // helpData.setTriggerHook([]() {
-    //     QMessageBox::information(
-    //         gGui, "Data Help",
-    //         QString("<h4>Data</h4>"
-    //                 "<h5>Loading data</h5>"
-    //                 "<p>You have two ways of loading data into NSXTool: <br>"
-    //                 ">loading raw data<br>"
-    //                 ">loading addited data<br>"
-    //                 "For loading raw data, you can find the trigger in the menu "
-    //                 "<i>Experiment->Data->import raw data</i>.<br>"
-    //                 "Other data you can load with <i>Experiment->Data->load data"
-    //                 "</i></p>"
-    //                 "<h5>Removing data</h5>"
-    //                 "<p>You can remove the selected data with <i>Experiment->"
-    //                 "Data->remove data</i></p>"));
-    // });
+    about = new QAction("About");
+
+    connect(about, &QAction::triggered, this, &Actions::aboutBox);
+}
+
+void Actions::setupCell()
+{
+    add_cell = new QAction("Add unit cell");
+    remove_cell = new QAction("Remove unit cell");
+
+    connect(add_cell, &QAction::triggered, this, &Actions::addCell);
+    connect(remove_cell, &QAction::triggered, this, &Actions::removeCell);
+}
+
+void Actions::addCell()
+{
+    QStringList space_groups;
+    for (const auto& symbol : nsx::SpaceGroup::symbols())
+        space_groups.push_back(QString::fromStdString(symbol));
+    std::unique_ptr<NewCellDialog> dlg(new NewCellDialog(space_groups));
+    dlg->exec();
+    if (!dlg->unitCellName().isEmpty()) {
+        nsx::Experiment* expt = gSession->currentProject()->experiment();
+        expt->addUnitCell(
+            dlg->unitCellName().toStdString(), dlg->a(), dlg->b(), dlg->c(), dlg->alpha(),
+            dlg->beta(), dlg->gamma(), dlg->spaceGroup().toStdString());
+        gGui->onUnitCellChanged();
+        gGui->sideBar()->refreshAll();
+    }
+}
+
+void Actions::removeCell()
+{
+    QString description{"Unit cell to remove"};
+    QStringList cell_list = gSession->currentProject()->getUnitCellNames();
+    std::unique_ptr<ComboDialog> dlg(new ComboDialog(cell_list, description));
+    dlg->exec();
+    if (!dlg->itemName().isEmpty()) {
+        std::string data_name = dlg->itemName().toStdString();
+        gSession->currentProject()->experiment()->removeUnitCell(data_name);
+        gGui->onUnitCellChanged();
+        gGui->sideBar()->refreshAll();
+    }
+}
+
+void Actions::removePeaks()
+{
+    QString description{"Peak collection to remove"};
+    QStringList peaks_list = gSession->currentProject()->getPeakListNames();
+    std::unique_ptr<ComboDialog> dlg(new ComboDialog(peaks_list, description));
+    dlg->exec();
+    if (!dlg->itemName().isEmpty()) {
+        QString peaks_name = dlg->itemName();
+        gSession->currentProject()->removePeakModel(peaks_name);
+        gGui->onPeaksChanged();
+        gGui->sideBar()->refreshAll();
+    }
+}
+
+void Actions::aboutBox()
+{
+    std::unique_ptr<AboutBox> dlg(new AboutBox());
+    dlg->exec();
 }

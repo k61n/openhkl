@@ -15,8 +15,8 @@
 #include "core/loader/XFileHandler.h"
 
 #include <fstream>
-#include <sstream>
 #include <iterator>
+#include <sstream>
 
 namespace nsx {
 
@@ -46,28 +46,28 @@ void XFileHandler::readXFile(int frame)
     // get the header data: a/u cell orientation matrices
     std::getline(ifs, line);
     tokens = tokenize(line);
-    _a(0,0) = std::stod(tokens[0]);
-    _a(1,0) = std::stod(tokens[1]);
-    _a(2,0) = std::stod(tokens[2]);
-    _u(0,0) = std::stod(tokens[3]);
-    _u(1,0) = std::stod(tokens[3]);
-    _u(2,0) = std::stod(tokens[4]);
+    _a(0, 0) = std::stod(tokens[0]);
+    _a(1, 0) = std::stod(tokens[1]);
+    _a(2, 0) = std::stod(tokens[2]);
+    _u(0, 0) = std::stod(tokens[3]);
+    _u(1, 0) = std::stod(tokens[3]);
+    _u(2, 0) = std::stod(tokens[4]);
     std::getline(ifs, line);
     tokens = tokenize(line);
-    _a(0,1) = std::stod(tokens[0]);
-    _a(1,1) = std::stod(tokens[1]);
-    _a(2,1) = std::stod(tokens[2]);
-    _u(0,1) = std::stod(tokens[3]);
-    _u(2,1) = std::stod(tokens[3]);
-    _u(1,1) = std::stod(tokens[4]);
+    _a(0, 1) = std::stod(tokens[0]);
+    _a(1, 1) = std::stod(tokens[1]);
+    _a(2, 1) = std::stod(tokens[2]);
+    _u(0, 1) = std::stod(tokens[3]);
+    _u(2, 1) = std::stod(tokens[3]);
+    _u(1, 1) = std::stod(tokens[4]);
     std::getline(ifs, line);
     tokens = tokenize(line);
-    _a(0,2) = std::stod(tokens[0]);
-    _a(1,2) = std::stod(tokens[1]);
-    _a(2,2) = std::stod(tokens[2]);
-    _u(0,2) = std::stod(tokens[3]);
-    _u(1,2) = std::stod(tokens[3]);
-    _u(2,2) = std::stod(tokens[4]);
+    _a(0, 2) = std::stod(tokens[0]);
+    _a(1, 2) = std::stod(tokens[1]);
+    _a(2, 2) = std::stod(tokens[2]);
+    _u(0, 2) = std::stod(tokens[3]);
+    _u(1, 2) = std::stod(tokens[3]);
+    _u(2, 2) = std::stod(tokens[4]);
 
     // Other metadata (line 5)
     std::getline(ifs, line);
@@ -118,7 +118,7 @@ bool XFileHandler::Reflection::parse(std::string line)
 {
     // TODO: read this in fixed format, only the px/py columns
     std::vector<std::string> tokens = tokenize(line);
-    if (tokens[0] == stop_flag){
+    if (tokens[0] == stop_flag) {
         maskx = std::stoi(tokens[1]);
         masky = std::stoi(tokens[2]);
         return true;

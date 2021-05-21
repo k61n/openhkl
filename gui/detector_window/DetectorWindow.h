@@ -70,7 +70,7 @@ class DetectorWindow : public QDialog {
     DetectorView* getDetectorView() { return _detector_view; };
 
  public slots:
-     void setUnitCell();
+    void setUnitCell();
 
  private:
     void changeSelected(PeakItemGraphic* peak_graphic);

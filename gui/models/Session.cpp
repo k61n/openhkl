@@ -77,26 +77,28 @@ bool Session::createExperiment(QString experimentName, QString instrumentName)
     return true;
 }
 
+void Session::removeExperiment(const QString& name)
+{
+    if (_projects.size() == 0) {
+        return;
+    } else {
+        for (int project_idx = 0; project_idx < _projects.size(); ++project_idx) {
+            if (name.toStdString() == _projects[project_idx]->experiment()->name()) {
+                _projects.erase(_projects.begin() + project_idx);
+            }
+        }
+    }
+
+    _currentProject = _projects.size() > 0 ? 0 : -1;
+    onExperimentChanged();
+}
+
 std::vector<QString> Session::experimentNames() const
 {
     std::vector<QString> ret;
     for (const auto& project : _projects)
         ret.push_back(QString::fromStdString(project->experiment()->name()));
     return ret;
-}
-
-void Session::removeExperiment()
-{
-    std::cerr << "TODO: implement Session::removeExperiment\n";
-    /*
-        if (_projects.size() == 0)
-            return;
-        if (_currentProject == -1)
-            _projects.removeFirst();
-
-        _currentProject = _projects.size() > 0 ? 0 : -1;
-    */
-    onExperimentChanged();
 }
 
 void Session::selectExperiment(int select)
@@ -192,51 +194,52 @@ void Session::loadRawData()
     if (_currentProject < 0)
         createExperiment();
 
-    QSettings s;
-    s.beginGroup("RecentDirectories");
-    QString loadDirectory = s.value("data_raw", QDir::homePath()).toString();
-
-    QStringList qfilenames = QFileDialog::getOpenFileNames(gGui, "import raw data", loadDirectory);
-    if (qfilenames.empty())
-        return;
-
-    // Don't leave sorting the files to the OS. Use QCollator + std::sortto sort naturally
-    // (numerically)
-    QCollator collator;
-    collator.setNumericMode(true);
-    std::sort(
-        qfilenames.begin(), qfilenames.end(),
-        [&collator](const QString& file1, const QString& file2) {
-            return collator.compare(file1, file2) < 0;
-        });
-
-    QFileInfo info(qfilenames.at(0));
-    loadDirectory = info.absolutePath();
-    s.setValue("data_raw", loadDirectory);
-
-    std::vector<std::string> filenames;
-    for (const QString& filename : qfilenames)
-        filenames.push_back(filename.toStdString());
-
-    RawDataDialog dialog;
-    if (!dialog.exec())
-        return;
-    nsx::Experiment* exp = currentProject()->experiment();
-
-    // If the experience already stores the current numor, skip it
-    if (exp->hasData(filenames[0]))
-        return;
-
-    nsx::RawDataReaderParameters parameters;
-    parameters.wavelength = dialog.wavelength();
-    parameters.delta_omega = dialog.deltaOmega();
-    parameters.delta_chi = dialog.deltaChi();
-    parameters.delta_phi = dialog.deltaPhi();
-    parameters.row_major = dialog.rowMajor();
-    parameters.swap_endian = dialog.swapEndian();
-    parameters.bpp = dialog.bpp();
-    double eps = 1e-8;
     try {
+        QSettings s;
+        s.beginGroup("RecentDirectories");
+        QString loadDirectory = s.value("data_raw", QDir::homePath()).toString();
+
+        QStringList qfilenames =
+            QFileDialog::getOpenFileNames(gGui, "import raw data", loadDirectory);
+        if (qfilenames.empty())
+            return;
+
+        // Don't leave sorting the files to the OS. Use QCollator + std::sortto sort naturally
+        // (numerically)
+        QCollator collator;
+        collator.setNumericMode(true);
+        std::sort(
+            qfilenames.begin(), qfilenames.end(),
+            [&collator](const QString& file1, const QString& file2) {
+                return collator.compare(file1, file2) < 0;
+            });
+
+        QFileInfo info(qfilenames.at(0));
+        loadDirectory = info.absolutePath();
+        s.setValue("data_raw", loadDirectory);
+
+        std::vector<std::string> filenames;
+        for (const QString& filename : qfilenames)
+            filenames.push_back(filename.toStdString());
+
+        RawDataDialog dialog;
+        if (!dialog.exec())
+            return;
+        nsx::Experiment* exp = currentProject()->experiment();
+
+        // If the experience already stores the current numor, skip it
+        if (exp->hasData(filenames[0]))
+            return;
+
+        nsx::RawDataReaderParameters parameters;
+        parameters.wavelength = dialog.wavelength();
+        parameters.delta_omega = dialog.deltaOmega();
+        parameters.delta_chi = dialog.deltaChi();
+        parameters.delta_phi = dialog.deltaPhi();
+        parameters.row_major = dialog.rowMajor();
+        parameters.swap_endian = dialog.swapEndian();
+        parameters.bpp = dialog.bpp();
+        double eps = 1e-8;
         nsx::Diffractometer* diff = exp->getDiffractometer();
         auto reader{std::make_unique<nsx::RawDataReader>(filenames[0], diff)};
         reader->setParameters(parameters);
@@ -247,13 +250,13 @@ void Session::loadRawData()
             throw std::runtime_error("Wavelength not set");
         auto data{std::make_shared<nsx::DataSet>(std::move(reader))};
         exp->addData(data);
+        // _selectedData = currentProject()->getIndex(qfilenames.at(0));
+        onDataChanged();
     } catch (std::exception& e) {
-        return;
+        QMessageBox::critical(nullptr, "Error", QString(e.what()));
     } catch (...) {
         return;
     }
-    // _selectedData = currentProject()->getIndex(qfilenames.at(0));
-    onDataChanged();
 }
 
 void Session::onDataChanged()

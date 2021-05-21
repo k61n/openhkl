@@ -46,7 +46,7 @@ class Session {
 
     bool createExperiment(
         QString experimentName = "new_experiment", QString instrumentName = "unknown_instrument");
-    void removeExperiment();
+    void removeExperiment(const QString& name);
 
     void loadData(nsx::DataFormat format);
     void loadRawData();

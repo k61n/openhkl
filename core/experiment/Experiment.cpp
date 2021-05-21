@@ -249,8 +249,7 @@ void Experiment::computeQuality(
     bool friedel)
 {
     _data_quality.computeQuality(
-        d_min, d_max, 1, predicted, found, _peak_handler->getMergedPeaks()->spaceGroup(),
-        friedel);
+        d_min, d_max, 1, predicted, found, _peak_handler->getMergedPeaks()->spaceGroup(), friedel);
     _data_resolution.computeQuality(
         d_min, d_max, n_shells, predicted, found, _peak_handler->getMergedPeaks()->spaceGroup(),
         friedel);
@@ -432,6 +431,13 @@ void Experiment::addUnitCell(
     const std::string& name, double a, double b, double c, double alpha, double beta, double gamma)
 {
     _cell_handler->addUnitCell(name, a, b, c, alpha, beta, gamma);
+}
+
+void Experiment::addUnitCell(
+    const std::string& name, double a, double b, double c, double alpha, double beta, double gamma,
+    const std::string& space_group)
+{
+    _cell_handler->addUnitCell(name, a, b, c, alpha, beta, gamma, space_group);
 }
 
 bool Experiment::hasUnitCell(const std::string& name) const

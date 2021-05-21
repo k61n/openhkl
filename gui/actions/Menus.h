@@ -23,12 +23,14 @@ class Menus {
     Menus() = delete;
     Menus(QMenuBar*);
 
-    QMenu* _file_menu;
-    QMenu* _edit_menu;
+    QMenu* _expt_menu;
     QMenu* _data_menu;
     QMenu* _peaks_menu;
+    QMenu* _cells_menu;
     QMenu* _view_menu;
     QMenu* _help_menu;
+
+    QMenu* _data_sub;
 
  private:
     QMenuBar* _menu_bar;

@@ -234,7 +234,8 @@ void SubframeRefiner::setBatchesUp()
 {
     const auto dataset =
         gSession->experimentAt(_exp_combo->currentIndex())->getData(_data_combo->currentIndex());
-    _n_batches_spin->setMaximum(dataset->nFrames());
+    if (dataset)
+        _n_batches_spin->setMaximum(dataset->nFrames());
 }
 
 void SubframeRefiner::refine()
