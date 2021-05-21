@@ -219,6 +219,7 @@ if(NSX_TIDY)
     set(CMAKE_CXX_CLANG_TIDY "clang-tidy") # has effect only if compiler is clang; uses .clang-tidy
 endif()
 
+configure_file("manifest.h.in" "${CMAKE_BINARY_DIR}/manifest.h")
 
 add_subdirectory(base)
 add_subdirectory(tables)

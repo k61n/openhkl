@@ -15,8 +15,7 @@
 #ifndef GUI_DIALOGS_MESSAGES_H
 #define GUI_DIALOGS_MESSAGES_H
 
-#define APPLICATION_NAME "NSXTool"
-#define APPLICATION_CLAIM "Peak integration for neutron single crystal diffraction"
+#include "manifest.h"
 
 #include <QDialog>
 

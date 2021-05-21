@@ -1,0 +1,12 @@
+#ifndef MANIFEST_H
+#define MANIFEST_H
+
+#define VERSION "@NSXTool_VERSION@"
+
+#define APPLICATION_NAME "NSXTool"
+#define APPLICATION_CLAIM "Peak integration for neutron single crystal diffraction"
+
+#define ORGANIZATION_NAME "NSXTool"
+#define ORGANIZATION_DOMAIN "https://jugit.fz-juelich.de/mlz/nsxtool"
+
+#endif
