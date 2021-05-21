@@ -65,6 +65,7 @@ class Actions : public QObject {
     void setupRest();
     void setupCell();
     void addCell();
+    void removeExperiment();
     void removeCell();
     void removePeaks();
     void aboutBox();

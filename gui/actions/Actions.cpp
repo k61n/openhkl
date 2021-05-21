@@ -53,7 +53,8 @@ void Actions::setupExperiment()
     connect(load_experiment, &QAction::triggered, []() { gGui->sideBar()->refreshAll(); });
     connect(save_experiment, &QAction::triggered, []() { gGui->home->saveCurrent(); });
     connect(save_all_experiment, &QAction::triggered, []() { gGui->home->saveAll(); });
-    // connect(remove_experiment, &QAction::triggered, [](){gGui->home->remo();} );
+    connect(remove_experiment, &QAction::triggered, this, &Actions::removeExperiment);
+
     connect(quit, &QAction::triggered, []() { gGui->close(); });
 }
 
@@ -83,6 +84,25 @@ void Actions::setupData()
     connect(add_nexus, &QAction::triggered, []() { gGui->sideBar()->refreshAll(); });
 
     connect(remove_data, &QAction::triggered, this, &Actions::removeData);
+}
+
+void Actions::removeExperiment()
+{
+    QString description{"Experiment to remove"};
+
+    QStringList expt_list;
+
+    for (int expt_idx=0; expt_idx<gSession->numExperiments(); ++expt_idx) {
+        std::string name = gSession->experimentAt(expt_idx)->experiment()->name();
+        expt_list.push_back(QString::fromStdString(name));
+    }
+    std::unique_ptr<ComboDialog> dlg(new ComboDialog(expt_list, description));
+    dlg->exec();
+    if (!dlg->itemName().isEmpty()) {
+        gSession->removeExperiment(dlg->itemName());
+        gSession->onExperimentChanged();
+        gGui->sideBar()->refreshAll();
+    }
 }
 
 void Actions::removeData()

@@ -77,26 +77,28 @@ bool Session::createExperiment(QString experimentName, QString instrumentName)
     return true;
 }
 
+void Session::removeExperiment(const QString& name)
+{
+    if (_projects.size() == 0) {
+        return;
+    } else {
+        for (int project_idx=0; project_idx<_projects.size(); ++project_idx) {
+            if (name.toStdString() == _projects[project_idx]->experiment()->name()) {
+                _projects.erase(_projects.begin() + project_idx);
+            }
+        }
+    }
+
+    _currentProject = _projects.size() > 0 ? 0 : -1;
+    onExperimentChanged();
+}
+
 std::vector<QString> Session::experimentNames() const
 {
     std::vector<QString> ret;
     for (const auto& project : _projects)
         ret.push_back(QString::fromStdString(project->experiment()->name()));
     return ret;
-}
-
-void Session::removeExperiment()
-{
-    std::cerr << "TODO: implement Session::removeExperiment\n";
-    /*
-        if (_projects.size() == 0)
-            return;
-        if (_currentProject == -1)
-            _projects.removeFirst();
-
-        _currentProject = _projects.size() > 0 ? 0 : -1;
-    */
-    onExperimentChanged();
 }
 
 void Session::selectExperiment(int select)
