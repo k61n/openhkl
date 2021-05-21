@@ -82,7 +82,7 @@ void Session::removeExperiment(const QString& name)
     if (_projects.size() == 0) {
         return;
     } else {
-        for (int project_idx=0; project_idx<_projects.size(); ++project_idx) {
+        for (int project_idx = 0; project_idx < _projects.size(); ++project_idx) {
             if (name.toStdString() == _projects[project_idx]->experiment()->name()) {
                 _projects.erase(_projects.begin() + project_idx);
             }
@@ -191,7 +191,8 @@ void Session::loadRawData()
         s.beginGroup("RecentDirectories");
         QString loadDirectory = s.value("data_raw", QDir::homePath()).toString();
 
-        QStringList qfilenames = QFileDialog::getOpenFileNames(gGui, "import raw data", loadDirectory);
+        QStringList qfilenames =
+            QFileDialog::getOpenFileNames(gGui, "import raw data", loadDirectory);
         if (qfilenames.empty())
             return;
 

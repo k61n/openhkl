@@ -260,9 +260,7 @@ void SubframeMergedPeaks::refreshAll()
     refreshExperimentList();
     double d_min;
     if (_exp_drop->currentIndex() >= 0) {
-        d_min = gSession->experimentAt(_exp_drop->currentIndex())
-                    ->experiment()
-                    ->shape_params.d_min;
+        d_min = gSession->experimentAt(_exp_drop->currentIndex())->experiment()->shape_params.d_min;
     } else {
         d_min = 1.5;
     }

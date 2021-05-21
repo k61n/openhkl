@@ -220,7 +220,6 @@ class DetectorScene : public QGraphicsScene {
     int _3rdparty_size;
 
 
-
     nsx::Peak3D* _selected_peak;
 
     nsx::UnitCell* _unit_cell;

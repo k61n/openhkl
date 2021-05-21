@@ -94,8 +94,8 @@ std::vector<Peak3D*> predictPeaks(
 
     const double wavelength = mono.wavelength();
 
-    auto predicted_hkls = unit_cell->generateReflectionsInShell(
-        params.d_min, params.d_max, wavelength);
+    auto predicted_hkls =
+        unit_cell->generateReflectionsInShell(params.d_min, params.d_max, wavelength);
 
     std::vector<Peak3D*> peaks =
         buildPeaksFromMillerIndices(data, predicted_hkls, unit_cell->reciprocalBasis());

@@ -28,11 +28,19 @@ class MillerIndex;
 enum class RejectionFlag {
     NotRejected,
     Masked,
-    OutsideThreshold, OutsideFrames, OutsideDetector, // from PeakFinder
-    IntegrationFailure, TooFewPoints, TooFewNeighbours, NoUnitCell, NoDataSet, InvalidRegion,
+    OutsideThreshold,
+    OutsideFrames,
+    OutsideDetector, // from PeakFinder
+    IntegrationFailure,
+    TooFewPoints,
+    TooFewNeighbours,
+    NoUnitCell,
+    NoDataSet,
+    InvalidRegion,
     // from integrator
     InterpolationFailure,
-    InvalidShape, PredictionUpdateFailure, // from refiner
+    InvalidShape,
+    PredictionUpdateFailure, // from refiner
     Count
 };
 

@@ -18,11 +18,11 @@
 
 #include <QApplication>
 #include <QDate>
-#include <QHBoxLayout>
-#include <QVBoxLayout>
-#include <QLabel>
 #include <QDialogButtonBox>
+#include <QHBoxLayout>
+#include <QLabel>
 #include <QToolTip>
+#include <QVBoxLayout>
 
 AboutBox::AboutBox() : QDialog{gGui, Qt::Dialog}
 {
@@ -43,7 +43,7 @@ AboutBox::AboutBox() : QDialog{gGui, Qt::Dialog}
     vb->addLayout(hb);
     hb->setSpacing(12);
     // logo->setPixmap(QPixmap(":/icon/retroStier")
-                        // .scaled(128, 128, Qt::KeepAspectRatio, Qt::SmoothTransformation));
+    // .scaled(128, 128, Qt::KeepAspectRatio, Qt::SmoothTransformation));
     // hb->addWidget(logo);
 
 #ifdef __x86_64__
@@ -51,16 +51,14 @@ AboutBox::AboutBox() : QDialog{gGui, Qt::Dialog}
 #else
     QString arch = "";
 #endif
-    info->setText(
-        QString("<h4>%1 version %2 %3</h4>"
-                "<p>%4</p>"
-                "<p>Copyright: Forschungszentrum Jülich GmbH %5</p>")
-            .arg(qApp->applicationName())
-            .arg(qApp->applicationVersion())
-            .arg(arch)
-            .arg(APPLICATION_CLAIM)
-            .arg(QDate::currentDate().toString("yyyy"))
-        );
+    info->setText(QString("<h4>%1 version %2 %3</h4>"
+                          "<p>%4</p>"
+                          "<p>Copyright: Forschungszentrum Jülich GmbH %5</p>")
+                      .arg(qApp->applicationName())
+                      .arg(qApp->applicationVersion())
+                      .arg(arch)
+                      .arg(APPLICATION_CLAIM)
+                      .arg(QDate::currentDate().toString("yyyy")));
     info->setAlignment(Qt::AlignTop | Qt::AlignLeft);
     /* info->setOpenExternalLinks(true); */
 #ifdef Q_OS_MAC

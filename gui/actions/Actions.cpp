@@ -15,11 +15,11 @@
 #include "gui/actions/Actions.h"
 
 #include "core/experiment/Experiment.h"
+#include "gui/MainWin.h" // for gGui
+#include "gui/detector_window/DetectorWindow.h"
 #include "gui/dialogs/ComboDialog.h"
 #include "gui/dialogs/Messages.h"
 #include "gui/dialogs/NewCellDialog.h"
-#include "gui/MainWin.h" // for gGui
-#include "gui/detector_window/DetectorWindow.h"
 #include "gui/models/Project.h"
 #include "gui/models/Session.h" //for gSession
 #include "gui/subframe_home/SubframeHome.h"
@@ -92,7 +92,7 @@ void Actions::removeExperiment()
 
     QStringList expt_list;
 
-    for (int expt_idx=0; expt_idx<gSession->numExperiments(); ++expt_idx) {
+    for (int expt_idx = 0; expt_idx < gSession->numExperiments(); ++expt_idx) {
         std::string name = gSession->experimentAt(expt_idx)->experiment()->name();
         expt_list.push_back(QString::fromStdString(name));
     }
@@ -119,13 +119,9 @@ void Actions::removeData()
     }
 }
 
-void Actions::setupInstrument()
-{
-}
+void Actions::setupInstrument() { }
 
-void Actions::setupOptions()
-{
-}
+void Actions::setupOptions() { }
 
 void Actions::setupPeaks()
 {
@@ -160,8 +156,8 @@ void Actions::addCell()
     if (!dlg->unitCellName().isEmpty()) {
         nsx::Experiment* expt = gSession->currentProject()->experiment();
         expt->addUnitCell(
-            dlg->unitCellName().toStdString(), dlg->a(), dlg->b(), dlg->c(),
-            dlg->alpha(), dlg->beta(), dlg->gamma(), dlg->spaceGroup().toStdString());
+            dlg->unitCellName().toStdString(), dlg->a(), dlg->b(), dlg->c(), dlg->alpha(),
+            dlg->beta(), dlg->gamma(), dlg->spaceGroup().toStdString());
         gGui->onUnitCellChanged();
         gGui->sideBar()->refreshAll();
     }

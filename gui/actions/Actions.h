@@ -53,7 +53,7 @@ class Actions : public QObject {
     QAction* remove_cell;
 
     // Help
-    QAction* about; 
+    QAction* about;
 
  private:
     void setupExperiment();

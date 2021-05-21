@@ -92,8 +92,8 @@ void DetectorWindow::setDetectorViewUp()
     detector_grid->addWidget(_detector_spin, 1, 1, 1, 1);
 
     _cursor_mode = new QComboBox(this);
-    _cursor_mode->addItems(QStringList{
-            "Cursor mode", "Pixel", "\u03B8", "\u03B3/\u03BD", "d", "Miller Indices"});
+    _cursor_mode->addItems(
+        QStringList{"Cursor mode", "Pixel", "\u03B8", "\u03B3/\u03BD", "d", "Miller Indices"});
     _cursor_mode->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     detector_grid->addWidget(_cursor_mode, 1, 2, 1, 1);
 
@@ -163,8 +163,8 @@ void DetectorWindow::setInputUp()
         &DetectorWindow::refreshPeakTable);
 
     connect(
-        _unit_cell_combo, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this,
-        &DetectorWindow::setUnitCell);
+        _unit_cell_combo, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
+        this, &DetectorWindow::setUnitCell);
 
     _control_layout->addWidget(input_spoiler);
 }
@@ -182,19 +182,20 @@ void DetectorWindow::set3rdPartyPeaksUp()
     _3rdparty_size = f.addSpinBox("Size");
     _3rdparty_size->setValue(10);
     connect(
-        _3rdparty_size,
-        static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged), this,
+        _3rdparty_size, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged), this,
         &DetectorWindow::refreshDetectorView);
 
     _3rdparty_color = f.addColorButton(Qt::black, "Color", "3rd party peak color");
-    connect(_3rdparty_color, &ColorButton::colorChanged, this, &DetectorWindow::refreshDetectorView);
+    connect(
+        _3rdparty_color, &ColorButton::colorChanged, this, &DetectorWindow::refreshDetectorView);
 
     // _3rdparty_start_frame = f.addSpinBox("Start frame");
     // _3rdparty_start_frame->setValue(0);
 
     auto load_peaks = f.addButton(
         "Load 3rd party peaks",
-        "<font>Load a set of peak centres computed from a 3rd party code (e.g. DENZO .x file)</font>");
+        "<font>Load a set of peak centres computed from a 3rd party code (e.g. DENZO .x "
+        "file)</font>");
     connect(load_peaks, &QPushButton::clicked, this, &DetectorWindow::load3rdPartyPeaks);
 
     _control_layout->addWidget(third_party_spoiler);
@@ -232,7 +233,6 @@ void DetectorWindow::load3rdPartyPeaks()
     // nsx::XFileHandler xfh(file_path.toStdString());
     // xfh.readXFile(double(_detector_view->getScene()->currentFrame()));
     _detector_view->getScene()->link3rdPartyPeaks(&_peakCenterData);
-
 }
 
 void DetectorWindow::setPlotUp(PeakViewWidget* peak_widget, QString name)

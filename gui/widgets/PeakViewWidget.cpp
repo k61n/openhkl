@@ -21,8 +21,8 @@
 #include <QLabel>
 #include <QSpinBox>
 
-PeakViewWidget::PeakViewWidget(const QString& titleSet1, const QString& titleSet2) :
-    _peak_end(3.0), _bkg_begin(3.0), _bkg_end(6.0)
+PeakViewWidget::PeakViewWidget(const QString& titleSet1, const QString& titleSet2)
+    : _peak_end(3.0), _bkg_begin(3.0), _bkg_end(6.0)
 {
     createSet(set1, titleSet1, Qt::green);
     addIntegrationRegion(set1, Qt::green, Qt::yellow);

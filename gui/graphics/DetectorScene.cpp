@@ -245,7 +245,7 @@ void DetectorScene::draw3rdPartyItems()
     _peak_center_items.clear();
     nsx::XFileHandler* xfh = _peak_center_data->getFrame(_currentFrameIndex);
 
-    if ( !xfh)
+    if (!xfh)
         return;
 
     for (Eigen::Vector3d vector : xfh->getPeakCenters()) {
@@ -725,7 +725,7 @@ void DetectorScene::createToolTipText(QGraphicsSceneMouseEvent* event)
     nsx::InstrumentState state;
     try {
         state = _currentData->instrumentStates().interpolate(_currentFrameIndex);
-    } catch (std::range_error &e) {
+    } catch (std::range_error& e) {
         // May get an interpolation error on the last frame of the set. Skip the tooltip if we
         // need an interpolated state in this instance.
         if (!(_cursorMode == PIXEL))
@@ -766,17 +766,16 @@ void DetectorScene::createToolTipText(QGraphicsSceneMouseEvent* event)
                 Eigen::RowVector3d hkl =
                     miller_indices.rowVector().cast<double>() + miller_indices.error();
                 ttip = QString("(%1,%2,%3) I: %4")
-                            .arg(hkl[0], 0, 'f', 2)
-                            .arg(hkl[1], 0, 'f', 2)
-                            .arg(hkl[2], 0, 'f', 2)
-                            .arg(intensity);
+                           .arg(hkl[0], 0, 'f', 2)
+                           .arg(hkl[1], 0, 'f', 2)
+                           .arg(hkl[2], 0, 'f', 2)
+                           .arg(intensity);
             } else {
                 ttip = QString("No unit cell selected");
             }
             break;
         }
-        default:
-            break;
+        default: break;
     }
     QToolTip::showText(event->screenPos(), ttip);
 }

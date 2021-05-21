@@ -25,7 +25,7 @@
 
 namespace nsx {
 
-const std::map<RejectionFlag, std::string> Peak3D::_rejection_map {
+const std::map<RejectionFlag, std::string> Peak3D::_rejection_map{
     {RejectionFlag::NotRejected, "Not rejected"},
     {RejectionFlag::Masked, "Masked by user"},
     {RejectionFlag::OutsideThreshold, "Too many or few detector counts"},
@@ -39,8 +39,7 @@ const std::map<RejectionFlag, std::string> Peak3D::_rejection_map {
     {RejectionFlag::InvalidRegion, "Integration region extends beyond image/frame range"},
     {RejectionFlag::InterpolationFailure, "Frame coordinate interpolation failed"},
     {RejectionFlag::InvalidShape, "Invalid shape post-refinement"},
-    {RejectionFlag::PredictionUpdateFailure, "Failure updating prediction post-refinement"}
-};
+    {RejectionFlag::PredictionUpdateFailure, "Failure updating prediction post-refinement"}};
 
 Peak3D::Peak3D(sptrDataSet data)
     : _shape()

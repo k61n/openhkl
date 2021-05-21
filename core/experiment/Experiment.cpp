@@ -249,8 +249,7 @@ void Experiment::computeQuality(
     bool friedel)
 {
     _data_quality.computeQuality(
-        d_min, d_max, 1, predicted, found, _peak_handler->getMergedPeaks()->spaceGroup(),
-        friedel);
+        d_min, d_max, 1, predicted, found, _peak_handler->getMergedPeaks()->spaceGroup(), friedel);
     _data_resolution.computeQuality(
         d_min, d_max, n_shells, predicted, found, _peak_handler->getMergedPeaks()->spaceGroup(),
         friedel);

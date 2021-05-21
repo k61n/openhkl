@@ -20,7 +20,8 @@
 #include <Eigen/Dense>
 #include <QColor>
 
-//! Plottable graphics item that represents a peak centre from a 3rd party code in the detector image
+//! Plottable graphics item that represents a peak centre from a 3rd party code in the detector
+//! image
 class PeakCenterGraphic : public QGraphicsItem {
  public:
     PeakCenterGraphic(const Eigen::Vector3d& peak);

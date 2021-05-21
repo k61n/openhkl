@@ -15,8 +15,8 @@
 #ifndef NSX_GUI_UTILITY_GRIDFILLER_H
 #define NSX_GUI_UTILITY_GRIDFILLER_H
 
-#include <QString>
 #include <QColor>
+#include <QString>
 
 class ColorButton;
 class Spoiler;

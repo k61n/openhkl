@@ -108,13 +108,14 @@ class XFileHandler {
 
 // TODO: generalise to other data fomrats?
 class PeakCenterDataSet {
-public:
+ public:
     PeakCenterDataSet() = default;
 
     void init(int nframes);
     XFileHandler* getFrame(int frame);
     void addFrame(std::string filename, int frame);
-private:
+
+ private:
     std::vector<std::unique_ptr<XFileHandler>> _xfiles;
 };
 

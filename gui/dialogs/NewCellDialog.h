@@ -17,8 +17,8 @@
 
 #include <QComboBox>
 #include <QDialog>
-#include <QLineEdit>
 #include <QDoubleSpinBox>
+#include <QLineEdit>
 
 //! Dialog to assign a unit cell to a peak collection
 class NewCellDialog : public QDialog {
