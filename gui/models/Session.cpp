@@ -140,16 +140,8 @@ void Session::loadData(nsx::DataFormat format)
     loadDirectory = info.absolutePath();
     s.setValue("data", loadDirectory);
 
-    if (_currentProject < 0) {
-	try {
-	    createExperiment();
-	} catch (const std::exception& ex) {
-            QString msg = QString("Loading file(s) failed with error: ")
-                + QString(ex.what()) + QString(".");
-            QMessageBox::critical(nullptr, "Error", msg);
-        }
-	return;
-    }
+    if (_currentProject < 0)
+        createExperiment();
 
     for (const QString& filename : filenames) {
         QFileInfo fileinfo(filename);
@@ -157,9 +149,15 @@ void Session::loadData(nsx::DataFormat format)
 
         // If the experiment already stores the current numor, skip it
         if (exp->hasData(filename.toStdString()))
-            return; // nullptr;
+            return;
 
         try {
+            // For all data-readers, a valid diffractometer instrument is needed;
+            // `_diffractometer` must not be null; otherwise undefined behaviour might occur
+            if (!exp->getDiffractometer()) {
+                throw std::runtime_error("Please set a valid instrument first");
+            }
+
             nsx::sptrDataSet data_ptr;
 
             std::string extension = fileinfo.completeSuffix().toStdString();
@@ -167,10 +165,11 @@ void Session::loadData(nsx::DataFormat format)
                 extension, filename.toStdString(), exp->getDiffractometer());
             exp->addData(data_ptr);
         } catch (const std::exception& ex) {
-            QString msg = QString("Loading file \"") + filename + QString("\" failed with error: ")
+            QString msg = QString("Loading file(s) '") + filename + QString("' failed with error: ")
                 + QString(ex.what()) + QString(".");
 
             QMessageBox::critical(nullptr, "Error", msg);
+	    return;
         }
     }
     currentProject()->selectData(currentProject()->getIndex(filenames.at(0)));
