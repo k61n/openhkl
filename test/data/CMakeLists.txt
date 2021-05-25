@@ -47,8 +47,6 @@ set(NSX_TESTDATA_URL https://computing.mlz-garching.de/download/testdata/nsx)
 
 set(NSX_TESTDATA_URL https://computing.mlz-garching.de/download/testdata/nsx)
 
-set(NSX_TESTDATA_URL https://computing.mlz-garching.de/download/testdata/nsx)
-
 function(check_file expected_hash fname)
     if(NOT EXISTS ${NSX_TESTDATA_DIR}/${fname})
         message(STATUS "File ${fname} not found, downloading...")
