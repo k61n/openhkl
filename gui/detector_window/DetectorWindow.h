@@ -36,6 +36,8 @@ class ShortTable;
 
 //! Modeless dialog containing a non-contextual detector scene (open via Menu)
 class DetectorWindow : public QDialog {
+    Q_OBJECT
+
  public:
     DetectorWindow(QWidget* parent = nullptr);
 
