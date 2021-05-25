@@ -168,11 +168,6 @@ void MainWin::plotData(QVector<double>& x, QVector<double>& y, QVector<double>& 
     experiment->getPlot()->plotData(x, y, e);
 }
 
-DetectorWindow* MainWin::detectorWindow()
-{
-    return detector_window;
-}
-
 void MainWin::resetViews()
 {
     restoreState(initialState_);

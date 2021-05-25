@@ -13,6 +13,7 @@
 //  ***********************************************************************************************
 
 #include "gui/detector_window/DetectorWindow.h"
+
 #include "core/experiment/Experiment.h"
 #include "gui/graphics/DetectorScene.cpp"
 #include "gui/graphics/DetectorView.cpp"
