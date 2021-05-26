@@ -228,6 +228,7 @@ int Project::numUnitCells() const
 
 void Project::changeInstrument(const QString& instrumentname)
 {
+    // Avoid changing the instrument, if Experiment has already some data
     if (_experiment->numData())
         return;
     _experiment.reset(new nsx::Experiment{_experiment->name(), instrumentname.toStdString()});
