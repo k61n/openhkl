@@ -52,7 +52,7 @@ class DataHandler {
     //! Gets the pointer to a given data stored in the experiment
     sptrDataSet dataShortName(std::string name) const;
     //! Get number of data
-    int numData() const { return _data_map.size(); };
+    int numData() const;
     //! Add some data to the experiment
     void addData(sptrDataSet data, std::string name = "");
     //! Returns true if the experiment has a data

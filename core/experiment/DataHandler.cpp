@@ -127,6 +127,11 @@ sptrDataSet DataHandler::dataShortName(std::string name) const
     throw std::runtime_error("The data " + name + " could not be found in the experiment " + _name);
 }
 
+int DataHandler::numData() const
+{
+    return _data_map.size();
+}
+
 bool DataHandler::hasData(const std::string& name) const
 {
     return (_data_map.find(name) != _data_map.end());
