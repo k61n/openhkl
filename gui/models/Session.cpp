@@ -110,6 +110,13 @@ void Session::selectExperiment(int select)
 
 void Session::loadData(nsx::DataFormat format)
 {
+    // Loading data requires an existing Experiment
+    if (_currentProject < 0) {
+        QMessageBox::critical(nullptr, "Error",
+                              "Please create an experiment before loading data.");
+        return;
+    }
+
     QSettings s;
     s.beginGroup("RecentDirectories");
     QString loadDirectory = s.value("data", QDir::homePath()).toString();
@@ -140,9 +147,6 @@ void Session::loadData(nsx::DataFormat format)
     loadDirectory = info.absolutePath();
     s.setValue("data", loadDirectory);
 
-    if (_currentProject < 0)
-        createExperiment();
-
     for (const QString& filename : filenames) {
         QFileInfo fileinfo(filename);
         nsx::Experiment* exp = currentProject()->experiment();
@@ -169,7 +173,7 @@ void Session::loadData(nsx::DataFormat format)
                 + QString(ex.what()) + QString(".");
 
             QMessageBox::critical(nullptr, "Error", msg);
-	    return;
+            return;
         }
     }
     currentProject()->selectData(currentProject()->getIndex(filenames.at(0)));
