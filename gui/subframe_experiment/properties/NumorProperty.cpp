@@ -24,6 +24,8 @@
 #include <QHeaderView>
 #include <QMenu>
 #include <QMessageBox>
+#include <QTextEdit>
+
 
 NumorProperty::NumorProperty()
 {
@@ -138,25 +140,34 @@ void NumorProperty::onChanged(int curIdx)
             int numberLines = 0;
             for (auto element : map) // Only int, double and string metadata are displayed.
             {
-                QTableWidgetItem* col0 = new QTableWidgetItem();
-                QTableWidgetItem* col1 = new QTableWidgetItem();
-                col0->setData(Qt::EditRole, QString(element.first.c_str()));
+                QTableWidgetItem* col1_number{nullptr};
+                QTextEdit* col1_text{nullptr};
 
-                if (std::holds_alternative<int>(element.second))
-                    col1->setData(Qt::EditRole, std::get<int>(element.second));
-                else if (std::holds_alternative<double>(element.second))
-                    col1->setData(Qt::EditRole, std::get<double>(element.second));
-                else if (std::holds_alternative<std::string>(element.second)) {
-                    col1->setData(
-                        Qt::EditRole,
-                        QString::fromStdString(std::get<std::string>(element.second)));
-                } else {
-                    delete col0;
-                    delete col1;
-                    continue;
+		// metadata contents
+                if (std::holds_alternative<int>(element.second)) {
+                    col1_number = new QTableWidgetItem();
+                    col1_number->setData(Qt::EditRole, std::get<int>(element.second));
                 }
-                _table->setItem(numberLines, 0, col0);
-                _table->setItem(numberLines++, 1, col1);
+                else if (std::holds_alternative<double>(element.second)) {
+                    col1_number = new QTableWidgetItem();
+                    col1_number->setData(Qt::EditRole, std::get<double>(element.second));
+                }
+                else if (std::holds_alternative<std::string>(element.second)) {
+                    col1_text = new QTextEdit(QString::fromStdString(std::get<std::string>(element.second)));
+                    col1_text->setReadOnly(true);
+                    col1_text->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
+                } else continue;
+
+                // 1st column: metadata id
+                _table->setItem(numberLines, 0,
+                                new QTableWidgetItem(QString(element.first.c_str())));
+
+                // 2nd column: metadata number/text
+                if (col1_number)
+                    _table->setItem(numberLines, 1, col1_number);
+                else if (col1_text)
+                    _table->setCellWidget(numberLines, 1, col1_text);
+                ++numberLines;
             }
             _table->horizontalHeader()->setStretchLastSection(true);
         }
