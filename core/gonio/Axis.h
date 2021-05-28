@@ -20,7 +20,7 @@
 
 namespace nsx {
 
-//! Pure virtual base class for homogeneous transforms (RotAxis, TransAxis).
+//! Pure virtual base class for homogeneous transforms (RotAxis).
 
 //! Each axis define a normalized direction (about which one rotates or along which one translates).
 //! An offset can be defined and a valid range of parameters (lowLimit, HighLimit). The Axis class

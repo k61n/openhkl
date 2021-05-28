@@ -17,14 +17,12 @@
 
 #include "core/gonio/AxisFactory.h"
 #include "core/gonio/RotAxis.h"
-#include "core/gonio/TransAxis.h"
 
 namespace nsx {
 
 AxisFactory::AxisFactory()
 {
     registerCallback("rotation", &RotAxis::create);
-    registerCallback("translation", &TransAxis::create);
 }
 
 } // namespace nsx
