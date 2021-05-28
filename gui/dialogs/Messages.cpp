@@ -6,7 +6,8 @@
 //! @brief     Implements class AboutBox
 //!
 //! @homepage  ###HOMEPAGE###
-//! @license   GNU General Public License v3 or higher (see COPYING) //! @copyright Institut Laue-Langevin and Forschungszentrum Jülich GmbH 2016-
+//! @license   GNU General Public License v3 or higher (see COPYING)
+//! @copyright Institut Laue-Langevin and Forschungszentrum Jülich GmbH 2016-
 //! @authors   see CITATION, MAINTAINER
 //
 //  ***********************************************************************************************
