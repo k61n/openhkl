@@ -18,6 +18,7 @@
 #include "base/utils/Logger.h"
 #include "base/utils/Units.h" // deg
 #include "core/data/DataSet.h"
+#include "core/raw/MetaData.h" // MetaDataMap
 #include "core/detector/Detector.h"
 #include "core/detector/DetectorEvent.h"
 #include "core/gonio/Gonio.h"
@@ -147,14 +148,14 @@ void ExperimentExporter::writeData(const std::map<std::string, DataSet*> data)
             sample_scan.write(&values(0), H5::PredType::NATIVE_DOUBLE, scanSpace, scanSpace);
         }
 
-        const auto& map = data_item->reader()->metadata().map();
-
         // Write all string metadata into the "Info" group
         H5::Group info_group = file.createGroup(std::string("/DataCollections/" + name + "/Info"));
 
         H5::DataSpace metaSpace(H5S_SCALAR);
         H5::StrType str80(H5::PredType::C_S1, 80);
         std::string info;
+
+	const nsx::MetaDataMap& map = data_item->metadata().map();
 
         for (const auto& item : map) {
             std::string info;

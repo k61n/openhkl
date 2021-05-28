@@ -92,6 +92,9 @@ class DataSet {
     //! List of data sources (filenames)
     std::vector<std::string> sources;
 
+    //! Returns a const reference to the MetaData container
+    const nsx::MetaData& metadata() const;
+
     //! Returns a reference to the MetaData container
     nsx::MetaData& metadata();
 

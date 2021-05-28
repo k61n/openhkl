@@ -366,7 +366,13 @@ std::string DataSet::name() const
     return name;
 }
 
-nsx::MetaData& DataSet::metadata() {
+const nsx::MetaData& DataSet::metadata() const
+{
+    return _metadata;
+}
+
+nsx::MetaData& DataSet::metadata()
+{
     return _metadata;
 }
 
