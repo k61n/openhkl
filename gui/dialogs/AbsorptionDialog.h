@@ -15,10 +15,14 @@
 #ifndef NSX_GUI_DIALOGS_ABSORPTIONDIALOG_H
 #define NSX_GUI_DIALOGS_ABSORPTIONDIALOG_H
 
-#include "core/instrument/InstrumentTypes.h"
 #include "gui/graphics/CrystalScene.h"
 #include <QDialog>
 #include <QScrollBar>
+
+namespace nsx{
+class Experiment;
+class RotAxis;
+}
 
 class AbsorptionDialog : public QDialog {
     Q_OBJECT
