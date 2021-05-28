@@ -302,7 +302,6 @@ ArrayExtendCRef(MillerIndex, int);
 %template(DetectorEventQueue) std::deque<nsx::DetectorEvent>;
 %template(DetectorEventList) std::vector<nsx::DetectorEvent>;
 
-%include "core/instrument/InstrumentTypes.h"
 %include "core/instrument/Monochromator.h"
 %include "core/instrument/Diffractometer.h"
 %include "core/instrument/Sample.h"

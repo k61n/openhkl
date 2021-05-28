@@ -23,6 +23,7 @@
 namespace nsx {
 
 class Detector;
+class DetectorEvent;
 
 //! Class used to manage loading detector images and metadata from disk.
 //!
