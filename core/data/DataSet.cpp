@@ -325,13 +325,25 @@ const Detector& DataSet::detector() const
     return *_reader->diffractometer()->detector();
 }
 
-void DataSet::setName(std::string name)
+void DataSet::setName(const std::string name)
 {
+    if (name.empty())
+        return;
+
+    const std::string invalid_chars{"\\/"};
+    const std::size_t sep = name.find_first_of(invalid_chars);
+    if (sep != std::string::npos)
+        throw std::invalid_argument("DataSet name '" + name
+                                    + "' must not include the characters " + invalid_chars);
+
     _name = name;
 }
 
 std::string DataSet::name() const
 {
+    if (!_name.empty())
+        return _name;
+
     std::string name;
     std::string ext;
     std::string data_name = filename();
@@ -349,8 +361,6 @@ std::string DataSet::name() const
         ext = "";
     }
 
-    if (!_name.empty())
-        return _name;
     return name;
 }
 
