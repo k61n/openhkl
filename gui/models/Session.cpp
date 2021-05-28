@@ -194,6 +194,7 @@ void Session::removeData()
 
 void Session::loadRawData()
 {
+    // disallow this vvv
     if (_currentProject < 0)
         createExperiment();
 

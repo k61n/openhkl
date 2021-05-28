@@ -25,6 +25,7 @@
 #include <QMenu>
 #include <QMessageBox>
 #include <QTextEdit>
+#include <QStringList>
 
 
 NumorProperty::NumorProperty()
@@ -115,10 +116,11 @@ void NumorProperty::refreshInput()
 {
     _numor_selector->blockSignals(true);
     _numor_selector->clear();
+    const QStringList& datanames{gSession->currentProject()->getDataNames()};
     _numor_selector->addItems(gSession->currentProject()->getDataNames());
     _numor_selector->blockSignals(false);
 
-    if (!gSession->currentProject()->getDataNames().empty())
+    if (!datanames.empty())
         onChanged(0);
 }
 
@@ -146,7 +148,7 @@ void NumorProperty::onChanged(int curIdx)
                 QTableWidgetItem* col1_number{nullptr};
                 QTextEdit* col1_text{nullptr};
 
-		// metadata contents
+                // metadata contents
                 if (std::holds_alternative<int>(element.second)) {
                     col1_number = new QTableWidgetItem();
                     col1_number->setData(Qt::EditRole, std::get<int>(element.second));

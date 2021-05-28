@@ -27,8 +27,7 @@ namespace nsx {
 template <typename T>
 std::shared_ptr<DataSet> create_reader(const std::string& filename, Diffractometer* diffractometer)
 {
-    auto reader = std::shared_ptr<IDataReader>{new T(filename, diffractometer)};
-    return std::shared_ptr<DataSet>{new DataSet(std::move(reader))};
+    return std::make_shared<DataSet>(std::shared_ptr<IDataReader>{new T(filename, diffractometer)});
 }
 
 DataReaderFactory::DataReaderFactory() : _callbacks()
