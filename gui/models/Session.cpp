@@ -194,9 +194,12 @@ void Session::removeData()
 
 void Session::loadRawData()
 {
-    // disallow this vvv
-    if (_currentProject < 0)
-        createExperiment();
+    // Loading data requires an existing Experiment
+    if (_currentProject < 0) {
+	QMessageBox::critical(nullptr, "Error",
+			      "Please create an experiment before loading data.");
+	return;
+    }
 
     try {
         QSettings s;
