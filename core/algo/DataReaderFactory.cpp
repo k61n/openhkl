@@ -19,7 +19,6 @@
 #include "core/loader/ILLDataReader.h"
 #include "core/loader/NexusDataReader.h"
 #include "core/loader/RawDataReader.h"
-#include "core/loader/TiffDataReader.h"
 
 #include <stdexcept>
 
@@ -42,8 +41,6 @@ DataReaderFactory::DataReaderFactory() : _callbacks()
     _callbacks["hdf"] = &create_reader<HDF5DataReader>;
     _callbacks["nxs"] = &create_reader<NexusDataReader>;
     _callbacks["raw"] = &create_reader<RawDataReader>;
-    _callbacks["tif"] = &create_reader<TiffDataReader>;
-    _callbacks["tiff"] = &create_reader<TiffDataReader>;
 }
 
 std::shared_ptr<DataSet> DataReaderFactory::create(
