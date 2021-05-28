@@ -60,6 +60,10 @@ class MetaData {
     const MetaDataKeySet& keys() const;
     //! Gets the full map of parameters
     const MetaDataMap& map() const;
+    //! Overwrites the full map of parameters
+    void setMap(const MetaDataMap& other_map);
+    //! Merges the map of parameters with another given map
+    void addMap(const MetaDataMap& other_map);
 
  private:
     //! Contains the map of all key/value pairs.

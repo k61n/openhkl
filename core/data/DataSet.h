@@ -89,6 +89,12 @@ class DataSet {
     std::string name() const;
     void setName(std::string name);
 
+    //! List of data sources (filenames)
+    std::vector<std::string> sources;
+
+    //! Returns a reference to the MetaData container
+    nsx::MetaData& metadata();
+
  private:
     bool _isOpened;
     std::string _filename;
@@ -102,6 +108,7 @@ class DataSet {
     std::set<IMask*> _masks;
     double _background;
     std::shared_ptr<IDataReader> _reader;
+    nsx::MetaData _metadata;
 };
 
 } // namespace nsx

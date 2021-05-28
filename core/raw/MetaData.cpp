@@ -57,4 +57,15 @@ const MetaDataMap& MetaData::map() const
 {
     return _map;
 }
+
+void MetaData::setMap(const MetaDataMap& other_map)
+{
+    _map = other_map;
+}
+
+void MetaData::addMap(const MetaDataMap& other_map)
+{
+    _map.insert(other_map.begin(), other_map.end());
+}
+
 } // End namespace nsx

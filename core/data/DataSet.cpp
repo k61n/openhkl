@@ -45,6 +45,8 @@ DataSet::DataSet(std::shared_ptr<IDataReader> reader)
     _ncols = detector().nCols();
     _nFrames = _reader->metadata().key<int>("npdone");
 
+    _metadata.setMap(_reader->metadata().map());
+
     double wav = _reader->metadata().key<double>("wavelength");
     _reader->diffractometer()->source().selectedMonochromator().setWavelength(wav);
 
@@ -362,6 +364,10 @@ std::string DataSet::name() const
     }
 
     return name;
+}
+
+nsx::MetaData& DataSet::metadata() {
+    return _metadata;
 }
 
 } // namespace nsx

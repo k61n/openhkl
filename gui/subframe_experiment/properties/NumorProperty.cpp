@@ -131,13 +131,16 @@ void NumorProperty::onChanged(int curIdx)
         nsx::sptrDataSet data = exp->getData(curIdx);
 
         if (data) {
-            const nsx::MetaData& metadata = data->reader()->metadata();
+            const nsx::MetaData& metadata = data->metadata();
             const nsx::MetaDataMap& map = metadata.map();
 
             _table->setColumnCount(2);
             _table->setRowCount(map.size());
 
             int numberLines = 0;
+
+            // TODO: Dispaly data->name in the table and make it editable
+
             for (auto element : map) // Only int, double and string metadata are displayed.
             {
                 QTableWidgetItem* col1_number{nullptr};

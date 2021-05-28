@@ -22,6 +22,8 @@
 #include "gui/MainWin.h"
 #include "gui/dialogs/RawDataDialog.h"
 #include "gui/models/Project.h"
+#include "base/utils/StringIO.h" // using join
+#include "core/raw/MetaData.h"
 
 #include <QCollator>
 #include <QDir>
@@ -162,10 +164,8 @@ void Session::loadData(nsx::DataFormat format)
                 throw std::runtime_error("Please set a valid instrument first");
             }
 
-            nsx::sptrDataSet data_ptr;
-
             std::string extension = fileinfo.completeSuffix().toStdString();
-            data_ptr = nsx::DataReaderFactory().create(
+            nsx::sptrDataSet data_ptr = nsx::DataReaderFactory().create(
                 extension, filename.toStdString(), exp->getDiffractometer());
             exp->addData(data_ptr);
         } catch (const std::exception& ex) {
@@ -242,17 +242,33 @@ void Session::loadRawData()
         parameters.row_major = dialog.rowMajor();
         parameters.swap_endian = dialog.swapEndian();
         parameters.bpp = dialog.bpp();
-        double eps = 1e-8;
         nsx::Diffractometer* diff = exp->getDiffractometer();
         auto reader{std::make_unique<nsx::RawDataReader>(filenames[0], diff)};
         reader->setParameters(parameters);
-        for (size_t i = 0; i < filenames.size(); ++i)
+
+        // Metadata for the DataSet, accumulated from the individual metadata
+        nsx::MetaData metadata;
+
+        for (size_t i = 0; i < filenames.size(); ++i) {
             reader->addFrame(filenames[i]);
+            metadata.addMap(reader->metadata().map());
+        }
         reader->end();
+        // include the latest changes from reader metadata (eg., `npdone`)
+        metadata.addMap(reader->metadata().map());
+
+        const double eps = 1e-8;
         if (parameters.wavelength < eps)
             throw std::runtime_error("Wavelength not set");
-        auto data{std::make_shared<nsx::DataSet>(std::move(reader))};
-        exp->addData(data);
+
+        const std::shared_ptr<nsx::DataSet> dataset{std::make_shared<nsx::DataSet>(std::move(reader))};
+        // dataset->setName(filenames[0]);
+
+        dataset->sources = filenames;
+        metadata.add("sources", nsx::join(filenames, ", "));
+        dataset->metadata().setMap(metadata.map());
+
+        exp->addData(dataset);
         // _selectedData = currentProject()->getIndex(qfilenames.at(0));
         onDataChanged();
     } catch (std::exception& e) {

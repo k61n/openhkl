@@ -88,7 +88,7 @@ void DataHandler::addData(sptrDataSet data, std::string name)
     if (_data_map.find(name) != _data_map.end())
         return;
 
-    const auto& metadata = data->reader()->metadata();
+    const auto& metadata = data->metadata();
 
     const std::string diffName = metadata.key<std::string>("Instrument");
 
