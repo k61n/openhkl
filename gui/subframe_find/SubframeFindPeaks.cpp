@@ -341,6 +341,7 @@ void SubframeFindPeaks::updateDatasetParameters(int idx)
     _end_frame_spin->setMaximum(data->nFrames());
     _end_frame_spin->setValue(data->nFrames());
     _start_frame_spin->setMaximum(data->nFrames());
+    _start_frame_spin->setValue(1);
 
     _figure_view->getScene()->slotChangeSelectedData(_data_list.at(idx), _figure_spin->value());
     //_figure_view->getScene()->setMaxIntensity(3000);
@@ -363,7 +364,7 @@ void SubframeFindPeaks::grabFinderParameters()
     _max_size_spin->setValue(finder->maxSize());
     _scale_spin->setValue(finder->peakEnd());
     _max_width_spin->setValue(finder->maxFrames());
-    _start_frame_spin->setValue(finder->framesBegin());
+    _start_frame_spin->setValue(finder->framesBegin()+1);
     _end_frame_spin->setValue(finder->framesEnd());
     _threshold_spin->setValue(finder->threshold());
 
@@ -408,7 +409,7 @@ void SubframeFindPeaks::setFinderParameters()
     finder->setMaxSize(_max_size_spin->value());
     finder->setPeakEnd(_scale_spin->value());
     finder->setMaxFrames(_max_width_spin->value());
-    finder->setFramesBegin(_start_frame_spin->value());
+    finder->setFramesBegin(_start_frame_spin->value()-1);
     finder->setFramesEnd(_end_frame_spin->value());
     finder->setThreshold(_threshold_spin->value());
 
