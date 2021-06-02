@@ -1,6 +1,6 @@
 ###### Find boost
 set(Boost_USE_MULTITHREADED ON)
-find_package(Boost 1.53.0 REQUIRED)
+find_package(Boost 1.53.0 REQUIRED COMPONENTS headers)
 if(Boost_FOUND)
     include_directories(SYSTEM "${Boost_INCLUDE_DIRS}")
     message(STATUS "Found boost:")
