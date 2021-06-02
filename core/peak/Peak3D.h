@@ -36,8 +36,7 @@ enum class RejectionFlag {
     TooFewNeighbours,
     NoUnitCell,
     NoDataSet,
-    InvalidRegion,
-    // from integrator
+    InvalidRegion, // from integrator
     InterpolationFailure,
     InvalidShape,
     PredictionUpdateFailure, // from refiner
