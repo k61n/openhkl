@@ -127,13 +127,8 @@ std::vector<Peak3D*> predictPeaks(
             peak->setShape(Ellipsoid(center, cov.inverse()));
         } catch (std::exception& e) {
             // qInfo() << e.what(); // TODO replace by less verbose reporting
-            if (handler) {
-                --npeaks;
-                std::ostringstream oss;
-                oss << "Predicting " << npeaks << " peaks";
-                handler->setStatus(oss.str().c_str());
-            }
-            continue;
+            peak->setSelected(false);
+            peak->setRejectionFlag(RejectionFlag::TooFewNeighbours);
         }
         predicted_peaks.push_back(peak);
         if (handler) {
