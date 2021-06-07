@@ -16,6 +16,7 @@
 #include "core/data/DataSet.h"
 #include "core/data/DataTypes.h"
 #include "core/raw/IDataReader.h"
+#include "base/utils/StringIO.h"  // split
 #include "gui/MainWin.h"
 #include "gui/models/Project.h"
 #include "gui/models/Session.h"
@@ -26,6 +27,7 @@
 #include <QMessageBox>
 #include <QTextEdit>
 #include <QStringList>
+#include <QComboBox>
 
 
 NumorProperty::NumorProperty()
@@ -117,12 +119,26 @@ void NumorProperty::refreshInput()
     _numor_selector->blockSignals(true);
     _numor_selector->clear();
     const QStringList& datanames{gSession->currentProject()->getDataNames()};
-    _numor_selector->addItems(gSession->currentProject()->getDataNames());
+    _numor_selector->addItems(datanames);
     _numor_selector->blockSignals(false);
 
     if (!datanames.empty())
         onChanged(0);
 }
+
+
+namespace {
+
+// make a ComboBox to show the source files as a drop-down list
+inline
+QComboBox* sourcesComboBox(const std::string sources_str) {
+    QComboBox* sources_combo = new QComboBox();
+    for (const std::string& src : nsx::split(sources_str, ", "))
+        sources_combo->addItem(QString::fromStdString(src));
+    return sources_combo;
+}
+
+} // end namespace
 
 void NumorProperty::onChanged(int curIdx)
 {
@@ -145,33 +161,36 @@ void NumorProperty::onChanged(int curIdx)
 
             for (auto element : map) // Only int, double and string metadata are displayed.
             {
-                QTableWidgetItem* col1_number{nullptr};
-                QTextEdit* col1_text{nullptr};
+                QTableWidgetItem* col1{nullptr};
 
                 // metadata contents
                 if (std::holds_alternative<int>(element.second)) {
-                    col1_number = new QTableWidgetItem();
-                    col1_number->setData(Qt::EditRole, std::get<int>(element.second));
+                    col1 = new QTableWidgetItem();
+                    col1->setData(Qt::EditRole, std::get<int>(element.second));
                 }
                 else if (std::holds_alternative<double>(element.second)) {
-                    col1_number = new QTableWidgetItem();
-                    col1_number->setData(Qt::EditRole, std::get<double>(element.second));
+                    col1 = new QTableWidgetItem();
+                    col1->setData(Qt::EditRole, std::get<double>(element.second));
                 }
                 else if (std::holds_alternative<std::string>(element.second)) {
-                    col1_text = new QTextEdit(QString::fromStdString(std::get<std::string>(element.second)));
-                    col1_text->setReadOnly(true);
-                    col1_text->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
-                } else continue;
+		    if (element.first != "sources") {
+			col1 = new QTableWidgetItem();
+			col1->setData(Qt::EditRole, QString::fromStdString(std::get<std::string>(element.second)));
+		    }
+                }
+		else continue;
 
                 // 1st column: metadata id
                 _table->setItem(numberLines, 0,
                                 new QTableWidgetItem(QString(element.first.c_str())));
 
                 // 2nd column: metadata number/text
-                if (col1_number)
-                    _table->setItem(numberLines, 1, col1_number);
-                else if (col1_text)
-                    _table->setCellWidget(numberLines, 1, col1_text);
+                if (col1)
+                    _table->setItem(numberLines, 1, col1);
+                else if (element.first == "sources")
+                        _table->setCellWidget(numberLines, 1,
+                                              sourcesComboBox(std::get<std::string>(element.second)));
+
                 ++numberLines;
             }
             _table->horizontalHeader()->setStretchLastSection(true);
