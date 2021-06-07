@@ -59,9 +59,12 @@ void PredictionParameters::log(const Level& level) const
 static std::vector<Peak3D*> buildPeaksFromMillerIndices(
     sptrDataSet data, const std::vector<MillerIndex>& hkls, const Eigen::Matrix3d& BU)
 {
-    std::vector<ReciprocalVector> qs(hkls.size());
+    std::vector<ReciprocalVector> qs;
     for (const auto& idx : hkls)
         qs.emplace_back(idx.rowVector().cast<double>() * BU);
+    nsxlog(
+        Level::Debug, qs.size(), "buildPeaksFromMillerIndices: q-vectors generated from",
+        hkls.size(), "Miller indices");
 
     const std::vector<DetectorEvent> events =
         algo::qs2events(qs, data->instrumentStates(), data->detector());
@@ -79,6 +82,9 @@ static std::vector<Peak3D*> buildPeaksFromMillerIndices(
             // invalid shape, nothing to do
         }
     }
+    nsxlog(
+        Level::Debug, "buildPeaksFromMillerIndices:", peaks.size(), "peaks generated from",
+        hkls.size(), "Miller indices");
     return peaks;
 }
 
@@ -101,7 +107,7 @@ std::vector<Peak3D*> predictPeaks(
         buildPeaksFromMillerIndices(data, predicted_hkls, unit_cell->reciprocalBasis());
 
     nsxlog(
-        Level::Info, "algo::predictPeaks: Computing shapes of", peaks.size(), "calculated peaks");
+        Level::Info, "predictPeaks: Computing shapes of", peaks.size(), "calculated peaks");
 
     int count = 0;
     int npeaks = peaks.size();
@@ -137,15 +143,15 @@ std::vector<Peak3D*> predictPeaks(
         }
     }
     nsxlog(
-        Level::Info, "algo::predictPeaks: Interpolation failed for", collection->nFailedInterp(),
+        Level::Info, "predictPeaks: Interpolation failed for", collection->nFailedInterp(),
         "peaks");
     nsxlog(
-        Level::Info, "algo::predictPeaks:", collection->nNoProfile(),
+        Level::Info, "predictPeaks:", collection->nNoProfile(),
         "peaks with no neighbouring profiles");
     nsxlog(
-        Level::Info, "algo::predictPeaks:", collection->nLonelyPeaks(), "peaks with no neighbours");
+        Level::Info, "predictPeaks:", collection->nLonelyPeaks(), "peaks with no neighbours");
     nsxlog(
-        Level::Info, "algo::predictPeaks:", collection->nUnfriendlyPeaks(),
+        Level::Info, "predictPeaks:", collection->nUnfriendlyPeaks(),
         "peaks with too few neighbours");
     // TODO: suggest course of action for fixing these error (increase radius, minimum number
     // of neighbours)
