@@ -291,7 +291,7 @@ void Session::loadRawData()
 
         // choose a name for the dataset
         // default data name: name of the first data-file
-	const std::string dataname {askDataName(dataset->filename())};
+        const std::string dataname {askDataName(dataset->filename())};
         dataset->setName(dataname);
         dataset->sources = filenames;
         metadata.add("sources", nsx::join(filenames, ", "));
