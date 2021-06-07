@@ -68,4 +68,24 @@ void MetaData::addMap(const MetaDataMap& other_map)
     _map.insert(other_map.begin(), other_map.end());
 }
 
+std::ostream& operator<<(std::ostream& os, const MetaData& metadata)
+{
+    os << "MetaData {";
+    for (const auto& [key, val] : metadata._map) {
+        os << key;
+        if (std::holds_alternative<int>(val))
+            os << "<int>: " << std::get<int>(val);
+        else if (std::holds_alternative<double>(val))
+            os << "<double>: " << std::get<double>(val);
+        else if (std::holds_alternative<std::string>(val))
+            os << "<string>: " << std::get<std::string>(val);
+        else
+            os << "<?>: ?";
+
+        os << ", ";
+        }
+    os << "}";
+    return os;
+}
+
 } // End namespace nsx
