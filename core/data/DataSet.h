@@ -89,9 +89,6 @@ class DataSet {
     std::string name() const;
     void setName(std::string name);
 
-    //! List of data sources (filenames)
-    std::vector<std::string> sources;
-
     //! Returns a const reference to the MetaData container
     const nsx::MetaData& metadata() const;
 
