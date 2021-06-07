@@ -41,6 +41,7 @@ ImagePanel::ImagePanel()
     _mode = new QComboBox();
 
     _image_view->getScene()->setMaxIntensity(5000);
+    _image_view->scale(1, -1);
 
     _scrollbar->setMouseTracking(true);
     _scrollbar->setFocusPolicy(Qt::WheelFocus);
