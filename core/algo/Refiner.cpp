@@ -188,7 +188,7 @@ int Refiner::updatePredictions(std::vector<Peak3D*>& peaks) const
         const ReciprocalVector q_pred(
             hkl.rowVector().cast<double>() * batch_cell->reciprocalBasis());
         const std::vector<DetectorEvent> events = algo::qs2events(
-            {q_pred}, peak->dataSet()->instrumentStates(), peak->dataSet()->detector());
+            {q_pred}, peak->dataSet()->instrumentStates(), peak->dataSet()->detector(), _nframes);
 
         // something wrong with new prediction...
         if (events.size() != 1) {

@@ -57,7 +57,8 @@ void PredictionParameters::log(const Level& level) const
 }
 
 static std::vector<Peak3D*> buildPeaksFromMillerIndices(
-    sptrDataSet data, const std::vector<MillerIndex>& hkls, const Eigen::Matrix3d& BU)
+    sptrDataSet data, const std::vector<MillerIndex>& hkls, const Eigen::Matrix3d& BU,
+    const int nframes, sptrProgressHandler handler = nullptr)
 {
     std::vector<ReciprocalVector> qs;
     for (const auto& idx : hkls)
@@ -67,7 +68,7 @@ static std::vector<Peak3D*> buildPeaksFromMillerIndices(
         hkls.size(), "Miller indices");
 
     const std::vector<DetectorEvent> events =
-        algo::qs2events(qs, data->instrumentStates(), data->detector());
+        algo::qs2events(qs, data->instrumentStates(), data->detector(), nframes, handler);
 
     std::vector<Peak3D*> peaks;
     for (auto event : events) {
@@ -104,7 +105,8 @@ std::vector<Peak3D*> predictPeaks(
         unit_cell->generateReflectionsInShell(params.d_min, params.d_max, wavelength);
 
     std::vector<Peak3D*> peaks =
-        buildPeaksFromMillerIndices(data, predicted_hkls, unit_cell->reciprocalBasis());
+        buildPeaksFromMillerIndices(
+            data, predicted_hkls, unit_cell->reciprocalBasis(), data->nFrames(), handler);
 
     nsxlog(
         Level::Info, "predictPeaks: Computing shapes of", peaks.size(), "calculated peaks");
