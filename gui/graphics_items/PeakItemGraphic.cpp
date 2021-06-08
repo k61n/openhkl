@@ -42,12 +42,8 @@ PeakItemGraphic::PeakItemGraphic(nsx::Peak3D* peak)
     setVisible(true);
     _size = Eigen::Vector2d(10, 10);
     _center_color = Qt::red;
-    _peak_color = Qt::red;
-    _bkg_color = Qt::red;
     _show_label = false;
     _show_center = true;
-    _show_box = false;
-    _show_bkg = false;
     redraw();
 }
 
@@ -91,36 +87,12 @@ void PeakItemGraphic::redraw()
 
     setBoundingRegionGranularity(0.0);
 
-    _bounding_box = new QGraphicsRectItem(boundingRect());
-    _bounding_box->setParentItem(this);
-    _bounding_box->setAcceptHoverEvents(false);
-    _bounding_box->setZValue(20);
-    _bounding_box->setPos(_center_gi->pos());
-    _bounding_box->setVisible(_show_box);
-
-    _bkg_box = new QGraphicsRectItem();
-    try {
-        nsx::IntegrationRegion int_region(
-            _peak, _peak->peakEnd(), _peak->bkgBegin(), _peak->bkgEnd());
-        _bkg_box = new QGraphicsRectItem(boundingRect(int_region.aabb()));
-        _bkg_box->setParentItem(this);
-        _bkg_box->setAcceptHoverEvents(false);
-        _bkg_box->setZValue(20);
-        _bkg_box->setPos(_center_gi->pos());
-        _bkg_box->setVisible(_show_bkg);
-    } catch (std::range_error& e) {
-    }
-
     if (peak()->enabled()) {
         setColor(Qt::darkGreen);
         setCenterColor(Qt::darkGreen);
-        setBoxColor(Qt::darkGreen);
-        setBkgColor(Qt::darkGreen);
     } else {
         setColor(Qt::red);
         setCenterColor(Qt::red);
-        setBoxColor(Qt::red);
-        setBkgColor(Qt::red);
     }
 
     // A peak item is always put on foreground of the scene
@@ -149,16 +121,6 @@ void PeakItemGraphic::setColor(QColor color)
     _center_gi->setBrush(QBrush(_center_color));
 }
 
-void PeakItemGraphic::setBoxColor(QColor color)
-{
-    _peak_color = color;
-    QPen box_pen;
-    box_pen.setCosmetic(true);
-    box_pen.setColor(_peak_color);
-    box_pen.setStyle(Qt::SolidLine);
-    _bounding_box->setPen(box_pen);
-}
-
 void PeakItemGraphic::setCenterColor(QColor color)
 {
     _center_color = color;
@@ -169,25 +131,11 @@ void PeakItemGraphic::setCenterColor(QColor color)
     _center_gi->setPen(center_pen);
 }
 
-void PeakItemGraphic::setBkgColor(QColor color)
-{
-    _bkg_color = color;
-    QPen bkg_pen;
-    bkg_pen.setCosmetic(true);
-    bkg_pen.setColor(_bkg_color);
-    bkg_pen.setStyle(Qt::SolidLine);
-    _bkg_box->setPen(bkg_pen);
-}
-
 void PeakItemGraphic::initFromPeakViewWidget(const PeakViewWidget::Set& set)
 {
     showArea(set.drawPeaks->isChecked());
     setSize(set.sizePeaks->value());
     setCenterColor(set.colorPeaks->color());
-    showBox(set.drawBoxes->isChecked());
-    setBoxColor(set.colorBoxes->color());
-    showBkg(set.drawBkg->isChecked());
-    setBkgColor(set.colorBkg->color());
 }
 
 nsx::Peak3D* PeakItemGraphic::peak() const
@@ -199,15 +147,6 @@ QRectF PeakItemGraphic::boundingRect() const
 {
     double width = _upper[0] - _lower[0]; // determined from AABB in constructor
     double height = _upper[1] - _lower[1];
-    return QRectF(-width / 2.0, -height / 2.0, width, height);
-}
-
-QRectF PeakItemGraphic::boundingRect(const nsx::AABB& aabb) const
-{
-    Eigen::Vector3d lower = aabb.lower();
-    Eigen::Vector3d upper = aabb.upper();
-    double width = upper[0] - lower[0];
-    double height = upper[1] - lower[1];
     return QRectF(-width / 2.0, -height / 2.0, width, height);
 }
 
@@ -239,18 +178,6 @@ void PeakItemGraphic::showArea(bool flag)
 {
     _show_center = flag;
     _center_gi->setVisible(_show_center);
-}
-
-void PeakItemGraphic::showBox(bool flag)
-{
-    _show_box = flag;
-    _bounding_box->setVisible(_show_box);
-}
-
-void PeakItemGraphic::showBkg(bool flag)
-{
-    _show_bkg = flag;
-    _bkg_box->setVisible(_show_bkg);
 }
 
 void PeakItemGraphic::plot(SXPlot* plot)

@@ -36,8 +36,6 @@ class PeakViewWidget : public QGridLayout {
         QSpinBox* sizePeaks;
         QDoubleSpinBox* alphaIntegrationRegion;
         ColorButton* colorPeaks;
-        ColorButton* colorBoxes;
-        ColorButton* colorBkg;
         ColorButton* colorIntPeak;
         ColorButton* colorIntBkg;
         QCheckBox* previewIntRegion;

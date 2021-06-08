@@ -38,7 +38,6 @@ class PeakItemGraphic : public PlottableItem {
     void plot(SXPlot* plot) override;
 
     QRectF boundingRect() const override;
-    QRectF boundingRect(const nsx::AABB& aabb) const;
 
     void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget) override;
 
@@ -50,20 +49,12 @@ class PeakItemGraphic : public PlottableItem {
     void showLabel(bool flag);
     //! Show the peak area
     void showArea(bool flag);
-    //! Show the bounding box
-    void showBox(bool flag);
-    //! Show the integration region bounding box
-    void showBkg(bool flag);
     //! Change the peak size
     void setSize(int size);
     //! Change the peak color
     void setColor(QColor color);
-    //! Change the bounding box color
-    void setBoxColor(QColor color);
+    //! Change the peak center color
     void setCenterColor(QColor color);
-    //! Change the background box color
-    void setBkgColor(QColor color);
-    void setBkgOutlineColor(QColor color);
 
     //! Init properties from a set of controls on \a peakViewWidget
     void initFromPeakViewWidget(const PeakViewWidget::Set& set);
@@ -75,16 +66,8 @@ class PeakItemGraphic : public PlottableItem {
     bool _show_label;
     //! Flag to show the area
     bool _show_center;
-    //! Flag to show the bounding box
-    bool _show_box;
-    //! Flag to show the background bounding box
-    bool _show_bkg;
     //! The area item
     QGraphicsEllipseItem* _center_gi;
-    //! The bounding box
-    QGraphicsRectItem* _bounding_box;
-    //! Background bounding box
-    QGraphicsRectItem* _bkg_box;
     //! Lower boundaries
     Eigen::Vector3d _lower;
     //! Upper boundaries
@@ -93,10 +76,6 @@ class PeakItemGraphic : public PlottableItem {
     Eigen::Vector2d _size;
     //! Peak centre colour
     QColor _center_color;
-    //! Peak bounding box colour
-    QColor _peak_color;
-    //! Background bounding box colour
-    QColor _bkg_color;
 };
 
 #endif // NSX_GUI_GRAPHICS_ITEMS_PEAKITEMGRAPHIC_H
