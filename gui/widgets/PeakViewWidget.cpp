@@ -100,15 +100,6 @@ void PeakViewWidget::createSet(Set& set, const QString& title, const QColor& btn
     addLabel(row, "Colour:");
     set.colorPeaks = addColorButton(row++, 1, btnColor);
 
-    addHeadline(row++, "Bounding boxes:");
-
-    addLabel(row, "Show:");
-    set.drawBoxes = addCheckBox(row, 1, "Peak", Qt::CheckState::Unchecked);
-    set.drawBkg = addCheckBox(row++, 2, "Background", Qt::CheckState::Unchecked);
-
-    addLabel(row, "Colour:");
-    set.colorBoxes = addColorButton(row, 1, btnColor);
-    set.colorBkg = addColorButton(row, 2, btnColor);
 }
 
 void PeakViewWidget::addIntegrationRegion(Set& set, const QColor& peak, const QColor& bkg)
@@ -137,8 +128,6 @@ void PeakViewWidget::addIntegrationRegion(Set& set, const QColor& peak, const QC
 void PeakViewWidget::Set::setColor(const QColor& color)
 {
     colorPeaks->setColor(color);
-    colorBoxes->setColor(color);
-    colorBkg->setColor(color);
 }
 
 void PeakViewWidget::Set::setIntegrationRegionColors(
