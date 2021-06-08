@@ -45,6 +45,8 @@ DataSet::DataSet(std::shared_ptr<IDataReader> reader)
     _ncols = detector().nCols();
     _nFrames = _reader->metadata().key<int>("npdone");
 
+    _metadata.setMap(_reader->metadata().map());
+
     double wav = _reader->metadata().key<double>("wavelength");
     _reader->diffractometer()->source().selectedMonochromator().setWavelength(wav);
 
@@ -325,13 +327,25 @@ const Detector& DataSet::detector() const
     return *_reader->diffractometer()->detector();
 }
 
-void DataSet::setName(std::string name)
+void DataSet::setName(const std::string name)
 {
+    if (name.empty())
+        return;
+
+    const std::string invalid_chars{"\\/"};
+    const std::size_t sep = name.find_first_of(invalid_chars);
+    if (sep != std::string::npos)
+        throw std::invalid_argument(
+            "DataSet name '" + name + "' must not include the characters " + invalid_chars);
+
     _name = name;
 }
 
 std::string DataSet::name() const
 {
+    if (!_name.empty())
+        return _name;
+
     std::string name;
     std::string ext;
     std::string data_name = filename();
@@ -349,9 +363,17 @@ std::string DataSet::name() const
         ext = "";
     }
 
-    if (!_name.empty())
-        return _name;
     return name;
+}
+
+const nsx::MetaData& DataSet::metadata() const
+{
+    return _metadata;
+}
+
+nsx::MetaData& DataSet::metadata()
+{
+    return _metadata;
 }
 
 } // namespace nsx

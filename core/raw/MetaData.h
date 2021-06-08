@@ -21,6 +21,7 @@
 #include <stdexcept>
 #include <string>
 #include <variant>
+#include <iostream>
 
 namespace nsx {
 
@@ -60,13 +61,20 @@ class MetaData {
     const MetaDataKeySet& keys() const;
     //! Gets the full map of parameters
     const MetaDataMap& map() const;
+    //! Overwrites the full map of parameters
+    void setMap(const MetaDataMap& other_map);
+    //! Merges the map of parameters with another given map
+    void addMap(const MetaDataMap& other_map);
 
  private:
     //! Contains the map of all key/value pairs.
     MetaDataMap _map;
     //! Contains all available keys so far.
     static MetaDataKeySet _metakeys;
+
+    friend std::ostream& operator<<(std::ostream& os, const MetaData& metadata);
 };
+
 
 template <typename _type> void MetaData::add(const std::string& key, const _type& value)
 {

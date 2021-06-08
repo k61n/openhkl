@@ -91,6 +91,7 @@ void Experiment::saveToFile(const std::string& path) const
     nsx::ExperimentExporter exporter;
     nsxlog(Level::Info, "Saving experiment to file: ", path);
 
+    // AN>>TODO: if no extension given, use .nsx
     exporter.createFile(name(), getDiffractometer()->name(), path);
 
     std::map<std::string, DataSet*> data_sets;

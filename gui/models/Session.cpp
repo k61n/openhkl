@@ -13,13 +13,16 @@
 //  ***********************************************************************************************
 
 #include "gui/models/Session.h"
+#include "base/utils/StringIO.h" // join
 #include "core/algo/DataReaderFactory.h"
 #include "core/data/DataSet.h"
 #include "core/data/DataTypes.h"
 #include "core/experiment/Experiment.h"
 #include "core/loader/RawDataReader.h"
 #include "core/raw/IDataReader.h"
+#include "core/raw/MetaData.h"
 #include "gui/MainWin.h"
+#include "gui/dialogs/DataNameDialog.h"
 #include "gui/dialogs/RawDataDialog.h"
 #include "gui/models/Project.h"
 
@@ -28,8 +31,25 @@
 #include <QFileDialog>
 #include <QMessageBox>
 #include <QSettings>
+#include <QStringList>
+
 
 Session* gSession;
+
+namespace {
+
+// open a dialog to choose a name for a dataset; warn against name clashes with previous names
+std::string askDataName(const std::string dataname0, const QStringList* const datanames_pre)
+{
+    DataNameDialog dataname_dialog(QString::fromStdString(dataname0), datanames_pre);
+    dataname_dialog.exec();
+    if (dataname_dialog.result())
+        return dataname_dialog.dataName().toStdString();
+
+    return dataname0;
+}
+
+} // namespace
 
 Session::Session()
 {
@@ -112,8 +132,7 @@ void Session::loadData(nsx::DataFormat format)
 {
     // Loading data requires an existing Experiment
     if (_currentProject < 0) {
-        QMessageBox::critical(nullptr, "Error",
-                              "Please create an experiment before loading data.");
+        QMessageBox::critical(nullptr, "Error", "Please create an experiment before loading data.");
         return;
     }
 
@@ -162,12 +181,17 @@ void Session::loadData(nsx::DataFormat format)
                 throw std::runtime_error("Please set a valid instrument first");
             }
 
-            nsx::sptrDataSet data_ptr;
-
             std::string extension = fileinfo.completeSuffix().toStdString();
-            data_ptr = nsx::DataReaderFactory().create(
+            nsx::sptrDataSet dataset_ptr = nsx::DataReaderFactory().create(
                 extension, filename.toStdString(), exp->getDiffractometer());
-            exp->addData(data_ptr);
+
+            // choose a name for the dataset
+            // default data name: name of the first data-file
+            const QStringList& datanames_pre{currentProject()->getDataNames()};
+            const std::string dataname{askDataName(dataset_ptr->filename(), &datanames_pre)};
+            // add the list of sources as metadata
+            dataset_ptr->metadata().add<std::string>("sources", filename.toStdString());
+            exp->addData(dataset_ptr, dataname);
         } catch (const std::exception& ex) {
             QString msg = QString("Loading file(s) '") + filename + QString("' failed with error: ")
                 + QString(ex.what()) + QString(".");
@@ -194,8 +218,11 @@ void Session::removeData()
 
 void Session::loadRawData()
 {
-    if (_currentProject < 0)
-        createExperiment();
+    // Loading data requires an existing Experiment
+    if (_currentProject < 0) {
+        QMessageBox::critical(nullptr, "Error", "Please create an experiment before loading data.");
+        return;
+    }
 
     try {
         QSettings s;
@@ -242,17 +269,37 @@ void Session::loadRawData()
         parameters.row_major = dialog.rowMajor();
         parameters.swap_endian = dialog.swapEndian();
         parameters.bpp = dialog.bpp();
-        double eps = 1e-8;
         nsx::Diffractometer* diff = exp->getDiffractometer();
         auto reader{std::make_unique<nsx::RawDataReader>(filenames[0], diff)};
         reader->setParameters(parameters);
-        for (size_t i = 0; i < filenames.size(); ++i)
+
+        // Metadata for the DataSet, accumulated from the individual metadata
+        nsx::MetaData metadata;
+
+        for (size_t i = 0; i < filenames.size(); ++i) {
             reader->addFrame(filenames[i]);
+            metadata.addMap(reader->metadata().map());
+        }
         reader->end();
+        // include the latest changes from reader metadata (eg., `npdone`)
+        metadata.addMap(reader->metadata().map());
+
+        const double eps = 1e-8;
         if (parameters.wavelength < eps)
             throw std::runtime_error("Wavelength not set");
-        auto data{std::make_shared<nsx::DataSet>(std::move(reader))};
-        exp->addData(data);
+
+        const std::shared_ptr<nsx::DataSet> dataset{
+            std::make_shared<nsx::DataSet>(std::move(reader))};
+
+        // choose a name for the dataset
+        // default data name: name of the first data-file
+        const QStringList& datanames_pre{currentProject()->getDataNames()};
+        const std::string dataname{askDataName(dataset->filename(), &datanames_pre)};
+        dataset->setName(dataname);
+        metadata.add("sources", nsx::join(filenames, ", "));
+        dataset->metadata().setMap(metadata.map());
+
+        exp->addData(dataset, dataname);
         // _selectedData = currentProject()->getIndex(qfilenames.at(0));
         onDataChanged();
     } catch (std::exception& e) {

@@ -25,6 +25,7 @@
 #include "core/instrument/Sample.h"
 #include "core/instrument/Source.h"
 #include "core/peak/Peak3D.h"
+#include "core/raw/MetaData.h" // MetaDataMap
 #include "tables/crystal/UnitCell.h"
 
 #include <Eigen/Dense>
@@ -147,17 +148,19 @@ void ExperimentExporter::writeData(const std::map<std::string, DataSet*> data)
             sample_scan.write(&values(0), H5::PredType::NATIVE_DOUBLE, scanSpace, scanSpace);
         }
 
-        const auto& map = data_item->reader()->metadata().map();
-
         // Write all string metadata into the "Info" group
         H5::Group info_group = file.createGroup(std::string("/DataCollections/" + name + "/Info"));
 
         H5::DataSpace metaSpace(H5S_SCALAR);
-        H5::StrType str80(H5::PredType::C_S1, 80);
+        H5::StrType str80(H5::PredType::C_S1, 80);  // TODO: why fixed length, and not `H5T_VARIABLE`?
         std::string info;
+
+        const nsx::MetaDataMap& map = data_item->metadata().map();
 
         for (const auto& item : map) {
             std::string info;
+
+            // TODO: why using `try..catch` instead of `std::has_alternative` and `std::get` for the Variant
             try {
                 info = std::get<std::string>(item.second);
                 H5::Attribute intAtt(info_group.createAttribute(item.first, str80, metaSpace));
@@ -175,6 +178,7 @@ void ExperimentExporter::writeData(const std::map<std::string, DataSet*> data)
         for (const auto& item : map) {
             int value;
 
+            // TODO: why using `try..catch` instead of `std::has_alternative` and `std::get` for the Variant
             try {
                 value = std::get<int>(item.second);
                 H5::Attribute intAtt(
