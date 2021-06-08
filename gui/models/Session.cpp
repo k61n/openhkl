@@ -13,18 +13,18 @@
 //  ***********************************************************************************************
 
 #include "gui/models/Session.h"
+#include "base/utils/StringIO.h" // join
 #include "core/algo/DataReaderFactory.h"
 #include "core/data/DataSet.h"
 #include "core/data/DataTypes.h"
 #include "core/experiment/Experiment.h"
 #include "core/loader/RawDataReader.h"
 #include "core/raw/IDataReader.h"
-#include "gui/MainWin.h"
-#include "gui/dialogs/RawDataDialog.h"
-#include "gui/dialogs/DataNameDialog.h"
-#include "gui/models/Project.h"
-#include "base/utils/StringIO.h" // using join
 #include "core/raw/MetaData.h"
+#include "gui/MainWin.h"
+#include "gui/dialogs/DataNameDialog.h"
+#include "gui/dialogs/RawDataDialog.h"
+#include "gui/models/Project.h"
 
 #include <QCollator>
 #include <QDir>
@@ -39,7 +39,8 @@ Session* gSession;
 namespace {
 
 // open a dialog to choose a name for a dataset; warn against name clashes with previous names
-std::string askDataName(const std::string dataname0, const QStringList* const datanames_pre) {
+std::string askDataName(const std::string dataname0, const QStringList* const datanames_pre)
+{
     DataNameDialog dataname_dialog(QString::fromStdString(dataname0), datanames_pre);
     dataname_dialog.exec();
     if (dataname_dialog.result())
@@ -131,8 +132,7 @@ void Session::loadData(nsx::DataFormat format)
 {
     // Loading data requires an existing Experiment
     if (_currentProject < 0) {
-        QMessageBox::critical(nullptr, "Error",
-                              "Please create an experiment before loading data.");
+        QMessageBox::critical(nullptr, "Error", "Please create an experiment before loading data.");
         return;
     }
 
@@ -187,8 +187,8 @@ void Session::loadData(nsx::DataFormat format)
 
             // choose a name for the dataset
             // default data name: name of the first data-file
-	    const QStringList& datanames_pre{currentProject()->getDataNames()};
-            const std::string dataname {askDataName(dataset_ptr->filename(), &datanames_pre)};
+            const QStringList& datanames_pre{currentProject()->getDataNames()};
+            const std::string dataname{askDataName(dataset_ptr->filename(), &datanames_pre)};
             // add the list of sources as metadata
             dataset_ptr->metadata().add<std::string>("sources", filename.toStdString());
             exp->addData(dataset_ptr, dataname);
@@ -220,8 +220,7 @@ void Session::loadRawData()
 {
     // Loading data requires an existing Experiment
     if (_currentProject < 0) {
-        QMessageBox::critical(nullptr, "Error",
-                              "Please create an experiment before loading data.");
+        QMessageBox::critical(nullptr, "Error", "Please create an experiment before loading data.");
         return;
     }
 
@@ -289,12 +288,13 @@ void Session::loadRawData()
         if (parameters.wavelength < eps)
             throw std::runtime_error("Wavelength not set");
 
-        const std::shared_ptr<nsx::DataSet> dataset{std::make_shared<nsx::DataSet>(std::move(reader))};
+        const std::shared_ptr<nsx::DataSet> dataset{
+            std::make_shared<nsx::DataSet>(std::move(reader))};
 
         // choose a name for the dataset
         // default data name: name of the first data-file
-	const QStringList& datanames_pre{currentProject()->getDataNames()};
-	const std::string dataname {askDataName(dataset->filename(), &datanames_pre)};
+        const QStringList& datanames_pre{currentProject()->getDataNames()};
+        const std::string dataname{askDataName(dataset->filename(), &datanames_pre)};
         dataset->setName(dataname);
         metadata.add("sources", nsx::join(filenames, ", "));
         dataset->metadata().setMap(metadata.map());

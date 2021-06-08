@@ -15,7 +15,6 @@
 #ifndef NSX_GUI_DIALOGS_DATANAMEDIALOG_H
 #define NSX_GUI_DIALOGS_DATANAMEDIALOG_H
 
-#include <QComboBox>
 #include <QDialog>
 #include <QLineEdit>
 #include <QString>
@@ -28,7 +27,7 @@ class DataNameDialog : public QDialog {
     const QStringList* const datanames; // list of current names
 
  private:
-    QLineEdit* dataname_ledit;
+    QLineEdit* _dataname_ledit;
     void verify();
 };
 

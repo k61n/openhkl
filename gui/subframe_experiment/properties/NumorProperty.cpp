@@ -13,21 +13,21 @@
 //  ***********************************************************************************************
 
 #include "gui/subframe_experiment/properties/NumorProperty.h"
+#include "base/utils/StringIO.h" // split
 #include "core/data/DataSet.h"
 #include "core/data/DataTypes.h"
 #include "core/raw/IDataReader.h"
-#include "base/utils/StringIO.h"  // split
 #include "gui/MainWin.h"
 #include "gui/models/Project.h"
 #include "gui/models/Session.h"
+#include <QComboBox>
 #include <QFormLayout>
 #include <QHBoxLayout>
 #include <QHeaderView>
 #include <QMenu>
 #include <QMessageBox>
-#include <QTextEdit>
 #include <QStringList>
-#include <QComboBox>
+#include <QTextEdit>
 
 
 NumorProperty::NumorProperty()
@@ -130,8 +130,8 @@ void NumorProperty::refreshInput()
 namespace {
 
 // make a ComboBox to show the source files as a drop-down list
-inline
-QComboBox* sourcesComboBox(const std::string sources_str) {
+inline QComboBox* sourcesComboBox(const std::string sources_str)
+{
     QComboBox* sources_combo = new QComboBox();
     for (const std::string& src : nsx::split(sources_str, ", "))
         sources_combo->addItem(QString::fromStdString(src));
@@ -167,29 +167,29 @@ void NumorProperty::onChanged(int curIdx)
                 if (std::holds_alternative<int>(element.second)) {
                     col1 = new QTableWidgetItem();
                     col1->setData(Qt::EditRole, std::get<int>(element.second));
-                }
-                else if (std::holds_alternative<double>(element.second)) {
+                } else if (std::holds_alternative<double>(element.second)) {
                     col1 = new QTableWidgetItem();
                     col1->setData(Qt::EditRole, std::get<double>(element.second));
-                }
-                else if (std::holds_alternative<std::string>(element.second)) {
-		    if (element.first != "sources") {
-			col1 = new QTableWidgetItem();
-			col1->setData(Qt::EditRole, QString::fromStdString(std::get<std::string>(element.second)));
-		    }
-                }
-		else continue;
+                } else if (std::holds_alternative<std::string>(element.second)) {
+                    if (element.first != "sources") {
+                        col1 = new QTableWidgetItem();
+                        col1->setData(
+                            Qt::EditRole,
+                            QString::fromStdString(std::get<std::string>(element.second)));
+                    }
+                } else
+                    continue;
 
                 // 1st column: metadata id
-                _table->setItem(numberLines, 0,
-                                new QTableWidgetItem(QString(element.first.c_str())));
+                _table->setItem(
+                    numberLines, 0, new QTableWidgetItem(QString(element.first.c_str())));
 
                 // 2nd column: metadata number/text
                 if (col1)
                     _table->setItem(numberLines, 1, col1);
                 else if (element.first == "sources")
-                        _table->setCellWidget(numberLines, 1,
-                                              sourcesComboBox(std::get<std::string>(element.second)));
+                    _table->setCellWidget(
+                        numberLines, 1, sourcesComboBox(std::get<std::string>(element.second)));
 
                 ++numberLines;
             }

@@ -15,9 +15,9 @@
 #include "gui/dialogs/ConfirmOverwriteDialog.h"
 
 #include <QDialogButtonBox>
-#include <QVBoxLayout>
 #include <QLabel>
 #include <QString>
+#include <QVBoxLayout>
 
 ConfirmOverwriteDialog::ConfirmOverwriteDialog(const QString& name)
 {
@@ -26,11 +26,11 @@ ConfirmOverwriteDialog::ConfirmOverwriteDialog(const QString& name)
     setMinimumSize(500, 130);
     setMaximumSize(500, 130);
 
-    const std::string msg {"The name '" + name.toStdString() + "' will be overwritten."};
-    QLabel* const dataname_label {new QLabel(QString::fromStdString(msg))};
+    const std::string msg{"The name '" + name.toStdString() + "' will be overwritten."};
+    QLabel* const dataname_label{new QLabel(QString::fromStdString(msg))};
 
     QDialogButtonBox* buttonBox = new QDialogButtonBox();
-    buttonBox->setOrientation(Qt::Horizontal);  
+    buttonBox->setOrientation(Qt::Horizontal);
     buttonBox->setStandardButtons(QDialogButtonBox::No | QDialogButtonBox::Yes);
 
     QVBoxLayout* vLayout = new QVBoxLayout(this);

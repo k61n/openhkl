@@ -83,7 +83,7 @@ std::ostream& operator<<(std::ostream& os, const MetaData& metadata)
             os << "<?>: ?";
 
         os << ", ";
-        }
+    }
     os << "}";
     return os;
 }

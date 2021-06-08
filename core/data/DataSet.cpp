@@ -335,8 +335,8 @@ void DataSet::setName(const std::string name)
     const std::string invalid_chars{"\\/"};
     const std::size_t sep = name.find_first_of(invalid_chars);
     if (sep != std::string::npos)
-        throw std::invalid_argument("DataSet name '" + name
-                                    + "' must not include the characters " + invalid_chars);
+        throw std::invalid_argument(
+            "DataSet name '" + name + "' must not include the characters " + invalid_chars);
 
     _name = name;
 }

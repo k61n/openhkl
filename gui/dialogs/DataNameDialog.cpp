@@ -15,19 +15,13 @@
 #include "gui/dialogs/DataNameDialog.h"
 #include "gui/dialogs/ConfirmOverwriteDialog.h"
 
-#include "base/utils/Path.h"
-#include "core/instrument/HardwareParameters.h"
-#include "gui/MainWin.h"
-
 #include <QDialogButtonBox>
 #include <QGridLayout>
 #include <QLabel>
 #include <QString>
 
-#include <iostream> // DEBUG
-
-DataNameDialog::DataNameDialog(const QString& dataname, const QStringList* const datanames_cur):
-    datanames{datanames_cur}
+DataNameDialog::DataNameDialog(const QString& dataname, const QStringList* const datanames_cur)
+    : datanames{datanames_cur}
 {
     setModal(true);
     resize(500, 130);
@@ -36,16 +30,16 @@ DataNameDialog::DataNameDialog(const QString& dataname, const QStringList* const
 
     QGridLayout* gridLayout = new QGridLayout(this);
 
-    QLabel* const dataname_label {new QLabel(QString::fromStdString("Data name:"))};
-    dataname_ledit = new QLineEdit(dataname);
+    QLabel* const dataname_label{new QLabel(QString::fromStdString("Data name:"))};
+    _dataname_ledit = new QLineEdit(dataname);
 
     QDialogButtonBox* buttonBox = new QDialogButtonBox();
     buttonBox->setOrientation(Qt::Horizontal);
     buttonBox->setStandardButtons(QDialogButtonBox::Ok);
 
     gridLayout->addWidget(dataname_label, 0, 0, 1, 1);
-    gridLayout->addWidget(dataname_ledit, 0, 1, 1, 1);
-    gridLayout->addWidget(buttonBox, 1, 0, 1, 1);
+    gridLayout->addWidget(_dataname_ledit, 0, 1, 1, 1);
+    gridLayout->addWidget(buttonBox, 1, 0, 1, 2);
 
     QObject::connect(buttonBox, &QDialogButtonBox::accepted, this, &DataNameDialog::verify);
     QObject::connect(buttonBox, &QDialogButtonBox::rejected, this, &QDialog::reject);
@@ -53,7 +47,7 @@ DataNameDialog::DataNameDialog(const QString& dataname, const QStringList* const
 
 QString DataNameDialog::dataName()
 {
-    return dataname_ledit->text();
+    return _dataname_ledit->text();
 }
 
 void DataNameDialog::verify()
