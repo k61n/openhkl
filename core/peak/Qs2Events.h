@@ -15,6 +15,7 @@
 #ifndef NSX_CORE_PEAK_QS2EVENTS_H
 #define NSX_CORE_PEAK_QS2EVENTS_H
 
+#include "base/utils/ProgressHandler.h"
 #include "core/detector/Detector.h"
 #include "core/instrument/InstrumentStateList.h"
 
@@ -42,7 +43,7 @@ namespace algo {
 //! Returns detector events corresponding to the list of q values.
 std::vector<DetectorEvent> qs2events(
     const std::vector<ReciprocalVector>& sample_qs, const InstrumentStateList& states,
-    const Detector& detector);
+    const Detector& detector, const int n_intervals, sptrProgressHandler handler = nullptr);
 
 } // namespace algo
 

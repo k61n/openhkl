@@ -22,9 +22,9 @@ namespace nsx {
 
 std::vector<DetectorEvent> algo::qs2events(
     const std::vector<ReciprocalVector>& sample_qs, const InstrumentStateList& states,
-    const Detector& detector)
+    const Detector& detector, const int n_intervals, sptrProgressHandler handler /* = nullptr */)
 {
-    nsxlog(Level::Info, "algo::Qs2Events::qs2events: processing", sample_qs.size(), "q vectors");
+    nsxlog(Level::Debug, "algo::Qs2Events::qs2events: processing", sample_qs.size(), "q vectors");
 
     /*
      * Algorithm description
@@ -40,8 +40,6 @@ std::vector<DetectorEvent> algo::qs2events(
 
     // Tolerance for bisection search
     const double eps = 1.0e-10;
-    // Divide frame range into this number of intervals, do bisection search on each interval
-    const int n_intervals = 4; // TODO: generalise this arbitrary parameter. May always work.
 
     const double fmin = 0.0;
     const double fmax = states.size() - 2;
@@ -55,6 +53,14 @@ std::vector<DetectorEvent> algo::qs2events(
         const Eigen::RowVector3d kf = ki + q * state.sampleOrientationMatrix().transpose();
         return kf.squaredNorm() < ki.squaredNorm();
     };
+
+    int count = 0;
+    if (handler) {
+        std::ostringstream oss;
+        oss << "Transforming " << sample_qs.size() << " q-vectors to detector events";
+        handler->setStatus(oss.str().c_str());
+        handler->setProgress(0);
+    }
 
     // for each sample q, determine the rotation that makes it intersect the Ewald sphere
     for (const ReciprocalVector& sample_q : sample_qs) {
@@ -111,8 +117,10 @@ std::vector<DetectorEvent> algo::qs2events(
 
             events.emplace_back(event);
         }
+        if (handler)
+            handler->setProgress(++count * 100.0 / sample_qs.size());
     }
-    nsxlog(Level::Info, "algo::Qs2Events::qs2events: finished; generated", events.size(), "events");
+    nsxlog(Level::Debug, "algo::Qs2Events::qs2events: finished; generated", events.size(), "events");
     return events;
 }
 
