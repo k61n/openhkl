@@ -23,11 +23,13 @@
 //! Dialog to get the experiment and instrument names
 class DataNameDialog : public QDialog {
  public:
-    DataNameDialog(const std::string dataname = "");
+    DataNameDialog(const QString& dataname = "", const QStringList* const datanames_cur = nullptr);
     QString dataName();
+    const QStringList* const datanames; // list of current names
 
  private:
     QLineEdit* dataname_ledit;
+    void verify();
 };
 
 #endif // NSX_GUI_DIALOGS_DATANAMEDIALOG_H

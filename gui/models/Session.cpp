@@ -31,15 +31,16 @@
 #include <QFileDialog>
 #include <QMessageBox>
 #include <QSettings>
+#include <QStringList>
+
 
 Session* gSession;
 
 namespace {
 
-// open a dialog to choose a name for a dataset
-std::string askDataName(const std::string dataname0) {
-    // std::string dataname = dataset->filename();  // default name: name of the first data-file
-    DataNameDialog dataname_dialog(dataname0);
+// open a dialog to choose a name for a dataset; warn against name clashes with previous names
+std::string askDataName(const std::string dataname0, const QStringList* const datanames_pre) {
+    DataNameDialog dataname_dialog(QString::fromStdString(dataname0), datanames_pre);
     dataname_dialog.exec();
     if (dataname_dialog.result())
         return dataname_dialog.dataName().toStdString();
@@ -186,7 +187,8 @@ void Session::loadData(nsx::DataFormat format)
 
             // choose a name for the dataset
             // default data name: name of the first data-file
-            const std::string dataname {askDataName(dataset_ptr->filename())};
+	    const QStringList& datanames_pre{currentProject()->getDataNames()};
+            const std::string dataname {askDataName(dataset_ptr->filename(), &datanames_pre)};
             // add the list of sources as metadata
             dataset_ptr->metadata().add<std::string>("sources", filename.toStdString());
             exp->addData(dataset_ptr, dataname);
@@ -291,7 +293,8 @@ void Session::loadRawData()
 
         // choose a name for the dataset
         // default data name: name of the first data-file
-        const std::string dataname {askDataName(dataset->filename())};
+	const QStringList& datanames_pre{currentProject()->getDataNames()};
+	const std::string dataname {askDataName(dataset->filename(), &datanames_pre)};
         dataset->setName(dataname);
         metadata.add("sources", nsx::join(filenames, ", "));
         dataset->metadata().setMap(metadata.map());
