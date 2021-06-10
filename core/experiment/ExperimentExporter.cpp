@@ -61,16 +61,10 @@ namespace nsx {
 void ExperimentExporter::createFile(std::string name, std::string diffractometer, std::string path)
 {
     H5::H5File file{path.c_str(), H5F_ACC_TRUNC};
-    _file_name = path;
+    _file_name = path;  // store the filename for later use
 
-    H5::DataSpace metaExpSpace(H5S_SCALAR);
-    H5::StrType str80(H5::PredType::C_S1, 80);
-
-    H5::Attribute nameAtt(file.createAttribute("name", str80, metaExpSpace));
-    nameAtt.write(str80, name);
-
-    H5::Attribute diffAtt(file.createAttribute("diffractometer", str80, metaExpSpace));
-    diffAtt.write(str80, diffractometer);
+    writeAttribute(file, "name", name.data(), str80, metaExpSpace);
+    writeAttribute(file, "diffractometer", diffractometer.data(), str80, metaExpSpace);
 }
 
 void ExperimentExporter::writeData(const std::map<std::string, DataSet*> data)
