@@ -39,8 +39,7 @@
 
 namespace {
 // HDF5 DataTypes
-static const H5::StrType str80(H5::PredType::C_S1, 80);
-static const H5::StrType metaStrType(H5::PredType::C_S1, 80);  // TODO: why fixed length, and not `H5T_VARIABLE`?
+static const H5::StrType str80Type(H5::PredType::C_S1, 80);
 static const H5::StrType strVarType(H5::PredType::C_S1, H5T_VARIABLE);
 
 // HDF5 DataSpace (defining data shape)
@@ -66,8 +65,8 @@ void ExperimentExporter::createFile(std::string name, std::string diffractometer
     H5::H5File file{path.c_str(), H5F_ACC_TRUNC};
     _file_name = path;  // store the filename for later use
 
-    writeAttribute(file, "name", name.data(), str80, metaExpSpace);
-    writeAttribute(file, "diffractometer", diffractometer.data(), str80, metaExpSpace);
+    writeAttribute(file, "name", name.data(), str80Type, metaExpSpace);
+    writeAttribute(file, "diffractometer", diffractometer.data(), str80Type, metaExpSpace);
 }
 
 void ExperimentExporter::writeData(const std::map<std::string, DataSet*> data)
@@ -191,8 +190,8 @@ void ExperimentExporter::writeData(const std::map<std::string, DataSet*> data)
             // TODO: why using `try..catch` instead of `std::has_alternative` and `std::get` for the Variant
             try {
                 info = std::get<std::string>(item.second);
-                H5::Attribute intAtt(info_group.createAttribute(item.first, metaStrType, metaSpace));
-                intAtt.write(metaStrType, info);
+                H5::Attribute intAtt(info_group.createAttribute(item.first, str80Type, metaSpace));
+                intAtt.write(str80Type, info);
             } catch (const std::exception& ex) {
                 nsxlog(Level::Debug, "Exception in", __PRETTY_FUNCTION__, ":", ex.what());
             } catch (...) {
@@ -378,7 +377,7 @@ void ExperimentExporter::writePeaks(const std::map<std::string, PeakCollection*>
 
         const std::map<std::string, float>& metadata = *(collection_item->meta()); // TODO: Bad variable name `map`
         H5::DataSpace metaSpace(H5S_SCALAR);
-        H5::StrType str80(H5::PredType::C_S1, 80);
+        H5::StrType str80Type(H5::PredType::C_S1, 80);
 
         for (const auto& item : metadata) {
             int value;
@@ -406,7 +405,7 @@ void ExperimentExporter::writeUnitCells(const std::map<std::string, UnitCell*> u
     H5::H5File file{_file_name.c_str(), H5F_ACC_RDWR};
     file.createGroup("/UnitCells");
     H5::DataSpace metaSpace(H5S_SCALAR);
-    H5::StrType str80(H5::PredType::C_S1, 80);
+    H5::StrType str80Type(H5::PredType::C_S1, 80);
 
     for (const auto& it : unit_cells) {
         // Write the data
@@ -439,8 +438,8 @@ void ExperimentExporter::writeUnitCells(const std::map<std::string, UnitCell*> u
             unit_cell_group.createAttribute("rec_22", H5::PredType::NATIVE_DOUBLE, metaSpace));
         H5::Attribute index_tolerance(unit_cell_group.createAttribute(
             "indexing_tolerance", H5::PredType::NATIVE_DOUBLE, metaSpace));
-        H5::Attribute bravais(unit_cell_group.createAttribute("bravais", str80, metaSpace));
-        H5::Attribute space_group(unit_cell_group.createAttribute("space_group", str80, metaSpace));
+        H5::Attribute bravais(unit_cell_group.createAttribute("bravais", str80Type, metaSpace));
+        H5::Attribute space_group(unit_cell_group.createAttribute("space_group", str80Type, metaSpace));
         H5::Attribute z(unit_cell_group.createAttribute("z", H5::PredType::NATIVE_UINT, metaSpace));
 
         rec_00.write(H5::PredType::NATIVE_DOUBLE, &rec(0, 0));
@@ -454,8 +453,8 @@ void ExperimentExporter::writeUnitCells(const std::map<std::string, UnitCell*> u
         rec_22.write(H5::PredType::NATIVE_DOUBLE, &rec(2, 2));
 
         index_tolerance.write(H5::PredType::NATIVE_DOUBLE, &tolerance);
-        bravais.write(str80, unit_cell->bravaisTypeSymbol());
-        space_group.write(str80, unit_cell->spaceGroup().symbol());
+        bravais.write(str80Type, unit_cell->bravaisTypeSymbol());
+        space_group.write(str80Type, unit_cell->spaceGroup().symbol());
         z.write(H5::PredType::NATIVE_UINT, &(z_val));
     }
 }
