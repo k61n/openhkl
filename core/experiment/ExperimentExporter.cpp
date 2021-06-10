@@ -33,6 +33,7 @@
 #include <Eigen/Dense>
 #include <iostream>
 #include <vector>
+#include <tuple>
 
 #include "H5Cpp.h"
 
@@ -322,81 +323,35 @@ void ExperimentExporter::writePeaks(const std::map<std::string, PeakCollection*>
         const hsize_t metric_peaks_h[2] = {static_cast<unsigned long long>(nPeaks) * 3, 3};
         const H5::DataSpace metric_space(2, metric_peaks_h);
 
-	const std::string collectionNameKey = peakCollectionsKey + "/" + collection_name;
-        H5::DataSet peak_end_H5(file.createDataSet(
-            collectionNameKey + "/PeakEnd", H5::PredType::NATIVE_DOUBLE,
-            peak_space));
-        peak_end_H5.write(peak_end.data(), H5::PredType::NATIVE_DOUBLE, peak_space, peak_space);
+        const std::string collectionNameKey = peakCollectionsKey + "/" + collection_name;
 
-        H5::DataSet bkg_begin_H5(file.createDataSet(
-            collectionNameKey + "/BkgBegin", H5::PredType::NATIVE_DOUBLE,
-            peak_space));
-        bkg_begin_H5.write(bkg_begin.data(), H5::PredType::NATIVE_DOUBLE, peak_space, peak_space);
+	const std::vector< std::tuple<std::string, H5::DataType, H5::DataSpace, const void*> > peakData_defs
+            {
+             // NATIVE_DOUBLE
+             {"PeakEnd", H5::PredType::NATIVE_DOUBLE, peak_space, peak_end.data()},
+             {"BkgBegin", H5::PredType::NATIVE_DOUBLE, peak_space, bkg_begin.data()},
+             {"BkgEnd", H5::PredType::NATIVE_DOUBLE, peak_space, bkg_end.data()},
+             {"Scale", H5::PredType::NATIVE_DOUBLE, peak_space, scale.data()},
+             {"Transmission", H5::PredType::NATIVE_DOUBLE, peak_space, transmission.data()},
+             {"Intensity", H5::PredType::NATIVE_DOUBLE, peak_space, intensity.data()},
+             {"Sigma", H5::PredType::NATIVE_DOUBLE, peak_space, sigma.data()},
+             {"BkgIntensity", H5::PredType::NATIVE_DOUBLE, peak_space, mean_bkg_val.data()},
+             {"BkgSigma", H5::PredType::NATIVE_DOUBLE, peak_space, mean_bkg_sig.data()},
+             {"Center", H5::PredType::NATIVE_DOUBLE, center_space, center.data()},
+             {"Metric", H5::PredType::NATIVE_DOUBLE, metric_space, metric.data()},
+             // NATIVE_INT32
+             {"Rejection", H5::PredType::NATIVE_INT32, peak_space, rejection_flag.data()},
+             // NATIVE_HBOOL
+             {"Selected", H5::PredType::NATIVE_HBOOL, peak_space, selected.data()},
+             {"Masked", H5::PredType::NATIVE_HBOOL, peak_space, masked.data()},
+             {"Predicted", H5::PredType::NATIVE_HBOOL, peak_space, predicted.data()}
+            };
 
-        H5::DataSet bkg_end_H5(file.createDataSet(
-            collectionNameKey + "/BkgEnd", H5::PredType::NATIVE_DOUBLE,
-            peak_space));
-        bkg_end_H5.write(bkg_end.data(), H5::PredType::NATIVE_DOUBLE, peak_space, peak_space);
-
-        H5::DataSet scale_H5(file.createDataSet(
-            collectionNameKey + "/Scale", H5::PredType::NATIVE_DOUBLE,
-            peak_space));
-        scale_H5.write(scale.data(), H5::PredType::NATIVE_DOUBLE, peak_space, peak_space);
-
-        H5::DataSet transmission_H5(file.createDataSet(
-            collectionNameKey + "/Transmission", H5::PredType::NATIVE_DOUBLE,
-            peak_space));
-        transmission_H5.write(transmission.data(), H5::PredType::NATIVE_DOUBLE, peak_space, peak_space);
-
-        H5::DataSet intensity_H5(file.createDataSet(
-            collectionNameKey + "/Intensity", H5::PredType::NATIVE_DOUBLE,
-            peak_space));
-        intensity_H5.write(intensity.data(), H5::PredType::NATIVE_DOUBLE, peak_space, peak_space);
-
-        H5::DataSet sigma_H5(file.createDataSet(
-            collectionNameKey + "/Sigma", H5::PredType::NATIVE_DOUBLE,
-            peak_space));
-        sigma_H5.write(sigma.data(), H5::PredType::NATIVE_DOUBLE, peak_space, peak_space);
-
-        H5::DataSet mean_bkg_val_H5(file.createDataSet(
-            collectionNameKey + "/BkgIntensity", H5::PredType::NATIVE_DOUBLE,
-            peak_space));
-        mean_bkg_val_H5.write(mean_bkg_val.data(), H5::PredType::NATIVE_DOUBLE, peak_space, peak_space);
-
-        H5::DataSet mean_bkg_sig_H5(file.createDataSet(
-            collectionNameKey + "/BkgSigma", H5::PredType::NATIVE_DOUBLE,
-            peak_space));
-        mean_bkg_sig_H5.write(mean_bkg_sig.data(), H5::PredType::NATIVE_DOUBLE, peak_space, peak_space);
-
-        H5::DataSet rejection_H5(file.createDataSet(
-            collectionNameKey + "/Rejection", H5::PredType::NATIVE_INT32,
-            peak_space));
-        rejection_H5.write(rejection_flag.data(), H5::PredType::NATIVE_INT32, peak_space, peak_space);
-
-        H5::DataSet center_H5(file.createDataSet(
-            collectionNameKey + "/Center", H5::PredType::NATIVE_DOUBLE,
-            center_space));
-        center_H5.write(center.data(), H5::PredType::NATIVE_DOUBLE, center_space, center_space);
-
-        H5::DataSet metric_H5(file.createDataSet(
-            collectionNameKey + "/Metric", H5::PredType::NATIVE_DOUBLE,
-            metric_space));
-        metric_H5.write(metric.data(), H5::PredType::NATIVE_DOUBLE, metric_space, metric_space);
-
-        H5::DataSet selected_H5(file.createDataSet(
-            collectionNameKey + "/Selected", H5::PredType::NATIVE_HBOOL,
-            peak_space));
-        selected_H5.write(selected.data(), H5::PredType::NATIVE_HBOOL, peak_space, peak_space);
-
-        H5::DataSet masked_H5(file.createDataSet(
-            collectionNameKey + "/Masked", H5::PredType::NATIVE_HBOOL,
-            peak_space));
-        masked_H5.write(masked.data(), H5::PredType::NATIVE_HBOOL, peak_space, peak_space);
-
-        H5::DataSet predicted_H5(file.createDataSet(
-            collectionNameKey + "/Predicted", H5::PredType::NATIVE_HBOOL,
-            peak_space));
-        predicted_H5.write(predicted.data(), H5::PredType::NATIVE_HBOOL, peak_space, peak_space);
+        for (const auto& [dkey, dtype, dspace, dptr] : peakData_defs) {
+            H5::DataSet data_H5(
+                        file.createDataSet(collectionNameKey + "/" + dkey, dtype, dspace));
+            data_H5.write(dptr, dtype, dspace, dspace);
+        }
 
         {
             std::vector<const char*> data_name_pointers(nPeaks);
