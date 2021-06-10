@@ -48,7 +48,7 @@ static const H5::DataSpace metaSpace(H5S_SCALAR);
 // write functions
 inline
 void writeAttribute(H5::H5File& file, const std::string& key, const void* const value,
-		    const H5::DataType& datatype, const H5::DataSpace& dataspace)
+                    const H5::DataType& datatype, const H5::DataSpace& dataspace)
 {
     H5::Attribute attr(file.createAttribute(key, datatype, dataspace));
     attr.write(datatype, value);
@@ -113,10 +113,10 @@ void ExperimentExporter::writeData(const std::map<std::string, DataSet*> data)
         free(date);
         date = nullptr;
 
-	// DataSet for frames
-	const hsize_t dims[3] = {n_frames, n_rows, n_cols};
+        // DataSet for frames
+        const hsize_t dims[3] = {n_frames, n_rows, n_cols};
         const H5::DataSpace space(3, dims, nullptr);
-	const H5::DataType frameType {H5::PredType::NATIVE_INT32};
+        const H5::DataType frameType {H5::PredType::NATIVE_INT32};
         H5::DataSet dset(file.createDataSet(std::string(datakey + "/" + name),
                                             frameType, space,
                                             plist));
@@ -127,10 +127,10 @@ void ExperimentExporter::writeData(const std::map<std::string, DataSet*> data)
 
         H5::DataSpace memspace(3, count, nullptr);
         for (offset[0] = 0; offset[0] < n_frames; offset[0] += count[0]) {
-	    // TODO: Explain the slab
+            // TODO: Explain the slab
             space.selectHyperslab(H5S_SELECT_SET, count, offset, nullptr, nullptr);
             // HDF5 requires row-major storage, so copy frame into a row-major matrix
-	    // TODO: check if this is really necessary
+            // TODO: check if this is really necessary
             IntMatrix current_frame(data_item->frame(offset[0]));
             dset.write(current_frame.data(), frameType, memspace, space);
         }
@@ -139,14 +139,14 @@ void ExperimentExporter::writeData(const std::map<std::string, DataSet*> data)
         //-- Blosc end
 
         // Write detector states // TODO: move to a separate function
-	using statesVec = std::vector< std::vector<double> >;
-	const std::string detectorKey = datakey + "/Detector";
-	const H5::DataType stateValueType {H5::PredType::NATIVE_DOUBLE};
+        using statesVec = std::vector< std::vector<double> >;
+        const std::string detectorKey = datakey + "/Detector";
+        const H5::DataType stateValueType {H5::PredType::NATIVE_DOUBLE};
         file.createGroup(detectorKey);
 
         const hsize_t nf[1] = {n_frames};
         const H5::DataSpace scanSpace(1, nf);
-	Eigen::VectorXd values(n_frames);
+        Eigen::VectorXd values(n_frames);
 
         const statesVec& detectorStates = data_item->reader()->detectorStates();
         const nsx::Gonio& detector_gonio = data_item->reader()->diffractometer()->detector()->gonio();
@@ -162,7 +162,7 @@ void ExperimentExporter::writeData(const std::map<std::string, DataSet*> data)
         }
 
         // Write sample states  // TODO: move to a separate function
-	const std::string sampleKey = datakey + "/Sample";
+        const std::string sampleKey = datakey + "/Sample";
         file.createGroup(sampleKey);
 
         const statesVec& sampleStates = data_item->reader()->sampleStates();
@@ -179,7 +179,7 @@ void ExperimentExporter::writeData(const std::map<std::string, DataSet*> data)
         }
 
         // Write all string metadata into the "Info" group  // TODO: move to a separate function
-	const std::string infoKey = datakey + "/Info";
+        const std::string infoKey = datakey + "/Info";
         H5::Group info_group = file.createGroup(infoKey);
         const nsx::MetaDataMap& map = data_item->metadata().map();
 
@@ -199,7 +199,7 @@ void ExperimentExporter::writeData(const std::map<std::string, DataSet*> data)
         }
 
         // Write all other metadata (int and double) into the "Experiment" Group
-	const std::string metaKey = datakey + "/Meta";  // TODO: Why different from Info?
+        const std::string metaKey = datakey + "/Meta";  // TODO: Why different from Info?
 
         H5::Group meta_group = file.createGroup(metaKey);
 
