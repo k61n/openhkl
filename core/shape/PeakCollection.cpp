@@ -113,6 +113,7 @@ int PeakCollection::numberRejectedByFilter() const
     return numberOfPeaks() - numberCaughtByFilter();
 }
 
+// TODO: Check this function: why _meta is cleared and regenerated?
 std::map<std::string, float>* PeakCollection::meta()
 {
     _meta.clear();
