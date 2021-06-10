@@ -43,7 +43,6 @@ static const H5::StrType str80Type(H5::PredType::C_S1, 80);
 static const H5::StrType strVarType(H5::PredType::C_S1, H5T_VARIABLE);
 
 // HDF5 DataSpace (defining data shape)
-static const H5::DataSpace metaExpSpace(H5S_SCALAR);
 static const H5::DataSpace metaSpace(H5S_SCALAR);
 
 // write functions
@@ -65,8 +64,8 @@ void ExperimentExporter::createFile(std::string name, std::string diffractometer
     H5::H5File file{path.c_str(), H5F_ACC_TRUNC};
     _file_name = path;  // store the filename for later use
 
-    writeAttribute(file, "name", name.data(), str80Type, metaExpSpace);
-    writeAttribute(file, "diffractometer", diffractometer.data(), str80Type, metaExpSpace);
+    writeAttribute(file, "name", name.data(), str80Type, metaSpace);
+    writeAttribute(file, "diffractometer", diffractometer.data(), str80Type, metaSpace);
 }
 
 void ExperimentExporter::writeData(const std::map<std::string, DataSet*> data)
