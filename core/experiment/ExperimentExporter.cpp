@@ -162,19 +162,17 @@ void ExperimentExporter::writeData(const std::map<std::string, DataSet*> data)
             detector_scan.write(&values(0), stateValueType, scanSpace, scanSpace);
         }
 
-
-        const auto& sampleStates = data_item->reader()->sampleStates();
-        const auto& sample_gonio = data_item->reader()->diffractometer()->sample().gonio();
-        size_t n_sample_gonio_axes = sample_gonio.nAxes();
-
-        for (size_t i = 0; i < n_sample_gonio_axes; ++i) {
-            const auto& axis = sample_gonio.axis(i);
-            Eigen::VectorXd values(data_item->nFrames());
-            for (size_t j = 0; j < data_item->nFrames(); ++j)
-                values(j) = sampleStates[j][i] / deg;
         // Write sample states  // TODO: move to a separate function
 	const std::string sampleKey = datakey + "/Sample";
         file.createGroup(sampleKey);
+
+        const statesVec& sampleStates = data_item->reader()->sampleStates();
+        const nsx::Gonio& sample_gonio = data_item->reader()->diffractometer()->sample().gonio();
+        std::size_t n_sample_gonio_axes = sample_gonio.nAxes();
+        for (std::size_t i_axis = 0; i_axis < n_sample_gonio_axes; ++i_axis) {
+            const auto& axis = sample_gonio.axis(i_axis);
+            for (std::size_t i_frame = 0; i_frame < n_frames; ++i_frame)
+                values(i_frame) = sampleStates[i_frame][i_axis] / deg;  // TODO: check the unit
             H5::DataSet sample_scan(file.createDataSet(
                 std::string(sampleKey + "/" + axis.name()),
                 stateValueType, scanSpace));
