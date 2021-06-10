@@ -123,19 +123,18 @@ void ExperimentExporter::writeData(const std::map<std::string, DataSet*> data)
                                             frameType, space,
                                             plist));
 
-        hsize_t offset[3];
-        offset[0] = 0;
-        offset[1] = 0;
-        offset[2] = 0;
+        // Write frames
+        const hsize_t count[3] = {1, n_rows, n_cols};  // TODO: is this `dims` for a single frame?
+        hsize_t offset[3] = {0, 0, 0};
 
-        // write frames
         H5::DataSpace memspace(3, count, nullptr);
-        using IntMatrix = Eigen::Matrix<int, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>;
-        for (offset[0] = 0; offset[0] < data_item->nFrames(); offset[0] += count[0]) {
+        for (offset[0] = 0; offset[0] < n_frames; offset[0] += count[0]) {
+	    // TODO: Explain the slab
             space.selectHyperslab(H5S_SELECT_SET, count, offset, nullptr, nullptr);
             // HDF5 requires row-major storage, so copy frame into a row-major matrix
+	    // TODO: check if this is really necessary
             IntMatrix current_frame(data_item->frame(offset[0]));
-            dset.write(current_frame.data(), H5::PredType::NATIVE_INT32, memspace, space);
+            dset.write(current_frame.data(), frameType, memspace, space);
         }
 
         blosc_destroy();
