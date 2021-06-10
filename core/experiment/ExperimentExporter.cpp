@@ -45,6 +45,10 @@ static const H5::StrType strVarType(H5::PredType::C_S1, H5T_VARIABLE);
 // HDF5 DataSpace (defining data shape)
 static const H5::DataSpace metaSpace(H5S_SCALAR);
 
+// state vector
+using statesVec = std::vector< std::vector<double> >;
+const H5::DataType stateValueType {H5::PredType::NATIVE_DOUBLE};
+
 // write functions
 inline
 void writeAttribute(H5::H5File& file, const std::string& key, const void* const value,
@@ -52,6 +56,32 @@ void writeAttribute(H5::H5File& file, const std::string& key, const void* const 
 {
     H5::Attribute attr(file.createAttribute(key, datatype, dataspace));
     attr.write(datatype, value);
+}
+
+void writeDetectorState(H5::H5File& file, const std::string& datakey,
+                        const nsx::DataSet* const dataset)
+{
+    const std::string detectorKey = datakey + "/Detector";
+
+    file.createGroup(detectorKey);
+
+    const std::size_t n_frames = dataset->nFrames();
+    const hsize_t nf[1] = {n_frames};
+    const H5::DataSpace scanSpace(1, nf);
+    Eigen::VectorXd values(n_frames);
+
+    const statesVec& detectorStates = dataset->reader()->detectorStates();
+    const nsx::Gonio& detector_gonio = dataset->reader()->diffractometer()->detector()->gonio();
+    const std::size_t n_detector_gonio_axes = detector_gonio.nAxes();
+    for (std::size_t i_axis = 0; i_axis < n_detector_gonio_axes; ++i_axis) {
+        for (std::size_t i_frame = 0; i_frame < n_frames; ++i_frame)
+            values(i_frame) = detectorStates[i_frame][i_axis] / nsx::deg;  // TODO: check the unit
+
+        H5::DataSet detector_scan(
+            file.createDataSet(std::string(detectorKey + "/" + detector_gonio.axis(i_axis).name()),
+                               stateValueType, scanSpace));
+        detector_scan.write(&values(0), stateValueType, scanSpace, scanSpace);
+    }
 }
 
 } // namespace
@@ -135,32 +165,16 @@ void ExperimentExporter::writeData(const std::map<std::string, DataSet*> data)
             dset.write(current_frame.data(), frameType, memspace, space);
         }
 
-        // Write detector states // TODO: move to a separate function
+        // Write detector states
         using statesVec = std::vector< std::vector<double> >;
-        const std::string detectorKey = datakey + "/Detector";
-        const H5::DataType stateValueType {H5::PredType::NATIVE_DOUBLE};
-        file.createGroup(detectorKey);
-
-        const hsize_t nf[1] = {n_frames};
-        const H5::DataSpace scanSpace(1, nf);
         Eigen::VectorXd values(n_frames);
-
-        const statesVec& detectorStates = data_item->reader()->detectorStates();
-        const nsx::Gonio& detector_gonio = data_item->reader()->diffractometer()->detector()->gonio();
-        const std::size_t n_detector_gonio_axes = detector_gonio.nAxes();
-        for (std::size_t i_axis = 0; i_axis < n_detector_gonio_axes; ++i_axis) {
-            const auto& axis = detector_gonio.axis(i_axis);
-            for (std::size_t i_frame = 0; i_frame < n_frames; ++i_frame)
-                values(i_frame) = detectorStates[i_frame][i_axis] / deg;  // TODO: check the unit
-            H5::DataSet detector_scan(file.createDataSet(
-                std::string(detectorKey + "/" + axis.name()),
-                stateValueType, scanSpace));
-            detector_scan.write(&values(0), stateValueType, scanSpace, scanSpace);
-        }
+        writeDetectorState(file, datakey, data_item);
 
         // Write sample states  // TODO: move to a separate function
         const std::string sampleKey = datakey + "/Sample";
         file.createGroup(sampleKey);
+	const hsize_t nf[1] = {n_frames};
+        const H5::DataSpace scanSpace(1, nf);
 
         const statesVec& sampleStates = data_item->reader()->sampleStates();
         const nsx::Gonio& sample_gonio = data_item->reader()->diffractometer()->sample().gonio();
