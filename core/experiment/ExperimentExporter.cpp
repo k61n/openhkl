@@ -70,14 +70,16 @@ void ExperimentExporter::createFile(std::string name, std::string diffractometer
 
 void ExperimentExporter::writeData(const std::map<std::string, DataSet*> data)
 {
+    const std::string dataCollectionsKey = "/DataCollections";
+
     H5::H5File file{_file_name.c_str(), H5F_ACC_RDWR};
-    file.createGroup("/DataCollections");
+    file.createGroup(dataCollectionsKey);
 
     for (const auto& it : data) {
         const DataSet* data_item = it.second;
-        std::string name = data_item->name();
+        const std::string name = data_item->name();
+        const std::string datakey = dataCollectionsKey + "/" + name;
 
-        H5::Group data_collection{file.createGroup(std::string("/DataCollections/" + name))};
 
         blosc_init();
         blosc_set_nthreads(4);
@@ -98,6 +100,8 @@ void ExperimentExporter::writeData(const std::map<std::string, DataSet*> data)
 
         r = register_blosc(&version, &date);
         if (r <= 0)
+        H5::Group data_collection{file.createGroup(datakey)};
+
             throw std::runtime_error("Problem registering BLOSC filter in HDF5 library");
 
         // caught by valgrind memcheck
@@ -107,10 +111,13 @@ void ExperimentExporter::writeData(const std::map<std::string, DataSet*> data)
         date = nullptr;
         plist.setFilter(FILTER_BLOSC, H5Z_FLAG_OPTIONAL, 7, cd_values);
 
-        H5::DataSpace space(3, dims, nullptr);
-        H5::DataSet dset(file.createDataSet(
-            std::string("/DataCollections/" + name + "/" + name), H5::PredType::NATIVE_INT32, space,
-            plist));
+	// DataSet for frames
+	const hsize_t dims[3] = {n_frames, n_rows, n_cols};
+        const H5::DataSpace space(3, dims, nullptr);
+	const H5::DataType frameType {H5::PredType::NATIVE_INT32};
+        H5::DataSet dset(file.createDataSet(std::string(datakey + "/" + name),
+                                            frameType, space,
+                                            plist));
 
         hsize_t offset[3];
         offset[0] = 0;
@@ -129,9 +136,6 @@ void ExperimentExporter::writeData(const std::map<std::string, DataSet*> data)
 
         blosc_destroy();
 
-        // Write detector states
-        file.createGroup(std::string("/DataCollections/" + name + "/Detector"));
-
         hsize_t nf[1] = {data_item->nFrames()};
         H5::DataSpace scanSpace(1, nf);
 
@@ -143,14 +147,13 @@ void ExperimentExporter::writeData(const std::map<std::string, DataSet*> data)
             Eigen::VectorXd values(data_item->nFrames());
             for (size_t j = 0; j < data_item->nFrames(); ++j)
                 values(j) = detectorStates[j][i] / deg;
+	const std::string detectorKey = datakey + "/Detector";
+        file.createGroup(detectorKey);
             H5::DataSet detector_scan(file.createDataSet(
-                std::string("/DataCollections/" + name + "/Detector/" + axis.name()),
-                H5::PredType::NATIVE_DOUBLE, scanSpace));
-            detector_scan.write(&values(0), H5::PredType::NATIVE_DOUBLE, scanSpace, scanSpace);
+                std::string(detectorKey + "/" + axis.name()),
+                stateValueType, scanSpace));
         }
 
-        // Write sample states
-        file.createGroup(std::string("/DataCollections/" + name + "/Sample"));
 
         const auto& sampleStates = data_item->reader()->sampleStates();
         const auto& sample_gonio = data_item->reader()->diffractometer()->sample().gonio();
@@ -161,10 +164,13 @@ void ExperimentExporter::writeData(const std::map<std::string, DataSet*> data)
             Eigen::VectorXd values(data_item->nFrames());
             for (size_t j = 0; j < data_item->nFrames(); ++j)
                 values(j) = sampleStates[j][i] / deg;
+        // Write sample states  // TODO: move to a separate function
+	const std::string sampleKey = datakey + "/Sample";
+        file.createGroup(sampleKey);
             H5::DataSet sample_scan(file.createDataSet(
-                std::string("/DataCollections/" + name + "/Sample/" + axis.name()),
-                H5::PredType::NATIVE_DOUBLE, scanSpace));
-            sample_scan.write(&values(0), H5::PredType::NATIVE_DOUBLE, scanSpace, scanSpace);
+                std::string(sampleKey + "/" + axis.name()),
+                stateValueType, scanSpace));
+            sample_scan.write(&values(0), stateValueType, scanSpace, scanSpace);
         }
 
         // Write all string metadata into the "Info" group
