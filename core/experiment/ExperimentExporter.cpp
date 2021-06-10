@@ -80,7 +80,10 @@ void ExperimentExporter::writeData(const std::map<std::string, DataSet*> data)
         const DataSet* data_item = it.second;
         const std::string name = data_item->name();
         const std::string datakey = dataCollectionsKey + "/" + name;
+        const std::size_t n_frames = data_item->nFrames(),
+            n_rows = data_item->nRows(), n_cols = data_item->nCols();
 
+        const hsize_t chunk[3] = {1, n_rows, n_cols};  // chunk for Blosc // TODO: check this
 
         blosc_init();
         blosc_set_nthreads(4);
