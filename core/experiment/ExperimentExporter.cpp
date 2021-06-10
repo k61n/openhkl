@@ -41,6 +41,7 @@ namespace {
 // HDF5 DataTypes
 static const H5::StrType str80(H5::PredType::C_S1, 80);
 static const H5::StrType metaStrType(H5::PredType::C_S1, 80);  // TODO: why fixed length, and not `H5T_VARIABLE`?
+static const H5::StrType strVarType(H5::PredType::C_S1, H5T_VARIABLE);
 
 // HDF5 DataSpace (defining data shape)
 static const H5::DataSpace metaExpSpace(H5S_SCALAR);
@@ -357,20 +358,18 @@ void ExperimentExporter::writePeaks(const std::map<std::string, PeakCollection*>
             std::vector<const char*> data_name_pointers(nPeaks);
             for (int i = 0; i < nPeaks; ++i)
                 data_name_pointers[i] = data_names[i].c_str();
-            H5::StrType data_str_type(H5::PredType::C_S1, H5T_VARIABLE);
             H5::DataSet data_H5(file.createDataSet(
-                collectionNameKey + "/DataNames", data_str_type, peak_space));
-            data_H5.write(data_name_pointers.data(), data_str_type, peak_space, peak_space);
+                collectionNameKey + "/DataNames", strVarType, peak_space));
+            data_H5.write(data_name_pointers.data(), strVarType, peak_space, peak_space);
         }
 
         {
             std::vector<const char*> unit_cell_pointers(nPeaks);
             for (int i = 0; i < nPeaks; ++i)
                 unit_cell_pointers[i] = unit_cells[i].c_str();
-            H5::StrType uc_str_type(H5::PredType::C_S1, H5T_VARIABLE);
             H5::DataSet unit_cell_H5(file.createDataSet(
-                collectionNameKey + "/UnitCells", uc_str_type, peak_space));
-            unit_cell_H5.write(unit_cell_pointers.data(), uc_str_type, peak_space, peak_space);
+                collectionNameKey + "/UnitCells", strVarType, peak_space));
+            unit_cell_H5.write(unit_cell_pointers.data(), strVarType, peak_space, peak_space);
         }
 
         // Write all other metadata (int and double) into the "Experiment" Group
