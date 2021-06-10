@@ -18,8 +18,6 @@
 #include "core/instrument/Diffractometer.h"
 #include "core/shape/PeakCollection.h"
 
-#include <H5Cpp.h>
-
 namespace nsx {
 
 //! Manages the export of peak information to file.

@@ -32,6 +32,8 @@
 #include <iostream>
 #include <vector>
 
+#include "H5Cpp.h"
+
 namespace nsx {
 
 void ExperimentExporter::createFile(std::string name, std::string diffractometer, std::string path)
