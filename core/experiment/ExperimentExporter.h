@@ -15,10 +15,15 @@
 #ifndef NSX_CORE_EXPERIMENT_EXPERIMENTEXPORTER_H
 #define NSX_CORE_EXPERIMENT_EXPERIMENTEXPORTER_H
 
-#include "core/instrument/Diffractometer.h"
-#include "core/shape/PeakCollection.h"
+#include <string>
+#include <map>
 
 namespace nsx {
+
+class DataSet;
+class Diffractometer;
+class PeakCollection;
+class UnitCell;
 
 //! Manages the export of peak information to file.
 class ExperimentExporter {

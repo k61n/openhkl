@@ -15,6 +15,8 @@
 #ifndef NSX_CORE_EXPERIMENT_EXPERIMENTIMPORTER_H
 #define NSX_CORE_EXPERIMENT_EXPERIMENTIMPORTER_H
 
+#include <string>
+
 namespace nsx {
 
 class Experiment;
