@@ -36,6 +36,26 @@
 
 #include "H5Cpp.h"
 
+namespace {
+// HDF5 DataTypes
+static const H5::StrType str80(H5::PredType::C_S1, 80);
+
+// HDF5 DataSpace (defining data shape)
+static const H5::DataSpace metaExpSpace(H5S_SCALAR);
+
+// write functions
+inline
+void writeAttribute(H5::H5File& file, const std::string& key, const void* const value,
+		    const H5::DataType& datatype, const H5::DataSpace& dataspace)
+{
+    H5::Attribute attr(file.createAttribute(key, datatype, dataspace));
+    attr.write(datatype, value);
+}
+
+
+} // namespace
+
+
 namespace nsx {
 
 void ExperimentExporter::createFile(std::string name, std::string diffractometer, std::string path)
