@@ -70,6 +70,7 @@ void ExperimentExporter::createFile(std::string name, std::string diffractometer
 
 void ExperimentExporter::writeData(const std::map<std::string, DataSet*> data)
 {
+    using IntMatrix = Eigen::Matrix<int, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>;
     const std::string dataCollectionsKey = "/DataCollections";
 
     H5::H5File file{_file_name.c_str(), H5F_ACC_RDWR};
