@@ -401,7 +401,7 @@ void ExperimentExporter::writePeaks(const std::map<std::string, PeakCollection*>
         H5::Group meta_peak_group(
             file.createGroup("/PeakCollections/" + collection_name + "/Meta"));
 
-        std::map<std::string, float>* map = collection_item->meta();
+        std::map<std::string, float>* map = collection_item->meta(); // TODO: Bad variable name `map`
         H5::DataSpace metaSpace(H5S_SCALAR);
         H5::StrType str80(H5::PredType::C_S1, 80);
 
