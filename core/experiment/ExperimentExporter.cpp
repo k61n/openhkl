@@ -139,22 +139,27 @@ void ExperimentExporter::writeData(const std::map<std::string, DataSet*> data)
 
         blosc_destroy();
 
-        hsize_t nf[1] = {data_item->nFrames()};
-        H5::DataSpace scanSpace(1, nf);
-
-        const auto& detectorStates = data_item->reader()->detectorStates();
-        const auto& detector_gonio = data_item->reader()->diffractometer()->detector()->gonio();
-        size_t n_detector_gonio_axes = detector_gonio.nAxes();
-        for (size_t i = 0; i < n_detector_gonio_axes; ++i) {
-            const auto& axis = detector_gonio.axis(i);
-            Eigen::VectorXd values(data_item->nFrames());
-            for (size_t j = 0; j < data_item->nFrames(); ++j)
-                values(j) = detectorStates[j][i] / deg;
+        // Write detector states // TODO: move to a separate function
+	using statesVec = std::vector< std::vector<double> >;
 	const std::string detectorKey = datakey + "/Detector";
+	const H5::DataType stateValueType {H5::PredType::NATIVE_DOUBLE};
         file.createGroup(detectorKey);
+
+        const hsize_t nf[1] = {n_frames};
+        const H5::DataSpace scanSpace(1, nf);
+	Eigen::VectorXd values(n_frames);
+
+        const statesVec& detectorStates = data_item->reader()->detectorStates();
+        const nsx::Gonio& detector_gonio = data_item->reader()->diffractometer()->detector()->gonio();
+        const std::size_t n_detector_gonio_axes = detector_gonio.nAxes();
+        for (std::size_t i_axis = 0; i_axis < n_detector_gonio_axes; ++i_axis) {
+            const auto& axis = detector_gonio.axis(i_axis);
+            for (std::size_t i_frame = 0; i_frame < n_frames; ++i_frame)
+                values(i_frame) = detectorStates[i_frame][i_axis] / deg;  // TODO: check the unit
             H5::DataSet detector_scan(file.createDataSet(
                 std::string(detectorKey + "/" + axis.name()),
                 stateValueType, scanSpace));
+            detector_scan.write(&values(0), stateValueType, scanSpace, scanSpace);
         }
 
 
