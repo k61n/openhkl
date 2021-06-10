@@ -200,14 +200,14 @@ void ExperimentExporter::writeData(const std::map<std::string, DataSet*> data)
         }
 
         // Write all other metadata (int and double) into the "Experiment" Group
-        H5::Group meta_group = file.createGroup(std::string("/DataCollections/" + name + "/Meta"));
+	const std::string metaKey = datakey + "/Meta";  // TODO: Why different from Info?
+
+        H5::Group meta_group = file.createGroup(metaKey);
 
         for (const auto& item : map) {
-            int value;
-
             // TODO: why using `try..catch` instead of `std::has_alternative` and `std::get` for the Variant
             try {
-                value = std::get<int>(item.second);
+                int value = std::get<int>(item.second);
                 H5::Attribute intAtt(
                     meta_group.createAttribute(item.first, H5::PredType::NATIVE_INT32, metaSpace));
                 intAtt.write(H5::PredType::NATIVE_INT, &value);
