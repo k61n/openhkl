@@ -39,9 +39,11 @@
 namespace {
 // HDF5 DataTypes
 static const H5::StrType str80(H5::PredType::C_S1, 80);
+static const H5::StrType metaStrType(H5::PredType::C_S1, 80);  // TODO: why fixed length, and not `H5T_VARIABLE`?
 
 // HDF5 DataSpace (defining data shape)
 static const H5::DataSpace metaExpSpace(H5S_SCALAR);
+static const H5::DataSpace metaSpace(H5S_SCALAR);
 
 // write functions
 inline
@@ -51,7 +53,6 @@ void writeAttribute(H5::H5File& file, const std::string& key, const void* const 
     H5::Attribute attr(file.createAttribute(key, datatype, dataspace));
     attr.write(datatype, value);
 }
-
 
 } // namespace
 
