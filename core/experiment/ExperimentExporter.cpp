@@ -73,6 +73,27 @@ void ExperimentExporter::writeData(const std::map<std::string, DataSet*> data)
     using IntMatrix = Eigen::Matrix<int, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>;
     const std::string dataCollectionsKey = "/DataCollections";
 
+    //-- BLOSC configuration
+    // speed/compression for diffraction data
+    unsigned int cd_values[7];  // TODO: cd_values[0-3] uninitialized!
+    cd_values[4] = 9; // Highest compression level
+    cd_values[5] = 1; // Bit shuffling active
+    cd_values[6] = BLOSC_BLOSCLZ; // Seem to be the best compromise
+    //-- Blosc begin
+    blosc_init();
+    blosc_set_nthreads(4);
+    char *version, *date;
+    const int register_status = register_blosc(&version, &date);
+    if (register_status <= 0)
+        throw std::runtime_error("Problem registering BLOSC filter in HDF5 library");
+
+    // caught by valgrind memcheck
+    free(version);
+    version = nullptr;
+    free(date);
+    date = nullptr;
+    //-- END Blosc configuration
+
     H5::H5File file{_file_name.c_str(), H5F_ACC_RDWR};
     file.createGroup(dataCollectionsKey);
 
@@ -85,33 +106,12 @@ void ExperimentExporter::writeData(const std::map<std::string, DataSet*> data)
 
         const hsize_t chunk[3] = {1, n_rows, n_cols};  // chunk for Blosc // TODO: check this
 
-        // BLOSC configuration
-        // speed/compression for diffraction data
-        unsigned int cd_values[7];  // TODO: cd_values[0-3] uninitialized!
-        cd_values[4] = 9; // Highest compression level
-        cd_values[5] = 1; // Bit shuffling active
-        cd_values[6] = BLOSC_BLOSCLZ; // Seem to be the best compromise
 
         H5::DSetCreatPropList plist;
         plist.setChunk(3, chunk);
         plist.setFilter(FILTER_BLOSC, H5Z_FLAG_OPTIONAL, 7, cd_values);
 
         H5::Group data_collection{file.createGroup(datakey)};
-
-        //-- Blosc begin
-        blosc_init();
-        blosc_set_nthreads(4);
-
-        char *version, *date;
-        const int register_status = register_blosc(&version, &date);
-        if (register_status <= 0)
-            throw std::runtime_error("Problem registering BLOSC filter in HDF5 library");
-
-        // caught by valgrind memcheck
-        free(version);
-        version = nullptr;
-        free(date);
-        date = nullptr;
 
         // DataSet for frames
         const hsize_t dims[3] = {n_frames, n_rows, n_cols};
@@ -134,9 +134,6 @@ void ExperimentExporter::writeData(const std::map<std::string, DataSet*> data)
             IntMatrix current_frame(data_item->frame(offset[0]));
             dset.write(current_frame.data(), frameType, memspace, space);
         }
-
-        blosc_destroy();
-        //-- Blosc end
 
         // Write detector states // TODO: move to a separate function
         using statesVec = std::vector< std::vector<double> >;
@@ -225,6 +222,9 @@ void ExperimentExporter::writeData(const std::map<std::string, DataSet*> data)
             }
         }
     }
+
+    blosc_destroy(); // Blosc end
+
 }
 
 
@@ -324,7 +324,7 @@ void ExperimentExporter::writePeaks(const std::map<std::string, PeakCollection*>
 
         const std::string collectionNameKey = peakCollectionsKey + "/" + collection_name;
 
-	const std::vector< std::tuple<std::string, H5::DataType, H5::DataSpace, const void*> > peakData_defs
+        const std::vector< std::tuple<std::string, H5::DataType, H5::DataSpace, const void*> > peakData_defs
             {
              // NATIVE_DOUBLE
              {"PeakEnd", H5::PredType::NATIVE_DOUBLE, peak_space, peak_end.data()},
