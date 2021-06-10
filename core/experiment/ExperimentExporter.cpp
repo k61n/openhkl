@@ -85,27 +85,26 @@ void ExperimentExporter::writeData(const std::map<std::string, DataSet*> data)
 
         const hsize_t chunk[3] = {1, n_rows, n_cols};  // chunk for Blosc // TODO: check this
 
-        blosc_init();
-        blosc_set_nthreads(4);
-
-        hsize_t dims[3] = {data_item->nFrames(), data_item->nRows(), data_item->nCols()};
-        hsize_t chunk[3] = {1, data_item->nRows(), data_item->nCols()};
-        hsize_t count[3] = {1, data_item->nRows(), data_item->nCols()};
-
-        H5::DSetCreatPropList plist;
-        plist.setChunk(3, chunk);
-        char *version, *date;
-        int r;
-        unsigned int cd_values[7];
+        // BLOSC configuration
+        // speed/compression for diffraction data
+        unsigned int cd_values[7];  // TODO: cd_values[0-3] uninitialized!
         cd_values[4] = 9; // Highest compression level
         cd_values[5] = 1; // Bit shuffling active
         cd_values[6] = BLOSC_BLOSCLZ; // Seem to be the best compromise
-        // speed/compression for diffraction data
 
-        r = register_blosc(&version, &date);
-        if (r <= 0)
+        H5::DSetCreatPropList plist;
+        plist.setChunk(3, chunk);
+        plist.setFilter(FILTER_BLOSC, H5Z_FLAG_OPTIONAL, 7, cd_values);
+
         H5::Group data_collection{file.createGroup(datakey)};
 
+        //-- Blosc begin
+        blosc_init();
+        blosc_set_nthreads(4);
+
+        char *version, *date;
+        const int register_status = register_blosc(&version, &date);
+        if (register_status <= 0)
             throw std::runtime_error("Problem registering BLOSC filter in HDF5 library");
 
         // caught by valgrind memcheck
@@ -113,7 +112,6 @@ void ExperimentExporter::writeData(const std::map<std::string, DataSet*> data)
         version = nullptr;
         free(date);
         date = nullptr;
-        plist.setFilter(FILTER_BLOSC, H5Z_FLAG_OPTIONAL, 7, cd_values);
 
 	// DataSet for frames
 	const hsize_t dims[3] = {n_frames, n_rows, n_cols};
@@ -138,6 +136,7 @@ void ExperimentExporter::writeData(const std::map<std::string, DataSet*> data)
         }
 
         blosc_destroy();
+        //-- Blosc end
 
         // Write detector states // TODO: move to a separate function
 	using statesVec = std::vector< std::vector<double> >;
