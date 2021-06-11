@@ -38,9 +38,6 @@
 #include "H5Cpp.h"
 
 namespace {
-// HDF5 DataTypes
-static const H5::StrType strVarType(H5::PredType::C_S1, H5T_VARIABLE);
-
 // HDF5 DataSpace (defining data shape)
 static const H5::DataSpace metaSpace(H5S_SCALAR);
 
@@ -187,6 +184,8 @@ void writePeakDataNames(H5::H5File& file, const std::string& datakey,
 
     const hsize_t num_peaks[1] = {nPeaks};
     const H5::DataSpace peak_space(1, num_peaks);
+    const H5::StrType strVarType(H5::PredType::C_S1, H5T_VARIABLE);
+
     H5::DataSet data_H5
         (file.createDataSet(datakey, strVarType, peak_space));
     data_H5.write(data_name_pointers.data(), strVarType, peak_space, peak_space);
