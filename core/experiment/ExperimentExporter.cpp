@@ -84,6 +84,33 @@ void writeDetectorState(H5::H5File& file, const std::string& datakey,
     }
 }
 
+
+void writeSampleState(H5::H5File& file, const std::string& datakey,
+                      const nsx::DataSet* const dataset)
+{
+    const std::string sampleKey = datakey + "/Sample";
+    const std::size_t n_frames = dataset->nFrames();
+    const hsize_t nf[1] = {n_frames};
+    Eigen::VectorXd values(n_frames);
+    const H5::DataSpace scanSpace(1, nf);
+    const statesVec& sampleStates = dataset->reader()->sampleStates();
+    const nsx::Gonio& sample_gonio = dataset->reader()->diffractometer()->sample().gonio();
+    std::size_t n_sample_gonio_axes = sample_gonio.nAxes();
+
+    file.createGroup(sampleKey);
+    for (std::size_t i_axis = 0; i_axis < n_sample_gonio_axes; ++i_axis) {
+        const auto& axis = sample_gonio.axis(i_axis);
+        for (std::size_t i_frame = 0; i_frame < n_frames; ++i_frame)
+            values(i_frame) = sampleStates[i_frame][i_axis] / nsx::deg;  // TODO: check the unit
+        H5::DataSet sample_scan(file.createDataSet(
+                                                   std::string(sampleKey + "/" + axis.name()),
+                                                   stateValueType, scanSpace));
+        sample_scan.write(&values(0), stateValueType, scanSpace, scanSpace);
+    }
+}
+
+
+
 } // namespace
 
 
@@ -166,28 +193,10 @@ void ExperimentExporter::writeData(const std::map<std::string, DataSet*> data)
         }
 
         // Write detector states
-        using statesVec = std::vector< std::vector<double> >;
-        Eigen::VectorXd values(n_frames);
         writeDetectorState(file, datakey, data_item);
 
-        // Write sample states  // TODO: move to a separate function
-        const std::string sampleKey = datakey + "/Sample";
-        file.createGroup(sampleKey);
-	const hsize_t nf[1] = {n_frames};
-        const H5::DataSpace scanSpace(1, nf);
-
-        const statesVec& sampleStates = data_item->reader()->sampleStates();
-        const nsx::Gonio& sample_gonio = data_item->reader()->diffractometer()->sample().gonio();
-        std::size_t n_sample_gonio_axes = sample_gonio.nAxes();
-        for (std::size_t i_axis = 0; i_axis < n_sample_gonio_axes; ++i_axis) {
-            const auto& axis = sample_gonio.axis(i_axis);
-            for (std::size_t i_frame = 0; i_frame < n_frames; ++i_frame)
-                values(i_frame) = sampleStates[i_frame][i_axis] / deg;  // TODO: check the unit
-            H5::DataSet sample_scan(file.createDataSet(
-                std::string(sampleKey + "/" + axis.name()),
-                stateValueType, scanSpace));
-            sample_scan.write(&values(0), stateValueType, scanSpace, scanSpace);
-        }
+        // Write sample states
+        writeSampleState(file, datakey, data_item);
 
         // Write all string metadata into the "Info" group  // TODO: move to a separate function
         const std::string infoKey = datakey + "/Info";
