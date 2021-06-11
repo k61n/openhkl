@@ -270,8 +270,9 @@ void ExperimentExporter::writePeaks(const std::map<std::string, PeakCollection*>
         // Write the data
         const std::string collection_name = it.first;
         PeakCollection* const collection_item = it.second;
+        const std::string collectionNameKey = peakCollectionsKey + "/" + collection_name;
 
-        file.createGroup(std::string(peakCollectionsKey + collection_name));
+        file.createGroup(collectionNameKey);
 
         // initialize doubles
         const std::size_t nPeaks = collection_item->numberOfPeaks();
@@ -296,7 +297,7 @@ void ExperimentExporter::writePeaks(const std::map<std::string, PeakCollection*>
         // initialize integers
         std::vector<int> rejection_flag(nPeaks);
 
-        // initialize the booleans (int is used instead of bool)
+        // initialize the booleans (NOTE: int is used instead of bool)
         std::vector<int> selected(nPeaks);
         std::vector<int> masked(nPeaks);
         std::vector<int> predicted(nPeaks);
@@ -342,14 +343,12 @@ void ExperimentExporter::writePeaks(const std::map<std::string, PeakCollection*>
         }
 
         // TODO: explain! check size 2 vs 3!
-        const hsize_t num_peaks[1] = {static_cast<unsigned long long>(nPeaks)};  // TODO: why 'usigned long long', not `hsize_t'?
+        const hsize_t num_peaks[1] = {nPeaks};
         const H5::DataSpace peak_space(1, num_peaks);
-        const hsize_t center_peaks_h[2] = {static_cast<unsigned long long>(nPeaks), 3};
+        const hsize_t center_peaks_h[2] = {nPeaks, 3};
         const H5::DataSpace center_space(2, center_peaks_h);
-        const hsize_t metric_peaks_h[2] = {static_cast<unsigned long long>(nPeaks) * 3, 3};
+        const hsize_t metric_peaks_h[2] = {nPeaks * 3, 3};
         const H5::DataSpace metric_space(2, metric_peaks_h);
-
-        const std::string collectionNameKey = peakCollectionsKey + "/" + collection_name;
 
         const std::vector< std::tuple<std::string, H5::DataType, H5::DataSpace, const void*> > peakData_defs
             {
@@ -381,7 +380,7 @@ void ExperimentExporter::writePeaks(const std::map<std::string, PeakCollection*>
 
         {
             std::vector<const char*> data_name_pointers(nPeaks);
-            for (int i = 0; i < nPeaks; ++i)
+            for (std::size_t i = 0; i < nPeaks; ++i)
                 data_name_pointers[i] = data_names[i].c_str();
             H5::DataSet data_H5(file.createDataSet(
                 collectionNameKey + "/DataNames", strVarType, peak_space));
@@ -390,18 +389,18 @@ void ExperimentExporter::writePeaks(const std::map<std::string, PeakCollection*>
 
         {
             std::vector<const char*> unit_cell_pointers(nPeaks);
-            for (int i = 0; i < nPeaks; ++i)
+            for (std::size_t i = 0; i < nPeaks; ++i)
                 unit_cell_pointers[i] = unit_cells[i].c_str();
             H5::DataSet unit_cell_H5(file.createDataSet(
                 collectionNameKey + "/UnitCells", strVarType, peak_space));
             unit_cell_H5.write(unit_cell_pointers.data(), strVarType, peak_space, peak_space);
         }
 
-        // Write all other metadata (int and double) into the "Experiment" Group
+        // Write all other metadata (int and double) into the "Meta" Group
         H5::Group meta_peak_group(
             file.createGroup(collectionNameKey + "/Meta"));
 
-        const std::map<std::string, float>& metadata = *(collection_item->meta()); // TODO: Bad variable name `map`
+        const std::map<std::string, float>& metadata = *(collection_item->meta());
         H5::DataSpace metaSpace(H5S_SCALAR);
         H5::StrType str80Type(H5::PredType::C_S1, 80);
 
