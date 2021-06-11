@@ -43,7 +43,6 @@ static const H5::DataSpace metaSpace(H5S_SCALAR);
 
 // state vector
 using statesVec = std::vector< std::vector<double> >;
-const H5::DataType stateValueType {H5::PredType::NATIVE_DOUBLE};
 
 // Peak metadata type
 using PeakMeta = std::map<std::string, float>;
@@ -67,6 +66,7 @@ void writeDetectorState(H5::H5File& file, const std::string& datakey,
     const std::size_t n_frames = dataset->nFrames();
     const hsize_t nf[1] = {n_frames};
     const H5::DataSpace scanSpace(1, nf);
+    const H5::DataType stateValueType {H5::PredType::NATIVE_DOUBLE};
     Eigen::VectorXd values(n_frames);
 
     const statesVec& detectorStates = dataset->reader()->detectorStates();
@@ -92,6 +92,7 @@ void writeSampleState(H5::H5File& file, const std::string& datakey,
     const hsize_t nf[1] = {n_frames};
     Eigen::VectorXd values(n_frames);
     const H5::DataSpace scanSpace(1, nf);
+    const H5::DataType stateValueType {H5::PredType::NATIVE_DOUBLE};
     const statesVec& sampleStates = dataset->reader()->sampleStates();
     const nsx::Gonio& sample_gonio = dataset->reader()->diffractometer()->sample().gonio();
     std::size_t n_sample_gonio_axes = sample_gonio.nAxes();
