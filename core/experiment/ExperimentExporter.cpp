@@ -110,6 +110,40 @@ void writeSampleState(H5::H5File& file, const std::string& datakey,
 }
 
 
+void writeMetaInfo(H5::H5File& file, const std::string& datakey,
+                   const nsx::DataSet* const dataset)
+{
+    // Write all string metadata into the "Info" group
+    const std::string infoKey = datakey + "/Info";
+    // Write all other metadata (int and double) into the "Meta" Group
+    const std::string metaKey = datakey + "/Meta";  // TODO: Why different from Info?
+
+    H5::Group info_group = file.createGroup(infoKey);
+    H5::Group meta_group = file.createGroup(metaKey);
+
+    try {
+        for (const auto& [key, val] : dataset->metadata().map()) {
+            if (std::holds_alternative<std::string>(val)) {
+                const std::string& info = std::get<std::string>(val);
+                H5::Attribute intAtt(info_group.createAttribute(key, str80Type, metaSpace));
+                intAtt.write(str80Type, info);
+            } else if (std::holds_alternative<int>(val)) {
+                const int value = std::get<int>(val);
+                H5::Attribute intAtt(meta_group.createAttribute
+                                     (key, H5::PredType::NATIVE_INT32, metaSpace));
+                intAtt.write(H5::PredType::NATIVE_INT, &value);
+            } else if (std::holds_alternative<double>(val)) {
+                const double d_value = std::get<double>(val);
+                H5::Attribute doubleAtt(meta_group.createAttribute
+                                        (key, H5::PredType::NATIVE_DOUBLE, metaSpace));
+                doubleAtt.write(H5::PredType::NATIVE_DOUBLE, &d_value);
+            }
+        }
+    } catch (const std::exception& ex) {
+        nsxlog(nsx::Level::Debug, "Exception in", __PRETTY_FUNCTION__, ":", ex.what());
+    }
+}
+
 
 } // namespace
 
@@ -198,52 +232,10 @@ void ExperimentExporter::writeData(const std::map<std::string, DataSet*> data)
         // Write sample states
         writeSampleState(file, datakey, data_item);
 
-        // Write all string metadata into the "Info" group  // TODO: move to a separate function
-        const std::string infoKey = datakey + "/Info";
-        H5::Group info_group = file.createGroup(infoKey);
-        const nsx::MetaDataMap& map = data_item->metadata().map();
-
-        for (const auto& item : map) {
-            std::string info;
-
-            // TODO: why using `try..catch` instead of `std::has_alternative` and `std::get` for the Variant
-            try {
-                info = std::get<std::string>(item.second);
-                H5::Attribute intAtt(info_group.createAttribute(item.first, str80Type, metaSpace));
-                intAtt.write(str80Type, info);
-            } catch (const std::exception& ex) {
-                nsxlog(Level::Debug, "Exception in", __PRETTY_FUNCTION__, ":", ex.what());
-            } catch (...) {
-                nsxlog(Level::Error, "Uncaught exception in", __PRETTY_FUNCTION__);
-            }
-        }
-
+        // Write all string metadata into the "Info" group
         // Write all other metadata (int and double) into the "Experiment" Group
-        const std::string metaKey = datakey + "/Meta";  // TODO: Why different from Info?
+        writeMetaInfo(file, datakey, data_item);
 
-        H5::Group meta_group = file.createGroup(metaKey);
-
-        for (const auto& item : map) {
-            // TODO: why using `try..catch` instead of `std::has_alternative` and `std::get` for the Variant
-            try {
-                int value = std::get<int>(item.second);
-                H5::Attribute intAtt(
-                    meta_group.createAttribute(item.first, H5::PredType::NATIVE_INT32, metaSpace));
-                intAtt.write(H5::PredType::NATIVE_INT, &value);
-            } catch (...) {
-                try {
-                    double d_value;
-                    d_value = std::get<double>(item.second);
-                    H5::Attribute intAtt(meta_group.createAttribute(
-                        item.first, H5::PredType::NATIVE_DOUBLE, metaSpace));
-                    intAtt.write(H5::PredType::NATIVE_DOUBLE, &d_value);
-                } catch (const std::exception& ex) {
-                    nsxlog(Level::Debug, "Exception in", __PRETTY_FUNCTION__, ":", ex.what());
-                } catch (...) {
-                    nsxlog(Level::Error, "Uncaught exception in", __PRETTY_FUNCTION__);
-                }
-            }
-        }
     }
 
     blosc_destroy(); // Blosc end
