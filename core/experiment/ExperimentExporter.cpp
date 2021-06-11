@@ -203,8 +203,10 @@ void writeFrames(H5::H5File& file, const std::map<std::string, nsx::DataSet*> da
     { // Register BLOSC
         char *version, *date;
         const int register_status = register_blosc(&version, &date);
-        if (register_status <= 0)
+        if (register_status <= 0) {
+            blosc_destroy();
             throw std::runtime_error("Problem registering BLOSC filter in HDF5 library");
+	}
 
         /* NOTE:
            BLOSC register_status stores the version and the date with `strdup`
