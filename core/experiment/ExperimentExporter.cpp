@@ -39,7 +39,6 @@
 
 namespace {
 // HDF5 DataTypes
-static const H5::StrType str80Type(H5::PredType::C_S1, 80);
 static const H5::StrType strVarType(H5::PredType::C_S1, H5T_VARIABLE);
 
 // HDF5 DataSpace (defining data shape)
@@ -116,6 +115,8 @@ void writeSampleState(H5::H5File& file, const std::string& datakey,
 void writeMetaInfo(H5::H5File& file, const std::string& datakey,
                    const nsx::DataSet* const dataset)
 {
+    const H5::StrType str80Type(H5::PredType::C_S1, 80); // TODO: Use strVarType
+
     // Write all string metadata into the "Info" group
     const std::string infoKey = datakey + "/Info";
     // Write all other metadata (int and double) into the "Meta" Group
@@ -275,6 +276,7 @@ void ExperimentExporter::createFile(std::string name, std::string diffractometer
     H5::H5File file{path.c_str(), H5F_ACC_TRUNC};
     _file_name = path;  // store the filename for later use
 
+    const H5::StrType str80Type(H5::PredType::C_S1, 80);  // TODO: Make 80-chr restriction also in the GUI
     writeAttribute(file, "name", name.data(), str80Type, metaSpace);
     writeAttribute(file, "diffractometer", diffractometer.data(), str80Type, metaSpace);
 }
