@@ -49,6 +49,9 @@ static const H5::DataSpace metaSpace(H5S_SCALAR);
 using statesVec = std::vector< std::vector<double> >;
 const H5::DataType stateValueType {H5::PredType::NATIVE_DOUBLE};
 
+// Peak metadata type
+using PeakMeta = std::map<std::string, float>;
+
 // write functions
 inline
 void writeAttribute(H5::H5File& file, const std::string& key, const void* const value,
@@ -142,6 +145,35 @@ void writeMetaInfo(H5::H5File& file, const std::string& datakey,
     } catch (const std::exception& ex) {
         nsxlog(nsx::Level::Debug, "Exception in", __PRETTY_FUNCTION__, ":", ex.what());
     }
+}
+
+// TODO: Merge with writeMetaInfo
+// TODO: PeakCollection metadata is map<string, float> but used as map<string, int> !
+// TODO: Unify the metadata structure for all objects
+void writePeakMeta(H5::H5File& file, const std::string& datakey,
+                   const PeakMeta& pmeta, const nsx::listtype type)
+{
+    const std::string metaKey = datakey + "/Meta";  // TODO: Why different from Info?
+
+    H5::Group peak_meta_group = file.createGroup(metaKey);
+    H5::DataSpace metaSpace(H5S_SCALAR);
+    H5::StrType str80Type(H5::PredType::C_S1, 80);
+
+    try {
+        for (const auto& [key, val] : pmeta) {
+	    const int value = static_cast<int>(val);
+	    H5::Attribute intAtt(peak_meta_group.createAttribute
+				 (key, H5::PredType::NATIVE_INT32, metaSpace));
+	    intAtt.write(H5::PredType::NATIVE_INT, &value);
+        }
+    } catch (const std::exception& ex) {
+        nsxlog(nsx::Level::Debug, "Exception in", __PRETTY_FUNCTION__, ":", ex.what());
+    }
+
+    const int listtype_int = static_cast<int>(collection_item->type());
+    H5::Attribute type_att
+        (peak_meta_group.createAttribute("Type", H5::PredType::NATIVE_INT32, metaSpace));
+    type_att.write(H5::PredType::NATIVE_INT32, &listtype_int);
 }
 
 void writeFrames(H5::H5File& file, const std::map<std::string, nsx::DataSet*> data)
@@ -397,31 +429,8 @@ void ExperimentExporter::writePeaks(const std::map<std::string, PeakCollection*>
         }
 
         // Write all other metadata (int and double) into the "Meta" Group
-        H5::Group meta_peak_group(
-            file.createGroup(collectionNameKey + "/Meta"));
-
-        const std::map<std::string, float>& metadata = *(collection_item->meta());
-        H5::DataSpace metaSpace(H5S_SCALAR);
-        H5::StrType str80Type(H5::PredType::C_S1, 80);
-
-        for (const auto& item : metadata) {
-            int value;
-            try {
-                value = item.second;
-                H5::Attribute intAtt(meta_peak_group.createAttribute(
-                    item.first, H5::PredType::NATIVE_INT32, metaSpace));
-                intAtt.write(H5::PredType::NATIVE_INT32, &value);
-            } catch (const std::exception& ex) {
-                nsxlog(Level::Debug, "Exception in", __PRETTY_FUNCTION__, ":", ex.what());
-            } catch (...) {
-                nsxlog(Level::Error, "Uncaught exception in", __PRETTY_FUNCTION__);
-            }
-        }
-
-        H5::Attribute type_att(
-            meta_peak_group.createAttribute("Type", H5::PredType::NATIVE_INT32, metaSpace));
-        int listtype_int = static_cast<int>(collection_item->type());
-        type_att.write(H5::PredType::NATIVE_INT32, &listtype_int);
+        const PeakMeta& pmeta = *(collection_item->meta());
+        writePeakMeta(file, collectionNameKey, metadata);
     }
 }
 
