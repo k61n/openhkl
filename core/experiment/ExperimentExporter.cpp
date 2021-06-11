@@ -144,6 +144,78 @@ void writeMetaInfo(H5::H5File& file, const std::string& datakey,
     }
 }
 
+void writeFrames(H5::H5File& file, const std::map<std::string, nsx::DataSet*> data)
+{
+    //-- BLOSC configuration
+    blosc_init();
+    blosc_set_nthreads(4);
+    { // Register BLOSC
+        char *version, *date;
+        const int register_status = register_blosc(&version, &date);
+        if (register_status <= 0)
+            throw std::runtime_error("Problem registering BLOSC filter in HDF5 library");
+
+        /* NOTE:
+           BLOSC register_status stores the version and the date with `strdup`
+           *version = strdup(BLOSC_VERSION_STRING);
+           *date = strdup(BLOSC_VERSION_DATE);
+
+           Therefore version and date must be freed afterwards.
+        */
+        free(version);
+        free(date);
+    }
+
+    // speed/compression for diffraction data
+    unsigned int cd_values[7]; // 0 to 3 (inclusive) param slots are reserved.
+    cd_values[4] = 9; // Highest compression level
+    cd_values[5] = 1; // Bit shuffling active; 0: shuffle not active, 1: shuffle active
+    cd_values[6] = BLOSC_BLOSCLZ; // Actual compressor to use: BLOSC seem to be the best compromise
+    //-- END BLOSC configuration
+
+    using IntMatrix = Eigen::Matrix<int, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>;
+    const std::string dataCollectionsKey = "/DataCollections";
+    file.createGroup(dataCollectionsKey);
+
+    for (const auto& it : data) {
+        const nsx::DataSet* data_item = it.second;
+        const std::string name = data_item->name();
+        const std::string datakey = dataCollectionsKey + "/" + name;
+        const std::size_t n_frames = data_item->nFrames(),
+            n_rows = data_item->nRows(), n_cols = data_item->nCols();
+
+        const hsize_t chunk[3] = {1, n_rows, n_cols};  // chunk for Blosc // TODO: check this
+
+        H5::DSetCreatPropList plist;
+        plist.setChunk(3, chunk);
+        plist.setFilter(FILTER_BLOSC, H5Z_FLAG_OPTIONAL, 7, cd_values);
+
+        H5::Group data_collection{file.createGroup(datakey)};
+
+        // H5::DataSet for frames
+        const hsize_t dims[3] = {n_frames, n_rows, n_cols};
+        const H5::DataSpace space(3, dims, nullptr);
+        const H5::DataType frameType {H5::PredType::NATIVE_INT32};
+        H5::DataSet dset(file.createDataSet
+                         (std::string(datakey + "/" + name), frameType, space, plist));
+
+        // Write frames
+        const hsize_t count[3] = {1, n_rows, n_cols};  // TODO: is this `dims` for a single frame?
+        hsize_t offset[3] = {0, 0, 0};
+
+        H5::DataSpace memspace(3, count, nullptr);
+        for (offset[0] = 0; offset[0] < n_frames; offset[0] += count[0]) {
+            // TODO: Explain the slab
+            space.selectHyperslab(H5S_SELECT_SET, count, offset, nullptr, nullptr);
+            // HDF5 requires row-major storage, so copy frame into a row-major matrix
+            // TODO: check if this is really necessary
+            IntMatrix current_frame(data_item->frame(offset[0]));
+            dset.write(current_frame.data(), frameType, memspace, space);
+        }
+    }
+
+    blosc_destroy();
+}
 
 } // namespace
 
@@ -161,70 +233,13 @@ void ExperimentExporter::createFile(std::string name, std::string diffractometer
 
 void ExperimentExporter::writeData(const std::map<std::string, DataSet*> data)
 {
-    using IntMatrix = Eigen::Matrix<int, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>;
-    const std::string dataCollectionsKey = "/DataCollections";
-
-    //-- BLOSC configuration
-    // speed/compression for diffraction data
-    unsigned int cd_values[7];  // TODO: cd_values[0-3] uninitialized!
-    cd_values[4] = 9; // Highest compression level
-    cd_values[5] = 1; // Bit shuffling active
-    cd_values[6] = BLOSC_BLOSCLZ; // Seem to be the best compromise
-    //-- Blosc begin
-    blosc_init();
-    blosc_set_nthreads(4);
-    char *version, *date;
-    const int register_status = register_blosc(&version, &date);
-    if (register_status <= 0)
-        throw std::runtime_error("Problem registering BLOSC filter in HDF5 library");
-
-    // caught by valgrind memcheck
-    free(version);
-    version = nullptr;
-    free(date);
-    date = nullptr;
-    //-- END Blosc configuration
-
     H5::H5File file{_file_name.c_str(), H5F_ACC_RDWR};
-    file.createGroup(dataCollectionsKey);
+    writeFrames(file, data);
 
+    const std::string dataCollectionsKey = "/DataCollections";
     for (const auto& it : data) {
         const DataSet* data_item = it.second;
-        const std::string name = data_item->name();
-        const std::string datakey = dataCollectionsKey + "/" + name;
-        const std::size_t n_frames = data_item->nFrames(),
-            n_rows = data_item->nRows(), n_cols = data_item->nCols();
-
-        const hsize_t chunk[3] = {1, n_rows, n_cols};  // chunk for Blosc // TODO: check this
-
-
-        H5::DSetCreatPropList plist;
-        plist.setChunk(3, chunk);
-        plist.setFilter(FILTER_BLOSC, H5Z_FLAG_OPTIONAL, 7, cd_values);
-
-        H5::Group data_collection{file.createGroup(datakey)};
-
-        // DataSet for frames
-        const hsize_t dims[3] = {n_frames, n_rows, n_cols};
-        const H5::DataSpace space(3, dims, nullptr);
-        const H5::DataType frameType {H5::PredType::NATIVE_INT32};
-        H5::DataSet dset(file.createDataSet(std::string(datakey + "/" + name),
-                                            frameType, space,
-                                            plist));
-
-        // Write frames
-        const hsize_t count[3] = {1, n_rows, n_cols};  // TODO: is this `dims` for a single frame?
-        hsize_t offset[3] = {0, 0, 0};
-
-        H5::DataSpace memspace(3, count, nullptr);
-        for (offset[0] = 0; offset[0] < n_frames; offset[0] += count[0]) {
-            // TODO: Explain the slab
-            space.selectHyperslab(H5S_SELECT_SET, count, offset, nullptr, nullptr);
-            // HDF5 requires row-major storage, so copy frame into a row-major matrix
-            // TODO: check if this is really necessary
-            IntMatrix current_frame(data_item->frame(offset[0]));
-            dset.write(current_frame.data(), frameType, memspace, space);
-        }
+        const std::string datakey = dataCollectionsKey + "/" + data_item->name();
 
         // Write detector states
         writeDetectorState(file, datakey, data_item);
@@ -233,12 +248,9 @@ void ExperimentExporter::writeData(const std::map<std::string, DataSet*> data)
         writeSampleState(file, datakey, data_item);
 
         // Write all string metadata into the "Info" group
-        // Write all other metadata (int and double) into the "Experiment" Group
+        // Write all other metadata (int and double) into the "Meta" Group
         writeMetaInfo(file, datakey, data_item);
-
     }
-
-    blosc_destroy(); // Blosc end
 
 }
 
