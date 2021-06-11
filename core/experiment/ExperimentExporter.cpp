@@ -161,20 +161,36 @@ void writePeakMeta(H5::H5File& file, const std::string& datakey,
 
     try {
         for (const auto& [key, val] : pmeta) {
-	    const int value = static_cast<int>(val);
-	    H5::Attribute intAtt(peak_meta_group.createAttribute
-				 (key, H5::PredType::NATIVE_INT32, metaSpace));
-	    intAtt.write(H5::PredType::NATIVE_INT, &value);
+            const int value = static_cast<int>(val);
+            H5::Attribute intAtt(peak_meta_group.createAttribute
+                                 (key, H5::PredType::NATIVE_INT32, metaSpace));
+            intAtt.write(H5::PredType::NATIVE_INT, &value);
         }
     } catch (const std::exception& ex) {
         nsxlog(nsx::Level::Debug, "Exception in", __PRETTY_FUNCTION__, ":", ex.what());
     }
 
-    const int listtype_int = static_cast<int>(collection_item->type());
+    const int listtype_int = static_cast<int>(type);
     H5::Attribute type_att
         (peak_meta_group.createAttribute("Type", H5::PredType::NATIVE_INT32, metaSpace));
     type_att.write(H5::PredType::NATIVE_INT32, &listtype_int);
 }
+
+void writePeakDataNames(H5::H5File& file, const std::string& datakey,
+                        const std::vector<std::string> data_names)
+{
+    const std::size_t nPeaks = data_names.size();
+    std::vector<const char*> data_name_pointers(nPeaks);
+    for (std::size_t i = 0; i < nPeaks; ++i)
+        data_name_pointers[i] = data_names[i].c_str();
+
+    const hsize_t num_peaks[1] = {nPeaks};
+    const H5::DataSpace peak_space(1, num_peaks);
+    H5::DataSet data_H5
+        (file.createDataSet(datakey, strVarType, peak_space));
+    data_H5.write(data_name_pointers.data(), strVarType, peak_space, peak_space);
+}
+
 
 void writeFrames(H5::H5File& file, const std::map<std::string, nsx::DataSet*> data)
 {
@@ -410,27 +426,14 @@ void ExperimentExporter::writePeaks(const std::map<std::string, PeakCollection*>
             data_H5.write(dptr, dtype, dspace, dspace);
         }
 
-        {
-            std::vector<const char*> data_name_pointers(nPeaks);
-            for (std::size_t i = 0; i < nPeaks; ++i)
-                data_name_pointers[i] = data_names[i].c_str();
-            H5::DataSet data_H5(file.createDataSet(
-                collectionNameKey + "/DataNames", strVarType, peak_space));
-            data_H5.write(data_name_pointers.data(), strVarType, peak_space, peak_space);
-        }
-
-        {
-            std::vector<const char*> unit_cell_pointers(nPeaks);
-            for (std::size_t i = 0; i < nPeaks; ++i)
-                unit_cell_pointers[i] = unit_cells[i].c_str();
-            H5::DataSet unit_cell_H5(file.createDataSet(
-                collectionNameKey + "/UnitCells", strVarType, peak_space));
-            unit_cell_H5.write(unit_cell_pointers.data(), strVarType, peak_space, peak_space);
-        }
+        // Write DataNames
+        writePeakDataNames(file, collectionNameKey + "/DataNames", data_names);
+        // Write unit-cell names
+        writePeakDataNames(file, collectionNameKey + "/UnitCells", unit_cells);
 
         // Write all other metadata (int and double) into the "Meta" Group
         const PeakMeta& pmeta = *(collection_item->meta());
-        writePeakMeta(file, collectionNameKey, metadata);
+        writePeakMeta(file, collectionNameKey, pmeta, collection_item->type());
     }
 }
 
