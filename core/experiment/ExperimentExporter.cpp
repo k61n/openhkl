@@ -195,7 +195,8 @@ void writePeakDataNames(H5::H5File& file, const std::string& datakey,
 }
 
 
-void writeFrames(H5::H5File& file, const std::map<std::string, nsx::DataSet*> data)
+void writeFrames(H5::H5File& file, const std::string& dataCollectionsKey,
+                 const std::map<std::string, nsx::DataSet*> data)
 {
     //-- BLOSC configuration
     blosc_init();
@@ -227,7 +228,6 @@ void writeFrames(H5::H5File& file, const std::map<std::string, nsx::DataSet*> da
     //-- END BLOSC configuration
 
     using IntMatrix = Eigen::Matrix<int, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>;
-    const std::string dataCollectionsKey = "/DataCollections";
     file.createGroup(dataCollectionsKey);
 
     for (const auto& it : data) {
@@ -288,10 +288,11 @@ void ExperimentExporter::createFile(std::string name, std::string diffractometer
 
 void ExperimentExporter::writeData(const std::map<std::string, DataSet*> data)
 {
-    H5::H5File file{_file_name.c_str(), H5F_ACC_RDWR};
-    writeFrames(file, data);
 
+    H5::H5File file{_file_name.c_str(), H5F_ACC_RDWR};
     const std::string dataCollectionsKey = "/DataCollections";
+    writeFrames(file, dataCollectionsKey, data);
+
     for (const auto& it : data) {
         const DataSet* data_item = it.second;
         const std::string datakey = dataCollectionsKey + "/" + data_item->name();
