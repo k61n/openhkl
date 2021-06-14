@@ -51,6 +51,7 @@ Menus::Menus(QMenuBar* menu_bar) : _menu_bar{menu_bar}
     _data_sub->addAction(actions->add_nexus);
     _data_menu->addAction(actions->remove_data);
 
+    _peaks_menu->addAction(actions->clone_peaks);
     _peaks_menu->addAction(actions->remove_peaks);
 
     _cells_menu->addAction(actions->add_cell);
