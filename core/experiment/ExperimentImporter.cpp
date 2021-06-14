@@ -24,6 +24,7 @@
 #include "core/raw/IDataReader.h"
 #include <Eigen/Dense>
 
+#include <string>
 #include "H5Cpp.h"
 
 namespace nsx {
