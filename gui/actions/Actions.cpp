@@ -17,6 +17,7 @@
 #include "core/experiment/Experiment.h"
 #include "gui/MainWin.h" // for gGui
 #include "gui/detector_window/DetectorWindow.h"
+#include "gui/dialogs/ClonePeakDialog.h"
 #include "gui/dialogs/ComboDialog.h"
 #include "gui/dialogs/Messages.h"
 #include "gui/dialogs/NewCellDialog.h"
@@ -126,8 +127,10 @@ void Actions::setupOptions() { }
 void Actions::setupPeaks()
 {
     remove_peaks = new QAction("Remove peak collection");
+    clone_peaks = new QAction("Clone peak collection");
 
     connect(remove_peaks, &QAction::triggered, this, &Actions::removePeaks);
+    connect(clone_peaks, &QAction::triggered, this, &Actions::clonePeaks);
 }
 
 void Actions::setupRest()
@@ -181,13 +184,30 @@ void Actions::removePeaks()
 {
     QString description{"Peak collection to remove"};
     QStringList peaks_list = gSession->currentProject()->getPeakListNames();
-    std::unique_ptr<ComboDialog> dlg(new ComboDialog(peaks_list, description));
-    dlg->exec();
-    if (!dlg->itemName().isEmpty()) {
-        QString peaks_name = dlg->itemName();
-        gSession->currentProject()->removePeakModel(peaks_name);
-        gGui->onPeaksChanged();
-        gGui->sideBar()->refreshAll();
+    if (!peaks_list.empty()) {
+        std::unique_ptr<ComboDialog> dlg(new ComboDialog(peaks_list, description));
+        dlg->exec();
+        if (!dlg->itemName().isEmpty()) {
+            QString peaks_name = dlg->itemName();
+            gSession->currentProject()->removePeakModel(peaks_name);
+            gGui->onPeaksChanged();
+            gGui->sideBar()->refreshAll();
+        }
+    }
+}
+
+void Actions::clonePeaks()
+{
+    QString description{"Peak collection to clone"};
+    QStringList peaks_list = gSession->currentProject()->getPeakListNames();
+    if (!peaks_list.empty()) {
+        std::unique_ptr<ClonePeakDialog> dlg(new ClonePeakDialog(peaks_list));
+        dlg->exec();
+        if (!dlg->clonedCollectionName().isEmpty()) {
+            QString original = dlg->originalCollectionName();
+            QString cloned = dlg->clonedCollectionName();
+            gSession->currentProject()->clonePeakCollection(original, cloned);
+        }
     }
 }
 

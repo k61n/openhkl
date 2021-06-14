@@ -47,6 +47,7 @@ class Actions : public QObject {
 
     // Peaks
     QAction* remove_peaks;
+    QAction* clone_peaks;
 
     // Unit Cells
     QAction* add_cell;
@@ -68,6 +69,7 @@ class Actions : public QObject {
     void removeExperiment();
     void removeCell();
     void removePeaks();
+    void clonePeaks();
     void aboutBox();
 };
 
