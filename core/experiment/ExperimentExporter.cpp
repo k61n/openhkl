@@ -21,19 +21,19 @@
 #include "core/detector/Detector.h"
 #include "core/detector/DetectorEvent.h"
 #include "core/gonio/Gonio.h"
+#include "core/instrument/Diffractometer.h"
 #include "core/instrument/Monochromator.h"
 #include "core/instrument/Sample.h"
 #include "core/instrument/Source.h"
 #include "core/peak/Peak3D.h"
 #include "core/raw/MetaData.h" // MetaDataMap
-#include "tables/crystal/UnitCell.h"
-#include "core/instrument/Diffractometer.h"
 #include "core/shape/PeakCollection.h"
+#include "tables/crystal/UnitCell.h"
 
 #include <Eigen/Dense>
 #include <iostream>
-#include <vector>
 #include <tuple>
+#include <vector>
 
 #include "H5Cpp.h"
 
@@ -51,14 +51,14 @@ using PeakMeta = std::map<std::string, float>;
 
 // TODO: Move BloscFilter to a separate file
 // Initialize, configure and release the Blosc filter
-class BloscFilter
-{
+class BloscFilter {
 
-public:
+ public:
     //! Speed/compression for diffraction data; 0 to 3 (inclusive) param slots are reserved.
     unsigned int cd_values[7];
 
-    BloscFilter() {
+    BloscFilter()
+    {
         blosc_init();
         _init_success = true;
         blosc_set_nthreads(_nthreads);
@@ -67,10 +67,12 @@ public:
         // speed/compression for diffraction data
         cd_values[4] = 9; // Highest compression level
         cd_values[5] = 1; // Bit shuffling active; 0: shuffle not active, 1: shuffle active
-        cd_values[6] = BLOSC_BLOSCLZ; // Actual compressor to use: BLOSC seem to be the best compromise
+        cd_values[6] =
+            BLOSC_BLOSCLZ; // Actual compressor to use: BLOSC seem to be the best compromise
     }
 
-    ~BloscFilter() {
+    ~BloscFilter()
+    {
         if (_version)
             free(_version);
         if (_date)
@@ -79,14 +81,15 @@ public:
             blosc_destroy();
     }
 
-private:
-    char *_version = nullptr;
-    char *_date = nullptr;
+ private:
+    char* _version = nullptr;
+    char* _date = nullptr;
     bool _init_success = false;
     const std::size_t _nthreads = 4;
 
     //! Register BLOSC
-    void _register() {
+    void _register()
+    {
         const int register_status = register_blosc(&_version, &_date);
         if (register_status <= 0)
             throw std::runtime_error("Problem registering BLOSC filter in HDF5 library");
@@ -105,16 +108,16 @@ private:
 };
 
 // write functions
-inline
-void writeAttribute(H5::Group& group, const std::string& key, const void* const value_ptr,
-                    const H5::DataType& datatype, const H5::DataSpace& dataspace)
+inline void writeAttribute(
+    H5::Group& group, const std::string& key, const void* const value_ptr,
+    const H5::DataType& datatype, const H5::DataSpace& dataspace)
 {
     H5::Attribute attr(group.createAttribute(key, datatype, dataspace));
     attr.write(datatype, value_ptr);
 }
 
-void writeDetectorState(H5::H5File& file, const std::string& datakey,
-                        const nsx::DataSet* const dataset)
+void writeDetectorState(
+    H5::H5File& file, const std::string& datakey, const nsx::DataSet* const dataset)
 {
     const std::string detectorKey = datakey + "/Detector";
 
@@ -123,7 +126,7 @@ void writeDetectorState(H5::H5File& file, const std::string& datakey,
     const std::size_t n_frames = dataset->nFrames();
     const hsize_t nf[1] = {n_frames};
     const H5::DataSpace scanSpace(1, nf);
-    const H5::DataType stateValueType {H5::PredType::NATIVE_DOUBLE};
+    const H5::DataType stateValueType{H5::PredType::NATIVE_DOUBLE};
     Eigen::VectorXd values(n_frames);
 
     const statesVec& detectorStates = dataset->reader()->detectorStates();
@@ -131,25 +134,25 @@ void writeDetectorState(H5::H5File& file, const std::string& datakey,
     const std::size_t n_detector_gonio_axes = detector_gonio.nAxes();
     for (std::size_t i_axis = 0; i_axis < n_detector_gonio_axes; ++i_axis) {
         for (std::size_t i_frame = 0; i_frame < n_frames; ++i_frame)
-            values(i_frame) = detectorStates[i_frame][i_axis] / nsx::deg;  // TODO: check the unit
+            values(i_frame) = detectorStates[i_frame][i_axis] / nsx::deg; // TODO: check the unit
 
-        H5::DataSet detector_scan(
-            file.createDataSet(std::string(detectorKey + "/" + detector_gonio.axis(i_axis).name()),
-                               stateValueType, scanSpace));
+        H5::DataSet detector_scan(file.createDataSet(
+            std::string(detectorKey + "/" + detector_gonio.axis(i_axis).name()), stateValueType,
+            scanSpace));
         detector_scan.write(&values(0), stateValueType, scanSpace, scanSpace);
     }
 }
 
 
-void writeSampleState(H5::H5File& file, const std::string& datakey,
-                      const nsx::DataSet* const dataset)
+void writeSampleState(
+    H5::H5File& file, const std::string& datakey, const nsx::DataSet* const dataset)
 {
     const std::string sampleKey = datakey + "/Sample";
     const std::size_t n_frames = dataset->nFrames();
     const hsize_t nf[1] = {n_frames};
     Eigen::VectorXd values(n_frames);
     const H5::DataSpace scanSpace(1, nf);
-    const H5::DataType stateValueType {H5::PredType::NATIVE_DOUBLE};
+    const H5::DataType stateValueType{H5::PredType::NATIVE_DOUBLE};
     const statesVec& sampleStates = dataset->reader()->sampleStates();
     const nsx::Gonio& sample_gonio = dataset->reader()->diffractometer()->sample().gonio();
     std::size_t n_sample_gonio_axes = sample_gonio.nAxes();
@@ -158,17 +161,15 @@ void writeSampleState(H5::H5File& file, const std::string& datakey,
     for (std::size_t i_axis = 0; i_axis < n_sample_gonio_axes; ++i_axis) {
         const auto& axis = sample_gonio.axis(i_axis);
         for (std::size_t i_frame = 0; i_frame < n_frames; ++i_frame)
-            values(i_frame) = sampleStates[i_frame][i_axis] / nsx::deg;  // TODO: check the unit
+            values(i_frame) = sampleStates[i_frame][i_axis] / nsx::deg; // TODO: check the unit
         H5::DataSet sample_scan(file.createDataSet(
-                                                   std::string(sampleKey + "/" + axis.name()),
-                                                   stateValueType, scanSpace));
+            std::string(sampleKey + "/" + axis.name()), stateValueType, scanSpace));
         sample_scan.write(&values(0), stateValueType, scanSpace, scanSpace);
     }
 }
 
 
-void writeMetaInfo(H5::H5File& file, const std::string& datakey,
-                   const nsx::DataSet* const dataset)
+void writeMetaInfo(H5::H5File& file, const std::string& datakey, const nsx::DataSet* const dataset)
 {
     const H5::DataSpace metaSpace(H5S_SCALAR);
     const H5::StrType str80Type(H5::PredType::C_S1, 80); // TODO: Use strVarType
@@ -176,7 +177,7 @@ void writeMetaInfo(H5::H5File& file, const std::string& datakey,
     // Write all string metadata into the "Info" group
     const std::string infoKey = datakey + "/Info";
     // Write all other metadata (int and double) into the "Meta" Group
-    const std::string metaKey = datakey + "/Meta";  // TODO: Why different from Info?
+    const std::string metaKey = datakey + "/Meta"; // TODO: Why different from Info?
 
     H5::Group info_group = file.createGroup(infoKey);
     H5::Group meta_group = file.createGroup(metaKey);
@@ -184,11 +185,15 @@ void writeMetaInfo(H5::H5File& file, const std::string& datakey,
     try {
         for (const auto& [key, val] : dataset->metadata().map()) {
             if (std::holds_alternative<std::string>(val))
-                writeAttribute(info_group, key, (std::get<std::string>(val)).data(), str80Type, metaSpace);
+                writeAttribute(
+                    info_group, key, (std::get<std::string>(val)).data(), str80Type, metaSpace);
             else if (std::holds_alternative<int>(val))
-                writeAttribute(meta_group, key, &std::get<int>(val), H5::PredType::NATIVE_INT32, metaSpace);
+                writeAttribute(
+                    meta_group, key, &std::get<int>(val), H5::PredType::NATIVE_INT32, metaSpace);
             else if (std::holds_alternative<double>(val))
-                writeAttribute(meta_group, key, &std::get<double>(val), H5::PredType::NATIVE_DOUBLE, metaSpace);
+                writeAttribute(
+                    meta_group, key, &std::get<double>(val), H5::PredType::NATIVE_DOUBLE,
+                    metaSpace);
         }
     } catch (const std::exception& ex) {
         nsxlog(nsx::Level::Debug, "Exception in", __PRETTY_FUNCTION__, ":", ex.what());
@@ -198,10 +203,10 @@ void writeMetaInfo(H5::H5File& file, const std::string& datakey,
 // TODO: Merge with writeMetaInfo
 // TODO: PeakCollection metadata is map<string, float> but used as map<string, int> !
 // TODO: Unify the metadata structure for all objects
-void writePeakMeta(H5::H5File& file, const std::string& datakey,
-                   const PeakMeta& pmeta, const nsx::listtype type)
+void writePeakMeta(
+    H5::H5File& file, const std::string& datakey, const PeakMeta& pmeta, const nsx::listtype type)
 {
-    const std::string metaKey = datakey + "/Meta";  // TODO: Why different from Info?
+    const std::string metaKey = datakey + "/Meta"; // TODO: Why different from Info?
 
     H5::Group peak_meta_group = file.createGroup(metaKey);
     H5::DataSpace metaSpace(H5S_SCALAR);
@@ -217,12 +222,11 @@ void writePeakMeta(H5::H5File& file, const std::string& datakey,
     }
 
     const int listtype_int = static_cast<int>(type);
-    writeAttribute(peak_meta_group, "Type", &listtype_int,
-                   H5::PredType::NATIVE_INT32, metaSpace);
+    writeAttribute(peak_meta_group, "Type", &listtype_int, H5::PredType::NATIVE_INT32, metaSpace);
 }
 
-void writePeakDataNames(H5::H5File& file, const std::string& datakey,
-                        const std::vector<std::string> data_names)
+void writePeakDataNames(
+    H5::H5File& file, const std::string& datakey, const std::vector<std::string> data_names)
 {
     const std::size_t nPeaks = data_names.size();
     std::vector<const char*> data_name_pointers(nPeaks);
@@ -233,14 +237,14 @@ void writePeakDataNames(H5::H5File& file, const std::string& datakey,
     const H5::DataSpace peak_space(1, num_peaks);
     const H5::StrType strVarType(H5::PredType::C_S1, H5T_VARIABLE);
 
-    H5::DataSet data_H5
-        (file.createDataSet(datakey, strVarType, peak_space));
+    H5::DataSet data_H5(file.createDataSet(datakey, strVarType, peak_space));
     data_H5.write(data_name_pointers.data(), strVarType, peak_space, peak_space);
 }
 
 
-void writeFrames(H5::H5File& file, const std::string& dataCollectionsKey,
-                 const std::map<std::string, nsx::DataSet*> data)
+void writeFrames(
+    H5::H5File& file, const std::string& dataCollectionsKey,
+    const std::map<std::string, nsx::DataSet*> data)
 {
     BloscFilter blosc_filter;
 
@@ -251,10 +255,10 @@ void writeFrames(H5::H5File& file, const std::string& dataCollectionsKey,
         const nsx::DataSet* data_item = it.second;
         const std::string name = data_item->name();
         const std::string datakey = dataCollectionsKey + "/" + name;
-        const std::size_t n_frames = data_item->nFrames(),
-            n_rows = data_item->nRows(), n_cols = data_item->nCols();
+        const std::size_t n_frames = data_item->nFrames(), n_rows = data_item->nRows(),
+                          n_cols = data_item->nCols();
 
-        const hsize_t chunk[3] = {1, n_rows, n_cols};  // chunk for Blosc // TODO: check this
+        const hsize_t chunk[3] = {1, n_rows, n_cols}; // chunk for Blosc // TODO: check this
 
         H5::DSetCreatPropList plist;
         plist.setChunk(3, chunk);
@@ -265,12 +269,12 @@ void writeFrames(H5::H5File& file, const std::string& dataCollectionsKey,
         // H5::DataSet for frames
         const hsize_t dims[3] = {n_frames, n_rows, n_cols};
         const H5::DataSpace space(3, dims, nullptr);
-        const H5::DataType frameType {H5::PredType::NATIVE_INT32};
-        H5::DataSet dset(file.createDataSet
-                         (std::string(datakey + "/" + name), frameType, space, plist));
+        const H5::DataType frameType{H5::PredType::NATIVE_INT32};
+        H5::DataSet dset(
+            file.createDataSet(std::string(datakey + "/" + name), frameType, space, plist));
 
         // Write frames
-        const hsize_t count[3] = {1, n_rows, n_cols};  // TODO: is this `dims` for a single frame?
+        const hsize_t count[3] = {1, n_rows, n_cols}; // TODO: is this `dims` for a single frame?
         hsize_t offset[3] = {0, 0, 0};
 
         H5::DataSpace memspace(3, count, nullptr);
@@ -283,7 +287,6 @@ void writeFrames(H5::H5File& file, const std::string& dataCollectionsKey,
             dset.write(current_frame.data(), frameType, memspace, space);
         }
     }
-
 }
 
 } // namespace
@@ -294,10 +297,11 @@ namespace nsx {
 void ExperimentExporter::createFile(std::string name, std::string diffractometer, std::string path)
 {
     H5::H5File file{path.c_str(), H5F_ACC_TRUNC};
-    _file_name = path;  // store the filename for later use
+    _file_name = path; // store the filename for later use
 
     const H5::DataSpace metaSpace(H5S_SCALAR);
-    const H5::StrType str80Type(H5::PredType::C_S1, 80);  // TODO: Make 80-chr restriction also in the GUI
+    const H5::StrType str80Type(
+        H5::PredType::C_S1, 80); // TODO: Make 80-chr restriction also in the GUI
     writeAttribute(file, "name", name.data(), str80Type, metaSpace);
     writeAttribute(file, "diffractometer", diffractometer.data(), str80Type, metaSpace);
 }
@@ -323,7 +327,6 @@ void ExperimentExporter::writeData(const std::map<std::string, DataSet*> data)
         // Write all other metadata (int and double) into the "Meta" Group
         writeMetaInfo(file, datakey, data_item);
     }
-
 }
 
 
@@ -348,7 +351,7 @@ void ExperimentExporter::writePeaks(const std::map<std::string, PeakCollection*>
 
         // initialize doubles
         const std::size_t nPeaks = collection_item->numberOfPeaks();
-        //TODO: no peak_begin?
+        // TODO: no peak_begin?
         std::vector<double> peak_end(nPeaks);
         std::vector<double> bkg_begin(nPeaks);
         std::vector<double> bkg_end(nPeaks);
@@ -406,7 +409,7 @@ void ExperimentExporter::writePeaks(const std::map<std::string, PeakCollection*>
             data_names.push_back(peak->dataSet()->name());
 
             const UnitCell* unit_cell_ptr = peak->unitCell();
-            unit_cell_name = unit_cell_ptr? unit_cell_ptr->name() : temp_name;
+            unit_cell_name = unit_cell_ptr ? unit_cell_ptr->name() : temp_name;
             unit_cells.push_back(unit_cell_name);
 
             Eigen::Vector3d temp_col = peak->shape().center();
@@ -422,31 +425,29 @@ void ExperimentExporter::writePeaks(const std::map<std::string, PeakCollection*>
         const hsize_t metric_peaks_h[2] = {nPeaks * 3, 3};
         const H5::DataSpace metric_space(2, metric_peaks_h);
 
-        const std::vector< std::tuple<std::string, H5::DataType, H5::DataSpace, const void*> > peakData_defs
-            {
-             // NATIVE_DOUBLE
-             {"PeakEnd", H5::PredType::NATIVE_DOUBLE, peak_space, peak_end.data()},
-             {"BkgBegin", H5::PredType::NATIVE_DOUBLE, peak_space, bkg_begin.data()},
-             {"BkgEnd", H5::PredType::NATIVE_DOUBLE, peak_space, bkg_end.data()},
-             {"Scale", H5::PredType::NATIVE_DOUBLE, peak_space, scale.data()},
-             {"Transmission", H5::PredType::NATIVE_DOUBLE, peak_space, transmission.data()},
-             {"Intensity", H5::PredType::NATIVE_DOUBLE, peak_space, intensity.data()},
-             {"Sigma", H5::PredType::NATIVE_DOUBLE, peak_space, sigma.data()},
-             {"BkgIntensity", H5::PredType::NATIVE_DOUBLE, peak_space, mean_bkg_val.data()},
-             {"BkgSigma", H5::PredType::NATIVE_DOUBLE, peak_space, mean_bkg_sig.data()},
-             {"Center", H5::PredType::NATIVE_DOUBLE, center_space, center.data()},
-             {"Metric", H5::PredType::NATIVE_DOUBLE, metric_space, metric.data()},
-             // NATIVE_INT32
-             {"Rejection", H5::PredType::NATIVE_INT32, peak_space, rejection_flag.data()},
-             // NATIVE_HBOOL
-             {"Selected", H5::PredType::NATIVE_HBOOL, peak_space, selected.data()},
-             {"Masked", H5::PredType::NATIVE_HBOOL, peak_space, masked.data()},
-             {"Predicted", H5::PredType::NATIVE_HBOOL, peak_space, predicted.data()}
-            };
+        const std::vector<std::tuple<std::string, H5::DataType, H5::DataSpace, const void*>>
+            peakData_defs{
+                // NATIVE_DOUBLE
+                {"PeakEnd", H5::PredType::NATIVE_DOUBLE, peak_space, peak_end.data()},
+                {"BkgBegin", H5::PredType::NATIVE_DOUBLE, peak_space, bkg_begin.data()},
+                {"BkgEnd", H5::PredType::NATIVE_DOUBLE, peak_space, bkg_end.data()},
+                {"Scale", H5::PredType::NATIVE_DOUBLE, peak_space, scale.data()},
+                {"Transmission", H5::PredType::NATIVE_DOUBLE, peak_space, transmission.data()},
+                {"Intensity", H5::PredType::NATIVE_DOUBLE, peak_space, intensity.data()},
+                {"Sigma", H5::PredType::NATIVE_DOUBLE, peak_space, sigma.data()},
+                {"BkgIntensity", H5::PredType::NATIVE_DOUBLE, peak_space, mean_bkg_val.data()},
+                {"BkgSigma", H5::PredType::NATIVE_DOUBLE, peak_space, mean_bkg_sig.data()},
+                {"Center", H5::PredType::NATIVE_DOUBLE, center_space, center.data()},
+                {"Metric", H5::PredType::NATIVE_DOUBLE, metric_space, metric.data()},
+                // NATIVE_INT32
+                {"Rejection", H5::PredType::NATIVE_INT32, peak_space, rejection_flag.data()},
+                // NATIVE_HBOOL
+                {"Selected", H5::PredType::NATIVE_HBOOL, peak_space, selected.data()},
+                {"Masked", H5::PredType::NATIVE_HBOOL, peak_space, masked.data()},
+                {"Predicted", H5::PredType::NATIVE_HBOOL, peak_space, predicted.data()}};
 
         for (const auto& [dkey, dtype, dspace, dptr] : peakData_defs) {
-            H5::DataSet data_H5(
-                        file.createDataSet(collectionNameKey + "/" + dkey, dtype, dspace));
+            H5::DataSet data_H5(file.createDataSet(collectionNameKey + "/" + dkey, dtype, dspace));
             data_H5.write(dptr, dtype, dspace, dspace);
         }
 
@@ -481,24 +482,24 @@ void ExperimentExporter::writeUnitCells(const std::map<std::string, UnitCell*> u
         char key_buff[5];
         for (std::size_t i = 0; i < 3; ++i) {
             for (std::size_t j = 0; j < 3; ++j) {
-                sprintf(key_buff,"rec_%1.1lu%1.1lu", i, j); // eg., "rec_01"
-                writeAttribute(unit_cell_group, std::string(key_buff), &rec(i, j),
-                               H5::PredType::NATIVE_DOUBLE, metaSpace);
+                sprintf(key_buff, "rec_%1.1lu%1.1lu", i, j); // eg., "rec_01"
+                writeAttribute(
+                    unit_cell_group, std::string(key_buff), &rec(i, j), H5::PredType::NATIVE_DOUBLE,
+                    metaSpace);
             }
         }
 
         const double tolerance = unit_cell->indexingTolerance();
-        writeAttribute(unit_cell_group, "indexing_tolerance", &tolerance,
-                       H5::PredType::NATIVE_DOUBLE, metaSpace);
+        writeAttribute(
+            unit_cell_group, "indexing_tolerance", &tolerance, H5::PredType::NATIVE_DOUBLE,
+            metaSpace);
         const std::string bravais_type_sym = unit_cell->bravaisTypeSymbol();
-        writeAttribute(unit_cell_group, "bravais", bravais_type_sym.data(),
-                       str80Type, metaSpace);
+        writeAttribute(unit_cell_group, "bravais", bravais_type_sym.data(), str80Type, metaSpace);
         const std::string unitcell_spacegroup_sym = unit_cell->spaceGroup().symbol();
-        writeAttribute(unit_cell_group, "space_group", unitcell_spacegroup_sym.data(),
-                       str80Type, metaSpace);
+        writeAttribute(
+            unit_cell_group, "space_group", unitcell_spacegroup_sym.data(), str80Type, metaSpace);
         const uint z_val = unit_cell->z();
-        writeAttribute(unit_cell_group, "z", &z_val,
-                       H5::PredType::NATIVE_UINT, metaSpace);
+        writeAttribute(unit_cell_group, "z", &z_val, H5::PredType::NATIVE_UINT, metaSpace);
     }
 }
 
