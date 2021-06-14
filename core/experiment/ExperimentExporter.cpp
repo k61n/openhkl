@@ -31,12 +31,12 @@
 #include "tables/crystal/UnitCell.h"
 
 #include <Eigen/Dense>
-#include <iostream>
+#include <sstream>
+#include <string>
 #include <tuple>
 #include <vector>
 
 #include "H5Cpp.h"
-
 
 // TODO: Add more log messages
 
@@ -479,12 +479,12 @@ void ExperimentExporter::writeUnitCells(const std::map<std::string, UnitCell*> u
         H5::Group unit_cell_group = file.createGroup(std::string("/UnitCells/" + unit_cell_name));
 
         // Write reciprocal-vector components
-        char key_buff[5];
         for (std::size_t i = 0; i < 3; ++i) {
             for (std::size_t j = 0; j < 3; ++j) {
-                sprintf(key_buff, "rec_%1.1lu%1.1lu", i, j); // eg., "rec_01"
-                writeAttribute(
-                    unit_cell_group, std::string(key_buff), &rec(i, j), H5::PredType::NATIVE_DOUBLE,
+                std::stringstream key_ss;
+                key_ss << "rec_" << i << j; // eg., "rec_01"
+		writeAttribute(
+                    unit_cell_group, key_ss.str(), &rec(i, j), H5::PredType::NATIVE_DOUBLE,
                     metaSpace);
             }
         }
