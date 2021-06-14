@@ -106,10 +106,10 @@ private:
 
 // write functions
 inline
-void writeAttribute(H5::H5File& file, const std::string& key, const void* const value,
+void writeAttribute(H5::Group& group, const std::string& key, const void* const value,
                     const H5::DataType& datatype, const H5::DataSpace& dataspace)
 {
-    H5::Attribute attr(file.createAttribute(key, datatype, dataspace));
+    H5::Attribute attr(group.createAttribute(key, datatype, dataspace));
     attr.write(datatype, value);
 }
 
@@ -183,21 +183,12 @@ void writeMetaInfo(H5::H5File& file, const std::string& datakey,
 
     try {
         for (const auto& [key, val] : dataset->metadata().map()) {
-            if (std::holds_alternative<std::string>(val)) {
-                const std::string& info = std::get<std::string>(val);
-                H5::Attribute intAtt(info_group.createAttribute(key, str80Type, metaSpace));
-                intAtt.write(str80Type, info);
-            } else if (std::holds_alternative<int>(val)) {
-                const int value = std::get<int>(val);
-                H5::Attribute intAtt(meta_group.createAttribute
-                                     (key, H5::PredType::NATIVE_INT32, metaSpace));
-                intAtt.write(H5::PredType::NATIVE_INT, &value);
-            } else if (std::holds_alternative<double>(val)) {
-                const double d_value = std::get<double>(val);
-                H5::Attribute doubleAtt(meta_group.createAttribute
-                                        (key, H5::PredType::NATIVE_DOUBLE, metaSpace));
-                doubleAtt.write(H5::PredType::NATIVE_DOUBLE, &d_value);
-            }
+            if (std::holds_alternative<std::string>(val))
+                writeAttribute(info_group, key, (std::get<std::string>(val)).data(), str80Type, metaSpace);
+            else if (std::holds_alternative<int>(val))
+                writeAttribute(meta_group, key, &std::get<int>(val), H5::PredType::NATIVE_INT32, metaSpace);
+            else if (std::holds_alternative<double>(val))
+                writeAttribute(meta_group, key, &std::get<double>(val), H5::PredType::NATIVE_DOUBLE, metaSpace);
         }
     } catch (const std::exception& ex) {
         nsxlog(nsx::Level::Debug, "Exception in", __PRETTY_FUNCTION__, ":", ex.what());
@@ -218,19 +209,16 @@ void writePeakMeta(H5::H5File& file, const std::string& datakey,
 
     try {
         for (const auto& [key, val] : pmeta) {
-            const int value = static_cast<int>(val);
-            H5::Attribute intAtt(peak_meta_group.createAttribute
-                                 (key, H5::PredType::NATIVE_INT32, metaSpace));
-            intAtt.write(H5::PredType::NATIVE_INT, &value);
+            const int val_int = val;
+            writeAttribute(peak_meta_group, key, &val_int, H5::PredType::NATIVE_INT32, metaSpace);
         }
     } catch (const std::exception& ex) {
         nsxlog(nsx::Level::Debug, "Exception in", __PRETTY_FUNCTION__, ":", ex.what());
     }
 
     const int listtype_int = static_cast<int>(type);
-    H5::Attribute type_att
-        (peak_meta_group.createAttribute("Type", H5::PredType::NATIVE_INT32, metaSpace));
-    type_att.write(H5::PredType::NATIVE_INT32, &listtype_int);
+    writeAttribute(peak_meta_group, "Type", &listtype_int,
+                   H5::PredType::NATIVE_INT32, metaSpace);
 }
 
 void writePeakDataNames(H5::H5File& file, const std::string& datakey,
@@ -485,8 +473,6 @@ void ExperimentExporter::writeUnitCells(const std::map<std::string, UnitCell*> u
         const std::string unit_cell_name = it.first;
         const UnitCell* unit_cell = it.second;
 
-        const uint z_val = unit_cell->z();
-        const double tolerance = unit_cell->indexingTolerance();
         const Eigen::MatrixX3d rec = unit_cell->reciprocalBasis();
 
         H5::Group unit_cell_group = file.createGroup(std::string("/UnitCells/" + unit_cell_name));
@@ -496,23 +482,23 @@ void ExperimentExporter::writeUnitCells(const std::map<std::string, UnitCell*> u
         for (std::size_t i = 0; i < 3; ++i) {
             for (std::size_t j = 0; j < 3; ++j) {
                 sprintf(key_buff,"rec_%1.1lu%1.1lu", i, j); // eg., "rec_01"
-                const std::string key = key_buff;
-                H5::Attribute rec_ij
-                    (unit_cell_group.createAttribute(key, H5::PredType::NATIVE_DOUBLE, metaSpace));
-                rec_ij.write(H5::PredType::NATIVE_DOUBLE, &rec(i, j));
+                writeAttribute(unit_cell_group, std::string(key_buff), &rec(i, j),
+                               H5::PredType::NATIVE_DOUBLE, metaSpace);
             }
         }
 
-        H5::Attribute index_tolerance(unit_cell_group.createAttribute
-                                      ("indexing_tolerance", H5::PredType::NATIVE_DOUBLE, metaSpace));
-        H5::Attribute bravais(unit_cell_group.createAttribute("bravais", str80Type, metaSpace));
-        H5::Attribute space_group(unit_cell_group.createAttribute("space_group", str80Type, metaSpace));
-        H5::Attribute z(unit_cell_group.createAttribute("z", H5::PredType::NATIVE_UINT, metaSpace));
-
-        index_tolerance.write(H5::PredType::NATIVE_DOUBLE, &tolerance);
-        bravais.write(str80Type, unit_cell->bravaisTypeSymbol());
-        space_group.write(str80Type, unit_cell->spaceGroup().symbol());
-        z.write(H5::PredType::NATIVE_UINT, &(z_val));
+        const double tolerance = unit_cell->indexingTolerance();
+        writeAttribute(unit_cell_group, "indexing_tolerance", &tolerance,
+                       H5::PredType::NATIVE_DOUBLE, metaSpace);
+        const std::string bravais_type_sym = unit_cell->bravaisTypeSymbol();
+        writeAttribute(unit_cell_group, "bravais", bravais_type_sym.data(),
+                       str80Type, metaSpace);
+        const std::string unitcell_spacegroup_sym = unit_cell->spaceGroup().symbol();
+        writeAttribute(unit_cell_group, "space_group", unitcell_spacegroup_sym.data(),
+                       str80Type, metaSpace);
+        const uint z_val = unit_cell->z();
+        writeAttribute(unit_cell_group, "z", &z_val,
+                       H5::PredType::NATIVE_UINT, metaSpace);
     }
 }
 
