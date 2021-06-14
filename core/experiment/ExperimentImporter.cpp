@@ -97,17 +97,21 @@ void ExperimentImporter::loadPeaks(Experiment* experiment)
             H5::Group peak_collection_meta(
                 file.openGroup(collection_key + "/Meta"));
             // Read the info group and store in metadata
-            int n_meta = peak_collection_meta.getNumAttrs();
             int n_peaks = 0;
             int type = 0;
-            for (int j = 0; j < n_meta; ++j) {
-                H5::Attribute attr = peak_collection_meta.openAttribute(j);
-                H5::DataType typ = attr.getDataType();
-                if (attr.getName() == "num_peaks")
-                    attr.read(typ, &n_peaks);
-                if (attr.getName() == "Type")
-                    attr.read(typ, &type);
+
+            if (peak_collection_meta.attrExists("num_peaks")) {
+                const H5::Attribute attr = peak_collection_meta.openAttribute("num_peaks");
+                const H5::DataType attr_type = attr.getDataType();
+                attr.read(attr_type, &n_peaks);
             }
+
+            if (peak_collection_meta.attrExists("Type")) {
+                const H5::Attribute attr = peak_collection_meta.openAttribute("Type");
+                const H5::DataType attr_type = attr.getDataType();
+                attr.read(attr_type, &type);
+            }
+
             nsxlog(Level::Debug, "ExperimentImporter::loadPeaks: found", n_peaks, "to import");
             nsxlog(Level::Debug, "Preparing the dataspace");
             // prepare the loading
