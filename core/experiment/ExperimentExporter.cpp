@@ -106,11 +106,11 @@ private:
 
 // write functions
 inline
-void writeAttribute(H5::Group& group, const std::string& key, const void* const value,
+void writeAttribute(H5::Group& group, const std::string& key, const void* const value_ptr,
                     const H5::DataType& datatype, const H5::DataSpace& dataspace)
 {
     H5::Attribute attr(group.createAttribute(key, datatype, dataspace));
-    attr.write(datatype, value);
+    attr.write(datatype, value_ptr);
 }
 
 void writeDetectorState(H5::H5File& file, const std::string& datakey,
