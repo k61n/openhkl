@@ -80,9 +80,9 @@ void ExperimentImporter::loadData(Experiment* experiment)
 
 void ExperimentImporter::loadPeaks(Experiment* experiment)
 {
-    using Eigen_double = Eigen::Matrix<double, Eigen::Dynamic, Eigen::RowMajor>;
-    using Eigen_int = Eigen::Matrix<int, Eigen::Dynamic, Eigen::RowMajor>;
-    using Eigen_bool = Eigen::Matrix<bool, Eigen::Dynamic, Eigen::RowMajor>;
+    using Eigen_VecXd = Eigen::Matrix<double, Eigen::Dynamic, Eigen::RowMajor>;
+    using Eigen_VecXint = Eigen::Matrix<int, Eigen::Dynamic, Eigen::RowMajor>;
+    using Eigen_VecXbool = Eigen::Matrix<bool, Eigen::Dynamic, Eigen::RowMajor>;
 
     try {
         H5::H5File file(_file_name.c_str(), H5F_ACC_RDONLY);
@@ -110,19 +110,19 @@ void ExperimentImporter::loadPeaks(Experiment* experiment)
             nsxlog(Level::Debug, "ExperimentImporter::loadPeaks: found", n_peaks, "to import");
             nsxlog(Level::Debug, "Preparing the dataspace");
             // prepare the loading
-            Eigen_double bkg_begin(n_peaks);
-            Eigen_double bkg_end(n_peaks);
-            Eigen_double peak_end(n_peaks);
-            Eigen_double scale(n_peaks);
-            Eigen_double transmission(n_peaks);
-            Eigen_double intensity(n_peaks);
-            Eigen_double sigma(n_peaks);
-            Eigen_double mean_bkg_val(n_peaks);
-            Eigen_double mean_bkg_sig(n_peaks);
+            Eigen_VecXd bkg_begin(n_peaks);
+            Eigen_VecXd bkg_end(n_peaks);
+            Eigen_VecXd peak_end(n_peaks);
+            Eigen_VecXd scale(n_peaks);
+            Eigen_VecXd transmission(n_peaks);
+            Eigen_VecXd intensity(n_peaks);
+            Eigen_VecXd sigma(n_peaks);
+            Eigen_VecXd mean_bkg_val(n_peaks);
+            Eigen_VecXd mean_bkg_sig(n_peaks);
 
-            Eigen_int rejection_flag(n_peaks);
+            Eigen_VecXint rejection_flag(n_peaks);
 
-            std::map<std::string, Eigen_double*> double_keys;
+            std::map<std::string, Eigen_VecXd*> double_keys;
             double_keys.insert(std::make_pair("BkgBegin", &bkg_begin));
             double_keys.insert(std::make_pair("BkgEnd", &bkg_end));
             double_keys.insert(std::make_pair("PeakEnd", &peak_end));
@@ -133,14 +133,14 @@ void ExperimentImporter::loadPeaks(Experiment* experiment)
             double_keys.insert(std::make_pair("BkgIntensity", &mean_bkg_val));
             double_keys.insert(std::make_pair("BkgSigma", &mean_bkg_sig));
 
-            std::map<std::string, Eigen_int*> int_keys;
+            std::map<std::string, Eigen_VecXint*> int_keys;
             int_keys.insert(std::make_pair("Rejection", &rejection_flag));
 
-            Eigen_bool predicted(n_peaks);
-            Eigen_bool masked(n_peaks);
-            Eigen_bool selected(n_peaks);
+            Eigen_VecXbool predicted(n_peaks);
+            Eigen_VecXbool masked(n_peaks);
+            Eigen_VecXbool selected(n_peaks);
 
-            std::map<std::string, Eigen_bool*> bool_keys;
+            std::map<std::string, Eigen_VecXbool*> bool_keys;
             bool_keys.insert(std::make_pair("Predicted", &predicted));
             bool_keys.insert(std::make_pair("Masked", &masked));
             bool_keys.insert(std::make_pair("Selected", &selected));
@@ -155,7 +155,7 @@ void ExperimentImporter::loadPeaks(Experiment* experiment)
 
             nsxlog(Level::Debug, "Loading doubles");
             // Load all doubles
-            for (std::map<std::string, Eigen_double*>::iterator it = double_keys.begin();
+            for (std::map<std::string, Eigen_VecXd*>::iterator it = double_keys.begin();
                  it != double_keys.end(); it++) {
                 H5::DataSet data_set = peak_collection.openDataSet(it->first);
                 H5::DataSpace space(data_set.getSpace());
@@ -164,7 +164,7 @@ void ExperimentImporter::loadPeaks(Experiment* experiment)
 
             nsxlog(Level::Debug, "Loading integers");
             // Load all ints
-            for (std::map<std::string, Eigen_int*>::iterator it = int_keys.begin();
+            for (std::map<std::string, Eigen_VecXint*>::iterator it = int_keys.begin();
                  it != int_keys.end(); it++) {
                 H5::DataSet data_set = peak_collection.openDataSet(it->first);
                 H5::DataSpace space(data_set.getSpace());
@@ -173,11 +173,11 @@ void ExperimentImporter::loadPeaks(Experiment* experiment)
 
             nsxlog(Level::Debug, "Loading booleans");
             // Load all booleans
-            for (std::map<std::string, Eigen_bool*>::iterator it = bool_keys.begin();
+            for (std::map<std::string, Eigen_VecXbool*>::iterator it = bool_keys.begin();
                  it != bool_keys.end(); it++) {
                 H5::DataSet data_set = peak_collection.openDataSet(it->first);
                 H5::DataSpace space(data_set.getSpace());
-                Eigen_bool* item = it->second;
+                Eigen_VecXbool* item = it->second;
                 data_set.read(item->data(), H5::PredType::NATIVE_HBOOL, space, space);
             }
 
