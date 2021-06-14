@@ -48,6 +48,62 @@ using statesVec = std::vector< std::vector<double> >;
 // Peak metadata type
 using PeakMeta = std::map<std::string, float>;
 
+
+// TODO: Move BloscFilter to a separate file
+// Initialize, configure and release the Blosc filter
+class BloscFilter
+{
+
+public:
+    //! Speed/compression for diffraction data; 0 to 3 (inclusive) param slots are reserved.
+    unsigned int cd_values[7];
+
+    BloscFilter() {
+        blosc_init();
+        _init_success = true;
+        blosc_set_nthreads(_nthreads);
+        _register();
+
+        // speed/compression for diffraction data
+        cd_values[4] = 9; // Highest compression level
+        cd_values[5] = 1; // Bit shuffling active; 0: shuffle not active, 1: shuffle active
+        cd_values[6] = BLOSC_BLOSCLZ; // Actual compressor to use: BLOSC seem to be the best compromise
+    }
+
+    ~BloscFilter() {
+        if (_version)
+            free(_version);
+        if (_date)
+            free(_date);
+        if (_init_success)
+            blosc_destroy();
+    }
+
+private:
+    char *_version = nullptr;
+    char *_date = nullptr;
+    bool _init_success = false;
+    const std::size_t _nthreads = 4;
+
+    //! Register BLOSC
+    void _register() {
+        const int register_status = register_blosc(&_version, &_date);
+        if (register_status <= 0)
+            throw std::runtime_error("Problem registering BLOSC filter in HDF5 library");
+
+        /* NOTE:
+           BLOSC register_status stores the version and the date with `strdup`
+           *version = strdup(BLOSC_VERSION_STRING);
+           *date = strdup(BLOSC_VERSION_DATE);
+
+           Therefore version and date must be freed afterwards.
+        */
+        free(_version);
+        free(_date);
+        _version = _date = nullptr;
+    }
+};
+
 // write functions
 inline
 void writeAttribute(H5::H5File& file, const std::string& key, const void* const value,
@@ -198,34 +254,7 @@ void writePeakDataNames(H5::H5File& file, const std::string& datakey,
 void writeFrames(H5::H5File& file, const std::string& dataCollectionsKey,
                  const std::map<std::string, nsx::DataSet*> data)
 {
-    //-- BLOSC configuration
-    blosc_init();
-    blosc_set_nthreads(4);
-    { // Register BLOSC
-        char *version, *date;
-        const int register_status = register_blosc(&version, &date);
-        if (register_status <= 0) {
-            blosc_destroy();
-            throw std::runtime_error("Problem registering BLOSC filter in HDF5 library");
-	}
-
-        /* NOTE:
-           BLOSC register_status stores the version and the date with `strdup`
-           *version = strdup(BLOSC_VERSION_STRING);
-           *date = strdup(BLOSC_VERSION_DATE);
-
-           Therefore version and date must be freed afterwards.
-        */
-        free(version);
-        free(date);
-    }
-
-    // speed/compression for diffraction data
-    unsigned int cd_values[7]; // 0 to 3 (inclusive) param slots are reserved.
-    cd_values[4] = 9; // Highest compression level
-    cd_values[5] = 1; // Bit shuffling active; 0: shuffle not active, 1: shuffle active
-    cd_values[6] = BLOSC_BLOSCLZ; // Actual compressor to use: BLOSC seem to be the best compromise
-    //-- END BLOSC configuration
+    BloscFilter blosc_filter;
 
     using IntMatrix = Eigen::Matrix<int, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>;
     file.createGroup(dataCollectionsKey);
@@ -241,7 +270,7 @@ void writeFrames(H5::H5File& file, const std::string& dataCollectionsKey,
 
         H5::DSetCreatPropList plist;
         plist.setChunk(3, chunk);
-        plist.setFilter(FILTER_BLOSC, H5Z_FLAG_OPTIONAL, 7, cd_values);
+        plist.setFilter(FILTER_BLOSC, H5Z_FLAG_OPTIONAL, 7, blosc_filter.cd_values);
 
         H5::Group data_collection{file.createGroup(datakey)};
 
@@ -267,7 +296,6 @@ void writeFrames(H5::H5File& file, const std::string& dataCollectionsKey,
         }
     }
 
-    blosc_destroy();
 }
 
 } // namespace
