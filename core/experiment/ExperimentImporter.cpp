@@ -127,28 +127,30 @@ void ExperimentImporter::loadPeaks(Experiment* experiment)
 
             Eigen_VecXint rejection_flag(n_peaks);
 
-            std::map<std::string, Eigen_VecXd*> double_keys;
-            double_keys.insert(std::make_pair("BkgBegin", &bkg_begin));
-            double_keys.insert(std::make_pair("BkgEnd", &bkg_end));
-            double_keys.insert(std::make_pair("PeakEnd", &peak_end));
-            double_keys.insert(std::make_pair("Scale", &scale));
-            double_keys.insert(std::make_pair("Transmission", &transmission));
-            double_keys.insert(std::make_pair("Intensity", &intensity));
-            double_keys.insert(std::make_pair("Sigma", &sigma));
-            double_keys.insert(std::make_pair("BkgIntensity", &mean_bkg_val));
-            double_keys.insert(std::make_pair("BkgSigma", &mean_bkg_sig));
+            std::map<std::string, Eigen_VecXd*> double_keys {
+                 {"BkgBegin", &bkg_begin},
+                 {"BkgEnd", &bkg_end},
+                 {"PeakEnd", &peak_end},
+                 {"Scale", &scale},
+                 {"Transmission", &transmission},
+                 {"Intensity", &intensity},
+                 {"Sigma", &sigma},
+                 {"BkgIntensity", &mean_bkg_val},
+                 {"BkgSigma", &mean_bkg_sig}
+            };
 
-            std::map<std::string, Eigen_VecXint*> int_keys;
-            int_keys.insert(std::make_pair("Rejection", &rejection_flag));
+            std::map<std::string, Eigen_VecXint*> int_keys {{"Rejection", &rejection_flag}};
 
             Eigen_VecXbool predicted(n_peaks);
             Eigen_VecXbool masked(n_peaks);
             Eigen_VecXbool selected(n_peaks);
 
-            std::map<std::string, Eigen_VecXbool*> bool_keys;
-            bool_keys.insert(std::make_pair("Predicted", &predicted));
-            bool_keys.insert(std::make_pair("Masked", &masked));
-            bool_keys.insert(std::make_pair("Selected", &selected));
+            std::map<std::string, Eigen_VecXbool*> bool_keys
+                {
+                 {"Predicted", &predicted},
+                 {"Masked", &masked},
+                 {"Selected", &selected}
+                };
 
             Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor> center(
                 n_peaks, 3);
