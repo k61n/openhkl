@@ -162,30 +162,26 @@ void ExperimentImporter::loadPeaks(Experiment* experiment)
 
             nsxlog(Level::Debug, "Loading doubles");
             // Load all doubles
-            for (std::map<std::string, Eigen_VecXd*>::iterator it = double_keys.begin();
-                 it != double_keys.end(); it++) {
-                H5::DataSet data_set = peak_collection.openDataSet(it->first);
+            for (const auto& [key, val] : double_keys) {
+                H5::DataSet data_set = peak_collection.openDataSet(key);
                 H5::DataSpace space(data_set.getSpace());
-                data_set.read(it->second->data(), H5::PredType::NATIVE_DOUBLE, space, space);
-            }
+                data_set.read(val->data(), H5::PredType::NATIVE_DOUBLE, space, space);
+            };
 
             nsxlog(Level::Debug, "Loading integers");
             // Load all ints
-            for (std::map<std::string, Eigen_VecXint*>::iterator it = int_keys.begin();
-                 it != int_keys.end(); it++) {
-                H5::DataSet data_set = peak_collection.openDataSet(it->first);
+            for (const auto& [key, val] : int_keys) {
+                H5::DataSet data_set = peak_collection.openDataSet(key);
                 H5::DataSpace space(data_set.getSpace());
-                data_set.read(it->second->data(), H5::PredType::NATIVE_INT, space, space);
+                data_set.read(val->data(), H5::PredType::NATIVE_INT, space, space);
             }
 
             nsxlog(Level::Debug, "Loading booleans");
             // Load all booleans
-            for (std::map<std::string, Eigen_VecXbool*>::iterator it = bool_keys.begin();
-                 it != bool_keys.end(); it++) {
-                H5::DataSet data_set = peak_collection.openDataSet(it->first);
+            for (const auto& [key, val] : bool_keys) {
+                H5::DataSet data_set = peak_collection.openDataSet(key);
                 H5::DataSpace space(data_set.getSpace());
-                Eigen_VecXbool* item = it->second;
-                data_set.read(item->data(), H5::PredType::NATIVE_HBOOL, space, space);
+                data_set.read(val->data(), H5::PredType::NATIVE_HBOOL, space, space);
             }
 
             nsxlog(Level::Debug, "Loading centers");
