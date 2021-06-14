@@ -91,10 +91,11 @@ void ExperimentImporter::loadPeaks(Experiment* experiment)
         hsize_t object_num = peak_collections.getNumObjs();
         for (int i = 0; i < object_num; ++i) {
             const std::string collection_name = peak_collections.getObjnameByIdx(i);
-            H5::Group peak_collection(file.openGroup("/PeakCollections/" + collection_name));
+            const std::string collection_key = "/PeakCollections/" + collection_name;
+            H5::Group peak_collection(file.openGroup(collection_key));
 
             H5::Group peak_collection_meta(
-                file.openGroup("/PeakCollections/" + collection_name + "/Meta"));
+                file.openGroup(collection_key + "/Meta"));
             // Read the info group and store in metadata
             int n_meta = peak_collection_meta.getNumAttrs();
             int n_peaks = 0;
