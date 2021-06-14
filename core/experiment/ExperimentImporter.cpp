@@ -29,24 +29,27 @@
 
 namespace nsx {
 
-void ExperimentImporter::setFilePath(std::string path, Experiment* experiment)
+void ExperimentImporter::setFilePath(const std::string path, Experiment* const experiment)
 {
     try {
         _file_name = path;
         H5::H5File file(_file_name.c_str(), H5F_ACC_RDONLY);
-
-        int num_att = file.getNumAttrs();
-        for (int i = 0; i < num_att; ++i) {
-            H5::Attribute attr = file.openAttribute(i);
-            H5::DataType attr_type = attr.getDataType();
+        if (file.attrExists("name")) {
+            const H5::Attribute attr = file.openAttribute("name");
+            const H5::DataType attr_type = attr.getDataType();
             std::string value;
             attr.read(attr_type, value);
-
-            if (attr.getName() == "name")
-                experiment->setName(value);
-            else if (attr.getName() == "diffractometer")
-                experiment->setDiffractometer(value);
+            experiment->setName(value);
         }
+
+        if (file.attrExists("diffractometer")) {
+            const H5::Attribute attr = file.openAttribute("diffractometer");
+            const H5::DataType attr_type = attr.getDataType();
+            std::string value;
+            attr.read(attr_type, value);
+            experiment->setDiffractometer(value);
+        }
+
     } catch (H5::Exception& e) {
         std::string what = e.getDetailMsg();
         throw std::runtime_error(what);
