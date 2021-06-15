@@ -315,33 +315,32 @@ void ExperimentImporter::loadUnitCells(Experiment* experiment)
             for (int j = 0; j < n_meta; ++j) {
                 H5::Attribute attr = unit_cell.openAttribute(j);
                 H5::DataType typ = attr.getDataType();
-
-                if (attr.getName() == "rec_00")
+                const std::string attr_name = attr.getName();
+                if (attr_name == "rec_00")
                     attr.read(typ, &rec_00);
-                if (attr.getName() == "rec_01")
+                else if (attr_name == "rec_01")
                     attr.read(typ, &rec_01);
-                if (attr.getName() == "rec_02")
+                else if (attr_name == "rec_02")
                     attr.read(typ, &rec_02);
-                if (attr.getName() == "rec_10")
+                else if (attr_name == "rec_10")
                     attr.read(typ, &rec_10);
-                if (attr.getName() == "rec_11")
+                else if (attr_name == "rec_11")
                     attr.read(typ, &rec_11);
-                if (attr.getName() == "rec_12")
+                else if (attr_name == "rec_12")
                     attr.read(typ, &rec_12);
-                if (attr.getName() == "rec_20")
+                else if (attr_name == "rec_20")
                     attr.read(typ, &rec_20);
-                if (attr.getName() == "rec_21")
+                else if (attr_name == "rec_21")
                     attr.read(typ, &rec_21);
-                if (attr.getName() == "rec_22")
+                else if (attr_name == "rec_22")
                     attr.read(typ, &rec_22);
-
-                if (attr.getName() == "indexing_tolerance")
+                else if (attr_name == "indexing_tolerance")
                     attr.read(typ, &indexing_tolerance);
-                if (attr.getName() == "bravais")
+                else if (attr_name == "bravais")
                     attr.read(typ, bravais);
-                if (attr.getName() == "space_group")
+                else if (attr_name == "space_group")
                     attr.read(typ, space_group);
-                if (attr.getName() == "z")
+                else if (attr_name == "z")
                     attr.read(typ, &z);
             }
 
