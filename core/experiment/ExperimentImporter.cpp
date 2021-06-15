@@ -207,17 +207,16 @@ void ExperimentImporter::loadPeaks(Experiment* experiment)
                 H5::DataType data_type = data_set.getDataType();
                 H5::DataSpace space(data_set.getSpace());
 
-                hsize_t data_dims_out[2];
+                hsize_t data_dims_out[1];
                 space.getSimpleExtentDims(data_dims_out, nullptr);
+                const hsize_t dataset_nr = data_dims_out[0]; // nr of datasets
 
-                char** char_data_names = new char*[data_dims_out[0]];
-                data_set.read((void*)char_data_names, data_type);
+                char** char_data_names = new char*[dataset_nr];
+                data_set.read(char_data_names, data_type);
 
-                for (int ii = 0; ii < data_dims_out[0]; ++ii) {
-                    std::string text;
-                    for (int jj = 0; jj < strlen(char_data_names[ii]); ++jj)
-                        text.append(std::string(1, char_data_names[ii][jj]));
-                    data_names.push_back(text);
+                for (int ii = 0; ii < dataset_nr; ++ii) {
+                    const std::string dataset_name{char_data_names[ii]};
+                    data_names.push_back(dataset_name);
                 }
 
                 delete[] char_data_names;
