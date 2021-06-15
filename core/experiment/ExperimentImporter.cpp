@@ -230,17 +230,16 @@ void ExperimentImporter::loadPeaks(Experiment* experiment)
                 H5::DataType uc_data_type = uc_data_set.getDataType();
                 H5::DataSpace uc_space = uc_data_set.getSpace();
 
-                hsize_t uc_dims_out[2];
+                hsize_t uc_dims_out[1];
                 uc_space.getSimpleExtentDims(uc_dims_out, nullptr);
+                const hsize_t uc_nr = uc_dims_out[0]; // nr of unit cells
 
-                char** char_unit_cells = new char*[uc_dims_out[0]];
-                uc_data_set.read((void*)char_unit_cells, uc_data_type);
+                char** char_unit_cells = new char*[uc_nr];
+                uc_data_set.read(char_unit_cells, uc_data_type);
 
-                for (int ii = 0; ii < uc_dims_out[0]; ++ii) {
-                    std::string text;
-                    for (int jj = 0; jj < strlen(char_unit_cells[ii]); ++jj)
-                        text.append(std::string(1, char_unit_cells[ii][jj]));
-                    unit_cells.push_back(text);
+                for (int ii = 0; ii < uc_nr; ++ii) {
+                    const std::string uc_name{char_unit_cells[ii]};
+                    unit_cells.push_back(uc_name);
                 }
 
                 delete[] char_unit_cells;
