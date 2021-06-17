@@ -284,7 +284,12 @@ void writeFrames(
             space.selectHyperslab(H5S_SELECT_SET, count_1frm, offset);
 
             // HDF5 requires row-major storage, so copy frame into a row-major matrix
-            // TODO: check if this is really necessary
+            /* TODO: initializing the row-major IntMatrix will make a _copy_ of the result of
+               calling `DataSet::frame` which returns a _col-major_ matrix `Eigen::MatrixXi`.
+               This copy is very costly and should be avoided.
+               Instead of `Eigen::MatrixXi` one should use `Eigen::RowMatrixXi`,
+               or store the matrix with col-major layout also in the HDF5 file.
+             */
             IntMatrix current_frame(data_item->frame(i_frame));
             dset.write(current_frame.data(), frameType, memspace, space);
         }
