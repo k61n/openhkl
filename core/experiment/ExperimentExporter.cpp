@@ -248,7 +248,7 @@ void writeFrames(
 {
     BloscFilter blosc_filter;
 
-    using IntMatrix = Eigen::Matrix<int, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>;
+    using RowMatrixXi = Eigen::Matrix<int, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>;
     file.createGroup(dataCollectionsKey);
 
     for (const auto& it : data) {
@@ -284,13 +284,13 @@ void writeFrames(
             space.selectHyperslab(H5S_SELECT_SET, count_1frm, offset);
 
             // HDF5 requires row-major storage, so copy frame into a row-major matrix
-            /* TODO: initializing the row-major IntMatrix will make a _copy_ of the result of
+            /* TODO: initializing the row-major RowMatrixXi will make a _copy_ of the result of
                calling `DataSet::frame` which returns a _col-major_ matrix `Eigen::MatrixXi`.
                This copy is very costly and should be avoided.
                Instead of `Eigen::MatrixXi` one should use `Eigen::RowMatrixXi`,
                or store the matrix with col-major layout also in the HDF5 file.
              */
-            IntMatrix current_frame(data_item->frame(i_frame));
+            RowMatrixXi current_frame(data_item->frame(i_frame));
             dset.write(current_frame.data(), frameType, memspace, space);
         }
     }
