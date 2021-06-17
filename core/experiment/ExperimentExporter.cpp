@@ -258,10 +258,9 @@ void writeFrames(
         const std::size_t n_frames = data_item->nFrames(), n_rows = data_item->nRows(),
                           n_cols = data_item->nCols();
 
-        const hsize_t chunk[3] = {1, n_rows, n_cols}; // chunk for Blosc // TODO: check this
-
         H5::DSetCreatPropList plist;
-        plist.setChunk(3, chunk);
+        const hsize_t chunk_1frm[3] = {1, n_rows, n_cols}; // each chunk is a frame
+        plist.setChunk(3, chunk_1frm);
         plist.setFilter(FILTER_BLOSC, H5Z_FLAG_OPTIONAL, 7, blosc_filter.cd_values);
 
         H5::Group data_collection{file.createGroup(datakey)};
@@ -274,16 +273,19 @@ void writeFrames(
             file.createDataSet(std::string(datakey + "/" + name), frameType, space, plist));
 
         // Write frames
-        const hsize_t count[3] = {1, n_rows, n_cols}; // TODO: is this `dims` for a single frame?
+        const hsize_t count_1frm[3] = {1, n_rows, n_cols};
         hsize_t offset[3] = {0, 0, 0};
+        hsize_t& i_frame = offset[0];
 
-        H5::DataSpace memspace(3, count, nullptr);
-        for (offset[0] = 0; offset[0] < n_frames; offset[0] += count[0]) {
-            // TODO: Explain the slab
-            space.selectHyperslab(H5S_SELECT_SET, count, offset, nullptr, nullptr);
+        H5::DataSpace memspace(3, count_1frm, nullptr);
+        for (i_frame = 0; i_frame < n_frames; i_frame += count_1frm[0]) {
+            // hyperslab corresponds to a single frame
+            // H5S_SELECT_SET replaces the existing selection with the parameters from this call
+            space.selectHyperslab(H5S_SELECT_SET, count_1frm, offset);
+
             // HDF5 requires row-major storage, so copy frame into a row-major matrix
             // TODO: check if this is really necessary
-            IntMatrix current_frame(data_item->frame(offset[0]));
+            IntMatrix current_frame(data_item->frame(i_frame));
             dset.write(current_frame.data(), frameType, memspace, space);
         }
     }
