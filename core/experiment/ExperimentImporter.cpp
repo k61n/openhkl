@@ -211,15 +211,13 @@ void ExperimentImporter::loadPeaks(Experiment* experiment)
                 space.getSimpleExtentDims(data_dims_out, nullptr);
                 const hsize_t dataset_nr = data_dims_out[0]; // nr of datasets
 
-                char** char_data_names = new char*[dataset_nr];
-                data_set.read(char_data_names, data_type);
+                std::unique_ptr<char*[]> char_data_names{new char*[dataset_nr]};
+                data_set.read(char_data_names.get(), data_type);
 
-                for (int ii = 0; ii < dataset_nr; ++ii) {
+                for (std::size_t ii = 0; ii < dataset_nr; ++ii) {
                     const std::string dataset_name{char_data_names[ii]};
                     data_names.push_back(dataset_name);
                 }
-
-                delete[] char_data_names;
             }
 
             nsxlog(Level::Debug, "Loading UnitCell names");
@@ -233,15 +231,13 @@ void ExperimentImporter::loadPeaks(Experiment* experiment)
                 uc_space.getSimpleExtentDims(uc_dims_out, nullptr);
                 const hsize_t uc_nr = uc_dims_out[0]; // nr of unit cells
 
-                char** char_unit_cells = new char*[uc_nr];
-                uc_data_set.read(char_unit_cells, uc_data_type);
+                std::unique_ptr<char*[]> char_unit_cells{new char*[uc_nr]};
+                uc_data_set.read(char_unit_cells.get(), uc_data_type);
 
                 for (int ii = 0; ii < uc_nr; ++ii) {
                     const std::string uc_name{char_unit_cells[ii]};
                     unit_cells.push_back(uc_name);
                 }
-
-                delete[] char_unit_cells;
             }
 
             nsxlog(Level::Debug, "Finished reading data from file");
