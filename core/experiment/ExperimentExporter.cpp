@@ -372,10 +372,10 @@ void ExperimentExporter::writePeaks(const std::map<std::string, PeakCollection*>
         // initialize integers
         std::vector<int> rejection_flag(nPeaks);
 
-        // initialize the booleans (NOTE: int is used instead of bool)
-        std::vector<int> selected(nPeaks);
-        std::vector<int> masked(nPeaks);
-        std::vector<int> predicted(nPeaks);
+        // initialize the booleans
+        std::unique_ptr<bool[]> selected{new bool[nPeaks]};
+        std::unique_ptr<bool[]> masked{new bool[nPeaks]};
+        std::unique_ptr<bool[]> predicted{new bool[nPeaks]};
 
         // initialize the datanames
         std::vector<std::string> data_names;
@@ -402,9 +402,9 @@ void ExperimentExporter::writePeaks(const std::map<std::string, PeakCollection*>
 
             rejection_flag[i] = static_cast<int>(peak->rejectionFlag());
 
-            selected[i] = static_cast<int>(peak->selected());
-            masked[i] = static_cast<int>(peak->masked());
-            predicted[i] = static_cast<int>(peak->predicted());
+            selected[i] = peak->selected();
+            masked[i] = peak->masked();
+            predicted[i] = peak->predicted();
 
             data_names.push_back(peak->dataSet()->name());
 
@@ -442,9 +442,9 @@ void ExperimentExporter::writePeaks(const std::map<std::string, PeakCollection*>
                 // NATIVE_INT32
                 {"Rejection", H5::PredType::NATIVE_INT32, peak_space, rejection_flag.data()},
                 // NATIVE_HBOOL
-                {"Selected", H5::PredType::NATIVE_HBOOL, peak_space, selected.data()},
-                {"Masked", H5::PredType::NATIVE_HBOOL, peak_space, masked.data()},
-                {"Predicted", H5::PredType::NATIVE_HBOOL, peak_space, predicted.data()}};
+                {"Selected", H5::PredType::NATIVE_HBOOL, peak_space, selected.get()},
+                {"Masked", H5::PredType::NATIVE_HBOOL, peak_space, masked.get()},
+                {"Predicted", H5::PredType::NATIVE_HBOOL, peak_space, predicted.get()}};
 
         for (const auto& [dkey, dtype, dspace, dptr] : peakData_defs) {
             H5::DataSet data_H5(file.createDataSet(collectionNameKey + "/" + dkey, dtype, dspace));
@@ -483,7 +483,7 @@ void ExperimentExporter::writeUnitCells(const std::map<std::string, UnitCell*> u
             for (std::size_t j = 0; j < 3; ++j) {
                 std::stringstream key_ss;
                 key_ss << "rec_" << i << j; // eg., "rec_01"
-		writeAttribute(
+                writeAttribute(
                     unit_cell_group, key_ss.str(), &rec(i, j), H5::PredType::NATIVE_DOUBLE,
                     metaSpace);
             }
