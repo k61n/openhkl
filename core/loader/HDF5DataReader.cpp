@@ -26,8 +26,9 @@ HDF5DataReader::HDF5DataReader(const std::string& filename, Diffractometer* diff
 
 Eigen::MatrixXi HDF5DataReader::data(const std::size_t frame)
 {
-    if (!_isOpened)
-        open();
+    // Open HDF5 file (does nothing if already opened)
+    open();
+
     // HDF5 specification requires row-major storage
     using RowMatrixXi = Eigen::Matrix<int, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>;
     RowMatrixXi m(_nRows, _nCols);
