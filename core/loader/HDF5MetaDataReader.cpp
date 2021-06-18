@@ -12,6 +12,8 @@
 //
 //  ***********************************************************************************************
 
+// TODO: The name HDF5MetaDataReader is misleading since the module does not only read metadata but the whole datastructure; something like `BaseHDF5DataReader` is better
+
 #include "core/loader/HDF5MetaDataReader.h"
 
 #include "base/parser/BloscFilter.h"
@@ -31,10 +33,12 @@ namespace nsx {
 HDF5MetaDataReader::HDF5MetaDataReader(const std::string& filename, Diffractometer* diffractometer)
     : IDataReader(filename, diffractometer), _dataset(nullptr), _space(nullptr), _memspace(nullptr)
 {
+    // TODO: experimentGroup -> metaGroup
     H5::Group infoGroup, experimentGroup, detectorGroup, sampleGroup;
 
     try {
         _file = std::unique_ptr<H5::H5File>(new H5::H5File(filename.c_str(), H5F_ACC_RDONLY));
+        // TODO: make groups names compatible accross the codebase
         infoGroup = _file->openGroup("/Info");
         experimentGroup = _file->openGroup("/Experiment");
         detectorGroup = _file->openGroup("/Data/Scan/Detector");
@@ -52,6 +56,7 @@ HDF5MetaDataReader::HDF5MetaDataReader(const std::string& filename, Diffractomet
         std::string value;
         attr.read(typ, value);
 
+        // TODO: check if this is still needed
         // override stored filename with the current one
         if (attr.getName() == "filename") {
             _metadata.add<std::string>("original_filename", value);
@@ -78,6 +83,7 @@ HDF5MetaDataReader::HDF5MetaDataReader(const std::string& filename, Diffractomet
         }
     }
 
+    // TODO: npdone -> nr of frames
     _nFrames = _metadata.key<int>("npdone");
 
     const auto& detector_gonio = _diffractometer->detector()->gonio();
@@ -113,6 +119,7 @@ HDF5MetaDataReader::HDF5MetaDataReader(const std::string& filename, Diffractomet
         }
     }
 
+    // TODO: check units and their consistency
     // Use natural units internally (rad)
     dm *= deg;
 
