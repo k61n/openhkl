@@ -16,7 +16,6 @@
 
 #include "core/loader/HDF5MetaDataReader.h"
 
-#include "base/parser/BloscFilter.h"
 #include "base/parser/EigenToVector.h"
 #include "base/utils/Units.h"
 #include "core/detector/Detector.h"
@@ -187,18 +186,11 @@ void HDF5MetaDataReader::open()
         throw;
     }
 
-    // handled automaticall by HDF5 blosc filter
-    blosc_init();
-    blosc_set_nthreads(4);
-
-    // Register blosc filter dynamically with HDF5
-    char *version, *date;
-    int r = register_blosc(&version, &date);
-    if (r <= 0)
-        throw std::runtime_error("Problem registering BLOSC filter in HDF5 library");
-
     // Create new data set
     try {
+        // handled automatically by HDF5 blosc filter
+        _blosc_filter.reset(new HDF5BloscFilter);
+
         _dataset =
             std::unique_ptr<H5::DataSet>(new H5::DataSet(_file->openDataSet("/Data/Counts")));
         // Dataspace of the dataset /counts
@@ -223,10 +215,6 @@ void HDF5MetaDataReader::open()
     count[2] = _nCols;
     _memspace = std::unique_ptr<H5::DataSpace>(new H5::DataSpace(3, count, nullptr));
     _isOpened = true;
-
-    // reported by valgrind
-    free(version);
-    free(date);
 }
 
 
