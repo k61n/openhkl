@@ -250,7 +250,7 @@ void ExperimentImporter::loadPeaks(Experiment* experiment)
 
                 const nsx::Ellipsoid ellipsoid(local_center, local_metric);
 
-                sptrDataSet data_pointer = experiment->dataShortName(std::string(data_names[k]));
+                sptrDataSet data_pointer = experiment->getData(std::string(data_names[k]));
                 nsx::Peak3D* peak = new nsx::Peak3D(data_pointer, ellipsoid);
 
                 const nsx::Intensity peak_intensity(intensity[k], sigma[k]);

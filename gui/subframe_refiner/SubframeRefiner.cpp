@@ -240,7 +240,7 @@ void SubframeRefiner::refine()
 {
     try {
         auto expt = gSession->experimentAt(_exp_combo->currentIndex())->experiment();
-        const auto data = expt->dataShortName(_data_combo->currentText().toStdString());
+        const auto data = expt->getData(_data_combo->currentText().toStdString());
         const auto peaks = expt->getPeakCollection(_peak_combo->currentText().toStdString());
         const auto cell = expt->getUnitCell(_cell_combo->currentText().toStdString());
         const auto peak_list = peaks->getPeakList();
