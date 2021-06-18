@@ -89,8 +89,9 @@ HDF5MetaDataReader::HDF5MetaDataReader(const std::string& filename, Diffractomet
     const auto& detector_gonio = _diffractometer->detector()->gonio();
     size_t n_detector_gonio_axes = detector_gonio.nAxes();
 
-    Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor> dm(
-        n_detector_gonio_axes, _nFrames);
+    using RowMatrixXd = Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>;
+
+    RowMatrixXd dm(n_detector_gonio_axes, _nFrames);
     for (size_t i = 0; i < n_detector_gonio_axes; ++i) {
         const auto& axis = detector_gonio.axis(i);
         if (axis.physical()) {
