@@ -41,7 +41,7 @@ ExperimentMetaReader::ExperimentMetaReader(
         experimentGroup = _file->openGroup("/DataCollections/" + group_name + "/Meta");
         detectorGroup = _file->openGroup("/DataCollections/" + group_name + "/Detector");
         sampleGroup = _file->openGroup("/DataCollections/" + group_name + "/Sample");
-
+	// TODO: Check consistency of the metadata
         _metadata.add<std::string>("real_path", file_name);
         _metadata.add<std::string>("group_name", group_name);
     } catch (H5::Exception& e) {
