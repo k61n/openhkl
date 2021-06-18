@@ -31,7 +31,7 @@ class HDF5MetaDataReader : public IDataReader {
 
     HDF5MetaDataReader(const std::string& filename, Diffractometer* diffractometer);
 
-    ~HDF5MetaDataReader() override = default;
+    ~HDF5MetaDataReader() = default;
 
     HDF5MetaDataReader& operator=(const HDF5MetaDataReader& other) = delete;
 
