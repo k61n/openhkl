@@ -88,7 +88,7 @@ class SubframeFindPeaks : public QWidget {
     //! Update the datalist as an experiment was changed
     void updateDatasetList();
     //! Update the dataset related parameters
-    void updateDatasetParameters(int idx);
+    void updateDatasetParameters(const QString& dataname);
 
     //! Grab the finder parameters
     void grabFinderParameters();
@@ -109,8 +109,6 @@ class SubframeFindPeaks : public QWidget {
     PeakCollectionItem _peak_collection_item;
     //! The temporary collection
     PeakCollectionModel _peak_collection_model;
-    //! The loaded data list
-    std::vector<nsx::sptrDataSet> _data_list;
 
  private:
     QVBoxLayout* _left_layout;
