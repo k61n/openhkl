@@ -36,7 +36,7 @@ Eigen::MatrixXi HDF5DataReader::data(const std::size_t frame)
     const hsize_t offset[3] = {frame, 0, 0};
     _space->selectHyperslab(H5S_SELECT_SET, count_1frm, offset);
     _dataset->read(m.data(), H5::PredType::NATIVE_INT32, *_memspace, *_space);
-    // return copy as MatrixXi (which could be col-major)
+    // return copy as MatrixXi (col-major)
     return Eigen::MatrixXi(m);
 }
 
