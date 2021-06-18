@@ -16,6 +16,7 @@
 #define NSX_CORE_LOADER_HDF5METADATAREADER_H
 
 #include "core/raw/IDataReader.h" // inherits from
+#include "core/raw/HDF5BloscFilter.h"
 
 #include <H5Cpp.h>
 
@@ -47,6 +48,8 @@ class HDF5MetaDataReader : public IDataReader {
     std::unique_ptr<H5::DataSpace> _space;
 
     std::unique_ptr<H5::DataSpace> _memspace;
+
+    std::unique_ptr<HDF5BloscFilter> _blosc_filter;
 };
 
 } // namespace nsx

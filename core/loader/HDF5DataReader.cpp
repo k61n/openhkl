@@ -13,8 +13,6 @@
 //  ***********************************************************************************************
 
 #include "core/loader/HDF5DataReader.h"
-
-#include "base/parser/BloscFilter.h"
 #include "core/instrument/Diffractometer.h"
 
 #include <memory>
