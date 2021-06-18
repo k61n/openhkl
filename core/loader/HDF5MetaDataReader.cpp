@@ -130,7 +130,6 @@ HDF5MetaDataReader::HDF5MetaDataReader(const std::string& filename, Diffractomet
 
     const auto& sample_gonio = _diffractometer->sample().gonio();
     size_t n_sample_gonio_axes = sample_gonio.nAxes();
-    ;
 
     dm.resize(n_sample_gonio_axes, _nFrames);
     for (size_t i = 0; i < n_sample_gonio_axes; ++i) {
@@ -191,10 +190,9 @@ void HDF5MetaDataReader::open()
         // handled automatically by HDF5 blosc filter
         _blosc_filter.reset(new HDF5BloscFilter);
 
-        _dataset =
-            std::unique_ptr<H5::DataSet>(new H5::DataSet(_file->openDataSet("/Data/Counts")));
+        _dataset.reset(new H5::DataSet(_file->openDataSet("/Data/Counts")));
         // Dataspace of the dataset /counts
-        _space = std::unique_ptr<H5::DataSpace>(new H5::DataSpace(_dataset->getSpace()));
+        _space.reset(new H5::DataSpace(_dataset->getSpace()));
     } catch (...) {
         throw;
     }
@@ -203,17 +201,14 @@ void HDF5MetaDataReader::open()
     std::vector<hsize_t> dims(ndims), maxdims(ndims);
 
     // Gets dimensions of data
-    _space->getSimpleExtentDims(&dims[0], &maxdims[0]);
+    _space->getSimpleExtentDims(dims.data(), maxdims.data());
     _nFrames = dims[0];
     _nRows = dims[1];
     _nCols = dims[2];
 
     // Size of one hyperslab
-    hsize_t count[3];
-    count[0] = 1;
-    count[1] = _nRows;
-    count[2] = _nCols;
-    _memspace = std::unique_ptr<H5::DataSpace>(new H5::DataSpace(3, count, nullptr));
+    const hsize_t count_1frm[3] = {1, _nRows, _nCols};
+    _memspace.reset(new H5::DataSpace(3, count_1frm, nullptr));
     _isOpened = true;
 }
 
