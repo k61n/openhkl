@@ -100,7 +100,7 @@ void SubframeFindPeaks::setDataUp()
         });
 
     connect(
-        _data_combo, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this,
+        _data_combo, &QComboBox::currentTextChanged, this,
         &SubframeFindPeaks::updateDatasetParameters);
 
     _left_layout->addWidget(_data_box);
@@ -318,32 +318,29 @@ void SubframeFindPeaks::updateDatasetList()
     _data_combo->blockSignals(true);
     QString current_data = _data_combo->currentText();
     _data_combo->clear();
-    _data_list = gSession->experimentAt(_exp_combo->currentIndex())->allData();
 
-    if (!_data_list.empty()) {
-        for (const nsx::sptrDataSet& data : _data_list) {
-            QFileInfo fileinfo(QString::fromStdString(data->filename()));
-            _data_combo->addItem(fileinfo.baseName());
-        }
+    const QStringList& datanames{gSession->currentProject()->getDataNames()};
+    if (!datanames.empty()) {
+        _data_combo->addItems(datanames);
         _data_combo->setCurrentText(current_data);
-        updateDatasetParameters(_data_combo->currentIndex());
+        updateDatasetParameters(_data_combo->currentText());
     }
+
     _data_combo->blockSignals(false);
 }
 
-void SubframeFindPeaks::updateDatasetParameters(int idx)
+void SubframeFindPeaks::updateDatasetParameters(const QString& dataname)
 {
-    if (_data_list.empty() || idx < 0)
-        return;
-
-    nsx::sptrDataSet data = _data_list.at(idx);
+    nsx::sptrDataSet data =
+        gSession->experimentAt(
+            _exp_combo->currentIndex())->experiment()->getData(dataname.toStdString());
 
     _end_frame_spin->setMaximum(data->nFrames());
     _end_frame_spin->setValue(data->nFrames());
     _start_frame_spin->setMaximum(data->nFrames());
     _start_frame_spin->setValue(1);
 
-    _figure_view->getScene()->slotChangeSelectedData(_data_list.at(idx), _figure_spin->value());
+    _figure_view->getScene()->slotChangeSelectedData(data, _figure_spin->value());
     //_figure_view->getScene()->setMaxIntensity(3000);
     emit _figure_view->getScene()->dataChanged();
     _figure_view->getScene()->update();
@@ -467,12 +464,13 @@ void SubframeFindPeaks::updateConvolutionParameters()
 void SubframeFindPeaks::find()
 {
     nsx::DataList data_list;
+    const nsx::DataList all_data = gSession->experimentAt(_exp_combo->currentIndex())->allData();
 
     if (_all_data->isChecked()) {
-        for (int i = 0; i < _data_list.size(); ++i)
-            data_list.push_back(_data_list.at(i));
+        for (int i = 0; i < all_data.size(); ++i)
+            data_list.push_back(all_data.at(i));
     } else {
-        data_list.push_back(_data_list.at(_data_combo->currentIndex()));
+        data_list.push_back(all_data.at(_data_combo->currentIndex()));
     }
 
     nsx::PeakFinder* finder =

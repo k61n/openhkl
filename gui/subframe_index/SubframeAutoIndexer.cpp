@@ -257,13 +257,9 @@ void SubframeAutoIndexer::updateDatasetList()
     QString current_data = _data_combo->currentText();
     _data_combo->clear();
 
-    auto data_list = gSession->experimentAt(_exp_combo->currentIndex())->allData();
-
-    if (!data_list.empty()) {
-        for (const nsx::sptrDataSet& data : data_list) {
-            QFileInfo fileinfo(QString::fromStdString(data->filename()));
-            _data_combo->addItem(fileinfo.baseName() /*absoluteFilePath()*/);
-        }
+    const QStringList& datanames{gSession->currentProject()->getDataNames()};
+    if (!datanames.empty()) {
+        _data_combo->addItems(datanames);
         _data_combo->setCurrentText(current_data);
     }
     _data_combo->blockSignals(false);

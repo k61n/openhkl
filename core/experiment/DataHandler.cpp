@@ -74,7 +74,7 @@ sptrDataSet DataHandler::getData(std::string name) const
     auto it = _data_map.find(name);
     if (it == _data_map.end()) {
         throw std::runtime_error(
-            "The data " + name + " could not be found in the experiment " + _name);
+            "The data key " + name + " could not be found in the experiment " + _name);
     }
     return it->second;
 }
