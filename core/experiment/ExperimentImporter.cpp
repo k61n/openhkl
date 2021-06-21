@@ -18,7 +18,7 @@
 #include "core/data/DataSet.h"
 #include "core/data/DataTypes.h"
 #include "core/experiment/Experiment.h"
-#include "core/loader/ExperimentDataReader.h"
+#include "core/loader/HDF5DataReader.h"
 #include "core/peak/Intensity.h"
 #include "core/peak/Peak3D.h"
 #include "core/raw/IDataReader.h"
@@ -64,12 +64,10 @@ void ExperimentImporter::loadData(Experiment* experiment)
 
         hsize_t object_num = data_collections.getNumObjs();
         for (int i = 0; i < object_num; ++i) {
-            auto reader = std::make_unique<nsx::ExperimentDataReader>(
-                _file_name, data_collections.getObjnameByIdx(i), experiment->getDiffractometer());
+	    const std::string collection_name = data_collections.getObjnameByIdx(i);
+            auto reader = std::make_unique<nsx::HDF5DataReader<ExperimentReader>>
+		(_file_name, experiment->getDiffractometer(), collection_name);
             nsx::sptrDataSet data{new nsx::DataSet{std::move(reader)}};
-
-            const std::string collection_name = data_collections.getObjnameByIdx(i);
-
             experiment->addData(data, collection_name);
         }
     } catch (H5::Exception& e) {
