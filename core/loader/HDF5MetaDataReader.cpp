@@ -2,8 +2,8 @@
 //
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
-//! @file      core/loader/HDF5MetaDataReader.cpp
-//! @brief     Implements class HDF5MetaDataReader
+//! @file      core/loader/HDF5MetaDataReader.h
+//! @brief     Defines class HDF5MetaDataReader (specialized templates)
 //!
 //! @homepage  ###HOMEPAGE###
 //! @license   GNU General Public License v3 or higher (see COPYING)
@@ -12,221 +12,68 @@
 //
 //  ***********************************************************************************************
 
-// TODO: The name HDF5MetaDataReader is misleading since the module does not only read metadata but the whole datastructure; something like `BaseHDF5DataReader` is better
-
 #include "core/loader/HDF5MetaDataReader.h"
 
-#include "base/parser/EigenToVector.h"
-#include "base/utils/Units.h"
-#include "core/detector/Detector.h"
-#include "core/gonio/Gonio.h"
-#include "core/instrument/Diffractometer.h"
-#include "core/instrument/Sample.h"
-
-#include <iostream>
-#include <memory>
-#include <stdexcept>
+#include <string>
 
 namespace nsx {
 
-HDF5MetaDataReader::HDF5MetaDataReader(const std::string& filename, Diffractometer* diffractometer)
-    : IDataReader(filename, diffractometer), _dataset(nullptr), _space(nullptr), _memspace(nullptr)
+// Template specializations
+
+// Legacy-reader group keys
+
+template <> std::string HDF5MetaDataReader<LegacyReader>::_metaKey(const std::string& _) const
 {
-    // TODO: experimentGroup -> metaGroup
-    H5::Group infoGroup, experimentGroup, detectorGroup, sampleGroup;
+    return "Experiment";
+}
 
-    try {
-        _file = std::unique_ptr<H5::H5File>(new H5::H5File(filename.c_str(), H5F_ACC_RDONLY));
-        // TODO: make groups names compatible accross the codebase
-        infoGroup = _file->openGroup("/Info");
-        experimentGroup = _file->openGroup("/Experiment");
-        detectorGroup = _file->openGroup("/Data/Scan/Detector");
-        sampleGroup = _file->openGroup("/Data/Scan/Sample");
-    } catch (H5::Exception& e) {
-        std::string what = e.getDetailMsg();
-        throw std::runtime_error(what);
-    }
+template <> std::string HDF5MetaDataReader<LegacyReader>::_infoKey(const std::string& _) const
+{
+    return "Info";
+}
 
-    // Read the info group and store in metadata
-    int ninfo = infoGroup.getNumAttrs();
-    for (int i = 0; i < ninfo; ++i) {
-        H5::Attribute attr = infoGroup.openAttribute(i);
-        H5::DataType typ = attr.getDataType();
-        std::string value;
-        attr.read(typ, value);
+template <> std::string HDF5MetaDataReader<LegacyReader>::_detectorKey(const std::string& _) const
+{
+    return "Data/Scan/Detector";
+}
 
-        // TODO: check if this is still needed
-        // override stored filename with the current one
-        if (attr.getName() == "filename") {
-            _metadata.add<std::string>("original_filename", value);
-            value = filename;
-        }
-        _metadata.add<std::string>(attr.getName(), value);
-    }
+template <> std::string HDF5MetaDataReader<LegacyReader>::_sampleKey(const std::string& _) const
+{
+    return "Data/Scan/Sample";
+}
 
-    // Read the experiment group and store all int and double attributes in
-    // metadata
-    int nexps = experimentGroup.getNumAttrs();
-    for (int i = 0; i < nexps; ++i) {
-        H5::Attribute attr = experimentGroup.openAttribute(i);
-        H5::DataType typ = attr.getDataType();
-        if (typ == H5::PredType::NATIVE_INT32) {
-            int value;
-            attr.read(typ, &value);
-            _metadata.add<int>(attr.getName(), value);
-        }
-        if (typ == H5::PredType::NATIVE_DOUBLE) {
-            double value;
-            attr.read(typ, &value);
-            _metadata.add<double>(attr.getName(), value);
-        }
-    }
-
-    // TODO: npdone -> nr of frames
-    _nFrames = _metadata.key<int>("npdone");
-
-    const auto& detector_gonio = _diffractometer->detector()->gonio();
-    size_t n_detector_gonio_axes = detector_gonio.nAxes();
-
-    using RowMatrixXd = Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>;
-
-    RowMatrixXd dm(n_detector_gonio_axes, _nFrames);
-    for (size_t i = 0; i < n_detector_gonio_axes; ++i) {
-        const auto& axis = detector_gonio.axis(i);
-        if (axis.physical()) {
-            try {
-                H5::DataSet dset = detectorGroup.openDataSet(axis.name());
-                H5::DataSpace space(dset.getSpace());
-                hsize_t dim = space.getSimpleExtentNdims();
-                if (dim != 1) {
-                    throw std::runtime_error(
-                        "Read HDF5, problem reading detector scan parameters, dimension "
-                        "of array should be 1");
-                }
-                std::vector<hsize_t> dims(dim), maxdims(dim);
-                space.getSimpleExtentDims(&dims[0], &maxdims[0]);
-                if (dims[0] != _nFrames) {
-                    throw std::runtime_error(
-                        "Read HDF5, problem reading detector scan parameters, different "
-                        "array length to npdone");
-                }
-                dset.read(&dm(i, 0), H5::PredType::NATIVE_DOUBLE, space, space);
-            } catch (...) {
-                throw std::runtime_error("Could not read " + axis.name() + " HDF5 dataset");
-            }
-        } else {
-            dm.row(i) = Eigen::VectorXd::Zero(_nFrames);
-        }
-    }
-
-    // TODO: check units and their consistency
-    // Use natural units internally (rad)
-    dm *= deg;
-
-    _detectorStates.resize(_nFrames);
-
-    for (unsigned int i = 0; i < _nFrames; ++i)
-        _detectorStates[i] = eigenToVector(dm.col(i));
-
-    const auto& sample_gonio = _diffractometer->sample().gonio();
-    size_t n_sample_gonio_axes = sample_gonio.nAxes();
-
-    dm.resize(n_sample_gonio_axes, _nFrames);
-    for (size_t i = 0; i < n_sample_gonio_axes; ++i) {
-        const auto& axis = sample_gonio.axis(i);
-        if (axis.physical()) {
-            try {
-                H5::DataSet dset = sampleGroup.openDataSet(axis.name());
-                H5::DataSpace space(dset.getSpace());
-                hsize_t dim = space.getSimpleExtentNdims();
-                if (dim != 1) {
-                    throw std::runtime_error(
-                        "Read HDF5, problem reading sample scan parameters, dimension of "
-                        "array should be 1");
-                }
-                std::vector<hsize_t> dims(dim), maxdims(dim);
-                space.getSimpleExtentDims(&dims[0], &maxdims[0]);
-                if (dims[0] != _nFrames) {
-                    throw std::runtime_error(
-                        "Read HDF5, problem reading sample scan parameters, different "
-                        "array length to npdone");
-                }
-                dset.read(&dm(i, 0), H5::PredType::NATIVE_DOUBLE, space, space);
-            } catch (...) {
-                throw std::runtime_error("Coud not read " + axis.name() + " HDF5 dataset");
-            }
-        } else {
-            dm.row(i) = Eigen::VectorXd::Zero(_nFrames);
-        }
-    }
-
-    // Use natural units internally (rad)
-    dm *= deg;
-
-    _sampleStates.resize(_nFrames);
-    for (unsigned int i = 0; i < _nFrames; ++i)
-        _sampleStates[i] = eigenToVector(dm.col(i));
-
-    _file->close();
+template <> std::string HDF5MetaDataReader<LegacyReader>::_dataKey(const std::string& _) const
+{
+    return "Data/Counts";
 }
 
 
-void HDF5MetaDataReader::open()
+// Experiment-reader group keys
+template <> std::string HDF5MetaDataReader<ExperimentReader>::_metaKey(const std::string& group_name) const
 {
-    if (_isOpened)
-        return;
-
-    try {
-        _file = std::unique_ptr<H5::H5File>(
-            new H5::H5File(_metadata.key<std::string>("filename").c_str(), H5F_ACC_RDONLY));
-    } catch (...) {
-        if (_file)
-            _file.reset();
-        throw;
-    }
-
-    // Create new data set
-    try {
-        // handled automatically by HDF5 blosc filter
-        _blosc_filter.reset(new HDF5BloscFilter);
-
-        _dataset.reset(new H5::DataSet(_file->openDataSet("/Data/Counts")));
-        // Dataspace of the dataset /counts
-        _space.reset(new H5::DataSpace(_dataset->getSpace()));
-    } catch (...) {
-        throw;
-    }
-    // Gets rank of data
-    const hsize_t ndims = _space->getSimpleExtentNdims();
-    std::vector<hsize_t> dims(ndims), maxdims(ndims);
-
-    // Gets dimensions of data
-    _space->getSimpleExtentDims(dims.data(), maxdims.data());
-    _nFrames = dims[0];
-    _nRows = dims[1];
-    _nCols = dims[2];
-
-    // Size of one hyperslab
-    const hsize_t count_1frm[3] = {1, _nRows, _nCols};
-    _memspace.reset(new H5::DataSpace(3, count_1frm, nullptr));
-    _isOpened = true;
+    return "DataCollections/" + group_name + "/Meta";
 }
 
-
-void HDF5MetaDataReader::close()
+template <> std::string HDF5MetaDataReader<ExperimentReader>::_infoKey(const std::string& group_name) const
 {
-    if (!_isOpened)
-        return;
-
-    _file->close();
-    _space->close();
-    _memspace->close();
-    _dataset->close();
-    _space.reset();
-    _memspace.reset();
-    _dataset.reset();
-    _file.reset();
-    _isOpened = false;
+    return "DataCollections/" + group_name + "/Info";
 }
+
+template <> std::string HDF5MetaDataReader<ExperimentReader>::_detectorKey(const std::string& group_name) const
+{
+    return "DataCollections/" + group_name + "/Detector";
+}
+
+template <> std::string HDF5MetaDataReader<ExperimentReader>::_sampleKey(const std::string& group_name) const
+{
+    return "DataCollections/" + group_name + "/Sample";
+}
+
+template <> std::string HDF5MetaDataReader<ExperimentReader>::_dataKey(const std::string& group_name) const
+{
+    return "DataCollections/" + group_name + "/" + group_name;
+}
+//-----------------------------------------------------------------------------80
+
 
 } // namespace nsx
