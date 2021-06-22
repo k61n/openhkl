@@ -11,7 +11,7 @@ class TestPrediction(unittest.TestCase):
         detector = "BioDiff5000"
         expt = nsx.Experiment(name, detector)
 
-        expt.loadFromFile("FutA-2.nsx")
+        expt.loadFromFile("FutA-3.nsx")
         found_peaks = expt.getPeakCollection("peaks")
         filtered_peaks = expt.getPeakCollection("filtered")
         expt.assignUnitCell(found_peaks)
@@ -33,7 +33,7 @@ class TestPrediction(unittest.TestCase):
         shapelib_params.bkg_end = 6.0
         expt.buildShapeCollection(filtered_peaks, shapelib_params)
         nprofiles = filtered_peaks.shapeCollection().numberOfPeaks()
-        self.assertEqual(nprofiles, 132)
+        self.assertEqual(nprofiles, 122)
 
         # predict the peaks
         prediction_params = expt.predict_params

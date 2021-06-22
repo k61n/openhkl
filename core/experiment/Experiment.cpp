@@ -246,13 +246,13 @@ void Experiment::predictPeaks(
 }
 
 void Experiment::computeQuality(
-    double d_min, double d_max, int n_shells, PeakCollection* predicted, PeakCollection* found,
+    double d_min, double d_max, int n_shells, std::vector<PeakCollection*> collections, 
     bool friedel)
 {
     _data_quality.computeQuality(
-        d_min, d_max, 1, predicted, found, _peak_handler->getMergedPeaks()->spaceGroup(), friedel);
+        d_min, d_max, 1, collections, _peak_handler->getMergedPeaks()->spaceGroup(), friedel);
     _data_resolution.computeQuality(
-        d_min, d_max, n_shells, predicted, found, _peak_handler->getMergedPeaks()->spaceGroup(),
+        d_min, d_max, n_shells, collections, _peak_handler->getMergedPeaks()->spaceGroup(),
         friedel);
     _data_quality.log();
     _data_resolution.log();

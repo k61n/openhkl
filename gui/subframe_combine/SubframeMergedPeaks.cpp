@@ -47,19 +47,19 @@ SubframeMergedPeaks::SubframeMergedPeaks()
     QHBoxLayout* drop_layout = new QHBoxLayout();
 
     _exp_drop = new QComboBox();
-    _found_drop = new QComboBox();
-    _predicted_drop = new QComboBox();
+    _peaks1_drop = new QComboBox();
+    _peaks2_drop = new QComboBox();
 
     _exp_drop->setSizePolicy(*_size_policy_right);
-    _found_drop->setSizePolicy(*_size_policy_right);
-    _predicted_drop->setSizePolicy(*_size_policy_right);
+    _peaks1_drop->setSizePolicy(*_size_policy_right);
+    _peaks2_drop->setSizePolicy(*_size_policy_right);
 
     drop_layout->addWidget(new QLabel("Experiment:"));
     drop_layout->addWidget(_exp_drop);
-    drop_layout->addWidget(new QLabel("Found peaks:"));
-    drop_layout->addWidget(_found_drop);
-    drop_layout->addWidget(new QLabel("Predicted peaks:"));
-    drop_layout->addWidget(_predicted_drop);
+    drop_layout->addWidget(new QLabel("Peak collection 1:"));
+    drop_layout->addWidget(_peaks1_drop);
+    drop_layout->addWidget(new QLabel("Peak collection 2:"));
+    drop_layout->addWidget(_peaks2_drop);
     drop_layout->addStretch();
     layout->addLayout(drop_layout);
 
@@ -83,10 +83,10 @@ SubframeMergedPeaks::SubframeMergedPeaks()
         _exp_drop, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this,
         &SubframeMergedPeaks::refreshPeakLists);
     connect(
-        _found_drop, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this,
+        _peaks1_drop, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this,
         &SubframeMergedPeaks::processMerge);
     connect(
-        _predicted_drop, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
+        _peaks2_drop, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
         this, &SubframeMergedPeaks::processMerge);
 
     show();
@@ -216,9 +216,12 @@ void SubframeMergedPeaks::setMergedUp()
 {
     QVBoxLayout* merged_layout = new QVBoxLayout(_merged_tab);
     _merged_view = new QTableView;
-    _merged_model = new QStandardItemModel(7, 0, this);
+    _merged_model = new QStandardItemModel(8, 0, this);
     _merged_view->setModel(_merged_model);
-    _merged_model->setHorizontalHeaderLabels({"h", "k", "l", "I", "sigmaI", "chi2", "p"});
+    QString sigma_header{QString((QChar)0x03C3 + QString{"(I)"})};
+    QString chi_header{QString((QChar)0x03C7 + QString{"2"})};
+    _merged_model->setHorizontalHeaderLabels(
+        {"h", "k", "l", "I", sigma_header, "nobs", chi_header, "p"});
     merged_layout->addWidget(_merged_view);
 
     QHBoxLayout* merged_row = new QHBoxLayout;
@@ -237,9 +240,11 @@ void SubframeMergedPeaks::setUnmergedUp()
 {
     QVBoxLayout* unmerged_layout = new QVBoxLayout(_unmerged_tab);
     _unmerged_view = new QTableView;
-    _unmerged_model = new QStandardItemModel(7, 0, this);
+    _unmerged_model = new QStandardItemModel(8, 0, this);
     _unmerged_view->setModel(_unmerged_model);
-    _unmerged_model->setHorizontalHeaderLabels({"h", "k", "l", "I", "sigmaI", "chi2", "p"});
+    QString sigma_header{QString((QChar)0x03C3 + QString{"(I)"})};
+    _unmerged_model->setHorizontalHeaderLabels(
+        {"h", "k", "l", "I", sigma_header, "x", "y", "frame"});
     unmerged_layout->addWidget(_unmerged_view);
 
     QHBoxLayout* unmerged_row = new QHBoxLayout;
@@ -285,60 +290,96 @@ void SubframeMergedPeaks::refreshExperimentList()
 
 void SubframeMergedPeaks::refreshPeakLists()
 {
-    refreshFoundPeakList();
-    refreshPredictedPeakList();
+    refreshPeakCombos();
     processMerge();
+}
+
+
+void SubframeMergedPeaks::refreshPeakCombos()
+{
+    _peaks1_drop->blockSignals(true);
+    QString current_found = _peaks1_drop->currentText();
+    _peaks1_drop->clear();
+    _peaks1_list.clear();
+
+    QStringList tmp = gSession->experimentAt(_exp_drop->currentIndex())
+        ->getPeakCollectionNames(nsx::listtype::PREDICTED);
+    _peaks1_list.append(tmp);
+    // tmp.clear();
+    // tmp = gSession->experimentAt(_exp_drop->currentIndex())
+    //     ->getPeakCollectionNames(nsx::listtype::FILTERED);
+    // _peaks1_list.append(tmp);
+
+    if (!_peaks1_list.empty()) {
+        _peaks1_drop->addItems(_peaks1_list);
+        _peaks1_drop->setCurrentText(current_found);
+    }
+    _peaks1_drop->blockSignals(false);
+
+    _peaks2_drop->blockSignals(true);
+    QString current_predicted = _peaks2_drop->currentText();
+    _peaks2_drop->clear();
+    _peaks2_list = gSession->experimentAt(_exp_drop->currentIndex())
+        ->getPeakCollectionNames(nsx::listtype::PREDICTED);
+
+    _peaks2_list.push_front(""); // Second peak collection is not used by default
+    if (!_peaks2_list.empty()) {
+        _peaks2_drop->addItems(_peaks2_list);
+        _peaks2_drop->setCurrentText(current_predicted);
+    }
+    _peaks2_drop->blockSignals(false);
 }
 
 void SubframeMergedPeaks::refreshFoundPeakList()
 {
-    _found_drop->blockSignals(true);
-    QString current_found = _found_drop->currentText();
-    _found_drop->clear();
-    _found_list.clear();
+    _peaks1_drop->blockSignals(true);
+    QString current_found = _peaks1_drop->currentText();
+    _peaks1_drop->clear();
+    _peaks1_list.clear();
 
     QStringList tmp = gSession->experimentAt(_exp_drop->currentIndex())
                           ->getPeakCollectionNames(nsx::listtype::FOUND);
-    _found_list.append(tmp);
+    _peaks1_list.append(tmp);
     tmp.clear();
     tmp = gSession->experimentAt(_exp_drop->currentIndex())
               ->getPeakCollectionNames(nsx::listtype::FILTERED);
-    _found_list.append(tmp);
+    _peaks1_list.append(tmp);
 
-    if (!_found_list.empty()) {
-        _found_drop->addItems(_found_list);
-        _found_drop->setCurrentText(current_found);
+    if (!_peaks1_list.empty()) {
+        _peaks1_drop->addItems(_peaks1_list);
+        _peaks1_drop->setCurrentText(current_found);
     }
-    _found_drop->blockSignals(false);
+    _peaks1_drop->blockSignals(false);
 }
 
 void SubframeMergedPeaks::refreshPredictedPeakList()
 {
-    _predicted_drop->blockSignals(true);
-    QString current_predicted = _predicted_drop->currentText();
-    _predicted_drop->clear();
-    _predicted_list = gSession->experimentAt(_exp_drop->currentIndex())
+    _peaks2_drop->blockSignals(true);
+    QString current_predicted = _peaks2_drop->currentText();
+    _peaks2_drop->clear();
+    _peaks2_list = gSession->experimentAt(_exp_drop->currentIndex())
                           ->getPeakCollectionNames(nsx::listtype::PREDICTED);
 
-    if (!_predicted_list.empty()) {
-        _predicted_drop->addItems(_predicted_list);
-        _predicted_drop->setCurrentText(current_predicted);
+    if (!_peaks2_list.empty()) {
+        _peaks2_drop->addItems(_peaks2_list);
+        _peaks2_drop->setCurrentText(current_predicted);
     }
-    _predicted_drop->blockSignals(false);
+    _peaks2_drop->blockSignals(false);
 }
 
 void SubframeMergedPeaks::processMerge()
 {
     auto expt = gSession->experimentAt(_exp_drop->currentIndex())->experiment();
     expt->resetMergedPeaks();
-    if (_found_list.empty() || _predicted_list.empty()) {
+    if (_peaks1_list.empty() || _peaks2_list.empty()) {
         _merged_data = nullptr;
     } else {
         std::vector<nsx::PeakCollection*> peak_collections;
-        peak_collections.push_back(
-            expt->getPeakCollection(_found_drop->currentText().toStdString()));
-        peak_collections.push_back(
-            expt->getPeakCollection(_predicted_drop->currentText().toStdString()));
+        QString collection1 = _peaks1_drop->currentText();
+        QString collection2 = _peaks2_drop->currentText();
+        peak_collections.push_back(expt->getPeakCollection(collection1.toStdString()));
+        if (!collection2.isEmpty())
+            peak_collections.push_back(expt->getPeakCollection(collection2.toStdString()));
 
         expt->setMergedPeaks(peak_collections, _friedel->isChecked());
         _merged_data = expt->getMergedPeaks();
@@ -371,10 +412,16 @@ void SubframeMergedPeaks::refreshDShellTable()
         return;
 
     nsx::Experiment* expt = gSession->experimentAt(_exp_drop->currentIndex())->experiment();
-    nsx::PeakCollection* found = expt->getPeakCollection(_found_drop->currentText().toStdString());
-    nsx::PeakCollection* predicted =
-        expt->getPeakCollection(_predicted_drop->currentText().toStdString());
-    expt->computeQuality(min, max, shells, predicted, found, inclFriedel);
+    std::vector<nsx::PeakCollection*> collections;
+    nsx::PeakCollection* collection1 = expt->getPeakCollection(_peaks1_drop->currentText().toStdString());
+    collections.emplace_back(collection1);
+    if (!_peaks2_drop->currentText().isEmpty()) {
+        nsx::PeakCollection* collection2 =
+            expt->getPeakCollection(_peaks2_drop->currentText().toStdString());
+        if (collection1 != collection2)
+            collections.emplace_back(collection2);
+    }
+    expt->computeQuality(min, max, shells, collections, inclFriedel);
     nsx::DataResolution* quality = expt->getQuality();
     nsx::DataResolution* resolution = expt->getResolution();
 
@@ -494,7 +541,7 @@ void SubframeMergedPeaks::refreshUnmergedTable()
             row.push_back(new QStandardItem(QString::number(c[0])));
             row.push_back(new QStandardItem(QString::number(c[1])));
             row.push_back(new QStandardItem(QString::number(c[2])));
-            row.push_back(new QStandardItem(fileinfo.baseName()));
+            // row.push_back(new QStandardItem(fileinfo.baseName()));
 
             _unmerged_model->appendRow(row);
         }
@@ -570,11 +617,11 @@ void SubframeMergedPeaks::saveStatistics()
 
     nsx::PeakCollection* found = gSession->experimentAt(_exp_drop->currentIndex())
                                      ->experiment()
-                                     ->getPeakCollection(_found_drop->currentText().toStdString());
+                                     ->getPeakCollection(_peaks1_drop->currentText().toStdString());
     nsx::PeakCollection* predicted =
         gSession->experimentAt(_exp_drop->currentIndex())
             ->experiment()
-            ->getPeakCollection(_predicted_drop->currentText().toStdString());
+            ->getPeakCollection(_peaks2_drop->currentText().toStdString());
 
     nsx::ResolutionShell resolutionShell(min, max, shells);
     for (nsx::Peak3D* peak : found->getPeakList()) {

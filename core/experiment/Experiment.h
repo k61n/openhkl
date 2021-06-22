@@ -214,7 +214,7 @@ class Experiment {
 
     //! Get resolution shells for quality metrics
     void computeQuality(
-        double d_min, double d_max, int n_shells, PeakCollection* predicted, PeakCollection* found,
+        double d_min, double d_max, int n_shells, std::vector<PeakCollection*> predicted, 
         bool friedel);
     //! Return data quality resolution
     DataResolution* getResolution() { return &_data_resolution; };
