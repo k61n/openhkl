@@ -24,7 +24,7 @@ namespace nsx {
 class Intensity {
  public:
     //! Constructs an Intensity from its value and variance.
-    Intensity(double value = 0.0, double sigma2 = 0.0);
+    Intensity(const double value = 0.0, const double sigma2 = 0.0);
 
     //! Returns the value of the Intensity
     double value() const;

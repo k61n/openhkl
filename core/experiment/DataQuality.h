@@ -57,7 +57,7 @@ struct DataResolution {
     std::vector<ShellQuality> shells;
 
     void computeQuality(
-        double d_min, double d_max, int n_shells, PeakCollection* predicted, PeakCollection* found,
+        double d_min, double d_max, int n_shells, std::vector<PeakCollection*> collections, 
         SpaceGroup spacegroup, bool friedel);
     void log() const;
 };

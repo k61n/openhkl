@@ -39,6 +39,8 @@ enum class RejectionFlag {
     InvalidRegion, // from integrator
     InterpolationFailure,
     InvalidShape,
+    InvalidSigma,
+    InvalidBkgSigma,
     PredictionUpdateFailure, // from refiner
     Count
 };
@@ -158,7 +160,7 @@ class Peak3D {
     //! Return the end of the background region (in peak scales)
     double getBkgEnd() { return _bkgEnd; };
     //! Set the reason for this peak being rejected (unselected)
-    void setRejectionFlag(RejectionFlag flag);
+    void setRejectionFlag(RejectionFlag flag, bool overwrite = false);
     //! Return the rejection flag
     RejectionFlag rejectionFlag() const { return _rejection_flag; };
     //! Return a string explaining the rejection
@@ -211,6 +213,9 @@ class Peak3D {
 
     //! Map of rejection flag descriptions
     static const std::map<RejectionFlag, std::string> _rejection_map;
+
+    //! Threshold for valid sigma2
+    static constexpr double _sigma2_eps = 1.0e-8;
 };
 
 using sptrPeak3D = std::shared_ptr<Peak3D>;

@@ -37,20 +37,26 @@ MergedPeak::MergedPeak(const SpaceGroup& grp, bool friedel)
 bool MergedPeak::addPeak(Peak3D* peak)
 {
     const UnitCell* cell = peak->unitCell();
-    const ReciprocalVector q = peak->q();
+    try {
+        const ReciprocalVector q = peak->q();
 
-    if (_peaks.empty()) {
-        _hkl = MillerIndex(q, *cell);
-        determineRepresentativeHKL();
-    } else {
-        MillerIndex hkl(q, *cell);
-        if (!_grp.isEquivalent(_hkl, hkl, _friedel))
-            return false;
+        if (_peaks.empty()) {
+            _hkl = MillerIndex(q, *cell);
+            determineRepresentativeHKL();
+        } else {
+            MillerIndex hkl(q, *cell);
+            if (!_grp.isEquivalent(_hkl, hkl, _friedel))
+                return false;
+        }
+        // add peak to list
+        _peaks.push_back(peak);
+        _intensitySum += peak->correctedIntensity();
+        return true;
+    } catch (std::range_error& e) {
+        peak->setSelected(false);
+        peak->setRejectionFlag(RejectionFlag::InterpolationFailure);
+        return false;
     }
-    // add peak to list
-    _peaks.push_back(peak);
-    _intensitySum += peak->correctedIntensity();
-    return true;
 }
 
 MillerIndex MergedPeak::index() const
@@ -68,7 +74,7 @@ size_t MergedPeak::redundancy() const
     return _peaks.size();
 }
 
-//! The representative of the equivalences is defined as the one whose h,j and l
+//! The representative of the equivalences is defined as the one whose h, k and l
 //! are maximum E.g. the representative of
 //! (2,1,2),(1,-3,5),(-2,4,3),(4,0,5),(7,8-2),(2,6,-1) will be (7,8-2)
 void MergedPeak::determineRepresentativeHKL()

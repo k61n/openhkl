@@ -39,10 +39,13 @@ const std::map<RejectionFlag, std::string> Peak3D::_rejection_map{
     {RejectionFlag::InvalidRegion, "Integration region extends beyond image/frame range"},
     {RejectionFlag::InterpolationFailure, "Frame coordinate interpolation failed"},
     {RejectionFlag::InvalidShape, "Invalid shape post-refinement"},
+    {RejectionFlag::InvalidSigma, "Negative, zero, or undefined sigma"},
+    {RejectionFlag::InvalidBkgSigma, "Negative, zero, or undefined background sigma"},
     {RejectionFlag::PredictionUpdateFailure, "Failure updating prediction post-refinement"}};
 
 Peak3D::Peak3D(sptrDataSet data)
     : _shape()
+    , _meanBackground()
     , _peakEnd(4.0)
     , _bkgBegin(5.0)
     , _bkgEnd(6.0)
@@ -68,6 +71,7 @@ Peak3D::Peak3D(sptrDataSet data, const Ellipsoid& shape) : Peak3D(data)
 Peak3D::Peak3D(std::shared_ptr<nsx::Peak3D> peak)
 {
     setShape(peak->shape());
+    _meanBackground = peak->meanBackground();
     _peakEnd = peak->peakEnd();
     _bkgBegin = peak->bkgBegin();
     _bkgEnd = peak->bkgEnd();
@@ -79,7 +83,6 @@ Peak3D::Peak3D(std::shared_ptr<nsx::Peak3D> peak)
     _transmission = peak->transmission();
     _data = peak->dataSet();
     _rockingCurve = peak->rockingCurve();
-    _meanBackground = peak->meanBackground();
     _rawIntensity = peak->rawIntensity();
     _hkl = peak->hkl();
 
@@ -199,6 +202,16 @@ void Peak3D::updateIntegration(
     _rockingCurve = rockingCurve;
     _meanBackground = meanBackground;
     _rawIntensity = integratedIntensity;
+
+    if (_rawIntensity.sigma() < _sigma2_eps) { // NaN sigma handled by Intensity constructor
+        setSelected(false);
+        setRejectionFlag(RejectionFlag::InvalidSigma, true);
+    }
+    if (_meanBackground.sigma() < _sigma2_eps) { // NaN sigma handled by Intensity constructor
+        setSelected(false);
+        setRejectionFlag(RejectionFlag::InvalidBkgSigma, true);
+    }
+
     //_rawIntensity = integrator.peakIntensity(); // TODO: test, reactivate ???
     //_shape = integrator.fitShape(); // TODO: test, reactivate ???
     _peakEnd = peakEnd;
@@ -327,10 +340,14 @@ void Peak3D::setMillerIndices()
     }
 }
 
-void Peak3D::setRejectionFlag(RejectionFlag flag)
+void Peak3D::setRejectionFlag(RejectionFlag flag, bool overwrite /* = false */)
 {
-    if (_rejection_flag == RejectionFlag::NotRejected) // Only record the intial rejection
+    if (_rejection_flag == RejectionFlag::NotRejected) {
         _rejection_flag = flag;
+    } else {
+        if (overwrite)
+            _rejection_flag = flag;
+    }
 }
 
 std::string Peak3D::rejectionString() const

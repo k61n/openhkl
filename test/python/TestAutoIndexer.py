@@ -11,7 +11,7 @@ class TestAutoIndexer(unittest.TestCase):
         detector = "BioDiff5000"
         expt = nsx.Experiment(name, detector)
 
-        expt.loadFromFile("FutA-2.nsx")
+        expt.loadFromFile("FutA-3.nsx")
         found_peaks = expt.getPeakCollection("peaks")
         n_peaks = found_peaks.numberOfPeaks()
         self.assertEqual(n_peaks, 269)
@@ -26,7 +26,7 @@ class TestAutoIndexer(unittest.TestCase):
         expt.acceptFilter("filtered", found_peaks)
         filtered_peaks = expt.getPeakCollection("filtered")
         n_caught = filtered_peaks.numberCaughtByFilter()
-        self.assertEqual(n_caught, 160)
+        self.assertEqual(n_caught, 150)
         print(f'Autoindex: {n_caught}/{n_peaks} peaks caught by filter')
 
         # Autoindex the peaks

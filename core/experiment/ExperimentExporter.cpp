@@ -267,7 +267,7 @@ void ExperimentExporter::writePeaks(const std::map<std::string, PeakCollection*>
             intensity[i] = peak->rawIntensity().value();
             sigma[i] = peak->rawIntensity().sigma();
             mean_bkg_val[i] = peak->meanBackground().value();
-            mean_bkg_val[i] = peak->meanBackground().sigma();
+            mean_bkg_sig[i] = peak->meanBackground().sigma();
 
             rejection_flag[i] = static_cast<int>(peak->rejectionFlag());
 

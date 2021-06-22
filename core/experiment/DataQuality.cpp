@@ -54,18 +54,18 @@ void ShellQuality::computeQuality(MergedData& merged_peaks, double d_min, double
 }
 
 void DataResolution::computeQuality(
-    double d_min, double d_max, int n_shells, PeakCollection* predicted, PeakCollection* found,
+    double d_min, double d_max, int n_shells, std::vector<PeakCollection*> collections, 
     SpaceGroup spacegroup, bool friedel)
 {
     shells.clear();
     std::vector<ShellQuality> data_resolution;
     ResolutionShell resolution_shell = nsx::ResolutionShell(d_min, d_max, n_shells);
-    for (auto peak : found->getPeakList())
-        if (peak->enabled())
-            resolution_shell.addPeak(peak);
-    for (auto peak : predicted->getPeakList())
-        if (peak->enabled())
-            resolution_shell.addPeak(peak);
+    for (PeakCollection* collection : collections) {
+        for (Peak3D* peak : collection->getPeakList()) {
+            if (peak->enabled())
+                resolution_shell.addPeak(peak);
+        }
+    }
 
     for (int i = n_shells - 1; i >= 0; --i) {
         double d_lower = resolution_shell.shell(i).dmin;
