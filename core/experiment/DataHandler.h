@@ -49,8 +49,6 @@ class DataHandler {
     std::string getName() const;
     //! Return all data sets as a DataList
     DataList getAllData() const;
-    //! Gets the pointer to a given data stored in the experiment
-    sptrDataSet dataShortName(std::string name) const;
     //! Get number of data
     int numData() const;
     //! Add some data to the experiment
