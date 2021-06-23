@@ -24,6 +24,8 @@
 #include "core/raw/IDataReader.h"
 #include <Eigen/Dense>
 
+#include "H5Cpp.h"
+
 namespace nsx {
 
 void ExperimentImporter::setFilePath(std::string path, Experiment* experiment)

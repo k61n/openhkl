@@ -1,0 +1,153 @@
+# Structure of the nsx file
+# raw results can be obtained by `h5dump`
+###########
+
+HDF5 "<filename>.nsx" {
+GROUP "/" {
+   ATTRIBUTE "name" {
+      DATATYPE  H5T_STRING80
+      DATASPACE  SCALAR
+
+   ATTRIBUTE "diffractometer" {
+      DATATYPE  H5T_STRING80
+      DATASPACE  SCALAR
+   }
+   }
+   ###########
+
+   GROUP "DataCollections" {
+
+      GROUP "<DataSet-name>" {
+
+         DATASET "<DataSet-name>" {
+            DATATYPE  NATIVE_INT32
+            DATASPACE  SIMPLE { (<frames-nr>, <rows-nr>, <cols-nr>) }
+            FILTER  BLOSC
+            ROWMAJOR
+         }
+
+         GROUP "Detector" {
+            DATASET "<axis-name>"  # eg., 2theta(gamma), 2theta(nu)
+            {
+               DATATYPE  NATIVE_DOUBLE
+               DATASPACE  SIMPLE { (<frames-nr>) }
+            }+
+         }
+
+         GROUP "Sample" {
+            DATASET "<axis-name>"  # eg., chi, omega, phi
+            {
+               DATATYPE  NATIVE_DOUBLE
+               DATASPACE  SIMPLE { (<frames-nr>) }
+            }+
+         }
+
+         GROUP "Info" {
+            ATTRIBUTE "<key>"  # eg., Instrument, filename, sources
+            {
+               DATATYPE  H5T_STRING80
+               DATASPACE  SCALAR
+            }*
+         }
+
+         GROUP "Meta" {
+            ATTRIBUTE "<key>"  # eg., Numor, monitor, wavelength, npdone
+            {
+               DATATYPE  NATIVE_INT32 | NATIVE_DOUBLE
+               DATASPxACE  SCALAR
+            }*
+         }
+      }
+   }
+   ###########
+
+   GROUP "PeakCollections" {
+      GROUP "<PeakCollection-name>" {
+         DATASET "<name>"  # eg., PeakEnd, BkgBegin, BkgIntensity, Masked
+         {
+           DATATYPE  NATIVE_DOUBLE
+           DATASPACE  SIMPLE { (<peaks-nr>) }
+         }
+
+         DATASET "Metric" {
+            DATATYPE  NATIVE_DOUBLE
+            DATASPACE  SIMPLE { (<peaks-nr> * 3, 3 ) }
+         }
+
+         DATASET "Center" {
+            DATATYPE  NATIVE_DOUBLE
+            DATASPACE  SIMPLE { (<peaks-nr>, 3 ) }
+         }
+
+         DATASET "Selected" {
+            DATATYPE  NATIVE_HBOOL
+            DATASPACE  SIMPLE { (<peaks-nr>) }
+         }
+
+         DATASET "DataNames" {
+            DATATYPE  H5T_STRING_VARIABLE
+            DATASPACE  SIMPLE { ( <peaks-nr> ) }
+         }
+
+         DATASET "UnitCells" {
+            DATATYPE  H5T_STRING_VARIABLE  # default "NONE"
+            DATASPACE  SIMPLE { ( <peaks-nr> ) }
+         }
+
+         GROUP "Meta" {
+            ATTRIBUTE "Type" {  #  { FOUND, FILTERED, PREDICTED, INDEXING }
+               DATATYPE  NATIVE_INT32
+               DATASPACE  SCALAR
+            }
+            ATTRIBUTE "num_invalid" {
+               DATATYPE  NATIVE_INT32
+               DATASPACE  SCALAR
+            }
+            ATTRIBUTE "num_peaks" {
+               DATATYPE  NATIVE_INT32
+               DATASPACE  SCALAR
+            }
+            ATTRIBUTE "num_peaks" {
+               DATATYPE  NATIVE_INT32
+               DATASPACE  SCALAR
+            }
+            ATTRIBUTE "num_valid" {
+               DATATYPE  NATIVE_INT32
+               DATASPACE  SCALAR
+            }
+         }
+      }*
+   }
+   ###########
+
+   GROUP "UnitCells" {
+     GROUP "<UnitCell-name>" {
+         ATTRIBUTE "bravais" {
+            DATATYPE  H5T_STRING80
+            DATASPACE  SCALAR
+         }
+
+         ATTRIBUTE "indexing_tolerance" {
+            DATATYPE  NATIVE_DOUBLE
+            DATASPACE  SCALAR
+         }
+
+         # components of the reciprocal vectors; rec_00, rec_01, rec_02, rec_10, ...
+         ATTRIBUTE "rec_00" {
+            DATATYPE  NATIVE_DOUBLE
+            DATASPACE  SCALAR
+         }+
+
+         ATTRIBUTE "space_group" {
+            DATATYPE  H5T_STRING80
+            DATASPACE  SCALAR
+         }
+
+         ATTRIBUTE "z" {
+            DATATYPE  NATIVE_UINT
+            DATASPACE  SCALAR
+         }
+     }*
+   }
+}
+}

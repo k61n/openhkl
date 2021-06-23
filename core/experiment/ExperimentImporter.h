@@ -15,7 +15,7 @@
 #ifndef NSX_CORE_EXPERIMENT_EXPERIMENTIMPORTER_H
 #define NSX_CORE_EXPERIMENT_EXPERIMENTIMPORTER_H
 
-#include <H5Cpp.h>
+#include <string>
 
 namespace nsx {
 
