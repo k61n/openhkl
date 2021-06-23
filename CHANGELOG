@@ -1,3 +1,26 @@
+#### [develop] Changes since 2021-06-01T00 until 2021-06-19T00
+
+Added/Changed
+-----
+* Core:
+** Modify the bisecting algorithm so that all intervals are checked for a solution. #265
+** Remove the spurious predicted peaks which intersect the beam stop. #267
+** Unselect unintegrable peaks during prediction, rather than skipping. #266
+
+* GUI:
+** GUI-Session: Prevent loading data before an Experiment is created, in order to avoid unexpected behaviour. #224
+** Display all source files of a DataSet as a scrollable dropdown list, and store them as a comma-separated string in the metadata. #89 #87
+** Ask for a name when a new DataSet is added; warn against overwriting previous names via a confirmation dialog.
+** Update DetectorWindow combo-boxes when peak collection is added.
+
+Fixed
+-----
+* GUI
+** Fix SubframeExperiment detector scene to match other subframes. #251
+** Fix 'd-min' issue (bisection algorithm). #204, #223
+
+----
+
 == some pre-release milestones ==
 
 21jun2019, tag "CI1": one gitlab CI target (deb_testing_clang) passes, with 62 tests
