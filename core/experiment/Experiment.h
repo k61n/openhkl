@@ -73,7 +73,6 @@ class Experiment {
     sptrDataSet getData(const std::string& name) const;
     //! Get a vector containing shared pointers to all data sets
     DataList getAllData();
-    sptrDataSet dataShortName(const std::string& name);
     //! Return number of data sets
     int numData() const;
     //! Add a data set to the handler
