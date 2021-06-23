@@ -8,6 +8,43 @@ Theory
 Shape Prediction
 ----------------
 
+.. _sec_peakshape:
+
+Definition of peak shape
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+In image analysis (peak finding), contiguous blobs (notionally detector spots)
+are used to construct an ellipsoid in 3D space (two detector coordinates and the
+frame number). This blob can be parameterised in terms of the moments of mass:
+the zeroth (total mass) :math:`m_0`, the first :math:`\mathbf{m}_1` and second
+(moment of inertia) :math:`M_2`. These can be used to compute the inertia
+matrix, or variance/covariance matrix.
+
+.. math::
+
+   \begin{aligned}
+   C = \frac{1}{m_0}M_2 - \frac{1}{m_0}\mathbf{m}_1}
+   \end{aligned}
+
+The metric tensor of the ellipsoid :math:`A` d is then the inverse of
+covariance, i.e. :math:`A = C^{-1}`. The eigenvalues of the covariance matrix
+(:math:`\Lambda` in :math:`3\times 3` diagonal matrix form) of an ellipsoid
+defines the radii around the principal axes, or alternatively the *variances* in
+the directions of the principal axes. The eigenvalues (:math:`U` as a matrix)
+define the principal axes. These are related by :math:`CU = V\Lambda`, thus the
+metric tensor can be derived from eigenvectors and eigenvalues via :math:`A =
+U\Lambda^{-1}U^T`.
+
+When constructing integration regions, we construct a central ellipsoid
+representing the peak, and a second concentric ellipsoid to represent the
+background. A third ellipsoid of intermediate radius may defin the beginning of
+the background region such that there is an ignored or "guard" region between
+the peak and background. If we interpret the eigenvalues :math:`\sigma_i, (i =
+1, 2, 3)` as the square root of thevariance in the direction of the principal
+axes, then scaling the peak ellipsoid by :math:`3\sigma` means that 99.7% of the
+points are contained in the peak region.
+
+
 Rotating the beam profile
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 

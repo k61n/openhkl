@@ -158,6 +158,15 @@ accurate integration. The found peaks are integrated at this stage using
 somewhat naive :ref:`sec_pixelsum` . The profiles are gennerated and accurate
 integration performed in subsequent steps.
 
+The following three integration paramters are explained in detail in
+:ref:`sec_peakshape` . Briefly, however, they are scaling factors that determine
+the size of the ellipsoids representing the peak and background region. The
+covariance matrix is scaled by a dimensionless :math:`\sigma^2`, such that an
+ellipsoid scaled by a "peak end" of :math:`\sigma` contains 66.3% of points in
+the ellipsoid, 95.4% for :math:`2\sigma` and 99.7% for :math:`3\sigma`. The
+ellipsoids (projected to ellipses on the detector scene) can be visualised via
+the "Show/hide" peaks widget.
+
 .. table:: Integration parameters
 
    +-----------------+----------------+---------------------------------+
