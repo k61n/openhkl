@@ -44,7 +44,7 @@ class HDF5BloscFilter {
     bool _init_success = false;
     //! number of threads
     const std::size_t _nthreads = 4;
-    
+
     //! Register BLOSC
     void _register();
 };
@@ -52,4 +52,3 @@ class HDF5BloscFilter {
 } // namespace nsx
 
 #endif // NSX_CORE_RAW_HDF5BLOSCFILTER_H
-

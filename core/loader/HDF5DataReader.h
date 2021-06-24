@@ -15,9 +15,9 @@
 #ifndef NSX_CORE_LOADER_HDF5DATAREADER_H
 #define NSX_CORE_LOADER_HDF5DATAREADER_H
 
-#include "core/loader/HDF5MetaDataReader.h" // inherits from
-#include "core/instrument/Diffractometer.h"
 #include "base/utils/Logger.h"
+#include "core/instrument/Diffractometer.h"
+#include "core/loader/HDF5MetaDataReader.h" // inherits from
 
 
 namespace nsx {
@@ -44,8 +44,8 @@ class HDF5DataReader : public HDF5MetaDataReader<ReaderT> {
 //-----------------------------------------------------------------------------80
 
 template <HDF5ReaderType ReaderT>
-HDF5DataReader<ReaderT>::HDF5DataReader
-(const std::string& filename, Diffractometer* diffractometer, const std::string& group_name)
+HDF5DataReader<ReaderT>::HDF5DataReader(
+    const std::string& filename, Diffractometer* diffractometer, const std::string& group_name)
     : HDF5MetaDataReader<ReaderT>(filename, diffractometer, group_name)
 {
 }

@@ -15,20 +15,20 @@
 #ifndef NSX_CORE_LOADER_HDF5METADATAREADER_H
 #define NSX_CORE_LOADER_HDF5METADATAREADER_H
 
-#include "core/raw/IDataReader.h" // inherits from
 #include "core/raw/HDF5BloscFilter.h"
+#include "core/raw/IDataReader.h" // inherits from
 
-#include <string>
 #include <H5Cpp.h>
+#include <string>
 
 // needed for method definitions
 #include "base/parser/EigenToVector.h"
+#include "base/utils/Logger.h"
 #include "base/utils/Units.h"
 #include "core/detector/Detector.h"
 #include "core/gonio/Gonio.h"
 #include "core/instrument/Diffractometer.h"
 #include "core/instrument/Sample.h"
-#include "base/utils/Logger.h"
 
 #include <memory>
 #include <stdexcept>
@@ -39,13 +39,12 @@ namespace nsx {
 // TODO: Check if the legacy reader is still needed
 //! Determines the type of the HDF5-Reader;
 //! legacy reader for backward-compatibility (should be removed after standardization)
-enum HDF5ReaderType {LegacyReader = -1, ExperimentReader = 0};
+enum HDF5ReaderType { LegacyReader = -1, ExperimentReader = 0 };
 
 //! IDataReader for HDF5 files. Base class for HDF5DataReader and FakeDataReader.
 template <HDF5ReaderType ReaderT>
 class HDF5MetaDataReader : public IDataReader {
  public:
-
     const HDF5ReaderType reader_type = ReaderT;
 
     HDF5MetaDataReader() = delete;
@@ -85,10 +84,13 @@ class HDF5MetaDataReader : public IDataReader {
 
 
 template <HDF5ReaderType ReaderT>
-HDF5MetaDataReader<ReaderT>::HDF5MetaDataReader
-(const std::string& filename, Diffractometer* diffractometer, const std::string& group_name)
-    : IDataReader(filename, diffractometer),
-      _dataset(nullptr), _space(nullptr), _memspace(nullptr), _blosc_filter(nullptr)
+HDF5MetaDataReader<ReaderT>::HDF5MetaDataReader(
+    const std::string& filename, Diffractometer* diffractometer, const std::string& group_name)
+    : IDataReader(filename, diffractometer)
+    , _dataset(nullptr)
+    , _space(nullptr)
+    , _memspace(nullptr)
+    , _blosc_filter(nullptr)
 {
     nsxlog(nsx::Level::Debug, "Initializing HDF5MetaDataReader<", ReaderT, ">",
            "to read ", filename, ", group ", group_name);
@@ -97,7 +99,7 @@ HDF5MetaDataReader<ReaderT>::HDF5MetaDataReader
     H5::Group infoGroup, experimentGroup, detectorGroup, sampleGroup;
 
     try {
-       _file = std::unique_ptr<H5::H5File>(new H5::H5File(filename.c_str(), H5F_ACC_RDONLY));
+        _file = std::unique_ptr<H5::H5File>(new H5::H5File(filename.c_str(), H5F_ACC_RDONLY));
 
         // TODO: make groups names compatible accross the codebase
         infoGroup = _file->openGroup("/" + _infoKey(group_name));

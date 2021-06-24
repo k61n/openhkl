@@ -24,8 +24,8 @@
 #include "core/raw/IDataReader.h"
 #include <Eigen/Dense>
 
-#include <string>
 #include "H5Cpp.h"
+#include <string>
 
 namespace nsx {
 
@@ -52,8 +52,10 @@ void ExperimentImporter::setFilePath(const std::string path, Experiment* const e
             experiment->setDiffractometer(value);
         }
 
-        nsxlog(nsx::Level::Info, "Finished reading Experiment", "'" + experiment->name() + "'",
-               "with diffractometer", "'" + experiment->getDiffractometer()->name() + "'", "from path", path);
+        nsxlog(
+            nsx::Level::Info, "Finished reading Experiment", "'" + experiment->name() + "'",
+            "with diffractometer", "'" + experiment->getDiffractometer()->name() + "'", "from path",
+            path);
 
     } catch (H5::Exception& e) {
         std::string what = e.getDetailMsg();
@@ -72,8 +74,8 @@ void ExperimentImporter::loadData(Experiment* experiment)
         hsize_t object_num = data_collections.getNumObjs();
         for (int i = 0; i < object_num; ++i) {
             const std::string collection_name = data_collections.getObjnameByIdx(i);
-            auto reader = std::make_unique<nsx::HDF5DataReader<ExperimentReader>>
-                (_file_name, experiment->getDiffractometer(), collection_name);
+            auto reader = std::make_unique< nsx::HDF5DataReader<ExperimentReader> >(
+                _file_name, experiment->getDiffractometer(), collection_name);
             nsx::sptrDataSet data{new nsx::DataSet{std::move(reader)}};
             experiment->addData(data, collection_name);
         }
@@ -83,7 +85,6 @@ void ExperimentImporter::loadData(Experiment* experiment)
     }
 
     nsxlog(nsx::Level::Debug, "Finished importing data from file", _file_name);
-
 }
 
 void ExperimentImporter::loadPeaks(Experiment* experiment)
@@ -104,8 +105,7 @@ void ExperimentImporter::loadPeaks(Experiment* experiment)
             const std::string collection_key = "/PeakCollections/" + collection_name;
             H5::Group peak_collection(file.openGroup(collection_key));
 
-            H5::Group peak_collection_meta(
-                file.openGroup(collection_key + "/Meta"));
+            H5::Group peak_collection_meta(file.openGroup(collection_key + "/Meta"));
             // Read the info group and store in metadata
             int n_peaks = 0;
             int type = 0;
@@ -221,7 +221,7 @@ void ExperimentImporter::loadPeaks(Experiment* experiment)
                 space.getSimpleExtentDims(data_dims_out, nullptr);
                 const hsize_t dataset_nr = data_dims_out[0]; // nr of datasets
 
-                std::unique_ptr<char*[]> char_data_names{new char*[dataset_nr]};
+                std::unique_ptr<char* []> char_data_names { new char*[dataset_nr] };
                 data_set.read(char_data_names.get(), data_type);
 
                 for (std::size_t ii = 0; ii < dataset_nr; ++ii) {
@@ -241,7 +241,7 @@ void ExperimentImporter::loadPeaks(Experiment* experiment)
                 uc_space.getSimpleExtentDims(uc_dims_out, nullptr);
                 const hsize_t uc_nr = uc_dims_out[0]; // nr of unit cells
 
-                std::unique_ptr<char*[]> char_unit_cells{new char*[uc_nr]};
+                std::unique_ptr<char* []> char_unit_cells { new char*[uc_nr] };
                 uc_data_set.read(char_unit_cells.get(), uc_data_type);
 
                 for (int ii = 0; ii < uc_nr; ++ii) {
@@ -372,6 +372,6 @@ void ExperimentImporter::loadUnitCells(Experiment* experiment)
     nsxlog(Level::Debug, "Finished importing unit cells from file", _file_name);
 }
 
-void ExperimentImporter::finishLoad() { }
+void ExperimentImporter::finishLoad() {}
 
 } // namespace nsx
