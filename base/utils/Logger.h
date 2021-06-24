@@ -56,7 +56,7 @@ class Logger {
 
     std::string time() const; //! get the time as a string
 
-    Level _max_print_level; //! print level
+    Level _max_print_level = Level::Warning; //! print level (default Warning)
     std::ofstream _ofs;
 };
 
