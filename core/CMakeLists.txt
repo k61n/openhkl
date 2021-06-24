@@ -18,7 +18,6 @@ target_link_libraries(${lib}
     PRIVATE
     ${HDF5_LIBRARIES}
     ${Blosc_LIBRARIES}
-    ${Boost_LIBRARIES}
     ${FFTW_LIBRARIES}
     ${TIFF_LIBRARY}
     ${GSL_LIBRARIES}

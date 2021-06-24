@@ -25,7 +25,7 @@ set(CPACK_DEBIAN_PACKAGE_SECTION devel)
 set(CPACK_STRIP_FILES TRUE)
 
 #Version-free dependencies:
-set(CPACK_DEBIAN_PACKAGE_DEPENDS "libgsl-dev(>=1.15), libboost-all-dev, libfftw3-3(>=3.3.1), python3, python3-numpy, python3-matplotlib, libqt5widgets5(>=5.4), libtiffxx5(>=4.0.2)")
+set(CPACK_DEBIAN_PACKAGE_DEPENDS "libgsl-dev(>=1.15), libfftw3-3(>=3.3.1), python3, python3-numpy, python3-matplotlib, libqt5widgets5(>=5.4), libtiffxx5(>=4.0.2)")
 
 set(CPACK_DEBIAN_PACKAGE_DESCRIPTION ${CMAKE_PROJECT_DESCRIPTION})
 set(CPACK_DEBIAN_PACKAGE_VERSION ${CPACK_PACKAGE_VERSION_MAJOR}.${CPACK_PACKAGE_VERSION_MINOR}-${BornAgain_VERSION_PATCH})

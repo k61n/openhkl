@@ -10,23 +10,22 @@ git clone https://jugit.fz-juelich.de/mlz/nsxtool.git
 ```
 
 2. Install global dependencies. These are generally installed at a system level via a package management system on Linux or MacOS.
-    1. cmake
-    2. C++ compiler (generally g++ or clang for Linux)
-    3. Python3 interpreter
-	4. HDF5 - assuming this is installed on the system level, it will be located automatically
-    5. QT5
-    6. QCustomPlot2
-    7. Eigen3
-    8. YAMLCpp
-    9. Boost
-    10. GSL
-    11. FFTW3
-    12. Blosc
-    13. QHull (esp. libqhullcpp)
+    - Blosc
+    - C++ compiler (e.g. g++ or clang)
+    - cmake
+    - Eigen3
+    - FFTW3
+    - GSL
+	- HDF5 - assuming this is installed on the system level, it will be located automatically
+    - Python3 interpreter
+    - QCustomPlot2
+    - QHull (esp. libqhullcpp)
+    - QT5
+    - YAMLCpp
 
 3. Install local dependencies. Assuming here that they are being installed in `~/Software`, which contains the directories `include` and `lib` with various headers and libraries installed.
-    1. XSection (https://jugit.fz-juelich.de/mlz/xsection)
-    2. QCR (https://jugit.fz-juelich.de/mlz/libqcr)
+    - XSection (https://jugit.fz-juelich.de/mlz/xsection)
+    - QCR (https://jugit.fz-juelich.de/mlz/libqcr)
 
 ```
 git clone https://jugit.fz-juelich.de/mlz/repo.git # Assuming this is now in directory "repo"
@@ -57,7 +56,7 @@ PYTHONPATH=$PYTHONPATH:/path/to/nsxtool/build/swig
 This is largely the same as for Linux, but I use Homebrew [brew.sh](brew.sh), but beware that if you have multiple package managers on MacOS, they can interfere and break something critical. Homebrew will also install any higher order dependencies you need.
 
 ```
-brew install python3 cmake boost qt5 eigen hdf5 swig c-blosc fftw cpp-gsl
+brew install python3 cmake qt5 eigen hdf5 swig c-blosc fftw cpp-gsl
 pip3 install numpy scipy
 ```
 

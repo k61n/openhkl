@@ -114,7 +114,6 @@ elseif(DEFINED MSVC)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /wd4348 /wd4127 /MP")
     add_compile_options(/W2) # reasonable warning level
     add_definitions(/DH5_BUILT_AS_DYNAMIC_LIB)
-    add_definitions(/DBOOST_ALL_NO_LIB)
     add_definitions(/D_USE_MATH_DEFINES)
     add_definitions(/DNSXTOOL_EXPORT)
 else()
