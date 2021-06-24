@@ -114,7 +114,7 @@ void DataHandler::addData(sptrDataSet data, std::string name)
     }
 
     nsxlog(
-        Level::Info, "DataHandler::addData: adding DataSet ", name, ":", data->nFrames(), "frames");
+        Level::Info, "DataHandler::addData: adding DataSet ", name, ": ", data->nFrames(), " frames");
     _data_map.insert(std::make_pair(name, data));
 }
 

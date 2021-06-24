@@ -24,7 +24,7 @@ std::vector<DetectorEvent> algo::qs2events(
     const std::vector<ReciprocalVector>& sample_qs, const InstrumentStateList& states,
     const Detector& detector, const int n_intervals, sptrProgressHandler handler /* = nullptr */)
 {
-    nsxlog(Level::Debug, "algo::Qs2Events::qs2events: processing", sample_qs.size(), "q vectors");
+    nsxlog(Level::Debug, "algo::Qs2Events::qs2events: processing ", sample_qs.size(), "q vectors");
 
     /*
      * Algorithm description
@@ -32,7 +32,7 @@ std::vector<DetectorEvent> algo::qs2events(
      * For each q-vector corresponding to a Miller index:
      * 1. Divide the frame range into n_intervals equal intervals
      * 2. for each interval f0 -> f1:
-     *    a) compute sign of |k_f| - |k_i| for f0 (s0) and f1 (s1). 
+     *    a) compute sign of |k_f| - |k_i| for f0 (s0) and f1 (s1).
      *    b) if s1 == s2, continue
      *    c) else use bisection search to compute frame value f at which |k_f| = |k_i|
      * 3. For each intersection f, generate a DetectorEvent, which will be used as a peak centre
@@ -120,7 +120,7 @@ std::vector<DetectorEvent> algo::qs2events(
         if (handler)
             handler->setProgress(++count * 100.0 / sample_qs.size());
     }
-    nsxlog(Level::Debug, "algo::Qs2Events::qs2events: finished; generated", events.size(), "events");
+    nsxlog(Level::Debug, "algo::Qs2Events::qs2events: finished; generated ", events.size(), "events");
     return events;
 }
 

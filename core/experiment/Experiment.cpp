@@ -136,12 +136,12 @@ void Experiment::autoIndex(PeakCollection* peaks, const IndexerParameters& param
     _peak_filter->setStrength(params.strength_min, params.strength_max);
     _peak_filter->setFrameRange(params.first_frame, params.last_frame);
     nsxlog(
-        Level::Info, "Experiment::autoIndex: attempting with frames", params.first_frame, "-",
+        Level::Info, "Experiment::autoIndex: attempting with frames ", params.first_frame, " - ",
         params.last_frame);
     _peak_filter->filter(peaks);
     double npeaks = peaks->numberOfPeaks();
     double ncaught = peaks->numberCaughtByFilter();
-    nsxlog(Level::Info, "Indexing using", ncaught, "/", npeaks, "peaks");
+    nsxlog(Level::Info, "Indexing using ", ncaught, " / ", npeaks, " peaks");
     _peak_handler->acceptFilter(collection_name, peaks, listtype::INDEXING);
     _auto_indexer->setParameters(params);
     PeakCollection* indexing_collection = getPeakCollection(collection_name);
@@ -189,8 +189,8 @@ void Experiment::buildShapeCollection(
         throw std::runtime_error("buildShapeCollection: no fit peaks found");
 
     nsxlog(
-        Level::Info, "Experiment::buildShapeCollection:", fit_peaks->numberOfPeaks(), "/",
-        peaks->numberOfPeaks(), "fit peaks");
+        Level::Info, "Experiment::buildShapeCollection: ", fit_peaks->numberOfPeaks(), " / ",
+        peaks->numberOfPeaks(), " fit peaks");
 
     nsx::AABB aabb;
 
@@ -227,7 +227,7 @@ void Experiment::predictPeaks(
     int current_numor = 0;
     for (const sptrDataSet& data : numors) {
         nsxlog(
-            Level::Info, "predictPeaks: predicting peaks for numor", ++current_numor, "of",
+            Level::Info, "predictPeaks: predicting peaks for numor ", ++current_numor, " of ",
             numors.size());
 
         const std::vector<nsx::Peak3D*> predicted =
@@ -237,8 +237,8 @@ void Experiment::predictPeaks(
             predicted_peaks.push_back(peak);
 
         nsxlog(
-            Level::Info, "predictPeaks: completed peak prediciton. Added", predicted_peaks.size(),
-            "peaks");
+            Level::Info, "predictPeaks: completed peak prediciton. Added ", predicted_peaks.size(),
+            " peaks");
 
         addPeakCollection(name, listtype::PREDICTED, predicted_peaks);
         predicted_peaks.clear();
@@ -246,7 +246,7 @@ void Experiment::predictPeaks(
 }
 
 void Experiment::computeQuality(
-    double d_min, double d_max, int n_shells, std::vector<PeakCollection*> collections, 
+    double d_min, double d_max, int n_shells, std::vector<PeakCollection*> collections,
     bool friedel)
 {
     _data_quality.computeQuality(
@@ -271,7 +271,7 @@ const UnitCell* Experiment::getReferenceCell() const
 bool Experiment::refine(
     PeakCollection* peaks, UnitCell* cell, DataSet* data, const RefinerParameters& params)
 {
-    nsxlog(Level::Info, "Experiment::refine: Refining peak collection", peaks->name());
+    nsxlog(Level::Info, "Experiment::refine: Refining peak collection ", peaks->name());
     std::vector<Peak3D*> peak_list = peaks->getPeakList();
     InstrumentStateList& states = data->instrumentStates();
     _refiner = std::make_unique<Refiner>(states, cell, peak_list, params, _cell_handler.get());

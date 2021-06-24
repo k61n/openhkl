@@ -103,7 +103,7 @@ void IntegrationHandler::integratePeaks(
     IPeakIntegrator* integrator, PeakCollection* peaks, IntegrationParameters* params,
     ShapeCollection* shapes)
 {
-    nsxlog(Level::Info, "IntegrationHandler::integratePeaks: integrating PeakCollection", peaks);
+    nsxlog(Level::Info, "IntegrationHandler::integratePeaks: integrating PeakCollection ", peaks);
     const DataMap* data = _data_handler->getDataMap();
     integrator->setNNumors(data->size());
     integrator->setParameters(*params);
