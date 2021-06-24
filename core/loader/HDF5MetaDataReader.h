@@ -28,6 +28,7 @@
 #include "core/gonio/Gonio.h"
 #include "core/instrument/Diffractometer.h"
 #include "core/instrument/Sample.h"
+#include "base/utils/Logger.h"
 
 #include <memory>
 #include <stdexcept>
@@ -89,6 +90,9 @@ HDF5MetaDataReader<ReaderT>::HDF5MetaDataReader
     : IDataReader(filename, diffractometer),
       _dataset(nullptr), _space(nullptr), _memspace(nullptr), _blosc_filter(nullptr)
 {
+    nsxlog(nsx::Level::Debug, "Initializing HDF5MetaDataReader<", ReaderT, ">",
+           "to read ", filename, ", group ", group_name);
+
     // TODO: experimentGroup -> metaGroup
     H5::Group infoGroup, experimentGroup, detectorGroup, sampleGroup;
 
@@ -112,6 +116,7 @@ HDF5MetaDataReader<ReaderT>::HDF5MetaDataReader
     }
 
     // Read the info group and store in metadata
+    nsxlog(nsx::Level::Debug, "Reading metadata attribute of", filename, ", group ", group_name);
     int ninfo = infoGroup.getNumAttrs();
     for (int i = 0; i < ninfo; ++i) {
         H5::Attribute attr = infoGroup.openAttribute(i);
@@ -148,6 +153,8 @@ HDF5MetaDataReader<ReaderT>::HDF5MetaDataReader
 
     // TODO: npdone -> nr of frames
     _nFrames = _metadata.key<int>("npdone");
+
+    nsxlog(nsx::Level::Debug, "Reading detector state of", filename, ", group ", group_name);
 
     const auto& detector_gonio = _diffractometer->detector()->gonio();
     size_t n_detector_gonio_axes = detector_gonio.nAxes();
@@ -186,6 +193,8 @@ HDF5MetaDataReader<ReaderT>::HDF5MetaDataReader
     // TODO: check units and their consistency
     // Use natural units internally (rad)
     dm *= deg;
+
+    nsxlog(nsx::Level::Debug, "Reading gonio state of", filename, ", group ", group_name);
 
     _detectorStates.resize(_nFrames);
 
@@ -231,17 +240,21 @@ HDF5MetaDataReader<ReaderT>::HDF5MetaDataReader
     for (unsigned int i = 0; i < _nFrames; ++i)
         _sampleStates[i] = eigenToVector(dm.col(i));
 
+    nsxlog(nsx::Level::Debug, "Finished reading the data in", filename, ", group ", group_name);
     _file->close();
 }
 
 template <HDF5ReaderType ReaderT>
 void HDF5MetaDataReader<ReaderT>::open()
 {
+    nsxlog(nsx::Level::Debug, "Opening datafile (already opened: ", _isOpened, ")");
+
     if (_isOpened)
         return;
 
     try {
         const std::string& filename = _metadata.key<std::string>("filename");
+        nsxlog(nsx::Level::Info, "Opening datafile ", filename, "for read-only access");
         _file.reset(new H5::H5File(filename.c_str(), H5F_ACC_RDONLY));
     } catch (...) {
         if (_file)
@@ -255,6 +268,7 @@ void HDF5MetaDataReader<ReaderT>::open()
         _blosc_filter.reset(new HDF5BloscFilter);
 
         const std::string& group_name = _metadata.key<std::string>("group_name");
+        nsxlog(nsx::Level::Debug, "Reading data group", group_name);
         _dataset.reset(new H5::DataSet(_file->openDataSet("/" + _dataKey(group_name))));
         // Dataspace of the dataset /counts
         _space.reset(new H5::DataSpace(_dataset->getSpace()));
@@ -271,6 +285,8 @@ void HDF5MetaDataReader<ReaderT>::open()
     _nRows = dims[1];
     _nCols = dims[2];
 
+    nsxlog(nsx::Level::Info, "Data shape: (frames =", _nFrames, ", rows =", _nRows, ", columns = ", _nCols, ")");
+
     // Size of one hyperslab
     const hsize_t count_1frm[3] = {1, _nRows, _nCols};
     _memspace.reset(new H5::DataSpace(3, count_1frm, nullptr));
@@ -282,6 +298,8 @@ void HDF5MetaDataReader<ReaderT>::close()
 {
     if (!_isOpened)
         return;
+
+    nsxlog(nsx::Level::Info, "Closing datafile", _metadata.key<std::string>("filename"));
 
     _file->close();
     _space->close();

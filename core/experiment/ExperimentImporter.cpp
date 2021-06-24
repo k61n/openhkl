@@ -31,6 +31,8 @@ namespace nsx {
 
 void ExperimentImporter::setFilePath(const std::string path, Experiment* const experiment)
 {
+    nsxlog(nsx::Level::Debug, "Importing data from path", path);
+
     try {
         _file_name = path;
         H5::H5File file(_file_name.c_str(), H5F_ACC_RDONLY);
@@ -50,6 +52,9 @@ void ExperimentImporter::setFilePath(const std::string path, Experiment* const e
             experiment->setDiffractometer(value);
         }
 
+        nsxlog(nsx::Level::Info, "Finished reading Experiment", "'" + experiment->name() + "'",
+               "with diffractometer", "'" + experiment->getDiffractometer()->name() + "'", "from path", path);
+
     } catch (H5::Exception& e) {
         std::string what = e.getDetailMsg();
         throw std::runtime_error(what);
@@ -58,15 +63,17 @@ void ExperimentImporter::setFilePath(const std::string path, Experiment* const e
 
 void ExperimentImporter::loadData(Experiment* experiment)
 {
+    nsxlog(nsx::Level::Debug, "Importing data from file", _file_name);
+
     try {
         H5::H5File file(_file_name.c_str(), H5F_ACC_RDONLY);
         H5::Group data_collections(file.openGroup("/DataCollections"));
 
         hsize_t object_num = data_collections.getNumObjs();
         for (int i = 0; i < object_num; ++i) {
-	    const std::string collection_name = data_collections.getObjnameByIdx(i);
+            const std::string collection_name = data_collections.getObjnameByIdx(i);
             auto reader = std::make_unique<nsx::HDF5DataReader<ExperimentReader>>
-		(_file_name, experiment->getDiffractometer(), collection_name);
+                (_file_name, experiment->getDiffractometer(), collection_name);
             nsx::sptrDataSet data{new nsx::DataSet{std::move(reader)}};
             experiment->addData(data, collection_name);
         }
@@ -74,10 +81,15 @@ void ExperimentImporter::loadData(Experiment* experiment)
         std::string what = e.getDetailMsg();
         throw std::runtime_error(what);
     }
+
+    nsxlog(nsx::Level::Debug, "Finished importing data from file", _file_name);
+
 }
 
 void ExperimentImporter::loadPeaks(Experiment* experiment)
 {
+    nsxlog(nsx::Level::Debug, "Importing peaks from file", _file_name);
+
     using Eigen_VecXd = Eigen::Matrix<double, Eigen::Dynamic, Eigen::RowMajor>;
     using Eigen_VecXint = Eigen::Matrix<int, Eigen::Dynamic, Eigen::RowMajor>;
     using Eigen_VecXbool = Eigen::Matrix<bool, Eigen::Dynamic, Eigen::RowMajor>;
@@ -158,7 +170,7 @@ void ExperimentImporter::loadPeaks(Experiment* experiment)
             std::vector<std::string> data_names;
             std::vector<std::string> unit_cells;
 
-            nsxlog(Level::Debug, "Loading doubles");
+            nsxlog(Level::Debug, "Importing doubles");
             // Load all doubles
             for (const auto& [key, val] : double_keys) {
                 H5::DataSet data_set = peak_collection.openDataSet(key);
@@ -166,7 +178,7 @@ void ExperimentImporter::loadPeaks(Experiment* experiment)
                 data_set.read(val->data(), H5::PredType::NATIVE_DOUBLE, space, space);
             };
 
-            nsxlog(Level::Debug, "Loading integers");
+            nsxlog(Level::Debug, "Importing integers");
             // Load all ints
             for (const auto& [key, val] : int_keys) {
                 H5::DataSet data_set = peak_collection.openDataSet(key);
@@ -174,7 +186,7 @@ void ExperimentImporter::loadPeaks(Experiment* experiment)
                 data_set.read(val->data(), H5::PredType::NATIVE_INT, space, space);
             }
 
-            nsxlog(Level::Debug, "Loading booleans");
+            nsxlog(Level::Debug, "Importing booleans");
             // Load all booleans
             for (const auto& [key, val] : bool_keys) {
                 H5::DataSet data_set = peak_collection.openDataSet(key);
@@ -182,7 +194,7 @@ void ExperimentImporter::loadPeaks(Experiment* experiment)
                 data_set.read(val->data(), H5::PredType::NATIVE_HBOOL, space, space);
             }
 
-            nsxlog(Level::Debug, "Loading centers");
+            nsxlog(Level::Debug, "Importing centers");
             // Load the centers
             {
                 H5::DataSet data_set = peak_collection.openDataSet("Center");
@@ -190,7 +202,7 @@ void ExperimentImporter::loadPeaks(Experiment* experiment)
                 data_set.read(center.data(), H5::PredType::NATIVE_DOUBLE, space, space);
             }
 
-            nsxlog(Level::Debug, "Loading metric");
+            nsxlog(Level::Debug, "Importing metric");
             // Load the metrics
             {
                 H5::DataSet data_set = peak_collection.openDataSet("Metric");
@@ -198,7 +210,7 @@ void ExperimentImporter::loadPeaks(Experiment* experiment)
                 data_set.read(metric.data(), H5::PredType::NATIVE_DOUBLE, space, space);
             }
 
-            nsxlog(Level::Debug, "Loading DataSet names");
+            nsxlog(Level::Debug, "Importing DataSet names");
             // Load the data_names
             {
                 H5::DataSet data_set = peak_collection.openDataSet("DataNames");
@@ -218,7 +230,7 @@ void ExperimentImporter::loadPeaks(Experiment* experiment)
                 }
             }
 
-            nsxlog(Level::Debug, "Loading UnitCell names");
+            nsxlog(Level::Debug, "Importing UnitCell names");
             // Load the unit cell strings
             {
                 H5::DataSet uc_data_set = peak_collection.openDataSet("UnitCells");
@@ -238,7 +250,7 @@ void ExperimentImporter::loadPeaks(Experiment* experiment)
                 }
             }
 
-            nsxlog(Level::Debug, "Finished reading data from file");
+            nsxlog(Level::Debug, "Finished reading peak data from file", _file_name);
             nsxlog(Level::Debug, "Creating the vector of peaks");
             std::vector<nsx::Peak3D*> peaks;
 
@@ -272,7 +284,7 @@ void ExperimentImporter::loadPeaks(Experiment* experiment)
             listtype collection_type = static_cast<listtype>(type);
             experiment->addPeakCollection(collection_name, collection_type, peaks);
 
-            nsxlog(Level::Debug, "Created the peak collection");
+            nsxlog(Level::Debug, "Finished creating the peak collection");
         }
     } catch (H5::Exception& e) {
         throw std::runtime_error{e.getDetailMsg()};
@@ -281,6 +293,8 @@ void ExperimentImporter::loadPeaks(Experiment* experiment)
 
 void ExperimentImporter::loadUnitCells(Experiment* experiment)
 {
+    nsxlog(Level::Debug, "Importing unit cells from file", _file_name);
+
     try {
         H5::H5File file(_file_name.c_str(), H5F_ACC_RDONLY);
         H5::Group unit_cells(file.openGroup("/UnitCells"));
@@ -354,6 +368,8 @@ void ExperimentImporter::loadUnitCells(Experiment* experiment)
         std::string what = e.getDetailMsg();
         throw std::runtime_error(what);
     }
+
+    nsxlog(Level::Debug, "Finished importing unit cells from file", _file_name);
 }
 
 void ExperimentImporter::finishLoad() { }
