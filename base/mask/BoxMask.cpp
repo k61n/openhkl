@@ -22,8 +22,8 @@ namespace nsx {
 BoxMask::BoxMask(const AABB& aabb) : IMask(), _aabb(aabb)
 {
     nsxlog(Level::Info, "BoxMask::Boxmask: Created new rectangular mask");
-    nsxlog(Level::Info, "Lower bound:", _aabb.lower().transpose());
-    nsxlog(Level::Info, "Upper bound:", _aabb.upper().transpose());
+    nsxlog(Level::Info, "Lower bound: ", _aabb.lower().transpose());
+    nsxlog(Level::Info, "Upper bound: ", _aabb.upper().transpose());
 }
 
 bool BoxMask::collide(const Ellipsoid& ellipsoid) const

@@ -25,13 +25,13 @@ namespace nsx {
 void IntegrationParameters::log(const Level& level) const
 {
     nsxlog(level, "Integration parameters:");
-    nsxlog(level, "peak_end               =", peak_end);
-    nsxlog(level, "bkg_begin              =", bkg_begin);
-    nsxlog(level, "bkg_end                =", bkg_end);
-    nsxlog(level, "neighbour_range_pixels =", neighbour_range_pixels);
-    nsxlog(level, "neighbour_range_frames =", neighbour_range_frames);
-    nsxlog(level, "fit_center             =", fit_center);
-    nsxlog(level, "fit_cov                =", fit_cov);
+    nsxlog(level, "peak_end               = ", peak_end);
+    nsxlog(level, "bkg_begin              = ", bkg_begin);
+    nsxlog(level, "bkg_end                = ", bkg_end);
+    nsxlog(level, "neighbour_range_pixels = ", neighbour_range_pixels);
+    nsxlog(level, "neighbour_range_frames = ", neighbour_range_frames);
+    nsxlog(level, "fit_center             = ", fit_center);
+    nsxlog(level, "fit_cov                = ", fit_cov);
 }
 
 IPeakIntegrator::IPeakIntegrator()
@@ -68,7 +68,7 @@ void IPeakIntegrator::integrate(
     std::ostringstream oss;
     std::string status = "Integrating " + std::to_string(peaks.size()) + " peaks...";
     oss << "Integrating " << peaks.size() << " peaks in numor " << n_numor << " of " << _n_numors;
-    nsxlog(Level::Info, "IPeakIntegrator::integrate: integrating", peaks.size(), "peaks");
+    nsxlog(Level::Info, "IPeakIntegrator::integrate: integrating ", peaks.size(), "peaks");
     if (_handler) {
         _handler->setStatus(oss.str().c_str());
         _handler->setProgress(0);
@@ -170,7 +170,7 @@ void IPeakIntegrator::integrate(
             _handler->setProgress(progress);
         }
     }
-    nsxlog(Level::Info, "IPeakIntegrator::integrate: end;", nfailures, "failures");
+    nsxlog(Level::Info, "IPeakIntegrator::integrate: end; ", nfailures, "failures");
 }
 
 void IPeakIntegrator::setHandler(sptrProgressHandler handler)

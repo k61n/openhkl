@@ -166,7 +166,7 @@ void PeakCollection::checkCollection() const
             ++n_nan;
         }
     }
-    nsxlog(Level::Info, "PeakCollection::checkCollection: peak collection", _name, "contains:");
+    nsxlog(Level::Info, "PeakCollection::checkCollection: peak collection ", _name, "contains:");
     nsxlog(Level::Info, numberOfPeaks(), "peaks");
     nsxlog(Level::Info, n_nan, "peaks with intensity NaN");
     nsxlog(Level::Info, n_zero, "peaks with intensity zero");

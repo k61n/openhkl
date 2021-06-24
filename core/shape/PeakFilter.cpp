@@ -119,7 +119,7 @@ void PeakFilter::filterSparseDataSet(PeakCollection* peak_collection) const
             }
         }
     }
-    nsxlog(Level::Info, "PeakFilter::filterSparseDataSet:", nrejected, "peaks rejected");
+    nsxlog(Level::Info, "PeakFilter::filterSparseDataSet: ", nrejected, "peaks rejected");
 }
 
 void PeakFilter::filterExtinct(PeakCollection* peak_collection) const
@@ -137,7 +137,7 @@ void PeakFilter::filterExtinct(PeakCollection* peak_collection) const
             }
         }
     }
-    nsxlog(Level::Info, "PeakFilter::filterExtinct:", nrejected, "peaks rejected");
+    nsxlog(Level::Info, "PeakFilter::filterExtinct: ", nrejected, "peaks rejected");
 }
 
 void PeakFilter::filterOverlapping(PeakCollection* peak_collection) const
@@ -199,7 +199,7 @@ void PeakFilter::filterEnabled(PeakCollection* peak_collection) const
             ++nrejected;
         }
     }
-    nsxlog(Level::Info, "PeakFilter::filterEnabled:", nrejected, "peaks rejected");
+    nsxlog(Level::Info, "PeakFilter::filterEnabled: ", nrejected, "peaks rejected");
 }
 
 std::vector<Peak3D*> PeakFilter::filterEnabled(
@@ -224,7 +224,7 @@ void PeakFilter::filterSelected(PeakCollection* peak_collection) const
             ++nrejected;
         }
     }
-    nsxlog(Level::Info, "PeakFilter::filterSelected:", nrejected, "peaks rejected");
+    nsxlog(Level::Info, "PeakFilter::filterSelected: ", nrejected, "peaks rejected");
 }
 
 void PeakFilter::filterMasked(PeakCollection* peak_collection) const
@@ -239,7 +239,7 @@ void PeakFilter::filterMasked(PeakCollection* peak_collection) const
             ++nrejected;
         }
     }
-    nsxlog(Level::Info, "PeakFilter::filterMasked:", nrejected, "peaks rejected");
+    nsxlog(Level::Info, "PeakFilter::filterMasked: ", nrejected, "peaks rejected");
 }
 
 void PeakFilter::filterIndexed(PeakCollection* peak_collection) const
@@ -257,7 +257,7 @@ void PeakFilter::filterIndexed(PeakCollection* peak_collection) const
             }
         }
     }
-    nsxlog(Level::Info, "PeakFilter::filterIndexed:", nrejected, "peaks rejected");
+    nsxlog(Level::Info, "PeakFilter::filterIndexed: ", nrejected, "peaks rejected");
 }
 
 std::vector<Peak3D*> PeakFilter::filterIndexed(
@@ -287,7 +287,7 @@ void PeakFilter::filterIndexTolerance(PeakCollection* peak_collection) const
             ++nrejected;
         }
     }
-    nsxlog(Level::Info, "PeakFilter::filterIndexTolerance:", nrejected, "peaks rejected");
+    nsxlog(Level::Info, "PeakFilter::filterIndexTolerance: ", nrejected, "peaks rejected");
 }
 
 void PeakFilter::filterUnitCell(PeakCollection* peak_collection) const
@@ -302,7 +302,7 @@ void PeakFilter::filterUnitCell(PeakCollection* peak_collection) const
             ++nrejected;
         }
     }
-    nsxlog(Level::Info, "PeakFilter::filterUnitCell:", nrejected, "peaks rejected");
+    nsxlog(Level::Info, "PeakFilter::filterUnitCell: ", nrejected, "peaks rejected");
 }
 
 void PeakFilter::filterStrength(PeakCollection* peak_collection) const
@@ -315,7 +315,7 @@ void PeakFilter::filterStrength(PeakCollection* peak_collection) const
         try {
             corrected_intensity = peak_ptr->correctedIntensity();
         } catch (std::range_error& e) {
-            nsxlog(Level::Debug, "PeakFilter::filterStrength: bad peak intensity;", e.what());
+            nsxlog(Level::Debug, "PeakFilter::filterStrength: bad peak intensity; ", e.what());
             peak_ptr->rejectYou(true);
             ++nrejected;
             continue;
@@ -337,7 +337,7 @@ void PeakFilter::filterStrength(PeakCollection* peak_collection) const
             ++nrejected;
         }
     }
-    nsxlog(Level::Info, "PeakFilter::filterStrength:", nrejected, "peaks rejected");
+    nsxlog(Level::Info, "PeakFilter::filterStrength: ", nrejected, "peaks rejected");
 }
 
 void PeakFilter::filterPredicted(PeakCollection* peak_collection) const
@@ -352,7 +352,7 @@ void PeakFilter::filterPredicted(PeakCollection* peak_collection) const
             ++nrejected;
         }
     }
-    nsxlog(Level::Info, "PeakFilter::filterPredicted:", nrejected, "peaks rejected");
+    nsxlog(Level::Info, "PeakFilter::filterPredicted: ", nrejected, "peaks rejected");
 }
 
 void PeakFilter::filterDRange(PeakCollection* peak_collection) const
@@ -370,12 +370,12 @@ void PeakFilter::filterDRange(PeakCollection* peak_collection) const
                 ++nrejected;
             }
         } catch (std::range_error& e) {
-            nsxlog(Level::Debug, "PeakFilter::filterDRange: bad peak intensity;", e.what());
+            nsxlog(Level::Debug, "PeakFilter::filterDRange: bad peak intensity; ", e.what());
             peak_ptr->rejectYou(true);
             ++nrejected;
         }
     }
-    nsxlog(Level::Info, "PeakFilter::filterDRange:", nrejected, "peaks rejected");
+    nsxlog(Level::Info, "PeakFilter::filterDRange: ", nrejected, "peaks rejected");
 }
 
 void PeakFilter::filterHasUnitCell(PeakCollection* peak_collection) const
@@ -392,7 +392,7 @@ void PeakFilter::filterHasUnitCell(PeakCollection* peak_collection) const
             ++nrejected;
         }
     }
-    nsxlog(Level::Info, "PeakFilter::filterHasUnitCell:", nrejected, "peaks rejected");
+    nsxlog(Level::Info, "PeakFilter::filterHasUnitCell: ", nrejected, "peaks rejected");
 }
 
 void PeakFilter::filterFrameRange(PeakCollection* peak_collection) const
@@ -408,7 +408,7 @@ void PeakFilter::filterFrameRange(PeakCollection* peak_collection) const
             ++nrejected;
         }
     }
-    nsxlog(Level::Info, "PeakFilter::filterFrameRange:", nrejected, "peaks rejected");
+    nsxlog(Level::Info, "PeakFilter::filterFrameRange: ", nrejected, "peaks rejected");
 }
 
 void PeakFilter::filter(PeakCollection* peak_collection) const

@@ -30,24 +30,24 @@ namespace nsx {
 void IndexerParameters::log(const Level& level) const
 {
     nsxlog(level, "Autoindexer parameters:");
-    nsxlog(level, "maxdim             =", maxdim);
-    nsxlog(level, "nSolutions         =", nSolutions);
-    nsxlog(level, "nVertices          =", nVertices);
-    nsxlog(level, "subdiv             =", subdiv);
-    nsxlog(level, "indexingTolerance  =", indexingTolerance);
-    nsxlog(level, "niggliTolerance    =", niggliTolerance);
-    nsxlog(level, "gruberTolerance    =", gruberTolerance);
-    nsxlog(level, "niggliReduction    =", niggliReduction);
-    nsxlog(level, "minUnitCellVolume  =", minUnitCellVolume);
-    nsxlog(level, "unitCellEquivalenceTolerance =", unitCellEquivalenceTolerance);
-    nsxlog(level, "solutionCutoff     =", solutionCutoff);
-    nsxlog(level, "frequencyTolerance =", frequencyTolerance);
-    nsxlog(level, "first_frame        =", first_frame);
-    nsxlog(level, "last_frame         =", last_frame);
-    nsxlog(level, "d_min              =", d_min);
-    nsxlog(level, "d_max              =", d_max);
-    nsxlog(level, "strength_min       =", strength_min);
-    nsxlog(level, "strength_max       =", strength_max);
+    nsxlog(level, "maxdim             = ", maxdim);
+    nsxlog(level, "nSolutions         = ", nSolutions);
+    nsxlog(level, "nVertices          = ", nVertices);
+    nsxlog(level, "subdiv             = ", subdiv);
+    nsxlog(level, "indexingTolerance  = ", indexingTolerance);
+    nsxlog(level, "niggliTolerance    = ", niggliTolerance);
+    nsxlog(level, "gruberTolerance    = ", gruberTolerance);
+    nsxlog(level, "niggliReduction    = ", niggliReduction);
+    nsxlog(level, "minUnitCellVolume  = ", minUnitCellVolume);
+    nsxlog(level, "unitCellEquivalenceTolerance = ", unitCellEquivalenceTolerance);
+    nsxlog(level, "solutionCutoff     = ", solutionCutoff);
+    nsxlog(level, "frequencyTolerance = ", frequencyTolerance);
+    nsxlog(level, "first_frame        = ", first_frame);
+    nsxlog(level, "last_frame         = ", last_frame);
+    nsxlog(level, "d_min              = ", d_min);
+    nsxlog(level, "d_max              = ", d_max);
+    nsxlog(level, "strength_min       = ", strength_min);
+    nsxlog(level, "strength_max       = ", strength_max);
 }
 
 AutoIndexer::AutoIndexer() : _solutions(), _handler(nullptr)
@@ -73,7 +73,7 @@ void AutoIndexer::autoIndex(const std::vector<Peak3D*>& peaks)
 
 void AutoIndexer::autoIndex(PeakCollection* peaks)
 {
-    nsxlog(Level::Info, "AutoIndexer::autoindex: indexing PeakCollection", peaks->name());
+    nsxlog(Level::Info, "AutoIndexer::autoindex: indexing PeakCollection ", peaks->name());
     std::vector<Peak3D*> peak_list = peaks->getPeakList();
     autoIndex(peak_list);
 }

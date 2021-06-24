@@ -571,14 +571,14 @@ void PeakFinder::mergeEquivalentBlobs(
  */
 void PeakFinder::find(const DataList numors)
 {
-    nsxlog(Level::Info, "PeakFinder::find: starting, with", numors.size(), "numors");
+    nsxlog(Level::Info, "PeakFinder::find: starting, with ", numors.size(), " numors");
     _current_peaks.clear();
     _current_data = numors;
 
     int i = 0;
     for (const auto& numor : numors) {
         if (numors.size() > 1)
-            nsxlog(Level::Debug, "PeakFinder::find: starting numor", i + 1);
+            nsxlog(Level::Debug, "PeakFinder::find: starting numor ", i + 1);
         PeakList numor_peaks;
 
         const auto& dectector = numor->reader()->diffractometer()->detector();
@@ -612,7 +612,7 @@ void PeakFinder::find(const DataList numors)
         nsx::EquivalenceList local_equivalences;
 
         // find blobs within the current frame range
-        nsxlog(Level::Debug, "PeakFinder::find: findPrimary from", loop_begin, "to", loop_end);
+        nsxlog(Level::Debug, "PeakFinder::find: findPrimary from ", loop_begin, " to ", loop_end);
         findPrimaryBlobs(*numor, local_blobs, local_equivalences, loop_begin, loop_end, i++);
 
         // merge adjacent blobs
@@ -719,7 +719,7 @@ void PeakFinder::find(const DataList numors)
             Level::Info, "PeakFinder::find:", numor_peaks.size(), "peaks found,",
             numPeaksTooSmallOrLarge, "peaks too small,", numPeaksOutsideFrames,
             "peaks outside frame range,", numPeaksNotInDetArea, "peaks not fully on detector.");
-        nsxlog(Level::Info, "PeakFinder::find:", numPeaksMasked, "peaks masked");
+        nsxlog(Level::Info, "PeakFinder::find: ", numPeaksMasked, "peaks masked");
 
         numor->close();
     }
