@@ -7,7 +7,6 @@ configure_file(../cpp/crystal/niggli_lattices.dat niggli_lattices.dat COPYONLY)
 configure_file(../cpp/crystal/CsOsO_15K.raf CsOsO_15K.raf COPYONLY)
 configure_file(../cpp/crystal/CsOsO_15K.lpt CsOsO_15K.lpt COPYONLY)
 
-configure_file(../cpp/data/D10_ascii_example D10_ascii_example COPYONLY)
 configure_file(../cpp/data/D9_ascii_example D9_ascii_example COPYONLY)
 configure_file(../cpp/data/D9_QSCAN D9_QSCAN COPYONLY)
 
@@ -22,7 +21,6 @@ configure_file(../cpp/geometry/convex_hull_vertices.xyz convex_hull_vertices.xyz
 
 configure_file(../cpp/instrument/RotAxis.xml RotAxis.xml COPYONLY)
 
-configure_file(../cpp/instrument/D10_ascii_example D10_ascii_example COPYONLY)
 configure_file(../cpp/instrument/Instrument.xml Instrument.xml COPYONLY)
 
 configure_file(../cpp/crystal/crystal_database.csv crystal_database.csv COPYONLY)

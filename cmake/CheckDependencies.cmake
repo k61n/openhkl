@@ -1,16 +1,3 @@
-###### Find boost
-set(Boost_USE_MULTITHREADED ON)
-find_package(Boost 1.53.0 REQUIRED)
-if(Boost_FOUND)
-    include_directories(SYSTEM "${Boost_INCLUDE_DIRS}")
-    message(STATUS "Found boost:")
-    message(STATUS "  version: ${Boost_MAJOR_VERSION}.${Boost_MINOR_VERSION}")
-    message(STATUS "  libraries: ${Boost_LIBRARIES}")
-    message(STATUS "  headers: ${Boost_INCLUDE_DIRS}")
-elseif(NOT Boost_FOUND)
-    message(FATAL_ERROR "Unable to find correct Boost version. Did you set BOOST_ROOT?")
-endif()
-
 ###### Find OPENMP
 if(BUILD_WITH_OPENMP)
     find_package(OpenMP REQUIRED)
