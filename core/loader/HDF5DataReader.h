@@ -17,6 +17,8 @@
 
 #include "core/loader/HDF5MetaDataReader.h" // inherits from
 #include "core/instrument/Diffractometer.h"
+#include "base/utils/Logger.h"
+
 
 namespace nsx {
 
@@ -51,6 +53,8 @@ HDF5DataReader<ReaderT>::HDF5DataReader
 template <HDF5ReaderType ReaderT>
 Eigen::MatrixXi HDF5DataReader<ReaderT>::data(std::size_t frame)
 {
+    nsxlog(nsx::Level::Info, __PRETTY_FUNCTION__, ":", "Reading data in frame nr.", frame);
+
     // NOTE: `this->` is needed due to C++ two-phase name lookup mechanism
 
     // Open HDF5 file (does nothing if already opened)
