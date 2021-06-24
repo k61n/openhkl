@@ -42,7 +42,7 @@ class Logger {
     {
         if (verbosity <= _max_print_level) {
             _ofs << time() << " " << static_cast<int>(verbosity) << " ";
-            ((_ofs << messages << " "), ...) << std::endl; // unpack messages separated by spaces
+            ((_ofs << messages), ...) << std::endl; // unpack messages separated by spaces
         }
     }
     void start(const std::string& filename, const Level& min_level); //! initialise
