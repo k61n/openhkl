@@ -52,7 +52,7 @@ template <> std::string HDF5MetaDataReader<LegacyReader>::_dataKey(const std::st
 template <>
 std::string HDF5MetaDataReader<ExperimentReader>::_metaKey(const std::string& group_name) const
 {
-    return "DataCollections/" + group_name + "/Meta";
+    return nsx::gr_DataCollections + "/" + group_name + "/" + nsx::gr_Metadata;
 }
 
 template <>
@@ -64,19 +64,19 @@ std::string HDF5MetaDataReader<ExperimentReader>::_infoKey(const std::string& gr
 template <>
 std::string HDF5MetaDataReader<ExperimentReader>::_detectorKey(const std::string& group_name) const
 {
-    return "DataCollections/" + group_name + "/Detector";
+    return nsx::gr_DataCollections + "/" + group_name + "/" + nsx::gr_Detector;
 }
 
 template <>
 std::string HDF5MetaDataReader<ExperimentReader>::_sampleKey(const std::string& group_name) const
 {
-    return "DataCollections/" + group_name + "/Sample";
+    return nsx::gr_DataCollections + "/" + group_name + "/" + nsx::gr_Sample;
 }
 
 template <>
 std::string HDF5MetaDataReader<ExperimentReader>::_dataKey(const std::string& group_name) const
 {
-    return "DataCollections/" + group_name + "/" + group_name;
+    return nsx::gr_DataCollections + "/" + group_name + "/" + group_name;
 }
 //-----------------------------------------------------------------------------80
 
