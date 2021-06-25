@@ -29,6 +29,7 @@
 #include "core/raw/MetaData.h" // MetaDataMap
 #include "core/shape/PeakCollection.h"
 #include "tables/crystal/UnitCell.h"
+#include "core/raw/DataKeys.h"
 
 #include <Eigen/Dense>
 #include <sstream>
@@ -119,7 +120,7 @@ inline void writeAttribute(
 void writeDetectorState(
     H5::H5File& file, const std::string& datakey, const nsx::DataSet* const dataset)
 {
-    const std::string detectorKey = datakey + "/Detector";
+    const std::string detectorKey = datakey + "/" + nsx::gr_Detector;
 
     file.createGroup(detectorKey);
 
@@ -147,7 +148,7 @@ void writeDetectorState(
 void writeSampleState(
     H5::H5File& file, const std::string& datakey, const nsx::DataSet* const dataset)
 {
-    const std::string sampleKey = datakey + "/Sample";
+    const std::string sampleKey = datakey + "/" + nsx::gr_Sample;
     const std::size_t n_frames = dataset->nFrames();
     const hsize_t nf[1] = {n_frames};
     Eigen::VectorXd values(n_frames);
@@ -206,7 +207,7 @@ void writeMetaInfo(H5::H5File& file, const std::string& datakey, const nsx::Data
 void writePeakMeta(
     H5::H5File& file, const std::string& datakey, const PeakMeta& pmeta, const nsx::listtype type)
 {
-    const std::string metaKey = datakey + "/Meta"; // TODO: Why different from Info?
+    const std::string metaKey = datakey + "/" + nsx::gr_Metadata; // TODO: Why different from Metadata?
 
     H5::Group peak_meta_group = file.createGroup(metaKey);
     H5::DataSpace metaSpace(H5S_SCALAR);
@@ -222,7 +223,7 @@ void writePeakMeta(
     }
 
     const int listtype_int = static_cast<int>(type);
-    writeAttribute(peak_meta_group, "Type", &listtype_int, H5::PredType::NATIVE_INT32, metaSpace);
+    writeAttribute(peak_meta_group, nsx::at_peakType, &listtype_int, H5::PredType::NATIVE_INT32, metaSpace);
 }
 
 void writePeakDataNames(
@@ -309,15 +310,15 @@ void ExperimentExporter::createFile(std::string name, std::string diffractometer
     const H5::DataSpace metaSpace(H5S_SCALAR);
     const H5::StrType str80Type(
         H5::PredType::C_S1, 80); // TODO: Make 80-chr restriction also in the GUI
-    writeAttribute(file, "name", name.data(), str80Type, metaSpace);
-    writeAttribute(file, "diffractometer", diffractometer.data(), str80Type, metaSpace);
+    writeAttribute(file, nsx::at_experiment, name.data(), str80Type, metaSpace);
+    writeAttribute(file, nsx::at_diffractometer, diffractometer.data(), str80Type, metaSpace);
 }
 
 void ExperimentExporter::writeData(const std::map<std::string, DataSet*> data)
 {
 
     H5::H5File file{_file_name.c_str(), H5F_ACC_RDWR};
-    const std::string dataCollectionsKey = "/DataCollections";
+    const std::string dataCollectionsKey = "/" + nsx::gr_DataCollections;
     writeFrames(file, dataCollectionsKey, data);
 
     for (const auto& it : data) {
@@ -344,7 +345,7 @@ void ExperimentExporter::writeInstrument(const Diffractometer*)
 
 void ExperimentExporter::writePeaks(const std::map<std::string, PeakCollection*> peakCollections)
 {
-    std::string peakCollectionsKey = "/PeakCollections";
+    std::string peakCollectionsKey = "/" + nsx::gr_PeakCollections;
     H5::H5File file{_file_name.c_str(), H5F_ACC_RDWR};
     file.createGroup(peakCollectionsKey);
 
@@ -391,7 +392,6 @@ void ExperimentExporter::writePeaks(const std::map<std::string, PeakCollection*>
         std::string name;
         std::string ext;
         std::string unit_cell_name;
-        const std::string temp_name = "NONE";
 
         for (std::size_t i = 0; i < nPeaks; ++i) {
             nsx::Peak3D* const peak = collection_item->getPeak(i);
@@ -416,7 +416,7 @@ void ExperimentExporter::writePeaks(const std::map<std::string, PeakCollection*>
             data_names.push_back(peak->dataSet()->name());
 
             const UnitCell* unit_cell_ptr = peak->unitCell();
-            unit_cell_name = unit_cell_ptr ? unit_cell_ptr->name() : temp_name;
+            unit_cell_name = unit_cell_ptr ? unit_cell_ptr->name() : nsx::kw_unitcellName0;
             unit_cells.push_back(unit_cell_name);
 
             Eigen::Vector3d temp_col = peak->shape().center();
@@ -435,23 +435,23 @@ void ExperimentExporter::writePeaks(const std::map<std::string, PeakCollection*>
         const std::vector<std::tuple<std::string, H5::DataType, H5::DataSpace, const void*>>
             peakData_defs{
                 // NATIVE_DOUBLE
-                {"PeakEnd", H5::PredType::NATIVE_DOUBLE, peak_space, peak_end.data()},
-                {"BkgBegin", H5::PredType::NATIVE_DOUBLE, peak_space, bkg_begin.data()},
-                {"BkgEnd", H5::PredType::NATIVE_DOUBLE, peak_space, bkg_end.data()},
-                {"Scale", H5::PredType::NATIVE_DOUBLE, peak_space, scale.data()},
-                {"Transmission", H5::PredType::NATIVE_DOUBLE, peak_space, transmission.data()},
-                {"Intensity", H5::PredType::NATIVE_DOUBLE, peak_space, intensity.data()},
-                {"Sigma", H5::PredType::NATIVE_DOUBLE, peak_space, sigma.data()},
-                {"BkgIntensity", H5::PredType::NATIVE_DOUBLE, peak_space, mean_bkg_val.data()},
-                {"BkgSigma", H5::PredType::NATIVE_DOUBLE, peak_space, mean_bkg_sig.data()},
-                {"Center", H5::PredType::NATIVE_DOUBLE, center_space, center.data()},
-                {"Metric", H5::PredType::NATIVE_DOUBLE, metric_space, metric.data()},
+                {nsx::ds_PeakEnd, H5::PredType::NATIVE_DOUBLE, peak_space, peak_end.data()},
+                {nsx::ds_BkgBegin, H5::PredType::NATIVE_DOUBLE, peak_space, bkg_begin.data()},
+                {nsx::ds_BkgEnd, H5::PredType::NATIVE_DOUBLE, peak_space, bkg_end.data()},
+                {nsx::ds_Scale, H5::PredType::NATIVE_DOUBLE, peak_space, scale.data()},
+                {nsx::ds_Transmission, H5::PredType::NATIVE_DOUBLE, peak_space, transmission.data()},
+                {nsx::ds_Intensity, H5::PredType::NATIVE_DOUBLE, peak_space, intensity.data()},
+                {nsx::ds_Sigma, H5::PredType::NATIVE_DOUBLE, peak_space, sigma.data()},
+                {nsx::ds_BkgIntensity, H5::PredType::NATIVE_DOUBLE, peak_space, mean_bkg_val.data()},
+                {nsx::ds_BkgSigma, H5::PredType::NATIVE_DOUBLE, peak_space, mean_bkg_sig.data()},
+                {nsx::ds_Center, H5::PredType::NATIVE_DOUBLE, center_space, center.data()},
+                {nsx::ds_Metric, H5::PredType::NATIVE_DOUBLE, metric_space, metric.data()},
                 // NATIVE_INT32
-                {"Rejection", H5::PredType::NATIVE_INT32, peak_space, rejection_flag.data()},
+                {nsx::ds_Rejection, H5::PredType::NATIVE_INT32, peak_space, rejection_flag.data()},
                 // NATIVE_HBOOL
-                {"Selected", H5::PredType::NATIVE_HBOOL, peak_space, selected.get()},
-                {"Masked", H5::PredType::NATIVE_HBOOL, peak_space, masked.get()},
-                {"Predicted", H5::PredType::NATIVE_HBOOL, peak_space, predicted.get()}};
+                {nsx::ds_Selected, H5::PredType::NATIVE_HBOOL, peak_space, selected.get()},
+                {nsx::ds_Masked, H5::PredType::NATIVE_HBOOL, peak_space, masked.get()},
+                {nsx::ds_Predicted, H5::PredType::NATIVE_HBOOL, peak_space, predicted.get()}};
 
         for (const auto& [dkey, dtype, dspace, dptr] : peakData_defs) {
             H5::DataSet data_H5(file.createDataSet(collectionNameKey + "/" + dkey, dtype, dspace));
@@ -459,9 +459,9 @@ void ExperimentExporter::writePeaks(const std::map<std::string, PeakCollection*>
         }
 
         // Write DataNames
-        writePeakDataNames(file, collectionNameKey + "/DataNames", data_names);
+        writePeakDataNames(file, collectionNameKey + "/" + nsx::ds_DatasetNames, data_names);
         // Write unit-cell names
-        writePeakDataNames(file, collectionNameKey + "/UnitCells", unit_cells);
+        writePeakDataNames(file, collectionNameKey + "/" + nsx::ds_UnitCellNames, unit_cells);
 
         // Write all other metadata (int and double) into the "Meta" Group
         const PeakMeta& pmeta = *(collection_item->meta());
@@ -472,7 +472,7 @@ void ExperimentExporter::writePeaks(const std::map<std::string, PeakCollection*>
 void ExperimentExporter::writeUnitCells(const std::map<std::string, UnitCell*> unit_cells)
 {
     H5::H5File file{_file_name.c_str(), H5F_ACC_RDWR};
-    file.createGroup("/UnitCells");
+    file.createGroup("/" + nsx::gr_UnitCells);
     H5::DataSpace metaSpace(H5S_SCALAR);
     H5::StrType str80Type(H5::PredType::C_S1, 80);
 
@@ -483,13 +483,13 @@ void ExperimentExporter::writeUnitCells(const std::map<std::string, UnitCell*> u
 
         const Eigen::MatrixX3d rec = unit_cell->reciprocalBasis();
 
-        H5::Group unit_cell_group = file.createGroup(std::string("/UnitCells/" + unit_cell_name));
+        H5::Group unit_cell_group = file.createGroup(std::string("/" + nsx::gr_UnitCells + "/" + unit_cell_name));
 
         // Write reciprocal-vector components
         for (std::size_t i = 0; i < 3; ++i) {
             for (std::size_t j = 0; j < 3; ++j) {
                 std::stringstream key_ss;
-                key_ss << "rec_" << i << j; // eg., "rec_01"
+                key_ss << (nsx::at_rVec + "_") << i << j; // eg., "reciprocal_01"
                 writeAttribute(
                     unit_cell_group, key_ss.str(), &rec(i, j), H5::PredType::NATIVE_DOUBLE,
                     metaSpace);
@@ -497,16 +497,16 @@ void ExperimentExporter::writeUnitCells(const std::map<std::string, UnitCell*> u
         }
 
         const double tolerance = unit_cell->indexingTolerance();
-        writeAttribute(
-            unit_cell_group, "indexing_tolerance", &tolerance, H5::PredType::NATIVE_DOUBLE,
-            metaSpace);
+        writeAttribute
+            (unit_cell_group, nsx::at_indexingTol, &tolerance, H5::PredType::NATIVE_DOUBLE,
+             metaSpace);
         const std::string bravais_type_sym = unit_cell->bravaisTypeSymbol();
-        writeAttribute(unit_cell_group, "bravais", bravais_type_sym.data(), str80Type, metaSpace);
+        writeAttribute(unit_cell_group, nsx::at_BravaisLattice, bravais_type_sym.data(), str80Type, metaSpace);
         const std::string unitcell_spacegroup_sym = unit_cell->spaceGroup().symbol();
-        writeAttribute(
-            unit_cell_group, "space_group", unitcell_spacegroup_sym.data(), str80Type, metaSpace);
+        writeAttribute
+            (unit_cell_group, nsx::at_spacegroup, unitcell_spacegroup_sym.data(), str80Type, metaSpace);
         const uint z_val = unit_cell->z();
-        writeAttribute(unit_cell_group, "z", &z_val, H5::PredType::NATIVE_UINT, metaSpace);
+        writeAttribute(unit_cell_group, nsx::at_z, &z_val, H5::PredType::NATIVE_UINT, metaSpace);
     }
 }
 
