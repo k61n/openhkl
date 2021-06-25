@@ -58,7 +58,7 @@ std::string HDF5MetaDataReader<ExperimentReader>::_metaKey(const std::string& gr
 template <>
 std::string HDF5MetaDataReader<ExperimentReader>::_infoKey(const std::string& group_name) const
 {
-    return "DataCollections/" + group_name + "/Info";
+    return nsx::gr_DataCollections + "/" + group_name + "/" + nsx::gr_Metadata;
 }
 
 template <>

@@ -96,15 +96,13 @@ HDF5MetaDataReader<ReaderT>::HDF5MetaDataReader(
     nsxlog(nsx::Level::Debug, "Initializing HDF5MetaDataReader<", ReaderT, ">",
            "to read ", filename, ", group ", group_name);
 
-    // TODO: experimentGroup -> metaGroup
-    H5::Group infoGroup, experimentGroup, detectorGroup, sampleGroup;
+    H5::Group metaGroup, detectorGroup, sampleGroup;
 
     try {
         _file = std::unique_ptr<H5::H5File>(new H5::H5File(filename.c_str(), H5F_ACC_RDONLY));
 
         // TODO: make groups names compatible accross the codebase
-        infoGroup = _file->openGroup("/" + _infoKey(group_name));
-        experimentGroup = _file->openGroup("/" + _metaKey(group_name)); // = metaGroup
+        metaGroup = _file->openGroup("/" + _metaKey(group_name));
         detectorGroup = _file->openGroup("/" + _detectorKey(group_name));
         sampleGroup = _file->openGroup("/" + _sampleKey(group_name));
 
@@ -117,40 +115,33 @@ HDF5MetaDataReader<ReaderT>::HDF5MetaDataReader(
         throw std::runtime_error(what);
     }
 
-    // Read the info group and store in metadata
-    nsxlog(nsx::Level::Debug, "Reading metadata attribute of", filename, ", group ", group_name);
-    int ninfo = infoGroup.getNumAttrs();
-    for (int i = 0; i < ninfo; ++i) {
-        H5::Attribute attr = infoGroup.openAttribute(i);
+    // Read the metadata group and store in metadata
+    nsxlog(nsx::Level::Debug, "Reading metadata attribute of '", filename, "', dataset '", dataset_name, "'");
+    const H5::StrType strVarType(H5::PredType::C_S1, H5T_VARIABLE);
+    int nmeta = metaGroup.getNumAttrs();
+    for (int i = 0; i < nmeta; ++i) {
+        H5::Attribute attr = metaGroup.openAttribute(i);
         H5::DataType typ = attr.getDataType();
-        std::string value;
-        attr.read(typ, value);
 
-	// Do not overwrite main attributes which are stored before
-	if (attr.getName() == "real_path" || attr.getName() == "group_name")
-	    continue;
+        // Do not overwrite main attributes which are stored before
+        if (attr.getName() == "real_path" || attr.getName() == "group_name")
+            continue;
 
-        // TODO: check if this is still needed
-        // override stored filename with the current one
-        if (attr.getName() == "filename" || attr.getName() == "file_name") {
-            _metadata.add<std::string>(nsx::at_datasetSources, value);
-            value = filename;
-        }
-        _metadata.add<std::string>(attr.getName(), value);
-    }
-
-    // Read the experiment group and store all int and double attributes in
-    // metadata
-    int nexps = experimentGroup.getNumAttrs();
-    for (int i = 0; i < nexps; ++i) {
-        H5::Attribute attr = experimentGroup.openAttribute(i);
-        H5::DataType typ = attr.getDataType();
-        if (typ == H5::PredType::NATIVE_INT32) {
+        if (typ == strVarType) {
+            std::string value;
+            attr.read(typ, value);
+            // TODO: check if this is still needed
+            // override stored filename with the current one
+            if (attr.getName() == "filename" || attr.getName() == "file_name") {
+                _metadata.add<std::string>(nsx::at_datasetSources, value);
+                value = filename;
+            }
+            _metadata.add<std::string>(attr.getName(), value);
+        } else if (typ == H5::PredType::NATIVE_INT32) {
             int value;
             attr.read(typ, &value);
             _metadata.add<int>(attr.getName(), value);
-        }
-        if (typ == H5::PredType::NATIVE_DOUBLE) {
+        } else if (typ == H5::PredType::NATIVE_DOUBLE) {
             double value;
             attr.read(typ, &value);
             _metadata.add<double>(attr.getName(), value);
