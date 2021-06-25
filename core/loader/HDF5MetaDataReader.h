@@ -53,7 +53,7 @@ class HDF5MetaDataReader : public IDataReader {
     HDF5MetaDataReader(const HDF5MetaDataReader& other) = delete;
 
     HDF5MetaDataReader(const std::string& filename, Diffractometer* diffractometer,
-                       const std::string& group_name = "");
+                       const std::string& dataset_name = "");
 
     ~HDF5MetaDataReader() = default;
 
@@ -74,11 +74,11 @@ class HDF5MetaDataReader : public IDataReader {
 
     std::unique_ptr<HDF5BloscFilter> _blosc_filter;
 
-    virtual std::string _metaKey(const std::string& group_name) const;
-    virtual std::string _infoKey(const std::string& group_name) const;
-    virtual std::string _detectorKey(const std::string& group_name) const;
-    virtual std::string _sampleKey(const std::string& group_name) const;
-    virtual std::string _dataKey(const std::string& group_name) const;
+    virtual std::string _metaKey(const std::string& dataset_name) const;
+    virtual std::string _infoKey(const std::string& dataset_name) const;
+    virtual std::string _detectorKey(const std::string& dataset_name) const;
+    virtual std::string _sampleKey(const std::string& dataset_name) const;
+    virtual std::string _dataKey(const std::string& dataset_name) const;
 };
 
 //-----------------------------------------------------------------------------80
@@ -86,7 +86,7 @@ class HDF5MetaDataReader : public IDataReader {
 
 template <HDF5ReaderType ReaderT>
 HDF5MetaDataReader<ReaderT>::HDF5MetaDataReader(
-    const std::string& filename, Diffractometer* diffractometer, const std::string& group_name)
+    const std::string& filename, Diffractometer* diffractometer, const std::string& dataset_name)
     : IDataReader(filename, diffractometer)
     , _dataset(nullptr)
     , _space(nullptr)
@@ -94,7 +94,7 @@ HDF5MetaDataReader<ReaderT>::HDF5MetaDataReader(
     , _blosc_filter(nullptr)
 {
     nsxlog(nsx::Level::Debug, "Initializing HDF5MetaDataReader<", ReaderT, ">",
-           "to read ", filename, ", group ", group_name);
+           "to read '", filename, "', dataset '", dataset_name, "'");
 
     H5::Group metaGroup, detectorGroup, sampleGroup;
 
@@ -102,13 +102,13 @@ HDF5MetaDataReader<ReaderT>::HDF5MetaDataReader(
         _file = std::unique_ptr<H5::H5File>(new H5::H5File(filename.c_str(), H5F_ACC_RDONLY));
 
         // TODO: make groups names compatible accross the codebase
-        metaGroup = _file->openGroup("/" + _metaKey(group_name));
-        detectorGroup = _file->openGroup("/" + _detectorKey(group_name));
-        sampleGroup = _file->openGroup("/" + _sampleKey(group_name));
+        metaGroup = _file->openGroup("/" + _metaKey(dataset_name));
+        detectorGroup = _file->openGroup("/" + _detectorKey(dataset_name));
+        sampleGroup = _file->openGroup("/" + _sampleKey(dataset_name));
 
         // TODO: Check consistency of the metadata
         _metadata.add<std::string>(nsx::at_filepath, filename);
-        _metadata.add<std::string>(nsx::at_datasetName, group_name);
+        _metadata.add<std::string>(nsx::at_datasetName, dataset_name);
 
     } catch (H5::Exception& e) {
         std::string what = e.getDetailMsg();
@@ -151,7 +151,7 @@ HDF5MetaDataReader<ReaderT>::HDF5MetaDataReader(
     // TODO: npdone -> nr of frames
     _nFrames = _metadata.key<int>(nsx::at_framesNr);
 
-    nsxlog(nsx::Level::Debug, "Reading detector state of", filename, ", group ", group_name);
+    nsxlog(nsx::Level::Debug, "Reading detector state of '", filename, "', dataset '", dataset_name, "'");
 
     const auto& detector_gonio = _diffractometer->detector()->gonio();
     size_t n_detector_gonio_axes = detector_gonio.nAxes();
@@ -191,7 +191,7 @@ HDF5MetaDataReader<ReaderT>::HDF5MetaDataReader(
     // Use natural units internally (rad)
     dm *= deg;
 
-    nsxlog(nsx::Level::Debug, "Reading gonio state of", filename, ", group ", group_name);
+    nsxlog(nsx::Level::Debug, "Reading gonio state of '", filename, "', dataset '", dataset_name,"'");
 
     _detectorStates.resize(_nFrames);
 
@@ -237,7 +237,7 @@ HDF5MetaDataReader<ReaderT>::HDF5MetaDataReader(
     for (unsigned int i = 0; i < _nFrames; ++i)
         _sampleStates[i] = eigenToVector(dm.col(i));
 
-    nsxlog(nsx::Level::Debug, "Finished reading the data in", filename, ", group ", group_name);
+    nsxlog(nsx::Level::Debug, "Finished reading the data in '", filename, "', dataset '", dataset_name, "'");
     _file->close();
 }
 
@@ -264,9 +264,9 @@ void HDF5MetaDataReader<ReaderT>::open()
         // handled automatically by HDF5 blosc filter
         _blosc_filter.reset(new HDF5BloscFilter);
 
-        const std::string& group_name = _metadata.key<std::string>(nsx::at_datasetName);
-        nsxlog(nsx::Level::Debug, "Reading data group", group_name);
-        _dataset.reset(new H5::DataSet(_file->openDataSet("/" + _dataKey(group_name))));
+        const std::string& dataset_name = _metadata.key<std::string>(nsx::at_datasetName);
+        nsxlog(nsx::Level::Debug, "Reading dataset '", dataset_name, ",");
+        _dataset.reset(new H5::DataSet(_file->openDataSet("/" + _dataKey(dataset_name))));
         // Dataspace of the dataset /counts
         _space.reset(new H5::DataSpace(_dataset->getSpace()));
     } catch (...) {
