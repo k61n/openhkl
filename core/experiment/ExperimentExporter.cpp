@@ -173,7 +173,7 @@ void writeSampleState(
 void writeMetadata(H5::H5File& file, const std::string& datakey, const nsx::DataSet* const dataset)
 {
     const H5::DataSpace metaSpace(H5S_SCALAR);
-    const H5::StrType str80Type(H5::PredType::C_S1, 80); // TODO: Use strVarType
+    const H5::StrType strVarType(H5::PredType::C_S1, H5T_VARIABLE);
 
     // Write all metadata (string, int and double) into the "Metadata" Group
     const std::string metaKey = datakey + "/" + nsx::gr_Metadata;
@@ -183,7 +183,7 @@ void writeMetadata(H5::H5File& file, const std::string& datakey, const nsx::Data
         for (const auto& [key, val] : dataset->metadata().map()) {
             if (std::holds_alternative<std::string>(val))
                 writeAttribute(
-                    meta_group, key, (std::get<std::string>(val)).data(), str80Type, metaSpace);
+                    meta_group, key, (std::get<std::string>(val)).data(), strVarType, metaSpace);
             else if (std::holds_alternative<int>(val))
                 writeAttribute(
                     meta_group, key, &std::get<int>(val), H5::PredType::NATIVE_INT32, metaSpace);
