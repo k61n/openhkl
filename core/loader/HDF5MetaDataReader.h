@@ -17,6 +17,7 @@
 
 #include "core/raw/HDF5BloscFilter.h"
 #include "core/raw/IDataReader.h" // inherits from
+#include "core/raw/DataKeys.h"
 
 #include <H5Cpp.h>
 #include <string>
@@ -108,9 +109,8 @@ HDF5MetaDataReader<ReaderT>::HDF5MetaDataReader(
         sampleGroup = _file->openGroup("/" + _sampleKey(group_name));
 
         // TODO: Check consistency of the metadata
-        _metadata.add<std::string>("filename", filename);
-        _metadata.add<std::string>("real_path", filename);
-        _metadata.add<std::string>("group_name", group_name);
+        _metadata.add<std::string>(nsx::at_filepath, filename);
+        _metadata.add<std::string>(nsx::at_datasetName, group_name);
 
     } catch (H5::Exception& e) {
         std::string what = e.getDetailMsg();
@@ -132,8 +132,8 @@ HDF5MetaDataReader<ReaderT>::HDF5MetaDataReader(
 
         // TODO: check if this is still needed
         // override stored filename with the current one
-        if (attr.getName() == "filename") {
-            _metadata.add<std::string>("original_filename", value);
+        if (attr.getName() == "filename" || attr.getName() == "file_name") {
+            _metadata.add<std::string>(nsx::at_datasetSources, value);
             value = filename;
         }
         _metadata.add<std::string>(attr.getName(), value);
@@ -158,7 +158,7 @@ HDF5MetaDataReader<ReaderT>::HDF5MetaDataReader(
     }
 
     // TODO: npdone -> nr of frames
-    _nFrames = _metadata.key<int>("npdone");
+    _nFrames = _metadata.key<int>(nsx::at_framesNr);
 
     nsxlog(nsx::Level::Debug, "Reading detector state of", filename, ", group ", group_name);
 
@@ -185,7 +185,7 @@ HDF5MetaDataReader<ReaderT>::HDF5MetaDataReader(
                 if (dims[0] != _nFrames) {
                     throw std::runtime_error(
                         "Read HDF5, problem reading detector scan parameters, different "
-                        "array length to npdone");
+                        "array length to number of frames");
                 }
                 dset.read(&dm(i, 0), H5::PredType::NATIVE_DOUBLE, space, space);
             } catch (...) {
@@ -228,7 +228,7 @@ HDF5MetaDataReader<ReaderT>::HDF5MetaDataReader(
                 if (dims[0] != _nFrames) {
                     throw std::runtime_error(
                         "Read HDF5, problem reading sample scan parameters, different "
-                        "array length to npdone");
+                        "array length to number of frames");
                 }
                 dset.read(&dm(i, 0), H5::PredType::NATIVE_DOUBLE, space, space);
             } catch (...) {
@@ -259,7 +259,7 @@ void HDF5MetaDataReader<ReaderT>::open()
         return;
 
     try {
-        const std::string& filename = _metadata.key<std::string>("filename");
+        const std::string& filename = _metadata.key<std::string>(nsx::at_filepath);
         nsxlog(nsx::Level::Info, "Opening datafile ", filename, "for read-only access");
         _file.reset(new H5::H5File(filename.c_str(), H5F_ACC_RDONLY));
     } catch (...) {
@@ -273,7 +273,7 @@ void HDF5MetaDataReader<ReaderT>::open()
         // handled automatically by HDF5 blosc filter
         _blosc_filter.reset(new HDF5BloscFilter);
 
-        const std::string& group_name = _metadata.key<std::string>("group_name");
+        const std::string& group_name = _metadata.key<std::string>(nsx::at_datasetName);
         nsxlog(nsx::Level::Debug, "Reading data group", group_name);
         _dataset.reset(new H5::DataSet(_file->openDataSet("/" + _dataKey(group_name))));
         // Dataspace of the dataset /counts
@@ -305,7 +305,7 @@ void HDF5MetaDataReader<ReaderT>::close()
     if (!_isOpened)
         return;
 
-    nsxlog(nsx::Level::Info, "Closing datafile", _metadata.key<std::string>("filename"));
+    nsxlog(nsx::Level::Info, "Closing datafile", _metadata.key<std::string>(nsx::at_filepath));
 
     _file->close();
     _space->close();

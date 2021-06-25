@@ -21,6 +21,7 @@
 #include "core/loader/RawDataReader.h"
 #include "core/raw/IDataReader.h"
 #include "core/raw/MetaData.h"
+#include "core/raw/DataKeys.h"
 #include "gui/MainWin.h"
 #include "gui/dialogs/DataNameDialog.h"
 #include "gui/dialogs/RawDataDialog.h"
@@ -190,7 +191,7 @@ void Session::loadData(nsx::DataFormat format)
             const QStringList& datanames_pre{currentProject()->getDataNames()};
             const std::string dataname{askDataName(dataset_ptr->filename(), &datanames_pre)};
             // add the list of sources as metadata
-            dataset_ptr->metadata().add<std::string>("sources", filename.toStdString());
+            dataset_ptr->metadata().add<std::string>(nsx::at_datasetSources, filename.toStdString());
             exp->addData(dataset_ptr, dataname);
         } catch (const std::exception& ex) {
             QString msg = QString("Loading file(s) '") + filename + QString("' failed with error: ")
@@ -296,7 +297,7 @@ void Session::loadRawData()
         const QStringList& datanames_pre{currentProject()->getDataNames()};
         const std::string dataname{askDataName(dataset->filename(), &datanames_pre)};
         dataset->setName(dataname);
-        metadata.add("sources", nsx::join(filenames, ", "));
+        metadata.add(nsx::at_datasetSources, nsx::join(filenames, ", "));
         dataset->metadata().setMap(metadata.map());
 
         exp->addData(dataset, dataname);
@@ -336,7 +337,7 @@ void Session::onUnitCellChanged()
 
 void Session::loadExperimentFromFile(QString filename)
 {
-    createExperiment("default");
+    createExperiment(QString::fromStdString(nsx::kw_experimentName0));
     currentProject()->experiment()->loadFromFile(filename.toStdString());
     currentProject()->generatePeakModels();
     onExperimentChanged();

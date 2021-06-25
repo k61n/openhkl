@@ -16,6 +16,8 @@
 #include "base/utils/Logger.h"
 #include "core/data/DataSet.h"
 #include "core/instrument/Diffractometer.h"
+#include "core/raw/DataKeys.h"
+
 #include <iostream>
 
 namespace nsx {
@@ -23,7 +25,7 @@ namespace nsx {
 DataHandler::DataHandler(const std::string& name, const std::string& diffractometerName)
 {
     _diffractometer = nullptr;
-    if (!(diffractometerName == std::string("unknown_instrument")))
+    if (!(diffractometerName == std::string(nsx::kw_unknownInstrument)))
         _diffractometer.reset(Diffractometer::create(diffractometerName));
     _name = name;
 }
@@ -90,17 +92,17 @@ void DataHandler::addData(sptrDataSet data, std::string name)
 
     const auto& metadata = data->metadata();
 
-    const std::string diffName = metadata.key<std::string>("Instrument");
+    const std::string diffName = metadata.key<std::string>(nsx::at_diffractometer);
 
     if (!(diffName.compare(_diffractometer->name()) == 0)) {
         throw std::runtime_error("Mismatch between the diffractometer assigned to "
                                  "the experiment and the data");
     }
-    const double wav = metadata.key<double>("wavelength");
+    const double wav = metadata.key<double>(nsx::at_wavelength);
 
     // ensure that there is at least one monochromator!
     if (_diffractometer->source().nMonochromators() == 0) {
-        Monochromator mono("mono");
+        Monochromator mono(nsx::kw_monochromatorName0);
         _diffractometer->source().addMonochromator(mono);
     }
 

@@ -25,6 +25,7 @@
 #include "core/instrument/Sample.h"
 #include "core/instrument/Source.h"
 #include "core/experiment/ExperimentExporter.h"
+#include "core/raw/DataKeys.h"
 #include "base/utils/Logger.h"
 
 #include <H5Cpp.h>
@@ -43,11 +44,11 @@ DataSet::DataSet(std::shared_ptr<IDataReader> reader)
 {
     _nrows = detector().nRows();
     _ncols = detector().nCols();
-    _nFrames = _reader->metadata().key<int>("npdone");
+    _nFrames = _reader->metadata().key<int>(nsx::at_framesNr);
 
     _metadata.setMap(_reader->metadata().map());
 
-    double wav = _reader->metadata().key<double>("wavelength");
+    double wav = _reader->metadata().key<double>(nsx::at_wavelength);
     _reader->diffractometer()->source().selectedMonochromator().setWavelength(wav);
 
     // Getting Scan parameters for the detector

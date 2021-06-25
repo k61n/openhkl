@@ -21,6 +21,7 @@
 #include "core/instrument/Diffractometer.h"
 #include "core/instrument/Sample.h"
 #include "core/instrument/Source.h"
+#include "core/raw/DataKeys.h"
 
 #include <cassert>
 
@@ -36,7 +37,7 @@ IDataReader::IDataReader(const std::string& filename, Diffractometer* diffractom
     , _fileSize(0)
     , _isOpened(false)
 {
-    _metadata.add<std::string>("filename", filename);
+    _metadata.add<std::string>(nsx::at_filepath, filename);
 
     _nRows = _diffractometer->detector()->nRows();
     _nCols = _diffractometer->detector()->nCols();
@@ -109,12 +110,12 @@ InstrumentState IDataReader::state(size_t frame) const
 
 std::string IDataReader::basename() const
 {
-    return fileBasename(_metadata.key<std::string>("filename"));
+    return fileBasename(_metadata.key<std::string>(nsx::at_filepath));
 }
 
 std::string IDataReader::filename() const
 {
-    return _metadata.key<std::string>("filename");
+    return _metadata.key<std::string>(nsx::at_filepath);
 }
 
 bool IDataReader::isOpened() const
