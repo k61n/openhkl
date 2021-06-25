@@ -201,7 +201,7 @@ void writeMetadata(H5::H5File& file, const std::string& datakey, const nsx::Data
 // TODO: PeakCollection metadata is map<string, float> but used as map<string, int> !
 // TODO: Unify the metadata structure for all objects
 void writePeakMeta(
-    H5::H5File& file, const std::string& datakey, const PeakMeta& pmeta, const nsx::listtype type)
+    H5::H5File& file, const std::string& datakey, const PeakMeta& pmeta, const nsx::listtype peak_type)
 {
     const std::string metaKey = datakey + "/" + nsx::gr_Metadata; // TODO: Why different from Metadata?
 
@@ -218,8 +218,8 @@ void writePeakMeta(
         nsxlog(nsx::Level::Debug, "Exception in ", __PRETTY_FUNCTION__, ": ", ex.what());
     }
 
-    const int listtype_int = static_cast<int>(type);
-    writeAttribute(peak_meta_group, nsx::at_peakType, &listtype_int, H5::PredType::NATIVE_INT32, metaSpace);
+    const int peak_type_int = static_cast<int>(peak_type);
+    writeAttribute(peak_meta_group, nsx::at_peakType, &peak_type_int, H5::PredType::NATIVE_INT32, metaSpace);
 }
 
 void writePeakDataNames(
