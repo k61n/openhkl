@@ -38,22 +38,22 @@ void ShapeCollectionParameters::log(const Level& level) const
 {
     IntegrationParameters::log(level);
     nsxlog(level, "Shape Collection parameters:");
-    nsxlog(level, "d_min     =", d_min);
-    nsxlog(level, "d_max     =", d_max);
-    nsxlog(level, "strength_min           =", strength_min);
-    nsxlog(level, "kabsch_coords          =", kabsch_coords);
-    nsxlog(level, "nbins_x                =", nbins_x);
-    nsxlog(level, "nbins_y                =", nbins_y);
-    nsxlog(level, "nbins_z                =", nbins_z);
+    nsxlog(level, "d_min     = ", d_min);
+    nsxlog(level, "d_max     = ", d_max);
+    nsxlog(level, "strength_min           = ", strength_min);
+    nsxlog(level, "kabsch_coords          = ", kabsch_coords);
+    nsxlog(level, "nbins_x                = ", nbins_x);
+    nsxlog(level, "nbins_y                = ", nbins_y);
+    nsxlog(level, "nbins_z                = ", nbins_z);
 }
 
 void PredictionParameters::log(const Level& level) const
 {
     IntegrationParameters::log(level);
     nsxlog(level, "Peak prediction parameters:");
-    nsxlog(level, "d_min     =", d_min);
-    nsxlog(level, "d_max     =", d_max);
-    nsxlog(level, "min_n_neighbors        =", min_n_neighbors);
+    nsxlog(level, "d_min     = ", d_min);
+    nsxlog(level, "d_max     = ", d_max);
+    nsxlog(level, "min_n_neighbors        = ", min_n_neighbors);
 }
 
 static std::vector<Peak3D*> buildPeaksFromMillerIndices(

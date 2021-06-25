@@ -196,7 +196,7 @@ void writeMetaInfo(H5::H5File& file, const std::string& datakey, const nsx::Data
                     metaSpace);
         }
     } catch (const std::exception& ex) {
-        nsxlog(nsx::Level::Debug, "Exception in", __PRETTY_FUNCTION__, ":", ex.what());
+        nsxlog(nsx::Level::Debug, "Exception in ", __PRETTY_FUNCTION__, ": ", ex.what());
     }
 }
 
@@ -218,7 +218,7 @@ void writePeakMeta(
             writeAttribute(peak_meta_group, key, &val_int, H5::PredType::NATIVE_INT32, metaSpace);
         }
     } catch (const std::exception& ex) {
-        nsxlog(nsx::Level::Debug, "Exception in", __PRETTY_FUNCTION__, ":", ex.what());
+        nsxlog(nsx::Level::Debug, "Exception in ", __PRETTY_FUNCTION__, ": ", ex.what());
     }
 
     const int listtype_int = static_cast<int>(type);

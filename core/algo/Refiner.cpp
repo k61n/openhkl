@@ -33,13 +33,13 @@ void RefinerParameters::log(const Level& level) const
 {
     IntegrationParameters::log(level);
     nsxlog(level, "Refiner parameters:");
-    nsxlog(level, "nbatches               =", nbatches);
-    nsxlog(level, "max_iter               =", max_iter);
-    nsxlog(level, "refine_ub              =", refine_ub);
-    nsxlog(level, "refine_sample_position =", refine_sample_position);
-    nsxlog(level, "refine_sample_orientation =", refine_sample_orientation);
-    nsxlog(level, "refine_detector_offset =", refine_detector_offset);
-    nsxlog(level, "refine_ki              =", refine_ki);
+    nsxlog(level, "nbatches               = ", nbatches);
+    nsxlog(level, "max_iter               = ", max_iter);
+    nsxlog(level, "refine_ub              = ", refine_ub);
+    nsxlog(level, "refine_sample_position = ", refine_sample_position);
+    nsxlog(level, "refine_sample_orientation = ", refine_sample_orientation);
+    nsxlog(level, "refine_detector_offset = ", refine_detector_offset);
+    nsxlog(level, "refine_ki              = ", refine_ki);
 }
 
 Refiner::Refiner(
@@ -139,7 +139,7 @@ bool Refiner::refine(unsigned int max_iter)
     if (_params.refine_detector_offset)
         refineDetectorOffset();
 
-    nsxlog(Level::Info, "Refiner::refine:", _batches.size(), "batches");
+    nsxlog(Level::Info, "Refiner::refine: ", _batches.size(), "batches");
     if (_batches.empty())
         return false;
 
@@ -233,7 +233,7 @@ int Refiner::nframes() const
 void Refiner::logChange()
 {
     nsxlog(Level::Info, "Refinement succeeded");
-    nsxlog(Level::Info, "Original cell:", _unrefined_cell.toString());
+    nsxlog(Level::Info, "Original cell: ", _unrefined_cell.toString());
     nsxlog(Level::Info, "Batch/Refined cell(s):");
     for (const auto& batch : _batches) {
         nsxlog(Level::Info, batch.name(), batch.cell()->toString());
@@ -261,7 +261,7 @@ void Refiner::logChange()
     for (int i = 0; i < _states->size(); ++i) {
         Eigen::Matrix3d sample_orientation_change = _unrefined_states[i].sampleOrientationMatrix()
             - (*_states)[i].sampleOrientationMatrix();
-        nsxlog(Level::Info, i + 1, "\n", sample_orientation_change.transpose().format(vec3));
+        nsxlog(Level::Info, i + 1, "\n ", sample_orientation_change.transpose().format(vec3));
     }
 }
 

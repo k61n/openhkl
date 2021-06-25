@@ -380,14 +380,14 @@ void SubframeAutoIndexer::runAutoIndexer()
     try {
         expt->autoIndex(collection, _params);
     } catch (const std::exception& e) {
-        nsx::nsxlog(nsx::Level::Error, "Autoindexer:", e.what());
-        QMessageBox::critical(this, "Indexing Error", e.what());
+        nsx::nsxlog(nsx::Level::Error, "Autoindexer: ", e.what());
+        QMessageBox::critical(this, "Indexing Error ", e.what());
         return;
     }
 
     _solutions = auto_indexer->solutions();
     if (_solutions.empty())
-        QMessageBox::warning(this, "Warning", "No solution found.");
+        QMessageBox::warning(this, "Warning", "deod", "No solution found. ");
 
     buildSolutionsTable();
 
