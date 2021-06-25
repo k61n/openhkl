@@ -170,24 +170,20 @@ void writeSampleState(
 }
 
 
-void writeMetaInfo(H5::H5File& file, const std::string& datakey, const nsx::DataSet* const dataset)
+void writeMetadata(H5::H5File& file, const std::string& datakey, const nsx::DataSet* const dataset)
 {
     const H5::DataSpace metaSpace(H5S_SCALAR);
     const H5::StrType str80Type(H5::PredType::C_S1, 80); // TODO: Use strVarType
 
-    // Write all string metadata into the "Info" group
-    const std::string infoKey = datakey + "/Info";
-    // Write all other metadata (int and double) into the "Meta" Group
-    const std::string metaKey = datakey + "/Meta"; // TODO: Why different from Info?
-
-    H5::Group info_group = file.createGroup(infoKey);
+    // Write all metadata (string, int and double) into the "Metadata" Group
+    const std::string metaKey = datakey + "/" + nsx::gr_Metadata;
     H5::Group meta_group = file.createGroup(metaKey);
 
     try {
         for (const auto& [key, val] : dataset->metadata().map()) {
             if (std::holds_alternative<std::string>(val))
                 writeAttribute(
-                    info_group, key, (std::get<std::string>(val)).data(), str80Type, metaSpace);
+                    meta_group, key, (std::get<std::string>(val)).data(), str80Type, metaSpace);
             else if (std::holds_alternative<int>(val))
                 writeAttribute(
                     meta_group, key, &std::get<int>(val), H5::PredType::NATIVE_INT32, metaSpace);
@@ -201,7 +197,7 @@ void writeMetaInfo(H5::H5File& file, const std::string& datakey, const nsx::Data
     }
 }
 
-// TODO: Merge with writeMetaInfo
+// TODO: Merge with writeMetadata
 // TODO: PeakCollection metadata is map<string, float> but used as map<string, int> !
 // TODO: Unify the metadata structure for all objects
 void writePeakMeta(
@@ -333,7 +329,7 @@ void ExperimentExporter::writeData(const std::map<std::string, DataSet*> data)
 
         // Write all string metadata into the "Info" group
         // Write all other metadata (int and double) into the "Meta" Group
-        writeMetaInfo(file, datakey, data_item);
+        writeMetadata(file, datakey, data_item);
     }
 }
 
