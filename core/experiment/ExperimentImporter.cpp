@@ -18,34 +18,45 @@
 #include "core/data/DataSet.h"
 #include "core/data/DataTypes.h"
 #include "core/experiment/Experiment.h"
-#include "core/loader/ExperimentDataReader.h"
+#include "core/loader/HDF5DataReader.h"
 #include "core/peak/Intensity.h"
 #include "core/peak/Peak3D.h"
 #include "core/raw/IDataReader.h"
 #include <Eigen/Dense>
 
 #include "H5Cpp.h"
+#include <string>
 
 namespace nsx {
 
-void ExperimentImporter::setFilePath(std::string path, Experiment* experiment)
+void ExperimentImporter::setFilePath(const std::string path, Experiment* const experiment)
 {
+    nsxlog(nsx::Level::Debug, "Importing data from path", path);
+
     try {
         _file_name = path;
         H5::H5File file(_file_name.c_str(), H5F_ACC_RDONLY);
-
-        int num_att = file.getNumAttrs();
-        for (int i = 0; i < num_att; ++i) {
-            H5::Attribute attr = file.openAttribute(i);
-            H5::DataType attr_type = attr.getDataType();
+        if (file.attrExists("name")) {
+            const H5::Attribute attr = file.openAttribute("name");
+            const H5::DataType attr_type = attr.getDataType();
             std::string value;
             attr.read(attr_type, value);
-
-            if (attr.getName() == "name")
-                experiment->setName(value);
-            else if (attr.getName() == "diffractometer")
-                experiment->setDiffractometer(value);
+            experiment->setName(value);
         }
+
+        if (file.attrExists("diffractometer")) {
+            const H5::Attribute attr = file.openAttribute("diffractometer");
+            const H5::DataType attr_type = attr.getDataType();
+            std::string value;
+            attr.read(attr_type, value);
+            experiment->setDiffractometer(value);
+        }
+
+        nsxlog(
+            nsx::Level::Info, "Finished reading Experiment", "'" + experiment->name() + "'",
+            "with diffractometer", "'" + experiment->getDiffractometer()->name() + "'", "from path",
+            path);
+
     } catch (H5::Exception& e) {
         std::string what = e.getDetailMsg();
         throw std::runtime_error(what);
@@ -54,31 +65,35 @@ void ExperimentImporter::setFilePath(std::string path, Experiment* experiment)
 
 void ExperimentImporter::loadData(Experiment* experiment)
 {
+    nsxlog(nsx::Level::Debug, "Importing data from file", _file_name);
+
     try {
         H5::H5File file(_file_name.c_str(), H5F_ACC_RDONLY);
         H5::Group data_collections(file.openGroup("/DataCollections"));
 
         hsize_t object_num = data_collections.getNumObjs();
         for (int i = 0; i < object_num; ++i) {
-            auto reader = std::make_unique<nsx::ExperimentDataReader>(
-                _file_name, data_collections.getObjnameByIdx(i), experiment->getDiffractometer());
-            nsx::sptrDataSet data{new nsx::DataSet{std::move(reader)}};
-
             const std::string collection_name = data_collections.getObjnameByIdx(i);
-
+            auto reader = std::make_unique< nsx::HDF5DataReader<ExperimentReader> >(
+                _file_name, experiment->getDiffractometer(), collection_name);
+            nsx::sptrDataSet data{new nsx::DataSet{std::move(reader)}};
             experiment->addData(data, collection_name);
         }
     } catch (H5::Exception& e) {
         std::string what = e.getDetailMsg();
         throw std::runtime_error(what);
     }
+
+    nsxlog(nsx::Level::Debug, "Finished importing data from file", _file_name);
 }
 
 void ExperimentImporter::loadPeaks(Experiment* experiment)
 {
-    using Eigen_double = Eigen::Matrix<double, Eigen::Dynamic, Eigen::RowMajor>;
-    using Eigen_int = Eigen::Matrix<int, Eigen::Dynamic, Eigen::RowMajor>;
-    using Eigen_bool = Eigen::Matrix<bool, Eigen::Dynamic, Eigen::RowMajor>;
+    nsxlog(nsx::Level::Debug, "Importing peaks from file", _file_name);
+
+    using Eigen_VecXd = Eigen::Matrix<double, Eigen::Dynamic, Eigen::RowMajor>;
+    using Eigen_VecXint = Eigen::Matrix<int, Eigen::Dynamic, Eigen::RowMajor>;
+    using Eigen_VecXbool = Eigen::Matrix<bool, Eigen::Dynamic, Eigen::RowMajor>;
 
     try {
         H5::H5File file(_file_name.c_str(), H5F_ACC_RDONLY);
@@ -87,59 +102,65 @@ void ExperimentImporter::loadPeaks(Experiment* experiment)
         hsize_t object_num = peak_collections.getNumObjs();
         for (int i = 0; i < object_num; ++i) {
             const std::string collection_name = peak_collections.getObjnameByIdx(i);
-            H5::Group peak_collection(file.openGroup("/PeakCollections/" + collection_name));
+            const std::string collection_key = "/PeakCollections/" + collection_name;
+            H5::Group peak_collection(file.openGroup(collection_key));
 
-            H5::Group peak_collection_meta(
-                file.openGroup("/PeakCollections/" + collection_name + "/Meta"));
+            H5::Group peak_collection_meta(file.openGroup(collection_key + "/Meta"));
             // Read the info group and store in metadata
-            int n_meta = peak_collection_meta.getNumAttrs();
             int n_peaks = 0;
             int type = 0;
-            for (int j = 0; j < n_meta; ++j) {
-                H5::Attribute attr = peak_collection_meta.openAttribute(j);
-                H5::DataType typ = attr.getDataType();
-                if (attr.getName() == "num_peaks")
-                    attr.read(typ, &n_peaks);
-                if (attr.getName() == "Type")
-                    attr.read(typ, &type);
+
+            if (peak_collection_meta.attrExists("num_peaks")) {
+                const H5::Attribute attr = peak_collection_meta.openAttribute("num_peaks");
+                const H5::DataType attr_type = attr.getDataType();
+                attr.read(attr_type, &n_peaks);
             }
+
+            if (peak_collection_meta.attrExists("Type")) {
+                const H5::Attribute attr = peak_collection_meta.openAttribute("Type");
+                const H5::DataType attr_type = attr.getDataType();
+                attr.read(attr_type, &type);
+            }
+
             nsxlog(Level::Debug, "ExperimentImporter::loadPeaks: found", n_peaks, "to import");
             nsxlog(Level::Debug, "Preparing the dataspace");
             // prepare the loading
-            Eigen_double bkg_begin(n_peaks);
-            Eigen_double bkg_end(n_peaks);
-            Eigen_double peak_end(n_peaks);
-            Eigen_double scale(n_peaks);
-            Eigen_double transmission(n_peaks);
-            Eigen_double intensity(n_peaks);
-            Eigen_double sigma(n_peaks);
-            Eigen_double mean_bkg_val(n_peaks);
-            Eigen_double mean_bkg_sig(n_peaks);
+            Eigen_VecXd bkg_begin(n_peaks);
+            Eigen_VecXd bkg_end(n_peaks);
+            Eigen_VecXd peak_end(n_peaks);
+            Eigen_VecXd scale(n_peaks);
+            Eigen_VecXd transmission(n_peaks);
+            Eigen_VecXd intensity(n_peaks);
+            Eigen_VecXd sigma(n_peaks);
+            Eigen_VecXd mean_bkg_val(n_peaks);
+            Eigen_VecXd mean_bkg_sig(n_peaks);
 
-            Eigen_int rejection_flag(n_peaks);
+            Eigen_VecXint rejection_flag(n_peaks);
 
-            std::map<std::string, Eigen_double*> double_keys;
-            double_keys.insert(std::make_pair("BkgBegin", &bkg_begin));
-            double_keys.insert(std::make_pair("BkgEnd", &bkg_end));
-            double_keys.insert(std::make_pair("PeakEnd", &peak_end));
-            double_keys.insert(std::make_pair("Scale", &scale));
-            double_keys.insert(std::make_pair("Transmission", &transmission));
-            double_keys.insert(std::make_pair("Intensity", &intensity));
-            double_keys.insert(std::make_pair("Sigma", &sigma));
-            double_keys.insert(std::make_pair("BkgIntensity", &mean_bkg_val));
-            double_keys.insert(std::make_pair("BkgSigma", &mean_bkg_sig));
+            std::map<std::string, Eigen_VecXd*> double_keys {
+                 {"BkgBegin", &bkg_begin},
+                 {"BkgEnd", &bkg_end},
+                 {"PeakEnd", &peak_end},
+                 {"Scale", &scale},
+                 {"Transmission", &transmission},
+                 {"Intensity", &intensity},
+                 {"Sigma", &sigma},
+                 {"BkgIntensity", &mean_bkg_val},
+                 {"BkgSigma", &mean_bkg_sig}
+            };
 
-            std::map<std::string, Eigen_int*> int_keys;
-            int_keys.insert(std::make_pair("Rejection", &rejection_flag));
+            std::map<std::string, Eigen_VecXint*> int_keys {{"Rejection", &rejection_flag}};
 
-            Eigen_bool predicted(n_peaks);
-            Eigen_bool masked(n_peaks);
-            Eigen_bool selected(n_peaks);
+            Eigen_VecXbool predicted(n_peaks);
+            Eigen_VecXbool masked(n_peaks);
+            Eigen_VecXbool selected(n_peaks);
 
-            std::map<std::string, Eigen_bool*> bool_keys;
-            bool_keys.insert(std::make_pair("Predicted", &predicted));
-            bool_keys.insert(std::make_pair("Masked", &masked));
-            bool_keys.insert(std::make_pair("Selected", &selected));
+            std::map<std::string, Eigen_VecXbool*> bool_keys
+                {
+                 {"Predicted", &predicted},
+                 {"Masked", &masked},
+                 {"Selected", &selected}
+                };
 
             Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor> center(
                 n_peaks, 3);
@@ -149,35 +170,31 @@ void ExperimentImporter::loadPeaks(Experiment* experiment)
             std::vector<std::string> data_names;
             std::vector<std::string> unit_cells;
 
-            nsxlog(Level::Debug, "Loading doubles");
+            nsxlog(Level::Debug, "Importing doubles");
             // Load all doubles
-            for (std::map<std::string, Eigen_double*>::iterator it = double_keys.begin();
-                 it != double_keys.end(); it++) {
-                H5::DataSet data_set = peak_collection.openDataSet(it->first);
+            for (const auto& [key, val] : double_keys) {
+                H5::DataSet data_set = peak_collection.openDataSet(key);
                 H5::DataSpace space(data_set.getSpace());
-                data_set.read(it->second->data(), H5::PredType::NATIVE_DOUBLE, space, space);
-            }
+                data_set.read(val->data(), H5::PredType::NATIVE_DOUBLE, space, space);
+            };
 
-            nsxlog(Level::Debug, "Loading integers");
+            nsxlog(Level::Debug, "Importing integers");
             // Load all ints
-            for (std::map<std::string, Eigen_int*>::iterator it = int_keys.begin();
-                 it != int_keys.end(); it++) {
-                H5::DataSet data_set = peak_collection.openDataSet(it->first);
+            for (const auto& [key, val] : int_keys) {
+                H5::DataSet data_set = peak_collection.openDataSet(key);
                 H5::DataSpace space(data_set.getSpace());
-                data_set.read(it->second->data(), H5::PredType::NATIVE_INT, space, space);
+                data_set.read(val->data(), H5::PredType::NATIVE_INT, space, space);
             }
 
-            nsxlog(Level::Debug, "Loading booleans");
+            nsxlog(Level::Debug, "Importing booleans");
             // Load all booleans
-            for (std::map<std::string, Eigen_bool*>::iterator it = bool_keys.begin();
-                 it != bool_keys.end(); it++) {
-                H5::DataSet data_set = peak_collection.openDataSet(it->first);
+            for (const auto& [key, val] : bool_keys) {
+                H5::DataSet data_set = peak_collection.openDataSet(key);
                 H5::DataSpace space(data_set.getSpace());
-                Eigen_bool* item = it->second;
-                data_set.read(item->data(), H5::PredType::NATIVE_HBOOL, space, space);
+                data_set.read(val->data(), H5::PredType::NATIVE_HBOOL, space, space);
             }
 
-            nsxlog(Level::Debug, "Loading centers");
+            nsxlog(Level::Debug, "Importing centers");
             // Load the centers
             {
                 H5::DataSet data_set = peak_collection.openDataSet("Center");
@@ -185,7 +202,7 @@ void ExperimentImporter::loadPeaks(Experiment* experiment)
                 data_set.read(center.data(), H5::PredType::NATIVE_DOUBLE, space, space);
             }
 
-            nsxlog(Level::Debug, "Loading metric");
+            nsxlog(Level::Debug, "Importing metric");
             // Load the metrics
             {
                 H5::DataSet data_set = peak_collection.openDataSet("Metric");
@@ -193,53 +210,47 @@ void ExperimentImporter::loadPeaks(Experiment* experiment)
                 data_set.read(metric.data(), H5::PredType::NATIVE_DOUBLE, space, space);
             }
 
-            nsxlog(Level::Debug, "Loading DataSet names");
+            nsxlog(Level::Debug, "Importing DataSet names");
             // Load the data_names
             {
                 H5::DataSet data_set = peak_collection.openDataSet("DataNames");
                 H5::DataType data_type = data_set.getDataType();
                 H5::DataSpace space(data_set.getSpace());
 
-                hsize_t data_dims_out[2];
+                hsize_t data_dims_out[1];
                 space.getSimpleExtentDims(data_dims_out, nullptr);
+                const hsize_t dataset_nr = data_dims_out[0]; // nr of datasets
 
-                char** char_data_names = new char*[data_dims_out[0]];
-                data_set.read((void*)char_data_names, data_type);
+                std::unique_ptr<char* []> char_data_names { new char*[dataset_nr] };
+                data_set.read(char_data_names.get(), data_type);
 
-                for (int ii = 0; ii < data_dims_out[0]; ++ii) {
-                    std::string text;
-                    for (int jj = 0; jj < strlen(char_data_names[ii]); ++jj)
-                        text.append(std::string(1, char_data_names[ii][jj]));
-                    data_names.push_back(text);
+                for (std::size_t ii = 0; ii < dataset_nr; ++ii) {
+                    const std::string dataset_name{char_data_names[ii]};
+                    data_names.push_back(dataset_name);
                 }
-
-                delete[] char_data_names;
             }
 
-            nsxlog(Level::Debug, "Loading UnitCell names");
+            nsxlog(Level::Debug, "Importing UnitCell names");
             // Load the unit cell strings
             {
                 H5::DataSet uc_data_set = peak_collection.openDataSet("UnitCells");
                 H5::DataType uc_data_type = uc_data_set.getDataType();
                 H5::DataSpace uc_space = uc_data_set.getSpace();
 
-                hsize_t uc_dims_out[2];
+                hsize_t uc_dims_out[1];
                 uc_space.getSimpleExtentDims(uc_dims_out, nullptr);
+                const hsize_t uc_nr = uc_dims_out[0]; // nr of unit cells
 
-                char** char_unit_cells = new char*[uc_dims_out[0]];
-                uc_data_set.read((void*)char_unit_cells, uc_data_type);
+                std::unique_ptr<char* []> char_unit_cells { new char*[uc_nr] };
+                uc_data_set.read(char_unit_cells.get(), uc_data_type);
 
-                for (int ii = 0; ii < uc_dims_out[0]; ++ii) {
-                    std::string text;
-                    for (int jj = 0; jj < strlen(char_unit_cells[ii]); ++jj)
-                        text.append(std::string(1, char_unit_cells[ii][jj]));
-                    unit_cells.push_back(text);
+                for (int ii = 0; ii < uc_nr; ++ii) {
+                    const std::string uc_name{char_unit_cells[ii]};
+                    unit_cells.push_back(uc_name);
                 }
-
-                delete[] char_unit_cells;
             }
 
-            nsxlog(Level::Debug, "Finished reading data from file");
+            nsxlog(Level::Debug, "Finished reading peak data from file", _file_name);
             nsxlog(Level::Debug, "Creating the vector of peaks");
             std::vector<nsx::Peak3D*> peaks;
 
@@ -273,7 +284,7 @@ void ExperimentImporter::loadPeaks(Experiment* experiment)
             listtype collection_type = static_cast<listtype>(type);
             experiment->addPeakCollection(collection_name, collection_type, peaks);
 
-            nsxlog(Level::Debug, "Created the peak collection");
+            nsxlog(Level::Debug, "Finished creating the peak collection");
         }
     } catch (H5::Exception& e) {
         throw std::runtime_error{e.getDetailMsg()};
@@ -282,6 +293,8 @@ void ExperimentImporter::loadPeaks(Experiment* experiment)
 
 void ExperimentImporter::loadUnitCells(Experiment* experiment)
 {
+    nsxlog(Level::Debug, "Importing unit cells from file", _file_name);
+
     try {
         H5::H5File file(_file_name.c_str(), H5F_ACC_RDONLY);
         H5::Group unit_cells(file.openGroup("/UnitCells"));
@@ -310,33 +323,32 @@ void ExperimentImporter::loadUnitCells(Experiment* experiment)
             for (int j = 0; j < n_meta; ++j) {
                 H5::Attribute attr = unit_cell.openAttribute(j);
                 H5::DataType typ = attr.getDataType();
-
-                if (attr.getName() == "rec_00")
+                const std::string attr_name = attr.getName();
+                if (attr_name == "rec_00")
                     attr.read(typ, &rec_00);
-                if (attr.getName() == "rec_01")
+                else if (attr_name == "rec_01")
                     attr.read(typ, &rec_01);
-                if (attr.getName() == "rec_02")
+                else if (attr_name == "rec_02")
                     attr.read(typ, &rec_02);
-                if (attr.getName() == "rec_10")
+                else if (attr_name == "rec_10")
                     attr.read(typ, &rec_10);
-                if (attr.getName() == "rec_11")
+                else if (attr_name == "rec_11")
                     attr.read(typ, &rec_11);
-                if (attr.getName() == "rec_12")
+                else if (attr_name == "rec_12")
                     attr.read(typ, &rec_12);
-                if (attr.getName() == "rec_20")
+                else if (attr_name == "rec_20")
                     attr.read(typ, &rec_20);
-                if (attr.getName() == "rec_21")
+                else if (attr_name == "rec_21")
                     attr.read(typ, &rec_21);
-                if (attr.getName() == "rec_22")
+                else if (attr_name == "rec_22")
                     attr.read(typ, &rec_22);
-
-                if (attr.getName() == "indexing_tolerance")
+                else if (attr_name == "indexing_tolerance")
                     attr.read(typ, &indexing_tolerance);
-                if (attr.getName() == "bravais")
+                else if (attr_name == "bravais")
                     attr.read(typ, bravais);
-                if (attr.getName() == "space_group")
+                else if (attr_name == "space_group")
                     attr.read(typ, space_group);
-                if (attr.getName() == "z")
+                else if (attr_name == "z")
                     attr.read(typ, &z);
             }
 
@@ -356,8 +368,10 @@ void ExperimentImporter::loadUnitCells(Experiment* experiment)
         std::string what = e.getDetailMsg();
         throw std::runtime_error(what);
     }
+
+    nsxlog(Level::Debug, "Finished importing unit cells from file", _file_name);
 }
 
-void ExperimentImporter::finishLoad() { }
+void ExperimentImporter::finishLoad() {}
 
 } // namespace nsx

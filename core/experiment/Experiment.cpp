@@ -324,11 +324,6 @@ DataList Experiment::getAllData()
     return _data_handler->getAllData();
 }
 
-sptrDataSet Experiment::dataShortName(const std::string& name)
-{
-    return _data_handler->dataShortName(name);
-}
-
 int Experiment::numData() const
 {
     return _data_handler->numData();

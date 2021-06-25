@@ -118,15 +118,6 @@ void DataHandler::addData(sptrDataSet data, std::string name)
     _data_map.insert(std::make_pair(name, data));
 }
 
-sptrDataSet DataHandler::dataShortName(std::string name) const
-{
-    for (DataMap::const_iterator it = _data_map.begin(); it != _data_map.end(); ++it) {
-        if (it->second->name() == name)
-            return it->second;
-    }
-    throw std::runtime_error("The data " + name + " could not be found in the experiment " + _name);
-}
-
 int DataHandler::numData() const
 {
     return _data_map.size();
