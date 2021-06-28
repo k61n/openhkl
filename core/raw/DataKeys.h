@@ -96,6 +96,19 @@ const std::string ax_omega { "omega" };
 const std::string ax_chi { "chi" };
 const std::string ax_phi { "phi" };
 
+//-- YAML keywords
+const std::string ym_instrument { "instrument" };
+const std::string ym_monochromator { "monochromator" };
+const std::string ym_instrumentName { "name" };
+const std::string ym_detector { "detector" };
+const std::string ym_sample { "sample" };
+const std::string ym_source { "source" };
+const std::string ym_units { "units" };
+const std::string ym_value { "value" };
+const std::string ym_width { "width" };
+const std::string ym_height { "height" };
+const std::string ym_fwhm { "fwhm" };
+const std::string ym_wavelength { "wavelength" };
 
 } // namespace nsx
 
