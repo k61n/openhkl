@@ -14,7 +14,8 @@
 
 #include "core/experiment/ExperimentExporter.h"
 
-#include "base/parser/BloscFilter.h"
+
+#include "core/raw/HDF5BloscFilter.h"
 #include "base/utils/Logger.h"
 #include "base/utils/Units.h" // deg
 #include "core/data/DataSet.h"
@@ -48,65 +49,6 @@ using statesVec = std::vector< std::vector<double> >;
 
 // Peak metadata type
 using PeakMeta = std::map<std::string, float>;
-
-
-// TODO: Move BloscFilter to a separate file
-// Initialize, configure and release the Blosc filter
-class BloscFilter {
-
- public:
-    //! Speed/compression for diffraction data; 0 to 3 (inclusive) param slots are reserved.
-    unsigned int cd_values[7];
-
-    BloscFilter()
-    {
-        blosc_init();
-        _init_success = true;
-        blosc_set_nthreads(_nthreads);
-        _register();
-
-        // speed/compression for diffraction data
-        cd_values[4] = 9; // Highest compression level
-        cd_values[5] = 1; // Bit shuffling active; 0: shuffle not active, 1: shuffle active
-        cd_values[6] =
-            BLOSC_BLOSCLZ; // Actual compressor to use: BLOSC seem to be the best compromise
-    }
-
-    ~BloscFilter()
-    {
-        if (_version)
-            free(_version);
-        if (_date)
-            free(_date);
-        if (_init_success)
-            blosc_destroy();
-    }
-
- private:
-    char* _version = nullptr;
-    char* _date = nullptr;
-    bool _init_success = false;
-    const std::size_t _nthreads = 4;
-
-    //! Register BLOSC
-    void _register()
-    {
-        const int register_status = register_blosc(&_version, &_date);
-        if (register_status <= 0)
-            throw std::runtime_error("Problem registering BLOSC filter in HDF5 library");
-
-        /* NOTE:
-           BLOSC register_status stores the version and the date with `strdup`
-           *version = strdup(BLOSC_VERSION_STRING);
-           *date = strdup(BLOSC_VERSION_DATE);
-
-           Therefore version and date must be freed afterwards.
-        */
-        free(_version);
-        free(_date);
-        _version = _date = nullptr;
-    }
-};
 
 // write functions
 inline void writeAttribute(
@@ -243,7 +185,7 @@ void writeFrames(
     H5::H5File& file, const std::string& dataCollectionsKey,
     const std::map<std::string, nsx::DataSet*> data)
 {
-    BloscFilter blosc_filter;
+    nsx::HDF5BloscFilter blosc_filter;
 
     using RowMatrixXi = Eigen::Matrix<int, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>;
     file.createGroup(dataCollectionsKey);
