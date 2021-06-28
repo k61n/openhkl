@@ -23,7 +23,7 @@ matrix, or variance/covariance matrix.
 .. math::
 
    \begin{aligned}
-   C = \frac{1}{m_0}M_2 - \frac{1}{m_0}\mathbf{m}_1}
+   C = \frac{1}{m_0}M_2 - \frac{1}{m_0}\mathbf{m}_1
    \end{aligned}
 
 The metric tensor of the ellipsoid :math:`A` d is then the inverse of
