@@ -251,7 +251,7 @@ void HDF5MetaDataReader<ReaderT>::open()
 
     try {
         const std::string& filename = _metadata.key<std::string>(nsx::at_filepath);
-        nsxlog(nsx::Level::Info, "Opening datafile ", filename, "for read-only access");
+        nsxlog(nsx::Level::Info, "Opening datafile '", filename, "' for read-only access");
         _file.reset(new H5::H5File(filename.c_str(), H5F_ACC_RDONLY));
     } catch (...) {
         if (_file)
@@ -265,7 +265,7 @@ void HDF5MetaDataReader<ReaderT>::open()
         _blosc_filter.reset(new HDF5BloscFilter);
 
         const std::string& dataset_name = _metadata.key<std::string>(nsx::at_datasetName);
-        nsxlog(nsx::Level::Debug, "Reading dataset '", dataset_name, ",");
+        nsxlog(nsx::Level::Debug, "Reading dataset '", dataset_name, "',");
         _dataset.reset(new H5::DataSet(_file->openDataSet("/" + _dataKey(dataset_name))));
         // Dataspace of the dataset /counts
         _space.reset(new H5::DataSpace(_dataset->getSpace()));
@@ -282,7 +282,7 @@ void HDF5MetaDataReader<ReaderT>::open()
     _nRows = dims[1];
     _nCols = dims[2];
 
-    nsxlog(nsx::Level::Info, "Data shape: (frames =", _nFrames, ", rows =", _nRows, ", columns = ", _nCols, ")");
+    nsxlog(nsx::Level::Info, "Data shape: (frames = ", _nFrames, ", rows = ", _nRows, ", columns = ", _nCols, ")");
 
     // Size of one hyperslab
     const hsize_t count_1frm[3] = {1, _nRows, _nCols};
@@ -296,7 +296,7 @@ void HDF5MetaDataReader<ReaderT>::close()
     if (!_isOpened)
         return;
 
-    nsxlog(nsx::Level::Info, "Closing datafile", _metadata.key<std::string>(nsx::at_filepath));
+    nsxlog(nsx::Level::Info, "Closing datafile '", _metadata.key<std::string>(nsx::at_filepath), "'");
 
     _file->close();
     _space->close();
