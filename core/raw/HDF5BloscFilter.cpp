@@ -13,12 +13,9 @@
 //  ***********************************************************************************************
 
 #include "core/raw/HDF5BloscFilter.h"
-
-#include "base/parser/BloscFilter.h"
 #include "base/utils/Logger.h"
 
 #include <stdexcept>
-
 
 namespace nsx {
 
