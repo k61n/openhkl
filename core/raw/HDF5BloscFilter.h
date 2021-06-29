@@ -20,7 +20,7 @@
 namespace nsx {
 
 /* usage:
-   # include "H5Cpp.h"
+   # include <H5Cpp.h>
    ...
    HDF5BloscFilter blosc_filter;
    H5::DSetCreatPropList plist;
