@@ -114,7 +114,7 @@ class ShapeCollection {
 
     //! Set the peak shapes for a peak collection
     void setPredictedShapes(
-        PeakCollection* peaks, const UnitCell* unit_cell, PeakInterpolation interpolation,
+        PeakCollection* peaks, PeakInterpolation interpolation,
         sptrProgressHandler handler = nullptr);
 
     //! Returns the peak scale used for the collection

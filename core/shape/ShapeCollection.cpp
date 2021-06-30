@@ -404,8 +404,7 @@ std::vector<Peak3D*> ShapeCollection::findNeighbors(
 }
 
 void ShapeCollection::setPredictedShapes(
-    PeakCollection* peaks, const UnitCell* unit_cell, PeakInterpolation interpolation,
-    sptrProgressHandler handler)
+    PeakCollection* peaks, PeakInterpolation interpolation, sptrProgressHandler handler)
 {
     nsxlog(
         Level::Info, "predictPeaks: Computing shapes of", peaks->numberOfPeaks(),
@@ -414,13 +413,12 @@ void ShapeCollection::setPredictedShapes(
     int count = 0;
     int npeaks = peaks->numberOfPeaks();
     std::ostringstream oss;
-    oss << "Predicting " << npeaks << " peaks";
+    oss << "Computing shapes of " << npeaks << " peaks";
     if (handler) {
         handler->setStatus(oss.str().c_str());
         handler->setProgress(0);
     }
     for (auto peak : peaks->getPeakList()) {
-        peak->setUnitCell(unit_cell);
         peak->setPredicted(true);
         peak->setSelected(true);
 

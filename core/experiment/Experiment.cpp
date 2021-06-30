@@ -241,7 +241,7 @@ void Experiment::predictPeaks(
             " peaks");
 
         addPeakCollection(name, listtype::PREDICTED, predicted_peaks);
-        shape_collection->setPredictedShapes(getPeakCollection(name), accepted_cell, interpol);
+        shape_collection->setPredictedShapes(getPeakCollection(name), interpol);
         predicted_peaks.clear();
     }
 }

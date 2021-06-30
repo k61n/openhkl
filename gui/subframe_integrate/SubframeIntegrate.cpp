@@ -65,7 +65,7 @@ void SubframeIntegrate::setInputUp()
 
     _exp_combo = f.addCombo("Experiment");
     _data_combo = f.addCombo("Data set");
-    _peak_combo = f.addCombo("Found peaks");
+    _peak_combo = f.addCombo("Found peaks", "Used to build shape collection");
     _int_peak_combo = f.addCombo("Peaks to integrate");
 
     connect(
@@ -298,6 +298,11 @@ void SubframeIntegrate::setIntegrateUp()
     _n_frames_int =
         f.addDoubleSpinBox("N. of frames:", "(frames) - neighbour search radius in frames");
 
+    _min_neighbours = f.addSpinBox(
+        "Min. neighbours", "Minimum number of neighbouring shapes to predict peak shape");
+
+    _interpolation_combo = f.addCombo("Interpolation", "Interpolation type for peak shape");
+
     _integrate = f.addButton("Integrate peaks");
 
     // -- Initialize controls
@@ -306,6 +311,10 @@ void SubframeIntegrate::setIntegrateUp()
     _integrator_combo->addItem("I/Sigma integrator");
     _integrator_combo->addItem("1d profile integrator");
     _integrator_combo->addItem("3d profile integrator");
+
+    _interpolation_combo->addItem("None");
+    _interpolation_combo->addItem("Inverse distance");
+    _interpolation_combo->addItem("Intensity");
 
     _fit_center->setChecked(_integration_params.fit_center);
 
@@ -330,6 +339,9 @@ void SubframeIntegrate::setIntegrateUp()
     _n_frames_int->setMaximum(100000);
     _n_frames_int->setDecimals(2);
     _n_frames_int->setValue(_integration_params.neighbour_range_frames);
+
+    _min_neighbours->setMaximum(100000);
+    _min_neighbours->setValue(_integration_params.min_neighbors);
 
     connect(_integrate, &QPushButton::clicked, this, &SubframeIntegrate::runIntegration);
     connect(build_shape_lib, &QPushButton::clicked, this, &SubframeIntegrate::openShapeBuilder);
@@ -389,6 +401,9 @@ void SubframeIntegrate::runIntegration()
         nsx::ShapeCollection* shapes =
             expt->getPeakCollection(_peak_combo->currentText().toStdString())->shapeCollection();
 
+        int interpol = _interpolation_combo->currentIndex();
+        nsx::PeakInterpolation peak_interpolation = static_cast<nsx::PeakInterpolation>(interpol);
+
         _integration_params.peak_end = _peak_end->value();
         _integration_params.bkg_begin = _bkg_begin->value();
         _integration_params.bkg_end = _bkg_end->value();
@@ -396,7 +411,9 @@ void SubframeIntegrate::runIntegration()
         _integration_params.neighbour_range_frames = _n_frames_int->value();
         _integration_params.fit_center = _fit_center->isChecked();
         _integration_params.fit_cov = _fit_covariance->isChecked();
+        _integration_params.min_neighbors = _min_neighbours->value();
 
+        shapes->setPredictedShapes(peaks_to_integrate, peak_interpolation, handler);
         integrator->setHandler(handler);
         expt->integratePeaks(integrator, peaks_to_integrate, &_integration_params, shapes);
     } catch (std::exception& e) {
@@ -437,8 +454,16 @@ void SubframeIntegrate::refreshShapeStatus()
 
     if (_integrator_combo->currentText().toStdString() == "Pixel sum integrator") {
         _integrate->setEnabled(true);
+        _interpolation_combo->setEnabled(false);
+        _radius_int->setEnabled(false);
+        _n_frames_int->setEnabled(false);
+        _min_neighbours->setEnabled(false);
     } else {
         _integrate->setEnabled(shape_collection_present);
+        _interpolation_combo->setEnabled(true);
+        _radius_int->setEnabled(true);
+        _n_frames_int->setEnabled(true);
+        _min_neighbours->setEnabled(true);
     }
 }
 

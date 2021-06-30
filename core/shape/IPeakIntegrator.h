@@ -35,6 +35,7 @@ struct IntegrationParameters {
     double neighbour_range_frames = 10.0; //!< Search radius for neighbouring peaks (frames)
     bool fit_center = true; //!< Whether to update the peak centre after integration
     bool fit_cov = true; //!< Whether to update the peak covariance after integration
+    int min_neighbors = 10; //!< Minimum number of neighbouring shapes for predicted shape
 
     void log(const Level& level) const;
 };
