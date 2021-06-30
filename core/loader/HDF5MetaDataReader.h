@@ -122,7 +122,34 @@ HDF5MetaDataReader<ReaderT>::HDF5MetaDataReader
         detectorGroup = _file->openGroup("/" + _detectorKey(dataset_name));
         sampleGroup = _file->openGroup("/" + _sampleKey(dataset_name));
 
-        // TODO: Check consistency of the metadata
+        // read the name of the experiment and diffractometer
+        std::string experiment_name = "", diffractometer_name = "", version_str = "";
+
+        if (_file->attrExists(nsx::at_experiment)) {
+            const H5::Attribute attr =  _file->openAttribute(nsx::at_experiment);
+            const H5::DataType attr_type = attr.getDataType();
+            attr.read(attr_type, experiment_name);
+        }
+
+        if (_file->attrExists(nsx::at_diffractometer)) {
+            const H5::Attribute attr = _file->openAttribute(nsx::at_diffractometer);
+            const H5::DataType attr_type = attr.getDataType();
+            attr.read(attr_type, diffractometer_name);
+        }
+
+        if (_file->attrExists(nsx::at_formatVersion)) {
+            const H5::Attribute attr = _file->openAttribute(nsx::at_formatVersion);
+            const H5::DataType attr_type = attr.getDataType();
+            attr.read(attr_type, version_str);
+        }
+
+        // store the attributes in the metadata
+        _metadata.add<std::string>(nsx::at_experiment,
+                                   experiment_name.empty()? nsx::kw_experimentName0 : experiment_name);
+        _metadata.add<std::string>(nsx::at_diffractometer,
+                                   diffractometer_name.empty()? nsx::kw_diffractometerName0 : diffractometer_name);
+        _metadata.add<std::string>(nsx::at_formatVersion,
+                                   version_str);
         _metadata.add<std::string>(nsx::at_filepath, filename);
         _metadata.add<std::string>(nsx::at_datasetName, dataset_name);
 
