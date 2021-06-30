@@ -167,10 +167,10 @@ void PeakCollection::checkCollection() const
             ++n_nan;
         }
     }
-    nsxlog(Level::Info, "PeakCollection::checkCollection: peak collection ", _name, "contains:");
-    nsxlog(Level::Info, numberOfPeaks(), "peaks");
-    nsxlog(Level::Info, n_nan, "peaks with intensity NaN");
-    nsxlog(Level::Info, n_zero, "peaks with intensity zero");
+    nsxlog(Level::Info, "PeakCollection::checkCollection: peak collection '" + _name + "' contains:");
+    nsxlog(Level::Info, numberOfPeaks(), " peaks");
+    nsxlog(Level::Info, n_nan, " peaks with intensity NaN");
+    nsxlog(Level::Info, n_zero, " peaks with intensity zero");
 }
 
 void PeakCollection::computeSigmas()
@@ -192,7 +192,7 @@ void PeakCollection::computeSigmas()
     _sigma_m = std::sqrt(cov(2, 2));
     nsxlog(
         Level::Info, "PeakCollection::computeSigmas: Beam divergence sigma and mosaicity sigma:");
-    nsxlog(Level::Info, "PeakCollection: ", _name);
+    nsxlog(Level::Info, "PeakCollection: '" + _name + "'");
     nsxlog(Level::Info, "sigma_d = ", _sigma_d);
     nsxlog(Level::Info, "sigma_m = ", _sigma_m);
 }
