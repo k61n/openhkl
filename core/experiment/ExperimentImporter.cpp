@@ -73,7 +73,7 @@ void ExperimentImporter::loadData(Experiment* experiment)
         hsize_t object_num = data_collections.getNumObjs();
         for (int i = 0; i < object_num; ++i) {
             const std::string collection_name = data_collections.getObjnameByIdx(i);
-            auto reader = std::make_unique< nsx::HDF5DataReader<ExperimentReader> >(
+            auto reader = std::make_unique<nsx::HDF5DataReader>(
                 _file_name, experiment->getDiffractometer(), collection_name);
             nsx::sptrDataSet data{new nsx::DataSet{std::move(reader)}};
             experiment->addData(data, collection_name);

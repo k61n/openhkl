@@ -15,17 +15,15 @@
 #ifndef NSX_CORE_LOADER_HDF5DATAREADER_H
 #define NSX_CORE_LOADER_HDF5DATAREADER_H
 
-#include "base/utils/Logger.h"
-#include "core/instrument/Diffractometer.h"
 #include "core/loader/HDF5MetaDataReader.h" // inherits from
+#include "core/instrument/Diffractometer.h"
 #include "core/raw/DataKeys.h" // kw_datasetName0
 
 
 namespace nsx {
 
 //! Read data from HDF5 format.
-template <HDF5ReaderType ReaderT>
-class HDF5DataReader : public HDF5MetaDataReader<ReaderT> {
+class HDF5DataReader : public HDF5MetaDataReader {
  public:
     HDF5DataReader() = delete;
 
@@ -41,37 +39,6 @@ class HDF5DataReader : public HDF5MetaDataReader<ReaderT> {
 
     Eigen::MatrixXi data(size_t frame) override final;
 };
-
-//-----------------------------------------------------------------------------80
-
-template <HDF5ReaderType ReaderT>
-HDF5DataReader<ReaderT>::HDF5DataReader(
-    const std::string& filename, Diffractometer* diffractometer, std::string dataset_name)
-    : HDF5MetaDataReader<ReaderT>(filename, diffractometer, dataset_name)
-{
-}
-
-template <HDF5ReaderType ReaderT>
-Eigen::MatrixXi HDF5DataReader<ReaderT>::data(std::size_t frame)
-{
-    nsxlog(nsx::Level::Debug, __PRETTY_FUNCTION__, ":", "Reading data in frame nr.", frame);
-
-    // NOTE: `this->` is needed due to C++ two-phase name lookup mechanism
-
-    // Open HDF5 file (does nothing if already opened)
-    this->open();
-
-    // HDF5 specification requires row-major storage
-    using RowMatrixXi = Eigen::Matrix<int, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>;
-    RowMatrixXi m(this->_nRows, this->_nCols);
-    const hsize_t count_1frm[3] = {1, this->_nRows, this->_nCols}; // a single frame
-    const hsize_t offset[3] = {frame, 0, 0};
-    this->_space->selectHyperslab(H5S_SELECT_SET, count_1frm, offset);
-    this->_dataset->read(m.data(), H5::PredType::NATIVE_INT32, *(this->_memspace), *(this->_space));
-    // return copy as MatrixXi (col-major)
-    return Eigen::MatrixXi(m);
-}
-
 
 } // namespace nsx
 
