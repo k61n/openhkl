@@ -82,7 +82,7 @@ Eigen::Transform<double, 3, Eigen::Affine> Gonio::affineMatrix(
     const std::vector<double>& state) const
 {
     if (static_cast<size_t>(state.size()) != _axes.size())
-        throw std::range_error("Trying to set Gonio " + _name + " with wrong number of parameters");
+        throw std::range_error("Trying to set Gonio '" + _name + "' with wrong number of parameters");
 
     Eigen::Transform<double, 3, Eigen::Affine> result =
         Eigen::Transform<double, 3, Eigen::Affine>::Identity();
