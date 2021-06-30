@@ -53,7 +53,7 @@ class HDF5MetaDataReader : public IDataReader {
     HDF5MetaDataReader(const HDF5MetaDataReader& other) = delete;
 
     HDF5MetaDataReader(const std::string& filename, Diffractometer* diffractometer,
-                       const std::string& dataset_name = "");
+                       std::string dataset_name = nsx::kw_datasetName0);
 
     ~HDF5MetaDataReader() = default;
 
@@ -85,21 +85,37 @@ class HDF5MetaDataReader : public IDataReader {
 
 
 template <HDF5ReaderType ReaderT>
-HDF5MetaDataReader<ReaderT>::HDF5MetaDataReader(
-    const std::string& filename, Diffractometer* diffractometer, const std::string& dataset_name)
+HDF5MetaDataReader<ReaderT>::HDF5MetaDataReader
+(const std::string& filename, Diffractometer* diffractometer, std::string dataset_name)
     : IDataReader(filename, diffractometer)
     , _dataset(nullptr)
     , _space(nullptr)
     , _memspace(nullptr)
     , _blosc_filter(nullptr)
 {
-    nsxlog(nsx::Level::Debug, "Initializing HDF5MetaDataReader<", ReaderT, ">",
-           "to read '", filename, "', dataset '", dataset_name, "'");
-
     H5::Group metaGroup, detectorGroup, sampleGroup;
 
     try {
         _file = std::unique_ptr<H5::H5File>(new H5::H5File(filename.c_str(), H5F_ACC_RDONLY));
+
+        // If the given dataset name is empty, find the name of the first DataCollection
+        if (dataset_name.empty()) {
+            H5::Group data_collections(_file->openGroup(nsx::gr_DataCollections));
+            hsize_t object_num = data_collections.getNumObjs();
+            if (object_num < 1) {
+                throw std::runtime_error("HDF5 file '" + filename + "' has no DataCollections");
+            } else {
+                dataset_name = data_collections.getObjnameByIdx(0);
+                // Warn about automatic selection of the first dataset when multiple datasets exist
+                if (object_num >= 1) {
+                    nsxlog(nsx::Level::Warning, "HDF5 file '", filename, "' has ", object_num,
+                           " DataCollections; the first one, '", dataset_name, "', will be taken.");
+                }
+            }
+        }
+
+        nsxlog(nsx::Level::Info, "Initializing HDF5MetaDataReader<", ReaderT, "> to read '",
+               filename, "', dataset '", dataset_name, "'");
 
         // TODO: make groups names compatible accross the codebase
         metaGroup = _file->openGroup("/" + _metaKey(dataset_name));
