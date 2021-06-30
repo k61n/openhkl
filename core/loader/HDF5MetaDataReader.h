@@ -164,6 +164,7 @@ HDF5MetaDataReader<ReaderT>::HDF5MetaDataReader
     int nmeta = metaGroup.getNumAttrs();
     for (int i = 0; i < nmeta; ++i) {
         H5::Attribute attr = metaGroup.openAttribute(i);
+        const std::string key { attr.getName() };
         H5::DataType typ = attr.getDataType();
 
         // Do not overwrite main attributes which are stored before
@@ -175,19 +176,19 @@ HDF5MetaDataReader<ReaderT>::HDF5MetaDataReader
             attr.read(typ, value);
             // TODO: check if this is still needed
             // override stored filename with the current one
-            if (attr.getName() == "filename" || attr.getName() == "file_name") {
+            if (key == "filename" || key == "file_name") {
                 _metadata.add<std::string>(nsx::at_datasetSources, value);
                 value = filename;
             }
-            _metadata.add<std::string>(attr.getName(), value);
+            _metadata.add<std::string>(key, value);
         } else if (typ == H5::PredType::NATIVE_INT32) {
             int value;
             attr.read(typ, &value);
-            _metadata.add<int>(attr.getName(), value);
+            _metadata.add<int>(key, value);
         } else if (typ == H5::PredType::NATIVE_DOUBLE) {
             double value;
             attr.read(typ, &value);
-            _metadata.add<double>(attr.getName(), value);
+            _metadata.add<double>(key, value);
         }
     }
 
@@ -280,7 +281,7 @@ HDF5MetaDataReader<ReaderT>::HDF5MetaDataReader
     for (unsigned int i = 0; i < _nFrames; ++i)
         _sampleStates[i] = eigenToVector(dm.col(i));
 
-    nsxlog(nsx::Level::Debug, "Finished reading the data in '", filename, "', dataset '", dataset_name, "'");
+    nsxlog(nsx::Level::Info, "Finished reading the data in '", filename, "', dataset '", dataset_name, "'");
     _file->close();
 }
 
