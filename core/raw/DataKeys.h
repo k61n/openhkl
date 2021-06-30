@@ -100,15 +100,35 @@ const std::string ax_phi { "phi" };
 const std::string ym_instrument { "instrument" };
 const std::string ym_monochromator { "monochromator" };
 const std::string ym_instrumentName { "name" };
+const std::string ym_detectorType { "type" };
 const std::string ym_detector { "detector" };
 const std::string ym_sample { "sample" };
 const std::string ym_source { "source" };
 const std::string ym_units { "units" };
 const std::string ym_value { "value" };
 const std::string ym_width { "width" };
+const std::string ym_angularWidth { "angular_width" };
 const std::string ym_height { "height" };
 const std::string ym_fwhm { "fwhm" };
 const std::string ym_wavelength { "wavelength" };
+const std::string ym_goniometerName { "name" };
+const std::string ym_axis { "axis" };
+const std::string ym_axisType { "type" };
+const std::string ym_axisName { "name" };
+const std::string ym_axisDirection { "direction" };
+const std::string ym_axisPhysical { "physical" };
+const std::string ym_axisId { "id" };
+const std::string ym_dataOrdering { "data_ordering" };
+const std::string ym_baseline { "baseline" };
+const std::string ym_gain { "gain" };
+const std::string ym_sampleDistance { "sample_distance" };
+const std::string ym_colsNr { "ncols" };
+const std::string ym_rowsNr { "nrows" };
+const std::string ym_originX { "origin_x" };
+const std::string ym_originY { "origin_y" };
+const std::string ym_componentName { "name" };
+const std::string ym_goniometer { "goniometer" };
+const std::string ym_rotClockwise { "clockwise" };
 
 } // namespace nsx
 
