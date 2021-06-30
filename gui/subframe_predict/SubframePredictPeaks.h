@@ -47,10 +47,8 @@ struct ShapeCollectionParameters;
 class SubframePredictPeaks : public QWidget {
  public:
     SubframePredictPeaks();
-    //! run the auto indexing
+    //! run the prediction
     void runPrediction();
-    //! run the auto indexing
-    void runIntegration();
     //! Refresh all the panels
     void refreshAll();
     //! detector view
@@ -58,12 +56,8 @@ class SubframePredictPeaks : public QWidget {
 
 
  private:
-    //! Build the input
-    void setInputUp();
     //! Set the parameters values up
     void setParametersUp();
-    //! Set the integration values up
-    void setIntegrateUp();
     //! Build the buttons
     void setProceedUp();
     //! Set the peak table view up
@@ -91,15 +85,11 @@ class SubframePredictPeaks : public QWidget {
     //! Get the parameters of the indexer
     void setPredictorParameters() const;
     //! Refresh the found peaks list
-    void refreshPeakShapeStatus();
-    //! Refresh the found peaks list
     void refreshPeakTable();
     //! Refresh the found peaks visual properties
     void refreshPeakVisual();
     //! Change the peak selected in the table
     void changeSelected(PeakItemGraphic* peak_graphic);
-    //! Open the shape builder dialog
-    void openShapeBuilder();
     //! Accept and save current list
     void accept();
 
@@ -112,8 +102,6 @@ class SubframePredictPeaks : public QWidget {
     PeakCollectionModel _peak_collection_model;
     //! The loaded data list
     std::vector<nsx::sptrDataSet> _data_list;
-    //! The loaded peak list
-    QStringList _peak_list;
     //! The loaded peak list
     QStringList _unit_cell_list;
     //! Parameters for shape collection
@@ -130,23 +118,11 @@ class SubframePredictPeaks : public QWidget {
     Spoiler* _preview_box;
 
     QComboBox* _unit_cells;
-    QComboBox* _interpolation;
     QComboBox* _integrator;
-    QSpinBox* _min_neighbors;
     QDoubleSpinBox* _d_min;
     QDoubleSpinBox* _d_max;
-    QDoubleSpinBox* _radius;
-    QDoubleSpinBox* _n_frames;
-    QDoubleSpinBox* _peak_end_int;
-    QDoubleSpinBox* _bkg_start_int;
-    QDoubleSpinBox* _bkg_end_int;
-    QDoubleSpinBox* _radius_int;
-    QDoubleSpinBox* _n_frames_int;
-    QCheckBox* _fit_center;
-    QCheckBox* _fit_covariance;
 
     QComboBox* _exp_combo;
-    QComboBox* _peak_combo;
     QComboBox* _data_combo;
 
     PeakViewWidget* _peak_view_widget;
