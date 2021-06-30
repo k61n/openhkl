@@ -81,18 +81,6 @@ class SubframeRefiner : public QWidget {
     void setPlotUp();
     //! Update list of predicted peak collections
     void updatePredictedList();
-    //! Set up reintegration spoiler
-    void setReintegrateUp();
-    //! Open the shape builder dialog
-    void openShapeBuilder();
-    //! Update the peak collection with the shape collection
-    void refreshPeakShapeStatus();
-    //! Wrapper for reintegration
-    void runReintegration(nsx::PeakCollection* peaks);
-    //! Reintegrate found peaks
-    void reintegrateFound();
-    //! Reintegrate predicted peaks
-    void reintegratePredicted();
 
     //! Refresh the found peaks list
     void refreshTables();
@@ -118,12 +106,8 @@ class SubframeRefiner : public QWidget {
     int _n_updated;
     //! Whether the refinement succeeded
     bool _refine_success;
-    //! Parameters for refinement/reintegration
+    //! Parameters for refinement
     nsx::RefinerParameters _refiner_params;
-    //! Parameters for shape library
-    nsx::ShapeCollectionParameters _shape_params;
-    //! Parameters for reintegration
-    nsx::IntegrationParameters _integration_params;
 
  private:
     QVBoxLayout* _left_layout;
@@ -147,19 +131,6 @@ class SubframeRefiner : public QWidget {
 
     // update prediction
     QComboBox* _predicted_combo;
-
-    // reintegration
-    Spoiler* _reintegrate_box;
-    QComboBox* _integrator_combo;
-    QDoubleSpinBox* _radius;
-    QDoubleSpinBox* _n_frames;
-    QDoubleSpinBox* _peak_end_int;
-    QDoubleSpinBox* _bkg_start_int;
-    QDoubleSpinBox* _bkg_end_int;
-    QDoubleSpinBox* _radius_int;
-    QDoubleSpinBox* _n_frames_int;
-    QCheckBox* _fit_center;
-    QCheckBox* _fit_covariance;
 
     QStringList _peak_list;
     QStringList _cell_list;

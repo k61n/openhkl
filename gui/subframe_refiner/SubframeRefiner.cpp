@@ -24,7 +24,6 @@
 #include "gui/models/Meta.h"
 #include "gui/models/Project.h"
 #include "gui/models/Session.h"
-#include "gui/subframe_predict/ShapeCollectionDialog.h"
 #include "gui/subframe_refiner/RefinerTables.h"
 #include "gui/utility/ColorButton.h"
 #include "gui/utility/GridFiller.h"
@@ -58,7 +57,6 @@ SubframeRefiner::SubframeRefiner()
     setParametersUp();
     setPlotUp();
     setUpdateUp();
-    setReintegrateUp();
 
     right_element->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     right_element->addWidget(_tables_widget);
@@ -77,7 +75,7 @@ SubframeRefiner::SubframeRefiner()
 
 void SubframeRefiner::setInputUp()
 {
-    auto input_box = new Spoiler("1. Input");
+    auto input_box = new Spoiler("Input");
     GridFiller f(input_box, true);
 
     _exp_combo = f.addCombo("Experiment");
@@ -105,7 +103,7 @@ void SubframeRefiner::setInputUp()
 
 void SubframeRefiner::setRefinerFlagsUp()
 {
-    auto refiner_flags_box = new Spoiler("2. Parameters to refine");
+    auto refiner_flags_box = new Spoiler("Parameters to refine");
     GridFiller f(refiner_flags_box, true);
 
     _refineUB = f.addCheckBox("Cell vectors");
@@ -129,7 +127,6 @@ void SubframeRefiner::setRefinerFlagsUp()
 void SubframeRefiner::refreshAll()
 {
     updateExptList();
-    // refreshTables();
 }
 
 void SubframeRefiner::refreshTables()
@@ -164,7 +161,6 @@ void SubframeRefiner::updateExptList()
     updateUnitCellList();
     _refiner_params =
         gSession->experimentAt(_exp_combo->currentIndex())->experiment()->refiner_params;
-    _shape_params = gSession->experimentAt(_exp_combo->currentIndex())->experiment()->shape_params;
 }
 
 void SubframeRefiner::updateDatasetList()
@@ -210,7 +206,6 @@ void SubframeRefiner::updatePeakList()
 
     _peak_combo->blockSignals(false);
     updatePredictedList();
-    refreshPeakShapeStatus();
 }
 
 void SubframeRefiner::updateUnitCellList()
@@ -294,7 +289,7 @@ void SubframeRefiner::setPlotUp()
         return new PlotCheckBox(text, table, column);
     };
 
-    _plot_box = new Spoiler("3. Plot");
+    _plot_box = new Spoiler("Plot");
     QVBoxLayout* plot_layout = new QVBoxLayout();
 
     // Create group & gridlayout for checkboxes. Add it already to the main layout
@@ -393,23 +388,16 @@ void SubframeRefiner::refreshPlot()
 
 void SubframeRefiner::setUpdateUp()
 {
-    auto update_box = new Spoiler("4. Update predictions");
+    auto update_box = new Spoiler("Update predictions");
     GridFiller f(update_box, true);
 
     _predicted_combo = f.addCombo("Predicted peaks");
 
     auto update_button = f.addButton("Update", "Update peak positions given refined unit cell");
 
-    auto build_shape_lib = f.addButton(
-        "Build shape collection",
-        "<font>A shape collection is a collection of averaged peaks attached to a peak"
-        "collection. A shape is the averaged peak shape of a peak and its neighbours within a "
-        "specified cutoff.</font>"); // Rich text to force line break in tooltip
-
     _left_layout->addWidget(update_box);
 
     connect(update_button, &QPushButton::clicked, this, &SubframeRefiner::updatePredictions);
-    connect(build_shape_lib, &QPushButton::clicked, this, &SubframeRefiner::openShapeBuilder);
 }
 
 void SubframeRefiner::updatePredictedList()
@@ -441,156 +429,4 @@ void SubframeRefiner::updatePredictions()
 QList<PlotCheckBox*> SubframeRefiner::plotCheckBoxes() const
 {
     return _plot_box->findChildren<PlotCheckBox*>();
-}
-
-void SubframeRefiner::setReintegrateUp()
-{
-    _reintegrate_box = new Spoiler("5. Reintegrate peaks");
-    GridFiller f(_reintegrate_box, true);
-
-    // -- Create controls
-    _integrator_combo = f.addCombo();
-
-    _fit_center =
-        f.addCheckBox("Fit the center", "Allow the peak center to move during integration");
-
-    _fit_covariance = f.addCheckBox(
-        "Fit the covariance", "Allow the peak covariance matrix to vary during integration");
-
-    _peak_end_int = f.addDoubleSpinBox("Peak end", "(sigmas) - scaling factor for peak region");
-
-    _bkg_start_int =
-        f.addDoubleSpinBox("Bkg begin:", "(sigmas) - scaling factor for lower limit of background");
-
-    _bkg_end_int =
-        f.addDoubleSpinBox("Bkg end:", "(sigmas) - scaling factor for upper limit of background");
-
-    _radius_int =
-        f.addDoubleSpinBox("Search radius:", "(pixels) - neighbour search radius in pixels");
-
-    _n_frames_int =
-        f.addDoubleSpinBox("N. of frames:", "(frames) - neighbour search radius in frames");
-
-    auto reintegrate_found = f.addButton("Reintegrate found peaks");
-    auto reintegrate_predicted = f.addButton("Reintegrate predicted peaks");
-
-    // -- Initialize controls
-    _integrator_combo->addItem("Pixel sum integrator");
-    _integrator_combo->addItem("Gaussian integrator");
-    _integrator_combo->addItem("I/Sigma integrator");
-    _integrator_combo->addItem("1d profile integrator");
-    _integrator_combo->addItem("3d profile integrator");
-
-    _fit_center->setChecked(_refiner_params.fit_center);
-
-    _fit_covariance->setChecked(_refiner_params.fit_cov);
-
-    _peak_end_int->setMaximum(100000);
-    _peak_end_int->setDecimals(2);
-    _peak_end_int->setValue(_refiner_params.peak_end);
-
-    _bkg_start_int->setMaximum(100000);
-    _bkg_start_int->setDecimals(2);
-    _bkg_start_int->setValue(_refiner_params.bkg_begin);
-
-    _bkg_end_int->setMaximum(100000);
-    _bkg_end_int->setDecimals(2);
-    _bkg_end_int->setValue(_refiner_params.bkg_end);
-
-    _radius_int->setMaximum(100000);
-    _radius_int->setDecimals(2);
-    _radius_int->setValue(_refiner_params.neighbour_range_pixels);
-
-    _n_frames_int->setMaximum(100000);
-    _n_frames_int->setDecimals(2);
-    _n_frames_int->setValue(_refiner_params.neighbour_range_frames);
-
-    connect(reintegrate_found, &QPushButton::clicked, this, &SubframeRefiner::reintegrateFound);
-    connect(
-        reintegrate_predicted, &QPushButton::clicked, this, &SubframeRefiner::reintegratePredicted);
-
-    _left_layout->addWidget(_reintegrate_box);
-}
-
-void SubframeRefiner::runReintegration(nsx::PeakCollection* peaks)
-{
-    try {
-        nsx::sptrProgressHandler handler(new nsx::ProgressHandler);
-        ProgressView progressView(nullptr);
-        progressView.watch(handler);
-
-        nsx::Experiment* expt = gSession->experimentAt(_exp_combo->currentIndex())->experiment();
-        nsx::IPeakIntegrator* integrator =
-            expt->getIntegrator(_integrator_combo->currentText().toStdString());
-        nsx::PeakCollection* found_peaks =
-            expt->getPeakCollection(_peak_combo->currentText().toStdString());
-        nsx::ShapeCollection* shapes = found_peaks->shapeCollection();
-
-        nsx::IntegrationParameters params;
-        params.peak_end = _peak_end_int->value();
-        params.bkg_begin = _bkg_start_int->value();
-        params.bkg_end = _bkg_end_int->value();
-        params.neighbour_range_pixels = _radius_int->value();
-        params.neighbour_range_frames = _n_frames_int->value();
-        params.fit_center = _fit_center->isChecked();
-        params.fit_cov = _fit_covariance->isChecked();
-
-        integrator->setHandler(handler);
-        expt->integratePeaks(integrator, peaks, &params, shapes);
-    } catch (std::exception& e) {
-        QMessageBox::critical(this, "Error", QString(e.what()));
-    }
-}
-
-void SubframeRefiner::reintegrateFound()
-{
-    // #nsxAudit Crash if no experiment existing. Disable btn if no experiment loaded?
-    nsx::Experiment* expt = gSession->experimentAt(_exp_combo->currentIndex())->experiment();
-    nsx::PeakCollection* found_peaks =
-        expt->getPeakCollection(_peak_combo->currentText().toStdString());
-    runReintegration(found_peaks);
-}
-
-void SubframeRefiner::reintegratePredicted()
-{
-    // #nsxAudit Crash if no experiment existing. Disable btn if no experiment loaded?
-    nsx::Experiment* expt = gSession->experimentAt(_exp_combo->currentIndex())->experiment();
-    nsx::PeakCollection* predicted_peaks =
-        expt->getPeakCollection(_predicted_combo->currentText().toStdString());
-    runReintegration(predicted_peaks);
-}
-
-void SubframeRefiner::openShapeBuilder()
-{
-    // #nsxAudit Crash if no experiment existing. Disable btn if no experiment loaded?
-    nsx::PeakCollection* peak_collection =
-        gSession->experimentAt(_exp_combo->currentIndex())
-            ->experiment()
-            ->getPeakCollection(_peak_combo->currentText().toStdString());
-
-    std::unique_ptr<ShapeCollectionDialog> dialog(
-        new ShapeCollectionDialog(peak_collection, _shape_params));
-
-    dialog->exec();
-    refreshPeakShapeStatus();
-}
-
-
-void SubframeRefiner::refreshPeakShapeStatus()
-{
-    bool shape_collection_present = true;
-
-    if (_peak_list.empty() || _exp_combo->count() < 1)
-        shape_collection_present = false;
-
-    if (shape_collection_present) {
-        nsx::PeakCollection* collection =
-            gSession->experimentAt(_exp_combo->currentIndex())
-                ->experiment()
-                ->getPeakCollection(_peak_combo->currentText().toStdString());
-        if (collection->shapeCollection() == nullptr)
-            shape_collection_present = false;
-    }
-
-    _reintegrate_box->setEnabled(shape_collection_present);
 }
