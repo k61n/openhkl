@@ -97,6 +97,7 @@ const std::string kw_peakCollectionName0 { "peaks" };
 const std::string kw_fitCollection { "fit" };
 const std::string kw_acceptedUnitcell { "accepted" };
 const std::string kw_referenceUnitcell { "reference" };
+const std::string kw_logFilename0 { "nsx.log" };
 
 //-- Axis names
 // detector gonio
