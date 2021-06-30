@@ -86,6 +86,17 @@ const std::string kw_datasetName0 { "DATASET" };  // default name for an experim
 const std::string kw_unitcellName0 { "UNITCELL" };  // default name for a unit-cell
 const std::string kw_monochromatorName0 { "MONOCHROMATOR" };  // default name for a monochromator
 const std::string kw_unknownInstrument { "UNKNOWN INSTRUMENT" };  // unknown instrument/diffractometer
+const std::string kw_goniometerName0 { "GONIOMETER" };  // default name for a goniometer
+const std::string kw_axisName0 { "axis" }; // default name for an axis
+const std::string kw_unknownAxis { "UNKNOWN AXIS" };  // unknown axis
+const unsigned int kw_unknownAxisId { 0 };  // unknown axis id
+const std::string kw_detectorName0 { "DETECTOR" };  // default name for a detector
+const std::string kw_rotationAxisName { "rotation" };
+const std::string kw_autoindexingCollection { "autoindexing" };
+const std::string kw_peakCollectionName0 { "peaks" };
+const std::string kw_fitCollection { "fit" };
+const std::string kw_acceptedUnitcell { "accepted" };
+const std::string kw_referenceUnitcell { "reference" };
 
 //-- Axis names
 // detector gonio
