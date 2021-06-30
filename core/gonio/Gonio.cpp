@@ -19,10 +19,11 @@
 
 #include "core/gonio/Gonio.h"
 #include "core/gonio/RotAxis.h"
+#include "core/raw/DataKeys.h"
 
 namespace nsx {
 
-Gonio::Gonio() : _name("goniometer") { }
+Gonio::Gonio() : _name(nsx::kw_goniometerName0) { }
 
 Gonio::Gonio(const std::string& name) : _name(name) { }
 
@@ -35,10 +36,10 @@ Gonio::Gonio(const Gonio& other) : _name(other._name)
 
 Gonio::Gonio(const YAML::Node& node)
 {
-    _name = node["name"] ? node["name"].as<std::string>() : "";
+    _name = node[nsx::ym_goniometerName] ? node[nsx::ym_goniometerName].as<std::string>() : "";
 
     // Sets the axis of the detector goniometer from the XML node
-    for (const auto& axisItem : node["axis"])
+    for (const auto& axisItem : node[nsx::ym_axis])
         _axes.emplace_back(std::unique_ptr<Axis>(Axis::create(axisItem)));
 }
 

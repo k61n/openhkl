@@ -13,11 +13,12 @@
 //  ***********************************************************************************************
 
 #include "core/shape/PeakCollection.h"
+#include "core/raw/DataKeys.h"
 #include "base/utils/Logger.h"
 
 namespace nsx {
 
-PeakCollection::PeakCollection() : _name{"No Name"}, _type{nsx::listtype::FOUND} { }
+PeakCollection::PeakCollection() : _name{nsx::kw_peakCollectionName0}, _type{nsx::listtype::FOUND} { }
 
 PeakCollection::PeakCollection(const std::string& name, nsx::listtype type)
     : _name{std::string(name)}, _type{type}
@@ -117,9 +118,9 @@ int PeakCollection::numberRejectedByFilter() const
 std::map<std::string, float>* PeakCollection::meta()
 {
     _meta.clear();
-    _meta.insert(std::make_pair(std::string("num_peaks"), numberOfPeaks()));
-    _meta.insert(std::make_pair(std::string("num_valid"), numberOfValid()));
-    _meta.insert(std::make_pair(std::string("num_invalid"), numberOfInvalid()));
+    _meta.insert(std::make_pair(std::string(nsx::at_peaksNr), numberOfPeaks()));
+    _meta.insert(std::make_pair(std::string(nsx::at_validsNr), numberOfValid()));
+    _meta.insert(std::make_pair(std::string(nsx::at_invalidsNr), numberOfInvalid()));
     // _meta.insert(std::make_pair(std::string(),));
     return &_meta;
 }
