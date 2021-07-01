@@ -38,7 +38,7 @@ HDF5BloscFilter::~HDF5BloscFilter()
 {
     if (_init_success) {
         blosc_destroy();
-        nsxlog(nsx::Level::Debug, "Released Blosc-filter resources");
+        nsxlog(nsx::Level::Info, "Released Blosc-filter resources");
     }
 }
 
