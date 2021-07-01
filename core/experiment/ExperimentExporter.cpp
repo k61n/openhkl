@@ -208,8 +208,9 @@ void writeFrames(
         const hsize_t dims[3] = {n_frames, n_rows, n_cols};
         const H5::DataSpace space(3, dims, nullptr);
         const H5::DataType frameType{H5::PredType::NATIVE_INT32};
-        H5::DataSet dset(
-            file.createDataSet(std::string(datakey + "/" + name), frameType, space, plist));
+        H5::DataSet dset
+	    (file.createDataSet(std::string(datakey + "/" + nsx::ds_Dataset),
+				frameType, space, plist));
 
         // Write frames
         const hsize_t count_1frm[3] = {1, n_rows, n_cols};

@@ -30,8 +30,10 @@ const std::string gr_PeakCollections { "PeakCollections" };
 const std::string gr_UnitCells { "UnitCells" };
 
 //-- HDF5 DataSet keys
+const std::string ds_Dataset { "Dataset" };
 const std::string ds_DatasetNames { "DatasetNames" };
 const std::string ds_UnitCellNames { "UnitCellNames" };
+
 // peaks
 const std::string ds_PeakEnd { "PeakEnd" };
 const std::string ds_BkgBegin { "BkgBegin" };
@@ -61,7 +63,7 @@ const std::string at_framesNr { "number of frames" };
 const std::string at_wavelength { "wavelength" };
 const std::string at_monitorSum { "monitor sum" };  // TODO: explain
 // Nexus-specific metadata
-const std::string at_numor { "NUMOR" }; // internal raw data labelling of ILL
+const std::string at_numor { "numor" }; // internal raw data labelling of ILL
 const std::string at_totalSteps { "total steps" };
 const std::string at_title { "title" };
 const std::string at_time { "time" };
