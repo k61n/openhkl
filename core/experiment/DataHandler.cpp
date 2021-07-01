@@ -25,7 +25,7 @@ namespace nsx {
 DataHandler::DataHandler(const std::string& name, const std::string& diffractometerName)
 {
     _diffractometer = nullptr;
-    if (!(diffractometerName == std::string(nsx::kw_unknownInstrument)))
+    if (!(diffractometerName == nsx::kw_unknownInstrument))
         _diffractometer.reset(Diffractometer::create(diffractometerName));
     _name = name;
 }
@@ -96,7 +96,8 @@ void DataHandler::addData(sptrDataSet data, std::string name)
 
     if (!(diffName.compare(_diffractometer->name()) == 0)) {
         throw std::runtime_error("Mismatch between the diffractometer assigned to "
-                                 "the experiment and the data");
+                                 "the experiment, '" + _diffractometer->name() + "', "
+				 "and the data, '" + diffName + "'");
     }
     const double wav = metadata.key<double>(nsx::at_wavelength);
 
