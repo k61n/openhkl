@@ -68,7 +68,7 @@ void ExperimentImporter::loadData(Experiment* experiment)
 
     try {
         H5::H5File file(_file_name.c_str(), H5F_ACC_RDONLY);
-        H5::Group data_collections(file.openGroup("/" + nsx::gr_DataCollections));
+        H5::Group data_collections(file.openGroup(nsx::gr_DataCollections));
 
         hsize_t object_num = data_collections.getNumObjs();
         for (int i = 0; i < object_num; ++i) {
@@ -96,7 +96,7 @@ void ExperimentImporter::loadPeaks(Experiment* experiment)
 
     try {
         H5::H5File file(_file_name.c_str(), H5F_ACC_RDONLY);
-        H5::Group peak_collections(file.openGroup("/" + nsx::gr_PeakCollections));
+        H5::Group peak_collections(file.openGroup(nsx::gr_PeakCollections));
 
         hsize_t object_num = peak_collections.getNumObjs();
         for (int i = 0; i < object_num; ++i) {
