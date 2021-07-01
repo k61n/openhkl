@@ -25,6 +25,7 @@ void Logger::start(const std::string& filename, const Level& level)
 {
     _ofs.open(filename);
     _max_print_level = level;
+    _ofs << std::boolalpha;
 }
 
 Logger& Logger::instance()
