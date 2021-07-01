@@ -337,7 +337,7 @@ void Session::onUnitCellChanged()
 
 void Session::loadExperimentFromFile(QString filename)
 {
-    createExperiment(QString::fromStdString(nsx::kw_experimentName0));
+    createExperiment();
     currentProject()->experiment()->loadFromFile(filename.toStdString());
     currentProject()->generatePeakModels();
     onExperimentChanged();

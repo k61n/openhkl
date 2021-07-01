@@ -15,6 +15,8 @@
 #ifndef NSX_GUI_MODELS_SESSION_H
 #define NSX_GUI_MODELS_SESSION_H
 
+#include "core/raw/DataKeys.h"
+
 #include <QString>
 #include <memory>
 #include <vector>
@@ -44,8 +46,9 @@ class Session {
 
     void selectExperiment(int);
 
-    bool createExperiment(
-        QString experimentName = "new_experiment", QString instrumentName = "unknown_instrument");
+    bool createExperiment
+    (QString experimentName = QString::fromStdString(nsx::kw_experimentName0),
+     QString instrumentName = QString::fromStdString(nsx::kw_unknownInstrument));
     void removeExperiment(const QString& name);
 
     void loadData(nsx::DataFormat format);
