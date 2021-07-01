@@ -84,11 +84,11 @@ SubframeFindPeaks::SubframeFindPeaks()
 
 void SubframeFindPeaks::setDataUp()
 {
-    Spoiler* _data_box = new Spoiler("1. Input Data");
+    Spoiler* _data_box = new Spoiler("Input");
     GridFiller f(_data_box);
 
     _exp_combo = f.addCombo("Experiment");
-    _data_combo = f.addCombo("Data-set");
+    _data_combo = f.addCombo("Data set");
     _all_data = f.addCheckBox("Search all", 1);
 
     connect(
@@ -108,7 +108,7 @@ void SubframeFindPeaks::setDataUp()
 
 void SubframeFindPeaks::setBlobUp()
 {
-    Spoiler* blob_para = new Spoiler("2. Peak search parameters");
+    Spoiler* blob_para = new Spoiler("Peak search parameters");
     GridFiller f(blob_para, true);
 
     _threshold_spin = f.addSpinBox(
@@ -155,7 +155,7 @@ void SubframeFindPeaks::setBlobUp()
 
 void SubframeFindPeaks::setIntegrateUp()
 {
-    Spoiler* integration_para = new Spoiler("3. Integration parameters");
+    Spoiler* integration_para = new Spoiler("Integration parameters");
     GridFiller f(integration_para);
 
     _peak_area = f.addDoubleSpinBox("Peak end", "(sigmas) - scaling factor for peak region");
@@ -179,7 +179,7 @@ void SubframeFindPeaks::setIntegrateUp()
 
 void SubframeFindPeaks::setPreviewUp()
 {
-    Spoiler* preview_spoiler = new Spoiler("4. Show/hide peaks");
+    Spoiler* preview_spoiler = new Spoiler("Show/hide peaks");
     _peak_view_widget = new PeakViewWidget("Valid peaks", "Invalid Peaks");
 
     connect(

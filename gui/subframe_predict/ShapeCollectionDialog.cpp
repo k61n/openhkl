@@ -221,7 +221,7 @@ void ShapeCollectionDialog::setParametersUp()
     form->addRow("Minimum I/Sigma:", _min_I_sigma);
     form->addRow("Minimum d:", _min_d);
     form->addRow("Maximum d:", _max_d);
-    form->addRow("Peak scale:", _peak_end);
+    form->addRow("Peak end:", _peak_end);
     form->addRow("Background begin:", _background_begin);
     form->addRow("Background end:", _background_end);
     form->addRow(_build_collection);
