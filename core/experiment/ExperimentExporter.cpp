@@ -123,9 +123,10 @@ void writeMetadata(H5::H5File& file, const std::string& datakey, const nsx::Data
 
     try {
         for (const auto& [key, val] : dataset->metadata().map()) {
-            if (std::holds_alternative<std::string>(val))
-                writeAttribute(
-                    meta_group, key, (std::get<std::string>(val)).data(), strVarType, metaSpace);
+            if (std::holds_alternative<std::string>(val)) {
+		H5::Attribute attr(meta_group.createAttribute(key, strVarType, metaSpace));
+		attr.write(strVarType, std::get<std::string>(val));
+	    }
             else if (std::holds_alternative<int>(val))
                 writeAttribute(
                     meta_group, key, &std::get<int>(val), H5::PredType::NATIVE_INT32, metaSpace);
