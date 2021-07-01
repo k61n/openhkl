@@ -39,6 +39,7 @@ struct DataQuality {
     double expectedRpim; //!< expected relative R-factor
     double CChalf; //!< CC_{1/2} correlation coefficient
     double CCstar; //!< estimate of CC_{true} derived from CC_{1/2}
+    double Completeness; //!< # valid predicted peaks / # predicted peaks
 
     void computeQuality(MergedData& merged_peaks);
     std::string toString() const;
@@ -50,6 +51,7 @@ struct ShellQuality : DataQuality {
     double dmax; //!< Upper limit of d for resolution shell
 
     void computeQuality(MergedData& merged_peaks, double d_min, double d_max);
+    void setCompleteness(const double c);
     std::string toString() const;
 };
 

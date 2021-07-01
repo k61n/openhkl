@@ -50,9 +50,11 @@ MergedData::MergedData(std::vector<PeakCollection*> peak_collections, bool fried
             addPeak(peaks[j]);
     }
     if (_nNaN > 0)
-        nsxlog(Level::Info, "MergedData::MergedData: ", _nNaN, "peaks with intensity NaN");
+        nsxlog(Level::Info, "MergedData::MergedData: ", _nNaN, " peaks with intensity NaN");
     if (_nZero > 0)
-        nsxlog(Level::Info, "MergedData::MergedData: ", _nZero, "peaks with intensity zero");
+        nsxlog(Level::Info, "MergedData::MergedData: ", _nZero, " peaks with intensity zero");
+    if (_nInvalid > 0)
+        nsxlog(Level::Info, "MergedData::MergedData: ", _nInvalid, " disabled peaks");
 }
 
 MergedData::MergedData(SpaceGroup space_group, bool friedel) : _friedel(friedel), _merged_peak_set()
@@ -62,6 +64,10 @@ MergedData::MergedData(SpaceGroup space_group, bool friedel) : _friedel(friedel)
 
 bool MergedData::addPeak(Peak3D* peak)
 {
+    if (!peak->enabled()) {
+        ++_nInvalid;
+        return false;
+    }
     double epsilon = 1.0e-8;
     MergedPeak new_peak(_group, _friedel);
     try {
@@ -106,6 +112,14 @@ double MergedData::redundancy() const
 void MergedData::clear()
 {
     _merged_peak_set.clear();
+}
+
+double MergedData::completeness()
+{
+    if (totalSize() == 0)
+        return 0.0;
+    int n_valid = totalSize() - _nInvalid - _nNaN - _nZero;
+    return double(n_valid) / double(totalSize());
 }
 
 } // namespace nsx

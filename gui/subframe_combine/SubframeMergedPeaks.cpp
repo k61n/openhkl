@@ -120,7 +120,7 @@ void SubframeMergedPeaks::setDShellUp()
     _d_shell_view->setModel(_shell_model);
     _shell_model->setHorizontalHeaderLabels(
         {"dmax", "dmin", "nobs", "nmerge", "redundancy", "Rmeas", "Rmeas(est.)", "Rmerge/Rsym",
-         "Rmerge(est.)", "Rpim", "Rpim(est.)", "CChalf", "CC*"});
+         "Rmerge(est.)", "Rpim", "Rpim(est.)", "CChalf", "CC*", "Completeness"});
     shell_layout->addWidget(_d_shell_view);
 
     QHBoxLayout* d_shell_down = new QHBoxLayout;
@@ -440,6 +440,7 @@ void SubframeMergedPeaks::refreshDShellTable()
         row.push_back(new QStandardItem(QString::number(shell.expectedRpim)));
         row.push_back(new QStandardItem(QString::number(shell.CChalf)));
         row.push_back(new QStandardItem(QString::number(shell.CCstar)));
+        row.push_back(new QStandardItem(QString::number(shell.Completeness)));
 
         model->appendRow(row);
     }
@@ -459,6 +460,7 @@ void SubframeMergedPeaks::refreshDShellTable()
         row.push_back(new QStandardItem(QString::number(shell.expectedRpim)));
         row.push_back(new QStandardItem(QString::number(shell.CChalf)));
         row.push_back(new QStandardItem(QString::number(shell.CCstar)));
+        row.push_back(new QStandardItem(QString::number(shell.Completeness)));
     }
     for (auto v : row) {
         QFont font(v->font());

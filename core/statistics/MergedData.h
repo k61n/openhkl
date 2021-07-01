@@ -47,6 +47,8 @@ class MergedData {
     size_t totalSize() const;
     //! Clear the merged data
     void clear();
+    //! Compute the completeness ( # valid peaks / # peaks )
+    double  completeness();
 
     SpaceGroup spaceGroup() const { return _group; };
 
@@ -59,6 +61,8 @@ class MergedData {
     int _nNaN = 0;
     //! Number of peaks with zero intensity
     int _nZero = 0;
+    //! Number of invalid peaks
+    int _nInvalid = 0;
 };
 
 } // namespace nsx

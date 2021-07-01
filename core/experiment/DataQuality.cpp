@@ -61,10 +61,8 @@ void DataResolution::computeQuality(
     std::vector<ShellQuality> data_resolution;
     ResolutionShell resolution_shell = nsx::ResolutionShell(d_min, d_max, n_shells);
     for (PeakCollection* collection : collections) {
-        for (Peak3D* peak : collection->getPeakList()) {
-            if (peak->enabled())
-                resolution_shell.addPeak(peak);
-        }
+        for (Peak3D* peak : collection->getPeakList())
+            resolution_shell.addPeak(peak);
     }
 
     for (int i = n_shells - 1; i >= 0; --i) {
@@ -78,8 +76,14 @@ void DataResolution::computeQuality(
 
         ShellQuality quality;
         quality.computeQuality(merged_data_per_shell, d_lower, d_upper);
+        quality.setCompleteness(merged_data_per_shell.completeness());
         shells.push_back(quality);
     }
+}
+
+void ShellQuality::setCompleteness(const double c)
+{
+    Completeness = c;
 }
 
 std::string DataQuality::toString() const
@@ -87,7 +91,8 @@ std::string DataQuality::toString() const
     std::ostringstream oss;
     oss << std::fixed << std::setprecision(4) << std::setw(8) << Rmeas << std::setw(8)
         << expectedRmeas << std::setw(8) << Rmerge << std::setw(8) << expectedRmerge << std::setw(8)
-        << Rpim << std::setw(8) << expectedRpim << std::setw(8) << CChalf << std::setw(8) << CCstar;
+        << Rpim << std::setw(8) << expectedRpim << std::setw(8) << CChalf << std::setw(8) << CCstar
+        << std::setw(8) << Completeness;
     return oss.str();
 }
 
@@ -105,7 +110,7 @@ void DataQuality::log() const
     oss << "Data quality metrics (overall):" << std::endl;
     oss << std::setw(8) << "Rmea" << std::setw(8) << "eRmea" << std::setw(8) << "Rmer"
         << std::setw(8) << "eRmer" << std::setw(8) << "Rpim" << std::setw(8) << "eRpim"
-        << std::setw(8) << "CChalf" << std::setw(8) << "Cstar";
+        << std::setw(8) << "CChalf" << std::setw(8) << "Cstar" << std::setw(8) << "Compl.";
     oss << std::endl << toString();
     nsxlog(Level::Info, oss.str());
 }
@@ -117,7 +122,7 @@ void DataResolution::log() const
     oss << std::setw(8) << "dmin" << std::setw(8) << "dmax" << std::setw(8) << "Rmea"
         << std::setw(8) << "eRmea" << std::setw(8) << "Rmer" << std::setw(8) << "eRmer"
         << std::setw(8) << "Rpim" << std::setw(8) << "eRpim" << std::setw(8) << "CChalf"
-        << std::setw(8) << "Cstar";
+        << std::setw(8) << "Cstar" << std::setw(8) << "Compl.";
     for (auto shell : shells) {
         oss << std::endl << shell.toString();
     }
