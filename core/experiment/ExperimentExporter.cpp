@@ -270,8 +270,7 @@ void ExperimentExporter::writeData(const std::map<std::string, DataSet*> data)
         // Write sample states
         writeSampleState(file, datakey, data_item);
 
-        // Write all string metadata into the "Info" group
-        // Write all other metadata (int and double) into the "Meta" Group
+        // Write  metadata into the "Metadata" group as attributes
         writeMetadata(file, datakey, data_item);
     }
 }
