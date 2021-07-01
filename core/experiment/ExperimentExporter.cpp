@@ -142,26 +142,21 @@ void writeMetadata(H5::H5File& file, const std::string& datakey, const nsx::Data
 // TODO: Merge with writeMetadata
 // TODO: PeakCollection metadata is map<string, float> but used as map<string, int> !
 // TODO: Unify the metadata structure for all objects
-void writePeakMeta(
-    H5::H5File& file, const std::string& datakey, const PeakMeta& pmeta, const nsx::listtype peak_type)
+void writePeakMeta(H5::Group& peak_group, const PeakMeta& peak_meta, const nsx::listtype peak_type)
 {
-    const std::string metaKey = datakey + "/" + nsx::gr_Metadata; // TODO: Why different from Metadata?
-
-    H5::Group peak_meta_group = file.createGroup(metaKey);
     H5::DataSpace metaSpace(H5S_SCALAR);
-    H5::StrType str80Type(H5::PredType::C_S1, 80);
 
     try {
-        for (const auto& [key, val] : pmeta) {
+        for (const auto& [key, val] : peak_meta) {
             const int val_int = val;
-            writeAttribute(peak_meta_group, key, &val_int, H5::PredType::NATIVE_INT32, metaSpace);
+            writeAttribute(peak_group, key, &val_int, H5::PredType::NATIVE_INT32, metaSpace);
         }
     } catch (const std::exception& ex) {
         nsxlog(nsx::Level::Debug, "Exception in ", __PRETTY_FUNCTION__, ": ", ex.what());
     }
 
     const int peak_type_int = static_cast<int>(peak_type);
-    writeAttribute(peak_meta_group, nsx::at_peakType, &peak_type_int, H5::PredType::NATIVE_INT32, metaSpace);
+    writeAttribute(peak_group, nsx::at_peakType, &peak_type_int, H5::PredType::NATIVE_INT32, metaSpace);
 }
 
 void writePeakDataNames(
@@ -293,7 +288,7 @@ void ExperimentExporter::writePeaks(const std::map<std::string, PeakCollection*>
         PeakCollection* const collection_item = it.second;
         const std::string collectionNameKey = peakCollectionsKey + "/" + collection_name;
 
-        file.createGroup(collectionNameKey);
+	H5::Group peak_group {file.createGroup(collectionNameKey)};
 
         // initialize doubles
         const std::size_t nPeaks = collection_item->numberOfPeaks();
@@ -403,7 +398,7 @@ void ExperimentExporter::writePeaks(const std::map<std::string, PeakCollection*>
 
         // Write all other metadata (int and double) into the "Meta" Group
         const PeakMeta& pmeta = *(collection_item->meta());
-        writePeakMeta(file, collectionNameKey, pmeta, collection_item->type());
+        writePeakMeta(peak_group, pmeta, collection_item->type());
     }
 }
 

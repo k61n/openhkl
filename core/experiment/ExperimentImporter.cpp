@@ -104,19 +104,20 @@ void ExperimentImporter::loadPeaks(Experiment* experiment)
             const std::string collection_key = nsx::gr_PeakCollections + "/" + collection_name;
             H5::Group peak_collection(file.openGroup(collection_key));
 
-            H5::Group peak_collection_meta(file.openGroup(collection_key + "/" + nsx::gr_Metadata));
             // Read the info group and store in metadata
             int n_peaks = 0;
             int type = 0;
 
-            if (peak_collection_meta.attrExists(nsx::at_peaksNr)) {
-                const H5::Attribute attr = peak_collection_meta.openAttribute(nsx::at_peaksNr);
+            // TODO: nr of valid and invalid peaks is not read from file!
+
+            if (peak_collection.attrExists(nsx::at_peaksNr)) {
+                const H5::Attribute attr = peak_collection.openAttribute(nsx::at_peaksNr);
                 const H5::DataType attr_type = attr.getDataType();
                 attr.read(attr_type, &n_peaks);
             }
 
-            if (peak_collection_meta.attrExists(nsx::at_peakType)) {
-                const H5::Attribute attr = peak_collection_meta.openAttribute(nsx::at_peakType);
+            if (peak_collection.attrExists(nsx::at_peakType)) {
+                const H5::Attribute attr = peak_collection.openAttribute(nsx::at_peakType);
                 const H5::DataType attr_type = attr.getDataType();
                 attr.read(attr_type, &type);
             }
