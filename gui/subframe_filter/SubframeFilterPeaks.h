@@ -78,6 +78,8 @@ class SubframeFilterPeaks : public QWidget {
     void changeSelected(PeakItemGraphic* peak_graphic);
     //! Accept and save current list
     void accept();
+    //! Disable unsafe widgets if no data loaded
+    void toggleUnsafeWidgets();
 
  private:
     //! Grab the finder parameters
@@ -149,6 +151,9 @@ class SubframeFilterPeaks : public QWidget {
     QComboBox* _exp_combo;
     QComboBox* _peak_combo;
     QComboBox* _data_combo;
+
+    QPushButton* _filter_button;
+    QPushButton* _save_button;
 
     PeakViewWidget* _peak_view_widget;
 

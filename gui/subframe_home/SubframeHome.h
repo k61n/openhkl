@@ -63,6 +63,9 @@ class SubframeHome : public QWidget {
     // ! Save the settings
     void saveSettings() const;
 
+    //! Disable unsafe widgets if no data loaded
+    void toggleUnsafeWidgets();
+
  private:
     QPushButton* _new_exp;
     QPushButton* _old_exp;

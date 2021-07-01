@@ -99,6 +99,9 @@ class SubframeRefiner : public QWidget {
     //! Refresh the plot (e.g. after changes of plot check boxes)
     void refreshPlot();
 
+    //! Disable unsafe widgets if no data loaded
+    void toggleUnsafeWidgets();
+
  private:
     //! The loaded data list
     std::vector<nsx::sptrDataSet> _data_list;
@@ -131,6 +134,9 @@ class SubframeRefiner : public QWidget {
 
     // update prediction
     QComboBox* _predicted_combo;
+
+    QPushButton* _refine_button;
+    QPushButton* _update_button;
 
     QStringList _peak_list;
     QStringList _cell_list;

@@ -45,8 +45,8 @@ SubframeIntegrate::SubframeIntegrate() : QWidget()
     _left_layout = new QVBoxLayout(this);
 
     setInputUp();
-    setPreviewUp();
     setIntegrateUp();
+    setPreviewUp();
     setFigureUp();
     setPeakTableUp();
 
@@ -173,6 +173,7 @@ void SubframeIntegrate::refreshPeakTable()
 void SubframeIntegrate::refreshAll()
 {
     updateExptList();
+    toggleUnsafeWidgets();
 }
 
 void SubframeIntegrate::updateExptList()
@@ -235,6 +236,7 @@ void SubframeIntegrate::updateDatasetList()
 void SubframeIntegrate::updatePeakList()
 {
     _peak_combo->blockSignals(true);
+    _int_peak_combo->blockSignals(true);
     QString current_peaks = _peak_combo->currentText();
     _peak_combo->clear();
 
@@ -254,13 +256,16 @@ void SubframeIntegrate::updatePeakList()
     }
 
     tmp = gSession->experimentAt(_exp_combo->currentIndex())->getPeakListNames();
+    current_peaks = _int_peak_combo->currentText();
+    _int_peak_combo->clear();
     if (!tmp.empty()) {
         current_peaks = _int_peak_combo->currentText();
         _int_peak_combo->addItems(tmp);
-        _peak_combo->setCurrentText(current_peaks);
+        _int_peak_combo->setCurrentText(current_peaks);
     }
 
     _peak_combo->blockSignals(false);
+    _int_peak_combo->blockSignals(false);
     refreshShapeStatus();
 }
 
@@ -272,17 +277,17 @@ void SubframeIntegrate::setIntegrateUp()
     // -- Create controls
     _integrator_combo = f.addCombo();
 
-    auto build_shape_lib = f.addButton(
+    _build_shape_lib_button = f.addButton(
         "Build shape collection",
         "<font>A shape collection is a collection of averaged peaks attached to a peak"
         "collection. A shape is the averaged peak shape of a peak and its neighbours within a "
         "specified cutoff.</font>"); // Rich text to force line break in tooltip
 
     _fit_center =
-        f.addCheckBox("Fit the center", "Allow the peak center to move during integration");
+        f.addCheckBox("Fit the center", "Allow the peak center to move during integration", 1);
 
     _fit_covariance = f.addCheckBox(
-        "Fit the covariance", "Allow the peak covariance matrix to vary during integration");
+        "Fit the covariance", "Allow the peak covariance matrix to vary during integration", 1);
 
     _peak_end = f.addDoubleSpinBox("Peak end", "(sigmas) - scaling factor for peak region");
 
@@ -303,7 +308,7 @@ void SubframeIntegrate::setIntegrateUp()
 
     _interpolation_combo = f.addCombo("Interpolation", "Interpolation type for peak shape");
 
-    _integrate = f.addButton("Integrate peaks");
+    _integrate_button = f.addButton("Integrate peaks");
 
     // -- Initialize controls
     _integrator_combo->addItem("Pixel sum integrator");
@@ -343,11 +348,29 @@ void SubframeIntegrate::setIntegrateUp()
     _min_neighbours->setMaximum(100000);
     _min_neighbours->setValue(_integration_params.min_neighbors);
 
-    connect(_integrate, &QPushButton::clicked, this, &SubframeIntegrate::runIntegration);
-    connect(build_shape_lib, &QPushButton::clicked, this, &SubframeIntegrate::openShapeBuilder);
+    connect(_integrate_button, &QPushButton::clicked, this, &SubframeIntegrate::runIntegration);
+    connect(_build_shape_lib_button, &QPushButton::clicked, this,
+            &SubframeIntegrate::openShapeBuilder);
     connect(
         _integrator_combo, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
         this, &SubframeIntegrate::refreshShapeStatus);
+    _left_layout->addWidget(_integrate_box);
+}
+
+void SubframeIntegrate::setPreviewUp()
+{
+    Spoiler* preview_spoiler = new Spoiler("Show/hide peaks");
+    _peak_view_widget = new PeakViewWidget("Valid peaks", "Invalid Peaks");
+
+    connect(
+        _peak_view_widget, &PeakViewWidget::settingsChanged, this,
+        &SubframeIntegrate::refreshPeakVisual);
+
+    preview_spoiler->setContentLayout(*_peak_view_widget);
+
+    _peak_view_widget->set1.drawIntegrationRegion->setChecked(true);
+    _peak_view_widget->set1.previewIntRegion->setChecked(true);
+
     connect(
         _peak_view_widget->set1.peakEnd, qOverload<double>(&QDoubleSpinBox::valueChanged),
         _peak_end, &QDoubleSpinBox::setValue);
@@ -366,24 +389,8 @@ void SubframeIntegrate::setIntegrateUp()
     connect(
         _bkg_end, qOverload<double>(&QDoubleSpinBox::valueChanged),
         _peak_view_widget->set1.bkgEnd, &QDoubleSpinBox::setValue);
-    _left_layout->addWidget(_integrate_box);
-}
 
-void SubframeIntegrate::setPreviewUp()
-{
-    Spoiler* preview_spoiler = new Spoiler("Show/hide peaks");
-    _peak_view_widget = new PeakViewWidget("Valid peaks", "Invalid Peaks");
-
-    connect(
-        _peak_view_widget, &PeakViewWidget::settingsChanged, this,
-        &SubframeIntegrate::refreshPeakVisual);
-
-    preview_spoiler->setContentLayout(*_peak_view_widget);
-
-    _peak_view_widget->set1.drawIntegrationRegion->setChecked(true);
-    _peak_view_widget->set1.previewIntRegion->setChecked(true);
     _left_layout->addWidget(preview_spoiler);
-    preview_spoiler->setExpanded(true);
 }
 
 void SubframeIntegrate::runIntegration()
@@ -453,13 +460,13 @@ void SubframeIntegrate::refreshShapeStatus()
     }
 
     if (_integrator_combo->currentText().toStdString() == "Pixel sum integrator") {
-        _integrate->setEnabled(true);
+        _integrate_button->setEnabled(true);
         _interpolation_combo->setEnabled(false);
         _radius_int->setEnabled(false);
         _n_frames_int->setEnabled(false);
         _min_neighbours->setEnabled(false);
     } else {
-        _integrate->setEnabled(shape_collection_present);
+        _integrate_button->setEnabled(shape_collection_present);
         _interpolation_combo->setEnabled(true);
         _radius_int->setEnabled(true);
         _n_frames_int->setEnabled(true);
@@ -473,4 +480,16 @@ void SubframeIntegrate::changeSelected(PeakItemGraphic* peak_graphic)
     QModelIndex index = _peak_collection_model.index(row, 0);
     _peak_table->selectRow(row);
     _peak_table->scrollTo(index, QAbstractItemView::PositionAtTop);
+}
+
+void SubframeIntegrate::toggleUnsafeWidgets()
+{
+    refreshShapeStatus();
+    _build_shape_lib_button->setEnabled(true);
+    if (!_int_peak_combo->count() == 0)
+        _integrate_button->setEnabled(true);
+    if (_exp_combo->count() == 0 || _data_combo->count() == 0 || _peak_combo->count() == 0) {
+        _integrate_button->setEnabled(false);
+        _build_shape_lib_button->setEnabled(false);
+    }
 }

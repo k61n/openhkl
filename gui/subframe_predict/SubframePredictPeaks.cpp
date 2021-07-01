@@ -84,7 +84,8 @@ void SubframePredictPeaks::setParametersUp()
     _unit_cells = f.addCombo("Unit cell:");
     _d_min = f.addDoubleSpinBox("d min:", QString::fromUtf8("(\u212B) - minimum d (Bragg's law)"));
     _d_max = f.addDoubleSpinBox("d max:", QString::fromUtf8("(\u212B) - maximum d (Bragg's law)"));
-    auto run_prediction = f.addButton("Predict");
+    _predict_button = f.addButton("Predict");
+    _predict_button->setEnabled(false);
 
     _d_min->setMaximum(100000);
     _d_min->setDecimals(2);
@@ -95,7 +96,7 @@ void SubframePredictPeaks::setParametersUp()
     connect(
         _exp_combo, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this,
         &SubframePredictPeaks::updateUnitCellList);
-    connect(run_prediction, &QPushButton::clicked, this, &SubframePredictPeaks::runPrediction);
+    connect(_predict_button, &QPushButton::clicked, this, &SubframePredictPeaks::runPrediction);
 
     _left_layout->addWidget(_para_box);
 }
@@ -116,9 +117,10 @@ void SubframePredictPeaks::setPreviewUp()
 
 void SubframePredictPeaks::setSaveUp()
 {
-    auto save_button = new QPushButton("Create peak collection");
-    _left_layout->addWidget(save_button);
-    connect(save_button, &QPushButton::clicked, this, &SubframePredictPeaks::accept);
+    _save_button = new QPushButton("Create peak collection");
+    _save_button->setEnabled(false);
+    _left_layout->addWidget(_save_button);
+    connect(_save_button, &QPushButton::clicked, this, &SubframePredictPeaks::accept);
 }
 
 void SubframePredictPeaks::setFigureUp()
@@ -180,6 +182,7 @@ void SubframePredictPeaks::setPeakTableUp()
 void SubframePredictPeaks::refreshAll()
 {
     setExperiments();
+    toggleUnsafeWidgets();
 }
 
 void SubframePredictPeaks::setExperiments()
@@ -354,4 +357,14 @@ void SubframePredictPeaks::changeSelected(PeakItemGraphic* peak_graphic)
     QModelIndex index = _peak_collection_model.index(row, 0);
     _peak_table->selectRow(row);
     _peak_table->scrollTo(index, QAbstractItemView::PositionAtTop);
+}
+
+void SubframePredictPeaks::toggleUnsafeWidgets()
+{
+    _predict_button->setEnabled(true);
+    _save_button->setEnabled(true);
+    if (_unit_cells->count() == 0 || _exp_combo->count() == 0) {
+        _predict_button->setEnabled(false);
+        _save_button->setEnabled(false);
+    }
 }

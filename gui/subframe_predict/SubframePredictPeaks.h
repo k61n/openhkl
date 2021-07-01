@@ -92,6 +92,8 @@ class SubframePredictPeaks : public QWidget {
     void changeSelected(PeakItemGraphic* peak_graphic);
     //! Accept and save current list
     void accept();
+    //! Disable unsafe widgets if no data loaded
+    void toggleUnsafeWidgets();
 
  private:
     //! The model for the found peaks
@@ -121,6 +123,9 @@ class SubframePredictPeaks : public QWidget {
     QComboBox* _integrator;
     QDoubleSpinBox* _d_min;
     QDoubleSpinBox* _d_max;
+
+    QPushButton* _save_button;
+    QPushButton* _predict_button;
 
     QComboBox* _exp_combo;
     QComboBox* _data_combo;

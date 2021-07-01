@@ -111,7 +111,7 @@ void SubframeRefiner::setRefinerFlagsUp()
     _refineSampleOrientation = f.addCheckBox("Sample orientation");
     _refineDetectorPosition = f.addCheckBox("Detector position");
     _refineKi = f.addCheckBox("Incident wavevector");
-    auto refine_button = f.addButton("Refine");
+    _refine_button = f.addButton("Refine");
 
     _refineUB->setChecked(_refiner_params.refine_ub);
     _refineSamplePosition->setChecked(_refiner_params.refine_sample_position);
@@ -119,7 +119,7 @@ void SubframeRefiner::setRefinerFlagsUp()
     _refineDetectorPosition->setChecked(_refiner_params.refine_detector_offset);
     _refineKi->setChecked(_refiner_params.refine_ki);
 
-    connect(refine_button, &QPushButton::clicked, this, &SubframeRefiner::refine);
+    connect(_refine_button, &QPushButton::clicked, this, &SubframeRefiner::refine);
 
     _left_layout->addWidget(refiner_flags_box);
 }
@@ -127,6 +127,7 @@ void SubframeRefiner::setRefinerFlagsUp()
 void SubframeRefiner::refreshAll()
 {
     updateExptList();
+    toggleUnsafeWidgets();
 }
 
 void SubframeRefiner::refreshTables()
@@ -393,11 +394,11 @@ void SubframeRefiner::setUpdateUp()
 
     _predicted_combo = f.addCombo("Predicted peaks");
 
-    auto update_button = f.addButton("Update", "Update peak positions given refined unit cell");
+    _update_button = f.addButton("Update", "Update peak positions given refined unit cell");
 
     _left_layout->addWidget(update_box);
 
-    connect(update_button, &QPushButton::clicked, this, &SubframeRefiner::updatePredictions);
+    connect(_update_button, &QPushButton::clicked, this, &SubframeRefiner::updatePredictions);
 }
 
 void SubframeRefiner::updatePredictedList()
@@ -429,4 +430,16 @@ void SubframeRefiner::updatePredictions()
 QList<PlotCheckBox*> SubframeRefiner::plotCheckBoxes() const
 {
     return _plot_box->findChildren<PlotCheckBox*>();
+}
+
+void SubframeRefiner::toggleUnsafeWidgets()
+{
+    _refine_button->setEnabled(true);
+    if (!_predicted_combo->count() == 0)
+        _update_button->setEnabled(true);
+    if (_exp_combo->count() == 0 || _data_combo->count() == 0 ||
+        _peak_combo->count() == 0 || _cell_combo->count() == 0) {
+        _refine_button->setEnabled(false);
+        _update_button->setEnabled(false);
+    }
 }

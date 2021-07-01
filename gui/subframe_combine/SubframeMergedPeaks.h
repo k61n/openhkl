@@ -65,6 +65,8 @@ class SubframeMergedPeaks : public QWidget {
     void refreshPredictedPeakList();
     //! Process the two inputs to create the merged dataset
     void processMerge();
+    //! Disable unsafe widgets if no data loaded
+    void toggleUnsafeWidgets();
 
  private:
     //! Refresh the tables of the visual

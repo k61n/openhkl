@@ -97,6 +97,9 @@ class SubframeIntegrate : public QWidget {
     //! Do the integration
     void integrate();
 
+    //! Disable unsafe widgets if no data loaded
+    void toggleUnsafeWidgets();
+
  private:
     //! The loaded data list
     std::vector<nsx::sptrDataSet> _data_list;
@@ -129,7 +132,8 @@ class SubframeIntegrate : public QWidget {
     QCheckBox* _fit_center;
     QCheckBox* _fit_covariance;
 
-    QPushButton* _integrate;
+    QPushButton* _integrate_button;
+    QPushButton* _build_shape_lib_button;
 
     QStringList _cell_list;
     QStringList _predicted_list;

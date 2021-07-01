@@ -270,6 +270,7 @@ void SubframeMergedPeaks::refreshAll()
         d_min = 1.5;
     }
     _d_min->setValue(d_min);
+    toggleUnsafeWidgets();
 }
 
 void SubframeMergedPeaks::refreshExperimentList()
@@ -719,4 +720,16 @@ void SubframeMergedPeaks::saveUnmergedPeaks()
 
     QFileInfo info(filename);
     s.setValue("merged", info.absolutePath());
+}
+
+void SubframeMergedPeaks::toggleUnsafeWidgets()
+{
+    _save_shell->setEnabled(true);
+    _save_merged->setEnabled(true);
+    _save_unmerged->setEnabled(true);
+    if (_exp_drop->count() == 0 || _peaks1_drop->count() == 0) {
+        _save_shell->setEnabled(false);
+        _save_merged->setEnabled(false);
+        _save_unmerged->setEnabled(false);
+    }
 }
