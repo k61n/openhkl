@@ -29,6 +29,7 @@ class SubframeFilterPeaks;
 class SubframeAutoIndexer;
 class SubframeMergedPeaks;
 class SubframeRefiner;
+class SubframeIntegrate;
 class SubframePredictPeaks;
 
 extern class MainWin* gGui; //!< global pointer to the main window
@@ -79,6 +80,7 @@ class MainWin : public QMainWindow {
     SubframeAutoIndexer* indexer;
     SubframePredictPeaks* predictor;
     SubframeRefiner* refiner;
+    SubframeIntegrate* integrator;
     SubframeMergedPeaks* merger;
 
     // modeless detector dialog

@@ -222,7 +222,7 @@ void Experiment::predictPeaks(
     const DataList numors = getAllData();
     std::vector<nsx::Peak3D*> predicted_peaks;
     const UnitCell* accepted_cell = getUnitCell("accepted");
-    const ShapeCollection* shape_collection = peaks->shapeCollection();
+    ShapeCollection* shape_collection = peaks->shapeCollection();
 
     int current_numor = 0;
     for (const sptrDataSet& data : numors) {
@@ -231,7 +231,7 @@ void Experiment::predictPeaks(
             numors.size());
 
         const std::vector<nsx::Peak3D*> predicted =
-            nsx::predictPeaks(shape_collection, data, accepted_cell, interpol, params);
+            nsx::predictPeaks(data, accepted_cell, params);
 
         for (nsx::Peak3D* peak : predicted)
             predicted_peaks.push_back(peak);
@@ -241,6 +241,7 @@ void Experiment::predictPeaks(
             " peaks");
 
         addPeakCollection(name, listtype::PREDICTED, predicted_peaks);
+        shape_collection->setPredictedShapes(getPeakCollection(name), interpol);
         predicted_peaks.clear();
     }
 }

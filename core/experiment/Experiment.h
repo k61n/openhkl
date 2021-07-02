@@ -109,6 +109,7 @@ class Experiment {
     void setMergedPeaks(std::vector<PeakCollection*> peak_collections, bool friedel);
     //! Merge two PeakCollection objects (mainly for SWIG)
     void setMergedPeaks(PeakCollection* found, PeakCollection* predicted, bool friedel);
+    int min_n_neighbors = 10; //!< Minimum number of neighbours required for shape collection
     //! Reset the merged peak collection
     void resetMergedPeaks();
     //! Get the merged peak collection

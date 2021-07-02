@@ -79,6 +79,8 @@ class SubframeFindPeaks : public QWidget {
     void changeSelected(PeakItemGraphic* peak_graphic);
     //! Accept and save current list
     void accept();
+    //! Disable widgets that are unsafe without relevant data
+    void toggleUnsafeWidgets();
 
  private:
     //! Update the datalist as an experiment was changed
@@ -134,6 +136,10 @@ class SubframeFindPeaks : public QWidget {
     QDoubleSpinBox* _peak_area;
     QDoubleSpinBox* _bkg_lower;
     QDoubleSpinBox* _bkg_upper;
+
+    QPushButton* _find_button;
+    QPushButton* _integrate_button;
+    QPushButton* _save_button;
 
     DetectorView* _figure_view;
     QGraphicsPixmapItem* _pixmap;

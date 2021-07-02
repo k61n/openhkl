@@ -222,8 +222,8 @@ void SubframeFilterPeaks::setProceedUp()
     _keep_complementary->setChecked(false);
     _left_layout->addWidget(_keep_complementary);
 
-    auto filter_button = new QPushButton("Filter");
-    _left_layout->addWidget(filter_button);
+    _filter_button = new QPushButton("Filter");
+    _left_layout->addWidget(_filter_button);
 
     auto show_hide_peaks = new Spoiler("Show/hide peaks");
     _peak_view_widget = new PeakViewWidget("Peaks caught by filter", "Peaks rejected by filter");
@@ -235,12 +235,12 @@ void SubframeFilterPeaks::setProceedUp()
 
     _left_layout->addWidget(show_hide_peaks);
 
-    auto save_button = new QPushButton("Create peak collection");
-    _left_layout->addWidget(save_button);
+    _save_button = new QPushButton("Create peak collection");
+    _left_layout->addWidget(_save_button);
 
-    connect(filter_button, &QPushButton::clicked, this, &SubframeFilterPeaks::filterPeaks);
+    connect(_filter_button, &QPushButton::clicked, this, &SubframeFilterPeaks::filterPeaks);
 
-    connect(save_button, &QPushButton::clicked, this, &SubframeFilterPeaks::accept);
+    connect(_save_button, &QPushButton::clicked, this, &SubframeFilterPeaks::accept);
 }
 
 void SubframeFilterPeaks::setFigureUp()
@@ -304,6 +304,7 @@ void SubframeFilterPeaks::setPeakTableUp()
 void SubframeFilterPeaks::refreshAll()
 {
     setParametersUp();
+    toggleUnsafeWidgets();
 }
 
 void SubframeFilterPeaks::setParametersUp()
@@ -566,4 +567,14 @@ void SubframeFilterPeaks::changeSelected(PeakItemGraphic* peak_graphic)
     QModelIndex index = _peak_collection_model.index(row, 0);
     _peak_table->selectRow(row);
     _peak_table->scrollTo(index, QAbstractItemView::PositionAtTop);
+}
+
+void SubframeFilterPeaks::toggleUnsafeWidgets()
+{
+    _filter_button->setEnabled(true);
+    _save_button->setEnabled(true);
+    if (_exp_combo->count() == 0 || _peak_combo->count() == 0) {
+        _filter_button->setEnabled(false);
+        _save_button->setEnabled(false);
+    }
 }

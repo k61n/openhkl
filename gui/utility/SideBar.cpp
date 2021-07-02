@@ -22,6 +22,7 @@
 #include "gui/subframe_find/SubframeFindPeaks.h"
 #include "gui/subframe_home/SubframeHome.h"
 #include "gui/subframe_index/SubframeAutoIndexer.h"
+#include "gui/subframe_integrate/SubframeIntegrate.h"
 #include "gui/subframe_predict/SubframePredictPeaks.h"
 #include "gui/subframe_refiner/SubframeRefiner.h"
 
@@ -41,11 +42,12 @@ SideBar::SideBar(QWidget* parent) : QWidget(parent), mCheckedAction(nullptr), mO
     QAction* home = addAction(QIcon(":/images/home.svg"), "Home");
     QAction* experiment = addAction(QIcon(":/images/experiment_info.svg"), "Experiment");
     QAction* finder = addAction(QIcon(":/images/find_peaks.svg"), "Find Peaks");
-    QAction* filter = addAction(QIcon(":/images/filterIcon.svg"), "Peak Filter");
+    QAction* filter = addAction(QIcon(":/images/filterIcon.svg"), "Filter Peaks");
     QAction* indexer = addAction(QIcon(":/images/uni_cell.svg"), "Indexer");
-    QAction* predictor = addAction(QIcon(":/images/predict_peaks.svg"), "Predictor");
-    QAction* refiner = addAction(QIcon(":/images/filterIcon.svg"), "Refiner");
-    QAction* info = addAction(QIcon(":/images/merge.svg"), "Merger");
+    QAction* predictor = addAction(QIcon(":/images/predict_peaks.svg"), "Predict");
+    QAction* refiner = addAction(QIcon(":/images/filterIcon.svg"), "Refine");
+    QAction* integrator = addAction(QIcon(":/images/find_peaks.svg"), "Integrate");
+    QAction* info = addAction(QIcon(":/images/merge.svg"), "Merge");
 
     QAction* tempAction = mActions.at(0);
     mCheckedAction = tempAction;
@@ -60,6 +62,7 @@ SideBar::SideBar(QWidget* parent) : QWidget(parent), mCheckedAction(nullptr), mO
     connect(indexer, &QAction::triggered, this, &SideBar::onIndexer);
     connect(predictor, &QAction::triggered, this, &SideBar::onPredictor);
     connect(refiner, &QAction::triggered, this, &SideBar::onRefiner);
+    connect(integrator, &QAction::triggered, this, &SideBar::onIntegrator);
     connect(info, &QAction::triggered, this, &SideBar::onMerger);
 }
 
@@ -99,7 +102,6 @@ void SideBar::paintEvent(QPaintEvent* event)
         action_y += actionRect.height();
     }
 }
-
 QSize SideBar::minimumSizeHint() const
 {
     return action_height * QSize(1, mActions.size());
@@ -231,9 +233,15 @@ void SideBar::onRefiner()
     gGui->refiner->refreshAll();
 }
 
-void SideBar::onMerger()
+void SideBar::onIntegrator()
 {
     gGui->_layout_stack->setCurrentIndex(7);
+    gGui->integrator->refreshAll();
+}
+
+void SideBar::onMerger()
+{
+    gGui->_layout_stack->setCurrentIndex(8);
     gGui->merger->refreshAll();
 }
 
@@ -250,6 +258,7 @@ void SideBar::refreshAll()
     gGui->indexer->refreshAll();
     gGui->predictor->refreshAll();
     gGui->refiner->refreshAll();
+    gGui->integrator->refreshAll();
     gGui->merger->refreshAll();
 }
 

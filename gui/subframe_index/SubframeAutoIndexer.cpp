@@ -36,7 +36,6 @@
 #include <QHeaderView>
 #include <QLabel>
 #include <QMessageBox>
-#include <QPushButton>
 #include <QSpinBox>
 #include <QSplitter>
 
@@ -57,6 +56,7 @@ SubframeAutoIndexer::SubframeAutoIndexer()
     setProceedUp();
     setPeakTableUp();
     setSolutionTableUp();
+    toggleUnsafeWidgets();
     _right_element->setSizePolicy(_size_policy_right);
 
     auto propertyScrollArea = new PropertyScrollArea(this);
@@ -173,14 +173,14 @@ void SubframeAutoIndexer::setParametersUp()
 
 void SubframeAutoIndexer::setProceedUp()
 {
-    QPushButton* solve_button = new QPushButton("Find unit cells");
-    _left_layout->addWidget(solve_button);
+    _solve_button = new QPushButton("Find unit cells");
+    _left_layout->addWidget(_solve_button);
 
-    QPushButton* save_button = new QPushButton("Assign selected unit cell");
-    _left_layout->addWidget(save_button);
+    _save_button = new QPushButton("Assign selected unit cell");
+    _left_layout->addWidget(_save_button);
 
-    connect(solve_button, &QPushButton::clicked, this, &SubframeAutoIndexer::runAutoIndexer);
-    connect(save_button, &QPushButton::clicked, this, &SubframeAutoIndexer::acceptSolution);
+    connect(_solve_button, &QPushButton::clicked, this, &SubframeAutoIndexer::runAutoIndexer);
+    connect(_save_button, &QPushButton::clicked, this, &SubframeAutoIndexer::acceptSolution);
 }
 
 void SubframeAutoIndexer::setPeakTableUp()
@@ -229,6 +229,7 @@ void SubframeAutoIndexer::refreshAll()
     if (dataset) {
         _max_frame->setMaximum(dataset->nFrames() - 1);
     }
+    toggleUnsafeWidgets();
 }
 
 void SubframeAutoIndexer::setExperiments()
@@ -498,5 +499,15 @@ void SubframeAutoIndexer::acceptSolution()
             nsx::UnitCell* cell = expt->getUnitCell(cellName);
             cell->setSpaceGroup(dlg->spaceGroup().toStdString());
         }
+    }
+}
+
+void SubframeAutoIndexer::toggleUnsafeWidgets()
+{
+    _solve_button->setEnabled(true);
+    _save_button->setEnabled(true);
+    if (_exp_combo->count() == 0 || _data_combo->count() == 0 || _peak_combo->count() == 0) {
+        _solve_button->setEnabled(false);
+        _save_button->setEnabled(false);
     }
 }

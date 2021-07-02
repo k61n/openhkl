@@ -21,6 +21,7 @@
 #include "gui/models/PeakCollectionModel.h"
 
 #include <QSizePolicy>
+#include <QPushButton>
 #include <QWidget>
 
 class PeakTableView;
@@ -76,6 +77,8 @@ class SubframeAutoIndexer : public QWidget {
     void selectSolutionTable();
     //! Accept the selected solution
     void acceptSolution();
+    //! Disable widgets that are unsafe without relevant data
+    void toggleUnsafeWidgets();
 
  private:
     //! The model for the found peaks
@@ -120,6 +123,10 @@ class SubframeAutoIndexer : public QWidget {
     QSpinBox* _number_subdivisions;
 
     QCheckBox* _only_niggli;
+
+    QPushButton* _solve_button;
+    QPushButton* _save_button;
+
 
     QSizePolicy _size_policy_right;
 

@@ -30,6 +30,7 @@
 #include "gui/subframe_find/SubframeFindPeaks.h"
 #include "gui/subframe_home/SubframeHome.h"
 #include "gui/subframe_index/SubframeAutoIndexer.h"
+#include "gui/subframe_integrate/SubframeIntegrate.h"
 #include "gui/subframe_predict/SubframePredictPeaks.h"
 #include "gui/subframe_refiner/SubframeRefiner.h"
 #include "gui/utility/SideBar.h"
@@ -76,6 +77,7 @@ MainWin::MainWin()
     indexer = new SubframeAutoIndexer;
     predictor = new SubframePredictPeaks;
     refiner = new SubframeRefiner;
+    integrator = new SubframeIntegrate;
     merger = new SubframeMergedPeaks;
 
     detector_window = new DetectorWindow();
@@ -88,6 +90,7 @@ MainWin::MainWin()
     _layout_stack->addWidget(indexer);
     _layout_stack->addWidget(predictor);
     _layout_stack->addWidget(refiner);
+    _layout_stack->addWidget(integrator);
     _layout_stack->addWidget(merger);
     _layout_stack->setCurrentIndex(0);
 
@@ -97,6 +100,8 @@ MainWin::MainWin()
     filter->getDetectorView()->getScene()->setMaxIntensity(
         experiment->getImage()->getMaxIntensitySlider()->value());
     predictor->getDetectorView()->getScene()->setMaxIntensity(
+        experiment->getImage()->getMaxIntensitySlider()->value());
+    integrator->getDetectorView()->getScene()->setMaxIntensity(
         experiment->getImage()->getMaxIntensitySlider()->value());
     detector_window->getDetectorView()->getScene()->setMaxIntensity(
         experiment->getImage()->getMaxIntensitySlider()->value());
@@ -111,6 +116,9 @@ MainWin::MainWin()
     connect(
         experiment->getImage()->getMaxIntensitySlider(), &QSlider::valueChanged,
         predictor->getDetectorView()->getScene(), &DetectorScene::setMaxIntensity);
+    connect(
+        experiment->getImage()->getMaxIntensitySlider(), &QSlider::valueChanged,
+        integrator->getDetectorView()->getScene(), &DetectorScene::setMaxIntensity);
     connect(
         experiment->getImage()->getMaxIntensitySlider(), &QSlider::valueChanged,
         detector_window->getDetectorView()->getScene(), &DetectorScene::setMaxIntensity);

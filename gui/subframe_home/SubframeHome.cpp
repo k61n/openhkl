@@ -47,6 +47,7 @@ SubframeHome::SubframeHome()
     main_layout->addSpacerItem(spacer_bot);
 
     readSettings();
+    toggleUnsafeWidgets();
     _updateLastLoadedWidget();
 }
 
@@ -144,6 +145,7 @@ void SubframeHome::createNew()
             _open_experiments_model.reset();
             _open_experiments_model = std::make_unique<ExperimentModel>();
             _open_experiments_view->setModel(_open_experiments_model.get());
+            toggleUnsafeWidgets();
         }
     }
 }
@@ -171,6 +173,7 @@ void SubframeHome::loadFromFile()
         _open_experiments_view->setModel(_open_experiments_model.get());
         _updateLastLoadedList(
             QString::fromStdString(gSession->currentProject()->experiment()->name()), file_path);
+        toggleUnsafeWidgets();
     } catch (const std::exception& e) {
         QMessageBox::critical(this, "Error", QString(e.what()));
     }
@@ -266,7 +269,18 @@ void SubframeHome::_loadSelectedItem(QListWidgetItem* item)
         _updateLastLoadedList(
             QString::fromStdString(gSession->currentProject()->experiment()->name()),
             item->data(100).toString());
+        toggleUnsafeWidgets();
     } catch (const std::exception& e) {
         QMessageBox::critical(this, "Error", QString(e.what()));
+    }
+}
+
+void SubframeHome::toggleUnsafeWidgets()
+{
+    _save_all->setEnabled(true);
+    _save_current->setEnabled(true);
+    if (_open_experiments_model->rowCount() == 0) {
+        _save_all->setEnabled(false);
+        _save_current->setEnabled(false);
     }
 }

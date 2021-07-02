@@ -84,11 +84,11 @@ SubframeFindPeaks::SubframeFindPeaks()
 
 void SubframeFindPeaks::setDataUp()
 {
-    Spoiler* _data_box = new Spoiler("1. Input Data");
+    Spoiler* _data_box = new Spoiler("Input");
     GridFiller f(_data_box);
 
     _exp_combo = f.addCombo("Experiment");
-    _data_combo = f.addCombo("Data-set");
+    _data_combo = f.addCombo("Data set");
     _all_data = f.addCheckBox("Search all", 1);
 
     connect(
@@ -97,18 +97,23 @@ void SubframeFindPeaks::setDataUp()
             grabFinderParameters();
             grabIntegrationParameters();
             updateDatasetList();
+            toggleUnsafeWidgets();
         });
 
     connect(
         _data_combo, &QComboBox::currentTextChanged, this,
         &SubframeFindPeaks::updateDatasetParameters);
 
+    connect(
+        _data_combo, &QComboBox::currentTextChanged, this, &SubframeFindPeaks::toggleUnsafeWidgets);
+
     _left_layout->addWidget(_data_box);
+    _data_box->setExpanded(true);
 }
 
 void SubframeFindPeaks::setBlobUp()
 {
-    Spoiler* blob_para = new Spoiler("2. Peak search parameters");
+    Spoiler* blob_para = new Spoiler("Peak search parameters");
     GridFiller f(blob_para, true);
 
     _threshold_spin = f.addSpinBox(
@@ -140,7 +145,7 @@ void SubframeFindPeaks::setBlobUp()
 
     _end_frame_spin = f.addSpinBox("End frame", "(frame) - end frame for peak finding");
 
-    auto find_button = f.addButton("Find peaks");
+    _find_button = f.addButton("Find peaks");
 
     _threshold_spin->setMaximum(10000000);
     _scale_spin->setMaximum(10000000);
@@ -148,14 +153,14 @@ void SubframeFindPeaks::setBlobUp()
     _max_size_spin->setMaximum(10000000);
     _max_width_spin->setMaximum(10000000);
 
-    connect(find_button, &QPushButton::clicked, this, &SubframeFindPeaks::find);
+    connect(_find_button, &QPushButton::clicked, this, &SubframeFindPeaks::find);
 
     _left_layout->addWidget(blob_para);
 }
 
 void SubframeFindPeaks::setIntegrateUp()
 {
-    Spoiler* integration_para = new Spoiler("3. Integration parameters");
+    Spoiler* integration_para = new Spoiler("Integration parameters");
     GridFiller f(integration_para);
 
     _peak_area = f.addDoubleSpinBox("Peak end", "(sigmas) - scaling factor for peak region");
@@ -166,20 +171,20 @@ void SubframeFindPeaks::setIntegrateUp()
     _bkg_upper =
         f.addDoubleSpinBox("Bkg. end", "(sigmas) - scaling factor for upper limit of background");
 
-    auto integrate_button = f.addButton("Integrate");
+    _integrate_button = f.addButton("Integrate");
 
     _peak_area->setMaximum(10000000);
     _bkg_lower->setMaximum(10000000);
     _bkg_upper->setMaximum(10000000);
 
-    connect(integrate_button, &QPushButton::clicked, this, &SubframeFindPeaks::integrate);
+    connect(_integrate_button, &QPushButton::clicked, this, &SubframeFindPeaks::integrate);
 
     _left_layout->addWidget(integration_para);
 }
 
 void SubframeFindPeaks::setPreviewUp()
 {
-    Spoiler* preview_spoiler = new Spoiler("4. Show/hide peaks");
+    Spoiler* preview_spoiler = new Spoiler("Show/hide peaks");
     _peak_view_widget = new PeakViewWidget("Valid peaks", "Invalid Peaks");
 
     connect(
@@ -209,9 +214,9 @@ void SubframeFindPeaks::setPreviewUp()
 
 void SubframeFindPeaks::setSaveUp()
 {
-    auto save_button = new QPushButton("Create peak collection");
-    _left_layout->addWidget(save_button);
-    connect(save_button, &QPushButton::clicked, this, &SubframeFindPeaks::accept);
+    _save_button = new QPushButton("Create peak collection");
+    _left_layout->addWidget(_save_button);
+    connect(_save_button, &QPushButton::clicked, this, &SubframeFindPeaks::accept);
 }
 
 void SubframeFindPeaks::setFigureUp()
@@ -274,6 +279,7 @@ void SubframeFindPeaks::setPeakTableUp()
 void SubframeFindPeaks::refreshAll()
 {
     setParametersUp();
+    toggleUnsafeWidgets();
 }
 
 void SubframeFindPeaks::setParametersUp()
@@ -619,4 +625,16 @@ void SubframeFindPeaks::changeSelected(PeakItemGraphic* peak_graphic)
     QModelIndex index = _peak_collection_model.index(row, 0);
     _peak_table->selectRow(row);
     _peak_table->scrollTo(index, QAbstractItemView::PositionAtTop);
+}
+
+void SubframeFindPeaks::toggleUnsafeWidgets()
+{
+    _find_button->setEnabled(true);
+    _integrate_button->setEnabled(true);
+    _save_button->setEnabled(true);
+    if (_exp_combo->count() == 0 || _data_combo->count() == 0) {
+        _find_button->setEnabled(false);
+        _integrate_button->setEnabled(false);
+        _save_button->setEnabled(false);
+    }
 }
