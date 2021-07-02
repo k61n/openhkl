@@ -299,34 +299,41 @@ void SubframeMergedPeaks::refreshPeakLists()
 void SubframeMergedPeaks::refreshPeakCombos()
 {
     _peaks1_drop->blockSignals(true);
-    QString current_found = _peaks1_drop->currentText();
+    QString current_peaks1 = _peaks1_drop->currentText();
     _peaks1_drop->clear();
     _peaks1_list.clear();
 
     QStringList tmp = gSession->experimentAt(_exp_drop->currentIndex())
         ->getPeakCollectionNames(nsx::listtype::PREDICTED);
     _peaks1_list.append(tmp);
-    // tmp.clear();
-    // tmp = gSession->experimentAt(_exp_drop->currentIndex())
-    //     ->getPeakCollectionNames(nsx::listtype::FILTERED);
-    // _peaks1_list.append(tmp);
+    tmp.clear();
+    tmp = gSession->experimentAt(_exp_drop->currentIndex())
+        ->getPeakCollectionNames(nsx::listtype::FOUND);
+    _peaks1_list.append(tmp);
+    tmp.clear();
 
     if (!_peaks1_list.empty()) {
         _peaks1_drop->addItems(_peaks1_list);
-        _peaks1_drop->setCurrentText(current_found);
+        _peaks1_drop->setCurrentText(current_peaks1);
     }
     _peaks1_drop->blockSignals(false);
 
     _peaks2_drop->blockSignals(true);
-    QString current_predicted = _peaks2_drop->currentText();
-    _peaks2_drop->clear();
-    _peaks2_list = gSession->experimentAt(_exp_drop->currentIndex())
+    tmp = gSession->experimentAt(_exp_drop->currentIndex())
         ->getPeakCollectionNames(nsx::listtype::PREDICTED);
+    _peaks2_list.append(tmp);
+    tmp.clear();
+    tmp = gSession->experimentAt(_exp_drop->currentIndex())
+        ->getPeakCollectionNames(nsx::listtype::FOUND);
+    _peaks2_list.append(tmp);
+    QString current_peaks2 = _peaks2_drop->currentText();
+    _peaks2_drop->clear();
+    _peaks2_list.append(tmp);
 
     _peaks2_list.push_front(""); // Second peak collection is not used by default
     if (!_peaks2_list.empty()) {
         _peaks2_drop->addItems(_peaks2_list);
-        _peaks2_drop->setCurrentText(current_predicted);
+        _peaks2_drop->setCurrentText(current_peaks2);
     }
     _peaks2_drop->blockSignals(false);
 }
