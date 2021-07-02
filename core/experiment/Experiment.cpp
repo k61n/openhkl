@@ -49,6 +49,8 @@ Experiment::~Experiment() = default;
 
 Experiment::Experiment(const std::string& name, const std::string& diffractometerName) : _name(name)
 {
+    // start logging
+    Logger::instance().start( nsx::kw_logFilename0, Level::Debug);
     _peak_finder = std::make_unique<PeakFinder>();
     _peak_filter = std::make_unique<PeakFilter>();
     _auto_indexer = std::make_unique<AutoIndexer>();
@@ -56,8 +58,6 @@ Experiment::Experiment(const std::string& name, const std::string& diffractomete
     _peak_handler = std::make_unique<PeakHandler>();
     _cell_handler = std::make_unique<UnitCellHandler>();
     _integration_handler = std::make_unique<IntegrationHandler>(_data_handler);
-    // start logging
-    Logger::instance().start( nsx::kw_logFilename0, Level::Info);
 
     _finder_params = std::make_shared<PeakFinderParameters>();
     _filter_params = std::make_shared<PeakFilterParameters>();
