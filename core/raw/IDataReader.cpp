@@ -34,7 +34,6 @@ IDataReader::IDataReader(const std::string& filename, Diffractometer* diffractom
     , _nCols(0)
     , _sampleStates()
     , _detectorStates()
-    , _fileSize(0)
     , _isOpened(false)
 {
 
@@ -120,11 +119,6 @@ std::string IDataReader::filename() const
 bool IDataReader::isOpened() const
 {
     return _isOpened;
-}
-
-std::size_t IDataReader::fileSize() const
-{
-    return _fileSize;
 }
 
 const std::vector<std::vector<double>>& IDataReader::sampleStates() const

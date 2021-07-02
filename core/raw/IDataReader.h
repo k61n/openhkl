@@ -76,9 +76,6 @@ class IDataReader {
     //! True if file is open
     bool isOpened() const;
 
-    //! Returns the size of the file in disk
-    std::size_t fileSize() const; //
-
 
  protected:
     IDataReader() = delete;
@@ -108,9 +105,6 @@ class IDataReader {
 
     //! Vector of detector states
     std::vector<std::vector<double>> _detectorStates;
-
-    //! Total size of file
-    std::size_t _fileSize;
 
     //! Status of file handle
     bool _isOpened;
