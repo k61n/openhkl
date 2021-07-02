@@ -50,7 +50,7 @@ class TestPrediction(unittest.TestCase):
         expt.predictPeaks("predicted", filtered_peaks, prediction_params,
                         nsx.PeakInterpolation_NoInterpolation)
         predicted_peaks = expt.getPeakCollection("predicted")
-        expt.integratePredictedPeaks('1d profile integrator', predicted_peaks,
+        expt.integratePredictedPeaks(nsx.IntegratorType_Profile1D, predicted_peaks,
                                     filtered_peaks.shapeCollection(), prediction_params)
 
         self.assertTrue(predicted_peaks.numberOfPeaks() > 200);
