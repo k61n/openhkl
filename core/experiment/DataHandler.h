@@ -34,7 +34,7 @@ class DataHandler {
     ~DataHandler() = default;
     DataHandler(const DataHandler& other);
     DataHandler& operator=(const DataHandler& other);
-    DataHandler(const std::string& name, const std::string& diffractometerName);
+    DataHandler(const std::string& experiment_name, const std::string& diffractometerName);
 
  public: // Handling data sets
     //! Get the diffractometer
@@ -45,21 +45,19 @@ class DataHandler {
     const DataMap* getDataMap() const;
     //! Gets the pointer to a given data stored in the experiment
     sptrDataSet getData(std::string name) const;
-    //! Get the name of the experiment
-    std::string getName() const;
     //! Return all data sets as a DataList
     DataList getAllData() const;
     //! Get number of data
     int numData() const;
     //! Add some data to the experiment
-    void addData(sptrDataSet data, std::string name = "");
+    void addData(sptrDataSet data, std::string name);
     //! Returns true if the experiment has a data
     bool hasData(const std::string& name) const;
     //! Remove a data from the experiment
     void removeData(const std::string& name);
 
  private:
-    std::string _name;
+    std::string _experiment_name;
     std::unique_ptr<Diffractometer> _diffractometer;
     //! A map of the data related to the experiment.
     DataMap _data_map;

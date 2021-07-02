@@ -34,7 +34,6 @@ namespace nsx {
 
 DataSet::DataSet(std::shared_ptr<IDataReader> reader)
     : _isOpened{false}
-    , _filename{reader->basename()}
     , _nFrames{0}
     , _nrows{0}
     , _ncols{0}
@@ -48,7 +47,7 @@ DataSet::DataSet(std::shared_ptr<IDataReader> reader)
 
     _metadata.setMap(_reader->metadata().map());
 
-    double wav = _reader->metadata().key<double>(nsx::at_wavelength);
+    double wav = _metadata.key<double>(nsx::at_wavelength);
     _reader->diffractometer()->source().selectedMonochromator().setWavelength(wav);
 
     // Getting Scan parameters for the detector
@@ -84,11 +83,6 @@ void DataSet::open()
 void DataSet::close()
 {
     _reader->close();
-}
-
-const std::string& DataSet::filename() const
-{
-    return _filename;
 }
 
 std::size_t DataSet::nFrames() const
@@ -222,24 +216,7 @@ std::string DataSet::name() const
     if (!_name.empty())
         return _name;
 
-    std::string name;
-    std::string ext;
-    std::string data_name = filename();
-
-    size_t sep = data_name.find_last_of("\\/");
-    if (sep != std::string::npos)
-        data_name = data_name.substr(sep + 1, data_name.size() - sep - 1);
-
-    size_t dot = data_name.find_last_of('.');
-    if (dot != std::string::npos) {
-        name = data_name.substr(0, dot);
-        ext = data_name.substr(dot, data_name.size() - dot);
-    } else {
-        name = data_name;
-        ext = "";
-    }
-
-    return name;
+    throw std::runtime_error("DataSet has no name yet");
 }
 
 const nsx::MetaData& DataSet::metadata() const

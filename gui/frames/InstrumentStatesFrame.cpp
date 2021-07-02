@@ -48,8 +48,7 @@ InstrumentStatesFrame::InstrumentStatesFrame() : QFrame()
     QVBoxLayout* vertical_1 = new QVBoxLayout;
     data = new QListWidget(this);
     for (const nsx::sptrDataSet& d : datalist) {
-        QFileInfo fileinfo(QString::fromStdString(d->filename()));
-        QListWidgetItem* item = new QListWidgetItem(fileinfo.baseName());
+        QListWidgetItem* item = new QListWidgetItem(QString::fromStdString(d->name()));
         item->setData(Qt::UserRole, QVariant::fromValue(d));
         data->addItem(item);
     }

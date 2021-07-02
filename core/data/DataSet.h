@@ -41,7 +41,6 @@ class DataSet {
     DataSet(const DataSet& other) = delete;
     DataSet& operator=(const DataSet& other) = delete;
 
-    const std::string& filename() const;
     std::size_t nFrames() const;
 
     std::size_t nRows() const; //!< The number of rows in each detector image
@@ -97,7 +96,6 @@ class DataSet {
 
  private:
     bool _isOpened;
-    std::string _filename;
     std::string _name;
     unsigned int _nFrames;
     unsigned int _nrows;

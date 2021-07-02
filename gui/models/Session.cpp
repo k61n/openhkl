@@ -26,6 +26,7 @@
 #include "gui/dialogs/DataNameDialog.h"
 #include "gui/dialogs/RawDataDialog.h"
 #include "gui/models/Project.h"
+#include "base/utils/Path.h"  // fileBasename
 
 #include <QCollator>
 #include <QDir>
@@ -86,9 +87,14 @@ int Session::numExperiments() const
 
 bool Session::createExperiment(QString experimentName, QString instrumentName)
 {
-    for (const QString& name : experimentNames())
-        if (name == experimentName)
+    for (const QString& name : experimentNames()) {
+        if (name == experimentName) {
+            QMessageBox::critical
+                (nullptr, "Error", "Experiment name, '"
+                 + experimentName + "' already exists");
             return false;
+        }
+    }
 
     auto experiment = std::make_unique<Project>(experimentName, instrumentName);
     _projects.push_back(std::move(experiment));
@@ -166,14 +172,11 @@ void Session::loadData(nsx::DataFormat format)
     QFileInfo info(filenames.at(0));
     loadDirectory = info.absolutePath();
     s.setValue("data", loadDirectory);
+    std::string dataset1_name;  // name of the first dataset (to be set by the user)
 
     for (const QString& filename : filenames) {
         QFileInfo fileinfo(filename);
         nsx::Experiment* exp = currentProject()->experiment();
-
-        // If the experiment already stores the current numor, skip it
-        if (exp->hasData(filename.toStdString()))
-            return;
 
         try {
             // For all data-readers, a valid diffractometer instrument is needed;
@@ -187,12 +190,19 @@ void Session::loadData(nsx::DataFormat format)
                 extension, filename.toStdString(), exp->getDiffractometer());
 
             // choose a name for the dataset
-            // default data name: name of the first data-file
+            // default dataset name: basename of the first data-file
             const QStringList& datanames_pre{currentProject()->getDataNames()};
-            const std::string dataname{askDataName(dataset_ptr->filename(), &datanames_pre)};
+            const std::string dataset_nm0 {nsx::fileBasename(filename.toStdString())};
+            const std::string dataname{askDataName(dataset_nm0, &datanames_pre)};
             // add the list of sources as metadata
-            dataset_ptr->metadata().add<std::string>(nsx::at_datasetSources, filename.toStdString());
-            exp->addData(dataset_ptr, dataname);
+            dataset_ptr->metadata().add<std::string>(nsx::at_datasetSources,
+                                                     filename.toStdString());
+            dataset_ptr->setName(dataname);
+            // store the name of the first dataset
+            if (dataset1_name.empty())
+                dataset1_name = dataset_ptr->name();
+
+            exp->addData(dataset_ptr, dataset_ptr->name());
         } catch (const std::exception& ex) {
             QString msg = QString("Loading file(s) '") + filename + QString("' failed with error: ")
                 + QString(ex.what()) + QString(".");
@@ -201,7 +211,10 @@ void Session::loadData(nsx::DataFormat format)
             return;
         }
     }
-    currentProject()->selectData(currentProject()->getIndex(filenames.at(0)));
+
+    // select the first dataset
+    currentProject()->selectData(currentProject()->getIndex
+                                 (QString::fromStdString(dataset1_name)));
     onDataChanged();
 }
 
@@ -212,7 +225,7 @@ void Session::removeData()
     if (_selectedData == -1)
         return;
 
-    std::string numorname = currentProject()->getData(_selectedData)->filename();
+    std::string numorname = currentProject()->getData(_selectedData)->name();
     currentProject()->experiment()->removeData(numorname);
     onDataChanged();
 }
@@ -258,10 +271,6 @@ void Session::loadRawData()
             return;
         nsx::Experiment* exp = currentProject()->experiment();
 
-        // If the experience already stores the current numor, skip it
-        if (exp->hasData(filenames[0]))
-            return;
-
         nsx::RawDataReaderParameters parameters;
         parameters.wavelength = dialog.wavelength();
         parameters.delta_omega = dialog.deltaOmega();
@@ -271,7 +280,7 @@ void Session::loadRawData()
         parameters.swap_endian = dialog.swapEndian();
         parameters.bpp = dialog.bpp();
         nsx::Diffractometer* diff = exp->getDiffractometer();
-        auto reader{std::make_unique<nsx::RawDataReader>(filenames[0], diff)};
+        auto reader{std::make_unique<nsx::RawDataReader>("::RawDataReader::", diff)};
         reader->setParameters(parameters);
 
         // Metadata for the DataSet, accumulated from the individual metadata
@@ -295,12 +304,12 @@ void Session::loadRawData()
         // choose a name for the dataset
         // default data name: name of the first data-file
         const QStringList& datanames_pre{currentProject()->getDataNames()};
-        const std::string dataname{askDataName(dataset->filename(), &datanames_pre)};
+        const std::string dataset_nm0 {nsx::fileBasename(filenames[0])};
+        const std::string dataname{askDataName(dataset_nm0, &datanames_pre)};
         dataset->setName(dataname);
         metadata.add(nsx::at_datasetSources, nsx::join(filenames, ", "));
         dataset->metadata().setMap(metadata.map());
-
-        exp->addData(dataset, dataname);
+        exp->addData(dataset, dataset->name());
         // _selectedData = currentProject()->getIndex(qfilenames.at(0));
         onDataChanged();
     } catch (std::exception& e) {
@@ -337,7 +346,7 @@ void Session::onUnitCellChanged()
 
 void Session::loadExperimentFromFile(QString filename)
 {
-    createExperiment();
+    createExperiment(QString::fromStdString(nsx::kw_experimentName0));
     currentProject()->experiment()->loadFromFile(filename.toStdString());
     currentProject()->generatePeakModels();
     onExperimentChanged();

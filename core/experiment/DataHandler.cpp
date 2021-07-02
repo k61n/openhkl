@@ -22,12 +22,13 @@
 
 namespace nsx {
 
-DataHandler::DataHandler(const std::string& name, const std::string& diffractometerName)
+DataHandler::DataHandler(const std::string& experiment_name, const std::string& diffractometerName)
 {
     _diffractometer = nullptr;
     if (!(diffractometerName == nsx::kw_unknownInstrument))
         _diffractometer.reset(Diffractometer::create(diffractometerName));
-    _name = name;
+
+    _experiment_name = experiment_name;
 }
 
 Diffractometer* DataHandler::getDiffractometer()
@@ -58,11 +59,6 @@ const DataMap* DataHandler::getDataMap() const
     return &_data_map;
 }
 
-std::string DataHandler::getName() const
-{
-    return _name;
-}
-
 DataList DataHandler::getAllData() const
 {
     DataList numors;
@@ -76,7 +72,7 @@ sptrDataSet DataHandler::getData(std::string name) const
     auto it = _data_map.find(name);
     if (it == _data_map.end()) {
         throw std::runtime_error(
-            "The data key " + name + " could not be found in the experiment " + _name);
+            "The data key " + name + " could not be found in the experiment " + _experiment_name);
     }
     return it->second;
 }
@@ -84,11 +80,11 @@ sptrDataSet DataHandler::getData(std::string name) const
 void DataHandler::addData(sptrDataSet data, std::string name)
 {
     if (name.empty())
-        name = data->filename();
+	throw std::invalid_argument("DataHandler::addData: Data name cannot be empty");
 
     // Add the data only if it does not exist in the current data map
     if (_data_map.find(name) != _data_map.end())
-        return;
+	throw std::invalid_argument("DataHandler::addData: Data name '" + name + "' already exists.");
 
     const auto& metadata = data->metadata();
 

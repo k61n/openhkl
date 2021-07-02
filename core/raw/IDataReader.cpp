@@ -37,7 +37,6 @@ IDataReader::IDataReader(const std::string& filename, Diffractometer* diffractom
     , _fileSize(0)
     , _isOpened(false)
 {
-    _metadata.add<std::string>(nsx::at_filepath, filename);
 
     _nRows = _diffractometer->detector()->nRows();
     _nCols = _diffractometer->detector()->nCols();
@@ -136,11 +135,6 @@ const std::vector<std::vector<double>>& IDataReader::sampleStates() const
 const std::vector<std::vector<double>>& IDataReader::detectorStates() const
 {
     return _detectorStates;
-}
-
-std::string IDataReader::name() const
-{
-    return _name;
 }
 
 } // namespace nsx
