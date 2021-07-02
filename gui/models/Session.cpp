@@ -143,9 +143,9 @@ void Session::loadData(nsx::DataFormat format)
         return;
     }
 
-    QSettings s;
-    s.beginGroup("RecentDirectories");
-    QString loadDirectory = s.value("data", QDir::homePath()).toString();
+    QSettings qset;
+    qset.beginGroup("RecentDirectories");
+    QString loadDirectory = qset.value("data", QDir::homePath()).toString();
 
     QString format_string;
     switch (format) {
@@ -171,7 +171,7 @@ void Session::loadData(nsx::DataFormat format)
 
     QFileInfo info(filenames.at(0));
     loadDirectory = info.absolutePath();
-    s.setValue("data", loadDirectory);
+    qset.setValue("data", loadDirectory);
     std::string dataset1_name;  // name of the first dataset (to be set by the user)
 
     for (const QString& filename : filenames) {
@@ -239,17 +239,16 @@ void Session::loadRawData()
     }
 
     try {
-        QSettings s;
-        s.beginGroup("RecentDirectories");
-        QString loadDirectory = s.value("data_raw", QDir::homePath()).toString();
+        QSettings qset;
+        qset.beginGroup("RecentDirectories");
+        QString loadDirectory = qset.value("data_raw", QDir::homePath()).toString();
 
         QStringList qfilenames =
             QFileDialog::getOpenFileNames(gGui, "import raw data", loadDirectory);
         if (qfilenames.empty())
             return;
 
-        // Don't leave sorting the files to the OS. Use QCollator + std::sortto sort naturally
-        // (numerically)
+        // Don't leave sorting the files to the OS. Use QCollator + std::sort to sort naturally (numerically)
         QCollator collator;
         collator.setNumericMode(true);
         std::sort(
@@ -260,7 +259,7 @@ void Session::loadRawData()
 
         QFileInfo info(qfilenames.at(0));
         loadDirectory = info.absolutePath();
-        s.setValue("data_raw", loadDirectory);
+        qset.setValue("data_raw", loadDirectory);
 
         std::vector<std::string> filenames;
         for (const QString& filename : qfilenames)
