@@ -17,7 +17,6 @@
 
 #include <fstream>
 #include <string>
-#include <type_traits>
 
 namespace nsx {
 
