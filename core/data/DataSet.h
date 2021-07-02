@@ -72,8 +72,6 @@ class DataSet {
 
     bool isOpened() const; //!< True if file is open
 
-    std::size_t fileSize() const;
-
     void saveHDF5(const std::string& filename);
 
     //! Returns the sample-space q vector corresponding to a detector event
@@ -102,7 +100,6 @@ class DataSet {
     unsigned int _ncols;
     std::vector<Eigen::MatrixXi> _data;
     InstrumentStateList _states;
-    std::size_t _fileSize;
     std::set<IMask*> _masks;
     double _background;
     std::shared_ptr<IDataReader> _reader;

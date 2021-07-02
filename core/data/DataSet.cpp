@@ -37,7 +37,6 @@ DataSet::DataSet(std::shared_ptr<IDataReader> reader)
     , _nFrames{0}
     , _nrows{0}
     , _ncols{0}
-    , _fileSize{0}
     , _background{0.0}
     , _reader{std::move(reader)}
 {
@@ -111,11 +110,6 @@ InstrumentStateList& DataSet::instrumentStates()
 bool DataSet::isOpened() const
 {
     return _isOpened;
-}
-
-std::size_t DataSet::fileSize() const
-{
-    return _fileSize;
 }
 
 void DataSet::saveHDF5(const std::string& filename)
