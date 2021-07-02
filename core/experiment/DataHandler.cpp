@@ -41,19 +41,6 @@ void DataHandler::setDiffractometer(const std::string& diffractometerName)
     _diffractometer.reset(Diffractometer::create(diffractometerName));
 }
 
-DataHandler::DataHandler(const DataHandler& other)
-{
-    this->operator=(other);
-}
-
-DataHandler& DataHandler::operator=(const DataHandler& other)
-{
-    _data_map = other._data_map;
-    _diffractometer.reset(other._diffractometer->clone());
-    _name = other._name;
-    return *this;
-}
-
 const DataMap* DataHandler::getDataMap() const
 {
     return &_data_map;

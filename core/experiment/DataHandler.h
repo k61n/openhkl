@@ -32,8 +32,8 @@ class DataHandler {
  public:
     DataHandler() = default;
     ~DataHandler() = default;
-    DataHandler(const DataHandler& other);
-    DataHandler& operator=(const DataHandler& other);
+    DataHandler(const DataHandler& other) = delete;
+    DataHandler& operator=(const DataHandler& other) = delete;
     DataHandler(const std::string& experiment_name, const std::string& diffractometerName);
 
  public: // Handling data sets
