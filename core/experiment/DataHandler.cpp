@@ -84,7 +84,7 @@ void DataHandler::addData(sptrDataSet data, std::string name)
     }
     const double wav = metadata.key<double>(nsx::at_wavelength);
 
-    // ensure that there is at least one monochromator!
+    // ensure that there is at least one monochromator; if not, create a new one.
     if (_diffractometer->source().nMonochromators() == 0) {
         Monochromator mono(nsx::kw_monochromatorName0);
         _diffractometer->source().addMonochromator(mono);
