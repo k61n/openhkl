@@ -33,6 +33,7 @@
 #include "core/experiment/PeakFinder.h"
 #include "core/instrument/Diffractometer.h"
 #include "core/instrument/Sample.h"
+#include "core/shape/IPeakIntegrator.h"
 #include "core/integration/PixelSumIntegrator.h"
 #include "core/peak/Peak3D.h"
 #include "core/peak/Qs2Events.h"
@@ -167,14 +168,14 @@ TEST_CASE("test/data/TestNewWorkFlow.cpp", "")
     CHECK(found_peaks.size() >= 800);
 
     nsx::IPeakIntegrator* integrator =
-        experiment.getIntegrator(std::string("Pixel sum integrator"));
+        experiment.getIntegrator(nsx::IntegratorType::PixelSum);
     nsx::IntegrationParameters params{};
     params.peak_end = 3.0;
     params.bkg_begin = 3.5;
     params.bkg_end = 4.0;
     integrator->setParameters(params);
     integrator->setHandler(progressHandler);
-    experiment.integrateFoundPeaks("Pixel sum integrator");
+    experiment.integrateFoundPeaks(nsx::IntegratorType::PixelSum);
     experiment.acceptFoundPeaks("found_peaks");
 
     // #########################################################
@@ -264,7 +265,7 @@ TEST_CASE("test/data/TestNewWorkFlow.cpp", "")
     params.bkg_begin = 4.0;
     params.bkg_end = 5.0;
     integrator->setParameters(params);
-    experiment.integrateFoundPeaks("Pixel sum integrator");
+    experiment.integrateFoundPeaks(nsx::IntegratorType::PixelSum);
 
     // #########################################################
     // compute shape library

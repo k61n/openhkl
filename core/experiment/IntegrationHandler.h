@@ -14,13 +14,14 @@
 #ifndef NSX_CORE_EXPERIMENT_INTEGRATIONHANDLER_H
 #define NSX_CORE_EXPERIMENT_INTEGRATIONHANDLER_H
 
+#include "core/shape/IPeakIntegrator.h"
 #include "core/shape/PeakFilter.h"
 #include <map>
 #include <string>
 
 namespace nsx {
 
-using IntegratorMap = std::map<std::string, std::unique_ptr<nsx::IPeakIntegrator>>;
+using IntegratorMap = std::map<IntegratorType, std::unique_ptr<nsx::IPeakIntegrator>>;
 
 class PeakCollection;
 class PeakFinder;
@@ -48,20 +49,20 @@ class IntegrationHandler {
     //! Return a pointer to the data handler
     DataHandler* getDataHandler();
     //! Get an integrator from the map
-    nsx::IPeakIntegrator* getIntegrator(const std::string& name) const;
+    nsx::IPeakIntegrator* getIntegrator(const IntegratorType name) const;
     //! Set the found peak integrator
     void integratePeaks(
-        std::string integrator_name, PeakCollection* peak_collection, double d_min, double d_max);
+        IntegratorType integrator_type, PeakCollection* peak_collection, double d_min, double d_max);
     //! Integrate a peak collection
     void integratePeaks(
         IPeakIntegrator* integrator, PeakCollection* peaks, IntegrationParameters* params,
         ShapeCollection* shapes);
     //! Set the found peak integrator
     void integratePredictedPeaks(
-        std::string integrator_name, PeakCollection* peak_collection,
+        IntegratorType integrator_type, PeakCollection* peak_collection,
         ShapeCollection* shape_collection, PredictionParameters& params);
     //! Integrate peaks found by _peak_finder
-    void integrateFoundPeaks(std::string integrator, PeakFinder* peak_finder);
+    void integrateFoundPeaks(const IntegratorType integrator, PeakFinder* peak_finder);
     //! Integrate the shape collection
     ShapeCollection& integrateShapeCollection(
         std::vector<Peak3D*>& peaks, ShapeCollection* shape_collection, const AABB& aabb,
@@ -70,8 +71,6 @@ class IntegrationHandler {
  private:
     IntegratorMap _integrator_map;
     std::shared_ptr<DataHandler> _data_handler;
-    //! Add integrators to the map
-    void populateMap();
 };
 
 } // namespace nsx

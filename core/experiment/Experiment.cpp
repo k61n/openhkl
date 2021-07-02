@@ -494,15 +494,15 @@ UnitCellHandler* Experiment::getCellHandler() const
 }
 
 // Integration handler methods
-IPeakIntegrator* Experiment::getIntegrator(const std::string& name) const
+IPeakIntegrator* Experiment::getIntegrator(const IntegratorType integrato_type) const
 {
-    return _integration_handler->getIntegrator(name);
+    return _integration_handler->getIntegrator(integrato_type);
 }
 
 void Experiment::integratePeaks(
-    const std::string& integrator_name, PeakCollection* peak_collection, double d_min, double d_max)
+    const IntegratorType integrator_type, PeakCollection* peak_collection, double d_min, double d_max)
 {
-    _integration_handler->integratePeaks(integrator_name, peak_collection, d_min, d_max);
+    _integration_handler->integratePeaks(integrator_type, peak_collection, d_min, d_max);
 }
 void Experiment::integratePeaks(
     IPeakIntegrator* integrator, PeakCollection* peaks, IntegrationParameters* params,
@@ -512,16 +512,16 @@ void Experiment::integratePeaks(
 }
 
 void Experiment::integratePredictedPeaks(
-    const std::string& integrator_name, PeakCollection* peak_collection,
+    const IntegratorType  integrator_type, PeakCollection* peak_collection,
     ShapeCollection* shape_collection, PredictionParameters& params)
 {
     _integration_handler->integratePredictedPeaks(
-        integrator_name, peak_collection, shape_collection, params);
+        integrator_type, peak_collection, shape_collection, params);
 }
 
-void Experiment::integrateFoundPeaks(const std::string& integrator)
+void Experiment::integrateFoundPeaks(const IntegratorType integrator_type)
 {
-    _integration_handler->integrateFoundPeaks(integrator, _peak_finder.get());
+    _integration_handler->integrateFoundPeaks(integrator_type, _peak_finder.get());
 }
 
 } // namespace nsx
