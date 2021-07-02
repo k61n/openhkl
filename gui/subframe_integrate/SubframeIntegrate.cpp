@@ -420,7 +420,8 @@ void SubframeIntegrate::runIntegration()
         _integration_params.fit_cov = _fit_covariance->isChecked();
         _integration_params.min_neighbors = _min_neighbours->value();
 
-        shapes->setPredictedShapes(peaks_to_integrate, peak_interpolation, handler);
+        if (peaks_to_integrate->shapeCollection())
+            shapes->setPredictedShapes(peaks_to_integrate, peak_interpolation, handler);
         integrator->setHandler(handler);
         expt->integratePeaks(integrator, peaks_to_integrate, &_integration_params, shapes);
     } catch (std::exception& e) {
