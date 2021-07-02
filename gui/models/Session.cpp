@@ -279,6 +279,13 @@ void Session::loadRawData()
         parameters.row_major = dialog.rowMajor();
         parameters.swap_endian = dialog.swapEndian();
         parameters.bpp = dialog.bpp();
+
+        const double eps = 1e-8;
+        if (parameters.wavelength < eps)
+            throw std::runtime_error("Wavelength, "
+                                     + std::to_string(parameters.wavelength)
+                                     + ", must be > 0");
+
         nsx::Diffractometer* diff = exp->getDiffractometer();
         auto reader{std::make_unique<nsx::RawDataReader>("::RawDataReader::", diff)};
         reader->setParameters(parameters);
@@ -294,9 +301,6 @@ void Session::loadRawData()
         // include the latest changes from reader metadata (eg., `npdone`)
         metadata.addMap(reader->metadata().map());
 
-        const double eps = 1e-8;
-        if (parameters.wavelength < eps)
-            throw std::runtime_error("Wavelength not set");
 
         const std::shared_ptr<nsx::DataSet> dataset{
             std::make_shared<nsx::DataSet>(std::move(reader))};
