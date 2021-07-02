@@ -58,9 +58,7 @@ DataSet::DataSet(std::shared_ptr<IDataReader> reader)
 }
 
 DataSet::~DataSet()
-{
-    blosc_destroy();
-}
+{}
 
 int DataSet::dataAt(unsigned int x, unsigned int y, unsigned int z) const
 {
