@@ -63,6 +63,7 @@ SubframeFilterPeaks::SubframeFilterPeaks()
     setFrameRangeUp();
     setSparseUp();
     setMergeUp();
+    setOverlapUp();
     setProceedUp();
     setFigureUp();
     setPeakTableUp();
@@ -208,12 +209,28 @@ void SubframeFilterPeaks::setMergeUp()
     _left_layout->addWidget(_merge_box);
 }
 
+void SubframeFilterPeaks::setOverlapUp()
+{
+    _overlap_box = new SpoilerCheck("Remove overlapping peaks");
+    GridFiller f(_overlap_box);
+
+    _peak_end = f.addDoubleSpinBox("Peak end");
+    _peak_end->setValue(3.0);
+    _peak_end->setMinimum(0.0);
+    _peak_end->setMaximum(10.0);
+    _peak_end->setDecimals(2);
+
+    _bkg_end = f.addDoubleSpinBox("Background end");
+    _bkg_end->setValue(6.0);
+    _bkg_end->setMaximum(10.0);
+    _bkg_end->setMinimum(0.0);
+    _bkg_end->setDecimals(2);
+
+    _left_layout->addWidget(_overlap_box);
+}
+
 void SubframeFilterPeaks::setProceedUp()
 {
-    _remove_overlaping = new QCheckBox("Remove overlapping peaks");
-    _remove_overlaping->setChecked(false);
-    _left_layout->addWidget(_remove_overlaping);
-
     _extinct_spacegroup = new QCheckBox("Remove extinct from spacegroup");
     _extinct_spacegroup->setChecked(false);
     _left_layout->addWidget(_extinct_spacegroup);
@@ -409,13 +426,14 @@ void SubframeFilterPeaks::grabFilterParameters()
     _frame_min->setValue(filter->frameRange().at(0));
     _frame_max->setValue(filter->frameRange().at(1));
     _significance_level->setValue(*(filter->significance()));
+    _peak_end->setValue(filter->peakEnd());
+    _bkg_end->setValue(filter->bkgEnd());
 
     _selected->setChecked(filter->getFilterSelected());
     _masked->setChecked(filter->getFilterMasked());
     _predicted->setChecked(filter->getFilterPredicted());
     _indexed_peaks->setChecked(filter->getFilterIndexed());
     _extinct_spacegroup->setChecked(filter->getFilterExtinct());
-    _remove_overlaping->setChecked(filter->getFilterOverlapping());
     _keep_complementary->setChecked(filter->getFilterComplementary());
 
     _state_box->setChecked(filter->getFilterState());
@@ -425,6 +443,7 @@ void SubframeFilterPeaks::grabFilterParameters()
     _frame_range_box->setChecked(filter->getFilterFrames());
     _sparse_box->setChecked(filter->getFilterSparse());
     _merge_box->setChecked(filter->getFilterSignificance());
+    _overlap_box->setChecked(filter->getFilterOverlapping());
 }
 
 void SubframeFilterPeaks::setFilterParameters() const
@@ -446,7 +465,7 @@ void SubframeFilterPeaks::setFilterParameters() const
         filter->setFilterIndexed(true);
     if (_extinct_spacegroup->isChecked())
         filter->setFilterExtinct(true);
-    if (_remove_overlaping->isChecked())
+    if (_overlap_box->isChecked())
         filter->setFilterOverlapping(true);
     if (_keep_complementary->isChecked())
         filter->setFilterComplementary(true);
@@ -476,6 +495,8 @@ void SubframeFilterPeaks::setFilterParameters() const
     filter->setFrameRange(frame_range);
     filter->setStrength(strength);
     filter->setUnitCellName(_unit_cell->currentText().toStdString());
+    filter->setPeakEnd(_peak_end->value());
+    filter->setPeakEnd(_bkg_end->value());
 }
 
 void SubframeFilterPeaks::filterPeaks()
