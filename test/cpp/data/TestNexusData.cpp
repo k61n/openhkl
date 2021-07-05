@@ -25,6 +25,7 @@
 #include "core/data/DataSet.h"
 #include "core/experiment/Experiment.h"
 #include "core/instrument/Diffractometer.h"
+#include "core/shape/IPeakIntegrator.h"
 
 
 #define OUTPUT_INTERMEDIATE
@@ -156,14 +157,14 @@ TEST_CASE("test/data/TestNexusData.cpp", "")
     std::cout << "--------------------------------------------------------------------------------"
               << std::endl;
 
-    nsx::IPeakIntegrator* integrator = exp.getIntegrator(std::string("Pixel sum integrator"));
+    nsx::IPeakIntegrator* integrator = exp.getIntegrator(nsx::IntegratorType::PixelSum);
     nsx::IntegrationParameters params{};
     params.peak_end = 3.0;
     params.bkg_begin = 3.5;
     params.bkg_end = 4.5;
     integrator->setParameters(params);
     integrator->setHandler(progressHandler);
-    exp.integrateFoundPeaks("Pixel sum integrator");
+    exp.integrateFoundPeaks(nsx::IntegratorType::PixelSum);
     exp.acceptFoundPeaks("found_peaks");
     nsx::PeakCollection* found_collection = exp.getPeakCollection("found_peaks");
 

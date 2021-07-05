@@ -23,6 +23,15 @@ namespace nsx {
 class IntegrationRegion;
 enum class Level;
 
+enum class IntegratorType {
+    PixelSum,
+    Gaussian,
+    ISigma,
+    Profile1D,
+    Profile3D,
+    Count
+};
+
 /*! \addtogroup integration
  *  @{*/
 

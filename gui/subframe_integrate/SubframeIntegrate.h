@@ -16,6 +16,7 @@
 #define NSX_GUI_SUBFRAME_INTEGRATE_SUBFRAMEINTEGRATE_H
 
 #include "core/data/DataSet.h"
+#include "core/shape/IPeakIntegrator.h"
 #include "core/shape/PeakCollection.h"
 #include "core/shape/ShapeCollection.h"
 #include "gui/items/PeakCollectionItem.h"
@@ -148,6 +149,14 @@ class SubframeIntegrate : public QWidget {
     nsx::PeakCollection* _peak_collection;
     PeakCollectionItem _peak_collection_item;
     PeakCollectionModel _peak_collection_model;
+
+    const std::map<std::string, nsx::IntegratorType> _integrator_strings {
+        {"Pixel sum integrator", nsx::IntegratorType::PixelSum},
+        {"Gaussian integrator", nsx::IntegratorType::Gaussian},
+        {"I/Sigma integrator", nsx::IntegratorType::ISigma},
+        {"1D Profile integrator", nsx::IntegratorType::Profile1D},
+        {"3D Profile integrator", nsx::IntegratorType::Profile3D}
+    };
 };
 
 

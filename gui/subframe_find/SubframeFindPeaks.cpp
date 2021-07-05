@@ -18,9 +18,9 @@
 #include "core/data/DataSet.h"
 #include "core/experiment/Experiment.h"
 #include "core/experiment/PeakFinder.h"
-#include "core/integration/PixelSumIntegrator.h"
 #include "core/peak/Peak3D.h"
 #include "core/raw/IDataReader.h"
+#include "core/shape/IPeakIntegrator.h"
 #include "gui/dialogs/ListNameDialog.h"
 #include "gui/frames/ProgressView.h"
 #include "gui/graphics/DetectorScene.h"
@@ -427,7 +427,7 @@ void SubframeFindPeaks::grabIntegrationParameters()
 {
     nsx::IPeakIntegrator* integrator = gSession->experimentAt(_exp_combo->currentIndex())
                                            ->experiment()
-                                           ->getIntegrator(std::string("Pixel sum integrator"));
+                                            ->getIntegrator(nsx::IntegratorType::PixelSum);
 
     _peak_area->setValue(integrator->peakEnd());
     _bkg_lower->setValue(integrator->backBegin());
@@ -500,7 +500,7 @@ void SubframeFindPeaks::integrate()
 {
     nsx::Experiment* experiment = gSession->experimentAt(_exp_combo->currentIndex())->experiment();
 
-    nsx::IPeakIntegrator* integrator = experiment->getIntegrator("Pixel sum integrator");
+    nsx::IPeakIntegrator* integrator = experiment->getIntegrator(nsx::IntegratorType::PixelSum);
 
     nsx::sptrProgressHandler handler(new nsx::ProgressHandler);
     ProgressView progressView(nullptr);
@@ -513,7 +513,7 @@ void SubframeFindPeaks::integrate()
     integrator->setParameters(params);
     integrator->setHandler(handler);
 
-    experiment->integrateFoundPeaks("Pixel sum integrator");
+    experiment->integrateFoundPeaks(nsx::IntegratorType::PixelSum);
 
     refreshPeakTable();
 }

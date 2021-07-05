@@ -175,10 +175,10 @@ class Experiment {
 
     // Integration handler
     //! get the named integrator
-    IPeakIntegrator* getIntegrator(const std::string& name) const;
+    IPeakIntegrator* getIntegrator(IntegratorType integrator_type) const;
     //! Integrate the given peak collection with the named integrator
     void integratePeaks(
-        const std::string& integrator_name, PeakCollection* peak_collection, double d_min,
+        const IntegratorType integrator_type, PeakCollection* peak_collection, double d_min,
         double d_max);
     //! Integrate peaks given full parameter set (for reintegration after prediction/refinement)
     void integratePeaks(
@@ -186,10 +186,10 @@ class Experiment {
         ShapeCollection* shapes);
     //! Integrate predicted peaks, fitting shapes from given shape collection
     void integratePredictedPeaks(
-        const std::string& integrator_name, PeakCollection* peak_collection,
+        const IntegratorType integrator_type, PeakCollection* peak_collection,
         ShapeCollection* shape_collection, PredictionParameters& params);
     //! Integrate peaks found by _peak_finder
-    void integrateFoundPeaks(const std::string& integrator);
+    void integrateFoundPeaks(const IntegratorType integrator_type);
 
     // Save load
     //! Save the current experiment state to hdf5

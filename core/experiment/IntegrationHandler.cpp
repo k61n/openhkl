@@ -31,29 +31,18 @@ IntegrationHandler::~IntegrationHandler() = default;
 
 IntegrationHandler::IntegrationHandler(std::shared_ptr<DataHandler> data_handler)
 {
-    populateMap();
-    _data_handler = data_handler;
-}
-
-IntegrationHandler::IntegrationHandler(const IntegrationHandler& other)
-{
-    populateMap();
-    _data_handler = other._data_handler;
-}
-
-void IntegrationHandler::populateMap()
-{
     _integrator_map.clear();
-    _integrator_map.insert(std::make_pair(
-        std::string("Pixel sum integrator"), std::make_unique<PixelSumIntegrator>(true, true)));
-    _integrator_map.insert(std::make_pair(
-        std::string("Gaussian integrator"), std::make_unique<GaussianIntegrator>(true, true)));
     _integrator_map.insert(
-        std::make_pair(std::string("I/Sigma integrator"), std::make_unique<ISigmaIntegrator>()));
-    _integrator_map.insert(std::make_pair(
-        std::string("1d profile integrator"), std::make_unique<Profile1DIntegrator>()));
-    _integrator_map.insert(std::make_pair(
-        std::string("3d profile integrator"), std::make_unique<Profile3DIntegrator>()));
+        std::make_pair(IntegratorType::PixelSum, std::make_unique<PixelSumIntegrator>(true, true)));
+    _integrator_map.insert(
+        std::make_pair(IntegratorType::Gaussian, std::make_unique<GaussianIntegrator>(true, true)));
+    _integrator_map.insert(
+        std::make_pair(IntegratorType::ISigma, std::make_unique<ISigmaIntegrator>()));
+    _integrator_map.insert(
+        std::make_pair(IntegratorType::Profile1D, std::make_unique<Profile1DIntegrator>()));
+    _integrator_map.insert(
+        std::make_pair(IntegratorType::Profile3D, std::make_unique<Profile3DIntegrator>()));
+    _data_handler = data_handler;
 }
 
 IntegratorMap* IntegrationHandler::getIntegratorMap()
@@ -66,23 +55,23 @@ DataHandler* IntegrationHandler::getDataHandler()
     return _data_handler.get();
 }
 
-IPeakIntegrator* IntegrationHandler::getIntegrator(const std::string& name) const
+IPeakIntegrator* IntegrationHandler::getIntegrator(const IntegratorType integrator_type) const
 {
-    std::map<std::string, std::unique_ptr<IPeakIntegrator>>::const_iterator it;
+    std::map<IntegratorType, std::unique_ptr<IPeakIntegrator>>::const_iterator it;
     for (it = _integrator_map.begin(); it != _integrator_map.end(); ++it) {
-        if (it->first == name)
+        if (it->first == integrator_type)
             return it->second.get();
     }
     return nullptr;
 }
 
 void IntegrationHandler::integratePeaks(
-    std::string integrator_name, PeakCollection* peak_collection, double d_min, double d_max)
+    IntegratorType integrator_type, PeakCollection* peak_collection, double d_min, double d_max)
 {
     nsxlog(
         Level::Info, "IntegrationHandler::integratePeaks: integrating PeakCollection",
         peak_collection);
-    IPeakIntegrator* integrator = getIntegrator(integrator_name);
+    IPeakIntegrator* integrator = getIntegrator(integrator_type);
 
     nsx::PeakFilter filter;
     filter.resetFiltering(peak_collection);
@@ -115,11 +104,11 @@ void IntegrationHandler::integratePeaks(
 }
 
 void IntegrationHandler::integratePredictedPeaks(
-    std::string integrator_name, PeakCollection* peak_collection, ShapeCollection* shape_collection,
-    PredictionParameters& params)
+    IntegratorType integrator_type, PeakCollection* peak_collection,
+    ShapeCollection* shape_collection, PredictionParameters& params)
 {
     nsxlog(Level::Info, "IntegrationHandler::integratePredictedPeaks");
-    IPeakIntegrator* integrator = getIntegrator(integrator_name);
+    IPeakIntegrator* integrator = getIntegrator(integrator_type);
     integrator->setParameters(params);
     params.log(Level::Info);
     nsx::PeakFilter filter;
@@ -137,10 +126,11 @@ void IntegrationHandler::integratePredictedPeaks(
     }
 }
 
-void IntegrationHandler::integrateFoundPeaks(std::string integrator_name, PeakFinder* peak_finder)
+void IntegrationHandler::integrateFoundPeaks(
+    IntegratorType integrator_type, PeakFinder* peak_finder)
 {
     nsxlog(Level::Info, "IntegrationHandler::integrateFoundPeaks");
-    IPeakIntegrator* integrator = getIntegrator(integrator_name);
+    IPeakIntegrator* integrator = getIntegrator(integrator_type);
     const DataMap* data = _data_handler->getDataMap();
     integrator->setNNumors(data->size());
 

@@ -311,11 +311,8 @@ void SubframeIntegrate::setIntegrateUp()
     _integrate_button = f.addButton("Integrate peaks");
 
     // -- Initialize controls
-    _integrator_combo->addItem("Pixel sum integrator");
-    _integrator_combo->addItem("Gaussian integrator");
-    _integrator_combo->addItem("I/Sigma integrator");
-    _integrator_combo->addItem("1d profile integrator");
-    _integrator_combo->addItem("3d profile integrator");
+    for (const auto& [key, val] : _integrator_strings)
+        _integrator_combo->addItem(QString::fromStdString(key)); 
 
     _interpolation_combo->addItem("None");
     _interpolation_combo->addItem("Inverse distance");
@@ -402,7 +399,8 @@ void SubframeIntegrate::runIntegration()
 
         nsx::Experiment* expt = gSession->experimentAt(_exp_combo->currentIndex())->experiment();
         nsx::IPeakIntegrator* integrator =
-            expt->getIntegrator(_integrator_combo->currentText().toStdString());
+            expt->getIntegrator(
+                _integrator_strings.find(_integrator_combo->currentText().toStdString())->second);
         nsx::PeakCollection* peaks_to_integrate =
             expt->getPeakCollection(_int_peak_combo->currentText().toStdString());
         nsx::ShapeCollection* shapes =
@@ -460,7 +458,8 @@ void SubframeIntegrate::refreshShapeStatus()
             shape_collection_present = false;
     }
 
-    if (_integrator_combo->currentText().toStdString() == "Pixel sum integrator") {
+    if (_integrator_strings.find(_integrator_combo->currentText().toStdString())->second ==
+        nsx::IntegratorType::PixelSum) {
         _integrate_button->setEnabled(true);
         _interpolation_combo->setEnabled(false);
         _radius_int->setEnabled(false);
@@ -473,6 +472,7 @@ void SubframeIntegrate::refreshShapeStatus()
         _n_frames_int->setEnabled(true);
         _min_neighbours->setEnabled(true);
     }
+    refreshShapeStatus();
 }
 
 void SubframeIntegrate::changeSelected(PeakItemGraphic* peak_graphic)
@@ -485,7 +485,6 @@ void SubframeIntegrate::changeSelected(PeakItemGraphic* peak_graphic)
 
 void SubframeIntegrate::toggleUnsafeWidgets()
 {
-    refreshShapeStatus();
     _build_shape_lib_button->setEnabled(true);
     if (!_int_peak_combo->count() == 0)
         _integrate_button->setEnabled(true);
