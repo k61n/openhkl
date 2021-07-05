@@ -41,6 +41,7 @@ enum class RejectionFlag {
     InvalidShape,
     InvalidSigma,
     InvalidBkgSigma,
+    OverlappingBkg,
     PredictionUpdateFailure, // from refiner
     Count
 };

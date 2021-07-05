@@ -83,6 +83,8 @@ class SubframeIntegrate : public QWidget {
     void setPeakTableUp();
     //! Refresh the peak table
     void refreshPeakTable();
+    //! Remove overlapping peaks
+    void removeOverlappingPeaks();
     //! Wrapper for integration
     void runIntegration();
     //! Open the shape builder dialog
@@ -128,6 +130,7 @@ class SubframeIntegrate : public QWidget {
     QDoubleSpinBox* _peak_end;
     QDoubleSpinBox* _bkg_begin;
     QDoubleSpinBox* _bkg_end;
+    QCheckBox* _remove_overlaps;
     QDoubleSpinBox* _radius_int;
     QDoubleSpinBox* _n_frames_int;
     QCheckBox* _fit_center;

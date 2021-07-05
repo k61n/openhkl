@@ -41,6 +41,7 @@ const std::map<RejectionFlag, std::string> Peak3D::_rejection_map{
     {RejectionFlag::InvalidShape, "Invalid shape post-refinement"},
     {RejectionFlag::InvalidSigma, "Negative, zero, or undefined sigma"},
     {RejectionFlag::InvalidBkgSigma, "Negative, zero, or undefined background sigma"},
+    {RejectionFlag::OverlappingBkg, "Adjacent peak background region overlaps this peak"},
     {RejectionFlag::PredictionUpdateFailure, "Failure updating prediction post-refinement"}};
 
 Peak3D::Peak3D(sptrDataSet data)

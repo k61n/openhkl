@@ -15,6 +15,7 @@
 #include "gui/subframe_integrate/SubframeIntegrate.h"
 
 #include "core/experiment/Experiment.h"
+#include "core/peak/Peak3D.h"
 #include "gui/MainWin.h"
 #include "gui/frames/ProgressView.h"
 #include "gui/graphics/DetectorScene.h"
@@ -297,6 +298,9 @@ void SubframeIntegrate::setIntegrateUp()
     _bkg_end =
         f.addDoubleSpinBox("Bkg end:", "(sigmas) - scaling factor for upper limit of background");
 
+    _remove_overlaps = f.addCheckBox(
+        "Remove overlaps", "Remove peaks with overlapping adjacent background regions", 1);
+
     _radius_int =
         f.addDoubleSpinBox("Search radius:", "(pixels) - neighbour search radius in pixels");
 
@@ -346,8 +350,11 @@ void SubframeIntegrate::setIntegrateUp()
     _min_neighbours->setValue(_integration_params.min_neighbors);
 
     connect(_integrate_button, &QPushButton::clicked, this, &SubframeIntegrate::runIntegration);
+    connect(
+        _remove_overlaps, &QCheckBox::stateChanged, this,
+        &SubframeIntegrate::removeOverlappingPeaks);
     connect(_build_shape_lib_button, &QPushButton::clicked, this,
-            &SubframeIntegrate::openShapeBuilder);
+        &SubframeIntegrate::openShapeBuilder);
     connect(
         _integrator_combo, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
         this, &SubframeIntegrate::refreshShapeStatus);
@@ -388,6 +395,35 @@ void SubframeIntegrate::setPreviewUp()
         _peak_view_widget->set1.bkgEnd, &QDoubleSpinBox::setValue);
 
     _left_layout->addWidget(preview_spoiler);
+}
+
+void SubframeIntegrate::removeOverlappingPeaks()
+{
+    nsx::Experiment* expt = gSession->experimentAt(_exp_combo->currentIndex())->experiment();
+    nsx::PeakCollection* peaks_to_integrate =
+        expt->getPeakCollection(_int_peak_combo->currentText().toStdString());
+    nsx::PeakFilter filter;
+    filter.resetFiltering(peaks_to_integrate);
+    if (_remove_overlaps->isChecked()) {
+        filter.setPeakEnd(_peak_end->value());
+        filter.setBkgEnd(_bkg_end->value());
+        filter.filterOverlapping(peaks_to_integrate);
+        for (auto* peak : peaks_to_integrate->getPeakList()) {
+            if (!peak->caughtByFilter()) {
+                peak->setSelected(false);
+                peak->setRejectionFlag(nsx::RejectionFlag::OverlappingBkg);
+            }
+        }
+    } else {
+        for (auto* peak : peaks_to_integrate->getPeakList()) {
+            if (peak->selected() == false &&
+                peak->rejectionFlag() == nsx::RejectionFlag::OverlappingBkg) {
+                peak->setSelected(true);
+                peak->setRejectionFlag(nsx::RejectionFlag::NotRejected, true);
+            }
+        }
+    }
+    refreshPeakTable();
 }
 
 void SubframeIntegrate::runIntegration()
@@ -472,7 +508,6 @@ void SubframeIntegrate::refreshShapeStatus()
         _n_frames_int->setEnabled(true);
         _min_neighbours->setEnabled(true);
     }
-    refreshShapeStatus();
 }
 
 void SubframeIntegrate::changeSelected(PeakItemGraphic* peak_graphic)
@@ -485,11 +520,15 @@ void SubframeIntegrate::changeSelected(PeakItemGraphic* peak_graphic)
 
 void SubframeIntegrate::toggleUnsafeWidgets()
 {
+    refreshShapeStatus();
     _build_shape_lib_button->setEnabled(true);
-    if (!_int_peak_combo->count() == 0)
+    if (!_int_peak_combo->count() == 0) {
         _integrate_button->setEnabled(true);
+        _remove_overlaps->setEnabled(true);
+    }
     if (_exp_combo->count() == 0 || _data_combo->count() == 0 || _peak_combo->count() == 0) {
         _integrate_button->setEnabled(false);
         _build_shape_lib_button->setEnabled(false);
+        _remove_overlaps->setEnabled(false);
     }
 }
