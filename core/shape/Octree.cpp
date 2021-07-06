@@ -131,6 +131,34 @@ std::set<Octree::collision_pair> Octree::getCollisions() const
     return collisions;
 }
 
+std::set<Octree::collision_pair> Octree::getCollisions(
+    const double peak_end, const double bkg_end) const
+{
+    std::set<collision_pair> collisions;
+
+    // loop over chambers of the ndtree
+    for (const auto& chamber : *this) {
+        // loop over ellipsoids in the chamber
+        for (size_t i = 0; i < chamber._data.size(); ++i) {
+            Ellipsoid a = *chamber._data[i];
+            a.scale(peak_end);
+            for (size_t j = i + 1; j < chamber._data.size(); ++j) {
+                Ellipsoid b = *chamber._data[j];
+                b.scale(bkg_end);
+
+                // collision detected
+                if (a.collide(b)) {
+                    if (chamber._data[i] < chamber._data[j])
+                        collisions.emplace(collision_pair(chamber._data[i], chamber._data[j]));
+                    else
+                        collisions.emplace(collision_pair(chamber._data[j], chamber._data[i]));
+                }
+            }
+        }
+    }
+    return collisions;
+}
+
 std::set<const Ellipsoid*> Octree::getCollisions(const Ellipsoid& given) const
 {
     using CollisionSet = std::set<const Ellipsoid*>;

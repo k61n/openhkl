@@ -877,26 +877,24 @@ void DetectorScene::getIntegrationMask(PeakCollectionModel* model, Eigen::Matrix
     double peak_end, bkg_begin, bkg_end;
     for (PeakItem* peak_item : peak_items) {
         nsx::Peak3D* peak = peak_item->peak();
-        if (peak_item->peak()->enabled()) {
-            if (_preview_int_regions_1 && model == _peak_model_1) {
-                peak_end = _peak_end_1;
-                bkg_begin = _bkg_begin_1;
-                bkg_end = _bkg_end_1;
-            } else if (_preview_int_regions_2 && model == _peak_model_2) {
-                peak_end = _peak_end_2;
-                bkg_begin = _bkg_begin_2;
-                bkg_end = _bkg_end_2;
-            } else {
-                peak_end = peak_item->peak()->peakEnd();
-                bkg_begin = peak_item->peak()->bkgBegin();
-                bkg_end = peak_item->peak()->bkgEnd();
-            }
-            try { // IntegrationRegion constructor can throw if the region is invalid
-                nsx::IntegrationRegion region(peak, peak_end, bkg_begin, bkg_end);
-                region.updateMask(mask, _currentFrameIndex);
-            } catch (...) {
-                continue;
-            }
+        if (_preview_int_regions_1 && model == _peak_model_1) {
+            peak_end = _peak_end_1;
+            bkg_begin = _bkg_begin_1;
+            bkg_end = _bkg_end_1;
+        } else if (_preview_int_regions_2 && model == _peak_model_2) {
+            peak_end = _peak_end_2;
+            bkg_begin = _bkg_begin_2;
+            bkg_end = _bkg_end_2;
+        } else {
+            peak_end = peak_item->peak()->peakEnd();
+            bkg_begin = peak_item->peak()->bkgBegin();
+            bkg_end = peak_item->peak()->bkgEnd();
+        }
+        try { // IntegrationRegion constructor can throw if the region is invalid
+            nsx::IntegrationRegion region(peak, peak_end, bkg_begin, bkg_end);
+            region.updateMask(mask, _currentFrameIndex);
+        } catch (...) {
+            continue;
         }
     }
 }

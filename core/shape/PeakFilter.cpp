@@ -42,6 +42,8 @@ PeakFilter::PeakFilter()
     _frameRange = {0.0, 10.0};
     _significance = 0.9900;
     _sparse = 100;
+    _peak_end = 3.0;
+    _bkg_end = 6.0;
     resetFilterFlags();
 }
 
@@ -168,12 +170,15 @@ void PeakFilter::filterOverlapping(PeakCollection* peak_collection) const
         tree.addData(&ellipsoids[i]);
 
     // handle collisions below
-    for (auto collision : tree.getCollisions()) {
+    int nrejected = 0;
+    for (auto collision : tree.getCollisions(_peak_end, _bkg_end)) {
         unsigned int i = collision.first - &ellipsoids[0];
         unsigned int j = collision.second - &ellipsoids[0];
         peak_collection->getPeak(i)->rejectYou(true);
         peak_collection->getPeak(j)->rejectYou(true);
+        nrejected += 2;
     }
+    nsxlog(Level::Info, "PeakFilter::filterOverlapping: ", nrejected, "peaks rejected");
 }
 
 void PeakFilter::filterComplementary(PeakCollection* /*peak_collection*/) const

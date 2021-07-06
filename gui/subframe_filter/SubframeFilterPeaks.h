@@ -68,7 +68,9 @@ class SubframeFilterPeaks : public QWidget {
     void setSparseUp();
     //! Build the merge
     void setMergeUp();
-    //! Build the merge
+    //! Build overlap
+    void setOverlapUp();
+    //! Build the others
     void setProceedUp();
     //! Set up the detector figure up
     void setFigureUp();
@@ -125,7 +127,6 @@ class SubframeFilterPeaks : public QWidget {
     QCheckBox* _predicted;
     QCheckBox* _indexed_peaks;
     QCheckBox* _extinct_spacegroup;
-    QCheckBox* _remove_overlaping;
     QCheckBox* _keep_complementary;
     QComboBox* _unit_cell;
 
@@ -137,6 +138,8 @@ class SubframeFilterPeaks : public QWidget {
     QDoubleSpinBox* _frame_min;
     QDoubleSpinBox* _frame_max;
     QDoubleSpinBox* _significance_level;
+    QDoubleSpinBox* _peak_end;
+    QDoubleSpinBox* _bkg_end;
 
     QSpinBox* _min_number_peaks;
 
@@ -147,6 +150,7 @@ class SubframeFilterPeaks : public QWidget {
     SpoilerCheck* _frame_range_box;
     SpoilerCheck* _sparse_box;
     SpoilerCheck* _merge_box;
+    SpoilerCheck* _overlap_box;
 
     QComboBox* _exp_combo;
     QComboBox* _peak_combo;

@@ -81,6 +81,9 @@ class Octree : public AABB {
     // void getPossibleCollisions(std::set<collision_pair>& collisions) const;
     std::set<collision_pair> getCollisions() const;
 
+    //! Returns collisions between intensity region and backgrounds of others
+    std::set<collision_pair> getCollisions(const double peak_end, const double bkg_end) const;
+
     //! Returns collisions with a given shape
     std::set<const Ellipsoid*> getCollisions(const Ellipsoid& given) const;
 

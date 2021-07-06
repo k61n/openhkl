@@ -15,6 +15,7 @@
 #include "gui/subframe_integrate/SubframeIntegrate.h"
 
 #include "core/experiment/Experiment.h"
+#include "core/peak/Peak3D.h"
 #include "gui/MainWin.h"
 #include "gui/frames/ProgressView.h"
 #include "gui/graphics/DetectorScene.h"
@@ -308,6 +309,12 @@ void SubframeIntegrate::setIntegrateUp()
 
     _interpolation_combo = f.addCombo("Interpolation", "Interpolation type for peak shape");
 
+    _assign_peak_shapes = f.addButton(
+        "Assign peak shapes", "Assign peak shapes from shape collection to a predicted collection");
+
+    _remove_overlaps = f.addCheckBox(
+        "Remove overlaps", "Remove peaks with overlapping adjacent background regions", 1);
+
     _integrate_button = f.addButton("Integrate peaks");
 
     // -- Initialize controls
@@ -346,11 +353,16 @@ void SubframeIntegrate::setIntegrateUp()
     _min_neighbours->setValue(_integration_params.min_neighbors);
 
     connect(_integrate_button, &QPushButton::clicked, this, &SubframeIntegrate::runIntegration);
+    connect(
+        _remove_overlaps, &QCheckBox::stateChanged, this,
+        &SubframeIntegrate::removeOverlappingPeaks);
     connect(_build_shape_lib_button, &QPushButton::clicked, this,
-            &SubframeIntegrate::openShapeBuilder);
+        &SubframeIntegrate::openShapeBuilder);
+    connect(_assign_peak_shapes, &QPushButton::clicked, this, &SubframeIntegrate::assignPeakShapes);
     connect(
         _integrator_combo, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
         this, &SubframeIntegrate::refreshShapeStatus);
+
     _left_layout->addWidget(_integrate_box);
 }
 
@@ -390,7 +402,7 @@ void SubframeIntegrate::setPreviewUp()
     _left_layout->addWidget(preview_spoiler);
 }
 
-void SubframeIntegrate::runIntegration()
+void SubframeIntegrate::assignPeakShapes()
 {
     try {
         nsx::sptrProgressHandler handler(new nsx::ProgressHandler);
@@ -398,9 +410,6 @@ void SubframeIntegrate::runIntegration()
         progressView.watch(handler);
 
         nsx::Experiment* expt = gSession->experimentAt(_exp_combo->currentIndex())->experiment();
-        nsx::IPeakIntegrator* integrator =
-            expt->getIntegrator(
-                _integrator_strings.find(_integrator_combo->currentText().toStdString())->second);
         nsx::PeakCollection* peaks_to_integrate =
             expt->getPeakCollection(_int_peak_combo->currentText().toStdString());
         nsx::ShapeCollection* shapes =
@@ -418,8 +427,66 @@ void SubframeIntegrate::runIntegration()
         _integration_params.fit_cov = _fit_covariance->isChecked();
         _integration_params.min_neighbors = _min_neighbours->value();
 
-        if (peaks_to_integrate->shapeCollection())
-            shapes->setPredictedShapes(peaks_to_integrate, peak_interpolation, handler);
+        shapes->setPredictedShapes(peaks_to_integrate, peak_interpolation, handler);
+    } catch (std::exception& e) {
+        QMessageBox::critical(this, "Error", QString(e.what()));
+    }
+}
+
+void SubframeIntegrate::removeOverlappingPeaks()
+{
+    nsx::Experiment* expt = gSession->experimentAt(_exp_combo->currentIndex())->experiment();
+    nsx::PeakCollection* peaks_to_integrate =
+        expt->getPeakCollection(_int_peak_combo->currentText().toStdString());
+    nsx::PeakFilter filter;
+    filter.resetFiltering(peaks_to_integrate);
+    if (_remove_overlaps->isChecked()) {
+        filter.setPeakEnd(_peak_end->value());
+        filter.setBkgEnd(_bkg_end->value());
+        filter.filterOverlapping(peaks_to_integrate);
+        for (auto* peak : peaks_to_integrate->getPeakList()) {
+            if (!peak->caughtByFilter()) {
+                peak->setSelected(false);
+                peak->setRejectionFlag(nsx::RejectionFlag::OverlappingBkg);
+            }
+        }
+    } else {
+        for (auto* peak : peaks_to_integrate->getPeakList()) {
+            if (peak->selected() == false &&
+                peak->rejectionFlag() == nsx::RejectionFlag::OverlappingBkg) {
+                peak->setSelected(true);
+                peak->setRejectionFlag(nsx::RejectionFlag::NotRejected, true);
+            }
+        }
+    }
+    refreshPeakTable();
+}
+
+void SubframeIntegrate::runIntegration()
+{
+    try {
+        nsx::sptrProgressHandler handler(new nsx::ProgressHandler);
+        ProgressView progressView(nullptr);
+        progressView.watch(handler);
+
+        nsx::Experiment* expt = gSession->experimentAt(_exp_combo->currentIndex())->experiment();
+        nsx::IPeakIntegrator* integrator =
+            expt->getIntegrator(
+                _integrator_strings.find(_integrator_combo->currentText().toStdString())->second);
+        nsx::PeakCollection* peaks_to_integrate =
+            expt->getPeakCollection(_int_peak_combo->currentText().toStdString());
+        nsx::ShapeCollection* shapes =
+            expt->getPeakCollection(_peak_combo->currentText().toStdString())->shapeCollection();
+
+        _integration_params.peak_end = _peak_end->value();
+        _integration_params.bkg_begin = _bkg_begin->value();
+        _integration_params.bkg_end = _bkg_end->value();
+        _integration_params.neighbour_range_pixels = _radius_int->value();
+        _integration_params.neighbour_range_frames = _n_frames_int->value();
+        _integration_params.fit_center = _fit_center->isChecked();
+        _integration_params.fit_cov = _fit_covariance->isChecked();
+        _integration_params.min_neighbors = _min_neighbours->value();
+
         integrator->setHandler(handler);
         expt->integratePeaks(integrator, peaks_to_integrate, &_integration_params, shapes);
     } catch (std::exception& e) {
@@ -454,8 +521,11 @@ void SubframeIntegrate::refreshShapeStatus()
             gSession->experimentAt(_exp_combo->currentIndex())
             ->experiment()
             ->getPeakCollection(_peak_combo->currentText().toStdString());
-        if (collection->shapeCollection() == nullptr)
+        _assign_peak_shapes->setEnabled(true);
+        if (collection->shapeCollection() == nullptr) {
+            _assign_peak_shapes->setEnabled(false);
             shape_collection_present = false;
+        }
     }
 
     if (_integrator_strings.find(_integrator_combo->currentText().toStdString())->second ==
@@ -472,7 +542,6 @@ void SubframeIntegrate::refreshShapeStatus()
         _n_frames_int->setEnabled(true);
         _min_neighbours->setEnabled(true);
     }
-    refreshShapeStatus();
 }
 
 void SubframeIntegrate::changeSelected(PeakItemGraphic* peak_graphic)
@@ -486,10 +555,15 @@ void SubframeIntegrate::changeSelected(PeakItemGraphic* peak_graphic)
 void SubframeIntegrate::toggleUnsafeWidgets()
 {
     _build_shape_lib_button->setEnabled(true);
-    if (!_int_peak_combo->count() == 0)
+    if (!_int_peak_combo->count() == 0) {
         _integrate_button->setEnabled(true);
+        _remove_overlaps->setEnabled(true);
+        refreshShapeStatus();
+    }
     if (_exp_combo->count() == 0 || _data_combo->count() == 0 || _peak_combo->count() == 0) {
         _integrate_button->setEnabled(false);
         _build_shape_lib_button->setEnabled(false);
+        _remove_overlaps->setEnabled(false);
+        _assign_peak_shapes->setEnabled(false);
     }
 }

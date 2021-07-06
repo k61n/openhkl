@@ -35,7 +35,7 @@ struct PeakFilterFlags {
     bool significance; //!
     bool overlapping; //!
     bool complementary; //!
-    bool frames; //! catch peaks in a specifed frame range
+    bool frames; //!< catch peaks in a specifed frame range
 };
 
 class PeakFilter {
@@ -173,6 +173,16 @@ class PeakFilter {
     //! Return the frame range
     const std::array<double, 2>& frameRange() { return _frameRange; };
 
+    //! Set peak end
+    void setPeakEnd(const double peak_end) { _peak_end = peak_end; };
+    //! set background end
+    void setBkgEnd(const double bkg_end) { _bkg_end = bkg_end; };
+    //! Return the peak end
+    double peakEnd() { return _peak_end; };
+    //! Return the background end
+    double bkgEnd() { return _bkg_end; };
+
+
  private:
     //! booleans for filtering
     PeakFilterFlags _filter_flags;
@@ -190,6 +200,10 @@ class PeakFilter {
     double _sparse;
     //! Frame range
     std::array<double, 2> _frameRange;
+    //! Peak end
+    double _peak_end;
+    //! Background end
+    double _bkg_end;
 };
 
 } // namespace nsx
