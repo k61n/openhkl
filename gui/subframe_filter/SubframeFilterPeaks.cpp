@@ -249,6 +249,18 @@ void SubframeFilterPeaks::setProceedUp()
     connect(
         _peak_view_widget, &PeakViewWidget::settingsChanged, this,
         &SubframeFilterPeaks::refreshPeakVisual);
+    connect(
+        _peak_view_widget->set1.peakEnd, qOverload<double>(&QDoubleSpinBox::valueChanged),
+        _peak_end, &QDoubleSpinBox::setValue);
+    connect(
+        _peak_view_widget->set1.bkgEnd, qOverload<double>(&QDoubleSpinBox::valueChanged),
+        _bkg_end, &QDoubleSpinBox::setValue);
+    connect(
+        _peak_end, qOverload<double>(&QDoubleSpinBox::valueChanged),
+        _peak_view_widget->set1.peakEnd, &QDoubleSpinBox::setValue);
+    connect(
+        _bkg_end, qOverload<double>(&QDoubleSpinBox::valueChanged),
+        _peak_view_widget->set1.bkgEnd, &QDoubleSpinBox::setValue);
 
     _left_layout->addWidget(show_hide_peaks);
 
