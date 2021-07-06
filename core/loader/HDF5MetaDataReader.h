@@ -126,6 +126,10 @@ HDF5MetaDataReader<ReaderT>::HDF5MetaDataReader(
         std::string value;
         attr.read(typ, value);
 
+	// Do not overwrite main attributes which are stored before
+	if (attr.getName() == "real_path" || attr.getName() == "group_name")
+	    continue;
+
         // TODO: check if this is still needed
         // override stored filename with the current one
         if (attr.getName() == "filename") {
