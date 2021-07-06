@@ -83,6 +83,8 @@ class SubframeIntegrate : public QWidget {
     void setPeakTableUp();
     //! Refresh the peak table
     void refreshPeakTable();
+    //! Assign shapes to a peak collection
+    void assignPeakShapes();
     //! Remove overlapping peaks
     void removeOverlappingPeaks();
     //! Wrapper for integration
@@ -138,6 +140,7 @@ class SubframeIntegrate : public QWidget {
 
     QPushButton* _integrate_button;
     QPushButton* _build_shape_lib_button;
+    QPushButton* _assign_peak_shapes;
 
     QStringList _cell_list;
     QStringList _predicted_list;
