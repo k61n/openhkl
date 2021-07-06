@@ -43,18 +43,23 @@ ResolutionShell::ResolutionShell(double dmin, double dmax, size_t num_shells)
 
 void ResolutionShell::addPeak(Peak3D* peak)
 {
-    auto q = peak->q();
-    const double d = 1.0 / q.rowVector().norm();
+    // Not discarding peaks that are disabled yet because they are used to compute completeness
+    try {
+        auto q = peak->q();
+        const double d = 1.0 / q.rowVector().norm();
 
-    double dmin;
-    double dmax;
-    for (size_t i = 0; i < _shells.size(); ++i) {
-        dmin = _shells[i].dmin;
-        dmax = _shells[i].dmax;
-        if (dmin <= d && d <= dmax) {
-            _shells[i].peaks.push_back(peak);
-            return;
+        double dmin;
+        double dmax;
+        for (size_t i = 0; i < _shells.size(); ++i) {
+            dmin = _shells[i].dmin;
+            dmax = _shells[i].dmax;
+            if (dmin <= d && d <= dmax) {
+                _shells[i].peaks.push_back(peak);
+                return;
+            }
         }
+    } catch (std::range_error& e) {
+        return;
     }
 }
 
