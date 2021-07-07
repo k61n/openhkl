@@ -307,8 +307,7 @@ void DetectorScene::slotChangeSelectedFrame(int frame)
     if (!_currentData)
         return;
 
-    if (!_currentData->isOpened())
-        _currentData->open();
+    _currentData->open();
 
     if (frame == _currentFrameIndex)
         return;
@@ -329,8 +328,8 @@ void DetectorScene::setMaxIntensity(int intensity)
 
     if (!_currentData)
         return;
-    if (!_currentData->isOpened())
-        _currentData->open();
+
+    _currentData->open();
 
     loadCurrentImage();
 }
