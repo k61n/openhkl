@@ -67,7 +67,10 @@ sptrDataSet DataHandler::getData(std::string name) const
 void DataHandler::addData(sptrDataSet data, std::string name)
 {
     if (name.empty())
-	throw std::invalid_argument("DataHandler::addData: Data name cannot be empty");
+        name = data->name();
+
+    if (name.empty())
+        throw std::invalid_argument("DataHandler::addData: Data name cannot be empty");
 
     // Add the data only if it does not exist in the current data map
     if (_data_map.find(name) != _data_map.end())
