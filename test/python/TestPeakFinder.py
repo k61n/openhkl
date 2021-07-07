@@ -27,7 +27,7 @@ class TestPeakFinder(unittest.TestCase):
         for filename in files[0:]:
             reader.addFrame(filename)
         reader.end()
-        expt.addData(nsx.DataSet(reader), name)
+        expt.addData(nsx.DataSet(reader))
 
         # Find the peaks
         finder = expt.peakFinder()

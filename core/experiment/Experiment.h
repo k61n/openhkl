@@ -80,7 +80,7 @@ class Experiment {
     //! Return number of data sets
     int numData() const;
     //! Add a data set to the handler
-    void addData(sptrDataSet data, std::string name = "");
+    void addData(sptrDataSet data);
     //! Check whether the handler has named data set
     bool hasData(const std::string& name) const;
     //! Remove data set from handler

@@ -303,9 +303,9 @@ int Experiment::numData() const
     return _data_handler->numData();
 }
 
-void Experiment::addData(sptrDataSet data, std::string name)
+void Experiment::addData(sptrDataSet data)
 {
-    _data_handler->addData(data, name);
+    _data_handler->addData(data, data->name());
     setDefaultDMin();
 }
 
