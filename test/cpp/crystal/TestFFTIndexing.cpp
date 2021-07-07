@@ -60,6 +60,7 @@ TEST_CASE("test/crystal/TestFFTIndexing.cpp", "")
     nsx::Experiment experiment("test", "BioDiff2500");
     const nsx::sptrDataSet data(
         nsx::DataReaderFactory().create("hdf", "gal3.hdf", experiment.getDiffractometer()));
+    data->setName("TestFFTIndexing");
     experiment.addData(data);
 
     nsx::PeakCollection peak_collection;

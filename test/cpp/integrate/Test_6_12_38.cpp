@@ -45,6 +45,7 @@ TEST_CASE("test/integrate/Test_6_12_38.cpp", "")
 
     nsx::Experiment experiment("test", "BioDiff2500");
     nsx::sptrDataSet dataf(factory.create("hdf", "gal3.hdf", experiment.getDiffractometer()));
+    dataf->setName("Test_6_12_38");
 
     experiment.addData(dataf);
 

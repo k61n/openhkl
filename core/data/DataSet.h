@@ -19,6 +19,7 @@
 #include "core/instrument/InstrumentStateList.h"
 #include "core/peak/Peak3D.h"
 #include "core/raw/IDataReader.h"
+#include "core/raw/DataKeys.h"
 
 namespace nsx {
 
@@ -94,7 +95,7 @@ class DataSet {
 
  private:
     bool _isOpened;
-    std::string _name;
+    std::string _name = nsx::kw_datasetName0;
     unsigned int _nFrames;
     unsigned int _nrows;
     unsigned int _ncols;

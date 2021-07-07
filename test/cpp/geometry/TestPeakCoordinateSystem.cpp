@@ -36,6 +36,7 @@ void run_test(const char* filename, const char* instrument)
 
     nsx::Experiment experiment("test", instrument);
     nsx::sptrDataSet dataf(factory.create("hdf", filename, experiment.getDiffractometer()));
+    dataf->setName("TestPeakCoordinateSystem");
 
     experiment.addData(dataf);
 

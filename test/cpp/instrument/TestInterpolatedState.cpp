@@ -38,6 +38,7 @@ void run_test(const char* filename, const char* instrument)
     auto diffractometer = experiment.getDiffractometer();
     const auto* detector = diffractometer->detector();
     nsx::sptrDataSet dataf(factory.create("hdf", filename, diffractometer));
+    dataf->setName("TestInterpolatedState");
 
     experiment.addData(dataf);
     const int nrows = dataf->nRows();
