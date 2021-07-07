@@ -224,7 +224,7 @@ void Experiment::predictPeaks(
     const DataList numors = getAllData();
     std::vector<nsx::Peak3D*> predicted_peaks;
     const UnitCell* accepted_cell = getUnitCell(nsx::kw_acceptedUnitcell);
-    const ShapeCollection* shape_collection = peaks->shapeCollection();
+    ShapeCollection* shape_collection = peaks->shapeCollection();
 
     int current_numor = 0;
     for (const sptrDataSet& data : numors) {
