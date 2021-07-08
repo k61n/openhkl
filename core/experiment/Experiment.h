@@ -203,15 +203,12 @@ class Experiment {
     //! Get a pointer to the refiner
     Refiner* refiner() { return _refiner.get(); };
     //! Refine unit cell and instrument parameters
-    bool refine(
-        PeakCollection* peaks, UnitCell* cell, DataSet* data, const RefinerParameters& params);
+    bool refine(PeakCollection* peaks, UnitCell* cell, DataSet* data);
     //! Update the predicted peaks post-refinement
     void updatePredictions(PeakCollection* predicted_peaks);
 
     //! Get resolution shells for quality metrics
-    void computeQuality(
-        double d_min, double d_max, int n_shells, std::vector<PeakCollection*> predicted, 
-        bool friedel);
+    void computeQuality(MergeParameters* params, std::vector<PeakCollection*> predicted);
     //! Return data quality resolution
     DataResolution* getResolution() { return &_data_resolution; };
     // Return data quality structs for all merged data:
@@ -232,12 +229,12 @@ class Experiment {
     std::shared_ptr<ShapeCollectionParameters> shape_params;
     //! Container for peak prediction parameters
     std::shared_ptr<PredictionParameters> predict_params;
+    //! Container for refiner parameters
+    std::shared_ptr<RefinerParameters> refiner_params;
     //! Container for merge parameters
     std::shared_ptr<MergeParameters> merge_params;
     //! Container for metadata for reading raw data files
     RawDataReaderParameters data_params;
-    //! Container for refiner parameters
-    RefinerParameters refiner_params;
 
  private: // private variables
     std::string _name; //!< The name of this experiment

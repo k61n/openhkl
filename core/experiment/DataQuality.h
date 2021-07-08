@@ -50,6 +50,7 @@ struct MergeParameters {
     double d_min = 1.5; //!< Minimum d (Bragg's law)
     double d_max = 50.0; //!< Maximum d (Bragg's law)
     int n_shells = 10; //!< Number of resolution shells
+    bool friedel = true; //!< Whether to include the Friedel relation
 };
 
 struct ShellQuality : DataQuality {

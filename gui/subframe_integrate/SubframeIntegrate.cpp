@@ -3,6 +3,7 @@
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
 //! @file      gui/subframe_filter/SubframeIntegrate.cpp
+
 //! @brief     Implements class SubframeIntegrate
 //!
 //! @homepage  ###HOMEPAGE###
@@ -25,8 +26,10 @@
 #include "gui/subframe_predict/ShapeCollectionDialog.h"
 #include "gui/utility/GridFiller.h"
 #include "gui/utility/PropertyScrollArea.h"
+#include "gui/utility/SideBar.h"
 #include "gui/utility/Spoiler.h"
 #include "gui/views/PeakTableView.h"
+#include "gui/MainWin.h" // gGui
 
 #include <QFileInfo>
 #include <QGridLayout>
@@ -282,6 +285,8 @@ void SubframeIntegrate::grabIntegrationParameters()
 
 void SubframeIntegrate::setIntegrationParameters()
 {
+    if (_exp_combo->count() == 0)
+        return;
     auto params = gSession->experimentAt(_exp_combo->currentIndex())->experiment()->int_params;
 
     params->peak_end = _peak_end->value();
@@ -376,6 +381,9 @@ void SubframeIntegrate::setIntegrateUp()
     connect(
         _integrator_combo, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
         this, &SubframeIntegrate::refreshShapeStatus);
+    connect(
+        gGui->sideBar(), &SideBar::subframeChanged, this,
+        &SubframeIntegrate::setIntegrationParameters);
 
     _left_layout->addWidget(_integrate_box);
 }
@@ -483,6 +491,7 @@ void SubframeIntegrate::runIntegration()
         nsx::ShapeCollection* shapes =
             expt->getPeakCollection(_peak_combo->currentText().toStdString())->shapeCollection();
 
+        setIntegrationParameters();
         auto params = gSession->experimentAt(_exp_combo->currentIndex())->experiment()->int_params;
 
         integrator->setHandler(handler);

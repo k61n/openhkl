@@ -184,7 +184,7 @@ TEST_CASE("test/data/TestNewWorkFlow.cpp", "")
     // #########################################################
     // Filter the peaks
     nsx::PeakFilter* peak_filter = experiment.peakFilter();
-    peak_filter->setFilterDRange(true);
+    peak_filter->flags()->d_range = true;
     peak_filter->parameters()->d_min = 1.5;
     peak_filter->parameters()->d_max = 50.0;
 

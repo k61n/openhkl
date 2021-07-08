@@ -24,7 +24,7 @@ class UnitCellHandler;
 enum class Level;
 
 //! Parameters for refinement
-struct RefinerParameters : public IntegrationParameters {
+struct RefinerParameters {
     bool refine_ub = true;
     bool refine_ki = true;
     bool refine_sample_position = true;
@@ -43,7 +43,7 @@ class Refiner {
     //! using the given number of frame batches. The peaks must belong to the same dataset.
     Refiner(
         InstrumentStateList& states, UnitCell* cell, const std::vector<nsx::Peak3D*>& peaks,
-        const RefinerParameters& params, UnitCellHandler* cell_handler);
+        UnitCellHandler* cell_handler);
 
     //! Sets the lattice B matrix to be refined.
     void refineUB();
@@ -63,7 +63,7 @@ class Refiner {
     //! Perform the refinement with the maximum number of iterations as given. N.B. the four
     //! previous funcitons set the number of free parameters and at least one must be run
     //! *before* refine
-    bool refine(unsigned int max_iter = 1000);
+    bool refine();
 
     //! Update the centers of predicted peaks, after refinement.
     int updatePredictions(std::vector<Peak3D*>& peaks) const;
@@ -86,8 +86,11 @@ class Refiner {
     //! Write the initial and final cells to the log
     void logChange();
 
-    // set the refiner parameters
-    void setParameters(const RefinerParameters& params);
+    //! set the refiner parameters
+    void setParameters(std::shared_ptr<RefinerParameters> params);
+
+    //! get a pointer to the parameters
+    RefinerParameters* parameters();
 
  private:
     UnitCellHandler* _cell_handler;
@@ -97,7 +100,7 @@ class Refiner {
     std::vector<RefinementBatch> _batches;
     int _nframes;
     InstrumentStateList* _states;
-    RefinerParameters _params;
+    std::shared_ptr<RefinerParameters> _params;
 };
 
 } // namespace nsx

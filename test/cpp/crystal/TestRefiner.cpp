@@ -105,7 +105,7 @@ TEST_CASE("test/crystal/TestRefiner.cpp", "")
     // #########################################################
     // Filter the peaks
     nsx::PeakFilter* peak_filter = experiment.peakFilter();
-    peak_filter->setFilterDRange(true);
+    peak_filter->flags()->d_range = true;
     peak_filter->parameters()->d_min = 1.5;
     peak_filter->parameters()->d_max = 50.0;
 
@@ -147,14 +147,15 @@ TEST_CASE("test/crystal/TestRefiner.cpp", "")
     auto&& states = dataf->instrumentStates();
     nsx::UnitCellHandler* cell_handler = experiment.getCellHandler();
 
-    nsx::RefinerParameters refiner_params{};
-    refiner_params.nbatches = 1;
-    refiner_params.refine_ub = true;
-    refiner_params.refine_sample_position = true;
-    refiner_params.refine_detector_offset = false;
-    refiner_params.refine_sample_orientation = false;
-    refiner_params.refine_ki = false;
-    nsx::Refiner refiner(states, cell.get(), peaks, refiner_params, cell_handler);
+    nsx::Refiner refiner(states, cell.get(), peaks, cell_handler);
+    auto* refiner_params = refiner.parameters();
+    refiner_params->nbatches = 1;
+    refiner_params->refine_ub = true;
+    refiner_params->refine_sample_position = true;
+    refiner_params->refine_detector_offset = false;
+    refiner_params->refine_sample_orientation = false;
+    refiner_params->refine_ki = false;
+    refiner_params->max_iter = 500;
 
     CHECK(refiner.batches().size() == 1);
 
@@ -163,5 +164,5 @@ TEST_CASE("test/crystal/TestRefiner.cpp", "")
 
     std::cout << "peaks to refine: " << peaks.size() << std::endl;
 
-    CHECK(refiner.refine(500));
+    CHECK(refiner.refine());
 }

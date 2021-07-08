@@ -61,6 +61,7 @@ Experiment::Experiment(const std::string& name, const std::string& diffractomete
     indexer_params = std::make_shared<IndexerParameters>();
     predict_params = std::make_shared<PredictionParameters>();
     shape_params= std::make_shared<ShapeCollectionParameters>();
+    refiner_params = std::make_shared<RefinerParameters>();
     int_params = std::make_shared<IntegrationParameters>();
     merge_params = std::make_shared<MergeParameters>();
 
@@ -139,9 +140,9 @@ void Experiment::autoIndex(PeakCollection* peaks)
     std::string collection_name = "autoindexing";
     _peak_filter->resetFiltering(peaks);
     _peak_filter->resetFilterFlags();
-    _peak_filter->setFilterStrength(true);
-    _peak_filter->setFilterDRange(true);
-    _peak_filter->setFilterFrames(true);
+    _peak_filter->flags()->strength = true;
+    _peak_filter->flags()->d_range = true;
+    _peak_filter->flags()->frames = true;
     _peak_filter->parameters()->d_min = params->d_min;
     _peak_filter->parameters()->d_max = params->d_max;
     _peak_filter->parameters()->strength_min = params->strength_min;
@@ -169,8 +170,8 @@ void Experiment::buildShapeCollection(
 
     _peak_filter->resetFiltering(peaks);
     _peak_filter->resetFilterFlags();
-    _peak_filter->setFilterStrength(true);
-    _peak_filter->setFilterDRange(true);
+    _peak_filter->flags()->strength = true;
+    _peak_filter->flags()->d_range = true;
     _peak_filter->parameters()->d_min = params.d_min;
     _peak_filter->parameters()->d_max = params.d_max;
     _peak_filter->parameters()->strength_min = params.strength_min;
@@ -242,14 +243,14 @@ void Experiment::predictPeaks(
 }
 
 void Experiment::computeQuality(
-    double d_min, double d_max, int n_shells, std::vector<PeakCollection*> collections,
-    bool friedel)
+    MergeParameters* params, std::vector<PeakCollection*> collections)
 {
     _data_quality.computeQuality(
-        d_min, d_max, 1, collections, _peak_handler->getMergedPeaks()->spaceGroup(), friedel);
+        params->d_min, params->d_max, 1, collections,
+        _peak_handler->getMergedPeaks()->spaceGroup(), params->friedel);
     _data_resolution.computeQuality(
-        d_min, d_max, n_shells, collections, _peak_handler->getMergedPeaks()->spaceGroup(),
-        friedel);
+        params->d_min, params->d_max, params->n_shells, collections,
+        _peak_handler->getMergedPeaks()->spaceGroup(), params->friedel);
     _data_quality.log();
     _data_resolution.log();
 }
@@ -264,15 +265,14 @@ const UnitCell* Experiment::getReferenceCell() const
     return getUnitCell("reference");
 }
 
-bool Experiment::refine(
-    PeakCollection* peaks, UnitCell* cell, DataSet* data, const RefinerParameters& params)
+bool Experiment::refine(PeakCollection* peaks, UnitCell* cell, DataSet* data)
 {
     nsxlog(Level::Info, "Experiment::refine: Refining peak collection ", peaks->name());
     std::vector<Peak3D*> peak_list = peaks->getPeakList();
     InstrumentStateList& states = data->instrumentStates();
-    _refiner = std::make_unique<Refiner>(states, cell, peak_list, params, _cell_handler.get());
-    params.log(Level::Info);
-    bool success = _refiner->refine(params.max_iter);
+    _refiner = std::make_unique<Refiner>(states, cell, peak_list, _cell_handler.get());
+    _refiner->parameters()->log(Level::Info);
+    bool success = _refiner->refine();
     if (success) {
         nsxlog(Level::Info, "Refinement succeeded");
     } else {

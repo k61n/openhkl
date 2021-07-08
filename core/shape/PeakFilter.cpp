@@ -36,12 +36,13 @@ namespace nsx {
 PeakFilter::PeakFilter()
 {
     _filter_params = std::make_shared<PeakFilterParameters>();
+    _filter_flags = std::make_shared<PeakFilterFlags>();
     resetFilterFlags();
 }
 
 void PeakFilter::resetFilterFlags()
 {
-    _filter_flags = {true,  false, false, false, false, false, false,
+    *_filter_flags = {true,  false, false, false, false, false, false,
                      false, false, false, false, false, false, false};
 }
 
@@ -412,69 +413,69 @@ void PeakFilter::filterFrameRange(PeakCollection* peak_collection) const
 void PeakFilter::filter(PeakCollection* peak_collection) const
 {
     nsxlog(Level::Info, "PeakFilter::filter: filtering peaks");
-    if (_filter_flags.state) {
-        if (_filter_flags.selected) {
+    if (_filter_flags->state) {
+        if (_filter_flags->selected) {
             nsxlog(Level::Info, "Filtering out unselected peaks");
             filterSelected(peak_collection);
         }
-        if (_filter_flags.masked) {
+        if (_filter_flags->masked) {
             nsxlog(Level::Info, "Filtering out unmasked peaks");
             filterMasked(peak_collection);
         }
-        if (_filter_flags.predicted) {
+        if (_filter_flags->predicted) {
             nsxlog(Level::Info, "Filtering by prediction");
             filterPredicted(peak_collection);
         }
     }
 
-    if (_filter_flags.indexed) {
+    if (_filter_flags->indexed) {
         nsxlog(Level::Info, "Filtering out unindexed peaks");
         filterIndexed(peak_collection);
     }
 
-    if (_filter_flags.index_tol) {
+    if (_filter_flags->index_tol) {
         if (!_filter_params->unit_cell.empty()) {
             nsxlog(Level::Info, "Filtering by Miller index tolerance");
             filterIndexTolerance(peak_collection);
         }
     }
 
-    if (_filter_flags.strength) {
+    if (_filter_flags->strength) {
         nsxlog(Level::Info, "Filtering by peak strength (I/sigma)");
         filterStrength(peak_collection);
     }
 
-    if (_filter_flags.d_range) {
+    if (_filter_flags->d_range) {
         nsxlog(Level::Info, "Filtering by D-range");
         filterDRange(peak_collection);
     }
 
-    if (_filter_flags.extinct) {
+    if (_filter_flags->extinct) {
         nsxlog(Level::Info, "Filtering out extinct peaks");
         filterExtinct(peak_collection);
     }
 
-    if (_filter_flags.sparse) {
+    if (_filter_flags->sparse) {
         nsxlog(Level::Info, "Filtering sparse data set");
         filterSparseDataSet(peak_collection);
     }
 
-    if (_filter_flags.significance) {
+    if (_filter_flags->significance) {
         nsxlog(Level::Info, "Filtering by significance");
         filterSignificance(peak_collection);
     }
 
-    if (_filter_flags.overlapping) {
+    if (_filter_flags->overlapping) {
         nsxlog(Level::Info, "Filtering out overlapping peaks");
         filterOverlapping(peak_collection);
     }
 
-    if (_filter_flags.complementary) { // this does nothing
+    if (_filter_flags->complementary) { // this does nothing
         filterComplementary(peak_collection);
         nsxlog(Level::Info, "Filtering complementary");
     }
 
-    if (_filter_flags.frames) {
+    if (_filter_flags->frames) {
         filterFrameRange(peak_collection);
         nsxlog(
             Level::Info, "Filtering peaks from frames in range", _filter_params->frame_min, "-",
@@ -498,6 +499,11 @@ void PeakFilter::setParameters(std::shared_ptr<PeakFilterParameters> params)
 PeakFilterParameters* PeakFilter::parameters()
 {
     return _filter_params.get();
+}
+
+PeakFilterFlags* PeakFilter::flags()
+{
+    return _filter_flags.get();
 }
 
 } // namespace nsx

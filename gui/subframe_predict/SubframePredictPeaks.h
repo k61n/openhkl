@@ -117,7 +117,7 @@ class SubframePredictPeaks : public QWidget {
     Spoiler* _integrate_box;
     Spoiler* _preview_box;
 
-    QComboBox* _unit_cells;
+    QComboBox* _cell_combo;
     QComboBox* _integrator;
     QDoubleSpinBox* _d_min;
     QDoubleSpinBox* _d_max;

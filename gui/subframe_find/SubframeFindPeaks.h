@@ -97,8 +97,10 @@ class SubframeFindPeaks : public QWidget {
     //! Set the finder parameters
     void setFinderParameters();
 
-    //! Grab the Integration parameters
+    //! Grab the integration parameters
     void grabIntegrationParameters();
+    //! Set the integration parameters
+    void setIntegrationParameters();
 
  private:
     //! Convolution parameter map

@@ -59,37 +59,6 @@ class PeakFilter {
     PeakFilter();
 
  public:
-    //! Set filter parameters
-    void setFilterSelected(bool val) { _filter_flags.selected = val; };
-    void setFilterMasked(bool val) { _filter_flags.masked = val; };
-    void setFilterPredicted(bool val) { _filter_flags.predicted = val; };
-    void setFilterIndexed(bool val) { _filter_flags.indexed = val; };
-    void setFilterIndexTol(bool val) { _filter_flags.index_tol = val; };
-    void setFilterState(bool val) { _filter_flags.state = val; };
-    void setFilterStrength(bool val) { _filter_flags.strength = val; };
-    void setFilterDRange(bool val) { _filter_flags.d_range = val; };
-    void setFilterExtinct(bool val) { _filter_flags.extinct = val; };
-    void setFilterSparse(bool val) { _filter_flags.sparse = val; };
-    void setFilterSignificance(bool val) { _filter_flags.significance = val; };
-    void setFilterOverlapping(bool val) { _filter_flags.overlapping = val; };
-    void setFilterComplementary(bool val) { _filter_flags.complementary = val; };
-    void setFilterFrames(bool val) { _filter_flags.frames = val; };
-
-    bool getFilterSelected() const { return _filter_flags.selected; };
-    bool getFilterMasked() const { return _filter_flags.masked; };
-    bool getFilterPredicted() const { return _filter_flags.predicted; };
-    bool getFilterIndexed() const { return _filter_flags.indexed; };
-    bool getFilterIndexTol() const { return _filter_flags.index_tol; };
-    bool getFilterState() const { return _filter_flags.state; };
-    bool getFilterStrength() const { return _filter_flags.strength; };
-    bool getFilterDRange() const { return _filter_flags.d_range; };
-    bool getFilterExtinct() const { return _filter_flags.extinct; };
-    bool getFilterSparse() const { return _filter_flags.sparse; };
-    bool getFilterSignificance() const { return _filter_flags.significance; };
-    bool getFilterOverlapping() const { return _filter_flags.overlapping; };
-    bool getFilterComplementary() const { return _filter_flags.complementary; };
-    bool getFilterFrames() const { return _filter_flags.frames; };
-
     //! set filter parameters to default
     void resetFilterFlags();
 
@@ -160,10 +129,12 @@ class PeakFilter {
 
     //! Get a pointer to the filter parameters
     PeakFilterParameters* parameters();
+    //! Get pointer to filter flags
+    PeakFilterFlags* flags();
 
  private:
     //! booleans for filtering
-    PeakFilterFlags _filter_flags;
+    std::shared_ptr<PeakFilterFlags> _filter_flags;
     std::shared_ptr<PeakFilterParameters> _filter_params;
 };
 

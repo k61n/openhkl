@@ -191,7 +191,7 @@ TEST_CASE("test/data/TestNexusData.cpp", "")
               << std::endl;
 
     nsx::PeakFilter* peak_filter = exp.peakFilter();
-    peak_filter->setFilterDRange(true);
+    peak_filter->flags()->d_range = true;
     peak_filter->parameters()->d_min = 1.5;
     peak_filter->parameters()->d_max = 50.0;
 

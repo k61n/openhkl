@@ -31,6 +31,7 @@
 #include <QLabel>
 #include <QPaintEvent>
 #include <QPainter>
+#include <QSignalBlocker>
 
 #define action_height 100
 
@@ -189,6 +190,7 @@ QAction* SideBar::actionAt(const QPoint& at)
 void SideBar::onHome()
 {
     gGui->_layout_stack->setCurrentIndex(0);
+    emit subframeChanged();
 }
 
 void SideBar::onExperiment()
@@ -200,18 +202,21 @@ void SideBar::onExperiment()
         gGui->experiment->getProperty()->experimentChanged();
         gGui->experiment->getProperty()->dataChanged();
     }
+    emit subframeChanged();
 }
 
 void SideBar::onFindPeaks()
 {
     gGui->_layout_stack->setCurrentIndex(2);
     gGui->finder->refreshAll();
+    emit subframeChanged();
 }
 
 void SideBar::onFilterPeaks()
 {
     gGui->_layout_stack->setCurrentIndex(3);
     gGui->filter->refreshAll();
+    emit subframeChanged();
 }
 
 void SideBar::onIndexer()
@@ -219,30 +224,35 @@ void SideBar::onIndexer()
     gGui->_layout_stack->setCurrentIndex(4);
     if (gSession->currentProjectNum() != -1)
         gGui->indexer->refreshAll();
+    emit subframeChanged();
 }
 
 void SideBar::onPredictor()
 {
     gGui->_layout_stack->setCurrentIndex(5);
     gGui->predictor->refreshAll();
+    emit subframeChanged();
 }
 
 void SideBar::onRefiner()
 {
     gGui->_layout_stack->setCurrentIndex(6);
     gGui->refiner->refreshAll();
+    emit subframeChanged();
 }
 
 void SideBar::onIntegrator()
 {
     gGui->_layout_stack->setCurrentIndex(7);
     gGui->integrator->refreshAll();
+    emit subframeChanged();
 }
 
 void SideBar::onMerger()
 {
     gGui->_layout_stack->setCurrentIndex(8);
     gGui->merger->refreshAll();
+    emit subframeChanged();
 }
 
 void SideBar::refreshAll()

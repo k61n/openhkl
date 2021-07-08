@@ -26,9 +26,11 @@
 #include "gui/models/Session.h"
 #include "gui/utility/GridFiller.h"
 #include "gui/utility/PropertyScrollArea.h"
+#include "gui/utility/SideBar.h"
 #include "gui/utility/Spoiler.h"
 #include "gui/utility/SpoilerCheck.h"
 #include "gui/widgets/PeakViewWidget.h"
+#include "gui/MainWin.h" // gGui
 
 #include <QFileInfo>
 #include <QGridLayout>
@@ -268,8 +270,9 @@ void SubframeFilterPeaks::setProceedUp()
     _left_layout->addWidget(_save_button);
 
     connect(_filter_button, &QPushButton::clicked, this, &SubframeFilterPeaks::filterPeaks);
-
     connect(_save_button, &QPushButton::clicked, this, &SubframeFilterPeaks::accept);
+    connect(
+        gGui->sideBar(), &SideBar::subframeChanged, this, &SubframeFilterPeaks::setFilterParameters);
 }
 
 void SubframeFilterPeaks::setFigureUp()
@@ -427,10 +430,7 @@ void SubframeFilterPeaks::grabFilterParameters()
     if (_peak_list.empty() || _exp_combo->count() < 1)
         return;
 
-    nsx::PeakFilter* filter =
-        gSession->experimentAt(_exp_combo->currentIndex())->experiment()->peakFilter();
-
-    nsx::PeakFilterParameters* params =
+    auto* params =
         gSession->experimentAt(_exp_combo->currentIndex())->experiment()->filter_params.get();
 
     _tolerance->setValue(params->unit_cell_tolerance);
@@ -444,62 +444,64 @@ void SubframeFilterPeaks::grabFilterParameters()
     _peak_end->setValue(params->peak_end);
     _bkg_end->setValue(params->bkg_end);
 
-    _selected->setChecked(filter->getFilterSelected());
-    _masked->setChecked(filter->getFilterMasked());
-    _predicted->setChecked(filter->getFilterPredicted());
-    _indexed_peaks->setChecked(filter->getFilterIndexed());
-    _extinct_spacegroup->setChecked(filter->getFilterExtinct());
-    _keep_complementary->setChecked(filter->getFilterComplementary());
-    _state_box->setChecked(filter->getFilterState());
-    _unit_cell_box->setChecked(filter->getFilterIndexTol());
-    _strength_box->setChecked(filter->getFilterStrength());
-    _d_range_box->setChecked(filter->getFilterDRange());
-    _frame_range_box->setChecked(filter->getFilterFrames());
-    _sparse_box->setChecked(filter->getFilterSparse());
-    _merge_box->setChecked(filter->getFilterSignificance());
-    _overlap_box->setChecked(filter->getFilterOverlapping());
+    auto* flags =
+        gSession->experimentAt(_exp_combo->currentIndex())->experiment()->peakFilter()->flags();
+
+    _selected->setChecked(flags->selected);
+    _masked->setChecked(flags->masked);
+    _predicted->setChecked(flags->predicted);
+    _indexed_peaks->setChecked(flags->indexed);
+    _extinct_spacegroup->setChecked(flags->extinct);
+    _keep_complementary->setChecked(flags->complementary);
+    _state_box->setChecked(flags->state);
+    _unit_cell_box->setChecked(flags->index_tol);
+    _strength_box->setChecked(flags->strength);
+    _d_range_box->setChecked(flags->d_range);
+    _frame_range_box->setChecked(flags->frames);
+    _sparse_box->setChecked(flags->sparse);
+    _merge_box->setChecked(flags->significance);
+    _overlap_box->setChecked(flags->overlapping);
 }
 
-void SubframeFilterPeaks::setFilterParameters() const
+void SubframeFilterPeaks::setFilterParameters()
 {
     if (_peak_list.empty() || _exp_combo->count() < 1)
         return;
 
-    nsx::PeakFilter* filter =
-        gSession->experimentAt(_exp_combo->currentIndex())->experiment()->peakFilter();
+    auto* filter = gSession->experimentAt(_exp_combo->currentIndex())->experiment()->peakFilter();
+    auto* flags = filter->flags();
     filter->resetFilterFlags();
 
     if (_selected->isChecked())
-        filter->setFilterSelected(true);
+        flags->selected = true;
     if (_masked->isChecked())
-        filter->setFilterMasked(true);
+        flags->masked = true;
     if (_predicted->isChecked())
-        filter->setFilterPredicted(true);
+        flags->predicted = true;
     if (_indexed_peaks->isChecked())
-        filter->setFilterIndexed(true);
+        flags->indexed = true;
     if (_extinct_spacegroup->isChecked())
-        filter->setFilterExtinct(true);
+        flags->extinct = true;
     if (_overlap_box->isChecked())
-        filter->setFilterOverlapping(true);
+        flags->overlapping = true;
     if (_keep_complementary->isChecked())
-        filter->setFilterComplementary(true);
-
+        flags->complementary = true;
     if (_state_box->isChecked())
-        filter->setFilterState(true);
+        flags->state = true;
     if (_unit_cell_box->isChecked())
-        filter->setFilterIndexTol(true);
+        flags->index_tol = true;
     if (_strength_box->isChecked())
-        filter->setFilterStrength(true);
+        flags->strength = true;
     if (_d_range_box->isChecked())
-        filter->setFilterDRange(true);
+        flags->d_range = true;
     if (_frame_range_box->isChecked())
-        filter->setFilterFrames(true);
+        flags->frames = true;
     if (_sparse_box->isChecked())
-        filter->setFilterSparse(true);
+        flags->sparse = true;
     if (_merge_box->isChecked())
-        filter->setFilterSignificance(true);
+        flags->significance = true;
 
-    nsx::PeakFilterParameters* params =
+    auto* params =
         gSession->experimentAt(_exp_combo->currentIndex())->experiment()->filter_params.get();
 
     params->unit_cell_tolerance = _tolerance->value();

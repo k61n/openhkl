@@ -32,9 +32,11 @@
 #include "gui/utility/ColorButton.h"
 #include "gui/utility/GridFiller.h"
 #include "gui/utility/PropertyScrollArea.h"
+#include "gui/utility/SideBar.h"
 #include "gui/utility/Spoiler.h"
 #include "gui/views/PeakTableView.h"
 #include "gui/widgets/PeakViewWidget.h"
+#include "gui/MainWin.h" // gGui
 
 #include <QFileInfo>
 #include <QGridLayout>
@@ -154,6 +156,9 @@ void SubframeFindPeaks::setBlobUp()
     _max_width_spin->setMaximum(10000000);
 
     connect(_find_button, &QPushButton::clicked, this, &SubframeFindPeaks::find);
+    connect(
+        gGui->sideBar(), &SideBar::subframeChanged, this,
+        &SubframeFindPeaks::setIntegrationParameters);
 
     _left_layout->addWidget(blob_para);
 }
@@ -178,6 +183,8 @@ void SubframeFindPeaks::setIntegrateUp()
     _bkg_upper->setMaximum(10000000);
 
     connect(_integrate_button, &QPushButton::clicked, this, &SubframeFindPeaks::integrate);
+    connect(
+        gGui->sideBar(), &SideBar::subframeChanged, this, &SubframeFindPeaks::setFinderParameters);
 
     _left_layout->addWidget(integration_para);
 }
@@ -408,6 +415,9 @@ void SubframeFindPeaks::grabFinderParameters()
 
 void SubframeFindPeaks::setFinderParameters()
 {
+    if (_exp_combo->count() == 0 || _data_combo->count() == 0)
+        return;
+
     nsx::PeakFinder* finder =
         gSession->experimentAt(_exp_combo->currentIndex())->experiment()->peakFinder();
 
@@ -430,13 +440,23 @@ void SubframeFindPeaks::setFinderParameters()
 
 void SubframeFindPeaks::grabIntegrationParameters()
 {
-    nsx::IPeakIntegrator* integrator = gSession->experimentAt(_exp_combo->currentIndex())
-                                           ->experiment()
-                                            ->getIntegrator(nsx::IntegratorType::PixelSum);
+    auto params = gSession->experimentAt(_exp_combo->currentIndex())->experiment()->int_params;
 
-    _peak_area->setValue(integrator->peakEnd());
-    _bkg_lower->setValue(integrator->backBegin());
-    _bkg_upper->setValue(integrator->backEnd());
+    _peak_area->setValue(params->peak_end);
+    _bkg_lower->setValue(params->bkg_begin);
+    _bkg_upper->setValue(params->bkg_end);
+}
+
+void SubframeFindPeaks::setIntegrationParameters()
+{
+    if (_exp_combo->count() == 0 || _data_combo->count() == 0)
+        return;
+
+    auto params = gSession->experimentAt(_exp_combo->currentIndex())->experiment()->int_params;
+
+    params->peak_end = _peak_area->value();
+    params->bkg_begin = _bkg_lower->value();
+    params->bkg_end = _bkg_upper->value();
 }
 
 void SubframeFindPeaks::updateConvolutionParameters()

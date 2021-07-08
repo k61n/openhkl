@@ -25,9 +25,11 @@
 #include "gui/models/Session.h"
 #include "gui/utility/GridFiller.h"
 #include "gui/utility/PropertyScrollArea.h"
+#include "gui/utility/SideBar.h"
 #include "gui/utility/Spoiler.h"
 #include "gui/views/PeakTableView.h"
 #include "gui/views/UnitCellTableView.h"
+#include "gui/MainWin.h" // gGui
 
 #include <QCheckBox>
 #include <QDoubleSpinBox>
@@ -167,6 +169,9 @@ void SubframeAutoIndexer::setParametersUp()
 
     _frequency_tolerance->setMaximum(1);
     _frequency_tolerance->setDecimals(3);
+
+    connect(
+        gGui->sideBar(), &SideBar::subframeChanged, this, &SubframeAutoIndexer::setIndexerParameters);
 
     _left_layout->addWidget(para_box);
 }

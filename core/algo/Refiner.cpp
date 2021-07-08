@@ -31,7 +31,6 @@ namespace nsx {
 
 void RefinerParameters::log(const Level& level) const
 {
-    IntegrationParameters::log(level);
     nsxlog(level, "Refiner parameters:");
     nsxlog(level, "nbatches               = ", nbatches);
     nsxlog(level, "max_iter               = ", max_iter);
@@ -44,10 +43,9 @@ void RefinerParameters::log(const Level& level) const
 
 Refiner::Refiner(
     InstrumentStateList& states, UnitCell* cell, const std::vector<nsx::Peak3D*>& peaks,
-    const RefinerParameters& params, UnitCellHandler* cell_handler)
-    : _cell_handler(cell_handler), _cell(cell), _batches()
+    UnitCellHandler* cell_handler) : _cell_handler(cell_handler), _cell(cell), _batches()
 {
-    _params = params;
+    _params = std::make_shared<RefinerParameters>();
     _states = &states;
     for (const InstrumentState& state : states)
         _unrefined_states.push_back(state);
@@ -66,7 +64,7 @@ Refiner::Refiner(
             return c1[2] < c2[2];
         });
 
-    const double batch_size = filtered_peaks.size() / double(_params.nbatches);
+    const double batch_size = filtered_peaks.size() / double(_params->nbatches);
     size_t current_batch = 0;
 
     std::vector<const nsx::Peak3D*> peaks_subset;
@@ -126,17 +124,17 @@ void Refiner::refineUB()
         batch.refineUB();
 }
 
-bool Refiner::refine(unsigned int max_iter)
+bool Refiner::refine()
 {
-    if (_params.refine_ub)
+    if (_params->refine_ub)
         refineUB();
-    if (_params.refine_ki)
+    if (_params->refine_ki)
         refineKi();
-    if (_params.refine_sample_position)
+    if (_params->refine_sample_position)
         refineSamplePosition();
-    if (_params.refine_sample_orientation)
+    if (_params->refine_sample_orientation)
         refineSampleOrientation();
-    if (_params.refine_detector_offset)
+    if (_params->refine_detector_offset)
         refineDetectorOffset();
 
     nsxlog(Level::Info, "Refiner::refine: ", _batches.size(), "batches");
@@ -144,7 +142,7 @@ bool Refiner::refine(unsigned int max_iter)
         return false;
 
     for (auto&& batch : _batches) {
-        if (!batch.refine(max_iter))
+        if (!batch.refine(_params->max_iter))
             return false;
     }
     logChange();
@@ -265,9 +263,14 @@ void Refiner::logChange()
     }
 }
 
-void Refiner::setParameters(const RefinerParameters& params)
+void Refiner::setParameters(std::shared_ptr<RefinerParameters> params)
 {
     _params = params;
+}
+
+RefinerParameters* Refiner::parameters()
+{
+    return _params.get();
 }
 
 } // namespace nsx

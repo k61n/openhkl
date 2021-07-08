@@ -18,6 +18,7 @@
 #include <QToolBar>
 
 class SideBar : public QWidget {
+    Q_OBJECT
  public:
     SideBar(QWidget* parent = nullptr);
     void addAction(QAction* action);
@@ -26,6 +27,9 @@ class SideBar : public QWidget {
     void manualSelect(int index);
 
     void refreshAll();
+
+ signals:
+    void subframeChanged();
 
  private:
     void onHome();
