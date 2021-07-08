@@ -29,6 +29,17 @@ class ProgressHandler;
 
 using sptrProgressHandler = std::shared_ptr<ProgressHandler>;
 
+struct PeakFinderParameters {
+    int minimum_size = 30; //!< Minimum number of pixels in a blob
+    int maximum_size = 10000; //!< Maximum number of pixels in a blob
+    double peak_end = 1.0; //!< Peak scaling factor (sigmas)
+    int maximum_frames = 10; //!< Maximum number of frames a blob can span
+    int frames_begin = -1; //!< First frame in range for peak finding
+    int frames_end = -1; //!< Last frame in range for peak findinng
+    double threshold = 80.0; //!< Blobs containing fewer counts than this are discarded
+    std::string convolver = "annular";
+};
+
 /*! \brief Perform image recognition on detector images to find peaks
  *
  *  Given a "DataSet" (set of detector images from one experimental run),
@@ -62,36 +73,11 @@ class PeakFinder {
     //! Set the progress handler
     void setHandler(const sptrProgressHandler& handler);
 
-    //! Return the peak scale
-    double peakEnd() const { return _peakEnd; }
-    //! Set the peak scale
-    void setPeakEnd(double scale) { _peakEnd = scale; }
+    //! Set the parameters for peak finding
+    void setParameters(std::shared_ptr<PeakFinderParameters> params);
 
-    //! Return the minimum blob size. Blob is discarded if it contains fewer pixels.
-    int minSize() const;
-    //! Set the minimum blob size
-    void setMinSize(int size);
-
-    //! Return the maximum blob size. Blob is discarded if it contains more pixels.
-    int maxSize() const;
-    //! Set the maximum blob size
-    void setMaxSize(int size);
-
-    //! Return the maximum number of frames for a blob. Blob is discarded if it is
-    //! spread over more frames.
-    int maxFrames() const;
-    //! Set the maximum number of frames for a blob
-    void setMaxFrames(int maxFrames);
-
-    //! Return the frame at which peak finding begins
-    int framesBegin() const;
-    //! Set the frame at which peak finding begins
-    void setFramesBegin(int framesBegin);
-
-    //! Return the frame at which peak finding ends
-    int framesEnd() const;
-    //! Set the frame at which peak finding ends
-    void setFramesEnd(int framesEnd);
+    //! Get the parameters for peak finding
+    std::shared_ptr<PeakFinderParameters> parameters();
 
 #ifndef SWIG
     //! Set the convolver flavour for peak/background convolution
@@ -103,11 +89,6 @@ class PeakFinder {
     //! Get the convolver
     nsx::Convolver* convolver() const { return _convolver.get(); }
 
-    //! Get the threshold. Blobs containing fewer counts than the threshold are
-    //! discarded
-    int threshold() const { return _threshold; };
-    //! Set the threshold.
-    void setThreshold(double value);
 
  private:
     //! Remove blobs that do not meet the above criteria
@@ -133,22 +114,10 @@ class PeakFinder {
 
     //! The convolver for peak/background convolution
     std::unique_ptr<Convolver> _convolver;
-    //! The threshold (counts) for discarding a blob
-    double _threshold;
-    //! The peak scaling factor
-    double _peakEnd;
-    //! Label defining type of pixel (peak, background etc.)
+    //! The parameters for peak finding
+    std::shared_ptr<PeakFinderParameters> _params;
+    //! Current label
     int _current_label;
-    //! Minimum number of pixels for a blob
-    int _minSize;
-    //! Maximum number of pixels for a blob
-    int _maxSize;
-    //! Maximum number of frames a blob can span
-    int _maxFrames;
-    //! First frame in range for peak finding
-    int _framesBegin;
-    //! Last frame in range for peak finding
-    int _framesEnd;
     //! Vector of found peaks
     nsx::PeakList _current_peaks;
     //! Vector of DataSets

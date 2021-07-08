@@ -56,6 +56,14 @@ Experiment::Experiment(const std::string& name, const std::string& diffractomete
     _cell_handler = std::make_unique<UnitCellHandler>();
     _integration_handler = std::make_unique<IntegrationHandler>(_data_handler);
 
+    finder_params = std::make_shared<PeakFinderParameters>();
+    filter_params = std::make_shared<PeakFilterParameters>();
+    indexer_params = std::make_shared<IndexerParameters>();
+    predict_params = std::make_shared<PredictionParameters>();
+    shape_params= std::make_shared<ShapeCollectionParameters>();
+    int_params = std::make_shared<IntegrationParameters>();
+    merge_params = std::make_shared<MergeParameters>();
+
     std::string logfile = "nsx.log";
     Logger::instance().start(logfile, Level::Info);
 }
@@ -74,10 +82,10 @@ void Experiment::setDefaultDMin()
 {
     double lambda = getDiffractometer()->source().selectedMonochromator().wavelength();
     double d_min = lambda / 2.0;
-    shape_params.d_min = d_min;
-    predict_params.d_min = d_min;
-    indexer_params.d_min = d_min;
-    _peak_filter->setDRange(d_min, 50.0);
+    shape_params->d_min = d_min;
+    predict_params->d_min = d_min;
+    indexer_params->d_min = d_min;
+    filter_params->d_min = d_min;
 }
 
 void Experiment::acceptFoundPeaks(const std::string& name)
@@ -124,49 +132,34 @@ void Experiment::loadFromFile(const std::string& path)
     setDefaultDMin();
 }
 
-void Experiment::autoIndex(PeakCollection* peaks, const IndexerParameters& params)
+void Experiment::autoIndex(PeakCollection* peaks)
 {
+    auto params = _auto_indexer->parameters();
+
     std::string collection_name = "autoindexing";
     _peak_filter->resetFiltering(peaks);
     _peak_filter->resetFilterFlags();
     _peak_filter->setFilterStrength(true);
     _peak_filter->setFilterDRange(true);
     _peak_filter->setFilterFrames(true);
-    _peak_filter->setDRange(params.d_min, params.d_max);
-    _peak_filter->setStrength(params.strength_min, params.strength_max);
-    _peak_filter->setFrameRange(params.first_frame, params.last_frame);
+    _peak_filter->parameters()->d_min = params->d_min;
+    _peak_filter->parameters()->d_max = params->d_max;
+    _peak_filter->parameters()->strength_min = params->strength_min;
+    _peak_filter->parameters()->strength_max = params->strength_max;
+    _peak_filter->parameters()->frame_min = params->first_frame;
+    _peak_filter->parameters()->frame_max = params->last_frame;
+
     nsxlog(
-        Level::Info, "Experiment::autoIndex: attempting with frames ", params.first_frame, " - ",
-        params.last_frame);
+        Level::Info, "Experiment::autoIndex: attempting with frames ", params->first_frame, " - ",
+        params->last_frame);
     _peak_filter->filter(peaks);
     double npeaks = peaks->numberOfPeaks();
     double ncaught = peaks->numberCaughtByFilter();
     nsxlog(Level::Info, "Indexing using ", ncaught, " / ", npeaks, " peaks");
     _peak_handler->acceptFilter(collection_name, peaks, listtype::INDEXING);
-    _auto_indexer->setParameters(params);
     PeakCollection* indexing_collection = getPeakCollection(collection_name);
     _auto_indexer->autoIndex(indexing_collection);
 }
-
-bool Experiment::runAutoIndexer(
-    PeakCollection* peaks, IndexerParameters& params, const double& length_tol,
-    const double& angle_tol, const double& frame_min, const double& frame_max)
-{
-    nsxlog(Level::Info, "Experiment::runAutoIndexer: start");
-    double frame = frame_min;
-    while (frame <= frame_max) {
-        params.last_frame = frame;
-        autoIndex(peaks, params);
-        if (checkAndAssignUnitCell(peaks, length_tol, angle_tol)) {
-            nsxlog(Level::Info, "Experiment::runAutoIndexer: success");
-            return true;
-        }
-        frame += 1.0;
-    }
-    nsxlog(Level::Info, "Experiment::runAutoIndexer: failure");
-    return false;
-}
-
 
 void Experiment::buildShapeCollection(
     PeakCollection* peaks, const ShapeCollectionParameters& params)
@@ -178,8 +171,10 @@ void Experiment::buildShapeCollection(
     _peak_filter->resetFilterFlags();
     _peak_filter->setFilterStrength(true);
     _peak_filter->setFilterDRange(true);
-    _peak_filter->setDRange(params.d_min, params.d_max);
-    _peak_filter->setStrength(params.strength_min, params.strength_max);
+    _peak_filter->parameters()->d_min = params.d_min;
+    _peak_filter->parameters()->d_max = params.d_max;
+    _peak_filter->parameters()->strength_min = params.strength_min;
+    _peak_filter->parameters()->strength_max = params.strength_max;
     _peak_filter->filter(peaks);
     std::string collection_name = "fit";
     _peak_handler->acceptFilter(collection_name, peaks, listtype::FILTERED);
@@ -216,7 +211,7 @@ void Experiment::buildShapeCollection(
 }
 
 void Experiment::predictPeaks(
-    const std::string& name, PeakCollection* peaks, const PredictionParameters& params,
+    const std::string& name, PeakCollection* peaks, std::shared_ptr<PredictionParameters> params,
     PeakInterpolation interpol)
 {
     const DataList numors = getAllData();

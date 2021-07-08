@@ -317,23 +317,25 @@ void SubframeAutoIndexer::grabIndexerParameters()
     if (_peak_list.empty() || _exp_combo->count() < 1)
         return;
 
-    _params = gSession->experimentAt(_exp_combo->currentIndex())->experiment()->indexer_params;
-    _min_frame->setValue(_params.first_frame);
-    _max_frame->setValue(_params.last_frame);
-    _d_min->setValue(_params.d_min);
-    _d_max->setValue(_params.d_max);
-    _str_min->setValue(_params.strength_min);
-    _str_max->setValue(_params.strength_max);
-    _niggli->setValue(_params.niggliTolerance);
-    _only_niggli->setChecked(_params.niggliReduction);
-    _gruber->setValue(_params.gruberTolerance);
-    _number_vertices->setValue(_params.nVertices);
-    _number_subdivisions->setValue(_params.subdiv);
-    _number_solutions->setValue(_params.nSolutions);
-    _max_cell_dimension->setValue(_params.maxdim);
-    _indexing_tolerance->setValue(_params.indexingTolerance);
-    _frequency_tolerance->setValue(_params.frequencyTolerance);
-    _min_cell_volume->setValue(_params.minUnitCellVolume);
+    auto params =
+        gSession->experimentAt(_exp_combo->currentIndex())->experiment()->autoIndexer()->
+        parameters();
+    _min_frame->setValue(params->first_frame);
+    _max_frame->setValue(params->last_frame);
+    _d_min->setValue(params->d_min);
+    _d_max->setValue(params->d_max);
+    _str_min->setValue(params->strength_min);
+    _str_max->setValue(params->strength_max);
+    _niggli->setValue(params->niggliTolerance);
+    _only_niggli->setChecked(params->niggliReduction);
+    _gruber->setValue(params->gruberTolerance);
+    _number_vertices->setValue(params->nVertices);
+    _number_subdivisions->setValue(params->subdiv);
+    _number_solutions->setValue(params->nSolutions);
+    _max_cell_dimension->setValue(params->maxdim);
+    _indexing_tolerance->setValue(params->indexingTolerance);
+    _frequency_tolerance->setValue(params->frequencyTolerance);
+    _min_cell_volume->setValue(params->minUnitCellVolume);
 }
 
 void SubframeAutoIndexer::setIndexerParameters()
@@ -341,22 +343,26 @@ void SubframeAutoIndexer::setIndexerParameters()
     if (_peak_list.empty() || _exp_combo->count() < 1)
         return;
 
-    _params.first_frame = _min_frame->value();
-    _params.last_frame = _max_frame->value();
-    _params.d_min = _d_min->value();
-    _params.d_max = _d_max->value();
-    _params.strength_min = _str_min->value();
-    _params.strength_max = _str_max->value();
-    _params.niggliTolerance = _niggli->value();
-    _params.niggliReduction = _only_niggli->isChecked();
-    _params.gruberTolerance = _gruber->value();
-    _params.nVertices = _number_vertices->value();
-    _params.subdiv = _number_subdivisions->value();
-    _params.nSolutions = _number_solutions->value();
-    _params.maxdim = _max_cell_dimension->value();
-    _params.indexingTolerance = _indexing_tolerance->value();
-    _params.frequencyTolerance = _frequency_tolerance->value();
-    _params.minUnitCellVolume = _min_cell_volume->value();
+    auto params =
+        gSession->experimentAt(_exp_combo->currentIndex())->experiment()->autoIndexer()->
+        parameters();
+
+    params->first_frame = _min_frame->value();
+    params->last_frame = _max_frame->value();
+    params->d_min = _d_min->value();
+    params->d_max = _d_max->value();
+    params->strength_min = _str_min->value();
+    params->strength_max = _str_max->value();
+    params->niggliTolerance = _niggli->value();
+    params->niggliReduction = _only_niggli->isChecked();
+    params->gruberTolerance = _gruber->value();
+    params->nVertices = _number_vertices->value();
+    params->subdiv = _number_subdivisions->value();
+    params->nSolutions = _number_solutions->value();
+    params->maxdim = _max_cell_dimension->value();
+    params->indexingTolerance = _indexing_tolerance->value();
+    params->frequencyTolerance = _frequency_tolerance->value();
+    params->minUnitCellVolume = _min_cell_volume->value();
 }
 
 void SubframeAutoIndexer::runAutoIndexer()
@@ -379,7 +385,7 @@ void SubframeAutoIndexer::runAutoIndexer()
     _solutions.clear();
 
     try {
-        expt->autoIndex(collection, _params);
+        expt->autoIndex(collection);
     } catch (const std::exception& e) {
         nsx::nsxlog(nsx::Level::Error, "Autoindexer: ", e.what());
         QMessageBox::critical(this, "Indexing Error ", e.what());

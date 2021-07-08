@@ -430,16 +430,19 @@ void SubframeFilterPeaks::grabFilterParameters()
     nsx::PeakFilter* filter =
         gSession->experimentAt(_exp_combo->currentIndex())->experiment()->peakFilter();
 
-    _tolerance->setValue(*(filter->unitCellTolerance()));
-    _strength_min->setValue(filter->strength()->at(0));
-    _strength_max->setValue(filter->strength()->at(1));
-    _d_range_min->setValue(filter->dRange()->at(0));
-    _d_range_max->setValue(filter->dRange()->at(1));
-    _frame_min->setValue(filter->frameRange().at(0));
-    _frame_max->setValue(filter->frameRange().at(1));
-    _significance_level->setValue(*(filter->significance()));
-    _peak_end->setValue(filter->peakEnd());
-    _bkg_end->setValue(filter->bkgEnd());
+    nsx::PeakFilterParameters* params =
+        gSession->experimentAt(_exp_combo->currentIndex())->experiment()->filter_params.get();
+
+    _tolerance->setValue(params->unit_cell_tolerance);
+    _strength_min->setValue(params->strength_min);
+    _strength_max->setValue(params->strength_max);
+    _d_range_min->setValue(params->d_min);
+    _d_range_max->setValue(params->d_max);
+    _frame_min->setValue(params->frame_min);
+    _frame_max->setValue(params->frame_max);
+    _significance_level->setValue(params->significance);
+    _peak_end->setValue(params->peak_end);
+    _bkg_end->setValue(params->bkg_end);
 
     _selected->setChecked(filter->getFilterSelected());
     _masked->setChecked(filter->getFilterMasked());
@@ -447,7 +450,6 @@ void SubframeFilterPeaks::grabFilterParameters()
     _indexed_peaks->setChecked(filter->getFilterIndexed());
     _extinct_spacegroup->setChecked(filter->getFilterExtinct());
     _keep_complementary->setChecked(filter->getFilterComplementary());
-
     _state_box->setChecked(filter->getFilterState());
     _unit_cell_box->setChecked(filter->getFilterIndexTol());
     _strength_box->setChecked(filter->getFilterStrength());
@@ -497,18 +499,20 @@ void SubframeFilterPeaks::setFilterParameters() const
     if (_merge_box->isChecked())
         filter->setFilterSignificance(true);
 
-    const std::array<double, 2> d_range{_d_range_min->value(), _d_range_max->value()};
-    const std::array<double, 2> strength{_strength_min->value(), _strength_max->value()};
-    const std::array<double, 2> frame_range{_frame_min->value(), _frame_max->value()};
+    nsx::PeakFilterParameters* params =
+        gSession->experimentAt(_exp_combo->currentIndex())->experiment()->filter_params.get();
 
-    filter->setUnitCellTolerance(_tolerance->value());
-    filter->setSignificance(_significance_level->value());
-    filter->setDRange(d_range);
-    filter->setFrameRange(frame_range);
-    filter->setStrength(strength);
-    filter->setUnitCellName(_unit_cell->currentText().toStdString());
-    filter->setPeakEnd(_peak_end->value());
-    filter->setPeakEnd(_bkg_end->value());
+    params->unit_cell_tolerance = _tolerance->value();
+    params->significance = _significance_level->value();
+    params->d_min = _d_range_min->value();
+    params->d_max = _d_range_max->value();
+    params->frame_min = _frame_min->value();
+    params->frame_max = _frame_max->value();
+    params->strength_min = _strength_min->value();
+    params->strength_max = _strength_max->value();
+    params->unit_cell = _unit_cell->currentText().toStdString();
+    params->peak_end = _peak_end->value();
+    params->bkg_end = _bkg_end->value();
 }
 
 void SubframeFilterPeaks::filterPeaks()

@@ -93,8 +93,8 @@ static std::vector<Peak3D*> buildPeaksFromMillerIndices(
 }
 
 std::vector<Peak3D*> predictPeaks(
-    const sptrDataSet data, const UnitCell* unit_cell, const PredictionParameters& params,
-    sptrProgressHandler handler)
+    const sptrDataSet data, const UnitCell* unit_cell,
+    const std::shared_ptr<PredictionParameters> params, sptrProgressHandler handler)
 {
     std::vector<Peak3D*> predicted_peaks;
 
@@ -104,7 +104,7 @@ std::vector<Peak3D*> predictPeaks(
     const double wavelength = mono.wavelength();
 
     auto predicted_hkls =
-        unit_cell->generateReflectionsInShell(params.d_min, params.d_max, wavelength);
+        unit_cell->generateReflectionsInShell(params->d_min, params->d_max, wavelength);
 
     std::vector<Peak3D*> peaks =
         buildPeaksFromMillerIndices(data, predicted_hkls, unit_cell, data->nFrames(), handler);

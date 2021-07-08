@@ -59,7 +59,7 @@ class SubframeIntegrate : public QWidget {
     //! Grab the refiner parameters
     void grabIntegrationParameters();
     //! Set the refiner parameters
-    void setIntegrationParameters() const;
+    void setIntegrationParameters();
 
     //! Refresh all the inputs
     void updateExptList();
@@ -108,10 +108,6 @@ class SubframeIntegrate : public QWidget {
  private:
     //! The loaded data list
     std::vector<nsx::sptrDataSet> _data_list;
-    //! Parameters for shape library
-    nsx::ShapeCollectionParameters _shape_params;
-    //! Parameters for reintegration
-    nsx::IntegrationParameters _integration_params;
 
  private:
     QVBoxLayout* _left_layout;

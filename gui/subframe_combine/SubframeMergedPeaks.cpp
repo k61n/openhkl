@@ -92,6 +92,24 @@ SubframeMergedPeaks::SubframeMergedPeaks()
     show();
 }
 
+void SubframeMergedPeaks::grabMergeParameters()
+{
+    auto params = gSession->experimentAt(_exp_drop->currentIndex())->experiment()->merge_params;
+
+    _d_min->setValue(params->d_min);
+    _d_max->setValue(params->d_max);
+    _d_shells->setValue(params->n_shells);
+}
+
+void SubframeMergedPeaks::setMergeParameters()
+{
+    auto params = gSession->experimentAt(_exp_drop->currentIndex())->experiment()->merge_params;
+
+    params->d_min = _d_min->value();
+    params->d_max = _d_max->value();
+    params->n_shells = _d_shells->value();
+}
+
 void SubframeMergedPeaks::setSizePolicies()
 {
     _size_policy_widgets = new QSizePolicy();
@@ -263,13 +281,8 @@ void SubframeMergedPeaks::setUnmergedUp()
 void SubframeMergedPeaks::refreshAll()
 {
     refreshExperimentList();
-    double d_min;
-    if (_exp_drop->currentIndex() >= 0) {
-        d_min = gSession->experimentAt(_exp_drop->currentIndex())->experiment()->shape_params.d_min;
-    } else {
-        d_min = 1.5;
-    }
-    _d_min->setValue(d_min);
+    if (_exp_drop->currentIndex() >= 0)
+        grabMergeParameters();
     toggleUnsafeWidgets();
 }
 

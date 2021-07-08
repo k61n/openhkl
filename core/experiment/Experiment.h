@@ -163,11 +163,7 @@ class Experiment {
     //! Get a pointer to the AutoIndexer object
     nsx::AutoIndexer* autoIndexer() const { return _auto_indexer.get(); };
     //! attempt to autoindex the data
-    void autoIndex(PeakCollection* peaks, const IndexerParameters& params);
-    //! Run the autoindexer over the dataset, vary number of frames in attempt to find cell
-    bool runAutoIndexer(
-        PeakCollection* peaks, IndexerParameters& params, const double& length_tol,
-        const double& angle_tol, const double& frame_min, const double& frame_max);
+    void autoIndex(PeakCollection* peaks);
     //! Get a pointer to the accepted/assigned unit cell
     const UnitCell* getAcceptedCell() const;
     //! Get a pointer to the reference unit cell
@@ -202,7 +198,7 @@ class Experiment {
     void buildShapeCollection(PeakCollection* peaks, const ShapeCollectionParameters& params);
     //! Predict peaks from unit cell
     void predictPeaks(
-        const std::string& name, PeakCollection* peaks, const PredictionParameters& params,
+        const std::string& name, PeakCollection* peaks, std::shared_ptr<PredictionParameters> params,
         PeakInterpolation interpol);
     //! Get a pointer to the refiner
     Refiner* refiner() { return _refiner.get(); };
@@ -224,16 +220,22 @@ class Experiment {
     // Objects containing integration parameters. If I construct these on their own in Python,
     // they get destroyed when passed to Experiment, hence the kludgy option of making them
     // public - zamaan
+    //! Container for peak finder parameters
+    std::shared_ptr<PeakFinderParameters> finder_params;
+    //! Container for peak filter parameters
+    std::shared_ptr<PeakFilterParameters> filter_params;
+    //! Container for autoindexer parameters
+    std::shared_ptr<IndexerParameters> indexer_params;
     //! Container for integration parameters
-    IntegrationParameters int_params;
+    std::shared_ptr<IntegrationParameters> int_params;
     //! Container for Shape (profile) collection parameters
-    ShapeCollectionParameters shape_params;
+    std::shared_ptr<ShapeCollectionParameters> shape_params;
     //! Container for peak prediction parameters
-    PredictionParameters predict_params;
+    std::shared_ptr<PredictionParameters> predict_params;
+    //! Container for merge parameters
+    std::shared_ptr<MergeParameters> merge_params;
     //! Container for metadata for reading raw data files
     RawDataReaderParameters data_params;
-    //! Container for autoindexer parameters
-    IndexerParameters indexer_params;
     //! Container for refiner parameters
     RefinerParameters refiner_params;
 

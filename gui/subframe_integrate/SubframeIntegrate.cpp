@@ -191,11 +191,7 @@ void SubframeIntegrate::updateExptList()
         updateDatasetList();
         updatePeakList();
         refreshPeakTable();
-
-        _integration_params =
-            gSession->experimentAt(_exp_combo->currentIndex())->experiment()->int_params;
-        _shape_params =
-            gSession->experimentAt(_exp_combo->currentIndex())->experiment()->shape_params;
+        grabIntegrationParameters();
     }
     _exp_combo->blockSignals(false);
 }
@@ -270,6 +266,34 @@ void SubframeIntegrate::updatePeakList()
     refreshShapeStatus();
 }
 
+void SubframeIntegrate::grabIntegrationParameters()
+{
+    auto params = gSession->experimentAt(_exp_combo->currentIndex())->experiment()->int_params;
+
+    _peak_end->setValue(params->peak_end);
+    _bkg_begin->setValue(params->bkg_begin);
+    _bkg_end->setValue(params->bkg_end);
+    _radius_int->setValue(params->neighbour_range_pixels);
+    _n_frames_int->setValue(params->neighbour_range_frames);
+    _fit_center->setChecked(params->fit_center);
+    _fit_covariance->setChecked(params->fit_cov);
+    _min_neighbours->setValue(params->min_neighbors);
+}
+
+void SubframeIntegrate::setIntegrationParameters()
+{
+    auto params = gSession->experimentAt(_exp_combo->currentIndex())->experiment()->int_params;
+
+    params->peak_end = _peak_end->value();
+    params->bkg_begin = _bkg_begin->value();
+    params->bkg_end = _bkg_end->value();
+    params->neighbour_range_pixels = _radius_int->value();
+    params->neighbour_range_frames = _n_frames_int->value();
+    params->fit_center = _fit_center->isChecked();
+    params->fit_cov = _fit_covariance->isChecked();
+    params->min_neighbors = _min_neighbours->value();
+}
+
 void SubframeIntegrate::setIntegrateUp()
 {
     _integrate_box = new Spoiler("Integrate peaks");
@@ -325,32 +349,22 @@ void SubframeIntegrate::setIntegrateUp()
     _interpolation_combo->addItem("Inverse distance");
     _interpolation_combo->addItem("Intensity");
 
-    _fit_center->setChecked(_integration_params.fit_center);
-
-    _fit_covariance->setChecked(_integration_params.fit_cov);
-
     _peak_end->setMaximum(100000);
     _peak_end->setDecimals(2);
-    _peak_end->setValue(_integration_params.peak_end);
 
     _bkg_begin->setMaximum(100000);
     _bkg_begin->setDecimals(2);
-    _bkg_begin->setValue(_integration_params.bkg_begin);
 
     _bkg_end->setMaximum(100000);
     _bkg_end->setDecimals(2);
-    _bkg_end->setValue(_integration_params.bkg_end);
 
     _radius_int->setMaximum(100000);
     _radius_int->setDecimals(2);
-    _radius_int->setValue(_integration_params.neighbour_range_pixels);
 
     _n_frames_int->setMaximum(100000);
     _n_frames_int->setDecimals(2);
-    _n_frames_int->setValue(_integration_params.neighbour_range_frames);
 
     _min_neighbours->setMaximum(100000);
-    _min_neighbours->setValue(_integration_params.min_neighbors);
 
     connect(_integrate_button, &QPushButton::clicked, this, &SubframeIntegrate::runIntegration);
     connect(
@@ -418,15 +432,6 @@ void SubframeIntegrate::assignPeakShapes()
         int interpol = _interpolation_combo->currentIndex();
         nsx::PeakInterpolation peak_interpolation = static_cast<nsx::PeakInterpolation>(interpol);
 
-        _integration_params.peak_end = _peak_end->value();
-        _integration_params.bkg_begin = _bkg_begin->value();
-        _integration_params.bkg_end = _bkg_end->value();
-        _integration_params.neighbour_range_pixels = _radius_int->value();
-        _integration_params.neighbour_range_frames = _n_frames_int->value();
-        _integration_params.fit_center = _fit_center->isChecked();
-        _integration_params.fit_cov = _fit_covariance->isChecked();
-        _integration_params.min_neighbors = _min_neighbours->value();
-
         shapes->setPredictedShapes(peaks_to_integrate, peak_interpolation, handler);
     } catch (std::exception& e) {
         QMessageBox::critical(this, "Error", QString(e.what()));
@@ -441,8 +446,8 @@ void SubframeIntegrate::removeOverlappingPeaks()
     nsx::PeakFilter filter;
     filter.resetFiltering(peaks_to_integrate);
     if (_remove_overlaps->isChecked()) {
-        filter.setPeakEnd(_peak_end->value());
-        filter.setBkgEnd(_bkg_end->value());
+        filter.parameters()->peak_end = _peak_end->value();
+        filter.parameters()->bkg_end = _bkg_end->value();
         filter.filterOverlapping(peaks_to_integrate);
         for (auto* peak : peaks_to_integrate->getPeakList()) {
             if (!peak->caughtByFilter()) {
@@ -478,17 +483,10 @@ void SubframeIntegrate::runIntegration()
         nsx::ShapeCollection* shapes =
             expt->getPeakCollection(_peak_combo->currentText().toStdString())->shapeCollection();
 
-        _integration_params.peak_end = _peak_end->value();
-        _integration_params.bkg_begin = _bkg_begin->value();
-        _integration_params.bkg_end = _bkg_end->value();
-        _integration_params.neighbour_range_pixels = _radius_int->value();
-        _integration_params.neighbour_range_frames = _n_frames_int->value();
-        _integration_params.fit_center = _fit_center->isChecked();
-        _integration_params.fit_cov = _fit_covariance->isChecked();
-        _integration_params.min_neighbors = _min_neighbours->value();
+        auto params = gSession->experimentAt(_exp_combo->currentIndex())->experiment()->int_params;
 
         integrator->setHandler(handler);
-        expt->integratePeaks(integrator, peaks_to_integrate, &_integration_params, shapes);
+        expt->integratePeaks(integrator, peaks_to_integrate, params.get(), shapes);
     } catch (std::exception& e) {
         QMessageBox::critical(this, "Error", QString(e.what()));
     }
@@ -501,9 +499,11 @@ void SubframeIntegrate::openShapeBuilder()
         gSession->experimentAt(_exp_combo->currentIndex())
         ->experiment()
         ->getPeakCollection(_peak_combo->currentText().toStdString());
+    auto shape_params =
+        gSession->experimentAt(_exp_combo->currentIndex())->experiment()->shape_params;
 
     std::unique_ptr<ShapeCollectionDialog> dialog(
-        new ShapeCollectionDialog(peak_collection, _shape_params));
+        new ShapeCollectionDialog(peak_collection, shape_params));
 
     dialog->exec();
     refreshShapeStatus();

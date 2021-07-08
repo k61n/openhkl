@@ -38,6 +38,21 @@ struct PeakFilterFlags {
     bool frames; //!< catch peaks in a specifed frame range
 };
 
+struct PeakFilterParameters {
+    double d_min = 1.5; //!< minimum d (Bragg's law)
+    double d_max = 50.0; //!< maximum d (Bragg's law)
+    double strength_min = 1.0; //!< minimum strength (I/sigma)
+    double strength_max = 1.0e7; //!< maximum strength (I/sigma)
+    std::string unit_cell = ""; //!< unit cell name
+    double unit_cell_tolerance = 0.2; //!< indexing tolerance
+    double significance = 0.99; //!< signficance
+    double sparse = 100; //!< number of peaks in dataset to be kept
+    double frame_min = 0.0; //!< start of frame range
+    double frame_max = 10.0; //!< end of frame range
+    double peak_end = 3.0; //!< scale for peak intensity ellipsoid (sigmas)
+    double bkg_end = 6.0; //!< scale for background ellipsoid (sigmas)
+};
+
 class PeakFilter {
  public:
     //! Constructor
@@ -140,70 +155,16 @@ class PeakFilter {
     //! Reset filtering
     void resetFiltering(PeakCollection* peak_collection) const;
 
-    //! Return the d range values
-    const std::array<double, 2>* dRange() const { return &_d_range; };
-    //! Set the d range values
-    void setDRange(const std::array<double, 2> d_range) { _d_range = d_range; };
-    void setDRange(double dmin, double dmax) { _d_range = {dmin, dmax}; };
+    //! Set the filter parameteres
+    void setParameters(std::shared_ptr<PeakFilterParameters> params);
 
-    //! Return the unit cell name
-    const std::string* unitCellName() const { return &_unit_cell; };
-    //! Set the unit cell name
-    void setUnitCellName(const std::string unit_cell) { _unit_cell = unit_cell; };
-
-    //! Return the unit cell tolerance
-    const double* unitCellTolerance() const { return &_unit_cell_tolerance; };
-    //! Set the unit cell tolerance
-    void setUnitCellTolerance(const double tolerance) { _unit_cell_tolerance = tolerance; };
-
-    //! Return the strength
-    const std::array<double, 2>* strength() const { return &_strength; };
-    //! Set the strength
-    void setStrength(const std::array<double, 2> strength) { _strength = strength; };
-    void setStrength(double strmin, double strmax) { _strength = {strmin, strmax}; };
-
-    //! Return the significance
-    const double* significance() const { return &_significance; };
-    //! Set the significance
-    void setSignificance(const double significance) { _significance = significance; };
-
-    //! Set the frame range
-    void setFrameRange(const double f0, const double f1) { _frameRange = {f0, f1}; };
-    void setFrameRange(const std::array<double, 2> frames) { _frameRange = frames; };
-    //! Return the frame range
-    const std::array<double, 2>& frameRange() { return _frameRange; };
-
-    //! Set peak end
-    void setPeakEnd(const double peak_end) { _peak_end = peak_end; };
-    //! set background end
-    void setBkgEnd(const double bkg_end) { _bkg_end = bkg_end; };
-    //! Return the peak end
-    double peakEnd() { return _peak_end; };
-    //! Return the background end
-    double bkgEnd() { return _bkg_end; };
-
+    //! Get a pointer to the filter parameters
+    PeakFilterParameters* parameters();
 
  private:
     //! booleans for filtering
     PeakFilterFlags _filter_flags;
-    //! Detector range
-    std::array<double, 2> _d_range;
-    //! The unit cell name
-    std::string _unit_cell;
-    //! The unit cell tolerance
-    double _unit_cell_tolerance;
-    //! The strength
-    std::array<double, 2> _strength;
-    //! The significance
-    double _significance;
-    //! number of peaks in dataset to be kept
-    double _sparse;
-    //! Frame range
-    std::array<double, 2> _frameRange;
-    //! Peak end
-    double _peak_end;
-    //! Background end
-    double _bkg_end;
+    std::shared_ptr<PeakFilterParameters> _filter_params;
 };
 
 } // namespace nsx

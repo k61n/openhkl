@@ -363,13 +363,16 @@ void SubframeFindPeaks::grabFinderParameters()
     nsx::PeakFinder* finder =
         gSession->experimentAt(_exp_combo->currentIndex())->experiment()->peakFinder();
 
-    _min_size_spin->setValue(finder->minSize());
-    _max_size_spin->setValue(finder->maxSize());
-    _scale_spin->setValue(finder->peakEnd());
-    _max_width_spin->setValue(finder->maxFrames());
-    _start_frame_spin->setValue(finder->framesBegin()+1);
-    _end_frame_spin->setValue(finder->framesEnd());
-    _threshold_spin->setValue(finder->threshold());
+    nsx::PeakFinderParameters* finder_params =
+        gSession->experimentAt(_exp_combo->currentIndex()) ->experiment()->finder_params.get();
+
+    _min_size_spin->setValue(finder_params->minimum_size);
+    _max_size_spin->setValue(finder_params->maximum_size);
+    _scale_spin->setValue(finder_params->peak_end);
+    _max_width_spin->setValue(finder_params->maximum_frames);
+    _start_frame_spin->setValue(finder_params->frames_begin+1);
+    _end_frame_spin->setValue(finder_params->frames_end);
+    _threshold_spin->setValue(finder_params->threshold);
 
     nsx::Convolver* convolver = finder->convolver();
     std::string convolverType = convolver->type();
@@ -408,13 +411,15 @@ void SubframeFindPeaks::setFinderParameters()
     nsx::PeakFinder* finder =
         gSession->experimentAt(_exp_combo->currentIndex())->experiment()->peakFinder();
 
-    finder->setMinSize(_min_size_spin->value());
-    finder->setMaxSize(_max_size_spin->value());
-    finder->setPeakEnd(_scale_spin->value());
-    finder->setMaxFrames(_max_width_spin->value());
-    finder->setFramesBegin(_start_frame_spin->value()-1);
-    finder->setFramesEnd(_end_frame_spin->value());
-    finder->setThreshold(_threshold_spin->value());
+    auto params =
+        gSession->experimentAt(_exp_combo->currentIndex())->experiment()->finder_params.get();
+    params->minimum_size = _min_size_spin->value();
+    params->maximum_size = _max_size_spin->value();
+    params->peak_end = _scale_spin->value();
+    params->maximum_frames = _max_width_spin->value();
+    params->frames_begin = _start_frame_spin->value();
+    params->frames_end = _end_frame_spin->value();
+    params->threshold = _threshold_spin->value();
 
     std::string convolverType = _kernel_combo->currentText().toStdString();
     nsx::ConvolverFactory factory;

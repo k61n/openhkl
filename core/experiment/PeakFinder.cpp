@@ -86,16 +86,9 @@ namespace nsx {
 
 PeakFinder::PeakFinder()
     : _handler(nullptr)
-    , _threshold(80.0)
-    , _peakEnd(1.0)
     , _current_label(0)
-    , _minSize(30)
-    , _maxSize(10000)
-    , _maxFrames(10)
-    , _framesBegin(-1)
-
-    , _framesEnd(-1)
 {
+    _params = std::make_shared<PeakFinderParameters>();
     _convolver.reset(ConvolverFactory{}.create("annular", {{"r1", 5.}, {"r2", 10.}, {"r3", 15.}}));
 }
 
@@ -126,54 +119,14 @@ void PeakFinder::setHandler(const sptrProgressHandler& handler)
     _handler = handler;
 }
 
-void PeakFinder::setMaxFrames(int maxFrames)
+void PeakFinder::setParameters(std::shared_ptr<PeakFinderParameters> params)
 {
-    _maxFrames = maxFrames;
+    _params = params;
 }
 
-int PeakFinder::maxFrames() const
+std::shared_ptr<PeakFinderParameters> PeakFinder::parameters()
 {
-    return _maxFrames;
-}
-
-void PeakFinder::setMinSize(int size)
-{
-    _minSize = size;
-}
-
-int PeakFinder::minSize() const
-{
-    return _minSize;
-}
-
-void PeakFinder::setMaxSize(int size)
-{
-    _maxSize = size;
-}
-
-int PeakFinder::maxSize() const
-{
-    return _maxSize;
-}
-
-void PeakFinder::setFramesBegin(int framesBegin)
-{
-    _framesBegin = framesBegin;
-}
-
-int PeakFinder::framesBegin() const
-{
-    return _framesBegin;
-}
-
-void PeakFinder::setFramesEnd(int framesEnd)
-{
-    _framesEnd = framesEnd;
-}
-
-int PeakFinder::framesEnd() const
-{
-    return _framesEnd;
+    return _params;
 }
 
 void PeakFinder::setConvolver(std::unique_ptr<Convolver> convolver)
@@ -184,11 +137,6 @@ void PeakFinder::setConvolver(std::unique_ptr<Convolver> convolver)
 void PeakFinder::setConvolver(const Convolver& convolver)
 {
     _convolver.reset(convolver.clone());
-}
-
-void PeakFinder::setThreshold(double value)
-{
-    _threshold = value;
 }
 
 //  ***********************************************************************************************
@@ -211,7 +159,7 @@ void PeakFinder::eliminateBlobs(std::map<int, Blob3D>& blobs) const
         ++dummy;
 
         Blob3D& p = it->second;
-        if (p.getComponents() < _minSize || p.getComponents() > _maxSize)
+        if (p.getComponents() < _params->minimum_size || p.getComponents() > _params->maximum_size)
             it = blobs.erase(it);
         else
             it++;
@@ -290,7 +238,7 @@ void PeakFinder::findPrimaryBlobs(
         for (unsigned int row = 0; row < nrows; ++row) {
             for (unsigned int col = 0; col < ncols; ++col) {
                 // Discard pixel if value < threshold
-                if (filtered_frame(row, col) < _threshold) {
+                if (filtered_frame(row, col) < _params->threshold) {
                     labels[index2D] = labels2[index2D] = 0;
                     index2D++;
                     continue;
@@ -406,7 +354,7 @@ void PeakFinder::findCollisions(
 
         try {
             // toEllipsoid throws exception if mass is too small
-            it->second.toEllipsoid(_peakEnd, center, extents, axis);
+            it->second.toEllipsoid(_params->peak_end, center, extents, axis);
         } catch (...) {
             it = blobs.erase(it);
             continue;
@@ -591,8 +539,8 @@ void PeakFinder::find(const DataList numors)
 
         _current_label = 0;
 
-        int loop_begin = _framesBegin;
-        int loop_end = _framesEnd;
+        int loop_begin = _params->frames_begin ;
+        int loop_end = _params->frames_end;
         if (loop_begin == -1)
             loop_begin = 0;
         if (loop_end == -1)
@@ -682,7 +630,7 @@ void PeakFinder::find(const DataList numors)
                 ++numPeaksTooSmallOrLarge;
             }
 
-            if (extents(2) > _maxFrames && !p->enabled()) {
+            if (extents(2) > _params->maximum_frames && !p->enabled()) {
                 p->setSelected(false);
                 p->setRejectionFlag(RejectionFlag::OutsideFrames);
                 ++numPeaksOutsideFrames;

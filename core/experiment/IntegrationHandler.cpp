@@ -75,7 +75,8 @@ void IntegrationHandler::integratePeaks(
 
     nsx::PeakFilter filter;
     filter.resetFiltering(peak_collection);
-    filter.setDRange(std::array<double, 2UL>{d_min, d_max});
+    filter.parameters()->d_min = d_min;
+    filter.parameters()->d_max = d_max;
     filter.filterDRange(peak_collection);
     std::vector<Peak3D*> peaks = peak_collection->getFilteredPeakList();
 
@@ -113,7 +114,8 @@ void IntegrationHandler::integratePredictedPeaks(
     params.log(Level::Info);
     nsx::PeakFilter filter;
     filter.resetFiltering(peak_collection);
-    filter.setDRange(std::array<double, 2UL>{params.d_min, params.d_max});
+    filter.parameters()->d_min = params.d_min;
+    filter.parameters()->d_max = params.d_max;
     filter.filterDRange(peak_collection);
     std::vector<Peak3D*> peaks = peak_collection->getFilteredPeakList();
 

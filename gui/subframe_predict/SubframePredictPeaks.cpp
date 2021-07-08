@@ -259,19 +259,27 @@ void SubframePredictPeaks::updateDatasetParameters(int idx)
 
 void SubframePredictPeaks::grabPredictorParameters()
 {
-    _params = gSession->experimentAt(_exp_combo->currentIndex())->experiment()->predict_params;
+    auto params =
+        gSession->experimentAt(_exp_combo->currentIndex())->experiment()->predict_params;
 
-    // Prediction parameters
-    _d_min->setValue(_params.d_min);
-    _d_max->setValue(_params.d_max);
+    _d_min->setValue(params->d_min);
+    _d_max->setValue(params->d_max);
 }
 
-void SubframePredictPeaks::setPredictorParameters() const { }
+void SubframePredictPeaks::setPredictorParameters()
+{
+    auto params =
+        gSession->experimentAt(_exp_combo->currentIndex())->experiment()->predict_params;
+
+    params->d_min = _d_min->value();
+    params->d_max = _d_max->value();
+}
 
 void SubframePredictPeaks::runPrediction()
 {
     try {
         const std::vector<nsx::sptrDataSet>& data = gSession->currentProject()->allData();
+        setPredictorParameters();
 
         nsx::sptrProgressHandler handler(new nsx::ProgressHandler);
         ProgressView progressView(nullptr);
@@ -279,10 +287,8 @@ void SubframePredictPeaks::runPrediction()
 
         nsx::UnitCell* cell = gSession->currentProject()->experiment()->getUnitCell(
             _unit_cells->currentText().toStdString());
-
-        nsx::PredictionParameters params;
-        params.d_min = _d_min->value();
-        params.d_max = _d_max->value();
+        auto params =
+            gSession->experimentAt(_exp_combo->currentIndex())->experiment()->predict_params;
 
         std::vector<nsx::Peak3D*> predicted_peaks;
 

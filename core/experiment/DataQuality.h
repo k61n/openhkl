@@ -46,6 +46,12 @@ struct DataQuality {
     void log() const;
 };
 
+struct MergeParameters {
+    double d_min = 1.5; //!< Minimum d (Bragg's law)
+    double d_max = 50.0; //!< Maximum d (Bragg's law)
+    int n_shells = 10; //!< Number of resolution shells
+};
+
 struct ShellQuality : DataQuality {
     double dmin; //!< Lower limit of d for resolution shell
     double dmax; //!< Upper limit of d for resolution shell

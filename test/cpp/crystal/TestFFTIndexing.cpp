@@ -29,24 +29,24 @@ TEST_CASE("test/crystal/TestFFTIndexing.cpp", "")
             std::cout << log << std::endl;
     });
 
-    nsx::IndexerParameters params;
-    params.maxdim = 70.0;
-    params.nSolutions = 10;
-    params.nVertices = 10000;
-    params.subdiv = 30;
-    params.indexingTolerance = 0.2;
-    params.niggliTolerance = 1e-3;
-    params.gruberTolerance = 4e-2;
-    params.niggliReduction = false;
-    params.minUnitCellVolume = 20.0;
-    params.unitCellEquivalenceTolerance = 0.05;
-    params.solutionCutoff = 10.0;
+    auto params = std::make_shared<nsx::IndexerParameters>();
+    params->maxdim = 70.0;
+    params->nSolutions = 10;
+    params->nVertices = 10000;
+    params->subdiv = 30;
+    params->indexingTolerance = 0.2;
+    params->niggliTolerance = 1e-3;
+    params->gruberTolerance = 4e-2;
+    params->niggliReduction = false;
+    params->minUnitCellVolume = 20.0;
+    params->unitCellEquivalenceTolerance = 0.05;
+    params->solutionCutoff = 10.0;
 
     // real basis of unit cell
     Eigen::Matrix3d basis;
     basis << 45.0, 1.0, -2.0, -1.5, 36.0, -2.2, 1.25, -3, 50.0;
     nsx::UnitCell uc(basis);
-    uc.reduce(params.niggliReduction, params.niggliTolerance, params.gruberTolerance);
+    uc.reduce(params->niggliReduction, params->niggliTolerance, params->gruberTolerance);
     uc = uc.applyNiggliConstraints();
     std::cout << "Basis:\n" << uc.basis() << std::endl;
 

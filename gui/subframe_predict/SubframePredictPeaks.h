@@ -83,7 +83,7 @@ class SubframePredictPeaks : public QWidget {
     //! Get the parameters of the indexer
     void grabPredictorParameters();
     //! Get the parameters of the indexer
-    void setPredictorParameters() const;
+    void setPredictorParameters();
     //! Refresh the found peaks list
     void refreshPeakTable();
     //! Refresh the found peaks visual properties
@@ -108,8 +108,6 @@ class SubframePredictPeaks : public QWidget {
     QStringList _unit_cell_list;
     //! Parameters for shape collection
     nsx::ShapeCollectionParameters _shape_params;
-    //! Parameters for peak prediction
-    nsx::PredictionParameters _params;
 
  private:
     QVBoxLayout* _left_layout;
