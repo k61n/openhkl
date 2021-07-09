@@ -259,7 +259,6 @@ void SubframeIntegrate::updatePeakList()
     current_peaks = _int_peak_combo->currentText();
     _int_peak_combo->clear();
     if (!tmp.empty()) {
-        current_peaks = _int_peak_combo->currentText();
         _int_peak_combo->addItems(tmp);
         _int_peak_combo->setCurrentText(current_peaks);
     }
