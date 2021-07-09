@@ -95,7 +95,7 @@ class DataSet {
 
  private:
     bool _isOpened;
-    std::string _name = nsx::kw_datasetName0;
+    std::string _name = nsx::kw_datasetDefaultName;
     unsigned int _nFrames;
     unsigned int _nrows;
     unsigned int _ncols;

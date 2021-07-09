@@ -23,7 +23,7 @@
 
 namespace nsx {
 
-Gonio::Gonio() : _name(nsx::kw_goniometerName0) { }
+Gonio::Gonio() : _name(nsx::kw_goniometerDefaultName) { }
 
 Gonio::Gonio(const std::string& name) : _name(name) { }
 

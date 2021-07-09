@@ -47,7 +47,7 @@ class Session {
     void selectExperiment(int);
 
     bool createExperiment
-    (QString experimentName = QString::fromStdString(nsx::kw_experimentName0),
+    (QString experimentName = QString::fromStdString(nsx::kw_experimentDefaultName),
      QString instrumentName = QString::fromStdString(nsx::kw_unknownInstrument));
     void removeExperiment(const QString& name);
 

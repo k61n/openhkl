@@ -80,24 +80,24 @@ const std::string at_spacegroup { "spacegroup" };
 const std::string at_z { "z" };
 
 //-- Default names
-const std::string kw_experimentName0 { "EXPERIMENT" };  // default name for an experiment
-const std::string kw_diffractometerName0 { "UNKNOWN INSTRUMENT" };  // default name for an experiment
-const std::string kw_datasetName0 { "DATASET" };  // default name for an experiment
-const std::string kw_unitcellName0 { "UNITCELL" };  // default name for a unit-cell
-const std::string kw_monochromatorName0 { "MONOCHROMATOR" };  // default name for a monochromator
+const std::string kw_experimentDefaultName { "EXPERIMENT" };  // default name for an experiment
+const std::string kw_diffractometerDefaultName { "UNKNOWN INSTRUMENT" };  // default name for an experiment
+const std::string kw_datasetDefaultName { "DATASET" };  // default name for an experiment
+const std::string kw_unitcellDefaultName { "UNITCELL" };  // default name for a unit-cell
+const std::string kw_monochromatorDefaultName { "MONOCHROMATOR" };  // default name for a monochromator
 const std::string kw_unknownInstrument { "UNKNOWN INSTRUMENT" };  // unknown instrument/diffractometer
-const std::string kw_goniometerName0 { "GONIOMETER" };  // default name for a goniometer
-const std::string kw_axisName0 { "axis" }; // default name for an axis
+const std::string kw_goniometerDefaultName { "GONIOMETER" };  // default name for a goniometer
+const std::string kw_axisDefaultName { "axis" }; // default name for an axis
 const std::string kw_unknownAxis { "UNKNOWN AXIS" };  // unknown axis
 const unsigned int kw_unknownAxisId { 0 };  // unknown axis id
-const std::string kw_detectorName0 { "DETECTOR" };  // default name for a detector
+const std::string kw_detectorDefaultName { "DETECTOR" };  // default name for a detector
 const std::string kw_rotationAxisName { "rotation" };
 const std::string kw_autoindexingCollection { "autoindexing" };
-const std::string kw_peakCollectionName0 { "peaks" };
+const std::string kw_peakCollectionDefaultName { "peaks" };
 const std::string kw_fitCollection { "fit" };
 const std::string kw_acceptedUnitcell { "accepted" };
 const std::string kw_referenceUnitcell { "reference" };
-const std::string kw_logFilename0 { "nsx.log" };
+const std::string kw_logFilename { "nsx.log" };
 
 //-- Axis names
 // detector gonio

@@ -114,9 +114,9 @@ HDF5MetaDataReader::HDF5MetaDataReader
 
         // store the attributes in the metadata
         _metadata.add<std::string>(nsx::at_experiment,
-                                   experiment_name.empty()? nsx::kw_experimentName0 : experiment_name);
+                                   experiment_name.empty()? nsx::kw_experimentDefaultName : experiment_name);
         _metadata.add<std::string>(nsx::at_diffractometer,
-                                   diffractometer_name.empty()? nsx::kw_diffractometerName0 : diffractometer_name);
+                                   diffractometer_name.empty()? nsx::kw_diffractometerDefaultName : diffractometer_name);
         _metadata.add<std::string>(nsx::at_formatVersion,
                                    version_str);
         _metadata.add<std::string>(nsx::at_filepath, filename);

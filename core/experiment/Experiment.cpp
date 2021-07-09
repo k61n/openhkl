@@ -50,7 +50,7 @@ Experiment::~Experiment() = default;
 Experiment::Experiment(const std::string& name, const std::string& diffractometerName) : _name(name)
 {
     // start logging
-    Logger::instance().start( nsx::kw_logFilename0, Level::Debug);
+    Logger::instance().start( nsx::kw_logFilename, Level::Debug);
     _peak_finder = std::make_unique<PeakFinder>();
     _peak_filter = std::make_unique<PeakFilter>();
     _auto_indexer = std::make_unique<AutoIndexer>();

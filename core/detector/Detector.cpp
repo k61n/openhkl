@@ -30,7 +30,7 @@ Detector* Detector::create(const YAML::Node& node)
 }
 
 Detector::Detector()
-    : Component(nsx::kw_detectorName0)
+    : Component(nsx::kw_detectorDefaultName)
     , _height(0.0)
     , _width(0.0)
     , _angularHeight(0.0)

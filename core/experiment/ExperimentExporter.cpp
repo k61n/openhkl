@@ -328,7 +328,7 @@ void ExperimentExporter::writePeaks(const std::map<std::string, PeakCollection*>
             data_names.push_back(peak->dataSet()->name());
 
             const UnitCell* unit_cell_ptr = peak->unitCell();
-            unit_cell_name = unit_cell_ptr ? unit_cell_ptr->name() : nsx::kw_unitcellName0;
+            unit_cell_name = unit_cell_ptr ? unit_cell_ptr->name() : nsx::kw_unitcellDefaultName;
             unit_cells.push_back(unit_cell_name);
 
             Eigen::Vector3d temp_col = peak->shape().center();

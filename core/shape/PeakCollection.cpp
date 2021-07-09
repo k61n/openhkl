@@ -18,7 +18,7 @@
 
 namespace nsx {
 
-PeakCollection::PeakCollection() : _name{nsx::kw_peakCollectionName0}, _type{nsx::listtype::FOUND} { }
+PeakCollection::PeakCollection() : _name{nsx::kw_peakCollectionDefaultName}, _type{nsx::listtype::FOUND} { }
 
 PeakCollection::PeakCollection(const std::string& name, nsx::listtype type)
     : _name{std::string(name)}, _type{type}

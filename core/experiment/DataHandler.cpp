@@ -89,7 +89,7 @@ void DataHandler::addData(sptrDataSet data, std::string name)
 
     // ensure that there is at least one monochromator; if not, create a new one.
     if (_diffractometer->source().nMonochromators() == 0) {
-        Monochromator mono(nsx::kw_monochromatorName0);
+        Monochromator mono(nsx::kw_monochromatorDefaultName);
         _diffractometer->source().addMonochromator(mono);
     }
 

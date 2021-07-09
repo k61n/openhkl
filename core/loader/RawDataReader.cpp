@@ -40,7 +40,7 @@ RawDataReader::RawDataReader(const std::string& filename, Diffractometer* diffra
 {
     // ensure that there is at least one monochromator!
     if (_diffractometer->source().nMonochromators() == 0) {
-        Monochromator mono(nsx::kw_monochromatorName0);
+        Monochromator mono(nsx::kw_monochromatorDefaultName);
         _diffractometer->source().addMonochromator(mono);
     }
 }
