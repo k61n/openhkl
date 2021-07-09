@@ -93,8 +93,8 @@ static std::vector<Peak3D*> buildPeaksFromMillerIndices(
 }
 
 std::vector<Peak3D*> predictPeaks(
-    const sptrDataSet data, const UnitCell* unit_cell, const PredictionParameters& params,
-    sptrProgressHandler handler)
+    const sptrDataSet data, const UnitCell* unit_cell,
+    const PredictionParameters* params, sptrProgressHandler handler)
 {
     std::vector<Peak3D*> predicted_peaks;
 
@@ -104,7 +104,7 @@ std::vector<Peak3D*> predictPeaks(
     const double wavelength = mono.wavelength();
 
     auto predicted_hkls =
-        unit_cell->generateReflectionsInShell(params.d_min, params.d_max, wavelength);
+        unit_cell->generateReflectionsInShell(params->d_min, params->d_max, wavelength);
 
     std::vector<Peak3D*> peaks =
         buildPeaksFromMillerIndices(data, predicted_hkls, unit_cell, data->nFrames(), handler);
@@ -188,6 +188,7 @@ ShapeCollection::ShapeCollection()
     _choleskyD.fill(1e-6);
     _choleskyM.fill(1e-6);
     _choleskyS.fill(1e-6);
+    _params = std::make_shared<ShapeCollectionParameters>();
 }
 
 ShapeCollection::ShapeCollection(
@@ -204,6 +205,7 @@ ShapeCollection::ShapeCollection(
     _choleskyD.fill(1e-6);
     _choleskyM.fill(1e-6);
     _choleskyS.fill(1e-6);
+    _params = std::make_shared<ShapeCollectionParameters>();
 }
 
 static void covariance_helper(
@@ -426,8 +428,8 @@ void ShapeCollection::setPredictedShapes(
         // too few or no neighbouring peaks found)
         try {
             Eigen::Matrix3d cov = meanCovariance(
-                peak, params.neighbour_range_pixels, params.neighbour_range_frames,
-                params.min_n_neighbors, interpolation);
+                peak, _params->neighbour_range_pixels, _params->neighbour_range_frames,
+                _params->min_n_neighbors, interpolation);
             Eigen::Vector3d center = peak->shape().center();
             peak->setShape(Ellipsoid(center, cov.inverse()));
         } catch (std::exception& e) {
@@ -536,6 +538,11 @@ std::array<double, 6> ShapeCollection::choleskyS() const
 std::map<Peak3D*, std::pair<Profile3D, Profile1D>> ShapeCollection::profiles() const
 {
     return _profiles;
+}
+
+ShapeCollectionParameters* ShapeCollection::parameters()
+{
+    return _params.get();
 }
 
 } // namespace nsx

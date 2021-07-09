@@ -118,13 +118,16 @@ TEST_CASE("test/data/TestNexusData.cpp", "")
     auto convolver = convolver_factory.create("annular", {});
 
     nsx::PeakFinder* peak_finder = exp.peakFinder();
-    peak_finder->setFramesBegin(0);
-    peak_finder->setFramesEnd(-1);
-    peak_finder->setMaxFrames(numframes);
-    peak_finder->setMinSize(5);
-    peak_finder->setMaxSize(10000);
-    peak_finder->setPeakEnd(1.0);
-    peak_finder->setThreshold(5.0);
+
+    auto finder_params = peak_finder->parameters();
+    finder_params->frames_begin = 0;
+    finder_params->frames_end = numframes;
+    finder_params->maximum_frames = 10;
+    finder_params->minimum_size = 5;
+    finder_params->maximum_size = 10000;
+    finder_params->peak_end = 1.0;
+    finder_params->threshold = 5.0;
+
     peak_finder->setConvolver(std::unique_ptr<nsx::Convolver>(convolver));
     peak_finder->setHandler(progressHandler);
     peak_finder->find(numors);
@@ -188,9 +191,9 @@ TEST_CASE("test/data/TestNexusData.cpp", "")
               << std::endl;
 
     nsx::PeakFilter* peak_filter = exp.peakFilter();
-    peak_filter->setFilterDRange(true);
-    const std::array<double, 2> d_range{1.5, 50.0};
-    peak_filter->setDRange(d_range);
+    peak_filter->flags()->d_range = true;
+    peak_filter->parameters()->d_min = 1.5;
+    peak_filter->parameters()->d_max = 50.0;
 
     peak_filter->resetFiltering(found_collection);
     peak_filter->filter(found_collection);
@@ -236,27 +239,27 @@ TEST_CASE("test/data/TestNexusData.cpp", "")
               << std::endl;
 
     nsx::AutoIndexer* auto_indexer = exp.autoIndexer();
-    nsx::IndexerParameters parameters;
+    auto parameters = std::make_shared<nsx::IndexerParameters>();
     // parameters for FFTIndexing
-    parameters.nVertices = 10000; // points on the direction sphere
-    parameters.subdiv = 50; // number of bins
-    parameters.frequencyTolerance = 0.2; // peaks to discard
-    parameters.maxdim = 8.; // unit cell length
-    parameters.nSolutions = 25;
+    parameters->nVertices = 10000; // points on the direction sphere
+    parameters->subdiv = 50; // number of bins
+    parameters->frequencyTolerance = 0.2; // peaks to discard
+    parameters->maxdim = 8.; // unit cell length
+    parameters->nSolutions = 25;
 
     std::cout << "AutoIndexer parameters: ";
-    std::cout << "maxdim = " << parameters.maxdim << ", ";
-    std::cout << "nSolutions = " << parameters.nSolutions << ", ";
-    std::cout << "nVertices = " << parameters.nVertices << ", ";
-    std::cout << "subdiv = " << parameters.subdiv << ", ";
-    std::cout << "indexingTolerance = " << parameters.indexingTolerance << ", ";
-    std::cout << "niggliTolerance = " << parameters.niggliTolerance << ", ";
-    std::cout << "gruberTolerance = " << parameters.gruberTolerance << ", ";
-    std::cout << "niggliReduction = " << parameters.niggliReduction << ", ";
-    std::cout << "minUnitCellVolume = " << parameters.minUnitCellVolume << ", ";
-    std::cout << "unitCellEquivalenceTolerance = " << parameters.unitCellEquivalenceTolerance
+    std::cout << "maxdim = " << parameters->maxdim << ", ";
+    std::cout << "nSolutions = " << parameters->nSolutions << ", ";
+    std::cout << "nVertices = " << parameters->nVertices << ", ";
+    std::cout << "subdiv = " << parameters->subdiv << ", ";
+    std::cout << "indexingTolerance = " << parameters->indexingTolerance << ", ";
+    std::cout << "niggliTolerance = " << parameters->niggliTolerance << ", ";
+    std::cout << "gruberTolerance = " << parameters->gruberTolerance << ", ";
+    std::cout << "niggliReduction = " << parameters->niggliReduction << ", ";
+    std::cout << "minUnitCellVolume = " << parameters->minUnitCellVolume << ", ";
+    std::cout << "unitCellEquivalenceTolerance = " << parameters->unitCellEquivalenceTolerance
               << ", ";
-    std::cout << "solutionCutoff = " << parameters.solutionCutoff << std::endl;
+    std::cout << "solutionCutoff = " << parameters->solutionCutoff << std::endl;
 
     auto_indexer->setParameters(parameters);
 

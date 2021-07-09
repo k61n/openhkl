@@ -63,7 +63,7 @@ class SubframeRefiner : public QWidget {
     //! Grab the refiner parameters
     void grabRefinerParameters();
     //! Set the refiner parameters
-    void setRefinerParameters() const;
+    void setRefinerParameters();
 
     //! Refresh all the inputs
     void setParametersUp();
@@ -109,8 +109,6 @@ class SubframeRefiner : public QWidget {
     int _n_updated;
     //! Whether the refinement succeeded
     bool _refine_success;
-    //! Parameters for refinement
-    nsx::RefinerParameters _refiner_params;
 
  private:
     QVBoxLayout* _left_layout;

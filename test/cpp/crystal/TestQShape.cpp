@@ -72,16 +72,17 @@ TEST_CASE("test/crystal/TestQShape.cpp", "")
     numors.push_back(dataf);
 
     // propagate changes to peak finder
-    peakFinder.setMinSize(30);
-    peakFinder.setMaxSize(10000);
-    peakFinder.setMaxFrames(10);
+    auto finder_params = peakFinder.parameters();
+    finder_params->minimum_size = 30;
+    finder_params->maximum_size = 10000;
+    finder_params->maximum_frames = 10;
+    finder_params->threshold = 15;
+    finder_params->peak_end = 1.0;
 
     nsx::ConvolverFactory convolver_factory;
     auto convolver = convolver_factory.create("annular", {});
     peakFinder.setConvolver(std::unique_ptr<nsx::Convolver>(convolver));
 
-    peakFinder.setThreshold(15.0);
-    peakFinder.setPeakEnd(1.0);
 
     peakFinder.setHandler(progressHandler);
 

@@ -37,7 +37,7 @@
 #include <QtGlobal>
 
 ShapeCollectionDialog::ShapeCollectionDialog(
-    nsx::PeakCollection* peak_collection, nsx::ShapeCollectionParameters params)
+    nsx::PeakCollection* peak_collection, nsx::ShapeCollectionParameters* params)
     : QDialog(), _peak_collection_model(), _peak_collection_item(), _params(params)
 {
     setModal(true);
@@ -160,7 +160,7 @@ void ShapeCollectionDialog::setParametersUp()
     _min_I_sigma = new QDoubleSpinBox();
     _min_I_sigma->setMaximum(10000);
     _min_I_sigma->setSingleStep(1.0);
-    _min_I_sigma->setValue(_params.strength_min);
+    _min_I_sigma->setValue(_params->strength_min);
     _min_I_sigma->setSizePolicy(*_size_policy_widgets);
     tooltip = QString::fromUtf8("Minimum strength (I/\u03C3) of peak to include in average");
     _min_I_sigma->setToolTip(tooltip);
@@ -168,7 +168,7 @@ void ShapeCollectionDialog::setParametersUp()
     _min_d = new QDoubleSpinBox();
     _min_d->setMaximum(10000);
     _min_d->setSingleStep(0.1);
-    _min_d->setValue(_params.d_min);
+    _min_d->setValue(_params->d_min);
     _min_d->setSizePolicy(*_size_policy_widgets);
     tooltip = QString::fromUtf8("Minimum d (I/\u212B) of peak to include in average");
     _min_d->setToolTip(tooltip);
@@ -176,7 +176,7 @@ void ShapeCollectionDialog::setParametersUp()
     _max_d = new QDoubleSpinBox();
     _max_d->setMaximum(10000);
     _max_d->setSingleStep(0.1);
-    _max_d->setValue(_params.d_max);
+    _max_d->setValue(_params->d_max);
     _max_d->setSizePolicy(*_size_policy_widgets);
     tooltip = QString::fromUtf8("Maximum d (I/\u212B) of peak to include in average");
     _max_d->setToolTip(tooltip);
@@ -184,7 +184,7 @@ void ShapeCollectionDialog::setParametersUp()
     _peak_end = new QDoubleSpinBox();
     _peak_end->setMaximum(10000);
     _peak_end->setSingleStep(0.1);
-    _peak_end->setValue(_params.peak_end);
+    _peak_end->setValue(_params->peak_end);
     _peak_end->setSizePolicy(*_size_policy_widgets);
     tooltip = "(sigmas) - scaling factor for peak region";
     _peak_end->setToolTip(tooltip);
@@ -192,7 +192,7 @@ void ShapeCollectionDialog::setParametersUp()
     _background_begin = new QDoubleSpinBox();
     _background_begin->setMaximum(10000);
     _background_begin->setSingleStep(0.1);
-    _background_begin->setValue(_params.bkg_begin);
+    _background_begin->setValue(_params->bkg_begin);
     _background_begin->setSizePolicy(*_size_policy_widgets);
     tooltip = "(sigmas) - scaling factor for lower limit of background";
     _background_begin->setToolTip(tooltip);
@@ -200,7 +200,7 @@ void ShapeCollectionDialog::setParametersUp()
     _background_end = new QDoubleSpinBox();
     _background_end->setMaximum(10000);
     _background_end->setSingleStep(0.1);
-    _background_end->setValue(_params.bkg_end);
+    _background_end->setValue(_params->bkg_end);
     _background_end->setSizePolicy(*_size_policy_widgets);
     tooltip = "(sigmas) - scaling factor for upper limit of background";
     _background_begin->setToolTip(tooltip);

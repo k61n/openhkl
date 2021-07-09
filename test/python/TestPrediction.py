@@ -19,8 +19,8 @@ class TestPrediction(unittest.TestCase):
 
         # build the shape library
         data = expt.getAllData()
-        shapelib_params = expt.shape_params
-        shapelib_params.kabsch = True
+        shapelib_params = expt.shapeParams()
+        shapelib_params.kabsch_coords = True
         shapelib_params.sigma_m = 0.23
         shapelib_params.sigma_d = 0.33
         shapelib_params.nx = 20
@@ -36,7 +36,7 @@ class TestPrediction(unittest.TestCase):
         self.assertEqual(nprofiles, 122)
 
         # predict the peaks
-        prediction_params = expt.predict_params
+        prediction_params = expt.predictParams()
         prediction_params.d_min = 1.5
         prediction_params.d_max = 50.0
         prediction_params.neighbour_max_radius = 400.0

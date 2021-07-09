@@ -67,13 +67,16 @@ TEST_CASE("test/crystal/TestRefiner.cpp", "")
     auto convolver = convolver_factory.create("annular", {});
 
     nsx::PeakFinder* peak_finder = experiment.peakFinder();
-    peak_finder->setMinSize(30);
-    peak_finder->setMaxSize(10000);
-    peak_finder->setPeakEnd(1.0);
-    peak_finder->setMaxFrames(10);
-    peak_finder->setFramesBegin(0);
-    peak_finder->setFramesEnd(dataf->nFrames());
-    peak_finder->setThreshold(15);
+
+    auto finder_params = peak_finder->parameters();
+    finder_params->minimum_size = 30;
+    finder_params->maximum_size = 10000;
+    finder_params->peak_end = 1.0;
+    finder_params->maximum_frames = 10;
+    finder_params->frames_begin = 0;
+    finder_params->frames_end = dataf->nFrames();
+    finder_params->threshold = 15;
+
     peak_finder->setConvolver(std::unique_ptr<nsx::Convolver>(convolver));
     peak_finder->setHandler(progressHandler);
     peak_finder->find(numors);
@@ -102,9 +105,9 @@ TEST_CASE("test/crystal/TestRefiner.cpp", "")
     // #########################################################
     // Filter the peaks
     nsx::PeakFilter* peak_filter = experiment.peakFilter();
-    const std::array<double, 2> d_range{1.5, 50};
-    peak_filter->setFilterDRange(true);
-    peak_filter->setDRange(d_range);
+    peak_filter->flags()->d_range = true;
+    peak_filter->parameters()->d_min = 1.5;
+    peak_filter->parameters()->d_max = 50.0;
 
     nsx::PeakCollection* found_collection = experiment.getPeakCollection("found_peaks");
     peak_filter->resetFiltering(found_collection);
@@ -118,9 +121,6 @@ TEST_CASE("test/crystal/TestRefiner.cpp", "")
     // at this stage we have the peaks, now we index
     nsx::AutoIndexer* auto_indexer = experiment.autoIndexer();
     nsx::PeakCollection* filtered_peaks = experiment.getPeakCollection("filtered_peaks");
-
-    nsx::IndexerParameters parameters;
-    auto_indexer->setParameters(parameters);
 
     CHECK_NOTHROW(auto_indexer->autoIndex(filtered_peaks->getPeakList()));
     CHECK(auto_indexer->solutions().size() > 1);
@@ -147,14 +147,14 @@ TEST_CASE("test/crystal/TestRefiner.cpp", "")
     auto&& states = dataf->instrumentStates();
     nsx::UnitCellHandler* cell_handler = experiment.getCellHandler();
 
-    nsx::RefinerParameters refiner_params{};
-    refiner_params.nbatches = 1;
-    refiner_params.refine_ub = true;
-    refiner_params.refine_sample_position = true;
-    refiner_params.refine_detector_offset = false;
-    refiner_params.refine_sample_orientation = false;
-    refiner_params.refine_ki = false;
-    nsx::Refiner refiner(states, cell.get(), peaks, refiner_params, cell_handler);
+    nsx::Refiner refiner(states, cell.get(), peaks, cell_handler, 1);
+    auto* refiner_params = refiner.parameters();
+    refiner_params->refine_ub = true;
+    refiner_params->refine_sample_position = true;
+    refiner_params->refine_detector_offset = false;
+    refiner_params->refine_sample_orientation = false;
+    refiner_params->refine_ki = false;
+    refiner_params->max_iter = 500;
 
     CHECK(refiner.batches().size() == 1);
 
@@ -163,5 +163,5 @@ TEST_CASE("test/crystal/TestRefiner.cpp", "")
 
     std::cout << "peaks to refine: " << peaks.size() << std::endl;
 
-    CHECK(refiner.refine(500));
+    CHECK(refiner.refine());
 }

@@ -25,6 +25,15 @@
 
 namespace nsx {
 
+void MergeParameters::log(const Level& level) const
+{
+    nsxlog(level, "Merge parameters:");
+    nsxlog(level, "d_min                  = ", d_min);
+    nsxlog(level, "d_max                  = ", d_max);
+    nsxlog(level, "n_shells               = ", n_shells);
+    nsxlog(level, "friedel                = ", friedel);
+}
+
 void DataQuality::computeQuality(MergedData& merged_peaks)
 {
     nobserved = merged_peaks.totalSize();

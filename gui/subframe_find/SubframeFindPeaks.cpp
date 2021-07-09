@@ -32,9 +32,11 @@
 #include "gui/utility/ColorButton.h"
 #include "gui/utility/GridFiller.h"
 #include "gui/utility/PropertyScrollArea.h"
+#include "gui/utility/SideBar.h"
 #include "gui/utility/Spoiler.h"
 #include "gui/views/PeakTableView.h"
 #include "gui/widgets/PeakViewWidget.h"
+#include "gui/MainWin.h" // gGui
 
 #include <QFileInfo>
 #include <QGridLayout>
@@ -56,7 +58,7 @@ SubframeFindPeaks::SubframeFindPeaks()
     , _pixmap(nullptr)
     , _size_policy_right(QSizePolicy::Expanding, QSizePolicy::Expanding)
 {
-    auto main_layout = new QHBoxLayout(this);
+    auto* main_layout = new QHBoxLayout(this);
     _right_element = new QSplitter(Qt::Vertical, this);
 
     _left_layout = new QVBoxLayout(this);
@@ -71,7 +73,7 @@ SubframeFindPeaks::SubframeFindPeaks()
 
     _right_element->setSizePolicy(_size_policy_right);
 
-    auto propertyScrollArea = new PropertyScrollArea(this);
+    auto* propertyScrollArea = new PropertyScrollArea(this);
     propertyScrollArea->setContentLayout(_left_layout);
     main_layout->addWidget(propertyScrollArea);
     main_layout->addWidget(_right_element);
@@ -154,6 +156,9 @@ void SubframeFindPeaks::setBlobUp()
     _max_width_spin->setMaximum(10000000);
 
     connect(_find_button, &QPushButton::clicked, this, &SubframeFindPeaks::find);
+    connect(
+        gGui->sideBar(), &SideBar::subframeChanged, this,
+        &SubframeFindPeaks::setIntegrationParameters);
 
     _left_layout->addWidget(blob_para);
 }
@@ -178,6 +183,8 @@ void SubframeFindPeaks::setIntegrateUp()
     _bkg_upper->setMaximum(10000000);
 
     connect(_integrate_button, &QPushButton::clicked, this, &SubframeFindPeaks::integrate);
+    connect(
+        gGui->sideBar(), &SideBar::subframeChanged, this, &SubframeFindPeaks::setFinderParameters);
 
     _left_layout->addWidget(integration_para);
 }
@@ -363,13 +370,16 @@ void SubframeFindPeaks::grabFinderParameters()
     nsx::PeakFinder* finder =
         gSession->experimentAt(_exp_combo->currentIndex())->experiment()->peakFinder();
 
-    _min_size_spin->setValue(finder->minSize());
-    _max_size_spin->setValue(finder->maxSize());
-    _scale_spin->setValue(finder->peakEnd());
-    _max_width_spin->setValue(finder->maxFrames());
-    _start_frame_spin->setValue(finder->framesBegin()+1);
-    _end_frame_spin->setValue(finder->framesEnd());
-    _threshold_spin->setValue(finder->threshold());
+    auto* finder_params =
+        gSession->experimentAt(_exp_combo->currentIndex()) ->experiment()->finderParams();
+
+    _min_size_spin->setValue(finder_params->minimum_size);
+    _max_size_spin->setValue(finder_params->maximum_size);
+    _scale_spin->setValue(finder_params->peak_end);
+    _max_width_spin->setValue(finder_params->maximum_frames);
+    _start_frame_spin->setValue(finder_params->frames_begin+1);
+    _end_frame_spin->setValue(finder_params->frames_end);
+    _threshold_spin->setValue(finder_params->threshold);
 
     nsx::Convolver* convolver = finder->convolver();
     std::string convolverType = convolver->type();
@@ -405,16 +415,21 @@ void SubframeFindPeaks::grabFinderParameters()
 
 void SubframeFindPeaks::setFinderParameters()
 {
+    if (_exp_combo->count() == 0 || _data_combo->count() == 0)
+        return;
+
     nsx::PeakFinder* finder =
         gSession->experimentAt(_exp_combo->currentIndex())->experiment()->peakFinder();
 
-    finder->setMinSize(_min_size_spin->value());
-    finder->setMaxSize(_max_size_spin->value());
-    finder->setPeakEnd(_scale_spin->value());
-    finder->setMaxFrames(_max_width_spin->value());
-    finder->setFramesBegin(_start_frame_spin->value()-1);
-    finder->setFramesEnd(_end_frame_spin->value());
-    finder->setThreshold(_threshold_spin->value());
+    auto* params =
+        gSession->experimentAt(_exp_combo->currentIndex())->experiment()->finderParams();
+    params->minimum_size = _min_size_spin->value();
+    params->maximum_size = _max_size_spin->value();
+    params->peak_end = _scale_spin->value();
+    params->maximum_frames = _max_width_spin->value();
+    params->frames_begin = _start_frame_spin->value();
+    params->frames_end = _end_frame_spin->value();
+    params->threshold = _threshold_spin->value();
 
     std::string convolverType = _kernel_combo->currentText().toStdString();
     nsx::ConvolverFactory factory;
@@ -425,13 +440,25 @@ void SubframeFindPeaks::setFinderParameters()
 
 void SubframeFindPeaks::grabIntegrationParameters()
 {
-    nsx::IPeakIntegrator* integrator = gSession->experimentAt(_exp_combo->currentIndex())
-                                           ->experiment()
-                                            ->getIntegrator(nsx::IntegratorType::PixelSum);
+    auto* params =
+        gSession->experimentAt(_exp_combo->currentIndex())->experiment()->integrationParams();
 
-    _peak_area->setValue(integrator->peakEnd());
-    _bkg_lower->setValue(integrator->backBegin());
-    _bkg_upper->setValue(integrator->backEnd());
+    _peak_area->setValue(params->peak_end);
+    _bkg_lower->setValue(params->bkg_begin);
+    _bkg_upper->setValue(params->bkg_end);
+}
+
+void SubframeFindPeaks::setIntegrationParameters()
+{
+    if (_exp_combo->count() == 0 || _data_combo->count() == 0)
+        return;
+
+    auto* params =
+        gSession->experimentAt(_exp_combo->currentIndex())->experiment()->integrationParams();
+
+    params->peak_end = _peak_area->value();
+    params->bkg_begin = _bkg_lower->value();
+    params->bkg_end = _bkg_upper->value();
 }
 
 void SubframeFindPeaks::updateConvolutionParameters()

@@ -163,11 +163,7 @@ class Experiment {
     //! Get a pointer to the AutoIndexer object
     nsx::AutoIndexer* autoIndexer() const { return _auto_indexer.get(); };
     //! attempt to autoindex the data
-    void autoIndex(PeakCollection* peaks, const IndexerParameters& params);
-    //! Run the autoindexer over the dataset, vary number of frames in attempt to find cell
-    bool runAutoIndexer(
-        PeakCollection* peaks, IndexerParameters& params, const double& length_tol,
-        const double& angle_tol, const double& frame_min, const double& frame_max);
+    void autoIndex(PeakCollection* peaks);
     //! Get a pointer to the accepted/assigned unit cell
     const UnitCell* getAcceptedCell() const;
     //! Get a pointer to the reference unit cell
@@ -202,40 +198,33 @@ class Experiment {
     void buildShapeCollection(PeakCollection* peaks, const ShapeCollectionParameters& params);
     //! Predict peaks from unit cell
     void predictPeaks(
-        const std::string& name, PeakCollection* peaks, const PredictionParameters& params,
+        const std::string& name, PeakCollection* peaks, PredictionParameters* params,
         PeakInterpolation interpol);
     //! Get a pointer to the refiner
     Refiner* refiner() { return _refiner.get(); };
     //! Refine unit cell and instrument parameters
-    bool refine(
-        PeakCollection* peaks, UnitCell* cell, DataSet* data, const RefinerParameters& params);
+    bool refine(PeakCollection* peaks, UnitCell* cell, DataSet* data, int nbatches);
     //! Update the predicted peaks post-refinement
     void updatePredictions(PeakCollection* predicted_peaks);
 
     //! Get resolution shells for quality metrics
-    void computeQuality(
-        double d_min, double d_max, int n_shells, std::vector<PeakCollection*> predicted, 
-        bool friedel);
+    void computeQuality(MergeParameters* params, std::vector<PeakCollection*> predicted);
     //! Return data quality resolution
     DataResolution* getResolution() { return &_data_resolution; };
     // Return data quality structs for all merged data:
     DataResolution* getQuality() { return &_data_quality; };
 
-    // Objects containing integration parameters. If I construct these on their own in Python,
-    // they get destroyed when passed to Experiment, hence the kludgy option of making them
-    // public - zamaan
-    //! Container for integration parameters
-    IntegrationParameters int_params;
-    //! Container for Shape (profile) collection parameters
-    ShapeCollectionParameters shape_params;
-    //! Container for peak prediction parameters
-    PredictionParameters predict_params;
+    PeakFinderParameters* finderParams();
+    PeakFilterParameters* filterParams();
+    IndexerParameters* indexerParams();
+    IntegrationParameters* integrationParams();
+    ShapeCollectionParameters* shapeParams();
+    PredictionParameters* predictParams();
+    RefinerParameters* refinerParams();
+    MergeParameters* mergeParams();
+
     //! Container for metadata for reading raw data files
     RawDataReaderParameters data_params;
-    //! Container for autoindexer parameters
-    IndexerParameters indexer_params;
-    //! Container for refiner parameters
-    RefinerParameters refiner_params;
 
  private: // private variables
     std::string _name; //!< The name of this experiment
@@ -256,6 +245,24 @@ class Experiment {
     // Objects containing quality metrics
     DataResolution _data_quality; //!< Data quality for whole resolution range
     DataResolution _data_resolution; //!< Data quality per resolution shell
+
+    //Parameter containers. Shared pointers are shared with their respective objects
+    //! Container for peak finder parameters
+    std::shared_ptr<PeakFinderParameters> _finder_params; // Shared with _finder
+    //! Container for peak filter parameters
+    std::shared_ptr<PeakFilterParameters> _filter_params; // Shared with _filter
+    //! Container for autoindexer parameters
+    std::shared_ptr<IndexerParameters> _indexer_params; // Shared with _indexer
+    //! Container for integration parameters
+    std::unique_ptr<IntegrationParameters> _int_params;
+    //! Container for Shape (profile) collection parameters
+    std::unique_ptr<ShapeCollectionParameters> _shape_params;
+    //! Container for peak prediction parameters
+    std::unique_ptr<PredictionParameters> _predict_params;
+    //! Container for refiner parameters
+    std::shared_ptr<RefinerParameters> _refiner_params; // Shared with _refiner
+    //! Container for merge parameters
+    std::unique_ptr<MergeParameters> _merge_params;
 };
 
 } // namespace nsx

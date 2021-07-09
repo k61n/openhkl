@@ -28,8 +28,10 @@
 #include "gui/utility/ColorButton.h"
 #include "gui/utility/GridFiller.h"
 #include "gui/utility/PropertyScrollArea.h"
+#include "gui/utility/SideBar.h"
 #include "gui/utility/Spoiler.h"
 #include "gui/widgets/PlotCheckBox.h"
+#include "gui/MainWin.h" // gGui
 
 #include <QFileInfo>
 #include <QGridLayout>
@@ -84,7 +86,6 @@ void SubframeRefiner::setInputUp()
     _cell_combo = f.addCombo("Unit cell");
     _n_batches_spin = f.addSpinBox("Number of batches");
 
-    _n_batches_spin->setValue(_refiner_params.nbatches);
     _n_batches_spin->setMinimum(1);
     _n_batches_spin->setMaximum(1000); // updated on setBatchesUp
 
@@ -113,13 +114,9 @@ void SubframeRefiner::setRefinerFlagsUp()
     _refineKi = f.addCheckBox("Incident wavevector");
     _refine_button = f.addButton("Refine");
 
-    _refineUB->setChecked(_refiner_params.refine_ub);
-    _refineSamplePosition->setChecked(_refiner_params.refine_sample_position);
-    _refineSampleOrientation->setChecked(_refiner_params.refine_sample_orientation);
-    _refineDetectorPosition->setChecked(_refiner_params.refine_detector_offset);
-    _refineKi->setChecked(_refiner_params.refine_ki);
-
     connect(_refine_button, &QPushButton::clicked, this, &SubframeRefiner::refine);
+    connect(
+        gGui->sideBar(), &SideBar::subframeChanged, this, &SubframeRefiner::setRefinerParameters);
 
     _left_layout->addWidget(refiner_flags_box);
 }
@@ -160,8 +157,7 @@ void SubframeRefiner::updateExptList()
     updateDatasetList();
     updatePeakList();
     updateUnitCellList();
-    _refiner_params =
-        gSession->experimentAt(_exp_combo->currentIndex())->experiment()->refiner_params;
+    grabRefinerParameters();
 }
 
 void SubframeRefiner::updateDatasetList()
@@ -241,42 +237,25 @@ void SubframeRefiner::refine()
         const auto cell = expt->getUnitCell(_cell_combo->currentText().toStdString());
         const auto peak_list = peaks->getPeakList();
         auto states = data->instrumentStates();
+        auto* params = expt->refinerParams();
 
-        nsx::RefinerParameters params{};
-        params.nbatches = _n_batches_spin->value();
-        params.refine_ub = false;
-        params.refine_sample_position = false;
-        params.refine_detector_offset = false;
-        params.refine_sample_orientation = false;
-        params.refine_ki = false;
+        setRefinerParameters();
 
         int n_checked = 0;
-        if (_refineUB->isChecked()) {
-            params.refine_ub = true;
+        if (params->refine_ub)
             ++n_checked;
-        }
-        if (_refineSamplePosition->isChecked()) {
-            params.refine_sample_position = true;
+        if (params->refine_sample_position)
             ++n_checked;
-        }
-        if (_refineSampleOrientation->isChecked()) {
-            params.refine_sample_orientation = true;
+        if (params->refine_sample_orientation)
             ++n_checked;
-        }
-        if (_refineDetectorPosition->isChecked()) {
-            params.refine_detector_offset = true;
+        if (params->refine_detector_offset)
             ++n_checked;
-        }
-        if (_refineKi->isChecked()) {
-            params.refine_ki = true;
+        if (params->refine_ki)
             ++n_checked;
-        }
+        if (n_checked > 0)
+            _refine_success = expt->refine(peaks, cell, data.get(), params->nbatches);
 
-        if (n_checked > 0) {
-            _refine_success = expt->refine(peaks, cell, data.get(), params);
-        }
-
-        const auto refiner = expt->refiner();
+        auto refiner = expt->refiner();
         _tables_widget->refreshTables(refiner, data.get());
     } catch (const std::exception& ex) {
         QMessageBox::critical(this, "Error", QString(ex.what()));
@@ -399,6 +378,32 @@ void SubframeRefiner::setUpdateUp()
     _left_layout->addWidget(update_box);
 
     connect(_update_button, &QPushButton::clicked, this, &SubframeRefiner::updatePredictions);
+}
+
+void SubframeRefiner::grabRefinerParameters()
+{
+    auto* params = gSession->experimentAt(_exp_combo->currentIndex())->experiment()->refinerParams();
+
+    _n_batches_spin->setValue(params->nbatches);
+    _refineUB->setChecked(params->refine_ub);
+    _refineSamplePosition->setChecked(params->refine_sample_position);
+    _refineSampleOrientation->setChecked(params->refine_sample_orientation);
+    _refineDetectorPosition->setChecked(params->refine_detector_offset);
+    _refineKi->setChecked(params->refine_ki);
+}
+
+void  SubframeRefiner::setRefinerParameters()
+{
+    if (_exp_combo->count() == 0)
+        return;
+    auto* params = gSession->experimentAt(_exp_combo->currentIndex())->experiment()->refinerParams();
+
+    params->nbatches = _n_batches_spin->value();
+    params->refine_ub = _refineUB->isChecked();
+    params->refine_sample_position = _refineSamplePosition->isChecked();
+    params->refine_sample_orientation = _refineSampleOrientation->isChecked();
+    params->refine_detector_offset = _refineDetectorPosition->isChecked();
+    params->refine_ki = _refineKi->isChecked();
 }
 
 void SubframeRefiner::updatePredictedList()

@@ -62,7 +62,7 @@ struct FitData;
 
 //! Helper function for predicting peaks
 std::vector<Peak3D*> predictPeaks(
-    const sptrDataSet data, const UnitCell* unit_cell, const PredictionParameters& params,
+    const sptrDataSet data, const UnitCell* unit_cell, const PredictionParameters* params,
     sptrProgressHandler handler = nullptr);
 
 //! Store a collection of peak shapes, to be used for peak prediction and integration.
@@ -154,7 +154,7 @@ class ShapeCollection {
     int nNoProfile() const { return _n_no_profile; };
 
     //! Shape collection parameters
-    ShapeCollectionParameters params;
+    ShapeCollectionParameters* parameters();
 
  private:
     //! Predict the (detector space) covariance given the fit data
@@ -196,6 +196,9 @@ class ShapeCollection {
 
     //! Number of peaks with no neighbouring profiles
     mutable int _n_no_profile = 0;
+
+    //! Shape collection parameters
+    std::shared_ptr<ShapeCollectionParameters> _params;
 };
 
 } // namespace nsx

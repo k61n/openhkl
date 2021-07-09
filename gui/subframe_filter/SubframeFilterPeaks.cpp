@@ -26,9 +26,11 @@
 #include "gui/models/Session.h"
 #include "gui/utility/GridFiller.h"
 #include "gui/utility/PropertyScrollArea.h"
+#include "gui/utility/SideBar.h"
 #include "gui/utility/Spoiler.h"
 #include "gui/utility/SpoilerCheck.h"
 #include "gui/widgets/PeakViewWidget.h"
+#include "gui/MainWin.h" // gGui
 
 #include <QFileInfo>
 #include <QGridLayout>
@@ -268,8 +270,9 @@ void SubframeFilterPeaks::setProceedUp()
     _left_layout->addWidget(_save_button);
 
     connect(_filter_button, &QPushButton::clicked, this, &SubframeFilterPeaks::filterPeaks);
-
     connect(_save_button, &QPushButton::clicked, this, &SubframeFilterPeaks::accept);
+    connect(
+        gGui->sideBar(), &SideBar::subframeChanged, this, &SubframeFilterPeaks::setFilterParameters);
 }
 
 void SubframeFilterPeaks::setFigureUp()
@@ -427,88 +430,91 @@ void SubframeFilterPeaks::grabFilterParameters()
     if (_peak_list.empty() || _exp_combo->count() < 1)
         return;
 
-    nsx::PeakFilter* filter =
-        gSession->experimentAt(_exp_combo->currentIndex())->experiment()->peakFilter();
+    auto* params =
+        gSession->experimentAt(_exp_combo->currentIndex())->experiment()->filterParams();
 
-    _tolerance->setValue(*(filter->unitCellTolerance()));
-    _strength_min->setValue(filter->strength()->at(0));
-    _strength_max->setValue(filter->strength()->at(1));
-    _d_range_min->setValue(filter->dRange()->at(0));
-    _d_range_max->setValue(filter->dRange()->at(1));
-    _frame_min->setValue(filter->frameRange().at(0));
-    _frame_max->setValue(filter->frameRange().at(1));
-    _significance_level->setValue(*(filter->significance()));
-    _peak_end->setValue(filter->peakEnd());
-    _bkg_end->setValue(filter->bkgEnd());
+    _tolerance->setValue(params->unit_cell_tolerance);
+    _strength_min->setValue(params->strength_min);
+    _strength_max->setValue(params->strength_max);
+    _d_range_min->setValue(params->d_min);
+    _d_range_max->setValue(params->d_max);
+    _frame_min->setValue(params->frame_min);
+    _frame_max->setValue(params->frame_max);
+    _significance_level->setValue(params->significance);
+    _peak_end->setValue(params->peak_end);
+    _bkg_end->setValue(params->bkg_end);
 
-    _selected->setChecked(filter->getFilterSelected());
-    _masked->setChecked(filter->getFilterMasked());
-    _predicted->setChecked(filter->getFilterPredicted());
-    _indexed_peaks->setChecked(filter->getFilterIndexed());
-    _extinct_spacegroup->setChecked(filter->getFilterExtinct());
-    _keep_complementary->setChecked(filter->getFilterComplementary());
+    auto* flags =
+        gSession->experimentAt(_exp_combo->currentIndex())->experiment()->peakFilter()->flags();
 
-    _state_box->setChecked(filter->getFilterState());
-    _unit_cell_box->setChecked(filter->getFilterIndexTol());
-    _strength_box->setChecked(filter->getFilterStrength());
-    _d_range_box->setChecked(filter->getFilterDRange());
-    _frame_range_box->setChecked(filter->getFilterFrames());
-    _sparse_box->setChecked(filter->getFilterSparse());
-    _merge_box->setChecked(filter->getFilterSignificance());
-    _overlap_box->setChecked(filter->getFilterOverlapping());
+    _selected->setChecked(flags->selected);
+    _masked->setChecked(flags->masked);
+    _predicted->setChecked(flags->predicted);
+    _indexed_peaks->setChecked(flags->indexed);
+    _extinct_spacegroup->setChecked(flags->extinct);
+    _keep_complementary->setChecked(flags->complementary);
+    _state_box->setChecked(flags->state);
+    _unit_cell_box->setChecked(flags->index_tol);
+    _strength_box->setChecked(flags->strength);
+    _d_range_box->setChecked(flags->d_range);
+    _frame_range_box->setChecked(flags->frames);
+    _sparse_box->setChecked(flags->sparse);
+    _merge_box->setChecked(flags->significance);
+    _overlap_box->setChecked(flags->overlapping);
 }
 
-void SubframeFilterPeaks::setFilterParameters() const
+void SubframeFilterPeaks::setFilterParameters()
 {
     if (_peak_list.empty() || _exp_combo->count() < 1)
         return;
 
-    nsx::PeakFilter* filter =
-        gSession->experimentAt(_exp_combo->currentIndex())->experiment()->peakFilter();
+    auto* filter = gSession->experimentAt(_exp_combo->currentIndex())->experiment()->peakFilter();
+    auto* flags = filter->flags();
     filter->resetFilterFlags();
 
     if (_selected->isChecked())
-        filter->setFilterSelected(true);
+        flags->selected = true;
     if (_masked->isChecked())
-        filter->setFilterMasked(true);
+        flags->masked = true;
     if (_predicted->isChecked())
-        filter->setFilterPredicted(true);
+        flags->predicted = true;
     if (_indexed_peaks->isChecked())
-        filter->setFilterIndexed(true);
+        flags->indexed = true;
     if (_extinct_spacegroup->isChecked())
-        filter->setFilterExtinct(true);
+        flags->extinct = true;
     if (_overlap_box->isChecked())
-        filter->setFilterOverlapping(true);
+        flags->overlapping = true;
     if (_keep_complementary->isChecked())
-        filter->setFilterComplementary(true);
-
+        flags->complementary = true;
     if (_state_box->isChecked())
-        filter->setFilterState(true);
+        flags->state = true;
     if (_unit_cell_box->isChecked())
-        filter->setFilterIndexTol(true);
+        flags->index_tol = true;
     if (_strength_box->isChecked())
-        filter->setFilterStrength(true);
+        flags->strength = true;
     if (_d_range_box->isChecked())
-        filter->setFilterDRange(true);
+        flags->d_range = true;
     if (_frame_range_box->isChecked())
-        filter->setFilterFrames(true);
+        flags->frames = true;
     if (_sparse_box->isChecked())
-        filter->setFilterSparse(true);
+        flags->sparse = true;
     if (_merge_box->isChecked())
-        filter->setFilterSignificance(true);
+        flags->significance = true;
 
-    const std::array<double, 2> d_range{_d_range_min->value(), _d_range_max->value()};
-    const std::array<double, 2> strength{_strength_min->value(), _strength_max->value()};
-    const std::array<double, 2> frame_range{_frame_min->value(), _frame_max->value()};
+    auto* params =
+        gSession->experimentAt(_exp_combo->currentIndex())->experiment()->filterParams();
 
-    filter->setUnitCellTolerance(_tolerance->value());
-    filter->setSignificance(_significance_level->value());
-    filter->setDRange(d_range);
-    filter->setFrameRange(frame_range);
-    filter->setStrength(strength);
-    filter->setUnitCellName(_unit_cell->currentText().toStdString());
-    filter->setPeakEnd(_peak_end->value());
-    filter->setPeakEnd(_bkg_end->value());
+    params->unit_cell_tolerance = _tolerance->value();
+    params->significance = _significance_level->value();
+    params->d_min = _d_range_min->value();
+    params->d_max = _d_range_max->value();
+    params->frame_min = _frame_min->value();
+    params->frame_max = _frame_max->value();
+    params->strength_min = _strength_min->value();
+    params->strength_max = _strength_max->value();
+    params->unit_cell = _unit_cell->currentText().toStdString();
+    params->peak_end = _peak_end->value();
+    params->bkg_end = _bkg_end->value();
 }
 
 void SubframeFilterPeaks::filterPeaks()

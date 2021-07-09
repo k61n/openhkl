@@ -52,17 +52,26 @@ void IndexerParameters::log(const Level& level) const
 
 AutoIndexer::AutoIndexer() : _solutions(), _handler(nullptr)
 {
-    _params = IndexerParameters();
+}
+
+std::shared_ptr<IndexerParameters> AutoIndexer::parameters()
+{
+    return _params;
+}
+
+void AutoIndexer::setParameters(std::shared_ptr<IndexerParameters> params)
+{
+    _params = params;
 }
 
 void AutoIndexer::autoIndex(const std::vector<Peak3D*>& peaks)
 {
-    _params.log(Level::Info);
+    _params->log(Level::Info);
     // Find the Q-space directions along which the projection of the the Q-vectors
     // shows the highest periodicity
     computeFFTSolutions(peaks);
     refineSolutions(peaks);
-    removeBad(_params.solutionCutoff);
+    removeBad(_params->solutionCutoff);
 
     // refine the constrained unit cells in order to get the uncertainties
     // refineConstraints();
@@ -111,16 +120,16 @@ void AutoIndexer::computeFFTSolutions(const std::vector<Peak3D*>& peaks)
 
     // Find the best vectors via FFT
     std::vector<Eigen::RowVector3d> tvects = algo::findOnSphere(
-        qvects, _params.nVertices, _params.nSolutions, _params.subdiv, _params.maxdim,
-        _params.frequencyTolerance);
+        qvects, _params->nVertices, _params->nSolutions, _params->subdiv, _params->maxdim,
+        _params->frequencyTolerance);
 
     // Need at least 3 t-vectors to form a basis
     if (tvects.size() < 3)
         throw std::runtime_error("Too few t-vectors to form basis");
 
-    for (int i = 0; i < _params.nSolutions; ++i) {
-        for (int j = i + 1; j < _params.nSolutions; ++j) {
-            for (int k = j + 1; k < _params.nSolutions; ++k) {
+    for (int i = 0; i < _params->nSolutions; ++i) {
+        for (int j = i + 1; j < _params->nSolutions; ++j) {
+            for (int k = j + 1; k < _params->nSolutions; ++k) {
                 // Build up a unit cell out of the current directions triplet
                 Eigen::Matrix3d A;
                 A.col(0) = tvects[i];
@@ -130,13 +139,13 @@ void AutoIndexer::computeFFTSolutions(const std::vector<Peak3D*>& peaks)
                 std::shared_ptr<UnitCell> cell{new UnitCell{A}};
 
                 // Skip this unit cell if its volume is below a user-defined minimum.
-                if (cell->volume() < _params.minUnitCellVolume)
+                if (cell->volume() < _params->minUnitCellVolume)
                     continue;
 
                 // Skip this unit cell if there is already an equivalent one.
                 bool equivalent = false;
                 for (const auto& solution : _solutions) {
-                    if (cell->equivalent(*solution.first, _params.unitCellEquivalenceTolerance)) {
+                    if (cell->equivalent(*solution.first, _params->unitCellEquivalenceTolerance)) {
                         equivalent = true;
                         break;
                     }
@@ -169,7 +178,7 @@ void AutoIndexer::refineSolutions(const std::vector<Peak3D*>& peaks)
     // TODO: candidate for easy parallelization
     for (auto&& soln : _solutions) {
         UnitCell* cell = soln.first.get();
-        cell->setIndexingTolerance(_params.indexingTolerance);
+        cell->setIndexingTolerance(_params->indexingTolerance);
         Eigen::Matrix3d B = cell->reciprocalBasis();
         std::vector<Eigen::RowVector3d> hkls;
         std::vector<Eigen::RowVector3d> qs;
@@ -252,8 +261,8 @@ void AutoIndexer::refineSolutions(const std::vector<Peak3D*>& peaks)
         // Update the cell with the fitter one and reduce it
         try {
             cell->setReciprocalBasis(B);
-            cell->setIndexingTolerance(_params.indexingTolerance);
-            cell->reduce(_params.niggliReduction, _params.niggliTolerance, _params.gruberTolerance);
+            cell->setIndexingTolerance(_params->indexingTolerance);
+            cell->reduce(_params->niggliReduction, _params->niggliTolerance, _params->gruberTolerance);
             *cell = cell->applyNiggliConstraints();
         } catch (std::exception& e) {
             continue;

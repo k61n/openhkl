@@ -25,7 +25,9 @@
 #include "core/statistics/ResolutionShell.h"
 #include "gui/graphics/SXPlot.h"
 #include "gui/models/Project.h"
+#include "gui/utility/SideBar.h"
 #include "gui/models/Session.h"
+#include "gui/MainWin.h" // gGui
 
 #include <QDialogButtonBox>
 #include <QFileDialog>
@@ -90,6 +92,29 @@ SubframeMergedPeaks::SubframeMergedPeaks()
         this, &SubframeMergedPeaks::processMerge);
 
     show();
+}
+
+void SubframeMergedPeaks::grabMergeParameters()
+{
+    auto params = gSession->experimentAt(_exp_drop->currentIndex())->experiment()->mergeParams();
+
+    _d_min->setValue(params->d_min);
+    _d_max->setValue(params->d_max);
+    _d_shells->setValue(params->n_shells);
+    _friedel->setChecked(params->friedel);
+}
+
+void SubframeMergedPeaks::setMergeParameters()
+{
+    if (_exp_drop->count() == 0)
+        return;
+
+    auto params = gSession->experimentAt(_exp_drop->currentIndex())->experiment()->mergeParams();
+
+    params->d_min = _d_min->value();
+    params->d_max = _d_max->value();
+    params->n_shells = _d_shells->value();
+    params->friedel = _friedel->isChecked();
 }
 
 void SubframeMergedPeaks::setSizePolicies()
@@ -209,6 +234,8 @@ void SubframeMergedPeaks::setDShellUp()
 
     connect(_save_shell, &QPushButton::clicked, this, &SubframeMergedPeaks::saveStatistics);
 
+    connect(
+        gGui->sideBar(), &SideBar::subframeChanged, this, &SubframeMergedPeaks::setMergeParameters);
     shell_layout->addLayout(d_shell_down);
 }
 
@@ -263,13 +290,8 @@ void SubframeMergedPeaks::setUnmergedUp()
 void SubframeMergedPeaks::refreshAll()
 {
     refreshExperimentList();
-    double d_min;
-    if (_exp_drop->currentIndex() >= 0) {
-        d_min = gSession->experimentAt(_exp_drop->currentIndex())->experiment()->shape_params.d_min;
-    } else {
-        d_min = 1.5;
-    }
-    _d_min->setValue(d_min);
+    if (_exp_drop->currentIndex() >= 0)
+        grabMergeParameters();
     toggleUnsafeWidgets();
 }
 
@@ -405,10 +427,8 @@ void SubframeMergedPeaks::refreshTables()
 
 void SubframeMergedPeaks::refreshDShellTable()
 {
-    double min = _d_min->value();
-    double max = _d_max->value();
-    int shells = _d_shells->value();
-    bool inclFriedel = _friedel->isChecked();
+    setMergeParameters();
+    auto params = gSession->experimentAt(_exp_drop->currentIndex())->experiment()->mergeParams();
 
     QStandardItemModel* model = dynamic_cast<QStandardItemModel*>(_d_shell_view->model());
     model->removeRows(0, model->rowCount());
@@ -429,7 +449,7 @@ void SubframeMergedPeaks::refreshDShellTable()
         if (collection1 != collection2)
             collections.emplace_back(collection2);
     }
-    expt->computeQuality(min, max, shells, collections, inclFriedel);
+    expt->computeQuality(params, collections);
     nsx::DataResolution* quality = expt->getQuality();
     nsx::DataResolution* resolution = expt->getResolution();
 
@@ -617,6 +637,7 @@ void SubframeMergedPeaks::saveStatistics()
     QFileInfo info(filename);
     s.setValue("merged", info.absolutePath());
 
+    setMergeParameters();
     double min = _d_min->value();
     double max = _d_max->value();
     int shells = _d_shells->value();

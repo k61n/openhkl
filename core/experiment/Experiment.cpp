@@ -56,6 +56,19 @@ Experiment::Experiment(const std::string& name, const std::string& diffractomete
     _cell_handler = std::make_unique<UnitCellHandler>();
     _integration_handler = std::make_unique<IntegrationHandler>(_data_handler);
 
+    _finder_params = std::make_shared<PeakFinderParameters>();
+    _filter_params = std::make_shared<PeakFilterParameters>();
+    _indexer_params = std::make_shared<IndexerParameters>();
+    _predict_params = std::make_unique<PredictionParameters>();
+    _shape_params= std::make_unique<ShapeCollectionParameters>();
+    _refiner_params = std::make_shared<RefinerParameters>();
+    _int_params = std::make_unique<IntegrationParameters>();
+    _merge_params = std::make_unique<MergeParameters>();
+
+    _peak_finder->setParameters(_finder_params);
+    _peak_filter->setParameters(_filter_params);
+    _auto_indexer->setParameters(_indexer_params);
+
     std::string logfile = "nsx.log";
     Logger::instance().start(logfile, Level::Info);
 }
@@ -74,10 +87,10 @@ void Experiment::setDefaultDMin()
 {
     double lambda = getDiffractometer()->source().selectedMonochromator().wavelength();
     double d_min = lambda / 2.0;
-    shape_params.d_min = d_min;
-    predict_params.d_min = d_min;
-    indexer_params.d_min = d_min;
-    _peak_filter->setDRange(d_min, 50.0);
+    _shape_params->d_min = d_min;
+    _predict_params->d_min = d_min;
+    _indexer_params->d_min = d_min;
+    _filter_params->d_min = d_min;
 }
 
 void Experiment::acceptFoundPeaks(const std::string& name)
@@ -124,49 +137,34 @@ void Experiment::loadFromFile(const std::string& path)
     setDefaultDMin();
 }
 
-void Experiment::autoIndex(PeakCollection* peaks, const IndexerParameters& params)
+void Experiment::autoIndex(PeakCollection* peaks)
 {
+    auto params = _auto_indexer->parameters();
+
     std::string collection_name = "autoindexing";
     _peak_filter->resetFiltering(peaks);
     _peak_filter->resetFilterFlags();
-    _peak_filter->setFilterStrength(true);
-    _peak_filter->setFilterDRange(true);
-    _peak_filter->setFilterFrames(true);
-    _peak_filter->setDRange(params.d_min, params.d_max);
-    _peak_filter->setStrength(params.strength_min, params.strength_max);
-    _peak_filter->setFrameRange(params.first_frame, params.last_frame);
+    _peak_filter->flags()->strength = true;
+    _peak_filter->flags()->d_range = true;
+    _peak_filter->flags()->frames = true;
+    _peak_filter->parameters()->d_min = params->d_min;
+    _peak_filter->parameters()->d_max = params->d_max;
+    _peak_filter->parameters()->strength_min = params->strength_min;
+    _peak_filter->parameters()->strength_max = params->strength_max;
+    _peak_filter->parameters()->frame_min = params->first_frame;
+    _peak_filter->parameters()->frame_max = params->last_frame;
+
     nsxlog(
-        Level::Info, "Experiment::autoIndex: attempting with frames ", params.first_frame, " - ",
-        params.last_frame);
+        Level::Info, "Experiment::autoIndex: attempting with frames ", params->first_frame, " - ",
+        params->last_frame);
     _peak_filter->filter(peaks);
     double npeaks = peaks->numberOfPeaks();
     double ncaught = peaks->numberCaughtByFilter();
     nsxlog(Level::Info, "Indexing using ", ncaught, " / ", npeaks, " peaks");
     _peak_handler->acceptFilter(collection_name, peaks, listtype::INDEXING);
-    _auto_indexer->setParameters(params);
     PeakCollection* indexing_collection = getPeakCollection(collection_name);
     _auto_indexer->autoIndex(indexing_collection);
 }
-
-bool Experiment::runAutoIndexer(
-    PeakCollection* peaks, IndexerParameters& params, const double& length_tol,
-    const double& angle_tol, const double& frame_min, const double& frame_max)
-{
-    nsxlog(Level::Info, "Experiment::runAutoIndexer: start");
-    double frame = frame_min;
-    while (frame <= frame_max) {
-        params.last_frame = frame;
-        autoIndex(peaks, params);
-        if (checkAndAssignUnitCell(peaks, length_tol, angle_tol)) {
-            nsxlog(Level::Info, "Experiment::runAutoIndexer: success");
-            return true;
-        }
-        frame += 1.0;
-    }
-    nsxlog(Level::Info, "Experiment::runAutoIndexer: failure");
-    return false;
-}
-
 
 void Experiment::buildShapeCollection(
     PeakCollection* peaks, const ShapeCollectionParameters& params)
@@ -176,10 +174,12 @@ void Experiment::buildShapeCollection(
 
     _peak_filter->resetFiltering(peaks);
     _peak_filter->resetFilterFlags();
-    _peak_filter->setFilterStrength(true);
-    _peak_filter->setFilterDRange(true);
-    _peak_filter->setDRange(params.d_min, params.d_max);
-    _peak_filter->setStrength(params.strength_min, params.strength_max);
+    _peak_filter->flags()->strength = true;
+    _peak_filter->flags()->d_range = true;
+    _peak_filter->parameters()->d_min = params.d_min;
+    _peak_filter->parameters()->d_max = params.d_max;
+    _peak_filter->parameters()->strength_min = params.strength_min;
+    _peak_filter->parameters()->strength_max = params.strength_max;
     _peak_filter->filter(peaks);
     std::string collection_name = "fit";
     _peak_handler->acceptFilter(collection_name, peaks, listtype::FILTERED);
@@ -216,7 +216,7 @@ void Experiment::buildShapeCollection(
 }
 
 void Experiment::predictPeaks(
-    const std::string& name, PeakCollection* peaks, const PredictionParameters& params,
+    const std::string& name, PeakCollection* peaks, PredictionParameters* params,
     PeakInterpolation interpol)
 {
     const DataList numors = getAllData();
@@ -247,14 +247,15 @@ void Experiment::predictPeaks(
 }
 
 void Experiment::computeQuality(
-    double d_min, double d_max, int n_shells, std::vector<PeakCollection*> collections,
-    bool friedel)
+    MergeParameters* params, std::vector<PeakCollection*> collections)
 {
+    params->log(Level::Info);
     _data_quality.computeQuality(
-        d_min, d_max, 1, collections, _peak_handler->getMergedPeaks()->spaceGroup(), friedel);
+        params->d_min, params->d_max, 1, collections,
+        _peak_handler->getMergedPeaks()->spaceGroup(), params->friedel);
     _data_resolution.computeQuality(
-        d_min, d_max, n_shells, collections, _peak_handler->getMergedPeaks()->spaceGroup(),
-        friedel);
+        params->d_min, params->d_max, params->n_shells, collections,
+        _peak_handler->getMergedPeaks()->spaceGroup(), params->friedel);
     _data_quality.log();
     _data_resolution.log();
 }
@@ -269,15 +270,14 @@ const UnitCell* Experiment::getReferenceCell() const
     return getUnitCell("reference");
 }
 
-bool Experiment::refine(
-    PeakCollection* peaks, UnitCell* cell, DataSet* data, const RefinerParameters& params)
+bool Experiment::refine(PeakCollection* peaks, UnitCell* cell, DataSet* data, int nbatches)
 {
     nsxlog(Level::Info, "Experiment::refine: Refining peak collection ", peaks->name());
     std::vector<Peak3D*> peak_list = peaks->getPeakList();
     InstrumentStateList& states = data->instrumentStates();
-    _refiner = std::make_unique<Refiner>(states, cell, peak_list, params, _cell_handler.get());
-    params.log(Level::Info);
-    bool success = _refiner->refine(params.max_iter);
+    _refiner = std::make_unique<Refiner>(states, cell, peak_list, _cell_handler.get(), nbatches);
+    _refiner->parameters()->log(Level::Info);
+    bool success = _refiner->refine();
     if (success) {
         nsxlog(Level::Info, "Refinement succeeded");
     } else {
@@ -522,6 +522,46 @@ void Experiment::integratePredictedPeaks(
 void Experiment::integrateFoundPeaks(const IntegratorType integrator_type)
 {
     _integration_handler->integrateFoundPeaks(integrator_type, _peak_finder.get());
+}
+
+PeakFinderParameters* Experiment::finderParams()
+{
+    return _finder_params.get();
+}
+
+PeakFilterParameters* Experiment::filterParams()
+{
+    return _filter_params.get();
+}
+
+IndexerParameters* Experiment::indexerParams()
+{
+    return _indexer_params.get();
+}
+
+IntegrationParameters* Experiment::integrationParams()
+{
+    return _int_params.get();
+}
+
+ShapeCollectionParameters* Experiment::shapeParams()
+{
+    return _shape_params.get();
+}
+
+PredictionParameters* Experiment::predictParams()
+{
+    return _predict_params.get();
+}
+
+RefinerParameters* Experiment::refinerParams()
+{
+    return _refiner_params.get();
+}
+
+MergeParameters* Experiment::mergeParams()
+{
+    return _merge_params.get();
 }
 
 } // namespace nsx

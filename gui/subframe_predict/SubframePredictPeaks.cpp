@@ -33,10 +33,12 @@
 #include "gui/utility/ColorButton.h"
 #include "gui/utility/GridFiller.h"
 #include "gui/utility/PropertyScrollArea.h"
+#include "gui/utility/SideBar.h"
 #include "gui/utility/Spoiler.h"
 #include "gui/views/PeakTableView.h"
 #include "gui/widgets/PeakViewWidget.h"
 #include "tables/crystal/UnitCell.h"
+#include "gui/MainWin.h" // gGui
 
 #include <QFileInfo>
 #include <QGridLayout>
@@ -81,7 +83,7 @@ void SubframePredictPeaks::setParametersUp()
     GridFiller f(_para_box, true);
 
     _exp_combo = f.addCombo("Experiment");
-    _unit_cells = f.addCombo("Unit cell:");
+    _cell_combo = f.addCombo("Unit cell:");
     _d_min = f.addDoubleSpinBox("d min:", QString::fromUtf8("(\u212B) - minimum d (Bragg's law)"));
     _d_max = f.addDoubleSpinBox("d max:", QString::fromUtf8("(\u212B) - maximum d (Bragg's law)"));
     _predict_button = f.addButton("Predict");
@@ -97,6 +99,9 @@ void SubframePredictPeaks::setParametersUp()
         _exp_combo, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this,
         &SubframePredictPeaks::updateUnitCellList);
     connect(_predict_button, &QPushButton::clicked, this, &SubframePredictPeaks::runPrediction);
+    connect(
+        gGui->sideBar(), &SideBar::subframeChanged, this,
+        &SubframePredictPeaks::setPredictorParameters);
 
     _left_layout->addWidget(_para_box);
 }
@@ -206,17 +211,17 @@ void SubframePredictPeaks::setExperiments()
 
 void SubframePredictPeaks::updateUnitCellList()
 {
-    _unit_cells->blockSignals(true);
-    QString current_cell = _unit_cells->currentText();
-    _unit_cells->clear();
+    _cell_combo->blockSignals(true);
+    QString current_cell = _cell_combo->currentText();
+    _cell_combo->clear();
 
     _unit_cell_list = gSession->experimentAt(_exp_combo->currentIndex())->getUnitCellNames();
 
     if (!_unit_cell_list.empty()) {
-        _unit_cells->addItems(_unit_cell_list);
-        _unit_cells->setCurrentText(current_cell);
+        _cell_combo->addItems(_unit_cell_list);
+        _cell_combo->setCurrentText(current_cell);
     }
-    _unit_cells->blockSignals(false);
+    _cell_combo->blockSignals(false);
 }
 
 void SubframePredictPeaks::updateDatasetList()
@@ -259,30 +264,39 @@ void SubframePredictPeaks::updateDatasetParameters(int idx)
 
 void SubframePredictPeaks::grabPredictorParameters()
 {
-    _params = gSession->experimentAt(_exp_combo->currentIndex())->experiment()->predict_params;
+    auto params =
+        gSession->experimentAt(_exp_combo->currentIndex())->experiment()->predictParams();
 
-    // Prediction parameters
-    _d_min->setValue(_params.d_min);
-    _d_max->setValue(_params.d_max);
+    _d_min->setValue(params->d_min);
+    _d_max->setValue(params->d_max);
 }
 
-void SubframePredictPeaks::setPredictorParameters() const { }
+void SubframePredictPeaks::setPredictorParameters()
+{
+    if (_exp_combo->count() == 0 || _cell_combo->count() == 0)
+        return;
+
+    auto params =
+        gSession->experimentAt(_exp_combo->currentIndex())->experiment()->predictParams();
+
+    params->d_min = _d_min->value();
+    params->d_max = _d_max->value();
+}
 
 void SubframePredictPeaks::runPrediction()
 {
     try {
         const std::vector<nsx::sptrDataSet>& data = gSession->currentProject()->allData();
+        setPredictorParameters();
 
         nsx::sptrProgressHandler handler(new nsx::ProgressHandler);
         ProgressView progressView(nullptr);
         progressView.watch(handler);
 
         nsx::UnitCell* cell = gSession->currentProject()->experiment()->getUnitCell(
-            _unit_cells->currentText().toStdString());
-
-        nsx::PredictionParameters params;
-        params.d_min = _d_min->value();
-        params.d_max = _d_max->value();
+            _cell_combo->currentText().toStdString());
+        auto params =
+            gSession->experimentAt(_exp_combo->currentIndex())->experiment()->predictParams();
 
         std::vector<nsx::Peak3D*> predicted_peaks;
 
@@ -363,7 +377,7 @@ void SubframePredictPeaks::toggleUnsafeWidgets()
 {
     _predict_button->setEnabled(true);
     _save_button->setEnabled(true);
-    if (_unit_cells->count() == 0 || _exp_combo->count() == 0) {
+    if (_cell_combo->count() == 0 || _exp_combo->count() == 0) {
         _predict_button->setEnabled(false);
         _save_button->setEnabled(false);
     }

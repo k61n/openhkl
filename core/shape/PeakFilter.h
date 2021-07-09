@@ -38,43 +38,27 @@ struct PeakFilterFlags {
     bool frames; //!< catch peaks in a specifed frame range
 };
 
+struct PeakFilterParameters {
+    double d_min = 1.5; //!< minimum d (Bragg's law)
+    double d_max = 50.0; //!< maximum d (Bragg's law)
+    double strength_min = 1.0; //!< minimum strength (I/sigma)
+    double strength_max = 1.0e7; //!< maximum strength (I/sigma)
+    std::string unit_cell = "DEFAULT UNIT CELL"; //!< unit cell name
+    double unit_cell_tolerance = 0.2; //!< indexing tolerance
+    double significance = 0.99; //!< signficance
+    double sparse = 100; //!< number of peaks in dataset to be kept
+    double frame_min = 0.0; //!< start of frame range
+    double frame_max = 10.0; //!< end of frame range
+    double peak_end = 3.0; //!< scale for peak intensity ellipsoid (sigmas)
+    double bkg_end = 6.0; //!< scale for background ellipsoid (sigmas)
+};
+
 class PeakFilter {
  public:
     //! Constructor
     PeakFilter();
 
  public:
-    //! Set filter parameters
-    void setFilterSelected(bool val) { _filter_flags.selected = val; };
-    void setFilterMasked(bool val) { _filter_flags.masked = val; };
-    void setFilterPredicted(bool val) { _filter_flags.predicted = val; };
-    void setFilterIndexed(bool val) { _filter_flags.indexed = val; };
-    void setFilterIndexTol(bool val) { _filter_flags.index_tol = val; };
-    void setFilterState(bool val) { _filter_flags.state = val; };
-    void setFilterStrength(bool val) { _filter_flags.strength = val; };
-    void setFilterDRange(bool val) { _filter_flags.d_range = val; };
-    void setFilterExtinct(bool val) { _filter_flags.extinct = val; };
-    void setFilterSparse(bool val) { _filter_flags.sparse = val; };
-    void setFilterSignificance(bool val) { _filter_flags.significance = val; };
-    void setFilterOverlapping(bool val) { _filter_flags.overlapping = val; };
-    void setFilterComplementary(bool val) { _filter_flags.complementary = val; };
-    void setFilterFrames(bool val) { _filter_flags.frames = val; };
-
-    bool getFilterSelected() const { return _filter_flags.selected; };
-    bool getFilterMasked() const { return _filter_flags.masked; };
-    bool getFilterPredicted() const { return _filter_flags.predicted; };
-    bool getFilterIndexed() const { return _filter_flags.indexed; };
-    bool getFilterIndexTol() const { return _filter_flags.index_tol; };
-    bool getFilterState() const { return _filter_flags.state; };
-    bool getFilterStrength() const { return _filter_flags.strength; };
-    bool getFilterDRange() const { return _filter_flags.d_range; };
-    bool getFilterExtinct() const { return _filter_flags.extinct; };
-    bool getFilterSparse() const { return _filter_flags.sparse; };
-    bool getFilterSignificance() const { return _filter_flags.significance; };
-    bool getFilterOverlapping() const { return _filter_flags.overlapping; };
-    bool getFilterComplementary() const { return _filter_flags.complementary; };
-    bool getFilterFrames() const { return _filter_flags.frames; };
-
     //! set filter parameters to default
     void resetFilterFlags();
 
@@ -140,70 +124,18 @@ class PeakFilter {
     //! Reset filtering
     void resetFiltering(PeakCollection* peak_collection) const;
 
-    //! Return the d range values
-    const std::array<double, 2>* dRange() const { return &_d_range; };
-    //! Set the d range values
-    void setDRange(const std::array<double, 2> d_range) { _d_range = d_range; };
-    void setDRange(double dmin, double dmax) { _d_range = {dmin, dmax}; };
+    //! Set the filter parameteres
+    void setParameters(std::shared_ptr<PeakFilterParameters> params);
 
-    //! Return the unit cell name
-    const std::string* unitCellName() const { return &_unit_cell; };
-    //! Set the unit cell name
-    void setUnitCellName(const std::string unit_cell) { _unit_cell = unit_cell; };
-
-    //! Return the unit cell tolerance
-    const double* unitCellTolerance() const { return &_unit_cell_tolerance; };
-    //! Set the unit cell tolerance
-    void setUnitCellTolerance(const double tolerance) { _unit_cell_tolerance = tolerance; };
-
-    //! Return the strength
-    const std::array<double, 2>* strength() const { return &_strength; };
-    //! Set the strength
-    void setStrength(const std::array<double, 2> strength) { _strength = strength; };
-    void setStrength(double strmin, double strmax) { _strength = {strmin, strmax}; };
-
-    //! Return the significance
-    const double* significance() const { return &_significance; };
-    //! Set the significance
-    void setSignificance(const double significance) { _significance = significance; };
-
-    //! Set the frame range
-    void setFrameRange(const double f0, const double f1) { _frameRange = {f0, f1}; };
-    void setFrameRange(const std::array<double, 2> frames) { _frameRange = frames; };
-    //! Return the frame range
-    const std::array<double, 2>& frameRange() { return _frameRange; };
-
-    //! Set peak end
-    void setPeakEnd(const double peak_end) { _peak_end = peak_end; };
-    //! set background end
-    void setBkgEnd(const double bkg_end) { _bkg_end = bkg_end; };
-    //! Return the peak end
-    double peakEnd() { return _peak_end; };
-    //! Return the background end
-    double bkgEnd() { return _bkg_end; };
-
+    //! Get a pointer to the filter parameters
+    PeakFilterParameters* parameters();
+    //! Get pointer to filter flags
+    PeakFilterFlags* flags();
 
  private:
     //! booleans for filtering
-    PeakFilterFlags _filter_flags;
-    //! Detector range
-    std::array<double, 2> _d_range;
-    //! The unit cell name
-    std::string _unit_cell;
-    //! The unit cell tolerance
-    double _unit_cell_tolerance;
-    //! The strength
-    std::array<double, 2> _strength;
-    //! The significance
-    double _significance;
-    //! number of peaks in dataset to be kept
-    double _sparse;
-    //! Frame range
-    std::array<double, 2> _frameRange;
-    //! Peak end
-    double _peak_end;
-    //! Background end
-    double _bkg_end;
+    std::shared_ptr<PeakFilterFlags> _filter_flags;
+    std::shared_ptr<PeakFilterParameters> _filter_params;
 };
 
 } // namespace nsx

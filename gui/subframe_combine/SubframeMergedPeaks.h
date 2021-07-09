@@ -43,6 +43,10 @@ class SubframeMergedPeaks : public QWidget {
     void refreshAll();
 
  private:
+    //! Get the merge parameters
+    void grabMergeParameters();
+    //! Set the merge parameters
+    void setMergeParameters();
     //! Set up the GUI size policies
     void setSizePolicies();
     //! Set the experiments

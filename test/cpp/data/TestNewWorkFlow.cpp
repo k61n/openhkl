@@ -130,13 +130,16 @@ TEST_CASE("test/data/TestNewWorkFlow.cpp", "")
     auto convolver = convolver_factory.create("annular", {});
 
     nsx::PeakFinder* peak_finder = experiment.peakFinder();
-    peak_finder->setMinSize(30);
-    peak_finder->setMaxSize(10000);
-    peak_finder->setPeakEnd(1.0);
-    peak_finder->setMaxFrames(10);
-    peak_finder->setFramesBegin(0);
-    peak_finder->setFramesEnd(dataf->nFrames());
-    peak_finder->setThreshold(10);
+
+    auto finder_params = peak_finder->parameters();
+    finder_params->minimum_size = 30;
+    finder_params->maximum_size = 10000;
+    finder_params->peak_end = 1.0;
+    finder_params->maximum_frames = 10;
+    finder_params->frames_begin = 0;
+    finder_params->frames_end = dataf->nFrames();
+    finder_params->threshold = 10;
+
     peak_finder->setConvolver(std::unique_ptr<nsx::Convolver>(convolver));
     peak_finder->setHandler(progressHandler);
     peak_finder->find(numors);
@@ -181,9 +184,9 @@ TEST_CASE("test/data/TestNewWorkFlow.cpp", "")
     // #########################################################
     // Filter the peaks
     nsx::PeakFilter* peak_filter = experiment.peakFilter();
-    peak_filter->setFilterDRange(true);
-    const std::array<double, 2> d_range{1.5, 50};
-    peak_filter->setDRange(d_range);
+    peak_filter->flags()->d_range = true;
+    peak_filter->parameters()->d_min = 1.5;
+    peak_filter->parameters()->d_max = 50.0;
 
     nsx::PeakCollection* found_collection = experiment.getPeakCollection("found_peaks");
     peak_filter->resetFiltering(found_collection);
@@ -221,9 +224,6 @@ TEST_CASE("test/data/TestNewWorkFlow.cpp", "")
     // at this stage we have the peaks, now we index
     nsx::AutoIndexer* auto_indexer = experiment.autoIndexer();
     nsx::PeakCollection* filtered_peaks = experiment.getPeakCollection("filtered_peaks");
-
-    nsx::IndexerParameters parameters;
-    auto_indexer->setParameters(parameters);
 
     CHECK_NOTHROW(auto_indexer->autoIndex(filtered_peaks->getPeakList()));
     CHECK(auto_indexer->solutions().size() > 1);

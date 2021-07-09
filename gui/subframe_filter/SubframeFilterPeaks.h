@@ -87,7 +87,7 @@ class SubframeFilterPeaks : public QWidget {
     //! Grab the finder parameters
     void grabFilterParameters();
     //! Set the finder parameters
-    void setFilterParameters() const;
+    void setFilterParameters();
 
     //! Refresh all th einputs
     void setParametersUp();

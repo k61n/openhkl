@@ -35,21 +35,14 @@ namespace nsx {
 
 PeakFilter::PeakFilter()
 {
-    _unit_cell = "";
-    _unit_cell_tolerance = 0.2;
-    _strength = {1.0, 1000000.};
-    _d_range = {1.5, 50.0};
-    _frameRange = {0.0, 10.0};
-    _significance = 0.9900;
-    _sparse = 100;
-    _peak_end = 3.0;
-    _bkg_end = 6.0;
+    _filter_params = std::make_shared<PeakFilterParameters>();
+    _filter_flags = std::make_shared<PeakFilterFlags>();
     resetFilterFlags();
 }
 
 void PeakFilter::resetFilterFlags()
 {
-    _filter_flags = {true,  false, false, false, false, false, false,
+    *_filter_flags = {true,  false, false, false, false, false, false,
                      false, false, false, false, false, false, false};
 }
 
@@ -82,7 +75,7 @@ void PeakFilter::filterSignificance(PeakCollection* peak_collection) const
             merged.addPeak(peak);
 
         for (const auto& merged_peak : merged.mergedPeakSet()) {
-            if (merged_peak.pValue() > _significance) {
+            if (merged_peak.pValue() > _filter_params->significance) {
                 for (const auto& p : merged_peak.peaks())
                     p->rejectYou(true);
             }
@@ -111,7 +104,7 @@ void PeakFilter::filterSparseDataSet(PeakCollection* peak_collection) const
 
     int nrejected = 0;
     for (const auto& p : peaks_per_dataset) {
-        if (p.second.size() > _sparse) {
+        if (p.second.size() > _filter_params->sparse) {
             for (auto peak : p.second)
                 peak->caughtYou(true);
         } else {
@@ -171,7 +164,7 @@ void PeakFilter::filterOverlapping(PeakCollection* peak_collection) const
 
     // handle collisions below
     int nrejected = 0;
-    for (auto collision : tree.getCollisions(_peak_end, _bkg_end)) {
+    for (auto collision : tree.getCollisions(_filter_params->peak_end, _filter_params->bkg_end)) {
         unsigned int i = collision.first - &ellipsoids[0];
         unsigned int j = collision.second - &ellipsoids[0];
         peak_collection->getPeak(i)->rejectYou(true);
@@ -254,7 +247,7 @@ void PeakFilter::filterIndexed(PeakCollection* peak_collection) const
     for (int i = 0; i < peak_collection->numberOfPeaks(); ++i) {
         nsx::Peak3D* peak_ptr = peak_collection->getPeak(i);
         if (peak_ptr->caughtByFilter()) {
-            if (peak_ptr->hkl().indexed(_unit_cell_tolerance))
+            if (peak_ptr->hkl().indexed(_filter_params->unit_cell_tolerance))
                 peak_ptr->caughtYou(true);
             else {
                 peak_ptr->rejectYou(true);
@@ -300,7 +293,7 @@ void PeakFilter::filterUnitCell(PeakCollection* peak_collection) const
     int nrejected = 0;
     for (int i = 0; i < peak_collection->numberOfPeaks(); ++i) {
         nsx::Peak3D* peak_ptr = peak_collection->getPeak(i);
-        if (peak_ptr->unitCell()->name() == _unit_cell)
+        if (peak_ptr->unitCell()->name() == _filter_params->unit_cell)
             peak_ptr->caughtYou(true);
         else {
             peak_ptr->rejectYou(true);
@@ -335,7 +328,8 @@ void PeakFilter::filterStrength(PeakCollection* peak_collection) const
         }
 
         double i_over_sigma = intensity / sigma;
-        if (i_over_sigma >= _strength[0] && i_over_sigma <= _strength[1])
+        if (i_over_sigma >= _filter_params->strength_min &&
+            i_over_sigma <= _filter_params->strength_max)
             peak_ptr->caughtYou(true);
         else {
             peak_ptr->rejectYou(true);
@@ -368,7 +362,7 @@ void PeakFilter::filterDRange(PeakCollection* peak_collection) const
         try {
             auto q = peak_ptr->q();
             double d = 1.0 / q.rowVector().norm();
-            if ((d >= _d_range[0] && d <= _d_range[1]))
+            if ((d >= _filter_params->d_min && d <= _filter_params->d_max))
                 peak_ptr->caughtYou(true);
             else {
                 peak_ptr->rejectYou(true);
@@ -406,7 +400,7 @@ void PeakFilter::filterFrameRange(PeakCollection* peak_collection) const
     for (int i = 0; i < peak_collection->numberOfPeaks(); ++i) {
         nsx::Peak3D* peak_ptr = peak_collection->getPeak(i);
         auto c = peak_ptr->shape().center();
-        if (c[2] >= _frameRange[0] && c[2] <= _frameRange[1])
+        if (c[2] >= _filter_params->frame_min && c[2] <= _filter_params->frame_max)
             peak_ptr->caughtYou(true);
         else {
             peak_ptr->rejectYou(true);
@@ -419,73 +413,73 @@ void PeakFilter::filterFrameRange(PeakCollection* peak_collection) const
 void PeakFilter::filter(PeakCollection* peak_collection) const
 {
     nsxlog(Level::Info, "PeakFilter::filter: filtering peaks");
-    if (_filter_flags.state) {
-        if (_filter_flags.selected) {
+    if (_filter_flags->state) {
+        if (_filter_flags->selected) {
             nsxlog(Level::Info, "Filtering out unselected peaks");
             filterSelected(peak_collection);
         }
-        if (_filter_flags.masked) {
+        if (_filter_flags->masked) {
             nsxlog(Level::Info, "Filtering out unmasked peaks");
             filterMasked(peak_collection);
         }
-        if (_filter_flags.predicted) {
+        if (_filter_flags->predicted) {
             nsxlog(Level::Info, "Filtering by prediction");
             filterPredicted(peak_collection);
         }
     }
 
-    if (_filter_flags.indexed) {
+    if (_filter_flags->indexed) {
         nsxlog(Level::Info, "Filtering out unindexed peaks");
         filterIndexed(peak_collection);
     }
 
-    if (_filter_flags.index_tol) {
-        if (!_unit_cell.empty()) {
+    if (_filter_flags->index_tol) {
+        if (!_filter_params->unit_cell.empty()) {
             nsxlog(Level::Info, "Filtering by Miller index tolerance");
             filterIndexTolerance(peak_collection);
         }
     }
 
-    if (_filter_flags.strength) {
+    if (_filter_flags->strength) {
         nsxlog(Level::Info, "Filtering by peak strength (I/sigma)");
         filterStrength(peak_collection);
     }
 
-    if (_filter_flags.d_range) {
+    if (_filter_flags->d_range) {
         nsxlog(Level::Info, "Filtering by D-range");
         filterDRange(peak_collection);
     }
 
-    if (_filter_flags.extinct) {
+    if (_filter_flags->extinct) {
         nsxlog(Level::Info, "Filtering out extinct peaks");
         filterExtinct(peak_collection);
     }
 
-    if (_filter_flags.sparse) {
+    if (_filter_flags->sparse) {
         nsxlog(Level::Info, "Filtering sparse data set");
         filterSparseDataSet(peak_collection);
     }
 
-    if (_filter_flags.significance) {
+    if (_filter_flags->significance) {
         nsxlog(Level::Info, "Filtering by significance");
         filterSignificance(peak_collection);
     }
 
-    if (_filter_flags.overlapping) {
+    if (_filter_flags->overlapping) {
         nsxlog(Level::Info, "Filtering out overlapping peaks");
         filterOverlapping(peak_collection);
     }
 
-    if (_filter_flags.complementary) { // this does nothing
+    if (_filter_flags->complementary) { // this does nothing
         filterComplementary(peak_collection);
         nsxlog(Level::Info, "Filtering complementary");
     }
 
-    if (_filter_flags.frames) {
+    if (_filter_flags->frames) {
         filterFrameRange(peak_collection);
         nsxlog(
-            Level::Info, "Filtering peaks from frames in range", _frameRange[0], "-",
-            _frameRange[1]);
+            Level::Info, "Filtering peaks from frames in range", _filter_params->frame_min, "-",
+            _filter_params->frame_max);
     }
 }
 
@@ -495,6 +489,21 @@ void PeakFilter::resetFiltering(PeakCollection* peak_collection) const
         peak_collection->getPeak(i)->caughtYou(false);
         peak_collection->getPeak(i)->rejectYou(false);
     }
+}
+
+void PeakFilter::setParameters(std::shared_ptr<PeakFilterParameters> params)
+{
+    _filter_params = params;
+}
+
+PeakFilterParameters* PeakFilter::parameters()
+{
+    return _filter_params.get();
+}
+
+PeakFilterFlags* PeakFilter::flags()
+{
+    return _filter_flags.get();
 }
 
 } // namespace nsx
