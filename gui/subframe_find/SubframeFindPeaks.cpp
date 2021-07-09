@@ -58,7 +58,7 @@ SubframeFindPeaks::SubframeFindPeaks()
     , _pixmap(nullptr)
     , _size_policy_right(QSizePolicy::Expanding, QSizePolicy::Expanding)
 {
-    auto main_layout = new QHBoxLayout(this);
+    auto* main_layout = new QHBoxLayout(this);
     _right_element = new QSplitter(Qt::Vertical, this);
 
     _left_layout = new QVBoxLayout(this);
@@ -73,7 +73,7 @@ SubframeFindPeaks::SubframeFindPeaks()
 
     _right_element->setSizePolicy(_size_policy_right);
 
-    auto propertyScrollArea = new PropertyScrollArea(this);
+    auto* propertyScrollArea = new PropertyScrollArea(this);
     propertyScrollArea->setContentLayout(_left_layout);
     main_layout->addWidget(propertyScrollArea);
     main_layout->addWidget(_right_element);
@@ -370,8 +370,8 @@ void SubframeFindPeaks::grabFinderParameters()
     nsx::PeakFinder* finder =
         gSession->experimentAt(_exp_combo->currentIndex())->experiment()->peakFinder();
 
-    nsx::PeakFinderParameters* finder_params =
-        gSession->experimentAt(_exp_combo->currentIndex()) ->experiment()->finder_params.get();
+    auto* finder_params =
+        gSession->experimentAt(_exp_combo->currentIndex()) ->experiment()->finderParams();
 
     _min_size_spin->setValue(finder_params->minimum_size);
     _max_size_spin->setValue(finder_params->maximum_size);
@@ -421,8 +421,8 @@ void SubframeFindPeaks::setFinderParameters()
     nsx::PeakFinder* finder =
         gSession->experimentAt(_exp_combo->currentIndex())->experiment()->peakFinder();
 
-    auto params =
-        gSession->experimentAt(_exp_combo->currentIndex())->experiment()->finder_params.get();
+    auto* params =
+        gSession->experimentAt(_exp_combo->currentIndex())->experiment()->finderParams();
     params->minimum_size = _min_size_spin->value();
     params->maximum_size = _max_size_spin->value();
     params->peak_end = _scale_spin->value();
@@ -440,7 +440,8 @@ void SubframeFindPeaks::setFinderParameters()
 
 void SubframeFindPeaks::grabIntegrationParameters()
 {
-    auto params = gSession->experimentAt(_exp_combo->currentIndex())->experiment()->int_params;
+    auto* params =
+        gSession->experimentAt(_exp_combo->currentIndex())->experiment()->integrationParams();
 
     _peak_area->setValue(params->peak_end);
     _bkg_lower->setValue(params->bkg_begin);
@@ -452,7 +453,8 @@ void SubframeFindPeaks::setIntegrationParameters()
     if (_exp_combo->count() == 0 || _data_combo->count() == 0)
         return;
 
-    auto params = gSession->experimentAt(_exp_combo->currentIndex())->experiment()->int_params;
+    auto* params =
+        gSession->experimentAt(_exp_combo->currentIndex())->experiment()->integrationParams();
 
     params->peak_end = _peak_area->value();
     params->bkg_begin = _bkg_lower->value();

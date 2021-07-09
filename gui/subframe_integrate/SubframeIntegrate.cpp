@@ -271,7 +271,7 @@ void SubframeIntegrate::updatePeakList()
 
 void SubframeIntegrate::grabIntegrationParameters()
 {
-    auto params = gSession->experimentAt(_exp_combo->currentIndex())->experiment()->int_params;
+    auto params = gSession->experimentAt(_exp_combo->currentIndex())->experiment()->integrationParams();
 
     _peak_end->setValue(params->peak_end);
     _bkg_begin->setValue(params->bkg_begin);
@@ -287,7 +287,7 @@ void SubframeIntegrate::setIntegrationParameters()
 {
     if (_exp_combo->count() == 0)
         return;
-    auto params = gSession->experimentAt(_exp_combo->currentIndex())->experiment()->int_params;
+    auto params = gSession->experimentAt(_exp_combo->currentIndex())->experiment()->integrationParams();
 
     params->peak_end = _peak_end->value();
     params->bkg_begin = _bkg_begin->value();
@@ -492,10 +492,11 @@ void SubframeIntegrate::runIntegration()
             expt->getPeakCollection(_peak_combo->currentText().toStdString())->shapeCollection();
 
         setIntegrationParameters();
-        auto params = gSession->experimentAt(_exp_combo->currentIndex())->experiment()->int_params;
+        auto* params = gSession->experimentAt(_exp_combo->currentIndex())->experiment()->
+            integrationParams();
 
         integrator->setHandler(handler);
-        expt->integratePeaks(integrator, peaks_to_integrate, params.get(), shapes);
+        expt->integratePeaks(integrator, peaks_to_integrate, params, shapes);
     } catch (std::exception& e) {
         QMessageBox::critical(this, "Error", QString(e.what()));
     }
@@ -508,8 +509,8 @@ void SubframeIntegrate::openShapeBuilder()
         gSession->experimentAt(_exp_combo->currentIndex())
         ->experiment()
         ->getPeakCollection(_peak_combo->currentText().toStdString());
-    auto shape_params =
-        gSession->experimentAt(_exp_combo->currentIndex())->experiment()->shape_params;
+    auto* shape_params =
+        gSession->experimentAt(_exp_combo->currentIndex())->experiment()->shapeParams();
 
     std::unique_ptr<ShapeCollectionDialog> dialog(
         new ShapeCollectionDialog(peak_collection, shape_params));

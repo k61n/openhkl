@@ -431,7 +431,7 @@ void SubframeFilterPeaks::grabFilterParameters()
         return;
 
     auto* params =
-        gSession->experimentAt(_exp_combo->currentIndex())->experiment()->filter_params.get();
+        gSession->experimentAt(_exp_combo->currentIndex())->experiment()->filterParams();
 
     _tolerance->setValue(params->unit_cell_tolerance);
     _strength_min->setValue(params->strength_min);
@@ -502,7 +502,7 @@ void SubframeFilterPeaks::setFilterParameters()
         flags->significance = true;
 
     auto* params =
-        gSession->experimentAt(_exp_combo->currentIndex())->experiment()->filter_params.get();
+        gSession->experimentAt(_exp_combo->currentIndex())->experiment()->filterParams();
 
     params->unit_cell_tolerance = _tolerance->value();
     params->significance = _significance_level->value();

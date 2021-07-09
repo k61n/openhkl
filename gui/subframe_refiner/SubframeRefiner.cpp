@@ -238,7 +238,7 @@ void SubframeRefiner::refine()
         const auto peak_list = peaks->getPeakList();
         auto states = data->instrumentStates();
         auto refiner = expt->refiner();
-        auto params = expt->refiner_params;
+        auto* params = expt->refinerParams();
 
         setRefinerParameters();
 
@@ -382,7 +382,7 @@ void SubframeRefiner::setUpdateUp()
 
 void SubframeRefiner::grabRefinerParameters()
 {
-    auto params = gSession->experimentAt(_exp_combo->currentIndex())->experiment()->refiner_params;
+    auto* params = gSession->experimentAt(_exp_combo->currentIndex())->experiment()->refinerParams();
 
     _n_batches_spin->setValue(params->nbatches);
     _refineUB->setChecked(params->refine_ub);
@@ -396,7 +396,7 @@ void  SubframeRefiner::setRefinerParameters()
 {
     if (_exp_combo->count() == 0)
         return;
-    auto params = gSession->experimentAt(_exp_combo->currentIndex())->experiment()->refiner_params;
+    auto* params = gSession->experimentAt(_exp_combo->currentIndex())->experiment()->refinerParams();
 
     params->nbatches = _n_batches_spin->value();
     params->refine_ub = _refineUB->isChecked();

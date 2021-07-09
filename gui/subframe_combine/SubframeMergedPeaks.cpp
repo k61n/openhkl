@@ -96,7 +96,7 @@ SubframeMergedPeaks::SubframeMergedPeaks()
 
 void SubframeMergedPeaks::grabMergeParameters()
 {
-    auto params = gSession->experimentAt(_exp_drop->currentIndex())->experiment()->merge_params;
+    auto params = gSession->experimentAt(_exp_drop->currentIndex())->experiment()->mergeParams();
 
     _d_min->setValue(params->d_min);
     _d_max->setValue(params->d_max);
@@ -109,7 +109,7 @@ void SubframeMergedPeaks::setMergeParameters()
     if (_exp_drop->count() == 0)
         return;
 
-    auto params = gSession->experimentAt(_exp_drop->currentIndex())->experiment()->merge_params;
+    auto params = gSession->experimentAt(_exp_drop->currentIndex())->experiment()->mergeParams();
 
     params->d_min = _d_min->value();
     params->d_max = _d_max->value();
@@ -428,7 +428,7 @@ void SubframeMergedPeaks::refreshTables()
 void SubframeMergedPeaks::refreshDShellTable()
 {
     setMergeParameters();
-    auto params = gSession->experimentAt(_exp_drop->currentIndex())->experiment()->merge_params;
+    auto params = gSession->experimentAt(_exp_drop->currentIndex())->experiment()->mergeParams();
 
     QStandardItemModel* model = dynamic_cast<QStandardItemModel*>(_d_shell_view->model());
     model->removeRows(0, model->rowCount());
@@ -449,7 +449,7 @@ void SubframeMergedPeaks::refreshDShellTable()
         if (collection1 != collection2)
             collections.emplace_back(collection2);
     }
-    expt->computeQuality(params.get(), collections);
+    expt->computeQuality(params, collections);
     nsx::DataResolution* quality = expt->getQuality();
     nsx::DataResolution* resolution = expt->getResolution();
 

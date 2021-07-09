@@ -73,7 +73,7 @@ class PeakFinder {
     //! Set the progress handler
     void setHandler(const sptrProgressHandler& handler);
 
-    //! Set the parameters for peak finding
+    //! set the parameters
     void setParameters(std::shared_ptr<PeakFinderParameters> params);
 
     //! Get the parameters for peak finding

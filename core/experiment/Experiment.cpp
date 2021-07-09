@@ -56,14 +56,18 @@ Experiment::Experiment(const std::string& name, const std::string& diffractomete
     _cell_handler = std::make_unique<UnitCellHandler>();
     _integration_handler = std::make_unique<IntegrationHandler>(_data_handler);
 
-    finder_params = std::make_shared<PeakFinderParameters>();
-    filter_params = std::make_shared<PeakFilterParameters>();
-    indexer_params = std::make_shared<IndexerParameters>();
-    predict_params = std::make_shared<PredictionParameters>();
-    shape_params= std::make_shared<ShapeCollectionParameters>();
-    refiner_params = std::make_shared<RefinerParameters>();
-    int_params = std::make_shared<IntegrationParameters>();
-    merge_params = std::make_shared<MergeParameters>();
+    _finder_params = std::make_shared<PeakFinderParameters>();
+    _filter_params = std::make_shared<PeakFilterParameters>();
+    _indexer_params = std::make_shared<IndexerParameters>();
+    _predict_params = std::make_unique<PredictionParameters>();
+    _shape_params= std::make_unique<ShapeCollectionParameters>();
+    _refiner_params = std::make_shared<RefinerParameters>();
+    _int_params = std::make_unique<IntegrationParameters>();
+    _merge_params = std::make_unique<MergeParameters>();
+
+    _peak_finder->setParameters(_finder_params);
+    _peak_filter->setParameters(_filter_params);
+    _auto_indexer->setParameters(_indexer_params);
 
     std::string logfile = "nsx.log";
     Logger::instance().start(logfile, Level::Info);
@@ -83,10 +87,10 @@ void Experiment::setDefaultDMin()
 {
     double lambda = getDiffractometer()->source().selectedMonochromator().wavelength();
     double d_min = lambda / 2.0;
-    shape_params->d_min = d_min;
-    predict_params->d_min = d_min;
-    indexer_params->d_min = d_min;
-    filter_params->d_min = d_min;
+    _shape_params->d_min = d_min;
+    _predict_params->d_min = d_min;
+    _indexer_params->d_min = d_min;
+    _filter_params->d_min = d_min;
 }
 
 void Experiment::acceptFoundPeaks(const std::string& name)
@@ -519,19 +523,44 @@ void Experiment::integrateFoundPeaks(const IntegratorType integrator_type)
     _integration_handler->integrateFoundPeaks(integrator_type, _peak_finder.get());
 }
 
-PredictionParameters* Experiment::predictParams()
+PeakFinderParameters* Experiment::finderParams()
 {
-    return predict_params.get();
+    return _finder_params.get();
 }
 
-ShapeCollectionParameters* Experiment::shapeParams()
+PeakFilterParameters* Experiment::filterParams()
 {
-    return shape_params.get();
+    return _filter_params.get();
+}
+
+IndexerParameters* Experiment::indexerParams()
+{
+    return _indexer_params.get();
 }
 
 IntegrationParameters* Experiment::integrationParams()
 {
-    return int_params.get();
+    return _int_params.get();
+}
+
+ShapeCollectionParameters* Experiment::shapeParams()
+{
+    return _shape_params.get();
+}
+
+PredictionParameters* Experiment::predictParams()
+{
+    return _predict_params.get();
+}
+
+RefinerParameters* Experiment::refinerParams()
+{
+    return _refiner_params.get();
+}
+
+MergeParameters* Experiment::mergeParams()
+{
+    return _merge_params.get();
 }
 
 } // namespace nsx

@@ -52,7 +52,6 @@ void IndexerParameters::log(const Level& level) const
 
 AutoIndexer::AutoIndexer() : _solutions(), _handler(nullptr)
 {
-    _params = std::make_shared<IndexerParameters>();
 }
 
 std::shared_ptr<IndexerParameters> AutoIndexer::parameters()

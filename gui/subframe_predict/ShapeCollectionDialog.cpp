@@ -37,7 +37,7 @@
 #include <QtGlobal>
 
 ShapeCollectionDialog::ShapeCollectionDialog(
-    nsx::PeakCollection* peak_collection, std::shared_ptr<nsx::ShapeCollectionParameters> params)
+    nsx::PeakCollection* peak_collection, nsx::ShapeCollectionParameters* params)
     : QDialog(), _peak_collection_model(), _peak_collection_item(), _params(params)
 {
     setModal(true);
