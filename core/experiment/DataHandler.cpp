@@ -25,7 +25,7 @@ namespace nsx {
 DataHandler::DataHandler(const std::string& experiment_name, const std::string& diffractometerName)
 {
     _diffractometer = nullptr;
-    if (!(diffractometerName == nsx::kw_unknownInstrument))
+    if (!(diffractometerName == nsx::kw_diffractometerDefaultName))
         _diffractometer.reset(Diffractometer::create(diffractometerName));
 
     _experiment_name = experiment_name;

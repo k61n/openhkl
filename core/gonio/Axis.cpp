@@ -45,7 +45,7 @@ Axis::Axis(const std::string& name, const Eigen::Vector3d& axis)
 
 Axis::Axis(const YAML::Node& node)
 {
-    _name = node[nsx::ym_axisName] ? node[nsx::ym_axisName].as<std::string>() : nsx::kw_unknownAxis;
+    _name = node[nsx::ym_axisName] ? node[nsx::ym_axisName].as<std::string>() : nsx::kw_axisDefaultName;
 
     Eigen::Vector3d axis = node[nsx::ym_axisDirection].as<Eigen::Vector3d>();
     axis.normalize();
@@ -54,7 +54,7 @@ Axis::Axis(const YAML::Node& node)
 
     _physical = node[nsx::ym_axisPhysical].as<bool>();
 
-    _id = node[nsx::ym_axisId] ? node[nsx::ym_axisId].as<unsigned int>() : nsx::kw_unknownAxisId;
+    _id = node[nsx::ym_axisId] ? node[nsx::ym_axisId].as<unsigned int>() : nsx::kw_axisDefaultId;
 }
 
 Axis::~Axis() = default;

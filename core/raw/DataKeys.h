@@ -80,20 +80,18 @@ const std::string at_spacegroup { "spacegroup" };
 const std::string at_z { "z" };
 
 //-- Default names
-const std::string kw_experimentDefaultName { "EXPERIMENT" };  // default name for an experiment
-const std::string kw_diffractometerDefaultName { "UNKNOWN INSTRUMENT" };  // default name for an experiment
-const std::string kw_datasetDefaultName { "DATASET" };  // default name for an experiment
-const std::string kw_unitcellDefaultName { "UNITCELL" };  // default name for a unit-cell
-const std::string kw_monochromatorDefaultName { "MONOCHROMATOR" };  // default name for a monochromator
-const std::string kw_unknownInstrument { "UNKNOWN INSTRUMENT" };  // unknown instrument/diffractometer
-const std::string kw_goniometerDefaultName { "GONIOMETER" };  // default name for a goniometer
-const std::string kw_axisDefaultName { "axis" }; // default name for an axis
-const std::string kw_unknownAxis { "UNKNOWN AXIS" };  // unknown axis
-const unsigned int kw_unknownAxisId { 0 };  // unknown axis id
-const std::string kw_detectorDefaultName { "DETECTOR" };  // default name for a detector
+const std::string kw_experimentDefaultName { "DEFAULT EXPERIMENT" };  // default name for an experiment
+const std::string kw_diffractometerDefaultName { "DEFAULT INSTRUMENT" };  // default name for an experiment
+const std::string kw_datasetDefaultName { "DEFAULT DATASET" };  // default name for an experiment
+const std::string kw_unitcellDefaultName { "DEFAULT UNITCELL" };  // default name for a unit-cell
+const std::string kw_monochromatorDefaultName { "DEFAULT MONOCHROMATOR" };  // default name for a monochromator
+const std::string kw_goniometerDefaultName { "DEFAULT GONIOMETER" };  // default name for a goniometer
+const std::string kw_axisDefaultName { "DEFUALT AXIS" }; // default name for an axis
+const unsigned int kw_axisDefaultId { 0 };  // default axis id
+const std::string kw_detectorDefaultName { "DEFAULT DETECTOR" };  // default name for a detector
+const std::string kw_peakCollectionDefaultName { "DEFAULT PEAKCOLLECTION" };
 const std::string kw_rotationAxisName { "rotation" };
 const std::string kw_autoindexingCollection { "autoindexing" };
-const std::string kw_peakCollectionDefaultName { "peaks" };
 const std::string kw_fitCollection { "fit" };
 const std::string kw_acceptedUnitcell { "accepted" };
 const std::string kw_referenceUnitcell { "reference" };
