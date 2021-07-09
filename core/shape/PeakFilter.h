@@ -43,7 +43,7 @@ struct PeakFilterParameters {
     double d_max = 50.0; //!< maximum d (Bragg's law)
     double strength_min = 1.0; //!< minimum strength (I/sigma)
     double strength_max = 1.0e7; //!< maximum strength (I/sigma)
-    std::string unit_cell = ""; //!< unit cell name
+    std::string unit_cell = "DEFAULT UNIT CELL"; //!< unit cell name
     double unit_cell_tolerance = 0.2; //!< indexing tolerance
     double significance = 0.99; //!< signficance
     double sparse = 100; //!< number of peaks in dataset to be kept
