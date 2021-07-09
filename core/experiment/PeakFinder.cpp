@@ -80,6 +80,19 @@ void reassignEquivalences(std::map<int, int>& equivalences)
 
 namespace nsx {
 
+void PeakFinderParameters::log(const Level& level) const
+{
+    nsxlog(level, "Peak finder parameters:");
+    nsxlog(level, "minimum_size           = ", minimum_size);
+    nsxlog(level, "maximum_size           = ", maximum_size);
+    nsxlog(level, "peak_end               = ", peak_end);
+    nsxlog(level, "maximum_frames         = ", maximum_frames);
+    nsxlog(level, "frames_begin           = ", frames_begin);
+    nsxlog(level, "frames_end             = ", frames_end);
+    nsxlog(level, "threshold              = ", threshold);
+    nsxlog(level, "convolver              = ", convolver);
+}
+
 //  ***********************************************************************************************
 //  PeakFinder trivia
 //  ***********************************************************************************************
@@ -519,6 +532,7 @@ void PeakFinder::mergeEquivalentBlobs(
  */
 void PeakFinder::find(const DataList numors)
 {
+    _params->log(Level::Info);
     nsxlog(Level::Info, "PeakFinder::find: starting, with ", numors.size(), " numors");
     _current_peaks.clear();
     _current_data = numors;

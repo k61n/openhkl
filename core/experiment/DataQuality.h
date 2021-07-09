@@ -15,6 +15,8 @@
 #ifndef NSX_CORE_EXPERIMENT_DATAQUALITY_H
 #define NSX_CORE_EXPERIMENT_DATAQUALITY_H
 
+#include "base/utils/Logger.h"
+
 #include <string>
 #include <vector>
 
@@ -51,6 +53,8 @@ struct MergeParameters {
     double d_max = 50.0; //!< Maximum d (Bragg's law)
     int n_shells = 10; //!< Number of resolution shells
     bool friedel = true; //!< Whether to include the Friedel relation
+
+    void log(const Level& level) const;
 };
 
 struct ShellQuality : DataQuality {

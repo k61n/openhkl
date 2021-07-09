@@ -249,6 +249,7 @@ void Experiment::predictPeaks(
 void Experiment::computeQuality(
     MergeParameters* params, std::vector<PeakCollection*> collections)
 {
+    params->log(Level::Info);
     _data_quality.computeQuality(
         params->d_min, params->d_max, 1, collections,
         _peak_handler->getMergedPeaks()->spaceGroup(), params->friedel);

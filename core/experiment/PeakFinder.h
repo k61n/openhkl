@@ -38,6 +38,8 @@ struct PeakFinderParameters {
     int frames_end = -1; //!< Last frame in range for peak findinng
     double threshold = 80.0; //!< Blobs containing fewer counts than this are discarded
     std::string convolver = "annular";
+
+    void log(const Level& level) const;
 };
 
 /*! \brief Perform image recognition on detector images to find peaks
