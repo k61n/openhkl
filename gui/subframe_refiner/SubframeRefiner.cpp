@@ -237,7 +237,6 @@ void SubframeRefiner::refine()
         const auto cell = expt->getUnitCell(_cell_combo->currentText().toStdString());
         const auto peak_list = peaks->getPeakList();
         auto states = data->instrumentStates();
-        auto refiner = expt->refiner();
         auto* params = expt->refinerParams();
 
         setRefinerParameters();
@@ -256,6 +255,7 @@ void SubframeRefiner::refine()
         if (n_checked > 0)
             _refine_success = expt->refine(peaks, cell, data.get(), params->nbatches);
 
+        auto refiner = expt->refiner();
         _tables_widget->refreshTables(refiner, data.get());
     } catch (const std::exception& ex) {
         QMessageBox::critical(this, "Error", QString(ex.what()));
