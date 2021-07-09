@@ -212,7 +212,7 @@ void Experiment::buildShapeCollection(
 }
 
 void Experiment::predictPeaks(
-    const std::string& name, PeakCollection* peaks, std::shared_ptr<PredictionParameters> params,
+    const std::string& name, PeakCollection* peaks, PredictionParameters* params,
     PeakInterpolation interpol)
 {
     const DataList numors = getAllData();
@@ -265,12 +265,12 @@ const UnitCell* Experiment::getReferenceCell() const
     return getUnitCell("reference");
 }
 
-bool Experiment::refine(PeakCollection* peaks, UnitCell* cell, DataSet* data)
+bool Experiment::refine(PeakCollection* peaks, UnitCell* cell, DataSet* data, int nbatches)
 {
     nsxlog(Level::Info, "Experiment::refine: Refining peak collection ", peaks->name());
     std::vector<Peak3D*> peak_list = peaks->getPeakList();
     InstrumentStateList& states = data->instrumentStates();
-    _refiner = std::make_unique<Refiner>(states, cell, peak_list, _cell_handler.get());
+    _refiner = std::make_unique<Refiner>(states, cell, peak_list, _cell_handler.get(), nbatches);
     _refiner->parameters()->log(Level::Info);
     bool success = _refiner->refine();
     if (success) {
@@ -517,6 +517,16 @@ void Experiment::integratePredictedPeaks(
 void Experiment::integrateFoundPeaks(const IntegratorType integrator_type)
 {
     _integration_handler->integrateFoundPeaks(integrator_type, _peak_finder.get());
+}
+
+PredictionParameters* Experiment::predictParams()
+{
+    return predict_params.get();
+}
+
+ShapeCollectionParameters* Experiment::shapeParams()
+{
+    return shape_params.get();
 }
 
 } // namespace nsx

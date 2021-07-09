@@ -265,7 +265,7 @@ void SubframePredictPeaks::updateDatasetParameters(int idx)
 void SubframePredictPeaks::grabPredictorParameters()
 {
     auto params =
-        gSession->experimentAt(_exp_combo->currentIndex())->experiment()->predict_params;
+        gSession->experimentAt(_exp_combo->currentIndex())->experiment()->predictParams();
 
     _d_min->setValue(params->d_min);
     _d_max->setValue(params->d_max);
@@ -277,7 +277,7 @@ void SubframePredictPeaks::setPredictorParameters()
         return;
 
     auto params =
-        gSession->experimentAt(_exp_combo->currentIndex())->experiment()->predict_params;
+        gSession->experimentAt(_exp_combo->currentIndex())->experiment()->predictParams();
 
     params->d_min = _d_min->value();
     params->d_max = _d_max->value();
@@ -296,7 +296,7 @@ void SubframePredictPeaks::runPrediction()
         nsx::UnitCell* cell = gSession->currentProject()->experiment()->getUnitCell(
             _cell_combo->currentText().toStdString());
         auto params =
-            gSession->experimentAt(_exp_combo->currentIndex())->experiment()->predict_params;
+            gSession->experimentAt(_exp_combo->currentIndex())->experiment()->predictParams();
 
         std::vector<nsx::Peak3D*> predicted_peaks;
 

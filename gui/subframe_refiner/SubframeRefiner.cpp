@@ -254,7 +254,7 @@ void SubframeRefiner::refine()
         if (params->refine_ki)
             ++n_checked;
         if (n_checked > 0)
-            _refine_success = expt->refine(peaks, cell, data.get());
+            _refine_success = expt->refine(peaks, cell, data.get(), params->nbatches);
 
         _tables_widget->refreshTables(refiner, data.get());
     } catch (const std::exception& ex) {

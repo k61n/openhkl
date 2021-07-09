@@ -198,12 +198,12 @@ class Experiment {
     void buildShapeCollection(PeakCollection* peaks, const ShapeCollectionParameters& params);
     //! Predict peaks from unit cell
     void predictPeaks(
-        const std::string& name, PeakCollection* peaks, std::shared_ptr<PredictionParameters> params,
+        const std::string& name, PeakCollection* peaks, PredictionParameters* params,
         PeakInterpolation interpol);
     //! Get a pointer to the refiner
     Refiner* refiner() { return _refiner.get(); };
     //! Refine unit cell and instrument parameters
-    bool refine(PeakCollection* peaks, UnitCell* cell, DataSet* data);
+    bool refine(PeakCollection* peaks, UnitCell* cell, DataSet* data, int nbatches);
     //! Update the predicted peaks post-refinement
     void updatePredictions(PeakCollection* predicted_peaks);
 
@@ -213,6 +213,9 @@ class Experiment {
     DataResolution* getResolution() { return &_data_resolution; };
     // Return data quality structs for all merged data:
     DataResolution* getQuality() { return &_data_quality; };
+
+    PredictionParameters* predictParams();
+    ShapeCollectionParameters* shapeParams();
 
     // Objects containing integration parameters. If I construct these on their own in Python,
     // they get destroyed when passed to Experiment, hence the kludgy option of making them

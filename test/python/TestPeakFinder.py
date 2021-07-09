@@ -31,13 +31,15 @@ class TestPeakFinder(unittest.TestCase):
 
         # Find the peaks
         finder = expt.peakFinder()
-        finder.setFramesBegin(0)
-        finder.setFramesEnd(-1)
+        params = finder.params()
+        params.frames_begin = 0
+        params.frames_end = -1
+        params.minimum_size = 30
+        params.maximum_size = 10000
+        params.peak_end = 1.0
+        params.threshold = 80
         finder.setConvolver(nsx.AnnularConvolver())
-        finder.setMinSize(30)
-        finder.setMaxSize(10000)
-        finder.setPeakEnd(1.0)
-        finder.setThreshold(80.0)
+
         finder.find(expt.getAllData())
 
         # Integrate the peaks

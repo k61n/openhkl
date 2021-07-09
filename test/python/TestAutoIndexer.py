@@ -18,10 +18,12 @@ class TestAutoIndexer(unittest.TestCase):
 
         # Filter the peaks
         filter = expt.peakFilter()
-        filter.setFilterStrength(True)
-        filter.setFilterDRange(True)
-        filter.setDRange(1.55, 50.0)
-        filter.setStrength(1.0, 1.0e7)
+        filter.flags().strength = True
+        filter.flags().d_range = True;
+        filter.parameters().d_min = 1.55
+        filter.parameters().d_max = 50.0
+        filter.parameters().strength_min = 1.0
+        filter.parameters().strength_max = 1.0e7
         filter.filter(found_peaks)
         expt.acceptFilter("filtered", found_peaks)
         filtered_peaks = expt.getPeakCollection("filtered")
@@ -39,7 +41,6 @@ class TestAutoIndexer(unittest.TestCase):
         autoindexer_params.subdiv = 30
         autoindexer_params.indexingTolerance = 0.2
         autoindexer_params.minUnitCellVolume = 100.0
-        autoindexer.setParameters(autoindexer_params)
         autoindexer.autoIndex(filtered_peaks)
         # reference_cell = expt.getReferenceCell()
         # accepted_cell = expt.getAcceptedCell()

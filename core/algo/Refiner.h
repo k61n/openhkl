@@ -43,7 +43,7 @@ class Refiner {
     //! using the given number of frame batches. The peaks must belong to the same dataset.
     Refiner(
         InstrumentStateList& states, UnitCell* cell, const std::vector<nsx::Peak3D*>& peaks,
-        UnitCellHandler* cell_handler);
+        UnitCellHandler* cell_handler, int nbatches);
 
     //! Sets the lattice B matrix to be refined.
     void refineUB();
