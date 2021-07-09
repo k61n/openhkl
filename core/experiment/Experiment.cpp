@@ -529,4 +529,9 @@ ShapeCollectionParameters* Experiment::shapeParams()
     return shape_params.get();
 }
 
+IntegrationParameters* Experiment::integrationParams()
+{
+    return int_params.get();
+}
+
 } // namespace nsx

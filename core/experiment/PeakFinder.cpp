@@ -124,9 +124,9 @@ void PeakFinder::setParameters(std::shared_ptr<PeakFinderParameters> params)
     _params = params;
 }
 
-std::shared_ptr<PeakFinderParameters> PeakFinder::parameters()
+PeakFinderParameters* PeakFinder::parameters()
 {
-    return _params;
+    return _params.get();
 }
 
 void PeakFinder::setConvolver(std::unique_ptr<Convolver> convolver)

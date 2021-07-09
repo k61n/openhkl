@@ -77,7 +77,7 @@ class PeakFinder {
     void setParameters(std::shared_ptr<PeakFinderParameters> params);
 
     //! Get the parameters for peak finding
-    std::shared_ptr<PeakFinderParameters> parameters();
+    PeakFinderParameters* parameters();
 
 #ifndef SWIG
     //! Set the convolver flavour for peak/background convolution

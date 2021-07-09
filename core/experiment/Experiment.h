@@ -216,6 +216,7 @@ class Experiment {
 
     PredictionParameters* predictParams();
     ShapeCollectionParameters* shapeParams();
+    IntegrationParameters* integrationParams();
 
     // Objects containing integration parameters. If I construct these on their own in Python,
     // they get destroyed when passed to Experiment, hence the kludgy option of making them

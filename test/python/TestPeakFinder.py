@@ -31,7 +31,7 @@ class TestPeakFinder(unittest.TestCase):
 
         # Find the peaks
         finder = expt.peakFinder()
-        params = finder.params()
+        params = finder.parameters()
         params.frames_begin = 0
         params.frames_end = -1
         params.minimum_size = 30
@@ -44,7 +44,7 @@ class TestPeakFinder(unittest.TestCase):
 
         # Integrate the peaks
         integrator = expt.getIntegrator(nsx.IntegratorType_PixelSum)
-        integrator_params = expt.int_params
+        integrator_params = expt.integrationParams()
         integrator_params.peak_end = 3.0
         integrator_params.bkg_begin = 3.0
         integrator_params.bkg_end = 6.0
