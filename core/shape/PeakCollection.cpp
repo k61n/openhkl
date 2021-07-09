@@ -114,15 +114,11 @@ int PeakCollection::numberRejectedByFilter() const
     return numberOfPeaks() - numberCaughtByFilter();
 }
 
-// TODO: Check this function: why _meta is cleared and regenerated?
-std::map<std::string, float>* PeakCollection::meta()
+MetaData& PeakCollection::metadata()
 {
-    _meta.clear();
-    _meta.insert(std::make_pair(std::string(nsx::at_peaksNr), numberOfPeaks()));
-    _meta.insert(std::make_pair(std::string(nsx::at_validsNr), numberOfValid()));
-    _meta.insert(std::make_pair(std::string(nsx::at_invalidsNr), numberOfInvalid()));
-    // _meta.insert(std::make_pair(std::string(),));
-    return &_meta;
+    _metadata.add<int>(nsx::at_peaksNr, numberOfPeaks());
+    _metadata.add<int>(nsx::at_peakType, static_cast<int>(type()));
+    return _metadata;
 }
 
 void PeakCollection::setShapeCollection(ShapeCollection shape_collection)

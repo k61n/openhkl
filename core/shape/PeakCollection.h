@@ -16,6 +16,7 @@
 #define NSX_CORE_SHAPE_PEAKCOLLECTION_H
 
 #include "core/shape/ShapeCollection.h"
+#include "core/raw/MetaData.h"
 
 namespace nsx {
 
@@ -81,8 +82,8 @@ class PeakCollection {
     // Return number of peaks rejected by filters
     int numberRejectedByFilter() const;
 
-    //! Return a fresh generated pointer to meta
-    std::map<std::string, float>* meta();
+    //! Return a fresh generated pointer to metadata
+    MetaData& metadata();
 
     //! Set the shape collection needed for profile integration
     void setShapeCollection(ShapeCollection shape_collection);
@@ -106,7 +107,7 @@ class PeakCollection {
     std::string _name;
 
     nsx::listtype _type{listtype::FOUND};
-    std::map<std::string, float> _meta;
+    nsx::MetaData _metadata;
 
     std::string _file_name;
     std::string _parent;

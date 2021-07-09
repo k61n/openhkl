@@ -27,7 +27,7 @@
 #include "core/instrument/Sample.h"
 #include "core/instrument/Source.h"
 #include "core/peak/Peak3D.h"
-#include "core/raw/MetaData.h" // MetaDataMap
+#include "core/raw/MetaData.h"
 #include "core/shape/PeakCollection.h"
 #include "tables/crystal/UnitCell.h"
 #include "core/raw/DataKeys.h"
@@ -112,17 +112,13 @@ void writeSampleState(
 }
 
 
-void writeMetadata(H5::H5File& file, const std::string& datakey, const nsx::DataSet* const dataset)
+void writeMetadata(H5::Group& meta_group,  const nsx::MetaData& metadata)
 {
     const H5::DataSpace metaSpace(H5S_SCALAR);
     const H5::StrType strVarType(H5::PredType::C_S1, H5T_VARIABLE);
 
-    // Write all metadata (string, int and double) into the "Metadata" Group
-    const std::string metaKey = datakey + "/" + nsx::gr_Metadata;
-    H5::Group meta_group = file.createGroup(metaKey);
-
     try {
-        for (const auto& [key, val] : dataset->metadata().map()) {
+        for (const auto& [key, val] : metadata.map()) {
             if (std::holds_alternative<std::string>(val)) {
 		H5::Attribute attr(meta_group.createAttribute(key, strVarType, metaSpace));
 		attr.write(strVarType, std::get<std::string>(val));
@@ -138,26 +134,6 @@ void writeMetadata(H5::H5File& file, const std::string& datakey, const nsx::Data
     } catch (const std::exception& ex) {
         nsxlog(nsx::Level::Debug, "Exception in ", __PRETTY_FUNCTION__, ": ", ex.what());
     }
-}
-
-// TODO: Merge with writeMetadata
-// TODO: PeakCollection metadata is map<string, float> but used as map<string, int> !
-// TODO: Unify the metadata structure for all objects
-void writePeakMeta(H5::Group& peak_group, const PeakMeta& peak_meta, const nsx::listtype peak_type)
-{
-    H5::DataSpace metaSpace(H5S_SCALAR);
-
-    try {
-        for (const auto& [key, val] : peak_meta) {
-            const int val_int = val;
-            writeAttribute(peak_group, key, &val_int, H5::PredType::NATIVE_INT32, metaSpace);
-        }
-    } catch (const std::exception& ex) {
-        nsxlog(nsx::Level::Debug, "Exception in ", __PRETTY_FUNCTION__, ": ", ex.what());
-    }
-
-    const int peak_type_int = static_cast<int>(peak_type);
-    writeAttribute(peak_group, nsx::at_peakType, &peak_type_int, H5::PredType::NATIVE_INT32, metaSpace);
 }
 
 void writePeakDataNames(
@@ -266,8 +242,10 @@ void ExperimentExporter::writeData(const std::map<std::string, DataSet*> data)
         // Write sample states
         writeSampleState(file, datakey, data_item);
 
-        // Write  metadata into the "Metadata" group as attributes
-        writeMetadata(file, datakey, data_item);
+	// Write all metadata (string, int and double) into the "Metadata" Group attributes
+	const std::string metaKey = datakey + "/" + nsx::gr_Metadata;
+	H5::Group meta_group = file.createGroup(metaKey);
+        writeMetadata(meta_group, data_item->metadata());
     }
 }
 
@@ -397,9 +375,8 @@ void ExperimentExporter::writePeaks(const std::map<std::string, PeakCollection*>
         // Write unit-cell names
         writePeakDataNames(file, collectionNameKey + "/" + nsx::ds_UnitCellNames, unit_cells);
 
-        // Write all other metadata (int and double) into the "Meta" Group
-        const PeakMeta& pmeta = *(collection_item->meta());
-        writePeakMeta(peak_group, pmeta, collection_item->type());
+        // Write peak metadata as attributes of the peak group
+        writeMetadata(peak_group, collection_item->metadata());
     }
 }
 

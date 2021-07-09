@@ -108,8 +108,6 @@ void ExperimentImporter::loadPeaks(Experiment* experiment)
             int n_peaks = 0;
             int type = 0;
 
-            // TODO: nr of valid and invalid peaks is not read from file!
-
             if (peak_collection.attrExists(nsx::at_peaksNr)) {
                 const H5::Attribute attr = peak_collection.openAttribute(nsx::at_peaksNr);
                 const H5::DataType attr_type = attr.getDataType();

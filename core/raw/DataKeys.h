@@ -71,8 +71,6 @@ const std::string at_startTime { "start time" };
 const std::string at_endTime { "end time" };
 // peaks
 const std::string at_peaksNr { "number of peaks" };
-const std::string at_validsNr { "number of valids" };
-const std::string at_invalidsNr { "number of invalids" };
 const std::string at_peakType { "peak type" };
 // unit cell
 const std::string at_rVec { "reciprocal" };
