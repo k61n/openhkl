@@ -74,11 +74,11 @@ void Actions::setupData()
     add_data = new QAction("Add data set");
     remove_data = new QAction("Remove data set");
     add_raw = new QAction("Add raw/tiff data");
-    add_hdf5 = new QAction("Add HDF5 data");
+    add_hdf5 = new QAction("Add NSX(HDF5) data");
     add_nexus = new QAction("Add Nexus data");
 
     connect(add_raw, &QAction::triggered, []() { gSession->loadRawData(); });
-    connect(add_hdf5, &QAction::triggered, []() { gSession->loadData(nsx::DataFormat::HDF5); });
+    connect(add_hdf5, &QAction::triggered, []() { gSession->loadData(nsx::DataFormat::NSX); });
     connect(add_hdf5, &QAction::triggered, []() { gSession->loadData(nsx::DataFormat::NEXUS); });
     connect(add_raw, &QAction::triggered, []() { gGui->sideBar()->refreshAll(); });
     connect(add_hdf5, &QAction::triggered, []() { gGui->sideBar()->refreshAll(); });

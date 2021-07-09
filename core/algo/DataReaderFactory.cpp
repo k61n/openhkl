@@ -32,9 +32,8 @@ std::shared_ptr<DataSet> create_reader(const std::string& filename, Diffractomet
 DataReaderFactory::DataReaderFactory() : _callbacks()
 {
     _callbacks["fake"] = &create_reader<FakeDataReader>;
-    _callbacks["h5"] = &create_reader<HDF5DataReader>;
-    _callbacks["hdf5"] = &create_reader<HDF5DataReader>;
-    _callbacks["hdf"] = &create_reader<HDF5DataReader>;
+    _callbacks["hdf"] = &create_reader<HDF5DataReader>;  // TODO: Warn for deprecation
+    _callbacks["nsx"] = &create_reader<HDF5DataReader>;
     _callbacks["nxs"] = &create_reader<NexusDataReader>;
     _callbacks["raw"] = &create_reader<RawDataReader>;
 }

@@ -24,7 +24,7 @@ class DataSet;
 using sptrDataSet = std::shared_ptr<DataSet>;
 using DataList = std::vector<sptrDataSet>;
 
-enum class DataFormat { HDF5, RAW, NEXUS, Count };
+enum class DataFormat { NSX, RAW, NEXUS };
 
 } // namespace nsx
 

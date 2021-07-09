@@ -148,8 +148,8 @@ void Session::loadData(nsx::DataFormat format)
 
     QString format_string;
     switch (format) {
-        case nsx::DataFormat::HDF5: {
-            format_string = QString("Data files(*.h5 *.hdf5 *.hdf);;all files (*.* *)");
+        case nsx::DataFormat::NSX: {
+            format_string = QString("Data files(*.nsx);;all files (*.* *)");
             break;
         }
         case nsx::DataFormat::NEXUS: {
@@ -157,7 +157,7 @@ void Session::loadData(nsx::DataFormat format)
             break;
         }
         default: {
-            throw std::range_error("Session::LoadData can only load HDF5 or Nexus data files");
+            throw std::runtime_error("Session::LoadData can only load NSX(HDF5) or Nexus data files");
             break;
         }
     }
