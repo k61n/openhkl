@@ -59,7 +59,7 @@ const std::string at_datasetName { "dataset" };
 const std::string at_formatVersion { "NSX-format version" };
 const std::string at_filepath { "filepath" };
 const std::string at_datasetSources { "sources" };  // list of sources for the DataSet, separated by ';'
-const std::string at_framesNr { "number of frames" };
+const std::string at_frameCount { "number of frames" };
 const std::string at_wavelength { "wavelength" };
 const std::string at_monitorSum { "monitor sum" };  // TODO: explain
 // Nexus-specific metadata
@@ -70,7 +70,7 @@ const std::string at_time { "time" };
 const std::string at_startTime { "start time" };
 const std::string at_endTime { "end time" };
 // peaks
-const std::string at_peaksNr { "number of peaks" };
+const std::string at_peakCount { "number of peaks" };
 const std::string at_peakType { "peak type" };
 // unit cell
 const std::string at_rVec { "reciprocal" };
@@ -134,8 +134,8 @@ const std::string ym_dataOrdering { "data_ordering" };
 const std::string ym_baseline { "baseline" };
 const std::string ym_gain { "gain" };
 const std::string ym_sampleDistance { "sample_distance" };
-const std::string ym_colsNr { "ncols" };
-const std::string ym_rowsNr { "nrows" };
+const std::string ym_colCount { "ncols" };
+const std::string ym_rowCount { "nrows" };
 const std::string ym_originX { "origin_x" };
 const std::string ym_originY { "origin_y" };
 const std::string ym_componentName { "name" };

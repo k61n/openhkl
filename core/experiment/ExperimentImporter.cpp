@@ -109,8 +109,8 @@ void ExperimentImporter::loadPeaks(Experiment* experiment)
             int n_peaks = 0;
             int type = 0;
 
-            if (peak_collection.attrExists(nsx::at_peaksNr)) {
-                const H5::Attribute attr = peak_collection.openAttribute(nsx::at_peaksNr);
+            if (peak_collection.attrExists(nsx::at_peakCount)) {
+                const H5::Attribute attr = peak_collection.openAttribute(nsx::at_peakCount);
                 const H5::DataType attr_type = attr.getDataType();
                 attr.read(attr_type, &n_peaks);
             }

@@ -42,7 +42,7 @@ DataSet::DataSet(std::shared_ptr<IDataReader> reader)
 {
     _nrows = detector().nRows();
     _ncols = detector().nCols();
-    _nFrames = _reader->metadata().key<int>(nsx::at_framesNr);
+    _nFrames = _reader->metadata().key<int>(nsx::at_frameCount);
 
     _metadata.setMap(_reader->metadata().map());
 

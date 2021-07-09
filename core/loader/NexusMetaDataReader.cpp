@@ -95,7 +95,7 @@ NexusMetaDataReader::NexusMetaDataReader(
         _metadata.add<double>(nsx::at_wavelength, wavelength);
         _metadata.add<double>(nsx::at_monitorSum, monitor);
         _metadata.add<int>(nsx::at_numor, numor);
-        _metadata.add<int>(nsx::at_framesNr, _nFrames);
+        _metadata.add<int>(nsx::at_frameCount, _nFrames);
         _metadata.add<int>(nsx::at_totalSteps, totalSteps);
         _metadata.add<std::string>(nsx::at_filepath, filename);
         _metadata.add<std::string>(nsx::at_title, title);

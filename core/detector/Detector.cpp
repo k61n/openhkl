@@ -114,10 +114,10 @@ Detector::Detector(const YAML::Node& node) : Component(node)
     setDistance(distance);
 
     // Sets the detector number of pixels from the property tree node
-    unsigned int nCols = node[nsx::ym_colsNr].as<unsigned int>();
+    unsigned int nCols = node[nsx::ym_colCount].as<unsigned int>();
     setNCols(nCols);
 
-    unsigned int nRows = node[nsx::ym_rowsNr].as<unsigned int>();
+    unsigned int nRows = node[nsx::ym_rowCount].as<unsigned int>();
     setNRows(nRows);
 
     _minCol = node[nsx::ym_originX] ? node[nsx::ym_originX].as<double>() : 0.0;

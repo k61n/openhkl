@@ -116,7 +116,7 @@ int PeakCollection::numberRejectedByFilter() const
 
 MetaData& PeakCollection::metadata()
 {
-    _metadata.add<int>(nsx::at_peaksNr, numberOfPeaks());
+    _metadata.add<int>(nsx::at_peakCount, numberOfPeaks());
     _metadata.add<int>(nsx::at_peakType, static_cast<int>(type()));
     return _metadata;
 }

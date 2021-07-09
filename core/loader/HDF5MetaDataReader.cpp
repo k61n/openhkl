@@ -157,7 +157,7 @@ HDF5MetaDataReader::HDF5MetaDataReader
     }
 
     // TODO: npdone -> nr of frames
-    _nFrames = _metadata.key<int>(nsx::at_framesNr);
+    _nFrames = _metadata.key<int>(nsx::at_frameCount);
 
     nsxlog(nsx::Level::Debug, "Reading detector state of '", filename, "', dataset '", dataset_name, "'");
 
