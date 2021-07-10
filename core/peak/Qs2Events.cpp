@@ -91,11 +91,9 @@ std::vector<DetectorEvent> algo::qs2events(
                 bool sign = compute_sign(q_vect, state);
 
                 if (sign == s0) { // branch right
-                    s0 = sign;
                     state0 = state;
                     f0 = f;
                 } else { // branch left
-                    s1 = sign;
                     state1 = state;
                     f1 = f;
                 }
