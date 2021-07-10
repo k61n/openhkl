@@ -38,7 +38,7 @@ struct ShapeCollectionParameters : public IntegrationParameters {
     bool kabsch_coords = true; //!< Are we using Kabsch or detector coordinates?
     int nbins_x = 20; //!< Number of x histogram bins for peak
     int nbins_y = 20; //!< Number of y histogram bins for peak
-    int nbins_z = 20; //!< Number of z histogram bins for peak
+    int nbins_z = 10; //!< Number of z histogram bins for peak
     int min_n_neighbors = 10; //!< Minimum number of neighbours required for shape collection
 
     void log(const Level& level) const;

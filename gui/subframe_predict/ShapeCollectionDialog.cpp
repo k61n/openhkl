@@ -63,7 +63,7 @@ ShapeCollectionDialog::ShapeCollectionDialog(
 
     connect(accept_button, &QPushButton::clicked, this, &ShapeCollectionDialog::accept);
 
-    connect(reject_button, &QPushButton::clicked, this, &ShapeCollectionDialog::rejected);
+    connect(reject_button, &QPushButton::clicked, this, &ShapeCollectionDialog::reject);
 }
 
 void ShapeCollectionDialog::setUpParametrization(nsx::PeakCollection* peak_collection)
@@ -112,7 +112,7 @@ void ShapeCollectionDialog::setParametersUp()
     _nx->setMinimum(5);
     _nx->setMaximum(10000);
     _nx->setMaximumWidth(10000);
-    _nx->setValue(20);
+    _nx->setValue(_params->nbins_x);
     _nx->setSizePolicy(*_size_policy_widgets);
     tooltip = "Number of histogram bins in x direction";
     _nx->setToolTip(tooltip);
@@ -121,7 +121,7 @@ void ShapeCollectionDialog::setParametersUp()
     _ny->setMinimum(5);
     _ny->setMaximum(10000);
     _ny->setMaximumWidth(10000);
-    _ny->setValue(20);
+    _ny->setValue(_params->nbins_y);
     _ny->setSizePolicy(*_size_policy_widgets);
     tooltip = "Number of histogram bins in y direction";
     _ny->setToolTip(tooltip);
@@ -130,7 +130,7 @@ void ShapeCollectionDialog::setParametersUp()
     _nz->setMinimum(5);
     _nz->setMaximum(10000);
     _nz->setMaximumWidth(10000);
-    _nz->setValue(20);
+    _nz->setValue(_params->nbins_z);
     _nz->setSizePolicy(*_size_policy_widgets);
     tooltip = "Number of histogram bins in z (frame) direction";
     _nz->setToolTip(tooltip);
@@ -138,6 +138,7 @@ void ShapeCollectionDialog::setParametersUp()
     _kabsch = new QGroupBox("Kabsch coordinates");
     _kabsch->setSizePolicy(*_size_policy_widgets);
     _kabsch->setCheckable(true);
+    _kabsch->setChecked(_params->kabsch_coords);
     tooltip = "Toggle between Kabsch and detector coordinates";
     _kabsch->setToolTip(tooltip);
 
@@ -170,7 +171,7 @@ void ShapeCollectionDialog::setParametersUp()
     _min_d->setSingleStep(0.1);
     _min_d->setValue(_params->d_min);
     _min_d->setSizePolicy(*_size_policy_widgets);
-    tooltip = QString::fromUtf8("Minimum d (I/\u212B) of peak to include in average");
+    tooltip = QString::fromUtf8("Minimum d (\u212B) of peak to include in average");
     _min_d->setToolTip(tooltip);
 
     _max_d = new QDoubleSpinBox();
@@ -178,7 +179,7 @@ void ShapeCollectionDialog::setParametersUp()
     _max_d->setSingleStep(0.1);
     _max_d->setValue(_params->d_max);
     _max_d->setSizePolicy(*_size_policy_widgets);
-    tooltip = QString::fromUtf8("Maximum d (I/\u212B) of peak to include in average");
+    tooltip = QString::fromUtf8("Maximum d (\u212B) of peak to include in average");
     _max_d->setToolTip(tooltip);
 
     _peak_end = new QDoubleSpinBox();
@@ -207,18 +208,18 @@ void ShapeCollectionDialog::setParametersUp()
 
     _build_collection = new QPushButton("Build shape collection");
     _build_collection->setSizePolicy(*_size_policy_widgets);
-    tooltip = "A shape collection is a collection of averaged peaks attached to a peak \
+    tooltip = "<font>A shape collection is a collection of averaged peaks attached to a peak \
         collection. A shape is the averaged peak shape of a peak and its neighbours within a \
-        specified cutoff.";
+        specified cutoff.</font>";
     _build_collection->setToolTip(tooltip);
 
-    form->addRow("Number along x:", _nx);
-    form->addRow("Number along y:", _ny);
-    form->addRow("Number along z:", _nz);
-    kabschform->addRow("Sigma D:", _sigma_D);
-    kabschform->addRow("Sigma M:", _sigma_M);
+    form->addRow("histogram bins x:", _nx);
+    form->addRow("histogram bins y:", _ny);
+    form->addRow("histogram bins frames:", _nz);
+    kabschform->addRow("Beam divergence " + QString(QChar(0x03C3)) + ":", _sigma_D);
+    kabschform->addRow("Mosaicity " + QString(QChar(0x03C3)) + ":", _sigma_M);
     form->addRow(_kabsch);
-    form->addRow("Minimum I/Sigma:", _min_I_sigma);
+    form->addRow("Minimum I/" + QString(QChar(0x03C3)) + ":", _min_I_sigma);
     form->addRow("Minimum d:", _min_d);
     form->addRow("Maximum d:", _max_d);
     form->addRow("Peak end:", _peak_end);
@@ -284,6 +285,8 @@ void ShapeCollectionDialog::setPreviewUp()
     left->addLayout(left_up);
 
     _calculate_mean_profile = new QPushButton("Calculate Profile");
+    tooltip = "Compute mean profile at position (x, y, frame) within specified radius";
+    _calculate_mean_profile->setToolTip(tooltip);
     connect(
         _calculate_mean_profile, &QPushButton::clicked, this, &ShapeCollectionDialog::calculate);
 
