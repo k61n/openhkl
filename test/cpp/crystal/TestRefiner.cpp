@@ -100,7 +100,7 @@ TEST_CASE("test/crystal/TestRefiner.cpp", "")
     params.bkg_end = 4.0;
     integrator->setParameters(params);
     integrator->setHandler(progressHandler);
-    experiment.integrateFoundPeaks(nsx::IntegratorType::PixelSum);
+    experiment.integrateFoundPeaks();
     experiment.acceptFoundPeaks("found_peaks");
 
     // #########################################################

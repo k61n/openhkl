@@ -31,7 +31,7 @@ class TestPrediction(unittest.TestCase):
         shapelib_params.d_max = 50.0
         shapelib_params.bkg_begin = 3.0
         shapelib_params.bkg_end = 6.0
-        expt.buildShapeCollection(filtered_peaks, shapelib_params)
+        expt.buildShapeCollection(filtered_peaks, data[0], shapelib_params)
         nprofiles = filtered_peaks.shapeCollection().numberOfPeaks()
         self.assertEqual(nprofiles, 122)
 
@@ -47,11 +47,9 @@ class TestPrediction(unittest.TestCase):
         prediction_params.fit_center = True
         prediction_params.fit_covariance = True
         prediction_params.min_neighbours = 400.0
-        expt.predictPeaks("predicted", filtered_peaks, prediction_params,
-                        nsx.PeakInterpolation_NoInterpolation)
+        cell = expt.getUnitCell("accepted")
+        expt.predictPeaks("predicted", data[0], cell, prediction_params)
         predicted_peaks = expt.getPeakCollection("predicted")
-        expt.integratePredictedPeaks(nsx.IntegratorType_Profile1D, predicted_peaks,
-                                    filtered_peaks.shapeCollection(), prediction_params)
 
         self.assertTrue(predicted_peaks.numberOfPeaks() > 200);
         # N.B. These results are not meaningful! The data set is too small to

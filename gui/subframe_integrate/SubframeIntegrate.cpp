@@ -482,6 +482,7 @@ void SubframeIntegrate::runIntegration()
         progressView.watch(handler);
 
         nsx::Experiment* expt = gSession->experimentAt(_exp_combo->currentIndex())->experiment();
+        nsx::sptrDataSet data = _data_list[_data_combo->currentIndex()];
         nsx::IPeakIntegrator* integrator =
             expt->getIntegrator(
                 _integrator_strings.find(_integrator_combo->currentText().toStdString())->second);
@@ -495,7 +496,7 @@ void SubframeIntegrate::runIntegration()
             integrationParams();
 
         integrator->setHandler(handler);
-        expt->integratePeaks(integrator, peaks_to_integrate, params, shapes);
+        expt->integratePeaks(integrator, data, peaks_to_integrate, params, shapes);
     } catch (std::exception& e) {
         QMessageBox::critical(this, "Error", QString(e.what()));
     }

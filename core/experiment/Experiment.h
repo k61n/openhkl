@@ -176,18 +176,13 @@ class Experiment {
     IPeakIntegrator* getIntegrator(IntegratorType integrator_type) const;
     //! Integrate the given peak collection with the named integrator
     void integratePeaks(
-        const IntegratorType integrator_type, PeakCollection* peak_collection, double d_min,
-        double d_max);
+        const IntegratorType integrator_type, sptrDataSet data, PeakCollection* peak_collection);
     //! Integrate peaks given full parameter set (for reintegration after prediction/refinement)
     void integratePeaks(
-        IPeakIntegrator* integrator, PeakCollection* peaks, IntegrationParameters* params,
-        ShapeCollection* shapes);
-    //! Integrate predicted peaks, fitting shapes from given shape collection
-    void integratePredictedPeaks(
-        const IntegratorType integrator_type, PeakCollection* peak_collection,
-        ShapeCollection* shape_collection, PredictionParameters& params);
+        IPeakIntegrator* integrator, sptrDataSet data, PeakCollection* peaks,
+        IntegrationParameters* params, ShapeCollection* shapes);
     //! Integrate peaks found by _peak_finder
-    void integrateFoundPeaks(const IntegratorType integrator_type);
+    void integrateFoundPeaks();
 
     // Save load
     //! Save the current experiment state to hdf5
@@ -197,11 +192,11 @@ class Experiment {
 
     // Prediction
     //! Construct the collection used to fit the shapes of predicted peaks
-    void buildShapeCollection(PeakCollection* peaks, const ShapeCollectionParameters& params);
+    void buildShapeCollection(
+        PeakCollection* peaks, sptrDataSet data, const ShapeCollectionParameters& params);
     //! Predict peaks from unit cell
     void predictPeaks(
-        const std::string& name, PeakCollection* peaks, PredictionParameters* params,
-        PeakInterpolation interpol);
+        const std::string& name, sptrDataSet data, UnitCell* cell, PredictionParameters* params);
     //! Get a pointer to the refiner
     Refiner* refiner() { return _refiner.get(); };
     //! Refine unit cell and instrument parameters

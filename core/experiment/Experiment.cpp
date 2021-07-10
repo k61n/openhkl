@@ -91,6 +91,7 @@ void Experiment::setDefaultDMin()
     _predict_params->d_min = d_min;
     _indexer_params->d_min = d_min;
     _filter_params->d_min = d_min;
+    _merge_params->d_min = d_min;
 }
 
 void Experiment::acceptFoundPeaks(const std::string& name)
@@ -169,7 +170,7 @@ void Experiment::autoIndex(PeakCollection* peaks)
 }
 
 void Experiment::buildShapeCollection(
-    PeakCollection* peaks, const ShapeCollectionParameters& params)
+    PeakCollection* peaks, sptrDataSet data, const ShapeCollectionParameters& params)
 {
     params.log(Level::Info);
     peaks->computeSigmas();
@@ -211,41 +212,30 @@ void Experiment::buildShapeCollection(
 
     std::vector<Peak3D*> fit_peak_list = fit_peaks->getPeakList();
     shape_collection = _integration_handler->integrateShapeCollection(
-        fit_peak_list, &shape_collection, aabb, params);
+        fit_peak_list, data, &shape_collection, aabb, params);
 
     peaks->setShapeCollection(shape_collection);
     // shape_collection.updateFit(1000); // This does nothing!! - zamaan
 }
 
 void Experiment::predictPeaks(
-    const std::string& name, PeakCollection* peaks, PredictionParameters* params,
-    PeakInterpolation interpol)
+    const std::string& name, sptrDataSet data, UnitCell* cell, PredictionParameters* params)
 {
-    const DataList numors = getAllData();
     std::vector<nsx::Peak3D*> predicted_peaks;
-    const UnitCell* accepted_cell = getUnitCell(nsx::kw_acceptedUnitcell);
-    ShapeCollection* shape_collection = peaks->shapeCollection();
 
-    int current_numor = 0;
-    for (const sptrDataSet& data : numors) {
-        nsxlog(
-            Level::Info, "predictPeaks: predicting peaks for numor ", ++current_numor, " of ",
-            numors.size());
+    nsxlog(Level::Info, "predictPeaks: predicting peaks for data set ", data->name());
 
-        const std::vector<nsx::Peak3D*> predicted =
-            nsx::predictPeaks(data, accepted_cell, params);
+    const std::vector<nsx::Peak3D*> predicted =
+        nsx::predictPeaks(data, cell, params);
 
-        for (nsx::Peak3D* peak : predicted)
-            predicted_peaks.push_back(peak);
+    for (nsx::Peak3D* peak : predicted)
+        predicted_peaks.push_back(peak);
 
-        nsxlog(
-            Level::Info, "predictPeaks: completed peak prediciton. Added ", predicted_peaks.size(),
-            " peaks");
+    nsxlog(
+        Level::Info, "predictPeaks: completed peak prediciton. Added ", predicted_peaks.size(),
+        " peaks");
 
-        addPeakCollection(name, listtype::PREDICTED, predicted_peaks);
-        shape_collection->setPredictedShapes(getPeakCollection(name), interpol);
-        predicted_peaks.clear();
-    }
+    addPeakCollection(name, listtype::PREDICTED, predicted_peaks);
 }
 
 void Experiment::computeQuality(
@@ -502,28 +492,21 @@ IPeakIntegrator* Experiment::getIntegrator(const IntegratorType integrato_type) 
 }
 
 void Experiment::integratePeaks(
-    const IntegratorType integrator_type, PeakCollection* peak_collection, double d_min, double d_max)
+    const IntegratorType integrator_type, sptrDataSet data, PeakCollection* peak_collection)
 {
-    _integration_handler->integratePeaks(integrator_type, peak_collection, d_min, d_max);
+    _integration_handler->integratePeaks(integrator_type, data, peak_collection);
 }
+
 void Experiment::integratePeaks(
-    IPeakIntegrator* integrator, PeakCollection* peaks, IntegrationParameters* params,
-    ShapeCollection* shapes)
+    IPeakIntegrator* integrator, sptrDataSet data, PeakCollection* peaks,
+    IntegrationParameters* params, ShapeCollection* shapes)
 {
-    _integration_handler->integratePeaks(integrator, peaks, params, shapes);
+    _integration_handler->integratePeaks(integrator, data, peaks, params, shapes);
 }
 
-void Experiment::integratePredictedPeaks(
-    const IntegratorType  integrator_type, PeakCollection* peak_collection,
-    ShapeCollection* shape_collection, PredictionParameters& params)
+void Experiment::integrateFoundPeaks()
 {
-    _integration_handler->integratePredictedPeaks(
-        integrator_type, peak_collection, shape_collection, params);
-}
-
-void Experiment::integrateFoundPeaks(const IntegratorType integrator_type)
-{
-    _integration_handler->integrateFoundPeaks(integrator_type, _peak_finder.get());
+    _integration_handler->integrateFoundPeaks(_peak_finder.get());
 }
 
 PeakFinderParameters* Experiment::finderParams()

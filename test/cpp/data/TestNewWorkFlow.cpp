@@ -179,7 +179,7 @@ TEST_CASE("test/data/TestNewWorkFlow.cpp", "")
     params.bkg_end = 4.0;
     integrator->setParameters(params);
     integrator->setHandler(progressHandler);
-    experiment.integrateFoundPeaks(nsx::IntegratorType::PixelSum);
+    experiment.integrateFoundPeaks();
     experiment.acceptFoundPeaks("found_peaks");
 
     // #########################################################
@@ -266,7 +266,7 @@ TEST_CASE("test/data/TestNewWorkFlow.cpp", "")
     params.bkg_begin = 4.0;
     params.bkg_end = 5.0;
     integrator->setParameters(params);
-    experiment.integrateFoundPeaks(nsx::IntegratorType::PixelSum);
+    experiment.integrateFoundPeaks();
 
     // #########################################################
     // compute shape library
