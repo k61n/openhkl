@@ -48,15 +48,6 @@ struct DataQuality {
     void log() const;
 };
 
-struct MergeParameters {
-    double d_min = 1.5; //!< Minimum d (Bragg's law)
-    double d_max = 50.0; //!< Maximum d (Bragg's law)
-    int n_shells = 10; //!< Number of resolution shells
-    bool friedel = true; //!< Whether to include the Friedel relation
-
-    void log(const Level& level) const;
-};
-
 struct ShellQuality : DataQuality {
     double dmin; //!< Lower limit of d for resolution shell
     double dmax; //!< Upper limit of d for resolution shell
@@ -69,9 +60,8 @@ struct ShellQuality : DataQuality {
 struct DataResolution {
     std::vector<ShellQuality> shells;
 
-    void computeQuality(
-        double d_min, double d_max, int n_shells, std::vector<PeakCollection*> collections, 
-        SpaceGroup spacegroup, bool friedel);
+    void addShell(const ShellQuality& shell);
+    void clear();
     void log() const;
 };
 

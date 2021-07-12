@@ -15,7 +15,6 @@
 #include "core/experiment/PeakHandler.h"
 #include "base/utils/Logger.h"
 #include "core/peak/Peak3D.h"
-#include "core/statistics/MergedData.h"
 
 namespace nsx {
 
@@ -95,23 +94,6 @@ void PeakHandler::acceptFilter(std::string name, PeakCollection* collection, lis
     _peak_collections.insert_or_assign(name, std::move(ptr));
 }
 
-void PeakHandler::setMergedPeaks(std::vector<PeakCollection*> peak_collections, bool friedel)
-{
-    _merged_peaks = std::make_unique<MergedData>(peak_collections, friedel);
-}
-
-void PeakHandler::setMergedPeaks(PeakCollection* found, PeakCollection* predicted, bool friedel)
-{
-    std::vector<PeakCollection*> collections;
-    collections.push_back(found);
-    collections.push_back(predicted);
-    _merged_peaks = std::make_unique<MergedData>(collections, friedel);
-}
-
-void PeakHandler::resetMergedPeaks()
-{
-    _merged_peaks.reset();
-}
 
 void PeakHandler::checkPeakCollections()
 {

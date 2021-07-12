@@ -21,6 +21,7 @@
 #include "core/statistics/CC.h"
 #include "core/statistics/MergedData.h"
 #include "core/statistics/MergedPeak.h"
+#include "core/statistics/PeakMerger.h"
 #include "core/statistics/RFactor.h"
 #include "core/statistics/ResolutionShell.h"
 #include "gui/graphics/SXPlot.h"
@@ -215,17 +216,17 @@ void SubframeMergedPeaks::setDShellUp()
 
     connect(
         _d_min, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged), this,
-        &SubframeMergedPeaks::refreshDShellTable);
+        &SubframeMergedPeaks::processMerge);
 
     connect(
         _d_max, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged), this,
-        &SubframeMergedPeaks::refreshDShellTable);
+        &SubframeMergedPeaks::processMerge);
 
     connect(
         _d_shells, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged), this,
-        &SubframeMergedPeaks::refreshDShellTable);
+        &SubframeMergedPeaks::processMerge);
 
-    connect(_friedel, &QCheckBox::clicked, this, &SubframeMergedPeaks::refreshDShellTable);
+    connect(_friedel, &QCheckBox::clicked, this, &SubframeMergedPeaks::processMerge);
 
     connect(
         _plottable_statistics,
@@ -399,20 +400,25 @@ void SubframeMergedPeaks::refreshPredictedPeakList()
 
 void SubframeMergedPeaks::processMerge()
 {
-    auto expt = gSession->experimentAt(_exp_drop->currentIndex())->experiment();
-    expt->resetMergedPeaks();
+    auto* expt = gSession->experimentAt(_exp_drop->currentIndex())->experiment();
+    auto* merger = expt->peakMerger();
+    merger->reset();
+    setMergeParameters();
+
     if (_peaks1_list.empty() || _peaks2_list.empty()) {
         _merged_data = nullptr;
     } else {
         std::vector<nsx::PeakCollection*> peak_collections;
         QString collection1 = _peaks1_drop->currentText();
         QString collection2 = _peaks2_drop->currentText();
-        peak_collections.push_back(expt->getPeakCollection(collection1.toStdString()));
-        if (!collection2.isEmpty())
-            peak_collections.push_back(expt->getPeakCollection(collection2.toStdString()));
 
-        expt->setMergedPeaks(peak_collections, _friedel->isChecked());
-        _merged_data = expt->getMergedPeaks();
+        merger->addPeakCollection(expt->getPeakCollection(collection1.toStdString()));
+        if (!collection2.isEmpty())
+            merger->addPeakCollection(expt->getPeakCollection(collection2.toStdString()));
+
+        merger->mergePeaks();
+        _merged_data = merger->getMergedData();
+        _merged_data_per_shell = merger->getMergedDataPerShell();
     }
     refreshTables();
 }
@@ -427,36 +433,27 @@ void SubframeMergedPeaks::refreshTables()
 
 void SubframeMergedPeaks::refreshDShellTable()
 {
-    setMergeParameters();
-    auto params = gSession->experimentAt(_exp_drop->currentIndex())->experiment()->mergeParams();
+    auto* expt = gSession->experimentAt(_exp_drop->currentIndex())->experiment();
+    auto* merger = expt->peakMerger();
 
     QStandardItemModel* model = dynamic_cast<QStandardItemModel*>(_d_shell_view->model());
     model->removeRows(0, model->rowCount());
+    auto* merged_data = merger->getMergedData();
 
-    if (_merged_data == nullptr)
+    if (merged_data == nullptr)
         return;
 
-    if (_merged_data->totalSize() == 0)
+    if (merged_data->totalSize() == 0)
         return;
 
-    nsx::Experiment* expt = gSession->experimentAt(_exp_drop->currentIndex())->experiment();
-    std::vector<nsx::PeakCollection*> collections;
-    nsx::PeakCollection* collection1 = expt->getPeakCollection(_peaks1_drop->currentText().toStdString());
-    collections.emplace_back(collection1);
-    if (!_peaks2_drop->currentText().isEmpty()) {
-        nsx::PeakCollection* collection2 =
-            expt->getPeakCollection(_peaks2_drop->currentText().toStdString());
-        if (collection1 != collection2)
-            collections.emplace_back(collection2);
-    }
-    expt->computeQuality(params, collections);
-    nsx::DataResolution* quality = expt->getQuality();
-    nsx::DataResolution* resolution = expt->getResolution();
+    merger->computeQuality();
+    const nsx::DataResolution* quality = merger->overallQuality();
+    const nsx::DataResolution* resolution = merger->shellQuality();
 
     for (auto shell : resolution->shells) {
         QList<QStandardItem*> row;
-        row.push_back(new QStandardItem(QString::number(shell.dmin)));
         row.push_back(new QStandardItem(QString::number(shell.dmax)));
+        row.push_back(new QStandardItem(QString::number(shell.dmin)));
         row.push_back(new QStandardItem(QString::number(shell.nobserved)));
         row.push_back(new QStandardItem(QString::number(shell.nunique)));
         row.push_back(new QStandardItem(QString::number(shell.redundancy)));
@@ -475,8 +472,8 @@ void SubframeMergedPeaks::refreshDShellTable()
 
     QList<QStandardItem*> row;
     for (auto shell : quality->shells) {
-        row.push_back(new QStandardItem(QString::number(shell.dmin)));
         row.push_back(new QStandardItem(QString::number(shell.dmax)));
+        row.push_back(new QStandardItem(QString::number(shell.dmin)));
         row.push_back(new QStandardItem(QString::number(shell.nobserved)));
         row.push_back(new QStandardItem(QString::number(shell.nunique)));
         row.push_back(new QStandardItem(QString::number(shell.redundancy)));
@@ -633,41 +630,11 @@ void SubframeMergedPeaks::saveStatistics()
     QFileInfo info(filename);
     s.setValue("merged", info.absolutePath());
 
-    setMergeParameters();
-    double min = _d_min->value();
-    double max = _d_max->value();
-    int shells = _d_shells->value();
-    bool inclFriedel = _friedel->isChecked();
-
-    if (_merged_data == nullptr)
-        return;
-
-    nsx::PeakCollection* found = gSession->experimentAt(_exp_drop->currentIndex())
-                                     ->experiment()
-                                     ->getPeakCollection(_peaks1_drop->currentText().toStdString());
-    nsx::PeakCollection* predicted =
-        gSession->experimentAt(_exp_drop->currentIndex())
-            ->experiment()
-            ->getPeakCollection(_peaks2_drop->currentText().toStdString());
-
-    nsx::ResolutionShell resolutionShell(min, max, shells);
-    for (nsx::Peak3D* peak : found->getPeakList()) {
-        try {
-            resolutionShell.addPeak(peak);
-        } catch (const std::exception& e) {
-            continue;
-        }
-    }
-    for (nsx::Peak3D* peak : predicted->getPeakList()) {
-        try {
-            resolutionShell.addPeak(peak);
-        } catch (const std::exception& e) {
-            continue;
-        }
-    }
+    auto* expt = gSession->experimentAt(_exp_drop->currentIndex())->experiment();
+    auto* merger = expt->peakMerger();
 
     exporter.saveStatistics(
-        filename.toStdString(), resolutionShell, _merged_data->spaceGroup(), inclFriedel);
+        filename.toStdString(), merger->shellQuality(), merger->overallQuality());
 }
 
 void SubframeMergedPeaks::saveMergedPeaks()
@@ -679,6 +646,11 @@ void SubframeMergedPeaks::saveMergedPeaks()
     QString loadDirectory = s.value("merged", QDir::homePath()).toString();
 
     QString filename;
+
+    auto* expt = gSession->experimentAt(_exp_drop->currentIndex())->experiment();
+    auto* merger = expt->peakMerger();
+    auto* merged_data = merger->getMergedData();
+
     if (format.compare("ShelX") == 0) {
         filename = QFileDialog::getSaveFileName(
             this, "Save peaks to ShelX", loadDirectory, "ShelX hkl file (*.hkl)");
@@ -686,7 +658,7 @@ void SubframeMergedPeaks::saveMergedPeaks()
         if (filename.isEmpty())
             return;
 
-        exporter.saveToShelXMerged(filename.toStdString(), _merged_data);
+        exporter.saveToShelXMerged(filename.toStdString(), merged_data);
     } else if (format.compare("FullProf") == 0) {
         filename = QFileDialog::getSaveFileName(
             this, "Save peaks to FullProf", loadDirectory, "FullProf hkl file (*.hkl)");
@@ -694,7 +666,7 @@ void SubframeMergedPeaks::saveMergedPeaks()
         if (filename.isEmpty())
             return;
 
-        exporter.saveToFullProfMerged(filename.toStdString(), _merged_data);
+        exporter.saveToFullProfMerged(filename.toStdString(), merged_data);
     } else if (format.compare("Phenix") == 0) {
         filename = QFileDialog::getSaveFileName(
             this, "Save peaks to Phenix sca", loadDirectory, "Phenix sca file (*.sca)");
@@ -702,7 +674,7 @@ void SubframeMergedPeaks::saveMergedPeaks()
         if (filename.isEmpty())
             return;
 
-        exporter.saveToSCAMerged(filename.toStdString(), _merged_data);
+        exporter.saveToSCAMerged(filename.toStdString(), merged_data);
     }
 
     QFileInfo info(filename);
@@ -718,6 +690,11 @@ void SubframeMergedPeaks::saveUnmergedPeaks()
     QString loadDirectory = s.value("merged", QDir::homePath()).toString();
 
     QString filename;
+
+    auto* expt = gSession->experimentAt(_exp_drop->currentIndex())->experiment();
+    auto* merger = expt->peakMerger();
+    auto* merged_data = merger->getMergedData();
+
     if (format.compare("ShelX") == 0) {
         filename = QFileDialog::getSaveFileName(
             this, "Save peaks to ShelX", loadDirectory, "ShelX hkl file (*.hkl)");
@@ -725,7 +702,7 @@ void SubframeMergedPeaks::saveUnmergedPeaks()
         if (filename.isEmpty())
             return;
 
-        exporter.saveToShelXUnmerged(filename.toStdString(), _merged_data);
+        exporter.saveToShelXUnmerged(filename.toStdString(), merged_data);
     } else if (format.compare("FullProf") == 0) {
         filename = QFileDialog::getSaveFileName(
             this, "Save peaks to FullProf", loadDirectory, "ShelX hkl file (*.hkl)");
@@ -733,7 +710,7 @@ void SubframeMergedPeaks::saveUnmergedPeaks()
         if (filename.isEmpty())
             return;
 
-        exporter.saveToFullProfUnmerged(filename.toStdString(), _merged_data);
+        exporter.saveToFullProfUnmerged(filename.toStdString(), merged_data);
     } else if (format.compare("Phenix") == 0) {
         filename = QFileDialog::getSaveFileName(
             this, "Save peaks to Phenix sca", loadDirectory, "Phenix sca file (*.sca)");
@@ -741,7 +718,7 @@ void SubframeMergedPeaks::saveUnmergedPeaks()
         if (filename.isEmpty())
             return;
 
-        exporter.saveToSCAUnmerged(filename.toStdString(), _merged_data);
+        exporter.saveToSCAUnmerged(filename.toStdString(), merged_data);
     }
 
     QFileInfo info(filename);

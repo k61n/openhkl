@@ -122,4 +122,20 @@ double MergedData::completeness()
     return double(n_valid) / double(totalSize());
 }
 
+void MergedData::setDRange(const double d_min, const double d_max)
+{
+    _d_min = d_min;
+    _d_max = d_max;
+}
+
+double MergedData::dMin() const
+{
+    return _d_min;
+}
+
+double MergedData::dMax() const
+{
+    return _d_max;
+}
+
 } // namespace nsx

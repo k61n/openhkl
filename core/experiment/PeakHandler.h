@@ -23,7 +23,6 @@ namespace nsx {
 
 using PeakCollectionMap = std::map<std::string, std::unique_ptr<PeakCollection>>;
 
-class MergedData;
 class Peak3D;
 
 using PeakList = std::vector<sptrPeak3D>;
@@ -57,14 +56,6 @@ class PeakHandler {
     //! Create a new collection of peaks caught by _peak_filter
     void acceptFilter(
         const std::string name, PeakCollection* collection, listtype lt = listtype::FILTERED);
-    //! Merge a vector of peak collections
-    void setMergedPeaks(std::vector<PeakCollection*> peak_collections, bool friedel);
-    //! Merge two peak collections (mainly for SWIG)
-    void setMergedPeaks(PeakCollection* found, PeakCollection* predicted, bool friedel);
-    //! Reset the merged peak collection
-    void resetMergedPeaks();
-    //! Get the merged peak collection
-    MergedData* getMergedPeaks() const { return _merged_peaks.get(); };
     //! Check peak collections for bad intensities
     void checkPeakCollections();
     //! Deep copy a peak collection
@@ -74,8 +65,6 @@ class PeakHandler {
  private:
     //! Pointer to map of peak collections in Experiment
     PeakCollectionMap _peak_collections;
-    //! A map of the peaklists with their name as index
-    std::unique_ptr<MergedData> _merged_peaks;
 };
 
 } // namespace nsx

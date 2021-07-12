@@ -54,6 +54,8 @@ Experiment::Experiment(const std::string& name, const std::string& diffractomete
     _peak_finder = std::make_unique<PeakFinder>();
     _peak_filter = std::make_unique<PeakFilter>();
     _auto_indexer = std::make_unique<AutoIndexer>();
+    _peak_merger = std::make_unique<PeakMerger>();
+
     _data_handler = std::make_shared<DataHandler>(_name, diffractometerName);
     _peak_handler = std::make_unique<PeakHandler>();
     _cell_handler = std::make_unique<UnitCellHandler>();
@@ -66,11 +68,15 @@ Experiment::Experiment(const std::string& name, const std::string& diffractomete
     _shape_params= std::make_unique<ShapeCollectionParameters>();
     _refiner_params = std::make_shared<RefinerParameters>();
     _int_params = std::make_unique<IntegrationParameters>();
-    _merge_params = std::make_unique<MergeParameters>();
+    _merge_params = std::make_shared<MergeParameters>();
 
     _peak_finder->setParameters(_finder_params);
     _peak_filter->setParameters(_filter_params);
     _auto_indexer->setParameters(_indexer_params);
+    _peak_merger->setParameters(_merge_params);
+
+    std::string logfile = "nsx.log";
+    Logger::instance().start(logfile, Level::Info);
 }
 
 const std::string& Experiment::name() const
@@ -238,20 +244,6 @@ void Experiment::predictPeaks(
     addPeakCollection(name, listtype::PREDICTED, predicted_peaks);
 }
 
-void Experiment::computeQuality(
-    MergeParameters* params, std::vector<PeakCollection*> collections)
-{
-    params->log(Level::Info);
-    _data_quality.computeQuality(
-        params->d_min, params->d_max, 1, collections,
-        _peak_handler->getMergedPeaks()->spaceGroup(), params->friedel);
-    _data_resolution.computeQuality(
-        params->d_min, params->d_max, params->n_shells, collections,
-        _peak_handler->getMergedPeaks()->spaceGroup(), params->friedel);
-    _data_quality.log();
-    _data_resolution.log();
-}
-
 const UnitCell* Experiment::getAcceptedCell() const
 {
     return getUnitCell(nsx::kw_acceptedUnitcell);
@@ -388,26 +380,6 @@ void Experiment::checkPeakCollections()
 void Experiment::clonePeakCollection(std::string name, std::string new_name)
 {
     _peak_handler->clonePeakCollection(name, new_name);
-}
-
-void Experiment::setMergedPeaks(std::vector<PeakCollection*> peak_collections, bool friedel)
-{
-    _peak_handler->setMergedPeaks(peak_collections, friedel);
-}
-
-void Experiment::setMergedPeaks(PeakCollection* found, PeakCollection* predicted, bool friedel)
-{
-    _peak_handler->setMergedPeaks(found, predicted, friedel);
-}
-
-void Experiment::resetMergedPeaks()
-{
-    _peak_handler->resetMergedPeaks();
-}
-
-MergedData* Experiment::getMergedPeaks() const
-{
-    return _peak_handler->getMergedPeaks();
 }
 
 // Unit cell handler methods

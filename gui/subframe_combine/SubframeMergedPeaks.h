@@ -100,7 +100,9 @@ class SubframeMergedPeaks : public QWidget {
     QStringList _peaks2_list;
     //! The merged peak list
     nsx::MergedData* _merged_data;
-    //! The spacegroup
+    //! Merged data per resolution shell
+    std::vector<nsx::MergedData*> _merged_data_per_shell;
+    //! The peak exporter
     nsx::PeakExporter exporter;
 
  private:
