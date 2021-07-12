@@ -11,7 +11,7 @@ class TestPrediction(unittest.TestCase):
         detector = "BioDiff5000"
         expt = nsx.Experiment(name, detector)
 
-        expt.loadFromFile("FutA-3.nsx")
+        expt.loadFromFile("FutA-4.nsx")
         found_peaks = expt.getPeakCollection("peaks")
         filtered_peaks = expt.getPeakCollection("filtered")
         expt.assignUnitCell(found_peaks)
