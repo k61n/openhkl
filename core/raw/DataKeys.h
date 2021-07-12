@@ -61,7 +61,7 @@ const std::string at_filepath { "filepath" };
 const std::string at_datasetSources { "sources" };  // list of sources for the DataSet, separated by ';'
 const std::string at_frameCount { "number of frames" };
 const std::string at_wavelength { "wavelength" };
-const std::string at_monitorSum { "monitor sum" };  // TODO: explain
+const std::string at_monitorSum { "monitor" };  // TODO: explain
 // Nexus-specific metadata
 const std::string at_numor { "numor" }; // internal raw data labelling of ILL
 const std::string at_totalSteps { "total steps" };
