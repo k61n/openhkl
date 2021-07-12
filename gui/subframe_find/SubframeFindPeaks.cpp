@@ -540,7 +540,7 @@ void SubframeFindPeaks::integrate()
     integrator->setParameters(params);
     integrator->setHandler(handler);
 
-    experiment->integrateFoundPeaks(nsx::IntegratorType::PixelSum);
+    experiment->integrateFoundPeaks();
 
     refreshPeakTable();
 }

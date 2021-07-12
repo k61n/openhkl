@@ -168,7 +168,7 @@ TEST_CASE("test/data/TestNexusData.cpp", "")
     params.bkg_end = 4.5;
     integrator->setParameters(params);
     integrator->setHandler(progressHandler);
-    exp.integrateFoundPeaks(nsx::IntegratorType::PixelSum);
+    exp.integrateFoundPeaks();
     exp.acceptFoundPeaks("found_peaks");
     nsx::PeakCollection* found_collection = exp.getPeakCollection("found_peaks");
 

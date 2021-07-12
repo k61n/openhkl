@@ -49,7 +49,7 @@ class TestPeakFinder(unittest.TestCase):
         integrator_params.bkg_begin = 3.0
         integrator_params.bkg_end = 6.0
         integrator.setParameters(integrator_params)
-        expt.integrateFoundPeaks(nsx.IntegratorType_PixelSum)
+        expt.integrateFoundPeaks()
         expt.acceptFoundPeaks("found")
         found_peaks = expt.getPeakCollection("found")
         n_peaks = found_peaks.numberOfPeaks()

@@ -66,74 +66,35 @@ IPeakIntegrator* IntegrationHandler::getIntegrator(const IntegratorType integrat
 }
 
 void IntegrationHandler::integratePeaks(
-    IntegratorType integrator_type, PeakCollection* peak_collection, double d_min, double d_max)
+    IntegratorType integrator_type, sptrDataSet data, PeakCollection* peaks)
 {
     nsxlog(
         Level::Info, "IntegrationHandler::integratePeaks: integrating PeakCollection",
-        peak_collection);
+        peaks->name());
     IPeakIntegrator* integrator = getIntegrator(integrator_type);
-
-    nsx::PeakFilter filter;
-    filter.resetFiltering(peak_collection);
-    filter.parameters()->d_min = d_min;
-    filter.parameters()->d_max = d_max;
-    filter.filterDRange(peak_collection);
-    std::vector<Peak3D*> peaks = peak_collection->getFilteredPeakList();
-
-    const DataMap* data = _data_handler->getDataMap();
-    integrator->setNNumors(data->size());
-    int n_numor = 1;
-    for (DataMap::const_iterator it = data->begin(); it != data->end(); ++it) {
-        integrator->integrate(peaks, peak_collection->shapeCollection(), it->second, n_numor);
-        ++n_numor;
-    }
+    integrator->setNNumors(1);
+    integrator->integrate(peaks->getPeakList(), peaks->shapeCollection(), data, 1);
 }
 
 void IntegrationHandler::integratePeaks(
-    IPeakIntegrator* integrator, PeakCollection* peaks, IntegrationParameters* params,
-    ShapeCollection* shapes)
+    IPeakIntegrator* integrator, sptrDataSet data, PeakCollection* peaks,
+    IntegrationParameters* params, ShapeCollection* shapes)
 {
-    nsxlog(Level::Info, "IntegrationHandler::integratePeaks: integrating PeakCollection ", peaks);
-    const DataMap* data = _data_handler->getDataMap();
-    integrator->setNNumors(data->size());
+    nsxlog(
+        Level::Info, "IntegrationHandler::integratePeaks: integrating PeakCollection ",
+        peaks->name());
+    params->log(Level::Info);
     integrator->setParameters(*params);
-    int n_numor = 1;
-    for (DataMap::const_iterator it = data->begin(); it != data->end(); ++it) {
-        integrator->integrate(peaks->getPeakList(), shapes, it->second, n_numor);
-        ++n_numor;
-    }
+
+    integrator->setNNumors(1);
+    integrator->integrate(peaks->getPeakList(), shapes, data, 1);
 }
 
-void IntegrationHandler::integratePredictedPeaks(
-    IntegratorType integrator_type, PeakCollection* peak_collection,
-    ShapeCollection* shape_collection, PredictionParameters& params)
-{
-    nsxlog(Level::Info, "IntegrationHandler::integratePredictedPeaks");
-    IPeakIntegrator* integrator = getIntegrator(integrator_type);
-    integrator->setParameters(params);
-    params.log(Level::Info);
-    nsx::PeakFilter filter;
-    filter.resetFiltering(peak_collection);
-    filter.parameters()->d_min = params.d_min;
-    filter.parameters()->d_max = params.d_max;
-    filter.filterDRange(peak_collection);
-    std::vector<Peak3D*> peaks = peak_collection->getFilteredPeakList();
-
-    const DataMap* data = _data_handler->getDataMap();
-    integrator->setNNumors(data->size());
-    int n_numor = 1;
-    for (DataMap::const_iterator it = data->begin(); it != data->end(); ++it) {
-        integrator->integrate(peaks, shape_collection, it->second, n_numor);
-        ++n_numor;
-    }
-}
-
-void IntegrationHandler::integrateFoundPeaks(
-    IntegratorType integrator_type, PeakFinder* peak_finder)
+void IntegrationHandler::integrateFoundPeaks(PeakFinder* peak_finder)
 {
     nsxlog(Level::Info, "IntegrationHandler::integrateFoundPeaks");
-    IPeakIntegrator* integrator = getIntegrator(integrator_type);
     const DataMap* data = _data_handler->getDataMap();
+    IPeakIntegrator* integrator = getIntegrator(IntegratorType::PixelSum);
     integrator->setNNumors(data->size());
 
     int n_numor = 1;
@@ -144,25 +105,15 @@ void IntegrationHandler::integrateFoundPeaks(
 }
 
 ShapeCollection& IntegrationHandler::integrateShapeCollection(
-    std::vector<Peak3D*>& fit_peaks, ShapeCollection* shape_collection, const AABB& aabb,
-    const ShapeCollectionParameters& params)
+    std::vector<Peak3D*>& fit_peaks, sptrDataSet data, ShapeCollection* shape_collection,
+    const AABB& aabb, const ShapeCollectionParameters& params)
 {
     nsxlog(Level::Info, "IntegrationHandler::integrateShapeCollection");
     ShapeIntegrator integrator{
         shape_collection, aabb, params.nbins_x, params.nbins_y, params.nbins_z};
     integrator.setNNumors(1);
     integrator.setParameters(params);
-
-    const DataMap* data = _data_handler->getDataMap();
-    integrator.setNNumors(data->size());
-    // TODO: (zamaan) change numors to a argument of buildShapeCollection
-    // Right now, there is no metadata for which DataSet was used to
-    // Generate the peak collection
-    int n_numor = 1;
-    for (auto const& [key, data] : *data) {
-        integrator.integrate(fit_peaks, shape_collection, data, n_numor);
-        ++n_numor;
-    }
+    integrator.integrate(fit_peaks, shape_collection, data, 1);
 
     return *shape_collection;
 }

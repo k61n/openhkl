@@ -52,21 +52,17 @@ class IntegrationHandler {
     nsx::IPeakIntegrator* getIntegrator(const IntegratorType name) const;
     //! Set the found peak integrator
     void integratePeaks(
-        IntegratorType integrator_type, PeakCollection* peak_collection, double d_min, double d_max);
+        IntegratorType integrator_type, sptrDataSet data, PeakCollection* peak_collection);
     //! Integrate a peak collection
     void integratePeaks(
-        IPeakIntegrator* integrator, PeakCollection* peaks, IntegrationParameters* params,
-        ShapeCollection* shapes);
-    //! Set the found peak integrator
-    void integratePredictedPeaks(
-        IntegratorType integrator_type, PeakCollection* peak_collection,
-        ShapeCollection* shape_collection, PredictionParameters& params);
+        IPeakIntegrator* integrator, sptrDataSet data, PeakCollection* peaks,
+        IntegrationParameters* params, ShapeCollection* shapes);
     //! Integrate peaks found by _peak_finder
-    void integrateFoundPeaks(const IntegratorType integrator, PeakFinder* peak_finder);
+    void integrateFoundPeaks(PeakFinder* peak_finder);
     //! Integrate the shape collection
     ShapeCollection& integrateShapeCollection(
-        std::vector<Peak3D*>& peaks, ShapeCollection* shape_collection, const AABB& aabb,
-        const ShapeCollectionParameters& params);
+        std::vector<Peak3D*>& peaks, sptrDataSet data, ShapeCollection* shape_collection,
+        const AABB& aabb, const ShapeCollectionParameters& params);
 
  private:
     IntegratorMap _integrator_map;
