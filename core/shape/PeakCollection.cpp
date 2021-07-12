@@ -13,11 +13,12 @@
 //  ***********************************************************************************************
 
 #include "core/shape/PeakCollection.h"
+#include "core/raw/DataKeys.h"
 #include "base/utils/Logger.h"
 
 namespace nsx {
 
-PeakCollection::PeakCollection() : _name{"No Name"}, _type{nsx::listtype::FOUND} { }
+PeakCollection::PeakCollection() : _name{nsx::kw_peakCollectionDefaultName}, _type{nsx::listtype::FOUND} { }
 
 PeakCollection::PeakCollection(const std::string& name, nsx::listtype type)
     : _name{std::string(name)}, _type{type}
@@ -113,15 +114,11 @@ int PeakCollection::numberRejectedByFilter() const
     return numberOfPeaks() - numberCaughtByFilter();
 }
 
-// TODO: Check this function: why _meta is cleared and regenerated?
-std::map<std::string, float>* PeakCollection::meta()
+MetaData& PeakCollection::metadata()
 {
-    _meta.clear();
-    _meta.insert(std::make_pair(std::string("num_peaks"), numberOfPeaks()));
-    _meta.insert(std::make_pair(std::string("num_valid"), numberOfValid()));
-    _meta.insert(std::make_pair(std::string("num_invalid"), numberOfInvalid()));
-    // _meta.insert(std::make_pair(std::string(),));
-    return &_meta;
+    _metadata.add<int>(nsx::at_peakCount, numberOfPeaks());
+    _metadata.add<int>(nsx::at_peakType, static_cast<int>(type()));
+    return _metadata;
 }
 
 void PeakCollection::setShapeCollection(ShapeCollection shape_collection)
@@ -166,10 +163,10 @@ void PeakCollection::checkCollection() const
             ++n_nan;
         }
     }
-    nsxlog(Level::Info, "PeakCollection::checkCollection: peak collection ", _name, "contains:");
-    nsxlog(Level::Info, numberOfPeaks(), "peaks");
-    nsxlog(Level::Info, n_nan, "peaks with intensity NaN");
-    nsxlog(Level::Info, n_zero, "peaks with intensity zero");
+    nsxlog(Level::Info, "PeakCollection::checkCollection: peak collection '" + _name + "' contains:");
+    nsxlog(Level::Info, numberOfPeaks(), " peaks");
+    nsxlog(Level::Info, n_nan, " peaks with intensity NaN");
+    nsxlog(Level::Info, n_zero, " peaks with intensity zero");
 }
 
 void PeakCollection::computeSigmas()
@@ -191,7 +188,7 @@ void PeakCollection::computeSigmas()
     _sigma_m = std::sqrt(cov(2, 2));
     nsxlog(
         Level::Info, "PeakCollection::computeSigmas: Beam divergence sigma and mosaicity sigma:");
-    nsxlog(Level::Info, "PeakCollection: ", _name);
+    nsxlog(Level::Info, "PeakCollection: '" + _name + "'");
     nsxlog(Level::Info, "sigma_d = ", _sigma_d);
     nsxlog(Level::Info, "sigma_m = ", _sigma_m);
 }

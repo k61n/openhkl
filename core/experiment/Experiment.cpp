@@ -41,6 +41,7 @@
 #include "core/raw/MetaData.h"
 #include "core/statistics/CC.h"
 #include "core/statistics/RFactor.h"
+#include "core/raw/DataKeys.h"
 
 namespace nsx {
 
@@ -48,6 +49,8 @@ Experiment::~Experiment() = default;
 
 Experiment::Experiment(const std::string& name, const std::string& diffractometerName) : _name(name)
 {
+    // start logging
+    Logger::instance().start( nsx::kw_logFilename, Level::Debug);
     _peak_finder = std::make_unique<PeakFinder>();
     _peak_filter = std::make_unique<PeakFilter>();
     _auto_indexer = std::make_unique<AutoIndexer>();
@@ -68,9 +71,6 @@ Experiment::Experiment(const std::string& name, const std::string& diffractomete
     _peak_finder->setParameters(_finder_params);
     _peak_filter->setParameters(_filter_params);
     _auto_indexer->setParameters(_indexer_params);
-
-    std::string logfile = "nsx.log";
-    Logger::instance().start(logfile, Level::Info);
 }
 
 const std::string& Experiment::name() const
@@ -139,9 +139,11 @@ void Experiment::loadFromFile(const std::string& path)
 
 void Experiment::autoIndex(PeakCollection* peaks)
 {
+
     auto params = _auto_indexer->parameters();
 
-    std::string collection_name = "autoindexing";
+    std::string collection_name = nsx::kw_autoindexingCollection;
+
     _peak_filter->resetFiltering(peaks);
     _peak_filter->resetFilterFlags();
     _peak_filter->flags()->strength = true;
@@ -181,7 +183,7 @@ void Experiment::buildShapeCollection(
     _peak_filter->parameters()->strength_min = params.strength_min;
     _peak_filter->parameters()->strength_max = params.strength_max;
     _peak_filter->filter(peaks);
-    std::string collection_name = "fit";
+    std::string collection_name = nsx::kw_fitCollection;
     _peak_handler->acceptFilter(collection_name, peaks, listtype::FILTERED);
     PeakCollection* fit_peaks = getPeakCollection(collection_name);
 
@@ -221,7 +223,7 @@ void Experiment::predictPeaks(
 {
     const DataList numors = getAllData();
     std::vector<nsx::Peak3D*> predicted_peaks;
-    const UnitCell* accepted_cell = getUnitCell("accepted");
+    const UnitCell* accepted_cell = getUnitCell(nsx::kw_acceptedUnitcell);
     ShapeCollection* shape_collection = peaks->shapeCollection();
 
     int current_numor = 0;
@@ -262,12 +264,12 @@ void Experiment::computeQuality(
 
 const UnitCell* Experiment::getAcceptedCell() const
 {
-    return getUnitCell("accepted");
+    return getUnitCell(nsx::kw_acceptedUnitcell);
 }
 
 const UnitCell* Experiment::getReferenceCell() const
 {
-    return getUnitCell("reference");
+    return getUnitCell(nsx::kw_referenceUnitcell);
 }
 
 bool Experiment::refine(PeakCollection* peaks, UnitCell* cell, DataSet* data, int nbatches)

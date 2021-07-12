@@ -92,12 +92,12 @@ template <typename _type> _type MetaData::key(const std::string& name) const
     // Search if this key is in the set.
     auto it = _metakeys.find(name);
     if (it == _metakeys.end())
-        throw std::runtime_error("Could not find key :" + name + " in MetaData");
+        throw std::runtime_error("Could not find key '" + name + "' in MetaData");
 
     // Then search in the map
     auto it2 = _map.find(name);
     if (it2 == _map.end())
-        throw std::runtime_error("Could not find key :" + name + " in MetaData");
+        throw std::runtime_error("Could not find key '" + name + "' in MetaData");
     return std::get<_type>(it2->second);
 }
 

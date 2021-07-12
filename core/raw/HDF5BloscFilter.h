@@ -14,12 +14,13 @@
 #ifndef NSX_CORE_RAW_HDF5BLOSCFILTER_H
 #define NSX_CORE_RAW_HDF5BLOSCFILTER_H
 
+#include "base/parser/BloscFilter.h"
 #include <memory> // unique_ptr
 
 namespace nsx {
 
 /* usage:
-   # include "H5Cpp.h"
+   # include <H5Cpp.h>
    ...
    HDF5BloscFilter blosc_filter;
    H5::DSetCreatPropList plist;

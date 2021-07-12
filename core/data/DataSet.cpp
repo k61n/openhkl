@@ -24,6 +24,9 @@
 #include "core/instrument/Monochromator.h"
 #include "core/instrument/Sample.h"
 #include "core/instrument/Source.h"
+#include "core/experiment/ExperimentExporter.h"
+#include "core/raw/DataKeys.h"
+#include "base/utils/Logger.h"
 
 #include <H5Cpp.h>
 
@@ -31,21 +34,19 @@ namespace nsx {
 
 DataSet::DataSet(std::shared_ptr<IDataReader> reader)
     : _isOpened{false}
-    , _filename{reader->basename()}
     , _nFrames{0}
     , _nrows{0}
     , _ncols{0}
-    , _fileSize{0}
     , _background{0.0}
     , _reader{std::move(reader)}
 {
     _nrows = detector().nRows();
     _ncols = detector().nCols();
-    _nFrames = _reader->metadata().key<int>("npdone");
+    _nFrames = _reader->metadata().key<int>(nsx::at_frameCount);
 
     _metadata.setMap(_reader->metadata().map());
 
-    double wav = _reader->metadata().key<double>("wavelength");
+    double wav = _metadata.key<double>(nsx::at_wavelength);
     _reader->diffractometer()->source().selectedMonochromator().setWavelength(wav);
 
     // Getting Scan parameters for the detector
@@ -56,9 +57,7 @@ DataSet::DataSet(std::shared_ptr<IDataReader> reader)
 }
 
 DataSet::~DataSet()
-{
-    blosc_destroy();
-}
+{}
 
 int DataSet::dataAt(unsigned int x, unsigned int y, unsigned int z) const
 {
@@ -81,11 +80,6 @@ void DataSet::open()
 void DataSet::close()
 {
     _reader->close();
-}
-
-const std::string& DataSet::filename() const
-{
-    return _filename;
 }
 
 std::size_t DataSet::nFrames() const
@@ -118,146 +112,16 @@ bool DataSet::isOpened() const
     return _isOpened;
 }
 
-std::size_t DataSet::fileSize() const
+void DataSet::saveHDF5(const std::string& filename)
 {
-    return _fileSize;
-}
+    nsx::ExperimentExporter exporter;
+    const std::string dname = name(), instrument_name = _reader->diffractometer()->name();
+    nsxlog(Level::Info, "Saving DataSet ", dname, " to HDF5 file:", filename);
 
-void DataSet::saveHDF5(const std::string& filename) // const
-{
-    blosc_init();
-    blosc_set_nthreads(4);
-
-    hsize_t dims[3] = {_nFrames, _nrows, _ncols};
-    hsize_t chunk[3] = {1, _nrows, _ncols};
-    hsize_t count[3] = {1, _nrows, _ncols};
-
-    H5::H5File file(filename.c_str(), H5F_ACC_TRUNC);
-    H5::DataSpace space(3, dims, nullptr);
-    H5::DSetCreatPropList plist;
-
-    plist.setChunk(3, chunk);
-
-    char *version, *date;
-    int r;
-    unsigned int cd_values[7];
-    cd_values[4] = 9; // Highest compression level
-    cd_values[5] = 1; // Bit shuffling active
-    cd_values[6] = BLOSC_BLOSCLZ; // Seem to be the best compromise
-                                  // speed/compression for diffraction data
-
-    r = register_blosc(&version, &date);
-    if (r <= 0)
-        throw std::runtime_error("Problem registering BLOSC filter in HDF5 library");
-
-    // caught by valgrind memcheck
-    free(version);
-    version = nullptr;
-    free(date);
-    date = nullptr;
-    plist.setFilter(FILTER_BLOSC, H5Z_FLAG_OPTIONAL, 7, cd_values);
-
-    H5::DataSpace memspace(3, count, nullptr);
-    H5::Group dataGroup(file.createGroup("/Data"));
-    H5::DataSet dset(dataGroup.createDataSet("Counts", H5::PredType::NATIVE_INT32, space, plist));
-
-    hsize_t offset[3];
-    offset[0] = 0;
-    offset[1] = 0;
-    offset[2] = 0;
-
-    using IntMatrix = Eigen::Matrix<int, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>;
-    for (offset[0] = 0; offset[0] < _nFrames; offset[0] += count[0]) {
-        space.selectHyperslab(H5S_SELECT_SET, count, offset, nullptr, nullptr);
-        // HDF5 requires row-major storage, so copy frame into a row-major matrix
-        IntMatrix current_frame(frame(offset[0]));
-        dset.write(current_frame.data(), H5::PredType::NATIVE_INT32, memspace, space);
-    }
-
-    // Saving the scans parameters (detector, sample and source)
-    H5::Group scanGroup(dataGroup.createGroup("Scan"));
-
-    // Write detector states
-    H5::Group detectorGroup(scanGroup.createGroup("Detector"));
-
-    hsize_t nf[1] = {_nFrames};
-    H5::DataSpace scanSpace(1, nf);
-
-    const auto& detectorStates = _reader->detectorStates();
-
-    const auto& detector_gonio = detector().gonio();
-    size_t n_detector_gonio_axes = detector_gonio.nAxes();
-    for (size_t i = 0; i < n_detector_gonio_axes; ++i) {
-        const auto& axis = detector_gonio.axis(i);
-        Eigen::VectorXd values(_nFrames);
-        for (size_t j = 0; j < _nFrames; ++j)
-            values(j) = detectorStates[j][i] / deg;
-        H5::DataSet detectorScan(
-            detectorGroup.createDataSet(axis.name(), H5::PredType::NATIVE_DOUBLE, scanSpace));
-        detectorScan.write(&values(0), H5::PredType::NATIVE_DOUBLE, scanSpace, scanSpace);
-    }
-
-    // Write sample states
-    H5::Group sampleGroup(scanGroup.createGroup("Sample"));
-
-    const auto& sampleStates = _reader->sampleStates();
-
-    const auto& sample_gonio = _reader->diffractometer()->sample().gonio();
-    size_t n_sample_gonio_axes = sample_gonio.nAxes();
-
-    for (size_t i = 0; i < n_sample_gonio_axes; ++i) {
-        const auto& axis = sample_gonio.axis(i);
-        Eigen::VectorXd values(_nFrames);
-        for (size_t j = 0; j < _nFrames; ++j)
-            values(j) = sampleStates[j][i] / deg;
-        H5::DataSet sampleScan(
-            sampleGroup.createDataSet(axis.name(), H5::PredType::NATIVE_DOUBLE, scanSpace));
-        sampleScan.write(&values(0), H5::PredType::NATIVE_DOUBLE, scanSpace, scanSpace);
-    }
-
-    const auto& map = _reader->metadata().map();
-
-    // Write all string metadata into the "Info" group
-    H5::Group infogroup(file.createGroup("/Info"));
-    H5::DataSpace metaSpace(H5S_SCALAR);
-    H5::StrType str80(H5::PredType::C_S1, 80);
-
-    for (const auto& item : map) {
-        try {
-            if (std::holds_alternative<std::string>(item.second)) {
-                H5::Attribute intAtt(infogroup.createAttribute(item.first, str80, metaSpace));
-                intAtt.write(str80, std::get<std::string>(item.second));
-            }
-        } catch (const std::exception& ex) {
-            std::cerr << "Exception in " << __PRETTY_FUNCTION__ << ": " << ex.what() << std::endl;
-        } catch (...) {
-            std::cerr << "Uncaught exception in " << __PRETTY_FUNCTION__ << std::endl;
-        }
-    }
-
-    // Write all other metadata (int and double) into the "Experiment" Group
-    H5::Group metadatagroup(file.createGroup("/Experiment"));
-
-    for (const auto& item : map) {
-        try {
-            if (std::holds_alternative<int>(item.second)) {
-                const int value = std::get<int>(item.second);
-                H5::Attribute intAtt(metadatagroup.createAttribute(
-                    item.first, H5::PredType::NATIVE_INT32, metaSpace));
-                intAtt.write(H5::PredType::NATIVE_INT, &value);
-            } else if (std::holds_alternative<double>(item.second)) {
-                const double dvalue = std::get<double>(item.second);
-                H5::Attribute intAtt(metadatagroup.createAttribute(
-                    item.first, H5::PredType::NATIVE_DOUBLE, metaSpace));
-                intAtt.write(H5::PredType::NATIVE_DOUBLE, &dvalue);
-            }
-        } catch (const std::exception& ex) {
-            std::cerr << "Exception in " << __PRETTY_FUNCTION__ << ": " << ex.what() << std::endl;
-        } catch (...) {
-            std::cerr << "Uncaught exception in " << __PRETTY_FUNCTION__ << std::endl;
-        }
-    }
-    file.close();
+    std::map<std::string, DataSet*> data_sets { {dname, this} };
+    exporter.createFile(dname, instrument_name, filename);
+    exporter.writeData(data_sets);
+    exporter.finishWrite();
 }
 
 void DataSet::addMask(IMask* mask)
@@ -344,24 +208,7 @@ std::string DataSet::name() const
     if (!_name.empty())
         return _name;
 
-    std::string name;
-    std::string ext;
-    std::string data_name = filename();
-
-    size_t sep = data_name.find_last_of("\\/");
-    if (sep != std::string::npos)
-        data_name = data_name.substr(sep + 1, data_name.size() - sep - 1);
-
-    size_t dot = data_name.find_last_of('.');
-    if (dot != std::string::npos) {
-        name = data_name.substr(0, dot);
-        ext = data_name.substr(dot, data_name.size() - dot);
-    } else {
-        name = data_name;
-        ext = "";
-    }
-
-    return name;
+    throw std::runtime_error("DataSet has no name yet");
 }
 
 const nsx::MetaData& DataSet::metadata() const

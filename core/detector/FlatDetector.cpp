@@ -18,6 +18,7 @@
 #include "base/utils/Units.h"
 #include "core/gonio/Gonio.h"
 #include "core/gonio/RotAxis.h"
+#include "core/raw/DataKeys.h"
 
 #include <Eigen/Dense>
 
@@ -33,16 +34,16 @@ FlatDetector::FlatDetector(const std::string& name) : Detector(name) { }
 FlatDetector::FlatDetector(const YAML::Node& node) : Detector(node)
 {
     // Sets the detector width from the property tree node
-    auto&& widthNode = node["width"];
-    double units = UnitsManager::get(widthNode["units"].as<std::string>());
-    double width = widthNode["value"].as<double>();
+    auto&& widthNode = node[nsx::ym_width];
+    double units = UnitsManager::get(widthNode[nsx::ym_units].as<std::string>());
+    double width = widthNode[nsx::ym_value].as<double>();
     width *= units;
     setWidth(width);
 
     // Sets the detector height from the property tree node
-    auto&& heightNode = node["height"];
-    units = UnitsManager::get(heightNode["units"].as<std::string>());
-    double height = heightNode["value"].as<double>();
+    auto&& heightNode = node[nsx::ym_height];
+    units = UnitsManager::get(heightNode[nsx::ym_units].as<std::string>());
+    double height = heightNode[nsx::ym_value].as<double>();
     height *= units;
     setHeight(height);
 }

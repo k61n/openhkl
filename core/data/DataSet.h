@@ -19,6 +19,7 @@
 #include "core/instrument/InstrumentStateList.h"
 #include "core/peak/Peak3D.h"
 #include "core/raw/IDataReader.h"
+#include "core/raw/DataKeys.h"
 
 namespace nsx {
 
@@ -41,7 +42,6 @@ class DataSet {
     DataSet(const DataSet& other) = delete;
     DataSet& operator=(const DataSet& other) = delete;
 
-    const std::string& filename() const;
     std::size_t nFrames() const;
 
     std::size_t nRows() const; //!< The number of rows in each detector image
@@ -73,8 +73,6 @@ class DataSet {
 
     bool isOpened() const; //!< True if file is open
 
-    std::size_t fileSize() const;
-
     void saveHDF5(const std::string& filename);
 
     //! Returns the sample-space q vector corresponding to a detector event
@@ -97,14 +95,12 @@ class DataSet {
 
  private:
     bool _isOpened;
-    std::string _filename;
-    std::string _name;
+    std::string _name = nsx::kw_datasetDefaultName;
     unsigned int _nFrames;
     unsigned int _nrows;
     unsigned int _ncols;
     std::vector<Eigen::MatrixXi> _data;
     InstrumentStateList _states;
-    std::size_t _fileSize;
     std::set<IMask*> _masks;
     double _background;
     std::shared_ptr<IDataReader> _reader;

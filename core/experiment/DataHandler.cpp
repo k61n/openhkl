@@ -16,16 +16,19 @@
 #include "base/utils/Logger.h"
 #include "core/data/DataSet.h"
 #include "core/instrument/Diffractometer.h"
+#include "core/raw/DataKeys.h"
+
 #include <iostream>
 
 namespace nsx {
 
-DataHandler::DataHandler(const std::string& name, const std::string& diffractometerName)
+DataHandler::DataHandler(const std::string& experiment_name, const std::string& diffractometerName)
 {
     _diffractometer = nullptr;
-    if (!(diffractometerName == std::string("unknown_instrument")))
+    if (!(diffractometerName == nsx::kw_diffractometerDefaultName))
         _diffractometer.reset(Diffractometer::create(diffractometerName));
-    _name = name;
+
+    _experiment_name = experiment_name;
 }
 
 Diffractometer* DataHandler::getDiffractometer()
@@ -38,27 +41,9 @@ void DataHandler::setDiffractometer(const std::string& diffractometerName)
     _diffractometer.reset(Diffractometer::create(diffractometerName));
 }
 
-DataHandler::DataHandler(const DataHandler& other)
-{
-    this->operator=(other);
-}
-
-DataHandler& DataHandler::operator=(const DataHandler& other)
-{
-    _data_map = other._data_map;
-    _diffractometer.reset(other._diffractometer->clone());
-    _name = other._name;
-    return *this;
-}
-
 const DataMap* DataHandler::getDataMap() const
 {
     return &_data_map;
-}
-
-std::string DataHandler::getName() const
-{
-    return _name;
 }
 
 DataList DataHandler::getAllData() const
@@ -74,7 +59,7 @@ sptrDataSet DataHandler::getData(std::string name) const
     auto it = _data_map.find(name);
     if (it == _data_map.end()) {
         throw std::runtime_error(
-            "The data key " + name + " could not be found in the experiment " + _name);
+            "The data key " + name + " could not be found in the experiment " + _experiment_name);
     }
     return it->second;
 }
@@ -82,25 +67,29 @@ sptrDataSet DataHandler::getData(std::string name) const
 void DataHandler::addData(sptrDataSet data, std::string name)
 {
     if (name.empty())
-        name = data->filename();
+        name = data->name();
+
+    if (name.empty())
+        throw std::invalid_argument("DataHandler::addData: Data name cannot be empty");
 
     // Add the data only if it does not exist in the current data map
     if (_data_map.find(name) != _data_map.end())
-        return;
+	throw std::invalid_argument("DataHandler::addData: Data name '" + name + "' already exists.");
 
     const auto& metadata = data->metadata();
 
-    const std::string diffName = metadata.key<std::string>("Instrument");
+    const std::string diffName = metadata.key<std::string>(nsx::at_diffractometer);
 
     if (!(diffName.compare(_diffractometer->name()) == 0)) {
         throw std::runtime_error("Mismatch between the diffractometer assigned to "
-                                 "the experiment and the data");
+                                 "the experiment, '" + _diffractometer->name() + "', "
+				 "and the data, '" + diffName + "'");
     }
-    const double wav = metadata.key<double>("wavelength");
+    const double wav = metadata.key<double>(nsx::at_wavelength);
 
-    // ensure that there is at least one monochromator!
+    // ensure that there is at least one monochromator; if not, create a new one.
     if (_diffractometer->source().nMonochromators() == 0) {
-        Monochromator mono("mono");
+        Monochromator mono(nsx::kw_monochromatorDefaultName);
         _diffractometer->source().addMonochromator(mono);
     }
 

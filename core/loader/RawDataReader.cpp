@@ -30,6 +30,7 @@
 #include "core/instrument/Monochromator.h"
 #include "core/instrument/Sample.h"
 #include "core/instrument/Source.h"
+#include "core/raw/DataKeys.h"
 #include "core/loader/RawDataReader.h"
 
 namespace nsx {
@@ -39,7 +40,7 @@ RawDataReader::RawDataReader(const std::string& filename, Diffractometer* diffra
 {
     // ensure that there is at least one monochromator!
     if (_diffractometer->source().nMonochromators() == 0) {
-        Monochromator mono("mono");
+        Monochromator mono(nsx::kw_monochromatorDefaultName);
         _diffractometer->source().addMonochromator(mono);
     }
 }
@@ -59,9 +60,9 @@ void RawDataReader::addFrame(const std::string& filename)
     int omega_idx = -1, phi_idx = -1, chi_idx = -1;
     for (size_t i = 0; i < n_sample_gonio_axes; ++i) {
         const std::string axis_name = sample_gonio.axis(i).name();
-        omega_idx = axis_name == "omega" ? int(i) : omega_idx;
-        chi_idx = axis_name == "chi" ? int(i) : chi_idx;
-        phi_idx = axis_name == "phi" ? int(i) : phi_idx;
+        omega_idx = axis_name == nsx::ax_omega ? int(i) : omega_idx;
+        chi_idx = axis_name == nsx::ax_chi ? int(i) : chi_idx;
+        phi_idx = axis_name == nsx::ax_phi ? int(i) : phi_idx;
     }
 
     if (omega_idx == -1 || phi_idx == -1 || chi_idx == -1)
@@ -87,7 +88,7 @@ void RawDataReader::close() {}
 
 void RawDataReader::end()
 {
-    _metadata.add<int>("npdone", int(_filenames.size()));
+    _metadata.add<int>(nsx::at_frameCount, int(_filenames.size()));
 }
 
 const RawDataReaderParameters& RawDataReader::parameters() const
@@ -103,10 +104,10 @@ void RawDataReader::setParameters(const RawDataReaderParameters& parameters)
     auto& mono = _diffractometer->source().selectedMonochromator();
     mono.setWavelength(_parameters.wavelength);
 
-    _metadata.add<std::string>("Instrument", _diffractometer->name());
-    _metadata.add<double>("wavelength", _parameters.wavelength);
-    _metadata.add<double>("monitor", 0.0);
-    _metadata.add<int>("Numor", 0.0);
+    _metadata.add<std::string>(nsx::at_diffractometer, _diffractometer->name());
+    _metadata.add<double>(nsx::at_wavelength, _parameters.wavelength);
+    _metadata.add<double>(nsx::at_monitorSum, 0.0);
+    _metadata.add<int>(nsx::at_numor, 0.0);
 
     _data.resize(_parameters.bpp * _nRows * _nCols);
 }

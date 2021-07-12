@@ -19,6 +19,7 @@
 #include "base/utils/Units.h"
 #include "core/gonio/Gonio.h"
 #include "core/gonio/RotAxis.h"
+#include "core/raw/DataKeys.h"
 
 #include <Eigen/Dense>
 
@@ -34,16 +35,16 @@ CylindricalDetector::CylindricalDetector(const std::string& name) : Detector(nam
 CylindricalDetector::CylindricalDetector(const YAML::Node& node) : Detector(node)
 {
     // Sets the detector angular width from the property tree node
-    auto&& angularWidthNode = node["angular_width"];
-    double units = UnitsManager::get(angularWidthNode["units"].as<std::string>());
-    double angularWidth = angularWidthNode["value"].as<double>();
+    auto&& angularWidthNode = node[nsx::ym_angularWidth];
+    double units = UnitsManager::get(angularWidthNode[nsx::ym_units].as<std::string>());
+    double angularWidth = angularWidthNode[nsx::ym_value].as<double>();
     angularWidth *= units;
     setAngularWidth(angularWidth);
 
     // Sets the detector height from the property tree node
-    auto&& heightNode = node["height"];
-    units = UnitsManager::get(heightNode["units"].as<std::string>());
-    double height = heightNode["value"].as<double>();
+    auto&& heightNode = node[nsx::ym_height];
+    units = UnitsManager::get(heightNode[nsx::ym_units].as<std::string>());
+    double height = heightNode[nsx::ym_value].as<double>();
     height *= units;
     setHeight(height);
 }

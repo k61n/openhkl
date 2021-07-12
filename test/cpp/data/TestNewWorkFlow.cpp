@@ -49,6 +49,7 @@ TEST_CASE("test/data/TestNewWorkFlow.cpp", "")
 
     nsx::Experiment experiment("test", "BioDiff2500");
     nsx::sptrDataSet dataf(factory.create("hdf", "gal3.hdf", experiment.getDiffractometer()));
+    dataf->setName("TestNewWorkFlow");
 
     std::cout << "Dataset columns: " << dataf->nCols() << ", rows: " << dataf->nRows()
               << ", frames: " << dataf->nFrames() << std::endl;

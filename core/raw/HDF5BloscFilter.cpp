@@ -13,18 +13,14 @@
 //  ***********************************************************************************************
 
 #include "core/raw/HDF5BloscFilter.h"
-
-#include "base/parser/BloscFilter.h"
 #include "base/utils/Logger.h"
 
 #include <stdexcept>
-
 
 namespace nsx {
 
 HDF5BloscFilter::HDF5BloscFilter()
 {
-    nsxlog(nsx::Level::Debug, "Initializing Blosc-filter to read HDF5 data");
     blosc_init();
     _init_success = true;
     blosc_set_nthreads(_nthreads);
@@ -34,7 +30,7 @@ HDF5BloscFilter::HDF5BloscFilter()
     cd_values[4] = 9; // Highest compression level
     cd_values[5] = 1; // Bit shuffling active; 0: shuffle not active, 1: shuffle active
     cd_values[6] = BLOSC_BLOSCLZ; // Actual compressor to use: BLOSC seem to be the best compromise
-    nsxlog(nsx::Level::Info, "Initialized Blosc-filter to read HDF5 data");
+    nsxlog(nsx::Level::Debug, "Initialized Blosc-filter to read HDF5 data");
 }
 
 HDF5BloscFilter::~HDF5BloscFilter()

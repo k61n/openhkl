@@ -17,12 +17,13 @@
 
 #include "core/gonio/AxisFactory.h"
 #include "core/gonio/RotAxis.h"
+#include "core/raw/DataKeys.h"
 
 namespace nsx {
 
 AxisFactory::AxisFactory()
 {
-    registerCallback("rotation", &RotAxis::create);
+    registerCallback(nsx::kw_rotationAxisName, &RotAxis::create);
 }
 
 } // namespace nsx

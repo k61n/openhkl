@@ -14,6 +14,7 @@
 
 #include "core/instrument/Monochromator.h"
 #include "base/utils/Units.h"
+#include "core/raw/DataKeys.h"
 
 namespace nsx {
 
@@ -26,24 +27,24 @@ Monochromator::Monochromator(const std::string& name)
 
 Monochromator::Monochromator(const YAML::Node& node)
 {
-    _name = node["name"].as<std::string>();
+    _name = node[nsx::ym_instrumentName].as<std::string>();
 
     // Sets the source slit width from the yaml tree node
-    auto&& widthNode = node["width"];
+    auto&& widthNode = node[nsx::ym_width];
     _width =
-        widthNode["value"].as<double>() * UnitsManager::get(widthNode["units"].as<std::string>());
+        widthNode[nsx::ym_value].as<double>() * UnitsManager::get(widthNode[nsx::ym_units].as<std::string>());
 
     // Sets the source slit height from the yaml tree node
-    auto&& heightNode = node["height"];
+    auto&& heightNode = node[nsx::ym_height];
     _height =
-        heightNode["value"].as<double>() * UnitsManager::get(heightNode["units"].as<std::string>());
+        heightNode[nsx::ym_value].as<double>() * UnitsManager::get(heightNode[nsx::ym_units].as<std::string>());
 
-    auto&& wavelengthNode = node["wavelength"];
-    _wavelength = wavelengthNode["value"].as<double>()
-        * UnitsManager::get(wavelengthNode["units"].as<std::string>()) / nsx::ang;
+    auto&& wavelengthNode = node[nsx::ym_wavelength];
+    _wavelength = wavelengthNode[nsx::ym_value].as<double>()
+        * UnitsManager::get(wavelengthNode[nsx::ym_units].as<std::string>()) / nsx::ang;
 
-    auto&& fwhmNode = node["fwhm"];
-    _fwhm = fwhmNode["value"].as<double>() * UnitsManager::get(fwhmNode["units"].as<std::string>())
+    auto&& fwhmNode = node[nsx::ym_fwhm];
+    _fwhm = fwhmNode[nsx::ym_value].as<double>() * UnitsManager::get(fwhmNode[nsx::ym_units].as<std::string>())
         / nsx::ang;
 }
 

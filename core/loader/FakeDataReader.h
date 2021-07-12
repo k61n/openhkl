@@ -21,7 +21,7 @@ namespace nsx {
 
 //! Makes simulated data behave as if it were real. Used for testing purposes.
 
-class FakeDataReader : public HDF5MetaDataReader<LegacyReader> {
+class FakeDataReader : public HDF5MetaDataReader {
  public:
     FakeDataReader() = delete;
 

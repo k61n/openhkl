@@ -554,13 +554,10 @@ void SubframeMergedPeaks::refreshUnmergedTable()
             const int l = hkl[2];
 
             const Eigen::Vector3d& c = unmerged_peak->shape().center();
-            std::string numor = unmerged_peak->dataSet()->filename();
             nsx::Intensity I = unmerged_peak->correctedIntensity();
 
             const double intensity = I.value();
             const double sigma = I.sigma();
-
-            const QFileInfo fileinfo(QString::fromStdString(numor));
 
             QList<QStandardItem*> row;
             row.push_back(new QStandardItem(QString::number(h)));
@@ -571,7 +568,6 @@ void SubframeMergedPeaks::refreshUnmergedTable()
             row.push_back(new QStandardItem(QString::number(c[0])));
             row.push_back(new QStandardItem(QString::number(c[1])));
             row.push_back(new QStandardItem(QString::number(c[2])));
-            // row.push_back(new QStandardItem(fileinfo.baseName()));
 
             _unmerged_model->appendRow(row);
         }

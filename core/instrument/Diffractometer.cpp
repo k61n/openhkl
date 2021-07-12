@@ -21,6 +21,7 @@
 #include "core/instrument/HardwareParameters.h"
 #include "core/instrument/Sample.h"
 #include "core/instrument/Source.h"
+#include "core/raw/DataKeys.h"
 
 namespace nsx {
 
@@ -30,7 +31,7 @@ Diffractometer* Diffractometer::create(const std::string& name)
 
     Diffractometer* diffractometer;
     try {
-        diffractometer = new Diffractometer(instrumentDefinition["instrument"]);
+        diffractometer = new Diffractometer(instrumentDefinition[nsx::ym_instrument]);
     } catch (std::exception& e) {
         std::string msg = "Error when reading instrument definition file: ";
         throw std::runtime_error(msg + e.what());
@@ -57,16 +58,16 @@ Diffractometer* Diffractometer::clone() const
 Diffractometer::Diffractometer(const YAML::Node& node)
 {
     // Sets the name of the diffractometer from the YAML node
-    _name = node["name"].as<std::string>();
+    _name = node[nsx::ym_instrumentName].as<std::string>();
 
     // Build the detector from its corresponding YAML node
-    _detector.reset(Detector::create(node["detector"]));
+    _detector.reset(Detector::create(node[nsx::ym_detector]));
 
     // Build the sample from its corresponding node
-    _sample = Sample(node["sample"]);
+    _sample = Sample(node[nsx::ym_sample]);
 
     // Build the source from its corresponding node
-    _source = Source(node["source"]);
+    _source = Source(node[nsx::ym_source]);
 }
 
 Diffractometer::~Diffractometer() = default;

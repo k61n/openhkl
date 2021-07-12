@@ -397,8 +397,7 @@ void SubframeFilterPeaks::updateDatasetList()
 
     if (!_data_list.empty()) {
         for (const nsx::sptrDataSet& data : _data_list) {
-            QFileInfo fileinfo(QString::fromStdString(data->filename()));
-            _data_combo->addItem(fileinfo.baseName());
+            _data_combo->addItem(QString::fromStdString(data->name()));
         }
         _data_combo->setCurrentText(current_data);
         updateDatasetParameters(_data_combo->currentIndex());

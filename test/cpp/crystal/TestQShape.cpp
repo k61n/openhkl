@@ -55,6 +55,7 @@ TEST_CASE("test/crystal/TestQShape.cpp", "")
     nsx::DataReaderFactory factory;
     nsx::Experiment experiment("test", "BioDiff2500");
     nsx::sptrDataSet dataf(factory.create("hdf", "gal3.hdf", experiment.getDiffractometer()));
+    dataf->setName("TestQShape");
     experiment.addData(dataf);
 
     nsx::sptrProgressHandler progressHandler(new nsx::ProgressHandler);

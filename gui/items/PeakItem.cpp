@@ -22,6 +22,7 @@
 #include "core/peak/Peak3D.h"
 #include "core/raw/IDataReader.h"
 #include "core/raw/MetaData.h"
+#include "core/raw/DataKeys.h"
 #include "core/shape/PeakFilter.h"
 #include "tables/crystal/MillerIndex.h"
 #include "tables/crystal/UnitCell.h"
@@ -114,7 +115,7 @@ QVariant PeakItem::peakData(const QModelIndex& index, int role, PeakDisplayModes
                     return strength();
                 }
                 case Column::Numor: {
-                    return _peak->dataSet()->reader()->metadata().key<int>("Numor");
+                    return _peak->dataSet()->reader()->metadata().key<int>(nsx::at_numor);
                 }
                 case Column::uc: {
                     const nsx::UnitCell* unit_cell = _peak->unitCell();

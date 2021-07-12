@@ -21,6 +21,7 @@
 #include "core/gonio/Gonio.h"
 #include "core/instrument/Diffractometer.h"
 #include "core/instrument/Sample.h"
+#include "core/raw/DataKeys.h"
 
 #include <iostream>
 #include <memory>
@@ -90,18 +91,18 @@ NexusMetaDataReader::NexusMetaDataReader(
 
 
         // set metadata
-        _metadata.add<std::string>("Instrument", _diffractometer->name());
-        _metadata.add<double>("wavelength", wavelength);
-        _metadata.add<double>("monitor", monitor);
-        _metadata.add<int>("Numor", numor);
-        _metadata.add<int>("npdone", _nFrames);
-        _metadata.add<int>("total_steps", totalSteps);
-        _metadata.add<std::string>("filename", filename);
-        _metadata.add<std::string>("title", title);
-        _metadata.add<std::string>("experiment_identifier", experiment_id);
-        _metadata.add<std::string>("start_time", start_time);
-        _metadata.add<std::string>("end_time", end_time);
-        _metadata.add<double>("time", time);
+        _metadata.add<std::string>(nsx::at_diffractometer, _diffractometer->name());
+        _metadata.add<double>(nsx::at_wavelength, wavelength);
+        _metadata.add<double>(nsx::at_monitorSum, monitor);
+        _metadata.add<int>(nsx::at_numor, numor);
+        _metadata.add<int>(nsx::at_frameCount, _nFrames);
+        _metadata.add<int>(nsx::at_totalSteps, totalSteps);
+        _metadata.add<std::string>(nsx::at_filepath, filename);
+        _metadata.add<std::string>(nsx::at_title, title);
+        _metadata.add<std::string>(nsx::at_experiment, experiment_id);
+        _metadata.add<std::string>(nsx::at_startTime, start_time);
+        _metadata.add<std::string>(nsx::at_endTime, end_time);
+        _metadata.add<double>(nsx::at_time, time);
 
         // put root attributes into meta data
         for (int i = 0; i < rootGroup.getNumAttrs(); ++i) {
@@ -112,7 +113,7 @@ NexusMetaDataReader::NexusMetaDataReader(
 
             // override stored filename with the current one
             if (attr.getName() == "file_name" || attr.getName() == "filename")
-                _metadata.add<std::string>("original_filename", value);
+                _metadata.add<std::string>(nsx::at_datasetSources, value);
             else
                 _metadata.add<std::string>(attr.getName(), value);
         }
@@ -158,9 +159,9 @@ NexusMetaDataReader::NexusMetaDataReader(
         int omega_idx = -1, phi_idx = -1, chi_idx = -1;
         for (size_t i = 0; i < n_sample_gonio_axes; ++i) {
             const std::string axis_name = sample_gonio.axis(i).name();
-            omega_idx = axis_name == "omega" ? int(i) : omega_idx;
-            chi_idx = axis_name == "chi" ? int(i) : chi_idx;
-            phi_idx = axis_name == "phi" ? int(i) : phi_idx;
+            omega_idx = axis_name == nsx::ax_omega ? int(i) : omega_idx;
+            chi_idx = axis_name == nsx::ax_chi ? int(i) : chi_idx;
+            phi_idx = axis_name == nsx::ax_phi ? int(i) : phi_idx;
         }
 
         if (omega_idx == -1 || phi_idx == -1 || chi_idx == -1)
@@ -211,8 +212,8 @@ void NexusMetaDataReader::open()
         return;
 
     try {
-        _file = std::unique_ptr<H5::H5File>(
-            new H5::H5File(_metadata.key<std::string>("filename").c_str(), H5F_ACC_RDONLY));
+        _file = std::unique_ptr<H5::H5File>
+	    (new H5::H5File(_metadata.key<std::string>(nsx::at_filepath).c_str(), H5F_ACC_RDONLY));
     } catch (...) {
         if (_file)
             _file.reset();

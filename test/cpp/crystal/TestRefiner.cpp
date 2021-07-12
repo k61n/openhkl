@@ -45,6 +45,7 @@ TEST_CASE("test/crystal/TestRefiner.cpp", "")
 
     nsx::Experiment experiment("test", "BioDiff2500");
     nsx::sptrDataSet dataf(factory.create("hdf", "gal3.hdf", experiment.getDiffractometer()));
+    dataf->setName("TestRefiner");
 
     experiment.addData(dataf);
 

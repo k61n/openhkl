@@ -25,6 +25,7 @@
 #include "core/peak/IntegrationRegion.h"
 #include "core/raw/IDataReader.h"
 #include "core/raw/MetaData.h"
+#include "core/raw/DataKeys.h"
 
 #include "gui/graphics/PeakPlot.h"
 #include "gui/utility/ColorButton.h"
@@ -237,7 +238,7 @@ void PeakItemGraphic::plot(SXPlot* plot)
         + " (" + QString::number(sI, 'f', 2) + ")\n";
 
     const double scale = _peak->scale();
-    const double monitor = _peak->dataSet()->reader()->metadata().key<double>("monitor");
+    const double monitor = _peak->dataSet()->reader()->metadata().key<double>(nsx::at_monitorSum);
     info += "Monitor " + QString::number(monitor * scale) + " counts";
     QCPTextElement* title = dynamic_cast<QCPTextElement*>(p->plotLayout()->element(0, 0));
     if (title != nullptr)

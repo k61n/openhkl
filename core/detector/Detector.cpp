@@ -18,18 +18,19 @@
 #include "base/utils/Units.h"
 #include "core/detector/Detector.h"
 #include "core/detector/DetectorFactory.h"
+#include "core/raw/DataKeys.h"
 
 namespace nsx {
 
 Detector* Detector::create(const YAML::Node& node)
 {
-    std::string detectorType = node["type"].as<std::string>();
+    std::string detectorType = node[nsx::ym_detectorType].as<std::string>();
 
     return DetectorFactory::instance().create(detectorType, node);
 }
 
 Detector::Detector()
-    : Component("detector")
+    : Component(nsx::kw_detectorDefaultName)
     , _height(0.0)
     , _width(0.0)
     , _angularHeight(0.0)
@@ -65,24 +66,24 @@ Detector::Detector(const std::string& name)
 Detector::Detector(const YAML::Node& node) : Component(node)
 {
     // If data order is not defined assumed default
-    if (!node["data_ordering"]) {
+    if (!node[nsx::ym_dataOrdering]) {
         _dataorder = DataOrder::BottomRightColMajor;
         return;
     }
 
     // detector gain
-    if (node["gain"])
-        _gain = node["gain"].as<double>();
+    if (node[nsx::ym_gain])
+        _gain = node[nsx::ym_gain].as<double>();
     else
         _gain = 1.0;
 
     // detector baseline
-    if (node["baseline"])
-        _baseline = node["baseline"].as<double>();
+    if (node[nsx::ym_baseline])
+        _baseline = node[nsx::ym_baseline].as<double>();
     else
         _baseline = 0.0;
 
-    std::string dataOrder = node["data_ordering"].as<std::string>();
+    std::string dataOrder = node[nsx::ym_dataOrdering].as<std::string>();
 
     if (dataOrder.compare("TopLeftColMajor") == 0)
         _dataorder = DataOrder::TopLeftColMajor;
@@ -106,21 +107,21 @@ Detector::Detector(const YAML::Node& node) : Component(node)
     }
 
     // Sets the detector to sample distance from the property tree node
-    auto&& distanceNode = node["sample_distance"];
-    double units = UnitsManager::get(distanceNode["units"].as<std::string>());
-    double distance = distanceNode["value"].as<double>();
+    auto&& distanceNode = node[nsx::ym_sampleDistance];
+    double units = UnitsManager::get(distanceNode[nsx::ym_units].as<std::string>());
+    double distance = distanceNode[nsx::ym_value].as<double>();
     distance *= units;
     setDistance(distance);
 
     // Sets the detector number of pixels from the property tree node
-    unsigned int nCols = node["ncols"].as<unsigned int>();
+    unsigned int nCols = node[nsx::ym_colCount].as<unsigned int>();
     setNCols(nCols);
 
-    unsigned int nRows = node["nrows"].as<unsigned int>();
+    unsigned int nRows = node[nsx::ym_rowCount].as<unsigned int>();
     setNRows(nRows);
 
-    _minCol = node["origin_x"] ? node["origin_x"].as<double>() : 0.0;
-    _minRow = node["origin_y"] ? node["origin_y"].as<double>() : 0.0;
+    _minCol = node[nsx::ym_originX] ? node[nsx::ym_originX].as<double>() : 0.0;
+    _minRow = node[nsx::ym_originY] ? node[nsx::ym_originY].as<double>() : 0.0;
 }
 
 Detector::~Detector() = default;
@@ -208,7 +209,7 @@ void Detector::setNCols(unsigned int cols)
 {
     if (cols == 0)
         throw std::range_error(
-            "Detector " + Component::_name + " number of pixels (row,col) must be >0");
+            "Detector '" + Component::_name + "' number of pixels (row,col) must be >0");
     _nCols = cols;
 }
 
@@ -221,7 +222,7 @@ void Detector::setNRows(unsigned int rows)
 {
     if (rows == 0)
         throw std::range_error(
-            "Detector " + Component::_name + " number of pixels (row,col) must be >0");
+            "Detector '" + Component::_name + "' number of pixels (row,col) must be >0");
     _nRows = rows;
 }
 

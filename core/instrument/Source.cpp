@@ -15,10 +15,11 @@
 #include "core/instrument/Source.h"
 #include "base/utils/Units.h"
 #include "core/instrument/Monochromator.h"
+#include "core/raw/DataKeys.h"
 
 namespace nsx {
 
-Source::Source() : Component("source"), _monochromators(), _selectedMonochromator(0) { }
+Source::Source() : Component(nsx::ym_sample), _monochromators(), _selectedMonochromator(0) { }
 
 Source::Source(const std::string& name)
     : Component(name), _monochromators(), _selectedMonochromator(0)
@@ -31,7 +32,7 @@ Source::Source(const YAML::Node& node) : Component(node), _selectedMonochromator
     // Monochromator objects to the Source
     for (const auto& subnode : node) {
         std::string subnodeName = subnode.first.as<std::string>();
-        if (subnodeName.compare("monochromator") == 0) {
+        if (subnodeName.compare(nsx::ym_monochromator) == 0) {
             Monochromator m(subnode.second);
             addMonochromator(m);
         }

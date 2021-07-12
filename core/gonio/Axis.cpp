@@ -19,17 +19,18 @@
 #include "base/utils/YAMLType.h"
 #include "core/gonio/Axis.h"
 #include "core/gonio/AxisFactory.h"
+#include "core/raw/DataKeys.h"
 
 namespace nsx {
 
 Axis* Axis::create(const YAML::Node& node)
 {
-    std::string axisType = node["type"].as<std::string>();
+    std::string axisType = node[nsx::ym_axisType].as<std::string>();
 
     return AxisFactory::instance().create(axisType, node);
 }
 
-Axis::Axis() : _name("axis"), _axis(Eigen::Vector3d(0.0, 0.0, 1.0)), _physical(true), _id(0) { }
+Axis::Axis() : _name(nsx::kw_axisDefaultName), _axis(Eigen::Vector3d(0.0, 0.0, 1.0)), _physical(true), _id(0) { }
 
 Axis::Axis(const std::string& name)
     : _name(name), _axis(Eigen::Vector3d(0.0, 0.0, 1.0)), _physical(true), _id(0)
@@ -44,16 +45,16 @@ Axis::Axis(const std::string& name, const Eigen::Vector3d& axis)
 
 Axis::Axis(const YAML::Node& node)
 {
-    _name = node["name"] ? node["name"].as<std::string>() : "no name";
+    _name = node[nsx::ym_axisName] ? node[nsx::ym_axisName].as<std::string>() : nsx::kw_axisDefaultName;
 
-    Eigen::Vector3d axis = node["direction"].as<Eigen::Vector3d>();
+    Eigen::Vector3d axis = node[nsx::ym_axisDirection].as<Eigen::Vector3d>();
     axis.normalize();
 
     _axis = axis;
 
-    _physical = node["physical"].as<bool>();
+    _physical = node[nsx::ym_axisPhysical].as<bool>();
 
-    _id = node["id"] ? node["id"].as<unsigned int>() : 0;
+    _id = node[nsx::ym_axisId] ? node[nsx::ym_axisId].as<unsigned int>() : nsx::kw_axisDefaultId;
 }
 
 Axis::~Axis() = default;
