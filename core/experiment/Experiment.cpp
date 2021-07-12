@@ -74,9 +74,6 @@ Experiment::Experiment(const std::string& name, const std::string& diffractomete
     _peak_filter->setParameters(_filter_params);
     _auto_indexer->setParameters(_indexer_params);
     _peak_merger->setParameters(_merge_params);
-
-    std::string logfile = "nsx.log";
-    Logger::instance().start(logfile, Level::Info);
 }
 
 const std::string& Experiment::name() const
