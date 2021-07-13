@@ -52,9 +52,10 @@ void ExperimentImporter::setFilePath(const std::string path, Experiment* const e
             experiment->setDiffractometer(value);
         }
 
-        nsxlog(nsx::Level::Info, "Finished reading Experiment '" + experiment->name() + "'",
-               " with diffractometer '" + experiment->getDiffractometer()->name() + "'",
-               " from path '" + path + "'");
+        nsxlog(
+            nsx::Level::Info, "Finished reading Experiment '" + experiment->name() + "'",
+            " with diffractometer '" + experiment->getDiffractometer()->name() + "'",
+            " from path '" + path + "'");
 
     } catch (H5::Exception& e) {
         std::string what = e.getDetailMsg();
@@ -76,7 +77,7 @@ void ExperimentImporter::loadData(Experiment* experiment)
             auto reader = std::make_unique<nsx::HDF5DataReader>(
                 _file_name, experiment->getDiffractometer(), collection_name);
             nsx::sptrDataSet data{new nsx::DataSet{std::move(reader)}};
-	    data->setName(collection_name);
+            data->setName(collection_name);
             experiment->addData(data, data->name());
         }
     } catch (H5::Exception& e) {
@@ -136,30 +137,27 @@ void ExperimentImporter::loadPeaks(Experiment* experiment)
 
             Eigen_VecXint rejection_flag(n_peaks);
 
-            std::map<std::string, Eigen_VecXd*> double_keys {
-                 {nsx::ds_BkgBegin, &bkg_begin},
-                 {nsx::ds_BkgEnd, &bkg_end},
-                 {nsx::ds_PeakEnd, &peak_end},
-                 {nsx::ds_Scale, &scale},
-                 {nsx::ds_Transmission, &transmission},
-                 {nsx::ds_Intensity, &intensity},
-                 {nsx::ds_Sigma, &sigma},
-                 {nsx::ds_BkgIntensity, &mean_bkg_val},
-                 {nsx::ds_BkgSigma, &mean_bkg_sig}
-            };
+            std::map<std::string, Eigen_VecXd*> double_keys{
+                {nsx::ds_BkgBegin, &bkg_begin},
+                {nsx::ds_BkgEnd, &bkg_end},
+                {nsx::ds_PeakEnd, &peak_end},
+                {nsx::ds_Scale, &scale},
+                {nsx::ds_Transmission, &transmission},
+                {nsx::ds_Intensity, &intensity},
+                {nsx::ds_Sigma, &sigma},
+                {nsx::ds_BkgIntensity, &mean_bkg_val},
+                {nsx::ds_BkgSigma, &mean_bkg_sig}};
 
-            std::map<std::string, Eigen_VecXint*> int_keys {{nsx::ds_Rejection, &rejection_flag}};
+            std::map<std::string, Eigen_VecXint*> int_keys{{nsx::ds_Rejection, &rejection_flag}};
 
             Eigen_VecXbool predicted(n_peaks);
             Eigen_VecXbool masked(n_peaks);
             Eigen_VecXbool selected(n_peaks);
 
-            std::map<std::string, Eigen_VecXbool*> bool_keys
-                {
-                 {nsx::ds_Predicted, &predicted},
-                 {nsx::ds_Masked, &masked},
-                 {nsx::ds_Selected, &selected}
-                };
+            std::map<std::string, Eigen_VecXbool*> bool_keys{
+                {nsx::ds_Predicted, &predicted},
+                {nsx::ds_Masked, &masked},
+                {nsx::ds_Selected, &selected}};
 
             Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor> center(
                 n_peaks, 3);
@@ -371,6 +369,6 @@ void ExperimentImporter::loadUnitCells(Experiment* experiment)
     nsxlog(Level::Debug, "Finished importing unit cells from file '", _file_name, "'");
 }
 
-void ExperimentImporter::finishLoad() {}
+void ExperimentImporter::finishLoad() { }
 
 } // namespace nsx

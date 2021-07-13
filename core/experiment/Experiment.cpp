@@ -37,11 +37,11 @@
 #include "core/integration/Profile3DIntegrator.h"
 #include "core/integration/ShapeIntegrator.h"
 #include "core/peak/PeakCoordinateSystem.h"
+#include "core/raw/DataKeys.h"
 #include "core/raw/IDataReader.h"
 #include "core/raw/MetaData.h"
 #include "core/statistics/CC.h"
 #include "core/statistics/RFactor.h"
-#include "core/raw/DataKeys.h"
 
 namespace nsx {
 
@@ -50,10 +50,12 @@ Experiment::~Experiment() = default;
 Experiment::Experiment(const std::string& name, const std::string& diffractometerName) : _name(name)
 {
     // start logging
-    Logger::instance().start( nsx::kw_logFilename, Level::Debug);
+    Logger::instance().start(nsx::kw_logFilename, Level::Debug);
     _peak_finder = std::make_unique<PeakFinder>();
     _peak_filter = std::make_unique<PeakFilter>();
     _auto_indexer = std::make_unique<AutoIndexer>();
+    _peak_merger = std::make_unique<PeakMerger>();
+
     _data_handler = std::make_shared<DataHandler>(_name, diffractometerName);
     _peak_handler = std::make_unique<PeakHandler>();
     _cell_handler = std::make_unique<UnitCellHandler>();
@@ -63,14 +65,15 @@ Experiment::Experiment(const std::string& name, const std::string& diffractomete
     _filter_params = std::make_shared<PeakFilterParameters>();
     _indexer_params = std::make_shared<IndexerParameters>();
     _predict_params = std::make_unique<PredictionParameters>();
-    _shape_params= std::make_unique<ShapeCollectionParameters>();
+    _shape_params = std::make_unique<ShapeCollectionParameters>();
     _refiner_params = std::make_shared<RefinerParameters>();
     _int_params = std::make_unique<IntegrationParameters>();
-    _merge_params = std::make_unique<MergeParameters>();
+    _merge_params = std::make_shared<MergeParameters>();
 
     _peak_finder->setParameters(_finder_params);
     _peak_filter->setParameters(_filter_params);
     _auto_indexer->setParameters(_indexer_params);
+    _peak_merger->setParameters(_merge_params);
 }
 
 const std::string& Experiment::name() const
@@ -167,6 +170,7 @@ void Experiment::autoIndex(PeakCollection* peaks)
     _peak_handler->acceptFilter(collection_name, peaks, listtype::INDEXING);
     PeakCollection* indexing_collection = getPeakCollection(collection_name);
     _auto_indexer->autoIndex(indexing_collection);
+    _peak_handler->removePeakCollection(collection_name);
 }
 
 void Experiment::buildShapeCollection(
@@ -225,8 +229,7 @@ void Experiment::predictPeaks(
 
     nsxlog(Level::Info, "predictPeaks: predicting peaks for data set ", data->name());
 
-    const std::vector<nsx::Peak3D*> predicted =
-        nsx::predictPeaks(data, cell, params);
+    const std::vector<nsx::Peak3D*> predicted = nsx::predictPeaks(data, cell, params);
 
     for (nsx::Peak3D* peak : predicted)
         predicted_peaks.push_back(peak);
@@ -236,20 +239,6 @@ void Experiment::predictPeaks(
         " peaks");
 
     addPeakCollection(name, listtype::PREDICTED, predicted_peaks);
-}
-
-void Experiment::computeQuality(
-    MergeParameters* params, std::vector<PeakCollection*> collections)
-{
-    params->log(Level::Info);
-    _data_quality.computeQuality(
-        params->d_min, params->d_max, 1, collections,
-        _peak_handler->getMergedPeaks()->spaceGroup(), params->friedel);
-    _data_resolution.computeQuality(
-        params->d_min, params->d_max, params->n_shells, collections,
-        _peak_handler->getMergedPeaks()->spaceGroup(), params->friedel);
-    _data_quality.log();
-    _data_resolution.log();
 }
 
 const UnitCell* Experiment::getAcceptedCell() const
@@ -388,26 +377,6 @@ void Experiment::checkPeakCollections()
 void Experiment::clonePeakCollection(std::string name, std::string new_name)
 {
     _peak_handler->clonePeakCollection(name, new_name);
-}
-
-void Experiment::setMergedPeaks(std::vector<PeakCollection*> peak_collections, bool friedel)
-{
-    _peak_handler->setMergedPeaks(peak_collections, friedel);
-}
-
-void Experiment::setMergedPeaks(PeakCollection* found, PeakCollection* predicted, bool friedel)
-{
-    _peak_handler->setMergedPeaks(found, predicted, friedel);
-}
-
-void Experiment::resetMergedPeaks()
-{
-    _peak_handler->resetMergedPeaks();
-}
-
-MergedData* Experiment::getMergedPeaks() const
-{
-    return _peak_handler->getMergedPeaks();
 }
 
 // Unit cell handler methods

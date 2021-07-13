@@ -16,9 +16,9 @@
 #include "base/utils/Logger.h"
 #include "core/algo/AutoIndexer.h"
 #include "core/experiment/PeakHandler.h"
+#include "core/raw/DataKeys.h"
 #include "core/shape/PeakCollection.h"
 #include "tables/crystal/UnitCell.h"
-#include "core/raw/DataKeys.h"
 #include <QDebug>
 
 namespace nsx {

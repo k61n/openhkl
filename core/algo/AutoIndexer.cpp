@@ -50,9 +50,7 @@ void IndexerParameters::log(const Level& level) const
     nsxlog(level, "strength_max       = ", strength_max);
 }
 
-AutoIndexer::AutoIndexer() : _solutions(), _handler(nullptr)
-{
-}
+AutoIndexer::AutoIndexer() : _solutions(), _handler(nullptr) { }
 
 std::shared_ptr<IndexerParameters> AutoIndexer::parameters()
 {
@@ -262,7 +260,8 @@ void AutoIndexer::refineSolutions(const std::vector<Peak3D*>& peaks)
         try {
             cell->setReciprocalBasis(B);
             cell->setIndexingTolerance(_params->indexingTolerance);
-            cell->reduce(_params->niggliReduction, _params->niggliTolerance, _params->gruberTolerance);
+            cell->reduce(
+                _params->niggliReduction, _params->niggliTolerance, _params->gruberTolerance);
             *cell = cell->applyNiggliConstraints();
         } catch (std::exception& e) {
             continue;

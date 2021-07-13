@@ -14,8 +14,8 @@
 
 #include "test/cpp/catch.hpp"
 
-#include <iostream>
 #include <Eigen/Dense>
+#include <iostream>
 
 #include "core/loader/XFileHandler.h"
 

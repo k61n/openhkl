@@ -13,6 +13,7 @@
 //  ***********************************************************************************************
 
 #include "core/experiment/DataQuality.h"
+
 #include "base/utils/Logger.h"
 #include "core/shape/PeakCollection.h"
 #include "core/statistics/CC.h"
@@ -24,15 +25,6 @@
 #include <iostream>
 
 namespace nsx {
-
-void MergeParameters::log(const Level& level) const
-{
-    nsxlog(level, "Merge parameters:");
-    nsxlog(level, "d_min                  = ", d_min);
-    nsxlog(level, "d_max                  = ", d_max);
-    nsxlog(level, "n_shells               = ", n_shells);
-    nsxlog(level, "friedel                = ", friedel);
-}
 
 void DataQuality::computeQuality(MergedData& merged_peaks)
 {
@@ -62,32 +54,14 @@ void ShellQuality::computeQuality(MergedData& merged_peaks, double d_min, double
     dmax = d_max;
 }
 
-void DataResolution::computeQuality(
-    double d_min, double d_max, int n_shells, std::vector<PeakCollection*> collections, 
-    SpaceGroup spacegroup, bool friedel)
+void DataResolution::addShell(const ShellQuality& shell)
+{
+    shells.push_back(shell);
+}
+
+void DataResolution::clear()
 {
     shells.clear();
-    std::vector<ShellQuality> data_resolution;
-    ResolutionShell resolution_shell = nsx::ResolutionShell(d_min, d_max, n_shells);
-    for (PeakCollection* collection : collections) {
-        for (Peak3D* peak : collection->getPeakList())
-            resolution_shell.addPeak(peak);
-    }
-
-    for (int i = n_shells - 1; i >= 0; --i) {
-        double d_lower = resolution_shell.shell(i).dmin;
-        double d_upper = resolution_shell.shell(i).dmax;
-
-        nsx::MergedData merged_data_per_shell(spacegroup, friedel);
-
-        for (auto peak : resolution_shell.shell(i).peaks)
-            merged_data_per_shell.addPeak(peak);
-
-        ShellQuality quality;
-        quality.computeQuality(merged_data_per_shell, d_lower, d_upper);
-        quality.setCompleteness(merged_data_per_shell.completeness());
-        shells.push_back(quality);
-    }
 }
 
 void ShellQuality::setCompleteness(const double c)

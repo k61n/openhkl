@@ -92,8 +92,7 @@ TEST_CASE("test/crystal/TestRefiner.cpp", "")
 
     CHECK(found_peaks.size() >= 800);
 
-    nsx::IPeakIntegrator* integrator =
-        experiment.getIntegrator(nsx::IntegratorType::PixelSum);
+    nsx::IPeakIntegrator* integrator = experiment.getIntegrator(nsx::IntegratorType::PixelSum);
     nsx::IntegrationParameters params{};
     params.peak_end = 2.7;
     params.bkg_begin = 3.5;

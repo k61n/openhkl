@@ -31,6 +31,6 @@ int main(int argc, char* argv[])
     Session session;
 
     MainWin mainWindow;
-    
+
     return QApplication::exec();
 }

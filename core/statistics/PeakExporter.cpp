@@ -14,8 +14,10 @@
 
 #include "core/statistics/PeakExporter.h"
 
+#include "base/utils/Units.h"
 #include "core/data/DataSet.h"
 #include "core/data/DataTypes.h"
+#include "core/experiment/DataQuality.h"
 #include "core/raw/DataKeys.h"
 #include "core/statistics/CC.h"
 #include "core/statistics/RFactor.h"
@@ -35,8 +37,7 @@
 namespace nsx {
 
 void PeakExporter::saveStatistics(
-    std::string filename, nsx::ResolutionShell resolutionShell, nsx::SpaceGroup spaceGroup,
-    bool inclFriedel)
+    std::string filename, const nsx::DataResolution* perShell, const nsx::DataResolution* overall)
 {
     std::fstream file(filename, std::ios::out);
 
@@ -48,34 +49,34 @@ void PeakExporter::saveStatistics(
          << std::setw(10) << "Rpim" << std::fixed << std::setw(11) << "Rpim exp." << std::fixed
          << std::setw(10) << "CC half" << std::fixed << std::setw(10) << "CC star" << std::endl;
 
-    size_t shells = resolutionShell.nShells();
-    for (int i = shells - 1; i >= 0; --i) {
-        const double d_lower = resolutionShell.shell(i).dmin;
-        const double d_upper = resolutionShell.shell(i).dmax;
+    for (const auto& shell : perShell->shells) {
+        file << std::fixed << std::setw(10) << std::setprecision(2) << shell.dmin << std::fixed
+             << std::setw(10) << std::setprecision(2) << shell.dmax << std::fixed << std::setw(10)
+             << shell.nobserved << std::fixed << std::setw(10) << shell.nunique << std::fixed
+             << std::setw(11) << std::setprecision(3) << shell.redundancy << std::fixed
+             << std::setw(10) << std::setprecision(3) << shell.Rmeas << std::fixed << std::setw(12)
+             << std::setprecision(3) << shell.expectedRmeas << std::fixed << std::setw(11)
+             << std::setprecision(3) << shell.Rmerge << std::fixed << std::setw(13)
+             << std::setprecision(3) << shell.expectedRmerge << std::fixed << std::setw(10)
+             << std::setprecision(3) << shell.Rpim << std::fixed << std::setw(11)
+             << std::setprecision(3) << shell.expectedRpim << std::fixed << std::setw(10)
+             << std::setprecision(3) << shell.CChalf << std::fixed << std::setw(10)
+             << std::setprecision(3) << shell.CCstar << std::endl;
+    }
 
-        nsx::MergedData mergedData_per_shell(spaceGroup, inclFriedel);
-
-        for (Peak3D* peak : resolutionShell.shell(i).peaks)
-            mergedData_per_shell.addPeak(peak);
-
-        nsx::CC cc;
-        cc.calculate(&mergedData_per_shell);
-        nsx::RFactor rFactor;
-        rFactor.calculate(&mergedData_per_shell);
-
-        file << std::fixed << std::setw(10) << std::setprecision(2) << d_upper << std::fixed
-             << std::setw(10) << std::setprecision(2) << d_lower << std::fixed << std::setw(10)
-             << mergedData_per_shell.totalSize() << std::fixed << std::setw(10)
-             << mergedData_per_shell.mergedPeakSet().size() << std::fixed << std::setw(11)
-             << std::setprecision(3) << mergedData_per_shell.redundancy() << std::fixed
-             << std::setw(10) << std::setprecision(3) << rFactor.Rmeas() << std::fixed
-             << std::setw(12) << std::setprecision(3) << rFactor.expectedRmeas() << std::fixed
-             << std::setw(11) << std::setprecision(3) << rFactor.Rmerge() << std::fixed
-             << std::setw(13) << std::setprecision(3) << rFactor.expectedRmerge() << std::fixed
-             << std::setw(10) << std::setprecision(3) << rFactor.Rpim() << std::fixed
-             << std::setw(11) << std::setprecision(3) << rFactor.expectedRpim() << std::fixed
-             << std::setw(10) << std::setprecision(3) << cc.CChalf() << std::fixed << std::setw(10)
-             << std::setprecision(3) << cc.CCstar() << std::endl;
+    for (const auto& shell : overall->shells) {
+        file << std::fixed << std::setw(10) << std::setprecision(2) << shell.dmin << std::fixed
+             << std::setw(10) << std::setprecision(2) << shell.dmax << std::fixed << std::setw(10)
+             << shell.nobserved << std::fixed << std::setw(10) << shell.nunique << std::fixed
+             << std::setw(11) << std::setprecision(3) << shell.redundancy << std::fixed
+             << std::setw(10) << std::setprecision(3) << shell.Rmeas << std::fixed << std::setw(12)
+             << std::setprecision(3) << shell.expectedRmeas << std::fixed << std::setw(11)
+             << std::setprecision(3) << shell.Rmerge << std::fixed << std::setw(13)
+             << std::setprecision(3) << shell.expectedRmerge << std::fixed << std::setw(10)
+             << std::setprecision(3) << shell.Rpim << std::fixed << std::setw(11)
+             << std::setprecision(3) << shell.expectedRpim << std::fixed << std::setw(10)
+             << std::setprecision(3) << shell.CChalf << std::fixed << std::setw(10)
+             << std::setprecision(3) << shell.CCstar << std::endl;
     }
 
     file.close();
@@ -92,7 +93,7 @@ void PeakExporter::saveToShelXUnmerged(const std::string& filename, nsx::MergedD
     std::fstream file(filename, std::ios::out);
     for (int i = 0; i < peak_vector.size(); i++) {
         const nsx::Peak3D* peak = peak_vector.at(i);
-        if (peak->selected()) {
+        if (peak->enabled()) {
             const nsx::UnitCell* cell = peak->unitCell();
             if (cell) {
                 nsx::MillerIndex miller_index(peak->q(), *cell);
@@ -150,7 +151,7 @@ void PeakExporter::saveToFullProfUnmerged(const std::string& filename, nsx::Merg
 
     for (int i = 0; i < peak_vector.size(); i++) {
         nsx::Peak3D* peak = peak_vector.at(i);
-        if (peak->selected()) {
+        if (peak->enabled()) {
             const nsx::UnitCell* cell = peak->unitCell();
             if (cell) {
                 nsx::MillerIndex miller_index(peak->q(), *cell);
@@ -223,15 +224,13 @@ void PeakExporter::saveToSCAUnmerged(const std::string& filename, nsx::MergedDat
     file << std::fixed << std::setw(10) << std::setprecision(3) << character.a << std::fixed
          << std::setw(10) << std::setprecision(3) << character.b << std::fixed << std::setw(10)
          << std::setprecision(3) << character.c << std::fixed << std::setw(10)
-         << std::setprecision(3) << character.alpha * (180.0 / 3.141592653589793238463)
-         << std::fixed << std::setw(10) << std::setprecision(3)
-         << character.beta * (180.0 / 3.141592653589793238463) << std::fixed << std::setw(10)
-         << std::setprecision(3) << character.gamma * (180.0 / 3.141592653589793238463) << " "
-         << symbol << std::endl;
+         << std::setprecision(3) << character.alpha / deg << std::fixed << std::setw(10)
+         << std::setprecision(3) << character.beta / deg << std::fixed << std::setw(10)
+         << std::setprecision(3) << character.gamma / deg << " " << symbol << std::endl;
 
     for (int i = 0; i < peak_vector.size(); i++) {
         const nsx::Peak3D* peak = peak_vector.at(i);
-        if (peak->selected()) {
+        if (peak->enabled()) {
             const nsx::UnitCell* cell = peak->unitCell();
             if (cell) {
                 const nsx::MillerIndex miller_index(peak->q(), *cell);
@@ -283,11 +282,9 @@ void PeakExporter::saveToSCAMerged(const std::string& filename, nsx::MergedData*
     file << std::fixed << std::setw(10) << std::setprecision(3) << character.a << std::fixed
          << std::setw(10) << std::setprecision(3) << character.b << std::fixed << std::setw(10)
          << std::setprecision(3) << character.c << std::fixed << std::setw(10)
-         << std::setprecision(3) << character.alpha * (180.0 / 3.141592653589793238463)
-         << std::fixed << std::setw(10) << std::setprecision(3)
-         << character.beta * (180.0 / 3.141592653589793238463) << std::fixed << std::setw(10)
-         << std::setprecision(3) << character.gamma * (180.0 / 3.141592653589793238463) << " "
-         << symbol << std::endl;
+         << std::setprecision(3) << character.alpha / deg << std::fixed << std::setw(10)
+         << std::setprecision(3) << character.beta / deg << std::fixed << std::setw(10)
+         << std::setprecision(3) << character.gamma * deg << " " << symbol << std::endl;
 
     for (const nsx::MergedPeak& peak : mergedData->mergedPeakSet()) {
         const auto hkl = peak.index();

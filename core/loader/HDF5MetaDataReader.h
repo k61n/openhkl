@@ -15,9 +15,9 @@
 #ifndef NSX_CORE_LOADER_HDF5METADATAREADER_H
 #define NSX_CORE_LOADER_HDF5METADATAREADER_H
 
+#include "core/raw/DataKeys.h" // kw_datasetDefaultName
 #include "core/raw/HDF5BloscFilter.h"
 #include "core/raw/IDataReader.h" // inherits from
-#include "core/raw/DataKeys.h" // kw_datasetDefaultName
 
 #include <H5Cpp.h>
 #include <memory>
@@ -34,8 +34,9 @@ class HDF5MetaDataReader : public IDataReader {
 
     HDF5MetaDataReader(const HDF5MetaDataReader& other) = delete;
 
-    HDF5MetaDataReader(const std::string& filename, Diffractometer* diffractometer,
-                       std::string dataset_name = nsx::kw_datasetDefaultName);
+    HDF5MetaDataReader(
+        const std::string& filename, Diffractometer* diffractometer,
+        std::string dataset_name = nsx::kw_datasetDefaultName);
 
     ~HDF5MetaDataReader() = default;
 

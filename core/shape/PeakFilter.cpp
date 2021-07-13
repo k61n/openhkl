@@ -43,7 +43,7 @@ PeakFilter::PeakFilter()
 void PeakFilter::resetFilterFlags()
 {
     *_filter_flags = {true,  false, false, false, false, false, false,
-                     false, false, false, false, false, false, false};
+                      false, false, false, false, false, false, false};
 }
 
 void PeakFilter::filterSignificance(PeakCollection* peak_collection) const
@@ -328,8 +328,8 @@ void PeakFilter::filterStrength(PeakCollection* peak_collection) const
         }
 
         double i_over_sigma = intensity / sigma;
-        if (i_over_sigma >= _filter_params->strength_min &&
-            i_over_sigma <= _filter_params->strength_max)
+        if (i_over_sigma >= _filter_params->strength_min
+            && i_over_sigma <= _filter_params->strength_max)
             peak_ptr->caughtYou(true);
         else {
             peak_ptr->rejectYou(true);

@@ -19,7 +19,7 @@
 #include <QDialog>
 #include <QScrollBar>
 
-namespace nsx{
+namespace nsx {
 class Experiment;
 class RotAxis;
 }

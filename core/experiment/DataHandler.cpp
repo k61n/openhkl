@@ -74,16 +74,21 @@ void DataHandler::addData(sptrDataSet data, std::string name)
 
     // Add the data only if it does not exist in the current data map
     if (_data_map.find(name) != _data_map.end())
-	throw std::invalid_argument("DataHandler::addData: Data name '" + name + "' already exists.");
+        throw std::invalid_argument(
+            "DataHandler::addData: Data name '" + name + "' already exists.");
 
     const auto& metadata = data->metadata();
 
     const std::string diffName = metadata.key<std::string>(nsx::at_diffractometer);
 
     if (!(diffName.compare(_diffractometer->name()) == 0)) {
-        throw std::runtime_error("Mismatch between the diffractometer assigned to "
-                                 "the experiment, '" + _diffractometer->name() + "', "
-				 "and the data, '" + diffName + "'");
+        throw std::runtime_error(
+            "Mismatch between the diffractometer assigned to "
+            "the experiment, '"
+            + _diffractometer->name()
+            + "', "
+              "and the data, '"
+            + diffName + "'");
     }
     const double wav = metadata.key<double>(nsx::at_wavelength);
 
@@ -103,7 +108,8 @@ void DataHandler::addData(sptrDataSet data, std::string name)
     }
 
     nsxlog(
-        Level::Info, "DataHandler::addData: adding DataSet ", name, ": ", data->nFrames(), " frames");
+        Level::Info, "DataHandler::addData: adding DataSet ", name, ": ", data->nFrames(),
+        " frames");
     _data_map.insert(std::make_pair(name, data));
 }
 

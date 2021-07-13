@@ -48,7 +48,13 @@ class MergedData {
     //! Clear the merged data
     void clear();
     //! Compute the completeness ( # valid peaks / # peaks )
-    double  completeness();
+    double completeness();
+    //! Set the d range
+    void setDRange(double d_min, double d_max);
+    //! Get minimum d
+    double dMin() const;
+    //! Get maximum d
+    double dMax() const;
 
     SpaceGroup spaceGroup() const { return _group; };
 
@@ -57,6 +63,9 @@ class MergedData {
     bool _friedel;
     MergedPeakSet _merged_peak_set;
     std::vector<PeakCollection*> _peak_collections;
+    double _d_min;
+    double _d_max;
+
     //! Number of peaks with intensity NaN (not added to set)
     int _nNaN = 0;
     //! Number of peaks with zero intensity

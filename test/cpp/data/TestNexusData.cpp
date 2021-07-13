@@ -75,7 +75,7 @@ TEST_CASE("test/data/TestNexusData.cpp", "")
         }
 
         std::shared_ptr<nsx::DataSet> datafile = factory.create("nxs", file, diffractometer);
-	datafile->setName("TestNexusData");
+        datafile->setName("TestNexusData");
         datafile->open();
         // std::cout << datafile->nFrames() << std::endl;
 

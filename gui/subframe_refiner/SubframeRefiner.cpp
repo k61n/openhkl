@@ -18,6 +18,7 @@
 #include "core/shape/PeakCollection.h"
 #include "core/shape/PeakFilter.h"
 #include "gui/MainWin.h"
+#include "gui/MainWin.h" // gGui
 #include "gui/dialogs/ListNameDialog.h"
 #include "gui/frames/ProgressView.h"
 #include "gui/graphics/SXPlot.h"
@@ -31,7 +32,6 @@
 #include "gui/utility/SideBar.h"
 #include "gui/utility/Spoiler.h"
 #include "gui/widgets/PlotCheckBox.h"
-#include "gui/MainWin.h" // gGui
 
 #include <QFileInfo>
 #include <QGridLayout>
@@ -382,7 +382,8 @@ void SubframeRefiner::setUpdateUp()
 
 void SubframeRefiner::grabRefinerParameters()
 {
-    auto* params = gSession->experimentAt(_exp_combo->currentIndex())->experiment()->refinerParams();
+    auto* params =
+        gSession->experimentAt(_exp_combo->currentIndex())->experiment()->refinerParams();
 
     _n_batches_spin->setValue(params->nbatches);
     _refineUB->setChecked(params->refine_ub);
@@ -392,11 +393,12 @@ void SubframeRefiner::grabRefinerParameters()
     _refineKi->setChecked(params->refine_ki);
 }
 
-void  SubframeRefiner::setRefinerParameters()
+void SubframeRefiner::setRefinerParameters()
 {
     if (_exp_combo->count() == 0)
         return;
-    auto* params = gSession->experimentAt(_exp_combo->currentIndex())->experiment()->refinerParams();
+    auto* params =
+        gSession->experimentAt(_exp_combo->currentIndex())->experiment()->refinerParams();
 
     params->nbatches = _n_batches_spin->value();
     params->refine_ub = _refineUB->isChecked();
@@ -442,8 +444,8 @@ void SubframeRefiner::toggleUnsafeWidgets()
     _refine_button->setEnabled(true);
     if (!_predicted_combo->count() == 0)
         _update_button->setEnabled(true);
-    if (_exp_combo->count() == 0 || _data_combo->count() == 0 ||
-        _peak_combo->count() == 0 || _cell_combo->count() == 0) {
+    if (_exp_combo->count() == 0 || _data_combo->count() == 0 || _peak_combo->count() == 0
+        || _cell_combo->count() == 0) {
         _refine_button->setEnabled(false);
         _update_button->setEnabled(false);
     }

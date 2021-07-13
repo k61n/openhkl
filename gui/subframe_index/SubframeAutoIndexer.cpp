@@ -19,6 +19,7 @@
 #include "base/utils/Units.h"
 #include "core/algo/AutoIndexer.h"
 #include "core/experiment/Experiment.h"
+#include "gui/MainWin.h" // gGui
 #include "gui/dialogs/UnitCellDialog.h"
 #include "gui/frames/UnitCellWidget.h"
 #include "gui/models/Project.h"
@@ -29,7 +30,6 @@
 #include "gui/utility/Spoiler.h"
 #include "gui/views/PeakTableView.h"
 #include "gui/views/UnitCellTableView.h"
-#include "gui/MainWin.h" // gGui
 
 #include <QCheckBox>
 #include <QDoubleSpinBox>
@@ -171,7 +171,8 @@ void SubframeAutoIndexer::setParametersUp()
     _frequency_tolerance->setDecimals(3);
 
     connect(
-        gGui->sideBar(), &SideBar::subframeChanged, this, &SubframeAutoIndexer::setIndexerParameters);
+        gGui->sideBar(), &SideBar::subframeChanged, this,
+        &SubframeAutoIndexer::setIndexerParameters);
 
     _left_layout->addWidget(para_box);
 }
@@ -322,9 +323,10 @@ void SubframeAutoIndexer::grabIndexerParameters()
     if (_peak_list.empty() || _exp_combo->count() < 1)
         return;
 
-    auto params =
-        gSession->experimentAt(_exp_combo->currentIndex())->experiment()->autoIndexer()->
-        parameters();
+    auto params = gSession->experimentAt(_exp_combo->currentIndex())
+                      ->experiment()
+                      ->autoIndexer()
+                      ->parameters();
     _min_frame->setValue(params->first_frame);
     _max_frame->setValue(params->last_frame);
     _d_min->setValue(params->d_min);
@@ -348,9 +350,10 @@ void SubframeAutoIndexer::setIndexerParameters()
     if (_peak_list.empty() || _exp_combo->count() < 1)
         return;
 
-    auto params =
-        gSession->experimentAt(_exp_combo->currentIndex())->experiment()->autoIndexer()->
-        parameters();
+    auto params = gSession->experimentAt(_exp_combo->currentIndex())
+                      ->experiment()
+                      ->autoIndexer()
+                      ->parameters();
 
     params->first_frame = _min_frame->value();
     params->last_frame = _max_frame->value();

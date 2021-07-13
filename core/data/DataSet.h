@@ -18,8 +18,8 @@
 #include "base/mask/IMask.h"
 #include "core/instrument/InstrumentStateList.h"
 #include "core/peak/Peak3D.h"
-#include "core/raw/IDataReader.h"
 #include "core/raw/DataKeys.h"
+#include "core/raw/IDataReader.h"
 
 namespace nsx {
 

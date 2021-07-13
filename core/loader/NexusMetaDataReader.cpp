@@ -212,8 +212,8 @@ void NexusMetaDataReader::open()
         return;
 
     try {
-        _file = std::unique_ptr<H5::H5File>
-	    (new H5::H5File(_metadata.key<std::string>(nsx::at_filepath).c_str(), H5F_ACC_RDONLY));
+        _file = std::unique_ptr<H5::H5File>(
+            new H5::H5File(_metadata.key<std::string>(nsx::at_filepath).c_str(), H5F_ACC_RDONLY));
     } catch (...) {
         if (_file)
             _file.reset();

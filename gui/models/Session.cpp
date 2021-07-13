@@ -13,20 +13,20 @@
 //  ***********************************************************************************************
 
 #include "gui/models/Session.h"
+#include "base/utils/Path.h" // fileBasename
 #include "base/utils/StringIO.h" // join
 #include "core/algo/DataReaderFactory.h"
 #include "core/data/DataSet.h"
 #include "core/data/DataTypes.h"
 #include "core/experiment/Experiment.h"
 #include "core/loader/RawDataReader.h"
+#include "core/raw/DataKeys.h"
 #include "core/raw/IDataReader.h"
 #include "core/raw/MetaData.h"
-#include "core/raw/DataKeys.h"
 #include "gui/MainWin.h"
 #include "gui/dialogs/DataNameDialog.h"
 #include "gui/dialogs/RawDataDialog.h"
 #include "gui/models/Project.h"
-#include "base/utils/Path.h"  // fileBasename
 
 #include <QCollator>
 #include <QDir>
@@ -89,9 +89,8 @@ bool Session::createExperiment(QString experimentName, QString instrumentName)
 {
     for (const QString& name : experimentNames()) {
         if (name == experimentName) {
-            QMessageBox::critical
-                (nullptr, "Error", "Experiment name, '"
-                 + experimentName + "' already exists");
+            QMessageBox::critical(
+                nullptr, "Error", "Experiment name, '" + experimentName + "' already exists");
             return false;
         }
     }
@@ -172,7 +171,7 @@ void Session::loadData(nsx::DataFormat format)
     QFileInfo info(filenames.at(0));
     loadDirectory = info.absolutePath();
     qset.setValue("data", loadDirectory);
-    std::string dataset1_name;  // name of the first dataset (to be set by the user)
+    std::string dataset1_name; // name of the first dataset (to be set by the user)
 
     for (const QString& filename : filenames) {
         QFileInfo fileinfo(filename);
@@ -192,11 +191,11 @@ void Session::loadData(nsx::DataFormat format)
             // choose a name for the dataset
             // default dataset name: basename of the first data-file
             const QStringList& datanames_pre{currentProject()->getDataNames()};
-            const std::string dataset_nm0 {nsx::fileBasename(filename.toStdString())};
+            const std::string dataset_nm0{nsx::fileBasename(filename.toStdString())};
             const std::string dataname{askDataName(dataset_nm0, &datanames_pre)};
             // add the list of sources as metadata
-            dataset_ptr->metadata().add<std::string>(nsx::at_datasetSources,
-                                                     filename.toStdString());
+            dataset_ptr->metadata().add<std::string>(
+                nsx::at_datasetSources, filename.toStdString());
             dataset_ptr->setName(dataname);
             // store the name of the first dataset
             if (dataset1_name.empty())
@@ -213,8 +212,7 @@ void Session::loadData(nsx::DataFormat format)
     }
 
     // select the first dataset
-    currentProject()->selectData(currentProject()->getIndex
-                                 (QString::fromStdString(dataset1_name)));
+    currentProject()->selectData(currentProject()->getIndex(QString::fromStdString(dataset1_name)));
     onDataChanged();
 }
 
@@ -248,7 +246,8 @@ void Session::loadRawData()
         if (qfilenames.empty())
             return;
 
-        // Don't leave sorting the files to the OS. Use QCollator + std::sort to sort naturally (numerically)
+        // Don't leave sorting the files to the OS. Use QCollator + std::sort to sort naturally
+        // (numerically)
         QCollator collator;
         collator.setNumericMode(true);
         std::sort(
@@ -281,9 +280,8 @@ void Session::loadRawData()
 
         const double eps = 1e-8;
         if (parameters.wavelength < eps)
-            throw std::runtime_error("Wavelength, "
-                                     + std::to_string(parameters.wavelength)
-                                     + ", must be > 0");
+            throw std::runtime_error(
+                "Wavelength, " + std::to_string(parameters.wavelength) + ", must be > 0");
 
         nsx::Diffractometer* diff = exp->getDiffractometer();
         auto reader{std::make_unique<nsx::RawDataReader>("::RawDataReader::", diff)};
@@ -307,7 +305,7 @@ void Session::loadRawData()
         // choose a name for the dataset
         // default data name: name of the first data-file
         const QStringList& datanames_pre{currentProject()->getDataNames()};
-        const std::string dataset_nm0 {nsx::fileBasename(filenames[0])};
+        const std::string dataset_nm0{nsx::fileBasename(filenames[0])};
         const std::string dataname{askDataName(dataset_nm0, &datanames_pre)};
         dataset->setName(dataname);
         metadata.add(nsx::at_datasetSources, nsx::join(filenames, ", "));

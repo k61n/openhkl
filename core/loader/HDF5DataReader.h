@@ -15,8 +15,8 @@
 #ifndef NSX_CORE_LOADER_HDF5DATAREADER_H
 #define NSX_CORE_LOADER_HDF5DATAREADER_H
 
-#include "core/loader/HDF5MetaDataReader.h" // inherits from
 #include "core/instrument/Diffractometer.h"
+#include "core/loader/HDF5MetaDataReader.h" // inherits from
 #include "core/raw/DataKeys.h" // kw_datasetDefaultName
 
 
@@ -30,8 +30,9 @@ class HDF5DataReader : public HDF5MetaDataReader {
     HDF5DataReader(const HDF5DataReader& other) = delete;
 
     // Note that we need this constructor explicitly defined for SWIG.
-    HDF5DataReader(const std::string& filename, Diffractometer* diffractometer,
-                   std::string dataset_name = nsx::kw_datasetDefaultName);
+    HDF5DataReader(
+        const std::string& filename, Diffractometer* diffractometer,
+        std::string dataset_name = nsx::kw_datasetDefaultName);
 
     ~HDF5DataReader() = default;
 

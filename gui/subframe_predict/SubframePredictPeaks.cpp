@@ -21,6 +21,7 @@
 #include "core/shape/IPeakIntegrator.h"
 #include "core/shape/PeakCollection.h"
 #include "core/shape/ShapeCollection.h"
+#include "gui/MainWin.h" // gGui
 #include "gui/dialogs/ListNameDialog.h"
 #include "gui/frames/ProgressView.h"
 #include "gui/graphics/DetectorScene.h"
@@ -38,7 +39,6 @@
 #include "gui/views/PeakTableView.h"
 #include "gui/widgets/PeakViewWidget.h"
 #include "tables/crystal/UnitCell.h"
-#include "gui/MainWin.h" // gGui
 
 #include <QFileInfo>
 #include <QGridLayout>
@@ -263,8 +263,7 @@ void SubframePredictPeaks::updateDatasetParameters(int idx)
 
 void SubframePredictPeaks::grabPredictorParameters()
 {
-    auto params =
-        gSession->experimentAt(_exp_combo->currentIndex())->experiment()->predictParams();
+    auto params = gSession->experimentAt(_exp_combo->currentIndex())->experiment()->predictParams();
 
     _d_min->setValue(params->d_min);
     _d_max->setValue(params->d_max);
@@ -275,8 +274,7 @@ void SubframePredictPeaks::setPredictorParameters()
     if (_exp_combo->count() == 0 || _cell_combo->count() == 0)
         return;
 
-    auto params =
-        gSession->experimentAt(_exp_combo->currentIndex())->experiment()->predictParams();
+    auto params = gSession->experimentAt(_exp_combo->currentIndex())->experiment()->predictParams();
 
     params->d_min = _d_min->value();
     params->d_max = _d_max->value();
@@ -300,8 +298,7 @@ void SubframePredictPeaks::runPrediction()
         std::vector<nsx::Peak3D*> predicted_peaks;
 
         for (const nsx::sptrDataSet& d : data) {
-            std::vector<nsx::Peak3D*> predicted =
-                nsx::predictPeaks(d, cell, params, handler);
+            std::vector<nsx::Peak3D*> predicted = nsx::predictPeaks(d, cell, params, handler);
 
             for (nsx::Peak3D* peak : predicted)
                 predicted_peaks.push_back(peak);

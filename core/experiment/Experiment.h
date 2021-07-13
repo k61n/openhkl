@@ -22,11 +22,12 @@
 #include "core/experiment/PeakFinder.h"
 #include "core/instrument/Diffractometer.h"
 #include "core/loader/RawDataReader.h"
+#include "core/raw/DataKeys.h"
 #include "core/shape/IPeakIntegrator.h"
 #include "core/shape/PeakFilter.h"
 #include "core/statistics/MergedData.h"
+#include "core/statistics/PeakMerger.h"
 #include "core/statistics/ResolutionShell.h"
-#include "core/raw/DataKeys.h"
 #include "tables/crystal/UnitCell.h"
 
 
@@ -107,15 +108,6 @@ class Experiment {
     void checkPeakCollections();
     //! Duplicate a peak collection (deep copy) for comparison after some process
     void clonePeakCollection(std::string name, std::string new_name);
-    //! Merge a vector of PeakCollection objects
-    void setMergedPeaks(std::vector<PeakCollection*> peak_collections, bool friedel);
-    //! Merge two PeakCollection objects (mainly for SWIG)
-    void setMergedPeaks(PeakCollection* found, PeakCollection* predicted, bool friedel);
-    int min_n_neighbors = 10; //!< Minimum number of neighbours required for shape collection
-    //! Reset the merged peak collection
-    void resetMergedPeaks();
-    //! Get the merged peak collection
-    MergedData* getMergedPeaks() const;
 
     // Unit cells
     //! Add a unit cell to the experiment
@@ -153,23 +145,27 @@ class Experiment {
 
     // Peak finder
     //! Return a pointer to the PeakFinder object
-    nsx::PeakFinder* peakFinder() { return _peak_finder.get(); };
+    PeakFinder* peakFinder() { return _peak_finder.get(); };
     //! Create a new peak collection from the peaks found by the peak finder
     void acceptFoundPeaks(const std::string& name);
 
     // Peak Filter
     //! Return a pointer to the PeakFilter object
-    nsx::PeakFilter* peakFilter() { return _peak_filter.get(); };
+    PeakFilter* peakFilter() { return _peak_filter.get(); };
 
     // Autoindexer
     //! Get a pointer to the AutoIndexer object
-    nsx::AutoIndexer* autoIndexer() const { return _auto_indexer.get(); };
+    AutoIndexer* autoIndexer() const { return _auto_indexer.get(); };
     //! attempt to autoindex the data
     void autoIndex(PeakCollection* peaks);
     //! Get a pointer to the accepted/assigned unit cell
     const UnitCell* getAcceptedCell() const;
     //! Get a pointer to the reference unit cell
     const UnitCell* getReferenceCell() const;
+
+    // Peak Merger
+    //! get a pointer to the PeakMerger object
+    PeakMerger* peakMerger() const { return _peak_merger.get(); };
 
     // Integration handler
     //! get the named integrator
@@ -204,8 +200,6 @@ class Experiment {
     //! Update the predicted peaks post-refinement
     void updatePredictions(PeakCollection* predicted_peaks);
 
-    //! Get resolution shells for quality metrics
-    void computeQuality(MergeParameters* params, std::vector<PeakCollection*> predicted);
     //! Return data quality resolution
     DataResolution* getResolution() { return &_data_resolution; };
     // Return data quality structs for all merged data:
@@ -238,12 +232,13 @@ class Experiment {
     std::unique_ptr<PeakFilter> _peak_filter;
     std::unique_ptr<AutoIndexer> _auto_indexer;
     std::unique_ptr<Refiner> _refiner;
+    std::unique_ptr<PeakMerger> _peak_merger;
 
     // Objects containing quality metrics
     DataResolution _data_quality; //!< Data quality for whole resolution range
     DataResolution _data_resolution; //!< Data quality per resolution shell
 
-    //Parameter containers. Shared pointers are shared with their respective objects
+    // Parameter containers. Shared pointers are shared with their respective objects
     //! Container for peak finder parameters
     std::shared_ptr<PeakFinderParameters> _finder_params; // Shared with _finder
     //! Container for peak filter parameters
@@ -259,7 +254,7 @@ class Experiment {
     //! Container for refiner parameters
     std::shared_ptr<RefinerParameters> _refiner_params; // Shared with _refiner
     //! Container for merge parameters
-    std::unique_ptr<MergeParameters> _merge_params;
+    std::shared_ptr<MergeParameters> _merge_params;
 };
 
 } // namespace nsx

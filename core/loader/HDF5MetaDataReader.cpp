@@ -54,8 +54,8 @@ std::string _dataKey(const std::string& dataset_name)
 
 namespace nsx {
 
-HDF5MetaDataReader::HDF5MetaDataReader
-(const std::string& filename, Diffractometer* diffractometer, std::string dataset_name)
+HDF5MetaDataReader::HDF5MetaDataReader(
+    const std::string& filename, Diffractometer* diffractometer, std::string dataset_name)
     : IDataReader(filename, diffractometer)
     , _dataset(nullptr)
     , _space(nullptr)
@@ -77,14 +77,16 @@ HDF5MetaDataReader::HDF5MetaDataReader
                 dataset_name = data_collections.getObjnameByIdx(0);
                 // Warn about automatic selection of the first dataset when multiple datasets exist
                 if (object_num >= 1) {
-                    nsxlog(nsx::Level::Warning, "HDF5 file '", filename, "' has ", object_num,
-                           " DataCollections; the first one, '", dataset_name, "', will be taken.");
+                    nsxlog(
+                        nsx::Level::Warning, "HDF5 file '", filename, "' has ", object_num,
+                        " DataCollections; the first one, '", dataset_name, "', will be taken.");
                 }
             }
         }
 
-        nsxlog(nsx::Level::Info, "Initializing HDF5MetaDataReader to read '",
-               filename, "', dataset '", dataset_name, "'");
+        nsxlog(
+            nsx::Level::Info, "Initializing HDF5MetaDataReader to read '", filename, "', dataset '",
+            dataset_name, "'");
 
         // TODO: make groups names compatible accross the codebase
         metaGroup = _file->openGroup("/" + _metaKey(dataset_name));
@@ -95,7 +97,7 @@ HDF5MetaDataReader::HDF5MetaDataReader
         std::string experiment_name = "", diffractometer_name = "", version_str = "";
 
         if (_file->attrExists(nsx::at_experiment)) {
-            const H5::Attribute attr =  _file->openAttribute(nsx::at_experiment);
+            const H5::Attribute attr = _file->openAttribute(nsx::at_experiment);
             const H5::DataType attr_type = attr.getDataType();
             attr.read(attr_type, experiment_name);
         }
@@ -113,12 +115,13 @@ HDF5MetaDataReader::HDF5MetaDataReader
         }
 
         // store the attributes in the metadata
-        _metadata.add<std::string>(nsx::at_experiment,
-                                   experiment_name.empty()? nsx::kw_experimentDefaultName : experiment_name);
-        _metadata.add<std::string>(nsx::at_diffractometer,
-                                   diffractometer_name.empty()? nsx::kw_diffractometerDefaultName : diffractometer_name);
-        _metadata.add<std::string>(nsx::at_formatVersion,
-                                   version_str);
+        _metadata.add<std::string>(
+            nsx::at_experiment,
+            experiment_name.empty() ? nsx::kw_experimentDefaultName : experiment_name);
+        _metadata.add<std::string>(
+            nsx::at_diffractometer,
+            diffractometer_name.empty() ? nsx::kw_diffractometerDefaultName : diffractometer_name);
+        _metadata.add<std::string>(nsx::at_formatVersion, version_str);
         _metadata.add<std::string>(nsx::at_filepath, filename);
         _metadata.add<std::string>(nsx::at_datasetName, dataset_name);
 
@@ -128,12 +131,14 @@ HDF5MetaDataReader::HDF5MetaDataReader
     }
 
     // Read the metadata group and store in metadata
-    nsxlog(nsx::Level::Debug, "Reading metadata attribute of '", filename, "', dataset '", dataset_name, "'");
+    nsxlog(
+        nsx::Level::Debug, "Reading metadata attribute of '", filename, "', dataset '",
+        dataset_name, "'");
     const H5::StrType strVarType(H5::PredType::C_S1, H5T_VARIABLE);
     int nmeta = metaGroup.getNumAttrs();
     for (int i = 0; i < nmeta; ++i) {
         H5::Attribute attr = metaGroup.openAttribute(i);
-        const std::string key { attr.getName() };
+        const std::string key{attr.getName()};
         H5::DataType typ = attr.getDataType();
         if (typ == strVarType) {
             std::string value;
@@ -159,7 +164,9 @@ HDF5MetaDataReader::HDF5MetaDataReader
     // TODO: npdone -> nr of frames
     _nFrames = _metadata.key<int>(nsx::at_frameCount);
 
-    nsxlog(nsx::Level::Debug, "Reading detector state of '", filename, "', dataset '", dataset_name, "'");
+    nsxlog(
+        nsx::Level::Debug, "Reading detector state of '", filename, "', dataset '", dataset_name,
+        "'");
 
     const auto& detector_gonio = _diffractometer->detector()->gonio();
     size_t n_detector_gonio_axes = detector_gonio.nAxes();
@@ -199,7 +206,8 @@ HDF5MetaDataReader::HDF5MetaDataReader
     // Use natural units internally (rad)
     dm *= deg;
 
-    nsxlog(nsx::Level::Debug, "Reading gonio state of '", filename, "', dataset '", dataset_name,"'");
+    nsxlog(
+        nsx::Level::Debug, "Reading gonio state of '", filename, "', dataset '", dataset_name, "'");
 
     _detectorStates.resize(_nFrames);
 
@@ -245,7 +253,9 @@ HDF5MetaDataReader::HDF5MetaDataReader
     for (unsigned int i = 0; i < _nFrames; ++i)
         _sampleStates[i] = eigenToVector(dm.col(i));
 
-    nsxlog(nsx::Level::Info, "Finished reading the data in '", filename, "', dataset '", dataset_name, "'");
+    nsxlog(
+        nsx::Level::Info, "Finished reading the data in '", filename, "', dataset '", dataset_name,
+        "'");
     _file->close();
 }
 
@@ -290,7 +300,9 @@ void HDF5MetaDataReader::open()
     _nRows = dims[1];
     _nCols = dims[2];
 
-    nsxlog(nsx::Level::Info, "Data shape: (frames = ", _nFrames, ", rows = ", _nRows, ", columns = ", _nCols, ")");
+    nsxlog(
+        nsx::Level::Info, "Data shape: (frames = ", _nFrames, ", rows = ", _nRows,
+        ", columns = ", _nCols, ")");
 
     // Size of one hyperslab
     const hsize_t count_1frm[3] = {1, _nRows, _nCols};
@@ -304,7 +316,8 @@ void HDF5MetaDataReader::close()
     if (!_isOpened)
         return;
 
-    nsxlog(nsx::Level::Info, "Closing datafile '", _metadata.key<std::string>(nsx::at_filepath), "'");
+    nsxlog(
+        nsx::Level::Info, "Closing datafile '", _metadata.key<std::string>(nsx::at_filepath), "'");
 
     _file->close();
     _space->close();

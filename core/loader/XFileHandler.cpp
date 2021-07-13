@@ -32,7 +32,7 @@ std::vector<std::string> tokenize(const std::string& line)
     return tokens;
 }
 
-XFileHandler::XFileHandler(std::string filename) : _filename(filename) {}
+XFileHandler::XFileHandler(std::string filename) : _filename(filename) { }
 
 void XFileHandler::readXFile(int frame)
 {
