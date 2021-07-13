@@ -521,7 +521,6 @@ void SubframeFilterPeaks::filterPeaks()
     if (_peak_list.empty() || _exp_combo->count() < 1)
         return;
 
-    setFilterParameters();
 
     nsx::PeakFilter* filter =
         gSession->experimentAt(_exp_combo->currentIndex())->experiment()->peakFilter();
@@ -530,6 +529,7 @@ void SubframeFilterPeaks::filterPeaks()
             ->experiment()
             ->getPeakCollection(_peak_combo->currentText().toStdString());
     filter->resetFiltering(collection);
+    setFilterParameters();
     filter->filter(collection);
 
     int n_peaks = _peak_collection_item.numberOfPeaks();

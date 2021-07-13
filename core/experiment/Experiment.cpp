@@ -170,6 +170,7 @@ void Experiment::autoIndex(PeakCollection* peaks)
     _peak_handler->acceptFilter(collection_name, peaks, listtype::INDEXING);
     PeakCollection* indexing_collection = getPeakCollection(collection_name);
     _auto_indexer->autoIndex(indexing_collection);
+    _peak_handler->removePeakCollection(collection_name);
 }
 
 void Experiment::buildShapeCollection(
