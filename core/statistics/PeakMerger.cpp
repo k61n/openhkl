@@ -59,11 +59,13 @@ void PeakMerger::mergePeaks()
     SpaceGroup space_group = _merged_data->spaceGroup();
     ResolutionShell resolution_shell{_params->d_min, _params->d_max, _params->n_shells};
 
+    // Sort the peaks by resoltion shell (concentric shells in d)
     for (PeakCollection* collection : _peak_collections) {
         for (Peak3D* peak : collection->getPeakList())
             resolution_shell.addPeak(peak);
     }
 
+    // Generate merged peak collections per resolution shell
     for (int i = _params->n_shells - 1; i >= 0; --i) {
         double d_lower = resolution_shell.shell(i).dmin;
         double d_upper = resolution_shell.shell(i).dmax;
@@ -84,11 +86,13 @@ void PeakMerger::computeQuality()
     ShellQuality quality;
     _overall_quality.shells.clear();
     _shell_qualities.shells.clear();
+    // R-factors, CC, completeness per shell
     for (auto&& merged_data : _merged_data_per_shell) {
         quality.computeQuality(*merged_data, merged_data->dMin(), merged_data->dMax());
         quality.setCompleteness(merged_data->completeness());
         _shell_qualities.addShell(quality);
     }
+    // Overall R-factors, CC, completeness
     quality.computeQuality(*_merged_data, _params->d_min, _params->d_max);
     _overall_quality.addShell(quality);
 

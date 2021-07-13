@@ -31,23 +31,37 @@ struct MergeParameters {
     void log(const Level& level) const;
 };
 
+//! Class to manage peak merging, i.e. merging peaks that are symmetry-equivalent.
+//! Can also secondarily be used to merge distinct peak collections.
+//! Computes statistical measures R-factor, CC to sanity check the quality of the
+//! refinement and integration.
 class PeakMerger {
  public:
     PeakMerger(PeakCollection* peaks = nullptr);
 
+    //! Add a peak collection to be merged
     void addPeakCollection(PeakCollection* peaks);
+    //! Reset peak collections and merged data
     void reset();
 
+    //! Perform the merge
     void mergePeaks();
+    //! Compute R-factors, CCs and completeness
     void computeQuality();
 
+    //! Return a pointer to the parameter structure
     MergeParameters* parameters() const ;
+    //! Set the shared pointer to the parameter
     void setParameters(std::shared_ptr<MergeParameters> params);
 
+    //! Get a pointer to the MergedData object
     MergedData* getMergedData() const;
+    //! Get a pointer to the merged data per resolution shell
     std::vector<MergedData*> getMergedDataPerShell() const;
 
+    //! Get the quality statistics per resolution shell
     const DataResolution* shellQuality();
+    //! Get the overall quality statistics
     const DataResolution* overallQuality();
 
  private:
