@@ -17,8 +17,8 @@
 #include "base/utils/Units.h"
 #include "core/data/DataSet.h"
 #include "core/data/DataTypes.h"
-#include "core/raw/DataKeys.h"
 #include "core/experiment/DataQuality.h"
+#include "core/raw/DataKeys.h"
 #include "core/statistics/CC.h"
 #include "core/statistics/RFactor.h"
 #include "tables/crystal/MillerIndex.h"
@@ -41,50 +41,42 @@ void PeakExporter::saveStatistics(
 {
     std::fstream file(filename, std::ios::out);
 
-    file << std::fixed << std::setw(10) << "dmax"
-         << std::fixed << std::setw(10) << "dmin"
-         << std::fixed << std::setw(10) << "nobs"
-         << std::fixed << std::setw(10) << "nmerge"
-         << std::fixed << std::setw(11) << "Redundancy"
-         << std::fixed << std::setw(10) << "R meas."
-         << std::fixed << std::setw(12) << "R exp. meas."
-         << std::fixed << std::setw(11) << "R merge"
-         << std::fixed << std::setw(13) << "R exp. merge"
-         << std::fixed << std::setw(10) << "Rpim"
-         << std::fixed << std::setw(11) << "Rpim exp."
-         << std::fixed << std::setw(10) << "CC half"
-         << std::fixed << std::setw(10) << "CC star" << std::endl;
+    file << std::fixed << std::setw(10) << "dmax" << std::fixed << std::setw(10) << "dmin"
+         << std::fixed << std::setw(10) << "nobs" << std::fixed << std::setw(10) << "nmerge"
+         << std::fixed << std::setw(11) << "Redundancy" << std::fixed << std::setw(10) << "R meas."
+         << std::fixed << std::setw(12) << "R exp. meas." << std::fixed << std::setw(11)
+         << "R merge" << std::fixed << std::setw(13) << "R exp. merge" << std::fixed
+         << std::setw(10) << "Rpim" << std::fixed << std::setw(11) << "Rpim exp." << std::fixed
+         << std::setw(10) << "CC half" << std::fixed << std::setw(10) << "CC star" << std::endl;
 
     for (const auto& shell : perShell->shells) {
-        file << std::fixed << std::setw(10) << std::setprecision(2) << shell.dmin
-            << std::fixed << std::setw(10) << std::setprecision(2) << shell.dmax
-            << std::fixed << std::setw(10) << shell.nobserved
-            << std::fixed << std::setw(10) << shell.nunique
-            << std::fixed << std::setw(11) << std::setprecision(3) << shell.redundancy
-            << std::fixed << std::setw(10) << std::setprecision(3) << shell.Rmeas
-            << std::fixed << std::setw(12) << std::setprecision(3) << shell.expectedRmeas
-            << std::fixed << std::setw(11) << std::setprecision(3) << shell.Rmerge
-            << std::fixed << std::setw(13) << std::setprecision(3) << shell.expectedRmerge
-            << std::fixed << std::setw(10) << std::setprecision(3) << shell.Rpim
-            << std::fixed << std::setw(11) << std::setprecision(3) << shell.expectedRpim
-            << std::fixed << std::setw(10) << std::setprecision(3) << shell.CChalf
-            << std::fixed << std::setw(10) << std::setprecision(3) << shell.CCstar << std::endl;
+        file << std::fixed << std::setw(10) << std::setprecision(2) << shell.dmin << std::fixed
+             << std::setw(10) << std::setprecision(2) << shell.dmax << std::fixed << std::setw(10)
+             << shell.nobserved << std::fixed << std::setw(10) << shell.nunique << std::fixed
+             << std::setw(11) << std::setprecision(3) << shell.redundancy << std::fixed
+             << std::setw(10) << std::setprecision(3) << shell.Rmeas << std::fixed << std::setw(12)
+             << std::setprecision(3) << shell.expectedRmeas << std::fixed << std::setw(11)
+             << std::setprecision(3) << shell.Rmerge << std::fixed << std::setw(13)
+             << std::setprecision(3) << shell.expectedRmerge << std::fixed << std::setw(10)
+             << std::setprecision(3) << shell.Rpim << std::fixed << std::setw(11)
+             << std::setprecision(3) << shell.expectedRpim << std::fixed << std::setw(10)
+             << std::setprecision(3) << shell.CChalf << std::fixed << std::setw(10)
+             << std::setprecision(3) << shell.CCstar << std::endl;
     }
 
     for (const auto& shell : overall->shells) {
-        file << std::fixed << std::setw(10) << std::setprecision(2) << shell.dmin
-            << std::fixed << std::setw(10) << std::setprecision(2) << shell.dmax
-            << std::fixed << std::setw(10) << shell.nobserved
-            << std::fixed << std::setw(10) << shell.nunique
-            << std::fixed << std::setw(11) << std::setprecision(3) << shell.redundancy
-            << std::fixed << std::setw(10) << std::setprecision(3) << shell.Rmeas
-            << std::fixed << std::setw(12) << std::setprecision(3) << shell.expectedRmeas
-            << std::fixed << std::setw(11) << std::setprecision(3) << shell.Rmerge
-            << std::fixed << std::setw(13) << std::setprecision(3) << shell.expectedRmerge
-            << std::fixed << std::setw(10) << std::setprecision(3) << shell.Rpim
-            << std::fixed << std::setw(11) << std::setprecision(3) << shell.expectedRpim
-            << std::fixed << std::setw(10) << std::setprecision(3) << shell.CChalf
-            << std::fixed << std::setw(10) << std::setprecision(3) << shell.CCstar << std::endl;
+        file << std::fixed << std::setw(10) << std::setprecision(2) << shell.dmin << std::fixed
+             << std::setw(10) << std::setprecision(2) << shell.dmax << std::fixed << std::setw(10)
+             << shell.nobserved << std::fixed << std::setw(10) << shell.nunique << std::fixed
+             << std::setw(11) << std::setprecision(3) << shell.redundancy << std::fixed
+             << std::setw(10) << std::setprecision(3) << shell.Rmeas << std::fixed << std::setw(12)
+             << std::setprecision(3) << shell.expectedRmeas << std::fixed << std::setw(11)
+             << std::setprecision(3) << shell.Rmerge << std::fixed << std::setw(13)
+             << std::setprecision(3) << shell.expectedRmerge << std::fixed << std::setw(10)
+             << std::setprecision(3) << shell.Rpim << std::fixed << std::setw(11)
+             << std::setprecision(3) << shell.expectedRpim << std::fixed << std::setw(10)
+             << std::setprecision(3) << shell.CChalf << std::fixed << std::setw(10)
+             << std::setprecision(3) << shell.CCstar << std::endl;
     }
 
     file.close();
@@ -229,13 +221,12 @@ void PeakExporter::saveToSCAUnmerged(const std::string& filename, nsx::MergedDat
     symbol.erase(std::remove(symbol.begin(), symbol.end(), ' '), symbol.end());
 
     file << "    1\n\n";
-    file << std::fixed << std::setw(10) << std::setprecision(3) << character.a
-         << std::fixed << std::setw(10) << std::setprecision(3) << character.b
-         << std::fixed << std::setw(10) << std::setprecision(3) << character.c
-         << std::fixed << std::setw(10) << std::setprecision(3) << character.alpha / deg
-         << std::fixed << std::setw(10) << std::setprecision(3) << character.beta / deg
-         << std::fixed << std::setw(10) << std::setprecision(3) << character.gamma / deg
-         << " " << symbol << std::endl;
+    file << std::fixed << std::setw(10) << std::setprecision(3) << character.a << std::fixed
+         << std::setw(10) << std::setprecision(3) << character.b << std::fixed << std::setw(10)
+         << std::setprecision(3) << character.c << std::fixed << std::setw(10)
+         << std::setprecision(3) << character.alpha / deg << std::fixed << std::setw(10)
+         << std::setprecision(3) << character.beta / deg << std::fixed << std::setw(10)
+         << std::setprecision(3) << character.gamma / deg << " " << symbol << std::endl;
 
     for (int i = 0; i < peak_vector.size(); i++) {
         const nsx::Peak3D* peak = peak_vector.at(i);
@@ -288,13 +279,12 @@ void PeakExporter::saveToSCAMerged(const std::string& filename, nsx::MergedData*
     symbol.erase(std::remove(symbol.begin(), symbol.end(), ' '), symbol.end());
 
     file << "    1\n\n";
-    file << std::fixed << std::setw(10) << std::setprecision(3) << character.a
-         << std::fixed << std::setw(10) << std::setprecision(3) << character.b
-         << std::fixed << std::setw(10) << std::setprecision(3) << character.c
-         << std::fixed << std::setw(10) << std::setprecision(3) << character.alpha / deg
-         << std::fixed << std::setw(10) << std::setprecision(3) << character.beta / deg
-         << std::fixed << std::setw(10) << std::setprecision(3) << character.gamma * deg
-         << " " << symbol << std::endl;
+    file << std::fixed << std::setw(10) << std::setprecision(3) << character.a << std::fixed
+         << std::setw(10) << std::setprecision(3) << character.b << std::fixed << std::setw(10)
+         << std::setprecision(3) << character.c << std::fixed << std::setw(10)
+         << std::setprecision(3) << character.alpha / deg << std::fixed << std::setw(10)
+         << std::setprecision(3) << character.beta / deg << std::fixed << std::setw(10)
+         << std::setprecision(3) << character.gamma * deg << " " << symbol << std::endl;
 
     for (const nsx::MergedPeak& peak : mergedData->mergedPeakSet()) {
         const auto hkl = peak.index();

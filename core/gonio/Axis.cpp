@@ -30,7 +30,10 @@ Axis* Axis::create(const YAML::Node& node)
     return AxisFactory::instance().create(axisType, node);
 }
 
-Axis::Axis() : _name(nsx::kw_axisDefaultName), _axis(Eigen::Vector3d(0.0, 0.0, 1.0)), _physical(true), _id(0) { }
+Axis::Axis()
+    : _name(nsx::kw_axisDefaultName), _axis(Eigen::Vector3d(0.0, 0.0, 1.0)), _physical(true), _id(0)
+{
+}
 
 Axis::Axis(const std::string& name)
     : _name(name), _axis(Eigen::Vector3d(0.0, 0.0, 1.0)), _physical(true), _id(0)
@@ -45,7 +48,8 @@ Axis::Axis(const std::string& name, const Eigen::Vector3d& axis)
 
 Axis::Axis(const YAML::Node& node)
 {
-    _name = node[nsx::ym_axisName] ? node[nsx::ym_axisName].as<std::string>() : nsx::kw_axisDefaultName;
+    _name = node[nsx::ym_axisName] ? node[nsx::ym_axisName].as<std::string>()
+                                   : nsx::kw_axisDefaultName;
 
     Eigen::Vector3d axis = node[nsx::ym_axisDirection].as<Eigen::Vector3d>();
     axis.normalize();

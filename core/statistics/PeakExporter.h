@@ -30,7 +30,8 @@ class PeakExporter {
  public:
     //! Saves the shell information to file.
     void saveStatistics(
-        std::string filename, const nsx::DataResolution* perShell, const nsx::DataResolution* overall);
+        std::string filename, const nsx::DataResolution* perShell,
+        const nsx::DataResolution* overall);
     //! Saves the peak information to ShelX file format given a peak list.
     void saveToShelXMerged(const std::string& filename, nsx::MergedData* mergedData);
     //! Saves the peak information to ShelX file format given a merged peak list.

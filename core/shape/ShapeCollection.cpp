@@ -93,8 +93,8 @@ static std::vector<Peak3D*> buildPeaksFromMillerIndices(
 }
 
 std::vector<Peak3D*> predictPeaks(
-    const sptrDataSet data, const UnitCell* unit_cell,
-    const PredictionParameters* params, sptrProgressHandler handler)
+    const sptrDataSet data, const UnitCell* unit_cell, const PredictionParameters* params,
+    sptrProgressHandler handler)
 {
     std::vector<Peak3D*> predicted_peaks;
 

@@ -37,11 +37,11 @@
 #include "core/integration/Profile3DIntegrator.h"
 #include "core/integration/ShapeIntegrator.h"
 #include "core/peak/PeakCoordinateSystem.h"
+#include "core/raw/DataKeys.h"
 #include "core/raw/IDataReader.h"
 #include "core/raw/MetaData.h"
 #include "core/statistics/CC.h"
 #include "core/statistics/RFactor.h"
-#include "core/raw/DataKeys.h"
 
 namespace nsx {
 
@@ -50,7 +50,7 @@ Experiment::~Experiment() = default;
 Experiment::Experiment(const std::string& name, const std::string& diffractometerName) : _name(name)
 {
     // start logging
-    Logger::instance().start( nsx::kw_logFilename, Level::Debug);
+    Logger::instance().start(nsx::kw_logFilename, Level::Debug);
     _peak_finder = std::make_unique<PeakFinder>();
     _peak_filter = std::make_unique<PeakFilter>();
     _auto_indexer = std::make_unique<AutoIndexer>();
@@ -65,7 +65,7 @@ Experiment::Experiment(const std::string& name, const std::string& diffractomete
     _filter_params = std::make_shared<PeakFilterParameters>();
     _indexer_params = std::make_shared<IndexerParameters>();
     _predict_params = std::make_unique<PredictionParameters>();
-    _shape_params= std::make_unique<ShapeCollectionParameters>();
+    _shape_params = std::make_unique<ShapeCollectionParameters>();
     _refiner_params = std::make_shared<RefinerParameters>();
     _int_params = std::make_unique<IntegrationParameters>();
     _merge_params = std::make_shared<MergeParameters>();
@@ -229,8 +229,7 @@ void Experiment::predictPeaks(
 
     nsxlog(Level::Info, "predictPeaks: predicting peaks for data set ", data->name());
 
-    const std::vector<nsx::Peak3D*> predicted =
-        nsx::predictPeaks(data, cell, params);
+    const std::vector<nsx::Peak3D*> predicted = nsx::predictPeaks(data, cell, params);
 
     for (nsx::Peak3D* peak : predicted)
         predicted_peaks.push_back(peak);

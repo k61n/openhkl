@@ -14,19 +14,19 @@
 
 #include "core/data/DataSet.h"
 #include "base/parser/BloscFilter.h"
+#include "base/utils/Logger.h"
 #include "base/utils/Path.h"
 #include "base/utils/ProgressHandler.h"
 #include "base/utils/Units.h" // deg
 #include "core/detector/Detector.h"
 #include "core/detector/DetectorEvent.h"
+#include "core/experiment/ExperimentExporter.h"
 #include "core/gonio/Gonio.h"
 #include "core/instrument/Diffractometer.h"
 #include "core/instrument/Monochromator.h"
 #include "core/instrument/Sample.h"
 #include "core/instrument/Source.h"
-#include "core/experiment/ExperimentExporter.h"
 #include "core/raw/DataKeys.h"
-#include "base/utils/Logger.h"
 
 #include <H5Cpp.h>
 
@@ -56,8 +56,7 @@ DataSet::DataSet(std::shared_ptr<IDataReader> reader)
         _states.push_back(_reader->state(i));
 }
 
-DataSet::~DataSet()
-{}
+DataSet::~DataSet() { }
 
 int DataSet::dataAt(unsigned int x, unsigned int y, unsigned int z) const
 {
@@ -118,7 +117,7 @@ void DataSet::saveHDF5(const std::string& filename)
     const std::string dname = name(), instrument_name = _reader->diffractometer()->name();
     nsxlog(Level::Info, "Saving DataSet ", dname, " to HDF5 file:", filename);
 
-    std::map<std::string, DataSet*> data_sets { {dname, this} };
+    std::map<std::string, DataSet*> data_sets{{dname, this}};
     exporter.createFile(dname, instrument_name, filename);
     exporter.writeData(data_sets);
     exporter.finishWrite();

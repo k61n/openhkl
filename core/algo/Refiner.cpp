@@ -43,7 +43,8 @@ void RefinerParameters::log(const Level& level) const
 
 Refiner::Refiner(
     InstrumentStateList& states, UnitCell* cell, const std::vector<nsx::Peak3D*>& peaks,
-    UnitCellHandler* cell_handler, int nbatches) : _cell_handler(cell_handler), _cell(cell)
+    UnitCellHandler* cell_handler, int nbatches)
+    : _cell_handler(cell_handler), _cell(cell)
 {
     _params = std::make_shared<RefinerParameters>();
     _params->nbatches = nbatches;

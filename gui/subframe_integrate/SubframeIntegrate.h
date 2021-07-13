@@ -152,13 +152,12 @@ class SubframeIntegrate : public QWidget {
     PeakCollectionItem _peak_collection_item;
     PeakCollectionModel _peak_collection_model;
 
-    const std::map<std::string, nsx::IntegratorType> _integrator_strings {
+    const std::map<std::string, nsx::IntegratorType> _integrator_strings{
         {"Pixel sum integrator", nsx::IntegratorType::PixelSum},
         {"Gaussian integrator", nsx::IntegratorType::Gaussian},
         {"I/Sigma integrator", nsx::IntegratorType::ISigma},
         {"1D Profile integrator", nsx::IntegratorType::Profile1D},
-        {"3D Profile integrator", nsx::IntegratorType::Profile3D}
-    };
+        {"3D Profile integrator", nsx::IntegratorType::Profile3D}};
 };
 
 

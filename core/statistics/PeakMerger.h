@@ -50,7 +50,7 @@ class PeakMerger {
     void computeQuality();
 
     //! Return a pointer to the parameter structure
-    MergeParameters* parameters() const ;
+    MergeParameters* parameters() const;
     //! Set the shared pointer to the parameter
     void setParameters(std::shared_ptr<MergeParameters> params);
 

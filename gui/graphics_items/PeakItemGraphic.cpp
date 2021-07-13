@@ -23,9 +23,9 @@
 #include "core/instrument/Diffractometer.h"
 #include "core/instrument/InstrumentState.h"
 #include "core/peak/IntegrationRegion.h"
+#include "core/raw/DataKeys.h"
 #include "core/raw/IDataReader.h"
 #include "core/raw/MetaData.h"
-#include "core/raw/DataKeys.h"
 
 #include "gui/graphics/PeakPlot.h"
 #include "gui/utility/ColorButton.h"

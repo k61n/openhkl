@@ -13,12 +13,15 @@
 //  ***********************************************************************************************
 
 #include "core/shape/PeakCollection.h"
-#include "core/raw/DataKeys.h"
 #include "base/utils/Logger.h"
+#include "core/raw/DataKeys.h"
 
 namespace nsx {
 
-PeakCollection::PeakCollection() : _name{nsx::kw_peakCollectionDefaultName}, _type{nsx::listtype::FOUND} { }
+PeakCollection::PeakCollection()
+    : _name{nsx::kw_peakCollectionDefaultName}, _type{nsx::listtype::FOUND}
+{
+}
 
 PeakCollection::PeakCollection(const std::string& name, nsx::listtype type)
     : _name{std::string(name)}, _type{type}
@@ -163,7 +166,8 @@ void PeakCollection::checkCollection() const
             ++n_nan;
         }
     }
-    nsxlog(Level::Info, "PeakCollection::checkCollection: peak collection '" + _name + "' contains:");
+    nsxlog(
+        Level::Info, "PeakCollection::checkCollection: peak collection '" + _name + "' contains:");
     nsxlog(Level::Info, numberOfPeaks(), " peaks");
     nsxlog(Level::Info, n_nan, " peaks with intensity NaN");
     nsxlog(Level::Info, n_zero, " peaks with intensity zero");

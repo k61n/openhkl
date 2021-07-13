@@ -15,8 +15,8 @@
 #ifndef NSX_CORE_SHAPE_PEAKCOLLECTION_H
 #define NSX_CORE_SHAPE_PEAKCOLLECTION_H
 
-#include "core/shape/ShapeCollection.h"
 #include "core/raw/MetaData.h"
+#include "core/shape/ShapeCollection.h"
 
 namespace nsx {
 

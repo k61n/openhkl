@@ -71,8 +71,8 @@ std::vector<DetectorEvent> algo::qs2events(
         for (int i = 0; i < n_intervals; ++i) { // Iterate over equally sized intervals
 
             // Generate the interval
-            double f0 = fmin + double(i) * fmax/double(n_intervals);
-            double f1 = f0 + fmax/double(n_intervals);
+            double f0 = fmin + double(i) * fmax / double(n_intervals);
+            double f1 = f0 + fmax / double(n_intervals);
 
             InterpolatedState state0 = states.interpolate(f0);
             InterpolatedState state1 = states.interpolate(f1);
@@ -108,8 +108,8 @@ std::vector<DetectorEvent> algo::qs2events(
             Eigen::RowVector3d kf =
                 state.ki().rowVector() + q_vect * state.sampleOrientationMatrix().transpose();
             DetectorEvent event = detector.constructEvent(
-                DirectVector(state.samplePosition), ReciprocalVector(kf * state.detectorOrientation),
-                frame);
+                DirectVector(state.samplePosition),
+                ReciprocalVector(kf * state.detectorOrientation), frame);
             if (event._tof <= 0)
                 continue;
 
@@ -118,7 +118,8 @@ std::vector<DetectorEvent> algo::qs2events(
         if (handler)
             handler->setProgress(++count * 100.0 / sample_qs.size());
     }
-    nsxlog(Level::Debug, "algo::Qs2Events::qs2events: finished; generated ", events.size(), "events");
+    nsxlog(
+        Level::Debug, "algo::Qs2Events::qs2events: finished; generated ", events.size(), "events");
     return events;
 }
 

@@ -19,7 +19,9 @@
 #include <string>
 
 // usage: DBG("This is my debug message nr.", 1);
-#define DBG(...) nsx::nsxlog(nsx::Level::Info, "DBG> ", __FILE__, ":L", __LINE__, ":", __FUNCTION__, ": ", __VA_ARGS__)
+#define DBG(...)                                                                                   \
+    nsx::nsxlog(                                                                                   \
+        nsx::Level::Info, "DBG> ", __FILE__, ":L", __LINE__, ":", __FUNCTION__, ": ", __VA_ARGS__)
 
 
 namespace nsx {

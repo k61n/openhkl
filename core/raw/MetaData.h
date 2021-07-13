@@ -15,13 +15,13 @@
 #ifndef NSX_CORE_RAW_METADATA_H
 #define NSX_CORE_RAW_METADATA_H
 
+#include <iostream>
 #include <map>
 #include <memory>
 #include <set>
 #include <stdexcept>
 #include <string>
 #include <variant>
-#include <iostream>
 
 namespace nsx {
 

@@ -31,21 +31,21 @@ Monochromator::Monochromator(const YAML::Node& node)
 
     // Sets the source slit width from the yaml tree node
     auto&& widthNode = node[nsx::ym_width];
-    _width =
-        widthNode[nsx::ym_value].as<double>() * UnitsManager::get(widthNode[nsx::ym_units].as<std::string>());
+    _width = widthNode[nsx::ym_value].as<double>()
+        * UnitsManager::get(widthNode[nsx::ym_units].as<std::string>());
 
     // Sets the source slit height from the yaml tree node
     auto&& heightNode = node[nsx::ym_height];
-    _height =
-        heightNode[nsx::ym_value].as<double>() * UnitsManager::get(heightNode[nsx::ym_units].as<std::string>());
+    _height = heightNode[nsx::ym_value].as<double>()
+        * UnitsManager::get(heightNode[nsx::ym_units].as<std::string>());
 
     auto&& wavelengthNode = node[nsx::ym_wavelength];
     _wavelength = wavelengthNode[nsx::ym_value].as<double>()
         * UnitsManager::get(wavelengthNode[nsx::ym_units].as<std::string>()) / nsx::ang;
 
     auto&& fwhmNode = node[nsx::ym_fwhm];
-    _fwhm = fwhmNode[nsx::ym_value].as<double>() * UnitsManager::get(fwhmNode[nsx::ym_units].as<std::string>())
-        / nsx::ang;
+    _fwhm = fwhmNode[nsx::ym_value].as<double>()
+        * UnitsManager::get(fwhmNode[nsx::ym_units].as<std::string>()) / nsx::ang;
 }
 
 const std::string& Monochromator::name() const

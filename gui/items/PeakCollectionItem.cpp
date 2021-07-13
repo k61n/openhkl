@@ -20,9 +20,9 @@
 #include "core/instrument/Diffractometer.h"
 #include "core/instrument/InstrumentState.h"
 #include "core/peak/Peak3D.h"
+#include "core/raw/DataKeys.h"
 #include "core/raw/IDataReader.h"
 #include "core/raw/MetaData.h"
-#include "core/raw/DataKeys.h"
 #include "core/shape/PeakFilter.h"
 #include "tables/crystal/MillerIndex.h"
 #include "tables/crystal/UnitCell.h"
@@ -211,8 +211,10 @@ void PeakCollectionItem::sort(int column, Qt::SortOrder order)
         }
         case Column::Numor: {
             compareFn = [&](std::unique_ptr<PeakItem>& p1, std::unique_ptr<PeakItem>& p2) {
-                            const int numor_1 = p1->peak()->dataSet()->reader()->metadata().key<int>(nsx::at_numor);
-                            const int numor_2 = p2->peak()->dataSet()->reader()->metadata().key<int>(nsx::at_numor);
+                const int numor_1 =
+                    p1->peak()->dataSet()->reader()->metadata().key<int>(nsx::at_numor);
+                const int numor_2 =
+                    p2->peak()->dataSet()->reader()->metadata().key<int>(nsx::at_numor);
                 return (numor_1 < numor_2);
             };
             break;

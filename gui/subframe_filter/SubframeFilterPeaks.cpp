@@ -18,6 +18,7 @@
 #include "core/shape/PeakCollection.h"
 #include "core/shape/PeakFilter.h"
 #include "gui/MainWin.h"
+#include "gui/MainWin.h" // gGui
 #include "gui/dialogs/ListNameDialog.h"
 #include "gui/graphics/DetectorScene.h"
 #include "gui/graphics/DetectorView.h"
@@ -30,7 +31,6 @@
 #include "gui/utility/Spoiler.h"
 #include "gui/utility/SpoilerCheck.h"
 #include "gui/widgets/PeakViewWidget.h"
-#include "gui/MainWin.h" // gGui
 
 #include <QFileInfo>
 #include <QGridLayout>
@@ -255,14 +255,14 @@ void SubframeFilterPeaks::setProceedUp()
         _peak_view_widget->set1.peakEnd, qOverload<double>(&QDoubleSpinBox::valueChanged),
         _peak_end, &QDoubleSpinBox::setValue);
     connect(
-        _peak_view_widget->set1.bkgEnd, qOverload<double>(&QDoubleSpinBox::valueChanged),
-        _bkg_end, &QDoubleSpinBox::setValue);
+        _peak_view_widget->set1.bkgEnd, qOverload<double>(&QDoubleSpinBox::valueChanged), _bkg_end,
+        &QDoubleSpinBox::setValue);
     connect(
         _peak_end, qOverload<double>(&QDoubleSpinBox::valueChanged),
         _peak_view_widget->set1.peakEnd, &QDoubleSpinBox::setValue);
     connect(
-        _bkg_end, qOverload<double>(&QDoubleSpinBox::valueChanged),
-        _peak_view_widget->set1.bkgEnd, &QDoubleSpinBox::setValue);
+        _bkg_end, qOverload<double>(&QDoubleSpinBox::valueChanged), _peak_view_widget->set1.bkgEnd,
+        &QDoubleSpinBox::setValue);
 
     _left_layout->addWidget(show_hide_peaks);
 
@@ -272,7 +272,8 @@ void SubframeFilterPeaks::setProceedUp()
     connect(_filter_button, &QPushButton::clicked, this, &SubframeFilterPeaks::filterPeaks);
     connect(_save_button, &QPushButton::clicked, this, &SubframeFilterPeaks::accept);
     connect(
-        gGui->sideBar(), &SideBar::subframeChanged, this, &SubframeFilterPeaks::setFilterParameters);
+        gGui->sideBar(), &SideBar::subframeChanged, this,
+        &SubframeFilterPeaks::setFilterParameters);
 }
 
 void SubframeFilterPeaks::setFigureUp()
@@ -429,8 +430,7 @@ void SubframeFilterPeaks::grabFilterParameters()
     if (_peak_list.empty() || _exp_combo->count() < 1)
         return;
 
-    auto* params =
-        gSession->experimentAt(_exp_combo->currentIndex())->experiment()->filterParams();
+    auto* params = gSession->experimentAt(_exp_combo->currentIndex())->experiment()->filterParams();
 
     _tolerance->setValue(params->unit_cell_tolerance);
     _strength_min->setValue(params->strength_min);
@@ -500,8 +500,7 @@ void SubframeFilterPeaks::setFilterParameters()
     if (_merge_box->isChecked())
         flags->significance = true;
 
-    auto* params =
-        gSession->experimentAt(_exp_combo->currentIndex())->experiment()->filterParams();
+    auto* params = gSession->experimentAt(_exp_combo->currentIndex())->experiment()->filterParams();
 
     params->unit_cell_tolerance = _tolerance->value();
     params->significance = _significance_level->value();

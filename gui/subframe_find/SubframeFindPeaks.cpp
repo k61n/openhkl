@@ -21,6 +21,7 @@
 #include "core/peak/Peak3D.h"
 #include "core/raw/IDataReader.h"
 #include "core/shape/IPeakIntegrator.h"
+#include "gui/MainWin.h" // gGui
 #include "gui/dialogs/ListNameDialog.h"
 #include "gui/frames/ProgressView.h"
 #include "gui/graphics/DetectorScene.h"
@@ -36,7 +37,6 @@
 #include "gui/utility/Spoiler.h"
 #include "gui/views/PeakTableView.h"
 #include "gui/widgets/PeakViewWidget.h"
-#include "gui/MainWin.h" // gGui
 
 #include <QFileInfo>
 #include <QGridLayout>
@@ -344,9 +344,9 @@ void SubframeFindPeaks::updateDatasetList()
 
 void SubframeFindPeaks::updateDatasetParameters(const QString& dataname)
 {
-    nsx::sptrDataSet data =
-        gSession->experimentAt(
-            _exp_combo->currentIndex())->experiment()->getData(dataname.toStdString());
+    nsx::sptrDataSet data = gSession->experimentAt(_exp_combo->currentIndex())
+                                ->experiment()
+                                ->getData(dataname.toStdString());
 
     _end_frame_spin->setMaximum(data->nFrames());
     _end_frame_spin->setValue(data->nFrames());
@@ -371,13 +371,13 @@ void SubframeFindPeaks::grabFinderParameters()
         gSession->experimentAt(_exp_combo->currentIndex())->experiment()->peakFinder();
 
     auto* finder_params =
-        gSession->experimentAt(_exp_combo->currentIndex()) ->experiment()->finderParams();
+        gSession->experimentAt(_exp_combo->currentIndex())->experiment()->finderParams();
 
     _min_size_spin->setValue(finder_params->minimum_size);
     _max_size_spin->setValue(finder_params->maximum_size);
     _scale_spin->setValue(finder_params->peak_end);
     _max_width_spin->setValue(finder_params->maximum_frames);
-    _start_frame_spin->setValue(finder_params->frames_begin+1);
+    _start_frame_spin->setValue(finder_params->frames_begin + 1);
     _end_frame_spin->setValue(finder_params->frames_end);
     _threshold_spin->setValue(finder_params->threshold);
 
@@ -421,8 +421,7 @@ void SubframeFindPeaks::setFinderParameters()
     nsx::PeakFinder* finder =
         gSession->experimentAt(_exp_combo->currentIndex())->experiment()->peakFinder();
 
-    auto* params =
-        gSession->experimentAt(_exp_combo->currentIndex())->experiment()->finderParams();
+    auto* params = gSession->experimentAt(_exp_combo->currentIndex())->experiment()->finderParams();
     params->minimum_size = _min_size_spin->value();
     params->maximum_size = _max_size_spin->value();
     params->peak_end = _scale_spin->value();

@@ -24,7 +24,7 @@
 
 namespace nsx {
 
-PeakData::PeakData(Peak3D* peak) : _peak(peak), _system(peak), _events(), _counts(), _coords() {}
+PeakData::PeakData(Peak3D* peak) : _peak(peak), _system(peak), _events(), _counts(), _coords() { }
 
 const std::deque<DetectorEvent>& PeakData::events() const
 {

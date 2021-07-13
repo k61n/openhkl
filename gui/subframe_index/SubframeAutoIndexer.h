@@ -20,8 +20,8 @@
 #include "gui/items/PeakCollectionItem.h"
 #include "gui/models/PeakCollectionModel.h"
 
-#include <QSizePolicy>
 #include <QPushButton>
+#include <QSizePolicy>
 #include <QWidget>
 
 class PeakTableView;

@@ -99,7 +99,6 @@ void PeakViewWidget::createSet(Set& set, const QString& title, const QColor& btn
 
     addLabel(row, "Colour:");
     set.colorPeaks = addColorButton(row++, 1, btnColor);
-
 }
 
 void PeakViewWidget::addIntegrationRegion(Set& set, const QColor& peak, const QColor& bkg)

@@ -97,9 +97,7 @@ void PeakFinderParameters::log(const Level& level) const
 //  PeakFinder trivia
 //  ***********************************************************************************************
 
-PeakFinder::PeakFinder()
-    : _handler(nullptr)
-    , _current_label(0)
+PeakFinder::PeakFinder() : _handler(nullptr), _current_label(0)
 {
     _params = std::make_shared<PeakFinderParameters>();
     _convolver.reset(ConvolverFactory{}.create("annular", {{"r1", 5.}, {"r2", 10.}, {"r3", 15.}}));
@@ -553,7 +551,7 @@ void PeakFinder::find(const DataList numors)
 
         _current_label = 0;
 
-        int loop_begin = _params->frames_begin ;
+        int loop_begin = _params->frames_begin;
         int loop_end = _params->frames_end;
         if (loop_begin == -1)
             loop_begin = 0;

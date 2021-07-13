@@ -46,9 +46,9 @@ class Session {
 
     void selectExperiment(int);
 
-    bool createExperiment
-    (QString experimentName = QString::fromStdString(nsx::kw_experimentDefaultName),
-     QString instrumentName = QString::fromStdString(nsx::kw_diffractometerDefaultName));
+    bool createExperiment(
+        QString experimentName = QString::fromStdString(nsx::kw_experimentDefaultName),
+        QString instrumentName = QString::fromStdString(nsx::kw_diffractometerDefaultName));
     void removeExperiment(const QString& name);
 
     void loadData(nsx::DataFormat format);

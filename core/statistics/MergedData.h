@@ -48,7 +48,7 @@ class MergedData {
     //! Clear the merged data
     void clear();
     //! Compute the completeness ( # valid peaks / # peaks )
-    double  completeness();
+    double completeness();
     //! Set the d range
     void setDRange(double d_min, double d_max);
     //! Get minimum d

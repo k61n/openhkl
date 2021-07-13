@@ -22,12 +22,12 @@
 #include "core/experiment/PeakFinder.h"
 #include "core/instrument/Diffractometer.h"
 #include "core/loader/RawDataReader.h"
+#include "core/raw/DataKeys.h"
 #include "core/shape/IPeakIntegrator.h"
 #include "core/shape/PeakFilter.h"
 #include "core/statistics/MergedData.h"
 #include "core/statistics/PeakMerger.h"
 #include "core/statistics/ResolutionShell.h"
-#include "core/raw/DataKeys.h"
 #include "tables/crystal/UnitCell.h"
 
 
@@ -238,7 +238,7 @@ class Experiment {
     DataResolution _data_quality; //!< Data quality for whole resolution range
     DataResolution _data_resolution; //!< Data quality per resolution shell
 
-    //Parameter containers. Shared pointers are shared with their respective objects
+    // Parameter containers. Shared pointers are shared with their respective objects
     //! Container for peak finder parameters
     std::shared_ptr<PeakFinderParameters> _finder_params; // Shared with _finder
     //! Container for peak filter parameters

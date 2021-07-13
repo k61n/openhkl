@@ -24,11 +24,11 @@
 #include "core/statistics/PeakMerger.h"
 #include "core/statistics/RFactor.h"
 #include "core/statistics/ResolutionShell.h"
+#include "gui/MainWin.h" // gGui
 #include "gui/graphics/SXPlot.h"
 #include "gui/models/Project.h"
-#include "gui/utility/SideBar.h"
 #include "gui/models/Session.h"
-#include "gui/MainWin.h" // gGui
+#include "gui/utility/SideBar.h"
 
 #include <QDialogButtonBox>
 #include <QFileDialog>
@@ -89,8 +89,8 @@ SubframeMergedPeaks::SubframeMergedPeaks()
         _peaks1_drop, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this,
         &SubframeMergedPeaks::processMerge);
     connect(
-        _peaks2_drop, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
-        this, &SubframeMergedPeaks::processMerge);
+        _peaks2_drop, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this,
+        &SubframeMergedPeaks::processMerge);
 
     show();
 }
@@ -327,11 +327,11 @@ void SubframeMergedPeaks::refreshPeakCombos()
     _peaks1_list.clear();
 
     QStringList tmp = gSession->experimentAt(_exp_drop->currentIndex())
-        ->getPeakCollectionNames(nsx::listtype::PREDICTED);
+                          ->getPeakCollectionNames(nsx::listtype::PREDICTED);
     _peaks1_list.append(tmp);
     tmp.clear();
     tmp = gSession->experimentAt(_exp_drop->currentIndex())
-        ->getPeakCollectionNames(nsx::listtype::FOUND);
+              ->getPeakCollectionNames(nsx::listtype::FOUND);
     _peaks1_list.append(tmp);
     tmp.clear();
 
@@ -343,11 +343,11 @@ void SubframeMergedPeaks::refreshPeakCombos()
 
     _peaks2_drop->blockSignals(true);
     tmp = gSession->experimentAt(_exp_drop->currentIndex())
-        ->getPeakCollectionNames(nsx::listtype::PREDICTED);
+              ->getPeakCollectionNames(nsx::listtype::PREDICTED);
     _peaks2_list.append(tmp);
     tmp.clear();
     tmp = gSession->experimentAt(_exp_drop->currentIndex())
-        ->getPeakCollectionNames(nsx::listtype::FOUND);
+              ->getPeakCollectionNames(nsx::listtype::FOUND);
     _peaks2_list.append(tmp);
     QString current_peaks2 = _peaks2_drop->currentText();
     _peaks2_drop->clear();
@@ -389,7 +389,7 @@ void SubframeMergedPeaks::refreshPredictedPeakList()
     QString current_predicted = _peaks2_drop->currentText();
     _peaks2_drop->clear();
     _peaks2_list = gSession->experimentAt(_exp_drop->currentIndex())
-                          ->getPeakCollectionNames(nsx::listtype::PREDICTED);
+                       ->getPeakCollectionNames(nsx::listtype::PREDICTED);
 
     if (!_peaks2_list.empty()) {
         _peaks2_drop->addItems(_peaks2_list);

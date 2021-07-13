@@ -121,7 +121,6 @@ std::vector<MergedData*> PeakMerger::getMergedDataPerShell() const
     for (auto&& item : _merged_data_per_shell)
         merged_data.push_back(item.get());
     return merged_data;
-
 }
 
 const DataResolution* PeakMerger::shellQuality()

@@ -18,6 +18,7 @@
 #include "core/experiment/Experiment.h"
 #include "core/peak/Peak3D.h"
 #include "gui/MainWin.h"
+#include "gui/MainWin.h" // gGui
 #include "gui/frames/ProgressView.h"
 #include "gui/graphics/DetectorScene.h"
 #include "gui/graphics/DetectorView.h"
@@ -29,7 +30,6 @@
 #include "gui/utility/SideBar.h"
 #include "gui/utility/Spoiler.h"
 #include "gui/views/PeakTableView.h"
-#include "gui/MainWin.h" // gGui
 
 #include <QFileInfo>
 #include <QGridLayout>
@@ -162,9 +162,9 @@ void SubframeIntegrate::refreshPeakTable()
     if (_int_peak_combo->count() == 0)
         return;
 
-    _peak_collection =
-        gSession->experimentAt(_exp_combo->currentIndex())->experiment()->
-        getPeakCollection(_int_peak_combo->currentText().toStdString());
+    _peak_collection = gSession->experimentAt(_exp_combo->currentIndex())
+                           ->experiment()
+                           ->getPeakCollection(_int_peak_combo->currentText().toStdString());
 
     _figure_view->getScene()->clearPeakItems();
     _peak_collection_item.setPeakCollection(_peak_collection);
@@ -201,9 +201,9 @@ void SubframeIntegrate::updateExptList()
 
 void SubframeIntegrate::updateDataset(const QString& dataname)
 {
-    nsx::sptrDataSet data =
-        gSession->experimentAt(
-            _exp_combo->currentIndex())->experiment()->getData(dataname.toStdString());
+    nsx::sptrDataSet data = gSession->experimentAt(_exp_combo->currentIndex())
+                                ->experiment()
+                                ->getData(dataname.toStdString());
 
     _figure_view->getScene()->slotChangeSelectedData(data, _figure_spin->value());
     //_figure_view->getScene()->setMaxIntensity(3000);
@@ -248,7 +248,7 @@ void SubframeIntegrate::updatePeakList()
     }
 
     tmp = gSession->experimentAt(_exp_combo->currentIndex())
-        ->getPeakCollectionNames(nsx::listtype::FILTERED);
+              ->getPeakCollectionNames(nsx::listtype::FILTERED);
 
     if (!tmp.empty()) {
         _peak_combo->addItems(tmp);
@@ -270,7 +270,8 @@ void SubframeIntegrate::updatePeakList()
 
 void SubframeIntegrate::grabIntegrationParameters()
 {
-    auto params = gSession->experimentAt(_exp_combo->currentIndex())->experiment()->integrationParams();
+    auto params =
+        gSession->experimentAt(_exp_combo->currentIndex())->experiment()->integrationParams();
 
     _peak_end->setValue(params->peak_end);
     _bkg_begin->setValue(params->bkg_begin);
@@ -286,7 +287,8 @@ void SubframeIntegrate::setIntegrationParameters()
 {
     if (_exp_combo->count() == 0)
         return;
-    auto params = gSession->experimentAt(_exp_combo->currentIndex())->experiment()->integrationParams();
+    auto params =
+        gSession->experimentAt(_exp_combo->currentIndex())->experiment()->integrationParams();
 
     params->peak_end = _peak_end->value();
     params->bkg_begin = _bkg_begin->value();
@@ -347,7 +349,7 @@ void SubframeIntegrate::setIntegrateUp()
 
     // -- Initialize controls
     for (const auto& [key, val] : _integrator_strings)
-        _integrator_combo->addItem(QString::fromStdString(key)); 
+        _integrator_combo->addItem(QString::fromStdString(key));
 
     _interpolation_combo->addItem("None");
     _interpolation_combo->addItem("Inverse distance");
@@ -374,8 +376,8 @@ void SubframeIntegrate::setIntegrateUp()
     connect(
         _remove_overlaps, &QCheckBox::stateChanged, this,
         &SubframeIntegrate::removeOverlappingPeaks);
-    connect(_build_shape_lib_button, &QPushButton::clicked, this,
-        &SubframeIntegrate::openShapeBuilder);
+    connect(
+        _build_shape_lib_button, &QPushButton::clicked, this, &SubframeIntegrate::openShapeBuilder);
     connect(_assign_peak_shapes, &QPushButton::clicked, this, &SubframeIntegrate::assignPeakShapes);
     connect(
         _integrator_combo, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
@@ -408,8 +410,8 @@ void SubframeIntegrate::setPreviewUp()
         _peak_view_widget->set1.bkgBegin, qOverload<double>(&QDoubleSpinBox::valueChanged),
         _bkg_begin, &QDoubleSpinBox::setValue);
     connect(
-        _peak_view_widget->set1.bkgEnd, qOverload<double>(&QDoubleSpinBox::valueChanged),
-        _bkg_end, &QDoubleSpinBox::setValue);
+        _peak_view_widget->set1.bkgEnd, qOverload<double>(&QDoubleSpinBox::valueChanged), _bkg_end,
+        &QDoubleSpinBox::setValue);
     connect(
         _peak_end, qOverload<double>(&QDoubleSpinBox::valueChanged),
         _peak_view_widget->set1.peakEnd, &QDoubleSpinBox::setValue);
@@ -417,8 +419,8 @@ void SubframeIntegrate::setPreviewUp()
         _bkg_begin, qOverload<double>(&QDoubleSpinBox::valueChanged),
         _peak_view_widget->set1.bkgBegin, &QDoubleSpinBox::setValue);
     connect(
-        _bkg_end, qOverload<double>(&QDoubleSpinBox::valueChanged),
-        _peak_view_widget->set1.bkgEnd, &QDoubleSpinBox::setValue);
+        _bkg_end, qOverload<double>(&QDoubleSpinBox::valueChanged), _peak_view_widget->set1.bkgEnd,
+        &QDoubleSpinBox::setValue);
 
     _left_layout->addWidget(preview_spoiler);
 }
@@ -464,8 +466,8 @@ void SubframeIntegrate::removeOverlappingPeaks()
         }
     } else {
         for (auto* peak : peaks_to_integrate->getPeakList()) {
-            if (peak->selected() == false &&
-                peak->rejectionFlag() == nsx::RejectionFlag::OverlappingBkg) {
+            if (peak->selected() == false
+                && peak->rejectionFlag() == nsx::RejectionFlag::OverlappingBkg) {
                 peak->setSelected(true);
                 peak->setRejectionFlag(nsx::RejectionFlag::NotRejected, true);
             }
@@ -483,17 +485,16 @@ void SubframeIntegrate::runIntegration()
 
         nsx::Experiment* expt = gSession->experimentAt(_exp_combo->currentIndex())->experiment();
         nsx::sptrDataSet data = _data_list[_data_combo->currentIndex()];
-        nsx::IPeakIntegrator* integrator =
-            expt->getIntegrator(
-                _integrator_strings.find(_integrator_combo->currentText().toStdString())->second);
+        nsx::IPeakIntegrator* integrator = expt->getIntegrator(
+            _integrator_strings.find(_integrator_combo->currentText().toStdString())->second);
         nsx::PeakCollection* peaks_to_integrate =
             expt->getPeakCollection(_int_peak_combo->currentText().toStdString());
         nsx::ShapeCollection* shapes =
             expt->getPeakCollection(_peak_combo->currentText().toStdString())->shapeCollection();
 
         setIntegrationParameters();
-        auto* params = gSession->experimentAt(_exp_combo->currentIndex())->experiment()->
-            integrationParams();
+        auto* params =
+            gSession->experimentAt(_exp_combo->currentIndex())->experiment()->integrationParams();
 
         integrator->setHandler(handler);
         expt->integratePeaks(integrator, data, peaks_to_integrate, params, shapes);
@@ -507,8 +508,8 @@ void SubframeIntegrate::openShapeBuilder()
     // #nsxAudit Crash if no experiment existing. Disable btn if no experiment loaded?
     nsx::PeakCollection* peak_collection =
         gSession->experimentAt(_exp_combo->currentIndex())
-        ->experiment()
-        ->getPeakCollection(_peak_combo->currentText().toStdString());
+            ->experiment()
+            ->getPeakCollection(_peak_combo->currentText().toStdString());
     auto* shape_params =
         gSession->experimentAt(_exp_combo->currentIndex())->experiment()->shapeParams();
 
@@ -529,8 +530,8 @@ void SubframeIntegrate::refreshShapeStatus()
     if (shape_collection_present) {
         nsx::PeakCollection* collection =
             gSession->experimentAt(_exp_combo->currentIndex())
-            ->experiment()
-            ->getPeakCollection(_peak_combo->currentText().toStdString());
+                ->experiment()
+                ->getPeakCollection(_peak_combo->currentText().toStdString());
         _assign_peak_shapes->setEnabled(true);
         if (collection->shapeCollection() == nullptr) {
             _assign_peak_shapes->setEnabled(false);
@@ -538,8 +539,8 @@ void SubframeIntegrate::refreshShapeStatus()
         }
     }
 
-    if (_integrator_strings.find(_integrator_combo->currentText().toStdString())->second ==
-        nsx::IntegratorType::PixelSum) {
+    if (_integrator_strings.find(_integrator_combo->currentText().toStdString())->second
+        == nsx::IntegratorType::PixelSum) {
         _integrate_button->setEnabled(true);
         _interpolation_combo->setEnabled(false);
         _radius_int->setEnabled(false);
