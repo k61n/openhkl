@@ -97,7 +97,6 @@ class DataSet {
     std::vector<Eigen::MatrixXi> _data;
     InstrumentStateList _states;
     std::set<IMask*> _masks;
-    double _background;
     std::shared_ptr<IDataReader> _reader;
     nsx::MetaData _metadata;
 };

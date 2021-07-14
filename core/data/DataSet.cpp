@@ -36,7 +36,6 @@ DataSet::DataSet(std::shared_ptr<IDataReader> reader)
     : _nFrames{0}
     , _nrows{0}
     , _ncols{0}
-    , _background{0.0}
     , _reader{std::move(reader)}
 {
     _nrows = detector().nRows();
