@@ -47,7 +47,7 @@ std::shared_ptr<DataSet> DataReaderFactory::create(
 
     // could not find key
     if (it == _callbacks.end())
-        throw std::runtime_error("could not find given extension in map of callbacks");
+        throw std::runtime_error("Could not find given extension in map of callbacks");
 
     return (it->second)(filename, diffractometer);
 }
