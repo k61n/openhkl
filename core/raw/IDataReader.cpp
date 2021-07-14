@@ -35,6 +35,7 @@ IDataReader::IDataReader(const std::string& filename, Diffractometer* diffractom
     , _sampleStates()
     , _detectorStates()
     , _isOpened(false)
+    , _filename(filename)
 {
 
     _nRows = _diffractometer->detector()->nRows();
@@ -104,16 +105,6 @@ InstrumentState IDataReader::state(size_t frame) const
     state.wavelength = _diffractometer->source().selectedMonochromator().wavelength();
 
     return state;
-}
-
-std::string IDataReader::basename() const
-{
-    return fileBasename(_metadata.key<std::string>(nsx::at_filepath));
-}
-
-std::string IDataReader::filename() const
-{
-    return _metadata.key<std::string>(nsx::at_filepath);
 }
 
 bool IDataReader::isOpened() const

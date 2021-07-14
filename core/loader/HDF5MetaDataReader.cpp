@@ -122,7 +122,6 @@ HDF5MetaDataReader::HDF5MetaDataReader(
             nsx::at_diffractometer,
             diffractometer_name.empty() ? nsx::kw_diffractometerDefaultName : diffractometer_name);
         _metadata.add<std::string>(nsx::at_formatVersion, version_str);
-        _metadata.add<std::string>(nsx::at_filepath, filename);
         _metadata.add<std::string>(nsx::at_datasetName, dataset_name);
 
     } catch (H5::Exception& e) {
@@ -268,9 +267,8 @@ void HDF5MetaDataReader::open()
         return;
 
     try {
-        const std::string& filename = _metadata.key<std::string>(nsx::at_filepath);
-        nsxlog(nsx::Level::Info, "Opening datafile '", filename, "' for read-only access");
-        _file.reset(new H5::H5File(filename.c_str(), H5F_ACC_RDONLY));
+        nsxlog(nsx::Level::Info, "Opening datafile '", _filename, "' for read-only access");
+        _file.reset(new H5::H5File(_filename.c_str(), H5F_ACC_RDONLY));
     } catch (...) {
         if (_file)
             _file.reset();
@@ -317,7 +315,7 @@ void HDF5MetaDataReader::close()
         return;
 
     nsxlog(
-        nsx::Level::Info, "Closing datafile '", _metadata.key<std::string>(nsx::at_filepath), "'");
+        nsx::Level::Info, "Closing datafile '", _filename, "'");
 
     _file->close();
     _space->close();
