@@ -32,10 +32,6 @@ class Diffractometer {
     Diffractometer(const YAML::Node& node);
     virtual ~Diffractometer();
 
-    Diffractometer(const Diffractometer& other);
-
-    Diffractometer* clone() const;
-
     //! Returns the name of this diffractometer
     const std::string& name() const;
 
