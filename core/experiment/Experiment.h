@@ -204,7 +204,6 @@ class Experiment {
 
  private: // private variables
     std::string _name; //!< The name of this experiment
-    std::unique_ptr<Diffractometer> _diffractometer; //!< The diffractometer
 
     // Handlers for peak collections and unit cells
     std::shared_ptr<DataHandler> _data_handler; // shared because Integrator needs access
