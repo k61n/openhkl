@@ -40,7 +40,6 @@ Detector::Detector()
     , _minRow(0.0)
     , _minCol(0.0)
     , _distance(0)
-    , _dataorder(DataOrder::BottomLeftColMajor)
     , _baseline(0.0)
     , _gain(1.0)
 {
@@ -57,7 +56,6 @@ Detector::Detector(const std::string& name)
     , _minRow(0.0)
     , _minCol(0.0)
     , _distance(0)
-    , _dataorder(DataOrder::BottomLeftColMajor)
     , _baseline(0.0)
     , _gain(1.0)
 {
@@ -65,12 +63,6 @@ Detector::Detector(const std::string& name)
 
 Detector::Detector(const YAML::Node& node) : Component(node)
 {
-    // If data order is not defined assumed default
-    if (!node[nsx::ym_dataOrdering]) {
-        _dataorder = DataOrder::BottomRightColMajor;
-        return;
-    }
-
     // detector gain
     if (node[nsx::ym_gain])
         _gain = node[nsx::ym_gain].as<double>();
@@ -82,29 +74,6 @@ Detector::Detector(const YAML::Node& node) : Component(node)
         _baseline = node[nsx::ym_baseline].as<double>();
     else
         _baseline = 0.0;
-
-    std::string dataOrder = node[nsx::ym_dataOrdering].as<std::string>();
-
-    if (dataOrder.compare("TopLeftColMajor") == 0)
-        _dataorder = DataOrder::TopLeftColMajor;
-    else if (dataOrder.compare("TopLeftRowMajor") == 0)
-        _dataorder = DataOrder::TopLeftRowMajor;
-    else if (dataOrder.compare("TopRightColMajor") == 0)
-        _dataorder = DataOrder::TopRightColMajor;
-    else if (dataOrder.compare("TopRightRowMajor") == 0)
-        _dataorder = DataOrder::TopRightRowMajor;
-    else if (dataOrder.compare("BottomLeftColMajor") == 0)
-        _dataorder = DataOrder::BottomLeftColMajor;
-    else if (dataOrder.compare("BottomLeftRowMajor") == 0)
-        _dataorder = DataOrder::BottomLeftRowMajor;
-    else if (dataOrder.compare("BottomRightColMajor") == 0)
-        _dataorder = DataOrder::BottomRightColMajor;
-    else if (dataOrder.compare("BottomRightRowMajor") == 0)
-        _dataorder = DataOrder::BottomRightRowMajor;
-    else {
-        throw std::runtime_error(
-            "Detector class: Data ordering mode not valid, can not build detector");
-    }
 
     // Sets the detector to sample distance from the property tree node
     auto&& distanceNode = node[nsx::ym_sampleDistance];
@@ -126,10 +95,6 @@ Detector::Detector(const YAML::Node& node) : Component(node)
 
 Detector::~Detector() = default;
 
-DataOrder Detector::dataOrder() const
-{
-    return _dataorder;
-}
 
 double Detector::baseline() const
 {
