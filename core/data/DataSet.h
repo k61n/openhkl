@@ -57,10 +57,10 @@ class DataSet {
     void maskPeaks(std::vector<Peak3D*>& peaks) const;
 
     //! Returns the intensity at point x,y,z.
-    int dataAt(unsigned int x = 0, unsigned int y = 0, unsigned int z = 0) const;
+    int dataAt(const std::size_t x = 0, const std::size_t y = 0, const std::size_t z = 0) const;
 
     //! Read a single frame
-    Eigen::MatrixXi frame(std::size_t idx) const;
+    Eigen::MatrixXi frame(const std::size_t idx) const;
 
     //! Returns frame after transforming to account for detector gain and baseline
     Eigen::MatrixXd transformedFrame(std::size_t idx) const;

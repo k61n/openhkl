@@ -56,15 +56,21 @@ DataSet::DataSet(std::shared_ptr<IDataReader> reader)
 
 DataSet::~DataSet() { }
 
-int DataSet::dataAt(unsigned int x, unsigned int y, unsigned int z) const
+int DataSet::dataAt(const std::size_t x, const std::size_t y, const std::size_t z) const
 {
     // Check that the voxel is inside the limit of the data
-    if (z >= _nFrames || y >= _ncols || x >= _nrows)
-        return 0;
+    if (z >= _nFrames || y >= _ncols || x >= _nrows) {
+        throw std::runtime_error
+        ("DataSet '" + _name + "': "
+         + "Out-of-bound access (x = " + std::to_string(x) + ", "
+         + "y = " + std::to_string(y) + ", z = " + std::to_string(z)
+         + ")");
+    }
+
     return frame(z)(x, y);
 }
 
-Eigen::MatrixXi DataSet::frame(std::size_t idx) const
+Eigen::MatrixXi DataSet::frame(const std::size_t idx) const
 {
     return _reader->data(idx);
 }
