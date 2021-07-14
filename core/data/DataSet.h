@@ -73,8 +73,6 @@ class DataSet {
 
     bool isOpened() const; //!< True if file is open
 
-    void saveHDF5(const std::string& filename);
-
     //! Returns the sample-space q vector corresponding to a detector event
     ReciprocalVector computeQ(const DetectorEvent& ev) const;
 

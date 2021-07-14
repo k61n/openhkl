@@ -111,18 +111,6 @@ bool DataSet::isOpened() const
     return _isOpened;
 }
 
-void DataSet::saveHDF5(const std::string& filename)
-{
-    nsx::ExperimentExporter exporter;
-    const std::string dname = name(), instrument_name = _reader->diffractometer()->name();
-    nsxlog(Level::Info, "Saving DataSet ", dname, " to HDF5 file:", filename);
-
-    std::map<std::string, DataSet*> data_sets{{dname, this}};
-    exporter.createFile(dname, instrument_name, filename);
-    exporter.writeData(data_sets);
-    exporter.finishWrite();
-}
-
 void DataSet::addMask(IMask* mask)
 {
     _masks.insert(mask);
