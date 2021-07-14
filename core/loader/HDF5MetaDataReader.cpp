@@ -61,37 +61,44 @@ HDF5MetaDataReader::HDF5MetaDataReader(
     , _space(nullptr)
     , _memspace(nullptr)
     , _blosc_filter(nullptr)
+    , _dataset_name(dataset_name)
 {
+}
+
+bool HDF5MetaDataReader::initRead()
+{
+    const bool init_success = IDataReader::initRead();
+
     H5::Group metaGroup, detectorGroup, sampleGroup;
 
     try {
-        _file = std::unique_ptr<H5::H5File>(new H5::H5File(filename.c_str(), H5F_ACC_RDONLY));
+        _file = std::unique_ptr<H5::H5File>(new H5::H5File(_filename.c_str(), H5F_ACC_RDONLY));
 
         // If the given dataset name is empty, find the name of the first DataCollection
-        if (dataset_name.empty()) {
+        if (_dataset_name.empty()) {
             H5::Group data_collections(_file->openGroup(nsx::gr_DataCollections));
             hsize_t object_num = data_collections.getNumObjs();
             if (object_num < 1) {
                 throw std::runtime_error("HDF5 file '" + filename + "' has no DataCollections");
             } else {
-                dataset_name = data_collections.getObjnameByIdx(0);
+                _dataset_name = data_collections.getObjnameByIdx(0);
                 // Warn about automatic selection of the first dataset when multiple datasets exist
                 if (object_num >= 1) {
                     nsxlog(
                         nsx::Level::Warning, "HDF5 file '", filename, "' has ", object_num,
-                        " DataCollections; the first one, '", dataset_name, "', will be taken.");
+                        " DataCollections; the first one, '", _dataset_name, "', will be taken.");
                 }
             }
         }
 
         nsxlog(
             nsx::Level::Info, "Initializing HDF5MetaDataReader to read '", filename, "', dataset '",
-            dataset_name, "'");
+            _dataset_name, "'");
 
         // TODO: make groups names compatible accross the codebase
-        metaGroup = _file->openGroup("/" + _metaKey(dataset_name));
-        detectorGroup = _file->openGroup("/" + _detectorKey(dataset_name));
-        sampleGroup = _file->openGroup("/" + _sampleKey(dataset_name));
+        metaGroup = _file->openGroup("/" + _metaKey(_dataset_name));
+        detectorGroup = _file->openGroup("/" + _detectorKey(_dataset_name));
+        sampleGroup = _file->openGroup("/" + _sampleKey(_dataset_name));
 
         // read the name of the experiment and diffractometer
         std::string experiment_name = "", diffractometer_name = "", version_str = "";
@@ -132,7 +139,7 @@ HDF5MetaDataReader::HDF5MetaDataReader(
     // Read the metadata group and store in metadata
     nsxlog(
         nsx::Level::Debug, "Reading metadata attribute of '", filename, "', dataset '",
-        dataset_name, "'");
+        _dataset_name, "'");
     const H5::StrType strVarType(H5::PredType::C_S1, H5T_VARIABLE);
     int nmeta = metaGroup.getNumAttrs();
     for (int i = 0; i < nmeta; ++i) {
@@ -164,7 +171,7 @@ HDF5MetaDataReader::HDF5MetaDataReader(
     _nFrames = _dataset_out->metadata()->key<int>(nsx::at_frameCount);
 
     nsxlog(
-        nsx::Level::Debug, "Reading detector state of '", filename, "', dataset '", dataset_name,
+        nsx::Level::Debug, "Reading detector state of '", filename, "', dataset '", _dataset_name,
         "'");
 
     const auto& detector_gonio = _diffractometer->detector()->gonio();
@@ -206,7 +213,7 @@ HDF5MetaDataReader::HDF5MetaDataReader(
     dm *= deg;
 
     nsxlog(
-        nsx::Level::Debug, "Reading gonio state of '", filename, "', dataset '", dataset_name, "'");
+        nsx::Level::Debug, "Reading gonio state of '", filename, "', dataset '", _dataset_name, "'");
 
     _detectorStates.resize(_nFrames);
 
@@ -253,15 +260,19 @@ HDF5MetaDataReader::HDF5MetaDataReader(
         _sampleStates[i] = eigenToVector(dm.col(i));
 
     nsxlog(
-        nsx::Level::Info, "Finished reading the data in '", filename, "', dataset '", dataset_name,
+        nsx::Level::Info, "Finished reading the data in '", filename, "', dataset '", _dataset_name,
         "'");
     _file->close();
+    isInitialized = true;
+    return isInitialized;
 }
 
 
 void HDF5MetaDataReader::open()
 {
     nsxlog(nsx::Level::Debug, "Opening datafile (already opened: ", _isOpened, ")");
+
+    checkInit();
 
     if (_isOpened)
         return;
@@ -280,9 +291,8 @@ void HDF5MetaDataReader::open()
         // handled automatically by HDF5 blosc filter
         _blosc_filter.reset(new HDF5BloscFilter);
 
-        const std::string& dataset_name = _metadata.key<std::string>(nsx::at_datasetName);
-        nsxlog(nsx::Level::Debug, "Reading dataset '", dataset_name, "',");
-        _dataset.reset(new H5::DataSet(_file->openDataSet("/" + _dataKey(dataset_name))));
+        nsxlog(nsx::Level::Debug, "Reading dataset '", _dataset_name, "',");
+        _dataset.reset(new H5::DataSet(_file->openDataSet("/" + _dataKey(_dataset_name))));
         // Dataspace of the dataset /counts
         _space.reset(new H5::DataSpace(_dataset->getSpace()));
     } catch (...) {

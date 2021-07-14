@@ -46,7 +46,12 @@ class HDF5MetaDataReader : public IDataReader {
 
     virtual void close() override;
 
+    virtual bool initRead() override;
+
  protected:
+    //! Name of the DataSet
+    std::string _dataset_name;
+
     std::unique_ptr<H5::H5File> _file;
 
     std::unique_ptr<H5::DataSet> _dataset;

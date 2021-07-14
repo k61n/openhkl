@@ -37,16 +37,21 @@ namespace nsx {
 
 RawDataReader::RawDataReader(const std::string& filename, Diffractometer* diffractometer)
     : IDataReader(filename, diffractometer), _parameters(), _length(0), _data()
+{}
+
+bool RawDataReader::initRead()
 {
-    // ensure that there is at least one monochromator!
-    if (_diffractometer->source().nMonochromators() == 0) {
-        Monochromator mono(nsx::kw_monochromatorDefaultName);
-        _diffractometer->source().addMonochromator(mono);
-    }
+    const bool init_success = IDataReader::initRead();
+
+    // NOTE: For correctness, this must be called after setting the parameters and frame files. Otherwise, results in undefined behaviour.
+    isInitialized = true;
+    return isInitialized;
 }
 
 void RawDataReader::addFrame(const std::string& filename)
 {
+    checkInit();
+
     _filenames.push_back(filename);
 
     _nFrames = _filenames.size();
@@ -128,6 +133,9 @@ void RawDataReader::swapEndian()
 
 Eigen::MatrixXi RawDataReader::data(size_t frame)
 {
+
+    checkInit();
+
     std::string filename = _filenames.at(frame);
 
     std::ifstream file;

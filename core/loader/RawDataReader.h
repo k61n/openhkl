@@ -62,6 +62,8 @@ class RawDataReader : public IDataReader {
     //! Close the file(s)
     void close() final;
 
+    virtual bool initRead() override;
+
     //! Read a single frame
     Eigen::MatrixXi data(size_t frame) final;
 

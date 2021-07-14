@@ -30,8 +30,14 @@ class IDataReader {
 
  public:
 
+    //! Status of reader initialization
+    bool isInitialized = false;
+
     IDataReader(const std::string& filename, Diffractometer* diffractometer);
     virtual ~IDataReader() = 0;
+
+    //! Initialize reading from the filename
+    virtual bool initRead();
 
     //! Open the file
     virtual void open() = 0;
@@ -72,6 +78,9 @@ class IDataReader {
     //! Set the DataSet where the data will be stored (allowed only once)
     void setDataSet(DataSet* dataset_out);
 
+    //! Check if the reader is successfully initialized
+    void checkInit();
+
  protected:
     IDataReader() = delete;
 
@@ -106,6 +115,7 @@ class IDataReader {
 
     //! Destination DataSet where the data will be stored
     DataSet* _dataset_out = nullptr;
+
 };
 
 } // namespace nsx

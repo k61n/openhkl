@@ -32,9 +32,14 @@ namespace nsx {
 NexusMetaDataReader::NexusMetaDataReader(
     const std::string& filename, Diffractometer* diffractometer)
     : IDataReader(filename, diffractometer), _dataset(nullptr), _space(nullptr), _memspace(nullptr)
+{}
+
+bool NexusMetaDataReader::initRead()
 {
+    const bool init_success = IDataReader::initRead();
+
     try {
-        _file = std::unique_ptr<H5::H5File>(new H5::H5File(filename.c_str(), H5F_ACC_RDONLY));
+        _file = std::unique_ptr<H5::H5File>(new H5::H5File(_filename.c_str(), H5F_ACC_RDONLY));
 
         H5::Group rootGroup = _file->openGroup("/");
         H5::Group entryGroup = rootGroup.openGroup("/entry0");
@@ -202,11 +207,16 @@ NexusMetaDataReader::NexusMetaDataReader(
         std::string what = "Nexus: " + e.getDetailMsg();
         throw std::runtime_error(what);
     }
+
+    isInitialized = true;
+    return isInitialized;
 }
 
 
 void NexusMetaDataReader::open()
 {
+    checkInit();
+
     if (_isOpened)
         return;
 
