@@ -71,8 +71,6 @@ class DataSet {
     //! Close file and release handle
     void close();
 
-    bool isOpened() const; //!< True if file is open
-
     //! Returns the sample-space q vector corresponding to a detector event
     ReciprocalVector computeQ(const DetectorEvent& ev) const;
 
@@ -92,7 +90,6 @@ class DataSet {
     nsx::MetaData& metadata();
 
  private:
-    bool _isOpened;
     std::string _name = nsx::kw_datasetDefaultName;
     unsigned int _nFrames;
     unsigned int _nrows;

@@ -33,8 +33,7 @@
 namespace nsx {
 
 DataSet::DataSet(std::shared_ptr<IDataReader> reader)
-    : _isOpened{false}
-    , _nFrames{0}
+    : _nFrames{0}
     , _nrows{0}
     , _ncols{0}
     , _background{0.0}
@@ -104,11 +103,6 @@ const InstrumentStateList& DataSet::instrumentStates() const
 InstrumentStateList& DataSet::instrumentStates()
 {
     return _states;
-}
-
-bool DataSet::isOpened() const
-{
-    return _isOpened;
 }
 
 void DataSet::addMask(IMask* mask)
