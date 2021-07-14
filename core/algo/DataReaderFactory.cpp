@@ -38,6 +38,8 @@ DataReaderFactory::DataReaderFactory() : _callbacks()
     _callbacks["raw"] = &create_reader<RawDataReader>;
 }
 
+// TODO: DataReaderFactory makes DataSet not an IDataReader!
+
 std::shared_ptr<DataSet> DataReaderFactory::create(
     const std::string& extension, const std::string& filename, Diffractometer* diffractometer) const
 {
