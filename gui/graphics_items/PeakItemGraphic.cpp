@@ -24,7 +24,6 @@
 #include "core/instrument/InstrumentState.h"
 #include "core/peak/IntegrationRegion.h"
 #include "core/raw/DataKeys.h"
-#include "core/raw/IDataReader.h"
 #include "core/raw/MetaData.h"
 
 #include "gui/graphics/PeakPlot.h"

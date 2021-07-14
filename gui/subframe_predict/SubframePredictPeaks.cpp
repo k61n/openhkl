@@ -17,7 +17,6 @@
 #include "core/data/DataSet.h"
 #include "core/experiment/Experiment.h"
 #include "core/peak/Peak3D.h"
-#include "core/raw/IDataReader.h"
 #include "core/shape/IPeakIntegrator.h"
 #include "core/shape/PeakCollection.h"
 #include "core/shape/Predictor.h"

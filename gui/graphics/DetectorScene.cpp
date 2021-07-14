@@ -28,7 +28,6 @@
 #include "core/instrument/Source.h"
 #include "core/loader/XFileHandler.h"
 #include "core/peak/Peak3D.h"
-#include "core/raw/IDataReader.h"
 #include "gui/MainWin.h"
 #include "gui/graphics_items/EllipseItem.h"
 #include "gui/graphics_items/MaskItem.h"

@@ -21,7 +21,6 @@
 #include "core/loader/HDF5DataReader.h"
 #include "core/peak/Intensity.h"
 #include "core/peak/Peak3D.h"
-#include "core/raw/IDataReader.h"
 #include <Eigen/Dense>
 
 #include <H5Cpp.h>
