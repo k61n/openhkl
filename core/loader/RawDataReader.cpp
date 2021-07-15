@@ -88,7 +88,7 @@ void RawDataReader::close() { }
 
 void RawDataReader::end()
 {
-    _metadata.add<int>(nsx::at_frameCount, int(_filenames.size()));
+    _dataset_out->metadata.add<int>(nsx::at_frameCount, int(_filenames.size()));
 }
 
 const RawDataReaderParameters& RawDataReader::parameters() const
@@ -104,10 +104,10 @@ void RawDataReader::setParameters(const RawDataReaderParameters& parameters)
     auto& mono = _diffractometer->source().selectedMonochromator();
     mono.setWavelength(_parameters.wavelength);
 
-    _metadata.add<std::string>(nsx::at_diffractometer, _diffractometer->name());
-    _metadata.add<double>(nsx::at_wavelength, _parameters.wavelength);
-    _metadata.add<double>(nsx::at_monitorSum, 0.0);
-    _metadata.add<int>(nsx::at_numor, 0.0);
+    _dataset_out->metadata.add<std::string>(nsx::at_diffractometer, _diffractometer->name());
+    _dataset_out->metadata.add<double>(nsx::at_wavelength, _parameters.wavelength);
+    _dataset_out->metadata.add<double>(nsx::at_monitorSum, 0.0);
+    _dataset_out->metadata.add<int>(nsx::at_numor, 0.0);
 
     _data.resize(_parameters.bpp * _nRows * _nCols);
 }

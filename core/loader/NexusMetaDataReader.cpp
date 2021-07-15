@@ -91,17 +91,17 @@ NexusMetaDataReader::NexusMetaDataReader(
 
 
         // set metadata
-        _metadata.add<std::string>(nsx::at_diffractometer, _diffractometer->name());
-        _metadata.add<double>(nsx::at_wavelength, wavelength);
-        _metadata.add<double>(nsx::at_monitorSum, monitor);
-        _metadata.add<int>(nsx::at_numor, numor);
-        _metadata.add<int>(nsx::at_frameCount, _nFrames);
-        _metadata.add<int>(nsx::at_totalSteps, totalSteps);
-        _metadata.add<std::string>(nsx::at_title, title);
-        _metadata.add<std::string>(nsx::at_experiment, experiment_id);
-        _metadata.add<std::string>(nsx::at_startTime, start_time);
-        _metadata.add<std::string>(nsx::at_endTime, end_time);
-        _metadata.add<double>(nsx::at_time, time);
+        _dataset_out->metadata()->add<std::string>(nsx::at_diffractometer, _diffractometer->name());
+        _dataset_out->metadata()->add<double>(nsx::at_wavelength, wavelength);
+        _dataset_out->metadata()->add<double>(nsx::at_monitorSum, monitor);
+        _dataset_out->metadata()->add<int>(nsx::at_numor, numor);
+        _dataset_out->metadata()->add<int>(nsx::at_frameCount, _nFrames);
+        _dataset_out->metadata()->add<int>(nsx::at_totalSteps, totalSteps);
+        _dataset_out->metadata()->add<std::string>(nsx::at_title, title);
+        _dataset_out->metadata()->add<std::string>(nsx::at_experiment, experiment_id);
+        _dataset_out->metadata()->add<std::string>(nsx::at_startTime, start_time);
+        _dataset_out->metadata()->add<std::string>(nsx::at_endTime, end_time);
+        _dataset_out->metadata()->add<double>(nsx::at_time, time);
 
         // put root attributes into meta data
         for (int i = 0; i < rootGroup.getNumAttrs(); ++i) {
@@ -112,9 +112,9 @@ NexusMetaDataReader::NexusMetaDataReader(
 
             // override stored filename with the current one
             if (attr.getName() == "file_name" || attr.getName() == "filename")
-                _metadata.add<std::string>(nsx::at_datasetSources, value);
+                _dataset_out->metadata()->add<std::string>(nsx::at_datasetSources, value);
             else
-                _metadata.add<std::string>(attr.getName(), value);
+                _dataset_out->metadata()->add<std::string>(attr.getName(), value);
         }
 
 

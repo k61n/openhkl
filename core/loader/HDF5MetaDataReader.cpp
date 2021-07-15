@@ -115,14 +115,14 @@ HDF5MetaDataReader::HDF5MetaDataReader(
         }
 
         // store the attributes in the metadata
-        _metadata.add<std::string>(
+        _dataset_out->metadata()->add<std::string>(
             nsx::at_experiment,
             experiment_name.empty() ? nsx::kw_experimentDefaultName : experiment_name);
-        _metadata.add<std::string>(
+        _dataset_out->metadata()->add<std::string>(
             nsx::at_diffractometer,
             diffractometer_name.empty() ? nsx::kw_diffractometerDefaultName : diffractometer_name);
-        _metadata.add<std::string>(nsx::at_formatVersion, version_str);
-        _metadata.add<std::string>(nsx::at_datasetName, dataset_name);
+        _dataset_out->metadata()->add<std::string>(nsx::at_formatVersion, version_str);
+        _dataset_out->metadata()->add<std::string>(nsx::at_datasetName, dataset_name);
 
     } catch (H5::Exception& e) {
         std::string what = e.getDetailMsg();
@@ -145,23 +145,23 @@ HDF5MetaDataReader::HDF5MetaDataReader(
             // TODO: check if this is still needed
             // override stored filename with the current one
             if (key == "filename" || key == "file_name") {
-                _metadata.add<std::string>(nsx::at_datasetSources, value);
+                _dataset_out->metadata()->add<std::string>(nsx::at_datasetSources, value);
                 value = filename;
             }
-            _metadata.add<std::string>(key, value);
+            _dataset_out->metadata()->add<std::string>(key, value);
         } else if (typ == H5::PredType::NATIVE_INT32) {
             int value;
             attr.read(typ, &value);
-            _metadata.add<int>(key, value);
+            _dataset_out->metadata()->add<int>(key, value);
         } else if (typ == H5::PredType::NATIVE_DOUBLE) {
             double value;
             attr.read(typ, &value);
-            _metadata.add<double>(key, value);
+            _dataset_out->metadata()->add<double>(key, value);
         }
     }
 
     // TODO: npdone -> nr of frames
-    _nFrames = _metadata.key<int>(nsx::at_frameCount);
+    _nFrames = _dataset_out->metadata()->key<int>(nsx::at_frameCount);
 
     nsxlog(
         nsx::Level::Debug, "Reading detector state of '", filename, "', dataset '", dataset_name,
