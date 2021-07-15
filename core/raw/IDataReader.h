@@ -51,12 +51,6 @@ class IDataReader {
     //! Returns the list of detector states associated to the detecot images
     const std::vector<std::vector<double>>& detectorStates() const;
 
-    //! Returns the metadata in the file
-    const MetaData& metadata() const;
-
-    //! Returns the metadata in the file
-    MetaData& metadata();
-
     //! Returns number of detector images
     size_t nFrames() const;
 
@@ -84,9 +78,6 @@ class IDataReader {
     IDataReader(const IDataReader& other) = delete;
 
     IDataReader& operator=(const IDataReader& other) = delete;
-
-    //! Stores the metadata
-    MetaData _metadata;
 
     //! A pointer to the diffractometer. The actual resource is not owned by this
     //! object which is just a borrower.

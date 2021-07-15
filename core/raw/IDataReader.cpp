@@ -60,16 +60,6 @@ size_t IDataReader::nRows() const
     return _nRows;
 }
 
-const MetaData& IDataReader::metadata() const
-{
-    return _metadata;
-}
-
-MetaData& IDataReader::metadata()
-{
-    return _metadata;
-}
-
 const Diffractometer* IDataReader::diffractometer() const
 {
     return _diffractometer;
