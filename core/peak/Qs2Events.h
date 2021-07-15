@@ -45,6 +45,9 @@ std::vector<DetectorEvent> qs2events(
     const std::vector<ReciprocalVector>& sample_qs, const InstrumentStateList& states,
     const Detector& detector, const int n_intervals, sptrProgressHandler handler = nullptr);
 
+std::vector<DetectorEvent> q2events(
+    const ReciprocalVector& sample_q, const InstrumentStateList& states,
+    const Detector& detector, const int n_intervals);
 } // namespace algo
 
 } // namespace nsx

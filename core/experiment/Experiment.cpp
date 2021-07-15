@@ -51,15 +51,16 @@ Experiment::Experiment(const std::string& name, const std::string& diffractomete
 {
     // start logging
     Logger::instance().start(nsx::kw_logFilename, Level::Debug);
-    _peak_finder = std::make_unique<PeakFinder>();
-    _peak_filter = std::make_unique<PeakFilter>();
-    _auto_indexer = std::make_unique<AutoIndexer>();
-    _peak_merger = std::make_unique<PeakMerger>();
-
     _data_handler = std::make_shared<DataHandler>(_name, diffractometerName);
     _peak_handler = std::make_unique<PeakHandler>();
     _cell_handler = std::make_unique<UnitCellHandler>();
     _integration_handler = std::make_unique<IntegrationHandler>(_data_handler);
+
+    _peak_finder = std::make_unique<PeakFinder>();
+    _peak_filter = std::make_unique<PeakFilter>();
+    _auto_indexer = std::make_unique<AutoIndexer>();
+    _refiner = std::make_unique<Refiner>(_cell_handler.get());
+    _peak_merger = std::make_unique<PeakMerger>();
 
     _finder_params = std::make_shared<PeakFinderParameters>();
     _filter_params = std::make_shared<PeakFilterParameters>();
@@ -73,6 +74,7 @@ Experiment::Experiment(const std::string& name, const std::string& diffractomete
     _peak_finder->setParameters(_finder_params);
     _peak_filter->setParameters(_filter_params);
     _auto_indexer->setParameters(_indexer_params);
+    _refiner->setParameters(_refiner_params);
     _peak_merger->setParameters(_merge_params);
 }
 
@@ -251,12 +253,12 @@ const UnitCell* Experiment::getReferenceCell() const
     return getUnitCell(nsx::kw_referenceUnitcell);
 }
 
-bool Experiment::refine(PeakCollection* peaks, UnitCell* cell, DataSet* data, int nbatches)
+bool Experiment::refine(const PeakCollection* peaks, UnitCell* cell, DataSet* data)
 {
     nsxlog(Level::Info, "Experiment::refine: Refining peak collection ", peaks->name());
     std::vector<Peak3D*> peak_list = peaks->getPeakList();
     InstrumentStateList& states = data->instrumentStates();
-    _refiner = std::make_unique<Refiner>(states, cell, peak_list, _cell_handler.get(), nbatches);
+    _refiner->makeBatches(states, cell, peak_list);
     _refiner->parameters()->log(Level::Info);
     bool success = _refiner->refine();
     if (success) {

@@ -123,4 +123,77 @@ std::vector<DetectorEvent> algo::qs2events(
     return events;
 }
 
+std::vector<DetectorEvent> algo::q2events(
+    const ReciprocalVector& sample_q, const InstrumentStateList& states,
+    const Detector& detector, const int n_intervals)
+{
+    // Tolerance for bisection search
+    const double eps = 1.0e-10;
+
+    const double fmin = 0.0;
+    const double fmax = states.size() - 2;
+
+    std::vector<double> roots;
+    std::vector<DetectorEvent> events;
+
+    // return true if |k_f| < |k_i|, i.e q_vect is inside Ewald sphere
+    auto compute_sign = [](const Eigen::RowVector3d& q, const InterpolatedState& state) -> bool {
+        const Eigen::RowVector3d ki = state.ki().rowVector();
+        const Eigen::RowVector3d kf = ki + q * state.sampleOrientationMatrix().transpose();
+        return kf.squaredNorm() < ki.squaredNorm();
+    };
+
+    const Eigen::RowVector3d& q_vect = sample_q.rowVector();
+    roots.clear();
+
+    for (int i = 0; i < n_intervals; ++i) { // Iterate over equally sized intervals
+
+        // Generate the interval
+        double f0 = fmin + double(i) * fmax / double(n_intervals);
+        double f1 = f0 + fmax / double(n_intervals);
+
+        InterpolatedState state0 = states.interpolate(f0);
+        InterpolatedState state1 = states.interpolate(f1);
+
+        bool s0 = compute_sign(q_vect, state0);
+        bool s1 = compute_sign(q_vect, state1);
+
+        // does not cross Ewald sphere, or crosses more than once
+        if (s0 == s1)
+            continue;
+
+        // now use bisection method to compute intersection to good accuracy
+        while (f1 - f0 > eps) {
+            double f = 0.5 * (f0 + f1);
+            InterpolatedState state = states.interpolate(f);
+            bool sign = compute_sign(q_vect, state);
+
+            if (sign == s0) { // branch right
+                state0 = state;
+                f0 = f;
+            } else { // branch left
+                state1 = state;
+                f1 = f;
+            }
+        }
+        // store the frame value at the intersection
+        roots.push_back(0.5 * (f0 + f1));
+    }
+
+    for (const double& frame : roots) { // Generate an event for each frame value
+        const auto state = states.interpolate(frame);
+
+        Eigen::RowVector3d kf =
+            state.ki().rowVector() + q_vect * state.sampleOrientationMatrix().transpose();
+        DetectorEvent event = detector.constructEvent(
+            DirectVector(state.samplePosition),
+            ReciprocalVector(kf * state.detectorOrientation), frame);
+        if (event._tof <= 0)
+            continue;
+
+        events.emplace_back(event);
+    }
+    return events;
+}
+
 } // namespace nsx

@@ -147,14 +147,16 @@ TEST_CASE("test/crystal/TestRefiner.cpp", "")
     auto&& states = dataf->instrumentStates();
     nsx::UnitCellHandler* cell_handler = experiment.getCellHandler();
 
-    nsx::Refiner refiner(states, cell.get(), peaks, cell_handler, 1);
+    nsx::Refiner refiner(cell_handler);
     auto* refiner_params = refiner.parameters();
+    refiner_params->nbatches = 1;
     refiner_params->refine_ub = true;
     refiner_params->refine_sample_position = true;
     refiner_params->refine_detector_offset = false;
     refiner_params->refine_sample_orientation = false;
     refiner_params->refine_ki = false;
     refiner_params->max_iter = 500;
+    refiner.makeBatches(states, cell.get(), peaks);
 
     CHECK(refiner.batches().size() == 1);
 
