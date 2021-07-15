@@ -145,10 +145,9 @@ TEST_CASE("test/crystal/TestRefiner.cpp", "")
     }
 
     auto&& states = dataf->instrumentStates();
-    nsx::UnitCellHandler* cell_handler = experiment.getCellHandler();
 
-    nsx::Refiner refiner(cell_handler);
-    auto* refiner_params = refiner.parameters();
+    nsx::Refiner* refiner = experiment.refiner();
+    auto* refiner_params = experiment.refinerParams();
     refiner_params->nbatches = 1;
     refiner_params->refine_ub = true;
     refiner_params->refine_sample_position = true;
@@ -156,14 +155,14 @@ TEST_CASE("test/crystal/TestRefiner.cpp", "")
     refiner_params->refine_sample_orientation = false;
     refiner_params->refine_ki = false;
     refiner_params->max_iter = 500;
-    refiner.makeBatches(states, cell.get(), peaks);
+    refiner->makeBatches(states, cell.get(), peaks);
 
-    CHECK(refiner.batches().size() == 1);
+    CHECK(refiner->batches().size() == 1);
 
-    for (const auto& batch : refiner.batches())
+    for (const auto& batch : refiner->batches())
         CHECK(batch.peaks().size() > 200);
 
     std::cout << "peaks to refine: " << peaks.size() << std::endl;
 
-    CHECK(refiner.refine());
+    CHECK(refiner->refine());
 }
