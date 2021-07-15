@@ -24,7 +24,6 @@
 #include "core/experiment/Experiment.h"
 #include "core/experiment/ExperimentExporter.h"
 #include "core/experiment/ExperimentImporter.h"
-#include "core/experiment/IntegrationHandler.h"
 #include "core/experiment/PeakHandler.h"
 #include "core/experiment/UnitCellHandler.h"
 #include "core/instrument/Diffractometer.h"
@@ -54,12 +53,12 @@ Experiment::Experiment(const std::string& name, const std::string& diffractomete
     _data_handler = std::make_shared<DataHandler>(_name, diffractometerName);
     _peak_handler = std::make_unique<PeakHandler>();
     _cell_handler = std::make_unique<UnitCellHandler>();
-    _integration_handler = std::make_unique<IntegrationHandler>(_data_handler);
 
     _peak_finder = std::make_unique<PeakFinder>();
     _peak_filter = std::make_unique<PeakFilter>();
     _auto_indexer = std::make_unique<AutoIndexer>();
     _refiner = std::make_unique<Refiner>(_cell_handler.get());
+    _integrator = std::make_unique<Integrator>(_data_handler);
     _peak_merger = std::make_unique<PeakMerger>();
 
     _finder_params = std::make_shared<PeakFinderParameters>();
@@ -75,6 +74,7 @@ Experiment::Experiment(const std::string& name, const std::string& diffractomete
     _peak_filter->setParameters(_filter_params);
     _auto_indexer->setParameters(_indexer_params);
     _refiner->setParameters(_refiner_params);
+    _integrator->setParameters(_int_params);
     _peak_merger->setParameters(_merge_params);
 }
 
@@ -217,7 +217,7 @@ void Experiment::buildShapeCollection(
         ShapeCollection(!params.kabsch_coords, params.peak_end, params.bkg_begin, params.bkg_end);
 
     std::vector<Peak3D*> fit_peak_list = fit_peaks->getPeakList();
-    shape_collection = _integration_handler->integrateShapeCollection(
+    shape_collection = _integrator->integrateShapeCollection(
         fit_peak_list, data, &shape_collection, aabb, params);
 
     peaks->setShapeCollection(shape_collection);
@@ -274,6 +274,11 @@ void Experiment::updatePredictions(PeakCollection* predicted_peaks)
     auto peak_list = predicted_peaks->getPeakList();
     int update = _refiner->updatePredictions(peak_list);
     nsxlog(Level::Info, update, "peaks updated");
+}
+
+Integrator* Experiment::integrator()
+{
+    return _integrator.get();
 }
 
 // Data handler methods
@@ -454,30 +459,6 @@ std::vector<std::string> Experiment::getCompatibleSpaceGroups() const
 UnitCellHandler* Experiment::getCellHandler() const
 {
     return _cell_handler.get();
-}
-
-// Integration handler methods
-IPeakIntegrator* Experiment::getIntegrator(const IntegratorType integrato_type) const
-{
-    return _integration_handler->getIntegrator(integrato_type);
-}
-
-void Experiment::integratePeaks(
-    const IntegratorType integrator_type, sptrDataSet data, PeakCollection* peak_collection)
-{
-    _integration_handler->integratePeaks(integrator_type, data, peak_collection);
-}
-
-void Experiment::integratePeaks(
-    IPeakIntegrator* integrator, sptrDataSet data, PeakCollection* peaks,
-    IntegrationParameters* params, ShapeCollection* shapes)
-{
-    _integration_handler->integratePeaks(integrator, data, peaks, params, shapes);
-}
-
-void Experiment::integrateFoundPeaks()
-{
-    _integration_handler->integrateFoundPeaks(_peak_finder.get());
 }
 
 PeakFinderParameters* Experiment::finderParams()

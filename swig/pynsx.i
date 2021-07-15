@@ -124,6 +124,7 @@ using Eigen::Quaterniond;
 #include "core/detector/FlatDetector.h"
 #include "core/detector/MatrixParser.h"
 #include "core/data/DataSet.h"
+#include "core/integration/Integrator.h"
 #include "core/experiment/Experiment.h"
 #include "core/gonio/Axis.h"
 #include "core/gonio/AxisFactory.h"
@@ -326,6 +327,7 @@ ArrayExtendCRef(MillerIndex, int);
 %include "core/data/DataTypes.h"
 %template(DataList) std::vector<std::shared_ptr<nsx::DataSet>>;
 
+%include "core/integration/Integrator.h"
 %include "core/shape/IPeakIntegrator.h"
 %include "core/shape/ShapeCollection.h"
 

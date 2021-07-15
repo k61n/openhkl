@@ -524,23 +524,21 @@ void SubframeFindPeaks::find()
 
 void SubframeFindPeaks::integrate()
 {
-    nsx::Experiment* experiment = gSession->experimentAt(_exp_combo->currentIndex())->experiment();
-
-    nsx::IPeakIntegrator* integrator = experiment->getIntegrator(nsx::IntegratorType::PixelSum);
+    auto* experiment = gSession->experimentAt(_exp_combo->currentIndex())->experiment();
+    auto* integrator = experiment->integrator();
+    auto* finder = experiment->peakFinder();
 
     nsx::sptrProgressHandler handler(new nsx::ProgressHandler);
     ProgressView progressView(nullptr);
     progressView.watch(handler);
 
-    nsx::IntegrationParameters params{};
-    params.peak_end = _peak_area->value();
-    params.bkg_begin = _bkg_lower->value();
-    params.bkg_end = _bkg_upper->value();
-    integrator->setParameters(params);
-    integrator->setHandler(handler);
+    nsx::IntegrationParameters* params = experiment->integrationParams();
+    params->peak_end = _peak_area->value();
+    params->bkg_begin = _bkg_lower->value();
+    params->bkg_end = _bkg_upper->value();
+    integrator->getIntegrator(nsx::IntegratorType::PixelSum)->setHandler(handler);
 
-    experiment->integrateFoundPeaks();
-
+    integrator->integrateFoundPeaks(finder);
     refreshPeakTable();
 }
 

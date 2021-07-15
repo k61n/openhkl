@@ -171,14 +171,13 @@ TEST_CASE("test/data/TestNewWorkFlow.cpp", "")
 
     CHECK(found_peaks.size() >= 800);
 
-    nsx::IPeakIntegrator* integrator = experiment.getIntegrator(nsx::IntegratorType::PixelSum);
-    nsx::IntegrationParameters params{};
-    params.peak_end = 3.0;
-    params.bkg_begin = 3.5;
-    params.bkg_end = 4.0;
-    integrator->setParameters(params);
-    integrator->setHandler(progressHandler);
-    experiment.integrateFoundPeaks();
+    nsx::Integrator* integrator = experiment.integrator();
+    nsx::IntegrationParameters* params = integrator->parameters();
+    params->peak_end = 3.0;
+    params->bkg_begin = 3.5;
+    params->bkg_end = 4.0;
+    integrator->getIntegrator(nsx::IntegratorType::PixelSum)->setHandler(progressHandler);
+    integrator->integrateFoundPeaks(peak_finder);
     experiment.acceptFoundPeaks("found_peaks");
 
     // #########################################################
@@ -261,11 +260,10 @@ TEST_CASE("test/data/TestNewWorkFlow.cpp", "")
     }
 
     // reintegrate peaks
-    params.peak_end = 3.0;
-    params.bkg_begin = 4.0;
-    params.bkg_end = 5.0;
-    integrator->setParameters(params);
-    experiment.integrateFoundPeaks();
+    params->peak_end = 3.0;
+    params->bkg_begin = 4.0;
+    params->bkg_end = 5.0;
+    integrator->integrateFoundPeaks(peak_finder);
 
     // #########################################################
     // compute shape library
