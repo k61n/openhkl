@@ -50,7 +50,8 @@ std::vector<Peak3D*> Predictor::buildPeaksFromMillerIndices(
         "q-vectors generated from ", hkls.size(), " Miller indices");
 
     const std::vector<DetectorEvent> events =
-        algo::qs2events(qs, data->instrumentStates(), data->detector(), data->nFrames(), handler);
+        algo::qVectorList2Events(qs, data->instrumentStates(), data->detector(), data->nFrames(),
+                                 handler);
 
     std::vector<Peak3D*> peaks;
     for (auto event : events) {
