@@ -21,6 +21,7 @@
 #include "core/data/DataSet.h"
 #include "core/instrument/InstrumentState.h"
 #include "core/peak/Peak3D.h"
+#include "core/peak/Qs2Events.h"
 #include "core/shape/PeakFilter.h"
 #include "tables/crystal/MillerIndex.h"
 #include "tables/crystal/UnitCell.h"
@@ -72,6 +73,7 @@ RefinementBatch::RefinementBatch(
     InstrumentStateList& states, UnitCell* uc, std::vector<const nsx::Peak3D*> peaks)
     : _fmin(std::numeric_limits<double>::max())
     , _fmax(std::numeric_limits<double>::lowest())
+    , _residual_type(ResidualType::QSpace)
     , _cell(uc)
     , _peaks(peaks)
 {
@@ -209,6 +211,19 @@ bool RefinementBatch::refine(unsigned int max_iter)
 
 int RefinementBatch::residuals(Eigen::VectorXd& fvec)
 {
+    if (_residual_type == ResidualType::QSpace) {
+        return qSpaceResiduals(fvec);
+    }
+    else if (_residual_type == ResidualType::RealSpace) {
+        return realSpaceResiduals(fvec);
+    }
+    else {
+        return 0;
+    }
+}
+
+int RefinementBatch::qSpaceResiduals(Eigen::VectorXd& fvec)
+{
     UnitCell uc = _cell->fromParameters(_u0, _uOffsets, _cellParameters);
     const Eigen::Matrix3d& UB = uc.reciprocalBasis();
 
@@ -226,6 +241,53 @@ int RefinementBatch::residuals(Eigen::VectorXd& fvec)
             fvec(3 * i) = 0.0;
             fvec(3 * i + 1) = 0.0;
             fvec(3 * i + 2) = 0.0;
+        }
+    }
+
+    _cost_function.push_back(0.5 * fvec.norm());
+
+    return 0;
+}
+
+int RefinementBatch::realSpaceResiduals(Eigen::VectorXd& fvec)
+{
+    UnitCell uc = _cell->fromParameters(_u0, _uOffsets, _cellParameters);
+    const Eigen::Matrix3d& UB = uc.reciprocalBasis();
+
+    //#pragma omp parallel for
+    for (unsigned int i = 0; i < _peaks.size(); ++i) {
+        const Eigen::RowVector3d x0 = _peaks[i]->shape().center();
+        auto data = _peaks[i]->dataSet();
+        ReciprocalVector q1{_hkls[i] * UB};
+
+        std::vector<DetectorEvent> events =
+            algo::qVector2Events(q1, data->instrumentStates(), data->detector(), data->nFrames());
+        std::vector<Eigen::RowVector3d> differences;
+        for (auto&& event : events) {
+            const Eigen::RowVector3d x1{event._px, event._py, event._frame};
+            const Eigen::RowVector3d dx = x1 - x0;
+            differences.push_back(dx);
+        }
+        double minNorm = 10000;
+        int minInd = 0;
+        if ((differences.size() >= 1)) {
+            for (int i = 0; i < differences.size(); ++i) {
+                double norm = differences[i].squaredNorm();
+                if (norm < minNorm) {
+                    minNorm = norm;
+                    minInd = i;
+                }
+            }
+        } else
+            continue;
+
+        fvec(3 * i) = 0.0;
+        fvec(3 * i + 1) = 0.0;
+        fvec(3 * i + 2) = 0.0;
+        if (differences[minInd].squaredNorm() < 10) {
+            fvec(3 * i) = differences[minInd][0];
+            fvec(3 * i + 1) = differences[minInd][1];
+            fvec(3 * i + 2) = differences[minInd][2];
         }
     }
 
@@ -269,6 +331,11 @@ std::string RefinementBatch::name() const
     std::ostringstream oss;
     oss << int(_fmin) << "-" << int(_fmax);
     return oss.str();
+}
+
+void RefinementBatch::setResidualType(const ResidualType& residual)
+{
+    _residual_type = residual;
 }
 
 } // namespace nsx

@@ -121,6 +121,7 @@ class SubframeRefiner : public QWidget {
     QSpinBox* _n_batches_spin;
 
     // refinement flags
+    QComboBox* _residual_combo;
     QCheckBox* _refineUB;
     QCheckBox* _refineSamplePosition;
     QCheckBox* _refineSampleOrientation;
@@ -145,6 +146,10 @@ class SubframeRefiner : public QWidget {
     SXPlot* _plot_widget;
 
     QRandomGenerator _rng;
+
+    const std::map<std::string, nsx::ResidualType> _residual_strings {
+        {"Reciprocal space", nsx::ResidualType::QSpace},
+        {"Real space", nsx::ResidualType::RealSpace}};
 };
 
 

@@ -65,7 +65,7 @@ TEST_CASE("test/crystal/TestFFTIndexing.cpp", "")
 
     nsx::PeakCollection peak_collection;
     const auto events =
-        nsx::algo::qs2events(qs, data->instrumentStates(), data->detector(), data->nFrames());
+        nsx::algo::qVectorList2Events(qs, data->instrumentStates(), data->detector(), data->nFrames());
     for (const nsx::DetectorEvent& event : events) {
         // std::cout << "event x=" << event._px << " y=" << event._py
         //    << " frame=" << event._frame << " tof=" << event._tof

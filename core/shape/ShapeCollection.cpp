@@ -70,7 +70,7 @@ static std::vector<Peak3D*> buildPeaksFromMillerIndices(
         hkls.size(), " Miller indices");
 
     const std::vector<DetectorEvent> events =
-        algo::qs2events(qs, data->instrumentStates(), data->detector(), nframes, handler);
+        algo::qVectorList2Events(qs, data->instrumentStates(), data->detector(), nframes, handler);
 
     std::vector<Peak3D*> peaks;
     for (auto event : events) {

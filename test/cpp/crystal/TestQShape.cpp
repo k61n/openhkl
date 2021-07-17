@@ -28,7 +28,7 @@
 
 nsx::Ellipsoid toDetectorSpace(const nsx::Ellipsoid e, const nsx::sptrDataSet data)
 {
-    auto events = nsx::algo::qs2events(
+    auto events = nsx::algo::qVectorList2Events(
         {nsx::ReciprocalVector(e.center())}, data->instrumentStates(), data->detector(),
         data->nFrames());
 

@@ -107,12 +107,17 @@ void SubframeRefiner::setRefinerFlagsUp()
     auto refiner_flags_box = new Spoiler("Parameters to refine");
     GridFiller f(refiner_flags_box, true);
 
+    _residual_combo = f.addCombo(
+        "Residual type", "Type of residual to use in least squares refinement");
     _refineUB = f.addCheckBox("Cell vectors");
     _refineSamplePosition = f.addCheckBox("Sample position");
     _refineSampleOrientation = f.addCheckBox("Sample orientation");
     _refineDetectorPosition = f.addCheckBox("Detector position");
     _refineKi = f.addCheckBox("Incident wavevector");
     _refine_button = f.addButton("Refine");
+
+    for (const auto& [key, val] : _residual_strings)
+        _residual_combo->addItem(QString::fromStdString(key));
 
     connect(_refine_button, &QPushButton::clicked, this, &SubframeRefiner::refine);
     connect(
@@ -233,11 +238,12 @@ void SubframeRefiner::refine()
     try {
         auto expt = gSession->experimentAt(_exp_combo->currentIndex())->experiment();
         const auto data = expt->getData(_data_combo->currentText().toStdString());
-        const auto peaks = expt->getPeakCollection(_peak_combo->currentText().toStdString());
-        const auto cell = expt->getUnitCell(_cell_combo->currentText().toStdString());
+        const auto* peaks = expt->getPeakCollection(_peak_combo->currentText().toStdString());
+        auto* cell = expt->getUnitCell(_cell_combo->currentText().toStdString());
         const auto peak_list = peaks->getPeakList();
         auto states = data->instrumentStates();
         auto* params = expt->refinerParams();
+        auto refiner = expt->refiner();
 
         setRefinerParameters();
 
@@ -253,9 +259,8 @@ void SubframeRefiner::refine()
         if (params->refine_ki)
             ++n_checked;
         if (n_checked > 0)
-            _refine_success = expt->refine(peaks, cell, data.get(), params->nbatches);
+            _refine_success = expt->refine(peaks, cell, data.get());
 
-        auto refiner = expt->refiner();
         _tables_widget->refreshTables(refiner, data.get());
     } catch (const std::exception& ex) {
         QMessageBox::critical(this, "Error", QString(ex.what()));
@@ -391,6 +396,12 @@ void SubframeRefiner::grabRefinerParameters()
     _refineSampleOrientation->setChecked(params->refine_sample_orientation);
     _refineDetectorPosition->setChecked(params->refine_detector_offset);
     _refineKi->setChecked(params->refine_ki);
+    for (const auto& [key, val] : _residual_strings) {
+        if (val == params->residual_type) {
+            _residual_combo->setCurrentText(QString::fromStdString(key));
+            break;
+        }
+    }
 }
 
 void SubframeRefiner::setRefinerParameters()
@@ -406,6 +417,12 @@ void SubframeRefiner::setRefinerParameters()
     params->refine_sample_orientation = _refineSampleOrientation->isChecked();
     params->refine_detector_offset = _refineDetectorPosition->isChecked();
     params->refine_ki = _refineKi->isChecked();
+    for (const auto& [key, val] : _residual_strings) {
+        if (key == _residual_combo->currentText().toStdString())
+            params->residual_type = val;
+    }
+    // params->residual_type =
+    //     _residual_strings.find(_residual_combo->currentText().toStdString())->second;
 }
 
 void SubframeRefiner::updatePredictedList()

@@ -21,6 +21,12 @@
 
 namespace nsx {
 
+enum class ResidualType {
+    RealSpace,
+    QSpace,
+    Count
+};
+
 //! Represents a batch of consecutive detector images.
 
 class RefinementBatch {
@@ -52,6 +58,12 @@ class RefinementBatch {
     //! Compute the residual vector for the current set of parameters.
     int residuals(Eigen::VectorXd& fvec);
 
+    //! Compute reciprocal space residual
+    int qSpaceResiduals(Eigen::VectorXd& fvec);
+
+    //! Compute real (detector) space residuals
+    int realSpaceResiduals(Eigen::VectorXd& fvec);
+
     //! Returns the list of peaks used for refinement.
     std::vector<const nsx::Peak3D*> peaks() const;
 
@@ -73,9 +85,14 @@ class RefinementBatch {
     //! Generate a name from the minimum/maximum frame
     std::string name() const;
 
+    //! Set the residual type
+    void setResidualType(const ResidualType& residual);
+
  private:
     double _fmin;
     double _fmax;
+
+    ResidualType _residual_type;
 
     nsx::UnitCell* _cell;
 

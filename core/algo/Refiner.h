@@ -31,6 +31,7 @@ struct RefinerParameters {
     bool refine_sample_orientation = true;
     bool refine_detector_offset = true;
     int nbatches = 10;
+    ResidualType residual_type = ResidualType::QSpace;
     unsigned int max_iter = 1000;
 
     void log(const Level& level) const;
@@ -39,11 +40,11 @@ struct RefinerParameters {
 //! Used to refine lattice and instrument parameters.
 class Refiner {
  public:
-    //! Construct an instance to refine the given cell based on the given peak list,
-    //! using the given number of frame batches. The peaks must belong to the same dataset.
-    Refiner(
-        InstrumentStateList& states, UnitCell* cell, const std::vector<nsx::Peak3D*>& peaks,
-        UnitCellHandler* cell_handler, int nbatches);
+    Refiner(UnitCellHandler* cell_handler);
+
+    //! Generate batches of peaks per frame range with the given peak list
+    void makeBatches(
+        InstrumentStateList& states, UnitCell* cell, const std::vector<nsx::Peak3D*>& peaks);
 
     //! Sets the lattice B matrix to be refined.
     void refineUB();

@@ -3,7 +3,7 @@
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
 //! @file      core/peak/Qs2Events.h
-//! @brief     Defines function qs2events
+//! @brief     Defines function qVectorList2Events
 //!
 //! @homepage  ###HOMEPAGE###
 //! @license   GNU General Public License v3 or higher (see COPYING)
@@ -41,10 +41,13 @@ namespace algo {
  */
 
 //! Returns detector events corresponding to the list of q values.
-std::vector<DetectorEvent> qs2events(
+std::vector<DetectorEvent> qVectorList2Events(
     const std::vector<ReciprocalVector>& sample_qs, const InstrumentStateList& states,
     const Detector& detector, const int n_intervals, sptrProgressHandler handler = nullptr);
 
+std::vector<DetectorEvent> qVector2Events(
+    const ReciprocalVector& sample_q, const InstrumentStateList& states,
+    const Detector& detector, const int n_intervals);
 } // namespace algo
 
 } // namespace nsx

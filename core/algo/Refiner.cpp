@@ -27,6 +27,7 @@
 #include "tables/crystal/MillerIndex.h"
 #include "tables/crystal/UnitCell.h"
 
+
 namespace nsx {
 
 void RefinerParameters::log(const Level& level) const
@@ -35,24 +36,25 @@ void RefinerParameters::log(const Level& level) const
     nsxlog(level, "nbatches               = ", nbatches);
     nsxlog(level, "max_iter               = ", max_iter);
     nsxlog(level, "refine_ub              = ", refine_ub);
+    nsxlog(level, "residual_type          = ", static_cast<int>(residual_type));
     nsxlog(level, "refine_sample_position = ", refine_sample_position);
     nsxlog(level, "refine_sample_orientation = ", refine_sample_orientation);
     nsxlog(level, "refine_detector_offset = ", refine_detector_offset);
     nsxlog(level, "refine_ki              = ", refine_ki);
 }
 
-Refiner::Refiner(
-    InstrumentStateList& states, UnitCell* cell, const std::vector<nsx::Peak3D*>& peaks,
-    UnitCellHandler* cell_handler, int nbatches)
-    : _cell_handler(cell_handler), _cell(cell)
+Refiner::Refiner(UnitCellHandler* cell_handler) : _cell_handler(cell_handler) { }
+
+void Refiner::makeBatches(
+    InstrumentStateList& states, UnitCell* cell, const std::vector<nsx::Peak3D*>& peaks)
 {
-    _params = std::make_shared<RefinerParameters>();
-    _params->nbatches = nbatches;
+    _cell = cell;
     _states = &states;
     for (const InstrumentState& state : states)
         _unrefined_states.push_back(state);
-    _unrefined_cell = *_cell;
+    _unrefined_cell = *cell;
     _nframes = states.size();
+
     std::vector<nsx::Peak3D*> filtered_peaks = peaks;
     PeakFilter peak_filter;
     filtered_peaks = peak_filter.filterEnabled(peaks, true);
@@ -84,6 +86,7 @@ Refiner::Refiner(
             _cell_handler->addUnitCell(name, _unrefined_cell);
 
             RefinementBatch b(states, _cell_handler->getUnitCell(name), peaks_subset);
+            b.setResidualType(_params->residual_type);
             _batches.emplace_back(std::move(b));
             peaks_subset.clear();
             ++current_batch;
@@ -187,7 +190,7 @@ int Refiner::updatePredictions(std::vector<Peak3D*>& peaks) const
         const MillerIndex hkl(peak->q(), *batch_cell);
         const ReciprocalVector q_pred(
             hkl.rowVector().cast<double>() * batch_cell->reciprocalBasis());
-        const std::vector<DetectorEvent> events = algo::qs2events(
+        const std::vector<DetectorEvent> events = algo::qVectorList2Events(
             {q_pred}, peak->dataSet()->instrumentStates(), peak->dataSet()->detector(), _nframes);
 
         // something wrong with new prediction...

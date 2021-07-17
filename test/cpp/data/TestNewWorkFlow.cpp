@@ -273,7 +273,7 @@ TEST_CASE("test/data/TestNewWorkFlow.cpp", "")
     for (auto peak : filtered_peaks->getPeakList()) {
         std::vector<nsx::ReciprocalVector> q_vectors;
         q_vectors.push_back(peak->q());
-        auto events = nsx::algo::qs2events(
+        auto events = nsx::algo::qVectorList2Events(
             q_vectors, dataf->instrumentStates(), dataf->detector(), dataf->nFrames());
 
         if (events.empty())
