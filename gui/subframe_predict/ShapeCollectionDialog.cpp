@@ -339,16 +339,19 @@ void ShapeCollectionDialog::build()
 
     nsx::AABB aabb;
 
-    const bool kabsch_coords = _kabsch->isChecked();
+    _collection = std::make_unique<nsx::ShapeCollection>();
+    auto* params = _collection->parameters();
+    params->kabsch_coords = _kabsch->isChecked();
+    params->peak_end = _peak_end->value();
+    params->bkg_begin = _background_begin->value();
+    params->bkg_end = _background_end->value();
 
-    const double peak_end_val = _peak_end->value();
-
-    if (kabsch_coords) {
+    if (_kabsch->isChecked()) {
         const double sigma_d_val = _sigma_D->value();
         const double sigma_m_val = _sigma_M->value();
         const Eigen::Vector3d sigma(sigma_d_val, sigma_d_val, sigma_m_val);
-        aabb.setLower(-peak_end_val * sigma);
-        aabb.setUpper(peak_end_val * sigma);
+        aabb.setLower(-params->peak_end * sigma);
+        aabb.setUpper(params->peak_end * sigma);
     } else {
         const Eigen::Vector3d dx(nx_val, ny_val, nz_val);
         aabb.setLower(-0.5 * dx);
@@ -360,27 +363,22 @@ void ShapeCollectionDialog::build()
     ProgressView view(this);
     view.watch(handler);
 
-    const double bkg_begin_val = _background_begin->value();
-    const double bkg_end_val = _background_end->value();
-    _collection = nsx::ShapeCollection(!kabsch_coords, peak_end_val, bkg_begin_val, bkg_end_val);
-
-    nsx::ShapeIntegrator integrator(&_collection, aabb, nx_val, ny_val, nz_val);
+    nsx::ShapeIntegrator integrator(_collection.get(), aabb, nx_val, ny_val, nz_val);
+    nsx::IntegrationParameters int_params{};
+    int_params.peak_end = _peak_end->value();
+    int_params.bkg_begin = _background_begin->value();
+    int_params.bkg_end = _background_end->value();
     integrator.setHandler(handler);
     integrator.setNNumors(1);
-    nsx::IntegrationParameters params{};
-    params.peak_end = peak_end_val;
-    params.bkg_begin = bkg_begin_val;
-    params.bkg_end = bkg_end_val;
-    integrator.setParameters(params);
+    integrator.setParameters(int_params);
 
     int n_numor = 1;
     for (const nsx::sptrDataSet& data : _data) {
-        integrator.integrate(fit_peaks, &_collection, data, n_numor);
+        integrator.integrate(fit_peaks, _collection.get(), data, n_numor);
         ++n_numor;
     }
 
-    _collection = *integrator.collection();
-    _collection.updateFit(1000); // This does nothing!! - zamaan
+    // _collection.updateFit(1000); // This does nothing!! - zamaan
 }
 
 void ShapeCollectionDialog::calculate()
@@ -392,7 +390,7 @@ void ShapeCollectionDialog::calculate()
     const nsx::DetectorEvent ev(_x->value(), _y->value(), _frame->value());
     // update maximum value, used for drawing
     try {
-        _profile = _collection.meanProfile(ev, _radius->value(), _n_frames->value());
+        _profile = _collection->meanProfile(ev, _radius->value(), _n_frames->value());
         _maximum = 0;
 
         for (int i = 0; i < nx_val; ++i) {

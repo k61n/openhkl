@@ -107,6 +107,7 @@ using Eigen::Quaterniond;
 #include "core/statistics/MergedPeak.h"
 #include "core/shape/PeakCollection.h"
 #include "core/shape/PeakFilter.h"
+#include "core/integration/Integrator.h"
 #include "core/experiment/PeakFinder.h"
 #include "core/convolve/AnnularConvolver.h"
 #include "core/convolve/AtomicConvolver.h"
@@ -330,6 +331,7 @@ ArrayExtendCRef(MillerIndex, int);
 %include "core/integration/Integrator.h"
 %include "core/shape/IPeakIntegrator.h"
 %include "core/shape/ShapeCollection.h"
+%include "core/shape/Predictor.h"
 
 %template(ConvolverParameters) std::map<std::string,double>;
 %include "core/convolve/Convolver.h"

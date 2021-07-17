@@ -86,7 +86,7 @@ class PeakCollection {
     MetaData& metadata();
 
     //! Set the shape collection needed for profile integration
-    void setShapeCollection(ShapeCollection shape_collection);
+    void setShapeCollection(std::unique_ptr<ShapeCollection>& shape_collection);
     //! Clear the shape collection
     void resetShapeCollection() { _shape_collection.reset(nullptr); };
     //! Get the shape collection

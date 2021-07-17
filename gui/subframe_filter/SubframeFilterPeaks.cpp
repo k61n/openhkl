@@ -430,7 +430,8 @@ void SubframeFilterPeaks::grabFilterParameters()
     if (_peak_list.empty() || _exp_combo->count() < 1)
         return;
 
-    auto* params = gSession->experimentAt(_exp_combo->currentIndex())->experiment()->filterParams();
+    auto* params =
+        gSession->experimentAt(_exp_combo->currentIndex())->experiment()->peakFilter()->parameters();
 
     _tolerance->setValue(params->unit_cell_tolerance);
     _strength_min->setValue(params->strength_min);
@@ -500,7 +501,7 @@ void SubframeFilterPeaks::setFilterParameters()
     if (_merge_box->isChecked())
         flags->significance = true;
 
-    auto* params = gSession->experimentAt(_exp_combo->currentIndex())->experiment()->filterParams();
+    auto* params = filter->parameters();
 
     params->unit_cell_tolerance = _tolerance->value();
     params->significance = _significance_level->value();

@@ -271,7 +271,8 @@ void SubframeIntegrate::updatePeakList()
 void SubframeIntegrate::grabIntegrationParameters()
 {
     auto params =
-        gSession->experimentAt(_exp_combo->currentIndex())->experiment()->integrationParams();
+        gSession->experimentAt(_exp_combo->currentIndex())->experiment()->integrator()->
+        parameters();
 
     _peak_end->setValue(params->peak_end);
     _bkg_begin->setValue(params->bkg_begin);
@@ -288,7 +289,8 @@ void SubframeIntegrate::setIntegrationParameters()
     if (_exp_combo->count() == 0)
         return;
     auto params =
-        gSession->experimentAt(_exp_combo->currentIndex())->experiment()->integrationParams();
+        gSession->experimentAt(_exp_combo->currentIndex())->experiment()->integrator()->
+        parameters();
 
     params->peak_end = _peak_end->value();
     params->bkg_begin = _bkg_begin->value();
@@ -493,7 +495,8 @@ void SubframeIntegrate::runIntegration()
 
         setIntegrationParameters();
         auto* params =
-            gSession->experimentAt(_exp_combo->currentIndex())->experiment()->integrationParams();
+            gSession->experimentAt(_exp_combo->currentIndex())->experiment()->integrator()->
+            parameters();
 
         integrator->getIntegrator(params->integrator_type)->setHandler(handler);
         integrator->integratePeaks(data, peaks_to_integrate, params, shapes);
@@ -509,11 +512,10 @@ void SubframeIntegrate::openShapeBuilder()
         gSession->experimentAt(_exp_combo->currentIndex())
             ->experiment()
             ->getPeakCollection(_peak_combo->currentText().toStdString());
-    auto* shape_params =
-        gSession->experimentAt(_exp_combo->currentIndex())->experiment()->shapeParams();
+    nsx::ShapeCollectionParameters shape_params{};
 
     std::unique_ptr<ShapeCollectionDialog> dialog(
-        new ShapeCollectionDialog(peak_collection, shape_params));
+        new ShapeCollectionDialog(peak_collection, &shape_params));
 
     dialog->exec();
     refreshShapeStatus();
@@ -527,12 +529,12 @@ void SubframeIntegrate::refreshShapeStatus()
         shape_collection_present = false;
 
     if (shape_collection_present) {
-        nsx::PeakCollection* collection =
+        nsx::PeakCollection* peaks =
             gSession->experimentAt(_exp_combo->currentIndex())
                 ->experiment()
                 ->getPeakCollection(_peak_combo->currentText().toStdString());
         _assign_peak_shapes->setEnabled(true);
-        if (collection->shapeCollection() == nullptr) {
+        if (peaks->shapeCollection() == nullptr) {
             _assign_peak_shapes->setEnabled(false);
             shape_collection_present = false;
         }

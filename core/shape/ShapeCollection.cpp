@@ -49,69 +49,6 @@ void ShapeCollectionParameters::log(const Level& level) const
     nsxlog(level, "min_n_neighbors        = ", min_n_neighbors);
 }
 
-void PredictionParameters::log(const Level& level) const
-{
-    IntegrationParameters::log(level);
-    nsxlog(level, "Peak prediction parameters: ");
-    nsxlog(level, "d_min     = ", d_min);
-    nsxlog(level, "d_max     = ", d_max);
-}
-
-static std::vector<Peak3D*> buildPeaksFromMillerIndices(
-    sptrDataSet data, const std::vector<MillerIndex>& hkls, const UnitCell* unit_cell,
-    const int nframes, sptrProgressHandler handler = nullptr)
-{
-    const Eigen::Matrix3d BU = unit_cell->reciprocalBasis();
-    std::vector<ReciprocalVector> qs;
-    for (const auto& idx : hkls)
-        qs.emplace_back(idx.rowVector().cast<double>() * BU);
-    nsxlog(
-        Level::Info, qs.size(), " buildPeaksFromMillerIndices: q-vectors generated from ",
-        hkls.size(), " Miller indices");
-
-    const std::vector<DetectorEvent> events =
-        algo::qVectorList2Events(qs, data->instrumentStates(), data->detector(), nframes, handler);
-
-    std::vector<Peak3D*> peaks;
-    for (auto event : events) {
-        Peak3D* peak(new Peak3D(data));
-        Eigen::Vector3d center = {event._px, event._py, event._frame};
-
-        // dummy shape
-        try {
-            peak->setShape(Ellipsoid(center, 1.0));
-            peak->setUnitCell(unit_cell);
-            peaks.push_back(peak);
-        } catch (...) {
-            // invalid shape, nothing to do
-        }
-    }
-    nsxlog(
-        Level::Info, "buildPeaksFromMillerIndices: ", peaks.size(), " peaks generated from ",
-        hkls.size(), " Miller indices");
-    return peaks;
-}
-
-std::vector<Peak3D*> predictPeaks(
-    const sptrDataSet data, const UnitCell* unit_cell, const PredictionParameters* params,
-    sptrProgressHandler handler)
-{
-    std::vector<Peak3D*> predicted_peaks;
-
-    // Generate the Miller indices found in the [dmin,dmax] shell
-    const auto& mono = data->reader()->diffractometer()->source().selectedMonochromator();
-
-    const double wavelength = mono.wavelength();
-
-    auto predicted_hkls =
-        unit_cell->generateReflectionsInShell(params->d_min, params->d_max, wavelength);
-
-    std::vector<Peak3D*> peaks =
-        buildPeaksFromMillerIndices(data, predicted_hkls, unit_cell, data->nFrames(), handler);
-
-    return peaks;
-}
-
 static Eigen::Matrix3d from_cholesky(const std::array<double, 6>& components)
 {
     Eigen::Matrix3d L;
@@ -184,11 +121,11 @@ ShapeCollection::ShapeCollection()
     , _peakEnd(1)
     , _bkgBegin(3)
     , _bkgEnd(4)
+    , _params()
 {
     _choleskyD.fill(1e-6);
     _choleskyM.fill(1e-6);
     _choleskyS.fill(1e-6);
-    _params = std::make_shared<ShapeCollectionParameters>();
 }
 
 ShapeCollection::ShapeCollection(
@@ -201,11 +138,11 @@ ShapeCollection::ShapeCollection(
     , _peakEnd(peakEnd)
     , _bkgBegin(bkgBegin)
     , _bkgEnd(bkgEnd)
+    , _params()
 {
     _choleskyD.fill(1e-6);
     _choleskyM.fill(1e-6);
     _choleskyS.fill(1e-6);
-    _params = std::make_shared<ShapeCollectionParameters>();
 }
 
 static void covariance_helper(
@@ -405,56 +342,6 @@ std::vector<Peak3D*> ShapeCollection::findNeighbors(
     return neighbors;
 }
 
-void ShapeCollection::setPredictedShapes(
-    PeakCollection* peaks, PeakInterpolation interpolation, sptrProgressHandler handler)
-{
-    nsxlog(
-        Level::Info, "predictPeaks: Computing shapes of", peaks->numberOfPeaks(),
-        "calculated peaks");
-
-    int count = 0;
-    int npeaks = peaks->numberOfPeaks();
-    std::ostringstream oss;
-    oss << "Computing shapes of " << npeaks << " peaks";
-    if (handler) {
-        handler->setStatus(oss.str().c_str());
-        handler->setProgress(0);
-    }
-    for (auto peak : peaks->getPeakList()) {
-        peak->setPredicted(true);
-        peak->setSelected(true);
-
-        // Skip the peak if any error occur when computing its mean covariance (e.g.
-        // too few or no neighbouring peaks found)
-        try {
-            Eigen::Matrix3d cov = meanCovariance(
-                peak, _params->neighbour_range_pixels, _params->neighbour_range_frames,
-                _params->min_n_neighbors, interpolation);
-            Eigen::Vector3d center = peak->shape().center();
-            peak->setShape(Ellipsoid(center, cov.inverse()));
-        } catch (std::exception& e) {
-            peak->setSelected(false);
-            peak->setRejectionFlag(RejectionFlag::TooFewNeighbours);
-        }
-        if (handler) {
-            double progress = ++count * 100.0 / npeaks;
-            handler->setProgress(progress);
-        }
-    }
-    nsxlog(
-        Level::Info, "ShapeCollection::setPredictedShapes: Interpolation failed for",
-        nFailedInterp(), "peaks");
-    nsxlog(
-        Level::Info, "ShapeCollection::setPredictedShapes:", nNoProfile(),
-        "peaks with no neighbouring profiles");
-    nsxlog(
-        Level::Info, "ShapeCollection::setPredictedShapes:", nLonelyPeaks(),
-        "peaks with no neighbours");
-    nsxlog(
-        Level::Info, "ShapeCollection::setPredictedShapes:", nUnfriendlyPeaks(),
-        "peaks with too few neighbours");
-}
-
 Eigen::Matrix3d ShapeCollection::meanCovariance(
     Peak3D* reference_peak, double radius, double nframes, size_t min_neighbors,
     PeakInterpolation interpolation) const
@@ -515,6 +402,57 @@ Eigen::Matrix3d ShapeCollection::meanCovariance(
     return JI * cov * JI.transpose();
 }
 
+void ShapeCollection::setPredictedShapes(
+    PeakCollection* peaks, PeakInterpolation interpolation, sptrProgressHandler handler)
+{
+    nsxlog(
+        Level::Info, "predictPeaks: Computing shapes of", peaks->numberOfPeaks(),
+        "calculated peaks");
+
+    int count = 0;
+    int npeaks = peaks->numberOfPeaks();
+    std::ostringstream oss;
+    oss << "Computing shapes of " << npeaks << " peaks";
+    if (handler) {
+        handler->setStatus(oss.str().c_str());
+        handler->setProgress(0);
+    }
+    for (auto peak : peaks->getPeakList()) {
+        peak->setPredicted(true);
+        peak->setSelected(true);
+
+        // Skip the peak if any error occur when computing its mean covariance (e.g.
+        // too few or no neighbouring peaks found)
+        try {
+            Eigen::Matrix3d cov = meanCovariance(
+                peak, _params.neighbour_range_pixels, _params.neighbour_range_frames,
+                _params.min_n_neighbors, interpolation);
+            Eigen::Vector3d center = peak->shape().center();
+            peak->setShape(Ellipsoid(center, cov.inverse()));
+        } catch (std::exception& e) {
+            peak->setSelected(false);
+            peak->setRejectionFlag(RejectionFlag::TooFewNeighbours);
+        }
+        if (handler) {
+            double progress = ++count * 100.0 / npeaks;
+            handler->setProgress(progress);
+        }
+    }
+    nsxlog(
+        Level::Info, "ShapeCollection::setPredictedShapes: Interpolation failed for",
+        nFailedInterp(), "peaks");
+    nsxlog(
+        Level::Info, "ShapeCollection::setPredictedShapes:", nNoProfile(),
+        "peaks with no neighbouring profiles");
+    nsxlog(
+        Level::Info, "ShapeCollection::setPredictedShapes:", nLonelyPeaks(),
+        "peaks with no neighbours");
+    nsxlog(
+        Level::Info, "ShapeCollection::setPredictedShapes:", nUnfriendlyPeaks(),
+        "peaks with too few neighbours");
+}
+
+
 bool ShapeCollection::detectorCoords() const
 {
     return _detectorCoords;
@@ -542,7 +480,7 @@ std::map<Peak3D*, std::pair<Profile3D, Profile1D>> ShapeCollection::profiles() c
 
 ShapeCollectionParameters* ShapeCollection::parameters()
 {
-    return _params.get();
+    return &_params;
 }
 
 } // namespace nsx

@@ -75,9 +75,6 @@ class PeakFinder {
     //! Set the progress handler
     void setHandler(const sptrProgressHandler& handler);
 
-    //! set the parameters
-    void setParameters(std::shared_ptr<PeakFinderParameters> params);
-
     //! Get the parameters for peak finding
     PeakFinderParameters* parameters();
 
@@ -117,7 +114,7 @@ class PeakFinder {
     //! The convolver for peak/background convolution
     std::unique_ptr<Convolver> _convolver;
     //! The parameters for peak finding
-    std::shared_ptr<PeakFinderParameters> _params;
+    std::unique_ptr<PeakFinderParameters> _params;
     //! Current label
     int _current_label;
     //! Vector of found peaks

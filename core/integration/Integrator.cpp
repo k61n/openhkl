@@ -41,6 +41,7 @@ Integrator::Integrator(std::shared_ptr<DataHandler> data_handler) : _data_handle
         std::make_pair(IntegratorType::Profile1D, std::make_unique<Profile1DIntegrator>()));
     _integrator_map.insert(
         std::make_pair(IntegratorType::Profile3D, std::make_unique<Profile3DIntegrator>()));
+    _params = std::make_unique<IntegrationParameters>();
 }
 
 IntegratorMap* Integrator::getIntegratorMap()
@@ -101,7 +102,7 @@ void Integrator::integrateFoundPeaks(PeakFinder* peak_finder)
     }
 }
 
-ShapeCollection& Integrator::integrateShapeCollection(
+void Integrator::integrateShapeCollection(
     std::vector<Peak3D*>& fit_peaks, sptrDataSet data, ShapeCollection* shape_collection,
     const AABB& aabb, const ShapeCollectionParameters& params)
 {
@@ -111,8 +112,6 @@ ShapeCollection& Integrator::integrateShapeCollection(
     integrator.setNNumors(1);
     integrator.setParameters(params);
     integrator.integrate(fit_peaks, shape_collection, data, 1);
-
-    return *shape_collection;
 }
 
 void Integrator::setParameters(std::shared_ptr<IntegrationParameters> params)

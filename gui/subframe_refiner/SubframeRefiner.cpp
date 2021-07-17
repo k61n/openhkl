@@ -242,8 +242,8 @@ void SubframeRefiner::refine()
         auto* cell = expt->getUnitCell(_cell_combo->currentText().toStdString());
         const auto peak_list = peaks->getPeakList();
         auto states = data->instrumentStates();
-        auto* params = expt->refinerParams();
         auto refiner = expt->refiner();
+        auto* params = refiner->parameters();
 
         setRefinerParameters();
 
@@ -388,7 +388,7 @@ void SubframeRefiner::setUpdateUp()
 void SubframeRefiner::grabRefinerParameters()
 {
     auto* params =
-        gSession->experimentAt(_exp_combo->currentIndex())->experiment()->refinerParams();
+        gSession->experimentAt(_exp_combo->currentIndex())->experiment()->refiner()->parameters();
 
     _n_batches_spin->setValue(params->nbatches);
     _refineUB->setChecked(params->refine_ub);
@@ -409,7 +409,7 @@ void SubframeRefiner::setRefinerParameters()
     if (_exp_combo->count() == 0)
         return;
     auto* params =
-        gSession->experimentAt(_exp_combo->currentIndex())->experiment()->refinerParams();
+        gSession->experimentAt(_exp_combo->currentIndex())->experiment()->refiner()->parameters();
 
     params->nbatches = _n_batches_spin->value();
     params->refine_ub = _refineUB->isChecked();
@@ -443,8 +443,8 @@ void SubframeRefiner::updatePredictedList()
 void SubframeRefiner::updatePredictions()
 {
     if (_refine_success) {
-        auto expt = gSession->experimentAt(_exp_combo->currentIndex())->experiment();
-        auto peaks = expt->getPeakCollection(_predicted_combo->currentText().toStdString());
+        auto* expt = gSession->experimentAt(_exp_combo->currentIndex())->experiment();
+        auto* peaks = expt->getPeakCollection(_predicted_combo->currentText().toStdString());
         expt->updatePredictions(peaks);
     } else {
         QMessageBox::critical(this, "Error", "Cannot update predictions: refinement failed");

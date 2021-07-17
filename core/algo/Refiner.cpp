@@ -43,7 +43,10 @@ void RefinerParameters::log(const Level& level) const
     nsxlog(level, "refine_ki              = ", refine_ki);
 }
 
-Refiner::Refiner(UnitCellHandler* cell_handler) : _cell_handler(cell_handler) { }
+Refiner::Refiner(UnitCellHandler* cell_handler) : _cell_handler(cell_handler)
+{
+    _params = std::make_unique<RefinerParameters>();
+}
 
 void Refiner::makeBatches(
     InstrumentStateList& states, UnitCell* cell, const std::vector<nsx::Peak3D*>& peaks)
@@ -266,11 +269,6 @@ void Refiner::logChange()
             - (*_states)[i].sampleOrientationMatrix();
         nsxlog(Level::Info, i + 1, "\n ", sample_orientation_change.transpose().format(vec3));
     }
-}
-
-void Refiner::setParameters(std::shared_ptr<RefinerParameters> params)
-{
-    _params = params;
 }
 
 RefinerParameters* Refiner::parameters()

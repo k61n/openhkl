@@ -89,9 +89,7 @@ class AutoIndexer {
     //! Constructor
     AutoIndexer();
     //! Return the autoindexing parameters
-    std::shared_ptr<IndexerParameters> parameters();
-    //! Set the autoindexing parameters
-    void setParameters(std::shared_ptr<IndexerParameters> parameters);
+    IndexerParameters* parameters();
     //! Perform the autoindexing
     void autoIndex(const std::vector<Peak3D*>& peaks);
     //! Autoindex by passing a peak collection (avoid SWIG memory leak)
@@ -123,7 +121,7 @@ class AutoIndexer {
     //! Remove bad candidate unit cells
     void removeBad(double quality);
 
-    std::shared_ptr<IndexerParameters> _params;
+    std::unique_ptr<IndexerParameters> _params;
     std::vector<RankedSolution> _solutions;
     std::shared_ptr<ProgressHandler> _handler;
 };

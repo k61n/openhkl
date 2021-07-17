@@ -29,6 +29,8 @@ class Peak3D;
 class PeakCollection;
 enum class Level;
 
+enum class PeakInterpolation { NoInterpolation = 0, InverseDistance = 1, Intensity = 2 };
+
 //! Parameters for building the shape collection
 struct ShapeCollectionParameters : public IntegrationParameters {
     double d_min = 1.5; //!< Minimum d (filter)
@@ -40,14 +42,7 @@ struct ShapeCollectionParameters : public IntegrationParameters {
     int nbins_y = 20; //!< Number of y histogram bins for peak
     int nbins_z = 10; //!< Number of z histogram bins for peak
     int min_n_neighbors = 10; //!< Minimum number of neighbours required for shape collection
-
-    void log(const Level& level) const;
-};
-
-//! Parameters for peak prediction
-struct PredictionParameters : public IntegrationParameters {
-    double d_min = 1.5; //!< Minimum detector range (filter)
-    double d_max = 50.0; //!< Maximum detector range (filter)
+    PeakInterpolation interpolation = PeakInterpolation::NoInterpolation;
 
     void log(const Level& level) const;
 };
@@ -56,14 +51,7 @@ class ShapeCollection;
 
 using sptrShapeCollection = std::shared_ptr<ShapeCollection>;
 
-enum class PeakInterpolation { NoInterpolation = 0, InverseDistance = 1, Intensity = 2 };
-
 struct FitData;
-
-//! Helper function for predicting peaks
-std::vector<Peak3D*> predictPeaks(
-    const sptrDataSet data, const UnitCell* unit_cell, const PredictionParameters* params,
-    sptrProgressHandler handler = nullptr);
 
 //! Store a collection of peak shapes, to be used for peak prediction and integration.
 
@@ -90,6 +78,10 @@ class ShapeCollection {
     //! Update the fitted covariances
     void updateFit(int num_iterations);
 
+    //! Set shapes of a predicted peak collection
+    void setPredictedShapes(
+        PeakCollection* peaks, PeakInterpolation interpolation, sptrProgressHandler handler);
+
     //! Predict the (detector space) covariance of a given peak
     Eigen::Matrix3d predictCovariance(Peak3D* peak) const;
 
@@ -111,11 +103,6 @@ class ShapeCollection {
     //! Find neighbors of a given peak
     std::vector<Peak3D*> findNeighbors(
         const DetectorEvent& ev, double radius, double nframes) const;
-
-    //! Set the peak shapes for a peak collection
-    void setPredictedShapes(
-        PeakCollection* peaks, PeakInterpolation interpolation,
-        sptrProgressHandler handler = nullptr);
 
     //! Returns the peak scale used for the collection
     double peakEnd() const;
@@ -198,7 +185,7 @@ class ShapeCollection {
     mutable int _n_no_profile = 0;
 
     //! Shape collection parameters
-    std::shared_ptr<ShapeCollectionParameters> _params;
+    ShapeCollectionParameters _params;
 };
 
 } // namespace nsx

@@ -146,7 +146,7 @@ TEST_CASE("test/crystal/TestRefiner.cpp", "")
     auto&& states = dataf->instrumentStates();
 
     nsx::Refiner* refiner = experiment.refiner();
-    auto* refiner_params = experiment.refinerParams();
+    auto* refiner_params = refiner->parameters();
     refiner_params->nbatches = 1;
     refiner_params->refine_ub = true;
     refiner_params->refine_sample_position = true;

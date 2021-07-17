@@ -57,25 +57,10 @@ Experiment::Experiment(const std::string& name, const std::string& diffractomete
     _peak_finder = std::make_unique<PeakFinder>();
     _peak_filter = std::make_unique<PeakFilter>();
     _auto_indexer = std::make_unique<AutoIndexer>();
+    _predictor = std::make_unique<Predictor>();
     _refiner = std::make_unique<Refiner>(_cell_handler.get());
     _integrator = std::make_unique<Integrator>(_data_handler);
     _peak_merger = std::make_unique<PeakMerger>();
-
-    _finder_params = std::make_shared<PeakFinderParameters>();
-    _filter_params = std::make_shared<PeakFilterParameters>();
-    _indexer_params = std::make_shared<IndexerParameters>();
-    _predict_params = std::make_unique<PredictionParameters>();
-    _shape_params = std::make_unique<ShapeCollectionParameters>();
-    _refiner_params = std::make_shared<RefinerParameters>();
-    _int_params = std::make_unique<IntegrationParameters>();
-    _merge_params = std::make_shared<MergeParameters>();
-
-    _peak_finder->setParameters(_finder_params);
-    _peak_filter->setParameters(_filter_params);
-    _auto_indexer->setParameters(_indexer_params);
-    _refiner->setParameters(_refiner_params);
-    _integrator->setParameters(_int_params);
-    _peak_merger->setParameters(_merge_params);
 }
 
 const std::string& Experiment::name() const
@@ -92,11 +77,10 @@ void Experiment::setDefaultDMin()
 {
     double lambda = getDiffractometer()->source().selectedMonochromator().wavelength();
     double d_min = lambda / 2.0;
-    _shape_params->d_min = d_min;
-    _predict_params->d_min = d_min;
-    _indexer_params->d_min = d_min;
-    _filter_params->d_min = d_min;
-    _merge_params->d_min = d_min;
+    _predictor->parameters()->d_min = d_min;
+    _auto_indexer->parameters()->d_min = d_min;
+    _peak_filter->parameters()->d_min = d_min;
+    _peak_merger->parameters()->d_min = d_min;
 }
 
 void Experiment::acceptFoundPeaks(const std::string& name)
@@ -213,32 +197,30 @@ void Experiment::buildShapeCollection(
         aabb.setUpper(0.5 * dx);
     }
 
-    ShapeCollection shape_collection =
-        ShapeCollection(!params.kabsch_coords, params.peak_end, params.bkg_begin, params.bkg_end);
+    ShapeCollection* shape_collection = peaks->shapeCollection();
 
     std::vector<Peak3D*> fit_peak_list = fit_peaks->getPeakList();
-    shape_collection = _integrator->integrateShapeCollection(
-        fit_peak_list, data, &shape_collection, aabb, params);
+    _integrator->integrateShapeCollection(
+        fit_peak_list, data, shape_collection, aabb, params);
 
-    peaks->setShapeCollection(shape_collection);
     // shape_collection.updateFit(1000); // This does nothing!! - zamaan
 }
 
 void Experiment::predictPeaks(
-    const std::string& name, sptrDataSet data, UnitCell* cell, PredictionParameters* params)
+    const std::string& name, sptrDataSet data, UnitCell* cell)
 {
     std::vector<nsx::Peak3D*> predicted_peaks;
 
-    nsxlog(Level::Info, "predictPeaks: predicting peaks for data set ", data->name());
+    nsxlog(Level::Info, "Experiment::predictPeaks: predicting peaks for data set ", data->name());
 
-    const std::vector<nsx::Peak3D*> predicted = nsx::predictPeaks(data, cell, params);
+    _predictor->predictPeaks(data, cell);
 
-    for (nsx::Peak3D* peak : predicted)
+    for (nsx::Peak3D* peak : _predictor->peaks())
         predicted_peaks.push_back(peak);
 
     nsxlog(
-        Level::Info, "predictPeaks: completed peak prediciton. Added ", predicted_peaks.size(),
-        " peaks");
+        Level::Info, "Experiment::predictPeaks: completed peak prediciton. Added ",
+        predicted_peaks.size(), " peaks");
 
     addPeakCollection(name, listtype::PREDICTED, predicted_peaks);
 }
@@ -459,46 +441,6 @@ std::vector<std::string> Experiment::getCompatibleSpaceGroups() const
 UnitCellHandler* Experiment::getCellHandler() const
 {
     return _cell_handler.get();
-}
-
-PeakFinderParameters* Experiment::finderParams()
-{
-    return _finder_params.get();
-}
-
-PeakFilterParameters* Experiment::filterParams()
-{
-    return _filter_params.get();
-}
-
-IndexerParameters* Experiment::indexerParams()
-{
-    return _indexer_params.get();
-}
-
-IntegrationParameters* Experiment::integrationParams()
-{
-    return _int_params.get();
-}
-
-ShapeCollectionParameters* Experiment::shapeParams()
-{
-    return _shape_params.get();
-}
-
-PredictionParameters* Experiment::predictParams()
-{
-    return _predict_params.get();
-}
-
-RefinerParameters* Experiment::refinerParams()
-{
-    return _refiner_params.get();
-}
-
-MergeParameters* Experiment::mergeParams()
-{
-    return _merge_params.get();
 }
 
 } // namespace nsx

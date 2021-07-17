@@ -99,7 +99,7 @@ void PeakFinderParameters::log(const Level& level) const
 
 PeakFinder::PeakFinder() : _handler(nullptr), _current_label(0)
 {
-    _params = std::make_shared<PeakFinderParameters>();
+    _params = std::make_unique<PeakFinderParameters>();
     _convolver.reset(ConvolverFactory{}.create("annular", {{"r1", 5.}, {"r2", 10.}, {"r3", 15.}}));
 }
 
@@ -128,11 +128,6 @@ void PeakFinder::setPeakCollection(
 void PeakFinder::setHandler(const sptrProgressHandler& handler)
 {
     _handler = handler;
-}
-
-void PeakFinder::setParameters(std::shared_ptr<PeakFinderParameters> params)
-{
-    _params = params;
 }
 
 PeakFinderParameters* PeakFinder::parameters()

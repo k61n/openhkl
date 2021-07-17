@@ -35,8 +35,8 @@ namespace nsx {
 
 PeakFilter::PeakFilter()
 {
-    _filter_params = std::make_shared<PeakFilterParameters>();
-    _filter_flags = std::make_shared<PeakFilterFlags>();
+    _filter_params = std::make_unique<PeakFilterParameters>();
+    _filter_flags = std::make_unique<PeakFilterFlags>();
     resetFilterFlags();
 }
 
@@ -489,11 +489,6 @@ void PeakFilter::resetFiltering(PeakCollection* peak_collection) const
         peak_collection->getPeak(i)->caughtYou(false);
         peak_collection->getPeak(i)->rejectYou(false);
     }
-}
-
-void PeakFilter::setParameters(std::shared_ptr<PeakFilterParameters> params)
-{
-    _filter_params = params;
 }
 
 PeakFilterParameters* PeakFilter::parameters()

@@ -124,9 +124,9 @@ MetaData& PeakCollection::metadata()
     return _metadata;
 }
 
-void PeakCollection::setShapeCollection(ShapeCollection shape_collection)
+void PeakCollection::setShapeCollection(std::unique_ptr<ShapeCollection>& shape_collection)
 {
-    _shape_collection = std::make_unique<ShapeCollection>(shape_collection);
+    _shape_collection = std::move(shape_collection);
 }
 
 void PeakCollection::setName(const std::string& name)

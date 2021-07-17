@@ -370,29 +370,29 @@ void SubframeFindPeaks::grabFinderParameters()
     nsx::PeakFinder* finder =
         gSession->experimentAt(_exp_combo->currentIndex())->experiment()->peakFinder();
 
-    auto* finder_params =
-        gSession->experimentAt(_exp_combo->currentIndex())->experiment()->finderParams();
+    auto* params =
+        gSession->experimentAt(_exp_combo->currentIndex())->experiment()->peakFinder()->parameters();
 
-    _min_size_spin->setValue(finder_params->minimum_size);
-    _max_size_spin->setValue(finder_params->maximum_size);
-    _scale_spin->setValue(finder_params->peak_end);
-    _max_width_spin->setValue(finder_params->maximum_frames);
-    _start_frame_spin->setValue(finder_params->frames_begin + 1);
-    _end_frame_spin->setValue(finder_params->frames_end);
-    _threshold_spin->setValue(finder_params->threshold);
+    _min_size_spin->setValue(params->minimum_size);
+    _max_size_spin->setValue(params->maximum_size);
+    _scale_spin->setValue(params->peak_end);
+    _max_width_spin->setValue(params->maximum_frames);
+    _start_frame_spin->setValue(params->frames_begin + 1);
+    _end_frame_spin->setValue(params->frames_end);
+    _threshold_spin->setValue(params->threshold);
 
     nsx::Convolver* convolver = finder->convolver();
     std::string convolverType = convolver->type();
     _kernel_combo->setCurrentText(QString::fromStdString(convolverType));
 
-    const std::map<std::string, double>& params = convolver->parameters();
+    const std::map<std::string, double>& convolver_params = convolver->parameters();
     using mapIterator = std::map<std::string, double>::const_iterator;
 
     _kernel_para_table->clear();
     _kernel_para_table->setRowCount(0);
     _kernel_para_table->setColumnCount(2);
     int currentRow = 0;
-    for (mapIterator it = params.begin(); it != params.end(); ++it) {
+    for (mapIterator it = convolver_params.begin(); it != convolver_params.end(); ++it) {
         _kernel_para_table->insertRow(currentRow);
 
         QString name = QString::fromStdString(it->first);
@@ -421,7 +421,8 @@ void SubframeFindPeaks::setFinderParameters()
     nsx::PeakFinder* finder =
         gSession->experimentAt(_exp_combo->currentIndex())->experiment()->peakFinder();
 
-    auto* params = gSession->experimentAt(_exp_combo->currentIndex())->experiment()->finderParams();
+    auto* params =
+        gSession->experimentAt(_exp_combo->currentIndex())->experiment()->peakFinder()->parameters();
     params->minimum_size = _min_size_spin->value();
     params->maximum_size = _max_size_spin->value();
     params->peak_end = _scale_spin->value();
@@ -440,7 +441,7 @@ void SubframeFindPeaks::setFinderParameters()
 void SubframeFindPeaks::grabIntegrationParameters()
 {
     auto* params =
-        gSession->experimentAt(_exp_combo->currentIndex())->experiment()->integrationParams();
+        gSession->experimentAt(_exp_combo->currentIndex())->experiment()->integrator()->parameters();
 
     _peak_area->setValue(params->peak_end);
     _bkg_lower->setValue(params->bkg_begin);
@@ -453,7 +454,7 @@ void SubframeFindPeaks::setIntegrationParameters()
         return;
 
     auto* params =
-        gSession->experimentAt(_exp_combo->currentIndex())->experiment()->integrationParams();
+        gSession->experimentAt(_exp_combo->currentIndex())->experiment()->integrator()->parameters();
 
     params->peak_end = _peak_area->value();
     params->bkg_begin = _bkg_lower->value();
@@ -532,10 +533,7 @@ void SubframeFindPeaks::integrate()
     ProgressView progressView(nullptr);
     progressView.watch(handler);
 
-    nsx::IntegrationParameters* params = experiment->integrationParams();
-    params->peak_end = _peak_area->value();
-    params->bkg_begin = _bkg_lower->value();
-    params->bkg_end = _bkg_upper->value();
+    setIntegrationParameters();
     integrator->getIntegrator(nsx::IntegratorType::PixelSum)->setHandler(handler);
 
     integrator->integrateFoundPeaks(finder);
