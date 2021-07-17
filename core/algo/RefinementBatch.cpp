@@ -261,7 +261,7 @@ int RefinementBatch::realSpaceResiduals(Eigen::VectorXd& fvec)
         ReciprocalVector q1{_hkls[i] * UB};
 
         std::vector<DetectorEvent> events =
-            algo::q2events(q1, data->instrumentStates(), data->detector(), data->nFrames());
+            algo::qVector2Events(q1, data->instrumentStates(), data->detector(), data->nFrames());
         std::vector<Eigen::RowVector3d> differences;
         for (auto&& event : events) {
             const Eigen::RowVector3d x1{event._px, event._py, event._frame};

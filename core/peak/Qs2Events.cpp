@@ -3,7 +3,7 @@
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
 //! @file      core/peak/Qs2Events.cpp
-//! @brief     Implements function qs2events
+//! @brief     Implements function qVectorList2Events
 //!
 //! @homepage  ###HOMEPAGE###
 //! @license   GNU General Public License v3 or higher (see COPYING)
@@ -30,11 +30,11 @@ auto compute_sign = [](const Eigen::RowVector3d& q, const InterpolatedState& sta
     return kf.squaredNorm() < ki.squaredNorm();
 };
 
-std::vector<DetectorEvent> algo::qs2events(
+std::vector<DetectorEvent> algo::qVectorList2Events(
     const std::vector<ReciprocalVector>& sample_qs, const InstrumentStateList& states,
     const Detector& detector, const int n_intervals, sptrProgressHandler handler /* = nullptr */)
 {
-    nsxlog(Level::Debug, "algo::Qs2Events::qs2events: processing ", sample_qs.size(), "q vectors");
+    nsxlog(Level::Debug, "algo::Qs2Events::qVectorList2Events: processing ", sample_qs.size(), "q vectors");
 
     std::vector<DetectorEvent> events;
 
@@ -48,18 +48,18 @@ std::vector<DetectorEvent> algo::qs2events(
 
     // for each sample q, determine the rotation that makes it intersect the Ewald sphere
     for (const ReciprocalVector& sample_q : sample_qs) {
-        std::vector<DetectorEvent> new_events = q2events(sample_q, states, detector, n_intervals);
+        std::vector<DetectorEvent> new_events = qVector2Events(sample_q, states, detector, n_intervals);
         for (auto event : new_events)
             events.emplace_back(event);
         if (handler)
             handler->setProgress(++count * 100.0 / sample_qs.size());
     }
     nsxlog(
-        Level::Debug, "algo::Qs2Events::qs2events: finished; generated ", events.size(), "events");
+        Level::Debug, "algo::Qs2Events::qVectorList2Events: finished; generated ", events.size(), "events");
     return events;
 }
 
-std::vector<DetectorEvent> algo::q2events(
+std::vector<DetectorEvent> algo::qVector2Events(
     const ReciprocalVector& sample_q, const InstrumentStateList& states,
     const Detector& detector, const int n_intervals)
 {
@@ -104,9 +104,9 @@ std::vector<DetectorEvent> algo::q2events(
 
         // now use bisection method to compute intersection to good accuracy
         while (f1 - f0 > eps) {
-            double f = 0.5 * (f0 + f1);
-            InterpolatedState state = states.interpolate(f);
-            bool sign = compute_sign(q_vect, state);
+            const double f = 0.5 * (f0 + f1);
+            const InterpolatedState state = states.interpolate(f);
+            const bool sign = compute_sign(q_vect, state);
 
             if (sign == s0) { // branch right
                 state0 = state;
