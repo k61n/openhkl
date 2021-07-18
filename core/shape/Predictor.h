@@ -15,13 +15,14 @@
 #ifndef NSX_CORE_SHAPE_PREDICTOR_H
 #define NSX_CORE_SHAPE_PREDICTOR_H
 
+#include "base/utils/ProgressHandler.h"
 #include "core/shape/IPeakIntegrator.h"
+#include "core/shape/ShapeCollection.h"
 
 #include <vector>
 
 class Peak3D;
 class PeakCollection;
-enum class PeakInterpolation;
 
 namespace nsx {
 
@@ -45,14 +46,6 @@ class Predictor {
     std::vector<Peak3D*> buildPeaksFromMillerIndices(
         sptrDataSet data, const std::vector<MillerIndex>& hkls, const UnitCell* unit_cell,
         sptrProgressHandler handler = nullptr);
-
-    //! Set the peak shapes for a predicted peak collection
-    void setPredictedShapes(
-        PeakCollection* peaks, PeakInterpolation interpolation,
-        sptrProgressHandler handler = nullptr);
-
-    void setShapes(PeakCollection* peaks, ShapeCollection* shapes, PeakInterpolation interpolation,
-                   sptrProgressHandler handler);
 
     //! Get a pointer to the prediction parameters
     PredictionParameters* parameters();

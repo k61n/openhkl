@@ -44,7 +44,7 @@ class TestPeakFinder(unittest.TestCase):
 
         # Integrate the peaks
         integrator = expt.integrator()
-        integrator_params = expt.integrationParams()
+        integrator_params = integrator.parameters()
         integrator_params.peak_end = 3.0
         integrator_params.bkg_begin = 3.0
         integrator_params.bkg_end = 6.0

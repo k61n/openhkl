@@ -162,6 +162,7 @@ void Experiment::autoIndex(PeakCollection* peaks)
 void Experiment::buildShapeCollection(
     PeakCollection* peaks, sptrDataSet data, const ShapeCollectionParameters& params)
 {
+    nsxlog(Level::Info, "Experiment::buildShapeCollection");
     params.log(Level::Info);
     peaks->computeSigmas();
 
@@ -197,13 +198,15 @@ void Experiment::buildShapeCollection(
         aabb.setUpper(0.5 * dx);
     }
 
-    ShapeCollection* shape_collection = peaks->shapeCollection();
+    std::unique_ptr<ShapeCollection> shapes = std::make_unique<ShapeCollection>();
 
     std::vector<Peak3D*> fit_peak_list = fit_peaks->getPeakList();
     _integrator->integrateShapeCollection(
-        fit_peak_list, data, shape_collection, aabb, params);
+        fit_peak_list, data, shapes.get(), aabb, params);
+    peaks->setShapeCollection(shapes);
 
     // shape_collection.updateFit(1000); // This does nothing!! - zamaan
+    nsxlog(Level::Info, "Experiment::buildShapeCollection finished");
 }
 
 void Experiment::predictPeaks(

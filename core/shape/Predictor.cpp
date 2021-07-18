@@ -21,7 +21,6 @@
 #include "core/peak/Peak3D.h"
 #include "core/peak/Qs2Events.h"
 #include "core/shape/PeakCollection.h"
-#include "core/shape/ShapeCollection.h"
 
 namespace nsx {
 
@@ -76,6 +75,7 @@ std::vector<Peak3D*> Predictor::buildPeaksFromMillerIndices(
 void Predictor::predictPeaks(
     const sptrDataSet data, const UnitCell* unit_cell, sptrProgressHandler handler)
 {
+    _params->log(Level::Info);
     _predicted_peaks.clear();
 
     // Generate the Miller indices found in the [dmin,dmax] shell
