@@ -41,14 +41,14 @@ SideBar::SideBar(QWidget* parent) : QWidget(parent), mCheckedAction(nullptr), mO
     setMouseTracking(true);
 
     QAction* home = addAction(QIcon(":/images/home.svg"), "Home");
-    QAction* experiment = addAction(QIcon(":/images/experiment_info.svg"), "Experiment");
-    QAction* finder = addAction(QIcon(":/images/find_peaks.svg"), "Find Peaks");
-    QAction* filter = addAction(QIcon(":/images/filterIcon.svg"), "Filter Peaks");
-    QAction* indexer = addAction(QIcon(":/images/uni_cell.svg"), "Indexer");
-    QAction* predictor = addAction(QIcon(":/images/predict_peaks.svg"), "Predict");
-    QAction* refiner = addAction(QIcon(":/images/filterIcon.svg"), "Refine");
-    QAction* integrator = addAction(QIcon(":/images/find_peaks.svg"), "Integrate");
-    QAction* info = addAction(QIcon(":/images/merge.svg"), "Merge");
+    QAction* experiment = addAction(QIcon(":/images/experiment.svg"), "Experiment");
+    QAction* finder = addAction(QIcon(":/images/finder.svg"), "Find Peaks");
+    QAction* filter = addAction(QIcon(":/images/filter.svg"), "Filter Peaks");
+    QAction* indexer = addAction(QIcon(":/images/indexer.svg"), "Indexer");
+    QAction* predictor = addAction(QIcon(":/images/predictor.svg"), "Predict");
+    QAction* refiner = addAction(QIcon(":/images/refiner.svg"), "Refine");
+    QAction* integrator = addAction(QIcon(":/images/integrator.svg"), "Integrate");
+    QAction* info = addAction(QIcon(":/images/merger.svg"), "Merge");
 
     QAction* tempAction = mActions.at(0);
     mCheckedAction = tempAction;
