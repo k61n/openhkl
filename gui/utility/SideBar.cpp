@@ -35,20 +35,50 @@
 
 #define action_height 100
 
+//! Determine whether a color is dark or not using luminance
+bool isDark(QColor color)
+{
+    double r = color.red();
+    double g = color.green();
+    double b  = color.blue();
+    double luminance = (0.2126 * r + 0.7152 * g + 0.0722 * b) / 256.0;
+    return luminance < 0.5;
+}
+
+// TODO: find a better place for this
+// Icon attributions:
+// home.svg: Home by Bhuvan from the Noun Project
+// experiment.svg: experiment by Nubaia Karim Barsha from the Noun Project
+// finder.svg: Radar by Luiz Carvalho from the Noun Project
+// filter.svg: filter by fauzin idea from the Noun Project
+// indexer.svg: Crystal by Vectorstall from the Noun Project
+// predictor.svg: Crystal Ball by Chanut is Industries from the Noun Project
+// refiner.svg: linear regression by Becris from the Noun Project
+// integrator.svg: triple integral by Sumana Chamrunworakiat from the Noun Project
+// merger.svg: Merge by Muneer A.Safiah from the Noun Project
 
 SideBar::SideBar(QWidget* parent) : QWidget(parent), mCheckedAction(nullptr), mOverAction(nullptr)
 {
     setMouseTracking(true);
 
-    QAction* home = addAction(QIcon(":/images/home.svg"), "Home");
-    QAction* experiment = addAction(QIcon(":/images/experiment_info.svg"), "Experiment");
-    QAction* finder = addAction(QIcon(":/images/find_peaks.svg"), "Find Peaks");
-    QAction* filter = addAction(QIcon(":/images/filterIcon.svg"), "Filter Peaks");
-    QAction* indexer = addAction(QIcon(":/images/uni_cell.svg"), "Indexer");
-    QAction* predictor = addAction(QIcon(":/images/predict_peaks.svg"), "Predict");
-    QAction* refiner = addAction(QIcon(":/images/filterIcon.svg"), "Refine");
-    QAction* integrator = addAction(QIcon(":/images/find_peaks.svg"), "Integrate");
-    QAction* info = addAction(QIcon(":/images/merge.svg"), "Merge");
+    QString path{":images/sidebar/"};
+    QString light{"lighttheme/"};
+    QString dark{"darktheme/"};
+
+    if (isDark(gGui->palette().color(QPalette::Window))) // looks like we have a dark theme
+        path = path + dark;
+    else
+        path = path + light;
+
+    QAction* home = addAction(QIcon(path + QString("home.svg")), "Home");
+    QAction* experiment = addAction(QIcon(path + QString("experiment.svg")), "Experiment");
+    QAction* finder = addAction(QIcon(path + QString("finder.svg")), "Find Peaks");
+    QAction* filter = addAction(QIcon(path + QString("filter.svg")), "Filter Peaks");
+    QAction* indexer = addAction(QIcon(path + QString("indexer.svg")), "Indexer");
+    QAction* predictor = addAction(QIcon(path + QString("predictor.svg")), "Predict");
+    QAction* refiner = addAction(QIcon(path + QString("refiner.svg")), "Refine");
+    QAction* integrator = addAction(QIcon(path + QString("integrator.svg")), "Integrate");
+    QAction* info = addAction(QIcon(path + QString("merger.svg")), "Merge");
 
     QAction* tempAction = mActions.at(0);
     mCheckedAction = tempAction;

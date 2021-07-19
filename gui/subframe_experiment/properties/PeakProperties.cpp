@@ -51,7 +51,7 @@ PeakProperties::PeakProperties()
     layout->addWidget(_peak_table);
 
     _add->setIcon(QIcon(":/images/Add_item.svg"));
-    _filter->setIcon(QIcon(":/images/filterIcon.svg"));
+    _filter->setIcon(QIcon(":/images/sidebar/lighttheme/filter.svg"));
     _remove->setIcon(QIcon(":/images/Delete_item.svg"));
 
     _peak_list_combo->setSizePolicy(*_size_policy_widgets);
