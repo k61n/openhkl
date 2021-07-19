@@ -21,10 +21,12 @@
 #include "core/experiment/DataQuality.h"
 #include "core/experiment/PeakFinder.h"
 #include "core/instrument/Diffractometer.h"
+#include "core/integration/Integrator.h"
 #include "core/loader/RawDataReader.h"
 #include "core/raw/DataKeys.h"
 #include "core/shape/IPeakIntegrator.h"
 #include "core/shape/PeakFilter.h"
+#include "core/shape/Predictor.h"
 #include "core/statistics/MergedData.h"
 #include "core/statistics/PeakMerger.h"
 #include "core/statistics/ResolutionShell.h"
@@ -36,7 +38,6 @@ namespace nsx {
 class DataHandler;
 class PeakHandler;
 class UnitCellHandler;
-class IntegrationHandler;
 
 using DataMap = std::map<std::string, sptrDataSet>;
 
@@ -167,19 +168,6 @@ class Experiment {
     //! get a pointer to the PeakMerger object
     PeakMerger* peakMerger() const { return _peak_merger.get(); };
 
-    // Integration handler
-    //! get the named integrator
-    IPeakIntegrator* getIntegrator(IntegratorType integrator_type) const;
-    //! Integrate the given peak collection with the named integrator
-    void integratePeaks(
-        const IntegratorType integrator_type, sptrDataSet data, PeakCollection* peak_collection);
-    //! Integrate peaks given full parameter set (for reintegration after prediction/refinement)
-    void integratePeaks(
-        IPeakIntegrator* integrator, sptrDataSet data, PeakCollection* peaks,
-        IntegrationParameters* params, ShapeCollection* shapes);
-    //! Integrate peaks found by _peak_finder
-    void integrateFoundPeaks();
-
     // Save load
     //! Save the current experiment state to hdf5
     void saveToFile(const std::string& path) const;
@@ -187,12 +175,14 @@ class Experiment {
     void loadFromFile(const std::string& path);
 
     // Prediction
+    //! Get a pointer to the predictor
+    Predictor* predictor() { return _predictor.get(); };
     //! Construct the collection used to fit the shapes of predicted peaks
     void buildShapeCollection(
         PeakCollection* peaks, sptrDataSet data, const ShapeCollectionParameters& params);
     //! Predict peaks from unit cell
     void predictPeaks(
-        const std::string& name, sptrDataSet data, UnitCell* cell, PredictionParameters* params);
+        const std::string& name, sptrDataSet data, UnitCell* cell);
     //! Get a pointer to the refiner
     Refiner* refiner() { return _refiner.get(); };
     //! Refine unit cell and instrument parameters
@@ -200,19 +190,14 @@ class Experiment {
     //! Update the predicted peaks post-refinement
     void updatePredictions(PeakCollection* predicted_peaks);
 
+    // Integration
+    //! Get a pointer to the integrator module
+    Integrator* integrator();
+
     //! Return data quality resolution
     DataResolution* getResolution() { return &_data_resolution; };
     // Return data quality structs for all merged data:
     DataResolution* getQuality() { return &_data_quality; };
-
-    PeakFinderParameters* finderParams();
-    PeakFilterParameters* filterParams();
-    IndexerParameters* indexerParams();
-    IntegrationParameters* integrationParams();
-    ShapeCollectionParameters* shapeParams();
-    PredictionParameters* predictParams();
-    RefinerParameters* refinerParams();
-    MergeParameters* mergeParams();
 
     //! Container for metadata for reading raw data files
     RawDataReaderParameters data_params;
@@ -222,39 +207,22 @@ class Experiment {
     std::unique_ptr<Diffractometer> _diffractometer; //!< The diffractometer
 
     // Handlers for peak collections and unit cells
-    std::shared_ptr<DataHandler> _data_handler; // shared because IntegrationHandler needs access
+    std::shared_ptr<DataHandler> _data_handler; // shared because Integrator needs access
     std::unique_ptr<PeakHandler> _peak_handler;
     std::unique_ptr<UnitCellHandler> _cell_handler;
-    std::unique_ptr<IntegrationHandler> _integration_handler;
 
     // Objects that do the number crunching
     std::unique_ptr<PeakFinder> _peak_finder;
     std::unique_ptr<PeakFilter> _peak_filter;
     std::unique_ptr<AutoIndexer> _auto_indexer;
+    std::unique_ptr<Predictor> _predictor;
     std::unique_ptr<Refiner> _refiner;
+    std::unique_ptr<Integrator> _integrator;
     std::unique_ptr<PeakMerger> _peak_merger;
 
     // Objects containing quality metrics
     DataResolution _data_quality; //!< Data quality for whole resolution range
     DataResolution _data_resolution; //!< Data quality per resolution shell
-
-    // Parameter containers. Shared pointers are shared with their respective objects
-    //! Container for peak finder parameters
-    std::shared_ptr<PeakFinderParameters> _finder_params; // Shared with _finder
-    //! Container for peak filter parameters
-    std::shared_ptr<PeakFilterParameters> _filter_params; // Shared with _filter
-    //! Container for autoindexer parameters
-    std::shared_ptr<IndexerParameters> _indexer_params; // Shared with _indexer
-    //! Container for integration parameters
-    std::unique_ptr<IntegrationParameters> _int_params;
-    //! Container for Shape (profile) collection parameters
-    std::unique_ptr<ShapeCollectionParameters> _shape_params;
-    //! Container for peak prediction parameters
-    std::unique_ptr<PredictionParameters> _predict_params;
-    //! Container for refiner parameters
-    std::shared_ptr<RefinerParameters> _refiner_params; // Shared with _refiner
-    //! Container for merge parameters
-    std::shared_ptr<MergeParameters> _merge_params;
 };
 
 } // namespace nsx

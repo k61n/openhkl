@@ -92,14 +92,13 @@ TEST_CASE("test/crystal/TestRefiner.cpp", "")
 
     CHECK(found_peaks.size() >= 800);
 
-    nsx::IPeakIntegrator* integrator = experiment.getIntegrator(nsx::IntegratorType::PixelSum);
-    nsx::IntegrationParameters params{};
-    params.peak_end = 2.7;
-    params.bkg_begin = 3.5;
-    params.bkg_end = 4.0;
-    integrator->setParameters(params);
-    integrator->setHandler(progressHandler);
-    experiment.integrateFoundPeaks();
+    nsx::Integrator* integrator = experiment.integrator();
+    nsx::IntegrationParameters* params = integrator->parameters();
+    params->peak_end = 2.7;
+    params->bkg_begin = 3.5;
+    params->bkg_end = 4.0;
+    integrator->getIntegrator(nsx::IntegratorType::PixelSum)->setHandler(progressHandler);
+    integrator->integrateFoundPeaks(peak_finder);
     experiment.acceptFoundPeaks("found_peaks");
 
     // #########################################################
@@ -147,7 +146,7 @@ TEST_CASE("test/crystal/TestRefiner.cpp", "")
     auto&& states = dataf->instrumentStates();
 
     nsx::Refiner* refiner = experiment.refiner();
-    auto* refiner_params = experiment.refinerParams();
+    auto* refiner_params = refiner->parameters();
     refiner_params->nbatches = 1;
     refiner_params->refine_ub = true;
     refiner_params->refine_sample_position = true;

@@ -68,6 +68,10 @@ bool MergedData::addPeak(Peak3D* peak)
         ++_nInvalid;
         return false;
     }
+    if (!peak->unitCell()) {
+        ++_nInvalid;
+        return false;
+    }
     double epsilon = 1.0e-8;
     MergedPeak new_peak(_group, _friedel);
     try {

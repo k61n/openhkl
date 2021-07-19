@@ -51,8 +51,6 @@ class PeakMerger {
 
     //! Return a pointer to the parameter structure
     MergeParameters* parameters() const;
-    //! Set the shared pointer to the parameter
-    void setParameters(std::shared_ptr<MergeParameters> params);
 
     //! Get a pointer to the MergedData object
     MergedData* getMergedData() const;
@@ -72,7 +70,7 @@ class PeakMerger {
     DataResolution _shell_qualities;
     DataResolution _overall_quality;
 
-    std::shared_ptr<MergeParameters> _params;
+    std::unique_ptr<MergeParameters> _params;
 };
 
 } // namespace nsx

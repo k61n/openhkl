@@ -161,14 +161,13 @@ TEST_CASE("test/data/TestNexusData.cpp", "")
     std::cout << "--------------------------------------------------------------------------------"
               << std::endl;
 
-    nsx::IPeakIntegrator* integrator = exp.getIntegrator(nsx::IntegratorType::PixelSum);
-    nsx::IntegrationParameters params{};
-    params.peak_end = 3.0;
-    params.bkg_begin = 3.5;
-    params.bkg_end = 4.5;
-    integrator->setParameters(params);
-    integrator->setHandler(progressHandler);
-    exp.integrateFoundPeaks();
+    nsx::Integrator* integrator = exp.integrator();
+    nsx::IntegrationParameters* params = integrator->parameters();
+    params->peak_end = 3.0;
+    params->bkg_begin = 3.5;
+    params->bkg_end = 4.5;
+    integrator->getIntegrator(nsx::IntegratorType::PixelSum)->setHandler(progressHandler);
+    integrator->integrateFoundPeaks(peak_finder);
     exp.acceptFoundPeaks("found_peaks");
     nsx::PeakCollection* found_collection = exp.getPeakCollection("found_peaks");
 
@@ -240,7 +239,7 @@ TEST_CASE("test/data/TestNexusData.cpp", "")
               << std::endl;
 
     nsx::AutoIndexer* auto_indexer = exp.autoIndexer();
-    auto parameters = std::make_shared<nsx::IndexerParameters>();
+    auto* parameters = auto_indexer->parameters();
     // parameters for FFTIndexing
     parameters->nVertices = 10000; // points on the direction sphere
     parameters->subdiv = 50; // number of bins
@@ -261,8 +260,6 @@ TEST_CASE("test/data/TestNexusData.cpp", "")
     std::cout << "unitCellEquivalenceTolerance = " << parameters->unitCellEquivalenceTolerance
               << ", ";
     std::cout << "solutionCutoff = " << parameters->solutionCutoff << std::endl;
-
-    auto_indexer->setParameters(parameters);
 
     auto peaksToIndex = filtered_collection->getPeakList();
     CHECK_NOTHROW(auto_indexer->autoIndex(peaksToIndex));

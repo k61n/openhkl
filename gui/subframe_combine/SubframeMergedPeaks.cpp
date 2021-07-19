@@ -97,7 +97,9 @@ SubframeMergedPeaks::SubframeMergedPeaks()
 
 void SubframeMergedPeaks::grabMergeParameters()
 {
-    auto params = gSession->experimentAt(_exp_drop->currentIndex())->experiment()->mergeParams();
+    auto params =
+        gSession->experimentAt(_exp_drop->currentIndex())->experiment()->peakMerger()->
+        parameters();
 
     _d_min->setValue(params->d_min);
     _d_max->setValue(params->d_max);
@@ -110,7 +112,9 @@ void SubframeMergedPeaks::setMergeParameters()
     if (_exp_drop->count() == 0)
         return;
 
-    auto params = gSession->experimentAt(_exp_drop->currentIndex())->experiment()->mergeParams();
+    auto params =
+        gSession->experimentAt(_exp_drop->currentIndex())->experiment()->peakMerger()->
+        parameters();
 
     params->d_min = _d_min->value();
     params->d_max = _d_max->value();

@@ -87,9 +87,6 @@ class Refiner {
     //! Write the initial and final cells to the log
     void logChange();
 
-    //! set the refiner parameters
-    void setParameters(std::shared_ptr<RefinerParameters> params);
-
     //! get a pointer to the parameters
     RefinerParameters* parameters();
 
@@ -101,7 +98,7 @@ class Refiner {
     std::vector<RefinementBatch> _batches;
     int _nframes;
     InstrumentStateList* _states;
-    std::shared_ptr<RefinerParameters> _params;
+    std::unique_ptr<RefinerParameters> _params;
 };
 
 } // namespace nsx

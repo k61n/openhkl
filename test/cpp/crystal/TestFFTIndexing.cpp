@@ -29,7 +29,15 @@ TEST_CASE("test/crystal/TestFFTIndexing.cpp", "")
             std::cout << log << std::endl;
     });
 
-    auto params = std::make_shared<nsx::IndexerParameters>();
+    nsx::Experiment experiment("test", "BioDiff2500");
+    const nsx::sptrDataSet data(
+        nsx::DataReaderFactory().create("hdf", "gal3.hdf", experiment.getDiffractometer()));
+    data->setName("TestFFTIndexing");
+    experiment.addData(data);
+
+    nsx::AutoIndexer* auto_indexer = experiment.autoIndexer();
+
+    auto* params = auto_indexer->parameters();
     params->maxdim = 70.0;
     params->nSolutions = 10;
     params->nVertices = 10000;
@@ -57,12 +65,6 @@ TEST_CASE("test/crystal/TestFFTIndexing.cpp", "")
         qs.emplace_back(index.rowVector().cast<double>() * uc.reciprocalBasis());
     }
 
-    nsx::Experiment experiment("test", "BioDiff2500");
-    const nsx::sptrDataSet data(
-        nsx::DataReaderFactory().create("hdf", "gal3.hdf", experiment.getDiffractometer()));
-    data->setName("TestFFTIndexing");
-    experiment.addData(data);
-
     nsx::PeakCollection peak_collection;
     const auto events =
         nsx::algo::qVectorList2Events(qs, data->instrumentStates(), data->detector(), data->nFrames());
@@ -85,9 +87,7 @@ TEST_CASE("test/crystal/TestFFTIndexing.cpp", "")
     }
     CHECK(peak_collection.numberOfPeaks() >= 5700);
 
-    nsx::AutoIndexer* auto_indexer = experiment.autoIndexer();
     auto_indexer->setHandler(logger);
-    auto_indexer->setParameters(params);
     auto_indexer->autoIndex(peak_collection.getPeakList());
 
     const auto solutions = auto_indexer->solutions();

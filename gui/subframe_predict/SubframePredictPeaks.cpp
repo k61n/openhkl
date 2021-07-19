@@ -20,6 +20,7 @@
 #include "core/raw/IDataReader.h"
 #include "core/shape/IPeakIntegrator.h"
 #include "core/shape/PeakCollection.h"
+#include "core/shape/Predictor.h"
 #include "core/shape/ShapeCollection.h"
 #include "gui/MainWin.h" // gGui
 #include "gui/dialogs/ListNameDialog.h"
@@ -263,7 +264,8 @@ void SubframePredictPeaks::updateDatasetParameters(int idx)
 
 void SubframePredictPeaks::grabPredictorParameters()
 {
-    auto params = gSession->experimentAt(_exp_combo->currentIndex())->experiment()->predictParams();
+    auto params =
+        gSession->experimentAt(_exp_combo->currentIndex())->experiment()->predictor()->parameters();
 
     _d_min->setValue(params->d_min);
     _d_max->setValue(params->d_max);
@@ -274,7 +276,8 @@ void SubframePredictPeaks::setPredictorParameters()
     if (_exp_combo->count() == 0 || _cell_combo->count() == 0)
         return;
 
-    auto params = gSession->experimentAt(_exp_combo->currentIndex())->experiment()->predictParams();
+    auto params =
+        gSession->experimentAt(_exp_combo->currentIndex())->experiment()->predictor()->parameters();
 
     params->d_min = _d_min->value();
     params->d_max = _d_max->value();
@@ -283,7 +286,9 @@ void SubframePredictPeaks::setPredictorParameters()
 void SubframePredictPeaks::runPrediction()
 {
     try {
-        const std::vector<nsx::sptrDataSet>& data = gSession->currentProject()->allData();
+        auto* experiment = gSession->experimentAt(_exp_combo->currentIndex())->experiment();
+        auto data = experiment->getData(_data_combo->currentText().toStdString());
+        auto* predictor = experiment->predictor();
         setPredictorParameters();
 
         nsx::sptrProgressHandler handler(new nsx::ProgressHandler);
@@ -292,17 +297,12 @@ void SubframePredictPeaks::runPrediction()
 
         nsx::UnitCell* cell = gSession->currentProject()->experiment()->getUnitCell(
             _cell_combo->currentText().toStdString());
-        auto params =
-            gSession->experimentAt(_exp_combo->currentIndex())->experiment()->predictParams();
+
+        predictor->predictPeaks(data, cell, handler);
 
         std::vector<nsx::Peak3D*> predicted_peaks;
-
-        for (const nsx::sptrDataSet& d : data) {
-            std::vector<nsx::Peak3D*> predicted = nsx::predictPeaks(d, cell, params, handler);
-
-            for (nsx::Peak3D* peak : predicted)
-                predicted_peaks.push_back(peak);
-        }
+        for (nsx::Peak3D* peak : predictor->peaks())
+            predicted_peaks.push_back(peak);
 
         _peak_collection.populate(predicted_peaks);
         for (nsx::Peak3D* peak : predicted_peaks)

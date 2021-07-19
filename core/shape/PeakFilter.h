@@ -124,9 +124,6 @@ class PeakFilter {
     //! Reset filtering
     void resetFiltering(PeakCollection* peak_collection) const;
 
-    //! Set the filter parameteres
-    void setParameters(std::shared_ptr<PeakFilterParameters> params);
-
     //! Get a pointer to the filter parameters
     PeakFilterParameters* parameters();
     //! Get pointer to filter flags
@@ -134,8 +131,8 @@ class PeakFilter {
 
  private:
     //! booleans for filtering
-    std::shared_ptr<PeakFilterFlags> _filter_flags;
-    std::shared_ptr<PeakFilterParameters> _filter_params;
+    std::unique_ptr<PeakFilterFlags> _filter_flags;
+    std::unique_ptr<PeakFilterParameters> _filter_params;
 };
 
 } // namespace nsx

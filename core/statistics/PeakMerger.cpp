@@ -31,6 +31,7 @@ void MergeParameters::log(const Level& level) const
 
 PeakMerger::PeakMerger(PeakCollection* peaks /* = nullptr */)
 {
+    _params = std::make_unique<MergeParameters>();
     if (peaks)
         _peak_collections.push_back(peaks);
 }
@@ -103,11 +104,6 @@ void PeakMerger::computeQuality()
 MergeParameters* PeakMerger::parameters() const
 {
     return _params.get();
-}
-
-void PeakMerger::setParameters(std::shared_ptr<MergeParameters> params)
-{
-    _params = params;
 }
 
 MergedData* PeakMerger::getMergedData() const

@@ -271,7 +271,8 @@ void SubframeIntegrate::updatePeakList()
 void SubframeIntegrate::grabIntegrationParameters()
 {
     auto params =
-        gSession->experimentAt(_exp_combo->currentIndex())->experiment()->integrationParams();
+        gSession->experimentAt(_exp_combo->currentIndex())->experiment()->integrator()->
+        parameters();
 
     _peak_end->setValue(params->peak_end);
     _bkg_begin->setValue(params->bkg_begin);
@@ -288,7 +289,8 @@ void SubframeIntegrate::setIntegrationParameters()
     if (_exp_combo->count() == 0)
         return;
     auto params =
-        gSession->experimentAt(_exp_combo->currentIndex())->experiment()->integrationParams();
+        gSession->experimentAt(_exp_combo->currentIndex())->experiment()->integrator()->
+        parameters();
 
     params->peak_end = _peak_end->value();
     params->bkg_begin = _bkg_begin->value();
@@ -484,9 +486,8 @@ void SubframeIntegrate::runIntegration()
         progressView.watch(handler);
 
         nsx::Experiment* expt = gSession->experimentAt(_exp_combo->currentIndex())->experiment();
+        nsx::Integrator* integrator = expt->integrator();
         nsx::sptrDataSet data = _data_list[_data_combo->currentIndex()];
-        nsx::IPeakIntegrator* integrator = expt->getIntegrator(
-            _integrator_strings.find(_integrator_combo->currentText().toStdString())->second);
         nsx::PeakCollection* peaks_to_integrate =
             expt->getPeakCollection(_int_peak_combo->currentText().toStdString());
         nsx::ShapeCollection* shapes =
@@ -494,10 +495,11 @@ void SubframeIntegrate::runIntegration()
 
         setIntegrationParameters();
         auto* params =
-            gSession->experimentAt(_exp_combo->currentIndex())->experiment()->integrationParams();
+            gSession->experimentAt(_exp_combo->currentIndex())->experiment()->integrator()->
+            parameters();
 
-        integrator->setHandler(handler);
-        expt->integratePeaks(integrator, data, peaks_to_integrate, params, shapes);
+        integrator->getIntegrator(params->integrator_type)->setHandler(handler);
+        integrator->integratePeaks(data, peaks_to_integrate, params, shapes);
     } catch (std::exception& e) {
         QMessageBox::critical(this, "Error", QString(e.what()));
     }
@@ -510,11 +512,10 @@ void SubframeIntegrate::openShapeBuilder()
         gSession->experimentAt(_exp_combo->currentIndex())
             ->experiment()
             ->getPeakCollection(_peak_combo->currentText().toStdString());
-    auto* shape_params =
-        gSession->experimentAt(_exp_combo->currentIndex())->experiment()->shapeParams();
+    nsx::ShapeCollectionParameters shape_params{};
 
     std::unique_ptr<ShapeCollectionDialog> dialog(
-        new ShapeCollectionDialog(peak_collection, shape_params));
+        new ShapeCollectionDialog(peak_collection, &shape_params));
 
     dialog->exec();
     refreshShapeStatus();
@@ -528,12 +529,12 @@ void SubframeIntegrate::refreshShapeStatus()
         shape_collection_present = false;
 
     if (shape_collection_present) {
-        nsx::PeakCollection* collection =
+        nsx::PeakCollection* peaks =
             gSession->experimentAt(_exp_combo->currentIndex())
                 ->experiment()
                 ->getPeakCollection(_peak_combo->currentText().toStdString());
         _assign_peak_shapes->setEnabled(true);
-        if (collection->shapeCollection() == nullptr) {
+        if (peaks->shapeCollection() == nullptr) {
             _assign_peak_shapes->setEnabled(false);
             shape_collection_present = false;
         }

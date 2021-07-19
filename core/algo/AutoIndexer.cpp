@@ -50,16 +50,14 @@ void IndexerParameters::log(const Level& level) const
     nsxlog(level, "strength_max       = ", strength_max);
 }
 
-AutoIndexer::AutoIndexer() : _solutions(), _handler(nullptr) { }
-
-std::shared_ptr<IndexerParameters> AutoIndexer::parameters()
+AutoIndexer::AutoIndexer() : _solutions(), _handler(nullptr)
 {
-    return _params;
+    _params = std::make_unique<IndexerParameters>();
 }
 
-void AutoIndexer::setParameters(std::shared_ptr<IndexerParameters> params)
+IndexerParameters* AutoIndexer::parameters()
 {
-    _params = params;
+    return _params.get();
 }
 
 void AutoIndexer::autoIndex(const std::vector<Peak3D*>& peaks)

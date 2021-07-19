@@ -323,10 +323,9 @@ void SubframeAutoIndexer::grabIndexerParameters()
     if (_peak_list.empty() || _exp_combo->count() < 1)
         return;
 
-    auto params = gSession->experimentAt(_exp_combo->currentIndex())
-                      ->experiment()
-                      ->autoIndexer()
-                      ->parameters();
+    auto params =
+        gSession->experimentAt(_exp_combo->currentIndex())->experiment()->autoIndexer()->
+        parameters();
     _min_frame->setValue(params->first_frame);
     _max_frame->setValue(params->last_frame);
     _d_min->setValue(params->d_min);
@@ -350,10 +349,9 @@ void SubframeAutoIndexer::setIndexerParameters()
     if (_peak_list.empty() || _exp_combo->count() < 1)
         return;
 
-    auto params = gSession->experimentAt(_exp_combo->currentIndex())
-                      ->experiment()
-                      ->autoIndexer()
-                      ->parameters();
+    auto params =
+        gSession->experimentAt(_exp_combo->currentIndex())->experiment()->autoIndexer()->
+        parameters();
 
     params->first_frame = _min_frame->value();
     params->last_frame = _max_frame->value();

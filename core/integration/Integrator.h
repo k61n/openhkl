@@ -2,7 +2,7 @@
 //
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
-//! @file      core/experiment/IntegrationHandler.h
+//! @file      core/experiment/Integrator.h
 //! @brief     Handles integration for Experiment object
 //! //! @homepage  ###HOMEPAGE###
 //! @license   GNU General Public License v3 or higher (see COPYING)
@@ -11,8 +11,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_CORE_EXPERIMENT_INTEGRATIONHANDLER_H
-#define NSX_CORE_EXPERIMENT_INTEGRATIONHANDLER_H
+#ifndef NSX_CORE_EXPERIMENT_INTEGRATOR_H
+#define NSX_CORE_EXPERIMENT_INTEGRATOR_H
 
 #include "core/shape/IPeakIntegrator.h"
 #include "core/shape/PeakFilter.h"
@@ -34,14 +34,10 @@ class ShapeIntegrator;
 class DataHandler;
 struct PredictionParameters;
 
-class IntegrationHandler {
+class Integrator {
 
  public:
-    IntegrationHandler() = default;
-    ~IntegrationHandler();
-    IntegrationHandler(const IntegrationHandler& other);
-    IntegrationHandler& operator=(const IntegrationHandler& other) = default;
-    IntegrationHandler(std::shared_ptr<DataHandler> data_handler);
+    Integrator(std::shared_ptr<DataHandler> data_handler = nullptr);
 
  public:
     //! Return a pointer to the integrator map
@@ -55,20 +51,25 @@ class IntegrationHandler {
         IntegratorType integrator_type, sptrDataSet data, PeakCollection* peak_collection);
     //! Integrate a peak collection
     void integratePeaks(
-        IPeakIntegrator* integrator, sptrDataSet data, PeakCollection* peaks,
-        IntegrationParameters* params, ShapeCollection* shapes);
+        sptrDataSet data, PeakCollection* peaks, IntegrationParameters* params,
+        ShapeCollection* shapes);
     //! Integrate peaks found by _peak_finder
     void integrateFoundPeaks(PeakFinder* peak_finder);
     //! Integrate the shape collection
-    ShapeCollection& integrateShapeCollection(
+    void integrateShapeCollection(
         std::vector<Peak3D*>& peaks, sptrDataSet data, ShapeCollection* shape_collection,
         const AABB& aabb, const ShapeCollectionParameters& params);
+    //! Set the parameters
+    void setParameters(std::shared_ptr<IntegrationParameters> params);
+    //! Get the parameters
+    IntegrationParameters* parameters();
 
  private:
     IntegratorMap _integrator_map;
     std::shared_ptr<DataHandler> _data_handler;
+    std::shared_ptr<IntegrationParameters> _params;
 };
 
 } // namespace nsx
 
-#endif // NSX_CORE_EXPERIMENT_INTEGRATIONHANDLER_H
+#endif // NSX_CORE_EXPERIMENT_INTEGRATOR_H

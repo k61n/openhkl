@@ -32,6 +32,7 @@ void IntegrationParameters::log(const Level& level) const
     nsxlog(level, "neighbour_range_frames = ", neighbour_range_frames);
     nsxlog(level, "fit_center             = ", fit_center);
     nsxlog(level, "fit_cov                = ", fit_cov);
+    nsxlog(level, "integrator_type        = ", static_cast<int>(integrator_type));
 }
 
 IPeakIntegrator::IPeakIntegrator()
