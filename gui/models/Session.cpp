@@ -273,24 +273,16 @@ void Session::loadRawData()
         for (const QString& filename : qfilenames)
             filenames.push_back(filename.toStdString());
 
-        RawDataDialog dialog;
+        nsx::RawDataReaderParameters parameters;
+        parameters.dataset_name = nsx::fileBasename(filenames[0]);
+        const QStringList& datanames_pre{currentProject()->getDataNames()};
+        RawDataDialog dialog(parameters, datanames_pre);
         if (!dialog.exec())
             return;
         nsx::Experiment* exp = currentProject()->experiment();
 
-        nsx::RawDataReaderParameters parameters;
-        parameters.wavelength = dialog.wavelength();
-        parameters.delta_omega = dialog.deltaOmega();
-        parameters.delta_chi = dialog.deltaChi();
-        parameters.delta_phi = dialog.deltaPhi();
-        parameters.row_major = dialog.rowMajor();
-        parameters.swap_endian = dialog.swapEndian();
-        parameters.bpp = dialog.bpp();
-
-        const double eps = 1e-8;
-        if (parameters.wavelength < eps)
-            throw std::runtime_error(
-                "Wavelength, " + std::to_string(parameters.wavelength) + ", must be > 0");
+        // update the parameters by those from the dialog
+        parameters = dialog.parameters();
 
         nsx::Diffractometer* diff = exp->getDiffractometer();
         auto reader{std::make_unique<nsx::RawDataReader>("::RawDataReader::", diff)};
@@ -307,16 +299,12 @@ void Session::loadRawData()
         // include the latest changes from reader metadata (eg., `npdone`)
         metadata.addMap(reader->metadata().map());
 
-
         const std::shared_ptr<nsx::DataSet> dataset{
             std::make_shared<nsx::DataSet>(std::move(reader))};
 
         // choose a name for the dataset
         // default data name: name of the first data-file
-        const QStringList& datanames_pre{currentProject()->getDataNames()};
-        const std::string dataset_nm0{nsx::fileBasename(filenames[0])};
-        const std::string dataname{askDataName(dataset_nm0, &datanames_pre)};
-        dataset->setName(dataname);
+        dataset->setName(parameters.dataset_name);
         metadata.add(nsx::at_datasetSources, nsx::join(filenames, ", "));
         dataset->metadata().setMap(metadata.map());
         exp->addData(dataset);

@@ -16,12 +16,14 @@
 #define NSX_CORE_LOADER_RAWDATAREADER_H
 
 #include "core/raw/IDataReader.h" // inherits from
+#include "core/raw/DataKeys.h"
 
 namespace nsx {
 
 //! Minimal meta data set, to supplement binary raw data in RawDataReader.
 
 struct RawDataReaderParameters {
+    std::string dataset_name = nsx::kw_datasetDefaultName;
     double wavelength = 2.665;
     double delta_omega = 0.4;
     double delta_chi = 0.0;

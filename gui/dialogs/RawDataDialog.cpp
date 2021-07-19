@@ -13,9 +13,15 @@
 //  ***********************************************************************************************
 
 #include "gui/dialogs/RawDataDialog.h"
-#include <QFormLayout>
+#include "gui/dialogs/ConfirmOverwriteDialog.h"
 
-RawDataDialog::RawDataDialog()
+#include <QFormLayout>
+#include <QMessageBox>
+
+RawDataDialog::RawDataDialog(const nsx::RawDataReaderParameters& parameters0,
+                             const QStringList& datanames_cur):
+    parameters0 {parameters0},
+    dataset_names{datanames_cur}
 {
     QFormLayout* layout = new QFormLayout(this);
 
@@ -26,6 +32,8 @@ RawDataDialog::RawDataDialog()
     omega = new QDoubleSpinBox();
     phi = new QDoubleSpinBox();
     wave = new QDoubleSpinBox();
+    datasetName = new QLineEdit();
+
     buttons =
         new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, Qt::Horizontal, this);
 
@@ -41,6 +49,13 @@ RawDataDialog::RawDataDialog()
     dataFormat->setCurrentIndex(1);
     swapEndianness->setCheckState(Qt::Checked);
 
+    chi->setValue(parameters0.delta_chi);
+    omega->setValue(parameters0.delta_omega);
+    phi->setValue(parameters0.delta_phi);
+    wave->setValue(parameters0.wavelength);
+    datasetName->setText(QString::fromStdString(parameters0.dataset_name));
+
+    layout->addRow("Name", datasetName);
     layout->addRow("Data arrangement", dataArrangement);
     layout->addRow("Data format", dataFormat);
     layout->addRow(swapEndianness);
@@ -50,10 +65,11 @@ RawDataDialog::RawDataDialog()
     layout->addRow("wavelength", wave);
     layout->addRow(buttons);
 
-    connect(buttons, &QDialogButtonBox::accepted, this, &RawDataDialog::accept);
+    connect(buttons, &QDialogButtonBox::accepted, this, &RawDataDialog::verify);
 
     connect(buttons, &QDialogButtonBox::rejected, this, &RawDataDialog::reject);
 }
+
 
 bool RawDataDialog::rowMajor()
 {
@@ -76,4 +92,47 @@ int RawDataDialog::bpp()
             return 4;
         default: return -1;
     }
+}
+
+void RawDataDialog::verify()
+{
+    // confirm overwrite if the name already exists
+    const QString& dname = dataset_name();
+    const bool name_exists = dataset_names.contains(dname);
+    bool dialog_accepted = true;
+
+    if (name_exists) {
+        const QString msg("Name '" + dname + "' already exists");
+        QMessageBox::critical(nullptr, "Error", msg);
+        dialog_accepted = false;
+        return;
+    }
+
+    // check wavelength
+    const double eps = 1e-8;
+    const double waveln = wavelength();
+    if (waveln < eps) {
+        const QString msg{QString::fromStdString(
+                "Wavelength, " + std::to_string(waveln) + ", must be > 0")};
+        QMessageBox::critical(nullptr, "Error", msg);
+        dialog_accepted = false;
+        return;
+    }
+
+    if (dialog_accepted)
+        this->accept();
+}
+
+nsx::RawDataReaderParameters RawDataDialog::parameters()
+{
+    nsx::RawDataReaderParameters parameters;
+    parameters.dataset_name = datasetName->text().toStdString();
+    parameters.wavelength = wave->value();
+    parameters.delta_omega = omega->value();
+    parameters.delta_chi = chi->value();
+    parameters.delta_phi = phi->value();
+    parameters.row_major = rowMajor();
+    parameters.swap_endian = swapEndianness->isChecked();
+    parameters.bpp = bpp();
+    return parameters;
 }
