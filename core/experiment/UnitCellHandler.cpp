@@ -19,7 +19,6 @@
 #include "core/raw/DataKeys.h"
 #include "core/shape/PeakCollection.h"
 #include "tables/crystal/UnitCell.h"
-#include <QDebug>
 
 namespace nsx {
 

@@ -18,7 +18,6 @@
 #include "core/shape/PeakCollection.h"
 #include "core/statistics/MergedPeak.h"
 
-#include <QDebug>
 #include <set>
 
 namespace nsx {
