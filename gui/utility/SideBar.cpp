@@ -45,6 +45,18 @@ bool isDark(QColor color)
     return luminance < 0.5;
 }
 
+// TODO: find a better place for this
+// Icon attributions:
+// home.svg: Home by Bhuvan from the Noun Project
+// experiment.svg: experiment by Nubaia Karim Barsha from the Noun Project
+// finder.svg: Radar by Luiz Carvalho from the Noun Project
+// filter.svg: filter by fauzin idea from the Noun Project
+// indexer.svg: Crystal by Vectorstall from the Noun Project
+// predictor.svg: Crystal Ball by Chanut is Industries from the Noun Project
+// refiner.svg: linear regression by Becris from the Noun Project
+// integrator.svg: triple integral by Sumana Chamrunworakiat from the Noun Project
+// merger.svg: Merge by Muneer A.Safiah from the Noun Project
+
 SideBar::SideBar(QWidget* parent) : QWidget(parent), mCheckedAction(nullptr), mOverAction(nullptr)
 {
     setMouseTracking(true);
