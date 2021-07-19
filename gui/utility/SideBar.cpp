@@ -35,20 +35,38 @@
 
 #define action_height 100
 
+//! Determine whether a color is dark or not using luminance
+bool isDark(QColor color)
+{
+    double r = color.red();
+    double g = color.green();
+    double b  = color.blue();
+    double luminance = (0.2126 * r + 0.7152 * g + 0.0722 * b) / 256.0;
+    return luminance < 0.5;
+}
 
 SideBar::SideBar(QWidget* parent) : QWidget(parent), mCheckedAction(nullptr), mOverAction(nullptr)
 {
     setMouseTracking(true);
 
-    QAction* home = addAction(QIcon(":/images/sidebar/darktheme/home.svg"), "Home");
-    QAction* experiment = addAction(QIcon(":/images/sidebar/darktheme/experiment.svg"), "Experiment");
-    QAction* finder = addAction(QIcon(":/images/sidebar/darktheme/finder.svg"), "Find Peaks");
-    QAction* filter = addAction(QIcon(":/images/sidebar/darktheme/filter.svg"), "Filter Peaks");
-    QAction* indexer = addAction(QIcon(":/images/sidebar/darktheme/indexer.svg"), "Indexer");
-    QAction* predictor = addAction(QIcon(":/images/sidebar/darktheme/predictor.svg"), "Predict");
-    QAction* refiner = addAction(QIcon(":/images/sidebar/darktheme/refiner.svg"), "Refine");
-    QAction* integrator = addAction(QIcon(":/images/sidebar/darktheme/integrator.svg"), "Integrate");
-    QAction* info = addAction(QIcon(":/images/sidebar/darktheme/merger.svg"), "Merge");
+    QString path{":images/sidebar/"};
+    QString light{"/lighttheme/"};
+    QString dark{"/darktheme/"};
+
+    if (isDark(gGui->palette().color(QPalette::Window))) // looks like we have a dark theme
+        path = path + dark;
+    else
+        path = path + light;
+
+    QAction* home = addAction(QIcon(path + QString("home.svg")), "Home");
+    QAction* experiment = addAction(QIcon(path + QString("experiment.svg")), "Experiment");
+    QAction* finder = addAction(QIcon(path + QString("finder.svg")), "Find Peaks");
+    QAction* filter = addAction(QIcon(path + QString("filter.svg")), "Filter Peaks");
+    QAction* indexer = addAction(QIcon(path + QString("indexer.svg")), "Indexer");
+    QAction* predictor = addAction(QIcon(path + QString("predictor.svg")), "Predict");
+    QAction* refiner = addAction(QIcon(path + QString("refiner.svg")), "Refine");
+    QAction* integrator = addAction(QIcon(path + QString("integrator.svg")), "Integrate");
+    QAction* info = addAction(QIcon(path + QString("merger.svg")), "Merge");
 
     QAction* tempAction = mActions.at(0);
     mCheckedAction = tempAction;
