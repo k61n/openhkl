@@ -40,15 +40,15 @@ SideBar::SideBar(QWidget* parent) : QWidget(parent), mCheckedAction(nullptr), mO
 {
     setMouseTracking(true);
 
-    QAction* home = addAction(QIcon(":/images/home.svg"), "Home");
-    QAction* experiment = addAction(QIcon(":/images/experiment.svg"), "Experiment");
-    QAction* finder = addAction(QIcon(":/images/finder.svg"), "Find Peaks");
-    QAction* filter = addAction(QIcon(":/images/filter.svg"), "Filter Peaks");
-    QAction* indexer = addAction(QIcon(":/images/indexer.svg"), "Indexer");
-    QAction* predictor = addAction(QIcon(":/images/predictor.svg"), "Predict");
-    QAction* refiner = addAction(QIcon(":/images/refiner.svg"), "Refine");
-    QAction* integrator = addAction(QIcon(":/images/integrator.svg"), "Integrate");
-    QAction* info = addAction(QIcon(":/images/merger.svg"), "Merge");
+    QAction* home = addAction(QIcon(":/images/sidebar/darktheme/home.svg"), "Home");
+    QAction* experiment = addAction(QIcon(":/images/sidebar/darktheme/experiment.svg"), "Experiment");
+    QAction* finder = addAction(QIcon(":/images/sidebar/darktheme/finder.svg"), "Find Peaks");
+    QAction* filter = addAction(QIcon(":/images/sidebar/darktheme/filter.svg"), "Filter Peaks");
+    QAction* indexer = addAction(QIcon(":/images/sidebar/darktheme/indexer.svg"), "Indexer");
+    QAction* predictor = addAction(QIcon(":/images/sidebar/darktheme/predictor.svg"), "Predict");
+    QAction* refiner = addAction(QIcon(":/images/sidebar/darktheme/refiner.svg"), "Refine");
+    QAction* integrator = addAction(QIcon(":/images/sidebar/darktheme/integrator.svg"), "Integrate");
+    QAction* info = addAction(QIcon(":/images/sidebar/darktheme/merger.svg"), "Merge");
 
     QAction* tempAction = mActions.at(0);
     mCheckedAction = tempAction;
