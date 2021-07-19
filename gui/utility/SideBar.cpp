@@ -50,8 +50,8 @@ SideBar::SideBar(QWidget* parent) : QWidget(parent), mCheckedAction(nullptr), mO
     setMouseTracking(true);
 
     QString path{":images/sidebar/"};
-    QString light{"/lighttheme/"};
-    QString dark{"/darktheme/"};
+    QString light{"lighttheme/"};
+    QString dark{"darktheme/"};
 
     if (isDark(gGui->palette().color(QPalette::Window))) // looks like we have a dark theme
         path = path + dark;
