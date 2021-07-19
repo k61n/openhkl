@@ -58,8 +58,10 @@ static void updateFit(
 bool Profile3DIntegrator::compute(
     Peak3D* peak, ShapeCollection* shape_collection, const IntegrationRegion& region)
 {
-    if (!shape_collection)
+    if (!shape_collection) {
+        peak->setRejectionFlag(RejectionFlag::NoShapeCollection);
         return false;
+    }
 
     if (!peak)
         return false;
@@ -136,7 +138,12 @@ bool Profile3DIntegrator::compute(
 
     double sigma = _integratedIntensity.sigma();
 
-    return !std::isnan(sigma) && sigma > 0;
+    if (std::isnan(sigma) && sigma > 0) {
+        peak->setRejectionFlag(RejectionFlag::InvalidSigma);
+        return false;
+    }
+
+    return true;
 }
 
 } // namespace nsx

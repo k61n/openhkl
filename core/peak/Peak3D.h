@@ -42,6 +42,13 @@ enum class RejectionFlag {
     InvalidSigma,
     InvalidBkgSigma,
     OverlappingBkg,
+    OverlappingPeak,
+    InvalidCentroid,
+    InvalidCovariance,
+    CentreOutOfBounds,
+    BadIntegrationFit,
+    NoShapeCollection,
+    NoISigmaMinimum,
     PredictionUpdateFailure, // from refiner
     Count
 };

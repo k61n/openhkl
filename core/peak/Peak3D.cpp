@@ -38,10 +38,17 @@ const std::map<RejectionFlag, std::string> Peak3D::_rejection_map{
     {RejectionFlag::NoDataSet, "No associated data set"},
     {RejectionFlag::InvalidRegion, "Integration region extends beyond image/frame range"},
     {RejectionFlag::InterpolationFailure, "Frame coordinate interpolation failed"},
-    {RejectionFlag::InvalidShape, "Invalid shape post-refinement"},
     {RejectionFlag::InvalidSigma, "Negative, zero, or undefined sigma"},
     {RejectionFlag::InvalidBkgSigma, "Negative, zero, or undefined background sigma"},
     {RejectionFlag::OverlappingBkg, "Adjacent peak background region overlaps this peak"},
+    {RejectionFlag::OverlappingPeak, "Adjacent peak intensity region overlaps this peak"},
+    {RejectionFlag::InvalidCentroid, "Centre of mass of peak is inconsistent"},
+    {RejectionFlag::InvalidCovariance, "Covariance matrix of peak is inconsistent"},
+    {RejectionFlag::InvalidShape, "Shape of peak is too small or large"},
+    {RejectionFlag::CentreOutOfBounds, "Peak centre moved beyond bounds of data set"},
+    {RejectionFlag::BadIntegrationFit, "Pearson coefficient of fit is too low"},
+    {RejectionFlag::NoShapeCollection, "No shape collection found"},
+    {RejectionFlag::NoISigmaMinimum, "Failed to find minimum of I/Sigma"},
     {RejectionFlag::PredictionUpdateFailure, "Failure updating prediction post-refinement"}};
 
 Peak3D::Peak3D(sptrDataSet data)

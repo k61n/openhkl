@@ -159,18 +159,26 @@ bool GaussianIntegrator::compute(
     }
 
     // consistency check: center should still be in dataset!
-    if (x0(0) < 0 || x0(0) >= peak->dataSet()->nCols())
+    if (x0(0) < 0 || x0(0) >= peak->dataSet()->nCols()) {
+        peak->setRejectionFlag(RejectionFlag::CentreOutOfBounds);
         return false;
-    if (x0(1) < 0 || x0(1) >= peak->dataSet()->nRows())
+    }
+    if (x0(1) < 0 || x0(1) >= peak->dataSet()->nRows()) {
+        peak->setRejectionFlag(RejectionFlag::CentreOutOfBounds);
         return false;
-    if (x0(2) < 0 || x0(2) >= peak->dataSet()->nFrames())
+    }
+    if (x0(2) < 0 || x0(2) >= peak->dataSet()->nFrames()) {
+        peak->setRejectionFlag(RejectionFlag::CentreOutOfBounds);
         return false;
+    }
 
     // consistency check: covariance matrix should be positive definite
     Eigen::SelfAdjointEigenSolver<Eigen::Matrix3d> solver(from_cholesky(a));
 
-    if (solver.eigenvalues().minCoeff() <= 0)
+    if (solver.eigenvalues().minCoeff() <= 0) {
+        peak->setRejectionFlag(RejectionFlag::InvalidCovariance);
         return false;
+    }
 
     const auto& covar = min.covariance();
     _meanBackground = {B, covar(0, 0)};
@@ -181,8 +189,10 @@ bool GaussianIntegrator::compute(
     Eigen::VectorXd r(N);
     residuals(r, B, I, x0, a, x, counts, &pearson);
 
-    if (pearson <= 0.75)
+    if (pearson <= 0.75) {
+        peak->setRejectionFlag(RejectionFlag::BadIntegrationFit);
         return false;
+    }
 
     peak->setShape({x0, from_cholesky(a)});
     return true;

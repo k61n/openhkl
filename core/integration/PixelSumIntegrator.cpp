@@ -92,25 +92,33 @@ bool PixelSumIntegrator::compute(
     Eigen::Matrix3d cov = fitCov() ? blob.covariance() : peak->shape().inverseMetric();
 
     // center of mass is consistent
-    if (std::isnan(center.norm()))
+    if (std::isnan(center.norm())) {
+        peak->setRejectionFlag(RejectionFlag::InvalidCentroid);
         return false;
+    }
 
-    if (!peak->shape().isInside(center))
+    if (!peak->shape().isInside(center)) {
+        peak->setRejectionFlag(RejectionFlag::InvalidCentroid);
         return false;
+    }
 
     Eigen::Matrix3d A0 = peak->shape().metric();
     Eigen::Matrix3d A1 = cov.inverse();
     const double dA = (A1 - A0).norm() / A0.norm();
 
     // check that the covariance is consistent
-    if (!(dA < 2.0))
+    if (!(dA < 2.0)) {
+        peak->setRejectionFlag(RejectionFlag::InvalidCovariance);
         return false;
+    }
 
     // shape is not too small or too large
     Eigen::SelfAdjointEigenSolver<Eigen::Matrix3d> solver(cov);
     const auto& w = solver.eigenvalues();
-    if (w.minCoeff() < 0.1 || w.maxCoeff() > 100)
+    if (w.minCoeff() < 0.1 || w.maxCoeff() > 100) {
+        peak->setRejectionFlag(RejectionFlag::InvalidShape);
         return false;
+    }
 
     peak->setShape(Ellipsoid(center, A1));
 
