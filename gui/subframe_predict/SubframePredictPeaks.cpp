@@ -90,10 +90,10 @@ void SubframePredictPeaks::setParametersUp()
     _predict_button = f.addButton("Predict");
     _predict_button->setEnabled(false);
 
-    _d_min->setMaximum(100000);
+    _d_min->setMaximum(100);
     _d_min->setDecimals(2);
 
-    _d_max->setMaximum(100000);
+    _d_max->setMaximum(100);
     _d_max->setDecimals(2);
 
     connect(

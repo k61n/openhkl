@@ -357,22 +357,22 @@ void SubframeIntegrate::setIntegrateUp()
     _interpolation_combo->addItem("Inverse distance");
     _interpolation_combo->addItem("Intensity");
 
-    _peak_end->setMaximum(100000);
+    _peak_end->setMaximum(10);
     _peak_end->setDecimals(2);
 
-    _bkg_begin->setMaximum(100000);
+    _bkg_begin->setMaximum(10);
     _bkg_begin->setDecimals(2);
 
-    _bkg_end->setMaximum(100000);
+    _bkg_end->setMaximum(10);
     _bkg_end->setDecimals(2);
 
-    _radius_int->setMaximum(100000);
+    _radius_int->setMaximum(1000);
     _radius_int->setDecimals(2);
 
-    _n_frames_int->setMaximum(100000);
+    _n_frames_int->setMaximum(20);
     _n_frames_int->setDecimals(2);
 
-    _min_neighbours->setMaximum(100000);
+    _min_neighbours->setMaximum(1000);
 
     connect(_integrate_button, &QPushButton::clicked, this, &SubframeIntegrate::runIntegration);
     connect(
@@ -458,7 +458,7 @@ void SubframeIntegrate::removeOverlappingPeaks()
     filter.resetFiltering(peaks_to_integrate);
     if (_remove_overlaps->isChecked()) {
         filter.parameters()->peak_end = _peak_end->value();
-        filter.parameters()->bkg_end = _bkg_end->value();
+        filter.parameters()->bkg_end = _peak_end->value();
         filter.filterOverlapping(peaks_to_integrate);
         for (auto* peak : peaks_to_integrate->getPeakList()) {
             if (!peak->caughtByFilter()) {

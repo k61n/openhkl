@@ -110,7 +110,8 @@ void PeakViewWidget::addIntegrationRegion(Set& set, const QColor& peak, const QC
     set.drawIntegrationRegion =
         addCheckBox(row++, 1, "Integration region", Qt::CheckState::Unchecked);
     addLabel(row, "Alpha");
-    set.alphaIntegrationRegion = addDoubleSpinBox(row++, 0.5);
+    set.alphaIntegrationRegion = addDoubleSpinBox(row++, 0.2);
+    set.alphaIntegrationRegion->setMaximum(1.0);
     addLabel(row, "Colour");
     set.colorIntPeak = addColorButton(row, 1, peak);
     set.colorIntBkg = addColorButton(row++, 2, bkg);
@@ -118,10 +119,13 @@ void PeakViewWidget::addIntegrationRegion(Set& set, const QColor& peak, const QC
         addCheckBox(row++, 1, "Preview Integration Region", Qt::CheckState::Unchecked);
     addLabel(row, "Peak end");
     set.peakEnd = addDoubleSpinBox(row++, _peak_end);
+    set.peakEnd->setMaximum(10.0);
     addLabel(row, "Background begin");
     set.bkgBegin = addDoubleSpinBox(row++, _bkg_begin);
+    set.bkgBegin->setMaximum(10.0);
     addLabel(row, "Background end");
     set.bkgEnd = addDoubleSpinBox(row++, _bkg_end);
+    set.bkgEnd->setMaximum(10.0);
 }
 
 void PeakViewWidget::Set::setColor(const QColor& color)

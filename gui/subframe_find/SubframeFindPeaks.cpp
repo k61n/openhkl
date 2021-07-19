@@ -149,11 +149,11 @@ void SubframeFindPeaks::setBlobUp()
 
     _find_button = f.addButton("Find peaks");
 
-    _threshold_spin->setMaximum(10000000);
-    _scale_spin->setMaximum(10000000);
-    _min_size_spin->setMaximum(10000000);
-    _max_size_spin->setMaximum(10000000);
-    _max_width_spin->setMaximum(10000000);
+    _threshold_spin->setMaximum(1000);
+    _scale_spin->setMaximum(10);
+    _min_size_spin->setMaximum(1000);
+    _max_size_spin->setMaximum(100000);
+    _max_width_spin->setMaximum(20);
 
     connect(_find_button, &QPushButton::clicked, this, &SubframeFindPeaks::find);
     connect(
@@ -178,9 +178,9 @@ void SubframeFindPeaks::setIntegrateUp()
 
     _integrate_button = f.addButton("Integrate");
 
-    _peak_area->setMaximum(10000000);
-    _bkg_lower->setMaximum(10000000);
-    _bkg_upper->setMaximum(10000000);
+    _peak_area->setMaximum(10);
+    _bkg_lower->setMaximum(10);
+    _bkg_upper->setMaximum(10);
 
     connect(_integrate_button, &QPushButton::clicked, this, &SubframeFindPeaks::integrate);
     connect(
