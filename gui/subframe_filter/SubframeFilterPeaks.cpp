@@ -156,12 +156,12 @@ void SubframeFilterPeaks::setRangeUp()
     GridFiller f(_d_range_box);
 
     _d_range_min = f.addDoubleSpinBox("Minimum:");
-    _d_range_min->setMaximum(1000);
+    _d_range_min->setMaximum(100);
     _d_range_min->setDecimals(6);
     _d_range_min->setValue(0.0000);
 
     _d_range_max = f.addDoubleSpinBox("Maximum:");
-    _d_range_max->setMaximum(1000);
+    _d_range_max->setMaximum(100);
     _d_range_max->setDecimals(6);
     _d_range_max->setValue(100.00000);
 
@@ -174,12 +174,12 @@ void SubframeFilterPeaks::setFrameRangeUp()
     GridFiller f(_frame_range_box);
 
     _frame_min = f.addDoubleSpinBox("Minimum:");
-    _frame_min->setMaximum(10000);
+    _frame_min->setMaximum(1000);
     _frame_min->setDecimals(0);
     _frame_min->setValue(0.0000);
 
     _frame_max = f.addDoubleSpinBox("Maximum:");
-    _frame_max->setMaximum(10000);
+    _frame_max->setMaximum(1000);
     _frame_max->setDecimals(0);
     _frame_max->setValue(10.00000);
 
@@ -193,7 +193,7 @@ void SubframeFilterPeaks::setSparseUp()
 
     _min_number_peaks = f.addSpinBox("Minimum number of peaks:");
     _min_number_peaks->setValue(0);
-    _min_number_peaks->setMaximum(1000);
+    _min_number_peaks->setMaximum(10000);
 
     _left_layout->addWidget(_sparse_box);
 }
@@ -218,7 +218,7 @@ void SubframeFilterPeaks::setOverlapUp()
 
     _peak_end = f.addDoubleSpinBox("Peak end");
     _peak_end->setValue(3.0);
-    _peak_end->setMinimum(0.0);
+    _peak_end->setMinimum(1.0);
     _peak_end->setMaximum(10.0);
     _peak_end->setDecimals(2);
 

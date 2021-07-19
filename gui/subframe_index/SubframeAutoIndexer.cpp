@@ -142,29 +142,29 @@ void SubframeAutoIndexer::setParametersUp()
     _d_max->setMaximum(100);
     _d_max->setDecimals(2);
 
-    _str_min->setMaximum(100);
+    _str_min->setMaximum(10000);
     _str_min->setDecimals(2);
 
-    _str_max->setMaximum(10000000);
+    _str_max->setMaximum(1000000000);
     _str_max->setDecimals(2);
 
-    _gruber->setMaximum(100000);
+    _gruber->setMaximum(10);
     _gruber->setDecimals(6);
 
-    _niggli->setMaximum(100000);
+    _niggli->setMaximum(10);
     _niggli->setDecimals(6);
 
-    _max_cell_dimension->setMaximum(100000);
+    _max_cell_dimension->setMaximum(1000);
     _max_cell_dimension->setDecimals(2);
 
-    _number_vertices->setMaximum(10000);
+    _number_vertices->setMaximum(100000);
 
-    _number_solutions->setMaximum(100000);
+    _number_solutions->setMaximum(1000);
 
-    _min_cell_volume->setMaximum(100000);
+    _min_cell_volume->setMaximum(1000000);
     _min_cell_volume->setDecimals(2);
 
-    _indexing_tolerance->setMaximum(100000);
+    _indexing_tolerance->setMaximum(10);
     _indexing_tolerance->setDecimals(6);
 
     _frequency_tolerance->setMaximum(1);
