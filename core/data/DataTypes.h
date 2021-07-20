@@ -24,7 +24,8 @@ class DataSet;
 using sptrDataSet = std::shared_ptr<DataSet>;
 using DataList = std::vector<sptrDataSet>;
 
-enum class DataFormat { NSX, RAW, NEXUS };
+// NOTE: `Count` is used to compute the number of members in the enum class
+enum class DataFormat { NSX, RAW, NEXUS, Count };
 
 } // namespace nsx
 
