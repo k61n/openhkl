@@ -24,13 +24,13 @@ namespace nsx {
 
 struct RawDataReaderParameters {
     std::string dataset_name = nsx::kw_datasetDefaultName;
-    double wavelength = 2.665;
-    double delta_omega = 0.4;
+    double wavelength = 0.0;
+    double delta_omega = 0.0;
     double delta_chi = 0.0;
     double delta_phi = 0.0;
     bool row_major = true;
     bool swap_endian = true;
-    size_t bpp = 2;
+    std::size_t bpp = 2;
 };
 
 //! IDataReader for raw binary data.
