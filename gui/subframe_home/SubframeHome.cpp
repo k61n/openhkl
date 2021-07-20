@@ -137,9 +137,12 @@ void SubframeHome::createNew()
     exp_dialog->exec();
 
     if (exp_dialog->result()) {
-        QString name = exp_dialog->experimentName();
-        QString type = exp_dialog->instrumentName();
-        bool success = gSession->createExperiment(name, type);
+        QString expr_nm = exp_dialog->experimentName();
+        QString instr_nm = exp_dialog->instrumentName();
+
+        std::unique_ptr<Project> project_ptr {gSession->createProject
+                                              (expr_nm, instr_nm)};
+        const bool success = gSession->addProject(std::move(project_ptr));
 
         if (success) {
             _open_experiments_model.reset();
