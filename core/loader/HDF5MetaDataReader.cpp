@@ -49,7 +49,7 @@ std::string _dataKey(const std::string& dataset_name)
     return nsx::gr_DataCollections + "/" + dataset_name + "/" + nsx::ds_Dataset;
 }
 
-} // namespace nsx
+} // namespace
 
 
 namespace nsx {
