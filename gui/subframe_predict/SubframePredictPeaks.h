@@ -104,6 +104,8 @@ class SubframePredictPeaks : public QWidget {
     void accept();
     //! Disable unsafe widgets if no data loaded
     void toggleUnsafeWidgets();
+    //! Compute beam divergence and mosaicity sigmas
+    void computeSigmas();
 
  private:
     //! The model for the found peaks

@@ -430,6 +430,7 @@ void ShapeCollection::setPredictedShapes(
             peak->setShape(Ellipsoid(center, cov.inverse()));
         } catch (std::exception& e) {
             peak->setSelected(false);
+            peak->setRejectionFlag(RejectionFlag::TooFewNeighbours);
         }
         if (handler) {
             double progress = ++count * 100.0 / npeaks;

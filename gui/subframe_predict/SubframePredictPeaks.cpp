@@ -129,12 +129,12 @@ void SubframePredictPeaks::setShapeCollectionUp()
     _nz = f.addSpinBox("histogram bins f", "Number of bins in frames direction");
     _kabsch = f.addCheckBox(
         "Kabsch coordinates", "Use Kabsch coordinate to mitigate effects of detector geometry", 1);
-    _sigma_m =
-        f.addDoubleSpinBox(QString(QChar(0x03C3)) + "M", "Variance arising from crystal mosaicity");
-    _sigma_d =
-        f.addDoubleSpinBox(QString(QChar(0x03C3)) + "D", "Variance arising from beam divergence");
-    _min_strength = f.addDoubleSpinBox(
-            "Minimum I/" + QString(QChar(0x03C3)),
+    _sigma_m = f.addDoubleSpinBox(
+        QString("Mosaicity ") + QChar(0x03C3), "Variance arising from crystal mosaicity");
+    _sigma_d = f.addDoubleSpinBox(
+        QString("Beam Divergence ") + QString(QChar(0x03C3)),
+        "Variance arising from beam divergence");
+    _min_strength = f.addDoubleSpinBox("Minimum I/" + QString(QChar(0x03C3)),
             "Minimum strength for peak to be included in shape collection");
     _min_d =
         f.addDoubleSpinBox("Minimum d", "Minimum d for peak to be included in shape collection");
@@ -295,6 +295,7 @@ void SubframePredictPeaks::setExperiments()
         refreshPeakCombo();
         grabPredictorParameters();
         grabShapeCollectionParameters();
+        computeSigmas();
     }
 
     _exp_combo->blockSignals(false);
@@ -373,13 +374,17 @@ void SubframePredictPeaks::setPredictorParameters()
     params->d_max = _d_max->value();
 }
 
-void SubframePredictPeaks::grabShapeCollectionParameters()
+void SubframePredictPeaks::computeSigmas()
 {
     if (!(_peak_collection.numberOfPeaks() == 0)) {
         _peak_collection.computeSigmas();
         _sigma_m->setValue(_peak_collection.sigmaM());
         _sigma_d->setValue(_peak_collection.sigmaD());
     }
+}
+
+void SubframePredictPeaks::grabShapeCollectionParameters()
+{
     _nx->setValue(_shape_params.nbins_x);
     _ny->setValue(_shape_params.nbins_y);
     _nz->setValue(_shape_params.nbins_z);
@@ -503,6 +508,7 @@ void SubframePredictPeaks::refreshPeakTable()
     if (_exp_combo->count() == 0)
         return;
 
+    computeSigmas();
     _figure_view->getScene()->clearPeakItems();
     _peak_collection_model.setRoot(&_peak_collection_item);
     _peak_table->resizeColumnsToContents();
