@@ -24,8 +24,12 @@ namespace nsx {
 
 //! Pure virtual base class of data readers that provide access to detector images and metadata.
 
+class DataSet;
+
 class IDataReader {
+
  public:
+
     IDataReader(const std::string& filename, Diffractometer* diffractometer);
     virtual ~IDataReader() = 0;
 
@@ -71,6 +75,8 @@ class IDataReader {
     //! True if file is open
     bool isOpened() const;
 
+    //! Set the DataSet where the data will be stored (allowed only once)
+    void setDataSet(DataSet* dataset_out);
 
  protected:
     IDataReader() = delete;
@@ -106,6 +112,9 @@ class IDataReader {
 
     //! Filename
     std::string _filename;
+
+    //! Destination DataSet where the data will be stored
+    DataSet* _dataset_out = nullptr;
 };
 
 } // namespace nsx

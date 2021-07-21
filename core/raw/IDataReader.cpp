@@ -24,6 +24,7 @@
 #include "core/raw/DataKeys.h"
 
 #include <cassert>
+#include <stdexcept>
 
 namespace nsx {
 
@@ -120,6 +121,19 @@ const std::vector<std::vector<double>>& IDataReader::sampleStates() const
 const std::vector<std::vector<double>>& IDataReader::detectorStates() const
 {
     return _detectorStates;
+}
+
+void IDataReader::setDataSet(DataSet* dataset_ptr) {
+    // Disallow resetting the destination DataSet
+    if(!_dataset_out) {
+        if (dataset_ptr)
+            _dataset_out = dataset_ptr;
+        else // Disallow setting the destination DataSet to a null pointer
+            throw std::invalid_argument("DataReader: Cannot set the destination DataSet to null");
+    }
+    else
+        throw std::invalid_argument("DataReader: Cannot reset the destination DataSet");
+
 }
 
 } // namespace nsx
