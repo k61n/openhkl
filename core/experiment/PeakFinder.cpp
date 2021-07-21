@@ -671,10 +671,10 @@ void PeakFinder::find(const DataList numors)
         }
 
         nsxlog(
-            Level::Info, "PeakFinder::find:", numor_peaks.size(), "peaks found,",
-            numPeaksTooSmallOrLarge, "peaks too small,", numPeaksOutsideFrames,
-            "peaks outside frame range,", numPeaksNotInDetArea, "peaks not fully on detector.");
-        nsxlog(Level::Info, "PeakFinder::find: ", numPeaksMasked, "peaks masked");
+            Level::Info, "PeakFinder::find: ", numor_peaks.size(), " peaks found,",
+            numPeaksTooSmallOrLarge, " peaks too small, ", numPeaksOutsideFrames,
+            " peaks outside frame range, ", numPeaksNotInDetArea, " peaks not fully on detector.");
+        nsxlog(Level::Info, "PeakFinder::find: ", numPeaksMasked, " peaks masked");
 
         numor->close();
     }

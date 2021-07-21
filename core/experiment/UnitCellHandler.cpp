@@ -38,7 +38,7 @@ const CellMap* UnitCellHandler::getCellMap() const
 
 void UnitCellHandler::addUnitCell(const std::string& name, const UnitCell& unit_cell)
 {
-    nsxlog(Level::Info, "UnitCellHandler::addUnitCell: ", name, ": ", unit_cell.toString());
+    nsxlog(Level::Info, "UnitCellHandler::addUnitCell: '", name, "': ", unit_cell.toString());
     std::unique_ptr<UnitCell> ptr(new UnitCell(unit_cell));
     ptr->setName(name);
     _unit_cells.insert_or_assign(name, std::move(ptr));

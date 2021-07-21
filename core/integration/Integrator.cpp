@@ -69,8 +69,8 @@ void Integrator::integratePeaks(
     IntegratorType integrator_type, sptrDataSet data, PeakCollection* peaks)
 {
     nsxlog(
-        Level::Info, "Integrator::integratePeaks: integrating PeakCollection",
-        peaks->name());
+        Level::Info, "Integrator::integratePeaks: integrating PeakCollection '"
+        + peaks->name() + "'");
     IPeakIntegrator* integrator = getIntegrator(integrator_type);
     integrator->setNNumors(1);
     integrator->integrate(peaks->getPeakList(), peaks->shapeCollection(), data, 1);
@@ -80,8 +80,8 @@ void Integrator::integratePeaks(
     sptrDataSet data, PeakCollection* peaks, IntegrationParameters* params, ShapeCollection* shapes)
 {
     nsxlog(
-        Level::Info, "Integrator::integratePeaks: integrating PeakCollection ",
-        peaks->name());
+        Level::Info, "Integrator::integratePeaks: integrating PeakCollection '"
+        + peaks->name() + "'");
     params->log(Level::Info);
     IPeakIntegrator* integrator = getIntegrator(_params->integrator_type);
     integrator->setParameters(*params);

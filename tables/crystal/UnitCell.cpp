@@ -331,8 +331,8 @@ std::vector<MillerIndex> UnitCell::generateReflectionsInShell(
     }
 
     nsxlog(
-        Level::Info, "UnitCell::generateReflectionsInShell: generated", hkls.size(),
-        "hkl in d-range [", dmin, ",", dmax, "]");
+        Level::Info, "UnitCell::generateReflectionsInShell: generated ", hkls.size(),
+        " hkl in d-range [", dmin, ", ", dmax, "]");
 
     return hkls;
 }

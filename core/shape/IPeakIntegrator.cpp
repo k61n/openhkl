@@ -69,7 +69,7 @@ void IPeakIntegrator::integrate(
     std::ostringstream oss;
     std::string status = "Integrating " + std::to_string(peaks.size()) + " peaks...";
     oss << "Integrating " << peaks.size() << " peaks in numor " << n_numor << " of " << _n_numors;
-    nsxlog(Level::Info, "IPeakIntegrator::integrate: integrating ", peaks.size(), "peaks");
+    nsxlog(Level::Info, "IPeakIntegrator::integrate: integrating ", peaks.size(), " peaks");
     if (_handler) {
         _handler->setStatus(oss.str().c_str());
         _handler->setProgress(0);
@@ -154,7 +154,7 @@ void IPeakIntegrator::integrate(
                 } catch (std::exception& e) {
                     // integration failed...
                     nsxlog(
-                        Level::Debug, "IPeakIntegrator::integrate: integration failed", e.what());
+                        Level::Debug, "IPeakIntegrator::integrate: integration failedL ", e.what());
                     ++nfailures;
                     peak->setSelected(false);
                     peak->setRejectionFlag(RejectionFlag::IntegrationFailure);
@@ -171,7 +171,7 @@ void IPeakIntegrator::integrate(
             _handler->setProgress(progress);
         }
     }
-    nsxlog(Level::Info, "IPeakIntegrator::integrate: end; ", nfailures, "failures");
+    nsxlog(Level::Info, "IPeakIntegrator::integrate: end; ", nfailures, " failures");
 }
 
 void IPeakIntegrator::setHandler(sptrProgressHandler handler)
