@@ -113,13 +113,17 @@ void Session::removeExperiment(const QString& name)
     if (_projects.size() == 0) {
         return;
     } else {
-        for (int project_idx = 0; project_idx < _projects.size(); ++project_idx) {
-            if (name.toStdString() == _projects[project_idx]->experiment()->name()) {
-                _projects.erase(_projects.begin() + project_idx);
-            }
+        const std::string name_str {name.toStdString()};
+        for (decltype(_projects)::const_iterator it = _projects.begin();
+             it != _projects.end(); ) {
+            const Project& prj {**it};
+            if (name_str == prj.experiment()->name())
+                it = _projects.erase(it);
+            else
+                ++it;
         }
-    }
 
+    }
     _currentProject = _projects.size() > 0 ? 0 : -1;
     onExperimentChanged();
 }
