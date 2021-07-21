@@ -179,8 +179,7 @@ class Experiment {
     Predictor* predictor() { return _predictor.get(); };
     //! Construct the collection used to fit the shapes of predicted peaks
     void buildShapeCollection(
-        PeakCollection* peaks, sptrDataSet data, const ShapeCollectionParameters& params,
-        sptrProgressHandler handler = nullptr);
+        PeakCollection* peaks, sptrDataSet data, const ShapeCollectionParameters& params);
     //! Predict peaks from unit cell
     void predictPeaks(
         const std::string& name, sptrDataSet data, UnitCell* cell);

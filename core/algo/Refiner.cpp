@@ -165,10 +165,12 @@ bool Refiner::refine()
         if (!batch.refine(_params->max_iter))
             return false;
         else {
-            std::ostringstream oss;
-            oss << "Refining batch " << ++count << " of " << _params->nbatches;
-            _handler->setStatus(oss.str().c_str());
-            _handler->setProgress(++count * 100.0 / _params->nbatches);
+            if (_handler) {
+                std::ostringstream oss;
+                oss << "Refining batch " << ++count << " of " << _params->nbatches;
+                _handler->setStatus(oss.str().c_str());
+                _handler->setProgress(++count * 100.0 / _params->nbatches);
+            }
         }
     }
     if (_handler)

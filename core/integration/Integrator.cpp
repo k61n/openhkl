@@ -28,7 +28,8 @@
 
 namespace nsx {
 
-Integrator::Integrator(std::shared_ptr<DataHandler> data_handler) : _data_handler(data_handler)
+    Integrator::Integrator(std::shared_ptr<DataHandler> data_handler) :
+        _handler(nullptr), _data_handler(data_handler)
 {
     _integrator_map.clear();
     _integrator_map.insert(
@@ -104,13 +105,14 @@ void Integrator::integrateFoundPeaks(PeakFinder* peak_finder)
 
 void Integrator::integrateShapeCollection(
     std::vector<Peak3D*>& fit_peaks, sptrDataSet data, ShapeCollection* shape_collection,
-    const AABB& aabb, const ShapeCollectionParameters& params, sptrProgressHandler handler)
+    const AABB& aabb, const ShapeCollectionParameters& params)
 {
     nsxlog(Level::Info, "Integrator::integrateShapeCollection");
     ShapeIntegrator integrator{
         shape_collection, aabb, params.nbins_x, params.nbins_y, params.nbins_z};
     integrator.setNNumors(1);
-    integrator.setHandler(handler);
+    if (_handler)
+        integrator.setHandler(_handler);
     integrator.setParameters(params);
     integrator.integrate(fit_peaks, shape_collection, data, 1);
 }
@@ -123,6 +125,11 @@ void Integrator::setParameters(std::shared_ptr<IntegrationParameters> params)
 IntegrationParameters* Integrator::parameters()
 {
     return _params.get();
+}
+
+void Integrator::setHandler(sptrProgressHandler handler)
+{
+    _handler = handler;
 }
 
 } // namespace nsx

@@ -58,14 +58,16 @@ class Integrator {
     //! Integrate the shape collection
     void integrateShapeCollection(
         std::vector<Peak3D*>& peaks, sptrDataSet data, ShapeCollection* shape_collection,
-        const AABB& aabb, const ShapeCollectionParameters& params,
-        sptrProgressHandler handler = nullptr);
+        const AABB& aabb, const ShapeCollectionParameters& params);
     //! Set the parameters
     void setParameters(std::shared_ptr<IntegrationParameters> params);
     //! Get the parameters
     IntegrationParameters* parameters();
+    //! Set a progress handler
+    void setHandler(sptrProgressHandler handler);
 
  private:
+    sptrProgressHandler _handler;
     IntegratorMap _integrator_map;
     std::shared_ptr<DataHandler> _data_handler;
     std::shared_ptr<IntegrationParameters> _params;

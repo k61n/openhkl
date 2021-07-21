@@ -482,8 +482,9 @@ void SubframePredictPeaks::assignPeakShapes()
     nsx::sptrProgressHandler handler(new nsx::ProgressHandler);
     ProgressView progressView(nullptr);
     progressView.watch(handler);
+    experiment->integrator()->setHandler(handler);
 
-    experiment->buildShapeCollection(found_peaks, data, _shape_params, handler);
+    experiment->buildShapeCollection(found_peaks, data, _shape_params);
     _shape_collection = found_peaks->shapeCollection();
     _shape_collection->setPredictedShapes(&_peak_collection, _shape_params.interpolation, handler);
     refreshPeakTable();
