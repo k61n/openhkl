@@ -194,6 +194,7 @@ void SubframePredictPeaks::setShapeCollectionUp()
         _assign_peak_shapes, &QPushButton::clicked, this, &SubframePredictPeaks::assignPeakShapes);
 
     _left_layout->addWidget(_shapes_box);
+    grabShapeCollectionParameters();
 }
 
 void SubframePredictPeaks::setPreviewUp()
@@ -284,12 +285,11 @@ void SubframePredictPeaks::setExperiments()
     _exp_combo->blockSignals(true);
     QString current_exp = _exp_combo->currentText();
     _exp_combo->clear();
+    for (const QString& exp : gSession->experimentNames())
+        _exp_combo->addItem(exp);
+    _exp_combo->setCurrentText(current_exp);
 
-    if (!gSession->experimentNames().empty()) {
-        for (const QString& exp : gSession->experimentNames())
-            _exp_combo->addItem(exp);
-        _exp_combo->setCurrentText(current_exp);
-
+    if (!(_exp_combo->count() == 0)) {
         updateUnitCellList();
         updateDatasetList();
         refreshPeakCombo();
@@ -460,7 +460,6 @@ void SubframePredictPeaks::runPrediction()
 
         _peak_collection_item.setPeakCollection(&_peak_collection);
         _peak_collection_model.setRoot(&_peak_collection_item);
-        grabShapeCollectionParameters();
         refreshPeakTable();
     } catch (const std::exception& e) {
         QMessageBox::critical(this, "Error", QString(e.what()));
