@@ -85,24 +85,6 @@ int Session::numExperiments() const
     return _projects.size();
 }
 
-bool Session::createExperiment(QString experimentName, QString instrumentName)
-{
-    for (const QString& name : experimentNames()) {
-        if (name == experimentName) {
-            QMessageBox::critical(
-                nullptr, "Error", "Experiment name, '" + experimentName + "' already exists");
-            return false;
-        }
-    }
-
-    auto experiment = std::make_unique<Project>(experimentName, instrumentName);
-    _projects.push_back(std::move(experiment));
-    _currentProject = _projects.size() - 1;
-    onExperimentChanged();
-
-    return true;
-}
-
 Project* Session::createProject
 (QString experimentName, QString instrumentName)
 {
