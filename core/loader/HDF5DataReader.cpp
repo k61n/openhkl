@@ -31,7 +31,7 @@ HDF5DataReader::HDF5DataReader(
 
 Eigen::MatrixXi HDF5DataReader::data(std::size_t frame)
 {
-    nsxlog(nsx::Level::Debug, __PRETTY_FUNCTION__, ":", "Reading data in frame nr.", frame);
+    nsxlog(nsx::Level::Debug, __FUNCTION__, ": Reading data in frame nr. ", frame);
 
     // NOTE: `this->` is needed due to C++ two-phase name lookup mechanism
 

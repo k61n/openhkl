@@ -34,7 +34,7 @@ std::vector<DetectorEvent> algo::qVectorList2Events(
     const std::vector<ReciprocalVector>& sample_qs, const InstrumentStateList& states,
     const Detector& detector, const int n_intervals, sptrProgressHandler handler /* = nullptr */)
 {
-    nsxlog(Level::Debug, "algo::Qs2Events::qVectorList2Events: processing ", sample_qs.size(), "q vectors");
+    nsxlog(Level::Debug, "algo::Qs2Events::qVectorList2Events: processing ", sample_qs.size(), " q-vectors");
 
     std::vector<DetectorEvent> events;
 
@@ -57,7 +57,7 @@ std::vector<DetectorEvent> algo::qVectorList2Events(
     if (handler)
         handler->setProgress(100);
     nsxlog(
-        Level::Debug, "algo::Qs2Events::qVectorList2Events: finished; generated ", events.size(), "events");
+        Level::Debug, "algo::Qs2Events::qVectorList2Events: finished; generated ", events.size(), " events");
     return events;
 }
 

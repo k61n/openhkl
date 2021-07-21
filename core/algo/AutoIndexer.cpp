@@ -78,7 +78,7 @@ void AutoIndexer::autoIndex(const std::vector<Peak3D*>& peaks)
 
 void AutoIndexer::autoIndex(PeakCollection* peaks)
 {
-    nsxlog(Level::Info, "AutoIndexer::autoindex: indexing PeakCollection ", peaks->name());
+    nsxlog(Level::Info, "AutoIndexer::autoindex: indexing PeakCollection '", peaks->name(), "'");
     std::vector<Peak3D*> peak_list = peaks->getPeakList();
     autoIndex(peak_list);
 }

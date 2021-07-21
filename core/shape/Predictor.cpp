@@ -46,7 +46,7 @@ std::vector<Peak3D*> Predictor::buildPeaksFromMillerIndices(
         qs.emplace_back(idx.rowVector().cast<double>() * BU);
     nsxlog(
         Level::Info, "Predictor::buildPeaksFromMillerIndices: ", qs.size(),
-        "q-vectors generated from ", hkls.size(), " Miller indices");
+        " q-vectors generated from ", hkls.size(), " Miller indices");
 
     const std::vector<DetectorEvent> events =
         algo::qVectorList2Events(qs, data->instrumentStates(), data->detector(), data->nFrames(),
@@ -86,7 +86,7 @@ void Predictor::predictPeaks(
     auto predicted_hkls =
         unit_cell->generateReflectionsInShell(_params->d_min, _params->d_max, wavelength);
 
-    _predicted_peaks = 
+    _predicted_peaks =
         buildPeaksFromMillerIndices(data, predicted_hkls, unit_cell, handler);
 }
 

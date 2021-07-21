@@ -92,7 +92,7 @@ void Experiment::acceptFoundPeaks(const std::string& name)
 void Experiment::saveToFile(const std::string& path) const
 {
     nsx::ExperimentExporter exporter;
-    nsxlog(Level::Info, "Saving experiment to file: ", path);
+    nsxlog(Level::Info, "Saving experiment to file: '" + path + "'");
 
     // AN>>TODO: if no extension given, use .nsx
     exporter.createFile(name(), getDiffractometer()->name(), path);
@@ -118,7 +118,7 @@ void Experiment::saveToFile(const std::string& path) const
 void Experiment::loadFromFile(const std::string& path)
 {
     nsx::ExperimentImporter importer;
-    nsxlog(Level::Info, "Loading experiment from file: ", path);
+    nsxlog(Level::Info, "Loading experiment from file: '" + path + "'");
 
     importer.setFilePath(path, this);
     importer.loadData(this);
@@ -258,7 +258,7 @@ void Experiment::updatePredictions(PeakCollection* predicted_peaks)
 {
     auto peak_list = predicted_peaks->getPeakList();
     int update = _refiner->updatePredictions(peak_list);
-    nsxlog(Level::Info, update, "peaks updated");
+    nsxlog(Level::Info, update, " peaks updated");
 }
 
 Integrator* Experiment::integrator()

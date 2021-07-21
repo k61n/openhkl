@@ -45,10 +45,10 @@ class Integrator {
     //! Return a pointer to the data handler
     DataHandler* getDataHandler();
     //! Get an integrator from the map
-    nsx::IPeakIntegrator* getIntegrator(const IntegratorType name) const;
+    nsx::IPeakIntegrator* getIntegrator(const IntegratorType integrator_type) const;
     //! Set the found peak integrator
     void integratePeaks(
-        IntegratorType integrator_type, sptrDataSet data, PeakCollection* peak_collection);
+        IntegratorType integrator_type, sptrDataSet data, PeakCollection* peaks);
     //! Integrate a peak collection
     void integratePeaks(
         sptrDataSet data, PeakCollection* peaks, IntegrationParameters* params,
