@@ -62,6 +62,10 @@ class Session {
 
     void loadExperimentFromFile(QString filename);
 
+    Project* createProject(QString experimentName, QString instrumentName);
+    bool addProject(std::unique_ptr<Project> project_ptr);
+
+
  private:
     std::vector<std::unique_ptr<Project>> _projects;
     int _currentProject = -1;

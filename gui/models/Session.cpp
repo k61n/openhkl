@@ -85,18 +85,23 @@ int Session::numExperiments() const
     return _projects.size();
 }
 
-bool Session::createExperiment(QString experimentName, QString instrumentName)
+Project* Session::createProject
+(QString experimentName, QString instrumentName)
 {
     for (const QString& name : experimentNames()) {
         if (name == experimentName) {
-            QMessageBox::critical(
-                nullptr, "Error", "Experiment name, '" + experimentName + "' already exists");
-            return false;
+            QMessageBox::critical(nullptr, "Error",
+               "Experiment name, '" + experimentName + "' already exists");
+            return nullptr;
         }
     }
 
-    auto experiment = std::make_unique<Project>(experimentName, instrumentName);
-    _projects.push_back(std::move(experiment));
+    return new Project(experimentName, instrumentName);
+}
+
+bool Session::addProject(std::unique_ptr<Project> project_ptr)
+{
+    _projects.push_back(std::move(project_ptr));
     _currentProject = _projects.size() - 1;
     onExperimentChanged();
 
@@ -347,8 +352,22 @@ void Session::onUnitCellChanged()
 
 void Session::loadExperimentFromFile(QString filename)
 {
-    createExperiment(QString::fromStdString(nsx::kw_experimentDefaultName));
-    currentProject()->experiment()->loadFromFile(filename.toStdString());
-    currentProject()->generatePeakModels();
-    onExperimentChanged();
+    std::unique_ptr<Project> project_ptr {
+        createProject(QString::fromStdString(nsx::kw_experimentDefaultName),
+                      QString::fromStdString(nsx::kw_diffractometerDefaultName))};
+
+    if (!project_ptr)
+        return;
+
+    try {
+        project_ptr->experiment()->loadFromFile(filename.toStdString());
+        project_ptr->generatePeakModels();
+    } catch(const std::exception& ex) {
+        const std::string msg {"Loading experiment from '" + filename.toStdString()
+                               + "' failed with error: " + ex.what() + "."};
+        throw std::runtime_error(msg);
+        return;
+    }
+
+    addProject(std::move(project_ptr));
 }
