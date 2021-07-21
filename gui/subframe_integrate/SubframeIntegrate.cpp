@@ -463,13 +463,13 @@ void SubframeIntegrate::removeOverlappingPeaks()
         for (auto* peak : peaks_to_integrate->getPeakList()) {
             if (!peak->caughtByFilter()) {
                 peak->setSelected(false);
-                peak->setRejectionFlag(nsx::RejectionFlag::OverlappingBkg);
+                peak->setRejectionFlag(nsx::RejectionFlag::OverlappingPeak);
             }
         }
     } else {
         for (auto* peak : peaks_to_integrate->getPeakList()) {
             if (peak->selected() == false
-                && peak->rejectionFlag() == nsx::RejectionFlag::OverlappingBkg) {
+                && peak->rejectionFlag() == nsx::RejectionFlag::OverlappingPeak) {
                 peak->setSelected(true);
                 peak->setRejectionFlag(nsx::RejectionFlag::NotRejected, true);
             }

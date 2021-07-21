@@ -245,6 +245,11 @@ void SubframeRefiner::refine()
         auto refiner = expt->refiner();
         auto* params = refiner->parameters();
 
+        nsx::sptrProgressHandler handler(new nsx::ProgressHandler);
+        ProgressView progressView(nullptr);
+        progressView.watch(handler);
+        refiner->setHandler(handler);
+
         setRefinerParameters();
 
         int n_checked = 0;

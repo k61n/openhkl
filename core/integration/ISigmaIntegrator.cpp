@@ -27,8 +27,10 @@ ISigmaIntegrator::ISigmaIntegrator() : PixelSumIntegrator(false, false) { }
 bool ISigmaIntegrator::compute(
     Peak3D* peak, ShapeCollection* shape_collection, const IntegrationRegion& region)
 {
-    if (!shape_collection)
+    if (!shape_collection) {
+        peak->setRejectionFlag(RejectionFlag::NoShapeCollection);
         return false;
+    }
 
     if (!peak)
         return false;
@@ -91,8 +93,10 @@ bool ISigmaIntegrator::compute(
     }
 
     // something went wrong (nans?)
-    if (best_idx < 0)
+    if (best_idx < 0) {
+        peak->setRejectionFlag(RejectionFlag::NoISigmaMinimum);
         return false;
+    }
 
     const double M = profile.counts()[best_idx];
     const int n = profile.npoints()[best_idx];
@@ -102,7 +106,12 @@ bool ISigmaIntegrator::compute(
 
     double sigma = _integratedIntensity.sigma();
 
-    return !std::isnan(sigma) && sigma > 0;
+    if (std::isnan(sigma) && sigma > 0) {
+        peak->setRejectionFlag(RejectionFlag::InvalidSigma);
+        return false;
+    }
+
+    return true;
 }
 
 } // namespace nsx

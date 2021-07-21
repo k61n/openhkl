@@ -126,6 +126,7 @@ MetaData& PeakCollection::metadata()
 
 void PeakCollection::setShapeCollection(std::unique_ptr<ShapeCollection>& shape_collection)
 {
+    resetShapeCollection();
     _shape_collection = std::move(shape_collection);
 }
 

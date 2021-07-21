@@ -78,8 +78,10 @@ static void updateFit(
 bool Profile1DIntegrator::compute(
     Peak3D* peak, ShapeCollection* shape_collection, const IntegrationRegion& region)
 {
-    if (!shape_collection)
+    if (!shape_collection) {
+        peak->setRejectionFlag(RejectionFlag::NoShapeCollection);
         return false;
+    }
 
     if (!peak)
         return false;
@@ -140,8 +142,10 @@ bool Profile1DIntegrator::compute(
 
     double sigma = I.sigma();
 
-    if (std::isnan(sigma) || sigma <= 0.0)
+    if (std::isnan(sigma) || sigma <= 0.0) {
+        peak->setRejectionFlag(RejectionFlag::InvalidSigma);
         return false;
+    }
 
     _integratedIntensity = I;
     _meanBackground = B;

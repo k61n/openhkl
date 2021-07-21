@@ -33,6 +33,7 @@ enum class RejectionFlag {
     OutsideDetector, // from PeakFinder
     IntegrationFailure,
     TooFewPoints,
+    NoNeighbours,
     TooFewNeighbours,
     NoUnitCell,
     NoDataSet,
@@ -42,6 +43,13 @@ enum class RejectionFlag {
     InvalidSigma,
     InvalidBkgSigma,
     OverlappingBkg,
+    OverlappingPeak,
+    InvalidCentroid,
+    InvalidCovariance,
+    CentreOutOfBounds,
+    BadIntegrationFit,
+    NoShapeCollection,
+    NoISigmaMinimum,
     PredictionUpdateFailure, // from refiner
     Count
 };

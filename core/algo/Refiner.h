@@ -21,6 +21,8 @@
 namespace nsx {
 
 class UnitCellHandler;
+class ProgressHandler;
+using sptrProgressHandler = std::shared_ptr<ProgressHandler>;
 enum class Level;
 
 //! Parameters for refinement
@@ -41,6 +43,8 @@ struct RefinerParameters {
 class Refiner {
  public:
     Refiner(UnitCellHandler* cell_handler);
+
+    void setHandler(const sptrProgressHandler& handler);
 
     //! Generate batches of peaks per frame range with the given peak list
     void makeBatches(
@@ -99,6 +103,7 @@ class Refiner {
     int _nframes;
     InstrumentStateList* _states;
     std::unique_ptr<RefinerParameters> _params;
+    sptrProgressHandler _handler;
 };
 
 } // namespace nsx

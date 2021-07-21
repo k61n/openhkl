@@ -38,7 +38,7 @@ std::vector<DetectorEvent> algo::qVectorList2Events(
 
     std::vector<DetectorEvent> events;
 
-    int count = 0;
+    int count = 1;
     if (handler) {
         std::ostringstream oss;
         oss << "Transforming " << sample_qs.size() << " q-vectors to detector events";
@@ -54,6 +54,8 @@ std::vector<DetectorEvent> algo::qVectorList2Events(
         if (handler)
             handler->setProgress(++count * 100.0 / sample_qs.size());
     }
+    if (handler)
+        handler->setProgress(100);
     nsxlog(
         Level::Debug, "algo::Qs2Events::qVectorList2Events: finished; generated ", events.size(), "events");
     return events;

@@ -47,8 +47,6 @@ struct ShapeCollectionParameters;
 class SubframePredictPeaks : public QWidget {
  public:
     SubframePredictPeaks();
-    //! run the prediction
-    void runPrediction();
     //! Refresh all the panels
     void refreshAll();
     //! detector view
@@ -58,6 +56,8 @@ class SubframePredictPeaks : public QWidget {
  private:
     //! Set the parameters values up
     void setParametersUp();
+    //! Set the shape collection construction update
+    void setShapeCollectionUp();
     //! Build the buttons
     void setProceedUp();
     //! Set the peak table view up
@@ -82,18 +82,30 @@ class SubframePredictPeaks : public QWidget {
     void updateDatasetParameters(int idx);
     //! Get the parameters of the indexer
     void grabPredictorParameters();
-    //! Get the parameters of the indexer
+    //! Set the parameters of the indexer
     void setPredictorParameters();
+    //! Get shape collection parameters
+    void grabShapeCollectionParameters();
+    //! Set shape collection parameters
+    void setShapeCollectionParameters();
+    //! Refresh the peak combo
+    void refreshPeakCombo();
     //! Refresh the found peaks list
     void refreshPeakTable();
     //! Refresh the found peaks visual properties
     void refreshPeakVisual();
     //! Change the peak selected in the table
     void changeSelected(PeakItemGraphic* peak_graphic);
+    //! run the prediction
+    void runPrediction();
+    //! Build the shapes to assign to predicted peaks
+    void assignPeakShapes();
     //! Accept and save current list
     void accept();
     //! Disable unsafe widgets if no data loaded
     void toggleUnsafeWidgets();
+    //! Compute beam divergence and mosaicity sigmas
+    void computeSigmas();
 
  private:
     //! The model for the found peaks
@@ -114,7 +126,7 @@ class SubframePredictPeaks : public QWidget {
     QSplitter* _right_element;
 
     Spoiler* _para_box;
-    Spoiler* _integrate_box;
+    Spoiler* _shapes_box;
     Spoiler* _preview_box;
 
     QComboBox* _cell_combo;
@@ -137,6 +149,27 @@ class SubframePredictPeaks : public QWidget {
     PeakTableView* _peak_table;
 
     QSizePolicy _size_policy_right;
+
+    QComboBox* _found_peaks_combo;
+    QSpinBox* _nx;
+    QSpinBox* _ny;
+    QSpinBox* _nz;
+    QCheckBox* _kabsch;
+    QDoubleSpinBox* _sigma_m;
+    QDoubleSpinBox* _sigma_d;
+    QDoubleSpinBox* _min_strength;
+    QDoubleSpinBox* _min_d;
+    QDoubleSpinBox* _max_d;
+    QDoubleSpinBox* _peak_end;
+    QDoubleSpinBox* _bkg_begin;
+    QDoubleSpinBox* _bkg_end;
+    QDoubleSpinBox* _radius_pix;
+    QDoubleSpinBox* _radius_frames;
+    QSpinBox* _min_neighbours;
+    QComboBox* _interpolation_combo;
+    QPushButton* _assign_peak_shapes;
+
+    nsx::ShapeCollection* _shape_collection = nullptr;
 };
 
 #endif // NSX_GUI_SUBFRAME_PREDICT_SUBFRAMEPREDICTPEAKS_H
