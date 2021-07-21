@@ -42,19 +42,6 @@ Diffractometer* Diffractometer::create(const std::string& name)
 
 Diffractometer::Diffractometer() : _detector(nullptr), _sample(), _source() { }
 
-Diffractometer::Diffractometer(const Diffractometer& other)
-    : _name(other._name)
-    , _detector(other._detector ? other._detector->clone() : nullptr)
-    , _sample(other._sample)
-    , _source(other._source)
-{
-}
-
-Diffractometer* Diffractometer::clone() const
-{
-    return new Diffractometer(*this);
-}
-
 Diffractometer::Diffractometer(const YAML::Node& node)
 {
     // Sets the name of the diffractometer from the YAML node

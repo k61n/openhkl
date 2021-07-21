@@ -33,11 +33,9 @@
 namespace nsx {
 
 DataSet::DataSet(std::shared_ptr<IDataReader> reader)
-    : _isOpened{false}
-    , _nFrames{0}
+    : _nFrames{0}
     , _nrows{0}
     , _ncols{0}
-    , _background{0.0}
     , _reader{std::move(reader)}
 {
     _nrows = detector().nRows();
@@ -58,15 +56,21 @@ DataSet::DataSet(std::shared_ptr<IDataReader> reader)
 
 DataSet::~DataSet() { }
 
-int DataSet::dataAt(unsigned int x, unsigned int y, unsigned int z) const
+int DataSet::dataAt(const std::size_t x, const std::size_t y, const std::size_t z) const
 {
     // Check that the voxel is inside the limit of the data
-    if (z >= _nFrames || y >= _ncols || x >= _nrows)
-        return 0;
+    if (z >= _nFrames || y >= _ncols || x >= _nrows) {
+        throw std::runtime_error
+        ("DataSet '" + _name + "': "
+         + "Out-of-bound access (x = " + std::to_string(x) + ", "
+         + "y = " + std::to_string(y) + ", z = " + std::to_string(z)
+         + ")");
+    }
+
     return frame(z)(x, y);
 }
 
-Eigen::MatrixXi DataSet::frame(std::size_t idx) const
+Eigen::MatrixXi DataSet::frame(const std::size_t idx) const
 {
     return _reader->data(idx);
 }
@@ -104,23 +108,6 @@ const InstrumentStateList& DataSet::instrumentStates() const
 InstrumentStateList& DataSet::instrumentStates()
 {
     return _states;
-}
-
-bool DataSet::isOpened() const
-{
-    return _isOpened;
-}
-
-void DataSet::saveHDF5(const std::string& filename)
-{
-    nsx::ExperimentExporter exporter;
-    const std::string dname = name(), instrument_name = _reader->diffractometer()->name();
-    nsxlog(Level::Info, "Saving DataSet ", dname, " to HDF5 file:", filename);
-
-    std::map<std::string, DataSet*> data_sets{{dname, this}};
-    exporter.createFile(dname, instrument_name, filename);
-    exporter.writeData(data_sets);
-    exporter.finishWrite();
 }
 
 void DataSet::addMask(IMask* mask)

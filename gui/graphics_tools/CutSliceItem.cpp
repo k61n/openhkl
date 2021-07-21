@@ -17,8 +17,6 @@
 #include "core/data/DataSet.h"
 #include "core/detector/Detector.h"
 #include "core/instrument/Diffractometer.h"
-#include "core/raw/IDataReader.h"
-
 #include "gui/graphics/DetectorScene.h"
 #include "gui/graphics/SimplePlot.h"
 #include <Eigen/Dense>

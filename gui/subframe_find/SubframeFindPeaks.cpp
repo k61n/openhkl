@@ -19,7 +19,6 @@
 #include "core/experiment/Experiment.h"
 #include "core/experiment/PeakFinder.h"
 #include "core/peak/Peak3D.h"
-#include "core/raw/IDataReader.h"
 #include "core/shape/IPeakIntegrator.h"
 #include "gui/MainWin.h" // gGui
 #include "gui/dialogs/ListNameDialog.h"

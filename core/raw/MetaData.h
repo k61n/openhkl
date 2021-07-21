@@ -15,7 +15,9 @@
 #ifndef NSX_CORE_RAW_METADATA_H
 #define NSX_CORE_RAW_METADATA_H
 
-#include <iostream>
+#include "base/utils/Logger.h"
+#include "core/raw/DataKeys.h"
+
 #include <map>
 #include <memory>
 #include <set>
@@ -78,6 +80,11 @@ class MetaData {
 
 template <typename _type> void MetaData::add(const std::string& key, const _type& value)
 {
+    // Warn against unrecognized keys
+    if (nsx::RecognizedMetaDataKeys.count(key) == 0) {
+        nsxlog(nsx::Level::Warning, __FUNCTION__, ": MetaData key '" + key + "' not recognized.");
+    }
+
     // First, make sure the key is already in the keyset
     // Since this is a set, no duplicate will be found. No need to search
     // explicitely.

@@ -16,7 +16,6 @@
 #include "base/utils/StringIO.h" // split
 #include "core/data/DataSet.h"
 #include "core/data/DataTypes.h"
-#include "core/raw/IDataReader.h"
 #include "gui/MainWin.h"
 #include "gui/models/Project.h"
 #include "gui/models/Session.h"
@@ -91,12 +90,12 @@ void NumorProperty::addMenuRequested()
     QMenu* menu = new QMenu(_add);
 
     QAction* add_from_raw = menu->addAction("Raw/Tiff");
-    QAction* add_from_HDF5 = menu->addAction("HDF5");
+    QAction* add_from_HDF5 = menu->addAction("NSX(HDF5)");
     QAction* add_from_nexus = menu->addAction("Nexus");
 
     connect(add_from_raw, &QAction::triggered, this, &NumorProperty::addFromRaw);
     connect(add_from_HDF5, &QAction::triggered, []() {
-        gSession->loadData(nsx::DataFormat::HDF5);
+        gSession->loadData(nsx::DataFormat::NSX);
     });
     connect(add_from_nexus, &QAction::triggered, []() {
         gSession->loadData(nsx::DataFormat::NEXUS);

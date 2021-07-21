@@ -21,7 +21,6 @@
 #include "core/loader/HDF5DataReader.h"
 #include "core/peak/Intensity.h"
 #include "core/peak/Peak3D.h"
-#include "core/raw/IDataReader.h"
 #include <Eigen/Dense>
 
 #include <H5Cpp.h>
@@ -78,7 +77,7 @@ void ExperimentImporter::loadData(Experiment* experiment)
                 _file_name, experiment->getDiffractometer(), collection_name);
             nsx::sptrDataSet data{new nsx::DataSet{std::move(reader)}};
             data->setName(collection_name);
-            experiment->addData(data, data->name());
+            experiment->addData(data);
         }
     } catch (H5::Exception& e) {
         std::string what = e.getDetailMsg();

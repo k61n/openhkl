@@ -18,7 +18,6 @@
 #include "core/gonio/Component.h" // inheriting from
 
 #include "base/geometry/ReciprocalVector.h"
-#include "core/detector/DataOrder.h"
 #include "core/detector/DetectorEvent.h"
 
 namespace nsx {
@@ -96,9 +95,6 @@ class Detector : public Component {
     //! Returns the mean detector pixel width
     double pixelWidth() const;
 
-    //! Returns how data are mapped to detector
-    DataOrder dataOrder() const;
-
     //! Returns the Jacobian matrix of the transformation (px,py) -> (x,y,z) from
     //! pixel coordinates to lab coordinates. The first and second columns are the
     //! derivatives of (x,y,z) with respect to px and py. The third column is
@@ -131,7 +127,6 @@ class Detector : public Component {
     double _distance;
 
  private:
-    DataOrder _dataorder;
     //! Detector baseline. Default is 0.0
     double _baseline;
     //! Detector gain. Default is 1.0

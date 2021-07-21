@@ -18,6 +18,7 @@
 #include "core/instrument/InstrumentState.h"
 #include "core/raw/MetaData.h"
 #include <vector>
+#include <string>
 
 namespace nsx {
 
@@ -67,12 +68,6 @@ class IDataReader {
     //! Returns a pointer to the diffractometer bound to the data
     Diffractometer* diffractometer();
 
-    //! Gets the data basename
-    std::string basename() const;
-
-    //! Gets the data filename
-    virtual std::string filename() const;
-
     //! True if file is open
     bool isOpened() const;
 
@@ -108,6 +103,9 @@ class IDataReader {
 
     //! Status of file handle
     bool _isOpened;
+
+    //! Filename
+    std::string _filename;
 };
 
 } // namespace nsx

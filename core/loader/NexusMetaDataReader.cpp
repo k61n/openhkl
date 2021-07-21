@@ -97,7 +97,6 @@ NexusMetaDataReader::NexusMetaDataReader(
         _metadata.add<int>(nsx::at_numor, numor);
         _metadata.add<int>(nsx::at_frameCount, _nFrames);
         _metadata.add<int>(nsx::at_totalSteps, totalSteps);
-        _metadata.add<std::string>(nsx::at_filepath, filename);
         _metadata.add<std::string>(nsx::at_title, title);
         _metadata.add<std::string>(nsx::at_experiment, experiment_id);
         _metadata.add<std::string>(nsx::at_startTime, start_time);
@@ -213,7 +212,7 @@ void NexusMetaDataReader::open()
 
     try {
         _file = std::unique_ptr<H5::H5File>(
-            new H5::H5File(_metadata.key<std::string>(nsx::at_filepath).c_str(), H5F_ACC_RDONLY));
+            new H5::H5File(_filename.c_str(), H5F_ACC_RDONLY));
     } catch (...) {
         if (_file)
             _file.reset();

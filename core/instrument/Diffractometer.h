@@ -18,6 +18,8 @@
 #include "core/detector/Detector.h"
 #include "core/instrument/Sample.h"
 #include "core/instrument/Source.h"
+#include "core/raw/DataKeys.h"
+
 
 namespace nsx {
 
@@ -29,10 +31,6 @@ class Diffractometer {
 
     Diffractometer(const YAML::Node& node);
     virtual ~Diffractometer();
-
-    Diffractometer(const Diffractometer& other);
-
-    Diffractometer* clone() const;
 
     //! Returns the name of this diffractometer
     const std::string& name() const;
@@ -76,7 +74,7 @@ class Diffractometer {
     Diffractometer(const std::string& name);
 
     //! Name of the diffractometer
-    std::string _name;
+    std::string _name = nsx::kw_diffractometerDefaultName;
 
     //! Pointer to detector
     std::unique_ptr<Detector> _detector;

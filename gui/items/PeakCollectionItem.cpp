@@ -21,7 +21,6 @@
 #include "core/instrument/InstrumentState.h"
 #include "core/peak/Peak3D.h"
 #include "core/raw/DataKeys.h"
-#include "core/raw/IDataReader.h"
 #include "core/raw/MetaData.h"
 #include "core/shape/PeakFilter.h"
 #include "tables/crystal/MillerIndex.h"

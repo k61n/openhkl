@@ -16,7 +16,6 @@
 
 #include "core/data/DataSet.h"
 #include "core/instrument/Diffractometer.h"
-#include "core/raw/IDataReader.h"
 #include "tables/crystal/MillerIndex.h"
 
 #include <algorithm>

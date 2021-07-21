@@ -16,6 +16,7 @@
 #define NSX_CORE_RAW_DATAKEYS_H
 
 #include <string>
+#include <set>
 
 namespace nsx {
 
@@ -57,7 +58,6 @@ const std::string at_experiment{"experiment"};
 const std::string at_diffractometer{"diffractometer"};
 const std::string at_datasetName{"dataset"};
 const std::string at_formatVersion{"NSX-format version"};
-const std::string at_filepath{"filepath"};
 const std::string at_datasetSources{"sources"}; // list of sources for the DataSet, separated by ';'
 const std::string at_frameCount{"number of frames"};
 const std::string at_wavelength{"wavelength"};
@@ -141,6 +141,16 @@ const std::string ym_originY{"origin_y"};
 const std::string ym_componentName{"name"};
 const std::string ym_goniometer{"goniometer"};
 const std::string ym_rotClockwise{"clockwise"};
+
+//-- Recognized metadata keys
+const std::set<std::string> RecognizedMetaDataKeys
+    {at_experiment, at_diffractometer, at_formatVersion,
+     at_datasetSources, at_frameCount, at_wavelength, at_monitorSum,
+     at_numor, at_totalSteps, at_title,
+     at_time, at_startTime, at_endTime,
+     at_peakCount, at_peakType, at_rVec, at_BravaisLattice, at_indexingTol,
+     at_spacegroup, at_z
+    };
 
 } // namespace nsx
 

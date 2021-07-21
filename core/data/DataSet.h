@@ -57,10 +57,10 @@ class DataSet {
     void maskPeaks(std::vector<Peak3D*>& peaks) const;
 
     //! Returns the intensity at point x,y,z.
-    int dataAt(unsigned int x = 0, unsigned int y = 0, unsigned int z = 0) const;
+    int dataAt(const std::size_t x = 0, const std::size_t y = 0, const std::size_t z = 0) const;
 
     //! Read a single frame
-    Eigen::MatrixXi frame(std::size_t idx) const;
+    Eigen::MatrixXi frame(const std::size_t idx) const;
 
     //! Returns frame after transforming to account for detector gain and baseline
     Eigen::MatrixXd transformedFrame(std::size_t idx) const;
@@ -70,10 +70,6 @@ class DataSet {
 
     //! Close file and release handle
     void close();
-
-    bool isOpened() const; //!< True if file is open
-
-    void saveHDF5(const std::string& filename);
 
     //! Returns the sample-space q vector corresponding to a detector event
     ReciprocalVector computeQ(const DetectorEvent& ev) const;
@@ -94,7 +90,6 @@ class DataSet {
     nsx::MetaData& metadata();
 
  private:
-    bool _isOpened;
     std::string _name = nsx::kw_datasetDefaultName;
     unsigned int _nFrames;
     unsigned int _nrows;
@@ -102,7 +97,6 @@ class DataSet {
     std::vector<Eigen::MatrixXi> _data;
     InstrumentStateList _states;
     std::set<IMask*> _masks;
-    double _background;
     std::shared_ptr<IDataReader> _reader;
     nsx::MetaData _metadata;
 };

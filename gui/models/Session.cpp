@@ -157,8 +157,8 @@ void Session::loadData(nsx::DataFormat format)
 
     QString format_string;
     switch (format) {
-        case nsx::DataFormat::HDF5: {
-            format_string = QString("Data files(*.h5 *.hdf5 *.hdf);;all files (*.* *)");
+        case nsx::DataFormat::NSX: {
+            format_string = QString("Data files(*.nsx);;all files (*.* *)");
             break;
         }
         case nsx::DataFormat::NEXUS: {
@@ -166,7 +166,7 @@ void Session::loadData(nsx::DataFormat format)
             break;
         }
         default: {
-            throw std::range_error("Session::LoadData can only load HDF5 or Nexus data files");
+            throw std::runtime_error("Session::LoadData can only load NSX(HDF5) or Nexus data files");
             break;
         }
     }
@@ -210,7 +210,7 @@ void Session::loadData(nsx::DataFormat format)
             if (dataset1_name.empty())
                 dataset1_name = dataset_ptr->name();
 
-            exp->addData(dataset_ptr, dataset_ptr->name());
+            exp->addData(dataset_ptr);
         } catch (const std::exception& ex) {
             QString msg = QString("Loading file(s) '") + filename + QString("' failed with error: ")
                 + QString(ex.what()) + QString(".");
@@ -319,7 +319,7 @@ void Session::loadRawData()
         dataset->setName(dataname);
         metadata.add(nsx::at_datasetSources, nsx::join(filenames, ", "));
         dataset->metadata().setMap(metadata.map());
-        exp->addData(dataset, dataset->name());
+        exp->addData(dataset);
         // _selectedData = currentProject()->getIndex(qfilenames.at(0));
         onDataChanged();
     } catch (std::exception& e) {

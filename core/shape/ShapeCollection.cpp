@@ -25,7 +25,6 @@
 #include "core/peak/Peak3D.h"
 #include "core/peak/PeakCoordinateSystem.h"
 #include "core/peak/Qs2Events.h"
-#include "core/raw/IDataReader.h"
 #include "core/shape/PeakCollection.h"
 #include "tables/crystal/UnitCell.h"
 
