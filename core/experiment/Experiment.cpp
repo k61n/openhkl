@@ -49,7 +49,7 @@ Experiment::~Experiment() = default;
 Experiment::Experiment(const std::string& name, const std::string& diffractometerName) : _name(name)
 {
     // start logging
-    Logger::instance().start(nsx::kw_logFilename, Level::Debug);
+    Logger::instance().start(nsx::kw_logFilename, Level::Info);
     _data_handler = std::make_shared<DataHandler>(_name, diffractometerName);
     _peak_handler = std::make_unique<PeakHandler>();
     _cell_handler = std::make_unique<UnitCellHandler>();
@@ -160,7 +160,8 @@ void Experiment::autoIndex(PeakCollection* peaks)
 }
 
 void Experiment::buildShapeCollection(
-    PeakCollection* peaks, sptrDataSet data, const ShapeCollectionParameters& params)
+    PeakCollection* peaks, sptrDataSet data, const ShapeCollectionParameters& params,
+    sptrProgressHandler handler)
 {
     nsxlog(Level::Info, "Experiment::buildShapeCollection");
     params.log(Level::Info);
@@ -168,8 +169,8 @@ void Experiment::buildShapeCollection(
 
     _peak_filter->resetFiltering(peaks);
     _peak_filter->resetFilterFlags();
-    _peak_filter->flags()->strength = true;
     _peak_filter->flags()->d_range = true;
+    _peak_filter->flags()->strength = true;
     _peak_filter->parameters()->d_min = params.d_min;
     _peak_filter->parameters()->d_max = params.d_max;
     _peak_filter->parameters()->strength_min = params.strength_min;
@@ -202,7 +203,7 @@ void Experiment::buildShapeCollection(
 
     std::vector<Peak3D*> fit_peak_list = fit_peaks->getPeakList();
     _integrator->integrateShapeCollection(
-        fit_peak_list, data, shapes.get(), aabb, params);
+        fit_peak_list, data, shapes.get(), aabb, params, handler);
     peaks->setShapeCollection(shapes);
 
     // shape_collection.updateFit(1000); // This does nothing!! - zamaan

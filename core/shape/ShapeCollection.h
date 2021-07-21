@@ -128,18 +128,6 @@ class ShapeCollection {
     //! Return number of peaks in collection
     int numberOfPeaks() const { return _profiles.size(); };
 
-    //! Return number of peaks with no neighbours
-    int nLonelyPeaks() const { return _n_lonely_peaks; };
-
-    //! Return number of peaks with too few neighbours
-    int nUnfriendlyPeaks() const { return _n_unfriendly_peaks; };
-
-    //! Return number of failed interpolations
-    int nFailedInterp() const { return _n_failed_interp; };
-
-    //! Return number of cases of no neighbouring profiles
-    int nNoProfile() const { return _n_no_profile; };
-
     //! Shape collection parameters
     ShapeCollectionParameters* parameters();
 
@@ -171,18 +159,6 @@ class ShapeCollection {
 
     //! The background end used by the collection for integration
     double _bkgEnd;
-
-    //! Number of failed interpolations
-    mutable int _n_failed_interp = 0;
-
-    //! Number of peaks with no neighbours
-    mutable int _n_lonely_peaks = 0;
-
-    //! Number of peaks with too few neighbours
-    mutable int _n_unfriendly_peaks = 0;
-
-    //! Number of peaks with no neighbouring profiles
-    mutable int _n_no_profile = 0;
 
     //! Shape collection parameters
     ShapeCollectionParameters _params;

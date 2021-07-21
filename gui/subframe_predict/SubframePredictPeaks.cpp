@@ -14,8 +14,10 @@
 
 #include "gui/subframe_predict/SubframePredictPeaks.h"
 
+#include "base/utils/Logger.h"
 #include "core/data/DataSet.h"
 #include "core/experiment/Experiment.h"
+#include "core/integration/ShapeIntegrator.h"
 #include "core/peak/Peak3D.h"
 #include "core/raw/IDataReader.h"
 #include "core/shape/IPeakIntegrator.h"
@@ -54,9 +56,10 @@
 
 SubframePredictPeaks::SubframePredictPeaks()
     : QWidget()
-    , _peak_collection("temp", nsx::listtype::FOUND)
+    , _peak_collection("temp", nsx::listtype::PREDICTED)
     , _peak_collection_item()
     , _peak_collection_model()
+    , _shape_params()
     , _size_policy_right(QSizePolicy::Expanding, QSizePolicy::Expanding)
 {
     auto main_layout = new QHBoxLayout(this);
@@ -65,6 +68,7 @@ SubframePredictPeaks::SubframePredictPeaks()
     _left_layout = new QVBoxLayout();
 
     setParametersUp();
+    setShapeCollectionUp();
     setPreviewUp();
     setSaveUp();
     setFigureUp();
@@ -103,8 +107,93 @@ void SubframePredictPeaks::setParametersUp()
     connect(
         gGui->sideBar(), &SideBar::subframeChanged, this,
         &SubframePredictPeaks::setPredictorParameters);
+    connect(
+        gGui->sideBar(), &SideBar::subframeChanged, this,
+        &SubframePredictPeaks::setShapeCollectionParameters);
+    connect(
+        _exp_combo, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this,
+        &SubframePredictPeaks::refreshPeakCombo);
 
     _left_layout->addWidget(_para_box);
+}
+
+void SubframePredictPeaks::setShapeCollectionUp()
+{
+    _shapes_box = new Spoiler("Generate shapes");
+    GridFiller f(_shapes_box, true);
+
+    _found_peaks_combo =
+        f.addCombo("Found peak collection", "Found peaks from which to construct shape collection");
+    _nx = f.addSpinBox("histogram bins x", "Number of bins in x direction");
+    _ny = f.addSpinBox("histogram bins y", "Number of bins in x direction");
+    _nz = f.addSpinBox("histogram bins f", "Number of bins in frames direction");
+    _kabsch = f.addCheckBox(
+        "Kabsch coordinates", "Use Kabsch coordinate to mitigate effects of detector geometry", 1);
+    _sigma_m =
+        f.addDoubleSpinBox(QString(QChar(0x03C3)) + "M", "Variance arising from crystal mosaicity");
+    _sigma_d =
+        f.addDoubleSpinBox(QString(QChar(0x03C3)) + "D", "Variance arising from beam divergence");
+    _min_strength = f.addDoubleSpinBox(
+            "Minimum I/" + QString(QChar(0x03C3)),
+            "Minimum strength for peak to be included in shape collection");
+    _min_d =
+        f.addDoubleSpinBox("Minimum d", "Minimum d for peak to be included in shape collection");
+    _max_d =
+        f.addDoubleSpinBox("Maximum d", "Minimum d for peak to be included in shape collection");
+    _peak_end = f.addDoubleSpinBox("Peak end", "(sigmas) - scaling factor for peak region");
+    _bkg_begin =
+        f.addDoubleSpinBox("Bkg begin:", "(sigmas) - scaling factor for lower limit of background");
+    _bkg_end =
+        f.addDoubleSpinBox("Bkg end:", "(sigmas) - scaling factor for upper limit of background");
+    _radius_pix =
+        f.addDoubleSpinBox("Search radius:", "(pixels) - neighbour search radius in pixels");
+    _radius_frames =
+        f.addDoubleSpinBox("N. of frames:", "(frames) - neighbour search radius in frames");
+    _min_neighbours = f.addSpinBox(
+        "Min. neighbours", "Minimum number of neighbouring shapes to predict peak shape");
+    _interpolation_combo = f.addCombo("Interpolation", "Interpolation type for peak shape");
+    _assign_peak_shapes = f.addButton(
+        "Assign peak shapes", "Assign peak shapes from shape collection to a predicted collection");
+
+    _nx->setMaximum(100);
+    _ny->setMaximum(100);
+    _nz->setMaximum(100);
+
+    _sigma_m->setMaximum(10);
+    _sigma_m->setDecimals(2);
+
+    _sigma_d->setMaximum(10);
+    _sigma_d->setDecimals(2);
+
+    _min_d->setMaximum(100);
+    _min_d->setDecimals(2);
+
+    _max_d->setMaximum(100);
+    _max_d->setDecimals(2);
+
+    _peak_end->setMaximum(100);
+    _peak_end->setDecimals(2);
+
+    _bkg_begin->setMaximum(100);
+    _bkg_begin->setDecimals(2);
+
+    _bkg_end->setMaximum(100);
+    _bkg_end->setDecimals(2);
+
+    _radius_pix->setMaximum(1000);
+    _radius_pix->setDecimals(2);
+
+    _radius_frames->setMaximum(50);
+    _radius_frames->setDecimals(2);
+
+    _interpolation_combo->addItem("None");
+    _interpolation_combo->addItem("Inverse distance");
+    _interpolation_combo->addItem("Intensity");
+
+    connect(
+        _assign_peak_shapes, &QPushButton::clicked, this, &SubframePredictPeaks::assignPeakShapes);
+
+    _left_layout->addWidget(_shapes_box);
 }
 
 void SubframePredictPeaks::setPreviewUp()
@@ -118,7 +207,6 @@ void SubframePredictPeaks::setPreviewUp()
 
     _preview_box->setContentLayout(*_peak_view_widget);
     _left_layout->addWidget(_preview_box);
-    _preview_box->setExpanded(true);
 }
 
 void SubframePredictPeaks::setSaveUp()
@@ -204,7 +292,9 @@ void SubframePredictPeaks::setExperiments()
 
         updateUnitCellList();
         updateDatasetList();
+        refreshPeakCombo();
         grabPredictorParameters();
+        grabShapeCollectionParameters();
     }
 
     _exp_combo->blockSignals(false);
@@ -283,6 +373,65 @@ void SubframePredictPeaks::setPredictorParameters()
     params->d_max = _d_max->value();
 }
 
+void SubframePredictPeaks::grabShapeCollectionParameters()
+{
+    if (!(_peak_collection.numberOfPeaks() == 0)) {
+        _peak_collection.computeSigmas();
+        _sigma_m->setValue(_peak_collection.sigmaM());
+        _sigma_d->setValue(_peak_collection.sigmaD());
+    }
+    _nx->setValue(_shape_params.nbins_x);
+    _ny->setValue(_shape_params.nbins_y);
+    _nz->setValue(_shape_params.nbins_z);
+    _kabsch->setChecked(_shape_params.kabsch_coords);
+    _min_strength->setValue(_shape_params.strength_min);
+    _min_d->setValue(_shape_params.d_min);
+    _max_d->setValue(_shape_params.d_max);
+    _peak_end->setValue(_shape_params.peak_end);
+    _bkg_begin->setValue(_shape_params.bkg_begin);
+    _bkg_end->setValue(_shape_params.bkg_end);
+    _radius_pix->setValue(_shape_params.neighbour_range_pixels);
+    _radius_frames->setValue(_shape_params.neighbour_range_frames);
+    _min_neighbours->setValue(_shape_params.min_neighbors);
+    _interpolation_combo->setCurrentIndex(static_cast<int>(_shape_params.interpolation));
+}
+
+void SubframePredictPeaks::setShapeCollectionParameters()
+{
+    if (!(_peak_collection.numberOfPeaks() == 0)) {
+        _peak_collection.computeSigmas();
+        _sigma_m->setValue(_peak_collection.sigmaM());
+        _sigma_d->setValue(_peak_collection.sigmaD());
+    }
+    _shape_params.nbins_x = _nx->value();
+    _shape_params.nbins_y = _ny->value();
+    _shape_params.nbins_z = _nz->value();
+    _shape_params.kabsch_coords = _kabsch->isChecked();
+    _shape_params.strength_min = _min_strength->value();
+    _shape_params.d_min = _min_d->value();
+    _shape_params.d_max = _max_d->value();
+    _shape_params.peak_end = _peak_end->value();
+    _shape_params.bkg_begin = _bkg_begin->value();
+    _shape_params.bkg_end = _bkg_end->value();
+    _shape_params.neighbour_range_pixels = _radius_pix->value();
+    _shape_params.neighbour_range_frames = _radius_frames->value();
+    _shape_params.min_neighbors = _min_neighbours->value();
+    _shape_params.interpolation =
+        static_cast<nsx::PeakInterpolation>(_interpolation_combo->currentIndex());
+}
+
+void SubframePredictPeaks::refreshPeakCombo()
+{
+    _found_peaks_combo->blockSignals(true);
+    QString current_peaks = _found_peaks_combo->currentText();
+    _found_peaks_combo->clear();
+    _found_peaks_combo->addItems(
+        gSession->experimentAt(_exp_combo->currentIndex())->
+        getPeakCollectionNames(nsx::listtype::FOUND));
+    _found_peaks_combo->setCurrentText(current_peaks);
+    _found_peaks_combo->blockSignals(false);
+}
+
 void SubframePredictPeaks::runPrediction()
 {
     try {
@@ -311,10 +460,29 @@ void SubframePredictPeaks::runPrediction()
 
         _peak_collection_item.setPeakCollection(&_peak_collection);
         _peak_collection_model.setRoot(&_peak_collection_item);
+        grabShapeCollectionParameters();
         refreshPeakTable();
     } catch (const std::exception& e) {
         QMessageBox::critical(this, "Error", QString(e.what()));
     }
+}
+
+void SubframePredictPeaks::assignPeakShapes()
+{
+    auto* experiment = gSession->experimentAt(_exp_combo->currentIndex())->experiment();
+    auto data = experiment->getData(_data_combo->currentText().toStdString());
+    auto* found_peaks = experiment->getPeakCollection(_found_peaks_combo->currentText().toStdString());
+
+    setShapeCollectionParameters();
+
+    nsx::sptrProgressHandler handler(new nsx::ProgressHandler);
+    ProgressView progressView(nullptr);
+    progressView.watch(handler);
+
+    experiment->buildShapeCollection(found_peaks, data, _shape_params, handler);
+    _shape_collection = found_peaks->shapeCollection();
+    _shape_collection->setPredictedShapes(&_peak_collection, _shape_params.interpolation, handler);
+    refreshPeakTable();
 }
 
 void SubframePredictPeaks::accept()
@@ -377,4 +545,15 @@ void SubframePredictPeaks::toggleUnsafeWidgets()
         _predict_button->setEnabled(false);
         _save_button->setEnabled(false);
     }
+
+    _sigma_d->setEnabled(true);
+    _sigma_m->setEnabled(true);
+    if (!_kabsch->isChecked()) {
+        _sigma_d->setEnabled(false);
+        _sigma_m->setEnabled(false);
+    }
+
+    _assign_peak_shapes->setEnabled(true);
+    if (!(_peak_collection.numberOfPeaks() == 0))
+        _assign_peak_shapes->setEnabled(false);
 }

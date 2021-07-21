@@ -336,7 +336,6 @@ std::vector<Peak3D*> ShapeCollection::findNeighbors(
         neighbors.push_back(peak);
     }
     if (neighbors.empty()) {
-        ++_n_no_profile;
         throw std::runtime_error("Error, no neighboring profiles found.");
     }
     return neighbors;
@@ -352,11 +351,11 @@ Eigen::Matrix3d ShapeCollection::meanCovariance(
         findNeighbors(DetectorEvent(reference_peak->shape().center()), radius, nframes);
 
     if (neighbors.empty()) {
-        ++_n_lonely_peaks;
+        reference_peak->setRejectionFlag(RejectionFlag::NoNeighbours);
         throw std::runtime_error("ShapeCollection::meanCovariance(): peak has no neighbors");
     }
     if (neighbors.size() < min_neighbors) {
-        ++_n_unfriendly_peaks;
+        reference_peak->setRejectionFlag(RejectionFlag::TooFewNeighbours);
         throw std::runtime_error("ShapeCollection::meanCovariance(): peak has too few neighbors");
     }
 
@@ -386,7 +385,7 @@ Eigen::Matrix3d ShapeCollection::meanCovariance(
                 break;
             }
             default: {
-                ++_n_failed_interp;
+                reference_peak->setRejectionFlag(RejectionFlag::InterpolationFailure);
                 throw std::runtime_error("Invalid peak interpolation");
             }
         }
@@ -406,8 +405,8 @@ void ShapeCollection::setPredictedShapes(
     PeakCollection* peaks, PeakInterpolation interpolation, sptrProgressHandler handler)
 {
     nsxlog(
-        Level::Info, "predictPeaks: Computing shapes of", peaks->numberOfPeaks(),
-        "calculated peaks");
+        Level::Info, "predictPeaks: Computing shapes of ", peaks->numberOfPeaks(),
+        " calculated peaks");
 
     int count = 0;
     int npeaks = peaks->numberOfPeaks();
@@ -431,25 +430,12 @@ void ShapeCollection::setPredictedShapes(
             peak->setShape(Ellipsoid(center, cov.inverse()));
         } catch (std::exception& e) {
             peak->setSelected(false);
-            peak->setRejectionFlag(RejectionFlag::TooFewNeighbours);
         }
         if (handler) {
             double progress = ++count * 100.0 / npeaks;
             handler->setProgress(progress);
         }
     }
-    nsxlog(
-        Level::Info, "ShapeCollection::setPredictedShapes: Interpolation failed for",
-        nFailedInterp(), "peaks");
-    nsxlog(
-        Level::Info, "ShapeCollection::setPredictedShapes:", nNoProfile(),
-        "peaks with no neighbouring profiles");
-    nsxlog(
-        Level::Info, "ShapeCollection::setPredictedShapes:", nLonelyPeaks(),
-        "peaks with no neighbours");
-    nsxlog(
-        Level::Info, "ShapeCollection::setPredictedShapes:", nUnfriendlyPeaks(),
-        "peaks with too few neighbours");
 }
 
 

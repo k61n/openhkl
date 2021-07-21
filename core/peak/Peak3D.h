@@ -33,6 +33,7 @@ enum class RejectionFlag {
     OutsideDetector, // from PeakFinder
     IntegrationFailure,
     TooFewPoints,
+    NoNeighbours,
     TooFewNeighbours,
     NoUnitCell,
     NoDataSet,
