@@ -166,6 +166,11 @@ bool HDF5MetaDataReader::initRead()
         }
     }
 
+    // Update the monochromator wavelength
+    const double waveln = dataset_out->metadata().key<double>(nsx::at_wavelength);
+    _dataset_out->diffractometer()->\
+        source().selectedMonochromator().setWavelength(waveln);
+
     // TODO: npdone -> nr of frames
     _nFrames = _dataset_out->metadata()->key<int>(nsx::at_frameCount);
 
