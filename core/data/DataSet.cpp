@@ -15,7 +15,7 @@
 #include "core/data/DataSet.h"
 #include "base/parser/BloscFilter.h"
 #include "base/utils/Logger.h"
-#include "base/utils/Path.h"
+#include "base/utils/Path.h" // splitFileExtension
 #include "base/utils/ProgressHandler.h"
 #include "base/utils/Units.h" // deg
 #include "core/detector/Detector.h"
@@ -27,6 +27,8 @@
 #include "core/instrument/Sample.h"
 #include "core/instrument/Source.h"
 #include "core/raw/DataKeys.h"
+#include "core/loader/RawDataReader.h"
+
 
 #include <H5Cpp.h>
 
@@ -55,6 +57,65 @@ DataSet::DataSet(std::shared_ptr<IDataReader> reader)
 }
 
 DataSet::~DataSet() { }
+
+void DataSet::_setReader(const DataFormat dataformat, const std::string& filename) {
+    nsxlog(Level::Debug, "Initializing a DataReader for the format ", dataformat);
+
+    switch(dataformat) {
+    case DataFormat::NSX:
+        _reader.reset(new HDF5DataReader(filename, _diffractometer));
+        break;
+    case DataFormat::RAW:
+        // NOTE: RawDataReader needs a list of frame files which should be given later
+        _reader.reset(new RawDataReader("::RawDataFile::", diffractometer));
+        break;
+    case DataFormat::NEXUS:
+        _reader.reset(new NexusDataReader(filename, _diffractometer));
+        break;
+    default:
+        throw std::invalid_argument("Data format is not recognized.");
+    }
+
+    _dataformat = dataformat;
+    _reader->setDataSet(this);
+    _reader->initRead();
+}
+
+void DataSet::addDataFile(const std::string& filename, const std::string& extension) {
+{
+    // if reader not set yet, initialize a proper reader
+    if (!_reader) {
+        const std::string ext = lowerCase(extension);
+        DataFormat datafmt {DataFormat::Unknown};
+        if (ext == "nsx" || ext == "hdf") {
+            datafmt = DataFormat::NSX;
+        } else if (ext == "nxs") {
+            datafmt = DataFormat::NEXUS;
+        } else if (ext == "raw") {
+            datafmt = DataFormat::RAW;
+        }
+        _setReader(datafmt, filename);
+
+    } else {
+        throw std::runtime_error("DataReader is already set.");
+    }
+}
+
+void DataSet::addRawFrame(const std::string& rawfilename,
+                          const RawDataReaderParameters* const params) {
+    if (!_reader)
+        _setReader(DataFormat::RAW);
+
+    // prevent mixing data formats
+    if (_dataformat != DataFormat::RAW)
+        throw std::runtime_error("To read a raw frame, data format must be raw.");
+
+    RawDataReader& rawreader = *static_cast<RawDataReader*>(_reader.get());
+    if (params)
+        rawreader.setParameters(params);
+
+    rawreader.addFrame(rawfilename);
+}
 
 int DataSet::dataAt(const std::size_t x, const std::size_t y, const std::size_t z) const
 {

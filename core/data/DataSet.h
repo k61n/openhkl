@@ -20,6 +20,8 @@
 #include "core/peak/Peak3D.h"
 #include "core/raw/DataKeys.h"
 #include "core/raw/IDataReader.h"
+#include "core/data/DataTypes.h"
+
 
 namespace nsx {
 
@@ -89,6 +91,17 @@ class DataSet {
     //! Returns a reference to the MetaData container
     nsx::MetaData& metadata();
 
+    //! Add a data file for reading data. Reading frames will be done only upon request.
+    void addDataFile(const std::string& filename, const std::string& extension);
+
+    //! Add a raw file to be read as a single detector image frame. Reading frames will be done only upon request.
+    void addRawFrame(const std::string& rawfilename,
+                     const RawDataReaderParameters* const params = nullptr);
+
+
+private:
+    void DataSet::_setReader(const DataFormat dataformat, const std::string& filename);
+
  private:
     std::string _name = nsx::kw_datasetDefaultName;
     unsigned int _nFrames;
@@ -97,8 +110,11 @@ class DataSet {
     std::vector<Eigen::MatrixXi> _data;
     InstrumentStateList _states;
     std::set<IMask*> _masks;
-    std::shared_ptr<IDataReader> _reader;
     nsx::MetaData _metadata;
+    //! Current data reader (set only once)
+    std::shared_ptr<IDataReader> _reader;
+    //! Current data format (set only once)
+    DataFormat _dataformat = DataFormat::Unknown;
 };
 
 } // namespace nsx
