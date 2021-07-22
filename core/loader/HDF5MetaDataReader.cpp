@@ -171,8 +171,7 @@ bool HDF5MetaDataReader::initRead()
     _dataset_out->diffractometer()->\
         source().selectedMonochromator().setWavelength(waveln);
 
-    // TODO: npdone -> nr of frames
-    _nFrames = _dataset_out->metadata()->key<int>(nsx::at_frameCount);
+    const std::size_t nframes = _dataset_out->metadata()->key<int>(nsx::at_frameCount);
 
     nsxlog(
         nsx::Level::Debug, "Reading detector state of '", _filename, "', dataset '", dataset_name,
@@ -183,7 +182,7 @@ bool HDF5MetaDataReader::initRead()
 
     using RowMatrixXd = Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>;
 
-    RowMatrixXd dm(n_detector_gonio_axes, _nFrames);
+    RowMatrixXd dm(n_detector_gonio_axes, nframes);
     for (size_t i = 0; i < n_detector_gonio_axes; ++i) {
         const auto& axis = detector_gonio.axis(i);
         if (axis.physical()) {
@@ -198,7 +197,7 @@ bool HDF5MetaDataReader::initRead()
                 }
                 std::vector<hsize_t> dims(dim), maxdims(dim);
                 space.getSimpleExtentDims(&dims[0], &maxdims[0]);
-                if (dims[0] != _nFrames) {
+                if (dims[0] != nframes) {
                     throw std::runtime_error(
                         "Read HDF5, problem reading detector scan parameters, different "
                         "array length to number of frames");
@@ -208,7 +207,7 @@ bool HDF5MetaDataReader::initRead()
                 throw std::runtime_error("Could not read " + axis.name() + " HDF5 dataset");
             }
         } else {
-            dm.row(i) = Eigen::VectorXd::Zero(_nFrames);
+            dm.row(i) = Eigen::VectorXd::Zero(nframes);
         }
     }
 
@@ -219,15 +218,15 @@ bool HDF5MetaDataReader::initRead()
     nsxlog(
         nsx::Level::Debug, "Reading gonio state of '", _filename, "', dataset '", dataset_name, "'");
 
-    _detectorStates.resize(_nFrames);
+    _detectorStates.resize(nframes);
 
-    for (unsigned int i = 0; i < _nFrames; ++i)
+    for (unsigned int i = 0; i < nframes; ++i)
         _detectorStates[i] = eigenToVector(dm.col(i));
 
     const auto& sample_gonio = _diffractometer->sample().gonio();
     size_t n_sample_gonio_axes = sample_gonio.nAxes();
 
-    dm.resize(n_sample_gonio_axes, _nFrames);
+    dm.resize(n_sample_gonio_axes, nframes);
     for (size_t i = 0; i < n_sample_gonio_axes; ++i) {
         const auto& axis = sample_gonio.axis(i);
         if (axis.physical()) {
@@ -242,7 +241,7 @@ bool HDF5MetaDataReader::initRead()
                 }
                 std::vector<hsize_t> dims(dim), maxdims(dim);
                 space.getSimpleExtentDims(&dims[0], &maxdims[0]);
-                if (dims[0] != _nFrames) {
+                if (dims[0] != nframes) {
                     throw std::runtime_error(
                         "Read HDF5, problem reading sample scan parameters, different "
                         "array length to number of frames");
@@ -252,15 +251,15 @@ bool HDF5MetaDataReader::initRead()
                 throw std::runtime_error("Coud not read " + axis.name() + " HDF5 dataset");
             }
         } else {
-            dm.row(i) = Eigen::VectorXd::Zero(_nFrames);
+            dm.row(i) = Eigen::VectorXd::Zero(nframes);
         }
     }
 
     // Use natural units internally (rad)
     dm *= deg;
 
-    _sampleStates.resize(_nFrames);
-    for (unsigned int i = 0; i < _nFrames; ++i)
+    _sampleStates.resize(nframes);
+    for (unsigned int i = 0; i < nframes; ++i)
         _sampleStates[i] = eigenToVector(dm.col(i));
 
     nsxlog(
@@ -309,16 +308,15 @@ void HDF5MetaDataReader::open()
 
     // Gets dimensions of data
     _space->getSimpleExtentDims(dims.data(), maxdims.data());
-    _nFrames = dims[0];
-    _nRows = dims[1];
-    _nCols = dims[2];
+    const std::size_t nframes = dims[0], nrows = dims[1], ncols = dims[2];
+    dataset_out->datashape = {nframes, nrows, ncols};
 
     nsxlog(
-        nsx::Level::Info, "Data shape: (frames = ", _nFrames, ", rows = ", _nRows,
-        ", columns = ", _nCols, ")");
+        nsx::Level::Info, "Data shape: (frames = ", nframes, ", rows = ", nrows,
+        ", columns = ", ncols, ")");
 
     // Size of one hyperslab
-    const hsize_t count_1frm[3] = {1, _nRows, _nCols};
+    const hsize_t count_1frm[3] = {1, nrows, ncols};
     _memspace.reset(new H5::DataSpace(3, count_1frm, nullptr));
     _isOpened = true;
 }
