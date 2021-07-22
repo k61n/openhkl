@@ -35,10 +35,7 @@
 namespace nsx {
 
 DataSet::DataSet(const std::string& dataset_name, Diffractometer* diffractometer)
-    : _nFrames{0}
-    , _nrows{0}
-    , _ncols{0}
-    , _diffractometer{diffractometer}
+    : _diffractometer{diffractometer}
 {
     setName(dataset_name);
     if (!diffractometer)
@@ -46,15 +43,8 @@ DataSet::DataSet(const std::string& dataset_name, Diffractometer* diffractometer
 }
 
 DataSet::DataSet(std::shared_ptr<IDataReader> reader)
-    : _nFrames{0}
-    , _nrows{0}
-    , _ncols{0}
-    , _reader{std::move(reader)}
+    : _reader{std::move(reader)}
 {
-    _nrows = detector().nRows();
-    _ncols = detector().nCols();
-    _nFrames = _reader->metadata().key<int>(nsx::at_frameCount);
-
     _metadata.setMap(_reader->metadata().map());
 
     double wav = _metadata.key<double>(nsx::at_wavelength);
@@ -140,12 +130,14 @@ void DataSet::addRawFrame(const std::string& rawfilename,
 
 int DataSet::dataAt(const std::size_t x, const std::size_t y, const std::size_t z) const
 {
+    const std::size_t nframes = nFrames(), ncols = nCols(), nrows = nRows();
     // Check that the voxel is inside the limit of the data
-    if (z >= _nFrames || y >= _ncols || x >= _nrows) {
+    if (z >= nframes || y >= ncols || x >= nrows) {
         throw std::runtime_error
-        ("DataSet '" + _name + "': "
-         + "Out-of-bound access (x = " + std::to_string(x) + ", "
-         + "y = " + std::to_string(y) + ", z = " + std::to_string(z)
+        ("DataSet '" + _name + "': Out-of-bound access ("
+         + "x = " + std::to_string(x) + "/" + std::to_string(nrows)
+         + ", y = " + std::to_string(y) + "/" + std::to_string(ncols)
+         + ", z = " + std::to_string(z) + "/" + std::to_string(nframes)
          + ")");
     }
 
@@ -167,19 +159,22 @@ void DataSet::close()
     _reader->close();
 }
 
+inline
 std::size_t DataSet::nFrames() const
 {
-    return _nFrames;
+    return metadata().key<int>(nsx::at_frameCount);
 }
 
+inline
 std::size_t DataSet::nCols() const
 {
-    return _ncols;
+    return detector().nCols();
 }
 
+inline
 std::size_t DataSet::nRows() const
 {
-    return _nrows;
+    return detector().nRows();
 }
 
 const InstrumentStateList& DataSet::instrumentStates() const
@@ -279,11 +274,13 @@ std::string DataSet::name() const
     throw std::runtime_error("DataSet has no name yet");
 }
 
+inline
 const nsx::MetaData& DataSet::metadata() const
 {
     return _metadata;
 }
 
+inline
 nsx::MetaData& DataSet::metadata()
 {
     return _metadata;

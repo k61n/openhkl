@@ -104,9 +104,6 @@ private:
 
  private:
     std::string _name = nsx::kw_datasetDefaultName;
-    unsigned int _nFrames;
-    unsigned int _nrows;
-    unsigned int _ncols;
     std::vector<Eigen::MatrixXi> _data;
     InstrumentStateList _states;
     std::set<IMask*> _masks;
