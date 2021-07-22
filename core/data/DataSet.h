@@ -98,6 +98,9 @@ class DataSet {
     void addRawFrame(const std::string& rawfilename,
                      const RawDataReaderParameters* const params = nullptr);
 
+    //! Finish reading procedure (must be called before using the data stored in the DataSet).
+    void finishRead();
+
     //! Query the wavelength stored in the metadata
     double wavelength() const;
 

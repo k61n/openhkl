@@ -91,11 +91,6 @@ void RawDataReader::open() { }
 
 void RawDataReader::close() { }
 
-void RawDataReader::end()
-{
-    _dataset_out->metadata.add<int>(nsx::at_frameCount, int(_filenames.size()));
-}
-
 const RawDataReaderParameters& RawDataReader::parameters() const
 {
     return _parameters;

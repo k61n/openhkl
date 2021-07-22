@@ -85,6 +85,15 @@ void DataSet::_setReader(const DataFormat dataformat, const std::string& filenam
     _dataformat = dataformat;
     _reader->setDataSet(this);
     _reader->initRead();
+}
+
+void DataSet::finishRead()
+{
+    if (!_reader)
+        throw std::invalid_argument("DataSet '" + name() + "': Data reader is not set.");
+
+    if (!diffractometer())
+        throw std::invalid_argument("DataSet '" + name() + "': Diffractometer is not set.");
 
     // Update the monochromator wavelength
     diffractometer()->source().selectedMonochromator().setWavelength(wavelength());

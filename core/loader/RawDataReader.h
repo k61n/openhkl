@@ -53,9 +53,6 @@ class RawDataReader : public IDataReader {
 
     void addFrame(const std::string& filename);
 
-    //! All frames are added, update the parameters
-    void end();
-
     //! Open the file(s)
     void open() final;
 
