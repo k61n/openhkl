@@ -40,6 +40,11 @@ DataSet::DataSet(const std::string& dataset_name, Diffractometer* diffractometer
     setName(dataset_name);
     if (!diffractometer)
         nsxlog(Level::Warning, "DataSet '", dataset_name, "' has no diffractometer.");
+    if (_diffractometer && _diffractometer->detector()) {
+        datashape[0] = 0;
+        datashape[1] = nRows();
+        datashape[2] = nCols();
+    }
 }
 
 DataSet::DataSet(std::shared_ptr<IDataReader> reader)

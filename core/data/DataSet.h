@@ -114,6 +114,10 @@ private:
     std::shared_ptr<IDataReader> _reader;
     //! Current data format (set only once)
     DataFormat _dataformat = DataFormat::Unknown;
+
+public:
+    //! Data shape (frames, rows, columns)
+    std::size_t datashape[3] {0, 0, 0};
 };
 
 } // namespace nsx
