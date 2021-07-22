@@ -27,6 +27,8 @@ std::string join(const std::vector<std::string>& tokens, std::string delimiter =
 
 std::vector<std::string> split(const std::string& input_string, const std::string& delimiter = " ");
 
+std::string lowerCase(const std::string& str_in);
+
 } // namespace nsx
 
 #endif // NSX_BASE_UTILS_STRINGIO_H
