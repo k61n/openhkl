@@ -22,11 +22,12 @@
 #include "core/raw/IDataReader.h"
 #include "core/data/DataTypes.h"
 
-
 namespace nsx {
 
 class Detector;
 class DetectorEvent;
+class Diffractometer;
+class RawDataReaderParameters;
 
 //! Class used to manage loading detector images and metadata from disk.
 //!
@@ -37,15 +38,15 @@ class DataSet {
     friend class UnitTest_DataSet;
 
  public:
-    DataSet() = delete;
-    DataSet(std::shared_ptr<IDataReader> reader);
+    DataSet(const std::string& dataset_name, Diffractometer* diffractometer);
     ~DataSet();
 
+    DataSet() = delete;
     DataSet(const DataSet& other) = delete;
     DataSet& operator=(const DataSet& other) = delete;
 
+    //! Number of detector image frames acquired so far
     std::size_t nFrames() const;
-
     std::size_t nRows() const; //!< The number of rows in each detector image
     std::size_t nCols() const; //!< The number of columns in each detector image
 
@@ -80,10 +81,20 @@ class DataSet {
     const IDataReader* reader() const;
     IDataReader* reader();
 
+    //! Returns the diffractometer associated to this dataset
+    const Diffractometer* diffractometer() const;
+
+    //! Returns the diffractometer associated to this dataset
+    Diffractometer* diffractometer();
+
+    //! Returns the detector associated to this dataset
+    Detector& detector();
+
+    //! Returns the detector associated to this dataset
     const Detector& detector() const;
 
     std::string name() const;
-    void setName(std::string name);
+    void setName(const std::string& name);
 
     //! Returns a const reference to the MetaData container
     const nsx::MetaData& metadata() const;
@@ -94,9 +105,11 @@ class DataSet {
     //! Add a data file for reading data. Reading frames will be done only upon request.
     void addDataFile(const std::string& filename, const std::string& extension);
 
+    //! Set the parameters for the raw-data reader.
+    void setRawReaderParameters(const RawDataReaderParameters& params);
+
     //! Add a raw file to be read as a single detector image frame. Reading frames will be done only upon request.
-    void addRawFrame(const std::string& rawfilename,
-                     const RawDataReaderParameters* const params = nullptr);
+    void addRawFrame(const std::string& rawfilename);
 
     //! Finish reading procedure (must be called before using the data stored in the DataSet).
     void finishRead();
@@ -105,7 +118,7 @@ class DataSet {
     double wavelength() const;
 
 private:
-    void DataSet::_setReader(const DataFormat dataformat, const std::string& filename);
+    void _setReader(const DataFormat dataformat, const std::string& filename = "");
 
  private:
     std::string _name = nsx::kw_datasetDefaultName;
@@ -117,6 +130,8 @@ private:
     std::shared_ptr<IDataReader> _reader;
     //! Current data format (set only once)
     DataFormat _dataformat = DataFormat::Unknown;
+    //! Pointer to the Diffractometer
+    Diffractometer* _diffractometer;
 
 public:
     //! Data shape (frames, rows, columns)

@@ -16,6 +16,7 @@
 #include "base/parser/BloscFilter.h"
 #include "base/utils/Logger.h"
 #include "base/utils/Path.h" // splitFileExtension
+#include "base/utils/StringIO.h" // lowerCase
 #include "base/utils/ProgressHandler.h"
 #include "base/utils/Units.h" // deg
 #include "core/detector/Detector.h"
@@ -28,6 +29,8 @@
 #include "core/instrument/Source.h"
 #include "core/raw/DataKeys.h"
 #include "core/loader/RawDataReader.h"
+#include "core/loader/HDF5DataReader.h"
+#include "core/loader/NexusDataReader.h"
 
 
 #include <H5Cpp.h>
@@ -47,36 +50,22 @@ DataSet::DataSet(const std::string& dataset_name, Diffractometer* diffractometer
     }
 }
 
-DataSet::DataSet(std::shared_ptr<IDataReader> reader)
-    : _reader{std::move(reader)}
-{
-    _metadata.setMap(_reader->metadata().map());
-
-    double wav = _metadata.key<double>(nsx::at_wavelength);
-    _reader->diffractometer()->source().selectedMonochromator().setWavelength(wav);
-
-    // Getting Scan parameters for the detector
-    _states.reserve(_nFrames);
-
-    for (unsigned int i = 0; i < _nFrames; ++i)
-        _states.push_back(_reader->state(i));
-}
-
 DataSet::~DataSet() { }
 
 void DataSet::_setReader(const DataFormat dataformat, const std::string& filename) {
-    nsxlog(Level::Debug, "Initializing a DataReader for the format ", dataformat);
+    nsxlog(Level::Debug, "Initializing a DataReader for the format ",
+           static_cast<int>(dataformat));
 
     switch(dataformat) {
     case DataFormat::NSX:
         _reader.reset(new HDF5DataReader(filename, _diffractometer));
         break;
-    case DataFormat::RAW:
-        // NOTE: RawDataReader needs a list of frame files which should be given later
-        _reader.reset(new RawDataReader("::RawDataFile::", diffractometer));
-        break;
     case DataFormat::NEXUS:
         _reader.reset(new NexusDataReader(filename, _diffractometer));
+        break;
+    case DataFormat::RAW:
+        // NOTE: RawDataReader needs a list of frame files which should be given later
+        _reader.reset(new RawDataReader("::RawDataFile::", _diffractometer));
         break;
     default:
         throw std::invalid_argument("Data format is not recognized.");
@@ -90,10 +79,10 @@ void DataSet::_setReader(const DataFormat dataformat, const std::string& filenam
 void DataSet::finishRead()
 {
     if (!_reader)
-        throw std::invalid_argument("DataSet '" + name() + "': Data reader is not set.");
+        throw std::invalid_argument("DataSet '" + _name + "': Data reader is not set.");
 
     if (!diffractometer())
-        throw std::invalid_argument("DataSet '" + name() + "': Diffractometer is not set.");
+        throw std::invalid_argument("DataSet '" + _name + "': Diffractometer is not set.");
 
     // Update the monochromator wavelength
     diffractometer()->source().selectedMonochromator().setWavelength(wavelength());
@@ -106,38 +95,59 @@ void DataSet::finishRead()
         _states.push_back(_reader->state(i));
 }
 
-void DataSet::addDataFile(const std::string& filename, const std::string& extension) {
+void DataSet::addDataFile(const std::string& filename, const std::string& extension)
 {
+    DataFormat datafmt {DataFormat::Unknown};
+
     // if reader not set yet, initialize a proper reader
     if (!_reader) {
         const std::string ext = lowerCase(extension);
-        DataFormat datafmt {DataFormat::Unknown};
-        if (ext == "nsx" || ext == "hdf") {
+
+        if (ext == "nsx" || ext == "hdf")
             datafmt = DataFormat::NSX;
-        } else if (ext == "nxs") {
+        else if (ext == "nxs")
             datafmt = DataFormat::NEXUS;
-        } else if (ext == "raw") {
-            datafmt = DataFormat::RAW;
-        }
-        _setReader(datafmt, filename);
+        else if (ext == "raw")
+            throw std::runtime_error("DataSet '" + _name + "': Use 'addRawFrame(<filename>)' for reading raw files.");
+        else
+            throw std::runtime_error("DataSet '" + _name + "': Extension unknown.");
 
     } else {
-        throw std::runtime_error("DataReader is already set.");
+        throw std::runtime_error("DataSet '" + _name + "': DataReader is already set.");
     }
+
+    _setReader(datafmt, filename);
 }
 
-void DataSet::addRawFrame(const std::string& rawfilename,
-                          const RawDataReaderParameters* const params) {
+void DataSet::setRawReaderParameters(const RawDataReaderParameters& params)
+{
+    // if data-format is not set, then set it to raw.
+    if (_dataformat == DataFormat::Unknown)
+        _dataformat = DataFormat::RAW;
+
+    // prevent mixing data formats
+    if (_dataformat != DataFormat::RAW)
+        throw std::runtime_error("DataSet '" + _name + "': Cannot set raw parameters since data format is not raw.");
+
+    if (!_reader)
+        _setReader(DataFormat::RAW);
+
+    RawDataReader& rawreader = *static_cast<RawDataReader*>(_reader.get());
+    rawreader.setParameters(params);
+
+    nsxlog(Level::Info, "DataSet '" + _name + "': RawDataReader parameters set.");  // TODO: log parameter details
+}
+
+void DataSet::addRawFrame(const std::string& rawfilename)
+{
     if (!_reader)
         _setReader(DataFormat::RAW);
 
     // prevent mixing data formats
     if (_dataformat != DataFormat::RAW)
-        throw std::runtime_error("To read a raw frame, data format must be raw.");
+        throw std::runtime_error("DataSet '" + _name + "': To read a raw frame, data format must be raw.");
 
     RawDataReader& rawreader = *static_cast<RawDataReader*>(_reader.get());
-    if (params)
-        rawreader.setParameters(params);
 
     rawreader.addFrame(rawfilename);
 }
@@ -173,25 +183,21 @@ void DataSet::close()
     _reader->close();
 }
 
-inline
 std::size_t DataSet::nFrames() const
 {
     return metadata().key<int>(nsx::at_frameCount);
 }
 
-inline
 std::size_t DataSet::nCols() const
 {
     return detector().nCols();
 }
 
-inline
 std::size_t DataSet::nRows() const
 {
     return detector().nRows();
 }
 
-inline
 double DataSet::wavelength() const
 {
     return _metadata.key<double>(nsx::at_wavelength);
@@ -272,16 +278,21 @@ const Detector& DataSet::detector() const
     return *_reader->diffractometer()->detector();
 }
 
-void DataSet::setName(const std::string name)
+void DataSet::setName(const std::string& name)
 {
-    if (name.empty())
+    if (name.empty()) {
+        nsxlog(Level::Warning, "Given name for the DataSet is empty.");
         return;
+    }
 
     const std::string invalid_chars{"\\/"};
     const std::size_t sep = name.find_first_of(invalid_chars);
-    if (sep != std::string::npos)
+    if (sep != std::string::npos) {
+        nsxlog(Level::Warning, "Given name, '", name, "' for the DataSet includes disallowed characters.");
         throw std::invalid_argument(
-            "DataSet name '" + name + "' must not include the characters " + invalid_chars);
+            "DataSet name '" + name + "' "
+            + "must not include the characters " + invalid_chars);
+    }
 
     _name = name;
 }
@@ -294,13 +305,11 @@ std::string DataSet::name() const
     throw std::runtime_error("DataSet has no name yet");
 }
 
-inline
 const nsx::MetaData& DataSet::metadata() const
 {
     return _metadata;
 }
 
-inline
 nsx::MetaData& DataSet::metadata()
 {
     return _metadata;
