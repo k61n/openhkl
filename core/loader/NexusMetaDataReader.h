@@ -25,9 +25,12 @@ namespace nsx {
 
 class NexusMetaDataReader : public IDataReader {
  public:
+
+    NexusMetaDataReader(const std::string& filename, Diffractometer* diffractometer);
+    bool initRead();
+
     NexusMetaDataReader() = delete;
     NexusMetaDataReader(const NexusMetaDataReader& other) = delete;
-    NexusMetaDataReader(const std::string& filename, Diffractometer* diffractometer);
     ~NexusMetaDataReader() override = default;
 
     NexusMetaDataReader& operator=(const NexusMetaDataReader& other) = delete;

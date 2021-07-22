@@ -17,6 +17,7 @@
 
 #include "core/raw/IDataReader.h" // inherits from
 #include "core/raw/DataKeys.h"
+#include "core/data/DataSet.h"
 
 namespace nsx {
 
@@ -78,7 +79,7 @@ class RawDataReader : public IDataReader {
 
     RawDataReaderParameters _parameters;
 
-    size_t _length;
+    std::size_t _length = 0;
 
     std::vector<char> _data;
 };
@@ -86,16 +87,18 @@ class RawDataReader : public IDataReader {
 template <typename T_>
 Eigen::Matrix<T_, Eigen::Dynamic, Eigen::Dynamic> RawDataReader::matrixFromData() const
 {
-    assert(sizeof(T_) * _nRows * _nCols == _length);
+    const std::size_t nrows = _dataset_out->nRows(), ncols = _dataset_out->nCols();
+
+    assert(sizeof(T_) * nrows * ncols == _length);
 
     if (_parameters.row_major) {
         Eigen::Matrix<T_, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor> frame;
-        frame.resize(_nRows, _nCols);
+        frame.resize(nrows, ncols);
         memcpy(&frame(0, 0), &_data[0], _length);
         return frame;
     } else {
         Eigen::Matrix<T_, Eigen::Dynamic, Eigen::Dynamic, Eigen::ColMajor> frame;
-        frame.resize(_nRows, _nCols);
+        frame.resize(nrows, ncols);
         memcpy(&frame(0, 0), &_data[0], _length);
         return frame;
     }

@@ -22,6 +22,7 @@
 #include "core/instrument/Sample.h"
 #include "core/instrument/Source.h"
 #include "core/raw/DataKeys.h"
+#include "core/data/DataSet.h"
 
 #include <cassert>
 #include <stdexcept>
@@ -29,30 +30,24 @@
 namespace nsx {
 
 IDataReader::IDataReader(const std::string& filename, Diffractometer* diffractometer)
-    : _diffractometer(diffractometer)
-    , _nFrames(0)
-    , _nRows(0)
-    , _nCols(0)
-    , _sampleStates()
+    : _sampleStates()
     , _detectorStates()
     , _isOpened(false)
     , _filename(filename)
 {
-
-    _nRows = _diffractometer->detector()->nRows();
-    _nCols = _diffractometer->detector()->nCols();
 }
 
 IDataReader::~IDataReader() = default;
 
 bool IDataReader::initRead()
 {
-    if(!_diffractometer) {
-        throw std::runtime_error("RawDataReader: No Diffractometer available.");
-    }
 
     if(!_dataset_out) {
         throw std::runtime_error("RawDataReader: No DataSet available for output.");
+    }
+
+    if(!_dataset_out->diffractometer()) {
+        throw std::runtime_error("RawDataReader: No Diffractometer available.");
     }
 
     // Ensure that there is at least one monochromator
@@ -66,40 +61,16 @@ bool IDataReader::initRead()
     return true;
 }
 
-size_t IDataReader::nFrames() const
-{
-    return _nFrames;
-}
-
-size_t IDataReader::nCols() const
-{
-    return _nCols;
-}
-
-size_t IDataReader::nRows() const
-{
-    return _nRows;
-}
-
-const Diffractometer* IDataReader::diffractometer() const
-{
-    return _diffractometer;
-}
-
-Diffractometer* IDataReader::diffractometer()
-{
-    return _diffractometer;
-}
-
 InstrumentState IDataReader::state(size_t frame) const
 {
-    assert(frame < _nFrames);
+    assert(frame < _dataset_out->nFrames());
 
-    InstrumentState state(_diffractometer);
+    Diffractometer* diffractometer = _dataset_out->diffractometer();
+    InstrumentState state(diffractometer);
 
     // compute transformations
-    const auto& detector_gonio = _diffractometer->detector()->gonio();
-    const auto& sample_gonio = _diffractometer->sample().gonio();
+    const auto& detector_gonio = diffractometer->detector()->gonio();
+    const auto& sample_gonio = diffractometer->sample().gonio();
 
     Eigen::Transform<double, 3, Eigen::Affine> detector_trans =
         detector_gonio.affineMatrix(_detectorStates[frame]);
@@ -112,9 +83,9 @@ InstrumentState IDataReader::state(size_t frame) const
     state.detectorPositionOffset = detector_trans.translation();
     state.samplePosition = sample_trans.translation();
 
-    state.ni = _diffractometer->source().selectedMonochromator().ki().rowVector();
+    state.ni = diffractometer->source().selectedMonochromator().ki().rowVector();
     state.ni.normalize();
-    state.wavelength = _diffractometer->source().selectedMonochromator().wavelength();
+    state.wavelength = diffractometer->source().selectedMonochromator().wavelength();
 
     return state;
 }

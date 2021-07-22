@@ -41,7 +41,7 @@ DataSet::DataSet(const std::string& dataset_name, Diffractometer* diffractometer
     : _diffractometer{diffractometer}
 {
     setName(dataset_name);
-    if (!diffractometer)
+    if (!_diffractometer)
         nsxlog(Level::Warning, "DataSet '", dataset_name, "' has no diffractometer.");
     if (_diffractometer && _diffractometer->detector()) {
         datashape[0] = 0;
@@ -273,9 +273,24 @@ IDataReader* DataSet::reader()
     return _reader.get();
 }
 
+const Diffractometer* DataSet::diffractometer() const
+{
+    return _diffractometer;
+}
+
+Diffractometer* DataSet::diffractometer()
+{
+    return _diffractometer;
+}
+
+Detector& DataSet::detector()
+{
+    return *(_diffractometer->detector());
+}
+
 const Detector& DataSet::detector() const
 {
-    return *_reader->diffractometer()->detector();
+    return *(_diffractometer->detector());
 }
 
 void DataSet::setName(const std::string& name)

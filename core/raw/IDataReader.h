@@ -57,21 +57,6 @@ class IDataReader {
     //! Returns the list of detector states associated to the detecot images
     const std::vector<std::vector<double>>& detectorStates() const;
 
-    //! Returns number of detector images
-    size_t nFrames() const;
-
-    //! Returns number of columns in each detector image
-    size_t nCols() const;
-
-    //! Returns number of rows in each detector image
-    size_t nRows() const;
-
-    //! Returns a const pointer to the diffractometer bound to the data
-    const Diffractometer* diffractometer() const;
-
-    //! Returns a pointer to the diffractometer bound to the data
-    Diffractometer* diffractometer();
-
     //! True if file is open
     bool isOpened() const;
 
@@ -87,19 +72,6 @@ class IDataReader {
     IDataReader(const IDataReader& other) = delete;
 
     IDataReader& operator=(const IDataReader& other) = delete;
-
-    //! A pointer to the diffractometer. The actual resource is not owned by this
-    //! object which is just a borrower.
-    Diffractometer* _diffractometer;
-
-    //! Number of frames of data
-    std::size_t _nFrames;
-
-    //! Number of rows
-    std::size_t _nRows;
-
-    //! Number of columns
-    std::size_t _nCols;
 
     //! Vector of sample states
     std::vector<std::vector<double>> _sampleStates;

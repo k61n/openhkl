@@ -22,6 +22,7 @@
 #include "core/instrument/Diffractometer.h"
 #include "core/instrument/Sample.h"
 #include "core/raw/DataKeys.h"
+#include "core/data/DataSet.h"
 
 #include <stdexcept>
 #include <string>
@@ -122,13 +123,13 @@ bool HDF5MetaDataReader::initRead()
         }
 
         // store the attributes in the metadata
-        _dataset_out->metadata()->add<std::string>(
+        _dataset_out->metadata().add<std::string>(
             nsx::at_experiment,
             experiment_name.empty() ? nsx::kw_experimentDefaultName : experiment_name);
-        _dataset_out->metadata()->add<std::string>(
+        _dataset_out->metadata().add<std::string>(
             nsx::at_diffractometer,
             diffractometer_name.empty() ? nsx::kw_diffractometerDefaultName : diffractometer_name);
-        _dataset_out->metadata()->add<std::string>(nsx::at_formatVersion, version_str);
+        _dataset_out->metadata().add<std::string>(nsx::at_formatVersion, version_str);
 
     } catch (H5::Exception& e) {
         std::string what = e.getDetailMsg();
@@ -151,33 +152,33 @@ bool HDF5MetaDataReader::initRead()
             // TODO: check if this is still needed
             // override stored filename with the current one
             if (key == "filename" || key == "file_name") {
-                _dataset_out->metadata()->add<std::string>(nsx::at_datasetSources, value);
+                _dataset_out->metadata().add<std::string>(nsx::at_datasetSources, value);
                 value = _filename;
             }
-            _dataset_out->metadata()->add<std::string>(key, value);
+            _dataset_out->metadata().add<std::string>(key, value);
         } else if (typ == H5::PredType::NATIVE_INT32) {
             int value;
             attr.read(typ, &value);
-            _dataset_out->metadata()->add<int>(key, value);
+            _dataset_out->metadata().add<int>(key, value);
         } else if (typ == H5::PredType::NATIVE_DOUBLE) {
             double value;
             attr.read(typ, &value);
-            _dataset_out->metadata()->add<double>(key, value);
+            _dataset_out->metadata().add<double>(key, value);
         }
     }
 
     // Update the monochromator wavelength
-    const double waveln = dataset_out->metadata().key<double>(nsx::at_wavelength);
+    const double waveln = _dataset_out->metadata().key<double>(nsx::at_wavelength);
     _dataset_out->diffractometer()->\
         source().selectedMonochromator().setWavelength(waveln);
 
-    const std::size_t nframes = _dataset_out->metadata()->key<int>(nsx::at_frameCount);
+    const std::size_t nframes = _dataset_out->metadata().key<int>(nsx::at_frameCount);
 
     nsxlog(
         nsx::Level::Debug, "Reading detector state of '", _filename, "', dataset '", dataset_name,
         "'");
 
-    const auto& detector_gonio = _diffractometer->detector()->gonio();
+    const auto& detector_gonio = _dataset_out->diffractometer()->detector()->gonio();
     size_t n_detector_gonio_axes = detector_gonio.nAxes();
 
     using RowMatrixXd = Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>;
@@ -223,7 +224,7 @@ bool HDF5MetaDataReader::initRead()
     for (unsigned int i = 0; i < nframes; ++i)
         _detectorStates[i] = eigenToVector(dm.col(i));
 
-    const auto& sample_gonio = _diffractometer->sample().gonio();
+    const auto& sample_gonio = _dataset_out->diffractometer()->sample().gonio();
     size_t n_sample_gonio_axes = sample_gonio.nAxes();
 
     dm.resize(n_sample_gonio_axes, nframes);
@@ -309,7 +310,9 @@ void HDF5MetaDataReader::open()
     // Gets dimensions of data
     _space->getSimpleExtentDims(dims.data(), maxdims.data());
     const std::size_t nframes = dims[0], nrows = dims[1], ncols = dims[2];
-    dataset_out->datashape = {nframes, nrows, ncols};
+    _dataset_out->datashape[0] = nframes;
+    _dataset_out->datashape[1] = nrows;
+    _dataset_out->datashape[2] = ncols;
 
     nsxlog(
         nsx::Level::Info, "Data shape: (frames = ", nframes, ", rows = ", nrows,

@@ -15,6 +15,7 @@
 #include "core/loader/HDF5DataReader.h"
 
 #include "base/utils/Logger.h"
+#include "core/data/DataSet.h"
 
 #include <Eigen/Dense>
 #include <H5Cpp.h>
@@ -33,18 +34,25 @@ Eigen::MatrixXi HDF5DataReader::data(std::size_t frame)
 {
     nsxlog(nsx::Level::Debug, __FUNCTION__, ": Reading data in frame nr. ", frame);
 
-    // NOTE: `this->` is needed due to C++ two-phase name lookup mechanism
+    const std::size_t nframes = _dataset_out->nFrames(),
+        nrows = _dataset_out->nRows(),
+        ncols = _dataset_out->nCols();
+
+    if (frame >= nframes)
+        throw std::range_error("Frame index " + std::to_string(frame)
+                               + " is out of bounds (" + std::to_string(nframes) + ")");
 
     // Open HDF5 file (does nothing if already opened)
-    this->open();
+    open();
 
     // HDF5 specification requires row-major storage
     using RowMatrixXi = Eigen::Matrix<int, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>;
-    RowMatrixXi m(this->_nRows, this->_nCols);
-    const hsize_t count_1frm[3] = {1, this->_nRows, this->_nCols}; // a single frame
+
+    RowMatrixXi m(nrows, ncols);
+    const hsize_t count_1frm[3] = {1, nrows, ncols}; // a single frame
     const hsize_t offset[3] = {frame, 0, 0};
-    this->_space->selectHyperslab(H5S_SELECT_SET, count_1frm, offset);
-    this->_dataset->read(m.data(), H5::PredType::NATIVE_INT32, *(this->_memspace), *(this->_space));
+    _space->selectHyperslab(H5S_SELECT_SET, count_1frm, offset);
+    _dataset->read(m.data(), H5::PredType::NATIVE_INT32, *_memspace, *_space);
     // return copy as MatrixXi (col-major)
     return Eigen::MatrixXi(m);
 }
