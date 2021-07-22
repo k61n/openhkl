@@ -36,7 +36,7 @@ class HDF5MetaDataReader : public IDataReader {
 
     HDF5MetaDataReader(
         const std::string& filename, Diffractometer* diffractometer,
-        std::string dataset_name = nsx::kw_datasetDefaultName);
+        std::string dataset_name_ = nsx::kw_datasetDefaultName);
 
     ~HDF5MetaDataReader() = default;
 
@@ -49,9 +49,6 @@ class HDF5MetaDataReader : public IDataReader {
     virtual bool initRead() override;
 
  protected:
-    //! Name of the DataSet
-    std::string _dataset_name;
-
     std::unique_ptr<H5::H5File> _file;
 
     std::unique_ptr<H5::DataSet> _dataset;
