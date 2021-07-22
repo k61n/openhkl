@@ -34,6 +34,17 @@
 
 namespace nsx {
 
+DataSet::DataSet(const std::string& dataset_name, Diffractometer* diffractometer)
+    : _nFrames{0}
+    , _nrows{0}
+    , _ncols{0}
+    , _diffractometer{diffractometer}
+{
+    setName(dataset_name);
+    if (!diffractometer)
+        nsxlog(Level::Warning, "DataSet '", dataset_name, "' has no diffractometer.");
+}
+
 DataSet::DataSet(std::shared_ptr<IDataReader> reader)
     : _nFrames{0}
     , _nrows{0}
@@ -79,6 +90,16 @@ void DataSet::_setReader(const DataFormat dataformat, const std::string& filenam
     _dataformat = dataformat;
     _reader->setDataSet(this);
     _reader->initRead();
+
+    // Update the monochromator wavelength
+    diffractometer()->source().selectedMonochromator().setWavelength(wavelength());
+
+    // Compute the instrument states for all frames
+    const std::size_t nframes = nFrames();
+    _states.reserve(nframes);
+
+    for (unsigned int i = 0; i < nframes; ++i)
+        _states.push_back(_reader->state(i));
 }
 
 void DataSet::addDataFile(const std::string& filename, const std::string& extension) {
