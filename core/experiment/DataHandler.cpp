@@ -23,12 +23,15 @@
 namespace nsx {
 
 DataHandler::DataHandler(const std::string& experiment_name, const std::string& diffractometerName)
+    : _experiment_name{experiment_name}
 {
-    _diffractometer = nullptr;
-    if (!(diffractometerName == nsx::kw_diffractometerDefaultName))
+    if (diffractometerName == nsx::kw_diffractometerDefaultName) {
+        nsxlog(Level::Warning,
+               "DataHandler: Diffractometer is not set for the experiment '"
+               + experiment_name + "'");
+    } else {
         _diffractometer.reset(Diffractometer::create(diffractometerName));
-
-    _experiment_name = experiment_name;
+    }
 }
 
 Diffractometer* DataHandler::getDiffractometer()
