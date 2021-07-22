@@ -223,7 +223,7 @@ void PeakItemGraphic::plot(SXPlot* plot)
     const Eigen::Vector3d c = _peak->shape().center();
     const nsx::InterpolatedState state = _peak->dataSet()->instrumentStates().interpolate(c[2]);
     const nsx::DirectVector position =
-        _peak->dataSet()->reader()->diffractometer()->detector()->pixelPosition(c[0], c[1]);
+        _peak->dataSet()->diffractometer()->detector()->pixelPosition(c[0], c[1]);
     const double g = state.gamma(position) / nsx::deg;
     const double n = state.nu(position) / nsx::deg;
     info += " " + QString(QChar(0x03B3)) + "," + QString(QChar(0x03BD)) + ":"

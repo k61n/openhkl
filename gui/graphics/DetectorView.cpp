@@ -76,7 +76,7 @@ void DetectorView::fitScene()
 
 void DetectorView::fixDetectorAspectRatio(bool value)
 {
-    const nsx::Detector* detector = _scene->getData()->reader()->diffractometer()->detector();
+    const nsx::Detector* detector = _scene->getData()->diffractometer()->detector();
 
     if (value) {
         int h = this->height();

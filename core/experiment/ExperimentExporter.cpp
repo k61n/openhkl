@@ -73,7 +73,7 @@ void writeDetectorState(
     Eigen::VectorXd values(n_frames);
 
     const statesVec& detectorStates = dataset->reader()->detectorStates();
-    const nsx::Gonio& detector_gonio = dataset->reader()->diffractometer()->detector()->gonio();
+    const nsx::Gonio& detector_gonio = dataset->diffractometer()->detector()->gonio();
     const std::size_t n_detector_gonio_axes = detector_gonio.nAxes();
     for (std::size_t i_axis = 0; i_axis < n_detector_gonio_axes; ++i_axis) {
         for (std::size_t i_frame = 0; i_frame < n_frames; ++i_frame)
@@ -97,7 +97,7 @@ void writeSampleState(
     const H5::DataSpace scanSpace(1, nf);
     const H5::DataType stateValueType{H5::PredType::NATIVE_DOUBLE};
     const statesVec& sampleStates = dataset->reader()->sampleStates();
-    const nsx::Gonio& sample_gonio = dataset->reader()->diffractometer()->sample().gonio();
+    const nsx::Gonio& sample_gonio = dataset->diffractometer()->sample().gonio();
     std::size_t n_sample_gonio_axes = sample_gonio.nAxes();
 
     file.createGroup(sampleKey);

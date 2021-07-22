@@ -40,7 +40,7 @@ void CutSliceItem::plot(SXPlot* plot)
         return;
 
     nsx::sptrDataSet data = detPtr->getData();
-    const nsx::Detector* det = data->reader()->diffractometer()->detector();
+    const nsx::Detector* det = data->diffractometer()->detector();
 
     int nrows = det->nRows();
     int ncols = det->nCols();

@@ -79,7 +79,7 @@ void Predictor::predictPeaks(
     _predicted_peaks.clear();
 
     // Generate the Miller indices found in the [dmin,dmax] shell
-    const auto& mono = data->reader()->diffractometer()->source().selectedMonochromator();
+    const auto& mono = data->diffractometer()->source().selectedMonochromator();
 
     const double wavelength = mono.wavelength();
 
