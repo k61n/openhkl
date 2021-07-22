@@ -177,6 +177,12 @@ std::size_t DataSet::nRows() const
     return detector().nRows();
 }
 
+inline
+double DataSet::wavelength() const
+{
+    return _metadata.key<double>(nsx::at_wavelength);
+}
+
 const InstrumentStateList& DataSet::instrumentStates() const
 {
     return _states;
