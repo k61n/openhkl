@@ -397,6 +397,7 @@ void SubframeMergedPeaks::refreshPeakCombos()
     }
     _peaks2_drop->blockSignals(false);
 
+    // Determine the maximum frame number for the frame spinboxes
     if (!(_exp_drop->count() == 0) && !(_peaks1_drop->count() == 0)) {
         auto* expt = gSession->experimentAt(_exp_drop->currentIndex())->experiment();
         auto* peaks1 = expt->getPeakCollection(_peaks1_drop->currentText().toStdString());
@@ -410,7 +411,7 @@ void SubframeMergedPeaks::refreshPeakCombos()
 
         _frame_min->setMaximum(max_frames);
         _frame_max->setMaximum(max_frames);
-        if (!_frame_set) {
+        if (!_frame_set) { // only set the values the first time
             _frame_min->setValue(1);
             _frame_max->setValue(max_frames);
             _frame_set = true;
