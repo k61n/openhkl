@@ -237,7 +237,7 @@ void PeakItemGraphic::plot(SXPlot* plot)
         + " (" + QString::number(sI, 'f', 2) + ")\n";
 
     const double scale = _peak->scale();
-    const double monitor = _peak->dataSet()->reader()->metadata().key<double>(nsx::at_monitorSum);
+    const double monitor = _peak->dataSet()->metadata().key<double>(nsx::at_monitorSum);
     info += "Monitor " + QString::number(monitor * scale) + " counts";
     QCPTextElement* title = dynamic_cast<QCPTextElement*>(p->plotLayout()->element(0, 0));
     if (title != nullptr)

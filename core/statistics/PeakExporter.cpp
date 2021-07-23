@@ -159,7 +159,7 @@ void PeakExporter::saveToFullProfUnmerged(const std::string& filename, nsx::Merg
     }
 
     std::shared_ptr<nsx::DataSet> data = peak_vector.at(0)->dataSet();
-    double wavelength = data->reader()->metadata().key<double>(nsx::at_wavelength);
+    double wavelength = data->metadata().key<double>(nsx::at_wavelength);
     file << std::fixed << std::setw(8) << std::setprecision(3) << wavelength;
     file << " 0 0" << std::endl;
 
@@ -199,7 +199,7 @@ void PeakExporter::saveToFullProfMerged(const std::string& filename, nsx::Merged
             peak_vector.push_back(unmerged_peak);
     }
     std::shared_ptr<nsx::DataSet> data = peak_vector[0]->dataSet();
-    double wavelength = data->reader()->metadata().key<double>(nsx::at_wavelength);
+    double wavelength = data->metadata().key<double>(nsx::at_wavelength);
     file << std::fixed << std::setw(8) << std::setprecision(3) << wavelength;
     file << " 0 0" << std::endl;
 
