@@ -25,8 +25,8 @@ namespace nsx {
 struct MergeParameters {
     double d_min = 1.5; //!< Minimum d (Bragg's law)
     double d_max = 50.0; //!< Maximum d (Bragg's law)
-    unsigned int frame_min = 1;
-    unsigned int frame_max = 0;
+    int frame_min = -1;
+    int frame_max = -1;
     size_t n_shells = 10; //!< Number of resolution shells
     bool friedel = true; //!< Whether to include the Friedel relation
 
@@ -45,8 +45,6 @@ class PeakMerger {
     void addPeakCollection(PeakCollection* peaks);
     //! Reset peak collections and merged data
     void reset();
-    //! Set the default frame range
-    void setFrameRange(unsigned int min, unsigned int max);
 
     //! Perform the merge
     void mergePeaks();

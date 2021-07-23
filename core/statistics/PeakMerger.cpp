@@ -42,8 +42,6 @@ PeakMerger::PeakMerger(PeakCollection* peaks /* = nullptr */)
 void PeakMerger::addPeakCollection(PeakCollection* peaks)
 {
     unsigned int nframes = peaks->getPeakList()[0]->dataSet()->nFrames();
-    if (nframes > _params->frame_max)
-        _params->frame_max = nframes;
     _peak_collections.push_back(peaks);
 }
 
@@ -56,19 +54,14 @@ void PeakMerger::reset()
     _overall_quality.clear();
 }
 
-void PeakMerger::setFrameRange(unsigned int min, unsigned int max)
-{
-    _params->frame_min = min;
-    _params->frame_max = max;
-}
-
 void PeakMerger::mergePeaks()
 {
     _merged_data.reset();
     _merged_data_per_shell.clear();
     nsxlog(Level::Info, "PeakMerger::mergePeaks: parameters");
     _params->log(Level::Info);
-    _merged_data = std::make_unique<MergedData>(_peak_collections, _params->friedel);
+    _merged_data = std::make_unique<MergedData>(
+        _peak_collections, _params->friedel, _params->frame_min, _params->frame_max);
     SpaceGroup space_group = _merged_data->spaceGroup();
     ResolutionShell resolution_shell{_params->d_min, _params->d_max, _params->n_shells};
 
@@ -83,8 +76,8 @@ void PeakMerger::mergePeaks()
         double d_lower = resolution_shell.shell(i).dmin;
         double d_upper = resolution_shell.shell(i).dmax;
 
-        std::unique_ptr<MergedData> merged_data_per_shell =
-            std::make_unique<MergedData>(space_group, _params->friedel);
+        std::unique_ptr<MergedData> merged_data_per_shell = std::make_unique<MergedData>(
+                space_group, _params->friedel, _params->frame_min, _params->frame_max);
         merged_data_per_shell->setDRange(d_lower, d_upper);
 
         for (auto peak : resolution_shell.shell(i).peaks)

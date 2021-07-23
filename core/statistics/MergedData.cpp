@@ -17,8 +17,12 @@
 
 namespace nsx {
 
-MergedData::MergedData(std::vector<PeakCollection*> peak_collections, bool friedel)
-    : _friedel(friedel), _merged_peak_set()
+    MergedData::MergedData(
+        std::vector<PeakCollection*> peak_collections, bool friedel, int fmin, int fmax)
+    : _friedel(friedel)
+    , _merged_peak_set()
+    , _frame_min(fmin)
+    , _frame_max(fmax)
 {
     _peak_collections = peak_collections;
     const UnitCell* unit_cell{nullptr};
@@ -53,13 +57,24 @@ MergedData::MergedData(std::vector<PeakCollection*> peak_collections, bool fried
         nsxlog(Level::Info, "MergedData::MergedData: ", _nInvalid, " disabled peaks");
 }
 
-MergedData::MergedData(SpaceGroup space_group, bool friedel) : _friedel(friedel), _merged_peak_set()
+MergedData::MergedData(SpaceGroup space_group, bool friedel, int fmin, int fmax)
+    : _friedel(friedel)
+    , _merged_peak_set()
+    , _frame_min(fmin)
+    , _frame_max(fmax)
 {
     _group = space_group;
 }
 
 bool MergedData::addPeak(Peak3D* peak)
 {
+    auto c = peak->shape().center();
+    // Ignore the peaks outside the frame range (mainly to exclude peaks that can't be interpolated)
+    if (_frame_min >= 0 && _frame_max >= 0) {
+        if (c[2] >= _frame_max && c[2] <= _frame_min)
+            return false;
+    }
+
     if (!peak->enabled()) {
         ++_nInvalid;
         return false;
