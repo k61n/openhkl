@@ -35,8 +35,7 @@ class HDF5MetaDataReader : public IDataReader {
     HDF5MetaDataReader(const HDF5MetaDataReader& other) = delete;
 
     HDF5MetaDataReader(
-        const std::string& filename, Diffractometer* diffractometer,
-        std::string dataset_name_ = nsx::kw_datasetDefaultName);
+        const std::string& filename, Diffractometer* diffractometer);
 
     ~HDF5MetaDataReader() = default;
 

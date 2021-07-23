@@ -55,7 +55,7 @@ std::string _dataKey(const std::string& dataset_name)
 namespace nsx {
 
 HDF5MetaDataReader::HDF5MetaDataReader(
-    const std::string& filename, Diffractometer* diffractometer, std::string dataset_name_)
+    const std::string& filename, Diffractometer* diffractometer)
     : IDataReader(filename, diffractometer)
     , _dataset(nullptr)
     , _space(nullptr)
