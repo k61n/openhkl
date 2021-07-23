@@ -49,10 +49,6 @@ MergedData::MergedData(std::vector<PeakCollection*> peak_collections, bool fried
         for (int j = 0; j < peaks.size(); ++j)
             addPeak(peaks[j]);
     }
-    if (_nNaN > 0)
-        nsxlog(Level::Info, "MergedData::MergedData: ", _nNaN, " peaks with intensity NaN");
-    if (_nZero > 0)
-        nsxlog(Level::Info, "MergedData::MergedData: ", _nZero, " peaks with intensity zero");
     if (_nInvalid > 0)
         nsxlog(Level::Info, "MergedData::MergedData: ", _nInvalid, " disabled peaks");
 }
@@ -72,24 +68,22 @@ bool MergedData::addPeak(Peak3D* peak)
         ++_nInvalid;
         return false;
     }
-    double epsilon = 1.0e-8;
     MergedPeak new_peak(_group, _friedel);
     try {
         new_peak.addPeak(peak);
         auto it = _merged_peak_set.find(new_peak);
 
-        if (it != _merged_peak_set.end()) {
-            if (std::fabs(it->intensity().value()) < epsilon)
-                ++_nZero;
+        if (it != _merged_peak_set.end()) { // Found this peak in the set already
             MergedPeak merged(*it);
             merged.addPeak(peak);
             _merged_peak_set.erase(it);
             _merged_peak_set.emplace(std::move(merged));
+            ++_nInvalid;
             return false;
         }
         _merged_peak_set.emplace(std::move(new_peak));
     } catch (std::range_error& e) {
-        ++_nNaN;
+        ++_nInvalid;
     }
     return true;
 }
@@ -122,7 +116,7 @@ double MergedData::completeness()
 {
     if (totalSize() == 0)
         return 0.0;
-    int n_valid = totalSize() - _nInvalid - _nNaN - _nZero;
+    int n_valid = totalSize() - _nInvalid;
     return double(n_valid) / double(totalSize());
 }
 
