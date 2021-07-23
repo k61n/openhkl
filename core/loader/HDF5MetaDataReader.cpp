@@ -267,6 +267,12 @@ bool HDF5MetaDataReader::initRead()
         nsx::Level::Info, "Finished reading the data in '", _filename, "', dataset '", dataset_name,
         "'");
     _file->close();
+
+    // Add the list of sources as metadata
+    if (!_dataset_out->metadata().isKey(nsx::at_datasetSources)) {
+        _dataset_out->metadata().add<std::string>(nsx::at_datasetSources, _filename);
+    }
+
     isInitialized = true;
     return isInitialized;
 }

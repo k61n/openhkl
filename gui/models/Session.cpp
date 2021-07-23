@@ -14,7 +14,6 @@
 
 #include "gui/models/Session.h"
 #include "base/utils/Path.h" // fileBasename
-#include "base/utils/StringIO.h" // join
 #include "core/data/DataSet.h"
 #include "core/data/DataTypes.h"
 #include "core/experiment/Experiment.h"
@@ -206,10 +205,6 @@ void Session::loadData(nsx::DataFormat format)
             // const std::string extension = fileinfo.completeSuffix().toStdString();
             dataset_ptr->addDataFile(filename.toStdString(), "nsx");
 
-            // add the list of sources as metadata
-            dataset_ptr->metadata().add<std::string>(
-                nsx::at_datasetSources, filename.toStdString());
-
             // store the name of the first dataset
             if (dataset1_name.empty())
                 dataset1_name = dataset_ptr->name();
@@ -295,8 +290,6 @@ void Session::loadRawData()
         dataset_ptr->setRawReaderParameters(parameters);
         for (const auto& filenm : filenames)
             dataset_ptr->addRawFrame(filenm);
-        dataset_ptr->metadata().add<std::string>
-            (nsx::at_datasetSources, nsx::join(filenames, ", "));
 
         exp->addData(dataset_ptr);
         // _selectedData = currentProject()->getIndex(qfilenames.at(0));

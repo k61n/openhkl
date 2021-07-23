@@ -128,6 +128,11 @@ bool NexusMetaDataReader::initRead()
         }
 
 
+        // Add the list of sources as metadata
+        if (!_dataset_out->metadata().isKey(nsx::at_datasetSources)) {
+            _dataset_out->metadata().add<std::string>(nsx::at_datasetSources, _filename);
+        }
+
         // which axis is scanned?
         int scanned_axes[4];
         dataGroup.openDataSet("scanned_variables/variables_names/scanned")

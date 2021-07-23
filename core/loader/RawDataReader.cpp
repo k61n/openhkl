@@ -25,6 +25,7 @@
 #include "base/parser/EigenToVector.h"
 #include "base/parser/Parser.h"
 #include "base/utils/Units.h"
+#include "base/utils/StringIO.h" // join
 #include "core/detector/Detector.h"
 #include "core/gonio/Component.h"
 #include "core/gonio/Gonio.h"
@@ -55,6 +56,10 @@ void RawDataReader::addFrame(const std::string& filename)
     checkInit();
 
     _filenames.push_back(filename);
+
+    // Update sources list
+    _dataset_out->metadata().add<std::string>(nsx::at_datasetSources,
+                                              nsx::join(_filenames, ", "));
 
     const std::size_t nframes = _filenames.size();
     _dataset_out->metadata().add<int>(nsx::at_frameCount, nframes);
