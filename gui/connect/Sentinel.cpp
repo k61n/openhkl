@@ -27,3 +27,13 @@ void Sentinel::onLinkedComboChanged(
 {
     emit linkedComboChanged(combo_type, id, list);
 }
+
+void Sentinel::addLinkedComboItem(const ComboType combo_type, const QString& item)
+{
+    emit linkedComboItemAdded(combo_type, item);
+}
+
+void setLinkedComboList(const ComboType combo_type, const QStringList& list)
+{
+    emit setLinkedComboList(combo_type, list);
+}

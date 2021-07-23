@@ -20,6 +20,7 @@
 #include "gui/models/Project.h"
 #include "gui/utility/ColorButton.h"
 #include "gui/utility/GridFiller.h"
+#include "gui/utility/LinkedComboBox.h"
 #include "gui/utility/PropertyScrollArea.h"
 #include "gui/utility/Spoiler.h"
 #include "gui/views/ShortTable.h"
@@ -146,8 +147,8 @@ void DetectorWindow::setInputUp()
 
     _exp_combo = f.addCombo("Experiment:");
     _data_combo = f.addCombo("Data set:");
-    _peak_combo_1 = f.addCombo("Peak collection 1:");
-    _peak_combo_2 = f.addCombo("Peak collection 2:");
+    _peak_combo_1 = f.addLinkedCombo(ComboType::PeakCollection, "Peak collection 1:");
+    _peak_combo_2 = f.addLinkedCombo(ComboType::PeakCollection, "Peak collection 2:");
     _unit_cell_combo = f.addCombo("Unit cell");
 
     connect(

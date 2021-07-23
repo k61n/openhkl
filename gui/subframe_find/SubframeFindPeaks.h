@@ -32,6 +32,7 @@
 #include <QWidget>
 
 class DetectorView;
+class LinkedComboBox;
 class PeakItemGraphic;
 class PeakTableView;
 class PeakViewWidget;
@@ -118,8 +119,8 @@ class SubframeFindPeaks : public QWidget {
     QVBoxLayout* _left_layout;
     QSplitter* _right_element;
 
-    QComboBox* _exp_combo;
-    QComboBox* _data_combo;
+    LinkedComboBox* _exp_combo;
+    LinkedComboBox* _data_combo;
     QCheckBox* _all_data;
 
     QSpinBox* _threshold_spin;

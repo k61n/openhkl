@@ -24,6 +24,7 @@
 #include "core/shape/Predictor.h"
 #include "core/shape/ShapeCollection.h"
 #include "gui/MainWin.h" // gGui
+#include "gui/connect/Sentinel.h"
 #include "gui/dialogs/ListNameDialog.h"
 #include "gui/frames/ProgressView.h"
 #include "gui/graphics/DetectorScene.h"
@@ -35,6 +36,7 @@
 #include "gui/subframe_predict/ShapeCollectionDialog.h"
 #include "gui/utility/ColorButton.h"
 #include "gui/utility/GridFiller.h"
+#include "gui/utility/LinkedComboBox.h"
 #include "gui/utility/PropertyScrollArea.h"
 #include "gui/utility/SideBar.h"
 #include "gui/utility/Spoiler.h"
@@ -86,8 +88,8 @@ void SubframePredictPeaks::setParametersUp()
     _para_box = new Spoiler("Predict peaks");
     GridFiller f(_para_box, true);
 
-    _exp_combo = f.addCombo("Experiment");
-    _cell_combo = f.addCombo("Unit cell:");
+    _exp_combo = f.addLinkedCombo(ComboType::Experiment, "Experiment");
+    _cell_combo = f.addLinkedCombo(ComboType::UnitCell, "Unit cell:");
     _d_min = f.addDoubleSpinBox("d min:", QString::fromUtf8("(\u212B) - minimum d (Bragg's law)"));
     _d_max = f.addDoubleSpinBox("d max:", QString::fromUtf8("(\u212B) - maximum d (Bragg's law)"));
     _predict_button = f.addButton("Predict");
@@ -122,7 +124,8 @@ void SubframePredictPeaks::setShapeCollectionUp()
     GridFiller f(_shapes_box, true);
 
     _found_peaks_combo =
-        f.addCombo("Found peak collection", "Found peaks from which to construct shape collection");
+        f.addLinkedCombo(ComboType::PeakCollection, "Found peak collection",
+                         "Found peaks from which to construct shape collection");
     _nx = f.addSpinBox("histogram bins x", "Number of bins in x direction");
     _ny = f.addSpinBox("histogram bins y", "Number of bins in x direction");
     _nz = f.addSpinBox("histogram bins f", "Number of bins in frames direction");
@@ -191,6 +194,7 @@ void SubframePredictPeaks::setShapeCollectionUp()
 
     connect(
         _assign_peak_shapes, &QPushButton::clicked, this, &SubframePredictPeaks::assignPeakShapes);
+    connect(_kabsch, &QCheckBox::clicked, this, &SubframePredictPeaks::toggleUnsafeWidgets);
 
     _left_layout->addWidget(_shapes_box);
     grabShapeCollectionParameters();
@@ -229,7 +233,7 @@ void SubframePredictPeaks::setFigureUp()
     _figure_view->scale(1, -1);
     figure_grid->addWidget(_figure_view, 0, 0, 1, 3);
 
-    _data_combo = new QComboBox(this);
+    _data_combo = new LinkedComboBox(ComboType::DataSet, gGui->sentinel, this);
     _data_combo->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
     figure_grid->addWidget(_data_combo, 1, 0, 1, 1);
 
@@ -500,6 +504,8 @@ void SubframePredictPeaks::accept()
                 dlg->listName().toStdString(), nsx::listtype::PREDICTED,
                 _peak_collection.getPeakList());
         gSession->experimentAt(_exp_combo->currentIndex())->generatePeakModel(dlg->listName());
+        gGui->sentinel->addLinkedComboItem(ComboType::PredictedPeaks, dlg->listName());
+        gGui->sentinel->addLinkedComboItem(ComboType::PeakCollection, dlg->listName());
     }
 }
 
@@ -546,9 +552,11 @@ void SubframePredictPeaks::toggleUnsafeWidgets()
 {
     _predict_button->setEnabled(true);
     _save_button->setEnabled(true);
+    _assign_peak_shapes->setEnabled(true);
     if (_cell_combo->count() == 0 || _exp_combo->count() == 0) {
         _predict_button->setEnabled(false);
         _save_button->setEnabled(false);
+        _assign_peak_shapes->setEnabled(false);
     }
 
     _sigma_d->setEnabled(true);
@@ -558,7 +566,6 @@ void SubframePredictPeaks::toggleUnsafeWidgets()
         _sigma_m->setEnabled(false);
     }
 
-    _assign_peak_shapes->setEnabled(true);
     if (!(_peak_collection.numberOfPeaks() == 0))
         _assign_peak_shapes->setEnabled(false);
 }

@@ -21,6 +21,7 @@
 #include "core/peak/Peak3D.h"
 #include "core/shape/IPeakIntegrator.h"
 #include "gui/MainWin.h" // gGui
+#include "gui/connect/Sentinel.h"
 #include "gui/dialogs/ListNameDialog.h"
 #include "gui/frames/ProgressView.h"
 #include "gui/graphics/DetectorScene.h"
@@ -31,6 +32,7 @@
 #include "gui/models/Session.h"
 #include "gui/utility/ColorButton.h"
 #include "gui/utility/GridFiller.h"
+#include "gui/utility/LinkedComboBox.h"
 #include "gui/utility/PropertyScrollArea.h"
 #include "gui/utility/SideBar.h"
 #include "gui/utility/Spoiler.h"
@@ -88,8 +90,8 @@ void SubframeFindPeaks::setDataUp()
     Spoiler* _data_box = new Spoiler("Input");
     GridFiller f(_data_box);
 
-    _exp_combo = f.addCombo("Experiment");
-    _data_combo = f.addCombo("Data set");
+    _exp_combo = f.addLinkedCombo(ComboType::Experiment, "Experiment");
+    _data_combo = f.addLinkedCombo(ComboType::DataSet, "Data set");
     _all_data = f.addCheckBox("Search all", 1);
 
     connect(
@@ -563,6 +565,8 @@ void SubframeFindPeaks::accept()
                 ->experiment()
                 ->acceptFoundPeaks(dlg->listName().toStdString());
             gSession->experimentAt(_exp_combo->currentIndex())->generatePeakModel(dlg->listName());
+            gGui->sentinel->addLinkedComboItem(ComboType::FoundPeaks, dlg->listName());
+            gGui->sentinel->addLinkedComboItem(ComboType::PeakCollection, dlg->listName());
         }
     }
 }

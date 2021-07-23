@@ -35,6 +35,7 @@
 namespace nsx {
 class PeakCollection;
 }
+class LinkedComboBox;
 class RefinerTables;
 class Spoiler;
 class SXPlot;
@@ -114,10 +115,10 @@ class SubframeRefiner : public QWidget {
     QVBoxLayout* _left_layout;
 
     // data selection
-    QComboBox* _exp_combo;
-    QComboBox* _peak_combo;
-    QComboBox* _data_combo;
-    QComboBox* _cell_combo;
+    LinkedComboBox* _exp_combo;
+    LinkedComboBox* _peak_combo;
+    LinkedComboBox* _data_combo;
+    LinkedComboBox* _cell_combo;
     QSpinBox* _n_batches_spin;
 
     // refinement flags
@@ -132,7 +133,7 @@ class SubframeRefiner : public QWidget {
     Spoiler* _plot_box;
 
     // update prediction
-    QComboBox* _predicted_combo;
+    LinkedComboBox* _predicted_combo;
 
     QPushButton* _refine_button;
     QPushButton* _update_button;

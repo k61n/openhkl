@@ -24,6 +24,7 @@
 #include <QSizePolicy>
 #include <QWidget>
 
+class LinkedComboBox;
 class PeakTableView;
 class UnitCellTableView;
 class Spoiler;
@@ -31,7 +32,6 @@ class QVBoxLayout;
 class QSplitter;
 class QSpinBox;
 class QCheckBox;
-class QComboBox;
 class QDoubleSpinBox;
 
 //! Frame which shows the settings for the AutoIndexer
@@ -87,8 +87,6 @@ class SubframeAutoIndexer : public QWidget {
     PeakCollectionItem _peak_collection_item;
     //! The temporary collection
     PeakCollectionModel _peak_collection_model;
-    //! The loaded peak list
-    QStringList _peak_list;
 
     std::vector<std::pair<nsx::sptrPeak3D, std::shared_ptr<const nsx::UnitCell>>> _defaults;
     std::vector<std::pair<std::shared_ptr<nsx::UnitCell>, double>> _solutions;
@@ -99,9 +97,9 @@ class SubframeAutoIndexer : public QWidget {
     QVBoxLayout* _left_layout;
     QSplitter* _right_element;
 
-    QComboBox* _exp_combo;
-    QComboBox* _data_combo;
-    QComboBox* _peak_combo;
+    LinkedComboBox* _exp_combo;
+    LinkedComboBox* _data_combo;
+    LinkedComboBox* _peak_combo;
 
     QSpinBox* _min_frame;
     QSpinBox* _max_frame;

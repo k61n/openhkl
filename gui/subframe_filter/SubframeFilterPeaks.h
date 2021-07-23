@@ -34,6 +34,7 @@
 #include <QWidget>
 
 class DetectorView;
+class LinkedComboBox;
 class PeakItemGraphic;
 class SpoilerCheck;
 class PeakViewWidget;
@@ -113,8 +114,6 @@ class SubframeFilterPeaks : public QWidget {
     //! The temporary collection
     PeakCollectionModel _peak_collection_model;
     //! The loaded data list
-    QStringList _peak_list;
-    //! The loaded data list
     std::vector<nsx::sptrDataSet> _data_list;
 
  private:
@@ -128,7 +127,7 @@ class SubframeFilterPeaks : public QWidget {
     QCheckBox* _indexed_peaks;
     QCheckBox* _extinct_spacegroup;
     QCheckBox* _keep_complementary;
-    QComboBox* _unit_cell;
+    LinkedComboBox* _unit_cell;
 
     QDoubleSpinBox* _tolerance;
     QDoubleSpinBox* _strength_min;
@@ -152,9 +151,9 @@ class SubframeFilterPeaks : public QWidget {
     SpoilerCheck* _merge_box;
     SpoilerCheck* _overlap_box;
 
-    QComboBox* _exp_combo;
-    QComboBox* _peak_combo;
-    QComboBox* _data_combo;
+    LinkedComboBox* _exp_combo;
+    LinkedComboBox* _peak_combo;
+    LinkedComboBox* _data_combo;
 
     QPushButton* _filter_button;
     QPushButton* _save_button;
