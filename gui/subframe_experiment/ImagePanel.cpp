@@ -104,6 +104,7 @@ void ImagePanel::dataChanged(int numor)
     _frame->setEnabled(false);
 
     _image_view->getScene()->resetScene();
+    _image_view->fitScene();
 
     if (gSession->currentProjectNum() >= 0) {
         nsx::sptrDataSet dataset = gSession->currentProject()->getData(numor);

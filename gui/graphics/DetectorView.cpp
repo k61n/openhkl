@@ -71,7 +71,7 @@ void DetectorView::keyPressEvent(QKeyEvent* event)
 
 void DetectorView::fitScene()
 {
-    fitInView(_scene->sceneRect());
+    fitInView(_scene->sceneRect(), Qt::KeepAspectRatio);
 }
 
 void DetectorView::fixDetectorAspectRatio(bool value)
