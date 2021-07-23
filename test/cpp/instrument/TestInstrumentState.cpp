@@ -14,7 +14,7 @@
 
 #include "test/cpp/catch.hpp"
 
-#include "core/algo/DataReaderFactory.h"
+#include "core/raw/DataKeys.h"
 #include "core/data/DataSet.h"
 #include "core/experiment/Experiment.h"
 #include "core/instrument/InstrumentState.h"
@@ -31,25 +31,25 @@ class UnitTest_DataSet {
 
 int nsx::UnitTest_DataSet::run()
 {
-    nsx::DataReaderFactory factory;
-
     nsx::Experiment experiment("test", "BioDiff2500");
 
-    nsx::sptrDataSet dataf(factory.create("hdf", "gal3.hdf", experiment.getDiffractometer()));
-    dataf->setName("TestInstrumentState");
+    const nsx::sptrDataSet dataset_ptr { std::make_shared<nsx::DataSet>
+          (nsx::kw_datasetDefaultName, experiment.getDiffractometer()) };
 
-    experiment.addData(dataf);
+    dataset_ptr->addDataFile("gal3.hdf", "nsx");
+    dataset_ptr->finishRead();
+    experiment.addData(dataset_ptr);
 
-    auto detectorStates = dataf->_reader->detectorStates();
-    auto sampleStates = dataf->_reader->sampleStates();
+    auto detectorStates = dataset_ptr->_reader->detectorStates();
+    auto sampleStates = dataset_ptr->_reader->sampleStates();
 
     int good_states = 0;
     int total_states = 0;
-    for (size_t i = 0; i < 100 * (dataf->nFrames() - 1); ++i) {
+    for (size_t i = 0; i < 100 * (dataset_ptr->nFrames() - 1); ++i) {
         double frame = double(i) / 100.0;
         ++total_states;
         try {
-            auto state = dataf->instrumentStates().interpolate(frame);
+            auto state = dataset_ptr->instrumentStates().interpolate(frame);
             ++good_states;
         } catch (std::range_error& e) {
             std::cout << e.what() << std::endl;

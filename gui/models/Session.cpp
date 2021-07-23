@@ -209,6 +209,7 @@ void Session::loadData(nsx::DataFormat format)
             if (dataset1_name.empty())
                 dataset1_name = dataset_ptr->name();
 
+            dataset_ptr->finishRead();
             exp->addData(dataset_ptr);
         } catch (const std::exception& ex) {
             QString msg = QString("Loading file(s) '") + filename + QString("' failed with error: ")
@@ -291,6 +292,7 @@ void Session::loadRawData()
         for (const auto& filenm : filenames)
             dataset_ptr->addRawFrame(filenm);
 
+        dataset_ptr->finishRead();
         exp->addData(dataset_ptr);
         // _selectedData = currentProject()->getIndex(qfilenames.at(0));
         onDataChanged();

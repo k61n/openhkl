@@ -21,8 +21,8 @@
 
 #include <Eigen/Dense>
 
-#include "core/algo/DataReaderFactory.h"
 #include "core/data/DataSet.h"
+#include "core/raw/DataKeys.h"
 #include "core/detector/Detector.h"
 #include "core/detector/DetectorEvent.h"
 #include "core/experiment/Experiment.h"
@@ -32,18 +32,20 @@
 
 void run_test(const char* filename, const char* instrument)
 {
-    nsx::DataReaderFactory factory;
-
     nsx::Experiment experiment("test", instrument);
-    nsx::sptrDataSet dataf(factory.create("hdf", filename, experiment.getDiffractometer()));
-    dataf->setName("TestPeakCoordinateSystem");
 
-    experiment.addData(dataf);
+    const nsx::sptrDataSet dataset_ptr { std::make_shared<nsx::DataSet>
+          (nsx::kw_datasetDefaultName, experiment.getDiffractometer()) };
 
-    const int nrows = dataf->nRows();
-    const int ncols = dataf->nCols();
+    dataset_ptr->addDataFile(filename, "nsx");
+    dataset_ptr->finishRead();
 
-    const int nframes = dataf->nFrames();
+    experiment.addData(dataset_ptr);
+
+    const int nrows = dataset_ptr->nRows();
+    const int ncols = dataset_ptr->nCols();
+
+    const int nframes = dataset_ptr->nFrames();
 
     const std::array<double, 9> fractions = {0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9};
 
@@ -57,7 +59,7 @@ void run_test(const char* filename, const char* instrument)
         }
     }
 
-    nsx::Peak3D peak(dataf);
+    nsx::Peak3D peak(dataset_ptr);
 
     for (auto coord : coords) {
         peak.setShape(nsx::Ellipsoid(coord, 2.0));

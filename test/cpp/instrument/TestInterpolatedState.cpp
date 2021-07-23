@@ -19,8 +19,8 @@
 
 #include "base/geometry/ReciprocalVector.h"
 #include "base/utils/ProgressHandler.h"
-#include "core/algo/DataReaderFactory.h"
 #include "core/data/DataSet.h"
+#include "core/raw/DataKeys.h"
 #include "core/detector/Detector.h"
 #include "core/experiment/Experiment.h"
 #include "core/instrument/Diffractometer.h"
@@ -32,18 +32,19 @@
 
 void run_test(const char* filename, const char* instrument)
 {
-    nsx::DataReaderFactory factory;
-
     nsx::Experiment experiment("test", instrument);
     auto diffractometer = experiment.getDiffractometer();
     const auto* detector = diffractometer->detector();
-    nsx::sptrDataSet dataf(factory.create("hdf", filename, diffractometer));
-    dataf->setName("TestInterpolatedState");
 
-    experiment.addData(dataf);
-    const int nrows = dataf->nRows();
-    const int ncols = dataf->nCols();
-    const int nframes = dataf->nFrames();
+    const nsx::sptrDataSet dataset_ptr { std::make_shared<nsx::DataSet>
+         (nsx::kw_datasetDefaultName, experiment.getDiffractometer()) };
+
+    dataset_ptr->addDataFile(filename, "nsx");
+    dataset_ptr->finishRead();
+    experiment.addData(dataset_ptr);
+    const int nrows = dataset_ptr->nRows();
+    const int ncols = dataset_ptr->nCols();
+    const int nframes = dataset_ptr->nFrames();
     const std::array<double, 9> fractions = {0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9};
 
     // different places to check the coordinate calculation
@@ -59,7 +60,7 @@ void run_test(const char* filename, const char* instrument)
     for (auto coord : coords) {
         const double dt = 1e-3;
 
-        auto state = dataf->instrumentStates().interpolate(coord[2]);
+        auto state = dataset_ptr->instrumentStates().interpolate(coord[2]);
         Eigen::Matrix3d Jq = state.jacobianQ(coord[0], coord[1]);
 
         auto pos0 = detector->pixelPosition(coord[0], coord[1]);
@@ -71,7 +72,7 @@ void run_test(const char* filename, const char* instrument)
         auto pos2 = detector->pixelPosition(coord[0], coord[1] + dt);
         Eigen::Vector3d dq2 = state.sampleQ(pos2).rowVector().transpose() - q0;
 
-        auto state3 = dataf->instrumentStates().interpolate(coord[2] + dt);
+        auto state3 = dataset_ptr->instrumentStates().interpolate(coord[2] + dt);
         Eigen::Vector3d dq3 = state3.sampleQ(pos0).rowVector().transpose() - q0;
 
         // Numerical Jacobian

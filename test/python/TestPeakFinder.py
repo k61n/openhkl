@@ -22,12 +22,14 @@ class TestPeakFinder(unittest.TestCase):
         data_params.row_major = True
         data_params.swap_endian = True
         data_params.bpp = 2
-        reader = nsx.RawDataReader(files[0], expt.getDiffractometer())
-        reader.setParameters(data_params)
-        for filename in files[0:]:
-            reader.addFrame(filename)
-        reader.end()
-        expt.addData(nsx.DataSet(reader))
+
+        dataset = nsx.DataSet("TestPeakFinder.py", expt.getDiffractometer())
+        dataset.setRawReaderParameters(data_params)
+        for filename in files:
+            dataset.addRawFrame(filename)
+
+        dataset.finishRead()
+        expt.addData(dataset)
 
         # Find the peaks
         finder = expt.peakFinder()

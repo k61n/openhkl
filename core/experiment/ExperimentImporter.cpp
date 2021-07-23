@@ -76,6 +76,7 @@ void ExperimentImporter::loadData(Experiment* experiment)
             const nsx::sptrDataSet dataset_ptr {std::make_shared<nsx::DataSet>
                   (collection_name, experiment->getDiffractometer())};
             dataset_ptr->addDataFile(_file_name, "nsx");
+            dataset_ptr->finishRead();
             experiment->addData(dataset_ptr);
         }
     } catch (H5::Exception& e) {

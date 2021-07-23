@@ -20,9 +20,9 @@
 #include <vector>
 
 #include "base/utils/ProgressHandler.h"
-#include "core/algo/DataReaderFactory.h"
 #include "core/convolve/ConvolverFactory.h"
 #include "core/data/DataSet.h"
+#include "core/raw/DataKeys.h"
 #include "core/experiment/Experiment.h"
 #include "core/instrument/Diffractometer.h"
 #include "core/shape/IPeakIntegrator.h"
@@ -49,7 +49,6 @@ TEST_CASE("test/data/TestNexusData.cpp", "")
     std::cout << "--------------------------------------------------------------------------------"
               << std::endl;
 
-    nsx::DataReaderFactory factory;
     nsx::DataList numors;
 
     std::string dir = "/users/tw/tmp/nsx-data/dkdp/nexus/";
@@ -74,28 +73,32 @@ TEST_CASE("test/data/TestNexusData.cpp", "")
             return;
         }
 
-        std::shared_ptr<nsx::DataSet> datafile = factory.create("nxs", file, diffractometer);
-        datafile->setName("TestNexusData");
-        datafile->open();
+        const nsx::sptrDataSet dataset_ptr { std::make_shared<nsx::DataSet>
+                (nsx::kw_datasetDefaultName, diffractometer) };
+
+        dataset_ptr->addDataFile(file, "nxs");
+        dataset_ptr->finishRead();
+
+        // datafile->open();
         // std::cout << datafile->nFrames() << std::endl;
 
-        std::cout << "Number of frames: " << datafile->nFrames() << std::endl;
-        numframes += datafile->nFrames();
-        for (std::size_t frame = 0; frame < datafile->nFrames(); ++frame) {
+        std::cout << "Number of frames: " << dataset_ptr->nFrames() << std::endl;
+        numframes += dataset_ptr->nFrames();
+        for (std::size_t frame = 0; frame < dataset_ptr->nFrames(); ++frame) {
             std::cout << "sample angles: ";
             for (std::size_t gonio = 0; gonio < diffractometer->sample().gonio().nAxes(); ++gonio) {
-                Eigen::MatrixXi M = datafile->frame(frame);
+                Eigen::MatrixXi M = dataset_ptr->frame(frame);
                 CHECK((M.rows() == 256 && M.cols() == 640));
 
-                std::cout << (datafile->reader()->sampleStates()[frame][gonio] / M_PI * 180.)
+                std::cout << (dataset_ptr->reader()->sampleStates()[frame][gonio] / M_PI * 180.)
                           << ", ";
             }
             std::cout << std::endl;
             break; // only check first in loop
         }
 
-        numors.push_back(datafile);
-        exp.addData(datafile);
+        numors.push_back(dataset_ptr);
+        exp.addData(dataset_ptr);
 
 #ifdef ONLY_FIRST_FILE
         break;

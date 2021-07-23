@@ -26,8 +26,8 @@
 #include "base/utils/ProgressHandler.h"
 #include "base/utils/Units.h"
 #include "core/algo/AutoIndexer.h"
-#include "core/algo/DataReaderFactory.h"
 #include "core/data/DataSet.h"
+#include "core/raw/DataKeys.h"
 #include "core/detector/DetectorEvent.h"
 #include "core/experiment/Experiment.h"
 #include "core/experiment/PeakFinder.h"
@@ -41,13 +41,15 @@
 
 TEST_CASE("test/integrate/Test_6_12_38.cpp", "")
 {
-    nsx::DataReaderFactory factory;
-
     nsx::Experiment experiment("test", "BioDiff2500");
-    nsx::sptrDataSet dataf(factory.create("hdf", "gal3.hdf", experiment.getDiffractometer()));
-    dataf->setName("Test_6_12_38");
 
-    experiment.addData(dataf);
+    const nsx::sptrDataSet dataset_ptr { std::make_shared<nsx::DataSet>
+          (nsx::kw_datasetDefaultName, experiment.getDiffractometer()) };
+
+    dataset_ptr->addDataFile("gal3.hdf", "nsx");
+    dataset_ptr->finishRead();
+
+    experiment.addData(dataset_ptr);
 
     Eigen::Matrix3d A;
 
@@ -66,7 +68,7 @@ TEST_CASE("test/integrate/Test_6_12_38.cpp", "")
     const Eigen::Matrix3d B = A.inverse().transpose();
     const Eigen::Vector3d q0 = Eigen::RowVector3d(-6, 12, -38) * B;
     nsx::Ellipsoid shape(Eigen::Vector3d(434, 802, 10), 2);
-    auto peak = nsx::Peak3D(dataf, shape);
+    auto peak = nsx::Peak3D(dataset_ptr, shape);
     peak.setSelected(true);
 
     Eigen::Vector3d q1 = peak.q().rowVector();
@@ -83,7 +85,7 @@ TEST_CASE("test/integrate/Test_6_12_38.cpp", "")
     params.bkg_begin = 3.0;
     params.bkg_end = 4.0;
     integrator.setParameters(params);
-    integrator.integrate(peaks, nullptr, dataf, 1);
+    integrator.integrate(peaks, nullptr, dataset_ptr, 1);
 
     CHECK(peak.enabled() == true);
 }

@@ -15,23 +15,23 @@
 #include "test/cpp/catch.hpp"
 #include <Eigen/Dense>
 
-#include "core/algo/DataReaderFactory.h"
 #include "core/data/DataSet.h"
+#include "core/raw/DataKeys.h"
 #include "core/instrument/Diffractometer.h"
 
 TEST_CASE("test/data/TestHDF5Data.cpp", "")
 {
-    nsx::DataReaderFactory factory;
-
     nsx::Diffractometer* diffractometer = nsx::Diffractometer::create("BioDiff2500");
-    auto dataf = factory.create("hdf", "H5_example.hdf", diffractometer);
+    const nsx::sptrDataSet dataset_ptr { std::make_shared<nsx::DataSet>
+          (nsx::kw_datasetDefaultName, diffractometer) };
+    dataset_ptr->addDataFile("H5_example.hdf", "nsx");
+    dataset_ptr->finishRead();
 
-    dataf->open();
-    Eigen::MatrixXi v = dataf->frame(0);
+    Eigen::MatrixXi v = dataset_ptr->frame(0);
     // std::cout << v << std::endl;
 
     // Check the total number of count in the frame 0
     CHECK(v.sum() == 1282584565);
 
-    dataf->close();
+    dataset_ptr->close();
 }
