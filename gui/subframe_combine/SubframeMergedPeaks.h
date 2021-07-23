@@ -124,6 +124,8 @@ class SubframeMergedPeaks : public QWidget {
     QTableView* _d_shell_view;
     QDoubleSpinBox* _d_min;
     QDoubleSpinBox* _d_max;
+    QSpinBox* _frame_min;
+    QSpinBox* _frame_max;
     QSpinBox* _d_shells;
     QCheckBox* _friedel;
     QComboBox* _plottable_statistics;

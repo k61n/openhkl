@@ -104,6 +104,8 @@ void SubframeMergedPeaks::grabMergeParameters()
 
     _d_min->setValue(params->d_min);
     _d_max->setValue(params->d_max);
+    _frame_min->setValue(params->frame_min);
+    _frame_max->setValue(params->frame_max);
     _d_shells->setValue(params->n_shells);
     _friedel->setChecked(params->friedel);
 }
@@ -159,12 +161,12 @@ void SubframeMergedPeaks::setDShellUp()
 
     QLabel* label_ptr;
 
-    label_ptr = new QLabel("Minimum d:");
+    label_ptr = new QLabel("d range:");
     label_ptr->setAlignment(Qt::AlignRight);
     d_shell_down_left->addWidget(label_ptr, 0, 0, 1, 1);
     label_ptr->setSizePolicy(*_size_policy_widgets);
 
-    label_ptr = new QLabel("Maximum d:");
+    label_ptr = new QLabel("Frame range:");
     label_ptr->setAlignment(Qt::AlignRight);
     d_shell_down_left->addWidget(label_ptr, 1, 0, 1, 1);
     label_ptr->setSizePolicy(*_size_policy_widgets);
@@ -181,6 +183,8 @@ void SubframeMergedPeaks::setDShellUp()
 
     _d_min = new QDoubleSpinBox();
     _d_max = new QDoubleSpinBox();
+    _frame_min = new QSpinBox();
+    _frame_max = new QSpinBox();
     _d_shells = new QSpinBox();
     _friedel = new QCheckBox("Include friedel");
     _plottable_statistics = new QComboBox();
@@ -192,11 +196,17 @@ void SubframeMergedPeaks::setDShellUp()
     _d_max->setValue(50);
     _d_max->setSingleStep(0.1);
     _d_max->setMaximum(100);
+    _frame_min->setMinimum(0);
+    _frame_min->setMaximum(1000);
+    _frame_max->setMinimum(0);
+    _frame_max->setMaximum(1000);
     _d_shells->setValue(10);
     _friedel->setChecked(true);
 
     _d_min->setSizePolicy(*_size_policy_widgets);
     _d_max->setSizePolicy(*_size_policy_widgets);
+    _frame_min->setSizePolicy(*_size_policy_widgets);
+    _frame_max->setSizePolicy(*_size_policy_widgets);
     _d_shells->setSizePolicy(*_size_policy_widgets);
     _friedel->setSizePolicy(*_size_policy_widgets);
     _plottable_statistics->setSizePolicy(*_size_policy_widgets);
@@ -210,11 +220,13 @@ void SubframeMergedPeaks::setDShellUp()
     _plottable_statistics->addItems(selection_stats);
 
     d_shell_down_left->addWidget(_d_min, 0, 1, 1, 1);
-    d_shell_down_left->addWidget(_d_max, 1, 1, 1, 1);
-    d_shell_down_left->addWidget(_d_shells, 2, 1, 1, 1);
-    d_shell_down_left->addWidget(_friedel, 3, 0, 1, 2);
-    d_shell_down_left->addWidget(_plottable_statistics, 4, 1, 1, 1);
-    d_shell_down_left->addWidget(_save_shell, 5, 0, 1, 2);
+    d_shell_down_left->addWidget(_d_max, 0, 2, 1, 1);
+    d_shell_down_left->addWidget(_frame_min, 1, 1, 1, 1);
+    d_shell_down_left->addWidget(_frame_max, 1, 2, 1, 1);
+    d_shell_down_left->addWidget(_d_shells, 2, 1, 1, 2);
+    d_shell_down_left->addWidget(_friedel, 3, 1, 1, 2);
+    d_shell_down_left->addWidget(_plottable_statistics, 4, 1, 1, 3);
+    d_shell_down_left->addWidget(_save_shell, 5, 0, 1, 3);
     d_shell_down->addLayout(d_shell_down_left);
 
     _statistics_plot = new SXPlot;

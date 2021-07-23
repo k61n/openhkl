@@ -15,6 +15,7 @@
 #include "core/statistics/PeakMerger.h"
 
 #include "base/utils/Logger.h"
+#include "core/data/DataSet.h"
 #include "core/shape/PeakCollection.h"
 #include "tables/crystal/SpaceGroup.h"
 
@@ -25,6 +26,8 @@ void MergeParameters::log(const Level& level) const
     nsxlog(level, "Merge parameters:");
     nsxlog(level, "d_min                  = ", d_min);
     nsxlog(level, "d_max                  = ", d_max);
+    nsxlog(level, "frame_min             = ", frame_min);
+    nsxlog(level, "frame_max             = ", frame_max);
     nsxlog(level, "n_shells               = ", n_shells);
     nsxlog(level, "friedel                = ", friedel);
 }
@@ -33,11 +36,14 @@ PeakMerger::PeakMerger(PeakCollection* peaks /* = nullptr */)
 {
     _params = std::make_unique<MergeParameters>();
     if (peaks)
-        _peak_collections.push_back(peaks);
+        addPeakCollection(peaks);
 }
 
 void PeakMerger::addPeakCollection(PeakCollection* peaks)
 {
+    unsigned int nframes = peaks->getPeakList()[0]->dataSet()->nFrames();
+    if (nframes > _params->frame_max)
+        _params->frame_max = nframes;
     _peak_collections.push_back(peaks);
 }
 
@@ -48,6 +54,12 @@ void PeakMerger::reset()
     _merged_data_per_shell.clear();
     _shell_qualities.clear();
     _overall_quality.clear();
+}
+
+void PeakMerger::setFrameRange(unsigned int min, unsigned int max)
+{
+    _params->frame_min = min;
+    _params->frame_max = max;
 }
 
 void PeakMerger::mergePeaks()
