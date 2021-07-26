@@ -44,9 +44,9 @@ DataSet::DataSet(const std::string& dataset_name, Diffractometer* diffractometer
     if (!_diffractometer)
         nsxlog(Level::Warning, "DataSet '", dataset_name, "' has no diffractometer.");
     if (_diffractometer && _diffractometer->detector()) {
-        datashape[0] = 0;
+        datashape[0] = nCols();
         datashape[1] = nRows();
-        datashape[2] = nCols();
+        datashape[2] = 0; // nr of frames
     }
 }
 

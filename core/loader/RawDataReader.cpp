@@ -63,7 +63,7 @@ void RawDataReader::addFrame(const std::string& filename)
 
     const std::size_t nframes = _filenames.size();
     _dataset_out->metadata().add<int>(nsx::at_frameCount, nframes);
-    _dataset_out->datashape[0] = nframes;
+    _dataset_out->datashape[2] = nframes;
 
     const auto& detector_gonio = _dataset_out->diffractometer()->detector()->gonio();
     size_t n_detector_gonio_axes = detector_gonio.nAxes();

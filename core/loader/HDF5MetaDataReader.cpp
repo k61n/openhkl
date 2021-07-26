@@ -316,9 +316,9 @@ void HDF5MetaDataReader::open()
     // Gets dimensions of data
     _space->getSimpleExtentDims(dims.data(), maxdims.data());
     const std::size_t nframes = dims[0], nrows = dims[1], ncols = dims[2];
-    _dataset_out->datashape[0] = nframes;
+    _dataset_out->datashape[0] = ncols;
     _dataset_out->datashape[1] = nrows;
-    _dataset_out->datashape[2] = ncols;
+    _dataset_out->datashape[2] = nframes;
 
     nsxlog(
         nsx::Level::Info, "Data shape: (frames = ", nframes, ", rows = ", nrows,

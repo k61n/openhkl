@@ -134,7 +134,7 @@ private:
     Diffractometer* _diffractometer;
 
 public:
-    //! Data shape (frames, rows, columns)
+    //! Data shape (columns, rows, frames)
     std::size_t datashape[3] {0, 0, 0};
 };
 

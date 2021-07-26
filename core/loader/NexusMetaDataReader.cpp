@@ -267,9 +267,9 @@ void NexusMetaDataReader::open()
     // Gets dimensions of data
     _space->getSimpleExtentDims(&dims[0], &maxdims[0]);
     const std::size_t nframes = dims[0], nrows = dims[2], ncols = dims[1];
-    _dataset_out->datashape[0] = nframes;
-    _dataset_out->datashape[1] = nrows;
     _dataset_out->datashape[0] = ncols;
+    _dataset_out->datashape[1] = nrows;
+    _dataset_out->datashape[2] = nframes;
 
     // Size of one hyperslab
     hsize_t count[3];
