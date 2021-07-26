@@ -50,9 +50,8 @@ DataSet::DataSet(const std::string& dataset_name, Diffractometer* diffractometer
     }
 }
 
-DataSet::~DataSet() { }
-
-void DataSet::_setReader(const DataFormat dataformat, const std::string& filename) {
+void DataSet::_setReader(const DataFormat dataformat, const std::string& filename)
+{
     nsxlog(Level::Debug, "Initializing a DataReader for the format ",
            static_cast<int>(dataformat));
 

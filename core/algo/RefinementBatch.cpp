@@ -270,7 +270,7 @@ int RefinementBatch::realSpaceResiduals(Eigen::VectorXd& fvec)
         }
         double minNorm = 10000;
         int minInd = 0;
-        if ((differences.size() >= 1)) {
+        if (!differences.empty()) {
             for (int i = 0; i < differences.size(); ++i) {
                 double norm = differences[i].squaredNorm();
                 if (norm < minNorm) {

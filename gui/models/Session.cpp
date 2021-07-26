@@ -110,7 +110,7 @@ bool Session::addProject(std::unique_ptr<Project> project_ptr)
 
 void Session::removeExperiment(const QString& name)
 {
-    if (_projects.size() == 0) {
+    if (_projects.empty()) {
         return;
     } else {
         const std::string name_str {name.toStdString()};
@@ -124,7 +124,7 @@ void Session::removeExperiment(const QString& name)
         }
 
     }
-    _currentProject = _projects.size() > 0 ? 0 : -1;
+    _currentProject = _projects.empty() ? -1: 0;
     onExperimentChanged();
 }
 
