@@ -223,7 +223,7 @@ void PeakItemGraphic::plot(SXPlot* plot)
     const Eigen::Vector3d c = _peak->shape().center();
     const nsx::InterpolatedState state = _peak->dataSet()->instrumentStates().interpolate(c[2]);
     const nsx::DirectVector position =
-        _peak->dataSet()->reader()->diffractometer()->detector()->pixelPosition(c[0], c[1]);
+        _peak->dataSet()->diffractometer()->detector()->pixelPosition(c[0], c[1]);
     const double g = state.gamma(position) / nsx::deg;
     const double n = state.nu(position) / nsx::deg;
     info += " " + QString(QChar(0x03B3)) + "," + QString(QChar(0x03BD)) + ":"
@@ -237,7 +237,7 @@ void PeakItemGraphic::plot(SXPlot* plot)
         + " (" + QString::number(sI, 'f', 2) + ")\n";
 
     const double scale = _peak->scale();
-    const double monitor = _peak->dataSet()->reader()->metadata().key<double>(nsx::at_monitorSum);
+    const double monitor = _peak->dataSet()->metadata().key<double>(nsx::at_monitorSum);
     info += "Monitor " + QString::number(monitor * scale) + " counts";
     QCPTextElement* title = dynamic_cast<QCPTextElement*>(p->plotLayout()->element(0, 0));
     if (title != nullptr)

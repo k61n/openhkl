@@ -114,7 +114,7 @@ QVariant PeakItem::peakData(const QModelIndex& index, int role, PeakDisplayModes
                     return strength();
                 }
                 case Column::Numor: {
-                    return _peak->dataSet()->reader()->metadata().key<int>(nsx::at_numor);
+                    return _peak->dataSet()->metadata().key<int>(nsx::at_numor);
                 }
                 case Column::uc: {
                     const nsx::UnitCell* unit_cell = _peak->unitCell();

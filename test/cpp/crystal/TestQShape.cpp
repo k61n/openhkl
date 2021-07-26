@@ -17,9 +17,9 @@
 #include <Eigen/Dense>
 
 #include "base/utils/ProgressHandler.h"
-#include "core/algo/DataReaderFactory.h"
 #include "core/convolve/ConvolverFactory.h"
 #include "core/data/DataSet.h"
+#include "core/raw/DataKeys.h"
 #include "core/experiment/Experiment.h"
 #include "core/experiment/PeakFinder.h"
 #include "core/peak/Peak3D.h"
@@ -52,11 +52,13 @@ nsx::Ellipsoid toDetectorSpace(const nsx::Ellipsoid e, const nsx::sptrDataSet da
 
 TEST_CASE("test/crystal/TestQShape.cpp", "")
 {
-    nsx::DataReaderFactory factory;
     nsx::Experiment experiment("test", "BioDiff2500");
-    nsx::sptrDataSet dataf(factory.create("hdf", "gal3.hdf", experiment.getDiffractometer()));
-    dataf->setName("TestQShape");
-    experiment.addData(dataf);
+    const nsx::sptrDataSet dataset_ptr { std::make_shared<nsx::DataSet>
+          (nsx::kw_datasetDefaultName, experiment.getDiffractometer()) };
+
+    dataset_ptr->addDataFile("gal3.hdf", "nsx");
+    dataset_ptr->finishRead();
+    experiment.addData(dataset_ptr);
 
     nsx::sptrProgressHandler progressHandler(new nsx::ProgressHandler);
     nsx::PeakFinder peakFinder;
@@ -70,7 +72,7 @@ TEST_CASE("test/crystal/TestQShape.cpp", "")
     progressHandler->setCallback(callback);
 
     nsx::DataList numors;
-    numors.push_back(dataf);
+    numors.push_back(dataset_ptr);
 
     // propagate changes to peak finder
     auto finder_params = peakFinder.parameters();
@@ -112,7 +114,7 @@ TEST_CASE("test/crystal/TestQShape.cpp", "")
         }
         nsx::Ellipsoid new_shape;
         try {
-            new_shape = toDetectorSpace(qshape, dataf);
+            new_shape = toDetectorSpace(qshape, dataset_ptr);
         } catch (...) {
             continue;
         }

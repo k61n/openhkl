@@ -386,7 +386,7 @@ void PeakFinder::findCollisions(
         }
     }
 
-    const auto& dectector = data.reader()->diffractometer()->detector();
+    const auto& dectector = data.diffractometer()->detector();
     const int nrows = dectector->nRows();
     const int ncols = dectector->nCols();
     const int nframes = data.nFrames();
@@ -536,7 +536,7 @@ void PeakFinder::find(const DataList numors)
             nsxlog(Level::Debug, "PeakFinder::find: starting numor ", i + 1);
         PeakList numor_peaks;
 
-        const auto& dectector = numor->reader()->diffractometer()->detector();
+        const auto& dectector = numor->diffractometer()->detector();
         const int nrows = dectector->nRows();
         const int ncols = dectector->nCols();
         const int nframes = numor->nFrames();

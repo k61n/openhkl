@@ -99,4 +99,14 @@ std::vector<std::string> split(const std::string& input_string, const std::strin
     return tokens;
 }
 
+std::string lowerCase(const std::string& str_in)
+{
+    const std::size_t strln = str_in.length();
+    std::string str_out = str_in;
+    for(std::size_t c = 0; c < strln; ++c)
+        str_out[c] = std::tolower(str_in[c]);
+
+    return str_out;
+}
+
 } // namespace nsx

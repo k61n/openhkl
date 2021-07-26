@@ -698,7 +698,7 @@ void DetectorScene::createToolTipText(QGraphicsSceneMouseEvent* event)
 {
     if (!_currentData)
         return;
-    nsx::Diffractometer* instr = _currentData->reader()->diffractometer();
+    nsx::Diffractometer* instr = _currentData->diffractometer();
     const nsx::Detector& det = _currentData->detector();
 
     const int nrows = int(det.nRows());

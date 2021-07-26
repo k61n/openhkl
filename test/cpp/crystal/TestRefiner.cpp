@@ -24,10 +24,10 @@
 #include "base/utils/ProgressHandler.h"
 #include "base/utils/Units.h"
 #include "core/algo/AutoIndexer.h"
-#include "core/algo/DataReaderFactory.h"
 #include "core/algo/Refiner.h"
 #include "core/convolve/ConvolverFactory.h"
 #include "core/data/DataSet.h"
+#include "core/raw/DataKeys.h"
 #include "core/experiment/Experiment.h"
 #include "core/experiment/PeakFinder.h"
 #include "core/experiment/UnitCellHandler.h"
@@ -41,13 +41,13 @@
 
 TEST_CASE("test/crystal/TestRefiner.cpp", "")
 {
-    nsx::DataReaderFactory factory;
-
     nsx::Experiment experiment("test", "BioDiff2500");
-    nsx::sptrDataSet dataf(factory.create("hdf", "gal3.hdf", experiment.getDiffractometer()));
-    dataf->setName("TestRefiner");
+    const nsx::sptrDataSet dataset_ptr { std::make_shared<nsx::DataSet>
+          (nsx::kw_datasetDefaultName, experiment.getDiffractometer()) };
 
-    experiment.addData(dataf);
+    dataset_ptr->addDataFile("gal3.hdf", "nsx");
+    dataset_ptr->finishRead();
+    experiment.addData(dataset_ptr);
 
     nsx::sptrProgressHandler progressHandler(new nsx::ProgressHandler);
 
@@ -62,7 +62,7 @@ TEST_CASE("test/crystal/TestRefiner.cpp", "")
     // #########################################################
     // test the finder
     nsx::DataList numors;
-    numors.push_back(dataf);
+    numors.push_back(dataset_ptr);
 
     nsx::ConvolverFactory convolver_factory;
     auto convolver = convolver_factory.create("annular", {});
@@ -75,7 +75,7 @@ TEST_CASE("test/crystal/TestRefiner.cpp", "")
     finder_params->peak_end = 1.0;
     finder_params->maximum_frames = 10;
     finder_params->frames_begin = 0;
-    finder_params->frames_end = dataf->nFrames();
+    finder_params->frames_end = dataset_ptr->nFrames();
     finder_params->threshold = 15;
 
     peak_finder->setConvolver(std::unique_ptr<nsx::Convolver>(convolver));
@@ -143,7 +143,7 @@ TEST_CASE("test/crystal/TestRefiner.cpp", "")
         peaks.push_back(peak);
     }
 
-    auto&& states = dataf->instrumentStates();
+    auto&& states = dataset_ptr->instrumentStates();
 
     nsx::Refiner* refiner = experiment.refiner();
     auto* refiner_params = refiner->parameters();

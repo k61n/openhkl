@@ -20,9 +20,12 @@
 #include <stdexcept>
 #include <string>
 
+#include "core/loader/RawDataReader.h"
+
 #include "base/parser/EigenToVector.h"
 #include "base/parser/Parser.h"
 #include "base/utils/Units.h"
+#include "base/utils/StringIO.h" // join
 #include "core/detector/Detector.h"
 #include "core/gonio/Component.h"
 #include "core/gonio/Gonio.h"
@@ -30,31 +33,42 @@
 #include "core/instrument/Monochromator.h"
 #include "core/instrument/Sample.h"
 #include "core/instrument/Source.h"
-#include "core/loader/RawDataReader.h"
 #include "core/raw/DataKeys.h"
+#include "core/data/DataSet.h"
 
 namespace nsx {
 
 RawDataReader::RawDataReader(const std::string& filename, Diffractometer* diffractometer)
     : IDataReader(filename, diffractometer), _parameters(), _length(0), _data()
+{}
+
+bool RawDataReader::initRead()
 {
-    // ensure that there is at least one monochromator!
-    if (_diffractometer->source().nMonochromators() == 0) {
-        Monochromator mono(nsx::kw_monochromatorDefaultName);
-        _diffractometer->source().addMonochromator(mono);
-    }
+    const bool init_success = IDataReader::initRead();
+
+    // NOTE: For correctness, this must be called after setting the parameters and frame files. Otherwise, results in undefined behaviour.
+    isInitialized = true;
+    return isInitialized;
 }
 
 void RawDataReader::addFrame(const std::string& filename)
 {
+    checkInit();
+
     _filenames.push_back(filename);
 
-    _nFrames = _filenames.size();
+    // Update sources list
+    _dataset_out->metadata().add<std::string>(nsx::at_datasetSources,
+                                              nsx::join(_filenames, ", "));
 
-    const auto& detector_gonio = _diffractometer->detector()->gonio();
+    const std::size_t nframes = _filenames.size();
+    _dataset_out->metadata().add<int>(nsx::at_frameCount, nframes);
+    _dataset_out->datashape[2] = nframes;
+
+    const auto& detector_gonio = _dataset_out->diffractometer()->detector()->gonio();
     size_t n_detector_gonio_axes = detector_gonio.nAxes();
 
-    const auto& sample_gonio = _diffractometer->sample().gonio();
+    const auto& sample_gonio = _dataset_out->diffractometer()->sample().gonio();
     size_t n_sample_gonio_axes = sample_gonio.nAxes();
 
     int omega_idx = -1, phi_idx = -1, chi_idx = -1;
@@ -68,7 +82,7 @@ void RawDataReader::addFrame(const std::string& filename)
     if (omega_idx == -1 || phi_idx == -1 || chi_idx == -1)
         throw std::runtime_error("RawDataReader: could not find angle indices");
 
-    size_t idx = _nFrames - 1;
+    const std::size_t idx = nframes - 1;
 
     std::vector<double> det_states(n_detector_gonio_axes);
     std::fill(det_states.begin(), det_states.end(), 0.0);
@@ -86,11 +100,6 @@ void RawDataReader::open() { }
 
 void RawDataReader::close() { }
 
-void RawDataReader::end()
-{
-    _metadata.add<int>(nsx::at_frameCount, int(_filenames.size()));
-}
-
 const RawDataReaderParameters& RawDataReader::parameters() const
 {
     return _parameters;
@@ -100,16 +109,20 @@ void RawDataReader::setParameters(const RawDataReaderParameters& parameters)
 {
     _parameters = parameters;
 
-    _length = _parameters.bpp * _nRows * _nCols;
-    auto& mono = _diffractometer->source().selectedMonochromator();
+    const std::size_t nrows = _dataset_out->nRows(),
+        ncols = _dataset_out->nCols();
+
+    _length = _parameters.bpp * nrows * ncols;
+    auto& mono = _dataset_out->diffractometer()->source().selectedMonochromator();
     mono.setWavelength(_parameters.wavelength);
 
-    _metadata.add<std::string>(nsx::at_diffractometer, _diffractometer->name());
-    _metadata.add<double>(nsx::at_wavelength, _parameters.wavelength);
-    _metadata.add<double>(nsx::at_monitorSum, 0.0);
-    _metadata.add<int>(nsx::at_numor, 0.0);
+    _dataset_out->metadata().add<std::string>(nsx::at_diffractometer,
+                                            _dataset_out->diffractometer()->name());
+    _dataset_out->metadata().add<double>(nsx::at_wavelength, _parameters.wavelength);
+    _dataset_out->metadata().add<double>(nsx::at_monitorSum, 0.0);
+    _dataset_out->metadata().add<int>(nsx::at_numor, 0.0);
 
-    _data.resize(_parameters.bpp * _nRows * _nCols);
+    _data.resize(_parameters.bpp * nrows * ncols);
 }
 
 void RawDataReader::swapEndian()
@@ -117,8 +130,11 @@ void RawDataReader::swapEndian()
     if (!_parameters.swap_endian)
         return;
 
-    for (unsigned int i = 0; i < _nRows * _nCols; ++i) {
-        for (unsigned int byte = 0; byte < _parameters.bpp / 2; ++byte) {
+    const std::size_t nrows = _dataset_out->nRows(),
+        ncols = _dataset_out->nCols();
+
+    for (std::size_t i = 0; i < nrows * ncols; ++i) {
+        for (std::size_t byte = 0; byte < _parameters.bpp / 2; ++byte) {
             std::swap(
                 _data[_parameters.bpp * i + byte],
                 _data[_parameters.bpp * i + (_parameters.bpp - 1 - byte)]);
@@ -128,6 +144,9 @@ void RawDataReader::swapEndian()
 
 Eigen::MatrixXi RawDataReader::data(size_t frame)
 {
+
+    checkInit();
+
     std::string filename = _filenames.at(frame);
 
     std::ifstream file;

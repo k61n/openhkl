@@ -99,7 +99,6 @@ using Eigen::Quaterniond;
 #include "tables/crystal/GruberReduction.h"
 
 #include "core/algo/AutoIndexer.h"
-#include "core/algo/DataReaderFactory.h"
 #include "core/algo/FFTIndexing.h"
 #include "core/algo/RefinementBatch.h"
 #include "core/algo/Refiner.h"
@@ -355,7 +354,6 @@ ArrayExtendCRef(MillerIndex, int);
 %include "core/algo/AutoIndexer.h"
 %include "core/algo/Refiner.h"
 %include "core/experiment/Experiment.h"
-%include "core/algo/DataReaderFactory.h"
 %include "core/algo/RefinementBatch.h"
 %include "core/algo/FFTIndexing.h"
 

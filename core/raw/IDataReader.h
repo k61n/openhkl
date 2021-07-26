@@ -24,10 +24,20 @@ namespace nsx {
 
 //! Pure virtual base class of data readers that provide access to detector images and metadata.
 
+class DataSet;
+
 class IDataReader {
+
  public:
+
+    //! Status of reader initialization
+    bool isInitialized = false;
+
     IDataReader(const std::string& filename, Diffractometer* diffractometer);
     virtual ~IDataReader() = 0;
+
+    //! Initialize reading from the filename
+    virtual bool initRead();
 
     //! Open the file
     virtual void open() = 0;
@@ -47,30 +57,14 @@ class IDataReader {
     //! Returns the list of detector states associated to the detecot images
     const std::vector<std::vector<double>>& detectorStates() const;
 
-    //! Returns the metadata in the file
-    const MetaData& metadata() const;
-
-    //! Returns the metadata in the file
-    MetaData& metadata();
-
-    //! Returns number of detector images
-    size_t nFrames() const;
-
-    //! Returns number of columns in each detector image
-    size_t nCols() const;
-
-    //! Returns number of rows in each detector image
-    size_t nRows() const;
-
-    //! Returns a const pointer to the diffractometer bound to the data
-    const Diffractometer* diffractometer() const;
-
-    //! Returns a pointer to the diffractometer bound to the data
-    Diffractometer* diffractometer();
-
     //! True if file is open
     bool isOpened() const;
 
+    //! Set the DataSet where the data will be stored (allowed only once)
+    void setDataSet(DataSet* dataset_out);
+
+    //! Check if the reader is successfully initialized
+    void checkInit();
 
  protected:
     IDataReader() = delete;
@@ -78,22 +72,6 @@ class IDataReader {
     IDataReader(const IDataReader& other) = delete;
 
     IDataReader& operator=(const IDataReader& other) = delete;
-
-    //! Stores the metadata
-    MetaData _metadata;
-
-    //! A pointer to the diffractometer. The actual resource is not owned by this
-    //! object which is just a borrower.
-    Diffractometer* _diffractometer;
-
-    //! Number of frames of data
-    std::size_t _nFrames;
-
-    //! Number of rows
-    std::size_t _nRows;
-
-    //! Number of columns
-    std::size_t _nCols;
 
     //! Vector of sample states
     std::vector<std::vector<double>> _sampleStates;
@@ -106,6 +84,10 @@ class IDataReader {
 
     //! Filename
     std::string _filename;
+
+    //! Destination DataSet where the data will be stored
+    DataSet* _dataset_out = nullptr;
+
 };
 
 } // namespace nsx

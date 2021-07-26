@@ -14,8 +14,6 @@
 
 #include "gui/models/Session.h"
 #include "base/utils/Path.h" // fileBasename
-#include "base/utils/StringIO.h" // join
-#include "core/algo/DataReaderFactory.h"
 #include "core/data/DataSet.h"
 #include "core/data/DataTypes.h"
 #include "core/experiment/Experiment.h"
@@ -195,23 +193,23 @@ void Session::loadData(nsx::DataFormat format)
                 throw std::runtime_error("Please set a valid instrument first");
             }
 
-            std::string extension = fileinfo.completeSuffix().toStdString();
-            nsx::sptrDataSet dataset_ptr = nsx::DataReaderFactory().create(
-                extension, filename.toStdString(), exp->getDiffractometer());
-
             // choose a name for the dataset
             // default dataset name: basename of the first data-file
             const QStringList& datanames_pre{currentProject()->getDataNames()};
-            const std::string dataset_nm0{nsx::fileBasename(filename.toStdString())};
-            const std::string dataname{askDataName(dataset_nm0, &datanames_pre)};
-            // add the list of sources as metadata
-            dataset_ptr->metadata().add<std::string>(
-                nsx::at_datasetSources, filename.toStdString());
-            dataset_ptr->setName(dataname);
+            const std::string dataset_nm {
+                askDataName(nsx::fileBasename(filename.toStdString()),
+                            &datanames_pre)};
+            const nsx::sptrDataSet dataset_ptr {
+                std::make_shared<nsx::DataSet>(dataset_nm, exp->getDiffractometer())};
+
+            // const std::string extension = fileinfo.completeSuffix().toStdString();
+            dataset_ptr->addDataFile(filename.toStdString(), "nsx");
+
             // store the name of the first dataset
             if (dataset1_name.empty())
                 dataset1_name = dataset_ptr->name();
 
+            dataset_ptr->finishRead();
             exp->addData(dataset_ptr);
         } catch (const std::exception& ex) {
             QString msg = QString("Loading file(s) '") + filename + QString("' failed with error: ")
@@ -259,8 +257,7 @@ void Session::loadRawData()
         if (qfilenames.empty())
             return;
 
-        // Don't leave sorting the files to the OS. Use QCollator + std::sort to sort naturally
-        // (numerically)
+        // Don't leave sorting the files to the OS. Use QCollator + std::sort to sort naturally (numerically)
         QCollator collator;
         collator.setNumericMode(true);
         std::sort(
@@ -289,29 +286,14 @@ void Session::loadRawData()
         parameters = dialog.parameters();
 
         nsx::Diffractometer* diff = exp->getDiffractometer();
-        auto reader{std::make_unique<nsx::RawDataReader>("::RawDataReader::", diff)};
-        reader->setParameters(parameters);
+        const std::shared_ptr<nsx::DataSet> dataset_ptr {
+            std::make_shared<nsx::DataSet>(parameters.dataset_name, diff)};
+        dataset_ptr->setRawReaderParameters(parameters);
+        for (const auto& filenm : filenames)
+            dataset_ptr->addRawFrame(filenm);
 
-        // Metadata for the DataSet, accumulated from the individual metadata
-        nsx::MetaData metadata;
-
-        for (size_t i = 0; i < filenames.size(); ++i) {
-            reader->addFrame(filenames[i]);
-            metadata.addMap(reader->metadata().map());
-        }
-        reader->end();
-        // include the latest changes from reader metadata (eg., `npdone`)
-        metadata.addMap(reader->metadata().map());
-
-        const std::shared_ptr<nsx::DataSet> dataset{
-            std::make_shared<nsx::DataSet>(std::move(reader))};
-
-        // choose a name for the dataset
-        // default data name: name of the first data-file
-        dataset->setName(parameters.dataset_name);
-        metadata.add(nsx::at_datasetSources, nsx::join(filenames, ", "));
-        dataset->metadata().setMap(metadata.map());
-        exp->addData(dataset);
+        dataset_ptr->finishRead();
+        exp->addData(dataset_ptr);
         // _selectedData = currentProject()->getIndex(qfilenames.at(0));
         onDataChanged();
         auto data_list = currentProject()->getDataNames();

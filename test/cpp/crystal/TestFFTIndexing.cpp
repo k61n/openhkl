@@ -17,8 +17,9 @@
 #include <Eigen/Dense>
 #include <iostream>
 
-#include "core/algo/DataReaderFactory.h"
 #include "core/experiment/Experiment.h"
+#include "core/raw/DataKeys.h"
+#include "core/data/DataSet.h"
 #include "core/peak/Qs2Events.h"
 
 TEST_CASE("test/crystal/TestFFTIndexing.cpp", "")
@@ -30,10 +31,13 @@ TEST_CASE("test/crystal/TestFFTIndexing.cpp", "")
     });
 
     nsx::Experiment experiment("test", "BioDiff2500");
-    const nsx::sptrDataSet data(
-        nsx::DataReaderFactory().create("hdf", "gal3.hdf", experiment.getDiffractometer()));
-    data->setName("TestFFTIndexing");
-    experiment.addData(data);
+    const nsx::sptrDataSet dataset_ptr { std::make_shared<nsx::DataSet>
+          (nsx::kw_datasetDefaultName, experiment.getDiffractometer()) };
+
+    dataset_ptr->addDataFile("gal3.hdf", "nsx");
+    dataset_ptr->finishRead();
+
+    experiment.addData(dataset_ptr);
 
     nsx::AutoIndexer* auto_indexer = experiment.autoIndexer();
 
@@ -67,12 +71,12 @@ TEST_CASE("test/crystal/TestFFTIndexing.cpp", "")
 
     nsx::PeakCollection peak_collection;
     const auto events =
-        nsx::algo::qVectorList2Events(qs, data->instrumentStates(), data->detector(), data->nFrames());
+        nsx::algo::qVectorList2Events(qs, dataset_ptr->instrumentStates(), dataset_ptr->detector(), dataset_ptr->nFrames());
     for (const nsx::DetectorEvent& event : events) {
         // std::cout << "event x=" << event._px << " y=" << event._py
         //    << " frame=" << event._frame << " tof=" << event._tof
         //    << std::endl;
-        nsx::Peak3D peak(data);
+        nsx::Peak3D peak(dataset_ptr);
         const Eigen::Vector3d center = {event._px, event._py, event._frame};
 
         // dummy shape

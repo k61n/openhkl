@@ -25,9 +25,9 @@
 #include "base/utils/ProgressHandler.h"
 #include "base/utils/Units.h"
 #include "core/algo/AutoIndexer.h"
-#include "core/algo/DataReaderFactory.h"
 #include "core/convolve/ConvolverFactory.h"
 #include "core/data/DataSet.h"
+#include "core/raw/DataKeys.h"
 #include "core/detector/DetectorEvent.h"
 #include "core/experiment/Experiment.h"
 #include "core/experiment/PeakFinder.h"
@@ -45,29 +45,31 @@
 
 TEST_CASE("test/data/TestNewWorkFlow.cpp", "")
 {
-    nsx::DataReaderFactory factory;
-
     nsx::Experiment experiment("test", "BioDiff2500");
-    nsx::sptrDataSet dataf(factory.create("hdf", "gal3.hdf", experiment.getDiffractometer()));
-    dataf->setName("TestNewWorkFlow");
 
-    std::cout << "Dataset columns: " << dataf->nCols() << ", rows: " << dataf->nRows()
-              << ", frames: " << dataf->nFrames() << std::endl;
+    const nsx::sptrDataSet dataset_ptr { std::make_shared<nsx::DataSet>
+          (nsx::kw_datasetDefaultName, experiment.getDiffractometer()) };
+
+    dataset_ptr->addDataFile("gal3.hdf", "nsx");
+    dataset_ptr->finishRead();
+
+    std::cout << "Dataset columns: " << dataset_ptr->nCols() << ", rows: " << dataset_ptr->nRows()
+              << ", frames: " << dataset_ptr->nFrames() << std::endl;
 
 
 #ifdef OUTPUT_INTERMEDIATE
     // export frames to gnuplot
-    for (int frame = 0; frame < dataf->nFrames(); ++frame) {
+    for (int frame = 0; frame < dataset_ptr->nFrames(); ++frame) {
         std::cout << "Saving frame " << frame << " ... ";
         std::ofstream ofstrFrame("frame_" + std::to_string(frame) + ".gpl");
-        // Eigen::MatrixXi frameDat = dataf->frame(frame);
+        // Eigen::MatrixXi frameDat = dataset_ptr->frame(frame);
         // ofstrFrame << frameDat << std::endl;
-        Eigen::MatrixXd frameDat_corr = dataf->transformedFrame(frame);
-        ofstrFrame << "set xrange [0:" << dataf->nCols() << "]\n";
-        ofstrFrame << "set yrange [0:" << dataf->nRows() << "]\n";
+        Eigen::MatrixXd frameDat_corr = dataset_ptr->transformedFrame(frame);
+        ofstrFrame << "set xrange [0:" << dataset_ptr->nCols() << "]\n";
+        ofstrFrame << "set yrange [0:" << dataset_ptr->nRows() << "]\n";
         ofstrFrame << "set cbrange [0:100]\n";
         ofstrFrame << "set logscale cb\n";
-        // ofstrFrame << "plot '-' u 1:(" << dataf->nRows() << "-$2):3 matrix w image\n";
+        // ofstrFrame << "plot '-' u 1:(" << dataset_ptr->nRows() << "-$2):3 matrix w image\n";
         ofstrFrame << "plot '-' matrix w image\n";
         ofstrFrame << frameDat_corr << "\n";
         ofstrFrame << "e" << std::endl;
@@ -79,7 +81,7 @@ TEST_CASE("test/data/TestNewWorkFlow.cpp", "")
     std::cout << "Detector distance: " << detector->distance() << ", "
               << "width: " << detector->width() << ", height: " << detector->height() << std::endl;
 
-    experiment.addData(dataf);
+    experiment.addData(dataset_ptr);
 
 
     // output sample angles for each frame
@@ -91,8 +93,8 @@ TEST_CASE("test/data/TestNewWorkFlow.cpp", "")
         const auto& axis = sample_gonio.axis(i);
 
         std::cout << axis.name() << ": ";
-        for (size_t j = 0; j < dataf->nFrames(); ++j)
-            std::cout << (dataf->reader()->sampleStates()[j][i] / M_PI * 180.) << ", ";
+        for (size_t j = 0; j < dataset_ptr->nFrames(); ++j)
+            std::cout << (dataset_ptr->reader()->sampleStates()[j][i] / M_PI * 180.) << ", ";
         std::cout << std::endl;
     }
 
@@ -105,8 +107,8 @@ TEST_CASE("test/data/TestNewWorkFlow.cpp", "")
         const auto& axis = detector_gonio.axis(i);
 
         std::cout << axis.name() << ": ";
-        for (size_t j = 0; j < dataf->nFrames(); ++j)
-            std::cout << (dataf->reader()->detectorStates()[j][i] / M_PI * 180.) << ", ";
+        for (size_t j = 0; j < dataset_ptr->nFrames(); ++j)
+            std::cout << (dataset_ptr->reader()->detectorStates()[j][i] / M_PI * 180.) << ", ";
         std::cout << std::endl;
     }
     std::cout << std::endl;
@@ -125,7 +127,7 @@ TEST_CASE("test/data/TestNewWorkFlow.cpp", "")
     // #########################################################
     // test the finder
     nsx::DataList numors;
-    numors.push_back(dataf);
+    numors.push_back(dataset_ptr);
 
     nsx::ConvolverFactory convolver_factory;
     auto convolver = convolver_factory.create("annular", {});
@@ -138,7 +140,7 @@ TEST_CASE("test/data/TestNewWorkFlow.cpp", "")
     finder_params->peak_end = 1.0;
     finder_params->maximum_frames = 10;
     finder_params->frames_begin = 0;
-    finder_params->frames_end = dataf->nFrames();
+    finder_params->frames_end = dataset_ptr->nFrames();
     finder_params->threshold = 10;
 
     peak_finder->setConvolver(std::unique_ptr<nsx::Convolver>(convolver));
@@ -272,7 +274,7 @@ TEST_CASE("test/data/TestNewWorkFlow.cpp", "")
         std::vector<nsx::ReciprocalVector> q_vectors;
         q_vectors.push_back(peak->q());
         auto events = nsx::algo::qVectorList2Events(
-            q_vectors, dataf->instrumentStates(), dataf->detector(), dataf->nFrames());
+            q_vectors, dataset_ptr->instrumentStates(), dataset_ptr->detector(), dataset_ptr->nFrames());
 
         if (events.empty())
             continue;
@@ -292,8 +294,8 @@ TEST_CASE("test/data/TestNewWorkFlow.cpp", "")
             }
         }
 
-        const Eigen::RowVector3d q0 = nsx::Peak3D(dataf, nsx::Ellipsoid(p0, 1.0)).q().rowVector();
-        const Eigen::RowVector3d q1 = nsx::Peak3D(dataf, nsx::Ellipsoid(p1, 1.0)).q().rowVector();
+        const Eigen::RowVector3d q0 = nsx::Peak3D(dataset_ptr, nsx::Ellipsoid(p0, 1.0)).q().rowVector();
+        const Eigen::RowVector3d q1 = nsx::Peak3D(dataset_ptr, nsx::Ellipsoid(p1, 1.0)).q().rowVector();
 
         CHECK(p0(0) == Approx(p1(0)).epsilon(3e-2));
         CHECK(p0(1) == Approx(p1(1)).epsilon(3e-2));
