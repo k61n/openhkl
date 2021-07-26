@@ -602,7 +602,7 @@ void SubframeFindPeaks::refreshPreview()
         _pixmap = _figure_view->scene()->addPixmap(QPixmap::fromImage(image));
     else
         _pixmap->setPixmap(QPixmap::fromImage(image));
-    _figure_view->fitInView(_figure_view->scene()->sceneRect());
+    _figure_view->fitInView(_figure_view->scene()->sceneRect(), Qt::KeepAspectRatio);
 }
 
 void SubframeFindPeaks::refreshPeakTable()

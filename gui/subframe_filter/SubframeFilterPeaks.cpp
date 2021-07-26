@@ -582,6 +582,7 @@ void SubframeFilterPeaks::refreshPeakVisual()
     _figure_view->getScene()->update();
     _figure_view->getScene()->initIntRegionFromPeakWidget(_peak_view_widget->set1);
     _figure_view->getScene()->drawPeakitems();
+    _figure_view->fitScene();
 }
 
 void SubframeFilterPeaks::changeSelected(PeakItemGraphic* peak_graphic)

@@ -298,6 +298,7 @@ void SubframePredictPeaks::setExperiments()
         refreshPeakCombo();
         grabPredictorParameters();
         grabShapeCollectionParameters();
+        refreshPeakTable();
         computeSigmas();
     }
 
@@ -345,7 +346,6 @@ void SubframePredictPeaks::updateDatasetParameters(int idx)
     const int nFrames = _data_list.at(idx)->nFrames();
 
     _figure_view->getScene()->slotChangeSelectedData(_data_list.at(idx), _figure_spin->value());
-    //_figure_view->getScene()->setMaxIntensity(3000);
     emit _figure_view->getScene()->dataChanged();
     _figure_view->getScene()->update();
 
@@ -523,6 +523,10 @@ void SubframePredictPeaks::refreshPeakTable()
 
 void SubframePredictPeaks::refreshPeakVisual()
 {
+    _figure_view->getScene()->update();
+    _figure_view->getScene()->initIntRegionFromPeakWidget(_peak_view_widget->set1);
+    _figure_view->getScene()->drawPeakitems();
+    _figure_view->fitScene();
     if (_peak_collection_item.childCount() == 0)
         return;
 
@@ -535,9 +539,6 @@ void SubframePredictPeaks::refreshPeakVisual()
         graphic->initFromPeakViewWidget(
             peak->peak()->enabled() ? _peak_view_widget->set1 : _peak_view_widget->set2);
     }
-    _figure_view->getScene()->update();
-    _figure_view->getScene()->initIntRegionFromPeakWidget(_peak_view_widget->set1);
-    _figure_view->getScene()->drawPeakitems();
 }
 
 void SubframePredictPeaks::changeSelected(PeakItemGraphic* peak_graphic)
