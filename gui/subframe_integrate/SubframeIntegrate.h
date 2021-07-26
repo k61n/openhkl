@@ -37,6 +37,7 @@
 #include <QWidget>
 
 class DetectorView;
+class LinkedComboBox;
 class PeakItemGraphic;
 class PeakTableView;
 class PeakViewWidget;
@@ -114,10 +115,10 @@ class SubframeIntegrate : public QWidget {
     QSplitter* _right_element;
 
     // data selection
-    QComboBox* _exp_combo;
-    QComboBox* _peak_combo;
-    QComboBox* _int_peak_combo;
-    QComboBox* _data_combo;
+    LinkedComboBox* _exp_combo;
+    LinkedComboBox* _peak_combo;
+    LinkedComboBox* _int_peak_combo;
+    LinkedComboBox* _data_combo;
 
     Spoiler* _integrate_box;
     QComboBox* _integrator_combo;

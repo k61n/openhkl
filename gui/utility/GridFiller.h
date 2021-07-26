@@ -19,6 +19,7 @@
 #include <QString>
 
 class ColorButton;
+class LinkedComboBox;
 class Spoiler;
 class QGridLayout;
 class QComboBox;
@@ -27,6 +28,7 @@ class QDoubleSpinBox;
 class QWidget;
 class QCheckBox;
 class QPushButton;
+enum class ComboType;
 
 //! Helps to fill a grid layout according to the standards used all over NSX (e.g. labels are right
 //! aligned).
@@ -40,6 +42,12 @@ class GridFiller {
     //! Add a row with a label and a combo box. If labelText is empty, then no label is created, and
     //! the tooltip is set on the created combo box directly.
     QComboBox* addCombo(const QString& labelText = QString(), const QString& tooltip = QString());
+
+    //! Add a row with a label and a linked combo box. If labelText is empty, then no label is
+    //! created, and the tooltip is set on the created combo box directly.
+    LinkedComboBox* addLinkedCombo(
+        ComboType comboType, const QString& labelText = QString(),
+        const QString& tooltip = QString());
 
     //! Add a row with a check box. The check box is placed in the given column, with span to the
     //! right edge.

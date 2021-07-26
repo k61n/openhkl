@@ -33,6 +33,7 @@
 #include <QWidget>
 
 class DetectorView;
+class LinkedComboBox;
 class PeakItemGraphic;
 class PeakTableView;
 class PeakViewWidget;
@@ -129,7 +130,7 @@ class SubframePredictPeaks : public QWidget {
     Spoiler* _shapes_box;
     Spoiler* _preview_box;
 
-    QComboBox* _cell_combo;
+    LinkedComboBox* _cell_combo;
     QComboBox* _integrator;
     QDoubleSpinBox* _d_min;
     QDoubleSpinBox* _d_max;
@@ -137,8 +138,8 @@ class SubframePredictPeaks : public QWidget {
     QPushButton* _save_button;
     QPushButton* _predict_button;
 
-    QComboBox* _exp_combo;
-    QComboBox* _data_combo;
+    LinkedComboBox* _exp_combo;
+    LinkedComboBox* _data_combo;
 
     PeakViewWidget* _peak_view_widget;
 
@@ -150,7 +151,7 @@ class SubframePredictPeaks : public QWidget {
 
     QSizePolicy _size_policy_right;
 
-    QComboBox* _found_peaks_combo;
+    LinkedComboBox* _found_peaks_combo;
     QSpinBox* _nx;
     QSpinBox* _ny;
     QSpinBox* _nz;

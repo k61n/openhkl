@@ -21,6 +21,7 @@
 class DetectorScene;
 class DetectorWindow;
 class PlottableItem;
+class Sentinel;
 class SideBar;
 class SubframeHome;
 class SubframeExperiment;
@@ -85,6 +86,8 @@ class MainWin : public QMainWindow {
 
     // modeless detector dialog
     DetectorWindow* detector_window;
+
+    Sentinel* sentinel;
 
  private:
     QStackedWidget* _layout_stack;

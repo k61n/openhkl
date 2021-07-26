@@ -31,6 +31,7 @@
 class ColorButton;
 class DetectorScene;
 class DetectorView;
+class LinkedComboBox;
 class PeakViewWidget;
 class ShortTable;
 
@@ -84,8 +85,8 @@ class DetectorWindow : public QDialog {
     // Control panel elements
     QComboBox* _exp_combo;
     QComboBox* _data_combo;
-    QComboBox* _peak_combo_1;
-    QComboBox* _peak_combo_2;
+    LinkedComboBox* _peak_combo_1;
+    LinkedComboBox* _peak_combo_2;
     QComboBox* _unit_cell_combo;
 
     // 3rd party peak plotting elements

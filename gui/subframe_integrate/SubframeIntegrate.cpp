@@ -26,6 +26,7 @@
 #include "gui/models/Session.h"
 #include "gui/subframe_predict/ShapeCollectionDialog.h"
 #include "gui/utility/GridFiller.h"
+#include "gui/utility/LinkedComboBox.h"
 #include "gui/utility/PropertyScrollArea.h"
 #include "gui/utility/SideBar.h"
 #include "gui/utility/Spoiler.h"
@@ -67,10 +68,12 @@ void SubframeIntegrate::setInputUp()
     auto input_box = new Spoiler("Input");
     GridFiller f(input_box, true);
 
-    _exp_combo = f.addCombo("Experiment");
-    _data_combo = f.addCombo("Data set");
-    _peak_combo = f.addCombo("Found peaks", "Used to build shape collection");
-    _int_peak_combo = f.addCombo("Peaks to integrate");
+    _exp_combo = f.addLinkedCombo(ComboType::Experiment, "Experiment");
+    _data_combo = f.addLinkedCombo(ComboType::DataSet, "Data set");
+    _peak_combo = f.addLinkedCombo(
+        ComboType::FoundPeaks, "Found peaks", "Used to build shape collection");
+    _int_peak_combo = f.addLinkedCombo(
+        ComboType::PeakCollection, "Peaks to integrate");
 
     connect(
         _exp_combo, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this,

@@ -14,7 +14,9 @@
 
 #include "gui/utility/GridFiller.h"
 
+#include "gui/MainWin.h" // gGui
 #include "gui/utility/ColorButton.h"
+#include "gui/utility/LinkedComboBox.h"
 #include "gui/utility/Spoiler.h"
 
 #include <QCheckBox>
@@ -53,6 +55,25 @@ QComboBox* GridFiller::addCombo(const QString& labelText, const QString& tooltip
         addLabel(labelText, tooltip);
 
     QComboBox* comboBox = new QComboBox();
+    if (!createLabel)
+        comboBox->setToolTip(tooltip);
+    comboBox->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
+    comboBox->setSizeAdjustPolicy(QComboBox::AdjustToContents);
+    _mainLayout->addWidget(comboBox, _nextRow, createLabel ? 1 : 0, 1, -1);
+
+    _nextRow++;
+
+    return comboBox;
+}
+
+LinkedComboBox* GridFiller::addLinkedCombo(
+    ComboType comboType, const QString& labelText, const QString& tooltip)
+{
+    const bool createLabel = !labelText.isEmpty();
+    if (createLabel)
+        addLabel(labelText, tooltip);
+
+    LinkedComboBox* comboBox = new LinkedComboBox(comboType, gGui->sentinel);
     if (!createLabel)
         comboBox->setToolTip(tooltip);
     comboBox->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);

@@ -24,9 +24,11 @@
 #include "core/raw/IDataReader.h"
 #include "core/raw/MetaData.h"
 #include "gui/MainWin.h"
+#include "gui/connect/Sentinel.h"
 #include "gui/dialogs/DataNameDialog.h"
 #include "gui/dialogs/RawDataDialog.h"
 #include "gui/models/Project.h"
+#include "gui/utility/LinkedComboBox.h"
 
 #include <QCollator>
 #include <QDir>
@@ -223,6 +225,8 @@ void Session::loadData(nsx::DataFormat format)
     // select the first dataset
     currentProject()->selectData(currentProject()->getIndex(QString::fromStdString(dataset1_name)));
     onDataChanged();
+    auto data_list = currentProject()->getDataNames();
+    gGui->sentinel->setLinkedComboList(ComboType::DataSet, data_list);
 }
 
 void Session::removeData()
@@ -310,6 +314,8 @@ void Session::loadRawData()
         exp->addData(dataset);
         // _selectedData = currentProject()->getIndex(qfilenames.at(0));
         onDataChanged();
+        auto data_list = currentProject()->getDataNames();
+        gGui->sentinel->setLinkedComboList(ComboType::DataSet, data_list);
     } catch (std::exception& e) {
         QMessageBox::critical(nullptr, "Error", QString(e.what()));
     } catch (...) {

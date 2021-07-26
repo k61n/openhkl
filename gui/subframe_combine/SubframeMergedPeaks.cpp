@@ -28,6 +28,7 @@
 #include "gui/graphics/SXPlot.h"
 #include "gui/models/Project.h"
 #include "gui/models/Session.h"
+#include "gui/utility/LinkedComboBox.h"
 #include "gui/utility/SideBar.h"
 
 #include <QDialogButtonBox>
@@ -50,8 +51,8 @@ SubframeMergedPeaks::SubframeMergedPeaks()
     QHBoxLayout* drop_layout = new QHBoxLayout();
 
     _exp_drop = new QComboBox();
-    _peaks1_drop = new QComboBox();
-    _peaks2_drop = new QComboBox();
+    _peaks1_drop = new LinkedComboBox(ComboType::PeakCollection, gGui->sentinel);
+    _peaks2_drop = new LinkedComboBox(ComboType::PeakCollection, gGui->sentinel);
 
     _exp_drop->setSizePolicy(*_size_policy_right);
     _peaks1_drop->setSizePolicy(*_size_policy_right);

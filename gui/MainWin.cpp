@@ -16,6 +16,7 @@
 
 #include "gui/actions/Actions.h"
 #include "gui/actions/Menus.h"
+#include "gui/connect/Sentinel.h"
 #include "gui/detector_window/DetectorWindow.h"
 #include "gui/graphics/DetectorScene.h"
 #include "gui/graphics/DetectorView.h"
@@ -59,6 +60,8 @@ MainWin::MainWin()
 
     triggers = new Actions;
     menus_ = new Menus(menuBar());
+
+    sentinel = new Sentinel();
 
     setTabPosition(Qt::AllDockWidgetAreas, QTabWidget::North);
 

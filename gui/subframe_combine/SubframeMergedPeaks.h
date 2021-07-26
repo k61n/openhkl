@@ -33,6 +33,7 @@
 #include <QVBoxLayout>
 #include <QWidget>
 
+class LinkedComboBox;
 class MergedData;
 class SXPlot;
 
@@ -117,8 +118,8 @@ class SubframeMergedPeaks : public QWidget {
     QWidget* _unmerged_tab;
 
     QComboBox* _exp_drop;
-    QComboBox* _peaks1_drop;
-    QComboBox* _peaks2_drop;
+    LinkedComboBox* _peaks1_drop;
+    LinkedComboBox* _peaks2_drop;
 
     QTableView* _d_shell_view;
     QDoubleSpinBox* _d_min;

@@ -28,6 +28,7 @@
 #include "gui/subframe_refiner/RefinerTables.h"
 #include "gui/utility/ColorButton.h"
 #include "gui/utility/GridFiller.h"
+#include "gui/utility/LinkedComboBox.h"
 #include "gui/utility/PropertyScrollArea.h"
 #include "gui/utility/SideBar.h"
 #include "gui/utility/Spoiler.h"
@@ -80,10 +81,10 @@ void SubframeRefiner::setInputUp()
     auto input_box = new Spoiler("Input");
     GridFiller f(input_box, true);
 
-    _exp_combo = f.addCombo("Experiment");
-    _peak_combo = f.addCombo("Peaks");
-    _data_combo = f.addCombo("Data set");
-    _cell_combo = f.addCombo("Unit cell");
+    _exp_combo = f.addLinkedCombo(ComboType::Experiment, "Experiment");
+    _peak_combo = f.addLinkedCombo(ComboType::FoundPeaks, "Peaks");
+    _data_combo = f.addLinkedCombo(ComboType::DataSet, "Data set");
+    _cell_combo = f.addLinkedCombo(ComboType::UnitCell, "Unit cell");
     _n_batches_spin = f.addSpinBox("Number of batches");
 
     _n_batches_spin->setMinimum(1);
@@ -381,7 +382,7 @@ void SubframeRefiner::setUpdateUp()
     auto update_box = new Spoiler("Update predictions");
     GridFiller f(update_box, true);
 
-    _predicted_combo = f.addCombo("Predicted peaks");
+    _predicted_combo = f.addLinkedCombo(ComboType::PredictedPeaks, "Predicted peaks");
 
     _update_button = f.addButton("Update", "Update peak positions given refined unit cell");
 

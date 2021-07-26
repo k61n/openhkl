@@ -26,6 +26,7 @@
 #include "gui/models/Project.h"
 #include "gui/models/Session.h"
 #include "gui/utility/GridFiller.h"
+#include "gui/utility/LinkedComboBox.h"
 #include "gui/utility/PropertyScrollArea.h"
 #include "gui/utility/SideBar.h"
 #include "gui/utility/Spoiler.h"
@@ -84,8 +85,8 @@ void SubframeFilterPeaks::setInputUp()
     auto input_box = new Spoiler("Input");
     GridFiller f(input_box, true);
 
-    _exp_combo = f.addCombo("Experiment");
-    _peak_combo = f.addCombo("Peak collection");
+    _exp_combo = f.addLinkedCombo(ComboType::Experiment, "Experiment");
+    _peak_combo = f.addLinkedCombo(ComboType::PeakCollection, "Peak collection");
 
     connect(
         _exp_combo, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this,
@@ -122,7 +123,7 @@ void SubframeFilterPeaks::setUnitCellUp()
     _unit_cell_box = new SpoilerCheck("Indexed peaks by unit cell");
     GridFiller f(_unit_cell_box);
 
-    _unit_cell = f.addCombo("Unit cell:");
+    _unit_cell = f.addLinkedCombo(ComboType::UnitCell, "Unit cell:");
     _tolerance = f.addDoubleSpinBox("Tolerance:");
 
     _tolerance->setValue(0.2);
@@ -288,7 +289,7 @@ void SubframeFilterPeaks::setFigureUp()
     _figure_view->scale(1, -1);
     figure_grid->addWidget(_figure_view, 0, 0, 1, 3);
 
-    _data_combo = new QComboBox(this);
+    _data_combo = new LinkedComboBox(ComboType::DataSet, gGui->sentinel, this);
     _data_combo->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
     figure_grid->addWidget(_data_combo, 1, 0, 1, 1);
 
@@ -365,28 +366,16 @@ void SubframeFilterPeaks::setExperimentsUp()
 
 void SubframeFilterPeaks::updatePeakList()
 {
-    _peak_combo->blockSignals(true);
+    if (gSession->experimentNames().empty())
+        return;
 
     QString current_peaks = _peak_combo->currentText();
-    _peak_combo->clear();
-    _peak_list = gSession->experimentAt(_exp_combo->currentIndex())->getPeakListNames();
+    auto peak_list = gSession->experimentAt(_exp_combo->currentIndex())->getPeakListNames();
+    _peak_combo->addItems(peak_list);
+    _peak_combo->setCurrentText(current_peaks);
 
-    if (!_peak_list.empty()) {
-        _peak_combo->addItems(_peak_list);
-        _peak_combo->setCurrentText(current_peaks);
-
-        nsx::PeakFilter* filter =
-            gSession->experimentAt(_exp_combo->currentIndex())->experiment()->peakFilter();
-        nsx::PeakCollection* collection =
-            gSession->experimentAt(_exp_combo->currentIndex())
-                ->experiment()
-                ->getPeakCollection(_peak_combo->currentText().toStdString());
-        filter->resetFiltering(collection);
-
-        updateDatasetList();
-        refreshPeakTable();
-    }
-    _peak_combo->blockSignals(false);
+    updateDatasetList();
+    refreshPeakTable();
 }
 
 void SubframeFilterPeaks::updateDatasetList()
@@ -427,7 +416,7 @@ void SubframeFilterPeaks::updateDatasetParameters(int idx)
 
 void SubframeFilterPeaks::grabFilterParameters()
 {
-    if (_peak_list.empty() || _exp_combo->count() < 1)
+    if (_peak_combo->count() == 0 || _exp_combo->count() == 0)
         return;
 
     auto* params =
@@ -465,7 +454,7 @@ void SubframeFilterPeaks::grabFilterParameters()
 
 void SubframeFilterPeaks::setFilterParameters()
 {
-    if (_peak_list.empty() || _exp_combo->count() < 1)
+    if (_peak_combo->count() == 0 || _exp_combo->count() == 0)
         return;
 
     auto* filter = gSession->experimentAt(_exp_combo->currentIndex())->experiment()->peakFilter();
@@ -518,10 +507,6 @@ void SubframeFilterPeaks::setFilterParameters()
 
 void SubframeFilterPeaks::filterPeaks()
 {
-    if (_peak_list.empty() || _exp_combo->count() < 1)
-        return;
-
-
     nsx::PeakFilter* filter =
         gSession->experimentAt(_exp_combo->currentIndex())->experiment()->peakFilter();
     nsx::PeakCollection* collection =
@@ -545,8 +530,6 @@ void SubframeFilterPeaks::filterPeaks()
 
 void SubframeFilterPeaks::accept()
 {
-    if (_peak_list.empty() || _exp_combo->count() < 1)
-        return;
     nsx::PeakCollection* collection =
         gSession->experimentAt(_exp_combo->currentIndex())
             ->experiment()
@@ -559,12 +542,14 @@ void SubframeFilterPeaks::accept()
             ->experiment()
             ->acceptFilter(dlg->listName().toStdString(), collection);
         gSession->experimentAt(_exp_combo->currentIndex())->generatePeakModel(dlg->listName());
+        auto peak_list = gSession->experimentAt(_exp_combo->currentIndex())->getPeakListNames();
+        _peak_combo->updateList(peak_list);
     }
 }
 
 void SubframeFilterPeaks::refreshPeakTable()
 {
-    if (_peak_list.empty() || _exp_combo->count() < 1)
+    if (_peak_combo->count() == 0 || _exp_combo->count() == 0)
         return;
 
     _figure_view->getScene()->clearPeakItems();
