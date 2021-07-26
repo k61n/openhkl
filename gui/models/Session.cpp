@@ -136,7 +136,7 @@ std::vector<QString> Session::experimentNames() const
     return ret;
 }
 
-void Session::selectExperiment(int select)
+void Session::selectProject(int select)
 {
     if (select < _projects.size() && select >= 0)
         _currentProject = select;

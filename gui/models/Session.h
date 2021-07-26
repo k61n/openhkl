@@ -44,7 +44,7 @@ class Session {
     int numExperiments() const;
     std::vector<QString> experimentNames() const;
 
-    void selectExperiment(int);
+    void selectProject(int);
 
     void removeExperiment(const QString& name);
 
