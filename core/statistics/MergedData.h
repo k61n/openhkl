@@ -65,10 +65,6 @@ class MergedData {
     double _d_min;
     double _d_max;
 
-    //! Number of peaks with intensity NaN (not added to set)
-    int _nNaN = 0;
-    //! Number of peaks with zero intensity
-    int _nZero = 0;
     //! Number of invalid peaks
     int _nInvalid = 0;
 };

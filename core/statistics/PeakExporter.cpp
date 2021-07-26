@@ -41,42 +41,56 @@ void PeakExporter::saveStatistics(
 {
     std::fstream file(filename, std::ios::out);
 
-    file << std::fixed << std::setw(10) << "dmax" << std::fixed << std::setw(10) << "dmin"
-         << std::fixed << std::setw(10) << "nobs" << std::fixed << std::setw(10) << "nmerge"
-         << std::fixed << std::setw(11) << "Redundancy" << std::fixed << std::setw(10) << "R meas."
-         << std::fixed << std::setw(12) << "R exp. meas." << std::fixed << std::setw(11)
-         << "R merge" << std::fixed << std::setw(13) << "R exp. merge" << std::fixed
-         << std::setw(10) << "Rpim" << std::fixed << std::setw(11) << "Rpim exp." << std::fixed
-         << std::setw(10) << "CC half" << std::fixed << std::setw(10) << "CC star" << std::endl;
+    file << std::fixed << std::setw(10) << "dmax"
+         << std::fixed << std::setw(10) << "dmin"
+         << std::fixed << std::setw(10) << "nobs"
+         << std::fixed << std::setw(10) << "nmerge"
+         << std::fixed << std::setw(11) << "Redundancy"
+         << std::fixed << std::setw(10) << "R meas."
+         << std::fixed << std::setw(12) << "R exp. meas."
+         << std::fixed << std::setw(11) << "R merge"
+         << std::fixed << std::setw(13) << "R exp. merge"
+         << std::fixed << std::setw(10) << "Rpim"
+         << std::fixed << std::setw(11) << "Rpim exp."
+         << std::fixed << std::setw(10) << "CC half"
+         << std::fixed << std::setw(10) << "CC star"
+         << std::fixed << std::setw(10) << "compl."
+         << std::endl;
 
     for (const auto& shell : perShell->shells) {
-        file << std::fixed << std::setw(10) << std::setprecision(2) << shell.dmin << std::fixed
-             << std::setw(10) << std::setprecision(2) << shell.dmax << std::fixed << std::setw(10)
-             << shell.nobserved << std::fixed << std::setw(10) << shell.nunique << std::fixed
-             << std::setw(11) << std::setprecision(3) << shell.redundancy << std::fixed
-             << std::setw(10) << std::setprecision(3) << shell.Rmeas << std::fixed << std::setw(12)
-             << std::setprecision(3) << shell.expectedRmeas << std::fixed << std::setw(11)
-             << std::setprecision(3) << shell.Rmerge << std::fixed << std::setw(13)
-             << std::setprecision(3) << shell.expectedRmerge << std::fixed << std::setw(10)
-             << std::setprecision(3) << shell.Rpim << std::fixed << std::setw(11)
-             << std::setprecision(3) << shell.expectedRpim << std::fixed << std::setw(10)
-             << std::setprecision(3) << shell.CChalf << std::fixed << std::setw(10)
-             << std::setprecision(3) << shell.CCstar << std::endl;
+        file << std::fixed << std::setw(10) << std::setprecision(2) << shell.dmin
+             << std::fixed << std::setw(10) << std::setprecision(2) << shell.dmax
+             << std::fixed << std::setw(10) << shell.nobserved
+             << std::fixed << std::setw(10) << shell.nunique
+             << std::fixed << std::setw(11) << std::setprecision(3) << shell.redundancy
+             << std::fixed << std::setw(10) << std::setprecision(3) << shell.Rmeas
+             << std::fixed << std::setw(12) << std::setprecision(3) << shell.expectedRmeas
+             << std::fixed << std::setw(11) << std::setprecision(3) << shell.Rmerge
+             << std::fixed << std::setw(13) << std::setprecision(3) << shell.expectedRmerge
+             << std::fixed << std::setw(10) << std::setprecision(3) << shell.Rpim
+             << std::fixed << std::setw(11) << std::setprecision(3) << shell.expectedRpim
+             << std::fixed << std::setw(10) << std::setprecision(3) << shell.CChalf
+             << std::fixed << std::setw(10) << std::setprecision(3) << shell.CCstar
+             << std::fixed << std::setw(10) << std::setprecision(3) << shell.Completeness
+             << std::endl;
     }
 
     for (const auto& shell : overall->shells) {
-        file << std::fixed << std::setw(10) << std::setprecision(2) << shell.dmin << std::fixed
-             << std::setw(10) << std::setprecision(2) << shell.dmax << std::fixed << std::setw(10)
-             << shell.nobserved << std::fixed << std::setw(10) << shell.nunique << std::fixed
-             << std::setw(11) << std::setprecision(3) << shell.redundancy << std::fixed
-             << std::setw(10) << std::setprecision(3) << shell.Rmeas << std::fixed << std::setw(12)
-             << std::setprecision(3) << shell.expectedRmeas << std::fixed << std::setw(11)
-             << std::setprecision(3) << shell.Rmerge << std::fixed << std::setw(13)
-             << std::setprecision(3) << shell.expectedRmerge << std::fixed << std::setw(10)
-             << std::setprecision(3) << shell.Rpim << std::fixed << std::setw(11)
-             << std::setprecision(3) << shell.expectedRpim << std::fixed << std::setw(10)
-             << std::setprecision(3) << shell.CChalf << std::fixed << std::setw(10)
-             << std::setprecision(3) << shell.CCstar << std::endl;
+        file << std::fixed << std::setw(10) << std::setprecision(2) << shell.dmin
+             << std::fixed << std::setw(10) << std::setprecision(2) << shell.dmax
+             << std::fixed << std::setw(10) << shell.nobserved
+             << std::fixed << std::setw(10) << shell.nunique
+             << std::fixed << std::setw(11) << std::setprecision(3) << shell.redundancy
+             << std::fixed << std::setw(10) << std::setprecision(3) << shell.Rmeas
+             << std::fixed << std::setw(12) << std::setprecision(3) << shell.expectedRmeas
+             << std::fixed << std::setw(11) << std::setprecision(3) << shell.Rmerge
+             << std::fixed << std::setw(13) << std::setprecision(3) << shell.expectedRmerge
+             << std::fixed << std::setw(10) << std::setprecision(3) << shell.Rpim
+             << std::fixed << std::setw(11) << std::setprecision(3) << shell.expectedRpim
+             << std::fixed << std::setw(10) << std::setprecision(3) << shell.CChalf
+             << std::fixed << std::setw(10) << std::setprecision(3) << shell.CCstar
+             << std::fixed << std::setw(10) << std::setprecision(3) << shell.Completeness
+             << std::endl;
     }
 
     file.close();
