@@ -17,7 +17,7 @@
 #include "base/fit/FitParameters.h"
 #include "base/fit/Minimizer.h"
 #include "core/data/DataSet.h"
-#include "core/raw/IDataReader.h"
+#include "core/loader/IDataReader.h"
 #include <QDebug>
 #include <QtGlobal>
 

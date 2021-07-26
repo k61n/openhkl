@@ -15,7 +15,7 @@
 #ifndef NSX_CORE_LOADER_NEXUSMETADATAREADER_H
 #define NSX_CORE_LOADER_NEXUSMETADATAREADER_H
 
-#include "core/raw/IDataReader.h" // inherits from
+#include "core/loader/IDataReader.h" // inherits from
 
 #include <H5Cpp.h>
 

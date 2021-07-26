@@ -28,7 +28,7 @@
 #include "core/instrument/InterpolatedState.h"
 #include "core/instrument/Sample.h"
 #include "core/instrument/Source.h"
-#include "core/raw/IDataReader.h"
+#include "core/loader/IDataReader.h"
 
 void run_test(const char* filename, const char* instrument)
 {

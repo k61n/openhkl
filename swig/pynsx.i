@@ -152,7 +152,7 @@ using Eigen::Quaterniond;
 #include "core/peak/Peak3D.h"
 #include "core/peak/PeakCoordinateSystem.h"
 #include "core/peak/PeakData.h"
-#include "core/raw/IDataReader.h"
+#include "core/loader/IDataReader.h"
 #include "core/raw/MetaData.h"
 #include "core/shape/Profile1D.h"
 #include "core/shape/Profile3D.h"
@@ -305,7 +305,7 @@ ArrayExtendCRef(MillerIndex, int);
 %include "core/instrument/Source.h"
 
 %include "core/raw/MetaData.h"
-%include "core/raw/IDataReader.h"
+%include "core/loader/IDataReader.h"
 
 %include "core/loader/HDF5MetaDataReader.h"
 %include "core/loader/HDF5DataReader.h"

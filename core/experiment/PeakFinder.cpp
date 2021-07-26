@@ -23,7 +23,7 @@
 #include "core/instrument/Sample.h"
 #include "core/integration/Blob3D.h"
 #include "core/peak/Peak3D.h"
-#include "core/raw/IDataReader.h"
+#include "core/loader/IDataReader.h"
 #include "core/shape/Octree.h"
 #include <Eigen/Dense>
 #include <cstdio>

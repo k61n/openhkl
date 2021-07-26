@@ -37,7 +37,7 @@
 #include "core/integration/ShapeIntegrator.h"
 #include "core/peak/PeakCoordinateSystem.h"
 #include "core/raw/DataKeys.h"
-#include "core/raw/IDataReader.h"
+#include "core/loader/IDataReader.h"
 #include "core/raw/MetaData.h"
 #include "core/statistics/CC.h"
 #include "core/statistics/RFactor.h"

@@ -19,7 +19,7 @@
 #include "core/instrument/InstrumentStateList.h"
 #include "core/peak/Peak3D.h"
 #include "core/raw/DataKeys.h"
-#include "core/raw/IDataReader.h"
+#include "core/loader/IDataReader.h"
 #include "core/data/DataTypes.h"
 
 namespace nsx {

@@ -2,7 +2,7 @@
 //
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
-//! @file      core/raw/IDataReader.h
+//! @file      core/loader/IDataReader.h
 //! @brief     Defines class IDataReader
 //!
 //! @homepage  ###HOMEPAGE###
