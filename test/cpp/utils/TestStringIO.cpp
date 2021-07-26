@@ -57,4 +57,8 @@ TEST_CASE("test/utils/TestStringIO.cpp", "")
     CHECK(
         nsx::split("hello ; how    ; are; you ;?", " ")
         != std::vector<std::string>({"hello", "how", "are", "you", "?"}));
+
+    const std::string str_to_lower {"TheCAPITALLetter 'd' is D "};
+    CHECK(nsx::lowerCase(str_to_lower) == "thecapitalletter 'd' is d ");
+
 }
