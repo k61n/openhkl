@@ -202,7 +202,6 @@ void Session::loadData(nsx::DataFormat format)
             const nsx::sptrDataSet dataset_ptr {
                 std::make_shared<nsx::DataSet>(dataset_nm, exp->getDiffractometer())};
 
-            // const std::string extension = fileinfo.completeSuffix().toStdString();
             dataset_ptr->addDataFile(filename.toStdString(), "nsx");
 
             // store the name of the first dataset
@@ -294,7 +293,6 @@ void Session::loadRawData()
 
         dataset_ptr->finishRead();
         exp->addData(dataset_ptr);
-        // _selectedData = currentProject()->getIndex(qfilenames.at(0));
         onDataChanged();
         auto data_list = currentProject()->getDataNames();
         gGui->sentinel->setLinkedComboList(ComboType::DataSet, data_list);
