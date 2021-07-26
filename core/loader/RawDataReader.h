@@ -38,7 +38,6 @@ struct RawDataReaderParameters {
 
 class RawDataReader : public IDataReader {
  public:
-    RawDataReader() = delete;
     RawDataReader(const RawDataReader& other) = delete;
 
     //! Construct a dataset from the list of files, with the give metadata.
@@ -48,7 +47,7 @@ class RawDataReader : public IDataReader {
     //! @param rowMajor determines if data is stored in row-major format (column
     //! major otherwise) @param swapEndian determines whether to swap the
     //! endianness of the input data @param bpp is the number of bytes per pixel
-    RawDataReader(const std::string& filename, Diffractometer* diffractometer);
+    RawDataReader();
 
     ~RawDataReader() = default;
 

@@ -58,14 +58,14 @@ void DataSet::_setReader(const DataFormat dataformat, const std::string& filenam
 
     switch(dataformat) {
     case DataFormat::NSX:
-        _reader.reset(new HDF5DataReader(filename, _diffractometer));
+        _reader.reset(new HDF5DataReader(filename));
         break;
     case DataFormat::NEXUS:
-        _reader.reset(new NexusDataReader(filename, _diffractometer));
+        _reader.reset(new NexusDataReader(filename));
         break;
     case DataFormat::RAW:
         // NOTE: RawDataReader needs a list of frame files which should be given later
-        _reader.reset(new RawDataReader("::RawDataFile::", _diffractometer));
+        _reader.reset(new RawDataReader);
         break;
     default:
         throw std::invalid_argument("Data format is not recognized.");

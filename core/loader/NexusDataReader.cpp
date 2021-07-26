@@ -15,15 +15,14 @@
 #include "core/loader/NexusDataReader.h"
 
 #include "base/parser/BloscFilter.h"
-#include "core/instrument/Diffractometer.h"
 #include "core/data/DataSet.h"
 
 #include <memory>
 
 namespace nsx {
 
-NexusDataReader::NexusDataReader(const std::string& filename, Diffractometer* diffractometer)
-    : NexusMetaDataReader(filename, diffractometer)
+NexusDataReader::NexusDataReader(const std::string& filename)
+    : NexusMetaDataReader(filename)
 {
 }
 

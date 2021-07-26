@@ -28,7 +28,7 @@ class NexusDataReader : public NexusMetaDataReader {
     NexusDataReader(const NexusDataReader& other) = delete;
 
     // Note that we need this constructor explicitly defined for SWIG.
-    NexusDataReader(const std::string& filename, Diffractometer* diffractometer);
+    NexusDataReader(const std::string& filename);
 
     ~NexusDataReader() = default;
 

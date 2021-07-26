@@ -31,8 +31,8 @@
 namespace nsx {
 
 NexusMetaDataReader::NexusMetaDataReader(
-    const std::string& filename, Diffractometer* diffractometer)
-    : IDataReader(filename, diffractometer), _dataset(nullptr), _space(nullptr), _memspace(nullptr)
+    const std::string& filename)
+    : IDataReader(filename), _dataset(nullptr), _space(nullptr), _memspace(nullptr)
 {}
 
 bool NexusMetaDataReader::initRead()

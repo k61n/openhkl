@@ -33,7 +33,7 @@ class IDataReader {
     //! Status of reader initialization
     bool isInitialized = false;
 
-    IDataReader(const std::string& filename, Diffractometer* diffractometer);
+    IDataReader(const std::string& filename);
     virtual ~IDataReader() = 0;
 
     //! Initialize reading from the filename
