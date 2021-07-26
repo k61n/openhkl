@@ -46,6 +46,8 @@ SubframeMergedPeaks::SubframeMergedPeaks()
 {
     setSizePolicies();
 
+    _frame_set = false;
+
     QVBoxLayout* layout = new QVBoxLayout(this);
 
     QHBoxLayout* drop_layout = new QHBoxLayout();
@@ -92,8 +94,6 @@ SubframeMergedPeaks::SubframeMergedPeaks()
     connect(
         _peaks2_drop, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this,
         &SubframeMergedPeaks::processMerge);
-
-    show();
 }
 
 void SubframeMergedPeaks::grabMergeParameters()
@@ -104,6 +104,8 @@ void SubframeMergedPeaks::grabMergeParameters()
 
     _d_min->setValue(params->d_min);
     _d_max->setValue(params->d_max);
+    _frame_min->setValue(params->frame_min + 1);
+    _frame_max->setValue(params->frame_max + 1);
     _d_shells->setValue(params->n_shells);
     _friedel->setChecked(params->friedel);
 }
@@ -119,6 +121,8 @@ void SubframeMergedPeaks::setMergeParameters()
 
     params->d_min = _d_min->value();
     params->d_max = _d_max->value();
+    params->frame_min = _frame_min->value() - 1;
+    params->frame_max = _frame_max->value() - 1;
     params->n_shells = _d_shells->value();
     params->friedel = _friedel->isChecked();
 }
@@ -159,12 +163,12 @@ void SubframeMergedPeaks::setDShellUp()
 
     QLabel* label_ptr;
 
-    label_ptr = new QLabel("Minimum d:");
+    label_ptr = new QLabel("d range:");
     label_ptr->setAlignment(Qt::AlignRight);
     d_shell_down_left->addWidget(label_ptr, 0, 0, 1, 1);
     label_ptr->setSizePolicy(*_size_policy_widgets);
 
-    label_ptr = new QLabel("Maximum d:");
+    label_ptr = new QLabel("Frame range:");
     label_ptr->setAlignment(Qt::AlignRight);
     d_shell_down_left->addWidget(label_ptr, 1, 0, 1, 1);
     label_ptr->setSizePolicy(*_size_policy_widgets);
@@ -181,6 +185,8 @@ void SubframeMergedPeaks::setDShellUp()
 
     _d_min = new QDoubleSpinBox();
     _d_max = new QDoubleSpinBox();
+    _frame_min = new QSpinBox();
+    _frame_max = new QSpinBox();
     _d_shells = new QSpinBox();
     _friedel = new QCheckBox("Include friedel");
     _plottable_statistics = new QComboBox();
@@ -192,11 +198,17 @@ void SubframeMergedPeaks::setDShellUp()
     _d_max->setValue(50);
     _d_max->setSingleStep(0.1);
     _d_max->setMaximum(100);
+    _frame_min->setMinimum(1);
+    _frame_min->setMaximum(1000);
+    _frame_max->setMinimum(1);
+    _frame_max->setMaximum(1000);
     _d_shells->setValue(10);
     _friedel->setChecked(true);
 
     _d_min->setSizePolicy(*_size_policy_widgets);
     _d_max->setSizePolicy(*_size_policy_widgets);
+    _frame_min->setSizePolicy(*_size_policy_widgets);
+    _frame_max->setSizePolicy(*_size_policy_widgets);
     _d_shells->setSizePolicy(*_size_policy_widgets);
     _friedel->setSizePolicy(*_size_policy_widgets);
     _plottable_statistics->setSizePolicy(*_size_policy_widgets);
@@ -210,11 +222,13 @@ void SubframeMergedPeaks::setDShellUp()
     _plottable_statistics->addItems(selection_stats);
 
     d_shell_down_left->addWidget(_d_min, 0, 1, 1, 1);
-    d_shell_down_left->addWidget(_d_max, 1, 1, 1, 1);
-    d_shell_down_left->addWidget(_d_shells, 2, 1, 1, 1);
-    d_shell_down_left->addWidget(_friedel, 3, 0, 1, 2);
-    d_shell_down_left->addWidget(_plottable_statistics, 4, 1, 1, 1);
-    d_shell_down_left->addWidget(_save_shell, 5, 0, 1, 2);
+    d_shell_down_left->addWidget(_d_max, 0, 2, 1, 1);
+    d_shell_down_left->addWidget(_frame_min, 1, 1, 1, 1);
+    d_shell_down_left->addWidget(_frame_max, 1, 2, 1, 1);
+    d_shell_down_left->addWidget(_d_shells, 2, 1, 1, 2);
+    d_shell_down_left->addWidget(_friedel, 3, 1, 1, 2);
+    d_shell_down_left->addWidget(_plottable_statistics, 4, 1, 1, 3);
+    d_shell_down_left->addWidget(_save_shell, 5, 0, 1, 3);
     d_shell_down->addLayout(d_shell_down_left);
 
     _statistics_plot = new SXPlot;
@@ -227,6 +241,14 @@ void SubframeMergedPeaks::setDShellUp()
 
     connect(
         _d_max, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged), this,
+        &SubframeMergedPeaks::processMerge);
+
+    connect(
+        _frame_min, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged), this,
+        &SubframeMergedPeaks::processMerge);
+
+    connect(
+        _frame_max, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged), this,
         &SubframeMergedPeaks::processMerge);
 
     connect(
@@ -341,6 +363,10 @@ void SubframeMergedPeaks::refreshPeakCombos()
               ->getPeakCollectionNames(nsx::listtype::FOUND);
     _peaks1_list.append(tmp);
     tmp.clear();
+    tmp = gSession->experimentAt(_exp_drop->currentIndex())
+        ->getPeakCollectionNames(nsx::listtype::FILTERED);
+    _peaks1_list.append(tmp);
+    tmp.clear();
 
     if (!_peaks1_list.empty()) {
         _peaks1_drop->addItems(_peaks1_list);
@@ -356,6 +382,10 @@ void SubframeMergedPeaks::refreshPeakCombos()
     tmp = gSession->experimentAt(_exp_drop->currentIndex())
               ->getPeakCollectionNames(nsx::listtype::FOUND);
     _peaks2_list.append(tmp);
+    tmp.clear();
+    tmp = gSession->experimentAt(_exp_drop->currentIndex())
+        ->getPeakCollectionNames(nsx::listtype::FILTERED);
+    _peaks2_list.append(tmp);
     QString current_peaks2 = _peaks2_drop->currentText();
     _peaks2_drop->clear();
     _peaks2_list.append(tmp);
@@ -366,43 +396,27 @@ void SubframeMergedPeaks::refreshPeakCombos()
         _peaks2_drop->setCurrentText(current_peaks2);
     }
     _peaks2_drop->blockSignals(false);
-}
 
-void SubframeMergedPeaks::refreshFoundPeakList()
-{
-    _peaks1_drop->blockSignals(true);
-    QString current_found = _peaks1_drop->currentText();
-    _peaks1_drop->clear();
-    _peaks1_list.clear();
+    // Determine the maximum frame number for the frame spinboxes
+    if (!(_exp_drop->count() == 0) && !(_peaks1_drop->count() == 0)) {
+        auto* expt = gSession->experimentAt(_exp_drop->currentIndex())->experiment();
+        auto* peaks1 = expt->getPeakCollection(_peaks1_drop->currentText().toStdString());
 
-    QStringList tmp = gSession->experimentAt(_exp_drop->currentIndex())
-                          ->getPeakCollectionNames(nsx::listtype::FOUND);
-    _peaks1_list.append(tmp);
-    tmp.clear();
-    tmp = gSession->experimentAt(_exp_drop->currentIndex())
-              ->getPeakCollectionNames(nsx::listtype::FILTERED);
-    _peaks1_list.append(tmp);
+        int max_frames = peaks1->getPeakList()[0]->dataSet()->nFrames();
+        if (!(_peaks2_drop->currentText() == QString())) {
+            auto* peaks2 = expt->getPeakCollection(_peaks2_drop->currentText().toStdString());
+            if (peaks2->getPeakList()[0]->dataSet()->nFrames() > max_frames)
+                max_frames = peaks2->getPeakList()[0]->dataSet()->nFrames();
+        }
 
-    if (!_peaks1_list.empty()) {
-        _peaks1_drop->addItems(_peaks1_list);
-        _peaks1_drop->setCurrentText(current_found);
+        _frame_min->setMaximum(max_frames);
+        _frame_max->setMaximum(max_frames);
+        if (!_frame_set) { // only set the values the first time
+            _frame_min->setValue(1);
+            _frame_max->setValue(max_frames);
+            _frame_set = true;
+        }
     }
-    _peaks1_drop->blockSignals(false);
-}
-
-void SubframeMergedPeaks::refreshPredictedPeakList()
-{
-    _peaks2_drop->blockSignals(true);
-    QString current_predicted = _peaks2_drop->currentText();
-    _peaks2_drop->clear();
-    _peaks2_list = gSession->experimentAt(_exp_drop->currentIndex())
-                       ->getPeakCollectionNames(nsx::listtype::PREDICTED);
-
-    if (!_peaks2_list.empty()) {
-        _peaks2_drop->addItems(_peaks2_list);
-        _peaks2_drop->setCurrentText(current_predicted);
-    }
-    _peaks2_drop->blockSignals(false);
 }
 
 void SubframeMergedPeaks::processMerge()

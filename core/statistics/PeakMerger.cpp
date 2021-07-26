@@ -15,6 +15,7 @@
 #include "core/statistics/PeakMerger.h"
 
 #include "base/utils/Logger.h"
+#include "core/data/DataSet.h"
 #include "core/shape/PeakCollection.h"
 #include "tables/crystal/SpaceGroup.h"
 
@@ -25,6 +26,8 @@ void MergeParameters::log(const Level& level) const
     nsxlog(level, "Merge parameters:");
     nsxlog(level, "d_min                  = ", d_min);
     nsxlog(level, "d_max                  = ", d_max);
+    nsxlog(level, "frame_min             = ", frame_min);
+    nsxlog(level, "frame_max             = ", frame_max);
     nsxlog(level, "n_shells               = ", n_shells);
     nsxlog(level, "friedel                = ", friedel);
 }
@@ -33,11 +36,12 @@ PeakMerger::PeakMerger(PeakCollection* peaks /* = nullptr */)
 {
     _params = std::make_unique<MergeParameters>();
     if (peaks)
-        _peak_collections.push_back(peaks);
+        addPeakCollection(peaks);
 }
 
 void PeakMerger::addPeakCollection(PeakCollection* peaks)
 {
+    unsigned int nframes = peaks->getPeakList()[0]->dataSet()->nFrames();
     _peak_collections.push_back(peaks);
 }
 
@@ -56,7 +60,8 @@ void PeakMerger::mergePeaks()
     _merged_data_per_shell.clear();
     nsxlog(Level::Info, "PeakMerger::mergePeaks: parameters");
     _params->log(Level::Info);
-    _merged_data = std::make_unique<MergedData>(_peak_collections, _params->friedel);
+    _merged_data = std::make_unique<MergedData>(
+        _peak_collections, _params->friedel, _params->frame_min, _params->frame_max);
     SpaceGroup space_group = _merged_data->spaceGroup();
     ResolutionShell resolution_shell{_params->d_min, _params->d_max, _params->n_shells};
 
@@ -71,8 +76,8 @@ void PeakMerger::mergePeaks()
         double d_lower = resolution_shell.shell(i).dmin;
         double d_upper = resolution_shell.shell(i).dmax;
 
-        std::unique_ptr<MergedData> merged_data_per_shell =
-            std::make_unique<MergedData>(space_group, _params->friedel);
+        std::unique_ptr<MergedData> merged_data_per_shell = std::make_unique<MergedData>(
+                space_group, _params->friedel, _params->frame_min, _params->frame_max);
         merged_data_per_shell->setDRange(d_lower, d_upper);
 
         for (auto peak : resolution_shell.shell(i).peaks)

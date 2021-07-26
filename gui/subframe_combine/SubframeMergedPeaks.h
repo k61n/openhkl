@@ -64,10 +64,6 @@ class SubframeMergedPeaks : public QWidget {
     void refreshPeakLists();
     //! Refresh the QComboBoxes for peak collections
     void refreshPeakCombos();
-    //! Refresh the QComboBox for the found peaks
-    void refreshFoundPeakList();
-    //! Refresh the QComboBox for the predicted peaks
-    void refreshPredictedPeakList();
     //! Process the two inputs to create the merged dataset
     void processMerge();
     //! Disable unsafe widgets if no data loaded
@@ -124,6 +120,8 @@ class SubframeMergedPeaks : public QWidget {
     QTableView* _d_shell_view;
     QDoubleSpinBox* _d_min;
     QDoubleSpinBox* _d_max;
+    QSpinBox* _frame_min;
+    QSpinBox* _frame_max;
     QSpinBox* _d_shells;
     QCheckBox* _friedel;
     QComboBox* _plottable_statistics;
@@ -140,6 +138,8 @@ class SubframeMergedPeaks : public QWidget {
     QComboBox* _unmerged_save_type;
     QPushButton* _save_unmerged;
     QStandardItemModel* _unmerged_model;
+
+    bool _frame_set;
 };
 
 #endif // NSX_GUI_SUBFRAME_COMBINE_SUBFRAMEMERGEDPEAKS_H
