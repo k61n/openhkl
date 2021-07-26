@@ -402,6 +402,7 @@ void SubframeAutoIndexer::runAutoIndexer()
 
     auto_indexer->unsetHandler();
     handler.reset();
+    toggleUnsafeWidgets();
 }
 
 void SubframeAutoIndexer::buildSolutionsTable()
