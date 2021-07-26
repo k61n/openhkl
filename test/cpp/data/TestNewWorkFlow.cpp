@@ -287,7 +287,7 @@ TEST_CASE("test/data/TestNewWorkFlow.cpp", "")
         // q could cross Ewald sphere multiple times, so find best match
         double diff = 1e200; // going to find smaller value
         for (const auto& event : events) {
-            const Eigen::Vector3d pnew = {event._px, event._py, event._frame};
+            const Eigen::Vector3d pnew = {event.px, event.py, event.frame};
             if ((pnew - p0).squaredNorm() < diff) {
                 diff = (pnew - p0).squaredNorm();
                 p1 = pnew;

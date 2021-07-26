@@ -105,7 +105,7 @@ struct FitData {
         Jp *= ki.norm();
 
         const DetectorEvent event(center);
-        Jd = state.jacobianQ(event._px, event._py);
+        Jd = state.jacobianQ(event.px, event.py);
 
         q = kf - ki;
     }
@@ -321,7 +321,7 @@ std::vector<Peak3D*> ShapeCollection::findNeighbors(
     const DetectorEvent& ev, double radius, double nframes) const
 {
     std::vector<Peak3D*> neighbors;
-    Eigen::Vector3d center(ev._px, ev._py, ev._frame);
+    Eigen::Vector3d center(ev.px, ev.py, ev.frame);
 
     for (const auto& pair : _profiles) {
         auto peak = pair.first;

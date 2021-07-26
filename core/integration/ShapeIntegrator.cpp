@@ -59,7 +59,7 @@ bool ShapeIntegrator::compute(
 
     for (size_t i = 0; i < events.size(); ++i) {
         const auto& ev = events[i];
-        Eigen::Vector3d x(ev._px, ev._py, ev._frame);
+        Eigen::Vector3d x(ev.px, ev.py, ev.frame);
         const double dI = counts[i] - mean_bkg;
         // todo: variance here assumes Poisson (no gain or baseline)
         integrated_profile.addPoint(e.r2(x), counts[i]);

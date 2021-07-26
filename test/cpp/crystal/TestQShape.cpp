@@ -37,14 +37,14 @@ nsx::Ellipsoid toDetectorSpace(const nsx::Ellipsoid e, const nsx::sptrDataSet da
 
     const auto& event = events[0];
     // auto position =
-    //    data->reader()->getDiffractometer()->detector()->pixelPosition(event._px, event._py);
-    auto state = data->instrumentStates().interpolate(event._frame);
+    //    data->reader()->getDiffractometer()->detector()->pixelPosition(event.px, event.py);
+    auto state = data->instrumentStates().interpolate(event.frame);
 
     // Jacobian of map from detector coords to sample q space
-    Eigen::Matrix3d J = state.jacobianQ(event._px, event._py);
+    Eigen::Matrix3d J = state.jacobianQ(event.px, event.py);
     const Eigen::Matrix3d det_inv_cov = J.transpose() * e.metric() * J;
 
-    Eigen::Vector3d p(event._px, event._py, event._frame);
+    Eigen::Vector3d p(event.px, event.py, event.frame);
     return nsx::Ellipsoid(p, det_inv_cov);
 }
 

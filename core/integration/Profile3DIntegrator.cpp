@@ -104,9 +104,9 @@ bool Profile3DIntegrator::compute(
     for (int i = 0; i < events.size(); ++i) {
         Eigen::Vector3d x;
         if (shape_collection->detectorCoords()) {
-            x(0) = events[i]._px;
-            x(1) = events[i]._py;
-            x(2) = events[i]._frame;
+            x(0) = events[i].px;
+            x(1) = events[i].py;
+            x(2) = events[i].frame;
             x -= peak->shape().center();
         } else {
             x = coord.transform(events[i]);

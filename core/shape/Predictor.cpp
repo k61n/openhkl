@@ -55,7 +55,7 @@ std::vector<Peak3D*> Predictor::buildPeaksFromMillerIndices(
     std::vector<Peak3D*> peaks;
     for (auto event : events) {
         Peak3D* peak(new Peak3D(data));
-        Eigen::Vector3d center = {event._px, event._py, event._frame};
+        Eigen::Vector3d center = {event.px, event.py, event.frame};
 
         // dummy shape
         try {

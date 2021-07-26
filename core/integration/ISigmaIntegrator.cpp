@@ -65,7 +65,7 @@ bool ISigmaIntegrator::compute(
 
     // evaluate the model profile at the given events
     for (int i = 0; i < events.size(); ++i) {
-        Eigen::Vector3d dx(events[i]._px, events[i]._py, events[i]._frame);
+        Eigen::Vector3d dx(events[i].px, events[i].py, events[i].frame);
         dx -= c;
         const double r2 = dx.transpose() * A * dx;
         profile.addPoint(r2, counts[i]);

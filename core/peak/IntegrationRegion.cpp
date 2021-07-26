@@ -106,7 +106,7 @@ void IntegrationRegion::updateMask(Eigen::MatrixXi& mask, double z) const
 
 IntegrationRegion::EventType IntegrationRegion::classify(const DetectorEvent& ev) const
 {
-    Eigen::Vector3d p(ev._px, ev._py, ev._frame);
+    Eigen::Vector3d p(ev.px, ev.py, ev.frame);
     p -= _shape.center();
     const double rr = p.dot(_shape.metric() * p);
 

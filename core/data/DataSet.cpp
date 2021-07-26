@@ -250,8 +250,8 @@ void DataSet::maskPeaks(std::vector<Peak3D*>& peaks) const
 
 ReciprocalVector DataSet::computeQ(const DetectorEvent& ev) const
 {
-    const auto& state = _states.interpolate(ev._frame);
-    const auto& detector_position = DirectVector(detector().pixelPosition(ev._px, ev._py));
+    const auto& state = _states.interpolate(ev.frame);
+    const auto& detector_position = DirectVector(detector().pixelPosition(ev.px, ev.py));
     return state.sampleQ(detector_position);
 }
 

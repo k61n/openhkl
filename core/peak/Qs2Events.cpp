@@ -130,7 +130,7 @@ std::vector<DetectorEvent> algo::qVector2Events(
         DetectorEvent event = detector.constructEvent(
             DirectVector(state.samplePosition),
             ReciprocalVector(kf * state.detectorOrientation), frame);
-        if (event._tof <= 0)
+        if (event.tof <= 0)
             continue;
 
         events.emplace_back(event);

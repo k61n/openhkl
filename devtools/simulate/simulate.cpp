@@ -194,7 +194,7 @@ int main(int argc, char* argv[])
     nsx::PeakList peaks;
 
     for (auto&& event : events) {
-        Eigen::Vector3d center = {event._px, event._py, event._frame};
+        Eigen::Vector3d center = {event.px, event.py, event.frame};
         auto peak = std::make_shared<nsx::Peak3D>(data, nsx::Ellipsoid(center, 5.0));
         auto coords = nsx::PeakCoordinateSystem(peak);
         auto shape = coords.detectorShape(sigmaD, sigmaM);
