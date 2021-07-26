@@ -85,7 +85,8 @@ void SubframeRefiner::setInputUp()
     _peak_combo = f.addLinkedCombo(ComboType::FoundPeaks, "Peaks");
     _data_combo = f.addLinkedCombo(ComboType::DataSet, "Data set");
     _cell_combo = f.addLinkedCombo(ComboType::UnitCell, "Unit cell");
-    _n_batches_spin = f.addSpinBox("Number of batches");
+    _n_batches_spin = f.addSpinBox(
+        "Number of batches", "Number of batches to equally divide frames into for refinement");
 
     _n_batches_spin->setMinimum(1);
     _n_batches_spin->setMaximum(1000); // updated on setBatchesUp
