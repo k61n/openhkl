@@ -12,7 +12,7 @@
 //
 //  ***********************************************************************************************
 
-#include "core/raw/IDataReader.h"
+#include "core/loader/IDataReader.h"
 
 #include "base/utils/Path.h"
 #include "base/utils/Units.h"
@@ -29,7 +29,7 @@
 
 namespace nsx {
 
-IDataReader::IDataReader(const std::string& filename, Diffractometer* diffractometer)
+IDataReader::IDataReader(const std::string& filename)
     : _sampleStates()
     , _detectorStates()
     , _isOpened(false)

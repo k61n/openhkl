@@ -264,13 +264,13 @@ int RefinementBatch::realSpaceResiduals(Eigen::VectorXd& fvec)
             algo::qVector2Events(q1, data->instrumentStates(), data->detector(), data->nFrames());
         std::vector<Eigen::RowVector3d> differences;
         for (auto&& event : events) {
-            const Eigen::RowVector3d x1{event._px, event._py, event._frame};
+            const Eigen::RowVector3d x1{event.px, event.py, event.frame};
             const Eigen::RowVector3d dx = x1 - x0;
             differences.push_back(dx);
         }
         double minNorm = 10000;
         int minInd = 0;
-        if ((differences.size() >= 1)) {
+        if (!differences.empty()) {
             for (int i = 0; i < differences.size(); ++i) {
                 double norm = differences[i].squaredNorm();
                 if (norm < minNorm) {

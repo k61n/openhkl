@@ -19,7 +19,7 @@
 #include "core/instrument/InstrumentStateList.h"
 #include "core/peak/Peak3D.h"
 #include "core/raw/DataKeys.h"
-#include "core/raw/IDataReader.h"
+#include "core/loader/IDataReader.h"
 #include "core/data/DataTypes.h"
 
 namespace nsx {
@@ -39,7 +39,7 @@ class DataSet {
 
  public:
     DataSet(const std::string& dataset_name, Diffractometer* diffractometer);
-    ~DataSet();
+    ~DataSet() = default;
 
     DataSet() = delete;
     DataSet(const DataSet& other) = delete;

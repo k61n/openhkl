@@ -86,13 +86,13 @@ TEST_CASE("test/instrument/TestFlatDetector.cpp", "")
                 nsx::DirectVector(from), nsx::ReciprocalVector(kf.transpose()), 0.);
 
             // detector has event
-            CHECK(event._tof > 0.0);
+            CHECK(event.tof > 0.0);
             // time of flight is correct
-            CHECK(event._tof == Approx(1.0).epsilon(1e-5));
+            CHECK(event.tof == Approx(1.0).epsilon(1e-5));
             // correct x coord
-            CHECK(event._px == Approx(j).epsilon(1e-5));
+            CHECK(event.px == Approx(j).epsilon(1e-5));
             // correct x coord
-            CHECK(event._py == Approx(i).epsilon(1e-5));
+            CHECK(event.py == Approx(i).epsilon(1e-5));
         }
     }
 }

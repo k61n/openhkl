@@ -227,7 +227,7 @@ int Refiner::updatePredictions(std::vector<Peak3D*>& peaks) const
 
         try {
             peak->setShape(Ellipsoid(
-                {events[0]._px, events[0]._py, events[0]._frame}, peak->shape().metric()));
+                {events[0].px, events[0].py, events[0].frame}, peak->shape().metric()));
             ++updated;
         } catch (...) {
             peak->setSelected(false);

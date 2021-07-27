@@ -26,7 +26,7 @@ namespace nsx {
 PeakCoordinateSystem::PeakCoordinateSystem(Peak3D* peak) : _peak(peak)
 {
     _event = DetectorEvent(peak->shape().center());
-    _state = peak->dataSet()->instrumentStates().interpolate(_event._frame);
+    _state = peak->dataSet()->instrumentStates().interpolate(_event.frame);
     _ki = _state.ki().rowVector();
     _kf = peak->q().rowVector() * _state.sampleOrientationMatrix().transpose() + _ki;
 
@@ -43,22 +43,22 @@ PeakCoordinateSystem::PeakCoordinateSystem(Peak3D* peak) : _peak(peak)
 
 Eigen::Vector3d PeakCoordinateSystem::transform(const DetectorEvent& ev) const
 {
-    auto position = _peak->dataSet()->detector().pixelPosition(ev._px, ev._py);
+    auto position = _peak->dataSet()->detector().pixelPosition(ev.px, ev.py);
     const Eigen::RowVector3d dk = _state.kfLab(position).rowVector() - _kf;
 
 // Kabsch coordinate system
 #if 1
     const double eps1 = _e1.dot(dk);
     const double eps2 = _e2.dot(dk);
-    const double eps3 = _zeta * (ev._frame - _event._frame);
+    const double eps3 = _zeta * (ev.frame - _event.frame);
 #else
 
     // new coordinate system?
     const Eigen::RowVector3d dq = _state.axis.cross(_kf - _ki) * _state.stepSize;
-    const Eigen::RowVector3d dk2 = dk + (ev._frame - _event._frame) * dq;
+    const Eigen::RowVector3d dk2 = dk + (ev.frame - _event.frame) * dq;
     const double eps1 = _e1.dot(dk2);
     const double eps2 = _e2.dot(dk2);
-    const double eps3 = _kf.dot(dq) / _kf.norm() / (_kf - _ki).norm() * (ev._frame - _event._frame);
+    const double eps3 = _kf.dot(dq) / _kf.norm() / (_kf - _ki).norm() * (ev.frame - _event.frame);
 #endif
 
     return Eigen::Vector3d(eps1, eps2, eps3);
@@ -66,7 +66,7 @@ Eigen::Vector3d PeakCoordinateSystem::transform(const DetectorEvent& ev) const
 
 Eigen::Matrix3d PeakCoordinateSystem::jacobian() const
 {
-    Eigen::Matrix3d dkdx = _state.jacobianK(_event._px, _event._py);
+    Eigen::Matrix3d dkdx = _state.jacobianK(_event.px, _event.py);
 
     // Jacobian of epsilon coordinates
     Eigen::Matrix3d J;

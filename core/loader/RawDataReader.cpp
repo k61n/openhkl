@@ -38,8 +38,9 @@
 
 namespace nsx {
 
-RawDataReader::RawDataReader(const std::string& filename, Diffractometer* diffractometer)
-    : IDataReader(filename, diffractometer), _parameters(), _length(0), _data()
+RawDataReader::RawDataReader()
+    // NOTE: RawDataReader needs a list of frame files which should be given later
+    : IDataReader("::NO-FILENAME::"), _parameters(), _length(0), _data()
 {}
 
 bool RawDataReader::initRead()

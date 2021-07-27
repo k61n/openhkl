@@ -50,22 +50,21 @@ DataSet::DataSet(const std::string& dataset_name, Diffractometer* diffractometer
     }
 }
 
-DataSet::~DataSet() { }
-
-void DataSet::_setReader(const DataFormat dataformat, const std::string& filename) {
+void DataSet::_setReader(const DataFormat dataformat, const std::string& filename)
+{
     nsxlog(Level::Debug, "Initializing a DataReader for the format ",
            static_cast<int>(dataformat));
 
     switch(dataformat) {
     case DataFormat::NSX:
-        _reader.reset(new HDF5DataReader(filename, _diffractometer));
+        _reader.reset(new HDF5DataReader(filename));
         break;
     case DataFormat::NEXUS:
-        _reader.reset(new NexusDataReader(filename, _diffractometer));
+        _reader.reset(new NexusDataReader(filename));
         break;
     case DataFormat::RAW:
         // NOTE: RawDataReader needs a list of frame files which should be given later
-        _reader.reset(new RawDataReader("::RawDataFile::", _diffractometer));
+        _reader.reset(new RawDataReader);
         break;
     default:
         throw std::invalid_argument("Data format is not recognized.");
@@ -250,8 +249,8 @@ void DataSet::maskPeaks(std::vector<Peak3D*>& peaks) const
 
 ReciprocalVector DataSet::computeQ(const DetectorEvent& ev) const
 {
-    const auto& state = _states.interpolate(ev._frame);
-    const auto& detector_position = DirectVector(detector().pixelPosition(ev._px, ev._py));
+    const auto& state = _states.interpolate(ev.frame);
+    const auto& detector_position = DirectVector(detector().pixelPosition(ev.px, ev.py));
     return state.sampleQ(detector_position);
 }
 

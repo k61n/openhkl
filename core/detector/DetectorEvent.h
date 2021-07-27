@@ -32,13 +32,13 @@ class DetectorEvent {
     explicit DetectorEvent(Eigen::Vector3d x, double tof = -1);
 
     //! Detector x-coord
-    double _px{0};
+    double px{0};
     //! Detector y-coord
-    double _py{0};
+    double py{0};
     //! Frame number, if applicable
-    double _frame{-1};
+    double frame{-1};
     //! Time of flight, if applicable
-    double _tof{-1};
+    double tof{-1};
 };
 
 } // namespace nsx

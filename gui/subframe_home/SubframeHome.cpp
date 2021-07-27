@@ -210,7 +210,7 @@ void SubframeHome::saveAll() { }
 
 void SubframeHome::_switchCurrentExperiment(const QModelIndex& index) const
 {
-    gSession->selectExperiment(index.row());
+    gSession->selectProject(index.row());
     emit _open_experiments_model->dataChanged(QModelIndex(), QModelIndex());
 }
 

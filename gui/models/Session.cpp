@@ -19,7 +19,7 @@
 #include "core/experiment/Experiment.h"
 #include "core/loader/RawDataReader.h"
 #include "core/raw/DataKeys.h"
-#include "core/raw/IDataReader.h"
+#include "core/loader/IDataReader.h"
 #include "core/raw/MetaData.h"
 #include "gui/MainWin.h"
 #include "gui/connect/Sentinel.h"
@@ -110,7 +110,7 @@ bool Session::addProject(std::unique_ptr<Project> project_ptr)
 
 void Session::removeExperiment(const QString& name)
 {
-    if (_projects.size() == 0) {
+    if (_projects.empty()) {
         return;
     } else {
         const std::string name_str {name.toStdString()};
@@ -124,7 +124,7 @@ void Session::removeExperiment(const QString& name)
         }
 
     }
-    _currentProject = _projects.size() > 0 ? 0 : -1;
+    _currentProject = _projects.empty() ? -1: 0;
     onExperimentChanged();
 }
 
@@ -136,7 +136,7 @@ std::vector<QString> Session::experimentNames() const
     return ret;
 }
 
-void Session::selectExperiment(int select)
+void Session::selectProject(int select)
 {
     if (select < _projects.size() && select >= 0)
         _currentProject = select;
@@ -202,7 +202,6 @@ void Session::loadData(nsx::DataFormat format)
             const nsx::sptrDataSet dataset_ptr {
                 std::make_shared<nsx::DataSet>(dataset_nm, exp->getDiffractometer())};
 
-            // const std::string extension = fileinfo.completeSuffix().toStdString();
             dataset_ptr->addDataFile(filename.toStdString(), "nsx");
 
             // store the name of the first dataset
@@ -294,7 +293,6 @@ void Session::loadRawData()
 
         dataset_ptr->finishRead();
         exp->addData(dataset_ptr);
-        // _selectedData = currentProject()->getIndex(qfilenames.at(0));
         onDataChanged();
         auto data_list = currentProject()->getDataNames();
         gGui->sentinel->setLinkedComboList(ComboType::DataSet, data_list);

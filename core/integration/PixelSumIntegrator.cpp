@@ -67,7 +67,7 @@ bool PixelSumIntegrator::compute(
 
             // update blob if pixel is strong (Poisson statistics)
             if (counts[i] > mean_bkg + sigma)
-                blob.addPoint(ev._px, ev._py, ev._frame, counts[i] - mean_bkg);
+                blob.addPoint(ev.px, ev.py, ev.frame, counts[i] - mean_bkg);
         }
     }
 
@@ -79,13 +79,13 @@ bool PixelSumIntegrator::compute(
         Intensity(sum_peak, sum_peak + npeak * mean_bkg + npeak * npeak * std_bkg * std_bkg);
 
     // TODO: compute rocking curve
-    double f_min = int(events[0]._frame);
+    double f_min = int(events[0].frame);
     double f_max = f_min;
 
     for (size_t i = 0; i < counts.size(); ++i) {
         const auto& ev = events[i];
-        f_min = std::min(ev._frame, f_min);
-        f_max = std::max(ev._frame, f_max);
+        f_min = std::min(ev.frame, f_min);
+        f_max = std::max(ev.frame, f_max);
     }
 
     Eigen::Vector3d center = fitCenter() ? blob.center() : peak->shape().center();
@@ -133,7 +133,7 @@ bool PixelSumIntegrator::compute(
         const auto& ev = events[i];
         const auto& ev_type = region.classify(ev);
 
-        const int bin = ev._frame - f_min;
+        const int bin = ev.frame - f_min;
 
         if (ev_type == IntegrationRegion::EventType::PEAK) {
             intensity_per_frame[bin] += counts[i];

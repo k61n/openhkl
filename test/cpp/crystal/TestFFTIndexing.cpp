@@ -73,11 +73,11 @@ TEST_CASE("test/crystal/TestFFTIndexing.cpp", "")
     const auto events =
         nsx::algo::qVectorList2Events(qs, dataset_ptr->instrumentStates(), dataset_ptr->detector(), dataset_ptr->nFrames());
     for (const nsx::DetectorEvent& event : events) {
-        // std::cout << "event x=" << event._px << " y=" << event._py
-        //    << " frame=" << event._frame << " tof=" << event._tof
+        // std::cout << "event x=" << event.px << " y=" << event.py
+        //    << " frame=" << event.frame << " tof=" << event.tof
         //    << std::endl;
         nsx::Peak3D peak(dataset_ptr);
-        const Eigen::Vector3d center = {event._px, event._py, event._frame};
+        const Eigen::Vector3d center = {event.px, event.py, event.frame};
 
         // dummy shape
         try {

@@ -44,11 +44,8 @@ class Session {
     int numExperiments() const;
     std::vector<QString> experimentNames() const;
 
-    void selectExperiment(int);
+    void selectProject(int);
 
-    bool createExperiment(
-        QString experimentName = QString::fromStdString(nsx::kw_experimentDefaultName),
-        QString instrumentName = QString::fromStdString(nsx::kw_diffractometerDefaultName));
     void removeExperiment(const QString& name);
 
     void loadData(nsx::DataFormat format);

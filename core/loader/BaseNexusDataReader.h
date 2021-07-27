@@ -2,8 +2,8 @@
 //
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
-//! @file      core/loader/NexusMetaDataReader.h
-//! @brief     Defines class HDF5MetaDataReader
+//! @file      core/loader/BaseNexusDataReader.h
+//! @brief     Defines class BaseNexusDataReader
 //!
 //! @homepage  ###HOMEPAGE###
 //! @license   GNU General Public License v3 or higher (see COPYING)
@@ -15,7 +15,7 @@
 #ifndef NSX_CORE_LOADER_NEXUSMETADATAREADER_H
 #define NSX_CORE_LOADER_NEXUSMETADATAREADER_H
 
-#include "core/raw/IDataReader.h" // inherits from
+#include "core/loader/IDataReader.h" // inherits from
 
 #include <H5Cpp.h>
 
@@ -23,17 +23,16 @@ namespace nsx {
 
 //! IDataReader for Nexus files. Base class for NexusDataReader and FakeDataReader.
 
-class NexusMetaDataReader : public IDataReader {
+class BaseNexusDataReader : public IDataReader {
  public:
-
-    NexusMetaDataReader(const std::string& filename, Diffractometer* diffractometer);
+    BaseNexusDataReader(const std::string& filename);
     bool initRead();
 
-    NexusMetaDataReader() = delete;
-    NexusMetaDataReader(const NexusMetaDataReader& other) = delete;
-    ~NexusMetaDataReader() override = default;
+    BaseNexusDataReader() = delete;
+    BaseNexusDataReader(const BaseNexusDataReader& other) = delete;
+    ~BaseNexusDataReader() override = default;
 
-    NexusMetaDataReader& operator=(const NexusMetaDataReader& other) = delete;
+    BaseNexusDataReader& operator=(const BaseNexusDataReader& other) = delete;
 
     virtual void open() override;
     virtual void close() override;

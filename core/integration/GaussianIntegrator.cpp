@@ -101,7 +101,7 @@ bool GaussianIntegrator::compute(
     for (size_t i = 0; i < N; ++i) {
         counts[i] = region.peakData().counts()[i];
         const auto& ev = region.peakData().events()[i];
-        x[i] = {ev._px, ev._py, ev._frame};
+        x[i] = {ev.px, ev.py, ev.frame};
         wts[i] = counts[i] <= 0.0 ? 0.0 : 1.0 / counts[i];
     }
 
@@ -208,7 +208,7 @@ std::vector<double> GaussianIntegrator::profile(Peak3D* peak, const IntegrationR
     std::vector<double> result(events.size(), 0.0);
     for (size_t i = 0; i < events.size(); ++i) {
         const DetectorEvent& ev = events[i];
-        Eigen::Vector3d dx(ev._px, ev._py, ev._frame);
+        Eigen::Vector3d dx(ev.px, ev.py, ev.frame);
         dx -= x0;
         result[i] = std::exp(-0.5 * dx.dot(A * dx)) * factor;
     }

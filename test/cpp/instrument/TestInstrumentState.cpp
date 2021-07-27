@@ -18,7 +18,7 @@
 #include "core/data/DataSet.h"
 #include "core/experiment/Experiment.h"
 #include "core/instrument/InstrumentState.h"
-#include "core/raw/IDataReader.h"
+#include "core/loader/IDataReader.h"
 
 namespace nsx {
 

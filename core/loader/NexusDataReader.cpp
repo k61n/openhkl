@@ -3,7 +3,7 @@
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
 //! @file      core/loader/NexusDataReader.cpp
-//! @brief     Implements class HDF5DataReader
+//! @brief     Implements class NexusDataReader
 //!
 //! @homepage  ###HOMEPAGE###
 //! @license   GNU General Public License v3 or higher (see COPYING)
@@ -15,17 +15,14 @@
 #include "core/loader/NexusDataReader.h"
 
 #include "base/parser/BloscFilter.h"
-#include "core/instrument/Diffractometer.h"
 #include "core/data/DataSet.h"
 
 #include <memory>
 
 namespace nsx {
 
-NexusDataReader::NexusDataReader(const std::string& filename, Diffractometer* diffractometer)
-    : NexusMetaDataReader(filename, diffractometer)
-{
-}
+NexusDataReader::NexusDataReader(const std::string& filename)
+    : BaseNexusDataReader(filename) {}
 
 Eigen::MatrixXi NexusDataReader::data(size_t frame)
 {
