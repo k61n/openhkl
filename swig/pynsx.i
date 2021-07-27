@@ -41,12 +41,12 @@
 %shared_ptr(nsx::Diffractometer)
 %shared_ptr(nsx::Experiment)
 %shared_ptr(nsx::HDF5DataReader)
-%shared_ptr(nsx::HDF5MetaDataReader)
+%shared_ptr(nsx::BaseHDF5DataReader)
 %shared_ptr(nsx::IDataReader)
 %shared_ptr(nsx::ProgressHandler)
 %shared_ptr(nsx::RawDataReader)
 %shared_ptr(nsx::NexusDataReader)
-%shared_ptr(nsx::NexusMetaDataReader)
+%shared_ptr(nsx::BaseNexusDataReader)
 %shared_ptr(nsx::UnitCell)
 
 %{
@@ -142,10 +142,10 @@ using Eigen::Quaterniond;
 #include "core/integration/Profile3DIntegrator.h"
 #include "core/integration/ShapeIntegrator.h"
 #include "core/loader/HDF5DataReader.h"
-#include "core/loader/HDF5MetaDataReader.h"
+#include "core/loader/BaseHDF5DataReader.h"
 #include "core/loader/RawDataReader.h"
 #include "core/loader/NexusDataReader.h"
-#include "core/loader/NexusMetaDataReader.h"
+#include "core/loader/BaseNexusDataReader.h"
 #include "core/shape/IPeakIntegrator.h"
 #include "core/peak/IntegrationRegion.h"
 #include "core/peak/Intensity.h"
@@ -307,11 +307,11 @@ ArrayExtendCRef(MillerIndex, int);
 %include "core/raw/MetaData.h"
 %include "core/loader/IDataReader.h"
 
-%include "core/loader/HDF5MetaDataReader.h"
+%include "core/loader/BaseHDF5DataReader.h"
 %include "core/loader/HDF5DataReader.h"
 %include "core/loader/RawDataReader.h"
 %include "core/loader/NexusDataReader.h"
-%include "core/loader/NexusMetaDataReader.h"
+%include "core/loader/BaseNexusDataReader.h"
 
 %include "core/peak/Intensity.h"
 %include "core/peak/Peak3D.h"

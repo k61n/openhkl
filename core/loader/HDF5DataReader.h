@@ -15,14 +15,13 @@
 #ifndef NSX_CORE_LOADER_HDF5DATAREADER_H
 #define NSX_CORE_LOADER_HDF5DATAREADER_H
 
-#include "core/loader/HDF5MetaDataReader.h" // inherits from
+#include "core/loader/BaseHDF5DataReader.h" // inherits from
 #include "core/raw/DataKeys.h" // kw_datasetDefaultName
-
 
 namespace nsx {
 
 //! Read data from HDF5 format.
-class HDF5DataReader : public HDF5MetaDataReader {
+class HDF5DataReader : public BaseHDF5DataReader {
  public:
     HDF5DataReader() = delete;
 

@@ -2,8 +2,8 @@
 //
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
-//! @file      core/loader/NexusMetaDataReader.cpp
-//! @brief     Implements class HDF5MetaDataReader
+//! @file      core/loader/BaseNexusDataReader.cpp
+//! @brief     Implements class BaseNexusDataReader
 //!
 //! @homepage  ###HOMEPAGE###
 //! @license   GNU General Public License v3 or higher (see COPYING)
@@ -12,7 +12,7 @@
 //
 //  ***********************************************************************************************
 
-#include "core/loader/NexusMetaDataReader.h"
+#include "core/loader/BaseNexusDataReader.h"
 
 #include "base/parser/BloscFilter.h"
 #include "base/parser/EigenToVector.h"
@@ -30,12 +30,11 @@
 
 namespace nsx {
 
-NexusMetaDataReader::NexusMetaDataReader(
-    const std::string& filename)
+BaseNexusDataReader::BaseNexusDataReader(const std::string& filename)
     : IDataReader(filename), _dataset(nullptr), _space(nullptr), _memspace(nullptr)
 {}
 
-bool NexusMetaDataReader::initRead()
+bool BaseNexusDataReader::initRead()
 {
     const bool init_success = IDataReader::initRead();
 
@@ -223,7 +222,7 @@ bool NexusMetaDataReader::initRead()
 }
 
 
-void NexusMetaDataReader::open()
+void BaseNexusDataReader::open()
 {
     checkInit();
 
@@ -281,7 +280,7 @@ void NexusMetaDataReader::open()
 }
 
 
-void NexusMetaDataReader::close()
+void BaseNexusDataReader::close()
 {
     if (!_isOpened)
         return;

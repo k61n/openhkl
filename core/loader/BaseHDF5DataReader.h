@@ -2,8 +2,8 @@
 //
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
-//! @file      core/loader/HDF5MetaDataReader.h
-//! @brief     Defines class HDF5MetaDataReader (template)
+//! @file      core/loader/BaseHDF5DataReader.h
+//! @brief     Defines class BaseHDF5DataReader (template)
 //!
 //! @homepage  ###HOMEPAGE###
 //! @license   GNU General Public License v3 or higher (see COPYING)
@@ -28,17 +28,17 @@
 namespace nsx {
 
 //! IDataReader for HDF5 files. Base class for HDF5DataReader and FakeDataReader.
-class HDF5MetaDataReader : public IDataReader {
+class BaseHDF5DataReader : public IDataReader {
  public:
-    HDF5MetaDataReader() = delete;
+    BaseHDF5DataReader() = delete;
 
-    HDF5MetaDataReader(const HDF5MetaDataReader& other) = delete;
+    BaseHDF5DataReader(const BaseHDF5DataReader& other) = delete;
 
-    HDF5MetaDataReader(const std::string& filename);
+    BaseHDF5DataReader(const std::string& filename);
 
-    ~HDF5MetaDataReader() = default;
+    ~BaseHDF5DataReader() = default;
 
-    HDF5MetaDataReader& operator=(const HDF5MetaDataReader& other) = delete;
+    BaseHDF5DataReader& operator=(const BaseHDF5DataReader& other) = delete;
 
     virtual void open() override;
 

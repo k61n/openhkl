@@ -2,8 +2,8 @@
 //
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
-//! @file      core/loader/HDF5MetaDataReader.h
-//! @brief     Defines class HDF5MetaDataReader (specialized templates)
+//! @file      core/loader/BaseHDF5DataReader.h
+//! @brief     Defines class BaseHDF5DataReader (specialized templates)
 //!
 //! @homepage  ###HOMEPAGE###
 //! @license   GNU General Public License v3 or higher (see COPYING)
@@ -12,7 +12,7 @@
 //
 //  ***********************************************************************************************
 
-#include "core/loader/HDF5MetaDataReader.h"
+#include "core/loader/BaseHDF5DataReader.h"
 
 #include "base/parser/EigenToVector.h"
 #include "base/utils/Logger.h"
@@ -55,8 +55,7 @@ std::string _dataKey(const std::string& dataset_name)
 
 namespace nsx {
 
-HDF5MetaDataReader::HDF5MetaDataReader(
-    const std::string& filename)
+BaseHDF5DataReader::BaseHDF5DataReader(const std::string& filename)
     : IDataReader(filename)
     , _dataset(nullptr)
     , _space(nullptr)
@@ -65,7 +64,7 @@ HDF5MetaDataReader::HDF5MetaDataReader(
 {
 }
 
-bool HDF5MetaDataReader::initRead()
+bool BaseHDF5DataReader::initRead()
 {
     const bool init_success = IDataReader::initRead();
 
@@ -93,8 +92,8 @@ bool HDF5MetaDataReader::initRead()
         }
 
         nsxlog(
-            nsx::Level::Info, "Initializing HDF5MetaDataReader to read '", _filename, "', dataset '",
-            dataset_name, "'");
+            nsx::Level::Info, "Initializing BaseHDF5DataReader to read '", _filename,
+            "', dataset '", dataset_name, "'");
 
         // TODO: make groups names compatible accross the codebase
         metaGroup = _file->openGroup("/" + _metaKey(dataset_name));
@@ -278,7 +277,7 @@ bool HDF5MetaDataReader::initRead()
 }
 
 
-void HDF5MetaDataReader::open()
+void BaseHDF5DataReader::open()
 {
     nsxlog(nsx::Level::Debug, "Opening datafile (already opened: ", _isOpened, ")");
 
@@ -331,7 +330,7 @@ void HDF5MetaDataReader::open()
 }
 
 
-void HDF5MetaDataReader::close()
+void BaseHDF5DataReader::close()
 {
     if (!_isOpened)
         return;

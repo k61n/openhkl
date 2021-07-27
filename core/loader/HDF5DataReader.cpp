@@ -24,11 +24,7 @@
 
 namespace nsx {
 
-HDF5DataReader::HDF5DataReader(
-    const std::string& filename)
-    : HDF5MetaDataReader(filename)
-{
-}
+HDF5DataReader::HDF5DataReader(const std::string& filename) : BaseHDF5DataReader(filename) {}
 
 Eigen::MatrixXi HDF5DataReader::data(std::size_t frame)
 {
