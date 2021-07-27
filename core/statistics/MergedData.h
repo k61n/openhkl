@@ -65,8 +65,8 @@ class MergedData {
     std::vector<PeakCollection*> _peak_collections;
     double _d_min;
     double _d_max;
-    unsigned int _frame_min;
-    unsigned int _frame_max;
+    int _frame_min;
+    int _frame_max;
 
     //! Number of invalid peaks
     int _nInvalid = 0;
