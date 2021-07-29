@@ -50,6 +50,8 @@ Experiment::Experiment(const std::string& name, const std::string& diffractomete
 {
     // start logging
     Logger::instance().start(nsx::kw_logFilename, Level::Info);
+    nsxlog(Level::Info, "Set Log level to Info");
+
     _data_handler = std::make_shared<DataHandler>(_name, diffractometerName);
     _peak_handler = std::make_unique<PeakHandler>();
     _cell_handler = std::make_unique<UnitCellHandler>();

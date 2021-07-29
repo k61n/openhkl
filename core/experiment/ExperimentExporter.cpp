@@ -213,14 +213,20 @@ namespace nsx {
 
 void ExperimentExporter::createFile(std::string name, std::string diffractometer, std::string path)
 {
-    H5::H5File file{path.c_str(), H5F_ACC_TRUNC};
-    _file_name = path; // store the filename for later use
+    try {
+        H5::H5File file{path.c_str(), H5F_ACC_TRUNC};
+        _file_name = path; // store the filename for later use
 
-    const H5::DataSpace metaSpace(H5S_SCALAR);
-    const H5::StrType str80Type(
-        H5::PredType::C_S1, 80); // TODO: Make 80-chr restriction also in the GUI
-    writeAttribute(file, nsx::at_experiment, name.data(), str80Type, metaSpace);
-    writeAttribute(file, nsx::at_diffractometer, diffractometer.data(), str80Type, metaSpace);
+        const H5::DataSpace metaSpace(H5S_SCALAR);
+        const H5::StrType str80Type(
+            H5::PredType::C_S1, 80); // TODO: Make 80-chr restriction also in the GUI
+        writeAttribute(file, nsx::at_experiment, name.data(), str80Type, metaSpace);
+        writeAttribute(file, nsx::at_diffractometer, diffractometer.data(), str80Type, metaSpace);
+    } catch(...) {
+        nsxlog(nsx::Level::Error, "ExperimentExporter: Failed to create the file '",
+               path, "' to export data"); //, ex.what());
+        throw;
+    }
 }
 
 void ExperimentExporter::writeData(const std::map<std::string, DataSet*> data)

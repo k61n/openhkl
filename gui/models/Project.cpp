@@ -241,7 +241,14 @@ void Project::onPeaksChanged()
 
 void Project::saveToFile(QString path)
 {
-    experiment()->saveToFile(path.toStdString());
-    _save_path = path.toStdString();
-    _saved = true;
+    try {
+        experiment()->saveToFile(path.toStdString());
+        _save_path = path.toStdString();
+        _saved = true;
+    } catch (const std::exception& ex) {
+        throw;
+    } catch (...) {
+        throw std::runtime_error("Failed to save the project to file '"
+                                 + path.toStdString() + "'");
+    }
 }

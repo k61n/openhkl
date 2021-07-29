@@ -13,6 +13,8 @@
 //  ***********************************************************************************************
 
 #include "gui/models/Session.h"
+
+#include "base/utils/Logger.h"
 #include "base/utils/Path.h" // fileBasename
 #include "core/data/DataSet.h"
 #include "core/data/DataTypes.h"
@@ -337,9 +339,17 @@ void Session::loadExperimentFromFile(QString filename)
     if (!project_ptr)
         return;
 
+    nsx::nsxlog(nsx::Level::Debug, "Session: Created Project for file '",
+                filename.toStdString(), "'");
+
     try {
         project_ptr->experiment()->loadFromFile(filename.toStdString());
+        nsx::nsxlog(nsx::Level::Debug, "Session: Loaded data for Project created from file '", filename.toStdString(), "'");
+
         project_ptr->generatePeakModels();
+
+        nsx::nsxlog(nsx::Level::Debug, "Session: Generated PeakModels for Project created from file '", filename.toStdString(), "'");
+
     } catch(const std::exception& ex) {
         const std::string msg {"Loading experiment from '" + filename.toStdString()
                                + "' failed with error: " + ex.what() + "."};
@@ -348,4 +358,7 @@ void Session::loadExperimentFromFile(QString filename)
     }
 
     addProject(std::move(project_ptr));
+
+    nsx::nsxlog(nsx::Level::Debug, "Session: Finished creating Project for file '", filename.toStdString(), "'");
+
 }
