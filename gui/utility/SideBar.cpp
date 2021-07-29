@@ -116,7 +116,11 @@ void SideBar::paintEvent(QPaintEvent* event)
         if (action == mOverAction)
             p.fillRect(actionRect, QColor(150, 150, 150));
 
-        p.setPen(QColor(255, 255, 255));
+        if (isDark(gGui->palette().color(QPalette::Window))) // looks like we have a dark theme
+            p.setPen(Qt::white);
+        else
+            p.setPen(Qt::black);
+
         QSize size = p.fontMetrics().size(Qt::TextSingleLine, action->text());
         QRect actionTextRect(
             QPoint(
