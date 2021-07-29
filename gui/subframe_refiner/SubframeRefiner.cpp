@@ -17,8 +17,8 @@
 #include "core/experiment/Experiment.h"
 #include "core/shape/PeakCollection.h"
 #include "core/shape/PeakFilter.h"
-#include "gui/MainWin.h"
 #include "gui/MainWin.h" // gGui
+#include "gui/detector_window/DetectorWindow.h"
 #include "gui/dialogs/ListNameDialog.h"
 #include "gui/frames/ProgressView.h"
 #include "gui/graphics/SXPlot.h"
@@ -453,6 +453,7 @@ void SubframeRefiner::updatePredictions()
         auto* expt = gSession->experimentAt(_exp_combo->currentIndex())->experiment();
         auto* peaks = expt->getPeakCollection(_predicted_combo->currentText().toStdString());
         expt->updatePredictions(peaks);
+        gGui->detector_window->refreshPeakTable();
     } else {
         QMessageBox::critical(this, "Error", "Cannot update predictions: refinement failed");
     }

@@ -17,8 +17,8 @@
 
 #include "core/experiment/Experiment.h"
 #include "core/peak/Peak3D.h"
-#include "gui/MainWin.h"
 #include "gui/MainWin.h" // gGui
+#include "gui/detector_window/DetectorWindow.h"
 #include "gui/frames/ProgressView.h"
 #include "gui/graphics/DetectorScene.h"
 #include "gui/graphics/DetectorView.h"
@@ -504,6 +504,7 @@ void SubframeIntegrate::runIntegration()
 
         integrator->getIntegrator(params->integrator_type)->setHandler(handler);
         integrator->integratePeaks(data, peaks_to_integrate, params, shapes);
+        gGui->detector_window->refreshPeakTable();
     } catch (std::exception& e) {
         QMessageBox::critical(this, "Error", QString(e.what()));
     }
