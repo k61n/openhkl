@@ -30,7 +30,7 @@ namespace nsx {
 
 void ExperimentImporter::setFilePath(const std::string path, Experiment* const experiment)
 {
-    nsxlog(nsx::Level::Debug, "Importing data from path '", path, "'");
+    nsxlog(nsx::Level::Debug, "Importing experiment info from path '", path, "'");
 
     try {
         _file_name = path;
@@ -52,7 +52,7 @@ void ExperimentImporter::setFilePath(const std::string path, Experiment* const e
         }
 
         nsxlog(
-            nsx::Level::Info, "Finished reading Experiment '" + experiment->name() + "'",
+            nsx::Level::Info, "Finished importing info for Experiment '" + experiment->name() + "'",
             " with diffractometer '" + experiment->getDiffractometer()->name() + "'",
             " from path '" + path + "'");
 
@@ -121,7 +121,7 @@ void ExperimentImporter::loadPeaks(Experiment* experiment)
                 attr.read(attr_type, &type);
             }
 
-            nsxlog(Level::Debug, "ExperimentImporter::loadPeaks: found ", n_peaks, " to import");
+            nsxlog(Level::Debug, "ExperimentImporter::loadPeaks: found ", n_peaks, " to import for PeakCollection '", collection_name, "'");
             nsxlog(Level::Debug, "Preparing the dataspace");
             // prepare the loading
             Eigen_VecXd bkg_begin(n_peaks);
@@ -285,6 +285,8 @@ void ExperimentImporter::loadPeaks(Experiment* experiment)
     } catch (H5::Exception& e) {
         throw std::runtime_error{e.getDetailMsg()};
     }
+
+    nsxlog(nsx::Level::Debug, "Finished importing peaks from file '", _file_name, "'");
 }
 
 void ExperimentImporter::loadUnitCells(Experiment* experiment)
