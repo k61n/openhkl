@@ -41,7 +41,7 @@ DetectorView::DetectorView(QWidget* parent) : QGraphicsView(parent), _scene(new 
 void DetectorView::resizeEvent(QResizeEvent* event)
 {
     Q_UNUSED(event);
-    fitInView(_scene->sceneRect());
+    fitInView(_scene->sceneRect(), Qt::KeepAspectRatio);
 }
 
 DetectorScene* DetectorView::getScene()

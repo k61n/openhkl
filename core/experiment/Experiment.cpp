@@ -176,14 +176,14 @@ void Experiment::buildShapeCollection(
     _peak_filter->parameters()->strength_max = params.strength_max;
     _peak_filter->filter(peaks);
     std::string collection_name = nsx::kw_fitCollection;
-    _peak_handler->acceptFilter(collection_name, peaks, listtype::FILTERED);
-    PeakCollection* fit_peaks = getPeakCollection(collection_name);
+    PeakCollection fit_peaks(collection_name, listtype::FILTERED);
+    fit_peaks.populateFromFiltered(peaks);
 
-    if (fit_peaks->numberOfPeaks() == 0)
+    if (fit_peaks.numberOfPeaks() == 0)
         throw std::runtime_error("buildShapeCollection: no fit peaks found");
 
     nsxlog(
-        Level::Info, "Experiment::buildShapeCollection: ", fit_peaks->numberOfPeaks(), " / ",
+        Level::Info, "Experiment::buildShapeCollection: ", fit_peaks.numberOfPeaks(), " / ",
         peaks->numberOfPeaks(), " fit peaks");
 
     nsx::AABB aabb;
@@ -200,7 +200,7 @@ void Experiment::buildShapeCollection(
 
     std::unique_ptr<ShapeCollection> shapes = std::make_unique<ShapeCollection>();
 
-    std::vector<Peak3D*> fit_peak_list = fit_peaks->getPeakList();
+    std::vector<Peak3D*> fit_peak_list = fit_peaks.getPeakList();
     _integrator->integrateShapeCollection(
         fit_peak_list, data, shapes.get(), aabb, params);
     peaks->setShapeCollection(shapes);
