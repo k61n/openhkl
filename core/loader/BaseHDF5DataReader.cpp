@@ -288,6 +288,7 @@ void BaseHDF5DataReader::open()
 
     try {
         nsxlog(nsx::Level::Info, "Opening datafile '", _filename, "' for read-only access");
+        _file.reset();
         _file.reset(new H5::H5File(_filename.c_str(), H5F_ACC_RDONLY));
     } catch (...) {
         if (_file)
@@ -299,6 +300,7 @@ void BaseHDF5DataReader::open()
     // Create new data set
     try {
         // handled automatically by HDF5 blosc filter
+        _blosc_filter.reset();
         _blosc_filter.reset(new HDF5BloscFilter);
 
         nsxlog(nsx::Level::Debug, "Reading dataset '", dataset_name, "',");
