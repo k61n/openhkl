@@ -51,11 +51,11 @@ class DetectorScene : public QGraphicsScene {
     enum MODE {
         SELECT = 0,
         ZOOM = 1,
-        LINE = 2,
-        HORIZONTALSLICE = 3,
-        VERTICALSLICE = 4,
-        MASK = 5,
-        ELLIPSE_MASK = 6
+        MASK = 2,
+        ELLIPSE_MASK = 3,
+        LINE = 4,
+        HORIZONTALSLICE = 5,
+        VERTICALSLICE = 6
     };
 
     //! Which mode is the cursor diplaying

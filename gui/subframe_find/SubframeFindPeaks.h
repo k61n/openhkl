@@ -148,6 +148,7 @@ class SubframeFindPeaks : public QWidget {
     QGraphicsPixmapItem* _pixmap;
     QSpinBox* _figure_spin;
     QScrollBar* _figure_scroll;
+    QComboBox* _mode;
 
     PeakTableView* _peak_table;
 

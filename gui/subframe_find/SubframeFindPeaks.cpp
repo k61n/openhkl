@@ -237,7 +237,7 @@ void SubframeFindPeaks::setFigureUp()
     _figure_view = new DetectorView(this);
     _figure_view->getScene()->linkPeakModel1(&_peak_collection_model);
     _figure_view->scale(1, -1);
-    figure_grid->addWidget(_figure_view, 0, 0, 1, 2);
+    figure_grid->addWidget(_figure_view, 0, 0, 1, 3);
 
     _figure_scroll = new QScrollBar(this);
     _figure_scroll->setOrientation(Qt::Horizontal);
@@ -247,6 +247,11 @@ void SubframeFindPeaks::setFigureUp()
     _figure_spin = new QSpinBox(this);
     _figure_spin->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     figure_grid->addWidget(_figure_spin, 1, 1, 1, 1);
+
+    _mode = new QComboBox(this);
+    _mode->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+    _mode->addItems(QStringList{"Selection", "Zoom", "Rectangular mask", "Elliptical mask"});
+    figure_grid->addWidget(_mode, 1, 2, 1, 1);
 
     connect(
         _figure_scroll, SIGNAL(valueChanged(int)), _figure_view->getScene(),
@@ -259,6 +264,10 @@ void SubframeFindPeaks::setFigureUp()
     connect(
         _figure_view->getScene(), &DetectorScene::signalSelectedPeakItemChanged, this,
         &SubframeFindPeaks::changeSelected);
+
+    connect(
+        _mode, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
+        [=](int i) { _figure_view->getScene()->changeInteractionMode(i); });
 
     _right_element->addWidget(figure_group);
 }
