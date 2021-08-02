@@ -21,6 +21,7 @@
 #include "core/shape/Profile3D.h"
 
 #include <array>
+#include <set>
 
 namespace nsx {
 
@@ -42,6 +43,8 @@ struct ShapeCollectionParameters : public IntegrationParameters {
     int nbins_y = 20; //!< Number of y histogram bins for peak
     int nbins_z = 10; //!< Number of z histogram bins for peak
     int min_n_neighbors = 10; //!< Minimum number of neighbours required for shape collection
+    double sigma_m = 0.1; //!< Variance due to crystal mosaicity
+    double sigma_d = 0.1; //!< Variance due to beam divergence
     PeakInterpolation interpolation = PeakInterpolation::NoInterpolation;
 
     void log(const Level& level) const;
@@ -67,10 +70,7 @@ class ShapeCollection {
     //! @param detector_coords if true, store profiles in detector coordinates;
     //! otherwise store in Kabsch coordinates
     ShapeCollection();
-    ShapeCollection(bool detector_coords, double peakEnd, double bkgBegin, double bkgEnd);
-
-    //! Returns whether the collection is stored in detector coords or Kabsch coords
-    bool detectorCoords() const;
+    ShapeCollection(std::shared_ptr<ShapeCollectionParameters> params);
 
     //! Add a reference peak to the collection
     bool addPeak(Peak3D* peak, Profile3D&& profile, Profile1D&& integrated_profile);
@@ -104,15 +104,6 @@ class ShapeCollection {
     std::vector<Peak3D*> findNeighbors(
         const DetectorEvent& ev, double radius, double nframes) const;
 
-    //! Returns the peak scale used for the collection
-    double peakEnd() const;
-
-    //! Returns the background begin used for the collection
-    double bkgBegin() const;
-
-    //! Returns the background end used for the collection
-    double bkgEnd() const;
-
     //! Returns the background end used for the collection
     std::array<double, 6> choleskyD() const;
 
@@ -131,6 +122,17 @@ class ShapeCollection {
     //! Shape collection parameters
     ShapeCollectionParameters* parameters();
 
+    //! Whether the collection uses Kabsch (f) or detector(t) coordinates
+    bool detectorCoords() const;
+
+    //! Set the bounding box depending on the coordinate type
+    AABB getAABB();
+
+    //! Integrate the shape collection
+    void integrate(
+        std::vector<Peak3D*> peaks, std::set<nsx::sptrDataSet> datalist,
+        sptrProgressHandler handler = nullptr);
+
  private:
     //! Predict the (detector space) covariance given the fit data
     Eigen::Matrix3d predictCovariance(const FitData&) const;
@@ -147,21 +149,8 @@ class ShapeCollection {
     //! Components of the Cholesky factor of shape covariance matrix
     std::array<double, 6> _choleskyS;
 
-    //! Sets true if the profiles are stored in detector space coordinates or false
-    //! for Kabsch coords
-    bool _detectorCoords;
-
-    //! The peak scale used by the collection for integration
-    double _peakEnd;
-
-    //! The background begin used by the collection for integration
-    double _bkgBegin;
-
-    //! The background end used by the collection for integration
-    double _bkgEnd;
-
     //! Shape collection parameters
-    ShapeCollectionParameters _params;
+    std::shared_ptr<ShapeCollectionParameters> _params;
 };
 
 } // namespace nsx

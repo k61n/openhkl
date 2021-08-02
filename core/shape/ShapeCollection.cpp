@@ -22,6 +22,7 @@
 #include "core/detector/DetectorEvent.h"
 #include "core/instrument/Diffractometer.h"
 #include "core/instrument/Source.h"
+#include "core/integration/ShapeIntegrator.h"
 #include "core/peak/Peak3D.h"
 #include "core/peak/PeakCoordinateSystem.h"
 #include "core/peak/Qs2Events.h"
@@ -46,6 +47,8 @@ void ShapeCollectionParameters::log(const Level& level) const
     nsxlog(level, "nbins_y                = ", nbins_y);
     nsxlog(level, "nbins_z                = ", nbins_z);
     nsxlog(level, "min_n_neighbors        = ", min_n_neighbors);
+    nsxlog(level, "sigma_m                = ", sigma_m);
+    nsxlog(level, "sigma_d                = ", sigma_d);
 }
 
 static Eigen::Matrix3d from_cholesky(const std::array<double, 6>& components)
@@ -116,28 +119,19 @@ ShapeCollection::ShapeCollection()
     , _choleskyD()
     , _choleskyM()
     , _choleskyS()
-    , _detectorCoords(true)
-    , _peakEnd(1)
-    , _bkgBegin(3)
-    , _bkgEnd(4)
-    , _params()
 {
     _choleskyD.fill(1e-6);
     _choleskyM.fill(1e-6);
     _choleskyS.fill(1e-6);
+    _params = std::make_shared<ShapeCollectionParameters>();
 }
 
-ShapeCollection::ShapeCollection(
-    bool detector_coords, double peakEnd, double bkgBegin, double bkgEnd)
+ShapeCollection::ShapeCollection(std::shared_ptr<ShapeCollectionParameters> params)
     : _profiles()
     , _choleskyD()
     , _choleskyM()
     , _choleskyS()
-    , _detectorCoords(detector_coords)
-    , _peakEnd(peakEnd)
-    , _bkgBegin(bkgBegin)
-    , _bkgEnd(bkgEnd)
-    , _params()
+    , _params(params)
 {
     _choleskyD.fill(1e-6);
     _choleskyM.fill(1e-6);
@@ -169,21 +163,6 @@ static void covariance_helper(
     cov += Jp * sigmaS * Jp.transpose();
 
     result = Jd * cov * Jd.transpose();
-}
-
-double ShapeCollection::peakEnd() const
-{
-    return _peakEnd;
-}
-
-double ShapeCollection::bkgBegin() const
-{
-    return _bkgBegin;
-}
-
-double ShapeCollection::bkgEnd() const
-{
-    return _bkgEnd;
 }
 
 bool ShapeCollection::addPeak(Peak3D* peak, Profile3D&& profile, Profile1D&& integrated_profile)
@@ -423,8 +402,8 @@ void ShapeCollection::setPredictedShapes(
         // too few or no neighbouring peaks found)
         try {
             Eigen::Matrix3d cov = meanCovariance(
-                peak, _params.neighbour_range_pixels, _params.neighbour_range_frames,
-                _params.min_n_neighbors, interpolation);
+                peak, _params->neighbour_range_pixels, _params->neighbour_range_frames,
+                _params->min_n_neighbors, interpolation);
             Eigen::Vector3d center = peak->shape().center();
             peak->setShape(Ellipsoid(center, cov.inverse()));
         } catch (std::exception& e) {
@@ -436,12 +415,6 @@ void ShapeCollection::setPredictedShapes(
             handler->setProgress(progress);
         }
     }
-}
-
-
-bool ShapeCollection::detectorCoords() const
-{
-    return _detectorCoords;
 }
 
 std::array<double, 6> ShapeCollection::choleskyD() const
@@ -466,7 +439,47 @@ std::map<Peak3D*, std::pair<Profile3D, Profile1D>> ShapeCollection::profiles() c
 
 ShapeCollectionParameters* ShapeCollection::parameters()
 {
-    return &_params;
+    return _params.get();
+}
+
+bool ShapeCollection::detectorCoords() const
+{
+    return !_params->kabsch_coords;
+}
+
+AABB ShapeCollection::getAABB()
+{
+    AABB aabb;
+    if (_params->kabsch_coords) {
+        const Eigen::Vector3d sigma(_params->sigma_d, _params->sigma_d, _params->sigma_m);
+        aabb.setLower(-_params->peak_end * sigma);
+        aabb.setUpper(_params->peak_end * sigma);
+    } else {
+        const Eigen::Vector3d dx(_params->nbins_x, _params->nbins_y, _params->nbins_z);
+        aabb.setLower(-0.5 * dx);
+        aabb.setUpper(0.5 * dx);
+    }
+    return aabb;
+}
+
+void ShapeCollection::integrate(
+    std::vector<Peak3D*> peaks, std::set<nsx::sptrDataSet> datalist, sptrProgressHandler handler)
+{
+    ShapeIntegrator integrator(
+        this, getAABB(), _params->nbins_x, _params->nbins_y, _params->nbins_z);
+    nsx::IntegrationParameters int_params{};
+    int_params.peak_end = _params->peak_end;
+    int_params.bkg_begin = _params->bkg_begin;
+    int_params.bkg_end = _params->bkg_end;
+    integrator.setHandler(handler);
+    integrator.setNNumors(datalist.size());
+    integrator.setParameters(int_params);
+
+    int n_numor = 1;
+    for (const nsx::sptrDataSet& data : datalist) {
+        integrator.integrate(peaks, this, data, n_numor);
+        ++n_numor;
+    }
 }
 
 } // namespace nsx

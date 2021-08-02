@@ -61,6 +61,8 @@ SubframeIntegrate::SubframeIntegrate() : QWidget()
     propertyScrollArea->setContentLayout(_left_layout);
     main_layout->addWidget(propertyScrollArea);
     main_layout->addWidget(_right_element);
+
+    _shape_params = nullptr;
 }
 
 void SubframeIntegrate::setInputUp()
@@ -512,15 +514,13 @@ void SubframeIntegrate::runIntegration()
 
 void SubframeIntegrate::openShapeBuilder()
 {
-    // #nsxAudit Crash if no experiment existing. Disable btn if no experiment loaded?
     nsx::PeakCollection* peak_collection =
         gSession->experimentAt(_exp_combo->currentIndex())
             ->experiment()
             ->getPeakCollection(_peak_combo->currentText().toStdString());
-    nsx::ShapeCollectionParameters shape_params{};
 
     std::unique_ptr<ShapeCollectionDialog> dialog(
-        new ShapeCollectionDialog(peak_collection, &shape_params));
+        new ShapeCollectionDialog(peak_collection, _shape_params));
 
     dialog->exec();
     refreshShapeStatus();
