@@ -25,7 +25,6 @@ TableType PlotCheckBox::getTable() const
     return _table;
 }
 
-
 int PlotCheckBox::getColumn() const
 {
     return _column;

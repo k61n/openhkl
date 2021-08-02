@@ -269,6 +269,7 @@ void SubframeRefiner::refine()
             _refine_success = expt->refine(peaks, cell, data.get());
 
         _tables_widget->refreshTables(refiner, data.get());
+        refreshPlot();
     } catch (const std::exception& ex) {
         QMessageBox::critical(this, "Error", QString(ex.what()));
     }
