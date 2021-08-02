@@ -506,7 +506,7 @@ void SubframeIntegrate::runIntegration()
 
         integrator->getIntegrator(params->integrator_type)->setHandler(handler);
         integrator->integratePeaks(data, peaks_to_integrate, params, shapes);
-        gGui->detector_window->refreshPeakTable();
+        gGui->detector_window->refreshAll();
     } catch (std::exception& e) {
         QMessageBox::critical(this, "Error", QString(e.what()));
     }
