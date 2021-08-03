@@ -35,6 +35,13 @@ enum class Level {
     Debug,
 };
 
+struct Message {
+    Level level;
+    std::string sender;
+    std::string header;
+    std::string body;
+};
+
 //! A singleton class for logging
 class Logger {
 
