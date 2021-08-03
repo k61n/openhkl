@@ -148,6 +148,8 @@ void SubframeFindPeaks::setBlobUp()
 
     _end_frame_spin = f.addSpinBox("End frame", "(frame) - end frame for peak finding");
 
+    // _live_check = f.addCheckBox("Apply threshold to preview", "Only show pixels above threshold");
+
     _find_button = f.addButton("Find peaks");
 
     _threshold_spin->setMaximum(1000);
@@ -157,6 +159,7 @@ void SubframeFindPeaks::setBlobUp()
     _max_width_spin->setMaximum(20);
 
     connect(_find_button, &QPushButton::clicked, this, &SubframeFindPeaks::find);
+    // connect(_live_check, &QCheckBox::stateChanged, this, &SubframeFindPeaks::refreshPreview);
     connect(
         gGui->sideBar(), &SideBar::subframeChanged, this,
         &SubframeFindPeaks::setIntegrationParameters);
@@ -211,10 +214,6 @@ void SubframeFindPeaks::setPreviewUp()
         _peak_view_widget->set1.bkgEnd, qOverload<double>(&QDoubleSpinBox::valueChanged),
         _bkg_upper, &QDoubleSpinBox::setValue);
 
-    _live_check = new QCheckBox("Apply threshold to preview");
-    // _peak_view_widget->addWidget(_live_check, 8, 0, 1, 3);
-    // Not sure what the _live_check widget does - zamaan
-
     preview_spoiler->setContentLayout(*_peak_view_widget);
 
     _left_layout->addWidget(preview_spoiler);
@@ -250,7 +249,7 @@ void SubframeFindPeaks::setFigureUp()
 
     _mode = new QComboBox(this);
     _mode->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-    _mode->addItems(QStringList{"Selection", "Zoom", "Rectangular mask", "Elliptical mask"});
+    _mode->addItems(QStringList{"Zoom", "Selection", "Rectangular mask", "Elliptical mask"});
     figure_grid->addWidget(_mode, 1, 2, 1, 1);
 
     connect(
@@ -268,6 +267,9 @@ void SubframeFindPeaks::setFigureUp()
     connect(
         _mode, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
         [=](int i) { _figure_view->getScene()->changeInteractionMode(i); });
+    connect(
+        _figure_view->getScene(), &DetectorScene::signalUpdateDetectorScene,
+        this, &SubframeFindPeaks::refreshPeakTable);
 
     _right_element->addWidget(figure_group);
 }

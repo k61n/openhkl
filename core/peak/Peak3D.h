@@ -51,6 +51,7 @@ enum class RejectionFlag {
     NoShapeCollection,
     NoISigmaMinimum,
     PredictionUpdateFailure, // from refiner
+    ManuallyRejected,
     Count
 };
 

@@ -49,7 +49,8 @@ const std::map<RejectionFlag, std::string> Peak3D::_rejection_map{
     {RejectionFlag::BadIntegrationFit, "Pearson coefficient of fit is too low"},
     {RejectionFlag::NoShapeCollection, "No shape collection found"},
     {RejectionFlag::NoISigmaMinimum, "Failed to find minimum of I/Sigma"},
-    {RejectionFlag::PredictionUpdateFailure, "Failure updating prediction post-refinement"}};
+    {RejectionFlag::PredictionUpdateFailure, "Failure updating prediction post-refinement"},
+    {RejectionFlag::ManuallyRejected, "Manually unselected by user"}};
 
 Peak3D::Peak3D(sptrDataSet data)
     : _shape()

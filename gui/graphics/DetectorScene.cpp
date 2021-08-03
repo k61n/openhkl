@@ -172,44 +172,6 @@ void DetectorScene::drawPeakitems()
     if (_draw3rdParty)
         draw3rdPartyItems();
     loadCurrentImage();
-
-    // if (_selected_peak_gi) {
-    //     removeItem(_selected_peak_gi);
-    //     delete _selected_peak_gi;
-    //     _selected_peak_gi = nullptr;
-    // }
-
-    // auto it = _peak_graphics_items.find(_selected_peak);
-
-    // if (it != _peak_graphics_items.end())
-    //     it->second->setVisible(true);
-
-    // if (_selected_peak) {
-    //     nsx::Ellipsoid selected_peak_ellipsoid = _selected_peak_item->peak()->shape();
-    //     selected_peak_ellipsoid.scale(_selected_peak_item->peak()->peakEnd());
-    //     double frame_index = static_cast<double>(_currentFrameIndex);
-    //     const nsx::AABB& aabb = selected_peak_ellipsoid.aabb();
-    //     const Eigen::Vector3d& lower = aabb.lower();
-    //     const Eigen::Vector3d& upper = aabb.upper();
-
-    //     if (frame_index >= lower[2] && frame_index <= upper[2]) {
-    //         Eigen::Vector3d center = selected_peak_ellipsoid.intersectionCenter(
-    //             {0.0, 0.0, 1.0}, {0.0, 0.0, static_cast<double>(_currentFrameIndex)});
-
-    //         _selected_peak_gi = new QGraphicsRectItem(nullptr);
-    //         _selected_peak_gi->setPos(center[0], center[1]);
-    //         _selected_peak_gi->setRect(-10, -10, 20, 20);
-
-    //         QPen pen;
-    //         pen.setColor(Qt::darkCyan);
-    //         pen.setStyle(Qt::DotLine);
-    //         _selected_peak_gi->setPen(pen);
-    //         _selected_peak_gi->setZValue(-1);
-    //         _selected_peak_gi->setAcceptHoverEvents(false);
-
-    //         addItem(_selected_peak_gi);
-    //     }
-    // }
 }
 
 void DetectorScene::drawPeakModelItems(PeakCollectionModel* model)
@@ -351,6 +313,11 @@ void DetectorScene::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
             zoom.setBottomRight(event->lastScenePos());
             _zoomrect->setRect(zoom);
             return;
+        } else if (_mode == SELECT) {
+            QRectF select = _selectionRect->rect();
+            select.setBottomRight(event->lastScenePos());
+            _selectionRect->setRect(select);
+            return;
         }
 
         if (!_lastClickedGI)
@@ -389,6 +356,12 @@ void DetectorScene::mousePressEvent(QGraphicsSceneMouseEvent* event)
     EllipseMaskItem* ellipse_mask(nullptr);
     //_masks.emplace_back(new graphicsItem(nullptr));
 
+    if (_selectionRect) {
+        removeItem(_selectionRect);
+        delete _selectionRect;
+        _selectionRect = nullptr;
+    }
+
     QPen pen1;
 
     // If no data is loaded, do nothing
@@ -413,6 +386,15 @@ void DetectorScene::mousePressEvent(QGraphicsSceneMouseEvent* event)
         }
         switch (_mode) {
             case SELECT: {
+                QPoint select_start = event->lastScenePos().toPoint();
+                QPoint select_end = select_start;
+                _selectionRect = addRect(QRect(select_start, select_end));
+
+                pen1 = QPen(QBrush(QColor("gray")), 1.0);
+                pen1.setWidth(0.5);
+                pen1.setCosmetic(true);
+                _selectionRect->setBrush(QBrush(Qt::transparent));
+                _selectionRect->setPen(pen1);
                 break;
             }
             case ZOOM: {
@@ -490,15 +472,35 @@ void DetectorScene::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
             return;
 
         if (_mode == SELECT) {
-            QGraphicsItem* item = itemAt(event->lastScenePos(), QTransform());
+            if (_selectionRect) {
+                qreal top = _selectionRect->rect().top();
+                qreal bot = _selectionRect->rect().bottom();
+                qreal left = _selectionRect->rect().left();
+                qreal right = _selectionRect->rect().right();
 
-            PeakItemGraphic* peak_item = dynamic_cast<PeakItemGraphic*>(item);
+                // If the user just clicked on the left mouse button with holding it, skip
+                // the event
+                if (qAbs(top - bot) <= 1 || qAbs(left - right) <= 1) {
+                    if (_selectionRect) {
+                        removeItem(_selectionRect);
+                        delete _selectionRect;
+                        _selectionRect = nullptr;
+                    }
+                    return;
+                }
 
-            if (!peak_item)
-                return;
+                if (top > bot)
+                    std::swap(top, bot);
 
-            // nsx::Peak3D* peak = peak_item->peak();
-            // gSession->onSelectedPeakChanged(peak);
+                if (right < left)
+                    std::swap(left, right);
+
+                clearSelection();
+                _selectionRect->setRect(left, top, right - left, bot - top);
+                QPainterPath path;
+                path.addRect(_selectionRect->rect());
+                setSelectionArea(path);
+            }
         } else if (_mode == ZOOM) {
             if (_zoomrect) {
                 qreal top = _zoomrect->rect().top();
@@ -571,7 +573,6 @@ void DetectorScene::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
                     _currentData->maskPeaks(peaks);
                     update();
                     updateMasks();
-                    //                gSession->onMaskedPeaksChanged(peaks);
                 } else if (EllipseMaskItem* p = dynamic_cast<EllipseMaskItem*>(_lastClickedGI)) {
                     auto it = findMask(p);
                     if (it != _masks.end()) {
@@ -582,7 +583,6 @@ void DetectorScene::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
                     _currentData->maskPeaks(peaks);
                     update();
                     updateMasks();
-                    //                gSession->onMaskedPeaksChanged(peaks);
                 }
             } else {
                 if (MaskItem* p = dynamic_cast<MaskItem*>(_lastClickedGI)) {
@@ -595,7 +595,6 @@ void DetectorScene::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
                     }
                     update();
                     updateMasks();
-                    //                gSession->onMaskedPeaksChanged(peaks);
                 } else if (EllipseMaskItem* p = dynamic_cast<EllipseMaskItem*>(_lastClickedGI)) {
                     auto it = findMask(p);
                     if (it != _masks.end()) {
@@ -605,7 +604,6 @@ void DetectorScene::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
                     }
                     update();
                     updateMasks();
-                    //                gSession->onMaskedPeaksChanged(peaks);
                 }
             }
         }
@@ -640,57 +638,44 @@ void DetectorScene::keyPressEvent(QKeyEvent* event)
 
     // The user pressed on Delete key
     if (event->key() == Qt::Key_Delete) {
-        QList<QGraphicsItem*> items = selectedItems();
-        int nPeaksUnselected = int(_peak_graphics_items.size());
-        for (QGraphicsItem* item : items) {
+        for (QGraphicsItem* item : selectedItems()) {
             SXGraphicsItem* p = dynamic_cast<SXGraphicsItem*>(item);
-
             if (p == nullptr)
                 continue;
-
-            // The item must be deletable ... to be deleted
+            // The item must be deletable
             if (!p->isDeletable())
                 continue;
+
             // If the item is a peak graphics item, remove its corresponding peak from
             // the data, update the set of peak graphics items and update the scene
-            // if (PeakItemGraphic* p = dynamic_cast<PeakItemGraphic*>(item))
-            //     p->peak()->setSelected(false);
-            // // If the item is a mask graphics item, remove its corresponding mask from
-            // // the data, update the std::vector of mask graphics items and update the scene
-            // else if (MaskItem* p = dynamic_cast<MaskItem*>(item)) {
-            //     auto it = findMask(p);
-            //     // if (it != _masks.end()) {
-            //     //     _currentData->removeMask(it->second);
-            //     //     _masks.erase(it);
-            //     //     nsx::PeakList peaks = gSession->currentProject()->getPeaks(0,
-            //     0)->peaks_;
-            //     //     _currentData->maskPeaks(peaks);
-            //     //     update();
-            //     //     updateMasks();
-            //     //     //                    gSession->onMaskedPeaksChanged(peaks);
-            //     }
-            // } else if (EllipseMaskItem* p = dynamic_cast<EllipseMaskItem*>(item)) {
-            //     auto it = findMask(p);
-            //     // if (it != _masks.end()) {
-            //     //     _currentData->removeMask(it->second);
-            //     //     _masks.erase(it);
-            //     //     nsx::PeakList peaks = gSession->currentProject()->getPeaks(0,
-            //     0)->peaks_;
-            //     //     _currentData->maskPeaks(peaks);
-            //     //     update();
-            //     //     updateMasks();
-            //         //                    gSession->onMaskedPeaksChanged(peaks);
-            //     }
-            // }
+            if (PeakItemGraphic* p = dynamic_cast<PeakItemGraphic*>(item)) {
+                p->peak()->setRejectionFlag(nsx::RejectionFlag::ManuallyRejected);
+                p->peak()->setSelected(false);
+                p->setCenterColor(Qt::red);
+            // If the item is a mask graphics item, remove its corresponding mask from
+            // the data, update the std::vector of mask graphics items and update the scene
+            } else if (MaskItem* p = dynamic_cast<MaskItem*>(item)) {
+                auto it = findMask(p);
+                if (it != _masks.end()) {
+                    _currentData->removeMask(it->second);
+                    _masks.erase(it);
+                    update();
+                    updateMasks();
+                    removeItem(item);
+                }
+            } else if (EllipseMaskItem* p = dynamic_cast<EllipseMaskItem*>(item)) {
+                auto it = findMask(p);
+                if (it != _masks.end()) {
+                    _currentData->removeMask(it->second);
+                    _masks.erase(it);
+                    update();
+                    updateMasks();
+                    removeItem(item);
+                }
+            }
             if (p == _lastClickedGI)
                 _lastClickedGI = nullptr;
-            // Remove the item from the scene
-            removeItem(item);
         }
-        // Computes the new number of peaks, and if it changes log it
-        nPeaksUnselected -= _peak_graphics_items.size();
-        if (nPeaksUnselected > 0)
-            qDebug() << "Unselected " << nPeaksUnselected << " peaks";
     }
 }
 

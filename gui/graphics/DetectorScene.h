@@ -49,8 +49,8 @@ class DetectorScene : public QGraphicsScene {
     Q_OBJECT
  public:
     enum MODE {
-        SELECT = 0,
-        ZOOM = 1,
+        ZOOM = 0,
+        SELECT = 1,
         MASK = 2,
         ELLIPSE_MASK = 3,
         LINE = 4,
@@ -150,6 +150,7 @@ class DetectorScene : public QGraphicsScene {
     void signalChangeSelectedFrame(int selected_frame);
     void signalChangeSelectedPeak(nsx::Peak3D* peak);
     void signalSelectedPeakItemChanged(PeakItemGraphic* peak);
+    void signalUpdateDetectorScene();
 
  private:
     //! Create the text of the tooltip depending on Scene Mode.
@@ -170,6 +171,8 @@ class DetectorScene : public QGraphicsScene {
     QPoint _zoomend;
     //! Graphics Window representing the zoomed area
     QGraphicsRectItem* _zoomrect;
+    //! QRect delineating selected area
+    QGraphicsRectItem* _selectionRect;
     //! Stack of zoom
     QStack<QRect> _zoomStack;
 
