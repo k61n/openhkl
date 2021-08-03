@@ -46,7 +46,7 @@
 class ShapeCollectionDialog : public QDialog {
  public:
     ShapeCollectionDialog(
-        nsx::PeakCollection* peak_collection, nsx::ShapeCollectionParameters* params);
+        nsx::PeakCollection* peak_collection, std::shared_ptr<nsx::ShapeCollectionParameters> params);
     double getDMin() { return _min_d->value(); };
     double getDMax() { return _max_d->value(); };
 
@@ -66,6 +66,13 @@ class ShapeCollectionDialog : public QDialog {
     void setPreviewUp();
     //! Once all the gui elements are set up fill them
     void setUpParametrization(nsx::PeakCollection* peak_collection);
+    //! Get the parameters
+    void setShapeCollectionParameters();
+    //! Set the parameters
+    void grabShapeCollectionParameters();
+
+    //! Disable unsafe widgets if no data loaded
+    void toggleUnsafeWidgets();
 
  private:
     //! The temporary collection
@@ -79,7 +86,7 @@ class ShapeCollectionDialog : public QDialog {
     std::set<nsx::sptrDataSet> _data;
     nsx::Profile3D _profile;
     nsx::PeakCollection* _collection_ptr;
-    nsx::ShapeCollectionParameters* _params;
+    std::shared_ptr<nsx::ShapeCollectionParameters> _params;
     double _maximum;
     ColorMap _cmap;
 

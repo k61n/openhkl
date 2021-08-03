@@ -154,7 +154,7 @@ void IPeakIntegrator::integrate(
                 } catch (std::exception& e) {
                     // integration failed...
                     nsxlog(
-                        Level::Debug, "IPeakIntegrator::integrate: integration failedL ", e.what());
+                        Level::Debug, "IPeakIntegrator::integrate: integration failed: ", e.what());
                     ++nfailures;
                     peak->setSelected(false);
                     peak->setRejectionFlag(RejectionFlag::IntegrationFailure);

@@ -454,7 +454,7 @@ void SubframeRefiner::updatePredictions()
         auto* expt = gSession->experimentAt(_exp_combo->currentIndex())->experiment();
         auto* peaks = expt->getPeakCollection(_predicted_combo->currentText().toStdString());
         expt->updatePredictions(peaks);
-        gGui->detector_window->refreshPeakTable();
+        gGui->detector_window->refreshAll();
     } else {
         QMessageBox::critical(this, "Error", "Cannot update predictions: refinement failed");
     }
