@@ -46,6 +46,8 @@ class BaseHDF5DataReader : public IDataReader {
 
     virtual bool initRead() override;
 
+    virtual std::string NSXfilepath() const override;
+
  protected:
     std::unique_ptr<H5::H5File> _file;
 

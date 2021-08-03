@@ -352,4 +352,9 @@ void BaseHDF5DataReader::close()
     _isOpened = false;
 }
 
+std::string BaseHDF5DataReader::NSXfilepath() const
+{
+    return _filename;
+}
+
 } // namespace nsx

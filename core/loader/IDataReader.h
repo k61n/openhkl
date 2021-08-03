@@ -66,6 +66,9 @@ class IDataReader {
     //! Check if the reader is successfully initialized
     void checkInit();
 
+    //! Return the NSX (HDF5) filepath associated with the dataset (if any)
+    virtual std::string NSXfilepath() const;
+
  protected:
     IDataReader() = delete;
 
