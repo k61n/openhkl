@@ -148,7 +148,7 @@ void SubframeFindPeaks::setBlobUp()
 
     _end_frame_spin = f.addSpinBox("End frame", "(frame) - end frame for peak finding");
 
-    // _live_check = f.addCheckBox("Apply threshold to preview", "Only show pixels above threshold");
+    _live_check = f.addCheckBox("Apply threshold to preview", "Only show pixels above threshold");
 
     _find_button = f.addButton("Find peaks");
 
@@ -159,7 +159,7 @@ void SubframeFindPeaks::setBlobUp()
     _max_width_spin->setMaximum(20);
 
     connect(_find_button, &QPushButton::clicked, this, &SubframeFindPeaks::find);
-    // connect(_live_check, &QCheckBox::stateChanged, this, &SubframeFindPeaks::refreshPreview);
+    connect(_live_check, &QCheckBox::stateChanged, this, &SubframeFindPeaks::refreshPreview);
     connect(
         gGui->sideBar(), &SideBar::subframeChanged, this,
         &SubframeFindPeaks::setIntegrationParameters);
@@ -259,6 +259,9 @@ void SubframeFindPeaks::setFigureUp()
     connect(_figure_scroll, SIGNAL(valueChanged(int)), _figure_spin, SLOT(setValue(int)));
 
     connect(_figure_spin, SIGNAL(valueChanged(int)), _figure_scroll, SLOT(setValue(int)));
+    connect(
+        _figure_spin, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged), this,
+        &SubframeFindPeaks::refreshPreview);
 
     connect(
         _figure_view->getScene(), &DetectorScene::signalSelectedPeakItemChanged, this,
@@ -584,15 +587,27 @@ void SubframeFindPeaks::accept()
 
 void SubframeFindPeaks::refreshPreview()
 {
-    nsx::sptrDataSet dataset = _data_combo->currentData().value<nsx::sptrDataSet>();
-    int selected = 0;
-    int nrows = dataset->nRows();
-    int ncols = dataset->nCols();
+    if (!_live_check->isChecked()) {
+        if (_pixmap) {
+            _figure_view->getScene()->removeItem(_pixmap);
+            delete _pixmap;
+            _pixmap = nullptr;
+            _figure_view->getScene()->loadCurrentImage();
+        }
+        return;
+    }
+
+    nsx::sptrDataSet data =
+        gSession->experimentAt(_exp_combo->currentIndex())->experiment()
+        ->getData(_data_combo->currentText().toStdString());
+    int nrows = data->nRows();
+    int ncols = data->nCols();
 
     std::string convolvertype = _kernel_combo->currentText().toStdString();
     std::map<std::string, double> convolverParams = convolutionParameters();
     Eigen::MatrixXd convolvedFrame =
-        nsx::convolvedFrame(dataset->reader()->data(selected), convolvertype, convolverParams);
+        nsx::convolvedFrame(
+            data->reader()->data(_figure_spin->value()), convolvertype, convolverParams);
     if (_live_check->isChecked()) {
         double thresholdVal = _threshold_spin->value();
         for (int i = 0; i < nrows; ++i) {
