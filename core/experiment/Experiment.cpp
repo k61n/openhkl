@@ -16,6 +16,9 @@
 #include <memory>
 #include <stdexcept>
 #include <utility>
+#include <filesystem>
+#include <chrono>
+#include <string>
 
 #include "base/utils/Logger.h"
 #include "base/utils/Units.h"
@@ -102,8 +105,38 @@ void Experiment::saveToFile(const std::string& path) const
     nsx::ExperimentExporter exporter;
     nsxlog(Level::Info, "Saving experiment to file: '" + path + "'");
 
-    // AN>>TODO: if no extension given, use .nsx
-    exporter.createFile(name(), getDiffractometer()->name(), path);
+    /* If the chosen path for saving is the same as the path of
+       the current dataset file, then a two-step process is used
+       to avoid HDF5 errors:
+       1. Create a temporary file to store the data.
+       2. After writing is finished, rename the temporary file
+          to the original given path.
+    */
+
+    namespace fs = std::filesystem;
+    namespace ch = std::chrono;
+
+    bool overwrite_datafile = false;
+    for (const auto& [ds_nm, ds_ptr] : *_data_handler->getDataMap()) {
+        const std::string nsx_filepath = ds_ptr->reader()->NSXfilepath();
+        if (nsx_filepath == path) {
+            overwrite_datafile = true;
+            break;
+        }
+    }
+
+    std::string filepath {path};
+    if (overwrite_datafile) {
+        const std::time_t epoch_time = ch::system_clock::to_time_t(ch::system_clock::now());
+        const fs::path tmp_path = fs::temp_directory_path();
+        const std::string tmp_fname {"$__" + name() + std::to_string(epoch_time) + ".nsx.tmp"};
+        const fs::path tmp_filepath = tmp_path / tmp_fname;
+        filepath = tmp_filepath.string();
+        nsxlog(Level::Debug, "Saving experiment to temporary file '"
+               + filepath + "'");
+    }
+
+    exporter.createFile(name(), getDiffractometer()->name(), filepath);
 
     std::map<std::string, DataSet*> data_sets;
     for (const auto& it : *_data_handler->getDataMap())
@@ -121,6 +154,13 @@ void Experiment::saveToFile(const std::string& path) const
     exporter.writeUnitCells(unit_cells);
 
     exporter.finishWrite();
+
+    if (overwrite_datafile) {
+        // rename the temporary datafile to the given filename
+        fs::rename(filepath, path);
+        nsxlog(Level::Debug, "Renamed the temporary file '" + filepath + "' "
+           + "to '" + path + "'");
+    }
 }
 
 void Experiment::loadFromFile(const std::string& path)
