@@ -577,7 +577,7 @@ void SubframeFindPeaks::accept()
         if (!dlg->listName().isEmpty()) {
             gSession->experimentAt(_exp_combo->currentIndex())
                 ->experiment()
-                ->acceptFoundPeaks(dlg->listName().toStdString());
+                ->acceptFoundPeaks(dlg->listName().toStdString(), _peak_collection);
             gSession->experimentAt(_exp_combo->currentIndex())->generatePeakModel(dlg->listName());
             gGui->sentinel->addLinkedComboItem(ComboType::FoundPeaks, dlg->listName());
             gGui->sentinel->addLinkedComboItem(ComboType::PeakCollection, dlg->listName());

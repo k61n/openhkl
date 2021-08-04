@@ -91,6 +91,12 @@ void Experiment::acceptFoundPeaks(const std::string& name)
     addPeakCollection(name, listtype::FOUND, peaks);
 }
 
+void Experiment::acceptFoundPeaks(const std::string& name, const PeakCollection& found)
+{
+    std::vector<Peak3D*> peaks = found.getPeakList();
+    addPeakCollection(name, listtype::FOUND, peaks);
+}
+
 void Experiment::saveToFile(const std::string& path) const
 {
     nsx::ExperimentExporter exporter;

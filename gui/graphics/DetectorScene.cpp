@@ -244,25 +244,6 @@ void DetectorScene::slotChangeSelectedData(nsx::sptrDataSet data, int frame)
     slotChangeSelectedFrame(frame);
 }
 
-void DetectorScene::slotChangeSelectedPeak(nsx::Peak3D* /*peak*/)
-{
-    // if (peak == _selected_peak)
-    //     return;
-
-    // _selected_peak = peak;
-
-    // nsx::sptrDataSet data = peak_item->peak()->data();
-
-    // const nsx::Ellipsoid& peak_ellipsoid = peak_item->peak()->shape();
-
-    // // Get frame number to adjust the data
-    // size_t frame = size_t(std::lround(peak_ellipsoid.aabb().center()[2]));
-
-    // slotChangeSelectedData(data, frame);
-
-    // update();
-}
-
 void DetectorScene::slotChangeSelectedFrame(int frame)
 {
     if (!_currentData)
@@ -636,8 +617,8 @@ void DetectorScene::keyPressEvent(QKeyEvent* event)
     if (!_currentData)
         return;
 
-    // The user pressed on Delete key
-    if (event->key() == Qt::Key_Delete) {
+    // The user pressed on Backspace key
+    if (event->key() == Qt::Key_Backspace) {
         for (QGraphicsItem* item : selectedItems()) {
             SXGraphicsItem* p = dynamic_cast<SXGraphicsItem*>(item);
             if (p == nullptr)
@@ -648,14 +629,14 @@ void DetectorScene::keyPressEvent(QKeyEvent* event)
 
             // If the item is a peak graphics item, remove its corresponding peak from
             // the data, update the set of peak graphics items and update the scene
-            if (PeakItemGraphic* p = dynamic_cast<PeakItemGraphic*>(item)) {
-                p->peak()->setRejectionFlag(nsx::RejectionFlag::ManuallyRejected);
-                p->peak()->setSelected(false);
-                p->setCenterColor(Qt::red);
+            if (PeakItemGraphic* peak_item = dynamic_cast<PeakItemGraphic*>(item)) {
+                peak_item->peak()->setRejectionFlag(nsx::RejectionFlag::ManuallyRejected, true);
+                peak_item->peak()->setSelected(false);
+                peak_item->setCenterColor(Qt::red);
             // If the item is a mask graphics item, remove its corresponding mask from
             // the data, update the std::vector of mask graphics items and update the scene
-            } else if (MaskItem* p = dynamic_cast<MaskItem*>(item)) {
-                auto it = findMask(p);
+            } else if (MaskItem* mask_item = dynamic_cast<MaskItem*>(item)) {
+                auto it = findMask(mask_item);
                 if (it != _masks.end()) {
                     _currentData->removeMask(it->second);
                     _masks.erase(it);
@@ -663,8 +644,8 @@ void DetectorScene::keyPressEvent(QKeyEvent* event)
                     updateMasks();
                     removeItem(item);
                 }
-            } else if (EllipseMaskItem* p = dynamic_cast<EllipseMaskItem*>(item)) {
-                auto it = findMask(p);
+            } else if (EllipseMaskItem* ellipse_item = dynamic_cast<EllipseMaskItem*>(item)) {
+                auto it = findMask(ellipse_item);
                 if (it != _masks.end()) {
                     _currentData->removeMask(it->second);
                     _masks.erase(it);
@@ -672,6 +653,26 @@ void DetectorScene::keyPressEvent(QKeyEvent* event)
                     updateMasks();
                     removeItem(item);
                 }
+            }
+            if (p == _lastClickedGI)
+                _lastClickedGI = nullptr;
+        }
+    }
+    if (event->key() == Qt::Key_U) {
+        for (QGraphicsItem* item : selectedItems()) {
+            SXGraphicsItem* p = dynamic_cast<SXGraphicsItem*>(item);
+            if (p == nullptr)
+                continue;
+            // The item must be deletable
+            if (!p->isDeletable())
+                continue;
+
+            // If the item is a peak graphics item, remove its corresponding peak from
+            // the data, update the set of peak graphics items and update the scene
+            if (PeakItemGraphic* peak_item = dynamic_cast<PeakItemGraphic*>(item)) {
+                peak_item->peak()->setRejectionFlag(nsx::RejectionFlag::NotRejected, true);
+                peak_item->peak()->setSelected(true);
+                peak_item->setCenterColor(Qt::green);
             }
             if (p == _lastClickedGI)
                 _lastClickedGI = nullptr;
