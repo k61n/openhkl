@@ -17,6 +17,7 @@
 
 #include "base/mask/IMask.h"
 #include "core/data/DataTypes.h"
+#include "core/detector/DetectorEvent.h"
 #include "core/peak/IntegrationRegion.h"
 #include "core/peak/Peak3D.h"
 #include "gui/graphics_items/PeakCenterGraphic.h"
@@ -34,6 +35,8 @@ class PeakCenterDataSet;
 class PeakItemGraphic;
 class PeakCollectionModel;
 class SXGraphicsItem;
+
+class DirectBeamGraphic : public QGraphicsEllipseItem { }; // Make it easier to remove direct beam
 
 using EventType = nsx::IntegrationRegion::EventType;
 
@@ -101,6 +104,8 @@ class DetectorScene : public QGraphicsScene {
     PeakCollectionModel* peakModel2() const;
     //! Populate vector of 3rd party peak centers
     void link3rdPartyPeaks(nsx::PeakCenterDataSet* pcd);
+    //! Set direct beam positions
+    void linkDirectBeamPositions(const std::vector<nsx::DetectorEvent>& events);
     //! Set the first peak model pointer to null
     void unlinkPeakModel1();
     //! Set the second peak model pointer to null
@@ -109,8 +114,12 @@ class DetectorScene : public QGraphicsScene {
     void peakModelDataChanged();
     //! Draw the peaks
     void drawPeakitems();
+    //! Draw the direct beam position
+    void drawDirectBeamPositions();
     //! Draw peaks for one model
     void drawPeakModelItems(PeakCollectionModel* model);
+    //! Draw the direct beam position
+    void drawDirectBeamPositions(std::vector<nsx::DetectorEvent> events);
     //! Draw peak centers from 3rd party software
     void draw3rdPartyItems();
     //! Remove all the peak elements
@@ -119,6 +128,8 @@ class DetectorScene : public QGraphicsScene {
     void setUnitCell(nsx::UnitCell* cell);
     //! Plot settings for 3rd party peak centres
     void setup3rdPartyPeaks(bool draw, const QColor& color, int size);
+    //! Toggle drawing the direct beam position
+    void showDirectBeam(bool show);
 
  protected:
     void mousePressEvent(QGraphicsSceneMouseEvent* event);
@@ -183,6 +194,8 @@ class DetectorScene : public QGraphicsScene {
     std::vector<PeakItemGraphic*> _peak_graphics_items;
     //! std vector of peak centres from 3rd party software
     std::vector<PeakCenterGraphic*> _peak_center_items;
+    //! std vector of direct beam positions for each frame
+    std::vector<nsx::DetectorEvent> _direct_beam_events;
 
     bool _itemSelected;
     QGraphicsPixmapItem* _image;
@@ -191,6 +204,7 @@ class DetectorScene : public QGraphicsScene {
     bool _logarithmic;
     bool _drawIntegrationRegion1;
     bool _drawIntegrationRegion2;
+    bool _drawDirectBeam;
     bool _draw3rdParty;
     std::unique_ptr<ColorMap> _colormap;
     QGraphicsPixmapItem* _integrationRegion1;
@@ -220,6 +234,11 @@ class DetectorScene : public QGraphicsScene {
     QColor _3rdparty_color;
     //! Size of 3rd party peaks
     int _3rdparty_size;
+
+    //! Colour of direct beam
+    QColor _beam_color;
+    //! Size of direct beam
+    double _beam_size;
 
 
     nsx::Peak3D* _selected_peak;

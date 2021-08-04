@@ -48,6 +48,8 @@ struct ShapeCollectionParameters;
 class SubframePredictPeaks : public QWidget {
  public:
     SubframePredictPeaks();
+    //! Show direct beam position computed from unit cell in DetectorScene
+    void showDirectBeamEvents();
     //! Refresh all the panels
     void refreshAll();
     //! detector view
@@ -134,6 +136,7 @@ class SubframePredictPeaks : public QWidget {
     QComboBox* _integrator;
     QDoubleSpinBox* _d_min;
     QDoubleSpinBox* _d_max;
+    QCheckBox* _direct_beam;
 
     QPushButton* _save_button;
     QPushButton* _predict_button;

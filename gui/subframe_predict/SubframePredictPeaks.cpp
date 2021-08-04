@@ -16,9 +16,11 @@
 
 #include "base/utils/Logger.h"
 #include "core/data/DataSet.h"
+#include "core/detector/DetectorEvent.h"
 #include "core/experiment/Experiment.h"
 #include "core/integration/ShapeIntegrator.h"
 #include "core/peak/Peak3D.h"
+#include "core/peak/Qs2Events.h"
 #include "core/shape/IPeakIntegrator.h"
 #include "core/shape/PeakCollection.h"
 #include "core/shape/Predictor.h"
@@ -92,6 +94,8 @@ void SubframePredictPeaks::setParametersUp()
     _cell_combo = f.addLinkedCombo(ComboType::UnitCell, "Unit cell:");
     _d_min = f.addDoubleSpinBox("d min:", QString::fromUtf8("(\u212B) - minimum d (Bragg's law)"));
     _d_max = f.addDoubleSpinBox("d max:", QString::fromUtf8("(\u212B) - maximum d (Bragg's law)"));
+    _direct_beam = f.addCheckBox(
+        "Show direct beam", "Show position of direct beam computed from instrument states", 1);
     _predict_button = f.addButton("Predict");
     _predict_button->setEnabled(false);
 
@@ -114,6 +118,8 @@ void SubframePredictPeaks::setParametersUp()
     connect(
         _exp_combo, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this,
         &SubframePredictPeaks::refreshPeakCombo);
+    connect(
+        _direct_beam, &QCheckBox::stateChanged, this, &SubframePredictPeaks::showDirectBeamEvents);
 
     _left_layout->addWidget(_para_box);
 }
@@ -474,6 +480,29 @@ void SubframePredictPeaks::runPrediction()
     }
 }
 
+void SubframePredictPeaks::showDirectBeamEvents()
+{
+    if (_direct_beam->isChecked()){
+        _figure_view->getScene()->showDirectBeam(true);
+
+        const std::vector<nsx::sptrDataSet>& data = gSession->currentProject()->allData();
+
+        std::vector<nsx::DetectorEvent> direct_beam_events;
+        for (nsx::sptrDataSet d : data) {
+            const auto& states = d->instrumentStates();
+            auto* detector = d->diffractometer()->detector();
+            std::vector<nsx::DetectorEvent> events = nsx::algo::getDirectBeamEvents(states, *detector);
+
+            for (auto&& event : events)
+                direct_beam_events.push_back(event);
+        }
+        _figure_view->getScene()->linkDirectBeamPositions(direct_beam_events);
+    } else {
+        _figure_view->getScene()->showDirectBeam(false);
+    }
+    refreshPeakVisual();
+}
+
 void SubframePredictPeaks::assignPeakShapes()
 {
     auto* experiment = gSession->experimentAt(_exp_combo->currentIndex())->experiment();
@@ -518,6 +547,7 @@ void SubframePredictPeaks::refreshPeakTable()
     _figure_view->getScene()->clearPeakItems();
     _peak_collection_model.setRoot(&_peak_collection_item);
     _peak_table->resizeColumnsToContents();
+    showDirectBeamEvents();
     refreshPeakVisual();
 }
 
