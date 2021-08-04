@@ -55,6 +55,7 @@ ImagePanel::ImagePanel()
     _slider->setSingleStep(1);
     _slider->setOrientation(Qt::Vertical);
     _slider->setTickPosition(QSlider::TicksRight);
+    _slider->setToolTip("Adjust the image intensity scale");
 
     _mode->addItems(
         QStringList{"Zoom", "Selection", "Rectangular mask", "Elliptical mask", "Line plot",
@@ -69,9 +70,6 @@ ImagePanel::ImagePanel()
     main_layout->addWidget(_scrollbar, 1, 0, 1, 1);
     main_layout->addWidget(_frame, 1, 1, 1, 1);
     main_layout->addWidget(_mode, 1, 2, 1, 1);
-
-    connect(
-        _slider, &QSlider::valueChanged, _image_view->getScene(), &DetectorScene::setMaxIntensity);
 
     connect(
         _scrollbar, &QScrollBar::valueChanged, _image_view->getScene(),

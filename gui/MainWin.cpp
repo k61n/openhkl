@@ -109,22 +109,34 @@ MainWin::MainWin()
     detector_window->getDetectorView()->getScene()->setMaxIntensity(
         experiment->getImage()->getMaxIntensitySlider()->value());
 
-    // sync the max. intensity slider with all other image plots
-    connect(
+    std::vector<DetectorScene*> scenes = {
+        experiment->getImage()->getView()->getScene(),
+        detector_window->getDetectorView()->getScene(),
+        finder->getDetectorView()->getScene(),
+        filter->getDetectorView()->getScene(),
+        predictor->getDetectorView()->getScene(),
+        integrator->getDetectorView()->getScene()};
+    std::vector<QSlider*> sliders = {
+        experiment->getImage()->getMaxIntensitySlider(), detector_window->getIntensitySlider()};
+
+    connect (
         experiment->getImage()->getMaxIntensitySlider(), &QSlider::valueChanged,
-        finder->getDetectorView()->getScene(), &DetectorScene::setMaxIntensity);
-    connect(
-        experiment->getImage()->getMaxIntensitySlider(), &QSlider::valueChanged,
-        filter->getDetectorView()->getScene(), &DetectorScene::setMaxIntensity);
-    connect(
-        experiment->getImage()->getMaxIntensitySlider(), &QSlider::valueChanged,
-        predictor->getDetectorView()->getScene(), &DetectorScene::setMaxIntensity);
-    connect(
-        experiment->getImage()->getMaxIntensitySlider(), &QSlider::valueChanged,
-        integrator->getDetectorView()->getScene(), &DetectorScene::setMaxIntensity);
-    connect(
-        experiment->getImage()->getMaxIntensitySlider(), &QSlider::valueChanged,
-        detector_window->getDetectorView()->getScene(), &DetectorScene::setMaxIntensity);
+        detector_window->getIntensitySlider(), &QSlider::setValue);
+    connect (
+        detector_window->getIntensitySlider(), &QSlider::valueChanged,
+        experiment->getImage()->getMaxIntensitySlider(), &QSlider::setValue);
+
+    // // sync the max. intensity slider with all other image plots
+    for (auto slider1 : sliders) {
+        for (auto slider2 : sliders) {
+            if (!(slider1 == slider2))
+                connect(slider1, &QSlider::valueChanged, slider2, &QSlider::setValue);
+        }
+    }
+    for (auto* slider : sliders) {
+        for (auto* scene : scenes)
+            connect(slider, &QSlider::valueChanged, scene, &DetectorScene::setMaxIntensity);
+    }
 
     main_layout->addWidget(_layout_stack);
     main_widget->setLayout(main_layout);
