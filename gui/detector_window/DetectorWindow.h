@@ -69,6 +69,8 @@ class DetectorWindow : public QDialog {
 
     //! Get a pointer to the DetectorView
     DetectorView* getDetectorView() { return _detector_view; };
+    //! Get a pointer to the intensity slider
+    QSlider* getIntensitySlider() { return _intensity_slider; };
 
  public slots:
     void setUnitCell();
@@ -104,6 +106,7 @@ class DetectorWindow : public QDialog {
     QScrollBar* _detector_scroll;
     QSpinBox* _detector_spin;
     QComboBox* _cursor_mode;
+    QSlider* _intensity_slider;
 
     // Peak table elements
     ShortTable* _peak_table_1;
