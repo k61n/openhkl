@@ -14,6 +14,8 @@
 
 #include "gui/widgets/LogWidget.h"
 
+#include "base/utils/Logger.h"
+
 #include <string>
 #include <chrono>
 #include <sstream>
@@ -79,6 +81,15 @@ void LogWidget::_connectUI()
 {
     connect(_saveButton, &QPushButton::clicked, this, &LogWidget::saveText);
     connect(_clearButton, &QPushButton::clicked, this, &LogWidget::clearText);
+
+    // register a method as receiver of log messages
+    _receiver_handle = nsx::Logger::instance().Msg.addReceiver(&LogWidget::show, this);
+}
+
+LogWidget::~LogWidget()
+{
+    // de-register the log-message receiver
+    nsx::Logger::instance().Msg.discardReceiver(_receiver_handle);
 }
 
 void LogWidget::clearText() const

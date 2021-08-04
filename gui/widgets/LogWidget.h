@@ -17,7 +17,7 @@
 
 #include <string>
 
-#include "base/utils/Logger.h"
+#include "base/utils/Logger.h" // LogMessage::receiverHandle
 
 #include <QWidget>  // derives from
 #include <QColor>
@@ -54,6 +54,9 @@ class LogWidget : public QWidget {
     const std::size_t _fontPointSize = 12;
     const std::size_t _wrapColumn = 80;
     const std::string _initText = "NSXTool Messages";
+
+    //! Receiver handle (for registering log messages)
+    nsx::LogMessenger::receiverHandle _receiver_handle;
 
     QTextEdit* _textDisplay;
     QPushButton* _saveButton;
