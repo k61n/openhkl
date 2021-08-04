@@ -16,6 +16,7 @@
 #define NSX_BASE_UTILS_LOGGER_H
 
 #include <fstream>
+#include <sstream>
 #include <functional>
 #include <string>
 
@@ -121,6 +122,22 @@ class Logger {
 template <typename... T> inline void nsxlog(const Level& level, const T&... messages)
 {
     Logger::instance().log(level, messages...);
+}
+
+//! Global messaging function (prefixed with "nsx" to facilitate grepping)
+//! Usage: nsxmsg(Level::Warning, "your message", 1, 3.14, "test")
+template <typename... T> inline void nsxmsg(const Level& level, const T&... messages)
+{
+    // Prepare a log message
+    std::stringstream ss;
+    ((ss << messages), ...) << '\n'; // unpack messages
+    Message msg{
+        level,
+        /* sender */ "",
+        /* header */ Logger::instance().time(),
+        /* body */ ss.str()
+    };
+    Logger::instance().Msg.send(msg);
 }
 
 } // namespace nsx
