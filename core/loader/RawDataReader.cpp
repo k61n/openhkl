@@ -46,6 +46,8 @@ RawDataReader::RawDataReader()
 bool RawDataReader::initRead()
 {
     const bool init_success = IDataReader::initRead();
+    if (!init_success)
+        throw std::runtime_error("RawDataReader::initRead(): initialisation failed");
 
     // NOTE: For correctness, this must be called after setting the parameters and frame files. Otherwise, results in undefined behaviour.
     isInitialized = true;

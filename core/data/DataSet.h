@@ -27,7 +27,7 @@ namespace nsx {
 class Detector;
 class DetectorEvent;
 class Diffractometer;
-class RawDataReaderParameters;
+struct RawDataReaderParameters;
 
 //! Class used to manage loading detector images and metadata from disk.
 //!

@@ -41,7 +41,6 @@ PeakMerger::PeakMerger(PeakCollection* peaks /* = nullptr */)
 
 void PeakMerger::addPeakCollection(PeakCollection* peaks)
 {
-    unsigned int nframes = peaks->getPeakList()[0]->dataSet()->nFrames();
     _peak_collections.push_back(peaks);
 }
 

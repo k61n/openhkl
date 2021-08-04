@@ -372,7 +372,7 @@ void DetectorScene::mousePressEvent(QGraphicsSceneMouseEvent* event)
                 _selectionRect = addRect(QRect(select_start, select_end));
 
                 pen1 = QPen(QBrush(QColor("gray")), 1.0);
-                pen1.setWidth(0.5);
+                pen1.setWidth(1);
                 pen1.setCosmetic(true);
                 _selectionRect->setBrush(QBrush(Qt::transparent));
                 _selectionRect->setPen(pen1);

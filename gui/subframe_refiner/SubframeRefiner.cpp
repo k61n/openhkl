@@ -468,7 +468,7 @@ QList<PlotCheckBox*> SubframeRefiner::plotCheckBoxes() const
 void SubframeRefiner::toggleUnsafeWidgets()
 {
     _refine_button->setEnabled(true);
-    if (!_predicted_combo->count() == 0)
+    if (!(_predicted_combo->count() == 0))
         _update_button->setEnabled(true);
     if (_exp_combo->count() == 0 || _data_combo->count() == 0 || _peak_combo->count() == 0
         || _cell_combo->count() == 0) {

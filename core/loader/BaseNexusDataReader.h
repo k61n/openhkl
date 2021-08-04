@@ -26,7 +26,7 @@ namespace nsx {
 class BaseNexusDataReader : public IDataReader {
  public:
     BaseNexusDataReader(const std::string& filename);
-    bool initRead();
+    bool initRead() override;
 
     BaseNexusDataReader() = delete;
     BaseNexusDataReader(const BaseNexusDataReader& other) = delete;
