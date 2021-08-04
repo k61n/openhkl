@@ -15,10 +15,11 @@
 #ifndef NSX_BASE_UTILS_LOGGER_H
 #define NSX_BASE_UTILS_LOGGER_H
 
-#include <fstream>
-#include <sstream>
-#include <functional>
+#include "base/utils/LogLevel.h"
+#include "base/utils/LogMessenger.h"
 #include <string>
+#include <sstream>
+#include <fstream>
 
 // usage: DBG("This is my debug message nr.", 1);
 #define DBG(...)                                                                                   \
@@ -27,63 +28,6 @@
 
 
 namespace nsx {
-
-//! Verbosity of the logger
-enum class Level {
-    Off = 0,
-    Info,
-    Error,
-    Warning,
-    Debug,
-};
-
-struct Message {
-    Level level;
-    std::string sender;
-    std::string header;
-    std::string body;
-};
-
-// maximum nr of receivers of the logging module
-#define MSG_RECEIVERS_MAXNR 5
-
-//! Enables sending messages to a number of registered receivers.
-//! Receivers are functions `fn` of type `void fn(const Message&)`.
-//! Receivers will be called synchronously, yet the order of calling is _not_
-//! guaranteed to be the same as that of registering.
-class Messenger {
-public:
-    //! receiver type: stand-alone function
-    using receiver_t = std::function<void(const Message&)>;
-    //! receiver type: member method
-    template <class C>
-    using receiver_m_t = void (C::*) (const Message&);
-
-    //! receiver handle: identifier for a receiver
-    using receiverHandle = int;
-    //! invalid receiver handle
-    static const receiverHandle NO_HANDLE = -1;
-
-    //! Registers a receiver and returns a handle.
-    //! In case of failure, the handle will be invalid
-    receiverHandle addReceiver(receiver_t rec_ptr);
-
-    //! Registers a receiver method of type `void C::method(const Message&)` and returns a handle
-    template<class C>
-    receiverHandle addReceiver(receiver_m_t<C> rec_m_ptr, C* obj_ptr) {
-        return addreceiver(std::bind(rec_m_ptr, obj_ptr, std::placeholders::_1));
-    }
-
-    //! Discards a receiver (if exists)
-    void discardReceiver(const receiverHandle rec_h);
-
-    //! Sends a message to the registered recievers
-    void send(const Message& msg);
-
-private:
-    //! Storage array for the receiver pointers (finite size)
-    receiver_t _receivers[MSG_RECEIVERS_MAXNR] {nullptr};
-};
 
 //! A singleton class for logging
 class Logger {
@@ -97,12 +41,15 @@ class Logger {
     {
         if (verbosity <= _max_print_level) {
             _ofs << time() << " " << static_cast<int>(verbosity) << " ";
-            ((_ofs << messages), ...) << std::endl; // unpack messages separated by spaces
+            ((_ofs << messages), ...) << std::endl; // unpack messages
         }
     }
     void start(const std::string& filename, const Level& min_level); //! initialise
 
-    Messenger Msg;
+    static std::string time(); //! get the time as a string
+
+    //! Log messenger
+    LogMessenger Msg;
 
  private:
     static Logger* m_logger; //! The single instance
@@ -110,8 +57,6 @@ class Logger {
     Logger() = default;
     ~Logger() = default;
     Logger(const Logger&) = delete;
-
-    std::string time() const; //! get the time as a string
 
     Level _max_print_level = Level::Warning; //! print level (default Warning)
     std::ofstream _ofs;
@@ -130,11 +75,10 @@ template <typename... T> inline void nsxmsg(const Level& level, const T&... mess
 {
     // Prepare a log message
     std::stringstream ss;
-    ((ss << messages), ...) << '\n'; // unpack messages
-    Message msg{
+    ((ss << messages), ...); // unpack messages
+    LogMessage msg{
         level,
-        /* sender */ "",
-        /* header */ Logger::instance().time(),
+        /* header */ Logger::time(),
         /* body */ ss.str()
     };
     Logger::instance().Msg.send(msg);
