@@ -49,13 +49,13 @@ class DetectorScene : public QGraphicsScene {
     Q_OBJECT
  public:
     enum MODE {
-        SELECT = 0,
-        ZOOM = 1,
-        LINE = 2,
-        HORIZONTALSLICE = 3,
-        VERTICALSLICE = 4,
-        MASK = 5,
-        ELLIPSE_MASK = 6
+        ZOOM = 0,
+        SELECT = 1,
+        MASK = 2,
+        ELLIPSE_MASK = 3,
+        LINE = 4,
+        HORIZONTALSLICE = 5,
+        VERTICALSLICE = 6
     };
 
     //! Which mode is the cursor diplaying
@@ -132,7 +132,6 @@ class DetectorScene : public QGraphicsScene {
     void setMaxIntensity(int);
     void slotChangeSelectedData(nsx::sptrDataSet data, int frame);
     void slotChangeSelectedFrame(int frame);
-    void slotChangeSelectedPeak(nsx::Peak3D* peak);
     void slotChangeEnabledPeak(nsx::Peak3D*) { loadCurrentImage(); }
     void slotChangeMaskedPeaks(const nsx::PeakList&) { loadCurrentImage(); }
     void changeInteractionMode(int mode) { _mode = static_cast<MODE>(mode); }
@@ -150,6 +149,7 @@ class DetectorScene : public QGraphicsScene {
     void signalChangeSelectedFrame(int selected_frame);
     void signalChangeSelectedPeak(nsx::Peak3D* peak);
     void signalSelectedPeakItemChanged(PeakItemGraphic* peak);
+    void signalUpdateDetectorScene();
 
  private:
     //! Create the text of the tooltip depending on Scene Mode.
@@ -170,6 +170,8 @@ class DetectorScene : public QGraphicsScene {
     QPoint _zoomend;
     //! Graphics Window representing the zoomed area
     QGraphicsRectItem* _zoomrect;
+    //! QRect delineating selected area
+    QGraphicsRectItem* _selectionRect;
     //! Stack of zoom
     QStack<QRect> _zoomStack;
 

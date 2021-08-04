@@ -148,6 +148,8 @@ void SubframeFindPeaks::setBlobUp()
 
     _end_frame_spin = f.addSpinBox("End frame", "(frame) - end frame for peak finding");
 
+    _live_check = f.addCheckBox("Apply threshold to preview", "Only show pixels above threshold");
+
     _find_button = f.addButton("Find peaks");
 
     _threshold_spin->setMaximum(1000);
@@ -157,6 +159,7 @@ void SubframeFindPeaks::setBlobUp()
     _max_width_spin->setMaximum(20);
 
     connect(_find_button, &QPushButton::clicked, this, &SubframeFindPeaks::find);
+    connect(_live_check, &QCheckBox::stateChanged, this, &SubframeFindPeaks::refreshPreview);
     connect(
         gGui->sideBar(), &SideBar::subframeChanged, this,
         &SubframeFindPeaks::setIntegrationParameters);
@@ -211,10 +214,6 @@ void SubframeFindPeaks::setPreviewUp()
         _peak_view_widget->set1.bkgEnd, qOverload<double>(&QDoubleSpinBox::valueChanged),
         _bkg_upper, &QDoubleSpinBox::setValue);
 
-    _live_check = new QCheckBox("Apply threshold to preview");
-    // _peak_view_widget->addWidget(_live_check, 8, 0, 1, 3);
-    // Not sure what the _live_check widget does - zamaan
-
     preview_spoiler->setContentLayout(*_peak_view_widget);
 
     _left_layout->addWidget(preview_spoiler);
@@ -237,7 +236,7 @@ void SubframeFindPeaks::setFigureUp()
     _figure_view = new DetectorView(this);
     _figure_view->getScene()->linkPeakModel1(&_peak_collection_model);
     _figure_view->scale(1, -1);
-    figure_grid->addWidget(_figure_view, 0, 0, 1, 2);
+    figure_grid->addWidget(_figure_view, 0, 0, 1, 3);
 
     _figure_scroll = new QScrollBar(this);
     _figure_scroll->setOrientation(Qt::Horizontal);
@@ -248,6 +247,11 @@ void SubframeFindPeaks::setFigureUp()
     _figure_spin->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     figure_grid->addWidget(_figure_spin, 1, 1, 1, 1);
 
+    _mode = new QComboBox(this);
+    _mode->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+    _mode->addItems(QStringList{"Zoom", "Selection", "Rectangular mask", "Elliptical mask"});
+    figure_grid->addWidget(_mode, 1, 2, 1, 1);
+
     connect(
         _figure_scroll, SIGNAL(valueChanged(int)), _figure_view->getScene(),
         SLOT(slotChangeSelectedFrame(int)));
@@ -255,10 +259,20 @@ void SubframeFindPeaks::setFigureUp()
     connect(_figure_scroll, SIGNAL(valueChanged(int)), _figure_spin, SLOT(setValue(int)));
 
     connect(_figure_spin, SIGNAL(valueChanged(int)), _figure_scroll, SLOT(setValue(int)));
+    connect(
+        _figure_spin, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged), this,
+        &SubframeFindPeaks::refreshPreview);
 
     connect(
         _figure_view->getScene(), &DetectorScene::signalSelectedPeakItemChanged, this,
         &SubframeFindPeaks::changeSelected);
+
+    connect(
+        _mode, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
+        [=](int i) { _figure_view->getScene()->changeInteractionMode(i); });
+    connect(
+        _figure_view->getScene(), &DetectorScene::signalUpdateDetectorScene,
+        this, &SubframeFindPeaks::refreshPeakTable);
 
     _right_element->addWidget(figure_group);
 }
@@ -563,7 +577,7 @@ void SubframeFindPeaks::accept()
         if (!dlg->listName().isEmpty()) {
             gSession->experimentAt(_exp_combo->currentIndex())
                 ->experiment()
-                ->acceptFoundPeaks(dlg->listName().toStdString());
+                ->acceptFoundPeaks(dlg->listName().toStdString(), _peak_collection);
             gSession->experimentAt(_exp_combo->currentIndex())->generatePeakModel(dlg->listName());
             gGui->sentinel->addLinkedComboItem(ComboType::FoundPeaks, dlg->listName());
             gGui->sentinel->addLinkedComboItem(ComboType::PeakCollection, dlg->listName());
@@ -573,15 +587,27 @@ void SubframeFindPeaks::accept()
 
 void SubframeFindPeaks::refreshPreview()
 {
-    nsx::sptrDataSet dataset = _data_combo->currentData().value<nsx::sptrDataSet>();
-    int selected = 0;
-    int nrows = dataset->nRows();
-    int ncols = dataset->nCols();
+    if (!_live_check->isChecked()) {
+        if (_pixmap) {
+            _figure_view->getScene()->removeItem(_pixmap);
+            delete _pixmap;
+            _pixmap = nullptr;
+            _figure_view->getScene()->loadCurrentImage();
+        }
+        return;
+    }
+
+    nsx::sptrDataSet data =
+        gSession->experimentAt(_exp_combo->currentIndex())->experiment()
+        ->getData(_data_combo->currentText().toStdString());
+    int nrows = data->nRows();
+    int ncols = data->nCols();
 
     std::string convolvertype = _kernel_combo->currentText().toStdString();
     std::map<std::string, double> convolverParams = convolutionParameters();
     Eigen::MatrixXd convolvedFrame =
-        nsx::convolvedFrame(dataset->reader()->data(selected), convolvertype, convolverParams);
+        nsx::convolvedFrame(
+            data->reader()->data(_figure_spin->value()), convolvertype, convolverParams);
     if (_live_check->isChecked()) {
         double thresholdVal = _threshold_spin->value();
         for (int i = 0; i < nrows; ++i) {

@@ -56,9 +56,9 @@ ImagePanel::ImagePanel()
     _slider->setOrientation(Qt::Vertical);
     _slider->setTickPosition(QSlider::TicksRight);
 
-    _mode->addItems(QStringList{
-        "selection", "zoom", "line plot", "horizontal slice", "vertical slice", "rectangular mask",
-        "ellipsoidal mask"});
+    _mode->addItems(
+        QStringList{"Zoom", "Selection", "Rectangular mask", "Elliptical mask", "Line plot",
+            "Horizontal slice", "Vertical slice"});
 
     _frame->setSizePolicy(QSizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed));
 

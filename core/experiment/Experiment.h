@@ -149,6 +149,8 @@ class Experiment {
     PeakFinder* peakFinder() { return _peak_finder.get(); };
     //! Create a new peak collection from the peaks found by the peak finder
     void acceptFoundPeaks(const std::string& name);
+    //! Create a new peak collection from a found collection
+    void acceptFoundPeaks(const std::string& name, const PeakCollection& found);
 
     // Peak Filter
     //! Return a pointer to the PeakFilter object
