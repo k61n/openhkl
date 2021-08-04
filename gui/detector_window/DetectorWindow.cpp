@@ -320,6 +320,7 @@ void DetectorWindow::updateExptList()
         for (const QString& exp : gSession->experimentNames())
             _exp_combo->addItem(exp);
         updateDatasetList();
+        updatePeakList();
         updateUnitCellList();
         refreshPeakTable();
     }

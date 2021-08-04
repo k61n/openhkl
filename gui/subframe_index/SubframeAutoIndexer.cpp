@@ -232,10 +232,11 @@ void SubframeAutoIndexer::setSolutionTableUp()
 void SubframeAutoIndexer::refreshAll()
 {
     setExperiments();
-    const auto dataset =
-        gSession->experimentAt(_exp_combo->currentIndex())->getData(_data_combo->currentIndex());
-    if (dataset) {
-        _max_frame->setMaximum(dataset->nFrames() - 1);
+    if (!(_exp_combo->count() == 0)) {
+        const auto dataset =
+            gSession->experimentAt(_exp_combo->currentIndex())->getData(_data_combo->currentIndex());
+        if (dataset)
+            _max_frame->setMaximum(dataset->nFrames() - 1);
     }
     toggleUnsafeWidgets();
 }
@@ -255,9 +256,11 @@ void SubframeAutoIndexer::setExperiments()
 
     _exp_combo->blockSignals(false);
 
-    updatePeakList();
-    updateDatasetList();
-    grabIndexerParameters();
+    if (!(_exp_combo->count() == 0)) {
+        updatePeakList();
+        updateDatasetList();
+        grabIndexerParameters();
+    }
 }
 
 void SubframeAutoIndexer::updateDatasetList()
