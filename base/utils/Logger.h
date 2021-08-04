@@ -16,6 +16,7 @@
 #define NSX_BASE_UTILS_LOGGER_H
 
 #include <fstream>
+#include <functional>
 #include <string>
 
 // usage: DBG("This is my debug message nr.", 1);
@@ -42,6 +43,47 @@ struct Message {
     std::string body;
 };
 
+// maximum nr of receivers of the logging module
+#define MSG_RECEIVERS_MAXNR 5
+
+//! Enables sending messages to a number of registered receivers.
+//! Receivers are functions `fn` of type `void fn(const Message&)`.
+//! Receivers will be called synchronously, yet the order of calling is _not_
+//! guaranteed to be the same as that of registering.
+class Messenger {
+public:
+    //! receiver type: stand-alone function
+    using receiver_t = std::function<void(const Message&)>;
+    //! receiver type: member method
+    template <class C>
+    using receiver_m_t = void (C::*) (const Message&);
+
+    //! receiver handle: identifier for a receiver
+    using receiverHandle = int;
+    //! invalid receiver handle
+    static const receiverHandle NO_HANDLE = -1;
+
+    //! Registers a receiver and returns a handle.
+    //! In case of failure, the handle will be invalid
+    receiverHandle addReceiver(receiver_t rec_ptr);
+
+    //! Registers a receiver method of type `void C::method(const Message&)` and returns a handle
+    template<class C>
+    receiverHandle addReceiver(receiver_m_t<C> rec_m_ptr, C* obj_ptr) {
+        return addreceiver(std::bind(rec_m_ptr, obj_ptr, std::placeholders::_1));
+    }
+
+    //! Discards a receiver (if exists)
+    void discardReceiver(const receiverHandle rec_h);
+
+    //! Sends a message to the registered recievers
+    void send(const Message& msg);
+
+private:
+    //! Storage array for the receiver pointers (finite size)
+    receiver_t _receivers[MSG_RECEIVERS_MAXNR] {nullptr};
+};
+
 //! A singleton class for logging
 class Logger {
 
@@ -58,6 +100,8 @@ class Logger {
         }
     }
     void start(const std::string& filename, const Level& min_level); //! initialise
+
+    Messenger Msg;
 
  private:
     static Logger* m_logger; //! The single instance
