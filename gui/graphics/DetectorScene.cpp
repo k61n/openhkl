@@ -76,6 +76,7 @@ DetectorScene::DetectorScene(QObject* parent)
     , _logarithmic(false)
     , _drawIntegrationRegion1(true)
     , _drawIntegrationRegion2(true)
+    , _drawDirectBeam(false)
     , _draw3rdParty(true)
     , _colormap(new ColorMap())
     , _integrationRegion1(nullptr)
@@ -87,6 +88,8 @@ DetectorScene::DetectorScene(QObject* parent)
     , _bkgPxColor2(QColor(251, 163, 0, 128)) // dark yellow, alpha = 0.5
     , _3rdparty_color(Qt::black)
     , _3rdparty_size(10)
+    , _beam_color(Qt::black)
+    , _beam_size(20)
     , _selected_peak(nullptr)
     , _unit_cell(nullptr)
     , _peak_center_data(nullptr)
@@ -133,6 +136,11 @@ void DetectorScene::link3rdPartyPeaks(nsx::PeakCenterDataSet* pcd)
     drawPeakitems();
 }
 
+void DetectorScene::linkDirectBeamPositions(const std::vector<nsx::DetectorEvent>& events)
+{
+    _direct_beam_events = events;
+}
+
 void DetectorScene::unlinkPeakModel2()
 {
     _peak_model_2 = nullptr;
@@ -157,6 +165,8 @@ void DetectorScene::clearPeakItems()
             removeItem(item);
         if (dynamic_cast<PeakCenterGraphic*>(item) != nullptr) // Remove 3rd party centers
             removeItem(item);
+        if (dynamic_cast<DirectBeamGraphic*>(item) != nullptr) // Remove direct beam position``
+            removeItem(item);
     }
 
     _peak_graphics_items.clear();
@@ -171,7 +181,30 @@ void DetectorScene::drawPeakitems()
         drawPeakModelItems(_peak_model_2);
     if (_draw3rdParty)
         draw3rdPartyItems();
+    if (_drawDirectBeam)
+        drawDirectBeamPositions();
     loadCurrentImage();
+}
+
+void DetectorScene::drawDirectBeamPositions()
+{
+    for (auto&& event : _direct_beam_events) {
+        double upper = double(_currentFrameIndex) + 0.01;
+        double lower = double(_currentFrameIndex) - 0.01;
+        if (event.frame < upper && event.frame > lower) {
+            DirectBeamGraphic* beam = new DirectBeamGraphic();
+            beam->setPos(event.px, event.py);
+            beam->setZValue(10);
+            beam->setAcceptHoverEvents(false);
+            beam->setRect(-_beam_size / 2, -_beam_size / 2, _beam_size, _beam_size);
+            QPen pen;
+            pen.setCosmetic(true);
+            pen.setColor(_beam_color);
+            pen.setStyle(Qt::SolidLine);
+            beam->setPen(pen);
+            addItem(beam);
+        }
+    }
 }
 
 void DetectorScene::drawPeakModelItems(PeakCollectionModel* model)
@@ -991,4 +1024,9 @@ void DetectorScene::setup3rdPartyPeaks(bool draw, const QColor& color, int size)
     _draw3rdParty = draw;
     _3rdparty_color = color;
     _3rdparty_size = size;
+}
+
+void DetectorScene::showDirectBeam(bool show)
+{
+    _drawDirectBeam = show;
 }

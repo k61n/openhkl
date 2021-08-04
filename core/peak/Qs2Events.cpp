@@ -138,4 +138,30 @@ std::vector<DetectorEvent> algo::qVector2Events(
     return events;
 }
 
+std::vector<DetectorEvent> algo::getDirectBeamEvents(
+    const InstrumentStateList& states, const Detector& detector)
+{
+    nsxlog(Level::Debug, "algo::getDirectBeamEvents");
+
+    std::vector<DetectorEvent> events;
+    const int nframes = states.size();
+    for (int frame = 0; frame < nframes; ++frame) { // Generate an event for each frame value
+        try {
+            const auto state = states.interpolate(frame);
+
+            Eigen::RowVector3d kf = state.ki().rowVector();
+            DetectorEvent event = detector.constructEvent(
+                DirectVector(state.samplePosition), ReciprocalVector(kf * state.detectorOrientation),
+                frame);
+            if (event.tof <= 0)
+                continue;
+
+            events.emplace_back(event);
+        } catch (std::range_error& e) {
+            continue;
+        }
+    }
+    return events;
+}
+
 } // namespace nsx

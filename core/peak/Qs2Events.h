@@ -48,6 +48,11 @@ std::vector<DetectorEvent> qVectorList2Events(
 std::vector<DetectorEvent> qVector2Events(
     const ReciprocalVector& sample_q, const InstrumentStateList& states,
     const Detector& detector, const int n_intervals);
+
+//! Returns detector events corresponding to direct beam for each frame
+    std::vector<DetectorEvent> getDirectBeamEvents(
+        const InstrumentStateList& states, const Detector& detector);
+
 } // namespace algo
 
 } // namespace nsx
