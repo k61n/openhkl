@@ -221,5 +221,9 @@ void MainWin::closeEvent(QCloseEvent* event)
     delete triggers;
     delete menus_;
     gGui = nullptr;
-    event->accept();
+
+    if (detector_window)
+        detector_window->close();
+
+    QMainWindow::closeEvent(event);
 }
