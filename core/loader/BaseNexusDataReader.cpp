@@ -37,6 +37,8 @@ BaseNexusDataReader::BaseNexusDataReader(const std::string& filename)
 bool BaseNexusDataReader::initRead()
 {
     const bool init_success = IDataReader::initRead();
+    if (!init_success)
+        throw std::runtime_error("BaseNexusDataReader::initRead(): initialisation failed");
 
     try {
         _file = std::unique_ptr<H5::H5File>(new H5::H5File(_filename.c_str(), H5F_ACC_RDONLY));

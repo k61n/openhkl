@@ -67,6 +67,8 @@ BaseHDF5DataReader::BaseHDF5DataReader(const std::string& filename)
 bool BaseHDF5DataReader::initRead()
 {
     const bool init_success = IDataReader::initRead();
+    if (!init_success)
+        throw std::runtime_error("BaseHDF5DataReader::initRead(): initialisation failed");
 
     H5::Group metaGroup, detectorGroup, sampleGroup;
     std::string dataset_name = _dataset_out->name();

@@ -572,7 +572,7 @@ void SubframeIntegrate::changeSelected(PeakItemGraphic* peak_graphic)
 void SubframeIntegrate::toggleUnsafeWidgets()
 {
     _build_shape_lib_button->setEnabled(true);
-    if (!_int_peak_combo->count() == 0) {
+    if (!(_int_peak_combo->count() == 0)) {
         _integrate_button->setEnabled(true);
         _remove_overlaps->setEnabled(true);
         refreshShapeStatus();
