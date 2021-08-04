@@ -56,6 +56,9 @@ void Refiner::setHandler(const sptrProgressHandler& handler)
 void Refiner::makeBatches(
     InstrumentStateList& states, UnitCell* cell, const std::vector<nsx::Peak3D*>& peaks)
 {
+    _unrefined_states.clear();
+    _batches.clear();
+
     _cell = cell;
     _states = &states;
     for (const InstrumentState& state : states)
