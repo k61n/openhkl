@@ -44,10 +44,10 @@
 
 SubframeIntegrate::SubframeIntegrate() : QWidget()
 {
-    auto main_layout = new QHBoxLayout(this);
+    auto main_layout = new QHBoxLayout();
     _right_element = new QSplitter(Qt::Vertical, this);
 
-    _left_layout = new QVBoxLayout(this);
+    _left_layout = new QVBoxLayout();
 
     setInputUp();
     setIntegrateUp();
