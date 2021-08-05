@@ -44,7 +44,7 @@
 
 SubframeIntegrate::SubframeIntegrate() : QWidget()
 {
-    auto main_layout = new QHBoxLayout();
+    auto main_layout = new QHBoxLayout(this);
     _right_element = new QSplitter(Qt::Vertical, this);
 
     _left_layout = new QVBoxLayout();
