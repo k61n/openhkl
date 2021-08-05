@@ -48,7 +48,7 @@ SubframeMergedPeaks::SubframeMergedPeaks()
 
     _frame_set = false;
 
-    QVBoxLayout* layout = new QVBoxLayout(this);
+    QVBoxLayout* layout = new QVBoxLayout();
 
     QHBoxLayout* drop_layout = new QHBoxLayout();
 
