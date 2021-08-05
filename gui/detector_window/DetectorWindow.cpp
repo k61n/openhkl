@@ -103,15 +103,15 @@ void DetectorWindow::setDetectorViewUp()
     top_grid->addWidget(_detector_view, 0, 0, 1, 1);
     top_grid->addWidget(_intensity_slider, 0, 1, 1, 1);
 
-    main_grid->addLayout(top_grid, 0, 0, 1, 3);
-    main_grid->addWidget(_detector_scroll, 1, 0, 1, 1);
-    main_grid->addWidget(_detector_spin, 1, 1, 1, 1);
-    main_grid->addWidget(_cursor_mode, 1, 2, 1, 1);
-
     _cursor_mode = new QComboBox(this);
     _cursor_mode->addItems(
         QStringList{"Cursor mode", "Pixel", "\u03B8", "\u03B3/\u03BD", "d", "Miller Indices"});
     _cursor_mode->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+
+    main_grid->addLayout(top_grid, 0, 0, 1, 3);
+    main_grid->addWidget(_detector_scroll, 1, 0, 1, 1);
+    main_grid->addWidget(_detector_spin, 1, 1, 1, 1);
+    main_grid->addWidget(_cursor_mode, 1, 2, 1, 1);
 
     connect(
         _detector_scroll, SIGNAL(valueChanged(int)), _detector_view->getScene(),
