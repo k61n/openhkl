@@ -100,13 +100,13 @@ void DetectorWindow::setDetectorViewUp()
     _intensity_slider->setTickPosition(QSlider::TicksRight);
     _intensity_slider->setToolTip("Adjust the image intensity scale");
 
-    top_grid->addWidget(_detector_view, 0, 0, 1, 1);
-    top_grid->addWidget(_intensity_slider, 0, 1, 1, 1);
-
     _cursor_mode = new QComboBox(this);
     _cursor_mode->addItems(
         QStringList{"Cursor mode", "Pixel", "\u03B8", "\u03B3/\u03BD", "d", "Miller Indices"});
     _cursor_mode->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+
+    top_grid->addWidget(_detector_view, 0, 0, 1, 1);
+    top_grid->addWidget(_intensity_slider, 0, 1, 1, 1);
 
     main_grid->addLayout(top_grid, 0, 0, 1, 3);
     main_grid->addWidget(_detector_scroll, 1, 0, 1, 1);
@@ -329,11 +329,13 @@ void DetectorWindow::refreshAll()
 void DetectorWindow::updateExptList()
 {
     _exp_combo->blockSignals(true);
+    QString current_exp = _exp_combo->currentText();
     _exp_combo->clear();
 
     if (!gSession->experimentNames().empty()) {
         for (const QString& exp : gSession->experimentNames())
             _exp_combo->addItem(exp);
+        _exp_combo->setCurrentText(current_exp);
         updateDatasetList();
         updatePeakList();
         updateUnitCellList();
@@ -345,6 +347,7 @@ void DetectorWindow::updateExptList()
 void DetectorWindow::updateDatasetList()
 {
     _data_combo->blockSignals(true);
+    QString current_data = _data_combo->currentText();
     _data_combo->clear();
     _data_list = gSession->experimentAt(_exp_combo->currentIndex())->allData();
 
@@ -352,7 +355,7 @@ void DetectorWindow::updateDatasetList()
         for (const nsx::sptrDataSet& data : _data_list) {
             _data_combo->addItem(QString::fromStdString(data->name()));
         }
-        _data_combo->setCurrentIndex(0);
+        _data_combo->setCurrentText(current_data);
         updateDatasetParameters(0);
     }
     _data_combo->blockSignals(false);
@@ -381,38 +384,42 @@ void DetectorWindow::updateDatasetParameters(int idx)
 void DetectorWindow::updatePeakList()
 {
     _peak_combo_1->blockSignals(true);
+    QString current_peaks = _peak_combo_1->currentText();
     _peak_combo_1->clear();
     _peak_list.clear();
     _peak_list = gSession->experimentAt(_exp_combo->currentIndex())->getPeakListNames();
 
     if (!_peak_list.empty()) {
         _peak_combo_1->addItems(_peak_list);
-        _peak_combo_1->setCurrentIndex(0);
+        _peak_combo_1->setCurrentText(current_peaks);
     }
     _peak_combo_1->blockSignals(false);
 
     _peak_combo_2->blockSignals(true);
+    current_peaks = _peak_combo_2->currentText();
     _peak_combo_2->clear();
-
     _peak_list.clear();
     _peak_list = gSession->experimentAt(_exp_combo->currentIndex())->getPeakListNames();
 
     _peak_list.push_front("");
-    _peak_combo_2->addItems(_peak_list);
-    _peak_combo_2->setCurrentIndex(0);
+    if (!_peak_list.empty()) {
+        _peak_combo_2->addItems(_peak_list);
+        _peak_combo_2->setCurrentText(current_peaks);
+    }
     _peak_combo_2->blockSignals(false);
 }
 
 void DetectorWindow::updateUnitCellList()
 {
     _unit_cell_combo->blockSignals(true);
+    QString current_cell = _unit_cell_combo->currentText();
     _unit_cell_combo->clear();
 
     _cell_list = gSession->experimentAt(_exp_combo->currentIndex())->getUnitCellNames();
 
     if (!_cell_list.empty()) {
         _unit_cell_combo->addItems(_cell_list);
-        _unit_cell_combo->setCurrentIndex(0);
+        _unit_cell_combo->setCurrentText(current_cell);
     }
     _unit_cell_combo->blockSignals(false);
     setUnitCell();
