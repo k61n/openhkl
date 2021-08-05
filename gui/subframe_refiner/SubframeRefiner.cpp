@@ -21,6 +21,7 @@
 #include "gui/detector_window/DetectorWindow.h"
 #include "gui/dialogs/ListNameDialog.h"
 #include "gui/frames/ProgressView.h"
+#include "gui/graphics/DetectorScene.h"
 #include "gui/graphics/SXPlot.h"
 #include "gui/models/Meta.h"
 #include "gui/models/Project.h"
@@ -32,6 +33,7 @@
 #include "gui/utility/PropertyScrollArea.h"
 #include "gui/utility/SideBar.h"
 #include "gui/utility/Spoiler.h"
+#include "gui/widgets/DetectorWidget.h"
 #include "gui/widgets/PlotCheckBox.h"
 
 #include <QFileInfo>
@@ -48,12 +50,25 @@
 SubframeRefiner::SubframeRefiner()
 {
     auto main_layout = new QHBoxLayout(this);
-    auto right_element = new QSplitter(Qt::Vertical, this);
+    _right_element = new QSplitter(Qt::Vertical, this);
 
     _left_layout = new QVBoxLayout();
 
+    QTabWidget* tab_widget = new QTabWidget(this);
+    QWidget* tables_tab = new QWidget(tab_widget);
+    QWidget* detector_tab = new QWidget(tab_widget);
+    tab_widget->addTab(tables_tab, "Tables");
+    tab_widget->addTab(detector_tab, "Detector");
+
+    QHBoxLayout* table_layout = new QHBoxLayout();
+
     _tables_widget = new RefinerTables();
     _tables_widget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    table_layout->addWidget(_tables_widget);
+    tables_tab->setLayout(table_layout);
+
+    _detector_widget = new DetectorWidget(true, false, false);
+    detector_tab->setLayout(_detector_widget);
 
     setInputUp();
     setRefinerFlagsUp();
@@ -61,17 +76,17 @@ SubframeRefiner::SubframeRefiner()
     setPlotUp();
     setUpdateUp();
 
-    right_element->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-    right_element->addWidget(_tables_widget);
+    _right_element->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    _right_element->addWidget(tab_widget);
 
     _plot_widget = new SXPlot;
     _plot_widget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-    right_element->addWidget(_plot_widget);
+    _right_element->addWidget(_plot_widget);
 
     auto propertyScrollArea = new PropertyScrollArea(this);
     propertyScrollArea->setContentLayout(_left_layout);
     main_layout->addWidget(propertyScrollArea);
-    main_layout->addWidget(right_element);
+    main_layout->addWidget(_right_element);
 
     QRandomGenerator _rng(0);
 }
@@ -174,6 +189,8 @@ void SubframeRefiner::updateDatasetList()
     QString current_data = _data_combo->currentText();
     _data_combo->clear();
     _data_list = gSession->experimentAt(_exp_combo->currentIndex())->allData();
+    _detector_widget->updateDatasetList(_data_list);
+    _detector_widget->refresh();
 
     const QStringList& datanames{gSession->currentProject()->getDataNames()};
     if (!datanames.empty()) {

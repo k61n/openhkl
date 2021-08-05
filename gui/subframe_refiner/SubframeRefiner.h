@@ -8,6 +8,7 @@
 //! @homepage  ###HOMEPAGE###
 //! @license   GNU General Public License v3 or higher (see COPYING)
 //! @copyright Institut Laue-Langevin and Forschungszentrum Jülich GmbH 2016-
+
 //! @authors   see CITATION, MAINTAINER
 //
 //  ***********************************************************************************************
@@ -35,6 +36,7 @@
 namespace nsx {
 class PeakCollection;
 }
+class DetectorWidget;
 class LinkedComboBox;
 class RefinerTables;
 class Spoiler;
@@ -113,6 +115,7 @@ class SubframeRefiner : public QWidget {
 
  private:
     QVBoxLayout* _left_layout;
+    QSplitter* _right_element;
 
     // data selection
     LinkedComboBox* _exp_combo;
@@ -131,6 +134,9 @@ class SubframeRefiner : public QWidget {
 
     // plot widget
     Spoiler* _plot_box;
+
+    // Detector scene
+    DetectorWidget* _detector_widget;
 
     // update prediction
     LinkedComboBox* _predicted_combo;

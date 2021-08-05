@@ -1,0 +1,56 @@
+//  ***********************************************************************************************
+//
+//  NSXTool: data reduction for neutron single-crystal diffraction
+//
+//! @file      gui/widgets/DetectorWidget.h
+//! @brief     Defines class DetectorWidget
+//!
+//! @homepage  ###HOMEPAGE###
+//! @license   GNU General Public License v3 or higher (see COPYING)
+//! @copyright Institut Laue-Langevin and Forschungszentrum Jülich GmbH 2016-
+//! @authors   see CITATION, MAINTAINER
+//
+//  ***********************************************************************************************
+
+#ifndef NSX_GUI_UTILITY_DETECTORWIDGET_H
+#define NSX_GUI_UTILITY_DETECTORWIDGET_H
+
+#include "core/data/DataSet.h"
+
+#include <QGridLayout>
+
+class DetectorScene;
+class DetectorView;
+class LinkedComboBox;
+class QSpinBox;
+class QScrollBar;
+class QComboBox;
+class QSlider;
+
+class DetectorWidget : public QGridLayout {
+
+ public:
+    DetectorWidget(bool data, bool mode, bool slider, QWidget* parent = nullptr);
+
+    void updateDatasetList(const std::vector<nsx::sptrDataSet>& data_list);
+    void refresh();
+
+    DetectorScene* scene();
+    QSpinBox* spin();
+    QScrollBar* scroll();
+    LinkedComboBox* dataCombo();
+    QComboBox* modeCombo();
+    QSlider* slider();
+
+ private:
+    DetectorView* _detector_view;
+    QSpinBox* _spin;
+    QScrollBar* _scroll;
+    LinkedComboBox* _data_combo = nullptr;
+    QComboBox* _mode_combo = nullptr;
+    QSlider* _intensity_slider = nullptr;
+
+    std::vector<nsx::sptrDataSet> _data_list;
+};
+
+#endif // NSX_GUI_UTILITY_DETECTORWIDGET_H

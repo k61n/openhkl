@@ -385,6 +385,9 @@ void SubframeIntegrate::setIntegrateUp()
         _remove_overlaps, &QCheckBox::stateChanged, this,
         &SubframeIntegrate::removeOverlappingPeaks);
     connect(
+        _peak_end, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged),
+        this, &SubframeIntegrate::removeOverlappingPeaks);
+    connect(
         _build_shape_lib_button, &QPushButton::clicked, this, &SubframeIntegrate::openShapeBuilder);
     connect(_assign_peak_shapes, &QPushButton::clicked, this, &SubframeIntegrate::assignPeakShapes);
     connect(
