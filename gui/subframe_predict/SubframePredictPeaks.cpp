@@ -65,7 +65,7 @@ SubframePredictPeaks::SubframePredictPeaks()
     , _shape_params()
     , _size_policy_right(QSizePolicy::Expanding, QSizePolicy::Expanding)
 {
-    auto main_layout = new QHBoxLayout();
+    auto main_layout = new QHBoxLayout(this);
     _right_element = new QSplitter(Qt::Vertical, this);
 
     _left_layout = new QVBoxLayout();

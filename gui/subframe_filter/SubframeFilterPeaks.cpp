@@ -53,7 +53,7 @@ SubframeFilterPeaks::SubframeFilterPeaks()
     , _peak_collection_model()
     , _size_policy_right(QSizePolicy::Expanding, QSizePolicy::Expanding)
 {
-    _main_layout = new QHBoxLayout();
+    _main_layout = new QHBoxLayout(this);
     _right_element = new QSplitter(Qt::Vertical, this);
 
     _left_layout = new QVBoxLayout();

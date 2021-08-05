@@ -47,10 +47,10 @@
 
 SubframeRefiner::SubframeRefiner()
 {
-    auto main_layout = new QHBoxLayout();
+    auto main_layout = new QHBoxLayout(this);
     auto right_element = new QSplitter(Qt::Vertical, this);
 
-    _left_layout = new QVBoxLayout(this);
+    _left_layout = new QVBoxLayout();
 
     _tables_widget = new RefinerTables();
     _tables_widget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
