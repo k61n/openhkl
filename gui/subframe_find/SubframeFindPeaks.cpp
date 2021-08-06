@@ -228,12 +228,11 @@ void SubframeFindPeaks::setSaveUp()
 void SubframeFindPeaks::setFigureUp()
 {
     QGroupBox* figure_group = new QGroupBox("Preview");
+    figure_group->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     _detector_widget = new DetectorWidget(true, false, figure_group);
     _detector_widget->modeCombo()->addItems(
         QStringList{"Zoom", "Selection", "Rectangular mask", "Elliptical mask"});
     _detector_widget->linkPeakModel(&_peak_collection_model);
-
-    figure_group->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
     connect(
         _detector_widget->spin(), static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged), this,
@@ -337,8 +336,6 @@ void SubframeFindPeaks::updateDatasetParameters(const QString& dataname)
     _end_frame_spin->setValue(data->nFrames());
     _start_frame_spin->setMaximum(data->nFrames());
     _start_frame_spin->setValue(1);
-
-    emit _detector_widget->scene()->dataChanged();
 }
 
 void SubframeFindPeaks::grabFinderParameters()

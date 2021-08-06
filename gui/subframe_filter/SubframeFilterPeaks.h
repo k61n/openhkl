@@ -156,9 +156,6 @@ class SubframeFilterPeaks : public QWidget {
     QPushButton* _save_button;
 
     PeakViewWidget* _peak_view_widget;
-
-    QSizePolicy _size_policy_right;
-
     DetectorWidget* _detector_widget;
     PeakTableView* _peak_table;
 

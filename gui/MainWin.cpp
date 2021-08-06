@@ -103,7 +103,7 @@ MainWin::MainWin()
         experiment->getImage()->getMaxIntensitySlider()->value());
     filter->detectorWidget()->scene()->setMaxIntensity(
         experiment->getImage()->getMaxIntensitySlider()->value());
-    predictor->getDetectorView()->getScene()->setMaxIntensity(
+    predictor->detectorWidget()->scene()->setMaxIntensity(
         experiment->getImage()->getMaxIntensitySlider()->value());
     integrator->getDetectorView()->getScene()->setMaxIntensity(
         experiment->getImage()->getMaxIntensitySlider()->value());
@@ -115,7 +115,7 @@ MainWin::MainWin()
         detector_window->getDetectorView()->getScene(),
         finder->detectorWidget()->scene(),
         filter->detectorWidget()->scene(),
-        predictor->getDetectorView()->getScene(),
+        predictor->detectorWidget()->scene(),
         integrator->getDetectorView()->getScene()};
     std::vector<QSlider*> sliders = {
         experiment->getImage()->getMaxIntensitySlider(), detector_window->getIntensitySlider()};

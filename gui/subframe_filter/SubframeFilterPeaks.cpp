@@ -50,7 +50,6 @@ SubframeFilterPeaks::SubframeFilterPeaks()
     , _peak_collection("temp", nsx::listtype::FOUND)
     , _peak_collection_item()
     , _peak_collection_model()
-    , _size_policy_right(QSizePolicy::Expanding, QSizePolicy::Expanding)
 {
     _main_layout = new QHBoxLayout(this);
     _right_element = new QSplitter(Qt::Vertical, this);
@@ -70,7 +69,7 @@ SubframeFilterPeaks::SubframeFilterPeaks()
     setFigureUp();
     setPeakTableUp();
 
-    _right_element->setSizePolicy(_size_policy_right);
+    _right_element->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
     auto propertyScrollArea = new PropertyScrollArea(this);
     propertyScrollArea->setContentLayout(_left_layout);
@@ -279,6 +278,7 @@ void SubframeFilterPeaks::setProceedUp()
 void SubframeFilterPeaks::setFigureUp()
 {
     QGroupBox* figure_group = new QGroupBox("Preview");
+    figure_group->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     _detector_widget = new DetectorWidget(false, false, figure_group);
     _detector_widget->linkPeakModel(&_peak_collection_model);
 
@@ -295,7 +295,7 @@ void SubframeFilterPeaks::setPeakTableUp()
     QGridLayout* peak_grid = new QGridLayout(peak_group);
 
     _preview_panel = peak_group;
-    peak_group->setSizePolicy(_size_policy_right);
+    peak_group->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
     _peak_table = new PeakTableView(this);
     _peak_collection_model.setRoot(&_peak_collection_item);
@@ -354,9 +354,8 @@ void SubframeFilterPeaks::updateDatasetList()
 {
     _data_list = gSession->experimentAt(_exp_combo->currentIndex())->allData();
     const nsx::DataList all_data = gSession->experimentAt(_exp_combo->currentIndex())->allData();
-    if (!_data_list.empty()) {
+    if (!_data_list.empty())
         _detector_widget->updateDatasetList(all_data);
-    }
 }
 
 void SubframeFilterPeaks::updateDatasetParameters(int idx)

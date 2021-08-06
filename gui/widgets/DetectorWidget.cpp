@@ -126,6 +126,7 @@ void DetectorWidget::refresh()
     _spin->setMinimum(0);
     _spin->setMaximum(data->nFrames());
 
+    emit scene()->dataChanged();
 }
 
 void DetectorWidget::linkPeakModel(PeakCollectionModel* model1, PeakCollectionModel* model2)
