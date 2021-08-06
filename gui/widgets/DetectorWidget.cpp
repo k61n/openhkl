@@ -17,6 +17,7 @@
 
 #include "gui/MainWin.h" // gGui
 #include "gui/models/PeakCollectionModel.h"
+#include "gui/models/Session.h" // gSession
 #include "gui/graphics/DetectorScene.h"
 #include "gui/graphics/DetectorView.h"
 #include "gui/utility/LinkedComboBox.h"
@@ -47,7 +48,7 @@ DetectorWidget::DetectorWidget(bool mode, bool slider, QWidget* parent)
         _intensity_slider->setOrientation(Qt::Vertical);
         _intensity_slider->setTickPosition(QSlider::TicksRight);
         _intensity_slider->setToolTip("Adjust the image intensity scale");
-        top_grid->addWidget(_intensity_slider, 0, 0, 1, 1);
+        top_grid->addWidget(_intensity_slider, 0, 1, 1, 1);
     }
 
     int col = 0;
@@ -134,6 +135,14 @@ void DetectorWidget::linkPeakModel(PeakCollectionModel* model1, PeakCollectionMo
     scene()->linkPeakModel1(model1);
     if (model2)
         scene()->linkPeakModel2(model2);
+}
+
+nsx::sptrDataSet DetectorWidget::currentData()
+{
+    if (_data_combo->count() == 0)
+        return nullptr;
+    return _data_list.at(_data_combo->currentIndex());
+
 }
 
 DetectorScene* DetectorWidget::scene()

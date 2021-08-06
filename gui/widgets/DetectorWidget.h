@@ -15,6 +15,7 @@
 #ifndef NSX_GUI_UTILITY_DETECTORWIDGET_H
 #define NSX_GUI_UTILITY_DETECTORWIDGET_H
 
+#include "core/data/DataTypes.h"
 #include "core/data/DataSet.h"
 
 #include <QGridLayout>
@@ -36,6 +37,7 @@ class DetectorWidget : public QGridLayout {
     void updateDatasetList(const std::vector<nsx::sptrDataSet>& data_list);
     void refresh();
     void linkPeakModel(PeakCollectionModel* model1, PeakCollectionModel* model2 = nullptr);
+    nsx::sptrDataSet currentData();
 
     DetectorScene* scene();
     QSpinBox* spin();

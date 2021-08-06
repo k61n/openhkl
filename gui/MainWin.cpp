@@ -107,24 +107,25 @@ MainWin::MainWin()
         experiment->getImage()->getMaxIntensitySlider()->value());
     integrator->detectorWidget()->scene()->setMaxIntensity(
         experiment->getImage()->getMaxIntensitySlider()->value());
-    detector_window->getDetectorView()->getScene()->setMaxIntensity(
+    detector_window->detectorWidget()->scene()->setMaxIntensity(
         experiment->getImage()->getMaxIntensitySlider()->value());
 
     std::vector<DetectorScene*> scenes = {
         experiment->getImage()->getView()->getScene(),
-        detector_window->getDetectorView()->getScene(),
+        detector_window->detectorWidget()->scene(),
         finder->detectorWidget()->scene(),
         filter->detectorWidget()->scene(),
         predictor->detectorWidget()->scene(),
         integrator->detectorWidget()->scene()};
     std::vector<QSlider*> sliders = {
-        experiment->getImage()->getMaxIntensitySlider(), detector_window->getIntensitySlider()};
+        experiment->getImage()->getMaxIntensitySlider(),
+        detector_window->detectorWidget()->slider()};
 
     connect (
         experiment->getImage()->getMaxIntensitySlider(), &QSlider::valueChanged,
-        detector_window->getIntensitySlider(), &QSlider::setValue);
+        detector_window->detectorWidget()->slider(), &QSlider::setValue);
     connect (
-        detector_window->getIntensitySlider(), &QSlider::valueChanged,
+        detector_window->detectorWidget()->slider(), &QSlider::valueChanged,
         experiment->getImage()->getMaxIntensitySlider(), &QSlider::setValue);
 
     // // sync the max. intensity slider with all other image plots

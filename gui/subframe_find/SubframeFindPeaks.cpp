@@ -240,6 +240,9 @@ void SubframeFindPeaks::setFigureUp()
     connect(
         _detector_widget->scene(), &DetectorScene::signalUpdateDetectorScene,
         this, &SubframeFindPeaks::refreshPeakTable);
+    connect(
+        _detector_widget->scene(), &DetectorScene::signalSelectedPeakItemChanged, this,
+        &SubframeFindPeaks::changeSelected);
 
     _right_element->addWidget(figure_group);
 }

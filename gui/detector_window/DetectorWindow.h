@@ -29,8 +29,7 @@
 #include <QVBoxLayout>
 
 class ColorButton;
-class DetectorScene;
-class DetectorView;
+class DetectorWidget;
 class LinkedComboBox;
 class PeakViewWidget;
 class ShortTable;
@@ -68,9 +67,7 @@ class DetectorWindow : public QDialog {
     void updateUnitCellList();
 
     //! Get a pointer to the DetectorView
-    DetectorView* getDetectorView() { return _detector_view; };
-    //! Get a pointer to the intensity slider
-    QSlider* getIntensitySlider() { return _intensity_slider; };
+    DetectorWidget* detectorWidget();
 
  public slots:
     void setUnitCell();
@@ -78,7 +75,6 @@ class DetectorWindow : public QDialog {
  private:
     void changeSelected(PeakItemGraphic* peak_graphic);
 
- private:
     int _nframes;
 
     QVBoxLayout* _control_layout;
@@ -86,7 +82,6 @@ class DetectorWindow : public QDialog {
 
     // Control panel elements
     QComboBox* _exp_combo;
-    QComboBox* _data_combo;
     LinkedComboBox* _peak_combo_1;
     LinkedComboBox* _peak_combo_2;
     QComboBox* _unit_cell_combo;
@@ -102,11 +97,7 @@ class DetectorWindow : public QDialog {
     PeakViewWidget* _peak_view_widget_2;
 
     // Detector elements
-    DetectorView* _detector_view;
-    QScrollBar* _detector_scroll;
-    QSpinBox* _detector_spin;
-    QComboBox* _cursor_mode;
-    QSlider* _intensity_slider;
+    DetectorWidget* _detector_widget;
 
     // Peak table elements
     ShortTable* _peak_table_1;

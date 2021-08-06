@@ -285,6 +285,9 @@ void SubframeFilterPeaks::setFigureUp()
     connect(
         _detector_widget->scene(), &DetectorScene::signalUpdateDetectorScene,
         this, &SubframeFilterPeaks::refreshPeakTable);
+    connect(
+        _detector_widget->scene(), &DetectorScene::signalSelectedPeakItemChanged, this,
+        &SubframeFilterPeaks::changeSelected);
 
     _right_element->addWidget(figure_group);
 }
@@ -356,16 +359,6 @@ void SubframeFilterPeaks::updateDatasetList()
     const nsx::DataList all_data = gSession->experimentAt(_exp_combo->currentIndex())->allData();
     if (!_data_list.empty())
         _detector_widget->updateDatasetList(all_data);
-}
-
-void SubframeFilterPeaks::updateDatasetParameters(int idx)
-{
-    if (_data_list.empty() || idx < 0)
-        return;
-
-    nsx::sptrDataSet data = _data_list.at(idx);
-
-    _detector_widget->updateDatasetList(_data_list);
 }
 
 void SubframeFilterPeaks::grabFilterParameters()
