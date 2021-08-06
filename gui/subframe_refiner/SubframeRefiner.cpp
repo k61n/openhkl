@@ -67,7 +67,7 @@ SubframeRefiner::SubframeRefiner()
     table_layout->addWidget(_tables_widget);
     tables_tab->setLayout(table_layout);
 
-    _detector_widget = new DetectorWidget(true, false, false);
+    _detector_widget = new DetectorWidget(false, false);
     detector_tab->setLayout(_detector_widget);
 
     setInputUp();

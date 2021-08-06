@@ -35,6 +35,7 @@
 #include "gui/subframe_predict/SubframePredictPeaks.h"
 #include "gui/subframe_refiner/SubframeRefiner.h"
 #include "gui/utility/SideBar.h"
+#include "gui/widgets/DetectorWidget.h"
 
 #include <QApplication>
 #include <QCloseEvent>
@@ -98,9 +99,9 @@ MainWin::MainWin()
     _layout_stack->setCurrentIndex(0);
 
     // set initial max. intensities
-    finder->getDetectorView()->getScene()->setMaxIntensity(
+    finder->detectorWidget()->scene()->setMaxIntensity(
         experiment->getImage()->getMaxIntensitySlider()->value());
-    filter->getDetectorView()->getScene()->setMaxIntensity(
+    filter->detectorWidget()->scene()->setMaxIntensity(
         experiment->getImage()->getMaxIntensitySlider()->value());
     predictor->getDetectorView()->getScene()->setMaxIntensity(
         experiment->getImage()->getMaxIntensitySlider()->value());
@@ -112,8 +113,8 @@ MainWin::MainWin()
     std::vector<DetectorScene*> scenes = {
         experiment->getImage()->getView()->getScene(),
         detector_window->getDetectorView()->getScene(),
-        finder->getDetectorView()->getScene(),
-        filter->getDetectorView()->getScene(),
+        finder->detectorWidget()->scene(),
+        filter->detectorWidget()->scene(),
         predictor->getDetectorView()->getScene(),
         integrator->getDetectorView()->getScene()};
     std::vector<QSlider*> sliders = {

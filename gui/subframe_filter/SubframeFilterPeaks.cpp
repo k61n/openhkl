@@ -17,11 +17,9 @@
 #include "core/experiment/Experiment.h"
 #include "core/shape/PeakCollection.h"
 #include "core/shape/PeakFilter.h"
-#include "gui/MainWin.h"
 #include "gui/MainWin.h" // gGui
 #include "gui/dialogs/ListNameDialog.h"
 #include "gui/graphics/DetectorScene.h"
-#include "gui/graphics/DetectorView.h"
 #include "gui/models/Meta.h"
 #include "gui/models/Project.h"
 #include "gui/models/Session.h"
@@ -31,6 +29,7 @@
 #include "gui/utility/SideBar.h"
 #include "gui/utility/Spoiler.h"
 #include "gui/utility/SpoilerCheck.h"
+#include "gui/widgets/DetectorWidget.h"
 #include "gui/widgets/PeakViewWidget.h"
 
 #include <QFileInfo>
@@ -280,39 +279,12 @@ void SubframeFilterPeaks::setProceedUp()
 void SubframeFilterPeaks::setFigureUp()
 {
     QGroupBox* figure_group = new QGroupBox("Preview");
-    QGridLayout* figure_grid = new QGridLayout(figure_group);
-
-    figure_group->setSizePolicy(_size_policy_right);
-
-    _figure_view = new DetectorView(this);
-    _figure_view->getScene()->linkPeakModel1(&_peak_collection_model);
-    _figure_view->scale(1, -1);
-    figure_grid->addWidget(_figure_view, 0, 0, 1, 3);
-
-    _data_combo = new LinkedComboBox(ComboType::DataSet, gGui->sentinel, this);
-    _data_combo->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
-    figure_grid->addWidget(_data_combo, 1, 0, 1, 1);
-
-    _figure_scroll = new QScrollBar(this);
-    _figure_scroll->setOrientation(Qt::Horizontal);
-    _figure_scroll->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
-    figure_grid->addWidget(_figure_scroll, 1, 1, 1, 1);
-
-    _figure_spin = new QSpinBox(this);
-    _figure_spin->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-    figure_grid->addWidget(_figure_spin, 1, 2, 1, 1);
+    _detector_widget = new DetectorWidget(false, false, figure_group);
+    _detector_widget->linkPeakModel(&_peak_collection_model);
 
     connect(
-        _figure_scroll, SIGNAL(valueChanged(int)), _figure_view->getScene(),
-        SLOT(slotChangeSelectedFrame(int)));
-
-    connect(_figure_scroll, SIGNAL(valueChanged(int)), _figure_spin, SLOT(setValue(int)));
-
-    connect(_figure_spin, SIGNAL(valueChanged(int)), _figure_scroll, SLOT(setValue(int)));
-
-    connect(
-        _figure_view->getScene(), &DetectorScene::signalSelectedPeakItemChanged, this,
-        &SubframeFilterPeaks::changeSelected);
+        _detector_widget->scene(), &DetectorScene::signalUpdateDetectorScene,
+        this, &SubframeFilterPeaks::refreshPeakTable);
 
     _right_element->addWidget(figure_group);
 }
@@ -380,19 +352,11 @@ void SubframeFilterPeaks::updatePeakList()
 
 void SubframeFilterPeaks::updateDatasetList()
 {
-    _data_combo->blockSignals(true);
-    QString current_data = _data_combo->currentText();
-    _data_combo->clear();
     _data_list = gSession->experimentAt(_exp_combo->currentIndex())->allData();
-
+    const nsx::DataList all_data = gSession->experimentAt(_exp_combo->currentIndex())->allData();
     if (!_data_list.empty()) {
-        for (const nsx::sptrDataSet& data : _data_list) {
-            _data_combo->addItem(QString::fromStdString(data->name()));
-        }
-        _data_combo->setCurrentText(current_data);
-        updateDatasetParameters(_data_combo->currentIndex());
+        _detector_widget->updateDatasetList(all_data);
     }
-    _data_combo->blockSignals(false);
 }
 
 void SubframeFilterPeaks::updateDatasetParameters(int idx)
@@ -402,16 +366,7 @@ void SubframeFilterPeaks::updateDatasetParameters(int idx)
 
     nsx::sptrDataSet data = _data_list.at(idx);
 
-    _figure_view->getScene()->slotChangeSelectedData(_data_list.at(idx), _figure_spin->value());
-    //_figure_view->getScene()->setMaxIntensity(3000);
-    emit _figure_view->getScene()->dataChanged();
-    _figure_view->getScene()->update();
-
-    _figure_scroll->setMaximum(data->nFrames() - 1);
-    _figure_scroll->setMinimum(0);
-
-    _figure_spin->setMaximum(data->nFrames() - 1);
-    _figure_spin->setMinimum(0);
+    _detector_widget->updateDatasetList(_data_list);
 }
 
 void SubframeFilterPeaks::grabFilterParameters()
@@ -552,7 +507,6 @@ void SubframeFilterPeaks::refreshPeakTable()
     if (_peak_combo->count() == 0 || _exp_combo->count() == 0)
         return;
 
-    _figure_view->getScene()->clearPeakItems();
     nsx::PeakCollection* collection =
         gSession->experimentAt(_exp_combo->currentIndex())
             ->experiment()
@@ -579,10 +533,8 @@ void SubframeFilterPeaks::refreshPeakVisual()
         graphic->initFromPeakViewWidget(
             peak->peak()->caughtByFilter() ? _peak_view_widget->set1 : _peak_view_widget->set2);
     }
-    _figure_view->getScene()->update();
-    _figure_view->getScene()->initIntRegionFromPeakWidget(_peak_view_widget->set1);
-    _figure_view->getScene()->drawPeakitems();
-    _figure_view->fitScene();
+    _detector_widget->scene()->initIntRegionFromPeakWidget(_peak_view_widget->set1);
+    _detector_widget->refresh();
 }
 
 void SubframeFilterPeaks::changeSelected(PeakItemGraphic* peak_graphic)
@@ -601,4 +553,9 @@ void SubframeFilterPeaks::toggleUnsafeWidgets()
         _filter_button->setEnabled(false);
         _save_button->setEnabled(false);
     }
+}
+
+DetectorWidget* SubframeFilterPeaks::detectorWidget()
+{
+    return _detector_widget;
 }

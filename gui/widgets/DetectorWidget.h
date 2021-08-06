@@ -22,6 +22,7 @@
 class DetectorScene;
 class DetectorView;
 class LinkedComboBox;
+class PeakCollectionModel;
 class QSpinBox;
 class QScrollBar;
 class QComboBox;
@@ -30,10 +31,11 @@ class QSlider;
 class DetectorWidget : public QGridLayout {
 
  public:
-    DetectorWidget(bool data, bool mode, bool slider, QWidget* parent = nullptr);
+    DetectorWidget(bool mode, bool slider, QWidget* parent = nullptr);
 
     void updateDatasetList(const std::vector<nsx::sptrDataSet>& data_list);
     void refresh();
+    void linkPeakModel(PeakCollectionModel* model1, PeakCollectionModel* model2 = nullptr);
 
     DetectorScene* scene();
     QSpinBox* spin();

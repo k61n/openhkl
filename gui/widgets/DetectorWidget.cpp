@@ -16,6 +16,7 @@
 #include "gui/widgets/DetectorWidget.h"
 
 #include "gui/MainWin.h" // gGui
+#include "gui/models/PeakCollectionModel.h"
 #include "gui/graphics/DetectorScene.h"
 #include "gui/graphics/DetectorView.h"
 #include "gui/utility/LinkedComboBox.h"
@@ -26,7 +27,7 @@
 #include <QSpinBox>
 #include <QVBoxLayout>
 
-DetectorWidget::DetectorWidget(bool data, bool mode, bool slider, QWidget* parent)
+DetectorWidget::DetectorWidget(bool mode, bool slider, QWidget* parent)
     : QGridLayout(parent)
 {
     QGridLayout* top_grid = new QGridLayout();
@@ -41,7 +42,7 @@ DetectorWidget::DetectorWidget(bool data, bool mode, bool slider, QWidget* paren
         _intensity_slider->setMouseTracking(true);
         _intensity_slider->setMinimum(1);
         _intensity_slider->setMaximum(10000);
-        _intensity_slider->setValue(scene()->intensity();
+        _intensity_slider->setValue(scene()->intensity());
         _intensity_slider->setSingleStep(1);
         _intensity_slider->setOrientation(Qt::Vertical);
         _intensity_slider->setTickPosition(QSlider::TicksRight);
@@ -51,12 +52,10 @@ DetectorWidget::DetectorWidget(bool data, bool mode, bool slider, QWidget* paren
 
     int col = 0;
 
-    if (data) {
-        _data_combo = new LinkedComboBox(ComboType::DataSet, gGui->sentinel);
-        _data_combo->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
-        _data_combo->setToolTip("Change the displayed data set");
-        bottom_grid->addWidget(_data_combo, 0, ++col, 1, 1);
-    }
+    _data_combo = new LinkedComboBox(ComboType::DataSet, gGui->sentinel);
+    _data_combo->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+    _data_combo->setToolTip("Change the displayed data set");
+    bottom_grid->addWidget(_data_combo, 0, ++col, 1, 1);
 
     _scroll = new QScrollBar();
     _scroll->setOrientation(Qt::Horizontal);
@@ -82,11 +81,9 @@ DetectorWidget::DetectorWidget(bool data, bool mode, bool slider, QWidget* paren
     connect(_scroll, &QScrollBar::valueChanged, scene(), &DetectorScene::slotChangeSelectedFrame);
     connect(_spin, QOverload<int>::of(&QSpinBox::valueChanged), _scroll, &QScrollBar::setValue);
     connect(_scroll, &QScrollBar::valueChanged, _spin, &QSpinBox::setValue);
-
-    if (data)
-        connect(
-            _data_combo, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
-            this, &DetectorWidget::refresh);
+    connect(
+        _data_combo, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
+        this, &DetectorWidget::refresh);
 
     if (mode)
         connect(
@@ -108,6 +105,7 @@ void DetectorWidget::updateDatasetList(const std::vector<nsx::sptrDataSet>& data
         _data_combo->setCurrentText(current_data);
     }
     _data_combo->blockSignals(false);
+    refresh();
 }
 
 void DetectorWidget::refresh()
@@ -117,13 +115,24 @@ void DetectorWidget::refresh()
 
     auto data = _data_list.at(_data_combo->currentIndex());
     scene()->slotChangeSelectedData(data, _spin->value());
+    scene()->clearPeakItems();
+    scene()->drawPeakitems();
     scene()->update();
+    _detector_view->fitInView(scene()->sceneRect(), Qt::KeepAspectRatio);
 
     _scroll->setMinimum(0);
     _scroll->setMaximum(data->nFrames());
 
     _spin->setMinimum(0);
     _spin->setMaximum(data->nFrames());
+
+}
+
+void DetectorWidget::linkPeakModel(PeakCollectionModel* model1, PeakCollectionModel* model2)
+{
+    scene()->linkPeakModel1(model1);
+    if (model2)
+        scene()->linkPeakModel2(model2);
 }
 
 DetectorScene* DetectorWidget::scene()
