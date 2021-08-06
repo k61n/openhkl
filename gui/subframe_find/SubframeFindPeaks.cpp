@@ -229,7 +229,7 @@ void SubframeFindPeaks::setFigureUp()
 {
     QGroupBox* figure_group = new QGroupBox("Preview");
     figure_group->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-    _detector_widget = new DetectorWidget(true, false, figure_group);
+    _detector_widget = new DetectorWidget(true, false, false, figure_group);
     _detector_widget->modeCombo()->addItems(
         QStringList{"Zoom", "Selection", "Rectangular mask", "Elliptical mask"});
     _detector_widget->linkPeakModel(&_peak_collection_model);
@@ -271,8 +271,10 @@ void SubframeFindPeaks::setPeakTableUp()
 void SubframeFindPeaks::refreshAll()
 {
     setParametersUp();
-    const nsx::DataList all_data = gSession->experimentAt(_exp_combo->currentIndex())->allData();
-    _detector_widget->updateDatasetList(all_data);
+    if (!(_exp_combo->count() == 0)) {
+        auto all_data = gSession->experimentAt(_exp_combo->currentIndex())->allData();
+        _detector_widget->updateDatasetList(all_data);
+    }
     toggleUnsafeWidgets();
 }
 

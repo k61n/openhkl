@@ -14,51 +14,52 @@
 
 #include "gui/subframe_experiment/SubframeExperiment.h"
 
+#include "gui/models/Project.h"
+#include "gui/models/Session.h"
 #include "gui/subframe_experiment/ImagePanel.h"
 #include "gui/subframe_experiment/LoggerPanel.h"
 #include "gui/subframe_experiment/PlotPanel.h"
 #include "gui/subframe_experiment/PropertyPanel.h"
 #include "gui/subframe_experiment/properties/NumorProperty.h"
+#include "gui/widgets/DetectorWidget.h"
 
 #include <QHBoxLayout>
+#include <QGroupBox>
 #include <QSplitter>
 #include <QVBoxLayout>
 #include <QWidget>
 
 SubframeExperiment::SubframeExperiment()
 {
-    QSizePolicy left_size_policy;
-    left_size_policy.setHorizontalPolicy(QSizePolicy::Minimum);
-    left_size_policy.setVerticalPolicy(QSizePolicy::Expanding);
-
-    QSizePolicy right_size_policy;
-    right_size_policy.setHorizontalPolicy(QSizePolicy::Expanding);
-    right_size_policy.setVerticalPolicy(QSizePolicy::Expanding);
-
     QHBoxLayout* layout = new QHBoxLayout(this);
     QSplitter* splitter = new QSplitter(this);
 
     QWidget* left_widget = new QWidget();
-    left_widget->setSizePolicy(left_size_policy);
+    left_widget->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Expanding);
     QVBoxLayout* left_layout = new QVBoxLayout;
 
     _properties = new PropertyPanel;
-    _logger = new LoggerPanel;
-    _image = new ImagePanel;
     _plot = new PlotPanel;
 
-    _properties->setSizePolicy(left_size_policy);
-    _logger->setSizePolicy(left_size_policy);
+    QGroupBox* figure_group = new QGroupBox("Preview");
+    figure_group->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    _detector_widget = new DetectorWidget(true, false, true, figure_group);
+    _detector_widget->modeCombo()->addItems(
+        QStringList{"Zoom", "Selection", "Rectangular mask", "Elliptical mask", "Line plot",
+            "Horizontal slice", "Vertical slice"});
+    QWidget* right_widget = new QWidget(this);
+    right_widget->setLayout(_detector_widget);
+
+    _properties->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Expanding);
 
     left_layout->addWidget(_properties, 7);
-    left_layout->addWidget(_logger, 2);
     left_widget->setLayout(left_layout);
 
     QSplitter* right_splitter = new QSplitter();
-    right_splitter->setSizePolicy(right_size_policy);
+    right_splitter->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     right_splitter->setOrientation(Qt::Orientation::Vertical);
     right_splitter->setChildrenCollapsible(false);
-    right_splitter->addWidget(_image);
+    right_splitter->addWidget(right_widget);
     right_splitter->addWidget(_plot);
 
     splitter->addWidget(left_widget);
@@ -68,10 +69,19 @@ SubframeExperiment::SubframeExperiment()
     splitter->setChildrenCollapsible(false);
 
     layout->addWidget(splitter);
+}
 
-    // ensure that correct numor is plotted
-    connect(
-        _properties->_data->numorSelector(),
-        static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), _image,
-        &ImagePanel::dataChanged);
+
+void SubframeExperiment::dataChanged()
+{
+    _data_list = gSession->currentProject()->allData();
+    if (_data_list.empty())
+        return;
+
+    _detector_widget->updateDatasetList(_data_list);
+}
+
+DetectorWidget* SubframeExperiment::detectorWidget()
+{
+    return _detector_widget;
 }

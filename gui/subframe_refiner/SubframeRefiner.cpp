@@ -67,7 +67,7 @@ SubframeRefiner::SubframeRefiner()
     table_layout->addWidget(_tables_widget);
     tables_tab->setLayout(table_layout);
 
-    _detector_widget = new DetectorWidget(false, false);
+    _detector_widget = new DetectorWidget(false, false, false);
     detector_tab->setLayout(_detector_widget);
 
     setInputUp();
@@ -190,7 +190,6 @@ void SubframeRefiner::updateDatasetList()
     _data_combo->clear();
     _data_list = gSession->experimentAt(_exp_combo->currentIndex())->allData();
     _detector_widget->updateDatasetList(_data_list);
-    _detector_widget->refresh();
 
     const QStringList& datanames{gSession->currentProject()->getDataNames()};
     if (!datanames.empty()) {

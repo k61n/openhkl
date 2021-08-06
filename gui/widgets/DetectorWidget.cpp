@@ -15,6 +15,7 @@
 
 #include "gui/widgets/DetectorWidget.h"
 
+#include "core/data/DataSet.h"
 #include "gui/MainWin.h" // gGui
 #include "gui/models/PeakCollectionModel.h"
 #include "gui/models/Session.h" // gSession
@@ -28,7 +29,7 @@
 #include <QSpinBox>
 #include <QVBoxLayout>
 
-DetectorWidget::DetectorWidget(bool mode, bool slider, QWidget* parent)
+DetectorWidget::DetectorWidget(bool mode, bool cursor, bool slider, QWidget* parent)
     : QGridLayout(parent)
 {
     QGridLayout* top_grid = new QGridLayout();
@@ -69,13 +70,6 @@ DetectorWidget::DetectorWidget(bool mode, bool slider, QWidget* parent)
     _spin->setToolTip("Go to the numbered frame in this data set");
     bottom_grid->addWidget(_spin, 0, ++col, 1, 1);
 
-    if (mode) {
-        _mode_combo = new QComboBox();
-        _mode_combo->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-        _mode_combo->setToolTip("Set the cursor mode for the detector image");
-        bottom_grid->addWidget(_mode_combo, 0, ++col, 1, 1);
-    }
-
     addLayout(top_grid, 0, 0, 1, 1);
     addLayout(bottom_grid, 1, 0, 1, 1);
 
@@ -86,10 +80,28 @@ DetectorWidget::DetectorWidget(bool mode, bool slider, QWidget* parent)
         _data_combo, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
         this, &DetectorWidget::refresh);
 
-    if (mode)
+
+    if (mode) {
+        _mode_combo = new QComboBox();
+        _mode_combo->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+        _mode_combo->setToolTip("Set the interaction mode for the detector image");
+        bottom_grid->addWidget(_mode_combo, 0, ++col, 1, 1);
+
         connect(
             _mode_combo, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
+            [=](int i) { _detector_view->getScene()->changeInteractionMode(i); });
+    }
+
+    if (cursor) {
+        _cursor_combo = new QComboBox();
+        _cursor_combo->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+        _cursor_combo->setToolTip("Set the cursor mode for the detector image");
+        bottom_grid->addWidget(_cursor_combo, 0, ++col, 1, 1);
+
+        connect(
+            _cursor_combo, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
             [=](int i) { _detector_view->getScene()->changeCursorMode(i); });
+    }
 }
 
 void DetectorWidget::updateDatasetList(const std::vector<nsx::sptrDataSet>& data_list)
@@ -145,6 +157,16 @@ nsx::sptrDataSet DetectorWidget::currentData()
 
 }
 
+void DetectorWidget::changeView(int option)
+{
+    QTransform trans;
+    trans.scale(-1, -1); // fromDetector (default; 0)
+    if (option == 1) // fromSample
+        trans.scale(-1, 1);
+    _detector_view->setTransform(trans);
+    _detector_view->fitScene();
+}
+
 DetectorScene* DetectorWidget::scene()
 {
     return _detector_view->getScene();
@@ -168,6 +190,11 @@ LinkedComboBox* DetectorWidget::dataCombo()
 QComboBox* DetectorWidget::modeCombo()
 {
     return _mode_combo;
+}
+
+QComboBox* DetectorWidget::cursorCombo()
+{
+    return _cursor_combo;
 }
 
 QSlider* DetectorWidget::slider()
