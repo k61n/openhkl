@@ -36,7 +36,7 @@
 #include <QVBoxLayout>
 #include <QWidget>
 
-class DetectorView;
+class DetectorWidget;
 class LinkedComboBox;
 class PeakItemGraphic;
 class PeakTableView;
@@ -52,7 +52,7 @@ class SubframeIntegrate : public QWidget {
     //! Refresh all the inputs
     void refreshAll();
     //! detector view
-    DetectorView* getDetectorView() { return _figure_view; }
+    DetectorWidget* detectorWidget();
 
  private:
     //! Select experiment, dataset, peak collection, unit cell
@@ -66,8 +66,6 @@ class SubframeIntegrate : public QWidget {
     void updateExptList();
     //! Update peak collection list on experiment change
     void updatePeakList();
-    //! Update the data set for the DetectorScene/Peak table
-    void updateDataset(const QString& dataname);
     //! Update the data list on experment change
     void updateDatasetList();
     //! Update the unit cell list on experment change
@@ -106,11 +104,9 @@ class SubframeIntegrate : public QWidget {
     //! Disable unsafe widgets if no data loaded
     void toggleUnsafeWidgets();
 
- private:
     //! The loaded data list
     std::vector<nsx::sptrDataSet> _data_list;
 
- private:
     QVBoxLayout* _left_layout;
     QSplitter* _right_element;
 
@@ -143,10 +139,7 @@ class SubframeIntegrate : public QWidget {
     QStringList _predicted_list;
 
     PeakViewWidget* _peak_view_widget;
-
-    DetectorView* _figure_view;
-    QSpinBox* _figure_spin;
-    QScrollBar* _figure_scroll;
+    DetectorWidget* _detector_widget;
 
     PeakTableView* _peak_table;
     nsx::PeakCollection* _peak_collection;

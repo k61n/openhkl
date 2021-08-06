@@ -21,7 +21,6 @@
 #include "gui/detector_window/DetectorWindow.h"
 #include "gui/frames/ProgressView.h"
 #include "gui/graphics/DetectorScene.h"
-#include "gui/graphics/DetectorView.h"
 #include "gui/models/Project.h"
 #include "gui/models/Session.h"
 #include "gui/subframe_predict/ShapeCollectionDialog.h"
@@ -31,6 +30,7 @@
 #include "gui/utility/SideBar.h"
 #include "gui/utility/Spoiler.h"
 #include "gui/views/PeakTableView.h"
+#include "gui/widgets/DetectorWidget.h"
 
 #include <QFileInfo>
 #include <QGridLayout>
@@ -93,34 +93,12 @@ void SubframeIntegrate::setInputUp()
 void SubframeIntegrate::setFigureUp()
 {
     QGroupBox* figure_group = new QGroupBox("Preview");
-    QGridLayout* figure_grid = new QGridLayout(figure_group);
-
     figure_group->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-
-    _figure_view = new DetectorView(this);
-    _figure_view->getScene()->linkPeakModel1(&_peak_collection_model);
-    _figure_view->scale(1, -1);
-    figure_grid->addWidget(_figure_view, 0, 0, 1, 2);
-
-    _figure_scroll = new QScrollBar(this);
-    _figure_scroll->setOrientation(Qt::Horizontal);
-    _figure_scroll->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
-    figure_grid->addWidget(_figure_scroll, 1, 0, 1, 1);
-
-    _figure_spin = new QSpinBox(this);
-    _figure_spin->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-    figure_grid->addWidget(_figure_spin, 1, 1, 1, 1);
+    _detector_widget = new DetectorWidget(false, false, figure_group);
+    _detector_widget->linkPeakModel(&_peak_collection_model);
 
     connect(
-        _figure_scroll, SIGNAL(valueChanged(int)), _figure_view->getScene(),
-        SLOT(slotChangeSelectedFrame(int)));
-
-    connect(_figure_scroll, SIGNAL(valueChanged(int)), _figure_spin, SLOT(setValue(int)));
-
-    connect(_figure_spin, SIGNAL(valueChanged(int)), _figure_scroll, SLOT(setValue(int)));
-
-    connect(
-        _figure_view->getScene(), &DetectorScene::signalSelectedPeakItemChanged, this,
+        _detector_widget->scene(), &DetectorScene::signalSelectedPeakItemChanged, this,
         &SubframeIntegrate::changeSelected);
 
     _right_element->addWidget(figure_group);
@@ -140,10 +118,8 @@ void SubframeIntegrate::refreshPeakVisual()
         graphic->initFromPeakViewWidget(
             peak->peak()->enabled() ? _peak_view_widget->set1 : _peak_view_widget->set2);
     }
-    _figure_view->getScene()->update();
-    _figure_view->getScene()->initIntRegionFromPeakWidget(_peak_view_widget->set1);
-    _figure_view->getScene()->drawPeakitems();
-    _figure_view->fitScene();
+    _detector_widget->scene()->initIntRegionFromPeakWidget(_peak_view_widget->set1);
+    _detector_widget->refresh();
 }
 
 void SubframeIntegrate::setPeakTableUp()
@@ -172,7 +148,6 @@ void SubframeIntegrate::refreshPeakTable()
                            ->experiment()
                            ->getPeakCollection(_int_peak_combo->currentText().toStdString());
 
-    _figure_view->getScene()->clearPeakItems();
     _peak_collection_item.setPeakCollection(_peak_collection);
     _peak_collection_model.setRoot(&_peak_collection_item);
     _peak_table->resizeColumnsToContents();
@@ -205,24 +180,6 @@ void SubframeIntegrate::updateExptList()
     _exp_combo->blockSignals(false);
 }
 
-void SubframeIntegrate::updateDataset(const QString& dataname)
-{
-    nsx::sptrDataSet data = gSession->experimentAt(_exp_combo->currentIndex())
-                                ->experiment()
-                                ->getData(dataname.toStdString());
-
-    _figure_view->getScene()->slotChangeSelectedData(data, _figure_spin->value());
-    //_figure_view->getScene()->setMaxIntensity(3000);
-    emit _figure_view->getScene()->dataChanged();
-    _figure_view->getScene()->update();
-
-    _figure_scroll->setMaximum(data->nFrames() - 1);
-    _figure_scroll->setMinimum(0);
-
-    _figure_spin->setMaximum(data->nFrames() - 1);
-    _figure_spin->setMinimum(0);
-}
-
 void SubframeIntegrate::updateDatasetList()
 {
     _data_combo->blockSignals(true);
@@ -234,9 +191,13 @@ void SubframeIntegrate::updateDatasetList()
     if (!datanames.empty()) {
         _data_combo->addItems(datanames);
         _data_combo->setCurrentText(current_data);
-        updateDataset(_data_combo->currentText());
     }
     _data_combo->blockSignals(false);
+
+    if (!_data_list.empty()) {
+        _detector_widget->updateDatasetList(_data_list);
+        _detector_widget->refresh();
+    }
 }
 
 void SubframeIntegrate::updatePeakList()
@@ -586,4 +547,9 @@ void SubframeIntegrate::toggleUnsafeWidgets()
         _remove_overlaps->setEnabled(false);
         _assign_peak_shapes->setEnabled(false);
     }
+}
+
+DetectorWidget* SubframeIntegrate::detectorWidget()
+{
+    return _detector_widget;
 }
