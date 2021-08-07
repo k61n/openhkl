@@ -59,6 +59,7 @@ SubframeRefiner::SubframeRefiner()
 
     _left_layout = new QVBoxLayout();
 
+    // Tabs to switch betwen tables and detector
     QTabWidget* tab_widget = new QTabWidget(this);
     QWidget* tables_tab = new QWidget(tab_widget);
     QWidget* detector_tab = new QWidget(tab_widget);
@@ -80,11 +81,11 @@ SubframeRefiner::SubframeRefiner()
 
     setInputUp();
     setRefinerFlagsUp();
-    setParametersUp();
     setUpdateUp();
     setPlotUp();
     setPeakViewWidgetUp(_peak_view_widget_1, "View refined_peaks");
     setPeakViewWidgetUp(_peak_view_widget_2, "View unrefined_peaks");
+    refreshAll();
 
     _detector_widget = new DetectorWidget(false, false, false);
     _detector_widget->linkPeakModel(&_unrefined_model, &_refined_model);
@@ -169,11 +170,6 @@ void SubframeRefiner::refreshTables()
     const auto data = expt->getData(_data_combo->currentText().toStdString());
     const auto refiner = expt->refiner();
     _tables_widget->refreshTables(refiner, data.get());
-}
-
-void SubframeRefiner::setParametersUp()
-{
-    updateExptList();
 }
 
 void SubframeRefiner::updateExptList()
@@ -296,7 +292,7 @@ void SubframeRefiner::refine()
             ++n_checked;
         if (params->refine_ki)
             ++n_checked;
-        if (n_checked > 0)
+        if (n_checked > 0) // Check that we have selected at least one parameter set
             _refine_success = expt->refine(peaks, cell, data.get());
 
         _tables_widget->refreshTables(refiner, data.get());

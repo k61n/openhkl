@@ -44,7 +44,7 @@ struct PredictionParameters;
 struct ShapeCollectionParameters;
 }
 
-//! Frame which shows the settings to find peaks
+//! Frame containing interface for predicting peaks from unit cell
 class SubframePredictPeaks : public QWidget {
  public:
     SubframePredictPeaks();

@@ -43,12 +43,11 @@ class PeakTableView;
 class PeakViewWidget;
 class Spoiler;
 
-//! Dialog to refine unit cell and instrument state
+//! Frame containing interface to integrate peaks
 class SubframeIntegrate : public QWidget {
  public:
     SubframeIntegrate();
 
- public:
     //! Refresh all the inputs
     void refreshAll();
     //! detector view

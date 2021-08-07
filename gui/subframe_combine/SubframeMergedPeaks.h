@@ -37,6 +37,7 @@ class LinkedComboBox;
 class MergedData;
 class SXPlot;
 
+//! Frame containing interface to merge peak collections and compute quality staticstics
 class SubframeMergedPeaks : public QWidget {
  public:
     SubframeMergedPeaks();
@@ -50,14 +51,13 @@ class SubframeMergedPeaks : public QWidget {
     void setMergeParameters();
     //! Set up the GUI size policies
     void setSizePolicies();
-    //! Set the experiments
+    //! Set up widget for resolution shells
     void setDShellUp();
-    //! Update the peak list
+    //! Set up the widget for merged represenation
     void setMergedUp();
-    //! Update the peak list
+    //! Set up the widget for the unmerged representation
     void setUnmergedUp();
 
- private:
     //! Refresh the QComboBox for the experiments
     void refreshExperimentList();
     //! Refresh the QComboBox for the found peaks
@@ -69,26 +69,24 @@ class SubframeMergedPeaks : public QWidget {
     //! Disable unsafe widgets if no data loaded
     void toggleUnsafeWidgets();
 
- private:
-    //! Refresh the tables of the visual
+    //! Refresh all tables
     void refreshTables();
-    //! Refresh the tables of the visual
+    //! Refresh the resolution shell table
     void refreshDShellTable();
-    //! Refresh the tables of the visual
+    //! Refresh the merged representation table
     void refreshMergedTable();
-    //! Refresh the tables of the visual
+    //! Refresh the unmerged representation table
     void refreshUnmergedTable();
-    //! Refresh the tables of the visual
+    //! Refresh the graph
     void refreshGraphTable(int column);
 
-    //! Save the statistics seen in the Dshell tab
+    //! Save the resolution shell statistics
     void saveStatistics();
     //! Save the merged peaks
     void saveMergedPeaks();
     //! Save the unmerged peaks
     void saveUnmergedPeaks();
 
- private:
     //! The loaded data list
     std::vector<nsx::sptrDataSet> _data_list;
     //! The loaded peak list
@@ -102,7 +100,6 @@ class SubframeMergedPeaks : public QWidget {
     //! The peak exporter
     nsx::PeakExporter exporter;
 
- private:
     QSizePolicy* _size_policy_widgets;
     QSizePolicy* _size_policy_box;
     QSizePolicy* _size_policy_right;

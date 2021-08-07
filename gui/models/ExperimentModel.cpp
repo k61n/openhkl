@@ -22,7 +22,7 @@ ExperimentModel::ExperimentModel(QObject* parent) : QAbstractTableModel(parent) 
 
 int ExperimentModel::columnCount(const QModelIndex& /*parent*/) const
 {
-    return 6;
+    return 5;
 }
 
 int ExperimentModel::rowCount(const QModelIndex& /*parent*/) const

@@ -39,7 +39,7 @@ class PeakItemGraphic;
 class SpoilerCheck;
 class PeakViewWidget;
 
-//! Dialog to filter a peak list
+//! Frame containing interface for filtering peak collections
 class SubframeFilterPeaks : public QWidget {
  public:
     SubframeFilterPeaks();

@@ -26,6 +26,7 @@
 #include <QVBoxLayout>
 #include <QWidget>
 
+//! Frame containing interface to create, save and load experiments
 class SubframeHome : public QWidget {
  public:
     //! Default constructor

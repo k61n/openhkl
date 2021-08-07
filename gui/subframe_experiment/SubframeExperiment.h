@@ -23,6 +23,7 @@ class DetectorWidget;
 class PlotPanel;
 class PropertyPanel;
 
+//! Frame containing information on all aspects of the experiment
 class SubframeExperiment : public QWidget {
  public:
     SubframeExperiment();

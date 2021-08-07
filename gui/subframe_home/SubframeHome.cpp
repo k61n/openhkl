@@ -109,7 +109,7 @@ void SubframeHome::_setRightLayout(QHBoxLayout* main_layout)
 
     _save_current = new QPushButton();
     _save_current->setIcon(QIcon(":/images/save.svg"));
-    _save_current->setText("Save current");
+    _save_current->setText("Save current experiment");
     _save_current->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
     tooltip = "Save current experiment to .nsx (HDF5) file";
     _save_current->setToolTip(tooltip);
@@ -117,7 +117,7 @@ void SubframeHome::_setRightLayout(QHBoxLayout* main_layout)
 
     _save_all = new QPushButton();
     _save_all->setIcon(QIcon(":/images/save.svg"));
-    _save_all->setText("Save all");
+    _save_all->setText("Save all experiments");
     _save_all->setMinimumWidth(_save_current->sizeHint().width());
     _save_all->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
     tooltip = "Save all experiments to .nsx (HDF5) files";

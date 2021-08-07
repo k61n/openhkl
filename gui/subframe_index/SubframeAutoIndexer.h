@@ -34,7 +34,7 @@ class QSpinBox;
 class QCheckBox;
 class QDoubleSpinBox;
 
-//! Frame which shows the settings for the AutoIndexer
+//! Frame containing interface to autoindex peak collections
 class SubframeAutoIndexer : public QWidget {
  public:
     SubframeAutoIndexer();
@@ -56,7 +56,6 @@ class SubframeAutoIndexer : public QWidget {
     //! Set the peak table view up
     void setSolutionTableUp();
 
- private:
     //! Build the table of solution
     void buildSolutionsTable();
     //! Set the experiments
@@ -80,7 +79,6 @@ class SubframeAutoIndexer : public QWidget {
     //! Disable widgets that are unsafe without relevant data
     void toggleUnsafeWidgets();
 
- private:
     //! The model for the found peaks
     nsx::PeakCollection _peak_collection;
     //! The temporary collection
@@ -93,7 +91,6 @@ class SubframeAutoIndexer : public QWidget {
 
     nsx::sptrUnitCell _selected_unit_cell;
 
- private:
     QVBoxLayout* _left_layout;
     QSplitter* _right_element;
 

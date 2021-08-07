@@ -38,7 +38,7 @@ class PeakItemGraphic;
 class PeakTableView;
 class PeakViewWidget;
 
-//! Frame which shows the settings to find peaks
+//! Frame containing interface to find peaks from detector images
 class SubframeFindPeaks : public QWidget {
  public:
     SubframeFindPeaks();
@@ -84,7 +84,6 @@ class SubframeFindPeaks : public QWidget {
     //! Disable widgets that are unsafe without relevant data
     void toggleUnsafeWidgets();
 
- private:
     //! Update the datalist as an experiment was changed
     void setExperimentsUp();
 
@@ -103,7 +102,6 @@ class SubframeFindPeaks : public QWidget {
     //! Set the integration parameters
     void setIntegrationParameters();
 
- private:
     //! Convolution parameter map
     std::map<std::string, double> convolutionParameters();
 
