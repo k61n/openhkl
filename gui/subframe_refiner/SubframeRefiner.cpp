@@ -424,6 +424,9 @@ void SubframeRefiner::updatePeaks()
 {
     auto* expt = gSession->experimentAt(_exp_combo->currentIndex())->experiment();
 
+    if (_predicted_combo->count() == 0)
+        return;
+
     // Peaks centres are refined in-place
     _refined_peaks = expt->getPeakCollection(_predicted_combo->currentText().toStdString());
     _refined_collection_item.setPeakCollection(_refined_peaks);

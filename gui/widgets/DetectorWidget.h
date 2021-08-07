@@ -33,30 +33,49 @@ class DetectorWidget : public QGridLayout {
  public:
     DetectorWidget(bool mode, bool cursor, bool slider, QWidget* parent = nullptr);
 
+    //! Synchronise intensity sliders and intensities across instances
+    void syncIntensitySliders();
+    //! Update the DataSet combo
     void updateDatasetList(const std::vector<nsx::sptrDataSet>& data_list);
+    //! Refresh the DetectorScene
     void refresh();
+    //! Link the detector scene to one or two peak models
     void linkPeakModel(PeakCollectionModel* model1, PeakCollectionModel* model2 = nullptr);
+    //! Return the current DataSet
     nsx::sptrDataSet currentData();
+    //! Switch the Detectorscene between coordinate types
     void changeView(int option);
 
+    //! Return the DetectorScene
     DetectorScene* scene();
+    //! Return the frame QSpinBox
     QSpinBox* spin();
+    //! Return the frame QScrollBar
     QScrollBar* scroll();
+    //! Return the DataSet QComboBox
     LinkedComboBox* dataCombo();
+    //! Return the interaction mode QComboBox
     QComboBox* modeCombo();
+    //! Return the cursor mode QComboBox
     QComboBox* cursorCombo();
+    //! Return the maximum intensity slider
     QSlider* slider();
+    //! Whether this instance has an intensity slider
+    bool hasSlider();
 
  private:
     DetectorView* _detector_view;
     QSpinBox* _spin;
     QScrollBar* _scroll;
-    LinkedComboBox* _data_combo = nullptr;
+    LinkedComboBox* _data_combo;
     QComboBox* _mode_combo = nullptr;
     QComboBox* _cursor_combo = nullptr;
     QSlider* _intensity_slider = nullptr;
 
     std::vector<nsx::sptrDataSet> _data_list;
+    bool _has_slider = false;
+
+    static QList<DetectorWidget*> _detector_widgets;
 };
 
 #endif // NSX_GUI_UTILITY_DETECTORWIDGET_H

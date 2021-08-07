@@ -29,6 +29,8 @@
 #include <QSpinBox>
 #include <QVBoxLayout>
 
+QList<DetectorWidget*> DetectorWidget::_detector_widgets = QList<DetectorWidget*>();
+
 DetectorWidget::DetectorWidget(bool mode, bool cursor, bool slider, QWidget* parent)
     : QGridLayout(parent)
 {
@@ -40,6 +42,7 @@ DetectorWidget::DetectorWidget(bool mode, bool cursor, bool slider, QWidget* par
     top_grid->addWidget(_detector_view, 0, 0, 1, 1);
 
     if (slider) {
+        _has_slider = true;
         _intensity_slider = new QSlider(Qt::Vertical);
         _intensity_slider->setMouseTracking(true);
         _intensity_slider->setMinimum(1);
@@ -101,6 +104,30 @@ DetectorWidget::DetectorWidget(bool mode, bool cursor, bool slider, QWidget* par
         connect(
             _cursor_combo, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
             [=](int i) { _detector_view->getScene()->changeCursorMode(i); });
+    }
+
+    syncIntensitySliders();
+    _detector_widgets.push_back(this);
+}
+
+void DetectorWidget::syncIntensitySliders()
+{
+    if (_has_slider) {
+        for (auto* widget : _detector_widgets) {
+            connect(
+                _intensity_slider, &QSlider::valueChanged, widget->scene(),
+                &DetectorScene::setMaxIntensity);
+            if (widget->hasSlider()) {
+                connect(
+                    widget->slider(), &QSlider::valueChanged, scene(),
+                    &DetectorScene::setMaxIntensity);
+                connect(_intensity_slider, &QSlider::valueChanged, widget->slider(),
+                        &QSlider::setValue);
+                connect(widget->slider(), &QSlider::valueChanged, _intensity_slider,
+                        &QSlider::setValue);
+
+            }
+        }
     }
 }
 
@@ -200,4 +227,9 @@ QComboBox* DetectorWidget::cursorCombo()
 QSlider* DetectorWidget::slider()
 {
     return _intensity_slider;
+}
+
+bool DetectorWidget::hasSlider()
+{
+    return _has_slider;
 }

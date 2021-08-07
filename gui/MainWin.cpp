@@ -96,44 +96,6 @@ MainWin::MainWin()
     _layout_stack->addWidget(merger);
     _layout_stack->setCurrentIndex(0);
 
-    // set initial max. intensities
-    int initial_intensity = experiment->detectorWidget()->slider()->value();
-    finder->detectorWidget()->scene()->setMaxIntensity(initial_intensity);
-    filter->detectorWidget()->scene()->setMaxIntensity(initial_intensity);
-    predictor->detectorWidget()->scene()->setMaxIntensity(initial_intensity);
-    integrator->detectorWidget()->scene()->setMaxIntensity(initial_intensity);
-    detector_window->detectorWidget()->scene()->setMaxIntensity(initial_intensity);
-
-    std::vector<DetectorScene*> scenes = {
-        experiment->detectorWidget()->scene(),
-        detector_window->detectorWidget()->scene(),
-        finder->detectorWidget()->scene(),
-        filter->detectorWidget()->scene(),
-        predictor->detectorWidget()->scene(),
-        integrator->detectorWidget()->scene()};
-    std::vector<QSlider*> sliders = {
-        experiment->detectorWidget()->slider(),
-        detector_window->detectorWidget()->slider()};
-
-    connect (
-        experiment->detectorWidget()->slider(), &QSlider::valueChanged,
-        detector_window->detectorWidget()->slider(), &QSlider::setValue);
-    connect (
-        detector_window->detectorWidget()->slider(), &QSlider::valueChanged,
-        experiment->detectorWidget()->slider(), &QSlider::setValue);
-
-    // // sync the max. intensity slider with all other image plots
-    for (auto slider1 : sliders) {
-        for (auto slider2 : sliders) {
-            if (!(slider1 == slider2))
-                connect(slider1, &QSlider::valueChanged, slider2, &QSlider::setValue);
-        }
-    }
-    for (auto* slider : sliders) {
-        for (auto* scene : scenes)
-            connect(slider, &QSlider::valueChanged, scene, &DetectorScene::setMaxIntensity);
-    }
-
     main_layout->addWidget(_layout_stack);
     main_widget->setLayout(main_layout);
     setCentralWidget(main_widget);
