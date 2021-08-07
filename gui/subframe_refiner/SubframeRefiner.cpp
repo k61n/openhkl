@@ -34,6 +34,7 @@
 #include "gui/utility/SideBar.h"
 #include "gui/utility/Spoiler.h"
 #include "gui/widgets/DetectorWidget.h"
+#include "gui/widgets/PeakViewWidget.h"
 #include "gui/widgets/PlotCheckBox.h"
 
 #include <QFileInfo>
@@ -48,6 +49,10 @@
 #include <sstream>
 
 SubframeRefiner::SubframeRefiner()
+    : _refined_collection_item(),
+      _refined_model(),
+      _unrefined_collection_item(),
+      _unrefined_model()
 {
     auto main_layout = new QHBoxLayout(this);
     _right_element = new QSplitter(Qt::Vertical, this);
@@ -67,14 +72,23 @@ SubframeRefiner::SubframeRefiner()
     table_layout->addWidget(_tables_widget);
     tables_tab->setLayout(table_layout);
 
-    _detector_widget = new DetectorWidget(false, false, false);
-    detector_tab->setLayout(_detector_widget);
+    _peak_view_widget_1 = new PeakViewWidget("Valid peaks", "Invalid Peaks");
+    _peak_view_widget_2 = new PeakViewWidget("Valid peaks", "Invalid Peaks");
+    _peak_view_widget_2->set1.setColor(Qt::darkGreen);
+    _peak_view_widget_2->set2.setColor(Qt::darkRed);
+    _peak_view_widget_2->set1.setIntegrationRegionColors(Qt::darkGreen, Qt::darkYellow, 0.5);
 
     setInputUp();
     setRefinerFlagsUp();
     setParametersUp();
-    setPlotUp();
     setUpdateUp();
+    setPlotUp();
+    setPeakViewWidgetUp(_peak_view_widget_1, "View refined_peaks");
+    setPeakViewWidgetUp(_peak_view_widget_2, "View unrefined_peaks");
+
+    _detector_widget = new DetectorWidget(false, false, false);
+    _detector_widget->linkPeakModel(&_unrefined_model, &_refined_model);
+    detector_tab->setLayout(_detector_widget);
 
     _right_element->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     _right_element->addWidget(tab_widget);
@@ -179,7 +193,9 @@ void SubframeRefiner::updateExptList()
     updateDatasetList();
     updatePeakList();
     updateUnitCellList();
+    updatePeaks();
     grabRefinerParameters();
+    refreshPeakVisual();
 }
 
 void SubframeRefiner::updateDatasetList()
@@ -255,10 +271,9 @@ void SubframeRefiner::refine()
 {
     try {
         auto expt = gSession->experimentAt(_exp_combo->currentIndex())->experiment();
+        auto* peaks = expt->getPeakCollection(_peak_combo->currentText().toStdString());
         const auto data = expt->getData(_data_combo->currentText().toStdString());
-        const auto* peaks = expt->getPeakCollection(_peak_combo->currentText().toStdString());
         auto* cell = expt->getUnitCell(_cell_combo->currentText().toStdString());
-        const auto peak_list = peaks->getPeakList();
         auto states = data->instrumentStates();
         auto refiner = expt->refiner();
         auto* params = refiner->parameters();
@@ -409,6 +424,67 @@ void SubframeRefiner::setUpdateUp()
     connect(_update_button, &QPushButton::clicked, this, &SubframeRefiner::updatePredictions);
 }
 
+void SubframeRefiner::updatePeaks()
+{
+    auto* expt = gSession->experimentAt(_exp_combo->currentIndex())->experiment();
+
+    // Peaks centres are refined in-place
+    _refined_peaks = expt->getPeakCollection(_predicted_combo->currentText().toStdString());
+    _refined_collection_item.setPeakCollection(_refined_peaks);
+    _refined_model.setRoot(&_refined_collection_item);
+
+    _unrefined_collection_item.setPeakCollection(&_unrefined_peaks);
+    _unrefined_model.setRoot(&_unrefined_collection_item);
+}
+
+void SubframeRefiner::setPeakViewWidgetUp(PeakViewWidget* peak_widget, QString name)
+{
+    Spoiler* preview_spoiler = new Spoiler(name);
+    preview_spoiler->setContentLayout(*peak_widget, true);
+    _left_layout->addWidget(preview_spoiler);
+    preview_spoiler->setExpanded(false);
+
+    connect(
+        peak_widget, &PeakViewWidget::settingsChanged, this, &SubframeRefiner::refreshPeakVisual);
+}
+
+void SubframeRefiner::refreshPeakVisual()
+{
+    _detector_widget->scene()->initIntRegionFromPeakWidget(_peak_view_widget_1->set1);
+    _detector_widget->scene()->initIntRegionFromPeakWidget(_peak_view_widget_2->set1, true);
+    _detector_widget->refresh();
+
+    if (_refined_collection_item.childCount() == 0)
+        return;
+
+    for (int i = 0; i < _refined_collection_item.childCount(); i++) {
+        PeakItem* peak = _refined_collection_item.peakItemAt(i);
+        auto graphic = peak->peakGraphic();
+
+        graphic->showLabel(false);
+        graphic->setColor(Qt::transparent);
+        graphic->initFromPeakViewWidget(
+            peak->peak()->enabled() ? _peak_view_widget_1->set1 : _peak_view_widget_1->set2);
+    }
+
+    if (!(_unrefined_collection_item.childCount() == 0)) {
+        for (int i = 0; i < _unrefined_collection_item.childCount(); i++) {
+            PeakItem* peak = _unrefined_collection_item.peakItemAt(i);
+            auto graphic = peak->peakGraphic();
+
+            graphic->showLabel(false);
+            graphic->setColor(Qt::transparent);
+            graphic->initFromPeakViewWidget(
+                peak->peak()->enabled() ? _peak_view_widget_2->set1 : _peak_view_widget_2->set2);
+        }
+    }
+
+    _detector_widget->scene()->initIntRegionFromPeakWidget(_peak_view_widget_1->set1);
+    _detector_widget->scene()->initIntRegionFromPeakWidget(_peak_view_widget_2->set1, true);
+    _detector_widget->refresh();
+    _detector_widget->scene()->drawPeakitems();
+}
+
 void SubframeRefiner::grabRefinerParameters()
 {
     auto* params =
@@ -445,8 +521,6 @@ void SubframeRefiner::setRefinerParameters()
         if (key == _residual_combo->currentText().toStdString())
             params->residual_type = val;
     }
-    // params->residual_type =
-    //     _residual_strings.find(_residual_combo->currentText().toStdString())->second;
 }
 
 void SubframeRefiner::updatePredictedList()
@@ -467,9 +541,15 @@ void SubframeRefiner::updatePredictedList()
 void SubframeRefiner::updatePredictions()
 {
     if (_refine_success) {
+        // A local copy to compare positions pre- and post-refinement
+        _unrefined_peaks.reset();
+        _unrefined_peaks.populate(_refined_peaks->getPeakList());
+        updatePeaks();
+
         auto* expt = gSession->experimentAt(_exp_combo->currentIndex())->experiment();
         auto* peaks = expt->getPeakCollection(_predicted_combo->currentText().toStdString());
         expt->updatePredictions(peaks);
+        refreshPeakVisual();
         gGui->detector_window->refreshAll();
     } else {
         QMessageBox::critical(this, "Error", "Cannot update predictions: refinement failed");

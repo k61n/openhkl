@@ -218,8 +218,7 @@ void DetectorWindow::setPlotUp(PeakViewWidget* peak_widget, QString name)
 
 void DetectorWindow::refreshDetectorView()
 {
-    if (_peak_collection_item_1.childCount()
-        == 0) // #nsxAudit Really? what if _peak_collection_item_2.childCount() is not empty?
+    if (_peak_collection_item_1.childCount() == 0)
         return;
 
     for (int i = 0; i < _peak_collection_item_1.childCount(); i++) {
@@ -232,14 +231,16 @@ void DetectorWindow::refreshDetectorView()
             peak->peak()->enabled() ? _peak_view_widget_1->set1 : _peak_view_widget_1->set2);
     }
 
-    for (int i = 0; i < _peak_collection_item_2.childCount(); i++) {
-        PeakItem* peak = _peak_collection_item_2.peakItemAt(i);
-        auto graphic = peak->peakGraphic();
+    if (!(_peak_collection_item_2.childCount() == 0)) {
+        for (int i = 0; i < _peak_collection_item_2.childCount(); i++) {
+            PeakItem* peak = _peak_collection_item_2.peakItemAt(i);
+            auto graphic = peak->peakGraphic();
 
-        graphic->showLabel(false);
-        graphic->setColor(Qt::transparent);
-        graphic->initFromPeakViewWidget(
-            peak->peak()->enabled() ? _peak_view_widget_2->set1 : _peak_view_widget_2->set2);
+            graphic->showLabel(false);
+            graphic->setColor(Qt::transparent);
+            graphic->initFromPeakViewWidget(
+                peak->peak()->enabled() ? _peak_view_widget_2->set1 : _peak_view_widget_2->set2);
+        }
     }
 
     _detector_widget->scene()->initIntRegionFromPeakWidget(_peak_view_widget_1->set1);

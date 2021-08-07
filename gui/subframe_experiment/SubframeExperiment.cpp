@@ -16,7 +16,6 @@
 
 #include "gui/models/Project.h"
 #include "gui/models/Session.h"
-#include "gui/subframe_experiment/ImagePanel.h"
 #include "gui/subframe_experiment/LoggerPanel.h"
 #include "gui/subframe_experiment/PlotPanel.h"
 #include "gui/subframe_experiment/PropertyPanel.h"

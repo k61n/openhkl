@@ -17,7 +17,10 @@
 #define NSX_GUI_SUBFRAME_REFINER_SUBFRAMEREFINER_H
 
 #include "core/algo/Refiner.h"
+#include "core/shape/PeakCollection.h"
 #include "core/shape/ShapeCollection.h"
+#include "gui/items/PeakCollectionItem.h"
+#include "gui/models/PeakCollectionModel.h"
 
 #include <QCheckBox>
 #include <QComboBox>
@@ -41,6 +44,7 @@ class LinkedComboBox;
 class RefinerTables;
 class Spoiler;
 class SXPlot;
+class PeakViewWidget;
 class PlotCheckBox;
 
 //! Dialog to refine unit cell and instrument state
@@ -61,8 +65,13 @@ class SubframeRefiner : public QWidget {
     void setRefinerFlagsUp();
     //! Update the predicted peaks
     void setUpdateUp();
+    //! Set up peak collections and models for DetectorWidget
+    void updatePeaks();
+    //! Set up PeakViewWidgets
+    void setPeakViewWidgetUp(PeakViewWidget* peak_widget, QString name);
+    //! Refresh the detector scene
+    void refreshPeakVisual();
 
- private:
     //! Grab the refiner parameters
     void grabRefinerParameters();
     //! Set the refiner parameters
@@ -132,11 +141,23 @@ class SubframeRefiner : public QWidget {
     QCheckBox* _refineDetectorPosition;
     QCheckBox* _refineKi;
 
+    // Peak view widgets
+    PeakViewWidget* _peak_view_widget_1;
+    PeakViewWidget* _peak_view_widget_2;
+
     // plot widget
     Spoiler* _plot_box;
 
     // Detector scene
     DetectorWidget* _detector_widget;
+
+    nsx::PeakCollection* _refined_peaks;
+    PeakCollectionItem _refined_collection_item;
+    PeakCollectionModel _refined_model;
+
+    nsx::PeakCollection _unrefined_peaks;
+    PeakCollectionItem _unrefined_collection_item;
+    PeakCollectionModel _unrefined_model;
 
     // update prediction
     LinkedComboBox* _predicted_combo;
