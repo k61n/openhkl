@@ -116,9 +116,12 @@ void SubframeRefiner::setInputUp()
     _peak_combo = f.addLinkedCombo(ComboType::FoundPeaks, "Peaks");
     _data_combo = f.addLinkedCombo(ComboType::DataSet, "Data set");
     _cell_combo = f.addLinkedCombo(ComboType::UnitCell, "Unit cell");
+    _batch_cell_check = f.addCheckBox(
+        "Use refined cells", "Use unit cells generated per batch during previous refinement", 1);
     _n_batches_spin = f.addSpinBox(
         "Number of batches", "Number of batches to equally divide frames into for refinement");
 
+    _batch_cell_check->setChecked(false);
     _n_batches_spin->setMinimum(1);
     _n_batches_spin->setMaximum(1000); // updated on setBatchesUp
 
@@ -131,6 +134,8 @@ void SubframeRefiner::setInputUp()
     connect(
         _exp_combo, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this,
         &SubframeRefiner::updatePeakList);
+    connect(
+        _batch_cell_check, &QCheckBox::stateChanged, this, &SubframeRefiner::toggleUnsafeWidgets);
 
     _left_layout->addWidget(input_box);
 }
@@ -293,13 +298,18 @@ void SubframeRefiner::refine()
             ++n_checked;
         if (params->refine_ki)
             ++n_checked;
-        if (n_checked > 0) // Check that we have selected at least one parameter set
-            _refine_success = expt->refine(peaks, cell, data.get());
+        if (n_checked > 0) { // Check that we have selected at least one parameter set
+            if (_batch_cell_check->isChecked())
+                _refine_success = expt->refine(peaks, data.get());
+            else
+                _refine_success = expt->refine(peaks, data.get(), cell);
+        }
 
         _tables_widget->refreshTables(refiner, data.get());
         auto cell_list = gSession->experimentAt(_exp_combo->currentIndex())->getUnitCellNames();
         gGui->sentinel->setLinkedComboList(ComboType::UnitCell, cell_list);
         refreshPlot();
+        toggleUnsafeWidgets();
     } catch (const std::exception& ex) {
         QMessageBox::critical(this, "Error", QString(ex.what()));
     }
@@ -566,11 +576,21 @@ QList<PlotCheckBox*> SubframeRefiner::plotCheckBoxes() const
 void SubframeRefiner::toggleUnsafeWidgets()
 {
     _refine_button->setEnabled(true);
+    _batch_cell_check->setEnabled(false);
+    _cell_combo->setEnabled(true);
     if (!(_predicted_combo->count() == 0))
         _update_button->setEnabled(true);
     if (_exp_combo->count() == 0 || _data_combo->count() == 0 || _peak_combo->count() == 0
         || _cell_combo->count() == 0) {
         _refine_button->setEnabled(false);
         _update_button->setEnabled(false);
+    } else {
+        const auto expt = gSession->experimentAt(_exp_combo->currentIndex())->experiment();
+        if (expt->refiner()->firstRefine())
+            _batch_cell_check->setChecked(false);
+        else
+            _batch_cell_check->setEnabled(true);
+        if (_batch_cell_check->isChecked())
+            _cell_combo->setEnabled(false);
     }
 }
