@@ -16,8 +16,7 @@
 #include <memory>
 #include <stdexcept>
 #include <utility>
-#include <filesystem>
-#include <chrono>
+#include <cstdio> // tmpnam, L_tmpnam, rename
 #include <string>
 
 #include "base/utils/Logger.h"
@@ -113,9 +112,6 @@ void Experiment::saveToFile(const std::string& path) const
           to the original given path.
     */
 
-    namespace fs = std::filesystem;
-    namespace ch = std::chrono;
-
     bool overwrite_datafile = false;
     for (const auto& [ds_nm, ds_ptr] : *_data_handler->getDataMap()) {
         const std::string nsx_filepath = ds_ptr->reader()->NSXfilepath();
@@ -127,11 +123,10 @@ void Experiment::saveToFile(const std::string& path) const
 
     std::string filepath {path};
     if (overwrite_datafile) {
-        const std::time_t epoch_time = ch::system_clock::to_time_t(ch::system_clock::now());
-        const fs::path tmp_path = fs::temp_directory_path();
-        const std::string tmp_fname {"$__" + name() + std::to_string(epoch_time) + ".nsx.tmp"};
-        const fs::path tmp_filepath = tmp_path / tmp_fname;
-        filepath = tmp_filepath.string();
+        // create a filename for the temporary datafile
+        char tmp_fname[L_tmpnam];
+        tmpnam(tmp_fname);
+        filepath = std::string(tmp_fname);
         nsxlog(Level::Debug, "Saving experiment to temporary file '"
                + filepath + "'");
     }
@@ -157,9 +152,14 @@ void Experiment::saveToFile(const std::string& path) const
 
     if (overwrite_datafile) {
         // rename the temporary datafile to the given filename
-        fs::rename(filepath, path);
-        nsxlog(Level::Debug, "Renamed the temporary file '" + filepath + "' "
-           + "to '" + path + "'");
+        const int rename_success = rename(filepath.c_str(), path.c_str());
+        if (rename_success == 0) {
+            nsxlog(Level::Debug, "Renamed the temporary file '" + filepath + "' "
+                   + "to '" + path + "'");
+        } else {
+            nsxlog(Level::Error, "Could not rename the temporary file '"
+                   + filepath + "' to '" + path + "'. Data might be lost.");
+        }
     }
 }
 
