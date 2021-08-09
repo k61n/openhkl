@@ -18,6 +18,7 @@
 #include "core/shape/PeakCollection.h"
 #include "core/shape/PeakFilter.h"
 #include "gui/MainWin.h" // gGui
+#include "gui/connect/Sentinel.h"
 #include "gui/detector_window/DetectorWindow.h"
 #include "gui/dialogs/ListNameDialog.h"
 #include "gui/frames/ProgressView.h"
@@ -296,6 +297,8 @@ void SubframeRefiner::refine()
             _refine_success = expt->refine(peaks, cell, data.get());
 
         _tables_widget->refreshTables(refiner, data.get());
+        auto cell_list = gSession->experimentAt(_exp_combo->currentIndex())->getUnitCellNames();
+        gGui->sentinel->setLinkedComboList(ComboType::UnitCell, cell_list);
         refreshPlot();
     } catch (const std::exception& ex) {
         QMessageBox::critical(this, "Error", QString(ex.what()));

@@ -84,20 +84,21 @@ void Refiner::makeBatches(
 
     std::vector<const nsx::Peak3D*> peaks_subset;
 
-    int n_batch = 0;
     for (size_t i = 0; i < filtered_peaks.size(); ++i) {
         peaks_subset.push_back(filtered_peaks[i]);
 
         if (i + 1.1 >= (current_batch + 1) * batch_size) {
 
             // Make a new unit cell for this batch
-            std::ostringstream oss;
-            oss << "batch" << ++n_batch;
-            std::string name = oss.str();
-            _cell_handler->addUnitCell(name, _unrefined_cell);
-
-            RefinementBatch b(states, _cell_handler->getUnitCell(name), peaks_subset);
+            std::unique_ptr<UnitCell> new_cell = std::make_unique<UnitCell>(_unrefined_cell);
+            RefinementBatch b(states, new_cell.get(), peaks_subset);
             b.setResidualType(_params->residual_type);
+
+            std::ostringstream oss;
+            oss << "frames " << b.name();
+            std::string name = oss.str();
+            _cell_handler->addUnitCell(name, new_cell);
+
             _batches.emplace_back(std::move(b));
             peaks_subset.clear();
             ++current_batch;

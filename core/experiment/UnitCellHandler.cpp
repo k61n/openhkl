@@ -44,6 +44,13 @@ void UnitCellHandler::addUnitCell(const std::string& name, const UnitCell& unit_
     _unit_cells.insert_or_assign(name, std::move(ptr));
 }
 
+void UnitCellHandler::addUnitCell(const std::string& name, std::unique_ptr<UnitCell>& unit_cell)
+{
+    nsxlog(Level::Info, "UnitCellHandler::addUnitCell: '", name, "': ", unit_cell->toString());
+    unit_cell->setName(name);
+    _unit_cells.insert_or_assign(name, std::move(unit_cell));
+}
+
 void UnitCellHandler::addUnitCell(
     const std::string& name, double a, double b, double c, double alpha, double beta, double gamma)
 {

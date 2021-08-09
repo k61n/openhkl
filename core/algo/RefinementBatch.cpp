@@ -14,6 +14,7 @@
 
 #include <algorithm>
 #include <iostream>
+#include <iomanip>
 #include <limits>
 
 #include "base/fit/Minimizer.h"
@@ -329,7 +330,8 @@ bool RefinementBatch::onlyContains(double f) const
 std::string RefinementBatch::name() const
 {
     std::ostringstream oss;
-    oss << int(_fmin) << "-" << int(_fmax);
+    oss << std::setw(3) << std::setfill('0') << int(_fmin) << " - "
+        << std::setw(3) << std::setfill('0') << int(_fmax - 2.0);
     return oss.str();
 }
 

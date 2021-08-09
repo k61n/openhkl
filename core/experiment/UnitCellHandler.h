@@ -43,8 +43,10 @@ class UnitCellHandler {
  public: // Handling unit cells
     //! Get a pointer to the map of unit cells
     const CellMap* getCellMap() const;
-    //! Add some data to the experiment
+    //! Add a unit cell to the experiment
     void addUnitCell(const std::string& name, const UnitCell& unit_cell);
+    //! Move a unique pointer to a unit cell to the experiment
+    void addUnitCell(const std::string& name, std::unique_ptr<UnitCell>& unit_cell);
     //! Add a unit cell to the experiment via cell parameters (skip autoindexing step)
     void addUnitCell(
         const std::string& name, double a, double b, double c, double alpha, double beta,
