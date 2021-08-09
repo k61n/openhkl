@@ -23,10 +23,7 @@
 
 #include <QColor>
 #include <QTextEdit>
-#include <QVBoxLayout>
-#include <QHBoxLayout>
-#include <QLabel>
-#include <QPushButton>
+
 
 namespace {
 
@@ -43,47 +40,26 @@ std::string datetime()
 } // namespace
 
 LogWidget::LogWidget(QWidget* parent):
-    QWidget(parent)
+    QTextEdit(parent)
 {
     // Text display
-    _textDisplay = new QTextEdit();
-    _textDisplay->setReadOnly(true);
-    _textDisplay->setAcceptRichText(false);
-    _textDisplay->setLineWrapColumnOrWidth(_wrapColumn);
-    _textDisplay->setFontFamily(QString::fromStdString(_fontFamily));
-    _textDisplay->setFontPointSize(_fontPointSize);
+    setReadOnly(true);
+    setAcceptRichText(false);
+    setLineWrapColumnOrWidth(_wrapColumn);
+    setFontFamily(QString::fromStdString(_fontFamily));
+    setFontPointSize(_fontPointSize);
     // add a prologue
-    _textDisplay->setText(
+    setText(
         QString::fromStdString("-*- " + _initText + " [" + datetime() + "] -*-"));
-
-    // save button
-    _saveButton = new QPushButton("Save");
-
-    // clear button
-    _clearButton = new QPushButton("Clear");
-
-    // button layout
-    QHBoxLayout* button_hlay = new QHBoxLayout();
-    button_hlay->addWidget(_saveButton);
-    button_hlay->addWidget(_clearButton);
-
-    // widget layout
-    QVBoxLayout* widget_vlay = new QVBoxLayout();
-    widget_vlay->addLayout(button_hlay);
-    widget_vlay->addWidget(_textDisplay);
-
-    setLayout(widget_vlay);
 
     _connectUI();
 }
 
 void LogWidget::_connectUI()
 {
-    connect(_saveButton, &QPushButton::clicked, this, &LogWidget::saveText);
-    connect(_clearButton, &QPushButton::clicked, this, &LogWidget::clearText);
-
     // register a method as receiver of log messages
-    _receiver_handle = nsx::Logger::instance().Msg.addReceiver(&LogWidget::show, this);
+    _receiver_handle = nsx::Logger::instance().Msg.addReceiver
+        (&LogWidget::showMessage, this);
 }
 
 LogWidget::~LogWidget()
@@ -92,9 +68,9 @@ LogWidget::~LogWidget()
     nsx::Logger::instance().Msg.discardReceiver(_receiver_handle);
 }
 
-void LogWidget::clearText() const
+void LogWidget::clearText()
 {
-    _textDisplay->clear();
+    clear();
 }
 
 void LogWidget::saveText() const
@@ -102,12 +78,12 @@ void LogWidget::saveText() const
     // TODO: Implement this
 }
 
-std::string LogWidget::text() const
+std::string LogWidget::textStr() const
 {
-    return (_textDisplay->toPlainText()).toStdString();
+    return toPlainText().toStdString();
 }
 
-void LogWidget::show(const nsx::LogMessage& message)
+void LogWidget::showMessage(const nsx::LogMessage& message)
 {
     QColor text_color {_infoColor};  // default text color
 
@@ -126,6 +102,6 @@ void LogWidget::show(const nsx::LogMessage& message)
         break;
     };
 
-    _textDisplay->setTextColor(text_color);
-    _textDisplay->append(QString::fromStdString(message.body));
+    setTextColor(text_color);
+    append(QString::fromStdString(message.body));
 }

@@ -18,6 +18,7 @@
 #include <QDialog>
 
 class LogWidget;
+class QPushButton;
 
 //! Modeless dialog to display log messages
 class LogWindow : public QDialog {
@@ -26,6 +27,10 @@ public:
 
 private:
     LogWidget* _log_widget;
+    QPushButton* _saveButton;
+    QPushButton* _clearButton;
+
+    void _connectUI();
 };
 
 #endif // NSX_GUI_WINDOWS_LOGWINDOW_H

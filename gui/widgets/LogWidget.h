@@ -19,30 +19,24 @@
 
 #include "base/utils/Logger.h" // LogMessage::receiverHandle
 
-#include <QWidget>  // derives from
+#include <QTextEdit>  // derives from
 #include <QColor>
 
-class QPushButton;
-class QTextEdit;
-
-
 // Displays the log messages to the GUI user
-class LogWidget : public QWidget {
-
-    Q_OBJECT
+class LogWidget : public QTextEdit {
 
  public:
     LogWidget(QWidget* parent = nullptr);
     ~LogWidget();
 
     // Clear the displayed text
-    void clearText() const;
+    void clearText();
     // Save the displayed text
     void saveText() const;
     // Get the displayed text as plain text
-    std::string text() const;
+    std::string textStr() const;
     // Write a message in the log window
-    void show(const nsx::LogMessage& message);
+    void showMessage(const nsx::LogMessage& message);
 
  private:
     // TODO: declare as static
@@ -57,10 +51,6 @@ class LogWidget : public QWidget {
 
     //! Receiver handle (for registering log messages)
     nsx::LogMessenger::receiverHandle _receiver_handle;
-
-    QTextEdit* _textDisplay;
-    QPushButton* _saveButton;
-    QPushButton* _clearButton;
 
     void _connectUI();
 };
