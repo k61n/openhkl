@@ -130,6 +130,8 @@ class DetectorScene : public QGraphicsScene {
     void setup3rdPartyPeaks(bool draw, const QColor& color, int size);
     //! Toggle drawing the direct beam position
     void showDirectBeam(bool show);
+    //! Get the current intensity
+    int intensity() { return _currentIntensity; };
 
  protected:
     void mousePressEvent(QGraphicsSceneMouseEvent* event);

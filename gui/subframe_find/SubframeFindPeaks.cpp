@@ -25,7 +25,6 @@
 #include "gui/dialogs/ListNameDialog.h"
 #include "gui/frames/ProgressView.h"
 #include "gui/graphics/DetectorScene.h"
-#include "gui/graphics/DetectorView.h"
 #include "gui/items/PeakItem.h"
 #include "gui/models/Meta.h"
 #include "gui/models/Project.h"
@@ -37,6 +36,7 @@
 #include "gui/utility/SideBar.h"
 #include "gui/utility/Spoiler.h"
 #include "gui/views/PeakTableView.h"
+#include "gui/widgets/DetectorWidget.h"
 #include "gui/widgets/PeakViewWidget.h"
 
 #include <QFileInfo>
@@ -57,7 +57,6 @@ SubframeFindPeaks::SubframeFindPeaks()
     , _peak_collection_item()
     , _peak_collection_model()
     , _pixmap(nullptr)
-    , _size_policy_right(QSizePolicy::Expanding, QSizePolicy::Expanding)
 {
     auto* main_layout = new QHBoxLayout(this);
     _right_element = new QSplitter(Qt::Vertical, this);
@@ -72,7 +71,7 @@ SubframeFindPeaks::SubframeFindPeaks()
     setFigureUp();
     setPeakTableUp();
 
-    _right_element->setSizePolicy(_size_policy_right);
+    _right_element->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
     auto* propertyScrollArea = new PropertyScrollArea(this);
     propertyScrollArea->setContentLayout(_left_layout);
@@ -229,50 +228,21 @@ void SubframeFindPeaks::setSaveUp()
 void SubframeFindPeaks::setFigureUp()
 {
     QGroupBox* figure_group = new QGroupBox("Preview");
-    QGridLayout* figure_grid = new QGridLayout(figure_group);
-
-    figure_group->setSizePolicy(_size_policy_right);
-
-    _figure_view = new DetectorView(this);
-    _figure_view->getScene()->linkPeakModel1(&_peak_collection_model);
-    _figure_view->scale(1, -1);
-    figure_grid->addWidget(_figure_view, 0, 0, 1, 3);
-
-    _figure_scroll = new QScrollBar(this);
-    _figure_scroll->setOrientation(Qt::Horizontal);
-    _figure_scroll->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
-    figure_grid->addWidget(_figure_scroll, 1, 0, 1, 1);
-
-    _figure_spin = new QSpinBox(this);
-    _figure_spin->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-    figure_grid->addWidget(_figure_spin, 1, 1, 1, 1);
-
-    _mode = new QComboBox(this);
-    _mode->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-    _mode->addItems(QStringList{"Zoom", "Selection", "Rectangular mask", "Elliptical mask"});
-    figure_grid->addWidget(_mode, 1, 2, 1, 1);
+    figure_group->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    _detector_widget = new DetectorWidget(true, false, false, figure_group);
+    _detector_widget->modeCombo()->addItems(
+        QStringList{"Zoom", "Selection", "Rectangular mask", "Elliptical mask"});
+    _detector_widget->linkPeakModel(&_peak_collection_model);
 
     connect(
-        _figure_scroll, SIGNAL(valueChanged(int)), _figure_view->getScene(),
-        SLOT(slotChangeSelectedFrame(int)));
-
-    connect(_figure_scroll, SIGNAL(valueChanged(int)), _figure_spin, SLOT(setValue(int)));
-
-    connect(_figure_spin, SIGNAL(valueChanged(int)), _figure_scroll, SLOT(setValue(int)));
-    connect(
-        _figure_spin, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged), this,
+        _detector_widget->spin(), static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged), this,
         &SubframeFindPeaks::refreshPreview);
-
     connect(
-        _figure_view->getScene(), &DetectorScene::signalSelectedPeakItemChanged, this,
-        &SubframeFindPeaks::changeSelected);
-
-    connect(
-        _mode, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
-        [=](int i) { _figure_view->getScene()->changeInteractionMode(i); });
-    connect(
-        _figure_view->getScene(), &DetectorScene::signalUpdateDetectorScene,
+        _detector_widget->scene(), &DetectorScene::signalUpdateDetectorScene,
         this, &SubframeFindPeaks::refreshPeakTable);
+    connect(
+        _detector_widget->scene(), &DetectorScene::signalSelectedPeakItemChanged, this,
+        &SubframeFindPeaks::changeSelected);
 
     _right_element->addWidget(figure_group);
 }
@@ -282,7 +252,7 @@ void SubframeFindPeaks::setPeakTableUp()
     QGroupBox* peak_group = new QGroupBox("Peaks");
     QGridLayout* peak_grid = new QGridLayout(peak_group);
 
-    peak_group->setSizePolicy(_size_policy_right);
+    peak_group->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
     _peak_table = new PeakTableView(this);
     _peak_collection_model.setRoot(&_peak_collection_item);
@@ -301,6 +271,10 @@ void SubframeFindPeaks::setPeakTableUp()
 void SubframeFindPeaks::refreshAll()
 {
     setParametersUp();
+    if (!(_exp_combo->count() == 0)) {
+        auto all_data = gSession->experimentAt(_exp_combo->currentIndex())->allData();
+        _detector_widget->updateDatasetList(all_data);
+    }
     toggleUnsafeWidgets();
 }
 
@@ -367,17 +341,6 @@ void SubframeFindPeaks::updateDatasetParameters(const QString& dataname)
     _end_frame_spin->setValue(data->nFrames());
     _start_frame_spin->setMaximum(data->nFrames());
     _start_frame_spin->setValue(1);
-
-    _figure_view->getScene()->slotChangeSelectedData(data, _figure_spin->value());
-    //_figure_view->getScene()->setMaxIntensity(3000);
-    emit _figure_view->getScene()->dataChanged();
-    _figure_view->getScene()->update();
-
-    _figure_scroll->setMaximum(data->nFrames() - 1);
-    _figure_scroll->setMinimum(0);
-
-    _figure_spin->setMaximum(data->nFrames() - 1);
-    _figure_spin->setMinimum(0);
 }
 
 void SubframeFindPeaks::grabFinderParameters()
@@ -589,10 +552,10 @@ void SubframeFindPeaks::refreshPreview()
 {
     if (!_live_check->isChecked()) {
         if (_pixmap) {
-            _figure_view->getScene()->removeItem(_pixmap);
+            _detector_widget->scene()->removeItem(_pixmap);
             delete _pixmap;
             _pixmap = nullptr;
-            _figure_view->getScene()->loadCurrentImage();
+            _detector_widget->scene()->loadCurrentImage();
         }
         return;
     }
@@ -607,7 +570,7 @@ void SubframeFindPeaks::refreshPreview()
     std::map<std::string, double> convolverParams = convolutionParameters();
     Eigen::MatrixXd convolvedFrame =
         nsx::convolvedFrame(
-            data->reader()->data(_figure_spin->value()), convolvertype, convolverParams);
+            data->reader()->data(_detector_widget->spin()->value()), convolvertype, convolverParams);
     if (_live_check->isChecked()) {
         double thresholdVal = _threshold_spin->value();
         for (int i = 0; i < nrows; ++i) {
@@ -625,10 +588,9 @@ void SubframeFindPeaks::refreshPreview()
     ColorMap* m = new ColorMap;
     QImage image = m->matToImage(convolvedFrame.cast<double>(), rect, maxVal);
     if (!_pixmap)
-        _pixmap = _figure_view->scene()->addPixmap(QPixmap::fromImage(image));
+        _pixmap = _detector_widget->scene()->addPixmap(QPixmap::fromImage(image));
     else
         _pixmap->setPixmap(QPixmap::fromImage(image));
-    _figure_view->fitInView(_figure_view->scene()->sceneRect(), Qt::KeepAspectRatio);
 }
 
 void SubframeFindPeaks::refreshPeakTable()
@@ -638,7 +600,6 @@ void SubframeFindPeaks::refreshPeakTable()
                                           ->peakFinder()
                                           ->currentPeaks();
 
-    _figure_view->getScene()->clearPeakItems();
     _peak_collection.populate(peaks);
     _peak_collection_item.setPeakCollection(&_peak_collection);
     _peak_collection_model.setRoot(&_peak_collection_item);
@@ -664,10 +625,10 @@ void SubframeFindPeaks::refreshPeakVisual()
         graphic->setColor(Qt::transparent);
         graphic->initFromPeakViewWidget(
             peak->peak()->enabled() ? _peak_view_widget->set1 : _peak_view_widget->set2);
+        _detector_widget->scene()->initIntRegionFromPeakWidget(_peak_view_widget->set1);
     }
-    _figure_view->getScene()->update();
-    _figure_view->getScene()->initIntRegionFromPeakWidget(_peak_view_widget->set1);
-    _figure_view->getScene()->drawPeakitems();
+    _detector_widget->scene()->initIntRegionFromPeakWidget(_peak_view_widget->set1);
+    _detector_widget->refresh();
 }
 
 void SubframeFindPeaks::changeSelected(PeakItemGraphic* peak_graphic)
@@ -688,4 +649,9 @@ void SubframeFindPeaks::toggleUnsafeWidgets()
         _integrate_button->setEnabled(false);
         _save_button->setEnabled(false);
     }
+}
+
+DetectorWidget* SubframeFindPeaks::detectorWidget()
+{
+    return _detector_widget;
 }

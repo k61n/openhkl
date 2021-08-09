@@ -24,6 +24,7 @@
 #include "gui/utility/PropertyScrollArea.h"
 #include "gui/utility/Spoiler.h"
 #include "gui/views/ShortTable.h"
+#include "gui/widgets/DetectorWidget.h"
 #include "gui/widgets/PeakViewWidget.h"
 
 #include <QCheckBox>
@@ -75,59 +76,15 @@ void DetectorWindow::showEvent(QShowEvent* event)
 void DetectorWindow::setDetectorViewUp()
 {
     QGroupBox* detector_group = new QGroupBox("Detector image");
-    QGridLayout* main_grid = new QGridLayout(detector_group);
-    QGridLayout* top_grid = new QGridLayout();
-
-    _detector_view = new DetectorView();
-    _detector_view->getScene()->linkPeakModel1(&_peak_collection_model_1);
-    _detector_view->getScene()->linkPeakModel2(&_peak_collection_model_2);
-    _detector_view->scale(1, -1);
-
-    _detector_scroll = new QScrollBar();
-    _detector_scroll->setOrientation(Qt::Horizontal);
-    _detector_scroll->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
-
-    _detector_spin = new QSpinBox();
-    _detector_spin->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-
-    _intensity_slider = new QSlider(Qt::Vertical);
-    _intensity_slider->setMouseTracking(true);
-    _intensity_slider->setMinimum(1);
-    _intensity_slider->setMaximum(10000);
-    _intensity_slider->setValue(5000);
-    _intensity_slider->setSingleStep(1);
-    _intensity_slider->setOrientation(Qt::Vertical);
-    _intensity_slider->setTickPosition(QSlider::TicksRight);
-    _intensity_slider->setToolTip("Adjust the image intensity scale");
-
-    _cursor_mode = new QComboBox(this);
-    _cursor_mode->addItems(
+    detector_group->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    _detector_widget = new DetectorWidget(false, true, true, detector_group);
+    _detector_widget->linkPeakModel(&_peak_collection_model_1, &_peak_collection_model_2);
+    _detector_widget->cursorCombo()->addItems(
         QStringList{"Cursor mode", "Pixel", "\u03B8", "\u03B3/\u03BD", "d", "Miller Indices"});
-    _cursor_mode->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-
-    top_grid->addWidget(_detector_view, 0, 0, 1, 1);
-    top_grid->addWidget(_intensity_slider, 0, 1, 1, 1);
-
-    main_grid->addLayout(top_grid, 0, 0, 1, 3);
-    main_grid->addWidget(_detector_scroll, 1, 0, 1, 1);
-    main_grid->addWidget(_detector_spin, 1, 1, 1, 1);
-    main_grid->addWidget(_cursor_mode, 1, 2, 1, 1);
 
     connect(
-        _detector_scroll, SIGNAL(valueChanged(int)), _detector_view->getScene(),
-        SLOT(slotChangeSelectedFrame(int)));
-
-    connect(_detector_scroll, SIGNAL(valueChanged(int)), _detector_spin, SLOT(setValue(int)));
-
-    connect(_detector_spin, SIGNAL(valueChanged(int)), _detector_scroll, SLOT(setValue(int)));
-
-    connect(
-        _detector_view->getScene(), &DetectorScene::signalSelectedPeakItemChanged, this,
+        _detector_widget->scene(), &DetectorScene::signalSelectedPeakItemChanged, this,
         &DetectorWindow::changeSelected);
-
-    connect(
-        _cursor_mode, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
-        [=](int i) { _detector_view->getScene()->changeCursorMode(i); });
 
     _right_element->addWidget(detector_group);
 }
@@ -161,7 +118,6 @@ void DetectorWindow::setInputUp()
     GridFiller f(input_spoiler, true);
 
     _exp_combo = f.addCombo("Experiment:");
-    _data_combo = f.addCombo("Data set:");
     _peak_combo_1 = f.addLinkedCombo(ComboType::PeakCollection, "Peak collection 1:");
     _peak_combo_2 = f.addLinkedCombo(ComboType::PeakCollection, "Peak collection 2:");
     _unit_cell_combo = f.addCombo("Unit cell");
@@ -226,7 +182,7 @@ void DetectorWindow::load3rdPartyPeaks()
     QStringList files = QFileDialog::getOpenFileNames(
         this, "Load 3rd party peaks file", loadDirectory, "3rd party output (*.x)");
 
-    int current_frame = _detector_view->getScene()->currentFrame();
+    int current_frame = _detector_widget->scene()->currentFrame();
 
     if (files.empty())
         return;
@@ -242,13 +198,10 @@ void DetectorWindow::load3rdPartyPeaks()
     }
 
     _peakCenterData.init(_nframes);
-    // _detector_view->getScene()->clearPeakItems();
     for (int i = current_frame; i < (current_frame + files.size()); ++i)
         _peakCenterData.addFrame(files[i].toStdString(), i);
 
-    // nsx::XFileHandler xfh(file_path.toStdString());
-    // xfh.readXFile(double(_detector_view->getScene()->currentFrame()));
-    _detector_view->getScene()->link3rdPartyPeaks(&_peakCenterData);
+    _detector_widget->scene()->link3rdPartyPeaks(&_peakCenterData);
 }
 
 void DetectorWindow::setPlotUp(PeakViewWidget* peak_widget, QString name)
@@ -265,8 +218,7 @@ void DetectorWindow::setPlotUp(PeakViewWidget* peak_widget, QString name)
 
 void DetectorWindow::refreshDetectorView()
 {
-    if (_peak_collection_item_1.childCount()
-        == 0) // #nsxAudit Really? what if _peak_collection_item_2.childCount() is not empty?
+    if (_peak_collection_item_1.childCount() == 0)
         return;
 
     for (int i = 0; i < _peak_collection_item_1.childCount(); i++) {
@@ -279,22 +231,25 @@ void DetectorWindow::refreshDetectorView()
             peak->peak()->enabled() ? _peak_view_widget_1->set1 : _peak_view_widget_1->set2);
     }
 
-    for (int i = 0; i < _peak_collection_item_2.childCount(); i++) {
-        PeakItem* peak = _peak_collection_item_2.peakItemAt(i);
-        auto graphic = peak->peakGraphic();
+    if (!(_peak_collection_item_2.childCount() == 0)) {
+        for (int i = 0; i < _peak_collection_item_2.childCount(); i++) {
+            PeakItem* peak = _peak_collection_item_2.peakItemAt(i);
+            auto graphic = peak->peakGraphic();
 
-        graphic->showLabel(false);
-        graphic->setColor(Qt::transparent);
-        graphic->initFromPeakViewWidget(
-            peak->peak()->enabled() ? _peak_view_widget_2->set1 : _peak_view_widget_2->set2);
+            graphic->showLabel(false);
+            graphic->setColor(Qt::transparent);
+            graphic->initFromPeakViewWidget(
+                peak->peak()->enabled() ? _peak_view_widget_2->set1 : _peak_view_widget_2->set2);
+        }
     }
 
-    _detector_view->getScene()->update();
-    _detector_view->getScene()->initIntRegionFromPeakWidget(_peak_view_widget_1->set1);
-    _detector_view->getScene()->initIntRegionFromPeakWidget(_peak_view_widget_2->set1, true);
-    _detector_view->getScene()->setup3rdPartyPeaks(
+    _detector_widget->scene()->initIntRegionFromPeakWidget(_peak_view_widget_1->set1);
+    _detector_widget->scene()->initIntRegionFromPeakWidget(_peak_view_widget_2->set1, true);
+    _detector_widget->refresh();
+
+    _detector_widget->scene()->setup3rdPartyPeaks(
         _draw_3rdparty->isChecked(), _3rdparty_color->color(), _3rdparty_size->value());
-    _detector_view->getScene()->drawPeakitems();
+    _detector_widget->scene()->drawPeakitems();
 }
 
 void DetectorWindow::refreshPeakTable()
@@ -305,7 +260,6 @@ void DetectorWindow::refreshPeakTable()
     if (!_peak_collection_1)
         return;
 
-    _detector_view->getScene()->clearPeakItems();
     _peak_collection_item_1.setPeakCollection(_peak_collection_1);
     _peak_collection_model_1.setRoot(&_peak_collection_item_1);
     _peak_table_1->resizeColumnsToContents();
@@ -346,39 +300,12 @@ void DetectorWindow::updateExptList()
 
 void DetectorWindow::updateDatasetList()
 {
-    _data_combo->blockSignals(true);
-    QString current_data = _data_combo->currentText();
-    _data_combo->clear();
     _data_list = gSession->experimentAt(_exp_combo->currentIndex())->allData();
-
     if (!_data_list.empty()) {
-        for (const nsx::sptrDataSet& data : _data_list) {
-            _data_combo->addItem(QString::fromStdString(data->name()));
-        }
-        _data_combo->setCurrentText(current_data);
-        updateDatasetParameters(0);
+        _detector_widget->updateDatasetList(_data_list);
+        _nframes = _detector_widget->currentData()->nFrames();
+        _peakCenterData.init(_nframes);
     }
-    _data_combo->blockSignals(false);
-}
-
-void DetectorWindow::updateDatasetParameters(int idx)
-{
-    if (_data_list.empty() || idx < 0)
-        return;
-
-    nsx::sptrDataSet data = _data_list.at(idx);
-    _nframes = data->nFrames();
-    _peakCenterData.init(_nframes);
-
-    _detector_view->getScene()->slotChangeSelectedData(_data_list.at(idx), 0);
-    emit _detector_view->getScene()->dataChanged();
-    _detector_view->getScene()->update();
-
-    _detector_scroll->setMaximum(data->nFrames() - 1);
-    _detector_scroll->setMinimum(0);
-
-    _detector_spin->setMaximum(data->nFrames() - 1);
-    _detector_spin->setMinimum(0);
 }
 
 void DetectorWindow::updatePeakList()
@@ -445,6 +372,11 @@ void DetectorWindow::setUnitCell()
     if (_unit_cell_combo->count() > 0) {
         nsx::UnitCell* cell = gSession->currentProject()->experiment()->getUnitCell(
             _unit_cell_combo->currentText().toStdString());
-        _detector_view->getScene()->setUnitCell(cell);
+        _detector_widget->scene()->setUnitCell(cell);
     }
+}
+
+DetectorWidget* DetectorWindow::detectorWidget()
+{
+    return _detector_widget;
 }

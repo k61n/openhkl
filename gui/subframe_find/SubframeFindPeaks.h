@@ -31,13 +31,14 @@
 #include <QVBoxLayout>
 #include <QWidget>
 
-class DetectorView;
+class DetectorScene;
+class DetectorWidget;
 class LinkedComboBox;
 class PeakItemGraphic;
 class PeakTableView;
 class PeakViewWidget;
 
-//! Frame which shows the settings to find peaks
+//! Frame containing interface to find peaks from detector images
 class SubframeFindPeaks : public QWidget {
  public:
     SubframeFindPeaks();
@@ -49,8 +50,8 @@ class SubframeFindPeaks : public QWidget {
     void integrate();
     //! Refresh all the panels
     void refreshAll();
-    //! detector view
-    DetectorView* getDetectorView() { return _figure_view; }
+    //! Get the detector widget
+    DetectorWidget* detectorWidget();
 
  private:
     //! Set up the data selection GUI
@@ -83,11 +84,9 @@ class SubframeFindPeaks : public QWidget {
     //! Disable widgets that are unsafe without relevant data
     void toggleUnsafeWidgets();
 
- private:
     //! Update the datalist as an experiment was changed
     void setExperimentsUp();
 
- private:
     //! Update the datalist as an experiment was changed
     void updateDatasetList();
     //! Update the dataset related parameters
@@ -103,11 +102,9 @@ class SubframeFindPeaks : public QWidget {
     //! Set the integration parameters
     void setIntegrationParameters();
 
- private:
     //! Convolution parameter map
     std::map<std::string, double> convolutionParameters();
 
- private:
     //! The model for the found peaks
     nsx::PeakCollection _peak_collection;
     //! The temporary collection
@@ -115,7 +112,6 @@ class SubframeFindPeaks : public QWidget {
     //! The temporary collection
     PeakCollectionModel _peak_collection_model;
 
- private:
     QVBoxLayout* _left_layout;
     QSplitter* _right_element;
 
@@ -144,15 +140,10 @@ class SubframeFindPeaks : public QWidget {
     QPushButton* _integrate_button;
     QPushButton* _save_button;
 
-    DetectorView* _figure_view;
+    DetectorWidget* _detector_widget;
     QGraphicsPixmapItem* _pixmap;
-    QSpinBox* _figure_spin;
-    QScrollBar* _figure_scroll;
-    QComboBox* _mode;
 
     PeakTableView* _peak_table;
-
-    QSizePolicy _size_policy_right;
 };
 
 #endif // NSX_GUI_SUBFRAME_FIND_SUBFRAMEFINDPEAKS_H

@@ -15,25 +15,28 @@
 #ifndef NSX_GUI_SUBFRAME_EXPERIMENT_SUBFRAMEEXPERIMENT_H
 #define NSX_GUI_SUBFRAME_EXPERIMENT_SUBFRAMEEXPERIMENT_H
 
+#include "core/data/DataTypes.h"
+
 #include <QWidget>
 
-class ImagePanel;
-class LoggerPanel;
+class DetectorWidget;
 class PlotPanel;
 class PropertyPanel;
 
+//! Frame containing information on all aspects of the experiment
 class SubframeExperiment : public QWidget {
  public:
     SubframeExperiment();
 
-    ImagePanel* getImage() { return _image; };
-    LoggerPanel* getLogger() { return _logger; };
+    void dataChanged();
+    DetectorWidget* detectorWidget();
+
     PlotPanel* getPlot() { return _plot; };
     PropertyPanel* getProperty() { return _properties; };
 
  private:
-    ImagePanel* _image;
-    LoggerPanel* _logger;
+    std::vector<nsx::sptrDataSet> _data_list;
+    DetectorWidget* _detector_widget;
     PlotPanel* _plot;
     PropertyPanel* _properties;
 };

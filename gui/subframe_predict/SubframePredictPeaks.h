@@ -32,7 +32,7 @@
 #include <QVBoxLayout>
 #include <QWidget>
 
-class DetectorView;
+class DetectorWidget;
 class LinkedComboBox;
 class PeakItemGraphic;
 class PeakTableView;
@@ -44,7 +44,7 @@ struct PredictionParameters;
 struct ShapeCollectionParameters;
 }
 
-//! Frame which shows the settings to find peaks
+//! Frame containing interface for predicting peaks from unit cell
 class SubframePredictPeaks : public QWidget {
  public:
     SubframePredictPeaks();
@@ -52,9 +52,8 @@ class SubframePredictPeaks : public QWidget {
     void showDirectBeamEvents();
     //! Refresh all the panels
     void refreshAll();
-    //! detector view
-    DetectorView* getDetectorView() { return _figure_view; }
-
+    //! Get a pointer to the detector widget
+    DetectorWidget* detectorWidget();
 
  private:
     //! Set the parameters values up
@@ -72,7 +71,6 @@ class SubframePredictPeaks : public QWidget {
     //! Set the save button up
     void setSaveUp();
 
- private:
     //! Set the experiments
     void setExperiments();
     //! Update the peak list
@@ -81,8 +79,6 @@ class SubframePredictPeaks : public QWidget {
     void updateUnitCellList();
     //! Update the peak list
     void updateDatasetList();
-    //! Update the peak list
-    void updateDatasetParameters(int idx);
     //! Get the parameters of the indexer
     void grabPredictorParameters();
     //! Set the parameters of the indexer
@@ -110,7 +106,6 @@ class SubframePredictPeaks : public QWidget {
     //! Compute beam divergence and mosaicity sigmas
     void computeSigmas();
 
- private:
     //! The model for the found peaks
     nsx::PeakCollection _peak_collection;
     //! The temporary collection
@@ -124,7 +119,6 @@ class SubframePredictPeaks : public QWidget {
     //! Parameters for shape collection
     nsx::ShapeCollectionParameters _shape_params;
 
- private:
     QVBoxLayout* _left_layout;
     QSplitter* _right_element;
 
@@ -142,17 +136,10 @@ class SubframePredictPeaks : public QWidget {
     QPushButton* _predict_button;
 
     LinkedComboBox* _exp_combo;
-    LinkedComboBox* _data_combo;
 
     PeakViewWidget* _peak_view_widget;
-
-    DetectorView* _figure_view;
-    QSpinBox* _figure_spin;
-    QScrollBar* _figure_scroll;
-
+    DetectorWidget* _detector_widget;
     PeakTableView* _peak_table;
-
-    QSizePolicy _size_policy_right;
 
     LinkedComboBox* _found_peaks_combo;
     QSpinBox* _nx;

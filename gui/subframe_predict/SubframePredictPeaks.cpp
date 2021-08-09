@@ -30,7 +30,6 @@
 #include "gui/dialogs/ListNameDialog.h"
 #include "gui/frames/ProgressView.h"
 #include "gui/graphics/DetectorScene.h"
-#include "gui/graphics/DetectorView.h"
 #include "gui/items/PeakItem.h"
 #include "gui/models/Meta.h"
 #include "gui/models/Project.h"
@@ -43,6 +42,7 @@
 #include "gui/utility/SideBar.h"
 #include "gui/utility/Spoiler.h"
 #include "gui/views/PeakTableView.h"
+#include "gui/widgets/DetectorWidget.h"
 #include "gui/widgets/PeakViewWidget.h"
 #include "tables/crystal/UnitCell.h"
 
@@ -63,7 +63,6 @@ SubframePredictPeaks::SubframePredictPeaks()
     , _peak_collection_item()
     , _peak_collection_model()
     , _shape_params()
-    , _size_policy_right(QSizePolicy::Expanding, QSizePolicy::Expanding)
 {
     auto main_layout = new QHBoxLayout(this);
     _right_element = new QSplitter(Qt::Vertical, this);
@@ -77,7 +76,7 @@ SubframePredictPeaks::SubframePredictPeaks()
     setFigureUp();
     setPeakTableUp();
 
-    _right_element->setSizePolicy(_size_policy_right);
+    _right_element->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
     auto propertyScrollArea = new PropertyScrollArea(this);
     propertyScrollArea->setContentLayout(_left_layout);
@@ -230,38 +229,12 @@ void SubframePredictPeaks::setSaveUp()
 void SubframePredictPeaks::setFigureUp()
 {
     QGroupBox* figure_group = new QGroupBox("Preview");
-    QGridLayout* figure_grid = new QGridLayout(figure_group);
-
-    figure_group->setSizePolicy(_size_policy_right);
-
-    _figure_view = new DetectorView(this);
-    _figure_view->getScene()->linkPeakModel1(&_peak_collection_model);
-    _figure_view->scale(1, -1);
-    figure_grid->addWidget(_figure_view, 0, 0, 1, 3);
-
-    _data_combo = new LinkedComboBox(ComboType::DataSet, gGui->sentinel, this);
-    _data_combo->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
-    figure_grid->addWidget(_data_combo, 1, 0, 1, 1);
-
-    _figure_scroll = new QScrollBar(this);
-    _figure_scroll->setOrientation(Qt::Horizontal);
-    _figure_scroll->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
-    figure_grid->addWidget(_figure_scroll, 1, 1, 1, 1);
-
-    _figure_spin = new QSpinBox(this);
-    _figure_spin->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-    figure_grid->addWidget(_figure_spin, 1, 2, 1, 1);
+    figure_group->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    _detector_widget = new DetectorWidget(false, false, false, figure_group);
+    _detector_widget->linkPeakModel(&_peak_collection_model);
 
     connect(
-        _figure_scroll, SIGNAL(valueChanged(int)), _figure_view->getScene(),
-        SLOT(slotChangeSelectedFrame(int)));
-
-    connect(_figure_scroll, SIGNAL(valueChanged(int)), _figure_spin, SLOT(setValue(int)));
-
-    connect(_figure_spin, SIGNAL(valueChanged(int)), _figure_scroll, SLOT(setValue(int)));
-
-    connect(
-        _figure_view->getScene(), &DetectorScene::signalSelectedPeakItemChanged, this,
+        _detector_widget->scene(), &DetectorScene::signalSelectedPeakItemChanged, this,
         &SubframePredictPeaks::changeSelected);
 
     _right_element->addWidget(figure_group);
@@ -272,7 +245,7 @@ void SubframePredictPeaks::setPeakTableUp()
     QGroupBox* peak_group = new QGroupBox("Peaks");
     QGridLayout* peak_grid = new QGridLayout(peak_group);
 
-    peak_group->setSizePolicy(_size_policy_right);
+    peak_group->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
     _peak_table = new PeakTableView(this);
     _peak_collection_model.setRoot(&_peak_collection_item);
@@ -328,38 +301,9 @@ void SubframePredictPeaks::updateUnitCellList()
 
 void SubframePredictPeaks::updateDatasetList()
 {
-    _data_combo->blockSignals(true);
-    QString current_data = _data_combo->currentText();
-    _data_combo->clear();
-
     _data_list = gSession->experimentAt(_exp_combo->currentIndex())->allData();
-
-    if (!_data_list.empty()) {
-        for (const nsx::sptrDataSet& data : _data_list) {
-            _data_combo->addItem(QString::fromStdString(data->name()));
-        }
-        _data_combo->setCurrentText(current_data);
-        updateDatasetParameters(_data_combo->currentIndex());
-    }
-    _data_combo->blockSignals(false);
-}
-
-void SubframePredictPeaks::updateDatasetParameters(int idx)
-{
-    if (_data_list.empty() || idx < 0)
-        return;
-
-    const int nFrames = _data_list.at(idx)->nFrames();
-
-    _figure_view->getScene()->slotChangeSelectedData(_data_list.at(idx), _figure_spin->value());
-    emit _figure_view->getScene()->dataChanged();
-    _figure_view->getScene()->update();
-
-    _figure_scroll->setMaximum(nFrames - 1);
-    _figure_scroll->setMinimum(0);
-
-    _figure_spin->setMaximum(nFrames - 1);
-    _figure_spin->setMinimum(0);
+    if (!_data_list.empty())
+        _detector_widget->updateDatasetList(_data_list);
 }
 
 void SubframePredictPeaks::grabPredictorParameters()
@@ -450,7 +394,7 @@ void SubframePredictPeaks::runPrediction()
 {
     try {
         auto* experiment = gSession->experimentAt(_exp_combo->currentIndex())->experiment();
-        auto data = experiment->getData(_data_combo->currentText().toStdString());
+        auto data = experiment->getData(_detector_widget->dataCombo()->currentText().toStdString());
         auto* predictor = experiment->predictor();
         setPredictorParameters();
 
@@ -483,7 +427,7 @@ void SubframePredictPeaks::runPrediction()
 void SubframePredictPeaks::showDirectBeamEvents()
 {
     if (_direct_beam->isChecked()){
-        _figure_view->getScene()->showDirectBeam(true);
+        _detector_widget->scene()->showDirectBeam(true);
 
         const std::vector<nsx::sptrDataSet>& data = gSession->currentProject()->allData();
 
@@ -496,9 +440,9 @@ void SubframePredictPeaks::showDirectBeamEvents()
             for (auto&& event : events)
                 direct_beam_events.push_back(event);
         }
-        _figure_view->getScene()->linkDirectBeamPositions(direct_beam_events);
+        _detector_widget->scene()->linkDirectBeamPositions(direct_beam_events);
     } else {
-        _figure_view->getScene()->showDirectBeam(false);
+        _detector_widget->scene()->showDirectBeam(false);
     }
     refreshPeakVisual();
 }
@@ -506,7 +450,7 @@ void SubframePredictPeaks::showDirectBeamEvents()
 void SubframePredictPeaks::assignPeakShapes()
 {
     auto* experiment = gSession->experimentAt(_exp_combo->currentIndex())->experiment();
-    auto data = experiment->getData(_data_combo->currentText().toStdString());
+    auto data = experiment->getData(_detector_widget->dataCombo()->currentText().toStdString());
     auto* found_peaks = experiment->getPeakCollection(_found_peaks_combo->currentText().toStdString());
 
     setShapeCollectionParameters();
@@ -544,7 +488,6 @@ void SubframePredictPeaks::refreshPeakTable()
         return;
 
     computeSigmas();
-    _figure_view->getScene()->clearPeakItems();
     _peak_collection_model.setRoot(&_peak_collection_item);
     _peak_table->resizeColumnsToContents();
     showDirectBeamEvents();
@@ -553,10 +496,8 @@ void SubframePredictPeaks::refreshPeakTable()
 
 void SubframePredictPeaks::refreshPeakVisual()
 {
-    _figure_view->getScene()->update();
-    _figure_view->getScene()->initIntRegionFromPeakWidget(_peak_view_widget->set1);
-    _figure_view->getScene()->drawPeakitems();
-    _figure_view->fitScene();
+    _detector_widget->scene()->initIntRegionFromPeakWidget(_peak_view_widget->set1);
+    _detector_widget->refresh();
     if (_peak_collection_item.childCount() == 0)
         return;
 
@@ -599,4 +540,9 @@ void SubframePredictPeaks::toggleUnsafeWidgets()
 
     if (!(_peak_collection.numberOfPeaks() == 0))
         _assign_peak_shapes->setEnabled(false);
+}
+
+DetectorWidget* SubframePredictPeaks::detectorWidget()
+{
+    return _detector_widget;
 }

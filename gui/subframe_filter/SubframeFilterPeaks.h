@@ -33,13 +33,13 @@
 #include <QVBoxLayout>
 #include <QWidget>
 
-class DetectorView;
+class DetectorWidget;
 class LinkedComboBox;
 class PeakItemGraphic;
 class SpoilerCheck;
 class PeakViewWidget;
 
-//! Dialog to filter a peak list
+//! Frame containing interface for filtering peak collections
 class SubframeFilterPeaks : public QWidget {
  public:
     SubframeFilterPeaks();
@@ -49,8 +49,8 @@ class SubframeFilterPeaks : public QWidget {
     void filterPeaks();
     //! Refresh all the inputs
     void refreshAll();
-    //! detector view
-    DetectorView* getDetectorView() { return _figure_view; }
+    //! Get a pointer to the detector wiget
+    DetectorWidget* detectorWidget();
 
  private:
     //! Build the input
@@ -84,7 +84,6 @@ class SubframeFilterPeaks : public QWidget {
     //! Disable unsafe widgets if no data loaded
     void toggleUnsafeWidgets();
 
- private:
     //! Grab the finder parameters
     void grabFilterParameters();
     //! Set the finder parameters
@@ -98,15 +97,12 @@ class SubframeFilterPeaks : public QWidget {
     void updatePeakList();
     //! Update the datalist as an experiment was changed
     void updateDatasetList();
-    //! Update the dataset related parameters
-    void updateDatasetParameters(int idx);
 
     //! Refresh the found peaks list
     void refreshPeakTable();
     //! Refresh the found peaks visual properties
     void refreshPeakVisual();
 
- private:
     //! The model for the found peaks
     nsx::PeakCollection _peak_collection;
     //! The temporary collection
@@ -116,7 +112,6 @@ class SubframeFilterPeaks : public QWidget {
     //! The loaded data list
     std::vector<nsx::sptrDataSet> _data_list;
 
- private:
     QHBoxLayout* _main_layout;
     QVBoxLayout* _left_layout;
     QSplitter* _right_element;
@@ -159,12 +154,7 @@ class SubframeFilterPeaks : public QWidget {
     QPushButton* _save_button;
 
     PeakViewWidget* _peak_view_widget;
-
-    QSizePolicy _size_policy_right;
-
-    DetectorView* _figure_view;
-    QSpinBox* _figure_spin;
-    QScrollBar* _figure_scroll;
+    DetectorWidget* _detector_widget;
     PeakTableView* _peak_table;
 
     // For modifying the title of peak_group

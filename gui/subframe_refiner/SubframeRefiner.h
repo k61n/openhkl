@@ -8,6 +8,7 @@
 //! @homepage  ###HOMEPAGE###
 //! @license   GNU General Public License v3 or higher (see COPYING)
 //! @copyright Institut Laue-Langevin and Forschungszentrum Jülich GmbH 2016-
+
 //! @authors   see CITATION, MAINTAINER
 //
 //  ***********************************************************************************************
@@ -16,7 +17,10 @@
 #define NSX_GUI_SUBFRAME_REFINER_SUBFRAMEREFINER_H
 
 #include "core/algo/Refiner.h"
+#include "core/shape/PeakCollection.h"
 #include "core/shape/ShapeCollection.h"
+#include "gui/items/PeakCollectionItem.h"
+#include "gui/models/PeakCollectionModel.h"
 
 #include <QCheckBox>
 #include <QComboBox>
@@ -35,40 +39,42 @@
 namespace nsx {
 class PeakCollection;
 }
+class DetectorWidget;
 class LinkedComboBox;
 class RefinerTables;
 class Spoiler;
 class SXPlot;
+class PeakViewWidget;
 class PlotCheckBox;
 
-//! Dialog to refine unit cell and instrument state
+//! Frame containing interface to refine cell parameters and intstrument states
 class SubframeRefiner : public QWidget {
  public:
     SubframeRefiner();
 
- public:
     //! Refresh all the inputs
     void refreshAll();
 
  private:
-    //! Set up the GUI size policies
-    void setSizePolicies();
     //! Select experiment, dataset, peak collection, unit cell
     void setInputUp();
     //! Set the refiner flags and constraints
     void setRefinerFlagsUp();
-    //! Update the predicted peaks
+    //! Set up combo/button to update predicted peaks
     void setUpdateUp();
+    //! Update the local copy of peaks to be refined, and the peak items and models
+    void updatePeaks();
+    //! Set up PeakViewWidgets
+    void setPeakViewWidgetUp(PeakViewWidget* peak_widget, QString name);
+    //! Refresh the detector scene
+    void refreshPeakVisual();
 
- private:
     //! Grab the refiner parameters
     void grabRefinerParameters();
     //! Set the refiner parameters
     void setRefinerParameters();
 
-    //! Refresh all the inputs
-    void setParametersUp();
-    //! Refresh all the inputs
+    //! Refresh all inputs
     void updateExptList();
     //! Update peak collection list on experiment change
     void updatePeakList();
@@ -103,7 +109,6 @@ class SubframeRefiner : public QWidget {
     //! Disable unsafe widgets if no data loaded
     void toggleUnsafeWidgets();
 
- private:
     //! The loaded data list
     std::vector<nsx::sptrDataSet> _data_list;
     //! Number of peaks updated
@@ -111,8 +116,8 @@ class SubframeRefiner : public QWidget {
     //! Whether the refinement succeeded
     bool _refine_success;
 
- private:
     QVBoxLayout* _left_layout;
+    QSplitter* _right_element;
 
     // data selection
     LinkedComboBox* _exp_combo;
@@ -129,8 +134,23 @@ class SubframeRefiner : public QWidget {
     QCheckBox* _refineDetectorPosition;
     QCheckBox* _refineKi;
 
+    // Peak view widgets
+    PeakViewWidget* _peak_view_widget_1;
+    PeakViewWidget* _peak_view_widget_2;
+
     // plot widget
     Spoiler* _plot_box;
+
+    // Detector scene
+    DetectorWidget* _detector_widget;
+
+    // Peak collections, items and models for refined and unrefined peaks
+    nsx::PeakCollection* _refined_peaks;
+    PeakCollectionItem _refined_collection_item;
+    PeakCollectionModel _refined_model;
+    nsx::PeakCollection _unrefined_peaks;
+    PeakCollectionItem _unrefined_collection_item;
+    PeakCollectionModel _unrefined_model;
 
     // update prediction
     LinkedComboBox* _predicted_combo;
@@ -148,6 +168,7 @@ class SubframeRefiner : public QWidget {
 
     QRandomGenerator _rng;
 
+    // Convert enum class ResidualType to a string
     const std::map<std::string, nsx::ResidualType> _residual_strings {
         {"Reciprocal space", nsx::ResidualType::QSpace},
         {"Real space", nsx::ResidualType::RealSpace}};

@@ -29,8 +29,7 @@
 #include <QVBoxLayout>
 
 class ColorButton;
-class DetectorScene;
-class DetectorView;
+class DetectorWidget;
 class LinkedComboBox;
 class PeakViewWidget;
 class ShortTable;
@@ -42,19 +41,25 @@ class DetectorWindow : public QDialog {
 
     //! Overload QDialog::showEvent to resize window at runtime
     void showEvent(QShowEvent* event);
+    //! Refresh the whole dialog
+    void refreshAll();
+    //! Get a pointer to the DetectorView
+    DetectorWidget* detectorWidget();
 
-    //! Set up control panel widgets
+ public slots:
+    void setUnitCell();
+
+ private:
+    //! Set up the detector image
     void setDetectorViewUp();
+    //! Set up the peak tables
     void setPeakTableUp();
+    //! Set up control panel widgets
     void setInputUp();
+    //! Set up interface peaks read from 3rd party software files
     void set3rdPartyPeaksUp();
     void load3rdPartyPeaks();
     void setPlotUp(PeakViewWidget* peak_widget, QString name);
-
-    void refreshDetectorView();
-    void refreshPeakTable();
-    //! Refresh the whole dialog
-    void refreshAll();
 
     //! Update experiment QComboBoxes
     void updateExptList();
@@ -66,19 +71,13 @@ class DetectorWindow : public QDialog {
     void updatePeakList();
     //! Update unit cell QComboBox
     void updateUnitCellList();
-
-    //! Get a pointer to the DetectorView
-    DetectorView* getDetectorView() { return _detector_view; };
-    //! Get a pointer to the intensity slider
-    QSlider* getIntensitySlider() { return _intensity_slider; };
-
- public slots:
-    void setUnitCell();
-
- private:
+    //! Refresh the detector image
+    void refreshDetectorView();
+    //! Refresh the peak tables
+    void refreshPeakTable();
+    //! Scroll the table to the peak under the cursor in the detector view
     void changeSelected(PeakItemGraphic* peak_graphic);
 
- private:
     int _nframes;
 
     QVBoxLayout* _control_layout;
@@ -86,7 +85,6 @@ class DetectorWindow : public QDialog {
 
     // Control panel elements
     QComboBox* _exp_combo;
-    QComboBox* _data_combo;
     LinkedComboBox* _peak_combo_1;
     LinkedComboBox* _peak_combo_2;
     QComboBox* _unit_cell_combo;
@@ -102,11 +100,7 @@ class DetectorWindow : public QDialog {
     PeakViewWidget* _peak_view_widget_2;
 
     // Detector elements
-    DetectorView* _detector_view;
-    QScrollBar* _detector_scroll;
-    QSpinBox* _detector_spin;
-    QComboBox* _cursor_mode;
-    QSlider* _intensity_slider;
+    DetectorWidget* _detector_widget;
 
     // Peak table elements
     ShortTable* _peak_table_1;
@@ -124,6 +118,7 @@ class DetectorWindow : public QDialog {
     QStringList _peak_list;
     QStringList _cell_list;
 
+    // 3rd party peaks container
     nsx::PeakCenterDataSet _peakCenterData;
 };
 
