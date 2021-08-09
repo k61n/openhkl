@@ -18,6 +18,7 @@
 #include "gui/MainWin.h" // for gGui
 #include "gui/connect/Sentinel.h" // for sentinel
 #include "gui/detector_window/DetectorWindow.h"
+#include "gui/windows/LogWindow.h"
 #include "gui/dialogs/ClonePeakDialog.h"
 #include "gui/dialogs/ComboDialog.h"
 #include "gui/dialogs/Messages.h"
@@ -64,11 +65,14 @@ void Actions::setupExperiment()
 void Actions::setupView()
 {
     detector_window = new QAction("Open detector window");
+    log_window = new QAction("Open log window");
 
     connect(detector_window, &QAction::triggered, []() {
         gGui->detector_window->show();
         gGui->detector_window->refreshAll();
     });
+
+    connect(log_window, &QAction::triggered, [](){ gGui->log_window->show(); });
 }
 
 void Actions::setupData()

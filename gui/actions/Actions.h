@@ -37,6 +37,7 @@ class Actions : public QObject {
 
     // View:
     QAction* detector_window;
+    QAction* log_window;
 
     // Data
     QAction* add_data;
