@@ -31,8 +31,6 @@ class LogWidget : public QTextEdit {
 
     // Clear the displayed text
     void clearText();
-    // Save the displayed text
-    void saveText() const;
     // Get the displayed text as plain text
     std::string textStr() const;
     // Write a message in the log window

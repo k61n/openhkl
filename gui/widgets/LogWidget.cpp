@@ -73,11 +73,6 @@ void LogWidget::clearText()
     clear();
 }
 
-void LogWidget::saveText() const
-{
-    // TODO: Implement this
-}
-
 std::string LogWidget::textStr() const
 {
     return toPlainText().toStdString();

@@ -24,6 +24,8 @@ class QPushButton;
 class LogWindow : public QDialog {
 public:
     LogWindow(QWidget* parent = nullptr);
+    // Save the displayed log messages
+    void saveLog();
 
 private:
     LogWidget* _log_widget;
