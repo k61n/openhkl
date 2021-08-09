@@ -16,6 +16,8 @@
 #include <memory>
 #include <stdexcept>
 #include <utility>
+#include <cstdio> // tmpnam, L_tmpnam, rename
+#include <string>
 
 #include "base/utils/Logger.h"
 #include "base/utils/Units.h"
@@ -102,8 +104,34 @@ void Experiment::saveToFile(const std::string& path) const
     nsx::ExperimentExporter exporter;
     nsxlog(Level::Info, "Saving experiment to file: '" + path + "'");
 
-    // AN>>TODO: if no extension given, use .nsx
-    exporter.createFile(name(), getDiffractometer()->name(), path);
+    /* If the chosen path for saving is the same as the path of
+       the current dataset file, then a two-step process is used
+       to avoid HDF5 errors:
+       1. Create a temporary file to store the data.
+       2. After writing is finished, rename the temporary file
+          to the original given path.
+    */
+
+    bool overwrite_datafile = false;
+    for (const auto& [ds_nm, ds_ptr] : *_data_handler->getDataMap()) {
+        const std::string nsx_filepath = ds_ptr->reader()->NSXfilepath();
+        if (nsx_filepath == path) {
+            overwrite_datafile = true;
+            break;
+        }
+    }
+
+    std::string filepath {path};
+    if (overwrite_datafile) {
+        // create a filename for the temporary datafile
+        char tmp_fname[L_tmpnam];
+        tmpnam(tmp_fname);
+        filepath = std::string(tmp_fname);
+        nsxlog(Level::Debug, "Saving experiment to temporary file '"
+               + filepath + "'");
+    }
+
+    exporter.createFile(name(), getDiffractometer()->name(), filepath);
 
     std::map<std::string, DataSet*> data_sets;
     for (const auto& it : *_data_handler->getDataMap())
@@ -121,6 +149,18 @@ void Experiment::saveToFile(const std::string& path) const
     exporter.writeUnitCells(unit_cells);
 
     exporter.finishWrite();
+
+    if (overwrite_datafile) {
+        // rename the temporary datafile to the given filename
+        const int rename_success = rename(filepath.c_str(), path.c_str());
+        if (rename_success == 0) {
+            nsxlog(Level::Debug, "Renamed the temporary file '" + filepath + "' "
+                   + "to '" + path + "'");
+        } else {
+            nsxlog(Level::Error, "Could not rename the temporary file '"
+                   + filepath + "' to '" + path + "'. Data might be lost.");
+        }
+    }
 }
 
 void Experiment::loadFromFile(const std::string& path)

@@ -123,4 +123,10 @@ void IDataReader::checkInit() {
         throw std::runtime_error("Reader is not initialized");
 }
 
+std::string IDataReader::NSXfilepath() const
+{
+    return "";
+}
+
+
 } // namespace nsx
