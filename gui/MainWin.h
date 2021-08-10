@@ -17,6 +17,7 @@
 
 #include <QMainWindow>
 #include <QStackedWidget>
+#include <QStatusBar>
 
 class DetectorScene;
 class DetectorWindow;
