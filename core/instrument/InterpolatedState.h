@@ -40,6 +40,10 @@ class InterpolatedState : public InstrumentState {
     //! Step size between the two underlying InstrumentStates, in radians
     double stepSize;
 
+    //! Interpolates the state for a given frame index (not necessarily integer)
+    static InterpolatedState interpolate(const InstrumentStateList& states,
+                                         const double frame_idx);
+
 #ifndef SWIG
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 #endif

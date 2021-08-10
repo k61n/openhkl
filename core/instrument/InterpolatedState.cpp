@@ -17,12 +17,34 @@
 #include "core/gonio/Component.h"
 #include "core/instrument/Diffractometer.h"
 #include "core/instrument/MatrixOperations.h"
+#include <string> // to_string
+#include <stdexcept>
+
 
 namespace nsx {
 
 InterpolatedState::InterpolatedState(Diffractometer* diffractometer)
     : InstrumentState(diffractometer)
 {
+}
+
+InterpolatedState InterpolatedState::interpolate(const InstrumentStateList& states,
+                                                 const double frame_idx)
+{
+    const std::size_t states_nr = states.size();
+    if (frame_idx > (states_nr - 2) || frame_idx < 0)
+        throw std::range_error(
+            "Error when interpolating state: invalid frame index: "
+            + std::to_string(frame_idx));
+
+    const std::size_t idx = std::size_t(std::lround(std::floor(frame_idx)));
+    const std::size_t next = std::min(idx + 1, states_nr - 1);
+
+    if (idx == next) // I *think* this only happens on the last frame of the data set - zamaan
+        throw std::range_error(
+            "InstrumentStateList::interpolate: Attempting to interpolate using 1 frame");
+
+    return InterpolatedState(states.at(idx), states.at(next), frame_idx - idx);
 }
 
 InterpolatedState::InterpolatedState(const InstrumentState& s1, const InstrumentState& s2, double t)
