@@ -95,6 +95,8 @@ void LogWidget::showMessage(const nsx::LogMessage& message)
     case nsx::Level::Debug:
         text_color = _debugColor;
         break;
+    default:
+        text_color = _infoColor;
     };
 
     setTextColor(text_color);

@@ -148,7 +148,6 @@ class SubframeFilterPeaks : public QWidget {
 
     LinkedComboBox* _exp_combo;
     LinkedComboBox* _peak_combo;
-    LinkedComboBox* _data_combo;
 
     QPushButton* _filter_button;
     QPushButton* _save_button;
