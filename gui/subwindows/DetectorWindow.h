@@ -2,7 +2,7 @@
 //
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
-//! @file      gui/detector_window/DetectorWindow.cpp
+//! @file      gui/subwindows/DetectorWindow.cpp
 //! @brief     Implements class DetectorWindow
 //!
 //! @homepage  ###HOMEPAGE###
@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_GUI_DETECTOR_WINDOW_DETECTORWINDOW_H
-#define NSX_GUI_DETECTOR_WINDOW_DETECTORWINDOW_H
+#ifndef NSX_GUI_SUBWINDOWS_DETECTORWINDOW_H
+#define NSX_GUI_SUBWINDOWS_DETECTORWINDOW_H
 
 #include "core/loader/XFileHandler.h"
 #include "core/shape/PeakCollection.h"
@@ -122,4 +122,4 @@ class DetectorWindow : public QDialog {
     nsx::PeakCenterDataSet _peakCenterData;
 };
 
-#endif // NSX_GUI_DETECTOR_WINDOW_DETECTORWINDOW_H
+#endif // NSX_GUI_SUBWINDOWS_DETECTORWINDOW_H
