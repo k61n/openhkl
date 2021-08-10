@@ -118,8 +118,8 @@ void Refiner::makeBatches(
                         max = val;
                         best_cell = key;
                     }
-                    new_cell = std::make_unique<UnitCell>(*best_cell);
                 }
+                new_cell = std::make_unique<UnitCell>(*best_cell);
             } else
                 // Starting from scratch, use the cell obtained from autoindexing
                 new_cell = std::make_unique<UnitCell>(_unrefined_cell);
