@@ -13,14 +13,7 @@
 //  ***********************************************************************************************
 
 #include "core/loader/IDataReader.h"
-
-#include "base/utils/Path.h"
-#include "base/utils/Units.h"
-#include "core/detector/Detector.h"
-#include "core/gonio/Gonio.h"
 #include "core/instrument/Diffractometer.h"
-#include "core/instrument/Sample.h"
-#include "core/instrument/Source.h"
 #include "core/raw/DataKeys.h"
 #include "core/data/DataSet.h"
 
@@ -30,9 +23,7 @@
 namespace nsx {
 
 IDataReader::IDataReader(const std::string& filename)
-    : _sampleStates()
-    , _detectorStates()
-    , _isOpened(false)
+    : _isOpened(false)
     , _filename(filename)
 {
 }
@@ -61,48 +52,9 @@ bool IDataReader::initRead()
     return true;
 }
 
-InstrumentState IDataReader::state(size_t frame) const
-{
-    assert(frame < _dataset_out->nFrames());
-
-    Diffractometer* diffractometer = _dataset_out->diffractometer();
-    InstrumentState state(diffractometer);
-
-    // compute transformations
-    const auto& detector_gonio = diffractometer->detector()->gonio();
-    const auto& sample_gonio = diffractometer->sample().gonio();
-
-    Eigen::Transform<double, 3, Eigen::Affine> detector_trans =
-        detector_gonio.affineMatrix(_detectorStates[frame]);
-    Eigen::Transform<double, 3, Eigen::Affine> sample_trans =
-        sample_gonio.affineMatrix(_sampleStates[frame]);
-
-    state.detectorOrientation = detector_trans.rotation();
-    state.sampleOrientation = Eigen::Quaterniond(sample_trans.rotation());
-
-    state.detectorPositionOffset = detector_trans.translation();
-    state.samplePosition = sample_trans.translation();
-
-    state.ni = diffractometer->source().selectedMonochromator().ki().rowVector();
-    state.ni.normalize();
-    state.wavelength = diffractometer->source().selectedMonochromator().wavelength();
-
-    return state;
-}
-
 bool IDataReader::isOpened() const
 {
     return _isOpened;
-}
-
-const std::vector<std::vector<double>>& IDataReader::sampleStates() const
-{
-    return _sampleStates;
-}
-
-const std::vector<std::vector<double>>& IDataReader::detectorStates() const
-{
-    return _detectorStates;
 }
 
 void IDataReader::setDataSet(DataSet* dataset_ptr) {
@@ -127,6 +79,5 @@ std::string IDataReader::NSXfilepath() const
 {
     return "";
 }
-
 
 } // namespace nsx

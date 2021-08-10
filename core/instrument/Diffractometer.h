@@ -18,7 +18,9 @@
 #include "core/detector/Detector.h"
 #include "core/instrument/Sample.h"
 #include "core/instrument/Source.h"
+#include "core/instrument/InstrumentState.h"
 #include "core/raw/DataKeys.h"
+
 
 
 namespace nsx {
@@ -44,6 +46,9 @@ class Diffractometer {
     //! Returns const pointer to the detector of this diffractometer
     const Detector* detector() const;
 
+    //! Returns the instrument state
+    InstrumentState instrumentState(const std::size_t frame_idx);
+
 #ifndef SWIG
     //! Sets the detector of this diffractometer
     void setDetector(std::unique_ptr<Detector> detector);
@@ -66,6 +71,13 @@ class Diffractometer {
 
     //! Sets the source of this diffractometer
     void setSource(const Source& source);
+
+ public:
+    //! Vector of sample states
+    std::vector<std::vector<double>> sampleStates;
+
+    //! Vector of detector states
+    std::vector<std::vector<double>> detectorStates;
 
  protected:
     Diffractometer();
