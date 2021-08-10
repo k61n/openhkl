@@ -58,7 +58,7 @@ void Refiner::makeBatches(
 {
     _unrefined_states.clear();
     _batches.clear();
-    _batch_cells.clear();
+    CellMap tmp_map = _cell_handler->extractBatchCells();
 
     _cell = cell;
     _states = &states;

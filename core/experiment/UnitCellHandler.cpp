@@ -154,4 +154,17 @@ std::vector<std::string> UnitCellHandler::getCompatibleSpaceGroups() const
     return getUnitCell(nsx::kw_acceptedUnitcell)->compatibleSpaceGroups();
 }
 
+CellMap UnitCellHandler::extractBatchCells()
+{
+    CellMap new_map;
+    for (auto it = _unit_cells.cbegin(), next_it = it; it != _unit_cells.cend(); it = next_it) {
+        ++next_it;
+        if (it->first.substr(0, 6) == "frames") {
+            auto nh = _unit_cells.extract(it);
+            new_map.insert(std::move(nh));
+        }
+    }
+    return new_map;
+}
+
 } // namespace nsx

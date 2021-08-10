@@ -78,6 +78,8 @@ class UnitCellHandler {
         PeakCollection* peaks, std::string cellName = nsx::kw_acceptedUnitcell) const;
     //! Get space groups compatible with unit cell
     std::vector<std::string> getCompatibleSpaceGroups() const;
+    //! Extract all items from the map without breaking pointers, return a new map
+    CellMap extractBatchCells();
 
  private:
     CellMap _unit_cells;
