@@ -103,6 +103,8 @@ MainWin::MainWin()
     setCentralWidget(main_widget);
     readSettings();
     show();
+
+    statusBar()->showMessage("Ready.");
 }
 
 void MainWin::onDataChanged() const
