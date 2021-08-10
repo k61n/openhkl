@@ -33,9 +33,9 @@ class RefinementBatch {
  public:
     //! Default constructor. Should not be used but needed for swig
     RefinementBatch() = default;
-    //! Construct batch with initial unit cell and list of peaks.
+    //! A batch contains peaks from frame _fmin to _fmax + 2
     RefinementBatch(
-        InstrumentStateList& states, UnitCell* uc, std::vector<const nsx::Peak3D*> peaksmax);
+        InstrumentStateList& states, UnitCell* uc, std::vector<nsx::Peak3D*> peaksmax);
 
     //! Sets the lattice B matrix to be refined.
     void refineUB();
@@ -65,7 +65,7 @@ class RefinementBatch {
     int realSpaceResiduals(Eigen::VectorXd& fvec);
 
     //! Returns the list of peaks used for refinement.
-    std::vector<const nsx::Peak3D*> peaks() const;
+    std::vector<nsx::Peak3D*> peaks() const;
 
     //! Returns the refined unit cell.
     UnitCell* cell() const;
@@ -96,7 +96,7 @@ class RefinementBatch {
 
     nsx::UnitCell* _cell;
 
-    std::vector<const nsx::Peak3D*> _peaks;
+    std::vector<nsx::Peak3D*> _peaks;
 
     FitParameters _params;
 

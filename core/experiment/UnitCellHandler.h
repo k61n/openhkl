@@ -43,8 +43,10 @@ class UnitCellHandler {
  public: // Handling unit cells
     //! Get a pointer to the map of unit cells
     const CellMap* getCellMap() const;
-    //! Add some data to the experiment
+    //! Add a unit cell to the experiment
     void addUnitCell(const std::string& name, const UnitCell& unit_cell);
+    //! Move a unique pointer to a unit cell to the experiment
+    void addUnitCell(const std::string& name, std::unique_ptr<UnitCell>& unit_cell);
     //! Add a unit cell to the experiment via cell parameters (skip autoindexing step)
     void addUnitCell(
         const std::string& name, double a, double b, double c, double alpha, double beta,
@@ -76,6 +78,8 @@ class UnitCellHandler {
         PeakCollection* peaks, std::string cellName = nsx::kw_acceptedUnitcell) const;
     //! Get space groups compatible with unit cell
     std::vector<std::string> getCompatibleSpaceGroups() const;
+    //! Extract all items from the map without breaking pointers, return a new map
+    CellMap extractBatchCells();
 
  private:
     CellMap _unit_cells;

@@ -54,22 +54,28 @@ void Refiner::setHandler(const sptrProgressHandler& handler)
 }
 
 void Refiner::makeBatches(
-    InstrumentStateList& states, UnitCell* cell, const std::vector<nsx::Peak3D*>& peaks)
+    InstrumentStateList& states, const std::vector<nsx::Peak3D*>& peaks, UnitCell* cell)
 {
     _unrefined_states.clear();
     _batches.clear();
+    CellMap tmp_map = _cell_handler->extractBatchCells();
 
     _cell = cell;
     _states = &states;
     for (const InstrumentState& state : states)
         _unrefined_states.push_back(state);
-    _unrefined_cell = *cell;
+    if (cell) // Only use the given cell if this is the first refinement
+        _unrefined_cell = *cell;
     _nframes = states.size();
 
     std::vector<nsx::Peak3D*> filtered_peaks = peaks;
     PeakFilter peak_filter;
     filtered_peaks = peak_filter.filterEnabled(peaks, true);
-    filtered_peaks = peak_filter.filterIndexed(filtered_peaks, *cell, cell->indexingTolerance());
+    if (_first_refine)
+        filtered_peaks = peak_filter.filterIndexed(
+            filtered_peaks, cell->indexingTolerance(), cell);
+    else
+        filtered_peaks = peak_filter.filterIndexed(filtered_peaks, cell->indexingTolerance());
 
     std::sort(
         filtered_peaks.begin(), filtered_peaks.end(),
@@ -80,24 +86,58 @@ void Refiner::makeBatches(
         });
 
     const double batch_size = filtered_peaks.size() / double(_params->nbatches);
+    nsxlog(Level::Info, "Batch size is ", batch_size, " peaks");
     size_t current_batch = 0;
 
-    std::vector<const nsx::Peak3D*> peaks_subset;
+    std::vector<nsx::Peak3D*> peaks_subset;
 
-    int n_batch = 0;
+    // batch contains peaks from frame _fmin to _fmax + 2
     for (size_t i = 0; i < filtered_peaks.size(); ++i) {
         peaks_subset.push_back(filtered_peaks[i]);
 
         if (i + 1.1 >= (current_batch + 1) * batch_size) {
 
             // Make a new unit cell for this batch
-            std::ostringstream oss;
-            oss << "batch" << ++n_batch;
-            std::string name = oss.str();
-            _cell_handler->addUnitCell(name, _unrefined_cell);
+            std::unique_ptr<UnitCell> new_cell;
+            if (!cell) {
+                // We have already refined once, and all peaks have been assigned a batch
+                // with its own cell
+                std::map<const UnitCell*, int> cell_count;
+                for (auto* peak : peaks_subset) {
+                    auto search = cell_count.find(peak->unitCell());
+                    if (search == cell_count.end())
+                        cell_count.insert({peak->unitCell(), 1});
+                    else
+                        search->second += 1;
+                }
+                // Find cell that appears the most in this batch
+                int max = 0;
+                const UnitCell* best_cell;
+                for (const auto [key, val] : cell_count) {
+                    if (val > max) {
+                        max = val;
+                        best_cell = key;
+                    }
+                }
+                new_cell = std::make_unique<UnitCell>(*best_cell);
+            } else
+                // Starting from scratch, use the cell obtained from autoindexing
+                new_cell = std::make_unique<UnitCell>(_unrefined_cell);
 
-            RefinementBatch b(states, _cell_handler->getUnitCell(name), peaks_subset);
+            RefinementBatch b(states, new_cell.get(), peaks_subset);
             b.setResidualType(_params->residual_type);
+
+            std::ostringstream oss;
+            oss << "frames " << b.name();
+            std::string name = oss.str();
+
+            for (auto* peak : b.peaks()) {
+                if (b.onlyContains(peak->shape().center()[2]))
+                    peak->setUnitCell(new_cell.get());
+            }
+
+            _cell_handler->addUnitCell(name, new_cell);
+
             _batches.emplace_back(std::move(b));
             peaks_subset.clear();
             ++current_batch;
@@ -178,6 +218,7 @@ bool Refiner::refine()
     }
     if (_handler)
         _handler->setProgress(100);
+    _first_refine = false;
     logChange();
     return true;
 }
@@ -193,7 +234,11 @@ int Refiner::updatePredictions(std::vector<Peak3D*>& peaks) const
     const PeakFilter peak_filter;
     std::vector<nsx::Peak3D*> filtered_peaks = peaks;
     filtered_peaks = peak_filter.filterEnabled(peaks, true);
-    filtered_peaks = peak_filter.filterIndexed(filtered_peaks, *_cell, _cell->indexingTolerance());
+    if (_first_refine)
+        filtered_peaks = peak_filter.filterIndexed(
+            filtered_peaks, _cell->indexingTolerance(), _cell);
+    else
+        filtered_peaks = peak_filter.filterIndexed(filtered_peaks, _cell->indexingTolerance());
 
     int updated = 0;
 
@@ -259,6 +304,11 @@ InstrumentStateList* Refiner::unrefinedStates()
 int Refiner::nframes() const
 {
     return _nframes;
+}
+
+bool Refiner::firstRefine() const
+{
+    return _first_refine;
 }
 
 void Refiner::logChange()

@@ -154,7 +154,7 @@ TEST_CASE("test/crystal/TestRefiner.cpp", "")
     refiner_params->refine_sample_orientation = false;
     refiner_params->refine_ki = false;
     refiner_params->max_iter = 500;
-    refiner->makeBatches(states, cell.get(), peaks);
+    refiner->makeBatches(states, peaks, cell.get());
 
     CHECK(refiner->batches().size() == 1);
 

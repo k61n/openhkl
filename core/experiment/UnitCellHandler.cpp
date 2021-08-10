@@ -44,6 +44,13 @@ void UnitCellHandler::addUnitCell(const std::string& name, const UnitCell& unit_
     _unit_cells.insert_or_assign(name, std::move(ptr));
 }
 
+void UnitCellHandler::addUnitCell(const std::string& name, std::unique_ptr<UnitCell>& unit_cell)
+{
+    nsxlog(Level::Info, "UnitCellHandler::addUnitCell: '", name, "': ", unit_cell->toString());
+    unit_cell->setName(name);
+    _unit_cells.insert_or_assign(name, std::move(unit_cell));
+}
+
 void UnitCellHandler::addUnitCell(
     const std::string& name, double a, double b, double c, double alpha, double beta, double gamma)
 {
@@ -145,6 +152,19 @@ void UnitCellHandler::assignUnitCell(PeakCollection* peaks, std::string cellName
 std::vector<std::string> UnitCellHandler::getCompatibleSpaceGroups() const
 {
     return getUnitCell(nsx::kw_acceptedUnitcell)->compatibleSpaceGroups();
+}
+
+CellMap UnitCellHandler::extractBatchCells()
+{
+    CellMap new_map;
+    for (auto it = _unit_cells.cbegin(), next_it = it; it != _unit_cells.cend(); it = next_it) {
+        ++next_it;
+        if (it->first.substr(0, 6) == "frames") {
+            auto nh = _unit_cells.extract(it);
+            new_map.insert(std::move(nh));
+        }
+    }
+    return new_map;
 }
 
 } // namespace nsx

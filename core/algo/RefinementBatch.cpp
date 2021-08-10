@@ -14,6 +14,7 @@
 
 #include <algorithm>
 #include <iostream>
+#include <iomanip>
 #include <limits>
 
 #include "base/fit/Minimizer.h"
@@ -70,14 +71,14 @@ Eigen::MatrixXd constraintKernel(int nparams, const std::vector<std::vector<int>
 namespace nsx {
 
 RefinementBatch::RefinementBatch(
-    InstrumentStateList& states, UnitCell* uc, std::vector<const nsx::Peak3D*> peaks)
+    InstrumentStateList& states, UnitCell* uc, std::vector<nsx::Peak3D*> peaks)
     : _fmin(std::numeric_limits<double>::max())
     , _fmax(std::numeric_limits<double>::lowest())
     , _residual_type(ResidualType::QSpace)
     , _cell(uc)
     , _peaks(peaks)
 {
-    for (const auto* peak : peaks) {
+    for (auto* peak : peaks) {
         const double z = peak->shape().center()[2];
         _fmin = std::min(z, std::floor(_fmin));
         _fmax = std::max(z, std::ceil(_fmax));
@@ -296,7 +297,7 @@ int RefinementBatch::realSpaceResiduals(Eigen::VectorXd& fvec)
     return 0;
 }
 
-std::vector<const nsx::Peak3D*> RefinementBatch::peaks() const
+std::vector<nsx::Peak3D*> RefinementBatch::peaks() const
 {
     return _peaks;
 }
@@ -329,7 +330,8 @@ bool RefinementBatch::onlyContains(double f) const
 std::string RefinementBatch::name() const
 {
     std::ostringstream oss;
-    oss << int(_fmin) << "-" << int(_fmax);
+    oss << std::setw(3) << std::setfill('0') << std::lround(_fmin) << " - "
+        << std::setw(3) << std::setfill('0') << std::lround(_fmax);
     return oss.str();
 }
 
