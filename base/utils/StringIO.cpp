@@ -15,8 +15,10 @@
 #include <algorithm>
 #include <cctype>
 #include <iterator>
-#include <sstream>
+#include <sstream> // stringstream
 #include <vector>
+#include <chrono>
+#include <iomanip> // put_time
 
 #include "base/utils/StringIO.h"
 
@@ -107,6 +109,16 @@ std::string lowerCase(const std::string& str_in)
         str_out[c] = std::tolower(str_in[c]);
 
     return str_out;
+}
+
+std::string datetime_str() // yoinked from BornAgain
+{
+    using clock = std::chrono::system_clock;
+
+    std::stringstream output;
+    std::time_t current_time = clock::to_time_t(clock::now());
+    output << std::put_time(std::gmtime(&current_time), "%Y-%b-%d %T");
+    return output.str();
 }
 
 } // namespace nsx

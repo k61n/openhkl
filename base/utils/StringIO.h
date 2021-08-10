@@ -29,6 +29,9 @@ std::vector<std::string> split(const std::string& input_string, const std::strin
 
 std::string lowerCase(const std::string& str_in);
 
+//! Returns current date and time as a string
+std::string datetime_str();
+
 } // namespace nsx
 
 #endif // NSX_BASE_UTILS_STRINGIO_H

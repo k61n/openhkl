@@ -15,7 +15,7 @@
 #include "gui/widgets/LogWidget.h"
 
 #include "base/utils/Logger.h"
-
+#include "base/utils/StringIO.h" // datetime_str
 #include <string>
 #include <chrono>
 #include <sstream>
@@ -24,20 +24,6 @@
 #include <QColor>
 #include <QTextEdit>
 
-
-namespace {
-
-// TODO: Move to utils
-std::string datetime()
-{
-    using clock = std::chrono::system_clock;
-    std::stringstream output;
-    std::time_t current_time = clock::to_time_t(clock::now());
-    output << std::put_time(std::gmtime(&current_time), "%Y-%b-%d %T");
-    return output.str();
-}
-
-} // namespace
 
 LogWidget::LogWidget(QWidget* parent):
     QTextEdit(parent)
@@ -50,7 +36,8 @@ LogWidget::LogWidget(QWidget* parent):
     setFontPointSize(_fontPointSize);
     // add a prologue
     setText(
-        QString::fromStdString("-*- " + _initText + " [" + datetime() + "] -*-"));
+        QString::fromStdString("-*- " + _initText + " ["
+                               + nsx::datetime_str() + "] -*-"));
 
     _connectUI();
 }
