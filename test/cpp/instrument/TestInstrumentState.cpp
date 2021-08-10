@@ -40,8 +40,8 @@ int nsx::UnitTest_DataSet::run()
     dataset_ptr->finishRead();
     experiment.addData(dataset_ptr);
 
-    auto detectorStates = dataset_ptr->_reader->detectorStates();
-    auto sampleStates = dataset_ptr->_reader->sampleStates();
+    auto detectorStates = dataset_ptr->_diffractometer->detectorStates;
+    auto sampleStates = dataset_ptr->_diffractometer->sampleStates;
 
     int good_states = 0;
     int total_states = 0;

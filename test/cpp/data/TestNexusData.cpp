@@ -90,7 +90,7 @@ TEST_CASE("test/data/TestNexusData.cpp", "")
                 Eigen::MatrixXi M = dataset_ptr->frame(frame);
                 CHECK((M.rows() == 256 && M.cols() == 640));
 
-                std::cout << (dataset_ptr->reader()->sampleStates()[frame][gonio] / M_PI * 180.)
+                std::cout << (dataset_ptr->diffractometer()->sampleStates[frame][gonio] / M_PI * 180.)
                           << ", ";
             }
             std::cout << std::endl;

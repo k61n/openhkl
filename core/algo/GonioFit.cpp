@@ -56,9 +56,9 @@ GonioFit fitSampleGonioOffsets(
     std::vector<std::vector<double>> selected_states;
     selected_states.reserve(n_selected_states);
 
-    for (const auto& data : dataset) {
-        auto&& states = data->instrumentStates();
-        auto&& sample_states = data->reader()->sampleStates();
+    for (const auto& ds : dataset) {
+        auto&& states = ds->instrumentStates();
+        auto&& sample_states = ds->diffractometer()->sampleStates;
         for (size_t i = 0; i < states.size(); ++i) {
             auto state = states[i];
             if (state.refined) {
