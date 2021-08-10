@@ -18,7 +18,7 @@
 #include "core/experiment/Experiment.h"
 #include "core/peak/Peak3D.h"
 #include "gui/MainWin.h" // gGui
-#include "gui/detector_window/DetectorWindow.h"
+#include "gui/subwindows/DetectorWindow.h"
 #include "gui/frames/ProgressView.h"
 #include "gui/graphics/DetectorScene.h"
 #include "gui/models/Project.h"

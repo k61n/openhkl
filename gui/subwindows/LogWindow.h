@@ -2,7 +2,7 @@
 //
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
-//! @file      gui/windows/LogWindow.h
+//! @file      gui/subwindows/LogWindow.h
 //! @brief     Defines class LogWindow
 //!
 //! @homepage  ###HOMEPAGE###
@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_GUI_WINDOWS_LOGWINDOW_H
-#define NSX_GUI_WINDOWS_LOGWINDOW_H
+#ifndef NSX_GUI_SUBWINDOWS_LOGWINDOW_H
+#define NSX_GUI_SUBWINDOWS_LOGWINDOW_H
 
 #include <QDialog>
 
@@ -35,4 +35,4 @@ private:
     void _connectUI();
 };
 
-#endif // NSX_GUI_WINDOWS_LOGWINDOW_H
+#endif // NSX_GUI_SUBWINDOWS_LOGWINDOW_H

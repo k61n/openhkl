@@ -2,7 +2,7 @@
 //
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
-//! @file      gui/detector_window/DetectorWindow.h
+//! @file      gui/subwindows/DetectorWindow.h
 //! @brief     Defines class DetectorWindow
 //!
 //! @homepage  ###HOMEPAGE###
@@ -12,7 +12,7 @@
 //
 //  ***********************************************************************************************
 
-#include "gui/detector_window/DetectorWindow.h"
+#include "gui/subwindows/DetectorWindow.h"
 
 #include "core/experiment/Experiment.h"
 #include "gui/graphics/DetectorScene.cpp"

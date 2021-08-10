@@ -19,7 +19,7 @@
 #include "core/shape/PeakFilter.h"
 #include "gui/MainWin.h" // gGui
 #include "gui/connect/Sentinel.h"
-#include "gui/detector_window/DetectorWindow.h"
+#include "gui/subwindows/DetectorWindow.h"
 #include "gui/dialogs/ListNameDialog.h"
 #include "gui/frames/ProgressView.h"
 #include "gui/graphics/DetectorScene.h"

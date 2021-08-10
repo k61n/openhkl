@@ -17,9 +17,10 @@
 
 #include "base/utils/LogLevel.h"
 #include "base/utils/LogMessenger.h"
+#include "base/utils/StringIO.h"  // datetime_str
 #include <string>
-#include <sstream>
-#include <fstream>
+#include <sstream>  // stringstream
+#include <fstream>  // ofstream
 
 // usage: DBG("This is my debug message nr.", 1);
 #define DBG(...)                                                                                   \
@@ -40,13 +41,11 @@ class Logger {
     template <typename... T> void log(const Level& verbosity, const T&... messages)
     {
         if (verbosity <= _max_print_level) {
-            _ofs << time() << " " << static_cast<int>(verbosity) << " ";
+            _ofs << datetime_str() << " " << static_cast<int>(verbosity) << " ";
             ((_ofs << messages), ...) << std::endl; // unpack messages
         }
     }
     void start(const std::string& filename, const Level& min_level); //! initialise
-
-    static std::string time(); //! get the time as a string
 
     //! Log messenger
     LogMessenger Msg;
@@ -78,7 +77,7 @@ template <typename... T> inline void nsxmsg(const Level& level, const T&... mess
     ((ss << messages), ...); // unpack messages
     LogMessage msg{
         level,
-        /* header */ Logger::time(),
+        /* header */ datetime_str(),
         /* body */ ss.str()
     };
     Logger::instance().Msg.send(msg);
