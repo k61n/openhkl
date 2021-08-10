@@ -15,8 +15,11 @@
 #ifndef NSX_BASE_UTILS_LOGGER_H
 #define NSX_BASE_UTILS_LOGGER_H
 
-#include <fstream>
+#include "base/utils/LogLevel.h"
+#include "base/utils/LogMessenger.h"
 #include <string>
+#include <sstream>
+#include <fstream>
 
 // usage: DBG("This is my debug message nr.", 1);
 #define DBG(...)                                                                                   \
@@ -25,15 +28,6 @@
 
 
 namespace nsx {
-
-//! Verbosity of the logger
-enum class Level {
-    Off = 0,
-    Info,
-    Error,
-    Warning,
-    Debug,
-};
 
 //! A singleton class for logging
 class Logger {
@@ -47,10 +41,15 @@ class Logger {
     {
         if (verbosity <= _max_print_level) {
             _ofs << time() << " " << static_cast<int>(verbosity) << " ";
-            ((_ofs << messages), ...) << std::endl; // unpack messages separated by spaces
+            ((_ofs << messages), ...) << std::endl; // unpack messages
         }
     }
     void start(const std::string& filename, const Level& min_level); //! initialise
+
+    static std::string time(); //! get the time as a string
+
+    //! Log messenger
+    LogMessenger Msg;
 
  private:
     static Logger* m_logger; //! The single instance
@@ -58,8 +57,6 @@ class Logger {
     Logger() = default;
     ~Logger() = default;
     Logger(const Logger&) = delete;
-
-    std::string time() const; //! get the time as a string
 
     Level _max_print_level = Level::Warning; //! print level (default Warning)
     std::ofstream _ofs;
@@ -70,6 +67,21 @@ class Logger {
 template <typename... T> inline void nsxlog(const Level& level, const T&... messages)
 {
     Logger::instance().log(level, messages...);
+}
+
+//! Global messaging function (prefixed with "nsx" to facilitate grepping)
+//! Usage: nsxmsg(Level::Warning, "your message", 1, 3.14, "test")
+template <typename... T> inline void nsxmsg(const Level& level, const T&... messages)
+{
+    // Prepare a log message
+    std::stringstream ss;
+    ((ss << messages), ...); // unpack messages
+    LogMessage msg{
+        level,
+        /* header */ Logger::time(),
+        /* body */ ss.str()
+    };
+    Logger::instance().Msg.send(msg);
 }
 
 } // namespace nsx

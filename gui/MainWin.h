@@ -20,6 +20,7 @@
 
 class DetectorScene;
 class DetectorWindow;
+class LogWindow;
 class PlottableItem;
 class Sentinel;
 class SideBar;
@@ -86,6 +87,9 @@ class MainWin : public QMainWindow {
 
     // modeless detector dialog
     DetectorWindow* detector_window;
+
+    // log window
+    LogWindow* log_window;
 
     Sentinel* sentinel;
 

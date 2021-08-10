@@ -15,7 +15,6 @@
 #include "base/utils/Logger.h"
 #include <chrono>
 #include <iomanip>
-#include <sstream>
 
 namespace nsx {
 
@@ -35,7 +34,7 @@ Logger& Logger::instance()
     return *m_logger;
 }
 
-std::string Logger::time() const // yoinked from BornAgain
+std::string Logger::time() // yoinked from BornAgain
 {
     using clock = std::chrono::system_clock;
 

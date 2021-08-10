@@ -43,7 +43,9 @@ Menus::Menus(QMenuBar* menu_bar) : _menu_bar{menu_bar}
     _expt_menu->addAction(actions->remove_experiment);
     _expt_menu->addAction(actions->quit);
 
+    // View menu
     _view_menu->addAction(actions->detector_window);
+    _view_menu->addAction(actions->log_window);
 
     QMenu* _data_sub = _data_menu->addMenu("Add data set");
     _data_sub->addAction(actions->add_raw);

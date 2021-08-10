@@ -18,6 +18,7 @@
 #include "gui/actions/Menus.h"
 #include "gui/connect/Sentinel.h"
 #include "gui/detector_window/DetectorWindow.h"
+#include "gui/windows/LogWindow.h"
 #include "gui/graphics/DetectorScene.h"
 #include "gui/graphics/DetectorView.h"
 #include "gui/graphics_items/PlottableItem.h"
@@ -83,6 +84,7 @@ MainWin::MainWin()
     merger = new SubframeMergedPeaks;
 
     detector_window = new DetectorWindow();
+    log_window = new LogWindow(this);
 
     _layout_stack = new QStackedWidget(main_widget);
     _layout_stack->addWidget(home);
@@ -182,6 +184,9 @@ void MainWin::closeEvent(QCloseEvent* event)
 
     if (detector_window)
         detector_window->close();
+
+    if (log_window)
+        log_window->close();
 
     QMainWindow::closeEvent(event);
 }
