@@ -114,33 +114,9 @@ void Diffractometer::setSource(const Source& source)
     _source = source;
 }
 
-InstrumentState Diffractometer::instrumentState(const std::size_t frame_idx) const
+InstrumentState Diffractometer::instrumentState(const std::size_t frame_idx)
 {
-    assert(frame_idx < sampleStates.size());
-    assert(frame_idx < detectorStates.size());
-
-    InstrumentState state(const_cast<Diffractometer*>(this));  // TODO: Find a better way instead of const_cast
-
-    // compute transformations
-    const auto& detector_gonio = _detector->gonio();
-    const auto& sample_gonio = _sample.gonio();
-
-    Eigen::Transform<double, 3, Eigen::Affine> detector_trans =
-        detector_gonio.affineMatrix(detectorStates[frame_idx]);
-    Eigen::Transform<double, 3, Eigen::Affine> sample_trans =
-        sample_gonio.affineMatrix(sampleStates[frame_idx]);
-
-    state.detectorOrientation = detector_trans.rotation();
-    state.sampleOrientation = Eigen::Quaterniond(sample_trans.rotation());
-
-    state.detectorPositionOffset = detector_trans.translation();
-    state.samplePosition = sample_trans.translation();
-
-    state.ni = _source.selectedMonochromator().ki().rowVector();
-    state.ni.normalize();
-    state.wavelength = _source.selectedMonochromator().wavelength();
-
-    return state;
+    return InstrumentState::state(this, frame_idx);
 }
 
 } // namespace nsx

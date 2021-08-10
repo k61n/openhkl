@@ -92,6 +92,11 @@ class InstrumentState {
     //! True if this state has been refined
     bool refined;
 
+    //! Returns the instrument state as read from the metadata
+    static InstrumentState state(Diffractometer* const diffractometer,
+                                 const std::size_t frame_idx);
+
+
 #ifndef SWIG
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 #endif
