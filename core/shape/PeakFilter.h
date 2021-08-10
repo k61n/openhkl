@@ -116,7 +116,7 @@ class PeakFilter {
 
     //! Filter only enabled on a peak vector
     std::vector<Peak3D*> filterIndexed(
-        const std::vector<Peak3D*> peaks, double tolerance, const UnitCell* cell = nullptr) const;
+        const std::vector<Peak3D*> peaks, const UnitCell* cell = nullptr) const;
 
     //! Run the filtering
     void filter(PeakCollection* peak_collection) const;
