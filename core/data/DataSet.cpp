@@ -91,7 +91,7 @@ void DataSet::finishRead()
     _states.reserve(nframes);
 
     for (unsigned int i = 0; i < nframes; ++i)
-        _states.push_back(_diffractometer->state(i));
+        _states.push_back(_diffractometer->instrumentState(i));
 }
 
 void DataSet::addDataFile(const std::string& filename, const std::string& extension)

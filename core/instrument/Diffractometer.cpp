@@ -114,7 +114,7 @@ void Diffractometer::setSource(const Source& source)
     _source = source;
 }
 
-InstrumentState Diffractometer::state(const std::size_t frame_idx) const
+InstrumentState Diffractometer::instrumentState(const std::size_t frame_idx) const
 {
     assert(frame_idx < sampleStates.size());
     assert(frame_idx < detectorStates.size());
