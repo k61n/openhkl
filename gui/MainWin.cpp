@@ -18,7 +18,7 @@
 #include "gui/actions/Menus.h"
 #include "gui/connect/Sentinel.h"
 #include "gui/detector_window/DetectorWindow.h"
-#include "gui/windows/LogWindow.h"
+#include "gui/subwindows/LogWindow.h"
 #include "gui/graphics/DetectorScene.h"
 #include "gui/graphics/DetectorView.h"
 #include "gui/graphics_items/PlottableItem.h"

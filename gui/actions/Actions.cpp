@@ -18,7 +18,7 @@
 #include "gui/MainWin.h" // for gGui
 #include "gui/connect/Sentinel.h" // for sentinel
 #include "gui/detector_window/DetectorWindow.h"
-#include "gui/windows/LogWindow.h"
+#include "gui/subwindows/LogWindow.h"
 #include "gui/dialogs/ClonePeakDialog.h"
 #include "gui/dialogs/ComboDialog.h"
 #include "gui/dialogs/Messages.h"

@@ -2,7 +2,7 @@
 //
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
-//! @file      gui/windows/LogWindow.cpp
+//! @file      gui/subwindows/LogWindow.cpp
 //! @brief     Implements class LogWindow
 //!
 //! @homepage  ###HOMEPAGE###
@@ -12,7 +12,7 @@
 //
 //  ***********************************************************************************************
 
-#include "gui/windows/LogWindow.h"
+#include "gui/subwindows/LogWindow.h"
 
 #include "gui/widgets/LogWidget.h"
 #include "base/utils/Logger.h"
