@@ -73,7 +73,9 @@ void Refiner::makeBatches(
     filtered_peaks = peak_filter.filterEnabled(peaks, true);
     if (_first_refine)
         filtered_peaks = peak_filter.filterIndexed(
-            filtered_peaks, *cell, cell->indexingTolerance());
+            filtered_peaks, cell->indexingTolerance(), cell);
+    else
+        filtered_peaks = peak_filter.filterIndexed(filtered_peaks, cell->indexingTolerance());
 
     std::sort(
         filtered_peaks.begin(), filtered_peaks.end(),
@@ -234,7 +236,9 @@ int Refiner::updatePredictions(std::vector<Peak3D*>& peaks) const
     filtered_peaks = peak_filter.filterEnabled(peaks, true);
     if (_first_refine)
         filtered_peaks = peak_filter.filterIndexed(
-            filtered_peaks, *_cell, _cell->indexingTolerance());
+            filtered_peaks, _cell->indexingTolerance(), _cell);
+    else
+        filtered_peaks = peak_filter.filterIndexed(filtered_peaks, _cell->indexingTolerance());
 
     int updated = 0;
 

@@ -184,7 +184,7 @@ void AutoIndexer::refineSolutions(const std::vector<Peak3D*>& peaks)
         std::vector<Peak3D*> enabled_peaks = peak_filter.filterEnabled(peaks, true);
 
         std::vector<Peak3D*> filtered_peaks =
-            peak_filter.filterIndexed(enabled_peaks, *cell, cell->indexingTolerance());
+            peak_filter.filterIndexed(enabled_peaks, cell->indexingTolerance(), cell);
 
         int success = filtered_peaks.size();
         for (const auto* peak : filtered_peaks) {
@@ -269,7 +269,7 @@ void AutoIndexer::refineSolutions(const std::vector<Peak3D*>& peaks)
         // the selected peaks which have been successfully indexed
 
         std::vector<Peak3D*> refiltered_peaks =
-            peak_filter.filterIndexed(filtered_peaks, *cell, cell->indexingTolerance());
+            peak_filter.filterIndexed(filtered_peaks, cell->indexingTolerance(), cell);
 
         double score = static_cast<double>(refiltered_peaks.size());
         double maxscore = static_cast<double>(filtered_peaks.size());
