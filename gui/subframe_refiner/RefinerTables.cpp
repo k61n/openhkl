@@ -16,7 +16,6 @@
 #include "core/algo/Refiner.h"
 #include "core/data/DataSet.h"
 #include "core/instrument/InstrumentState.h"
-#include "core/instrument/InstrumentStateList.h"
 #include "gui/widgets/PlotCheckBox.h"
 
 #include "gui/subframe_refiner/RefinerTables.h"

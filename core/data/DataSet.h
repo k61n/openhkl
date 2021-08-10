@@ -16,7 +16,7 @@
 #define NSX_CORE_DATA_DATASET_H
 
 #include "base/mask/IMask.h"
-#include "core/instrument/InstrumentStateList.h"
+#include "core/instrument/InstrumentState.h"
 #include "core/peak/Peak3D.h"
 #include "core/raw/DataKeys.h"
 #include "core/loader/IDataReader.h"

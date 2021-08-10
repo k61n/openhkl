@@ -16,6 +16,7 @@
 
 #include "core/data/DataSet.h"
 #include "core/instrument/Diffractometer.h"
+#include "core/instrument/InterpolatedState.h"
 #include "tables/crystal/MillerIndex.h"
 
 #include <algorithm>
@@ -142,7 +143,7 @@ Intensity Peak3D::rawIntensity() const
 Intensity Peak3D::correctedIntensity() const
 {
     auto c = _shape.center();
-    auto state = _data->instrumentStates().interpolate(c[2]);
+    auto state = InterpolatedState::interpolate(_data->instrumentStates(), c[2]);
     const double lorentz = state.lorentzFactor(c[0], c[1]);
     const double factor = _scale / lorentz / _transmission;
     return rawIntensity() * factor / state.stepSize;
@@ -237,7 +238,8 @@ void Peak3D::setRawIntensity(const Intensity& i)
 ReciprocalVector Peak3D::q() const
 {
     auto pixel_coords = _shape.center();
-    auto state = _data->instrumentStates().interpolate(pixel_coords[2]);
+    auto state = InterpolatedState::interpolate(_data->instrumentStates(),
+                                                pixel_coords[2]);
     const auto* detector = _data->diffractometer()->detector();
     auto detector_position =
         DirectVector(detector->pixelPosition(pixel_coords[0], pixel_coords[1]));
@@ -263,7 +265,7 @@ Ellipsoid Peak3D::qShape() const
         throw std::runtime_error("Attempted to compute q-shape of peak not attached to data");
 
     Eigen::Vector3d p = _shape.center();
-    auto state = _data->instrumentStates().interpolate(p[2]);
+    auto state = InterpolatedState::interpolate(_data->instrumentStates(), p[2]);
     Eigen::Vector3d q0 = q().rowVector();
 
     // Jacobian of map from detector coords to sample q space

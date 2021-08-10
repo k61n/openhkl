@@ -24,6 +24,8 @@
 #include "core/experiment/PeakFinder.h"
 #include "core/peak/Peak3D.h"
 #include "core/peak/Qs2Events.h"
+#include "core/instrument/InterpolatedState.h"
+
 
 nsx::Ellipsoid toDetectorSpace(const nsx::Ellipsoid e, const nsx::sptrDataSet data)
 {
@@ -38,7 +40,7 @@ nsx::Ellipsoid toDetectorSpace(const nsx::Ellipsoid e, const nsx::sptrDataSet da
     const auto& event = events[0];
     // auto position =
     //    data->reader()->getDiffractometer()->detector()->pixelPosition(event.px, event.py);
-    auto state = data->instrumentStates().interpolate(event.frame);
+    auto state = nsx::InterpolatedState::interpolate(data->instrumentStates(), event.frame);
 
     // Jacobian of map from detector coords to sample q space
     Eigen::Matrix3d J = state.jacobianQ(event.px, event.py);

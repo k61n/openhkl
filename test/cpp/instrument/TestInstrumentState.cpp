@@ -49,7 +49,7 @@ int nsx::UnitTest_DataSet::run()
         double frame = double(i) / 100.0;
         ++total_states;
         try {
-            auto state = dataset_ptr->instrumentStates().interpolate(frame);
+            auto state = InterpolatedState::interpolate(dataset_ptr->instrumentStates(), frame);
             ++good_states;
         } catch (std::range_error& e) {
             std::cout << e.what() << std::endl;

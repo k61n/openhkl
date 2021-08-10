@@ -94,8 +94,8 @@ std::vector<DetectorEvent> algo::qVector2Events(
         double f0 = fmin + double(i) * fmax / double(n_intervals);
         double f1 = f0 + fmax / double(n_intervals);
 
-        InterpolatedState state0 = states.interpolate(f0);
-        InterpolatedState state1 = states.interpolate(f1);
+        InterpolatedState state0 = InterpolatedState::interpolate(states, f0);
+        InterpolatedState state1 = InterpolatedState::interpolate(states, f1);
 
         bool s0 = compute_sign(q_vect, state0);
         bool s1 = compute_sign(q_vect, state1);
@@ -107,7 +107,7 @@ std::vector<DetectorEvent> algo::qVector2Events(
         // now use bisection method to compute intersection to good accuracy
         while (f1 - f0 > eps) {
             const double f = 0.5 * (f0 + f1);
-            const InterpolatedState state = states.interpolate(f);
+            const InterpolatedState state = InterpolatedState::interpolate(states, f);
             const bool sign = compute_sign(q_vect, state);
 
             if (sign == s0) { // branch right
@@ -123,7 +123,7 @@ std::vector<DetectorEvent> algo::qVector2Events(
     }
 
     for (const double& frame : roots) { // Generate an event for each frame value
-        const auto state = states.interpolate(frame);
+        const auto state = InterpolatedState::interpolate(states, frame);
 
         Eigen::RowVector3d kf =
             state.ki().rowVector() + q_vect * state.sampleOrientationMatrix().transpose();
@@ -147,7 +147,7 @@ std::vector<DetectorEvent> algo::getDirectBeamEvents(
     const int nframes = states.size();
     for (int frame = 0; frame < nframes; ++frame) { // Generate an event for each frame value
         try {
-            const auto state = states.interpolate(frame);
+            const auto state = InterpolatedState::interpolate(states, frame);
 
             Eigen::RowVector3d kf = state.ki().rowVector();
             DetectorEvent event = detector.constructEvent(

@@ -27,6 +27,7 @@
 #include "core/instrument/Monochromator.h"
 #include "core/instrument/Sample.h"
 #include "core/instrument/Source.h"
+#include "core/instrument/InterpolatedState.h"
 #include "core/raw/DataKeys.h"
 #include "core/loader/RawDataReader.h"
 #include "core/loader/HDF5DataReader.h"
@@ -249,7 +250,7 @@ void DataSet::maskPeaks(std::vector<Peak3D*>& peaks) const
 
 ReciprocalVector DataSet::computeQ(const DetectorEvent& ev) const
 {
-    const auto& state = _states.interpolate(ev.frame);
+    const auto& state = InterpolatedState::interpolate(_states, ev.frame);
     const auto& detector_position = DirectVector(detector().pixelPosition(ev.px, ev.py));
     return state.sampleQ(detector_position);
 }

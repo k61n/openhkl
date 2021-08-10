@@ -20,6 +20,8 @@
 #include "core/data/DataSet.h" // peak->data()->interpolatedState
 #include "core/shape/PeakFilter.h"
 #include "tables/crystal/MillerIndex.h"
+#include "core/instrument/InterpolatedState.h" // interpolate
+
 
 #include <iomanip>
 #include <iostream>
@@ -196,7 +198,7 @@ void AutoIndexer::refineSolutions(const std::vector<Peak3D*>& peaks)
             Eigen::Matrix3d M = peak->shape().metric();
             InterpolatedState state;
             try {
-                state = peak->dataSet()->instrumentStates().interpolate(c[2]);
+                state = InterpolatedState::interpolate(peak->dataSet()->instrumentStates(), c[2]);
             } catch (std::range_error& e) {
                 continue;
             }
