@@ -21,6 +21,7 @@
 #include "core/algo/Refiner.h"
 #include "core/data/DataSet.h"
 #include "core/instrument/InstrumentState.h"
+#include "core/instrument/InterpolatedState.h"
 #include "core/peak/Peak3D.h"
 #include "core/peak/Qs2Events.h"
 #include "core/shape/PeakFilter.h"
@@ -96,7 +97,7 @@ RefinementBatch::RefinementBatch(
         Eigen::Vector3d c = peak->shape().center();
         Eigen::Matrix3d M = peak->shape().metric();
         Eigen::Matrix3d J =
-            peak->dataSet()->instrumentStates().interpolate(c[2]).jacobianQ(c[0], c[1]);
+            InterpolatedState::interpolate(peak->dataSet()->instrumentStates(), c[2]).jacobianQ(c[0], c[1]);
         Eigen::Matrix3d JI = J.inverse();
         Eigen::Matrix3d A = JI.transpose() * M * JI;
         Eigen::SelfAdjointEigenSolver<Eigen::Matrix3d> solver(A);

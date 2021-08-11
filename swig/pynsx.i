@@ -301,7 +301,6 @@ ArrayExtendCRef(MillerIndex, int);
 %include "core/instrument/Sample.h"
 %include "core/instrument/InstrumentState.h"
 %include "core/instrument/InterpolatedState.h"
-%include "core/instrument/InstrumentStateList.h"
 %include "core/instrument/Source.h"
 
 %include "core/raw/MetaData.h"

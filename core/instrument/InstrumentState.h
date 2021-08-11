@@ -18,6 +18,9 @@
 #include "base/geometry/DirectVector.h"
 #include "base/geometry/ReciprocalVector.h"
 
+#include <vector>
+
+
 namespace nsx {
 
 class Diffractometer;
@@ -92,6 +95,11 @@ class InstrumentState {
     //! True if this state has been refined
     bool refined;
 
+    //! Returns the instrument state as read from the metadata
+    static InstrumentState state(Diffractometer* const diffractometer,
+                                 const std::size_t frame_idx);
+
+
 #ifndef SWIG
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 #endif
@@ -101,6 +109,8 @@ class InstrumentState {
     //! The actual resource is not owned by this object which just borrows it.
     Diffractometer* _diffractometer;
 };
+
+using InstrumentStateList = std::vector<InstrumentState>;
 
 } // namespace nsx
 

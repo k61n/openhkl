@@ -17,7 +17,7 @@
 
 #include "base/utils/ProgressHandler.h"
 #include "core/detector/Detector.h"
-#include "core/instrument/InstrumentStateList.h"
+#include "core/instrument/InstrumentState.h"
 
 namespace nsx {
 

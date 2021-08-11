@@ -40,8 +40,8 @@ int nsx::UnitTest_DataSet::run()
     dataset_ptr->finishRead();
     experiment.addData(dataset_ptr);
 
-    auto detectorStates = dataset_ptr->_reader->detectorStates();
-    auto sampleStates = dataset_ptr->_reader->sampleStates();
+    auto detectorStates = dataset_ptr->_diffractometer->detectorStates;
+    auto sampleStates = dataset_ptr->_diffractometer->sampleStates;
 
     int good_states = 0;
     int total_states = 0;
@@ -49,7 +49,7 @@ int nsx::UnitTest_DataSet::run()
         double frame = double(i) / 100.0;
         ++total_states;
         try {
-            auto state = dataset_ptr->instrumentStates().interpolate(frame);
+            auto state = InterpolatedState::interpolate(dataset_ptr->instrumentStates(), frame);
             ++good_states;
         } catch (std::range_error& e) {
             std::cout << e.what() << std::endl;

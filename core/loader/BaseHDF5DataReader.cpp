@@ -220,10 +220,10 @@ bool BaseHDF5DataReader::initRead()
     nsxlog(
         nsx::Level::Debug, "Reading gonio state of '", _filename, "', dataset '", dataset_name, "'");
 
-    _detectorStates.resize(nframes);
+    _dataset_out->diffractometer()->detectorStates.resize(nframes);
 
     for (unsigned int i = 0; i < nframes; ++i)
-        _detectorStates[i] = eigenToVector(dm.col(i));
+        _dataset_out->diffractometer()->detectorStates[i] = eigenToVector(dm.col(i));
 
     const auto& sample_gonio = _dataset_out->diffractometer()->sample().gonio();
     size_t n_sample_gonio_axes = sample_gonio.nAxes();
@@ -260,9 +260,9 @@ bool BaseHDF5DataReader::initRead()
     // Use natural units internally (rad)
     dm *= deg;
 
-    _sampleStates.resize(nframes);
+    _dataset_out->diffractometer()->sampleStates.resize(nframes);
     for (unsigned int i = 0; i < nframes; ++i)
-        _sampleStates[i] = eigenToVector(dm.col(i));
+        _dataset_out->diffractometer()->sampleStates[i] = eigenToVector(dm.col(i));
 
     nsxlog(
         nsx::Level::Info, "Finished reading the data in '", _filename, "', dataset '", dataset_name,

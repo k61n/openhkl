@@ -114,4 +114,9 @@ void Diffractometer::setSource(const Source& source)
     _source = source;
 }
 
+InstrumentState Diffractometer::instrumentState(const std::size_t frame_idx)
+{
+    return InstrumentState::state(this, frame_idx);
+}
+
 } // namespace nsx

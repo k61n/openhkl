@@ -221,7 +221,7 @@ void PeakItemGraphic::plot(SXPlot* plot)
     }
 
     const Eigen::Vector3d c = _peak->shape().center();
-    const nsx::InterpolatedState state = _peak->dataSet()->instrumentStates().interpolate(c[2]);
+    const nsx::InterpolatedState state = nsx::InterpolatedState::interpolate(_peak->dataSet()->instrumentStates(), c[2]);
     const nsx::DirectVector position =
         _peak->dataSet()->diffractometer()->detector()->pixelPosition(c[0], c[1]);
     const double g = state.gamma(position) / nsx::deg;

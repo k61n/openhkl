@@ -89,7 +89,7 @@ struct FitData {
     {
         const auto* detector = peak->dataSet()->diffractometer()->detector();
         const Eigen::Vector3d center = peak->shape().center();
-        const auto state = peak->dataSet()->instrumentStates().interpolate(center[2]);
+        const auto state = InterpolatedState::interpolate(peak->dataSet()->instrumentStates(), center[2]);
 
         Rs = state.sampleOrientationMatrix().transpose();
         Rd = state.detectorOrientation;

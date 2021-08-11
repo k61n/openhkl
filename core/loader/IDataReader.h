@@ -15,10 +15,10 @@
 #ifndef NSX_CORE_RAW_IDATAREADER_H
 #define NSX_CORE_RAW_IDATAREADER_H
 
-#include "core/instrument/InstrumentState.h"
 #include "core/raw/MetaData.h"
 #include <vector>
 #include <string>
+#include <Eigen/Dense>
 
 namespace nsx {
 
@@ -48,15 +48,6 @@ class IDataReader {
     //! Returns the a detector image
     virtual Eigen::MatrixXi data(size_t frame) = 0;
 
-    //! Returns the instrument state as read from the metadata
-    InstrumentState state(size_t frame) const;
-
-    //! Returns the list of sample states associated to the detector images
-    const std::vector<std::vector<double>>& sampleStates() const;
-
-    //! Returns the list of detector states associated to the detecot images
-    const std::vector<std::vector<double>>& detectorStates() const;
-
     //! True if file is open
     bool isOpened() const;
 
@@ -75,12 +66,6 @@ class IDataReader {
     IDataReader(const IDataReader& other) = delete;
 
     IDataReader& operator=(const IDataReader& other) = delete;
-
-    //! Vector of sample states
-    std::vector<std::vector<double>> _sampleStates;
-
-    //! Vector of detector states
-    std::vector<std::vector<double>> _detectorStates;
 
     //! Status of file handle
     bool _isOpened;

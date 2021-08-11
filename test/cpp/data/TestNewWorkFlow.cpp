@@ -94,7 +94,7 @@ TEST_CASE("test/data/TestNewWorkFlow.cpp", "")
 
         std::cout << axis.name() << ": ";
         for (size_t j = 0; j < dataset_ptr->nFrames(); ++j)
-            std::cout << (dataset_ptr->reader()->sampleStates()[j][i] / M_PI * 180.) << ", ";
+            std::cout << (dataset_ptr->diffractometer()->sampleStates[j][i] / M_PI * 180.) << ", ";
         std::cout << std::endl;
     }
 
@@ -108,7 +108,7 @@ TEST_CASE("test/data/TestNewWorkFlow.cpp", "")
 
         std::cout << axis.name() << ": ";
         for (size_t j = 0; j < dataset_ptr->nFrames(); ++j)
-            std::cout << (dataset_ptr->reader()->detectorStates()[j][i] / M_PI * 180.) << ", ";
+            std::cout << (dataset_ptr->diffractometer()->detectorStates[j][i] / M_PI * 180.) << ", ";
         std::cout << std::endl;
     }
     std::cout << std::endl;

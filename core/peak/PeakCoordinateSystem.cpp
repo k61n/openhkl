@@ -26,7 +26,7 @@ namespace nsx {
 PeakCoordinateSystem::PeakCoordinateSystem(Peak3D* peak) : _peak(peak)
 {
     _event = DetectorEvent(peak->shape().center());
-    _state = peak->dataSet()->instrumentStates().interpolate(_event.frame);
+    _state = InterpolatedState::interpolate(peak->dataSet()->instrumentStates(), _event.frame);
     _ki = _state.ki().rowVector();
     _kf = peak->q().rowVector() * _state.sampleOrientationMatrix().transpose() + _ki;
 

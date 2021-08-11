@@ -766,7 +766,8 @@ void DetectorScene::createToolTipText(QGraphicsSceneMouseEvent* event)
     bool has_state = true;
     nsx::InstrumentState state;
     try {
-        state = _currentData->instrumentStates().interpolate(_currentFrameIndex);
+        state = nsx::InterpolatedState::interpolate(_currentData->instrumentStates(),
+                                                    _currentFrameIndex);
     } catch (std::range_error& e) {
         // May get an interpolation error on the last frame of the set. Skip the tooltip if we
         // need an interpolated state in this instance.

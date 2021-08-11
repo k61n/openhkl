@@ -89,14 +89,14 @@ void RawDataReader::addFrame(const std::string& filename)
 
     std::vector<double> det_states(n_detector_gonio_axes);
     std::fill(det_states.begin(), det_states.end(), 0.0);
-    _detectorStates.emplace_back(std::move(det_states));
+    _dataset_out->diffractometer()->detectorStates.emplace_back(std::move(det_states));
 
     std::vector<double> sample_states(n_sample_gonio_axes);
     std::fill(sample_states.begin(), sample_states.end(), 0.0);
     sample_states[omega_idx] = idx * _parameters.delta_omega * deg;
     sample_states[phi_idx] = idx * _parameters.delta_phi * deg;
     sample_states[chi_idx] = idx * _parameters.delta_chi * deg;
-    _sampleStates.emplace_back(std::move(sample_states));
+    _dataset_out->diffractometer()->sampleStates.emplace_back(std::move(sample_states));
 }
 
 void RawDataReader::open() { }
