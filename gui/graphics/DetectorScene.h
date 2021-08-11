@@ -106,6 +106,8 @@ class DetectorScene : public QGraphicsScene {
     void link3rdPartyPeaks(nsx::PeakCenterDataSet* pcd);
     //! Set direct beam positions
     void linkDirectBeamPositions(const std::vector<nsx::DetectorEvent>& events);
+    //! Set unrefined direct beam positions
+    void linkOldDirectBeamPositions(const std::vector<nsx::DetectorEvent>& events);
     //! Set the first peak model pointer to null
     void unlinkPeakModel1();
     //! Set the second peak model pointer to null
@@ -198,6 +200,8 @@ class DetectorScene : public QGraphicsScene {
     std::vector<PeakCenterGraphic*> _peak_center_items;
     //! std vector of direct beam positions for each frame
     std::vector<nsx::DetectorEvent> _direct_beam_events;
+    //! direct beam events pre-refinement
+    std::vector<nsx::DetectorEvent> _old_direct_beam_events;
 
     bool _itemSelected;
     QGraphicsPixmapItem* _image;
@@ -239,6 +243,8 @@ class DetectorScene : public QGraphicsScene {
 
     //! Colour of direct beam
     QColor _beam_color;
+    //! Colour of unrefined direct beam;
+    QColor _old_beam_color;
     //! Size of direct beam
     double _beam_size;
 

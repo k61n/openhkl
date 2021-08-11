@@ -429,17 +429,18 @@ void SubframePredictPeaks::showDirectBeamEvents()
     if (_direct_beam->isChecked()){
         _detector_widget->scene()->showDirectBeam(true);
 
-        const std::vector<nsx::sptrDataSet>& data = gSession->currentProject()->allData();
+        auto* expt = gSession->experimentAt(_exp_combo->currentIndex())->experiment();
+        auto data_name = _detector_widget->dataCombo()->currentText();
+        const auto data = expt->getData(data_name.toStdString());
 
         std::vector<nsx::DetectorEvent> direct_beam_events;
-        for (nsx::sptrDataSet d : data) {
-            const auto& states = d->instrumentStates();
-            auto* detector = d->diffractometer()->detector();
-            std::vector<nsx::DetectorEvent> events = nsx::algo::getDirectBeamEvents(states, *detector);
+        const auto& states = data->instrumentStates();
+        auto* detector = data->diffractometer()->detector();
+        std::vector<nsx::DetectorEvent> events = nsx::algo::getDirectBeamEvents(states, *detector);
 
-            for (auto&& event : events)
-                direct_beam_events.push_back(event);
-        }
+        for (auto&& event : events)
+            direct_beam_events.push_back(event);
+
         _detector_widget->scene()->linkDirectBeamPositions(direct_beam_events);
     } else {
         _detector_widget->scene()->showDirectBeam(false);
