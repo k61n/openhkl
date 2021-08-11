@@ -56,6 +56,7 @@ SubframeFindPeaks::SubframeFindPeaks()
     , _peak_collection("temp", nsx::listtype::FOUND)
     , _peak_collection_item()
     , _peak_collection_model()
+    , _peaks_integrated(false)
     , _pixmap(nullptr)
 {
     auto* main_layout = new QHBoxLayout(this);
@@ -516,6 +517,8 @@ void SubframeFindPeaks::integrate()
 
     integrator->integrateFoundPeaks(finder);
     refreshPeakTable();
+    _peaks_integrated = true;
+    toggleUnsafeWidgets();
 }
 
 std::map<std::string, double> SubframeFindPeaks::convolutionParameters()
@@ -644,10 +647,15 @@ void SubframeFindPeaks::toggleUnsafeWidgets()
     _find_button->setEnabled(true);
     _integrate_button->setEnabled(true);
     _save_button->setEnabled(true);
+    _save_button->setToolTip("");
     if (_exp_combo->count() == 0 || _data_combo->count() == 0) {
         _find_button->setEnabled(false);
         _integrate_button->setEnabled(false);
         _save_button->setEnabled(false);
+    }
+    if (!_peaks_integrated) {
+        _save_button->setEnabled(false);
+        _save_button->setToolTip("Peaks must be integrated in order to create a peak collection");
     }
 }
 
