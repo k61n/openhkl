@@ -438,7 +438,7 @@ void SubframeIntegrate::removeOverlappingPeaks()
         }
     } else {
         for (auto* peak : peaks_to_integrate->getPeakList()) {
-            if (peak->selected() == false
+            if (!(peak->selected())
                 && peak->rejectionFlag() == nsx::RejectionFlag::OverlappingPeak) {
                 peak->setSelected(true);
                 peak->setRejectionFlag(nsx::RejectionFlag::NotRejected, true);

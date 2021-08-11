@@ -267,7 +267,7 @@ void DetectorScene::draw3rdPartyItems()
     if (!xfh)
         return;
 
-    for (Eigen::Vector3d vector : xfh->getPeakCenters()) {
+    for (const Eigen::Vector3d& vector : xfh->getPeakCenters()) {
         PeakCenterGraphic* center = new PeakCenterGraphic(vector);
         center->setColor(_3rdparty_color);
         center->setSize(_3rdparty_size);

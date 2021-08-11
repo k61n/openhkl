@@ -520,6 +520,6 @@ void SubframeAutoIndexer::toggleUnsafeWidgets()
         _solve_button->setEnabled(false);
         _save_button->setEnabled(false);
     }
-    if (_peak_collection_model.rowCount() == 0 || _solutions.size() == 0)
+    if (_peak_collection_model.rowCount() == 0 || _solutions.empty())
         _save_button->setEnabled(false);
 }

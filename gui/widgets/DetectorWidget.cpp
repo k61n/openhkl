@@ -140,7 +140,7 @@ void DetectorWidget::updateDatasetList(const std::vector<nsx::sptrDataSet>& data
     _data_combo->clear();
 
     if (!data_list.empty()) {
-        for (auto item : _data_list)
+        for (const auto& item : _data_list)
             _data_combo->addItem(QString::fromStdString(item->name()));
         _data_combo->setCurrentText(current_data);
     }
