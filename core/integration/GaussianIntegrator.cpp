@@ -19,10 +19,9 @@
 #include "core/data/DataSet.h"
 #include "core/peak/Intensity.h"
 #include "core/peak/Peak3D.h"
+#include "base/utils/Logger.h"
 
 #include <Eigen/Cholesky>
-#include <QDebug>
-#include <QtGlobal>
 
 namespace nsx {
 
@@ -154,7 +153,7 @@ bool GaussianIntegrator::compute(
         if (!success)
             return false;
     } catch (std::exception& e) {
-        qWarning() << "Gaussian fit failed: " << e.what();
+        nsxlog(Level::Warning, __FUNCTION__, ": Gaussian fit failed: ", e.what());
         return false;
     }
 
