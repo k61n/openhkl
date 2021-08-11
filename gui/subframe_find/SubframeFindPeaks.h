@@ -112,6 +112,9 @@ class SubframeFindPeaks : public QWidget {
     //! The temporary collection
     PeakCollectionModel _peak_collection_model;
 
+    //! Flag to check whether the peaks have been integrated
+    bool _peaks_integrated;
+
     QVBoxLayout* _left_layout;
     QSplitter* _right_element;
 
