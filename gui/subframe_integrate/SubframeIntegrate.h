@@ -89,8 +89,6 @@ class SubframeIntegrate : public QWidget {
     void runIntegration();
     //! Open the shape builder dialog
     void openShapeBuilder();
-    //! Update the peak collection with the shape collection
-    void refreshShapeStatus();
     //! Scroll to selected peak in table
     void changeSelected(PeakItemGraphic* peak_graphic);
 

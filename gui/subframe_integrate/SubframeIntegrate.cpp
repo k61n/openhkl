@@ -85,7 +85,10 @@ void SubframeIntegrate::setInputUp()
         &SubframeIntegrate::updatePeakList);
     connect(
         _int_peak_combo, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
-        this, &SubframeIntegrate::refreshPeakTable);
+        this, &SubframeIntegrate::toggleUnsafeWidgets);
+    connect(
+        _exp_combo, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
+        this, &SubframeIntegrate::toggleUnsafeWidgets);
 
     _left_layout->addWidget(input_box);
 }
@@ -232,7 +235,7 @@ void SubframeIntegrate::updatePeakList()
 
     _peak_combo->blockSignals(false);
     _int_peak_combo->blockSignals(false);
-    refreshShapeStatus();
+    toggleUnsafeWidgets();
 }
 
 void SubframeIntegrate::grabIntegrationParameters()
@@ -353,7 +356,7 @@ void SubframeIntegrate::setIntegrateUp()
     connect(_assign_peak_shapes, &QPushButton::clicked, this, &SubframeIntegrate::assignPeakShapes);
     connect(
         _integrator_combo, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
-        this, &SubframeIntegrate::refreshShapeStatus);
+        this, &SubframeIntegrate::toggleUnsafeWidgets);
     connect(
         gGui->sideBar(), &SideBar::subframeChanged, this,
         &SubframeIntegrate::setIntegrationParameters);
@@ -487,42 +490,7 @@ void SubframeIntegrate::openShapeBuilder()
         new ShapeCollectionDialog(peak_collection, _shape_params));
 
     dialog->exec();
-    refreshShapeStatus();
-}
-
-void SubframeIntegrate::refreshShapeStatus()
-{
-    bool shape_collection_present = true;
-
-    if (_peak_combo->count() == 0 || _exp_combo->count() == 0)
-        shape_collection_present = false;
-
-    if (shape_collection_present) {
-        nsx::PeakCollection* peaks =
-            gSession->experimentAt(_exp_combo->currentIndex())
-                ->experiment()
-                ->getPeakCollection(_peak_combo->currentText().toStdString());
-        _assign_peak_shapes->setEnabled(true);
-        if (peaks->shapeCollection() == nullptr) {
-            _assign_peak_shapes->setEnabled(false);
-            shape_collection_present = false;
-        }
-    }
-
-    if (_integrator_strings.find(_integrator_combo->currentText().toStdString())->second
-        == nsx::IntegratorType::PixelSum) {
-        _integrate_button->setEnabled(true);
-        _interpolation_combo->setEnabled(false);
-        _radius_int->setEnabled(false);
-        _n_frames_int->setEnabled(false);
-        _min_neighbours->setEnabled(false);
-    } else {
-        _integrate_button->setEnabled(shape_collection_present);
-        _interpolation_combo->setEnabled(true);
-        _radius_int->setEnabled(true);
-        _n_frames_int->setEnabled(true);
-        _min_neighbours->setEnabled(true);
-    }
+    toggleUnsafeWidgets();
 }
 
 void SubframeIntegrate::changeSelected(PeakItemGraphic* peak_graphic)
@@ -535,17 +503,44 @@ void SubframeIntegrate::changeSelected(PeakItemGraphic* peak_graphic)
 
 void SubframeIntegrate::toggleUnsafeWidgets()
 {
+    _radius_int->setEnabled(true);
+    _n_frames_int->setEnabled(true);
+    _min_neighbours->setEnabled(true);
+    _interpolation_combo->setEnabled(true);
     _build_shape_lib_button->setEnabled(true);
-    if (!(_int_peak_combo->count() == 0)) {
-        _integrate_button->setEnabled(true);
-        _remove_overlaps->setEnabled(true);
-        refreshShapeStatus();
-    }
+    _assign_peak_shapes->setEnabled(true);
+    _remove_overlaps->setEnabled(true);
+    _integrate_button->setEnabled(true);
+
     if (_exp_combo->count() == 0 || _data_combo->count() == 0 || _peak_combo->count() == 0) {
         _integrate_button->setEnabled(false);
-        _build_shape_lib_button->setEnabled(false);
         _remove_overlaps->setEnabled(false);
         _assign_peak_shapes->setEnabled(false);
+    }
+
+    if (_int_peak_combo->count() == 0) {
+        _integrate_button->setEnabled(false);
+        _assign_peak_shapes->setEnabled(false);
+        _remove_overlaps->setEnabled(false);
+    }
+
+    if (_integrator_strings.find(_integrator_combo->currentText().toStdString())->second
+        == nsx::IntegratorType::PixelSum) {
+        _interpolation_combo->setEnabled(false);
+        _radius_int->setEnabled(false);
+        _n_frames_int->setEnabled(false);
+        _min_neighbours->setEnabled(false);
+        _assign_peak_shapes->setEnabled(false);
+        _build_shape_lib_button->setEnabled(false);
+    }
+
+    nsx::PeakCollection* peaks =
+        gSession->experimentAt(_exp_combo->currentIndex())->experiment()
+        ->getPeakCollection(_peak_combo->currentText().toStdString());
+    if (peaks->shapeCollection() == nullptr) {
+        _assign_peak_shapes->setEnabled(false);
+        _integrate_button->setEnabled(false);
+        _remove_overlaps->setEnabled(false);
     }
 }
 
