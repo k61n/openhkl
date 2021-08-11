@@ -118,6 +118,10 @@ class SubframePredictPeaks : public QWidget {
     QStringList _unit_cell_list;
     //! Parameters for shape collection
     nsx::ShapeCollectionParameters _shape_params;
+    //! Flag to check whether peaks have been predicted
+    bool _peaks_predicted;
+    //! Flag to check whether shapes have been assigned to predicted peaks
+    bool _shapes_assigned;
 
     QVBoxLayout* _left_layout;
     QSplitter* _right_element;

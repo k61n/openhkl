@@ -51,10 +51,11 @@
 #include <sstream>
 
 SubframeRefiner::SubframeRefiner()
-    : _refined_collection_item(),
-      _refined_model(),
-      _unrefined_collection_item(),
-      _unrefined_model()
+    : _refine_success(false)
+    , _refined_collection_item()
+    , _refined_model()
+    , _unrefined_collection_item()
+    , _unrefined_model()
 {
     auto main_layout = new QHBoxLayout(this);
     _right_element = new QSplitter(Qt::Vertical, this);
@@ -607,4 +608,6 @@ void SubframeRefiner::toggleUnsafeWidgets()
         if (_batch_cell_check->isChecked())
             _cell_combo->setEnabled(false);
     }
+    if (!_refine_success)
+        _update_button->setEnabled(false);
 }

@@ -63,6 +63,8 @@ SubframePredictPeaks::SubframePredictPeaks()
     , _peak_collection_item()
     , _peak_collection_model()
     , _shape_params()
+    , _peaks_predicted(false)
+    , _shapes_assigned(false)
 {
     auto main_layout = new QHBoxLayout(this);
     _right_element = new QSplitter(Qt::Vertical, this);
@@ -419,6 +421,8 @@ void SubframePredictPeaks::runPrediction()
         _peak_collection_item.setPeakCollection(&_peak_collection);
         _peak_collection_model.setRoot(&_peak_collection_item);
         refreshPeakTable();
+        _peaks_predicted = true;
+        toggleUnsafeWidgets();
     } catch (const std::exception& e) {
         QMessageBox::critical(this, "Error", QString(e.what()));
     }
@@ -465,6 +469,8 @@ void SubframePredictPeaks::assignPeakShapes()
     _shape_collection = found_peaks->shapeCollection();
     _shape_collection->setPredictedShapes(&_peak_collection, _shape_params.interpolation, handler);
     refreshPeakTable();
+    _shapes_assigned = true;
+    toggleUnsafeWidgets();
 }
 
 void SubframePredictPeaks::accept()
@@ -532,15 +538,20 @@ void SubframePredictPeaks::toggleUnsafeWidgets()
         _assign_peak_shapes->setEnabled(false);
     }
 
+    if (!_peaks_predicted) {
+        _assign_peak_shapes->setEnabled(false);
+        _save_button->setEnabled(false);
+    }
+
+    if (!_shapes_assigned)
+        _save_button->setEnabled(false);
+
     _sigma_d->setEnabled(true);
     _sigma_m->setEnabled(true);
     if (!_kabsch->isChecked()) {
         _sigma_d->setEnabled(false);
         _sigma_m->setEnabled(false);
     }
-
-    if (!(_peak_collection.numberOfPeaks() == 0))
-        _assign_peak_shapes->setEnabled(false);
 }
 
 DetectorWidget* SubframePredictPeaks::detectorWidget()
