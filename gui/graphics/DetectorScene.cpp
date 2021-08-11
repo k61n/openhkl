@@ -90,6 +90,7 @@ DetectorScene::DetectorScene(QObject* parent)
     , _3rdparty_color(Qt::black)
     , _3rdparty_size(10)
     , _beam_color(Qt::black)
+    , _old_beam_color(Qt::gray)
     , _beam_size(20)
     , _selected_peak(nullptr)
     , _unit_cell(nullptr)
@@ -140,6 +141,11 @@ void DetectorScene::link3rdPartyPeaks(nsx::PeakCenterDataSet* pcd)
 void DetectorScene::linkDirectBeamPositions(const std::vector<nsx::DetectorEvent>& events)
 {
     _direct_beam_events = events;
+}
+
+void DetectorScene::linkOldDirectBeamPositions(const std::vector<nsx::DetectorEvent>& events)
+{
+    _old_direct_beam_events = events;
 }
 
 void DetectorScene::unlinkPeakModel2()
@@ -201,6 +207,24 @@ void DetectorScene::drawDirectBeamPositions()
             QPen pen;
             pen.setCosmetic(true);
             pen.setColor(_beam_color);
+            pen.setStyle(Qt::SolidLine);
+            beam->setPen(pen);
+            addItem(beam);
+        }
+    }
+
+    for (auto&& event : _old_direct_beam_events) {
+        double upper = double(_currentFrameIndex) + 0.01;
+        double lower = double(_currentFrameIndex) - 0.01;
+        if (event.frame < upper && event.frame > lower) {
+            DirectBeamGraphic* beam = new DirectBeamGraphic();
+            beam->setPos(event.px, event.py);
+            beam->setZValue(10);
+            beam->setAcceptHoverEvents(false);
+            beam->setRect(-_beam_size / 2, -_beam_size / 2, _beam_size, _beam_size);
+            QPen pen;
+            pen.setCosmetic(true);
+            pen.setColor(_old_beam_color);
             pen.setStyle(Qt::SolidLine);
             beam->setPen(pen);
             addItem(beam);

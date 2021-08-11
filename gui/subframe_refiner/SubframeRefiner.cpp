@@ -15,6 +15,7 @@
 #include "gui/subframe_refiner/SubframeRefiner.h"
 
 #include "core/experiment/Experiment.h"
+#include "core/peak/Qs2Events.h"
 #include "core/shape/PeakCollection.h"
 #include "core/shape/PeakFilter.h"
 #include "gui/MainWin.h" // gGui
@@ -280,6 +281,12 @@ void SubframeRefiner::refine()
         auto refiner = expt->refiner();
         auto* params = refiner->parameters();
 
+        _detector_widget->scene()->showDirectBeam(true);
+        auto* detector = data->diffractometer()->detector();
+        std::vector<nsx::DetectorEvent> old_beam =
+            nsx::algo::getDirectBeamEvents(states, *detector);
+        _detector_widget->scene()->linkOldDirectBeamPositions(old_beam);
+
         nsx::sptrProgressHandler handler(new nsx::ProgressHandler);
         ProgressView progressView(nullptr);
         progressView.watch(handler);
@@ -304,6 +311,13 @@ void SubframeRefiner::refine()
             else
                 _refine_success = expt->refine(peaks, data.get(), cell);
         }
+
+        states = data->instrumentStates();
+        std::vector<nsx::DetectorEvent> new_beam =
+            nsx::algo::getDirectBeamEvents(states, *detector);
+        _detector_widget->scene()->linkDirectBeamPositions(new_beam);
+        refreshPeakVisual();
+        gGui->detector_window->refreshAll();
 
         _tables_widget->refreshTables(refiner, data.get());
         auto cell_list = gSession->experimentAt(_exp_combo->currentIndex())->getUnitCellNames();
@@ -449,8 +463,8 @@ void SubframeRefiner::updatePeaks()
     _unrefined_model.setRoot(&_unrefined_collection_item);
 }
 
-void SubframeRefiner::setPeakViewWidgetUp(PeakViewWidget* peak_widget, QString name)
-{
+void SubframeRefiner::setPeakViewWidgetUp(PeakViewWidget* peak_widget, QString name) {
+
     Spoiler* preview_spoiler = new Spoiler(name);
     preview_spoiler->setContentLayout(*peak_widget, true);
     _left_layout->addWidget(preview_spoiler);
