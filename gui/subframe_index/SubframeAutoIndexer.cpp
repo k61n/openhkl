@@ -377,6 +377,7 @@ void SubframeAutoIndexer::setIndexerParameters()
 
 void SubframeAutoIndexer::runAutoIndexer()
 {
+    gGui->setReady(false);
     setIndexerParameters();
 
     nsx::Experiment* expt = gSession->experimentAt(_exp_combo->currentIndex())->experiment();
@@ -406,6 +407,7 @@ void SubframeAutoIndexer::runAutoIndexer()
     auto_indexer->unsetHandler();
     handler.reset();
     toggleUnsafeWidgets();
+    gGui->setReady(true);
 }
 
 void SubframeAutoIndexer::buildSolutionsTable()

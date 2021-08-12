@@ -475,6 +475,7 @@ void SubframeFindPeaks::updateConvolutionParameters()
 
 void SubframeFindPeaks::find()
 {
+    gGui->setReady(false);
     nsx::DataList data_list;
     const nsx::DataList all_data = gSession->experimentAt(_exp_combo->currentIndex())->allData();
 
@@ -500,10 +501,12 @@ void SubframeFindPeaks::find()
     } catch (std::exception& e) {
         QMessageBox::critical(this, "Error", QString(e.what()));
     }
+    gGui->setReady(true);
 }
 
 void SubframeFindPeaks::integrate()
 {
+    gGui->setReady(false);
     auto* experiment = gSession->experimentAt(_exp_combo->currentIndex())->experiment();
     auto* integrator = experiment->integrator();
     auto* finder = experiment->peakFinder();
@@ -519,6 +522,7 @@ void SubframeFindPeaks::integrate()
     refreshPeakTable();
     _peaks_integrated = true;
     toggleUnsafeWidgets();
+    gGui->setReady(true);
 }
 
 std::map<std::string, double> SubframeFindPeaks::convolutionParameters()

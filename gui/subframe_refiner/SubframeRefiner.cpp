@@ -273,6 +273,7 @@ void SubframeRefiner::setBatchesUp()
 
 void SubframeRefiner::refine()
 {
+    gGui->setReady(false);
     try {
         auto expt = gSession->experimentAt(_exp_combo->currentIndex())->experiment();
         auto* peaks = expt->getPeakCollection(_peak_combo->currentText().toStdString());
@@ -328,6 +329,7 @@ void SubframeRefiner::refine()
     } catch (const std::exception& ex) {
         QMessageBox::critical(this, "Error", QString(ex.what()));
     }
+    gGui->setReady(true);
 }
 
 void SubframeRefiner::setPlotUp()
@@ -567,6 +569,7 @@ void SubframeRefiner::updatePredictedList()
 
 void SubframeRefiner::updatePredictions()
 {
+    gGui->setReady(false);
     if (_refine_success) {
         // A local copy to compare positions pre- and post-refinement
         _unrefined_peaks.reset();
@@ -581,6 +584,7 @@ void SubframeRefiner::updatePredictions()
     } else {
         QMessageBox::critical(this, "Error", "Cannot update predictions: refinement failed");
     }
+    gGui->setReady(true);
 }
 
 QList<PlotCheckBox*> SubframeRefiner::plotCheckBoxes() const

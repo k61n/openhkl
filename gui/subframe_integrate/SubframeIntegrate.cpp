@@ -402,6 +402,7 @@ void SubframeIntegrate::setPreviewUp()
 
 void SubframeIntegrate::assignPeakShapes()
 {
+    gGui->setReady(false);
     try {
         nsx::sptrProgressHandler handler(new nsx::ProgressHandler);
         ProgressView progressView(nullptr);
@@ -420,10 +421,12 @@ void SubframeIntegrate::assignPeakShapes()
     } catch (std::exception& e) {
         QMessageBox::critical(this, "Error", QString(e.what()));
     }
+    gGui->setReady(true);
 }
 
 void SubframeIntegrate::removeOverlappingPeaks()
 {
+    gGui->setReady(false);
     nsx::Experiment* expt = gSession->experimentAt(_exp_combo->currentIndex())->experiment();
     nsx::PeakCollection* peaks_to_integrate =
         expt->getPeakCollection(_int_peak_combo->currentText().toStdString());
@@ -449,10 +452,12 @@ void SubframeIntegrate::removeOverlappingPeaks()
         }
     }
     refreshPeakTable();
+    gGui->setReady(true);
 }
 
 void SubframeIntegrate::runIntegration()
 {
+    gGui->setReady(false);
     try {
         nsx::sptrProgressHandler handler(new nsx::ProgressHandler);
         ProgressView progressView(nullptr);
@@ -477,6 +482,7 @@ void SubframeIntegrate::runIntegration()
     } catch (std::exception& e) {
         QMessageBox::critical(this, "Error", QString(e.what()));
     }
+    gGui->setReady(true);
 }
 
 void SubframeIntegrate::openShapeBuilder()
@@ -534,13 +540,15 @@ void SubframeIntegrate::toggleUnsafeWidgets()
         _build_shape_lib_button->setEnabled(false);
     }
 
-    nsx::PeakCollection* peaks =
-        gSession->experimentAt(_exp_combo->currentIndex())->experiment()
-        ->getPeakCollection(_peak_combo->currentText().toStdString());
-    if (peaks->shapeCollection() == nullptr) {
-        _assign_peak_shapes->setEnabled(false);
-        _integrate_button->setEnabled(false);
-        _remove_overlaps->setEnabled(false);
+    if (!(_peak_combo->count() == 0)) {
+        nsx::PeakCollection* peaks =
+            gSession->experimentAt(_exp_combo->currentIndex())->experiment()
+            ->getPeakCollection(_peak_combo->currentText().toStdString());
+        if (peaks->shapeCollection() == nullptr) {
+            _assign_peak_shapes->setEnabled(false);
+            _integrate_button->setEnabled(false);
+            _remove_overlaps->setEnabled(false);
+        }
     }
 }
 

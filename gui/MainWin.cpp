@@ -104,7 +104,7 @@ MainWin::MainWin()
     readSettings();
     show();
 
-    statusBar()->showMessage("Ready.");
+    initStatusBar();
 }
 
 void MainWin::onDataChanged() const
@@ -191,4 +191,28 @@ void MainWin::closeEvent(QCloseEvent* event)
         log_window->close();
 
     QMainWindow::closeEvent(event);
+}
+
+void MainWin::initStatusBar()
+{
+    _status = new QLabel("Ready", statusBar());
+    _light = new QLabel();
+    _red_circle = QPixmap(
+        ":images/statusbar/red-circle.svg").scaledToHeight(statusBar()->height() * 0.5);
+    _green_circle = QPixmap(
+        ":images/statusbar/green-circle.svg").scaledToHeight(statusBar()->height() * 0.5);
+    _light->setPixmap(_green_circle);
+    statusBar()->addPermanentWidget(_status);
+    statusBar()->addPermanentWidget(_light);
+}
+
+void MainWin::setReady(bool ready)
+{
+    if (ready) {
+        _status->setText("Ready");
+        _light->setPixmap(_green_circle);
+    } else {
+        _status->setText("Processing");
+        _light->setPixmap(_red_circle);
+    }
 }
