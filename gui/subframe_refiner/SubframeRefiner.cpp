@@ -126,10 +126,14 @@ void SubframeRefiner::setInputUp()
         "Use refined cells", "Use unit cells generated per batch during previous refinement", 1);
     _n_batches_spin = f.addSpinBox(
         "Number of batches", "Number of batches to equally divide frames into for refinement");
+    _max_iter_spin = f.addSpinBox(
+        "Maximum iterations", "Maximum number of iterations for NLLS minimsation");
 
     _batch_cell_check->setChecked(false);
     _n_batches_spin->setMinimum(1);
     _n_batches_spin->setMaximum(1000); // updated on setBatchesUp
+    _max_iter_spin->setMinimum(100);
+    _max_iter_spin->setMaximum(10000000);
 
     connect(
         _exp_combo, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this,
@@ -524,6 +528,7 @@ void SubframeRefiner::grabRefinerParameters()
         gSession->experimentAt(_exp_combo->currentIndex())->experiment()->refiner()->parameters();
 
     _n_batches_spin->setValue(params->nbatches);
+    _max_iter_spin->setValue(params->max_iter);
     _refineUB->setChecked(params->refine_ub);
     _refineSamplePosition->setChecked(params->refine_sample_position);
     _refineSampleOrientation->setChecked(params->refine_sample_orientation);
@@ -545,6 +550,7 @@ void SubframeRefiner::setRefinerParameters()
         gSession->experimentAt(_exp_combo->currentIndex())->experiment()->refiner()->parameters();
 
     params->nbatches = _n_batches_spin->value();
+    params->max_iter = _max_iter_spin->value();
     params->refine_ub = _refineUB->isChecked();
     params->refine_sample_position = _refineSamplePosition->isChecked();
     params->refine_sample_orientation = _refineSampleOrientation->isChecked();

@@ -126,6 +126,7 @@ class SubframeRefiner : public QWidget {
     LinkedComboBox* _cell_combo;
     QCheckBox* _batch_cell_check;
     QSpinBox* _n_batches_spin;
+    QSpinBox* _max_iter_spin;
 
     // refinement flags
     QComboBox* _residual_combo;
