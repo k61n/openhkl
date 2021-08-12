@@ -418,6 +418,10 @@ void SubframeIntegrate::assignPeakShapes()
         nsx::PeakInterpolation peak_interpolation = static_cast<nsx::PeakInterpolation>(interpol);
 
         shapes->setPredictedShapes(peaks_to_integrate, peak_interpolation, handler);
+        gGui->statusBar()->showMessage(
+            QString::number(peaks_to_integrate->numberOfValid()) + "/" +
+            QString::number(peaks_to_integrate->numberOfPeaks()) +
+            " predicted peaks with valid shapes");
     } catch (std::exception& e) {
         QMessageBox::critical(this, "Error", QString(e.what()));
     }
@@ -479,6 +483,9 @@ void SubframeIntegrate::runIntegration()
         integrator->getIntegrator(params->integrator_type)->setHandler(handler);
         integrator->integratePeaks(data, peaks_to_integrate, params, shapes);
         gGui->detector_window->refreshAll();
+        gGui->statusBar()->showMessage(
+            QString::number(integrator->numberOfValidPeaks()) + "/" +
+            QString::number(integrator->numberOfPeaks()) + " peaks integrated");
     } catch (std::exception& e) {
         QMessageBox::critical(this, "Error", QString(e.what()));
     }
@@ -487,6 +494,7 @@ void SubframeIntegrate::runIntegration()
 
 void SubframeIntegrate::openShapeBuilder()
 {
+    gGui->setReady(false);
     nsx::PeakCollection* peak_collection =
         gSession->experimentAt(_exp_combo->currentIndex())
             ->experiment()
@@ -497,6 +505,11 @@ void SubframeIntegrate::openShapeBuilder()
 
     dialog->exec();
     toggleUnsafeWidgets();
+    if (peak_collection->shapeCollection())
+        gGui->statusBar()->showMessage(
+            QString::number(peak_collection->shapeCollection()->numberOfPeaks()) +
+            " shapes generated");
+    gGui->setReady(true);
 }
 
 void SubframeIntegrate::changeSelected(PeakItemGraphic* peak_graphic)

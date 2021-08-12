@@ -501,6 +501,7 @@ void SubframeFindPeaks::find()
     } catch (std::exception& e) {
         QMessageBox::critical(this, "Error", QString(e.what()));
     }
+    gGui->statusBar()->showMessage(QString::number(finder->numberFound()) + " peaks found");
     gGui->setReady(true);
 }
 
@@ -522,6 +523,9 @@ void SubframeFindPeaks::integrate()
     refreshPeakTable();
     _peaks_integrated = true;
     toggleUnsafeWidgets();
+    gGui->statusBar()->showMessage(
+        QString::number(integrator->numberOfValidPeaks()) + "/" +
+        QString::number(integrator->numberOfPeaks()) + " peaks integrated");
     gGui->setReady(true);
 }
 

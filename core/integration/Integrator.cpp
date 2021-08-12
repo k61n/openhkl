@@ -74,6 +74,14 @@ void Integrator::integratePeaks(
     IPeakIntegrator* integrator = getIntegrator(integrator_type);
     integrator->setNNumors(1);
     integrator->integrate(peaks->getPeakList(), peaks->shapeCollection(), data, 1);
+
+    _n_peaks = 0;
+    _n_valid = 0;
+    for (auto peak : peaks->getPeakList()) {
+        ++_n_peaks;
+        if (peak->enabled())
+            ++_n_valid;
+    }
 }
 
 void Integrator::integratePeaks(
@@ -87,6 +95,14 @@ void Integrator::integratePeaks(
     integrator->setParameters(*params);
     integrator->setNNumors(1);
     integrator->integrate(peaks->getPeakList(), shapes, data, 1);
+
+    _n_peaks = 0;
+    _n_valid = 0;
+    for (auto peak : peaks->getPeakList()) {
+        ++_n_peaks;
+        if (peak->enabled())
+            ++_n_valid;
+    }
 }
 
 void Integrator::integrateFoundPeaks(PeakFinder* peak_finder)
@@ -100,6 +116,14 @@ void Integrator::integrateFoundPeaks(PeakFinder* peak_finder)
     for (const sptrDataSet& data : peak_finder->currentData()) {
         integrator->integrate(peak_finder->currentPeaks(), nullptr, data, n_numor);
         ++n_numor;
+    }
+
+    _n_peaks = 0;
+    _n_valid = 0;
+    for (auto peak : peak_finder->currentPeaks()) {
+        ++_n_peaks;
+        if (peak->enabled())
+            ++_n_valid;
     }
 }
 
@@ -130,6 +154,16 @@ IntegrationParameters* Integrator::parameters()
 void Integrator::setHandler(sptrProgressHandler handler)
 {
     _handler = handler;
+}
+
+unsigned int Integrator::numberOfPeaks()
+{
+    return _n_peaks;
+}
+
+unsigned int Integrator::numberOfValidPeaks()
+{
+    return _n_valid;
 }
 
 } // namespace nsx

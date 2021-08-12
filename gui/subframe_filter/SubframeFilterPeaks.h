@@ -155,9 +155,6 @@ class SubframeFilterPeaks : public QWidget {
     PeakViewWidget* _peak_view_widget;
     DetectorWidget* _detector_widget;
     PeakTableView* _peak_table;
-
-    // For modifying the title of peak_group
-    QGroupBox* _preview_panel;
 };
 
 #endif // NSX_GUI_SUBFRAME_FILTER_SUBFRAMEFILTERPEAKS_H

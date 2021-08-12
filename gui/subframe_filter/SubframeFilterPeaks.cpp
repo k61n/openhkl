@@ -297,7 +297,6 @@ void SubframeFilterPeaks::setPeakTableUp()
     QGroupBox* peak_group = new QGroupBox("Peaks");
     QGridLayout* peak_grid = new QGridLayout(peak_group);
 
-    _preview_panel = peak_group;
     peak_group->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
     _peak_table = new PeakTableView(this);
@@ -454,6 +453,7 @@ void SubframeFilterPeaks::setFilterParameters()
 
 void SubframeFilterPeaks::filterPeaks()
 {
+    gGui->setReady(false);
     nsx::PeakFilter* filter =
         gSession->experimentAt(_exp_combo->currentIndex())->experiment()->peakFilter();
     nsx::PeakCollection* collection =
@@ -464,15 +464,14 @@ void SubframeFilterPeaks::filterPeaks()
     setFilterParameters();
     filter->filter(collection);
 
+    refreshPeakTable();
+
     int n_peaks = _peak_collection_item.numberOfPeaks();
     int n_caught = _peak_collection_item.numberCaughtByFilter();
 
-    std::ostringstream oss;
-    oss << n_caught << " of " << n_peaks << " peaks caught by filter";
-    QString new_title = QString::fromUtf8(oss.str().c_str());
-    _preview_panel->setTitle(new_title);
-
-    refreshPeakTable();
+    gGui->statusBar()->showMessage(
+        QString::number(n_caught) + "/" + QString::number(n_peaks) + " caught by filter");
+    gGui->setReady(true);
 }
 
 void SubframeFilterPeaks::accept()
