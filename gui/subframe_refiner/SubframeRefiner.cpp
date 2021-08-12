@@ -94,6 +94,10 @@ SubframeRefiner::SubframeRefiner()
     _detector_widget->linkPeakModel(&_unrefined_model, &_refined_model);
     detector_tab->setLayout(_detector_widget);
 
+    connect(
+        _peak_combo, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this,
+        &SubframeRefiner::refreshPeakVisual);
+
     _right_element->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     _right_element->addWidget(tab_widget);
 

@@ -288,6 +288,9 @@ void SubframeFilterPeaks::setFigureUp()
     connect(
         _detector_widget->scene(), &DetectorScene::signalSelectedPeakItemChanged, this,
         &SubframeFilterPeaks::changeSelected);
+    connect(
+        _peak_combo, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this,
+        &SubframeFilterPeaks::refreshPeakTable);
 
     _right_element->addWidget(figure_group);
 }
