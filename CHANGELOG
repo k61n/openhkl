@@ -1,4 +1,75 @@
-#### [develop] Changes since 2021-06-01T00 until 2021-06-19T00
+#### [develop] Changes since 2021-06-19T00 until 2021-08-12T00
+
+Added/Improved
+-----
+* Core:
+  * Merge and compute R-factors of _found_ peaks only. #285
+  * Added completeness to saved statistics. #307
+  * Added per-resolution shell computation of completeness. #137
+  * Added real-space residual for refining (experimental). #304
+  * Modified overlap filter criteria to reject colliding intensity regions, instead of colliding intensity/background regions.
+  * Remove overlapping peaks during integration. #282
+  * Integration/prediction no longer loops over numors. #300 and #293
+  * Integration improvements: #314 and #309
+    - Added several new rejection flags to the integration process, and their respective checks in all integrators.
+  * NSX new data storage format:
+    - Introduced the new NSX data storage format v1.0 (Backward-incompatible)
+      + The structure of the NSX data storage format is simplified and improved.
+      + Removed duplicate code to export/import HDF5 files in order to avoid inconsistencies. Improve the safety and uniformity of the HDF5 importers.
+      + Removed the legacy HDF5 reader to have a _single_ data storage format.
+      + Removed duplicate instances of HDF5 Blosc-Filter definition. A dedicated module, `HDF5BloscFilter`, is used to avoid resource leaks.
+      + Disentangled DataSet and DataReaders to avoid inconsistent states of DataSet depending on the order of execution and data duplication. #262
+  * Removed boost, ILLDataReader and associated tests. #16 and #279
+  * Refactored core to avoid code duplication or unused code. #305, #306 and #276
+
+* GUI:
+  * Added direct beam position to SubframeRefiner; on refinement, the direct beam position pre- and post-refinement will be displayed. #330
+  * Added a visualisation for the direct beam centre on `DetectorScene`. #283
+  * Added a simple mechanism to store data on the currently opened datafile. #320
+  * Added a detector image to `SubframeRefiner`. #329
+    Upon clicking 'Update peaks' in `DetectorWidget` in `SubframeRefiner`, the predicted peaks collection are cloned locally and the original predicted collection is updated, allowing the user to visually see the effect of refinement on the peak centres.
+  * Added intensity slider to `DetectorWindow`. #244
+  * Added controls to GUI to switch between cells from last refinement and cell from autoindexer.
+    - Unit cell are chosen per batch according to which unit cell is assigned to the most peaks in that batch. #338
+    - Refiner can now use cells generated from last refinement. #328
+  * Improved detector masking functionality. #254
+  * Added frame range to `SubframeMergedPeaks` in order to limit the R-factor calculation to a subset of frames. #193
+  * Improved `QComboBox` updating via a Sentinel. #272 and #237
+  * Improved integration: #314 and #309
+    - Removed some now-redundant counters from ShapeCollection, these are now covered by rejection flags.
+    - Improved the prediction workflow such that shapes can be assigned to predicted peaks straight after predictions.
+    - Mosaicity and Beam divergence sigma `QSpinBoxes` allow visualisation of the direct affect of changing them (after integrating and assigning shapes).
+  * Added subframe 'Integrate'. #262
+    Decoupled shape collection building and prediction, so that a shape collection is now no longer required to predict peaks. Predicted peaks are discarded at the point of integration if their profiles are invalid.
+  * Added a mechanism to propagate changes to the parameters consistently to the whole GUI
+    - Made parameter setting/getting consistent across Subframes. #296
+    - Parameter values now saved centrally with no duplication, saved across refreshes. #294
+  * Re-implemented removeExperiment. #260
+  * Implemented a mechanism to display log messages in a separate window in the GUI. #161
+  * Added status-bar messages to inform GUI activities.
+  * Added new sidebar icons for dark and light themes. #287
+  * Improved GUI safety to avoid crashes. Reduce code duplication.
+
+Fixed
+-----
+* GUI:
+  * Gracefully kill the `DetectorWindow` on `MainWin` shutdown. #239
+  * Fail gracefully when trying to create a data file to export experiments. #320
+  * Reset states and batches between refinements to avoid refiner crash when switching residuals between refinements. #324
+  * Disallow creating peak collection in `SubframeFindPeaks`, when the peaks are not integrated.
+  * Add a Project to the projects list only if loading the Experiment was successful (to avoid a crash). #262
+  * Fixed the crash which occured when the refiner was used twice. #334
+  * Fixed the crash which occured after cancelling the Load experiment action in menu. #323
+  * Fixed calculate profile in `ShapeCollectionDialog`. #322
+  * Fixed the incorrect aspect ratio of detector image on first load. #270
+  * Fixed the crash in merge section when calculate/displaying R-factors for "find" peak collection. #289
+  * Fixed pixel-sum integrator crash in SubframeIntegrator. #288
+  * Fixed text colour for light theme sidebar.
+  * Fixed Qt warnings. #235
+
+
+
+### [develop] Changes since 2021-06-01T00 until 2021-06-19T00
 
 Added/Changed
 -----
@@ -15,7 +86,13 @@ Added/Changed
 
 Fixed
 -----
-* GUI
+* Core:
+  * Fixed many problems with merge statistics. #280 and #274
+    - Merge symmetry-related peaks within a set of predicted peaks (instead of merging two peak collections).
+    - Proper handling of intensities (background and raw) with zero, negative or undefined sigmas.
+
+
+* GUI:
 ** Fix SubframeExperiment detector scene to match other subframes. #251
 ** Fix 'd-min' issue (bisection algorithm). #204, #223
 
