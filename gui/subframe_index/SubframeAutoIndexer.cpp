@@ -320,6 +320,7 @@ void SubframeAutoIndexer::refreshPeakTable()
             ->getPeakCollection(_peak_combo->currentText().toStdString());
     _peak_collection_item.setPeakCollection(collection);
     _peak_collection_model.setRoot(&_peak_collection_item);
+    _peak_table->resizeColumnsToContents();
 }
 
 void SubframeAutoIndexer::grabIndexerParameters()
@@ -377,6 +378,7 @@ void SubframeAutoIndexer::setIndexerParameters()
 
 void SubframeAutoIndexer::runAutoIndexer()
 {
+    gGui->setReady(false);
     setIndexerParameters();
 
     nsx::Experiment* expt = gSession->experimentAt(_exp_combo->currentIndex())->experiment();
@@ -398,20 +400,25 @@ void SubframeAutoIndexer::runAutoIndexer()
     }
 
     _solutions = auto_indexer->solutions();
-    if (_solutions.empty())
-        QMessageBox::warning(this, "Warning", "deod", "No solution found. ");
 
     buildSolutionsTable();
 
     auto_indexer->unsetHandler();
     handler.reset();
     toggleUnsafeWidgets();
+
+    if (_solutions.empty())
+        gGui->statusBar()->showMessage("WARNING: No unit cells found");
+    else
+        gGui->statusBar()->showMessage(QString::number(_solutions.size()) + " unit cells found");
+
+    gGui->setReady(true);
 }
 
 void SubframeAutoIndexer::buildSolutionsTable()
 {
     // Create table with 9 columns
-    QStandardItemModel* model = new QStandardItemModel(_solutions.size(), 10, this);
+    QStandardItemModel* model = new QStandardItemModel(_solutions.size(), 9, this);
     model->setHorizontalHeaderItem(0, new QStandardItem("a"));
     model->setHorizontalHeaderItem(1, new QStandardItem("b"));
     model->setHorizontalHeaderItem(2, new QStandardItem("c"));

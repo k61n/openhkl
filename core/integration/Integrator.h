@@ -66,11 +66,19 @@ class Integrator {
     //! Set a progress handler
     void setHandler(sptrProgressHandler handler);
 
+    //! Get the number of valid peaks;
+    unsigned int numberOfPeaks();
+    //! Get the total number of peaks
+    unsigned int numberOfValidPeaks();
+
  private:
     sptrProgressHandler _handler;
     IntegratorMap _integrator_map;
     std::shared_ptr<DataHandler> _data_handler;
     std::shared_ptr<IntegrationParameters> _params;
+
+    unsigned int _n_peaks;
+    unsigned int _n_valid;
 };
 
 } // namespace nsx

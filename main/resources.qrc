@@ -27,5 +27,7 @@
         <file>images/sidebar/darktheme/refiner.svg</file>
         <file>images/sidebar/darktheme/integrator.svg</file>
         <file>images/sidebar/darktheme/merger.svg</file>
+        <file>images/statusbar/red-circle.svg</file>
+        <file>images/statusbar/green-circle.svg</file>
     </qresource>
 </RCC>

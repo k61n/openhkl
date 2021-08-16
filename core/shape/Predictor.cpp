@@ -100,4 +100,9 @@ const std::vector<Peak3D*>& Predictor::peaks() const
     return _predicted_peaks;
 }
 
+unsigned int Predictor::numberOfPredictedPeaks()
+{
+    return _predicted_peaks.size();
+}
+
 } // namespace nsx

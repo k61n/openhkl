@@ -94,6 +94,10 @@ SubframeRefiner::SubframeRefiner()
     _detector_widget->linkPeakModel(&_unrefined_model, &_refined_model);
     detector_tab->setLayout(_detector_widget);
 
+    connect(
+        _peak_combo, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this,
+        &SubframeRefiner::refreshPeakVisual);
+
     _right_element->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     _right_element->addWidget(tab_widget);
 
@@ -122,10 +126,14 @@ void SubframeRefiner::setInputUp()
         "Use refined cells", "Use unit cells generated per batch during previous refinement", 1);
     _n_batches_spin = f.addSpinBox(
         "Number of batches", "Number of batches to equally divide frames into for refinement");
+    _max_iter_spin = f.addSpinBox(
+        "Maximum iterations", "Maximum number of iterations for NLLS minimsation");
 
     _batch_cell_check->setChecked(false);
     _n_batches_spin->setMinimum(1);
     _n_batches_spin->setMaximum(1000); // updated on setBatchesUp
+    _max_iter_spin->setMinimum(100);
+    _max_iter_spin->setMaximum(10000000);
 
     connect(
         _exp_combo, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this,
@@ -273,6 +281,7 @@ void SubframeRefiner::setBatchesUp()
 
 void SubframeRefiner::refine()
 {
+    gGui->setReady(false);
     try {
         auto expt = gSession->experimentAt(_exp_combo->currentIndex())->experiment();
         auto* peaks = expt->getPeakCollection(_peak_combo->currentText().toStdString());
@@ -328,6 +337,7 @@ void SubframeRefiner::refine()
     } catch (const std::exception& ex) {
         QMessageBox::critical(this, "Error", QString(ex.what()));
     }
+    gGui->setReady(true);
 }
 
 void SubframeRefiner::setPlotUp()
@@ -518,6 +528,7 @@ void SubframeRefiner::grabRefinerParameters()
         gSession->experimentAt(_exp_combo->currentIndex())->experiment()->refiner()->parameters();
 
     _n_batches_spin->setValue(params->nbatches);
+    _max_iter_spin->setValue(params->max_iter);
     _refineUB->setChecked(params->refine_ub);
     _refineSamplePosition->setChecked(params->refine_sample_position);
     _refineSampleOrientation->setChecked(params->refine_sample_orientation);
@@ -539,6 +550,7 @@ void SubframeRefiner::setRefinerParameters()
         gSession->experimentAt(_exp_combo->currentIndex())->experiment()->refiner()->parameters();
 
     params->nbatches = _n_batches_spin->value();
+    params->max_iter = _max_iter_spin->value();
     params->refine_ub = _refineUB->isChecked();
     params->refine_sample_position = _refineSamplePosition->isChecked();
     params->refine_sample_orientation = _refineSampleOrientation->isChecked();
@@ -567,6 +579,7 @@ void SubframeRefiner::updatePredictedList()
 
 void SubframeRefiner::updatePredictions()
 {
+    gGui->setReady(false);
     if (_refine_success) {
         // A local copy to compare positions pre- and post-refinement
         _unrefined_peaks.reset();
@@ -581,6 +594,7 @@ void SubframeRefiner::updatePredictions()
     } else {
         QMessageBox::critical(this, "Error", "Cannot update predictions: refinement failed");
     }
+    gGui->setReady(true);
 }
 
 QList<PlotCheckBox*> SubframeRefiner::plotCheckBoxes() const

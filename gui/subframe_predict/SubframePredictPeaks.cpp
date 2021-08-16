@@ -394,6 +394,7 @@ void SubframePredictPeaks::refreshPeakCombo()
 
 void SubframePredictPeaks::runPrediction()
 {
+    gGui->setReady(false);
     try {
         auto* experiment = gSession->experimentAt(_exp_combo->currentIndex())->experiment();
         auto data = experiment->getData(_detector_widget->dataCombo()->currentText().toStdString());
@@ -423,9 +424,14 @@ void SubframePredictPeaks::runPrediction()
         refreshPeakTable();
         _peaks_predicted = true;
         toggleUnsafeWidgets();
+
+        gGui->statusBar()->showMessage(
+            QString::number(predictor->numberOfPredictedPeaks()) + " peaks predicted");
     } catch (const std::exception& e) {
         QMessageBox::critical(this, "Error", QString(e.what()));
     }
+
+    gGui->setReady(true);
 }
 
 void SubframePredictPeaks::showDirectBeamEvents()
@@ -454,6 +460,7 @@ void SubframePredictPeaks::showDirectBeamEvents()
 
 void SubframePredictPeaks::assignPeakShapes()
 {
+    gGui->setReady(false);
     auto* experiment = gSession->experimentAt(_exp_combo->currentIndex())->experiment();
     auto data = experiment->getData(_detector_widget->dataCombo()->currentText().toStdString());
     auto* found_peaks = experiment->getPeakCollection(_found_peaks_combo->currentText().toStdString());
@@ -471,6 +478,10 @@ void SubframePredictPeaks::assignPeakShapes()
     refreshPeakTable();
     _shapes_assigned = true;
     toggleUnsafeWidgets();
+    gGui->statusBar()->showMessage(
+        QString::number(_peak_collection.numberOfValid()) + "/" +
+        QString::number(_peak_collection.numberOfPeaks()) + " predicted peaks with valid shapes");
+    gGui->setReady(true);
 }
 
 void SubframePredictPeaks::accept()

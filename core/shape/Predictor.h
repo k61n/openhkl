@@ -51,6 +51,8 @@ class Predictor {
     PredictionParameters* parameters();
     //! Get the vector of predicted peaks
     const std::vector<Peak3D*>& peaks() const;
+    //! Get the number of predicted peaks
+    unsigned int numberOfPredictedPeaks();
 
  private:
     std::unique_ptr<PredictionParameters> _params;

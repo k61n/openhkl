@@ -78,6 +78,9 @@ class PeakFinder {
     //! Get the parameters for peak finding
     PeakFinderParameters* parameters();
 
+    //! Get the number of peaks found
+    unsigned int numberFound();
+
 #ifndef SWIG
     //! Set the convolver flavour for peak/background convolution
     void setConvolver(std::unique_ptr<Convolver> convolver);
@@ -123,6 +126,8 @@ class PeakFinder {
     nsx::DataList _current_data;
     //! PeakCollection attached to PeakFinder
     nsx::PeakCollection _peak_collection;
+    //! Number of found peaks
+    unsigned int _peaks_found;
 };
 
 } // namespace nsx

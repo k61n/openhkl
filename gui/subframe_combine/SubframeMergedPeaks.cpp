@@ -421,6 +421,7 @@ void SubframeMergedPeaks::refreshPeakCombos()
 
 void SubframeMergedPeaks::processMerge()
 {
+    gGui->setReady(false);
     auto* expt = gSession->experimentAt(_exp_drop->currentIndex())->experiment();
     auto* merger = expt->peakMerger();
     merger->reset();
@@ -442,6 +443,7 @@ void SubframeMergedPeaks::processMerge()
         _merged_data_per_shell = merger->getMergedDataPerShell();
     }
     refreshTables();
+    gGui->setReady(true);
 }
 
 void SubframeMergedPeaks::refreshTables()

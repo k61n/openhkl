@@ -16,6 +16,9 @@
 #define NSX_GUI_MAINWIN_H
 
 #include <QMainWindow>
+
+#include <QLabel>
+#include <QPixmap>
 #include <QStackedWidget>
 #include <QStatusBar>
 
@@ -69,6 +72,9 @@ class MainWin : public QMainWindow {
     //! Get the Sidebar
     SideBar* sideBar() { return _side_bar; };
 
+ public slots:
+    void setReady(bool ready);
+
  private:
     void readSettings();
     void saveSettings() const;
@@ -95,6 +101,12 @@ class MainWin : public QMainWindow {
     Sentinel* sentinel;
 
  private:
+    void initStatusBar();
+
+    QPixmap _red_circle;
+    QPixmap _green_circle;
+    QLabel* _status;
+    QLabel* _light;
     QStackedWidget* _layout_stack;
     SideBar* _side_bar;
     class Menus* menus_;

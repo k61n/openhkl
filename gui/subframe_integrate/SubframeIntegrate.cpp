@@ -103,6 +103,9 @@ void SubframeIntegrate::setFigureUp()
     connect(
         _detector_widget->scene(), &DetectorScene::signalSelectedPeakItemChanged, this,
         &SubframeIntegrate::changeSelected);
+    connect(
+        _int_peak_combo, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this,
+        &SubframeIntegrate::refreshPeakTable);
 
     _right_element->addWidget(figure_group);
 }
@@ -402,6 +405,7 @@ void SubframeIntegrate::setPreviewUp()
 
 void SubframeIntegrate::assignPeakShapes()
 {
+    gGui->setReady(false);
     try {
         nsx::sptrProgressHandler handler(new nsx::ProgressHandler);
         ProgressView progressView(nullptr);
@@ -417,13 +421,19 @@ void SubframeIntegrate::assignPeakShapes()
         nsx::PeakInterpolation peak_interpolation = static_cast<nsx::PeakInterpolation>(interpol);
 
         shapes->setPredictedShapes(peaks_to_integrate, peak_interpolation, handler);
+        gGui->statusBar()->showMessage(
+            QString::number(peaks_to_integrate->numberOfValid()) + "/" +
+            QString::number(peaks_to_integrate->numberOfPeaks()) +
+            " predicted peaks with valid shapes");
     } catch (std::exception& e) {
         QMessageBox::critical(this, "Error", QString(e.what()));
     }
+    gGui->setReady(true);
 }
 
 void SubframeIntegrate::removeOverlappingPeaks()
 {
+    gGui->setReady(false);
     nsx::Experiment* expt = gSession->experimentAt(_exp_combo->currentIndex())->experiment();
     nsx::PeakCollection* peaks_to_integrate =
         expt->getPeakCollection(_int_peak_combo->currentText().toStdString());
@@ -449,10 +459,12 @@ void SubframeIntegrate::removeOverlappingPeaks()
         }
     }
     refreshPeakTable();
+    gGui->setReady(true);
 }
 
 void SubframeIntegrate::runIntegration()
 {
+    gGui->setReady(false);
     try {
         nsx::sptrProgressHandler handler(new nsx::ProgressHandler);
         ProgressView progressView(nullptr);
@@ -474,13 +486,18 @@ void SubframeIntegrate::runIntegration()
         integrator->getIntegrator(params->integrator_type)->setHandler(handler);
         integrator->integratePeaks(data, peaks_to_integrate, params, shapes);
         gGui->detector_window->refreshAll();
+        gGui->statusBar()->showMessage(
+            QString::number(integrator->numberOfValidPeaks()) + "/" +
+            QString::number(integrator->numberOfPeaks()) + " peaks integrated");
     } catch (std::exception& e) {
         QMessageBox::critical(this, "Error", QString(e.what()));
     }
+    gGui->setReady(true);
 }
 
 void SubframeIntegrate::openShapeBuilder()
 {
+    gGui->setReady(false);
     nsx::PeakCollection* peak_collection =
         gSession->experimentAt(_exp_combo->currentIndex())
             ->experiment()
@@ -491,6 +508,11 @@ void SubframeIntegrate::openShapeBuilder()
 
     dialog->exec();
     toggleUnsafeWidgets();
+    if (peak_collection->shapeCollection())
+        gGui->statusBar()->showMessage(
+            QString::number(peak_collection->shapeCollection()->numberOfPeaks()) +
+            " shapes generated");
+    gGui->setReady(true);
 }
 
 void SubframeIntegrate::changeSelected(PeakItemGraphic* peak_graphic)
@@ -534,13 +556,15 @@ void SubframeIntegrate::toggleUnsafeWidgets()
         _build_shape_lib_button->setEnabled(false);
     }
 
-    nsx::PeakCollection* peaks =
-        gSession->experimentAt(_exp_combo->currentIndex())->experiment()
-        ->getPeakCollection(_peak_combo->currentText().toStdString());
-    if (peaks->shapeCollection() == nullptr) {
-        _assign_peak_shapes->setEnabled(false);
-        _integrate_button->setEnabled(false);
-        _remove_overlaps->setEnabled(false);
+    if (!(_peak_combo->count() == 0)) {
+        nsx::PeakCollection* peaks =
+            gSession->experimentAt(_exp_combo->currentIndex())->experiment()
+            ->getPeakCollection(_peak_combo->currentText().toStdString());
+        if (peaks->shapeCollection() == nullptr) {
+            _assign_peak_shapes->setEnabled(false);
+            _integrate_button->setEnabled(false);
+            _remove_overlaps->setEnabled(false);
+        }
     }
 }
 
