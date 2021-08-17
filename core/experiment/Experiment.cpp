@@ -16,11 +16,12 @@
 #include <memory>
 #include <stdexcept>
 #include <utility>
-#include <cstdio> // tmpnam, L_tmpnam, rename
+#include <cstdio> // rename
 #include <string>
 
 #include "base/utils/Logger.h"
 #include "base/utils/Units.h"
+#include "base/utils/Path.h"  // tempFilename
 #include "core/data/DataSet.h"
 #include "core/experiment/DataHandler.h"
 #include "core/experiment/Experiment.h"
@@ -124,9 +125,7 @@ void Experiment::saveToFile(const std::string& path) const
     std::string filepath {path};
     if (overwrite_datafile) {
         // create a filename for the temporary datafile
-        char tmp_fname[L_tmpnam];
-        tmpnam(tmp_fname);
-        filepath = std::string(tmp_fname);
+        filepath = tempFilename(path);
         nsxlog(Level::Debug, "Saving experiment to temporary file '"
                + filepath + "'");
     }

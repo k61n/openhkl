@@ -47,6 +47,9 @@ bool fileExists(const std::string& filename);
 
 std::string diffractometersPath();
 
+//! Returns a temporary filename based on a given filename
+std::string tempFilename(const std::string& filename);
+
 } // namespace nsx
 
 #endif // NSX_BASE_UTILS_PATH_H
