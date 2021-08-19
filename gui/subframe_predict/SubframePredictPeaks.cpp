@@ -93,10 +93,15 @@ void SubframePredictPeaks::setParametersUp()
 
     _exp_combo = f.addLinkedCombo(ComboType::Experiment, "Experiment");
     _cell_combo = f.addLinkedCombo(ComboType::UnitCell, "Unit cell:");
+    _found_peaks_combo =
+        f.addLinkedCombo(ComboType::PeakCollection, "Found peak collection",
+                         "Found peaks from which to construct shape collection");
     _d_min = f.addDoubleSpinBox("d min:", QString::fromUtf8("(\u212B) - minimum d (Bragg's law)"));
     _d_max = f.addDoubleSpinBox("d max:", QString::fromUtf8("(\u212B) - maximum d (Bragg's law)"));
     _direct_beam = f.addCheckBox(
         "Show direct beam", "Show position of direct beam computed from instrument states", 1);
+    _refine_ki_button = f.addButton(
+        "Refine incident wavevector", "Refine the position of the  direct beam");
     _predict_button = f.addButton("Predict");
     _predict_button->setEnabled(false);
 
@@ -121,6 +126,7 @@ void SubframePredictPeaks::setParametersUp()
         &SubframePredictPeaks::refreshPeakCombo);
     connect(
         _direct_beam, &QCheckBox::stateChanged, this, &SubframePredictPeaks::showDirectBeamEvents);
+    connect(_refine_ki_button, &QPushButton::clicked, this, &SubframePredictPeaks::refineKi);
 
     _left_layout->addWidget(_para_box);
 }
@@ -130,9 +136,6 @@ void SubframePredictPeaks::setShapeCollectionUp()
     _shapes_box = new Spoiler("Generate shapes");
     GridFiller f(_shapes_box, true);
 
-    _found_peaks_combo =
-        f.addLinkedCombo(ComboType::PeakCollection, "Found peak collection",
-                         "Found peaks from which to construct shape collection");
     _nx = f.addSpinBox("histogram bins x", "Number of bins in x direction");
     _ny = f.addSpinBox("histogram bins y", "Number of bins in x direction");
     _nz = f.addSpinBox("histogram bins f", "Number of bins in frames direction");
@@ -390,6 +393,39 @@ void SubframePredictPeaks::refreshPeakCombo()
         getPeakCollectionNames(nsx::listtype::FOUND));
     _found_peaks_combo->setCurrentText(current_peaks);
     _found_peaks_combo->blockSignals(false);
+}
+
+void SubframePredictPeaks::refineKi()
+{
+    auto expt = gSession->experimentAt(_exp_combo->currentIndex())->experiment();
+    auto* peaks = expt->getPeakCollection(_found_peaks_combo->currentText().toStdString());
+    const auto data = _detector_widget->currentData();
+    auto* detector = data->diffractometer()->detector();
+    auto states = data->instrumentStates();
+    auto refiner = expt->refiner();
+    auto* params = refiner->parameters();
+
+    gGui->setReady(false);
+    std::vector<nsx::DetectorEvent> old_beam =
+        nsx::algo::getDirectBeamEvents(states, *detector);
+    _detector_widget->scene()->linkOldDirectBeamPositions(old_beam);
+    refreshPeakVisual();
+
+    params->refine_ki = true;
+    params->refine_ub = false;
+    params->refine_detector_offset = false;
+    params->refine_sample_position = false;
+    params->refine_sample_orientation = false;
+    params->nbatches = data->nFrames();
+    params->residual_type = nsx::ResidualType::RealSpace;
+
+    bool success = expt->refine(peaks, data.get());
+    if (success) {
+        gGui->statusBar()->showMessage("Direct beam positions refined");
+        showDirectBeamEvents();
+    } else
+        gGui->statusBar()->showMessage("Direct beam position refinement failed");
+    gGui->setReady(true);
 }
 
 void SubframePredictPeaks::runPrediction()

@@ -89,6 +89,8 @@ class SubframePredictPeaks : public QWidget {
     void setShapeCollectionParameters();
     //! Refresh the peak combo
     void refreshPeakCombo();
+    //! Refine the incident wavevector
+    void refineKi();
     //! Refresh the found peaks list
     void refreshPeakTable();
     //! Refresh the found peaks visual properties
@@ -135,6 +137,7 @@ class SubframePredictPeaks : public QWidget {
     QDoubleSpinBox* _d_min;
     QDoubleSpinBox* _d_max;
     QCheckBox* _direct_beam;
+    QPushButton* _refine_ki_button;
 
     QPushButton* _save_button;
     QPushButton* _predict_button;
