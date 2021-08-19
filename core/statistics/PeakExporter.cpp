@@ -298,7 +298,7 @@ void PeakExporter::saveToSCAMerged(const std::string& filename, nsx::MergedData*
          << std::setprecision(3) << character.c << std::fixed << std::setw(10)
          << std::setprecision(3) << character.alpha / deg << std::fixed << std::setw(10)
          << std::setprecision(3) << character.beta / deg << std::fixed << std::setw(10)
-         << std::setprecision(3) << character.gamma * deg << " " << symbol << std::endl;
+         << std::setprecision(3) << character.gamma / deg << " " << symbol << std::endl;
 
     for (const nsx::MergedPeak& peak : mergedData->mergedPeakSet()) {
         const auto hkl = peak.index();
