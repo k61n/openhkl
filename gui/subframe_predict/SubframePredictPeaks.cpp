@@ -404,6 +404,7 @@ void SubframePredictPeaks::refineKi()
     auto states = data->instrumentStates();
     auto refiner = expt->refiner();
     auto* params = refiner->parameters();
+    auto* cell = expt->getUnitCell(_cell_combo->currentText().toStdString());
 
     gGui->setReady(false);
     std::vector<nsx::DetectorEvent> old_beam =
@@ -419,7 +420,7 @@ void SubframePredictPeaks::refineKi()
     params->nbatches = data->nFrames();
     params->residual_type = nsx::ResidualType::RealSpace;
 
-    bool success = expt->refine(peaks, data.get());
+    bool success = expt->refine(peaks, data.get(), cell);
     if (success) {
         gGui->statusBar()->showMessage("Direct beam positions refined");
         showDirectBeamEvents();
