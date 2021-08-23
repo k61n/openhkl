@@ -210,7 +210,7 @@ void SubframeAutoIndexer::setPeakTableUp()
 void SubframeAutoIndexer::setSolutionTableUp()
 {
     QGroupBox* solution_group = new QGroupBox("Solutions");
-    QGridLayout* solution_grid = new QGridLayout(solution_group);
+    QGridLayout* solution_grid = new QGridLayout(solution_group); // TODO: Why GridLayout instead of QVBoxLayout?
 
     solution_group->setSizePolicy(_size_policy_right);
 
@@ -422,9 +422,9 @@ void SubframeAutoIndexer::buildSolutionsTable()
     model->setHorizontalHeaderItem(0, new QStandardItem("a"));
     model->setHorizontalHeaderItem(1, new QStandardItem("b"));
     model->setHorizontalHeaderItem(2, new QStandardItem("c"));
-    model->setHorizontalHeaderItem(3, new QStandardItem(QString((QChar)0x03B1)));
-    model->setHorizontalHeaderItem(4, new QStandardItem(QString((QChar)0x03B2)));
-    model->setHorizontalHeaderItem(5, new QStandardItem(QString((QChar)0x03B3)));
+    model->setHorizontalHeaderItem(3, new QStandardItem(QString((QChar)0x03B1))); // alpha
+    model->setHorizontalHeaderItem(4, new QStandardItem(QString((QChar)0x03B2))); // beta
+    model->setHorizontalHeaderItem(5, new QStandardItem(QString((QChar)0x03B3))); // gamma
     model->setHorizontalHeaderItem(6, new QStandardItem("Volume"));
     model->setHorizontalHeaderItem(7, new QStandardItem("Bravais type"));
     model->setHorizontalHeaderItem(8, new QStandardItem("Quality"));
