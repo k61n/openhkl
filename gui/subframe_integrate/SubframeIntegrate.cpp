@@ -435,6 +435,10 @@ void SubframeIntegrate::removeOverlappingPeaks()
 {
     gGui->setReady(false);
     nsx::Experiment* expt = gSession->experimentAt(_exp_combo->currentIndex())->experiment();
+
+    if (_int_peak_combo->count() == 0)
+      return;
+
     nsx::PeakCollection* peaks_to_integrate =
         expt->getPeakCollection(_int_peak_combo->currentText().toStdString());
     nsx::PeakFilter filter;
