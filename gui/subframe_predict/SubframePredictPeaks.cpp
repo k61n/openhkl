@@ -397,6 +397,7 @@ void SubframePredictPeaks::refreshPeakCombo()
 
 void SubframePredictPeaks::refineKi()
 {
+    gGui->setReady(false);
     auto expt = gSession->experimentAt(_exp_combo->currentIndex())->experiment();
     auto* peaks = expt->getPeakCollection(_found_peaks_combo->currentText().toStdString());
     const auto data = _detector_widget->currentData();
@@ -406,7 +407,6 @@ void SubframePredictPeaks::refineKi()
     auto* params = refiner->parameters();
     auto* cell = expt->getUnitCell(_cell_combo->currentText().toStdString());
 
-    gGui->setReady(false);
     std::vector<nsx::DetectorEvent> old_beam =
         nsx::algo::getDirectBeamEvents(states, *detector);
     _detector_widget->scene()->linkOldDirectBeamPositions(old_beam);
