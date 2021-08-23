@@ -42,6 +42,7 @@
 #include <QMessageBox>
 #include <QSpinBox>
 #include <QSplitter>
+#include <QVBoxLayout>
 
 
 SubframeAutoIndexer::SubframeAutoIndexer()
@@ -210,13 +211,13 @@ void SubframeAutoIndexer::setPeakTableUp()
 void SubframeAutoIndexer::setSolutionTableUp()
 {
     QGroupBox* solution_group = new QGroupBox("Solutions");
-    QGridLayout* solution_grid = new QGridLayout(solution_group); // TODO: Why GridLayout instead of QVBoxLayout?
+    QVBoxLayout* solution_grid = new QVBoxLayout(solution_group);
 
     solution_group->setSizePolicy(_size_policy_right);
 
     _solution_table = new UnitCellTableView(this);
 
-    solution_grid->addWidget(_solution_table, 0, 0, 0, 0);
+    solution_grid->addWidget(_solution_table);
 
     connect(
         _solution_table->verticalHeader(), &QHeaderView::sectionClicked, this,
