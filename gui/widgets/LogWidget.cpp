@@ -16,6 +16,7 @@
 
 #include "base/utils/Logger.h"
 #include "base/utils/StringIO.h" // datetime_str
+#include "gui/MainWin.h"
 #include <string>
 #include <chrono>
 #include <sstream>
@@ -24,10 +25,14 @@
 #include <QColor>
 #include <QTextEdit>
 
-
 LogWidget::LogWidget(QWidget* parent):
     QTextEdit(parent)
 {
+    if (gGui->isDark()) // looks like we have a dark theme
+        _infoColor = QColor(Qt::white);
+    else
+        _infoColor = QColor(Qt::black);
+
     // Text display
     setReadOnly(true);
     setAcceptRichText(false);
@@ -38,6 +43,12 @@ LogWidget::LogWidget(QWidget* parent):
     setText(
         QString::fromStdString("-*- " + _initText + " ["
                                + nsx::datetime_str() + "] -*-"));
+
+    // set minmimum size to 100 columns, 30 lines (depending on font; assumes monospace)
+    auto* fontMetrics = new QFontMetrics(currentFont());
+    QSize fontSize = fontMetrics->size(0, "A");
+    setMinimumSize(fontSize.width() * 100 + 10, fontSize.height() * 30 + 10);
+    resize(fontSize.width() * 100 + 10, fontSize.height() + 10);
 
     _connectUI();
 }

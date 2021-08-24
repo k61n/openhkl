@@ -28,8 +28,6 @@ HDF5DataReader::HDF5DataReader(const std::string& filename) : BaseHDF5DataReader
 
 Eigen::MatrixXi HDF5DataReader::data(std::size_t frame)
 {
-    nsxlog(nsx::Level::Debug, "HDF5DataReader::data: Reading data in frame nr. ", frame);
-
     const std::size_t nframes = _dataset_out->nFrames(),
         nrows = _dataset_out->nRows(),
         ncols = _dataset_out->nCols();
@@ -49,7 +47,6 @@ Eigen::MatrixXi HDF5DataReader::data(std::size_t frame)
     const hsize_t offset[3] = {frame, 0, 0};
     _space->selectHyperslab(H5S_SELECT_SET, count_1frm, offset);
     _dataset->read(m.data(), H5::PredType::NATIVE_INT32, *_memspace, *_space);
-    nsxlog(nsx::Level::Debug, "HDF5DataReader::data: Finished reading data in frame nr. ", frame);
     // return copy as MatrixXi (col-major)
     return Eigen::MatrixXi(m);
 }

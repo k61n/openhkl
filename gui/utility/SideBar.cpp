@@ -35,16 +35,6 @@
 
 #define action_height 100
 
-//! Determine whether a color is dark or not using luminance
-bool isDark(QColor color)
-{
-    double r = color.red();
-    double g = color.green();
-    double b  = color.blue();
-    double luminance = (0.2126 * r + 0.7152 * g + 0.0722 * b) / 256.0;
-    return luminance < 0.5;
-}
-
 // TODO: find a better place for this
 // Icon attributions:
 // home.svg: Home by Bhuvan from the Noun Project
@@ -65,7 +55,7 @@ SideBar::SideBar(QWidget* parent) : QWidget(parent), mCheckedAction(nullptr), mO
     QString light{"lighttheme/"};
     QString dark{"darktheme/"};
 
-    if (isDark(gGui->palette().color(QPalette::Window))) // looks like we have a dark theme
+    if (gGui->isDark()) // looks like we have a dark theme
         path = path + dark;
     else
         path = path + light;
@@ -116,7 +106,7 @@ void SideBar::paintEvent(QPaintEvent* event)
         if (action == mOverAction)
             p.fillRect(actionRect, QColor(150, 150, 150));
 
-        if (isDark(gGui->palette().color(QPalette::Window))) // looks like we have a dark theme
+        if (gGui->isDark()) // looks like we have a dark theme
             p.setPen(Qt::white);
         else
             p.setPen(Qt::black);

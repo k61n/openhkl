@@ -216,3 +216,14 @@ void MainWin::setReady(bool ready)
         _light->setPixmap(_red_circle);
     }
 }
+
+//! Determine whether a color is dark or not using luminance
+bool MainWin::isDark()
+{
+    QColor color = palette().color(QPalette::Window);
+    double r = color.red();
+    double g = color.green();
+    double b  = color.blue();
+    double luminance = (0.2126 * r + 0.7152 * g + 0.0722 * b) / 256.0;
+    return luminance < 0.5;
+}

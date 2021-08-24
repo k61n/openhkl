@@ -281,8 +281,6 @@ bool BaseHDF5DataReader::initRead()
 
 void BaseHDF5DataReader::open()
 {
-    nsxlog(nsx::Level::Debug, "Opening datafile (already opened: ", _isOpened, ")");
-
     checkInit();
 
     if (_isOpened)
