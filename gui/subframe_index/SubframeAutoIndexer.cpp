@@ -42,6 +42,7 @@
 #include <QMessageBox>
 #include <QSpinBox>
 #include <QSplitter>
+#include <QVBoxLayout>
 
 
 SubframeAutoIndexer::SubframeAutoIndexer()
@@ -210,13 +211,13 @@ void SubframeAutoIndexer::setPeakTableUp()
 void SubframeAutoIndexer::setSolutionTableUp()
 {
     QGroupBox* solution_group = new QGroupBox("Solutions");
-    QGridLayout* solution_grid = new QGridLayout(solution_group);
+    QVBoxLayout* solution_grid = new QVBoxLayout(solution_group);
 
     solution_group->setSizePolicy(_size_policy_right);
 
     _solution_table = new UnitCellTableView(this);
 
-    solution_grid->addWidget(_solution_table, 0, 0, 0, 0);
+    solution_grid->addWidget(_solution_table);
 
     connect(
         _solution_table->verticalHeader(), &QHeaderView::sectionClicked, this,
@@ -422,9 +423,9 @@ void SubframeAutoIndexer::buildSolutionsTable()
     model->setHorizontalHeaderItem(0, new QStandardItem("a"));
     model->setHorizontalHeaderItem(1, new QStandardItem("b"));
     model->setHorizontalHeaderItem(2, new QStandardItem("c"));
-    model->setHorizontalHeaderItem(3, new QStandardItem(QString((QChar)0x03B1)));
-    model->setHorizontalHeaderItem(4, new QStandardItem(QString((QChar)0x03B2)));
-    model->setHorizontalHeaderItem(5, new QStandardItem(QString((QChar)0x03B3)));
+    model->setHorizontalHeaderItem(3, new QStandardItem(QString((QChar)0x03B1))); // alpha
+    model->setHorizontalHeaderItem(4, new QStandardItem(QString((QChar)0x03B2))); // beta
+    model->setHorizontalHeaderItem(5, new QStandardItem(QString((QChar)0x03B3))); // gamma
     model->setHorizontalHeaderItem(6, new QStandardItem("Volume"));
     model->setHorizontalHeaderItem(7, new QStandardItem("Bravais type"));
     model->setHorizontalHeaderItem(8, new QStandardItem("Quality"));
@@ -433,28 +434,40 @@ void SubframeAutoIndexer::buildSolutionsTable()
     for (unsigned int i = 0; i < _solutions.size(); ++i) {
         const nsx::sptrUnitCell cell = _solutions[i].first;
         const double quality = _solutions[i].second;
+        const double volume = cell->volume();
 
         const nsx::UnitCellCharacter ch = cell->character();
         const nsx::UnitCellCharacter sigma = cell->characterSigmas();
 
-        QStandardItem* col1 = new QStandardItem(
-            QString::number(ch.a, 'f', 3) + "(" + QString::number(sigma.a * 1000, 'f', 0) + ")");
-        QStandardItem* col2 = new QStandardItem(
-            QString::number(ch.b, 'f', 3) + "(" + QString::number(sigma.b * 1000, 'f', 0) + ")");
-        QStandardItem* col3 = new QStandardItem(
-            QString::number(ch.c, 'f', 3) + "(" + QString::number(sigma.c * 1000, 'f', 0) + ")");
-        QStandardItem* col4 = new QStandardItem(
+        ValueTupleItem* col1 = new ValueTupleItem(
+            QString::number(ch.a, 'f', 3)
+            + "(" + QString::number(sigma.a * 1000, 'f', 0) + ")",
+            ch.a, sigma.a);
+        ValueTupleItem* col2 = new ValueTupleItem(
+            QString::number(ch.b, 'f', 3)
+            + "(" + QString::number(sigma.b * 1000, 'f', 0) + ")",
+            ch.b, sigma.b);
+        ValueTupleItem* col3 = new ValueTupleItem(
+            QString::number(ch.c, 'f', 3)
+            + "(" + QString::number(sigma.c * 1000, 'f', 0) + ")",
+            ch.c, sigma.c);
+        ValueTupleItem* col4 = new ValueTupleItem(
             QString::number(ch.alpha / nsx::deg, 'f', 3) + "("
-            + QString::number(sigma.alpha / nsx::deg * 1000, 'f', 0) + ")");
-        QStandardItem* col5 = new QStandardItem(
+            + QString::number(sigma.alpha / nsx::deg * 1000, 'f', 0) + ")",
+            ch.alpha, sigma.alpha);
+        ValueTupleItem* col5 = new ValueTupleItem(
             QString::number(ch.beta / nsx::deg, 'f', 3) + "("
-            + QString::number(sigma.beta / nsx::deg * 1000, 'f', 0) + ")");
-        QStandardItem* col6 = new QStandardItem(
+            + QString::number(sigma.beta / nsx::deg * 1000, 'f', 0) + ")",
+            ch.beta, sigma.beta);
+        ValueTupleItem* col6 = new ValueTupleItem(
             QString::number(ch.gamma / nsx::deg, 'f', 3) + "("
-            + QString::number(sigma.gamma / nsx::deg * 1000, 'f', 0) + ")");
-        QStandardItem* col7 = new QStandardItem(QString::number(cell->volume(), 'f', 3));
+            + QString::number(sigma.gamma / nsx::deg * 1000, 'f', 0) + ")",
+            ch.gamma, sigma.gamma);
+        ValueTupleItem* col7 = new ValueTupleItem(QString::number(volume, 'f', 3),
+            volume);
         QStandardItem* col8 = new QStandardItem(QString::fromStdString(cell->bravaisTypeSymbol()));
-        QStandardItem* col9 = new QStandardItem(QString::number(quality, 'f', 2) + "%");
+        ValueTupleItem* col9 = new ValueTupleItem(QString::number(quality, 'f', 2) + "%",
+            quality);
 
         model->setItem(i, 0, col1);
         model->setItem(i, 1, col2);

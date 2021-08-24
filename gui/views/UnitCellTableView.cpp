@@ -15,6 +15,8 @@
 #include "gui/views/UnitCellTableView.h"
 
 #include <QHeaderView>
+#include <QStandardItem>
+#include <QString>
 
 UnitCellTableView::UnitCellTableView(QWidget* parent) : QTableView(parent)
 {
@@ -26,4 +28,19 @@ UnitCellTableView::UnitCellTableView(QWidget* parent) : QTableView(parent)
     sortByColumn(0, Qt::AscendingOrder);
     verticalHeader()->show();
     setFocusPolicy(Qt::StrongFocus);
+}
+
+ValueTupleItem::ValueTupleItem(const QString& text, const double val, const double qmes)
+    : QStandardItem(text),
+      value{val}, qmeasure{qmes}
+{}
+
+bool ValueTupleItem::operator< (const QStandardItem& other) const
+{
+    // assumes that the other Item is also of type ValueTupleItem
+    const ValueTupleItem* other_p = dynamic_cast<const ValueTupleItem*>(&other);
+    const bool isLess = (this->value < other_p->value)
+        || (this->value == other_p->value && this->qmeasure < other_p->qmeasure);
+
+    return isLess;
 }
