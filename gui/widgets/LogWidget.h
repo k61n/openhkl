@@ -38,7 +38,7 @@ class LogWidget : public QTextEdit {
 
  private:
     // TODO: declare as static
-    const QColor _infoColor {"Black"};
+    QColor _infoColor {"Black"};
     const QColor _errorColor {"#FF003F"}; // Crimson
     const QColor _warningColor {"#FF7F00"}; // Orange
     const QColor _debugColor {"#8F00FF"}; // Violet

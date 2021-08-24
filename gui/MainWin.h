@@ -68,6 +68,8 @@ class MainWin : public QMainWindow {
     void exportPlot() const;
     //! plot the x and y data, e is the error to y
     void plotData(QVector<double>& x, QVector<double>& y, QVector<double>& e) const;
+    //! determine if the system theme is dark
+    bool isDark();
 
     //! Get the Sidebar
     SideBar* sideBar() { return _side_bar; };

@@ -66,6 +66,7 @@ class Logger {
 template <typename... T> inline void nsxlog(const Level& level, const T&... messages)
 {
     Logger::instance().log(level, messages...);
+    nsxmsg(level, messages...);
 }
 
 //! Global messaging function (prefixed with "nsx" to facilitate grepping)
