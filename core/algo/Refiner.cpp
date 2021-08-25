@@ -356,4 +356,16 @@ RefinerParameters* Refiner::parameters()
     return _params.get();
 }
 
+void Refiner::setParameters(const RefinerParameters& params)
+{
+    _params->nbatches = params.nbatches;
+    _params->max_iter = params.max_iter;
+    _params->refine_ub = params.refine_ub;
+    _params->residual_type = params.residual_type;
+    _params->refine_sample_orientation = params.refine_sample_orientation;
+    _params->refine_sample_position = params.refine_sample_position;
+    _params->refine_detector_offset = params.refine_detector_offset;
+    _params->refine_ki = params.refine_ki;
+}
+
 } // namespace nsx

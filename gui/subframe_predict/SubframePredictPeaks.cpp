@@ -407,6 +407,8 @@ void SubframePredictPeaks::refineKi()
     auto* params = refiner->parameters();
     auto* cell = expt->getUnitCell(_cell_combo->currentText().toStdString());
 
+    nsx::RefinerParameters tmp_params = *params;
+
     std::vector<nsx::DetectorEvent> old_beam =
         nsx::algo::getDirectBeamEvents(states, *detector);
     _detector_widget->scene()->linkOldDirectBeamPositions(old_beam);
@@ -426,6 +428,8 @@ void SubframePredictPeaks::refineKi()
         showDirectBeamEvents();
     } else
         gGui->statusBar()->showMessage("Direct beam position refinement failed");
+
+    refiner->setParameters(tmp_params);
     gGui->setReady(true);
 }
 
