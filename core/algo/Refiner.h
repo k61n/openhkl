@@ -98,6 +98,9 @@ class Refiner {
     //! get a pointer to the parameters
     RefinerParameters* parameters();
 
+    //! set the parameters
+    void setParameters(const RefinerParameters& params);
+
  private:
     UnitCellHandler* _cell_handler;
     UnitCell _unrefined_cell;
