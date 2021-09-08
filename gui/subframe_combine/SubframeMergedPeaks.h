@@ -124,6 +124,8 @@ class SubframeMergedPeaks : public QWidget {
     QComboBox* _plottable_statistics;
     SXPlot* _statistics_plot;
     QStandardItemModel* _shell_model;
+    QDoubleSpinBox* _intensity_rescale_merged;
+    QDoubleSpinBox* _intensity_rescale_unmerged;
     QPushButton* _save_shell;
 
     QTableView* _merged_view;

@@ -37,13 +37,15 @@ class PeakExporter {
     //! Saves the peak information to ShelX file format given a merged peak list.
     void saveToFullProfMerged(const std::string& filename, nsx::MergedData* mergedData);
     //! Saves the peak information to FullProf file format given a peak list.
-    void saveToSCAMerged(const std::string& filename, nsx::MergedData* mergedData);
+    void saveToSCAMerged(
+        const std::string& filename, nsx::MergedData* mergedData, double scale = 1.0);
     //! Saves the peak information to FullProf file format given a merged peak list.
     void saveToShelXUnmerged(const std::string& filename, nsx::MergedData* mergedData);
     //! Saves the peak information to .sca file format given a peak list.
     void saveToFullProfUnmerged(const std::string& filename, nsx::MergedData* mergedData);
     //! Saves the peak information to .sca file format given a merged peak list.
-    void saveToSCAUnmerged(const std::string& filename, nsx::MergedData* mergedData);
+    void saveToSCAUnmerged(
+        const std::string& filename, nsx::MergedData* mergedData, double scale = 1.0);
 
  private:
 };

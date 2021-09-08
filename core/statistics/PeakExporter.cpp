@@ -219,7 +219,8 @@ void PeakExporter::saveToFullProfMerged(const std::string& filename, nsx::Merged
     file.close();
 }
 
-void PeakExporter::saveToSCAUnmerged(const std::string& filename, nsx::MergedData* mergedData)
+void PeakExporter::saveToSCAUnmerged(
+    const std::string& filename, nsx::MergedData* mergedData, double scale)
 {
     std::fstream file(filename, std::ios::out);
 
@@ -250,7 +251,7 @@ void PeakExporter::saveToSCAUnmerged(const std::string& filename, nsx::MergedDat
                 const nsx::MillerIndex miller_index(peak->q(), *cell);
                 if (miller_index.indexed(cell->indexingTolerance())) {
                     const Eigen::RowVector3i& hkl = miller_index.rowVector();
-                    const double intensity = peak->correctedIntensity().value();
+                    const double intensity = peak->correctedIntensity().value() * scale;
                     const double sigma_intensity = peak->correctedIntensity().sigma();
 
                     file << std::fixed << std::setw(4) << hkl(0) << std::fixed << std::setw(4)
@@ -277,7 +278,8 @@ void PeakExporter::saveToSCAUnmerged(const std::string& filename, nsx::MergedDat
     file.close();
 }
 
-void PeakExporter::saveToSCAMerged(const std::string& filename, nsx::MergedData* mergedData)
+void PeakExporter::saveToSCAMerged(
+    const std::string& filename, nsx::MergedData* mergedData, double scale)
 {
     std::fstream file(filename, std::ios::out);
 
@@ -303,7 +305,7 @@ void PeakExporter::saveToSCAMerged(const std::string& filename, nsx::MergedData*
     for (const nsx::MergedPeak& peak : mergedData->mergedPeakSet()) {
         const auto hkl = peak.index();
         nsx::Intensity I = peak.intensity();
-        const double intensity = I.value();
+        const double intensity = I.value() * scale;
         const double sigma_intensity = I.sigma();
 
         file << std::fixed << std::setw(4) << hkl(0) << std::fixed << std::setw(4) << hkl(1)

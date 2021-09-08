@@ -228,7 +228,7 @@ void SubframeMergedPeaks::setDShellUp()
     d_shell_down_left->addWidget(_d_shells, 2, 1, 1, 2);
     d_shell_down_left->addWidget(_friedel, 3, 1, 1, 2);
     d_shell_down_left->addWidget(_plottable_statistics, 4, 1, 1, 3);
-    d_shell_down_left->addWidget(_save_shell, 5, 0, 1, 3);
+    d_shell_down_left->addWidget(_save_shell, 6, 0, 1, 3);
     d_shell_down->addLayout(d_shell_down_left);
 
     _statistics_plot = new SXPlot;
@@ -282,10 +282,23 @@ void SubframeMergedPeaks::setMergedUp()
     merged_layout->addWidget(_merged_view);
 
     QHBoxLayout* merged_row = new QHBoxLayout;
+
     _merged_save_type = new QComboBox();
     _merged_save_type->addItems({"ShelX", "FullProf", "Phenix"});
     _save_merged = new QPushButton("Save merged");
+
+    QLabel* label = new QLabel("Intensity scale factor");
+
+    _intensity_rescale_merged = new QDoubleSpinBox();
+    _intensity_rescale_merged->setValue(1);
+    _intensity_rescale_merged->setMaximum(1000000);
+    _intensity_rescale_merged->setMinimum(0.000001);
+    _intensity_rescale_merged->setToolTip(
+        "Rescale intensities in output file by this factor (Phenix only)");
+
     merged_row->addStretch();
+    merged_row->addWidget(label);
+    merged_row->addWidget(_intensity_rescale_merged);
     merged_row->addWidget(_merged_save_type);
     merged_row->addWidget(_save_merged);
     merged_layout->addLayout(merged_row);
@@ -309,7 +322,18 @@ void SubframeMergedPeaks::setUnmergedUp()
     _unmerged_save_type->addItems({"ShelX", "FullProf", "Phenix"});
     _save_unmerged = new QPushButton("Save unmerged");
 
+    QLabel* label = new QLabel("Intensity scale factor");
+
+    _intensity_rescale_unmerged = new QDoubleSpinBox();
+    _intensity_rescale_unmerged->setValue(1);
+    _intensity_rescale_unmerged->setMaximum(1000000);
+    _intensity_rescale_unmerged->setMinimum(0.000001);
+    _intensity_rescale_unmerged->setToolTip(
+        "Rescale intensities in output file by this factor (Phenix only)");
+
     unmerged_row->addStretch();
+    unmerged_row->addWidget(label);
+    unmerged_row->addWidget(_intensity_rescale_unmerged);
     unmerged_row->addWidget(_unmerged_save_type);
     unmerged_row->addWidget(_save_unmerged);
     unmerged_layout->addLayout(unmerged_row);
@@ -697,7 +721,8 @@ void SubframeMergedPeaks::saveMergedPeaks()
         if (filename.isEmpty())
             return;
 
-        exporter.saveToSCAMerged(filename.toStdString(), merged_data);
+        exporter.saveToSCAMerged(
+            filename.toStdString(), merged_data, _intensity_rescale_merged->value());
     }
 
     QFileInfo info(filename);
@@ -741,7 +766,8 @@ void SubframeMergedPeaks::saveUnmergedPeaks()
         if (filename.isEmpty())
             return;
 
-        exporter.saveToSCAUnmerged(filename.toStdString(), merged_data);
+        exporter.saveToSCAUnmerged(
+            filename.toStdString(), merged_data, _intensity_rescale_unmerged->value());
     }
 
     QFileInfo info(filename);
