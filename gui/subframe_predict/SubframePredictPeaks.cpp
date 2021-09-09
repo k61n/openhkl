@@ -595,8 +595,8 @@ void SubframePredictPeaks::toggleUnsafeWidgets()
         _save_button->setEnabled(false);
     }
 
-    if (!_shapes_assigned)
-        _save_button->setEnabled(false);
+    // if (!_shapes_assigned) // TODO: reenable later
+    //     _save_button->setEnabled(false);
 
     _sigma_d->setEnabled(true);
     _sigma_m->setEnabled(true);
