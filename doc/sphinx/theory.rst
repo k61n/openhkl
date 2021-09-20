@@ -44,6 +44,7 @@ the peak and background. If we interpret the eigenvalues :math:`\sigma_i, (i =
 axes, then scaling the peak ellipsoid by :math:`3\sigma` means that 99.7% of the
 points are contained in the peak region.
 
+.. _beam_profile:
 
 Rotating the beam profile
 ~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -188,7 +189,6 @@ and totally obscure**
 .. math:: \mathbf{{\Sigma }}= \sigma_M^2 \mathbf{{1}} + \sigma_D^2 \mathbf{{A}}_b \mathbf{{A}}_b^\intercal
 
 .. _kabschs-coordinate-system-1:
-
 
 Kabsch’s Coordinate System
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
