@@ -516,6 +516,7 @@ void SubframeIntegrate::openShapeBuilder()
         gGui->statusBar()->showMessage(
             QString::number(peak_collection->shapeCollection()->numberOfPeaks()) +
             " shapes generated");
+    refreshPeakVisual();
     gGui->setReady(true);
 }
 
