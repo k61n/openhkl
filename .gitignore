@@ -17,6 +17,8 @@
 build/
 debug/
 qbuild/
+cover/
+tidy/
 
 docs/build
 
