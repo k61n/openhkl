@@ -233,6 +233,11 @@ void ShapeCollection::updateFit(int /*num_iterations*/)
 #endif
 }
 
+void ShapeCollection::setParameters(std::shared_ptr<ShapeCollectionParameters> params)
+{
+    _params = params;
+}
+
 Eigen::Matrix3d ShapeCollection::predictCovariance(Peak3D* peak) const
 {
     FitData f(peak);
@@ -394,6 +399,7 @@ void ShapeCollection::setPredictedShapes(
         handler->setStatus(oss.str().c_str());
         handler->setProgress(0);
     }
+
     for (auto peak : peaks->getPeakList()) {
         peak->setPredicted(true);
         peak->setSelected(true);

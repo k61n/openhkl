@@ -118,12 +118,12 @@ class SubframePredictPeaks : public QWidget {
     std::vector<nsx::sptrDataSet> _data_list;
     //! The loaded peak list
     QStringList _unit_cell_list;
-    //! Parameters for shape collection
-    nsx::ShapeCollectionParameters _shape_params;
     //! Flag to check whether peaks have been predicted
     bool _peaks_predicted;
     //! Flag to check whether shapes have been assigned to predicted peaks
     bool _shapes_assigned;
+    //! Shape collection paramters
+    std::shared_ptr<nsx::ShapeCollectionParameters> _shape_params;
 
     QVBoxLayout* _left_layout;
     QSplitter* _right_element;
@@ -167,7 +167,7 @@ class SubframePredictPeaks : public QWidget {
     QComboBox* _interpolation_combo;
     QPushButton* _assign_peak_shapes;
 
-    nsx::ShapeCollection* _shape_collection = nullptr;
+    std::unique_ptr<nsx::ShapeCollection> _shape_collection;
 };
 
 #endif // NSX_GUI_SUBFRAME_PREDICT_SUBFRAMEPREDICTPEAKS_H

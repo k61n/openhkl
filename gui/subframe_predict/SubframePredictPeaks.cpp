@@ -62,7 +62,6 @@ SubframePredictPeaks::SubframePredictPeaks()
     , _peak_collection("temp", nsx::listtype::PREDICTED)
     , _peak_collection_item()
     , _peak_collection_model()
-    , _shape_params()
     , _peaks_predicted(false)
     , _shapes_assigned(false)
 {
@@ -84,6 +83,9 @@ SubframePredictPeaks::SubframePredictPeaks()
     propertyScrollArea->setContentLayout(_left_layout);
     main_layout->addWidget(propertyScrollArea);
     main_layout->addWidget(_right_element);
+
+    _shape_collection = std::make_unique<nsx::ShapeCollection>();
+    _shape_params = std::make_shared<nsx::ShapeCollectionParameters>();
 }
 
 void SubframePredictPeaks::setParametersUp()
@@ -343,43 +345,49 @@ void SubframePredictPeaks::computeSigmas()
 
 void SubframePredictPeaks::grabShapeCollectionParameters()
 {
-    _nx->setValue(_shape_params.nbins_x);
-    _ny->setValue(_shape_params.nbins_y);
-    _nz->setValue(_shape_params.nbins_z);
-    _kabsch->setChecked(_shape_params.kabsch_coords);
-    _min_strength->setValue(_shape_params.strength_min);
-    _min_d->setValue(_shape_params.d_min);
-    _max_d->setValue(_shape_params.d_max);
-    _peak_end->setValue(_shape_params.peak_end);
-    _bkg_begin->setValue(_shape_params.bkg_begin);
-    _bkg_end->setValue(_shape_params.bkg_end);
-    _radius_pix->setValue(_shape_params.neighbour_range_pixels);
-    _radius_frames->setValue(_shape_params.neighbour_range_frames);
-    _min_neighbours->setValue(_shape_params.min_neighbors);
-    _interpolation_combo->setCurrentIndex(static_cast<int>(_shape_params.interpolation));
+    if (_exp_combo->count() == 0)
+        return;
+
+    _nx->setValue(_shape_params->nbins_x);
+    _ny->setValue(_shape_params->nbins_y);
+    _nz->setValue(_shape_params->nbins_z);
+    _kabsch->setChecked(_shape_params->kabsch_coords);
+    _min_strength->setValue(_shape_params->strength_min);
+    _min_d->setValue(_shape_params->d_min);
+    _max_d->setValue(_shape_params->d_max);
+    _peak_end->setValue(_shape_params->peak_end);
+    _bkg_begin->setValue(_shape_params->bkg_begin);
+    _bkg_end->setValue(_shape_params->bkg_end);
+    _radius_pix->setValue(_shape_params->neighbour_range_pixels);
+    _radius_frames->setValue(_shape_params->neighbour_range_frames);
+    _min_neighbours->setValue(_shape_params->min_neighbors);
+    _interpolation_combo->setCurrentIndex(static_cast<int>(_shape_params->interpolation));
 }
 
 void SubframePredictPeaks::setShapeCollectionParameters()
 {
+    if (_exp_combo->count() == 0)
+        return;
+
     if (!(_peak_collection.numberOfPeaks() == 0)) {
         _peak_collection.computeSigmas();
         _sigma_m->setValue(_peak_collection.sigmaM());
         _sigma_d->setValue(_peak_collection.sigmaD());
     }
-    _shape_params.nbins_x = _nx->value();
-    _shape_params.nbins_y = _ny->value();
-    _shape_params.nbins_z = _nz->value();
-    _shape_params.kabsch_coords = _kabsch->isChecked();
-    _shape_params.strength_min = _min_strength->value();
-    _shape_params.d_min = _min_d->value();
-    _shape_params.d_max = _max_d->value();
-    _shape_params.peak_end = _peak_end->value();
-    _shape_params.bkg_begin = _bkg_begin->value();
-    _shape_params.bkg_end = _bkg_end->value();
-    _shape_params.neighbour_range_pixels = _radius_pix->value();
-    _shape_params.neighbour_range_frames = _radius_frames->value();
-    _shape_params.min_neighbors = _min_neighbours->value();
-    _shape_params.interpolation =
+    _shape_params->nbins_x = _nx->value();
+    _shape_params->nbins_y = _ny->value();
+    _shape_params->nbins_z = _nz->value();
+    _shape_params->kabsch_coords = _kabsch->isChecked();
+    _shape_params->strength_min = _min_strength->value();
+    _shape_params->d_min = _min_d->value();
+    _shape_params->d_max = _max_d->value();
+    _shape_params->peak_end = _peak_end->value();
+    _shape_params->bkg_begin = _bkg_begin->value();
+    _shape_params->bkg_end = _bkg_end->value();
+    _shape_params->neighbour_range_pixels = _radius_pix->value();
+    _shape_params->neighbour_range_frames = _radius_frames->value();
+    _shape_params->min_neighbors = _min_neighbours->value();
+    _shape_params->interpolation =
         static_cast<nsx::PeakInterpolation>(_interpolation_combo->currentIndex());
 }
 
@@ -508,14 +516,37 @@ void SubframePredictPeaks::assignPeakShapes()
 
     setShapeCollectionParameters();
 
+    std::set<nsx::sptrDataSet> datalist;
+    std::vector<nsx::Peak3D*> fit_peaks;
+    for (nsx::Peak3D* peak : found_peaks->getPeakList()) {
+        datalist.insert(peak->dataSet());
+        if (!peak->enabled())
+            continue;
+        const double d = 1.0 / peak->q().rowVector().norm();
+
+        if (d > _shape_params->d_max || d < _shape_params->d_min)
+            continue;
+
+        const nsx::Intensity intensity = peak->correctedIntensity();
+
+        if (intensity.value() <= _shape_params->strength_min * intensity.sigma())
+            continue;
+        fit_peaks.push_back(peak);
+    }
+
     nsx::sptrProgressHandler handler(new nsx::ProgressHandler);
     ProgressView progressView(nullptr);
     progressView.watch(handler);
     experiment->integrator()->setHandler(handler);
 
-    experiment->buildShapeCollection(found_peaks, data, _shape_params);
-    _shape_collection = found_peaks->shapeCollection();
-    _shape_collection->setPredictedShapes(&_peak_collection, _shape_params.interpolation, handler);
+    _shape_collection->setParameters(_shape_params);
+    _shape_collection->integrate(fit_peaks, datalist, handler);
+
+    found_peaks->setShapeCollection(_shape_collection);
+
+    nsx::ShapeCollection* shapes = found_peaks->shapeCollection();
+    shapes->setPredictedShapes(&_peak_collection, _shape_params->interpolation, handler);
+
     refreshPeakTable();
     _shapes_assigned = true;
     toggleUnsafeWidgets();

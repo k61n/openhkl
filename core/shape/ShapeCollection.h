@@ -78,6 +78,9 @@ class ShapeCollection {
     //! Update the fitted covariances
     void updateFit(int num_iterations);
 
+    //! Set the shape collection parameters
+    void setParameters(std::shared_ptr<ShapeCollectionParameters> params);
+
     //! Set shapes of a predicted peak collection
     void setPredictedShapes(
         PeakCollection* peaks, PeakInterpolation interpolation, sptrProgressHandler handler);
