@@ -55,14 +55,22 @@ RawDataDialog::RawDataDialog(const nsx::RawDataReaderParameters& parameters0,
     wave->setValue(parameters0.wavelength);
     datasetName->setText(QString::fromStdString(parameters0.dataset_name));
 
+    dataArrangement->setToolTip("Toggle data arrangement between row and column major");
+    chi->setToolTip("Angle increment about the chi instrument axis");
+    omega->setToolTip("Angle increment about the omega instrument axis");
+    phi->setToolTip("Angle increment about the phi instrument axis");
+    swapEndianness->setToolTip("Swap the endianness of the input data");
+    wave->setToolTip("Wavelength of the incident beam");
+    dataFormat->setToolTip("Number of bytes per pixel in images");
+
     layout->addRow("Name", datasetName);
     layout->addRow("Data arrangement", dataArrangement);
     layout->addRow("Data format", dataFormat);
-    layout->addRow(swapEndianness);
-    layout->addRow("delta chi", chi);
-    layout->addRow("delta omega", omega);
-    layout->addRow("delta phi", phi);
-    layout->addRow("wavelength", wave);
+    layout->addRow("", swapEndianness);
+    layout->addRow(QString((QChar)0x0394) + " " +  QString((QChar)0x03C7), chi);
+    layout->addRow(QString((QChar)0x0394) + " " + QString((QChar)0x03C9), omega);
+    layout->addRow(QString((QChar)0x0394) + " " + QString((QChar)0x03C6), phi);
+    layout->addRow("Wavelength", wave);
     layout->addRow(buttons);
 
     connect(buttons, &QDialogButtonBox::accepted, this, &RawDataDialog::verify);
