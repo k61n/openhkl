@@ -136,10 +136,8 @@ void Refiner::makeBatches(
             oss << "frames " << b.name();
             std::string name = oss.str();
 
-            for (auto* peak : b.peaks()) {
-                if (b.onlyContains(peak->shape().center()[2]))
-                    peak->setUnitCell(cell_ptr);
-            }
+            for (auto* peak : b.peaks())
+                peak->setUnitCell(cell_ptr);
 
             if (_params->refine_ub) // only add the cell if we are refining it
                 _cell_handler->addUnitCell(name, new_cell);
