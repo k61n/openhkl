@@ -152,9 +152,9 @@ void SubframePredictPeaks::setShapeCollectionUp()
     _min_strength = f.addDoubleSpinBox("Minimum I/" + QString(QChar(0x03C3)),
             "Minimum strength for peak to be included in shape collection");
     _min_d =
-        f.addDoubleSpinBox("Minimum d", "Minimum d for peak to be included in shape collection");
+        f.addDoubleSpinBox("d min", "Minimum d for peak to be included in shape collection");
     _max_d =
-        f.addDoubleSpinBox("Maximum d", "Minimum d for peak to be included in shape collection");
+        f.addDoubleSpinBox("d max", "Minimum d for peak to be included in shape collection");
     _peak_end = f.addDoubleSpinBox("Peak end", "(sigmas) - scaling factor for peak region");
     _bkg_begin =
         f.addDoubleSpinBox("Bkg begin:", "(sigmas) - scaling factor for lower limit of background");
