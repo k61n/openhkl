@@ -33,6 +33,7 @@
 #include "gui/utility/GridFiller.h"
 #include "gui/utility/LinkedComboBox.h"
 #include "gui/utility/PropertyScrollArea.h"
+#include "gui/utility/SafeSpinBox.h"
 #include "gui/utility/SideBar.h"
 #include "gui/utility/Spoiler.h"
 #include "gui/widgets/DetectorWidget.h"
@@ -90,7 +91,7 @@ SubframeRefiner::SubframeRefiner()
     setPeakViewWidgetUp(_peak_view_widget_2, "View unrefined_peaks");
     refreshAll();
 
-    _detector_widget = new DetectorWidget(false, false, false);
+    _detector_widget = new DetectorWidget(false, false, true);
     _detector_widget->linkPeakModel(&_unrefined_model, &_refined_model);
     detector_tab->setLayout(_detector_widget);
 
@@ -125,7 +126,7 @@ void SubframeRefiner::setInputUp()
     _batch_cell_check = f.addCheckBox(
         "Use refined cells", "Use unit cells generated per batch during previous refinement", 1);
     _n_batches_spin = f.addSpinBox(
-        "Number of batches", "Number of batches to equally divide frames into for refinement");
+        "Number of batches", "Number of batches of equal numbers of peaks for refinement");
     _max_iter_spin = f.addSpinBox(
         "Maximum iterations", "Maximum number of iterations for NLLS minimsation");
 
@@ -335,8 +336,13 @@ void SubframeRefiner::refine()
         refreshPlot();
         toggleUnsafeWidgets();
     } catch (const std::exception& ex) {
+        gGui->statusBar()->showMessage("Refinement failed");
         QMessageBox::critical(this, "Error", QString(ex.what()));
     }
+    if (_refine_success)
+        gGui->statusBar()->showMessage("Refinement success");
+    else
+        gGui->statusBar()->showMessage("Refinement failed");
     gGui->setReady(true);
 }
 
@@ -581,14 +587,19 @@ void SubframeRefiner::updatePredictions()
 {
     gGui->setReady(false);
     if (_refine_success) {
+
         // A local copy to compare positions pre- and post-refinement
         _unrefined_peaks.reset();
         _unrefined_peaks.populate(_refined_peaks->getPeakList());
         updatePeaks();
 
         auto* expt = gSession->experimentAt(_exp_combo->currentIndex())->experiment();
+        auto* refiner = expt->refiner();
         auto* peaks = expt->getPeakCollection(_predicted_combo->currentText().toStdString());
-        expt->updatePredictions(peaks);
+        auto peak_list = peaks->getPeakList();
+
+        int n_updated = refiner->updatePredictions(peak_list);
+        gGui->statusBar()->showMessage(QString::number(n_updated) + " peaks updated");
         refreshPeakVisual();
         gGui->detector_window->refreshAll();
     } else {

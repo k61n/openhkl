@@ -21,12 +21,10 @@
 
 #include <QCheckBox>
 #include <QComboBox>
-#include <QDoubleSpinBox>
 #include <QHBoxLayout>
 #include <QLabel>
 #include <QPushButton>
 #include <QSizePolicy>
-#include <QSpinBox>
 #include <QSplitter>
 #include <QTableWidget>
 #include <QVBoxLayout>
@@ -38,6 +36,8 @@ class PeakItemGraphic;
 class PeakTableView;
 class PeakViewWidget;
 class Spoiler;
+class SafeSpinBox;
+class SafeDoubleSpinBox;
 
 namespace nsx {
 struct PredictionParameters;
@@ -134,8 +134,8 @@ class SubframePredictPeaks : public QWidget {
 
     LinkedComboBox* _cell_combo;
     QComboBox* _integrator;
-    QDoubleSpinBox* _d_min;
-    QDoubleSpinBox* _d_max;
+    SafeDoubleSpinBox* _d_min;
+    SafeDoubleSpinBox* _d_max;
     QCheckBox* _direct_beam;
     QPushButton* _refine_ki_button;
 
@@ -149,21 +149,21 @@ class SubframePredictPeaks : public QWidget {
     PeakTableView* _peak_table;
 
     LinkedComboBox* _found_peaks_combo;
-    QSpinBox* _nx;
-    QSpinBox* _ny;
-    QSpinBox* _nz;
+    SafeSpinBox* _nx;
+    SafeSpinBox* _ny;
+    SafeSpinBox* _nz;
     QCheckBox* _kabsch;
-    QDoubleSpinBox* _sigma_m;
-    QDoubleSpinBox* _sigma_d;
-    QDoubleSpinBox* _min_strength;
-    QDoubleSpinBox* _min_d;
-    QDoubleSpinBox* _max_d;
-    QDoubleSpinBox* _peak_end;
-    QDoubleSpinBox* _bkg_begin;
-    QDoubleSpinBox* _bkg_end;
-    QDoubleSpinBox* _radius_pix;
-    QDoubleSpinBox* _radius_frames;
-    QSpinBox* _min_neighbours;
+    SafeDoubleSpinBox* _sigma_m;
+    SafeDoubleSpinBox* _sigma_d;
+    SafeDoubleSpinBox* _min_strength;
+    SafeDoubleSpinBox* _min_d;
+    SafeDoubleSpinBox* _max_d;
+    SafeDoubleSpinBox* _peak_end;
+    SafeDoubleSpinBox* _bkg_begin;
+    SafeDoubleSpinBox* _bkg_end;
+    SafeDoubleSpinBox* _radius_pix;
+    SafeDoubleSpinBox* _radius_frames;
+    SafeSpinBox* _min_neighbours;
     QComboBox* _interpolation_combo;
     QPushButton* _assign_peak_shapes;
 

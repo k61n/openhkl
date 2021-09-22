@@ -27,6 +27,7 @@
 #include "gui/utility/GridFiller.h"
 #include "gui/utility/LinkedComboBox.h"
 #include "gui/utility/PropertyScrollArea.h"
+#include "gui/utility/SafeSpinBox.h"
 #include "gui/utility/SideBar.h"
 #include "gui/utility/Spoiler.h"
 #include "gui/views/PeakTableView.h"
@@ -97,7 +98,7 @@ void SubframeIntegrate::setFigureUp()
 {
     QGroupBox* figure_group = new QGroupBox("Preview");
     figure_group->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-    _detector_widget = new DetectorWidget(false, false, false, figure_group);
+    _detector_widget = new DetectorWidget(false, false, true, figure_group);
     _detector_widget->linkPeakModel(&_peak_collection_model);
 
     connect(
@@ -243,9 +244,10 @@ void SubframeIntegrate::updatePeakList()
 
 void SubframeIntegrate::grabIntegrationParameters()
 {
-    auto params =
-        gSession->experimentAt(_exp_combo->currentIndex())->experiment()->integrator()->
-        parameters();
+
+    auto* expt = gSession->experimentAt(_exp_combo->currentIndex())->experiment();
+    auto* integrator = expt->integrator();
+    auto* params = integrator->parameters();
 
     _peak_end->setValue(params->peak_end);
     _bkg_begin->setValue(params->bkg_begin);
@@ -255,15 +257,20 @@ void SubframeIntegrate::grabIntegrationParameters()
     _fit_center->setChecked(params->fit_center);
     _fit_covariance->setChecked(params->fit_cov);
     _min_neighbours->setValue(params->min_neighbors);
+
+    for (auto it = _integrator_strings.begin(); it != _integrator_strings.end(); ++it)
+        if (it->second == params->integrator_type)
+            _integrator_combo->setCurrentText(QString::fromStdString(it->first));
 }
 
 void SubframeIntegrate::setIntegrationParameters()
 {
     if (_exp_combo->count() == 0)
         return;
-    auto params =
-        gSession->experimentAt(_exp_combo->currentIndex())->experiment()->integrator()->
-        parameters();
+
+    auto* expt = gSession->experimentAt(_exp_combo->currentIndex())->experiment();
+    auto* integrator = expt->integrator();
+    auto* params = integrator->parameters();
 
     params->peak_end = _peak_end->value();
     params->bkg_begin = _bkg_begin->value();
@@ -273,6 +280,8 @@ void SubframeIntegrate::setIntegrationParameters()
     params->fit_center = _fit_center->isChecked();
     params->fit_cov = _fit_covariance->isChecked();
     params->min_neighbors = _min_neighbours->value();
+    params->integrator_type =
+        _integrator_strings.find(_integrator_combo->currentText().toStdString())->second;
 }
 
 void SubframeIntegrate::setIntegrateUp()

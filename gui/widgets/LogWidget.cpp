@@ -78,6 +78,9 @@ std::string LogWidget::textStr() const
 
 void LogWidget::showMessage(const nsx::LogMessage& message)
 {
+    if (message.level > _print_level)
+        return;
+
     QColor text_color {_infoColor};  // default text color
 
     switch (message.level) {
@@ -99,4 +102,9 @@ void LogWidget::showMessage(const nsx::LogMessage& message)
 
     setTextColor(text_color);
     append(QString::fromStdString(message.body));
+}
+
+void LogWidget::setPrintLevel(const nsx::Level& level)
+{
+    _print_level = level;
 }

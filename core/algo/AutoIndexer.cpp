@@ -65,6 +65,7 @@ IndexerParameters* AutoIndexer::parameters()
 void AutoIndexer::autoIndex(const std::vector<Peak3D*>& peaks)
 {
     _params->log(Level::Info);
+    nsxlog(Level::Info, "AutoIndexer::autoindex: indexing using ", peaks.size(), " peaks");
     // Find the Q-space directions along which the projection of the the Q-vectors
     // shows the highest periodicity
     computeFFTSolutions(peaks);
@@ -76,6 +77,8 @@ void AutoIndexer::autoIndex(const std::vector<Peak3D*>& peaks)
 
     // finally, rank the solutions
     rankSolutions();
+    nsxlog(Level::Info, "AutoIndexer::autoindex: ", _solutions.size(), " unit cells found");
+    nsxlog(Level::Info, solutionsToString());
 }
 
 void AutoIndexer::autoIndex(PeakCollection* peaks)

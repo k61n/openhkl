@@ -17,6 +17,7 @@
 
 #include <string>
 
+#include "base/utils/LogLevel.h"
 #include "base/utils/Logger.h" // LogMessage::receiverHandle
 
 #include <QTextEdit>  // derives from
@@ -35,6 +36,8 @@ class LogWidget : public QTextEdit {
     std::string textStr() const;
     // Write a message in the log window
     void showMessage(const nsx::LogMessage& message);
+    // Set the print level
+    void setPrintLevel(const nsx::Level& level);
 
  private:
     // TODO: declare as static
@@ -49,6 +52,9 @@ class LogWidget : public QTextEdit {
 
     //! Receiver handle (for registering log messages)
     nsx::LogMessenger::receiverHandle _receiver_handle;
+
+    //! Current print level
+    nsx::Level _print_level;
 
     void _connectUI();
 };

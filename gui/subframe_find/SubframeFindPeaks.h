@@ -21,11 +21,9 @@
 
 #include <QCheckBox>
 #include <QComboBox>
-#include <QDoubleSpinBox>
 #include <QHBoxLayout>
 #include <QPushButton>
 #include <QSizePolicy>
-#include <QSpinBox>
 #include <QSplitter>
 #include <QTableWidget>
 #include <QVBoxLayout>
@@ -37,6 +35,8 @@ class LinkedComboBox;
 class PeakItemGraphic;
 class PeakTableView;
 class PeakViewWidget;
+class SafeSpinBox;
+class SafeDoubleSpinBox;
 
 //! Frame containing interface to find peaks from detector images
 class SubframeFindPeaks : public QWidget {
@@ -122,22 +122,22 @@ class SubframeFindPeaks : public QWidget {
     LinkedComboBox* _data_combo;
     QCheckBox* _all_data;
 
-    QSpinBox* _threshold_spin;
-    QDoubleSpinBox* _scale_spin;
-    QSpinBox* _min_size_spin;
-    QSpinBox* _max_size_spin;
-    QSpinBox* _max_width_spin;
+    SafeSpinBox* _threshold_spin;
+    SafeDoubleSpinBox* _scale_spin;
+    SafeSpinBox* _min_size_spin;
+    SafeSpinBox* _max_size_spin;
+    SafeSpinBox* _max_width_spin;
     QComboBox* _kernel_combo;
     QTableWidget* _kernel_para_table;
-    QSpinBox* _start_frame_spin;
-    QSpinBox* _end_frame_spin;
+    SafeSpinBox* _start_frame_spin;
+    SafeSpinBox* _end_frame_spin;
 
     PeakViewWidget* _peak_view_widget;
     QCheckBox* _live_check;
 
-    QDoubleSpinBox* _peak_area;
-    QDoubleSpinBox* _bkg_lower;
-    QDoubleSpinBox* _bkg_upper;
+    SafeDoubleSpinBox* _peak_area;
+    SafeDoubleSpinBox* _bkg_lower;
+    SafeDoubleSpinBox* _bkg_upper;
 
     QPushButton* _find_button;
     QPushButton* _integrate_button;

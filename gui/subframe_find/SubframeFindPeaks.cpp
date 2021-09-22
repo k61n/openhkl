@@ -33,6 +33,7 @@
 #include "gui/utility/GridFiller.h"
 #include "gui/utility/LinkedComboBox.h"
 #include "gui/utility/PropertyScrollArea.h"
+#include "gui/utility/SafeSpinBox.h"
 #include "gui/utility/SideBar.h"
 #include "gui/utility/Spoiler.h"
 #include "gui/views/PeakTableView.h"
@@ -92,7 +93,7 @@ void SubframeFindPeaks::setDataUp()
 
     _exp_combo = f.addLinkedCombo(ComboType::Experiment, "Experiment");
     _data_combo = f.addLinkedCombo(ComboType::DataSet, "Data set");
-    _all_data = f.addCheckBox("Search all", 1);
+    _all_data = f.addCheckBox("Search all", "Find peaks in all data sets", 1);
 
     connect(
         _exp_combo, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this,
@@ -230,7 +231,7 @@ void SubframeFindPeaks::setFigureUp()
 {
     QGroupBox* figure_group = new QGroupBox("Preview");
     figure_group->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-    _detector_widget = new DetectorWidget(true, false, false, figure_group);
+    _detector_widget = new DetectorWidget(true, false, true, figure_group);
     _detector_widget->modeCombo()->addItems(
         QStringList{"Zoom", "Selection", "Rectangular mask", "Elliptical mask"});
     _detector_widget->linkPeakModel(&_peak_collection_model);

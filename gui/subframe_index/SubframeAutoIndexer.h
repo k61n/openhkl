@@ -28,11 +28,11 @@ class LinkedComboBox;
 class PeakTableView;
 class UnitCellTableView;
 class Spoiler;
+class SafeSpinBox;
+class SafeDoubleSpinBox;
 class QVBoxLayout;
 class QSplitter;
-class QSpinBox;
 class QCheckBox;
-class QDoubleSpinBox;
 
 //! Frame containing interface to autoindex peak collections
 class SubframeAutoIndexer : public QWidget {
@@ -79,7 +79,7 @@ class SubframeAutoIndexer : public QWidget {
     //! Disable widgets that are unsafe without relevant data
     void toggleUnsafeWidgets();
 
-    //! The model for the found peaks
+    //! The model for the indexing peaks
     nsx::PeakCollection _peak_collection;
     //! The temporary collection
     PeakCollectionItem _peak_collection_item;
@@ -98,22 +98,22 @@ class SubframeAutoIndexer : public QWidget {
     LinkedComboBox* _data_combo;
     LinkedComboBox* _peak_combo;
 
-    QSpinBox* _min_frame;
-    QSpinBox* _max_frame;
-    QDoubleSpinBox* _d_min;
-    QDoubleSpinBox* _d_max;
-    QDoubleSpinBox* _str_min;
-    QDoubleSpinBox* _str_max;
-    QDoubleSpinBox* _gruber;
-    QDoubleSpinBox* _niggli;
-    QDoubleSpinBox* _max_cell_dimension;
-    QDoubleSpinBox* _min_cell_volume;
-    QDoubleSpinBox* _indexing_tolerance;
-    QDoubleSpinBox* _frequency_tolerance;
+    SafeSpinBox* _min_frame;
+    SafeSpinBox* _max_frame;
+    SafeDoubleSpinBox* _d_min;
+    SafeDoubleSpinBox* _d_max;
+    SafeDoubleSpinBox* _str_min;
+    SafeDoubleSpinBox* _str_max;
+    SafeDoubleSpinBox* _gruber;
+    SafeDoubleSpinBox* _niggli;
+    SafeDoubleSpinBox* _max_cell_dimension;
+    SafeDoubleSpinBox* _min_cell_volume;
+    SafeDoubleSpinBox* _indexing_tolerance;
+    SafeDoubleSpinBox* _frequency_tolerance;
 
-    QSpinBox* _number_vertices;
-    QSpinBox* _number_solutions;
-    QSpinBox* _number_subdivisions;
+    SafeSpinBox* _number_vertices;
+    SafeSpinBox* _number_solutions;
+    SafeSpinBox* _number_subdivisions;
 
     QCheckBox* _only_niggli;
 

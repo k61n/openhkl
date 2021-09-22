@@ -24,7 +24,6 @@
 #include <QDialog>
 #include <QHBoxLayout>
 #include <QScrollBar>
-#include <QSpinBox>
 #include <QSplitter>
 #include <QVBoxLayout>
 
@@ -32,6 +31,7 @@ class ColorButton;
 class DetectorWidget;
 class LinkedComboBox;
 class PeakViewWidget;
+class SafeSpinBox;
 class ShortTable;
 
 //! Modeless dialog containing a non-contextual detector scene (open via Menu)
@@ -92,8 +92,8 @@ class DetectorWindow : public QDialog {
     // 3rd party peak plotting elements
     QCheckBox* _draw_3rdparty;
     ColorButton* _3rdparty_color;
-    QSpinBox* _3rdparty_size;
-    /* QSpinBox* _3rdparty_start_frame; */
+    SafeSpinBox* _3rdparty_size;
+    /* SafeSpinBox* _3rdparty_start_frame; */
 
     // the widget for plotting elements on the detector scene
     PeakViewWidget* _peak_view_widget_1;

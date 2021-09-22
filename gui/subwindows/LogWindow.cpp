@@ -14,11 +14,12 @@
 
 #include "gui/subwindows/LogWindow.h"
 
-#include "gui/widgets/LogWidget.h"
 #include "base/utils/Logger.h"
+#include "gui/widgets/LogWidget.h"
 
 #include <cstdio> // fopen, fclose, fprintf, FILE
 
+#include <QComboBox>
 #include <QVBoxLayout>
 #include <QHBoxLayout>
 #include <QPushButton>
@@ -39,11 +40,18 @@ LogWindow::LogWindow(QWidget* parent)
     // clear button
     _clearButton = new QPushButton("Clear");
 
+    // print level
+    _levelCombo = new QComboBox();
+
     // button layout
     QHBoxLayout* button_hlay = new QHBoxLayout();
     button_hlay->addStretch();
+    button_hlay->addWidget(_levelCombo);
     button_hlay->addWidget(_saveButton);
     button_hlay->addWidget(_clearButton);
+
+    for (const auto& [key, val] : _level_strings)
+        _levelCombo->addItem(QString::fromStdString(key));
 
     // log widget layout
     QHBoxLayout* widget_hlay = new QHBoxLayout();
@@ -55,11 +63,16 @@ LogWindow::LogWindow(QWidget* parent)
     setLayout(main_vlay);
 
     _connectUI();
+
+    _levelCombo->setCurrentText("Info");
 }
 
 
 void LogWindow::_connectUI()
 {
+    connect(
+        _levelCombo, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
+        this, &LogWindow::_setPrintLevel);
     connect(_saveButton, &QPushButton::clicked, this, &LogWindow::saveLog);
     connect(_clearButton, &QPushButton::clicked, _log_widget, &LogWidget::clearText);
 }
@@ -99,4 +112,10 @@ void LogWindow::saveLog()
         nsx::nsxmsg(nsx::Level::Error, msg);
     }
 
+}
+
+void LogWindow::_setPrintLevel()
+{
+    _log_widget->setPrintLevel(
+        _level_strings.find(_levelCombo->currentText().toStdString())->second);
 }
