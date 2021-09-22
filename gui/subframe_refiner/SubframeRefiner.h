@@ -24,13 +24,11 @@
 
 #include <QCheckBox>
 #include <QComboBox>
-#include <QDoubleSpinBox>
 #include <QGroupBox>
 #include <QHBoxLayout>
 #include <QPushButton>
 #include <QRandomGenerator>
 #include <QSizePolicy>
-#include <QSpinBox>
 #include <QSplitter>
 #include <QTableWidget>
 #include <QVBoxLayout>
@@ -46,6 +44,8 @@ class Spoiler;
 class SXPlot;
 class PeakViewWidget;
 class PlotCheckBox;
+class SafeSpinBox;
+class SafeDoubleSpinBox;
 
 //! Frame containing interface to refine cell parameters and intstrument states
 class SubframeRefiner : public QWidget {
@@ -125,8 +125,8 @@ class SubframeRefiner : public QWidget {
     LinkedComboBox* _data_combo;
     LinkedComboBox* _cell_combo;
     QCheckBox* _batch_cell_check;
-    QSpinBox* _n_batches_spin;
-    QSpinBox* _max_iter_spin;
+    SafeSpinBox* _n_batches_spin;
+    SafeSpinBox* _max_iter_spin;
 
     // refinement flags
     QComboBox* _residual_combo;

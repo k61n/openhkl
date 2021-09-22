@@ -24,13 +24,11 @@
 
 #include <QCheckBox>
 #include <QComboBox>
-#include <QDoubleSpinBox>
 #include <QGroupBox>
 #include <QHBoxLayout>
 #include <QPushButton>
 #include <QRandomGenerator>
 #include <QSizePolicy>
-#include <QSpinBox>
 #include <QSplitter>
 #include <QTableWidget>
 #include <QVBoxLayout>
@@ -42,6 +40,8 @@ class PeakItemGraphic;
 class PeakTableView;
 class PeakViewWidget;
 class Spoiler;
+class SafeSpinBox;
+class SafeDoubleSpinBox;
 
 //! Frame containing interface to integrate peaks
 class SubframeIntegrate : public QWidget {
@@ -116,15 +116,15 @@ class SubframeIntegrate : public QWidget {
     Spoiler* _integrate_box;
     QComboBox* _integrator_combo;
     QComboBox* _interpolation_combo;
-    QSpinBox* _min_neighbours;
-    QDoubleSpinBox* _radius;
-    QDoubleSpinBox* _n_frames;
-    QDoubleSpinBox* _peak_end;
-    QDoubleSpinBox* _bkg_begin;
-    QDoubleSpinBox* _bkg_end;
+    SafeSpinBox* _min_neighbours;
+    SafeDoubleSpinBox* _radius;
+    SafeDoubleSpinBox* _n_frames;
+    SafeDoubleSpinBox* _peak_end;
+    SafeDoubleSpinBox* _bkg_begin;
+    SafeDoubleSpinBox* _bkg_end;
     QCheckBox* _remove_overlaps;
-    QDoubleSpinBox* _radius_int;
-    QDoubleSpinBox* _n_frames_int;
+    SafeDoubleSpinBox* _radius_int;
+    SafeDoubleSpinBox* _n_frames_int;
     QCheckBox* _fit_center;
     QCheckBox* _fit_covariance;
 

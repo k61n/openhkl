@@ -22,12 +22,10 @@
 
 #include <QCheckBox>
 #include <QComboBox>
-#include <QDoubleSpinBox>
 #include <QGroupBox>
 #include <QHBoxLayout>
 #include <QPushButton>
 #include <QSizePolicy>
-#include <QSpinBox>
 #include <QSplitter>
 #include <QTableWidget>
 #include <QVBoxLayout>
@@ -38,6 +36,8 @@ class LinkedComboBox;
 class PeakItemGraphic;
 class SpoilerCheck;
 class PeakViewWidget;
+class SafeSpinBox;
+class SafeDoubleSpinBox;
 
 //! Frame containing interface for filtering peak collections
 class SubframeFilterPeaks : public QWidget {
@@ -124,16 +124,16 @@ class SubframeFilterPeaks : public QWidget {
     QCheckBox* _keep_complementary;
     LinkedComboBox* _unit_cell;
 
-    QDoubleSpinBox* _tolerance;
-    QDoubleSpinBox* _strength_min;
-    QDoubleSpinBox* _strength_max;
-    QDoubleSpinBox* _d_range_min;
-    QDoubleSpinBox* _d_range_max;
-    QDoubleSpinBox* _frame_min;
-    QDoubleSpinBox* _frame_max;
-    QDoubleSpinBox* _significance_level;
-    QDoubleSpinBox* _peak_end;
-    QDoubleSpinBox* _bkg_end;
+    SafeDoubleSpinBox* _tolerance;
+    SafeDoubleSpinBox* _strength_min;
+    SafeDoubleSpinBox* _strength_max;
+    SafeDoubleSpinBox* _d_range_min;
+    SafeDoubleSpinBox* _d_range_max;
+    SafeDoubleSpinBox* _frame_min;
+    SafeDoubleSpinBox* _frame_max;
+    SafeDoubleSpinBox* _significance_level;
+    SafeDoubleSpinBox* _peak_end;
+    SafeDoubleSpinBox* _bkg_end;
 
     QSpinBox* _min_number_peaks;
 

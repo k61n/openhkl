@@ -18,13 +18,13 @@
 #include "gui/utility/ColorButton.h"
 #include "gui/utility/LinkedComboBox.h"
 #include "gui/utility/Spoiler.h"
+#include "gui/utility/SafeSpinBox.h"
 
 #include <QCheckBox>
 #include <QComboBox>
 #include <QGridLayout>
 #include <QLabel>
 #include <QPushButton>
-#include <QSpinBox>
 
 GridFiller::GridFiller(QGridLayout* gridLayout)
     : _mainLayout(gridLayout), _spoiler(nullptr), _nextRow(0)
@@ -100,53 +100,55 @@ QCheckBox* GridFiller::addCheckBox(const QString& title, const QString& tooltip,
     return checkBox;
 }
 
-QDoubleSpinBox* GridFiller::addDoubleSpinBox(const QString& labelText, const QString& labelTooltip)
+SafeDoubleSpinBox* GridFiller::addDoubleSpinBox(const QString& labelText, const QString& labelTooltip)
 {
     addLabel(labelText, labelTooltip);
 
-    auto* spinBox = new QDoubleSpinBox();
+    auto* spinBox = new SafeDoubleSpinBox();
     spinBox->setSingleStep(0.1);
+    spinBox->setFocusPolicy(Qt::ClickFocus);
     _mainLayout->addWidget(spinBox, _nextRow, 1, 1, -1);
 
     _nextRow++;
     return spinBox;
 }
 
-QSpinBox* GridFiller::addSpinBox(const QString& labelText, const QString& labelTooltip)
+SafeSpinBox* GridFiller::addSpinBox(const QString& labelText, const QString& labelTooltip)
 {
     addLabel(labelText, labelTooltip);
 
-    QSpinBox* spinBox = new QSpinBox();
+    SafeSpinBox* spinBox = new SafeSpinBox();
+    spinBox->setFocusPolicy(Qt::ClickFocus);
     _mainLayout->addWidget(spinBox, _nextRow, 1, 1, -1);
 
     _nextRow++;
     return spinBox;
 }
 
-std::tuple<QSpinBox*, QSpinBox*> GridFiller::addSpinBoxPair(
+std::tuple<SafeSpinBox*, SafeSpinBox*> GridFiller::addSpinBoxPair(
     const QString& labelText, const QString& labelTooltip)
 {
     addLabel(labelText, labelTooltip);
 
-    auto* spinBox1 = new QSpinBox();
+    auto* spinBox1 = new SafeSpinBox();
     _mainLayout->addWidget(spinBox1, _nextRow, 1, 1, 1);
 
-    auto* spinBox2 = new QSpinBox();
+    auto* spinBox2 = new SafeSpinBox();
     _mainLayout->addWidget(spinBox2, _nextRow, 2, 1, 1);
 
     _nextRow++;
     return std::make_tuple(spinBox1, spinBox2);
 }
 
-std::tuple<QDoubleSpinBox*, QDoubleSpinBox*> GridFiller::addDoubleSpinBoxPair(
+std::tuple<SafeDoubleSpinBox*, SafeDoubleSpinBox*> GridFiller::addDoubleSpinBoxPair(
     const QString& labelText, const QString& labelTooltip)
 {
     addLabel(labelText, labelTooltip);
 
-    auto* spinBox1 = new QDoubleSpinBox();
+    auto* spinBox1 = new SafeDoubleSpinBox();
     _mainLayout->addWidget(spinBox1, _nextRow, 1, 1, 1);
 
-    auto* spinBox2 = new QDoubleSpinBox();
+    auto* spinBox2 = new SafeDoubleSpinBox();
     _mainLayout->addWidget(spinBox2, _nextRow, 2, 1, 1);
 
     _nextRow++;

@@ -21,10 +21,10 @@
 class ColorButton;
 class LinkedComboBox;
 class Spoiler;
+class SafeSpinBox;
+class SafeDoubleSpinBox;
 class QGridLayout;
 class QComboBox;
-class QSpinBox;
-class QDoubleSpinBox;
 class QWidget;
 class QCheckBox;
 class QPushButton;
@@ -58,18 +58,18 @@ class GridFiller {
     QCheckBox* addCheckBox(const QString& title, const QString& tooltip, int col = 0);
 
     //! Add a row with a label, a tooltip for the label and a spin box.
-    QSpinBox* addSpinBox(const QString& labelText, const QString& labelTooltip = QString());
+    SafeSpinBox* addSpinBox(const QString& labelText, const QString& labelTooltip = QString());
 
     //! Add a row with a label, a tooltip for the label and a double spin box.
-    QDoubleSpinBox* addDoubleSpinBox(
+    SafeDoubleSpinBox* addDoubleSpinBox(
         const QString& labelText, const QString& labelTooltip = QString());
 
     //! Add a row with a label, a tooltip for the label and two spin boxes.
-    std::tuple<QSpinBox*, QSpinBox*> addSpinBoxPair(
+    std::tuple<SafeSpinBox*, SafeSpinBox*> addSpinBoxPair(
         const QString& labelText, const QString& labelTooltip = QString());
 
     //! Add a row with a label, a tooltip for the label and two double spin boxes.
-    std::tuple<QDoubleSpinBox*, QDoubleSpinBox*> addDoubleSpinBoxPair(
+    std::tuple<SafeDoubleSpinBox*, SafeDoubleSpinBox*> addDoubleSpinBoxPair(
         const QString& labelText, const QString& labelTooltip = QString());
 
     //! Add a row containing a pushbutton which covers the whole row.
