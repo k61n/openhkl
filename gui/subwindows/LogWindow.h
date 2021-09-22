@@ -15,9 +15,12 @@
 #ifndef NSX_GUI_SUBWINDOWS_LOGWINDOW_H
 #define NSX_GUI_SUBWINDOWS_LOGWINDOW_H
 
+#include "base/utils/LogLevel.h"
+
 #include <QDialog>
 
 class LogWidget;
+class QComboBox;
 class QPushButton;
 
 //! Modeless dialog to display log messages
@@ -31,8 +34,18 @@ private:
     LogWidget* _log_widget;
     QPushButton* _saveButton;
     QPushButton* _clearButton;
+    QComboBox* _levelCombo;
 
     void _connectUI();
+    void _setPrintLevel();
+
+    const std::map<std::string, nsx::Level> _level_strings {
+        {"Off", nsx::Level::Off},
+        {"Info", nsx::Level::Info},
+        {"Error", nsx::Level::Error},
+        {"Warning", nsx::Level::Warning},
+        {"Debug", nsx::Level::Debug}
+    };
 };
 
 #endif // NSX_GUI_SUBWINDOWS_LOGWINDOW_H
