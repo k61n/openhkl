@@ -92,7 +92,7 @@ void SubframeFindPeaks::setDataUp()
 
     _exp_combo = f.addLinkedCombo(ComboType::Experiment, "Experiment");
     _data_combo = f.addLinkedCombo(ComboType::DataSet, "Data set");
-    _all_data = f.addCheckBox("Search all", 1);
+    _all_data = f.addCheckBox("Search all", "Find peaks in all data sets", 1);
 
     connect(
         _exp_combo, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this,
