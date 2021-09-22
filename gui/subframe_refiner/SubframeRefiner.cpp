@@ -335,8 +335,13 @@ void SubframeRefiner::refine()
         refreshPlot();
         toggleUnsafeWidgets();
     } catch (const std::exception& ex) {
+        gGui->statusBar()->showMessage("Refinement failed");
         QMessageBox::critical(this, "Error", QString(ex.what()));
     }
+    if (_refine_success)
+        gGui->statusBar()->showMessage("Refinement success");
+    else
+        gGui->statusBar()->showMessage("Refinement failed");
     gGui->setReady(true);
 }
 
@@ -581,14 +586,19 @@ void SubframeRefiner::updatePredictions()
 {
     gGui->setReady(false);
     if (_refine_success) {
+
         // A local copy to compare positions pre- and post-refinement
         _unrefined_peaks.reset();
         _unrefined_peaks.populate(_refined_peaks->getPeakList());
         updatePeaks();
 
         auto* expt = gSession->experimentAt(_exp_combo->currentIndex())->experiment();
+        auto* refiner = expt->refiner();
         auto* peaks = expt->getPeakCollection(_predicted_combo->currentText().toStdString());
-        expt->updatePredictions(peaks);
+        auto peak_list = peaks->getPeakList();
+
+        int n_updated = refiner->updatePredictions(peak_list);
+        gGui->statusBar()->showMessage(QString::number(n_updated) + " peaks updated");
         refreshPeakVisual();
         gGui->detector_window->refreshAll();
     } else {
