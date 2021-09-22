@@ -46,7 +46,7 @@
 
 SubframeAutoIndexer::SubframeAutoIndexer()
     : QWidget()
-    , _peak_collection("temp", nsx::listtype::FOUND)
+    , _peak_collection(nsx::kw_autoindexingCollection, nsx::listtype::INDEXING)
     , _peak_collection_item()
     , _peak_collection_model()
     , _size_policy_right(QSizePolicy::Expanding, QSizePolicy::Expanding)
@@ -67,6 +67,9 @@ SubframeAutoIndexer::SubframeAutoIndexer()
     propertyScrollArea->setContentLayout(_left_layout);
     main_layout->addWidget(propertyScrollArea);
     main_layout->addWidget(_right_element);
+
+    _peak_collection_item.setPeakCollection(&_peak_collection);
+    _peak_collection_model.setRoot(&_peak_collection_item);
 }
 
 void SubframeAutoIndexer::setInputUp()
@@ -193,7 +196,7 @@ void SubframeAutoIndexer::setProceedUp()
 
 void SubframeAutoIndexer::setPeakTableUp()
 {
-    QGroupBox* peak_group = new QGroupBox("Peaks");
+    QGroupBox* peak_group = new QGroupBox("Peaks used in indexing");
     QGridLayout* peak_grid = new QGridLayout(peak_group);
 
     peak_group->setSizePolicy(_size_policy_right);
@@ -314,11 +317,7 @@ void SubframeAutoIndexer::refreshPeakTable()
     if (_peak_combo->count() == 0 || _exp_combo->count() == 0)
         return;
 
-    const nsx::PeakCollection* collection =
-        gSession->experimentAt(_exp_combo->currentIndex())
-            ->experiment()
-            ->getPeakCollection(_peak_combo->currentText().toStdString());
-    _peak_collection_item.setPeakCollection(collection);
+    _peak_collection_item.setPeakCollection(&_peak_collection);
     _peak_collection_model.setRoot(&_peak_collection_item);
     _peak_table->resizeColumnsToContents();
 }
@@ -381,29 +380,45 @@ void SubframeAutoIndexer::runAutoIndexer()
     gGui->setReady(false);
     setIndexerParameters();
 
-    nsx::Experiment* expt = gSession->experimentAt(_exp_combo->currentIndex())->experiment();
-    nsx::AutoIndexer* auto_indexer = expt->autoIndexer();
+    auto* expt = gSession->experimentAt(_exp_combo->currentIndex())->experiment();
+    auto* autoindexer = expt->autoIndexer();
+    auto* params = autoindexer->parameters();
+    auto* filter = expt->peakFilter();
     nsx::PeakCollection* collection =
         expt->getPeakCollection(_peak_combo->currentText().toStdString());
 
     std::shared_ptr<nsx::ProgressHandler> handler(new nsx::ProgressHandler());
-    auto_indexer->setHandler(handler);
+    autoindexer->setHandler(handler);
 
+    filter->resetFiltering(collection);
+    filter->resetFilterFlags();
+    filter->flags()->strength = true;
+    filter->flags()->d_range = true;
+    filter->flags()->frames = true;
+    filter->parameters()->d_min = params->d_min;
+    filter->parameters()->d_max = params->d_max;
+    filter->parameters()->strength_min = params->strength_min;
+    filter->parameters()->strength_max = params->strength_max;
+    filter->parameters()->frame_min = params->first_frame;
+    filter->parameters()->frame_max = params->last_frame;
+
+    filter->filter(collection);
+    _peak_collection.populateFromFiltered(collection);
     _solutions.clear();
+    refreshPeakTable();
 
     try {
-        expt->autoIndex(collection);
+        autoindexer->autoIndex(&_peak_collection);
     } catch (const std::exception& e) {
         nsx::nsxlog(nsx::Level::Error, "Autoindexer: ", e.what());
         QMessageBox::critical(this, "Indexing Error ", e.what());
         return;
     }
 
-    _solutions = auto_indexer->solutions();
-
+    _solutions = autoindexer->solutions();
     buildSolutionsTable();
 
-    auto_indexer->unsetHandler();
+    autoindexer->unsetHandler();
     handler.reset();
     toggleUnsafeWidgets();
 
