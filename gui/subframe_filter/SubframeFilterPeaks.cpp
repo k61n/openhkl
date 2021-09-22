@@ -279,7 +279,7 @@ void SubframeFilterPeaks::setFigureUp()
 {
     QGroupBox* figure_group = new QGroupBox("Preview");
     figure_group->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-    _detector_widget = new DetectorWidget(false, false, false, figure_group);
+    _detector_widget = new DetectorWidget(false, false, true, figure_group);
     _detector_widget->linkPeakModel(&_peak_collection_model);
 
     connect(
