@@ -126,7 +126,7 @@ void SubframeRefiner::setInputUp()
     _batch_cell_check = f.addCheckBox(
         "Use refined cells", "Use unit cells generated per batch during previous refinement", 1);
     _n_batches_spin = f.addSpinBox(
-        "Number of batches", "Number of batches to equally divide frames into for refinement");
+        "Number of batches", "Number of batches of equal numbers of peaks for refinement");
     _max_iter_spin = f.addSpinBox(
         "Maximum iterations", "Maximum number of iterations for NLLS minimsation");
 
