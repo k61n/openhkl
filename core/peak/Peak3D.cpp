@@ -134,7 +134,7 @@ const UnitCell* Peak3D::unitCell() const
     if (auto uc = _unitCell.lock())
         return uc.get();
     else
-        throw std::runtime_error("Broken pointer to UnitCell");
+        return nullptr;
 }
 
 Intensity Peak3D::rawIntensity() const
