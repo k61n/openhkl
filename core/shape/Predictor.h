@@ -40,11 +40,11 @@ class Predictor {
 
     //! Predict peaks give a unit cell
     void predictPeaks(
-        const sptrDataSet data, const UnitCell* unit_cell, sptrProgressHandler handler = nullptr);
+        const sptrDataSet data, const sptrUnitCell& unit_cell, sptrProgressHandler handler = nullptr);
 
     //! Build a list of peaks from hkls as computed from unit cell
     std::vector<Peak3D*> buildPeaksFromMillerIndices(
-        sptrDataSet data, const std::vector<MillerIndex>& hkls, const UnitCell* unit_cell,
+        sptrDataSet data, const std::vector<MillerIndex>& hkls, const sptrUnitCell& unit_cell,
         sptrProgressHandler handler = nullptr);
 
     //! Get a pointer to the prediction parameters

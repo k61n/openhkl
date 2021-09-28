@@ -97,7 +97,7 @@ void Refiner::makeBatches(
         if (i + 1.1 >= (current_batch + 1) * batch_size) {
 
             // Make a new unit cell for this batch
-            std::unique_ptr<UnitCell> new_cell;
+            std::shared_ptr<UnitCell> new_cell;
             nsx::UnitCell* cell_ptr;
             if (!cell && _params->refine_ub) {
                 // We have already refined once, and all peaks have been assigned a batch
@@ -119,11 +119,11 @@ void Refiner::makeBatches(
                         best_cell = key;
                     }
                 }
-                new_cell = std::make_unique<UnitCell>(*best_cell);
+                new_cell = std::make_shared<UnitCell>(*best_cell);
                 cell_ptr = new_cell.get();
             } else if (cell && _params->refine_ub) {
                 // Starting from scratch, use the cell obtained from autoindexing
-                new_cell = std::make_unique<UnitCell>(_unrefined_cell);
+                new_cell = std::make_shared<UnitCell>(_unrefined_cell);
                 cell_ptr = new_cell.get();
             } else {
                 cell_ptr = cell;
@@ -137,7 +137,7 @@ void Refiner::makeBatches(
             std::string name = oss.str();
 
             for (auto* peak : b.peaks())
-                peak->setUnitCell(cell_ptr);
+                peak->setUnitCell(new_cell);
 
             if (_params->refine_ub) // only add the cell if we are refining it
                 _cell_handler->addUnitCell(name, new_cell);

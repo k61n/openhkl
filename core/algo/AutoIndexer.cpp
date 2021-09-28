@@ -300,17 +300,17 @@ std::string AutoIndexer::solutionsToString() const
     return oss.str();
 }
 
-void AutoIndexer::acceptSolution(const UnitCell* solution, const std::vector<nsx::Peak3D*>& peaks)
+void AutoIndexer::acceptSolution(sptrUnitCell solution, const std::vector<nsx::Peak3D*>& peaks)
 {
     for (auto* peak : peaks)
         peak->setUnitCell(solution);
 }
 
-UnitCell* AutoIndexer::goodSolution(UnitCell* reference_cell, double length_tol, double angle_tol)
+sptrUnitCell AutoIndexer::goodSolution(const UnitCell* reference_cell, double length_tol, double angle_tol)
 {
     for (const auto& solution : _solutions) {
         if (solution.first->isSimilar(reference_cell, length_tol, angle_tol)) {
-            return solution.first.get();
+            return solution.first;
         }
     }
     return nullptr;

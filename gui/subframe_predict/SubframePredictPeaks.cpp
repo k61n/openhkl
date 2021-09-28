@@ -455,7 +455,7 @@ void SubframePredictPeaks::runPrediction()
         ProgressView progressView(nullptr);
         progressView.watch(handler);
 
-        nsx::UnitCell* cell = gSession->currentProject()->experiment()->getUnitCell(
+        nsx::sptrUnitCell cell = gSession->currentProject()->experiment()->getSptrUnitCell(
             _cell_combo->currentText().toStdString());
 
         predictor->predictPeaks(data, cell, handler);

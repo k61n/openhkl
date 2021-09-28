@@ -257,7 +257,7 @@ TEST_CASE("test/data/TestNewWorkFlow.cpp", "")
     cell->printSelf(std::cout);
 
     for (const auto& peak : filtered_peaks->getPeakList()) {
-        peak->setUnitCell(cell.get());
+        peak->setUnitCell(cell);
         // std::cout << "recip peak: " << peak->q().rowVector() << std::endl;
     }
 

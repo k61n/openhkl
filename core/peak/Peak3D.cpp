@@ -59,7 +59,6 @@ Peak3D::Peak3D(sptrDataSet data)
     , _peakEnd(4.0)
     , _bkgBegin(5.0)
     , _bkgEnd(6.0)
-    , _unitCell(nullptr)
     , _scale(1.0)
     , _selected(true)
     , _masked(false)
@@ -85,7 +84,7 @@ Peak3D::Peak3D(std::shared_ptr<nsx::Peak3D> peak)
     _peakEnd = peak->peakEnd();
     _bkgBegin = peak->bkgBegin();
     _bkgEnd = peak->bkgEnd();
-    _unitCell = peak->unitCell();
+    _unitCell = peak->_unitCell;
     _scale = peak->scale();
     _selected = peak->selected();
     _masked = peak->masked();
@@ -125,14 +124,17 @@ const std::vector<Intensity>& Peak3D::rockingCurve() const
     return _rockingCurve;
 }
 
-void Peak3D::setUnitCell(const UnitCell* uc)
+void Peak3D::setUnitCell(const sptrUnitCell& uc)
 {
     _unitCell = uc;
 }
 
 const UnitCell* Peak3D::unitCell() const
 {
-    return _unitCell;
+    if (auto uc = _unitCell.lock())
+        return uc.get();
+    else
+        throw std::runtime_error("Broken pointer to UnitCell");
 }
 
 Intensity Peak3D::rawIntensity() const
@@ -340,9 +342,9 @@ const MillerIndex& Peak3D::hkl() const
 
 void Peak3D::setMillerIndices()
 {
-    if (_unitCell) {
+    if (unitCell()) {
         try {
-            _hkl = MillerIndex(q(), *_unitCell);
+            _hkl = MillerIndex(q(), *unitCell());
         } catch (std::range_error& e) { // Catch interpolation error for last frame
             _hkl = {0, 0, 0};
             _selected = false;

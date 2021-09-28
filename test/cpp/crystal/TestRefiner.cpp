@@ -139,7 +139,7 @@ TEST_CASE("test/crystal/TestRefiner.cpp", "")
 
     std::vector<nsx::Peak3D*> peaks;
     for (const auto& peak : filtered_peaks->getPeakList()) {
-        peak->setUnitCell(cell.get());
+        peak->setUnitCell(cell);
         peaks.push_back(peak);
     }
 

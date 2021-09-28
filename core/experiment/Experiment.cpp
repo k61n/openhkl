@@ -256,7 +256,7 @@ void Experiment::buildShapeCollection(
 }
 
 void Experiment::predictPeaks(
-    const std::string& name, sptrDataSet data, UnitCell* cell)
+    const std::string& name, sptrDataSet data, const sptrUnitCell& cell)
 {
     std::vector<nsx::Peak3D*> predicted_peaks;
 
@@ -449,6 +449,11 @@ std::vector<std::string> Experiment::getUnitCellNames() const
 UnitCell* Experiment::getUnitCell(const std::string& name) const
 {
     return _cell_handler->getUnitCell(name);
+}
+
+sptrUnitCell Experiment::getSptrUnitCell(const std::string& name) const
+{
+    return _cell_handler->getSptrUnitCell(name);
 }
 
 void Experiment::removeUnitCell(const std::string& name)
