@@ -412,6 +412,7 @@ void SubframeMergedPeaks::refreshPeakCombos()
     _peaks2_list.append(tmp);
     QString current_peaks2 = _peaks2_drop->currentText();
     _peaks2_drop->clear();
+    _peaks2_list.clear();
     _peaks2_list.append(tmp);
 
     _peaks2_list.push_front(""); // Second peak collection is not used by default
