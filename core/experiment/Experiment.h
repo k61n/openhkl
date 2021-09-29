@@ -190,7 +190,7 @@ class Experiment {
     //! Get a pointer to the refiner
     Refiner* refiner() { return _refiner.get(); };
     //! Refine unit cell and instrument parameters
-    bool refine(const PeakCollection* peaks, DataSet* data, UnitCell* cell = nullptr);
+    bool refine(const PeakCollection* peaks, DataSet* data, sptrUnitCell cell = nullptr);
     //! Update the predicted peaks post-refinement
     void updatePredictions(PeakCollection* predicted_peaks);
 

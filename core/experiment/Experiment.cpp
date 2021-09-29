@@ -284,13 +284,12 @@ const UnitCell* Experiment::getReferenceCell() const
     return getUnitCell(nsx::kw_referenceUnitcell);
 }
 
-bool Experiment::refine(const PeakCollection* peaks, DataSet* data, UnitCell* cell /* = nullptr */)
+bool Experiment::refine(const PeakCollection* peaks, DataSet* data, sptrUnitCell cell /* = nullptr */)
 {
     nsxlog(Level::Info, "Experiment::refine: Refining peak collection ", peaks->name());
     std::vector<Peak3D*> peak_list = peaks->getPeakList();
     InstrumentStateList& states = data->instrumentStates();
     _refiner->makeBatches(states, peak_list, cell);
-    _refiner->parameters()->log(Level::Info);
     bool success = _refiner->refine();
     if (success) {
         nsxlog(Level::Info, "Refinement succeeded");

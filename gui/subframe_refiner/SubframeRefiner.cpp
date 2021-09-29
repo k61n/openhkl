@@ -287,7 +287,7 @@ void SubframeRefiner::refine()
         auto expt = gSession->experimentAt(_exp_combo->currentIndex())->experiment();
         auto* peaks = expt->getPeakCollection(_peak_combo->currentText().toStdString());
         const auto data = expt->getData(_data_combo->currentText().toStdString());
-        auto* cell = expt->getUnitCell(_cell_combo->currentText().toStdString());
+        auto cell = expt->getSptrUnitCell(_cell_combo->currentText().toStdString());
         auto states = data->instrumentStates();
         auto refiner = expt->refiner();
         auto* params = refiner->parameters();

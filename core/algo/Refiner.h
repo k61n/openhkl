@@ -49,7 +49,7 @@ class Refiner {
     //! Generate batches of peaks per frame range with the given peak list
     void makeBatches(
         InstrumentStateList& states, const std::vector<nsx::Peak3D*>& peaks,
-        UnitCell* cell = nullptr);
+        sptrUnitCell cell = nullptr);
 
     //! Sets the lattice B matrix to be refined.
     void refineUB();
@@ -105,7 +105,7 @@ class Refiner {
     UnitCellHandler* _cell_handler;
     UnitCell _unrefined_cell;
     InstrumentStateList _unrefined_states;
-    UnitCell* _cell;
+    sptrUnitCell _cell;
     std::vector<UnitCell*> _batch_cells;
     std::vector<RefinementBatch> _batches;
     int _nframes;

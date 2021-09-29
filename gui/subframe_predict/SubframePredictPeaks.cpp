@@ -411,10 +411,10 @@ void SubframePredictPeaks::refineKi()
     auto* peaks = expt->getPeakCollection(_found_peaks_combo->currentText().toStdString());
     const auto data = _detector_widget->currentData();
     auto* detector = data->diffractometer()->detector();
-    auto states = data->instrumentStates();
+    auto& states = data->instrumentStates();
     auto refiner = expt->refiner();
     auto* params = refiner->parameters();
-    auto* cell = expt->getUnitCell(_cell_combo->currentText().toStdString());
+    auto cell = expt->getSptrUnitCell(_cell_combo->currentText().toStdString());
 
     nsx::RefinerParameters tmp_params = *params;
 
@@ -431,7 +431,8 @@ void SubframePredictPeaks::refineKi()
     params->nbatches = data->nFrames();
     params->residual_type = nsx::ResidualType::RealSpace;
 
-    bool success = expt->refine(peaks, data.get(), cell);
+    refiner->makeBatches(states, peaks->getPeakList(), cell);
+    bool success = refiner->refine();
     if (success) {
         gGui->statusBar()->showMessage("Direct beam positions refined");
         showDirectBeamEvents();

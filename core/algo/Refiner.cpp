@@ -54,7 +54,7 @@ void Refiner::setHandler(const sptrProgressHandler& handler)
 }
 
 void Refiner::makeBatches(
-    InstrumentStateList& states, const std::vector<nsx::Peak3D*>& peaks, UnitCell* cell)
+    InstrumentStateList& states, const std::vector<nsx::Peak3D*>& peaks, sptrUnitCell cell)
 {
     _unrefined_states.clear();
     _batches.clear();
@@ -72,7 +72,7 @@ void Refiner::makeBatches(
     PeakFilter peak_filter;
     filtered_peaks = peak_filter.filterEnabled(peaks, true);
     if (_first_refine)
-        filtered_peaks = peak_filter.filterIndexed(filtered_peaks, cell);
+        filtered_peaks = peak_filter.filterIndexed(filtered_peaks, cell.get());
     else
         filtered_peaks = peak_filter.filterIndexed(filtered_peaks);
 
@@ -90,6 +90,7 @@ void Refiner::makeBatches(
 
     std::vector<nsx::Peak3D*> peaks_subset;
 
+    std::shared_ptr<UnitCell> cell_ptr;
     // batch contains peaks from frame _fmin to _fmax + 2
     for (size_t i = 0; i < filtered_peaks.size(); ++i) {
         peaks_subset.push_back(filtered_peaks[i]);
@@ -97,18 +98,18 @@ void Refiner::makeBatches(
         if (i + 1.1 >= (current_batch + 1) * batch_size) {
 
             // Make a new unit cell for this batch
-            std::shared_ptr<UnitCell> new_cell;
-            nsx::UnitCell* cell_ptr;
-            if (!cell && _params->refine_ub) {
+            if (!cell) {
                 // We have already refined once, and all peaks have been assigned a batch
                 // with its own cell
                 std::map<const UnitCell*, int> cell_count;
                 for (auto* peak : peaks_subset) {
-                    auto search = cell_count.find(peak->unitCell());
-                    if (search == cell_count.end())
-                        cell_count.insert({peak->unitCell(), 1});
-                    else
-                        search->second += 1;
+                    if (peak->unitCell()) {
+                        auto search = cell_count.find(peak->unitCell());
+                        if (search == cell_count.end())
+                            cell_count.insert({peak->unitCell(), 1});
+                        else
+                            search->second += 1;
+                    }
                 }
                 // Find cell that appears the most in this batch
                 int max = 0;
@@ -119,14 +120,13 @@ void Refiner::makeBatches(
                         best_cell = key;
                     }
                 }
-                new_cell = std::make_shared<UnitCell>(*best_cell);
-                cell_ptr = new_cell.get();
-            } else if (cell && _params->refine_ub) {
-                // Starting from scratch, use the cell obtained from autoindexing
-                new_cell = std::make_shared<UnitCell>(_unrefined_cell);
-                cell_ptr = new_cell.get();
+                cell_ptr = std::make_shared<UnitCell>(*best_cell);
             } else {
-                cell_ptr = cell;
+                // Starting from scratch, use the cell obtained from autoindexing
+                if (_params->refine_ub)
+                    cell_ptr = std::make_shared<UnitCell>(_unrefined_cell);
+                else
+                    cell_ptr = cell;
             }
 
             RefinementBatch b(states, cell_ptr, peaks_subset);
@@ -137,10 +137,10 @@ void Refiner::makeBatches(
             std::string name = oss.str();
 
             for (auto* peak : b.peaks())
-                peak->setUnitCell(new_cell);
+                peak->setUnitCell(cell_ptr);
 
             if (_params->refine_ub) // only add the cell if we are refining it
-                _cell_handler->addUnitCell(name, new_cell);
+                _cell_handler->addUnitCell(name, cell_ptr);
 
             _batches.emplace_back(std::move(b));
             peaks_subset.clear();
@@ -186,6 +186,7 @@ void Refiner::refineUB()
 
 bool Refiner::refine()
 {
+    _params->log(Level::Info);
     int count = 1;
     if (_handler) {
         std::ostringstream oss;
@@ -239,7 +240,7 @@ int Refiner::updatePredictions(std::vector<Peak3D*>& peaks) const
     std::vector<nsx::Peak3D*> filtered_peaks = peaks;
     filtered_peaks = peak_filter.filterEnabled(peaks, true);
     if (_first_refine)
-        filtered_peaks = peak_filter.filterIndexed(filtered_peaks, _cell);
+        filtered_peaks = peak_filter.filterIndexed(filtered_peaks, _cell.get());
     else
         filtered_peaks = peak_filter.filterIndexed(filtered_peaks);
 

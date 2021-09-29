@@ -72,7 +72,7 @@ Eigen::MatrixXd constraintKernel(int nparams, const std::vector<std::vector<int>
 namespace nsx {
 
 RefinementBatch::RefinementBatch(
-    InstrumentStateList& states, UnitCell* uc, std::vector<nsx::Peak3D*> peaks)
+    InstrumentStateList& states, sptrUnitCell uc, std::vector<nsx::Peak3D*> peaks)
     : _fmin(std::numeric_limits<double>::max())
     , _fmax(std::numeric_limits<double>::lowest())
     , _residual_type(ResidualType::QSpace)
@@ -305,7 +305,7 @@ std::vector<nsx::Peak3D*> RefinementBatch::peaks() const
 
 UnitCell* RefinementBatch::cell() const
 {
-    return _cell;
+    return _cell.get();
 }
 
 int RefinementBatch::first_frame() const

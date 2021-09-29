@@ -35,7 +35,7 @@ class RefinementBatch {
     RefinementBatch() = default;
     //! A batch contains peaks from frame _fmin to _fmax + 2
     RefinementBatch(
-        InstrumentStateList& states, UnitCell* uc, std::vector<nsx::Peak3D*> peaksmax);
+        InstrumentStateList& states, sptrUnitCell uc, std::vector<nsx::Peak3D*> peaksmax);
 
     //! Sets the lattice B matrix to be refined.
     void refineUB();
@@ -94,7 +94,7 @@ class RefinementBatch {
 
     ResidualType _residual_type;
 
-    nsx::UnitCell* _cell;
+    sptrUnitCell _cell;
 
     std::vector<nsx::Peak3D*> _peaks;
 
