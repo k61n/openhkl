@@ -48,6 +48,27 @@ IntegrationRegion::IntegrationRegion(
     _hull.updateHull();
 }
 
+IntegrationRegion::IntegrationRegion(Peak3D* peak, const Ellipsoid& shape, double bkg_scale)
+    : _shape(shape), _bkgEnd(bkg_scale)
+{
+    Ellipsoid bkg(_shape);
+    bkg.scale(_bkgEnd);
+    auto aabb = bkg.aabb();
+
+    const Eigen::Vector3d& lo = aabb.lower();
+    const Eigen::Vector3d& dx = aabb.upper() - aabb.lower();
+
+    _hull.addVertex(lo);
+    _hull.addVertex(lo + Eigen::Vector3d(0, 0, dx[2]));
+    _hull.addVertex(lo + Eigen::Vector3d(0, dx[1], 0));
+    _hull.addVertex(lo + Eigen::Vector3d(0, dx[1], dx[2]));
+    _hull.addVertex(lo + Eigen::Vector3d(dx[0], 0, 0));
+    _hull.addVertex(lo + Eigen::Vector3d(dx[0], 0, dx[2]));
+    _hull.addVertex(lo + Eigen::Vector3d(dx[0], dx[1], 0));
+    _hull.addVertex(lo + Eigen::Vector3d(dx[0], dx[1], dx[2]));
+    _hull.updateHull();
+}
+
 const AABB& IntegrationRegion::aabb() const
 {
     return _hull.aabb();

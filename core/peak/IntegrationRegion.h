@@ -33,6 +33,9 @@ class IntegrationRegion {
 
     IntegrationRegion(Peak3D* peak, double peak_end, double bkg_begin, double bkg_end);
 
+    //! Construct an integration region with a fixed shape (independent of other peaks)
+    IntegrationRegion(Peak3D* peak, const Ellipsoid& shape, double bkg_scale);
+
     //! Update the integration mask of the detector (peak, background, forbiddgen
     //! zones)
     void updateMask(Eigen::MatrixXi& mask, double z) const;
