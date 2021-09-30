@@ -256,7 +256,7 @@ void Experiment::buildShapeCollection(
 }
 
 void Experiment::predictPeaks(
-    const std::string& name, sptrDataSet data, UnitCell* cell)
+    const std::string& name, sptrDataSet data, const sptrUnitCell& cell)
 {
     std::vector<nsx::Peak3D*> predicted_peaks;
 
@@ -284,13 +284,12 @@ const UnitCell* Experiment::getReferenceCell() const
     return getUnitCell(nsx::kw_referenceUnitcell);
 }
 
-bool Experiment::refine(const PeakCollection* peaks, DataSet* data, UnitCell* cell /* = nullptr */)
+bool Experiment::refine(const PeakCollection* peaks, DataSet* data, sptrUnitCell cell /* = nullptr */)
 {
     nsxlog(Level::Info, "Experiment::refine: Refining peak collection ", peaks->name());
     std::vector<Peak3D*> peak_list = peaks->getPeakList();
     InstrumentStateList& states = data->instrumentStates();
     _refiner->makeBatches(states, peak_list, cell);
-    _refiner->parameters()->log(Level::Info);
     bool success = _refiner->refine();
     if (success) {
         nsxlog(Level::Info, "Refinement succeeded");
@@ -449,6 +448,11 @@ std::vector<std::string> Experiment::getUnitCellNames() const
 UnitCell* Experiment::getUnitCell(const std::string& name) const
 {
     return _cell_handler->getUnitCell(name);
+}
+
+sptrUnitCell Experiment::getSptrUnitCell(const std::string& name) const
+{
+    return _cell_handler->getSptrUnitCell(name);
 }
 
 void Experiment::removeUnitCell(const std::string& name)

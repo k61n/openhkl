@@ -22,6 +22,8 @@
 
 namespace nsx {
 
+using sptrUnitCell = std::shared_ptr<UnitCell>;
+
 class MillerIndex;
 
 //! Structure to encapsulate lattice cell character.

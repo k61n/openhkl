@@ -127,7 +127,7 @@ class Peak3D {
     double transmission() const;
 
     //! Assign a unit cell to the peak
-    void setUnitCell(const UnitCell* uc);
+    void setUnitCell(const sptrUnitCell& uc);
     //! Returns the unit cell
     const UnitCell* unitCell() const;
 
@@ -197,8 +197,8 @@ class Peak3D {
     //! Miller indices calculated during autoindexing
     MillerIndex _hkl = {0, 0, 0};
 
-    //! Unit celll assigned to this peak
-    const UnitCell* _unitCell = nullptr;
+    //! Unit cell assigned to this peak
+    std::weak_ptr<UnitCell> _unitCell;
 
     double _scale;
     //! Whether this peak is selected (valid)

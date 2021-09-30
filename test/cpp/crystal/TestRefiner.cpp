@@ -139,7 +139,7 @@ TEST_CASE("test/crystal/TestRefiner.cpp", "")
 
     std::vector<nsx::Peak3D*> peaks;
     for (const auto& peak : filtered_peaks->getPeakList()) {
-        peak->setUnitCell(cell.get());
+        peak->setUnitCell(cell);
         peaks.push_back(peak);
     }
 
@@ -154,7 +154,7 @@ TEST_CASE("test/crystal/TestRefiner.cpp", "")
     refiner_params->refine_sample_orientation = false;
     refiner_params->refine_ki = false;
     refiner_params->max_iter = 500;
-    refiner->makeBatches(states, peaks, cell.get());
+    refiner->makeBatches(states, peaks, cell);
 
     CHECK(refiner->batches().size() == 1);
 

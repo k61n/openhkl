@@ -515,7 +515,7 @@ void SubframeAutoIndexer::selectSolutionHeader(int index)
 
     std::vector<nsx::Peak3D*> peaks = collection->getPeakList();
     for (nsx::Peak3D* peak : peaks)
-        peak->setUnitCell(_selected_unit_cell.get());
+        peak->setUnitCell(_selected_unit_cell);
     refreshPeakTable();
 }
 

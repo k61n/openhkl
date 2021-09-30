@@ -384,11 +384,11 @@ void SubframeMergedPeaks::refreshPeakCombos()
     _peaks1_list.append(tmp);
     tmp.clear();
     tmp = gSession->experimentAt(_exp_drop->currentIndex())
-              ->getPeakCollectionNames(nsx::listtype::FOUND);
+        ->getPeakCollectionNames(nsx::listtype::FILTERED);
     _peaks1_list.append(tmp);
     tmp.clear();
     tmp = gSession->experimentAt(_exp_drop->currentIndex())
-        ->getPeakCollectionNames(nsx::listtype::FILTERED);
+              ->getPeakCollectionNames(nsx::listtype::FOUND);
     _peaks1_list.append(tmp);
     tmp.clear();
 
@@ -404,14 +404,15 @@ void SubframeMergedPeaks::refreshPeakCombos()
     _peaks2_list.append(tmp);
     tmp.clear();
     tmp = gSession->experimentAt(_exp_drop->currentIndex())
-              ->getPeakCollectionNames(nsx::listtype::FOUND);
+        ->getPeakCollectionNames(nsx::listtype::FILTERED);
     _peaks2_list.append(tmp);
     tmp.clear();
     tmp = gSession->experimentAt(_exp_drop->currentIndex())
-        ->getPeakCollectionNames(nsx::listtype::FILTERED);
+              ->getPeakCollectionNames(nsx::listtype::FOUND);
     _peaks2_list.append(tmp);
     QString current_peaks2 = _peaks2_drop->currentText();
     _peaks2_drop->clear();
+    _peaks2_list.clear();
     _peaks2_list.append(tmp);
 
     _peaks2_list.push_front(""); // Second peak collection is not used by default

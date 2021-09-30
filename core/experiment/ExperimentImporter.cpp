@@ -270,8 +270,7 @@ void ExperimentImporter::loadPeaks(Experiment* experiment)
                     transmission[k], peak_mean_bkg, predicted[k], selected[k], masked[k],
                     rejection_flag[k]);
 
-                const UnitCell* unit_cell_pointer = experiment->getUnitCell(unit_cells[k]);
-                peak->setUnitCell(unit_cell_pointer);
+                peak->setUnitCell(experiment->getSptrUnitCell(unit_cells[k]));
 
                 peaks.push_back(peak);
             }

@@ -18,7 +18,6 @@
 #include "core/experiment/PeakHandler.h"
 #include "core/raw/DataKeys.h"
 #include "core/shape/PeakCollection.h"
-#include "tables/crystal/UnitCell.h"
 
 namespace nsx {
 
@@ -39,12 +38,12 @@ const CellMap* UnitCellHandler::getCellMap() const
 void UnitCellHandler::addUnitCell(const std::string& name, const UnitCell& unit_cell)
 {
     nsxlog(Level::Info, "UnitCellHandler::addUnitCell: '", name, "': ", unit_cell.toString());
-    std::unique_ptr<UnitCell> ptr(new UnitCell(unit_cell));
-    ptr->setName(name);
-    _unit_cells.insert_or_assign(name, std::move(ptr));
+    sptrUnitCell uc = std::make_shared<UnitCell>(unit_cell);
+    uc->setName(name);
+    _unit_cells.insert_or_assign(name, std::move(uc));
 }
 
-void UnitCellHandler::addUnitCell(const std::string& name, std::unique_ptr<UnitCell>& unit_cell)
+void UnitCellHandler::addUnitCell(const std::string& name, sptrUnitCell unit_cell)
 {
     nsxlog(Level::Info, "UnitCellHandler::addUnitCell: '", name, "': ", unit_cell->toString());
     unit_cell->setName(name);
@@ -81,12 +80,17 @@ std::vector<std::string> UnitCellHandler::getUnitCellNames() const
     return names;
 }
 
-UnitCell* UnitCellHandler::getUnitCell(const std::string& name) const
+sptrUnitCell UnitCellHandler::getSptrUnitCell(const std::string& name) const
 {
     if (hasUnitCell(name)) {
-        return _unit_cells.find(name)->second.get();
+        return _unit_cells.find(name)->second;
     }
     return nullptr;
+}
+
+UnitCell* UnitCellHandler::getUnitCell(const std::string& name) const
+{
+    return getSptrUnitCell(name).get();
 }
 
 void UnitCellHandler::removeUnitCell(const std::string& name)
@@ -102,15 +106,15 @@ void UnitCellHandler::swapUnitCells(
     const std::string& old_cell_name, const std::string& new_cell_name,
     PeakHandler* peak_handler) const
 {
-    UnitCell* old_cell = getUnitCell(old_cell_name);
-    UnitCell* new_cell = getUnitCell(new_cell_name);
+    sptrUnitCell old_cell = getSptrUnitCell(old_cell_name);
+    sptrUnitCell new_cell = getSptrUnitCell(new_cell_name);
     const auto* peak_collections = peak_handler->getPeakCollectionMap();
 
     std::map<std::string, std::unique_ptr<PeakCollection>>::const_iterator it;
     for (it = peak_collections->begin(); it != peak_collections->end(); ++it) {
         std::vector<Peak3D*> peaks = it->second->getPeakList();
         for (Peak3D* peak : peaks) {
-            if (peak->unitCell() == old_cell)
+            if (peak->unitCell() == old_cell.get())
                 peak->setUnitCell(new_cell);
         }
     }
@@ -129,9 +133,9 @@ bool UnitCellHandler::checkAndAssignUnitCell(
 {
     std::string name = nsx::kw_acceptedUnitcell;
     std::string ref_name = nsx::kw_referenceUnitcell;
-    UnitCell* ref_cell = getUnitCell(ref_name);
+    const UnitCell* ref_cell = getUnitCell(ref_name);
     bool accepted = false;
-    UnitCell* good_cell = auto_indexer->goodSolution(ref_cell, length_tol, angle_tol);
+    sptrUnitCell good_cell = auto_indexer->goodSolution(ref_cell, length_tol, angle_tol);
     if (good_cell) {
         addUnitCell(name, *good_cell);
         assignUnitCell(peaks);
@@ -144,14 +148,14 @@ void UnitCellHandler::assignUnitCell(PeakCollection* peaks, std::string cellName
 {
     std::vector<Peak3D*> peak_list = peaks->getPeakList();
     for (auto* peak : peak_list) {
-        peak->setUnitCell(getUnitCell(cellName));
+        peak->setUnitCell(getSptrUnitCell(cellName));
         peak->setMillerIndices();
     }
 }
 
 std::vector<std::string> UnitCellHandler::getCompatibleSpaceGroups() const
 {
-    return getUnitCell(nsx::kw_acceptedUnitcell)->compatibleSpaceGroups();
+    return getSptrUnitCell(nsx::kw_acceptedUnitcell)->compatibleSpaceGroups();
 }
 
 CellMap UnitCellHandler::extractBatchCells()

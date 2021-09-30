@@ -127,6 +127,8 @@ class Experiment {
     std::vector<std::string> getUnitCellNames() const;
     //! Return a pointer to the named unit cell
     UnitCell* getUnitCell(const std::string& name) const;
+    //! Return a pointer to the named unit cell
+    sptrUnitCell getSptrUnitCell(const std::string& name) const;
     //! Remove a unit cell from the experiment
     void removeUnitCell(const std::string& name);
     //! Swap two unit cells in the map contained by the handler
@@ -184,11 +186,11 @@ class Experiment {
         PeakCollection* peaks, sptrDataSet data, const ShapeCollectionParameters& params);
     //! Predict peaks from unit cell
     void predictPeaks(
-        const std::string& name, sptrDataSet data, UnitCell* cell);
+        const std::string& name, sptrDataSet data, const sptrUnitCell& cell);
     //! Get a pointer to the refiner
     Refiner* refiner() { return _refiner.get(); };
     //! Refine unit cell and instrument parameters
-    bool refine(const PeakCollection* peaks, DataSet* data, UnitCell* cell = nullptr);
+    bool refine(const PeakCollection* peaks, DataSet* data, sptrUnitCell cell = nullptr);
     //! Update the predicted peaks post-refinement
     void updatePredictions(PeakCollection* predicted_peaks);
 

@@ -18,6 +18,7 @@
 #include "base/utils/Units.h"
 #include "core/data/DataTypes.h"
 #include "core/raw/DataKeys.h"
+#include "tables/crystal/UnitCell.h"
 
 #include <map>
 #include <stdexcept>
@@ -28,9 +29,8 @@ namespace nsx {
 class AutoIndexer;
 class PeakHandler;
 class PeakCollection;
-class UnitCell;
 
-using CellMap = std::map<std::string, std::unique_ptr<UnitCell>>;
+using CellMap = std::map<std::string, sptrUnitCell>;
 
 class UnitCellHandler {
 
@@ -46,7 +46,7 @@ class UnitCellHandler {
     //! Add a unit cell to the experiment
     void addUnitCell(const std::string& name, const UnitCell& unit_cell);
     //! Move a unique pointer to a unit cell to the experiment
-    void addUnitCell(const std::string& name, std::unique_ptr<UnitCell>& unit_cell);
+    void addUnitCell(const std::string& name, sptrUnitCell unit_cell);
     //! Add a unit cell to the experiment via cell parameters (skip autoindexing step)
     void addUnitCell(
         const std::string& name, double a, double b, double c, double alpha, double beta,
@@ -59,6 +59,8 @@ class UnitCellHandler {
     bool hasUnitCell(const std::string& name) const;
     //! Get a list of loaded list names
     std::vector<std::string> getUnitCellNames() const;
+    //! Returns the unit cell denoted by the name
+    sptrUnitCell getSptrUnitCell(const std::string& name) const;
     //! Returns the unit cell denoted by the name
     UnitCell* getUnitCell(const std::string& name) const;
     //! Remove a data from the experiment
