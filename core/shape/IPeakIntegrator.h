@@ -39,6 +39,7 @@ struct IntegrationParameters {
     bool fit_cov = true; //!< Whether to update the peak covariance after integration
     int min_neighbors = 10; //!< Minimum number of neighbouring shapes for predicted shape
     IntegratorType integrator_type = IntegratorType::PixelSum; //!< Type of integrator
+    bool fixed_integration_region = false; //!< Set peak end in pixels instead of sigmas
 
     void log(const Level& level) const;
 };

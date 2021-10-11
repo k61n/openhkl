@@ -33,6 +33,7 @@ class PeakViewWidget : public QGridLayout {
         QCheckBox* drawBoxes;
         QCheckBox* drawBkg;
         QCheckBox* drawIntegrationRegion;
+        QCheckBox* fixedIntegrationRegion;
         QSpinBox* sizePeaks;
         QDoubleSpinBox* alphaIntegrationRegion;
         ColorButton* colorPeaks;
@@ -67,6 +68,7 @@ class PeakViewWidget : public QGridLayout {
     double _peak_end;
     double _bkg_begin;
     double _bkg_end;
+    bool _fixed_integration_region;
 };
 
 #endif // NSX_GUI_UTILITY_PEAKVIEWWIDGET_H

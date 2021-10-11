@@ -51,6 +51,7 @@ SubframeIntegrate::SubframeIntegrate() : QWidget()
     _left_layout = new QVBoxLayout();
 
     setInputUp();
+    setIntegrationRegionUp();
     setIntegrateUp();
     setPreviewUp();
     setFigureUp();
@@ -257,6 +258,7 @@ void SubframeIntegrate::grabIntegrationParameters()
     _fit_center->setChecked(params->fit_center);
     _fit_covariance->setChecked(params->fit_cov);
     _min_neighbours->setValue(params->min_neighbors);
+    _fixed_integration_region->setChecked(params->fixed_integration_region);
 
     for (auto it = _integrator_strings.begin(); it != _integrator_strings.end(); ++it)
         if (it->second == params->integrator_type)
@@ -280,8 +282,43 @@ void SubframeIntegrate::setIntegrationParameters()
     params->fit_center = _fit_center->isChecked();
     params->fit_cov = _fit_covariance->isChecked();
     params->min_neighbors = _min_neighbours->value();
+    params->fixed_integration_region = _fixed_integration_region->isChecked();
     params->integrator_type =
         _integrator_strings.find(_integrator_combo->currentText().toStdString())->second;
+}
+
+void SubframeIntegrate::setIntegrationRegionUp()
+{
+    _integration_region_box = new Spoiler("Integration region");
+    GridFiller f(_integration_region_box, true);
+
+    _fixed_integration_region = f.addCheckBox(
+        "Fixed integration region",
+        "<font>Specify integration region in Pixels (peak end), and"
+        "scaling factors for background region (bkg begin, bkg end)</font>", 1);
+
+    _peak_end = f.addDoubleSpinBox("Peak end", "(sigmas) - scaling factor for peak region");
+
+    _bkg_begin =
+        f.addDoubleSpinBox("Bkg begin:", "(sigmas) - scaling factor for lower limit of background");
+
+    _bkg_end =
+        f.addDoubleSpinBox("Bkg end:", "(sigmas) - scaling factor for upper limit of background");
+
+    _peak_end->setMaximum(50);
+    _peak_end->setDecimals(2);
+
+    _bkg_begin->setMaximum(10);
+    _bkg_begin->setDecimals(2);
+
+    _bkg_end->setMaximum(10);
+    _bkg_end->setDecimals(2);
+
+    _left_layout->addWidget(_integration_region_box);
+
+    connect(
+        _fixed_integration_region, &QCheckBox::stateChanged, this,
+        &SubframeIntegrate::refreshPeakVisual);
 }
 
 void SubframeIntegrate::setIntegrateUp()
@@ -303,14 +340,6 @@ void SubframeIntegrate::setIntegrateUp()
 
     _fit_covariance = f.addCheckBox(
         "Fit the covariance", "Allow the peak covariance matrix to vary during integration", 1);
-
-    _peak_end = f.addDoubleSpinBox("Peak end", "(sigmas) - scaling factor for peak region");
-
-    _bkg_begin =
-        f.addDoubleSpinBox("Bkg begin:", "(sigmas) - scaling factor for lower limit of background");
-
-    _bkg_end =
-        f.addDoubleSpinBox("Bkg end:", "(sigmas) - scaling factor for upper limit of background");
 
     _radius_int =
         f.addDoubleSpinBox("Search radius:", "(pixels) - neighbour search radius in pixels");
@@ -338,15 +367,6 @@ void SubframeIntegrate::setIntegrateUp()
     _interpolation_combo->addItem("None");
     _interpolation_combo->addItem("Inverse distance");
     _interpolation_combo->addItem("Intensity");
-
-    _peak_end->setMaximum(10);
-    _peak_end->setDecimals(2);
-
-    _bkg_begin->setMaximum(10);
-    _bkg_begin->setDecimals(2);
-
-    _bkg_end->setMaximum(10);
-    _bkg_end->setDecimals(2);
 
     _radius_int->setMaximum(1000);
     _radius_int->setDecimals(2);
@@ -400,14 +420,14 @@ void SubframeIntegrate::setPreviewUp()
         _peak_view_widget->set1.bkgEnd, qOverload<double>(&QDoubleSpinBox::valueChanged), _bkg_end,
         &QDoubleSpinBox::setValue);
     connect(
+        _peak_view_widget->set1.fixedIntegrationRegion, &QCheckBox::stateChanged,
+        _fixed_integration_region, &QCheckBox::setChecked);
+    connect(
         _peak_end, qOverload<double>(&QDoubleSpinBox::valueChanged),
         _peak_view_widget->set1.peakEnd, &QDoubleSpinBox::setValue);
     connect(
         _bkg_begin, qOverload<double>(&QDoubleSpinBox::valueChanged),
         _peak_view_widget->set1.bkgBegin, &QDoubleSpinBox::setValue);
-    connect(
-        _bkg_end, qOverload<double>(&QDoubleSpinBox::valueChanged), _peak_view_widget->set1.bkgEnd,
-        &QDoubleSpinBox::setValue);
 
     _left_layout->addWidget(preview_spoiler);
 }

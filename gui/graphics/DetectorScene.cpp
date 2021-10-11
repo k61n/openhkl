@@ -864,7 +864,7 @@ void DetectorScene::refreshIntegrationOverlay()
     mask.setConstant(int(EventType::EXCLUDED));
 
     if (_peak_model_1 && _drawIntegrationRegion1) {
-        getIntegrationMask(_peak_model_1, mask);
+        getIntegrationMask(_peak_model_1, mask, _fixed_int_regions_1);
         QImage* region_img = getIntegrationRegionImage(mask, _peakPxColor1, _bkgPxColor1);
         if (!_integrationRegion1) {
             _integrationRegion1 = addPixmap(QPixmap::fromImage(*region_img));
@@ -876,7 +876,7 @@ void DetectorScene::refreshIntegrationOverlay()
 
     if (_peak_model_2 && _drawIntegrationRegion2) {
         mask.setConstant(int(EventType::EXCLUDED));
-        getIntegrationMask(_peak_model_2, mask);
+        getIntegrationMask(_peak_model_2, mask, _fixed_int_regions_2);
         QImage* region_img = getIntegrationRegionImage(mask, _peakPxColor2, _bkgPxColor2);
         if (!_integrationRegion2) {
             _integrationRegion2 = addPixmap(QPixmap::fromImage(*region_img));
@@ -910,7 +910,7 @@ QImage* DetectorScene::getIntegrationRegionImage(
     return region_img;
 }
 
-void DetectorScene::getIntegrationMask(PeakCollectionModel* model, Eigen::MatrixXi& mask)
+void DetectorScene::getIntegrationMask(PeakCollectionModel* model, Eigen::MatrixXi& mask, bool fixed)
 {
     if (model == nullptr || model->root() == nullptr)
         return;
@@ -934,7 +934,7 @@ void DetectorScene::getIntegrationMask(PeakCollectionModel* model, Eigen::Matrix
             bkg_end = peak_item->peak()->bkgEnd();
         }
         try { // IntegrationRegion constructor can throw if the region is invalid
-            nsx::IntegrationRegion region(peak, peak_end, bkg_begin, bkg_end);
+            nsx::IntegrationRegion region(peak, peak_end, bkg_begin, bkg_end, fixed);
             region.updateMask(mask, _currentFrameIndex);
         } catch (...) {
             continue;
@@ -947,6 +947,7 @@ void DetectorScene::initIntRegionFromPeakWidget(
 {
     if (!alt) {
         _preview_int_regions_1 = set.previewIntRegion->isChecked();
+        _fixed_int_regions_1 = set.fixedIntegrationRegion->isChecked();
         _peak_end_1 = set.peakEnd->value();
         _bkg_begin_1 = set.bkgBegin->value();
         _bkg_end_1 = set.bkgEnd->value();
@@ -957,6 +958,8 @@ void DetectorScene::initIntRegionFromPeakWidget(
         _bkgPxColor1.setAlphaF(set.alphaIntegrationRegion->value());
     } else { // alternative colour scheme for second overlay
         _preview_int_regions_2 = set.previewIntRegion->isChecked();
+        _fixed_int_regions_2 = set.fixedIntegrationRegion->isChecked();
+        _peak_end_1 = set.peakEnd->value();
         _peak_end_2 = set.peakEnd->value();
         _bkg_begin_2 = set.bkgBegin->value();
         _bkg_end_2 = set.bkgEnd->value();

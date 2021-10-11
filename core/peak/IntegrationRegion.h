@@ -31,10 +31,8 @@ class IntegrationRegion {
 
     IntegrationRegion(IntegrationRegion&& other) = default;
 
-    IntegrationRegion(Peak3D* peak, double peak_end, double bkg_begin, double bkg_end);
-
-    //! Construct an integration region with a fixed shape (independent of other peaks)
-    IntegrationRegion(Peak3D* peak, const Ellipsoid& shape, double bkg_scale);
+    IntegrationRegion(
+        Peak3D* peak, double peak_end, double bkg_begin, double bkg_end, bool fixed = false);
 
     //! Update the integration mask of the detector (peak, background, forbiddgen
     //! zones)
@@ -67,6 +65,8 @@ class IntegrationRegion {
     double _bkgEnd;
     PeakData _data;
     ConvexHull _hull;
+    bool _fixed;
+    double _pixelRadius;
 };
 
 } // namespace nsx

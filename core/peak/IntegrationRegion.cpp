@@ -27,30 +27,18 @@ IntegrationRegion::IntegrationRegion()
 }
 
 IntegrationRegion::IntegrationRegion(
-    Peak3D* peak, double peak_end, double bkg_begin, double bkg_end)
-    : _shape(peak->shape()), _peakEnd(peak_end), _bkgBegin(bkg_begin), _bkgEnd(bkg_end), _data(peak)
+    Peak3D* peak, double peak_end, double bkg_begin, double bkg_end, bool fixed /* = false */)
+    : _bkgBegin(bkg_begin), _bkgEnd(bkg_end), _data(peak), _fixed(fixed)
 {
-    Ellipsoid bkg(_shape);
-    bkg.scale(_bkgEnd);
-    auto aabb = bkg.aabb();
+    if (_fixed) {
+        _shape = Ellipsoid(peak->shape().center(), peak_end);
+        _pixelRadius = peak_end;
+        _peakEnd = 1.0;
+    } else {
+        _shape = peak->shape();
+        _peakEnd = peak_end;
+    }
 
-    const Eigen::Vector3d& lo = aabb.lower();
-    const Eigen::Vector3d& dx = aabb.upper() - aabb.lower();
-
-    _hull.addVertex(lo);
-    _hull.addVertex(lo + Eigen::Vector3d(0, 0, dx[2]));
-    _hull.addVertex(lo + Eigen::Vector3d(0, dx[1], 0));
-    _hull.addVertex(lo + Eigen::Vector3d(0, dx[1], dx[2]));
-    _hull.addVertex(lo + Eigen::Vector3d(dx[0], 0, 0));
-    _hull.addVertex(lo + Eigen::Vector3d(dx[0], 0, dx[2]));
-    _hull.addVertex(lo + Eigen::Vector3d(dx[0], dx[1], 0));
-    _hull.addVertex(lo + Eigen::Vector3d(dx[0], dx[1], dx[2]));
-    _hull.updateHull();
-}
-
-IntegrationRegion::IntegrationRegion(Peak3D* peak, const Ellipsoid& shape, double bkg_scale)
-    : _shape(shape), _bkgEnd(bkg_scale)
-{
     Ellipsoid bkg(_shape);
     bkg.scale(_bkgEnd);
     auto aabb = bkg.aabb();
@@ -77,7 +65,8 @@ const AABB& IntegrationRegion::aabb() const
 AABB IntegrationRegion::peakBB() const
 {
     Ellipsoid peakShape = _shape;
-    peakShape.scale(_peakEnd);
+    if (!_fixed)
+        peakShape.scale(_peakEnd);
     return peakShape.aabb();
 }
 
@@ -131,13 +120,23 @@ IntegrationRegion::EventType IntegrationRegion::classify(const DetectorEvent& ev
     p -= _shape.center();
     const double rr = p.dot(_shape.metric() * p);
 
-    if (rr <= _peakEnd * _peakEnd)
-        return EventType::PEAK;
-    if (rr > _bkgEnd * _bkgEnd)
-        return EventType::EXCLUDED;
-    if (rr >= _bkgBegin * _bkgBegin)
-        return EventType::BACKGROUND;
-    return EventType::FORBIDDEN;
+    if (_fixed) {
+        if (rr <= _peakEnd * _peakEnd)
+            return EventType::PEAK;
+        if (rr > _peakEnd * _peakEnd * _bkgEnd * _bkgEnd)
+            return EventType::EXCLUDED;
+        if (rr >= _peakEnd * _peakEnd * _bkgBegin * _bkgBegin)
+            return EventType::BACKGROUND;
+        return EventType::FORBIDDEN;
+    } else {
+        if (rr <= _peakEnd * _peakEnd)
+            return EventType::PEAK;
+        if (rr > _bkgEnd * _bkgEnd)
+            return EventType::EXCLUDED;
+        if (rr >= _bkgBegin * _bkgBegin)
+            return EventType::BACKGROUND;
+        return EventType::FORBIDDEN;
+    }
 }
 
 bool IntegrationRegion::advanceFrame(
