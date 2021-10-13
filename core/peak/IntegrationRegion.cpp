@@ -117,18 +117,24 @@ void IntegrationRegion::updateMask(Eigen::MatrixXi& mask, double z) const
 IntegrationRegion::EventType IntegrationRegion::classify(const DetectorEvent& ev) const
 {
     Eigen::Vector3d p(ev.px, ev.py, ev.frame);
-    p -= _shape.center();
-    const double rr = p.dot(_shape.metric() * p);
 
     if (_fixed) {
-        if (rr <= _peakEnd * _peakEnd)
+        Ellipsoid bb(_shape);
+        Ellipsoid be(_shape);
+        bb.scale(_bkgBegin);
+        be.scale(_bkgEnd);
+
+        if (_shape.isInside(p))
             return EventType::PEAK;
-        if (rr > _peakEnd * _peakEnd * _bkgEnd * _bkgEnd)
-            return EventType::EXCLUDED;
-        if (rr >= _peakEnd * _peakEnd * _bkgBegin * _bkgBegin)
+        else if (bb.isInside(p))
+            return EventType::FORBIDDEN;
+        else if (be.isInside(p))
             return EventType::BACKGROUND;
-        return EventType::FORBIDDEN;
+        else
+            return EventType::EXCLUDED;
     } else {
+        p -= _shape.center();
+        const double rr = p.dot(_shape.metric() * p);
         if (rr <= _peakEnd * _peakEnd)
             return EventType::PEAK;
         if (rr > _bkgEnd * _bkgEnd)
