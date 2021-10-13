@@ -87,7 +87,9 @@ void IPeakIntegrator::integrate(
             // IntegrationRegion constructor may throw (e.g. peak on boundary of image)
             regions.emplace(std::make_pair(
                 peak,
-                IntegrationRegion(peak, _params.peak_end, _params.bkg_begin, _params.bkg_end)));
+                IntegrationRegion(
+                    peak, _params.peak_end, _params.bkg_begin, _params.bkg_end,
+                    _params.fixed_integration_region)));
             integrated.emplace(std::make_pair(peak, false));
         } catch (...) {
             peak->setSelected(false);
