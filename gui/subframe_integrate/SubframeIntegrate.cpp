@@ -468,6 +468,7 @@ void SubframeIntegrate::assignPeakShapes()
             QString::number(peaks_to_integrate->numberOfValid()) + "/" +
             QString::number(peaks_to_integrate->numberOfPeaks()) +
             " predicted peaks with valid shapes");
+        refreshPeakTable();
     } catch (std::exception& e) {
         QMessageBox::critical(this, "Error", QString(e.what()));
     }
@@ -594,16 +595,6 @@ void SubframeIntegrate::toggleUnsafeWidgets()
         _remove_overlaps->setEnabled(false);
     }
 
-    if (_integrator_strings.find(_integrator_combo->currentText().toStdString())->second
-        == nsx::IntegratorType::PixelSum) {
-        _interpolation_combo->setEnabled(false);
-        _radius_int->setEnabled(false);
-        _n_frames_int->setEnabled(false);
-        _min_neighbours->setEnabled(false);
-        _assign_peak_shapes->setEnabled(false);
-        _build_shape_lib_button->setEnabled(false);
-    }
-
     if (!(_peak_combo->count() == 0)) {
         nsx::PeakCollection* peaks =
             gSession->experimentAt(_exp_combo->currentIndex())->experiment()
@@ -613,6 +604,17 @@ void SubframeIntegrate::toggleUnsafeWidgets()
             _integrate_button->setEnabled(false);
             _remove_overlaps->setEnabled(false);
         }
+    }
+
+    if (_integrator_strings.find(_integrator_combo->currentText().toStdString())->second
+        == nsx::IntegratorType::PixelSum) {
+        _integrate_button->setEnabled(true);
+        _interpolation_combo->setEnabled(false);
+        _radius_int->setEnabled(false);
+        _n_frames_int->setEnabled(false);
+        _min_neighbours->setEnabled(false);
+        _assign_peak_shapes->setEnabled(false);
+        _build_shape_lib_button->setEnabled(false);
     }
 }
 
