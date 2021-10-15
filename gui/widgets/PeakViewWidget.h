@@ -15,6 +15,8 @@
 #ifndef NSX_GUI_UTILITY_PEAKVIEWWIDGET_H
 #define NSX_GUI_UTILITY_PEAKVIEWWIDGET_H
 
+#include "gui/utility/LinkedComboBox.h"
+
 #include <QGridLayout>
 
 class QCheckBox;
@@ -33,7 +35,7 @@ class PeakViewWidget : public QGridLayout {
         QCheckBox* drawBoxes;
         QCheckBox* drawBkg;
         QCheckBox* drawIntegrationRegion;
-        QCheckBox* fixedIntegrationRegion;
+        LinkedComboBox* regionType;
         QSpinBox* sizePeaks;
         QDoubleSpinBox* alphaIntegrationRegion;
         ColorButton* colorPeaks;
@@ -63,6 +65,7 @@ class PeakViewWidget : public QGridLayout {
     QCheckBox* addCheckBox(int row, int col, const QString& text, Qt::CheckState state);
     QSpinBox* addSpinBox(int row, int value);
     QDoubleSpinBox* addDoubleSpinBox(int row, double value);
+    LinkedComboBox* addCombo(int row, ComboType combo_type);
     ColorButton* addColorButton(int row, int col, const QColor& color);
 
     double _peak_end;

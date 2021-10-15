@@ -25,15 +25,15 @@ namespace nsx {
 void IntegrationParameters::log(const Level& level) const
 {
     nsxlog(level, "Integration parameters:");
-    nsxlog(level, "peak_end                 = ", peak_end);
-    nsxlog(level, "bkg_begin                = ", bkg_begin);
-    nsxlog(level, "bkg_end                  = ", bkg_end);
-    nsxlog(level, "neighbour_range_pixels   = ", neighbour_range_pixels);
-    nsxlog(level, "neighbour_range_frames   = ", neighbour_range_frames);
-    nsxlog(level, "fit_center               = ", fit_center);
-    nsxlog(level, "fit_cov                  = ", fit_cov);
-    nsxlog(level, "integrator_type          = ", static_cast<int>(integrator_type));
-    nsxlog(level, "fixed_integration_region = ", fixed_integration_region);
+    nsxlog(level, "peak_end               = ", peak_end);
+    nsxlog(level, "bkg_begin              = ", bkg_begin);
+    nsxlog(level, "bkg_end                = ", bkg_end);
+    nsxlog(level, "neighbour_range_pixels = ", neighbour_range_pixels);
+    nsxlog(level, "neighbour_range_frames = ", neighbour_range_frames);
+    nsxlog(level, "fit_center             = ", fit_center);
+    nsxlog(level, "fit_cov                = ", fit_cov);
+    nsxlog(level, "integrator_type        = ", static_cast<int>(integrator_type));
+    nsxlog(level, "region_type            = ", static_cast<int>(region_type));
 }
 
 IPeakIntegrator::IPeakIntegrator()
@@ -89,7 +89,7 @@ void IPeakIntegrator::integrate(
                 peak,
                 IntegrationRegion(
                     peak, _params.peak_end, _params.bkg_begin, _params.bkg_end,
-                    _params.fixed_integration_region)));
+                    _params.region_type)));
             integrated.emplace(std::make_pair(peak, false));
         } catch (...) {
             peak->setSelected(false);

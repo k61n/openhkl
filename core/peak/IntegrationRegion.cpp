@@ -27,16 +27,40 @@ IntegrationRegion::IntegrationRegion()
 }
 
 IntegrationRegion::IntegrationRegion(
-    Peak3D* peak, double peak_end, double bkg_begin, double bkg_end, bool fixed /* = false */)
-    : _bkgBegin(bkg_begin), _bkgEnd(bkg_end), _data(peak), _fixed(fixed)
+    Peak3D* peak, double peak_end, double bkg_begin, double bkg_end,
+    RegionType region_type /* = RegionType::VariableEllipsoid */)
+    : _bkgBegin(bkg_begin), _bkgEnd(bkg_end), _data(peak), _regionType(region_type)
 {
-    if (_fixed) {
-        _shape = Ellipsoid(peak->shape().center(), peak_end);
-        _pixelRadius = peak_end;
-        _peakEnd = 1.0;
-    } else {
-        _shape = peak->shape();
-        _peakEnd = peak_end;
+    switch (_regionType) {
+        case RegionType::VariableEllipsoid: {
+            _shape = peak->shape();
+            _peakEnd = peak_end;
+            _fixed = false;
+            break;
+        }
+        case RegionType::FixedEllipsoid: {
+            // scale the ellipsoid to the volume of a unit sphere (in pixels)
+            _shape = peak->shape();
+            double volume = _shape.volume();
+            static constexpr double c = 4.0 * M_PI / 3.0;
+            _shape.scale(cbrt(c / volume));
+            _pixelRadius = peak_end;
+            _peakEnd = 1.0;
+            _fixed = true;
+            break;
+        }
+        case RegionType::FixedSphere: {
+            // unit sphere (pixels)
+            _shape = Ellipsoid(peak->shape().center(), peak_end);
+            _pixelRadius = peak_end;
+            _peakEnd = 1.0;
+            _fixed = true;
+            break;
+        }
+        default: {
+            throw std::runtime_error("Invalid RegionType");
+            break;
+        }
     }
 
     Ellipsoid bkg(_shape);

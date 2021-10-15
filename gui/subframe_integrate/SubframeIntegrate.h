@@ -117,7 +117,7 @@ class SubframeIntegrate : public QWidget {
 
     // Integration region
     Spoiler* _integration_region_box;
-    QCheckBox* _fixed_integration_region;
+    LinkedComboBox* _integration_region_type;
     SafeDoubleSpinBox* _peak_end;
     SafeDoubleSpinBox* _bkg_begin;
     SafeDoubleSpinBox* _bkg_end;

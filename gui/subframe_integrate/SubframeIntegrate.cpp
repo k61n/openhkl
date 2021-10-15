@@ -16,6 +16,7 @@
 #include "gui/subframe_integrate/SubframeIntegrate.h"
 
 #include "core/experiment/Experiment.h"
+#include "core/peak/IntegrationRegion.h"
 #include "core/peak/Peak3D.h"
 #include "gui/MainWin.h" // gGui
 #include "gui/subwindows/DetectorWindow.h"
@@ -258,11 +259,14 @@ void SubframeIntegrate::grabIntegrationParameters()
     _fit_center->setChecked(params->fit_center);
     _fit_covariance->setChecked(params->fit_cov);
     _min_neighbours->setValue(params->min_neighbors);
-    _fixed_integration_region->setChecked(params->fixed_integration_region);
 
     for (auto it = _integrator_strings.begin(); it != _integrator_strings.end(); ++it)
         if (it->second == params->integrator_type)
             _integrator_combo->setCurrentText(QString::fromStdString(it->first));
+
+    for (auto it = nsx::regionTypeDescription.begin(); it != nsx::regionTypeDescription.end(); ++it)
+        if (it->first == params->region_type)
+            _integration_region_type->setCurrentText(QString::fromStdString(it->second));
 }
 
 void SubframeIntegrate::setIntegrationParameters()
@@ -282,9 +286,13 @@ void SubframeIntegrate::setIntegrationParameters()
     params->fit_center = _fit_center->isChecked();
     params->fit_cov = _fit_covariance->isChecked();
     params->min_neighbors = _min_neighbours->value();
-    params->fixed_integration_region = _fixed_integration_region->isChecked();
+    params->region_type = static_cast<nsx::RegionType>(_integration_region_type->currentIndex());
     params->integrator_type =
         _integrator_strings.find(_integrator_combo->currentText().toStdString())->second;
+
+    for (auto it = nsx::regionTypeDescription.begin(); it != nsx::regionTypeDescription.end(); ++it)
+        if (it->second == _integration_region_type->currentText().toStdString())
+            params->region_type = it->first;
 }
 
 void SubframeIntegrate::setIntegrationRegionUp()
@@ -292,10 +300,15 @@ void SubframeIntegrate::setIntegrationRegionUp()
     _integration_region_box = new Spoiler("Integration region");
     GridFiller f(_integration_region_box, true);
 
-    _fixed_integration_region = f.addCheckBox(
-        "Fixed integration region",
+    _integration_region_type = f.addLinkedCombo(
+        ComboType::RegionType,
+        "Integration region type",
         "<font>Specify integration region in Pixels (peak end), and"
-        "scaling factors for background region (bkg begin, bkg end)</font>", 1);
+        "scaling factors for background region (bkg begin, bkg end)</font>");
+    for (int i = 0; i < static_cast<int>(nsx::RegionType::Count); ++i)
+        for (const auto& [key, val] : nsx::regionTypeDescription)
+            if (i == static_cast<int>(key))
+                _integration_region_type->addItem(QString::fromStdString(val));
 
     _peak_end = f.addDoubleSpinBox("Peak end", "(sigmas) - scaling factor for peak region");
 
@@ -317,8 +330,9 @@ void SubframeIntegrate::setIntegrationRegionUp()
     _left_layout->addWidget(_integration_region_box);
 
     connect(
-        _fixed_integration_region, &QCheckBox::stateChanged, this,
-        &SubframeIntegrate::refreshPeakVisual);
+        _integration_region_type,
+        static_cast<void (LinkedComboBox::*)(int)>(&LinkedComboBox::currentIndexChanged),
+        this, &SubframeIntegrate::refreshPeakVisual);
 }
 
 void SubframeIntegrate::setIntegrateUp()
@@ -420,8 +434,8 @@ void SubframeIntegrate::setPreviewUp()
         _peak_view_widget->set1.bkgEnd, qOverload<double>(&QDoubleSpinBox::valueChanged), _bkg_end,
         &QDoubleSpinBox::setValue);
     connect(
-        _peak_view_widget->set1.fixedIntegrationRegion, &QCheckBox::stateChanged,
-        _fixed_integration_region, &QCheckBox::setChecked);
+        _integration_region_type, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
+        this, &SubframeIntegrate::refreshPeakVisual);
     connect(
         _peak_end, qOverload<double>(&QDoubleSpinBox::valueChanged),
         _peak_view_widget->set1.peakEnd, &QDoubleSpinBox::setValue);

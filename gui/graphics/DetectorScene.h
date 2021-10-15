@@ -87,7 +87,9 @@ class DetectorScene : public QGraphicsScene {
     //! Refresh the overlay displaying integration regions
     void refreshIntegrationOverlay();
     //! Generate a mask of integration regions (a matrix of integers classifying pixels)
-    void getIntegrationMask(PeakCollectionModel* model, Eigen::MatrixXi& mask, bool fixed);
+    void getIntegrationMask(
+        PeakCollectionModel* model, Eigen::MatrixXi& mask,
+        nsx::RegionType region_type = nsx::RegionType::VariableEllipsoid);
     //! Convert the mask to a QImage with the given colours
     QImage* getIntegrationRegionImage(const Eigen::MatrixXi& mask, QColor& peak, QColor& bkg);
     //! Remove integration overlays from the DetectorScene
@@ -228,9 +230,9 @@ class DetectorScene : public QGraphicsScene {
     //! Toggle preview of integration region rather than using regions defined from peaks
     bool _preview_int_regions_1;
     bool _preview_int_regions_2;
-    //! Toggle fixed integration region
-    bool _fixed_int_regions_1;
-    bool _fixed_int_regions_2;
+    //! Integration region types
+    nsx::RegionType _int_region_type_1;
+    nsx::RegionType _int_region_type_2;
     //! Integration Region bounds
     double _peak_end_1;
     double _bkg_begin_1;
