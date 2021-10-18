@@ -20,6 +20,19 @@
 
 namespace nsx {
 
+enum class RegionType {
+    VariableEllipsoid,
+    FixedEllipsoid,
+    FixedSphere,
+    Count
+};
+
+const std::map<RegionType, std::string> regionTypeDescription{
+    {RegionType::VariableEllipsoid, "Variable ellipsoid"},
+    {RegionType::FixedEllipsoid, "Fixed ellipsoid"},
+    {RegionType::FixedSphere, "Fixed sphere"}
+};
+
 //! Used to construct a peak integration region.
 
 class IntegrationRegion {
@@ -31,7 +44,9 @@ class IntegrationRegion {
 
     IntegrationRegion(IntegrationRegion&& other) = default;
 
-    IntegrationRegion(Peak3D* peak, double peak_end, double bkg_begin, double bkg_end);
+    IntegrationRegion(
+        Peak3D* peak, double peak_end, double bkg_begin, double bkg_end,
+        RegionType region_type = RegionType::VariableEllipsoid);
 
     //! Update the integration mask of the detector (peak, background, forbiddgen
     //! zones)
@@ -64,6 +79,10 @@ class IntegrationRegion {
     double _bkgEnd;
     PeakData _data;
     ConvexHull _hull;
+    bool _fixed;
+    double _pixelRadius;
+
+    RegionType _regionType;
 };
 
 } // namespace nsx

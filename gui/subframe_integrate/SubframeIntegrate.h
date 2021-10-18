@@ -69,7 +69,9 @@ class SubframeIntegrate : public QWidget {
     void updateDatasetList();
     //! Update the unit cell list on experment change
     void updateUnitCellList();
-    //! Set up reintegration spoiler
+    //! Set up integration region spoiler
+    void setIntegrationRegionUp();
+    //! Set up integration spoiler
     void setIntegrateUp();
     //! Set up the peak view widget
     void setPreviewUp();
@@ -113,15 +115,19 @@ class SubframeIntegrate : public QWidget {
     LinkedComboBox* _int_peak_combo;
     LinkedComboBox* _data_combo;
 
+    // Integration region
+    Spoiler* _integration_region_box;
+    LinkedComboBox* _integration_region_type;
+    SafeDoubleSpinBox* _peak_end;
+    SafeDoubleSpinBox* _bkg_begin;
+    SafeDoubleSpinBox* _bkg_end;
+
     Spoiler* _integrate_box;
     QComboBox* _integrator_combo;
     QComboBox* _interpolation_combo;
     SafeSpinBox* _min_neighbours;
     SafeDoubleSpinBox* _radius;
     SafeDoubleSpinBox* _n_frames;
-    SafeDoubleSpinBox* _peak_end;
-    SafeDoubleSpinBox* _bkg_begin;
-    SafeDoubleSpinBox* _bkg_end;
     QCheckBox* _remove_overlaps;
     SafeDoubleSpinBox* _radius_int;
     SafeDoubleSpinBox* _n_frames_int;

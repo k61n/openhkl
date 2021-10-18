@@ -26,6 +26,7 @@ enum class ComboType {
     PeakCollection,
     FoundPeaks,
     PredictedPeaks,
+    RegionType,
     Count
 };
 

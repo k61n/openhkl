@@ -14,6 +14,10 @@
 //  ***********************************************************************************************
 
 #include "gui/widgets/PeakViewWidget.h"
+
+#include "core/peak/IntegrationRegion.h"
+#include "gui/MainWin.h" // gGui
+#include "gui/connect/Sentinel.h"
 #include "gui/utility/ColorButton.h"
 
 #include <QCheckBox>
@@ -77,6 +81,17 @@ QDoubleSpinBox* PeakViewWidget::addDoubleSpinBox(int row, double value)
     return spinbox;
 }
 
+LinkedComboBox* PeakViewWidget::addCombo(int row, ComboType combo_type)
+{
+    auto* combo = new LinkedComboBox(combo_type, gGui->sentinel);
+    addWidget(combo, row, 1, 1, 1);
+    connect(
+        combo, static_cast<void (LinkedComboBox::*)(int)>(&LinkedComboBox::currentIndexChanged),
+        this, &PeakViewWidget::settingsChanged);
+
+    return combo;
+}
+
 ColorButton* PeakViewWidget::addColorButton(int row, int col, const QColor& color)
 {
     auto btn = new ColorButton(color);
@@ -109,6 +124,14 @@ void PeakViewWidget::addIntegrationRegion(Set& set, const QColor& peak, const QC
     addLabel(row, "Show:");
     set.drawIntegrationRegion =
         addCheckBox(row++, 1, "Integration region", Qt::CheckState::Unchecked);
+    set.regionType =
+        addCombo(row++, ComboType::RegionType);
+
+    for (int i = 0; i < static_cast<int>(nsx::RegionType::Count); ++i)
+        for (const auto& [key, val] : nsx::regionTypeDescription)
+            if (i == static_cast<int>(key))
+                set.regionType->addItem(QString::fromStdString(val));
+
     addLabel(row, "Alpha");
     set.alphaIntegrationRegion = addDoubleSpinBox(row++, 0.2);
     set.alphaIntegrationRegion->setMaximum(1.0);
@@ -119,7 +142,7 @@ void PeakViewWidget::addIntegrationRegion(Set& set, const QColor& peak, const QC
         addCheckBox(row++, 1, "Preview Integration Region", Qt::CheckState::Unchecked);
     addLabel(row, "Peak end");
     set.peakEnd = addDoubleSpinBox(row++, _peak_end);
-    set.peakEnd->setMaximum(10.0);
+    set.peakEnd->setMaximum(50.0);
     addLabel(row, "Background begin");
     set.bkgBegin = addDoubleSpinBox(row++, _bkg_begin);
     set.bkgBegin->setMaximum(10.0);

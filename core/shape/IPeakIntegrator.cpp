@@ -33,6 +33,7 @@ void IntegrationParameters::log(const Level& level) const
     nsxlog(level, "fit_center             = ", fit_center);
     nsxlog(level, "fit_cov                = ", fit_cov);
     nsxlog(level, "integrator_type        = ", static_cast<int>(integrator_type));
+    nsxlog(level, "region_type            = ", static_cast<int>(region_type));
 }
 
 IPeakIntegrator::IPeakIntegrator()
@@ -86,7 +87,9 @@ void IPeakIntegrator::integrate(
             // IntegrationRegion constructor may throw (e.g. peak on boundary of image)
             regions.emplace(std::make_pair(
                 peak,
-                IntegrationRegion(peak, _params.peak_end, _params.bkg_begin, _params.bkg_end)));
+                IntegrationRegion(
+                    peak, _params.peak_end, _params.bkg_begin, _params.bkg_end,
+                    _params.region_type)));
             integrated.emplace(std::make_pair(peak, false));
         } catch (...) {
             peak->setSelected(false);

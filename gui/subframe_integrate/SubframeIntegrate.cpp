@@ -16,6 +16,7 @@
 #include "gui/subframe_integrate/SubframeIntegrate.h"
 
 #include "core/experiment/Experiment.h"
+#include "core/peak/IntegrationRegion.h"
 #include "core/peak/Peak3D.h"
 #include "gui/MainWin.h" // gGui
 #include "gui/subwindows/DetectorWindow.h"
@@ -51,6 +52,7 @@ SubframeIntegrate::SubframeIntegrate() : QWidget()
     _left_layout = new QVBoxLayout();
 
     setInputUp();
+    setIntegrationRegionUp();
     setIntegrateUp();
     setPreviewUp();
     setFigureUp();
@@ -261,6 +263,10 @@ void SubframeIntegrate::grabIntegrationParameters()
     for (auto it = _integrator_strings.begin(); it != _integrator_strings.end(); ++it)
         if (it->second == params->integrator_type)
             _integrator_combo->setCurrentText(QString::fromStdString(it->first));
+
+    for (auto it = nsx::regionTypeDescription.begin(); it != nsx::regionTypeDescription.end(); ++it)
+        if (it->first == params->region_type)
+            _integration_region_type->setCurrentText(QString::fromStdString(it->second));
 }
 
 void SubframeIntegrate::setIntegrationParameters()
@@ -280,8 +286,53 @@ void SubframeIntegrate::setIntegrationParameters()
     params->fit_center = _fit_center->isChecked();
     params->fit_cov = _fit_covariance->isChecked();
     params->min_neighbors = _min_neighbours->value();
+    params->region_type = static_cast<nsx::RegionType>(_integration_region_type->currentIndex());
     params->integrator_type =
         _integrator_strings.find(_integrator_combo->currentText().toStdString())->second;
+
+    for (auto it = nsx::regionTypeDescription.begin(); it != nsx::regionTypeDescription.end(); ++it)
+        if (it->second == _integration_region_type->currentText().toStdString())
+            params->region_type = it->first;
+}
+
+void SubframeIntegrate::setIntegrationRegionUp()
+{
+    _integration_region_box = new Spoiler("Integration region");
+    GridFiller f(_integration_region_box, true);
+
+    _integration_region_type = f.addLinkedCombo(
+        ComboType::RegionType,
+        "Integration region type",
+        "<font>Specify integration region in Pixels (peak end), and"
+        "scaling factors for background region (bkg begin, bkg end)</font>");
+    for (int i = 0; i < static_cast<int>(nsx::RegionType::Count); ++i)
+        for (const auto& [key, val] : nsx::regionTypeDescription)
+            if (i == static_cast<int>(key))
+                _integration_region_type->addItem(QString::fromStdString(val));
+
+    _peak_end = f.addDoubleSpinBox("Peak end", "(sigmas) - scaling factor for peak region");
+
+    _bkg_begin =
+        f.addDoubleSpinBox("Bkg begin:", "(sigmas) - scaling factor for lower limit of background");
+
+    _bkg_end =
+        f.addDoubleSpinBox("Bkg end:", "(sigmas) - scaling factor for upper limit of background");
+
+    _peak_end->setMaximum(20);
+    _peak_end->setDecimals(2);
+
+    _bkg_begin->setMaximum(10);
+    _bkg_begin->setDecimals(2);
+
+    _bkg_end->setMaximum(10);
+    _bkg_end->setDecimals(2);
+
+    _left_layout->addWidget(_integration_region_box);
+
+    connect(
+        _integration_region_type,
+        static_cast<void (LinkedComboBox::*)(int)>(&LinkedComboBox::currentIndexChanged),
+        this, &SubframeIntegrate::refreshPeakVisual);
 }
 
 void SubframeIntegrate::setIntegrateUp()
@@ -303,14 +354,6 @@ void SubframeIntegrate::setIntegrateUp()
 
     _fit_covariance = f.addCheckBox(
         "Fit the covariance", "Allow the peak covariance matrix to vary during integration", 1);
-
-    _peak_end = f.addDoubleSpinBox("Peak end", "(sigmas) - scaling factor for peak region");
-
-    _bkg_begin =
-        f.addDoubleSpinBox("Bkg begin:", "(sigmas) - scaling factor for lower limit of background");
-
-    _bkg_end =
-        f.addDoubleSpinBox("Bkg end:", "(sigmas) - scaling factor for upper limit of background");
 
     _radius_int =
         f.addDoubleSpinBox("Search radius:", "(pixels) - neighbour search radius in pixels");
@@ -338,15 +381,6 @@ void SubframeIntegrate::setIntegrateUp()
     _interpolation_combo->addItem("None");
     _interpolation_combo->addItem("Inverse distance");
     _interpolation_combo->addItem("Intensity");
-
-    _peak_end->setMaximum(10);
-    _peak_end->setDecimals(2);
-
-    _bkg_begin->setMaximum(10);
-    _bkg_begin->setDecimals(2);
-
-    _bkg_end->setMaximum(10);
-    _bkg_end->setDecimals(2);
 
     _radius_int->setMaximum(1000);
     _radius_int->setDecimals(2);
@@ -397,8 +431,11 @@ void SubframeIntegrate::setPreviewUp()
         _peak_view_widget->set1.bkgBegin, qOverload<double>(&QDoubleSpinBox::valueChanged),
         _bkg_begin, &QDoubleSpinBox::setValue);
     connect(
-        _peak_view_widget->set1.bkgEnd, qOverload<double>(&QDoubleSpinBox::valueChanged), _bkg_end,
-        &QDoubleSpinBox::setValue);
+        _peak_view_widget->set1.bkgEnd, qOverload<double>(&QDoubleSpinBox::valueChanged),
+        _bkg_end, &QDoubleSpinBox::setValue);
+    connect(
+        _peak_view_widget->set1.regionType, &QComboBox::currentTextChanged,
+        _integration_region_type, &QComboBox::setCurrentText);
     connect(
         _peak_end, qOverload<double>(&QDoubleSpinBox::valueChanged),
         _peak_view_widget->set1.peakEnd, &QDoubleSpinBox::setValue);
@@ -406,8 +443,11 @@ void SubframeIntegrate::setPreviewUp()
         _bkg_begin, qOverload<double>(&QDoubleSpinBox::valueChanged),
         _peak_view_widget->set1.bkgBegin, &QDoubleSpinBox::setValue);
     connect(
-        _bkg_end, qOverload<double>(&QDoubleSpinBox::valueChanged), _peak_view_widget->set1.bkgEnd,
-        &QDoubleSpinBox::setValue);
+        _bkg_end, qOverload<double>(&QDoubleSpinBox::valueChanged),
+        _peak_view_widget->set1.bkgEnd, &QDoubleSpinBox::setValue);
+    connect(
+        _integration_region_type, &QComboBox::currentTextChanged,
+        _peak_view_widget->set1.regionType, &QComboBox::setCurrentText);
 
     _left_layout->addWidget(preview_spoiler);
 }

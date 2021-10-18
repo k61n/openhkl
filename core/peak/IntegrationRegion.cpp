@@ -27,9 +27,47 @@ IntegrationRegion::IntegrationRegion()
 }
 
 IntegrationRegion::IntegrationRegion(
-    Peak3D* peak, double peak_end, double bkg_begin, double bkg_end)
-    : _shape(peak->shape()), _peakEnd(peak_end), _bkgBegin(bkg_begin), _bkgEnd(bkg_end), _data(peak)
+    Peak3D* peak, double peak_end, double bkg_begin, double bkg_end,
+    RegionType region_type /* = RegionType::VariableEllipsoid */)
+    : _bkgBegin(bkg_begin), _bkgEnd(bkg_end), _data(peak), _regionType(region_type)
 {
+    switch (_regionType) {
+        case RegionType::VariableEllipsoid: {
+            _shape = peak->shape();
+            _peakEnd = peak_end;
+            _fixed = false;
+            break;
+        }
+        case RegionType::FixedEllipsoid: {
+            // scale the ellipsoid to the volume of a unit sphere (in pixels)
+            _shape = peak->shape();
+            const double r = _shape.radii().sum() / 3.0;
+            if (!std::isnan(r)) { // Eigensolver to compute radii can fail, resulting in NaN
+                _shape.scale(peak_end / r);
+            } else {
+                peak->setRejectionFlag(RejectionFlag::InvalidRegion);
+                peak->setSelected(false);
+            }
+            _pixelRadius = peak_end;
+            _peakEnd = 1.0;
+            _fixed = true;
+            break;
+        }
+        case RegionType::FixedSphere: {
+            // unit sphere (pixels)
+            _shape = Ellipsoid(peak->shape().center(), peak_end);
+            _pixelRadius = peak_end;
+            _peakEnd = 1.0;
+            _fixed = true;
+            break;
+        }
+        default: {
+            peak->setRejectionFlag(RejectionFlag::InvalidRegion);
+            peak->setSelected(false);
+            break;
+        }
+    }
+
     Ellipsoid bkg(_shape);
     bkg.scale(_bkgEnd);
     auto aabb = bkg.aabb();
@@ -56,7 +94,8 @@ const AABB& IntegrationRegion::aabb() const
 AABB IntegrationRegion::peakBB() const
 {
     Ellipsoid peakShape = _shape;
-    peakShape.scale(_peakEnd);
+    if (!_fixed)
+        peakShape.scale(_peakEnd);
     return peakShape.aabb();
 }
 
@@ -107,16 +146,32 @@ void IntegrationRegion::updateMask(Eigen::MatrixXi& mask, double z) const
 IntegrationRegion::EventType IntegrationRegion::classify(const DetectorEvent& ev) const
 {
     Eigen::Vector3d p(ev.px, ev.py, ev.frame);
-    p -= _shape.center();
-    const double rr = p.dot(_shape.metric() * p);
 
-    if (rr <= _peakEnd * _peakEnd)
-        return EventType::PEAK;
-    if (rr > _bkgEnd * _bkgEnd)
-        return EventType::EXCLUDED;
-    if (rr >= _bkgBegin * _bkgBegin)
-        return EventType::BACKGROUND;
-    return EventType::FORBIDDEN;
+    if (_fixed) {
+        Ellipsoid bb(_shape);
+        Ellipsoid be(_shape);
+        bb.scale(_bkgBegin);
+        be.scale(_bkgEnd);
+
+        if (_shape.isInside(p))
+            return EventType::PEAK;
+        else if (bb.isInside(p))
+            return EventType::FORBIDDEN;
+        else if (be.isInside(p))
+            return EventType::BACKGROUND;
+        else
+            return EventType::EXCLUDED;
+    } else {
+        p -= _shape.center();
+        const double rr = p.dot(_shape.metric() * p);
+        if (rr <= _peakEnd * _peakEnd)
+            return EventType::PEAK;
+        if (rr > _bkgEnd * _bkgEnd)
+            return EventType::EXCLUDED;
+        if (rr >= _bkgBegin * _bkgBegin)
+            return EventType::BACKGROUND;
+        return EventType::FORBIDDEN;
+    }
 }
 
 bool IntegrationRegion::advanceFrame(
