@@ -41,9 +41,13 @@ IntegrationRegion::IntegrationRegion(
         case RegionType::FixedEllipsoid: {
             // scale the ellipsoid to the volume of a unit sphere (in pixels)
             _shape = peak->shape();
-            double volume = _shape.volume();
-            static constexpr double c = 4.0 * M_PI / 3.0;
-            _shape.scale(cbrt(c / volume));
+            const double r = _shape.radii().sum() / 3.0;
+            if (!std::isnan(r)) { // Eigensolver to compute radii can fail, resulting in NaN
+                _shape.scale(peak_end / r);
+            } else {
+                peak->setRejectionFlag(RejectionFlag::InvalidRegion);
+                peak->setSelected(false);
+            }
             _pixelRadius = peak_end;
             _peakEnd = 1.0;
             _fixed = true;
@@ -58,7 +62,8 @@ IntegrationRegion::IntegrationRegion(
             break;
         }
         default: {
-            throw std::runtime_error("Invalid RegionType");
+            peak->setRejectionFlag(RejectionFlag::InvalidRegion);
+            peak->setSelected(false);
             break;
         }
     }
