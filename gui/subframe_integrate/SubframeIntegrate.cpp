@@ -318,7 +318,7 @@ void SubframeIntegrate::setIntegrationRegionUp()
     _bkg_end =
         f.addDoubleSpinBox("Bkg end:", "(sigmas) - scaling factor for upper limit of background");
 
-    _peak_end->setMaximum(50);
+    _peak_end->setMaximum(20);
     _peak_end->setDecimals(2);
 
     _bkg_begin->setMaximum(10);
@@ -431,17 +431,23 @@ void SubframeIntegrate::setPreviewUp()
         _peak_view_widget->set1.bkgBegin, qOverload<double>(&QDoubleSpinBox::valueChanged),
         _bkg_begin, &QDoubleSpinBox::setValue);
     connect(
-        _peak_view_widget->set1.bkgEnd, qOverload<double>(&QDoubleSpinBox::valueChanged), _bkg_end,
-        &QDoubleSpinBox::setValue);
+        _peak_view_widget->set1.bkgEnd, qOverload<double>(&QDoubleSpinBox::valueChanged),
+        _bkg_end, &QDoubleSpinBox::setValue);
     connect(
-        _integration_region_type, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
-        this, &SubframeIntegrate::refreshPeakVisual);
+        _peak_view_widget->set1.regionType, &QComboBox::currentTextChanged,
+        _integration_region_type, &QComboBox::setCurrentText);
     connect(
         _peak_end, qOverload<double>(&QDoubleSpinBox::valueChanged),
         _peak_view_widget->set1.peakEnd, &QDoubleSpinBox::setValue);
     connect(
         _bkg_begin, qOverload<double>(&QDoubleSpinBox::valueChanged),
         _peak_view_widget->set1.bkgBegin, &QDoubleSpinBox::setValue);
+    connect(
+        _bkg_end, qOverload<double>(&QDoubleSpinBox::valueChanged),
+        _peak_view_widget->set1.bkgEnd, &QDoubleSpinBox::setValue);
+    connect(
+        _integration_region_type, &QComboBox::currentTextChanged,
+        _peak_view_widget->set1.regionType, &QComboBox::setCurrentText);
 
     _left_layout->addWidget(preview_spoiler);
 }
