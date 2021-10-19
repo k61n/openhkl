@@ -40,9 +40,9 @@ class IntegrationRegion {
     //! Classify the type of detector event with respect to the current integration region
     enum class EventType : int { BACKGROUND = 1, PEAK = 2, FORBIDDEN = -1, EXCLUDED = 0 };
 
-    IntegrationRegion();
-
-    IntegrationRegion(IntegrationRegion&& other) = default;
+    IntegrationRegion() = delete;
+    IntegrationRegion(const IntegrationRegion& region) = delete;
+    IntegrationRegion(IntegrationRegion&& region) = default;
 
     IntegrationRegion(
         Peak3D* peak, double peak_end, double bkg_begin, double bkg_end,

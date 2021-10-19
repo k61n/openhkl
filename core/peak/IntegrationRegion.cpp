@@ -21,11 +21,6 @@
 
 namespace nsx {
 
-IntegrationRegion::IntegrationRegion()
-{
-    throw std::runtime_error("The default constructor of IntegrationRegion should no be called.");
-}
-
 IntegrationRegion::IntegrationRegion(
     Peak3D* peak, double peak_end, double bkg_begin, double bkg_end,
     RegionType region_type /* = RegionType::VariableEllipsoid */)
