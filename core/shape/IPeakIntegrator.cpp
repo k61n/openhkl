@@ -79,26 +79,25 @@ void IPeakIntegrator::integrate(
     size_t idx = 0;
     int num_frames_done = 0;
 
-    std::map<Peak3D*, IntegrationRegion> regions;
+    std::map<Peak3D*, std::unique_ptr<IntegrationRegion>> regions;
     std::map<Peak3D*, bool> integrated;
 
     for (auto peak : peaks) {
-        try {
-            // IntegrationRegion constructor may throw (e.g. peak on boundary of image)
+        try { // Frame interpolation may throw
             regions.emplace(std::make_pair(
                 peak,
-                IntegrationRegion(
+                std::make_unique<IntegrationRegion>(
                     peak, _params.peak_end, _params.bkg_begin, _params.bkg_end,
                     _params.region_type)));
             integrated.emplace(std::make_pair(peak, false));
-        } catch (...) {
+        } catch (std::range_error& e) {
             peak->setSelected(false);
-            peak->setRejectionFlag(RejectionFlag::InvalidRegion);
+            peak->setRejectionFlag(RejectionFlag::InterpolationFailure);
             continue;
         }
 
         // ignore partials
-        auto bb = regions[peak].peakBB();
+        auto bb = regions.at(peak).get()->peakBB();
         auto data = peak->dataSet();
         auto lo = bb.lower();
         auto hi = bb.upper();
@@ -133,20 +132,22 @@ void IPeakIntegrator::integrate(
 
         for (auto peak : peaks) {
             assert(peak != nullptr);
-            assert(regions.find(peak) != regions.end());
-            regions[peak].updateMask(mask, idx);
+            auto* current_peak = regions.at(peak).get();
+            assert(current_peak != regions.end());
+            current_peak->updateMask(mask, idx);
         }
 
         for (auto peak : peaks) {
-            bool result = regions[peak].advanceFrame(current_frame, mask, idx);
+            auto* current_peak = regions.at(peak).get();
+            bool result = current_peak->advanceFrame(current_frame, mask, idx);
             // this allows for partials at end of data
             result |= idx == data->nFrames() - 1;
 
             // done reading peak data
             if (result && !integrated[peak]) {
-                regions[peak].peakData().computeStandard();
+                current_peak->peakData().computeStandard();
                 try {
-                    if (compute(peak, shape_collection, regions[peak])) {
+                    if (compute(peak, shape_collection, *current_peak)) {
                         peak->updateIntegration(
                             rockingCurve(), meanBackground(), integratedIntensity(),
                             _params.peak_end, _params.bkg_begin, _params.bkg_end);
@@ -163,7 +164,7 @@ void IPeakIntegrator::integrate(
                     peak->setRejectionFlag(RejectionFlag::IntegrationFailure);
                 }
                 // free memory (important!!)
-                regions[peak].reset();
+                current_peak->reset();
                 integrated[peak] = true;
             }
         }
