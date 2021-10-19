@@ -314,15 +314,13 @@ void PeakFilter::filterStrength(PeakCollection* peak_collection) const
     int nrejected = 0;
     for (int i = 0; i < peak_collection->numberOfPeaks(); ++i) {
         nsx::Peak3D* peak_ptr = peak_collection->getPeak(i);
-        Intensity corrected_intensity;
-        try {
-            corrected_intensity = peak_ptr->correctedIntensity();
-        } catch (std::range_error& e) {
-            nsxlog(Level::Debug, "PeakFilter::filterStrength: bad peak intensity; ", e.what());
+        Intensity corrected_intensity = peak_ptr->correctedIntensity();
+        if (!corrected_intensity.isValid()) {
             peak_ptr->rejectYou(true);
             ++nrejected;
             continue;
         }
+
         double intensity = corrected_intensity.value();
         double sigma = corrected_intensity.sigma();
 
@@ -363,18 +361,18 @@ void PeakFilter::filterDRange(PeakCollection* peak_collection) const
 {
     int nrejected = 0;
     for (int i = 0; i < peak_collection->numberOfPeaks(); ++i) {
-        nsx::Peak3D* peak_ptr = peak_collection->getPeak(i);
-        try {
-            auto q = peak_ptr->q();
-            double d = 1.0 / q.rowVector().norm();
-            if ((d >= _filter_params->d_min && d <= _filter_params->d_max))
-                peak_ptr->caughtYou(true);
-            else {
-                peak_ptr->rejectYou(true);
-                ++nrejected;
-            }
-        } catch (std::range_error& e) {
-            nsxlog(Level::Debug, "PeakFilter::filterDRange: bad peak intensity; ", e.what());
+        auto* peak_ptr = peak_collection->getPeak(i);
+        auto q = peak_ptr->q();
+        if (!q.isValid()) {
+            peak_ptr->rejectYou(true);
+            ++nrejected;
+            continue;
+        }
+
+        double d = 1.0 / q.rowVector().norm();
+        if ((d >= _filter_params->d_min && d <= _filter_params->d_max))
+            peak_ptr->caughtYou(true);
+        else {
             peak_ptr->rejectYou(true);
             ++nrejected;
         }

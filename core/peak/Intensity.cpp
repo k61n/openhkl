@@ -18,13 +18,16 @@
 
 namespace nsx {
 
-Intensity::Intensity(const double value, const double sigma2) : _value(value), _sigma2(sigma2)
+Intensity::Intensity() : _value(0), _sigma2(0), _valid(false) { }
+
+Intensity::Intensity(const double value, const double sigma2)
+    : _value(value)
+    , _sigma2(sigma2)
+    , _valid(true)
 {
     // Deal with invalid sigmas later so that we can diagnose the problem.
-    if (_sigma2 < 0.0 || std::isnan(_sigma2))
-        _sigma2 = 0.0;
-    if (std::isnan(value))
-        throw std::range_error("Attempting to assign NaN to Intensity::_value");
+    if (std::isnan(value) || _sigma2 < 0.0 || std::isnan(_sigma2))
+        _valid = false;
 }
 
 double Intensity::value() const
@@ -88,6 +91,11 @@ Intensity Intensity::operator/(const Intensity& other) const
 {
     const double d = 1.0 / other.value();
     return {_value * d, d * d * (_sigma2 + value() * other._sigma2)};
+}
+
+bool Intensity::isValid() const
+{
+    return _valid;
 }
 
 } // namespace nsx

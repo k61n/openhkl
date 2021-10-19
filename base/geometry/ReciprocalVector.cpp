@@ -18,9 +18,12 @@
 
 namespace nsx {
 
-ReciprocalVector::ReciprocalVector(double x, double y, double z) : _rvector(x, y, z) { }
+ReciprocalVector::ReciprocalVector() : _valid(false) { }
 
-ReciprocalVector::ReciprocalVector(const Eigen::RowVector3d& rvector) : _rvector(rvector) { }
+ReciprocalVector::ReciprocalVector(double x, double y, double z) : _rvector(x, y, z), _valid(true) { }
+
+ReciprocalVector::ReciprocalVector(const Eigen::RowVector3d& rvector)
+    : _rvector(rvector) , _valid(true) { }
 
 const Eigen::RowVector3d& ReciprocalVector::rowVector() const
 {
@@ -50,6 +53,11 @@ std::ostream& operator<<(std::ostream& os, const ReciprocalVector& rvector)
 {
     rvector.print(os);
     return os;
+}
+
+bool ReciprocalVector::isValid() const
+{
+    return _valid;
 }
 
 } // namespace nsx

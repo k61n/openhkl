@@ -31,4 +31,9 @@ DetectorEvent::DetectorEvent(Eigen::Vector3d x, double tof)
 {
 }
 
+bool DetectorEvent::isValid() const
+{
+    return _valid;
+}
+
 } // namespace nsx

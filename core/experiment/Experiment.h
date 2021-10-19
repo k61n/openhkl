@@ -105,8 +105,6 @@ class Experiment {
     //! Create a new peak collection from peaks caught by a filter
     void acceptFilter(
         std::string name, PeakCollection* collection, listtype lt = listtype::FILTERED);
-    //! Check for unphysical peaks in all collections
-    void checkPeakCollections();
     //! Duplicate a peak collection (deep copy) for comparison after some process
     void clonePeakCollection(std::string name, std::string new_name);
 

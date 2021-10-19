@@ -23,8 +23,11 @@ namespace nsx {
 
 class Intensity {
  public:
+    //! Construct a default *invalid* intensity
+    Intensity();
+
     //! Constructs an Intensity from its value and variance.
-    Intensity(const double value = 0.0, const double sigma2 = 0.0);
+    Intensity(const double value, const double sigma2 = 0.0);
 
     //! Returns the value of the Intensity
     double value() const;
@@ -57,11 +60,14 @@ class Intensity {
     Intensity& operator*=(double s);
     //! Divide the intensity, taking error into account
     Intensity operator/(const Intensity& other) const;
+    //! Whether the corrected intensity if valid (check for interpolation error)
+    bool isValid() const;
 
  private:
     static constexpr double _eps = 1.0e-8;
     double _value;
     double _sigma2;
+    bool _valid;
 };
 
 } // namespace nsx

@@ -146,38 +146,6 @@ std::string PeakCollection::name() const
     return std::string(_name);
 }
 
-void PeakCollection::printUnitCells() const
-{
-    std::vector<nsx::Peak3D*> peak_list = getPeakList();
-    int i = 1;
-    for (auto peak : peak_list) {
-        std::cout << i << " " << peak->unitCell()->toString() << std::endl;
-        i++;
-    }
-}
-
-void PeakCollection::checkCollection() const
-{
-    int n_nan = 0;
-    int n_zero = 0;
-    const double epsilon = 1.0e-8;
-    const std::vector<nsx::Peak3D*>& peak_list = getPeakList();
-    for (const auto* const peak : peak_list) {
-        try {
-            double I = peak->correctedIntensity().value();
-            if (std::fabs(I) < epsilon)
-                ++n_zero;
-        } catch (std::range_error& e) {
-            ++n_nan;
-        }
-    }
-    nsxlog(
-        Level::Info, "PeakCollection::checkCollection: peak collection '" + _name + "' contains:");
-    nsxlog(Level::Info, numberOfPeaks(), " peaks");
-    nsxlog(Level::Info, n_nan, " peaks with intensity NaN");
-    nsxlog(Level::Info, n_zero, " peaks with intensity zero");
-}
-
 void PeakCollection::computeSigmas()
 {
     Eigen::Matrix3d cov;

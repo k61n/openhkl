@@ -146,6 +146,9 @@ Intensity Peak3D::correctedIntensity() const
 {
     auto c = _shape.center();
     auto state = InterpolatedState::interpolate(_data->instrumentStates(), c[2]);
+    if (!state.isValid()) // Interpolation error
+        return Intensity();
+
     const double lorentz = state.lorentzFactor(c[0], c[1]);
     const double factor = _scale / lorentz / _transmission;
     return rawIntensity() * factor / state.stepSize;
@@ -242,6 +245,9 @@ ReciprocalVector Peak3D::q() const
     auto pixel_coords = _shape.center();
     auto state = InterpolatedState::interpolate(_data->instrumentStates(),
                                                 pixel_coords[2]);
+    if (!state.isValid()) // this is the source of many interpolation problems
+        return ReciprocalVector();
+
     const auto* detector = _data->diffractometer()->detector();
     auto detector_position =
         DirectVector(detector->pixelPosition(pixel_coords[0], pixel_coords[1]));
@@ -268,6 +274,10 @@ Ellipsoid Peak3D::qShape() const
 
     Eigen::Vector3d p = _shape.center();
     auto state = InterpolatedState::interpolate(_data->instrumentStates(), p[2]);
+    if (!state.isValid()) {
+        throw std::range_error("Interpolation error");
+    }
+
     Eigen::Vector3d q0 = q().rowVector();
 
     // Jacobian of map from detector coords to sample q space
@@ -343,9 +353,10 @@ const MillerIndex& Peak3D::hkl() const
 void Peak3D::setMillerIndices()
 {
     if (unitCell()) {
-        try {
+        ReciprocalVector rv = q();
+        if (rv.isValid()) {
             _hkl = MillerIndex(q(), *unitCell());
-        } catch (std::range_error& e) { // Catch interpolation error for last frame
+        } else {
             _hkl = {0, 0, 0};
             _selected = false;
             _rejection_flag = RejectionFlag::InterpolationFailure;

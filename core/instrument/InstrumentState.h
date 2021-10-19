@@ -64,6 +64,9 @@ class InstrumentState {
     //! Returns a const pointer to the diffractometer of the state
     const Diffractometer* diffractometer() const;
 
+    //! Returns whether the InstrumentState is valid
+    bool isValid() const;
+
  public:
     //! compute the sample orientation from fixed orientation and offset
     Eigen::Matrix3d detectorOrientationMatrix() const;
@@ -108,6 +111,9 @@ class InstrumentState {
     //! Pointer to the diffractometer whose state this object stores.
     //! The actual resource is not owned by this object which just borrows it.
     Diffractometer* _diffractometer;
+
+    //! The state may be invalid (usually because the interpolation has failed)
+    bool _valid;
 };
 
 using InstrumentStateList = std::vector<InstrumentState>;
