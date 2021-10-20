@@ -137,6 +137,7 @@ void IPeakIntegrator::integrate(
             current_peak->updateMask(mask, idx);
         }
 
+        #pragma omp parallel for
         for (auto peak : peaks) {
             auto* current_peak = regions.at(peak).get();
             bool result = current_peak->advanceFrame(current_frame, mask, idx);
@@ -159,6 +160,7 @@ void IPeakIntegrator::integrate(
                     // integration failed...
                     nsxlog(
                         Level::Debug, "IPeakIntegrator::integrate: integration failed: ", e.what());
+                    #pragma omp atomic
                     ++nfailures;
                     peak->setSelected(false);
                     peak->setRejectionFlag(RejectionFlag::IntegrationFailure);
