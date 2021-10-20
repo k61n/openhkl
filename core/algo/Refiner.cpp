@@ -214,9 +214,12 @@ bool Refiner::refine()
     if (_batches.empty())
         return false;
 
+    unsigned int failed_batches = 0;
+    #pragma omp parallel for
     for (auto&& batch : _batches) {
         if (!batch.refine(_params->max_iter))
-            return false;
+            #pragma omp atomic
+            ++failed_batches;
         else {
             if (_handler) {
                 std::ostringstream oss;
@@ -230,7 +233,10 @@ bool Refiner::refine()
         _handler->setProgress(100);
     _first_refine = false;
     logChange();
-    return true;
+    if (failed_batches > 0)
+        return false;
+    else
+        return true;
 }
 
 const std::vector<RefinementBatch>& Refiner::batches() const
