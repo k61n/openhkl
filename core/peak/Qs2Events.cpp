@@ -50,7 +50,7 @@ std::vector<DetectorEvent> algo::qVectorList2Events(
     #pragma omp parallel for
     for (const ReciprocalVector& sample_q : sample_qs) {
         std::vector<DetectorEvent> new_events = qVector2Events(sample_q, states, detector, n_intervals);
-        #pragma omp critical(dataupdata)
+        #pragma omp critical(dataupdate)
         {
         for (auto event : new_events)
             events.emplace_back(event);
