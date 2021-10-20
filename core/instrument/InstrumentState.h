@@ -30,6 +30,8 @@ class Diffractometer;
 //! State refers to any parameters which might change during the experiment:
 //! sample orientation, sample position, etc. States are initially loaded
 //! as metadata but can also be refined as part of the data treatment.
+//! Note that InstrumentState can be invalid (_valid = false) if interpolation
+//! fails
 
 class InstrumentState {
  public:

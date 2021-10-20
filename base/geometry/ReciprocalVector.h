@@ -23,6 +23,8 @@ namespace nsx {
 
 //! This class allows to enforce dimensional and C++-type consistency when
 //! dealing with vectors in algorithms dedicated to crystallographic data.
+//! Note that it can have an invalid state if frame interpolation fails
+//! (_valid = false)
 
 class ReciprocalVector {
  public:
