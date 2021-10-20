@@ -41,6 +41,9 @@ class DetectorEvent {
     double frame{-1};
     //! Time of flight, if applicable
     double tof{-1};
+
+ private:
+    bool _valid;
 };
 
 } // namespace nsx
