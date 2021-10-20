@@ -47,10 +47,14 @@ std::vector<DetectorEvent> algo::qVectorList2Events(
     }
 
     // for each sample q, determine the rotation that makes it intersect the Ewald sphere
+    #pragma omp parallel for
     for (const ReciprocalVector& sample_q : sample_qs) {
         std::vector<DetectorEvent> new_events = qVector2Events(sample_q, states, detector, n_intervals);
+        #pragma omp critical(dataupdata)
+        {
         for (auto event : new_events)
             events.emplace_back(event);
+        }
         if (handler)
             handler->setProgress(++count * 100.0 / sample_qs.size());
     }
