@@ -58,7 +58,7 @@ int nsx::UnitTest_DataSet::run()
         // auto lframe = std::lround(std::floor(frame));
     }
     std::cout << good_states << "/" << total_states << " good states" << std::endl;
-    CHECK(good_states == 2901);
+    CHECK(good_states == 3000);
     return 0;
 }
 
