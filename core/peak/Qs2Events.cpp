@@ -97,6 +97,9 @@ std::vector<DetectorEvent> algo::qVector2Events(
         InterpolatedState state0 = InterpolatedState::interpolate(states, f0);
         InterpolatedState state1 = InterpolatedState::interpolate(states, f1);
 
+        if (!(state0.isValid() && state1.isValid())) // interpolation failure
+            continue;
+
         bool s0 = compute_sign(q_vect, state0);
         bool s1 = compute_sign(q_vect, state1);
 
@@ -124,6 +127,8 @@ std::vector<DetectorEvent> algo::qVector2Events(
 
     for (const double& frame : roots) { // Generate an event for each frame value
         const auto state = InterpolatedState::interpolate(states, frame);
+        if (!state.isValid())
+            continue;
 
         Eigen::RowVector3d kf =
             state.ki().rowVector() + q_vect * state.sampleOrientationMatrix().transpose();
@@ -146,20 +151,18 @@ std::vector<DetectorEvent> algo::getDirectBeamEvents(
     std::vector<DetectorEvent> events;
     const int nframes = states.size();
     for (int frame = 0; frame < nframes; ++frame) { // Generate an event for each frame value
-        try {
-            const auto state = InterpolatedState::interpolate(states, frame);
-
-            Eigen::RowVector3d kf = state.ki().rowVector();
-            DetectorEvent event = detector.constructEvent(
-                DirectVector(state.samplePosition), ReciprocalVector(kf * state.detectorOrientation),
-                frame);
-            if (event.tof <= 0)
-                continue;
-
-            events.emplace_back(event);
-        } catch (std::range_error& e) {
+        const auto state = InterpolatedState::interpolate(states, frame);
+        if (!state.isValid())
             continue;
-        }
+
+        Eigen::RowVector3d kf = state.ki().rowVector();
+        DetectorEvent event = detector.constructEvent(
+            DirectVector(state.samplePosition), ReciprocalVector(kf * state.detectorOrientation),
+            frame);
+        if (event.tof <= 0)
+            continue;
+
+        events.emplace_back(event);
     }
     return events;
 }

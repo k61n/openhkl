@@ -56,8 +56,6 @@ class PeakHandler {
     //! Create a new collection of peaks caught by _peak_filter
     void acceptFilter(
         const std::string name, PeakCollection* collection, listtype lt = listtype::FILTERED);
-    //! Check peak collections for bad intensities
-    void checkPeakCollections();
     //! Deep copy a peak collection
     void clonePeakCollection(std::string name, std::string new_name);
 

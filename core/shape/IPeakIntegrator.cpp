@@ -83,18 +83,12 @@ void IPeakIntegrator::integrate(
     std::map<Peak3D*, bool> integrated;
 
     for (auto peak : peaks) {
-        try { // Frame interpolation may throw
-            regions.emplace(std::make_pair(
-                peak,
-                std::make_unique<IntegrationRegion>(
-                    peak, _params.peak_end, _params.bkg_begin, _params.bkg_end,
-                    _params.region_type)));
-            integrated.emplace(std::make_pair(peak, false));
-        } catch (std::range_error& e) {
-            peak->setSelected(false);
-            peak->setRejectionFlag(RejectionFlag::InterpolationFailure);
-            continue;
-        }
+        regions.emplace(std::make_pair(
+            peak,
+            std::make_unique<IntegrationRegion>(
+                peak, _params.peak_end, _params.bkg_begin, _params.bkg_end,
+                _params.region_type)));
+        integrated.emplace(std::make_pair(peak, false));
 
         // ignore partials
         auto bb = regions.at(peak).get()->peakBB();

@@ -92,11 +92,6 @@ class PeakCollection {
     //! Get the shape collection
     ShapeCollection* shapeCollection() const { return _shape_collection.get(); };
 
-    void printUnitCells() const;
-
-    //! Check the collection for unphysical  peaks
-    void checkCollection() const;
-
     //! Count selected peaks
     int countSelected() const;
     //! Count enabled peaks

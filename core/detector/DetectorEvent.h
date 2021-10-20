@@ -31,6 +31,8 @@ class DetectorEvent {
     //! Construct from a 3 vector
     explicit DetectorEvent(Eigen::Vector3d x, double tof = -1);
 
+    bool isValid() const;
+
     //! Detector x-coord
     double px{0};
     //! Detector y-coord
@@ -39,6 +41,9 @@ class DetectorEvent {
     double frame{-1};
     //! Time of flight, if applicable
     double tof{-1};
+
+ private:
+    bool _valid;
 };
 
 } // namespace nsx

@@ -30,7 +30,8 @@ class InterpolatedState : public InstrumentState {
     //! Default value needed for SWIG (note: nullptr does _not_ work)
     InterpolatedState(Diffractometer* diffractometer = nullptr);
     //! Construct by interpolation. The paramter t should be between 0 and 1.
-    InterpolatedState(const InstrumentState& s1, const InstrumentState& s2, double t);
+    InterpolatedState(
+        const InstrumentState& s1, const InstrumentState& s2, double t, bool valid = true);
     //! Compute the jacobian of the transformation (x,y,frame) -> q_sample
     Eigen::Matrix3d jacobianQ(double px, double py) const;
     //! Compute the Lorentz factor at the detector coordinates (px, py).

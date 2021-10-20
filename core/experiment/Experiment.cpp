@@ -406,11 +406,6 @@ void Experiment::acceptFilter(std::string name, PeakCollection* collection, list
     _peak_handler->acceptFilter(name, collection, lt);
 }
 
-void Experiment::checkPeakCollections()
-{
-    _peak_handler->checkPeakCollections();
-}
-
 void Experiment::clonePeakCollection(std::string name, std::string new_name)
 {
     _peak_handler->clonePeakCollection(name, new_name);

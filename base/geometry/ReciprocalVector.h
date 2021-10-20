@@ -23,10 +23,12 @@ namespace nsx {
 
 //! This class allows to enforce dimensional and C++-type consistency when
 //! dealing with vectors in algorithms dedicated to crystallographic data.
+//! Note that it can have an invalid state if frame interpolation fails
+//! (_valid = false)
 
 class ReciprocalVector {
  public:
-    ReciprocalVector() = default;
+    ReciprocalVector();
     ReciprocalVector(const ReciprocalVector& other) = default;
 
     //! Constructor from its 3 components
@@ -49,8 +51,11 @@ class ReciprocalVector {
     //! Print information about a ReciprocalVector to a stream
     void print(std::ostream& os) const;
 
+    bool isValid() const;
+
  private:
     Eigen::RowVector3d _rvector;
+    bool _valid;
 };
 
 //! Overload operator<< with ReciprocalVector type

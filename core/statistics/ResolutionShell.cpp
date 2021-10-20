@@ -44,8 +44,8 @@ ResolutionShell::ResolutionShell(double dmin, double dmax, size_t num_shells)
 void ResolutionShell::addPeak(Peak3D* peak)
 {
     // Not discarding peaks that are disabled yet because they are used to compute completeness
-    try {
-        auto q = peak->q();
+    auto q = peak->q();
+    if (q.isValid()) {
         const double d = 1.0 / q.rowVector().norm();
 
         double dmin;
@@ -58,7 +58,7 @@ void ResolutionShell::addPeak(Peak3D* peak)
                 return;
             }
         }
-    } catch (std::range_error& e) {
+    } else { // interpolation error
         return;
     }
 }

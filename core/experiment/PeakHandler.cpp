@@ -94,14 +94,6 @@ void PeakHandler::acceptFilter(std::string name, PeakCollection* collection, lis
     _peak_collections.insert_or_assign(name, std::move(ptr));
 }
 
-
-void PeakHandler::checkPeakCollections()
-{
-    for (const auto& [name, collection] : _peak_collections) {
-        collection->checkCollection();
-    }
-}
-
 void PeakHandler::clonePeakCollection(std::string name, std::string new_name)
 {
     addEmptyCollection(new_name, getPeakCollection(name)->type());

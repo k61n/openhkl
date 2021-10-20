@@ -26,30 +26,16 @@ namespace nsx {
 InterpolatedState::InterpolatedState(Diffractometer* diffractometer)
     : InstrumentState(diffractometer)
 {
+    _valid = false;
 }
 
-InterpolatedState InterpolatedState::interpolate(const InstrumentStateList& states,
-                                                 const double frame_idx)
+InterpolatedState::InterpolatedState(
+    const InstrumentState& s1, const InstrumentState& s2, double t, bool valid)
+    : InstrumentState(const_cast<Diffractometer*>(s1.diffractometer()))
+    , axis()
+    , stepSize()
 {
-    const std::size_t states_nr = states.size();
-    if (frame_idx > (states_nr - 2) || frame_idx < 0)
-        throw std::range_error(
-            "Error when interpolating state: invalid frame index: "
-            + std::to_string(frame_idx));
-
-    const std::size_t idx = std::size_t(std::lround(std::floor(frame_idx)));
-    const std::size_t next = std::min(idx + 1, states_nr - 1);
-
-    if (idx == next) // I *think* this only happens on the last frame of the data set - zamaan
-        throw std::range_error(
-            "InstrumentStateList::interpolate: Attempting to interpolate using 1 frame");
-
-    return InterpolatedState(states.at(idx), states.at(next), frame_idx - idx);
-}
-
-InterpolatedState::InterpolatedState(const InstrumentState& s1, const InstrumentState& s2, double t)
-    : InstrumentState(const_cast<Diffractometer*>(s1.diffractometer())), axis(), stepSize()
-{
+    _valid = valid;
     if (s1.diffractometer() != s2.diffractometer())
         throw std::runtime_error("Cannot interpolate states between different diffractometers");
 
@@ -79,6 +65,23 @@ InterpolatedState::InterpolatedState(const InstrumentState& s1, const Instrument
     const double cos_theta2 = q.w();
     const double sin_theta2 = q.vec().norm();
     stepSize = 2.0 * std::atan2(sin_theta2, cos_theta2);
+}
+
+InterpolatedState InterpolatedState::interpolate(const InstrumentStateList& states,
+                                                 const double frame_idx)
+{
+    bool valid = true;
+    const std::size_t states_nr = states.size();
+    if (frame_idx > (states_nr - 2) || frame_idx < 0)
+        valid = false;
+
+    const std::size_t idx = std::size_t(std::lround(std::floor(frame_idx)));
+    const std::size_t next = std::min(idx + 1, states_nr - 1);
+
+    if (idx == next) // I *think* this only happens on the last frame of the data set - zamaan
+        valid = false;
+
+    return InterpolatedState(states.at(idx), states.at(next), frame_idx - idx, valid);
 }
 
 Eigen::Matrix3d InterpolatedState::jacobianQ(double px, double py) const

@@ -154,5 +154,9 @@ InstrumentState InstrumentState::state(Diffractometer* const diffractometer,
     return state_;
 }
 
+bool InstrumentState::isValid() const
+{
+    return _valid;
+}
 
 } // namespace nsx

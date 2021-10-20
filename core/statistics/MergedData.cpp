@@ -84,21 +84,24 @@ bool MergedData::addPeak(Peak3D* peak)
         return false;
     }
     MergedPeak new_peak(_group, _friedel);
-    try {
-        new_peak.addPeak(peak);
-        auto it = _merged_peak_set.find(new_peak);
 
-        if (it != _merged_peak_set.end()) { // Found this peak in the set already
-            MergedPeak merged(*it);
-            merged.addPeak(peak);
-            _merged_peak_set.erase(it);
-            _merged_peak_set.emplace(std::move(merged));
-            return false;
-        }
-        _merged_peak_set.emplace(std::move(new_peak));
-    } catch (std::range_error& e) {
+    bool success = new_peak.addPeak(peak);
+    if (!success) { // Interpolation error check
         ++_nInvalid;
+        return false;
     }
+
+    auto it = _merged_peak_set.find(new_peak);
+
+    if (it != _merged_peak_set.end()) { // Found this peak in the set already
+        MergedPeak merged(*it);
+        merged.addPeak(peak);
+        _merged_peak_set.erase(it);
+        _merged_peak_set.emplace(std::move(merged));
+        return false;
+    }
+    _merged_peak_set.emplace(std::move(new_peak));
+
     return true;
 }
 
