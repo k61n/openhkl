@@ -84,7 +84,7 @@ class ShapeCollectionDialog : public QDialog {
     nsx::sptrUnitCell _unitCell;
     std::vector<nsx::Peak3D*> _peaks;
     std::set<nsx::sptrDataSet> _data;
-    nsx::Profile3D _profile;
+    std::optional<nsx::Profile3D> _profile;
     nsx::PeakCollection* _collection_ptr;
     std::shared_ptr<nsx::ShapeCollectionParameters> _params;
     double _maximum;

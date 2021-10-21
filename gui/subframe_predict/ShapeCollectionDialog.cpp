@@ -24,6 +24,7 @@
 #include "gui/frames/ProgressView.h"
 #include "gui/models/ColorMap.h"
 #include "gui/models/Session.h"
+#include "gui/MainWin.h" // gGui
 
 #include <QDebug>
 #include <QFormLayout>
@@ -340,36 +341,39 @@ void ShapeCollectionDialog::calculate()
 
     const nsx::DetectorEvent ev(_x->value(), _y->value(), _frame->value());
     // update maximum value, used for drawing
-    try {
-        _profile = _collection->meanProfile(
-            ev, params->neighbour_range_pixels, params->neighbour_range_frames);
-        _maximum = 0;
-
-        for (int i = 0; i < params->nbins_x; ++i) {
-            for (int j = 0; j < params->nbins_y; ++j) {
-                for (int k = 0; k < params->nbins_z; ++k)
-                    _maximum = std::max(_maximum, _profile(i, j, k));
-            }
-        }
-        drawFrame(_draw_frame->value()); // draw the updated frame
-    } catch (std::runtime_error& e) {
-        QMessageBox::critical(this, "Error", QString(e.what()));
+    _profile = _collection->meanProfile(
+        ev, params->neighbour_range_pixels, params->neighbour_range_frames);
+    if (!_profile) {
+        gGui->statusBar()->showMessage(
+            "Failed to calculate profile. Insufficient neighbouring peaks");
+        return;
     }
+    _maximum = 0;
+
+    for (int i = 0; i < params->nbins_x; ++i) {
+        for (int j = 0; j < params->nbins_y; ++j) {
+            for (int k = 0; k < params->nbins_z; ++k)
+                _maximum = std::max(_maximum, _profile.value()(i, j, k));
+        }
+    }
+    drawFrame(_draw_frame->value()); // draw the updated frame
 }
 
 void ShapeCollectionDialog::drawFrame(int value)
 {
-    if (value < 0 || value >= _profile.shape()[2]) {
+    if (!_profile)
         return;
-    }
 
-    const Eigen::Vector3i shape = _profile.shape();
+    if (value < 0 || value >= _profile.value().shape()[2])
+        return;
+
+    const Eigen::Vector3i shape = _profile.value().shape();
 
     QImage img(shape[0], shape[1], QImage::Format_ARGB32);
 
     for (int i = 0; i < shape[0]; ++i) {
         for (int j = 0; j < shape[1]; ++j) {
-            const double value = _profile.at(i, j, _draw_frame->value());
+            const double value = _profile.value().at(i, j, _draw_frame->value());
             QRgb color = _cmap.color(value, _maximum);
             img.setPixel(i, j, color);
         }

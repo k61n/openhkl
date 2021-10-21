@@ -127,7 +127,7 @@ void IPeakIntegrator::integrate(
         for (auto peak : peaks) {
             assert(peak != nullptr);
             auto* current_peak = regions.at(peak).get();
-           // assert(current_peak != regions.end());
+            //assert(current_peak != regions.end());
             current_peak->updateMask(mask, idx);
         }
 

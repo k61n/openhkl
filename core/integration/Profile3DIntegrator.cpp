@@ -60,6 +60,7 @@ bool Profile3DIntegrator::compute(
 {
     if (!shape_collection) {
         peak->setRejectionFlag(RejectionFlag::NoShapeCollection);
+        peak->setSelected(false);
         return false;
     }
 
@@ -72,7 +73,8 @@ bool Profile3DIntegrator::compute(
     // TODO: should this be hard-coded??
     if (events.size() < 29) {
         peak->setRejectionFlag(RejectionFlag::TooFewPoints);
-        throw std::runtime_error("Profile3DIntegrator::compute(): too few data points in peak");
+        peak->setSelected(false);
+        return false;
     }
 
     // dummy value for initial guess
@@ -87,16 +89,12 @@ bool Profile3DIntegrator::compute(
 
     const double tolerance = 1e-5;
 
-    Profile3D model_profile;
     DetectorEvent event(peak->shape().center());
 
-    try {
-        // throws if there are no neighboring peaks within the bounds
-        model_profile = shape_collection->meanProfile(event, radius(), nFrames());
-    } catch (...) {
-        peak->setRejectionFlag(RejectionFlag::TooFewNeighbours);
+    std::optional<Profile3D> model_profile =
+        shape_collection->meanProfile(event, radius(), nFrames());
+    if (!model_profile)
         return false;
-    }
 
     PeakCoordinateSystem coord(peak);
 
@@ -112,7 +110,7 @@ bool Profile3DIntegrator::compute(
             x = coord.transform(events[i]);
         }
 
-        const double predict = model_profile.predict(x);
+        const double predict = model_profile.value().predict(x);
 
         // if (predict > 0.0001) {
         profile.push_back(predict);
@@ -140,6 +138,7 @@ bool Profile3DIntegrator::compute(
 
     if (std::isnan(sigma) && sigma > 0) {
         peak->setRejectionFlag(RejectionFlag::InvalidSigma);
+        peak->setSelected(false);
         return false;
     }
 

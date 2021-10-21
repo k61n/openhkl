@@ -94,11 +94,13 @@ bool PixelSumIntegrator::compute(
     // center of mass is consistent
     if (std::isnan(center.norm())) {
         peak->setRejectionFlag(RejectionFlag::InvalidCentroid);
+        peak->setSelected(false);
         return false;
     }
 
     if (!peak->shape().isInside(center)) {
         peak->setRejectionFlag(RejectionFlag::InvalidCentroid);
+        peak->setSelected(false);
         return false;
     }
 
@@ -109,6 +111,7 @@ bool PixelSumIntegrator::compute(
     // check that the covariance is consistent
     if (!(dA < 2.0)) {
         peak->setRejectionFlag(RejectionFlag::InvalidCovariance);
+        peak->setSelected(false);
         return false;
     }
 
@@ -117,6 +120,7 @@ bool PixelSumIntegrator::compute(
     const auto& w = solver.eigenvalues();
     if (w.minCoeff() < 0.1 || w.maxCoeff() > 100) {
         peak->setRejectionFlag(RejectionFlag::InvalidShape);
+        peak->setSelected(false);
         return false;
     }
 
