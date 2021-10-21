@@ -62,13 +62,15 @@ IndexerParameters* AutoIndexer::parameters()
     return _params.get();
 }
 
-void AutoIndexer::autoIndex(const std::vector<Peak3D*>& peaks)
+bool AutoIndexer::autoIndex(const std::vector<Peak3D*>& peaks)
 {
     _params->log(Level::Info);
     nsxlog(Level::Info, "AutoIndexer::autoindex: indexing using ", peaks.size(), " peaks");
     // Find the Q-space directions along which the projection of the the Q-vectors
     // shows the highest periodicity
-    computeFFTSolutions(peaks);
+    bool success = computeFFTSolutions(peaks);
+    if (!success)
+        return success;
     refineSolutions(peaks);
     removeBad(_params->solutionCutoff);
 
@@ -79,13 +81,14 @@ void AutoIndexer::autoIndex(const std::vector<Peak3D*>& peaks)
     rankSolutions();
     nsxlog(Level::Info, "AutoIndexer::autoindex: ", _solutions.size(), " unit cells found");
     nsxlog(Level::Info, solutionsToString());
+    return success;
 }
 
-void AutoIndexer::autoIndex(PeakCollection* peaks)
+bool AutoIndexer::autoIndex(PeakCollection* peaks)
 {
     nsxlog(Level::Info, "AutoIndexer::autoindex: indexing PeakCollection '", peaks->name(), "'");
     std::vector<Peak3D*> peak_list = peaks->getPeakList();
-    autoIndex(peak_list);
+    return autoIndex(peak_list);
 }
 
 void AutoIndexer::removeBad(double quality)
@@ -103,7 +106,7 @@ const std::vector<std::pair<sptrUnitCell, double>>& AutoIndexer::solutions() con
     return _solutions;
 }
 
-void AutoIndexer::computeFFTSolutions(const std::vector<Peak3D*>& peaks)
+bool AutoIndexer::computeFFTSolutions(const std::vector<Peak3D*>& peaks)
 {
     _solutions.clear();
 
@@ -116,8 +119,10 @@ void AutoIndexer::computeFFTSolutions(const std::vector<Peak3D*>& peaks)
     }
 
     // Check that a minimum number of peaks have been selected for indexing
-    if (qvects.size() < 10)
-        throw std::runtime_error("Too few peaks to autoindex");
+    if (qvects.size() < 10) {
+        nsxlog(Level::Info, "AutoIndexer::computeFFTSolutions: Too few peaks to autoindex");
+        return false;
+    }
 
     // Find the best vectors via FFT
     std::vector<Eigen::RowVector3d> tvects = algo::findOnSphere(
@@ -125,8 +130,10 @@ void AutoIndexer::computeFFTSolutions(const std::vector<Peak3D*>& peaks)
         _params->frequencyTolerance);
 
     // Need at least 3 t-vectors to form a basis
-    if (tvects.size() < 3)
-        throw std::runtime_error("Too few t-vectors to form basis");
+    if (tvects.size() < 3) {
+        nsxlog(Level::Info, "AutoIndexer::computeFFTSolutions: Too few t-vectors to form basis");
+        return false;
+    }
 
     for (int i = 0; i < _params->nSolutions; ++i) {
         for (int j = i + 1; j < _params->nSolutions; ++j) {
@@ -159,6 +166,7 @@ void AutoIndexer::computeFFTSolutions(const std::vector<Peak3D*>& peaks)
             }
         }
     }
+    return true;
 }
 
 void AutoIndexer::rankSolutions()
