@@ -101,16 +101,16 @@ Peak3D::Peak3D(std::shared_ptr<nsx::Peak3D> peak)
 
 void Peak3D::setShape(const Ellipsoid& shape)
 {
-    // TODO: restore this assertion elsewhere
-    //    // shape should be consistent with data
-    //    if (_data) {
-    //        Eigen::Vector3d c = shape.center();
-    //        if (c[2] < 0.0 || c[2] > _data->nFrames() - 1 || c[0] < 0.0 || c[0] > _data->nCols() -
-    //        1
-    //            || c[1] < 0.0 || c[1] > _data->nRows() - 1) {
-    //            throw std::runtime_error("Peak3D::setShape(): peak center out of bounds");
-    //        }
-    //    }
+    // shape should be consistent with data
+    if (_data) {
+        Eigen::Vector3d c = shape.center();
+        if (c[2] < 0.0 || c[2] > _data->nFrames() - 1 ||
+            c[0] < 0.0 || c[0] > _data->nCols() - 1 ||
+            c[1] < 0.0 || c[1] > _data->nRows() - 1) {
+            setSelected(false);
+            setRejectionFlag(RejectionFlag::OutsideFrames);
+        }
+    }
     _shape = shape;
 }
 
