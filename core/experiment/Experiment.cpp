@@ -225,8 +225,10 @@ void Experiment::buildShapeCollection(
     PeakCollection fit_peaks(collection_name, listtype::FILTERED);
     fit_peaks.populateFromFiltered(peaks);
 
-    if (fit_peaks.numberOfPeaks() == 0)
-        throw std::runtime_error("buildShapeCollection: no fit peaks found");
+    if (fit_peaks.numberOfPeaks() == 0) {
+        nsxlog(Level::Info, "Experiment::buildShapeCollection: no fit peaks found");
+        return;
+    }
 
     nsxlog(
         Level::Info, "Experiment::buildShapeCollection: ", fit_peaks.numberOfPeaks(), " / ",
