@@ -77,10 +77,12 @@ bool MergedData::addPeak(Peak3D* peak)
 
     if (!peak->enabled()) {
         ++_nInvalid;
+        ++_nPeaks;
         return false;
     }
     if (!peak->unitCell()) {
         ++_nInvalid;
+        ++_nPeaks;
         return false;
     }
     MergedPeak new_peak(_group, _friedel);
@@ -88,6 +90,7 @@ bool MergedData::addPeak(Peak3D* peak)
     bool success = new_peak.addPeak(peak);
     if (!success) { // Interpolation error check
         ++_nInvalid;
+        ++_nPeaks;
         return false;
     }
 
@@ -101,6 +104,7 @@ bool MergedData::addPeak(Peak3D* peak)
         return false;
     }
     _merged_peak_set.emplace(std::move(new_peak));
+    ++_nPeaks;
 
     return true;
 }
@@ -133,8 +137,7 @@ double MergedData::completeness()
 {
     if (totalSize() == 0)
         return 0.0;
-    int n_valid = totalSize() - _nInvalid;
-    return double(n_valid) / double(totalSize());
+    return double(_nPeaks - _nInvalid) / double(_nPeaks);
 }
 
 void MergedData::setDRange(const double d_min, const double d_max)
