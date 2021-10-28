@@ -76,7 +76,12 @@ void SubframeIntegrate::setInputUp()
     _exp_combo = f.addLinkedCombo(ComboType::Experiment, "Experiment");
     _data_combo = f.addLinkedCombo(ComboType::DataSet, "Data set");
     _peak_combo = f.addLinkedCombo(
-        ComboType::FoundPeaks, "Found peaks", "Used to build shape collection");
+        ComboType::FoundPeaks, "Peaks for shapes", "Used to build shape collection");
+    _build_shape_lib_button = f.addButton(
+        "Build shape collection",
+        "<font>A shape collection is a collection of averaged peaks attached to a peak"
+        "collection. A shape is the averaged peak shape of a peak and its neighbours within a "
+        "specified cutoff.</font>"); // Rich text to force line break in tooltip
     _int_peak_combo = f.addLinkedCombo(
         ComboType::PeakCollection, "Peaks to integrate");
 
@@ -216,22 +221,12 @@ void SubframeIntegrate::updatePeakList()
     QString current_peaks = _peak_combo->currentText();
     _peak_combo->clear();
 
-    QStringList tmp = gSession->experimentAt(_exp_combo->currentIndex())
-                          ->getPeakCollectionNames(nsx::listtype::FOUND);
-    if (!tmp.empty()) {
-        _peak_combo->addItems(tmp);
-        tmp.clear();
-    }
-
-    tmp = gSession->experimentAt(_exp_combo->currentIndex())
-              ->getPeakCollectionNames(nsx::listtype::FILTERED);
-
+    QStringList tmp = gSession->experimentAt(_exp_combo->currentIndex())->getPeakListNames();
     if (!tmp.empty()) {
         _peak_combo->addItems(tmp);
         _peak_combo->setCurrentText(current_peaks);
     }
 
-    tmp = gSession->experimentAt(_exp_combo->currentIndex())->getPeakListNames();
     current_peaks = _int_peak_combo->currentText();
     _int_peak_combo->clear();
     if (!tmp.empty()) {
@@ -342,12 +337,6 @@ void SubframeIntegrate::setIntegrateUp()
 
     // -- Create controls
     _integrator_combo = f.addCombo();
-
-    _build_shape_lib_button = f.addButton(
-        "Build shape collection",
-        "<font>A shape collection is a collection of averaged peaks attached to a peak"
-        "collection. A shape is the averaged peak shape of a peak and its neighbours within a "
-        "specified cutoff.</font>"); // Rich text to force line break in tooltip
 
     _fit_center =
         f.addCheckBox("Fit the center", "Allow the peak center to move during integration", 1);
