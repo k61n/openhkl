@@ -70,6 +70,7 @@ class MergedData {
 
     //! Number of invalid peaks
     int _nInvalid = 0;
+    int _nPeaks = 0;
 };
 
 } // namespace nsx
