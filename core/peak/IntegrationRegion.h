@@ -17,6 +17,7 @@
 
 #include "base/geometry/ConvexHull.h"
 #include "core/peak/PeakData.h"
+#include "core/peak/RegionData.h"
 
 namespace nsx {
 
@@ -51,6 +52,8 @@ class IntegrationRegion {
     //! Update the integration mask of the detector (peak, background, forbiddgen
     //! zones)
     void updateMask(Eigen::MatrixXi& mask, double z) const;
+    //! Get matrices containing the integration region
+    RegionData getRegion(bool transpose = false);
     //! Returns the bounding box of the region
     const AABB& aabb() const;
     //! Returns the bounding box of the peak region
@@ -81,8 +84,8 @@ class IntegrationRegion {
     ConvexHull _hull;
     bool _fixed;
     double _pixelRadius;
-
     RegionType _regionType;
+    Peak3D* _peak;
 };
 
 } // namespace nsx

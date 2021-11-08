@@ -186,6 +186,17 @@ void PeakCollection::setMillerIndices() const
         peak->setMillerIndices();
 }
 
+Peak3D* PeakCollection::findPeakByIndex(const MillerIndex& hkl)
+{
+    for (auto peak : getPeakList()) {
+        const MillerIndex& peak_hkl = peak->hkl();
+        if ((hkl.h() == peak_hkl.h()) && (hkl.k() == peak_hkl.k()) && (hkl.l() == peak_hkl.l())) {
+            return peak;
+        }
+    }
+    return nullptr;
+}
+
 int PeakCollection::countSelected() const
 {
     int nselected = 0;

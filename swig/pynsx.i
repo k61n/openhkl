@@ -31,8 +31,8 @@
 %include <std_array.i>
 %include <typemaps.i>
 
-%template(vector_1d)  std::vector<double>;
-%template(vector_2d)  std::vector<std::vector<double>>;
+%template(vector_1d) std::vector<double>;
+%template(vector_2d) std::vector<std::vector<double>>;
 %template(vector_1i) std::vector<int>;
 %template(vector_2i) std::vector<std::vector<int>>;
 %template(vector_string) std::vector<std::string>;
@@ -69,6 +69,7 @@ using Eigen::Vector3d;
 using Eigen::RowVector3i;
 using Eigen::Vector3i;
 using Eigen::Matrix3d;
+using Eigen::Matrix3i;
 using Eigen::Matrix;
 using Eigen::Quaterniond;
 
@@ -148,6 +149,7 @@ using Eigen::Quaterniond;
 #include "core/loader/BaseNexusDataReader.h"
 #include "core/shape/IPeakIntegrator.h"
 #include "core/peak/IntegrationRegion.h"
+#include "core/peak/RegionData.h"
 #include "core/peak/Intensity.h"
 #include "core/peak/Peak3D.h"
 #include "core/peak/PeakCoordinateSystem.h"
@@ -227,6 +229,7 @@ using namespace nsx;
 %eigen_typemaps(Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>)
 
 %template(vectorMatrixXd) std::vector<Eigen::MatrixXd>;
+%template(vectorMatrixXi) std::vector<Eigen::MatrixXi>;
 %template(vectorVectorXd) std::vector<Eigen::VectorXd>;
 %template(vectorVector3d) std::vector<Eigen::Vector3d>;
 %template(vectorRowVector3d) std::vector<Eigen::RowVector3d>;
@@ -316,10 +319,11 @@ ArrayExtendCRef(MillerIndex, int);
 %include "core/peak/Peak3D.h"
 %include "core/peak/PeakCoordinateSystem.h"
 %include "core/peak/PeakData.h"
+%include "core/data/DataSet.h"
+%include "core/peak/RegionData.h"
 %include "core/peak/IntegrationRegion.h"
 %template(PeakList) std::vector<nsx::Peak3D*>;
 
-%include "core/data/DataSet.h"
 %include "core/data/DataTypes.h"
 %template(DataList) std::vector<std::shared_ptr<nsx::DataSet>>;
 
