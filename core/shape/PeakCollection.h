@@ -70,6 +70,8 @@ class PeakCollection {
 
     //! Set Miller indices of peaks for those with an assigned unit cell
     void setMillerIndices() const;
+    //! Find the peak with the given MillerIndex
+    Peak3D* findPeakByIndex(const MillerIndex& hkl);
 
     //! Get the number of peaks int he PeakCollection
     int numberOfPeaks() const { return _peaks.size(); }

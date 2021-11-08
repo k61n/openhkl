@@ -13,7 +13,9 @@
 //  ***********************************************************************************************
 
 #include "core/peak/IntegrationRegion.h"
+
 #include "base/geometry/Ellipsoid.h"
+#include "core/data/DataSet.h"
 #include "core/detector/Detector.h"
 #include "core/instrument/Diffractometer.h"
 #include "core/peak/Peak3D.h"
@@ -24,7 +26,7 @@ namespace nsx {
 IntegrationRegion::IntegrationRegion(
     Peak3D* peak, double peak_end, double bkg_begin, double bkg_end,
     RegionType region_type /* = RegionType::VariableEllipsoid */)
-    : _bkgBegin(bkg_begin), _bkgEnd(bkg_end), _data(peak), _regionType(region_type)
+    : _bkgBegin(bkg_begin), _bkgEnd(bkg_end), _data(peak), _regionType(region_type), _peak(peak)
 {
     switch (_regionType) {
         case RegionType::VariableEllipsoid: {
@@ -136,6 +138,70 @@ void IntegrationRegion::updateMask(Eigen::MatrixXi& mask, double z) const
             mask(y, x) = int(val);
         }
     }
+}
+
+RegionData IntegrationRegion::getRegion(bool transpose /* = false */)
+{
+    auto aabb = _hull.aabb();
+    auto lower = aabb.lower();
+    auto upper = aabb.upper();
+
+    long xmin = std::lround(std::floor(lower[0]));
+    long ymin = std::lround(std::floor(lower[1]));
+    long xmax = std::lround(std::ceil(upper[0]) + 1);
+    long ymax = std::lround(std::ceil(upper[1]) + 1);
+
+    xmin = std::max(0L, xmin);
+    ymin = std::max(0L, ymin);
+
+    auto data = _peak->dataSet();
+
+    xmax = std::min(xmax, long(data->nCols()));
+    ymax = std::min(ymax, long(data->nRows()));
+
+    int zmin = std::ceil(lower[2]);
+    int zmax = std::floor(upper[2]);
+
+
+    RegionData region_data;
+    for (unsigned int z = zmin; z <= zmax; ++z) {
+        Eigen::MatrixXi region;
+        Eigen::MatrixXi mask;
+        if (transpose) {
+            region = data->frame(z).block(ymin, xmin, ymax - ymin + 1, xmax - xmin + 1);
+            // region = data->frame(z)(Eigen::seq(ymin, ymax), Eigen::seq(xmin, xmax)); // Eigen 3.4
+            mask = Eigen::MatrixXi::Zero(ymax - ymin + 1, xmax - xmin + 1);
+        } else {
+            region = data->frame(z).block(xmin, ymin, xmax - xmin + 1, ymax - ymin + 1);
+            // region = data->frame(z)(Eigen::seq(xmin, xmax), Eigen::seq(ymin, ymax)); // Eigen 3.4
+            mask = Eigen::MatrixXi::Zero(xmax - xmin + 1, ymax - ymin + 1);
+        }
+
+        for (auto x = xmin; x < xmax; ++x) {
+            for (auto y = ymin; y < ymax; ++y) {
+                EventType val = EventType::EXCLUDED;
+
+                DetectorEvent ev(x, y, z);
+                auto ev_type = classify(ev);
+
+                switch (ev_type) {
+                case EventType::FORBIDDEN: val = EventType::FORBIDDEN; break;
+                case EventType::PEAK: val = EventType::PEAK; break;
+                case EventType::BACKGROUND:
+                    if (val == EventType::EXCLUDED)
+                        val = EventType::BACKGROUND;
+                    break;
+                default: break;
+                }
+                if (transpose)
+                    mask(y - ymin, x - xmin) = int(val);
+                else
+                    mask(x - xmin, y - ymin) = int(val);
+            }
+        }
+        region_data.addFrame(region, mask);
+    }
+    return region_data;
 }
 
 IntegrationRegion::EventType IntegrationRegion::classify(const DetectorEvent& ev) const
