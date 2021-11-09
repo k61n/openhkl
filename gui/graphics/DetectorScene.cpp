@@ -830,7 +830,7 @@ void DetectorScene::loadCurrentImage()
         return;
 
     // Full image size, front of the stack
-    QRect& full = _zoomStack.front();
+    QRect full = _zoomStack.front();
     if (_currentFrameIndex >= _currentData->nFrames())
         _currentFrameIndex = _currentData->nFrames() - 1;
     _currentFrame = _currentData->frame(_currentFrameIndex);

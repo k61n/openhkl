@@ -41,7 +41,7 @@ ColorMap::ColorMap(const std::string& name) : ColorMap(getColorMap(name)) { }
 ColorMap::ColorMap() : ColorMap(getColorMapNames().front()) { }
 
 QImage ColorMap::matToImage(
-    const Eigen::ArrayXXd& source, const QRect& rect, double colorMax, bool log)
+    const Eigen::ArrayXXd& source, const QRect rect, double colorMax, bool log)
 {
     // invalid rectangle: early return
     if (rect.left() < 0 || rect.top() < 0)

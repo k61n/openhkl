@@ -24,6 +24,8 @@ namespace nsx {
 class RegionData {
  public:
     RegionData() = default;
+    RegionData(
+        double xmin, double xmax, double ymin, double ymax, unsigned int zmin, unsigned int zmax);
 
     //! Add data from a single frame
     void addFrame(Eigen::MatrixXi& frame, Eigen::MatrixXi& mask);
@@ -33,11 +35,25 @@ class RegionData {
     //! Return the integration mask
     Eigen::MatrixXi mask(size_t i);
     //! Return the number of frames
-    int nFrames() const;
+    unsigned int nFrames() const;
+
+    double xmin() const;
+    double xmax() const;
+    double ymin() const;
+    double ymax() const;
+    unsigned int zmin() const;
+    unsigned int zmax() const;
 
  private:
     std::vector<Eigen::MatrixXi> _data;
     std::vector<Eigen::MatrixXi> _mask;
+
+    double _xmin;
+    double _xmax;
+    double _ymin;
+    double _ymax;
+    unsigned int _zmin;
+    unsigned int _zmax;
 };
 
 } // namespace nsx

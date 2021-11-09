@@ -163,7 +163,7 @@ RegionData IntegrationRegion::getRegion(bool transpose /* = false */)
     int zmax = std::floor(upper[2]);
 
 
-    RegionData region_data;
+    RegionData region_data(xmin, xmax, ymin, ymax, zmin, zmax);
     for (unsigned int z = zmin; z <= zmax; ++z) {
         Eigen::MatrixXi region;
         Eigen::MatrixXi mask;
