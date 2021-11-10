@@ -21,9 +21,10 @@
 #include <QHBoxLayout>
 #include <QPixmap>
 
-PeakWindow::PeakWindow(nsx::IntegrationRegion* region, QWidget* parent)
+PeakWindow::PeakWindow(QWidget* parent, nsx::IntegrationRegion* region)
     : QDialog(parent)
     , _integration_region(region)
+    , _frame_index(0)
     , _intensity(3000)
     , _logarithmic(false)
     , _colormap(new ColorMap())
@@ -37,7 +38,7 @@ PeakWindow::PeakWindow(nsx::IntegrationRegion* region, QWidget* parent)
     QWidget* _control_widget = new QWidget(this);
 
     QVBoxLayout* main_layout = new QVBoxLayout(this);
-    QHBoxLayout* view_layout = new QHBoxLayout(_preview_widget);
+    QHBoxLayout* view_layout = new QHBoxLayout();
     QHBoxLayout* control_layout = new QHBoxLayout();
 
     setGraphicsViewUp();
@@ -48,10 +49,17 @@ PeakWindow::PeakWindow(nsx::IntegrationRegion* region, QWidget* parent)
     main_layout->addLayout(control_layout);
 }
 
+void PeakWindow::setIntegrationRegion(nsx::IntegrationRegion* region)
+{
+    _integration_region = region;
+    _region_data = _integration_region->getRegion();
+    _frame_index = _region_data.centreFrame();
+}
+
 void PeakWindow::setGraphicsViewUp()
 {
     _graphics_view = new QGraphicsView;
-    _frame_slider = new QSlider(_preview_widget);
+    _frame_slider = new QSlider();
 
     _frame_slider->setOrientation(Qt::Horizontal);
     _frame_slider->setMinimum(1);
@@ -62,9 +70,15 @@ void PeakWindow::setGraphicsViewUp()
     graphics->addWidget(_frame_slider);
 }
 
-void PeakWindow::drawFrame(std::size_t frame_index)
+void PeakWindow::setFrame(std::size_t frame_index)
 {
-    _region_data = _integration_region->getRegion();
+    _frame_index = frame_index;
+}
+
+void PeakWindow::drawFrame()
+{
+    if (!_integration_region)
+        return;
 
     QRect rect(0, 0, _region_data.xmax(), _region_data.ymax());
     if (!_graphics_view->scene())
@@ -77,17 +91,17 @@ void PeakWindow::drawFrame(std::size_t frame_index)
     if (_image == nullptr) {
         _image = _graphics_view->scene()->addPixmap(
             QPixmap::fromImage(
-                _colormap->matToImage(_region_data.frame(frame_index).cast<double>(), rect,
+                _colormap->matToImage(_region_data.frame(_frame_index).cast<double>(), rect,
                                       _intensity, _logarithmic)));
         _image->setZValue(-2);
     } else {
         _image->setPixmap(
-            QPixmap::fromImage(_colormap->matToImage(_region_data.frame(frame_index).cast<double>(),
+            QPixmap::fromImage(_colormap->matToImage(_region_data.frame(_frame_index).cast<double>(),
                                                      rect, _intensity, _logarithmic)));
     }
 
     // add the integration overlay
-    QImage* mask_image = getIntegrationMask(_region_data.mask(frame_index), _peak_color, _bkg_color);
+    QImage* mask_image = getIntegrationMask(_region_data.mask(_frame_index), _peak_color, _bkg_color);
     if (_integration_overlay)
         _integration_overlay->setPixmap(QPixmap::fromImage(*mask_image));
     else

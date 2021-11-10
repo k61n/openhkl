@@ -163,10 +163,11 @@ RegionData IntegrationRegion::getRegion(bool transpose /* = false */)
     int zmax = std::floor(upper[2]);
 
 
-    RegionData region_data(xmin, xmax, ymin, ymax, zmin, zmax);
+    RegionData region_data(this, xmin, xmax, ymin, ymax, zmin, zmax);
     for (unsigned int z = zmin; z <= zmax; ++z) {
         Eigen::MatrixXi region;
         Eigen::MatrixXi mask;
+
         if (transpose) {
             region = data->frame(z).block(ymin, xmin, ymax - ymin + 1, xmax - xmin + 1);
             // region = data->frame(z)(Eigen::seq(ymin, ymax), Eigen::seq(xmin, xmax)); // Eigen 3.4

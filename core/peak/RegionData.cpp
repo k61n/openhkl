@@ -14,11 +14,20 @@
 
 #include "core/peak/RegionData.h"
 
+#include "core/peak/IntegrationRegion.h"
+
 namespace nsx {
 
 RegionData::RegionData(
-    double x1, double x2, double y1, double y2, unsigned int z1, unsigned int z2)
-    : _xmin(x1) , _xmax(x2) , _ymin(y1) , _ymax(y2) , _zmin(z1) , _zmax(z2)
+    IntegrationRegion* region, double x1, double x2, double y1, double y2,
+    unsigned int z1, unsigned int z2)
+    : _integration_region(region)
+    , _xmin(x1)
+    , _xmax(x2)
+    , _ymin(y1)
+    , _ymax(y2)
+    , _zmin(z1)
+    , _zmax(z2)
 {
 }
 
@@ -47,6 +56,16 @@ Eigen::MatrixXi RegionData::mask(size_t i)
 unsigned int RegionData::nFrames() const
 {
     return _data.size();
+}
+
+unsigned int RegionData::centreFrame() const
+{
+    return std::round(_integration_region->peak()->shape().center()[2]) - _zmin;
+}
+
+IntegrationRegion* RegionData::integrationRegion() const
+{
+    return _integration_region;
 }
 
 double RegionData::xmin() const

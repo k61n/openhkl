@@ -34,19 +34,25 @@ class IntegrationRegion;
 //! Modeless dialog containing a non-contextual detector scene (open via Menu)
 class PeakWindow : public QDialog {
  public:
-    PeakWindow(nsx::IntegrationRegion* region, QWidget* parent = nullptr);
+    PeakWindow(QWidget* parent = nullptr, nsx::IntegrationRegion* region = nullptr);
 
+    //! set the integration region
+    void setIntegrationRegion(nsx::IntegrationRegion* region);
     //! Refresh the whole dialog
     void refreshAll();
+    //! Set the frame index
+    void setFrame(std::size_t frame_index);
+    //! Plot the integration region image with overlay
+    void drawFrame();
 
  private:
     void setGraphicsViewUp();
-    void drawFrame(std::size_t frame_index);
     QImage* getIntegrationMask(const Eigen::MatrixXi& mask, QColor& peak, QColor& bkg);
 
     nsx::IntegrationRegion* _integration_region;
     nsx::RegionData _region_data;
 
+    unsigned int _frame_index;
     int _intensity;
     bool _logarithmic;
 

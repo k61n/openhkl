@@ -140,6 +140,7 @@ class DetectorScene : public QGraphicsScene {
  protected:
     void mousePressEvent(QGraphicsSceneMouseEvent* event);
     void mouseMoveEvent(QGraphicsSceneMouseEvent* event);
+    void mouseDoubleClickEvent(QGraphicsSceneMouseEvent* event);
     void mouseReleaseEvent(QGraphicsSceneMouseEvent* event);
     void keyPressEvent(QKeyEvent* event);
     void wheelEvent(QGraphicsSceneWheelEvent* event);

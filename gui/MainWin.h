@@ -25,6 +25,7 @@
 class DetectorScene;
 class DetectorWindow;
 class LogWindow;
+class PeakWindow;
 class PlottableItem;
 class Sentinel;
 class SideBar;
@@ -96,6 +97,9 @@ class MainWin : public QMainWindow {
 
     // modeless detector dialog
     DetectorWindow* detector_window;
+
+    // modeless window to show a single peak
+    PeakWindow* peak_window;
 
     // log window
     LogWindow* log_window;

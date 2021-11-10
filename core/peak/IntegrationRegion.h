@@ -74,6 +74,8 @@ class IntegrationRegion {
     const ConvexHull& hull() const;
     //! Returns the scaling factor used to determine the peak boundary
     double peakEnd() const { return _peakEnd; }
+    //! Return a pointer to the peak
+    Peak3D* peak() const { return _peak; };
 
  private:
     Ellipsoid _shape;
@@ -86,6 +88,7 @@ class IntegrationRegion {
     double _pixelRadius;
     RegionType _regionType;
     Peak3D* _peak;
+    unsigned int _centre_index;
 };
 
 } // namespace nsx

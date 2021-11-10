@@ -20,12 +20,15 @@
 
 namespace nsx {
 
+class IntegrationRegion;
+
 //! A small container class for visualising individual peaks mainly via Python interface
 class RegionData {
  public:
     RegionData() = default;
     RegionData(
-        double xmin, double xmax, double ymin, double ymax, unsigned int zmin, unsigned int zmax);
+        IntegrationRegion* region, double xmin, double xmax, double ymin, double ymax,
+        unsigned int zmin, unsigned int zmax);
 
     //! Add data from a single frame
     void addFrame(Eigen::MatrixXi& frame, Eigen::MatrixXi& mask);
@@ -36,7 +39,10 @@ class RegionData {
     Eigen::MatrixXi mask(size_t i);
     //! Return the number of frames
     unsigned int nFrames() const;
+    //! Return the index of the frame closest to the peak centre
+    unsigned int centreFrame() const;
 
+    IntegrationRegion* integrationRegion() const;
     double xmin() const;
     double xmax() const;
     double ymin() const;
@@ -45,6 +51,7 @@ class RegionData {
     unsigned int zmax() const;
 
  private:
+    IntegrationRegion* _integration_region;
     std::vector<Eigen::MatrixXi> _data;
     std::vector<Eigen::MatrixXi> _mask;
 

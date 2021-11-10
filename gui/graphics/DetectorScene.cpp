@@ -41,6 +41,7 @@
 #include "gui/items/PeakItem.h"
 #include "gui/models/PeakCollectionModel.h"
 #include "gui/models/Session.h"
+#include "gui/subwindows/PeakWindow.h"
 #include "gui/utility/ColorButton.h"
 #include "gui/utility/LinkedComboBox.h"
 #include "tables/crystal/MillerIndex.h"
@@ -495,6 +496,29 @@ void DetectorScene::mousePressEvent(QGraphicsSceneMouseEvent* event)
             if (!_zoomStack.empty()) {
                 setSceneRect(_zoomStack.top());
                 emit dataChanged();
+            }
+        }
+    }
+}
+
+void DetectorScene::mouseDoubleClickEvent(QGraphicsSceneMouseEvent* event)
+{
+    // If no data is loaded, do nothing
+    if (!_currentData)
+        return;
+
+    if (event->button() == Qt::LeftButton) {
+        for (auto* item : items(event->scenePos())) {
+            PeakItemGraphic* peak_item = dynamic_cast<PeakItemGraphic*>(item);
+            if (peak_item) {
+                auto* peak = peak_item->peak();
+                nsx::IntegrationRegion region(peak, peak->peakEnd(), peak->bkgBegin(), peak->bkgEnd());
+                gGui->peak_window->setIntegrationRegion(&region);
+                gGui->peak_window->drawFrame();
+                gGui->peak_window->show();
+
+                if (peak_item == _lastClickedGI)
+                    _lastClickedGI = nullptr;
             }
         }
     }
