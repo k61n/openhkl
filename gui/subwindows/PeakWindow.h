@@ -48,7 +48,6 @@ class PeakWindow : public QDialog {
 
  private:
     QImage* getIntegrationMask(const Eigen::MatrixXi& mask, QColor& peak, QColor& bkg);
-
     void closeEvent(QCloseEvent* event) override;
 
     nsx::IntegrationRegion* _integration_region;
@@ -64,7 +63,6 @@ class PeakWindow : public QDialog {
     QVector<QGraphicsView*> _views;
     QGridLayout* _main_layout;
     QGraphicsView* _graphics_view;
-    QGraphicsPixmapItem* _integration_overlay;
     QSlider* _frame_slider;
 
     QColor _peak_color;
