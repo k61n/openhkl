@@ -116,13 +116,6 @@ QImage* PeakWindow::getIntegrationMask(const Eigen::MatrixXi& mask, QColor& peak
     return region_img;
 }
 
-QSize PeakWindow::sizeHint() const
-{
-    QSize hint = QDialog::sizeHint();
-    hint.setWidth(gGui->sizeHint().rwidth());
-    return hint;
-}
-
 void PeakWindow::closeEvent(QCloseEvent* event)
 {
     remove();

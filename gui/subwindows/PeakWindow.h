@@ -44,8 +44,6 @@ class PeakWindow : public QDialog {
     //! Plot the integration region image with overlay
     QGraphicsView* drawFrame(std::size_t frame_index);
 
-    QSize sizeHint() const;
-
  private:
     QImage* getIntegrationMask(const Eigen::MatrixXi& mask, QColor& peak, QColor& bkg);
     void closeEvent(QCloseEvent* event) override;
