@@ -140,7 +140,7 @@ void IntegrationRegion::updateMask(Eigen::MatrixXi& mask, double z) const
     }
 }
 
-RegionData IntegrationRegion::getRegion(bool transpose /* = false */)
+RegionData* IntegrationRegion::getRegion(bool transpose /* = false */)
 {
     auto aabb = _hull.aabb();
     auto lower = aabb.lower();
@@ -163,7 +163,7 @@ RegionData IntegrationRegion::getRegion(bool transpose /* = false */)
     int zmax = std::floor(upper[2]);
 
 
-    RegionData region_data(this, xmin, xmax, ymin, ymax, zmin, zmax);
+    _region_data = RegionData(this, xmin, xmax, ymin, ymax, zmin, zmax);
     for (unsigned int z = zmin; z <= zmax; ++z) {
         Eigen::MatrixXi region;
         Eigen::MatrixXi mask;
@@ -191,9 +191,9 @@ RegionData IntegrationRegion::getRegion(bool transpose /* = false */)
                 mask(y - ymin, x - xmin) = int(val);
             }
         }
-        region_data.addFrame(region, mask);
+        _region_data.addFrame(region, mask);
     }
-    return region_data;
+    return &_region_data;
 }
 
 IntegrationRegion::EventType IntegrationRegion::classify(const DetectorEvent& ev) const

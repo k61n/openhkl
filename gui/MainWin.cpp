@@ -86,7 +86,6 @@ MainWin::MainWin()
 
     detector_window = new DetectorWindow();
     log_window = new LogWindow(this);
-    peak_window = new PeakWindow(this);
 
     _layout_stack = new QStackedWidget(main_widget);
     _layout_stack->addWidget(home);
@@ -189,8 +188,11 @@ void MainWin::closeEvent(QCloseEvent* event)
     if (detector_window)
         detector_window->close();
 
-    if (peak_window)
-        peak_window->close();
+    for (PeakWindow* window : peak_windows) {
+        window->close();
+        delete window;
+    }
+    peak_windows.clear();
 
     if (log_window)
         log_window->close();

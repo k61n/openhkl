@@ -49,8 +49,10 @@ class PeakWindow : public QDialog {
  private:
     QImage* getIntegrationMask(const Eigen::MatrixXi& mask, QColor& peak, QColor& bkg);
 
+    void closeEvent(QCloseEvent* event) override;
+
     nsx::IntegrationRegion* _integration_region;
-    nsx::RegionData _region_data;
+    nsx::RegionData* _region_data;
 
     int _intensity;
     bool _logarithmic;

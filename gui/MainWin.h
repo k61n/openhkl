@@ -99,7 +99,7 @@ class MainWin : public QMainWindow {
     DetectorWindow* detector_window;
 
     // modeless window to show a single peak
-    PeakWindow* peak_window;
+    QVector<PeakWindow*> peak_windows;
 
     // log window
     LogWindow* log_window;

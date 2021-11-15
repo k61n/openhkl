@@ -53,7 +53,7 @@ class IntegrationRegion {
     //! zones)
     void updateMask(Eigen::MatrixXi& mask, double z) const;
     //! Get matrices containing the integration region
-    RegionData getRegion(bool transpose = false);
+    RegionData* getRegion(bool transpose = false);
     //! Returns the bounding box of the region
     const AABB& aabb() const;
     //! Returns the bounding box of the peak region
@@ -89,6 +89,7 @@ class IntegrationRegion {
     RegionType _regionType;
     Peak3D* _peak;
     unsigned int _centre_index;
+    RegionData _region_data;
 };
 
 } // namespace nsx

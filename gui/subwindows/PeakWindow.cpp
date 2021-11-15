@@ -32,7 +32,9 @@ PeakWindow::PeakWindow(QWidget* parent, nsx::IntegrationRegion* region)
 {
     setModal(false);
     _main_layout = new QGridLayout(this);
-    setAttribute(Qt::WA_DeleteOnClose);
+    gGui->peak_windows.push_back(this);
+    if (region)
+        _region_data = _integration_region->getRegion();
 }
 
 void PeakWindow::refreshAll()
@@ -40,7 +42,7 @@ void PeakWindow::refreshAll()
     for (auto* view : _views)
         delete view;
     _views.clear();
-    for (std::size_t i = 0; i < _region_data.nFrames(); ++i) {
+    for (std::size_t i = 0; i < _region_data->nFrames(); ++i) {
         QGraphicsView* view = drawFrame(i);
         _views.push_back(view);
         _main_layout->addWidget(view, 0, i, 1, 1);
@@ -59,7 +61,7 @@ QGraphicsView* PeakWindow::drawFrame(std::size_t frame_index)
         return nullptr;
 
     QGraphicsView* view = new QGraphicsView();
-    QRect rect(0, 0, _region_data.cols()+1, _region_data.rows()+1);
+    QRect rect(0, 0, _region_data->cols()+1, _region_data->rows()+1);
     if (!view->scene())
         view->setScene(new QGraphicsScene());
     view->scene()->clear(); // clear the scene
@@ -69,12 +71,12 @@ QGraphicsView* PeakWindow::drawFrame(std::size_t frame_index)
     // add the image data
     QGraphicsPixmapItem* image = view->scene()->addPixmap(
         QPixmap::fromImage(
-            _colormap->matToImage(_region_data.frame(frame_index).cast<double>(), rect,
+            _colormap->matToImage(_region_data->frame(frame_index).cast<double>(), rect,
                                     _intensity, _logarithmic)));
     image->setZValue(-2);
 
     // add the integration overlay
-    QImage* mask_image = getIntegrationMask(_region_data.mask(frame_index), _peak_color, _bkg_color);
+    QImage* mask_image = getIntegrationMask(_region_data->mask(frame_index), _peak_color, _bkg_color);
     QGraphicsPixmapItem* mask = view->scene()->addPixmap(QPixmap::fromImage(*mask_image));
     mask->setZValue(-1);
 
@@ -113,4 +115,17 @@ QSize PeakWindow::sizeHint() const
     QSize hint = QDialog::sizeHint();
     hint.setWidth(gGui->sizeHint().rwidth());
     return hint;
+}
+
+void PeakWindow::closeEvent(QCloseEvent* event)
+{
+    // Remove the pointer from vector owned by MainWin
+    for (std::size_t i = 0; i <= gGui->peak_windows.size(); ++i) {
+        if (gGui->peak_windows[i] == this) {
+            gGui->peak_windows.remove(i);
+            break;
+        }
+    }
+    QDialog::closeEvent(event);
+    delete this;
 }
