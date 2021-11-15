@@ -31,11 +31,14 @@ PeakWindow::PeakWindow(QWidget* parent, nsx::IntegrationRegion* region)
     , _bkg_color(QColor(255, 255, 0, 32)) // yellow, alpha = 1/8
 {
     setModal(false);
+    _main_layout = new QGridLayout(this);
+    setAttribute(Qt::WA_DeleteOnClose);
 }
 
 void PeakWindow::refreshAll()
 {
-    _main_layout = new QGridLayout(this);
+    for (auto* view : _views)
+        delete view;
     _views.clear();
     for (std::size_t i = 0; i < _region_data.nFrames(); ++i) {
         QGraphicsView* view = drawFrame(i);
@@ -71,17 +74,15 @@ QGraphicsView* PeakWindow::drawFrame(std::size_t frame_index)
     image->setZValue(-2);
 
     // add the integration overlay
-    // QImage* mask_image = getIntegrationMask(_region_data.mask(_frame_index), _peak_color, _bkg_color);
-    // if (_integration_overlay)
-    //     _integration_overlay->setPixmap(QPixmap::fromImage(*mask_image));
-    // else
-    //     _integration_overlay = _graphics_view->scene()->addPixmap(QPixmap::fromImage(*mask_image));
-    // _integration_overlay->setZValue(-1);
+    QImage* mask_image = getIntegrationMask(_region_data.mask(frame_index), _peak_color, _bkg_color);
+    QGraphicsPixmapItem* mask = view->scene()->addPixmap(QPixmap::fromImage(*mask_image));
+    mask->setZValue(-1);
 
     view->fitInView(view->scene()->sceneRect(), Qt::KeepAspectRatio);
     view->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     view->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     view->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff );
+    view->scale(0.25, 0.25);
     return view;
 }
 
