@@ -513,10 +513,16 @@ void DetectorScene::mouseDoubleClickEvent(QGraphicsSceneMouseEvent* event)
             if (peak_item) {
                 auto* peak = peak_item->peak();
                 nsx::IntegrationRegion region(peak, peak->peakEnd(), peak->bkgBegin(), peak->bkgEnd());
-                PeakWindow* window = new PeakWindow();
-                window->setIntegrationRegion(&region);
-                window->refreshAll();
-                window->show();
+                try {
+                    PeakWindow* window = new PeakWindow();
+                    window->setIntegrationRegion(&region);
+                    window->refreshAll();
+                    window->show();
+                } catch (std::runtime_error& e) {
+                    gGui->statusBar()->showMessage(
+                        "Invalid integration region; could not open peak window");
+                    continue;
+                }
 
                 if (peak_item == _lastClickedGI)
                     _lastClickedGI = nullptr;

@@ -44,8 +44,14 @@ void PeakWindow::refreshAll()
     _views.clear();
     for (std::size_t i = 0; i < _region_data->nFrames(); ++i) {
         QGraphicsView* view = drawFrame(i);
-        _views.push_back(view);
-        _main_layout->addWidget(view, 0, i, 1, 1);
+        if (view) {
+            _views.push_back(view);
+            _main_layout->addWidget(view, 0, i, 1, 1);
+        }
+    }
+    if (_views.size() == 0) {
+        remove();
+        throw std::runtime_error("Invalid integration region");
     }
 }
 
@@ -119,6 +125,13 @@ QSize PeakWindow::sizeHint() const
 
 void PeakWindow::closeEvent(QCloseEvent* event)
 {
+    remove();
+    QDialog::closeEvent(event);
+    delete this;
+}
+
+void PeakWindow::remove()
+{
     // Remove the pointer from vector owned by MainWin
     for (std::size_t i = 0; i <= gGui->peak_windows.size(); ++i) {
         if (gGui->peak_windows[i] == this) {
@@ -126,6 +139,4 @@ void PeakWindow::closeEvent(QCloseEvent* event)
             break;
         }
     }
-    QDialog::closeEvent(event);
-    delete this;
 }
