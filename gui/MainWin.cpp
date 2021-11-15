@@ -19,6 +19,7 @@
 #include "gui/connect/Sentinel.h"
 #include "gui/subwindows/DetectorWindow.h"
 #include "gui/subwindows/LogWindow.h"
+#include "gui/subwindows/PeakWindow.h"
 #include "gui/graphics/DetectorScene.h"
 #include "gui/graphics/DetectorView.h"
 #include "gui/graphics_items/PlottableItem.h"
@@ -186,6 +187,12 @@ void MainWin::closeEvent(QCloseEvent* event)
 
     if (detector_window)
         detector_window->close();
+
+    for (PeakWindow* window : peak_windows) {
+        window->close();
+        delete window;
+    }
+    peak_windows.clear();
 
     if (log_window)
         log_window->close();

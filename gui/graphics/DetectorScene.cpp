@@ -41,6 +41,7 @@
 #include "gui/items/PeakItem.h"
 #include "gui/models/PeakCollectionModel.h"
 #include "gui/models/Session.h"
+#include "gui/subwindows/PeakWindow.h"
 #include "gui/utility/ColorButton.h"
 #include "gui/utility/LinkedComboBox.h"
 #include "tables/crystal/MillerIndex.h"
@@ -500,6 +501,36 @@ void DetectorScene::mousePressEvent(QGraphicsSceneMouseEvent* event)
     }
 }
 
+void DetectorScene::mouseDoubleClickEvent(QGraphicsSceneMouseEvent* event)
+{
+    // If no data is loaded, do nothing
+    if (!_currentData)
+        return;
+
+    if (event->button() == Qt::LeftButton) {
+        for (auto* item : items(event->scenePos())) {
+            PeakItemGraphic* peak_item = dynamic_cast<PeakItemGraphic*>(item);
+            if (peak_item) {
+                auto* peak = peak_item->peak();
+                nsx::IntegrationRegion region(peak, peak->peakEnd(), peak->bkgBegin(), peak->bkgEnd());
+                try {
+                    PeakWindow* window = new PeakWindow();
+                    window->setIntegrationRegion(&region);
+                    window->refreshAll();
+                    window->show();
+                } catch (std::runtime_error& e) {
+                    gGui->statusBar()->showMessage(
+                        "Invalid integration region; could not open peak window");
+                    continue;
+                }
+
+                if (peak_item == _lastClickedGI)
+                    _lastClickedGI = nullptr;
+            }
+        }
+    }
+}
+
 void DetectorScene::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
 {
     // If no data is loaded, do nothing
@@ -830,7 +861,7 @@ void DetectorScene::loadCurrentImage()
         return;
 
     // Full image size, front of the stack
-    QRect& full = _zoomStack.front();
+    QRect full = _zoomStack.front();
     if (_currentFrameIndex >= _currentData->nFrames())
         _currentFrameIndex = _currentData->nFrames() - 1;
     _currentFrame = _currentData->frame(_currentFrameIndex);
