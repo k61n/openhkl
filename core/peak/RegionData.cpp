@@ -98,4 +98,14 @@ unsigned int RegionData::zmax() const
     return _zmax;
 }
 
+unsigned int RegionData::cols() const
+{
+    return _xmax - _xmin;
+}
+
+unsigned int RegionData::rows() const
+{
+    return _ymax - _ymin;
+}
+
 } // namespace nsx

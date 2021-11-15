@@ -168,15 +168,9 @@ RegionData IntegrationRegion::getRegion(bool transpose /* = false */)
         Eigen::MatrixXi region;
         Eigen::MatrixXi mask;
 
-        if (transpose) {
-            region = data->frame(z).block(ymin, xmin, ymax - ymin + 1, xmax - xmin + 1);
-            // region = data->frame(z)(Eigen::seq(ymin, ymax), Eigen::seq(xmin, xmax)); // Eigen 3.4
-            mask = Eigen::MatrixXi::Zero(ymax - ymin + 1, xmax - xmin + 1);
-        } else {
-            region = data->frame(z).block(xmin, ymin, xmax - xmin + 1, ymax - ymin + 1);
-            // region = data->frame(z)(Eigen::seq(xmin, xmax), Eigen::seq(ymin, ymax)); // Eigen 3.4
-            mask = Eigen::MatrixXi::Zero(xmax - xmin + 1, ymax - ymin + 1);
-        }
+        region = data->frame(z).block(ymin, xmin, ymax - ymin + 1, xmax - xmin + 1);
+        // region = data->frame(z)(Eigen::seq(ymin, ymax), Eigen::seq(xmin, xmax)); // Eigen 3.4
+        mask = Eigen::MatrixXi::Zero(ymax - ymin + 1, xmax - xmin + 1);
 
         for (auto x = xmin; x < xmax; ++x) {
             for (auto y = ymin; y < ymax; ++y) {
@@ -194,10 +188,7 @@ RegionData IntegrationRegion::getRegion(bool transpose /* = false */)
                     break;
                 default: break;
                 }
-                if (transpose)
-                    mask(y - ymin, x - xmin) = int(val);
-                else
-                    mask(x - xmin, y - ymin) = int(val);
+                mask(y - ymin, x - xmin) = int(val);
             }
         }
         region_data.addFrame(region, mask);

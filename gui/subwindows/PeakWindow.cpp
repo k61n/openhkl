@@ -16,99 +16,73 @@
 
 #include "core/peak/IntegrationRegion.h"
 #include "gui/models/ColorMap.h"
+#include "gui/MainWin.h" // gGui
 
 #include <QVBoxLayout>
-#include <QHBoxLayout>
 #include <QPixmap>
 
 PeakWindow::PeakWindow(QWidget* parent, nsx::IntegrationRegion* region)
     : QDialog(parent)
     , _integration_region(region)
-    , _frame_index(0)
     , _intensity(3000)
     , _logarithmic(false)
     , _colormap(new ColorMap())
-    , _image(nullptr)
     , _peak_color(QColor(0, 255, 0, 32)) // green, alpha = 1/8
     , _bkg_color(QColor(255, 255, 0, 32)) // yellow, alpha = 1/8
 {
     setModal(false);
+}
 
-    QWidget* _preview_widget = new QWidget(this);
-    QWidget* _control_widget = new QWidget(this);
-
-    QVBoxLayout* main_layout = new QVBoxLayout(this);
-    QHBoxLayout* view_layout = new QHBoxLayout();
-    QHBoxLayout* control_layout = new QHBoxLayout();
-
-    setGraphicsViewUp();
-
-    view_layout->addWidget(_preview_widget);
-    control_layout->addWidget(_control_widget);
-    main_layout->addLayout(view_layout);
-    main_layout->addLayout(control_layout);
+void PeakWindow::refreshAll()
+{
+    _main_layout = new QGridLayout(this);
+    _views.clear();
+    for (std::size_t i = 0; i < _region_data.nFrames(); ++i) {
+        QGraphicsView* view = drawFrame(i);
+        _views.push_back(view);
+        _main_layout->addWidget(view, 0, i, 1, 1);
+    }
 }
 
 void PeakWindow::setIntegrationRegion(nsx::IntegrationRegion* region)
 {
     _integration_region = region;
     _region_data = _integration_region->getRegion();
-    _frame_index = _region_data.centreFrame();
 }
 
-void PeakWindow::setGraphicsViewUp()
-{
-    _graphics_view = new QGraphicsView;
-    _frame_slider = new QSlider();
-
-    _frame_slider->setOrientation(Qt::Horizontal);
-    _frame_slider->setMinimum(1);
-    _frame_slider->setValue(1);
-
-    QVBoxLayout* graphics = new QVBoxLayout;
-    graphics->addWidget(_graphics_view);
-    graphics->addWidget(_frame_slider);
-}
-
-void PeakWindow::setFrame(std::size_t frame_index)
-{
-    _frame_index = frame_index;
-}
-
-void PeakWindow::drawFrame()
+QGraphicsView* PeakWindow::drawFrame(std::size_t frame_index)
 {
     if (!_integration_region)
-        return;
+        return nullptr;
 
-    QRect rect(0, 0, _region_data.xmax(), _region_data.ymax());
-    if (!_graphics_view->scene())
-        _graphics_view->setScene(new QGraphicsScene());
-    _graphics_view->scene()->clear(); // clear the scene
-    _graphics_view->scene()->setSceneRect(rect);
+    QGraphicsView* view = new QGraphicsView();
+    QRect rect(0, 0, _region_data.cols()+1, _region_data.rows()+1);
+    if (!view->scene())
+        view->setScene(new QGraphicsScene());
+    view->scene()->clear(); // clear the scene
+    view->scene()->setSceneRect(rect);
 
 
     // add the image data
-    if (_image == nullptr) {
-        _image = _graphics_view->scene()->addPixmap(
-            QPixmap::fromImage(
-                _colormap->matToImage(_region_data.frame(_frame_index).cast<double>(), rect,
-                                      _intensity, _logarithmic)));
-        _image->setZValue(-2);
-    } else {
-        _image->setPixmap(
-            QPixmap::fromImage(_colormap->matToImage(_region_data.frame(_frame_index).cast<double>(),
-                                                     rect, _intensity, _logarithmic)));
-    }
+    QGraphicsPixmapItem* image = view->scene()->addPixmap(
+        QPixmap::fromImage(
+            _colormap->matToImage(_region_data.frame(frame_index).cast<double>(), rect,
+                                    _intensity, _logarithmic)));
+    image->setZValue(-2);
 
     // add the integration overlay
-    QImage* mask_image = getIntegrationMask(_region_data.mask(_frame_index), _peak_color, _bkg_color);
-    if (_integration_overlay)
-        _integration_overlay->setPixmap(QPixmap::fromImage(*mask_image));
-    else
-        _integration_overlay = _graphics_view->scene()->addPixmap(QPixmap::fromImage(*mask_image));
-    _integration_overlay->setZValue(-1);
+    // QImage* mask_image = getIntegrationMask(_region_data.mask(_frame_index), _peak_color, _bkg_color);
+    // if (_integration_overlay)
+    //     _integration_overlay->setPixmap(QPixmap::fromImage(*mask_image));
+    // else
+    //     _integration_overlay = _graphics_view->scene()->addPixmap(QPixmap::fromImage(*mask_image));
+    // _integration_overlay->setZValue(-1);
 
-    _graphics_view->fitInView(0, 0, _region_data.xmax(), _region_data.ymax());
+    view->fitInView(view->scene()->sceneRect(), Qt::KeepAspectRatio);
+    view->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    view->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    view->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff );
+    return view;
 }
 
 QImage* PeakWindow::getIntegrationMask(const Eigen::MatrixXi& mask, QColor& peak, QColor& bkg)
@@ -133,6 +107,9 @@ QImage* PeakWindow::getIntegrationMask(const Eigen::MatrixXi& mask, QColor& peak
     return region_img;
 }
 
-void PeakWindow::refreshAll()
+QSize PeakWindow::sizeHint() const
 {
+    QSize hint = QDialog::sizeHint();
+    hint.setWidth(gGui->sizeHint().rwidth());
+    return hint;
 }

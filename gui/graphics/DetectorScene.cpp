@@ -514,7 +514,7 @@ void DetectorScene::mouseDoubleClickEvent(QGraphicsSceneMouseEvent* event)
                 auto* peak = peak_item->peak();
                 nsx::IntegrationRegion region(peak, peak->peakEnd(), peak->bkgBegin(), peak->bkgEnd());
                 gGui->peak_window->setIntegrationRegion(&region);
-                gGui->peak_window->drawFrame();
+                gGui->peak_window->refreshAll();
                 gGui->peak_window->show();
 
                 if (peak_item == _lastClickedGI)

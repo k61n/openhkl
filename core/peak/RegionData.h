@@ -49,6 +49,8 @@ class RegionData {
     double ymax() const;
     unsigned int zmin() const;
     unsigned int zmax() const;
+    unsigned int cols() const;
+    unsigned int rows() const;
 
  private:
     IntegrationRegion* _integration_region;

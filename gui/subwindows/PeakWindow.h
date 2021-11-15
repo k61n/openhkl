@@ -23,6 +23,7 @@
 #include <QDialog>
 #include <QGraphicsView>
 #include <QGraphicsPixmapItem>
+#include <QGridLayout>
 #include <QSlider>
 
 class ColorMap;
@@ -40,19 +41,17 @@ class PeakWindow : public QDialog {
     void setIntegrationRegion(nsx::IntegrationRegion* region);
     //! Refresh the whole dialog
     void refreshAll();
-    //! Set the frame index
-    void setFrame(std::size_t frame_index);
     //! Plot the integration region image with overlay
-    void drawFrame();
+    QGraphicsView* drawFrame(std::size_t frame_index);
+
+    QSize sizeHint() const;
 
  private:
-    void setGraphicsViewUp();
     QImage* getIntegrationMask(const Eigen::MatrixXi& mask, QColor& peak, QColor& bkg);
 
     nsx::IntegrationRegion* _integration_region;
     nsx::RegionData _region_data;
 
-    unsigned int _frame_index;
     int _intensity;
     bool _logarithmic;
 
@@ -60,8 +59,9 @@ class PeakWindow : public QDialog {
     QWidget* _control_widget;
 
     ColorMap* _colormap;
+    QVector<QGraphicsView*> _views;
+    QGridLayout* _main_layout;
     QGraphicsView* _graphics_view;
-    QGraphicsPixmapItem* _image;
     QGraphicsPixmapItem* _integration_overlay;
     QSlider* _frame_slider;
 
