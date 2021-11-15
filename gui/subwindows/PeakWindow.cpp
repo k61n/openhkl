@@ -19,7 +19,9 @@
 #include "gui/MainWin.h" // gGui
 
 #include <QVBoxLayout>
+#include <QTextStream>
 #include <QPixmap>
+#include <QLineEdit>
 
 PeakWindow::PeakWindow(QWidget* parent, nsx::IntegrationRegion* region)
     : QDialog(parent)
@@ -31,7 +33,7 @@ PeakWindow::PeakWindow(QWidget* parent, nsx::IntegrationRegion* region)
     , _bkg_color(QColor(255, 255, 0, 32)) // yellow, alpha = 1/8
 {
     setModal(false);
-    _main_layout = new QGridLayout(this);
+    _grid_layout = new QGridLayout(this);
     gGui->peak_windows.push_back(this);
     if (region)
         _region_data = _integration_region->getRegion();
@@ -46,13 +48,14 @@ void PeakWindow::refreshAll()
         QGraphicsView* view = drawFrame(i);
         if (view) {
             _views.push_back(view);
-            _main_layout->addWidget(view, 0, i, 1, 1);
+            _grid_layout->addWidget(view, 0, i, 1, 1);
         }
     }
     if (_views.size() == 0) {
         remove();
         throw std::runtime_error("Invalid integration region");
     }
+    setLabel();
 }
 
 void PeakWindow::setIntegrationRegion(nsx::IntegrationRegion* region)
@@ -114,6 +117,24 @@ QImage* PeakWindow::getIntegrationMask(const Eigen::MatrixXi& mask, QColor& peak
         }
     }
     return region_img;
+}
+
+void PeakWindow::setLabel()
+{
+    QString text;
+    QTextStream(&text) << "hkl: ("
+                       << _integration_region->peak()->hkl().h() << ", "
+                       << _integration_region->peak()->hkl().k() << ", "
+                       << _integration_region->peak()->hkl().l() << ")   coordinates: ("
+                       << _integration_region->peak()->shape().center()[0] << ", "
+                       << _integration_region->peak()->shape().center()[1] << ", "
+                       << _integration_region->peak()->shape().center()[2] << ")   intensity: "
+                       << _integration_region->peak()->correctedIntensity().value() << "   sigma: "
+                       << _integration_region->peak()->correctedIntensity().sigma();
+    QLineEdit* line = new QLineEdit();
+    line->setText(text);
+    line->setReadOnly(true);
+    _grid_layout->addWidget(line, 1, 0, 1, _region_data->nFrames());
 }
 
 void PeakWindow::closeEvent(QCloseEvent* event)

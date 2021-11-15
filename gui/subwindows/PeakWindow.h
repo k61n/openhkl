@@ -19,12 +19,12 @@
 
 #include <Eigen/Core>
 
+#include <QLabel>
 #include <QWidget>
 #include <QDialog>
 #include <QGraphicsView>
 #include <QGraphicsPixmapItem>
 #include <QGridLayout>
-#include <QSlider>
 
 class ColorMap;
 
@@ -46,6 +46,7 @@ class PeakWindow : public QDialog {
 
  private:
     QImage* getIntegrationMask(const Eigen::MatrixXi& mask, QColor& peak, QColor& bkg);
+    void setLabel();
     void closeEvent(QCloseEvent* event) override;
     void remove();
 
@@ -55,14 +56,13 @@ class PeakWindow : public QDialog {
     int _intensity;
     bool _logarithmic;
 
-    QWidget* _preview_widget;
-    QWidget* _control_widget;
+    QWidget* _scroll_widget;
 
     ColorMap* _colormap;
     QVector<QGraphicsView*> _views;
-    QGridLayout* _main_layout;
+    QGridLayout* _grid_layout;
     QGraphicsView* _graphics_view;
-    QSlider* _frame_slider;
+    QLabel _label;
 
     QColor _peak_color;
     QColor _bkg_color;
