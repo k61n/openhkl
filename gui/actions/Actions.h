@@ -38,6 +38,7 @@ class Actions : public QObject {
     // View:
     QAction* detector_window;
     QAction* log_window;
+    QAction* close_peak_windows;
 
     // Data
     QAction* add_data;
@@ -72,6 +73,7 @@ class Actions : public QObject {
     void removePeaks();
     void clonePeaks();
     void aboutBox();
+    void closePeakWindows();
 };
 
 #endif // NSX_GUI_ACTIONS_ACTIONS_H

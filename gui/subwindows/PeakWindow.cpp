@@ -93,7 +93,7 @@ QGraphicsView* PeakWindow::drawFrame(std::size_t frame_index)
     view->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     view->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     view->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff );
-    view->scale(0.25, 0.25);
+    view->scale(0.33, 0.33);
     return view;
 }
 

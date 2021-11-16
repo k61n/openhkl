@@ -19,6 +19,7 @@
 #include "gui/connect/Sentinel.h" // for sentinel
 #include "gui/subwindows/DetectorWindow.h"
 #include "gui/subwindows/LogWindow.h"
+#include "gui/subwindows/PeakWindow.h"
 #include "gui/dialogs/ClonePeakDialog.h"
 #include "gui/dialogs/ComboDialog.h"
 #include "gui/dialogs/Messages.h"
@@ -66,6 +67,7 @@ void Actions::setupView()
 {
     detector_window = new QAction("Open detector window");
     log_window = new QAction("Open log window");
+    close_peak_windows = new QAction("Close all peak windows");
 
     connect(detector_window, &QAction::triggered, []() {
         gGui->detector_window->show();
@@ -73,6 +75,7 @@ void Actions::setupView()
     });
 
     connect(log_window, &QAction::triggered, [](){ gGui->log_window->show(); });
+    connect(close_peak_windows, &QAction::triggered, this, &Actions::closePeakWindows);
 }
 
 void Actions::setupData()
@@ -218,6 +221,7 @@ void Actions::removePeaks()
 
 void Actions::clonePeaks()
 {
+    gGui->setReady(false);
     QString description{"Peak collection to clone"};
     QStringList peaks_list = gSession->currentProject()->getPeakListNames();
     if (!peaks_list.empty()) {
@@ -237,10 +241,18 @@ void Actions::clonePeaks()
                 gGui->sentinel->setLinkedComboList(ComboType::PredictedPeaks, peaks_list);
         }
     }
+    gGui->setReady(true);
 }
 
 void Actions::aboutBox()
 {
     std::unique_ptr<AboutBox> dlg(new AboutBox());
     dlg->exec();
+}
+
+void Actions::closePeakWindows()
+{
+    for (PeakWindow* window : gGui->peak_windows)
+        window->close();
+    gGui->peak_windows.clear();
 }

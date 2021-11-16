@@ -46,6 +46,8 @@ Menus::Menus(QMenuBar* menu_bar) : _menu_bar{menu_bar}
     // View menu
     _view_menu->addAction(actions->detector_window);
     _view_menu->addAction(actions->log_window);
+    _view_menu->addSeparator();
+    _view_menu->addAction(actions->close_peak_windows);
 
     QMenu* _data_sub = _data_menu->addMenu("Add data set");
     _data_sub->addAction(actions->add_raw);
