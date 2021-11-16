@@ -140,7 +140,7 @@ void IntegrationRegion::updateMask(Eigen::MatrixXi& mask, double z) const
     }
 }
 
-RegionData* IntegrationRegion::getRegion(bool transpose /* = false */)
+RegionData* IntegrationRegion::getRegion()
 {
     auto aabb = _hull.aabb();
     auto lower = aabb.lower();

@@ -73,7 +73,6 @@ QGraphicsView* PeakWindow::drawFrame(std::size_t frame_index)
     QRect rect(0, 0, _region_data->cols()+1, _region_data->rows()+1);
     if (!view->scene())
         view->setScene(new QGraphicsScene());
-    view->scene()->clear(); // clear the scene
     view->scene()->setSceneRect(rect);
 
 
@@ -90,10 +89,10 @@ QGraphicsView* PeakWindow::drawFrame(std::size_t frame_index)
     mask->setZValue(-1);
 
     view->fitInView(view->scene()->sceneRect(), Qt::KeepAspectRatio);
-    view->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    view->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     view->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     view->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff );
-    view->scale(0.33, 0.33);
+    view->scale(0.5, 0.5);
     return view;
 }
 

@@ -53,7 +53,7 @@ class IntegrationRegion {
     //! zones)
     void updateMask(Eigen::MatrixXi& mask, double z) const;
     //! Get matrices containing the integration region
-    RegionData* getRegion(bool transpose = false);
+    RegionData* getRegion();
     //! Returns the bounding box of the region
     const AABB& aabb() const;
     //! Returns the bounding box of the peak region
