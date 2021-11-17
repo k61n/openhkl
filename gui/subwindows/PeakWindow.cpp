@@ -34,17 +34,14 @@ PeakWindow::PeakWindow(QWidget* parent, nsx::IntegrationRegion* region)
 {
     setModal(false);
 
-    QVBoxLayout* main_layout = new QVBoxLayout(this);
-    QScrollArea* scroll = new QScrollArea();
-    QWidget* scroll_widget = new QWidget();
+    QWidget* view_widget = new QWidget(this);
+    QScrollArea* scroll_area = new QScrollArea(this);
 
-    scroll->setWidget(scroll_widget);
-    scroll_widget->setMaximumWidth(1000);
-    scroll->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
+    _grid_layout = new QGridLayout;
 
-    QWidget* view_widget = new QWidget();
-    _grid_layout = new QGridLayout(view_widget);
-    main_layout->addWidget(view_widget);
+    scroll_area->setWidget(view_widget);
+    scroll_area->setWidgetResizable(true);
+    view_widget->setLayout(_grid_layout);
 
     gGui->peak_windows.push_back(this);
     if (region)
@@ -103,7 +100,7 @@ QGraphicsView* PeakWindow::drawFrame(std::size_t frame_index)
     view->fitInView(view->scene()->sceneRect(), Qt::KeepAspectRatio);
     view->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     view->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    view->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff );
+    view->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     view->scale(0.3, 0.3);
     return view;
 }
