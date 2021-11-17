@@ -34,14 +34,25 @@ PeakWindow::PeakWindow(QWidget* parent, nsx::IntegrationRegion* region)
 {
     setModal(false);
 
-    QWidget* view_widget = new QWidget(this);
-    QScrollArea* scroll_area = new QScrollArea(this);
+    QWidget* view_widget = new QWidget;
+    QScrollArea* scroll_area = new QScrollArea;
+    QVBoxLayout* main_layout = new QVBoxLayout;
+
+    setLayout(main_layout);
+    main_layout->addWidget(scroll_area);
+
+    main_layout->addWidget(view_widget);
 
     _grid_layout = new QGridLayout;
 
     scroll_area->setWidget(view_widget);
     scroll_area->setWidgetResizable(true);
+    scroll_area->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    scroll_area->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
     view_widget->setLayout(_grid_layout);
+
+    setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Expanding);
+    view_widget->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Expanding);
 
     gGui->peak_windows.push_back(this);
     if (region)
