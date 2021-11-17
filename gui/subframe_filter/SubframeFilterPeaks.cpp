@@ -39,7 +39,6 @@
 #include <QHeaderView>
 #include <QItemDelegate>
 #include <QLabel>
-#include <QScrollArea>
 #include <QScrollBar>
 #include <QSpacerItem>
 #include <QTableWidgetItem>

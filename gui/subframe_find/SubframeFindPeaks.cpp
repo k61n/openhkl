@@ -47,7 +47,6 @@
 #include <QItemDelegate>
 #include <QLabel>
 #include <QMessageBox>
-#include <QScrollArea>
 #include <QScrollBar>
 #include <QSpacerItem>
 #include <QTableWidgetItem>

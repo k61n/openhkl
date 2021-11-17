@@ -53,7 +53,6 @@
 #include <QHeaderView>
 #include <QItemDelegate>
 #include <QMessageBox>
-#include <QScrollArea>
 #include <QScrollBar>
 #include <QSpacerItem>
 #include <QTableWidgetItem>

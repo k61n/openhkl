@@ -33,7 +33,27 @@ PeakWindow::PeakWindow(QWidget* parent, nsx::IntegrationRegion* region)
     , _bkg_color(QColor(255, 255, 0, 32)) // yellow, alpha = 1/8
 {
     setModal(false);
-    _grid_layout = new QGridLayout(this);
+
+    QWidget* view_widget = new QWidget;
+    QScrollArea* scroll_area = new QScrollArea;
+    QVBoxLayout* main_layout = new QVBoxLayout;
+
+    setLayout(main_layout);
+    main_layout->addWidget(scroll_area);
+
+    main_layout->addWidget(view_widget);
+
+    _grid_layout = new QGridLayout;
+
+    scroll_area->setWidget(view_widget);
+    scroll_area->setWidgetResizable(true);
+    scroll_area->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    scroll_area->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
+    view_widget->setLayout(_grid_layout);
+
+    setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Expanding);
+    view_widget->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Expanding);
+
     gGui->peak_windows.push_back(this);
     if (region)
         _region_data = _integration_region->getRegion();
@@ -73,7 +93,6 @@ QGraphicsView* PeakWindow::drawFrame(std::size_t frame_index)
     QRect rect(0, 0, _region_data->cols()+1, _region_data->rows()+1);
     if (!view->scene())
         view->setScene(new QGraphicsScene());
-    view->scene()->clear(); // clear the scene
     view->scene()->setSceneRect(rect);
 
 
@@ -90,10 +109,10 @@ QGraphicsView* PeakWindow::drawFrame(std::size_t frame_index)
     mask->setZValue(-1);
 
     view->fitInView(view->scene()->sceneRect(), Qt::KeepAspectRatio);
-    view->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    view->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     view->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    view->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff );
-    view->scale(0.33, 0.33);
+    view->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    view->scale(0.3, 0.3);
     return view;
 }
 
@@ -153,4 +172,11 @@ void PeakWindow::remove()
             break;
         }
     }
+}
+
+QSize PeakWindow::sizeHint() const
+{
+    double w = gGui->sizeHint().width();
+    double h = QDialog::sizeHint().height();
+    return QSize(w, h);
 }

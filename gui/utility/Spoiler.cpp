@@ -20,7 +20,6 @@
 #include <QGroupBox>
 #include <QParallelAnimationGroup>
 #include <QPropertyAnimation>
-#include <QScrollArea>
 #include <QToolButton>
 
 Spoiler::Spoiler(const QString& title, bool isCheckable) : _animationDuration(100)
