@@ -144,11 +144,12 @@ void PeakWindow::setLabel()
     QTextStream(&text) << "hkl: ("
                        << _integration_region->peak()->hkl().h() << ", "
                        << _integration_region->peak()->hkl().k() << ", "
-                       << _integration_region->peak()->hkl().l() << ")   coordinates: ("
+                       << _integration_region->peak()->hkl().l() << ")   position: ("
                        << _integration_region->peak()->shape().center()[0] << ", "
                        << _integration_region->peak()->shape().center()[1] << ", "
-                       << _integration_region->peak()->shape().center()[2] << ")   intensity: "
-                       << _integration_region->peak()->correctedIntensity().value() << "   sigma: "
+                       << _integration_region->peak()->shape().center()[2] << ")   I = "
+                       << _integration_region->peak()->correctedIntensity().value()
+                       << "   " << QString(QChar(0x03C3)) << " = "
                        << _integration_region->peak()->correctedIntensity().sigma();
     QLineEdit* line = new QLineEdit();
     line->setText(text);
