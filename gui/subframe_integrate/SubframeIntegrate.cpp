@@ -40,7 +40,6 @@
 #include <QHeaderView>
 #include <QLabel>
 #include <QMessageBox>
-#include <QScrollArea>
 #include <QScrollBar>
 #include <QSpacerItem>
 

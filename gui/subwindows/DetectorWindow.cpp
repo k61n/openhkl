@@ -35,7 +35,6 @@
 #include <QGroupBox>
 #include <QLabel>
 #include <QMessageBox>
-#include <QScrollArea>
 #include <QSettings>
 
 DetectorWindow::DetectorWindow(QWidget* parent)

@@ -33,7 +33,19 @@ PeakWindow::PeakWindow(QWidget* parent, nsx::IntegrationRegion* region)
     , _bkg_color(QColor(255, 255, 0, 32)) // yellow, alpha = 1/8
 {
     setModal(false);
-    _grid_layout = new QGridLayout(this);
+
+    QVBoxLayout* main_layout = new QVBoxLayout(this);
+    QScrollArea* scroll = new QScrollArea();
+    QWidget* scroll_widget = new QWidget();
+
+    scroll->setWidget(scroll_widget);
+    scroll_widget->setMaximumWidth(1000);
+    scroll->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
+
+    QWidget* view_widget = new QWidget();
+    _grid_layout = new QGridLayout(view_widget);
+    main_layout->addWidget(view_widget);
+
     gGui->peak_windows.push_back(this);
     if (region)
         _region_data = _integration_region->getRegion();
@@ -92,7 +104,7 @@ QGraphicsView* PeakWindow::drawFrame(std::size_t frame_index)
     view->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     view->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     view->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff );
-    view->scale(0.5, 0.5);
+    view->scale(0.3, 0.3);
     return view;
 }
 
