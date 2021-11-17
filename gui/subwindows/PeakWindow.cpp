@@ -173,3 +173,10 @@ void PeakWindow::remove()
         }
     }
 }
+
+QSize PeakWindow::sizeHint() const
+{
+    double w = gGui->sizeHint().width();
+    double h = QDialog::sizeHint().height();
+    return QSize(w, h);
+}
