@@ -347,6 +347,7 @@ void SubframeFilterPeaks::updatePeakList()
         return;
 
     QString current_peaks = _peak_combo->currentText();
+    _peak_combo->clear();
     auto peak_list = gSession->experimentAt(_exp_combo->currentIndex())->getPeakListNames();
     _peak_combo->addItems(peak_list);
     _peak_combo->setCurrentText(current_peaks);
