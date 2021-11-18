@@ -24,6 +24,8 @@
 #include <QPixmap>
 #include <QLineEdit>
 
+PeakWindowParameters PeakWindow::_params = {};
+
 PeakWindow::PeakWindow(QWidget* parent, nsx::IntegrationRegion* region)
     : QDialog(parent)
     , _integration_region(region)
