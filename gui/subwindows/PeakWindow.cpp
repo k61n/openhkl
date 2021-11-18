@@ -65,6 +65,8 @@ PeakWindow::PeakWindow(nsx::Peak3D* peak, QWidget* parent /* = nullptr */)
     view_widget->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Expanding);
 
     gGui->peak_windows.push_back(this);
+
+    initView();
 }
 
 void PeakWindow::setControlWidgetUp()
@@ -92,6 +94,11 @@ void PeakWindow::setControlWidgetUp()
     _bkg_color_button->setColor(Qt::yellow);
     _alpha->setValue(0.2);
     _intensity_slider->setValue(3000);
+
+    _peak_end->setSingleStep(0.1);
+    _bkg_begin->setSingleStep(0.1);
+    _bkg_end->setSingleStep(0.1);
+    _alpha->setSingleStep(0.1);
 
     QLabel* label = new QLabel;
     label->setText("Peak end");
@@ -167,17 +174,21 @@ void PeakWindow::setControlWidgetUp()
     connect(_bkg_color_button, &ColorButton::colorChanged, this, &PeakWindow::refresh);
 }
 
-void PeakWindow::refresh()
+void PeakWindow::initView()
 {
     _integration_region = std::make_unique<nsx::IntegrationRegion>(
         _peak, _params.peak_end, _params.bkg_begin, _params.bkg_end);
     _region_data = _integration_region->getRegion();
-    for (auto* view : _views)
-        delete view;
-    _views.clear();
     for (std::size_t i = 0; i < _region_data->nFrames(); ++i) {
-        QGraphicsView* view = drawFrame(i);
+        _index.push_back(_region_data->index(i));
+        QGraphicsView* view = new QGraphicsView;
+        drawFrame(view, i);
         if (view) {
+            view->fitInView(view->scene()->sceneRect(), Qt::KeepAspectRatio);
+            view->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+            view->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+            view->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+            view->scale(0.3, 0.3);
             _views.push_back(view);
             _grid_layout->addWidget(view, 0, i, 1, 1);
         }
@@ -189,24 +200,42 @@ void PeakWindow::refresh()
     setLabel();
 }
 
-QGraphicsView* PeakWindow::drawFrame(std::size_t frame_index)
+void PeakWindow::refresh()
 {
-    if (!_peak)
-        return nullptr;
+    _integration_region.reset();
+    _integration_region = std::make_unique<nsx::IntegrationRegion>(
+        _peak, _params.peak_end, _params.bkg_begin, _params.bkg_end);
+    _region_data = _integration_region->getRegion();
+    for (int i = 0; i < _index.size(); ++i) {
+        try {
+            int j = _region_data->getRegionDataIndex(_index[i]);
+            QGraphicsView* view = _views[i];
+            drawFrame(view, j);
+        } catch (std::range_error& e) {
+            continue;
+        }
+    }
 
-    QGraphicsView* view = new QGraphicsView();
+}
+
+void PeakWindow::drawFrame(QGraphicsView* view, std::size_t frame_index)
+{
     QRect rect(0, 0, _region_data->cols()+1, _region_data->rows()+1);
     if (!view->scene())
         view->setScene(new QGraphicsScene());
+    view->scene()->clear();
     view->scene()->setSceneRect(rect);
 
-
     // add the image data
-    QGraphicsPixmapItem* image = view->scene()->addPixmap(
-        QPixmap::fromImage(
-            _colormap->matToImage(_region_data->frame(frame_index).cast<double>(), rect,
-                                    _intensity, _logarithmic)));
-    image->setZValue(-2);
+    try {
+        QGraphicsPixmapItem* image = view->scene()->addPixmap(
+            QPixmap::fromImage(
+                _colormap->matToImage(_region_data->frame(frame_index).cast<double>(), rect,
+                                        _params.max_intensity, _logarithmic)));
+        image->setZValue(-2);
+    } catch (std::range_error& e) {
+        return;
+    }
 
     // add the integration overlay
     QColor peak_color = _params.peak_color;
@@ -218,12 +247,6 @@ QGraphicsView* PeakWindow::drawFrame(std::size_t frame_index)
     QGraphicsPixmapItem* mask = view->scene()->addPixmap(QPixmap::fromImage(*mask_image));
     mask->setZValue(-1);
 
-    view->fitInView(view->scene()->sceneRect(), Qt::KeepAspectRatio);
-    view->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-    view->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    view->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    view->scale(0.3, 0.3);
-    return view;
 }
 
 QImage* PeakWindow::getIntegrationMask(const Eigen::MatrixXi& mask, QColor& peak, QColor& bkg)

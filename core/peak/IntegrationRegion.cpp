@@ -191,7 +191,7 @@ RegionData* IntegrationRegion::getRegion()
                 mask(y - ymin, x - xmin) = int(val);
             }
         }
-        _region_data.addFrame(region, mask);
+        _region_data.addFrame(z, region, mask);
     }
     return &_region_data;
 }

@@ -514,7 +514,6 @@ void DetectorScene::mouseDoubleClickEvent(QGraphicsSceneMouseEvent* event)
                 auto* peak = peak_item->peak();
                 try {
                     PeakWindow* window = new PeakWindow(peak);
-                    window->refresh();
                     window->show();
                 } catch (std::runtime_error& e) {
                     gGui->statusBar()->showMessage(

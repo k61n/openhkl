@@ -62,13 +62,15 @@ class PeakWindow : public QDialog {
     //! set up control widget
     void setControlWidgetUp();
     //! Plot the integration region image with overlay
-    QGraphicsView* drawFrame(std::size_t frame_index);
+    void drawFrame(QGraphicsView* view, std::size_t frame_index);
     //! Convert matrix to integration mask QImage
     QImage* getIntegrationMask(const Eigen::MatrixXi& mask, QColor& peak, QColor& bkg);
     //! Set the peak description
     void setLabel();
     //! Remove this peak from the global vector
     void remove();
+    //! Set up the initial display
+    void initView();
 
     void grabParameters();
     void setParameters();
@@ -81,6 +83,7 @@ class PeakWindow : public QDialog {
 
     int _intensity;
     bool _logarithmic;
+    std::vector<int> _index;
 
     QWidget* _scroll_widget;
 
