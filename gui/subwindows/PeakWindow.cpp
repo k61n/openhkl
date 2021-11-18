@@ -14,7 +14,7 @@
 
 #include "gui/subwindows/PeakWindow.h"
 
-#include "core/peak/IntegrationRegion.h"
+#include "core/peak/Peak3D.h"
 #include "gui/models/ColorMap.h"
 #include "gui/MainWin.h" // gGui
 #include "gui/utility/ColorButton.h"
@@ -26,9 +26,10 @@
 
 PeakWindowParameters PeakWindow::_params = {};
 
-PeakWindow::PeakWindow(QWidget* parent, nsx::IntegrationRegion* region)
+PeakWindow::PeakWindow(nsx::Peak3D* peak, QWidget* parent /* = nullptr */)
     : QDialog(parent)
-    , _integration_region(region)
+    , _peak(peak)
+    , _integration_region(nullptr)
     , _intensity(3000)
     , _logarithmic(false)
     , _colormap(new ColorMap())
@@ -63,8 +64,6 @@ PeakWindow::PeakWindow(QWidget* parent, nsx::IntegrationRegion* region)
     view_widget->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Expanding);
 
     gGui->peak_windows.push_back(this);
-    if (region)
-        _region_data = _integration_region->getRegion();
 }
 
 void PeakWindow::setControlWidgetUp()
@@ -140,8 +139,11 @@ void PeakWindow::setControlWidgetUp()
     connect(_bkg_color_button, &ColorButton::colorChanged, this, &PeakWindow::setParameters);
 }
 
-void PeakWindow::refreshAll()
+void PeakWindow::refresh()
 {
+    _integration_region = std::make_unique<nsx::IntegrationRegion>(
+        _peak, _params.peak_end, _params.bkg_begin, _params.bkg_end);
+    _region_data = _integration_region->getRegion();
     for (auto* view : _views)
         delete view;
     _views.clear();
@@ -159,15 +161,9 @@ void PeakWindow::refreshAll()
     setLabel();
 }
 
-void PeakWindow::setIntegrationRegion(nsx::IntegrationRegion* region)
-{
-    _integration_region = region;
-    _region_data = _integration_region->getRegion();
-}
-
 QGraphicsView* PeakWindow::drawFrame(std::size_t frame_index)
 {
-    if (!_integration_region)
+    if (!_peak)
         return nullptr;
 
     QGraphicsView* view = new QGraphicsView();
@@ -185,8 +181,12 @@ QGraphicsView* PeakWindow::drawFrame(std::size_t frame_index)
     image->setZValue(-2);
 
     // add the integration overlay
+    QColor peak_color = _params.peak_color;
+    QColor bkg_color = _params.bkg_color;
+    peak_color.setAlphaF(_params.alpha);
+    bkg_color.setAlphaF(_params.alpha);
     QImage* mask_image = getIntegrationMask(
-        _region_data->mask(frame_index), _params.peak_color, _params.bkg_color);
+        _region_data->mask(frame_index), peak_color, bkg_color);
     QGraphicsPixmapItem* mask = view->scene()->addPixmap(QPixmap::fromImage(*mask_image));
     mask->setZValue(-1);
 

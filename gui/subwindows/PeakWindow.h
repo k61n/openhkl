@@ -17,6 +17,8 @@
 
 #include "core/peak/RegionData.h"
 
+#include "core/peak/IntegrationRegion.h"
+
 #include <Eigen/Core>
 
 #include <QLabel>
@@ -32,7 +34,7 @@ class ColorButton;
 class ColorMap;
 
 namespace nsx {
-class IntegrationRegion;
+class Peak3D;
 }
 
 struct PeakWindowParameters {
@@ -49,12 +51,10 @@ struct PeakWindowParameters {
 class PeakWindow : public QDialog {
 
  public:
-    PeakWindow(QWidget* parent = nullptr, nsx::IntegrationRegion* region = nullptr);
+    PeakWindow(nsx::Peak3D* peak, QWidget* parent = nullptr);
 
-    //! set the integration region
-    void setIntegrationRegion(nsx::IntegrationRegion* region);
     //! Refresh the whole dialog
-    void refreshAll();
+    void refresh();
 
     QSize sizeHint() const;
 
@@ -75,7 +75,8 @@ class PeakWindow : public QDialog {
 
     void closeEvent(QCloseEvent* event) override;
 
-    nsx::IntegrationRegion* _integration_region;
+    nsx::Peak3D* _peak;
+    std::unique_ptr<nsx::IntegrationRegion> _integration_region;
     nsx::RegionData* _region_data;
 
     int _intensity;
