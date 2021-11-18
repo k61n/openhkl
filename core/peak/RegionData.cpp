@@ -31,13 +31,22 @@ RegionData::RegionData(
 {
 }
 
-void RegionData::addFrame(Eigen::MatrixXi& frame, Eigen::MatrixXi& mask)
+void RegionData::addFrame(unsigned int frame_index, Eigen::MatrixXi& frame, Eigen::MatrixXi& mask)
 {
+    _index.emplace_back(frame_index);
     _data.emplace_back(frame);
     _mask.emplace_back(mask);
 }
 
-Eigen::MatrixXi RegionData::frame(size_t i)
+int RegionData::index(std::size_t i)
+{
+    if (i < _index.size())
+        return _index[i];
+    else
+        throw std::range_error("Frame index out of bounds");
+}
+
+Eigen::MatrixXi RegionData::frame(std::size_t i)
 {
     if (i < _data.size())
         return _data[i];
@@ -45,7 +54,7 @@ Eigen::MatrixXi RegionData::frame(size_t i)
         throw std::range_error("Region frame index out of bounds");
 }
 
-Eigen::MatrixXi RegionData::mask(size_t i)
+Eigen::MatrixXi RegionData::mask(std::size_t i)
 {
     if (i < _mask.size())
         return _mask[i];
@@ -61,6 +70,15 @@ unsigned int RegionData::nFrames() const
 unsigned int RegionData::centreFrame() const
 {
     return std::round(_integration_region->peak()->shape().center()[2]) - _zmin;
+}
+
+unsigned int RegionData::getRegionDataIndex(unsigned int frame_index)
+{
+    for (int i = 0; i < nFrames(); ++i) {
+        if (_index[i] == frame_index)
+            return i;
+    }
+    throw std::range_error("Frame is not in this integration region");
 }
 
 IntegrationRegion* RegionData::integrationRegion() const

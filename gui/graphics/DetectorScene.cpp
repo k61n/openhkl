@@ -512,11 +512,8 @@ void DetectorScene::mouseDoubleClickEvent(QGraphicsSceneMouseEvent* event)
             PeakItemGraphic* peak_item = dynamic_cast<PeakItemGraphic*>(item);
             if (peak_item) {
                 auto* peak = peak_item->peak();
-                nsx::IntegrationRegion region(peak, peak->peakEnd(), peak->bkgBegin(), peak->bkgEnd());
                 try {
-                    PeakWindow* window = new PeakWindow();
-                    window->setIntegrationRegion(&region);
-                    window->refreshAll();
+                    PeakWindow* window = new PeakWindow(peak);
                     window->show();
                 } catch (std::runtime_error& e) {
                     gGui->statusBar()->showMessage(

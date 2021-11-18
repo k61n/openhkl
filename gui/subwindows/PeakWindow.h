@@ -17,6 +17,8 @@
 
 #include "core/peak/RegionData.h"
 
+#include "core/peak/IntegrationRegion.h"
+
 #include <Eigen/Core>
 
 #include <QLabel>
@@ -25,38 +27,63 @@
 #include <QGraphicsView>
 #include <QGraphicsPixmapItem>
 #include <QGridLayout>
+#include <QDoubleSpinBox>
+#include <QSlider>
 
+class ColorButton;
 class ColorMap;
 
 namespace nsx {
-class IntegrationRegion;
+class Peak3D;
 }
+
+struct PeakWindowParameters {
+    double peak_end = 3.0;
+    double bkg_begin = 3.0;
+    double bkg_end = 6.0;
+    QColor peak_color = Qt::green;
+    QColor bkg_color = Qt::yellow;
+    double alpha = 0.2;
+    int max_intensity = 3000;
+};
 
 //! Modeless dialog containing a non-contextual detector scene (open via Menu)
 class PeakWindow : public QDialog {
- public:
-    PeakWindow(QWidget* parent = nullptr, nsx::IntegrationRegion* region = nullptr);
 
-    //! set the integration region
-    void setIntegrationRegion(nsx::IntegrationRegion* region);
+ public:
+    PeakWindow(nsx::Peak3D* peak, QWidget* parent = nullptr);
+
     //! Refresh the whole dialog
-    void refreshAll();
-    //! Plot the integration region image with overlay
-    QGraphicsView* drawFrame(std::size_t frame_index);
+    void refresh();
 
     QSize sizeHint() const;
 
  private:
+    //! set up control widget
+    void setControlWidgetUp();
+    //! Plot the integration region image with overlay
+    void drawFrame(QGraphicsView* view, std::size_t frame_index);
+    //! Convert matrix to integration mask QImage
     QImage* getIntegrationMask(const Eigen::MatrixXi& mask, QColor& peak, QColor& bkg);
+    //! Set the peak description
     void setLabel();
-    void closeEvent(QCloseEvent* event) override;
+    //! Remove this peak from the global vector
     void remove();
+    //! Set up the initial display
+    void initView();
 
-    nsx::IntegrationRegion* _integration_region;
+    void grabParameters();
+    void setParameters();
+
+    void closeEvent(QCloseEvent* event) override;
+
+    nsx::Peak3D* _peak;
+    std::unique_ptr<nsx::IntegrationRegion> _integration_region;
     nsx::RegionData* _region_data;
 
     int _intensity;
     bool _logarithmic;
+    std::vector<int> _index;
 
     QWidget* _scroll_widget;
 
@@ -64,10 +91,20 @@ class PeakWindow : public QDialog {
     QVector<QGraphicsView*> _views;
     QGridLayout* _grid_layout;
     QGraphicsView* _graphics_view;
-    QLabel _label;
+    QGridLayout* _control_layout;
+
+    QDoubleSpinBox* _peak_end;
+    QDoubleSpinBox* _bkg_begin;
+    QDoubleSpinBox* _bkg_end;
+    QDoubleSpinBox* _alpha;
+    ColorButton* _peak_color_button;
+    ColorButton* _bkg_color_button;
+    QSlider* _intensity_slider;
 
     QColor _peak_color;
     QColor _bkg_color;
+
+    static PeakWindowParameters _params;
 };
 
 #endif // NSX_GUI_SUBWINDOWS_PEAKWINDOW_H
