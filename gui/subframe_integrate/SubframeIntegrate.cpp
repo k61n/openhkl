@@ -409,8 +409,8 @@ void SubframeIntegrate::setPreviewUp()
 
     preview_spoiler->setContentLayout(*_peak_view_widget);
 
-    _peak_view_widget->set1.drawIntegrationRegion->setChecked(true);
-    _peak_view_widget->set1.previewIntRegion->setChecked(true);
+    _peak_view_widget->set1.drawIntegrationRegion->setChecked(false);
+    _peak_view_widget->set1.previewIntRegion->setChecked(false);
 
     connect(
         _peak_view_widget->set1.peakEnd, qOverload<double>(&QDoubleSpinBox::valueChanged),
