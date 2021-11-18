@@ -134,7 +134,7 @@ void PeakWindow::setControlWidgetUp()
     label->setText("Alpha");
     label->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
     _control_layout->addWidget(label, 0, 11, 1, 1);
-    _control_layout->addWidget(_bkg_color_button, 0, 12, 1, 1);
+    _control_layout->addWidget(_alpha, 0, 12, 1, 1);
 
     label = new QLabel;
     label->setText("Intensity max");
