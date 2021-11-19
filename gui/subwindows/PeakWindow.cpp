@@ -36,7 +36,6 @@ PeakWindow::PeakWindow(nsx::Peak3D* peak, QWidget* parent /* = nullptr */)
 {
     setModal(false);
     setControlWidgetUp();
-    grabParameters();
 
     QWidget* view_widget = new QWidget;
     QWidget* control_widget = new QWidget;
@@ -85,13 +84,7 @@ void PeakWindow::setControlWidgetUp()
     _intensity_slider->setMaximum(10000);
     _intensity_slider->setSingleStep(1);
 
-    _peak_end->setValue(3.0);
-    _bkg_begin->setValue(3.0);
-    _bkg_end->setValue(6.0);
-    _peak_color_button->setColor(Qt::yellow);
-    _bkg_color_button->setColor(Qt::green);
-    _alpha->setValue(0.2);
-    _intensity_slider->setValue(3000);
+    grabParameters();
 
     _peak_end->setSingleStep(0.1);
     _bkg_begin->setSingleStep(0.1);
@@ -142,21 +135,6 @@ void PeakWindow::setControlWidgetUp()
 
     connect(
         _peak_end, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged),
-        this, &PeakWindow::setParameters);
-    connect(
-        _bkg_begin, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged),
-        this, &PeakWindow::setParameters);
-    connect(
-        _bkg_end, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged),
-        this, &PeakWindow::setParameters);
-    connect(
-        _alpha, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged),
-        this, &PeakWindow::setParameters);
-    connect(_intensity_slider, &QSlider::valueChanged, this, &PeakWindow::setParameters);
-    connect(_peak_color_button, &ColorButton::colorChanged, this, &PeakWindow::setParameters);
-    connect(_bkg_color_button, &ColorButton::colorChanged, this, &PeakWindow::setParameters);
-    connect(
-        _peak_end, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged),
         this, &PeakWindow::refresh);
     connect(
         _bkg_begin, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged),
@@ -200,6 +178,7 @@ void PeakWindow::initView()
 
 void PeakWindow::refresh()
 {
+    setParameters();
     _integration_region.reset();
     _integration_region = std::make_unique<nsx::IntegrationRegion>(
         _peak, _params.peak_end, _params.bkg_begin, _params.bkg_end);
