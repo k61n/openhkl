@@ -18,6 +18,7 @@
 #include "gui/dialogs/ExperimentDialog.h"
 #include "gui/models/Project.h"
 #include "gui/models/Session.h"
+#include "gui/MainWin.h"
 
 #include <QFileDialog>
 #include <QMessageBox>
@@ -155,6 +156,7 @@ void SubframeHome::createNew()
 
 void SubframeHome::loadFromFile()
 {
+    gGui->setReady(false);
     QSettings s;
     s.beginGroup("RecentDirectories");
     QString loadDirectory = s.value("experiment", QDir::homePath()).toString();
@@ -180,10 +182,12 @@ void SubframeHome::loadFromFile()
     } catch (const std::exception& e) {
         QMessageBox::critical(this, "Error", QString(e.what()));
     }
+    gGui->setReady(true);
 }
 
 void SubframeHome::saveCurrent()
 {
+    gGui->setReady(false);
     QSettings s;
     s.beginGroup("RecentDirectories");
     QString loadDirectory = s.value("experiment", QDir::homePath()).toString();
@@ -204,6 +208,7 @@ void SubframeHome::saveCurrent()
     } catch (const std::exception& e) {
         QMessageBox::critical(this, "Error", QString(e.what()));
     }
+    gGui->setReady(true);
 }
 
 void SubframeHome::saveAll() { }
