@@ -33,8 +33,6 @@ PeakWindow::PeakWindow(nsx::Peak3D* peak, QWidget* parent /* = nullptr */)
     , _intensity(3000)
     , _logarithmic(false)
     , _colormap(new ColorMap())
-    , _peak_color(QColor(0, 255, 0, 32)) // green, alpha = 1/8
-    , _bkg_color(QColor(255, 255, 0, 32)) // yellow, alpha = 1/8
 {
     setModal(false);
     setControlWidgetUp();
@@ -90,8 +88,8 @@ void PeakWindow::setControlWidgetUp()
     _peak_end->setValue(3.0);
     _bkg_begin->setValue(3.0);
     _bkg_end->setValue(6.0);
-    _peak_color_button->setColor(Qt::green);
-    _bkg_color_button->setColor(Qt::yellow);
+    _peak_color_button->setColor(Qt::yellow);
+    _bkg_color_button->setColor(Qt::green);
     _alpha->setValue(0.2);
     _intensity_slider->setValue(3000);
 
