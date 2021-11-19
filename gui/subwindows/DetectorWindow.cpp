@@ -52,7 +52,7 @@ DetectorWindow::DetectorWindow(QWidget* parent)
     _peak_view_widget_2 = new PeakViewWidget("Valid peaks", "Invalid Peaks");
     _peak_view_widget_2->set1.setColor(Qt::darkGreen);
     _peak_view_widget_2->set2.setColor(Qt::darkRed);
-    _peak_view_widget_2->set1.setIntegrationRegionColors(Qt::darkGreen, Qt::darkYellow, 0.5);
+    _peak_view_widget_2->set1.setIntegrationRegionColors(Qt::darkYellow, Qt::darkGreen, 0.2);
 
     setDetectorViewUp();
     setPeakTableUp();

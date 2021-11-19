@@ -41,8 +41,8 @@ struct PeakWindowParameters {
     double peak_end = 3.0;
     double bkg_begin = 3.0;
     double bkg_end = 6.0;
-    QColor peak_color = Qt::green;
-    QColor bkg_color = Qt::yellow;
+    QColor peak_color = Qt::yellow;
+    QColor bkg_color = Qt::green;
     double alpha = 0.2;
     int max_intensity = 3000;
 };
@@ -100,9 +100,6 @@ class PeakWindow : public QDialog {
     ColorButton* _peak_color_button;
     ColorButton* _bkg_color_button;
     QSlider* _intensity_slider;
-
-    QColor _peak_color;
-    QColor _bkg_color;
 
     static PeakWindowParameters _params;
 };
