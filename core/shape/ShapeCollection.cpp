@@ -388,7 +388,7 @@ void ShapeCollection::setPredictedShapes(
     PeakCollection* peaks, PeakInterpolation interpolation, sptrProgressHandler handler)
 {
     nsxlog(
-        Level::Info, "predictPeaks: Computing shapes of ", peaks->numberOfPeaks(),
+        Level::Info, "ShapeCollection: Computing shapes of ", peaks->numberOfPeaks(),
         " calculated peaks");
 
     int count = 0;
@@ -400,6 +400,7 @@ void ShapeCollection::setPredictedShapes(
         handler->setProgress(0);
     }
 
+    #pragma omp parallel for
     for (auto peak : peaks->getPeakList()) {
         peak->setPredicted(true);
         peak->setSelected(true);
@@ -421,6 +422,7 @@ void ShapeCollection::setPredictedShapes(
             handler->setProgress(progress);
         }
     }
+    nsxlog(Level::Info, "ShapeCollection: finished computing shapes");
 }
 
 std::array<double, 6> ShapeCollection::choleskyD() const
