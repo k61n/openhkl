@@ -55,13 +55,15 @@ class Blob3D {
     //! Returns the center of Mass
     Eigen::Vector3d center() const;
     //! Gets the ellipsoid parameters
-    void toEllipsoid(
+    bool toEllipsoid(
         double scale, Eigen::Vector3d& center, Eigen::Vector3d& eigenvalues,
         Eigen::Matrix3d& eigenvectors) const;
     //! Print to ostream
     void printSelf(std::ostream& os) const;
     //! Gets covariance matrix of the blob
     Eigen::Matrix3d covariance() const;
+    //! Whether the blob is valid
+    bool isValid() const;
 
  private:
     //! Zeroth moment (total mass)
@@ -76,6 +78,8 @@ class Blob3D {
     double _minValue;
     //! Maximum mass value
     double _maxValue;
+    //! Validity of blob
+    mutable bool _valid;
 };
 
 #ifndef SWIG

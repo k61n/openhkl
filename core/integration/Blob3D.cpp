@@ -92,7 +92,7 @@ double Blob3D::getMaximumMass() const
 Eigen::Vector3d Blob3D::center() const
 {
     if (_m0 < minimum_blob_mass)
-        throw std::runtime_error("No mass in Blob");
+        _valid = false;
     return _m1 / _m0;
 }
 
@@ -104,12 +104,14 @@ void Blob3D::printSelf(std::ostream& os) const
 }
 
 // todo: remove non-const reference args, just return Ellipsoid3D
-void Blob3D::toEllipsoid(
+bool Blob3D::toEllipsoid(
     double scale, Eigen::Vector3d& c, Eigen::Vector3d& eigenvalues,
     Eigen::Matrix3d& eigenvectors) const
 {
-    if (_m0 < minimum_blob_mass)
-        throw std::runtime_error("No mass in Blob");
+    if (_m0 < minimum_blob_mass) {
+        _valid = false;
+        return false;
+    }
 
     // Center of the ellipsoid
     c = center();
@@ -132,6 +134,7 @@ void Blob3D::toEllipsoid(
 
     // Now eigenvectors
     eigenvectors = solver.eigenvectors();
+    return true;
 }
 
 std::ostream& operator<<(std::ostream& os, const Blob3D& b)
@@ -145,6 +148,11 @@ Eigen::Matrix3d Blob3D::covariance() const
     Eigen::Vector3d com = _m1 / _m0;
     Eigen::Matrix3d cov = _m2 / _m0 - com * com.transpose();
     return cov;
+}
+
+bool Blob3D::isValid() const
+{
+    return _valid;
 }
 
 } // namespace nsx
