@@ -88,8 +88,32 @@ bool PixelSumIntegrator::compute(
         f_max = std::max(ev.frame, f_max);
     }
 
-    Eigen::Vector3d center = fitCenter() ? blob.center() : peak->shape().center();
-    Eigen::Matrix3d cov = fitCov() ? blob.covariance() : peak->shape().inverseMetric();
+    Eigen::Vector3d center;
+    Eigen::Matrix3d cov;
+
+    if (fitCenter()) {
+        if (blob.isValid()) {
+            center = blob.center();
+        } else {
+            peak->setRejectionFlag(RejectionFlag::InvalidCentroid);
+            peak->setSelected(false);
+            return false;
+        }
+    } else {
+        center = peak->shape().center();
+    }
+
+    if (fitCov()) {
+        if (blob.isValid()) {
+            cov = blob.covariance();
+        } else {
+            peak->setRejectionFlag(RejectionFlag::InvalidCentroid);
+            peak->setSelected(false);
+            return false;
+        }
+    } else {
+        cov = peak->shape().inverseMetric();
+    }
 
     // center of mass is consistent
     if (std::isnan(center.norm())) {

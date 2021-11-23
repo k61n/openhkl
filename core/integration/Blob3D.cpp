@@ -31,6 +31,7 @@ Blob3D::Blob3D()
     , _npoints(0)
     , _minValue(std::numeric_limits<double>::max())
     , _maxValue(std::numeric_limits<double>::min())
+    , _valid(true)
 {
 }
 
@@ -43,6 +44,7 @@ Blob3D::Blob3D(double x, double y, double z, double m)
     _npoints = 1;
     _minValue = m;
     _maxValue = m;
+    _valid = true;
 }
 
 void Blob3D::addPoint(double x, double y, double z, double m)
