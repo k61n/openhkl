@@ -363,10 +363,7 @@ void PeakFinder::findCollisions(
     for (auto it = blobs.begin(); it != blobs.end();) {
         ++dummy;
 
-        try {
-            // toEllipsoid throws exception if mass is too small
-            it->second.toEllipsoid(_params->peak_end, center, extents, axis);
-        } catch (...) {
+        if (!it->second.toEllipsoid(_params->peak_end, center, extents, axis)) {
             it = blobs.erase(it);
             continue;
         }
