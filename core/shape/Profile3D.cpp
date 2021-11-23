@@ -161,14 +161,14 @@ void Profile3D::addProfile(const Profile3D& other, double weight)
     }
 
     if (_shape != other._shape)
-        throw std::runtime_error("Profile3D: cannot add profiles of different dimensions");
+        ++_n_failures; // cannot add profiles of different dimensions
 
     double dx = _aabb.extents().squaredNorm();
     auto dlb = _aabb.lower() - other._aabb.lower();
     auto dub = _aabb.upper() - other._aabb.upper();
 
     if (dlb.squaredNorm() > 1e-6 * dx || dub.squaredNorm() > 1e-6 * dx)
-        throw std::runtime_error("Profile3D: cannot add profiles with different bounding boxes");
+        ++_n_failures; // cannot add profiles with different bounding boxes
 
     assert(_profile.size() == other._profile.size());
 

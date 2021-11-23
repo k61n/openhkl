@@ -73,6 +73,7 @@ class Profile3D {
     Eigen::Vector3i _shape;
     size_t _count;
     std::vector<double> _profile;
+    int _n_failures;
 };
 
 /*! @}*/

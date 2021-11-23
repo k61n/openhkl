@@ -91,9 +91,9 @@ class AutoIndexer {
     //! Return the autoindexing parameters
     IndexerParameters* parameters();
     //! Perform the autoindexing
-    void autoIndex(const std::vector<Peak3D*>& peaks);
+    bool autoIndex(const std::vector<Peak3D*>& peaks);
     //! Autoindex by passing a peak collection (avoid SWIG memory leak)
-    void autoIndex(PeakCollection* peaks);
+    bool autoIndex(PeakCollection* peaks);
     //! Return a list of the best solutions ordered by percentage of successfully indexed peaks
     const std::vector<RankedSolution>& solutions() const;
 
@@ -112,7 +112,7 @@ class AutoIndexer {
  private:
     //! Get a vector of candidate unit cells from a list of peaks using the
     //! Fourier transform method
-    void computeFFTSolutions(const std::vector<Peak3D*>& peaks);
+    bool computeFFTSolutions(const std::vector<Peak3D*>& peaks);
     //! Do least squares minimisation to refine candidate unit cells
     void refineSolutions(const std::vector<Peak3D*>& peaks);
     //! Rand solutions by quality (percentage of peak indexed)

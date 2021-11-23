@@ -21,6 +21,7 @@
 #include "core/shape/Profile3D.h"
 
 #include <array>
+#include <optional>
 #include <set>
 
 namespace nsx {
@@ -92,19 +93,20 @@ class ShapeCollection {
     double meanPearson() const;
 
     //! Returns the average peak profile near the given detector event
-    Profile3D meanProfile(const DetectorEvent& ev, double radius, double nframes) const;
+    std::optional<Profile3D> meanProfile(
+        const DetectorEvent& ev, double radius, double nframes) const;
 
     //! Returns the average peak profile near the given detector event
-    std::vector<Intensity> meanProfile1D(
+    std::optional<std::vector<Intensity>> meanProfile1D(
         const DetectorEvent& ev, double radius, double nframes) const;
 
     //! Returns the average peak covariance near the given detector event
-    Eigen::Matrix3d meanCovariance(
+    std::optional<Eigen::Matrix3d> meanCovariance(
         Peak3D* reference_peak, double radius, double nframes, size_t min_neighbors,
         PeakInterpolation interpolation) const;
 
     //! Find neighbors of a given peak
-    std::vector<Peak3D*> findNeighbors(
+    std::optional<std::vector<Peak3D*>> findNeighbors(
         const DetectorEvent& ev, double radius, double nframes) const;
 
     //! Returns the background end used for the collection

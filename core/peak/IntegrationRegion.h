@@ -76,6 +76,8 @@ class IntegrationRegion {
     double peakEnd() const { return _peakEnd; }
     //! Return a pointer to the peak
     Peak3D* peak() const { return _peak; };
+    //! Returns whether the integration region is valid
+    bool isValid() const;
 
  private:
     Ellipsoid _shape;
@@ -90,6 +92,7 @@ class IntegrationRegion {
     Peak3D* _peak;
     unsigned int _centre_index;
     RegionData _region_data;
+    bool _valid;
 };
 
 } // namespace nsx

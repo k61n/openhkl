@@ -234,7 +234,6 @@ void PeakFinder::findPrimaryBlobs(
 
     // Iterate on all pixels in the image
     int nframes = 0;
-    std::cout << DYNAMIC_CHUNK << std::endl;
     #pragma omp for schedule(dynamic, DYNAMIC_CHUNK)
     for (size_t idx = begin; idx < end; ++idx) {
         ++nframes;

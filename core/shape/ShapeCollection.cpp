@@ -267,12 +267,15 @@ double ShapeCollection::meanPearson() const
     return sum_pearson / _profiles.size();
 }
 
-Profile3D ShapeCollection::meanProfile(const DetectorEvent& ev, double radius, double nframes) const
+std::optional<Profile3D> ShapeCollection::meanProfile(
+    const DetectorEvent& ev, double radius, double nframes) const
 {
     Profile3D mean;
-    std::vector<Peak3D*> neighbors = findNeighbors(ev, radius, nframes);
+    auto neighbors = findNeighbors(ev, radius, nframes);
+    if (!neighbors)
+        return {};
 
-    for (auto peak : neighbors) {
+    for (auto peak : neighbors.value()) {
         // double weight = (1-r/radius) * (1-df/nframes);
         // mean.addProfile(profile, weight*weight);
         mean.addProfile(_profiles.find(peak)->second.first, 1.0);
@@ -282,14 +285,17 @@ Profile3D ShapeCollection::meanProfile(const DetectorEvent& ev, double radius, d
     return mean;
 }
 
-std::vector<Intensity> ShapeCollection::meanProfile1D(
+std::optional<std::vector<Intensity>> ShapeCollection::meanProfile1D(
     const DetectorEvent& ev, double radius, double nframes) const
 {
-    std::vector<Peak3D*> neighbors = findNeighbors(ev, radius, nframes);
-    std::vector<Intensity> mean_profile;
-    const double inv_N = 1.0 / neighbors.size();
+    auto neighbors = findNeighbors(ev, radius, nframes);
+    if (!neighbors)
+        return {};
 
-    for (auto peak : neighbors) {
+    std::vector<Intensity> mean_profile;
+    const double inv_N = 1.0 / neighbors.value().size();
+
+    for (auto peak : neighbors.value()) {
         const auto& profile = _profiles.find(peak)->second.second.profile();
 
         if (mean_profile.empty())
@@ -301,7 +307,7 @@ std::vector<Intensity> ShapeCollection::meanProfile1D(
     return mean_profile;
 }
 
-std::vector<Peak3D*> ShapeCollection::findNeighbors(
+std::optional<std::vector<Peak3D*>> ShapeCollection::findNeighbors(
     const DetectorEvent& ev, double radius, double nframes) const
 {
     std::vector<Peak3D*> neighbors;
@@ -318,34 +324,35 @@ std::vector<Peak3D*> ShapeCollection::findNeighbors(
             continue;
         neighbors.push_back(peak);
     }
-    if (neighbors.empty()) {
-        throw std::runtime_error("Error, no neighboring profiles found.");
-    }
+    if (neighbors.empty())
+        return {};
     return neighbors;
 }
 
-Eigen::Matrix3d ShapeCollection::meanCovariance(
+std::optional<Eigen::Matrix3d> ShapeCollection::meanCovariance(
     Peak3D* reference_peak, double radius, double nframes, size_t min_neighbors,
     PeakInterpolation interpolation) const
 {
     Eigen::Matrix3d cov;
     cov.setZero();
-    std::vector<Peak3D*> neighbors =
+    auto neighbors =
         findNeighbors(DetectorEvent(reference_peak->shape().center()), radius, nframes);
 
-    if (neighbors.empty()) {
+    if (!neighbors) {
         reference_peak->setRejectionFlag(RejectionFlag::NoNeighbours);
-        throw std::runtime_error("ShapeCollection::meanCovariance(): peak has no neighbors");
+        reference_peak->setSelected(false);
+        return {};
     }
-    if (neighbors.size() < min_neighbors) {
+    if (neighbors.value().size() < min_neighbors) {
         reference_peak->setRejectionFlag(RejectionFlag::TooFewNeighbours);
-        throw std::runtime_error("ShapeCollection::meanCovariance(): peak has too few neighbors");
+        reference_peak->setSelected(false);
+        return {};
     }
 
     PeakCoordinateSystem reference_coord(reference_peak);
 
     double sum_weight(0.0);
-    for (auto peak : neighbors) {
+    for (auto peak : neighbors.value()) {
         PeakCoordinateSystem coord(peak);
         Eigen::Matrix3d J = coord.jacobian();
 
@@ -369,7 +376,8 @@ Eigen::Matrix3d ShapeCollection::meanCovariance(
             }
             default: {
                 reference_peak->setRejectionFlag(RejectionFlag::InterpolationFailure);
-                throw std::runtime_error("Invalid peak interpolation");
+                reference_peak->setSelected(false);
+                return {};
             }
         }
 
@@ -407,16 +415,13 @@ void ShapeCollection::setPredictedShapes(
 
         // Skip the peak if any error occur when computing its mean covariance (e.g.
         // too few or no neighbouring peaks found)
-        try {
-            Eigen::Matrix3d cov = meanCovariance(
-                peak, _params->neighbour_range_pixels, _params->neighbour_range_frames,
-                _params->min_n_neighbors, interpolation);
+        if (auto cov = meanCovariance(
+            peak, _params->neighbour_range_pixels, _params->neighbour_range_frames,
+            _params->min_n_neighbors, interpolation)) {
             Eigen::Vector3d center = peak->shape().center();
-            peak->setShape(Ellipsoid(center, cov.inverse()));
-        } catch (std::exception& e) {
-            peak->setSelected(false);
-            peak->setRejectionFlag(RejectionFlag::TooFewNeighbours);
+            peak->setShape(Ellipsoid(center, cov.value().inverse()));
         }
+
         if (handler) {
             double progress = ++count * 100.0 / npeaks;
             handler->setProgress(progress);

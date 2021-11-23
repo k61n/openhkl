@@ -26,7 +26,12 @@ namespace nsx {
 IntegrationRegion::IntegrationRegion(
     Peak3D* peak, double peak_end, double bkg_begin, double bkg_end,
     RegionType region_type /* = RegionType::VariableEllipsoid */)
-    : _bkgBegin(bkg_begin), _bkgEnd(bkg_end), _data(peak), _regionType(region_type), _peak(peak)
+    : _bkgBegin(bkg_begin)
+    , _bkgEnd(bkg_end)
+    , _data(peak)
+    , _regionType(region_type)
+    , _peak(peak)
+    , _valid(true)
 {
     switch (_regionType) {
         case RegionType::VariableEllipsoid: {
@@ -65,22 +70,27 @@ IntegrationRegion::IntegrationRegion(
         }
     }
 
-    Ellipsoid bkg(_shape);
-    bkg.scale(_bkgEnd);
-    auto aabb = bkg.aabb();
+    if (peak->rejectionFlag() == RejectionFlag::InvalidRegion ||
+        peak->rejectionFlag() == RejectionFlag::InterpolationFailure) {
+        _valid = false;
+    } else {
+        Ellipsoid bkg(_shape);
+        bkg.scale(_bkgEnd);
+        auto aabb = bkg.aabb();
 
-    const Eigen::Vector3d& lo = aabb.lower();
-    const Eigen::Vector3d& dx = aabb.upper() - aabb.lower();
+        const Eigen::Vector3d& lo = aabb.lower();
+        const Eigen::Vector3d& dx = aabb.upper() - aabb.lower();
 
-    _hull.addVertex(lo);
-    _hull.addVertex(lo + Eigen::Vector3d(0, 0, dx[2]));
-    _hull.addVertex(lo + Eigen::Vector3d(0, dx[1], 0));
-    _hull.addVertex(lo + Eigen::Vector3d(0, dx[1], dx[2]));
-    _hull.addVertex(lo + Eigen::Vector3d(dx[0], 0, 0));
-    _hull.addVertex(lo + Eigen::Vector3d(dx[0], 0, dx[2]));
-    _hull.addVertex(lo + Eigen::Vector3d(dx[0], dx[1], 0));
-    _hull.addVertex(lo + Eigen::Vector3d(dx[0], dx[1], dx[2]));
-    _hull.updateHull();
+        _hull.addVertex(lo);
+        _hull.addVertex(lo + Eigen::Vector3d(0, 0, dx[2]));
+        _hull.addVertex(lo + Eigen::Vector3d(0, dx[1], 0));
+        _hull.addVertex(lo + Eigen::Vector3d(0, dx[1], dx[2]));
+        _hull.addVertex(lo + Eigen::Vector3d(dx[0], 0, 0));
+        _hull.addVertex(lo + Eigen::Vector3d(dx[0], 0, dx[2]));
+        _hull.addVertex(lo + Eigen::Vector3d(dx[0], dx[1], 0));
+        _hull.addVertex(lo + Eigen::Vector3d(dx[0], dx[1], dx[2]));
+        _hull.updateHull();
+    }
 }
 
 const AABB& IntegrationRegion::aabb() const
@@ -293,6 +303,11 @@ const Ellipsoid& IntegrationRegion::shape() const
 const ConvexHull& IntegrationRegion::hull() const
 {
     return _hull;
+}
+
+bool IntegrationRegion::isValid() const
+{
+    return _valid;
 }
 
 } // namespace nsx

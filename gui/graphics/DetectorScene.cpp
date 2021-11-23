@@ -964,12 +964,9 @@ void DetectorScene::getIntegrationMask(
             bkg_begin = peak_item->peak()->bkgBegin();
             bkg_end = peak_item->peak()->bkgEnd();
         }
-        try { // IntegrationRegion constructor can throw if the region is invalid
-            nsx::IntegrationRegion region(peak, peak_end, bkg_begin, bkg_end, region_type);
+        nsx::IntegrationRegion region(peak, peak_end, bkg_begin, bkg_end, region_type);
+        if (region.isValid())
             region.updateMask(mask, _currentFrameIndex);
-        } catch (...) {
-            continue;
-        }
     }
 }
 

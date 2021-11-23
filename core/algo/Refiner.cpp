@@ -288,14 +288,9 @@ int Refiner::updatePredictions(std::vector<Peak3D*>& peaks) const
             continue;
         }
 
-        try {
-            peak->setShape(Ellipsoid(
-                {events[0].px, events[0].py, events[0].frame}, peak->shape().metric()));
-            ++updated;
-        } catch (...) {
-            peak->setSelected(false);
-            peak->setRejectionFlag(RejectionFlag::InvalidShape);
-        }
+        peak->setShape(Ellipsoid(
+            {events[0].px, events[0].py, events[0].frame}, peak->shape().metric()));
+        ++updated;
     }
     nsxlog(Level::Info, updated, " peaks updated");
     return updated;

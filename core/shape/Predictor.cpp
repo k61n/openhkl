@@ -57,13 +57,11 @@ std::vector<Peak3D*> Predictor::buildPeaksFromMillerIndices(
         Peak3D* peak(new Peak3D(data));
         Eigen::Vector3d center = {event.px, event.py, event.frame};
 
-        // dummy shape
-        try {
-            peak->setShape(Ellipsoid(center, 1.0));
+        // setShape may disable the peak if the centre is out of bounds
+        peak->setShape(Ellipsoid(center, 1.0));
+        if (peak->selected()) {
             peak->setUnitCell(unit_cell);
             peaks.push_back(peak);
-        } catch (...) {
-            // invalid shape, nothing to do
         }
     }
     nsxlog(

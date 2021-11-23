@@ -80,6 +80,7 @@ bool Profile1DIntegrator::compute(
 {
     if (!shape_collection) {
         peak->setRejectionFlag(RejectionFlag::NoShapeCollection);
+        peak->setSelected(false);
         return false;
     }
 
@@ -92,22 +93,19 @@ bool Profile1DIntegrator::compute(
     // TODO: should this be hard-coded??
     if (events.size() < 29) {
         peak->setRejectionFlag(RejectionFlag::TooFewPoints);
-        throw std::runtime_error("Profile1DIntegrator::compute(): too few data points in peak");
+        peak->setSelected(false);
+        return false;
     }
 
-    std::vector<Intensity> mean_profile;
-    Profile1D profile(0.0, region.peakEnd());
 
     Eigen::Vector3d c = peak->shape().center();
     Eigen::Matrix3d A = peak->shape().metric();
 
-    try {
-        // throws if there are no neighboring peaks within the bounds
-        mean_profile = shape_collection->meanProfile1D(DetectorEvent(c), radius(), nFrames());
-    } catch (...) {
-        peak->setRejectionFlag(RejectionFlag::TooFewNeighbours);
+    Profile1D profile(0.0, region.peakEnd());
+    std::optional<std::vector<Intensity>> mean_profile =
+        shape_collection->meanProfile1D(DetectorEvent(c), radius(), nFrames());
+    if (!mean_profile)
         return false;
-    }
 
     // construct the observed profile
     for (size_t i = 0; i < events.size(); ++i) {
@@ -123,15 +121,15 @@ bool Profile1DIntegrator::compute(
 
     dn.push_back(profile.npoints()[0]);
     dm.push_back(profile.counts()[0]);
-    dp.push_back(mean_profile[0].value());
+    dp.push_back(mean_profile.value()[0].value());
 
     // compute differences and rebin if necessary so that dn > 0
-    for (size_t i = 1; i < mean_profile.size(); ++i) {
+    for (size_t i = 1; i < mean_profile.value().size(); ++i) {
         const auto& counts = profile.counts();
         const auto& npoints = profile.npoints();
         dn.push_back(npoints[i] - npoints[i - 1]);
         dm.push_back(counts[i] - counts[i - 1]);
-        dp.push_back(mean_profile[i].value() - mean_profile[i - 1].value());
+        dp.push_back(mean_profile.value()[i].value() - mean_profile.value()[i - 1].value());
     }
 
     Intensity I = 1e-6;
@@ -144,6 +142,7 @@ bool Profile1DIntegrator::compute(
 
     if (std::isnan(sigma) || sigma <= 0.0) {
         peak->setRejectionFlag(RejectionFlag::InvalidSigma);
+        peak->setSelected(false);
         return false;
     }
 

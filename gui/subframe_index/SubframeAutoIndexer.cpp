@@ -407,11 +407,9 @@ void SubframeAutoIndexer::runAutoIndexer()
     _solutions.clear();
     refreshPeakTable();
 
-    try {
-        autoindexer->autoIndex(&_peak_collection);
-    } catch (const std::exception& e) {
-        nsx::nsxlog(nsx::Level::Error, "Autoindexer: ", e.what());
-        QMessageBox::critical(this, "Indexing Error ", e.what());
+    bool success = autoindexer->autoIndex(&_peak_collection);
+    if (!success) {
+        gGui->statusBar()->showMessage("Indexing failed");
         return;
     }
 
