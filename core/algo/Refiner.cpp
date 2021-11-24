@@ -292,7 +292,6 @@ int Refiner::updatePredictions(std::vector<Peak3D*>& peaks) const
                     peak->setShape(
                         Ellipsoid({event.px, event.py, event.frame}, peak->shape().metric()));
                     ++updated;
-                    break;
                 }
             }
         } else {
