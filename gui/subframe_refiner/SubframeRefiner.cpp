@@ -331,7 +331,7 @@ void SubframeRefiner::refine()
 
         _tables_widget->refreshTables(refiner, data.get());
         auto cell_list = gSession->experimentAt(_exp_combo->currentIndex())->getUnitCellNames();
-        gGui->sentinel->setLinkedComboList(ComboType::UnitCell, cell_list);
+        emit gGui->sentinel->setLinkedComboList(ComboType::UnitCell, cell_list);
         refreshPlot();
         toggleUnsafeWidgets();
     } catch (const std::exception& ex) {
