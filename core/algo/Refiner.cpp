@@ -108,7 +108,7 @@ void Refiner::makeBatches(
     std::vector<nsx::Peak3D*> filtered_peaks = peaks;
     PeakFilter peak_filter;
     filtered_peaks = peak_filter.filterEnabled(peaks, true);
-    if (_first_refine)
+    if (_cell)
         filtered_peaks = peak_filter.filterIndexed(filtered_peaks, cell.get());
     else
         filtered_peaks = peak_filter.filterIndexed(filtered_peaks);
@@ -250,7 +250,7 @@ int Refiner::updatePredictions(std::vector<Peak3D*>& peaks) const
     const PeakFilter peak_filter;
     std::vector<nsx::Peak3D*> filtered_peaks = peaks;
     filtered_peaks = peak_filter.filterEnabled(peaks, true);
-    if (_first_refine)
+    if (_cell)
         filtered_peaks = peak_filter.filterIndexed(filtered_peaks, _cell.get());
     else
         filtered_peaks = peak_filter.filterIndexed(filtered_peaks);
@@ -300,7 +300,6 @@ int Refiner::updatePredictions(std::vector<Peak3D*>& peaks) const
                           peak->shape().metric()));
             ++updated;
         }
-
     }
     nsxlog(Level::Info, updated, " peaks updated");
     return updated;
