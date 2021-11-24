@@ -278,19 +278,30 @@ int Refiner::updatePredictions(std::vector<Peak3D*>& peaks) const
         const MillerIndex hkl(peak->q(), *batch_cell);
         const ReciprocalVector q_pred(
             hkl.rowVector().cast<double>() * batch_cell->reciprocalBasis());
-        const std::vector<DetectorEvent> events = algo::qVectorList2Events(
-            {q_pred}, peak->dataSet()->instrumentStates(), peak->dataSet()->detector(), _nframes);
+        const std::vector<DetectorEvent> events = algo::qVector2Events(
+            q_pred, peak->dataSet()->instrumentStates(), peak->dataSet()->detector(), _nframes);
 
-        // something wrong with new prediction...
-        if (events.size() != 1) {
+        if (events.size() == 0) { // No event found
             peak->setSelected(false);
             peak->setRejectionFlag(RejectionFlag::PredictionUpdateFailure);
             continue;
+        } else if (events.size() > 1) { // Some peaks cross the Ewald sphere more than once
+            for (auto event : events) {
+                auto vec = peak->shape().center() - Eigen::Vector3d(event.px, event.py, event.frame);
+                if (vec.norm() < _eps_norm){
+                    peak->setShape(
+                        Ellipsoid({event.px, event.py, event.frame}, peak->shape().metric()));
+                    ++updated;
+                    break;
+                }
+            }
+        } else {
+            peak->setShape(
+                Ellipsoid({events[0].px, events[0].py, events[0].frame},
+                          peak->shape().metric()));
+            ++updated;
         }
 
-        peak->setShape(Ellipsoid(
-            {events[0].px, events[0].py, events[0].frame}, peak->shape().metric()));
-        ++updated;
     }
     nsxlog(Level::Info, updated, " peaks updated");
     return updated;
