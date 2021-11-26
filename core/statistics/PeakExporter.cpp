@@ -252,7 +252,7 @@ void PeakExporter::saveToSCAUnmerged(
                 if (miller_index.indexed(cell->indexingTolerance())) {
                     const Eigen::RowVector3i& hkl = miller_index.rowVector();
                     const double intensity = peak->correctedIntensity().value() * scale;
-                    const double sigma_intensity = peak->correctedIntensity().sigma();
+                    const double sigma_intensity = peak->correctedIntensity().sigma() * scale;
 
                     file << std::fixed << std::setw(4) << hkl(0) << std::fixed << std::setw(4)
                          << hkl(1) << std::fixed << std::setw(4) << hkl(2) << " "
