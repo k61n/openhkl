@@ -266,10 +266,20 @@ std::vector<Peak3D*> PeakFilter::filterIndexed(
     // specified by the peak
     std::vector<Peak3D*> filtered_peaks;
     for (auto peak : peaks) {
-        if (!cell)
-            cell = peak->unitCell();
-        MillerIndex miller_index(peak->q(), *cell);
-        if (miller_index.indexed(cell->indexingTolerance()))
+        MillerIndex index;
+        double tol = 0;
+        if (cell) {
+            index = MillerIndex(peak->q(), *cell);
+            tol = cell->indexingTolerance();
+        } else {
+            const UnitCell* batch_cell = peak->unitCell();
+            if (!batch_cell)
+                continue;
+            index = MillerIndex(peak->q(), *batch_cell);
+            tol = batch_cell->indexingTolerance();
+        }
+
+        if (index.indexed(tol))
             filtered_peaks.push_back(peak);
     }
     return filtered_peaks;
