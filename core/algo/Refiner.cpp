@@ -43,14 +43,9 @@ void RefinerParameters::log(const Level& level) const
     nsxlog(level, "refine_ki              = ", refine_ki);
 }
 
-Refiner::Refiner(UnitCellHandler* cell_handler) : _cell_handler(cell_handler), _handler(nullptr)
+Refiner::Refiner(UnitCellHandler* cell_handler) : _cell_handler(cell_handler)
 {
     _params = std::make_unique<RefinerParameters>();
-}
-
-void Refiner::setHandler(const sptrProgressHandler& handler)
-{
-    _handler = handler;
 }
 
 sptrUnitCell Refiner::_getUnitCell(const std::vector<Peak3D*> peaks_subset, sptrUnitCell cell)
@@ -192,13 +187,7 @@ void Refiner::refineUB()
 bool Refiner::refine()
 {
     _params->log(Level::Info);
-    int count = 1;
-    if (_handler) {
-        std::ostringstream oss;
-        oss << "Refining batch " << count << " of " << _params->nbatches;
-        _handler->setStatus(oss.str().c_str());
-        _handler->setProgress(0);
-    }
+
     if (_params->refine_ub)
         refineUB();
     if (_params->refine_ki)
@@ -217,20 +206,11 @@ bool Refiner::refine()
     unsigned int failed_batches = 0;
     #pragma omp parallel for
     for (auto&& batch : _batches) {
-        if (!batch.refine(_params->max_iter))
+        if (!batch.refine(_params->max_iter)) {
             #pragma omp atomic
             ++failed_batches;
-        else {
-            if (_handler) {
-                std::ostringstream oss;
-                oss << "Refining batch " << ++count << " of " << _params->nbatches;
-                _handler->setStatus(oss.str().c_str());
-                _handler->setProgress(++count * 100.0 / _params->nbatches);
-            }
         }
     }
-    if (_handler)
-        _handler->setProgress(100);
     _first_refine = false;
     logChange();
     if (failed_batches > 0)

@@ -115,7 +115,6 @@ class Refiner {
     bool _first_refine = true;
     InstrumentStateList* _states;
     std::unique_ptr<RefinerParameters> _params;
-    sptrProgressHandler _handler;
     static constexpr double _eps_norm = 50.0;
 };
 
