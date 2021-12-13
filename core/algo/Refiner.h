@@ -46,8 +46,6 @@ class Refiner {
  public:
     Refiner(UnitCellHandler* cell_handler);
 
-    void setHandler(const sptrProgressHandler& handler);
-
     //! Generate batches of peaks per frame range with the given peak list
     void makeBatches(
         InstrumentStateList& states, const std::vector<nsx::Peak3D*>& peaks,
