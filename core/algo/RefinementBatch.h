@@ -18,6 +18,7 @@
 #include "base/fit/FitParameters.h"
 #include "core/instrument/InstrumentState.h"
 #include "core/peak/Peak3D.h"
+#include "tables/crystal/UnitCell.h"
 
 namespace nsx {
 
@@ -35,7 +36,7 @@ class RefinementBatch {
     RefinementBatch() = default;
     //! A batch contains peaks from frame _fmin to _fmax + 2
     RefinementBatch(
-        InstrumentStateList& states, sptrUnitCell uc, std::vector<nsx::Peak3D*> peaksmax);
+        InstrumentStateList& states, sptrUnitCell uc, std::vector<nsx::Peak3D*> peaks);
 
     //! Sets the lattice B matrix to be refined.
     void refineUB();
@@ -69,6 +70,7 @@ class RefinementBatch {
 
     //! Returns the refined unit cell.
     UnitCell* cell() const;
+
 
     //! Return the lower frame bound
     int first_frame() const;

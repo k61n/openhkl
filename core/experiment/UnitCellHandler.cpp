@@ -18,6 +18,7 @@
 #include "core/experiment/PeakHandler.h"
 #include "core/raw/DataKeys.h"
 #include "core/shape/PeakCollection.h"
+#include "tables/crystal/UnitCell.h"
 
 namespace nsx {
 
@@ -158,17 +159,22 @@ std::vector<std::string> UnitCellHandler::getCompatibleSpaceGroups() const
     return getSptrUnitCell(nsx::kw_acceptedUnitcell)->compatibleSpaceGroups();
 }
 
-CellMap UnitCellHandler::extractBatchCells()
+std::vector<sptrUnitCell> UnitCellHandler::extractBatchCells()
 {
-    CellMap new_map;
+    std::vector<sptrUnitCell> vec;
     for (auto it = _unit_cells.cbegin(), next_it = it; it != _unit_cells.cend(); it = next_it) {
         ++next_it;
         if (it->first.substr(0, 6) == "frames") {
+            vec.push_back(it->second);
             auto nh = _unit_cells.extract(it);
-            new_map.insert(std::move(nh));
         }
     }
-    return new_map;
+    return vec;
+}
+
+void UnitCellHandler::mergeBatchCells(CellMap map)
+{
+    _unit_cells.merge(map);
 }
 
 } // namespace nsx

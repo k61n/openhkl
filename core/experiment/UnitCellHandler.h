@@ -81,7 +81,9 @@ class UnitCellHandler {
     //! Get space groups compatible with unit cell
     std::vector<std::string> getCompatibleSpaceGroups() const;
     //! Extract all items from the map without breaking pointers, return a new map
-    CellMap extractBatchCells();
+    std::vector<sptrUnitCell> extractBatchCells();
+    //! Merge unicells from another CellMap into this container
+    void mergeBatchCells(CellMap map);
 
  private:
     CellMap _unit_cells;

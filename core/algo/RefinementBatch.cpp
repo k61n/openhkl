@@ -18,6 +18,7 @@
 #include <limits>
 
 #include "base/fit/Minimizer.h"
+#include "core/algo/RefinementBatch.h"
 #include "core/algo/Refiner.h"
 #include "core/data/DataSet.h"
 #include "core/instrument/InstrumentState.h"
