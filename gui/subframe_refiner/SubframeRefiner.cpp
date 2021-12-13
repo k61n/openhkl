@@ -297,11 +297,6 @@ void SubframeRefiner::refine()
             nsx::algo::getDirectBeamEvents(states, *detector);
         _detector_widget->scene()->linkOldDirectBeamPositions(old_beam);
 
-        nsx::sptrProgressHandler handler(new nsx::ProgressHandler);
-        ProgressView progressView(nullptr);
-        progressView.watch(handler);
-        refiner->setHandler(handler);
-
         setRefinerParameters();
 
         int n_checked = 0;

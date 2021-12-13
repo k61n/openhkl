@@ -182,6 +182,8 @@ bool Peak3D::enabled() const
 void Peak3D::setSelected(bool s)
 {
     _selected = s;
+    if (s)
+        setRejectionFlag(RejectionFlag::NotRejected, true);
 }
 
 bool Peak3D::selected() const

@@ -16,11 +16,13 @@
 #define NSX_CORE_ALGO_REFINER_H
 
 #include "core/algo/RefinementBatch.h"
+#include "core/experiment/UnitCellHandler.h"
 #include "core/shape/IPeakIntegrator.h"
+#include "tables/crystal/UnitCell.h"
+#include <vector>
 
 namespace nsx {
 
-class UnitCellHandler;
 class ProgressHandler;
 using sptrProgressHandler = std::shared_ptr<ProgressHandler>;
 enum class Level;
@@ -44,12 +46,13 @@ class Refiner {
  public:
     Refiner(UnitCellHandler* cell_handler);
 
-    void setHandler(const sptrProgressHandler& handler);
-
     //! Generate batches of peaks per frame range with the given peak list
     void makeBatches(
         InstrumentStateList& states, const std::vector<nsx::Peak3D*>& peaks,
         sptrUnitCell cell = nullptr);
+
+    //! Rebuild old batches if refinement failed
+    void reconstructBatches(std::vector<Peak3D*> peaks);
 
     //! Sets the lattice B matrix to be refined.
     void refineUB();
@@ -101,7 +104,7 @@ class Refiner {
     //! set the parameters
     void setParameters(const RefinerParameters& params);
 
- private:
+ private :
     //! Determine which unit cell to use in a batch
     sptrUnitCell _getUnitCell(const std::vector<Peak3D*> peaks_subset, sptrUnitCell cell);
 
@@ -115,8 +118,9 @@ class Refiner {
     bool _first_refine = true;
     InstrumentStateList* _states;
     std::unique_ptr<RefinerParameters> _params;
-    sptrProgressHandler _handler;
     static constexpr double _eps_norm = 50.0;
+    std::vector<sptrUnitCell> _tmp_vec;
+    std::vector<Peak3D*> _peaks;
 };
 
 } // namespace nsx

@@ -43,14 +43,9 @@ void RefinerParameters::log(const Level& level) const
     nsxlog(level, "refine_ki              = ", refine_ki);
 }
 
-Refiner::Refiner(UnitCellHandler* cell_handler) : _cell_handler(cell_handler), _handler(nullptr)
+Refiner::Refiner(UnitCellHandler* cell_handler) : _cell_handler(cell_handler)
 {
     _params = std::make_unique<RefinerParameters>();
-}
-
-void Refiner::setHandler(const sptrProgressHandler& handler)
-{
-    _handler = handler;
 }
 
 sptrUnitCell Refiner::_getUnitCell(const std::vector<Peak3D*> peaks_subset, sptrUnitCell cell)
@@ -93,9 +88,10 @@ sptrUnitCell Refiner::_getUnitCell(const std::vector<Peak3D*> peaks_subset, sptr
 void Refiner::makeBatches(
     InstrumentStateList& states, const std::vector<nsx::Peak3D*>& peaks, sptrUnitCell cell)
 {
+    _peaks = peaks;
     _unrefined_states.clear();
     _batches.clear();
-    CellMap tmp_map = _cell_handler->extractBatchCells();
+    _tmp_vec = _cell_handler->extractBatchCells();
 
     _cell = cell;
     _states = &states;
@@ -144,8 +140,57 @@ void Refiner::makeBatches(
             for (auto* peak : b.peaks())
                 peak->setUnitCell(cell_ptr);
 
-            if (_params->refine_ub) // only add the cell if we are refining it
-                _cell_handler->addUnitCell(name, cell_ptr);
+            _cell_handler->addUnitCell(name, cell_ptr);
+
+            _batches.emplace_back(std::move(b));
+            peaks_subset.clear();
+            ++current_batch;
+        }
+    }
+}
+
+void Refiner::reconstructBatches(std::vector<Peak3D*> peaks)
+{
+    auto tmp = _cell_handler->extractBatchCells(); // we're discarding this
+    _batches.clear();
+
+    std::vector<nsx::Peak3D*> filtered_peaks = peaks;
+    PeakFilter peak_filter;
+    filtered_peaks = peak_filter.filterEnabled(peaks, true);
+    filtered_peaks = peak_filter.filterIndexed(filtered_peaks);
+
+    std::sort(
+        filtered_peaks.begin(), filtered_peaks.end(),
+        [](const Peak3D* p1, const Peak3D* p2) -> bool {
+            auto&& c1 = p1->shape().center();
+            auto&& c2 = p2->shape().center();
+            return c1[2] < c2[2];
+        });
+
+    const double batch_size = filtered_peaks.size() / double(_tmp_vec.size());
+    nsxlog(Level::Info, "Batch size is ", batch_size, " peaks");
+    size_t current_batch = 0;
+
+    std::vector<nsx::Peak3D*> peaks_subset;
+
+    // batch contains peaks from frame _fmin to _fmax + 2
+    for (size_t i = 0; i < filtered_peaks.size(); ++i) {
+        peaks_subset.push_back(filtered_peaks[i]);
+
+        if (i + 1.1 >= (current_batch + 1) * batch_size) {
+
+            sptrUnitCell cell_ptr = _tmp_vec.at(current_batch);
+            RefinementBatch b(*_states, cell_ptr, peaks_subset);
+            std::ostringstream oss;
+            oss << "frames " << b.name();
+            std::string name = oss.str();
+
+            b.setResidualType(_params->residual_type);
+
+            for (auto* peak : b.peaks())
+                peak->setUnitCell(cell_ptr);
+
+            _cell_handler->addUnitCell(name, cell_ptr);
 
             _batches.emplace_back(std::move(b));
             peaks_subset.clear();
@@ -192,13 +237,7 @@ void Refiner::refineUB()
 bool Refiner::refine()
 {
     _params->log(Level::Info);
-    int count = 1;
-    if (_handler) {
-        std::ostringstream oss;
-        oss << "Refining batch " << count << " of " << _params->nbatches;
-        _handler->setStatus(oss.str().c_str());
-        _handler->setProgress(0);
-    }
+
     if (_params->refine_ub)
         refineUB();
     if (_params->refine_ki)
@@ -217,26 +256,19 @@ bool Refiner::refine()
     unsigned int failed_batches = 0;
     #pragma omp parallel for
     for (auto&& batch : _batches) {
-        if (!batch.refine(_params->max_iter))
+        if (!batch.refine(_params->max_iter)) {
             #pragma omp atomic
             ++failed_batches;
-        else {
-            if (_handler) {
-                std::ostringstream oss;
-                oss << "Refining batch " << ++count << " of " << _params->nbatches;
-                _handler->setStatus(oss.str().c_str());
-                _handler->setProgress(++count * 100.0 / _params->nbatches);
-            }
         }
     }
-    if (_handler)
-        _handler->setProgress(100);
     _first_refine = false;
     logChange();
-    if (failed_batches > 0)
+    if (failed_batches > 0) { // Failed, replace the original batch cells
+        reconstructBatches(_peaks);
         return false;
-    else
+    } else {
         return true;
+    }
 }
 
 const std::vector<RefinementBatch>& Refiner::batches() const
