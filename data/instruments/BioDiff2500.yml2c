@@ -18,8 +18,6 @@
 "        nrows: 900\n"
 "        ncols: 2500\n"
 "        data_ordering: TopLeftRowMajor\n"
-"        gain: 7.0\n"
-"        baseline: 227.0\n"
 "        goniometer:\n"
 "            name: detector-gonio\n"
 "            axis:\n"
