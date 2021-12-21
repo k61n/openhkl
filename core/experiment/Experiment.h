@@ -134,7 +134,9 @@ class Experiment {
     //! Get the number of unit cells in the map
     int numUnitCells() const;
     //! Check solution against reference cell and accept if within tolerances
-    bool checkAndAssignUnitCell(PeakCollection* peaks, double length_tol, double angle_tol);
+    bool checkAndAssignUnitCell(
+        PeakCollection* peaks, double length_tol, double angle_tol,
+        std::string name = kw_acceptedUnitcell);
     //! Assign unit cell to a peak collection, compute Miller indices from q and cell
     void assignUnitCell(PeakCollection* peaks, std::string cellName = nsx::kw_acceptedUnitcell);
     //! Set the reference cell

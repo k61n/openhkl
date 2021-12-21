@@ -270,7 +270,7 @@ void Experiment::predictPeaks(
         predicted_peaks.push_back(peak);
 
     nsxlog(
-        Level::Info, "Experiment::predictPeaks: completed peak prediciton. Added ",
+        Level::Info, "Experiment::predictPeaks: completed peak prediction. Added ",
         predicted_peaks.size(), " peaks");
 
     addPeakCollection(name, listtype::PREDICTED, predicted_peaks);
@@ -467,9 +467,11 @@ int Experiment::numUnitCells() const
     return _cell_handler->numUnitCells();
 }
 
-bool Experiment::checkAndAssignUnitCell(PeakCollection* peaks, double length_tol, double angle_tol)
+bool Experiment::checkAndAssignUnitCell(
+    PeakCollection* peaks, double length_tol, double angle_tol, std::string name)
 {
-    return _cell_handler->checkAndAssignUnitCell(peaks, _auto_indexer.get(), length_tol, angle_tol);
+    return _cell_handler->checkAndAssignUnitCell(
+        peaks, _auto_indexer.get(), length_tol, angle_tol, name);
 }
 
 void Experiment::assignUnitCell(PeakCollection* peaks, std::string name)

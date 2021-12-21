@@ -298,7 +298,7 @@ std::string AutoIndexer::solutionsToString() const
     oss << std::endl
         << std::setw(10) << "quality" << std::setw(10) << "a" << std::setw(10) << "b"
         << std::setw(10) << "c" << std::setw(10) << "alpha" << std::setw(10) << "beta"
-        << std::setw(10) << "gamma";
+        << std::setw(10) << "gamma" << std::setw(10) << "bravais";
     for (const auto& solution : _solutions) {
         oss << std::endl
             << std::fixed << std::setw(10) << std::setprecision(3) << solution.second

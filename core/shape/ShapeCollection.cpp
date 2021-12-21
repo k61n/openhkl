@@ -235,6 +235,7 @@ void ShapeCollection::updateFit(int /*num_iterations*/)
 
 void ShapeCollection::setParameters(std::shared_ptr<ShapeCollectionParameters> params)
 {
+    _params.reset();
     _params = params;
 }
 
@@ -478,6 +479,7 @@ AABB ShapeCollection::getAABB()
 void ShapeCollection::integrate(
     std::vector<Peak3D*> peaks, std::set<nsx::sptrDataSet> datalist, sptrProgressHandler handler)
 {
+    nsxlog(Level::Info, "ShapeCollection::integrate: integrating ", peaks.size(), " peaks");
     ShapeIntegrator integrator(
         this, getAABB(), _params->nbins_x, _params->nbins_y, _params->nbins_z);
     nsx::IntegrationParameters int_params{};
@@ -493,6 +495,7 @@ void ShapeCollection::integrate(
         integrator.integrate(peaks, this, data, n_numor);
         ++n_numor;
     }
+    nsxlog(Level::Info, "ShapeCollection::integrate: finished integrating shapes");
 }
 
 } // namespace nsx

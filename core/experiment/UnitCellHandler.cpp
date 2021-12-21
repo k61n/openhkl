@@ -130,14 +130,15 @@ void UnitCellHandler::setReferenceCell(
 }
 
 bool UnitCellHandler::checkAndAssignUnitCell(
-    PeakCollection* peaks, AutoIndexer* auto_indexer, double length_tol, double angle_tol)
+    PeakCollection* peaks, AutoIndexer* auto_indexer, double length_tol,
+    double angle_tol, std::string name)
 {
-    std::string name = nsx::kw_acceptedUnitcell;
     std::string ref_name = nsx::kw_referenceUnitcell;
     const UnitCell* ref_cell = getUnitCell(ref_name);
     bool accepted = false;
     sptrUnitCell good_cell = auto_indexer->goodSolution(ref_cell, length_tol, angle_tol);
     if (good_cell) {
+        std::cout << good_cell->toString() << std::endl;
         addUnitCell(name, *good_cell);
         assignUnitCell(peaks);
         accepted = true;
