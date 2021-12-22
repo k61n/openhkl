@@ -64,16 +64,16 @@ if(NSX_PYTHON)
 
     # Python packages dir
     execute_process(COMMAND ${PYTHON_EXECUTABLE} -c
-        "from __future__ import print_function; from distutils import sysconfig as sc; print(sc.get_python_lib(prefix='', plat_specific=True))"
+        "from distutils import sysconfig as sc; print(sc.get_python_lib(prefix='', plat_specific=True))"
         RESULT_VARIABLE PYTHON_SITE_RESULT
         OUTPUT_VARIABLE PYTHON_SITE
         OUTPUT_STRIP_TRAILING_WHITESPACE)
 
-    if(NOT PYTHON_SITE_RESULT)
-        message(STATUS "python package destination is ${PYTHON_SITE}")
-    else()
-        message(FATAL_ERROR "could NOT determine python package directory")
+    if(PYTHON_SITE_RESULT)
+        message(FATAL_ERROR "Failed running PYTHON_EXECUTABLE=${PYTHON_EXECUTABLE} to determine"
+            " Python package directory; output = '${PYTHON_SITE}'")
     endif()
+    message(STATUS "Python package destination is ${PYTHON_SITE}")
 
     # swig
     find_package(SWIG REQUIRED)
