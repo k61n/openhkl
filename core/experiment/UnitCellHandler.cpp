@@ -138,7 +138,6 @@ bool UnitCellHandler::checkAndAssignUnitCell(
     bool accepted = false;
     sptrUnitCell good_cell = auto_indexer->goodSolution(ref_cell, length_tol, angle_tol);
     if (good_cell) {
-        std::cout << good_cell->toString() << std::endl;
         addUnitCell(name, *good_cell);
         assignUnitCell(peaks);
         accepted = true;

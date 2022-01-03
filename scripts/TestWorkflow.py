@@ -114,23 +114,74 @@ params.refine_sample_orientation = False
 params.refine_detector_offset = False
 params.refine_ki = False
 params.residual_type = nsx.ResidualType_RealSpace
-refine_success =  expt.refine(found_peaks, cell)
-n_updated = refiner.updatePredictions(predicted_peaks.getPeakList())
+states = data.instrumentStates()
+peak_list = found_peaks.getPeakList()
+predicted_peak_list = predicted_peaks.getPeakList()
+
+
+refiner.makeBatches(states, peak_list, indexed_cell)
+refine_success = refiner.refine()
+n_updated = refiner.updatePredictions(predicted_peak_list)
 print(f'Refine 1: {n_updated} peaks updated')
 params.residual_type = nsx.ResidualType_QSpace
-refine_success =  expt.refine(found_peaks)
-n_updated = refiner.updatePredictions(predicted_peaks.getPeakList())
+refiner.makeBatches(states, peak_list, indexed_cell)
+refine_success = refiner.refine()
+n_updated = refiner.updatePredictions(predicted_peak_list)
 print(f'Refine 2: {n_updated} peaks updated')
 params.residual_type = nsx.ResidualType_RealSpace
-refine_success =  expt.refine(found_peaks)
-n_updated = refiner.updatePredictions(predicted_peaks.getPeakList())
+refiner.makeBatches(states, peak_list, indexed_cell)
+refine_success = refiner.refine()
+n_updated = refiner.updatePredictions(predicted_peak_list)
 print(f'Refine 3: {n_updated} peaks updated')
+
+print('Filtering fit peaks for shape collection...')
+found_peaks.computeSigmas()
+filter = expt.peakFilter()
+filter.resetFiltering(found_peaks)
+filter.resetFilterFlags()
+flags = filter.flags()
+flags.d_range = True
+flags.strength = True
+params = filter.parameters()
+params.d_min = 1.5
+params.strength_min = 1.0
+params.strength_max = 1000000.0
+filter.filter(found_peaks)
+filtered_peaks = nsx.PeakCollection('fit', nsx.listtype_FILTERED)
+filtered_peaks.populateFromFiltered(found_peaks)
 
 
 print('Building shape collection...')
+
+shapes = nsx.ShapeCollection()
 params = nsx.ShapeCollectionParameters()
-params.d_min = 1.5
-params.strength_min = 1.0
-expt.buildShapeCollection(found_peaks, data, params)
-nprofiles = found_peaks.shapeCollection().numberOfPeaks()
-print(f'{nprofiles} shapes generated')
+aabb = nsx.AABB()
+sigma = np.array([found_peaks.sigmaD(), found_peaks.sigmaD(), found_peaks.sigmaM()])
+aabb.setLower(-params.peak_end * sigma)
+aabb.setUpper(params.peak_end * sigma)
+integrator = expt.integrator()
+fit_peak_list = filtered_peaks.getPeakList()
+integrator.integrateShapeCollection(fit_peak_list, data, shapes, aabb, params)
+print(f'{shapes.numberOfPeaks()} shapes generated')
+
+print('Assigning shapes to predicted peaks...')
+interpolation = nsx.PeakInterpolation_InverseDistance
+shapes.setPredictedShapes(predicted_peaks, interpolation)
+
+print('Integrating predicted peaks...')
+integrator = expt.integrator()
+params = integrator.parameters()
+integrator_type = nsx.IntegratorType_Profile3D
+integrator.getIntegrator(integrator_type)
+integrator.integratePeaks(data, predicted_peaks, params, shapes)
+print(f'{integrator.numberOfValidPeaks()} / {integrator.numberOfPeaks()} peaks integrated')
+
+print('Merging predicted peaks...')
+merger = expt.peakMerger()
+params = merger.parameters()
+merger.reset()
+merger.addPeakCollection(predicted_peaks)
+merger.mergePeaks()
+merger.computeQuality()
+
+

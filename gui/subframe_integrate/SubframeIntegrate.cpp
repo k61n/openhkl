@@ -457,7 +457,8 @@ void SubframeIntegrate::assignPeakShapes()
         int interpol = _interpolation_combo->currentIndex();
         nsx::PeakInterpolation peak_interpolation = static_cast<nsx::PeakInterpolation>(interpol);
 
-        shapes->setPredictedShapes(peaks_to_integrate, peak_interpolation, handler);
+        shapes->setHandler(handler);
+        shapes->setPredictedShapes(peaks_to_integrate, peak_interpolation);
         gGui->statusBar()->showMessage(
             QString::number(peaks_to_integrate->numberOfValid()) + "/" +
             QString::number(peaks_to_integrate->numberOfPeaks()) +

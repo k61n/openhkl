@@ -88,6 +88,7 @@ class UnitCellHandler {
 
  private:
     CellMap _unit_cells;
+    CellMap _batch_cells;
 };
 
 } // namespace nsx

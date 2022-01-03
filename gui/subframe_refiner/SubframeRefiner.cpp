@@ -288,7 +288,7 @@ void SubframeRefiner::refine()
         const auto data = expt->getData(_data_combo->currentText().toStdString());
         auto cell = expt->getSptrUnitCell(_cell_combo->currentText().toStdString());
         auto states = data->instrumentStates();
-        auto refiner = expt->refiner();
+        auto* refiner = expt->refiner();
         auto* params = refiner->parameters();
 
         _detector_widget->scene()->showDirectBeam(true);
@@ -311,10 +311,8 @@ void SubframeRefiner::refine()
         if (params->refine_ki)
             ++n_checked;
         if (n_checked > 0) { // Check that we have selected at least one parameter set
-            if (_batch_cell_check->isChecked())
-                _refine_success = expt->refine(peaks, data.get());
-            else
-                _refine_success = expt->refine(peaks, data.get(), cell);
+            refiner->makeBatches(states, peaks->getPeakList(), cell);
+            _refine_success = refiner->refine();
         }
 
         states = data->instrumentStates();
@@ -534,6 +532,7 @@ void SubframeRefiner::grabRefinerParameters()
     _refineSampleOrientation->setChecked(params->refine_sample_orientation);
     _refineDetectorPosition->setChecked(params->refine_detector_offset);
     _refineKi->setChecked(params->refine_ki);
+    _batch_cell_check->setChecked(params->use_batch_cells);
     for (const auto& [key, val] : _residual_strings) {
         if (val == params->residual_type) {
             _residual_combo->setCurrentText(QString::fromStdString(key));
@@ -556,6 +555,7 @@ void SubframeRefiner::setRefinerParameters()
     params->refine_sample_orientation = _refineSampleOrientation->isChecked();
     params->refine_detector_offset = _refineDetectorPosition->isChecked();
     params->refine_ki = _refineKi->isChecked();
+    params->use_batch_cells = _batch_cell_check->isChecked();
     for (const auto& [key, val] : _residual_strings) {
         if (key == _residual_combo->currentText().toStdString())
             params->residual_type = val;

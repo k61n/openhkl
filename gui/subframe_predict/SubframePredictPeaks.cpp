@@ -546,7 +546,8 @@ void SubframePredictPeaks::assignPeakShapes()
     found_peaks->setShapeCollection(_shape_collection);
 
     nsx::ShapeCollection* shapes = found_peaks->shapeCollection();
-    shapes->setPredictedShapes(&_peak_collection, _shape_params->interpolation, handler);
+    shapes->setHandler(handler);
+    shapes->setPredictedShapes(&_peak_collection, _shape_params->interpolation);
 
     refreshPeakTable();
     _shapes_assigned = true;

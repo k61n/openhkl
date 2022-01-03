@@ -37,6 +37,7 @@ struct RefinerParameters {
     int nbatches = 10;
     ResidualType residual_type = ResidualType::QSpace;
     unsigned int max_iter = 1000;
+    bool use_batch_cells = false;
 
     void log(const Level& level) const;
 };
@@ -48,8 +49,7 @@ class Refiner {
 
     //! Generate batches of peaks per frame range with the given peak list
     void makeBatches(
-        InstrumentStateList& states, const std::vector<nsx::Peak3D*>& peaks,
-        sptrUnitCell cell = nullptr);
+        InstrumentStateList& states, const std::vector<nsx::Peak3D*>& peaks, sptrUnitCell cell);
 
     //! Rebuild old batches if refinement failed
     void reconstructBatches(std::vector<Peak3D*> peaks);
@@ -75,7 +75,7 @@ class Refiner {
     bool refine();
 
     //! Update the centers of predicted peaks, after refinement.
-    int updatePredictions(std::vector<Peak3D*>& peaks) const;
+    int updatePredictions(std::vector<Peak3D*> peaks) const;
 
     //! Returns the individual peak/frame batches used during refinement.
     const std::vector<RefinementBatch>& batches() const;

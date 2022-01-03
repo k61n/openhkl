@@ -41,6 +41,7 @@ void RefinerParameters::log(const Level& level) const
     nsxlog(level, "refine_sample_orientation = ", refine_sample_orientation);
     nsxlog(level, "refine_detector_offset = ", refine_detector_offset);
     nsxlog(level, "refine_ki              = ", refine_ki);
+    nsxlog(level, "use_batch_cells        = ", use_batch_cells);
 }
 
 Refiner::Refiner(UnitCellHandler* cell_handler) : _cell_handler(cell_handler)
@@ -51,7 +52,7 @@ Refiner::Refiner(UnitCellHandler* cell_handler) : _cell_handler(cell_handler)
 sptrUnitCell Refiner::_getUnitCell(const std::vector<Peak3D*> peaks_subset, sptrUnitCell cell)
 {
     sptrUnitCell cell_ptr;
-    if (!cell) { // Make a new unit cell for this batch
+    if (_params->use_batch_cells) { // Make a new unit cell for this batch
         // We have already refined once, and all peaks have been assigned a batch
         // with its own cell
         std::map<const UnitCell*, int> cell_count;
@@ -97,17 +98,24 @@ void Refiner::makeBatches(
     _states = &states;
     for (const InstrumentState& state : states)
         _unrefined_states.push_back(state);
+
+    if (_params->use_batch_cells)
+        _cell = nullptr;
+    else
+        _cell = cell;
+
     if (cell) // Only use the given cell if this is the first refinement
         _unrefined_cell = *cell;
+
     _nframes = states.size();
 
     std::vector<nsx::Peak3D*> filtered_peaks = peaks;
     PeakFilter peak_filter;
     filtered_peaks = peak_filter.filterEnabled(peaks, true);
-    if (_cell)
-        filtered_peaks = peak_filter.filterIndexed(filtered_peaks, cell.get());
-    else
+    if (_params->use_batch_cells)
         filtered_peaks = peak_filter.filterIndexed(filtered_peaks);
+    else
+        filtered_peaks = peak_filter.filterIndexed(filtered_peaks, cell.get());
 
     std::sort(
         filtered_peaks.begin(), filtered_peaks.end(),
@@ -254,10 +262,10 @@ bool Refiner::refine()
         return false;
 
     unsigned int failed_batches = 0;
-    #pragma omp parallel for
+    // #pragma omp parallel for
     for (auto&& batch : _batches) {
         if (!batch.refine(_params->max_iter)) {
-            #pragma omp atomic
+            // #pragma omp atomic
             ++failed_batches;
         }
     }
@@ -276,7 +284,7 @@ const std::vector<RefinementBatch>& Refiner::batches() const
     return _batches;
 }
 
-int Refiner::updatePredictions(std::vector<Peak3D*>& peaks) const
+int Refiner::updatePredictions(std::vector<Peak3D*> peaks) const
 {
     nsxlog(Level::Info, "Refiner::updatePredictions");
     const PeakFilter peak_filter;

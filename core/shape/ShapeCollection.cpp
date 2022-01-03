@@ -119,6 +119,7 @@ ShapeCollection::ShapeCollection()
     , _choleskyD()
     , _choleskyM()
     , _choleskyS()
+    , _handler(nullptr)
 {
     _choleskyD.fill(1e-6);
     _choleskyM.fill(1e-6);
@@ -132,6 +133,8 @@ ShapeCollection::ShapeCollection(std::shared_ptr<ShapeCollectionParameters> para
     , _choleskyM()
     , _choleskyS()
     , _params(params)
+    , _handler(nullptr)
+
 {
     _choleskyD.fill(1e-6);
     _choleskyM.fill(1e-6);
@@ -393,8 +396,7 @@ std::optional<Eigen::Matrix3d> ShapeCollection::meanCovariance(
     return JI * cov * JI.transpose();
 }
 
-void ShapeCollection::setPredictedShapes(
-    PeakCollection* peaks, PeakInterpolation interpolation, sptrProgressHandler handler)
+void ShapeCollection::setPredictedShapes(PeakCollection* peaks, PeakInterpolation interpolation)
 {
     nsxlog(
         Level::Info, "ShapeCollection: Computing shapes of ", peaks->numberOfPeaks(),
@@ -404,9 +406,9 @@ void ShapeCollection::setPredictedShapes(
     int npeaks = peaks->numberOfPeaks();
     std::ostringstream oss;
     oss << "Computing shapes of " << npeaks << " peaks";
-    if (handler) {
-        handler->setStatus(oss.str().c_str());
-        handler->setProgress(0);
+    if (_handler) {
+        _handler->setStatus(oss.str().c_str());
+        _handler->setProgress(0);
     }
 
     #pragma omp parallel for
@@ -423,9 +425,9 @@ void ShapeCollection::setPredictedShapes(
             peak->setShape(Ellipsoid(center, cov.value().inverse()));
         }
 
-        if (handler) {
+        if (_handler) {
             double progress = ++count * 100.0 / npeaks;
-            handler->setProgress(progress);
+            _handler->setProgress(progress);
         }
     }
     nsxlog(Level::Info, "ShapeCollection: finished computing shapes");
@@ -496,6 +498,11 @@ void ShapeCollection::integrate(
         ++n_numor;
     }
     nsxlog(Level::Info, "ShapeCollection::integrate: finished integrating shapes");
+}
+
+void ShapeCollection::setHandler(sptrProgressHandler handler)
+{
+    _handler = handler;
 }
 
 } // namespace nsx
