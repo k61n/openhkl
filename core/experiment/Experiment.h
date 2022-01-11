@@ -110,7 +110,7 @@ class Experiment {
 
     // Unit cells
     //! Add a unit cell to the experiment
-    void addUnitCell(const std::string& name, const UnitCell& unit_cell);
+    void addUnitCell(const std::string& name, const UnitCell& unit_cell, bool refined = false);
     //! Add a unit cell to the experiment via cell parameters (skip autoindexing step)
     void addUnitCell(
         const std::string& name, double a, double b, double c, double alpha, double beta,
@@ -145,6 +145,8 @@ class Experiment {
     std::vector<std::string> getCompatibleSpaceGroups() const;
     //! Get the cell handler
     UnitCellHandler* getCellHandler() const;
+    //! Remove the batch cells if they are not being used
+    void removeBatchCells();
 
     // Peak finder
     //! Return a pointer to the PeakFinder object

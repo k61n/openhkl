@@ -414,9 +414,9 @@ void Experiment::clonePeakCollection(std::string name, std::string new_name)
 }
 
 // Unit cell handler methods
-void Experiment::addUnitCell(const std::string& name, const UnitCell& unit_cell)
+void Experiment::addUnitCell(const std::string& name, const UnitCell& unit_cell, bool refined)
 {
-    _cell_handler->addUnitCell(name, unit_cell);
+    _cell_handler->addUnitCell(name, unit_cell, refined);
 }
 
 void Experiment::addUnitCell(
@@ -493,6 +493,11 @@ std::vector<std::string> Experiment::getCompatibleSpaceGroups() const
 UnitCellHandler* Experiment::getCellHandler() const
 {
     return _cell_handler.get();
+}
+
+void Experiment::removeBatchCells()
+{
+    auto tmp = _cell_handler->extractBatchCells();
 }
 
 } // namespace nsx

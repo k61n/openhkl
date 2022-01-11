@@ -94,28 +94,25 @@ void Refiner::makeBatches(
     _batches.clear();
     _tmp_vec = _cell_handler->extractBatchCells();
 
-    _cell = cell;
     _states = &states;
+    _nframes = states.size();
+
     for (const InstrumentState& state : states)
         _unrefined_states.push_back(state);
 
-    if (_params->use_batch_cells)
+    if (_params->use_batch_cells) {
         _cell = nullptr;
-    else
+    } else {
         _cell = cell;
-
-    if (cell) // Only use the given cell if this is the first refinement
         _unrefined_cell = *cell;
+    }
 
-    _nframes = states.size();
-
-    std::vector<nsx::Peak3D*> filtered_peaks = peaks;
     PeakFilter peak_filter;
-    filtered_peaks = peak_filter.filterEnabled(peaks, true);
+    std::vector<nsx::Peak3D*> filtered_peaks = peak_filter.filterEnabled(peaks, true);
     if (_params->use_batch_cells)
         filtered_peaks = peak_filter.filterIndexed(filtered_peaks);
     else
-        filtered_peaks = peak_filter.filterIndexed(filtered_peaks, cell.get());
+        filtered_peaks = peak_filter.filterIndexed(filtered_peaks, _cell.get());
 
     std::sort(
         filtered_peaks.begin(), filtered_peaks.end(),
@@ -137,7 +134,7 @@ void Refiner::makeBatches(
 
         if (i + 1.1 >= (current_batch + 1) * batch_size) {
 
-            sptrUnitCell cell_ptr = _getUnitCell(peaks_subset, cell);
+            sptrUnitCell cell_ptr = _getUnitCell(peaks_subset, _cell);
             RefinementBatch b(states, cell_ptr, peaks_subset);
             b.setResidualType(_params->residual_type);
 
@@ -148,7 +145,7 @@ void Refiner::makeBatches(
             for (auto* peak : b.peaks())
                 peak->setUnitCell(cell_ptr);
 
-            _cell_handler->addUnitCell(name, cell_ptr);
+            _cell_handler->addUnitCell(name, cell_ptr, true);
 
             _batches.emplace_back(std::move(b));
             peaks_subset.clear();
@@ -198,7 +195,7 @@ void Refiner::reconstructBatches(std::vector<Peak3D*> peaks)
             for (auto* peak : b.peaks())
                 peak->setUnitCell(cell_ptr);
 
-            _cell_handler->addUnitCell(name, cell_ptr);
+            _cell_handler->addUnitCell(name, cell_ptr, true);
 
             _batches.emplace_back(std::move(b));
             peaks_subset.clear();
@@ -373,7 +370,8 @@ bool Refiner::firstRefine() const
 void Refiner::logChange()
 {
     nsxlog(Level::Info, "Refinement succeeded");
-    nsxlog(Level::Info, "Original cell: ", _unrefined_cell.toString());
+    if (!_params->use_batch_cells)
+        nsxlog(Level::Info, "Original cell: ", _unrefined_cell.toString());
     nsxlog(Level::Info, "Batch/Refined cell(s):");
     for (const auto& batch : _batches) {
         nsxlog(Level::Info, batch.name(), ": ", batch.cell()->toString());

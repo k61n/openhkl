@@ -439,6 +439,10 @@ void SubframePredictPeaks::refineKi()
         gGui->statusBar()->showMessage("Direct beam position refinement failed");
 
     refiner->setParameters(tmp_params);
+    expt->removeBatchCells();
+    for (auto* peak : peaks->getPeakList()) // Assign original unit cell to all peaks
+        peak->setUnitCell(cell);
+
     gGui->setReady(true);
 }
 

@@ -22,33 +22,30 @@
 
 namespace nsx {
 
-UnitCellHandler::~UnitCellHandler() = default;
-
-UnitCellHandler::UnitCellHandler(const UnitCellHandler& other)
-{
-    for (auto const& [name, cell] : other._unit_cells) {
-        addUnitCell(name, *cell.get());
-    }
-}
-
 const CellMap* UnitCellHandler::getCellMap() const
 {
     return &_unit_cells;
 }
 
-void UnitCellHandler::addUnitCell(const std::string& name, const UnitCell& unit_cell)
+void UnitCellHandler::addUnitCell(const std::string& name, const UnitCell& unit_cell, bool refined)
 {
     nsxlog(Level::Info, "UnitCellHandler::addUnitCell: '", name, "': ", unit_cell.toString());
     sptrUnitCell uc = std::make_shared<UnitCell>(unit_cell);
     uc->setName(name);
-    _unit_cells.insert_or_assign(name, std::move(uc));
+    if (refined)
+        _batch_cells.insert_or_assign(name, std::move(uc));
+    else
+        _unit_cells.insert_or_assign(name, std::move(uc));
 }
 
-void UnitCellHandler::addUnitCell(const std::string& name, sptrUnitCell unit_cell)
+void UnitCellHandler::addUnitCell(const std::string& name, sptrUnitCell unit_cell, bool refined)
 {
     nsxlog(Level::Info, "UnitCellHandler::addUnitCell: '", name, "': ", unit_cell->toString());
     unit_cell->setName(name);
-    _unit_cells.insert_or_assign(name, std::move(unit_cell));
+    if (refined)
+        _batch_cells.insert_or_assign(name, std::move(unit_cell));
+    else
+        _unit_cells.insert_or_assign(name, std::move(unit_cell));
 }
 
 void UnitCellHandler::addUnitCell(
@@ -69,7 +66,14 @@ void UnitCellHandler::addUnitCell(
 
 bool UnitCellHandler::hasUnitCell(const std::string& name) const
 {
-    return _unit_cells.find(name) != _unit_cells.end();
+    bool has = false;
+    if (_unit_cells.find(name) != _unit_cells.end()) {
+        has = true;
+    } else {
+        if (_batch_cells.find(name) != _batch_cells.end())
+            has = true;
+    }
+    return has;
 }
 
 std::vector<std::string> UnitCellHandler::getUnitCellNames() const
@@ -78,13 +82,22 @@ std::vector<std::string> UnitCellHandler::getUnitCellNames() const
     for (CellMap::const_iterator it = _unit_cells.begin(); it != _unit_cells.end(); ++it) {
         names.push_back(it->second->name());
     }
+    for (CellMap::const_iterator it = _batch_cells.begin(); it != _batch_cells.end(); ++it) {
+        names.push_back(it->second->name());
+    }
     return names;
 }
 
 sptrUnitCell UnitCellHandler::getSptrUnitCell(const std::string& name) const
 {
     if (hasUnitCell(name)) {
-        return _unit_cells.find(name)->second;
+        if (_unit_cells.find(name) != _unit_cells.end()) {
+            auto it = _unit_cells.find(name);
+            return it->second;
+        } else {
+            auto it = _batch_cells.find(name);
+            return it->second;
+        }
     }
     return nullptr;
 }
@@ -97,9 +110,15 @@ UnitCell* UnitCellHandler::getUnitCell(const std::string& name) const
 void UnitCellHandler::removeUnitCell(const std::string& name)
 {
     if (hasUnitCell(name)) {
-        auto unit_cell = _unit_cells.find(name);
-        unit_cell->second.reset();
-        _unit_cells.erase(unit_cell);
+        if (_unit_cells.find(name) != _unit_cells.end()) {
+            auto unit_cell = _unit_cells.find(name);
+            unit_cell->second.reset();
+            _unit_cells.erase(unit_cell);
+        } else {
+            auto unit_cell = _batch_cells.find(name);
+            unit_cell->second.reset();
+            _batch_cells.erase(unit_cell);
+        }
     }
 }
 
@@ -162,12 +181,10 @@ std::vector<std::string> UnitCellHandler::getCompatibleSpaceGroups() const
 std::vector<sptrUnitCell> UnitCellHandler::extractBatchCells()
 {
     std::vector<sptrUnitCell> vec;
-    for (auto it = _unit_cells.cbegin(), next_it = it; it != _unit_cells.cend(); it = next_it) {
+    for (auto it = _batch_cells.cbegin(), next_it = it; it != _batch_cells.cend(); it = next_it) {
         ++next_it;
-        if (it->first.substr(0, 6) == "frames") {
-            vec.push_back(it->second);
-            auto nh = _unit_cells.extract(it);
-        }
+        vec.push_back(it->second);
+        auto nh = _batch_cells.extract(it);
     }
     return vec;
 }

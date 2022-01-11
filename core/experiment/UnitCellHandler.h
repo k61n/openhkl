@@ -36,17 +36,14 @@ class UnitCellHandler {
 
  public:
     UnitCellHandler() = default;
-    ~UnitCellHandler();
-    UnitCellHandler(const UnitCellHandler& other);
-    UnitCellHandler& operator=(const UnitCellHandler& other) = default;
 
  public: // Handling unit cells
     //! Get a pointer to the map of unit cells
     const CellMap* getCellMap() const;
     //! Add a unit cell to the experiment
-    void addUnitCell(const std::string& name, const UnitCell& unit_cell);
+    void addUnitCell(const std::string& name, const UnitCell& unit_cell, bool refined = false);
     //! Move a unique pointer to a unit cell to the experiment
-    void addUnitCell(const std::string& name, sptrUnitCell unit_cell);
+    void addUnitCell(const std::string& name, sptrUnitCell unit_cell, bool refined = false);
     //! Add a unit cell to the experiment via cell parameters (skip autoindexing step)
     void addUnitCell(
         const std::string& name, double a, double b, double c, double alpha, double beta,
