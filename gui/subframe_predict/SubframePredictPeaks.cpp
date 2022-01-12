@@ -84,7 +84,6 @@ SubframePredictPeaks::SubframePredictPeaks()
     main_layout->addWidget(propertyScrollArea);
     main_layout->addWidget(_right_element);
 
-    _shape_collection = std::make_unique<nsx::ShapeCollection>();
     _shape_params = std::make_shared<nsx::ShapeCollectionParameters>();
 }
 
@@ -510,6 +509,8 @@ void SubframePredictPeaks::showDirectBeamEvents()
 
 void SubframePredictPeaks::assignPeakShapes()
 {
+    auto shape_collection = std::make_unique<nsx::ShapeCollection>();
+
     gGui->setReady(false);
     auto* experiment = gSession->experimentAt(_exp_combo->currentIndex())->experiment();
     auto data = experiment->getData(_detector_widget->dataCombo()->currentText().toStdString());
@@ -540,10 +541,10 @@ void SubframePredictPeaks::assignPeakShapes()
     progressView.watch(handler);
     experiment->integrator()->setHandler(handler);
 
-    _shape_collection->setParameters(_shape_params);
-    _shape_collection->integrate(fit_peaks, datalist, handler);
+    shape_collection->setParameters(_shape_params);
+    shape_collection->integrate(fit_peaks, datalist, handler);
 
-    found_peaks->setShapeCollection(_shape_collection);
+    found_peaks->setShapeCollection(shape_collection);
 
     nsx::ShapeCollection* shapes = found_peaks->shapeCollection();
     shapes->setPredictedShapes(&_peak_collection, _shape_params->interpolation, handler);

@@ -166,8 +166,6 @@ class SubframePredictPeaks : public QWidget {
     SafeSpinBox* _min_neighbours;
     QComboBox* _interpolation_combo;
     QPushButton* _assign_peak_shapes;
-
-    std::unique_ptr<nsx::ShapeCollection> _shape_collection;
 };
 
 #endif // NSX_GUI_SUBFRAME_PREDICT_SUBFRAMEPREDICTPEAKS_H
