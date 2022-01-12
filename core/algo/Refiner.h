@@ -106,7 +106,7 @@ class Refiner {
 
  private :
     //! Determine which unit cell to use in a batch
-    sptrUnitCell _getUnitCell(const std::vector<Peak3D*> peaks_subset, sptrUnitCell cell);
+    sptrUnitCell _getUnitCell(const std::vector<Peak3D*> peaks_subset);
 
     UnitCellHandler* _cell_handler;
     UnitCell _unrefined_cell;

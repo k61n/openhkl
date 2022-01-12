@@ -49,7 +49,7 @@ Refiner::Refiner(UnitCellHandler* cell_handler) : _cell_handler(cell_handler)
     _params = std::make_unique<RefinerParameters>();
 }
 
-sptrUnitCell Refiner::_getUnitCell(const std::vector<Peak3D*> peaks_subset, sptrUnitCell cell)
+sptrUnitCell Refiner::_getUnitCell(const std::vector<Peak3D*> peaks_subset)
 {
     sptrUnitCell cell_ptr;
     if (_params->use_batch_cells) { // Make a new unit cell for this batch
@@ -77,10 +77,7 @@ sptrUnitCell Refiner::_getUnitCell(const std::vector<Peak3D*> peaks_subset, sptr
         cell_ptr = std::make_shared<UnitCell>(*best_cell);
     } else { // The refiner has been passed a unit cell
         // Starting from scratch, use the cell obtained from autoindexing
-        if (_params->refine_ub) // We are refining the unit cell
-            cell_ptr = std::make_shared<UnitCell>(_unrefined_cell);
-        else //We are not refining the unit cell
-            cell_ptr = cell;
+        cell_ptr = std::make_shared<UnitCell>(_unrefined_cell);
     }
 
     return cell_ptr;
@@ -104,7 +101,8 @@ void Refiner::makeBatches(
         _cell = nullptr;
     } else {
         _cell = cell;
-        _unrefined_cell = *cell;
+        if (_cell)
+            _unrefined_cell = *_cell;
     }
 
     PeakFilter peak_filter;
@@ -134,7 +132,7 @@ void Refiner::makeBatches(
 
         if (i + 1.1 >= (current_batch + 1) * batch_size) {
 
-            sptrUnitCell cell_ptr = _getUnitCell(peaks_subset, _cell);
+            sptrUnitCell cell_ptr = _getUnitCell(peaks_subset);
             RefinementBatch b(states, cell_ptr, peaks_subset);
             b.setResidualType(_params->residual_type);
 
