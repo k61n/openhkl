@@ -328,8 +328,8 @@ void SubframeRefiner::refine()
         refreshPlot();
         toggleUnsafeWidgets();
     } catch (const std::exception& ex) {
-        gGui->statusBar()->showMessage("Refinement failed");
-        QMessageBox::critical(this, "Error", QString(ex.what()));
+        gGui->statusBar()->showMessage("Error: " + QString(ex.what()));
+        // QMessageBox::critical(this, "Error", QString(ex.what()));
     }
     if (_refine_success)
         gGui->statusBar()->showMessage("Refinement success");
