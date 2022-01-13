@@ -130,6 +130,8 @@ void SubframeHome::_setRightLayout(QHBoxLayout* main_layout)
     right->addLayout(right_bot);
 
     main_layout->addLayout(right);
+
+    _open_experiments_view->resizeColumnsToContents();
 }
 
 void SubframeHome::createNew()
@@ -290,5 +292,6 @@ void SubframeHome::toggleUnsafeWidgets()
     if (_open_experiments_model->rowCount() == 0) {
         _save_all->setEnabled(false);
         _save_current->setEnabled(false);
+        _open_experiments_view->resizeColumnsToContents();
     }
 }
