@@ -80,7 +80,7 @@ class ShapeCollectionDialog : public QDialog {
     //! The temporary collection
     PeakCollectionItem _peak_collection_item;
 
-    std::unique_ptr<nsx::ShapeCollection> _collection;
+    std::unique_ptr<nsx::ShapeCollection> _shape_collection;
     nsx::sptrUnitCell _unitCell;
     std::vector<nsx::Peak3D*> _peaks;
     std::set<nsx::sptrDataSet> _data;
