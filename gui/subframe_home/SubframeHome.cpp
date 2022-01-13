@@ -279,6 +279,7 @@ void SubframeHome::_loadSelectedItem(QListWidgetItem* item)
         _updateLastLoadedList(
             QString::fromStdString(gSession->currentProject()->experiment()->name()),
             item->data(100).toString());
+        _open_experiments_view->resizeColumnsToContents();
         toggleUnsafeWidgets();
     } catch (const std::exception& e) {
         QMessageBox::critical(this, "Error", QString(e.what()));
@@ -292,6 +293,5 @@ void SubframeHome::toggleUnsafeWidgets()
     if (_open_experiments_model->rowCount() == 0) {
         _save_all->setEnabled(false);
         _save_current->setEnabled(false);
-        _open_experiments_view->resizeColumnsToContents();
     }
 }
