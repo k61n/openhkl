@@ -83,8 +83,7 @@ class ShapeCollection {
     void setParameters(std::shared_ptr<ShapeCollectionParameters> params);
 
     //! Set shapes of a predicted peak collection
-    void setPredictedShapes(
-        PeakCollection* peaks, PeakInterpolation interpolation, sptrProgressHandler handler);
+    void setPredictedShapes(PeakCollection* peaks, PeakInterpolation interpolation);
 
     //! Predict the (detector space) covariance of a given peak
     Eigen::Matrix3d predictCovariance(Peak3D* peak) const;
@@ -138,6 +137,9 @@ class ShapeCollection {
         std::vector<Peak3D*> peaks, std::set<nsx::sptrDataSet> datalist,
         sptrProgressHandler handler = nullptr);
 
+    //! Set the progress handler
+    void setHandler(sptrProgressHandler handler);
+
  private:
     //! Predict the (detector space) covariance given the fit data
     Eigen::Matrix3d predictCovariance(const FitData&) const;
@@ -156,6 +158,9 @@ class ShapeCollection {
 
     //! Shape collection parameters
     std::shared_ptr<ShapeCollectionParameters> _params;
+
+    //! Progress handler
+    sptrProgressHandler _handler;
 };
 
 } // namespace nsx

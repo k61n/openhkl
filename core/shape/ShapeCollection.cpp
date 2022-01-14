@@ -119,6 +119,7 @@ ShapeCollection::ShapeCollection()
     , _choleskyD()
     , _choleskyM()
     , _choleskyS()
+    , _handler(nullptr)
 {
     _choleskyD.fill(1e-6);
     _choleskyM.fill(1e-6);
@@ -132,6 +133,8 @@ ShapeCollection::ShapeCollection(std::shared_ptr<ShapeCollectionParameters> para
     , _choleskyM()
     , _choleskyS()
     , _params(params)
+    , _handler(nullptr)
+
 {
     _choleskyD.fill(1e-6);
     _choleskyM.fill(1e-6);
@@ -235,6 +238,7 @@ void ShapeCollection::updateFit(int /*num_iterations*/)
 
 void ShapeCollection::setParameters(std::shared_ptr<ShapeCollectionParameters> params)
 {
+    _params.reset();
     _params = params;
 }
 
@@ -392,8 +396,7 @@ std::optional<Eigen::Matrix3d> ShapeCollection::meanCovariance(
     return JI * cov * JI.transpose();
 }
 
-void ShapeCollection::setPredictedShapes(
-    PeakCollection* peaks, PeakInterpolation interpolation, sptrProgressHandler handler)
+void ShapeCollection::setPredictedShapes(PeakCollection* peaks, PeakInterpolation interpolation)
 {
     nsxlog(
         Level::Info, "ShapeCollection: Computing shapes of ", peaks->numberOfPeaks(),
@@ -403,15 +406,14 @@ void ShapeCollection::setPredictedShapes(
     int npeaks = peaks->numberOfPeaks();
     std::ostringstream oss;
     oss << "Computing shapes of " << npeaks << " peaks";
-    if (handler) {
-        handler->setStatus(oss.str().c_str());
-        handler->setProgress(0);
+    if (_handler) {
+        _handler->setStatus(oss.str().c_str());
+        _handler->setProgress(0);
     }
 
     #pragma omp parallel for
     for (auto peak : peaks->getPeakList()) {
         peak->setPredicted(true);
-        peak->setSelected(true);
 
         // Skip the peak if any error occur when computing its mean covariance (e.g.
         // too few or no neighbouring peaks found)
@@ -422,9 +424,9 @@ void ShapeCollection::setPredictedShapes(
             peak->setShape(Ellipsoid(center, cov.value().inverse()));
         }
 
-        if (handler) {
+        if (_handler) {
             double progress = ++count * 100.0 / npeaks;
-            handler->setProgress(progress);
+            _handler->setProgress(progress);
         }
     }
     nsxlog(Level::Info, "ShapeCollection: finished computing shapes");
@@ -478,6 +480,7 @@ AABB ShapeCollection::getAABB()
 void ShapeCollection::integrate(
     std::vector<Peak3D*> peaks, std::set<nsx::sptrDataSet> datalist, sptrProgressHandler handler)
 {
+    nsxlog(Level::Info, "ShapeCollection::integrate: integrating ", peaks.size(), " peaks");
     ShapeIntegrator integrator(
         this, getAABB(), _params->nbins_x, _params->nbins_y, _params->nbins_z);
     nsx::IntegrationParameters int_params{};
@@ -493,6 +496,12 @@ void ShapeCollection::integrate(
         integrator.integrate(peaks, this, data, n_numor);
         ++n_numor;
     }
+    nsxlog(Level::Info, "ShapeCollection::integrate: finished integrating shapes");
+}
+
+void ShapeCollection::setHandler(sptrProgressHandler handler)
+{
+    _handler = handler;
 }
 
 } // namespace nsx

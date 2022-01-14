@@ -109,6 +109,7 @@ using Eigen::Quaterniond;
 #include "core/shape/PeakFilter.h"
 #include "core/integration/Integrator.h"
 #include "core/experiment/PeakFinder.h"
+#include "core/statistics/PeakMerger.h"
 #include "core/convolve/AnnularConvolver.h"
 #include "core/convolve/AtomicConvolver.h"
 #include "core/convolve/ConstantConvolver.h"
@@ -355,9 +356,10 @@ ArrayExtendCRef(MillerIndex, int);
 %template(MergedPeakSet) std::set<nsx::MergedPeak>;
 
 %include "core/algo/AutoIndexer.h"
-%include "core/algo/Refiner.h"
-%include "core/experiment/Experiment.h"
 %include "core/algo/RefinementBatch.h"
+%include "core/algo/Refiner.h"
+%include "core/statistics/PeakMerger.h"
+%include "core/experiment/Experiment.h"
 %include "core/algo/FFTIndexing.h"
 
 %include "core/integration/MeanBackgroundIntegrator.h"

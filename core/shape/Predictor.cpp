@@ -16,6 +16,7 @@
 
 #include "base/utils/Logger.h"
 #include "core/data/DataSet.h"
+#include "core/data/DataTypes.h"
 #include "core/instrument/Diffractometer.h"
 #include "core/instrument/Monochromator.h"
 #include "core/peak/Peak3D.h"
@@ -37,7 +38,7 @@ Predictor::Predictor() {
 }
 
 std::vector<Peak3D*> Predictor::buildPeaksFromMillerIndices(
-    sptrDataSet data, const std::vector<MillerIndex>& hkls, const sptrUnitCell& unit_cell,
+    sptrDataSet data, const std::vector<MillerIndex>& hkls, const sptrUnitCell unit_cell,
     sptrProgressHandler handler)
 {
     const Eigen::Matrix3d BU = unit_cell->reciprocalBasis();
@@ -71,7 +72,7 @@ std::vector<Peak3D*> Predictor::buildPeaksFromMillerIndices(
 }
 
 void Predictor::predictPeaks(
-    const sptrDataSet data, const sptrUnitCell& unit_cell, sptrProgressHandler handler)
+    const sptrDataSet data, const sptrUnitCell unit_cell, sptrProgressHandler handler)
 {
     _params->log(Level::Info);
     _predicted_peaks.clear();

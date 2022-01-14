@@ -438,6 +438,10 @@ void SubframePredictPeaks::refineKi()
         gGui->statusBar()->showMessage("Direct beam position refinement failed");
 
     refiner->setParameters(tmp_params);
+    expt->removeBatchCells();
+    for (auto* peak : peaks->getPeakList()) // Assign original unit cell to all peaks
+        peak->setUnitCell(cell);
+
     gGui->setReady(true);
 }
 
@@ -547,7 +551,8 @@ void SubframePredictPeaks::assignPeakShapes()
     found_peaks->setShapeCollection(shape_collection);
 
     nsx::ShapeCollection* shapes = found_peaks->shapeCollection();
-    shapes->setPredictedShapes(&_peak_collection, _shape_params->interpolation, handler);
+    shapes->setHandler(handler);
+    shapes->setPredictedShapes(&_peak_collection, _shape_params->interpolation);
 
     refreshPeakTable();
     _shapes_assigned = true;

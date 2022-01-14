@@ -23,6 +23,7 @@
 #include "base/utils/Units.h"
 #include "tables/crystal/GruberReduction.h"
 #include "tables/crystal/MillerIndex.h"
+#include "tables/crystal/NiggliCharacter.h"
 #include "tables/crystal/NiggliReduction.h"
 #include "tables/crystal/UnitCell.h"
 
@@ -91,6 +92,7 @@ UnitCell::UnitCell()
     , _centring(LatticeCentring::P)
     , _bravaisType(BravaisType::Triclinic)
     , _Z(1)
+    , _space_group("P 1")
     , _name("uc")
     , _indexingTolerance(0.2)
 {
@@ -275,7 +277,7 @@ std::string UnitCell::toString() const
     auto c = character();
     oss << std::fixed << std::setw(10) << std::setprecision(5) << c.a << std::setw(10) << c.b
         << std::setw(10) << c.c << std::setw(10) << c.alpha / deg << std::setw(10) << c.beta / deg
-        << std::setw(10) << c.gamma / deg;
+        << std::setw(10) << c.gamma / deg << std::setw(10) << bravaisTypeSymbol();
     return oss.str();
 }
 
@@ -383,6 +385,7 @@ void UnitCell::setMaterial(const xsection::Material& material)
 void UnitCell::setSpaceGroup(const SpaceGroup& space_group)
 {
     _space_group = space_group;
+    _bravaisType = static_cast<BravaisType>(space_group.bravaisType());
 }
 
 void UnitCell::setSpaceGroup(const std::string symbol)
@@ -894,11 +897,17 @@ bool UnitCell::isSimilar(const UnitCell* other, double length_tol, double angle_
 {
     auto c1 = character();
     auto c2 = other->character();
+    auto t1 = bravaisTypeSymbol();
+    auto t2 = other->bravaisTypeSymbol();
+    std::cout << t1 << " " << t2 << std::endl;
     return (
-        smallDiff(c1.a, c2.a, length_tol) && smallDiff(c1.b, c2.b, length_tol)
-        && smallDiff(c1.c, c2.c, length_tol) && smallDiff(c1.alpha / deg, c2.alpha / deg, angle_tol)
-        && smallDiff(c1.beta / deg, c2.beta / deg, angle_tol)
-        && smallDiff(c1.gamma / deg, c2.gamma / deg, angle_tol));
+        smallDiff(c1.a, c2.a, length_tol) &&
+        smallDiff(c1.b, c2.b, length_tol) &&
+        smallDiff(c1.c, c2.c, length_tol) &&
+        smallDiff(c1.alpha / deg, c2.alpha / deg, angle_tol) &&
+        smallDiff(c1.beta / deg, c2.beta / deg, angle_tol) &&
+        smallDiff(c1.gamma / deg, c2.gamma / deg, angle_tol) &&
+        t1 == t2);
 }
 
 } // namespace nsx

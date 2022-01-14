@@ -32,14 +32,17 @@ ShapeIntegrator::ShapeIntegrator(ShapeCollection* lib, const AABB& aabb, int nx,
 bool ShapeIntegrator::compute(
     Peak3D* peak, ShapeCollection* shape_collection, const IntegrationRegion& region)
 {
-    auto uc = peak->unitCell();
+    const UnitCell* uc = peak->unitCell();
     auto data = peak->dataSet();
 
     if (!uc) {
+        peak->setSelected(false);
         peak->setRejectionFlag(RejectionFlag::NoUnitCell);
         return false;
     }
+
     if (!data) {
+        peak->setSelected(false);
         peak->setRejectionFlag(RejectionFlag::NoDataSet);
         return false;
     }

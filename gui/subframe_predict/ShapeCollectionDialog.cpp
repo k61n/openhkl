@@ -41,7 +41,7 @@ ShapeCollectionDialog::ShapeCollectionDialog(
     : QDialog(), _peak_collection_model() , _peak_collection_item(),
       _collection_ptr(peak_collection), _params(params)
 {
-    _collection = std::make_unique<nsx::ShapeCollection>();
+    _shape_collection = std::make_unique<nsx::ShapeCollection>();
 
     setModal(true);
     setSizePolicies();
@@ -301,7 +301,7 @@ void ShapeCollectionDialog::setPreviewUp()
 void ShapeCollectionDialog::build()
 {
     setShapeCollectionParameters();
-    auto* params = _collection->parameters();
+    auto* params = _shape_collection->parameters();
     std::vector<nsx::Peak3D*> fit_peaks;
 
     for (nsx::Peak3D* peak : _peaks) {
@@ -329,19 +329,19 @@ void ShapeCollectionDialog::build()
     ProgressView view(this);
     view.watch(handler);
 
-    _collection->integrate(fit_peaks, _data, handler);
+    _shape_collection->integrate(fit_peaks, _data, handler);
 
-    // _collection.updateFit(1000); // This does nothing!! - zamaan
+    // _shape_collection.updateFit(1000); // This does nothing!! - zamaan
 }
 
 void ShapeCollectionDialog::calculate()
 {
     setShapeCollectionParameters();
-    auto* params = _collection->parameters();
+    auto* params = _shape_collection->parameters();
 
     const nsx::DetectorEvent ev(_x->value(), _y->value(), _frame->value());
     // update maximum value, used for drawing
-    _profile = _collection->meanProfile(
+    _profile = _shape_collection->meanProfile(
         ev, params->neighbour_range_pixels, params->neighbour_range_frames);
     if (!_profile) {
         gGui->statusBar()->showMessage(
@@ -401,13 +401,13 @@ void ShapeCollectionDialog::selectTargetPeak(int row)
 
 void ShapeCollectionDialog::accept()
 {
-    _collection_ptr->setShapeCollection(_collection);
+    _collection_ptr->setShapeCollection(_shape_collection);
     QDialog::accept();
 }
 
 void ShapeCollectionDialog::setShapeCollectionParameters()
 {
-    auto* params = _collection->parameters();
+    auto* params = _shape_collection->parameters();
 
     params->d_min = _min_d->value();
     params->d_max = _max_d->value();
@@ -427,7 +427,7 @@ void ShapeCollectionDialog::setShapeCollectionParameters()
 
 void ShapeCollectionDialog::grabShapeCollectionParameters()
 {
-    auto* params = _collection->parameters();
+    auto* params = _shape_collection->parameters();
     _collection_ptr->computeSigmas();
 
     _min_d->setValue(params->d_min);
@@ -449,7 +449,7 @@ void ShapeCollectionDialog::grabShapeCollectionParameters()
 void ShapeCollectionDialog::toggleUnsafeWidgets()
 {
     _calculate_mean_profile->setEnabled(true);
-    if (!_collection)
+    if (!_shape_collection)
         _calculate_mean_profile->setEnabled(false);
 
 }

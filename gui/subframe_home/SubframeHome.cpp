@@ -130,6 +130,8 @@ void SubframeHome::_setRightLayout(QHBoxLayout* main_layout)
     right->addLayout(right_bot);
 
     main_layout->addLayout(right);
+
+    _open_experiments_view->resizeColumnsToContents();
 }
 
 void SubframeHome::createNew()
@@ -277,6 +279,7 @@ void SubframeHome::_loadSelectedItem(QListWidgetItem* item)
         _updateLastLoadedList(
             QString::fromStdString(gSession->currentProject()->experiment()->name()),
             item->data(100).toString());
+        _open_experiments_view->resizeColumnsToContents();
         toggleUnsafeWidgets();
     } catch (const std::exception& e) {
         QMessageBox::critical(this, "Error", QString(e.what()));

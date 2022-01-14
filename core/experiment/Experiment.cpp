@@ -270,7 +270,7 @@ void Experiment::predictPeaks(
         predicted_peaks.push_back(peak);
 
     nsxlog(
-        Level::Info, "Experiment::predictPeaks: completed peak prediciton. Added ",
+        Level::Info, "Experiment::predictPeaks: completed peak prediction. Added ",
         predicted_peaks.size(), " peaks");
 
     addPeakCollection(name, listtype::PREDICTED, predicted_peaks);
@@ -414,9 +414,9 @@ void Experiment::clonePeakCollection(std::string name, std::string new_name)
 }
 
 // Unit cell handler methods
-void Experiment::addUnitCell(const std::string& name, const UnitCell& unit_cell)
+void Experiment::addUnitCell(const std::string& name, const UnitCell& unit_cell, bool refined)
 {
-    _cell_handler->addUnitCell(name, unit_cell);
+    _cell_handler->addUnitCell(name, unit_cell, refined);
 }
 
 void Experiment::addUnitCell(
@@ -467,9 +467,11 @@ int Experiment::numUnitCells() const
     return _cell_handler->numUnitCells();
 }
 
-bool Experiment::checkAndAssignUnitCell(PeakCollection* peaks, double length_tol, double angle_tol)
+bool Experiment::checkAndAssignUnitCell(
+    PeakCollection* peaks, double length_tol, double angle_tol, std::string name)
 {
-    return _cell_handler->checkAndAssignUnitCell(peaks, _auto_indexer.get(), length_tol, angle_tol);
+    return _cell_handler->checkAndAssignUnitCell(
+        peaks, _auto_indexer.get(), length_tol, angle_tol, name);
 }
 
 void Experiment::assignUnitCell(PeakCollection* peaks, std::string name)
@@ -491,6 +493,11 @@ std::vector<std::string> Experiment::getCompatibleSpaceGroups() const
 UnitCellHandler* Experiment::getCellHandler() const
 {
     return _cell_handler.get();
+}
+
+void Experiment::removeBatchCells()
+{
+    auto tmp = _cell_handler->extractBatchCells();
 }
 
 } // namespace nsx

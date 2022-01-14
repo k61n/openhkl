@@ -128,7 +128,7 @@ void Integrator::integrateFoundPeaks(PeakFinder* peak_finder)
 }
 
 void Integrator::integrateShapeCollection(
-    std::vector<Peak3D*>& fit_peaks, sptrDataSet data, ShapeCollection* shape_collection,
+    std::vector<Peak3D*> fit_peaks, sptrDataSet data, ShapeCollection* shape_collection,
     const AABB& aabb, const ShapeCollectionParameters& params)
 {
     nsxlog(Level::Info, "Integrator::integrateShapeCollection");
