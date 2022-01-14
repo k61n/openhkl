@@ -42,11 +42,9 @@ class TestAutoIndexer(unittest.TestCase):
         autoindexer_params.indexingTolerance = 0.2
         autoindexer_params.minUnitCellVolume = 100.0
         autoindexer.autoIndex(filtered_peaks)
-        # reference_cell = expt.getReferenceCell()
-        # accepted_cell = expt.getAcceptedCell()
-        # print("Reference cell = " + reference_cell.toString())
-        # print(autoindexer.solutionsToString())
-        self.assertTrue(expt.checkAndAssignUnitCell(filtered_peaks, 1.0, 1.0))  # boolean return value
+        reference_cell = expt.getReferenceCell()
+        reference_cell.setSpaceGroup(nsx.SpaceGroup("P 21"));
+        self.assertTrue(expt.checkAndAssignUnitCell(filtered_peaks, 1.5, 1.0))  # boolean return value
 
 if __name__ == "__main__":
     unittest.main()

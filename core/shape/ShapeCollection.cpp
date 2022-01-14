@@ -414,7 +414,6 @@ void ShapeCollection::setPredictedShapes(PeakCollection* peaks, PeakInterpolatio
     #pragma omp parallel for
     for (auto peak : peaks->getPeakList()) {
         peak->setPredicted(true);
-        peak->setSelected(true);
 
         // Skip the peak if any error occur when computing its mean covariance (e.g.
         // too few or no neighbouring peaks found)
