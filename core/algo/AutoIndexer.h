@@ -20,12 +20,15 @@
 
 namespace nsx {
 
+/*! \addtogroup python_api
+ *  @{*/
+
 using RankedSolution = std::pair<sptrUnitCell, double>;
 using SolutionList = std::vector<RankedSolution>;
 
 enum class Level;
 
-//! Struct to store parameters used by autoindexer.
+//! Parameters for indexing a peak collection
 struct IndexerParameters {
     //! Expected maximum dimension of the unit cell, in angstroms
     double maxdim = 200.0;
@@ -126,6 +129,7 @@ class AutoIndexer {
     std::shared_ptr<ProgressHandler> _handler;
 };
 
+/*! @}*/
 } // namespace nsx
 
 #endif // NSX_CORE_ALGO_AUTOINDEXER_H

@@ -25,7 +25,7 @@ enum class Level;
 
 enum class IntegratorType { PixelSum, Gaussian, ISigma, Profile1D, Profile3D, Count };
 
-/*! \addtogroup integration
+/*! \addtogroup python_api
  *  @{*/
 
 //! Structure containing parameters for all integrators

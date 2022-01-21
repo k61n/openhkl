@@ -27,6 +27,9 @@ class ProgressHandler;
 using sptrProgressHandler = std::shared_ptr<ProgressHandler>;
 enum class Level;
 
+/*! \addtogroup python_api
+ *  @{*/
+
 //! Parameters for refinement
 struct RefinerParameters {
     bool refine_ub = true;
@@ -42,7 +45,21 @@ struct RefinerParameters {
     void log(const Level& level) const;
 };
 
-//! Used to refine lattice and instrument parameters.
+/*! \addtogroup python_api
+ *  @{*/
+
+/*! \brief Refine unit cell and instrument states
+ *
+ * Use GSL non-linear least squares minimisation to refine instrument states
+ * (sample position and orientation, incident wavevector, and detector position)
+ * and unit cell parameters. The residual is computed as the difference between
+ * a q-vector computed from the unit cell (used to predict peaks) and a q-vector
+ * from transforming an observed reflection into reciprocal space. An
+ * alternative residual (useful for refining unit cells and incident
+ * wavevectors) is computed using the real space difference between a predicted
+ * spot and its associated observed spot.
+ */
+
 class Refiner {
  public:
     Refiner(UnitCellHandler* cell_handler);
@@ -123,6 +140,7 @@ class Refiner {
     std::vector<Peak3D*> _peaks;
 };
 
+/*! @}*/
 } // namespace nsx
 
 #endif // NSX_CORE_ALGO_REFINER_H

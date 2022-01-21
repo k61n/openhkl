@@ -19,8 +19,10 @@
 
 namespace nsx {
 
-//! Class to remove "bad" peaks based on various critera.
+/*! \addtogroup python_api
+ *  @{*/
 
+//! Enable/disable the various types of filters
 struct PeakFilterFlags {
     bool selected; //!< filter by selection
     bool masked; //!< filter by mask
@@ -38,6 +40,7 @@ struct PeakFilterFlags {
     bool frames; //!< catch peaks in a specifed frame range
 };
 
+//! Parameters for the different filter types
 struct PeakFilterParameters {
     double d_min = 1.5; //!< minimum d (Bragg's law)
     double d_max = 50.0; //!< maximum d (Bragg's law)
@@ -52,6 +55,11 @@ struct PeakFilterParameters {
     double peak_end = 3.0; //!< scale for peak intensity ellipsoid (sigmas)
     double bkg_end = 6.0; //!< scale for background ellipsoid (sigmas)
 };
+
+/*! \brief Remove peaks that meet specific criteria from a collection
+ *
+ *  Peaks excluded by the filter will be labelled "caught" by the filter.
+ */
 
 class PeakFilter {
  public:
@@ -135,6 +143,7 @@ class PeakFilter {
     std::unique_ptr<PeakFilterParameters> _filter_params;
 };
 
+/*! @}*/
 } // namespace nsx
 
 #endif // NSX_CORE_SHAPE_PEAKFILTER_H

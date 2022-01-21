@@ -19,7 +19,7 @@
 
 namespace nsx {
 
-/*! \addtogroup integration
+/*! \addtogroup python_api
  *  @{*/
 
 /*!  \brief Compute the mean background near a peak. */

@@ -31,6 +31,10 @@ class Peak3D;
 class PeakCollection;
 enum class Level;
 
+/*! \addtogroup python_api
+ *  @{*/
+
+//! Interpolation type for assigning a shape to a predicted peaks
 enum class PeakInterpolation { NoInterpolation = 0, InverseDistance = 1, Intensity = 2 };
 
 //! Parameters for building the shape collection
@@ -57,13 +61,14 @@ using sptrShapeCollection = std::shared_ptr<ShapeCollection>;
 
 struct FitData;
 
-//! Store a collection of peak shapes, to be used for peak prediction and integration.
-
-//! The collection stores a list of reference peaks. For each reference peak, the
-//! collection stores the covariance matrix of the intensity distribution, as well
-//! as 3d- and 1d- integrated profiles. The covariance matrices are used to
-//! roughly predict the shapes of weak peaks, and the integrated profiles are
-//! used in the profile-fitting integration methods.
+/*! \brief Store a collection of peak shapes,  for peak prediction and integration.
+ *
+ * The collection stores a list of reference peaks. For each reference peak, the
+ * collection stores the covariance matrix of the intensity distribution, as well
+ * as 3d- and 1d- integrated profiles. The covariance matrices are used to
+ * roughly predict the shapes of weak peaks, and the integrated profiles are
+ * used in the profile-fitting integration methods.
+ */
 
 class ShapeCollection {
  public:
@@ -163,6 +168,7 @@ class ShapeCollection {
     sptrProgressHandler _handler;
 };
 
+/*! @}*/
 } // namespace nsx
 
 #endif // NSX_CORE_SHAPE_SHAPECOLLECTION_H

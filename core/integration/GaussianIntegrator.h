@@ -19,7 +19,7 @@
 
 namespace nsx {
 
-/*! \addtogroup integration
+/*! \addtogroup python_api
  *  @{*/
 
 /*! \brief Compute integrated intensity by fitting to an analytic 3D Gaussian.*/

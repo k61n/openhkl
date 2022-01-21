@@ -34,6 +34,19 @@ class ShapeIntegrator;
 class DataHandler;
 struct PredictionParameters;
 
+/*! \addtogroup python_api
+ *  @{*/
+
+/*! \brief Integrate predicted peaks
+ *
+ *  Implements naive pixel sum integration and various profile fitting
+ *  integration methods for computing intensities, sigmas and strengths of
+ *  reflections.
+ *
+ *  Construct a shape collection of integrated strong peaks, and compute the
+ *  mean covariance of shapes in the vicinity of a predicted peaks to generate
+ *  an integration region. This is integrated via profile integration.
+ */
 class Integrator {
 
  public:
@@ -81,6 +94,7 @@ class Integrator {
     unsigned int _n_valid;
 };
 
+/*! @}*/
 } // namespace nsx
 
 #endif // NSX_CORE_EXPERIMENT_INTEGRATOR_H

@@ -20,7 +20,7 @@
 
 namespace nsx {
 
-/*! \addtogroup integration
+/*! \addtogroup python_api
  *  @{*/
 
 /*! \brief A region of interest in a 3D image.

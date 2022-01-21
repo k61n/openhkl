@@ -26,6 +26,9 @@ class PeakCollection;
 
 namespace nsx {
 
+/*! \addtogroup python_api
+ *  @{*/
+
 //! Parameters for peak prediction
 struct PredictionParameters : public IntegrationParameters {
     double d_min = 1.5; //!< Minimum detector range (filter)
@@ -33,6 +36,12 @@ struct PredictionParameters : public IntegrationParameters {
 
     void log(const Level& level) const;
 };
+
+/*! \brief Predict peaks positions in real space given a unit cell
+ *
+ *  Given a unit cell, convert all combinations of Miller indices in some range
+ *  to q-vectors, and transform their positions to real space detector spots.
+ */
 
 class Predictor {
  public:
@@ -61,6 +70,7 @@ class Predictor {
     sptrProgressHandler _handler;
 };
 
+/*! @}*/
 } // namespace nsx
 
 #endif // NSX_CORE_SHAPE_PREDICTOR_H

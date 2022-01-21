@@ -21,7 +21,7 @@ namespace nsx {
 
 class ShapeCollection;
 
-/*! \addtogroup integration
+/*! \addtogroup python_api
  *  @{*/
 
 /*! \brief Integrate a peak to generate a profile for ShapeCollection*/

@@ -19,7 +19,7 @@
 
 namespace nsx {
 
-/*! \addtogroup integration
+/*! \addtogroup python_api
  *  @{*/
 
 /*! \brief Peak integration using naive background estimation and subtraction.

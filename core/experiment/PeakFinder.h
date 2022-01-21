@@ -21,6 +21,9 @@
 
 namespace nsx {
 
+/*! \addtogroup python_api
+ *  @{*/
+
 using EquivalencePair = std::pair<int, int>;
 using EquivalenceList = std::vector<EquivalencePair>;
 
@@ -29,6 +32,7 @@ class ProgressHandler;
 
 using sptrProgressHandler = std::shared_ptr<ProgressHandler>;
 
+//! Parameters for finding peaks
 struct PeakFinderParameters {
     int minimum_size = 30; //!< Minimum number of pixels in a blob
     int maximum_size = 10000; //!< Maximum number of pixels in a blob
@@ -130,6 +134,7 @@ class PeakFinder {
     unsigned int _peaks_found;
 };
 
+/*! @}*/
 } // namespace nsx
 
 #endif // NSX_CORE_EXPERIMENT_PEAKFINDER_H

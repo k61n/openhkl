@@ -20,7 +20,7 @@
 
 namespace nsx {
 
-/*! \addtogroup integration
+/*! \addtogroup python_api
  *  @{*/
 
 /*! \brief Peak integrator using 1D profile fitting.
