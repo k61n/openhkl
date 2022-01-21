@@ -1,119 +1,192 @@
-#!/usr/bin/env python3
-
-'''
-workflow.py
-
-A test script for the entire NSXTool workflow
-'''
+#!/usr/bin/python
+##  ***********************************************************************************************
+##
+##  NSXTool: data reduction for neutron single-crystal diffraction
+##
+##! @file      test/python/TestWorkFlow.py
+##! @brief     Test ...
+##!
+##! @homepage  ###HOMEPAGE###
+##! @license   GNU General Public License v3 or higher (see COPYING)
+##! @copyright Institut Laue-Langevin and Forschungszentrum Jülich GmbH 2016-
+##! @authors   see CITATION, MAINTAINER
+##
+##  ***********************************************************************************************
 
 import sys
-import argparse
+import numpy as np
+import unittest
 from pathlib import Path
-from nsx.experiment import Experiment, pynsxprint
-from nsx.parameters import Parameters
-from pdb import set_trace
 
-parser = argparse.ArgumentParser(description='NSXTool workflow test script')
-parser.add_argument('--name', type=str, dest='name', help='name of system', required=True)
-parser.add_argument('--files', type=str, nargs='+', dest='files',
-                    help='Data files')
-parser.add_argument('--dataformat', type=str, dest='dataformat',
-                    help='Format of data files')
-parser.add_argument('--detector', type=str, dest='detector',
-                    help='Type of detector', required=True)
-parser.add_argument('--loadnsx', action='store_true', dest='loadnsx', default=False,
-                    help='load <name>.nsx')
-parser.add_argument('--predicted', action='store_true', dest='predicted', default=False,
-                    help='Saved data in .nsx has completed prediction step')
-parser.add_argument('-p', '--parameters', type=str, dest='paramfile',
-                    default='parameters', help='File containing experiment paramters')
-parser.add_argument('--max_autoindex_frames', type=int, dest='frames_max',
-                    default=20, help='Maximum number of frames to use for autoindexing')
-parser.add_argument('--min_autoindex_frames', type=int, dest='frames_min',
-                    default=10, help='Minimum number of frames to use for autoindexing')
-parser.add_argument('--length_tol', type=float, dest='length_tol',
-                    default=0.5, help='length tolerance (a, b, c) for autoindexing')
-parser.add_argument('--angle_tol', type=float, dest='angle_tol',
-                    default=0.5, help='angle tolerance (alpha, beta, gamma) for autoindexing')
-parser.add_argument('-v', '--verbose', action='store_true', dest='verbose', default=False,
-                    help='Print extra output')
-parser.add_argument('--batches', action='store', dest='nbatches', type=int, default=20,
-                    help='Number of batches for refinement')
-parser.add_argument('--integrator', action='store', dest='integrator', type=str,
-                    default="Profile3D", help="Integrator to use")
-args = parser.parse_args()
+lib_dir = "@SWIG_INSTALL_PATH@" # Path to pynsx.py
+data_dir = '/home/zamaan/projects/datasets/small_cell_low_intensity' # Path to .raw data files
 
-integrators = {"Profile1D": "1d profile integrator",
-               "Profile3D": "3d profile integrator",
-               "PixelSum": "Pixel sum integrator",
-               "Gaussian": "Gaussian integrator",
-               "ISigma": "I/Sigma integrator"}
+sys.path.append(lib_dir)
+import pynsx as nsx
 
-params = Parameters()
-if Path(args.paramfile).is_file():
-    pynsxprint(str(f"Reading parameters from {args.paramfile}"))
-    params.load(args.paramfile)
-else:
-    raise RuntimeError("No parameters file detected")
+# set up the experiment
+expt = nsx.Experiment('trypsin-sim', 'BioDiff2500')
+diffractometer = expt.getDiffractometer()
+dataset = nsx.DataSet('trypsin-sim', diffractometer)
 
-expt = Experiment(args.name, args.detector, params, verbose=args.verbose)
-expt.set_logger()
-logger = expt.get_logger()
+# raw data parameters
+data_params = expt.data_params
+data_params.wavelength = 2.67
+data_params.delta_omega = 0.3
 
-if not args.loadnsx:
-    if not args.dataformat:
-        raise RuntimeError("Command line argument --dataformat must be specified")
-    if not args.files:
-        raise RuntimeError("No data files specified (--files)")
-    filenames = [Path(file) for file in args.files]
-    pynsxprint("Loading data...")
-    expt.add_data_set(filenames, args.dataformat)
-    data = expt.get_data()
+print(f'Reading files from {data_dir}')
+dir = Path(data_dir)
+raw_data_files = sorted(list(dir.glob('*.raw')))
+for file in raw_data_files:
+    print(file)
+dataset.setRawReaderParameters(data_params)
+for filename in raw_data_files:
+    dataset.addRawFrame(str(filename))
 
-    pynsxprint("Finding peaks...")
-    expt.find_peaks(data, 0, -1)
-    pynsxprint("Integrating...")
-    npeaks = expt.integrate_peaks(integrators["PixelSum"])
+dataset.finishRead()
+expt.addData(dataset)
+data = expt.getData('trypsin-sim')
 
-    expt.save()
-else:
-    if not args.predicted:
-        pynsxprint("Loading data...")
-        expt.load()
+print('Finding peaks...')
+peak_finder = expt.peakFinder()
+params = peak_finder.parameters()
+params.threshold = 80
+peak_finder.find(expt.getAllData())
+print(f'Found {peak_finder.numberFound()} peaks')
 
-if args.predicted:
-    pynsxprint("Loading data...")
-    expt.load(predicted=args.predicted)
-else:
-    # Autoindex
-    pynsxprint("Autoindexing...")
-    peaks = expt.get_found_peaks()
-    success = expt.run_auto_indexer(peaks, args.length_tol, args.angle_tol,
-                                    args.frames_min, args.frames_max)
-    pynsxprint("Autoindexing successful")
-    if not success:
-        raise RuntimeError("AutoIndexer failed")
-    pynsxprint("Filtering...")
-    filtered_collection_name = "filtered"
-    peaks = expt.get_found_peaks()
-    expt.assign_unit_cell(peaks)
-    params.filter['extinct'] = True
-    npeaks = peaks.numberOfPeaks()
-    ncaught = expt.filter_peaks(params.filter, peaks, filtered_collection_name)
-    pynsxprint("Building shape collection...")
-    all_data = expt.get_data()
-    expt.build_shape_collection(all_data)
-    pynsxprint("Predicting peaks...")
-    if not args.integrator in integrators:
-        raise RuntimeError(f'{args.integrator} is not a valid integrator')
-    pynsxprint("Integrating predicted peaks...")
-    expt.predict_peaks(all_data, integrators[args.integrator], 'None')
-    expt.save(predicted=True)
+print('Integrating found peaks...')
+integrator = expt.integrator()
+params = integrator.parameters()
+params.peak_end = 3.0
+params.bkg_begin = 3.0
+params.bkg_end = 6.0
+integrator.integrateFoundPeaks(peak_finder)
+expt.acceptFoundPeaks('found') # Peak collection is now saved to experiment as "found"
+found_peaks = expt.getPeakCollection('found')
+print(f'Integrated {found_peaks.numberOfValid()} valid peaks')
 
-pynsxprint("Refining cell and instrument states...")
-expt.refine(args.nbatches, integrators[args.integrator])
-expt.check_peak_collections()
-pynsxprint("Merging peak collection...")
-expt.merge_peaks()
-pynsxprint("Computing quality metrics...")
-expt.get_statistics()
+print('Indexing found peaks...')
+expt.setReferenceCell(24.5, 28.7, 37.7, 90, 90, 90) # reference cell used to pick best solution
+space_group = nsx.SpaceGroup('P 21 21 21') # required to check that Bravais type is correct
+reference_cell = expt.getUnitCell('reference')
+reference_cell.setSpaceGroup(space_group)
+indexer = expt.autoIndexer();
+params = indexer.parameters();
+params.length_tol = 1.5
+params.angle_tol = 0.1
+
+# Filter to generate the peak collection for indexing
+filter = expt.peakFilter();
+filter.resetFilterFlags();
+filter.flags().strength = True;
+filter.flags().d_range = True;
+filter.flags().frames = True;
+filter.parameters().d_min = 1.5
+filter.parameters().frame_min = 10
+filter.parameters().frame_max= 20
+filter.parameters().strength_min = 1.0
+filter.filter(found_peaks)
+expt.acceptFilter('indexing', found_peaks)
+
+indexing_peaks = expt.getPeakCollection('indexing')
+indexer.autoIndex(indexing_peaks)
+indexed_cell = indexer.goodSolution(reference_cell, 1.5, 0.2)
+indexed_cell.setSpaceGroup(space_group)
+expt.addUnitCell("accepted", indexed_cell)
+expt.assignUnitCell(found_peaks, 'accepted');
+print(f'Reference cell {reference_cell.toString()}')
+print(f'Using cell     {indexed_cell.toString()}')
+
+print('Filtering fit peaks for shape collection...')
+filter = expt.peakFilter()
+filter.resetFiltering(found_peaks)
+filter.resetFilterFlags()
+flags = filter.flags()
+flags.d_range = True
+flags.strength = True
+params = filter.parameters()
+params.d_min = 1.5
+params.strength_min = 10.0
+params.strength_max = 1000000.0
+filter.filter(found_peaks)
+filtered_peaks = nsx.PeakCollection('fit', nsx.listtype_FILTERED)
+filtered_peaks.populateFromFiltered(found_peaks)
+
+print('Predicting peaks...')
+cell = expt.getSptrUnitCell('indexing')
+predictor = expt.predictor()
+params = predictor.parameters()
+params.d_min = 1.5
+predictor.predictPeaks(data, indexed_cell)
+expt.addPeakCollection('predicted', nsx.listtype_PREDICTED, predictor.peaks())
+predicted_peaks = expt.getPeakCollection('predicted')
+print(f'{predicted_peaks.numberOfPeaks()} peaks predicted')
+
+print('Building shape collection...')
+filtered_peaks.computeSigmas()
+params = nsx.ShapeCollectionParameters()
+params.sigma_d = filtered_peaks.sigmaD()
+params.sigma_m = filtered_peaks.sigmaM()
+filtered_peaks.buildShapeCollection(data, params)
+print(f'{filtered_peaks.shapeCollection().numberOfPeaks()} shapes generated')
+
+print('Assigning shapes to predicted peaks...')
+interpolation = nsx.PeakInterpolation_InverseDistance
+filtered_peaks.shapeCollection().setPredictedShapes(predicted_peaks, interpolation)
+
+print('Refining...')
+refiner = expt.refiner()
+params = refiner.parameters()
+params.nbatches = 1
+params.refine_ub = True
+params.refine_sample_position = False
+params.refine_sample_orientation = False
+params.refine_detector_offset = False
+params.refine_ki = False
+params.residual_type = nsx.ResidualType_RealSpace
+states = data.instrumentStates()
+peak_list = found_peaks.getPeakList()
+predicted_peak_list = predicted_peaks.getPeakList()
+
+
+params.residual_type = nsx.ResidualType_RealSpace
+params.use_batch_cells = False
+refiner.makeBatches(states, peak_list, indexed_cell)
+refine_success = refiner.refine()
+n_updated = refiner.updatePredictions(predicted_peak_list)
+print(f'Refine 1: {n_updated} peaks updated')
+params.residual_type = nsx.ResidualType_QSpace
+params.use_batch_cells = True
+refiner.makeBatches(states, peak_list, indexed_cell)
+refine_success = refiner.refine()
+n_updated = refiner.updatePredictions(predicted_peak_list)
+print(f'Refine 2: {n_updated} peaks updated')
+params.residual_type = nsx.ResidualType_RealSpace
+params.use_batch_cells = True
+refiner.makeBatches(states, peak_list, indexed_cell)
+refine_success = refiner.refine()
+n_updated = refiner.updatePredictions(predicted_peak_list)
+print(f'Refine 3: {n_updated} peaks updated')
+
+print('Integrating predicted peaks...')
+integrator = expt.integrator()
+params = integrator.parameters()
+integrator_type = nsx.IntegratorType_Profile3D
+integrator.getIntegrator(integrator_type)
+integrator.integratePeaks(data, predicted_peaks, params, filtered_peaks.shapeCollection())
+print(f'{integrator.numberOfValidPeaks()} / {integrator.numberOfPeaks()} peaks integrated')
+
+print('Merging predicted peaks...')
+merger = expt.peakMerger()
+params = merger.parameters()
+merger.reset()
+params.d_min = 1.5
+params.frame_min = 3
+params.frame_max = 58
+merger.addPeakCollection(predicted_peaks)
+merger.mergePeaks()
+merger.computeQuality()
+
+print("Workflow complete")
+
+expt.saveToFile("test.nsx")

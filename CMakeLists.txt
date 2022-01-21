@@ -31,6 +31,7 @@ option(BUILD_TESTING "Build the tests" ON)
 option(BUILD_DOCUMENTATION "Build Sphinx/Doxygen documentation" ON)
 option(BUILD_PDF_DOCUMENTATION "Build Sphinx documentation using LaTeX" ON)
 option(NSX_TIDY "Upon 'make', clang-tidy will print warnings as specified in .clang-tidy" OFF)
+option(NSX_FULL_WORKFLOW_TEST "Add full workflow test to ctest" OFF)
 
 # Path to test data directory must provided via -DNSX_TESTDATA_DIR or from cache.
 set(NSX_TESTDATA_URL https://computing.mlz-garching.de/download/testdata/nsx)
@@ -242,9 +243,14 @@ if(BUILD_TESTING) # option defined by CTest and enabled by default
 endif()
 
 if(NSX_PYTHON)
+    set(SWIG_INSTALL_PATH "${CMAKE_BINARY_DIR}/swig")
     add_subdirectory(swig)
+    add_subdirectory(scripts)
     if(BUILD_TESTING)
         add_subdirectory(test/python)
+        if (NSX_FULL_WORKFLOW_TEST)
+            add_subdirectory(test/python/nightly)
+        endif()
     endif()
 endif()
 

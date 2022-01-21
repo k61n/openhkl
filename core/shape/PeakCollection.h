@@ -99,6 +99,9 @@ class PeakCollection {
     //! Count enabled peaks
     int countEnabled() const;
 
+    //! Build shape collection from strong peaks in this peak collection
+    void buildShapeCollection(sptrDataSet data, const ShapeCollectionParameters& params);
+
  private:
     std::vector<std::unique_ptr<nsx::Peak3D>> _peaks;
     std::string _name;

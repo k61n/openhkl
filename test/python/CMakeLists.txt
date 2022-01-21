@@ -1,6 +1,6 @@
 set(CTEST_ENVIRONMENT "PYTHONPATH=${CMAKE_BINARY_DIR}/swig")
 
-file(GLOB_RECURSE python_tests *.py)
+file(GLOB python_tests *.py)
 
 foreach(python_script ${python_tests})
     get_filename_component(base_name ${python_script} NAME)

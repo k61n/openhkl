@@ -39,8 +39,7 @@ class Predictor {
     Predictor();
 
     //! Predict peaks give a unit cell
-    void predictPeaks(
-        const sptrDataSet data, const sptrUnitCell unit_cell, sptrProgressHandler handler = nullptr);
+    void predictPeaks(const sptrDataSet data, const sptrUnitCell unit_cell);
 
     //! Build a list of peaks from hkls as computed from unit cell
     std::vector<Peak3D*> buildPeaksFromMillerIndices(
@@ -53,10 +52,13 @@ class Predictor {
     const std::vector<Peak3D*>& peaks() const;
     //! Get the number of predicted peaks
     unsigned int numberOfPredictedPeaks();
+    //! Set handler for GUI
+    void setHandler(sptrProgressHandler handler);
 
  private:
     std::unique_ptr<PredictionParameters> _params;
     std::vector<Peak3D*> _predicted_peaks;
+    sptrProgressHandler _handler;
 };
 
 } // namespace nsx

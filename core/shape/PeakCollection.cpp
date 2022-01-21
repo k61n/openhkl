@@ -13,7 +13,9 @@
 //  ***********************************************************************************************
 
 #include "core/shape/PeakCollection.h"
+
 #include "base/utils/Logger.h"
+#include "core/integration/ShapeIntegrator.h"
 #include "core/raw/DataKeys.h"
 
 namespace nsx {
@@ -215,6 +217,25 @@ int PeakCollection::countEnabled() const
             ++nenabled;
     }
     return nenabled;
+}
+
+void PeakCollection::buildShapeCollection(sptrDataSet data, const ShapeCollectionParameters& params)
+{
+    nsxlog(Level::Info, "PeakCollection::buildShapeCollection");
+    _shape_collection =
+        std::make_unique<ShapeCollection>(std::make_shared<ShapeCollectionParameters>(params));
+    _shape_collection->parameters()->log(Level::Info);
+    computeSigmas();
+    _shape_collection->parameters()->sigma_d = _sigma_d;
+    _shape_collection->parameters()->sigma_m = _sigma_m;
+
+    std::set<sptrDataSet> datalist;
+    datalist.insert(data);
+    std::vector<Peak3D*> fit_peak_list = getPeakList();
+    _shape_collection->integrate(fit_peak_list, datalist);
+
+    // shape_collection.updateFit(1000); // This does nothing!! - zamaan
+    nsxlog(Level::Info, "PeakCollection::buildShapeCollection finished");
 }
 
 } // namespace nsx
