@@ -89,7 +89,6 @@ void SampleShapeProperties::refreshInput()
 
             QTableWidgetItem* item0 = new QTableWidgetItem();
             item0->setData(Qt::DisplayRole, QString(axis.name().c_str()));
-            item0->setBackground(axis.physical() ? QColor("#FFDDDD") : QColor("#DDFFDD"));
             sampleGoniometer->setItem(i, 0, item0);
 
             sampleGoniometer->setItem(i, 1, new QTableWidgetItem(QString(os.str().c_str())));

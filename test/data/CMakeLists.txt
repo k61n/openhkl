@@ -42,8 +42,7 @@ set(test_files
     FutA-4.nsx)
 
 set(NSX_TESTDATA_URL https://computing.mlz-garching.de/download/testdata/nsx)
-
-set(NSX_TESTDATA_URL https://computing.mlz-garching.de/download/testdata/nsx)
+set(NSX_NIGHTLY_TESTDATA_URL ${NSX_TESTDATA_URL}/nightly)
 
 function(check_file expected_hash fname)
     if(NOT EXISTS ${NSX_TESTDATA_DIR}/${fname})
@@ -75,3 +74,14 @@ check_file(d7551c196a513853575f5f79f755e64cfa263fc1cb381780e86fc3d6c5d8b531e77e0
 check_file(b44f01e8154c91e8ff821c0818982e1643931f9f124e2a7463cd0b940f06c9312f570ac2c80715cd519ddd7a92e6bd87  p16106_00029303.tiff)
 check_file(4752be16363af29ff6066879f990f4f0d29cb8a59e1c8328cf1c569c82cc471982354b712970ea1f120ca855b2d48224  p16106_00029304.tiff)
 check_file(ad70d1b3adbdaa94dc96070daa7b206e5114097009b9dc0b2fa8cec9d0fcc5b66d9b2144ef76b93bbfe1e52ccd275f61  p16106_00029305.tiff)
+
+###################################################################################################
+#  Simulated data files for full workflow test (NSX_FULL_WORKFLOW_TEST)
+###################################################################################################
+if (NSX_FULL_WORKFLOW_TEST)
+    message(STATUS "Full workflow test enabled, checking for data file...")
+    set(nightly_test_file small_cell_low_intensity.tar.gz)
+    file(DOWNLOAD ${NSX_NIGHTLY_TESTDATA_URL}/${nightly_test_file} ${NSX_TESTDATA_DIR}/${nightly_test_file})
+    check_file(f98e6ae071c6d89c122b89ac9880fa85497ed1f552e524933c37fe70adce30066dd4b37ce0ed660484d0892f8b1c62e3  small_cell_low_intensity.tar.gz)
+    file(ARCHIVE_EXTRACT INPUT ${nightly_test_file})
+endif()

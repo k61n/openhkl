@@ -257,25 +257,6 @@ void Experiment::buildShapeCollection(
     nsxlog(Level::Info, "Experiment::buildShapeCollection finished");
 }
 
-void Experiment::predictPeaks(
-    const std::string& name, sptrDataSet data, const sptrUnitCell& cell)
-{
-    std::vector<nsx::Peak3D*> predicted_peaks;
-
-    nsxlog(Level::Info, "Experiment::predictPeaks: predicting peaks for data set ", data->name());
-
-    _predictor->predictPeaks(data, cell);
-
-    for (nsx::Peak3D* peak : _predictor->peaks())
-        predicted_peaks.push_back(peak);
-
-    nsxlog(
-        Level::Info, "Experiment::predictPeaks: completed peak prediction. Added ",
-        predicted_peaks.size(), " peaks");
-
-    addPeakCollection(name, listtype::PREDICTED, predicted_peaks);
-}
-
 const UnitCell* Experiment::getAcceptedCell() const
 {
     return getUnitCell(nsx::kw_acceptedUnitcell);

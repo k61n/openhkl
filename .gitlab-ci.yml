@@ -34,20 +34,30 @@ mac:
     expire_in: 10 days
 
 native_Debian_clang:
-  tags: &native
+  tags:
   - Debian
   before_script: &debian_clang
     - export CC=clang; export CXX=clang++
     - cmake --version
     - clang --version
   stage: build
-  script: &native_scr
+  script:
     - pwd && ls
     - mkdir build
     - cd build
-    - cmake .. -D CMAKE_CXX_COMPILER_LAUNCHER=ccache
+    - |-
+      if [[ $CI_PIPELINE_SOURCE == "nightly" ]]; then
+        cmake .. -D CMAKE_CXX_COMPILER_LAUNCHER=ccache -D NSX_FULL_WORKFLOW_TEST=ON
+      else
+        cmake .. -D CMAKE_CXX_COMPILER_LAUNCHER=ccache
+      fi
     - make -j6
-    - ctest -j6 --output-on-failure
+    - |-
+      if [[ $CI_PIPELINE_SOURCE == "nightly" ]]; then
+        ctest -j6 --output-on-failure -L "nightly"
+      else
+        ctest -j6 --output-on-failure -E "nightly"
+      fi
 
 # ## Dockerized:
 #

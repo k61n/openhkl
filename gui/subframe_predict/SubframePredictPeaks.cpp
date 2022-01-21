@@ -347,6 +347,11 @@ void SubframePredictPeaks::grabShapeCollectionParameters()
     if (_exp_combo->count() == 0)
         return;
 
+    if (!(_peak_collection.numberOfPeaks() == 0)) {
+        _peak_collection.computeSigmas();
+        _sigma_m->setValue(_peak_collection.sigmaM());
+        _sigma_d->setValue(_peak_collection.sigmaD());
+    }
     _nx->setValue(_shape_params->nbins_x);
     _ny->setValue(_shape_params->nbins_y);
     _nz->setValue(_shape_params->nbins_z);
@@ -368,11 +373,8 @@ void SubframePredictPeaks::setShapeCollectionParameters()
     if (_exp_combo->count() == 0)
         return;
 
-    if (!(_peak_collection.numberOfPeaks() == 0)) {
-        _peak_collection.computeSigmas();
-        _sigma_m->setValue(_peak_collection.sigmaM());
-        _sigma_d->setValue(_peak_collection.sigmaD());
-    }
+    _shape_params->sigma_m = _sigma_m->value();
+    _shape_params->sigma_d = _sigma_d->value();
     _shape_params->nbins_x = _nx->value();
     _shape_params->nbins_y = _ny->value();
     _shape_params->nbins_z = _nz->value();
@@ -461,7 +463,8 @@ void SubframePredictPeaks::runPrediction()
         nsx::sptrUnitCell cell = gSession->currentProject()->experiment()->getSptrUnitCell(
             _cell_combo->currentText().toStdString());
 
-        predictor->predictPeaks(data, cell, handler);
+        predictor->setHandler(handler);
+        predictor->predictPeaks(data, cell);
 
         std::vector<nsx::Peak3D*> predicted_peaks;
         for (nsx::Peak3D* peak : predictor->peaks())

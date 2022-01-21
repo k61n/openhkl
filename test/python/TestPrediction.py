@@ -49,7 +49,8 @@ class TestPrediction(unittest.TestCase):
         prediction_params.fit_covariance = True
         prediction_params.min_neighbours = 400.0
         cell = expt.getUnitCell("accepted")
-        expt.predictPeaks("predicted", data[0], cell)
+        predictor.predictPeaks(data[0], cell)
+        expt.addPeakCollection("predicted", nsx.listtype_PREDICTED, predictor.peaks())
         predicted_peaks = expt.getPeakCollection("predicted")
 
         self.assertTrue(predicted_peaks.numberOfPeaks() > 200);

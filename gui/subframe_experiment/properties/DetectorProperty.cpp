@@ -124,7 +124,6 @@ void DetectorProperty::refreshInput()
 
             QTableWidgetItem* item0 = new QTableWidgetItem();
             item0->setData(Qt::DisplayRole, QString(axis.name().c_str()));
-            item0->setBackground(axis.physical() ? QColor("#FFDDDD") : QColor("#DDFFDD"));
             _axes->setItem(i, 0, item0);
 
             _axes->setItem(i, 1, new QTableWidgetItem(QString(os.str().c_str())));

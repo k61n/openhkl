@@ -15,6 +15,7 @@
 #include "core/shape/Predictor.h"
 
 #include "base/utils/Logger.h"
+#include "base/utils/ProgressHandler.h"
 #include "core/data/DataSet.h"
 #include "core/data/DataTypes.h"
 #include "core/instrument/Diffractometer.h"
@@ -33,7 +34,9 @@ void PredictionParameters::log(const Level& level) const
     nsxlog(level, "d_max     = ", d_max);
 }
 
-Predictor::Predictor() {
+Predictor::Predictor()
+    : _handler(nullptr)
+{
     _params = std::make_unique<PredictionParameters>();
 }
 
@@ -71,8 +74,7 @@ std::vector<Peak3D*> Predictor::buildPeaksFromMillerIndices(
     return peaks;
 }
 
-void Predictor::predictPeaks(
-    const sptrDataSet data, const sptrUnitCell unit_cell, sptrProgressHandler handler)
+void Predictor::predictPeaks(const sptrDataSet data, const sptrUnitCell unit_cell)
 {
     _params->log(Level::Info);
     _predicted_peaks.clear();
@@ -86,7 +88,7 @@ void Predictor::predictPeaks(
         unit_cell->generateReflectionsInShell(_params->d_min, _params->d_max, wavelength);
 
     _predicted_peaks =
-        buildPeaksFromMillerIndices(data, predicted_hkls, unit_cell, handler);
+        buildPeaksFromMillerIndices(data, predicted_hkls, unit_cell, _handler);
 }
 
 PredictionParameters* Predictor::parameters()
@@ -102,6 +104,11 @@ const std::vector<Peak3D*>& Predictor::peaks() const
 unsigned int Predictor::numberOfPredictedPeaks()
 {
     return _predicted_peaks.size();
+}
+
+void Predictor::setHandler(sptrProgressHandler handler)
+{
+    _handler = handler;
 }
 
 } // namespace nsx

@@ -186,9 +186,6 @@ class Experiment {
     //! Construct the collection used to fit the shapes of predicted peaks
     void buildShapeCollection(
         PeakCollection* peaks, sptrDataSet data, const ShapeCollectionParameters& params);
-    //! Predict peaks from unit cell
-    void predictPeaks(
-        const std::string& name, sptrDataSet data, const sptrUnitCell& cell);
     //! Get a pointer to the refiner
     Refiner* refiner() { return _refiner.get(); };
     //! Refine unit cell and instrument parameters
