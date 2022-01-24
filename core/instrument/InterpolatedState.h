@@ -19,11 +19,15 @@
 
 namespace nsx {
 
-//! Stores an interpolation between two instrument states.
+/*! \addtogroup python_api
+ *  @{*/
 
-//! In addition to the data fields stored in an InstrumentState, this class
-//! also stores information about the (angular) velocity and step size, which
-//! is needed to compute analytic derivatives of various functions.
+/*! \brief Stores an interpolation between two instrument states.
+ *
+ *  In addition to the data fields stored in an InstrumentState, this class
+ *  also stores information about the (angular) velocity and step size, which
+ *  is needed to compute analytic derivatives of various functions.
+ */
 
 class InterpolatedState : public InstrumentState {
  public:
@@ -50,6 +54,7 @@ class InterpolatedState : public InstrumentState {
 #endif
 };
 
+/*! @}*/
 } // namespace nsx
 
 #endif // NSX_CORE_INSTRUMENT_INTERPOLATEDSTATE_H

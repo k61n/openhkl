@@ -47,7 +47,7 @@ struct IntegrationParameters {
 
 class ShapeCollection;
 
-/*! Base class for integrators. Handles per-frame integration of a peak.
+/*! \brief Base class for integrators. Handles per-frame integration of a peak.
  *
  *  All integrators inherit from this class.
  */
