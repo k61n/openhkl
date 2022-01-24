@@ -25,7 +25,7 @@ enum class Level;
 
 enum class IntegratorType { PixelSum, Gaussian, ISigma, Profile1D, Profile3D, Count };
 
-/*! \addtogroup integration
+/*! \addtogroup python_api
  *  @{*/
 
 //! Structure containing parameters for all integrators
@@ -47,7 +47,7 @@ struct IntegrationParameters {
 
 class ShapeCollection;
 
-/*! Base class for integrators. Handles per-frame integration of a peak.
+/*! \brief Base class for integrators. Handles per-frame integration of a peak.
  *
  *  All integrators inherit from this class.
  */

@@ -25,7 +25,12 @@
 
 namespace nsx {
 
-//! A diffractometer setup, consisting of a sample, source, and detector.
+/*! \addtogroup python_api
+ *  @{*/
+
+/*! \brief diffractometer setup, consisting of a sample, source, and detector.
+ *
+ */
 
 class Diffractometer {
  public:
@@ -98,6 +103,7 @@ class Diffractometer {
     Source _source;
 };
 
+/*! @}*/
 } // namespace nsx
 
 #endif // NSX_CORE_INSTRUMENT_DIFFRACTOMETER_H

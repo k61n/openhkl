@@ -29,11 +29,15 @@ class DetectorEvent;
 class Diffractometer;
 struct RawDataReaderParameters;
 
-//! Class used to manage loading detector images and metadata from disk.
-//!
-//! Note that this class does not contain any actual data,
-//! just a few metadata and a link to the data reader.
+/*! \addtogroup python_api
+ *  @{*/
 
+/*! \brief Class used to manage loading of detector images and metadata from
+ *  disk
+ *
+ *  Note that this class does not contain any actual data, just a few metadata
+ *  and a link to the data reader.
+ */
 class DataSet {
     friend class UnitTest_DataSet;
 
@@ -138,6 +142,7 @@ public:
     std::size_t datashape[3] {0, 0, 0};
 };
 
+/*! @}*/
 } // namespace nsx
 
 #endif // NSX_CORE_DATA_DATASET_H

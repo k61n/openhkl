@@ -25,13 +25,17 @@ namespace nsx {
 
 class Diffractometer;
 
-//! Class storing the state of the experiment at a given moment of time.
+/*! \addtogroup python_api
+ *  @{*/
 
-//! State refers to any parameters which might change during the experiment:
-//! sample orientation, sample position, etc. States are initially loaded
-//! as metadata but can also be refined as part of the data treatment.
-//! Note that InstrumentState can be invalid (_valid = false) if interpolation
-//! fails
+/*! \brief Class storing the state of the experiment at a given point in time
+ *
+ *  State refers to any parameters which might change during the experiment:
+ *  sample orientation, sample position, etc. States are initially loaded
+ *  as metadata but can also be refined as part of the data treatment.
+ *  Note that InstrumentState can be invalid (_valid = false) if interpolation
+ *  fails
+ */
 
 class InstrumentState {
  public:
@@ -120,6 +124,7 @@ class InstrumentState {
 
 using InstrumentStateList = std::vector<InstrumentState>;
 
+/*! @}*/
 } // namespace nsx
 
 #endif // NSX_CORE_INSTRUMENT_INSTRUMENTSTATE_H

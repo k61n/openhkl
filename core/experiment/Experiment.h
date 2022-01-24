@@ -41,6 +41,9 @@ class UnitCellHandler;
 
 using DataMap = std::map<std::string, sptrDataSet>;
 
+/*! \addtogroup python_api
+ *  @{*/
+
 /*! \brief Top level core object wrapping all other core objects
  *
  *  The Experiment object contains organises and controls almost all other core
@@ -227,6 +230,7 @@ class Experiment {
     DataResolution _data_resolution; //!< Data quality per resolution shell
 };
 
+/*! @}*/
 } // namespace nsx
 
 #endif // NSX_CORE_EXPERIMENT_EXPERIMENT_H

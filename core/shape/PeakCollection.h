@@ -20,9 +20,17 @@
 
 namespace nsx {
 
+/*! \addtogroup python_api
+ *  @{*/
+
+//! Type of peak collection
 enum class listtype { FOUND, FILTERED, PREDICTED, INDEXING };
 
-//! Container for a collection of peaks and its metadata
+/*! \brief Store a collection of peak shapes,  for peak prediction and integration.
+ *
+ * Container for a collection of peaks and its metadata
+ */
+
 class PeakCollection {
  public:
     //! Default contructor
@@ -120,6 +128,7 @@ class PeakCollection {
     double _sigma_m;
 };
 
+/*! @}*/
 } // namespace nsx
 
 #endif // NSX_CORE_SHAPE_PEAKCOLLECTION_H

@@ -19,7 +19,7 @@
 
 namespace nsx {
 
-/*! \addtogroup integration
+/*! \addtogroup python_api
  *  @{*/
 
 /*! \brief A 3D peak profile used for profile-fitting integration

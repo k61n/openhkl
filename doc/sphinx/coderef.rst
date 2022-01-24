@@ -3,6 +3,6 @@
 Code Reference
 ==============
 
-.. doxygengroup:: integration
+.. doxygengroup:: python_api
     :project: NSXTool
     :members:

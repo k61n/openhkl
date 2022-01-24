@@ -22,6 +22,10 @@
 
 namespace nsx {
 
+/*! \addtogroup python_api
+ *  @{*/
+
+//! Parameters for merging peaks
 struct MergeParameters {
     double d_min = 1.5; //!< Minimum d (Bragg's law)
     double d_max = 50.0; //!< Maximum d (Bragg's law)
@@ -33,10 +37,14 @@ struct MergeParameters {
     void log(const Level& level) const;
 };
 
-//! Class to manage peak merging, i.e. merging peaks that are symmetry-equivalent.
-//! Can also secondarily be used to merge distinct peak collections.
-//! Computes statistical measures R-factor, CC to sanity check the quality of the
-//! refinement and integration.
+
+/*! \brief Merge symmetry-related peaks and compute statistics
+ *
+ * Class to manage peak merging, i.e. merging peaks that are symmetry-equivalent.
+ * Can also secondarily be used to merge distinct peak collections.
+ * Computes statistical measures R-factor, CC to sanity check the quality of the
+ * refinement and integration.
+ */
 class PeakMerger {
  public:
     PeakMerger(PeakCollection* peaks = nullptr);
@@ -75,6 +83,7 @@ class PeakMerger {
     std::unique_ptr<MergeParameters> _params;
 };
 
+/*! @}*/
 } // namespace nsx
 
 #endif // NSX_CORE_STATISTICS_PEAKMERGER_H

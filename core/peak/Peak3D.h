@@ -25,6 +25,10 @@ namespace nsx {
 class IPeakIntegrator;
 class MillerIndex;
 
+/*! \addtogroup python_api
+ *  @{*/
+
+//! Specifies reason why a peak was rejected
 enum class RejectionFlag {
     NotRejected,
     Masked,
@@ -238,6 +242,7 @@ using sptrPeakList = std::shared_ptr<PeakList>;
 // std::vector<PeakList> findEquivalences(
 //    const SpaceGroup& group, const PeakList& peak_list, bool friedel);
 
+/*! @}*/
 } // namespace nsx
 
 #endif // NSX_CORE_PEAK_PEAK3D_H

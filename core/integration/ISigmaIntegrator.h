@@ -20,7 +20,7 @@
 
 namespace nsx {
 
-/*! \addtogroup integration
+/*! \addtogroup python_api
  *  @{*/
 
 /*! \brief Compute the integrated intensity via the I/sigma method used in RETREAT.
