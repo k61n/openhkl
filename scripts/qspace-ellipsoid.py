@@ -40,6 +40,10 @@ parser.add_argument('--ny', type=int, dest='ny', default=2,
                     help='Frame subdivisions in y direction')
 parser.add_argument('--nz', type=int, dest='nz', default=1,
                     help='Frame subdivisions in z direction')
+parser.add_argument('--real', dest='real', action='store_true',
+                    help='Use real space ellipsoids')
+parser.add_argument('-b', '--bins', type=int, default=30, dest='bins',
+                    help='Number of histogram bins')
 args = parser.parse_args()
 
 def angle_between(v1, v2):
@@ -51,7 +55,7 @@ def major_axis(shape):
     imax = np.argmax(eigenvalues)
     return eigenvectors[:,imax]
 
-def segment_data(data, peaks, nx, ny, nz):
+def segment_data(data, peaks, nx, ny, nz, real=False):
     ncols = data.nCols()
     nrows = data.nRows()
     nframes = data.nFrames()
@@ -77,7 +81,11 @@ def segment_data(data, peaks, nx, ny, nz):
                     if (c[0] > x_min and c[0] < x_max and
                         c[1] > y_min and c[1] < y_max and
                         c[2] > z_min and c[2] < z_max):
-                        shapes.append(peak.qShape().metric())
+                        if (real):
+                            shape = peak.shape().metric()
+                        else:
+                            shape = peak.qShape().metric()
+                        shapes.append(shape)
                 segmented_data[(x, y, z)] = shapes
 
     return segmented_data
@@ -90,10 +98,11 @@ peaks = expt.getPeakCollection(args.peakcollection)
 data = expt.getAllData()[0]
 
 
-segmented_data = segment_data(data, peaks, args.nx, args.ny, args.nz)
+segmented_data = segment_data(data, peaks, args.nx, args.ny, args.nz, args.real)
 
+plt.rc('font', size=6)
 for k in range(args.nz):
-    fig, axs = plt.subplots(args.nx, args.ny)
+    fig, axs = plt.subplots(args.nx, args.ny, sharex=True, sharey=True)
     for i in range(args.nx):
         for j in range(args.ny):
             shapes = segmented_data[(i, j, k)]
@@ -105,6 +114,7 @@ for k in range(args.nz):
                     ax0 = axis
                 else:
                     angles.append(angle_between(ax0, axis))
-            axs[i, j].hist(angles, bins=90)
+            axs[i, j].hist(angles, bins=args.bins)
+            axs[i, j].set(xlim=(0, 90))
 
-    plt.show()
+    plt.savefig(f'{args.name}{k}.pdf')
