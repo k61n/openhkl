@@ -109,6 +109,10 @@ void ExperimentImporter::loadPeaks(Experiment* experiment)
             int n_peaks = 0;
             int type = 0;
 
+            //added by ctrageser
+            bool indexed;
+            bool integrated;
+
             if (peak_collection.attrExists(nsx::at_peakCount)) {
                 const H5::Attribute attr = peak_collection.openAttribute(nsx::at_peakCount);
                 const H5::DataType attr_type = attr.getDataType();
@@ -121,8 +125,22 @@ void ExperimentImporter::loadPeaks(Experiment* experiment)
                 attr.read(attr_type, &type);
             }
 
+            //added by ctrageser
+            if (peak_collection.attrExists(nsx::at_indexed)) {
+                const H5::Attribute attr = peak_collection.openAttribute(nsx::at_indexed);
+                const H5::DataType attr_type = attr.getDataType();
+                attr.read(attr_type, &indexed);
+            }
+
+            if (peak_collection.attrExists(nsx::at_integrated)) {
+                const H5::Attribute attr = peak_collection.openAttribute(nsx::at_integrated);
+                const H5::DataType attr_type = attr.getDataType();
+                attr.read(attr_type, &integrated);
+            }
+
             nsxlog(Level::Debug, "ExperimentImporter::loadPeaks: found ", n_peaks, " to import for PeakCollection '", collection_name, "'");
             nsxlog(Level::Debug, "Preparing the dataspace");
+            
             // prepare the loading
             Eigen_VecXd bkg_begin(n_peaks);
             Eigen_VecXd bkg_end(n_peaks);

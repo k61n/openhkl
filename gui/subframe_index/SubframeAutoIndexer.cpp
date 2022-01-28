@@ -551,7 +551,16 @@ void SubframeAutoIndexer::toggleUnsafeWidgets()
     if (_exp_combo->count() == 0 || _data_combo->count() == 0 || _peak_combo->count() == 0) {
         _solve_button->setEnabled(false);
         _save_button->setEnabled(false);
-    }
+    }    
     if (_peak_collection_model.rowCount() == 0 || _solutions.empty())
         _save_button->setEnabled(false);
+
+    // added by c.trageser
+    // disabling button in case of missing integrarion
+    if (!_peak_collection.isIntegrated()){
+         _save_button->setEnabled(false);
+         std::cout << " save button has been deactivated since missing indexing"
+                    << std::boolalpha << _peak_collection.isIntegrated() <<          std::endl;
+    }
+    
 }

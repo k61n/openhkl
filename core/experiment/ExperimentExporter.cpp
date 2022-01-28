@@ -338,7 +338,7 @@ void ExperimentExporter::writePeaks(const std::map<std::string, PeakCollection*>
             Eigen::Vector3d temp_col = peak->shape().center();
             center.block(i, 0, 1, 3) = Eigen::RowVector3d{temp_col(0), temp_col(1), temp_col(2)};
             metric.block(i * 3, 0, 3, 3) = peak->shape().metric();
-        }
+        }  
 
         // TODO: explain! check size 2 vs 3!
         const hsize_t num_peaks[1] = {nPeaks};
@@ -369,7 +369,13 @@ void ExperimentExporter::writePeaks(const std::map<std::string, PeakCollection*>
                 // NATIVE_HBOOL
                 {nsx::ds_Selected, H5::PredType::NATIVE_HBOOL, peak_space, selected.get()},
                 {nsx::ds_Masked, H5::PredType::NATIVE_HBOOL, peak_space, masked.get()},
-                {nsx::ds_Predicted, H5::PredType::NATIVE_HBOOL, peak_space, predicted.get()}};
+                {nsx::ds_Predicted, H5::PredType::NATIVE_HBOOL, peak_space, predicted.get()},
+
+                // added by ctrageser
+                {nsx::ds_Predicted, H5::PredType::NATIVE_HBOOL, peak_space, predicted.get()},
+                {nsx::ds_Predicted, H5::PredType::NATIVE_HBOOL, peak_space, predicted.get()}
+                
+                };
 
         for (const auto& [dkey, dtype, dspace, dptr] : peakData_defs) {
             H5::DataSet data_H5(file.createDataSet(collectionNameKey + "/" + dkey, dtype, dspace));

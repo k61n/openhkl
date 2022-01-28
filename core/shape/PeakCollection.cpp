@@ -17,6 +17,7 @@
 #include "base/utils/Logger.h"
 #include "core/integration/ShapeIntegrator.h"
 #include "core/raw/DataKeys.h"
+#include <typeindex>
 
 namespace nsx {
 
@@ -24,6 +25,8 @@ PeakCollection::PeakCollection()
     : _name{nsx::kw_peakCollectionDefaultName}
     , _type{nsx::listtype::FOUND}
     , _shape_collection(nullptr)
+    , _indexed(false)
+    , _integrated(false)
 {
 }
 
@@ -31,6 +34,17 @@ PeakCollection::PeakCollection(const std::string& name, nsx::listtype type)
     : _name{std::string(name)}
     , _type{type}
     , _shape_collection(nullptr)
+    , _indexed(false)
+    , _integrated(false)
+{
+}
+
+PeakCollection::PeakCollection(const std::string& name, nsx::listtype type, bool indexed, bool integrated)
+    : _name{std::string(name)}
+    , _type{type}
+    , _shape_collection(nullptr)
+    , _indexed(indexed)
+    , _integrated(integrated)
 {
 }
 
@@ -127,6 +141,10 @@ MetaData& PeakCollection::metadata()
 {
     _metadata.add<int>(nsx::at_peakCount, numberOfPeaks());
     _metadata.add<int>(nsx::at_peakType, static_cast<int>(type()));
+
+    // added by ctrageser
+    _metadata.add<bool>(nsx::at_indexed, isIndexed());
+    _metadata.add<bool>(nsx::at_integrated, isIntegrated());
     return _metadata;
 }
 

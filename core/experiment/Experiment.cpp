@@ -354,6 +354,12 @@ void Experiment::addPeakCollection(
     _peak_handler->addPeakCollection(name, type, peaks);
 }
 
+void Experiment::addPeakCollection(
+    const std::string& name, const listtype type, std::vector<Peak3D*> peaks, bool indexed, bool integrated)
+{
+    _peak_handler->addPeakCollection(name, type, peaks, indexed, integrated);
+}
+
 bool Experiment::hasPeakCollection(const std::string& name)
 {
     return _peak_handler->hasPeakCollection(name);
