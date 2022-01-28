@@ -72,6 +72,9 @@ const std::string at_endTime{"end time"};
 // peaks
 const std::string at_peakCount{"number of peaks"};
 const std::string at_peakType{"peak type"};
+//added by ctrageser
+const std::string at_indexed{"is indexed"};
+const std::string at_integrated{"is integrated"};
 // unit cell
 const std::string at_rVec{"reciprocal"};
 const std::string at_BravaisLattice{"Bravais lattice"};

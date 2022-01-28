@@ -39,6 +39,11 @@ class PeakHandler {
     //! Add a peak collection
     void addPeakCollection(
         const std::string& name, const listtype type, const std::vector<nsx::Peak3D*> peaks);
+    //
+    void addPeakCollection(
+        const std::string& name, const listtype type, const std::vector<nsx::Peak3D*> peaks,
+        bool indexed, bool integrated
+        );
     //! Add an empty peak collection
     void addEmptyCollection(const std::string& name, const listtype type);
     //! Returns true if the experiment has named peak collection
