@@ -686,9 +686,11 @@ void SubframePredictPeaks::changeSelected(PeakItemGraphic* peak_graphic)
 
 void SubframePredictPeaks::toggleUnsafeWidgets()
 {
-    _predict_button->setEnabled(true);
-    _save_button->setEnabled(true);
-    _assign_peak_shapes->setEnabled(true);
+    _predict_button->setEnabled(false);
+    _save_button->setEnabled(false);
+    _assign_peak_shapes->setEnabled(false);
+    _refine_ki_button->setEnabled(false);
+    _direct_beam->setEnabled(false);
     if (_cell_combo->count() == 0 || _exp_combo->count() == 0) {
         _predict_button->setEnabled(false);
         _save_button->setEnabled(false);
@@ -709,6 +711,25 @@ void SubframePredictPeaks::toggleUnsafeWidgets()
         _sigma_d->setEnabled(false);
         _sigma_m->setEnabled(false);
     }
+
+    // added by trageser
+    nsx::PeakCollection* pc = nullptr;
+    //pc = gSession->currentProject()->experiment()->getPeakCollection();
+    
+    std::string current_pc = _found_peaks_combo->currentText().toStdString();
+    if (current_pc.size() == 0) return;
+    pc = gSession->currentProject()->experiment()->getPeakCollection( current_pc );
+    // if (pc == nullptr) std::runtime_error("BAM"); 
+
+    if (  pc->isIndexed() && pc->isIntegrated() ){
+        _predict_button->setEnabled(true);
+        _save_button->setEnabled(true);
+        _assign_peak_shapes->setEnabled(true);    
+        _refine_ki_button->setEnabled(true);
+        _direct_beam->setEnabled(true);
+    
+    }
+
 }
 
 DetectorWidget* SubframePredictPeaks::detectorWidget()

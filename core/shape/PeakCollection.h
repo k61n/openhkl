@@ -112,8 +112,8 @@ class PeakCollection {
     void buildShapeCollection(sptrDataSet data, const ShapeCollectionParameters& params);
 
 
-    bool isIndexed() { return _indexed;}
-    bool isIntegrated() {return _integrated;}
+    bool isIndexed() const { return _indexed;}
+    bool isIntegrated() const {return _integrated;}
 
     void setIndexed(bool value) {_indexed = value;}
     void setIntegrated(bool value) {_integrated = value;}

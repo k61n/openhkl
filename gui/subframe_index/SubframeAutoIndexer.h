@@ -23,6 +23,7 @@
 #include <QPushButton>
 #include <QSizePolicy>
 #include <QWidget>
+#include <QLabel>
 
 class LinkedComboBox;
 class PeakTableView;
@@ -79,6 +80,9 @@ class SubframeAutoIndexer : public QWidget {
     //! Disable widgets that are unsafe without relevant data
     void toggleUnsafeWidgets();
 
+
+    void ShowPeakCollectionInfo();
+
     //! The model for the indexing peaks
     nsx::PeakCollection _peak_collection;
     //! The temporary collection
@@ -125,6 +129,10 @@ class SubframeAutoIndexer : public QWidget {
 
     PeakTableView* _peak_table;
     UnitCellTableView* _solution_table;
+
+    //added by trageser
+    QLabel* _peak_collection_indexed;
+    QLabel* _peak_collection_integrated;
 };
 
 #endif // NSX_GUI_SUBFRAME_INDEX_SUBFRAMEAUTOINDEXER_H

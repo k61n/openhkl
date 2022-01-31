@@ -143,8 +143,8 @@ MetaData& PeakCollection::metadata()
     _metadata.add<int>(nsx::at_peakType, static_cast<int>(type()));
 
     // added by ctrageser
-    _metadata.add<bool>(nsx::at_indexed, isIndexed());
-    _metadata.add<bool>(nsx::at_integrated, isIntegrated());
+    _metadata.add<char>(nsx::at_indexed, static_cast<char>(isIndexed()));
+    _metadata.add<char>(nsx::at_integrated, static_cast<char>(isIntegrated()));
     return _metadata;
 }
 
