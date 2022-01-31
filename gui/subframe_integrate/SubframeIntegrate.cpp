@@ -573,10 +573,10 @@ void SubframeIntegrate::toggleUnsafeWidgets()
     _n_frames_int->setEnabled(true);
     _min_neighbours->setEnabled(true);
     _interpolation_combo->setEnabled(true);
-    _build_shape_lib_button->setEnabled(true);
-    _assign_peak_shapes->setEnabled(true);
+    _build_shape_lib_button->setEnabled(false);
+    _assign_peak_shapes->setEnabled(false);
     _remove_overlaps->setEnabled(true);
-    _integrate_button->setEnabled(true);
+    _integrate_button->setEnabled(false);
 
     if (_exp_combo->count() == 0 || _data_combo->count() == 0 || _peak_combo->count() == 0) {
         _integrate_button->setEnabled(false);
@@ -611,6 +611,29 @@ void SubframeIntegrate::toggleUnsafeWidgets()
         _assign_peak_shapes->setEnabled(false);
         _build_shape_lib_button->setEnabled(false);
     }
+
+
+
+    // added by trageser
+    nsx::PeakCollection* pc = nullptr;
+    //pc = gSession->currentProject()->experiment()->getPeakCollection();
+
+    std::string current_pc = _peak_combo->currentText().toStdString();
+    if (current_pc.size() == 0) return;
+    pc = gSession->currentProject()->experiment()->getPeakCollection( current_pc );
+    // if (pc == nullptr) std::runtime_error("BAM"); 
+
+    if (  pc->isIndexed() && pc->isIntegrated() ){
+        _integrate_button->setEnabled(true);
+        _build_shape_lib_button->setEnabled(true);
+        _assign_peak_shapes->setEnabled(true);
+        
+    
+    }
+
+
+
+
 }
 
 DetectorWidget* SubframeIntegrate::detectorWidget()

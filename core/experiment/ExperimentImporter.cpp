@@ -110,8 +110,8 @@ void ExperimentImporter::loadPeaks(Experiment* experiment)
             int type = 0;
 
             //added by ctrageser
-            bool indexed;
-            bool integrated;
+            int indexed = 0;
+            int integrated = 0;
 
             if (peak_collection.attrExists(nsx::at_peakCount)) {
                 const H5::Attribute attr = peak_collection.openAttribute(nsx::at_peakCount);
@@ -134,10 +134,12 @@ void ExperimentImporter::loadPeaks(Experiment* experiment)
 
             if (peak_collection.attrExists(nsx::at_integrated)) {
                 const H5::Attribute attr = peak_collection.openAttribute(nsx::at_integrated);
-                const H5::DataType attr_type = attr.getDataType();
+                const H5::DataType attr_type = attr.getDataType();                
                 attr.read(attr_type, &integrated);
             }
 
+            
+             
             nsxlog(Level::Debug, "ExperimentImporter::loadPeaks: found ", n_peaks, " to import for PeakCollection '", collection_name, "'");
             nsxlog(Level::Debug, "Preparing the dataspace");
             
@@ -295,7 +297,7 @@ void ExperimentImporter::loadPeaks(Experiment* experiment)
             nsxlog(Level::Debug, "Finished creating the vector of peaks");
 
             listtype collection_type = static_cast<listtype>(type);
-            experiment->addPeakCollection(collection_name, collection_type, peaks);
+            experiment->addPeakCollection(collection_name, collection_type, peaks, static_cast<bool>(indexed), static_cast<bool>(integrated));
 
             nsxlog(Level::Debug, "Finished creating the peak collection");
         }

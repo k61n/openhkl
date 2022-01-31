@@ -369,12 +369,7 @@ void ExperimentExporter::writePeaks(const std::map<std::string, PeakCollection*>
                 // NATIVE_HBOOL
                 {nsx::ds_Selected, H5::PredType::NATIVE_HBOOL, peak_space, selected.get()},
                 {nsx::ds_Masked, H5::PredType::NATIVE_HBOOL, peak_space, masked.get()},
-                {nsx::ds_Predicted, H5::PredType::NATIVE_HBOOL, peak_space, predicted.get()},
-
-                // added by ctrageser
-                {nsx::ds_Predicted, H5::PredType::NATIVE_HBOOL, peak_space, predicted.get()},
                 {nsx::ds_Predicted, H5::PredType::NATIVE_HBOOL, peak_space, predicted.get()}
-                
                 };
 
         for (const auto& [dkey, dtype, dspace, dptr] : peakData_defs) {

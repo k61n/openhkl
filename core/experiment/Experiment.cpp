@@ -96,7 +96,7 @@ void Experiment::acceptFoundPeaks(const std::string& name)
 void Experiment::acceptFoundPeaks(const std::string& name, const PeakCollection& found)
 {
     std::vector<Peak3D*> peaks = found.getPeakList();
-    addPeakCollection(name, listtype::FOUND, peaks);
+    addPeakCollection(name, listtype::FOUND, peaks,  found.isIndexed(), found.isIntegrated() );
 }
 
 void Experiment::saveToFile(const std::string& path) const
