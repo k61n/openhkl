@@ -161,7 +161,7 @@ set(CMAKE_AUTORCC ON)
 set(CMAKE_AUTOUIC OFF)
 
 ###################################################################################################
-#  Other dependences
+#  3rd party dependences
 ###################################################################################################
 
 # QCustomPlot: As long as there is no homebrew package for MacOS, we provide it as 3rdparty code:
@@ -173,16 +173,16 @@ set(QCustomPlot_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/3rdparty/qcustomplot)
 #        VERSION=${QCustomPlot_VERSION}, LIB=${QCustomPlot_LIBRARIES},
 #        INCLUDE_DIR=${QCustomPlot_INCLUDE_DIR}")
 
-find_package(Eigen3 MODULE REQUIRED)
-message(STATUS "Found Eigen3: EIGEN3_VERSION=${EIGEN3_VERSION}, EIGEN3_INCLUDE_DIR=${EIGEN3_INCLUDE_DIR}")
-
-find_package(Qhull MODULE REQUIRED)
-message(STATUS "Found QHull: QHULL_INCLUDE_DIR=${QHULL_INCLUDE_DIR}")
-
-include(CheckDependencies)
 add_subdirectory(3rdparty/xsection)
 #set(XSection_LIBRARIES XSection)
 #set(XSection_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/3rdparty/xsection)
+
+###################################################################################################
+#  Other dependences
+###################################################################################################
+
+# All other dependences are included in CheckDependencies.cmake
+include(CheckDependencies)
 
 ###################################################################################################
 #  Prepare for tests; static code analysis
@@ -209,7 +209,6 @@ endif()
 if(BUILD_DOCUMENTATION)
     find_package(Doxygen)
     find_package(Sphinx)
-    message(STATUS "Found Sphinx: SPHINX_EXECUTABLE=${SPHINX_EXECUTABLE}")
     find_package(LATEX COMPONENTS PDFLATEX BIBTEX)
     message(STATUS "PDFLATEX_COMPILER=${PDFLATEX_COMPILER} BIBTEX_COMPILER=${BIBTEX_COMPILER}")
 endif()
