@@ -161,6 +161,13 @@ set(CMAKE_AUTORCC ON)
 set(CMAKE_AUTOUIC OFF)
 
 ###################################################################################################
+#  Other dependences
+###################################################################################################
+
+# All other dependences are included in CheckDependencies.cmake
+include(CheckDependencies)
+
+###################################################################################################
 #  3rd party dependences
 ###################################################################################################
 
@@ -176,13 +183,6 @@ set(QCustomPlot_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/3rdparty/qcustomplot)
 add_subdirectory(3rdparty/xsection)
 #set(XSection_LIBRARIES XSection)
 #set(XSection_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/3rdparty/xsection)
-
-###################################################################################################
-#  Other dependences
-###################################################################################################
-
-# All other dependences are included in CheckDependencies.cmake
-include(CheckDependencies)
 
 ###################################################################################################
 #  Prepare for tests; static code analysis
