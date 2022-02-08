@@ -15,87 +15,146 @@
 
 import sys
 import numpy as np
-import unittest
 from pathlib import Path
 
-lib_dir = "@SWIG_INSTALL_PATH@" # Path to pynsx.py
-data_dir = '/home/zamaan/projects/datasets/small_cell_low_intensity' # Path to .raw data files
+lib_dir = "@SWIG_INSTALL_PATH@"  # Path to pynsx.py
 
 sys.path.append(lib_dir)
 import pynsx as nsx
 
-# set up the experiment
-expt = nsx.Experiment('trypsin-sim', 'BioDiff2500')
-diffractometer = expt.getDiffractometer()
-dataset = nsx.DataSet('trypsin-sim', diffractometer)
+############################################################################
+# Modifiy these according to your data set
+name = 'CrChiA'
+data_dir = '/home/zamaan/projects/datasets/CrChiA'  # Path to .raw data files
+diffractometer = 'BioDiff2500'
+wl = 2.67
+d_omega = 0.3
+a = 57.96
+b = 65.12
+c = 86.52
+alpha = 90.0
+beta = 90.0
+gamma = 90.0
+sg = 'P 21 21 21'
+predicted_d_min = 1.5
+############################################################################
 
-# raw data parameters
-data_params = expt.data_params
-data_params.wavelength = 2.67
-data_params.delta_omega = 0.3
 
-print(f'Reading files from {data_dir}')
-dir = Path(data_dir)
-raw_data_files = sorted(list(dir.glob('*.raw')))
-for file in raw_data_files:
-    print(file)
-dataset.setRawReaderParameters(data_params)
-for filename in raw_data_files:
-    dataset.addRawFrame(str(filename))
+def load_data(experiment, name, diffractometer, path):
+    print(f'Reading files from {data_dir}...')
+    dataset = nsx.DataSet(name, diffractometer)
+    data_params = expt.data_params
+    data_params.wavelength = wl
+    data_params.delta_omega = d_omega
+    dir = Path(data_dir)
+    raw_data_files = sorted(list(dir.glob('*.raw')))
+    for file in raw_data_files:
+        print(file)
+    print(f'{len(raw_data_files)} files read')
+    dataset.setRawReaderParameters(data_params)
+    for filename in raw_data_files:
+        dataset.addRawFrame(str(filename))
 
-dataset.finishRead()
-expt.addData(dataset)
-data = expt.getData('trypsin-sim')
+    dataset.finishRead()
+    experiment.addData(dataset)
 
-print('Finding peaks...')
-peak_finder = expt.peakFinder()
-params = peak_finder.parameters()
-params.threshold = 80
-peak_finder.find(expt.getAllData())
-print(f'Found {peak_finder.numberFound()} peaks')
 
-print('Integrating found peaks...')
-integrator = expt.integrator()
-params = integrator.parameters()
-params.peak_end = 3.0
-params.bkg_begin = 3.0
-params.bkg_end = 6.0
-integrator.integrateFoundPeaks(peak_finder)
-expt.acceptFoundPeaks('found') # Peak collection is now saved to experiment as "found"
-found_peaks = expt.getPeakCollection('found')
-print(f'Integrated {found_peaks.numberOfValid()} valid peaks')
+def find_peaks(experiment, threshold):
+    print('Finding peaks...')
+    peak_finder = experiment.peakFinder()
+    params = peak_finder.parameters()
+    params.threshold = threshold
+    peak_finder.find(experiment.getAllData())
+    print(f'Found {peak_finder.numberFound()} peaks')
 
-print('Indexing found peaks...')
-expt.setReferenceCell(24.5, 28.7, 37.7, 90, 90, 90) # reference cell used to pick best solution
-space_group = nsx.SpaceGroup('P 21 21 21') # required to check that Bravais type is correct
-reference_cell = expt.getUnitCell('reference')
-reference_cell.setSpaceGroup(space_group)
-indexer = expt.autoIndexer();
-params = indexer.parameters();
-params.length_tol = 1.5
-params.angle_tol = 0.1
+    print('Integrating found peaks...')
+    integrator = experiment.integrator()
+    params = integrator.parameters()
+    params.peak_end = 3.0
+    params.bkg_begin = 3.0
+    params.bkg_end = 6.0
+    integrator.integrateFoundPeaks(peak_finder)
+    experiment.acceptFoundPeaks('found') # Peak collection is now saved to experiment as "found"
+    found_peaks = experiment.getPeakCollection('found')
+    print(f'Integrated {found_peaks.numberOfValid()} valid peaks')
+    return found_peaks
 
-# Filter to generate the peak collection for indexing
-filter = expt.peakFilter();
-filter.resetFilterFlags();
-filter.flags().strength = True;
-filter.flags().d_range = True;
-filter.flags().frames = True;
-filter.parameters().d_min = 1.5
-filter.parameters().frame_min = 10
-filter.parameters().frame_max= 20
-filter.parameters().strength_min = 1.0
-filter.filter(found_peaks)
-expt.acceptFilter('indexing', found_peaks)
 
-indexing_peaks = expt.getPeakCollection('indexing')
-indexer.autoIndex(indexing_peaks)
-indexed_cell = indexer.goodSolution(reference_cell, 1.5, 0.2)
-indexed_cell.setSpaceGroup(space_group)
-expt.addUnitCell("accepted", indexed_cell)
-expt.assignUnitCell(found_peaks, 'accepted');
-print(f'Reference cell {reference_cell.toString()}')
-print(f'Using cell     {indexed_cell.toString()}')
+def index(experiment, a, b, c, alpha, beta, gamma, sg):
+    print('Indexing found peaks...')
+    experiment.setReferenceCell(a, b, c, alpha, beta, gamma) # reference cell used to pick best solution
+    space_group = nsx.SpaceGroup(sg) # required to check that Bravais type is correct
+    reference_cell = experiment.getUnitCell('reference')
+    reference_cell.setSpaceGroup(space_group)
+    indexer = experiment.autoIndexer()
+    params = indexer.parameters()
+    params.length_tol = 1.5
+    params.angle_tol = 0.1
+
+    # Filter to generate the peak collection for indexing
+    filter = experiment.peakFilter()
+    filter.resetFilterFlags()
+    filter.flags().strength = True
+    filter.flags().d_range = True
+    filter.flags().frames = True
+    filter.parameters().d_min = 1.5
+    filter.parameters().frame_min = 10
+    filter.parameters().frame_max = 20
+    filter.parameters().strength_min = 1.0
+    filter.filter(found_peaks)
+    experiment.acceptFilter('indexing', found_peaks)
+
+    indexing_peaks = experiment.getPeakCollection('indexing')
+    indexer.autoIndex(indexing_peaks)
+    print(indexer.solutionsToString())
+    indexed_cell = indexer.goodSolution(reference_cell, 1.5, 0.2)
+    indexed_cell.setSpaceGroup(space_group)
+    experiment.addUnitCell("accepted", indexed_cell)
+    experiment.assignUnitCell(found_peaks, 'accepted')
+    print(f'Reference cell {reference_cell.toString()}')
+    print(f'Using cell     {indexed_cell.toString()}')
+    return experiment.getUnitCell("accepted")
+
+
+def predict(experiment, cell, data, d_min):
+    predictor = experiment.predictor()
+    params = predictor.parameters()
+    params.d_min = d_min
+    print()
+    predictor.predictPeaks(data, cell)
+    experiment.addPeakCollection('predicted', nsx.listtype_PREDICTED, predictor.peaks())
+    predicted_peaks = experiment.getPeakCollection('predicted')
+    print(f'{predicted_peaks.numberOfPeaks()} peaks predicted')
+    return predicted_peaks
+
+
+def get_shapes(data, peaks):
+    peaks.computeSigmas()
+    params = nsx.ShapeCollectionParameters()
+    params.sigma_d = peaks.sigmaD()
+    params.sigma_m = peaks.sigmaM()
+    peaks.buildShapeCollection(data, params)
+    print(f'{peaks.shapeCollection().numberOfPeaks()} shapes generated')
+    return peaks.shapeCollection()
+
+
+expt = nsx.Experiment(name, diffractometer)
+d = expt.getDiffractometer()
+
+# find peaks from raw images (if necessary)
+found_peaks = None
+found_peaks_file = Path(f'{name}-found.nsx')
+if found_peaks_file.exists():
+    expt.loadFromFile(str(found_peaks_file))
+    found_peaks = expt.getPeakCollection('found')
+else:
+    load_data(expt, name, d, data_dir)
+    found_peaks = find_peaks(expt, 80)
+    expt.saveToFile(str(found_peaks_file))
+
+data = expt.getData(name)
+
+indexed_cell = index(expt, a, b, c, alpha, beta, gamma, sg)
 
 print('Filtering fit peaks for shape collection...')
 filter = expt.peakFilter()
@@ -112,27 +171,31 @@ filter.filter(found_peaks)
 filtered_peaks = nsx.PeakCollection('fit', nsx.listtype_FILTERED)
 filtered_peaks.populateFromFiltered(found_peaks)
 
+print('Refining direct beam positions...')
+refiner = expt.refiner()
+params = refiner.parameters()
+params.nbatches = data.nFrames()
+params.refine_ub = False
+params.refine_sample_position = False
+params.refine_sample_orientation = False
+params.refine_detector_offset = False
+params.refine_ki = True
+params.residual_type = nsx.ResidualType_RealSpace
+params.use_batch_cells = False
+states = data.instrumentStates()
+peak_list = found_peaks.getPeakList()
+refiner.makeBatches(states, peak_list, indexed_cell)
+refine_success = refiner.refine()
+
 print('Predicting peaks...')
-cell = expt.getSptrUnitCell('indexing')
-predictor = expt.predictor()
-params = predictor.parameters()
-params.d_min = 1.5
-predictor.predictPeaks(data, indexed_cell)
-expt.addPeakCollection('predicted', nsx.listtype_PREDICTED, predictor.peaks())
-predicted_peaks = expt.getPeakCollection('predicted')
-print(f'{predicted_peaks.numberOfPeaks()} peaks predicted')
+predicted_peaks = predict(expt, indexed_cell, data, predicted_d_min)
 
 print('Building shape collection...')
-filtered_peaks.computeSigmas()
-params = nsx.ShapeCollectionParameters()
-params.sigma_d = filtered_peaks.sigmaD()
-params.sigma_m = filtered_peaks.sigmaM()
-filtered_peaks.buildShapeCollection(data, params)
-print(f'{filtered_peaks.shapeCollection().numberOfPeaks()} shapes generated')
+shapes = get_shapes(data, filtered_peaks)
 
 print('Assigning shapes to predicted peaks...')
 interpolation = nsx.PeakInterpolation_InverseDistance
-filtered_peaks.shapeCollection().setPredictedShapes(predicted_peaks, interpolation)
+shapes.setPredictedShapes(predicted_peaks, interpolation)
 
 print('Refining...')
 refiner = expt.refiner()
@@ -147,7 +210,6 @@ params.residual_type = nsx.ResidualType_RealSpace
 states = data.instrumentStates()
 peak_list = found_peaks.getPeakList()
 predicted_peak_list = predicted_peaks.getPeakList()
-
 
 params.residual_type = nsx.ResidualType_RealSpace
 params.use_batch_cells = False
@@ -171,6 +233,9 @@ print(f'Refine 3: {n_updated} peaks updated')
 print('Integrating predicted peaks...')
 integrator = expt.integrator()
 params = integrator.parameters()
+params.neighbour_range_pixels = 500
+params.neighbour_range_frames = 5
+params.min_neighbours = 20
 integrator_type = nsx.IntegratorType_Profile3D
 integrator.getIntegrator(integrator_type)
 integrator.integratePeaks(data, predicted_peaks, params, filtered_peaks.shapeCollection())
@@ -181,12 +246,12 @@ merger = expt.peakMerger()
 params = merger.parameters()
 merger.reset()
 params.d_min = 1.5
-params.frame_min = 3
-params.frame_max = 58
+params.frame_min = 1  # exclude first and last frames from statistics
+params.frame_max = data.nFrames() - 1
 merger.addPeakCollection(predicted_peaks)
 merger.mergePeaks()
 merger.computeQuality()
 
 print("Workflow complete")
 
-expt.saveToFile("test.nsx")
+expt.saveToFile(f'{name}.nsx')

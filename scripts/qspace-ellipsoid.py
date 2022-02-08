@@ -44,6 +44,8 @@ parser.add_argument('--real', dest='real', action='store_true',
                     help='Use real space ellipsoids')
 parser.add_argument('-b', '--bins', type=int, default=30, dest='bins',
                     help='Number of histogram bins')
+parser.add_argument('-a', '--angle', type=int, default=90, dest='angle',
+                    help='Angular range of plot')
 args = parser.parse_args()
 
 def angle_between(v1, v2):
@@ -115,6 +117,6 @@ for k in range(args.nz):
                 else:
                     angles.append(angle_between(ax0, axis))
             axs[i, j].hist(angles, bins=args.bins)
-            axs[i, j].set(xlim=(0, 90))
+            axs[i, j].set(xlim=(0, args.angle))
 
     plt.savefig(f'{args.name}{k}.pdf')
