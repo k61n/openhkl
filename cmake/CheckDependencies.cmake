@@ -98,5 +98,10 @@ include_directories(SYSTEM ${FFTW_INCLUDE_DIR})
 find_package(GSL REQUIRED)
 include_directories(SYSTEM ${GSL_INCLUDE_DIR})
 
-#find_package(XSection REQUIRED)
-#include_directories(SYSTEM ${XSection_INCLUDE_DIR})
+##### Find Eigen3
+find_package(Eigen3 MODULE REQUIRED)
+include_directories(SYSTEM ${EIGEN3_INCLUDE_DIR})
+
+##### Find QHull
+find_package(Qhull MODULE REQUIRED)
+include_directories(SYSTEM ${QHULL_INCLUDE_DIR})
