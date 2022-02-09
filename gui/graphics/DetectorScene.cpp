@@ -350,11 +350,15 @@ void DetectorScene::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
 
         // Case of the Zoom mode, update the scene
         if (_mode == ZOOM) {
+            if (!_zoomrect)
+                return;
             QRectF zoom = _zoomrect->rect();
             zoom.setBottomRight(event->lastScenePos());
             _zoomrect->setRect(zoom);
             return;
         } else if (_mode == SELECT) {
+            if (!_selectionRect)
+                return;
             QRectF select = _selectionRect->rect();
             select.setBottomRight(event->lastScenePos());
             _selectionRect->setRect(select);
