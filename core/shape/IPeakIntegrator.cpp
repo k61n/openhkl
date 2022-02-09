@@ -83,6 +83,9 @@ void IPeakIntegrator::integrate(
     std::map<Peak3D*, bool> integrated;
 
     for (auto peak : peaks) {
+        if (!peak->enabled())
+            continue;
+
         regions.emplace(std::make_pair(
             peak,
             std::make_unique<IntegrationRegion>(
