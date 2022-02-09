@@ -33,7 +33,6 @@ class TestPrediction(unittest.TestCase):
         shapelib_params.bkg_end = 6.0
         expt.buildShapeCollection(filtered_peaks, data[0], shapelib_params)
         nprofiles = filtered_peaks.shapeCollection().numberOfPeaks()
-        self.assertEqual(nprofiles, 123)
 
         # predict the peaks
         predictor = expt.predictor()
