@@ -42,7 +42,12 @@
 #include <QMessageBox>
 #include <QSplitter>
 #include <QVBoxLayout>
+#include <qboxlayout.h>
+#include <qcheckbox.h>
+#include <qnamespace.h>
 #include <stdexcept>
+
+
 
 
 
@@ -74,49 +79,23 @@ SubframeAutoIndexer::SubframeAutoIndexer()
     _peak_collection_model.setRoot(&_peak_collection_item);
 }  
 
-void SubframeAutoIndexer::ShowPeakCollectionInfo()
-{
-    // QVariant selected = _peak_combo->itemData( _peak_combo->currentIndex());
-   
-    nsx::PeakCollection* pc = nullptr;
-    
-    std::string current_pc = _peak_combo->currentText().toStdString();
-    if (current_pc.size() == 0) return;
-    std::cout << current_pc<< std::endl;
-    pc = gSession->currentProject()->experiment()->getPeakCollection( current_pc );
-    if (pc == nullptr) std::runtime_error("BAM");
-
-  
-    std::string info = std::string("PeakCollection ") + current_pc + std::string( " is "); 
-
-      
-    _peak_collection_indexed->setText(QString(info.c_str()) + QString (" UNINDEXED"));
-    _peak_collection_integrated->setText(QString(info.c_str()) + QString (" UNINTEGRATED"));
-   
-    if (pc->isIndexed()) {
-        _peak_collection_indexed->setText(QString(info.c_str()) + QString (" INDEXED"));
-    }
-    if ( pc->isIntegrated()) {
-        _peak_collection_integrated->setText(QString(info.c_str()) + QString (" INTEGRATED"));
-    }
-}
-
 void SubframeAutoIndexer::setInputUp()
 {
     Spoiler* input_box = new Spoiler("Input");
-    GridFiller f(input_box, true);
-
-    _peak_collection_indexed = new QLabel("PeakCollection is UNINDEXED");
-    _peak_collection_integrated= new QLabel("PeakCollection is UNINTEGRATED");
+    GridFiller f(input_box, true);  
 
     _exp_combo = f.addLinkedCombo(ComboType::Experiment, "Experiment");
     _data_combo = f.addLinkedCombo(ComboType::DataSet, "Data set");
     _peak_combo = f.addLinkedCombo(ComboType::FoundPeaks, "Peak collection");
 
-    f.addWidget(_peak_collection_indexed);
-    f.addWidget(_peak_collection_integrated);
-    ShowPeakCollectionInfo();
-     
+    _pc_indexed = f.addCheckBox("Is Indexed",5);
+    _pc_integrated = f.addCheckBox("Is Integrated",5);
+
+    _pc_indexed->setAttribute(Qt::WA_TransparentForMouseEvents, true);
+    _pc_indexed->setFocusPolicy(true ? Qt::NoFocus : Qt::StrongFocus);
+
+    _pc_integrated->setAttribute(Qt::WA_TransparentForMouseEvents, true);
+    _pc_integrated->setFocusPolicy(true ? Qt::NoFocus : Qt::StrongFocus);
 
     connect(
         _exp_combo, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this,
@@ -127,6 +106,8 @@ void SubframeAutoIndexer::setInputUp()
         &SubframeAutoIndexer::refreshPeakTable);
 
     _left_layout->addWidget(input_box);
+
+   showPeakCollectionState();    
 }
 
 void SubframeAutoIndexer::setParametersUp()
@@ -346,6 +327,7 @@ void SubframeAutoIndexer::updatePeakList()
         _solutions.clear();
         _selected_unit_cell = nullptr;
     }
+    showPeakCollectionState();
     _peak_combo->blockSignals(false);    
 }
 
@@ -357,7 +339,7 @@ void SubframeAutoIndexer::refreshPeakTable()
     _peak_collection_item.setPeakCollection(&_peak_collection);
     _peak_collection_model.setRoot(&_peak_collection_item);
     _peak_table->resizeColumnsToContents();
-    ShowPeakCollectionInfo();
+    showPeakCollectionState();
 }
 
 void SubframeAutoIndexer::grabIndexerParameters()
@@ -592,12 +574,29 @@ void SubframeAutoIndexer::toggleUnsafeWidgets()
     }    
     if (_peak_collection_model.rowCount() == 0 || _solutions.empty())
         _save_button->setEnabled(false);
-
-    // added by c.trageser
+    
     // disabling button in case of missing integrarion
     if (!_peak_collection.isIntegrated()){
-         _save_button->setEnabled(false);
-        
+        // _save_button->setEnabled(false);        
     }
     
+}
+
+bool SubframeAutoIndexer::showPeakCollectionState()
+{  
+    nsx::PeakCollection* pc = nullptr;
+    std::string current_pc = _peak_combo->currentText().toStdString();
+    if (current_pc.size() == 0)
+        return false;
+    pc = gSession->currentProject()->experiment()->getPeakCollection( current_pc );    
+    if (pc == nullptr)    
+        return false;  
+    if (pc->isIndexed()) {      
+        _pc_indexed->setCheckState(Qt::CheckState::Checked);       
+    } else _pc_indexed->setCheckState(Qt::CheckState::Unchecked);    
+    if ( pc->isIntegrated()) {
+       _pc_integrated->setCheckState(Qt::CheckState::Checked)  ;    
+    } else _pc_integrated->setCheckState(Qt::CheckState::Unchecked);    
+
+   return true;
 }

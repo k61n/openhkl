@@ -84,6 +84,16 @@ void SubframeIntegrate::setInputUp()
     _int_peak_combo = f.addLinkedCombo(
         ComboType::PeakCollection, "Peaks to integrate");
 
+    
+    _pc_indexed = f.addCheckBox("Is Indexed",5);
+    _pc_integrated = f.addCheckBox("Is Integrated",5);
+
+    _pc_indexed->setAttribute(Qt::WA_TransparentForMouseEvents, true);
+    _pc_indexed->setFocusPolicy(true ? Qt::NoFocus : Qt::StrongFocus);
+
+    _pc_integrated->setAttribute(Qt::WA_TransparentForMouseEvents, true);
+    _pc_integrated->setFocusPolicy(true ? Qt::NoFocus : Qt::StrongFocus);
+
     connect(
         _exp_combo, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this,
         &SubframeIntegrate::updateDatasetList);
@@ -98,6 +108,7 @@ void SubframeIntegrate::setInputUp()
         this, &SubframeIntegrate::toggleUnsafeWidgets);
 
     _left_layout->addWidget(input_box);
+    showPeakCollectionState();
 }
 
 void SubframeIntegrate::setFigureUp()
@@ -236,6 +247,7 @@ void SubframeIntegrate::updatePeakList()
     _peak_combo->blockSignals(false);
     _int_peak_combo->blockSignals(false);
     toggleUnsafeWidgets();
+    showPeakCollectionState();
 }
 
 void SubframeIntegrate::grabIntegrationParameters()
@@ -611,32 +623,39 @@ void SubframeIntegrate::toggleUnsafeWidgets()
         _assign_peak_shapes->setEnabled(false);
         _build_shape_lib_button->setEnabled(false);
     }
-
-
-
-    // added by trageser
-    nsx::PeakCollection* pc = nullptr;
-    //pc = gSession->currentProject()->experiment()->getPeakCollection();
+    nsx::PeakCollection* pc = nullptr;  
 
     std::string current_pc = _peak_combo->currentText().toStdString();
     if (current_pc.size() == 0) return;
-    pc = gSession->currentProject()->experiment()->getPeakCollection( current_pc );
-    // if (pc == nullptr) std::runtime_error("BAM"); 
-
+    pc = gSession->currentProject()->experiment()->getPeakCollection( current_pc );   
+    if (pc == nullptr) return;
     if (  pc->isIndexed() && pc->isIntegrated() ){
         _integrate_button->setEnabled(true);
         _build_shape_lib_button->setEnabled(true);
-        _assign_peak_shapes->setEnabled(true);
-        
-    
-    }
-
-
-
-
+        _assign_peak_shapes->setEnabled(true);       
+    } 
 }
 
 DetectorWidget* SubframeIntegrate::detectorWidget()
 {
     return _detector_widget;
+}
+
+bool SubframeIntegrate::showPeakCollectionState()
+{  
+    nsx::PeakCollection* pc = nullptr;
+    std::string current_pc = _peak_combo->currentText().toStdString();
+    if (current_pc.size() == 0)
+        return false;
+    pc = gSession->currentProject()->experiment()->getPeakCollection( current_pc );    
+    if (pc == nullptr)    
+        return false;  
+    if (pc->isIndexed()) {      
+        _pc_indexed->setCheckState(Qt::CheckState::Checked);       
+    } else _pc_indexed->setCheckState(Qt::CheckState::Unchecked);    
+    if ( pc->isIntegrated()) {
+       _pc_integrated->setCheckState(Qt::CheckState::Checked)  ;    
+    } else _pc_integrated->setCheckState(Qt::CheckState::Unchecked);    
+
+   return true;
 }

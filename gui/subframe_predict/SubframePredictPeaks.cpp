@@ -712,14 +712,13 @@ void SubframePredictPeaks::toggleUnsafeWidgets()
         _sigma_m->setEnabled(false);
     }
 
-    // added by trageser
     nsx::PeakCollection* pc = nullptr;
     //pc = gSession->currentProject()->experiment()->getPeakCollection();
     
     std::string current_pc = _found_peaks_combo->currentText().toStdString();
     if (current_pc.size() == 0) return;
     pc = gSession->currentProject()->experiment()->getPeakCollection( current_pc );
-    // if (pc == nullptr) std::runtime_error("BAM"); 
+   
 
     if (  pc->isIndexed() && pc->isIntegrated() ){
         _predict_button->setEnabled(true);

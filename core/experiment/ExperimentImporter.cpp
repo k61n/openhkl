@@ -109,9 +109,8 @@ void ExperimentImporter::loadPeaks(Experiment* experiment)
             int n_peaks = 0;
             int type = 0;
 
-            //added by ctrageser
-            int indexed = 0;
-            int integrated = 0;
+            std::string indexed;
+            std::string integrated;
 
             if (peak_collection.attrExists(nsx::at_peakCount)) {
                 const H5::Attribute attr = peak_collection.openAttribute(nsx::at_peakCount);
@@ -125,7 +124,7 @@ void ExperimentImporter::loadPeaks(Experiment* experiment)
                 attr.read(attr_type, &type);
             }
 
-            //added by ctrageser
+             
             if (peak_collection.attrExists(nsx::at_indexed)) {
                 const H5::Attribute attr = peak_collection.openAttribute(nsx::at_indexed);
                 const H5::DataType attr_type = attr.getDataType();
@@ -297,7 +296,7 @@ void ExperimentImporter::loadPeaks(Experiment* experiment)
             nsxlog(Level::Debug, "Finished creating the vector of peaks");
 
             listtype collection_type = static_cast<listtype>(type);
-            experiment->addPeakCollection(collection_name, collection_type, peaks, static_cast<bool>(indexed), static_cast<bool>(integrated));
+            experiment->addPeakCollection(collection_name, collection_type, peaks, static_cast<bool>(indexed[0]), static_cast<bool>(integrated[0]));
 
             nsxlog(Level::Debug, "Finished creating the peak collection");
         }

@@ -100,6 +100,9 @@ class SubframeRefiner : public QWidget {
     //! Set up the lattice parameter table
     void setLatticeTableUp();
 
+    //! Read indexed/integrated booleans from current PekColletion and Update GUI
+    bool showPeakCollectionState();
+
     //! Returns all plot check boxes
     QList<PlotCheckBox*> plotCheckBoxes() const;
 
@@ -108,6 +111,7 @@ class SubframeRefiner : public QWidget {
 
     //! Disable unsafe widgets if no data loaded
     void toggleUnsafeWidgets();
+
 
     //! The loaded data list
     std::vector<nsx::sptrDataSet> _data_list;
@@ -169,6 +173,9 @@ class SubframeRefiner : public QWidget {
     SXPlot* _plot_widget;
 
     QRandomGenerator _rng;
+
+    QCheckBox* _pc_indexed;
+    QCheckBox* _pc_integrated;
 
     // Convert enum class ResidualType to a string
     const std::map<std::string, nsx::ResidualType> _residual_strings {

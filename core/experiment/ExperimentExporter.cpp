@@ -116,6 +116,7 @@ void writeMetadata(H5::Group& meta_group, const nsx::MetaData& metadata)
 {
     const H5::DataSpace metaSpace(H5S_SCALAR);
     const H5::StrType strVarType(H5::PredType::C_S1, H5T_VARIABLE);
+   
 
     try {
         for (const auto& [key, val] : metadata.map()) {

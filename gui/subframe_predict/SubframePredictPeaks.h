@@ -116,6 +116,10 @@ class SubframePredictPeaks : public QWidget {
     //! Compute beam divergence and mosaicity sigmas
     void computeSigmas();
 
+    //! Read indexed/integrated booleans from current PekColletion and Update GUI
+    bool showPeakCollectionState();
+
+
     //! The model for the found peaks
     nsx::PeakCollection _peak_collection;
     //! The temporary collection
