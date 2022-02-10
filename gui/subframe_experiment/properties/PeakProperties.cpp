@@ -55,7 +55,7 @@ PeakProperties::PeakProperties()
     _remove->setIcon(QIcon(":/images/Delete_item.svg"));
 
     _peak_list_combo->setSizePolicy(*_size_policy_widgets);
-
+   
     _type = new QLabel;
     _file_name = new QLabel;
     _kernel_name = new QLabel;

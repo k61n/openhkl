@@ -79,9 +79,8 @@ class SubframeAutoIndexer : public QWidget {
     void acceptSolution();
     //! Disable widgets that are unsafe without relevant data
     void toggleUnsafeWidgets();
-
-
-    void ShowPeakCollectionInfo();
+    //! Read indexed/integrated booleans from current PekColletion and Update GUI
+    bool showPeakCollectionState();
 
     //! The model for the indexing peaks
     nsx::PeakCollection _peak_collection;
@@ -124,15 +123,13 @@ class SubframeAutoIndexer : public QWidget {
     QPushButton* _solve_button;
     QPushButton* _save_button;
 
-
     QSizePolicy _size_policy_right;
 
     PeakTableView* _peak_table;
     UnitCellTableView* _solution_table;
 
-    //added by trageser
-    QLabel* _peak_collection_indexed;
-    QLabel* _peak_collection_integrated;
+    QCheckBox* _pc_indexed;
+    QCheckBox* _pc_integrated;
 };
 
 #endif // NSX_GUI_SUBFRAME_INDEX_SUBFRAMEAUTOINDEXER_H

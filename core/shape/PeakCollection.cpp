@@ -17,6 +17,7 @@
 #include "base/utils/Logger.h"
 #include "core/integration/ShapeIntegrator.h"
 #include "core/raw/DataKeys.h"
+#include <string>
 #include <typeindex>
 
 namespace nsx {
@@ -138,13 +139,14 @@ int PeakCollection::numberRejectedByFilter() const
 }
 
 MetaData& PeakCollection::metadata()
-{
+{ 
     _metadata.add<int>(nsx::at_peakCount, numberOfPeaks());
     _metadata.add<int>(nsx::at_peakType, static_cast<int>(type()));
 
-    // added by ctrageser
-    _metadata.add<char>(nsx::at_indexed, static_cast<char>(isIndexed()));
-    _metadata.add<char>(nsx::at_integrated, static_cast<char>(isIntegrated()));
+    // converting booleans to std::strings with 1 bytes size
+    // while saving data to files only Int32, String and DBL seemed to supported
+    _metadata.add<std::string>(nsx::at_indexed,  std::to_string(isIndexed()));
+    _metadata.add<std::string>(nsx::at_integrated, std::to_string(isIntegrated()));
     return _metadata;
 }
 
