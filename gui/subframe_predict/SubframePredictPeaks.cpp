@@ -14,10 +14,13 @@
 
 #include "gui/subframe_predict/SubframePredictPeaks.h"
 
+#include "base/geometry/ReciprocalVector.h"
 #include "base/utils/Logger.h"
 #include "core/data/DataSet.h"
+#include "core/data/DataTypes.h"
 #include "core/detector/DetectorEvent.h"
 #include "core/experiment/Experiment.h"
+#include "core/instrument/InstrumentState.h"
 #include "core/integration/ShapeIntegrator.h"
 #include "core/peak/Peak3D.h"
 #include "core/peak/Qs2Events.h"
@@ -35,6 +38,7 @@
 #include "gui/models/Project.h"
 #include "gui/models/Session.h"
 #include "gui/subframe_predict/ShapeCollectionDialog.h"
+#include "gui/subframe_refiner/SubframeRefiner.h"
 #include "gui/utility/ColorButton.h"
 #include "gui/utility/GridFiller.h"
 #include "gui/utility/LinkedComboBox.h"
@@ -79,6 +83,9 @@ SubframePredictPeaks::SubframePredictPeaks()
     setFigureUp();
     setPeakTableUp();
 
+    _detector_widget->scene()->linkDirectBeamPositions(&_direct_beam_events);
+    _detector_widget->scene()->linkOldDirectBeamPositions(&_old_direct_beam_events);
+
     _right_element->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
     auto propertyScrollArea = new PropertyScrollArea(this);
@@ -94,6 +101,13 @@ void SubframePredictPeaks::setRefineKiUp()
     Spoiler* ki_box = new Spoiler("Refine direct beam position");
     GridFiller f(ki_box, true);
 
+    _set_initial_ki = f.addCheckBox(
+        "Set initial direct beam",
+        "Set the initial position of the direct beam in detector coordinates", 1);
+    _beam_offset_x = f.addSpinBox(
+        "x offset", "Direct beam offset in x direction (pixels)");
+    _beam_offset_y = f.addSpinBox(
+        "y offset", "Direct beam offset in y direction (pixels)");
     _n_batches_spin = f.addSpinBox(
         "Number of batches", "Number of batches for refining incident wavevector");
     _max_iter_spin = f.addSpinBox(
@@ -111,6 +125,10 @@ void SubframePredictPeaks::setRefineKiUp()
     _n_batches_spin->setValue(10);
     _max_iter_spin->setMaximum(1000000);
     _max_iter_spin->setValue(1000);
+    _beam_offset_x->setValue(0);
+    _beam_offset_y->setValue(0);
+    _beam_offset_x->setMaximum(1000);
+    _beam_offset_y->setMaximum(1000);
 
     connect(
         _direct_beam, &QCheckBox::stateChanged, this, &SubframePredictPeaks::showDirectBeamEvents);
@@ -118,6 +136,14 @@ void SubframePredictPeaks::setRefineKiUp()
     connect(
         gGui->sideBar(), &SideBar::subframeChanged, this,
         &SubframePredictPeaks::setRefinerParameters);
+    connect(
+        _set_initial_ki, &QCheckBox::stateChanged, this, &SubframePredictPeaks::toggleUnsafeWidgets);
+    connect(
+        _beam_offset_x, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged), this,
+        &SubframePredictPeaks::adjustDirectBeam);
+    connect(
+        _beam_offset_y, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged), this,
+        &SubframePredictPeaks::adjustDirectBeam);
 
     _left_layout->addWidget(ki_box);
 }
@@ -469,6 +495,28 @@ void SubframePredictPeaks::refreshPeakCombo()
     _found_peaks_combo->blockSignals(false);
 }
 
+void SubframePredictPeaks::adjustDirectBeam()
+{
+    if (_old_direct_beam_events.size() == 0)
+        _old_direct_beam_events = _direct_beam_events;
+
+    for (std::size_t i = 0; i < _direct_beam_events.size(); ++i) {
+        _direct_beam_events[i].px = _old_direct_beam_events[i].px - _beam_offset_x->value();
+        _direct_beam_events[i].py = _old_direct_beam_events[i].py - _beam_offset_y->value();
+    }
+    refreshPeakTable();
+}
+
+void SubframePredictPeaks::setInitialKi(std::vector<nsx::InstrumentState>& states)
+{
+    for (std::size_t i = 0; i < states.size(); ++i) {
+        auto detector_position =
+            nsx::DirectVector(_direct_beam_events[i].px, _direct_beam_events[i].py, i);
+        nsx::ReciprocalVector q_position = states[i].sampleQ(detector_position);
+        states[i].ni = q_position.rowVector() * states[i].wavelength;
+    }
+}
+
 void SubframePredictPeaks::refineKi()
 {
     gGui->setReady(false);
@@ -484,9 +532,11 @@ void SubframePredictPeaks::refineKi()
     nsx::RefinerParameters tmp_params = *params;
     setRefinerParameters();
 
+    if (_set_initial_ki->isChecked())
+        setInitialKi(states);
+
     std::vector<nsx::DetectorEvent> old_beam =
         nsx::algo::getDirectBeamEvents(states, *detector);
-    _detector_widget->scene()->linkOldDirectBeamPositions(old_beam);
     refreshPeakVisual();
 
     params->refine_ki = true;
@@ -507,6 +557,8 @@ void SubframePredictPeaks::refineKi()
     expt->removeBatchCells();
     for (auto* peak : peaks->getPeakList()) // Assign original unit cell to all peaks
         peak->setUnitCell(cell);
+
+    _old_direct_beam_events = _direct_beam_events;
 
     gGui->setReady(true);
 }
@@ -563,15 +615,14 @@ void SubframePredictPeaks::showDirectBeamEvents()
         auto data_name = _detector_widget->dataCombo()->currentText();
         const auto data = expt->getData(data_name.toStdString());
 
-        std::vector<nsx::DetectorEvent> direct_beam_events;
+        _direct_beam_events.clear();
         const auto& states = data->instrumentStates();
         auto* detector = data->diffractometer()->detector();
         std::vector<nsx::DetectorEvent> events = nsx::algo::getDirectBeamEvents(states, *detector);
 
         for (auto&& event : events)
-            direct_beam_events.push_back(event);
+            _direct_beam_events.push_back(event);
 
-        _detector_widget->scene()->linkDirectBeamPositions(direct_beam_events);
     } else {
         _detector_widget->scene()->showDirectBeam(false);
     }
@@ -708,6 +759,13 @@ void SubframePredictPeaks::toggleUnsafeWidgets()
     if (!_kabsch->isChecked()) {
         _sigma_d->setEnabled(false);
         _sigma_m->setEnabled(false);
+    }
+
+    _beam_offset_x->setEnabled(false);
+    _beam_offset_y->setEnabled(false);
+    if (_set_initial_ki->isChecked()) {
+        _beam_offset_x->setEnabled(true);
+        _beam_offset_y->setEnabled(true);
     }
 }
 

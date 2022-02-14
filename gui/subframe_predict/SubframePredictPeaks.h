@@ -16,6 +16,8 @@
 #define NSX_GUI_SUBFRAME_PREDICT_SUBFRAMEPREDICTPEAKS_H
 
 #include "core/algo/Refiner.h"
+#include "core/data/DataTypes.h"
+#include "core/detector/DetectorEvent.h"
 #include "core/shape/PeakCollection.h"
 #include "gui/items/PeakCollectionItem.h"
 #include "gui/models/PeakCollectionModel.h"
@@ -30,6 +32,7 @@
 #include <QTableWidget>
 #include <QVBoxLayout>
 #include <QWidget>
+#include <qcheckbox.h>
 #include <qcombobox.h>
 #include <qspinbox.h>
 
@@ -97,6 +100,10 @@ class SubframePredictPeaks : public QWidget {
     void setShapeCollectionParameters();
     //! Refresh the peak combo
     void refreshPeakCombo();
+    //! Adjust position of the visualised direct beam when spin box is changed
+    void adjustDirectBeam();
+    //! Allow the user to manual input the initial direct beam position
+    void setInitialKi(std::vector<nsx::InstrumentState>& states);
     //! Refine the incident wavevector
     void refineKi();
     //! Refresh the found peaks list
@@ -132,10 +139,18 @@ class SubframePredictPeaks : public QWidget {
     bool _shapes_assigned;
     //! Shape collection paramters
     std::shared_ptr<nsx::ShapeCollectionParameters> _shape_params;
+    //! Saved direct beam positions
+    std::vector<nsx::DetectorEvent> _direct_beam_events;
+    //! Current direct beam positions
+    std::vector<nsx::DetectorEvent> _old_direct_beam_events;
+
 
     QVBoxLayout* _left_layout;
     QSplitter* _right_element;
 
+    QCheckBox* _set_initial_ki;
+    QSpinBox* _beam_offset_x;
+    QSpinBox* _beam_offset_y;
     QSpinBox* _n_batches_spin;
     QSpinBox* _max_iter_spin;
     QComboBox* _residual_combo;

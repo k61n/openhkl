@@ -140,12 +140,12 @@ void DetectorScene::link3rdPartyPeaks(nsx::PeakCenterDataSet* pcd)
     drawPeakitems();
 }
 
-void DetectorScene::linkDirectBeamPositions(const std::vector<nsx::DetectorEvent>& events)
+void DetectorScene::linkDirectBeamPositions(std::vector<nsx::DetectorEvent>* events)
 {
     _direct_beam_events = events;
 }
 
-void DetectorScene::linkOldDirectBeamPositions(const std::vector<nsx::DetectorEvent>& events)
+void DetectorScene::linkOldDirectBeamPositions(std::vector<nsx::DetectorEvent>* events)
 {
     _old_direct_beam_events = events;
 }
@@ -197,7 +197,7 @@ void DetectorScene::drawPeakitems()
 
 void DetectorScene::drawDirectBeamPositions()
 {
-    for (auto&& event : _direct_beam_events) {
+    for (auto&& event : *_direct_beam_events) {
         double upper = double(_currentFrameIndex) + 0.01;
         double lower = double(_currentFrameIndex) - 0.01;
         if (event.frame < upper && event.frame > lower) {
@@ -215,7 +215,7 @@ void DetectorScene::drawDirectBeamPositions()
         }
     }
 
-    for (auto&& event : _old_direct_beam_events) {
+    for (auto&& event : *_old_direct_beam_events) {
         double upper = double(_currentFrameIndex) + 0.01;
         double lower = double(_currentFrameIndex) - 0.01;
         if (event.frame < upper && event.frame > lower) {
