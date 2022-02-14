@@ -15,6 +15,7 @@
 #ifndef NSX_GUI_SUBFRAME_PREDICT_SUBFRAMEPREDICTPEAKS_H
 #define NSX_GUI_SUBFRAME_PREDICT_SUBFRAMEPREDICTPEAKS_H
 
+#include "core/algo/Refiner.h"
 #include "core/shape/PeakCollection.h"
 #include "gui/items/PeakCollectionItem.h"
 #include "gui/models/PeakCollectionModel.h"
@@ -29,13 +30,14 @@
 #include <QTableWidget>
 #include <QVBoxLayout>
 #include <QWidget>
+#include <qcombobox.h>
+#include <qspinbox.h>
 
 class DetectorWidget;
 class LinkedComboBox;
 class PeakItemGraphic;
 class PeakTableView;
 class PeakViewWidget;
-class Spoiler;
 class SafeSpinBox;
 class SafeDoubleSpinBox;
 
@@ -56,7 +58,9 @@ class SubframePredictPeaks : public QWidget {
     DetectorWidget* detectorWidget();
 
  private:
-    //! Set the parameters values up
+    //! Set the incident wavevector refinement up
+    void setRefineKiUp();
+    //! Set the parameters up
     void setParametersUp();
     //! Set the shape collection construction update
     void setShapeCollectionUp();
@@ -79,9 +83,13 @@ class SubframePredictPeaks : public QWidget {
     void updateUnitCellList();
     //! Update the peak list
     void updateDatasetList();
-    //! Get the parameters of the indexer
+    //! Get refiner parameters
+    void grabRefinerParameters();
+    //! Set refiner parameters
+    void setRefinerParameters();
+    //! Get prediction parameters
     void grabPredictorParameters();
-    //! Set the parameters of the indexer
+    //! Set prediction parameters
     void setPredictorParameters();
     //! Get shape collection parameters
     void grabShapeCollectionParameters();
@@ -128,16 +136,16 @@ class SubframePredictPeaks : public QWidget {
     QVBoxLayout* _left_layout;
     QSplitter* _right_element;
 
-    Spoiler* _para_box;
-    Spoiler* _shapes_box;
-    Spoiler* _preview_box;
+    QSpinBox* _n_batches_spin;
+    QSpinBox* _max_iter_spin;
+    QComboBox* _residual_combo;
+    QCheckBox* _direct_beam;
+    QPushButton* _refine_ki_button;
 
     LinkedComboBox* _cell_combo;
     QComboBox* _integrator;
     SafeDoubleSpinBox* _d_min;
     SafeDoubleSpinBox* _d_max;
-    QCheckBox* _direct_beam;
-    QPushButton* _refine_ki_button;
 
     QPushButton* _save_button;
     QPushButton* _predict_button;
@@ -166,6 +174,11 @@ class SubframePredictPeaks : public QWidget {
     SafeSpinBox* _min_neighbours;
     QComboBox* _interpolation_combo;
     QPushButton* _assign_peak_shapes;
+
+    // Convert enum class ResidualType to a string
+    const std::map<std::string, nsx::ResidualType> _residual_strings{
+        {"Reciprocal space", nsx::ResidualType::QSpace},
+        {"Real space", nsx::ResidualType::RealSpace}};
 };
 
 #endif // NSX_GUI_SUBFRAME_PREDICT_SUBFRAMEPREDICTPEAKS_H

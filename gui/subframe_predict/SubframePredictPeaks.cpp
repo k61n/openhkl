@@ -56,6 +56,7 @@
 #include <QScrollBar>
 #include <QSpacerItem>
 #include <QTableWidgetItem>
+#include <qnamespace.h>
 
 SubframePredictPeaks::SubframePredictPeaks()
     : QWidget()
@@ -70,6 +71,7 @@ SubframePredictPeaks::SubframePredictPeaks()
 
     _left_layout = new QVBoxLayout();
 
+    setRefineKiUp();
     setParametersUp();
     setShapeCollectionUp();
     setPreviewUp();
@@ -87,22 +89,48 @@ SubframePredictPeaks::SubframePredictPeaks()
     _shape_params = std::make_shared<nsx::ShapeCollectionParameters>();
 }
 
+void SubframePredictPeaks::setRefineKiUp()
+{
+    Spoiler* ki_box = new Spoiler("Refine direct beam position");
+    GridFiller f(ki_box, true);
+
+    _n_batches_spin = f.addSpinBox(
+        "Number of batches", "Number of batches for refining incident wavevector");
+    _max_iter_spin = f.addSpinBox(
+            "Maximum iterations", "Maximum number of iterations for least squares minimisation");
+    _residual_combo = f.addCombo("Residual type", "Residual type for refinement");
+    _direct_beam = f.addCheckBox(
+        "Show direct beam", "Show position of direct beam computed from instrument states", 1);
+    _refine_ki_button =
+        f.addButton("Refine incident wavevector", "Refine the position of the  direct beam");
+
+    for (const auto& [key, val] : _residual_strings)
+        _residual_combo->addItem(QString::fromStdString(key));
+
+    _direct_beam->setChecked(true);
+    _n_batches_spin->setValue(10);
+    _max_iter_spin->setMaximum(1000000);
+    _max_iter_spin->setValue(1000);
+
+    connect(
+        _direct_beam, &QCheckBox::stateChanged, this, &SubframePredictPeaks::showDirectBeamEvents);
+    connect(_refine_ki_button, &QPushButton::clicked, this, &SubframePredictPeaks::refineKi);
+    connect(
+        gGui->sideBar(), &SideBar::subframeChanged, this,
+        &SubframePredictPeaks::setRefinerParameters);
+
+    _left_layout->addWidget(ki_box);
+}
+
 void SubframePredictPeaks::setParametersUp()
 {
-    _para_box = new Spoiler("Predict peaks");
-    GridFiller f(_para_box, true);
+    Spoiler* para_box = new Spoiler("Predict peaks");
+    GridFiller f(para_box, true);
 
     _exp_combo = f.addLinkedCombo(ComboType::Experiment, "Experiment");
     _cell_combo = f.addLinkedCombo(ComboType::UnitCell, "Unit cell:");
-    _found_peaks_combo =
-        f.addLinkedCombo(ComboType::PeakCollection, "Found peak collection",
-                         "Found peaks from which to construct shape collection");
     _d_min = f.addDoubleSpinBox("d min:", QString::fromUtf8("(\u212B) - minimum d (Bragg's law)"));
     _d_max = f.addDoubleSpinBox("d max:", QString::fromUtf8("(\u212B) - maximum d (Bragg's law)"));
-    _direct_beam = f.addCheckBox(
-        "Show direct beam", "Show position of direct beam computed from instrument states", 1);
-    _refine_ki_button = f.addButton(
-        "Refine incident wavevector", "Refine the position of the  direct beam");
     _predict_button = f.addButton("Predict");
     _predict_button->setEnabled(false);
 
@@ -125,18 +153,18 @@ void SubframePredictPeaks::setParametersUp()
     connect(
         _exp_combo, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this,
         &SubframePredictPeaks::refreshPeakCombo);
-    connect(
-        _direct_beam, &QCheckBox::stateChanged, this, &SubframePredictPeaks::showDirectBeamEvents);
-    connect(_refine_ki_button, &QPushButton::clicked, this, &SubframePredictPeaks::refineKi);
 
-    _left_layout->addWidget(_para_box);
+    _left_layout->addWidget(para_box);
 }
 
 void SubframePredictPeaks::setShapeCollectionUp()
 {
-    _shapes_box = new Spoiler("Generate shapes");
-    GridFiller f(_shapes_box, true);
+    Spoiler* shapes_box = new Spoiler("Generate shapes");
+    GridFiller f(shapes_box, true);
 
+    _found_peaks_combo = f.addLinkedCombo(
+        ComboType::PeakCollection, "Found peak collection",
+        "Found peaks from which to construct shape collection");
     _nx = f.addSpinBox("histogram bins x", "Number of bins in x direction");
     _ny = f.addSpinBox("histogram bins y", "Number of bins in x direction");
     _nz = f.addSpinBox("histogram bins f", "Number of bins in frames direction");
@@ -207,21 +235,21 @@ void SubframePredictPeaks::setShapeCollectionUp()
         _assign_peak_shapes, &QPushButton::clicked, this, &SubframePredictPeaks::assignPeakShapes);
     connect(_kabsch, &QCheckBox::clicked, this, &SubframePredictPeaks::toggleUnsafeWidgets);
 
-    _left_layout->addWidget(_shapes_box);
+    _left_layout->addWidget(shapes_box);
     grabShapeCollectionParameters();
 }
 
 void SubframePredictPeaks::setPreviewUp()
 {
-    _preview_box = new Spoiler("Show/hide peaks");
+    Spoiler* preview_box = new Spoiler("Show/hide peaks");
     _peak_view_widget = new PeakViewWidget("Valid peaks", "Invalid peaks");
 
     connect(
         _peak_view_widget, &PeakViewWidget::settingsChanged, this,
         &SubframePredictPeaks::refreshPeakVisual);
 
-    _preview_box->setContentLayout(*_peak_view_widget);
-    _left_layout->addWidget(_preview_box);
+    preview_box->setContentLayout(*_peak_view_widget);
+    _left_layout->addWidget(preview_box);
 }
 
 void SubframePredictPeaks::setSaveUp()
@@ -281,10 +309,17 @@ void SubframePredictPeaks::setExperiments()
         updateUnitCellList();
         updateDatasetList();
         refreshPeakCombo();
+        grabRefinerParameters();
         grabPredictorParameters();
         grabShapeCollectionParameters();
         refreshPeakTable();
         computeSigmas();
+        const auto data = _detector_widget->currentData();
+        if (data) {
+            _n_batches_spin->setMaximum(data->nFrames());
+            _n_batches_spin->setValue(data->nFrames());
+        }
+
     }
 
     _exp_combo->blockSignals(false);
@@ -339,6 +374,36 @@ void SubframePredictPeaks::computeSigmas()
         _peak_collection.computeSigmas();
         _sigma_m->setValue(_peak_collection.sigmaM());
         _sigma_d->setValue(_peak_collection.sigmaD());
+    }
+}
+
+void SubframePredictPeaks::grabRefinerParameters()
+{
+    auto* params =
+        gSession->experimentAt(_exp_combo->currentIndex())->experiment()->refiner()->parameters();
+
+    _n_batches_spin->setValue(params->nbatches);
+    _max_iter_spin->setValue(params->max_iter);
+    for (const auto& [key, val] : _residual_strings) {
+        if (val == params->residual_type) {
+            _residual_combo->setCurrentText(QString::fromStdString(key));
+            break;
+        }
+    }
+}
+
+void SubframePredictPeaks::setRefinerParameters()
+{
+    if (_exp_combo->count() == 0)
+        return;
+    auto* params =
+        gSession->experimentAt(_exp_combo->currentIndex())->experiment()->refiner()->parameters();
+
+    params->nbatches = _n_batches_spin->value();
+    params->max_iter = _max_iter_spin->value();
+    for (const auto& [key, val] : _residual_strings) {
+        if (key == _residual_combo->currentText().toStdString())
+            params->residual_type = val;
     }
 }
 
@@ -417,6 +482,7 @@ void SubframePredictPeaks::refineKi()
     auto cell = expt->getSptrUnitCell(_cell_combo->currentText().toStdString());
 
     nsx::RefinerParameters tmp_params = *params;
+    setRefinerParameters();
 
     std::vector<nsx::DetectorEvent> old_beam =
         nsx::algo::getDirectBeamEvents(states, *detector);
@@ -428,8 +494,6 @@ void SubframePredictPeaks::refineKi()
     params->refine_detector_offset = false;
     params->refine_sample_position = false;
     params->refine_sample_orientation = false;
-    params->nbatches = data->nFrames();
-    params->residual_type = nsx::ResidualType::RealSpace;
 
     refiner->makeBatches(states, peaks->getPeakList(), cell);
     bool success = refiner->refine();
