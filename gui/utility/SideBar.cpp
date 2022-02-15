@@ -33,8 +33,6 @@
 #include <QPainter>
 #include <QSignalBlocker>
 
-#define action_height 100
-
 // TODO: find a better place for this
 // Icon attributions:
 // home.svg: Home by Bhuvan from the Noun Project
@@ -89,47 +87,47 @@ SideBar::SideBar(QWidget* parent) : QWidget(parent), mCheckedAction(nullptr), mO
 
 void SideBar::paintEvent(QPaintEvent* event)
 {
-    QPainter p(this);
+    QPainter painter(this);
 
-    QFont fontText(p.font());
+    QFont fontText(painter.font());
     fontText.setFamily("Helvetica Neue");
-    p.setFont(fontText);
+    painter.setFont(fontText);
 
     int action_y = 0;
-    // p.fillRect(rect(), QColor(100, 100, 100));
+    // painter.fillRect(rect(), QColor(100, 100, 100));
     for (auto action : mActions) {
-        QRect actionRect(0, action_y, event->rect().width(), action_height);
+        QRect actionRect(0, action_y, event->rect().width(), event->rect().width());
 
         if (action->isChecked())
-            p.fillRect(actionRect, QColor(35, 35, 35));
+            painter.fillRect(actionRect, QColor(35, 35, 35));
 
         if (action == mOverAction)
-            p.fillRect(actionRect, QColor(150, 150, 150));
+            painter.fillRect(actionRect, QColor(150, 150, 150));
 
         if (gGui->isDark()) // looks like we have a dark theme
-            p.setPen(Qt::white);
+            painter.setPen(Qt::white);
         else
-            p.setPen(Qt::black);
+            painter.setPen(Qt::black);
 
-        QSize size = p.fontMetrics().size(Qt::TextSingleLine, action->text());
+        QSize size = painter.fontMetrics().size(Qt::TextSingleLine, action->text());
         QRect actionTextRect(
             QPoint(
                 actionRect.width() / 2 - size.width() / 2, actionRect.bottom() - size.height() - 5),
             size);
-        p.drawText(actionTextRect, Qt::AlignCenter, action->text());
+        painter.drawText(actionTextRect, Qt::AlignCenter, action->text());
 
         QRect actionIconRect(
             0, action_y + 10, actionRect.width(),
             actionRect.height() - 2 * actionTextRect.height() - 10);
         QIcon actionIcon(action->icon());
-        actionIcon.paint(&p, actionIconRect);
+        actionIcon.paint(&painter, actionIconRect);
 
         action_y += actionRect.height();
     }
 }
 QSize SideBar::minimumSizeHint() const
 {
-    return action_height * QSize(1, mActions.size());
+    return 100 * QSize(1, mActions.size());
 }
 
 void SideBar::addAction(QAction* action)
@@ -203,7 +201,7 @@ QAction* SideBar::actionAt(const QPoint& at)
 {
     int action_y = 0;
     for (auto action : mActions) {
-        QRect actionRect(0, action_y, rect().width(), action_height);
+        QRect actionRect(0, action_y, rect().width(), rect().width());
         if (actionRect.contains(at))
             return action;
         action_y += actionRect.height();
@@ -295,5 +293,3 @@ void SideBar::refreshAll()
     gGui->integrator->refreshAll();
     gGui->merger->refreshAll();
 }
-
-#undef action_height
