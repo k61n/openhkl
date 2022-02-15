@@ -11,7 +11,7 @@ target_include_directories(${lib}
     PRIVATE
     ${CMAKE_BINARY_DIR} # for manifest.h
     ${CMAKE_SOURCE_DIR}
-    ${Qt5Widgets_INCLUDE_DIRS}
+    ${Qt6Widgets_INCLUDE_DIRS}
     ${QCustomPlot_INCLUDE_DIR}
     )
 

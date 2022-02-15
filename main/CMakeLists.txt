@@ -13,10 +13,10 @@ target_include_directories(${app}
     ${CMAKE_BINARY_DIR} # for manifest.h
     ${CMAKE_SOURCE_DIR}
     ${XSection_INCLUDE_DIR}
-    ${Qt5Widgets_INCLUDE_DIRS}
+    ${Qt6Widgets_INCLUDE_DIRS}
     )
 
-target_link_libraries(${app} PRIVATE ${Qt5Widgets_LIBRARIES} nsxgui)
+target_link_libraries(${app} PRIVATE ${Qt6Widgets_LIBRARIES} nsxgui)
 
 if(WIN32)
     include(PackIFW)

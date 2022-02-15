@@ -150,10 +150,10 @@ message(STATUS "  libraries: ${OPENGL_LIBRARIES}")
 message(STATUS "  headers: ${OPENGL_INCLUDE_DIR}")
 
 if (APPLE)
-    find_package(Qt5 COMPONENTS Core Gui Widgets OpenGL PrintSupport REQUIRED
+    find_package(Qt6 COMPONENTS Core Gui Widgets OpenGL PrintSupport REQUIRED
         HINTS /opt/local/ /opt/local/lib /opt/local/include)
 else()
-    find_package(Qt5 COMPONENTS Core Gui Widgets OpenGL PrintSupport REQUIRED)
+    find_package(Qt6 COMPONENTS Core Gui Widgets OpenGL PrintSupport REQUIRED)
 endif()
 
 set(CMAKE_AUTOMOC ON)

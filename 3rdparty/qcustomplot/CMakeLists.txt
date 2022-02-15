@@ -23,6 +23,6 @@ endif()
 target_link_libraries(${library_name} ${Qt5Widgets_LIBRARIES})
 
 target_link_libraries(${library_name}
-    Qt5::Widgets
-    Qt5::PrintSupport
+    Qt6::Widgets
+    Qt6::PrintSupport
 )
