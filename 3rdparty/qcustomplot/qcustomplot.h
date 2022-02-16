@@ -23,6 +23,13 @@
 **          Version: 2.1.0                                                **
 ****************************************************************************/
 
+/*
+ * ZR 16/02/2022
+ *
+ * This is QCustomPlot 2.1.0 *patched* to be compatible with QT 6.2 LTS.
+ * Details at https://www.qcustomplot.com/index.php/support/forum/2380
+ */
+
 #ifndef QCUSTOMPLOT_H
 #define QCUSTOMPLOT_H
 
