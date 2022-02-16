@@ -26,6 +26,8 @@
 #include <QMessageBox>
 #include <QSettings>
 #include <QSpacerItem>
+#include <qboxlayout.h>
+#include <qnamespace.h>
 #include <qtablewidget.h>
 
 SubframeHome::SubframeHome()
@@ -59,8 +61,9 @@ void SubframeHome::_setLeftLayout(QHBoxLayout* main_layout)
 {
     QVBoxLayout* left = new QVBoxLayout;
     QHBoxLayout* left_top = new QHBoxLayout();
-    QVBoxLayout* left_bottom = new QVBoxLayout();
-    QString tooltip;
+    QHBoxLayout* left_tables = new QHBoxLayout();
+   
+    QString tooltip; 
 
     _new_exp = new QPushButton();
     _new_exp->setIcon(QIcon(":/images/create_new.svg"));
@@ -92,53 +95,36 @@ void SubframeHome::_setLeftLayout(QHBoxLayout* main_layout)
     QSpacerItem* spacer_bottom =
         new QSpacerItem(10, 15, QSizePolicy::Minimum, QSizePolicy::Expanding);
     left->addSpacerItem(spacer_bottom);
-  
 
 
-    /*
-     nsx::PeakCollection* pc = nullptr;
-    std::string current_pc = _peak_combo->currentText().toStdString();
-    if (current_pc.size() == 0)
-        return false;
-    pc = gSession->currentProject()->experiment()->getPeakCollection( current_pc );    
-    if (pc == nullptr)    
-        return false;  
-    if (pc->isIndexed()) {      
-        _pc_indexed->setCheckState(Qt::CheckState::Checked);       
-    } else _pc_indexed->setCheckState(Qt::CheckState::Unchecked);    
-    if ( pc->isIntegrated()) {
-       _pc_integrated->setCheckState(Qt::CheckState::Checked)  ;    
-    } else _pc_integrated->setCheckState(Qt::CheckState::Unchecked);    
-    */
- 
-    
+    _general_information_table = new QTableWidget(8,2);
+    _general_information_table->setEditTriggers(QAbstractItemView::NoEditTriggers);    
 
-    _peak_collections_information_table = new QTableWidget(2,5);
+    _general_information_table->setHorizontalHeaderLabels(QStringList 
+    {"Property","Value"});
+
+    _general_information_table->setItem(0, 0, new QTableWidgetItem("Experiment"));
+    _general_information_table->setItem(1, 0, new QTableWidgetItem("Diffractometer"));
+    _general_information_table->setItem(2, 0, new QTableWidgetItem("NFrames"));
+    _general_information_table->setItem(3, 0, new QTableWidgetItem("NRows"));
+    _general_information_table->setItem(4, 0, new QTableWidgetItem("NCols"));
+    _general_information_table->setItem(5, 0, new QTableWidgetItem("Wavelength"));
+    _general_information_table->setItem(6, 0, new QTableWidgetItem("Omega"));
+    _general_information_table->setItem(7, 0, new QTableWidgetItem("NPeakCollections"));
+    //_general_information_table->setItem(7, 0, new QTableWidgetItem("End Time"));    
+
+    _peak_collections_information_table = new QTableWidget(0,4);  
     _peak_collections_information_table->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    _peak_collections_information_table->setHorizontalHeaderLabels(QStringList 
+    {"Name","NPeaks","Indexed","Integrated"});    
 
-    _peak_collections_information_table->setItem(0, 0, new QTableWidgetItem("Name of PeakCollection"));
-    _peak_collections_information_table->setItem(0, 1, new QTableWidgetItem("Peaks"));
-    _peak_collections_information_table->setItem(0, 2, new QTableWidgetItem("Indexed"));
-    _peak_collections_information_table->setItem(0, 3, new QTableWidgetItem("Integration"));
-    _peak_collections_information_table->setItem(0, 4, new QTableWidgetItem("unit cells"));
-
-
-
-    _peaks_information_table = new QTableWidget(2,5);
-    _peaks_information_table->setEditTriggers(QAbstractItemView::NoEditTriggers);
-    _peaks_information_table->setItem(0, 0, new QTableWidgetItem("Peak"));
-    _peaks_information_table->setItem(0, 0, new QTableWidgetItem("Unit Cell"));
-
-    UpdatePeakInformationTable();
-
+    left_tables->addWidget(_general_information_table);    
+    left_tables->addWidget(_peak_collections_information_table);  
     
-    
-    left->addWidget(_peak_collections_information_table);  
-    left->addWidget(_peaks_information_table);  
+    UpdatePeakInformationTable(); 
 
-    connect(_peak_collections_information_table, &QTableWidget::itemClicked, this, &SubframeHome::UpdatePeakList);
-
-    main_layout->addLayout(left);
+    left->addLayout(left_tables);   
+    main_layout->addLayout(left);      
 }
 
 void SubframeHome::_setRightLayout(QHBoxLayout* main_layout)
@@ -353,99 +339,42 @@ void SubframeHome::toggleUnsafeWidgets()
 
 void SubframeHome::UpdatePeakInformationTable()
 {
+   
   
-  try{
-   // if (gSession->currentProject() == nullptr) return;
-   // if (gSession->currentProject()->experiment() == nullptr) return;
+  try{    
+    std::vector<std::string> pcs_names = gSession->currentProject()->experiment()->getCollectionNames();        
     
-    std::vector<std::string> pcs_names = gSession->currentProject()->experiment()->getCollectionNames();     
-    if (pcs_names.size() > 0){
+    if (!pcs_names.empty()){
         std::vector<std::string>::iterator it; 
         nsx::PeakCollection* pc;
-        auto b2c = [](bool a) { return a == false ? "No" : "Yes"; };
+        auto b2s = [](bool a) { return !a ? QString("No") : QString("Yes"); };
 
+        auto data = gSession->currentProject()->experiment()->getAllData().at(0);   
+       
+        _general_information_table->setItem(0, 1, new QTableWidgetItem(QString::fromStdString(data->metadata().key<std::string>("experiment"))));
+        _general_information_table->setItem(1, 1, new QTableWidgetItem(QString::fromStdString(data->metadata().key<std::string>("diffractometer"))));   
+        _general_information_table->setItem(2, 1, new QTableWidgetItem(QString::number(data->nFrames())));
+        _general_information_table->setItem(3, 1, new QTableWidgetItem(QString::number(data->nRows())));
+        _general_information_table->setItem(4, 1, new QTableWidgetItem(QString::number(data->nCols() )));
+        _general_information_table->setItem(5, 1, new QTableWidgetItem(QString::number(data->wavelength())));
+      //  _general_information_table->setItem(6, 1, new QTableWidgetItem(QString::number(data->metadata().key<double>("omega"))));   
+        _general_information_table->setItem(7, 1, new QTableWidgetItem(QString::number(pcs_names.size())));
+         
         for (it = pcs_names.begin(); it != pcs_names.end(); it++){
             pc = gSession->currentProject()->experiment()->getPeakCollection( *it );
-            short n = std::distance(pcs_names.begin(), it)+1;
+            short n = std::distance(pcs_names.begin(), it);
 
-            if (n >= _peak_collections_information_table->rowCount())
-            {
-                _peak_collections_information_table->insertRow(_peak_collections_information_table->rowCount());
-            }
-           
-         
+            if (n >= _peak_collections_information_table->rowCount())            
+                _peak_collections_information_table->insertRow(_peak_collections_information_table->rowCount());            
+
             _peak_collections_information_table->setItem(n, 0, new QTableWidgetItem(QString( (*it).c_str() )));
             _peak_collections_information_table->setItem(n, 1, new QTableWidgetItem(QString::number(pc->numberOfPeaks())));
-            _peak_collections_information_table->setItem(n, 2, new QTableWidgetItem(b2c(pc->isIndexed())));
-            _peak_collections_information_table->setItem(n, 3, new QTableWidgetItem(b2c(pc->isIntegrated())));
-            _peak_collections_information_table->setItem(n, 4, new QTableWidgetItem("unit cells"));   
-            
+            _peak_collections_information_table->setItem(n, 2, new QTableWidgetItem(b2s(pc->isIndexed())));
+            _peak_collections_information_table->setItem(n, 3, new QTableWidgetItem(b2s(pc->isIntegrated())));         
         }  
     }
+  }  catch (const std::out_of_range& e){ // happens at programm start at least once
   } catch (const std::exception& e){
-   // QMessageBox::critical(this, "Error", QString(e.what()));
-  }
-}
-
-void SubframeHome::UpdatePeakList()
-{
-    
-    try {
-
-        _peaks_information_table->setItem(0, 0, new QTableWidgetItem(QString("Is Enabled")));
-        _peaks_information_table->setItem(0, 1, new QTableWidgetItem(QString("Is Predicted")));
-        _peaks_information_table->setItem(0, 2, new QTableWidgetItem(QString("Was Caught")));
-        _peaks_information_table->setItem(0, 3, new QTableWidgetItem(QString("Vol")));
-        _peaks_information_table->setItem(0, 4, new QTableWidgetItem(QString("unit cell")));
-         
-
-        int row   = _peak_collections_information_table->currentRow();
-        QString pc_name = _peak_collections_information_table->item(row,0)->text();
-        auto pc = gSession->currentProject()->experiment()->getPeakCollection(pc_name.toStdString());
-       
-        //if (pc == nullptr) return;
-
-        auto peak_list = pc->getPeakList();
-      
-        //if (peak_list == nullptr) return;
-        auto b2s = [](bool a) { return a == false ? QString("No") : QString("Yes"); };
-        std::vector<nsx::Peak3D>::iterator it; 
-        for (auto it = peak_list.begin(); it != peak_list.end(); it++){
-            short n = std::distance(peak_list.begin(), it)+1;
-            //auto peak = *it;
-
-            if (n >= _peaks_information_table->rowCount())
-            {
-                _peaks_information_table->insertRow(_peaks_information_table->rowCount());
-            }
-            
-            _peaks_information_table->setItem(n, 0, new QTableWidgetItem( b2s((*it)->enabled()) ));
-            _peaks_information_table->setItem(n, 1, new QTableWidgetItem( b2s((*it)->predicted()) ));
-            _peaks_information_table->setItem(n, 2, new QTableWidgetItem( b2s((*it)->caughtByFilter()) ));
-            _peaks_information_table->setItem(n, 3, new QTableWidgetItem( QString::number((*it)->shape().volume() )));
-            
-           // std::cout << n << std::endl;
-
-
-            const nsx::UnitCell* unit_cell = nullptr;
-            unit_cell = (*it)->unitCell();
-            if (unit_cell == nullptr)
-            {
-                _peaks_information_table->setItem(n, 4, new QTableWidgetItem( QString("None") ));
-            }
-            else 
-            {
-                
-                _peaks_information_table->setItem(n, 4, new QTableWidgetItem( QString::fromStdString((*it)->unitCell()->bravaisTypeSymbol()) ));
-            }
-            
-           // auto e = (*it)->unitCell()->character().a;
-            
-        }
-    }    catch (const std::exception& e){
-        QMessageBox::critical(this, "Error", QString(e.what()));
-    }
-
-     
-
+    QMessageBox::critical(this, "Error", QString(e.what()));
+  }  
 }

@@ -88,15 +88,6 @@ void SubframeAutoIndexer::setInputUp()
     _data_combo = f.addLinkedCombo(ComboType::DataSet, "Data set");
     _peak_combo = f.addLinkedCombo(ComboType::FoundPeaks, "Peak collection");
 
-    _pc_indexed = f.addCheckBox("Is Indexed",5);
-    _pc_integrated = f.addCheckBox("Is Integrated",5);
-
-    _pc_indexed->setAttribute(Qt::WA_TransparentForMouseEvents, true);
-    _pc_indexed->setFocusPolicy(true ? Qt::NoFocus : Qt::StrongFocus);
-
-    _pc_integrated->setAttribute(Qt::WA_TransparentForMouseEvents, true);
-    _pc_integrated->setFocusPolicy(true ? Qt::NoFocus : Qt::StrongFocus);
-
     connect(
         _exp_combo, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this,
         &SubframeAutoIndexer::updatePeakList);
@@ -106,8 +97,6 @@ void SubframeAutoIndexer::setInputUp()
         &SubframeAutoIndexer::refreshPeakTable);
 
     _left_layout->addWidget(input_box);
-
-   showPeakCollectionState();    
 }
 
 void SubframeAutoIndexer::setParametersUp()
@@ -131,7 +120,7 @@ void SubframeAutoIndexer::setParametersUp()
 
     _niggli = f.addDoubleSpinBox("Niggli tol.:", "Tolerance for Niggli reduction");
 
-    _only_niggli = f.addCheckBox("Find Niggli cell only", 1);
+     _only_niggli = f.addCheckBox("Find Niggli cell only", 1);
 
     _max_cell_dimension = f.addDoubleSpinBox(
         "Max. Cell dim.:", QString::fromUtf8("(\u212B) - maximum length of any lattice vector"));
@@ -327,7 +316,6 @@ void SubframeAutoIndexer::updatePeakList()
         _solutions.clear();
         _selected_unit_cell = nullptr;
     }
-    showPeakCollectionState();
     _peak_combo->blockSignals(false);    
 }
 
@@ -339,7 +327,6 @@ void SubframeAutoIndexer::refreshPeakTable()
     _peak_collection_item.setPeakCollection(&_peak_collection);
     _peak_collection_model.setRoot(&_peak_collection_item);
     _peak_table->resizeColumnsToContents();
-    showPeakCollectionState();
 }
 
 void SubframeAutoIndexer::grabIndexerParameters()
@@ -580,23 +567,4 @@ void SubframeAutoIndexer::toggleUnsafeWidgets()
         // _save_button->setEnabled(false);        
     }
     
-}
-
-bool SubframeAutoIndexer::showPeakCollectionState()
-{  
-    nsx::PeakCollection* pc = nullptr;
-    std::string current_pc = _peak_combo->currentText().toStdString();
-    if (current_pc.size() == 0)
-        return false;
-    pc = gSession->currentProject()->experiment()->getPeakCollection( current_pc );    
-    if (pc == nullptr)    
-        return false;  
-    if (pc->isIndexed()) {      
-        _pc_indexed->setCheckState(Qt::CheckState::Checked);       
-    } else _pc_indexed->setCheckState(Qt::CheckState::Unchecked);    
-    if ( pc->isIntegrated()) {
-       _pc_integrated->setCheckState(Qt::CheckState::Checked)  ;    
-    } else _pc_integrated->setCheckState(Qt::CheckState::Unchecked);    
-
-   return true;
 }
