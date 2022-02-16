@@ -98,8 +98,14 @@ void SideBar::paintEvent(QPaintEvent* event)
     for (auto action : mActions) {
         QRect actionRect(0, action_y, event->rect().width(), event->rect().width());
 
-        if (action->isChecked())
-            painter.fillRect(actionRect, QColor(35, 35, 35));
+        if (action->isChecked()) {
+            QColor fill_color;
+            if (gGui->isDark())
+                fill_color = QColor(35, 35, 35);
+            else
+                fill_color = QColor(200, 200, 200);
+            painter.fillRect(actionRect, fill_color);
+        }
 
         if (action == mOverAction)
             painter.fillRect(actionRect, QColor(150, 150, 150));
