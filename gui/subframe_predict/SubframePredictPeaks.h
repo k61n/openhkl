@@ -108,10 +108,6 @@ class SubframePredictPeaks : public QWidget {
     //! Compute beam divergence and mosaicity sigmas
     void computeSigmas();
 
-    //! Read indexed/integrated booleans from current PekColletion and Update GUI
-    bool showPeakCollectionState();
-
-
     //! The model for the found peaks
     nsx::PeakCollection _peak_collection;
     //! The temporary collection
@@ -169,10 +165,7 @@ class SubframePredictPeaks : public QWidget {
     SafeDoubleSpinBox* _radius_frames;
     SafeSpinBox* _min_neighbours;
     QComboBox* _interpolation_combo;
-    QPushButton* _assign_peak_shapes;
-
-    QCheckBox* _pc_indexed;
-    QCheckBox* _pc_integrated;
+    QPushButton* _assign_peak_shapes; 
 };
 
 #endif // NSX_GUI_SUBFRAME_PREDICT_SUBFRAMEPREDICTPEAKS_H

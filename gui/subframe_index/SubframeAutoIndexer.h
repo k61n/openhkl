@@ -79,8 +79,6 @@ class SubframeAutoIndexer : public QWidget {
     void acceptSolution();
     //! Disable widgets that are unsafe without relevant data
     void toggleUnsafeWidgets();
-    //! Read indexed/integrated booleans from current PekColletion and Update GUI
-    bool showPeakCollectionState();
 
     //! The model for the indexing peaks
     nsx::PeakCollection _peak_collection;
@@ -127,9 +125,6 @@ class SubframeAutoIndexer : public QWidget {
 
     PeakTableView* _peak_table;
     UnitCellTableView* _solution_table;
-
-    QCheckBox* _pc_indexed;
-    QCheckBox* _pc_integrated;
 };
 
 #endif // NSX_GUI_SUBFRAME_INDEX_SUBFRAMEAUTOINDEXER_H

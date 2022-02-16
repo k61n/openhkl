@@ -88,10 +88,8 @@ SubframePredictPeaks::SubframePredictPeaks()
 }
 
 void SubframePredictPeaks::updatePeakList()
-{
-   
+{   
     _found_peaks_combo->blockSignals(false);
-    showPeakCollectionState();
 }
 
 void SubframePredictPeaks::setParametersUp()
@@ -119,15 +117,6 @@ void SubframePredictPeaks::setParametersUp()
     _d_max->setMaximum(100);
     _d_max->setDecimals(2);
 
-    _pc_indexed = f.addCheckBox("Is Indexed",5);
-    _pc_integrated = f.addCheckBox("Is Integrated",5);
-
-    _pc_indexed->setAttribute(Qt::WA_TransparentForMouseEvents, true);
-    _pc_indexed->setFocusPolicy(true ? Qt::NoFocus : Qt::StrongFocus);
-
-    _pc_integrated->setAttribute(Qt::WA_TransparentForMouseEvents, true);
-    _pc_integrated->setFocusPolicy(true ? Qt::NoFocus : Qt::StrongFocus);
-
     connect(
         _exp_combo, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this,
         &SubframePredictPeaks::updateUnitCellList);
@@ -149,8 +138,6 @@ void SubframePredictPeaks::setParametersUp()
         &SubframePredictPeaks::updatePeakList);
 
     _left_layout->addWidget(_para_box);
-
-    showPeakCollectionState();
 }
 
 void SubframePredictPeaks::setShapeCollectionUp()
@@ -691,26 +678,4 @@ void SubframePredictPeaks::toggleUnsafeWidgets()
 DetectorWidget* SubframePredictPeaks::detectorWidget()
 {
     return _detector_widget;
-}
-
-
-bool SubframePredictPeaks::showPeakCollectionState()
-{  
-    if (_found_peaks_combo->currentIndex() == -1) _found_peaks_combo->setCurrentIndex(0);
-    nsx::PeakCollection* pc = nullptr;
-    std::string current_pc = _found_peaks_combo->currentText().toStdString();
-    
-    if (current_pc.size() == 0)
-        return false;
-    pc = gSession->currentProject()->experiment()->getPeakCollection( current_pc );    
-    if (pc == nullptr)    
-        return false;  
-    if (pc->isIndexed()) {      
-        _pc_indexed->setCheckState(Qt::CheckState::Checked);       
-    } else _pc_indexed->setCheckState(Qt::CheckState::Unchecked);    
-    if ( pc->isIntegrated()) {
-       _pc_integrated->setCheckState(Qt::CheckState::Checked)  ;    
-    } else _pc_integrated->setCheckState(Qt::CheckState::Unchecked);    
- 
-    return true;
 }

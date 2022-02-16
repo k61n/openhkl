@@ -103,9 +103,6 @@ class SubframeIntegrate : public QWidget {
     //! Disable unsafe widgets if no data loaded
     void toggleUnsafeWidgets();
 
-    //! Read indexed/integrated booleans from current PekColletion and Update GUI
-    bool showPeakCollectionState();
-
     //! The loaded data list
     std::vector<nsx::sptrDataSet> _data_list;
 
@@ -153,9 +150,6 @@ class SubframeIntegrate : public QWidget {
     PeakCollectionModel _peak_collection_model;
 
     std::shared_ptr<nsx::ShapeCollectionParameters> _shape_params;
-
-    QCheckBox* _pc_indexed;
-    QCheckBox* _pc_integrated;
 
     const std::map<std::string, nsx::IntegratorType> _integrator_strings{
         {"Pixel sum integrator", nsx::IntegratorType::PixelSum},

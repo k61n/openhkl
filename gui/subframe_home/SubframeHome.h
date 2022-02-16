@@ -70,7 +70,7 @@ class SubframeHome : public QWidget {
 
     void UpdatePeakInformationTable();
 
-    void UpdatePeakList();
+   // void UpdatePeakList();
 
  private:
     QPushButton* _new_exp;
@@ -84,8 +84,10 @@ class SubframeHome : public QWidget {
     QList<QStringList> _last_imports;
     QListWidget* _last_import_widget;
 
+    
+    QTableWidget* _general_information_table;
     QTableWidget* _peak_collections_information_table;
-    QTableWidget* _peaks_information_table;
+   
 };
 
 #endif // NSX_GUI_SUBFRAME_HOME_SUBFRAMEHOME_H
