@@ -127,7 +127,7 @@ void SideBar::paintEvent(QPaintEvent* event)
 }
 QSize SideBar::minimumSizeHint() const
 {
-    return 100 * QSize(1, mActions.size());
+    return _min_icon_height * QSize(1, mActions.size());
 }
 
 void SideBar::addAction(QAction* action)

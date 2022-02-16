@@ -55,6 +55,8 @@ class SideBar : public QWidget {
 
     QAction* mCheckedAction;
     QAction* mOverAction;
+
+    const unsigned int _min_icon_height = 80;
 };
 
 #endif // NSX_GUI_UTILITY_SIDEBAR_H
