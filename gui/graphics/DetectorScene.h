@@ -59,7 +59,8 @@ class DetectorScene : public QGraphicsScene {
         ELLIPSE_MASK = 3,
         LINE = 4,
         HORIZONTALSLICE = 5,
-        VERTICALSLICE = 6
+        VERTICALSLICE = 6,
+        DRAG_DROP = 7
     };
 
     //! Which mode is the cursor diplaying
@@ -137,6 +138,14 @@ class DetectorScene : public QGraphicsScene {
     void showDirectBeam(bool show);
     //! Get the current intensity
     int intensity() { return _currentIntensity; };
+    //! Set up the direct beam crosshair
+    void addBeamSetter(int size, int linewidth);
+    //! Remove the beam crosshair from the scene
+    void removeBeamSetter();
+    //! Get the beam setter crosshairs
+    QGraphicsPathItem* beamSetter() const { return _beam_pos_setter; };
+    //! Return the interaction mode
+    int mode() const { return static_cast<int>(_mode); };
 
  protected:
     void mousePressEvent(QGraphicsSceneMouseEvent* event);
@@ -193,6 +202,8 @@ class DetectorScene : public QGraphicsScene {
     QGraphicsRectItem* _selectionRect;
     //! Stack of zoom
     QStack<QRect> _zoomStack;
+    //! item being dragged
+    QGraphicsPathItem* _current_dragged_item;
 
     //! The current peak model
     PeakCollectionModel* _peak_model_1;
@@ -254,6 +265,8 @@ class DetectorScene : public QGraphicsScene {
     QColor _old_beam_color;
     //! Size of direct beam
     double _beam_size;
+    //! Crosshair for setting direct beam
+    QGraphicsPathItem* _beam_pos_setter;
 
 
     nsx::Peak3D* _selected_peak;

@@ -139,6 +139,10 @@ void SubframePredictPeaks::setRefineKiUp()
     connect(
         _set_initial_ki, &QCheckBox::stateChanged, this, &SubframePredictPeaks::toggleUnsafeWidgets);
     connect(
+        _set_initial_ki, &QCheckBox::stateChanged, this, &SubframePredictPeaks::refreshPeakVisual);
+    connect(
+        _set_initial_ki, &QCheckBox::stateChanged, this, &SubframePredictPeaks::toggleCursorMode);
+    connect(
         _beam_offset_x, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged), this,
         &SubframePredictPeaks::adjustDirectBeam);
     connect(
@@ -146,6 +150,16 @@ void SubframePredictPeaks::setRefineKiUp()
         &SubframePredictPeaks::adjustDirectBeam);
 
     _left_layout->addWidget(ki_box);
+}
+
+void SubframePredictPeaks::toggleCursorMode()
+{
+    if (_set_initial_ki->isChecked()) {
+        _stored_cursor_mode = _detector_widget->scene()->mode();
+        _detector_widget->scene()->changeInteractionMode(7);
+    } else {
+        _detector_widget->scene()->changeInteractionMode(_stored_cursor_mode);
+    }
 }
 
 void SubframePredictPeaks::setParametersUp()
@@ -712,6 +726,10 @@ void SubframePredictPeaks::refreshPeakTable()
 void SubframePredictPeaks::refreshPeakVisual()
 {
     _detector_widget->scene()->initIntRegionFromPeakWidget(_peak_view_widget->set1);
+    if (_set_initial_ki->isChecked())
+        _detector_widget->scene()->addBeamSetter(30, 1);
+    else
+        _detector_widget->scene()->removeBeamSetter();
     _detector_widget->refresh();
     if (_peak_collection_item.childCount() == 0)
         return;

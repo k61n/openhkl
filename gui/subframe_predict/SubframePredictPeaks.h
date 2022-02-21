@@ -122,6 +122,8 @@ class SubframePredictPeaks : public QWidget {
     void toggleUnsafeWidgets();
     //! Compute beam divergence and mosaicity sigmas
     void computeSigmas();
+    //! Toggle cursor mode
+    void toggleCursorMode();
 
     //! The model for the found peaks
     nsx::PeakCollection _peak_collection;
@@ -189,6 +191,8 @@ class SubframePredictPeaks : public QWidget {
     SafeSpinBox* _min_neighbours;
     QComboBox* _interpolation_combo;
     QPushButton* _assign_peak_shapes;
+
+    int _stored_cursor_mode;
 
     // Convert enum class ResidualType to a string
     const std::map<std::string, nsx::ResidualType> _residual_strings{

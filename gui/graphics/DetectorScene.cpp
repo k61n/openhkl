@@ -57,6 +57,8 @@
 #include <QPixmap>
 #include <QToolTip>
 #include <QtGlobal>
+#include <qgraphicsitem.h>
+#include <qpainterpath.h>
 
 DetectorScene::DetectorScene(QObject* parent)
     : QGraphicsScene(parent)
@@ -98,6 +100,47 @@ DetectorScene::DetectorScene(QObject* parent)
     , _unit_cell(nullptr)
     , _peak_center_data(nullptr)
 {
+}
+
+void DetectorScene::addBeamSetter(int size, int linewidth)
+{
+
+    QPen pen;
+    pen.setColor(Qt::black);
+    pen.setWidth(linewidth);
+    pen.setCosmetic(true);
+    pen.setStyle(Qt::SolidLine);
+
+    QPainterPath path;
+    path.moveTo(0, 0);
+    path.lineTo(0, size);
+    path.lineTo(0, -size);
+    path.lineTo(0, 0);
+    path.lineTo(size, 0);
+    path.lineTo(-size, 0);
+    path.lineTo(0, 0);
+
+    _beam_pos_setter = new QGraphicsPathItem(path);
+    _beam_pos_setter->setPen(pen);
+    _beam_pos_setter->setZValue(20);
+    _beam_pos_setter->setFlag(QGraphicsItem::ItemIsSelectable, true);
+    _beam_pos_setter->setFlag(QGraphicsItem::ItemIsMovable, true);
+    _beam_pos_setter->setFlag(QGraphicsItem::ItemSendsGeometryChanges, true);
+
+    if (_currentData) {
+        _beam_pos_setter->setPos(_currentData->nCols() / 2, _currentData->nRows() / 2);
+        _beam_pos_setter->setAcceptHoverEvents(false);
+    }
+
+    addItem(_beam_pos_setter);
+}
+
+void DetectorScene::removeBeamSetter()
+{
+    for (auto item : items()) {
+        if (dynamic_cast<QGraphicsPathItem*>(item) != nullptr)
+            removeItem(item);
+    }
 }
 
 void DetectorScene::linkPeakModel1(PeakCollectionModel* source)
@@ -327,7 +370,7 @@ void DetectorScene::setMaxIntensity(int intensity)
     if (_currentIntensity == intensity)
         return;
     _currentIntensity = intensity;
-
+    
     if (!_currentData)
         return;
 
@@ -363,6 +406,9 @@ void DetectorScene::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
             select.setBottomRight(event->lastScenePos());
             _selectionRect->setRect(select);
             return;
+        } else if (_mode == DRAG_DROP) {
+            _current_dragged_item->setPos(event->scenePos());
+            update();
         }
 
         if (!_lastClickedGI)
@@ -484,6 +530,12 @@ void DetectorScene::mousePressEvent(QGraphicsSceneMouseEvent* event)
                 _masks.emplace_back(ellipse_mask, nullptr);
                 break;
             }
+            case DRAG_DROP: {
+                _current_dragged_item = _beam_pos_setter;
+                break;
+            }
+            default:
+                break;
         }
         if (cutter != nullptr) {
             cutter->setFrom(event->lastScenePos());
@@ -623,6 +675,9 @@ void DetectorScene::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
                 }
                 emit dataChanged();
             }
+        } else if (_mode == DRAG_DROP) {
+            _current_dragged_item->setPos(event->scenePos());
+            update();
         } else {
             if (_peak_model_1) {
                 // _peak_model_2 is only relevant in DetectorWindow, ignore here.
