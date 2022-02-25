@@ -60,6 +60,9 @@ class SubframePredictPeaks : public QWidget {
     //! Get a pointer to the detector widget
     DetectorWidget* detectorWidget();
 
+ public slots:
+    void onBeamPosChanged(QPointF pos);
+
  private:
     //! Set the incident wavevector refinement up
     void setRefineKiUp();

@@ -678,6 +678,7 @@ void DetectorScene::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
         } else if (_mode == DRAG_DROP) {
             _current_dragged_item->setPos(event->scenePos());
             update();
+            emit beamPosChanged(event->scenePos());
         } else {
             if (_peak_model_1) {
                 // _peak_model_2 is only relevant in DetectorWindow, ignore here.

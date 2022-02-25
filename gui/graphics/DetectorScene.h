@@ -1,4 +1,3 @@
-//  ***********************************************************************************************
 //
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
@@ -178,6 +177,7 @@ class DetectorScene : public QGraphicsScene {
     void signalChangeSelectedPeak(nsx::Peak3D* peak);
     void signalSelectedPeakItemChanged(PeakItemGraphic* peak);
     void signalUpdateDetectorScene();
+    void beamPosChanged(QPointF pos);
 
  private:
     //! Create the text of the tooltip depending on Scene Mode.

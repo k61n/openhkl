@@ -83,6 +83,10 @@ SubframePredictPeaks::SubframePredictPeaks()
     setFigureUp();
     setPeakTableUp();
 
+    connect(
+        _detector_widget->scene(), &DetectorScene::beamPosChanged, this,
+        &SubframePredictPeaks::onBeamPosChanged);
+
     _detector_widget->scene()->linkDirectBeamPositions(&_direct_beam_events);
     _detector_widget->scene()->linkOldDirectBeamPositions(&_old_direct_beam_events);
 
@@ -790,4 +794,11 @@ void SubframePredictPeaks::toggleUnsafeWidgets()
 DetectorWidget* SubframePredictPeaks::detectorWidget()
 {
     return _detector_widget;
+}
+
+void SubframePredictPeaks::onBeamPosChanged(QPointF pos)
+{
+    auto data = _detector_widget->currentData();
+    _beam_offset_x->setValue(pos.x() - data->nCols() / 2);
+    _beam_offset_y->setValue(pos.y() - data->nRows() / 2);
 }
