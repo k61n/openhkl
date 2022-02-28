@@ -84,7 +84,7 @@ enable_language(C)
 set(CMAKE_CXX_STANDARD 17)
 
 if(APPLE)
-    add_compile_options(-mmacosx-version-min=10.14)
+    add_compile_options(-mmacosx-version-min=10.15)
 endif()
 if((CMAKE_CXX_COMPILER_ID STREQUAL "GNU") OR (CMAKE_CXX_COMPILER_ID MATCHES "Clang"))
     if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
@@ -102,7 +102,7 @@ if((CMAKE_CXX_COMPILER_ID STREQUAL "GNU") OR (CMAKE_CXX_COMPILER_ID MATCHES "Cla
             add_compile_options(-Og)
         endif()
     endif()
-    add_compile_options(-Wall -Wextra -Wpedantic -Wno-sign-compare)
+    add_compile_options(-Wall -Wextra -Wpedantic -Wno-sign-compare -Wno-error=return-type)
     add_compile_options(-Wno-overlength-strings) # WAITING for xsection to remove overlong strings
     # exception for swig-generated code:
     #add_compile_options(-Wno-error=sometimes-uninitialized)

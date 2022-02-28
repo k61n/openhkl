@@ -16,9 +16,9 @@ stages:
 #     - dir Release
 #     - ctest -C Release --output-on-failure
 
-mac:
+mac10_15:
   tags:
-  - MacOS
+  - macbuild3
   stage: build
   script:
     - mkdir build
@@ -27,6 +27,27 @@ mac:
     - cmake .. -D CMAKE_PREFIX_PATH=$QTDIR -D CMAKE_CXX_COMPILER_LAUNCHER=ccache
     - make -j3
     - ctest -j3 --output-on-failure
+    - cpack -V
+  artifacts:
+    paths:
+    - build/NSXTool-*.dmg
+    expire_in: 10 days
+
+mac12_2:
+  tags:
+  - scgmac4
+  stage: build
+  script:
+    - mkdir build
+    - cd build
+    - export PATH=/opt/homebrew/bin:$PATH
+    - export QTDIR=/opt/homebrew/opt/qt5
+    - export PYDIR=/opt/homebrew/opt/python@3.9/Frameworks/Python.framework/Versions/3.9
+    - export PYLIB=$PYDIR/lib/libpython3.9.dylib
+    - export PYINC=$PYDIR/include/python3.9
+    - cmake .. -D CMAKE_PREFIX_PATH=$QTDIR -D CMAKE_CXX_COMPILER_LAUNCHER=ccache -D PYTHON_INCLUDE_DIR=$PYINC -D PYTHON_LIBRARY=$PYLIB
+    - make -j12
+    - ctest -j12 --output-on-failure
     - cpack -V
   artifacts:
     paths:
