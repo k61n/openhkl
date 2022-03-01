@@ -656,22 +656,18 @@ void SubframePredictPeaks::toggleUnsafeWidgets()
         _sigma_m->setEnabled(false);
     }
 
-    nsx::PeakCollection* pc = nullptr;
-    //pc = gSession->currentProject()->experiment()->getPeakCollection();
-    
+    nsx::PeakCollection* pc = nullptr; 
     std::string current_pc = _found_peaks_combo->currentText().toStdString();
     if (current_pc.size() == 0) return;
-    pc = gSession->currentProject()->experiment()->getPeakCollection( current_pc );
-   
+    pc = gSession->currentProject()->experiment()->getPeakCollection( current_pc );   
 
-    if (  pc->isIndexed() && pc->isIntegrated() ){
-        _predict_button->setEnabled(true);
-        _save_button->setEnabled(true);
-        _assign_peak_shapes->setEnabled(true);    
-        _refine_ki_button->setEnabled(true);
-        _direct_beam->setEnabled(true);
-    
-    }
+    // these elements are only to be enabled if collection is indeced && integrated
+    bool b = pc->isIndexed() && pc->isIntegrated();   
+    _predict_button->setEnabled(b);
+    _save_button->setEnabled(b);
+    _assign_peak_shapes->setEnabled(b);    
+    _refine_ki_button->setEnabled(b);
+    _direct_beam->setEnabled(b);     
 
 }
 
