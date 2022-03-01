@@ -60,9 +60,7 @@ SubframeHome::SubframeHome()
 void SubframeHome::_setLeftLayout(QHBoxLayout* main_layout)
 {
     QVBoxLayout* left = new QVBoxLayout;
-    QHBoxLayout* left_top = new QHBoxLayout();
-    QHBoxLayout* left_tables = new QHBoxLayout();
-   
+    QHBoxLayout* left_top = new QHBoxLayout();    
     QString tooltip; 
 
     _new_exp = new QPushButton();
@@ -93,37 +91,48 @@ void SubframeHome::_setLeftLayout(QHBoxLayout* main_layout)
     left->addWidget(_last_import_widget);
 
     QSpacerItem* spacer_bottom =
-        new QSpacerItem(10, 15, QSizePolicy::Minimum, QSizePolicy::Expanding);
-    left->addSpacerItem(spacer_bottom);
-
-
-    _general_information_table = new QTableWidget(8,2);
-    _general_information_table->setEditTriggers(QAbstractItemView::NoEditTriggers);    
-
-    _general_information_table->setHorizontalHeaderLabels(QStringList 
-    {"Property","Value"});
-
-    _general_information_table->setItem(0, 0, new QTableWidgetItem("Experiment"));
-    _general_information_table->setItem(1, 0, new QTableWidgetItem("Diffractometer"));
-    _general_information_table->setItem(2, 0, new QTableWidgetItem("NFrames"));
-    _general_information_table->setItem(3, 0, new QTableWidgetItem("NRows"));
-    _general_information_table->setItem(4, 0, new QTableWidgetItem("NCols"));
-    _general_information_table->setItem(5, 0, new QTableWidgetItem("Wavelength"));
-    _general_information_table->setItem(6, 0, new QTableWidgetItem("Omega"));
-    _general_information_table->setItem(7, 0, new QTableWidgetItem("NPeakCollections"));
-    //_general_information_table->setItem(7, 0, new QTableWidgetItem("End Time"));    
-
-    _peak_collections_information_table = new QTableWidget(0,4);  
-    _peak_collections_information_table->setEditTriggers(QAbstractItemView::NoEditTriggers);
-    _peak_collections_information_table->setHorizontalHeaderLabels(QStringList 
-    {"Name","NPeaks","Indexed","Integrated"});    
-
-    left_tables->addWidget(_general_information_table);    
-    left_tables->addWidget(_peak_collections_information_table);  
+        new QSpacerItem(10, 0, QSizePolicy::Minimum, QSizePolicy::Expanding);
+    left->addSpacerItem(spacer_bottom);   
     
-    UpdatePeakInformationTable(); 
+    _dataset_table = new QTableWidget(0,3);    
+    _dataset_table->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    _dataset_table->setHorizontalHeaderLabels(QStringList 
+    {"Name","Diffractometer","Number of Frames"});    
+   
+    _peak_collections_table = new QTableWidget(0,4);  
+    _peak_collections_table->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    _peak_collections_table->setHorizontalHeaderLabels(QStringList 
+    {"Name","Number of Peaks","Is indexed","Is integrated"});    
 
-    left->addLayout(left_tables);   
+    _unitcell_table = new QTableWidget(0,8);
+    _unitcell_table->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    _unitcell_table->setHorizontalHeaderLabels(QStringList 
+    {"Name","Space Group","a","b", "c", QChar(0xb1, 0x03), QChar(0xb2, 0x03), QChar(0xb3, 0x03)});   
+
+     // labels for tables
+    QLabel* lab_dataset = new QLabel("Datasets",this);
+    QLabel* lab_peaks = new QLabel("Peak Collections",this); 
+    QLabel* lab_unitcell = new QLabel("Unit Cell",this); 
+    
+    QVBoxLayout* lay_datasets = new QVBoxLayout();
+    QVBoxLayout* lay_peaks = new QVBoxLayout(); 
+    QVBoxLayout* lay_unitcells = new QVBoxLayout(); 
+
+    lay_datasets->addWidget(lab_dataset);
+    lay_datasets->addWidget(_dataset_table);
+
+    lay_peaks->addWidget(lab_peaks);
+    lay_peaks->addWidget(_peak_collections_table);
+
+    lay_unitcells->addWidget(lab_unitcell);
+    lay_unitcells->addWidget(_unitcell_table); 
+   
+    left->addLayout(lay_datasets);
+    left->addLayout(lay_peaks);
+    left->addLayout(lay_unitcells);
+     
+    UpdatePeakInformationTable(); 
+   
     main_layout->addLayout(left);      
 }
 
@@ -177,7 +186,7 @@ void SubframeHome::createNew()
     if (exp_dialog->result()) {
         QString expr_nm = exp_dialog->experimentName();
         QString instr_nm = exp_dialog->instrumentName();
-
+        
         std::unique_ptr<Project> project_ptr {gSession->createProject
                                               (expr_nm, instr_nm)};
         const bool success = gSession->addProject(std::move(project_ptr));
@@ -219,12 +228,10 @@ void SubframeHome::loadFromFile()
     } catch (const std::exception& e) {
         QMessageBox::critical(this, "Error", QString(e.what()));
     }
-    
-    
+
     UpdatePeakInformationTable();
     gGui->setReady(true);
 }
-
 
 void SubframeHome::saveCurrent()
 {
@@ -257,8 +264,7 @@ void SubframeHome::saveAll() { }
 void SubframeHome::_switchCurrentExperiment(const QModelIndex& index) const
 {
     gSession->selectProject(index.row());
-    emit _open_experiments_model->dataChanged(QModelIndex(), QModelIndex());
-    
+    emit _open_experiments_model->dataChanged(QModelIndex(), QModelIndex());    
 }
 
 void SubframeHome::saveSettings() const
@@ -306,7 +312,6 @@ void SubframeHome::_updateLastLoadedWidget()
         item->setData(100, (*it).at(1));
         _last_import_widget->addItem(item);
     }
-
     _last_import_widget->blockSignals(false);
 }
 
@@ -338,42 +343,77 @@ void SubframeHome::toggleUnsafeWidgets()
 }
 
 void SubframeHome::UpdatePeakInformationTable()
-{
-   
-  
+{ 
   try{    
-    std::vector<std::string> pcs_names = gSession->currentProject()->experiment()->getCollectionNames();        
+    auto b2s = [](bool a) { return !a ? QString("No") : QString("Yes"); };
+
+    std::vector<std::string> pcs_names = gSession->currentProject()
+        ->experiment()->getCollectionNames(); 
+    
+    auto ucell_names = gSession->currentProject()->experiment()
+        ->getUnitCellNames();
+
+    for (auto it = ucell_names.begin(); it != ucell_names.end(); ++it){
+        
+        auto data = gSession->currentProject()->experiment()->getUnitCell(*it);
+        short n = std::distance(ucell_names.begin(), it);       
+
+        if (n >= _unitcell_table->rowCount())            
+            _unitcell_table->insertRow(_unitcell_table->rowCount());     
+
+        _unitcell_table->setItem(n, 0, new QTableWidgetItem(QString::fromStdString(*it)));
+        _unitcell_table->setItem(n, 1, new QTableWidgetItem(QString::fromStdString(
+            data->spaceGroup().symbol())));    
+        _unitcell_table->setItem(n, 2, new QTableWidgetItem(QString::number(
+            data->character().a)));
+        _unitcell_table->setItem(n, 3, new QTableWidgetItem(QString::number(
+            data->character().b)));
+        _unitcell_table->setItem(n, 4, new QTableWidgetItem(QString::number(
+            data->character().c)));
+        _unitcell_table->setItem(n, 5, new QTableWidgetItem(QString::number(
+            data->character().alpha)));
+        _unitcell_table->setItem(n, 6, new QTableWidgetItem(QString::number(
+            data->character().beta)));
+        _unitcell_table->setItem(n, 7, new QTableWidgetItem(QString::number(
+            data->character().gamma)));
+    }
+
+    auto datasets = gSession->currentProject()->allData();
+    for (auto it = datasets.begin(); it != datasets.end(); ++it){
+        short n = std::distance(datasets.begin(), it);
+
+        if (n >= _dataset_table->rowCount())            
+            _dataset_table->insertRow(_dataset_table->rowCount());            
+
+
+        _dataset_table->setItem(n, 0, new QTableWidgetItem(QString::fromStdString(
+            it->get()->name())));    
+        _dataset_table->setItem(n, 1, new QTableWidgetItem(QString::fromStdString(
+            it->get()->diffractometer()->name() )));        
+        _dataset_table->setItem(n, 2, new QTableWidgetItem(QString::number(
+            it->get()->nFrames())));  
+    }   
     
     if (!pcs_names.empty()){
         std::vector<std::string>::iterator it; 
         nsx::PeakCollection* pc;
-        auto b2s = [](bool a) { return !a ? QString("No") : QString("Yes"); };
 
-        auto data = gSession->currentProject()->experiment()->getAllData().at(0);   
-       
-        _general_information_table->setItem(0, 1, new QTableWidgetItem(QString::fromStdString(data->metadata().key<std::string>("experiment"))));
-        _general_information_table->setItem(1, 1, new QTableWidgetItem(QString::fromStdString(data->metadata().key<std::string>("diffractometer"))));   
-        _general_information_table->setItem(2, 1, new QTableWidgetItem(QString::number(data->nFrames())));
-        _general_information_table->setItem(3, 1, new QTableWidgetItem(QString::number(data->nRows())));
-        _general_information_table->setItem(4, 1, new QTableWidgetItem(QString::number(data->nCols() )));
-        _general_information_table->setItem(5, 1, new QTableWidgetItem(QString::number(data->wavelength())));
-      //  _general_information_table->setItem(6, 1, new QTableWidgetItem(QString::number(data->metadata().key<double>("omega"))));   
-        _general_information_table->setItem(7, 1, new QTableWidgetItem(QString::number(pcs_names.size())));
-         
         for (it = pcs_names.begin(); it != pcs_names.end(); it++){
             pc = gSession->currentProject()->experiment()->getPeakCollection( *it );
             short n = std::distance(pcs_names.begin(), it);
 
-            if (n >= _peak_collections_information_table->rowCount())            
-                _peak_collections_information_table->insertRow(_peak_collections_information_table->rowCount());            
+            if (n >= _peak_collections_table->rowCount())            
+                _peak_collections_table->insertRow(_peak_collections_table->rowCount());            
 
-            _peak_collections_information_table->setItem(n, 0, new QTableWidgetItem(QString( (*it).c_str() )));
-            _peak_collections_information_table->setItem(n, 1, new QTableWidgetItem(QString::number(pc->numberOfPeaks())));
-            _peak_collections_information_table->setItem(n, 2, new QTableWidgetItem(b2s(pc->isIndexed())));
-            _peak_collections_information_table->setItem(n, 3, new QTableWidgetItem(b2s(pc->isIntegrated())));         
-        }  
+            _peak_collections_table->setItem(n, 0, new QTableWidgetItem(QString(
+                (*it).c_str() )));
+            _peak_collections_table->setItem(n, 1, new QTableWidgetItem(QString::number(
+                pc->numberOfPeaks())));
+            _peak_collections_table->setItem(n, 2, new QTableWidgetItem(b2s(pc->isIndexed())));
+            _peak_collections_table->setItem(n, 3, new QTableWidgetItem(b2s(pc->isIntegrated())));         
+        }     
     }
-  }  catch (const std::out_of_range& e){ // happens at programm start at least once
+  } catch (const std::out_of_range& e){
   } catch (const std::exception& e){
     QMessageBox::critical(this, "Error", QString(e.what()));
   }  

@@ -44,7 +44,9 @@
 #include <QVBoxLayout>
 #include <qboxlayout.h>
 #include <qcheckbox.h>
+#include <qmessagebox.h>
 #include <qnamespace.h>
+#include <qpushbutton.h>
 #include <stdexcept>
 
 
@@ -78,7 +80,7 @@ SubframeAutoIndexer::SubframeAutoIndexer()
     _peak_collection_item.setPeakCollection(&_peak_collection);
     _peak_collection_model.setRoot(&_peak_collection_item);
 }  
-
+ 
 void SubframeAutoIndexer::setInputUp()
 {
     Spoiler* input_box = new Spoiler("Input");
@@ -120,7 +122,7 @@ void SubframeAutoIndexer::setParametersUp()
 
     _niggli = f.addDoubleSpinBox("Niggli tol.:", "Tolerance for Niggli reduction");
 
-     _only_niggli = f.addCheckBox("Find Niggli cell only", 1);
+    _only_niggli = f.addCheckBox("Find Niggli cell only", 1);
 
     _max_cell_dimension = f.addDoubleSpinBox(
         "Max. Cell dim.:", QString::fromUtf8("(\u212B) - maximum length of any lattice vector"));
@@ -333,7 +335,7 @@ void SubframeAutoIndexer::grabIndexerParameters()
 {
     if (_peak_combo->count() == 0 || _exp_combo->count() == 0)
         return;
-
+        
     auto params =
         gSession->experimentAt(_exp_combo->currentIndex())->experiment()->autoIndexer()->
         parameters();
