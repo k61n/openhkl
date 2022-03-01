@@ -531,7 +531,7 @@ void SubframeFindPeaks::integrate()
     
     //set integrated state to true without further verification
     _peak_collection.setIntegrated(true);
-    _peak_collection.setIndexed(true);
+    //_peak_collection.setIndexed(true);
    
 }
 

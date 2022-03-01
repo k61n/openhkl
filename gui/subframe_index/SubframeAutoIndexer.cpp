@@ -549,6 +549,7 @@ void SubframeAutoIndexer::acceptSolution()
             nsx::UnitCell* cell = expt->getUnitCell(cellName);
             cell->setSpaceGroup(dlg->spaceGroup().toStdString());
             gGui->sentinel->addLinkedComboItem(ComboType::UnitCell, dlg->unitCellName());
+            collection->setIndexed(true);
         }
     }
 }
@@ -563,10 +564,12 @@ void SubframeAutoIndexer::toggleUnsafeWidgets()
     }    
     if (_peak_collection_model.rowCount() == 0 || _solutions.empty())
         _save_button->setEnabled(false);
-    
-    // disabling button in case of missing integrarion
-    if (!_peak_collection.isIntegrated()){
-        // _save_button->setEnabled(false);        
-    }
-    
+
+    nsx::PeakCollection* pc = nullptr; 
+    std::string current_pc = _peak_combo->currentText().toStdString();
+    if (current_pc.size() == 0) return;
+    pc = gSession->currentProject()->experiment()->getPeakCollection( current_pc );   
+         
+   // _save_button->setEnabled(pc->isIntegrated());         
+    _solve_button->setEnabled(pc->isIntegrated());    
 }
