@@ -80,6 +80,8 @@ class SubframeAutoIndexer : public QWidget {
     //! Disable widgets that are unsafe without relevant data
     void toggleUnsafeWidgets();
 
+
+
     //! The model for the indexing peaks
     nsx::PeakCollection _peak_collection;
     //! The temporary collection

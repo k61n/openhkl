@@ -85,8 +85,10 @@ class SubframeHome : public QWidget {
     QListWidget* _last_import_widget;
 
     
-    QTableWidget* _general_information_table;
-    QTableWidget* _peak_collections_information_table;
+    QTableWidget* _dataset_table;
+    QTableWidget* _peak_collections_table;
+    QTableWidget* _unitcell_table;
+    
    
 };
 
