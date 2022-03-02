@@ -57,7 +57,7 @@ void CrosshairGraphic::redraw()
     path.lineTo(-_size, 0);
     path.lineTo(0, 0);
 
-    _circle->setRect(-_size / 2.0, -_size / 2.0, _size, _size);
+    _circle->setRect(-_size, -_size, 2.0 * _size, 2.0 * _size);
     _xhair->setPath(path);
 }
 
@@ -86,6 +86,7 @@ void CrosshairGraphic::setLinewidth(int width)
     _linewidth = width;
     _pen.setWidth(_linewidth);
     _xhair->setPen(_pen);
+    _circle->setPen(_pen);
     redraw();
 }
 

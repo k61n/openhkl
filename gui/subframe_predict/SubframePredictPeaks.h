@@ -167,7 +167,7 @@ class SubframePredictPeaks : public QWidget {
     SpoilerCheck* _set_initial_ki;
     SafeDoubleSpinBox* _beam_offset_x;
     SafeDoubleSpinBox* _beam_offset_y;
-    SafeSpinBox* _crosshair_size;
+    QSlider* _crosshair_size;
     SafeSpinBox* _crosshair_linewidth;
     SafeSpinBox* _n_batches_spin;
     SafeSpinBox* _max_iter_spin;

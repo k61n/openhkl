@@ -119,7 +119,17 @@ void SubframePredictPeaks::setAdjustBeamUp()
 
     _beam_offset_y = f.addDoubleSpinBox(
         "y offset", "Direct beam offset in y direction (pixels)");
-    _crosshair_size = f.addSpinBox("Crosshair size", "Radius of crosshair (pixels)");
+
+    _crosshair_size = new QSlider(Qt::Horizontal);
+    QLabel* crosshair_label = new QLabel("Crosshair size");
+    crosshair_label->setToolTip("Radius of crosshair (pixels)");
+    crosshair_label->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
+    _crosshair_size->setMinimum(5);
+    _crosshair_size->setMaximum(200);
+    _crosshair_size->setValue(15);
+    f.addLabel("Crosshair size", "Radius of crosshair (pixels)");
+    f.addWidget(_crosshair_size, 1);
+
     _crosshair_linewidth = f.addSpinBox("Crosshair linewidth", "Line width of crosshair");
 
     _beam_offset_x->setValue(0.0);
@@ -130,10 +140,7 @@ void SubframePredictPeaks::setAdjustBeamUp()
     _beam_offset_y->setMaximum(1000.0);
     _beam_offset_y->setMinimum(-1000.0);
     _beam_offset_y->setDecimals(2);
-    _crosshair_size->setValue(15);
-    _crosshair_size->setMinimum(5);
-    _crosshair_size->setMaximum(500);
-    _crosshair_linewidth->setValue(1);
+    _crosshair_linewidth->setValue(2);
     _crosshair_linewidth->setMinimum(1);
     _crosshair_linewidth->setMaximum(10);
 
@@ -150,7 +157,7 @@ void SubframePredictPeaks::setAdjustBeamUp()
         _beam_offset_y, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged),
         this, &SubframePredictPeaks::onBeamPosSpinChanged);
     connect(
-        _crosshair_size, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged),
+        _crosshair_size, static_cast<void (QSlider::*)(int)>(&QSlider::valueChanged),
         this, &SubframePredictPeaks::changeCrosshair);
     connect(
         _crosshair_linewidth, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged),
