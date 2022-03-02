@@ -108,9 +108,9 @@ void SubframePredictPeaks::setRefineKiUp()
     _set_initial_ki = f.addCheckBox(
         "Set initial direct beam",
         "Set the initial position of the direct beam in detector coordinates", 1);
-    _beam_offset_x = f.addSpinBox(
+    _beam_offset_x = f.addDoubleSpinBox(
         "x offset", "Direct beam offset in x direction (pixels)");
-    _beam_offset_y = f.addSpinBox(
+    _beam_offset_y = f.addDoubleSpinBox(
         "y offset", "Direct beam offset in y direction (pixels)");
     _n_batches_spin = f.addSpinBox(
         "Number of batches", "Number of batches for refining incident wavevector");
@@ -129,10 +129,14 @@ void SubframePredictPeaks::setRefineKiUp()
     _n_batches_spin->setValue(10);
     _max_iter_spin->setMaximum(1000000);
     _max_iter_spin->setValue(1000);
-    _beam_offset_x->setValue(0);
-    _beam_offset_y->setValue(0);
-    _beam_offset_x->setMaximum(1000);
-    _beam_offset_y->setMaximum(1000);
+    _beam_offset_x->setValue(0.0);
+    _beam_offset_x->setMaximum(1000.0);
+    _beam_offset_x->setMinimum(-1000.0);
+    _beam_offset_x->setDecimals(2);
+    _beam_offset_y->setValue(0.0);
+    _beam_offset_y->setMaximum(1000.0);
+    _beam_offset_y->setMinimum(-1000.0);
+    _beam_offset_y->setDecimals(2);
 
     connect(
         _direct_beam, &QCheckBox::stateChanged, this, &SubframePredictPeaks::showDirectBeamEvents);
@@ -147,11 +151,11 @@ void SubframePredictPeaks::setRefineKiUp()
     connect(
         _set_initial_ki, &QCheckBox::stateChanged, this, &SubframePredictPeaks::toggleCursorMode);
     connect(
-        _beam_offset_x, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged), this,
-        &SubframePredictPeaks::adjustDirectBeam);
+        _beam_offset_x, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged),
+        this, &SubframePredictPeaks::adjustDirectBeam);
     connect(
-        _beam_offset_y, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged), this,
-        &SubframePredictPeaks::adjustDirectBeam);
+        _beam_offset_y, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged),
+        this, &SubframePredictPeaks::adjustDirectBeam);
 
     _left_layout->addWidget(ki_box);
 }
@@ -362,6 +366,10 @@ void SubframePredictPeaks::setExperiments()
         if (data) {
             _n_batches_spin->setMaximum(data->nFrames());
             _n_batches_spin->setValue(data->nFrames());
+            _beam_offset_x->setMaximum(static_cast<double>(data->nCols()) / 2.0);
+            _beam_offset_x->setMinimum(-static_cast<double>(data->nCols()) / 2.0);
+            _beam_offset_y->setMaximum(static_cast<double>(data->nRows()) / 2.0);
+            _beam_offset_y->setMinimum(-static_cast<double>(data->nRows()) / 2.0);
         }
 
     }
@@ -804,6 +812,6 @@ DetectorWidget* SubframePredictPeaks::detectorWidget()
 void SubframePredictPeaks::onBeamPosChanged(QPointF pos)
 {
     auto data = _detector_widget->currentData();
-    _beam_offset_x->setValue(pos.x() - data->nCols() / 2);
-    _beam_offset_y->setValue(pos.y() - data->nRows() / 2);
+    _beam_offset_x->setValue(pos.x() - (static_cast<double>(data->nCols()) / 2.0));
+    _beam_offset_y->setValue(-pos.y() + (static_cast<double>(data->nRows()) / 2.0));
 }

@@ -154,8 +154,8 @@ class SubframePredictPeaks : public QWidget {
     QSplitter* _right_element;
 
     QCheckBox* _set_initial_ki;
-    QSpinBox* _beam_offset_x;
-    QSpinBox* _beam_offset_y;
+    QDoubleSpinBox* _beam_offset_x;
+    QDoubleSpinBox* _beam_offset_y;
     QSpinBox* _n_batches_spin;
     QSpinBox* _max_iter_spin;
     QComboBox* _residual_combo;
