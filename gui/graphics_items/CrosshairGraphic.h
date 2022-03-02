@@ -24,7 +24,6 @@
 class CrosshairGraphic : public QGraphicsItem {
  public:
     CrosshairGraphic(QPointF centre);
-    ~CrosshairGraphic() = default;
 
     QRectF boundingRect() const override; //!< Overloading boundingRect from QGraphicsItem
 
@@ -44,7 +43,6 @@ class CrosshairGraphic : public QGraphicsItem {
     QPen _pen;
     int _size;
     int _linewidth;
-
 };
 
 #endif // NSX_GUI_GRAPHICS_ITEMS_CROSSHAIRGRAPHIC_H

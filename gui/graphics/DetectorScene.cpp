@@ -392,7 +392,6 @@ void DetectorScene::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
             return;
         } else if (_mode == DRAG_DROP) {
             _current_dragged_item->setPos(event->scenePos());
-            update();
         }
 
         if (!_lastClickedGI)
@@ -516,7 +515,6 @@ void DetectorScene::mousePressEvent(QGraphicsSceneMouseEvent* event)
             }
             case DRAG_DROP: {
                 _current_dragged_item = _beam_pos_setter;
-                update();
                 break;
             }
             default:
@@ -662,7 +660,6 @@ void DetectorScene::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
             }
         } else if (_mode == DRAG_DROP) {
             _current_dragged_item->setPos(event->scenePos());
-            update();
             emit beamPosChanged(event->scenePos());
             addBeamSetter(event->scenePos());
         } else {

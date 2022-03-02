@@ -20,6 +20,7 @@
 CrosshairGraphic::CrosshairGraphic(QPointF centre)
     : _size(15), _linewidth(1)
 {
+    setPos(centre);
     _pen.setColor(Qt::black);
     _pen.setWidth(_linewidth);
     _pen.setCosmetic(true);
@@ -34,7 +35,6 @@ CrosshairGraphic::CrosshairGraphic(QPointF centre)
     _xhair->setVisible(true);
     _xhair->setPen(_pen);
     _xhair->setZValue(20);
-    _xhair->setPos(centre);
     redraw();
 }
 
