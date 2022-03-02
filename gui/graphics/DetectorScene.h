@@ -139,7 +139,7 @@ class DetectorScene : public QGraphicsScene {
     //! Get the current intensity
     int intensity() { return _currentIntensity; };
     //! Set up the direct beam crosshair
-    void addBeamSetter(QPointF position);
+    void addBeamSetter(QPointF position, int size, int linewidth);
     //! Remove the beam crosshair from the scene
     void removeBeamSetter();
     //! Show/hide the beam setter crosshair
@@ -174,6 +174,7 @@ class DetectorScene : public QGraphicsScene {
     void updateMasks() { _lastClickedGI = nullptr; }
     int currentFrame() const { return _currentFrameIndex; }
     void setBeamSetterPos(QPointF pos);
+    void onCrosshairChanged(int size, int linewidth);
 
  signals:
     //! Signal emitted for all changes of the image

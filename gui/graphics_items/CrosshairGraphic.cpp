@@ -27,6 +27,7 @@ CrosshairGraphic::CrosshairGraphic(QPointF centre)
     _pen.setStyle(Qt::SolidLine);
 
     _xhair = new QGraphicsPathItem(this);
+    _circle = new QGraphicsEllipseItem(this);
 
     _xhair->setFlag(QGraphicsItem::ItemIsSelectable, true);
     _xhair->setFlag(QGraphicsItem::ItemIsMovable, true);
@@ -35,6 +36,13 @@ CrosshairGraphic::CrosshairGraphic(QPointF centre)
     _xhair->setVisible(true);
     _xhair->setPen(_pen);
     _xhair->setZValue(20);
+    _circle->setFlag(QGraphicsItem::ItemIsSelectable, true);
+    _circle->setFlag(QGraphicsItem::ItemIsMovable, true);
+    _circle->setFlag(QGraphicsItem::ItemSendsGeometryChanges, true);
+    _circle->setAcceptHoverEvents(false);
+    _circle->setVisible(true);
+    _circle->setPen(_pen);
+    _circle->setZValue(20);
     redraw();
 }
 
@@ -49,12 +57,14 @@ void CrosshairGraphic::redraw()
     path.lineTo(-_size, 0);
     path.lineTo(0, 0);
 
+    _circle->setRect(-_size / 2.0, -_size / 2.0, _size, _size);
     _xhair->setPath(path);
 }
 
 QRectF CrosshairGraphic::boundingRect() const
 {
-    return {-_size / 2.0 - 1.0, -_size / 2.0 + 1.0, _size + 2.0, _size + 2.0};
+    return {-_size / 2.0 - _linewidth / 2.0, -_size / 2.0 + _linewidth / 2.0,
+        static_cast<double>(_size + _linewidth), static_cast<double>(_size + _linewidth)};
 }
 
 void CrosshairGraphic::paint(
@@ -75,6 +85,7 @@ void CrosshairGraphic::setLinewidth(int width)
 {
     _linewidth = width;
     _pen.setWidth(_linewidth);
+    _xhair->setPen(_pen);
     redraw();
 }
 

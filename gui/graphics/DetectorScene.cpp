@@ -103,7 +103,7 @@ DetectorScene::DetectorScene(QObject* parent)
 {
 }
 
-void DetectorScene::addBeamSetter(QPointF position)
+void DetectorScene::addBeamSetter(QPointF position, int size, int linewidth)
 {
     if (_beam_pos_setter) {
         removeItem(_beam_pos_setter);
@@ -111,6 +111,8 @@ void DetectorScene::addBeamSetter(QPointF position)
     }
 
     _beam_pos_setter = new CrosshairGraphic(position);
+    _beam_pos_setter->setSize(size);
+    _beam_pos_setter->setLinewidth(linewidth);
     addItem(_beam_pos_setter);}
 
 void DetectorScene::removeBeamSetter()
@@ -660,8 +662,10 @@ void DetectorScene::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
             }
         } else if (_mode == DRAG_DROP) {
             _current_dragged_item->setPos(event->scenePos());
+            int size = _current_dragged_item->size();
+            int linewidth = _current_dragged_item->linewidth();
             emit beamPosChanged(event->scenePos());
-            addBeamSetter(event->scenePos());
+            addBeamSetter(event->scenePos(), size, linewidth);
         } else {
             if (_peak_model_1) {
                 // _peak_model_2 is only relevant in DetectorWindow, ignore here.
@@ -1140,4 +1144,10 @@ Eigen::Vector3d DetectorScene::getBeamSetterPosition() const
 void DetectorScene::setBeamSetterPos(QPointF pos)
 {
     _beam_pos_setter->setPos(pos);
+}
+
+void DetectorScene::onCrosshairChanged(int size, int linewidth)
+{
+    _beam_pos_setter->setSize(size);
+    _beam_pos_setter->setLinewidth(linewidth);
 }

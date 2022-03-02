@@ -89,6 +89,9 @@ SubframePredictPeaks::SubframePredictPeaks()
     connect(
         this, &SubframePredictPeaks::beamPosChanged, _detector_widget->scene(),
         &DetectorScene::setBeamSetterPos);
+    connect(
+        this, &SubframePredictPeaks::crosshairChanged, _detector_widget->scene(),
+        &DetectorScene::onCrosshairChanged);
 
     _detector_widget->scene()->linkDirectBeamPositions(&_direct_beam_events);
     _detector_widget->scene()->linkOldDirectBeamPositions(&_old_direct_beam_events);
@@ -113,8 +116,11 @@ void SubframePredictPeaks::setRefineKiUp()
         "Set the initial position of the direct beam in detector coordinates", 1);
     _beam_offset_x = f.addDoubleSpinBox(
         "x offset", "Direct beam offset in x direction (pixels)");
+
     _beam_offset_y = f.addDoubleSpinBox(
         "y offset", "Direct beam offset in y direction (pixels)");
+    _crosshair_size = f.addSpinBox("Crosshair size", "Radius of crosshair (pixels)");
+    _crosshair_linewidth = f.addSpinBox("Crosshair linewidth", "Line width of crosshair");
     _n_batches_spin = f.addSpinBox(
         "Number of batches", "Number of batches for refining incident wavevector");
     _max_iter_spin = f.addSpinBox(
@@ -140,6 +146,12 @@ void SubframePredictPeaks::setRefineKiUp()
     _beam_offset_y->setMaximum(1000.0);
     _beam_offset_y->setMinimum(-1000.0);
     _beam_offset_y->setDecimals(2);
+    _crosshair_size->setValue(15);
+    _crosshair_size->setMinimum(5);
+    _crosshair_size->setMaximum(500);
+    _crosshair_linewidth->setValue(1);
+    _crosshair_linewidth->setMinimum(1);
+    _crosshair_linewidth->setMaximum(10);
 
     connect(
         _direct_beam, &QCheckBox::stateChanged, this, &SubframePredictPeaks::showDirectBeamEvents);
@@ -159,6 +171,12 @@ void SubframePredictPeaks::setRefineKiUp()
     connect(
         _beam_offset_y, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged),
         this, &SubframePredictPeaks::onBeamPosSpinChanged);
+    connect(
+        _crosshair_size, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged),
+        this, &SubframePredictPeaks::changeCrosshair);
+    connect(
+        _crosshair_linewidth, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged),
+        this, &SubframePredictPeaks::changeCrosshair);
 
     _left_layout->addWidget(ki_box);
 }
@@ -530,8 +548,8 @@ void SubframePredictPeaks::adjustDirectBeam()
         _old_direct_beam_events = _direct_beam_events;
 
     for (std::size_t i = 0; i < _direct_beam_events.size(); ++i) {
-        _direct_beam_events[i].px = _old_direct_beam_events[i].px - _beam_offset_x->value();
-        _direct_beam_events[i].py = _old_direct_beam_events[i].py - _beam_offset_y->value();
+        _direct_beam_events[i].px = _old_direct_beam_events[i].px + _beam_offset_x->value();
+        _direct_beam_events[i].py = _old_direct_beam_events[i].py + _beam_offset_y->value();
     }
     refreshPeakTable();
 }
@@ -746,7 +764,9 @@ void SubframePredictPeaks::refreshPeakVisual()
         QPointF current =
             {data->nCols() / 2.0 - _beam_offset_x->value(),
              data->nRows() / 2.0 - _beam_offset_y->value()};
-        _detector_widget->scene()->addBeamSetter(current);
+        _detector_widget->scene()->addBeamSetter(
+            current, _crosshair_size->value(), _crosshair_linewidth->value());
+        changeCrosshair();
     } else {
         _detector_widget->scene()->removeBeamSetter();
     }
@@ -801,9 +821,13 @@ void SubframePredictPeaks::toggleUnsafeWidgets()
 
     _beam_offset_x->setEnabled(false);
     _beam_offset_y->setEnabled(false);
+    _crosshair_size->setEnabled(false);
+    _crosshair_linewidth->setEnabled(false);
     if (_set_initial_ki->isChecked()) {
         _beam_offset_x->setEnabled(true);
         _beam_offset_y->setEnabled(true);
+        _crosshair_size->setEnabled(true);
+        _crosshair_linewidth->setEnabled(true);
     }
 }
 
@@ -825,4 +849,9 @@ void SubframePredictPeaks::onBeamPosSpinChanged()
     double x = _beam_offset_x->value() + static_cast<double>(data->nCols()) / 2.0;
     double y = -_beam_offset_y->value() + static_cast<double>(data->nRows()) / 2.0;
     emit beamPosChanged({x, y});
+}
+
+void SubframePredictPeaks::changeCrosshair()
+{
+    emit crosshairChanged(_crosshair_size->value(), _crosshair_linewidth->value());
 }

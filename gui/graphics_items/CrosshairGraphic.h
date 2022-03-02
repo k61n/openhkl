@@ -31,8 +31,12 @@ class CrosshairGraphic : public QGraphicsItem {
     void redraw();
     //! Required to avoid abstract class
     void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget) override;
+    //! Get the size of the crosshair
+    int size() { return _size; };
     //! Set the size of the crosshair
     void setSize(int size);
+    //! Get the linewidth
+    int linewidth() { return _linewidth; };
     //! Set the linewidth of the crosshair
     void setLinewidth(int width);
     //! Show/hide the crosshair
@@ -40,6 +44,7 @@ class CrosshairGraphic : public QGraphicsItem {
 
  private:
     QGraphicsPathItem* _xhair;
+    QGraphicsEllipseItem* _circle;
     QPen _pen;
     int _size;
     int _linewidth;

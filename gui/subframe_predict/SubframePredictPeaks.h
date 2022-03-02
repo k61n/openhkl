@@ -67,6 +67,7 @@ class SubframePredictPeaks : public QWidget {
 
  signals:
     void beamPosChanged(QPointF pos);
+    void crosshairChanged(int size, int linewidth);
 
  private:
     //! Set the incident wavevector refinement up
@@ -132,6 +133,8 @@ class SubframePredictPeaks : public QWidget {
     void computeSigmas();
     //! Toggle cursor mode
     void toggleCursorMode();
+    //! Transmit crosshair changes to DetectorScene
+    void changeCrosshair();
 
     //! The model for the found peaks
     nsx::PeakCollection _peak_collection;
@@ -159,10 +162,12 @@ class SubframePredictPeaks : public QWidget {
     QSplitter* _right_element;
 
     QCheckBox* _set_initial_ki;
-    QDoubleSpinBox* _beam_offset_x;
-    QDoubleSpinBox* _beam_offset_y;
-    QSpinBox* _n_batches_spin;
-    QSpinBox* _max_iter_spin;
+    SafeDoubleSpinBox* _beam_offset_x;
+    SafeDoubleSpinBox* _beam_offset_y;
+    SafeSpinBox* _crosshair_size;
+    SafeSpinBox* _crosshair_linewidth;
+    SafeSpinBox* _n_batches_spin;
+    SafeSpinBox* _max_iter_spin;
     QComboBox* _residual_combo;
     QCheckBox* _direct_beam;
     QPushButton* _refine_ki_button;
