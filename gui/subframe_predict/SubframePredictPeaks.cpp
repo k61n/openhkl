@@ -729,11 +729,16 @@ void SubframePredictPeaks::refreshPeakTable()
 
 void SubframePredictPeaks::refreshPeakVisual()
 {
+    auto data = _detector_widget->currentData();
     _detector_widget->scene()->initIntRegionFromPeakWidget(_peak_view_widget->set1);
-    if (_set_initial_ki->isChecked())
-        _detector_widget->scene()->addBeamSetter(30, 1);
-    else
+    if (_set_initial_ki->isChecked()) {
+        QPointF current =
+            {data->nCols() / 2.0 - _beam_offset_x->value(),
+             data->nRows() / 2.0 - _beam_offset_y->value()};
+        _detector_widget->scene()->addBeamSetter(current);
+    } else {
         _detector_widget->scene()->removeBeamSetter();
+    }
     _detector_widget->refresh();
     if (_peak_collection_item.childCount() == 0)
         return;

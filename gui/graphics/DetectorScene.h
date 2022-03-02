@@ -19,6 +19,7 @@
 #include "core/detector/DetectorEvent.h"
 #include "core/peak/IntegrationRegion.h"
 #include "core/peak/Peak3D.h"
+#include "gui/graphics_items/CrosshairGraphic.h"
 #include "gui/graphics_items/PeakCenterGraphic.h"
 #include "gui/models/ColorMap.h"
 #include "gui/widgets/PeakViewWidget.h"
@@ -138,11 +139,15 @@ class DetectorScene : public QGraphicsScene {
     //! Get the current intensity
     int intensity() { return _currentIntensity; };
     //! Set up the direct beam crosshair
-    void addBeamSetter(int size, int linewidth);
+    void addBeamSetter(QPointF position);
     //! Remove the beam crosshair from the scene
     void removeBeamSetter();
+    //! Show/hide the beam setter crosshair
+    void showBeamSetter(bool show);
+    //! Get the beam setter position
+    Eigen::Vector3d getBeamSetterPosition() const;
     //! Get the beam setter crosshairs
-    QGraphicsPathItem* beamSetter() const { return _beam_pos_setter; };
+    CrosshairGraphic* beamSetter() const { return _beam_pos_setter; };
     //! Return the interaction mode
     int mode() const { return static_cast<int>(_mode); };
 
@@ -203,7 +208,7 @@ class DetectorScene : public QGraphicsScene {
     //! Stack of zoom
     QStack<QRect> _zoomStack;
     //! item being dragged
-    QGraphicsPathItem* _current_dragged_item;
+    CrosshairGraphic* _current_dragged_item;
 
     //! The current peak model
     PeakCollectionModel* _peak_model_1;
@@ -266,7 +271,7 @@ class DetectorScene : public QGraphicsScene {
     //! Size of direct beam
     double _beam_size;
     //! Crosshair for setting direct beam
-    QGraphicsPathItem* _beam_pos_setter;
+    CrosshairGraphic* _beam_pos_setter;
 
 
     nsx::Peak3D* _selected_peak;

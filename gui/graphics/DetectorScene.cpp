@@ -29,6 +29,7 @@
 #include "core/loader/XFileHandler.h"
 #include "core/peak/Peak3D.h"
 #include "gui/MainWin.h"
+#include "gui/graphics_items/CrosshairGraphic.h"
 #include "gui/graphics_items/EllipseItem.h"
 #include "gui/graphics_items/MaskItem.h"
 #include "gui/graphics_items/PeakItemGraphic.h"
@@ -102,45 +103,28 @@ DetectorScene::DetectorScene(QObject* parent)
 {
 }
 
-void DetectorScene::addBeamSetter(int size, int linewidth)
+void DetectorScene::addBeamSetter(QPointF position)
 {
-
-    QPen pen;
-    pen.setColor(Qt::black);
-    pen.setWidth(linewidth);
-    pen.setCosmetic(true);
-    pen.setStyle(Qt::SolidLine);
-
-    QPainterPath path;
-    path.moveTo(0, 0);
-    path.lineTo(0, size);
-    path.lineTo(0, -size);
-    path.lineTo(0, 0);
-    path.lineTo(size, 0);
-    path.lineTo(-size, 0);
-    path.lineTo(0, 0);
-
-    _beam_pos_setter = new QGraphicsPathItem(path);
-    _beam_pos_setter->setPen(pen);
-    _beam_pos_setter->setZValue(20);
-    _beam_pos_setter->setFlag(QGraphicsItem::ItemIsSelectable, true);
-    _beam_pos_setter->setFlag(QGraphicsItem::ItemIsMovable, true);
-    _beam_pos_setter->setFlag(QGraphicsItem::ItemSendsGeometryChanges, true);
-
-    if (_currentData) {
-        _beam_pos_setter->setPos(_currentData->nCols() / 2, _currentData->nRows() / 2);
-        _beam_pos_setter->setAcceptHoverEvents(false);
+    if (_beam_pos_setter) {
+        removeItem(_beam_pos_setter);
+        delete _beam_pos_setter;
     }
 
-    addItem(_beam_pos_setter);
-}
+    _beam_pos_setter = new CrosshairGraphic(position);
+    addItem(_beam_pos_setter);}
 
 void DetectorScene::removeBeamSetter()
 {
     for (auto item : items()) {
-        if (dynamic_cast<QGraphicsPathItem*>(item) != nullptr)
+        if (dynamic_cast<CrosshairGraphic*>(item) != nullptr)
             removeItem(item);
     }
+}
+
+void DetectorScene::showBeamSetter(bool show)
+{
+    _beam_pos_setter->setVisible(show);
+    update();
 }
 
 void DetectorScene::linkPeakModel1(PeakCollectionModel* source)
@@ -370,7 +354,7 @@ void DetectorScene::setMaxIntensity(int intensity)
     if (_currentIntensity == intensity)
         return;
     _currentIntensity = intensity;
-    
+
     if (!_currentData)
         return;
 
@@ -532,6 +516,7 @@ void DetectorScene::mousePressEvent(QGraphicsSceneMouseEvent* event)
             }
             case DRAG_DROP: {
                 _current_dragged_item = _beam_pos_setter;
+                update();
                 break;
             }
             default:
@@ -679,6 +664,7 @@ void DetectorScene::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
             _current_dragged_item->setPos(event->scenePos());
             update();
             emit beamPosChanged(event->scenePos());
+            addBeamSetter(event->scenePos());
         } else {
             if (_peak_model_1) {
                 // _peak_model_2 is only relevant in DetectorWindow, ignore here.
@@ -1146,4 +1132,10 @@ void DetectorScene::setup3rdPartyPeaks(bool draw, const QColor& color, int size)
 void DetectorScene::showDirectBeam(bool show)
 {
     _drawDirectBeam = show;
+}
+
+Eigen::Vector3d DetectorScene::getBeamSetterPosition() const
+{
+    return {_beam_pos_setter->pos().x(), _beam_pos_setter->pos().y(),
+        static_cast<double>(_currentFrameIndex)};
 }
