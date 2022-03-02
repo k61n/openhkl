@@ -1136,3 +1136,8 @@ Eigen::Vector3d DetectorScene::getBeamSetterPosition() const
     return {_beam_pos_setter->pos().x(), _beam_pos_setter->pos().y(),
         static_cast<double>(_currentFrameIndex)};
 }
+
+void DetectorScene::setBeamSetterPos(QPointF pos)
+{
+    _beam_pos_setter->setPos(pos);
+}

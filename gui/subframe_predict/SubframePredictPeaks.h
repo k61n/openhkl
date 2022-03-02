@@ -51,6 +51,7 @@ struct ShapeCollectionParameters;
 
 //! Frame containing interface for predicting peaks from unit cell
 class SubframePredictPeaks : public QWidget {
+    Q_OBJECT
  public:
     SubframePredictPeaks();
     //! Show direct beam position computed from unit cell in DetectorScene
@@ -62,6 +63,10 @@ class SubframePredictPeaks : public QWidget {
 
  public slots:
     void onBeamPosChanged(QPointF pos);
+    void onBeamPosSpinChanged();
+
+ signals:
+    void beamPosChanged(QPointF pos);
 
  private:
     //! Set the incident wavevector refinement up

@@ -173,6 +173,7 @@ class DetectorScene : public QGraphicsScene {
     void drawIntegrationRegion(bool);
     void updateMasks() { _lastClickedGI = nullptr; }
     int currentFrame() const { return _currentFrameIndex; }
+    void setBeamSetterPos(QPointF pos);
 
  signals:
     //! Signal emitted for all changes of the image

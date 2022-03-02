@@ -86,6 +86,9 @@ SubframePredictPeaks::SubframePredictPeaks()
     connect(
         _detector_widget->scene(), &DetectorScene::beamPosChanged, this,
         &SubframePredictPeaks::onBeamPosChanged);
+    connect(
+        this, &SubframePredictPeaks::beamPosChanged, _detector_widget->scene(),
+        &DetectorScene::setBeamSetterPos);
 
     _detector_widget->scene()->linkDirectBeamPositions(&_direct_beam_events);
     _detector_widget->scene()->linkOldDirectBeamPositions(&_old_direct_beam_events);
@@ -152,10 +155,10 @@ void SubframePredictPeaks::setRefineKiUp()
         _set_initial_ki, &QCheckBox::stateChanged, this, &SubframePredictPeaks::toggleCursorMode);
     connect(
         _beam_offset_x, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged),
-        this, &SubframePredictPeaks::adjustDirectBeam);
+        this, &SubframePredictPeaks::onBeamPosSpinChanged);
     connect(
         _beam_offset_y, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged),
-        this, &SubframePredictPeaks::adjustDirectBeam);
+        this, &SubframePredictPeaks::onBeamPosSpinChanged);
 
     _left_layout->addWidget(ki_box);
 }
@@ -814,4 +817,12 @@ void SubframePredictPeaks::onBeamPosChanged(QPointF pos)
     auto data = _detector_widget->currentData();
     _beam_offset_x->setValue(pos.x() - (static_cast<double>(data->nCols()) / 2.0));
     _beam_offset_y->setValue(-pos.y() + (static_cast<double>(data->nRows()) / 2.0));
+}
+
+void SubframePredictPeaks::onBeamPosSpinChanged()
+{
+    auto data = _detector_widget->currentData();
+    double x = _beam_offset_x->value() + static_cast<double>(data->nCols()) / 2.0;
+    double y = -_beam_offset_y->value() + static_cast<double>(data->nRows()) / 2.0;
+    emit beamPosChanged({x, y});
 }
