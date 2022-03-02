@@ -46,6 +46,7 @@
 #include "gui/utility/SafeSpinBox.h"
 #include "gui/utility/SideBar.h"
 #include "gui/utility/Spoiler.h"
+#include "gui/utility/SpoilerCheck.h"
 #include "gui/views/PeakTableView.h"
 #include "gui/widgets/DetectorWidget.h"
 #include "gui/widgets/PeakViewWidget.h"
@@ -75,6 +76,7 @@ SubframePredictPeaks::SubframePredictPeaks()
 
     _left_layout = new QVBoxLayout();
 
+    setAdjustBeamUp();
     setRefineKiUp();
     setParametersUp();
     setShapeCollectionUp();
@@ -102,18 +104,16 @@ SubframePredictPeaks::SubframePredictPeaks()
     propertyScrollArea->setContentLayout(_left_layout);
     main_layout->addWidget(propertyScrollArea);
     main_layout->addWidget(_right_element);
+    _set_initial_ki->setChecked(false);
 
     _shape_params = std::make_shared<nsx::ShapeCollectionParameters>();
 }
 
-void SubframePredictPeaks::setRefineKiUp()
+void SubframePredictPeaks::setAdjustBeamUp()
 {
-    Spoiler* ki_box = new Spoiler("Refine direct beam position");
-    GridFiller f(ki_box, true);
+    _set_initial_ki = new SpoilerCheck("Set initial direct beam position");
+    GridFiller f(_set_initial_ki, true);
 
-    _set_initial_ki = f.addCheckBox(
-        "Set initial direct beam",
-        "Set the initial position of the direct beam in detector coordinates", 1);
     _beam_offset_x = f.addDoubleSpinBox(
         "x offset", "Direct beam offset in x direction (pixels)");
 
@@ -121,6 +121,49 @@ void SubframePredictPeaks::setRefineKiUp()
         "y offset", "Direct beam offset in y direction (pixels)");
     _crosshair_size = f.addSpinBox("Crosshair size", "Radius of crosshair (pixels)");
     _crosshair_linewidth = f.addSpinBox("Crosshair linewidth", "Line width of crosshair");
+
+    _beam_offset_x->setValue(0.0);
+    _beam_offset_x->setMaximum(1000.0);
+    _beam_offset_x->setMinimum(-1000.0);
+    _beam_offset_x->setDecimals(2);
+    _beam_offset_y->setValue(0.0);
+    _beam_offset_y->setMaximum(1000.0);
+    _beam_offset_y->setMinimum(-1000.0);
+    _beam_offset_y->setDecimals(2);
+    _crosshair_size->setValue(15);
+    _crosshair_size->setMinimum(5);
+    _crosshair_size->setMaximum(500);
+    _crosshair_linewidth->setValue(1);
+    _crosshair_linewidth->setMinimum(1);
+    _crosshair_linewidth->setMaximum(10);
+
+    connect(
+        _set_initial_ki->checkBox(), &QCheckBox::stateChanged, this,
+        &SubframePredictPeaks::refreshPeakVisual);
+    connect(
+        _set_initial_ki->checkBox(), &QCheckBox::stateChanged, this,
+        &SubframePredictPeaks::toggleCursorMode);
+    connect(
+        _beam_offset_x, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged),
+        this, &SubframePredictPeaks::onBeamPosSpinChanged);
+    connect(
+        _beam_offset_y, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged),
+        this, &SubframePredictPeaks::onBeamPosSpinChanged);
+    connect(
+        _crosshair_size, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged),
+        this, &SubframePredictPeaks::changeCrosshair);
+    connect(
+        _crosshair_linewidth, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged),
+        this, &SubframePredictPeaks::changeCrosshair);
+
+    _left_layout->addWidget(_set_initial_ki);
+}
+
+void SubframePredictPeaks::setRefineKiUp()
+{
+    Spoiler* ki_box = new Spoiler("Refine direct beam position");
+    GridFiller f(ki_box, true);
+
     _n_batches_spin = f.addSpinBox(
         "Number of batches", "Number of batches for refining incident wavevector");
     _max_iter_spin = f.addSpinBox(
@@ -138,20 +181,6 @@ void SubframePredictPeaks::setRefineKiUp()
     _n_batches_spin->setValue(10);
     _max_iter_spin->setMaximum(1000000);
     _max_iter_spin->setValue(1000);
-    _beam_offset_x->setValue(0.0);
-    _beam_offset_x->setMaximum(1000.0);
-    _beam_offset_x->setMinimum(-1000.0);
-    _beam_offset_x->setDecimals(2);
-    _beam_offset_y->setValue(0.0);
-    _beam_offset_y->setMaximum(1000.0);
-    _beam_offset_y->setMinimum(-1000.0);
-    _beam_offset_y->setDecimals(2);
-    _crosshair_size->setValue(15);
-    _crosshair_size->setMinimum(5);
-    _crosshair_size->setMaximum(500);
-    _crosshair_linewidth->setValue(1);
-    _crosshair_linewidth->setMinimum(1);
-    _crosshair_linewidth->setMaximum(10);
 
     connect(
         _direct_beam, &QCheckBox::stateChanged, this, &SubframePredictPeaks::showDirectBeamEvents);
@@ -159,24 +188,6 @@ void SubframePredictPeaks::setRefineKiUp()
     connect(
         gGui->sideBar(), &SideBar::subframeChanged, this,
         &SubframePredictPeaks::setRefinerParameters);
-    connect(
-        _set_initial_ki, &QCheckBox::stateChanged, this, &SubframePredictPeaks::toggleUnsafeWidgets);
-    connect(
-        _set_initial_ki, &QCheckBox::stateChanged, this, &SubframePredictPeaks::refreshPeakVisual);
-    connect(
-        _set_initial_ki, &QCheckBox::stateChanged, this, &SubframePredictPeaks::toggleCursorMode);
-    connect(
-        _beam_offset_x, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged),
-        this, &SubframePredictPeaks::onBeamPosSpinChanged);
-    connect(
-        _beam_offset_y, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged),
-        this, &SubframePredictPeaks::onBeamPosSpinChanged);
-    connect(
-        _crosshair_size, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged),
-        this, &SubframePredictPeaks::changeCrosshair);
-    connect(
-        _crosshair_linewidth, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged),
-        this, &SubframePredictPeaks::changeCrosshair);
 
     _left_layout->addWidget(ki_box);
 }
@@ -817,17 +828,6 @@ void SubframePredictPeaks::toggleUnsafeWidgets()
     if (!_kabsch->isChecked()) {
         _sigma_d->setEnabled(false);
         _sigma_m->setEnabled(false);
-    }
-
-    _beam_offset_x->setEnabled(false);
-    _beam_offset_y->setEnabled(false);
-    _crosshair_size->setEnabled(false);
-    _crosshair_linewidth->setEnabled(false);
-    if (_set_initial_ki->isChecked()) {
-        _beam_offset_x->setEnabled(true);
-        _beam_offset_y->setEnabled(true);
-        _crosshair_size->setEnabled(true);
-        _crosshair_linewidth->setEnabled(true);
     }
 }
 

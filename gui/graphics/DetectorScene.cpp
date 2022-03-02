@@ -106,7 +106,7 @@ DetectorScene::DetectorScene(QObject* parent)
 void DetectorScene::addBeamSetter(QPointF position, int size, int linewidth)
 {
     if (_beam_pos_setter) {
-        removeItem(_beam_pos_setter);
+        removeBeamSetter();
         delete _beam_pos_setter;
     }
 

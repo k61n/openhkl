@@ -43,6 +43,7 @@ class PeakTableView;
 class PeakViewWidget;
 class SafeSpinBox;
 class SafeDoubleSpinBox;
+class SpoilerCheck;
 
 namespace nsx {
 struct PredictionParameters;
@@ -70,6 +71,8 @@ class SubframePredictPeaks : public QWidget {
     void crosshairChanged(int size, int linewidth);
 
  private:
+    //! Manually set the incident wavevector
+    void setAdjustBeamUp();
     //! Set the incident wavevector refinement up
     void setRefineKiUp();
     //! Set the parameters up
@@ -161,7 +164,7 @@ class SubframePredictPeaks : public QWidget {
     QVBoxLayout* _left_layout;
     QSplitter* _right_element;
 
-    QCheckBox* _set_initial_ki;
+    SpoilerCheck* _set_initial_ki;
     SafeDoubleSpinBox* _beam_offset_x;
     SafeDoubleSpinBox* _beam_offset_y;
     SafeSpinBox* _crosshair_size;
