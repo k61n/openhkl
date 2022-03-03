@@ -148,6 +148,8 @@ class DetectorScene : public QGraphicsScene {
     Eigen::Vector3d getBeamSetterPosition() const;
     //! Get the beam setter crosshairs
     CrosshairGraphic* beamSetter() const { return _beam_pos_setter; };
+    //! Get the beam setter coordinates
+    QPointF beamSetterCoords() const;
     //! Return the interaction mode
     int mode() const { return static_cast<int>(_mode); };
 

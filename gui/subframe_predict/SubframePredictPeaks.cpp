@@ -135,11 +135,11 @@ void SubframePredictPeaks::setAdjustBeamUp()
     _beam_offset_x->setValue(0.0);
     _beam_offset_x->setMaximum(1000.0);
     _beam_offset_x->setMinimum(-1000.0);
-    _beam_offset_x->setDecimals(2);
+    _beam_offset_x->setDecimals(4);
     _beam_offset_y->setValue(0.0);
     _beam_offset_y->setMaximum(1000.0);
     _beam_offset_y->setMinimum(-1000.0);
-    _beam_offset_y->setDecimals(2);
+    _beam_offset_y->setDecimals(4);
     _crosshair_linewidth->setValue(2);
     _crosshair_linewidth->setMinimum(1);
     _crosshair_linewidth->setMaximum(10);
@@ -562,7 +562,7 @@ void SubframePredictPeaks::refreshPeakCombo()
 
 void SubframePredictPeaks::adjustDirectBeam()
 {
-    if (_old_direct_beam_events.size() == 0)
+    if (_old_direct_beam_events.empty())
         _old_direct_beam_events = _direct_beam_events;
 
     for (std::size_t i = 0; i < _direct_beam_events.size(); ++i) {
@@ -574,12 +574,14 @@ void SubframePredictPeaks::adjustDirectBeam()
 
 void SubframePredictPeaks::setInitialKi(std::vector<nsx::InstrumentState>& states)
 {
-    for (std::size_t i = 0; i < states.size(); ++i) {
-        auto detector_position =
-            nsx::DirectVector(_direct_beam_events[i].px, _direct_beam_events[i].py, i);
-        nsx::ReciprocalVector q_position = states[i].sampleQ(detector_position);
-        states[i].ni = q_position.rowVector() * states[i].wavelength;
-    }
+    auto data = _detector_widget->currentData();
+    const auto* detector = data->diffractometer()->detector();
+    double x = _beam_offset_x->value() + data->nCols() / 2.0;
+    double y = _beam_offset_y->value() + data->nRows() / 2.0;
+
+    nsx::DirectVector direct = detector->pixelPosition(x, y);
+    for (auto state : states)
+        state.adjustKi(direct);
 }
 
 void SubframePredictPeaks::refineKi()
@@ -587,7 +589,7 @@ void SubframePredictPeaks::refineKi()
     gGui->setReady(false);
     auto expt = gSession->experimentAt(_exp_combo->currentIndex())->experiment();
     auto* peaks = expt->getPeakCollection(_found_peaks_combo->currentText().toStdString());
-    const auto data = _detector_widget->currentData();
+    auto data = _detector_widget->currentData();
     auto* detector = data->diffractometer()->detector();
     auto& states = data->instrumentStates();
     auto refiner = expt->refiner();
@@ -631,6 +633,12 @@ void SubframePredictPeaks::refineKi()
 void SubframePredictPeaks::runPrediction()
 {
     gGui->setReady(false);
+    if (_set_initial_ki->isChecked()) {
+        auto data = _detector_widget->currentData();
+        auto& states = data->instrumentStates();
+        adjustDirectBeam();
+        setInitialKi(states);
+    }
     try {
         auto* experiment = gSession->experimentAt(_exp_combo->currentIndex())->experiment();
         auto data = experiment->getData(_detector_widget->dataCombo()->currentText().toStdString());
@@ -779,14 +787,14 @@ void SubframePredictPeaks::refreshPeakVisual()
     auto data = _detector_widget->currentData();
     _detector_widget->scene()->initIntRegionFromPeakWidget(_peak_view_widget->set1);
     if (_set_initial_ki->isChecked()) {
-        QPointF current =
-            {data->nCols() / 2.0 - _beam_offset_x->value(),
-             data->nRows() / 2.0 - _beam_offset_y->value()};
+        QPointF current;
+        if (!_detector_widget->scene()->beamSetter())
+            current = {data->nCols() / 2.0, data->nRows() / 2.0};
+        else
+            current = _detector_widget->scene()->beamSetterCoords();
         _detector_widget->scene()->addBeamSetter(
             current, _crosshair_size->value(), _crosshair_linewidth->value());
         changeCrosshair();
-    } else {
-        _detector_widget->scene()->removeBeamSetter();
     }
     _detector_widget->refresh();
     if (_peak_collection_item.childCount() == 0)

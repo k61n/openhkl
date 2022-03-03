@@ -22,6 +22,8 @@
 #include <algorithm>
 #include <cassert>
 
+#include <iostream>
+
 namespace nsx {
 
 InstrumentState::InstrumentState(Diffractometer* diffractometer) : _diffractometer(diffractometer)
@@ -49,6 +51,12 @@ ReciprocalVector InstrumentState::kfLab(const DirectVector& detector_position) c
     k.normalize();
     k /= wavelength;
     return ReciprocalVector(k);
+}
+
+void InstrumentState::adjustKi(const DirectVector& detector_position)
+{
+    ni = detectorOrientation * (detector_position.vector() - samplePosition);
+    ni.normalize();
 }
 
 ReciprocalVector InstrumentState::sampleQ(const DirectVector& detector_position) const

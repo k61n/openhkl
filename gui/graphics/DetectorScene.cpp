@@ -97,6 +97,7 @@ DetectorScene::DetectorScene(QObject* parent)
     , _beam_color(Qt::black)
     , _old_beam_color(Qt::gray)
     , _beam_size(20)
+    , _beam_pos_setter(nullptr)
     , _selected_peak(nullptr)
     , _unit_cell(nullptr)
     , _peak_center_data(nullptr)
@@ -1150,4 +1151,9 @@ void DetectorScene::onCrosshairChanged(int size, int linewidth)
 {
     _beam_pos_setter->setSize(size);
     _beam_pos_setter->setLinewidth(linewidth);
+}
+
+QPointF DetectorScene::beamSetterCoords() const
+{
+    return _beam_pos_setter->scenePos();
 }
