@@ -23,6 +23,7 @@
 #include "gui/connect/Sentinel.h"
 #include "gui/dialogs/UnitCellDialog.h"
 #include "gui/frames/UnitCellWidget.h"
+#include "gui/graphics/DetectorScene.h"
 #include "gui/models/Project.h"
 #include "gui/models/Session.h"
 #include "gui/utility/GridFiller.h"
@@ -33,6 +34,7 @@
 #include "gui/utility/Spoiler.h"
 #include "gui/views/PeakTableView.h"
 #include "gui/views/UnitCellTableView.h"
+#include "gui/widgets/DetectorWidget.h"
 
 #include <QCheckBox>
 #include <QFileInfo>
@@ -42,6 +44,9 @@
 #include <QMessageBox>
 #include <QSplitter>
 #include <QVBoxLayout>
+#include <qgridlayout.h>
+#include <qtabwidget.h>
+#include <QGroupBox>
 
 
 SubframeAutoIndexer::SubframeAutoIndexer()
@@ -55,13 +60,23 @@ SubframeAutoIndexer::SubframeAutoIndexer()
     _right_element = new QSplitter(Qt::Vertical, this);
     _left_layout = new QVBoxLayout();
 
+    QTabWidget* tab_widget = new QTabWidget(this);
+    QWidget* tables_tab = new QWidget(tab_widget);
+    QWidget* detector_tab = new QWidget(tab_widget);
+    tab_widget->addTab(tables_tab, "Solutions");
+    tab_widget->addTab(detector_tab, "Detector");
+
     setInputUp();
     setParametersUp();
     setProceedUp();
+    setPeakViewWidgetUp();
     setPeakTableUp();
     setSolutionTableUp();
+    setFigureUp();
     toggleUnsafeWidgets();
-    _right_element->setSizePolicy(_size_policy_right);
+
+    tables_tab->setLayout(_solution_layout);
+    detector_tab->setLayout(_detector_widget);
 
     auto propertyScrollArea = new PropertyScrollArea(this);
     propertyScrollArea->setContentLayout(_left_layout);
@@ -70,6 +85,11 @@ SubframeAutoIndexer::SubframeAutoIndexer()
 
     _peak_collection_item.setPeakCollection(&_peak_collection);
     _peak_collection_model.setRoot(&_peak_collection_item);
+
+    _right_element->addWidget(tab_widget);
+    _right_element->addWidget(_peak_group);
+    // _right_element->addWidget(_peak_group);
+    _right_element->setSizePolicy(_size_policy_right);
 }
 
 void SubframeAutoIndexer::setInputUp()
@@ -196,30 +216,28 @@ void SubframeAutoIndexer::setProceedUp()
 
 void SubframeAutoIndexer::setPeakTableUp()
 {
-    QGroupBox* peak_group = new QGroupBox("Peaks used in indexing");
-    QGridLayout* peak_grid = new QGridLayout(peak_group);
+    _peak_group = new QGroupBox("Peaks used in indexing");
+    QGridLayout* peak_layout = new QGridLayout(_peak_group);
 
-    peak_group->setSizePolicy(_size_policy_right);
+    _peak_group->setSizePolicy(_size_policy_right);
 
     _peak_table = new PeakTableView(this);
     _peak_collection_model.setRoot(&_peak_collection_item);
     _peak_table->setModel(&_peak_collection_model);
 
-    peak_grid->addWidget(_peak_table, 0, 0, 0, 0);
-
-    _right_element->addWidget(peak_group);
+    peak_layout->addWidget(_peak_table, 0, 0, 0, 0);
 }
 
 void SubframeAutoIndexer::setSolutionTableUp()
 {
     QGroupBox* solution_group = new QGroupBox("Solutions");
-    QVBoxLayout* solution_grid = new QVBoxLayout(solution_group);
+    _solution_layout = new QVBoxLayout(solution_group);
 
     solution_group->setSizePolicy(_size_policy_right);
 
     _solution_table = new UnitCellTableView(this);
 
-    solution_grid->addWidget(_solution_table);
+    _solution_layout->addWidget(_solution_table);
 
     connect(
         _solution_table->verticalHeader(), &QHeaderView::sectionClicked, this,
@@ -228,14 +246,14 @@ void SubframeAutoIndexer::setSolutionTableUp()
     connect(
         _solution_table, &UnitCellTableView::clicked, this,
         &SubframeAutoIndexer::selectSolutionTable);
-
-    _right_element->addWidget(solution_group);
 }
 
 void SubframeAutoIndexer::refreshAll()
 {
     setExperiments();
     if (!(_exp_combo->count() == 0)) {
+        const auto all_data = gSession->experimentAt(_exp_combo->currentIndex())->allData();
+        _detector_widget->updateDatasetList(all_data);
         const auto dataset =
             gSession->experimentAt(_exp_combo->currentIndex())->getData(_data_combo->currentIndex());
         if (dataset)
@@ -266,11 +284,43 @@ void SubframeAutoIndexer::setExperiments()
     }
 }
 
+void SubframeAutoIndexer::setPeakViewWidgetUp()
+{
+    _peak_view_widget = new PeakViewWidget("Valid peaks", "Invalid Peaks");
+
+    Spoiler* preview_spoiler = new Spoiler("Show/hide peaks");
+    preview_spoiler->setContentLayout(*_peak_view_widget, true);
+    _left_layout->addWidget(preview_spoiler);
+    preview_spoiler->setExpanded(false);
+
+    connect(
+        _peak_view_widget, &PeakViewWidget::settingsChanged, this,
+        &SubframeAutoIndexer::refreshPeakVisual);
+}
+
+void SubframeAutoIndexer::setFigureUp()
+{
+    _detector_widget = new DetectorWidget(false, false, true);
+    _detector_widget->linkPeakModel(&_peak_collection_model);
+
+    connect(
+        _detector_widget->spin(), static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged),
+        this, &SubframeAutoIndexer::refreshPeakVisual);
+    connect(
+        _detector_widget->scene(), &DetectorScene::signalUpdateDetectorScene, this,
+        &SubframeAutoIndexer::refreshPeakTable);
+    connect(
+        _detector_widget->scene(), &DetectorScene::signalSelectedPeakItemChanged, this,
+        &SubframeAutoIndexer::changeSelected);
+}
+
 void SubframeAutoIndexer::updateDatasetList()
 {
     _data_combo->blockSignals(true);
     QString current_data = _data_combo->currentText();
     _data_combo->clear();
+    _data_list = gSession->experimentAt(_exp_combo->currentIndex())->allData();
+    _detector_widget->updateDatasetList(_data_list);
 
     const QStringList& datanames{gSession->currentProject()->getDataNames()};
     if (!datanames.empty()) {
@@ -320,6 +370,34 @@ void SubframeAutoIndexer::refreshPeakTable()
     _peak_collection_item.setPeakCollection(&_peak_collection);
     _peak_collection_model.setRoot(&_peak_collection_item);
     _peak_table->resizeColumnsToContents();
+    refreshPeakVisual();
+}
+
+void SubframeAutoIndexer::changeSelected(PeakItemGraphic* peak_graphic)
+{
+    int row = _peak_collection_item.returnRowOfVisualItem(peak_graphic);
+    QModelIndex index = _peak_collection_model.index(row, 0);
+    _peak_table->selectRow(row);
+    _peak_table->scrollTo(index, QAbstractItemView::PositionAtTop);
+}
+
+void SubframeAutoIndexer::refreshPeakVisual()
+{
+    if (_peak_collection_item.childCount() == 0)
+        return;
+
+    for (int i = 0; i < _peak_collection_item.childCount(); i++) {
+        PeakItem* peak = _peak_collection_item.peakItemAt(i);
+        auto graphic = peak->peakGraphic();
+
+        graphic->showLabel(false);
+        graphic->setColor(Qt::transparent);
+        graphic->initFromPeakViewWidget(
+            peak->peak()->enabled() ? _peak_view_widget->set1 : _peak_view_widget->set2);
+    }
+
+    _detector_widget->scene()->initIntRegionFromPeakWidget(_peak_view_widget->set1);
+    _detector_widget->refresh();
 }
 
 void SubframeAutoIndexer::grabIndexerParameters()

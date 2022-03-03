@@ -19,11 +19,15 @@
 #include "core/shape/PeakCollection.h"
 #include "gui/items/PeakCollectionItem.h"
 #include "gui/models/PeakCollectionModel.h"
+#include "gui/widgets/PeakViewWidget.h"
 
 #include <QPushButton>
 #include <QSizePolicy>
 #include <QWidget>
+#include <qgridlayout.h>
+#include <qgroupbox.h>
 
+class DetectorWidget;
 class LinkedComboBox;
 class PeakTableView;
 class UnitCellTableView;
@@ -33,6 +37,7 @@ class SafeDoubleSpinBox;
 class QVBoxLayout;
 class QSplitter;
 class QCheckBox;
+class QGroupBox;
 
 //! Frame containing interface to autoindex peak collections
 class SubframeAutoIndexer : public QWidget {
@@ -55,6 +60,10 @@ class SubframeAutoIndexer : public QWidget {
     void setPeakTableUp();
     //! Set the peak table view up
     void setSolutionTableUp();
+    //! Set peak view widget update
+    void setPeakViewWidgetUp();
+    //! Set up the detector scene
+    void setFigureUp();
 
     //! Build the table of solution
     void buildSolutionsTable();
@@ -66,6 +75,10 @@ class SubframeAutoIndexer : public QWidget {
     void updatePeakList();
     //! Refresh the peak table
     void refreshPeakTable();
+    //! Change the peak selected in the table
+    void changeSelected(PeakItemGraphic* peak_graphic);
+        //! Refresh the detector scene
+        void refreshPeakVisual();
     //! Get the parameters of the indexer
     void grabIndexerParameters();
     //! Get the parameters of the indexer
@@ -85,6 +98,8 @@ class SubframeAutoIndexer : public QWidget {
     PeakCollectionItem _peak_collection_item;
     //! The temporary collection
     PeakCollectionModel _peak_collection_model;
+    //! List of data sets
+    std::vector<nsx::sptrDataSet> _data_list;
 
     std::vector<std::pair<nsx::sptrPeak3D, std::shared_ptr<const nsx::UnitCell>>> _defaults;
     std::vector<std::pair<std::shared_ptr<nsx::UnitCell>, double>> _solutions;
@@ -120,11 +135,16 @@ class SubframeAutoIndexer : public QWidget {
     QPushButton* _solve_button;
     QPushButton* _save_button;
 
-
     QSizePolicy _size_policy_right;
 
+    QGroupBox* _peak_group;
+    QVBoxLayout* _solution_layout;
     PeakTableView* _peak_table;
     UnitCellTableView* _solution_table;
+
+    DetectorWidget* _detector_widget;
+
+    PeakViewWidget* _peak_view_widget;
 };
 
 #endif // NSX_GUI_SUBFRAME_INDEX_SUBFRAMEAUTOINDEXER_H
