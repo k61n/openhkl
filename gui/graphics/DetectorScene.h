@@ -1,4 +1,3 @@
-//  ***********************************************************************************************
 //
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
@@ -20,6 +19,7 @@
 #include "core/detector/DetectorEvent.h"
 #include "core/peak/IntegrationRegion.h"
 #include "core/peak/Peak3D.h"
+#include "gui/graphics_items/CrosshairGraphic.h"
 #include "gui/graphics_items/PeakCenterGraphic.h"
 #include "gui/models/ColorMap.h"
 #include "gui/widgets/PeakViewWidget.h"
@@ -27,6 +27,7 @@
 #include <QGraphicsPixmapItem>
 #include <QGraphicsScene>
 #include <QStack>
+#include <qgraphicsitem.h>
 
 namespace nsx {
 class UnitCell;
@@ -58,7 +59,8 @@ class DetectorScene : public QGraphicsScene {
         ELLIPSE_MASK = 3,
         LINE = 4,
         HORIZONTALSLICE = 5,
-        VERTICALSLICE = 6
+        VERTICALSLICE = 6,
+        DRAG_DROP = 7
     };
 
     //! Which mode is the cursor diplaying
@@ -107,9 +109,9 @@ class DetectorScene : public QGraphicsScene {
     //! Populate vector of 3rd party peak centers
     void link3rdPartyPeaks(nsx::PeakCenterDataSet* pcd);
     //! Set direct beam positions
-    void linkDirectBeamPositions(const std::vector<nsx::DetectorEvent>& events);
+    void linkDirectBeamPositions(std::vector<nsx::DetectorEvent>* events);
     //! Set unrefined direct beam positions
-    void linkOldDirectBeamPositions(const std::vector<nsx::DetectorEvent>& events);
+    void linkOldDirectBeamPositions(std::vector<nsx::DetectorEvent>* events);
     //! Set the first peak model pointer to null
     void unlinkPeakModel1();
     //! Set the second peak model pointer to null
@@ -136,6 +138,20 @@ class DetectorScene : public QGraphicsScene {
     void showDirectBeam(bool show);
     //! Get the current intensity
     int intensity() { return _currentIntensity; };
+    //! Set up the direct beam crosshair
+    void addBeamSetter(int size, int linewidth);
+    //! Remove the beam crosshair from the scene
+    void removeBeamSetter();
+    //! Show/hide the beam setter crosshair
+    void showBeamSetter(bool show);
+    //! Get the beam setter position
+    Eigen::Vector3d getBeamSetterPosition() const;
+    //! Get the beam setter crosshairs
+    CrosshairGraphic* beamSetter() const { return _beam_pos_setter; };
+    //! Get the beam setter coordinates
+    static QPointF beamSetterCoords();
+    //! Return the interaction mode
+    int mode() const { return static_cast<int>(_mode); };
 
  protected:
     void mousePressEvent(QGraphicsSceneMouseEvent* event);
@@ -159,6 +175,8 @@ class DetectorScene : public QGraphicsScene {
     void drawIntegrationRegion(bool);
     void updateMasks() { _lastClickedGI = nullptr; }
     int currentFrame() const { return _currentFrameIndex; }
+    void setBeamSetterPos(QPointF pos);
+    void onCrosshairChanged(int size, int linewidth);
 
  signals:
     //! Signal emitted for all changes of the image
@@ -168,6 +186,7 @@ class DetectorScene : public QGraphicsScene {
     void signalChangeSelectedPeak(nsx::Peak3D* peak);
     void signalSelectedPeakItemChanged(PeakItemGraphic* peak);
     void signalUpdateDetectorScene();
+    void beamPosChanged(QPointF pos);
 
  private:
     //! Create the text of the tooltip depending on Scene Mode.
@@ -192,6 +211,8 @@ class DetectorScene : public QGraphicsScene {
     QGraphicsRectItem* _selectionRect;
     //! Stack of zoom
     QStack<QRect> _zoomStack;
+    //! item being dragged
+    CrosshairGraphic* _current_dragged_item;
 
     //! The current peak model
     PeakCollectionModel* _peak_model_1;
@@ -202,9 +223,9 @@ class DetectorScene : public QGraphicsScene {
     //! std vector of peak centres from 3rd party software
     std::vector<PeakCenterGraphic*> _peak_center_items;
     //! std vector of direct beam positions for each frame
-    std::vector<nsx::DetectorEvent> _direct_beam_events;
+    std::vector<nsx::DetectorEvent>* _direct_beam_events;
     //! direct beam events pre-refinement
-    std::vector<nsx::DetectorEvent> _old_direct_beam_events;
+    std::vector<nsx::DetectorEvent>* _old_direct_beam_events;
 
     bool _itemSelected;
     QGraphicsPixmapItem* _image;
@@ -253,6 +274,10 @@ class DetectorScene : public QGraphicsScene {
     QColor _old_beam_color;
     //! Size of direct beam
     double _beam_size;
+    //! Crosshair for setting direct beam
+    CrosshairGraphic* _beam_pos_setter;
+    //! current position of the crosshair
+    static QPointF _current_beam_position;
 
 
     nsx::Peak3D* _selected_peak;

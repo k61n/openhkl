@@ -106,6 +106,11 @@ MainWin::MainWin()
     show();
 
     initStatusBar();
+
+    connect(indexer, &SubframeAutoIndexer::beamPosChanged,
+            predictor, &SubframePredictPeaks::onBeamPosChanged);
+    connect(predictor, &SubframePredictPeaks::beamPosChanged,
+            indexer, &SubframeAutoIndexer::onBeamPosChanged);
 }
 
 void MainWin::onDataChanged() const
