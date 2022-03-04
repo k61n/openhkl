@@ -32,6 +32,7 @@
 #include "gui/utility/SafeSpinBox.h"
 #include "gui/utility/SideBar.h"
 #include "gui/utility/Spoiler.h"
+#include "gui/utility/SpoilerCheck.h"
 #include "gui/views/PeakTableView.h"
 #include "gui/views/UnitCellTableView.h"
 #include "gui/widgets/DetectorWidget.h"
@@ -67,6 +68,7 @@ SubframeAutoIndexer::SubframeAutoIndexer()
     tab_widget->addTab(detector_tab, "Detector");
 
     setInputUp();
+    setAdjustBeamUp();
     setParametersUp();
     setProceedUp();
     setPeakViewWidgetUp();
@@ -74,6 +76,16 @@ SubframeAutoIndexer::SubframeAutoIndexer()
     setSolutionTableUp();
     setFigureUp();
     toggleUnsafeWidgets();
+
+    connect(
+        _detector_widget->scene(), &DetectorScene::beamPosChanged, this,
+        &SubframeAutoIndexer::onBeamPosChanged);
+    connect(
+        this, &SubframeAutoIndexer::beamPosChanged, _detector_widget->scene(),
+        &DetectorScene::setBeamSetterPos);
+    connect(
+        this, &SubframeAutoIndexer::crosshairChanged, _detector_widget->scene(),
+        &DetectorScene::onCrosshairChanged);
 
     tables_tab->setLayout(_solution_layout);
     detector_tab->setLayout(_detector_widget);
@@ -88,8 +100,8 @@ SubframeAutoIndexer::SubframeAutoIndexer()
 
     _right_element->addWidget(tab_widget);
     _right_element->addWidget(_peak_group);
-    // _right_element->addWidget(_peak_group);
     _right_element->setSizePolicy(_size_policy_right);
+    _set_initial_ki->setChecked(false);
 }
 
 void SubframeAutoIndexer::setInputUp()
@@ -110,6 +122,63 @@ void SubframeAutoIndexer::setInputUp()
         &SubframeAutoIndexer::refreshPeakTable);
 
     _left_layout->addWidget(input_box);
+}
+
+void SubframeAutoIndexer::setAdjustBeamUp()
+{
+    _set_initial_ki = new SpoilerCheck("Set initial direct beam position");
+    GridFiller f(_set_initial_ki, true);
+
+    _beam_offset_x = f.addDoubleSpinBox(
+        "x offset", "Direct beam offset in x direction (pixels)");
+
+    _beam_offset_y = f.addDoubleSpinBox(
+        "y offset", "Direct beam offset in y direction (pixels)");
+
+    _crosshair_size = new QSlider(Qt::Horizontal);
+    QLabel* crosshair_label = new QLabel("Crosshair size");
+    crosshair_label->setToolTip("Radius of crosshair (pixels)");
+    crosshair_label->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
+    _crosshair_size->setMinimum(5);
+    _crosshair_size->setMaximum(200);
+    _crosshair_size->setValue(15);
+    f.addLabel("Crosshair size", "Radius of crosshair (pixels)");
+    f.addWidget(_crosshair_size, 1);
+
+    _crosshair_linewidth = f.addSpinBox("Crosshair linewidth", "Line width of crosshair");
+
+    _beam_offset_x->setValue(0.0);
+    _beam_offset_x->setMaximum(1000.0);
+    _beam_offset_x->setMinimum(-1000.0);
+    _beam_offset_x->setDecimals(4);
+    _beam_offset_y->setValue(0.0);
+    _beam_offset_y->setMaximum(1000.0);
+    _beam_offset_y->setMinimum(-1000.0);
+    _beam_offset_y->setDecimals(4);
+    _crosshair_linewidth->setValue(2);
+    _crosshair_linewidth->setMinimum(1);
+    _crosshair_linewidth->setMaximum(10);
+
+    connect(
+        _set_initial_ki->checkBox(), &QCheckBox::stateChanged, this,
+        &SubframeAutoIndexer::refreshPeakVisual);
+    connect(
+        _set_initial_ki->checkBox(), &QCheckBox::stateChanged, this,
+        &SubframeAutoIndexer::toggleCursorMode);
+    connect(
+        _beam_offset_x, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged),
+        this, &SubframeAutoIndexer::onBeamPosSpinChanged);
+    connect(
+        _beam_offset_y, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged),
+        this, &SubframeAutoIndexer::onBeamPosSpinChanged);
+    connect(
+        _crosshair_size, static_cast<void (QSlider::*)(int)>(&QSlider::valueChanged),
+        this, &SubframeAutoIndexer::changeCrosshair);
+    connect(
+        _crosshair_linewidth, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged),
+        this, &SubframeAutoIndexer::changeCrosshair);
+
+    _left_layout->addWidget(_set_initial_ki);
 }
 
 void SubframeAutoIndexer::setParametersUp()
@@ -275,13 +344,20 @@ void SubframeAutoIndexer::setExperiments()
         _exp_combo->addItem(exp);
     _exp_combo->setCurrentText(current_exp);
 
-    _exp_combo->blockSignals(false);
-
     if (!(_exp_combo->count() == 0)) {
         updatePeakList();
         updateDatasetList();
         grabIndexerParameters();
+        refreshPeakTable();
+        const auto data = _detector_widget->currentData();
+        if (data) {
+            _beam_offset_x->setMaximum(static_cast<double>(data->nCols()) / 2.0);
+            _beam_offset_x->setMinimum(-static_cast<double>(data->nCols()) / 2.0);
+            _beam_offset_y->setMaximum(static_cast<double>(data->nRows()) / 2.0);
+            _beam_offset_y->setMinimum(-static_cast<double>(data->nRows()) / 2.0);
+        }
     }
+    _exp_combo->blockSignals(false);
 }
 
 void SubframeAutoIndexer::setPeakViewWidgetUp()
@@ -383,6 +459,19 @@ void SubframeAutoIndexer::changeSelected(PeakItemGraphic* peak_graphic)
 
 void SubframeAutoIndexer::refreshPeakVisual()
 {
+    auto data = _detector_widget->currentData();
+    _detector_widget->scene()->initIntRegionFromPeakWidget(_peak_view_widget->set1);
+    if (_set_initial_ki->isChecked()) {
+        QPointF current;
+        if (!_detector_widget->scene()->beamSetter())
+            current = {data->nCols() / 2.0, data->nRows() / 2.0};
+        else
+            current = _detector_widget->scene()->beamSetterCoords();
+        _detector_widget->scene()->addBeamSetter(
+            current, _crosshair_size->value(), _crosshair_linewidth->value());
+        changeCrosshair();
+    }
+
     if (_peak_collection_item.childCount() == 0)
         return;
 
@@ -632,4 +721,34 @@ void SubframeAutoIndexer::toggleUnsafeWidgets()
     }
     if (_peak_collection_model.rowCount() == 0 || _solutions.empty())
         _save_button->setEnabled(false);
+}
+
+void SubframeAutoIndexer::onBeamPosChanged(QPointF pos)
+{
+    auto data = _detector_widget->currentData();
+    _beam_offset_x->setValue(pos.x() - (static_cast<double>(data->nCols()) / 2.0));
+    _beam_offset_y->setValue(-pos.y() + (static_cast<double>(data->nRows()) / 2.0));
+}
+
+void SubframeAutoIndexer::onBeamPosSpinChanged()
+{
+    auto data = _detector_widget->currentData();
+    double x = _beam_offset_x->value() + static_cast<double>(data->nCols()) / 2.0;
+    double y = -_beam_offset_y->value() + static_cast<double>(data->nRows()) / 2.0;
+    emit beamPosChanged({x, y});
+}
+
+void SubframeAutoIndexer::changeCrosshair()
+{
+    emit crosshairChanged(_crosshair_size->value(), _crosshair_linewidth->value());
+}
+
+void SubframeAutoIndexer::toggleCursorMode()
+{
+    if (_set_initial_ki->isChecked()) {
+        _stored_cursor_mode = _detector_widget->scene()->mode();
+        _detector_widget->scene()->changeInteractionMode(7);
+    } else {
+        _detector_widget->scene()->changeInteractionMode(_stored_cursor_mode);
+    }
 }

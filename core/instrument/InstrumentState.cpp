@@ -22,8 +22,6 @@
 #include <algorithm>
 #include <cassert>
 
-#include <iostream>
-
 namespace nsx {
 
 InstrumentState::InstrumentState(Diffractometer* diffractometer) : _diffractometer(diffractometer)

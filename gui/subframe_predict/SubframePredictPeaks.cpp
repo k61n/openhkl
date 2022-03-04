@@ -410,7 +410,6 @@ void SubframePredictPeaks::setExperiments()
             _beam_offset_y->setMaximum(static_cast<double>(data->nRows()) / 2.0);
             _beam_offset_y->setMinimum(-static_cast<double>(data->nRows()) / 2.0);
         }
-
     }
 
     _exp_combo->blockSignals(false);
