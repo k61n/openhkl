@@ -139,7 +139,7 @@ class DetectorScene : public QGraphicsScene {
     //! Get the current intensity
     int intensity() { return _currentIntensity; };
     //! Set up the direct beam crosshair
-    void addBeamSetter(QPointF position, int size, int linewidth);
+    void addBeamSetter(int size, int linewidth);
     //! Remove the beam crosshair from the scene
     void removeBeamSetter();
     //! Show/hide the beam setter crosshair
@@ -149,7 +149,7 @@ class DetectorScene : public QGraphicsScene {
     //! Get the beam setter crosshairs
     CrosshairGraphic* beamSetter() const { return _beam_pos_setter; };
     //! Get the beam setter coordinates
-    QPointF beamSetterCoords() const;
+    static QPointF beamSetterCoords();
     //! Return the interaction mode
     int mode() const { return static_cast<int>(_mode); };
 
@@ -276,6 +276,8 @@ class DetectorScene : public QGraphicsScene {
     double _beam_size;
     //! Crosshair for setting direct beam
     CrosshairGraphic* _beam_pos_setter;
+    //! current position of the crosshair
+    static QPointF _current_beam_position;
 
 
     nsx::Peak3D* _selected_peak;

@@ -46,6 +46,7 @@
 #include <QSplitter>
 #include <QVBoxLayout>
 #include <qgridlayout.h>
+#include <qobject.h>
 #include <qtabwidget.h>
 #include <QGroupBox>
 
@@ -462,13 +463,8 @@ void SubframeAutoIndexer::refreshPeakVisual()
     auto data = _detector_widget->currentData();
     _detector_widget->scene()->initIntRegionFromPeakWidget(_peak_view_widget->set1);
     if (_set_initial_ki->isChecked()) {
-        QPointF current;
-        if (!_detector_widget->scene()->beamSetter())
-            current = {data->nCols() / 2.0, data->nRows() / 2.0};
-        else
-            current = _detector_widget->scene()->beamSetterCoords();
         _detector_widget->scene()->addBeamSetter(
-            current, _crosshair_size->value(), _crosshair_linewidth->value());
+            _crosshair_size->value(), _crosshair_linewidth->value());
         changeCrosshair();
     }
 
@@ -725,6 +721,7 @@ void SubframeAutoIndexer::toggleUnsafeWidgets()
 
 void SubframeAutoIndexer::onBeamPosChanged(QPointF pos)
 {
+    const QSignalBlocker blocker(this);
     auto data = _detector_widget->currentData();
     _beam_offset_x->setValue(pos.x() - (static_cast<double>(data->nCols()) / 2.0));
     _beam_offset_y->setValue(-pos.y() + (static_cast<double>(data->nRows()) / 2.0));

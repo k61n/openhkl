@@ -61,6 +61,8 @@
 #include <qgraphicsitem.h>
 #include <qpainterpath.h>
 
+QPointF DetectorScene::_current_beam_position = {0, 0};
+
 DetectorScene::DetectorScene(QObject* parent)
     : QGraphicsScene(parent)
     , _currentData(nullptr)
@@ -104,14 +106,14 @@ DetectorScene::DetectorScene(QObject* parent)
 {
 }
 
-void DetectorScene::addBeamSetter(QPointF position, int size, int linewidth)
+void DetectorScene::addBeamSetter(int size, int linewidth)
 {
     if (_beam_pos_setter) {
         removeBeamSetter();
         delete _beam_pos_setter;
     }
 
-    _beam_pos_setter = new CrosshairGraphic(position);
+    _beam_pos_setter = new CrosshairGraphic(_current_beam_position);
     _beam_pos_setter->setSize(size);
     _beam_pos_setter->setLinewidth(linewidth);
     addItem(_beam_pos_setter);}
@@ -329,6 +331,8 @@ void DetectorScene::slotChangeSelectedData(nsx::sptrDataSet data, int frame)
             removeItem(_lastClickedGI);
             _lastClickedGI = nullptr;
         }
+
+        _current_beam_position = {_currentData->nCols() / 2.0, _currentData->nRows() / 2.0};
     }
 
     slotChangeSelectedFrame(frame);
@@ -666,7 +670,8 @@ void DetectorScene::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
             int size = _current_dragged_item->size();
             int linewidth = _current_dragged_item->linewidth();
             emit beamPosChanged(event->scenePos());
-            addBeamSetter(event->scenePos(), size, linewidth);
+            _current_beam_position = event->scenePos();
+            addBeamSetter(size, linewidth);
         } else {
             if (_peak_model_1) {
                 // _peak_model_2 is only relevant in DetectorWindow, ignore here.
@@ -1144,6 +1149,7 @@ Eigen::Vector3d DetectorScene::getBeamSetterPosition() const
 
 void DetectorScene::setBeamSetterPos(QPointF pos)
 {
+    _current_beam_position = pos;
     _beam_pos_setter->setPos(pos);
 }
 
@@ -1153,7 +1159,7 @@ void DetectorScene::onCrosshairChanged(int size, int linewidth)
     _beam_pos_setter->setLinewidth(linewidth);
 }
 
-QPointF DetectorScene::beamSetterCoords() const
+QPointF DetectorScene::beamSetterCoords()
 {
-    return _beam_pos_setter->scenePos();
+    return _current_beam_position;
 }
