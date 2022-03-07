@@ -717,14 +717,12 @@ void SubframePredictPeaks::toggleUnsafeWidgets()
     if (current_pc.size() == 0) return;
     pc = gSession->currentProject()->experiment()->getPeakCollection( current_pc );   
 
-    // these elements are only to be enabled if collection is indeced && integrated
-    bool b = pc->isIndexed() && pc->isIntegrated();   
-    _predict_button->setEnabled(b);
-    _save_button->setEnabled(b);
-    _assign_peak_shapes->setEnabled(b);    
-    _refine_ki_button->setEnabled(b);
-    _direct_beam->setEnabled(b);     
-
+    bool is_indexed = pc->isIndexed();
+    _predict_button->setEnabled(is_indexed);
+    _save_button->setEnabled(is_indexed);
+    _assign_peak_shapes->setEnabled(is_indexed);    
+    _refine_ki_button->setEnabled(is_indexed);
+    _direct_beam->setEnabled(is_indexed);     
 }
 
 DetectorWidget* SubframePredictPeaks::detectorWidget()

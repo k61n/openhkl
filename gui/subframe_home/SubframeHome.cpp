@@ -94,25 +94,28 @@ void SubframeHome::_setLeftLayout(QHBoxLayout* main_layout)
         new QSpacerItem(10, 0, QSizePolicy::Minimum, QSizePolicy::Expanding);
     left->addSpacerItem(spacer_bottom);   
     
-    _dataset_table = new QTableWidget(0,3);    
+    _dataset_table = new QTableWidget(0,5);    
     _dataset_table->setEditTriggers(QAbstractItemView::NoEditTriggers);
     _dataset_table->setHorizontalHeaderLabels(QStringList 
-    {"Name","Diffractometer","Number of Frames"});    
+    {"Name","Diffractometer","Number of Frames","Number of Columns", "Number of Rows"});  
+    _dataset_table->resizeColumnsToContents();  
    
-    _peak_collections_table = new QTableWidget(0,4);  
+    _peak_collections_table = new QTableWidget(0,6);  
     _peak_collections_table->setEditTriggers(QAbstractItemView::NoEditTriggers);
     _peak_collections_table->setHorizontalHeaderLabels(QStringList 
-    {"Name","Number of Peaks","Is indexed","Is integrated"});    
+    {"Name","Number of Peaks", "Number of Invalid Peaks", "Is indexed","Is integrated", "List Type"});
+    _peak_collections_table->resizeColumnsToContents();    
 
     _unitcell_table = new QTableWidget(0,8);
     _unitcell_table->setEditTriggers(QAbstractItemView::NoEditTriggers);
     _unitcell_table->setHorizontalHeaderLabels(QStringList 
     {"Name","Space Group","a","b", "c", QChar(0xb1, 0x03), QChar(0xb2, 0x03), QChar(0xb3, 0x03)});   
+    _unitcell_table->resizeColumnsToContents();
 
      // labels for tables
     QLabel* lab_dataset = new QLabel("Datasets",this);
     QLabel* lab_peaks = new QLabel("Peak Collections",this); 
-    QLabel* lab_unitcell = new QLabel("Unit Cell",this); 
+    QLabel* lab_unitcell = new QLabel("Unit Cells",this); 
     
     QVBoxLayout* lay_datasets = new QVBoxLayout();
     QVBoxLayout* lay_peaks = new QVBoxLayout(); 
@@ -346,6 +349,25 @@ void SubframeHome::UpdatePeakInformationTable()
 { 
   try{    
     auto b2s = [](bool a) { return !a ? QString("No") : QString("Yes"); };
+    auto Type2s = [](nsx::listtype t) {
+        switch (t){
+            case nsx::listtype::FILTERED:
+                return QString("Filtered");
+                break;
+            case nsx::listtype::FOUND:
+                return QString("Found");
+                break;
+            case nsx::listtype::INDEXING:
+                return QString("Indexing");
+                break;
+            case nsx::listtype::PREDICTED:
+                return QString("Predicted");
+                break;
+            default:
+                return QString("UNNANMED");
+                break;
+        }
+    };
 
     std::vector<std::string> pcs_names = gSession->currentProject()
         ->experiment()->getCollectionNames(); 
@@ -377,22 +399,28 @@ void SubframeHome::UpdatePeakInformationTable()
         _unitcell_table->setItem(n, 7, new QTableWidgetItem(QString::number(
             data->character().gamma)));
     }
+    _unitcell_table->resizeColumnsToContents();
 
     auto datasets = gSession->currentProject()->allData();
+    
     for (auto it = datasets.begin(); it != datasets.end(); ++it){
-        short n = std::distance(datasets.begin(), it);
-
+        short n = std::distance(datasets.begin(), it);        
+        
         if (n >= _dataset_table->rowCount())            
-            _dataset_table->insertRow(_dataset_table->rowCount());            
-
+            _dataset_table->insertRow(_dataset_table->rowCount());          
 
         _dataset_table->setItem(n, 0, new QTableWidgetItem(QString::fromStdString(
             it->get()->name())));    
         _dataset_table->setItem(n, 1, new QTableWidgetItem(QString::fromStdString(
             it->get()->diffractometer()->name() )));        
         _dataset_table->setItem(n, 2, new QTableWidgetItem(QString::number(
-            it->get()->nFrames())));  
+            it->get()->nFrames()))); 
+        _dataset_table->setItem(n, 3, new QTableWidgetItem(QString::number(
+            it->get()->nCols()))); 
+        _dataset_table->setItem(n, 4, new QTableWidgetItem(QString::number(
+            it->get()->nRows())));        
     }   
+    _dataset_table->resizeColumnsToContents();
     
     if (!pcs_names.empty()){
         std::vector<std::string>::iterator it; 
@@ -409,9 +437,13 @@ void SubframeHome::UpdatePeakInformationTable()
                 (*it).c_str() )));
             _peak_collections_table->setItem(n, 1, new QTableWidgetItem(QString::number(
                 pc->numberOfPeaks())));
-            _peak_collections_table->setItem(n, 2, new QTableWidgetItem(b2s(pc->isIndexed())));
-            _peak_collections_table->setItem(n, 3, new QTableWidgetItem(b2s(pc->isIntegrated())));         
-        }     
+            _peak_collections_table->setItem(n, 2, new QTableWidgetItem(QString::number(
+                pc->numberOfInvalid() )));
+            _peak_collections_table->setItem(n, 3, new QTableWidgetItem(b2s(pc->isIndexed())));
+            _peak_collections_table->setItem(n, 4, new QTableWidgetItem(b2s(pc->isIntegrated())));  
+            _peak_collections_table->setItem(n, 5, new QTableWidgetItem(Type2s( pc->type() )));                         
+        }   
+        _peak_collections_table->resizeColumnsToContents();  
     }
   } catch (const std::out_of_range& e){
   } catch (const std::exception& e){

@@ -527,12 +527,6 @@ void SubframeFindPeaks::integrate()
         QString::number(integrator->numberOfValidPeaks()) + "/" +
         QString::number(integrator->numberOfPeaks()) + " peaks integrated");
     gGui->setReady(true);
-
-    
-    //set integrated state to true without further verification
-    _peak_collection.setIntegrated(true);
-    //_peak_collection.setIndexed(true);
-   
 }
 
 std::map<std::string, double> SubframeFindPeaks::convolutionParameters()

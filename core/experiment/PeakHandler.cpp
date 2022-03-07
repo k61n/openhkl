@@ -38,7 +38,9 @@ void PeakHandler::addPeakCollection(
     const std::string& name, const listtype type, const std::vector<nsx::Peak3D*> peaks, bool indexed, bool integrated)
 {
     nsxlog(Level::Info, "PeakHandler::addPeakCollection '", name, "': ", peaks.size(), " peaks");
-    std::unique_ptr<PeakCollection> ptr(new PeakCollection(name, type, indexed, integrated));
+    std::unique_ptr<PeakCollection> ptr(new PeakCollection(name, type));
+    ptr->setIndexed(indexed);
+    ptr->setIntegrated(integrated);
     ptr->populate(peaks);
     _peak_collections.insert_or_assign(name, std::move(ptr));
 }

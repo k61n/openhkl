@@ -36,7 +36,6 @@ class PeakCollection {
     //! Default contructor
     PeakCollection();
     PeakCollection(const std::string& name, listtype type);
-    PeakCollection(const std::string& name, listtype type, bool indexed, bool integrated);
 
     //! Sets name of the PeakCollection
     void setName(const std::string& name);

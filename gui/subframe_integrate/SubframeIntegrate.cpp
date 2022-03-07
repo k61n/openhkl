@@ -573,10 +573,10 @@ void SubframeIntegrate::toggleUnsafeWidgets()
     _n_frames_int->setEnabled(true);
     _min_neighbours->setEnabled(true);
     _interpolation_combo->setEnabled(true);
-    _build_shape_lib_button->setEnabled(false);
-    _assign_peak_shapes->setEnabled(false);
+    _build_shape_lib_button->setEnabled(true);
+    _assign_peak_shapes->setEnabled(true);
     _remove_overlaps->setEnabled(true);
-    _integrate_button->setEnabled(false);
+    _integrate_button->setEnabled(true);
 
     if (_exp_combo->count() == 0 || _data_combo->count() == 0 || _peak_combo->count() == 0) {
         _integrate_button->setEnabled(false);
@@ -611,7 +611,7 @@ void SubframeIntegrate::toggleUnsafeWidgets()
         _assign_peak_shapes->setEnabled(false);
         _build_shape_lib_button->setEnabled(false);
     }
-    nsx::PeakCollection* pc = nullptr;  
+    /*nsx::PeakCollection* pc = nullptr;  
 
     std::string current_pc = _peak_combo->currentText().toStdString();
     if (current_pc.size() == 0) return;
@@ -621,7 +621,7 @@ void SubframeIntegrate::toggleUnsafeWidgets()
         _integrate_button->setEnabled(true);
         _build_shape_lib_button->setEnabled(true);
         _assign_peak_shapes->setEnabled(true);       
-    } 
+    }*/ 
 }
 
 DetectorWidget* SubframeIntegrate::detectorWidget()

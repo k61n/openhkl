@@ -40,15 +40,6 @@ PeakCollection::PeakCollection(const std::string& name, nsx::listtype type)
 {
 }
 
-PeakCollection::PeakCollection(const std::string& name, nsx::listtype type, bool indexed, bool integrated)
-    : _name{std::string(name)}
-    , _type{type}
-    , _shape_collection(nullptr)
-    , _indexed(indexed)
-    , _integrated(integrated)
-{
-}
-
 void PeakCollection::populate(const std::vector<std::shared_ptr<nsx::Peak3D>> peak_list)
 {
     reset();
