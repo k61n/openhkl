@@ -75,9 +75,10 @@ void Actions::setupView()
         gGui->detector_window->show();
         gGui->detector_window->refreshAll();
     });
-
-    connect(instrumentstate_window, &QAction::triggered,
-            [](){ gGui->instrumentstate_window->show();});
+    connect(instrumentstate_window, &QAction::triggered, [](){
+        gGui->instrumentstate_window->show();
+        gGui->instrumentstate_window->refreshAll();
+    });
     connect(log_window, &QAction::triggered, [](){ gGui->log_window->show(); });
     connect(close_peak_windows, &QAction::triggered, this, &Actions::closePeakWindows);
 }

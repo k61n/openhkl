@@ -15,18 +15,23 @@
 #ifndef NSX_GUI_SUBWINDOWS_INSTRUMENTSTATEWINDOW_H
 #define NSX_GUI_SUBWINDOWS_INSTRUMENTSTATEWINDOW_H
 
+#include "gui/utility/LinkedComboBox.h"
 #include <QDialog>
 
+class LinkedComboBox;
 
 //! Modeless dialog to display current instrument states
 class InstrumentStateWindow : public QDialog {
  public:
     InstrumentStateWindow(QWidget* parent = nullptr);
 
-    //! Overload QDialog::showEvent to resize window at runtime
-    void showEvent(QShowEvent* event);
+    //! Refresh list of datasets
+    void updateData();
     //! Refresh the whole dialog
     void refreshAll();
+
+ private:
+    LinkedComboBox* _data_combo;
 
 };
 

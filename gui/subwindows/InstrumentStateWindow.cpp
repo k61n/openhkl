@@ -14,20 +14,43 @@
 
 #include "gui/subwindows/InstrumentStateWindow.h"
 
-#include <QHBoxLayout>
+#include "gui/MainWin.h" // gGui
+#include "gui/models/Project.h"
+#include "gui/models/Session.h"
+#include "gui/utility/LinkedComboBox.h"
+
+#include <QVBoxLayout>
+#include <QSignalBlocker>
 
 InstrumentStateWindow::InstrumentStateWindow(QWidget* parent)
     : QDialog(parent)
 {
-    auto main_layout = new QHBoxLayout(this);
+    auto* main_layout = new QVBoxLayout(this);
+
+    _data_combo = new LinkedComboBox(ComboType::DataSet, gGui->sentinel);
+    main_layout->addWidget(_data_combo);
+
+    refreshAll();
 }
 
-void InstrumentStateWindow::showEvent(QShowEvent* event)
+void InstrumentStateWindow::updateData()
 {
-    QDialog::showEvent(event);
-    // setGeometry(gGui->x() + 40, gGui->y() + 80, gGui->width(), gGui->height());
+    if (gSession->numExperiments() == 0)
+        return;
+
+    const QSignalBlocker blocker(this);
+    QString current_data = _data_combo->currentText();
+    _data_combo->clear();
+
+    const QStringList& datanames{gSession->currentProject()->getDataNames()};
+    if (!datanames.empty()) {
+        _data_combo->addItems(datanames);
+        _data_combo->setCurrentText(current_data);
+    }
 }
+
 
 void InstrumentStateWindow::refreshAll()
 {
+    updateData();
 }
