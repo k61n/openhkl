@@ -37,6 +37,7 @@ class Actions : public QObject {
 
     // View:
     QAction* detector_window;
+    QAction* instrumentstate_window;
     QAction* log_window;
     QAction* close_peak_windows;
 
