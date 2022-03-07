@@ -550,6 +550,13 @@ void SubframeAutoIndexer::runAutoIndexer()
     nsx::PeakCollection* collection =
         expt->getPeakCollection(_peak_combo->currentText().toStdString());
 
+    // Manally adjust the direct beam position
+    if (_set_initial_ki->isChecked()) {
+        auto data = _detector_widget->currentData();
+        auto& states = data->instrumentStates();
+        setInitialKi(states);
+    }
+
     std::shared_ptr<nsx::ProgressHandler> handler(new nsx::ProgressHandler());
     autoindexer->setHandler(handler);
 
@@ -748,4 +755,15 @@ void SubframeAutoIndexer::toggleCursorMode()
     } else {
         _detector_widget->scene()->changeInteractionMode(_stored_cursor_mode);
     }
+}
+
+void SubframeAutoIndexer::setInitialKi(std::vector<nsx::InstrumentState>& states)
+{
+    auto data = _detector_widget->currentData();
+    const auto* detector = data->diffractometer()->detector();
+    const auto coords = _detector_widget->scene()->beamSetterCoords();
+
+    nsx::DirectVector direct = detector->pixelPosition(coords.x(), coords.y());
+    for (auto state : states)
+        state.adjustKi(direct);
 }
