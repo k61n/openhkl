@@ -575,10 +575,9 @@ void SubframePredictPeaks::setInitialKi(std::vector<nsx::InstrumentState>& state
 {
     auto data = _detector_widget->currentData();
     const auto* detector = data->diffractometer()->detector();
-    double x = _beam_offset_x->value() + data->nCols() / 2.0;
-    double y = _beam_offset_y->value() + data->nRows() / 2.0;
+    const auto coords = _detector_widget->scene()->beamSetterCoords();
 
-    nsx::DirectVector direct = detector->pixelPosition(x, y);
+    nsx::DirectVector direct = detector->pixelPosition(coords.x(), coords.y());
     for (auto state : states)
         state.adjustKi(direct);
 }

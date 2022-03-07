@@ -109,6 +109,8 @@ class SubframeAutoIndexer : public QWidget {
     void changeCrosshair();
     //! Toggle cursor mode
     void toggleCursorMode();
+    //! Set the initial value of ki from the crosshair position
+    void setInitialKi(std::vector<nsx::InstrumentState>& states);
 
     //! The model for the indexing peaks
     nsx::PeakCollection _peak_collection;
