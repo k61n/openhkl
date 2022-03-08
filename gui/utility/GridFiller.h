@@ -83,8 +83,6 @@ class GridFiller {
     //! column span (-1 => to the right edge).
     //! The internal row counter will be increased.
     void addWidget(QWidget* w, int col = 0, int colspan = -1);
-
- private:
     //! Add a label in the current row. The row will not be increased.
     void addLabel(const QString& labelText, const QString& labelTooltip = QString());
 

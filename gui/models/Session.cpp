@@ -64,9 +64,15 @@ Project* Session::currentProject()
 {
     return _projects.at(_currentProject).get();
 }
+
 const Project* Session::currentProject() const
 {
     return _projects.at(_currentProject).get();
+}
+
+bool Session::hasProject() const
+{
+    return !_projects.empty();
 }
 
 Project* Session::experimentAt(int i)

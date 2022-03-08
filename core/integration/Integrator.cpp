@@ -81,7 +81,7 @@ void Integrator::integratePeaks(
         ++_n_peaks;
         if (peak->enabled())
             ++_n_valid;
-    }
+    } 
 }
 
 void Integrator::integratePeaks(
@@ -102,7 +102,7 @@ void Integrator::integratePeaks(
         ++_n_peaks;
         if (peak->enabled())
             ++_n_valid;
-    }
+    } 
 }
 
 void Integrator::integrateFoundPeaks(PeakFinder* peak_finder)
@@ -125,6 +125,9 @@ void Integrator::integrateFoundPeaks(PeakFinder* peak_finder)
         if (peak->enabled())
             ++_n_valid;
     }
+    //no further checks
+    //peak_finder->getPeakCollection()->setIntegrated(true); // doesnt work since peak collection does not exist yet
+    peak_finder->setIntegrated(true);
 }
 
 void Integrator::integrateShapeCollection(

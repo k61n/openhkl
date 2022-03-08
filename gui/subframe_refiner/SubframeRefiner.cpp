@@ -295,7 +295,7 @@ void SubframeRefiner::refine()
         auto* detector = data->diffractometer()->detector();
         std::vector<nsx::DetectorEvent> old_beam =
             nsx::algo::getDirectBeamEvents(states, *detector);
-        _detector_widget->scene()->linkOldDirectBeamPositions(old_beam);
+        _detector_widget->scene()->linkOldDirectBeamPositions(&old_beam);
 
         setRefinerParameters();
 
@@ -318,7 +318,7 @@ void SubframeRefiner::refine()
         states = data->instrumentStates();
         std::vector<nsx::DetectorEvent> new_beam =
             nsx::algo::getDirectBeamEvents(states, *detector);
-        _detector_widget->scene()->linkDirectBeamPositions(new_beam);
+        _detector_widget->scene()->linkDirectBeamPositions(&new_beam);
         refreshPeakVisual();
         gGui->detector_window->refreshAll();
 
@@ -632,14 +632,11 @@ void SubframeRefiner::toggleUnsafeWidgets()
         _update_button->setEnabled(false);
 
     nsx::PeakCollection* pc = nullptr;
-    //pc = gSession->currentProject()->experiment()->getPeakCollection();
-
     std::string current_pc = _peak_combo->currentText().toStdString();
     if (current_pc.size() == 0) return;
     pc = gSession->currentProject()->experiment()->getPeakCollection( current_pc );
-   // if (pc == nullptr) std::runtime_error("BAM"); 
 
-    if (  pc->isIndexed() && pc->isIntegrated() ){
+    if (  pc->isIndexed() ){
          _refine_button->setEnabled(true);
          _update_button->setEnabled(true);
     }

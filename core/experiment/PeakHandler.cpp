@@ -42,7 +42,9 @@ void PeakHandler::addPeakCollection(
 {
     std::string name = listtype2Str(type) + std::to_string(_peak_collections.size());
     nsxlog(Level::Info, "PeakHandler::addPeakCollection '", name, "': ", peaks.size(), " peaks");
-    std::unique_ptr<PeakCollection> ptr(new PeakCollection(name, type, indexed, integrated));
+    std::unique_ptr<PeakCollection> ptr(new PeakCollection(name, type));
+    ptr->setIndexed(indexed);
+    ptr->setIntegrated(integrated);
     ptr->populate(peaks);
     _peak_collections.insert_or_assign(name, std::move(ptr));
 }

@@ -30,6 +30,7 @@
 #include "gui/utility/LinkedComboBox.h"
 #include "gui/utility/SideBar.h"
 #include "tables/crystal/SpaceGroup.h"
+#include <qaction.h>
 
 Actions::Actions()
 {
@@ -66,6 +67,7 @@ void Actions::setupExperiment()
 void Actions::setupView()
 {
     detector_window = new QAction("Open detector window");
+    instrumentstate_window = new QAction("Open instrument states window");
     log_window = new QAction("Open log window");
     close_peak_windows = new QAction("Close all peak windows");
 
@@ -73,7 +75,10 @@ void Actions::setupView()
         gGui->detector_window->show();
         gGui->detector_window->refreshAll();
     });
-
+    connect(instrumentstate_window, &QAction::triggered, [](){
+        gGui->instrumentstate_window->show();
+        gGui->instrumentstate_window->refreshAll();
+    });
     connect(log_window, &QAction::triggered, [](){ gGui->log_window->show(); });
     connect(close_peak_windows, &QAction::triggered, this, &Actions::closePeakWindows);
 }
