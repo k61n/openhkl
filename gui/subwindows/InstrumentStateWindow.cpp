@@ -28,6 +28,7 @@
 #include <QWidget>
 #include <QSizePolicy>
 #include <QSpinBox>
+#include <qlineedit.h>
 
 InstrumentStateWindow::InstrumentStateWindow(QWidget* parent)
     : QDialog(parent)
@@ -60,6 +61,7 @@ void InstrumentStateWindow::setStateGridsUp()
 {
     QHBoxLayout* instrument_state_layout = new QHBoxLayout();
     _instrument_state_widget->setLayout(instrument_state_layout);
+    QVector<QLineEdit*> line_edits;
 
     QWidget* sample_orn_widget = new QWidget();
     QWidget* sample_pos_widget = new QWidget();
@@ -79,22 +81,36 @@ void InstrumentStateWindow::setStateGridsUp()
         _sample_orn_elements.push_back(vec);
     }
 
+    sample_pos_grid->addWidget(new QLabel("Sample position"), 0, 0, 1, 1);
+    sample_orn_grid->addWidget(new QLabel("Sample orientation"), 0, 0, 1, 3);
+    detector_pos_grid->addWidget(new QLabel("Detector position"), 0, 0, 1, 1);
+    ki_grid->addWidget(new QLabel("Incident wavevector"), 0, 0, 1, 1);
+
     QLineEdit* element;
     for (std::size_t i = 0; i < 3; ++i) {
         element = new QLineEdit();
         _sample_pos_elements.push_back(element);
-        sample_pos_grid->addWidget(element, i, 0, 1, 1);
+        sample_pos_grid->addWidget(element, i+1, 0, 1, 1);
+        line_edits.push_back(element);
         element = new QLineEdit();
         _detector_pos_elements.push_back(element);
-        detector_pos_grid->addWidget(element, i, 0, 1, 1);
+        detector_pos_grid->addWidget(element, i+1, 0, 1, 1);
+        line_edits.push_back(element);
         element = new QLineEdit();
         _ki_elements.push_back(element);
-        ki_grid->addWidget(element, i, 0, 1, 1);
+        ki_grid->addWidget(element, i+1, 0, 1, 1);
+        line_edits.push_back(element);
         for (std::size_t j = 0; j < 3; ++j) {
             element = new QLineEdit();
             _sample_orn_elements[i].push_back(element);
-            sample_orn_grid->addWidget(element, i, j, 1, 1);
+            sample_orn_grid->addWidget(element, i+1, j, 1, 1);
+            line_edits.push_back(element);
         }
+    }
+
+    for (auto* line_edit : line_edits) {
+        line_edit->setReadOnly(true);
+        line_edit->setAlignment(Qt::AlignRight);
     }
 
     instrument_state_layout->addWidget(sample_orn_widget);
@@ -141,12 +157,12 @@ void InstrumentStateWindow::updateState()
     const auto data = expt->getData(_data_combo->currentText().toStdString());
     const auto state = data->instrumentStates()[_frame_spin->value()];
     for (std::size_t i = 0; i < 3; ++i) {
-        _sample_pos_elements[i]->setText(QString::number(state.samplePosition[i]));
-        _detector_pos_elements[i]->setText(QString::number(state.detectorPositionOffset[i]));
-        _ki_elements[i]->setText(QString::number(state.ki()[i]));
+        _sample_pos_elements[i]->setText(QString::number(state.samplePosition[i], 'f', 4));
+        _detector_pos_elements[i]->setText(QString::number(state.detectorPositionOffset[i], 'f', 4));
+        _ki_elements[i]->setText(QString::number(state.ki()[i], 'f', 4));
         for (std::size_t j = 0; j < 3; ++j) {
             _sample_orn_elements[i][j]->setText(
-                QString::number(state.sampleOrientationMatrix()(i, j)));
+                QString::number(state.sampleOrientationMatrix()(i, j), 'f', 4));
         }
     }
 }
