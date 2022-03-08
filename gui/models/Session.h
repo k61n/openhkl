@@ -40,6 +40,8 @@ class Session {
     Project* experimentAt(int i);
     const Project* experimentAt(int i) const;
 
+    bool UpdateExperimentData(unsigned int idx, QString name, QString instrument);
+
     int currentProjectNum() const;
     int numExperiments() const;
     std::vector<QString> experimentNames() const;

@@ -92,12 +92,25 @@ Project* Session::createProject
 {
     for (const QString& name : experimentNames()) {
         if (name == experimentName) {
+            auto now = std::chrono::system_clock::now();
+            std::chrono::duration_cast<std::chrono::seconds>(now.time_since_epoch()).count();
+            experimentName += "_" + QString::fromStdString(std::to_string(std::chrono::duration_cast<std::chrono::seconds>(now.time_since_epoch()).count()));
+
+            QMessageBox::warning(nullptr,"Warning",
+            "Experiment name was changed to '" + experimentName + "' to keep all experiment names unique. You can change the name via GUI");         
+            //critical(nullptr, "Error",
+            //   "Experiment name, '" + experimentName + "' already exists");
+            //return nullptr;
+        }
+    }
+
+    /*for (const QString& name : experimentNames()) {
+        if (name == experimentName) {
             QMessageBox::critical(nullptr, "Error",
                "Experiment name, '" + experimentName + "' already exists");
             return nullptr;
         }
-    }
-
+    }*/
     return new Project(experimentName, instrumentName);
 }
 
@@ -361,4 +374,20 @@ void Session::loadExperimentFromFile(QString filename)
 
     nsx::nsxlog(nsx::Level::Debug, "Session: Finished creating Project for file '", filename.toStdString(), "'");
 
+}
+
+bool Session::UpdateExperimentData(unsigned int idx, QString name, QString instrument){
+    if (idx >= _projects.size()) return false;
+
+    for (const auto& e : _projects){// excluding duplicate project names
+        if (e->experiment()->name() == name.toStdString()){
+            // the selected item is allowed to have an identical name! 
+            // This allows to change instument name and keeo the same experiment name. 
+            // therefore ->
+            if (_projects.at(idx) != e) return false; 
+        }
+    }
+   _projects.at(idx)->experiment()->setName(name.toStdString());
+   _projects.at(idx)->experiment()->setDiffractometer(instrument.toStdString());
+   return true;
 }

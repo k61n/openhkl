@@ -85,6 +85,12 @@ class PeakFinder {
     //! Get the number of peaks found
     unsigned int numberFound();
 
+    //! Return integrated state
+    bool isIntegrated() {return _integrated;};
+
+    //! set integration state
+    void setIntegrated(bool b) {_integrated=b;};
+
 #ifndef SWIG
     //! Set the convolver flavour for peak/background convolution
     void setConvolver(std::unique_ptr<Convolver> convolver);
@@ -94,7 +100,6 @@ class PeakFinder {
     void setConvolver(const Convolver& convolver);
     //! Get the convolver
     nsx::Convolver* convolver() const { return _convolver.get(); }
-
 
  private:
     //! Remove blobs that do not meet the above criteria
@@ -113,7 +118,7 @@ class PeakFinder {
     void mergeCollidingBlobs(const DataSet& data, std::map<int, Blob3D>& blobs) const;
 
     //! Merge equivalent blobs
-    void mergeEquivalentBlobs(std::map<int, Blob3D>& blobs, EquivalenceList& equivalences) const;
+    void mergeEquivalentBlobs(std::map<int, Blob3D>& blobs, EquivalenceList& equivalences) const;    
 
  private:
     sptrProgressHandler _handler;
@@ -132,6 +137,8 @@ class PeakFinder {
     nsx::PeakCollection _peak_collection;
     //! Number of found peaks
     unsigned int _peaks_found;
+    //! stores value of integration state
+    bool _integrated;
 };
 
 /*! @}*/

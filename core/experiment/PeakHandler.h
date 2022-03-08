@@ -15,6 +15,7 @@
 #define NSX_CORE_EXPERIMENT_PEAKHANDLER_H
 
 #include <map>
+#include <vector>
 #include <string>
 
 #include "core/shape/PeakCollection.h"
@@ -37,11 +38,9 @@ class PeakHandler {
     //! Get a pointer to the map of peak collections
     const PeakCollectionMap* getPeakCollectionMap() const;
     //! Add a peak collection
-    void addPeakCollection(
-        const std::string& name, const listtype type, const std::vector<nsx::Peak3D*> peaks);
+    void addPeakCollection(const listtype type, const std::vector<nsx::Peak3D*> peaks);
     //
-    void addPeakCollection(
-        const std::string& name, const listtype type, const std::vector<nsx::Peak3D*> peaks,
+    void addPeakCollection(const listtype type, const std::vector<nsx::Peak3D*> peaks,
         bool indexed, bool integrated
         );
     //! Add an empty peak collection
@@ -68,6 +67,8 @@ class PeakHandler {
  private:
     //! Pointer to map of peak collections in Experiment
     PeakCollectionMap _peak_collections;
+  
+    //enum class listtype { FOUND, FILTERED, PREDICTED, INDEXING };
 };
 
 } // namespace nsx

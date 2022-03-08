@@ -26,8 +26,11 @@ const PeakCollectionMap* PeakHandler::getPeakCollectionMap() const
 }
 
 void PeakHandler::addPeakCollection(
-    const std::string& name, const listtype type, const std::vector<nsx::Peak3D*> peaks)
+    const listtype type, const std::vector<nsx::Peak3D*> peaks)
 {
+    // auto generated name here like FOUND5423
+    
+    std::string name = listtype2Str(type) + std::to_string(_peak_collections.size());
     nsxlog(Level::Info, "PeakHandler::addPeakCollection '", name, "': ", peaks.size(), " peaks");
     std::unique_ptr<PeakCollection> ptr(new PeakCollection(name, type));
     ptr->populate(peaks);
@@ -35,8 +38,9 @@ void PeakHandler::addPeakCollection(
 }
 
 void PeakHandler::addPeakCollection(
-    const std::string& name, const listtype type, const std::vector<nsx::Peak3D*> peaks, bool indexed, bool integrated)
+    const listtype type, const std::vector<nsx::Peak3D*> peaks, bool indexed, bool integrated)
 {
+    std::string name = listtype2Str(type) + std::to_string(_peak_collections.size());
     nsxlog(Level::Info, "PeakHandler::addPeakCollection '", name, "': ", peaks.size(), " peaks");
     std::unique_ptr<PeakCollection> ptr(new PeakCollection(name, type, indexed, integrated));
     ptr->populate(peaks);

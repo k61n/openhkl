@@ -96,7 +96,9 @@ void Experiment::acceptFoundPeaks(const std::string& name)
 void Experiment::acceptFoundPeaks(const std::string& name, const PeakCollection& found)
 {
     std::vector<Peak3D*> peaks = found.getPeakList();
-    addPeakCollection(name, listtype::FOUND, peaks,  found.isIndexed(), found.isIntegrated() );
+    
+    addPeakCollection(name, listtype::FOUND, peaks,  found.isIndexed(), _peak_finder->isIntegrated() );
+    _peak_finder->setIntegrated(false); // reset for next use
 }
 
 void Experiment::saveToFile(const std::string& path) const
@@ -351,13 +353,13 @@ void Experiment::removeData(const std::string& name)
 void Experiment::addPeakCollection(
     const std::string& name, const listtype type, std::vector<Peak3D*> peaks)
 {
-    _peak_handler->addPeakCollection(name, type, peaks);
+    _peak_handler->addPeakCollection(type, peaks);
 }
 
 void Experiment::addPeakCollection(
     const std::string& name, const listtype type, std::vector<Peak3D*> peaks, bool indexed, bool integrated)
 {
-    _peak_handler->addPeakCollection(name, type, peaks, indexed, integrated);
+    _peak_handler->addPeakCollection(type, peaks, indexed, integrated);
 }
 
 bool Experiment::hasPeakCollection(const std::string& name)
