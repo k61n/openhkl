@@ -20,9 +20,6 @@ if(NOT WIN32)
     target_compile_options(${library_name} PRIVATE -Wno-deprecated-declarations)
 endif()
 
-target_link_libraries(${library_name} ${Qt5Widgets_LIBRARIES})
+target_link_libraries(${library_name} ${QT_LIBS})
 
-target_link_libraries(${library_name}
-    Qt6::Widgets
-    Qt6::PrintSupport
-)
+target_link_libraries(${library_name} ${QT_VER}::Widgets ${QT_VER}::PrintSupport)

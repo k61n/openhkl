@@ -11,7 +11,7 @@ target_include_directories(${lib}
     PRIVATE
     ${CMAKE_BINARY_DIR} # for manifest.h
     ${CMAKE_SOURCE_DIR}
-    ${Qt6Widgets_INCLUDE_DIRS}
+    ${QT_INCLUDES}
     ${QCustomPlot_INCLUDE_DIR}
     )
 
@@ -19,4 +19,5 @@ target_link_libraries(${lib}
     PRIVATE
     nsxcore
     ${QCustomPlot_LIBRARIES}
+    ${QT_LIBS}
     )
