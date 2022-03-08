@@ -28,7 +28,7 @@
 #include <QWidget>
 #include <QSizePolicy>
 #include <QSpinBox>
-#include <qlineedit.h>
+#include <QLineEdit>
 
 InstrumentStateWindow::InstrumentStateWindow(QWidget* parent)
     : QDialog(parent)

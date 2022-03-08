@@ -16,13 +16,13 @@
 #define NSX_GUI_SUBWINDOWS_INSTRUMENTSTATEWINDOW_H
 
 #include "gui/utility/LinkedComboBox.h"
+
 #include <QDialog>
-#include <qboxlayout.h>
-#include <qlineedit.h>
 
 class LinkedComboBox;
 class QGridLayout;
 class QSpinBox;
+class QLineEdit;
 
 //! Modeless dialog to display current instrument states
 class InstrumentStateWindow : public QDialog {
