@@ -47,6 +47,9 @@ class Spoiler : public QGroupBox {
     //! No effect if not checkable at all.
     void setChecked(bool checked);
 
+    //! Get a pointer to the QCheckBox
+    QCheckBox* checkBox() { return _select; };
+
  private slots:
     void checker(const int state);
     void showEvent(QShowEvent* event);

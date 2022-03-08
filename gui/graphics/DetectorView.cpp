@@ -36,6 +36,7 @@ DetectorView::DetectorView(QWidget* parent) : QGraphicsView(parent), _scene(new 
     // left) This match detector coordinates in NSXTool
     scale(1, -1);
     setContextMenuPolicy(Qt::CustomContextMenu);
+    setCacheMode(QGraphicsView::CacheBackground);
 }
 
 void DetectorView::resizeEvent(QResizeEvent* event)

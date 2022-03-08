@@ -29,6 +29,7 @@
 #include "core/loader/XFileHandler.h"
 #include "core/peak/Peak3D.h"
 #include "gui/MainWin.h"
+#include "gui/graphics_items/CrosshairGraphic.h"
 #include "gui/graphics_items/EllipseItem.h"
 #include "gui/graphics_items/MaskItem.h"
 #include "gui/graphics_items/PeakItemGraphic.h"
@@ -57,6 +58,10 @@
 #include <QPixmap>
 #include <QToolTip>
 #include <QtGlobal>
+#include <qgraphicsitem.h>
+#include <qpainterpath.h>
+
+QPointF DetectorScene::_current_beam_position = {0, 0};
 
 DetectorScene::DetectorScene(QObject* parent)
     : QGraphicsScene(parent)
@@ -94,10 +99,37 @@ DetectorScene::DetectorScene(QObject* parent)
     , _beam_color(Qt::black)
     , _old_beam_color(Qt::gray)
     , _beam_size(20)
+    , _beam_pos_setter(nullptr)
     , _selected_peak(nullptr)
     , _unit_cell(nullptr)
     , _peak_center_data(nullptr)
 {
+}
+
+void DetectorScene::addBeamSetter(int size, int linewidth)
+{
+    if (_beam_pos_setter) {
+        removeBeamSetter();
+        delete _beam_pos_setter;
+    }
+
+    _beam_pos_setter = new CrosshairGraphic(_current_beam_position);
+    _beam_pos_setter->setSize(size);
+    _beam_pos_setter->setLinewidth(linewidth);
+    addItem(_beam_pos_setter);}
+
+void DetectorScene::removeBeamSetter()
+{
+    for (auto item : items()) {
+        if (dynamic_cast<CrosshairGraphic*>(item) != nullptr)
+            removeItem(item);
+    }
+}
+
+void DetectorScene::showBeamSetter(bool show)
+{
+    _beam_pos_setter->setVisible(show);
+    update();
 }
 
 void DetectorScene::linkPeakModel1(PeakCollectionModel* source)
@@ -140,12 +172,12 @@ void DetectorScene::link3rdPartyPeaks(nsx::PeakCenterDataSet* pcd)
     drawPeakitems();
 }
 
-void DetectorScene::linkDirectBeamPositions(const std::vector<nsx::DetectorEvent>& events)
+void DetectorScene::linkDirectBeamPositions(std::vector<nsx::DetectorEvent>* events)
 {
     _direct_beam_events = events;
 }
 
-void DetectorScene::linkOldDirectBeamPositions(const std::vector<nsx::DetectorEvent>& events)
+void DetectorScene::linkOldDirectBeamPositions(std::vector<nsx::DetectorEvent>* events)
 {
     _old_direct_beam_events = events;
 }
@@ -197,7 +229,7 @@ void DetectorScene::drawPeakitems()
 
 void DetectorScene::drawDirectBeamPositions()
 {
-    for (auto&& event : _direct_beam_events) {
+    for (auto&& event : *_direct_beam_events) {
         double upper = double(_currentFrameIndex) + 0.01;
         double lower = double(_currentFrameIndex) - 0.01;
         if (event.frame < upper && event.frame > lower) {
@@ -215,7 +247,7 @@ void DetectorScene::drawDirectBeamPositions()
         }
     }
 
-    for (auto&& event : _old_direct_beam_events) {
+    for (auto&& event : *_old_direct_beam_events) {
         double upper = double(_currentFrameIndex) + 0.01;
         double lower = double(_currentFrameIndex) - 0.01;
         if (event.frame < upper && event.frame > lower) {
@@ -299,6 +331,8 @@ void DetectorScene::slotChangeSelectedData(nsx::sptrDataSet data, int frame)
             removeItem(_lastClickedGI);
             _lastClickedGI = nullptr;
         }
+
+        _current_beam_position = {_currentData->nCols() / 2.0, _currentData->nRows() / 2.0};
     }
 
     slotChangeSelectedFrame(frame);
@@ -363,6 +397,8 @@ void DetectorScene::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
             select.setBottomRight(event->lastScenePos());
             _selectionRect->setRect(select);
             return;
+        } else if (_mode == DRAG_DROP) {
+            _current_dragged_item->setPos(event->scenePos());
         }
 
         if (!_lastClickedGI)
@@ -484,6 +520,12 @@ void DetectorScene::mousePressEvent(QGraphicsSceneMouseEvent* event)
                 _masks.emplace_back(ellipse_mask, nullptr);
                 break;
             }
+            case DRAG_DROP: {
+                _current_dragged_item = _beam_pos_setter;
+                break;
+            }
+            default:
+                break;
         }
         if (cutter != nullptr) {
             cutter->setFrom(event->lastScenePos());
@@ -623,6 +665,13 @@ void DetectorScene::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
                 }
                 emit dataChanged();
             }
+        } else if (_mode == DRAG_DROP) {
+            _current_dragged_item->setPos(event->scenePos());
+            int size = _current_dragged_item->size();
+            int linewidth = _current_dragged_item->linewidth();
+            emit beamPosChanged(event->scenePos());
+            _current_beam_position = event->scenePos();
+            addBeamSetter(size, linewidth);
         } else {
             if (_peak_model_1) {
                 // _peak_model_2 is only relevant in DetectorWindow, ignore here.
@@ -1090,4 +1139,27 @@ void DetectorScene::setup3rdPartyPeaks(bool draw, const QColor& color, int size)
 void DetectorScene::showDirectBeam(bool show)
 {
     _drawDirectBeam = show;
+}
+
+Eigen::Vector3d DetectorScene::getBeamSetterPosition() const
+{
+    return {_beam_pos_setter->pos().x(), _beam_pos_setter->pos().y(),
+        static_cast<double>(_currentFrameIndex)};
+}
+
+void DetectorScene::setBeamSetterPos(QPointF pos)
+{
+    _current_beam_position = pos;
+    _beam_pos_setter->setPos(pos);
+}
+
+void DetectorScene::onCrosshairChanged(int size, int linewidth)
+{
+    _beam_pos_setter->setSize(size);
+    _beam_pos_setter->setLinewidth(linewidth);
+}
+
+QPointF DetectorScene::beamSetterCoords()
+{
+    return _current_beam_position;
 }

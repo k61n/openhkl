@@ -49,6 +49,9 @@ class InstrumentState {
     //! Returns source wavevector k_i
     ReciprocalVector ki() const;
 
+    //! Adjust ki by shifting the direct beam on the detector
+    void adjustKi(const DirectVector& detector_position);
+
     //! Takes direct vector in detector coordinates and returns q in sample coordinates
     ReciprocalVector sampleQ(const DirectVector& detector_position) const;
 

@@ -19,24 +19,32 @@
 #include "core/shape/PeakCollection.h"
 #include "gui/items/PeakCollectionItem.h"
 #include "gui/models/PeakCollectionModel.h"
+#include "gui/widgets/PeakViewWidget.h"
 
 #include <QPushButton>
 #include <QSizePolicy>
 #include <QWidget>
-#include <QLabel>
+#include <qglobal.h>
+#include <qgridlayout.h>
+#include <qgroupbox.h>
+#include <qobjectdefs.h>
 
+class DetectorWidget;
 class LinkedComboBox;
 class PeakTableView;
 class UnitCellTableView;
 class Spoiler;
+class SpoilerCheck;
 class SafeSpinBox;
 class SafeDoubleSpinBox;
 class QVBoxLayout;
 class QSplitter;
 class QCheckBox;
+class QGroupBox;
 
 //! Frame containing interface to autoindex peak collections
 class SubframeAutoIndexer : public QWidget {
+    Q_OBJECT
  public:
     SubframeAutoIndexer();
 
@@ -45,9 +53,19 @@ class SubframeAutoIndexer : public QWidget {
     //! Refresh all the panels
     void refreshAll();
 
+ public slots:
+    void onBeamPosChanged(QPointF pos);
+    void onBeamPosSpinChanged();
+
+ signals:
+    void beamPosChanged(QPointF pos);
+    void crosshairChanged(int size, int linewidth);
+
  private:
     //! Build the input
     void setInputUp();
+    //! Manually set the incident wavevector
+    void setAdjustBeamUp();
     //! Set the parameters values up
     void setParametersUp();
     //! Build the buttons
@@ -56,6 +74,10 @@ class SubframeAutoIndexer : public QWidget {
     void setPeakTableUp();
     //! Set the peak table view up
     void setSolutionTableUp();
+    //! Set peak view widget update
+    void setPeakViewWidgetUp();
+    //! Set up the detector scene
+    void setFigureUp();
 
     //! Build the table of solution
     void buildSolutionsTable();
@@ -67,6 +89,10 @@ class SubframeAutoIndexer : public QWidget {
     void updatePeakList();
     //! Refresh the peak table
     void refreshPeakTable();
+    //! Change the peak selected in the table
+    void changeSelected(PeakItemGraphic* peak_graphic);
+        //! Refresh the detector scene
+        void refreshPeakVisual();
     //! Get the parameters of the indexer
     void grabIndexerParameters();
     //! Get the parameters of the indexer
@@ -79,6 +105,12 @@ class SubframeAutoIndexer : public QWidget {
     void acceptSolution();
     //! Disable widgets that are unsafe without relevant data
     void toggleUnsafeWidgets();
+    //! Transmit crosshair changes to DetectorScene
+    void changeCrosshair();
+    //! Toggle cursor mode
+    void toggleCursorMode();
+    //! Set the initial value of ki from the crosshair position
+    void setInitialKi(std::vector<nsx::InstrumentState>& states);
 
 
 
@@ -88,6 +120,8 @@ class SubframeAutoIndexer : public QWidget {
     PeakCollectionItem _peak_collection_item;
     //! The temporary collection
     PeakCollectionModel _peak_collection_model;
+    //! List of data sets
+    std::vector<nsx::sptrDataSet> _data_list;
 
     std::vector<std::pair<nsx::sptrPeak3D, std::shared_ptr<const nsx::UnitCell>>> _defaults;
     std::vector<std::pair<std::shared_ptr<nsx::UnitCell>, double>> _solutions;
@@ -100,6 +134,13 @@ class SubframeAutoIndexer : public QWidget {
     LinkedComboBox* _exp_combo;
     LinkedComboBox* _data_combo;
     LinkedComboBox* _peak_combo;
+
+    SpoilerCheck* _set_initial_ki;
+    QCheckBox* _direct_beam;
+    SafeDoubleSpinBox* _beam_offset_x;
+    SafeDoubleSpinBox* _beam_offset_y;
+    QSlider* _crosshair_size;
+    SafeSpinBox* _crosshair_linewidth;
 
     SafeSpinBox* _min_frame;
     SafeSpinBox* _max_frame;
@@ -125,8 +166,16 @@ class SubframeAutoIndexer : public QWidget {
 
     QSizePolicy _size_policy_right;
 
+    QGroupBox* _peak_group;
+    QVBoxLayout* _solution_layout;
     PeakTableView* _peak_table;
     UnitCellTableView* _solution_table;
+
+    DetectorWidget* _detector_widget;
+
+    PeakViewWidget* _peak_view_widget;
+
+    int _stored_cursor_mode;
 };
 
 #endif // NSX_GUI_SUBFRAME_INDEX_SUBFRAMEAUTOINDEXER_H
