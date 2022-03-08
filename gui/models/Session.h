@@ -36,6 +36,7 @@ class Session {
 
     Project* currentProject();
     const Project* currentProject() const;
+    bool hasProject() const;
 
     Project* experimentAt(int i);
     const Project* experimentAt(int i) const;

@@ -18,6 +18,7 @@
 #include "gui/actions/Menus.h"
 #include "gui/connect/Sentinel.h"
 #include "gui/subwindows/DetectorWindow.h"
+#include "gui/subwindows/InstrumentStateWindow.h"
 #include "gui/subwindows/LogWindow.h"
 #include "gui/subwindows/PeakWindow.h"
 #include "gui/graphics/DetectorScene.h"
@@ -85,6 +86,7 @@ MainWin::MainWin()
     merger = new SubframeMergedPeaks;
 
     detector_window = new DetectorWindow();
+    instrumentstate_window = new InstrumentStateWindow();
     log_window = new LogWindow(this);
 
     _layout_stack = new QStackedWidget(main_widget);
@@ -201,6 +203,9 @@ void MainWin::closeEvent(QCloseEvent* event)
 
     if (log_window)
         log_window->close();
+
+    if (instrumentstate_window)
+        instrumentstate_window->close();
 
     QMainWindow::closeEvent(event);
 }

@@ -45,6 +45,7 @@ Menus::Menus(QMenuBar* menu_bar) : _menu_bar{menu_bar}
 
     // View menu
     _view_menu->addAction(actions->detector_window);
+    _view_menu->addAction(actions->instrumentstate_window);
     _view_menu->addAction(actions->log_window);
     _view_menu->addSeparator();
     _view_menu->addAction(actions->close_peak_windows);
