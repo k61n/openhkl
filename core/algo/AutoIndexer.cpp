@@ -79,6 +79,7 @@ bool AutoIndexer::autoIndex(const std::vector<Peak3D*>& peaks)
 
     // finally, rank the solutions
     rankSolutions();
+
     nsxlog(Level::Info, "AutoIndexer::autoindex: ", _solutions.size(), " unit cells found");
     nsxlog(Level::Info, solutionsToString());
     return success;
@@ -88,7 +89,13 @@ bool AutoIndexer::autoIndex(PeakCollection* peaks)
 {
     nsxlog(Level::Info, "AutoIndexer::autoindex: indexing PeakCollection '", peaks->name(), "'");
     std::vector<Peak3D*> peak_list = peaks->getPeakList();
-    return autoIndex(peak_list);
+    
+    if (autoIndex(peak_list)){
+        peaks->setIndexed(true);
+        return true;
+    }
+    peaks->setIndexed(false);
+    return false; 
 }
 
 void AutoIndexer::removeBad(double quality)

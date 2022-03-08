@@ -45,6 +45,12 @@
 #include <QMessageBox>
 #include <QSplitter>
 #include <QVBoxLayout>
+#include <QBoxLayout>
+#include <QCheckBox>
+#include <QMessageBox>
+#include <qnamespace.h>
+#include <QPushButton>
+#include <stdexcept>
 #include <qgridlayout.h>
 #include <qobject.h>
 #include <qtabwidget.h>
@@ -105,10 +111,11 @@ SubframeAutoIndexer::SubframeAutoIndexer()
     _set_initial_ki->setChecked(false);
 }
 
+
 void SubframeAutoIndexer::setInputUp()
 {
     Spoiler* input_box = new Spoiler("Input");
-    GridFiller f(input_box, true);
+    GridFiller f(input_box, true);  
 
     _exp_combo = f.addLinkedCombo(ComboType::Experiment, "Experiment");
     _data_combo = f.addLinkedCombo(ComboType::DataSet, "Data set");
@@ -436,7 +443,7 @@ void SubframeAutoIndexer::updatePeakList()
         _solutions.clear();
         _selected_unit_cell = nullptr;
     }
-    _peak_combo->blockSignals(false);
+    _peak_combo->blockSignals(false);    
 }
 
 void SubframeAutoIndexer::refreshPeakTable()
@@ -489,7 +496,7 @@ void SubframeAutoIndexer::grabIndexerParameters()
 {
     if (_peak_combo->count() == 0 || _exp_combo->count() == 0)
         return;
-
+        
     auto params =
         gSession->experimentAt(_exp_combo->currentIndex())->experiment()->autoIndexer()->
         parameters();
@@ -721,9 +728,18 @@ void SubframeAutoIndexer::toggleUnsafeWidgets()
     if (_exp_combo->count() == 0 || _data_combo->count() == 0 || _peak_combo->count() == 0) {
         _solve_button->setEnabled(false);
         _save_button->setEnabled(false);
-    }
+    }    
     if (_peak_collection_model.rowCount() == 0 || _solutions.empty())
         _save_button->setEnabled(false);
+
+    nsx::PeakCollection* pc = nullptr; 
+    std::string current_pc = _peak_combo->currentText().toStdString();
+    if (current_pc.size() == 0) return;
+    pc = gSession->currentProject()->experiment()->getPeakCollection( current_pc ); 
+    
+         
+   // _save_button->setEnabled(pc->isIntegrated());         
+    _solve_button->setEnabled(pc->isIntegrated()); 
 }
 
 void SubframeAutoIndexer::onBeamPosChanged(QPointF pos)

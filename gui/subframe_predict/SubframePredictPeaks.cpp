@@ -814,9 +814,11 @@ void SubframePredictPeaks::changeSelected(PeakItemGraphic* peak_graphic)
 
 void SubframePredictPeaks::toggleUnsafeWidgets()
 {
-    _predict_button->setEnabled(true);
-    _save_button->setEnabled(true);
-    _assign_peak_shapes->setEnabled(true);
+    _predict_button->setEnabled(false);
+    _save_button->setEnabled(false);
+    _assign_peak_shapes->setEnabled(false);
+    _refine_ki_button->setEnabled(false);
+    _direct_beam->setEnabled(false);
     if (_cell_combo->count() == 0 || _exp_combo->count() == 0) {
         _predict_button->setEnabled(false);
         _save_button->setEnabled(false);
@@ -837,6 +839,18 @@ void SubframePredictPeaks::toggleUnsafeWidgets()
         _sigma_d->setEnabled(false);
         _sigma_m->setEnabled(false);
     }
+
+    nsx::PeakCollection* pc = nullptr; 
+    std::string current_pc = _found_peaks_combo->currentText().toStdString();
+    if (current_pc.size() == 0) return;
+    pc = gSession->currentProject()->experiment()->getPeakCollection( current_pc );   
+
+    bool is_indexed = pc->isIndexed();
+    _predict_button->setEnabled(is_indexed);
+    _save_button->setEnabled(is_indexed);
+    _assign_peak_shapes->setEnabled(is_indexed);    
+    _refine_ki_button->setEnabled(is_indexed);
+    _direct_beam->setEnabled(is_indexed);     
 }
 
 DetectorWidget* SubframePredictPeaks::detectorWidget()

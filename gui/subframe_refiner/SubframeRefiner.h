@@ -109,6 +109,7 @@ class SubframeRefiner : public QWidget {
     //! Disable unsafe widgets if no data loaded
     void toggleUnsafeWidgets();
 
+
     //! The loaded data list
     std::vector<nsx::sptrDataSet> _data_list;
     //! Number of peaks updated

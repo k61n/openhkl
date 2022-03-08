@@ -83,7 +83,7 @@ void SubframeIntegrate::setInputUp()
         "specified cutoff.</font>"); // Rich text to force line break in tooltip
     _int_peak_combo = f.addLinkedCombo(
         ComboType::PeakCollection, "Peaks to integrate");
-
+        
     connect(
         _exp_combo, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this,
         &SubframeIntegrate::updateDatasetList);
@@ -611,6 +611,17 @@ void SubframeIntegrate::toggleUnsafeWidgets()
         _assign_peak_shapes->setEnabled(false);
         _build_shape_lib_button->setEnabled(false);
     }
+    /*nsx::PeakCollection* pc = nullptr;  
+
+    std::string current_pc = _peak_combo->currentText().toStdString();
+    if (current_pc.size() == 0) return;
+    pc = gSession->currentProject()->experiment()->getPeakCollection( current_pc );   
+    if (pc == nullptr) return;
+    if (  pc->isIndexed() && pc->isIntegrated() ){
+        _integrate_button->setEnabled(true);
+        _build_shape_lib_button->setEnabled(true);
+        _assign_peak_shapes->setEnabled(true);       
+    }*/ 
 }
 
 DetectorWidget* SubframeIntegrate::detectorWidget()

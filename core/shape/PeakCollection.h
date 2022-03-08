@@ -110,6 +110,13 @@ class PeakCollection {
     //! Build shape collection from strong peaks in this peak collection
     void buildShapeCollection(sptrDataSet data, const ShapeCollectionParameters& params);
 
+
+    bool isIndexed() const { return _indexed;}
+    bool isIntegrated() const {return _integrated;}
+
+    void setIndexed(bool value) {_indexed = value;}
+    void setIntegrated(bool value) {_integrated = value;}
+
  private:
     std::vector<std::unique_ptr<nsx::Peak3D>> _peaks;
     std::string _name;
@@ -126,6 +133,12 @@ class PeakCollection {
     double _sigma_d;
     //! Mosaicity sigma
     double _sigma_m;
+
+    //! has been indexed already 
+    bool _indexed;
+
+    //! has been integrated
+    bool _integrated;
 };
 
 /*! @}*/

@@ -99,7 +99,7 @@ void PeakFinderParameters::log(const Level& level) const
 //  PeakFinder trivia
 //  ***********************************************************************************************
 
-PeakFinder::PeakFinder() : _handler(nullptr), _current_label(0)
+PeakFinder::PeakFinder() : _handler(nullptr), _current_label(0), _integrated(false)
 {
     _params = std::make_unique<PeakFinderParameters>();
     _convolver.reset(ConvolverFactory{}.create("annular", {{"r1", 5.}, {"r2", 10.}, {"r3", 15.}}));
@@ -125,6 +125,7 @@ void PeakFinder::setPeakCollection(
 {
     _peak_collection = PeakCollection(name, type);
     _peak_collection.populate(peak_list);
+    _peak_collection.setIntegrated(_integrated);
 }
 
 void PeakFinder::setHandler(const sptrProgressHandler& handler)

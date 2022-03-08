@@ -65,6 +65,8 @@ ShapeCollectionDialog::ShapeCollectionDialog(
     button_layout->addWidget(reject_button);
     main_layout->addLayout(button_layout);
 
+    
+
     connect(accept_button, &QPushButton::clicked, this, &ShapeCollectionDialog::accept);
 
     connect(reject_button, &QPushButton::clicked, this, &ShapeCollectionDialog::reject);
