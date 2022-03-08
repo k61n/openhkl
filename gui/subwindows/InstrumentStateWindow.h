@@ -17,22 +17,37 @@
 
 #include "gui/utility/LinkedComboBox.h"
 #include <QDialog>
+#include <qboxlayout.h>
+#include <qlineedit.h>
 
 class LinkedComboBox;
+class QGridLayout;
+class QSpinBox;
 
 //! Modeless dialog to display current instrument states
 class InstrumentStateWindow : public QDialog {
  public:
     InstrumentStateWindow(QWidget* parent = nullptr);
 
+    //! Set up the grids for instrument states
+    void setStateGridsUp();
+
     //! Refresh list of datasets
     void updateData();
+    //! Update the instrument states
+    void updateState();
     //! Refresh the whole dialog
     void refreshAll();
 
  private:
     LinkedComboBox* _data_combo;
+    QSpinBox* _frame_spin;
+    QWidget* _instrument_state_widget;
 
+    QVector<QVector<QLineEdit*>> _sample_orn_elements;
+    QVector<QLineEdit*> _sample_pos_elements;
+    QVector<QLineEdit*> _detector_pos_elements;
+    QVector<QLineEdit*> _ki_elements;
 };
 
 #endif // NSX_GUI_SUBWINDOWS_INSTRUMENTSTATEWINDOW_H
