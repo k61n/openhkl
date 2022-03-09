@@ -250,8 +250,7 @@ void SideBar::onFilterPeaks()
 void SideBar::onIndexer()
 {
     gGui->_layout_stack->setCurrentIndex(4);
-    if (gSession->currentProjectNum() != -1)
-        gGui->indexer->refreshAll();
+    gGui->indexer->refreshAll();
     emit subframeChanged();
 }
 

@@ -190,12 +190,12 @@ void SubframeRefiner::refreshTables()
 
 void SubframeRefiner::updateExptList()
 {
+    if (gSession->experimentNames().empty())
+        return;
+
     _exp_combo->blockSignals(true);
     QString current_exp = _exp_combo->currentText();
     _exp_combo->clear();
-
-    if (gSession->experimentNames().empty())
-        return;
 
     for (const QString& exp : gSession->experimentNames())
         _exp_combo->addItem(exp);
