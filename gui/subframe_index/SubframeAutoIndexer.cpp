@@ -339,9 +339,13 @@ void SubframeAutoIndexer::refreshAll()
 
 void SubframeAutoIndexer::setExperiments()
 {
+    if (gSession->experimentNames().empty())
+        return;
+
     _exp_combo->blockSignals(true);
     QString current_exp = _exp_combo->currentText();
     _exp_combo->clear();
+
 
     if (gSession->experimentNames().empty())
         return;
@@ -350,19 +354,18 @@ void SubframeAutoIndexer::setExperiments()
         _exp_combo->addItem(exp);
     _exp_combo->setCurrentText(current_exp);
 
-    if (!(_exp_combo->count() == 0)) {
-        updatePeakList();
-        updateDatasetList();
-        grabIndexerParameters();
-        refreshPeakTable();
-        const auto data = _detector_widget->currentData();
-        if (data) {
-            _beam_offset_x->setMaximum(static_cast<double>(data->nCols()) / 2.0);
-            _beam_offset_x->setMinimum(-static_cast<double>(data->nCols()) / 2.0);
-            _beam_offset_y->setMaximum(static_cast<double>(data->nRows()) / 2.0);
-            _beam_offset_y->setMinimum(-static_cast<double>(data->nRows()) / 2.0);
-        }
+    updatePeakList();
+    updateDatasetList();
+    grabIndexerParameters();
+    refreshPeakTable();
+    const auto data = _detector_widget->currentData();
+    if (data) {
+        _beam_offset_x->setMaximum(static_cast<double>(data->nCols()) / 2.0);
+        _beam_offset_x->setMinimum(-static_cast<double>(data->nCols()) / 2.0);
+        _beam_offset_y->setMaximum(static_cast<double>(data->nRows()) / 2.0);
+        _beam_offset_y->setMinimum(-static_cast<double>(data->nRows()) / 2.0);
     }
+
     _exp_combo->blockSignals(false);
 }
 
@@ -492,7 +495,7 @@ void SubframeAutoIndexer::refreshPeakVisual()
 
 void SubframeAutoIndexer::grabIndexerParameters()
 {
-    if (_peak_combo->count() == 0 || _exp_combo->count() == 0)
+    if (_exp_combo->count() == 0)
         return;
 
     auto params = gSession->experimentAt(_exp_combo->currentIndex())
@@ -519,7 +522,7 @@ void SubframeAutoIndexer::grabIndexerParameters()
 
 void SubframeAutoIndexer::setIndexerParameters()
 {
-    if (_peak_combo->count() == 0 || _exp_combo->count() == 0)
+    if (_exp_combo->count() == 0)
         return;
 
     auto params = gSession->experimentAt(_exp_combo->currentIndex())
