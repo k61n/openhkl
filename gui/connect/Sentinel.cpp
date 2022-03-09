@@ -18,9 +18,7 @@
 
 #include "gui/MainWin.h"
 
-Sentinel::Sentinel()
-{
-}
+Sentinel::Sentinel() { }
 
 void Sentinel::onLinkedComboChanged(
     const ComboType combo_type, const int id, const QStringList& list)

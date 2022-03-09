@@ -21,17 +21,15 @@
 #include "gui/utility/LinkedComboBox.h"
 
 #include <QGridLayout>
-#include <QVBoxLayout>
+#include <QLineEdit>
 #include <QSignalBlocker>
-#include <QLineEdit>
-#include <QSpacerItem>
-#include <QWidget>
 #include <QSizePolicy>
+#include <QSpacerItem>
 #include <QSpinBox>
-#include <QLineEdit>
+#include <QVBoxLayout>
+#include <QWidget>
 
-InstrumentStateWindow::InstrumentStateWindow(QWidget* parent)
-    : QDialog(parent)
+InstrumentStateWindow::InstrumentStateWindow(QWidget* parent) : QDialog(parent)
 {
     QWidget* top_widget = new QWidget();
 
@@ -90,20 +88,20 @@ void InstrumentStateWindow::setStateGridsUp()
     for (std::size_t i = 0; i < 3; ++i) {
         element = new QLineEdit();
         _sample_pos_elements.push_back(element);
-        sample_pos_grid->addWidget(element, i+1, 0, 1, 1);
+        sample_pos_grid->addWidget(element, i + 1, 0, 1, 1);
         line_edits.push_back(element);
         element = new QLineEdit();
         _detector_pos_elements.push_back(element);
-        detector_pos_grid->addWidget(element, i+1, 0, 1, 1);
+        detector_pos_grid->addWidget(element, i + 1, 0, 1, 1);
         line_edits.push_back(element);
         element = new QLineEdit();
         _ki_elements.push_back(element);
-        ki_grid->addWidget(element, i+1, 0, 1, 1);
+        ki_grid->addWidget(element, i + 1, 0, 1, 1);
         line_edits.push_back(element);
         for (std::size_t j = 0; j < 3; ++j) {
             element = new QLineEdit();
             _sample_orn_elements[i].push_back(element);
-            sample_orn_grid->addWidget(element, i+1, j, 1, 1);
+            sample_orn_grid->addWidget(element, i + 1, j, 1, 1);
             line_edits.push_back(element);
         }
     }
@@ -158,7 +156,8 @@ void InstrumentStateWindow::updateState()
     const auto state = data->instrumentStates()[_frame_spin->value()];
     for (std::size_t i = 0; i < 3; ++i) {
         _sample_pos_elements[i]->setText(QString::number(state.samplePosition[i], 'f', 4));
-        _detector_pos_elements[i]->setText(QString::number(state.detectorPositionOffset[i], 'f', 4));
+        _detector_pos_elements[i]->setText(
+            QString::number(state.detectorPositionOffset[i], 'f', 4));
         _ki_elements[i]->setText(QString::number(state.ki()[i], 'f', 4));
         for (std::size_t j = 0; j < 3; ++j) {
             _sample_orn_elements[i][j]->setText(

@@ -17,10 +17,6 @@
 #include "gui/actions/Actions.h"
 #include "gui/actions/Menus.h"
 #include "gui/connect/Sentinel.h"
-#include "gui/subwindows/DetectorWindow.h"
-#include "gui/subwindows/InstrumentStateWindow.h"
-#include "gui/subwindows/LogWindow.h"
-#include "gui/subwindows/PeakWindow.h"
 #include "gui/graphics/DetectorScene.h"
 #include "gui/graphics/DetectorView.h"
 #include "gui/graphics_items/PlottableItem.h"
@@ -35,6 +31,10 @@
 #include "gui/subframe_integrate/SubframeIntegrate.h"
 #include "gui/subframe_predict/SubframePredictPeaks.h"
 #include "gui/subframe_refiner/SubframeRefiner.h"
+#include "gui/subwindows/DetectorWindow.h"
+#include "gui/subwindows/InstrumentStateWindow.h"
+#include "gui/subwindows/LogWindow.h"
+#include "gui/subwindows/PeakWindow.h"
 #include "gui/utility/SideBar.h"
 #include "gui/widgets/DetectorWidget.h"
 
@@ -109,10 +109,12 @@ MainWin::MainWin()
 
     initStatusBar();
 
-    connect(indexer, &SubframeAutoIndexer::beamPosChanged,
-            predictor, &SubframePredictPeaks::onBeamPosChanged);
-    connect(predictor, &SubframePredictPeaks::beamPosChanged,
-            indexer, &SubframeAutoIndexer::onBeamPosChanged);
+    connect(
+        indexer, &SubframeAutoIndexer::beamPosChanged, predictor,
+        &SubframePredictPeaks::onBeamPosChanged);
+    connect(
+        predictor, &SubframePredictPeaks::beamPosChanged, indexer,
+        &SubframeAutoIndexer::onBeamPosChanged);
 }
 
 void MainWin::onDataChanged() const
@@ -214,10 +216,10 @@ void MainWin::initStatusBar()
 {
     _status = new QLabel("Ready", statusBar());
     _light = new QLabel();
-    _red_circle = QPixmap(
-        ":images/statusbar/red-circle.svg").scaledToHeight(statusBar()->height() * 0.5);
-    _green_circle = QPixmap(
-        ":images/statusbar/green-circle.svg").scaledToHeight(statusBar()->height() * 0.5);
+    _red_circle =
+        QPixmap(":images/statusbar/red-circle.svg").scaledToHeight(statusBar()->height() * 0.5);
+    _green_circle =
+        QPixmap(":images/statusbar/green-circle.svg").scaledToHeight(statusBar()->height() * 0.5);
     _light->setPixmap(_green_circle);
     statusBar()->addPermanentWidget(_status);
     statusBar()->addPermanentWidget(_light);
@@ -240,7 +242,7 @@ bool MainWin::isDark()
     QColor color = palette().color(QPalette::Window);
     double r = color.red();
     double g = color.green();
-    double b  = color.blue();
+    double b = color.blue();
     double luminance = (0.2126 * r + 0.7152 * g + 0.0722 * b) / 256.0;
     return luminance < 0.5;
 }

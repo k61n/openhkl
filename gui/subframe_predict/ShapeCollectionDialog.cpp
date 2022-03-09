@@ -21,10 +21,10 @@
 #include "core/shape/PeakFilter.h"
 #include "core/shape/Profile3D.h"
 #include "core/shape/ShapeCollection.h"
+#include "gui/MainWin.h" // gGui
 #include "gui/frames/ProgressView.h"
 #include "gui/models/ColorMap.h"
 #include "gui/models/Session.h"
-#include "gui/MainWin.h" // gGui
 
 #include <QDebug>
 #include <QFormLayout>
@@ -38,8 +38,11 @@
 
 ShapeCollectionDialog::ShapeCollectionDialog(
     nsx::PeakCollection* peak_collection, std::shared_ptr<nsx::ShapeCollectionParameters> params)
-    : QDialog(), _peak_collection_model() , _peak_collection_item(),
-      _collection_ptr(peak_collection), _params(params)
+    : QDialog()
+    , _peak_collection_model()
+    , _peak_collection_item()
+    , _collection_ptr(peak_collection)
+    , _params(params)
 {
     _shape_collection = std::make_unique<nsx::ShapeCollection>();
 
@@ -65,12 +68,10 @@ ShapeCollectionDialog::ShapeCollectionDialog(
     button_layout->addWidget(reject_button);
     main_layout->addLayout(button_layout);
 
-    
 
     connect(accept_button, &QPushButton::clicked, this, &ShapeCollectionDialog::accept);
 
     connect(reject_button, &QPushButton::clicked, this, &ShapeCollectionDialog::reject);
-
 }
 
 void ShapeCollectionDialog::setUpParametrization(nsx::PeakCollection* peak_collection)
@@ -453,5 +454,4 @@ void ShapeCollectionDialog::toggleUnsafeWidgets()
     _calculate_mean_profile->setEnabled(true);
     if (!_shape_collection)
         _calculate_mean_profile->setEnabled(false);
-
 }

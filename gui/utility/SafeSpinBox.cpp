@@ -21,7 +21,8 @@ SafeSpinBox::SafeSpinBox(QWidget* parent) : QSpinBox(parent)
     setFocusPolicy(Qt::StrongFocus);
 }
 
-void SafeSpinBox::wheelEvent(QWheelEvent *event) {
+void SafeSpinBox::wheelEvent(QWheelEvent* event)
+{
     if (!hasFocus()) {
         event->ignore();
     } else {
@@ -34,7 +35,8 @@ SafeDoubleSpinBox::SafeDoubleSpinBox(QWidget* parent) : QDoubleSpinBox(parent)
     setFocusPolicy(Qt::StrongFocus);
 }
 
-void SafeDoubleSpinBox::wheelEvent(QWheelEvent *event) {
+void SafeDoubleSpinBox::wheelEvent(QWheelEvent* event)
+{
     if (!hasFocus()) {
         event->ignore();
     } else {

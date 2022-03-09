@@ -12,16 +12,16 @@
 //
 //  ***********************************************************************************************
 
+#include <cstdio> // rename
 #include <iostream>
 #include <memory>
 #include <stdexcept>
-#include <utility>
-#include <cstdio> // rename
 #include <string>
+#include <utility>
 
 #include "base/utils/Logger.h"
+#include "base/utils/Path.h" // tempFilename
 #include "base/utils/Units.h"
-#include "base/utils/Path.h"  // tempFilename
 #include "core/data/DataSet.h"
 #include "core/experiment/DataHandler.h"
 #include "core/experiment/Experiment.h"
@@ -38,9 +38,9 @@
 #include "core/integration/Profile1DIntegrator.h"
 #include "core/integration/Profile3DIntegrator.h"
 #include "core/integration/ShapeIntegrator.h"
+#include "core/loader/IDataReader.h"
 #include "core/peak/PeakCoordinateSystem.h"
 #include "core/raw/DataKeys.h"
-#include "core/loader/IDataReader.h"
 #include "core/raw/MetaData.h"
 #include "core/statistics/CC.h"
 #include "core/statistics/RFactor.h"
@@ -96,8 +96,9 @@ void Experiment::acceptFoundPeaks(const std::string& name)
 void Experiment::acceptFoundPeaks(const std::string& name, const PeakCollection& found)
 {
     std::vector<Peak3D*> peaks = found.getPeakList();
-    
-    addPeakCollection(name, listtype::FOUND, peaks,  found.isIndexed(), _peak_finder->isIntegrated() );
+
+    addPeakCollection(
+        name, listtype::FOUND, peaks, found.isIndexed(), _peak_finder->isIntegrated());
     _peak_finder->setIntegrated(false); // reset for next use
 }
 
@@ -123,12 +124,11 @@ void Experiment::saveToFile(const std::string& path) const
         }
     }
 
-    std::string filepath {path};
+    std::string filepath{path};
     if (overwrite_datafile) {
         // create a filename for the temporary datafile
         filepath = tempFilename(path);
-        nsxlog(Level::Debug, "Saving experiment to temporary file '"
-               + filepath + "'");
+        nsxlog(Level::Debug, "Saving experiment to temporary file '" + filepath + "'");
     }
 
     exporter.createFile(name(), getDiffractometer()->name(), filepath);
@@ -154,11 +154,14 @@ void Experiment::saveToFile(const std::string& path) const
         // rename the temporary datafile to the given filename
         const int rename_success = rename(filepath.c_str(), path.c_str());
         if (rename_success == 0) {
-            nsxlog(Level::Debug, "Renamed the temporary file '" + filepath + "' "
-                   + "to '" + path + "'");
+            nsxlog(
+                Level::Debug,
+                "Renamed the temporary file '" + filepath + "' " + "to '" + path + "'");
         } else {
-            nsxlog(Level::Error, "Could not rename the temporary file '"
-                   + filepath + "' to '" + path + "'. Data might be lost.");
+            nsxlog(
+                Level::Error,
+                "Could not rename the temporary file '" + filepath + "' to '" + path
+                    + "'. Data might be lost.");
         }
     }
 }
@@ -251,8 +254,7 @@ void Experiment::buildShapeCollection(
     std::unique_ptr<ShapeCollection> shapes = std::make_unique<ShapeCollection>();
 
     std::vector<Peak3D*> fit_peak_list = fit_peaks.getPeakList();
-    _integrator->integrateShapeCollection(
-        fit_peak_list, data, shapes.get(), aabb, params);
+    _integrator->integrateShapeCollection(fit_peak_list, data, shapes.get(), aabb, params);
     peaks->setShapeCollection(shapes);
 
     // shape_collection.updateFit(1000); // This does nothing!! - zamaan
@@ -269,7 +271,8 @@ const UnitCell* Experiment::getReferenceCell() const
     return getUnitCell(nsx::kw_referenceUnitcell);
 }
 
-bool Experiment::refine(const PeakCollection* peaks, DataSet* data, sptrUnitCell cell /* = nullptr */)
+bool Experiment::refine(
+    const PeakCollection* peaks, DataSet* data, sptrUnitCell cell /* = nullptr */)
 {
     nsxlog(Level::Info, "Experiment::refine: Refining peak collection ", peaks->name());
     std::vector<Peak3D*> peak_list = peaks->getPeakList();
@@ -357,7 +360,8 @@ void Experiment::addPeakCollection(
 }
 
 void Experiment::addPeakCollection(
-    const std::string& name, const listtype type, std::vector<Peak3D*> peaks, bool indexed, bool integrated)
+    const std::string& name, const listtype type, std::vector<Peak3D*> peaks, bool indexed,
+    bool integrated)
 {
     _peak_handler->addPeakCollection(name, type, peaks, indexed, integrated);
 }

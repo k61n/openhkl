@@ -236,11 +236,11 @@ void SubframeFindPeaks::setFigureUp()
     _detector_widget->linkPeakModel(&_peak_collection_model);
 
     connect(
-        _detector_widget->spin(), static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged), this,
-        &SubframeFindPeaks::refreshPreview);
+        _detector_widget->spin(), static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged),
+        this, &SubframeFindPeaks::refreshPreview);
     connect(
-        _detector_widget->scene(), &DetectorScene::signalUpdateDetectorScene,
-        this, &SubframeFindPeaks::refreshPeakTable);
+        _detector_widget->scene(), &DetectorScene::signalUpdateDetectorScene, this,
+        &SubframeFindPeaks::refreshPeakTable);
     connect(
         _detector_widget->scene(), &DetectorScene::signalSelectedPeakItemChanged, this,
         &SubframeFindPeaks::changeSelected);
@@ -349,8 +349,10 @@ void SubframeFindPeaks::grabFinderParameters()
     nsx::PeakFinder* finder =
         gSession->experimentAt(_exp_combo->currentIndex())->experiment()->peakFinder();
 
-    auto* params =
-        gSession->experimentAt(_exp_combo->currentIndex())->experiment()->peakFinder()->parameters();
+    auto* params = gSession->experimentAt(_exp_combo->currentIndex())
+                       ->experiment()
+                       ->peakFinder()
+                       ->parameters();
 
     _min_size_spin->setValue(params->minimum_size);
     _max_size_spin->setValue(params->maximum_size);
@@ -400,8 +402,10 @@ void SubframeFindPeaks::setFinderParameters()
     nsx::PeakFinder* finder =
         gSession->experimentAt(_exp_combo->currentIndex())->experiment()->peakFinder();
 
-    auto* params =
-        gSession->experimentAt(_exp_combo->currentIndex())->experiment()->peakFinder()->parameters();
+    auto* params = gSession->experimentAt(_exp_combo->currentIndex())
+                       ->experiment()
+                       ->peakFinder()
+                       ->parameters();
     params->minimum_size = _min_size_spin->value();
     params->maximum_size = _max_size_spin->value();
     params->peak_end = _scale_spin->value();
@@ -419,8 +423,10 @@ void SubframeFindPeaks::setFinderParameters()
 
 void SubframeFindPeaks::grabIntegrationParameters()
 {
-    auto* params =
-        gSession->experimentAt(_exp_combo->currentIndex())->experiment()->integrator()->parameters();
+    auto* params = gSession->experimentAt(_exp_combo->currentIndex())
+                       ->experiment()
+                       ->integrator()
+                       ->parameters();
 
     _peak_area->setValue(params->peak_end);
     _bkg_lower->setValue(params->bkg_begin);
@@ -432,8 +438,10 @@ void SubframeFindPeaks::setIntegrationParameters()
     if (_exp_combo->count() == 0 || _data_combo->count() == 0)
         return;
 
-    auto* params =
-        gSession->experimentAt(_exp_combo->currentIndex())->experiment()->integrator()->parameters();
+    auto* params = gSession->experimentAt(_exp_combo->currentIndex())
+                       ->experiment()
+                       ->integrator()
+                       ->parameters();
 
     params->peak_end = _peak_area->value();
     params->bkg_begin = _bkg_lower->value();
@@ -524,8 +532,8 @@ void SubframeFindPeaks::integrate()
     _peaks_integrated = true;
     toggleUnsafeWidgets();
     gGui->statusBar()->showMessage(
-        QString::number(integrator->numberOfValidPeaks()) + "/" +
-        QString::number(integrator->numberOfPeaks()) + " peaks integrated");
+        QString::number(integrator->numberOfValidPeaks()) + "/"
+        + QString::number(integrator->numberOfPeaks()) + " peaks integrated");
     gGui->setReady(true);
 }
 
@@ -571,17 +579,16 @@ void SubframeFindPeaks::refreshPreview()
         return;
     }
 
-    nsx::sptrDataSet data =
-        gSession->experimentAt(_exp_combo->currentIndex())->experiment()
-        ->getData(_data_combo->currentText().toStdString());
+    nsx::sptrDataSet data = gSession->experimentAt(_exp_combo->currentIndex())
+                                ->experiment()
+                                ->getData(_data_combo->currentText().toStdString());
     int nrows = data->nRows();
     int ncols = data->nCols();
 
     std::string convolvertype = _kernel_combo->currentText().toStdString();
     std::map<std::string, double> convolverParams = convolutionParameters();
-    Eigen::MatrixXd convolvedFrame =
-        nsx::convolvedFrame(
-            data->reader()->data(_detector_widget->spin()->value()), convolvertype, convolverParams);
+    Eigen::MatrixXd convolvedFrame = nsx::convolvedFrame(
+        data->reader()->data(_detector_widget->spin()->value()), convolvertype, convolverParams);
     if (_live_check->isChecked()) {
         double thresholdVal = _threshold_spin->value();
         for (int i = 0; i < nrows; ++i) {

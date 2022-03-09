@@ -94,9 +94,7 @@ void NumorProperty::addMenuRequested()
     QAction* add_from_nexus = menu->addAction("Nexus");
 
     connect(add_from_raw, &QAction::triggered, this, &NumorProperty::addFromRaw);
-    connect(add_from_HDF5, &QAction::triggered, []() {
-        gSession->loadData(nsx::DataFormat::NSX);
-    });
+    connect(add_from_HDF5, &QAction::triggered, []() { gSession->loadData(nsx::DataFormat::NSX); });
     connect(add_from_nexus, &QAction::triggered, []() {
         gSession->loadData(nsx::DataFormat::NEXUS);
     });

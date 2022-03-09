@@ -131,8 +131,8 @@ Diffractometer* InstrumentState::diffractometer()
     return _diffractometer;
 }
 
-InstrumentState InstrumentState::state(Diffractometer* const diffractometer,
-                                       const std::size_t frame_idx)
+InstrumentState InstrumentState::state(
+    Diffractometer* const diffractometer, const std::size_t frame_idx)
 {
     assert(frame_idx < diffractometer->sampleStates.size());
     assert(frame_idx < diffractometer->detectorStates.size());

@@ -17,12 +17,12 @@
 #include "base/parser/EigenToVector.h"
 #include "base/utils/Logger.h"
 #include "base/utils/Units.h"
+#include "core/data/DataSet.h"
 #include "core/detector/Detector.h"
 #include "core/gonio/Gonio.h"
 #include "core/instrument/Diffractometer.h"
 #include "core/instrument/Sample.h"
 #include "core/raw/DataKeys.h"
-#include "core/data/DataSet.h"
 
 #include <stdexcept>
 #include <string>
@@ -170,8 +170,7 @@ bool BaseHDF5DataReader::initRead()
 
     // Update the monochromator wavelength
     const double waveln = _dataset_out->metadata().key<double>(nsx::at_wavelength);
-    _dataset_out->diffractometer()->\
-        source().selectedMonochromator().setWavelength(waveln);
+    _dataset_out->diffractometer()->source().selectedMonochromator().setWavelength(waveln);
 
     const std::size_t nframes = _dataset_out->metadata().key<int>(nsx::at_frameCount);
 
@@ -218,7 +217,8 @@ bool BaseHDF5DataReader::initRead()
     dm *= deg;
 
     nsxlog(
-        nsx::Level::Debug, "Reading gonio state of '", _filename, "', dataset '", dataset_name, "'");
+        nsx::Level::Debug, "Reading gonio state of '", _filename, "', dataset '", dataset_name,
+        "'");
 
     _dataset_out->diffractometer()->detectorStates.resize(nframes);
 

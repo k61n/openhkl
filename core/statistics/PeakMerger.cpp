@@ -76,7 +76,7 @@ void PeakMerger::mergePeaks()
         double d_upper = resolution_shell.shell(i).dmax;
 
         std::unique_ptr<MergedData> merged_data_per_shell = std::make_unique<MergedData>(
-                space_group, _params->friedel, _params->frame_min, _params->frame_max);
+            space_group, _params->friedel, _params->frame_min, _params->frame_max);
         merged_data_per_shell->setDRange(d_lower, d_upper);
 
         for (auto peak : resolution_shell.shell(i).peaks)

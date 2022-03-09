@@ -21,8 +21,8 @@
 #include "gui/subframe_experiment/properties/NumorProperty.h"
 #include "gui/widgets/DetectorWidget.h"
 
-#include <QHBoxLayout>
 #include <QGroupBox>
+#include <QHBoxLayout>
 #include <QSplitter>
 #include <QVBoxLayout>
 #include <QWidget>
@@ -42,9 +42,9 @@ SubframeExperiment::SubframeExperiment()
     QGroupBox* figure_group = new QGroupBox("Preview");
     figure_group->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     _detector_widget = new DetectorWidget(true, false, true, figure_group);
-    _detector_widget->modeCombo()->addItems(
-        QStringList{"Zoom", "Selection", "Rectangular mask", "Elliptical mask", "Line plot",
-            "Horizontal slice", "Vertical slice"});
+    _detector_widget->modeCombo()->addItems(QStringList{
+        "Zoom", "Selection", "Rectangular mask", "Elliptical mask", "Line plot", "Horizontal slice",
+        "Vertical slice"});
     QWidget* right_widget = new QWidget(this);
     right_widget->setLayout(_detector_widget);
 

@@ -21,9 +21,7 @@ namespace nsx {
 Intensity::Intensity() : _value(0), _sigma2(0), _valid(false) { }
 
 Intensity::Intensity(const double value, const double sigma2)
-    : _value(value)
-    , _sigma2(sigma2)
-    , _valid(true)
+    : _value(value), _sigma2(sigma2), _valid(true)
 {
     // Deal with invalid sigmas later so that we can diagnose the problem.
     if (std::isnan(value) || _sigma2 < 0.0 || std::isnan(_sigma2))

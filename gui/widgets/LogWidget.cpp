@@ -17,16 +17,15 @@
 #include "base/utils/Logger.h"
 #include "base/utils/StringIO.h" // datetime_str
 #include "gui/MainWin.h"
-#include <string>
 #include <chrono>
-#include <sstream>
 #include <iomanip>
+#include <sstream>
+#include <string>
 
 #include <QColor>
 #include <QTextEdit>
 
-LogWidget::LogWidget(QWidget* parent):
-    QTextEdit(parent)
+LogWidget::LogWidget(QWidget* parent) : QTextEdit(parent)
 {
     if (gGui->isDark()) // looks like we have a dark theme
         _infoColor = QColor(Qt::white);
@@ -40,9 +39,7 @@ LogWidget::LogWidget(QWidget* parent):
     setFontFamily(QString::fromStdString(_fontFamily));
     setFontPointSize(_fontPointSize);
     // add a prologue
-    setText(
-        QString::fromStdString("-*- " + _initText + " ["
-                               + nsx::datetime_str() + "] -*-"));
+    setText(QString::fromStdString("-*- " + _initText + " [" + nsx::datetime_str() + "] -*-"));
 
     // set minmimum size to 100 columns, 30 lines (depending on font; assumes monospace)
     auto* fontMetrics = new QFontMetrics(currentFont());
@@ -56,8 +53,7 @@ LogWidget::LogWidget(QWidget* parent):
 void LogWidget::_connectUI()
 {
     // register a method as receiver of log messages
-    _receiver_handle = nsx::Logger::instance().Msg.addReceiver
-        (&LogWidget::showMessage, this);
+    _receiver_handle = nsx::Logger::instance().Msg.addReceiver(&LogWidget::showMessage, this);
 }
 
 LogWidget::~LogWidget()
@@ -81,23 +77,14 @@ void LogWidget::showMessage(const nsx::LogMessage& message)
     if (message.level > _print_level)
         return;
 
-    QColor text_color {_infoColor};  // default text color
+    QColor text_color{_infoColor}; // default text color
 
     switch (message.level) {
-    case nsx::Level::Info:
-        text_color = _infoColor;
-        break;
-    case nsx::Level::Error:
-        text_color = _errorColor;
-        break;
-    case nsx::Level::Warning:
-        text_color = _warningColor;
-        break;
-    case nsx::Level::Debug:
-        text_color = _debugColor;
-        break;
-    default:
-        text_color = _infoColor;
+        case nsx::Level::Info: text_color = _infoColor; break;
+        case nsx::Level::Error: text_color = _errorColor; break;
+        case nsx::Level::Warning: text_color = _warningColor; break;
+        case nsx::Level::Debug: text_color = _debugColor; break;
+        default: text_color = _infoColor;
     };
 
     setTextColor(text_color);

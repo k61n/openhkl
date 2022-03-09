@@ -17,8 +17,7 @@
 #include <QPainter>
 #include <qgraphicsitem.h>
 
-CrosshairGraphic::CrosshairGraphic(QPointF centre)
-    : _size(15), _linewidth(1)
+CrosshairGraphic::CrosshairGraphic(QPointF centre) : _size(15), _linewidth(1)
 {
     setPos(centre);
     _pen.setColor(Qt::black);
@@ -63,7 +62,8 @@ void CrosshairGraphic::redraw()
 
 QRectF CrosshairGraphic::boundingRect() const
 {
-    return {-_size / 2.0 - _linewidth / 2.0, -_size / 2.0 + _linewidth / 2.0,
+    return {
+        -_size / 2.0 - _linewidth / 2.0, -_size / 2.0 + _linewidth / 2.0,
         static_cast<double>(_size + _linewidth), static_cast<double>(_size + _linewidth)};
 }
 

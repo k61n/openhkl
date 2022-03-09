@@ -16,8 +16,8 @@
 
 #include "gui/connect/Sentinel.h"
 
-#include <QSignalBlocker>
 #include <QDebug>
+#include <QSignalBlocker>
 
 int LinkedComboBox::_count = 0;
 
@@ -36,7 +36,8 @@ void LinkedComboBox::updateList(const QStringList& list)
     clear();
     addItems(list);
     setCurrentText(current_text);
-    emit comboChanged(_combo_type, _id, list);}
+    emit comboChanged(_combo_type, _id, list);
+}
 
 void LinkedComboBox::onComboChanged(
     const ComboType combo_type, const int id, const QStringList& list)

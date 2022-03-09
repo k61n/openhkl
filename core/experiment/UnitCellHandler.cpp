@@ -149,8 +149,8 @@ void UnitCellHandler::setReferenceCell(
 }
 
 bool UnitCellHandler::checkAndAssignUnitCell(
-    PeakCollection* peaks, AutoIndexer* auto_indexer, double length_tol,
-    double angle_tol, std::string name)
+    PeakCollection* peaks, AutoIndexer* auto_indexer, double length_tol, double angle_tol,
+    std::string name)
 {
     std::string ref_name = nsx::kw_referenceUnitcell;
     const UnitCell* ref_cell = getUnitCell(ref_name);

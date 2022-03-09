@@ -116,7 +116,8 @@ void DetectorScene::addBeamSetter(int size, int linewidth)
     _beam_pos_setter = new CrosshairGraphic(_current_beam_position);
     _beam_pos_setter->setSize(size);
     _beam_pos_setter->setLinewidth(linewidth);
-    addItem(_beam_pos_setter);}
+    addItem(_beam_pos_setter);
+}
 
 void DetectorScene::removeBeamSetter()
 {
@@ -524,8 +525,7 @@ void DetectorScene::mousePressEvent(QGraphicsSceneMouseEvent* event)
                 _current_dragged_item = _beam_pos_setter;
                 break;
             }
-            default:
-                break;
+            default: break;
         }
         if (cutter != nullptr) {
             cutter->setFrom(event->lastScenePos());
@@ -773,8 +773,8 @@ void DetectorScene::keyPressEvent(QKeyEvent* event)
                 peak_item->peak()->setRejectionFlag(nsx::RejectionFlag::ManuallyRejected, true);
                 peak_item->peak()->setSelected(false);
                 peak_item->setCenterColor(Qt::red);
-            // If the item is a mask graphics item, remove its corresponding mask from
-            // the data, update the std::vector of mask graphics items and update the scene
+                // If the item is a mask graphics item, remove its corresponding mask from
+                // the data, update the std::vector of mask graphics items and update the scene
             } else if (MaskItem* mask_item = dynamic_cast<MaskItem*>(item)) {
                 auto it = findMask(mask_item);
                 if (it != _masks.end()) {
@@ -848,8 +848,8 @@ void DetectorScene::createToolTipText(QGraphicsSceneMouseEvent* event)
     bool has_state = true;
     nsx::InstrumentState state;
     try {
-        state = nsx::InterpolatedState::interpolate(_currentData->instrumentStates(),
-                                                    _currentFrameIndex);
+        state = nsx::InterpolatedState::interpolate(
+            _currentData->instrumentStates(), _currentFrameIndex);
     } catch (std::range_error& e) {
         // May get an interpolation error on the last frame of the set. Skip the tooltip if we
         // need an interpolated state in this instance.
@@ -1143,7 +1143,8 @@ void DetectorScene::showDirectBeam(bool show)
 
 Eigen::Vector3d DetectorScene::getBeamSetterPosition() const
 {
-    return {_beam_pos_setter->pos().x(), _beam_pos_setter->pos().y(),
+    return {
+        _beam_pos_setter->pos().x(), _beam_pos_setter->pos().y(),
         static_cast<double>(_currentFrameIndex)};
 }
 

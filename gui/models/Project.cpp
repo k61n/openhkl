@@ -248,7 +248,6 @@ void Project::saveToFile(QString path)
     } catch (const std::exception& ex) {
         throw;
     } catch (...) {
-        throw std::runtime_error("Failed to save the project to file '"
-                                 + path.toStdString() + "'");
+        throw std::runtime_error("Failed to save the project to file '" + path.toStdString() + "'");
     }
 }
