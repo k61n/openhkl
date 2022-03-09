@@ -18,6 +18,7 @@
 #include "base/utils/ProgressHandler.h"
 #include "base/utils/Units.h"
 #include "core/algo/AutoIndexer.h"
+#include "core/data/DataTypes.h"
 #include "core/experiment/Experiment.h"
 #include "gui/MainWin.h" // gGui
 #include "gui/connect/Sentinel.h"
@@ -563,8 +564,7 @@ void SubframeAutoIndexer::runAutoIndexer()
     // Manally adjust the direct beam position
     if (_set_initial_ki->isChecked()) {
         auto data = _detector_widget->currentData();
-        auto& states = data->instrumentStates();
-        setInitialKi(states);
+        setInitialKi(data);
     }
 
     std::shared_ptr<nsx::ProgressHandler> handler(new nsx::ProgressHandler());
@@ -772,13 +772,13 @@ void SubframeAutoIndexer::toggleCursorMode()
     }
 }
 
-void SubframeAutoIndexer::setInitialKi(std::vector<nsx::InstrumentState>& states)
+void SubframeAutoIndexer::setInitialKi(nsx::sptrDataSet data)
 {
-    auto data = _detector_widget->currentData();
     const auto* detector = data->diffractometer()->detector();
     const auto coords = _detector_widget->scene()->beamSetterCoords();
 
     nsx::DirectVector direct = detector->pixelPosition(coords.x(), coords.y());
-    for (auto state : states)
+    for (nsx::InstrumentState& state : data->instrumentStates())
         state.adjustKi(direct);
+    emit gGui->sentinel->instrumentStatesChanged();
 }

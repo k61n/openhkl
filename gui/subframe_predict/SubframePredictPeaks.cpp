@@ -569,15 +569,17 @@ void SubframePredictPeaks::adjustDirectBeam()
     refreshPeakTable();
 }
 
-void SubframePredictPeaks::setInitialKi(std::vector<nsx::InstrumentState>& states)
+void SubframePredictPeaks::setInitialKi(nsx::sptrDataSet data)
 {
-    auto data = _detector_widget->currentData();
     const auto* detector = data->diffractometer()->detector();
     const auto coords = _detector_widget->scene()->beamSetterCoords();
 
     nsx::DirectVector direct = detector->pixelPosition(coords.x(), coords.y());
-    for (auto state : states)
+    for (nsx::InstrumentState& state : data->instrumentStates()) {
         state.adjustKi(direct);
+        std::cout << state.ki() << std::endl << std::endl;
+    }
+    emit gGui->sentinel->instrumentStatesChanged();
 }
 
 void SubframePredictPeaks::refineKi()
@@ -596,7 +598,7 @@ void SubframePredictPeaks::refineKi()
     setRefinerParameters();
 
     if (_set_initial_ki->isChecked())
-        setInitialKi(states);
+        setInitialKi(data);
 
     std::vector<nsx::DetectorEvent> old_beam = nsx::algo::getDirectBeamEvents(states, *detector);
     refreshPeakVisual();
@@ -621,6 +623,7 @@ void SubframePredictPeaks::refineKi()
         peak->setUnitCell(cell);
 
     _old_direct_beam_events = _direct_beam_events;
+    emit gGui->sentinel->instrumentStatesChanged();
 
     gGui->setReady(true);
 }
@@ -630,9 +633,8 @@ void SubframePredictPeaks::runPrediction()
     gGui->setReady(false);
     if (_set_initial_ki->isChecked()) {
         auto data = _detector_widget->currentData();
-        auto& states = data->instrumentStates();
         adjustDirectBeam();
-        setInitialKi(states);
+        setInitialKi(data);
     }
     try {
         auto* experiment = gSession->experimentAt(_exp_combo->currentIndex())->experiment();

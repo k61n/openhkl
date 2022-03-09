@@ -39,6 +39,7 @@ class Sentinel : public QObject {
     void linkedComboChanged(const ComboType combo_type, const int id, const QStringList& list);
     void linkedComboItemAdded(const ComboType combo_type, const QString& item);
     void setLinkedComboList(const ComboType combo_type, const QStringList& list);
+    void instrumentStatesChanged();
 };
 
 #endif // GUI_CONNECT_SENTINEL_H

@@ -115,7 +115,7 @@ class SubframePredictPeaks : public QWidget {
     //! Adjust position of the visualised direct beam when spin box is changed
     void adjustDirectBeam();
     //! Allow the user to manual input the initial direct beam position
-    void setInitialKi(std::vector<nsx::InstrumentState>& states);
+    void setInitialKi(nsx::sptrDataSet data);
     //! Refine the incident wavevector
     void refineKi();
     //! Refresh the found peaks list
