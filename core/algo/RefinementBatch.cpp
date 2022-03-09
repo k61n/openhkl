@@ -13,8 +13,8 @@
 //  ***********************************************************************************************
 
 #include <algorithm>
-#include <iostream>
 #include <iomanip>
+#include <iostream>
 #include <limits>
 
 #include "base/fit/Minimizer.h"
@@ -98,7 +98,8 @@ RefinementBatch::RefinementBatch(
         Eigen::Vector3d c = peak->shape().center();
         Eigen::Matrix3d M = peak->shape().metric();
         Eigen::Matrix3d J =
-            InterpolatedState::interpolate(peak->dataSet()->instrumentStates(), c[2]).jacobianQ(c[0], c[1]);
+            InterpolatedState::interpolate(peak->dataSet()->instrumentStates(), c[2])
+                .jacobianQ(c[0], c[1]);
         Eigen::Matrix3d JI = J.inverse();
         Eigen::Matrix3d A = JI.transpose() * M * JI;
         Eigen::SelfAdjointEigenSolver<Eigen::Matrix3d> solver(A);
@@ -216,11 +217,9 @@ int RefinementBatch::residuals(Eigen::VectorXd& fvec)
 {
     if (_residual_type == ResidualType::QSpace) {
         return qSpaceResiduals(fvec);
-    }
-    else if (_residual_type == ResidualType::RealSpace) {
+    } else if (_residual_type == ResidualType::RealSpace) {
         return realSpaceResiduals(fvec);
-    }
-    else {
+    } else {
         return 0;
     }
 }
@@ -332,8 +331,8 @@ bool RefinementBatch::onlyContains(double f) const
 std::string RefinementBatch::name() const
 {
     std::ostringstream oss;
-    oss << std::setw(3) << std::setfill('0') << std::lround(_fmin) << " - "
-        << std::setw(3) << std::setfill('0') << std::lround(_fmax);
+    oss << std::setw(3) << std::setfill('0') << std::lround(_fmin) << " - " << std::setw(3)
+        << std::setfill('0') << std::lround(_fmax);
     return oss.str();
 }
 

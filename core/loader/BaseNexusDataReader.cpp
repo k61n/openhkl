@@ -17,12 +17,12 @@
 #include "base/parser/BloscFilter.h"
 #include "base/parser/EigenToVector.h"
 #include "base/utils/Units.h"
+#include "core/data/DataSet.h"
 #include "core/detector/Detector.h"
 #include "core/gonio/Gonio.h"
 #include "core/instrument/Diffractometer.h"
 #include "core/instrument/Sample.h"
 #include "core/raw/DataKeys.h"
-#include "core/data/DataSet.h"
 
 #include <iostream>
 #include <memory>
@@ -32,7 +32,8 @@ namespace nsx {
 
 BaseNexusDataReader::BaseNexusDataReader(const std::string& filename)
     : IDataReader(filename), _dataset(nullptr), _space(nullptr), _memspace(nullptr)
-{}
+{
+}
 
 bool BaseNexusDataReader::initRead()
 {
@@ -57,10 +58,9 @@ bool BaseNexusDataReader::initRead()
         std::size_t totalSteps = 0;
         dataGroup.openDataSet("total_steps").read(&totalSteps, H5::PredType::NATIVE_INT);
         int nFrames_i32;
-        dataGroup.openDataSet("actual_step").read(&nFrames_i32,
-                                                  H5::PredType::NATIVE_INT);
+        dataGroup.openDataSet("actual_step").read(&nFrames_i32, H5::PredType::NATIVE_INT);
         // TODO: Choose a ui32 type for storing nFrames to avoid this cast
-        const std::size_t nFrames {static_cast<std::size_t>(nFrames_i32)};
+        const std::size_t nFrames{static_cast<std::size_t>(nFrames_i32)};
 
         // get wavelength
         double wavelength = -1.;
@@ -102,7 +102,8 @@ bool BaseNexusDataReader::initRead()
 
 
         // set metadata
-        _dataset_out->metadata().add<std::string>(nsx::at_diffractometer, _dataset_out->diffractometer()->name());
+        _dataset_out->metadata().add<std::string>(
+            nsx::at_diffractometer, _dataset_out->diffractometer()->name());
         _dataset_out->metadata().add<double>(nsx::at_wavelength, wavelength);
         _dataset_out->metadata().add<double>(nsx::at_monitorSum, monitor);
         _dataset_out->metadata().add<int>(nsx::at_numor, numor);
@@ -232,8 +233,7 @@ void BaseNexusDataReader::open()
         return;
 
     try {
-        _file = std::unique_ptr<H5::H5File>(
-            new H5::H5File(_filename.c_str(), H5F_ACC_RDONLY));
+        _file = std::unique_ptr<H5::H5File>(new H5::H5File(_filename.c_str(), H5F_ACC_RDONLY));
     } catch (...) {
         if (_file)
             _file.reset();

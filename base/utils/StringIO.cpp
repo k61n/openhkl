@@ -14,11 +14,11 @@
 
 #include <algorithm>
 #include <cctype>
+#include <chrono>
+#include <iomanip> // put_time
 #include <iterator>
 #include <sstream> // stringstream
 #include <vector>
-#include <chrono>
-#include <iomanip> // put_time
 
 #include "base/utils/StringIO.h"
 
@@ -105,7 +105,7 @@ std::string lowerCase(const std::string& str_in)
 {
     const std::size_t strln = str_in.length();
     std::string str_out = str_in;
-    for(std::size_t c = 0; c < strln; ++c)
+    for (std::size_t c = 0; c < strln; ++c)
         str_out[c] = std::tolower(str_in[c]);
 
     return str_out;

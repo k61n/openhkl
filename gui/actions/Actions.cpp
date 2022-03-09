@@ -17,9 +17,6 @@
 #include "core/experiment/Experiment.h"
 #include "gui/MainWin.h" // for gGui
 #include "gui/connect/Sentinel.h" // for sentinel
-#include "gui/subwindows/DetectorWindow.h"
-#include "gui/subwindows/LogWindow.h"
-#include "gui/subwindows/PeakWindow.h"
 #include "gui/dialogs/ClonePeakDialog.h"
 #include "gui/dialogs/ComboDialog.h"
 #include "gui/dialogs/Messages.h"
@@ -27,6 +24,9 @@
 #include "gui/models/Project.h"
 #include "gui/models/Session.h" //for gSession
 #include "gui/subframe_home/SubframeHome.h"
+#include "gui/subwindows/DetectorWindow.h"
+#include "gui/subwindows/LogWindow.h"
+#include "gui/subwindows/PeakWindow.h"
 #include "gui/utility/LinkedComboBox.h"
 #include "gui/utility/SideBar.h"
 #include "tables/crystal/SpaceGroup.h"
@@ -75,11 +75,11 @@ void Actions::setupView()
         gGui->detector_window->show();
         gGui->detector_window->refreshAll();
     });
-    connect(instrumentstate_window, &QAction::triggered, [](){
+    connect(instrumentstate_window, &QAction::triggered, []() {
         gGui->instrumentstate_window->show();
         gGui->instrumentstate_window->refreshAll();
     });
-    connect(log_window, &QAction::triggered, [](){ gGui->log_window->show(); });
+    connect(log_window, &QAction::triggered, []() { gGui->log_window->show(); });
     connect(close_peak_windows, &QAction::triggered, this, &Actions::closePeakWindows);
 }
 
@@ -209,8 +209,10 @@ void Actions::removePeaks()
         dlg->exec();
         if (!dlg->itemName().isEmpty()) {
             QString peaks_name = dlg->itemName();
-            nsx::listtype lt = gSession->currentProject()->experiment()->
-                getPeakCollection(peaks_name.toStdString())->type();
+            nsx::listtype lt = gSession->currentProject()
+                                   ->experiment()
+                                   ->getPeakCollection(peaks_name.toStdString())
+                                   ->type();
             gSession->currentProject()->removePeakModel(peaks_name);
             gGui->onPeaksChanged();
             peaks_list = gSession->currentProject()->getPeakListNames();
@@ -235,8 +237,10 @@ void Actions::clonePeaks()
         if (!dlg->clonedCollectionName().isEmpty()) {
             QString original = dlg->originalCollectionName();
             QString cloned = dlg->clonedCollectionName();
-            nsx::listtype lt = gSession->currentProject()->experiment()->
-                getPeakCollection(original.toStdString())->type();
+            nsx::listtype lt = gSession->currentProject()
+                                   ->experiment()
+                                   ->getPeakCollection(original.toStdString())
+                                   ->type();
             gSession->currentProject()->clonePeakCollection(original, cloned);
             peaks_list = gSession->currentProject()->getPeakListNames();
             gGui->sentinel->setLinkedComboList(ComboType::PeakCollection, peaks_list);

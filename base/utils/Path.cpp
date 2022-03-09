@@ -18,13 +18,13 @@
 #include <sys/stat.h>
 #endif
 
+#include <chrono>
 #include <cstdlib>
 #include <fstream>
 #include <mutex>
 #include <numeric>
 #include <stdexcept>
 #include <string>
-#include <chrono>
 
 #include "base/utils/Path.h"
 #include "base/utils/StringIO.h"
@@ -166,11 +166,9 @@ bool fileExists(const std::string& filename)
 
 std::string tempFilename(const std::string& filename)
 {
-    const std::time_t epoch_time = std::chrono::system_clock::to_time_t(
-        std::chrono::system_clock::now());
-    const std::string tmp_fname {
-        filename + "_NSXTMP$" + std::to_string(epoch_time) + "$"
-        + ".tmp"};
+    const std::time_t epoch_time =
+        std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
+    const std::string tmp_fname{filename + "_NSXTMP$" + std::to_string(epoch_time) + "$" + ".tmp"};
     return tmp_fname;
 }
 

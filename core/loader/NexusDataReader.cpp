@@ -21,8 +21,7 @@
 
 namespace nsx {
 
-NexusDataReader::NexusDataReader(const std::string& filename)
-    : BaseNexusDataReader(filename) {}
+NexusDataReader::NexusDataReader(const std::string& filename) : BaseNexusDataReader(filename) { }
 
 Eigen::MatrixXi NexusDataReader::data(size_t frame)
 {
@@ -32,8 +31,8 @@ Eigen::MatrixXi NexusDataReader::data(size_t frame)
     if (!_isOpened)
         open();
 
-    const std::size_t nframes = _dataset_out->nFrames(),
-        nrows = _dataset_out->nRows(), ncols = _dataset_out->nCols();
+    const std::size_t nframes = _dataset_out->nFrames(), nrows = _dataset_out->nRows(),
+                      ncols = _dataset_out->nCols();
 
     if (frame >= nframes)
         throw std::runtime_error("Requested invalid frame " + std::to_string(frame));

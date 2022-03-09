@@ -19,12 +19,12 @@
 #include "core/peak/IntegrationRegion.h"
 #include "core/peak/Peak3D.h"
 #include "gui/MainWin.h" // gGui
-#include "gui/subwindows/DetectorWindow.h"
 #include "gui/frames/ProgressView.h"
 #include "gui/graphics/DetectorScene.h"
 #include "gui/models/Project.h"
 #include "gui/models/Session.h"
 #include "gui/subframe_predict/ShapeCollectionDialog.h"
+#include "gui/subwindows/DetectorWindow.h"
 #include "gui/utility/GridFiller.h"
 #include "gui/utility/LinkedComboBox.h"
 #include "gui/utility/PropertyScrollArea.h"
@@ -81,9 +81,8 @@ void SubframeIntegrate::setInputUp()
         "<font>A shape collection is a collection of averaged peaks attached to a peak"
         "collection. A shape is the averaged peak shape of a peak and its neighbours within a "
         "specified cutoff.</font>"); // Rich text to force line break in tooltip
-    _int_peak_combo = f.addLinkedCombo(
-        ComboType::PeakCollection, "Peaks to integrate");
-        
+    _int_peak_combo = f.addLinkedCombo(ComboType::PeakCollection, "Peaks to integrate");
+
     connect(
         _exp_combo, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this,
         &SubframeIntegrate::updateDatasetList);
@@ -94,8 +93,8 @@ void SubframeIntegrate::setInputUp()
         _int_peak_combo, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
         this, &SubframeIntegrate::toggleUnsafeWidgets);
     connect(
-        _exp_combo, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
-        this, &SubframeIntegrate::toggleUnsafeWidgets);
+        _exp_combo, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this,
+        &SubframeIntegrate::toggleUnsafeWidgets);
 
     _left_layout->addWidget(input_box);
 }
@@ -111,8 +110,8 @@ void SubframeIntegrate::setFigureUp()
         _detector_widget->scene(), &DetectorScene::signalSelectedPeakItemChanged, this,
         &SubframeIntegrate::changeSelected);
     connect(
-        _int_peak_combo, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this,
-        &SubframeIntegrate::refreshPeakTable);
+        _int_peak_combo, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
+        this, &SubframeIntegrate::refreshPeakTable);
 
     _right_element->addWidget(figure_group);
 }
@@ -295,8 +294,7 @@ void SubframeIntegrate::setIntegrationRegionUp()
     GridFiller f(_integration_region_box, true);
 
     _integration_region_type = f.addLinkedCombo(
-        ComboType::RegionType,
-        "Integration region type",
+        ComboType::RegionType, "Integration region type",
         "<font>Specify integration region in Pixels (peak end), and"
         "scaling factors for background region (bkg begin, bkg end)</font>");
     for (int i = 0; i < static_cast<int>(nsx::RegionType::Count); ++i)
@@ -325,8 +323,8 @@ void SubframeIntegrate::setIntegrationRegionUp()
 
     connect(
         _integration_region_type,
-        static_cast<void (LinkedComboBox::*)(int)>(&LinkedComboBox::currentIndexChanged),
-        this, &SubframeIntegrate::refreshPeakVisual);
+        static_cast<void (LinkedComboBox::*)(int)>(&LinkedComboBox::currentIndexChanged), this,
+        &SubframeIntegrate::refreshPeakVisual);
 }
 
 void SubframeIntegrate::setIntegrateUp()
@@ -419,8 +417,8 @@ void SubframeIntegrate::setPreviewUp()
         _peak_view_widget->set1.bkgBegin, qOverload<double>(&QDoubleSpinBox::valueChanged),
         _bkg_begin, &QDoubleSpinBox::setValue);
     connect(
-        _peak_view_widget->set1.bkgEnd, qOverload<double>(&QDoubleSpinBox::valueChanged),
-        _bkg_end, &QDoubleSpinBox::setValue);
+        _peak_view_widget->set1.bkgEnd, qOverload<double>(&QDoubleSpinBox::valueChanged), _bkg_end,
+        &QDoubleSpinBox::setValue);
     connect(
         _peak_view_widget->set1.regionType, &QComboBox::currentTextChanged,
         _integration_region_type, &QComboBox::setCurrentText);
@@ -431,8 +429,8 @@ void SubframeIntegrate::setPreviewUp()
         _bkg_begin, qOverload<double>(&QDoubleSpinBox::valueChanged),
         _peak_view_widget->set1.bkgBegin, &QDoubleSpinBox::setValue);
     connect(
-        _bkg_end, qOverload<double>(&QDoubleSpinBox::valueChanged),
-        _peak_view_widget->set1.bkgEnd, &QDoubleSpinBox::setValue);
+        _bkg_end, qOverload<double>(&QDoubleSpinBox::valueChanged), _peak_view_widget->set1.bkgEnd,
+        &QDoubleSpinBox::setValue);
     connect(
         _integration_region_type, &QComboBox::currentTextChanged,
         _peak_view_widget->set1.regionType, &QComboBox::setCurrentText);
@@ -460,9 +458,9 @@ void SubframeIntegrate::assignPeakShapes()
         shapes->setHandler(handler);
         shapes->setPredictedShapes(peaks_to_integrate, peak_interpolation);
         gGui->statusBar()->showMessage(
-            QString::number(peaks_to_integrate->numberOfValid()) + "/" +
-            QString::number(peaks_to_integrate->numberOfPeaks()) +
-            " predicted peaks with valid shapes");
+            QString::number(peaks_to_integrate->numberOfValid()) + "/"
+            + QString::number(peaks_to_integrate->numberOfPeaks())
+            + " predicted peaks with valid shapes");
         refreshPeakTable();
     } catch (std::exception& e) {
         QMessageBox::critical(this, "Error", QString(e.what()));
@@ -476,7 +474,7 @@ void SubframeIntegrate::removeOverlappingPeaks()
     nsx::Experiment* expt = gSession->experimentAt(_exp_combo->currentIndex())->experiment();
 
     if (_int_peak_combo->count() == 0)
-      return;
+        return;
 
     nsx::PeakCollection* peaks_to_integrate =
         expt->getPeakCollection(_int_peak_combo->currentText().toStdString());
@@ -522,16 +520,17 @@ void SubframeIntegrate::runIntegration()
             expt->getPeakCollection(_peak_combo->currentText().toStdString())->shapeCollection();
 
         setIntegrationParameters();
-        auto* params =
-            gSession->experimentAt(_exp_combo->currentIndex())->experiment()->integrator()->
-            parameters();
+        auto* params = gSession->experimentAt(_exp_combo->currentIndex())
+                           ->experiment()
+                           ->integrator()
+                           ->parameters();
 
         integrator->getIntegrator(params->integrator_type)->setHandler(handler);
         integrator->integratePeaks(data, peaks_to_integrate, params, shapes);
         gGui->detector_window->refreshAll();
         gGui->statusBar()->showMessage(
-            QString::number(integrator->numberOfValidPeaks()) + "/" +
-            QString::number(integrator->numberOfPeaks()) + " peaks integrated");
+            QString::number(integrator->numberOfValidPeaks()) + "/"
+            + QString::number(integrator->numberOfPeaks()) + " peaks integrated");
     } catch (std::exception& e) {
         QMessageBox::critical(this, "Error", QString(e.what()));
     }
@@ -553,8 +552,8 @@ void SubframeIntegrate::openShapeBuilder()
     toggleUnsafeWidgets();
     if (peak_collection->shapeCollection())
         gGui->statusBar()->showMessage(
-            QString::number(peak_collection->shapeCollection()->numberOfPeaks()) +
-            " shapes generated");
+            QString::number(peak_collection->shapeCollection()->numberOfPeaks())
+            + " shapes generated");
     refreshPeakVisual();
     gGui->setReady(true);
 }
@@ -592,8 +591,9 @@ void SubframeIntegrate::toggleUnsafeWidgets()
 
     if (!(_peak_combo->count() == 0)) {
         nsx::PeakCollection* peaks =
-            gSession->experimentAt(_exp_combo->currentIndex())->experiment()
-            ->getPeakCollection(_peak_combo->currentText().toStdString());
+            gSession->experimentAt(_exp_combo->currentIndex())
+                ->experiment()
+                ->getPeakCollection(_peak_combo->currentText().toStdString());
         if (peaks->shapeCollection() == nullptr) {
             _assign_peak_shapes->setEnabled(false);
             _integrate_button->setEnabled(false);
@@ -611,17 +611,17 @@ void SubframeIntegrate::toggleUnsafeWidgets()
         _assign_peak_shapes->setEnabled(false);
         _build_shape_lib_button->setEnabled(false);
     }
-    /*nsx::PeakCollection* pc = nullptr;  
+    /*nsx::PeakCollection* pc = nullptr;
 
     std::string current_pc = _peak_combo->currentText().toStdString();
     if (current_pc.size() == 0) return;
-    pc = gSession->currentProject()->experiment()->getPeakCollection( current_pc );   
+    pc = gSession->currentProject()->experiment()->getPeakCollection( current_pc );
     if (pc == nullptr) return;
     if (  pc->isIndexed() && pc->isIntegrated() ){
         _integrate_button->setEnabled(true);
         _build_shape_lib_button->setEnabled(true);
-        _assign_peak_shapes->setEnabled(true);       
-    }*/ 
+        _assign_peak_shapes->setEnabled(true);
+    }*/
 }
 
 DetectorWidget* SubframeIntegrate::detectorWidget()

@@ -20,10 +20,14 @@ namespace nsx {
 
 ReciprocalVector::ReciprocalVector() : _valid(false) { }
 
-ReciprocalVector::ReciprocalVector(double x, double y, double z) : _rvector(x, y, z), _valid(true) { }
+ReciprocalVector::ReciprocalVector(double x, double y, double z) : _rvector(x, y, z), _valid(true)
+{
+}
 
 ReciprocalVector::ReciprocalVector(const Eigen::RowVector3d& rvector)
-    : _rvector(rvector) , _valid(true) { }
+    : _rvector(rvector), _valid(true)
+{
+}
 
 const Eigen::RowVector3d& ReciprocalVector::rowVector() const
 {

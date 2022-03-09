@@ -89,7 +89,8 @@ struct FitData {
     {
         const auto* detector = peak->dataSet()->diffractometer()->detector();
         const Eigen::Vector3d center = peak->shape().center();
-        const auto state = InterpolatedState::interpolate(peak->dataSet()->instrumentStates(), center[2]);
+        const auto state =
+            InterpolatedState::interpolate(peak->dataSet()->instrumentStates(), center[2]);
 
         Rs = state.sampleOrientationMatrix().transpose();
         Rd = state.detectorOrientation;
@@ -115,11 +116,7 @@ struct FitData {
 };
 
 ShapeCollection::ShapeCollection()
-    : _profiles()
-    , _choleskyD()
-    , _choleskyM()
-    , _choleskyS()
-    , _handler(nullptr)
+    : _profiles(), _choleskyD(), _choleskyM(), _choleskyS(), _handler(nullptr)
 {
     _choleskyD.fill(1e-6);
     _choleskyM.fill(1e-6);
@@ -128,12 +125,7 @@ ShapeCollection::ShapeCollection()
 }
 
 ShapeCollection::ShapeCollection(std::shared_ptr<ShapeCollectionParameters> params)
-    : _profiles()
-    , _choleskyD()
-    , _choleskyM()
-    , _choleskyS()
-    , _params(params)
-    , _handler(nullptr)
+    : _profiles(), _choleskyD(), _choleskyM(), _choleskyS(), _params(params), _handler(nullptr)
 
 {
     _choleskyD.fill(1e-6);
@@ -411,7 +403,7 @@ void ShapeCollection::setPredictedShapes(PeakCollection* peaks, PeakInterpolatio
         _handler->setProgress(0);
     }
 
-    #pragma omp parallel for
+#pragma omp parallel for
     for (auto peak : peaks->getPeakList()) {
         peak->setPredicted(true);
         peak->setSelected(true);
@@ -419,8 +411,8 @@ void ShapeCollection::setPredictedShapes(PeakCollection* peaks, PeakInterpolatio
         // Skip the peak if any error occur when computing its mean covariance (e.g.
         // too few or no neighbouring peaks found)
         if (auto cov = meanCovariance(
-            peak, _params->neighbour_range_pixels, _params->neighbour_range_frames,
-            _params->min_n_neighbors, interpolation)) {
+                peak, _params->neighbour_range_pixels, _params->neighbour_range_frames,
+                _params->min_n_neighbors, interpolation)) {
             Eigen::Vector3d center = peak->shape().center();
             peak->setShape(Ellipsoid(center, cov.value().inverse()));
         }

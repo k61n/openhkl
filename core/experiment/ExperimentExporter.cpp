@@ -116,7 +116,7 @@ void writeMetadata(H5::Group& meta_group, const nsx::MetaData& metadata)
 {
     const H5::DataSpace metaSpace(H5S_SCALAR);
     const H5::StrType strVarType(H5::PredType::C_S1, H5T_VARIABLE);
-   
+
 
     try {
         for (const auto& [key, val] : metadata.map()) {
@@ -223,9 +223,10 @@ void ExperimentExporter::createFile(std::string name, std::string diffractometer
             H5::PredType::C_S1, 80); // TODO: Make 80-chr restriction also in the GUI
         writeAttribute(file, nsx::at_experiment, name.data(), str80Type, metaSpace);
         writeAttribute(file, nsx::at_diffractometer, diffractometer.data(), str80Type, metaSpace);
-    } catch(...) {
-        nsxlog(nsx::Level::Error, "ExperimentExporter: Failed to create the file '",
-               path, "' to export data"); //, ex.what());
+    } catch (...) {
+        nsxlog(
+            nsx::Level::Error, "ExperimentExporter: Failed to create the file '", path,
+            "' to export data"); //, ex.what());
         throw;
     }
 }
@@ -339,7 +340,7 @@ void ExperimentExporter::writePeaks(const std::map<std::string, PeakCollection*>
             Eigen::Vector3d temp_col = peak->shape().center();
             center.block(i, 0, 1, 3) = Eigen::RowVector3d{temp_col(0), temp_col(1), temp_col(2)};
             metric.block(i * 3, 0, 3, 3) = peak->shape().metric();
-        }  
+        }
 
         // TODO: explain! check size 2 vs 3!
         const hsize_t num_peaks[1] = {nPeaks};
@@ -370,8 +371,7 @@ void ExperimentExporter::writePeaks(const std::map<std::string, PeakCollection*>
                 // NATIVE_HBOOL
                 {nsx::ds_Selected, H5::PredType::NATIVE_HBOOL, peak_space, selected.get()},
                 {nsx::ds_Masked, H5::PredType::NATIVE_HBOOL, peak_space, masked.get()},
-                {nsx::ds_Predicted, H5::PredType::NATIVE_HBOOL, peak_space, predicted.get()}
-                };
+                {nsx::ds_Predicted, H5::PredType::NATIVE_HBOOL, peak_space, predicted.get()}};
 
         for (const auto& [dkey, dtype, dspace, dptr] : peakData_defs) {
             H5::DataSet data_H5(file.createDataSet(collectionNameKey + "/" + dkey, dtype, dspace));

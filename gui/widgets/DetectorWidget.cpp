@@ -17,10 +17,10 @@
 
 #include "core/data/DataSet.h"
 #include "gui/MainWin.h" // gGui
-#include "gui/models/PeakCollectionModel.h"
-#include "gui/models/Session.h" // gSession
 #include "gui/graphics/DetectorScene.h"
 #include "gui/graphics/DetectorView.h"
+#include "gui/models/PeakCollectionModel.h"
+#include "gui/models/Session.h" // gSession
 #include "gui/utility/LinkedComboBox.h"
 
 #include <QComboBox>
@@ -80,8 +80,8 @@ DetectorWidget::DetectorWidget(bool mode, bool cursor, bool slider, QWidget* par
     connect(_spin, QOverload<int>::of(&QSpinBox::valueChanged), _scroll, &QScrollBar::setValue);
     connect(_scroll, &QScrollBar::valueChanged, _spin, &QSpinBox::setValue);
     connect(
-        _data_combo, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
-        this, &DetectorWidget::refresh);
+        _data_combo, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this,
+        &DetectorWidget::refresh);
 
 
     if (mode) {
@@ -121,11 +121,12 @@ void DetectorWidget::syncIntensitySliders()
                 connect(
                     widget->slider(), &QSlider::valueChanged, scene(),
                     &DetectorScene::setMaxIntensity);
-                connect(_intensity_slider, &QSlider::valueChanged, widget->slider(),
-                        &QSlider::setValue);
-                connect(widget->slider(), &QSlider::valueChanged, _intensity_slider,
-                        &QSlider::setValue);
-
+                connect(
+                    _intensity_slider, &QSlider::valueChanged, widget->slider(),
+                    &QSlider::setValue);
+                connect(
+                    widget->slider(), &QSlider::valueChanged, _intensity_slider,
+                    &QSlider::setValue);
             }
         }
     }
@@ -181,7 +182,6 @@ nsx::sptrDataSet DetectorWidget::currentData()
     if (_data_combo->count() == 0)
         return nullptr;
     return _data_list.at(_data_combo->currentIndex());
-
 }
 
 void DetectorWidget::changeView(int option)

@@ -33,12 +33,14 @@ LogMessenger::receiverHandle LogMessenger::addReceiver(LogMessenger::receiver_t 
     return rec_h;
 }
 
-void LogMessenger::discardReceiver(const LogMessenger::receiverHandle rec_h) {
+void LogMessenger::discardReceiver(const LogMessenger::receiverHandle rec_h)
+{
     if (rec_h >= 0 && rec_h < MSG_RECEIVERS_MAXNR)
         _receivers[rec_h] = nullptr;
 }
 
-void LogMessenger::send(const LogMessage& msg) {
+void LogMessenger::send(const LogMessage& msg)
+{
     for (std::size_t i = 0; i < MSG_RECEIVERS_MAXNR; ++i) {
         if (_receivers[i])
             _receivers[i](msg);
