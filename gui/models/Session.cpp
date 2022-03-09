@@ -96,17 +96,11 @@ int Session::numExperiments() const
 Project* Session::createProject
 (QString experimentName, QString instrumentName)
 {
-    for (const QString& name : experimentNames()) {
+    for (const QString& name : experimentNames()) {// check name
         if (name == experimentName) {
-            auto now = std::chrono::system_clock::now();
-            std::chrono::duration_cast<std::chrono::seconds>(now.time_since_epoch()).count();
-            experimentName += "_" + QString::fromStdString(std::to_string(std::chrono::duration_cast<std::chrono::seconds>(now.time_since_epoch()).count()));
-
-            QMessageBox::warning(nullptr,"Warning",
-            "Experiment name was changed to '" + experimentName + "' to keep all experiment names unique. You can change the name via GUI");         
-            //critical(nullptr, "Error",
-            //   "Experiment name, '" + experimentName + "' already exists");
-            //return nullptr;
+            QMessageBox::critical(nullptr, "Unable to create experiment",
+               "Experiment name, '" + experimentName + "' already exists");
+            return nullptr;
         }
     }
 

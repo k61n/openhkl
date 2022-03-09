@@ -22,43 +22,50 @@
 #include <QHBoxLayout>
 #include <QLabel>
 
-UnitCellDialog::UnitCellDialog(QStringList collectionNames, QStringList spaceGroups)
+UnitCellDialog::UnitCellDialog(QString suggestion, QStringList collectionNames, QStringList spaceGroups)
 {
     setModal(true);
-    resize(600, 130);
-    setMinimumSize(600, 130);
-    setMaximumSize(600, 130);
+    resize(400, 230);
+    setMinimumSize(400, 230);
+    setMaximumSize(400, 230);
 
     QGridLayout* gridLayout = new QGridLayout(this);
     QHBoxLayout* horizontalLayout = new QHBoxLayout;
 
     horizontalLayout->addWidget(new QLabel("Unit cell name:"));
     _cell_name = new QLineEdit("");
-    _cell_name->setMaximumSize(200, 30);
+    _cell_name->setFixedWidth(200);
+    //_cell_name->setMaximumSize(200, 30);
     horizontalLayout->addWidget(_cell_name);
-    gridLayout->addLayout(horizontalLayout, 0, 0, 1, 1);
+    gridLayout->addLayout(horizontalLayout, 0, 0, 3, 2);
 
     QHBoxLayout* horizontalLayout_2 = new QHBoxLayout;
     horizontalLayout_2->addWidget(new QLabel("Peak collection:"));
     _peak_collections = new QComboBox();
     _peak_collections->addItems(collectionNames);
     _peak_collections->setInsertPolicy(QComboBox::InsertAlphabetically);
+    _peak_collections->setFixedWidth(200);
+    //_peak_collections->setMaximumSize(200, 30);
     horizontalLayout_2->addWidget(_peak_collections);
-    gridLayout->addLayout(horizontalLayout_2, 0, 1, 1, 1);
+    gridLayout->addLayout(horizontalLayout_2, 1, 0, 3, 2);
 
     QHBoxLayout* horizontalLayout_3 = new QHBoxLayout;
-    horizontalLayout_2->addWidget(new QLabel("Space group:"));
+    horizontalLayout_3->addWidget(new QLabel("Space group:"));
     _space_group = new QComboBox();
     _space_group->addItems(spaceGroups);
     _space_group->setInsertPolicy(QComboBox::InsertAlphabetically);
+    _space_group->setFixedWidth(200);
+    //_space_group->setMaximumSize(200, 30);
     horizontalLayout_3->addWidget(_space_group);
-    gridLayout->addLayout(horizontalLayout_3, 0, 2, 1, 1);
+    gridLayout->addLayout(horizontalLayout_3, 2, 0, 3, 2);
 
     QDialogButtonBox* buttonBox = new QDialogButtonBox(this);
     buttonBox->setOrientation(Qt::Horizontal);
     buttonBox->setStandardButtons(QDialogButtonBox::Cancel | QDialogButtonBox::Ok);
     buttonBox->setCenterButtons(false);
-    gridLayout->addWidget(buttonBox, 1, 1, 1, 1);
+    gridLayout->addWidget(buttonBox, 3, 0, 3, 2);
+
+    _cell_name->setText(suggestion);
 
     QObject::connect(buttonBox, SIGNAL(accepted()), this, SLOT(accept()));
     QObject::connect(buttonBox, SIGNAL(rejected()), this, SLOT(reject()));

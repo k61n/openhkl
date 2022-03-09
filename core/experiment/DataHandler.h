@@ -50,7 +50,7 @@ class DataHandler {
     //! Get number of data
     int numData() const;
     //! Add some data to the experiment
-    void addData(sptrDataSet data, std::string name);
+    bool addData(sptrDataSet data, std::string name);
     //! Returns true if the experiment has a data
     bool hasData(const std::string& name) const;
     //! Remove a data from the experiment

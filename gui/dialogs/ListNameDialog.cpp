@@ -20,7 +20,7 @@
 #include <QLabel>
 #include <QVBoxLayout>
 
-ListNameDialog::ListNameDialog()
+ListNameDialog::ListNameDialog(QString suggestion)
 {
     setModal(true);
     resize(500, 130);
@@ -36,6 +36,8 @@ ListNameDialog::ListNameDialog()
     QDialogButtonBox* buttonbox =
         new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, Qt::Horizontal);
     whole->addWidget(buttonbox);
+
+    name_->setText(suggestion);
 
     QObject::connect(buttonbox, SIGNAL(accepted()), this, SLOT(accept()));
     QObject::connect(buttonbox, SIGNAL(rejected()), this, SLOT(reject()));

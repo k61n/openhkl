@@ -25,28 +25,30 @@ const PeakCollectionMap* PeakHandler::getPeakCollectionMap() const
     return &_peak_collections;
 }
 
-void PeakHandler::addPeakCollection(
-    const listtype type, const std::vector<nsx::Peak3D*> peaks)
+bool PeakHandler::addPeakCollection(
+    const std::string& name, const listtype type, const std::vector<nsx::Peak3D*> peaks)
 {
-    // auto generated name here like FOUND5423
-    
-    std::string name = listtype2Str(type) + std::to_string(_peak_collections.size());
+    // abort if name is aleady in use
+    if (hasPeakCollection(name)) return false; 
     nsxlog(Level::Info, "PeakHandler::addPeakCollection '", name, "': ", peaks.size(), " peaks");
     std::unique_ptr<PeakCollection> ptr(new PeakCollection(name, type));
     ptr->populate(peaks);
     _peak_collections.insert_or_assign(name, std::move(ptr));
+    return hasPeakCollection(name); // now name must be in use
 }
 
-void PeakHandler::addPeakCollection(
-    const listtype type, const std::vector<nsx::Peak3D*> peaks, bool indexed, bool integrated)
+bool PeakHandler::addPeakCollection(
+    const std::string& name, const listtype type, const std::vector<nsx::Peak3D*> peaks, bool indexed, bool integrated)
 {
-    std::string name = listtype2Str(type) + std::to_string(_peak_collections.size());
+    // abort if name is aleady in use
+    if (hasPeakCollection(name)) return false;
     nsxlog(Level::Info, "PeakHandler::addPeakCollection '", name, "': ", peaks.size(), " peaks");
     std::unique_ptr<PeakCollection> ptr(new PeakCollection(name, type));
     ptr->setIndexed(indexed);
     ptr->setIntegrated(integrated);
     ptr->populate(peaks);
     _peak_collections.insert_or_assign(name, std::move(ptr));
+    return hasPeakCollection(name); // now name must be in use
 }
 
 void PeakHandler::addEmptyCollection(const std::string& name, const listtype type)
@@ -113,6 +115,11 @@ void PeakHandler::clonePeakCollection(std::string name, std::string new_name)
 {
     addEmptyCollection(new_name, getPeakCollection(name)->type());
     getPeakCollection(new_name)->populate(getPeakCollection(name)->getPeakList());
+}
+
+std::string PeakHandler::GenerateName()
+{
+    return std::string("PeakCollectionNr.:") + std::to_string(numPeakCollections()+1);
 }
 
 } // namespace nsx

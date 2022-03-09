@@ -23,6 +23,9 @@ RawDataDialog::RawDataDialog(const nsx::RawDataReaderParameters& parameters0,
     parameters0 {parameters0},
     dataset_names{datanames_cur}
 {
+    setModal(true);
+    resize(400, 300);
+
     QFormLayout* layout = new QFormLayout(this);
 
     dataArrangement = new QComboBox();

@@ -12,6 +12,7 @@
 //
 //  ***********************************************************************************************
 
+#include <QtWidgets/qmessagebox.h>
 #include <iostream>
 #include <memory>
 #include <stdexcept>
@@ -87,18 +88,22 @@ void Experiment::setDefaultDMin()
     _peak_merger->parameters()->d_min = d_min;
 }
 
-void Experiment::acceptFoundPeaks(const std::string& name)
+bool Experiment::acceptFoundPeaks(const std::string& name)
 {
     std::vector<Peak3D*> peaks = _peak_finder->currentPeaks();
-    addPeakCollection(name, listtype::FOUND, peaks);
+    return addPeakCollection(name, listtype::FOUND, peaks);
 }
 
-void Experiment::acceptFoundPeaks(const std::string& name, const PeakCollection& found)
+bool Experiment::acceptFoundPeaks(const std::string& name, const PeakCollection& found)
 {
     std::vector<Peak3D*> peaks = found.getPeakList();
     
-    addPeakCollection(name, listtype::FOUND, peaks,  found.isIndexed(), _peak_finder->isIntegrated() );
+    if(!addPeakCollection(name, 
+        listtype::FOUND, peaks,  found.isIndexed(), _peak_finder->isIntegrated() )){    
+        return false;
+    }
     _peak_finder->setIntegrated(false); // reset for next use
+    return true;
 }
 
 void Experiment::saveToFile(const std::string& path) const
@@ -333,10 +338,13 @@ int Experiment::numData() const
     return _data_handler->numData();
 }
 
-void Experiment::addData(sptrDataSet data)
+bool Experiment::addData(sptrDataSet data)
 {
-    _data_handler->addData(data, data->name());
+    if (!_data_handler->addData(data, data->name())){
+        return false;
+    }
     setDefaultDMin();
+    return true;
 }
 
 bool Experiment::hasData(const std::string& name) const
@@ -350,16 +358,20 @@ void Experiment::removeData(const std::string& name)
 }
 
 // Peak handler methods
-void Experiment::addPeakCollection(
+bool Experiment::addPeakCollection(
     const std::string& name, const listtype type, std::vector<Peak3D*> peaks)
 {
-    _peak_handler->addPeakCollection(type, peaks);
+    if (!_peak_handler->hasPeakCollection(name)){   
+        _peak_handler->addPeakCollection(name, type, peaks);
+        return true;
+    }
+    return false;
 }
 
-void Experiment::addPeakCollection(
+bool Experiment::addPeakCollection(
     const std::string& name, const listtype type, std::vector<Peak3D*> peaks, bool indexed, bool integrated)
 {
-    _peak_handler->addPeakCollection(type, peaks, indexed, integrated);
+    return _peak_handler->addPeakCollection(name, type, peaks, indexed, integrated);
 }
 
 bool Experiment::hasPeakCollection(const std::string& name)
@@ -403,18 +415,18 @@ void Experiment::clonePeakCollection(std::string name, std::string new_name)
 }
 
 // Unit cell handler methods
-void Experiment::addUnitCell(const std::string& name, const UnitCell& unit_cell, bool refined)
+bool Experiment::addUnitCell(const std::string& name, const UnitCell& unit_cell, bool refined)
 {
-    _cell_handler->addUnitCell(name, unit_cell, refined);
+    return _cell_handler->addUnitCell(name, unit_cell, refined);
 }
 
-void Experiment::addUnitCell(
+bool Experiment::addUnitCell(
     const std::string& name, double a, double b, double c, double alpha, double beta, double gamma)
 {
     _cell_handler->addUnitCell(name, a, b, c, alpha, beta, gamma);
 }
 
-void Experiment::addUnitCell(
+bool Experiment::addUnitCell(
     const std::string& name, double a, double b, double c, double alpha, double beta, double gamma,
     const std::string& space_group)
 {
@@ -487,6 +499,16 @@ UnitCellHandler* Experiment::getCellHandler() const
 void Experiment::removeBatchCells()
 {
     auto tmp = _cell_handler->extractBatchCells();
+}
+
+std::string Experiment::GeneratePeakCollectionName()
+{
+    return _peak_handler->GenerateName();
+}
+
+std::string Experiment::GenerareUnitCellName()
+{
+    return _cell_handler->GenerateUnitCellName();
 }
 
 } // namespace nsx

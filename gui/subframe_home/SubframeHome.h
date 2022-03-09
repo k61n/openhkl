@@ -70,14 +70,11 @@ class SubframeHome : public QWidget {
 
     void UpdatePeakInformationTable();
 
-    void changeProjectData();
-
    // void UpdatePeakList();
 
  private:
     QPushButton* _new_exp;
     QPushButton* _old_exp;
-    QPushButton* _change_project_name;
     QPushButton* _save_current;
     QPushButton* _save_all;
 

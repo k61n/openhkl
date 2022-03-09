@@ -22,7 +22,7 @@
 //! Dialog to assign a unit cell to a peak collection
 class UnitCellDialog : public QDialog {
  public:
-    UnitCellDialog(QStringList collectionNames, QStringList spaceGroups);
+    UnitCellDialog(QString name, QStringList collectionNames, QStringList spaceGroups);
     QString unitCellName();
     QString peakCollectionName();
     QString spaceGroup();

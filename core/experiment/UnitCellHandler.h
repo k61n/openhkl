@@ -41,15 +41,15 @@ class UnitCellHandler {
     //! Get a pointer to the map of unit cells
     const CellMap* getCellMap() const;
     //! Add a unit cell to the experiment
-    void addUnitCell(const std::string& name, const UnitCell& unit_cell, bool refined = false);
+    bool addUnitCell(const std::string& name, const UnitCell& unit_cell, bool refined = false);
     //! Move a unique pointer to a unit cell to the experiment
-    void addUnitCell(const std::string& name, sptrUnitCell unit_cell, bool refined = false);
+    bool addUnitCell(const std::string& name, sptrUnitCell unit_cell, bool refined = false);
     //! Add a unit cell to the experiment via cell parameters (skip autoindexing step)
-    void addUnitCell(
+    bool addUnitCell(
         const std::string& name, double a, double b, double c, double alpha, double beta,
         double gamma);
     //! Add a user-defined unit cell to the experiment including space group
-    void addUnitCell(
+    bool addUnitCell(
         const std::string& name, double a, double b, double c, double alpha, double beta,
         double gamma, const std::string& space_group);
     //! Returns true if the experiment has a data
@@ -82,6 +82,8 @@ class UnitCellHandler {
     std::vector<sptrUnitCell> extractBatchCells();
     //! Merge unicells from another CellMap into this container
     void mergeBatchCells(CellMap map);
+
+    std::string GenerateUnitCellName();
 
  private:
     CellMap _unit_cells;

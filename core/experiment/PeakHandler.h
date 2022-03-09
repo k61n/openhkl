@@ -38,9 +38,11 @@ class PeakHandler {
     //! Get a pointer to the map of peak collections
     const PeakCollectionMap* getPeakCollectionMap() const;
     //! Add a peak collection
-    void addPeakCollection(const listtype type, const std::vector<nsx::Peak3D*> peaks);
+    bool addPeakCollection(
+        const std::string& name, const listtype type, const std::vector<nsx::Peak3D*> peaks);
     //
-    void addPeakCollection(const listtype type, const std::vector<nsx::Peak3D*> peaks,
+    bool addPeakCollection(
+        const std::string& name,const listtype type, const std::vector<nsx::Peak3D*> peaks,
         bool indexed, bool integrated
         );
     //! Add an empty peak collection
@@ -62,7 +64,8 @@ class PeakHandler {
         const std::string name, PeakCollection* collection, listtype lt = listtype::FILTERED);
     //! Deep copy a peak collection
     void clonePeakCollection(std::string name, std::string new_name);
-
+    //! Generate name for new peak collection
+    std::string GenerateName();
 
  private:
     //! Pointer to map of peak collections in Experiment

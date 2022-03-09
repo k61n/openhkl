@@ -48,6 +48,7 @@
 #include <QBoxLayout>
 #include <QCheckBox>
 #include <QMessageBox>
+#include <qmessagebox.h>
 #include <qnamespace.h>
 #include <QPushButton>
 #include <stdexcept>
@@ -699,16 +700,28 @@ void SubframeAutoIndexer::acceptSolution()
     if (_selected_unit_cell) {
         nsx::Experiment* expt = gSession->experimentAt(_exp_combo->currentIndex())->experiment();
         QStringList collections = gSession->experimentAt(_exp_combo->currentIndex())
-                                      ->getPeakCollectionNames(nsx::listtype::FOUND);
+                                      ->getPeakCollectionNames(nsx::listtype::FOUND);       
+        
         QStringList space_groups;
         for (const std::string& name : _selected_unit_cell->compatibleSpaceGroups())
             space_groups.push_back(QString::fromStdString(name));
-        std::unique_ptr<UnitCellDialog> dlg(new UnitCellDialog(collections, space_groups));
+        
+        std::unique_ptr<UnitCellDialog> dlg(new UnitCellDialog(
+            QString::fromStdString(expt->GenerareUnitCellName()),
+            collections, space_groups));
         dlg->exec();
         if (!dlg->unitCellName().isEmpty()) {
             std::string cellName = dlg->unitCellName().toStdString();
             _selected_unit_cell->setName(cellName);
-            expt->addUnitCell(dlg->unitCellName().toStdString(), *_selected_unit_cell.get());
+            
+            if (!expt->addUnitCell(dlg->unitCellName().toStdString(), 
+                *_selected_unit_cell.get())){
+                    QMessageBox::warning(this,
+                    "Unable to add Unit Cell",
+                    "UnitCell with same name already exists");
+                    return;
+                }
+
             gSession->onUnitCellChanged();
 
             nsx::PeakCollection* collection =

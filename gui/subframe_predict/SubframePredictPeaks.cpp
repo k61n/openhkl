@@ -754,14 +754,22 @@ void SubframePredictPeaks::assignPeakShapes()
 
 void SubframePredictPeaks::accept()
 {
-    std::unique_ptr<ListNameDialog> dlg(new ListNameDialog());
+    //suggest name to user
+    auto num = gSession->experimentAt(_exp_combo->currentIndex())
+            ->experiment()->numPeakCollections();
+    std::string suggestion = "PeakCollectionNr.:" + std::to_string(num+1);
+    std::unique_ptr<ListNameDialog> dlg(new ListNameDialog(QString::fromStdString(suggestion)));
     dlg->exec();
     if (!dlg->listName().isEmpty()) {
-        gSession->experimentAt(_exp_combo->currentIndex())
+        if(!gSession->experimentAt(_exp_combo->currentIndex())
             ->experiment()
             ->addPeakCollection(
                 dlg->listName().toStdString(), nsx::listtype::PREDICTED,
-                _peak_collection.getPeakList());
+                _peak_collection.getPeakList())){
+                    QMessageBox::warning(this,"Unable to add PeakCollection",
+                    "Unable to add PeakCollection with this name. Please make sure to use unique names only");
+                    return;
+                }
         gSession->experimentAt(_exp_combo->currentIndex())->generatePeakModel(dlg->listName());
         gGui->sentinel->addLinkedComboItem(ComboType::PredictedPeaks, dlg->listName());
         gGui->sentinel->addLinkedComboItem(ComboType::PeakCollection, dlg->listName());

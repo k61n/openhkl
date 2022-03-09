@@ -50,6 +50,7 @@
 #include <QScrollBar>
 #include <QSpacerItem>
 #include <QTableWidgetItem>
+#include <qmessagebox.h>
 
 SubframeFindPeaks::SubframeFindPeaks()
     : QWidget()
@@ -542,16 +543,22 @@ std::map<std::string, double> SubframeFindPeaks::convolutionParameters()
 
 void SubframeFindPeaks::accept()
 {
-    nsx::PeakFinder* finder =
-        gSession->experimentAt(_exp_combo->currentIndex())->experiment()->peakFinder();
+    auto expt = gSession->experimentAt(_exp_combo->currentIndex())->experiment();
+    nsx::PeakFinder* finder = expt->peakFinder();
 
     if (!finder->currentPeaks().empty()) {
-        std::unique_ptr<ListNameDialog> dlg(new ListNameDialog());
+        std::unique_ptr<ListNameDialog> dlg(new ListNameDialog(QString::fromStdString(
+        expt->GeneratePeakCollectionName())));
         dlg->exec();
         if (!dlg->listName().isEmpty()) {
-            gSession->experimentAt(_exp_combo->currentIndex())
+            if(!gSession->experimentAt(_exp_combo->currentIndex())
                 ->experiment()
-                ->acceptFoundPeaks(dlg->listName().toStdString(), _peak_collection);
+                ->acceptFoundPeaks(dlg->listName().toStdString(), _peak_collection)){
+                    QMessageBox::warning(this,
+                    "Unable to add PeakCollection",
+                    "Collection with this name already exists!");                      
+                    return;
+            }
             gSession->experimentAt(_exp_combo->currentIndex())->generatePeakModel(dlg->listName());
             gGui->sentinel->addLinkedComboItem(ComboType::FoundPeaks, dlg->listName());
             gGui->sentinel->addLinkedComboItem(ComboType::PeakCollection, dlg->listName());

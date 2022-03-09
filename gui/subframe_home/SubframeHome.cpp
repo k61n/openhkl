@@ -27,6 +27,7 @@
 #include <QSettings>
 #include <QSpacerItem>
 #include <qboxlayout.h>
+#include <qmessagebox.h>
 #include <qnamespace.h>
 #include <qtablewidget.h>
 
@@ -158,15 +159,6 @@ void SubframeHome::_setRightLayout(QHBoxLayout* main_layout)
 
     QHBoxLayout* right_bot = new QHBoxLayout();
 
-    _change_project_name = new QPushButton();
-    _change_project_name->setIcon(QIcon(":/images/save.svg"));
-    _change_project_name->setText("Change Project Name");
-    _change_project_name->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
-    tooltip = "Change Project Name";
-    _change_project_name->setToolTip(tooltip);
-    connect(_change_project_name, &QPushButton::clicked, this, &SubframeHome::changeProjectData);
-
-
     _save_current = new QPushButton();
     _save_current->setIcon(QIcon(":/images/save.svg"));
     _save_current->setText("Save current experiment");
@@ -183,7 +175,6 @@ void SubframeHome::_setRightLayout(QHBoxLayout* main_layout)
     tooltip = "Save all experiments to .nsx (HDF5) files";
     _save_all->setToolTip(tooltip);
 
-    right_bot->addWidget(_change_project_name);
     right_bot->addWidget(_save_current);
     right_bot->addWidget(_save_all);
 
@@ -205,7 +196,9 @@ void SubframeHome::createNew()
        
         std::unique_ptr<Project> project_ptr {gSession->createProject
                                               (expr_nm, instr_nm)};
-        if (project_ptr == nullptr) return;
+        if (project_ptr == nullptr){            
+            return;
+        }
         const bool success = gSession->addProject(std::move(project_ptr));
 
         if (success) {
@@ -351,17 +344,12 @@ void SubframeHome::_loadSelectedItem(QListWidgetItem* item)
 
 void SubframeHome::toggleUnsafeWidgets()
 {
-    _change_project_name->setEnabled(false);
     _save_all->setEnabled(true);
     _save_current->setEnabled(true);
     _save_current->setEnabled(true);
     if (_open_experiments_model->rowCount() == 0) {
         _save_all->setEnabled(false);
-        _save_current->setEnabled(false);
-       
-    }   
-    if (_open_experiments_view->currentIndex().row() >= 0){
-         _change_project_name->setEnabled(true);
+        _save_current->setEnabled(false);       
     }
 }
 
@@ -469,19 +457,4 @@ void SubframeHome::UpdatePeakInformationTable()
   } catch (const std::exception& e){
     QMessageBox::critical(this, "Error", QString(e.what()));
   }  
-}
-
-void SubframeHome::changeProjectData()
-{
-    int project_id = _open_experiments_view->currentIndex().row();
-    QString old_name = _open_experiments_model->index(project_id,0).data().toString(); 
-    
-    std::unique_ptr<ExperimentDialog> exp_dialog(new ExperimentDialog(old_name));
-    exp_dialog->exec();    
-
-    if (exp_dialog->result()) {
-        gSession->UpdateExperimentData(project_id, exp_dialog->experimentName(), exp_dialog->instrumentName());
-        //gSession->experimentAt(project_id)->experiment()->setName(exp_dialog->experimentName().toStdString());
-        //gSession->experimentAt(project_id)->experiment()->setDiffractometer(exp_dialog->instrumentName().toStdString());      
-    }
 }
