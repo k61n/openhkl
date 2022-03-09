@@ -68,7 +68,7 @@ class SubframeHome : public QWidget {
     //! Disable unsafe widgets if no data loaded
     void toggleUnsafeWidgets();
 
-    void UpdatePeakInformationTable();
+    void refreshTables();
 
    // void UpdatePeakList();
 
@@ -84,12 +84,10 @@ class SubframeHome : public QWidget {
     QList<QStringList> _last_imports;
     QListWidget* _last_import_widget;
 
-    
     QTableWidget* _dataset_table;
     QTableWidget* _peak_collections_table;
     QTableWidget* _unitcell_table;
-    
-   
+
 };
 
 #endif // NSX_GUI_SUBFRAME_HOME_SUBFRAMEHOME_H

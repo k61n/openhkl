@@ -137,7 +137,7 @@ void SubframeHome::_setLeftLayout(QHBoxLayout* main_layout)
     left->addLayout(lay_peaks);
     left->addLayout(lay_unitcells);
 
-    UpdatePeakInformationTable();
+    refreshTables();
 
     main_layout->addLayout(left);
 }
@@ -234,7 +234,7 @@ void SubframeHome::loadFromFile()
         QMessageBox::critical(this, "Error", QString(e.what()));
     }
 
-    UpdatePeakInformationTable();
+    refreshTables();
     gGui->setReady(true);
 }
 
@@ -300,7 +300,7 @@ void SubframeHome::_updateLastLoadedList(QString name, QString file_path)
         _last_imports.removeLast();
 
     _updateLastLoadedWidget();
-    UpdatePeakInformationTable();
+    refreshTables();
 }
 
 void SubframeHome::_updateLastLoadedWidget()
@@ -347,7 +347,7 @@ void SubframeHome::toggleUnsafeWidgets()
     }
 }
 
-void SubframeHome::UpdatePeakInformationTable()
+void SubframeHome::refreshTables()
 {
     try {
         auto b2s = [](bool a) { return !a ? QString("No") : QString("Yes"); };

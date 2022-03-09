@@ -218,6 +218,7 @@ QAction* SideBar::actionAt(const QPoint& at)
 void SideBar::onHome()
 {
     gGui->_layout_stack->setCurrentIndex(0);
+    gGui->home->refreshTables();
     emit subframeChanged();
 }
 
