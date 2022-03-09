@@ -52,11 +52,13 @@ bool PeakHandler::addPeakCollection(
     return hasPeakCollection(name); // now name must be in use
 }
 
-void PeakHandler::addEmptyCollection(const std::string& name, const listtype type)
+bool PeakHandler::addEmptyCollection(const std::string& name, const listtype type)
 {
+    if (hasPeakCollection(name)) return false;
     nsxlog(Level::Info, "PeakHandler::addEmptyCollection '" + name + "'");
     std::unique_ptr<PeakCollection> ptr(new PeakCollection(name, type));
     _peak_collections.insert_or_assign(name, std::move(ptr));
+    return hasPeakCollection(name); // now name must be in use
 }
 
 bool PeakHandler::hasPeakCollection(const std::string& name) const
@@ -105,17 +107,21 @@ std::vector<std::string> PeakHandler::getCollectionNames(
     return names;
 }
 
-void PeakHandler::acceptFilter(std::string name, PeakCollection* collection, listtype lt)
+bool PeakHandler::acceptFilter(std::string name, PeakCollection* collection, listtype lt)
 {
+    if (hasPeakCollection(name)) return false;
     std::unique_ptr<PeakCollection> ptr(new PeakCollection(name, lt));
     ptr->populateFromFiltered(collection);
     _peak_collections.insert_or_assign(name, std::move(ptr));
+    return hasPeakCollection(name);
 }
 
-void PeakHandler::clonePeakCollection(std::string name, std::string new_name)
+bool PeakHandler::clonePeakCollection(std::string name, std::string new_name)
 {
+    if (name == new_name) return false;
     addEmptyCollection(new_name, getPeakCollection(name)->type());
     getPeakCollection(new_name)->populate(getPeakCollection(name)->getPeakList());
+    return hasPeakCollection(name);
 }
 
 std::string PeakHandler::GenerateName()
