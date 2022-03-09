@@ -108,6 +108,8 @@ class AutoIndexer {
     std::string solutionsToString() const;
     //! Set solution to be unit cell for given peak list
     void acceptSolution(const sptrUnitCell solution, const std::vector<nsx::Peak3D*>& peaks);
+    //! Set solution to be unit cell for given peak collection
+    void acceptSolution(const sptrUnitCell solution, PeakCollection* peaks);
     //! Check if list of solutions contains reference unit cell. If it does,
     //! return a pointer, otherwise return nullptr
     sptrUnitCell goodSolution(const UnitCell* reference_cell, double length_tol, double angle_tol);

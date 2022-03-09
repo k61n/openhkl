@@ -470,6 +470,7 @@ bool Experiment::checkAndAssignUnitCell(
 void Experiment::assignUnitCell(PeakCollection* peaks, std::string name)
 {
     _cell_handler->assignUnitCell(peaks, name);
+    peaks->setIndexed(true);
 }
 
 void Experiment::setReferenceCell(
