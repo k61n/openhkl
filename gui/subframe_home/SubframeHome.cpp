@@ -14,12 +14,13 @@
 
 #include "gui/subframe_home/SubframeHome.h"
 
+#include "base/utils/Units.h"
 #include "core/experiment/Experiment.h"
 #include "core/shape/PeakCollection.h"
+#include "gui/MainWin.h"
 #include "gui/dialogs/ExperimentDialog.h"
 #include "gui/models/Project.h"
 #include "gui/models/Session.h"
-#include "gui/MainWin.h"
 #include "tables/crystal/UnitCell.h"
 
 #include <QFileDialog>
@@ -393,11 +394,11 @@ void SubframeHome::UpdatePeakInformationTable()
         _unitcell_table->setItem(n, 4, new QTableWidgetItem(QString::number(
             data->character().c)));
         _unitcell_table->setItem(n, 5, new QTableWidgetItem(QString::number(
-            data->character().alpha)));
+            data->character().alpha / nsx::deg)));
         _unitcell_table->setItem(n, 6, new QTableWidgetItem(QString::number(
-            data->character().beta)));
+            data->character().beta / nsx::deg)));
         _unitcell_table->setItem(n, 7, new QTableWidgetItem(QString::number(
-            data->character().gamma)));
+            data->character().gamma / nsx::deg)));
     }
     _unitcell_table->resizeColumnsToContents();
 
