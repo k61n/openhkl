@@ -340,6 +340,7 @@ void SubframeRefiner::refine()
         gGui->statusBar()->showMessage("Refinement success");
     else
         gGui->statusBar()->showMessage("Refinement failed");
+    emit gGui->sentinel->instrumentStatesChanged();
     gGui->setReady(true);
 }
 

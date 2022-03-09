@@ -16,6 +16,7 @@
 
 #include "core/experiment/Experiment.h"
 #include "gui/MainWin.h" // gGui
+#include "gui/connect/Sentinel.h"
 #include "gui/models/Project.h"
 #include "gui/models/Session.h"
 #include "gui/utility/LinkedComboBox.h"
@@ -52,6 +53,9 @@ InstrumentStateWindow::InstrumentStateWindow(QWidget* parent) : QDialog(parent)
 
     connect(
         _frame_spin, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged), this,
+        &InstrumentStateWindow::refreshAll);
+    connect(
+        gGui->sentinel, &Sentinel::instrumentStatesChanged, this,
         &InstrumentStateWindow::refreshAll);
 }
 
