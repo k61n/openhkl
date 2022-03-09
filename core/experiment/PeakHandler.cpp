@@ -37,7 +37,7 @@ bool PeakHandler::addPeakCollection(
     return hasPeakCollection(name); // now name must be in use
 }
 
-void PeakHandler::addPeakCollection(
+bool PeakHandler::addPeakCollection(
     const std::string& name, const listtype type, const std::vector<nsx::Peak3D*> peaks,
     bool indexed, bool integrated)
 {
