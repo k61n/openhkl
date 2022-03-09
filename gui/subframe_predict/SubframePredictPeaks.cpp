@@ -575,10 +575,8 @@ void SubframePredictPeaks::setInitialKi(nsx::sptrDataSet data)
     const auto coords = _detector_widget->scene()->beamSetterCoords();
 
     nsx::DirectVector direct = detector->pixelPosition(coords.x(), coords.y());
-    for (nsx::InstrumentState& state : data->instrumentStates()) {
+    for (nsx::InstrumentState& state : data->instrumentStates())
         state.adjustKi(direct);
-        std::cout << state.ki() << std::endl << std::endl;
-    }
     emit gGui->sentinel->instrumentStatesChanged();
 }
 
