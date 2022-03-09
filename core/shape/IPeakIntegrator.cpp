@@ -89,8 +89,7 @@ void IPeakIntegrator::integrate(
         regions.emplace(std::make_pair(
             peak,
             std::make_unique<IntegrationRegion>(
-                peak, _params.peak_end, _params.bkg_begin, _params.bkg_end,
-                _params.region_type)));
+                peak, _params.peak_end, _params.bkg_begin, _params.bkg_end, _params.region_type)));
         integrated.emplace(std::make_pair(peak, false));
 
         // ignore partials
@@ -130,11 +129,11 @@ void IPeakIntegrator::integrate(
         for (auto peak : peaks) {
             assert(peak != nullptr);
             auto* current_peak = regions.at(peak).get();
-            //assert(current_peak != regions.end());
+            // assert(current_peak != regions.end());
             current_peak->updateMask(mask, idx);
         }
 
-        #pragma omp parallel for
+#pragma omp parallel for
         for (auto peak : peaks) {
             auto* current_peak = regions.at(peak).get();
             bool result = current_peak->advanceFrame(current_frame, mask, idx);
@@ -157,7 +156,7 @@ void IPeakIntegrator::integrate(
                     // integration failed...
                     nsxlog(
                         Level::Debug, "IPeakIntegrator::integrate: integration failed: ", e.what());
-                    #pragma omp atomic
+#pragma omp atomic
                     ++nfailures;
                     peak->setSelected(false);
                     peak->setRejectionFlag(RejectionFlag::IntegrationFailure);

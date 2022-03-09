@@ -28,8 +28,8 @@
 
 namespace nsx {
 
-    Integrator::Integrator(std::shared_ptr<DataHandler> data_handler) :
-        _handler(nullptr), _data_handler(data_handler)
+Integrator::Integrator(std::shared_ptr<DataHandler> data_handler)
+    : _handler(nullptr), _data_handler(data_handler)
 {
     _integrator_map.clear();
     _integrator_map.insert(
@@ -69,8 +69,8 @@ void Integrator::integratePeaks(
     IntegratorType integrator_type, sptrDataSet data, PeakCollection* peaks)
 {
     nsxlog(
-        Level::Info, "Integrator::integratePeaks: integrating PeakCollection '"
-        + peaks->name() + "'");
+        Level::Info,
+        "Integrator::integratePeaks: integrating PeakCollection '" + peaks->name() + "'");
     IPeakIntegrator* integrator = getIntegrator(integrator_type);
     integrator->setNNumors(1);
     integrator->integrate(peaks->getPeakList(), peaks->shapeCollection(), data, 1);
@@ -81,15 +81,15 @@ void Integrator::integratePeaks(
         ++_n_peaks;
         if (peak->enabled())
             ++_n_valid;
-    } 
+    }
 }
 
 void Integrator::integratePeaks(
     sptrDataSet data, PeakCollection* peaks, IntegrationParameters* params, ShapeCollection* shapes)
 {
     nsxlog(
-        Level::Info, "Integrator::integratePeaks: integrating PeakCollection '"
-        + peaks->name() + "'");
+        Level::Info,
+        "Integrator::integratePeaks: integrating PeakCollection '" + peaks->name() + "'");
     params->log(Level::Info);
     IPeakIntegrator* integrator = getIntegrator(_params->integrator_type);
     integrator->setParameters(*params);
@@ -102,7 +102,7 @@ void Integrator::integratePeaks(
         ++_n_peaks;
         if (peak->enabled())
             ++_n_valid;
-    } 
+    }
 }
 
 void Integrator::integrateFoundPeaks(PeakFinder* peak_finder)
@@ -125,8 +125,9 @@ void Integrator::integrateFoundPeaks(PeakFinder* peak_finder)
         if (peak->enabled())
             ++_n_valid;
     }
-    //no further checks
-    //peak_finder->getPeakCollection()->setIntegrated(true); // doesnt work since peak collection does not exist yet
+    // no further checks
+    // peak_finder->getPeakCollection()->setIntegrated(true); // doesnt work since peak collection
+    // does not exist yet
     peak_finder->setIntegrated(true);
 }
 

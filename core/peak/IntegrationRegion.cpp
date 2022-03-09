@@ -70,8 +70,8 @@ IntegrationRegion::IntegrationRegion(
         }
     }
 
-    if (peak->rejectionFlag() == RejectionFlag::InvalidRegion ||
-        peak->rejectionFlag() == RejectionFlag::InterpolationFailure) {
+    if (peak->rejectionFlag() == RejectionFlag::InvalidRegion
+        || peak->rejectionFlag() == RejectionFlag::InterpolationFailure) {
         _valid = false;
     } else {
         Ellipsoid bkg(_shape);
@@ -190,13 +190,13 @@ RegionData* IntegrationRegion::getRegion()
                 auto ev_type = classify(ev);
 
                 switch (ev_type) {
-                case EventType::FORBIDDEN: val = EventType::FORBIDDEN; break;
-                case EventType::PEAK: val = EventType::PEAK; break;
-                case EventType::BACKGROUND:
-                    if (val == EventType::EXCLUDED)
-                        val = EventType::BACKGROUND;
-                    break;
-                default: break;
+                    case EventType::FORBIDDEN: val = EventType::FORBIDDEN; break;
+                    case EventType::PEAK: val = EventType::PEAK; break;
+                    case EventType::BACKGROUND:
+                        if (val == EventType::EXCLUDED)
+                            val = EventType::BACKGROUND;
+                        break;
+                    default: break;
                 }
                 mask(y - ymin, x - xmin) = int(val);
             }

@@ -28,9 +28,9 @@ DataHandler::DataHandler(const std::string& experiment_name, const std::string& 
     : _experiment_name{experiment_name}
 {
     if (diffractometerName == nsx::kw_diffractometerDefaultName) {
-        nsxlog(Level::Warning,
-               "DataHandler: Diffractometer is not set for the experiment '"
-               + experiment_name + "'");
+        nsxlog(
+            Level::Warning,
+            "DataHandler: Diffractometer is not set for the experiment '" + experiment_name + "'");
     } else {
         _diffractometer.reset(Diffractometer::create(diffractometerName));
     }
@@ -121,7 +121,8 @@ bool DataHandler::addData(sptrDataSet data, std::string name)
     }
 
     nsxlog(
-        Level::Info, "DataHandler::addData: adding DataSet '", name, "': ", data->nFrames(), " frames");
+        Level::Info, "DataHandler::addData: adding DataSet '", name, "': ", data->nFrames(),
+        " frames");
     _data_map.insert(std::make_pair(name, data));
 
     return hasData(name);

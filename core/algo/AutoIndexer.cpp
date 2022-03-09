@@ -18,9 +18,9 @@
 #include "base/utils/Logger.h"
 #include "core/algo/FFTIndexing.h"
 #include "core/data/DataSet.h" // peak->data()->interpolatedState
+#include "core/instrument/InterpolatedState.h" // interpolate
 #include "core/shape/PeakFilter.h"
 #include "tables/crystal/MillerIndex.h"
-#include "core/instrument/InterpolatedState.h" // interpolate
 
 
 #include <iomanip>
@@ -89,13 +89,13 @@ bool AutoIndexer::autoIndex(PeakCollection* peaks)
 {
     nsxlog(Level::Info, "AutoIndexer::autoindex: indexing PeakCollection '", peaks->name(), "'");
     std::vector<Peak3D*> peak_list = peaks->getPeakList();
-    
-    if (autoIndex(peak_list)){
+
+    if (autoIndex(peak_list)) {
         peaks->setIndexed(true);
         return true;
     }
     peaks->setIndexed(false);
-    return false; 
+    return false;
 }
 
 void AutoIndexer::removeBad(double quality)
@@ -203,8 +203,7 @@ void AutoIndexer::refineSolutions(const std::vector<Peak3D*>& peaks)
         PeakFilter peak_filter;
         std::vector<Peak3D*> enabled_peaks = peak_filter.filterEnabled(peaks, true);
 
-        std::vector<Peak3D*> filtered_peaks =
-            peak_filter.filterIndexed(enabled_peaks, cell);
+        std::vector<Peak3D*> filtered_peaks = peak_filter.filterIndexed(enabled_peaks, cell);
 
         int success = filtered_peaks.size();
         for (const auto* peak : filtered_peaks) {
@@ -287,8 +286,7 @@ void AutoIndexer::refineSolutions(const std::vector<Peak3D*>& peaks)
         // Define the final score of this solution by computing the percentage of
         // the selected peaks which have been successfully indexed
 
-        std::vector<Peak3D*> refiltered_peaks =
-            peak_filter.filterIndexed(filtered_peaks, cell);
+        std::vector<Peak3D*> refiltered_peaks = peak_filter.filterIndexed(filtered_peaks, cell);
 
         double score = static_cast<double>(refiltered_peaks.size());
         double maxscore = static_cast<double>(filtered_peaks.size());
@@ -314,13 +312,21 @@ std::string AutoIndexer::solutionsToString() const
     return oss.str();
 }
 
-void AutoIndexer::acceptSolution(sptrUnitCell solution, const std::vector<nsx::Peak3D*>& peaks)
+void AutoIndexer::acceptSolution(const sptrUnitCell solution, const std::vector<nsx::Peak3D*>& peaks)
 {
     for (auto* peak : peaks)
         peak->setUnitCell(solution);
 }
 
-sptrUnitCell AutoIndexer::goodSolution(const UnitCell* reference_cell, double length_tol, double angle_tol)
+void AutoIndexer::acceptSolution(const sptrUnitCell solution, PeakCollection* peaks)
+{
+    for (auto* peak : peaks->getPeakList())
+        peak->setUnitCell(solution);
+    peaks->setIndexed(true);
+}
+
+sptrUnitCell AutoIndexer::goodSolution(
+    const UnitCell* reference_cell, double length_tol, double angle_tol)
 {
     for (const auto& solution : _solutions) {
         if (solution.first->isSimilar(reference_cell, length_tol, angle_tol)) {

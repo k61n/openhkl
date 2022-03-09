@@ -18,10 +18,9 @@
 #include <QFormLayout>
 #include <QMessageBox>
 
-RawDataDialog::RawDataDialog(const nsx::RawDataReaderParameters& parameters0,
-                             const QStringList& datanames_cur):
-    parameters0 {parameters0},
-    dataset_names{datanames_cur}
+RawDataDialog::RawDataDialog(
+    const nsx::RawDataReaderParameters& parameters0, const QStringList& datanames_cur)
+    : parameters0{parameters0}, dataset_names{datanames_cur}
 {
     setModal(true);
     resize(400, 300);
@@ -70,7 +69,7 @@ RawDataDialog::RawDataDialog(const nsx::RawDataReaderParameters& parameters0,
     layout->addRow("Data arrangement", dataArrangement);
     layout->addRow("Data format", dataFormat);
     layout->addRow("", swapEndianness);
-    layout->addRow(QString((QChar)0x0394) + " " +  QString((QChar)0x03C7), chi);
+    layout->addRow(QString((QChar)0x0394) + " " + QString((QChar)0x03C7), chi);
     layout->addRow(QString((QChar)0x0394) + " " + QString((QChar)0x03C9), omega);
     layout->addRow(QString((QChar)0x0394) + " " + QString((QChar)0x03C6), phi);
     layout->addRow("Wavelength", wave);
@@ -123,8 +122,8 @@ void RawDataDialog::verify()
     const double eps = 1e-8;
     const double waveln = wavelength();
     if (waveln < eps) {
-        const QString msg{QString::fromStdString(
-                "Wavelength, " + std::to_string(waveln) + ", must be > 0")};
+        const QString msg{
+            QString::fromStdString("Wavelength, " + std::to_string(waveln) + ", must be > 0")};
         QMessageBox::critical(nullptr, "Error", msg);
         dialog_accepted = false;
         return;

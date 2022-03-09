@@ -19,9 +19,9 @@
 #include "core/data/DataSet.h"
 #include "core/data/DataTypes.h"
 #include "core/experiment/Experiment.h"
+#include "core/loader/IDataReader.h"
 #include "core/loader/RawDataReader.h"
 #include "core/raw/DataKeys.h"
-#include "core/loader/IDataReader.h"
 #include "core/raw/MetaData.h"
 #include "gui/MainWin.h"
 #include "gui/connect/Sentinel.h"
@@ -93,8 +93,7 @@ int Session::numExperiments() const
     return _projects.size();
 }
 
-Project* Session::createProject
-(QString experimentName, QString instrumentName)
+Project* Session::createProject(QString experimentName, QString instrumentName)
 {
     for (const QString& name : experimentNames()) {// check name
         if (name == experimentName) {
@@ -128,18 +127,16 @@ void Session::removeExperiment(const QString& name)
     if (_projects.empty()) {
         return;
     } else {
-        const std::string name_str {name.toStdString()};
-        for (decltype(_projects)::const_iterator it = _projects.begin();
-             it != _projects.end(); ) {
-            const Project& prj {**it};
+        const std::string name_str{name.toStdString()};
+        for (decltype(_projects)::const_iterator it = _projects.begin(); it != _projects.end();) {
+            const Project& prj{**it};
             if (name_str == prj.experiment()->name())
                 it = _projects.erase(it);
             else
                 ++it;
         }
-
     }
-    _currentProject = _projects.empty() ? -1: 0;
+    _currentProject = _projects.empty() ? -1 : 0;
     onExperimentChanged();
 }
 
@@ -181,7 +178,8 @@ void Session::loadData(nsx::DataFormat format)
             break;
         }
         default: {
-            throw std::runtime_error("Session::LoadData can only load NSX(HDF5) or Nexus data files");
+            throw std::runtime_error(
+                "Session::LoadData can only load NSX(HDF5) or Nexus data files");
             break;
         }
     }
@@ -211,10 +209,9 @@ void Session::loadData(nsx::DataFormat format)
             // choose a name for the dataset
             // default dataset name: basename of the first data-file
             const QStringList& datanames_pre{currentProject()->getDataNames()};
-            const std::string dataset_nm {
-                askDataName(nsx::fileBasename(filename.toStdString()),
-                            &datanames_pre)};
-            const nsx::sptrDataSet dataset_ptr {
+            const std::string dataset_nm{
+                askDataName(nsx::fileBasename(filename.toStdString()), &datanames_pre)};
+            const nsx::sptrDataSet dataset_ptr{
                 std::make_shared<nsx::DataSet>(dataset_nm, exp->getDiffractometer())};
 
             dataset_ptr->addDataFile(filename.toStdString(), "nsx");
@@ -271,7 +268,8 @@ void Session::loadRawData()
         if (qfilenames.empty())
             return;
 
-        // Don't leave sorting the files to the OS. Use QCollator + std::sort to sort naturally (numerically)
+        // Don't leave sorting the files to the OS. Use QCollator + std::sort to sort naturally
+        // (numerically)
         QCollator collator;
         collator.setNumericMode(true);
         std::sort(
@@ -300,7 +298,7 @@ void Session::loadRawData()
         parameters = dialog.parameters();
 
         nsx::Diffractometer* diff = exp->getDiffractometer();
-        const std::shared_ptr<nsx::DataSet> dataset_ptr {
+        const std::shared_ptr<nsx::DataSet> dataset_ptr{
             std::make_shared<nsx::DataSet>(parameters.dataset_name, diff)};
         dataset_ptr->setRawReaderParameters(parameters);
         for (const auto& filenm : filenames)
@@ -345,35 +343,41 @@ void Session::onUnitCellChanged()
 
 void Session::loadExperimentFromFile(QString filename)
 {
-    std::unique_ptr<Project> project_ptr {
-        createProject(QString::fromStdString(nsx::kw_experimentDefaultName),
-                      QString::fromStdString(nsx::kw_diffractometerDefaultName))};
+    std::unique_ptr<Project> project_ptr{createProject(
+        QString::fromStdString(nsx::kw_experimentDefaultName),
+        QString::fromStdString(nsx::kw_diffractometerDefaultName))};
 
     if (!project_ptr)
         return;
 
-    nsx::nsxlog(nsx::Level::Debug, "Session: Created Project for file '",
-                filename.toStdString(), "'");
+    nsx::nsxlog(
+        nsx::Level::Debug, "Session: Created Project for file '", filename.toStdString(), "'");
 
     try {
         project_ptr->experiment()->loadFromFile(filename.toStdString());
-        nsx::nsxlog(nsx::Level::Debug, "Session: Loaded data for Project created from file '", filename.toStdString(), "'");
+        nsx::nsxlog(
+            nsx::Level::Debug, "Session: Loaded data for Project created from file '",
+            filename.toStdString(), "'");
 
         project_ptr->generatePeakModels();
 
-        nsx::nsxlog(nsx::Level::Debug, "Session: Generated PeakModels for Project created from file '", filename.toStdString(), "'");
+        nsx::nsxlog(
+            nsx::Level::Debug, "Session: Generated PeakModels for Project created from file '",
+            filename.toStdString(), "'");
 
-    } catch(const std::exception& ex) {
-        const std::string msg {"Loading experiment from '" + filename.toStdString()
-                               + "' failed with error: " + ex.what() + "."};
+    } catch (const std::exception& ex) {
+        const std::string msg{
+            "Loading experiment from '" + filename.toStdString()
+            + "' failed with error: " + ex.what() + "."};
         throw std::runtime_error(msg);
         return;
     }
 
     addProject(std::move(project_ptr));
 
-    nsx::nsxlog(nsx::Level::Debug, "Session: Finished creating Project for file '", filename.toStdString(), "'");
-
+    nsx::nsxlog(
+        nsx::Level::Debug, "Session: Finished creating Project for file '", filename.toStdString(),
+        "'");
 }
 
 bool Session::UpdateExperimentData(unsigned int idx, QString name, QString instrument){

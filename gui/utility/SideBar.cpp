@@ -218,6 +218,7 @@ QAction* SideBar::actionAt(const QPoint& at)
 void SideBar::onHome()
 {
     gGui->_layout_stack->setCurrentIndex(0);
+    gGui->home->refreshTables();
     emit subframeChanged();
 }
 
@@ -250,8 +251,7 @@ void SideBar::onFilterPeaks()
 void SideBar::onIndexer()
 {
     gGui->_layout_stack->setCurrentIndex(4);
-    if (gSession->currentProjectNum() != -1)
-        gGui->indexer->refreshAll();
+    gGui->indexer->refreshAll();
     emit subframeChanged();
 }
 

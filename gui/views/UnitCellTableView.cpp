@@ -31,11 +31,11 @@ UnitCellTableView::UnitCellTableView(QWidget* parent) : QTableView(parent)
 }
 
 ValueTupleItem::ValueTupleItem(const QString& text, const double val, const double qmes)
-    : QStandardItem(text),
-      value{val}, qmeasure{qmes}
-{}
+    : QStandardItem(text), value{val}, qmeasure{qmes}
+{
+}
 
-bool ValueTupleItem::operator< (const QStandardItem& other) const
+bool ValueTupleItem::operator<(const QStandardItem& other) const
 {
     // assumes that the other Item is also of type ValueTupleItem
     const ValueTupleItem* other_p = dynamic_cast<const ValueTupleItem*>(&other);

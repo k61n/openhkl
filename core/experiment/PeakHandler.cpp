@@ -37,8 +37,9 @@ bool PeakHandler::addPeakCollection(
     return hasPeakCollection(name); // now name must be in use
 }
 
-bool PeakHandler::addPeakCollection(
-    const std::string& name, const listtype type, const std::vector<nsx::Peak3D*> peaks, bool indexed, bool integrated)
+void PeakHandler::addPeakCollection(
+    const std::string& name, const listtype type, const std::vector<nsx::Peak3D*> peaks,
+    bool indexed, bool integrated)
 {
     // abort if name is aleady in use
     if (hasPeakCollection(name)) return false;

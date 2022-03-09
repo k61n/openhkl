@@ -45,7 +45,8 @@ mac12_2:
     - export PYDIR=/opt/homebrew/opt/python@3.9/Frameworks/Python.framework/Versions/3.9
     - export PYLIB=$PYDIR/lib/libpython3.9.dylib
     - export PYINC=$PYDIR/include/python3.9
-    - cmake .. -D CMAKE_PREFIX_PATH=$QTDIR -D CMAKE_CXX_COMPILER_LAUNCHER=ccache -D PYTHON_INCLUDE_DIR=$PYINC -D PYTHON_LIBRARY=$PYLIB
+    - export TESTDATADIR=$HOME/testdata
+    - cmake .. -D CMAKE_PREFIX_PATH=$QTDIR -D CMAKE_CXX_COMPILER_LAUNCHER=ccache -D PYTHON_INCLUDE_DIR=$PYINC -D PYTHON_LIBRARY=$PYLIB -D NSX_TESTDATA_DIR=$TESTDATADIR
     - make -j12
     - ctest -j12 --output-on-failure
     - cpack -V

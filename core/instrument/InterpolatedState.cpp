@@ -17,8 +17,8 @@
 #include "core/gonio/Component.h"
 #include "core/instrument/Diffractometer.h"
 #include "core/instrument/MatrixOperations.h"
-#include <string> // to_string
 #include <stdexcept>
+#include <string> // to_string
 
 
 namespace nsx {
@@ -31,9 +31,7 @@ InterpolatedState::InterpolatedState(Diffractometer* diffractometer)
 
 InterpolatedState::InterpolatedState(
     const InstrumentState& s1, const InstrumentState& s2, double t, bool valid)
-    : InstrumentState(const_cast<Diffractometer*>(s1.diffractometer()))
-    , axis()
-    , stepSize()
+    : InstrumentState(const_cast<Diffractometer*>(s1.diffractometer())), axis(), stepSize()
 {
     _valid = valid;
     if (s1.diffractometer() != s2.diffractometer())
@@ -67,8 +65,8 @@ InterpolatedState::InterpolatedState(
     stepSize = 2.0 * std::atan2(sin_theta2, cos_theta2);
 }
 
-InterpolatedState InterpolatedState::interpolate(const InstrumentStateList& states,
-                                                 const double frame_idx)
+InterpolatedState InterpolatedState::interpolate(
+    const InstrumentStateList& states, const double frame_idx)
 {
     bool valid = true;
     const std::size_t states_nr = states.size();

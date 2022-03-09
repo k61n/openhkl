@@ -34,8 +34,7 @@ void PredictionParameters::log(const Level& level) const
     nsxlog(level, "d_max     = ", d_max);
 }
 
-Predictor::Predictor()
-    : _handler(nullptr)
+Predictor::Predictor() : _handler(nullptr)
 {
     _params = std::make_unique<PredictionParameters>();
 }
@@ -52,9 +51,8 @@ std::vector<Peak3D*> Predictor::buildPeaksFromMillerIndices(
         Level::Info, "Predictor::buildPeaksFromMillerIndices: ", qs.size(),
         " q-vectors generated from ", hkls.size(), " Miller indices");
 
-    const std::vector<DetectorEvent> events =
-        algo::qVectorList2Events(qs, data->instrumentStates(), data->detector(), data->nFrames(),
-                                 handler);
+    const std::vector<DetectorEvent> events = algo::qVectorList2Events(
+        qs, data->instrumentStates(), data->detector(), data->nFrames(), handler);
 
     std::vector<Peak3D*> peaks;
     for (auto event : events) {
@@ -87,8 +85,7 @@ void Predictor::predictPeaks(const sptrDataSet data, const sptrUnitCell unit_cel
     auto predicted_hkls =
         unit_cell->generateReflectionsInShell(_params->d_min, _params->d_max, wavelength);
 
-    _predicted_peaks =
-        buildPeaksFromMillerIndices(data, predicted_hkls, unit_cell, _handler);
+    _predicted_peaks = buildPeaksFromMillerIndices(data, predicted_hkls, unit_cell, _handler);
 }
 
 PredictionParameters* Predictor::parameters()

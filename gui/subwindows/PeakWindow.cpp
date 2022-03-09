@@ -15,14 +15,14 @@
 #include "gui/subwindows/PeakWindow.h"
 
 #include "core/peak/Peak3D.h"
-#include "gui/models/ColorMap.h"
 #include "gui/MainWin.h" // gGui
+#include "gui/models/ColorMap.h"
 #include "gui/utility/ColorButton.h"
 
-#include <QVBoxLayout>
-#include <QTextStream>
-#include <QPixmap>
 #include <QLineEdit>
+#include <QPixmap>
+#include <QTextStream>
+#include <QVBoxLayout>
 
 PeakWindowParameters PeakWindow::_params = {};
 
@@ -143,8 +143,8 @@ void PeakWindow::setControlWidgetUp()
         _bkg_end, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged),
         this, &PeakWindow::refresh);
     connect(
-        _alpha, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged),
-        this, &PeakWindow::refresh);
+        _alpha, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged), this,
+        &PeakWindow::refresh);
     connect(_intensity_slider, &QSlider::valueChanged, this, &PeakWindow::refresh);
     connect(_peak_color_button, &ColorButton::colorChanged, this, &PeakWindow::refresh);
     connect(_bkg_color_button, &ColorButton::colorChanged, this, &PeakWindow::refresh);
@@ -192,12 +192,11 @@ void PeakWindow::refresh()
             continue;
         }
     }
-
 }
 
 void PeakWindow::drawFrame(QGraphicsView* view, std::size_t frame_index)
 {
-    QRect rect(0, 0, _region_data->cols()+1, _region_data->rows()+1);
+    QRect rect(0, 0, _region_data->cols() + 1, _region_data->rows() + 1);
     if (!view->scene())
         view->setScene(new QGraphicsScene());
     view->scene()->clear();
@@ -205,10 +204,10 @@ void PeakWindow::drawFrame(QGraphicsView* view, std::size_t frame_index)
 
     // add the image data
     try {
-        QGraphicsPixmapItem* image = view->scene()->addPixmap(
-            QPixmap::fromImage(
-                _colormap->matToImage(_region_data->frame(frame_index).cast<double>(), rect,
-                                        _params.max_intensity, _logarithmic)));
+        QGraphicsPixmapItem* image =
+            view->scene()->addPixmap(QPixmap::fromImage(_colormap->matToImage(
+                _region_data->frame(frame_index).cast<double>(), rect, _params.max_intensity,
+                _logarithmic)));
         image->setZValue(-2);
     } catch (std::range_error& e) {
         return;
@@ -219,11 +218,9 @@ void PeakWindow::drawFrame(QGraphicsView* view, std::size_t frame_index)
     QColor bkg_color = _params.bkg_color;
     peak_color.setAlphaF(_params.alpha);
     bkg_color.setAlphaF(_params.alpha);
-    QImage* mask_image = getIntegrationMask(
-        _region_data->mask(frame_index), peak_color, bkg_color);
+    QImage* mask_image = getIntegrationMask(_region_data->mask(frame_index), peak_color, bkg_color);
     QGraphicsPixmapItem* mask = view->scene()->addPixmap(QPixmap::fromImage(*mask_image));
     mask->setZValue(-1);
-
 }
 
 QImage* PeakWindow::getIntegrationMask(const Eigen::MatrixXi& mask, QColor& peak, QColor& bkg)
@@ -236,9 +233,9 @@ QImage* PeakWindow::getIntegrationMask(const Eigen::MatrixXi& mask, QColor& peak
             QColor color;
 
             switch (ev) {
-            case nsx::IntegrationRegion::EventType::PEAK: color = peak; break;
-            case nsx::IntegrationRegion::EventType::BACKGROUND: color = bkg; break;
-            default: color = Qt::transparent; break;
+                case nsx::IntegrationRegion::EventType::PEAK: color = peak; break;
+                case nsx::IntegrationRegion::EventType::BACKGROUND: color = bkg; break;
+                default: color = Qt::transparent; break;
             }
 
             // todo: what about unselected peaks?
@@ -251,14 +248,13 @@ QImage* PeakWindow::getIntegrationMask(const Eigen::MatrixXi& mask, QColor& peak
 void PeakWindow::setLabel()
 {
     QString text;
-    QTextStream(&text) << "hkl: ("
-                       << _integration_region->peak()->hkl().h() << ", "
+    QTextStream(&text) << "hkl: (" << _integration_region->peak()->hkl().h() << ", "
                        << _integration_region->peak()->hkl().k() << ", "
                        << _integration_region->peak()->hkl().l() << ")   position: ("
                        << _integration_region->peak()->shape().center()[0] << ", "
                        << _integration_region->peak()->shape().center()[1] << ", "
-                       << _integration_region->peak()->shape().center()[2] << ")   I = "
-                       << _integration_region->peak()->correctedIntensity().value()
+                       << _integration_region->peak()->shape().center()[2]
+                       << ")   I = " << _integration_region->peak()->correctedIntensity().value()
                        << "   " << QString(QChar(0x03C3)) << " = "
                        << _integration_region->peak()->correctedIntensity().sigma();
     QLineEdit* line = new QLineEdit();

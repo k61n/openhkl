@@ -16,22 +16,22 @@
 #include "base/parser/BloscFilter.h"
 #include "base/utils/Logger.h"
 #include "base/utils/Path.h" // splitFileExtension
-#include "base/utils/StringIO.h" // lowerCase
 #include "base/utils/ProgressHandler.h"
+#include "base/utils/StringIO.h" // lowerCase
 #include "base/utils/Units.h" // deg
 #include "core/detector/Detector.h"
 #include "core/detector/DetectorEvent.h"
 #include "core/experiment/ExperimentExporter.h"
 #include "core/gonio/Gonio.h"
 #include "core/instrument/Diffractometer.h"
+#include "core/instrument/InterpolatedState.h"
 #include "core/instrument/Monochromator.h"
 #include "core/instrument/Sample.h"
 #include "core/instrument/Source.h"
-#include "core/instrument/InterpolatedState.h"
-#include "core/raw/DataKeys.h"
-#include "core/loader/RawDataReader.h"
 #include "core/loader/HDF5DataReader.h"
 #include "core/loader/NexusDataReader.h"
+#include "core/loader/RawDataReader.h"
+#include "core/raw/DataKeys.h"
 
 
 #include <H5Cpp.h>
@@ -53,22 +53,16 @@ DataSet::DataSet(const std::string& dataset_name, Diffractometer* diffractometer
 
 void DataSet::_setReader(const DataFormat dataformat, const std::string& filename)
 {
-    nsxlog(Level::Debug, "Initializing a DataReader for the format ",
-           static_cast<int>(dataformat));
+    nsxlog(Level::Debug, "Initializing a DataReader for the format ", static_cast<int>(dataformat));
 
-    switch(dataformat) {
-    case DataFormat::NSX:
-        _reader.reset(new HDF5DataReader(filename));
-        break;
-    case DataFormat::NEXUS:
-        _reader.reset(new NexusDataReader(filename));
-        break;
-    case DataFormat::RAW:
-        // NOTE: RawDataReader needs a list of frame files which should be given later
-        _reader.reset(new RawDataReader);
-        break;
-    default:
-        throw std::invalid_argument("Data format is not recognized.");
+    switch (dataformat) {
+        case DataFormat::NSX: _reader.reset(new HDF5DataReader(filename)); break;
+        case DataFormat::NEXUS: _reader.reset(new NexusDataReader(filename)); break;
+        case DataFormat::RAW:
+            // NOTE: RawDataReader needs a list of frame files which should be given later
+            _reader.reset(new RawDataReader);
+            break;
+        default: throw std::invalid_argument("Data format is not recognized.");
     }
 
     _dataformat = dataformat;
@@ -97,7 +91,7 @@ void DataSet::finishRead()
 
 void DataSet::addDataFile(const std::string& filename, const std::string& extension)
 {
-    DataFormat datafmt {DataFormat::Unknown};
+    DataFormat datafmt{DataFormat::Unknown};
 
     // if reader not set yet, initialize a proper reader
     if (!_reader) {
@@ -108,7 +102,8 @@ void DataSet::addDataFile(const std::string& filename, const std::string& extens
         else if (ext == "nxs")
             datafmt = DataFormat::NEXUS;
         else if (ext == "raw")
-            throw std::runtime_error("DataSet '" + _name + "': Use 'addRawFrame(<filename>)' for reading raw files.");
+            throw std::runtime_error(
+                "DataSet '" + _name + "': Use 'addRawFrame(<filename>)' for reading raw files.");
         else
             throw std::runtime_error("DataSet '" + _name + "': Extension unknown.");
 
@@ -127,7 +122,8 @@ void DataSet::setRawReaderParameters(const RawDataReaderParameters& params)
 
     // prevent mixing data formats
     if (_dataformat != DataFormat::RAW)
-        throw std::runtime_error("DataSet '" + _name + "': Cannot set raw parameters since data format is not raw.");
+        throw std::runtime_error(
+            "DataSet '" + _name + "': Cannot set raw parameters since data format is not raw.");
 
     if (!_reader)
         _setReader(DataFormat::RAW);
@@ -135,7 +131,9 @@ void DataSet::setRawReaderParameters(const RawDataReaderParameters& params)
     RawDataReader& rawreader = *static_cast<RawDataReader*>(_reader.get());
     rawreader.setParameters(params);
 
-    nsxlog(Level::Info, "DataSet '" + _name + "': RawDataReader parameters set.");  // TODO: log parameter details
+    nsxlog(
+        Level::Info,
+        "DataSet '" + _name + "': RawDataReader parameters set."); // TODO: log parameter details
 }
 
 void DataSet::addRawFrame(const std::string& rawfilename)
@@ -145,7 +143,8 @@ void DataSet::addRawFrame(const std::string& rawfilename)
 
     // prevent mixing data formats
     if (_dataformat != DataFormat::RAW)
-        throw std::runtime_error("DataSet '" + _name + "': To read a raw frame, data format must be raw.");
+        throw std::runtime_error(
+            "DataSet '" + _name + "': To read a raw frame, data format must be raw.");
 
     RawDataReader& rawreader = *static_cast<RawDataReader*>(_reader.get());
 
@@ -157,12 +156,10 @@ int DataSet::dataAt(const std::size_t x, const std::size_t y, const std::size_t 
     const std::size_t nframes = nFrames(), ncols = nCols(), nrows = nRows();
     // Check that the voxel is inside the limit of the data
     if (z >= nframes || y >= ncols || x >= nrows) {
-        throw std::runtime_error
-        ("DataSet '" + _name + "': Out-of-bound access ("
-         + "x = " + std::to_string(x) + "/" + std::to_string(nrows)
-         + ", y = " + std::to_string(y) + "/" + std::to_string(ncols)
-         + ", z = " + std::to_string(z) + "/" + std::to_string(nframes)
-         + ")");
+        throw std::runtime_error(
+            "DataSet '" + _name + "': Out-of-bound access (" + "x = " + std::to_string(x) + "/"
+            + std::to_string(nrows) + ", y = " + std::to_string(y) + "/" + std::to_string(ncols)
+            + ", z = " + std::to_string(z) + "/" + std::to_string(nframes) + ")");
     }
 
     return frame(z)(x, y);
@@ -303,10 +300,11 @@ void DataSet::setName(const std::string& name)
     const std::string invalid_chars{"\\/"};
     const std::size_t sep = name.find_first_of(invalid_chars);
     if (sep != std::string::npos) {
-        nsxlog(Level::Warning, "Given name, '", name, "' for the DataSet includes disallowed characters.");
+        nsxlog(
+            Level::Warning, "Given name, '", name,
+            "' for the DataSet includes disallowed characters.");
         throw std::invalid_argument(
-            "DataSet name '" + name + "' "
-            + "must not include the characters " + invalid_chars);
+            "DataSet name '" + name + "' " + "must not include the characters " + invalid_chars);
     }
 
     _name = name;

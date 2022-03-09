@@ -17,8 +17,8 @@
 #include "gui/MainWin.h" // gGui
 #include "gui/utility/ColorButton.h"
 #include "gui/utility/LinkedComboBox.h"
-#include "gui/utility/Spoiler.h"
 #include "gui/utility/SafeSpinBox.h"
+#include "gui/utility/Spoiler.h"
 
 #include <QCheckBox>
 #include <QComboBox>
@@ -100,7 +100,8 @@ QCheckBox* GridFiller::addCheckBox(const QString& title, const QString& tooltip,
     return checkBox;
 }
 
-SafeDoubleSpinBox* GridFiller::addDoubleSpinBox(const QString& labelText, const QString& labelTooltip)
+SafeDoubleSpinBox* GridFiller::addDoubleSpinBox(
+    const QString& labelText, const QString& labelTooltip)
 {
     addLabel(labelText, labelTooltip);
 

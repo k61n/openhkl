@@ -16,10 +16,10 @@
 #include "base/fit/FitParameters.h"
 #include "base/fit/Minimizer.h"
 #include "base/geometry/Ellipsoid.h"
+#include "base/utils/Logger.h"
 #include "core/data/DataSet.h"
 #include "core/peak/Intensity.h"
 #include "core/peak/Peak3D.h"
-#include "base/utils/Logger.h"
 
 #include <Eigen/Cholesky>
 

@@ -110,7 +110,7 @@ class SubframeAutoIndexer : public QWidget {
     //! Toggle cursor mode
     void toggleCursorMode();
     //! Set the initial value of ki from the crosshair position
-    void setInitialKi(std::vector<nsx::InstrumentState>& states);
+    void setInitialKi(nsx::sptrDataSet data);
 
 
 

@@ -24,17 +24,17 @@
 
 namespace nsx {
 
-HDF5DataReader::HDF5DataReader(const std::string& filename) : BaseHDF5DataReader(filename) {}
+HDF5DataReader::HDF5DataReader(const std::string& filename) : BaseHDF5DataReader(filename) { }
 
 Eigen::MatrixXi HDF5DataReader::data(std::size_t frame)
 {
-    const std::size_t nframes = _dataset_out->nFrames(),
-        nrows = _dataset_out->nRows(),
-        ncols = _dataset_out->nCols();
+    const std::size_t nframes = _dataset_out->nFrames(), nrows = _dataset_out->nRows(),
+                      ncols = _dataset_out->nCols();
 
     if (frame >= nframes)
-        throw std::range_error("Frame index " + std::to_string(frame)
-                               + " is out of bounds (" + std::to_string(nframes) + ")");
+        throw std::range_error(
+            "Frame index " + std::to_string(frame) + " is out of bounds (" + std::to_string(nframes)
+            + ")");
 
     // Open HDF5 file (does nothing if already opened)
     open();

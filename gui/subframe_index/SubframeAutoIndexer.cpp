@@ -18,6 +18,7 @@
 #include "base/utils/ProgressHandler.h"
 #include "base/utils/Units.h"
 #include "core/algo/AutoIndexer.h"
+#include "core/data/DataTypes.h"
 #include "core/experiment/Experiment.h"
 #include "gui/MainWin.h" // gGui
 #include "gui/connect/Sentinel.h"
@@ -37,12 +38,15 @@
 #include "gui/views/UnitCellTableView.h"
 #include "gui/widgets/DetectorWidget.h"
 
+#include <QBoxLayout>
 #include <QCheckBox>
 #include <QFileInfo>
+#include <QGroupBox>
 #include <QHBoxLayout>
 #include <QHeaderView>
 #include <QLabel>
 #include <QMessageBox>
+#include <QPushButton>
 #include <QSplitter>
 #include <QVBoxLayout>
 #include <QBoxLayout>
@@ -53,9 +57,10 @@
 #include <QPushButton>
 #include <stdexcept>
 #include <qgridlayout.h>
+#include <qnamespace.h>
 #include <qobject.h>
 #include <qtabwidget.h>
-#include <QGroupBox>
+#include <stdexcept>
 
 
 SubframeAutoIndexer::SubframeAutoIndexer()
@@ -116,7 +121,7 @@ SubframeAutoIndexer::SubframeAutoIndexer()
 void SubframeAutoIndexer::setInputUp()
 {
     Spoiler* input_box = new Spoiler("Input");
-    GridFiller f(input_box, true);  
+    GridFiller f(input_box, true);
 
     _exp_combo = f.addLinkedCombo(ComboType::Experiment, "Experiment");
     _data_combo = f.addLinkedCombo(ComboType::DataSet, "Data set");
@@ -138,11 +143,9 @@ void SubframeAutoIndexer::setAdjustBeamUp()
     _set_initial_ki = new SpoilerCheck("Set initial direct beam position");
     GridFiller f(_set_initial_ki, true);
 
-    _beam_offset_x = f.addDoubleSpinBox(
-        "x offset", "Direct beam offset in x direction (pixels)");
+    _beam_offset_x = f.addDoubleSpinBox("x offset", "Direct beam offset in x direction (pixels)");
 
-    _beam_offset_y = f.addDoubleSpinBox(
-        "y offset", "Direct beam offset in y direction (pixels)");
+    _beam_offset_y = f.addDoubleSpinBox("y offset", "Direct beam offset in y direction (pixels)");
 
     _crosshair_size = new QSlider(Qt::Horizontal);
     QLabel* crosshair_label = new QLabel("Crosshair size");
@@ -175,17 +178,19 @@ void SubframeAutoIndexer::setAdjustBeamUp()
         _set_initial_ki->checkBox(), &QCheckBox::stateChanged, this,
         &SubframeAutoIndexer::toggleCursorMode);
     connect(
-        _beam_offset_x, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged),
-        this, &SubframeAutoIndexer::onBeamPosSpinChanged);
+        _beam_offset_x,
+        static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged), this,
+        &SubframeAutoIndexer::onBeamPosSpinChanged);
     connect(
-        _beam_offset_y, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged),
-        this, &SubframeAutoIndexer::onBeamPosSpinChanged);
+        _beam_offset_y,
+        static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged), this,
+        &SubframeAutoIndexer::onBeamPosSpinChanged);
     connect(
-        _crosshair_size, static_cast<void (QSlider::*)(int)>(&QSlider::valueChanged),
-        this, &SubframeAutoIndexer::changeCrosshair);
+        _crosshair_size, static_cast<void (QSlider::*)(int)>(&QSlider::valueChanged), this,
+        &SubframeAutoIndexer::changeCrosshair);
     connect(
-        _crosshair_linewidth, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged),
-        this, &SubframeAutoIndexer::changeCrosshair);
+        _crosshair_linewidth, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged), this,
+        &SubframeAutoIndexer::changeCrosshair);
 
     _left_layout->addWidget(_set_initial_ki);
 }
@@ -332,8 +337,8 @@ void SubframeAutoIndexer::refreshAll()
     if (!(_exp_combo->count() == 0)) {
         const auto all_data = gSession->experimentAt(_exp_combo->currentIndex())->allData();
         _detector_widget->updateDatasetList(all_data);
-        const auto dataset =
-            gSession->experimentAt(_exp_combo->currentIndex())->getData(_data_combo->currentIndex());
+        const auto dataset = gSession->experimentAt(_exp_combo->currentIndex())
+                                 ->getData(_data_combo->currentIndex());
         if (dataset)
             _max_frame->setMaximum(dataset->nFrames() - 1);
     }
@@ -342,9 +347,13 @@ void SubframeAutoIndexer::refreshAll()
 
 void SubframeAutoIndexer::setExperiments()
 {
+    if (gSession->experimentNames().empty())
+        return;
+
     _exp_combo->blockSignals(true);
     QString current_exp = _exp_combo->currentText();
     _exp_combo->clear();
+
 
     if (gSession->experimentNames().empty())
         return;
@@ -353,19 +362,18 @@ void SubframeAutoIndexer::setExperiments()
         _exp_combo->addItem(exp);
     _exp_combo->setCurrentText(current_exp);
 
-    if (!(_exp_combo->count() == 0)) {
-        updatePeakList();
-        updateDatasetList();
-        grabIndexerParameters();
-        refreshPeakTable();
-        const auto data = _detector_widget->currentData();
-        if (data) {
-            _beam_offset_x->setMaximum(static_cast<double>(data->nCols()) / 2.0);
-            _beam_offset_x->setMinimum(-static_cast<double>(data->nCols()) / 2.0);
-            _beam_offset_y->setMaximum(static_cast<double>(data->nRows()) / 2.0);
-            _beam_offset_y->setMinimum(-static_cast<double>(data->nRows()) / 2.0);
-        }
+    updatePeakList();
+    updateDatasetList();
+    grabIndexerParameters();
+    refreshPeakTable();
+    const auto data = _detector_widget->currentData();
+    if (data) {
+        _beam_offset_x->setMaximum(static_cast<double>(data->nCols()) / 2.0);
+        _beam_offset_x->setMinimum(-static_cast<double>(data->nCols()) / 2.0);
+        _beam_offset_y->setMaximum(static_cast<double>(data->nRows()) / 2.0);
+        _beam_offset_y->setMinimum(-static_cast<double>(data->nRows()) / 2.0);
     }
+
     _exp_combo->blockSignals(false);
 }
 
@@ -444,7 +452,7 @@ void SubframeAutoIndexer::updatePeakList()
         _solutions.clear();
         _selected_unit_cell = nullptr;
     }
-    _peak_combo->blockSignals(false);    
+    _peak_combo->blockSignals(false);
 }
 
 void SubframeAutoIndexer::refreshPeakTable()
@@ -495,12 +503,13 @@ void SubframeAutoIndexer::refreshPeakVisual()
 
 void SubframeAutoIndexer::grabIndexerParameters()
 {
-    if (_peak_combo->count() == 0 || _exp_combo->count() == 0)
+    if (_exp_combo->count() == 0)
         return;
-        
-    auto params =
-        gSession->experimentAt(_exp_combo->currentIndex())->experiment()->autoIndexer()->
-        parameters();
+
+    auto params = gSession->experimentAt(_exp_combo->currentIndex())
+                      ->experiment()
+                      ->autoIndexer()
+                      ->parameters();
     _min_frame->setValue(params->first_frame);
     _max_frame->setValue(params->last_frame);
     _d_min->setValue(params->d_min);
@@ -521,12 +530,13 @@ void SubframeAutoIndexer::grabIndexerParameters()
 
 void SubframeAutoIndexer::setIndexerParameters()
 {
-    if (_peak_combo->count() == 0 || _exp_combo->count() == 0)
+    if (_exp_combo->count() == 0)
         return;
 
-    auto params =
-        gSession->experimentAt(_exp_combo->currentIndex())->experiment()->autoIndexer()->
-        parameters();
+    auto params = gSession->experimentAt(_exp_combo->currentIndex())
+                      ->experiment()
+                      ->autoIndexer()
+                      ->parameters();
 
     params->first_frame = _min_frame->value();
     params->last_frame = _max_frame->value();
@@ -561,8 +571,7 @@ void SubframeAutoIndexer::runAutoIndexer()
     // Manally adjust the direct beam position
     if (_set_initial_ki->isChecked()) {
         auto data = _detector_widget->currentData();
-        auto& states = data->instrumentStates();
-        setInitialKi(states);
+        setInitialKi(data);
     }
 
     std::shared_ptr<nsx::ProgressHandler> handler(new nsx::ProgressHandler());
@@ -630,34 +639,29 @@ void SubframeAutoIndexer::buildSolutionsTable()
         const nsx::UnitCellCharacter sigma = cell->characterSigmas();
 
         ValueTupleItem* col1 = new ValueTupleItem(
-            QString::number(ch.a, 'f', 3)
-            + "(" + QString::number(sigma.a * 1000, 'f', 0) + ")",
+            QString::number(ch.a, 'f', 3) + "(" + QString::number(sigma.a * 1000, 'f', 0) + ")",
             ch.a, sigma.a);
         ValueTupleItem* col2 = new ValueTupleItem(
-            QString::number(ch.b, 'f', 3)
-            + "(" + QString::number(sigma.b * 1000, 'f', 0) + ")",
+            QString::number(ch.b, 'f', 3) + "(" + QString::number(sigma.b * 1000, 'f', 0) + ")",
             ch.b, sigma.b);
         ValueTupleItem* col3 = new ValueTupleItem(
-            QString::number(ch.c, 'f', 3)
-            + "(" + QString::number(sigma.c * 1000, 'f', 0) + ")",
+            QString::number(ch.c, 'f', 3) + "(" + QString::number(sigma.c * 1000, 'f', 0) + ")",
             ch.c, sigma.c);
         ValueTupleItem* col4 = new ValueTupleItem(
             QString::number(ch.alpha / nsx::deg, 'f', 3) + "("
-            + QString::number(sigma.alpha / nsx::deg * 1000, 'f', 0) + ")",
+                + QString::number(sigma.alpha / nsx::deg * 1000, 'f', 0) + ")",
             ch.alpha, sigma.alpha);
         ValueTupleItem* col5 = new ValueTupleItem(
             QString::number(ch.beta / nsx::deg, 'f', 3) + "("
-            + QString::number(sigma.beta / nsx::deg * 1000, 'f', 0) + ")",
+                + QString::number(sigma.beta / nsx::deg * 1000, 'f', 0) + ")",
             ch.beta, sigma.beta);
         ValueTupleItem* col6 = new ValueTupleItem(
             QString::number(ch.gamma / nsx::deg, 'f', 3) + "("
-            + QString::number(sigma.gamma / nsx::deg * 1000, 'f', 0) + ")",
+                + QString::number(sigma.gamma / nsx::deg * 1000, 'f', 0) + ")",
             ch.gamma, sigma.gamma);
-        ValueTupleItem* col7 = new ValueTupleItem(QString::number(volume, 'f', 3),
-            volume);
+        ValueTupleItem* col7 = new ValueTupleItem(QString::number(volume, 'f', 3), volume);
         QStandardItem* col8 = new QStandardItem(QString::fromStdString(cell->bravaisTypeSymbol()));
-        ValueTupleItem* col9 = new ValueTupleItem(QString::number(quality, 'f', 2) + "%",
-            quality);
+        ValueTupleItem* col9 = new ValueTupleItem(QString::number(quality, 'f', 2) + "%", quality);
 
         model->setItem(i, 0, col1);
         model->setItem(i, 1, col2);
@@ -741,18 +745,19 @@ void SubframeAutoIndexer::toggleUnsafeWidgets()
     if (_exp_combo->count() == 0 || _data_combo->count() == 0 || _peak_combo->count() == 0) {
         _solve_button->setEnabled(false);
         _save_button->setEnabled(false);
-    }    
+    }
     if (_peak_collection_model.rowCount() == 0 || _solutions.empty())
         _save_button->setEnabled(false);
 
-    nsx::PeakCollection* pc = nullptr; 
+    nsx::PeakCollection* pc = nullptr;
     std::string current_pc = _peak_combo->currentText().toStdString();
-    if (current_pc.size() == 0) return;
-    pc = gSession->currentProject()->experiment()->getPeakCollection( current_pc ); 
-    
-         
-   // _save_button->setEnabled(pc->isIntegrated());         
-    _solve_button->setEnabled(pc->isIntegrated()); 
+    if (current_pc.size() == 0)
+        return;
+    pc = gSession->currentProject()->experiment()->getPeakCollection(current_pc);
+
+
+    // _save_button->setEnabled(pc->isIntegrated());
+    _solve_button->setEnabled(pc->isIntegrated());
 }
 
 void SubframeAutoIndexer::onBeamPosChanged(QPointF pos)
@@ -786,13 +791,13 @@ void SubframeAutoIndexer::toggleCursorMode()
     }
 }
 
-void SubframeAutoIndexer::setInitialKi(std::vector<nsx::InstrumentState>& states)
+void SubframeAutoIndexer::setInitialKi(nsx::sptrDataSet data)
 {
-    auto data = _detector_widget->currentData();
     const auto* detector = data->diffractometer()->detector();
     const auto coords = _detector_widget->scene()->beamSetterCoords();
 
     nsx::DirectVector direct = detector->pixelPosition(coords.x(), coords.y());
-    for (auto state : states)
+    for (nsx::InstrumentState& state : data->instrumentStates())
         state.adjustKi(direct);
+    emit gGui->sentinel->instrumentStatesChanged();
 }

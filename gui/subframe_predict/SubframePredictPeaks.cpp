@@ -114,11 +114,9 @@ void SubframePredictPeaks::setAdjustBeamUp()
     _set_initial_ki = new SpoilerCheck("Set initial direct beam position");
     GridFiller f(_set_initial_ki, true);
 
-    _beam_offset_x = f.addDoubleSpinBox(
-        "x offset", "Direct beam offset in x direction (pixels)");
+    _beam_offset_x = f.addDoubleSpinBox("x offset", "Direct beam offset in x direction (pixels)");
 
-    _beam_offset_y = f.addDoubleSpinBox(
-        "y offset", "Direct beam offset in y direction (pixels)");
+    _beam_offset_y = f.addDoubleSpinBox("y offset", "Direct beam offset in y direction (pixels)");
 
     _crosshair_size = new QSlider(Qt::Horizontal);
     QLabel* crosshair_label = new QLabel("Crosshair size");
@@ -151,17 +149,19 @@ void SubframePredictPeaks::setAdjustBeamUp()
         _set_initial_ki->checkBox(), &QCheckBox::stateChanged, this,
         &SubframePredictPeaks::toggleCursorMode);
     connect(
-        _beam_offset_x, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged),
-        this, &SubframePredictPeaks::onBeamPosSpinChanged);
+        _beam_offset_x,
+        static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged), this,
+        &SubframePredictPeaks::onBeamPosSpinChanged);
     connect(
-        _beam_offset_y, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged),
-        this, &SubframePredictPeaks::onBeamPosSpinChanged);
+        _beam_offset_y,
+        static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged), this,
+        &SubframePredictPeaks::onBeamPosSpinChanged);
     connect(
-        _crosshair_size, static_cast<void (QSlider::*)(int)>(&QSlider::valueChanged),
-        this, &SubframePredictPeaks::changeCrosshair);
+        _crosshair_size, static_cast<void (QSlider::*)(int)>(&QSlider::valueChanged), this,
+        &SubframePredictPeaks::changeCrosshair);
     connect(
-        _crosshair_linewidth, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged),
-        this, &SubframePredictPeaks::changeCrosshair);
+        _crosshair_linewidth, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged), this,
+        &SubframePredictPeaks::changeCrosshair);
 
     _left_layout->addWidget(_set_initial_ki);
 }
@@ -171,10 +171,10 @@ void SubframePredictPeaks::setRefineKiUp()
     Spoiler* ki_box = new Spoiler("Refine direct beam position");
     GridFiller f(ki_box, true);
 
-    _n_batches_spin = f.addSpinBox(
-        "Number of batches", "Number of batches for refining incident wavevector");
+    _n_batches_spin =
+        f.addSpinBox("Number of batches", "Number of batches for refining incident wavevector");
     _max_iter_spin = f.addSpinBox(
-            "Maximum iterations", "Maximum number of iterations for least squares minimisation");
+        "Maximum iterations", "Maximum number of iterations for least squares minimisation");
     _residual_combo = f.addCombo("Residual type", "Residual type for refinement");
     _direct_beam = f.addCheckBox(
         "Show direct beam", "Show position of direct beam computed from instrument states", 1);
@@ -262,12 +262,11 @@ void SubframePredictPeaks::setShapeCollectionUp()
     _sigma_d = f.addDoubleSpinBox(
         QString("Beam Divergence ") + QString(QChar(0x03C3)),
         "Variance arising from beam divergence");
-    _min_strength = f.addDoubleSpinBox("Minimum I/" + QString(QChar(0x03C3)),
-            "Minimum strength for peak to be included in shape collection");
-    _min_d =
-        f.addDoubleSpinBox("d min", "Minimum d for peak to be included in shape collection");
-    _max_d =
-        f.addDoubleSpinBox("d max", "Minimum d for peak to be included in shape collection");
+    _min_strength = f.addDoubleSpinBox(
+        "Minimum I/" + QString(QChar(0x03C3)),
+        "Minimum strength for peak to be included in shape collection");
+    _min_d = f.addDoubleSpinBox("d min", "Minimum d for peak to be included in shape collection");
+    _max_d = f.addDoubleSpinBox("d max", "Minimum d for peak to be included in shape collection");
     _peak_end = f.addDoubleSpinBox("Peak end", "(sigmas) - scaling factor for peak region");
     _bkg_begin =
         f.addDoubleSpinBox("Bkg begin:", "(sigmas) - scaling factor for lower limit of background");
@@ -552,9 +551,8 @@ void SubframePredictPeaks::refreshPeakCombo()
     _found_peaks_combo->blockSignals(true);
     QString current_peaks = _found_peaks_combo->currentText();
     _found_peaks_combo->clear();
-    _found_peaks_combo->addItems(
-        gSession->experimentAt(_exp_combo->currentIndex())->
-        getPeakCollectionNames(nsx::listtype::FOUND));
+    _found_peaks_combo->addItems(gSession->experimentAt(_exp_combo->currentIndex())
+                                     ->getPeakCollectionNames(nsx::listtype::FOUND));
     _found_peaks_combo->setCurrentText(current_peaks);
     _found_peaks_combo->blockSignals(false);
 }
@@ -571,15 +569,15 @@ void SubframePredictPeaks::adjustDirectBeam()
     refreshPeakTable();
 }
 
-void SubframePredictPeaks::setInitialKi(std::vector<nsx::InstrumentState>& states)
+void SubframePredictPeaks::setInitialKi(nsx::sptrDataSet data)
 {
-    auto data = _detector_widget->currentData();
     const auto* detector = data->diffractometer()->detector();
     const auto coords = _detector_widget->scene()->beamSetterCoords();
 
     nsx::DirectVector direct = detector->pixelPosition(coords.x(), coords.y());
-    for (auto state : states)
+    for (nsx::InstrumentState& state : data->instrumentStates())
         state.adjustKi(direct);
+    emit gGui->sentinel->instrumentStatesChanged();
 }
 
 void SubframePredictPeaks::refineKi()
@@ -598,10 +596,9 @@ void SubframePredictPeaks::refineKi()
     setRefinerParameters();
 
     if (_set_initial_ki->isChecked())
-        setInitialKi(states);
+        setInitialKi(data);
 
-    std::vector<nsx::DetectorEvent> old_beam =
-        nsx::algo::getDirectBeamEvents(states, *detector);
+    std::vector<nsx::DetectorEvent> old_beam = nsx::algo::getDirectBeamEvents(states, *detector);
     refreshPeakVisual();
 
     params->refine_ki = true;
@@ -624,6 +621,7 @@ void SubframePredictPeaks::refineKi()
         peak->setUnitCell(cell);
 
     _old_direct_beam_events = _direct_beam_events;
+    emit gGui->sentinel->instrumentStatesChanged();
 
     gGui->setReady(true);
 }
@@ -633,9 +631,8 @@ void SubframePredictPeaks::runPrediction()
     gGui->setReady(false);
     if (_set_initial_ki->isChecked()) {
         auto data = _detector_widget->currentData();
-        auto& states = data->instrumentStates();
         adjustDirectBeam();
-        setInitialKi(states);
+        setInitialKi(data);
     }
     try {
         auto* experiment = gSession->experimentAt(_exp_combo->currentIndex())->experiment();
@@ -679,7 +676,7 @@ void SubframePredictPeaks::runPrediction()
 
 void SubframePredictPeaks::showDirectBeamEvents()
 {
-    if (_direct_beam->isChecked()){
+    if (_direct_beam->isChecked()) {
         _detector_widget->scene()->showDirectBeam(true);
 
         auto* expt = gSession->experimentAt(_exp_combo->currentIndex())->experiment();
@@ -707,7 +704,8 @@ void SubframePredictPeaks::assignPeakShapes()
     gGui->setReady(false);
     auto* experiment = gSession->experimentAt(_exp_combo->currentIndex())->experiment();
     auto data = experiment->getData(_detector_widget->dataCombo()->currentText().toStdString());
-    auto* found_peaks = experiment->getPeakCollection(_found_peaks_combo->currentText().toStdString());
+    auto* found_peaks =
+        experiment->getPeakCollection(_found_peaks_combo->currentText().toStdString());
 
     setShapeCollectionParameters();
 
@@ -747,8 +745,8 @@ void SubframePredictPeaks::assignPeakShapes()
     _shapes_assigned = true;
     toggleUnsafeWidgets();
     gGui->statusBar()->showMessage(
-        QString::number(_peak_collection.numberOfValid()) + "/" +
-        QString::number(_peak_collection.numberOfPeaks()) + " predicted peaks with valid shapes");
+        QString::number(_peak_collection.numberOfValid()) + "/"
+        + QString::number(_peak_collection.numberOfPeaks()) + " predicted peaks with valid shapes");
     gGui->setReady(true);
 }
 
@@ -848,17 +846,18 @@ void SubframePredictPeaks::toggleUnsafeWidgets()
         _sigma_m->setEnabled(false);
     }
 
-    nsx::PeakCollection* pc = nullptr; 
+    nsx::PeakCollection* pc = nullptr;
     std::string current_pc = _found_peaks_combo->currentText().toStdString();
-    if (current_pc.size() == 0) return;
-    pc = gSession->currentProject()->experiment()->getPeakCollection( current_pc );   
+    if (current_pc.size() == 0)
+        return;
+    pc = gSession->currentProject()->experiment()->getPeakCollection(current_pc);
 
     bool is_indexed = pc->isIndexed();
     _predict_button->setEnabled(is_indexed);
     _save_button->setEnabled(is_indexed);
-    _assign_peak_shapes->setEnabled(is_indexed);    
+    _assign_peak_shapes->setEnabled(is_indexed);
     _refine_ki_button->setEnabled(is_indexed);
-    _direct_beam->setEnabled(is_indexed);     
+    _direct_beam->setEnabled(is_indexed);
 }
 
 DetectorWidget* SubframePredictPeaks::detectorWidget()

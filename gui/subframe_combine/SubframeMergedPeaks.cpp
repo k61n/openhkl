@@ -99,8 +99,7 @@ SubframeMergedPeaks::SubframeMergedPeaks()
 void SubframeMergedPeaks::grabMergeParameters()
 {
     auto params =
-        gSession->experimentAt(_exp_drop->currentIndex())->experiment()->peakMerger()->
-        parameters();
+        gSession->experimentAt(_exp_drop->currentIndex())->experiment()->peakMerger()->parameters();
 
     _d_min->setValue(params->d_min);
     _d_max->setValue(params->d_max);
@@ -116,8 +115,7 @@ void SubframeMergedPeaks::setMergeParameters()
         return;
 
     auto params =
-        gSession->experimentAt(_exp_drop->currentIndex())->experiment()->peakMerger()->
-        parameters();
+        gSession->experimentAt(_exp_drop->currentIndex())->experiment()->peakMerger()->parameters();
 
     params->d_min = _d_min->value();
     params->d_max = _d_max->value();
@@ -384,7 +382,7 @@ void SubframeMergedPeaks::refreshPeakCombos()
     _peaks1_list.append(tmp);
     tmp.clear();
     tmp = gSession->experimentAt(_exp_drop->currentIndex())
-        ->getPeakCollectionNames(nsx::listtype::FILTERED);
+              ->getPeakCollectionNames(nsx::listtype::FILTERED);
     _peaks1_list.append(tmp);
     tmp.clear();
     tmp = gSession->experimentAt(_exp_drop->currentIndex())
@@ -404,7 +402,7 @@ void SubframeMergedPeaks::refreshPeakCombos()
     _peaks2_list.append(tmp);
     tmp.clear();
     tmp = gSession->experimentAt(_exp_drop->currentIndex())
-        ->getPeakCollectionNames(nsx::listtype::FILTERED);
+              ->getPeakCollectionNames(nsx::listtype::FILTERED);
     _peaks2_list.append(tmp);
     tmp.clear();
     tmp = gSession->experimentAt(_exp_drop->currentIndex())

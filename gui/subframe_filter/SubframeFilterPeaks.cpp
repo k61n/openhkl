@@ -283,8 +283,8 @@ void SubframeFilterPeaks::setFigureUp()
     _detector_widget->linkPeakModel(&_peak_collection_model);
 
     connect(
-        _detector_widget->scene(), &DetectorScene::signalUpdateDetectorScene,
-        this, &SubframeFilterPeaks::refreshPeakTable);
+        _detector_widget->scene(), &DetectorScene::signalUpdateDetectorScene, this,
+        &SubframeFilterPeaks::refreshPeakTable);
     connect(
         _detector_widget->scene(), &DetectorScene::signalSelectedPeakItemChanged, this,
         &SubframeFilterPeaks::changeSelected);
@@ -369,8 +369,10 @@ void SubframeFilterPeaks::grabFilterParameters()
     if (_peak_combo->count() == 0 || _exp_combo->count() == 0)
         return;
 
-    auto* params =
-        gSession->experimentAt(_exp_combo->currentIndex())->experiment()->peakFilter()->parameters();
+    auto* params = gSession->experimentAt(_exp_combo->currentIndex())
+                       ->experiment()
+                       ->peakFilter()
+                       ->parameters();
 
     _tolerance->setValue(params->unit_cell_tolerance);
     _strength_min->setValue(params->strength_min);

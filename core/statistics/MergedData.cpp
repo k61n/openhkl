@@ -17,12 +17,9 @@
 
 namespace nsx {
 
-    MergedData::MergedData(
-        std::vector<PeakCollection*> peak_collections, bool friedel, int fmin, int fmax)
-    : _friedel(friedel)
-    , _merged_peak_set()
-    , _frame_min(fmin)
-    , _frame_max(fmax)
+MergedData::MergedData(
+    std::vector<PeakCollection*> peak_collections, bool friedel, int fmin, int fmax)
+    : _friedel(friedel), _merged_peak_set(), _frame_min(fmin), _frame_max(fmax)
 {
     _peak_collections = peak_collections;
     const UnitCell* unit_cell{nullptr};
@@ -58,10 +55,7 @@ namespace nsx {
 }
 
 MergedData::MergedData(SpaceGroup space_group, bool friedel, int fmin, int fmax)
-    : _friedel(friedel)
-    , _merged_peak_set()
-    , _frame_min(fmin)
-    , _frame_max(fmax)
+    : _friedel(friedel), _merged_peak_set(), _frame_min(fmin), _frame_max(fmax)
 {
     _group = space_group;
 }

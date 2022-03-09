@@ -20,7 +20,6 @@
 #include "core/shape/PeakFilter.h"
 #include "gui/MainWin.h" // gGui
 #include "gui/connect/Sentinel.h"
-#include "gui/subwindows/DetectorWindow.h"
 #include "gui/dialogs/ListNameDialog.h"
 #include "gui/frames/ProgressView.h"
 #include "gui/graphics/DetectorScene.h"
@@ -29,6 +28,7 @@
 #include "gui/models/Project.h"
 #include "gui/models/Session.h"
 #include "gui/subframe_refiner/RefinerTables.h"
+#include "gui/subwindows/DetectorWindow.h"
 #include "gui/utility/ColorButton.h"
 #include "gui/utility/GridFiller.h"
 #include "gui/utility/LinkedComboBox.h"
@@ -126,8 +126,8 @@ void SubframeRefiner::setInputUp()
         "Use refined cells", "Use unit cells generated per batch during previous refinement", 1);
     _n_batches_spin = f.addSpinBox(
         "Number of batches", "Number of batches of equal numbers of peaks for refinement");
-    _max_iter_spin = f.addSpinBox(
-        "Maximum iterations", "Maximum number of iterations for NLLS minimsation");
+    _max_iter_spin =
+        f.addSpinBox("Maximum iterations", "Maximum number of iterations for NLLS minimsation");
 
     _batch_cell_check->setChecked(false);
     _n_batches_spin->setMinimum(1);
@@ -155,8 +155,8 @@ void SubframeRefiner::setRefinerFlagsUp()
     auto refiner_flags_box = new Spoiler("Parameters to refine");
     GridFiller f(refiner_flags_box, true);
 
-    _residual_combo = f.addCombo(
-        "Residual type", "Type of residual to use in least squares refinement");
+    _residual_combo =
+        f.addCombo("Residual type", "Type of residual to use in least squares refinement");
     _refineUB = f.addCheckBox("Cell vectors");
     _refineSamplePosition = f.addCheckBox("Sample position");
     _refineSampleOrientation = f.addCheckBox("Sample orientation");
@@ -190,12 +190,12 @@ void SubframeRefiner::refreshTables()
 
 void SubframeRefiner::updateExptList()
 {
+    if (gSession->experimentNames().empty())
+        return;
+
     _exp_combo->blockSignals(true);
     QString current_exp = _exp_combo->currentText();
     _exp_combo->clear();
-
-    if (gSession->experimentNames().empty())
-        return;
 
     for (const QString& exp : gSession->experimentNames())
         _exp_combo->addItem(exp);
@@ -311,8 +311,13 @@ void SubframeRefiner::refine()
         if (params->refine_ki)
             ++n_checked;
         if (n_checked > 0) { // Check that we have selected at least one parameter set
-            refiner->makeBatches(states, peaks->getPeakList(), cell);
-            _refine_success = refiner->refine();
+            // TODO: Work out why calling the refiner directly doesn't work
+            // refiner->makeBatches(states, peaks->getPeakList(), cell);
+            // _refine_success = refiner->refine();
+            if (_batch_cell_check->isChecked())
+                _refine_success = expt->refine(peaks, data.get());
+            else
+                _refine_success = expt->refine(peaks, data.get(), cell);
         }
 
         states = data->instrumentStates();
@@ -335,6 +340,7 @@ void SubframeRefiner::refine()
         gGui->statusBar()->showMessage("Refinement success");
     else
         gGui->statusBar()->showMessage("Refinement failed");
+    emit gGui->sentinel->instrumentStatesChanged();
     gGui->setReady(true);
 }
 
@@ -472,7 +478,8 @@ void SubframeRefiner::updatePeaks()
     _unrefined_model.setRoot(&_unrefined_collection_item);
 }
 
-void SubframeRefiner::setPeakViewWidgetUp(PeakViewWidget* peak_widget, QString name) {
+void SubframeRefiner::setPeakViewWidgetUp(PeakViewWidget* peak_widget, QString name)
+{
 
     Spoiler* preview_spoiler = new Spoiler(name);
     preview_spoiler->setContentLayout(*peak_widget, true);
@@ -613,8 +620,8 @@ void SubframeRefiner::toggleUnsafeWidgets()
     _batch_cell_check->setEnabled(false);
     _update_button->setEnabled(false);
     _cell_combo->setEnabled(true);
-    //if (!(_predicted_combo->count() == 0))
-    //    _update_button->setEnabled(true);
+    // if (!(_predicted_combo->count() == 0))
+    //     _update_button->setEnabled(true);
     if (_exp_combo->count() == 0 || _data_combo->count() == 0 || _peak_combo->count() == 0
         || _cell_combo->count() == 0) {
         _refine_button->setEnabled(false);
@@ -633,11 +640,12 @@ void SubframeRefiner::toggleUnsafeWidgets()
 
     nsx::PeakCollection* pc = nullptr;
     std::string current_pc = _peak_combo->currentText().toStdString();
-    if (current_pc.size() == 0) return;
-    pc = gSession->currentProject()->experiment()->getPeakCollection( current_pc );
+    if (current_pc.size() == 0)
+        return;
+    pc = gSession->currentProject()->experiment()->getPeakCollection(current_pc);
 
-    if (  pc->isIndexed() ){
-         _refine_button->setEnabled(true);
-         _update_button->setEnabled(true);
+    if (pc->isIndexed()) {
+        _refine_button->setEnabled(true);
+        _update_button->setEnabled(true);
     }
 }

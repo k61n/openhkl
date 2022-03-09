@@ -24,8 +24,9 @@
 
 #include "base/parser/EigenToVector.h"
 #include "base/parser/Parser.h"
-#include "base/utils/Units.h"
 #include "base/utils/StringIO.h" // join
+#include "base/utils/Units.h"
+#include "core/data/DataSet.h"
 #include "core/detector/Detector.h"
 #include "core/gonio/Component.h"
 #include "core/gonio/Gonio.h"
@@ -34,14 +35,14 @@
 #include "core/instrument/Sample.h"
 #include "core/instrument/Source.h"
 #include "core/raw/DataKeys.h"
-#include "core/data/DataSet.h"
 
 namespace nsx {
 
 RawDataReader::RawDataReader()
     // NOTE: RawDataReader needs a list of frame files which should be given later
     : IDataReader("::NO-FILENAME::"), _parameters(), _length(0), _data()
-{}
+{
+}
 
 bool RawDataReader::initRead()
 {
@@ -49,7 +50,8 @@ bool RawDataReader::initRead()
     if (!init_success)
         throw std::runtime_error("RawDataReader::initRead(): initialisation failed");
 
-    // NOTE: For correctness, this must be called after setting the parameters and frame files. Otherwise, results in undefined behaviour.
+    // NOTE: For correctness, this must be called after setting the parameters and frame files.
+    // Otherwise, results in undefined behaviour.
     isInitialized = true;
     return isInitialized;
 }
@@ -61,8 +63,7 @@ void RawDataReader::addFrame(const std::string& filename)
     _filenames.push_back(filename);
 
     // Update sources list
-    _dataset_out->metadata().add<std::string>(nsx::at_datasetSources,
-                                              nsx::join(_filenames, ", "));
+    _dataset_out->metadata().add<std::string>(nsx::at_datasetSources, nsx::join(_filenames, ", "));
 
     const std::size_t nframes = _filenames.size();
     _dataset_out->metadata().add<int>(nsx::at_frameCount, nframes);
@@ -112,15 +113,14 @@ void RawDataReader::setParameters(const RawDataReaderParameters& parameters)
 {
     _parameters = parameters;
 
-    const std::size_t nrows = _dataset_out->nRows(),
-        ncols = _dataset_out->nCols();
+    const std::size_t nrows = _dataset_out->nRows(), ncols = _dataset_out->nCols();
 
     _length = _parameters.bpp * nrows * ncols;
     auto& mono = _dataset_out->diffractometer()->source().selectedMonochromator();
     mono.setWavelength(_parameters.wavelength);
 
-    _dataset_out->metadata().add<std::string>(nsx::at_diffractometer,
-                                            _dataset_out->diffractometer()->name());
+    _dataset_out->metadata().add<std::string>(
+        nsx::at_diffractometer, _dataset_out->diffractometer()->name());
     _dataset_out->metadata().add<double>(nsx::at_wavelength, _parameters.wavelength);
     _dataset_out->metadata().add<double>(nsx::at_monitorSum, 0.0);
     _dataset_out->metadata().add<int>(nsx::at_numor, 0.0);
@@ -133,8 +133,7 @@ void RawDataReader::swapEndian()
     if (!_parameters.swap_endian)
         return;
 
-    const std::size_t nrows = _dataset_out->nRows(),
-        ncols = _dataset_out->nCols();
+    const std::size_t nrows = _dataset_out->nRows(), ncols = _dataset_out->nCols();
 
     for (std::size_t i = 0; i < nrows * ncols; ++i) {
         for (std::size_t byte = 0; byte < _parameters.bpp / 2; ++byte) {
