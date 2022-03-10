@@ -293,9 +293,8 @@ void SubframeRefiner::refine()
 
         _detector_widget->scene()->showDirectBeam(true);
         auto* detector = data->diffractometer()->detector();
-        std::vector<nsx::DetectorEvent> old_beam =
-            nsx::algo::getDirectBeamEvents(states, *detector);
-        _detector_widget->scene()->linkOldDirectBeamPositions(&old_beam);
+        _old_direct_beam_events = nsx::algo::getDirectBeamEvents(states, *detector);
+        _detector_widget->scene()->linkOldDirectBeamPositions(&_old_direct_beam_events);
 
         setRefinerParameters();
 
@@ -321,9 +320,8 @@ void SubframeRefiner::refine()
         }
 
         states = data->instrumentStates();
-        std::vector<nsx::DetectorEvent> new_beam =
-            nsx::algo::getDirectBeamEvents(states, *detector);
-        _detector_widget->scene()->linkDirectBeamPositions(&new_beam);
+        _direct_beam_events = nsx::algo::getDirectBeamEvents(states, *detector);
+        _detector_widget->scene()->linkDirectBeamPositions(&_direct_beam_events);
         refreshPeakVisual();
         gGui->detector_window->refreshAll();
 
