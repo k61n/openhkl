@@ -58,8 +58,8 @@
 #include <QPixmap>
 #include <QToolTip>
 #include <QtGlobal>
-#include <qgraphicsitem.h>
-#include <qpainterpath.h>
+#include <QGraphicsItem>
+#include <QPainterPath>
 
 QPointF DetectorScene::_current_beam_position = {0, 0};
 
