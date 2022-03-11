@@ -48,7 +48,6 @@
 #include <QLabel>
 #include <QScrollBar>
 #include <QSpacerItem>
-#include <sstream>
 
 SubframeRefiner::SubframeRefiner()
     : _refine_success(false)
@@ -97,6 +96,12 @@ SubframeRefiner::SubframeRefiner()
     connect(
         _peak_combo, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this,
         &SubframeRefiner::refreshPeakVisual);
+    connect(
+        _predicted_combo, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
+        this, [=]() {
+            updatePeaks();
+            refreshPeakVisual();
+        });
 
     _right_element->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     _right_element->addWidget(tab_widget);
@@ -462,6 +467,7 @@ void SubframeRefiner::setUpdateUp()
 
 void SubframeRefiner::updatePeaks()
 {
+    QSignalBlocker blocker(_predicted_combo);
     auto* expt = gSession->experimentAt(_exp_combo->currentIndex())->experiment();
 
     if (_predicted_combo->count() == 0)
