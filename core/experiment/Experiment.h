@@ -108,10 +108,10 @@ class Experiment {
     //! Get the number of peak collections
     int numPeakCollections() const;
     //! Create a new peak collection from peaks caught by a filter
-    void acceptFilter(
+    bool acceptFilter(
         std::string name, PeakCollection* collection, listtype lt = listtype::FILTERED);
     //! Duplicate a peak collection (deep copy) for comparison after some process
-    void clonePeakCollection(std::string name, std::string new_name);
+    bool clonePeakCollection(std::string name, std::string new_name);
 
     // Unit cells
     //! Add a unit cell to the experiment

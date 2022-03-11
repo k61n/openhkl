@@ -407,14 +407,14 @@ int Experiment::numPeakCollections() const
     return _peak_handler->numPeakCollections();
 }
 
-void Experiment::acceptFilter(std::string name, PeakCollection* collection, listtype lt)
+bool Experiment::acceptFilter(std::string name, PeakCollection* collection, listtype lt)
 {
-    _peak_handler->acceptFilter(name, collection, lt);
+    return _peak_handler->acceptFilter(name, collection, lt);
 }
 
-void Experiment::clonePeakCollection(std::string name, std::string new_name)
+bool Experiment::clonePeakCollection(std::string name, std::string new_name)
 {
-    _peak_handler->clonePeakCollection(name, new_name);
+    return _peak_handler->clonePeakCollection(name, new_name);
 }
 
 // Unit cell handler methods
