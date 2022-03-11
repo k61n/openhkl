@@ -212,7 +212,7 @@ class Experiment {
 
     // auto generating names for collections
     std::string GeneratePeakCollectionName();
-    std::string GenerareUnitCellName();
+    std::string GenerateUnitCellName();
 
  private: // private variables
     std::string _name; //!< The name of this experiment

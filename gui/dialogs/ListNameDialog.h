@@ -26,7 +26,7 @@ class ListNameDialog : public QDialog {
     QString listName();
 
  private:
-    QLineEdit* name_;
+    QLineEdit* _name;
 };
 
 #endif // NSX_GUI_DIALOGS_LISTNAMEDIALOG_H

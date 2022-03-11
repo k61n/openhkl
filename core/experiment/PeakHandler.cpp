@@ -15,6 +15,7 @@
 #include "core/experiment/PeakHandler.h"
 #include "base/utils/Logger.h"
 #include "core/peak/Peak3D.h"
+#include <stdexcept>
 
 namespace nsx {
 
@@ -119,14 +120,21 @@ bool PeakHandler::acceptFilter(std::string name, PeakCollection* collection, lis
 bool PeakHandler::clonePeakCollection(std::string name, std::string new_name)
 {
     if (name == new_name) return false;
-    addEmptyCollection(new_name, getPeakCollection(name)->type());
+    if (!addEmptyCollection(new_name, getPeakCollection(name)->type())){
+        return false;
+    }
     getPeakCollection(new_name)->populate(getPeakCollection(name)->getPeakList());
     return hasPeakCollection(name);
 }
 
 std::string PeakHandler::GenerateName()
-{
-    return std::string("PeakCollectionNr.:") + std::to_string(numPeakCollections()+1);
+{     
+    int n = 4; // number of digits
+    std::string str = std::to_string(numPeakCollections()+1);
+    if (str.size() > n){//
+        return "Please enter name for this collection";
+    }
+    return std::string("PeakCollectionNr") +  std::string( n - str.size(), '0').append( str );
 }
 
 } // namespace nsx

@@ -50,7 +50,7 @@
 #include <QScrollBar>
 #include <QSpacerItem>
 #include <QTableWidgetItem>
-#include <qmessagebox.h>
+#include <QMessageBox>
 
 SubframeFindPeaks::SubframeFindPeaks()
     : QWidget()

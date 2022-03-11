@@ -102,14 +102,6 @@ Project* Session::createProject(QString experimentName, QString instrumentName)
             return nullptr;
         }
     }
-
-    /*for (const QString& name : experimentNames()) {
-        if (name == experimentName) {
-            QMessageBox::critical(nullptr, "Error",
-               "Experiment name, '" + experimentName + "' already exists");
-            return nullptr;
-        }
-    }*/
     return new Project(experimentName, instrumentName);
 }
 

@@ -200,7 +200,12 @@ void UnitCellHandler::mergeBatchCells(CellMap map)
 
 std::string UnitCellHandler::GenerateUnitCellName()
 {
-    return std::string("UnitCellNr.:") + std::to_string(numUnitCells()+1);
+    int n = 4; // number of digits
+    std::string str = std::to_string(numUnitCells()+1);
+    if (str.size() > n){//
+        return "Please enter name for this unit cell";
+    }
+    return std::string("UnitCellNr") +  std::string( n - str.size(), '0').append( str );
 }
 
 } // namespace nsx

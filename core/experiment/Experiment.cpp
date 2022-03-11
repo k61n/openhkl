@@ -510,7 +510,7 @@ std::string Experiment::GeneratePeakCollectionName()
     return _peak_handler->GenerateName();
 }
 
-std::string Experiment::GenerareUnitCellName()
+std::string Experiment::GenerateUnitCellName()
 {
     return _cell_handler->GenerateUnitCellName();
 }
