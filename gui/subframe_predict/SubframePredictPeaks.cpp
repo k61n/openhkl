@@ -598,7 +598,7 @@ void SubframePredictPeaks::refineKi()
     if (_set_initial_ki->isChecked())
         setInitialKi(data);
 
-    std::vector<nsx::DetectorEvent> old_beam = nsx::algo::getDirectBeamEvents(states, *detector);
+    _old_direct_beam_events = nsx::algo::getDirectBeamEvents(states, *detector);
     refreshPeakVisual();
 
     params->refine_ki = true;
