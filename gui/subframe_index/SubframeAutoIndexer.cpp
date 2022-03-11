@@ -49,18 +49,11 @@
 #include <QPushButton>
 #include <QSplitter>
 #include <QVBoxLayout>
-#include <QBoxLayout>
-#include <QCheckBox>
-#include <QMessageBox>
-#include <qmessagebox.h>
 #include <qnamespace.h>
-#include <QPushButton>
 #include <stdexcept>
-#include <qgridlayout.h>
-#include <qnamespace.h>
-#include <qobject.h>
-#include <qtabwidget.h>
-#include <stdexcept>
+#include <QGridLayout>
+#include <QObject>
+#include <QTabWidget>
 
 
 SubframeAutoIndexer::SubframeAutoIndexer()

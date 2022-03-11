@@ -27,10 +27,6 @@
 #include <QMessageBox>
 #include <QSettings>
 #include <QSpacerItem>
-#include <qboxlayout.h>
-#include <qmessagebox.h>
-#include <qnamespace.h>
-#include <qtablewidget.h>
 
 SubframeHome::SubframeHome()
 {
