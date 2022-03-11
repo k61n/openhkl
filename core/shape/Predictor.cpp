@@ -22,7 +22,6 @@
 #include "core/instrument/Monochromator.h"
 #include "core/peak/Peak3D.h"
 #include "core/peak/Qs2Events.h"
-#include "core/shape/PeakCollection.h"
 
 namespace nsx {
 
