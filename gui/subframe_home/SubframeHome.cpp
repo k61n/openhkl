@@ -151,12 +151,9 @@ void SubframeHome::_setRightLayout(QHBoxLayout* main_layout)
     _open_experiments_model = std::make_unique<ExperimentModel>();
     _open_experiments_view = new ExperimentTableView();
     _open_experiments_view->setModel(_open_experiments_model.get());
-    /*connect(
-        _open_experiments_view, &ExperimentTableView::doubleClicked, this,
-        &SubframeHome::_switchCurrentExperiment);*/
     connect(
         _open_experiments_view, &ExperimentTableView::clicked, this,
-        &SubframeHome::toggleUnsafeWidgets);
+        &SubframeHome::_switchCurrentExperiment);
 
     right->addWidget(_open_experiments_view);
 
