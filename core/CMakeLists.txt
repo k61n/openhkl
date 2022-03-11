@@ -6,6 +6,7 @@ add_library(${lib} ${sources})
 
 target_include_directories(${lib}
     PUBLIC
+    ${CMAKE_BINARY_DIR} # for manifest.h
     ${XSection_INCLUDE_DIR}
     PRIVATE
     ${CMAKE_SOURCE_DIR}
