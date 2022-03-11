@@ -620,12 +620,14 @@ QList<PlotCheckBox*> SubframeRefiner::plotCheckBoxes() const
 
 void SubframeRefiner::toggleUnsafeWidgets()
 {
-    _refine_button->setEnabled(false);
+    _refine_button->setEnabled(true);
     _batch_cell_check->setEnabled(false);
     _update_button->setEnabled(false);
     _cell_combo->setEnabled(true);
-    // if (!(_predicted_combo->count() == 0))
-    //     _update_button->setEnabled(true);
+
+    if (!(_predicted_combo->count() == 0))
+        _update_button->setEnabled(true);
+
     if (_exp_combo->count() == 0 || _data_combo->count() == 0 || _peak_combo->count() == 0
         || _cell_combo->count() == 0) {
         _refine_button->setEnabled(false);
@@ -648,8 +650,8 @@ void SubframeRefiner::toggleUnsafeWidgets()
         return;
     pc = gSession->currentProject()->experiment()->getPeakCollection(current_pc);
 
-    if (pc->isIndexed()) {
-        _refine_button->setEnabled(true);
-        _update_button->setEnabled(true);
+    if (!pc->isIndexed()) {
+        _refine_button->setEnabled(false);
+        _update_button->setEnabled(false);
     }
 }
