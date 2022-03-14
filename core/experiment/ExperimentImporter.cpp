@@ -300,11 +300,10 @@ void ExperimentImporter::loadPeaks(Experiment* experiment)
 
             listtype collection_type = static_cast<listtype>(type);
             
-            // converting strings back to boolean
-            bool bindexed = int(indexed[0])-48;
-            bool bintegrated = int(integrated[0])-48;
             experiment->addPeakCollection(
-                collection_name, collection_type, peaks, bindexed, bintegrated);
+                collection_name, collection_type, peaks, 
+                static_cast<bool>(indexed[0]-48), 
+                static_cast<bool>(integrated[0]-48));
 
             nsxlog(Level::Debug, "Finished creating the peak collection");
         }
