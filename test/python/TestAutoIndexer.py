@@ -19,14 +19,15 @@ class TestAutoIndexer(unittest.TestCase):
         # Filter the peaks
         filter = expt.peakFilter()
         filter.flags().strength = True
-        filter.flags().d_range = True;
+        filter.flags().d_range = True
         filter.parameters().d_min = 1.55
         filter.parameters().d_max = 50.0
         filter.parameters().strength_min = 1.0
         filter.parameters().strength_max = 1.0e7
         filter.filter(found_peaks)
-        expt.acceptFilter("filtered", found_peaks)
-        filtered_peaks = expt.getPeakCollection("filtered")
+        name = expt.GeneratePeakCollectionName()
+        expt.acceptFilter(name, found_peaks)
+        filtered_peaks = expt.getPeakCollection(name)
         n_caught = filtered_peaks.numberCaughtByFilter()
         self.assertEqual(n_caught, 150)
         print(f'Autoindex: {n_caught}/{n_peaks} peaks caught by filter')
@@ -43,7 +44,7 @@ class TestAutoIndexer(unittest.TestCase):
         autoindexer_params.minUnitCellVolume = 100.0
         autoindexer.autoIndex(filtered_peaks)
         reference_cell = expt.getReferenceCell()
-        reference_cell.setSpaceGroup(nsx.SpaceGroup("P 21"));
+        reference_cell.setSpaceGroup(nsx.SpaceGroup("P 21"))
         self.assertTrue(expt.checkAndAssignUnitCell(filtered_peaks, 1.5, 1.0))  # boolean return value
 
 if __name__ == "__main__":

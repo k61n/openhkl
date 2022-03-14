@@ -41,6 +41,8 @@ class Session {
     Project* experimentAt(int i);
     const Project* experimentAt(int i) const;
 
+    bool UpdateExperimentData(unsigned int idx, QString name, QString instrument);
+
     int currentProjectNum() const;
     int numExperiments() const;
     std::vector<QString> experimentNames() const;
@@ -50,7 +52,7 @@ class Session {
     void removeExperiment(const QString& name);
 
     void loadData(nsx::DataFormat format);
-    void loadRawData();
+    bool loadRawData();
     void removeData();
 
     void onDataChanged();

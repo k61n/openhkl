@@ -61,6 +61,7 @@
 #include <QScrollBar>
 #include <QSpacerItem>
 #include <QTableWidgetItem>
+#include <qmessagebox.h>
 #include <qnamespace.h>
 
 SubframePredictPeaks::SubframePredictPeaks()
@@ -680,8 +681,14 @@ void SubframePredictPeaks::showDirectBeamEvents()
         _detector_widget->scene()->showDirectBeam(true);
 
         auto* expt = gSession->experimentAt(_exp_combo->currentIndex())->experiment();
-        auto data_name = _detector_widget->dataCombo()->currentText();
-        const auto data = expt->getData(data_name.toStdString());
+        auto data_name = _detector_widget->dataCombo()->currentText().toStdString();
+        if (data_name.empty()){ // to prevent crash
+            QMessageBox::warning(nullptr,
+            "Empty Experimentname",
+            "Unable to retrieve data for an empty experiment name!");
+            return; 
+        }
+        const auto data = expt->getData(data_name);
 
         _direct_beam_events.clear();
         const auto& states = data->instrumentStates();
@@ -752,14 +759,22 @@ void SubframePredictPeaks::assignPeakShapes()
 
 void SubframePredictPeaks::accept()
 {
-    std::unique_ptr<ListNameDialog> dlg(new ListNameDialog());
+    //suggest name to user
+    auto num = gSession->experimentAt(_exp_combo->currentIndex())
+            ->experiment()->numPeakCollections();
+    std::string suggestion = "PeakCollectionNr.:" + std::to_string(num+1);
+    std::unique_ptr<ListNameDialog> dlg(new ListNameDialog(QString::fromStdString(suggestion)));
     dlg->exec();
     if (!dlg->listName().isEmpty()) {
-        gSession->experimentAt(_exp_combo->currentIndex())
+        if(!gSession->experimentAt(_exp_combo->currentIndex())
             ->experiment()
             ->addPeakCollection(
                 dlg->listName().toStdString(), nsx::listtype::PREDICTED,
-                _peak_collection.getPeakList());
+                _peak_collection.getPeakList())){
+                    QMessageBox::warning(this,"Unable to add PeakCollection",
+                    "Unable to add PeakCollection with this name. Please make sure to use unique names only");
+                    return;
+                }
         gSession->experimentAt(_exp_combo->currentIndex())->generatePeakModel(dlg->listName());
         gGui->sentinel->addLinkedComboItem(ComboType::PredictedPeaks, dlg->listName());
         gGui->sentinel->addLinkedComboItem(ComboType::PeakCollection, dlg->listName());

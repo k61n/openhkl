@@ -36,6 +36,7 @@
 #include <QMessageBox>
 #include <QSettings>
 #include <QStringList>
+#include <qmessagebox.h>
 
 
 Session* gSession;
@@ -95,14 +96,13 @@ int Session::numExperiments() const
 
 Project* Session::createProject(QString experimentName, QString instrumentName)
 {
-    for (const QString& name : experimentNames()) {
+    for (const QString& name : experimentNames()) {// check name
         if (name == experimentName) {
-            QMessageBox::critical(
-                nullptr, "Error", "Experiment name, '" + experimentName + "' already exists");
+            QMessageBox::critical(nullptr, "Unable to create experiment",
+               "Experiment name, '" + experimentName + "' already exists");
             return nullptr;
         }
     }
-
     return new Project(experimentName, instrumentName);
 }
 
@@ -243,12 +243,12 @@ void Session::removeData()
     onDataChanged();
 }
 
-void Session::loadRawData()
+bool Session::loadRawData()
 {
     // Loading data requires an existing Experiment
     if (_currentProject < 0) {
         QMessageBox::critical(nullptr, "Error", "Please create an experiment before loading data.");
-        return;
+        return false;
     }
 
     try {
@@ -259,7 +259,7 @@ void Session::loadRawData()
         QStringList qfilenames =
             QFileDialog::getOpenFileNames(gGui, "import raw data", loadDirectory);
         if (qfilenames.empty())
-            return;
+            return false;
 
         // Don't leave sorting the files to the OS. Use QCollator + std::sort to sort naturally
         // (numerically)
@@ -283,8 +283,9 @@ void Session::loadRawData()
         parameters.dataset_name = nsx::fileBasename(filenames[0]);
         const QStringList& datanames_pre{currentProject()->getDataNames()};
         RawDataDialog dialog(parameters, datanames_pre);
-        if (!dialog.exec())
-            return;
+        if (!dialog.exec()){
+            return false;
+        }
         nsx::Experiment* exp = currentProject()->experiment();
 
         // update the parameters by those from the dialog
@@ -298,15 +299,22 @@ void Session::loadRawData()
             dataset_ptr->addRawFrame(filenm);
 
         dataset_ptr->finishRead();
-        exp->addData(dataset_ptr);
+        if (!exp->addData(dataset_ptr)){
+            QMessageBox::warning(nullptr,
+            "Unable to add Dataset",
+            "Could not add Dataset " + 
+            QString::fromStdString(dataset_ptr->name()) + 
+            "to the DataHandler");
+        } 
         onDataChanged();
         auto data_list = currentProject()->getDataNames();
         gGui->sentinel->setLinkedComboList(ComboType::DataSet, data_list);
     } catch (std::exception& e) {
         QMessageBox::critical(nullptr, "Error", QString(e.what()));
     } catch (...) {
-        return;
+        return false;
     }
+    return true;
 }
 
 void Session::onDataChanged()
@@ -371,4 +379,20 @@ void Session::loadExperimentFromFile(QString filename)
     nsx::nsxlog(
         nsx::Level::Debug, "Session: Finished creating Project for file '", filename.toStdString(),
         "'");
+}
+
+bool Session::UpdateExperimentData(unsigned int idx, QString name, QString instrument){
+    if (idx >= _projects.size()) return false;
+
+    for (const auto& e : _projects){// excluding duplicate project names
+        if (e->experiment()->name() == name.toStdString()){
+            // the selected item is allowed to have an identical name! 
+            // This allows to change instument name and keeo the same experiment name. 
+            // therefore ->
+            if (_projects.at(idx) != e) return false; 
+        }
+    }
+   _projects.at(idx)->experiment()->setName(name.toStdString());
+   _projects.at(idx)->experiment()->setDiffractometer(instrument.toStdString());
+   return true;
 }

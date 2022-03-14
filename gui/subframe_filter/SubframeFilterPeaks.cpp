@@ -490,9 +490,10 @@ void SubframeFilterPeaks::accept()
     std::unique_ptr<ListNameDialog> dlg(new ListNameDialog());
     dlg->exec();
     if (!dlg->listName().isEmpty()) {
-        gSession->experimentAt(_exp_combo->currentIndex())
+       gSession->experimentAt(_exp_combo->currentIndex())
             ->experiment()
             ->acceptFilter(dlg->listName().toStdString(), collection);
+        
         gSession->experimentAt(_exp_combo->currentIndex())->generatePeakModel(dlg->listName());
         auto peak_list = gSession->experimentAt(_exp_combo->currentIndex())->getPeakListNames();
         _peak_combo->updateList(peak_list);

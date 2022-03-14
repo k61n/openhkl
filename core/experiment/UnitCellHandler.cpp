@@ -27,8 +27,9 @@ const CellMap* UnitCellHandler::getCellMap() const
     return &_unit_cells;
 }
 
-void UnitCellHandler::addUnitCell(const std::string& name, const UnitCell& unit_cell, bool refined)
+bool UnitCellHandler::addUnitCell(const std::string& name, const UnitCell& unit_cell, bool refined)
 {
+    if (hasUnitCell(name)) return false;
     nsxlog(Level::Info, "UnitCellHandler::addUnitCell: '", name, "': ", unit_cell.toString());
     sptrUnitCell uc = std::make_shared<UnitCell>(unit_cell);
     uc->setName(name);
@@ -36,32 +37,35 @@ void UnitCellHandler::addUnitCell(const std::string& name, const UnitCell& unit_
         _batch_cells.insert_or_assign(name, std::move(uc));
     else
         _unit_cells.insert_or_assign(name, std::move(uc));
+    return hasUnitCell(name); 
 }
 
-void UnitCellHandler::addUnitCell(const std::string& name, sptrUnitCell unit_cell, bool refined)
+bool UnitCellHandler::addUnitCell(const std::string& name, sptrUnitCell unit_cell, bool refined)
 {
+    if (hasUnitCell(name)) return false;
     nsxlog(Level::Info, "UnitCellHandler::addUnitCell: '", name, "': ", unit_cell->toString());
     unit_cell->setName(name);
     if (refined)
         _batch_cells.insert_or_assign(name, std::move(unit_cell));
     else
         _unit_cells.insert_or_assign(name, std::move(unit_cell));
+    return hasUnitCell(name); 
 }
 
-void UnitCellHandler::addUnitCell(
+bool UnitCellHandler::addUnitCell(
     const std::string& name, double a, double b, double c, double alpha, double beta, double gamma)
 {
     UnitCell cell{a, b, c, alpha * deg, beta * deg, gamma * deg};
-    addUnitCell(name, cell);
+    return addUnitCell(name, cell);
 }
 
-void UnitCellHandler::addUnitCell(
+bool UnitCellHandler::addUnitCell(
     const std::string& name, double a, double b, double c, double alpha, double beta, double gamma,
     const std::string& space_group)
 {
     UnitCell cell{a, b, c, alpha * deg, beta * deg, gamma * deg};
     cell.setSpaceGroup(space_group);
-    addUnitCell(name, cell);
+    return addUnitCell(name, cell);
 }
 
 bool UnitCellHandler::hasUnitCell(const std::string& name) const
@@ -192,6 +196,16 @@ std::vector<sptrUnitCell> UnitCellHandler::extractBatchCells()
 void UnitCellHandler::mergeBatchCells(CellMap map)
 {
     _unit_cells.merge(map);
+}
+
+std::string UnitCellHandler::GenerateUnitCellName()
+{
+    int n = 4; // number of digits
+    std::string str = std::to_string(numUnitCells()+1);
+    if (str.size() > n){//
+        return "Please enter name for this unit cell";
+    }
+    return std::string("UnitCellNr") +  std::string( n - str.size(), '0').append( str );
 }
 
 } // namespace nsx

@@ -18,7 +18,9 @@
 #include "core/instrument/Diffractometer.h"
 #include "core/raw/DataKeys.h"
 
+#include <QtWidgets/qmessagebox.h>
 #include <iostream>
+#include <stdexcept>
 
 namespace nsx {
 
@@ -67,13 +69,21 @@ sptrDataSet DataHandler::getData(std::string name) const
     return it->second;
 }
 
-void DataHandler::addData(sptrDataSet data, std::string name)
+bool DataHandler::addData(sptrDataSet data, std::string name)
 {
     if (name.empty())
-        name = data->name();
+        name = data->name();    
 
     if (name.empty())
         throw std::invalid_argument("DataHandler::addData: Data name cannot be empty");
+    
+    if (hasData(name)){
+        //QMessageBox::critical(nullptr, 
+        //"Unable to add Dataset",
+        //"Please choose unique name for Dataset");
+        throw std::invalid_argument("DataHandler::addData: Data name must be unique");
+        return false;
+    }
 
     // Add the data only if it does not exist in the current data map
     if (_data_map.find(name) != _data_map.end())
@@ -114,6 +124,8 @@ void DataHandler::addData(sptrDataSet data, std::string name)
         Level::Info, "DataHandler::addData: adding DataSet '", name, "': ", data->nFrames(),
         " frames");
     _data_map.insert(std::make_pair(name, data));
+
+    return hasData(name);
 }
 
 int DataHandler::numData() const

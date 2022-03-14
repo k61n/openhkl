@@ -83,7 +83,7 @@ class Experiment {
     //! Return number of data sets
     int numData() const;
     //! Add a data set to the handler
-    void addData(sptrDataSet data);
+    bool addData(sptrDataSet data);
     //! Check whether the handler has named data set
     bool hasData(const std::string& name) const;
     //! Remove data set from handler
@@ -91,9 +91,9 @@ class Experiment {
 
     // Peak handler
     //! Create a new PeakCollection from a vector of peaks
-    void addPeakCollection(
+    bool addPeakCollection(
         const std::string& name, const listtype type, std::vector<Peak3D*> peaks);
-    void addPeakCollection(
+    bool addPeakCollection(
         const std::string& name, const listtype type, std::vector<Peak3D*> peaks, bool indexed, bool integrated);
     //! Check if the handler has the named peak collection
     bool hasPeakCollection(const std::string& name);
@@ -108,20 +108,20 @@ class Experiment {
     //! Get the number of peak collections
     int numPeakCollections() const;
     //! Create a new peak collection from peaks caught by a filter
-    void acceptFilter(
+    bool acceptFilter(
         std::string name, PeakCollection* collection, listtype lt = listtype::FILTERED);
     //! Duplicate a peak collection (deep copy) for comparison after some process
-    void clonePeakCollection(std::string name, std::string new_name);
+    bool clonePeakCollection(std::string name, std::string new_name);
 
     // Unit cells
     //! Add a unit cell to the experiment
-    void addUnitCell(const std::string& name, const UnitCell& unit_cell, bool refined = false);
+    bool addUnitCell(const std::string& name, const UnitCell& unit_cell, bool refined = false);
     //! Add a unit cell to the experiment via cell parameters (skip autoindexing step)
-    void addUnitCell(
+    bool addUnitCell(
         const std::string& name, double a, double b, double c, double alpha, double beta,
         double gamma);
     //! Add a user-defined unit cell including space group
-    void addUnitCell(
+    bool addUnitCell(
         const std::string& name, double a, double b, double c, double alpha, double beta,
         double gamma, const std::string& space_group);
     //! Returns true if the experiment has a data
@@ -157,9 +157,9 @@ class Experiment {
     //! Return a pointer to the PeakFinder object
     PeakFinder* peakFinder() { return _peak_finder.get(); };
     //! Create a new peak collection from the peaks found by the peak finder
-    void acceptFoundPeaks(const std::string& name);
+    bool acceptFoundPeaks(const std::string& name);
     //! Create a new peak collection from a found collection
-    void acceptFoundPeaks(const std::string& name, const PeakCollection& found);
+    bool acceptFoundPeaks(const std::string& name, const PeakCollection& found);
 
     // Peak Filter
     //! Return a pointer to the PeakFilter object
@@ -209,6 +209,10 @@ class Experiment {
 
     //! Container for metadata for reading raw data files
     RawDataReaderParameters data_params;
+
+    // auto generating names for collections
+    std::string GeneratePeakCollectionName();
+    std::string GenerateUnitCellName();
 
  private: // private variables
     std::string _name; //!< The name of this experiment

@@ -91,10 +91,11 @@ void Actions::setupData()
     add_hdf5 = new QAction("Add NSX(HDF5) data");
     add_nexus = new QAction("Add Nexus data");
 
-    connect(add_raw, &QAction::triggered, []() { gSession->loadRawData(); });
+    connect(add_raw, &QAction::triggered, [](){ // can cause a crash without checking
+        if (gSession->loadRawData()) gGui->sideBar()->refreshAll();
+    });
     connect(add_hdf5, &QAction::triggered, []() { gSession->loadData(nsx::DataFormat::NSX); });
     connect(add_hdf5, &QAction::triggered, []() { gSession->loadData(nsx::DataFormat::NEXUS); });
-    connect(add_raw, &QAction::triggered, []() { gGui->sideBar()->refreshAll(); });
     connect(add_hdf5, &QAction::triggered, []() { gGui->sideBar()->refreshAll(); });
     connect(add_nexus, &QAction::triggered, []() { gGui->sideBar()->refreshAll(); });
 

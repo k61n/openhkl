@@ -15,6 +15,7 @@
 #define NSX_CORE_EXPERIMENT_PEAKHANDLER_H
 
 #include <map>
+#include <vector>
 #include <string>
 
 #include "core/shape/PeakCollection.h"
@@ -37,15 +38,15 @@ class PeakHandler {
     //! Get a pointer to the map of peak collections
     const PeakCollectionMap* getPeakCollectionMap() const;
     //! Add a peak collection
-    void addPeakCollection(
+    bool addPeakCollection(
         const std::string& name, const listtype type, const std::vector<nsx::Peak3D*> peaks);
     //
-    void addPeakCollection(
-        const std::string& name, const listtype type, const std::vector<nsx::Peak3D*> peaks,
+    bool addPeakCollection(
+        const std::string& name,const listtype type, const std::vector<nsx::Peak3D*> peaks,
         bool indexed, bool integrated
         );
     //! Add an empty peak collection
-    void addEmptyCollection(const std::string& name, const listtype type);
+    bool addEmptyCollection(const std::string& name, const listtype type);
     //! Returns true if the experiment has named peak collection
     bool hasPeakCollection(const std::string& name) const;
     //! Returns the named peak collection
@@ -59,15 +60,18 @@ class PeakHandler {
     //! Get the number of peak collections
     int numPeakCollections() const { return _peak_collections.size(); };
     //! Create a new collection of peaks caught by _peak_filter
-    void acceptFilter(
+    bool acceptFilter(
         const std::string name, PeakCollection* collection, listtype lt = listtype::FILTERED);
     //! Deep copy a peak collection
-    void clonePeakCollection(std::string name, std::string new_name);
-
+    bool clonePeakCollection(std::string name, std::string new_name);
+    //! Generate name for new peak collection
+    std::string GenerateName();
 
  private:
     //! Pointer to map of peak collections in Experiment
     PeakCollectionMap _peak_collections;
+  
+    //enum class listtype { FOUND, FILTERED, PREDICTED, INDEXING };
 };
 
 } // namespace nsx

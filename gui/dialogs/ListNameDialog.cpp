@@ -20,7 +20,7 @@
 #include <QLabel>
 #include <QVBoxLayout>
 
-ListNameDialog::ListNameDialog()
+ListNameDialog::ListNameDialog(QString suggestion)
 {
     setModal(true);
     resize(500, 130);
@@ -29,13 +29,15 @@ ListNameDialog::ListNameDialog()
 
     QVBoxLayout* whole = new QVBoxLayout(this);
     QHBoxLayout* line = new QHBoxLayout;
-    name_ = new QLineEdit();
+    _name = new QLineEdit();
     line->addWidget(new QLabel("Peak collection name: "));
-    line->addWidget(name_);
+    line->addWidget(_name);
     whole->addLayout(line);
     QDialogButtonBox* buttonbox =
         new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, Qt::Horizontal);
     whole->addWidget(buttonbox);
+
+    _name->setText(suggestion);
 
     QObject::connect(buttonbox, SIGNAL(accepted()), this, SLOT(accept()));
     QObject::connect(buttonbox, SIGNAL(rejected()), this, SLOT(reject()));
@@ -43,7 +45,7 @@ ListNameDialog::ListNameDialog()
 
 QString ListNameDialog::listName()
 {
-    if (name_->text() == "")
+    if (_name->text() == "")
         return "unnamed peak collection";
-    return name_->text();
+    return _name->text();
 }

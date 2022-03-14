@@ -41,6 +41,10 @@ class PeakCollection {
     void setName(const std::string& name);
     //! Returns the name of the PeakCollection
     std::string name() const;
+    //! Returns description of the PeakCollection
+    std::string description() const {return _description;};
+    //! set description
+    void setDescription(std::string str) {_description=str;};
 
     //! Populate the PeakCollection with a vector of shared pointers to peaks
     void populate(const std::vector<std::shared_ptr<nsx::Peak3D>> peak_list);
@@ -120,6 +124,7 @@ class PeakCollection {
  private:
     std::vector<std::unique_ptr<nsx::Peak3D>> _peaks;
     std::string _name;
+    std::string _description;
 
     nsx::listtype _type{listtype::FOUND};
     nsx::MetaData _metadata;

@@ -27,9 +27,6 @@
 #include <QMessageBox>
 #include <QSettings>
 #include <QSpacerItem>
-#include <qboxlayout.h>
-#include <qnamespace.h>
-#include <qtablewidget.h>
 
 SubframeHome::SubframeHome()
 {
@@ -151,7 +148,7 @@ void SubframeHome::_setRightLayout(QHBoxLayout* main_layout)
     _open_experiments_view = new ExperimentTableView();
     _open_experiments_view->setModel(_open_experiments_model.get());
     connect(
-        _open_experiments_view, &ExperimentTableView::doubleClicked, this,
+        _open_experiments_view, &ExperimentTableView::clicked, this,
         &SubframeHome::_switchCurrentExperiment);
 
     right->addWidget(_open_experiments_view);
@@ -192,8 +189,12 @@ void SubframeHome::createNew()
     if (exp_dialog->result()) {
         QString expr_nm = exp_dialog->experimentName();
         QString instr_nm = exp_dialog->instrumentName();
-
-        std::unique_ptr<Project> project_ptr{gSession->createProject(expr_nm, instr_nm)};
+       
+        std::unique_ptr<Project> project_ptr {gSession->createProject
+                                              (expr_nm, instr_nm)};
+        if (project_ptr == nullptr){            
+            return;
+        }
         const bool success = gSession->addProject(std::move(project_ptr));
 
         if (success) {
@@ -341,9 +342,10 @@ void SubframeHome::toggleUnsafeWidgets()
 {
     _save_all->setEnabled(true);
     _save_current->setEnabled(true);
+    _save_current->setEnabled(true);
     if (_open_experiments_model->rowCount() == 0) {
         _save_all->setEnabled(false);
-        _save_current->setEnabled(false);
+        _save_current->setEnabled(false);       
     }
 }
 
