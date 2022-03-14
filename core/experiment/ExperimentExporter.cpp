@@ -40,6 +40,8 @@
 
 #include <H5Cpp.h>
 
+#include <iostream>
+
 // TODO: Add more log messages
 
 namespace {
