@@ -426,14 +426,14 @@ bool Experiment::addUnitCell(const std::string& name, const UnitCell& unit_cell,
 bool Experiment::addUnitCell(
     const std::string& name, double a, double b, double c, double alpha, double beta, double gamma)
 {
-    _cell_handler->addUnitCell(name, a, b, c, alpha, beta, gamma);
+    return _cell_handler->addUnitCell(name, a, b, c, alpha, beta, gamma);
 }
 
 bool Experiment::addUnitCell(
     const std::string& name, double a, double b, double c, double alpha, double beta, double gamma,
     const std::string& space_group)
 {
-    _cell_handler->addUnitCell(name, a, b, c, alpha, beta, gamma, space_group);
+    return _cell_handler->addUnitCell(name, a, b, c, alpha, beta, gamma, space_group);
 }
 
 bool Experiment::hasUnitCell(const std::string& name) const
