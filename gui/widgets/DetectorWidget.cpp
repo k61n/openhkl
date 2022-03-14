@@ -21,6 +21,7 @@
 #include "gui/graphics/DetectorView.h"
 #include "gui/models/PeakCollectionModel.h"
 #include "gui/models/Session.h" // gSession
+#include "gui/subwindows/InstrumentStateWindow.h"
 #include "gui/utility/LinkedComboBox.h"
 
 #include <QComboBox>
@@ -82,6 +83,9 @@ DetectorWidget::DetectorWidget(bool mode, bool cursor, bool slider, QWidget* par
     connect(
         _data_combo, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this,
         &DetectorWidget::refresh);
+    connect(
+        _spin, QOverload<int>::of(&QSpinBox::valueChanged),
+        gGui->instrumentstate_window, &InstrumentStateWindow::onFrameChanged);
 
 
     if (mode) {

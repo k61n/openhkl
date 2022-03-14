@@ -17,6 +17,7 @@
 #include "core/experiment/Experiment.h"
 #include "gui/MainWin.h" // gGui
 #include "gui/connect/Sentinel.h"
+#include "gui/graphics/DetectorScene.h"
 #include "gui/models/Project.h"
 #include "gui/models/Session.h"
 #include "gui/utility/LinkedComboBox.h"
@@ -174,4 +175,9 @@ void InstrumentStateWindow::refreshAll()
 {
     updateData();
     updateState();
+}
+
+void InstrumentStateWindow::onFrameChanged(int frame)
+{
+    _frame_spin->setValue(frame);
 }

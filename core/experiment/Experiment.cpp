@@ -20,6 +20,7 @@
 #include <string>
 #include <utility>
 
+#include "manifest.h"
 #include "base/utils/Logger.h"
 #include "base/utils/Path.h" // tempFilename
 #include "base/utils/Units.h"
@@ -54,6 +55,7 @@ Experiment::Experiment(const std::string& name, const std::string& diffractomete
 {
     // start logging
     Logger::instance().start(nsx::kw_logFilename, Level::Info);
+    nsxlog(Level::Info, "Git branch ", GIT_BRANCH, " / commit hash ", COMMIT_HASH);
 
     _data_handler = std::make_shared<DataHandler>(_name, diffractometerName);
     _peak_handler = std::make_unique<PeakHandler>();

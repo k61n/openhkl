@@ -31,6 +31,7 @@ class Actions : public QObject {
     QAction* new_experiment;
     QAction* load_experiment;
     QAction* save_experiment;
+    QAction* save_experiment_as;
     QAction* save_all_experiment;
     QAction* remove_experiment;
     QAction* quit;

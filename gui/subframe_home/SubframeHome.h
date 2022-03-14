@@ -56,7 +56,7 @@ class SubframeHome : public QWidget {
     void loadFromFile();
 
     //! Save the current experiment
-    void saveCurrent();
+    void saveCurrent(bool dialogue = false);
     //! Save all experiments provided they have save paths (not implemented)
     void saveAll();
 

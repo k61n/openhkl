@@ -239,20 +239,28 @@ void SubframeHome::loadFromFile()
     gGui->setReady(true);
 }
 
-void SubframeHome::saveCurrent()
+void SubframeHome::saveCurrent(bool dialogue /* = false */)
 {
     gGui->setReady(false);
     QSettings s;
     s.beginGroup("RecentDirectories");
     QString loadDirectory = s.value("experiment", QDir::homePath()).toString();
 
-    try {
-        QString file_path = QFileDialog::getSaveFileName(
-            this, "Save the current experiment", loadDirectory, "NSXTool file (*.nsx)");
+    auto* project = gSession->currentProject();
+    QString file_path;
+
+    if (project->saved() && !dialogue) {
+        file_path = project->currentFileName();
+    } else {
+        QString default_name = loadDirectory + "/" + project->currentFileName();
+        file_path = QFileDialog::getSaveFileName(
+            this, "Save the current experiment", default_name, "NSXTool file (*.nsx)");
 
         if (file_path.isEmpty())
             return;
+    }
 
+    try {
         QFileInfo info(file_path);
         s.setValue("experiment", info.absolutePath());
 

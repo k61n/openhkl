@@ -22,7 +22,6 @@
 #include <vector>
 
 class Peak3D;
-class PeakCollection;
 
 namespace nsx {
 
