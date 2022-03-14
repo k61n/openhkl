@@ -767,7 +767,7 @@ void SubframePredictPeaks::accept()
     std::unique_ptr<ListNameDialog> dlg(new ListNameDialog(QString::fromStdString(suggestion)));
     dlg->exec();
     if (!dlg->listName().isEmpty()) {
-        if (expt->addPeakCollection(dlg->listName().toStdString(), nsx::listtype::PREDICTED,
+        if (!expt->addPeakCollection(dlg->listName().toStdString(), nsx::listtype::PREDICTED,
                 _peak_collection.getPeakList())) {
             QMessageBox::warning(
                 this,"Unable to add PeakCollection",
