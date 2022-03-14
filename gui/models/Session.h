@@ -52,7 +52,7 @@ class Session {
     void removeExperiment(const QString& name);
 
     void loadData(nsx::DataFormat format);
-    void loadRawData();
+    bool loadRawData();
     void removeData();
 
     void onDataChanged();

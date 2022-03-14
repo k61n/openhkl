@@ -242,12 +242,12 @@ void Session::removeData()
     onDataChanged();
 }
 
-void Session::loadRawData()
+bool Session::loadRawData()
 {
     // Loading data requires an existing Experiment
     if (_currentProject < 0) {
         QMessageBox::critical(nullptr, "Error", "Please create an experiment before loading data.");
-        return;
+        return false;
     }
 
     try {
@@ -258,7 +258,7 @@ void Session::loadRawData()
         QStringList qfilenames =
             QFileDialog::getOpenFileNames(gGui, "import raw data", loadDirectory);
         if (qfilenames.empty())
-            return;
+            return false;
 
         // Don't leave sorting the files to the OS. Use QCollator + std::sort to sort naturally
         // (numerically)
@@ -282,8 +282,9 @@ void Session::loadRawData()
         parameters.dataset_name = nsx::fileBasename(filenames[0]);
         const QStringList& datanames_pre{currentProject()->getDataNames()};
         RawDataDialog dialog(parameters, datanames_pre);
-        if (!dialog.exec())
-            return;
+        if (!dialog.exec()){
+            return false;
+        }
         nsx::Experiment* exp = currentProject()->experiment();
 
         // update the parameters by those from the dialog
@@ -304,8 +305,9 @@ void Session::loadRawData()
     } catch (std::exception& e) {
         QMessageBox::critical(nullptr, "Error", QString(e.what()));
     } catch (...) {
-        return;
+        return false;
     }
+    return true;
 }
 
 void Session::onDataChanged()

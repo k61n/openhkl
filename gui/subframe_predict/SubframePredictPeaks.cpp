@@ -61,6 +61,7 @@
 #include <QScrollBar>
 #include <QSpacerItem>
 #include <QTableWidgetItem>
+#include <qmessagebox.h>
 #include <qnamespace.h>
 
 SubframePredictPeaks::SubframePredictPeaks()
@@ -680,8 +681,14 @@ void SubframePredictPeaks::showDirectBeamEvents()
         _detector_widget->scene()->showDirectBeam(true);
 
         auto* expt = gSession->experimentAt(_exp_combo->currentIndex())->experiment();
-        auto data_name = _detector_widget->dataCombo()->currentText();
-        const auto data = expt->getData(data_name.toStdString());
+        auto data_name = _detector_widget->dataCombo()->currentText().toStdString();
+        if (data_name.empty()){ // to prevent crash
+            QMessageBox::warning(nullptr,
+            "Empty Experimentname",
+            "Unable to retrieve data for an empty experiment name!");
+            return; 
+        }
+        const auto data = expt->getData(data_name);
 
         _direct_beam_events.clear();
         const auto& states = data->instrumentStates();
