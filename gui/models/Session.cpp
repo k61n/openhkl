@@ -36,6 +36,7 @@
 #include <QMessageBox>
 #include <QSettings>
 #include <QStringList>
+#include <qmessagebox.h>
 
 
 Session* gSession;
@@ -298,7 +299,13 @@ bool Session::loadRawData()
             dataset_ptr->addRawFrame(filenm);
 
         dataset_ptr->finishRead();
-        exp->addData(dataset_ptr);
+        if (!exp->addData(dataset_ptr)){
+            QMessageBox::warning(nullptr,
+            "Unable to add Dataset",
+            "Could not add Dataset " + 
+            QString::fromStdString(dataset_ptr->name()) + 
+            "to the DataHandler");
+        } 
         onDataChanged();
         auto data_list = currentProject()->getDataNames();
         gGui->sentinel->setLinkedComboList(ComboType::DataSet, data_list);

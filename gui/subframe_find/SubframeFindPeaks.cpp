@@ -51,6 +51,7 @@
 #include <QSpacerItem>
 #include <QTableWidgetItem>
 #include <QMessageBox>
+#include <qmessagebox.h>
 
 SubframeFindPeaks::SubframeFindPeaks()
     : QWidget()
@@ -322,22 +323,29 @@ void SubframeFindPeaks::updateDatasetList()
     _data_combo->blockSignals(true);
     QString current_data = _data_combo->currentText();
     _data_combo->clear();
-
+    
     const QStringList& datanames{gSession->currentProject()->getDataNames()};
     if (!datanames.empty()) {
         _data_combo->addItems(datanames);
         _data_combo->setCurrentText(current_data);
         updateDatasetParameters(_data_combo->currentText());
     }
-
     _data_combo->blockSignals(false);
 }
 
 void SubframeFindPeaks::updateDatasetParameters(const QString& dataname)
 {
-    nsx::sptrDataSet data = gSession->experimentAt(_exp_combo->currentIndex())
-                                ->experiment()
-                                ->getData(dataname.toStdString());
+    // to be update on the experiment/project list if a new
+    // experiment is added on SubframeHome
+    auto exp = gSession->experimentAt(gSession->currentProjectNum())
+    ->experiment();                      
+    if (!exp->hasData(dataname.toStdString())){
+        QMessageBox::warning(nullptr,
+        "Dataset does not exist",
+        "The given dataset " + dataname + " could not be found!");
+        return;
+    }
+    nsx::sptrDataSet data = exp->getData(dataname.toStdString());
 
     _end_frame_spin->setMaximum(data->nFrames());
     _end_frame_spin->setValue(data->nFrames());
