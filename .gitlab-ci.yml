@@ -27,10 +27,12 @@ mac10_15:
     - cmake .. -D CMAKE_PREFIX_PATH=$QTDIR -D CMAKE_CXX_COMPILER_LAUNCHER=ccache
     - make -j3
     - ctest -j3 --output-on-failure
-    - cpack -V
+    # - cpack -V
+    - bash ../setup_scripts/mk_macos_pkg.sh ../ ./
   artifacts:
     paths:
     - build/NSXTool-*.dmg
+    - build/macospack/*.zip
     expire_in: 10 days
 
 mac12_2:
@@ -49,10 +51,12 @@ mac12_2:
     - cmake .. -D CMAKE_PREFIX_PATH=$QTDIR -D CMAKE_CXX_COMPILER_LAUNCHER=ccache -D PYTHON_INCLUDE_DIR=$PYINC -D PYTHON_LIBRARY=$PYLIB -D NSX_TESTDATA_DIR=$TESTDATADIR
     - make -j12
     - ctest -j12 --output-on-failure
-    - cpack -V
+    # - cpack -V
+    - bash ../setup_scripts/mk_macos_pkg.sh ../ ./
   artifacts:
     paths:
     - build/NSXTool-*.dmg
+    - build/macospack/*.zip
     expire_in: 10 days
 
 native_Debian_clang:
