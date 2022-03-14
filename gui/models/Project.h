@@ -73,6 +73,9 @@ class Project {
     void saveToFile(QString path);
     void saveAs(QString /*path*/) const { return; };
 
+    QString currentFileName() const;
+    void setCurrentFileName(const QString& name);
+
  private:
     std::unique_ptr<nsx::Experiment> _experiment;
 
@@ -82,6 +85,9 @@ class Project {
     bool _saved = false;
     std::string _save_path;
     int _dataIndex = -1;
+
+    // Current save file name
+    QString _file_name;
 };
 
 #endif // NSX_GUI_MODELS_SESSIONEXPERIMENT_H
