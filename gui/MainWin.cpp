@@ -75,6 +75,8 @@ MainWin::MainWin()
     _side_bar = new SideBar(main_widget);
     main_layout->addWidget(_side_bar);
 
+    instrumentstate_window = new InstrumentStateWindow();
+
     home = new SubframeHome;
     experiment = new SubframeExperiment;
     finder = new SubframeFindPeaks;
@@ -86,7 +88,6 @@ MainWin::MainWin()
     merger = new SubframeMergedPeaks;
 
     detector_window = new DetectorWindow();
-    instrumentstate_window = new InstrumentStateWindow();
     log_window = new LogWindow(this);
 
     _layout_stack = new QStackedWidget(main_widget);

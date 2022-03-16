@@ -39,6 +39,9 @@ class InstrumentStateWindow : public QDialog {
     //! Refresh the whole dialog
     void refreshAll();
 
+ public slots:
+    void onFrameChanged(int frame);
+
  private:
     LinkedComboBox* _data_combo;
     QSpinBox* _frame_spin;

@@ -49,6 +49,7 @@ void Actions::setupExperiment()
     new_experiment = new QAction("New experiment");
     load_experiment = new QAction("Load experiment");
     save_experiment = new QAction("Save");
+    save_experiment_as = new QAction("Save as");
     save_all_experiment = new QAction("Save all");
     remove_experiment = new QAction("Remove experiment");
     quit = new QAction("Quit");
@@ -58,6 +59,7 @@ void Actions::setupExperiment()
     connect(load_experiment, &QAction::triggered, []() { gGui->home->loadFromFile(); });
     connect(load_experiment, &QAction::triggered, []() { gGui->sideBar()->refreshAll(); });
     connect(save_experiment, &QAction::triggered, []() { gGui->home->saveCurrent(); });
+    connect(save_experiment_as, &QAction::triggered, []() { gGui->home->saveCurrent(true); });
     connect(save_all_experiment, &QAction::triggered, []() { gGui->home->saveAll(); });
     connect(remove_experiment, &QAction::triggered, this, &Actions::removeExperiment);
 

@@ -245,9 +245,22 @@ void Project::saveToFile(QString path)
         experiment()->saveToFile(path.toStdString());
         _save_path = path.toStdString();
         _saved = true;
+        _file_name = path;
     } catch (const std::exception& ex) {
         throw;
     } catch (...) {
         throw std::runtime_error("Failed to save the project to file '" + path.toStdString() + "'");
     }
+}
+
+QString Project::currentFileName() const
+{
+    if (_file_name.isEmpty())
+        return QString::fromStdString(_experiment->name());
+    return _file_name;
+}
+
+void Project::setCurrentFileName(const QString& name)
+{
+    _file_name = name;
 }
