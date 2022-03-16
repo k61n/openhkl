@@ -24,6 +24,8 @@
 #include <Eigen/Dense>
 
 #include <H5Cpp.h>
+#include <QtWidgets/QMessageBox>
+#include <stdexcept>
 #include <string>
 
 namespace nsx {
@@ -297,9 +299,12 @@ void ExperimentImporter::loadPeaks(Experiment* experiment)
             nsxlog(Level::Debug, "Finished creating the vector of peaks");
 
             listtype collection_type = static_cast<listtype>(type);
+            
+            // converting data types. Ascii code of '0' is 48, of '1' is 49
             experiment->addPeakCollection(
-                collection_name, collection_type, peaks, static_cast<bool>(indexed[0]),
-                static_cast<bool>(integrated[0]));
+                collection_name, collection_type, peaks, 
+                static_cast<bool>(indexed[0]-48), 
+                static_cast<bool>(integrated[0]-48));
 
             nsxlog(Level::Debug, "Finished creating the peak collection");
         }
