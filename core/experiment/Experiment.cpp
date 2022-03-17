@@ -151,9 +151,9 @@ void Experiment::saveToFile(const std::string& path) const
         peak_collections.insert(std::make_pair(it.first, it.second.get()));
     exporter.writePeaks(peak_collections);
 
-    std::map<std::string, UnitCell*> unit_cells;
-    for (const auto& it : *_cell_handler->getCellMap())
-        unit_cells.insert(std::make_pair(it.first, it.second.get()));
+    std::vector<UnitCell*> unit_cells;
+    for (const auto& cell : *_cell_handler->getCellList())
+        unit_cells.push_back(cell.get());
     exporter.writeUnitCells(unit_cells);
 
     exporter.finishWrite();
@@ -421,9 +421,9 @@ bool Experiment::clonePeakCollection(std::string name, std::string new_name)
 }
 
 // Unit cell handler methods
-bool Experiment::addUnitCell(const std::string& name, const UnitCell& unit_cell, bool refined)
+bool Experiment::addUnitCell(const std::string& name, const UnitCell& unit_cell)
 {
-    return _cell_handler->addUnitCell(name, unit_cell, refined);
+    return _cell_handler->addUnitCell(name, unit_cell);
 }
 
 bool Experiment::addUnitCell(
@@ -457,6 +457,11 @@ UnitCell* Experiment::getUnitCell(const std::string& name) const
 sptrUnitCell Experiment::getSptrUnitCell(const std::string& name) const
 {
     return _cell_handler->getSptrUnitCell(name);
+}
+
+sptrUnitCell Experiment::getSptrUnitCell(const unsigned int id) const
+{
+    return _cell_handler->getSptrUnitCell(id);
 }
 
 void Experiment::removeUnitCell(const std::string& name)
@@ -503,10 +508,6 @@ UnitCellHandler* Experiment::getCellHandler() const
     return _cell_handler.get();
 }
 
-void Experiment::removeBatchCells()
-{
-    auto tmp = _cell_handler->extractBatchCells();
-}
 
 bool Experiment::addInstrumentStateSet(sptrDataSet data)
 {
@@ -546,6 +547,11 @@ InstrumentStateSet* Experiment::getInstrumentStateSet(const DataSet* data)
 void Experiment::removeInstrumentStateSet(const sptrDataSet& data)
 {
     _instrumentstate_handler->removeInstrumentStateSet(data);
+}
+
+void Experiment::setLastUnitCellIndex(unsigned int index)
+{
+    _cell_handler->setLastIndex(index);
 }
 
 } // namespace nsx

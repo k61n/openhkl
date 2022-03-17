@@ -89,7 +89,6 @@ void Refiner::makeBatches(
     _peaks = peaks;
     _unrefined_states.clear();
     _batches.clear();
-    _tmp_vec = _cell_handler->extractBatchCells();
 
     _states = &states;
     _nframes = states.size();
@@ -143,7 +142,7 @@ void Refiner::makeBatches(
             for (auto* peak : b.peaks())
                 peak->setUnitCell(cell_ptr);
 
-            _cell_handler->addUnitCell(name, cell_ptr, true);
+            _cell_handler->addUnitCell(name, cell_ptr);
 
             _batches.emplace_back(std::move(b));
             peaks_subset.clear();
@@ -154,7 +153,6 @@ void Refiner::makeBatches(
 
 void Refiner::reconstructBatches(std::vector<Peak3D*> peaks)
 {
-    auto tmp = _cell_handler->extractBatchCells(); // we're discarding this
     _batches.clear();
 
     std::vector<nsx::Peak3D*> filtered_peaks = peaks;
@@ -193,7 +191,7 @@ void Refiner::reconstructBatches(std::vector<Peak3D*> peaks)
             for (auto* peak : b.peaks())
                 peak->setUnitCell(cell_ptr);
 
-            _cell_handler->addUnitCell(name, cell_ptr, true);
+            _cell_handler->addUnitCell(name, cell_ptr);
 
             _batches.emplace_back(std::move(b));
             peaks_subset.clear();
@@ -307,7 +305,7 @@ int Refiner::updatePredictions(std::vector<Peak3D*> peaks) const
         if (b == nullptr)
             continue;
 
-        const auto* batch_cell = b->cell();
+        const sptrUnitCell batch_cell = b->sptrCell();
 
         // update the position
         const MillerIndex hkl(peak->q(), *batch_cell);
@@ -327,12 +325,14 @@ int Refiner::updatePredictions(std::vector<Peak3D*> peaks) const
                 if (vec.norm() < _eps_norm) {
                     peak->setShape(
                         Ellipsoid({event.px, event.py, event.frame}, peak->shape().metric()));
+                    peak->setUnitCell(batch_cell);
                     ++updated;
                 }
             }
         } else {
             peak->setShape(
                 Ellipsoid({events[0].px, events[0].py, events[0].frame}, peak->shape().metric()));
+            peak->setUnitCell(batch_cell);
             ++updated;
         }
     }

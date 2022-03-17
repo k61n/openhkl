@@ -308,6 +308,11 @@ UnitCell* RefinementBatch::cell() const
     return _cell.get();
 }
 
+sptrUnitCell RefinementBatch::sptrCell() const
+{
+    return _cell;
+}
+
 int RefinementBatch::first_frame() const
 {
     return _fmin;

@@ -22,34 +22,35 @@
 
 namespace nsx {
 
-const CellMap* UnitCellHandler::getCellMap() const
+UnitCellHandler::UnitCellHandler()
+{
+    _unit_cells.reserve(_max_unit_cells);
+}
+
+const UnitCellList* UnitCellHandler::getCellList() const
 {
     return &_unit_cells;
 }
 
-bool UnitCellHandler::addUnitCell(const std::string& name, const UnitCell& unit_cell, bool refined)
+bool UnitCellHandler::addUnitCell(const std::string& name, const UnitCell& unit_cell)
 {
     if (hasUnitCell(name)) return false;
     nsxlog(Level::Info, "UnitCellHandler::addUnitCell: '", name, "': ", unit_cell.toString());
     sptrUnitCell uc = std::make_shared<UnitCell>(unit_cell);
     uc->setName(name);
-    if (refined)
-        _batch_cells.insert_or_assign(name, std::move(uc));
-    else
-        _unit_cells.insert_or_assign(name, std::move(uc));
-    return hasUnitCell(name); 
+    uc->setId(_last_index++);
+    _unit_cells.push_back(std::move(uc));
+    return hasUnitCell(name);
 }
 
-bool UnitCellHandler::addUnitCell(const std::string& name, sptrUnitCell unit_cell, bool refined)
+bool UnitCellHandler::addUnitCell(const std::string& name, sptrUnitCell unit_cell)
 {
     if (hasUnitCell(name)) return false;
     nsxlog(Level::Info, "UnitCellHandler::addUnitCell: '", name, "': ", unit_cell->toString());
     unit_cell->setName(name);
-    if (refined)
-        _batch_cells.insert_or_assign(name, std::move(unit_cell));
-    else
-        _unit_cells.insert_or_assign(name, std::move(unit_cell));
-    return hasUnitCell(name); 
+    unit_cell->setId(_last_index++);
+    _unit_cells.push_back(std::move(unit_cell));
+    return hasUnitCell(name);
 }
 
 bool UnitCellHandler::addUnitCell(
@@ -70,58 +71,53 @@ bool UnitCellHandler::addUnitCell(
 
 bool UnitCellHandler::hasUnitCell(const std::string& name) const
 {
-    bool has = false;
-    if (_unit_cells.find(name) != _unit_cells.end()) {
-        has = true;
-    } else {
-        if (_batch_cells.find(name) != _batch_cells.end())
-            has = true;
+    for (const auto& cell : _unit_cells) {
+        if (cell->name() == name)
+            return true;
     }
-    return has;
+    return false;
 }
 
 std::vector<std::string> UnitCellHandler::getUnitCellNames() const
 {
     std::vector<std::string> names;
-    for (CellMap::const_iterator it = _unit_cells.begin(); it != _unit_cells.end(); ++it) {
-        names.push_back(it->second->name());
-    }
-    for (CellMap::const_iterator it = _batch_cells.begin(); it != _batch_cells.end(); ++it) {
-        names.push_back(it->second->name());
-    }
+    for (const auto& cell : _unit_cells)
+        names.push_back(cell->name());
     return names;
 }
 
 sptrUnitCell UnitCellHandler::getSptrUnitCell(const std::string& name) const
 {
-    if (hasUnitCell(name)) {
-        if (_unit_cells.find(name) != _unit_cells.end()) {
-            auto it = _unit_cells.find(name);
-            return it->second;
-        } else {
-            auto it = _batch_cells.find(name);
-            return it->second;
-        }
+    for (const auto& cell : _unit_cells) {
+        if (cell->name() == name)
+            return cell;
+    }
+    return nullptr;
+}
+
+sptrUnitCell UnitCellHandler::getSptrUnitCell(const unsigned int id) const
+{
+    for (const auto& cell : _unit_cells) {
+        if (cell->id() == id)
+            return cell;
     }
     return nullptr;
 }
 
 UnitCell* UnitCellHandler::getUnitCell(const std::string& name) const
 {
-    return getSptrUnitCell(name).get();
+    if (hasUnitCell(name))
+        return getSptrUnitCell(name).get();
+    return nullptr;
 }
 
 void UnitCellHandler::removeUnitCell(const std::string& name)
 {
-    if (hasUnitCell(name)) {
-        if (_unit_cells.find(name) != _unit_cells.end()) {
-            auto unit_cell = _unit_cells.find(name);
-            unit_cell->second.reset();
-            _unit_cells.erase(unit_cell);
-        } else {
-            auto unit_cell = _batch_cells.find(name);
-            unit_cell->second.reset();
-            _batch_cells.erase(unit_cell);
+    std::vector<sptrUnitCell>::iterator it;
+    for (it = _unit_cells.begin(); it != _unit_cells.end(); ++it) {
+        if ((*it)->name() == name) {
+            _unit_cells.erase(it);
+            --_last_index;
         }
     }
 }
@@ -182,30 +178,19 @@ std::vector<std::string> UnitCellHandler::getCompatibleSpaceGroups() const
     return getSptrUnitCell(nsx::kw_acceptedUnitcell)->compatibleSpaceGroups();
 }
 
-std::vector<sptrUnitCell> UnitCellHandler::extractBatchCells()
-{
-    std::vector<sptrUnitCell> vec;
-    for (auto it = _batch_cells.cbegin(), next_it = it; it != _batch_cells.cend(); it = next_it) {
-        ++next_it;
-        vec.push_back(it->second);
-        auto nh = _batch_cells.extract(it);
-    }
-    return vec;
-}
-
-void UnitCellHandler::mergeBatchCells(CellMap map)
-{
-    _unit_cells.merge(map);
-}
-
 std::string UnitCellHandler::GenerateUnitCellName()
 {
     int n = 4; // number of digits
-    std::string str = std::to_string(numUnitCells()+1);
+    std::string str = std::to_string(_last_index);
     if (str.size() > n){//
         return "Please enter name for this unit cell";
     }
-    return std::string("UnitCellNr") +  std::string( n - str.size(), '0').append( str );
+    return std::string("UnitCell") +  std::string( n - str.size(), '0').append( str );
+}
+
+void UnitCellHandler::setLastIndex(unsigned int index)
+{
+    _last_index = index;
 }
 
 } // namespace nsx

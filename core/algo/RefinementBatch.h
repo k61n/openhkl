@@ -71,6 +71,9 @@ class RefinementBatch {
     //! Returns the refined unit cell.
     UnitCell* cell() const;
 
+    //! Return shared pointer to the refined unit cell
+    sptrUnitCell sptrCell() const;
+
 
     //! Return the lower frame bound
     int first_frame() const;

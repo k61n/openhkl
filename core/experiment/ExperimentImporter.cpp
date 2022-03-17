@@ -21,6 +21,7 @@
 #include "core/loader/HDF5DataReader.h"
 #include "core/peak/Intensity.h"
 #include "core/peak/Peak3D.h"
+#include "core/raw/DataKeys.h"
 #include <Eigen/Dense>
 
 #include <H5Cpp.h>
@@ -187,7 +188,7 @@ void ExperimentImporter::loadPeaks(Experiment* experiment)
                 3 * n_peaks, 3);
 
             std::vector<std::string> data_names;
-            std::vector<std::string> unit_cells;
+            std::vector<unsigned int> unit_cells;
 
             nsxlog(Level::Debug, "Importing doubles");
             // Load all doubles
@@ -265,7 +266,8 @@ void ExperimentImporter::loadPeaks(Experiment* experiment)
 
                 for (int ii = 0; ii < uc_nr; ++ii) {
                     const std::string uc_name{char_unit_cells[ii]};
-                    unit_cells.push_back(uc_name);
+                    unit_cells.push_back(std::stoi(uc_name));
+                    std::cout << std::stoi(uc_name) << std::endl;
                 }
             }
 
@@ -300,7 +302,7 @@ void ExperimentImporter::loadPeaks(Experiment* experiment)
             nsxlog(Level::Debug, "Finished creating the vector of peaks");
 
             listtype collection_type = static_cast<listtype>(type);
-            
+
             // converting data types. Ascii code of '0' is 48, of '1' is 49
             experiment->addPeakCollection(
                 collection_name, collection_type, peaks, 
@@ -324,6 +326,8 @@ void ExperimentImporter::loadUnitCells(Experiment* experiment)
         H5::H5File file(_file_name.c_str(), H5F_ACC_RDONLY);
         H5::Group unit_cells(file.openGroup(nsx::gr_UnitCells));
 
+        std::vector<unsigned int> cell_ids;
+
         const hsize_t object_num = unit_cells.getNumObjs();
         for (int i = 0; i < object_num; ++i) {
             double rec_00 = 1;
@@ -339,9 +343,11 @@ void ExperimentImporter::loadUnitCells(Experiment* experiment)
             uint z = 1;
             std::string bravais = "aP";
             std::string space_group = "P 1";
+            std::string unit_cell_name;
 
-            std::string cell_name = unit_cells.getObjnameByIdx(i);
-            H5::Group unit_cell(file.openGroup(nsx::gr_UnitCells + "/" + cell_name));
+            std::string cell_id = unit_cells.getObjnameByIdx(i);
+            cell_ids.push_back(std::stoi(cell_id));
+            H5::Group unit_cell(file.openGroup(nsx::gr_UnitCells + "/" + cell_id));
 
             // Read the info group and store in metadata
             int n_meta = unit_cell.getNumAttrs();
@@ -375,20 +381,25 @@ void ExperimentImporter::loadUnitCells(Experiment* experiment)
                     attr.read(typ, space_group);
                 else if (attr_name == nsx::at_z)
                     attr.read(typ, &z);
+                else if (attr_name == nsx::at_unitCellName)
+                    attr.read(typ, unit_cell_name);
             }
 
             Eigen::Matrix3d aa = Eigen::Matrix3d::Identity();
             aa << rec_00, rec_01, rec_02, rec_10, rec_11, rec_12, rec_20, rec_21, rec_22;
 
             UnitCell temp_cell(aa, true);
-            temp_cell.setName(cell_name);
             temp_cell.setBravaisType(BravaisType(bravais[0]));
             temp_cell.setIndexingTolerance(indexing_tolerance);
             temp_cell.setSpaceGroup(SpaceGroup(space_group));
             temp_cell.setZ(z);
             temp_cell.setLatticeCentring(LatticeCentring(bravais[1]));
-            experiment->addUnitCell(cell_name, temp_cell);
+            temp_cell.setId(std::stoi(cell_id));
+            experiment->addUnitCell(unit_cell_name, temp_cell);
         }
+
+        unsigned int max_val = *std::max_element(cell_ids.begin(), cell_ids.end());
+        experiment->setLastUnitCellIndex(max_val);
     } catch (H5::Exception& e) {
         std::string what = e.getDetailMsg();
         throw std::runtime_error(what);
