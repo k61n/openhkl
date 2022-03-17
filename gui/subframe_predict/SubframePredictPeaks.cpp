@@ -762,7 +762,7 @@ void SubframePredictPeaks::accept()
     auto* project = gSession->experimentAt(_exp_combo->currentIndex());
     auto* expt = project->experiment();
     auto num = expt ->numPeakCollections();
-    std::string suggestion = "PeakCollectionNr.:" + std::to_string(num+1);
+    std::string suggestion = expt->generatePeakCollectionName();
     std::unique_ptr<ListNameDialog> dlg(new ListNameDialog(QString::fromStdString(suggestion)));
     dlg->exec();
     if (!dlg->listName().isEmpty()) {

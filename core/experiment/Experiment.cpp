@@ -508,15 +508,14 @@ UnitCellHandler* Experiment::getCellHandler() const
     return _cell_handler.get();
 }
 
-
 bool Experiment::addInstrumentStateSet(sptrDataSet data)
 {
     return _instrumentstate_handler->addInstrumentStateSet(data);
 }
 
-std::string Experiment::GeneratePeakCollectionName()
+std::string Experiment::generatePeakCollectionName()
 {
-    return _peak_handler->GenerateName();
+    return _peak_handler->generateName();
 }
 
 bool Experiment::addInstrumentStateSet(sptrDataSet data, const InstrumentStateList& states)
@@ -529,9 +528,9 @@ bool Experiment::addInstrumentStateSet(sptrDataSet data, std::unique_ptr<Instrum
     return _instrumentstate_handler->addInstrumentStateSet(data, states);
 }
 
-    std::string Experiment::GenerateUnitCellName()
+std::string Experiment::generateUnitCellName()
 {
-    return _cell_handler->GenerateUnitCellName();
+    return _cell_handler->generateUnitCellName();
 }
 
 InstrumentStateSet* Experiment::getInstrumentStateSet(const sptrDataSet& data)

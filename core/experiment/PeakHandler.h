@@ -65,7 +65,7 @@ class PeakHandler {
     //! Deep copy a peak collection
     bool clonePeakCollection(std::string name, std::string new_name);
     //! Generate name for new peak collection
-    std::string GenerateName();
+    std::string generateName();
 
  private:
     //! Pointer to map of peak collections in Experiment

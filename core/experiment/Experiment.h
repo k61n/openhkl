@@ -229,8 +229,8 @@ class Experiment {
     RawDataReaderParameters data_params;
 
     // auto generating names for collections
-    std::string GeneratePeakCollectionName();
-    std::string GenerateUnitCellName();
+    std::string generatePeakCollectionName();
+    std::string generateUnitCellName();
 
  private: // private variables
     std::string _name; //!< The name of this experiment

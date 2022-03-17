@@ -178,7 +178,7 @@ std::vector<std::string> UnitCellHandler::getCompatibleSpaceGroups() const
     return getSptrUnitCell(nsx::kw_acceptedUnitcell)->compatibleSpaceGroups();
 }
 
-std::string UnitCellHandler::GenerateUnitCellName()
+std::string UnitCellHandler::generateUnitCellName()
 {
     int n = 4; // number of digits
     std::string str = std::to_string(_last_index);
