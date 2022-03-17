@@ -38,6 +38,7 @@ ListNameDialog::ListNameDialog(QString suggestion)
     whole->addWidget(buttonbox);
 
     _name->setText(suggestion);
+    _name->selectAll();
 
     QObject::connect(buttonbox, SIGNAL(accepted()), this, SLOT(accept()));
     QObject::connect(buttonbox, SIGNAL(rejected()), this, SLOT(reject()));
