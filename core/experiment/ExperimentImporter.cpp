@@ -267,7 +267,6 @@ void ExperimentImporter::loadPeaks(Experiment* experiment)
                 for (int ii = 0; ii < uc_nr; ++ii) {
                     const std::string uc_name{char_unit_cells[ii]};
                     unit_cells.push_back(std::stoi(uc_name));
-                    std::cout << std::stoi(uc_name) << std::endl;
                 }
             }
 
@@ -399,7 +398,7 @@ void ExperimentImporter::loadUnitCells(Experiment* experiment)
         }
 
         unsigned int max_val = *std::max_element(cell_ids.begin(), cell_ids.end());
-        experiment->setLastUnitCellIndex(max_val);
+        experiment->setLastUnitCellIndex(max_val + 1);
     } catch (H5::Exception& e) {
         std::string what = e.getDetailMsg();
         throw std::runtime_error(what);

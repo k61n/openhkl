@@ -451,8 +451,8 @@ void ExperimentExporter::writeUnitCells(const std::vector<UnitCell*> unit_cells)
 
         const Eigen::MatrixX3d rec = unit_cell->reciprocalBasis();
 
-        H5::Group unit_cell_group =
-            file.createGroup(std::string("/" + nsx::gr_UnitCells + "/" + std::to_string(unit_cell_id)));
+        const std::string group_name = "/" + nsx::gr_UnitCells + "/" + std::to_string(unit_cell_id);
+        H5::Group unit_cell_group = file.createGroup(group_name);
 
         // Write reciprocal-vector components
         for (std::size_t i = 0; i < 3; ++i) {
