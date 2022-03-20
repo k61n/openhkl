@@ -92,7 +92,7 @@ class Refiner {
     bool refine();
 
     //! Update the centers of predicted peaks, after refinement.
-    int updatePredictions(std::vector<Peak3D*> peaks) const;
+    int updatePredictions(std::vector<Peak3D*> peaks);
 
     //! Returns the individual peak/frame batches used during refinement.
     const std::vector<RefinementBatch>& batches() const;
@@ -121,9 +121,12 @@ class Refiner {
     //! set the parameters
     void setParameters(const RefinerParameters& params);
 
- private :
-    //! Determine which unit cell to use in a batch
-    sptrUnitCell _getUnitCell(const std::vector<Peak3D*> peaks_subset);
+    //! Assign batch cells to predicted peaks
+    void assignPredictedCells(std::vector<Peak3D*> predicted_peaks);
+
+        private :
+        //! Determine which unit cell to use in a batch
+        sptrUnitCell _getUnitCell(const std::vector<Peak3D*> peaks_subset);
 
     UnitCellHandler* _cell_handler;
     UnitCell _unrefined_cell;

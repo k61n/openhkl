@@ -56,6 +56,7 @@ enum class RejectionFlag {
     NoISigmaMinimum,
     PredictionUpdateFailure, // from refiner
     ManuallyRejected,
+    OutsideIndexingTol,
     Count
 };
 
@@ -146,6 +147,8 @@ class Peak3D {
     void rejectYou(bool reject);
     //! Has the peak been caught by a filter?
     bool caughtByFilter() const;
+    //! Has the peak been rejected by a filter?
+    bool rejectedByFilter() const;
 
     //! Manually set the integration parameters for this peak
     void setManually(

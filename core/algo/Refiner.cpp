@@ -156,6 +156,16 @@ void Refiner::makeBatches(
     }
 }
 
+void Refiner::assignPredictedCells(std::vector<Peak3D*> predicted_peaks)
+{
+    for (const auto& batch : _batches) {
+        for (auto* peak : predicted_peaks) {
+            if (batch.onlyContains(peak->shape().center()[2]))
+                peak->setUnitCell(batch.sptrCell());
+        }
+    }
+}
+
 void Refiner::reconstructBatches(std::vector<Peak3D*> peaks)
 {
     _batches.clear();
@@ -282,19 +292,29 @@ const std::vector<RefinementBatch>& Refiner::batches() const
     return _batches;
 }
 
-int Refiner::updatePredictions(std::vector<Peak3D*> peaks) const
+int Refiner::updatePredictions(std::vector<Peak3D*> peaks)
 {
     nsxlog(Level::Info, "Refiner::updatePredictions");
+    assignPredictedCells(peaks); // Set the batch cells to the predicted peaks
     const PeakFilter peak_filter;
     std::vector<nsx::Peak3D*> filtered_peaks = peaks;
     filtered_peaks = peak_filter.filterEnabled(peaks, true);
-    if (_cell)
-        filtered_peaks = peak_filter.filterIndexed(filtered_peaks, _cell.get());
-    else
-        filtered_peaks = peak_filter.filterIndexed(filtered_peaks);
+    int n_enabled = filtered_peaks.size();
+    // if (_cell)
+    //     filtered_peaks = peak_filter.filterIndexed(filtered_peaks, _cell.get());
+    // else
+    //     filtered_peaks = peak_filter.filterIndexed(filtered_peaks);
+
+    // // Disable any peaks outside indexing tolerance
+    // for (auto peak : peaks) {
+    //     if (peak->rejectedByFilter()) {
+    //         peak->setRejectionFlag(RejectionFlag::OutsideIndexingTol);
+    //         peak->setSelected(false);
+    //     }
+    // }
 
     nsxlog(
-        Level::Info, filtered_peaks.size(), " / ", peaks.size(),
+        Level::Info, filtered_peaks.size(), " / ", n_enabled,
         " peaks within indexing tolerance");
 
     int updated = 0;
