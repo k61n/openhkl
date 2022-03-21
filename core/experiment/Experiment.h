@@ -19,6 +19,7 @@
 #include "core/algo/Refiner.h"
 #include "core/data/DataTypes.h"
 #include "core/experiment/DataQuality.h"
+#include "core/experiment/InstrumentStateHandler.h"
 #include "core/experiment/PeakFinder.h"
 #include "core/instrument/Diffractometer.h"
 #include "core/integration/Integrator.h"
@@ -31,6 +32,7 @@
 #include "core/statistics/PeakMerger.h"
 #include "core/statistics/ResolutionShell.h"
 #include "tables/crystal/UnitCell.h"
+#include <memory>
 
 
 namespace nsx {
@@ -221,6 +223,7 @@ class Experiment {
     std::shared_ptr<DataHandler> _data_handler; // shared because Integrator needs access
     std::unique_ptr<PeakHandler> _peak_handler;
     std::unique_ptr<UnitCellHandler> _cell_handler;
+    std::unique_ptr<InstrumentStateHandler> _instrumentstate_handler;
 
     // Objects that do the number crunching
     std::unique_ptr<PeakFinder> _peak_finder;

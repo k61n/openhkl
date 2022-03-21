@@ -1,0 +1,56 @@
+//  ***********************************************************************************************
+//
+//  NSXTool: data reduction for neutron single-crystal diffraction
+//
+//! @file      core/data/InstrumentStateSet.h
+//! @brief     Defines class InstrumentStateSet
+//!
+//! @homepage  ###HOMEPAGE###
+//! @license   GNU General Public License v3 or higher (see COPYING)
+//! @copyright Institut Laue-Langevin and Forschungszentrum Jülich GmbH 2016-
+//! @authors   see CITATION, MAINTAINER
+//
+//  ***********************************************************************************************
+
+#ifndef NSX_CORE_INSTRUMENT_INSTRUMENTSTATESET_H
+#define NSX_CORE_INSTRUMENT_INSTRUMENTSTATESET_H
+
+#include "core/data/DataSet.h"
+#include "core/data/DataTypes.h"
+#include "core/instrument/InstrumentState.h"
+
+namespace nsx {
+
+class DataSet;
+
+/*! \addtogroup python_api
+ *  @{*/
+
+/*! \brief Container for *mutable* instrument states (sample
+ * positions/orientation, detector offset and incident wavevector) that are
+ * modified during refinement.
+ */
+class InstrumentStateSet {
+
+ public:
+    InstrumentStateSet(sptrDataSet data);
+    InstrumentStateSet(sptrDataSet data, const InstrumentStateList& states);
+
+    InstrumentStateList instrumentStates() { return _instrument_states; };
+    std::string name() const { return _name; };
+    DataSet* data() const { return _data.get(); };
+    unsigned int id() const { return _id; };
+    void setId(unsigned int id) { if (_id == 0) _id = id; };
+
+ private:
+    unsigned int _id;
+    std::string _name;
+    std::size_t _nframes;
+    sptrDataSet _data;
+    InstrumentStateList _instrument_states;
+};
+
+/*! @}*/
+} // namespace nsx
+
+#endif // NSX_CORE_INSTRUMENT_INSTRUMENTSTATESET_H
