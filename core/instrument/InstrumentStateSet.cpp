@@ -14,6 +14,7 @@
 
 #include "core/instrument/InstrumentStateSet.h"
 
+#include "core/data/DataSet.h"
 #include "core/data/DataTypes.h"
 #include "core/instrument/Diffractometer.h"
 

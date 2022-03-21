@@ -16,17 +16,18 @@
 #define NSX_CORE_DATA_DATASET_H
 
 #include "base/mask/IMask.h"
+#include "core/data/DataTypes.h"
 #include "core/instrument/InstrumentState.h"
+#include "core/loader/IDataReader.h"
 #include "core/peak/Peak3D.h"
 #include "core/raw/DataKeys.h"
-#include "core/loader/IDataReader.h"
-#include "core/data/DataTypes.h"
 
 namespace nsx {
 
 class Detector;
 class DetectorEvent;
 class Diffractometer;
+class InstrumentStateSet;
 struct RawDataReaderParameters;
 
 /*! \addtogroup python_api
@@ -53,9 +54,6 @@ class DataSet {
     std::size_t nFrames() const;
     std::size_t nRows() const; //!< The number of rows in each detector image
     std::size_t nCols() const; //!< The number of columns in each detector image
-
-    InstrumentStateList& instrumentStates();
-    const InstrumentStateList& instrumentStates() const;
 
     void addMask(IMask* mask);
     void removeMask(IMask* mask);
@@ -121,13 +119,18 @@ class DataSet {
     //! Query the wavelength stored in the metadata
     double wavelength() const;
 
+    //! Get the initial instrument states
+    void setInstrumentStates(InstrumentStateSet* states);
+
+    //! Return instrument state list
+    InstrumentStateList& instrumentStates();
+
 private:
     void _setReader(const DataFormat dataformat, const std::string& filename = "");
 
  private:
     std::string _name = nsx::kw_datasetDefaultName;
     std::vector<Eigen::MatrixXi> _data;
-    InstrumentStateList _states;
     std::set<IMask*> _masks;
     nsx::MetaData _metadata;
     //! Current data reader (set only once)
@@ -136,6 +139,8 @@ private:
     DataFormat _dataformat = DataFormat::Unknown;
     //! Pointer to the Diffractometer
     Diffractometer* _diffractometer;
+    //! Pointer to instrument states
+    InstrumentStateSet* _states;
 
 public:
     //! Data shape (columns, rows, frames)

@@ -76,7 +76,7 @@ sptrDataSet DataHandler::getData(std::string name) const
 bool DataHandler::addData(sptrDataSet data, std::string name)
 {
     if (name.empty())
-        name = data->name();    
+        name = data->name();
 
     if (name.empty())
         throw std::invalid_argument("DataHandler::addData: Data name cannot be empty");
@@ -125,6 +125,7 @@ bool DataHandler::addData(sptrDataSet data, std::string name)
         Level::Info, "DataHandler::addData: adding DataSet '", name, "': ", data->nFrames(),
         " frames");
     _data_map.insert(std::make_pair(name, data));
+    _instrument_state_handler->addInstrumentStateSet(data);
 
     return hasData(name);
 }

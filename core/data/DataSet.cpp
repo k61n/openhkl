@@ -24,6 +24,7 @@
 #include "core/experiment/ExperimentExporter.h"
 #include "core/gonio/Gonio.h"
 #include "core/instrument/Diffractometer.h"
+#include "core/instrument/InstrumentStateSet.h"
 #include "core/instrument/InterpolatedState.h"
 #include "core/instrument/Monochromator.h"
 #include "core/instrument/Sample.h"
@@ -35,11 +36,12 @@
 
 
 #include <H5Cpp.h>
+#include <stdexcept>
 
 namespace nsx {
 
 DataSet::DataSet(const std::string& dataset_name, Diffractometer* diffractometer)
-    : _diffractometer{diffractometer}
+    : _diffractometer{diffractometer}, _states(nullptr)
 {
     setName(dataset_name);
     if (!_diffractometer)
@@ -80,13 +82,6 @@ void DataSet::finishRead()
 
     // Update the monochromator wavelength
     diffractometer()->source().selectedMonochromator().setWavelength(wavelength());
-
-    // Compute the instrument states for all frames
-    const std::size_t nframes = nFrames();
-    _states.reserve(nframes);
-
-    for (unsigned int i = 0; i < nframes; ++i)
-        _states.push_back(_diffractometer->instrumentState(i));
 }
 
 void DataSet::addDataFile(const std::string& filename, const std::string& extension)
@@ -200,16 +195,6 @@ double DataSet::wavelength() const
     return _metadata.key<double>(nsx::at_wavelength);
 }
 
-const InstrumentStateList& DataSet::instrumentStates() const
-{
-    return _states;
-}
-
-InstrumentStateList& DataSet::instrumentStates()
-{
-    return _states;
-}
-
 void DataSet::addMask(IMask* mask)
 {
     _masks.insert(mask);
@@ -247,7 +232,9 @@ void DataSet::maskPeaks(std::vector<Peak3D*>& peaks) const
 
 ReciprocalVector DataSet::computeQ(const DetectorEvent& ev) const
 {
-    const auto& state = InterpolatedState::interpolate(_states, ev.frame);
+    if (!_states)
+        throw std::runtime_error("InstrumentStates not set");
+    const auto& state = InterpolatedState::interpolate(_states->instrumentStates(), ev.frame);
     const auto& detector_position = DirectVector(detector().pixelPosition(ev.px, ev.py));
     return state.sampleQ(detector_position);
 }
@@ -326,6 +313,16 @@ const nsx::MetaData& DataSet::metadata() const
 nsx::MetaData& DataSet::metadata()
 {
     return _metadata;
+}
+
+void DataSet::setInstrumentStates(InstrumentStateSet* states)
+{
+    _states = states;
+}
+
+InstrumentStateList& DataSet::instrumentStates()
+{
+    return _states->instrumentStates();
 }
 
 } // namespace nsx

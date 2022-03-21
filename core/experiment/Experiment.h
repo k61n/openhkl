@@ -155,6 +155,18 @@ class Experiment {
     //! Remove the batch cells if they are not being used
     void removeBatchCells();
 
+    // Instrument state handler
+    //! Add a set of instrment states
+    bool addInstrumentStateSet(sptrDataSet data);
+    //! Add a set of instrment states
+    bool addInstrumentStateSet(sptrDataSet data, const InstrumentStateList& states);
+    //! Returns the named InstrumentStateSet
+    InstrumentStateSet* getInstrumentStateSet(const sptrDataSet& data);
+    //! Returns the named InstrumentStateSet
+    InstrumentStateSet* getInstrumentStateSet(const DataSet* data);
+    // !Remove a set of instrument states from the experiment
+    void removeInstrumentStateSet(const sptrDataSet& data);
+
     // Peak finder
     //! Return a pointer to the PeakFinder object
     PeakFinder* peakFinder() { return _peak_finder.get(); };

@@ -211,7 +211,7 @@ void writeFrames(
 
 
 void writeInstrumentStates(H5::H5File& file, const std::string& datakey,
-                           const nsx::DataSet* const dataset)
+                           nsx::DataSet* dataset)
 {
     const std::string instrumentStatesKey {datakey + "/" + nsx::gr_Instrument};
     file.createGroup(nsx::gr_Instrument);
@@ -292,7 +292,7 @@ void ExperimentExporter::writeData(const std::map<std::string, DataSet*> data)
     writeFrames(file, dataCollectionsKey, data);
 
     for (const auto& it : data) {
-        const DataSet* data_item = it.second;
+        DataSet* data_item = it.second;
         const std::string datakey = dataCollectionsKey + "/" + data_item->name();
 
         // Write detector states

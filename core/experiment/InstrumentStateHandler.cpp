@@ -28,6 +28,7 @@ bool InstrumentStateHandler::addInstrumentStateSet(sptrDataSet data)
     nsxlog(Level::Info, "InstrumentStateHandler::addInstrumentStateSet for DataSet'", data->name());
     std::unique_ptr<InstrumentStateSet> ptr = std::make_unique<InstrumentStateSet>(data);
     ptr->setId(_last_index++);
+    data->setInstrumentStates(ptr.get());
     _instrumentstate_map.insert({data, std::move(ptr)});
     return hasInstrumentStateSet(data);
 }
@@ -39,6 +40,7 @@ bool InstrumentStateHandler::addInstrumentStateSet(
     nsxlog(Level::Info, "InstrumentStateHandler::addInstrumentStateSet for DataSet'", data->name());
     std::unique_ptr<InstrumentStateSet> ptr = std::make_unique<InstrumentStateSet>(data, states);
     ptr->setId(_last_index++);
+    data->setInstrumentStates(ptr.get());
     _instrumentstate_map.insert({data, std::move(ptr)});
     return hasInstrumentStateSet(data);
 }
@@ -52,6 +54,13 @@ bool InstrumentStateHandler::hasInstrumentStateSet(const sptrDataSet& data) cons
 InstrumentStateSet* InstrumentStateHandler::getInstrumentStateSet(const sptrDataSet& data)
 {
     if (hasInstrumentStateSet(data)) return _instrumentstate_map[data].get();
+    return nullptr;
+}
+
+InstrumentStateSet* InstrumentStateHandler::getInstrumentStateSet(const DataSet* data)
+{
+    for (auto it = _instrumentstate_map.begin(); it != _instrumentstate_map.end(); ++it)
+        if (it->first.get() == data) return it->second.get();
     return nullptr;
 }
 

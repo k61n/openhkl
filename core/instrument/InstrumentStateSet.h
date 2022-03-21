@@ -15,11 +15,12 @@
 #ifndef NSX_CORE_INSTRUMENT_INSTRUMENTSTATESET_H
 #define NSX_CORE_INSTRUMENT_INSTRUMENTSTATESET_H
 
-#include "core/data/DataSet.h"
 #include "core/data/DataTypes.h"
 #include "core/instrument/InstrumentState.h"
 
 namespace nsx {
+
+using sptrDataSet = std::shared_ptr<DataSet>;
 
 class DataSet;
 
@@ -36,7 +37,7 @@ class InstrumentStateSet {
     InstrumentStateSet(sptrDataSet data);
     InstrumentStateSet(sptrDataSet data, const InstrumentStateList& states);
 
-    InstrumentStateList instrumentStates() { return _instrument_states; };
+    InstrumentStateList& instrumentStates() { return _instrument_states; };
     std::string name() const { return _name; };
     DataSet* data() const { return _data.get(); };
     unsigned int id() const { return _id; };
