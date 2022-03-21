@@ -150,7 +150,7 @@ bool BaseHDF5DataReader::initRead()
         sampleGroup = _file->openGroup("/" + _sampleKey(dataset_name));
 
         // read the name of the experiment and diffractometer
-        std::string experiment_name = "", diffractometer_name = "", version_str = "";
+        std::string experiment_name, diffractometer_name, version_str;
 
         if (_file->attrExists(nsx::at_experiment)) {
             const H5::Attribute attr = _file->openAttribute(nsx::at_experiment);
