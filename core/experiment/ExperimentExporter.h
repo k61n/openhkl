@@ -33,8 +33,6 @@ class ExperimentExporter {
     //! Write the data into the current file
     void writeData(const std::map<std::string, DataSet*> data);
     //! Write the peak data into the current file
-    void writeInstrument(const Diffractometer* diffractometer);
-    //! Write the peak data into the current file
     void writePeaks(const std::map<std::string, PeakCollection*> peakCollections);
     //! write the unit cells into current file
     void writeUnitCells(const std::map<std::string, UnitCell*> unit_cells);

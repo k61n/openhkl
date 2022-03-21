@@ -23,6 +23,8 @@
 #include "core/instrument/Diffractometer.h"
 #include "core/instrument/Sample.h"
 #include "core/raw/DataKeys.h"
+#include "core/raw/HDF5TableIO.h" // HDF5TableReader
+#include "core/instrument/InstrumentState.h"
 
 #include <stdexcept>
 #include <string>
@@ -40,6 +42,11 @@ std::string _detectorKey(const std::string& dataset_name)
     return nsx::gr_DataCollections + "/" + dataset_name + "/" + nsx::gr_Detector;
 }
 
+std::string _instrumentStateKey(const std::string& dataset_name)
+{
+    return nsx::gr_DataCollections + "/" + dataset_name + "/" + nsx::gr_Instrument;
+}
+
 std::string _sampleKey(const std::string& dataset_name)
 {
     return nsx::gr_DataCollections + "/" + dataset_name + "/" + nsx::gr_Sample;
@@ -48,6 +55,46 @@ std::string _sampleKey(const std::string& dataset_name)
 std::string _dataKey(const std::string& dataset_name)
 {
     return nsx::gr_DataCollections + "/" + dataset_name + "/" + nsx::ds_Dataset;
+}
+
+
+void loadInstrumentStates(const H5::Group& instrument_grp, nsx::InstrumentStateList& instrument_states)
+{
+   // temp. container for the state
+    nsx::InstrumentState state;
+    H5::DataSet
+        detectorOrientation_ds {instrument_grp.openDataSet(nsx::ds_detectorOrientation)},
+        detectorPositionOffset_ds {instrument_grp.openDataSet(nsx::ds_detectorPositionOffset)},
+        sampleOrientation_ds {instrument_grp.openDataSet(nsx::ds_sampleOrientation)},
+        sampleOrientationOffset_ds {instrument_grp.openDataSet(nsx::ds_sampleOrientationOffset)},
+        samplePosition_ds {instrument_grp.openDataSet(nsx::ds_samplePosition)},
+        ni_ds {instrument_grp.openDataSet(nsx::ds_beamDirection)},
+        wavelength_ds {instrument_grp.openDataSet(nsx::ds_beamWavelength)},
+        refined_ds {instrument_grp.openDataSet(nsx::ds_isRefinedState)};
+
+    HDF5TableReader
+        detectorOrientation(detectorOrientation_ds),
+        detectorPositionOffset(detectorPositionOffset_ds),
+        sampleOrientation(sampleOrientation_ds),
+        sampleOrientationOffset(sampleOrientationOffset_ds),
+        samplePosition(samplePosition_ds),
+        ni(ni_ds), wavelength(wavelength_ds), refined(refined_ds);
+
+    std::size_t n_states = detectorOrientation.n_rows;
+    for (std::size_t i_row = 0; i_row < n_states; ++i_row)
+    {
+        detectorOrientation.readRow(i_row, state.detectorOrientation.data());
+        detectorPositionOffset.readRow(i_row, state.detectorPositionOffset.data());
+        samplePosition.readRow(i_row, state.samplePosition.data());
+        sampleOrientation.readRow(i_row, state.sampleOrientation.coeffs().data());
+        sampleOrientationOffset.readRow(i_row, state.sampleOrientationOffset.coeffs().data());
+        samplePosition.readRow(i_row, state.samplePosition.data());
+        ni.readRow(i_row, state.ni.data());
+        wavelength.readRow(i_row, &state.wavelength);
+        refined.readRow(i_row, &state.refined);
+    }
+
+    instrument_states.push_back(state);
 }
 
 } // namespace
@@ -103,7 +150,7 @@ bool BaseHDF5DataReader::initRead()
         sampleGroup = _file->openGroup("/" + _sampleKey(dataset_name));
 
         // read the name of the experiment and diffractometer
-        std::string experiment_name = "", diffractometer_name = "", version_str = "";
+        std::string experiment_name, diffractometer_name, version_str;
 
         if (_file->attrExists(nsx::at_experiment)) {
             const H5::Attribute attr = _file->openAttribute(nsx::at_experiment);
@@ -264,9 +311,22 @@ bool BaseHDF5DataReader::initRead()
     for (unsigned int i = 0; i < nframes; ++i)
         _dataset_out->diffractometer()->sampleStates[i] = eigenToVector(dm.col(i));
 
+    if (_file->nameExists("/" + _instrumentStateKey(dataset_name))) {
+        nsxlog(
+            nsx::Level::Debug, "Reading instrument states of '", _filename, "', dataset '", dataset_name,
+            "'");
+        H5::Group instrumentStateGroup {_file->openGroup("/" + _instrumentStateKey(dataset_name))};
+        loadInstrumentStates(instrumentStateGroup, _dataset_out->instrumentStates());
+    } else {
+        nsxlog(
+            nsx::Level::Debug, "No instrument states found in '", _filename, "', dataset '", dataset_name,
+            "'");
+    };
+
     nsxlog(
         nsx::Level::Info, "Finished reading the data in '", _filename, "', dataset '", dataset_name,
         "'");
+
     _file->close();
 
     // Add the list of sources as metadata
