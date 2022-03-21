@@ -54,7 +54,7 @@ class DataSet {
     std::size_t nRows() const; //!< The number of rows in each detector image
     std::size_t nCols() const; //!< The number of columns in each detector image
 
-    InstrumentStateList& instrumentStates(); // TODO: rm if possible
+    InstrumentStateList& instrumentStates();
     const InstrumentStateList& instrumentStates() const;
 
     void addMask(IMask* mask);
