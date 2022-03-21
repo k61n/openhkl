@@ -25,6 +25,7 @@ namespace nsx {
 //-- HDF5 Group keys
 const std::string gr_DataCollections{"DataCollections"};
 const std::string gr_Detector{"Detector"};
+const std::string gr_Instrument{"Instrument"};
 const std::string gr_Sample{"Sample"};
 const std::string gr_Metadata{"Metadata"};
 const std::string gr_PeakCollections{"PeakCollections"};
@@ -34,6 +35,16 @@ const std::string gr_UnitCells{"UnitCells"};
 const std::string ds_Dataset{"Dataset"};
 const std::string ds_DatasetNames{"DatasetNames"};
 const std::string ds_UnitCellNames{"UnitCellNames"};
+
+// instrument state
+const std::string ds_detectorOrientation{"detector orientation"};
+const std::string ds_detectorPositionOffset{"detector position offset"};
+const std::string ds_sampleOrientation{"sample orientation"};
+const std::string ds_sampleOrientationOffset{"sample orientation offset"};
+const std::string ds_samplePosition{"sample position"};
+const std::string ds_beamDirection{"incoming beam direction"};
+const std::string ds_beamWavelength{"incoming beam wavelength"};
+const std::string ds_isRefinedState{"is refined"};
 
 // peaks
 const std::string ds_PeakEnd{"PeakEnd"};
