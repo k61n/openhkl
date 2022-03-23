@@ -284,7 +284,6 @@ void SideBar::onMerger()
 
 void SideBar::refreshAll()
 {
-    std::cout << "refresh all " << std::endl;
     if (gSession->currentProjectNum() != -1) {
         gGui->experiment->getProperty()->unitCellChanged();
         gGui->experiment->getProperty()->peaksChanged();
