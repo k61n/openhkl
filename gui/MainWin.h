@@ -72,6 +72,8 @@ class MainWin : public QMainWindow {
     void plotData(QVector<double>& x, QVector<double>& y, QVector<double>& e) const;
     //! determine if the system theme is dark
     bool isDark();
+    
+    void refreshMenu();
 
     //! Get the Sidebar
     SideBar* sideBar() { return _side_bar; };
@@ -109,6 +111,8 @@ class MainWin : public QMainWindow {
     LogWindow* log_window;
 
     Sentinel* sentinel;
+
+
 
  private:
     void initStatusBar();

@@ -285,6 +285,7 @@ void SideBar::onMerger()
 
 void SideBar::refreshAll()
 {
+    std::cout << "refresh all " << std::endl;
     if (gSession->currentProjectNum() != -1) {
         gGui->experiment->getProperty()->unitCellChanged();
         gGui->experiment->getProperty()->peaksChanged();
@@ -298,4 +299,7 @@ void SideBar::refreshAll()
     gGui->refiner->refreshAll();
     gGui->integrator->refreshAll();
     gGui->merger->refreshAll();
+
+    gGui->refreshMenu();
+
 }

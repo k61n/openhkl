@@ -16,9 +16,15 @@
 
 #include "gui/MainWin.h"
 #include "gui/actions/Actions.h"
+#include "gui/models/Session.h"
+#include "gui/models/Project.h"
+#include "core/experiment/Experiment.h"
 
 #include <QAction>
 #include <QMenu>
+#include <iostream>
+
+class Project;
 
 //! Initialize the menu bar.
 Menus::Menus(QMenuBar* menu_bar) : _menu_bar{menu_bar}
@@ -64,6 +70,8 @@ Menus::Menus(QMenuBar* menu_bar) : _menu_bar{menu_bar}
     _cells_menu->addAction(actions->remove_cell);
 
     _help_menu->addAction(actions->about);
+
+    toggle_entries();
 }
 
 QAction* Menus::separator() const
@@ -82,4 +90,47 @@ QMenu* Menus::actionsToMenu(const char* menuName, QList<QAction*> actions)
     for (auto action : actions)
         action->setToolTip(prefix + action->toolTip());
     return menu;
+}
+
+// toggles Menu entries
+void Menus::toggle_entries()
+{  
+    //return;
+    Actions* actions = gGui->triggers;
+
+    if (gSession->numExperiments() == 0){ // just disables everything
+        actions->save_all_experiment->setDisabled(true);
+        actions->save_experiment->setDisabled(true);
+        actions->save_experiment_as->setDisabled(true);
+
+        actions->remove_experiment->setDisabled(true);
+
+        _view_menu->setDisabled(true);    
+        _data_menu->setDisabled(true);    
+        _peaks_menu->setDisabled(true);
+        _cells_menu->setDisabled(true);
+        return;
+    }     
+    
+    auto prj = gSession->experimentAt(
+    gSession->currentProjectNum());
+    auto expt = prj->experiment();
+
+    bool no_projects = (gSession->currentProjectNum() < 0);
+    bool no_datasets = expt->numData() == 0;
+    bool no_pcollections = (expt->numPeakCollections() == 0);
+    bool no_unitcell = (expt->numUnitCells() == 0);
+    
+    actions->remove_data->setDisabled(no_datasets);
+    
+    actions->save_all_experiment->setDisabled(no_projects);
+    actions->save_experiment->setDisabled(no_projects);
+    actions->save_experiment_as->setDisabled(no_projects);
+
+    actions->remove_experiment->setDisabled(no_projects);
+
+    _view_menu->setDisabled(no_projects);    
+    _data_menu->setDisabled(no_projects);    
+    _peaks_menu->setDisabled(no_projects || no_pcollections);
+    _cells_menu->setDisabled(no_projects || no_unitcell);
 }

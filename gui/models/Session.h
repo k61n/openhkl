@@ -65,6 +65,8 @@ class Session {
     Project* createProject(QString experimentName, QString instrumentName);
     bool addProject(std::unique_ptr<Project> project_ptr);
 
+    std::string GenerateExperimentName();
+
 
  private:
     std::vector<std::unique_ptr<Project>> _projects;

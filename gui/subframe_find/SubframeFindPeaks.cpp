@@ -192,6 +192,7 @@ void SubframeFindPeaks::setIntegrateUp()
     connect(
         gGui->sideBar(), &SideBar::subframeChanged, this, &SubframeFindPeaks::setFinderParameters);
 
+    integration_para->setExpanded(true);
     _left_layout->addWidget(integration_para);
 }
 
