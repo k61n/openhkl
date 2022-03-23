@@ -524,6 +524,11 @@ bool Experiment::addInstrumentStateSet(sptrDataSet data, const InstrumentStateLi
     return _instrumentstate_handler->addInstrumentStateSet(data, states);
 }
 
+bool Experiment::addInstrumentStateSet(sptrDataSet data, std::unique_ptr<InstrumentStateSet>& states)
+{
+    return _instrumentstate_handler->addInstrumentStateSet(data, states);
+}
+
     std::string Experiment::GenerateUnitCellName()
 {
     return _cell_handler->GenerateUnitCellName();

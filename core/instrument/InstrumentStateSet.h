@@ -34,20 +34,23 @@ class DataSet;
 class InstrumentStateSet {
 
  public:
+    InstrumentStateSet(DataSet* data, const InstrumentStateList& states);
     InstrumentStateSet(sptrDataSet data);
     InstrumentStateSet(sptrDataSet data, const InstrumentStateList& states);
 
     InstrumentStateList& instrumentStates() { return _instrument_states; };
     std::string name() const { return _name; };
-    DataSet* data() const { return _data.get(); };
+    DataSet* data() const { return _data; };
     unsigned int id() const { return _id; };
     void setId(unsigned int id) { if (_id == 0) _id = id; };
+    void reset() { _instrument_states.clear(); };
+    void setInstrumentStates(const InstrumentStateList& states) { _instrument_states = states; };
 
  private:
     unsigned int _id;
     std::string _name;
     std::size_t _nframes;
-    sptrDataSet _data;
+    DataSet* _data;
     InstrumentStateList _instrument_states;
 };
 

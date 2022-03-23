@@ -15,9 +15,9 @@
 #ifndef NSX_CORE_LOADER_HDF5METADATAREADER_H
 #define NSX_CORE_LOADER_HDF5METADATAREADER_H
 
+#include "core/loader/IDataReader.h" // inherits from
 #include "core/raw/DataKeys.h" // kw_datasetDefaultName
 #include "core/raw/HDF5BloscFilter.h"
-#include "core/loader/IDataReader.h" // inherits from
 
 #include <H5Cpp.h>
 #include <memory>

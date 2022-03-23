@@ -160,6 +160,8 @@ class Experiment {
     bool addInstrumentStateSet(sptrDataSet data);
     //! Add a set of instrment states
     bool addInstrumentStateSet(sptrDataSet data, const InstrumentStateList& states);
+    //! Add a set of instrment states
+    bool addInstrumentStateSet(sptrDataSet data, std::unique_ptr<InstrumentStateSet>& states);
     //! Returns the named InstrumentStateSet
     InstrumentStateSet* getInstrumentStateSet(const sptrDataSet& data);
     //! Returns the named InstrumentStateSet

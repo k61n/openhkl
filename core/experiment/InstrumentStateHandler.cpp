@@ -45,6 +45,17 @@ bool InstrumentStateHandler::addInstrumentStateSet(
     return hasInstrumentStateSet(data);
 }
 
+bool InstrumentStateHandler::addInstrumentStateSet(
+    sptrDataSet data, std::unique_ptr<InstrumentStateSet>& states)
+{
+    nsxlog(Level::Info, "InstrumentStateHandler::addInstrumentStateSet for DataSet'", data->name());
+    std::unique_ptr<InstrumentStateSet> ptr = std::move(states);
+    ptr->setId(_last_index++);
+    data->setInstrumentStates(ptr.get());
+    _instrumentstate_map.insert_or_assign(data, std::move(ptr));
+    return hasInstrumentStateSet(data);
+}
+
 bool InstrumentStateHandler::hasInstrumentStateSet(const sptrDataSet& data) const
 {
     auto states = _instrumentstate_map.find(data);

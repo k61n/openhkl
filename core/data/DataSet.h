@@ -21,6 +21,7 @@
 #include "core/loader/IDataReader.h"
 #include "core/peak/Peak3D.h"
 #include "core/raw/DataKeys.h"
+#include <memory>
 
 namespace nsx {
 

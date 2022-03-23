@@ -21,10 +21,10 @@
 #include "core/detector/Detector.h"
 #include "core/gonio/Gonio.h"
 #include "core/instrument/Diffractometer.h"
+#include "core/instrument/InstrumentState.h"
 #include "core/instrument/Sample.h"
 #include "core/raw/DataKeys.h"
 #include "core/raw/HDF5TableIO.h" // HDF5TableReader
-#include "core/instrument/InstrumentState.h"
 
 #include <stdexcept>
 #include <string>
@@ -92,9 +92,8 @@ void loadInstrumentStates(const H5::Group& instrument_grp, nsx::InstrumentStateL
         ni.readRow(i_row, state.ni.data());
         wavelength.readRow(i_row, &state.wavelength);
         refined.readRow(i_row, &state.refined);
+        instrument_states.push_back(state);
     }
-
-    instrument_states.push_back(state);
 }
 
 } // namespace
@@ -316,7 +315,9 @@ bool BaseHDF5DataReader::initRead()
             nsx::Level::Debug, "Reading instrument states of '", _filename, "', dataset '", dataset_name,
             "'");
         H5::Group instrumentStateGroup {_file->openGroup("/" + _instrumentStateKey(dataset_name))};
-        loadInstrumentStates(instrumentStateGroup, _dataset_out->instrumentStates());
+        InstrumentStateList states;
+        loadInstrumentStates(instrumentStateGroup, states);
+        _instrument_states = std::make_unique<InstrumentStateSet>(_dataset_out, states);
     } else {
         nsxlog(
             nsx::Level::Debug, "No instrument states found in '", _filename, "', dataset '", dataset_name,

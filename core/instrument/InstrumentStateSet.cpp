@@ -20,8 +20,18 @@
 
 namespace nsx {
 
-InstrumentStateSet::InstrumentStateSet(sptrDataSet data)
-    : _id(0), _data(data)
+InstrumentStateSet::InstrumentStateSet(DataSet* data, const InstrumentStateList& states)
+    : _id(0), _data(data), _instrument_states(states)
+{
+    _name = data->name();
+    _nframes = data->nFrames();
+    _instrument_states.reserve(_nframes);
+    for (const auto& state : states) {
+        _instrument_states.push_back(state);
+    }
+}
+
+InstrumentStateSet::InstrumentStateSet(sptrDataSet data) : _id(0), _data(data.get())
 {
     _name = data->name();
     _nframes = data->nFrames();
@@ -32,7 +42,7 @@ InstrumentStateSet::InstrumentStateSet(sptrDataSet data)
 }
 
 InstrumentStateSet::InstrumentStateSet(sptrDataSet data, const InstrumentStateList& states)
-    : _id(0), _data(data), _instrument_states(states)
+    : _id(0), _data(data.get()), _instrument_states(states)
 {
     _name = data->name();
     _nframes = data->nFrames();
