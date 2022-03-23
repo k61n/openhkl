@@ -153,6 +153,7 @@ void SubframeHome::_setRightLayout(QHBoxLayout* main_layout)
         &SubframeHome::_switchCurrentExperiment);
 
     right->addWidget(_open_experiments_view);
+    _open_experiments_view->resizeColumnsToContents();
 
     QHBoxLayout* right_bot = new QHBoxLayout();
 
@@ -209,6 +210,7 @@ void SubframeHome::createNew()
             toggleUnsafeWidgets();
         }
     }
+    _open_experiments_view->resizeColumnsToContents();
     gGui->refreshMenu();
 }
 
