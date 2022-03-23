@@ -280,8 +280,8 @@ bool Session::loadRawData()
         for (const QString& filename : qfilenames)
             filenames.push_back(filename.toStdString());
 
-        nsx::RawDataReaderParameters parameters;
-        parameters.dataset_name = nsx::fileBasename(filenames[0]);
+        nsx::RawDataReaderParameters parameters(filenames.at(0));
+        //parameters.dataset_name = nsx::fileBasename(filenames[0]);
         const QStringList& datanames_pre{currentProject()->getDataNames()};
         RawDataDialog dialog(parameters, datanames_pre);
         if (!dialog.exec()){
