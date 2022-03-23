@@ -62,6 +62,7 @@ SubframeHome::SubframeHome()
     readSettings();
     toggleUnsafeWidgets();
     _updateLastLoadedWidget();
+    gGui->refreshMenu();
 }
 
 void SubframeHome::_setLeftLayout(QHBoxLayout* main_layout)
@@ -219,8 +220,12 @@ void SubframeHome::_setRightLayout(QHBoxLayout* main_layout)
 
 void SubframeHome::createNew()
 {
-    std::unique_ptr<ExperimentDialog> exp_dialog(new ExperimentDialog);
-    exp_dialog->exec();
+    std::unique_ptr<ExperimentDialog> exp_dialog(//new ExperimentDialog());
+        new ExperimentDialog(
+        QString::fromStdString(
+        gSession->GenerateExperimentName())
+        ));
+    exp_dialog->exec();  
 
     if (exp_dialog->result()) {
         QString expr_nm = exp_dialog->experimentName();
@@ -239,6 +244,7 @@ void SubframeHome::createNew()
             toggleUnsafeWidgets();
         }
     }
+    gGui->refreshMenu();
 }
 
 void SubframeHome::loadFromFile()
@@ -272,6 +278,7 @@ void SubframeHome::loadFromFile()
 
     refreshTables();
     gGui->setReady(true);
+    gGui->refreshMenu();
 }
 
 void SubframeHome::saveCurrent(bool dialogue /* = false */)
@@ -308,6 +315,7 @@ void SubframeHome::saveCurrent(bool dialogue /* = false */)
         QMessageBox::critical(this, "Error", QString(e.what()));
     }
     gGui->setReady(true);
+    gGui->refreshMenu();
 }
 
 void SubframeHome::saveAll() { }
@@ -330,6 +338,7 @@ void SubframeHome::saveSettings() const
     QSettings s;
     s.beginGroup("RecentFiles");
     s.setValue("last_loaded", QVariant::fromValue(_last_imports));
+    gGui->refreshMenu();
 }
 
 void SubframeHome::readSettings()
@@ -337,6 +346,7 @@ void SubframeHome::readSettings()
     QSettings s;
     s.beginGroup("RecentFiles");
     _last_imports = s.value("last_loaded").value<QList<QStringList>>();
+    gGui->refreshMenu();
 }
 
 void SubframeHome::_updateLastLoadedList(QString name, QString file_path)
@@ -352,6 +362,7 @@ void SubframeHome::_updateLastLoadedList(QString name, QString file_path)
 
     _updateLastLoadedWidget();
     refreshTables();
+    gGui->refreshMenu();
 }
 
 void SubframeHome::_updateLastLoadedWidget()
@@ -394,6 +405,7 @@ void SubframeHome::_loadSelectedItem(QListWidgetItem* item)
     } catch (const std::exception& e) {
         QMessageBox::critical(this, "Error", QString(e.what()));
     }
+    gGui->refreshMenu();
 }
 
 void SubframeHome::toggleUnsafeWidgets()
@@ -407,6 +419,7 @@ void SubframeHome::toggleUnsafeWidgets()
         _save_current->setEnabled(false);
         _remove_current->setEnabled(false);
     }
+    gGui->refreshMenu();
 }
 
 void SubframeHome::refreshTables()
@@ -517,4 +530,5 @@ void SubframeHome::refreshTables()
     } catch (const std::exception& e) {
         QMessageBox::critical(this, "Error", QString(e.what()));
     }
+    gGui->refreshMenu();
 }

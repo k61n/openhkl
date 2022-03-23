@@ -32,6 +32,8 @@ class Menus {
 
     QMenu* _data_sub;
 
+
+   void toggle_entries();
  private:
     QMenuBar* _menu_bar;
     QAction* separator() const;

@@ -260,7 +260,8 @@ bool Session::loadRawData()
 {
     // Loading data requires an existing Experiment
     if (_currentProject < 0) {
-        QMessageBox::critical(nullptr, "Error", "Please create an experiment before loading data.");
+        
+        //QMessageBox::critical(nullptr, "Error", "Please create an experiment before loading data.");
         return false;
     }
 
@@ -418,3 +419,13 @@ bool Session::UpdateExperimentData(unsigned int idx, QString name, QString instr
     _projects.at(idx)->experiment()->setDiffractometer(instrument.toStdString());
     return true;
 }
+
+  std::string Session::GenerateExperimentName()
+  {
+    int n = 3;
+    std::string str = std::to_string(_projects.size()+1);
+    if (str.size() > n){//
+        return "New Experiment";
+    }
+    return std::string("ExperimentNr") +  std::string( n - str.size(), '0').append( str );
+  }
