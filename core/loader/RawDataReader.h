@@ -35,20 +35,15 @@ struct RawDataReaderParameters {
     bool swap_endian = true;
     std::size_t bpp = 2;
 
-    RawDataReaderParameters(std::string file="")
+    void LoadDataFromFile(std::string file)
     {
-        if (file.empty()){
-            //throw std::runtime_error("Need RawDataReaderParameter");
-            return;
-        }
-
         std::size_t pos1 = file.find_last_of("/");
         std::size_t pos0 = (file.substr(0,pos1-1)).find_last_of("/");
         std::size_t pos2 = file.find_last_of(".");
 
-        std::string name = file.substr(pos1+1, pos2);
-        name = name.substr(0, name.size() - 9);
-        dataset_name = "DataSet_" + name;
+        //std::string name = file.substr(pos1+1, pos2);
+        //name = name.substr(0, name.size() - 9);
+        //dataset_name = "DataSet_" + name;
 
         if (pos1 == std::string::npos || 
             pos0 == std::string::npos || 
@@ -75,14 +70,14 @@ struct RawDataReaderParameters {
 
                 auto omega_pos = buffer.find("Omegarange:");
                 if (  omega_pos != std::string::npos){
-                    auto nl_pos = buffer.find(";");
+                    auto nl_pos = buffer.find(";", omega_pos);
                     std::string a = buffer.substr(omega_pos+ 11, nl_pos-1);
                     delta_omega = std::stod(a);                
                 }
 
                 auto lambda_pos = buffer.find("Lambda:");
                 if (  lambda_pos != std::string::npos){
-                auto nl_pos = buffer.find(";");
+                auto nl_pos = buffer.find(";", lambda_pos);
                 std::string b = buffer.substr(lambda_pos+7, nl_pos-1);
                 wavelength = std::stod(b);                
                 }
