@@ -7,18 +7,18 @@ class TestPeakFinder(unittest.TestCase):
 
     def test(self):
         # Initialise the experiment
-        name = "FutA"
-        detector = "BioDiff5000"
+        name = "CrChiA"
+        detector = "BioDiff2500"
         expt = nsx.Experiment(name, detector)
 
         # Read the data
-        files = glob.glob('p16106_00029*.tiff')
-        if len(files) != 7:
+        files = glob.glob('CrChiA_c01runab_28*.raw')
+        if len(files) != 15:
             raise Exception(f"Found {len(files)} tiff files while expecting 7")
         data_params = nsx.RawDataReaderParameters()
         # instrument and file parameters
-        data_params.wavelength = 3.1
-        data_params.delta_omega = 0.4
+        data_params.wavelength = 2.669
+        data_params.delta_omega = 0.3
         data_params.row_major = True
         data_params.swap_endian = True
         data_params.bpp = 2
@@ -54,7 +54,7 @@ class TestPeakFinder(unittest.TestCase):
         expt.acceptFoundPeaks("found")
         found_peaks = expt.getPeakCollection("found")
         n_peaks = found_peaks.numberOfPeaks()
-        self.assertTrue(n_peaks >= 210, f"found only {n_peaks} peaks")
+        self.assertTrue(n_peaks >= 465, f"found only {n_peaks} peaks")
 
 if __name__ == "__main__":
     unittest.main()
