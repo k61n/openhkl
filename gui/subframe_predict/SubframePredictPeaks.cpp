@@ -683,9 +683,9 @@ void SubframePredictPeaks::showDirectBeamEvents()
         auto* expt = gSession->experimentAt(_exp_combo->currentIndex())->experiment();
         auto data_name = _detector_widget->dataCombo()->currentText().toStdString();
         if (data_name.empty()){ // to prevent crash
-            QMessageBox::warning(nullptr,
+            /*QMessageBox::warning(nullptr,
             "Empty Experimentname",
-            "Unable to retrieve data for an empty experiment name!");
+            "Unable to retrieve data for an empty experiment name!");*/
             return; 
         }
         const auto data = expt->getData(data_name);
