@@ -18,7 +18,6 @@
 #include "core/instrument/Diffractometer.h"
 #include "core/raw/DataKeys.h"
 
-#include <QtWidgets/qmessagebox.h>
 #include <iostream>
 #include <stdexcept>
 
@@ -78,9 +77,6 @@ bool DataHandler::addData(sptrDataSet data, std::string name)
         throw std::invalid_argument("DataHandler::addData: Data name cannot be empty");
     
     if (hasData(name)){
-        //QMessageBox::critical(nullptr, 
-        //"Unable to add Dataset",
-        //"Please choose unique name for Dataset");
         throw std::invalid_argument("DataHandler::addData: Data name must be unique");
         return false;
     }
