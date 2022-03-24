@@ -53,6 +53,8 @@
 #include <QSplitter>
 #include <QTabWidget>
 #include <QVBoxLayout>
+#include <qnamespace.h>
+#include <QWidget>
 #include <stdexcept>
 
 
@@ -113,7 +115,6 @@ SubframeAutoIndexer::SubframeAutoIndexer()
     _right_element->setSizePolicy(_size_policy_right);
     _set_initial_ki->setChecked(false);
 }
-
 
 void SubframeAutoIndexer::setInputUp()
 {
@@ -654,6 +655,7 @@ void SubframeAutoIndexer::selectSolutionTable()
     QModelIndexList indices = select->selectedRows();
     if (!indices.empty())
         selectSolutionHeader(indices[0].row());
+    toggleUnsafeWidgets();
 }
 
 void SubframeAutoIndexer::selectSolutionHeader(int index)
@@ -714,14 +716,25 @@ void SubframeAutoIndexer::acceptSolution()
 void SubframeAutoIndexer::toggleUnsafeWidgets()
 {
     _solve_button->setEnabled(true);
+<<<<<<< HEAD
     _save_button->setEnabled(true);
     if (!gSession->hasProject() || !gSession->currentProject()->hasPeakCollection() ||
         !gSession->currentProject()->hasDataSet()) {
+=======
+    _save_button->setEnabled(false);
+    if (_exp_combo->count() == 0 || _data_combo->count() == 0 || _peak_combo->count() == 0) {
+>>>>>>> improvent Subframe::AutoIndexer GUI
         _solve_button->setEnabled(false);
         _save_button->setEnabled(false);
     }
     if (_peak_collection_model.rowCount() == 0 || _solutions.empty())
         _save_button->setEnabled(false);
+    
+    if (_solution_table->currentIndex().row() == -1){
+        _save_button->setEnabled(false);
+    } else {
+        _save_button->setEnabled(true);
+    }
 
     nsx::PeakCollection* pc = nullptr;
     std::string current_pc = _peak_combo->currentText().toStdString();
