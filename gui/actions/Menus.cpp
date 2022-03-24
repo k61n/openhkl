@@ -23,6 +23,8 @@
 #include <QAction>
 #include <QMenu>
 #include <iostream>
+#include <qkeysequence.h>
+#include <qnamespace.h>
 
 class Project;
 
@@ -69,6 +71,23 @@ Menus::Menus(QMenuBar* menu_bar) : _menu_bar{menu_bar}
     _cells_menu->addAction(actions->remove_cell);
 
     _help_menu->addAction(actions->about);
+
+    // adding shortcuts
+    actions->new_experiment->setShortcuts(QKeySequence::New);
+    actions->load_experiment->setShortcuts(QKeySequence::Open);
+    actions->save_experiment->setShortcuts(QKeySequence::Save);
+    actions->save_experiment_as->setShortcuts(QKeySequence::SaveAs);
+    //actions->save_all_experiment->setShortcuts(QKeySequence::SaveAll)
+    actions->remove_experiment->setShortcuts(QKeySequence::Delete);
+    actions->quit->setShortcuts(QKeySequence::Quit);
+
+    actions->add_raw->setShortcut(QKeySequence("A+R"));
+    actions->add_hdf5->setShortcut(QKeySequence("A+H"));
+    actions->add_nexus->setShortcut(QKeySequence("A+N"));
+
+    actions->about->setShortcut(QKeySequence("F1"));
+
+
 
     toggle_entries();
 }
@@ -122,7 +141,7 @@ void Menus::toggle_entries()
     
     actions->remove_data->setDisabled(no_datasets);
     
-    actions->save_all_experiment->setDisabled(no_projects);
+    actions->save_all_experiment->setDisabled(true);//not implemented yet
     actions->save_experiment->setDisabled(no_projects);
     actions->save_experiment_as->setDisabled(no_projects);
 

@@ -18,6 +18,9 @@
 #include "core/data/DataSet.h"
 #include "core/loader/IDataReader.h" // inherits from
 #include "core/raw/DataKeys.h"
+#include "core/data/DataSet.h"
+#include <fstream>
+#include <stdexcept>
 
 namespace nsx {
 
@@ -35,7 +38,11 @@ struct RawDataReaderParameters {
 
     RawDataReaderParameters(std::string file="")
     {
-        if (file.empty()) return;
+        if (file.empty()){
+            //throw std::runtime_error("Need RawDataReaderParameter");
+            return;
+        }
+
         std::size_t pos1 = file.find_last_of("/");
         std::size_t pos0 = (file.substr(0,pos1-1)).find_last_of("/");
         std::size_t pos2 = file.find_last_of(".");
@@ -50,23 +57,38 @@ struct RawDataReaderParameters {
             return;
 
         std::string dir = "data_" + file.substr(pos0+1, pos1-pos0-1);
-
         std::string readme =  file.substr(0, pos1+1) +  dir + ".readme";
+ 
+        std::ifstream fin(readme.c_str(), std::ios::in); 
 
-        std::string line;         
-        std::fstream f(readme.c_str(), std::ios::in);
-        while(std::getline(f, line)){                 
-            std::remove_if(line.begin(), line.end(), isspace);           
-            if ( line.find("Omegarange:") != std::string::npos){
-                std::string a = line.substr(11, line.size()-17);
-                delta_omega = std::stod(a);                
-            }
-            if ( line.find("Lambda:") != std::string::npos){
-                std::string b = line.substr(7, line.size()-9);
+        if (fin.is_open() || fin.good()){
+            fin.seekg(0,std::ios::end);
+            auto fsize = fin.tellg();
+            fin.seekg(0, std::ios::beg);         
+
+            if (fsize > 0){
+                std::string buffer;
+                buffer.resize(fsize);
+                fin.read(buffer.data(), fsize);
+                fin.close();   
+        
+                std::remove_if(buffer.begin(), buffer.end(), isspace); 
+
+                auto omega_pos = buffer.find("Omegarange:");
+                if (  omega_pos != std::string::npos){
+                    auto nl_pos = buffer.find(";");
+                    std::string a = buffer.substr(omega_pos+ 11, nl_pos-1);
+                    delta_omega = std::stod(a);                
+                }
+
+                auto lambda_pos = buffer.find("Lambda:");
+                if (  lambda_pos != std::string::npos){
+                auto nl_pos = buffer.find(";");
+                std::string b = buffer.substr(lambda_pos+7, nl_pos-1);
                 wavelength = std::stod(b);                
+                }
             }
         }
-        f.close();
     }
 };
 
