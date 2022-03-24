@@ -23,5 +23,4 @@ target_link_libraries(${lib}
     ${TIFF_LIBRARY}
     ${GSL_LIBRARIES}
     ${XSection_LIBRARIES}
-    ${Qt5Core_LIBRARIES}
     )
