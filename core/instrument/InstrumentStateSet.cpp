@@ -48,4 +48,10 @@ InstrumentStateSet::InstrumentStateSet(sptrDataSet data, const InstrumentStateLi
     _nframes = data->nFrames();
 }
 
+void InstrumentStateSet::setDiffractometer()
+{
+    for (auto& state : _instrument_states)
+        state.setDiffractometer(_data->diffractometer());
+}
+
 } // namespace nsx

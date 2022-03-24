@@ -37,8 +37,9 @@ class InstrumentStateSet {
     InstrumentStateSet(DataSet* data, const InstrumentStateList& states);
     InstrumentStateSet(sptrDataSet data);
     InstrumentStateSet(sptrDataSet data, const InstrumentStateList& states);
-
     InstrumentStateList& instrumentStates() { return _instrument_states; };
+    void setDiffractometer();
+
     std::string name() const { return _name; };
     DataSet* data() const { return _data; };
     unsigned int id() const { return _id; };

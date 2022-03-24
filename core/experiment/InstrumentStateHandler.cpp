@@ -53,6 +53,7 @@ bool InstrumentStateHandler::addInstrumentStateSet(
     ptr->setId(_last_index++);
     data->setInstrumentStates(ptr.get());
     _instrumentstate_map.insert_or_assign(data, std::move(ptr));
+    getInstrumentStateSet(data)->setDiffractometer();
     return hasInstrumentStateSet(data);
 }
 
