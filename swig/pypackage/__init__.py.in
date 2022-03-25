@@ -1,0 +1,7 @@
+# init file for the Python package
+
+# version
+version_str = "@NSXTool_VERSION_MAJOR@.@NSXTool_VERSION_MINOR@.@NSXTool_VERSION_PATCH@"
+version = (@NSXTool_VERSION_MAJOR@, @NSXTool_VERSION_MINOR@, @NSXTool_VERSION_PATCH@)
+
+from .pynsx import *
