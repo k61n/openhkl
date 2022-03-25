@@ -344,9 +344,10 @@ void ExperimentImporter::loadUnitCells(Experiment* experiment)
             std::string space_group = "P 1";
             std::string unit_cell_name;
 
-            std::string cell_id = unit_cells.getObjnameByIdx(i);
-            cell_ids.push_back(std::stoi(cell_id));
-            H5::Group unit_cell(file.openGroup(nsx::gr_UnitCells + "/" + cell_id));
+            if (!unit_cells.nameExists(std::to_string(i)))
+                continue;
+            H5::Group unit_cell(file.openGroup(nsx::gr_UnitCells + "/" + std::to_string(i)));
+            cell_ids.push_back(i);
 
             // Read the info group and store in metadata
             int n_meta = unit_cell.getNumAttrs();
@@ -393,7 +394,7 @@ void ExperimentImporter::loadUnitCells(Experiment* experiment)
             temp_cell.setSpaceGroup(SpaceGroup(space_group));
             temp_cell.setZ(z);
             temp_cell.setLatticeCentring(LatticeCentring(bravais[1]));
-            temp_cell.setId(std::stoi(cell_id));
+            temp_cell.setId(i);
             experiment->addUnitCell(unit_cell_name, temp_cell);
         }
 
