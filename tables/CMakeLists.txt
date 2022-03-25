@@ -13,5 +13,4 @@ target_link_libraries(nsxtables
     PUBLIC
     nsxbase
     ${XSection_LIBRARIES}
-    ${Qt5Core_LIBRARIES}
     )
