@@ -27,3 +27,5 @@ set_property(SOURCE pynsx.i PROPERTY SWIG_FLAGS ${PYNSX_SWIG_INCLUDE_DIRECTORIES
 swig_add_library(pynsx TYPE MODULE LANGUAGE python SOURCES pynsx.i)
 
 swig_link_libraries(pynsx ${PYTHON_LIBRARIES} nsxcore ${XSection_LIBRARIES})
+
+configure_file("${CMAKE_SOURCE_DIR}/swig/pypackage/__init__.py.in" "${CMAKE_BINARY_DIR}/swig/__init__.py" @ONLY)
