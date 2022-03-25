@@ -300,18 +300,6 @@ int Refiner::updatePredictions(std::vector<Peak3D*> peaks)
     std::vector<nsx::Peak3D*> filtered_peaks = peaks;
     filtered_peaks = peak_filter.filterEnabled(peaks, true);
     int n_enabled = filtered_peaks.size();
-    // if (_cell)
-    //     filtered_peaks = peak_filter.filterIndexed(filtered_peaks, _cell.get());
-    // else
-    //     filtered_peaks = peak_filter.filterIndexed(filtered_peaks);
-
-    // // Disable any peaks outside indexing tolerance
-    // for (auto peak : peaks) {
-    //     if (peak->rejectedByFilter()) {
-    //         peak->setRejectionFlag(RejectionFlag::OutsideIndexingTol);
-    //         peak->setSelected(false);
-    //     }
-    // }
 
     nsxlog(
         Level::Info, filtered_peaks.size(), " / ", n_enabled,

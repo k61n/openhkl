@@ -93,6 +93,9 @@ class RefinementBatch {
     //! Set the residual type
     void setResidualType(const ResidualType& residual);
 
+    double fmin() { return _fmin; };
+    double fmax() { return _fmax; };
+
  private:
     double _fmin;
     double _fmax;

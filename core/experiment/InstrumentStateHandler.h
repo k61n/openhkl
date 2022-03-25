@@ -44,8 +44,8 @@ class InstrumentStateHandler {
     InstrumentStateSet* getInstrumentStateSet(const sptrDataSet& data);
     //! Returns the named InstrumentStateSet
     InstrumentStateSet* getInstrumentStateSet(const DataSet* data);
-        // !Remove a set of instrument states from the experiment
-        void removeInstrumentStateSet(const sptrDataSet& data);
+    // !Remove a set of instrument states from the experiment
+    void removeInstrumentStateSet(const sptrDataSet& data);
     //! Get a vector of InstrumentStateSet names from the handler
     std::vector<std::string> getInstrumentStateSetNames() const;
     //! Get the number of instrument state sets

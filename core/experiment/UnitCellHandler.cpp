@@ -88,26 +88,21 @@ std::vector<std::string> UnitCellHandler::getUnitCellNames() const
 
 sptrUnitCell UnitCellHandler::getSptrUnitCell(const std::string& name) const
 {
-    for (const auto& cell : _unit_cells) {
-        if (cell->name() == name)
-            return cell;
-    }
+    for (const auto& cell : _unit_cells)
+        if (cell->name() == name) return cell;
     return nullptr;
 }
 
 sptrUnitCell UnitCellHandler::getSptrUnitCell(const unsigned int id) const
 {
-    for (const auto& cell : _unit_cells) {
-        if (cell->id() == id)
-            return cell;
-    }
+    for (const auto& cell : _unit_cells)
+        if (cell->id() == id) return cell;
     return nullptr;
 }
 
 UnitCell* UnitCellHandler::getUnitCell(const std::string& name) const
 {
-    if (hasUnitCell(name))
-        return getSptrUnitCell(name).get();
+    if (hasUnitCell(name)) return getSptrUnitCell(name).get();
     return nullptr;
 }
 
