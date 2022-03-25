@@ -12,7 +12,6 @@
 //
 //  ***********************************************************************************************
 
-#include <QtWidgets/qmessagebox.h>
 #include <cstdio> // rename
 #include <iostream>
 #include <memory>

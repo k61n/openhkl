@@ -24,7 +24,6 @@
 #include <Eigen/Dense>
 
 #include <H5Cpp.h>
-#include <QtWidgets/QMessageBox>
 #include <stdexcept>
 #include <string>
 
