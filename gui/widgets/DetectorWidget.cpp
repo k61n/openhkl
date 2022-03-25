@@ -158,13 +158,18 @@ void DetectorWidget::refresh()
     if (_data_combo->count() == 0)
         return;
 
+    // without checking this caused a crash when adding new experiment
+    if (_data_list.size() == 0 ||
+        _data_list.size() < _data_combo->currentIndex()) return;
     auto data = _data_list.at(_data_combo->currentIndex());
+
+    if (data==nullptr) return;
+
     scene()->slotChangeSelectedData(data, _spin->value());
     scene()->clearPeakItems();
     scene()->drawPeakitems();
     scene()->update();
     _detector_view->fitInView(scene()->sceneRect(), Qt::KeepAspectRatio);
-
     _scroll->setMinimum(0);
     _scroll->setMaximum(data->nFrames());
 
@@ -183,13 +188,18 @@ void DetectorWidget::linkPeakModel(PeakCollectionModel* model1, PeakCollectionMo
 
 nsx::sptrDataSet DetectorWidget::currentData()
 {
-    if (_data_combo->count() == 0)
+    if (_data_combo->count() == 0 ||
+        _data_list.size() == 0 ||
+        _data_list.size() < _data_combo->currentIndex()
+    )
         return nullptr;
     return _data_list.at(_data_combo->currentIndex());
 }
 
 void DetectorWidget::changeView(int option)
 {
+    std::cout << "debug " << option << std::endl;
+    if (_detector_view==nullptr) return;
     QTransform trans;
     trans.scale(-1, -1); // fromDetector (default; 0)
     if (option == 1) // fromSample

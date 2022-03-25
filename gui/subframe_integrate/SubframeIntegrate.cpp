@@ -533,6 +533,16 @@ void SubframeIntegrate::changeSelected(PeakItemGraphic* peak_graphic)
 
 void SubframeIntegrate::toggleUnsafeWidgets()
 {
+    int pid = _exp_combo->currentIndex();
+    if (pid < 0) return;
+    Project* prj = gSession->experimentAt(pid);
+    if (prj == nullptr) return;
+    const auto expt = prj->experiment();
+    if (expt == nullptr) return;
+    nsx::PeakCollection* peaks =
+            expt->getPeakCollection(_peak_combo->currentText().toStdString());
+    if (peaks == nullptr) return;
+
     _radius_int->setEnabled(true);
     _n_frames_int->setEnabled(true);
     _min_neighbours->setEnabled(true);
@@ -540,7 +550,7 @@ void SubframeIntegrate::toggleUnsafeWidgets()
     _build_shape_lib_button->setEnabled(true);
     _assign_peak_shapes->setEnabled(true);
     _remove_overlaps->setEnabled(true);
-    _integrate_button->setEnabled(true);
+    _integrate_button->setEnabled(true);    
 
     if (!gSession->hasProject())
         return;
@@ -559,6 +569,8 @@ void SubframeIntegrate::toggleUnsafeWidgets()
     }
 
     if (!_peak_combo->count() == 0) {
+
+    if (gSession->currentProject()->hasPeakCollection()) {
         nsx::PeakCollection* peaks =
             gSession->currentProject() ->experiment()
                 ->getPeakCollection(_peak_combo->currentText().toStdString());

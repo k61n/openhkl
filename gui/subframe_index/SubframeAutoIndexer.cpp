@@ -450,10 +450,24 @@ void SubframeAutoIndexer::changeSelected(PeakItemGraphic* peak_graphic)
 
 void SubframeAutoIndexer::refreshPeakVisual()
 {
+    if (_detector_widget==nullptr){
+        return;
+    }
+    if (_set_initial_ki==nullptr){
+        return;
+    }
     auto data = _detector_widget->currentData();
-    _detector_widget->scene()->initIntRegionFromPeakWidget(_peak_view_widget->set1);
+    if (data==nullptr) {
+        return;
+    }
+    auto scene = _detector_widget->scene();
+    if (scene==nullptr) {
+        return;
+    }
+
+    scene->initIntRegionFromPeakWidget(_peak_view_widget->set1);
     if (_set_initial_ki->isChecked()) {
-        _detector_widget->scene()->addBeamSetter(
+        scene->addBeamSetter(
             _crosshair_size->value(), _crosshair_linewidth->value());
         changeCrosshair();
     }
@@ -464,7 +478,9 @@ void SubframeAutoIndexer::refreshPeakVisual()
 
     for (int i = 0; i < _peak_collection_item.childCount(); i++) {
         PeakItem* peak = _peak_collection_item.peakItemAt(i);
+        if (peak==nullptr) return;
         auto graphic = peak->peakGraphic();
+        if (graphic==nullptr) return;
 
         graphic->showLabel(false);
         graphic->setColor(Qt::transparent);
@@ -716,32 +732,37 @@ void SubframeAutoIndexer::acceptSolution()
 void SubframeAutoIndexer::toggleUnsafeWidgets()
 {
     _solve_button->setEnabled(true);
-<<<<<<< HEAD
     _save_button->setEnabled(true);
     if (!gSession->hasProject() || !gSession->currentProject()->hasPeakCollection() ||
         !gSession->currentProject()->hasDataSet()) {
-=======
-    _save_button->setEnabled(false);
-    if (_exp_combo->count() == 0 || _data_combo->count() == 0 || _peak_combo->count() == 0) {
->>>>>>> improvent Subframe::AutoIndexer GUI
         _solve_button->setEnabled(false);
         _save_button->setEnabled(false);
     }
     if (_peak_collection_model.rowCount() == 0 || _solutions.empty())
         _save_button->setEnabled(false);
     
+    // select a solution before accepting it
     if (_solution_table->currentIndex().row() == -1){
         _save_button->setEnabled(false);
     } else {
         _save_button->setEnabled(true);
     }
 
-    nsx::PeakCollection* pc = nullptr;
+    Project* prj = gSession->currentProject();
+    if (prj==nullptr) return;
+    nsx::Experiment* expt = prj->experiment();
+    if (expt==nullptr) return;
     std::string current_pc = _peak_combo->currentText().toStdString();
     if (current_pc.size() == 0)
         return;
+<<<<<<< HEAD
     pc = gSession->currentProject()->experiment()->getPeakCollection(current_pc);
 
+=======
+    auto pc = expt->getPeakCollection(current_pc);
+    if (pc==nullptr) return;
+    // _save_button->setEnabled(pc->isIntegrated());
+>>>>>>> removed bugs from gui update mechanism
     _solve_button->setEnabled(pc->isIntegrated());
 }
 

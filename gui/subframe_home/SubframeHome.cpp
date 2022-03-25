@@ -22,6 +22,7 @@
 #include "gui/models/Project.h"
 #include "gui/models/Session.h"
 #include "tables/crystal/UnitCell.h"
+#include "gui/utility/SideBar.h"
 
 #include <QFileDialog>
 #include <QMessageBox>
@@ -36,6 +37,7 @@
 // plus.svg: circle plus by Loudoun Design Co from the Noun Project
 // minus.svg: circle minus by Loudoun Design Co from the Noun Project
 // beaker.svg: beaker by Loudoun Design Co from the Noun Project
+
 
 SubframeHome::SubframeHome()
 {
@@ -245,8 +247,14 @@ void SubframeHome::createNew()
             toggleUnsafeWidgets();
         }
     }
+
+    gSession->selectProject(gSession->numExperiments()-1);
+   
+    QModelIndex idx = _open_experiments_view->model()->index(gSession->numExperiments()-1, 0);
+    _open_experiments_view->setCurrentIndex(idx);
     _open_experiments_view->resizeColumnsToContents();
     gGui->refreshMenu();
+    refreshTables();
 }
 
 void SubframeHome::loadFromFile()
@@ -333,6 +341,7 @@ void SubframeHome::_switchCurrentExperiment(const QModelIndex& index)
     gSession->selectProject(index.row());
     refreshTables();
     emit _open_experiments_model->dataChanged(QModelIndex(), QModelIndex());
+    refreshTables();
 }
 
 void SubframeHome::saveSettings() const
@@ -424,7 +433,7 @@ void SubframeHome::toggleUnsafeWidgets()
     gGui->refreshMenu();
 }
 
-void SubframeHome::refreshTables()
+void SubframeHome::refreshTables() const
 {
     _dataset_table->clearContents();
     _peak_collections_table->clearContents();
@@ -432,8 +441,10 @@ void SubframeHome::refreshTables()
     _dataset_table->setRowCount(0);
     _peak_collections_table->setRowCount(0);
     _unitcell_table->setRowCount(0);
+    
     if (!gSession->hasProject())
         return;
+    
     try {
         auto b2s = [](bool a) { return !a ? QString("No") : QString("Yes"); };
         auto Type2s = [](nsx::listtype t) {
@@ -446,8 +457,12 @@ void SubframeHome::refreshTables()
             }
         };
 
-        std::vector<std::string> pcs_names =
-            gSession->currentProject()->experiment()->getCollectionNames();
+        Project* prj = gSession->currentProject();
+        if (prj==nullptr) return;
+    
+        nsx::Experiment* expt = prj->experiment();
+        if (expt == nullptr) return;
+        std::vector<std::string> pcs_names = expt->getCollectionNames();
 
         auto ucell_names = gSession->currentProject()->experiment()->getUnitCellNames();
 
@@ -530,7 +545,14 @@ void SubframeHome::refreshTables()
         }
     } catch (const std::out_of_range& e) {
     } catch (const std::exception& e) {
-        QMessageBox::critical(this, "Error", QString(e.what()));
+        //QMessageBox::critical(this, "Error", QString(e.what()));
     }
     gGui->refreshMenu();
+}
+
+void SubframeHome::clearTables()
+{
+    _unitcell_table->clearContents();
+    _dataset_table->clearContents();
+    _peak_collections_table->clearContents();
 }

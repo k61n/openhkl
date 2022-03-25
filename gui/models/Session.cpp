@@ -43,7 +43,7 @@
 #include <QMessageBox>
 #include <QSettings>
 #include <QStringList>
-#include <qmessagebox.h>
+#include <QMessageBox>
 
 
 Session* gSession;
@@ -95,6 +95,9 @@ Project* Session::experimentAt(int i)
 }
 const Project* Session::experimentAt(int i) const
 {
+    if (_projects.size() == 0 || _projects.size() < i)
+    return nullptr;
+    
     return _projects.at(i).get();
 }
 
@@ -138,7 +141,7 @@ void Session::removeExperiment(unsigned int id)
             const Project& prj{**it};
             if (id == prj.id())
                 it = _projects.erase(it);
-            else
+            } else
                 ++it;
         }
     }
@@ -421,12 +424,12 @@ bool Session::UpdateExperimentData(unsigned int idx, QString name, QString instr
     return true;
 }
 
-  std::string Session::GenerateExperimentName()
-  {
+std::string Session::GenerateExperimentName()
+{
     int n = 3;
     std::string str = std::to_string(_projects.size()+1);
     if (str.size() > n){//
         return "New Experiment";
     }
     return std::string("ExperimentNr") +  std::string( n - str.size(), '0').append( str );
-  }
+}

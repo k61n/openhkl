@@ -525,8 +525,22 @@ void SubframeRefiner::setRefinerParameters()
 {
     if (!gSession->hasProject())
         return;
+<<<<<<< HEAD
     auto* params =
         gSession->currentProject()->experiment()->refiner()->parameters();
+=======
+
+    int pid = _exp_combo->currentIndex();
+    if (pid < 0) return;
+    if (gSession->currentProjectNum() <= 0 ) return;
+    Project* prj = gSession->experimentAt(pid);
+    if (prj == nullptr) return;
+    nsx::Experiment* expt = prj->experiment();
+    if (expt == nullptr) return;
+    nsx::Refiner* refiner=expt->refiner();
+    auto params = refiner->parameters();
+    if (params == nullptr) return;
+>>>>>>> removed bugs from gui update mechanism
 
     params->nbatches = _n_batches_spin->value();
     params->max_iter = _max_iter_spin->value();
@@ -593,8 +607,17 @@ void SubframeRefiner::toggleUnsafeWidgets()
     _update_button->setEnabled(false);
     _cell_combo->setEnabled(true);
 
+<<<<<<< HEAD
     if (!gSession->hasProject())
         return;
+=======
+    int pid = _exp_combo->currentIndex();
+    if (pid < 0) return;
+    Project* prj = gSession->experimentAt(pid);
+    if (prj == nullptr) return;
+    const auto expt = prj->experiment();
+    if (expt == nullptr) return;
+>>>>>>> removed bugs from gui update mechanism
 
     if (!(_predicted_combo->count() == 0))
         _update_button->setEnabled(true);
@@ -603,8 +626,12 @@ void SubframeRefiner::toggleUnsafeWidgets()
         !gSession->currentProject()->hasPeakCollection()) {
         _refine_button->setEnabled(false);
         _update_button->setEnabled(false);
+<<<<<<< HEAD
     } else {
         auto* expt = gSession->currentProject()->experiment();
+=======
+    } else {         
+>>>>>>> removed bugs from gui update mechanism
         if (expt->refiner()->firstRefine())
             _batch_cell_check->setChecked(false);
         else
@@ -619,7 +646,7 @@ void SubframeRefiner::toggleUnsafeWidgets()
     std::string current_pc = _peak_combo->currentText().toStdString();
     if (current_pc.size() == 0)
         return;
-    pc = gSession->currentProject()->experiment()->getPeakCollection(current_pc);
+    pc = expt->getPeakCollection(current_pc);
 
     if (!pc->isIndexed()) {
         _refine_button->setEnabled(false);

@@ -108,6 +108,8 @@ void Actions::setupData()
     connect(add_nexus, &QAction::triggered, []() { gGui->sideBar()->refreshCurrent(); });
 
     connect(remove_data, &QAction::triggered, this, &Actions::removeData);
+
+    
 }
 
 void Actions::removeExperiment()

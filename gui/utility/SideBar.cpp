@@ -297,6 +297,7 @@ void SideBar::refreshAll()
     gGui->refiner->refreshAll();
     gGui->integrator->refreshAll();
     gGui->merger->refreshAll();
+    gGui->home->clearTables();
 
     gGui->refreshMenu();
 
