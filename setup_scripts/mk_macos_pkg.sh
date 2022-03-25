@@ -132,6 +132,7 @@ function get_depends()
 #-- package-related variables
 pack_dirname="macospack"
 pack_nsx_dirname="nsx"
+pack_pynsx_dirname="pynsx"
 pack_lib_dirname="lib"
 pack_fmwk_dirname="Frameworks"
 pack_qt_fmwk_dirname="Qt"
@@ -141,19 +142,24 @@ pack_readme_filename="README.md"
 
 # package structure:
 # nsx
-#   |
-#   + NSXTool <executable>
-#   + dbg_macos_pkg.sh <debug script>
-#   + README.md
-#   |
-#   +- lib
-#        |
-#        + <external libraries, no Qt>
+# |
+# + NSXTool <executable>
+# + dbg_macos_pkg.sh <debug script>
+# + README.md
+# |
+# +- lib
+# |  |
+# |  + <external libraries, no Qt>
+# |
+# +- pynsx
+#    |
+#    + <Python interface library>
 
 bin_dir="main/NSXTool.app/Contents/MacOS"
 nsx_bin0="$build_dir/$bin_dir/$pack_exe_filename"
 root_dir="$build_dir/$pack_dirname"
 pack_dir="$root_dir/$pack_nsx_dirname"
+pynsx_dir="$pack_dir/$pack_pynsx_dirname"
 xlib_dir="$pack_dir/$pack_lib_dirname"
 fmwk_dir="$pack_dir/$pack_fmwk_dirname"
 qt_fmwk_dir="$fmwk_dir/$pack_qt_fmwk_dirname"
@@ -162,6 +168,8 @@ pkg_intro="$source_dir/setup_scripts/intro_macos_pkg.md"
 
 nsx_bin="$pack_dir/NSXTool"
 nsx_readme="$pack_dir/$pack_readme_filename"
+pynsx_files0=$(ls -Ap $build_dir/swig/*.{so,py})
+pynsx_lib0="$build_dir/swig/_pynsx.so"
 
 # arrays to store dependency data
 declare -a depends_fullpath=( ) depends_filename=( ) \
@@ -194,6 +202,34 @@ qt_dir_rx='s;(.+)/lib/(.+);\1;'
 qt_dir_build=$(echo "${qt_depends_fullpath[0]}" | sed -E $qt_dir_rx)
 qt_rpaths="$qt_rpaths $qt_dir_build"
 
+# extract the Python dependency from the pynsx library
+# regexp to extract the Python dependence
+py_fmwk_rx='s;[[:blank:]]*(.+)/(Python|libpython.+\.dylib).*;\1/\2;p'
+# regexp to extract the Python framework path
+# eg.: '/usr/local/opt/python@3.9/Frameworks/Python.framework/Versions/3.9/Python'
+#   => '/usr/local/opt/python@3.9/Frameworks/Python.framework/Versions/3.9/'
+py_fmwk_path_rx='s;(.*)/(Python|libpython).*;\1;'
+# regexp to correct the Python dependence; eg.:
+# '/usr/local/opt/python@3.9/Frameworks/Python.framework/Versions/3.9/Python' => 'libpython3.9.dylib'
+# '/usr/local/opt/python@3.9/Frameworks/Python.framework/Versions/3.9/libpython3.9.dylib' => 'libpython3.9.dylib'
+pylib_rx='s;.*[pP]ython.+[Vv]ersions/([0-9.]+).+(Python|libpython).*;libpython\1.dylib;'
+# regexp to extract the Python version
+pyversion_rx='s;.*[pP]ython.+[Vv]ersions/([0-9.]+).*;\1;'
+
+pydeps0=$(otool -L "$pynsx_lib0")
+pydepends_fullpath=$(echo "$pydeps0" | sed -nE $py_fmwk_rx)
+pydepends_filename=$(echo "$pydepends_fullpath" | sed -E $pylib_rx)
+pyversion=$(echo "$pydepends_fullpath" | sed -E $pyversion_rx)
+py_fmwk_dir=$(echo "$pydepends_fullpath" | sed -E $py_fmwk_path_rx)
+
+# add RPATHs corresponding to the common framework paths
+framework_paths="/usr/local/Library/Frameworks  /Library/Frameworks  /usr/local/Frameworks"
+py_fmwk_path="Python.framework/Versions/$pyversion/lib"
+
+for pth in $framework_paths; do
+    py_fmwk_rpaths="$py_fmwk_rpaths  $pth/$py_fmwk_path"
+done
+
 #-- make the package directory structure
 # make the dependency folders
 
@@ -218,11 +254,22 @@ do
     $COPY "$dep" "$xlib_dir"
 done
 # list of copied files
-xlibfiles="$(ls -Ap "$xlib_dir/"* | grep -v /$)"
+xlibfiles=$(ls -Ap "$xlib_dir/"* | grep -v /$)
+
+# copy the Python library
+echo "$TITLE: Copy Python library '$pynsx_dir'..."
+$MKDIR "$pynsx_dir"
+
+for dep in $pynsx_files0;
+do
+    $COPY "$dep" "$pynsx_dir/"
+done
+pynsx_files=$(ls -Ap "$pynsx_dir/"* | grep -v /$)
+pynsx_lib=$(ls -Ap "$pynsx_dir"/*.so)
 
 #-- modify the library references in all files
 # ref to external libraries
-for filenm in $xlibfiles $nsx_bin
+for filenm in $xlibfiles $nsx_bin $pynsx_lib
 do
     for idx in "${!depends_fullpath[@]}";
     do
@@ -252,6 +299,8 @@ do
 
     log "$TITLE: Changed Qt references in '$filenm'"
 done
+#ref to Python library
+install_name_tool "$pynsx_lib" -change "$pydepends_fullpath" "@rpath/$pydepends_filename"
 
 #-- add proper RPATHs
 
@@ -266,6 +315,15 @@ install_name_tool "$nsx_bin" -add_rpath "@loader_path/$pack_lib_dirname"
 for rpth in $qt_rpaths
 do
     install_name_tool "$nsx_bin" -add_rpath "$rpth"
+done
+
+# add RPATHs to the Python library
+install_name_tool "$pynsx_lib" \
+   -add_rpath "@loader_path/../$pack_lib_dirname" \
+   -add_rpath "$py_fmwk_dir/lib"
+
+for rpth in $py_fmwk_rpaths; do
+    install_name_tool "$pynsx_lib" -add_rpath "$rpth"
 done
 
 #-- make a README to include instructions and details
@@ -292,6 +350,15 @@ echo >> $nsx_readme
 echo "* Details:" >> $nsx_readme
 echo "- Executables:" >> $nsx_readme
 echo "$nsx_bin" >> $nsx_readme
+echo >> $nsx_readme
+
+echo "- Python library:" >> $nsx_readme
+idx=0
+for fnm in $pynsx_files
+do
+    idx=$((idx+1))
+    printf "%3d) %s" "$idx" "$fnm\n" >> $nsx_readme
+done
 echo >> $nsx_readme
 
 echo "- Library files:" >> $nsx_readme
@@ -324,6 +391,11 @@ echo >> $nsx_readme
 echo "- RPATHs:" >> $nsx_readme
 echo "@loader_path" >> $nsx_readme
 echo "@loader_path/$pack_lib_dirname" >> $nsx_readme
+echo "@loader_path/../$pack_lib_dirname" >> $nsx_readme
+echo "$py_fmwk_dir/lib" >> $nsx_readme
+for rpth in $py_fmwk_rpaths; do
+    echo "$rpth" >> $nsx_readme
+done
 for rpth in $qt_rpaths
 do
     echo "$rpth" >> $nsx_readme
