@@ -88,8 +88,6 @@ Menus::Menus(QMenuBar* menu_bar) : _menu_bar{menu_bar}
 
     actions->about->setShortcut(QKeySequence("F1"));
 
-
-
     toggle_entries();
 }
 

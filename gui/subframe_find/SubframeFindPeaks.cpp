@@ -275,8 +275,15 @@ void SubframeFindPeaks::setPeakTableUp()
 void SubframeFindPeaks::refreshAll()
 {
     setParametersUp();
+
+    int pid = _exp_combo->currentIndex();
+    if (pid < 0) return;
+    Project* expt = gSession->experimentAt(pid);
+    if (expt == nullptr){ 
+        return;
+    }   
     if (!(_exp_combo->count() == 0)) {
-        auto all_data = gSession->experimentAt(_exp_combo->currentIndex())->allData();
+        auto all_data = expt->allData();
         _detector_widget->updateDatasetList(all_data);
     }
     toggleUnsafeWidgets();
@@ -305,8 +312,12 @@ void SubframeFindPeaks::setParametersUp()
 void SubframeFindPeaks::setExperimentsUp()
 {
     _exp_combo->blockSignals(true);
-    QString current_exp = _exp_combo->currentText();
-    _exp_combo->clear();
+    Project* prj =gSession->currentProject();
+    if (prj==nullptr) return;
+    auto expt = prj->experiment();
+    if (expt == nullptr) return;
+    QString current_exp = QString::fromStdString(expt->name());
+    _exp_combo->clear(); 
 
     if (!gSession->experimentNames().empty()) {
         for (const QString& exp : gSession->experimentNames())
@@ -409,13 +420,17 @@ void SubframeFindPeaks::setFinderParameters()
     if (_exp_combo->count() == 0 || _data_combo->count() == 0)
         return;
 
-    nsx::PeakFinder* finder =
-        gSession->experimentAt(_exp_combo->currentIndex())->experiment()->peakFinder();
+    int pid = _exp_combo->currentIndex();
+    if (pid <0) return;
+    Project* prj = gSession->experimentAt(pid);
+    if (prj==nullptr) return;
+    auto expt = prj->experiment();
+    if (expt == nullptr) return;
+    nsx::PeakFinder* finder = expt->peakFinder();
+    if (finder == nullptr) return;
+    auto* params = finder->parameters();
+    if (params == nullptr) return;
 
-    auto* params = gSession->experimentAt(_exp_combo->currentIndex())
-                       ->experiment()
-                       ->peakFinder()
-                       ->parameters();
     params->minimum_size = _min_size_spin->value();
     params->maximum_size = _max_size_spin->value();
     params->peak_end = _scale_spin->value();
@@ -447,11 +462,18 @@ void SubframeFindPeaks::setIntegrationParameters()
 {
     if (_exp_combo->count() == 0 || _data_combo->count() == 0)
         return;
-
-    auto* params = gSession->experimentAt(_exp_combo->currentIndex())
-                       ->experiment()
-                       ->integrator()
-                       ->parameters();
+    
+    int pid = _exp_combo->currentIndex();
+    if (pid < 0) return;
+    if (gSession->currentProjectNum() <= 0 ) return;
+    Project* prj = gSession->experimentAt(pid);
+    if (prj == nullptr) return;
+    auto expt = prj->experiment();
+    if (expt == nullptr) return;
+    auto integrator = expt->integrator();
+    if (integrator== nullptr) return;
+    auto* params = integrator->parameters();
+    if (params == nullptr) return;
 
     params->peak_end = _peak_area->value();
     params->bkg_begin = _bkg_lower->value();

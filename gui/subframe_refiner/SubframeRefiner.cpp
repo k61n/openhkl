@@ -199,8 +199,12 @@ void SubframeRefiner::updateExptList()
         return;
 
     _exp_combo->blockSignals(true);
-    QString current_exp = _exp_combo->currentText();
-    _exp_combo->clear();
+    Project* prj =gSession->currentProject();
+    if (prj==nullptr) return;
+    auto expt = prj->experiment();
+    if (expt == nullptr) return;
+    QString current_exp = QString::fromStdString(expt->name());
+    _exp_combo->clear(); 
 
     for (const QString& exp : gSession->experimentNames())
         _exp_combo->addItem(exp);
@@ -556,8 +560,17 @@ void SubframeRefiner::setRefinerParameters()
 {
     if (_exp_combo->count() == 0)
         return;
-    auto* params =
-        gSession->experimentAt(_exp_combo->currentIndex())->experiment()->refiner()->parameters();
+
+    int pid = _exp_combo->currentIndex();
+    if (pid < 0) return;
+    if (gSession->currentProjectNum() <= 0 ) return;
+    Project* prj = gSession->experimentAt(pid);
+    if (prj == nullptr) return;
+    nsx::Experiment* expt = prj->experiment();
+    if (expt == nullptr) return;
+    nsx::Refiner* refiner=expt->refiner();
+    auto params = refiner->parameters();
+    if (params == nullptr) return;
 
     params->nbatches = _n_batches_spin->value();
     params->max_iter = _max_iter_spin->value();
@@ -625,6 +638,13 @@ void SubframeRefiner::toggleUnsafeWidgets()
     _update_button->setEnabled(false);
     _cell_combo->setEnabled(true);
 
+    int pid = _exp_combo->currentIndex();
+    if (pid < 0) return;
+    Project* prj = gSession->experimentAt(pid);
+    if (prj == nullptr) return;
+    const auto expt = prj->experiment();
+    if (expt == nullptr) return;
+
     if (!(_predicted_combo->count() == 0))
         _update_button->setEnabled(true);
 
@@ -632,8 +652,7 @@ void SubframeRefiner::toggleUnsafeWidgets()
         || _cell_combo->count() == 0) {
         _refine_button->setEnabled(false);
         _update_button->setEnabled(false);
-    } else {
-        const auto expt = gSession->experimentAt(_exp_combo->currentIndex())->experiment();
+    } else {         
         if (expt->refiner()->firstRefine())
             _batch_cell_check->setChecked(false);
         else
@@ -648,7 +667,7 @@ void SubframeRefiner::toggleUnsafeWidgets()
     std::string current_pc = _peak_combo->currentText().toStdString();
     if (current_pc.size() == 0)
         return;
-    pc = gSession->currentProject()->experiment()->getPeakCollection(current_pc);
+    pc = expt->getPeakCollection(current_pc);
 
     if (!pc->isIndexed()) {
         _refine_button->setEnabled(false);

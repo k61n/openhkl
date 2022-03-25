@@ -326,8 +326,12 @@ void SubframeFilterPeaks::setParametersUp()
 void SubframeFilterPeaks::setExperimentsUp()
 {
     _exp_combo->blockSignals(true);
-    QString current_exp = _exp_combo->currentText();
-    _exp_combo->clear();
+    Project* prj =gSession->currentProject();
+    if (prj==nullptr) return;
+    auto expt = prj->experiment();
+    if (expt == nullptr) return;
+    QString current_exp = QString::fromStdString(expt->name());
+    _exp_combo->clear(); 
 
     if (gSession->experimentNames().empty())
         return;

@@ -68,7 +68,9 @@ class SubframeHome : public QWidget {
     //! Disable unsafe widgets if no data loaded
     void toggleUnsafeWidgets();
 
-    void refreshTables();
+    void refreshTables() const;
+
+    void clearTables();
 
    // void UpdatePeakList();
 

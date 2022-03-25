@@ -63,6 +63,7 @@ Session::Session()
 
 Project* Session::currentProject()
 {
+    if (_projects.size() == 0 || _currentProject == -1) return nullptr;
     return _projects.at(_currentProject).get();
 }
 
@@ -78,10 +79,16 @@ bool Session::hasProject() const
 
 Project* Session::experimentAt(int i)
 {
+    if (_projects.size() == 0 || _projects.size() < i || i < 0)
+    return nullptr;
+
     return _projects.at(i).get();
 }
 const Project* Session::experimentAt(int i) const
 {
+    if (_projects.size() == 0 || _projects.size() < i)
+    return nullptr;
+    
     return _projects.at(i).get();
 }
 
@@ -123,9 +130,10 @@ void Session::removeExperiment(const QString& name)
         const std::string name_str{name.toStdString()};
         for (decltype(_projects)::const_iterator it = _projects.begin(); it != _projects.end();) {
             const Project& prj{**it};
-            if (name_str == prj.experiment()->name())
+            if (name_str == prj.experiment()->name()){
+                //prj.SetActiveState(false);
                 it = _projects.erase(it);
-            else
+            } else
                 ++it;
         }
     }
@@ -327,9 +335,13 @@ void Session::onDataChanged()
 
 void Session::onExperimentChanged()
 {
-    if (currentProject()->experiment()->getDiffractometer()) {
-        gGui->onExperimentChanged();
-    }
+    auto prj = currentProject();
+    if (prj == nullptr) return;
+    auto expt = prj->experiment();
+    auto diff = expt->getDiffractometer();
+    if (diff == nullptr) return;
+    
+    gGui->onExperimentChanged();    
     onDataChanged();
     onUnitCellChanged();
 }
@@ -399,12 +411,12 @@ bool Session::UpdateExperimentData(unsigned int idx, QString name, QString instr
    return true;
 }
 
-  std::string Session::GenerateExperimentName()
-  {
+std::string Session::GenerateExperimentName()
+{
     int n = 3;
     std::string str = std::to_string(_projects.size()+1);
     if (str.size() > n){//
         return "New Experiment";
     }
     return std::string("ExperimentNr") +  std::string( n - str.size(), '0').append( str );
-  }
+}

@@ -386,8 +386,13 @@ void SubframePredictPeaks::refreshAll()
 void SubframePredictPeaks::setExperiments()
 {
     _exp_combo->blockSignals(true);
-    QString current_exp = _exp_combo->currentText();
-    _exp_combo->clear();
+    Project* prj =gSession->currentProject();
+    if (prj==nullptr) return;
+    auto expt = prj->experiment();
+    if (expt == nullptr) return;
+    QString current_exp = QString::fromStdString(expt->name());
+    _exp_combo->clear(); 
+
     for (const QString& exp : gSession->experimentNames())
         _exp_combo->addItem(exp);
     _exp_combo->setCurrentText(current_exp);
@@ -759,12 +764,11 @@ void SubframePredictPeaks::assignPeakShapes()
 
 void SubframePredictPeaks::accept()
 {
-    //suggest name to user
     auto* project = gSession->experimentAt(_exp_combo->currentIndex());
     auto* expt = project->experiment();
-    auto num = expt ->numPeakCollections();
-    std::string suggestion = "PeakCollectionNr.:" + std::to_string(num+1);
-    std::unique_ptr<ListNameDialog> dlg(new ListNameDialog(QString::fromStdString(suggestion)));
+    
+    std::unique_ptr<ListNameDialog> dlg(new ListNameDialog
+    (QString::fromStdString(expt->GeneratePeakCollectionName())));
     dlg->exec();
     if (!dlg->listName().isEmpty()) {
         if (!expt->addPeakCollection(dlg->listName().toStdString(), nsx::listtype::PREDICTED,
@@ -858,7 +862,12 @@ void SubframePredictPeaks::toggleUnsafeWidgets()
     std::string current_pc = _found_peaks_combo->currentText().toStdString();
     if (current_pc.size() == 0)
         return;
-    pc = gSession->currentProject()->experiment()->getPeakCollection(current_pc);
+    Project* prj = gSession->currentProject();
+    if (prj == nullptr) return;
+    auto expt = prj->experiment();
+    if (expt == nullptr) return;
+    pc = expt->getPeakCollection(current_pc);
+    if (pc==nullptr) return;
 
     bool is_indexed = pc->isIndexed();
     _predict_button->setEnabled(is_indexed);

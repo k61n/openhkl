@@ -327,8 +327,15 @@ void SubframeAutoIndexer::setSolutionTableUp()
 void SubframeAutoIndexer::refreshAll()
 {
     setExperiments();
+
+    int pid = _exp_combo->currentIndex();
+    if (pid == -1) return;
+    auto expt = gSession->experimentAt(pid);
+    if (expt == nullptr) return;
+   
     if (!(_exp_combo->count() == 0)) {
-        const auto all_data = gSession->experimentAt(_exp_combo->currentIndex())->allData();
+        const auto all_data = expt->allData();
+        if (all_data.empty()) return;
         _detector_widget->updateDatasetList(all_data);
         const auto dataset = gSession->experimentAt(_exp_combo->currentIndex())
                                  ->getData(_data_combo->currentIndex());
@@ -344,8 +351,12 @@ void SubframeAutoIndexer::setExperiments()
         return;
 
     _exp_combo->blockSignals(true);
-    QString current_exp = _exp_combo->currentText();
-    _exp_combo->clear();
+    Project* prj =gSession->currentProject();
+    if (prj==nullptr) return;
+    auto expt = prj->experiment();
+    if (expt == nullptr) return;
+    QString current_exp = QString::fromStdString(expt->name());
+    _exp_combo->clear(); 
 
 
     if (gSession->experimentNames().empty())
@@ -469,10 +480,24 @@ void SubframeAutoIndexer::changeSelected(PeakItemGraphic* peak_graphic)
 
 void SubframeAutoIndexer::refreshPeakVisual()
 {
+    if (_detector_widget==nullptr){
+        return;
+    }
+    if (_set_initial_ki==nullptr){
+        return;
+    }
     auto data = _detector_widget->currentData();
-    _detector_widget->scene()->initIntRegionFromPeakWidget(_peak_view_widget->set1);
+    if (data==nullptr) {
+        return;
+    }
+    auto scene = _detector_widget->scene();
+    if (scene==nullptr) {
+        return;
+    }
+
+    scene->initIntRegionFromPeakWidget(_peak_view_widget->set1);
     if (_set_initial_ki->isChecked()) {
-        _detector_widget->scene()->addBeamSetter(
+        scene->addBeamSetter(
             _crosshair_size->value(), _crosshair_linewidth->value());
         changeCrosshair();
     }
@@ -482,7 +507,9 @@ void SubframeAutoIndexer::refreshPeakVisual()
 
     for (int i = 0; i < _peak_collection_item.childCount(); i++) {
         PeakItem* peak = _peak_collection_item.peakItemAt(i);
+        if (peak==nullptr) return;
         auto graphic = peak->peakGraphic();
+        if (graphic==nullptr) return;
 
         graphic->showLabel(false);
         graphic->setColor(Qt::transparent);
@@ -526,10 +553,16 @@ void SubframeAutoIndexer::setIndexerParameters()
     if (_exp_combo->count() == 0)
         return;
 
-    auto params = gSession->experimentAt(_exp_combo->currentIndex())
-                      ->experiment()
-                      ->autoIndexer()
-                      ->parameters();
+    int pid = _exp_combo->currentIndex();
+    if (pid < 0) return;
+    if (gSession->currentProjectNum() <= 0 ) return;
+    Project* prj = gSession->experimentAt(pid);
+    if (prj == nullptr) return;
+    nsx::Experiment* expt = prj->experiment();
+    if (expt == nullptr) return;
+    nsx::AutoIndexer* indexer=expt->autoIndexer();
+    auto params = indexer->parameters();
+    if (params == nullptr) return;
 
     params->first_frame = _min_frame->value();
     params->last_frame = _max_frame->value();
@@ -743,19 +776,22 @@ void SubframeAutoIndexer::toggleUnsafeWidgets()
     if (_peak_collection_model.rowCount() == 0 || _solutions.empty())
         _save_button->setEnabled(false);
     
+    // select a solution before accepting it
     if (_solution_table->currentIndex().row() == -1){
         _save_button->setEnabled(false);
     } else {
         _save_button->setEnabled(true);
     }
 
-    nsx::PeakCollection* pc = nullptr;
+    Project* prj = gSession->currentProject();
+    if (prj==nullptr) return;
+    nsx::Experiment* expt = prj->experiment();
+    if (expt==nullptr) return;
     std::string current_pc = _peak_combo->currentText().toStdString();
     if (current_pc.size() == 0)
         return;
-    pc = gSession->currentProject()->experiment()->getPeakCollection(current_pc);
-
-
+    auto pc = expt->getPeakCollection(current_pc);
+    if (pc==nullptr) return;
     // _save_button->setEnabled(pc->isIntegrated());
     _solve_button->setEnabled(pc->isIntegrated());
 }

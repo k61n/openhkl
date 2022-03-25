@@ -102,6 +102,8 @@ void Actions::setupData()
     connect(add_nexus, &QAction::triggered, []() { gGui->sideBar()->refreshAll(); });
 
     connect(remove_data, &QAction::triggered, this, &Actions::removeData);
+
+    
 }
 
 void Actions::removeExperiment()
@@ -120,6 +122,7 @@ void Actions::removeExperiment()
         gSession->removeExperiment(dlg->itemName());
         gSession->onExperimentChanged();
         gGui->sideBar()->refreshAll();
+
     }
 }
 

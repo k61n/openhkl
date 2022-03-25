@@ -350,8 +350,12 @@ void SubframeMergedPeaks::refreshAll()
 void SubframeMergedPeaks::refreshExperimentList()
 {
     _exp_drop->blockSignals(true);
-    QString current_exp = _exp_drop->currentText();
-    _exp_drop->clear();
+    Project* prj =gSession->currentProject();
+    if (prj==nullptr) return;
+    auto expt = prj->experiment();
+    if (expt == nullptr) return;
+    QString current_exp = QString::fromStdString(expt->name());
+    _exp_drop->clear(); 
 
     if (gSession->experimentNames().empty())
         return;

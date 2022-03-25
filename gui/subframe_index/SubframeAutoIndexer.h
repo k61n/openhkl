@@ -91,8 +91,8 @@ class SubframeAutoIndexer : public QWidget {
     void refreshPeakTable();
     //! Change the peak selected in the table
     void changeSelected(PeakItemGraphic* peak_graphic);
-        //! Refresh the detector scene
-        void refreshPeakVisual();
+    //! Refresh the detector scene
+    void refreshPeakVisual();
     //! Get the parameters of the indexer
     void grabIndexerParameters();
     //! Get the parameters of the indexer

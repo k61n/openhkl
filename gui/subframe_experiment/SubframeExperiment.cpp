@@ -72,7 +72,9 @@ SubframeExperiment::SubframeExperiment()
 
 void SubframeExperiment::dataChanged()
 {
-    _data_list = gSession->currentProject()->allData();
+    auto prj = gSession->currentProject();
+    if (prj) return;
+    _data_list = prj->allData();
     if (_data_list.empty())
         return;
 

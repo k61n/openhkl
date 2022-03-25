@@ -176,8 +176,12 @@ void SubframeIntegrate::refreshAll()
 void SubframeIntegrate::updateExptList()
 {
     _exp_combo->blockSignals(true);
-    QString current_exp = _exp_combo->currentText();
-    _exp_combo->clear();
+    Project* prj =gSession->currentProject();
+    if (prj==nullptr) return;
+    auto expt = prj->experiment();
+    if (expt == nullptr) return;
+    QString current_exp = QString::fromStdString(expt->name());
+    _exp_combo->clear(); 
 
     if (!gSession->experimentNames().empty()) {
         for (const QString& exp : gSession->experimentNames())
@@ -568,6 +572,16 @@ void SubframeIntegrate::changeSelected(PeakItemGraphic* peak_graphic)
 
 void SubframeIntegrate::toggleUnsafeWidgets()
 {
+    int pid = _exp_combo->currentIndex();
+    if (pid < 0) return;
+    Project* prj = gSession->experimentAt(pid);
+    if (prj == nullptr) return;
+    const auto expt = prj->experiment();
+    if (expt == nullptr) return;
+    nsx::PeakCollection* peaks =
+            expt->getPeakCollection(_peak_combo->currentText().toStdString());
+    if (peaks == nullptr) return;
+
     _radius_int->setEnabled(true);
     _n_frames_int->setEnabled(true);
     _min_neighbours->setEnabled(true);
@@ -575,7 +589,7 @@ void SubframeIntegrate::toggleUnsafeWidgets()
     _build_shape_lib_button->setEnabled(true);
     _assign_peak_shapes->setEnabled(true);
     _remove_overlaps->setEnabled(true);
-    _integrate_button->setEnabled(true);
+    _integrate_button->setEnabled(true);    
 
     if (_exp_combo->count() == 0 || _data_combo->count() == 0 || _peak_combo->count() == 0) {
         _integrate_button->setEnabled(false);
@@ -589,12 +603,8 @@ void SubframeIntegrate::toggleUnsafeWidgets()
         _remove_overlaps->setEnabled(false);
     }
 
-    if (!(_peak_combo->count() == 0)) {
-        nsx::PeakCollection* peaks =
-            gSession->experimentAt(_exp_combo->currentIndex())
-                ->experiment()
-                ->getPeakCollection(_peak_combo->currentText().toStdString());
-        if (peaks->shapeCollection() == nullptr) {
+    if (!(_peak_combo->count() == 0)) {      
+            if (peaks->shapeCollection() == nullptr) {
             _assign_peak_shapes->setEnabled(false);
             _integrate_button->setEnabled(false);
             _remove_overlaps->setEnabled(false);
