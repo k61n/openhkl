@@ -13,19 +13,23 @@
 //  ***********************************************************************************************
 
 #include "core/experiment/DataHandler.h"
+
 #include "base/utils/Logger.h"
 #include "core/data/DataSet.h"
+#include "core/experiment/InstrumentStateHandler.h"
 #include "core/instrument/Diffractometer.h"
 #include "core/raw/DataKeys.h"
 
-#include <QtWidgets/qmessagebox.h>
 #include <iostream>
 #include <stdexcept>
 
 namespace nsx {
 
-DataHandler::DataHandler(const std::string& experiment_name, const std::string& diffractometerName)
+DataHandler::DataHandler(
+    const std::string& experiment_name, const std::string& diffractometerName,
+    InstrumentStateHandler* instrument_state_handler)
     : _experiment_name{experiment_name}
+    , _instrument_state_handler(instrument_state_handler)
 {
     if (diffractometerName == nsx::kw_diffractometerDefaultName) {
         nsxlog(
@@ -72,15 +76,12 @@ sptrDataSet DataHandler::getData(std::string name) const
 bool DataHandler::addData(sptrDataSet data, std::string name)
 {
     if (name.empty())
-        name = data->name();    
+        name = data->name();
 
     if (name.empty())
         throw std::invalid_argument("DataHandler::addData: Data name cannot be empty");
-    
+
     if (hasData(name)){
-        //QMessageBox::critical(nullptr, 
-        //"Unable to add Dataset",
-        //"Please choose unique name for Dataset");
         throw std::invalid_argument("DataHandler::addData: Data name must be unique");
         return false;
     }
@@ -124,6 +125,7 @@ bool DataHandler::addData(sptrDataSet data, std::string name)
         Level::Info, "DataHandler::addData: adding DataSet '", name, "': ", data->nFrames(),
         " frames");
     _data_map.insert(std::make_pair(name, data));
+    _instrument_state_handler->addInstrumentStateSet(data);
 
     return hasData(name);
 }

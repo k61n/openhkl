@@ -20,7 +20,6 @@
 #include <string>
 #include <utility>
 
-#include "manifest.h"
 #include "base/utils/Logger.h"
 #include "base/utils/Path.h" // tempFilename
 #include "base/utils/Units.h"
@@ -29,6 +28,7 @@
 #include "core/experiment/Experiment.h"
 #include "core/experiment/ExperimentExporter.h"
 #include "core/experiment/ExperimentImporter.h"
+#include "core/experiment/InstrumentStateHandler.h"
 #include "core/experiment/PeakHandler.h"
 #include "core/experiment/UnitCellHandler.h"
 #include "core/instrument/Diffractometer.h"
@@ -46,6 +46,7 @@
 #include "core/raw/MetaData.h"
 #include "core/statistics/CC.h"
 #include "core/statistics/RFactor.h"
+#include "manifest.h"
 
 namespace nsx {
 
@@ -57,7 +58,9 @@ Experiment::Experiment(const std::string& name, const std::string& diffractomete
     Logger::instance().start(nsx::kw_logFilename, Level::Info);
     nsxlog(Level::Info, "Git branch ", GIT_BRANCH, " / commit hash ", COMMIT_HASH);
 
-    _data_handler = std::make_shared<DataHandler>(_name, diffractometerName);
+    _instrumentstate_handler = std::make_unique<InstrumentStateHandler>();
+    _data_handler = std::make_shared<DataHandler>(
+        _name, diffractometerName, _instrumentstate_handler.get());
     _peak_handler = std::make_unique<PeakHandler>();
     _cell_handler = std::make_unique<UnitCellHandler>();
 
@@ -282,8 +285,7 @@ bool Experiment::refine(
 {
     nsxlog(Level::Info, "Experiment::refine: Refining peak collection ", peaks->name());
     std::vector<Peak3D*> peak_list = peaks->getPeakList();
-    InstrumentStateList& states = data->instrumentStates();
-    _refiner->makeBatches(states, peak_list, cell);
+    _refiner->makeBatches(getInstrumentStateSet(data)->instrumentStates(), peak_list, cell);
     bool success = _refiner->refine();
     if (success) {
         nsxlog(Level::Info, "Refinement succeeded");
@@ -507,14 +509,44 @@ void Experiment::removeBatchCells()
     auto tmp = _cell_handler->extractBatchCells();
 }
 
+bool Experiment::addInstrumentStateSet(sptrDataSet data)
+{
+    return _instrumentstate_handler->addInstrumentStateSet(data);
+}
+
 std::string Experiment::GeneratePeakCollectionName()
 {
     return _peak_handler->GenerateName();
 }
 
-std::string Experiment::GenerateUnitCellName()
+bool Experiment::addInstrumentStateSet(sptrDataSet data, const InstrumentStateList& states)
+{
+    return _instrumentstate_handler->addInstrumentStateSet(data, states);
+}
+
+bool Experiment::addInstrumentStateSet(sptrDataSet data, std::unique_ptr<InstrumentStateSet>& states)
+{
+    return _instrumentstate_handler->addInstrumentStateSet(data, states);
+}
+
+    std::string Experiment::GenerateUnitCellName()
 {
     return _cell_handler->GenerateUnitCellName();
+}
+
+InstrumentStateSet* Experiment::getInstrumentStateSet(const sptrDataSet& data)
+{
+    return _instrumentstate_handler->getInstrumentStateSet(data);
+}
+
+InstrumentStateSet* Experiment::getInstrumentStateSet(const DataSet* data)
+{
+    return _instrumentstate_handler->getInstrumentStateSet(data);
+}
+
+void Experiment::removeInstrumentStateSet(const sptrDataSet& data)
+{
+    _instrumentstate_handler->removeInstrumentStateSet(data);
 }
 
 } // namespace nsx

@@ -7,14 +7,14 @@ class TestAutoIndexer(unittest.TestCase):
 
     def test(self):
         # Initialise the experiment
-        name = "FutA"
-        detector = "BioDiff5000"
+        name = "CrChiA"
+        detector = "BioDiff2500"
         expt = nsx.Experiment(name, detector)
 
-        expt.loadFromFile("FutA-4.nsx")
-        found_peaks = expt.getPeakCollection("peaks")
+        expt.loadFromFile("CrChiA.nsx")
+        found_peaks = expt.getPeakCollection("found")
         n_peaks = found_peaks.numberOfPeaks()
-        self.assertEqual(n_peaks, 269)
+        self.assertEqual(n_peaks, 492)
 
         # Filter the peaks
         filter = expt.peakFilter()
@@ -29,23 +29,23 @@ class TestAutoIndexer(unittest.TestCase):
         expt.acceptFilter(name, found_peaks)
         filtered_peaks = expt.getPeakCollection(name)
         n_caught = filtered_peaks.numberCaughtByFilter()
-        self.assertEqual(n_caught, 150)
+        self.assertEqual(n_caught, 396)
         print(f'Autoindex: {n_caught}/{n_peaks} peaks caught by filter')
 
         # Autoindex the peaks
         autoindexer = expt.autoIndexer()
-        expt.setReferenceCell(39.66, 78.19, 47.02, 90.0, 97.358, 90.0)
+        expt.setReferenceCell(57.96, 65.12, 86.52, 90.0, 90.0, 90.0)
         autoindexer_params = nsx.IndexerParameters()
-        autoindexer_params.maxdim = 200.0
-        autoindexer_params.nSolutions = 15
-        autoindexer_params.nVertices = 2300
+        autoindexer_params.maxdim = 100.0
+        autoindexer_params.nSolutions = 10
+        autoindexer_params.nVertices = 10000
         autoindexer_params.subdiv = 30
         autoindexer_params.indexingTolerance = 0.2
-        autoindexer_params.minUnitCellVolume = 100.0
+        autoindexer_params.minUnitCellVolume = 10000.0
         autoindexer.autoIndex(filtered_peaks)
         reference_cell = expt.getReferenceCell()
-        reference_cell.setSpaceGroup(nsx.SpaceGroup("P 21"))
-        self.assertTrue(expt.checkAndAssignUnitCell(filtered_peaks, 1.5, 1.0))  # boolean return value
+        reference_cell.setSpaceGroup(nsx.SpaceGroup("P 21 21 21"))
+        self.assertTrue(expt.checkAndAssignUnitCell(filtered_peaks, 2.0, 0.1))  # boolean return value
 
 if __name__ == "__main__":
     unittest.main()

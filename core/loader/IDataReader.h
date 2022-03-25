@@ -15,6 +15,8 @@
 #ifndef NSX_CORE_RAW_IDATAREADER_H
 #define NSX_CORE_RAW_IDATAREADER_H
 
+#include "core/instrument/InstrumentState.h"
+#include "core/instrument/InstrumentStateSet.h"
 #include "core/raw/MetaData.h"
 #include <vector>
 #include <string>
@@ -24,6 +26,7 @@ namespace nsx {
 
 //! Pure virtual base class of data readers that provide access to detector images and metadata.
 
+class InstrumentStateSet;
 class DataSet;
 
 class IDataReader {
@@ -60,6 +63,8 @@ class IDataReader {
     //! Return the NSX (HDF5) filepath associated with the dataset (if any)
     virtual std::string NSXfilepath() const;
 
+    std::unique_ptr<InstrumentStateSet>& transferInstrumentStates();
+
  protected:
     IDataReader() = delete;
 
@@ -76,6 +81,7 @@ class IDataReader {
     //! Destination DataSet where the data will be stored
     DataSet* _dataset_out = nullptr;
 
+    std::unique_ptr<InstrumentStateSet> _instrument_states;
 };
 
 } // namespace nsx

@@ -67,6 +67,9 @@ class InstrumentState {
     //! Compute the jacobian of the transformation (x,y) -> k_lab
     Eigen::Matrix3d jacobianK(double px, double py) const;
 
+    //! Set the diffractometer
+    void setDiffractometer(Diffractometer* diffractometer);
+
     //! Returns a pointer to the diffractometer of the state
     Diffractometer* diffractometer();
 

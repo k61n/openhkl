@@ -16,6 +16,7 @@
 #define NSX_CORE_EXPERIMENT_DATAHANDLER_H
 
 #include "core/data/DataTypes.h"
+#include "core/experiment/InstrumentStateHandler.h"
 #include <map>
 #include <stdexcept>
 #include <string>
@@ -26,6 +27,7 @@ using DataMap = std::map<std::string, sptrDataSet>;
 
 class DataSet;
 class Diffractometer;
+class InstrumentStateHandler;
 
 class DataHandler {
 
@@ -34,7 +36,9 @@ class DataHandler {
     ~DataHandler() = default;
     DataHandler(const DataHandler& other) = delete;
     DataHandler& operator=(const DataHandler& other) = delete;
-    DataHandler(const std::string& experiment_name, const std::string& diffractometerName);
+    DataHandler(
+        const std::string& experiment_name, const std::string& diffractometerName,
+        InstrumentStateHandler* instrument_state_handler);
 
  public: // Handling data sets
     //! Get the diffractometer
@@ -61,6 +65,8 @@ class DataHandler {
     std::unique_ptr<Diffractometer> _diffractometer;
     //! A map of the data related to the experiment.
     DataMap _data_map;
+    //! pointer to handler for instrument states
+    InstrumentStateHandler* _instrument_state_handler;
 };
 
 } // namespace nsx

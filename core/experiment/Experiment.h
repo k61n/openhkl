@@ -19,6 +19,7 @@
 #include "core/algo/Refiner.h"
 #include "core/data/DataTypes.h"
 #include "core/experiment/DataQuality.h"
+#include "core/experiment/InstrumentStateHandler.h"
 #include "core/experiment/PeakFinder.h"
 #include "core/instrument/Diffractometer.h"
 #include "core/integration/Integrator.h"
@@ -31,6 +32,7 @@
 #include "core/statistics/PeakMerger.h"
 #include "core/statistics/ResolutionShell.h"
 #include "tables/crystal/UnitCell.h"
+#include <memory>
 
 
 namespace nsx {
@@ -153,6 +155,20 @@ class Experiment {
     //! Remove the batch cells if they are not being used
     void removeBatchCells();
 
+    // Instrument state handler
+    //! Add a set of instrment states
+    bool addInstrumentStateSet(sptrDataSet data);
+    //! Add a set of instrment states
+    bool addInstrumentStateSet(sptrDataSet data, const InstrumentStateList& states);
+    //! Add a set of instrment states
+    bool addInstrumentStateSet(sptrDataSet data, std::unique_ptr<InstrumentStateSet>& states);
+    //! Returns the named InstrumentStateSet
+    InstrumentStateSet* getInstrumentStateSet(const sptrDataSet& data);
+    //! Returns the named InstrumentStateSet
+    InstrumentStateSet* getInstrumentStateSet(const DataSet* data);
+    // !Remove a set of instrument states from the experiment
+    void removeInstrumentStateSet(const sptrDataSet& data);
+
     // Peak finder
     //! Return a pointer to the PeakFinder object
     PeakFinder* peakFinder() { return _peak_finder.get(); };
@@ -221,6 +237,7 @@ class Experiment {
     std::shared_ptr<DataHandler> _data_handler; // shared because Integrator needs access
     std::unique_ptr<PeakHandler> _peak_handler;
     std::unique_ptr<UnitCellHandler> _cell_handler;
+    std::unique_ptr<InstrumentStateHandler> _instrumentstate_handler;
 
     // Objects that do the number crunching
     std::unique_ptr<PeakFinder> _peak_finder;

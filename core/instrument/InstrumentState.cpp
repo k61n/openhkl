@@ -121,6 +121,11 @@ Eigen::Matrix3d InstrumentState::jacobianK(double px, double py) const
     return dkdx;
 }
 
+void InstrumentState::setDiffractometer(Diffractometer* diffractometer)
+{
+    _diffractometer = diffractometer;
+}
+
 const Diffractometer* InstrumentState::diffractometer() const
 {
     return _diffractometer;
