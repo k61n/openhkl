@@ -117,7 +117,7 @@ class Experiment {
 
     // Unit cells
     //! Add a unit cell to the experiment
-    bool addUnitCell(const std::string& name, const UnitCell& unit_cell, bool refined = false);
+    bool addUnitCell(const std::string& name, const UnitCell& unit_cell);
     //! Add a unit cell to the experiment via cell parameters (skip autoindexing step)
     bool addUnitCell(
         const std::string& name, double a, double b, double c, double alpha, double beta,
@@ -134,6 +134,8 @@ class Experiment {
     UnitCell* getUnitCell(const std::string& name) const;
     //! Return a pointer to the named unit cell
     sptrUnitCell getSptrUnitCell(const std::string& name) const;
+    //! Return a pointer to the numbered unit cell
+    sptrUnitCell getSptrUnitCell(const unsigned int id) const;
     //! Remove a unit cell from the experiment
     void removeUnitCell(const std::string& name);
     //! Swap two unit cells in the map contained by the handler
@@ -152,8 +154,8 @@ class Experiment {
     std::vector<std::string> getCompatibleSpaceGroups() const;
     //! Get the cell handler
     UnitCellHandler* getCellHandler() const;
-    //! Remove the batch cells if they are not being used
-    void removeBatchCells();
+    //! set last unit cell index in cell handler
+    void setLastUnitCellIndex(unsigned int index);
 
     // Instrument state handler
     //! Add a set of instrment states
@@ -227,8 +229,8 @@ class Experiment {
     RawDataReaderParameters data_params;
 
     // auto generating names for collections
-    std::string GeneratePeakCollectionName();
-    std::string GenerateUnitCellName();
+    std::string generatePeakCollectionName();
+    std::string generateUnitCellName();
 
  private: // private variables
     std::string _name; //!< The name of this experiment

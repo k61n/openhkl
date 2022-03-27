@@ -704,7 +704,7 @@ void SubframeAutoIndexer::acceptSolution()
             space_groups.push_back(QString::fromStdString(name));
         
         std::unique_ptr<UnitCellDialog> dlg(new UnitCellDialog(
-            QString::fromStdString(expt->GenerateUnitCellName()),
+            QString::fromStdString(expt->generateUnitCellName()),
             collections, space_groups));
         dlg->exec();
         if (!dlg->unitCellName().isEmpty()) {

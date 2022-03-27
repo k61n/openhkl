@@ -308,6 +308,11 @@ UnitCell* RefinementBatch::cell() const
     return _cell.get();
 }
 
+sptrUnitCell RefinementBatch::sptrCell() const
+{
+    return _cell;
+}
+
 int RefinementBatch::first_frame() const
 {
     return _fmin;
@@ -325,7 +330,7 @@ bool RefinementBatch::contains(double f) const
 
 bool RefinementBatch::onlyContains(double f) const
 {
-    return (f >= _fmin) && (f < _fmax - 2.0);
+    return (f >= _fmin) && (f < _fmax - 1.0);
 }
 
 std::string RefinementBatch::name() const

@@ -95,6 +95,7 @@ UnitCell::UnitCell()
     , _space_group("P 1")
     , _name("uc")
     , _indexingTolerance(0.2)
+    , _id(0)
 {
 }
 
@@ -110,6 +111,7 @@ UnitCell::UnitCell(const UnitCell& other)
     , _indexingTolerance(other._indexingTolerance)
     , _niggli(other._niggli)
     , _characterSigmas(other._characterSigmas)
+    , _id(0)
 {
     _material.reset(other._material ? other._material->clone() : nullptr);
 }
@@ -907,6 +909,17 @@ bool UnitCell::isSimilar(const UnitCell* other, double length_tol, double angle_
         smallDiff(c1.beta / deg, c2.beta / deg, angle_tol) &&
         smallDiff(c1.gamma / deg, c2.gamma / deg, angle_tol) &&
         t1 == t2);
+}
+
+unsigned int UnitCell::id() const
+{
+    return _id;
+}
+
+void UnitCell::setId(const unsigned int id)
+{
+    if (_id == 0)
+        _id = id;
 }
 
 } // namespace nsx

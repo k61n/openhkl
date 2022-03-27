@@ -87,6 +87,7 @@ const std::string at_peakType{"peak type"};
 const std::string at_indexed{"is indexed"};
 const std::string at_integrated{"is integrated"};
 // unit cell
+const std::string at_unitCellName{"unit cell name"};
 const std::string at_rVec{"reciprocal"};
 const std::string at_BravaisLattice{"Bravais lattice"};
 const std::string at_indexingTol{"indexing tolerance"};

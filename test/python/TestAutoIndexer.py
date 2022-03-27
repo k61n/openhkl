@@ -25,11 +25,11 @@ class TestAutoIndexer(unittest.TestCase):
         filter.parameters().strength_min = 1.0
         filter.parameters().strength_max = 1.0e7
         filter.filter(found_peaks)
-        name = expt.GeneratePeakCollectionName()
+        name = expt.generatePeakCollectionName()
         expt.acceptFilter(name, found_peaks)
         filtered_peaks = expt.getPeakCollection(name)
         n_caught = filtered_peaks.numberCaughtByFilter()
-        self.assertEqual(n_caught, 396)
+        self.assertEqual(n_caught, 391)
         print(f'Autoindex: {n_caught}/{n_peaks} peaks caught by filter')
 
         # Autoindex the peaks

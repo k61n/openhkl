@@ -249,4 +249,10 @@ void PeakCollection::buildShapeCollection(sptrDataSet data, const ShapeCollectio
     nsxlog(Level::Info, "PeakCollection::buildShapeCollection finished");
 }
 
+void PeakCollection::setUnitCell(const sptrUnitCell& cell)
+{
+    for (auto* peak : getPeakList())
+        peak->setUnitCell(cell);
+}
+
 } // namespace nsx

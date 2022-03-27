@@ -51,7 +51,8 @@ const std::map<RejectionFlag, std::string> Peak3D::_rejection_map{
     {RejectionFlag::NoShapeCollection, "No shape collection found"},
     {RejectionFlag::NoISigmaMinimum, "Failed to find minimum of I/Sigma"},
     {RejectionFlag::PredictionUpdateFailure, "Failure updating prediction post-refinement"},
-    {RejectionFlag::ManuallyRejected, "Manually unselected by user"}};
+    {RejectionFlag::ManuallyRejected, "Manually unselected by user"},
+    {RejectionFlag::OutsideIndexingTol, "Outside indexing tolerance"}};
 
 Peak3D::Peak3D(sptrDataSet data)
     : _shape()
@@ -294,6 +295,11 @@ bool Peak3D::caughtByFilter() const
     if (_rejected_by_filter)
         return false;
     return _caught_by_filter;
+}
+
+bool Peak3D::rejectedByFilter() const
+{
+    return _rejected_by_filter;
 }
 
 void Peak3D::caughtYou(bool caught)

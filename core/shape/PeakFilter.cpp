@@ -262,6 +262,12 @@ void PeakFilter::filterIndexed(PeakCollection* peak_collection) const
 std::vector<Peak3D*> PeakFilter::filterIndexed(
     const std::vector<Peak3D*> peaks, const UnitCell* cell /* = nullptr  */) const
 {
+    // reset filters
+    for (auto* peak : peaks) {
+        peak->caughtYou(false);
+        peak->rejectYou(false);
+    }
+
     // If a cell is passed, use it to compute the Miller index, otherwise use the cell
     // specified by the peak
     std::vector<Peak3D*> filtered_peaks;
@@ -279,8 +285,12 @@ std::vector<Peak3D*> PeakFilter::filterIndexed(
             tol = batch_cell->indexingTolerance();
         }
 
-        if (index.indexed(tol))
+        if (index.indexed(tol)) {
             filtered_peaks.push_back(peak);
+            peak->caughtYou(true);
+        } else {
+            peak->rejectYou(true);
+        }
     }
     return filtered_peaks;
 }

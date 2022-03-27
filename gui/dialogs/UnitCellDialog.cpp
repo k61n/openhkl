@@ -66,6 +66,7 @@ UnitCellDialog::UnitCellDialog(QString suggestion, QStringList collectionNames, 
     gridLayout->addWidget(buttonBox, 3, 0, 3, 2);
 
     _cell_name->setText(suggestion);
+    _cell_name->selectAll();
 
     QObject::connect(buttonBox, SIGNAL(accepted()), this, SLOT(accept()));
     QObject::connect(buttonBox, SIGNAL(rejected()), this, SLOT(reject()));

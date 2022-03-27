@@ -71,6 +71,9 @@ class RefinementBatch {
     //! Returns the refined unit cell.
     UnitCell* cell() const;
 
+    //! Return shared pointer to the refined unit cell
+    sptrUnitCell sptrCell() const;
+
 
     //! Return the lower frame bound
     int first_frame() const;
@@ -89,6 +92,9 @@ class RefinementBatch {
 
     //! Set the residual type
     void setResidualType(const ResidualType& residual);
+
+    double fmin() { return _fmin; };
+    double fmax() { return _fmax; };
 
  private:
     double _fmin;

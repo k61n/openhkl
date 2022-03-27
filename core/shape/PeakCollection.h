@@ -121,6 +121,8 @@ class PeakCollection {
     void setIndexed(bool value) {_indexed = value;}
     void setIntegrated(bool value) {_integrated = value;}
 
+    void setUnitCell(const sptrUnitCell& cell);
+
  private:
     std::vector<std::unique_ptr<nsx::Peak3D>> _peaks;
     std::string _name;

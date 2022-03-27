@@ -86,10 +86,10 @@ sptrUnitCell Refiner::_getUnitCell(const std::vector<Peak3D*> peaks_subset)
 void Refiner::makeBatches(
     InstrumentStateList& states, const std::vector<nsx::Peak3D*>& peaks, sptrUnitCell cell)
 {
+    nsxlog(Level::Info, "Refiner::makeBatches: making ", _params->nbatches, " batches");
     _peaks = peaks;
     _unrefined_states.clear();
     _batches.clear();
-    _tmp_vec = _cell_handler->extractBatchCells();
 
     _states = &states;
     _nframes = states.size();
@@ -111,6 +111,10 @@ void Refiner::makeBatches(
         filtered_peaks = peak_filter.filterIndexed(filtered_peaks);
     else
         filtered_peaks = peak_filter.filterIndexed(filtered_peaks, _cell.get());
+
+    nsxlog(
+        Level::Info, filtered_peaks.size(), " / ", peaks.size(),
+        " peaks used by refiner");
 
     std::sort(
         filtered_peaks.begin(), filtered_peaks.end(),
@@ -143,7 +147,7 @@ void Refiner::makeBatches(
             for (auto* peak : b.peaks())
                 peak->setUnitCell(cell_ptr);
 
-            _cell_handler->addUnitCell(name, cell_ptr, true);
+            _cell_handler->addUnitCell(name, cell_ptr);
 
             _batches.emplace_back(std::move(b));
             peaks_subset.clear();
@@ -152,9 +156,18 @@ void Refiner::makeBatches(
     }
 }
 
+void Refiner::assignPredictedCells(std::vector<Peak3D*> predicted_peaks)
+{
+    for (const auto& batch : _batches) {
+        for (auto* peak : predicted_peaks) {
+            if (batch.onlyContains(peak->shape().center()[2]))
+                peak->setUnitCell(batch.sptrCell());
+        }
+    }
+}
+
 void Refiner::reconstructBatches(std::vector<Peak3D*> peaks)
 {
-    auto tmp = _cell_handler->extractBatchCells(); // we're discarding this
     _batches.clear();
 
     std::vector<nsx::Peak3D*> filtered_peaks = peaks;
@@ -193,7 +206,7 @@ void Refiner::reconstructBatches(std::vector<Peak3D*> peaks)
             for (auto* peak : b.peaks())
                 peak->setUnitCell(cell_ptr);
 
-            _cell_handler->addUnitCell(name, cell_ptr, true);
+            _cell_handler->addUnitCell(name, cell_ptr);
 
             _batches.emplace_back(std::move(b));
             peaks_subset.clear();
@@ -279,16 +292,18 @@ const std::vector<RefinementBatch>& Refiner::batches() const
     return _batches;
 }
 
-int Refiner::updatePredictions(std::vector<Peak3D*> peaks) const
+int Refiner::updatePredictions(std::vector<Peak3D*> peaks)
 {
     nsxlog(Level::Info, "Refiner::updatePredictions");
+    assignPredictedCells(peaks); // Set the batch cells to the predicted peaks
     const PeakFilter peak_filter;
     std::vector<nsx::Peak3D*> filtered_peaks = peaks;
     filtered_peaks = peak_filter.filterEnabled(peaks, true);
-    if (_cell)
-        filtered_peaks = peak_filter.filterIndexed(filtered_peaks, _cell.get());
-    else
-        filtered_peaks = peak_filter.filterIndexed(filtered_peaks);
+    int n_enabled = filtered_peaks.size();
+
+    nsxlog(
+        Level::Info, filtered_peaks.size(), " / ", n_enabled,
+        " peaks within indexing tolerance");
 
     int updated = 0;
 
@@ -307,7 +322,7 @@ int Refiner::updatePredictions(std::vector<Peak3D*> peaks) const
         if (b == nullptr)
             continue;
 
-        const auto* batch_cell = b->cell();
+        const sptrUnitCell batch_cell = b->sptrCell();
 
         // update the position
         const MillerIndex hkl(peak->q(), *batch_cell);
@@ -327,12 +342,14 @@ int Refiner::updatePredictions(std::vector<Peak3D*> peaks) const
                 if (vec.norm() < _eps_norm) {
                     peak->setShape(
                         Ellipsoid({event.px, event.py, event.frame}, peak->shape().metric()));
+                    peak->setUnitCell(batch_cell);
                     ++updated;
                 }
             }
         } else {
             peak->setShape(
                 Ellipsoid({events[0].px, events[0].py, events[0].frame}, peak->shape().metric()));
+            peak->setUnitCell(batch_cell);
             ++updated;
         }
     }
@@ -367,37 +384,37 @@ bool Refiner::firstRefine() const
 
 void Refiner::logChange()
 {
-    nsxlog(Level::Info, "Refinement succeeded");
+    nsxlog(Level::Debug, "Refinement succeeded");
     if (!_params->use_batch_cells)
         nsxlog(Level::Info, "Original cell: ", _unrefined_cell.toString());
     nsxlog(Level::Info, "Batch/Refined cell(s):");
     for (const auto& batch : _batches) {
-        nsxlog(Level::Info, batch.name(), ": ", batch.cell()->toString());
+        nsxlog(Level::Debug, batch.name(), ": ", batch.cell()->toString());
     }
     Eigen::IOFormat vec3(6, 0, ", ", "\n", "[", "]");
-    nsxlog(Level::Info, "Frame/k_i:");
+    nsxlog(Level::Debug, "Frame/k_i:");
     for (int i = 0; i < _states->size(); ++i) {
         Eigen::Vector3d k_i_change =
             _unrefined_states[i].ki().rowVector() - (*_states)[i].ki().rowVector();
-        nsxlog(Level::Info, i + 1, ": ", k_i_change.transpose().format(vec3));
+        nsxlog(Level::Debug, i + 1, ": ", k_i_change.transpose().format(vec3));
     }
-    nsxlog(Level::Info, "Frame/Detector position:");
+    nsxlog(Level::Debug, "Frame/Detector position:");
     for (int i = 0; i < _states->size(); ++i) {
         Eigen::Vector3d detector_pos_change =
             _unrefined_states[i].detectorPositionOffset - (*_states)[i].detectorPositionOffset;
-        nsxlog(Level::Info, i + 1, ": ", detector_pos_change.transpose().format(vec3));
+        nsxlog(Level::Debug, i + 1, ": ", detector_pos_change.transpose().format(vec3));
     }
-    nsxlog(Level::Info, "Frame/Sample position:");
+    nsxlog(Level::Debug, "Frame/Sample position:");
     for (int i = 0; i < _states->size(); ++i) {
         Eigen::Vector3d sample_pos_change =
             _unrefined_states[i].samplePosition - (*_states)[i].samplePosition;
-        nsxlog(Level::Info, i + 1, ": ", sample_pos_change.transpose().format(vec3));
+        nsxlog(Level::Debug, i + 1, ": ", sample_pos_change.transpose().format(vec3));
     }
-    nsxlog(Level::Info, "Frame/Sample orienation:");
+    nsxlog(Level::Debug, "Frame/Sample orientation:");
     for (int i = 0; i < _states->size(); ++i) {
         Eigen::Matrix3d sample_orientation_change = _unrefined_states[i].sampleOrientationMatrix()
             - (*_states)[i].sampleOrientationMatrix();
-        nsxlog(Level::Info, i + 1, ":\n ", sample_orientation_change.transpose().format(vec3));
+        nsxlog(Level::Debug, i + 1, ":\n ", sample_orientation_change.transpose().format(vec3));
     }
 }
 

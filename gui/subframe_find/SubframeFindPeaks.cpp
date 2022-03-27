@@ -564,7 +564,7 @@ void SubframeFindPeaks::accept()
 
     if (!finder->currentPeaks().empty()) {
         std::unique_ptr<ListNameDialog> dlg(new ListNameDialog(QString::fromStdString(
-        expt->GeneratePeakCollectionName())));
+        expt->generatePeakCollectionName())));
         dlg->exec();
         if (!dlg->listName().isEmpty()) {
             if(!gSession->experimentAt(_exp_combo->currentIndex())

@@ -38,7 +38,6 @@
 #include <sstream>
 #include <string>
 #include <tuple>
-#include <vector>
 
 #include <H5Cpp.h>
 
@@ -360,7 +359,6 @@ void ExperimentExporter::writePeaks(const std::map<std::string, PeakCollection*>
 
         std::string name;
         std::string ext;
-        std::string unit_cell_name;
 
         for (std::size_t i = 0; i < nPeaks; ++i) {
             nsx::Peak3D* const peak = collection_item->getPeak(i);
@@ -385,8 +383,11 @@ void ExperimentExporter::writePeaks(const std::map<std::string, PeakCollection*>
             data_names.push_back(peak->dataSet()->name());
 
             const UnitCell* unit_cell_ptr = peak->unitCell();
-            unit_cell_name = unit_cell_ptr ? unit_cell_ptr->name() : nsx::kw_unitcellDefaultName;
-            unit_cells.push_back(unit_cell_name);
+            if (!unit_cell_ptr)
+                continue;
+
+            const std::string unit_cell_id = std::to_string(unit_cell_ptr->id());
+            unit_cells.push_back(unit_cell_id);
 
             Eigen::Vector3d temp_col = peak->shape().center();
             center.block(i, 0, 1, 3) = Eigen::RowVector3d{temp_col(0), temp_col(1), temp_col(2)};
@@ -439,22 +440,21 @@ void ExperimentExporter::writePeaks(const std::map<std::string, PeakCollection*>
     }
 }
 
-void ExperimentExporter::writeUnitCells(const std::map<std::string, UnitCell*> unit_cells)
+void ExperimentExporter::writeUnitCells(const std::vector<UnitCell*> unit_cells)
 {
     H5::H5File file{_file_name.c_str(), H5F_ACC_RDWR};
     file.createGroup("/" + nsx::gr_UnitCells);
     H5::DataSpace metaSpace(H5S_SCALAR);
     H5::StrType str80Type(H5::PredType::C_S1, 80);
 
-    for (const auto& it : unit_cells) {
+    for (const auto* unit_cell : unit_cells) {
         // Write the data
-        const std::string unit_cell_name = it.first;
-        const UnitCell* unit_cell = it.second;
+        const unsigned int unit_cell_id = unit_cell->id();
 
         const Eigen::MatrixX3d rec = unit_cell->reciprocalBasis();
 
-        H5::Group unit_cell_group =
-            file.createGroup(std::string("/" + nsx::gr_UnitCells + "/" + unit_cell_name));
+        const std::string group_name = "/" + nsx::gr_UnitCells + "/" + std::to_string(unit_cell_id);
+        H5::Group unit_cell_group = file.createGroup(group_name);
 
         // Write reciprocal-vector components
         for (std::size_t i = 0; i < 3; ++i) {
@@ -467,6 +467,9 @@ void ExperimentExporter::writeUnitCells(const std::map<std::string, UnitCell*> u
             }
         }
 
+        const std::string unit_cell_name = unit_cell->name();
+        writeAttribute(
+            unit_cell_group, nsx::at_unitCellName, unit_cell_name.data(), str80Type, metaSpace);
         const double tolerance = unit_cell->indexingTolerance();
         writeAttribute(
             unit_cell_group, nsx::at_indexingTol, &tolerance, H5::PredType::NATIVE_DOUBLE,

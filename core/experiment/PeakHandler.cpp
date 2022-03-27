@@ -127,8 +127,8 @@ bool PeakHandler::clonePeakCollection(std::string name, std::string new_name)
     return hasPeakCollection(name);
 }
 
-std::string PeakHandler::GenerateName()
-{
+std::string PeakHandler::generateName()
+{     
     int n = 4; // number of digits
     std::string str = std::to_string(numPeakCollections()+1);
     if (str.size() > n){//

@@ -20,7 +20,7 @@
 #include "core/raw/DataKeys.h"
 #include "tables/crystal/UnitCell.h"
 
-#include <map>
+#include <vector>
 #include <stdexcept>
 #include <string>
 
@@ -30,20 +30,20 @@ class AutoIndexer;
 class PeakHandler;
 class PeakCollection;
 
-using CellMap = std::map<std::string, sptrUnitCell>;
+using UnitCellList = std::vector<sptrUnitCell>;
 
 class UnitCellHandler {
 
  public:
-    UnitCellHandler() = default;
+    UnitCellHandler();
 
  public: // Handling unit cells
     //! Get a pointer to the map of unit cells
-    const CellMap* getCellMap() const;
+    const UnitCellList* getCellList() const;
     //! Add a unit cell to the experiment
-    bool addUnitCell(const std::string& name, const UnitCell& unit_cell, bool refined = false);
+    bool addUnitCell(const std::string& name, const UnitCell& unit_cell);
     //! Move a unique pointer to a unit cell to the experiment
-    bool addUnitCell(const std::string& name, sptrUnitCell unit_cell, bool refined = false);
+    bool addUnitCell(const std::string& name, sptrUnitCell unit_cell);
     //! Add a unit cell to the experiment via cell parameters (skip autoindexing step)
     bool addUnitCell(
         const std::string& name, double a, double b, double c, double alpha, double beta,
@@ -58,6 +58,8 @@ class UnitCellHandler {
     std::vector<std::string> getUnitCellNames() const;
     //! Returns the unit cell denoted by the name
     sptrUnitCell getSptrUnitCell(const std::string& name) const;
+    //! Returns the unit cell denoted by the integer id
+    sptrUnitCell getSptrUnitCell(const unsigned int id) const;
     //! Returns the unit cell denoted by the name
     UnitCell* getUnitCell(const std::string& name) const;
     //! Remove a data from the experiment
@@ -78,16 +80,15 @@ class UnitCellHandler {
         PeakCollection* peaks, std::string cellName = nsx::kw_acceptedUnitcell) const;
     //! Get space groups compatible with unit cell
     std::vector<std::string> getCompatibleSpaceGroups() const;
-    //! Extract all items from the map without breaking pointers, return a new map
-    std::vector<sptrUnitCell> extractBatchCells();
-    //! Merge unicells from another CellMap into this container
-    void mergeBatchCells(CellMap map);
 
-    std::string GenerateUnitCellName();
+    std::string generateUnitCellName();
+
+    void setLastIndex(unsigned int index);
 
  private:
-    CellMap _unit_cells;
-    CellMap _batch_cells;
+    UnitCellList _unit_cells;
+    const std::size_t _max_unit_cells = 1000;
+    unsigned int _last_index = 0;
 };
 
 } // namespace nsx

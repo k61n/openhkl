@@ -617,7 +617,6 @@ void SubframePredictPeaks::refineKi()
         gGui->statusBar()->showMessage("Direct beam position refinement failed");
 
     refiner->setParameters(tmp_params);
-    expt->removeBatchCells();
     for (auto* peak : peaks->getPeakList()) // Assign original unit cell to all peaks
         peak->setUnitCell(cell);
 
@@ -762,8 +761,7 @@ void SubframePredictPeaks::accept()
     //suggest name to user
     auto* project = gSession->experimentAt(_exp_combo->currentIndex());
     auto* expt = project->experiment();
-    auto num = expt ->numPeakCollections();
-    std::string suggestion = "PeakCollectionNr.:" + std::to_string(num+1);
+    std::string suggestion = expt->generatePeakCollectionName();
     std::unique_ptr<ListNameDialog> dlg(new ListNameDialog(QString::fromStdString(suggestion)));
     dlg->exec();
     if (!dlg->listName().isEmpty()) {

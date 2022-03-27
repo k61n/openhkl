@@ -270,6 +270,9 @@ class UnitCell {
     //! Return true if similar to another unit cell
     bool isSimilar(const UnitCell* other, double length_tol, double angle_tol) const;
 
+    unsigned int id() const;
+    void setId(const unsigned int id);
+
 #ifndef SWIG
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 #endif
@@ -299,6 +302,8 @@ class UnitCell {
     NiggliCharacter _niggli;
 
     UnitCellCharacter _characterSigmas;
+
+    unsigned int _id;
 };
 
 //! Print to a stream

@@ -105,10 +105,10 @@ void SubframeHome::_setLeftLayout(QHBoxLayout* main_layout)
         "List Type"});
     _peak_collections_table->resizeColumnsToContents();
 
-    _unitcell_table = new QTableWidget(0, 8);
+    _unitcell_table = new QTableWidget(0, 9);
     _unitcell_table->setEditTriggers(QAbstractItemView::NoEditTriggers);
     _unitcell_table->setHorizontalHeaderLabels(QStringList{
-        "Name", "Space Group", "a", "b", "c", QChar(0xb1, 0x03), QChar(0xb2, 0x03),
+        "ID", "Name", "Space Group", "a", "b", "c", QChar(0xb1, 0x03), QChar(0xb2, 0x03),
         QChar(0xb3, 0x03)});
     _unitcell_table->resizeColumnsToContents();
 
@@ -384,21 +384,24 @@ void SubframeHome::refreshTables()
             if (n >= _unitcell_table->rowCount())
                 _unitcell_table->insertRow(_unitcell_table->rowCount());
 
-            _unitcell_table->setItem(n, 0, new QTableWidgetItem(QString::fromStdString(*it)));
+            int col = 0;
             _unitcell_table->setItem(
-                n, 1, new QTableWidgetItem(QString::fromStdString(data->spaceGroup().symbol())));
+                n, col++, new QTableWidgetItem(QString::number(data->id())));
+            _unitcell_table->setItem(n, col++, new QTableWidgetItem(QString::fromStdString(*it)));
             _unitcell_table->setItem(
-                n, 2, new QTableWidgetItem(QString::number(data->character().a)));
+                n, col++, new QTableWidgetItem(QString::fromStdString(data->spaceGroup().symbol())));
             _unitcell_table->setItem(
-                n, 3, new QTableWidgetItem(QString::number(data->character().b)));
+                n, col++, new QTableWidgetItem(QString::number(data->character().a)));
             _unitcell_table->setItem(
-                n, 4, new QTableWidgetItem(QString::number(data->character().c)));
+                n, col++, new QTableWidgetItem(QString::number(data->character().b)));
             _unitcell_table->setItem(
-                n, 5, new QTableWidgetItem(QString::number(data->character().alpha / nsx::deg)));
+                n, col++, new QTableWidgetItem(QString::number(data->character().c)));
             _unitcell_table->setItem(
-                n, 6, new QTableWidgetItem(QString::number(data->character().beta / nsx::deg)));
+                n, col++, new QTableWidgetItem(QString::number(data->character().alpha / nsx::deg)));
             _unitcell_table->setItem(
-                n, 7, new QTableWidgetItem(QString::number(data->character().gamma / nsx::deg)));
+                n, col++, new QTableWidgetItem(QString::number(data->character().beta / nsx::deg)));
+            _unitcell_table->setItem(
+                n, col++, new QTableWidgetItem(QString::number(data->character().gamma / nsx::deg)));
         }
         _unitcell_table->resizeColumnsToContents();
 
