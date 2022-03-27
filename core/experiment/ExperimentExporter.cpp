@@ -359,7 +359,6 @@ void ExperimentExporter::writePeaks(const std::map<std::string, PeakCollection*>
 
         std::string name;
         std::string ext;
-        std::string unit_cell_name;
 
         for (std::size_t i = 0; i < nPeaks; ++i) {
             nsx::Peak3D* const peak = collection_item->getPeak(i);
@@ -384,6 +383,9 @@ void ExperimentExporter::writePeaks(const std::map<std::string, PeakCollection*>
             data_names.push_back(peak->dataSet()->name());
 
             const UnitCell* unit_cell_ptr = peak->unitCell();
+            if (!unit_cell_ptr)
+                continue;
+
             const std::string unit_cell_id = std::to_string(unit_cell_ptr->id());
             unit_cells.push_back(unit_cell_id);
 

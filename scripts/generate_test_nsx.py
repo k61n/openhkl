@@ -113,6 +113,7 @@ autoindexer.autoIndex(filtered_peaks)
 reference_cell = expt.getReferenceCell()
 reference_cell.setSpaceGroup(nsx.SpaceGroup("P 21 21 21"))
 print(autoindexer.solutionsToString())
+print(expt.checkAndAssignUnitCell(found_peaks, 2.0, 0.1))  # boolean return value
 print(expt.checkAndAssignUnitCell(filtered_peaks, 2.0, 0.1))  # boolean return value
 
 expt.saveToFile(f'{name}.nsx')

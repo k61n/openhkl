@@ -384,7 +384,6 @@ void ExperimentImporter::loadUnitCells(Experiment* experiment)
                 else if (attr_name == nsx::at_unitCellName)
                     attr.read(typ, unit_cell_name);
             }
-
             Eigen::Matrix3d aa = Eigen::Matrix3d::Identity();
             aa << rec_00, rec_01, rec_02, rec_10, rec_11, rec_12, rec_20, rec_21, rec_22;
 
