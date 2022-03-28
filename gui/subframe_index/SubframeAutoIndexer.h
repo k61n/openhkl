@@ -111,7 +111,8 @@ class SubframeAutoIndexer : public QWidget {
     void toggleCursorMode();
     //! Set the initial value of ki from the crosshair position
     void setInitialKi(nsx::sptrDataSet data);
-
+    //! Show direct beam position computed from unit cell in DetectorScene
+    void showDirectBeamEvents();
 
 
     //! The model for the indexing peaks
@@ -125,6 +126,8 @@ class SubframeAutoIndexer : public QWidget {
 
     std::vector<std::pair<nsx::sptrPeak3D, std::shared_ptr<const nsx::UnitCell>>> _defaults;
     std::vector<std::pair<std::shared_ptr<nsx::UnitCell>, double>> _solutions;
+
+    bool _show_direct_beam;
 
     nsx::sptrUnitCell _selected_unit_cell;
 
@@ -176,6 +179,11 @@ class SubframeAutoIndexer : public QWidget {
     PeakViewWidget* _peak_view_widget;
 
     int _stored_cursor_mode;
+
+    //! Saved direct beam positions
+    std::vector<nsx::DetectorEvent> _direct_beam_events;
+    //! Current direct beam positions
+    std::vector<nsx::DetectorEvent> _old_direct_beam_events;
 };
 
 #endif // NSX_GUI_SUBFRAME_INDEX_SUBFRAMEAUTOINDEXER_H

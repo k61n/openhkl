@@ -20,6 +20,7 @@
 #include "core/algo/AutoIndexer.h"
 #include "core/data/DataTypes.h"
 #include "core/experiment/Experiment.h"
+#include "core/peak/Qs2Events.h"
 #include "gui/MainWin.h" // gGui
 #include "gui/connect/Sentinel.h"
 #include "gui/dialogs/UnitCellDialog.h"
@@ -61,6 +62,7 @@ SubframeAutoIndexer::SubframeAutoIndexer()
     , _peak_collection(nsx::kw_autoindexingCollection, nsx::listtype::INDEXING)
     , _peak_collection_item()
     , _peak_collection_model()
+    , _show_direct_beam(true)
     , _size_policy_right(QSizePolicy::Expanding, QSizePolicy::Expanding)
 {
     QHBoxLayout* main_layout = new QHBoxLayout(this);
@@ -92,6 +94,9 @@ SubframeAutoIndexer::SubframeAutoIndexer()
     connect(
         this, &SubframeAutoIndexer::crosshairChanged, _detector_widget->scene(),
         &DetectorScene::onCrosshairChanged);
+
+    _detector_widget->scene()->linkDirectBeamPositions(&_direct_beam_events);
+    _detector_widget->scene()->linkOldDirectBeamPositions(&_old_direct_beam_events);
 
     tables_tab->setLayout(_solution_layout);
     detector_tab->setLayout(_detector_widget);
@@ -332,8 +337,10 @@ void SubframeAutoIndexer::refreshAll()
         _detector_widget->updateDatasetList(all_data);
         const auto dataset = gSession->experimentAt(_exp_combo->currentIndex())
                                  ->getData(_data_combo->currentIndex());
-        if (dataset)
+        if (dataset) {
             _max_frame->setMaximum(dataset->nFrames() - 1);
+            refreshPeakTable();
+        }
     }
     toggleUnsafeWidgets();
 }
@@ -406,7 +413,8 @@ void SubframeAutoIndexer::updateDatasetList()
     QString current_data = _data_combo->currentText();
     _data_combo->clear();
     _data_list = gSession->experimentAt(_exp_combo->currentIndex())->allData();
-    _detector_widget->updateDatasetList(_data_list);
+    if (!_data_list.empty())
+        _detector_widget->updateDatasetList(_data_list);
 
     const QStringList& datanames{gSession->currentProject()->getDataNames()};
     if (!datanames.empty()) {
@@ -476,6 +484,7 @@ void SubframeAutoIndexer::refreshPeakVisual()
             _crosshair_size->value(), _crosshair_linewidth->value());
         changeCrosshair();
     }
+    showDirectBeamEvents();
 
     if (_peak_collection_item.childCount() == 0)
         return;
@@ -561,9 +570,13 @@ void SubframeAutoIndexer::runAutoIndexer()
     nsx::PeakCollection* collection =
         expt->getPeakCollection(_peak_combo->currentText().toStdString());
 
+
     // Manally adjust the direct beam position
     if (_set_initial_ki->isChecked()) {
         auto data = _detector_widget->currentData();
+        auto* detector = data->diffractometer()->detector();
+        auto& states = data->instrumentStates();
+        _old_direct_beam_events = nsx::algo::getDirectBeamEvents(states, *detector);
         setInitialKi(data);
     }
 
@@ -698,11 +711,11 @@ void SubframeAutoIndexer::acceptSolution()
         nsx::Experiment* expt = gSession->experimentAt(_exp_combo->currentIndex())->experiment();
         QStringList collections = gSession->experimentAt(_exp_combo->currentIndex())
                                       ->getPeakCollectionNames(nsx::listtype::FOUND);       
-        
+
         QStringList space_groups;
         for (const std::string& name : _selected_unit_cell->compatibleSpaceGroups())
             space_groups.push_back(QString::fromStdString(name));
-        
+
         std::unique_ptr<UnitCellDialog> dlg(new UnitCellDialog(
             QString::fromStdString(expt->generateUnitCellName()),
             collections, space_groups));
@@ -710,7 +723,7 @@ void SubframeAutoIndexer::acceptSolution()
         if (!dlg->unitCellName().isEmpty()) {
             std::string cellName = dlg->unitCellName().toStdString();
             _selected_unit_cell->setName(cellName);
-            
+
             if (!expt->addUnitCell(dlg->unitCellName().toStdString(), 
                 *_selected_unit_cell.get())){
                     QMessageBox::warning(this,
@@ -793,4 +806,29 @@ void SubframeAutoIndexer::setInitialKi(nsx::sptrDataSet data)
     for (nsx::InstrumentState& state : data->instrumentStates())
         state.adjustKi(direct);
     emit gGui->sentinel->instrumentStatesChanged();
+}
+
+void SubframeAutoIndexer::showDirectBeamEvents()
+{
+    if (!_show_direct_beam)
+        return;
+
+    updateDatasetList();
+    _detector_widget->scene()->showDirectBeam(true);
+    auto data_name = _detector_widget->dataCombo()->currentText().toStdString();
+    if (data_name.empty()) { // to prevent crash
+        QMessageBox::warning(
+            nullptr, "Empty Experimentname",
+            "Unable to retrieve data for an empty experiment name!");
+        return;
+    }
+    const auto data = _detector_widget->currentData();
+
+    _direct_beam_events.clear();
+    const auto& states = data->instrumentStates();
+    auto* detector = data->diffractometer()->detector();
+    std::vector<nsx::DetectorEvent> events = nsx::algo::getDirectBeamEvents(states, *detector);
+
+    for (auto&& event : events)
+        _direct_beam_events.push_back(event);
 }
