@@ -391,6 +391,16 @@ bool Experiment::hasPeakCollection(const std::string& name)
     return _peak_handler->hasPeakCollection(name);
 }
 
+bool Experiment::hasPeakCollectionType(listtype t)
+{
+    return _peak_handler->hasPeakCollectionType(t);
+}
+
+bool Experiment::hasIntegratedPeakCollection()
+{
+    return _peak_handler->hasIntegratedPeakCollection();
+}
+
 PeakCollection* Experiment::getPeakCollection(const std::string name)
 {
     if (name.empty())

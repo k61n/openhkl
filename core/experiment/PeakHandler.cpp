@@ -71,6 +71,20 @@ bool PeakHandler::hasPeakCollection(const std::string& name) const
     return (peaks != _peak_collections.end());
 }
 
+bool PeakHandler::hasPeakCollectionType(listtype t) const
+{
+    for (auto& e : _peak_collections)
+        if (e.second->type() == t) return true;
+    return false;
+}
+
+bool PeakHandler::hasIntegratedPeakCollection()
+{
+    for (auto& e : _peak_collections)
+        if (e.second->isIntegrated()) return true;
+    return false;
+}
+
 PeakCollection* PeakHandler::getPeakCollection(const std::string name)
 {
     if (hasPeakCollection(name)) {

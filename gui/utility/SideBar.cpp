@@ -13,7 +13,9 @@
 //  ***********************************************************************************************
 
 #include "gui/utility/SideBar.h"
+#include "core/experiment/Experiment.h"
 #include "gui/MainWin.h"
+#include "gui/models/Project.h"
 #include "gui/models/Session.h"
 #include "gui/subframe_combine/SubframeMergedPeaks.h"
 #include "gui/subframe_experiment/PropertyPanel.h"
@@ -32,6 +34,7 @@
 #include <QPaintEvent>
 #include <QPainter>
 #include <QSignalBlocker>
+#include <qapplication.h>
 
 // TODO: find a better place for this
 // Icon attributions:
@@ -82,6 +85,7 @@ SideBar::SideBar(QWidget* parent) : QWidget(parent), mCheckedAction(nullptr), mO
     connect(refiner, &QAction::triggered, this, &SideBar::onRefiner);
     connect(integrator, &QAction::triggered, this, &SideBar::onIntegrator);
     connect(info, &QAction::triggered, this, &SideBar::onMerger);
+
 }
 
 void SideBar::paintEvent(QPaintEvent* event)
@@ -129,6 +133,8 @@ void SideBar::paintEvent(QPaintEvent* event)
 
         action_y += actionRect.height();
     }
+
+    toggling();
 }
 QSize SideBar::minimumSizeHint() const
 {
@@ -142,10 +148,11 @@ void SideBar::addAction(QAction* action)
     update();
 }
 
-QAction* SideBar::addAction(const QIcon& icon, const QString& text)
+QAction* SideBar::addAction(const QIcon& icon, const QString& text, bool active)
 {
     QAction* action = new QAction(icon, text, this);
-    action->setCheckable(true);
+    action->setCheckable(active);
+    action->blockSignals(!active);
     mActions.push_back(action);
     update();
     return action;
@@ -299,8 +306,7 @@ void SideBar::refreshAll()
     gGui->merger->refreshAll();
     gGui->home->clearTables();
 
-    gGui->refreshMenu();
-
+    toggling();
 }
 
 void SideBar::refreshCurrent()

@@ -100,6 +100,10 @@ class Experiment {
         bool integrated);
     //! Check if the handler has the named peak collection
     bool hasPeakCollection(const std::string& name);
+    //! Check if handler has Peak Collections of a certain type
+    bool hasPeakCollectionType(listtype t);
+    //! returns whether or not experiment has integrated peakcollections
+    bool hasIntegratedPeakCollection();
     //! Get a pointer to the named peak collection
     PeakCollection* getPeakCollection(const std::string name);
     //! Remove the named peak collection

@@ -48,6 +48,10 @@ class PeakHandler {
     bool addEmptyCollection(const std::string& name, const listtype type);
     //! Returns true if the experiment has named peak collection
     bool hasPeakCollection(const std::string& name) const;
+    //! Returns true if the exp has a peakcollection of a certain type
+    bool hasPeakCollectionType(listtype t) const;
+    //! Returns whether or not peak collection as integrated peaks
+    bool hasIntegratedPeakCollection();
     //! Returns the named peak collection
     PeakCollection* getPeakCollection(const std::string name);
     // !Remove a peak collection from the experiment

@@ -19,6 +19,7 @@
 #include "gui/actions/Actions.h"
 #include "gui/models/Project.h"
 #include "gui/models/Session.h"
+#include "gui/utility/SideBar.h"
 
 #include <QAction>
 #include <QMenu>
@@ -148,4 +149,6 @@ void Menus::toggle_entries()
     _data_menu->setDisabled(no_projects);
     _peaks_menu->setDisabled(no_projects || no_pcollections);
     _cells_menu->setDisabled(no_projects || no_unitcell);
+
+    gGui->sideBar()->refreshAll();
 }

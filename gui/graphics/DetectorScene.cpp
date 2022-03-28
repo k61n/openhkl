@@ -235,17 +235,18 @@ void DetectorScene::drawDirectBeamPositions()
         double upper = double(_currentFrameIndex) + 0.01;
         double lower = double(_currentFrameIndex) - 0.01;
         if (event.frame < upper && event.frame > lower) {
-            DirectBeamGraphic* beam = new DirectBeamGraphic();
-            beam->setPos(event.px, event.py);
-            beam->setZValue(10);
-            beam->setAcceptHoverEvents(false);
-            beam->setRect(-_beam_size / 2, -_beam_size / 2, _beam_size, _beam_size);
+            //DirectBeamGraphic* beam = new DirectBeamGraphic();
+            DirectBeamGraphic beam;
+            beam.setPos(event.px, event.py);
+            beam.setZValue(10);
+            beam.setAcceptHoverEvents(false);
+            beam.setRect(-_beam_size / 2, -_beam_size / 2, _beam_size, _beam_size);
             QPen pen;
             pen.setCosmetic(true);
             pen.setColor(_beam_color);
             pen.setStyle(Qt::SolidLine);
-            beam->setPen(pen);
-            addItem(beam);
+            beam.setPen(pen);
+            addItem(&beam);
         }
     }
 
@@ -253,17 +254,18 @@ void DetectorScene::drawDirectBeamPositions()
         double upper = double(_currentFrameIndex) + 0.01;
         double lower = double(_currentFrameIndex) - 0.01;
         if (event.frame < upper && event.frame > lower) {
-            DirectBeamGraphic* beam = new DirectBeamGraphic();
-            beam->setPos(event.px, event.py);
-            beam->setZValue(10);
-            beam->setAcceptHoverEvents(false);
-            beam->setRect(-_beam_size / 2, -_beam_size / 2, _beam_size, _beam_size);
+            //DirectBeamGraphic* beam = new DirectBeamGraphic();
+            DirectBeamGraphic beam;
+            beam.setPos(event.px, event.py);
+            beam.setZValue(10);
+            beam.setAcceptHoverEvents(false);
+            beam.setRect(-_beam_size / 2, -_beam_size / 2, _beam_size, _beam_size);
             QPen pen;
             pen.setCosmetic(true);
             pen.setColor(_old_beam_color);
             pen.setStyle(Qt::SolidLine);
-            beam->setPen(pen);
-            addItem(beam);
+            beam.setPen(pen);
+            addItem(&beam);
         }
     }
 }

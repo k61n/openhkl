@@ -22,7 +22,7 @@ class SideBar : public QWidget {
  public:
     SideBar(QWidget* parent = nullptr);
     void addAction(QAction* action);
-    QAction* addAction(const QIcon& icon, const QString& text);
+    QAction* addAction(const QIcon& icon, const QString& text, bool active);
     QSize minimumSizeHint() const;
     void manualSelect(int index);
 
@@ -54,6 +54,9 @@ class SideBar : public QWidget {
 
  private:
     QList<QAction*> mActions;
+
+    std::array<QIcon, 9> mEnabledIcons;
+    std::array<QIcon, 9> mDisabledIcons;
 
     QAction* mCheckedAction;
     QAction* mOverAction;

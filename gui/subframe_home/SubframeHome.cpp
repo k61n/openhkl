@@ -226,7 +226,7 @@ void SubframeHome::createNew()
     std::unique_ptr<ExperimentDialog> exp_dialog(//new ExperimentDialog());
         new ExperimentDialog(
         QString::fromStdString(
-        gSession->GenerateExperimentName())
+        gSession->generateExperimentName())
         ));
     exp_dialog->exec();  
 
@@ -525,7 +525,7 @@ void SubframeHome::refreshTables() const
 
             for (it = pcs_names.begin(); it != pcs_names.end(); it++) {
                 pc = gSession->currentProject()->experiment()->getPeakCollection(*it);
-                short n = std::distance(pcs_names.begin(), it);
+                short n = std::distance(pcs_names.begin(), it);               
 
                 if (n >= _peak_collections_table->rowCount())
                     _peak_collections_table->insertRow(_peak_collections_table->rowCount());
@@ -547,7 +547,7 @@ void SubframeHome::refreshTables() const
     } catch (const std::exception& e) {
         //QMessageBox::critical(this, "Error", QString(e.what()));
     }
-    gGui->refreshMenu();
+    //gGui->refreshMenu();
 }
 
 void SubframeHome::clearTables()
