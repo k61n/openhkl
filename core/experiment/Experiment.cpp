@@ -393,7 +393,8 @@ bool Experiment::hasPeakCollection(const std::string& name)
 
 PeakCollection* Experiment::getPeakCollection(const std::string name)
 {
-    if (name.empty()) return nullptr;
+    if (name.empty())
+        return nullptr;
     return _peak_handler->getPeakCollection(name);
 }
 

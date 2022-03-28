@@ -18,7 +18,6 @@
 #include "core/data/DataSet.h"
 #include "core/loader/IDataReader.h" // inherits from
 #include "core/raw/DataKeys.h"
-#include "core/data/DataSet.h"
 #include <fstream>
 #include <stdexcept>
 
@@ -39,48 +38,46 @@ struct RawDataReaderParameters {
     void LoadDataFromFile(std::string file)
     {
         std::size_t pos1 = file.find_last_of("/");
-        std::size_t pos0 = (file.substr(0,pos1-1)).find_last_of("/");
+        std::size_t pos0 = (file.substr(0, pos1 - 1)).find_last_of("/");
         std::size_t pos2 = file.find_last_of(".");
 
-        //std::string name = file.substr(pos1+1, pos2);
-        //name = name.substr(0, name.size() - 9);
-        //dataset_name = "DataSet_" + name;
+        // std::string name = file.substr(pos1+1, pos2);
+        // name = name.substr(0, name.size() - 9);
+        // dataset_name = "DataSet_" + name;
 
-        if (pos1 == std::string::npos || 
-            pos0 == std::string::npos || 
-            pos2 == std::string::npos)
+        if (pos1 == std::string::npos || pos0 == std::string::npos || pos2 == std::string::npos)
             return;
 
-        std::string dir = "data_" + file.substr(pos0+1, pos1-pos0-1);
-        std::string readme =  file.substr(0, pos1+1) +  dir + ".readme";
- 
-        std::ifstream fin(readme.c_str(), std::ios::in); 
+        std::string dir = "data_" + file.substr(pos0 + 1, pos1 - pos0 - 1);
+        std::string readme = file.substr(0, pos1 + 1) + dir + ".readme";
 
-        if (fin.is_open() || fin.good()){
-            fin.seekg(0,std::ios::end);
+        std::ifstream fin(readme.c_str(), std::ios::in);
+
+        if (fin.is_open() || fin.good()) {
+            fin.seekg(0, std::ios::end);
             auto fsize = fin.tellg();
-            fin.seekg(0, std::ios::beg);         
+            fin.seekg(0, std::ios::beg);
 
-            if (fsize > 0){
+            if (fsize > 0) {
                 std::string buffer;
                 buffer.resize(fsize);
                 fin.read(buffer.data(), fsize);
-                fin.close();   
-        
-                std::remove_if(buffer.begin(), buffer.end(), isspace); 
+                fin.close();
+
+                std::remove_if(buffer.begin(), buffer.end(), isspace);
 
                 auto omega_pos = buffer.find("Omegarange:");
-                if (  omega_pos != std::string::npos){
+                if (omega_pos != std::string::npos) {
                     auto nl_pos = buffer.find(";", omega_pos);
-                    std::string a = buffer.substr(omega_pos+ 11, nl_pos-1);
-                    delta_omega = std::stod(a);                
+                    std::string a = buffer.substr(omega_pos + 11, nl_pos - 1);
+                    delta_omega = std::stod(a);
                 }
 
                 auto lambda_pos = buffer.find("Lambda:");
-                if (  lambda_pos != std::string::npos){
-                auto nl_pos = buffer.find(";", lambda_pos);
-                std::string b = buffer.substr(lambda_pos+7, nl_pos-1);
-                wavelength = std::stod(b);                
+                if (lambda_pos != std::string::npos) {
+                    auto nl_pos = buffer.find(";", lambda_pos);
+                    std::string b = buffer.substr(lambda_pos + 7, nl_pos - 1);
+                    wavelength = std::stod(b);
                 }
             }
         }

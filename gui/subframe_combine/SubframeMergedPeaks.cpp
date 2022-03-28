@@ -347,7 +347,29 @@ void SubframeMergedPeaks::setUnmergedUp()
 
 void SubframeMergedPeaks::refreshAll()
 {
+<<<<<<< HEAD
     if (!gSession->hasProject())
+=======
+    refreshExperimentList();
+    if (_exp_drop->currentIndex() >= 0)
+        grabMergeParameters();
+    toggleUnsafeWidgets();
+}
+
+void SubframeMergedPeaks::refreshExperimentList()
+{
+    _exp_drop->blockSignals(true);
+    Project* prj = gSession->currentProject();
+    if (prj == nullptr)
+        return;
+    auto expt = prj->experiment();
+    if (expt == nullptr)
+        return;
+    QString current_exp = QString::fromStdString(expt->name());
+    _exp_drop->clear();
+
+    if (gSession->experimentNames().empty())
+>>>>>>> Implementing listed Remarks
         return;
 
     refreshSpaceGroupCombo();

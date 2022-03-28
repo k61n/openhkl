@@ -96,8 +96,8 @@ Project* Session::experimentAt(int i)
 const Project* Session::experimentAt(int i) const
 {
     if (_projects.size() == 0 || _projects.size() < i)
-    return nullptr;
-    
+        return nullptr;
+
     return _projects.at(i).get();
 }
 
@@ -263,8 +263,6 @@ bool Session::loadRawData()
 {
     // Loading data requires an existing Experiment
     if (_currentProject < 0) {
-        
-        //QMessageBox::critical(nullptr, "Error", "Please create an experiment before loading data.");
         return false;
     }
 
@@ -317,7 +315,9 @@ bool Session::loadRawData()
             dataset_ptr->addRawFrame(filenm);
 
         dataset_ptr->finishRead();
-        exp->addData(dataset_ptr);
+        if (!exp->addData(dataset_ptr)) {
+            throw std::runtime_error("Unable to add dataset to Experiment");
+        }
         onDataChanged();
         auto data_list = currentProject()->getDataNames();
         gGui->sentinel->setLinkedComboList(ComboType::DataSet, data_list);
@@ -424,12 +424,12 @@ bool Session::UpdateExperimentData(unsigned int idx, QString name, QString instr
     return true;
 }
 
-std::string Session::GenerateExperimentName()
+std::string Session::generateExperimentName()
 {
     int n = 3;
-    std::string str = std::to_string(_projects.size()+1);
-    if (str.size() > n){//
+    std::string str = std::to_string(_projects.size() + 1);
+    if (str.size() > n) { //
         return "New Experiment";
     }
-    return std::string("ExperimentNr") +  std::string( n - str.size(), '0').append( str );
+    return std::string("ExperimentNr") + std::string(n - str.size(), '0').append(str);
 }

@@ -14,11 +14,11 @@
 
 #include "gui/actions/Menus.h"
 
+#include "core/experiment/Experiment.h"
 #include "gui/MainWin.h"
 #include "gui/actions/Actions.h"
-#include "gui/models/Session.h"
 #include "gui/models/Project.h"
-#include "core/experiment/Experiment.h"
+#include "gui/models/Session.h"
 
 #include <QAction>
 #include <QMenu>
@@ -77,7 +77,7 @@ Menus::Menus(QMenuBar* menu_bar) : _menu_bar{menu_bar}
     actions->load_experiment->setShortcuts(QKeySequence::Open);
     actions->save_experiment->setShortcuts(QKeySequence::Save);
     actions->save_experiment_as->setShortcuts(QKeySequence::SaveAs);
-    //actions->save_all_experiment->setShortcuts(QKeySequence::SaveAll)
+    // actions->save_all_experiment->setShortcuts(QKeySequence::SaveAll)
     actions->remove_experiment->setShortcuts(QKeySequence::Delete);
     actions->quit->setShortcuts(QKeySequence::Quit);
 
@@ -110,43 +110,42 @@ QMenu* Menus::actionsToMenu(const char* menuName, QList<QAction*> actions)
 
 // toggles Menu entries
 void Menus::toggle_entries()
-{  
-    //return;
+{
+    // return;
     Actions* actions = gGui->triggers;
 
-    if (gSession->numExperiments() == 0){ // just disables everything
+    if (gSession->numExperiments() == 0) { // just disables everything
         actions->save_all_experiment->setDisabled(true);
         actions->save_experiment->setDisabled(true);
         actions->save_experiment_as->setDisabled(true);
 
         actions->remove_experiment->setDisabled(true);
 
-        _view_menu->setDisabled(true);    
-        _data_menu->setDisabled(true);    
+        _view_menu->setDisabled(true);
+        _data_menu->setDisabled(true);
         _peaks_menu->setDisabled(true);
         _cells_menu->setDisabled(true);
         return;
-    }     
-    
-    auto prj = gSession->experimentAt(
-    gSession->currentProjectNum());
+    }
+
+    auto prj = gSession->experimentAt(gSession->currentProjectNum());
     auto expt = prj->experiment();
 
     bool no_projects = (gSession->currentProjectNum() < 0);
     bool no_datasets = expt->numData() == 0;
     bool no_pcollections = (expt->numPeakCollections() == 0);
     bool no_unitcell = (expt->numUnitCells() == 0);
-    
+
     actions->remove_data->setDisabled(no_datasets);
-    
-    actions->save_all_experiment->setDisabled(true);//not implemented yet
+
+    actions->save_all_experiment->setDisabled(true); // not implemented yet
     actions->save_experiment->setDisabled(no_projects);
     actions->save_experiment_as->setDisabled(no_projects);
 
     actions->remove_experiment->setDisabled(no_projects);
 
-    _view_menu->setDisabled(no_projects);    
-    _data_menu->setDisabled(no_projects);    
+    _view_menu->setDisabled(no_projects);
+    _data_menu->setDisabled(no_projects);
     _peaks_menu->setDisabled(no_projects || no_pcollections);
     _cells_menu->setDisabled(no_projects || no_unitcell);
 }

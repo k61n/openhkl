@@ -304,7 +304,11 @@ void SubframeFindPeaks::updateDatasetParameters(const QString& dataname)
 {
     // to be update on the experiment/project list if a new
     // experiment is added on SubframeHome
+<<<<<<< HEAD
     auto* exp = gSession->currentProject()->experiment();
+=======
+    auto exp = gSession->experimentAt(gSession->currentProjectNum())->experiment();
+>>>>>>> Implementing listed Remarks
     if (!exp->hasData(dataname.toStdString())) {
         QMessageBox::warning(
             nullptr, "Dataset does not exist",

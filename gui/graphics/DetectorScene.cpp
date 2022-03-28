@@ -190,7 +190,7 @@ void DetectorScene::unlinkPeakModel2()
 
 void DetectorScene::peakModelDataChanged()
 {
-    std::cout<< "DetectorScene::peakModelDataChanged()" << std::endl;
+    std::cout << "DetectorScene::peakModelDataChanged()" << std::endl;
     loadCurrentImage();
     drawPeakitems();
     update();
