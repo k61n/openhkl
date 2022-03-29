@@ -156,6 +156,8 @@ class Experiment {
     UnitCellHandler* getCellHandler() const;
     //! set last unit cell index in cell handler
     void setLastUnitCellIndex(unsigned int index);
+    //! Get a vector of unit cells in the experiment
+    std::vector<UnitCell*> getUnitCells();
 
     // Instrument state handler
     //! Add a set of instrment states

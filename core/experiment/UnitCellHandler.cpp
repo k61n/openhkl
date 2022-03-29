@@ -188,4 +188,12 @@ void UnitCellHandler::setLastIndex(unsigned int index)
     _last_index = index;
 }
 
+std::vector<UnitCell*> UnitCellHandler::getUnitCells() const
+{
+    std::vector<UnitCell*> cells;
+    for (auto cell : _unit_cells)
+        cells.push_back(cell.get());
+    return cells;
+}
+
 } // namespace nsx

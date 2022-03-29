@@ -64,6 +64,8 @@ class SubframeMergedPeaks : public QWidget {
     void refreshPeakLists();
     //! Refresh the QComboBoxes for peak collections
     void refreshPeakCombos();
+    //! Refresh the QComboBox for the space group
+    void refreshSpaceGroupCombo();
     //! Process the two inputs to create the merged dataset
     void processMerge();
     //! Disable unsafe widgets if no data loaded
@@ -121,6 +123,7 @@ class SubframeMergedPeaks : public QWidget {
     QSpinBox* _frame_max;
     QSpinBox* _d_shells;
     QCheckBox* _friedel;
+    QComboBox* _space_group;
     QComboBox* _plottable_statistics;
     SXPlot* _statistics_plot;
     QStandardItemModel* _shell_model;

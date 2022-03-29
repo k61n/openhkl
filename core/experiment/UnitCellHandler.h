@@ -84,6 +84,8 @@ class UnitCellHandler {
     std::string generateUnitCellName();
 
     void setLastIndex(unsigned int index);
+    std::vector<UnitCell*> getUnitCells() const;
+
 
  private:
     UnitCellList _unit_cells;

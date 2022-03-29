@@ -51,6 +51,8 @@ class PeakMerger {
 
     //! Add a peak collection to be merged
     void addPeakCollection(PeakCollection* peaks);
+    //! Set the space group
+    void setSpaceGroup(const SpaceGroup& group);
     //! Reset peak collections and merged data
     void reset();
 
@@ -81,6 +83,8 @@ class PeakMerger {
     DataResolution _overall_quality;
 
     std::unique_ptr<MergeParameters> _params;
+
+    SpaceGroup _space_group;
 };
 
 /*! @}*/

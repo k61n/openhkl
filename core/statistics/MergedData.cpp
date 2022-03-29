@@ -18,33 +18,11 @@
 namespace nsx {
 
 MergedData::MergedData(
-    std::vector<PeakCollection*> peak_collections, bool friedel, int fmin, int fmax)
-    : _friedel(friedel), _merged_peak_set(), _frame_min(fmin), _frame_max(fmax)
+    SpaceGroup space_group, std::vector<PeakCollection*> peak_collections, bool friedel, int fmin,
+    int fmax)
+    : _group(space_group), _friedel(friedel), _merged_peak_set(), _frame_min(fmin), _frame_max(fmax)
 {
     _peak_collections = peak_collections;
-    const UnitCell* unit_cell{nullptr};
-
-    for (int i = 0; i < _peak_collections.size(); ++i) {
-        std::vector<Peak3D*> peaks = _peak_collections[i]->getPeakList();
-        for (int j = 0; j < peaks.size(); ++j) {
-            if (peaks[j]->unitCell())
-                unit_cell = peaks[j]->unitCell();
-        }
-    }
-
-    if (!unit_cell)
-        return;
-
-    for (int i = 0; i < _peak_collections.size(); ++i) {
-        std::vector<Peak3D*> peaks = _peak_collections[i]->getPeakList();
-        for (int j = 0; j < peaks.size(); ++j) {
-            if (!(peaks[j]->unitCell() == unit_cell))
-                return;
-        }
-    }
-
-    _group = unit_cell->spaceGroup();
-
     for (int i = 0; i < _peak_collections.size(); ++i) {
         std::vector<Peak3D*> peaks = _peak_collections[i]->getPeakList();
         for (int j = 0; j < peaks.size(); ++j)

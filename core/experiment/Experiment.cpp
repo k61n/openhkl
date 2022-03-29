@@ -553,4 +553,9 @@ void Experiment::setLastUnitCellIndex(unsigned int index)
     _cell_handler->setLastIndex(index);
 }
 
+std::vector<UnitCell*> Experiment::getUnitCells()
+{
+    return _cell_handler->getUnitCells();
+}
+
 } // namespace nsx
