@@ -493,9 +493,7 @@ void SubframeMergedPeaks::processMerge()
     gGui->setReady(false);
     auto* expt = gSession->experimentAt(_exp_drop->currentIndex())->experiment();
     auto* merger = expt->peakMerger();
-    nsx::SpaceGroup group = {_space_group->currentText().toStdString()};
     merger->reset();
-    merger->setSpaceGroup(group);
     setMergeParameters();
 
     if (_peaks1_list.empty() || _peaks2_list.empty()) {
@@ -504,6 +502,9 @@ void SubframeMergedPeaks::processMerge()
         std::vector<nsx::PeakCollection*> peak_collections;
         QString collection1 = _peaks1_drop->currentText();
         QString collection2 = _peaks2_drop->currentText();
+
+        nsx::SpaceGroup group = {_space_group->currentText().toStdString()};
+        merger->setSpaceGroup(group);
 
         merger->addPeakCollection(expt->getPeakCollection(collection1.toStdString()));
         if (!collection2.isEmpty())
