@@ -65,13 +65,13 @@ void PeakFilter::filterSignificance(PeakCollection* peak_collection) const
         }
     }
 
-    for (const auto& p : peaks_per_unit_cell) {
-        (void)p;
+    for (const auto& [cell, peaks] : peaks_per_unit_cell) {
+        (void)peaks;
         std::vector<PeakCollection*> collection_vector;
         collection_vector.push_back(peak_collection);
         const std::vector<Peak3D*> filtered_peaks = peak_collection->getFilteredPeakList();
 
-        MergedData merged(collection_vector, true);
+        MergedData merged(cell->spaceGroup(), collection_vector, true);
         for (const auto& peak : filtered_peaks)
             merged.addPeak(peak);
 

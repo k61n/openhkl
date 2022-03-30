@@ -37,7 +37,8 @@ class PeakItemGraphic;
 class PeakCollectionModel;
 class SXGraphicsItem;
 
-class DirectBeamGraphic : public QGraphicsEllipseItem { }; // Make it easier to remove direct beam
+class DirectBeamGraphic : public QGraphicsEllipseItem {
+}; // Make it easier to remove direct beam
 
 using EventType = nsx::IntegrationRegion::EventType;
 

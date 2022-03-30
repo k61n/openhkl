@@ -22,7 +22,7 @@
 //! Dialog to get the experiment and instrument names
 class ExperimentDialog : public QDialog {
  public:
-    ExperimentDialog(QString exp_name="");
+    ExperimentDialog(QString exp_name = "");
     QString experimentName();
     QString instrumentName();
 

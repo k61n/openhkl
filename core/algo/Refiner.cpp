@@ -112,9 +112,7 @@ void Refiner::makeBatches(
     else
         filtered_peaks = peak_filter.filterIndexed(filtered_peaks, _cell.get());
 
-    nsxlog(
-        Level::Info, filtered_peaks.size(), " / ", peaks.size(),
-        " peaks used by refiner");
+    nsxlog(Level::Info, filtered_peaks.size(), " / ", peaks.size(), " peaks used by refiner");
 
     std::sort(
         filtered_peaks.begin(), filtered_peaks.end(),
@@ -302,8 +300,7 @@ int Refiner::updatePredictions(std::vector<Peak3D*> peaks)
     int n_enabled = filtered_peaks.size();
 
     nsxlog(
-        Level::Info, filtered_peaks.size(), " / ", n_enabled,
-        " peaks within indexing tolerance");
+        Level::Info, filtered_peaks.size(), " / ", n_enabled, " peaks within indexing tolerance");
 
     int updated = 0;
 

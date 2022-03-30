@@ -37,12 +37,11 @@ struct LogMessage {
 //! guaranteed to be the same as that of registering.
 //! The receiver must be registered and discarded by the _caller_, when its lifetime ends.
 class LogMessenger {
-public:
+ public:
     //! receiver type: stand-alone function
     using receiver_t = std::function<void(const LogMessage&)>;
     //! receiver type: member method
-    template <class C>
-    using receiver_m_t = void (C::*) (const LogMessage&);
+    template <class C> using receiver_m_t = void (C::*)(const LogMessage&);
 
     //! receiver handle: identifier for a receiver
     using receiverHandle = int;
@@ -59,14 +58,14 @@ public:
 
     receiverHandle addReceiver(receiver_t rec_ptr);
 
-    //! Registers a receiver method of type `void C::method(const LogMessage&)` and returns a handle.
-    //! The receiver must be discarded by the _caller_, when its lifetime ends.
-    //! Usage (within MyClass):
+    //! Registers a receiver method of type `void C::method(const LogMessage&)` and returns a
+    //! handle. The receiver must be discarded by the _caller_, when its lifetime ends. Usage
+    //! (within MyClass):
     //!   receiverHandle h = logMessenger.addReceiver(&MyClass::myReceiverMethod, this);
     //!   logMessenger.discardReceiver(h); // de-register
 
-    template<class C>
-    receiverHandle addReceiver(receiver_m_t<C> rec_m_ptr, C* obj_ptr) {
+    template <class C> receiverHandle addReceiver(receiver_m_t<C> rec_m_ptr, C* obj_ptr)
+    {
         return addReceiver(std::bind(rec_m_ptr, obj_ptr, std::placeholders::_1));
     }
 
@@ -76,9 +75,9 @@ public:
     //! Sends a message to the registered recievers
     void send(const LogMessage& msg);
 
-private:
+ private:
     //! Storage array for the receiver pointers (finite size)
-    receiver_t _receivers[MSG_RECEIVERS_MAXNR] {nullptr};
+    receiver_t _receivers[MSG_RECEIVERS_MAXNR]{nullptr};
 };
 
 } // namespace nsx

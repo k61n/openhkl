@@ -22,17 +22,17 @@
 #include "core/detector/DetectorEvent.h"
 #include "core/gonio/Gonio.h"
 #include "core/instrument/Diffractometer.h"
+#include "core/instrument/InstrumentState.h"
 #include "core/instrument/Monochromator.h"
 #include "core/instrument/Sample.h"
 #include "core/instrument/Source.h"
 #include "core/peak/Peak3D.h"
 #include "core/raw/DataKeys.h"
 #include "core/raw/HDF5BloscFilter.h"
+#include "core/raw/HDF5TableIO.h" // HDF5TableWriter
 #include "core/raw/MetaData.h"
 #include "core/shape/PeakCollection.h"
-#include "core/instrument/InstrumentState.h"
 #include "tables/crystal/UnitCell.h"
-#include "core/raw/HDF5TableIO.h" // HDF5TableWriter
 
 #include <Eigen/Dense>
 #include <sstream>
@@ -209,12 +209,11 @@ void writeFrames(
 }
 
 
-void writeInstrumentStates(H5::H5File& file, const std::string& datakey,
-                           nsx::DataSet* dataset)
+void writeInstrumentStates(H5::H5File& file, const std::string& datakey, nsx::DataSet* dataset)
 {
-    const std::string instrumentStatesKey {datakey + "/" + nsx::gr_Instrument};
+    const std::string instrumentStatesKey{datakey + "/" + nsx::gr_Instrument};
     file.createGroup(nsx::gr_Instrument);
-    H5::Group instrument_grp {file.createGroup(instrumentStatesKey)};
+    H5::Group instrument_grp{file.createGroup(instrumentStatesKey)};
     const nsx::InstrumentStateList& instrumentStates = dataset->instrumentStates();
     const std::size_t n_states = instrumentStates.size();
     //-- write detector orientation (3d matrix)
@@ -223,24 +222,23 @@ void writeInstrumentStates(H5::H5File& file, const std::string& datakey,
     const hsize_t vec3d_size = 3; // 3 elements
 
     const H5::DataType stateValueType{H5::PredType::NATIVE_DOUBLE};
-    HDF5TableWriter
-        detectorOrientation(instrument_grp, stateValueType, n_states, mat3d_size,
-                            nsx::ds_detectorOrientation),
-        detectorPositionOffset(instrument_grp, stateValueType, n_states, vec3d_size,
-                               nsx::ds_detectorPositionOffset),
-        sampleOrientation(instrument_grp, stateValueType, n_states, quaternion_size,
-                          nsx::ds_sampleOrientation),
-        sampleOrientationOffset(instrument_grp, stateValueType, n_states, quaternion_size,
-                                nsx::ds_sampleOrientationOffset),
-        samplePosition(instrument_grp, stateValueType, n_states, vec3d_size,
-                       nsx::ds_samplePosition),
+    HDF5TableWriter detectorOrientation(
+        instrument_grp, stateValueType, n_states, mat3d_size, nsx::ds_detectorOrientation),
+        detectorPositionOffset(
+            instrument_grp, stateValueType, n_states, vec3d_size, nsx::ds_detectorPositionOffset),
+        sampleOrientation(
+            instrument_grp, stateValueType, n_states, quaternion_size, nsx::ds_sampleOrientation),
+        sampleOrientationOffset(
+            instrument_grp, stateValueType, n_states, quaternion_size,
+            nsx::ds_sampleOrientationOffset),
+        samplePosition(
+            instrument_grp, stateValueType, n_states, vec3d_size, nsx::ds_samplePosition),
         ni(instrument_grp, stateValueType, n_states, vec3d_size, nsx::ds_beamDirection),
         wavelength(instrument_grp, stateValueType, n_states, 1, nsx::ds_beamWavelength),
         refined(instrument_grp, H5::PredType::NATIVE_HBOOL, n_states, 1, nsx::ds_isRefinedState);
 
     std::size_t i_row = 0;
-    for (const nsx::InstrumentState& state: instrumentStates)
-    {
+    for (const nsx::InstrumentState& state : instrumentStates) {
         detectorOrientation.writeRow(i_row, state.detectorOrientation.data());
         detectorPositionOffset.writeRow(i_row, state.detectorPositionOffset.data());
         samplePosition.writeRow(i_row, state.samplePosition.data());
@@ -254,8 +252,9 @@ void writeInstrumentStates(H5::H5File& file, const std::string& datakey,
         i_row += 1;
     }
 
-    nsxlog(nsx::Level::Debug, "ExperimentExporter: Exported ", i_row + 1,
-           " instrument states to the database");
+    nsxlog(
+        nsx::Level::Debug, "ExperimentExporter: Exported ", i_row + 1,
+        " instrument states to the database");
 }
 
 

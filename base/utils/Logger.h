@@ -17,10 +17,10 @@
 
 #include "base/utils/LogLevel.h"
 #include "base/utils/LogMessenger.h"
-#include "base/utils/StringIO.h"  // datetime_str
+#include "base/utils/StringIO.h" // datetime_str
+#include <fstream> // ofstream
+#include <sstream> // stringstream
 #include <string>
-#include <sstream>  // stringstream
-#include <fstream>  // ofstream
 
 // usage: DBG("This is my debug message nr.", 1);
 #define DBG(...)                                                                                   \
@@ -79,8 +79,7 @@ template <typename... T> inline void nsxmsg(const Level& level, const T&... mess
     LogMessage msg{
         level,
         /* header */ datetime_str(),
-        /* body */ ss.str()
-    };
+        /* body */ ss.str()};
     Logger::instance().Msg.send(msg);
 }
 

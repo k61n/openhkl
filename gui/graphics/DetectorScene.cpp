@@ -52,14 +52,14 @@
 #include <QCheckBox>
 #include <QDebug>
 #include <QDoubleSpinBox>
+#include <QGraphicsItem>
 #include <QGraphicsSceneMouseEvent>
 #include <QKeyEvent>
 #include <QMenu>
+#include <QPainterPath>
 #include <QPixmap>
 #include <QToolTip>
 #include <QtGlobal>
-#include <QGraphicsItem>
-#include <QPainterPath>
 
 QPointF DetectorScene::_current_beam_position = {0, 0};
 

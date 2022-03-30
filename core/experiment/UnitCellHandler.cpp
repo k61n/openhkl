@@ -34,7 +34,8 @@ const UnitCellList* UnitCellHandler::getCellList() const
 
 bool UnitCellHandler::addUnitCell(const std::string& name, const UnitCell& unit_cell)
 {
-    if (hasUnitCell(name)) return false;
+    if (hasUnitCell(name))
+        return false;
     nsxlog(Level::Info, "UnitCellHandler::addUnitCell: '", name, "': ", unit_cell.toString());
     sptrUnitCell uc = std::make_shared<UnitCell>(unit_cell);
     uc->setName(name);
@@ -45,7 +46,8 @@ bool UnitCellHandler::addUnitCell(const std::string& name, const UnitCell& unit_
 
 bool UnitCellHandler::addUnitCell(const std::string& name, sptrUnitCell unit_cell)
 {
-    if (hasUnitCell(name)) return false;
+    if (hasUnitCell(name))
+        return false;
     nsxlog(Level::Info, "UnitCellHandler::addUnitCell: '", name, "': ", unit_cell->toString());
     unit_cell->setName(name);
     unit_cell->setId(_last_index++);
@@ -89,20 +91,23 @@ std::vector<std::string> UnitCellHandler::getUnitCellNames() const
 sptrUnitCell UnitCellHandler::getSptrUnitCell(const std::string& name) const
 {
     for (const auto& cell : _unit_cells)
-        if (cell->name() == name) return cell;
+        if (cell->name() == name)
+            return cell;
     return nullptr;
 }
 
 sptrUnitCell UnitCellHandler::getSptrUnitCell(const unsigned int id) const
 {
     for (const auto& cell : _unit_cells)
-        if (cell->id() == id) return cell;
+        if (cell->id() == id)
+            return cell;
     return nullptr;
 }
 
 UnitCell* UnitCellHandler::getUnitCell(const std::string& name) const
 {
-    if (hasUnitCell(name)) return getSptrUnitCell(name).get();
+    if (hasUnitCell(name))
+        return getSptrUnitCell(name).get();
     return nullptr;
 }
 
@@ -177,15 +182,23 @@ std::string UnitCellHandler::generateUnitCellName()
 {
     int n = 4; // number of digits
     std::string str = std::to_string(_last_index);
-    if (str.size() > n){//
+    if (str.size() > n) { //
         return "Please enter name for this unit cell";
     }
-    return std::string("UnitCell") +  std::string( n - str.size(), '0').append( str );
+    return std::string("UnitCell") + std::string(n - str.size(), '0').append(str);
 }
 
 void UnitCellHandler::setLastIndex(unsigned int index)
 {
     _last_index = index;
+}
+
+std::vector<UnitCell*> UnitCellHandler::getUnitCells() const
+{
+    std::vector<UnitCell*> cells;
+    for (auto cell : _unit_cells)
+        cells.push_back(cell.get());
+    return cells;
 }
 
 } // namespace nsx

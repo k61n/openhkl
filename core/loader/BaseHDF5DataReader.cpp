@@ -58,31 +58,27 @@ std::string _dataKey(const std::string& dataset_name)
 }
 
 
-void loadInstrumentStates(const H5::Group& instrument_grp, nsx::InstrumentStateList& instrument_states)
+void loadInstrumentStates(
+    const H5::Group& instrument_grp, nsx::InstrumentStateList& instrument_states)
 {
-   // temp. container for the state
+    // temp. container for the state
     nsx::InstrumentState state;
-    H5::DataSet
-        detectorOrientation_ds {instrument_grp.openDataSet(nsx::ds_detectorOrientation)},
-        detectorPositionOffset_ds {instrument_grp.openDataSet(nsx::ds_detectorPositionOffset)},
-        sampleOrientation_ds {instrument_grp.openDataSet(nsx::ds_sampleOrientation)},
-        sampleOrientationOffset_ds {instrument_grp.openDataSet(nsx::ds_sampleOrientationOffset)},
-        samplePosition_ds {instrument_grp.openDataSet(nsx::ds_samplePosition)},
-        ni_ds {instrument_grp.openDataSet(nsx::ds_beamDirection)},
-        wavelength_ds {instrument_grp.openDataSet(nsx::ds_beamWavelength)},
-        refined_ds {instrument_grp.openDataSet(nsx::ds_isRefinedState)};
+    H5::DataSet detectorOrientation_ds{instrument_grp.openDataSet(nsx::ds_detectorOrientation)},
+        detectorPositionOffset_ds{instrument_grp.openDataSet(nsx::ds_detectorPositionOffset)},
+        sampleOrientation_ds{instrument_grp.openDataSet(nsx::ds_sampleOrientation)},
+        sampleOrientationOffset_ds{instrument_grp.openDataSet(nsx::ds_sampleOrientationOffset)},
+        samplePosition_ds{instrument_grp.openDataSet(nsx::ds_samplePosition)},
+        ni_ds{instrument_grp.openDataSet(nsx::ds_beamDirection)},
+        wavelength_ds{instrument_grp.openDataSet(nsx::ds_beamWavelength)},
+        refined_ds{instrument_grp.openDataSet(nsx::ds_isRefinedState)};
 
-    HDF5TableReader
-        detectorOrientation(detectorOrientation_ds),
-        detectorPositionOffset(detectorPositionOffset_ds),
-        sampleOrientation(sampleOrientation_ds),
-        sampleOrientationOffset(sampleOrientationOffset_ds),
-        samplePosition(samplePosition_ds),
+    HDF5TableReader detectorOrientation(detectorOrientation_ds),
+        detectorPositionOffset(detectorPositionOffset_ds), sampleOrientation(sampleOrientation_ds),
+        sampleOrientationOffset(sampleOrientationOffset_ds), samplePosition(samplePosition_ds),
         ni(ni_ds), wavelength(wavelength_ds), refined(refined_ds);
 
     std::size_t n_states = detectorOrientation.n_rows;
-    for (std::size_t i_row = 0; i_row < n_states; ++i_row)
-    {
+    for (std::size_t i_row = 0; i_row < n_states; ++i_row) {
         detectorOrientation.readRow(i_row, state.detectorOrientation.data());
         detectorPositionOffset.readRow(i_row, state.detectorPositionOffset.data());
         samplePosition.readRow(i_row, state.samplePosition.data());
@@ -312,16 +308,16 @@ bool BaseHDF5DataReader::initRead()
 
     if (_file->nameExists("/" + _instrumentStateKey(dataset_name))) {
         nsxlog(
-            nsx::Level::Debug, "Reading instrument states of '", _filename, "', dataset '", dataset_name,
-            "'");
-        H5::Group instrumentStateGroup {_file->openGroup("/" + _instrumentStateKey(dataset_name))};
+            nsx::Level::Debug, "Reading instrument states of '", _filename, "', dataset '",
+            dataset_name, "'");
+        H5::Group instrumentStateGroup{_file->openGroup("/" + _instrumentStateKey(dataset_name))};
         InstrumentStateList states;
         loadInstrumentStates(instrumentStateGroup, states);
         _instrument_states = std::make_unique<InstrumentStateSet>(_dataset_out, states);
     } else {
         nsxlog(
-            nsx::Level::Debug, "No instrument states found in '", _filename, "', dataset '", dataset_name,
-            "'");
+            nsx::Level::Debug, "No instrument states found in '", _filename, "', dataset '",
+            dataset_name, "'");
     };
 
     nsxlog(

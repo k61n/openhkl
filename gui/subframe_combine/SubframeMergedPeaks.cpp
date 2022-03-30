@@ -13,6 +13,7 @@
 //  ***********************************************************************************************
 
 #include "gui/subframe_combine/SubframeMergedPeaks.h"
+
 #include "core/data/DataSet.h"
 #include "core/experiment/DataQuality.h"
 #include "core/experiment/Experiment.h"
@@ -30,6 +31,7 @@
 #include "gui/models/Session.h"
 #include "gui/utility/LinkedComboBox.h"
 #include "gui/utility/SideBar.h"
+#include "tables/crystal/UnitCell.h"
 
 #include <QDialogButtonBox>
 #include <QFileDialog>
@@ -41,6 +43,7 @@
 
 #include <fstream>
 #include <iomanip>
+#include <qobject.h>
 
 SubframeMergedPeaks::SubframeMergedPeaks()
 {
@@ -176,6 +179,11 @@ void SubframeMergedPeaks::setDShellUp()
     d_shell_down_left->addWidget(label_ptr, 2, 0, 1, 1);
     label_ptr->setSizePolicy(*_size_policy_widgets);
 
+    label_ptr = new QLabel("Space group:");
+    label_ptr->setAlignment(Qt::AlignRight);
+    d_shell_down_left->addWidget(label_ptr, 3, 0, 1, 1);
+    label_ptr->setSizePolicy(*_size_policy_widgets);
+
     label_ptr = new QLabel("Plot axis:");
     label_ptr->setAlignment(Qt::AlignRight);
     d_shell_down_left->addWidget(label_ptr, 4, 0, 1, 1);
@@ -187,6 +195,7 @@ void SubframeMergedPeaks::setDShellUp()
     _frame_max = new QSpinBox();
     _d_shells = new QSpinBox();
     _friedel = new QCheckBox("Include friedel");
+    _space_group = new QComboBox();
     _plottable_statistics = new QComboBox();
     _save_shell = new QPushButton("Save");
 
@@ -209,6 +218,7 @@ void SubframeMergedPeaks::setDShellUp()
     _frame_max->setSizePolicy(*_size_policy_widgets);
     _d_shells->setSizePolicy(*_size_policy_widgets);
     _friedel->setSizePolicy(*_size_policy_widgets);
+    _space_group->setSizePolicy(*_size_policy_widgets);
     _plottable_statistics->setSizePolicy(*_size_policy_widgets);
     _save_shell->setSizePolicy(*_size_policy_widgets);
 
@@ -224,8 +234,9 @@ void SubframeMergedPeaks::setDShellUp()
     d_shell_down_left->addWidget(_frame_min, 1, 1, 1, 1);
     d_shell_down_left->addWidget(_frame_max, 1, 2, 1, 1);
     d_shell_down_left->addWidget(_d_shells, 2, 1, 1, 2);
-    d_shell_down_left->addWidget(_friedel, 3, 1, 1, 2);
-    d_shell_down_left->addWidget(_plottable_statistics, 4, 1, 1, 3);
+    d_shell_down_left->addWidget(_space_group, 3, 1, 1, 2);
+    d_shell_down_left->addWidget(_friedel, 4, 1, 1, 2);
+    d_shell_down_left->addWidget(_plottable_statistics, 5, 1, 1, 3);
     d_shell_down_left->addWidget(_save_shell, 6, 0, 1, 3);
     d_shell_down->addLayout(d_shell_down_left);
 
@@ -360,6 +371,7 @@ void SubframeMergedPeaks::refreshExperimentList()
         _exp_drop->addItem(exp);
     _exp_drop->setCurrentText(current_exp);
     _exp_drop->blockSignals(false);
+    refreshSpaceGroupCombo();
     refreshPeakLists();
 }
 
@@ -390,8 +402,12 @@ void SubframeMergedPeaks::refreshPeakCombos()
     _peaks1_list.append(tmp);
     tmp.clear();
 
+    auto* expt = gSession->experimentAt(_exp_drop->currentIndex())->experiment();
     if (!_peaks1_list.empty()) {
-        _peaks1_drop->addItems(_peaks1_list);
+        for (QString& collection : _peaks1_list) {
+            if (expt->getPeakCollection(collection.toStdString())->isIntegrated())
+                _peaks1_drop->addItem(collection);
+        }
         _peaks1_drop->setCurrentText(current_peaks1);
     }
     _peaks1_drop->blockSignals(false);
@@ -415,7 +431,11 @@ void SubframeMergedPeaks::refreshPeakCombos()
 
     _peaks2_list.push_front(""); // Second peak collection is not used by default
     if (!_peaks2_list.empty()) {
-        _peaks2_drop->addItems(_peaks2_list);
+        for (QString& collection : _peaks2_list) {
+            if (!expt->hasPeakCollection(collection.toStdString())
+                || expt->getPeakCollection(collection.toStdString())->isIntegrated())
+                _peaks2_drop->addItem(collection);
+        }
         _peaks2_drop->setCurrentText(current_peaks2);
     }
     _peaks2_drop->blockSignals(false);
@@ -442,12 +462,40 @@ void SubframeMergedPeaks::refreshPeakCombos()
     }
 }
 
+void SubframeMergedPeaks::refreshSpaceGroupCombo()
+{
+    QSignalBlocker blocker(_space_group);
+    auto* expt = gSession->experimentAt(_exp_drop->currentIndex())->experiment();
+    if (expt->numUnitCells() == 0)
+        return;
+
+    std::vector<nsx::UnitCell*> cells = expt->getUnitCells();
+    std::map<std::string, int> space_groups;
+    for (auto* cell : cells) {
+        if (space_groups.find(cell->spaceGroup().toString()) != space_groups.end())
+            ++space_groups[cell->spaceGroup().toString()];
+        else
+            space_groups[cell->spaceGroup().toString()] = 0;
+    }
+    std::vector<std::pair<std::string, int>> vec;
+    for (const auto& item : space_groups)
+        vec.emplace_back(item);
+    std::sort(vec.begin(), vec.end(), [](const auto& x, const auto& y) {
+        return x.second > y.second;
+    });
+    for (const auto& [key, value] : vec) {
+        _space_group->addItem(QString::fromStdString(key));
+    }
+}
+
 void SubframeMergedPeaks::processMerge()
 {
     gGui->setReady(false);
     auto* expt = gSession->experimentAt(_exp_drop->currentIndex())->experiment();
     auto* merger = expt->peakMerger();
+    nsx::SpaceGroup group = {_space_group->currentText().toStdString()};
     merger->reset();
+    merger->setSpaceGroup(group);
     setMergeParameters();
 
     if (_peaks1_list.empty() || _peaks2_list.empty()) {

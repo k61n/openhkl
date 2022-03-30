@@ -21,18 +21,12 @@
 
 namespace nsx {
 
-enum class RegionType {
-    VariableEllipsoid,
-    FixedEllipsoid,
-    FixedSphere,
-    Count
-};
+enum class RegionType { VariableEllipsoid, FixedEllipsoid, FixedSphere, Count };
 
 const std::map<RegionType, std::string> regionTypeDescription{
     {RegionType::VariableEllipsoid, "Variable ellipsoid"},
     {RegionType::FixedEllipsoid, "Fixed ellipsoid"},
-    {RegionType::FixedSphere, "Fixed sphere"}
-};
+    {RegionType::FixedSphere, "Fixed sphere"}};
 
 //! Used to construct a peak integration region.
 

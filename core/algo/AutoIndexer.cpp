@@ -312,7 +312,8 @@ std::string AutoIndexer::solutionsToString() const
     return oss.str();
 }
 
-void AutoIndexer::acceptSolution(const sptrUnitCell solution, const std::vector<nsx::Peak3D*>& peaks)
+void AutoIndexer::acceptSolution(
+    const sptrUnitCell solution, const std::vector<nsx::Peak3D*>& peaks)
 {
     for (auto* peak : peaks)
         peak->setUnitCell(solution);

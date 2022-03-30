@@ -24,7 +24,8 @@ namespace nsx {
 
 bool InstrumentStateHandler::addInstrumentStateSet(sptrDataSet data)
 {
-    if (hasInstrumentStateSet(data)) return false;
+    if (hasInstrumentStateSet(data))
+        return false;
     nsxlog(Level::Info, "InstrumentStateHandler::addInstrumentStateSet for DataSet'", data->name());
     std::unique_ptr<InstrumentStateSet> ptr = std::make_unique<InstrumentStateSet>(data);
     ptr->setId(_last_index++);
@@ -36,7 +37,8 @@ bool InstrumentStateHandler::addInstrumentStateSet(sptrDataSet data)
 bool InstrumentStateHandler::addInstrumentStateSet(
     sptrDataSet data, const InstrumentStateList& states)
 {
-    if (hasInstrumentStateSet(data)) return false;
+    if (hasInstrumentStateSet(data))
+        return false;
     nsxlog(Level::Info, "InstrumentStateHandler::addInstrumentStateSet for DataSet'", data->name());
     std::unique_ptr<InstrumentStateSet> ptr = std::make_unique<InstrumentStateSet>(data, states);
     ptr->setId(_last_index++);
@@ -65,14 +67,16 @@ bool InstrumentStateHandler::hasInstrumentStateSet(const sptrDataSet& data) cons
 
 InstrumentStateSet* InstrumentStateHandler::getInstrumentStateSet(const sptrDataSet& data)
 {
-    if (hasInstrumentStateSet(data)) return _instrumentstate_map[data].get();
+    if (hasInstrumentStateSet(data))
+        return _instrumentstate_map[data].get();
     return nullptr;
 }
 
 InstrumentStateSet* InstrumentStateHandler::getInstrumentStateSet(const DataSet* data)
 {
     for (auto it = _instrumentstate_map.begin(); it != _instrumentstate_map.end(); ++it)
-        if (it->first.get() == data) return it->second.get();
+        if (it->first.get() == data)
+            return it->second.get();
     return nullptr;
 }
 
@@ -80,7 +84,8 @@ void InstrumentStateHandler::removeInstrumentStateSet(const sptrDataSet& data)
 {
     std::map<sptrDataSet, std::unique_ptr<InstrumentStateSet>>::iterator it;
     for (it = _instrumentstate_map.begin(); it != _instrumentstate_map.end(); ++it)
-        if (it->first == data) _instrumentstate_map.erase(it);
+        if (it->first == data)
+            _instrumentstate_map.erase(it);
 }
 
 } // namespace nsx

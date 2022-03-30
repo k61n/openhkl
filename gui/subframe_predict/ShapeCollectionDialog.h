@@ -46,7 +46,8 @@
 class ShapeCollectionDialog : public QDialog {
  public:
     ShapeCollectionDialog(
-        nsx::PeakCollection* peak_collection, std::shared_ptr<nsx::ShapeCollectionParameters> params);
+        nsx::PeakCollection* peak_collection,
+        std::shared_ptr<nsx::ShapeCollectionParameters> params);
     double getDMin() { return _min_d->value(); };
     double getDMax() { return _max_d->value(); };
 

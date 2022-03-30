@@ -111,7 +111,8 @@ class DataSet {
     //! Set the parameters for the raw-data reader.
     void setRawReaderParameters(const RawDataReaderParameters& params);
 
-    //! Add a raw file to be read as a single detector image frame. Reading frames will be done only upon request.
+    //! Add a raw file to be read as a single detector image frame. Reading frames will be done only
+    //! upon request.
     void addRawFrame(const std::string& rawfilename);
 
     //! Finish reading procedure (must be called before using the data stored in the DataSet).
@@ -126,7 +127,7 @@ class DataSet {
     //! Return instrument state list
     InstrumentStateList& instrumentStates();
 
-private:
+ private:
     void _setReader(const DataFormat dataformat, const std::string& filename = "");
 
  private:
@@ -143,9 +144,9 @@ private:
     //! Pointer to instrument states
     InstrumentStateSet* _states;
 
-public:
+ public:
     //! Data shape (columns, rows, frames)
-    std::size_t datashape[3] {0, 0, 0};
+    std::size_t datashape[3]{0, 0, 0};
 };
 
 /*! @}*/

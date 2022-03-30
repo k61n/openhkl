@@ -96,7 +96,8 @@ class Experiment {
     bool addPeakCollection(
         const std::string& name, const listtype type, std::vector<Peak3D*> peaks);
     bool addPeakCollection(
-        const std::string& name, const listtype type, std::vector<Peak3D*> peaks, bool indexed, bool integrated);
+        const std::string& name, const listtype type, std::vector<Peak3D*> peaks, bool indexed,
+        bool integrated);
     //! Check if the handler has the named peak collection
     bool hasPeakCollection(const std::string& name);
     //! Get a pointer to the named peak collection
@@ -156,6 +157,8 @@ class Experiment {
     UnitCellHandler* getCellHandler() const;
     //! set last unit cell index in cell handler
     void setLastUnitCellIndex(unsigned int index);
+    //! Get a vector of unit cells in the experiment
+    std::vector<UnitCell*> getUnitCells();
 
     // Instrument state handler
     //! Add a set of instrment states

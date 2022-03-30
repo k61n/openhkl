@@ -177,7 +177,7 @@ class SubframeRefiner : public QWidget {
     std::vector<nsx::DetectorEvent> _old_direct_beam_events;
 
     // Convert enum class ResidualType to a string
-    const std::map<std::string, nsx::ResidualType> _residual_strings {
+    const std::map<std::string, nsx::ResidualType> _residual_strings{
         {"Reciprocal space", nsx::ResidualType::QSpace},
         {"Real space", nsx::ResidualType::RealSpace}};
 };

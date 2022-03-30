@@ -22,11 +22,7 @@
 
 namespace nsx {
 
-enum class ResidualType {
-    RealSpace,
-    QSpace,
-    Count
-};
+enum class ResidualType { RealSpace, QSpace, Count };
 
 //! Represents a batch of consecutive detector images.
 
@@ -35,8 +31,7 @@ class RefinementBatch {
     //! Default constructor. Should not be used but needed for swig
     RefinementBatch() = default;
     //! A batch contains peaks from frame _fmin to _fmax + 2
-    RefinementBatch(
-        InstrumentStateList& states, sptrUnitCell uc, std::vector<nsx::Peak3D*> peaks);
+    RefinementBatch(InstrumentStateList& states, sptrUnitCell uc, std::vector<nsx::Peak3D*> peaks);
 
     //! Sets the lattice B matrix to be refined.
     void refineUB();

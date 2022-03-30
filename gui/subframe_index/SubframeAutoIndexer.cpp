@@ -42,19 +42,19 @@
 #include <QBoxLayout>
 #include <QCheckBox>
 #include <QFileInfo>
+#include <QGridLayout>
 #include <QGroupBox>
 #include <QHBoxLayout>
 #include <QHeaderView>
 #include <QLabel>
 #include <QMessageBox>
+#include <QObject>
 #include <QPushButton>
 #include <QSplitter>
+#include <QTabWidget>
 #include <QVBoxLayout>
 #include <qnamespace.h>
 #include <stdexcept>
-#include <QGridLayout>
-#include <QObject>
-#include <QTabWidget>
 
 
 SubframeAutoIndexer::SubframeAutoIndexer()
@@ -710,27 +710,24 @@ void SubframeAutoIndexer::acceptSolution()
     if (_selected_unit_cell) {
         nsx::Experiment* expt = gSession->experimentAt(_exp_combo->currentIndex())->experiment();
         QStringList collections = gSession->experimentAt(_exp_combo->currentIndex())
-                                      ->getPeakCollectionNames(nsx::listtype::FOUND);       
+                                      ->getPeakCollectionNames(nsx::listtype::FOUND);
 
         QStringList space_groups;
         for (const std::string& name : _selected_unit_cell->compatibleSpaceGroups())
             space_groups.push_back(QString::fromStdString(name));
 
         std::unique_ptr<UnitCellDialog> dlg(new UnitCellDialog(
-            QString::fromStdString(expt->generateUnitCellName()),
-            collections, space_groups));
+            QString::fromStdString(expt->generateUnitCellName()), collections, space_groups));
         dlg->exec();
         if (!dlg->unitCellName().isEmpty()) {
             std::string cellName = dlg->unitCellName().toStdString();
             _selected_unit_cell->setName(cellName);
 
-            if (!expt->addUnitCell(dlg->unitCellName().toStdString(), 
-                *_selected_unit_cell.get())){
-                    QMessageBox::warning(this,
-                    "Unable to add Unit Cell",
-                    "UnitCell with same name already exists");
-                    return;
-                }
+            if (!expt->addUnitCell(dlg->unitCellName().toStdString(), *_selected_unit_cell.get())) {
+                QMessageBox::warning(
+                    this, "Unable to add Unit Cell", "UnitCell with same name already exists");
+                return;
+            }
 
             gSession->onUnitCellChanged();
 

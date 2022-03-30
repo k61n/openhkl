@@ -91,8 +91,8 @@ class SubframeAutoIndexer : public QWidget {
     void refreshPeakTable();
     //! Change the peak selected in the table
     void changeSelected(PeakItemGraphic* peak_graphic);
-        //! Refresh the detector scene
-        void refreshPeakVisual();
+    //! Refresh the detector scene
+    void refreshPeakVisual();
     //! Get the parameters of the indexer
     void grabIndexerParameters();
     //! Get the parameters of the indexer
@@ -113,7 +113,6 @@ class SubframeAutoIndexer : public QWidget {
     void setInitialKi(nsx::sptrDataSet data);
     //! Show direct beam position computed from unit cell in DetectorScene
     void showDirectBeamEvents();
-
 
     //! The model for the indexing peaks
     nsx::PeakCollection _peak_collection;

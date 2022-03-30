@@ -902,13 +902,10 @@ bool UnitCell::isSimilar(const UnitCell* other, double length_tol, double angle_
     auto t1 = bravaisTypeSymbol();
     auto t2 = other->bravaisTypeSymbol();
     return (
-        smallDiff(c1.a, c2.a, length_tol) &&
-        smallDiff(c1.b, c2.b, length_tol) &&
-        smallDiff(c1.c, c2.c, length_tol) &&
-        smallDiff(c1.alpha / deg, c2.alpha / deg, angle_tol) &&
-        smallDiff(c1.beta / deg, c2.beta / deg, angle_tol) &&
-        smallDiff(c1.gamma / deg, c2.gamma / deg, angle_tol) &&
-        t1 == t2);
+        smallDiff(c1.a, c2.a, length_tol) && smallDiff(c1.b, c2.b, length_tol)
+        && smallDiff(c1.c, c2.c, length_tol) && smallDiff(c1.alpha / deg, c2.alpha / deg, angle_tol)
+        && smallDiff(c1.beta / deg, c2.beta / deg, angle_tol)
+        && smallDiff(c1.gamma / deg, c2.gamma / deg, angle_tol) && t1 == t2);
 }
 
 unsigned int UnitCell::id() const

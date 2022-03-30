@@ -20,8 +20,8 @@
 #include "base/utils/LogLevel.h"
 #include "base/utils/Logger.h" // LogMessage::receiverHandle
 
-#include <QTextEdit>  // derives from
 #include <QColor>
+#include <QTextEdit> // derives from
 
 // Displays the log messages to the GUI user
 class LogWidget : public QTextEdit {
@@ -41,11 +41,11 @@ class LogWidget : public QTextEdit {
 
  private:
     // TODO: declare as static
-    QColor _infoColor {"Black"};
-    const QColor _errorColor {"#FF003F"}; // Crimson
-    const QColor _warningColor {"#FF7F00"}; // Orange
-    const QColor _debugColor {"#8F00FF"}; // Violet
-    const std::string _fontFamily {"Courier"};
+    QColor _infoColor{"Black"};
+    const QColor _errorColor{"#FF003F"}; // Crimson
+    const QColor _warningColor{"#FF7F00"}; // Orange
+    const QColor _debugColor{"#8F00FF"}; // Violet
+    const std::string _fontFamily{"Courier"};
     const std::size_t _fontPointSize = 12;
     const std::size_t _wrapColumn = 80;
     const std::string _initText = "NSXTool Messages";

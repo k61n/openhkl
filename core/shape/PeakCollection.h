@@ -42,9 +42,9 @@ class PeakCollection {
     //! Returns the name of the PeakCollection
     std::string name() const;
     //! Returns description of the PeakCollection
-    std::string description() const {return _description;};
+    std::string description() const { return _description; };
     //! set description
-    void setDescription(std::string str) {_description=str;};
+    void setDescription(std::string str) { _description = str; };
 
     //! Populate the PeakCollection with a vector of shared pointers to peaks
     void populate(const std::vector<std::shared_ptr<nsx::Peak3D>> peak_list);
@@ -115,11 +115,11 @@ class PeakCollection {
     void buildShapeCollection(sptrDataSet data, const ShapeCollectionParameters& params);
 
 
-    bool isIndexed() const { return _indexed;}
-    bool isIntegrated() const {return _integrated;}
+    bool isIndexed() const { return _indexed; }
+    bool isIntegrated() const { return _integrated; }
 
-    void setIndexed(bool value) {_indexed = value;}
-    void setIntegrated(bool value) {_integrated = value;}
+    void setIndexed(bool value) { _indexed = value; }
+    void setIntegrated(bool value) { _integrated = value; }
 
     void setUnitCell(const sptrUnitCell& cell);
 
@@ -141,7 +141,7 @@ class PeakCollection {
     //! Mosaicity sigma
     double _sigma_m;
 
-    //! has been indexed already 
+    //! has been indexed already
     bool _indexed;
 
     //! has been integrated

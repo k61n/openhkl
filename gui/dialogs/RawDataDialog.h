@@ -23,15 +23,16 @@
 #include <QLineEdit>
 #include <QString>
 
-#include "core/loader/RawDataReader.h"  // RawDataReaderParameters
+#include "core/loader/RawDataReader.h" // RawDataReaderParameters
 
-# include <string>
+#include <string>
 
 //! Dialog to get the parameters to the selected raw data
 class RawDataDialog : public QDialog {
  public:
-    RawDataDialog(const nsx::RawDataReaderParameters& parameters0,
-                  const QStringList& datanames_cur = QStringList());
+    RawDataDialog(
+        const nsx::RawDataReaderParameters& parameters0,
+        const QStringList& datanames_cur = QStringList());
 
     QString dataset_name() { return datasetName->text(); }
     double wavelength() { return wave->value(); }
@@ -45,7 +46,7 @@ class RawDataDialog : public QDialog {
     //! Return a copy of the parameters acquired from the dialog
     nsx::RawDataReaderParameters parameters();
 
-private:
+ private:
     //! Verify user-provided parameters
     void verify();
 
@@ -59,9 +60,8 @@ private:
     QDoubleSpinBox* wave;
     QDialogButtonBox* buttons;
     QLineEdit* datasetName;
-    const nsx::RawDataReaderParameters& parameters0;  // initial parameters
+    const nsx::RawDataReaderParameters& parameters0; // initial parameters
     const QStringList& dataset_names; // list of current dataset names
-
 };
 
 #endif // NSX_GUI_DIALOGS_RAWDATADIALOG_H

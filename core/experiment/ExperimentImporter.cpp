@@ -304,9 +304,8 @@ void ExperimentImporter::loadPeaks(Experiment* experiment)
 
             // converting data types. Ascii code of '0' is 48, of '1' is 49
             experiment->addPeakCollection(
-                collection_name, collection_type, peaks, 
-                static_cast<bool>(indexed[0]-48), 
-                static_cast<bool>(integrated[0]-48));
+                collection_name, collection_type, peaks, static_cast<bool>(indexed[0] - 48),
+                static_cast<bool>(integrated[0] - 48));
 
             nsxlog(Level::Debug, "Finished creating the peak collection");
         }

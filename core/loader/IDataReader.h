@@ -18,9 +18,9 @@
 #include "core/instrument/InstrumentState.h"
 #include "core/instrument/InstrumentStateSet.h"
 #include "core/raw/MetaData.h"
-#include <vector>
-#include <string>
 #include <Eigen/Dense>
+#include <string>
+#include <vector>
 
 namespace nsx {
 
@@ -32,7 +32,6 @@ class DataSet;
 class IDataReader {
 
  public:
-
     //! Status of reader initialization
     bool isInitialized = false;
 
