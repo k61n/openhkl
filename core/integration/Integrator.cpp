@@ -74,6 +74,7 @@ void Integrator::integratePeaks(
     IPeakIntegrator* integrator = getIntegrator(integrator_type);
     integrator->setNNumors(1);
     integrator->integrate(peaks->getPeakList(), peaks->shapeCollection(), data, 1);
+    peaks->setIntegrated(true);
 
     _n_peaks = 0;
     _n_valid = 0;
@@ -95,6 +96,7 @@ void Integrator::integratePeaks(
     integrator->setParameters(*params);
     integrator->setNNumors(1);
     integrator->integrate(peaks->getPeakList(), shapes, data, 1);
+    peaks->setIntegrated(true);
 
     _n_peaks = 0;
     _n_valid = 0;
