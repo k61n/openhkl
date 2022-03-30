@@ -96,10 +96,11 @@ int Session::numExperiments() const
 
 Project* Session::createProject(QString experimentName, QString instrumentName)
 {
-    for (const QString& name : experimentNames()) {// check name
+    for (const QString& name : experimentNames()) { // check name
         if (name == experimentName) {
-            QMessageBox::critical(nullptr, "Unable to create experiment",
-               "Experiment name, '" + experimentName + "' already exists");
+            QMessageBox::critical(
+                nullptr, "Unable to create experiment",
+                "Experiment name, '" + experimentName + "' already exists");
             return nullptr;
         }
     }
@@ -283,7 +284,7 @@ bool Session::loadRawData()
         parameters.dataset_name = nsx::fileBasename(filenames[0]);
         const QStringList& datanames_pre{currentProject()->getDataNames()};
         RawDataDialog dialog(parameters, datanames_pre);
-        if (!dialog.exec()){
+        if (!dialog.exec()) {
             return false;
         }
         nsx::Experiment* exp = currentProject()->experiment();
@@ -299,13 +300,12 @@ bool Session::loadRawData()
             dataset_ptr->addRawFrame(filenm);
 
         dataset_ptr->finishRead();
-        if (!exp->addData(dataset_ptr)){
-            QMessageBox::warning(nullptr,
-            "Unable to add Dataset",
-            "Could not add Dataset " + 
-            QString::fromStdString(dataset_ptr->name()) + 
-            "to the DataHandler");
-        } 
+        if (!exp->addData(dataset_ptr)) {
+            QMessageBox::warning(
+                nullptr, "Unable to add Dataset",
+                "Could not add Dataset " + QString::fromStdString(dataset_ptr->name())
+                    + "to the DataHandler");
+        }
         onDataChanged();
         auto data_list = currentProject()->getDataNames();
         gGui->sentinel->setLinkedComboList(ComboType::DataSet, data_list);
@@ -381,18 +381,21 @@ void Session::loadExperimentFromFile(QString filename)
         "'");
 }
 
-bool Session::UpdateExperimentData(unsigned int idx, QString name, QString instrument){
-    if (idx >= _projects.size()) return false;
+bool Session::UpdateExperimentData(unsigned int idx, QString name, QString instrument)
+{
+    if (idx >= _projects.size())
+        return false;
 
-    for (const auto& e : _projects){// excluding duplicate project names
-        if (e->experiment()->name() == name.toStdString()){
-            // the selected item is allowed to have an identical name! 
-            // This allows to change instument name and keeo the same experiment name. 
+    for (const auto& e : _projects) { // excluding duplicate project names
+        if (e->experiment()->name() == name.toStdString()) {
+            // the selected item is allowed to have an identical name!
+            // This allows to change instument name and keeo the same experiment name.
             // therefore ->
-            if (_projects.at(idx) != e) return false; 
+            if (_projects.at(idx) != e)
+                return false;
         }
     }
-   _projects.at(idx)->experiment()->setName(name.toStdString());
-   _projects.at(idx)->experiment()->setDiffractometer(instrument.toStdString());
-   return true;
+    _projects.at(idx)->experiment()->setName(name.toStdString());
+    _projects.at(idx)->experiment()->setDiffractometer(instrument.toStdString());
+    return true;
 }

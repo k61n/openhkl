@@ -86,10 +86,10 @@ class PeakFinder {
     unsigned int numberFound();
 
     //! Return integrated state
-    bool isIntegrated() {return _integrated;};
+    bool isIntegrated() { return _integrated; };
 
     //! set integration state
-    void setIntegrated(bool b) {_integrated=b;};
+    void setIntegrated(bool b) { _integrated = b; };
 
 #ifndef SWIG
     //! Set the convolver flavour for peak/background convolution
@@ -118,7 +118,7 @@ class PeakFinder {
     void mergeCollidingBlobs(const DataSet& data, std::map<int, Blob3D>& blobs) const;
 
     //! Merge equivalent blobs
-    void mergeEquivalentBlobs(std::map<int, Blob3D>& blobs, EquivalenceList& equivalences) const;    
+    void mergeEquivalentBlobs(std::map<int, Blob3D>& blobs, EquivalenceList& equivalences) const;
 
  private:
     sptrProgressHandler _handler;

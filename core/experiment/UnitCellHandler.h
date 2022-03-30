@@ -20,9 +20,9 @@
 #include "core/raw/DataKeys.h"
 #include "tables/crystal/UnitCell.h"
 
-#include <vector>
 #include <stdexcept>
 #include <string>
+#include <vector>
 
 namespace nsx {
 
@@ -73,8 +73,8 @@ class UnitCellHandler {
     int numUnitCells() const { return _unit_cells.size(); };
     //! Accept an autoindexer solution as the unit cell
     bool checkAndAssignUnitCell(
-        PeakCollection* peaks, AutoIndexer* auto_indexer, double length_tol,
-        double angle_tol, std::string name);
+        PeakCollection* peaks, AutoIndexer* auto_indexer, double length_tol, double angle_tol,
+        std::string name);
     //! Assign unit cell to a peak collection, compute Miller indices from q and cell
     void assignUnitCell(
         PeakCollection* peaks, std::string cellName = nsx::kw_acceptedUnitcell) const;

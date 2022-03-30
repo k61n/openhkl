@@ -30,7 +30,8 @@ bool PeakHandler::addPeakCollection(
     const std::string& name, const listtype type, const std::vector<nsx::Peak3D*> peaks)
 {
     // abort if name is aleady in use
-    if (hasPeakCollection(name)) return false; 
+    if (hasPeakCollection(name))
+        return false;
     nsxlog(Level::Info, "PeakHandler::addPeakCollection '", name, "': ", peaks.size(), " peaks");
     std::unique_ptr<PeakCollection> ptr(new PeakCollection(name, type));
     ptr->populate(peaks);
@@ -43,7 +44,8 @@ bool PeakHandler::addPeakCollection(
     bool indexed, bool integrated)
 {
     // abort if name is aleady in use
-    if (hasPeakCollection(name)) return false;
+    if (hasPeakCollection(name))
+        return false;
     nsxlog(Level::Info, "PeakHandler::addPeakCollection '", name, "': ", peaks.size(), " peaks");
     std::unique_ptr<PeakCollection> ptr(new PeakCollection(name, type));
     ptr->setIndexed(indexed);
@@ -55,7 +57,8 @@ bool PeakHandler::addPeakCollection(
 
 bool PeakHandler::addEmptyCollection(const std::string& name, const listtype type)
 {
-    if (hasPeakCollection(name)) return false;
+    if (hasPeakCollection(name))
+        return false;
     nsxlog(Level::Info, "PeakHandler::addEmptyCollection '" + name + "'");
     std::unique_ptr<PeakCollection> ptr(new PeakCollection(name, type));
     _peak_collections.insert_or_assign(name, std::move(ptr));
@@ -110,7 +113,8 @@ std::vector<std::string> PeakHandler::getCollectionNames(
 
 bool PeakHandler::acceptFilter(std::string name, PeakCollection* collection, listtype lt)
 {
-    if (hasPeakCollection(name)) return false;
+    if (hasPeakCollection(name))
+        return false;
     std::unique_ptr<PeakCollection> ptr(new PeakCollection(name, lt));
     ptr->populateFromFiltered(collection);
     _peak_collections.insert_or_assign(name, std::move(ptr));
@@ -119,8 +123,9 @@ bool PeakHandler::acceptFilter(std::string name, PeakCollection* collection, lis
 
 bool PeakHandler::clonePeakCollection(std::string name, std::string new_name)
 {
-    if (name == new_name) return false;
-    if (!addEmptyCollection(new_name, getPeakCollection(name)->type())){
+    if (name == new_name)
+        return false;
+    if (!addEmptyCollection(new_name, getPeakCollection(name)->type())) {
         return false;
     }
     getPeakCollection(new_name)->populate(getPeakCollection(name)->getPeakList());
@@ -128,13 +133,13 @@ bool PeakHandler::clonePeakCollection(std::string name, std::string new_name)
 }
 
 std::string PeakHandler::generateName()
-{     
+{
     int n = 4; // number of digits
-    std::string str = std::to_string(numPeakCollections()+1);
-    if (str.size() > n){//
+    std::string str = std::to_string(numPeakCollections() + 1);
+    if (str.size() > n) { //
         return "Please enter name for this collection";
     }
-    return std::string("PeakCollectionNr") +  std::string( n - str.size(), '0').append( str );
+    return std::string("PeakCollectionNr") + std::string(n - str.size(), '0').append(str);
 }
 
 } // namespace nsx

@@ -189,10 +189,9 @@ void SubframeHome::createNew()
     if (exp_dialog->result()) {
         QString expr_nm = exp_dialog->experimentName();
         QString instr_nm = exp_dialog->instrumentName();
-       
-        std::unique_ptr<Project> project_ptr {gSession->createProject
-                                              (expr_nm, instr_nm)};
-        if (project_ptr == nullptr){            
+
+        std::unique_ptr<Project> project_ptr{gSession->createProject(expr_nm, instr_nm)};
+        if (project_ptr == nullptr) {
             return;
         }
         const bool success = gSession->addProject(std::move(project_ptr));
@@ -353,7 +352,7 @@ void SubframeHome::toggleUnsafeWidgets()
     _save_current->setEnabled(true);
     if (_open_experiments_model->rowCount() == 0) {
         _save_all->setEnabled(false);
-        _save_current->setEnabled(false);       
+        _save_current->setEnabled(false);
     }
 }
 
@@ -385,11 +384,11 @@ void SubframeHome::refreshTables()
                 _unitcell_table->insertRow(_unitcell_table->rowCount());
 
             int col = 0;
-            _unitcell_table->setItem(
-                n, col++, new QTableWidgetItem(QString::number(data->id())));
+            _unitcell_table->setItem(n, col++, new QTableWidgetItem(QString::number(data->id())));
             _unitcell_table->setItem(n, col++, new QTableWidgetItem(QString::fromStdString(*it)));
             _unitcell_table->setItem(
-                n, col++, new QTableWidgetItem(QString::fromStdString(data->spaceGroup().symbol())));
+                n, col++,
+                new QTableWidgetItem(QString::fromStdString(data->spaceGroup().symbol())));
             _unitcell_table->setItem(
                 n, col++, new QTableWidgetItem(QString::number(data->character().a)));
             _unitcell_table->setItem(
@@ -397,11 +396,13 @@ void SubframeHome::refreshTables()
             _unitcell_table->setItem(
                 n, col++, new QTableWidgetItem(QString::number(data->character().c)));
             _unitcell_table->setItem(
-                n, col++, new QTableWidgetItem(QString::number(data->character().alpha / nsx::deg)));
+                n, col++,
+                new QTableWidgetItem(QString::number(data->character().alpha / nsx::deg)));
             _unitcell_table->setItem(
                 n, col++, new QTableWidgetItem(QString::number(data->character().beta / nsx::deg)));
             _unitcell_table->setItem(
-                n, col++, new QTableWidgetItem(QString::number(data->character().gamma / nsx::deg)));
+                n, col++,
+                new QTableWidgetItem(QString::number(data->character().gamma / nsx::deg)));
         }
         _unitcell_table->resizeColumnsToContents();
 

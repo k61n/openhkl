@@ -50,7 +50,6 @@
 #include <QScrollBar>
 #include <QSpacerItem>
 #include <QTableWidgetItem>
-#include <QMessageBox>
 #include <qmessagebox.h>
 
 SubframeFindPeaks::SubframeFindPeaks()
@@ -323,7 +322,7 @@ void SubframeFindPeaks::updateDatasetList()
     _data_combo->blockSignals(true);
     QString current_data = _data_combo->currentText();
     _data_combo->clear();
-    
+
     const QStringList& datanames{gSession->currentProject()->getDataNames()};
     if (!datanames.empty()) {
         _data_combo->addItems(datanames);
@@ -337,12 +336,11 @@ void SubframeFindPeaks::updateDatasetParameters(const QString& dataname)
 {
     // to be update on the experiment/project list if a new
     // experiment is added on SubframeHome
-    auto exp = gSession->experimentAt(gSession->currentProjectNum())
-    ->experiment();                      
-    if (!exp->hasData(dataname.toStdString())){
-        QMessageBox::warning(nullptr,
-        "Dataset does not exist",
-        "The given dataset " + dataname + " could not be found!");
+    auto exp = gSession->experimentAt(gSession->currentProjectNum())->experiment();
+    if (!exp->hasData(dataname.toStdString())) {
+        QMessageBox::warning(
+            nullptr, "Dataset does not exist",
+            "The given dataset " + dataname + " could not be found!");
         return;
     }
     nsx::sptrDataSet data = exp->getData(dataname.toStdString());
@@ -563,17 +561,17 @@ void SubframeFindPeaks::accept()
     nsx::PeakFinder* finder = expt->peakFinder();
 
     if (!finder->currentPeaks().empty()) {
-        std::unique_ptr<ListNameDialog> dlg(new ListNameDialog(QString::fromStdString(
-        expt->generatePeakCollectionName())));
+        std::unique_ptr<ListNameDialog> dlg(
+            new ListNameDialog(QString::fromStdString(expt->generatePeakCollectionName())));
         dlg->exec();
         if (!dlg->listName().isEmpty()) {
-            if(!gSession->experimentAt(_exp_combo->currentIndex())
-                ->experiment()
-                ->acceptFoundPeaks(dlg->listName().toStdString(), _peak_collection)){
-                    QMessageBox::warning(this,
-                    "Unable to add PeakCollection",
-                    "Collection with this name already exists!");                      
-                    return;
+            if (!gSession->experimentAt(_exp_combo->currentIndex())
+                     ->experiment()
+                     ->acceptFoundPeaks(dlg->listName().toStdString(), _peak_collection)) {
+                QMessageBox::warning(
+                    this, "Unable to add PeakCollection",
+                    "Collection with this name already exists!");
+                return;
             }
             gSession->experimentAt(_exp_combo->currentIndex())->generatePeakModel(dlg->listName());
             gGui->sentinel->addLinkedComboItem(ComboType::FoundPeaks, dlg->listName());

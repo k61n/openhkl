@@ -21,14 +21,14 @@
 
 #include <Eigen/Core>
 
-#include <QLabel>
-#include <QWidget>
 #include <QDialog>
-#include <QGraphicsView>
-#include <QGraphicsPixmapItem>
-#include <QGridLayout>
 #include <QDoubleSpinBox>
+#include <QGraphicsPixmapItem>
+#include <QGraphicsView>
+#include <QGridLayout>
+#include <QLabel>
 #include <QSlider>
+#include <QWidget>
 
 class ColorButton;
 class ColorMap;

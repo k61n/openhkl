@@ -23,9 +23,9 @@
 #include <QHBoxLayout>
 #include <QListWidget>
 #include <QPushButton>
+#include <QTableWidget>
 #include <QVBoxLayout>
 #include <QWidget>
-#include <QTableWidget>
 
 //! Frame containing interface to create, save and load experiments
 class SubframeHome : public QWidget {
@@ -70,7 +70,7 @@ class SubframeHome : public QWidget {
 
     void refreshTables();
 
-   // void UpdatePeakList();
+    // void UpdatePeakList();
 
  private:
     QPushButton* _new_exp;
@@ -87,7 +87,6 @@ class SubframeHome : public QWidget {
     QTableWidget* _dataset_table;
     QTableWidget* _peak_collections_table;
     QTableWidget* _unitcell_table;
-
 };
 
 #endif // NSX_GUI_SUBFRAME_HOME_SUBFRAMEHOME_H

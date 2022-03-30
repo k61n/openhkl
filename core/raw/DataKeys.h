@@ -15,8 +15,8 @@
 #ifndef NSX_CORE_RAW_DATAKEYS_H
 #define NSX_CORE_RAW_DATAKEYS_H
 
-#include <string>
 #include <set>
+#include <string>
 
 namespace nsx {
 
@@ -83,7 +83,7 @@ const std::string at_endTime{"end time"};
 // peaks
 const std::string at_peakCount{"number of peaks"};
 const std::string at_peakType{"peak type"};
-//added by ctrageser
+// added by ctrageser
 const std::string at_indexed{"is indexed"};
 const std::string at_integrated{"is integrated"};
 // unit cell
@@ -158,14 +158,11 @@ const std::string ym_goniometer{"goniometer"};
 const std::string ym_rotClockwise{"clockwise"};
 
 //-- Recognized metadata keys
-const std::set<std::string> RecognizedMetaDataKeys
-    {at_experiment, at_diffractometer, at_formatVersion,
-     at_datasetSources, at_frameCount, at_wavelength, at_monitorSum,
-     at_numor, at_totalSteps, at_title,
-     at_time, at_startTime, at_endTime,
-     at_peakCount, at_peakType, at_rVec, at_BravaisLattice, at_indexingTol,
-     at_spacegroup, at_z
-    };
+const std::set<std::string> RecognizedMetaDataKeys{
+    at_experiment, at_diffractometer, at_formatVersion, at_datasetSources, at_frameCount,
+    at_wavelength, at_monitorSum,     at_numor,         at_totalSteps,     at_title,
+    at_time,       at_startTime,      at_endTime,       at_peakCount,      at_peakType,
+    at_rVec,       at_BravaisLattice, at_indexingTol,   at_spacegroup,     at_z};
 
 } // namespace nsx
 

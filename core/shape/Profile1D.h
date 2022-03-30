@@ -33,8 +33,7 @@ class Profile1D {
  public:
     //! Constructor. sigma_max indicates maximum number of standard deviations
     Profile1D(
-        const Intensity& mean_background = Intensity(), double sigma_max = 4.0,
-        size_t num = 200);
+        const Intensity& mean_background = Intensity(), double sigma_max = 4.0, size_t num = 200);
     //! Add a data point to the bins.
     //! @param r2 : equal to \f$(x-x0)\cdot A\cdot (x-x0)\f$ where \f$A\f$ is the inverse
     //! covariance matrix of the peak.

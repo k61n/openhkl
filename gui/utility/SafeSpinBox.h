@@ -15,8 +15,8 @@
 #ifndef NSX_GUI_UTILITY_SAFESPINBOX_H
 #define NSX_GUI_UTILITY_SAFESPINBOX_H
 
-#include <QSpinBox>
 #include <QDoubleSpinBox>
+#include <QSpinBox>
 
 //! A QSpinBox that doesn't accept wheel events
 class SafeSpinBox : public QSpinBox {
@@ -26,8 +26,7 @@ class SafeSpinBox : public QSpinBox {
     SafeSpinBox(QWidget* parent = nullptr);
 
  protected:
-
-    virtual void wheelEvent(QWheelEvent *event);
+    virtual void wheelEvent(QWheelEvent* event);
 };
 
 class SafeDoubleSpinBox : public QDoubleSpinBox {
@@ -37,7 +36,7 @@ class SafeDoubleSpinBox : public QDoubleSpinBox {
     SafeDoubleSpinBox(QWidget* parent = nullptr);
 
  protected:
-    virtual void wheelEvent(QWheelEvent *event);
+    virtual void wheelEvent(QWheelEvent* event);
 };
 
 #endif // NSX_GUI_UTILITY_SAFESPINBOX_H

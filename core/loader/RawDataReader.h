@@ -15,9 +15,9 @@
 #ifndef NSX_CORE_LOADER_RAWDATAREADER_H
 #define NSX_CORE_LOADER_RAWDATAREADER_H
 
+#include "core/data/DataSet.h"
 #include "core/loader/IDataReader.h" // inherits from
 #include "core/raw/DataKeys.h"
-#include "core/data/DataSet.h"
 
 namespace nsx {
 

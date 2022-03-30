@@ -66,7 +66,7 @@ void PeakFilter::filterSignificance(PeakCollection* peak_collection) const
     }
 
     for (const auto& [cell, peaks] : peaks_per_unit_cell) {
-        (void) peaks;
+        (void)peaks;
         std::vector<PeakCollection*> collection_vector;
         collection_vector.push_back(peak_collection);
         const std::vector<Peak3D*> filtered_peaks = peak_collection->getFilteredPeakList();

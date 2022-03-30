@@ -432,8 +432,8 @@ void SubframeMergedPeaks::refreshPeakCombos()
     _peaks2_list.push_front(""); // Second peak collection is not used by default
     if (!_peaks2_list.empty()) {
         for (QString& collection : _peaks2_list) {
-            if (!expt->hasPeakCollection(collection.toStdString()) || 
-                expt->getPeakCollection(collection.toStdString())->isIntegrated())
+            if (!expt->hasPeakCollection(collection.toStdString())
+                || expt->getPeakCollection(collection.toStdString())->isIntegrated())
                 _peaks2_drop->addItem(collection);
         }
         _peaks2_drop->setCurrentText(current_peaks2);
@@ -480,7 +480,9 @@ void SubframeMergedPeaks::refreshSpaceGroupCombo()
     std::vector<std::pair<std::string, int>> vec;
     for (const auto& item : space_groups)
         vec.emplace_back(item);
-    std::sort(vec.begin(), vec.end(), [] (const auto& x, const auto& y) { return x.second > y.second;});
+    std::sort(vec.begin(), vec.end(), [](const auto& x, const auto& y) {
+        return x.second > y.second;
+    });
     for (const auto& [key, value] : vec) {
         _space_group->addItem(QString::fromStdString(key));
     }

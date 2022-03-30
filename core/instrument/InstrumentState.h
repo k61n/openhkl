@@ -111,8 +111,7 @@ class InstrumentState {
     bool refined;
 
     //! Returns the instrument state as read from the metadata
-    static InstrumentState state(Diffractometer* const diffractometer,
-                                 const std::size_t frame_idx);
+    static InstrumentState state(Diffractometer* const diffractometer, const std::size_t frame_idx);
 
 
 #ifndef SWIG

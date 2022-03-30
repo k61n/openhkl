@@ -28,8 +28,7 @@ namespace nsx {
 DataHandler::DataHandler(
     const std::string& experiment_name, const std::string& diffractometerName,
     InstrumentStateHandler* instrument_state_handler)
-    : _experiment_name{experiment_name}
-    , _instrument_state_handler(instrument_state_handler)
+    : _experiment_name{experiment_name}, _instrument_state_handler(instrument_state_handler)
 {
     if (diffractometerName == nsx::kw_diffractometerDefaultName) {
         nsxlog(
@@ -81,7 +80,7 @@ bool DataHandler::addData(sptrDataSet data, std::string name)
     if (name.empty())
         throw std::invalid_argument("DataHandler::addData: Data name cannot be empty");
 
-    if (hasData(name)){
+    if (hasData(name)) {
         throw std::invalid_argument("DataHandler::addData: Data name must be unique");
         return false;
     }

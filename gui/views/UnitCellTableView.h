@@ -15,9 +15,9 @@
 #ifndef NSX_GUI_VIEWS_UNITCELLTABLEVIEW_H
 #define NSX_GUI_VIEWS_UNITCELLTABLEVIEW_H
 
-#include <QTableView>
-#include <QString>
 #include <QStandardItem>
+#include <QString>
+#include <QTableView>
 
 class UnitCellTableView : public QTableView {
     Q_OBJECT
@@ -26,24 +26,24 @@ class UnitCellTableView : public QTableView {
 };
 
 //! Value-Tuple Item:
-//! A QStandardItem which holds a floating-point value and its standard deviation or quality measure.
-//! The sorting mechanism is taylored to sort according the value and then (if the values are equal) according the std. devs. or quality measures.
-//! Sorting is based on the stored numerical values, not the textual representation.
+//! A QStandardItem which holds a floating-point value and its standard deviation or quality
+//! measure. The sorting mechanism is taylored to sort according the value and then (if the values
+//! are equal) according the std. devs. or quality measures. Sorting is based on the stored
+//! numerical values, not the textual representation.
 //! * Sorting examples:
 //! ValueTupleItem("1.2(3)", 1.238, 3e-3) < ValueTupleItem("1.0(3)", 1.01, 3e-3)
 //! ValueTupleItem("1.2(3)", 1.238, 3e-3) < ValueTupleItem("1.2(3)", 1.240, 3e-3)
 //! ValueTupleItem("1.2(3)", 1.238, 3e-3) < ValueTupleItem("1.2(4)", 1.238, 4e-3)
-class ValueTupleItem: public QStandardItem
-{
-public:
+class ValueTupleItem : public QStandardItem {
+ public:
     explicit ValueTupleItem(const QString& text, const double val, const double qmes = 0);
     ~ValueTupleItem() = default;
 
     //! Custom sorting;
     //! See the Qt documentation for `QStandardItem::operator<`.
-    bool operator< (const QStandardItem& other) const override;
+    bool operator<(const QStandardItem& other) const override;
 
-public:
+ public:
     double value = 0;
     double qmeasure = 0;
 };

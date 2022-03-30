@@ -73,7 +73,7 @@ ExperimentDialog::ExperimentDialog(QString exp_name)
     gridLayout->addWidget(buttonBox, 1, 1, 1, 1);
 
     experiment->setText(exp_name);
-    
+
     QObject::connect(buttonBox, SIGNAL(accepted()), this, SLOT(accept()));
     QObject::connect(buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
 }

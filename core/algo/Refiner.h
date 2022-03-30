@@ -124,9 +124,9 @@ class Refiner {
     //! Assign batch cells to predicted peaks
     void assignPredictedCells(std::vector<Peak3D*> predicted_peaks);
 
-        private :
-        //! Determine which unit cell to use in a batch
-        sptrUnitCell _getUnitCell(const std::vector<Peak3D*> peaks_subset);
+ private:
+    //! Determine which unit cell to use in a batch
+    sptrUnitCell _getUnitCell(const std::vector<Peak3D*> peaks_subset);
 
     UnitCellHandler* _cell_handler;
     UnitCell _unrefined_cell;

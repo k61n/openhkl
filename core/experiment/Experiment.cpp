@@ -58,8 +58,8 @@ Experiment::Experiment(const std::string& name, const std::string& diffractomete
     nsxlog(Level::Info, "Git branch ", GIT_BRANCH, " / commit hash ", COMMIT_HASH);
 
     _instrumentstate_handler = std::make_unique<InstrumentStateHandler>();
-    _data_handler = std::make_shared<DataHandler>(
-        _name, diffractometerName, _instrumentstate_handler.get());
+    _data_handler =
+        std::make_shared<DataHandler>(_name, diffractometerName, _instrumentstate_handler.get());
     _peak_handler = std::make_unique<PeakHandler>();
     _cell_handler = std::make_unique<UnitCellHandler>();
 
@@ -101,9 +101,9 @@ bool Experiment::acceptFoundPeaks(const std::string& name)
 bool Experiment::acceptFoundPeaks(const std::string& name, const PeakCollection& found)
 {
     std::vector<Peak3D*> peaks = found.getPeakList();
-    
-    if(!addPeakCollection(name, 
-        listtype::FOUND, peaks,  found.isIndexed(), _peak_finder->isIntegrated() )){    
+
+    if (!addPeakCollection(
+            name, listtype::FOUND, peaks, found.isIndexed(), _peak_finder->isIntegrated())) {
         return false;
     }
     _peak_finder->setIntegrated(false); // reset for next use
@@ -345,7 +345,7 @@ int Experiment::numData() const
 
 bool Experiment::addData(sptrDataSet data)
 {
-    if (!_data_handler->addData(data, data->name())){
+    if (!_data_handler->addData(data, data->name())) {
         return false;
     }
     setDefaultDMin();
@@ -366,7 +366,7 @@ void Experiment::removeData(const std::string& name)
 bool Experiment::addPeakCollection(
     const std::string& name, const listtype type, std::vector<Peak3D*> peaks)
 {
-    if (!_peak_handler->hasPeakCollection(name)){   
+    if (!_peak_handler->hasPeakCollection(name)) {
         _peak_handler->addPeakCollection(name, type, peaks);
         return true;
     }
@@ -374,7 +374,7 @@ bool Experiment::addPeakCollection(
 }
 
 bool Experiment::addPeakCollection(
-    const std::string& name, const listtype type, std::vector<Peak3D*> peaks, bool indexed, 
+    const std::string& name, const listtype type, std::vector<Peak3D*> peaks, bool indexed,
     bool integrated)
 {
     return _peak_handler->addPeakCollection(name, type, peaks, indexed, integrated);
@@ -523,7 +523,8 @@ bool Experiment::addInstrumentStateSet(sptrDataSet data, const InstrumentStateLi
     return _instrumentstate_handler->addInstrumentStateSet(data, states);
 }
 
-bool Experiment::addInstrumentStateSet(sptrDataSet data, std::unique_ptr<InstrumentStateSet>& states)
+bool Experiment::addInstrumentStateSet(
+    sptrDataSet data, std::unique_ptr<InstrumentStateSet>& states)
 {
     return _instrumentstate_handler->addInstrumentStateSet(data, states);
 }

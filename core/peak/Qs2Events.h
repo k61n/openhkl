@@ -46,12 +46,12 @@ std::vector<DetectorEvent> qVectorList2Events(
     const Detector& detector, const int n_intervals, sptrProgressHandler handler = nullptr);
 
 std::vector<DetectorEvent> qVector2Events(
-    const ReciprocalVector& sample_q, const InstrumentStateList& states,
-    const Detector& detector, const int n_intervals);
+    const ReciprocalVector& sample_q, const InstrumentStateList& states, const Detector& detector,
+    const int n_intervals);
 
 //! Returns detector events corresponding to direct beam for each frame
-    std::vector<DetectorEvent> getDirectBeamEvents(
-        const InstrumentStateList& states, const Detector& detector);
+std::vector<DetectorEvent> getDirectBeamEvents(
+    const InstrumentStateList& states, const Detector& detector);
 
 } // namespace algo
 

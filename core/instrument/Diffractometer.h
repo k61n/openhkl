@@ -16,11 +16,10 @@
 #define NSX_CORE_INSTRUMENT_DIFFRACTOMETER_H
 
 #include "core/detector/Detector.h"
+#include "core/instrument/InstrumentState.h"
 #include "core/instrument/Sample.h"
 #include "core/instrument/Source.h"
-#include "core/instrument/InstrumentState.h"
 #include "core/raw/DataKeys.h"
-
 
 
 namespace nsx {

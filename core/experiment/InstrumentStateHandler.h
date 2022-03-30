@@ -20,9 +20,9 @@
 #include "core/instrument/InstrumentState.h"
 #include "core/instrument/InstrumentStateSet.h"
 
+#include <map>
 #include <memory>
 #include <string>
-#include <map>
 
 namespace nsx {
 
@@ -36,8 +36,7 @@ class InstrumentStateHandler {
     //! Add a set of instrment states
     bool addInstrumentStateSet(sptrDataSet data, const InstrumentStateList& states);
     //! Add a set of instrment states
-    bool addInstrumentStateSet(
-        sptrDataSet data, std::unique_ptr<InstrumentStateSet>& states);
+    bool addInstrumentStateSet(sptrDataSet data, std::unique_ptr<InstrumentStateSet>& states);
     //! Returns true if the experiment has named instrument state set
     bool hasInstrumentStateSet(const sptrDataSet& data) const;
     //! Returns the named InstrumentStateSet

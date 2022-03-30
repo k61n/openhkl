@@ -84,8 +84,8 @@ DetectorWidget::DetectorWidget(bool mode, bool cursor, bool slider, QWidget* par
         _data_combo, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this,
         &DetectorWidget::refresh);
     connect(
-        _spin, QOverload<int>::of(&QSpinBox::valueChanged),
-        gGui->instrumentstate_window, &InstrumentStateWindow::onFrameChanged);
+        _spin, QOverload<int>::of(&QSpinBox::valueChanged), gGui->instrumentstate_window,
+        &InstrumentStateWindow::onFrameChanged);
 
 
     if (mode) {

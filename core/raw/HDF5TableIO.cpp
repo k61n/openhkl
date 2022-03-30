@@ -1,9 +1,9 @@
 #include "HDF5TableIO.h"
 
-HDF5TableWriter::HDF5TableWriter(const H5::Group& datagroup, const H5::DataType& dtype,
-                                 const std::size_t n_rows, const std::size_t n_cols,
-                                 const std::string& dataset_name):
-    _dtype{dtype}
+HDF5TableWriter::HDF5TableWriter(
+    const H5::Group& datagroup, const H5::DataType& dtype, const std::size_t n_rows,
+    const std::size_t n_cols, const std::string& dataset_name)
+    : _dtype{dtype}
 {
     // create the table as a DataSet of shape (n_rows, n_cols)
     const hsize_t dims[_rank] = {n_rows, n_cols};
@@ -33,10 +33,8 @@ void HDF5TableWriter::writeRow(const std::size_t row_idx, const void* const row_
 }
 
 
-HDF5TableReader::HDF5TableReader(const H5::DataSet& dataset):
-    _dataset{&dataset},
-    _dtype{dataset.getDataType()},
-    _fspace{dataset.getSpace()}
+HDF5TableReader::HDF5TableReader(const H5::DataSet& dataset)
+    : _dataset{&dataset}, _dtype{dataset.getDataType()}, _fspace{dataset.getSpace()}
 {
     // obtain DataSet properties
     // expects that rank = 2; ie. `_fspace.getSimpleExtentNdims() == 2`

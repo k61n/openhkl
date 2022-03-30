@@ -34,8 +34,8 @@ class MergedData {
     //! determines whether to include the Friedel relation \f$q \mapsto -q\f$, if
     //! this is not already part of the space group symmetry.
     MergedData(
-        SpaceGroup space_group, std::vector<PeakCollection*> peak_collections,
-        bool friedel, int fmin = -1, int fmax = -1);
+        SpaceGroup space_group, std::vector<PeakCollection*> peak_collections, bool friedel,
+        int fmin = -1, int fmax = -1);
     MergedData(SpaceGroup space_group, bool friedel, int fmin = -1, int fmax = -1);
     //! Add a peak to the data set. It will be automatically merged correctly
     //! according to the space group symmetry.

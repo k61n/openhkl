@@ -43,7 +43,11 @@ class InstrumentStateSet {
     std::string name() const { return _name; };
     DataSet* data() const { return _data; };
     unsigned int id() const { return _id; };
-    void setId(unsigned int id) { if (_id == 0) _id = id; };
+    void setId(unsigned int id)
+    {
+        if (_id == 0)
+            _id = id;
+    };
     void reset() { _instrument_states.clear(); };
     void setInstrumentStates(const InstrumentStateList& states) { _instrument_states = states; };
 
