@@ -745,6 +745,7 @@ void SubframeMergedPeaks::saveMergedPeaks()
     auto* expt = gSession->experimentAt(_exp_drop->currentIndex())->experiment();
     auto* merger = expt->peakMerger();
     auto* merged_data = merger->getMergedData();
+    bool success = false;
 
     if (format.compare("ShelX") == 0) {
         filename = QFileDialog::getSaveFileName(
@@ -753,7 +754,7 @@ void SubframeMergedPeaks::saveMergedPeaks()
         if (filename.isEmpty())
             return;
 
-        exporter.saveToShelXMerged(filename.toStdString(), merged_data);
+        success = exporter.saveToShelXMerged(filename.toStdString(), merged_data);
     } else if (format.compare("FullProf") == 0) {
         filename = QFileDialog::getSaveFileName(
             this, "Save peaks to FullProf", loadDirectory, "FullProf hkl file (*.hkl)");
@@ -761,7 +762,7 @@ void SubframeMergedPeaks::saveMergedPeaks()
         if (filename.isEmpty())
             return;
 
-        exporter.saveToFullProfMerged(filename.toStdString(), merged_data);
+        success = exporter.saveToFullProfMerged(filename.toStdString(), merged_data);
     } else if (format.compare("Phenix") == 0) {
         filename = QFileDialog::getSaveFileName(
             this, "Save peaks to Phenix sca", loadDirectory, "Phenix sca file (*.sca)");
@@ -769,9 +770,11 @@ void SubframeMergedPeaks::saveMergedPeaks()
         if (filename.isEmpty())
             return;
 
-        exporter.saveToSCAMerged(
+        success = exporter.saveToSCAMerged(
             filename.toStdString(), merged_data, _intensity_rescale_merged->value());
     }
+    if (!success)
+        QMessageBox::critical(this, "Error", "File open unsuccessful");
 
     QFileInfo info(filename);
     s.setValue("merged", info.absolutePath());
@@ -790,6 +793,7 @@ void SubframeMergedPeaks::saveUnmergedPeaks()
     auto* expt = gSession->experimentAt(_exp_drop->currentIndex())->experiment();
     auto* merger = expt->peakMerger();
     auto* merged_data = merger->getMergedData();
+    bool success = false;
 
     if (format.compare("ShelX") == 0) {
         filename = QFileDialog::getSaveFileName(
@@ -798,7 +802,7 @@ void SubframeMergedPeaks::saveUnmergedPeaks()
         if (filename.isEmpty())
             return;
 
-        exporter.saveToShelXUnmerged(filename.toStdString(), merged_data);
+        success = exporter.saveToShelXUnmerged(filename.toStdString(), merged_data);
     } else if (format.compare("FullProf") == 0) {
         filename = QFileDialog::getSaveFileName(
             this, "Save peaks to FullProf", loadDirectory, "ShelX hkl file (*.hkl)");
@@ -806,7 +810,7 @@ void SubframeMergedPeaks::saveUnmergedPeaks()
         if (filename.isEmpty())
             return;
 
-        exporter.saveToFullProfUnmerged(filename.toStdString(), merged_data);
+        success = exporter.saveToFullProfUnmerged(filename.toStdString(), merged_data);
     } else if (format.compare("Phenix") == 0) {
         filename = QFileDialog::getSaveFileName(
             this, "Save peaks to Phenix sca", loadDirectory, "Phenix sca file (*.sca)");
@@ -814,9 +818,10 @@ void SubframeMergedPeaks::saveUnmergedPeaks()
         if (filename.isEmpty())
             return;
 
-        exporter.saveToSCAUnmerged(
+        success = exporter.saveToSCAUnmerged(
             filename.toStdString(), merged_data, _intensity_rescale_unmerged->value());
     }
+    if (!success) QMessageBox::critical(this, "Error", "File open unsuccessful");
 
     QFileInfo info(filename);
     s.setValue("merged", info.absolutePath());
