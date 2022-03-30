@@ -30,6 +30,8 @@ echo "## NSXTool dependencies:" >> $logfile
 otool -L NSXTool >> $logfile
 echo "## NSXTool RPATHs:" >> $logfile
 otool -l NSXTool | grep -A2 RPATH >> $logfile
+echo "## Python config:" >> $logfile
+python3 -c "import sysconfig as sc; print(sc.get_config_vars('LIBDIR', 'MULTIARCH'))" >> $logfile
 echo "----------" >> $logfile
 echo "The debug info written to '$logfile'."
 
