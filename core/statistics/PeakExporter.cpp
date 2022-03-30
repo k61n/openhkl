@@ -36,10 +36,11 @@
 
 namespace nsx {
 
-void PeakExporter::saveStatistics(
+bool PeakExporter::saveStatistics(
     std::string filename, const nsx::DataResolution* perShell, const nsx::DataResolution* overall)
 {
     std::fstream file(filename, std::ios::out);
+    if (!file.is_open()) return false;
 
     file << std::fixed << std::setw(10) << "dmax" << std::fixed << std::setw(10) << "dmin"
          << std::fixed << std::setw(10) << "nobs" << std::fixed << std::setw(10) << "nmerge"
@@ -83,9 +84,10 @@ void PeakExporter::saveStatistics(
     }
 
     file.close();
+    return true;
 }
 
-void PeakExporter::saveToShelXUnmerged(const std::string& filename, nsx::MergedData* mergedData)
+bool PeakExporter::saveToShelXUnmerged(const std::string& filename, nsx::MergedData* mergedData)
 {
     std::vector<Peak3D*> peak_vector;
     for (const nsx::MergedPeak& peak : mergedData->mergedPeakSet()) {
@@ -94,30 +96,26 @@ void PeakExporter::saveToShelXUnmerged(const std::string& filename, nsx::MergedD
     }
 
     std::fstream file(filename, std::ios::out);
+    if (!file.is_open()) return false;
     for (int i = 0; i < peak_vector.size(); i++) {
         const nsx::Peak3D* peak = peak_vector.at(i);
-        if (peak->enabled()) {
-            const nsx::UnitCell* cell = peak->unitCell();
-            if (cell) {
-                nsx::MillerIndex miller_index(peak->q(), *cell);
-                if (miller_index.indexed(cell->indexingTolerance())) {
-                    const Eigen::RowVector3i& hkl = miller_index.rowVector();
-                    const double intensity = peak->correctedIntensity().value();
-                    const double sigma_intensity = peak->correctedIntensity().sigma();
+        const nsx::UnitCell* cell = peak->unitCell();
+        nsx::MillerIndex miller_index(peak->q(), *cell);
+        const Eigen::RowVector3i& hkl = miller_index.rowVector();
+        const double intensity = peak->correctedIntensity().value();
+        const double sigma_intensity = peak->correctedIntensity().sigma();
 
-                    file << std::fixed << std::setw(4) << hkl(0) << std::fixed << std::setw(4)
-                         << hkl(1) << std::fixed << std::setw(4) << hkl(2) << std::fixed
-                         << std::setw(14) << std::setprecision(4) << intensity << std::fixed
-                         << std::setw(14) << std::setprecision(4) << sigma_intensity << std::fixed
-                         << std::setw(5) << "1" << std::endl;
-                }
-            }
-        }
+        file << std::fixed << std::setw(4) << hkl(0) << std::fixed << std::setw(4)
+                << hkl(1) << std::fixed << std::setw(4) << hkl(2) << std::fixed
+                << std::setw(14) << std::setprecision(4) << intensity << std::fixed
+                << std::setw(14) << std::setprecision(4) << sigma_intensity << std::fixed
+                << std::setw(5) << "1" << std::endl;
     }
     file.close();
+    return true;
 }
 
-void PeakExporter::saveToShelXMerged(const std::string& filename, nsx::MergedData* mergedData)
+bool PeakExporter::saveToShelXMerged(const std::string& filename, nsx::MergedData* mergedData)
 {
     std::fstream file(filename, std::ios::out);
     for (const nsx::MergedPeak& peak : mergedData->mergedPeakSet()) {
@@ -132,11 +130,13 @@ void PeakExporter::saveToShelXMerged(const std::string& filename, nsx::MergedDat
              << std::setprecision(4) << sigma << std::fixed << std::setw(5) << "1" << std::endl;
     }
     file.close();
+    return true;
 }
 
-void PeakExporter::saveToFullProfUnmerged(const std::string& filename, nsx::MergedData* mergedData)
+bool PeakExporter::saveToFullProfUnmerged(const std::string& filename, nsx::MergedData* mergedData)
 {
     std::fstream file(filename, std::ios::out);
+    if (!file.is_open()) return false;
 
     file << "TITLE File written by ...\n";
     file << "(3i4,2F14.4,i5,4f8.2)\n";
@@ -154,30 +154,25 @@ void PeakExporter::saveToFullProfUnmerged(const std::string& filename, nsx::Merg
 
     for (int i = 0; i < peak_vector.size(); i++) {
         nsx::Peak3D* peak = peak_vector.at(i);
-        if (peak->enabled()) {
-            const nsx::UnitCell* cell = peak->unitCell();
-            if (cell) {
-                nsx::MillerIndex miller_index(peak->q(), *cell);
-                if (miller_index.indexed(cell->indexingTolerance())) {
-                    const Eigen::RowVector3i& hkl = miller_index.rowVector();
-                    const double intensity = peak->correctedIntensity().value();
-                    const double sigma_intensity = peak->correctedIntensity().sigma();
+        const nsx::UnitCell* cell = peak->unitCell();
+        nsx::MillerIndex miller_index(peak->q(), *cell); const Eigen::RowVector3i& hkl = miller_index.rowVector();
+        const double intensity = peak->correctedIntensity().value();
+        const double sigma_intensity = peak->correctedIntensity().sigma();
 
-                    file << std::fixed << std::setw(4) << hkl(0) << std::fixed << std::setw(4)
-                         << hkl(1) << std::fixed << std::setw(4) << hkl(2) << std::fixed
-                         << std::setw(14) << std::setprecision(4) << intensity << std::fixed
-                         << std::setw(14) << std::setprecision(4) << sigma_intensity << std::fixed
-                         << std::setw(5) << "1" << std::endl;
-                }
-            }
-        }
+        file << std::fixed << std::setw(4) << hkl(0) << std::fixed << std::setw(4)
+                << hkl(1) << std::fixed << std::setw(4) << hkl(2) << std::fixed
+                << std::setw(14) << std::setprecision(4) << intensity << std::fixed
+                << std::setw(14) << std::setprecision(4) << sigma_intensity << std::fixed
+                << std::setw(5) << "1" << std::endl;
     }
     file.close();
+    return true;
 }
 
-void PeakExporter::saveToFullProfMerged(const std::string& filename, nsx::MergedData* mergedData)
+bool PeakExporter::saveToFullProfMerged(const std::string& filename, nsx::MergedData* mergedData)
 {
     std::fstream file(filename, std::ios::out);
+    if (!file.is_open()) return false;
 
     file << "TITLE File written by ...\n";
     file << "(3i4,2F14.4,i5,4f8.2)\n";
@@ -206,12 +201,14 @@ void PeakExporter::saveToFullProfMerged(const std::string& filename, nsx::Merged
              << std::endl;
     }
     file.close();
+    return true;
 }
 
-void PeakExporter::saveToSCAUnmerged(
+bool PeakExporter::saveToSCAUnmerged(
     const std::string& filename, nsx::MergedData* mergedData, double scale)
 {
     std::fstream file(filename, std::ios::out);
+    if (!file.is_open()) return false;
 
     std::vector<Peak3D*> peak_vector;
     for (const nsx::MergedPeak& peak : mergedData->mergedPeakSet()) {
@@ -234,43 +231,39 @@ void PeakExporter::saveToSCAUnmerged(
 
     for (int i = 0; i < peak_vector.size(); i++) {
         const nsx::Peak3D* peak = peak_vector.at(i);
-        if (peak->enabled()) {
-            const nsx::UnitCell* cell = peak->unitCell();
-            if (cell) {
-                const nsx::MillerIndex miller_index(peak->q(), *cell);
-                if (miller_index.indexed(cell->indexingTolerance())) {
-                    const Eigen::RowVector3i& hkl = miller_index.rowVector();
-                    const double intensity = peak->correctedIntensity().value() * scale;
-                    const double sigma_intensity = peak->correctedIntensity().sigma() * scale;
+        const nsx::UnitCell* cell = peak->unitCell();
+        const nsx::MillerIndex miller_index(peak->q(), *cell);
+        const Eigen::RowVector3i& hkl = miller_index.rowVector();
+        const double intensity = peak->correctedIntensity().value() * scale;
+        const double sigma_intensity = peak->correctedIntensity().sigma() * scale;
 
-                    file << std::fixed << std::setw(4) << hkl(0) << std::fixed << std::setw(4)
-                         << hkl(1) << std::fixed << std::setw(4) << hkl(2) << " "
-                         << std::setprecision(1);
+        file << std::fixed << std::setw(4) << hkl(0) << std::fixed << std::setw(4)
+                << hkl(1) << std::fixed << std::setw(4) << hkl(2) << " "
+                << std::setprecision(1);
 
-                    if (abs(intensity) > 100000 - 1) {
-                        file << std::fixed << std::setw(7) << std::setprecision(1)
-                             << std::scientific << intensity << " ";
-                    } else {
-                        file << std::fixed << std::setw(7) << intensity << " ";
-                    }
+        if (abs(intensity) > 100000 - 1) {
+            file << std::fixed << std::setw(7) << std::setprecision(1)
+                    << std::scientific << intensity << " ";
+        } else {
+            file << std::fixed << std::setw(7) << intensity << " ";
+        }
 
-                    if (abs(sigma_intensity) > 100000 - 1) {
-                        file << std::fixed << std::setw(7) << std::setprecision(1)
-                             << std::scientific << sigma_intensity << std::endl;
-                    } else {
-                        file << std::fixed << std::setw(7) << sigma_intensity << std::endl;
-                    }
-                }
-            }
+        if (abs(sigma_intensity) > 100000 - 1) {
+            file << std::fixed << std::setw(7) << std::setprecision(1)
+                    << std::scientific << sigma_intensity << std::endl;
+        } else {
+            file << std::fixed << std::setw(7) << sigma_intensity << std::endl;
         }
     }
     file.close();
+    return true;
 }
 
-void PeakExporter::saveToSCAMerged(
+bool PeakExporter::saveToSCAMerged(
     const std::string& filename, nsx::MergedData* mergedData, double scale)
 {
     std::fstream file(filename, std::ios::out);
+    if (!file.is_open()) return false;
 
     std::vector<const Peak3D*> peak_vector;
     for (const nsx::MergedPeak& peak : mergedData->mergedPeakSet()) {
@@ -315,6 +308,7 @@ void PeakExporter::saveToSCAMerged(
         }
     }
     file.close();
+    return true;
 }
 
 } // namespace nsx

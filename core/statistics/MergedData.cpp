@@ -28,8 +28,14 @@ MergedData::MergedData(
         for (int j = 0; j < peaks.size(); ++j)
             addPeak(peaks[j]);
     }
-    if (_nInvalid > 0)
+    if (_nInvalid > 0) {
+        nsxlog(Level::Info, "MergedData::MergedData: ", _nPeaks, " total peaks");
+        nsxlog(Level::Info, "MergedData::MergedData: ", _nMergeSuccess, " successful merges");
         nsxlog(Level::Info, "MergedData::MergedData: ", _nInvalid, " disabled peaks");
+        nsxlog(Level::Info, "MergedData::MergedData: ", _nDupes, " duplicate peaks");
+        nsxlog(Level::Info, "MergedData::MergedData: ", _nNoCell, " peaks without cell");
+        nsxlog(Level::Info, "MergedData::MergedData: ", _nBadInterp, " bad interpolations");
+    }
 }
 
 MergedData::MergedData(SpaceGroup space_group, bool friedel, int fmin, int fmax)
@@ -50,11 +56,13 @@ bool MergedData::addPeak(Peak3D* peak)
     if (!peak->enabled()) {
         ++_nInvalid;
         ++_nPeaks;
+        ++_nDisabled;
         return false;
     }
     if (!peak->unitCell()) {
         ++_nInvalid;
         ++_nPeaks;
+        ++_nNoCell;
         return false;
     }
     MergedPeak new_peak(_group, _friedel);
@@ -63,7 +71,10 @@ bool MergedData::addPeak(Peak3D* peak)
     if (!success) { // Interpolation error check
         ++_nInvalid;
         ++_nPeaks;
+        ++_nBadInterp;
         return false;
+    } else {
+        ++_nMergeSuccess;
     }
 
     auto it = _merged_peak_set.find(new_peak);
@@ -73,6 +84,7 @@ bool MergedData::addPeak(Peak3D* peak)
         merged.addPeak(peak);
         _merged_peak_set.erase(it);
         _merged_peak_set.emplace(std::move(merged));
+        ++_nDupes;
         return false;
     }
     _merged_peak_set.emplace(std::move(new_peak));

@@ -29,22 +29,22 @@ struct DataResolution;
 class PeakExporter {
  public:
     //! Saves the shell information to file.
-    void saveStatistics(
+    bool saveStatistics(
         std::string filename, const nsx::DataResolution* perShell,
         const nsx::DataResolution* overall);
     //! Saves the peak information to ShelX file format given a peak list.
-    void saveToShelXMerged(const std::string& filename, nsx::MergedData* mergedData);
+    bool saveToShelXMerged(const std::string& filename, nsx::MergedData* mergedData);
     //! Saves the peak information to ShelX file format given a merged peak list.
-    void saveToFullProfMerged(const std::string& filename, nsx::MergedData* mergedData);
+    bool saveToFullProfMerged(const std::string& filename, nsx::MergedData* mergedData);
     //! Saves the peak information to FullProf file format given a peak list.
-    void saveToSCAMerged(
+    bool saveToSCAMerged(
         const std::string& filename, nsx::MergedData* mergedData, double scale = 1.0);
     //! Saves the peak information to FullProf file format given a merged peak list.
-    void saveToShelXUnmerged(const std::string& filename, nsx::MergedData* mergedData);
+    bool saveToShelXUnmerged(const std::string& filename, nsx::MergedData* mergedData);
     //! Saves the peak information to .sca file format given a peak list.
-    void saveToFullProfUnmerged(const std::string& filename, nsx::MergedData* mergedData);
+    bool saveToFullProfUnmerged(const std::string& filename, nsx::MergedData* mergedData);
     //! Saves the peak information to .sca file format given a merged peak list.
-    void saveToSCAUnmerged(
+    bool saveToSCAUnmerged(
         const std::string& filename, nsx::MergedData* mergedData, double scale = 1.0);
 
  private:
