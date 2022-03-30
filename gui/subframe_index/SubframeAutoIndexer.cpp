@@ -54,6 +54,7 @@
 #include <QTabWidget>
 #include <QVBoxLayout>
 #include <qnamespace.h>
+#include <qobject.h>
 #include <stdexcept>
 
 
@@ -337,35 +338,28 @@ void SubframeAutoIndexer::refreshAll()
         _detector_widget->updateDatasetList(all_data);
         const auto dataset = gSession->experimentAt(_exp_combo->currentIndex())
                                  ->getData(_data_combo->currentIndex());
-        if (dataset) {
+        if (dataset)
             _max_frame->setMaximum(dataset->nFrames() - 1);
-            refreshPeakTable();
-        }
     }
     toggleUnsafeWidgets();
 }
 
 void SubframeAutoIndexer::setExperiments()
 {
+    QSignalBlocker blocker(_exp_combo);
     if (gSession->experimentNames().empty())
         return;
 
-    _exp_combo->blockSignals(true);
     QString current_exp = _exp_combo->currentText();
     _exp_combo->clear();
-
-
-    if (gSession->experimentNames().empty())
-        return;
 
     for (const QString& exp : gSession->experimentNames())
         _exp_combo->addItem(exp);
     _exp_combo->setCurrentText(current_exp);
 
-    updatePeakList();
     updateDatasetList();
+    updatePeakList();
     grabIndexerParameters();
-    refreshPeakTable();
     const auto data = _detector_widget->currentData();
     if (data) {
         _beam_offset_x->setMaximum(static_cast<double>(data->nCols()) / 2.0);
@@ -373,8 +367,6 @@ void SubframeAutoIndexer::setExperiments()
         _beam_offset_y->setMaximum(static_cast<double>(data->nRows()) / 2.0);
         _beam_offset_y->setMinimum(-static_cast<double>(data->nRows()) / 2.0);
     }
-
-    _exp_combo->blockSignals(false);
 }
 
 void SubframeAutoIndexer::setPeakViewWidgetUp()
@@ -409,28 +401,29 @@ void SubframeAutoIndexer::setFigureUp()
 
 void SubframeAutoIndexer::updateDatasetList()
 {
-    _data_combo->blockSignals(true);
+    QSignalBlocker blocker(_data_combo);
     QString current_data = _data_combo->currentText();
     _data_combo->clear();
     _data_list = gSession->experimentAt(_exp_combo->currentIndex())->allData();
-    if (!_data_list.empty())
+    if (!_data_list.empty()) {
         _detector_widget->updateDatasetList(_data_list);
 
-    const QStringList& datanames{gSession->currentProject()->getDataNames()};
-    if (!datanames.empty()) {
+        const QStringList& datanames{gSession->currentProject()->getDataNames()};
         _data_combo->addItems(datanames);
         _data_combo->setCurrentText(current_data);
     }
-    _data_combo->blockSignals(false);
 }
 
 void SubframeAutoIndexer::updatePeakList()
 {
-    _peak_combo->blockSignals(true);
+    QSignalBlocker blocker(_peak_combo);
+    QStringList peak_list = gSession->experimentAt(_exp_combo->currentIndex())->getPeakListNames();
+    if (peak_list.empty())
+        return;
+    peak_list.clear();
 
     QString current_peaks = _peak_combo->currentText();
     _peak_combo->clear();
-    auto peak_list = gSession->experimentAt(_exp_combo->currentIndex())->getPeakListNames();
 
     QStringList tmp = gSession->experimentAt(_exp_combo->currentIndex())
                           ->getPeakCollectionNames(nsx::listtype::FOUND);
@@ -453,7 +446,6 @@ void SubframeAutoIndexer::updatePeakList()
         _solutions.clear();
         _selected_unit_cell = nullptr;
     }
-    _peak_combo->blockSignals(false);
 }
 
 void SubframeAutoIndexer::refreshPeakTable()
