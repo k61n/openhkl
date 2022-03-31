@@ -31,8 +31,10 @@ bool MeanBackgroundIntegrator::compute(
     const auto& counts = region.peakData().counts();
 
     // TODO: should this be hard-coded??
-    if (events.size() < 20)
-        throw std::runtime_error("MeanBackgroundIntegrator::compute(): too few data points");
+    if (events.size() < 20) {
+        nsxlog(Level::Debug, "MeanBackgroundIntegrator::compute: too few data points");
+        return false;
+    }
 
     // compute initial mean background and error
     for (auto i = 0; i < counts.size(); ++i) {

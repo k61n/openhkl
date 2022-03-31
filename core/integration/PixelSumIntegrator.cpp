@@ -34,7 +34,11 @@ PixelSumIntegrator::~PixelSumIntegrator() = default;
 bool PixelSumIntegrator::compute(
     Peak3D* peak, ShapeCollection* shape_collection, const IntegrationRegion& region)
 {
-    MeanBackgroundIntegrator::compute(peak, shape_collection, region);
+    if (!MeanBackgroundIntegrator::compute(peak, shape_collection, region)) {
+        peak->setRejectionFlag(RejectionFlag::TooFewPoints);
+        peak->setSelected(false);
+        return false;
+    }
     PeakCoordinateSystem frame(peak);
 
     const auto& events = region.peakData().events();
