@@ -22,7 +22,7 @@
 //! Dialog to clone (deep copy) a peak collection
 class ClonePeakDialog : public QDialog {
  public:
-    ClonePeakDialog(QStringList collectionNames);
+    ClonePeakDialog(QStringList collectionNames, const QString& suggestion);
     QString originalCollectionName();
     QString clonedCollectionName();
 

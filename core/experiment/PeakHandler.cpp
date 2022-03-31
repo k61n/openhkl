@@ -139,7 +139,7 @@ std::string PeakHandler::generateName()
     if (str.size() > n) { //
         return "Please enter name for this collection";
     }
-    return std::string("PeakCollectionNr") + std::string(n - str.size(), '0').append(str);
+    return std::string("PeakCollection") + std::string(n - str.size(), '0').append(str);
 }
 
 } // namespace nsx
