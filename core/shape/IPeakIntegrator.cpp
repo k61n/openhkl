@@ -143,19 +143,11 @@ void IPeakIntegrator::integrate(
             // done reading peak data
             if (result && !integrated[peak]) {
                 current_peak->peakData().computeStandard();
-                try {
-                    if (compute(peak, shape_collection, *current_peak)) {
-                        peak->updateIntegration(
-                            rockingCurve(), meanBackground(), integratedIntensity(),
-                            _params.peak_end, _params.bkg_begin, _params.bkg_end);
-                    } else {
-                        peak->setSelected(false);
-                        peak->setRejectionFlag(RejectionFlag::IntegrationFailure);
-                    }
-                } catch (std::exception& e) {
-                    // integration failed...
-                    nsxlog(
-                        Level::Debug, "IPeakIntegrator::integrate: integration failed: ", e.what());
+                if (compute(peak, shape_collection, *current_peak)) {
+                    peak->updateIntegration(
+                        rockingCurve(), meanBackground(), integratedIntensity(),
+                        _params.peak_end, _params.bkg_begin, _params.bkg_end);
+                } else {
 #pragma omp atomic
                     ++nfailures;
                     peak->setSelected(false);
