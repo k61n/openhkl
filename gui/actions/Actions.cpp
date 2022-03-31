@@ -234,9 +234,12 @@ void Actions::clonePeaks()
 {
     gGui->setReady(false);
     QString description{"Peak collection to clone"};
+    QString suggested_name =
+        QString::fromStdString(
+            gSession->currentProject()->experiment()->generatePeakCollectionName());
     QStringList peaks_list = gSession->currentProject()->getPeakListNames();
     if (!peaks_list.empty()) {
-        std::unique_ptr<ClonePeakDialog> dlg(new ClonePeakDialog(peaks_list));
+        std::unique_ptr<ClonePeakDialog> dlg(new ClonePeakDialog(peaks_list, suggested_name));
         dlg->exec();
         if (!dlg->clonedCollectionName().isEmpty()) {
             QString original = dlg->originalCollectionName();

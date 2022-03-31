@@ -15,12 +15,14 @@
 #include "gui/subframe_experiment/properties/PeakProperties.h"
 
 #include "gui/MainWin.h"
+#include "core/experiment/Experiment.h"
 #include "gui/dialogs/ClonePeakDialog.h"
 #include "gui/items/PeakCollectionItem.h"
 #include "gui/models/PeakCollectionModel.h"
 #include "gui/models/Project.h"
 #include "gui/models/Session.h"
 #include "gui/utility/SideBar.h"
+
 #include <QFormLayout>
 #include <QHBoxLayout>
 #include <QMenu>
@@ -199,7 +201,10 @@ void PeakProperties::jumpToFilter()
 void PeakProperties::clonePeakCollection()
 {
     if (!_peak_list.empty()) {
-        std::unique_ptr<ClonePeakDialog> dlg(new ClonePeakDialog(_peak_list));
+        QString suggested_name =
+            QString::fromStdString(
+                gSession->currentProject()->experiment()->generatePeakCollectionName());
+        std::unique_ptr<ClonePeakDialog> dlg(new ClonePeakDialog(_peak_list, suggested_name));
         dlg->exec();
         if (!dlg->clonedCollectionName().isEmpty()) {
             QString original = dlg->originalCollectionName();

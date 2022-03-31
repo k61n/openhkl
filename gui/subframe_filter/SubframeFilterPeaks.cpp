@@ -487,7 +487,9 @@ void SubframeFilterPeaks::accept()
             ->experiment()
             ->getPeakCollection(_peak_combo->currentText().toStdString());
 
-    std::unique_ptr<ListNameDialog> dlg(new ListNameDialog());
+    std::string suggestion =
+        gSession->currentProject()->experiment()->generatePeakCollectionName();
+    std::unique_ptr<ListNameDialog> dlg(new ListNameDialog(QString::fromStdString(suggestion)));
     dlg->exec();
     if (!dlg->listName().isEmpty()) {
         gSession->experimentAt(_exp_combo->currentIndex())
