@@ -288,7 +288,7 @@ bool PeakExporter::saveToSCAMerged(
         const auto hkl = peak.index();
         nsx::Intensity I = peak.intensity();
         const double intensity = I.value() * scale;
-        const double sigma_intensity = I.sigma();
+        const double sigma_intensity = I.sigma() * scale;
 
         file << std::fixed << std::setw(4) << hkl(0) << std::fixed << std::setw(4) << hkl(1)
              << std::fixed << std::setw(4) << hkl(2) << " " << std::setprecision(1);
