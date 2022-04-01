@@ -453,6 +453,7 @@ void SubframeAutoIndexer::refreshPeakTable()
     if (_peak_combo->count() == 0 || _exp_combo->count() == 0)
         return;
 
+    _peak_collection.setMillerIndices();
     _peak_collection_item.setPeakCollection(&_peak_collection);
     _peak_collection_model.setRoot(&_peak_collection_item);
     _peak_table->resizeColumnsToContents();
@@ -692,8 +693,10 @@ void SubframeAutoIndexer::selectSolutionHeader(int index)
             ->getPeakCollection(_peak_combo->currentText().toStdString());
 
     std::vector<nsx::Peak3D*> peaks = collection->getPeakList();
-    for (nsx::Peak3D* peak : peaks)
+    for (nsx::Peak3D* peak : peaks) {
         peak->setUnitCell(_selected_unit_cell);
+        peak->setMillerIndices();
+    }
     refreshPeakTable();
 }
 
@@ -728,6 +731,7 @@ void SubframeAutoIndexer::acceptSolution()
             expt->assignUnitCell(collection, cellName);
             nsx::UnitCell* cell = expt->getUnitCell(cellName);
             cell->setSpaceGroup(dlg->spaceGroup().toStdString());
+            collection->setMillerIndices();
             gGui->sentinel->addLinkedComboItem(ComboType::UnitCell, dlg->unitCellName());
         }
     }

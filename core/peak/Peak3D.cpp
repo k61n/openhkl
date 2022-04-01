@@ -78,6 +78,26 @@ Peak3D::Peak3D(sptrDataSet data, const Ellipsoid& shape) : Peak3D(data)
     setShape(shape);
 }
 
+Peak3D::Peak3D(sptrDataSet data, const MillerIndex& hkl)
+    : _shape()
+    , _meanBackground()
+    , _peakEnd(3.0)
+    , _bkgBegin(3.0)
+    , _bkgEnd(6.0)
+    , _hkl(hkl)
+    , _scale(1.0)
+    , _selected(true)
+    , _masked(false)
+    , _predicted(true)
+    , _caught_by_filter(false)
+    , _rejected_by_filter(false)
+    , _transmission(1.0)
+    , _rejection_flag(RejectionFlag::NotRejected)
+    , _data(data)
+    , _rockingCurve()
+{
+}
+
 Peak3D::Peak3D(std::shared_ptr<nsx::Peak3D> peak)
 {
     setShape(peak->shape());

@@ -14,6 +14,7 @@
 
 #include "core/shape/Predictor.h"
 
+#include "base/geometry/ReciprocalVector.h"
 #include "base/utils/Logger.h"
 #include "base/utils/ProgressHandler.h"
 #include "core/data/DataSet.h"
@@ -22,6 +23,7 @@
 #include "core/instrument/Monochromator.h"
 #include "core/peak/Peak3D.h"
 #include "core/peak/Qs2Events.h"
+#include "tables/crystal/MillerIndex.h"
 
 namespace nsx {
 
@@ -43,19 +45,21 @@ std::vector<Peak3D*> Predictor::buildPeaksFromMillerIndices(
     sptrProgressHandler handler)
 {
     const Eigen::Matrix3d BU = unit_cell->reciprocalBasis();
-    std::vector<ReciprocalVector> qs;
-    for (const auto& idx : hkls)
-        qs.emplace_back(idx.rowVector().cast<double>() * BU);
+    std::vector<std::pair<MillerIndex, ReciprocalVector>> qs;
+    for (const auto& idx : hkls) {
+        ReciprocalVector q(idx.rowVector().cast<double>() * BU);
+        qs.push_back({idx,q});
+    }
     nsxlog(
         Level::Info, "Predictor::buildPeaksFromMillerIndices: ", qs.size(),
         " q-vectors generated from ", hkls.size(), " Miller indices");
 
-    const std::vector<DetectorEvent> events = algo::qVectorList2Events(
+    const std::vector<std::pair<MillerIndex, DetectorEvent>> events = algo::qMap2Events(
         qs, data->instrumentStates(), data->detector(), data->nFrames(), handler);
 
     std::vector<Peak3D*> peaks;
-    for (auto event : events) {
-        Peak3D* peak(new Peak3D(data));
+    for (const auto& [hkl, event] : events) {
+        Peak3D* peak(new Peak3D(data, hkl));
         Eigen::Vector3d center = {event.px, event.py, event.frame};
 
         // setShape may disable the peak if the centre is out of bounds
