@@ -88,6 +88,8 @@ class Peak3D {
     void setShape(const Ellipsoid& shape);
     //! Set the Miller indices
     void setMillerIndices();
+    //! Set the Miller indices from the given triple. NB. ONLY TO BE USED BY EXPERIMENTIMPORTER
+    void setMillerIndices(const MillerIndex& hkl) { _hkl = hkl; };
 
     //! Gets the projection of total data in the bounding box.
     const std::vector<Intensity>& rockingCurve() const;

@@ -28,6 +28,11 @@ MillerIndex::MillerIndex(const Eigen::RowVector3i& hkl)
 {
 }
 
+MillerIndex::MillerIndex(const Eigen::RowVector3i& hkl, const Eigen::RowVector3d& error)
+    : _hkl(hkl), _error(error)
+{
+}
+
 // MillerIndex::MillerIndex(const ReciprocalVector &q, const UnitCell &unit_cell) {
 //   const Eigen::RowVector3d hkld = q.rowVector() * unit_cell.basis();
 
