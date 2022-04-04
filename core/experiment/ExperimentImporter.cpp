@@ -309,7 +309,7 @@ void ExperimentImporter::loadPeaks(Experiment* experiment)
                 local_hkl = {hkl(k, 0), hkl(k, 1), hkl(k, 2)};
 
                 const nsx::Ellipsoid ellipsoid(local_center, local_metric);
-                const nsx::MillerIndex miller(hkl, hkl_error);
+                const nsx::MillerIndex miller(local_hkl, local_hkl_error);
 
                 sptrDataSet data_pointer = experiment->getData(std::string(data_names[k]));
                 nsx::Peak3D* peak = new nsx::Peak3D(data_pointer, ellipsoid);
