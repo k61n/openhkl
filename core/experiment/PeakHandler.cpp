@@ -128,7 +128,12 @@ bool PeakHandler::clonePeakCollection(std::string name, std::string new_name)
     if (!addEmptyCollection(new_name, getPeakCollection(name)->type())) {
         return false;
     }
-    getPeakCollection(new_name)->populate(getPeakCollection(name)->getPeakList());
+    auto* peaks = getPeakCollection(name);
+    auto* new_peaks = getPeakCollection(new_name);
+    new_peaks->populate(peaks->getPeakList());
+    new_peaks->setIndexed(peaks->isIndexed());
+    new_peaks->setIntegrated(peaks->isIntegrated());
+    new_peaks->setType(peaks->type());
     return hasPeakCollection(name);
 }
 
