@@ -322,9 +322,8 @@ int Refiner::updatePredictions(std::vector<Peak3D*> peaks)
         const sptrUnitCell batch_cell = b->sptrCell();
 
         // update the position
-        const MillerIndex hkl(peak->q(), *batch_cell);
         const ReciprocalVector q_pred(
-            hkl.rowVector().cast<double>() * batch_cell->reciprocalBasis());
+            peak->hkl().rowVector().cast<double>() * batch_cell->reciprocalBasis());
         const std::vector<DetectorEvent> events = algo::qVector2Events(
             q_pred, peak->dataSet()->instrumentStates(), peak->dataSet()->detector(), _nframes);
 
