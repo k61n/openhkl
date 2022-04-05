@@ -404,7 +404,6 @@ void SubframePredictPeaks::setExperiments()
         const auto data = _detector_widget->currentData();
         if (data) {
             _n_batches_spin->setMaximum(data->nFrames());
-            _n_batches_spin->setValue(data->nFrames());
             _beam_offset_x->setMaximum(static_cast<double>(data->nCols()) / 2.0);
             _beam_offset_x->setMinimum(-static_cast<double>(data->nCols()) / 2.0);
             _beam_offset_y->setMaximum(static_cast<double>(data->nRows()) / 2.0);

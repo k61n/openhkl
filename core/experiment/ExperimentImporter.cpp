@@ -81,8 +81,6 @@ void ExperimentImporter::loadData(Experiment* experiment)
             dataset_ptr->addDataFile(_file_name, "nsx");
             dataset_ptr->finishRead();
             experiment->addData(dataset_ptr);
-            experiment->addInstrumentStateSet(
-                dataset_ptr, dataset_ptr->reader()->transferInstrumentStates());
         }
     } catch (H5::Exception& e) {
         std::string what = e.getDetailMsg();

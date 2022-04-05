@@ -299,9 +299,6 @@ int Refiner::updatePredictions(std::vector<Peak3D*> peaks)
     filtered_peaks = peak_filter.filterEnabled(peaks, true);
     int n_enabled = filtered_peaks.size();
 
-    nsxlog(
-        Level::Info, filtered_peaks.size(), " / ", n_enabled, " peaks within indexing tolerance");
-
     int updated = 0;
 
     for (nsx::Peak3D* peak : filtered_peaks) {
@@ -382,8 +379,8 @@ void Refiner::logChange()
 {
     nsxlog(Level::Debug, "Refinement succeeded");
     if (!_params->use_batch_cells)
-        nsxlog(Level::Info, "Original cell: ", _unrefined_cell.toString());
-    nsxlog(Level::Info, "Batch/Refined cell(s):");
+        nsxlog(Level::Debug, "Original cell: ", _unrefined_cell.toString());
+    nsxlog(Level::Debug, "Batch/Refined cell(s):");
     for (const auto& batch : _batches) {
         nsxlog(Level::Debug, batch.name(), ": ", batch.cell()->toString());
     }
