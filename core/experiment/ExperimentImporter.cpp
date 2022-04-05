@@ -54,6 +54,22 @@ void ExperimentImporter::setFilePath(const std::string path, Experiment* const e
             experiment->setDiffractometer(value);
         }
 
+        if (file.attrExists(nsx::at_nsxVersion)) {
+            const H5::Attribute attr = file.openAttribute(nsx::at_nsxVersion);
+            const H5::DataType attr_type = attr.getDataType();
+            std::string value;
+            attr.read(attr_type, value);
+            nsxlog(Level::Info, "Loading data NSXTool version ", value);
+        }
+
+        if (file.attrExists(nsx::at_commitHash)) {
+            const H5::Attribute attr = file.openAttribute(nsx::at_commitHash);
+            const H5::DataType attr_type = attr.getDataType();
+            std::string value;
+            attr.read(attr_type, value);
+            nsxlog(Level::Info, "Git commit hash ", value);
+        }
+
         nsxlog(
             nsx::Level::Info, "Finished importing info for Experiment '" + experiment->name() + "'",
             " with diffractometer '" + experiment->getDiffractometer()->name() + "'",
