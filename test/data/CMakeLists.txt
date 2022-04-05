@@ -89,7 +89,7 @@ check_file(a9da31c093bf1e9984a6706a100cf1c64908c9387080f7103c5a8861ede6185fab3f1
 check_file(fa3af6170b7006016fa5e4027062235526d47646da5ad0f00a5a4e69a3ce3e13daf929ea5770bdedb287a5a6e0852aa8  CrChiA_c01runab_28615.raw)
 check_file(b82da648c43aff3b196f3e66b33150d7087071a0de72f7a79528c37886e7073c3ced38079b98a56d1e1860904c49387f  CrChiA_c01runab_28616.raw)
 check_file(598d2406631dd96a6c3b0bf4fe6f41a6b7435077b9475da0178cab34649be4b548fff182fb7d2ffed34655052d042282  CrChiA_c01runab_28617.raw)
-check_file(fd0dcaaf768a7d0d834dc4f28d5ad80a89f985393e7a3dc5c08d49a62a6b5ec84b2471bcc42ef800af087bca59bfaef0  CrChiA.nsx)
+check_file(f6e2f759824dee1310ce12c45a34b2fe22fb61ec4582d7affbd609b0da2369042ba74e6a00af0aeee8b613904a762275 CrChiA.nsx)
 
 ###################################################################################################
 #  Simulated data files for full workflow test (NSX_FULL_WORKFLOW_TEST)
