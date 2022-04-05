@@ -32,6 +32,7 @@
 #include "core/raw/HDF5TableIO.h" // HDF5TableWriter
 #include "core/raw/MetaData.h"
 #include "core/shape/PeakCollection.h"
+#include "manifest.h"
 #include "tables/crystal/UnitCell.h"
 
 #include <Eigen/Dense>
@@ -272,8 +273,12 @@ void ExperimentExporter::createFile(std::string name, std::string diffractometer
         const H5::DataSpace metaSpace(H5S_SCALAR);
         const H5::StrType str80Type(
             H5::PredType::C_S1, 80); // TODO: Make 80-chr restriction also in the GUI
+        std::string hash = COMMIT_HASH;
+        std::string version = VERSION;
         writeAttribute(file, nsx::at_experiment, name.data(), str80Type, metaSpace);
         writeAttribute(file, nsx::at_diffractometer, diffractometer.data(), str80Type, metaSpace);
+        writeAttribute(file, nsx::at_nsxVersion, version.data(), str80Type, metaSpace);
+        writeAttribute(file, nsx::at_commitHash, hash.data(), str80Type, metaSpace);
     } catch (...) {
         nsxlog(
             nsx::Level::Error, "ExperimentExporter: Failed to create the file '", path,

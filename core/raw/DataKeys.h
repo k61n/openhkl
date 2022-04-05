@@ -67,6 +67,8 @@ const std::string ds_hklError{"hklError"};
 
 //-- HDF Attribute keys
 // general
+const std::string at_commitHash("commit hash");
+const std::string at_nsxVersion("version");
 const std::string at_experiment{"experiment"};
 const std::string at_diffractometer{"diffractometer"};
 const std::string at_datasetName{"dataset"};
