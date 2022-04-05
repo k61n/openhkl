@@ -302,6 +302,7 @@ void SubframeMergedPeaks::setMergedUp()
     _intensity_rescale_merged->setValue(1);
     _intensity_rescale_merged->setMaximum(1000000);
     _intensity_rescale_merged->setMinimum(0.000001);
+    _intensity_rescale_merged->setDecimals(6);
     _intensity_rescale_merged->setToolTip(
         "Rescale intensities in output file by this factor (Phenix only)");
 
@@ -337,6 +338,7 @@ void SubframeMergedPeaks::setUnmergedUp()
     _intensity_rescale_unmerged->setValue(1);
     _intensity_rescale_unmerged->setMaximum(1000000);
     _intensity_rescale_unmerged->setMinimum(0.000001);
+    _intensity_rescale_unmerged->setDecimals(6);
     _intensity_rescale_unmerged->setToolTip(
         "Rescale intensities in output file by this factor (Phenix only)");
 
