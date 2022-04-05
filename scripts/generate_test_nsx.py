@@ -116,4 +116,30 @@ print(autoindexer.solutionsToString())
 print(expt.checkAndAssignUnitCell(found_peaks, 2.0, 0.1))  # boolean return value
 print(expt.checkAndAssignUnitCell(filtered_peaks, 2.0, 0.1))  # boolean return value
 
+# Predict peaks
+predictor = expt.predictor()
+data = expt.getAllData()[0]
+indexed_cell = expt.getUnitCell("accepted")
+prediction_params = predictor.parameters()
+prediction_params.d_min = 1.5
+prediction_params.d_max = 50.0
+predictor.predictPeaks(data, indexed_cell)
+expt.addPeakCollection("predicted", nsx.listtype_PREDICTED, predictor.peaks())
+predicted_peaks = expt.getPeakCollection("predicted")
+npeaks = predicted_peaks.numberOfPeaks()
+print(f'{npeaks} predicted')
+
+# Generate shapes
+found_peaks.computeSigmas()
+params = nsx.ShapeCollectionParameters()
+params.sigma_d = found_peaks.sigmaD()
+params.sigma_m = found_peaks.sigmaM()
+found_peaks.buildShapeCollection(data, params)
+print(f'{found_peaks.shapeCollection().numberOfPeaks()} shapes generated')
+shapes = found_peaks.shapeCollection()
+
+# Assign shapes to predicted peaks
+interpolation = nsx.PeakInterpolation_InverseDistance
+shapes.setPredictedShapes(predicted_peaks, interpolation)
+
 expt.saveToFile(f'{name}.nsx')

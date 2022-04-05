@@ -298,6 +298,7 @@ int Refiner::updatePredictions(std::vector<Peak3D*> peaks)
     std::vector<nsx::Peak3D*> filtered_peaks = peaks;
     filtered_peaks = peak_filter.filterEnabled(peaks, true);
     int n_enabled = filtered_peaks.size();
+    nsxlog(Level::Info, "Refiner::updatePredictions: ", n_enabled, " enabled peaks");
 
     int updated = 0;
 
