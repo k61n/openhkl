@@ -18,6 +18,7 @@
 #include "base/utils/ProgressHandler.h"
 #include "core/detector/Detector.h"
 #include "core/instrument/InstrumentState.h"
+#include "tables/crystal/MillerIndex.h"
 
 namespace nsx {
 
@@ -40,6 +41,12 @@ namespace algo {
  * intervals and then performing the bisection algorithm over each interval.
  */
 
+//! Returns a map of pairs of Miller indices and detector events given a map of q-vectors
+//! This method maintains the mapping between hkl triples and q-vectors/detector events
+std::vector<std::pair<MillerIndex, DetectorEvent>> qMap2Events(
+    const std::vector<std::pair<MillerIndex, ReciprocalVector>>& sample_qs,
+    const InstrumentStateList& states, const Detector& detector, const int n_intervals,
+    sptrProgressHandler handler  = nullptr);
 //! Returns detector events corresponding to the list of q values.
 std::vector<DetectorEvent> qVectorList2Events(
     const std::vector<ReciprocalVector>& sample_qs, const InstrumentStateList& states,

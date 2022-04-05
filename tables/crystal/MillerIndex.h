@@ -45,7 +45,9 @@ class MillerIndex {
 
     //! Construct a MillerIndex from an Eigen row vector of integer
     explicit MillerIndex(const Eigen::RowVector3i& hkl);
-    MillerIndex& operator=(const MillerIndex& other) = default;
+    MillerIndex(const Eigen::RowVector3i& hkl, const Eigen::RowVector3d& error);
+        MillerIndex&
+        operator=(const MillerIndex& other) = default;
     ~MillerIndex() = default;
 
     //! Returns indices in the form of an Eigen row vector

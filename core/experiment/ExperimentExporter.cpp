@@ -337,9 +337,11 @@ void ExperimentExporter::writePeaks(const std::map<std::string, PeakCollection*>
         std::vector<double> mean_bkg_val(nPeaks);
         std::vector<double> mean_bkg_sig(nPeaks);
 
+        Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor> hkl_error(nPeaks, 3);
         Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor> center(nPeaks, 3);
         Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor> metric(
             3 * nPeaks, 3);
+        Eigen::Matrix<int, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor> hkl(nPeaks, 3);
 
         center.setZero(nPeaks, 3);
         metric.setZero(3 * nPeaks, 3);
@@ -391,6 +393,10 @@ void ExperimentExporter::writePeaks(const std::map<std::string, PeakCollection*>
             Eigen::Vector3d temp_col = peak->shape().center();
             center.block(i, 0, 1, 3) = Eigen::RowVector3d{temp_col(0), temp_col(1), temp_col(2)};
             metric.block(i * 3, 0, 3, 3) = peak->shape().metric();
+            temp_col = peak->hkl().error();
+            hkl_error.block(i, 0, 1, 3) = peak->shape().metric();
+            Eigen::Vector3i itemp_col = peak->hkl().rowVector();
+            hkl.block(i, 0, 1, 3) = Eigen::RowVector3i{itemp_col(0), itemp_col(1), itemp_col(2)};
         }
 
         // TODO: explain! check size 2 vs 3!
@@ -400,6 +406,8 @@ void ExperimentExporter::writePeaks(const std::map<std::string, PeakCollection*>
         const H5::DataSpace center_space(2, center_peaks_h);
         const hsize_t metric_peaks_h[2] = {nPeaks * 3, 3};
         const H5::DataSpace metric_space(2, metric_peaks_h);
+        const H5::DataSpace hkl_error_space(2, center_peaks_h);
+        const H5::DataSpace hkl_space(2, center_peaks_h);
 
         const std::vector<std::tuple<std::string, H5::DataType, H5::DataSpace, const void*>>
             peakData_defs{
@@ -415,10 +423,12 @@ void ExperimentExporter::writePeaks(const std::map<std::string, PeakCollection*>
                 {nsx::ds_BkgIntensity, H5::PredType::NATIVE_DOUBLE, peak_space,
                  mean_bkg_val.data()},
                 {nsx::ds_BkgSigma, H5::PredType::NATIVE_DOUBLE, peak_space, mean_bkg_sig.data()},
+                {nsx::ds_hklError, H5::PredType::NATIVE_DOUBLE, hkl_error_space, hkl_error.data()},
                 {nsx::ds_Center, H5::PredType::NATIVE_DOUBLE, center_space, center.data()},
                 {nsx::ds_Metric, H5::PredType::NATIVE_DOUBLE, metric_space, metric.data()},
                 // NATIVE_INT32
                 {nsx::ds_Rejection, H5::PredType::NATIVE_INT32, peak_space, rejection_flag.data()},
+                {nsx::ds_hkl, H5::PredType::NATIVE_INT32, hkl_space, hkl.data()},
                 // NATIVE_HBOOL
                 {nsx::ds_Selected, H5::PredType::NATIVE_HBOOL, peak_space, selected.get()},
                 {nsx::ds_Masked, H5::PredType::NATIVE_HBOOL, peak_space, masked.get()},

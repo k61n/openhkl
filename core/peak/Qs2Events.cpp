@@ -30,6 +30,46 @@ auto compute_sign = [](const Eigen::RowVector3d& q, const InterpolatedState& sta
     return kf.squaredNorm() < ki.squaredNorm();
 };
 
+std::vector<std::pair<MillerIndex, DetectorEvent>> algo::qMap2Events(
+    const std::vector<std::pair<MillerIndex, ReciprocalVector>>& sample_qs,
+    const InstrumentStateList& states, const Detector& detector,
+    const int n_intervals, sptrProgressHandler handler /* = nullptr */)
+{
+    nsxlog(
+        Level::Debug, "algo::Qs2Events::qVectorList2Events: processing ", sample_qs.size(),
+        " q-vectors");
+
+    std::vector<std::pair<MillerIndex, DetectorEvent>> events;
+
+    int count = 1;
+    if (handler) {
+        std::ostringstream oss;
+        oss << "Transforming " << sample_qs.size() << " q-vectors to detector events";
+        handler->setStatus(oss.str().c_str());
+        handler->setProgress(0);
+    }
+
+// for each sample q, determine the rotation that makes it intersect the Ewald sphere
+#pragma omp parallel for
+    for (const auto& [hkl, sample_q] : sample_qs) {
+        std::vector<DetectorEvent> new_events =
+            qVector2Events(sample_q, states, detector, n_intervals);
+#pragma omp critical(dataupdate)
+        {
+        for (auto event : new_events)
+            events.push_back({hkl, event});
+        }
+        if (handler)
+            handler->setProgress(++count * 100.0 / sample_qs.size());
+    }
+    if (handler)
+        handler->setProgress(100);
+    nsxlog(
+        Level::Debug, "algo::Qs2Events::qVectorList2Events: finished; generated ", events.size(),
+        " events");
+    return events;
+}
+
 std::vector<DetectorEvent> algo::qVectorList2Events(
     const std::vector<ReciprocalVector>& sample_qs, const InstrumentStateList& states,
     const Detector& detector, const int n_intervals, sptrProgressHandler handler /* = nullptr */)

@@ -92,8 +92,7 @@ RefinementBatch::RefinementBatch(
 
     _hkls.reserve(_peaks.size());
     for (const auto* peak : _peaks) {
-        MillerIndex hkl(peak->q(), *_cell);
-        _hkls.emplace_back(hkl.rowVector().cast<double>());
+      _hkls.emplace_back(peak->hkl().rowVector().cast<double>());
 
         Eigen::Vector3d c = peak->shape().center();
         Eigen::Matrix3d M = peak->shape().metric();

@@ -22,6 +22,7 @@
 #include "core/peak/Intensity.h"
 #include "core/peak/Peak3D.h"
 #include "core/raw/DataKeys.h"
+#include "tables/crystal/MillerIndex.h"
 #include <Eigen/Dense>
 
 #include <H5Cpp.h>
@@ -80,8 +81,6 @@ void ExperimentImporter::loadData(Experiment* experiment)
             dataset_ptr->addDataFile(_file_name, "nsx");
             dataset_ptr->finishRead();
             experiment->addData(dataset_ptr);
-            experiment->addInstrumentStateSet(
-                dataset_ptr, dataset_ptr->reader()->transferInstrumentStates());
         }
     } catch (H5::Exception& e) {
         std::string what = e.getDetailMsg();
@@ -171,7 +170,8 @@ void ExperimentImporter::loadPeaks(Experiment* experiment)
                 {nsx::ds_BkgIntensity, &mean_bkg_val},
                 {nsx::ds_BkgSigma, &mean_bkg_sig}};
 
-            std::map<std::string, Eigen_VecXint*> int_keys{{nsx::ds_Rejection, &rejection_flag}};
+            std::map<std::string, Eigen_VecXint*> int_keys{
+                {nsx::ds_Rejection, &rejection_flag},};
 
             Eigen_VecXbool predicted(n_peaks);
             Eigen_VecXbool masked(n_peaks);
@@ -186,6 +186,11 @@ void ExperimentImporter::loadPeaks(Experiment* experiment)
                 n_peaks, 3);
             Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor> metric(
                 3 * n_peaks, 3);
+            Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor> hkl_error(
+                n_peaks, 3);
+
+            Eigen::Matrix<int, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor> hkl(
+                n_peaks, 3);
 
             std::vector<std::string> data_names;
             std::vector<unsigned int> unit_cells;
@@ -228,6 +233,22 @@ void ExperimentImporter::loadPeaks(Experiment* experiment)
                 H5::DataSet data_set = peak_collection.openDataSet(nsx::ds_Metric);
                 H5::DataSpace space(data_set.getSpace());
                 data_set.read(metric.data(), H5::PredType::NATIVE_DOUBLE, space, space);
+            }
+
+            nsxlog(Level::Debug, "Importing hkls");
+            // Load the hkls
+            {
+                H5::DataSet data_set = peak_collection.openDataSet(nsx::ds_hkl);
+                H5::DataSpace space(data_set.getSpace());
+                data_set.read(hkl.data(), H5::PredType::NATIVE_INT, space, space);
+            }
+
+            nsxlog(Level::Debug, "Importing hkl errors");
+            // Load the hkl errors
+            {
+                H5::DataSet data_set = peak_collection.openDataSet(nsx::ds_hklError);
+                H5::DataSpace space(data_set.getSpace());
+                data_set.read(hkl_error.data(), H5::PredType::NATIVE_DOUBLE, space, space);
             }
 
             nsxlog(Level::Debug, "Importing DataSet names");
@@ -276,12 +297,17 @@ void ExperimentImporter::loadPeaks(Experiment* experiment)
 
             Eigen::Vector3d local_center;
             Eigen::Matrix3d local_metric;
+            Eigen::Vector3d local_hkl_error;
+            Eigen::Vector3i local_hkl;
 
             for (int k = 0; k < n_peaks; ++k) {
                 local_center = Eigen::Vector3d(center(k, 0), center(k, 1), center(k, 2));
                 local_metric = metric.block(k * 3, 0, 3, 3);
+                local_hkl_error = {hkl_error(k, 0), hkl_error(k, 1), hkl_error(k, 2)};
+                local_hkl = {hkl(k, 0), hkl(k, 1), hkl(k, 2)};
 
                 const nsx::Ellipsoid ellipsoid(local_center, local_metric);
+                const nsx::MillerIndex miller(local_hkl, local_hkl_error);
 
                 sptrDataSet data_pointer = experiment->getData(std::string(data_names[k]));
                 nsx::Peak3D* peak = new nsx::Peak3D(data_pointer, ellipsoid);
@@ -294,7 +320,9 @@ void ExperimentImporter::loadPeaks(Experiment* experiment)
                     transmission[k], peak_mean_bkg, predicted[k], selected[k], masked[k],
                     rejection_flag[k]);
 
+
                 peak->setUnitCell(experiment->getSptrUnitCell(unit_cells[k]));
+                peak->setMillerIndices(miller);
 
                 peaks.push_back(peak);
             }

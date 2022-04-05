@@ -76,6 +76,8 @@ class Peak3D {
     Peak3D(sptrDataSet dataSet);
     //! Create peak belonging to data with given shape
     Peak3D(sptrDataSet dataSet, const Ellipsoid& shape);
+    //! Create peak belonging to data with given shape
+    Peak3D(sptrDataSet dataSet, const MillerIndex& hkl);
     //! Creat the peak from another peak
     Peak3D(std::shared_ptr<nsx::Peak3D> peak);
 
@@ -84,6 +86,10 @@ class Peak3D {
 
     //! Sets the Peak region. Peak shaped is owned after setting
     void setShape(const Ellipsoid& shape);
+    //! Set the Miller indices
+    void setMillerIndices();
+    //! Set the Miller indices from the given triple. NB. ONLY TO BE USED BY EXPERIMENTIMPORTER
+    void setMillerIndices(const MillerIndex& hkl) { _hkl = hkl; };
 
     //! Gets the projection of total data in the bounding box.
     const std::vector<Intensity>& rockingCurve() const;
@@ -168,8 +174,6 @@ class Peak3D {
     void setRawIntensity(const Intensity& i);
     //! Get the Miller indices for this peak
     const MillerIndex& hkl() const;
-    //! Set the Miller indices given the q-vector and unit cell
-    void setMillerIndices();
     //! Return the peak scale
     double getPeakEnd() { return _peakEnd; };
     //! Return the beginniing of the background region (in peak scales)

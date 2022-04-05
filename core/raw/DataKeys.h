@@ -62,6 +62,8 @@ const std::string ds_Rejection{"Rejection"};
 const std::string ds_Selected{"Selected"};
 const std::string ds_Masked{"Masked"};
 const std::string ds_Predicted{"Predicted"};
+const std::string ds_hkl{"hkl"};
+const std::string ds_hklError{"hklError"};
 
 //-- HDF Attribute keys
 // general

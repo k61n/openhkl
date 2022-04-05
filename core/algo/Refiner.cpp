@@ -298,9 +298,7 @@ int Refiner::updatePredictions(std::vector<Peak3D*> peaks)
     std::vector<nsx::Peak3D*> filtered_peaks = peaks;
     filtered_peaks = peak_filter.filterEnabled(peaks, true);
     int n_enabled = filtered_peaks.size();
-
-    nsxlog(
-        Level::Info, filtered_peaks.size(), " / ", n_enabled, " peaks within indexing tolerance");
+    nsxlog(Level::Info, "Refiner::updatePredictions: ", n_enabled, " enabled peaks");
 
     int updated = 0;
 
@@ -322,9 +320,8 @@ int Refiner::updatePredictions(std::vector<Peak3D*> peaks)
         const sptrUnitCell batch_cell = b->sptrCell();
 
         // update the position
-        const MillerIndex hkl(peak->q(), *batch_cell);
         const ReciprocalVector q_pred(
-            hkl.rowVector().cast<double>() * batch_cell->reciprocalBasis());
+            peak->hkl().rowVector().cast<double>() * batch_cell->reciprocalBasis());
         const std::vector<DetectorEvent> events = algo::qVector2Events(
             q_pred, peak->dataSet()->instrumentStates(), peak->dataSet()->detector(), _nframes);
 
@@ -383,8 +380,8 @@ void Refiner::logChange()
 {
     nsxlog(Level::Debug, "Refinement succeeded");
     if (!_params->use_batch_cells)
-        nsxlog(Level::Info, "Original cell: ", _unrefined_cell.toString());
-    nsxlog(Level::Info, "Batch/Refined cell(s):");
+        nsxlog(Level::Debug, "Original cell: ", _unrefined_cell.toString());
+    nsxlog(Level::Debug, "Batch/Refined cell(s):");
     for (const auto& batch : _batches) {
         nsxlog(Level::Debug, batch.name(), ": ", batch.cell()->toString());
     }
