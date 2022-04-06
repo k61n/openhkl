@@ -99,6 +99,7 @@ class TestFullWorkFlow(unittest.TestCase):
         indexed_cell.setSpaceGroup(space_group)
         expt.addUnitCell("accepted", indexed_cell)
         expt.assignUnitCell(found_peaks, 'accepted');
+        found_peaks.setMillerIndices();
         print(f'Reference cell {reference_cell.toString()}')
         print(f'Using cell     {indexed_cell.toString()}')
 
