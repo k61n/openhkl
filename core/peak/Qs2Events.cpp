@@ -32,8 +32,8 @@ auto compute_sign = [](const Eigen::RowVector3d& q, const InterpolatedState& sta
 
 std::vector<std::pair<MillerIndex, DetectorEvent>> algo::qMap2Events(
     const std::vector<std::pair<MillerIndex, ReciprocalVector>>& sample_qs,
-    const InstrumentStateList& states, const Detector& detector,
-    const int n_intervals, sptrProgressHandler handler /* = nullptr */)
+    const InstrumentStateList& states, const Detector& detector, const int n_intervals,
+    sptrProgressHandler handler /* = nullptr */)
 {
     nsxlog(
         Level::Debug, "algo::Qs2Events::qVectorList2Events: processing ", sample_qs.size(),
@@ -56,8 +56,8 @@ std::vector<std::pair<MillerIndex, DetectorEvent>> algo::qMap2Events(
             qVector2Events(sample_q, states, detector, n_intervals);
 #pragma omp critical(dataupdate)
         {
-        for (auto event : new_events)
-            events.push_back({hkl, event});
+            for (auto event : new_events)
+                events.push_back({hkl, event});
         }
         if (handler)
             handler->setProgress(++count * 100.0 / sample_qs.size());
