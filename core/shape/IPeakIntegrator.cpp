@@ -145,8 +145,8 @@ void IPeakIntegrator::integrate(
                 current_peak->peakData().computeStandard();
                 if (compute(peak, shape_collection, *current_peak)) {
                     peak->updateIntegration(
-                        rockingCurve(), meanBackground(), integratedIntensity(),
-                        _params.peak_end, _params.bkg_begin, _params.bkg_end);
+                        rockingCurve(), meanBackground(), integratedIntensity(), _params.peak_end,
+                        _params.bkg_begin, _params.bkg_end);
                 } else {
 #pragma omp atomic
                     ++nfailures;

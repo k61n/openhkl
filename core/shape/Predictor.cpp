@@ -48,14 +48,14 @@ std::vector<Peak3D*> Predictor::buildPeaksFromMillerIndices(
     std::vector<std::pair<MillerIndex, ReciprocalVector>> qs;
     for (const auto& idx : hkls) {
         ReciprocalVector q(idx.rowVector().cast<double>() * BU);
-        qs.push_back({idx,q});
+        qs.push_back({idx, q});
     }
     nsxlog(
         Level::Info, "Predictor::buildPeaksFromMillerIndices: ", qs.size(),
         " q-vectors generated from ", hkls.size(), " Miller indices");
 
-    const std::vector<std::pair<MillerIndex, DetectorEvent>> events = algo::qMap2Events(
-        qs, data->instrumentStates(), data->detector(), data->nFrames(), handler);
+    const std::vector<std::pair<MillerIndex, DetectorEvent>> events =
+        algo::qMap2Events(qs, data->instrumentStates(), data->detector(), data->nFrames(), handler);
 
     std::vector<Peak3D*> peaks;
     for (const auto& [hkl, event] : events) {

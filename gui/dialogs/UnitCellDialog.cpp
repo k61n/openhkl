@@ -35,7 +35,7 @@ UnitCellDialog::UnitCellDialog(
     _cell_name = new QLineEdit("");
     _cell_name->setFixedWidth(200);
     gridLayout->addWidget(label, 0, 0, 1, 1);
-    gridLayout->addWidget(_cell_name , 0, 1, 1, 2);
+    gridLayout->addWidget(_cell_name, 0, 1, 1, 2);
 
     label = new QLabel("Peak collection:");
     label->setAlignment(Qt::AlignRight | Qt::AlignVCenter);

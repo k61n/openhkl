@@ -823,7 +823,8 @@ void SubframeMergedPeaks::saveUnmergedPeaks()
         success = exporter.saveToSCAUnmerged(
             filename.toStdString(), merged_data, _intensity_rescale_unmerged->value());
     }
-    if (!success) QMessageBox::critical(this, "Error", "File open unsuccessful");
+    if (!success)
+        QMessageBox::critical(this, "Error", "File open unsuccessful");
 
     QFileInfo info(filename);
     s.setValue("merged", info.absolutePath());

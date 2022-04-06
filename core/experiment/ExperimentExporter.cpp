@@ -401,7 +401,8 @@ void ExperimentExporter::writePeaks(const std::map<std::string, PeakCollection*>
                 hkl_error.block(i, 0, 1, 3) = peak->shape().metric();
 
                 Eigen::Vector3i itemp_col = peak->hkl().rowVector();
-                hkl.block(i, 0, 1, 3) = Eigen::RowVector3i{itemp_col(0), itemp_col(1), itemp_col(2)};
+                hkl.block(i, 0, 1, 3) =
+                    Eigen::RowVector3i{itemp_col(0), itemp_col(1), itemp_col(2)};
             }
         }
 

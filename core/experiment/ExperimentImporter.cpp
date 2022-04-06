@@ -187,7 +187,8 @@ void ExperimentImporter::loadPeaks(Experiment* experiment)
                 {nsx::ds_BkgSigma, &mean_bkg_sig}};
 
             std::map<std::string, Eigen_VecXint*> int_keys{
-                {nsx::ds_Rejection, &rejection_flag},};
+                {nsx::ds_Rejection, &rejection_flag},
+            };
 
             Eigen_VecXbool predicted(n_peaks);
             Eigen_VecXbool masked(n_peaks);
@@ -205,8 +206,7 @@ void ExperimentImporter::loadPeaks(Experiment* experiment)
             Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor> hkl_error(
                 n_peaks, 3);
 
-            Eigen::Matrix<int, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor> hkl(
-                n_peaks, 3);
+            Eigen::Matrix<int, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor> hkl(n_peaks, 3);
 
             std::vector<std::string> data_names;
             std::vector<unsigned int> unit_cells;
