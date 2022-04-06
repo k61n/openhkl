@@ -337,8 +337,10 @@ void ExperimentImporter::loadPeaks(Experiment* experiment)
                     rejection_flag[k]);
 
 
-                peak->setUnitCell(experiment->getSptrUnitCell(unit_cells[k]));
-                peak->setMillerIndices(miller);
+                if (experiment->numUnitCells() > 0) {
+                    peak->setUnitCell(experiment->getSptrUnitCell(unit_cells[k]));
+                    peak->setMillerIndices(miller);
+                }
 
                 peaks.push_back(peak);
             }
@@ -440,8 +442,10 @@ void ExperimentImporter::loadUnitCells(Experiment* experiment)
             experiment->addUnitCell(unit_cell_name, temp_cell);
         }
 
-        unsigned int max_val = *std::max_element(cell_ids.begin(), cell_ids.end());
-        experiment->setLastUnitCellIndex(max_val + 1);
+        if (object_num > 0) {
+            unsigned int max_val = *std::max_element(cell_ids.begin(), cell_ids.end());
+            experiment->setLastUnitCellIndex(max_val + 1);
+        }
     } catch (H5::Exception& e) {
         std::string what = e.getDetailMsg();
         throw std::runtime_error(what);
