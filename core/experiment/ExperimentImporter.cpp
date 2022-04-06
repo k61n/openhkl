@@ -289,7 +289,7 @@ void ExperimentImporter::loadPeaks(Experiment* experiment)
 
             nsxlog(Level::Debug, "Importing UnitCell names");
             // Load the unit cell strings
-            {
+            if (experiment->numUnitCells() > 0) {
                 H5::DataSet uc_data_set = peak_collection.openDataSet(nsx::ds_UnitCellNames);
                 H5::DataType uc_data_type = uc_data_set.getDataType();
                 H5::DataSpace uc_space = uc_data_set.getSpace();
@@ -319,11 +319,8 @@ void ExperimentImporter::loadPeaks(Experiment* experiment)
             for (int k = 0; k < n_peaks; ++k) {
                 local_center = Eigen::Vector3d(center(k, 0), center(k, 1), center(k, 2));
                 local_metric = metric.block(k * 3, 0, 3, 3);
-                local_hkl_error = {hkl_error(k, 0), hkl_error(k, 1), hkl_error(k, 2)};
-                local_hkl = {hkl(k, 0), hkl(k, 1), hkl(k, 2)};
 
                 const nsx::Ellipsoid ellipsoid(local_center, local_metric);
-                const nsx::MillerIndex miller(local_hkl, local_hkl_error);
 
                 sptrDataSet data_pointer = experiment->getData(std::string(data_names[k]));
                 nsx::Peak3D* peak = new nsx::Peak3D(data_pointer, ellipsoid);
@@ -338,6 +335,9 @@ void ExperimentImporter::loadPeaks(Experiment* experiment)
 
 
                 if (experiment->numUnitCells() > 0) {
+                    local_hkl_error = {hkl_error(k, 0), hkl_error(k, 1), hkl_error(k, 2)};
+                    local_hkl = {hkl(k, 0), hkl(k, 1), hkl(k, 2)};
+                    const nsx::MillerIndex miller(local_hkl, local_hkl_error);
                     peak->setUnitCell(experiment->getSptrUnitCell(unit_cells[k]));
                     peak->setMillerIndices(miller);
                 }

@@ -389,19 +389,20 @@ void ExperimentExporter::writePeaks(const std::map<std::string, PeakCollection*>
             data_names.push_back(peak->dataSet()->name());
 
             const UnitCell* unit_cell_ptr = peak->unitCell();
-            if (!unit_cell_ptr)
-                continue;
-
-            const std::string unit_cell_id = std::to_string(unit_cell_ptr->id());
-            unit_cells.push_back(unit_cell_id);
 
             Eigen::Vector3d temp_col = peak->shape().center();
             center.block(i, 0, 1, 3) = Eigen::RowVector3d{temp_col(0), temp_col(1), temp_col(2)};
             metric.block(i * 3, 0, 3, 3) = peak->shape().metric();
-            temp_col = peak->hkl().error();
-            hkl_error.block(i, 0, 1, 3) = peak->shape().metric();
-            Eigen::Vector3i itemp_col = peak->hkl().rowVector();
-            hkl.block(i, 0, 1, 3) = Eigen::RowVector3i{itemp_col(0), itemp_col(1), itemp_col(2)};
+            if (unit_cell_ptr) {
+                const std::string unit_cell_id = std::to_string(unit_cell_ptr->id());
+                unit_cells.push_back(unit_cell_id);
+
+                temp_col = peak->hkl().error();
+                hkl_error.block(i, 0, 1, 3) = peak->shape().metric();
+
+                Eigen::Vector3i itemp_col = peak->hkl().rowVector();
+                hkl.block(i, 0, 1, 3) = Eigen::RowVector3i{itemp_col(0), itemp_col(1), itemp_col(2)};
+            }
         }
 
         // TODO: explain! check size 2 vs 3!
