@@ -20,7 +20,6 @@
 #include "core/shape/PeakFilter.h"
 #include "gui/MainWin.h" // gGui
 #include "gui/connect/Sentinel.h"
-#include "gui/dialogs/ListNameDialog.h"
 #include "gui/frames/ProgressView.h"
 #include "gui/graphics/DetectorScene.h"
 #include "gui/graphics/SXPlot.h"

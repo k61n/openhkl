@@ -763,22 +763,20 @@ void SubframePredictPeaks::accept()
     std::string suggestion = expt->generatePeakCollectionName();
     std::unique_ptr<ListNameDialog> dlg(new ListNameDialog(QString::fromStdString(suggestion)));
     dlg->exec();
-    if (!dlg->listName().isEmpty()) {
-        if (!expt->addPeakCollection(
-                dlg->listName().toStdString(), nsx::listtype::PREDICTED,
-                _peak_collection.getPeakList())) {
-            QMessageBox::warning(
-                this, "Unable to add PeakCollection",
-                "Unable to add PeakCollection with this name. Please make sure to use unique names "
-                "only");
-            return;
-        }
-        auto* collection = expt->getPeakCollection(dlg->listName().toStdString());
-        collection->setIndexed(true);
-        project->generatePeakModel(dlg->listName());
-        gGui->sentinel->addLinkedComboItem(ComboType::PredictedPeaks, dlg->listName());
-        gGui->sentinel->addLinkedComboItem(ComboType::PeakCollection, dlg->listName());
+    if (dlg->listName().isEmpty()) return;
+    if (dlg->result() == QDialog::Rejected) return;
+    if (!gSession->experimentAt(_exp_combo->currentIndex())
+             ->experiment()
+             ->acceptFoundPeaks(dlg->listName().toStdString(), _peak_collection)) {
+        QMessageBox::warning(
+            this, "Unable to add PeakCollection", "Collection with this name already exists!");
+        return;
     }
+    auto* collection = expt->getPeakCollection(dlg->listName().toStdString());
+    collection->setIndexed(true);
+    project->generatePeakModel(dlg->listName());
+    gGui->sentinel->addLinkedComboItem(ComboType::PredictedPeaks, dlg->listName());
+    gGui->sentinel->addLinkedComboItem(ComboType::PeakCollection, dlg->listName());
 }
 
 void SubframePredictPeaks::refreshPeakTable()

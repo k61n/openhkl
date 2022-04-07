@@ -39,6 +39,7 @@
 #include <QHeaderView>
 #include <QItemDelegate>
 #include <QLabel>
+#include <QMessageBox>
 #include <QScrollBar>
 #include <QSpacerItem>
 #include <QTableWidgetItem>
@@ -490,15 +491,24 @@ void SubframeFilterPeaks::accept()
     std::string suggestion = gSession->currentProject()->experiment()->generatePeakCollectionName();
     std::unique_ptr<ListNameDialog> dlg(new ListNameDialog(QString::fromStdString(suggestion)));
     dlg->exec();
-    if (!dlg->listName().isEmpty()) {
-        gSession->experimentAt(_exp_combo->currentIndex())
-            ->experiment()
-            ->acceptFilter(dlg->listName().toStdString(), collection);
-
-        gSession->experimentAt(_exp_combo->currentIndex())->generatePeakModel(dlg->listName());
-        auto peak_list = gSession->experimentAt(_exp_combo->currentIndex())->getPeakListNames();
-        _peak_combo->updateList(peak_list);
+    if (dlg->listName().isEmpty())
+        return;
+    if (dlg->result() == QDialog::Rejected)
+        return;
+    if (!gSession->experimentAt(_exp_combo->currentIndex())
+             ->experiment()
+             ->acceptFoundPeaks(dlg->listName().toStdString(), _peak_collection)) {
+        QMessageBox::warning(
+            this, "Unable to add PeakCollection", "Collection with this name already exists!");
+        return;
     }
+    gSession->experimentAt(_exp_combo->currentIndex())
+        ->experiment()
+        ->acceptFilter(dlg->listName().toStdString(), collection);
+
+    gSession->experimentAt(_exp_combo->currentIndex())->generatePeakModel(dlg->listName());
+    auto peak_list = gSession->experimentAt(_exp_combo->currentIndex())->getPeakListNames();
+    _peak_combo->updateList(peak_list);
 }
 
 void SubframeFilterPeaks::refreshPeakTable()
