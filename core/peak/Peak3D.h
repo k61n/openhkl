@@ -186,6 +186,8 @@ class Peak3D {
     RejectionFlag rejectionFlag() const { return _rejection_flag; };
     //! Return a string explaining the rejection
     std::string rejectionString() const;
+    //! Return a string representation of the peak
+    std::string toString() const;
 
 
 #ifndef SWIG

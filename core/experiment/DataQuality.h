@@ -53,7 +53,6 @@ struct ShellQuality : DataQuality {
     double dmax; //!< Upper limit of d for resolution shell
 
     void computeQuality(MergedData& merged_peaks, double d_min, double d_max);
-    void setCompleteness(const double c);
     std::string toString() const;
 };
 

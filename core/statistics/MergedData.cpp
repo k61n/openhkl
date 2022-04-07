@@ -20,16 +20,25 @@ namespace nsx {
 MergedData::MergedData(
     SpaceGroup space_group, std::vector<PeakCollection*> peak_collections, bool friedel, int fmin,
     int fmax)
-    : _group(space_group), _friedel(friedel), _merged_peak_set(), _frame_min(fmin), _frame_max(fmax)
+    : _group(space_group)
+    , _friedel(friedel)
+    , _merged_peak_set()
+    , _frame_min(fmin)
+    , _frame_max(fmax)
 {
+    nsxlog(Level::Info, "MergedData::MergedData: merging peaks");
     _peak_collections = peak_collections;
     for (int i = 0; i < _peak_collections.size(); ++i) {
+        nsxlog(
+            Level::Info, "MergedData::MergedData: peak collection ", _peak_collections[i]->name());
         std::vector<Peak3D*> peaks = _peak_collections[i]->getPeakList();
         for (int j = 0; j < peaks.size(); ++j)
             addPeak(peaks[j]);
     }
     if (_nInvalid > 0) {
-        nsxlog(Level::Info, "MergedData::MergedData: ", _nPeaks, " total peaks");
+        nsxlog(Level::Info, "MergedData::MergedData: ", _max_peaks, " maximum possible peaks");
+        nsxlog(Level::Info, "MergedData::MergedData: ", totalSize(), " merged peaks");
+        nsxlog(Level::Info, "MergedData::MergedData: ", _nExtinct, " extinct peaks");
         nsxlog(Level::Info, "MergedData::MergedData: ", _nMergeSuccess, " successful merges");
         nsxlog(Level::Info, "MergedData::MergedData: ", _nInvalid, " disabled peaks");
         nsxlog(Level::Info, "MergedData::MergedData: ", _nDupes, " duplicate peaks");
@@ -52,6 +61,7 @@ bool MergedData::addPeak(Peak3D* peak)
         if (c[2] >= _frame_max && c[2] <= _frame_min)
             return false;
     }
+    ++_max_peaks;
 
     if (!peak->enabled()) {
         ++_nInvalid;
@@ -67,11 +77,16 @@ bool MergedData::addPeak(Peak3D* peak)
     }
     MergedPeak new_peak(_group, _friedel);
 
-    bool success = new_peak.addPeak(peak);
-    if (!success) { // Interpolation error check
+    MergeFlag success = new_peak.addPeak(peak);
+    if (success == MergeFlag::InvalidQ) { // Interpolation error check
         ++_nInvalid;
         ++_nPeaks;
         ++_nBadInterp;
+        return false;
+    } else if (success == MergeFlag::Extinct){
+        ++_nPeaks;
+        --_max_peaks;
+        nsxlog(Level::Info, "Extinct: ", peak->toString());
         return false;
     } else {
         ++_nMergeSuccess;
@@ -121,7 +136,7 @@ double MergedData::completeness()
 {
     if (totalSize() == 0)
         return 0.0;
-    return double(_nPeaks - _nInvalid) / double(_nPeaks);
+    return double(totalSize()) / double(_max_peaks);
 }
 
 void MergedData::setDRange(const double d_min, const double d_max)

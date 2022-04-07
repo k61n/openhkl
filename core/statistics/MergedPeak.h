@@ -20,8 +20,13 @@
 
 namespace nsx {
 
-//! A PeakList, and crystallographic information (SpaceGroup, MillerIndex, ...).
+enum class MergeFlag {
+    Valid,
+    InvalidQ,
+    Extinct
+};
 
+//! A list of peaks, and crystallographic information (SpaceGroup, MillerIndex, ...).
 class MergedPeak {
  public:
     //! Construct a merged peak with the given spacegroup.
@@ -33,7 +38,7 @@ class MergedPeak {
     MergedPeak(const SpaceGroup& grp, bool friedel = false);
 
     //! Add a peak to the merged peak.
-    bool addPeak(Peak3D* peak);
+    MergeFlag addPeak(Peak3D* peak);
 
     //! Returns a representative Miller index of the peak.
     MillerIndex index() const;
