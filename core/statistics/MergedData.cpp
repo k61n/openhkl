@@ -20,11 +20,7 @@ namespace nsx {
 MergedData::MergedData(
     SpaceGroup space_group, std::vector<PeakCollection*> peak_collections, bool friedel, int fmin,
     int fmax)
-    : _group(space_group)
-    , _friedel(friedel)
-    , _merged_peak_set()
-    , _frame_min(fmin)
-    , _frame_max(fmax)
+    : _group(space_group), _friedel(friedel), _merged_peak_set(), _frame_min(fmin), _frame_max(fmax)
 {
     nsxlog(Level::Info, "MergedData::MergedData: merging peaks");
     _peak_collections = peak_collections;

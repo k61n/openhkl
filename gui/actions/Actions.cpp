@@ -85,7 +85,7 @@ void Actions::setupView()
     connect(log_window, &QAction::triggered, []() {
         gGui->log_window->show();
         gGui->log_window->logWidget()->verticalScrollBar()->setValue(
-                gGui->log_window->logWidget()->verticalScrollBar()->maximum());
+            gGui->log_window->logWidget()->verticalScrollBar()->maximum());
     });
     connect(close_peak_windows, &QAction::triggered, this, &Actions::closePeakWindows);
 }

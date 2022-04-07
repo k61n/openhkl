@@ -713,8 +713,10 @@ void SubframeAutoIndexer::acceptSolution()
         std::unique_ptr<UnitCellDialog> dlg(new UnitCellDialog(
             QString::fromStdString(expt->generateUnitCellName()), collections, space_groups));
         dlg->exec();
-        if (dlg->unitCellName().isEmpty()) return;
-        if (dlg->result() == QDialog::Rejected) return;
+        if (dlg->unitCellName().isEmpty())
+            return;
+        if (dlg->result() == QDialog::Rejected)
+            return;
 
         std::string cellName = dlg->unitCellName().toStdString();
         _selected_unit_cell->setName(cellName);

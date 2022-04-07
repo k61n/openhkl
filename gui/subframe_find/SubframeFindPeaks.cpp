@@ -560,18 +560,20 @@ void SubframeFindPeaks::accept()
     auto expt = gSession->experimentAt(_exp_combo->currentIndex())->experiment();
     nsx::PeakFinder* finder = expt->peakFinder();
 
-    if (!finder->currentPeaks().empty()) return;
+    if (!finder->currentPeaks().empty())
+        return;
     std::unique_ptr<ListNameDialog> dlg(
         new ListNameDialog(QString::fromStdString(expt->generatePeakCollectionName())));
     dlg->exec();
-    if (dlg->listName().isEmpty()) return;
-    if (dlg->result() == QDialog::Rejected) return;
+    if (dlg->listName().isEmpty())
+        return;
+    if (dlg->result() == QDialog::Rejected)
+        return;
     if (!gSession->experimentAt(_exp_combo->currentIndex())
-                ->experiment()
-                ->acceptFoundPeaks(dlg->listName().toStdString(), _peak_collection)) {
+             ->experiment()
+             ->acceptFoundPeaks(dlg->listName().toStdString(), _peak_collection)) {
         QMessageBox::warning(
-            this, "Unable to add PeakCollection",
-            "Collection with this name already exists!");
+            this, "Unable to add PeakCollection", "Collection with this name already exists!");
         return;
     }
     gSession->experimentAt(_exp_combo->currentIndex())->generatePeakModel(dlg->listName());
