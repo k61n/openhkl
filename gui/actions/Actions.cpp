@@ -29,6 +29,7 @@
 #include "gui/subwindows/PeakWindow.h"
 #include "gui/utility/LinkedComboBox.h"
 #include "gui/utility/SideBar.h"
+#include "gui/widgets/LogWidget.h"
 #include "tables/crystal/SpaceGroup.h"
 #include <qaction.h>
 
@@ -81,7 +82,11 @@ void Actions::setupView()
         gGui->instrumentstate_window->show();
         gGui->instrumentstate_window->refreshAll();
     });
-    connect(log_window, &QAction::triggered, []() { gGui->log_window->show(); });
+    connect(log_window, &QAction::triggered, []() {
+        gGui->log_window->show();
+        gGui->log_window->logWidget()->verticalScrollBar()->setValue(
+                gGui->log_window->logWidget()->verticalScrollBar()->maximum());
+    });
     connect(close_peak_windows, &QAction::triggered, this, &Actions::closePeakWindows);
 }
 
