@@ -16,7 +16,6 @@
 
 #include "gui/connect/Sentinel.h"
 
-#include <QDebug>
 #include <QSignalBlocker>
 
 int LinkedComboBox::_count = 0;

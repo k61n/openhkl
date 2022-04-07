@@ -282,7 +282,6 @@ void SubframeHome::_switchCurrentExperiment(const QModelIndex& index) const
 
 void SubframeHome::saveSettings() const
 {
-    qRegisterMetaTypeStreamOperators<QList<QStringList>>("last_loaded");
     QSettings s;
     s.beginGroup("RecentFiles");
     s.setValue("last_loaded", QVariant::fromValue(_last_imports));
@@ -290,7 +289,6 @@ void SubframeHome::saveSettings() const
 
 void SubframeHome::readSettings()
 {
-    qRegisterMetaTypeStreamOperators<QList<QStringList>>("last_loaded");
     QSettings s;
     s.beginGroup("RecentFiles");
     _last_imports = s.value("last_loaded").value<QList<QStringList>>();

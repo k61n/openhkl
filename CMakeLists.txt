@@ -32,6 +32,7 @@ option(BUILD_DOCUMENTATION "Build Sphinx/Doxygen documentation" ON)
 option(BUILD_PDF_DOCUMENTATION "Build Sphinx documentation using LaTeX" ON)
 option(NSX_TIDY "Upon 'make', clang-tidy will print warnings as specified in .clang-tidy" OFF)
 option(NSX_FULL_WORKFLOW_TEST "Add full workflow test to ctest" OFF)
+option(BUILD_WITH_QT6 "Build using QT6" OFF)
 
 # Path to test data directory must provided via -DNSX_TESTDATA_DIR or from cache.
 set(NSX_TESTDATA_URL https://computing.mlz-garching.de/download/testdata/nsx)
@@ -142,6 +143,16 @@ endif()
 #  Qt
 ###################################################################################################
 
+if(BUILD_WITH_QT6)
+  set(QT_VER "Qt6")
+  set(QT_LIBS "Qt6::Widgets")
+  set(QT_INCLUDES ${Qt6Widgets_INCLUDE_DIRl})
+else()
+  set(QT_VER "Qt5")
+  set(QT_LIBS "Qt5::Widgets")
+  set(QT_INCLUDES ${Qt5Widgets_INCLUDE_DIR})
+endif()
+
 set(OpenGL_GL_PREFERENCE LEGACY)
 set(QT_USE_QTOPENGL TRUE)
 find_package(OpenGL REQUIRED)
@@ -150,10 +161,10 @@ message(STATUS "  libraries: ${OPENGL_LIBRARIES}")
 message(STATUS "  headers: ${OPENGL_INCLUDE_DIR}")
 
 if (APPLE)
-    find_package(Qt5 COMPONENTS Core Gui Widgets OpenGL PrintSupport REQUIRED
+    find_package(${QT_VER} COMPONENTS Core Gui Widgets OpenGL PrintSupport REQUIRED
         HINTS /opt/local/ /opt/local/lib /opt/local/include)
 else()
-    find_package(Qt5 COMPONENTS Core Gui Widgets OpenGL PrintSupport REQUIRED)
+    find_package(${QT_VER} COMPONENTS Core Gui Widgets OpenGL PrintSupport REQUIRED)
 endif()
 
 set(CMAKE_AUTOMOC ON)

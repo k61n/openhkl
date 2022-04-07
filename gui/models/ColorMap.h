@@ -17,6 +17,7 @@
 
 #include <Eigen/Dense>
 #include <QImage>
+#include <vector>
 
 //! A colormap for the DetectorScene
 class ColorMap {
