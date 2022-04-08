@@ -76,7 +76,6 @@ class MergedData {
     int _nDisabled = 0;
     int _nBadInterp = 0;
     int _nDupes = 0;
-    int _nMergeSuccess = 0;
     int _nExtinct = 0;
     int _max_peaks = 0;
 };

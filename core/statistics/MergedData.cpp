@@ -35,7 +35,6 @@ MergedData::MergedData(
         nsxlog(Level::Info, "MergedData::MergedData: ", _max_peaks, " maximum possible peaks");
         nsxlog(Level::Info, "MergedData::MergedData: ", totalSize(), " merged peaks");
         nsxlog(Level::Info, "MergedData::MergedData: ", _nExtinct, " extinct peaks");
-        nsxlog(Level::Info, "MergedData::MergedData: ", _nMergeSuccess, " successful merges");
         nsxlog(Level::Info, "MergedData::MergedData: ", _nInvalid, " disabled peaks");
         nsxlog(Level::Info, "MergedData::MergedData: ", _nDupes, " duplicate peaks");
         nsxlog(Level::Info, "MergedData::MergedData: ", _nNoCell, " peaks without cell");
@@ -84,8 +83,6 @@ bool MergedData::addPeak(Peak3D* peak)
         --_max_peaks;
         nsxlog(Level::Info, "Extinct: ", peak->toString());
         return false;
-    } else {
-        ++_nMergeSuccess;
     }
 
     auto it = _merged_peak_set.find(new_peak);
@@ -126,13 +123,6 @@ double MergedData::redundancy() const
 void MergedData::clear()
 {
     _merged_peak_set.clear();
-}
-
-double MergedData::completeness()
-{
-    if (totalSize() == 0)
-        return 0.0;
-    return double(totalSize()) / double(_max_peaks);
 }
 
 void MergedData::setDRange(const double d_min, const double d_max)

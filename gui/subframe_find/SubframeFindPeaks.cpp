@@ -560,7 +560,7 @@ void SubframeFindPeaks::accept()
     auto expt = gSession->experimentAt(_exp_combo->currentIndex())->experiment();
     nsx::PeakFinder* finder = expt->peakFinder();
 
-    if (!finder->currentPeaks().empty())
+    if (finder->currentPeaks().empty())
         return;
     std::unique_ptr<ListNameDialog> dlg(
         new ListNameDialog(QString::fromStdString(expt->generatePeakCollectionName())));
