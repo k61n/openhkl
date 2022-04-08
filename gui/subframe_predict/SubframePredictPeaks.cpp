@@ -767,13 +767,16 @@ void SubframePredictPeaks::accept()
         return;
     if (dlg->result() == QDialog::Rejected)
         return;
-    if (!gSession->experimentAt(_exp_combo->currentIndex())
-             ->experiment()
-             ->acceptFoundPeaks(dlg->listName().toStdString(), _peak_collection)) {
+
+    if (!expt->addPeakCollection(
+            dlg->listName().toStdString(), nsx::listtype::PREDICTED,
+            _peak_collection.getPeakList())) {
         QMessageBox::warning(
-            this, "Unable to add PeakCollection", "Collection with this name already exists!");
+            this, "Unable to add PeakCollection",
+            "Unable to add PeakCollection, please use a unique name");
         return;
     }
+
     auto* collection = expt->getPeakCollection(dlg->listName().toStdString());
     collection->setIndexed(true);
     project->generatePeakModel(dlg->listName());
