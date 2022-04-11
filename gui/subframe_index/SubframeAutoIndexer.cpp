@@ -53,7 +53,6 @@
 #include <QSplitter>
 #include <QTabWidget>
 #include <QVBoxLayout>
-#include <qnamespace.h>
 #include <qobject.h>
 #include <stdexcept>
 
@@ -714,26 +713,28 @@ void SubframeAutoIndexer::acceptSolution()
         std::unique_ptr<UnitCellDialog> dlg(new UnitCellDialog(
             QString::fromStdString(expt->generateUnitCellName()), collections, space_groups));
         dlg->exec();
-        if (!dlg->unitCellName().isEmpty()) {
-            std::string cellName = dlg->unitCellName().toStdString();
-            _selected_unit_cell->setName(cellName);
+        if (dlg->unitCellName().isEmpty())
+            return;
+        if (dlg->result() == QDialog::Rejected)
+            return;
 
-            if (!expt->addUnitCell(dlg->unitCellName().toStdString(), *_selected_unit_cell.get())) {
-                QMessageBox::warning(
-                    this, "Unable to add Unit Cell", "UnitCell with same name already exists");
-                return;
-            }
-
-            gSession->onUnitCellChanged();
-
-            nsx::PeakCollection* collection =
-                expt->getPeakCollection(dlg->peakCollectionName().toStdString());
-            expt->assignUnitCell(collection, cellName);
-            nsx::UnitCell* cell = expt->getUnitCell(cellName);
-            cell->setSpaceGroup(dlg->spaceGroup().toStdString());
-            collection->setMillerIndices();
-            gGui->sentinel->addLinkedComboItem(ComboType::UnitCell, dlg->unitCellName());
+        std::string cellName = dlg->unitCellName().toStdString();
+        _selected_unit_cell->setName(cellName);
+        if (!expt->addUnitCell(dlg->unitCellName().toStdString(), *_selected_unit_cell.get())) {
+            QMessageBox::warning(
+                this, "Unable to add Unit Cell", "UnitCell with same name already exists");
+            return;
         }
+
+        gSession->onUnitCellChanged();
+
+        nsx::PeakCollection* collection =
+            expt->getPeakCollection(dlg->peakCollectionName().toStdString());
+        expt->assignUnitCell(collection, cellName);
+        nsx::UnitCell* cell = expt->getUnitCell(cellName);
+        cell->setSpaceGroup(dlg->spaceGroup().toStdString());
+        collection->setMillerIndices();
+        gGui->sentinel->addLinkedComboItem(ComboType::UnitCell, dlg->unitCellName());
     }
 }
 

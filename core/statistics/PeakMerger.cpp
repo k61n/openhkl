@@ -98,7 +98,6 @@ void PeakMerger::computeQuality()
     // R-factors, CC, completeness per shell
     for (auto&& merged_data : _merged_data_per_shell) {
         quality.computeQuality(*merged_data, merged_data->dMin(), merged_data->dMax());
-        quality.setCompleteness(merged_data->completeness());
         _shell_qualities.addShell(quality);
     }
     // Overall R-factors, CC, completeness

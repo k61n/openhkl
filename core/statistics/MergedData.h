@@ -46,10 +46,10 @@ class MergedData {
     double redundancy() const;
     //! Returns total number of observations (including redundant ones)
     size_t totalSize() const;
+    //! Return theoretical maximum number of peaks
+    int maxPeaks() const { return _max_peaks; };
     //! Clear the merged data
     void clear();
-    //! Compute the completeness ( # valid peaks / # peaks )
-    double completeness();
     //! Set the d range
     void setDRange(double d_min, double d_max);
     //! Get minimum d
@@ -76,7 +76,8 @@ class MergedData {
     int _nDisabled = 0;
     int _nBadInterp = 0;
     int _nDupes = 0;
-    int _nMergeSuccess = 0;
+    int _nExtinct = 0;
+    int _max_peaks = 0;
 };
 
 } // namespace nsx

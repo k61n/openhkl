@@ -21,6 +21,7 @@
 
 int main(int argc, char* argv[])
 {
+    qRegisterMetaTypeStreamOperators<QList<QStringList>>("Data"); // for QSettings
     QApplication app{argc, argv};
 
     QApplication::setApplicationName("NSXTool");

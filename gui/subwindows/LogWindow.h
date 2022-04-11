@@ -29,6 +29,8 @@ class LogWindow : public QDialog {
     LogWindow(QWidget* parent = nullptr);
     // Save the displayed log messages
     void saveLog();
+    //! Return the log widget
+    LogWidget* logWidget() { return _log_widget; };
 
  private:
     LogWidget* _log_widget;
