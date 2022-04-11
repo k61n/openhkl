@@ -51,6 +51,8 @@ class InstrumentStateHandler {
     std::size_t numInstrumentStateSets() const { return _instrumentstate_map.size(); };
     //! Set the last index on loading an experiment
     void setLastIndex(unsigned int index) { _last_index = index; };
+    //! Return a pointer to the map
+    InstrumentStateMap* instrumentStateMap() { return &_instrumentstate_map; };
 
  private:
     //! Container for InstrumentStateSet unique pointers

@@ -156,6 +156,11 @@ void Experiment::saveToFile(const std::string& path) const
         unit_cells.push_back(cell.get());
     exporter.writeUnitCells(unit_cells);
 
+    std::map<DataSet*, InstrumentStateSet*> instrument_states;
+    for (const auto& it : *_instrumentstate_handler->instrumentStateMap())
+        instrument_states.insert({it.first.get(), it.second.get()});
+    exporter.writeInstrumentStates(instrument_states);
+
     exporter.finishWrite();
 
     if (overwrite_datafile) {

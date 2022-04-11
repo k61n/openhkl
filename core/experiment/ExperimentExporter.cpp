@@ -23,6 +23,7 @@
 #include "core/gonio/Gonio.h"
 #include "core/instrument/Diffractometer.h"
 #include "core/instrument/InstrumentState.h"
+#include "core/instrument/InstrumentStateSet.h"
 #include "core/instrument/Monochromator.h"
 #include "core/instrument/Sample.h"
 #include "core/instrument/Source.h"
@@ -88,7 +89,6 @@ void writeDetectorState(
     }
 }
 
-
 void writeSampleState(
     H5::H5File& file, const std::string& datakey, const nsx::DataSet* const dataset)
 {
@@ -112,7 +112,6 @@ void writeSampleState(
         sample_scan.write(&values(0), stateValueType, scanSpace, scanSpace);
     }
 }
-
 
 void writeMetadata(H5::Group& meta_group, const nsx::MetaData& metadata)
 {
@@ -153,7 +152,6 @@ void writePeakDataNames(
     H5::DataSet data_H5(file.createDataSet(datakey, strVarType, peak_space));
     data_H5.write(data_name_pointers.data(), strVarType, peak_space, peak_space);
 }
-
 
 void writeFrames(
     H5::H5File& file, const std::string& dataCollectionsKey,
@@ -209,58 +207,7 @@ void writeFrames(
     }
 }
 
-
-void writeInstrumentStates(H5::H5File& file, const std::string& datakey, nsx::DataSet* dataset)
-{
-    const std::string instrumentStatesKey{datakey + "/" + nsx::gr_Instrument};
-    file.createGroup(nsx::gr_Instrument);
-    H5::Group instrument_grp{file.createGroup(instrumentStatesKey)};
-    const nsx::InstrumentStateList& instrumentStates = dataset->instrumentStates();
-    const std::size_t n_states = instrumentStates.size();
-    //-- write detector orientation (3d matrix)
-    const hsize_t mat3d_size = 9; // 3x3=9 matrix elements
-    const hsize_t quaternion_size = 4; // x,y,z,w = 4 elements
-    const hsize_t vec3d_size = 3; // 3 elements
-
-    const H5::DataType stateValueType{H5::PredType::NATIVE_DOUBLE};
-    HDF5TableWriter detectorOrientation(
-        instrument_grp, stateValueType, n_states, mat3d_size, nsx::ds_detectorOrientation),
-        detectorPositionOffset(
-            instrument_grp, stateValueType, n_states, vec3d_size, nsx::ds_detectorPositionOffset),
-        sampleOrientation(
-            instrument_grp, stateValueType, n_states, quaternion_size, nsx::ds_sampleOrientation),
-        sampleOrientationOffset(
-            instrument_grp, stateValueType, n_states, quaternion_size,
-            nsx::ds_sampleOrientationOffset),
-        samplePosition(
-            instrument_grp, stateValueType, n_states, vec3d_size, nsx::ds_samplePosition),
-        ni(instrument_grp, stateValueType, n_states, vec3d_size, nsx::ds_beamDirection),
-        wavelength(instrument_grp, stateValueType, n_states, 1, nsx::ds_beamWavelength),
-        refined(instrument_grp, H5::PredType::NATIVE_HBOOL, n_states, 1, nsx::ds_isRefinedState);
-
-    std::size_t i_row = 0;
-    for (const nsx::InstrumentState& state : instrumentStates) {
-        detectorOrientation.writeRow(i_row, state.detectorOrientation.data());
-        detectorPositionOffset.writeRow(i_row, state.detectorPositionOffset.data());
-        samplePosition.writeRow(i_row, state.samplePosition.data());
-        sampleOrientation.writeRow(i_row, state.sampleOrientation.coeffs().data());
-        sampleOrientationOffset.writeRow(i_row, state.sampleOrientationOffset.coeffs().data());
-        samplePosition.writeRow(i_row, state.samplePosition.data());
-        ni.writeRow(i_row, state.ni.data());
-        wavelength.writeRow(i_row, &state.wavelength);
-        refined.writeRow(i_row, &state.refined);
-
-        i_row += 1;
-    }
-
-    nsxlog(
-        nsx::Level::Debug, "ExperimentExporter: Exported ", i_row + 1,
-        " instrument states to the database");
-}
-
-
 } // namespace
-
 
 namespace nsx {
 
@@ -300,9 +247,6 @@ void ExperimentExporter::writeData(const std::map<std::string, DataSet*> data)
 
         // Write detector states
         writeDetectorState(file, datakey, data_item);
-
-        // Write instrument states
-        writeInstrumentStates(file, datakey, data_item);
 
         // Write sample states
         writeSampleState(file, datakey, data_item);
@@ -499,6 +443,56 @@ void ExperimentExporter::writeUnitCells(const std::vector<UnitCell*> unit_cells)
             metaSpace);
         const uint z_val = unit_cell->z();
         writeAttribute(unit_cell_group, nsx::at_z, &z_val, H5::PredType::NATIVE_UINT, metaSpace);
+    }
+}
+
+void ExperimentExporter::writeInstrumentStates(
+    std::map<DataSet*, nsx::InstrumentStateSet*> instrumentStateMap)
+{
+    std::string instrumentStateKey = "/" + nsx::gr_Instrument;
+    H5::H5File file{_file_name.c_str(), H5F_ACC_RDWR};
+    file.createGroup(instrumentStateKey);
+
+    for (const auto& [dataset, instrumentStateSet] : instrumentStateMap) {
+        std::string instrumentStateSetKey = instrumentStateKey + "/" + dataset->name();
+        H5::Group instrument_grp{file.createGroup(instrumentStateSetKey)};
+        const nsx::InstrumentStateList& instrumentStates = instrumentStateSet->instrumentStates();
+        const std::size_t n_states = instrumentStates.size();
+        //-- write detector orientation (3d matrix)
+        const hsize_t mat3d_size = 9; // 3x3=9 matrix elements
+        const hsize_t quaternion_size = 4; // x,y,z,w = 4 elements
+        const hsize_t vec3d_size = 3; // 3 elements
+
+        const H5::DataType stateValueType{H5::PredType::NATIVE_DOUBLE};
+        HDF5TableWriter detectorOrientation(
+            instrument_grp, stateValueType, n_states, mat3d_size, nsx::ds_detectorOrientation),
+            detectorPositionOffset(
+                instrument_grp, stateValueType, n_states, vec3d_size, nsx::ds_detectorPositionOffset),
+            sampleOrientation(
+                instrument_grp, stateValueType, n_states, quaternion_size, nsx::ds_sampleOrientation),
+            sampleOrientationOffset(
+                instrument_grp, stateValueType, n_states, quaternion_size,
+                nsx::ds_sampleOrientationOffset),
+            samplePosition(
+                instrument_grp, stateValueType, n_states, vec3d_size, nsx::ds_samplePosition),
+            ni(instrument_grp, stateValueType, n_states, vec3d_size, nsx::ds_beamDirection),
+            wavelength(instrument_grp, stateValueType, n_states, 1, nsx::ds_beamWavelength),
+            refined(instrument_grp, H5::PredType::NATIVE_HBOOL, n_states, 1, nsx::ds_isRefinedState);
+
+        std::size_t i_row = 0;
+        for (const nsx::InstrumentState& state : instrumentStates) {
+            detectorOrientation.writeRow(i_row, state.detectorOrientation.data());
+            detectorPositionOffset.writeRow(i_row, state.detectorPositionOffset.data());
+            samplePosition.writeRow(i_row, state.samplePosition.data());
+            sampleOrientation.writeRow(i_row, state.sampleOrientation.coeffs().data());
+            sampleOrientationOffset.writeRow(i_row, state.sampleOrientationOffset.coeffs().data());
+            samplePosition.writeRow(i_row, state.samplePosition.data());
+            ni.writeRow(i_row, state.ni.data());
+            wavelength.writeRow(i_row, &state.wavelength);
+            refined.writeRow(i_row, &state.refined);
+
+            i_row += 1;
+        }
     }
 }
 
