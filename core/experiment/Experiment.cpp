@@ -54,7 +54,7 @@ Experiment::~Experiment() = default;
 Experiment::Experiment(const std::string& name, const std::string& diffractometerName) : _name(name)
 {
     // start logging
-    Logger::instance().start(nsx::kw_logFilename, Level::Info);
+    Logger::instance().start(nsx::kw_logFilename, Level::Debug);
     nsxlog(Level::Info, "Git branch ", GIT_BRANCH, " / commit hash ", COMMIT_HASH);
 
     _instrumentstate_handler = std::make_unique<InstrumentStateHandler>();
@@ -188,6 +188,7 @@ void Experiment::loadFromFile(const std::string& path)
     importer.loadData(this);
     importer.loadUnitCells(this);
     importer.loadPeaks(this);
+    importer.loadInstrumentStates(this);
     setDefaultDMin();
 }
 
@@ -348,9 +349,9 @@ int Experiment::numData() const
     return _data_handler->numData();
 }
 
-bool Experiment::addData(sptrDataSet data)
+bool Experiment::addData(sptrDataSet data, bool default_states)
 {
-    if (!_data_handler->addData(data, data->name())) {
+    if (!_data_handler->addData(data, data->name()), default_states) {
         return false;
     }
     setDefaultDMin();
@@ -523,9 +524,10 @@ std::string Experiment::generatePeakCollectionName()
     return _peak_handler->generateName();
 }
 
-bool Experiment::addInstrumentStateSet(sptrDataSet data, const InstrumentStateList& states)
+bool Experiment::addInstrumentStateSet(
+    sptrDataSet data, const InstrumentStateList& states, bool overwrite)
 {
-    return _instrumentstate_handler->addInstrumentStateSet(data, states);
+    return _instrumentstate_handler->addInstrumentStateSet(data, states, overwrite);
 }
 
 bool Experiment::addInstrumentStateSet(
