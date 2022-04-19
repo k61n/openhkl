@@ -143,7 +143,7 @@ void InstrumentStateWindow::updateData()
         _data_combo->setCurrentText(current_data);
         const auto* expt = gSession->currentProject()->experiment();
         const auto data = expt->getData(_data_combo->currentText().toStdString());
-        _frame_spin->setMaximum(data->nFrames());
+        _frame_spin->setMaximum(data->nFrames()-1);
     }
 }
 

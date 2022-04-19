@@ -300,12 +300,7 @@ bool Session::loadRawData()
             dataset_ptr->addRawFrame(filenm);
 
         dataset_ptr->finishRead();
-        if (!exp->addData(dataset_ptr)) {
-            QMessageBox::warning(
-                nullptr, "Unable to add Dataset",
-                "Could not add Dataset " + QString::fromStdString(dataset_ptr->name())
-                    + "to the DataHandler");
-        }
+        exp->addData(dataset_ptr);
         onDataChanged();
         auto data_list = currentProject()->getDataNames();
         gGui->sentinel->setLinkedComboList(ComboType::DataSet, data_list);

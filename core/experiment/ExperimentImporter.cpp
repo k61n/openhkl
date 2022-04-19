@@ -464,6 +464,7 @@ void ExperimentImporter::loadInstrumentStates(Experiment* experiment)
         H5::H5File file(_file_name.c_str(), H5F_ACC_RDONLY);
         H5::Group instrument_grp(file.openGroup(nsx::gr_Instrument));
 
+        Diffractometer* diff = experiment->getDiffractometer();
         const hsize_t object_num = instrument_grp.getNumObjs();
         for (int i = 0; i < object_num; ++i)  {
             nsx::InstrumentStateList instrument_states;
@@ -485,7 +486,7 @@ void ExperimentImporter::loadInstrumentStates(Experiment* experiment)
                 ni(ni_ds), wavelength(wavelength_ds), refined(refined_ds);
 
             std::size_t n_states = detectorOrientation.n_rows;
-            nsx::InstrumentState state;
+            nsx::InstrumentState state(diff);
             for (std::size_t i_row = 0; i_row < n_states; ++i_row) {
                 detectorOrientation.readRow(i_row, state.detectorOrientation.data());
                 detectorPositionOffset.readRow(i_row, state.detectorPositionOffset.data());
