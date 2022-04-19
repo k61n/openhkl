@@ -23,6 +23,7 @@ namespace nsx {
 
 class DataSet;
 class Diffractometer;
+class InstrumentStateSet;
 class PeakCollection;
 class UnitCell;
 
@@ -31,12 +32,14 @@ class ExperimentExporter {
  public:
     //! Create the file
     void createFile(std::string name, std::string diffractometer, std::string path);
-    //! Write the data into the current file
+    //! Write the data to the current file
     void writeData(const std::map<std::string, DataSet*> data);
-    //! Write the peak data into the current file
+    //! Write the peak data to the current file
     void writePeaks(const std::map<std::string, PeakCollection*> peakCollections);
-    //! write the unit cells into current file
+    //! write the unit cells to current file
     void writeUnitCells(const std::vector<UnitCell*> unit_cells);
+    //! write the instrument states to the current file
+    void writeInstrumentStates(const std::map<DataSet*, InstrumentStateSet*> instrumentStateMap);
     //! Finish writing the current file
     void finishWrite();
 

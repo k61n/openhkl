@@ -85,7 +85,7 @@ class Experiment {
     //! Return number of data sets
     int numData() const;
     //! Add a data set to the handler
-    bool addData(sptrDataSet data);
+    bool addData(sptrDataSet data, bool default_states = true);
     //! Check whether the handler has named data set
     bool hasData(const std::string& name) const;
     //! Remove data set from handler
@@ -164,7 +164,8 @@ class Experiment {
     //! Add a set of instrment states
     bool addInstrumentStateSet(sptrDataSet data);
     //! Add a set of instrment states
-    bool addInstrumentStateSet(sptrDataSet data, const InstrumentStateList& states);
+    bool addInstrumentStateSet(
+        sptrDataSet data, const InstrumentStateList& states, bool overwrite = true);
     //! Add a set of instrment states
     bool addInstrumentStateSet(sptrDataSet data, std::unique_ptr<InstrumentStateSet>& states);
     //! Returns the named InstrumentStateSet

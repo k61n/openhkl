@@ -34,7 +34,8 @@ class InstrumentStateHandler {
     //! Add a set of instrment states
     bool addInstrumentStateSet(sptrDataSet data);
     //! Add a set of instrment states
-    bool addInstrumentStateSet(sptrDataSet data, const InstrumentStateList& states);
+    bool addInstrumentStateSet(
+        sptrDataSet data, const InstrumentStateList& states, bool overwrite = true);
     //! Add a set of instrment states
     bool addInstrumentStateSet(sptrDataSet data, std::unique_ptr<InstrumentStateSet>& states);
     //! Returns true if the experiment has named instrument state set
@@ -51,6 +52,8 @@ class InstrumentStateHandler {
     std::size_t numInstrumentStateSets() const { return _instrumentstate_map.size(); };
     //! Set the last index on loading an experiment
     void setLastIndex(unsigned int index) { _last_index = index; };
+    //! Return a pointer to the map
+    InstrumentStateMap* instrumentStateMap() { return &_instrumentstate_map; };
 
  private:
     //! Container for InstrumentStateSet unique pointers

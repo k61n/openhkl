@@ -35,15 +35,19 @@ bool InstrumentStateHandler::addInstrumentStateSet(sptrDataSet data)
 }
 
 bool InstrumentStateHandler::addInstrumentStateSet(
-    sptrDataSet data, const InstrumentStateList& states)
+    sptrDataSet data, const InstrumentStateList& states, bool overwrite)
 {
-    if (hasInstrumentStateSet(data))
+    if (hasInstrumentStateSet(data) && !overwrite)
         return false;
     nsxlog(Level::Info, "InstrumentStateHandler::addInstrumentStateSet for DataSet'", data->name());
     std::unique_ptr<InstrumentStateSet> ptr = std::make_unique<InstrumentStateSet>(data, states);
     ptr->setId(_last_index++);
     data->setInstrumentStates(ptr.get());
-    _instrumentstate_map.insert({data, std::move(ptr)});
+    if (overwrite) {
+        _instrumentstate_map.insert_or_assign(data, std::move(ptr));
+    } else {
+        _instrumentstate_map.insert({data, std::move(ptr)});
+    }
     return hasInstrumentStateSet(data);
 }
 

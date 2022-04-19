@@ -156,6 +156,11 @@ void Experiment::saveToFile(const std::string& path) const
         unit_cells.push_back(cell.get());
     exporter.writeUnitCells(unit_cells);
 
+    std::map<DataSet*, InstrumentStateSet*> instrument_states;
+    for (const auto& it : *_instrumentstate_handler->instrumentStateMap())
+        instrument_states.insert({it.first.get(), it.second.get()});
+    exporter.writeInstrumentStates(instrument_states);
+
     exporter.finishWrite();
 
     if (overwrite_datafile) {
@@ -183,6 +188,7 @@ void Experiment::loadFromFile(const std::string& path)
     importer.loadData(this);
     importer.loadUnitCells(this);
     importer.loadPeaks(this);
+    importer.loadInstrumentStates(this);
     setDefaultDMin();
 }
 
@@ -343,9 +349,9 @@ int Experiment::numData() const
     return _data_handler->numData();
 }
 
-bool Experiment::addData(sptrDataSet data)
+bool Experiment::addData(sptrDataSet data, bool default_states)
 {
-    if (!_data_handler->addData(data, data->name())) {
+    if (!_data_handler->addData(data, data->name()), default_states) {
         return false;
     }
     setDefaultDMin();
@@ -518,9 +524,10 @@ std::string Experiment::generatePeakCollectionName()
     return _peak_handler->generateName();
 }
 
-bool Experiment::addInstrumentStateSet(sptrDataSet data, const InstrumentStateList& states)
+bool Experiment::addInstrumentStateSet(
+    sptrDataSet data, const InstrumentStateList& states, bool overwrite)
 {
-    return _instrumentstate_handler->addInstrumentStateSet(data, states);
+    return _instrumentstate_handler->addInstrumentStateSet(data, states, overwrite);
 }
 
 bool Experiment::addInstrumentStateSet(

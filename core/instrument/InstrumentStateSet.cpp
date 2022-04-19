@@ -25,7 +25,7 @@ InstrumentStateSet::InstrumentStateSet(DataSet* data, const InstrumentStateList&
 {
     _name = data->name();
     _nframes = data->nFrames();
-    _instrument_states.reserve(_nframes);
+    // _instrument_states.reserve(_nframes);
     for (const auto& state : states) {
         _instrument_states.push_back(state);
     }
@@ -35,7 +35,7 @@ InstrumentStateSet::InstrumentStateSet(sptrDataSet data) : _id(0), _data(data.ge
 {
     _name = data->name();
     _nframes = data->nFrames();
-    _instrument_states.reserve(_nframes);
+    // _instrument_states.reserve(_nframes);
 
     for (unsigned int i = 0; i < _nframes; ++i)
         _instrument_states.push_back(data->diffractometer()->instrumentState(i));

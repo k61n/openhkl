@@ -77,9 +77,4 @@ std::string IDataReader::NSXfilepath() const
     return "";
 }
 
-std::unique_ptr<InstrumentStateSet>& IDataReader::transferInstrumentStates()
-{
-    return _instrument_states;
-}
-
 } // namespace nsx

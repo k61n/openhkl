@@ -26,12 +26,14 @@ class ExperimentImporter {
  public:
     //! Create the file
     void setFilePath(std::string path, Experiment* experiment);
-    //! Write the data into the current file
+    //! read data from the current file
     void loadData(Experiment* experiment);
-    //! Write the peak data into the current file
+    //! read peaks from the current file
     void loadPeaks(Experiment* experiment);
-    //! write the unit cells into current file
+    //! read unit cells from the current file
     void loadUnitCells(Experiment* experiment);
+    //! read instrument states from the current file
+    void loadInstrumentStates(Experiment* experiment);
     //! Finish writing the current file
     void finishLoad();
 

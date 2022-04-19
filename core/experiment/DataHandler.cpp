@@ -72,7 +72,7 @@ sptrDataSet DataHandler::getData(std::string name) const
     return it->second;
 }
 
-bool DataHandler::addData(sptrDataSet data, std::string name)
+bool DataHandler::addData(sptrDataSet data, std::string name, bool default_states)
 {
     if (name.empty())
         name = data->name();
@@ -80,10 +80,8 @@ bool DataHandler::addData(sptrDataSet data, std::string name)
     if (name.empty())
         throw std::invalid_argument("DataHandler::addData: Data name cannot be empty");
 
-    if (hasData(name)) {
+    if (hasData(name))
         throw std::invalid_argument("DataHandler::addData: Data name must be unique");
-        return false;
-    }
 
     // Add the data only if it does not exist in the current data map
     if (_data_map.find(name) != _data_map.end())
@@ -123,8 +121,9 @@ bool DataHandler::addData(sptrDataSet data, std::string name)
     nsxlog(
         Level::Info, "DataHandler::addData: adding DataSet '", name, "': ", data->nFrames(),
         " frames");
-    _data_map.insert(std::make_pair(name, data));
-    _instrument_state_handler->addInstrumentStateSet(data);
+    _data_map.insert({name, data});
+    if (default_states)
+        _instrument_state_handler->addInstrumentStateSet(data);
 
     return hasData(name);
 }

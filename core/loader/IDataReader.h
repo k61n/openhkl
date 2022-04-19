@@ -62,8 +62,6 @@ class IDataReader {
     //! Return the NSX (HDF5) filepath associated with the dataset (if any)
     virtual std::string NSXfilepath() const;
 
-    std::unique_ptr<InstrumentStateSet>& transferInstrumentStates();
-
  protected:
     IDataReader() = delete;
 
@@ -79,8 +77,6 @@ class IDataReader {
 
     //! Destination DataSet where the data will be stored
     DataSet* _dataset_out = nullptr;
-
-    std::unique_ptr<InstrumentStateSet> _instrument_states;
 };
 
 } // namespace nsx
