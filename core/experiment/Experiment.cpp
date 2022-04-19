@@ -54,7 +54,7 @@ Experiment::~Experiment() = default;
 Experiment::Experiment(const std::string& name, const std::string& diffractometerName) : _name(name)
 {
     // start logging
-    Logger::instance().start(nsx::kw_logFilename, Level::Debug);
+    Logger::instance().start(nsx::kw_logFilename, Level::Info);
     nsxlog(Level::Info, "Git branch ", GIT_BRANCH, " / commit hash ", COMMIT_HASH);
 
     _instrumentstate_handler = std::make_unique<InstrumentStateHandler>();
