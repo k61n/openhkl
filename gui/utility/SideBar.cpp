@@ -72,7 +72,6 @@ SideBar::SideBar(QWidget* parent) : QWidget(parent), mCheckedAction(nullptr), mO
     mCheckedAction = tempAction;
     tempAction->setChecked(true);
     update();
-    ;
 
     connect(home, &QAction::triggered, this, &SideBar::onHome);
     connect(experiment, &QAction::triggered, this, &SideBar::onExperiment);
@@ -298,4 +297,9 @@ void SideBar::refreshAll()
     gGui->refiner->refreshAll();
     gGui->integrator->refreshAll();
     gGui->merger->refreshAll();
+}
+
+void SideBar::refreshCurrent()
+{
+    mCheckedAction->trigger();
 }

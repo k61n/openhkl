@@ -495,16 +495,12 @@ void SubframeFilterPeaks::accept()
         return;
     if (dlg->result() == QDialog::Rejected)
         return;
-    if (!gSession->experimentAt(_exp_combo->currentIndex())
-             ->experiment()
-             ->acceptFoundPeaks(dlg->listName().toStdString(), _peak_collection)) {
+    if (!gSession->experimentAt(_exp_combo->currentIndex()) ->experiment()
+        ->acceptFilter(dlg->listName().toStdString(), collection, nsx::listtype::FILTERED)) {
         QMessageBox::warning(
             this, "Unable to add PeakCollection", "Collection with this name already exists!");
         return;
     }
-    gSession->experimentAt(_exp_combo->currentIndex())
-        ->experiment()
-        ->acceptFilter(dlg->listName().toStdString(), collection);
 
     gSession->experimentAt(_exp_combo->currentIndex())->generatePeakModel(dlg->listName());
     auto peak_list = gSession->experimentAt(_exp_combo->currentIndex())->getPeakListNames();

@@ -28,6 +28,8 @@ class SideBar : public QWidget {
 
     void refreshAll();
 
+    void refreshCurrent();
+
  signals:
     void subframeChanged();
 
