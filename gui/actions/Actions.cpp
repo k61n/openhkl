@@ -15,6 +15,7 @@
 #include "gui/actions/Actions.h"
 
 #include "core/experiment/Experiment.h"
+#include "core/shape/PeakCollection.h"
 #include "gui/MainWin.h" // for gGui
 #include "gui/connect/Sentinel.h" // for sentinel
 #include "gui/dialogs/ClonePeakDialog.h"
@@ -31,7 +32,6 @@
 #include "gui/utility/SideBar.h"
 #include "gui/widgets/LogWidget.h"
 #include "tables/crystal/SpaceGroup.h"
-#include <qaction.h>
 
 Actions::Actions()
 {
@@ -56,9 +56,9 @@ void Actions::setupExperiment()
     quit = new QAction("Quit");
 
     connect(new_experiment, &QAction::triggered, []() { gGui->home->createNew(); });
-    connect(new_experiment, &QAction::triggered, []() { gGui->sideBar()->refreshAll(); });
+    connect(new_experiment, &QAction::triggered, []() { gGui->sideBar()->refreshCurrent(); });
     connect(load_experiment, &QAction::triggered, []() { gGui->home->loadFromFile(); });
-    connect(load_experiment, &QAction::triggered, []() { gGui->sideBar()->refreshAll(); });
+    connect(load_experiment, &QAction::triggered, []() { gGui->sideBar()->refreshCurrent(); });
     connect(save_experiment, &QAction::triggered, []() { gGui->home->saveCurrent(); });
     connect(save_experiment_as, &QAction::triggered, []() { gGui->home->saveCurrent(true); });
     connect(save_all_experiment, &QAction::triggered, []() { gGui->home->saveAll(); });
@@ -100,12 +100,12 @@ void Actions::setupData()
 
     connect(add_raw, &QAction::triggered, []() { // can cause a crash without checking
         if (gSession->loadRawData())
-            gGui->sideBar()->refreshAll();
+            gGui->sideBar()->refreshCurrent();
     });
     connect(add_hdf5, &QAction::triggered, []() { gSession->loadData(nsx::DataFormat::NSX); });
     connect(add_hdf5, &QAction::triggered, []() { gSession->loadData(nsx::DataFormat::NEXUS); });
-    connect(add_hdf5, &QAction::triggered, []() { gGui->sideBar()->refreshAll(); });
-    connect(add_nexus, &QAction::triggered, []() { gGui->sideBar()->refreshAll(); });
+    connect(add_hdf5, &QAction::triggered, []() { gGui->sideBar()->refreshCurrent(); });
+    connect(add_nexus, &QAction::triggered, []() { gGui->sideBar()->refreshCurrent(); });
 
     connect(remove_data, &QAction::triggered, this, &Actions::removeData);
 }
@@ -122,11 +122,15 @@ void Actions::removeExperiment()
     }
     std::unique_ptr<ComboDialog> dlg(new ComboDialog(expt_list, description));
     dlg->exec();
-    if (!dlg->itemName().isEmpty()) {
-        gSession->removeExperiment(dlg->itemName());
-        gSession->onExperimentChanged();
-        gGui->sideBar()->refreshAll();
-    }
+
+    if (dlg->itemName().isEmpty())
+        return;
+    if (dlg->result() == QDialog::Rejected)
+        return;
+
+    gGui->sideBar()->manualSelect(0); // switch to SubframeHome
+    gSession->removeExperiment(dlg->itemName());
+    gSession->onExperimentChanged();
 }
 
 void Actions::removeData()
@@ -135,14 +139,18 @@ void Actions::removeData()
     QStringList data_list = gSession->currentProject()->getDataNames();
     std::unique_ptr<ComboDialog> dlg(new ComboDialog(data_list, description));
     dlg->exec();
-    if (!dlg->itemName().isEmpty()) {
-        std::string data_name = dlg->itemName().toStdString();
-        gSession->currentProject()->experiment()->removeData(data_name);
-        gSession->onDataChanged();
-        data_list = gSession->currentProject()->getDataNames();
-        gGui->sentinel->setLinkedComboList(ComboType::DataSet, data_list);
-        gGui->sideBar()->refreshAll();
-    }
+
+    if (dlg->itemName().isEmpty())
+        return;
+    if (dlg->result() == QDialog::Rejected)
+        return;
+
+    gGui->sideBar()->manualSelect(0); // switch to SubframeHome
+    std::string data_name = dlg->itemName().toStdString();
+    gSession->currentProject()->experiment()->removeData(data_name);
+    gSession->onDataChanged();
+    data_list = gSession->currentProject()->getDataNames();
+    gGui->sentinel->setLinkedComboList(ComboType::DataSet, data_list);
 }
 
 void Actions::setupInstrument() { }
@@ -181,16 +189,20 @@ void Actions::addCell()
         space_groups.push_back(QString::fromStdString(symbol));
     std::unique_ptr<NewCellDialog> dlg(new NewCellDialog(space_groups));
     dlg->exec();
-    if (!dlg->unitCellName().isEmpty()) {
-        nsx::Experiment* expt = gSession->currentProject()->experiment();
-        expt->addUnitCell(
-            dlg->unitCellName().toStdString(), dlg->a(), dlg->b(), dlg->c(), dlg->alpha(),
-            dlg->beta(), dlg->gamma(), dlg->spaceGroup().toStdString());
-        gGui->onUnitCellChanged();
-        auto cell_list = gSession->currentProject()->getUnitCellNames();
-        gGui->sentinel->setLinkedComboList(ComboType::UnitCell, cell_list);
-        gGui->sideBar()->refreshAll();
-    }
+
+    if (dlg->unitCellName().isEmpty())
+        return;
+    if (dlg->result() == QDialog::Rejected)
+        return;
+
+    nsx::Experiment* expt = gSession->currentProject()->experiment();
+    expt->addUnitCell(
+        dlg->unitCellName().toStdString(), dlg->a(), dlg->b(), dlg->c(), dlg->alpha(),
+        dlg->beta(), dlg->gamma(), dlg->spaceGroup().toStdString());
+    gGui->onUnitCellChanged();
+    auto cell_list = gSession->currentProject()->getUnitCellNames();
+    gGui->sentinel->setLinkedComboList(ComboType::UnitCell, cell_list);
+    gGui->sideBar()->refreshCurrent();
 }
 
 void Actions::removeCell()
@@ -199,40 +211,53 @@ void Actions::removeCell()
     QStringList cell_list = gSession->currentProject()->getUnitCellNames();
     std::unique_ptr<ComboDialog> dlg(new ComboDialog(cell_list, description));
     dlg->exec();
-    if (!dlg->itemName().isEmpty()) {
-        std::string data_name = dlg->itemName().toStdString();
-        gSession->currentProject()->experiment()->removeUnitCell(data_name);
-        gGui->onUnitCellChanged();
-        cell_list = gSession->currentProject()->getUnitCellNames();
-        gGui->sentinel->setLinkedComboList(ComboType::UnitCell, cell_list);
-        gGui->sideBar()->refreshAll();
-    }
+
+    if (dlg->itemName().isEmpty())
+        return;
+    if (dlg->result() == QDialog::Rejected)
+        return;
+
+    std::string data_name = dlg->itemName().toStdString();
+    gSession->currentProject()->experiment()->removeUnitCell(data_name);
+    gGui->onUnitCellChanged();
+    cell_list = gSession->currentProject()->getUnitCellNames();
+    gGui->sentinel->setLinkedComboList(ComboType::UnitCell, cell_list);
+    gGui->sideBar()->refreshCurrent();
 }
 
 void Actions::removePeaks()
 {
+    gGui->setReady(false);
     QString description{"Peak collection to remove"};
     QStringList peaks_list = gSession->currentProject()->getPeakListNames();
-    if (!peaks_list.empty()) {
-        std::unique_ptr<ComboDialog> dlg(new ComboDialog(peaks_list, description));
-        dlg->exec();
-        if (!dlg->itemName().isEmpty()) {
-            QString peaks_name = dlg->itemName();
-            nsx::listtype lt = gSession->currentProject()
-                                   ->experiment()
-                                   ->getPeakCollection(peaks_name.toStdString())
-                                   ->type();
-            gSession->currentProject()->removePeakModel(peaks_name);
-            gGui->onPeaksChanged();
-            peaks_list = gSession->currentProject()->getPeakListNames();
-            gGui->sentinel->setLinkedComboList(ComboType::PeakCollection, peaks_list);
-            if (lt == nsx::listtype::FOUND)
-                gGui->sentinel->setLinkedComboList(ComboType::FoundPeaks, peaks_list);
-            if (lt == nsx::listtype::PREDICTED)
-                gGui->sentinel->setLinkedComboList(ComboType::PredictedPeaks, peaks_list);
-            gGui->sideBar()->refreshAll();
-        }
-    }
+    if (peaks_list.empty())
+        return;
+
+    std::unique_ptr<ComboDialog> dlg(new ComboDialog(peaks_list, description));
+    dlg->exec();
+    if (dlg->itemName().isEmpty())
+        return;
+    if (dlg->result() == QDialog::Rejected)
+        return;
+
+    QString peaks_name = dlg->itemName();
+    nsx::Experiment* experiment = gSession->currentProject()->experiment();
+    nsx::PeakCollection* peaks = experiment->getPeakCollection(peaks_name.toStdString());
+    nsx::listtype lt = peaks->type();
+
+    experiment->removePeakCollection(peaks_name.toStdString());
+
+    gSession->currentProject()->removePeakModel(peaks_name);
+    gGui->onPeaksChanged();
+    peaks_list = gSession->currentProject()->getPeakListNames();
+
+    emit gGui->sentinel->setLinkedComboList(ComboType::PeakCollection, peaks_list);
+    if (lt == nsx::listtype::FOUND)
+        emit gGui->sentinel->setLinkedComboList(ComboType::FoundPeaks, peaks_list);
+    if (lt == nsx::listtype::PREDICTED)
+        emit gGui->sentinel->setLinkedComboList(ComboType::PredictedPeaks, peaks_list);
+    gGui->sideBar()->refreshCurrent();
+    gGui->setReady(true);
 }
 
 void Actions::clonePeaks()
@@ -242,25 +267,31 @@ void Actions::clonePeaks()
     QString suggested_name = QString::fromStdString(
         gSession->currentProject()->experiment()->generatePeakCollectionName());
     QStringList peaks_list = gSession->currentProject()->getPeakListNames();
-    if (!peaks_list.empty()) {
-        std::unique_ptr<ClonePeakDialog> dlg(new ClonePeakDialog(peaks_list, suggested_name));
-        dlg->exec();
-        if (!dlg->clonedCollectionName().isEmpty()) {
-            QString original = dlg->originalCollectionName();
-            QString cloned = dlg->clonedCollectionName();
-            nsx::listtype lt = gSession->currentProject()
-                                   ->experiment()
-                                   ->getPeakCollection(original.toStdString())
-                                   ->type();
-            gSession->currentProject()->clonePeakCollection(original, cloned);
-            peaks_list = gSession->currentProject()->getPeakListNames();
-            gGui->sentinel->setLinkedComboList(ComboType::PeakCollection, peaks_list);
-            if (lt == nsx::listtype::FOUND)
-                gGui->sentinel->setLinkedComboList(ComboType::FoundPeaks, peaks_list);
-            if (lt == nsx::listtype::PREDICTED)
-                gGui->sentinel->setLinkedComboList(ComboType::PredictedPeaks, peaks_list);
-        }
-    }
+
+    if (peaks_list.empty())
+        return;
+
+    std::unique_ptr<ClonePeakDialog> dlg(new ClonePeakDialog(peaks_list, suggested_name));
+    dlg->exec();
+
+    if (dlg->clonedCollectionName().isEmpty())
+        return;
+    if (dlg->result() == QDialog::Rejected)
+        return;
+
+    QString original = dlg->originalCollectionName();
+    QString cloned = dlg->clonedCollectionName();
+    nsx::listtype lt = gSession->currentProject()
+                            ->experiment()
+                            ->getPeakCollection(original.toStdString())
+                            ->type();
+    gSession->currentProject()->clonePeakCollection(original, cloned);
+    peaks_list = gSession->currentProject()->getPeakListNames();
+    emit gGui->sentinel->setLinkedComboList(ComboType::PeakCollection, peaks_list);
+    if (lt == nsx::listtype::FOUND)
+        emit gGui->sentinel->setLinkedComboList(ComboType::FoundPeaks, peaks_list);
+    if (lt == nsx::listtype::PREDICTED)
+        emit gGui->sentinel->setLinkedComboList(ComboType::PredictedPeaks, peaks_list);
     gGui->setReady(true);
 }
 
