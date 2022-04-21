@@ -224,7 +224,7 @@ void SideBar::onHome()
 void SideBar::onExperiment()
 {
     gGui->_layout_stack->setCurrentIndex(1);
-    if (gSession->currentProjectNum() != -1) {
+    if (gSession->hasProject()) {
         gGui->experiment->getProperty()->unitCellChanged();
         gGui->experiment->getProperty()->peaksChanged();
         gGui->experiment->getProperty()->experimentChanged();

@@ -47,6 +47,8 @@
 #include <QLabel>
 #include <QScrollBar>
 #include <QSpacerItem>
+#include <qobject.h>
+#include <qsizepolicy.h>
 
 SubframeRefiner::SubframeRefiner()
     : _refine_success(false)
@@ -122,7 +124,6 @@ void SubframeRefiner::setInputUp()
     auto input_box = new Spoiler("Input");
     GridFiller f(input_box, true);
 
-    _exp_combo = f.addLinkedCombo(ComboType::Experiment, "Experiment");
     _peak_combo = f.addLinkedCombo(ComboType::FoundPeaks, "Peaks");
     _data_combo = f.addLinkedCombo(ComboType::DataSet, "Data set");
     _cell_combo = f.addLinkedCombo(ComboType::UnitCell, "Unit cell");
@@ -139,15 +140,6 @@ void SubframeRefiner::setInputUp()
     _max_iter_spin->setMinimum(100);
     _max_iter_spin->setMaximum(10000000);
 
-    connect(
-        _exp_combo, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this,
-        &SubframeRefiner::updateDatasetList);
-    connect(
-        _exp_combo, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this,
-        &SubframeRefiner::updateUnitCellList);
-    connect(
-        _exp_combo, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this,
-        &SubframeRefiner::updatePeakList);
     connect(
         _batch_cell_check, &QCheckBox::stateChanged, this, &SubframeRefiner::toggleUnsafeWidgets);
 
@@ -180,105 +172,85 @@ void SubframeRefiner::setRefinerFlagsUp()
 
 void SubframeRefiner::refreshAll()
 {
-    updateExptList();
-    toggleUnsafeWidgets();
-}
-
-void SubframeRefiner::refreshTables()
-{
-    const auto expt = gSession->experimentAt(_exp_combo->currentIndex())->experiment();
-    const auto data = expt->getData(_data_combo->currentText().toStdString());
-    const auto refiner = expt->refiner();
-    _tables_widget->refreshTables(refiner, data.get());
-}
-
-void SubframeRefiner::updateExptList()
-{
-    if (gSession->experimentNames().empty())
+    if (!gSession->hasProject())
         return;
 
-    _exp_combo->blockSignals(true);
-    QString current_exp = _exp_combo->currentText();
-    _exp_combo->clear();
-
-    for (const QString& exp : gSession->experimentNames())
-        _exp_combo->addItem(exp);
-    _exp_combo->setCurrentText(current_exp);
-
-    _exp_combo->blockSignals(false);
     updateDatasetList();
     updatePeakList();
     updateUnitCellList();
     updatePeaks();
     grabRefinerParameters();
     refreshPeakVisual();
+    toggleUnsafeWidgets();
+}
+
+void SubframeRefiner::refreshTables()
+{
+    const auto expt = gSession->currentProject()->experiment();
+    const auto data = expt->getData(_data_combo->currentText().toStdString());
+    const auto refiner = expt->refiner();
+    _tables_widget->refreshTables(refiner, data.get());
 }
 
 void SubframeRefiner::updateDatasetList()
 {
-    _data_combo->blockSignals(true);
+    if (!gSession->currentProject()->hasDataSet())
+        return;
+
+    QSignalBlocker blocker(_data_combo);
 
     QString current_data = _data_combo->currentText();
     _data_combo->clear();
-    _data_list = gSession->experimentAt(_exp_combo->currentIndex())->allData();
+    _data_list = gSession->currentProject()->allData();
     _detector_widget->updateDatasetList(_data_list);
 
     const QStringList& datanames{gSession->currentProject()->getDataNames()};
-    if (!datanames.empty()) {
-        _data_combo->addItems(datanames);
-        _data_combo->setCurrentText(current_data);
-    }
-    _data_combo->blockSignals(false);
+    _data_combo->addItems(datanames);
+    _data_combo->setCurrentText(current_data);
     setBatchesUp();
 }
 
 void SubframeRefiner::updatePeakList()
 {
-    _peak_combo->blockSignals(true);
+    if (!gSession->currentProject()->hasPeakCollection())
+        return;
+
+    QSignalBlocker blocker(_peak_combo);
     QString current_peaks = _peak_combo->currentText();
     _peak_combo->clear();
     _peak_list.clear();
 
-    QStringList tmp = gSession->experimentAt(_exp_combo->currentIndex())
-                          ->getPeakCollectionNames(nsx::listtype::FOUND);
+    QStringList tmp = gSession->currentProject()->getPeakCollectionNames(nsx::listtype::FOUND);
     _peak_list.append(tmp);
     tmp.clear();
-    tmp = gSession->experimentAt(_exp_combo->currentIndex())
-              ->getPeakCollectionNames(nsx::listtype::PREDICTED);
+    tmp = gSession->currentProject()->getPeakCollectionNames(nsx::listtype::PREDICTED);
     _peak_list.append(tmp);
     tmp.clear();
-    tmp = gSession->experimentAt(_exp_combo->currentIndex())
-              ->getPeakCollectionNames(nsx::listtype::FILTERED);
+    tmp = gSession->currentProject()->getPeakCollectionNames(nsx::listtype::FILTERED);
     _peak_list.append(tmp);
+    _peak_combo->addItems(_peak_list);
+    _peak_combo->setCurrentText(current_peaks);
 
-    if (!_peak_list.empty()) {
-        _peak_combo->addItems(_peak_list);
-        _peak_combo->setCurrentText(current_peaks);
-    }
-
-    _peak_combo->blockSignals(false);
     updatePredictedList();
 }
 
 void SubframeRefiner::updateUnitCellList()
 {
-    _cell_combo->blockSignals(true);
+    if (!gSession->currentProject()->hasUnitCell())
+        return;
+
+    QSignalBlocker blocker(_cell_combo);
     QString current_cell = _cell_combo->currentText();
     _cell_combo->clear();
-
-    _cell_list = gSession->experimentAt(_exp_combo->currentIndex())->getUnitCellNames();
-
-    if (!_cell_list.empty()) {
-        _cell_combo->addItems(_cell_list);
-        _cell_combo->setCurrentText(current_cell);
-    }
-    _cell_combo->blockSignals(false);
+    _cell_list = gSession->currentProject()->getUnitCellNames();
+    _cell_combo->addItems(_cell_list);
+    _cell_combo->setCurrentText(current_cell);
 }
 
 void SubframeRefiner::setBatchesUp()
 {
     const auto dataset =
-        gSession->experimentAt(_exp_combo->currentIndex())->getData(_data_combo->currentIndex());
+        gSession->currentProject()->getData(_data_combo->currentIndex());
     if (dataset)
         _n_batches_spin->setMaximum(dataset->nFrames());
 }
@@ -287,7 +259,7 @@ void SubframeRefiner::refine()
 {
     gGui->setReady(false);
     try {
-        auto expt = gSession->experimentAt(_exp_combo->currentIndex())->experiment();
+        auto expt = gSession->currentProject()->experiment();
         auto* peaks = expt->getPeakCollection(_peak_combo->currentText().toStdString());
         const auto data = expt->getData(_data_combo->currentText().toStdString());
         auto cell = expt->getSptrUnitCell(_cell_combo->currentText().toStdString());
@@ -330,7 +302,7 @@ void SubframeRefiner::refine()
         gGui->detector_window->refreshAll();
 
         _tables_widget->refreshTables(refiner, data.get());
-        auto cell_list = gSession->experimentAt(_exp_combo->currentIndex())->getUnitCellNames();
+        auto cell_list = gSession->currentProject()->getUnitCellNames();
         emit gGui->sentinel->setLinkedComboList(ComboType::UnitCell, cell_list);
         refreshPlot();
         toggleUnsafeWidgets();
@@ -467,7 +439,7 @@ void SubframeRefiner::setUpdateUp()
 void SubframeRefiner::updatePeaks()
 {
     QSignalBlocker blocker(_predicted_combo);
-    auto* expt = gSession->experimentAt(_exp_combo->currentIndex())->experiment();
+    auto* expt = gSession->currentProject()->experiment();
 
     if (_predicted_combo->count() == 0)
         return;
@@ -533,7 +505,7 @@ void SubframeRefiner::refreshPeakVisual()
 void SubframeRefiner::grabRefinerParameters()
 {
     auto* params =
-        gSession->experimentAt(_exp_combo->currentIndex())->experiment()->refiner()->parameters();
+        gSession->currentProject()->experiment()->refiner()->parameters();
 
     _n_batches_spin->setValue(params->nbatches);
     _max_iter_spin->setValue(params->max_iter);
@@ -553,10 +525,10 @@ void SubframeRefiner::grabRefinerParameters()
 
 void SubframeRefiner::setRefinerParameters()
 {
-    if (_exp_combo->count() == 0)
+    if (!gSession->hasProject())
         return;
     auto* params =
-        gSession->experimentAt(_exp_combo->currentIndex())->experiment()->refiner()->parameters();
+        gSession->currentProject()->experiment()->refiner()->parameters();
 
     params->nbatches = _n_batches_spin->value();
     params->max_iter = _max_iter_spin->value();
@@ -577,8 +549,7 @@ void SubframeRefiner::updatePredictedList()
     _predicted_combo->blockSignals(true);
     _predicted_combo->clear();
 
-    _predicted_list = gSession->experimentAt(_exp_combo->currentIndex())
-                          ->getPeakCollectionNames(nsx::listtype::PREDICTED);
+    _predicted_list = gSession->currentProject()->getPeakCollectionNames(nsx::listtype::PREDICTED);
 
     if (!_predicted_list.empty()) {
         _predicted_combo->addItems(_predicted_list);
@@ -597,7 +568,7 @@ void SubframeRefiner::updatePredictions()
         _unrefined_peaks.populate(_refined_peaks->getPeakList());
         updatePeaks();
 
-        auto* expt = gSession->experimentAt(_exp_combo->currentIndex())->experiment();
+        auto* expt = gSession->currentProject()->experiment();
         auto* refiner = expt->refiner();
         auto* peaks = expt->getPeakCollection(_predicted_combo->currentText().toStdString());
         auto peak_list = peaks->getPeakList();
@@ -624,15 +595,18 @@ void SubframeRefiner::toggleUnsafeWidgets()
     _update_button->setEnabled(false);
     _cell_combo->setEnabled(true);
 
+    if (!gSession->hasProject())
+        return;
+
     if (!(_predicted_combo->count() == 0))
         _update_button->setEnabled(true);
 
-    if (_exp_combo->count() == 0 || _data_combo->count() == 0 || _peak_combo->count() == 0
-        || _cell_combo->count() == 0) {
+    if (!gSession->currentProject()->hasDataSet() ||
+        !gSession->currentProject()->hasPeakCollection()) {
         _refine_button->setEnabled(false);
         _update_button->setEnabled(false);
     } else {
-        const auto expt = gSession->experimentAt(_exp_combo->currentIndex())->experiment();
+        auto* expt = gSession->currentProject()->experiment();
         if (expt->refiner()->firstRefine())
             _batch_cell_check->setChecked(false);
         else

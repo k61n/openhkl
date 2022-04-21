@@ -556,6 +556,11 @@ void Experiment::removeInstrumentStateSet(const sptrDataSet& data)
     _instrumentstate_handler->removeInstrumentStateSet(data);
 }
 
+int Experiment::numInstrumentStateSets() const
+{
+    return _instrumentstate_handler->numInstrumentStateSets();
+}
+
 void Experiment::setLastUnitCellIndex(unsigned int index)
 {
     _cell_handler->setLastIndex(index);

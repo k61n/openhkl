@@ -58,8 +58,6 @@ class SubframeMergedPeaks : public QWidget {
     //! Set up the widget for the unmerged representation
     void setUnmergedUp();
 
-    //! Refresh the QComboBox for the experiments
-    void refreshExperimentList();
     //! Refresh the QComboBox for the found peaks
     void refreshPeakLists();
     //! Refresh the QComboBoxes for peak collections
@@ -112,7 +110,6 @@ class SubframeMergedPeaks : public QWidget {
     QWidget* _merged_tab;
     QWidget* _unmerged_tab;
 
-    QComboBox* _exp_drop;
     LinkedComboBox* _peaks1_drop;
     LinkedComboBox* _peaks2_drop;
 

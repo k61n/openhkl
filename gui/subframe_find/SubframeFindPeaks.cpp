@@ -51,6 +51,7 @@
 #include <QSpacerItem>
 #include <QTableWidgetItem>
 #include <qmessagebox.h>
+#include <qobject.h>
 
 SubframeFindPeaks::SubframeFindPeaks()
     : QWidget()
@@ -91,18 +92,8 @@ void SubframeFindPeaks::setDataUp()
     Spoiler* _data_box = new Spoiler("Input");
     GridFiller f(_data_box);
 
-    _exp_combo = f.addLinkedCombo(ComboType::Experiment, "Experiment");
     _data_combo = f.addLinkedCombo(ComboType::DataSet, "Data set");
     _all_data = f.addCheckBox("Search all", "Find peaks in all data sets", 1);
-
-    connect(
-        _exp_combo, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this,
-        [=]() {
-            grabFinderParameters();
-            grabIntegrationParameters();
-            updateDatasetList();
-            toggleUnsafeWidgets();
-        });
 
     connect(
         _data_combo, &QComboBox::currentTextChanged, this,
@@ -136,6 +127,11 @@ void SubframeFindPeaks::setBlobUp()
         "Maximum width", "(frames) - blob is discarded if it spans more frames than this value");
 
     _kernel_combo = f.addCombo("Kernel", "Convolution kernel for peak search");
+
+    nsx::ConvolverFactory convolver_factory;
+    for (const auto& convolution_kernel_combo : convolver_factory.callbacks())
+        _kernel_combo->addItem(QString::fromStdString(convolution_kernel_combo.first));
+    _kernel_combo->setCurrentText("annular");
 
     QLabel* kernel_para_label = new QLabel("Parameters:");
     kernel_para_label->setAlignment(Qt::AlignLeft | Qt::AlignTop);
@@ -273,70 +269,48 @@ void SubframeFindPeaks::setPeakTableUp()
 void SubframeFindPeaks::refreshAll()
 {
     setParametersUp();
-    if (!(_exp_combo->count() == 0)) {
-        auto all_data = gSession->experimentAt(_exp_combo->currentIndex())->allData();
-        _detector_widget->updateDatasetList(all_data);
-    }
+    if (!gSession->hasProject())
+        return;
+
+    _detector_widget->updateDatasetList(gSession->currentProject()->allData());
     toggleUnsafeWidgets();
 }
 
 void SubframeFindPeaks::setParametersUp()
 {
-    if (gSession->experimentNames().empty())
+    if (!gSession->hasProject())
         return;
 
-    setExperimentsUp();
+    grabFinderParameters();
+    grabIntegrationParameters();
+    updateDatasetList();
     refreshPeakTable();
-
-    _kernel_combo->blockSignals(true);
-
-    _kernel_combo->clear();
-    nsx::ConvolverFactory convolver_factory;
-    for (const auto& convolution_kernel_combo : convolver_factory.callbacks())
-        _kernel_combo->addItem(QString::fromStdString(convolution_kernel_combo.first));
-
-    _kernel_combo->blockSignals(false);
-
-    _kernel_combo->setCurrentText("annular");
-}
-
-void SubframeFindPeaks::setExperimentsUp()
-{
-    _exp_combo->blockSignals(true);
-    QString current_exp = _exp_combo->currentText();
-    _exp_combo->clear();
-
-    if (!gSession->experimentNames().empty()) {
-        for (const QString& exp : gSession->experimentNames())
-            _exp_combo->addItem(exp);
-        _exp_combo->setCurrentText(current_exp);
-        grabFinderParameters();
-        grabIntegrationParameters();
-        updateDatasetList();
-    }
-    _exp_combo->blockSignals(false);
 }
 
 void SubframeFindPeaks::updateDatasetList()
 {
-    _data_combo->blockSignals(true);
+    if (gSession->currentProject()->hasDataSet())
+        return;
+
+    QSignalBlocker blocker(_data_combo);
     QString current_data = _data_combo->currentText();
     _data_combo->clear();
 
-    const QStringList& datanames{gSession->currentProject()->getDataNames()};
-    if (!datanames.empty()) {
-        _data_combo->addItems(datanames);
-        _data_combo->setCurrentText(current_data);
-        updateDatasetParameters(_data_combo->currentText());
-    }
-    _data_combo->blockSignals(false);
+    Project* project = gSession->currentProject();
+    if (!project->hasDataSet())
+        return;
+
+    const QStringList& datanames{project->getDataNames()};
+    _data_combo->addItems(datanames);
+    _data_combo->setCurrentText(current_data);
+    updateDatasetParameters(_data_combo->currentText());
 }
 
 void SubframeFindPeaks::updateDatasetParameters(const QString& dataname)
 {
     // to be update on the experiment/project list if a new
     // experiment is added on SubframeHome
-    auto exp = gSession->experimentAt(gSession->currentProjectNum())->experiment();
+    auto* exp = gSession->currentProject()->experiment();
     if (!exp->hasData(dataname.toStdString())) {
         QMessageBox::warning(
             nullptr, "Dataset does not exist",
@@ -354,12 +328,9 @@ void SubframeFindPeaks::updateDatasetParameters(const QString& dataname)
 void SubframeFindPeaks::grabFinderParameters()
 {
     nsx::PeakFinder* finder =
-        gSession->experimentAt(_exp_combo->currentIndex())->experiment()->peakFinder();
+        gSession->currentProject()->experiment()->peakFinder();
 
-    auto* params = gSession->experimentAt(_exp_combo->currentIndex())
-                       ->experiment()
-                       ->peakFinder()
-                       ->parameters();
+    auto* params = gSession->currentProject()->experiment()->peakFinder()->parameters();
 
     _min_size_spin->setValue(params->minimum_size);
     _max_size_spin->setValue(params->maximum_size);
@@ -403,16 +374,13 @@ void SubframeFindPeaks::grabFinderParameters()
 
 void SubframeFindPeaks::setFinderParameters()
 {
-    if (_exp_combo->count() == 0 || _data_combo->count() == 0)
+    if (!gSession->hasProject())
         return;
 
     nsx::PeakFinder* finder =
-        gSession->experimentAt(_exp_combo->currentIndex())->experiment()->peakFinder();
+        gSession->currentProject()->experiment()->peakFinder();
 
-    auto* params = gSession->experimentAt(_exp_combo->currentIndex())
-                       ->experiment()
-                       ->peakFinder()
-                       ->parameters();
+    auto* params = gSession->currentProject()->experiment()->peakFinder()->parameters();
     params->minimum_size = _min_size_spin->value();
     params->maximum_size = _max_size_spin->value();
     params->peak_end = _scale_spin->value();
@@ -430,10 +398,7 @@ void SubframeFindPeaks::setFinderParameters()
 
 void SubframeFindPeaks::grabIntegrationParameters()
 {
-    auto* params = gSession->experimentAt(_exp_combo->currentIndex())
-                       ->experiment()
-                       ->integrator()
-                       ->parameters();
+    auto* params = gSession->currentProject()->experiment()->integrator()->parameters();
 
     _peak_area->setValue(params->peak_end);
     _bkg_lower->setValue(params->bkg_begin);
@@ -442,13 +407,10 @@ void SubframeFindPeaks::grabIntegrationParameters()
 
 void SubframeFindPeaks::setIntegrationParameters()
 {
-    if (_exp_combo->count() == 0 || _data_combo->count() == 0)
+    if (!gSession->hasProject())
         return;
 
-    auto* params = gSession->experimentAt(_exp_combo->currentIndex())
-                       ->experiment()
-                       ->integrator()
-                       ->parameters();
+    auto* params = gSession->currentProject()->experiment()->integrator()->parameters();
 
     params->peak_end = _peak_area->value();
     params->bkg_begin = _bkg_lower->value();
@@ -492,7 +454,7 @@ void SubframeFindPeaks::find()
 {
     gGui->setReady(false);
     nsx::DataList data_list;
-    const nsx::DataList all_data = gSession->experimentAt(_exp_combo->currentIndex())->allData();
+    const nsx::DataList all_data = gSession->currentProject()->allData();
 
     if (_all_data->isChecked()) {
         for (int i = 0; i < all_data.size(); ++i)
@@ -502,7 +464,7 @@ void SubframeFindPeaks::find()
     }
 
     nsx::PeakFinder* finder =
-        gSession->experimentAt(_exp_combo->currentIndex())->experiment()->peakFinder();
+        gSession->currentProject()->experiment()->peakFinder();
     nsx::sptrProgressHandler progHandler = nsx::sptrProgressHandler(new nsx::ProgressHandler);
     ProgressView progressView(nullptr);
     progressView.watch(progHandler);
@@ -523,7 +485,7 @@ void SubframeFindPeaks::find()
 void SubframeFindPeaks::integrate()
 {
     gGui->setReady(false);
-    auto* experiment = gSession->experimentAt(_exp_combo->currentIndex())->experiment();
+    auto* experiment = gSession->currentProject()->experiment();
     auto* integrator = experiment->integrator();
     auto* finder = experiment->peakFinder();
 
@@ -557,7 +519,7 @@ std::map<std::string, double> SubframeFindPeaks::convolutionParameters()
 
 void SubframeFindPeaks::accept()
 {
-    auto expt = gSession->experimentAt(_exp_combo->currentIndex())->experiment();
+    auto expt = gSession->currentProject()->experiment();
     nsx::PeakFinder* finder = expt->peakFinder();
 
     if (finder->currentPeaks().empty())
@@ -569,14 +531,13 @@ void SubframeFindPeaks::accept()
         return;
     if (dlg->result() == QDialog::Rejected)
         return;
-    if (!gSession->experimentAt(_exp_combo->currentIndex())
-             ->experiment()
+    if (!gSession->currentProject() ->experiment()
              ->acceptFoundPeaks(dlg->listName().toStdString(), _peak_collection)) {
         QMessageBox::warning(
             this, "Unable to add PeakCollection", "Collection with this name already exists!");
         return;
     }
-    gSession->experimentAt(_exp_combo->currentIndex())->generatePeakModel(dlg->listName());
+    gSession->currentProject()->generatePeakModel(dlg->listName());
     gGui->sentinel->addLinkedComboItem(ComboType::FoundPeaks, dlg->listName());
     gGui->sentinel->addLinkedComboItem(ComboType::PeakCollection, dlg->listName());
 }
@@ -593,9 +554,8 @@ void SubframeFindPeaks::refreshPreview()
         return;
     }
 
-    nsx::sptrDataSet data = gSession->experimentAt(_exp_combo->currentIndex())
-                                ->experiment()
-                                ->getData(_data_combo->currentText().toStdString());
+    nsx::sptrDataSet data = gSession->currentProject()->experiment()
+                            ->getData(_data_combo->currentText().toStdString());
     int nrows = data->nRows();
     int ncols = data->nCols();
 
@@ -627,10 +587,8 @@ void SubframeFindPeaks::refreshPreview()
 
 void SubframeFindPeaks::refreshPeakTable()
 {
-    std::vector<nsx::Peak3D*> peaks = gSession->experimentAt(_exp_combo->currentIndex())
-                                          ->experiment()
-                                          ->peakFinder()
-                                          ->currentPeaks();
+    std::vector<nsx::Peak3D*> peaks =
+        gSession->currentProject()->experiment()->peakFinder()->currentPeaks();
 
     _peak_collection.populate(peaks);
     _peak_collection_item.setPeakCollection(&_peak_collection);
@@ -646,7 +604,7 @@ void SubframeFindPeaks::refreshPeakTable()
 
 void SubframeFindPeaks::refreshPeakVisual()
 {
-    if (_peak_collection_item.childCount() == 0)
+    if (!gSession->currentProject()->hasPeakCollection())
         return;
 
     for (int i = 0; i < _peak_collection_item.childCount(); i++) {
@@ -677,7 +635,7 @@ void SubframeFindPeaks::toggleUnsafeWidgets()
     _integrate_button->setEnabled(true);
     _save_button->setEnabled(true);
     _save_button->setToolTip("");
-    if (_exp_combo->count() == 0 || _data_combo->count() == 0) {
+    if (!gSession->hasProject() || !gSession->currentProject()->hasDataSet()) {
         _find_button->setEnabled(false);
         _integrate_button->setEnabled(false);
         _save_button->setEnabled(false);

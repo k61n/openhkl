@@ -81,8 +81,6 @@ class SubframeAutoIndexer : public QWidget {
 
     //! Build the table of solution
     void buildSolutionsTable();
-    //! Set the experiments
-    void setExperiments();
     //! Update the list of data sets
     void updateDatasetList();
     //! Update the peak list
@@ -133,7 +131,6 @@ class SubframeAutoIndexer : public QWidget {
     QVBoxLayout* _left_layout;
     QSplitter* _right_element;
 
-    LinkedComboBox* _exp_combo;
     LinkedComboBox* _data_combo;
     LinkedComboBox* _peak_combo;
 

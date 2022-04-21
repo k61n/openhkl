@@ -172,8 +172,10 @@ class Experiment {
     InstrumentStateSet* getInstrumentStateSet(const sptrDataSet& data);
     //! Returns the named InstrumentStateSet
     InstrumentStateSet* getInstrumentStateSet(const DataSet* data);
-    // !Remove a set of instrument states from the experiment
+    //! Remove a set of instrument states from the experiment
     void removeInstrumentStateSet(const sptrDataSet& data);
+    //! Return number of instrument state sets
+    int numInstrumentStateSets() const;
 
     // Peak finder
     //! Return a pointer to the PeakFinder object

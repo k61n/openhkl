@@ -76,6 +76,11 @@ class Project {
     QString currentFileName() const;
     void setCurrentFileName(const QString& name);
 
+    bool hasDataSet() const;
+    bool hasPeakCollection() const;
+    bool hasInstrumentStateSet() const;
+    bool hasUnitCell() const;
+
  private:
     std::unique_ptr<nsx::Experiment> _experiment;
 

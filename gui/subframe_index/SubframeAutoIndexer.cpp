@@ -121,13 +121,8 @@ void SubframeAutoIndexer::setInputUp()
     Spoiler* input_box = new Spoiler("Input");
     GridFiller f(input_box, true);
 
-    _exp_combo = f.addLinkedCombo(ComboType::Experiment, "Experiment");
     _data_combo = f.addLinkedCombo(ComboType::DataSet, "Data set");
     _peak_combo = f.addLinkedCombo(ComboType::FoundPeaks, "Peak collection");
-
-    connect(
-        _exp_combo, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this,
-        &SubframeAutoIndexer::updatePeakList);
 
     connect(
         _peak_combo, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this,
@@ -331,41 +326,28 @@ void SubframeAutoIndexer::setSolutionTableUp()
 
 void SubframeAutoIndexer::refreshAll()
 {
-    setExperiments();
-    if (!(_exp_combo->count() == 0)) {
-        const auto all_data = gSession->experimentAt(_exp_combo->currentIndex())->allData();
-        _detector_widget->updateDatasetList(all_data);
-        const auto dataset = gSession->experimentAt(_exp_combo->currentIndex())
-                                 ->getData(_data_combo->currentIndex());
-        if (dataset)
-            _max_frame->setMaximum(dataset->nFrames() - 1);
-    }
-    toggleUnsafeWidgets();
-}
-
-void SubframeAutoIndexer::setExperiments()
-{
-    QSignalBlocker blocker(_exp_combo);
-    if (gSession->experimentNames().empty())
+    if (!gSession->hasProject())
         return;
 
-    QString current_exp = _exp_combo->currentText();
-    _exp_combo->clear();
-
-    for (const QString& exp : gSession->experimentNames())
-        _exp_combo->addItem(exp);
-    _exp_combo->setCurrentText(current_exp);
+    if (!gSession->currentProject()->hasDataSet())
+        return;
 
     updateDatasetList();
     updatePeakList();
     grabIndexerParameters();
-    const auto data = _detector_widget->currentData();
-    if (data) {
-        _beam_offset_x->setMaximum(static_cast<double>(data->nCols()) / 2.0);
-        _beam_offset_x->setMinimum(-static_cast<double>(data->nCols()) / 2.0);
-        _beam_offset_y->setMaximum(static_cast<double>(data->nRows()) / 2.0);
-        _beam_offset_y->setMinimum(-static_cast<double>(data->nRows()) / 2.0);
-    }
+
+    const auto all_data = gSession->currentProject()->allData();
+    _detector_widget->updateDatasetList(all_data);
+    const auto dataset =
+        gSession->currentProject()->experiment()->getData(_data_combo->currentText().toStdString());
+    _max_frame->setMaximum(dataset->nFrames() - 1);
+
+    _beam_offset_x->setMaximum(static_cast<double>(dataset->nCols()) / 2.0);
+    _beam_offset_x->setMinimum(-static_cast<double>(dataset->nCols()) / 2.0);
+    _beam_offset_y->setMaximum(static_cast<double>(dataset->nRows()) / 2.0);
+    _beam_offset_y->setMinimum(-static_cast<double>(dataset->nRows()) / 2.0);
+
+    toggleUnsafeWidgets();
 }
 
 void SubframeAutoIndexer::setPeakViewWidgetUp()
@@ -400,23 +382,27 @@ void SubframeAutoIndexer::setFigureUp()
 
 void SubframeAutoIndexer::updateDatasetList()
 {
+    if (!gSession->currentProject()->hasDataSet())
+        return;
+
     QSignalBlocker blocker(_data_combo);
     QString current_data = _data_combo->currentText();
     _data_combo->clear();
-    _data_list = gSession->experimentAt(_exp_combo->currentIndex())->allData();
-    if (!_data_list.empty()) {
-        _detector_widget->updateDatasetList(_data_list);
+    _data_list = gSession->currentProject()->allData();
+    _detector_widget->updateDatasetList(_data_list);
 
-        const QStringList& datanames{gSession->currentProject()->getDataNames()};
-        _data_combo->addItems(datanames);
-        _data_combo->setCurrentText(current_data);
-    }
+    const QStringList& datanames{gSession->currentProject()->getDataNames()};
+    _data_combo->addItems(datanames);
+    _data_combo->setCurrentText(current_data);
 }
 
 void SubframeAutoIndexer::updatePeakList()
 {
+    if (!gSession->currentProject()->hasPeakCollection())
+        return;
+
     QSignalBlocker blocker(_peak_combo);
-    QStringList peak_list = gSession->experimentAt(_exp_combo->currentIndex())->getPeakListNames();
+    QStringList peak_list = gSession->currentProject()->getPeakListNames();
     if (peak_list.empty())
         return;
     peak_list.clear();
@@ -424,32 +410,27 @@ void SubframeAutoIndexer::updatePeakList()
     QString current_peaks = _peak_combo->currentText();
     _peak_combo->clear();
 
-    QStringList tmp = gSession->experimentAt(_exp_combo->currentIndex())
-                          ->getPeakCollectionNames(nsx::listtype::FOUND);
+    QStringList tmp = gSession->currentProject() ->getPeakCollectionNames(nsx::listtype::FOUND);
     peak_list.append(tmp);
     tmp.clear();
-    tmp = gSession->experimentAt(_exp_combo->currentIndex())
-              ->getPeakCollectionNames(nsx::listtype::FILTERED);
+    tmp = gSession->currentProject() ->getPeakCollectionNames(nsx::listtype::FILTERED);
     peak_list.append(tmp);
     tmp.clear();
-    tmp = gSession->experimentAt(_exp_combo->currentIndex())
-              ->getPeakCollectionNames(nsx::listtype::INDEXING);
+    tmp = gSession->currentProject() ->getPeakCollectionNames(nsx::listtype::INDEXING);
     peak_list.append(tmp);
 
-    if (!peak_list.empty()) {
-        _peak_combo->addItems(peak_list);
-        _peak_combo->setCurrentText(current_peaks);
+    _peak_combo->addItems(peak_list);
+    _peak_combo->setCurrentText(current_peaks);
 
-        refreshPeakTable();
-        _solution_table->setModel(nullptr);
-        _solutions.clear();
-        _selected_unit_cell = nullptr;
-    }
+    refreshPeakTable();
+    _solution_table->setModel(nullptr);
+    _solutions.clear();
+    _selected_unit_cell = nullptr;
 }
 
 void SubframeAutoIndexer::refreshPeakTable()
 {
-    if (_peak_combo->count() == 0 || _exp_combo->count() == 0)
+    if (!gSession->currentProject()->hasPeakCollection())
         return;
 
     _peak_collection.setMillerIndices();
@@ -497,13 +478,10 @@ void SubframeAutoIndexer::refreshPeakVisual()
 
 void SubframeAutoIndexer::grabIndexerParameters()
 {
-    if (_exp_combo->count() == 0)
+    if (!gSession->hasProject())
         return;
 
-    auto params = gSession->experimentAt(_exp_combo->currentIndex())
-                      ->experiment()
-                      ->autoIndexer()
-                      ->parameters();
+    auto params = gSession->currentProject()->experiment()->autoIndexer()->parameters();
     _min_frame->setValue(params->first_frame);
     _max_frame->setValue(params->last_frame);
     _d_min->setValue(params->d_min);
@@ -524,13 +502,10 @@ void SubframeAutoIndexer::grabIndexerParameters()
 
 void SubframeAutoIndexer::setIndexerParameters()
 {
-    if (_exp_combo->count() == 0)
+    if (!gSession->hasProject())
         return;
 
-    auto params = gSession->experimentAt(_exp_combo->currentIndex())
-                      ->experiment()
-                      ->autoIndexer()
-                      ->parameters();
+    auto params = gSession->currentProject()->experiment()->autoIndexer()->parameters();
 
     params->first_frame = _min_frame->value();
     params->last_frame = _max_frame->value();
@@ -555,7 +530,7 @@ void SubframeAutoIndexer::runAutoIndexer()
     gGui->setReady(false);
     setIndexerParameters();
 
-    auto* expt = gSession->experimentAt(_exp_combo->currentIndex())->experiment();
+    auto* expt = gSession->currentProject()->experiment();
     auto* autoindexer = expt->autoIndexer();
     auto* params = autoindexer->parameters();
     auto* filter = expt->peakFilter();
@@ -687,8 +662,7 @@ void SubframeAutoIndexer::selectSolutionHeader(int index)
     _selected_unit_cell = _solutions[index].first;
 
     const nsx::PeakCollection* collection =
-        gSession->experimentAt(_exp_combo->currentIndex())
-            ->experiment()
+        gSession->currentProject()->experiment()
             ->getPeakCollection(_peak_combo->currentText().toStdString());
 
     std::vector<nsx::Peak3D*> peaks = collection->getPeakList();
@@ -702,9 +676,9 @@ void SubframeAutoIndexer::selectSolutionHeader(int index)
 void SubframeAutoIndexer::acceptSolution()
 {
     if (_selected_unit_cell) {
-        nsx::Experiment* expt = gSession->experimentAt(_exp_combo->currentIndex())->experiment();
-        QStringList collections = gSession->experimentAt(_exp_combo->currentIndex())
-                                      ->getPeakCollectionNames(nsx::listtype::FOUND);
+        nsx::Experiment* expt = gSession->currentProject()->experiment();
+        QStringList collections =
+            gSession->currentProject()->getPeakCollectionNames(nsx::listtype::FOUND);
 
         QStringList space_groups;
         for (const std::string& name : _selected_unit_cell->compatibleSpaceGroups())
@@ -742,7 +716,8 @@ void SubframeAutoIndexer::toggleUnsafeWidgets()
 {
     _solve_button->setEnabled(true);
     _save_button->setEnabled(true);
-    if (_exp_combo->count() == 0 || _data_combo->count() == 0 || _peak_combo->count() == 0) {
+    if (!gSession->hasProject() || !gSession->currentProject()->hasPeakCollection() ||
+        !gSession->currentProject()->hasDataSet()) {
         _solve_button->setEnabled(false);
         _save_button->setEnabled(false);
     }
@@ -755,8 +730,6 @@ void SubframeAutoIndexer::toggleUnsafeWidgets()
         return;
     pc = gSession->currentProject()->experiment()->getPeakCollection(current_pc);
 
-
-    // _save_button->setEnabled(pc->isIntegrated());
     _solve_button->setEnabled(pc->isIntegrated());
 }
 

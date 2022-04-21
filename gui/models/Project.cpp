@@ -264,3 +264,23 @@ void Project::setCurrentFileName(const QString& name)
 {
     _file_name = name;
 }
+
+bool Project::hasDataSet() const
+{
+    return _experiment->numData() > 0;
+}
+
+bool Project::hasPeakCollection() const
+{
+    return _experiment->numPeakCollections() > 0;
+}
+
+bool Project::hasUnitCell() const
+{
+    return _experiment->numUnitCells() > 0;
+}
+
+bool Project::hasInstrumentStateSet() const
+{
+    return _experiment->numInstrumentStateSets() > 0;
+}

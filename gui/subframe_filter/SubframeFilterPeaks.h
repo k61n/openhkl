@@ -92,8 +92,6 @@ class SubframeFilterPeaks : public QWidget {
     //! Refresh all th einputs
     void setParametersUp();
     //! Refresh all th einputs
-    void setExperimentsUp();
-    //! Refresh all th einputs
     void updatePeakList();
     //! Update the datalist as an experiment was changed
     void updateDatasetList();
@@ -146,7 +144,6 @@ class SubframeFilterPeaks : public QWidget {
     SpoilerCheck* _merge_box;
     SpoilerCheck* _overlap_box;
 
-    LinkedComboBox* _exp_combo;
     LinkedComboBox* _peak_combo;
 
     QPushButton* _filter_button;
