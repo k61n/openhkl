@@ -63,7 +63,6 @@
 #include <QTableWidgetItem>
 #include <qmessagebox.h>
 #include <qnamespace.h>
-#include <qobject.h>
 
 SubframePredictPeaks::SubframePredictPeaks()
     : QWidget()

@@ -44,7 +44,6 @@
 #include <QSpacerItem>
 #include <QTableWidgetItem>
 
-#include <qobject.h>
 #include <sstream>
 
 SubframeFilterPeaks::SubframeFilterPeaks()

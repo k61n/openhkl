@@ -53,7 +53,6 @@
 #include <QSplitter>
 #include <QTabWidget>
 #include <QVBoxLayout>
-#include <qobject.h>
 #include <stdexcept>
 
 

@@ -42,7 +42,6 @@
 #include <QMessageBox>
 #include <QScrollBar>
 #include <QSpacerItem>
-#include <qobject.h>
 
 SubframeIntegrate::SubframeIntegrate() : QWidget()
 {

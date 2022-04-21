@@ -47,8 +47,6 @@
 #include <QLabel>
 #include <QScrollBar>
 #include <QSpacerItem>
-#include <qobject.h>
-#include <qsizepolicy.h>
 
 SubframeRefiner::SubframeRefiner()
     : _refine_success(false)
