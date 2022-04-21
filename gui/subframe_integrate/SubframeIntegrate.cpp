@@ -144,10 +144,10 @@ void SubframeIntegrate::setPeakTableUp()
 
 void SubframeIntegrate::refreshPeakTable()
 {
-    if (_int_peak_combo->count() == 0)
+    if (!gSession->currentProject()->hasPeakCollection())
         return;
 
-    _peak_collection = gSession->currentProject() ->experiment()
+    _peak_collection = gSession->currentProject()->experiment()
         ->getPeakCollection(_int_peak_combo->currentText().toStdString());
 
     _peak_collection_item.setPeakCollection(_peak_collection);
@@ -559,7 +559,7 @@ void SubframeIntegrate::toggleUnsafeWidgets()
         _remove_overlaps->setEnabled(false);
     }
 
-    if (!(_peak_combo->count() == 0)) {
+    if (gSession->currentProject()->hasPeakCollection()) {
         nsx::PeakCollection* peaks =
             gSession->currentProject() ->experiment()
                 ->getPeakCollection(_peak_combo->currentText().toStdString());
