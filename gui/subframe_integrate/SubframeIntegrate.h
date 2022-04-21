@@ -61,8 +61,6 @@ class SubframeIntegrate : public QWidget {
     //! Set the refiner parameters
     void setIntegrationParameters();
 
-    //! Refresh all the inputs
-    void updateExptList();
     //! Update peak collection list on experiment change
     void updatePeakList();
     //! Update the data list on experment change
@@ -110,7 +108,6 @@ class SubframeIntegrate : public QWidget {
     QSplitter* _right_element;
 
     // data selection
-    LinkedComboBox* _exp_combo;
     LinkedComboBox* _peak_combo;
     LinkedComboBox* _int_peak_combo;
     LinkedComboBox* _data_combo;

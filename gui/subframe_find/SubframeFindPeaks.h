@@ -85,9 +85,6 @@ class SubframeFindPeaks : public QWidget {
     void toggleUnsafeWidgets();
 
     //! Update the datalist as an experiment was changed
-    void setExperimentsUp();
-
-    //! Update the datalist as an experiment was changed
     void updateDatasetList();
     //! Update the dataset related parameters
     void updateDatasetParameters(const QString& dataname);

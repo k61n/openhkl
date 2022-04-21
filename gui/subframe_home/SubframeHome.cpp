@@ -274,9 +274,10 @@ void SubframeHome::saveCurrent(bool dialogue /* = false */)
 
 void SubframeHome::saveAll() { }
 
-void SubframeHome::_switchCurrentExperiment(const QModelIndex& index) const
+void SubframeHome::_switchCurrentExperiment(const QModelIndex& index)
 {
     gSession->selectProject(index.row());
+    refreshTables();
     emit _open_experiments_model->dataChanged(QModelIndex(), QModelIndex());
 }
 
@@ -311,7 +312,7 @@ void SubframeHome::_updateLastLoadedList(QString name, QString file_path)
 
 void SubframeHome::_updateLastLoadedWidget()
 {
-    _last_import_widget->blockSignals(true);
+    QSignalBlocker blocker(_last_import_widget);
     _last_import_widget->clear();
 
     QList<QStringList>::iterator it;
@@ -323,7 +324,6 @@ void SubframeHome::_updateLastLoadedWidget()
         item->setData(100, (*it).at(1));
         _last_import_widget->addItem(item);
     }
-    _last_import_widget->blockSignals(false);
 }
 
 void SubframeHome::_loadSelectedItem(QListWidgetItem* item)
@@ -356,6 +356,12 @@ void SubframeHome::toggleUnsafeWidgets()
 
 void SubframeHome::refreshTables()
 {
+    _dataset_table->clearContents();
+    _peak_collections_table->clearContents();
+    _unitcell_table->clearContents();
+    _dataset_table->setRowCount(0);
+    _peak_collections_table->setRowCount(0);
+    _unitcell_table->setRowCount(0);
     try {
         auto b2s = [](bool a) { return !a ? QString("No") : QString("Yes"); };
         auto Type2s = [](nsx::listtype t) {

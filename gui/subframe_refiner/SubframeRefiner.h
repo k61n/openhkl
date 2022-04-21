@@ -74,8 +74,6 @@ class SubframeRefiner : public QWidget {
     //! Set the refiner parameters
     void setRefinerParameters();
 
-    //! Refresh all inputs
-    void updateExptList();
     //! Update peak collection list on experiment change
     void updatePeakList();
     //! Update the data list on experment change
@@ -121,7 +119,6 @@ class SubframeRefiner : public QWidget {
     QSplitter* _right_element;
 
     // data selection
-    LinkedComboBox* _exp_combo;
     LinkedComboBox* _peak_combo;
     LinkedComboBox* _data_combo;
     LinkedComboBox* _cell_combo;

@@ -90,8 +90,6 @@ class SubframePredictPeaks : public QWidget {
     //! Set the save button up
     void setSaveUp();
 
-    //! Set the experiments
-    void setExperiments();
     //! Update the peak list
     void updatePeakList();
     //! Update the peak list

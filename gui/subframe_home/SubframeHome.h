@@ -41,7 +41,7 @@ class SubframeHome : public QWidget {
 
  private:
     //! Switch the current experiment through the model index
-    void _switchCurrentExperiment(const QModelIndex& index) const;
+    void _switchCurrentExperiment(const QModelIndex& index);
     //! Update the current list
     void _updateLastLoadedList(QString name, QString file_path);
     //! Update the current list widget

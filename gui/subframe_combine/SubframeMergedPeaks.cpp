@@ -55,16 +55,12 @@ SubframeMergedPeaks::SubframeMergedPeaks()
 
     QHBoxLayout* drop_layout = new QHBoxLayout();
 
-    _exp_drop = new QComboBox();
     _peaks1_drop = new LinkedComboBox(ComboType::PeakCollection, gGui->sentinel);
     _peaks2_drop = new LinkedComboBox(ComboType::PeakCollection, gGui->sentinel);
 
-    _exp_drop->setSizePolicy(*_size_policy_right);
     _peaks1_drop->setSizePolicy(*_size_policy_right);
     _peaks2_drop->setSizePolicy(*_size_policy_right);
 
-    drop_layout->addWidget(new QLabel("Experiment:"));
-    drop_layout->addWidget(_exp_drop);
     drop_layout->addWidget(new QLabel("Peak collection 1:"));
     drop_layout->addWidget(_peaks1_drop);
     drop_layout->addWidget(new QLabel("Peak collection 2:"));
@@ -89,9 +85,6 @@ SubframeMergedPeaks::SubframeMergedPeaks()
     layout->addWidget(_main_tab_widget);
 
     connect(
-        _exp_drop, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this,
-        &SubframeMergedPeaks::refreshPeakLists);
-    connect(
         _peaks1_drop, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this,
         &SubframeMergedPeaks::processMerge);
     connect(
@@ -102,7 +95,7 @@ SubframeMergedPeaks::SubframeMergedPeaks()
 void SubframeMergedPeaks::grabMergeParameters()
 {
     auto params =
-        gSession->experimentAt(_exp_drop->currentIndex())->experiment()->peakMerger()->parameters();
+        gSession->currentProject()->experiment()->peakMerger()->parameters();
 
     _d_min->setValue(params->d_min);
     _d_max->setValue(params->d_max);
@@ -114,11 +107,11 @@ void SubframeMergedPeaks::grabMergeParameters()
 
 void SubframeMergedPeaks::setMergeParameters()
 {
-    if (_exp_drop->count() == 0)
+    if (!gSession->hasProject())
         return;
 
     auto params =
-        gSession->experimentAt(_exp_drop->currentIndex())->experiment()->peakMerger()->parameters();
+        gSession->currentProject()->experiment()->peakMerger()->parameters();
 
     params->d_min = _d_min->value();
     params->d_max = _d_max->value();
@@ -354,27 +347,13 @@ void SubframeMergedPeaks::setUnmergedUp()
 
 void SubframeMergedPeaks::refreshAll()
 {
-    refreshExperimentList();
-    if (_exp_drop->currentIndex() >= 0)
-        grabMergeParameters();
-    toggleUnsafeWidgets();
-}
-
-void SubframeMergedPeaks::refreshExperimentList()
-{
-    _exp_drop->blockSignals(true);
-    QString current_exp = _exp_drop->currentText();
-    _exp_drop->clear();
-
-    if (gSession->experimentNames().empty())
+    if (!gSession->hasProject())
         return;
 
-    for (const QString& exp : gSession->experimentNames())
-        _exp_drop->addItem(exp);
-    _exp_drop->setCurrentText(current_exp);
-    _exp_drop->blockSignals(false);
     refreshSpaceGroupCombo();
     refreshPeakLists();
+    grabMergeParameters();
+    toggleUnsafeWidgets();
 }
 
 void SubframeMergedPeaks::refreshPeakLists()
@@ -383,28 +362,28 @@ void SubframeMergedPeaks::refreshPeakLists()
     processMerge();
 }
 
-
 void SubframeMergedPeaks::refreshPeakCombos()
 {
-    _peaks1_drop->blockSignals(true);
+    QSignalBlocker blocker1(_peaks1_drop);
+    QSignalBlocker blocker2(_peaks2_drop);
     QString current_peaks1 = _peaks1_drop->currentText();
     _peaks1_drop->clear();
     _peaks1_list.clear();
 
-    QStringList tmp = gSession->experimentAt(_exp_drop->currentIndex())
-                          ->getPeakCollectionNames(nsx::listtype::PREDICTED);
+    if (!gSession->currentProject()->hasPeakCollection())
+        return;
+
+    QStringList tmp = gSession->currentProject()->getPeakCollectionNames(nsx::listtype::PREDICTED);
     _peaks1_list.append(tmp);
     tmp.clear();
-    tmp = gSession->experimentAt(_exp_drop->currentIndex())
-              ->getPeakCollectionNames(nsx::listtype::FILTERED);
+    tmp = gSession->currentProject()->getPeakCollectionNames(nsx::listtype::FILTERED);
     _peaks1_list.append(tmp);
     tmp.clear();
-    tmp = gSession->experimentAt(_exp_drop->currentIndex())
-              ->getPeakCollectionNames(nsx::listtype::FOUND);
+    tmp = gSession->currentProject()->getPeakCollectionNames(nsx::listtype::FOUND);
     _peaks1_list.append(tmp);
     tmp.clear();
 
-    auto* expt = gSession->experimentAt(_exp_drop->currentIndex())->experiment();
+    auto* expt = gSession->currentProject()->experiment();
     if (!_peaks1_list.empty()) {
         for (QString& collection : _peaks1_list) {
             if (expt->getPeakCollection(collection.toStdString())->isIntegrated())
@@ -412,19 +391,14 @@ void SubframeMergedPeaks::refreshPeakCombos()
         }
         _peaks1_drop->setCurrentText(current_peaks1);
     }
-    _peaks1_drop->blockSignals(false);
 
-    _peaks2_drop->blockSignals(true);
-    tmp = gSession->experimentAt(_exp_drop->currentIndex())
-              ->getPeakCollectionNames(nsx::listtype::PREDICTED);
+    tmp = gSession->currentProject()->getPeakCollectionNames(nsx::listtype::PREDICTED);
     _peaks2_list.append(tmp);
     tmp.clear();
-    tmp = gSession->experimentAt(_exp_drop->currentIndex())
-              ->getPeakCollectionNames(nsx::listtype::FILTERED);
+    tmp = gSession->currentProject()->getPeakCollectionNames(nsx::listtype::FILTERED);
     _peaks2_list.append(tmp);
     tmp.clear();
-    tmp = gSession->experimentAt(_exp_drop->currentIndex())
-              ->getPeakCollectionNames(nsx::listtype::FOUND);
+    tmp = gSession->currentProject()->getPeakCollectionNames(nsx::listtype::FOUND);
     _peaks2_list.append(tmp);
     QString current_peaks2 = _peaks2_drop->currentText();
     _peaks2_drop->clear();
@@ -440,35 +414,32 @@ void SubframeMergedPeaks::refreshPeakCombos()
         }
         _peaks2_drop->setCurrentText(current_peaks2);
     }
-    _peaks2_drop->blockSignals(false);
 
     // Determine the maximum frame number for the frame spinboxes
-    if (!(_exp_drop->count() == 0) && !(_peaks1_drop->count() == 0)) {
-        auto* expt = gSession->experimentAt(_exp_drop->currentIndex())->experiment();
-        auto* peaks1 = expt->getPeakCollection(_peaks1_drop->currentText().toStdString());
+    auto* peaks1 = expt->getPeakCollection(_peaks1_drop->currentText().toStdString());
 
-        int max_frames = peaks1->getPeakList()[0]->dataSet()->nFrames();
-        if (!(_peaks2_drop->currentText() == QString())) {
-            auto* peaks2 = expt->getPeakCollection(_peaks2_drop->currentText().toStdString());
-            if (peaks2->getPeakList()[0]->dataSet()->nFrames() > max_frames)
-                max_frames = peaks2->getPeakList()[0]->dataSet()->nFrames();
-        }
+    int max_frames = peaks1->getPeakList()[0]->dataSet()->nFrames();
+    if (!(_peaks2_drop->currentText() == QString())) {
+        auto* peaks2 = expt->getPeakCollection(_peaks2_drop->currentText().toStdString());
+        if (peaks2->getPeakList()[0]->dataSet()->nFrames() > max_frames)
+            max_frames = peaks2->getPeakList()[0]->dataSet()->nFrames();
+    }
 
-        _frame_min->setMaximum(max_frames);
-        _frame_max->setMaximum(max_frames);
-        if (!_frame_set) { // only set the values the first time
-            _frame_min->setValue(1);
-            _frame_max->setValue(max_frames);
-            _frame_set = true;
-        }
+    _frame_min->setMaximum(max_frames);
+    _frame_max->setMaximum(max_frames);
+    if (!_frame_set) { // only set the values the first time
+        _frame_min->setValue(1);
+        _frame_max->setValue(max_frames);
+        _frame_set = true;
     }
 }
 
 void SubframeMergedPeaks::refreshSpaceGroupCombo()
 {
     QSignalBlocker blocker(_space_group);
-    auto* expt = gSession->experimentAt(_exp_drop->currentIndex())->experiment();
-    if (expt->numUnitCells() == 0)
+    auto* expt = gSession->currentProject()->experiment();
+
+    if (!gSession->currentProject()->hasUnitCell())
         return;
 
     std::vector<nsx::UnitCell*> cells = expt->getUnitCells();
@@ -485,15 +456,14 @@ void SubframeMergedPeaks::refreshSpaceGroupCombo()
     std::sort(vec.begin(), vec.end(), [](const auto& x, const auto& y) {
         return x.second > y.second;
     });
-    for (const auto& [key, value] : vec) {
+    for (const auto& [key, value] : vec)
         _space_group->addItem(QString::fromStdString(key));
-    }
 }
 
 void SubframeMergedPeaks::processMerge()
 {
     gGui->setReady(false);
-    auto* expt = gSession->experimentAt(_exp_drop->currentIndex())->experiment();
+    auto* expt = gSession->currentProject()->experiment();
     auto* merger = expt->peakMerger();
     merger->reset();
     setMergeParameters();
@@ -530,7 +500,7 @@ void SubframeMergedPeaks::refreshTables()
 
 void SubframeMergedPeaks::refreshDShellTable()
 {
-    auto* expt = gSession->experimentAt(_exp_drop->currentIndex())->experiment();
+    auto* expt = gSession->currentProject()->experiment();
     auto* merger = expt->peakMerger();
 
     QStandardItemModel* model = dynamic_cast<QStandardItemModel*>(_d_shell_view->model());
@@ -727,7 +697,7 @@ void SubframeMergedPeaks::saveStatistics()
     QFileInfo info(filename);
     s.setValue("merged", info.absolutePath());
 
-    auto* expt = gSession->experimentAt(_exp_drop->currentIndex())->experiment();
+    auto* expt = gSession->currentProject()->experiment();
     auto* merger = expt->peakMerger();
 
     exporter.saveStatistics(
@@ -744,7 +714,7 @@ void SubframeMergedPeaks::saveMergedPeaks()
 
     QString filename;
 
-    auto* expt = gSession->experimentAt(_exp_drop->currentIndex())->experiment();
+    auto* expt = gSession->currentProject()->experiment();
     auto* merger = expt->peakMerger();
     auto* merged_data = merger->getMergedData();
     bool success = false;
@@ -792,7 +762,7 @@ void SubframeMergedPeaks::saveUnmergedPeaks()
 
     QString filename;
 
-    auto* expt = gSession->experimentAt(_exp_drop->currentIndex())->experiment();
+    auto* expt = gSession->currentProject()->experiment();
     auto* merger = expt->peakMerger();
     auto* merged_data = merger->getMergedData();
     bool success = false;
@@ -832,12 +802,16 @@ void SubframeMergedPeaks::saveUnmergedPeaks()
 
 void SubframeMergedPeaks::toggleUnsafeWidgets()
 {
-    _save_shell->setEnabled(true);
-    _save_merged->setEnabled(true);
-    _save_unmerged->setEnabled(true);
-    if (_exp_drop->count() == 0 || _peaks1_drop->count() == 0) {
-        _save_shell->setEnabled(false);
-        _save_merged->setEnabled(false);
-        _save_unmerged->setEnabled(false);
+    _save_shell->setEnabled(false);
+    _save_merged->setEnabled(false);
+    _save_unmerged->setEnabled(false);
+
+    if (!gSession->hasProject())
+        return;
+
+    if (_peaks1_drop->count() > 0) {
+        _save_shell->setEnabled(true);
+        _save_merged->setEnabled(true);
+        _save_unmerged->setEnabled(true);
     }
 }

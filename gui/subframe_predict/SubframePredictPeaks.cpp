@@ -215,7 +215,6 @@ void SubframePredictPeaks::setParametersUp()
     Spoiler* para_box = new Spoiler("Predict peaks");
     GridFiller f(para_box, true);
 
-    _exp_combo = f.addLinkedCombo(ComboType::Experiment, "Experiment");
     _cell_combo = f.addLinkedCombo(ComboType::UnitCell, "Unit cell:");
     _d_min = f.addDoubleSpinBox("d min:", QString::fromUtf8("(\u212B) - minimum d (Bragg's law)"));
     _d_max = f.addDoubleSpinBox("d max:", QString::fromUtf8("(\u212B) - maximum d (Bragg's law)"));
@@ -228,9 +227,6 @@ void SubframePredictPeaks::setParametersUp()
     _d_max->setMaximum(100);
     _d_max->setDecimals(2);
 
-    connect(
-        _exp_combo, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this,
-        &SubframePredictPeaks::updateUnitCellList);
     connect(_predict_button, &QPushButton::clicked, this, &SubframePredictPeaks::runPrediction);
     connect(
         gGui->sideBar(), &SideBar::subframeChanged, this,
@@ -238,9 +234,6 @@ void SubframePredictPeaks::setParametersUp()
     connect(
         gGui->sideBar(), &SideBar::subframeChanged, this,
         &SubframePredictPeaks::setShapeCollectionParameters);
-    connect(
-        _exp_combo, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this,
-        &SubframePredictPeaks::refreshPeakCombo);
 
     _left_layout->addWidget(para_box);
 }
@@ -379,67 +372,55 @@ void SubframePredictPeaks::setPeakTableUp()
 
 void SubframePredictPeaks::refreshAll()
 {
-    setExperiments();
-    toggleUnsafeWidgets();
-}
+    if (!gSession->hasProject())
+        return
 
-void SubframePredictPeaks::setExperiments()
-{
-    _exp_combo->blockSignals(true);
-    QString current_exp = _exp_combo->currentText();
-    _exp_combo->clear();
-    for (const QString& exp : gSession->experimentNames())
-        _exp_combo->addItem(exp);
-    _exp_combo->setCurrentText(current_exp);
-
-    if (!(_exp_combo->count() == 0)) {
-        updateUnitCellList();
-        updateDatasetList();
-        refreshPeakCombo();
-        grabRefinerParameters();
-        grabPredictorParameters();
-        grabShapeCollectionParameters();
-        refreshPeakTable();
-        computeSigmas();
-        const auto data = _detector_widget->currentData();
-        if (data) {
-            _n_batches_spin->setMaximum(data->nFrames());
-            _beam_offset_x->setMaximum(static_cast<double>(data->nCols()) / 2.0);
-            _beam_offset_x->setMinimum(-static_cast<double>(data->nCols()) / 2.0);
-            _beam_offset_y->setMaximum(static_cast<double>(data->nRows()) / 2.0);
-            _beam_offset_y->setMinimum(-static_cast<double>(data->nRows()) / 2.0);
-        }
+    updateUnitCellList();
+    updateDatasetList();
+    refreshPeakCombo();
+    grabRefinerParameters();
+    grabPredictorParameters();
+    grabShapeCollectionParameters();
+    refreshPeakTable();
+    computeSigmas();
+    const auto data = _detector_widget->currentData();
+    if (data) {
+        _n_batches_spin->setMaximum(data->nFrames());
+        _beam_offset_x->setMaximum(static_cast<double>(data->nCols()) / 2.0);
+        _beam_offset_x->setMinimum(-static_cast<double>(data->nCols()) / 2.0);
+        _beam_offset_y->setMaximum(static_cast<double>(data->nRows()) / 2.0);
+        _beam_offset_y->setMinimum(-static_cast<double>(data->nRows()) / 2.0);
     }
-
-    _exp_combo->blockSignals(false);
+    toggleUnsafeWidgets();
 }
 
 void SubframePredictPeaks::updateUnitCellList()
 {
-    _cell_combo->blockSignals(true);
+    if (!gSession->hasProject())
+        return;
+    if (!gSession->currentProject()->hasUnitCell())
+        return;
+
+    QSignalBlocker blocker(_cell_combo);
     QString current_cell = _cell_combo->currentText();
     _cell_combo->clear();
-
-    _unit_cell_list = gSession->experimentAt(_exp_combo->currentIndex())->getUnitCellNames();
-
-    if (!_unit_cell_list.empty()) {
-        _cell_combo->addItems(_unit_cell_list);
-        _cell_combo->setCurrentText(current_cell);
-    }
-    _cell_combo->blockSignals(false);
+    _unit_cell_list = gSession->currentProject()->getUnitCellNames();
+    _cell_combo->addItems(_unit_cell_list);
+    _cell_combo->setCurrentText(current_cell);
 }
 
 void SubframePredictPeaks::updateDatasetList()
 {
-    _data_list = gSession->experimentAt(_exp_combo->currentIndex())->allData();
-    if (!_data_list.empty())
-        _detector_widget->updateDatasetList(_data_list);
+    if (!gSession->currentProject()->hasDataSet())
+        return;
+    _data_list = gSession->currentProject()->allData();
+    _detector_widget->updateDatasetList(_data_list);
 }
 
 void SubframePredictPeaks::grabPredictorParameters()
 {
     auto params =
-        gSession->experimentAt(_exp_combo->currentIndex())->experiment()->predictor()->parameters();
+        gSession->currentProject()->experiment()->predictor()->parameters();
 
     _d_min->setValue(params->d_min);
     _d_max->setValue(params->d_max);
@@ -447,11 +428,13 @@ void SubframePredictPeaks::grabPredictorParameters()
 
 void SubframePredictPeaks::setPredictorParameters()
 {
-    if (_exp_combo->count() == 0 || _cell_combo->count() == 0)
+    if (!gSession->hasProject())
+        return;
+    if (!gSession->currentProject()->hasUnitCell())
         return;
 
     auto params =
-        gSession->experimentAt(_exp_combo->currentIndex())->experiment()->predictor()->parameters();
+        gSession->currentProject()->experiment()->predictor()->parameters();
 
     params->d_min = _d_min->value();
     params->d_max = _d_max->value();
@@ -469,7 +452,7 @@ void SubframePredictPeaks::computeSigmas()
 void SubframePredictPeaks::grabRefinerParameters()
 {
     auto* params =
-        gSession->experimentAt(_exp_combo->currentIndex())->experiment()->refiner()->parameters();
+        gSession->currentProject()->experiment()->refiner()->parameters();
 
     _n_batches_spin->setValue(params->nbatches);
     _max_iter_spin->setValue(params->max_iter);
@@ -483,10 +466,10 @@ void SubframePredictPeaks::grabRefinerParameters()
 
 void SubframePredictPeaks::setRefinerParameters()
 {
-    if (_exp_combo->count() == 0)
+    if (!gSession->hasProject())
         return;
     auto* params =
-        gSession->experimentAt(_exp_combo->currentIndex())->experiment()->refiner()->parameters();
+        gSession->currentProject()->experiment()->refiner()->parameters();
 
     params->nbatches = _n_batches_spin->value();
     params->max_iter = _max_iter_spin->value();
@@ -498,7 +481,7 @@ void SubframePredictPeaks::setRefinerParameters()
 
 void SubframePredictPeaks::grabShapeCollectionParameters()
 {
-    if (_exp_combo->count() == 0)
+    if (!gSession->hasProject())
         return;
 
     if (!(_peak_collection.numberOfPeaks() == 0)) {
@@ -524,7 +507,7 @@ void SubframePredictPeaks::grabShapeCollectionParameters()
 
 void SubframePredictPeaks::setShapeCollectionParameters()
 {
-    if (_exp_combo->count() == 0)
+    if (!gSession->hasProject())
         return;
 
     _shape_params->sigma_m = _sigma_m->value();
@@ -551,8 +534,8 @@ void SubframePredictPeaks::refreshPeakCombo()
     _found_peaks_combo->blockSignals(true);
     QString current_peaks = _found_peaks_combo->currentText();
     _found_peaks_combo->clear();
-    _found_peaks_combo->addItems(gSession->experimentAt(_exp_combo->currentIndex())
-                                     ->getPeakCollectionNames(nsx::listtype::FOUND));
+    _found_peaks_combo->addItems(
+        gSession->currentProject()->getPeakCollectionNames(nsx::listtype::FOUND));
     _found_peaks_combo->setCurrentText(current_peaks);
     _found_peaks_combo->blockSignals(false);
 }
@@ -583,7 +566,7 @@ void SubframePredictPeaks::setInitialKi(nsx::sptrDataSet data)
 void SubframePredictPeaks::refineKi()
 {
     gGui->setReady(false);
-    auto expt = gSession->experimentAt(_exp_combo->currentIndex())->experiment();
+    auto expt = gSession->currentProject()->experiment();
     auto* peaks = expt->getPeakCollection(_found_peaks_combo->currentText().toStdString());
     auto data = _detector_widget->currentData();
     auto* detector = data->diffractometer()->detector();
@@ -634,7 +617,7 @@ void SubframePredictPeaks::runPrediction()
         setInitialKi(data);
     }
     try {
-        auto* experiment = gSession->experimentAt(_exp_combo->currentIndex())->experiment();
+        auto* experiment = gSession->currentProject()->experiment();
         auto data = experiment->getData(_detector_widget->dataCombo()->currentText().toStdString());
         auto* predictor = experiment->predictor();
         setPredictorParameters();
@@ -678,7 +661,7 @@ void SubframePredictPeaks::showDirectBeamEvents()
     if (_direct_beam->isChecked()) {
         _detector_widget->scene()->showDirectBeam(true);
 
-        auto* expt = gSession->experimentAt(_exp_combo->currentIndex())->experiment();
+        auto* expt = gSession->currentProject()->experiment();
         auto data_name = _detector_widget->dataCombo()->currentText().toStdString();
         if (data_name.empty()) { // to prevent crash
             QMessageBox::warning(
@@ -707,7 +690,7 @@ void SubframePredictPeaks::assignPeakShapes()
     auto shape_collection = std::make_unique<nsx::ShapeCollection>();
 
     gGui->setReady(false);
-    auto* experiment = gSession->experimentAt(_exp_combo->currentIndex())->experiment();
+    auto* experiment = gSession->currentProject()->experiment();
     auto data = experiment->getData(_detector_widget->dataCombo()->currentText().toStdString());
     auto* found_peaks =
         experiment->getPeakCollection(_found_peaks_combo->currentText().toStdString());
@@ -758,7 +741,7 @@ void SubframePredictPeaks::assignPeakShapes()
 void SubframePredictPeaks::accept()
 {
     // suggest name to user
-    auto* project = gSession->experimentAt(_exp_combo->currentIndex());
+    auto* project = gSession->currentProject();
     auto* expt = project->experiment();
     std::string suggestion = expt->generatePeakCollectionName();
     std::unique_ptr<ListNameDialog> dlg(new ListNameDialog(QString::fromStdString(suggestion)));
@@ -786,7 +769,7 @@ void SubframePredictPeaks::accept()
 
 void SubframePredictPeaks::refreshPeakTable()
 {
-    if (_exp_combo->count() == 0)
+    if (!gSession->hasProject())
         return;
 
     computeSigmas();
@@ -835,7 +818,10 @@ void SubframePredictPeaks::toggleUnsafeWidgets()
     _assign_peak_shapes->setEnabled(false);
     _refine_ki_button->setEnabled(false);
     _direct_beam->setEnabled(false);
-    if (_cell_combo->count() == 0 || _exp_combo->count() == 0) {
+    if (!gSession->hasProject())
+        return;
+
+    if (!gSession->currentProject()->hasUnitCell()) {
         _predict_button->setEnabled(false);
         _save_button->setEnabled(false);
         _assign_peak_shapes->setEnabled(false);

@@ -84,15 +84,7 @@ void SubframeFilterPeaks::setInputUp()
     auto input_box = new Spoiler("Input");
     GridFiller f(input_box, true);
 
-    _exp_combo = f.addLinkedCombo(ComboType::Experiment, "Experiment");
     _peak_combo = f.addLinkedCombo(ComboType::PeakCollection, "Peak collection");
-
-    connect(
-        _exp_combo, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this,
-        [=]() {
-            updatePeakList();
-            grabFilterParameters();
-        });
 
     connect(
         _peak_combo, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this,
@@ -321,35 +313,21 @@ void SubframeFilterPeaks::refreshAll()
 
 void SubframeFilterPeaks::setParametersUp()
 {
-    setExperimentsUp();
-}
-
-void SubframeFilterPeaks::setExperimentsUp()
-{
-    _exp_combo->blockSignals(true);
-    QString current_exp = _exp_combo->currentText();
-    _exp_combo->clear();
-
-    if (gSession->experimentNames().empty())
-        return;
-
-    for (const QString& exp : gSession->experimentNames())
-        _exp_combo->addItem(exp);
-
-    _exp_combo->setCurrentText(current_exp);
-    _exp_combo->blockSignals(false);
     updatePeakList();
     grabFilterParameters();
 }
 
 void SubframeFilterPeaks::updatePeakList()
 {
-    if (gSession->experimentNames().empty())
+    if (!gSession->hasProject())
+        return;
+
+    if (!gSession->currentProject()->hasPeakCollection())
         return;
 
     QString current_peaks = _peak_combo->currentText();
     _peak_combo->clear();
-    auto peak_list = gSession->experimentAt(_exp_combo->currentIndex())->getPeakListNames();
+    auto peak_list = gSession->currentProject()->getPeakListNames();
     _peak_combo->addItems(peak_list);
     _peak_combo->setCurrentText(current_peaks);
 
@@ -359,18 +337,18 @@ void SubframeFilterPeaks::updatePeakList()
 
 void SubframeFilterPeaks::updateDatasetList()
 {
-    _data_list = gSession->experimentAt(_exp_combo->currentIndex())->allData();
-    const nsx::DataList all_data = gSession->experimentAt(_exp_combo->currentIndex())->allData();
+    _data_list = gSession->currentProject()->allData();
+    const nsx::DataList all_data = gSession->currentProject()->allData();
     if (!_data_list.empty())
         _detector_widget->updateDatasetList(all_data);
 }
 
 void SubframeFilterPeaks::grabFilterParameters()
 {
-    if (_peak_combo->count() == 0 || _exp_combo->count() == 0)
+    if (!gSession->hasProject())
         return;
 
-    auto* params = gSession->experimentAt(_exp_combo->currentIndex())
+    auto* params = gSession->currentProject()
                        ->experiment()
                        ->peakFilter()
                        ->parameters();
@@ -387,7 +365,7 @@ void SubframeFilterPeaks::grabFilterParameters()
     _bkg_end->setValue(params->bkg_end);
 
     auto* flags =
-        gSession->experimentAt(_exp_combo->currentIndex())->experiment()->peakFilter()->flags();
+        gSession->currentProject()->experiment()->peakFilter()->flags();
 
     _selected->setChecked(flags->selected);
     _masked->setChecked(flags->masked);
@@ -407,10 +385,10 @@ void SubframeFilterPeaks::grabFilterParameters()
 
 void SubframeFilterPeaks::setFilterParameters()
 {
-    if (_peak_combo->count() == 0 || _exp_combo->count() == 0)
+    if (!gSession->hasProject())
         return;
 
-    auto* filter = gSession->experimentAt(_exp_combo->currentIndex())->experiment()->peakFilter();
+    auto* filter = gSession->currentProject()->experiment()->peakFilter();
     auto* flags = filter->flags();
     filter->resetFilterFlags();
 
@@ -462,10 +440,9 @@ void SubframeFilterPeaks::filterPeaks()
 {
     gGui->setReady(false);
     nsx::PeakFilter* filter =
-        gSession->experimentAt(_exp_combo->currentIndex())->experiment()->peakFilter();
+        gSession->currentProject()->experiment()->peakFilter();
     nsx::PeakCollection* collection =
-        gSession->experimentAt(_exp_combo->currentIndex())
-            ->experiment()
+        gSession->currentProject() ->experiment()
             ->getPeakCollection(_peak_combo->currentText().toStdString());
     filter->resetFiltering(collection);
     setFilterParameters();
@@ -484,8 +461,7 @@ void SubframeFilterPeaks::filterPeaks()
 void SubframeFilterPeaks::accept()
 {
     nsx::PeakCollection* collection =
-        gSession->experimentAt(_exp_combo->currentIndex())
-            ->experiment()
+        gSession->currentProject() ->experiment()
             ->getPeakCollection(_peak_combo->currentText().toStdString());
 
     std::string suggestion = gSession->currentProject()->experiment()->generatePeakCollectionName();
@@ -495,26 +471,27 @@ void SubframeFilterPeaks::accept()
         return;
     if (dlg->result() == QDialog::Rejected)
         return;
-    if (!gSession->experimentAt(_exp_combo->currentIndex()) ->experiment()
+    if (!gSession->currentProject()->experiment()
         ->acceptFilter(dlg->listName().toStdString(), collection, nsx::listtype::FILTERED)) {
         QMessageBox::warning(
             this, "Unable to add PeakCollection", "Collection with this name already exists!");
         return;
     }
 
-    gSession->experimentAt(_exp_combo->currentIndex())->generatePeakModel(dlg->listName());
-    auto peak_list = gSession->experimentAt(_exp_combo->currentIndex())->getPeakListNames();
+    gSession->currentProject()->generatePeakModel(dlg->listName());
+    auto peak_list = gSession->currentProject()->getPeakListNames();
     _peak_combo->updateList(peak_list);
 }
 
 void SubframeFilterPeaks::refreshPeakTable()
 {
-    if (_peak_combo->count() == 0 || _exp_combo->count() == 0)
+    if (!gSession->hasProject())
+        return;
+    if (!gSession->currentProject()->hasPeakCollection())
         return;
 
     nsx::PeakCollection* collection =
-        gSession->experimentAt(_exp_combo->currentIndex())
-            ->experiment()
+        gSession->currentProject() ->experiment()
             ->getPeakCollection(_peak_combo->currentText().toStdString());
     _peak_collection_item.setPeakCollection(collection);
     _peak_collection_item.setFilterMode();
@@ -554,7 +531,9 @@ void SubframeFilterPeaks::toggleUnsafeWidgets()
 {
     _filter_button->setEnabled(true);
     _save_button->setEnabled(true);
-    if (_exp_combo->count() == 0 || _peak_combo->count() == 0) {
+    if (!gSession->hasProject())
+        return;
+    if (!gSession->currentProject()->hasPeakCollection()) {
         _filter_button->setEnabled(false);
         _save_button->setEnabled(false);
     }
