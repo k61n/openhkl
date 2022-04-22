@@ -299,3 +299,9 @@ int PeakCollectionItem::numberRejectedByFilter() const
 {
     return _peak_items.size() - numberCaughtByFilter();
 }
+
+void PeakCollectionItem::reset()
+{
+    _peak_collection = nullptr;
+    _peak_items.clear();
+}

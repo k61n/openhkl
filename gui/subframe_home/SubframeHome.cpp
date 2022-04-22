@@ -246,6 +246,8 @@ void SubframeHome::saveCurrent(bool dialogue /* = false */)
     QString loadDirectory = s.value("experiment", QDir::homePath()).toString();
 
     auto* project = gSession->currentProject();
+    if (!project)
+        return;
     QString file_path;
 
     if (project->saved() && !dialogue) {
@@ -362,6 +364,8 @@ void SubframeHome::refreshTables()
     _dataset_table->setRowCount(0);
     _peak_collections_table->setRowCount(0);
     _unitcell_table->setRowCount(0);
+    if (!gSession->hasProject())
+        return;
     try {
         auto b2s = [](bool a) { return !a ? QString("No") : QString("Yes"); };
         auto Type2s = [](nsx::listtype t) {

@@ -72,6 +72,8 @@ SubframeExperiment::SubframeExperiment()
 
 void SubframeExperiment::dataChanged()
 {
+    if (!gSession->hasProject())
+        return;
     _data_list = gSession->currentProject()->allData();
     if (_data_list.empty())
         return;
