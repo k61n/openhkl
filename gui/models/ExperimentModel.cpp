@@ -91,19 +91,22 @@ QVariant ExperimentModel::valueOutput(const QModelIndex& index) const
 
     switch (col) {
         case 0: {
-            return QString::fromStdString(gSession->experimentAt(row)->experiment()->name());
+            return gSession->experimentAt(row)->id();
         }
         case 1: {
+            return QString::fromStdString(gSession->experimentAt(row)->experiment()->name());
+        }
+        case 2: {
             return QString::fromStdString(
                 gSession->experimentAt(row)->experiment()->getDiffractometer()->name());
         }
-        case 2: {
+        case 3: {
             return QVariant(gSession->experimentAt(row)->experiment()->numData());
         }
-        case 3: {
+        case 4: {
             return QVariant(gSession->experimentAt(row)->experiment()->numPeakCollections());
         }
-        case 4: {
+        case 5: {
             return QVariant(gSession->experimentAt(row)->experiment()->numUnitCells());
         }
         default: return QVariant();
@@ -118,18 +121,21 @@ QVariant ExperimentModel::headerData(int section, Qt::Orientation orientation, i
     if (orientation == Qt::Horizontal) {
         switch (section) {
             case 0: {
-                return QString("Name");
+                return QString("ID");
             }
             case 1: {
-                return QString("Instrument");
+                return QString("Name");
             }
             case 2: {
-                return QString("Data sets");
+                return QString("Instrument");
             }
             case 3: {
-                return QString("Peak collections");
+                return QString("Data sets");
             }
             case 4: {
+                return QString("Peak collections");
+            }
+            case 5: {
                 return QString("Unit cells");
             }
             default: return QVariant();

@@ -115,10 +115,12 @@ void Actions::removeExperiment()
     QString description{"Experiment to remove"};
 
     QStringList expt_list;
+    std::vector<unsigned int> id_list;
 
     for (int expt_idx = 0; expt_idx < gSession->numExperiments(); ++expt_idx) {
         std::string name = gSession->experimentAt(expt_idx)->experiment()->name();
         expt_list.push_back(QString::fromStdString(name));
+        id_list.push_back(gSession->experimentAt(expt_idx)->id());
     }
     std::unique_ptr<ComboDialog> dlg(new ComboDialog(expt_list, description));
     dlg->exec();
@@ -129,7 +131,7 @@ void Actions::removeExperiment()
         return;
 
     gGui->sideBar()->manualSelect(0); // switch to SubframeHome
-    gSession->removeExperiment(dlg->itemName());
+    gSession->removeExperiment(id_list[dlg->itemIndex()]);
     gSession->onExperimentChanged();
 }
 

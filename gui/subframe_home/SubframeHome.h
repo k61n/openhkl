@@ -26,6 +26,7 @@
 #include <QTableWidget>
 #include <QVBoxLayout>
 #include <QWidget>
+#include <qpushbutton.h>
 
 //! Frame containing interface to create, save and load experiments
 class SubframeHome : public QWidget {
@@ -59,6 +60,8 @@ class SubframeHome : public QWidget {
     void saveCurrent(bool dialogue = false);
     //! Save all experiments provided they have save paths (not implemented)
     void saveAll();
+    //! Remove the current experiment
+    void removeCurrent();
 
     //! Read the settings
     void readSettings();
@@ -77,6 +80,7 @@ class SubframeHome : public QWidget {
     QPushButton* _old_exp;
     QPushButton* _save_current;
     QPushButton* _save_all;
+    QPushButton* _remove_current;
 
     ExperimentTableView* _open_experiments_view;
     std::unique_ptr<ExperimentModel> _open_experiments_model;

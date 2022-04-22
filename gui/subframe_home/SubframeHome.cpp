@@ -27,6 +27,15 @@
 #include <QMessageBox>
 #include <QSettings>
 #include <QSpacerItem>
+#include <QHeaderView>
+
+// Icon attributions:
+// save.svg: folder open by Loudoun Design Co from the Noun Project
+// delete.svg: trash by Loudoun Design Co from the Noun Project
+// open.svg: open book by Loudoun Design Co from the Noun Project
+// plus.svg: circle plus by Loudoun Design Co from the Noun Project
+// minus.svg: circle minus by Loudoun Design Co from the Noun Project
+// beaker.svg: beaker by Loudoun Design Co from the Noun Project
 
 SubframeHome::SubframeHome()
 {
@@ -61,14 +70,23 @@ void SubframeHome::_setLeftLayout(QHBoxLayout* main_layout)
     QHBoxLayout* left_top = new QHBoxLayout();
     QString tooltip;
 
+    QString path{":images/icons/"};
+    QString light{"lighttheme/"};
+    QString dark{"darktheme/"};
+
+    if (gGui->isDark()) // looks like we have a dark theme
+        path = path + dark;
+    else
+        path = path + light;
+
     _new_exp = new QPushButton();
-    _new_exp->setIcon(QIcon(":/images/create_new.svg"));
+    _new_exp->setIcon(QIcon(path + "plus.svg"));
     _new_exp->setText("Create new experiment");
     _new_exp->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
     connect(_new_exp, &QPushButton::clicked, this, &SubframeHome::createNew);
 
     _old_exp = new QPushButton();
-    _old_exp->setIcon(QIcon(":/images/load_from_folder.svg"));
+    _old_exp->setIcon(QIcon(path + "open.svg"));
     _old_exp->setText("Load from file");
     _old_exp->setMinimumWidth(_new_exp->sizeHint().width());
     _old_exp->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
@@ -97,6 +115,7 @@ void SubframeHome::_setLeftLayout(QHBoxLayout* main_layout)
     _dataset_table->setHorizontalHeaderLabels(QStringList{
         "Name", "Diffractometer", "Number of Frames", "Number of Columns", "Number of Rows"});
     _dataset_table->resizeColumnsToContents();
+    _dataset_table->verticalHeader()->setVisible(false);
 
     _peak_collections_table = new QTableWidget(0, 6);
     _peak_collections_table->setEditTriggers(QAbstractItemView::NoEditTriggers);
@@ -104,6 +123,7 @@ void SubframeHome::_setLeftLayout(QHBoxLayout* main_layout)
         "Name", "Number of Peaks", "Number of Invalid Peaks", "Is indexed", "Is integrated",
         "List Type"});
     _peak_collections_table->resizeColumnsToContents();
+    _peak_collections_table->verticalHeader()->setVisible(false);
 
     _unitcell_table = new QTableWidget(0, 9);
     _unitcell_table->setEditTriggers(QAbstractItemView::NoEditTriggers);
@@ -111,6 +131,7 @@ void SubframeHome::_setLeftLayout(QHBoxLayout* main_layout)
         "ID", "Name", "Space Group", "a", "b", "c", QChar(0xb1, 0x03), QChar(0xb2, 0x03),
         QChar(0xb3, 0x03)});
     _unitcell_table->resizeColumnsToContents();
+    _unitcell_table->verticalHeader()->setVisible(false);
 
     // labels for tables
     QLabel* lab_dataset = new QLabel("Datasets", this);
@@ -142,7 +163,6 @@ void SubframeHome::_setLeftLayout(QHBoxLayout* main_layout)
 void SubframeHome::_setRightLayout(QHBoxLayout* main_layout)
 {
     QVBoxLayout* right = new QVBoxLayout;
-    QString tooltip;
 
     _open_experiments_model = std::make_unique<ExperimentModel>();
     _open_experiments_view = new ExperimentTableView();
@@ -155,24 +175,40 @@ void SubframeHome::_setRightLayout(QHBoxLayout* main_layout)
 
     QHBoxLayout* right_bot = new QHBoxLayout();
 
+    QString path{":images/icons/"};
+    QString light{"lighttheme/"};
+    QString dark{"darktheme/"};
+
+    if (gGui->isDark()) // looks like we have a dark theme
+        path = path + dark;
+    else
+        path = path + light;
+
     _save_current = new QPushButton();
-    _save_current->setIcon(QIcon(":/images/save.svg"));
+    _save_current->setIcon(QIcon(path + "save.svg"));
     _save_current->setText("Save current experiment");
     _save_current->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
-    tooltip = "Save current experiment to .nsx (HDF5) file";
-    _save_current->setToolTip(tooltip);
+    _save_current->setToolTip("Save current experiment to .nsx (HDF5) file");
     connect(_save_current, &QPushButton::clicked, this, &SubframeHome::saveCurrent);
 
     _save_all = new QPushButton();
-    _save_all->setIcon(QIcon(":/images/save.svg"));
+    _save_all->setIcon(QIcon(path + "save.svg"));
     _save_all->setText("Save all experiments");
     _save_all->setMinimumWidth(_save_current->sizeHint().width());
     _save_all->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
-    tooltip = "Save all experiments to .nsx (HDF5) files";
-    _save_all->setToolTip(tooltip);
+    _save_all->setToolTip("Save all experiments to .nsx (HDF5) file");
+
+    _remove_current = new QPushButton();
+    _remove_current->setIcon(QIcon(path + "delete.svg"));
+    _remove_current->setText("Remove current experiment");
+    _remove_current->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
+    _remove_current->setToolTip("Remove selected experiment from list");
+    connect(_remove_current, &QPushButton::clicked, this, &SubframeHome::removeCurrent);
+
 
     right_bot->addWidget(_save_current);
     right_bot->addWidget(_save_all);
+    right_bot->addWidget(_remove_current);
 
     right->addLayout(right_bot);
 
@@ -276,6 +312,12 @@ void SubframeHome::saveCurrent(bool dialogue /* = false */)
 
 void SubframeHome::saveAll() { }
 
+void SubframeHome::removeCurrent()
+{
+    gSession->removeExperiment(gSession->currentProject()->id());
+    refreshTables();
+}
+
 void SubframeHome::_switchCurrentExperiment(const QModelIndex& index)
 {
     gSession->selectProject(index.row());
@@ -317,12 +359,21 @@ void SubframeHome::_updateLastLoadedWidget()
     QSignalBlocker blocker(_last_import_widget);
     _last_import_widget->clear();
 
+    QString path{":images/icons/"};
+    QString light{"lighttheme/"};
+    QString dark{"darktheme/"};
+
+    if (gGui->isDark()) // looks like we have a dark theme
+        path = path + dark;
+    else
+        path = path + light;
+
     QList<QStringList>::iterator it;
     for (it = _last_imports.begin(); it != _last_imports.end(); ++it) {
         std::ostringstream oss;
         oss << (*it).at(0).toStdString() << " (" << (*it).at(1).toStdString() << ")";
         QString fullname = QString::fromStdString(oss.str());
-        QListWidgetItem* item = new QListWidgetItem(QIcon(":/images/experimentIcon.png"), fullname);
+        QListWidgetItem* item = new QListWidgetItem(QIcon(path + "beaker.svg"), fullname);
         item->setData(100, (*it).at(1));
         _last_import_widget->addItem(item);
     }
@@ -350,9 +401,11 @@ void SubframeHome::toggleUnsafeWidgets()
     _save_all->setEnabled(true);
     _save_current->setEnabled(true);
     _save_current->setEnabled(true);
+    _remove_current->setEnabled(true);
     if (_open_experiments_model->rowCount() == 0) {
         _save_all->setEnabled(false);
         _save_current->setEnabled(false);
+        _remove_current->setEnabled(false);
     }
 }
 

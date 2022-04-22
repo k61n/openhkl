@@ -23,7 +23,7 @@ ExperimentTableView::ExperimentTableView(QWidget* parent) : QTableView(parent)
     setSelectionMode(QAbstractItemView::ExtendedSelection);
 
     // setSortingEnabled(true);
-    verticalHeader()->show();
+    verticalHeader()->setVisible(false);
     // sortByColumn(0, Qt::AscendingOrder);
     setFocusPolicy(Qt::StrongFocus);
 }

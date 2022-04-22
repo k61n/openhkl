@@ -122,15 +122,14 @@ bool Session::addProject(std::unique_ptr<Project> project_ptr)
     return true;
 }
 
-void Session::removeExperiment(const QString& name)
+void Session::removeExperiment(unsigned int id)
 {
     if (_projects.empty()) {
         return;
     } else {
-        const std::string name_str{name.toStdString()};
         for (decltype(_projects)::const_iterator it = _projects.begin(); it != _projects.end();) {
             const Project& prj{**it};
-            if (name_str == prj.experiment()->name())
+            if (id == prj.id())
                 it = _projects.erase(it);
             else
                 ++it;

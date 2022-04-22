@@ -45,7 +45,12 @@ ComboDialog::ComboDialog(QStringList items, QString description)
     QObject::connect(buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
 }
 
-QString ComboDialog::itemName()
+QString ComboDialog::itemName() const
 {
     return _items_combo->currentText();
+}
+
+unsigned int ComboDialog::itemIndex() const
+{
+    return _items_combo->currentIndex();
 }

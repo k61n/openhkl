@@ -25,8 +25,10 @@
 #include <iostream>
 #include <vector>
 
+unsigned int Project::_last_id = 0;
+
 Project::Project(QString name, QString instrument)
-    : _experiment{new nsx::Experiment{name.toStdString(), instrument.toStdString()}}
+    : _experiment{new nsx::Experiment{name.toStdString(), instrument.toStdString()}}, _id(++_last_id)
 {
 }
 
