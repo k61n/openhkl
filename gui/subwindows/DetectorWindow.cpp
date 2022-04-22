@@ -260,15 +260,15 @@ void DetectorWindow::refreshPeakTable()
     auto expt = gSession->experimentAt(_exp_combo->currentIndex())->experiment();
     _peak_collection_1 = expt->getPeakCollection(_peak_combo_1->currentText().toStdString());
 
-    if (!_peak_collection_1) {
+    if (_peak_collection_1) {
+        _peak_collection_item_1.setPeakCollection(_peak_collection_1);
+        _peak_collection_model_1.setRoot(&_peak_collection_item_1);
+        _peak_table_1->resizeColumnsToContents();
+    } else {
         _peak_collection_item_1.reset();
         _peak_collection_model_1.reset();
-        return;
     }
 
-    _peak_collection_item_1.setPeakCollection(_peak_collection_1);
-    _peak_collection_model_1.setRoot(&_peak_collection_item_1);
-    _peak_table_1->resizeColumnsToContents();
 
     QString collection_2 = _peak_combo_2->currentText();
     if (!collection_2.isEmpty()) {
@@ -320,9 +320,6 @@ void DetectorWindow::updateDatasetList()
 
 void DetectorWindow::updatePeakList()
 {
-    if (!gSession->experimentAt(_exp_combo->currentIndex())->hasPeakCollection())
-        return;
-
     QSignalBlocker blocker1(_peak_combo_1);
     QSignalBlocker blocker2(_peak_combo_2);
     QString current_peaks = _peak_combo_1->currentText();
@@ -344,8 +341,6 @@ void DetectorWindow::updatePeakList()
 
 void DetectorWindow::updateUnitCellList()
 {
-    if (!gSession->experimentAt(_exp_combo->currentIndex())->hasUnitCell())
-        return;
     QSignalBlocker blocker(_unit_cell_combo);
     QString current_cell = _unit_cell_combo->currentText();
     _unit_cell_combo->clear();
