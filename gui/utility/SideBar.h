@@ -22,10 +22,9 @@ class SideBar : public QWidget {
  public:
     SideBar(QWidget* parent = nullptr);
     void addAction(QAction* action);
-    QAction* addAction(const QIcon& icon, const QString& text, bool active);
+    QAction* addAction(const QIcon& icon, const QString& text);
     QSize minimumSizeHint() const;
     void manualSelect(int index);
-
     void refreshAll();
 
     void refreshCurrent();

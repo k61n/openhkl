@@ -85,8 +85,12 @@ SideBar::SideBar(QWidget* parent) : QWidget(parent), mCheckedAction(nullptr), mO
     connect(refiner, &QAction::triggered, this, &SideBar::onRefiner);
     connect(integrator, &QAction::triggered, this, &SideBar::onIntegrator);
     connect(info, &QAction::triggered, this, &SideBar::onMerger);
+<<<<<<< HEAD
 
+=======
+>>>>>>> removed Toggled Sidebar
 }
+
 
 void SideBar::paintEvent(QPaintEvent* event)
 {
@@ -132,9 +136,7 @@ void SideBar::paintEvent(QPaintEvent* event)
         actionIcon.paint(&painter, actionIconRect);
 
         action_y += actionRect.height();
-    }
-
-    toggling();
+    } 
 }
 QSize SideBar::minimumSizeHint() const
 {
@@ -148,11 +150,11 @@ void SideBar::addAction(QAction* action)
     update();
 }
 
-QAction* SideBar::addAction(const QIcon& icon, const QString& text, bool active)
+QAction* SideBar::addAction(const QIcon& icon, const QString& text)
 {
     QAction* action = new QAction(icon, text, this);
-    action->setCheckable(active);
-    action->blockSignals(!active);
+    action->setCheckable(true);
+    action->blockSignals(false);
     mActions.push_back(action);
     update();
     return action;
@@ -305,11 +307,4 @@ void SideBar::refreshAll()
     gGui->integrator->refreshAll();
     gGui->merger->refreshAll();
     gGui->home->clearTables();
-
-    toggling();
-}
-
-void SideBar::refreshCurrent()
-{
-    mCheckedAction->trigger();
 }
