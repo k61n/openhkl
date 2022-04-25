@@ -54,6 +54,8 @@ class SubframeFindPeaks : public QWidget {
     DetectorWidget* detectorWidget();
     //! Grab the finder parameters
     void grabFinderParameters();
+    //! Grab the integration parameters
+    void grabIntegrationParameters();
 
  private:
     //! Set up the data selection GUI
@@ -93,8 +95,6 @@ class SubframeFindPeaks : public QWidget {
     //! Set the finder parameters
     void setFinderParameters();
 
-    //! Grab the integration parameters
-    void grabIntegrationParameters();
     //! Set the integration parameters
     void setIntegrationParameters();
 

@@ -338,9 +338,12 @@ void Session::onExperimentChanged()
         gGui->onExperimentChanged();
     }
     gGui->finder->grabFinderParameters();
+    gGui->finder->grabIntegrationParameters();
     gGui->filter->grabFilterParameters();
     gGui->indexer->grabIndexerParameters();
     gGui->predictor->grabPredictorParameters();
+    gGui->predictor->grabRefinerParameters();
+    gGui->predictor->grabShapeCollectionParameters();
     gGui->refiner->grabRefinerParameters();
     gGui->integrator->grabIntegrationParameters();
     gGui->merger->grabMergeParameters();
