@@ -138,7 +138,7 @@ void Session::removeExperiment(unsigned int id)
             const Project& prj{**it};
             if (id == prj.id())
                 it = _projects.erase(it);
-            } else
+            else
                 ++it;
         }
     }
