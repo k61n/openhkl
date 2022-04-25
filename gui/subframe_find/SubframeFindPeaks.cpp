@@ -269,7 +269,6 @@ void SubframeFindPeaks::refreshAll()
     setParametersUp();
     if (gSession->hasProject())
         _detector_widget->updateDatasetList(gSession->currentProject()->allData());
-
     toggleUnsafeWidgets();
 }
 
@@ -286,9 +285,6 @@ void SubframeFindPeaks::setParametersUp()
 
 void SubframeFindPeaks::updateDatasetList()
 {
-    if (!gSession->currentProject()->hasDataSet())
-        return;
-
     QSignalBlocker blocker(_data_combo);
     QString current_data = _data_combo->currentText();
     _data_combo->clear();
@@ -601,7 +597,7 @@ void SubframeFindPeaks::refreshPeakTable()
 
 void SubframeFindPeaks::refreshPeakVisual()
 {
-    if (!gSession->currentProject()->hasPeakCollection())
+    if (_peak_collection.numberOfPeaks() == 0)
         return;
 
     for (int i = 0; i < _peak_collection_item.childCount(); i++) {
