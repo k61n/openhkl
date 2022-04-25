@@ -85,10 +85,6 @@ SideBar::SideBar(QWidget* parent) : QWidget(parent), mCheckedAction(nullptr), mO
     connect(refiner, &QAction::triggered, this, &SideBar::onRefiner);
     connect(integrator, &QAction::triggered, this, &SideBar::onIntegrator);
     connect(info, &QAction::triggered, this, &SideBar::onMerger);
-<<<<<<< HEAD
-
-=======
->>>>>>> removed Toggled Sidebar
 }
 
 
@@ -307,4 +303,9 @@ void SideBar::refreshAll()
     gGui->integrator->refreshAll();
     gGui->merger->refreshAll();
     gGui->home->clearTables();
+}
+
+void SideBar::refreshCurrent()
+{
+    mCheckedAction->trigger();
 }

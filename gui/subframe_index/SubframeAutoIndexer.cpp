@@ -53,8 +53,6 @@
 #include <QSplitter>
 #include <QTabWidget>
 #include <QVBoxLayout>
-#include <qnamespace.h>
-#include <QWidget>
 #include <stdexcept>
 
 
@@ -115,6 +113,7 @@ SubframeAutoIndexer::SubframeAutoIndexer()
     _right_element->setSizePolicy(_size_policy_right);
     _set_initial_ki->setChecked(false);
 }
+
 
 void SubframeAutoIndexer::setInputUp()
 {
@@ -338,8 +337,10 @@ void SubframeAutoIndexer::refreshAll()
 
     const auto all_data = gSession->currentProject()->allData();
     _detector_widget->updateDatasetList(all_data);
+    auto dataname = _data_combo->currentText().toStdString();
+    if (dataname.empty()) dataname = all_data.at(0).get()->name();
     const auto dataset =
-        gSession->currentProject()->experiment()->getData(_data_combo->currentText().toStdString());
+        gSession->currentProject()->experiment()->getData(dataname);
     _max_frame->setMaximum(dataset->nFrames() - 1);
 
     _beam_offset_x->setMaximum(static_cast<double>(dataset->nCols()) / 2.0);
@@ -450,24 +451,10 @@ void SubframeAutoIndexer::changeSelected(PeakItemGraphic* peak_graphic)
 
 void SubframeAutoIndexer::refreshPeakVisual()
 {
-    if (_detector_widget==nullptr){
-        return;
-    }
-    if (_set_initial_ki==nullptr){
-        return;
-    }
     auto data = _detector_widget->currentData();
-    if (data==nullptr) {
-        return;
-    }
-    auto scene = _detector_widget->scene();
-    if (scene==nullptr) {
-        return;
-    }
-
-    scene->initIntRegionFromPeakWidget(_peak_view_widget->set1);
+    _detector_widget->scene()->initIntRegionFromPeakWidget(_peak_view_widget->set1);
     if (_set_initial_ki->isChecked()) {
-        scene->addBeamSetter(
+        _detector_widget->scene()->addBeamSetter(
             _crosshair_size->value(), _crosshair_linewidth->value());
         changeCrosshair();
     }
@@ -478,9 +465,7 @@ void SubframeAutoIndexer::refreshPeakVisual()
 
     for (int i = 0; i < _peak_collection_item.childCount(); i++) {
         PeakItem* peak = _peak_collection_item.peakItemAt(i);
-        if (peak==nullptr) return;
         auto graphic = peak->peakGraphic();
-        if (graphic==nullptr) return;
 
         graphic->showLabel(false);
         graphic->setColor(Qt::transparent);
@@ -671,7 +656,6 @@ void SubframeAutoIndexer::selectSolutionTable()
     QModelIndexList indices = select->selectedRows();
     if (!indices.empty())
         selectSolutionHeader(indices[0].row());
-    toggleUnsafeWidgets();
 }
 
 void SubframeAutoIndexer::selectSolutionHeader(int index)
@@ -726,6 +710,7 @@ void SubframeAutoIndexer::acceptSolution()
         cell->setSpaceGroup(dlg->spaceGroup().toStdString());
         collection->setMillerIndices();
         gGui->sentinel->addLinkedComboItem(ComboType::UnitCell, dlg->unitCellName());
+        gGui->refreshMenu(); 
     }
 }
 
@@ -740,29 +725,13 @@ void SubframeAutoIndexer::toggleUnsafeWidgets()
     }
     if (_peak_collection_model.rowCount() == 0 || _solutions.empty())
         _save_button->setEnabled(false);
-    
-    // select a solution before accepting it
-    if (_solution_table->currentIndex().row() == -1){
-        _save_button->setEnabled(false);
-    } else {
-        _save_button->setEnabled(true);
-    }
 
-    Project* prj = gSession->currentProject();
-    if (prj==nullptr) return;
-    nsx::Experiment* expt = prj->experiment();
-    if (expt==nullptr) return;
+    nsx::PeakCollection* pc = nullptr;
     std::string current_pc = _peak_combo->currentText().toStdString();
     if (current_pc.size() == 0)
         return;
-<<<<<<< HEAD
     pc = gSession->currentProject()->experiment()->getPeakCollection(current_pc);
 
-=======
-    auto pc = expt->getPeakCollection(current_pc);
-    if (pc==nullptr) return;
-    // _save_button->setEnabled(pc->isIntegrated());
->>>>>>> removed bugs from gui update mechanism
     _solve_button->setEnabled(pc->isIntegrated());
 }
 
@@ -816,10 +785,7 @@ void SubframeAutoIndexer::showDirectBeamEvents()
     updateDatasetList();
     _detector_widget->scene()->showDirectBeam(true);
     auto data_name = _detector_widget->dataCombo()->currentText().toStdString();
-    if (data_name.empty()) { // to prevent crash
-        QMessageBox::warning(
-            nullptr, "Empty Experimentname",
-            "Unable to retrieve data for an empty experiment name!");
+    if (data_name.empty()) {
         return;
     }
     const auto data = _detector_widget->currentData();

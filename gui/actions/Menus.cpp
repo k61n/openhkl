@@ -82,13 +82,25 @@ Menus::Menus(QMenuBar* menu_bar) : _menu_bar{menu_bar}
     actions->remove_experiment->setShortcuts(QKeySequence::Delete);
     actions->quit->setShortcuts(QKeySequence::Quit);
 
-    actions->add_raw->setShortcut(QKeySequence("A+R"));
-    actions->add_hdf5->setShortcut(QKeySequence("A+H"));
-    actions->add_nexus->setShortcut(QKeySequence("A+N"));
+    actions->detector_window->setShortcut(QKeySequence("Ctrl+D"));
+    actions->instrumentstate_window->setShortcut(QKeySequence("Ctrl+I"));
+    actions->log_window->setShortcut(QKeySequence("Ctrl+L"));
+    actions->close_peak_windows->setShortcut(QKeySequence("Ctrl+C"));
+
+    // apparently this doesnt work for three keys ???
+    actions->clone_peaks->setShortcut(QKeySequence("Ctrl+P+C"));
+    actions->remove_peaks->setShortcut(QKeySequence("Ctrl+P+X"));
+
+    actions->add_cell->setShortcut(QKeySequence("Ctrl+U+C"));
+    actions->remove_cell->setShortcut(QKeySequence("Ctrl+U+X"));
+
+    actions->add_raw->setShortcut(QKeySequence("Ctrl+R"));
+    actions->add_hdf5->setShortcut(QKeySequence("Ctrl+H"));
+    actions->add_nexus->setShortcut(QKeySequence("Ctrl+X"));
 
     actions->about->setShortcut(QKeySequence("F1"));
 
-    toggle_entries();
+    toggleEntries();
 }
 
 QAction* Menus::separator() const
@@ -110,7 +122,7 @@ QMenu* Menus::actionsToMenu(const char* menuName, QList<QAction*> actions)
 }
 
 // toggles Menu entries
-void Menus::toggle_entries()
+void Menus::toggleEntries()
 {
     // return;
     Actions* actions = gGui->triggers;
@@ -147,8 +159,8 @@ void Menus::toggle_entries()
 
     _view_menu->setDisabled(no_projects);
     _data_menu->setDisabled(no_projects);
-    _peaks_menu->setDisabled(no_projects || no_pcollections);
-    _cells_menu->setDisabled(no_projects || no_unitcell);
+    _peaks_menu->setDisabled(no_pcollections);
+    _cells_menu->setDisabled(no_unitcell);
 
     gGui->sideBar()->refreshAll();
 }

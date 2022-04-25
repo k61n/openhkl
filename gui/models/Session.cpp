@@ -114,9 +114,6 @@ Project* Session::createProject(QString experimentName, QString instrumentName)
 {
     for (const QString& name : experimentNames()) { // check name
         if (name == experimentName) {
-            QMessageBox::critical(
-                nullptr, "Unable to create experiment",
-                "Experiment name, '" + experimentName + "' already exists");
             return nullptr;
         }
     }
@@ -316,7 +313,6 @@ bool Session::loadRawData()
 
         dataset_ptr->finishRead();
         if (!exp->addData(dataset_ptr)) {
-            throw std::runtime_error("Unable to add dataset to Experiment");
         }
         onDataChanged();
         auto data_list = currentProject()->getDataNames();

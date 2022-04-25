@@ -250,5 +250,5 @@ bool MainWin::isDark()
 
 void MainWin::refreshMenu()
 {
-   menus_->toggle_entries();
+   menus_->toggleEntries();
 }

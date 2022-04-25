@@ -46,6 +46,9 @@ PeakCollectionItem::PeakCollectionItem(const nsx::PeakCollection* peak_collectio
 
 void PeakCollectionItem::setPeakCollection(const nsx::PeakCollection* peak_collection)
 {
+    if (!peak_collection){
+        throw std::runtime_error("Error eakCollectionItem::setPeakCollection: No valid PeakCollection was given");
+    }
     _peak_collection = peak_collection;
 
     std::vector<nsx::Peak3D*> peak_list = _peak_collection->getPeakList();

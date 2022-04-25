@@ -33,7 +33,7 @@ class Menus {
     QMenu* _data_sub;
 
 
-    void toggle_entries();
+    void toggleEntries();
 
  private:
     QMenuBar* _menu_bar;

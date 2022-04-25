@@ -286,6 +286,9 @@ void SubframeFindPeaks::setParametersUp()
 
 void SubframeFindPeaks::updateDatasetList()
 {
+    if (!gSession->currentProject()->hasDataSet())
+        return;
+
     QSignalBlocker blocker(_data_combo);
     QString current_data = _data_combo->currentText();
     _data_combo->clear();
@@ -295,6 +298,7 @@ void SubframeFindPeaks::updateDatasetList()
         return;
 
     const QStringList& datanames{project->getDataNames()};
+    if (current_data.isEmpty()) current_data = datanames.at(0);
     _data_combo->addItems(datanames);
     _data_combo->setCurrentText(current_data);
     updateDatasetParameters(_data_combo->currentText());
@@ -304,11 +308,7 @@ void SubframeFindPeaks::updateDatasetParameters(const QString& dataname)
 {
     // to be update on the experiment/project list if a new
     // experiment is added on SubframeHome
-<<<<<<< HEAD
     auto* exp = gSession->currentProject()->experiment();
-=======
-    auto exp = gSession->experimentAt(gSession->currentProjectNum())->experiment();
->>>>>>> Implementing listed Remarks
     if (!exp->hasData(dataname.toStdString())) {
         QMessageBox::warning(
             nullptr, "Dataset does not exist",
@@ -454,11 +454,22 @@ void SubframeFindPeaks::find()
     nsx::DataList data_list;
     const nsx::DataList all_data = gSession->currentProject()->allData();
 
+    int idx = _data_combo->currentIndex();
+    if ( _data_combo->currentText().isEmpty()){// no way
+        throw std::runtime_error("SubframeFindPeaks::find - Unnamed Dataset detected!");
+    }
+    if (idx >= all_data.size() || idx == -1){
+        _data_combo->setCurrentIndex(0);
+    }
+
     if (_all_data->isChecked()) {
         for (int i = 0; i < all_data.size(); ++i)
             data_list.push_back(all_data.at(i));
     } else {
-        data_list.push_back(all_data.at(_data_combo->currentIndex()));
+        int idx = _data_combo->currentIndex();
+        if (idx < all_data.size()){
+            data_list.push_back(all_data.at(idx));
+        }
     }
 
     nsx::PeakFinder* finder =
@@ -538,6 +549,7 @@ void SubframeFindPeaks::accept()
     gSession->currentProject()->generatePeakModel(dlg->listName());
     gGui->sentinel->addLinkedComboItem(ComboType::FoundPeaks, dlg->listName());
     gGui->sentinel->addLinkedComboItem(ComboType::PeakCollection, dlg->listName());
+    gGui->refreshMenu(); 
 }
 
 void SubframeFindPeaks::refreshPreview()

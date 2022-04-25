@@ -375,7 +375,6 @@ void SubframePredictPeaks::refreshAll()
     if (!gSession->hasProject())
         return;
 
-<<<<<<< HEAD
     updateUnitCellList();
     updateDatasetList();
     refreshPeakCombo();
@@ -391,40 +390,6 @@ void SubframePredictPeaks::refreshAll()
         _beam_offset_x->setMinimum(-static_cast<double>(data->nCols()) / 2.0);
         _beam_offset_y->setMaximum(static_cast<double>(data->nRows()) / 2.0);
         _beam_offset_y->setMinimum(-static_cast<double>(data->nRows()) / 2.0);
-=======
-void SubframePredictPeaks::setExperiments()
-{
-    _exp_combo->blockSignals(true);
-    Project* prj =gSession->currentProject();
-    if (prj==nullptr) return;
-    auto expt = prj->experiment();
-    if (expt == nullptr) return;
-    QString current_exp = QString::fromStdString(expt->name());
-    _exp_combo->clear(); 
-
-    for (const QString& exp : gSession->experimentNames())
-        _exp_combo->addItem(exp);
-    _exp_combo->setCurrentText(current_exp);
-
-    if (!(_exp_combo->count() == 0)) {
-        updateUnitCellList();
-        updateDatasetList();
-        refreshPeakCombo();
-        grabRefinerParameters();
-        grabPredictorParameters();
-        grabShapeCollectionParameters();
-        refreshPeakTable();
-        computeSigmas();
-        const auto data = _detector_widget->currentData();
-        if (data) {
-            _n_batches_spin->setMaximum(data->nFrames());
-            _n_batches_spin->setValue(data->nFrames());
-            _beam_offset_x->setMaximum(static_cast<double>(data->nCols()) / 2.0);
-            _beam_offset_x->setMinimum(-static_cast<double>(data->nCols()) / 2.0);
-            _beam_offset_y->setMaximum(static_cast<double>(data->nRows()) / 2.0);
-            _beam_offset_y->setMinimum(-static_cast<double>(data->nRows()) / 2.0);
-        }
->>>>>>> removed bugs from gui update mechanism
     }
     toggleUnsafeWidgets();
 }
@@ -696,10 +661,7 @@ void SubframePredictPeaks::showDirectBeamEvents()
 
         auto* expt = gSession->currentProject()->experiment();
         auto data_name = _detector_widget->dataCombo()->currentText().toStdString();
-        if (data_name.empty()) { // to prevent crash
-            QMessageBox::warning(
-                nullptr, "Empty Experimentname",
-                "Unable to retrieve data for an empty experiment name!");
+        if (data_name.empty()) {
             return;
         }
         const auto data = expt->getData(data_name);
@@ -773,19 +735,11 @@ void SubframePredictPeaks::assignPeakShapes()
 
 void SubframePredictPeaks::accept()
 {
-<<<<<<< HEAD
     // suggest name to user
     auto* project = gSession->currentProject();
     auto* expt = project->experiment();
     std::string suggestion = expt->generatePeakCollectionName();
     std::unique_ptr<ListNameDialog> dlg(new ListNameDialog(QString::fromStdString(suggestion)));
-=======
-    auto* project = gSession->experimentAt(_exp_combo->currentIndex());
-    auto* expt = project->experiment();
-    
-    std::unique_ptr<ListNameDialog> dlg(new ListNameDialog
-    (QString::fromStdString(expt->GeneratePeakCollectionName())));
->>>>>>> removed bugs from gui update mechanism
     dlg->exec();
     if (dlg->listName().isEmpty())
         return;
@@ -887,12 +841,7 @@ void SubframePredictPeaks::toggleUnsafeWidgets()
     std::string current_pc = _found_peaks_combo->currentText().toStdString();
     if (current_pc.size() == 0)
         return;
-    Project* prj = gSession->currentProject();
-    if (prj == nullptr) return;
-    auto expt = prj->experiment();
-    if (expt == nullptr) return;
-    pc = expt->getPeakCollection(current_pc);
-    if (pc==nullptr) return;
+    pc = gSession->currentProject()->experiment()->getPeakCollection(current_pc);
 
     bool is_indexed = pc->isIndexed();
     _predict_button->setEnabled(is_indexed);
@@ -927,3 +876,4 @@ void SubframePredictPeaks::changeCrosshair()
 {
     emit crosshairChanged(_crosshair_size->value(), _crosshair_linewidth->value());
 }
+
