@@ -63,11 +63,15 @@ Session::Session()
 
 Project* Session::currentProject()
 {
+    if (!hasProject())
+        throw std::runtime_error("Session::currentProject(): no projects available");
     return _projects.at(_currentProject).get();
 }
 
 const Project* Session::currentProject() const
 {
+    if (!hasProject())
+        throw std::runtime_error("Session::currentProject(): no projects available");
     return _projects.at(_currentProject).get();
 }
 
@@ -78,6 +82,8 @@ bool Session::hasProject() const
 
 Project* Session::experimentAt(int i)
 {
+    if (!hasProject())
+        throw std::runtime_error("Session::experimentAt(): no projects available");
     return _projects.at(i).get();
 }
 const Project* Session::experimentAt(int i) const
@@ -320,6 +326,8 @@ void Session::onDataChanged()
 
 void Session::onExperimentChanged()
 {
+    if (!gSession->hasProject())
+        return;
     if (currentProject()->experiment()->getDiffractometer()) {
         gGui->onExperimentChanged();
     }

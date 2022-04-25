@@ -39,6 +39,8 @@ class PeakCollectionModel : public QAbstractTableModel {
     int columnCount(const QModelIndex& parent = QModelIndex()) const override;
     //! Returns whether the selected peak is valid
     bool indexIsValid(const QModelIndex& index) const;
+    //! Remove all data
+    void reset();
 
  public:
     //! Return the data of the item (Manages role interaction)

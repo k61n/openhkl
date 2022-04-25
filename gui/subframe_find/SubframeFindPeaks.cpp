@@ -529,7 +529,7 @@ void SubframeFindPeaks::accept()
         return;
     if (dlg->result() == QDialog::Rejected)
         return;
-    if (!gSession->currentProject() ->experiment()
+    if (!gSession->currentProject()->experiment()
              ->acceptFoundPeaks(dlg->listName().toStdString(), _peak_collection)) {
         QMessageBox::warning(
             this, "Unable to add PeakCollection", "Collection with this name already exists!");

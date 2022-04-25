@@ -131,3 +131,9 @@ void PeakCollectionModel::sort(int column, Qt::SortOrder order)
     return _root_item->sort(column, order);
     emit dataChanged(QModelIndex(), QModelIndex());
 }
+
+void PeakCollectionModel::reset()
+{
+    _root_item = nullptr;
+    _name = "No Collection";
+}

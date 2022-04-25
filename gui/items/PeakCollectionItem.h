@@ -72,6 +72,8 @@ class PeakCollectionItem {
     int numberRejectedByFilter() const;
     //! Return number of peaks
     int numberOfPeaks() const;
+    //! Remove all data
+    void reset();
 
  private:
     const nsx::PeakCollection* _peak_collection;
