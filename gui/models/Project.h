@@ -47,6 +47,7 @@ class Project {
     void selectData(int selected);
     void changeInstrument(const QString& instrumentname);
     bool saved() const { return _saved; };
+    unsigned int id() const { return _id; };
 
     std::vector<nsx::Peak3D*> getPeaks(
         const QString& peakListName, int upperindex = -1, int lowerindex = -1) const;
@@ -93,6 +94,9 @@ class Project {
 
     // Current save file name
     QString _file_name;
+    unsigned int _id;
+
+    static unsigned int _last_id;
 };
 
 #endif // NSX_GUI_MODELS_SESSIONEXPERIMENT_H

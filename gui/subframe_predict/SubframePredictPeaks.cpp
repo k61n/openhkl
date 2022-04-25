@@ -373,7 +373,7 @@ void SubframePredictPeaks::setPeakTableUp()
 void SubframePredictPeaks::refreshAll()
 {
     if (!gSession->hasProject())
-        return
+        return;
 
     updateUnitCellList();
     updateDatasetList();
@@ -398,14 +398,12 @@ void SubframePredictPeaks::updateUnitCellList()
 {
     if (!gSession->hasProject())
         return;
-    if (!gSession->currentProject()->hasUnitCell())
-        return;
 
     QSignalBlocker blocker(_cell_combo);
     QString current_cell = _cell_combo->currentText();
     _cell_combo->clear();
-    _unit_cell_list = gSession->currentProject()->getUnitCellNames();
-    _cell_combo->addItems(_unit_cell_list);
+    QStringList unit_cell_list = gSession->currentProject()->getUnitCellNames();
+    _cell_combo->addItems(unit_cell_list);
     _cell_combo->setCurrentText(current_cell);
 }
 

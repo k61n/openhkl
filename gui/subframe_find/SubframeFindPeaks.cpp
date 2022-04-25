@@ -267,10 +267,9 @@ void SubframeFindPeaks::setPeakTableUp()
 void SubframeFindPeaks::refreshAll()
 {
     setParametersUp();
-    if (!gSession->hasProject())
-        return;
+    if (gSession->hasProject())
+        _detector_widget->updateDatasetList(gSession->currentProject()->allData());
 
-    _detector_widget->updateDatasetList(gSession->currentProject()->allData());
     toggleUnsafeWidgets();
 }
 
@@ -287,7 +286,7 @@ void SubframeFindPeaks::setParametersUp()
 
 void SubframeFindPeaks::updateDatasetList()
 {
-    if (gSession->currentProject()->hasDataSet())
+    if (!gSession->currentProject()->hasDataSet())
         return;
 
     QSignalBlocker blocker(_data_combo);

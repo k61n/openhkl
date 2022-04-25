@@ -22,7 +22,8 @@
 class ComboDialog : public QDialog {
  public:
     ComboDialog(QStringList items, QString description);
-    QString itemName();
+    QString itemName() const;
+    unsigned int itemIndex() const;
 
  private:
     QString _description;

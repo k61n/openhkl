@@ -29,6 +29,13 @@
 #include "gui/dialogs/RawDataDialog.h"
 #include "gui/models/Project.h"
 #include "gui/utility/LinkedComboBox.h"
+#include "gui/subframe_find/SubframeFindPeaks.h"
+#include "gui/subframe_filter/SubframeFilterPeaks.h"
+#include "gui/subframe_predict/SubframePredictPeaks.h"
+#include "gui/subframe_refiner/SubframeRefiner.h"
+#include "gui/subframe_integrate/SubframeIntegrate.h"
+#include "gui/subframe_index/SubframeAutoIndexer.h"
+#include "gui/subframe_combine/SubframeMergedPeaks.h"
 
 #include <QCollator>
 #include <QDir>
@@ -122,15 +129,14 @@ bool Session::addProject(std::unique_ptr<Project> project_ptr)
     return true;
 }
 
-void Session::removeExperiment(const QString& name)
+void Session::removeExperiment(unsigned int id)
 {
     if (_projects.empty()) {
         return;
     } else {
-        const std::string name_str{name.toStdString()};
         for (decltype(_projects)::const_iterator it = _projects.begin(); it != _projects.end();) {
             const Project& prj{**it};
-            if (name_str == prj.experiment()->name())
+            if (id == prj.id())
                 it = _projects.erase(it);
             else
                 ++it;
@@ -331,6 +337,13 @@ void Session::onExperimentChanged()
     if (currentProject()->experiment()->getDiffractometer()) {
         gGui->onExperimentChanged();
     }
+    gGui->finder->grabFinderParameters();
+    gGui->filter->grabFilterParameters();
+    gGui->indexer->grabIndexerParameters();
+    gGui->predictor->grabPredictorParameters();
+    gGui->refiner->grabRefinerParameters();
+    gGui->integrator->grabIntegrationParameters();
+    gGui->merger->grabMergeParameters();
     onDataChanged();
     onUnitCellChanged();
 }

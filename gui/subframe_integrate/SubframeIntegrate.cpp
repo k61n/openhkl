@@ -558,7 +558,7 @@ void SubframeIntegrate::toggleUnsafeWidgets()
         _remove_overlaps->setEnabled(false);
     }
 
-    if (gSession->currentProject()->hasPeakCollection()) {
+    if (!_peak_combo->count() == 0) {
         nsx::PeakCollection* peaks =
             gSession->currentProject() ->experiment()
                 ->getPeakCollection(_peak_combo->currentText().toStdString());

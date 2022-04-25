@@ -49,7 +49,7 @@ class Session {
 
     void selectProject(int);
 
-    void removeExperiment(const QString& name);
+    void removeExperiment(unsigned int id);
 
     void loadData(nsx::DataFormat format);
     bool loadRawData();

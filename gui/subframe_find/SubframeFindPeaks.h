@@ -52,6 +52,8 @@ class SubframeFindPeaks : public QWidget {
     void refreshAll();
     //! Get the detector widget
     DetectorWidget* detectorWidget();
+    //! Grab the finder parameters
+    void grabFinderParameters();
 
  private:
     //! Set up the data selection GUI
@@ -88,9 +90,6 @@ class SubframeFindPeaks : public QWidget {
     void updateDatasetList();
     //! Update the dataset related parameters
     void updateDatasetParameters(const QString& dataname);
-
-    //! Grab the finder parameters
-    void grabFinderParameters();
     //! Set the finder parameters
     void setFinderParameters();
 

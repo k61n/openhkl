@@ -61,6 +61,8 @@ class SubframePredictPeaks : public QWidget {
     void refreshAll();
     //! Get a pointer to the detector widget
     DetectorWidget* detectorWidget();
+    //! Get prediction parameters
+    void grabPredictorParameters();
 
  public slots:
     void onBeamPosChanged(QPointF pos);
@@ -100,8 +102,6 @@ class SubframePredictPeaks : public QWidget {
     void grabRefinerParameters();
     //! Set refiner parameters
     void setRefinerParameters();
-    //! Get prediction parameters
-    void grabPredictorParameters();
     //! Set prediction parameters
     void setPredictorParameters();
     //! Get shape collection parameters
@@ -145,8 +145,6 @@ class SubframePredictPeaks : public QWidget {
     PeakCollectionModel _peak_collection_model;
     //! The loaded data list
     std::vector<nsx::sptrDataSet> _data_list;
-    //! The loaded peak list
-    QStringList _unit_cell_list;
     //! Flag to check whether peaks have been predicted
     bool _peaks_predicted;
     //! Flag to check whether shapes have been assigned to predicted peaks

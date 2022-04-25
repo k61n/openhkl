@@ -41,7 +41,6 @@ Menus::Menus(QMenuBar* menu_bar) : _menu_bar{menu_bar}
     _expt_menu->addAction(actions->save_experiment_as);
     _expt_menu->addAction(actions->save_all_experiment);
     _expt_menu->addSeparator();
-    _expt_menu->addAction(actions->remove_experiment);
     _expt_menu->addAction(actions->quit);
 
     // View menu
