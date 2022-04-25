@@ -51,6 +51,8 @@ class SubframeFilterPeaks : public QWidget {
     void refreshAll();
     //! Get a pointer to the detector wiget
     DetectorWidget* detectorWidget();
+    //! Grab the finder parameters
+    void grabFilterParameters();
 
  private:
     //! Build the input
@@ -84,8 +86,6 @@ class SubframeFilterPeaks : public QWidget {
     //! Disable unsafe widgets if no data loaded
     void toggleUnsafeWidgets();
 
-    //! Grab the finder parameters
-    void grabFilterParameters();
     //! Set the finder parameters
     void setFilterParameters();
 

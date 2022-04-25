@@ -52,6 +52,8 @@ class SubframeAutoIndexer : public QWidget {
     void runAutoIndexer();
     //! Refresh all the panels
     void refreshAll();
+    //! Get the parameters of the indexer
+    void grabIndexerParameters();
 
  public slots:
     void onBeamPosChanged(QPointF pos);
@@ -91,8 +93,6 @@ class SubframeAutoIndexer : public QWidget {
     void changeSelected(PeakItemGraphic* peak_graphic);
     //! Refresh the detector scene
     void refreshPeakVisual();
-    //! Get the parameters of the indexer
-    void grabIndexerParameters();
     //! Get the parameters of the indexer
     void setIndexerParameters();
     //! Select a solution

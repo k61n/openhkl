@@ -52,12 +52,12 @@ class SubframeIntegrate : public QWidget {
     void refreshAll();
     //! detector view
     DetectorWidget* detectorWidget();
+    //! Grab the refiner parameters
+    void grabIntegrationParameters();
 
  private:
     //! Select experiment, dataset, peak collection, unit cell
     void setInputUp();
-    //! Grab the refiner parameters
-    void grabIntegrationParameters();
     //! Set the refiner parameters
     void setIntegrationParameters();
 

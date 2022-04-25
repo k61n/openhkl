@@ -54,6 +54,8 @@ class SubframeRefiner : public QWidget {
 
     //! Refresh all the inputs
     void refreshAll();
+    //! Grab the refiner parameters
+    void grabRefinerParameters();
 
  private:
     //! Select experiment, dataset, peak collection, unit cell
@@ -69,8 +71,6 @@ class SubframeRefiner : public QWidget {
     //! Refresh the detector scene
     void refreshPeakVisual();
 
-    //! Grab the refiner parameters
-    void grabRefinerParameters();
     //! Set the refiner parameters
     void setRefinerParameters();
 

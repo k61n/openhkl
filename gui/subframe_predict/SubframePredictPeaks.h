@@ -61,6 +61,8 @@ class SubframePredictPeaks : public QWidget {
     void refreshAll();
     //! Get a pointer to the detector widget
     DetectorWidget* detectorWidget();
+    //! Get prediction parameters
+    void grabPredictorParameters();
 
  public slots:
     void onBeamPosChanged(QPointF pos);
@@ -100,8 +102,6 @@ class SubframePredictPeaks : public QWidget {
     void grabRefinerParameters();
     //! Set refiner parameters
     void setRefinerParameters();
-    //! Get prediction parameters
-    void grabPredictorParameters();
     //! Set prediction parameters
     void setPredictorParameters();
     //! Get shape collection parameters
