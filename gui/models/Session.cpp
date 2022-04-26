@@ -71,7 +71,7 @@ Session::Session()
 Project* Session::currentProject()
 {
     if (!hasProject())
-        throw std::runtime_error("Session::currentProject(): no projects available");
+        return nullptr;
     return _projects.at(_currentProject).get();
 }
 

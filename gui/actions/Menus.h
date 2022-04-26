@@ -30,9 +30,8 @@ class Menus {
     QMenu* _view_menu;
     QMenu* _help_menu;
 
-    QMenu* _data_sub;
-
-
+    QMenu* _data_sub; 
+    
     void toggleEntries();
 
  private:

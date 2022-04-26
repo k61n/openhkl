@@ -170,14 +170,15 @@ Intensity Peak3D::correctedIntensity() const
     auto c = _shape.center();
     auto state = InterpolatedState::interpolate(_data->instrumentStates(), c[2]);
     if (!state.isValid()) // Interpolation error
-        return Intensity();
-
+        return Intensity(); 
+   
     auto diff = state.diffractometer();
     if (diff == nullptr) {
         return Intensity();
     }
-    auto detector = diff->detector();
-    if (detector == nullptr) {
+
+     auto detector = diff->detector();
+    if (detector == nullptr){
         return Intensity();
     }
 

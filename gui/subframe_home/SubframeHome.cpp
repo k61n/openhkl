@@ -39,6 +39,7 @@
 // beaker.svg: beaker by Loudoun Design Co from the Noun Project
 
 
+
 SubframeHome::SubframeHome()
 {
     QVBoxLayout* main_layout = new QVBoxLayout(this);
@@ -545,9 +546,7 @@ void SubframeHome::refreshTables() const
         }
     } catch (const std::out_of_range& e) {
     } catch (const std::exception& e) {
-        //QMessageBox::critical(this, "Error", QString(e.what()));
     }
-    //gGui->refreshMenu();
 }
 
 void SubframeHome::clearTables()

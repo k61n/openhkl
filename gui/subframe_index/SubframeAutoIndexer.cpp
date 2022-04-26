@@ -114,7 +114,6 @@ SubframeAutoIndexer::SubframeAutoIndexer()
     _set_initial_ki->setChecked(false);
 }
 
-
 void SubframeAutoIndexer::setInputUp()
 {
     Spoiler* input_box = new Spoiler("Input");
@@ -451,10 +450,24 @@ void SubframeAutoIndexer::changeSelected(PeakItemGraphic* peak_graphic)
 
 void SubframeAutoIndexer::refreshPeakVisual()
 {
+    if (_detector_widget==nullptr){
+        return;
+    }
+    if (_set_initial_ki==nullptr){
+        return;
+    }
     auto data = _detector_widget->currentData();
-    _detector_widget->scene()->initIntRegionFromPeakWidget(_peak_view_widget->set1);
+    if (data==nullptr) {
+        return;
+    }
+    auto scene = _detector_widget->scene();
+    if (scene==nullptr) {
+        return;
+    }
+
+    scene->initIntRegionFromPeakWidget(_peak_view_widget->set1);
     if (_set_initial_ki->isChecked()) {
-        _detector_widget->scene()->addBeamSetter(
+        scene->addBeamSetter(
             _crosshair_size->value(), _crosshair_linewidth->value());
         changeCrosshair();
     }
@@ -465,7 +478,9 @@ void SubframeAutoIndexer::refreshPeakVisual()
 
     for (int i = 0; i < _peak_collection_item.childCount(); i++) {
         PeakItem* peak = _peak_collection_item.peakItemAt(i);
+        if (peak==nullptr) return;
         auto graphic = peak->peakGraphic();
+        if (graphic==nullptr) return;
 
         graphic->showLabel(false);
         graphic->setColor(Qt::transparent);
@@ -656,6 +671,7 @@ void SubframeAutoIndexer::selectSolutionTable()
     QModelIndexList indices = select->selectedRows();
     if (!indices.empty())
         selectSolutionHeader(indices[0].row());
+    toggleUnsafeWidgets();
 }
 
 void SubframeAutoIndexer::selectSolutionHeader(int index)
@@ -725,12 +741,23 @@ void SubframeAutoIndexer::toggleUnsafeWidgets()
     }
     if (_peak_collection_model.rowCount() == 0 || _solutions.empty())
         _save_button->setEnabled(false);
+    
+    // select a solution before accepting it
+    if (_solution_table->currentIndex().row() == -1){
+        _save_button->setEnabled(false);
+    } else {
+        _save_button->setEnabled(true);
+    }
 
-    nsx::PeakCollection* pc = nullptr;
+    Project* prj = gSession->currentProject();
+    if (prj==nullptr) return;
+    nsx::Experiment* expt = prj->experiment();
+    if (expt==nullptr) return;
     std::string current_pc = _peak_combo->currentText().toStdString();
     if (current_pc.size() == 0)
         return;
-    pc = gSession->currentProject()->experiment()->getPeakCollection(current_pc);
+    auto pc = 
+    gSession->currentProject()->experiment()->getPeakCollection(current_pc);
 
     _solve_button->setEnabled(pc->isIntegrated());
 }

@@ -558,17 +558,16 @@ void SubframeIntegrate::toggleUnsafeWidgets()
         _remove_overlaps->setEnabled(false);
     }
 
-    if (!_peak_combo->count() == 0)
-        if (gSession->currentProject()->hasPeakCollection()) {
-            nsx::PeakCollection* peaks =
-                gSession->currentProject() ->experiment()
-                    ->getPeakCollection(_peak_combo->currentText().toStdString());
-            if (peaks->shapeCollection() == nullptr) {
-                _assign_peak_shapes->setEnabled(false);
-                _integrate_button->setEnabled(false);
-                _remove_overlaps->setEnabled(false);
-            }
+    if (!_peak_combo->count() == 0) {
+        nsx::PeakCollection* peaks =
+            gSession->currentProject() ->experiment()
+                ->getPeakCollection(_peak_combo->currentText().toStdString());
+        if (peaks->shapeCollection() == nullptr) {
+            _assign_peak_shapes->setEnabled(false);
+            _integrate_button->setEnabled(false);
+            _remove_overlaps->setEnabled(false);
         }
+    }
 
     if (_integrator_strings.find(_integrator_combo->currentText().toStdString())->second
         == nsx::IntegratorType::PixelSum) {
@@ -581,6 +580,7 @@ void SubframeIntegrate::toggleUnsafeWidgets()
         _build_shape_lib_button->setEnabled(false);
     }
 }
+
 
 DetectorWidget* SubframeIntegrate::detectorWidget()
 {
