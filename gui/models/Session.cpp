@@ -427,5 +427,5 @@ std::string Session::generateExperimentName()
     if (str.size() > n) { //
         return "New Experiment";
     }
-    return std::string("ExperimentNr") + std::string(n - str.size(), '0').append(str);
+    return std::string("Experiment") + std::string(n - str.size(), '0').append(str);
 }

@@ -841,12 +841,11 @@ void SubframePredictPeaks::toggleUnsafeWidgets()
     std::string current_pc = _found_peaks_combo->currentText().toStdString();
     if (current_pc.size() == 0)
         return;
-    Project* prj = gSession->currentProject();
-    if (prj == nullptr) return;
-    auto expt = prj->experiment();
-    if (expt == nullptr) return;
-    pc = expt->getPeakCollection(current_pc);
-    if (pc==nullptr) return;
+   
+    if (!gSession->hasProject()) return;
+
+    pc = gSession->currentProject()->experiment()->getPeakCollection(current_pc);
+    if (pc == nullptr) return;
 
     bool is_indexed = pc->isIndexed();
     _predict_button->setEnabled(is_indexed);

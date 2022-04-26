@@ -150,7 +150,6 @@ QAction* SideBar::addAction(const QIcon& icon, const QString& text)
 {
     QAction* action = new QAction(icon, text, this);
     action->setCheckable(true);
-    action->blockSignals(false);
     mActions.push_back(action);
     update();
     return action;

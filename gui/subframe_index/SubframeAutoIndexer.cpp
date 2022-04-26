@@ -450,20 +450,8 @@ void SubframeAutoIndexer::changeSelected(PeakItemGraphic* peak_graphic)
 
 void SubframeAutoIndexer::refreshPeakVisual()
 {
-    if (_detector_widget==nullptr){
-        return;
-    }
-    if (_set_initial_ki==nullptr){
-        return;
-    }
-    auto data = _detector_widget->currentData();
-    if (data==nullptr) {
-        return;
-    }
-    auto scene = _detector_widget->scene();
-    if (scene==nullptr) {
-        return;
-    }
+    auto data = _detector_widget->currentData();   
+    auto scene = _detector_widget->scene();   
 
     scene->initIntRegionFromPeakWidget(_peak_view_widget->set1);
     if (_set_initial_ki->isChecked()) {
@@ -478,9 +466,9 @@ void SubframeAutoIndexer::refreshPeakVisual()
 
     for (int i = 0; i < _peak_collection_item.childCount(); i++) {
         PeakItem* peak = _peak_collection_item.peakItemAt(i);
-        if (peak==nullptr) return;
+        if (peak == nullptr) continue;
         auto graphic = peak->peakGraphic();
-        if (graphic==nullptr) return;
+        if (graphic == nullptr) continue;
 
         graphic->showLabel(false);
         graphic->setColor(Qt::transparent);
@@ -748,11 +736,9 @@ void SubframeAutoIndexer::toggleUnsafeWidgets()
     } else {
         _save_button->setEnabled(true);
     }
+   
+    if (!gSession->hasProject()) return;
 
-    Project* prj = gSession->currentProject();
-    if (prj==nullptr) return;
-    nsx::Experiment* expt = prj->experiment();
-    if (expt==nullptr) return;
     std::string current_pc = _peak_combo->currentText().toStdString();
     if (current_pc.size() == 0)
         return;

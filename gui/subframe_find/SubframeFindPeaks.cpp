@@ -286,17 +286,14 @@ void SubframeFindPeaks::setParametersUp()
 
 void SubframeFindPeaks::updateDatasetList()
 {
-    if (!gSession->currentProject()->hasDataSet())
+    Project* project = gSession->currentProject();
+    if (!project->hasDataSet())
         return;
 
     QSignalBlocker blocker(_data_combo);
     QString current_data = _data_combo->currentText();
     _data_combo->clear();
-
-    Project* project = gSession->currentProject();
-    if (!project->hasDataSet())
-        return;
-
+    
     const QStringList& datanames{project->getDataNames()};
     if (current_data.isEmpty()) current_data = datanames.at(0);
     _data_combo->addItems(datanames);
@@ -455,9 +452,7 @@ void SubframeFindPeaks::find()
     const nsx::DataList all_data = gSession->currentProject()->allData();
 
     int idx = _data_combo->currentIndex();
-    if ( _data_combo->currentText().isEmpty()){// no way
-        throw std::runtime_error("SubframeFindPeaks::find - Unnamed Dataset detected!");
-    }
+    
     if (idx >= all_data.size() || idx == -1){
         _data_combo->setCurrentIndex(0);
     }

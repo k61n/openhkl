@@ -329,13 +329,15 @@ void SubframeFilterPeaks::updatePeakList()
     QString current_peaks = _peak_combo->currentText();
     _peak_combo->clear();
     auto peak_list = gSession->currentProject()->getPeakListNames();
-    if (peak_list.size() > 0){// we need at lest one entry
+    _peak_combo->addItems(peak_list);
+    /*if (peak_list.size() > 0){// we need at lest one entry
         _peak_combo->addItems(peak_list);
         if (current_peaks == ""){// just in case nothing has been selected before
             current_peaks = peak_list.at(0);
         }
         _peak_combo->setCurrentText(current_peaks);
-    }
+    }*/
+    _peak_combo->setCurrentText(current_peaks);
     updateDatasetList();
     refreshPeakTable();
 }
@@ -447,7 +449,7 @@ void SubframeFilterPeaks::filterPeaks()
     nsx::PeakFilter* filter =
         gSession->currentProject()->experiment()->peakFilter();
     nsx::PeakCollection* collection =
-        gSession->currentProject() ->experiment()
+        gSession->currentProject()->experiment()
             ->getPeakCollection(_peak_combo->currentText().toStdString());
     filter->resetFiltering(collection);
     setFilterParameters();
@@ -496,7 +498,7 @@ void SubframeFilterPeaks::refreshPeakTable()
         return;
 
     nsx::PeakCollection* collection =
-        gSession->currentProject() ->experiment()
+        gSession->currentProject()->experiment()
             ->getPeakCollection(_peak_combo->currentText().toStdString());
 
     if (!collection)// if no PeakCollection has been selected from the GUI

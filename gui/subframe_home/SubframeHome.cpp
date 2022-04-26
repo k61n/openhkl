@@ -458,10 +458,9 @@ void SubframeHome::refreshTables() const
             }
         };
 
-        Project* prj = gSession->currentProject();
-        if (prj==nullptr) return;
-    
-        nsx::Experiment* expt = prj->experiment();
+        if (!gSession->hasProject()) return;
+        
+        nsx::Experiment* expt = gSession->currentProject()->experiment();
         if (expt == nullptr) return;
         std::vector<std::string> pcs_names = expt->getCollectionNames();
 
