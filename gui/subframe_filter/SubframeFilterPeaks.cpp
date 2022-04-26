@@ -330,13 +330,6 @@ void SubframeFilterPeaks::updatePeakList()
     _peak_combo->clear();
     auto peak_list = gSession->currentProject()->getPeakListNames();
     _peak_combo->addItems(peak_list);
-    /*if (peak_list.size() > 0){// we need at lest one entry
-        _peak_combo->addItems(peak_list);
-        if (current_peaks == ""){// just in case nothing has been selected before
-            current_peaks = peak_list.at(0);
-        }
-        _peak_combo->setCurrentText(current_peaks);
-    }*/
     _peak_combo->setCurrentText(current_peaks);
     updateDatasetList();
     refreshPeakTable();
