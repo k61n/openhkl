@@ -581,7 +581,9 @@ void SubframeIntegrate::toggleUnsafeWidgets()
     }
 }
 
+
 DetectorWidget* SubframeIntegrate::detectorWidget()
 {
     return _detector_widget;
 }
+

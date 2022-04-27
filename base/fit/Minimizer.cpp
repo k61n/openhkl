@@ -19,6 +19,7 @@
 #include <gsl/gsl_matrix.h>
 #include <gsl/gsl_multifit_nlinear.h>
 #include <gsl/gsl_vector.h>
+#include "base/utils/Logger.h"
 
 #include <Eigen/Dense>
 
@@ -147,18 +148,27 @@ bool Minimizer::fit(int max_iter)
         _dfInputEigen.resize(nfree);
         _dfOutputEigen.resize(_numValues, nfree);
     }
+    
+    // There is a random and recurring error with the GSL Lib stating that "rank must have 0 < rank <= N" 
+    // which occurs in qrpt.c. The source for this lies in gsl_multifit_nlinear_driver and by introducing
+    // this try/catch environment around it prevents a crash..
+    // not sure if there is a deeper problem or just a failed minimization attempt
+    try {
+        // initialize solver with starting point and weights
+        // note that this is NOT called in MinimizerGSL::initialize because _f needs
+        // to be set first!
+        _params.writeValues(_gsl->x);
+        gslFromEigen(_wt, _gsl->wt);
 
-    // initialize solver with starting point and weights
-    // note that this is NOT called in MinimizerGSL::initialize because _f needs
-    // to be set first!
-    _params.writeValues(_gsl->x);
-    gslFromEigen(_wt, _gsl->wt);
-
-    gsl_multifit_nlinear_winit(_gsl->x, _gsl->wt, &_gsl->fdf, _gsl->workspace);
-    _gsl->status = gsl_multifit_nlinear_driver(
-        max_iter, _xtol, _gtol, _ftol, &callback_helper, this, &_gsl->info, _gsl->workspace);
-    gsl_multifit_nlinear_covar(_gsl->workspace->J, 1e-10, _gsl->covariance);
-
+        gsl_multifit_nlinear_winit(_gsl->x, _gsl->wt, &_gsl->fdf, _gsl->workspace);
+        _gsl->status = gsl_multifit_nlinear_driver(//bug occurs here
+            max_iter, _xtol, _gtol, _ftol, &callback_helper, this, &_gsl->info, _gsl->workspace);
+        gsl_multifit_nlinear_covar(_gsl->workspace->J, 1e-10, _gsl->covariance);
+    } catch (const std::exception& e){
+        nsxlog(nsx::Level::Error,
+        "Minimizer::fit GSL Library Error Message : " + std::string(e.what()));
+        return false;
+    }
     eigenFromGSL(_gsl->workspace->J, _jacobian);
     _params.setValues(_gsl->workspace->x);
     eigenFromGSL(_gsl->covariance, _covariance);

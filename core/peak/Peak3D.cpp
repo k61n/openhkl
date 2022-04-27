@@ -14,6 +14,7 @@
 
 #include "core/peak/Peak3D.h"
 
+#include "base/utils/LogLevel.h"
 #include "core/data/DataSet.h"
 #include "core/instrument/Diffractometer.h"
 #include "core/instrument/InterpolatedState.h"
@@ -169,7 +170,17 @@ Intensity Peak3D::correctedIntensity() const
     auto c = _shape.center();
     auto state = InterpolatedState::interpolate(_data->instrumentStates(), c[2]);
     if (!state.isValid()) // Interpolation error
+        return Intensity(); 
+   
+    auto diff = state.diffractometer();
+    if (diff == nullptr) {
         return Intensity();
+    }
+
+     auto detector = diff->detector();
+    if (detector == nullptr){
+        return Intensity();
+    }
 
     const double lorentz = state.lorentzFactor(c[0], c[1]);
     const double factor = _scale / lorentz / _transmission;

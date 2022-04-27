@@ -247,3 +247,8 @@ bool MainWin::isDark()
     double luminance = (0.2126 * r + 0.7152 * g + 0.0722 * b) / 256.0;
     return luminance < 0.5;
 }
+
+void MainWin::refreshMenu()
+{
+   menus_->toggleEntries();
+}

@@ -25,6 +25,7 @@ MergedData::MergedData(
     nsxlog(Level::Info, "MergedData::MergedData: merging peaks");
     _peak_collections = peak_collections;
     for (int i = 0; i < _peak_collections.size(); ++i) {
+        if (_peak_collections[i] == nullptr) continue;
         nsxlog(
             Level::Info, "MergedData::MergedData: peak collection ", _peak_collections[i]->name());
         std::vector<Peak3D*> peaks = _peak_collections[i]->getPeakList();

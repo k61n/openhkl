@@ -661,10 +661,7 @@ void SubframePredictPeaks::showDirectBeamEvents()
 
         auto* expt = gSession->currentProject()->experiment();
         auto data_name = _detector_widget->dataCombo()->currentText().toStdString();
-        if (data_name.empty()) { // to prevent crash
-            QMessageBox::warning(
-                nullptr, "Empty Experimentname",
-                "Unable to retrieve data for an empty experiment name!");
+        if (data_name.empty()) {
             return;
         }
         const auto data = expt->getData(data_name);
@@ -844,7 +841,11 @@ void SubframePredictPeaks::toggleUnsafeWidgets()
     std::string current_pc = _found_peaks_combo->currentText().toStdString();
     if (current_pc.size() == 0)
         return;
+   
+    if (!gSession->hasProject()) return;
+
     pc = gSession->currentProject()->experiment()->getPeakCollection(current_pc);
+    if (pc == nullptr) return;
 
     bool is_indexed = pc->isIndexed();
     _predict_button->setEnabled(is_indexed);
@@ -879,3 +880,4 @@ void SubframePredictPeaks::changeCrosshair()
 {
     emit crosshairChanged(_crosshair_size->value(), _crosshair_linewidth->value());
 }
+

@@ -13,7 +13,9 @@
 //  ***********************************************************************************************
 
 #include "gui/utility/SideBar.h"
+#include "core/experiment/Experiment.h"
 #include "gui/MainWin.h"
+#include "gui/models/Project.h"
 #include "gui/models/Session.h"
 #include "gui/subframe_combine/SubframeMergedPeaks.h"
 #include "gui/subframe_experiment/PropertyPanel.h"
@@ -32,6 +34,7 @@
 #include <QPaintEvent>
 #include <QPainter>
 #include <QSignalBlocker>
+#include <qapplication.h>
 
 // TODO: find a better place for this
 // Icon attributions:
@@ -84,6 +87,7 @@ SideBar::SideBar(QWidget* parent) : QWidget(parent), mCheckedAction(nullptr), mO
     connect(info, &QAction::triggered, this, &SideBar::onMerger);
 }
 
+
 void SideBar::paintEvent(QPaintEvent* event)
 {
     QPainter painter(this);
@@ -128,7 +132,7 @@ void SideBar::paintEvent(QPaintEvent* event)
         actionIcon.paint(&painter, actionIconRect);
 
         action_y += actionRect.height();
-    }
+    } 
 }
 QSize SideBar::minimumSizeHint() const
 {
@@ -297,6 +301,7 @@ void SideBar::refreshAll()
     gGui->refiner->refreshAll();
     gGui->integrator->refreshAll();
     gGui->merger->refreshAll();
+    gGui->home->clearTables();
 }
 
 void SideBar::refreshCurrent()

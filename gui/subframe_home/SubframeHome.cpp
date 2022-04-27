@@ -22,6 +22,7 @@
 #include "gui/models/Project.h"
 #include "gui/models/Session.h"
 #include "tables/crystal/UnitCell.h"
+#include "gui/utility/SideBar.h"
 
 #include <QFileDialog>
 #include <QMessageBox>
@@ -36,6 +37,8 @@
 // plus.svg: circle plus by Loudoun Design Co from the Noun Project
 // minus.svg: circle minus by Loudoun Design Co from the Noun Project
 // beaker.svg: beaker by Loudoun Design Co from the Noun Project
+
+
 
 SubframeHome::SubframeHome()
 {
@@ -62,6 +65,7 @@ SubframeHome::SubframeHome()
     readSettings();
     toggleUnsafeWidgets();
     _updateLastLoadedWidget();
+    gGui->refreshMenu();
 }
 
 void SubframeHome::_setLeftLayout(QHBoxLayout* main_layout)
@@ -172,6 +176,7 @@ void SubframeHome::_setRightLayout(QHBoxLayout* main_layout)
         &SubframeHome::_switchCurrentExperiment);
 
     right->addWidget(_open_experiments_view);
+    _open_experiments_view->resizeColumnsToContents();
 
     QHBoxLayout* right_bot = new QHBoxLayout();
 
@@ -219,8 +224,12 @@ void SubframeHome::_setRightLayout(QHBoxLayout* main_layout)
 
 void SubframeHome::createNew()
 {
-    std::unique_ptr<ExperimentDialog> exp_dialog(new ExperimentDialog);
-    exp_dialog->exec();
+    std::unique_ptr<ExperimentDialog> exp_dialog(//new ExperimentDialog());
+        new ExperimentDialog(
+        QString::fromStdString(
+        gSession->generateExperimentName())
+        ));
+    exp_dialog->exec();  
 
     if (exp_dialog->result()) {
         QString expr_nm = exp_dialog->experimentName();
@@ -239,6 +248,14 @@ void SubframeHome::createNew()
             toggleUnsafeWidgets();
         }
     }
+
+    gSession->selectProject(gSession->numExperiments()-1);
+   
+    QModelIndex idx = _open_experiments_view->model()->index(gSession->numExperiments()-1, 0);
+    _open_experiments_view->setCurrentIndex(idx);
+    _open_experiments_view->resizeColumnsToContents();
+    gGui->refreshMenu();
+    refreshTables();
 }
 
 void SubframeHome::loadFromFile()
@@ -272,6 +289,7 @@ void SubframeHome::loadFromFile()
 
     refreshTables();
     gGui->setReady(true);
+    gGui->refreshMenu();
 }
 
 void SubframeHome::saveCurrent(bool dialogue /* = false */)
@@ -308,6 +326,7 @@ void SubframeHome::saveCurrent(bool dialogue /* = false */)
         QMessageBox::critical(this, "Error", QString(e.what()));
     }
     gGui->setReady(true);
+    gGui->refreshMenu();
 }
 
 void SubframeHome::saveAll() { }
@@ -323,6 +342,7 @@ void SubframeHome::_switchCurrentExperiment(const QModelIndex& index)
     gSession->selectProject(index.row());
     refreshTables();
     emit _open_experiments_model->dataChanged(QModelIndex(), QModelIndex());
+    refreshTables();
 }
 
 void SubframeHome::saveSettings() const
@@ -330,6 +350,7 @@ void SubframeHome::saveSettings() const
     QSettings s;
     s.beginGroup("RecentFiles");
     s.setValue("last_loaded", QVariant::fromValue(_last_imports));
+    gGui->refreshMenu();
 }
 
 void SubframeHome::readSettings()
@@ -337,6 +358,7 @@ void SubframeHome::readSettings()
     QSettings s;
     s.beginGroup("RecentFiles");
     _last_imports = s.value("last_loaded").value<QList<QStringList>>();
+    gGui->refreshMenu();
 }
 
 void SubframeHome::_updateLastLoadedList(QString name, QString file_path)
@@ -352,6 +374,7 @@ void SubframeHome::_updateLastLoadedList(QString name, QString file_path)
 
     _updateLastLoadedWidget();
     refreshTables();
+    gGui->refreshMenu();
 }
 
 void SubframeHome::_updateLastLoadedWidget()
@@ -394,6 +417,7 @@ void SubframeHome::_loadSelectedItem(QListWidgetItem* item)
     } catch (const std::exception& e) {
         QMessageBox::critical(this, "Error", QString(e.what()));
     }
+    gGui->refreshMenu();
 }
 
 void SubframeHome::toggleUnsafeWidgets()
@@ -409,7 +433,7 @@ void SubframeHome::toggleUnsafeWidgets()
     }
 }
 
-void SubframeHome::refreshTables()
+void SubframeHome::refreshTables() const
 {
     _dataset_table->clearContents();
     _peak_collections_table->clearContents();
@@ -417,8 +441,10 @@ void SubframeHome::refreshTables()
     _dataset_table->setRowCount(0);
     _peak_collections_table->setRowCount(0);
     _unitcell_table->setRowCount(0);
+    
     if (!gSession->hasProject())
         return;
+    
     try {
         auto b2s = [](bool a) { return !a ? QString("No") : QString("Yes"); };
         auto Type2s = [](nsx::listtype t) {
@@ -431,8 +457,11 @@ void SubframeHome::refreshTables()
             }
         };
 
-        std::vector<std::string> pcs_names =
-            gSession->currentProject()->experiment()->getCollectionNames();
+        if (!gSession->hasProject()) return;
+        
+        nsx::Experiment* expt = gSession->currentProject()->experiment();
+        if (expt == nullptr) return;
+        std::vector<std::string> pcs_names = expt->getCollectionNames();
 
         auto ucell_names = gSession->currentProject()->experiment()->getUnitCellNames();
 
@@ -495,7 +524,7 @@ void SubframeHome::refreshTables()
 
             for (it = pcs_names.begin(); it != pcs_names.end(); it++) {
                 pc = gSession->currentProject()->experiment()->getPeakCollection(*it);
-                short n = std::distance(pcs_names.begin(), it);
+                short n = std::distance(pcs_names.begin(), it);               
 
                 if (n >= _peak_collections_table->rowCount())
                     _peak_collections_table->insertRow(_peak_collections_table->rowCount());
@@ -513,8 +542,15 @@ void SubframeHome::refreshTables()
             }
             _peak_collections_table->resizeColumnsToContents();
         }
+        gGui->refreshMenu();
     } catch (const std::out_of_range& e) {
     } catch (const std::exception& e) {
-        QMessageBox::critical(this, "Error", QString(e.what()));
     }
+}
+
+void SubframeHome::clearTables()
+{
+    _unitcell_table->clearContents();
+    _dataset_table->clearContents();
+    _peak_collections_table->clearContents();
 }

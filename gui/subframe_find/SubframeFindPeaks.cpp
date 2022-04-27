@@ -185,6 +185,7 @@ void SubframeFindPeaks::setIntegrateUp()
     connect(
         gGui->sideBar(), &SideBar::subframeChanged, this, &SubframeFindPeaks::setFinderParameters);
 
+    integration_para->setExpanded(true);
     _left_layout->addWidget(integration_para);
 }
 
@@ -285,15 +286,16 @@ void SubframeFindPeaks::setParametersUp()
 
 void SubframeFindPeaks::updateDatasetList()
 {
-    QSignalBlocker blocker(_data_combo);
-    QString current_data = _data_combo->currentText();
-    _data_combo->clear();
-
     Project* project = gSession->currentProject();
     if (!project->hasDataSet())
         return;
 
+    QSignalBlocker blocker(_data_combo);
+    QString current_data = _data_combo->currentText();
+    _data_combo->clear();
+    
     const QStringList& datanames{project->getDataNames()};
+    if (current_data.isEmpty()) current_data = datanames.at(0);
     _data_combo->addItems(datanames);
     _data_combo->setCurrentText(current_data);
     updateDatasetParameters(_data_combo->currentText());
@@ -449,11 +451,20 @@ void SubframeFindPeaks::find()
     nsx::DataList data_list;
     const nsx::DataList all_data = gSession->currentProject()->allData();
 
+    int idx = _data_combo->currentIndex();
+    
+    if (idx >= all_data.size() || idx == -1){
+        _data_combo->setCurrentIndex(0);
+    }
+
     if (_all_data->isChecked()) {
         for (int i = 0; i < all_data.size(); ++i)
             data_list.push_back(all_data.at(i));
     } else {
-        data_list.push_back(all_data.at(_data_combo->currentIndex()));
+        int idx = _data_combo->currentIndex();
+        if (idx < all_data.size()){
+            data_list.push_back(all_data.at(idx));
+        }
     }
 
     nsx::PeakFinder* finder =
@@ -533,6 +544,7 @@ void SubframeFindPeaks::accept()
     gSession->currentProject()->generatePeakModel(dlg->listName());
     gGui->sentinel->addLinkedComboItem(ComboType::FoundPeaks, dlg->listName());
     gGui->sentinel->addLinkedComboItem(ComboType::PeakCollection, dlg->listName());
+    gGui->refreshMenu(); 
 }
 
 void SubframeFindPeaks::refreshPreview()

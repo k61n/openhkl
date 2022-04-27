@@ -43,7 +43,7 @@
 #include <QMessageBox>
 #include <QSettings>
 #include <QStringList>
-#include <qmessagebox.h>
+#include <QMessageBox>
 
 
 Session* gSession;
@@ -71,7 +71,7 @@ Session::Session()
 Project* Session::currentProject()
 {
     if (!hasProject())
-        throw std::runtime_error("Session::currentProject(): no projects available");
+        return nullptr;
     return _projects.at(_currentProject).get();
 }
 
@@ -95,6 +95,9 @@ Project* Session::experimentAt(int i)
 }
 const Project* Session::experimentAt(int i) const
 {
+    if (_projects.size() == 0 || _projects.size() < i)
+        return nullptr;
+
     return _projects.at(i).get();
 }
 
@@ -111,9 +114,6 @@ Project* Session::createProject(QString experimentName, QString instrumentName)
 {
     for (const QString& name : experimentNames()) { // check name
         if (name == experimentName) {
-            QMessageBox::critical(
-                nullptr, "Unable to create experiment",
-                "Experiment name, '" + experimentName + "' already exists");
             return nullptr;
         }
     }
@@ -260,7 +260,6 @@ bool Session::loadRawData()
 {
     // Loading data requires an existing Experiment
     if (_currentProject < 0) {
-        QMessageBox::critical(nullptr, "Error", "Please create an experiment before loading data.");
         return false;
     }
 
@@ -294,6 +293,7 @@ bool Session::loadRawData()
 
         nsx::RawDataReaderParameters parameters;
         parameters.dataset_name = nsx::fileBasename(filenames[0]);
+        parameters.LoadDataFromFile(filenames.at(0));
         const QStringList& datanames_pre{currentProject()->getDataNames()};
         RawDataDialog dialog(parameters, datanames_pre);
         if (!dialog.exec()) {
@@ -312,7 +312,8 @@ bool Session::loadRawData()
             dataset_ptr->addRawFrame(filenm);
 
         dataset_ptr->finishRead();
-        exp->addData(dataset_ptr);
+        if (!exp->addData(dataset_ptr)) {
+        }
         onDataChanged();
         auto data_list = currentProject()->getDataNames();
         gGui->sentinel->setLinkedComboList(ComboType::DataSet, data_list);
@@ -417,4 +418,14 @@ bool Session::UpdateExperimentData(unsigned int idx, QString name, QString instr
     _projects.at(idx)->experiment()->setName(name.toStdString());
     _projects.at(idx)->experiment()->setDiffractometer(instrument.toStdString());
     return true;
+}
+
+std::string Session::generateExperimentName()
+{
+    int n = 3;
+    std::string str = std::to_string(_projects.size() + 1);
+    if (str.size() > n) { //
+        return "New Experiment";
+    }
+    return std::string("Experiment") + std::string(n - str.size(), '0').append(str);
 }

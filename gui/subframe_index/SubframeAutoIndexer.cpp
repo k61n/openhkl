@@ -114,7 +114,6 @@ SubframeAutoIndexer::SubframeAutoIndexer()
     _set_initial_ki->setChecked(false);
 }
 
-
 void SubframeAutoIndexer::setInputUp()
 {
     Spoiler* input_box = new Spoiler("Input");
@@ -337,8 +336,10 @@ void SubframeAutoIndexer::refreshAll()
 
     const auto all_data = gSession->currentProject()->allData();
     _detector_widget->updateDatasetList(all_data);
+    auto dataname = _data_combo->currentText().toStdString();
+    if (dataname.empty()) dataname = all_data.at(0).get()->name();
     const auto dataset =
-        gSession->currentProject()->experiment()->getData(_data_combo->currentText().toStdString());
+        gSession->currentProject()->experiment()->getData(dataname);
     _max_frame->setMaximum(dataset->nFrames() - 1);
 
     _beam_offset_x->setMaximum(static_cast<double>(dataset->nCols()) / 2.0);
@@ -449,10 +450,12 @@ void SubframeAutoIndexer::changeSelected(PeakItemGraphic* peak_graphic)
 
 void SubframeAutoIndexer::refreshPeakVisual()
 {
-    auto data = _detector_widget->currentData();
-    _detector_widget->scene()->initIntRegionFromPeakWidget(_peak_view_widget->set1);
+    auto data = _detector_widget->currentData();   
+    auto scene = _detector_widget->scene();   
+
+    scene->initIntRegionFromPeakWidget(_peak_view_widget->set1);
     if (_set_initial_ki->isChecked()) {
-        _detector_widget->scene()->addBeamSetter(
+        scene->addBeamSetter(
             _crosshair_size->value(), _crosshair_linewidth->value());
         changeCrosshair();
     }
@@ -463,7 +466,9 @@ void SubframeAutoIndexer::refreshPeakVisual()
 
     for (int i = 0; i < _peak_collection_item.childCount(); i++) {
         PeakItem* peak = _peak_collection_item.peakItemAt(i);
+        if (peak == nullptr) continue;
         auto graphic = peak->peakGraphic();
+        if (graphic == nullptr) continue;
 
         graphic->showLabel(false);
         graphic->setColor(Qt::transparent);
@@ -654,6 +659,7 @@ void SubframeAutoIndexer::selectSolutionTable()
     QModelIndexList indices = select->selectedRows();
     if (!indices.empty())
         selectSolutionHeader(indices[0].row());
+    toggleUnsafeWidgets();
 }
 
 void SubframeAutoIndexer::selectSolutionHeader(int index)
@@ -708,6 +714,7 @@ void SubframeAutoIndexer::acceptSolution()
         cell->setSpaceGroup(dlg->spaceGroup().toStdString());
         collection->setMillerIndices();
         gGui->sentinel->addLinkedComboItem(ComboType::UnitCell, dlg->unitCellName());
+        gGui->refreshMenu(); 
     }
 }
 
@@ -722,12 +729,21 @@ void SubframeAutoIndexer::toggleUnsafeWidgets()
     }
     if (_peak_collection_model.rowCount() == 0 || _solutions.empty())
         _save_button->setEnabled(false);
+    
+    // select a solution before accepting it
+    if (_solution_table->currentIndex().row() == -1){
+        _save_button->setEnabled(false);
+    } else {
+        _save_button->setEnabled(true);
+    }
+   
+    if (!gSession->hasProject()) return;
 
-    nsx::PeakCollection* pc = nullptr;
     std::string current_pc = _peak_combo->currentText().toStdString();
     if (current_pc.size() == 0)
         return;
-    pc = gSession->currentProject()->experiment()->getPeakCollection(current_pc);
+    auto pc = 
+    gSession->currentProject()->experiment()->getPeakCollection(current_pc);
 
     _solve_button->setEnabled(pc->isIntegrated());
 }
@@ -782,10 +798,7 @@ void SubframeAutoIndexer::showDirectBeamEvents()
     updateDatasetList();
     _detector_widget->scene()->showDirectBeam(true);
     auto data_name = _detector_widget->dataCombo()->currentText().toStdString();
-    if (data_name.empty()) { // to prevent crash
-        QMessageBox::warning(
-            nullptr, "Empty Experimentname",
-            "Unable to retrieve data for an empty experiment name!");
+    if (data_name.empty()) {
         return;
     }
     const auto data = _detector_widget->currentData();

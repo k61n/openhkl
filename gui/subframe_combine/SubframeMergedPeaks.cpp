@@ -456,8 +456,10 @@ void SubframeMergedPeaks::refreshSpaceGroupCombo()
     std::sort(vec.begin(), vec.end(), [](const auto& x, const auto& y) {
         return x.second > y.second;
     });
+    _space_group->clear();//clear first?
     for (const auto& [key, value] : vec)
         _space_group->addItem(QString::fromStdString(key));
+    _space_group->setCurrentIndex(0);
 }
 
 void SubframeMergedPeaks::processMerge()
@@ -474,7 +476,9 @@ void SubframeMergedPeaks::processMerge()
         std::vector<nsx::PeakCollection*> peak_collections;
         QString collection1 = _peaks1_drop->currentText();
         QString collection2 = _peaks2_drop->currentText();
-
+        if (_space_group->currentText().toStdString().empty()){
+                return;
+        }
         nsx::SpaceGroup group = {_space_group->currentText().toStdString()};
         merger->setSpaceGroup(group);
 

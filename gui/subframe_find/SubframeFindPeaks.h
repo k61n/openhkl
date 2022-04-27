@@ -114,7 +114,7 @@ class SubframeFindPeaks : public QWidget {
     QVBoxLayout* _left_layout;
     QSplitter* _right_element;
 
-    LinkedComboBox* _exp_combo;
+    //LinkedComboBox* _exp_combo; // ?
     LinkedComboBox* _data_combo;
     QCheckBox* _all_data;
 

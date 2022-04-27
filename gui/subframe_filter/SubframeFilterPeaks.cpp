@@ -43,6 +43,7 @@
 #include <QScrollBar>
 #include <QSpacerItem>
 #include <QTableWidgetItem>
+#include <QMessageBox>
 
 #include <sstream>
 
@@ -330,7 +331,6 @@ void SubframeFilterPeaks::updatePeakList()
     auto peak_list = gSession->currentProject()->getPeakListNames();
     _peak_combo->addItems(peak_list);
     _peak_combo->setCurrentText(current_peaks);
-
     updateDatasetList();
     refreshPeakTable();
 }
@@ -442,7 +442,7 @@ void SubframeFilterPeaks::filterPeaks()
     nsx::PeakFilter* filter =
         gSession->currentProject()->experiment()->peakFilter();
     nsx::PeakCollection* collection =
-        gSession->currentProject() ->experiment()
+        gSession->currentProject()->experiment()
             ->getPeakCollection(_peak_combo->currentText().toStdString());
     filter->resetFiltering(collection);
     setFilterParameters();
@@ -491,8 +491,12 @@ void SubframeFilterPeaks::refreshPeakTable()
         return;
 
     nsx::PeakCollection* collection =
-        gSession->currentProject() ->experiment()
+        gSession->currentProject()->experiment()
             ->getPeakCollection(_peak_combo->currentText().toStdString());
+
+    if (!collection)// if no PeakCollection has been selected from the GUI
+        return;
+
     _peak_collection_item.setPeakCollection(collection);
     _peak_collection_item.setFilterMode();
     _peak_collection_model.setRoot(&_peak_collection_item);
