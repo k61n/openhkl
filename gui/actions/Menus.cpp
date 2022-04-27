@@ -161,6 +161,4 @@ void Menus::toggleEntries()
     _data_menu->setDisabled(no_projects);
     _peaks_menu->setDisabled(no_pcollections);
     _cells_menu->setDisabled(no_unitcell);
-
-    gGui->sideBar()->refreshAll();
 }

@@ -431,7 +431,6 @@ void SubframeHome::toggleUnsafeWidgets()
         _save_current->setEnabled(false);
         _remove_current->setEnabled(false);
     }
-    gGui->refreshMenu();
 }
 
 void SubframeHome::refreshTables() const
@@ -543,6 +542,7 @@ void SubframeHome::refreshTables() const
             }
             _peak_collections_table->resizeColumnsToContents();
         }
+        gGui->refreshMenu();
     } catch (const std::out_of_range& e) {
     } catch (const std::exception& e) {
     }
