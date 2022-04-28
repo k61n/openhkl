@@ -16,12 +16,14 @@
 #define NSX_GUI_MODELS_SESSION_H
 
 #include "core/raw/DataKeys.h"
+#include "gui/utility/CellComboBox.h"
 
 #include <QString>
 #include <memory>
 #include <vector>
 
 class Project;
+class CellComboBox;
 namespace nsx {
 enum class DataFormat;
 }
@@ -64,6 +66,8 @@ class Session {
 
     Project* createProject(QString experimentName, QString instrumentName);
     bool addProject(std::unique_ptr<Project> project_ptr);
+
+    CellComboBox* _cell_combo; // for updating other cell combos
 
     std::string generateExperimentName(); 
 

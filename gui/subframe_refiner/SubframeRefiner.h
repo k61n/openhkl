@@ -21,6 +21,7 @@
 #include "core/shape/ShapeCollection.h"
 #include "gui/items/PeakCollectionItem.h"
 #include "gui/models/PeakCollectionModel.h"
+#include "gui/utility/CellComboBox.h"
 
 #include <QCheckBox>
 #include <QComboBox>
@@ -37,6 +38,7 @@
 namespace nsx {
 class PeakCollection;
 }
+class CellComboBox;
 class DetectorWidget;
 class LinkedComboBox;
 class RefinerTables;
@@ -78,14 +80,14 @@ class SubframeRefiner : public QWidget {
     void updatePeakList();
     //! Update the data list on experment change
     void updateDatasetList();
-    //! Update the unit cell list on experment change
-    void updateUnitCellList();
     //! set parameters for _n_batches spin box
     void setBatchesUp();
     //! set up the variables to plot
     void setPlotUp();
     //! Update list of predicted peak collections
     void updatePredictedList();
+    //! Update the unit cell combo
+    void updateCells();
 
     //! Refresh the found peaks list
     void refreshTables();
@@ -107,6 +109,9 @@ class SubframeRefiner : public QWidget {
     //! Disable unsafe widgets if no data loaded
     void toggleUnsafeWidgets();
 
+    //! Get a pointer to the cell combo
+    CellComboBox* cellCombo() const { return _cell_combo; };
+
 
     //! The loaded data list
     std::vector<nsx::sptrDataSet> _data_list;
@@ -121,7 +126,7 @@ class SubframeRefiner : public QWidget {
     // data selection
     LinkedComboBox* _peak_combo;
     LinkedComboBox* _data_combo;
-    LinkedComboBox* _cell_combo;
+    CellComboBox* _cell_combo;
     QCheckBox* _batch_cell_check;
     SafeSpinBox* _n_batches_spin;
     SafeSpinBox* _max_iter_spin;

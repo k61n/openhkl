@@ -41,15 +41,15 @@ class UnitCellHandler {
     //! Get a pointer to the map of unit cells
     const UnitCellList* getCellList() const;
     //! Add a unit cell to the experiment
-    bool addUnitCell(const std::string& name, const UnitCell& unit_cell);
+    void addUnitCell(const std::string& name, const UnitCell& unit_cell);
     //! Move a unique pointer to a unit cell to the experiment
-    bool addUnitCell(const std::string& name, sptrUnitCell unit_cell);
+    void addUnitCell(const std::string& name, sptrUnitCell unit_cell);
     //! Add a unit cell to the experiment via cell parameters (skip autoindexing step)
-    bool addUnitCell(
+    void addUnitCell(
         const std::string& name, double a, double b, double c, double alpha, double beta,
         double gamma);
     //! Add a user-defined unit cell to the experiment including space group
-    bool addUnitCell(
+    void addUnitCell(
         const std::string& name, double a, double b, double c, double alpha, double beta,
         double gamma, const std::string& space_group);
     //! Returns true if the experiment has a data
@@ -85,6 +85,7 @@ class UnitCellHandler {
 
     void setLastIndex(unsigned int index);
     std::vector<UnitCell*> getUnitCells() const;
+    std::vector<sptrUnitCell> getSptrUnitCells() const;
 
 
  private:

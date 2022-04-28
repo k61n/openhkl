@@ -41,6 +41,7 @@
 #include "gui/subframe_refiner/SubframeRefiner.h"
 #include "gui/utility/ColorButton.h"
 #include "gui/utility/GridFiller.h"
+#include "gui/utility/CellComboBox.h"
 #include "gui/utility/LinkedComboBox.h"
 #include "gui/utility/PropertyScrollArea.h"
 #include "gui/utility/SafeSpinBox.h"
@@ -61,6 +62,7 @@
 #include <QScrollBar>
 #include <QSpacerItem>
 #include <QTableWidgetItem>
+#include <qcombobox.h>
 #include <qmessagebox.h>
 #include <qnamespace.h>
 
@@ -215,7 +217,9 @@ void SubframePredictPeaks::setParametersUp()
     Spoiler* para_box = new Spoiler("Predict peaks");
     GridFiller f(para_box, true);
 
-    _cell_combo = f.addLinkedCombo(ComboType::UnitCell, "Unit cell:");
+    _cell_combo = new CellComboBox();
+    f.addLabel("Unit Cell");
+    f.addWidget(_cell_combo, 1, -1);
     _d_min = f.addDoubleSpinBox("d min:", QString::fromUtf8("(\u212B) - minimum d (Bragg's law)"));
     _d_max = f.addDoubleSpinBox("d max:", QString::fromUtf8("(\u212B) - maximum d (Bragg's law)"));
     _predict_button = f.addButton("Predict");
@@ -375,7 +379,7 @@ void SubframePredictPeaks::refreshAll()
     if (!gSession->hasProject())
         return;
 
-    updateUnitCellList();
+    _cell_combo->refresh();
     updateDatasetList();
     refreshPeakCombo();
     grabRefinerParameters();
@@ -392,19 +396,6 @@ void SubframePredictPeaks::refreshAll()
         _beam_offset_y->setMinimum(-static_cast<double>(data->nRows()) / 2.0);
     }
     toggleUnsafeWidgets();
-}
-
-void SubframePredictPeaks::updateUnitCellList()
-{
-    if (!gSession->hasProject())
-        return;
-
-    QSignalBlocker blocker(_cell_combo);
-    QString current_cell = _cell_combo->currentText();
-    _cell_combo->clear();
-    QStringList unit_cell_list = gSession->currentProject()->getUnitCellNames();
-    _cell_combo->addItems(unit_cell_list);
-    _cell_combo->setCurrentText(current_cell);
 }
 
 void SubframePredictPeaks::updateDatasetList()
@@ -571,7 +562,7 @@ void SubframePredictPeaks::refineKi()
     auto& states = data->instrumentStates();
     auto refiner = expt->refiner();
     auto* params = refiner->parameters();
-    auto cell = expt->getSptrUnitCell(_cell_combo->currentText().toStdString());
+    auto cell = _cell_combo->currentCell();
 
     nsx::RefinerParameters tmp_params = *params;
     setRefinerParameters();
@@ -624,8 +615,7 @@ void SubframePredictPeaks::runPrediction()
         ProgressView progressView(nullptr);
         progressView.watch(handler);
 
-        nsx::sptrUnitCell cell = gSession->currentProject()->experiment()->getSptrUnitCell(
-            _cell_combo->currentText().toStdString());
+        nsx::sptrUnitCell cell = _cell_combo->currentCell();
 
         predictor->setHandler(handler);
         predictor->predictPeaks(data, cell);

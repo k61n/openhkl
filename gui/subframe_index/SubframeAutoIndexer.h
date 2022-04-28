@@ -19,6 +19,7 @@
 #include "core/shape/PeakCollection.h"
 #include "gui/items/PeakCollectionItem.h"
 #include "gui/models/PeakCollectionModel.h"
+#include "gui/utility/CellComboBox.h"
 #include "gui/widgets/PeakViewWidget.h"
 
 #include <QPushButton>
@@ -29,6 +30,7 @@
 #include <qgroupbox.h>
 #include <qobjectdefs.h>
 
+class CellComboBox;
 class DetectorWidget;
 class LinkedComboBox;
 class PeakTableView;
