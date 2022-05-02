@@ -175,21 +175,11 @@ void SubframeRefiner::refreshAll()
     if (!gSession->hasProject())
         return;
 
-    _data_combo->clearAll();
-    DataList data = gSession->currentProject()->experiment()->getAllData();
-    _data_combo->addDataSets(data);
     _data_combo->refresh();
-
-    PeakList peaks = gSession->currentProject()->experiment()->getPeakCollections();
-    _peak_combo->clearAll();
-    _peak_combo->addPeakCollections(peaks);
+    _predicted_combo->refresh();
     _peak_combo->refresh();
+    _cell_combo->refresh();
 
-    _predicted_combo->clearAll();
-    _predicted_combo->addPeakCollections(peaks);
-    _peak_combo->refresh();
-
-    updateCells(); // here because cells added in this widget
     updatePeaks();
     grabRefinerParameters();
     refreshPeakVisual();
@@ -255,11 +245,11 @@ void SubframeRefiner::refine()
         _direct_beam_events = nsx::algo::getDirectBeamEvents(states, *detector);
         _detector_widget->scene()->linkDirectBeamPositions(&_direct_beam_events);
         refreshPeakVisual();
-        updateCells();
+        gSession->onUnitCellChanged();
+        _cell_combo->refresh();
         gGui->detector_window->refreshAll();
 
         _tables_widget->refreshTables(refiner, data.get());
-        auto cell_list = gSession->currentProject()->getUnitCellNames();
         refreshPlot();
         toggleUnsafeWidgets();
     } catch (const std::exception& ex) {
@@ -496,17 +486,6 @@ void SubframeRefiner::setRefinerParameters()
         if (key == _residual_combo->currentText().toStdString())
             params->residual_type = val;
     }
-}
-
-void SubframeRefiner::updateCells()
-{
-    if (!gSession->hasProject())
-        return;
-
-    _cell_combo->clearAll();
-    CellList cells = gSession->currentProject()->experiment()->getSptrUnitCells();
-    _cell_combo->addCells(cells);
-    _cell_combo->refresh();
 }
 
 void SubframeRefiner::updatePredictions()

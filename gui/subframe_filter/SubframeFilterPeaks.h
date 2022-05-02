@@ -90,11 +90,6 @@ class SubframeFilterPeaks : public QWidget {
     //! Set the finder parameters
     void setFilterParameters();
 
-    //! Refresh all th einputs
-    void updatePeakList();
-    //! Update the datalist as an experiment was changed
-    void updateDatasetList();
-
     //! Refresh the found peaks list
     void refreshPeakTable();
     //! Refresh the found peaks visual properties

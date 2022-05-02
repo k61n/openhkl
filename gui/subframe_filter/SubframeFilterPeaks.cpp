@@ -90,10 +90,7 @@ void SubframeFilterPeaks::setInputUp()
 
     connect(
         _peak_combo, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this,
-        [=]() {
-            updateDatasetList();
-            refreshPeakTable();
-        });
+        &SubframeFilterPeaks::refreshAll);
 
     _left_layout->addWidget(input_box);
 }
@@ -309,30 +306,14 @@ void SubframeFilterPeaks::setPeakTableUp()
 
 void SubframeFilterPeaks::refreshAll()
 {
-    updatePeakList();
-    grabFilterParameters();
-    toggleUnsafeWidgets();
-}
-
-void SubframeFilterPeaks::updatePeakList()
-{
     if (!gSession->hasProject())
         return;
 
-    _peak_combo->clearAll();
-    PeakList peaks = gSession->currentProject()->experiment()->getPeakCollections();
-    _peak_combo->addPeakCollections(peaks);
     _peak_combo->refresh();
-    updateDatasetList();
+    _detector_widget->updateDatasetList(gSession->currentProject()->allData());
     refreshPeakTable();
-}
-
-void SubframeFilterPeaks::updateDatasetList()
-{
-    _data_list = gSession->currentProject()->allData();
-    const nsx::DataList all_data = gSession->currentProject()->allData();
-    if (!_data_list.empty())
-        _detector_widget->updateDatasetList(all_data);
+    grabFilterParameters();
+    toggleUnsafeWidgets();
 }
 
 void SubframeFilterPeaks::grabFilterParameters()
@@ -340,10 +321,7 @@ void SubframeFilterPeaks::grabFilterParameters()
     if (!gSession->hasProject())
         return;
 
-    auto* params = gSession->currentProject()
-                       ->experiment()
-                       ->peakFilter()
-                       ->parameters();
+    auto* params = gSession->currentProject()->experiment()->peakFilter()->parameters();
 
     _tolerance->setValue(params->unit_cell_tolerance);
     _strength_min->setValue(params->strength_min);
@@ -466,9 +444,9 @@ void SubframeFilterPeaks::accept()
         return;
     }
 
+    gSession->onPeaksChanged();
+    _peak_combo->refresh();
     gSession->currentProject()->generatePeakModel(dlg->listName());
-    auto peak_list = gSession->currentProject()->getPeakListNames();
-    updatePeakList();
 }
 
 void SubframeFilterPeaks::refreshPeakTable()

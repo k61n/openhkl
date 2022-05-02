@@ -339,9 +339,9 @@ bool Session::loadRawData()
 
 void Session::onDataChanged()
 {
+    DataList data = currentProject()->experiment()->getAllData();
     gGui->onDataChanged();
     _data_combo->clearAll();
-    DataList data = currentProject()->experiment()->getAllData();
     _data_combo->addDataSets(data);
     onPeaksChanged();
 }
@@ -369,17 +369,17 @@ void Session::onExperimentChanged()
 
 void Session::onPeaksChanged()
 {
+    PeakList peaks = currentProject()->experiment()->getPeakCollections();
     gGui->onPeaksChanged();
     _peak_combo->clearAll();
-    PeakList peaks = currentProject()->experiment()->getPeakCollections();
     _peak_combo->addPeakCollections(peaks);
 }
 
 void Session::onUnitCellChanged()
 {
+    CellList cells = currentProject()->experiment()->getSptrUnitCells();
     gGui->onUnitCellChanged();
     _cell_combo->clearAll();
-    CellList cells = currentProject()->experiment()->getSptrUnitCells();
     _cell_combo->addCells(cells);
 }
 

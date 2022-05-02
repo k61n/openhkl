@@ -333,16 +333,16 @@ void SubframeAutoIndexer::refreshAll()
     if (!gSession->currentProject()->hasDataSet())
         return;
 
-    updateDatasetList();
-    updatePeakList();
+    _data_combo->refresh();
+    _detector_widget->updateDatasetList(gSession->currentProject()->experiment()->getAllData());
+    _peak_combo->refresh();
+    refreshPeakTable();
+    _solution_table->setModel(nullptr);
+    _solutions.clear();
+    _selected_unit_cell = nullptr;
     grabIndexerParameters();
 
-    const auto all_data = gSession->currentProject()->allData();
-    _detector_widget->updateDatasetList(all_data);
-    auto dataname = _data_combo->currentText().toStdString();
-    if (dataname.empty()) dataname = all_data.at(0).get()->name();
-    const auto dataset =
-        gSession->currentProject()->experiment()->getData(dataname);
+    auto dataset = _data_combo->currentData();
     _max_frame->setMaximum(dataset->nFrames() - 1);
 
     _beam_offset_x->setMaximum(static_cast<double>(dataset->nCols()) / 2.0);
@@ -381,54 +381,6 @@ void SubframeAutoIndexer::setFigureUp()
     connect(
         _detector_widget->scene(), &DetectorScene::signalSelectedPeakItemChanged, this,
         &SubframeAutoIndexer::changeSelected);
-}
-
-void SubframeAutoIndexer::updateDatasetList()
-{
-    if (!gSession->currentProject()->hasDataSet())
-        return;
-
-    QSignalBlocker blocker(_data_combo);
-    QString current_data = _data_combo->currentText();
-    _data_combo->clear();
-    _data_list = gSession->currentProject()->allData();
-    _detector_widget->updateDatasetList(_data_list);
-
-    const QStringList& datanames{gSession->currentProject()->getDataNames()};
-    _data_combo->addItems(datanames);
-    _data_combo->setCurrentText(current_data);
-}
-
-void SubframeAutoIndexer::updatePeakList()
-{
-    if (!gSession->currentProject()->hasPeakCollection())
-        return;
-
-    QSignalBlocker blocker(_peak_combo);
-    QStringList peak_list = gSession->currentProject()->getPeakListNames();
-    if (peak_list.empty())
-        return;
-    peak_list.clear();
-
-    QString current_peaks = _peak_combo->currentText();
-    _peak_combo->clear();
-
-    QStringList tmp = gSession->currentProject() ->getPeakCollectionNames(nsx::listtype::FOUND);
-    peak_list.append(tmp);
-    tmp.clear();
-    tmp = gSession->currentProject() ->getPeakCollectionNames(nsx::listtype::FILTERED);
-    peak_list.append(tmp);
-    tmp.clear();
-    tmp = gSession->currentProject() ->getPeakCollectionNames(nsx::listtype::INDEXING);
-    peak_list.append(tmp);
-
-    _peak_combo->addItems(peak_list);
-    _peak_combo->setCurrentText(current_peaks);
-
-    refreshPeakTable();
-    _solution_table->setModel(nullptr);
-    _solutions.clear();
-    _selected_unit_cell = nullptr;
 }
 
 void SubframeAutoIndexer::refreshPeakTable()
@@ -541,9 +493,7 @@ void SubframeAutoIndexer::runAutoIndexer()
     auto* autoindexer = expt->autoIndexer();
     auto* params = autoindexer->parameters();
     auto* filter = expt->peakFilter();
-    nsx::PeakCollection* collection =
-        expt->getPeakCollection(_peak_combo->currentText().toStdString());
-
+    nsx::PeakCollection* collection = _peak_combo->currentPeakCollection();
 
     // Manally adjust the direct beam position
     if (_set_initial_ki->isChecked()) {
@@ -669,9 +619,7 @@ void SubframeAutoIndexer::selectSolutionHeader(int index)
 {
     _selected_unit_cell = _solutions[index].first;
 
-    const nsx::PeakCollection* collection =
-        gSession->currentProject()->experiment()
-            ->getPeakCollection(_peak_combo->currentText().toStdString());
+    const nsx::PeakCollection* collection = _peak_combo->currentPeakCollection();
 
     std::vector<nsx::Peak3D*> peaks = collection->getPeakList();
     for (nsx::Peak3D* peak : peaks) {
@@ -794,7 +742,7 @@ void SubframeAutoIndexer::showDirectBeamEvents()
     if (!_show_direct_beam)
         return;
 
-    updateDatasetList();
+    _detector_widget->updateDatasetList(gSession->currentProject()->experiment()->getAllData());
     _detector_widget->scene()->showDirectBeam(true);
     auto data_name = _detector_widget->dataCombo()->currentText().toStdString();
     if (data_name.empty()) {

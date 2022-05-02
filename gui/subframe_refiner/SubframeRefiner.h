@@ -80,8 +80,6 @@ class SubframeRefiner : public QWidget {
     void setBatchesUp();
     //! set up the variables to plot
     void setPlotUp();
-    //! Update the unit cell combo
-    void updateCells();
 
     //! Refresh the found peaks list
     void refreshTables();
