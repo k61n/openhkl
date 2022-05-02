@@ -28,14 +28,15 @@
 #include "gui/dialogs/DataNameDialog.h"
 #include "gui/dialogs/RawDataDialog.h"
 #include "gui/models/Project.h"
-#include "gui/utility/LinkedComboBox.h"
-#include "gui/subframe_find/SubframeFindPeaks.h"
+#include "gui/subframe_combine/SubframeMergedPeaks.h"
 #include "gui/subframe_filter/SubframeFilterPeaks.h"
+#include "gui/subframe_find/SubframeFindPeaks.h"
+#include "gui/subframe_index/SubframeAutoIndexer.h"
+#include "gui/subframe_integrate/SubframeIntegrate.h"
 #include "gui/subframe_predict/SubframePredictPeaks.h"
 #include "gui/subframe_refiner/SubframeRefiner.h"
-#include "gui/subframe_integrate/SubframeIntegrate.h"
-#include "gui/subframe_index/SubframeAutoIndexer.h"
-#include "gui/subframe_combine/SubframeMergedPeaks.h"
+#include "gui/utility/CellComboBox.h"
+#include "gui/utility/LinkedComboBox.h"
 
 #include <QCollator>
 #include <QDir>
@@ -66,6 +67,9 @@ std::string askDataName(const std::string dataname0, const QStringList* const da
 Session::Session()
 {
     gSession = this;
+
+    //! For refreshing combos in other widgets
+    _cell_combo = new CellComboBox();
 }
 
 Project* Session::currentProject()
@@ -360,6 +364,9 @@ void Session::onPeaksChanged()
 void Session::onUnitCellChanged()
 {
     gGui->onUnitCellChanged();
+    _cell_combo->clearAll();
+    CellList cells = currentProject()->experiment()->getSptrUnitCells();
+    _cell_combo->addCells(cells);
 }
 
 void Session::loadExperimentFromFile(QString filename)
@@ -395,6 +402,7 @@ void Session::loadExperimentFromFile(QString filename)
     }
 
     addProject(std::move(project_ptr));
+    onExperimentChanged();
 
     nsx::nsxlog(
         nsx::Level::Debug, "Session: Finished creating Project for file '", filename.toStdString(),

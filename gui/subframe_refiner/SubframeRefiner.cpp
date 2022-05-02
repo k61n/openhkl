@@ -30,6 +30,7 @@
 #include "gui/subwindows/DetectorWindow.h"
 #include "gui/utility/ColorButton.h"
 #include "gui/utility/GridFiller.h"
+#include "gui/utility/CellComboBox.h"
 #include "gui/utility/LinkedComboBox.h"
 #include "gui/utility/PropertyScrollArea.h"
 #include "gui/utility/SafeSpinBox.h"
@@ -124,7 +125,9 @@ void SubframeRefiner::setInputUp()
 
     _peak_combo = f.addLinkedCombo(ComboType::FoundPeaks, "Peaks");
     _data_combo = f.addLinkedCombo(ComboType::DataSet, "Data set");
-    _cell_combo = f.addLinkedCombo(ComboType::UnitCell, "Unit cell");
+    _cell_combo = new CellComboBox();
+    f.addLabel("Unit Cell");
+    f.addWidget(_cell_combo, 1, -1);
     _batch_cell_check = f.addCheckBox(
         "Use refined cells", "Use unit cells generated per batch during previous refinement", 1);
     _n_batches_spin = f.addSpinBox(
@@ -174,8 +177,8 @@ void SubframeRefiner::refreshAll()
         return;
 
     updateDatasetList();
+    updateCells();
     updatePeakList();
-    updateUnitCellList();
     updatePeaks();
     grabRefinerParameters();
     refreshPeakVisual();
@@ -232,19 +235,6 @@ void SubframeRefiner::updatePeakList()
     updatePredictedList();
 }
 
-void SubframeRefiner::updateUnitCellList()
-{
-    if (!gSession->currentProject()->hasUnitCell())
-        return;
-
-    QSignalBlocker blocker(_cell_combo);
-    QString current_cell = _cell_combo->currentText();
-    _cell_combo->clear();
-    _cell_list = gSession->currentProject()->getUnitCellNames();
-    _cell_combo->addItems(_cell_list);
-    _cell_combo->setCurrentText(current_cell);
-}
-
 void SubframeRefiner::setBatchesUp()
 {
     const auto dataset =
@@ -260,7 +250,7 @@ void SubframeRefiner::refine()
         auto expt = gSession->currentProject()->experiment();
         auto* peaks = expt->getPeakCollection(_peak_combo->currentText().toStdString());
         const auto data = expt->getData(_data_combo->currentText().toStdString());
-        auto cell = expt->getSptrUnitCell(_cell_combo->currentText().toStdString());
+        auto cell = _cell_combo->currentCell();
         auto states = data->instrumentStates();
         auto* refiner = expt->refiner();
         auto* params = refiner->parameters();
@@ -297,6 +287,7 @@ void SubframeRefiner::refine()
         _direct_beam_events = nsx::algo::getDirectBeamEvents(states, *detector);
         _detector_widget->scene()->linkDirectBeamPositions(&_direct_beam_events);
         refreshPeakVisual();
+        updateCells();
         gGui->detector_window->refreshAll();
 
         _tables_widget->refreshTables(refiner, data.get());
@@ -556,6 +547,17 @@ void SubframeRefiner::updatePredictedList()
     _predicted_combo->blockSignals(false);
 }
 
+void SubframeRefiner::updateCells()
+{
+    if (!gSession->hasProject())
+        return;
+
+    _cell_combo->clearAll();
+    CellList cells = gSession->currentProject()->experiment()->getSptrUnitCells();
+    _cell_combo->addCells(cells);
+    _cell_combo->refresh();
+}
+
 void SubframeRefiner::updatePredictions()
 {
     gGui->setReady(false);
@@ -589,7 +591,6 @@ QList<PlotCheckBox*> SubframeRefiner::plotCheckBoxes() const
 void SubframeRefiner::toggleUnsafeWidgets()
 {
     _refine_button->setEnabled(true);
-    _batch_cell_check->setEnabled(false);
     _update_button->setEnabled(false);
     _cell_combo->setEnabled(true);
 
@@ -599,18 +600,13 @@ void SubframeRefiner::toggleUnsafeWidgets()
     if (!(_predicted_combo->count() == 0))
         _update_button->setEnabled(true);
 
+    if (_batch_cell_check->isChecked())
+        _cell_combo->setEnabled(false);
+
     if (!gSession->currentProject()->hasDataSet() ||
         !gSession->currentProject()->hasPeakCollection()) {
         _refine_button->setEnabled(false);
         _update_button->setEnabled(false);
-    } else {
-        auto* expt = gSession->currentProject()->experiment();
-        if (expt->refiner()->firstRefine())
-            _batch_cell_check->setChecked(false);
-        else
-            _batch_cell_check->setEnabled(true);
-        if (_batch_cell_check->isChecked())
-            _cell_combo->setEnabled(false);
     }
     if (!_refine_success)
         _update_button->setEnabled(false);

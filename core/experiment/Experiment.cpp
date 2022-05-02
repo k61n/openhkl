@@ -46,6 +46,7 @@
 #include "core/statistics/CC.h"
 #include "core/statistics/RFactor.h"
 #include "manifest.h"
+#include "tables/crystal/UnitCell.h"
 
 namespace nsx {
 
@@ -437,22 +438,22 @@ bool Experiment::clonePeakCollection(std::string name, std::string new_name)
 }
 
 // Unit cell handler methods
-bool Experiment::addUnitCell(const std::string& name, const UnitCell& unit_cell)
+void Experiment::addUnitCell(const std::string& name, const UnitCell& unit_cell)
 {
-    return _cell_handler->addUnitCell(name, unit_cell);
+    _cell_handler->addUnitCell(name, unit_cell);
 }
 
-bool Experiment::addUnitCell(
+void Experiment::addUnitCell(
     const std::string& name, double a, double b, double c, double alpha, double beta, double gamma)
 {
-    return _cell_handler->addUnitCell(name, a, b, c, alpha, beta, gamma);
+    _cell_handler->addUnitCell(name, a, b, c, alpha, beta, gamma);
 }
 
-bool Experiment::addUnitCell(
+void Experiment::addUnitCell(
     const std::string& name, double a, double b, double c, double alpha, double beta, double gamma,
     const std::string& space_group)
 {
-    return _cell_handler->addUnitCell(name, a, b, c, alpha, beta, gamma, space_group);
+    _cell_handler->addUnitCell(name, a, b, c, alpha, beta, gamma, space_group);
 }
 
 bool Experiment::hasUnitCell(const std::string& name) const
@@ -579,6 +580,11 @@ void Experiment::setLastUnitCellIndex(unsigned int index)
 std::vector<UnitCell*> Experiment::getUnitCells()
 {
     return _cell_handler->getUnitCells();
+}
+
+std::vector<sptrUnitCell> Experiment::getSptrUnitCells()
+{
+    return _cell_handler->getSptrUnitCells();
 }
 
 } // namespace nsx

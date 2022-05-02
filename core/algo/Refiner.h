@@ -40,7 +40,7 @@ struct RefinerParameters {
     int nbatches = 10;
     ResidualType residual_type = ResidualType::QSpace;
     unsigned int max_iter = 1000;
-    bool use_batch_cells = false;
+    bool use_batch_cells = true;
 
     void log(const Level& level) const;
 };

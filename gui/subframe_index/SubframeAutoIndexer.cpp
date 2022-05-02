@@ -28,6 +28,7 @@
 #include "gui/graphics/DetectorScene.h"
 #include "gui/models/Project.h"
 #include "gui/models/Session.h"
+#include "gui/utility/CellComboBox.h"
 #include "gui/utility/GridFiller.h"
 #include "gui/utility/LinkedComboBox.h"
 #include "gui/utility/PropertyScrollArea.h"
@@ -699,11 +700,8 @@ void SubframeAutoIndexer::acceptSolution()
 
         std::string cellName = dlg->unitCellName().toStdString();
         _selected_unit_cell->setName(cellName);
-        if (!expt->addUnitCell(dlg->unitCellName().toStdString(), *_selected_unit_cell.get())) {
-            QMessageBox::warning(
-                this, "Unable to add Unit Cell", "UnitCell with same name already exists");
-            return;
-        }
+        expt->addUnitCell(dlg->unitCellName().toStdString(), *_selected_unit_cell.get());
+        gSession->onUnitCellChanged();
 
         gSession->onUnitCellChanged();
 

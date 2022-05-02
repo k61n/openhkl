@@ -21,6 +21,7 @@
 #include "core/shape/PeakCollection.h"
 #include "gui/items/PeakCollectionItem.h"
 #include "gui/models/PeakCollectionModel.h"
+#include "gui/utility/CellComboBox.h"
 
 #include <QCheckBox>
 #include <QComboBox>
@@ -37,6 +38,7 @@
 #include <qspinbox.h>
 
 class DetectorWidget;
+class CellComboBox;
 class LinkedComboBox;
 class PeakItemGraphic;
 class PeakTableView;
@@ -98,8 +100,6 @@ class SubframePredictPeaks : public QWidget {
 
     //! Update the peak list
     void updatePeakList();
-    //! Update the peak list
-    void updateUnitCellList();
     //! Update the peak list
     void updateDatasetList();
     //! Set refiner parameters
@@ -171,7 +171,7 @@ class SubframePredictPeaks : public QWidget {
     QCheckBox* _direct_beam;
     QPushButton* _refine_ki_button;
 
-    LinkedComboBox* _cell_combo;
+    CellComboBox* _cell_combo;
     QComboBox* _integrator;
     SafeDoubleSpinBox* _d_min;
     SafeDoubleSpinBox* _d_max;

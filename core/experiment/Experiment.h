@@ -122,13 +122,13 @@ class Experiment {
 
     // Unit cells
     //! Add a unit cell to the experiment
-    bool addUnitCell(const std::string& name, const UnitCell& unit_cell);
+    void addUnitCell(const std::string& name, const UnitCell& unit_cell);
     //! Add a unit cell to the experiment via cell parameters (skip autoindexing step)
-    bool addUnitCell(
+    void addUnitCell(
         const std::string& name, double a, double b, double c, double alpha, double beta,
         double gamma);
     //! Add a user-defined unit cell including space group
-    bool addUnitCell(
+    void addUnitCell(
         const std::string& name, double a, double b, double c, double alpha, double beta,
         double gamma, const std::string& space_group);
     //! Returns true if the experiment has a data
@@ -163,6 +163,8 @@ class Experiment {
     void setLastUnitCellIndex(unsigned int index);
     //! Get a vector of unit cells in the experiment
     std::vector<UnitCell*> getUnitCells();
+    //! Get a vector of unit cells in the experiment
+    std::vector<sptrUnitCell> getSptrUnitCells();
 
     // Instrument state handler
     //! Add a set of instrment states
