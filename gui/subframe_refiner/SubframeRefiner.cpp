@@ -180,6 +180,8 @@ void SubframeRefiner::refreshAll()
     _peak_combo->refresh();
     _cell_combo->refresh();
 
+    _detector_widget->updateDatasetList(gSession->currentProject()->allData());
+
     updatePeaks();
     grabRefinerParameters();
     refreshPeakVisual();
