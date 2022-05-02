@@ -42,7 +42,7 @@
 #include "gui/utility/ColorButton.h"
 #include "gui/utility/GridFiller.h"
 #include "gui/utility/CellComboBox.h"
-#include "gui/utility/LinkedComboBox.h"
+#include "gui/utility/PeakComboBox.h"
 #include "gui/utility/PropertyScrollArea.h"
 #include "gui/utility/SafeSpinBox.h"
 #include "gui/utility/SideBar.h"
@@ -245,7 +245,7 @@ void SubframePredictPeaks::setShapeCollectionUp()
     Spoiler* shapes_box = new Spoiler("Generate shapes");
     GridFiller f(shapes_box, true);
 
-    _found_peaks_combo = f.addLinkedCombo(
+    _found_peaks_combo = f.addPeakCombo(
         ComboType::PeakCollection, "Found peak collection",
         "Found peaks from which to construct shape collection");
     _nx = f.addSpinBox("histogram bins x", "Number of bins in x direction");

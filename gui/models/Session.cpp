@@ -37,8 +37,10 @@
 #include "gui/subframe_refiner/SubframeRefiner.h"
 #include "gui/utility/CellComboBox.h"
 #include "gui/utility/DataComboBox.h"
+#include "gui/utility/FoundPeakComboBox.h"
 #include "gui/utility/PeakComboBox.h"
 #include "gui/utility/LinkedComboBox.h"
+#include "gui/utility/PredictedPeakComboBox.h"
 
 #include <QCollator>
 #include <QDir>
@@ -72,6 +74,10 @@ Session::Session()
 
     //! For refreshing combos in other widgets
     _cell_combo = new CellComboBox();
+    _data_combo = new DataComboBox();
+    _peak_combo = new PeakComboBox();
+    _found_peak_combo = new FoundPeakComboBox();
+    _predicted_peak_combo = new PredictedPeakComboBox();
 }
 
 Project* Session::currentProject()

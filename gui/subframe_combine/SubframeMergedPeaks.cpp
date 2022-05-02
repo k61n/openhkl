@@ -30,6 +30,7 @@
 #include "gui/models/Project.h"
 #include "gui/models/Session.h"
 #include "gui/utility/LinkedComboBox.h"
+#include "gui/utility/PeakComboBox.h"
 #include "gui/utility/SideBar.h"
 #include "tables/crystal/UnitCell.h"
 
@@ -55,16 +56,16 @@ SubframeMergedPeaks::SubframeMergedPeaks()
 
     QHBoxLayout* drop_layout = new QHBoxLayout();
 
-    _peaks1_drop = new LinkedComboBox(ComboType::PeakCollection, gGui->sentinel);
-    _peaks2_drop = new LinkedComboBox(ComboType::PeakCollection, gGui->sentinel);
+    _peak_combo_1 = new PeakComboBox();
+    _peak_combo_2 = new PeakComboBox();
 
-    _peaks1_drop->setSizePolicy(*_size_policy_right);
-    _peaks2_drop->setSizePolicy(*_size_policy_right);
+    _peak_combo_1->setSizePolicy(*_size_policy_right);
+    _peak_combo_2->setSizePolicy(*_size_policy_right);
 
     drop_layout->addWidget(new QLabel("Peak collection 1:"));
-    drop_layout->addWidget(_peaks1_drop);
+    drop_layout->addWidget(_peak_combo_1);
     drop_layout->addWidget(new QLabel("Peak collection 2:"));
-    drop_layout->addWidget(_peaks2_drop);
+    drop_layout->addWidget(_peak_combo_2);
     drop_layout->addStretch();
     layout->addLayout(drop_layout);
 
@@ -85,10 +86,10 @@ SubframeMergedPeaks::SubframeMergedPeaks()
     layout->addWidget(_main_tab_widget);
 
     connect(
-        _peaks1_drop, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this,
+        _peak_combo_1, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this,
         &SubframeMergedPeaks::processMerge);
     connect(
-        _peaks2_drop, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this,
+        _peak_combo_2, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this,
         &SubframeMergedPeaks::processMerge);
 }
 
@@ -364,63 +365,28 @@ void SubframeMergedPeaks::refreshPeakLists()
 
 void SubframeMergedPeaks::refreshPeakCombos()
 {
-    QSignalBlocker blocker1(_peaks1_drop);
-    QSignalBlocker blocker2(_peaks2_drop);
-    QString current_peaks1 = _peaks1_drop->currentText();
-    _peaks1_drop->clear();
-    _peaks1_list.clear();
-
-    if (!gSession->currentProject()->hasPeakCollection())
+    if (!gSession->hasProject())
         return;
 
-    QStringList tmp = gSession->currentProject()->getPeakCollectionNames(nsx::listtype::PREDICTED);
-    _peaks1_list.append(tmp);
-    tmp.clear();
-    tmp = gSession->currentProject()->getPeakCollectionNames(nsx::listtype::FILTERED);
-    _peaks1_list.append(tmp);
-    tmp.clear();
-    tmp = gSession->currentProject()->getPeakCollectionNames(nsx::listtype::FOUND);
-    _peaks1_list.append(tmp);
-    tmp.clear();
-
-    auto* expt = gSession->currentProject()->experiment();
-    if (!_peaks1_list.empty()) {
-        for (QString& collection : _peaks1_list) {
-            if (expt->getPeakCollection(collection.toStdString())->isIntegrated())
-                _peaks1_drop->addItem(collection);
-        }
-        _peaks1_drop->setCurrentText(current_peaks1);
+    PeakList peaks;
+    for (auto* collection : gSession->currentProject()->experiment()->getPeakCollections()) {
+        if (collection->isIntegrated())
+            peaks.push_back(collection);
     }
 
-    tmp = gSession->currentProject()->getPeakCollectionNames(nsx::listtype::PREDICTED);
-    _peaks2_list.append(tmp);
-    tmp.clear();
-    tmp = gSession->currentProject()->getPeakCollectionNames(nsx::listtype::FILTERED);
-    _peaks2_list.append(tmp);
-    tmp.clear();
-    tmp = gSession->currentProject()->getPeakCollectionNames(nsx::listtype::FOUND);
-    _peaks2_list.append(tmp);
-    QString current_peaks2 = _peaks2_drop->currentText();
-    _peaks2_drop->clear();
-    _peaks2_list.clear();
-    _peaks2_list.append(tmp);
-
-    _peaks2_list.push_front(""); // Second peak collection is not used by default
-    if (!_peaks2_list.empty()) {
-        for (QString& collection : _peaks2_list) {
-            if (!expt->hasPeakCollection(collection.toStdString())
-                || expt->getPeakCollection(collection.toStdString())->isIntegrated())
-                _peaks2_drop->addItem(collection);
-        }
-        _peaks2_drop->setCurrentText(current_peaks2);
-    }
+    _peak_combo_1->clearAll();
+    _peak_combo_1->addPeakCollections(peaks);
+    _peak_combo_1->refresh();
+    _peak_combo_2->clearAll();
+    _peak_combo_2->addPeakCollections(peaks);
+    _peak_combo_2->refresh();
 
     // Determine the maximum frame number for the frame spinboxes
-    auto* peaks1 = expt->getPeakCollection(_peaks1_drop->currentText().toStdString());
+    auto* peaks1 = _peak_combo_1->currentPeakCollection();
 
     int max_frames = peaks1->getPeakList()[0]->dataSet()->nFrames();
-    if (!(_peaks2_drop->currentText() == QString())) {
-        auto* peaks2 = expt->getPeakCollection(_peaks2_drop->currentText().toStdString());
+    if (_peak_combo_2->currentText() != QString()) {
+        auto* peaks2 = _peak_combo_2->currentPeakCollection();
         if (peaks2->getPeakList()[0]->dataSet()->nFrames() > max_frames)
             max_frames = peaks2->getPeakList()[0]->dataSet()->nFrames();
     }
@@ -470,12 +436,12 @@ void SubframeMergedPeaks::processMerge()
     merger->reset();
     setMergeParameters();
 
-    if (_peaks1_list.empty() || _peaks2_list.empty()) {
+    if (!gSession->currentProject()->hasPeakCollection()) {
         _merged_data = nullptr;
     } else {
         std::vector<nsx::PeakCollection*> peak_collections;
-        QString collection1 = _peaks1_drop->currentText();
-        QString collection2 = _peaks2_drop->currentText();
+        QString collection1 = _peak_combo_1->currentText();
+        QString collection2 = _peak_combo_2->currentText();
         if (_space_group->currentText().toStdString().empty()){
                 return;
         }
@@ -813,7 +779,7 @@ void SubframeMergedPeaks::toggleUnsafeWidgets()
     if (!gSession->hasProject())
         return;
 
-    if (_peaks1_drop->count() > 0) {
+    if (_peak_combo_1->count() > 0) {
         _save_shell->setEnabled(true);
         _save_merged->setEnabled(true);
         _save_unmerged->setEnabled(true);

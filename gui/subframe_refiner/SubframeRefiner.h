@@ -21,7 +21,6 @@
 #include "core/shape/ShapeCollection.h"
 #include "gui/items/PeakCollectionItem.h"
 #include "gui/models/PeakCollectionModel.h"
-#include "gui/utility/CellComboBox.h"
 
 #include <QCheckBox>
 #include <QComboBox>
@@ -39,8 +38,9 @@ namespace nsx {
 class PeakCollection;
 }
 class CellComboBox;
+class DataComboBox;
+class PeakComboBox;
 class DetectorWidget;
-class LinkedComboBox;
 class RefinerTables;
 class Spoiler;
 class SXPlot;
@@ -76,16 +76,10 @@ class SubframeRefiner : public QWidget {
     //! Set the refiner parameters
     void setRefinerParameters();
 
-    //! Update peak collection list on experiment change
-    void updatePeakList();
-    //! Update the data list on experment change
-    void updateDatasetList();
     //! set parameters for _n_batches spin box
     void setBatchesUp();
     //! set up the variables to plot
     void setPlotUp();
-    //! Update list of predicted peak collections
-    void updatePredictedList();
     //! Update the unit cell combo
     void updateCells();
 
@@ -124,8 +118,8 @@ class SubframeRefiner : public QWidget {
     QSplitter* _right_element;
 
     // data selection
-    LinkedComboBox* _peak_combo;
-    LinkedComboBox* _data_combo;
+    PeakComboBox* _peak_combo;
+    DataComboBox* _data_combo;
     CellComboBox* _cell_combo;
     QCheckBox* _batch_cell_check;
     SafeSpinBox* _n_batches_spin;
@@ -158,7 +152,7 @@ class SubframeRefiner : public QWidget {
     PeakCollectionModel _unrefined_model;
 
     // update prediction
-    LinkedComboBox* _predicted_combo;
+    PeakComboBox* _predicted_combo;
 
     QPushButton* _refine_button;
     QPushButton* _update_button;

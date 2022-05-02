@@ -26,6 +26,8 @@
 #include "gui/subframe_predict/ShapeCollectionDialog.h"
 #include "gui/subwindows/DetectorWindow.h"
 #include "gui/utility/GridFiller.h"
+#include "gui/utility/PeakComboBox.h"
+#include "gui/utility/DataComboBox.h"
 #include "gui/utility/LinkedComboBox.h"
 #include "gui/utility/PropertyScrollArea.h"
 #include "gui/utility/SafeSpinBox.h"
@@ -72,15 +74,15 @@ void SubframeIntegrate::setInputUp()
     auto input_box = new Spoiler("Input");
     GridFiller f(input_box, true);
 
-    _data_combo = f.addLinkedCombo(ComboType::DataSet, "Data set");
-    _peak_combo = f.addLinkedCombo(
+    _data_combo = f.addDataCombo("Data set");
+    _peak_combo = f.addPeakCombo(
         ComboType::FoundPeaks, "Peaks for shapes", "Used to build shape collection");
     _build_shape_lib_button = f.addButton(
         "Build shape collection",
         "<font>A shape collection is a collection of averaged peaks attached to a peak"
         "collection. A shape is the averaged peak shape of a peak and its neighbours within a "
         "specified cutoff.</font>"); // Rich text to force line break in tooltip
-    _int_peak_combo = f.addLinkedCombo(ComboType::PeakCollection, "Peaks to integrate");
+    _int_peak_combo = f.addPeakCombo(ComboType::PeakCollection, "Peaks to integrate");
 
     connect(
         _int_peak_combo, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
@@ -146,9 +148,7 @@ void SubframeIntegrate::refreshPeakTable()
     if (!gSession->currentProject()->hasPeakCollection())
         return;
 
-    _peak_collection = gSession->currentProject()->experiment()
-        ->getPeakCollection(_int_peak_combo->currentText().toStdString());
-
+    _peak_collection = _int_peak_combo->currentPeakCollection();
     _peak_collection_item.setPeakCollection(_peak_collection);
     _peak_collection_model.setRoot(&_peak_collection_item);
     _peak_table->resizeColumnsToContents();
@@ -161,48 +161,24 @@ void SubframeIntegrate::refreshAll()
     if (!gSession->hasProject())
         return;
 
-    updateDatasetList();
-    updatePeakList();
+    DataList data = gSession->currentProject()->experiment()->getAllData();
+    _data_combo->clearAll();
+    _data_combo->addDataSets(data);
+    _data_combo->refresh();
+    _detector_widget->updateDatasetList(data);
+    _detector_widget->refresh();
+
+    PeakList peaks = gSession->currentProject()->experiment()->getPeakCollections();
+    _peak_combo->clearAll();
+    _peak_combo->addPeakCollections(peaks);
+    _peak_combo->refresh();
+
+    _int_peak_combo->clearAll();
+    _int_peak_combo->addPeakCollections(peaks);
+    _int_peak_combo->refresh();
+
     refreshPeakTable();
     grabIntegrationParameters();
-    toggleUnsafeWidgets();
-}
-
-void SubframeIntegrate::updateDatasetList()
-{
-    if (!gSession->currentProject()->hasDataSet())
-        return;
-
-    QSignalBlocker blocker(_data_combo);
-    QString current_data = _data_combo->currentText();
-    _data_combo->clear();
-    _data_list = gSession->currentProject()->allData();
-    const QStringList& datanames{gSession->currentProject()->getDataNames()};
-    _data_combo->addItems(datanames);
-    _data_combo->setCurrentText(current_data);
-    _detector_widget->updateDatasetList(_data_list);
-    _detector_widget->refresh();
-}
-
-void SubframeIntegrate::updatePeakList()
-{
-    if (!gSession->currentProject()->hasPeakCollection())
-        return;
-
-    QSignalBlocker blocker1(_peak_combo);
-    QSignalBlocker blocker2(_int_peak_combo);
-    QString current_peaks = _peak_combo->currentText();
-    _peak_combo->clear();
-
-    QStringList tmp = gSession->currentProject()->getPeakListNames();
-    _peak_combo->addItems(tmp);
-    _peak_combo->setCurrentText(current_peaks);
-
-    current_peaks = _int_peak_combo->currentText();
-    _int_peak_combo->clear();
-    _int_peak_combo->addItems(tmp);
-    _int_peak_combo->setCurrentText(current_peaks);
-
     toggleUnsafeWidgets();
 }
 
@@ -415,11 +391,8 @@ void SubframeIntegrate::assignPeakShapes()
         ProgressView progressView(nullptr);
         progressView.watch(handler);
 
-        nsx::Experiment* expt = gSession->currentProject()->experiment();
-        nsx::PeakCollection* peaks_to_integrate =
-            expt->getPeakCollection(_int_peak_combo->currentText().toStdString());
-        nsx::ShapeCollection* shapes =
-            expt->getPeakCollection(_peak_combo->currentText().toStdString())->shapeCollection();
+        nsx::PeakCollection* peaks_to_integrate =_int_peak_combo->currentPeakCollection();
+        nsx::ShapeCollection* shapes = _peak_combo->currentPeakCollection()->shapeCollection();
 
         int interpol = _interpolation_combo->currentIndex();
         nsx::PeakInterpolation peak_interpolation = static_cast<nsx::PeakInterpolation>(interpol);
@@ -440,13 +413,11 @@ void SubframeIntegrate::assignPeakShapes()
 void SubframeIntegrate::removeOverlappingPeaks()
 {
     gGui->setReady(false);
-    nsx::Experiment* expt = gSession->currentProject()->experiment();
 
     if (_int_peak_combo->count() == 0)
         return;
 
-    nsx::PeakCollection* peaks_to_integrate =
-        expt->getPeakCollection(_int_peak_combo->currentText().toStdString());
+    nsx::PeakCollection* peaks_to_integrate = _int_peak_combo->currentPeakCollection();
     nsx::PeakFilter filter;
     filter.resetFiltering(peaks_to_integrate);
     if (_remove_overlaps->isChecked()) {
@@ -482,11 +453,9 @@ void SubframeIntegrate::runIntegration()
 
         nsx::Experiment* expt = gSession->currentProject()->experiment();
         nsx::Integrator* integrator = expt->integrator();
-        nsx::sptrDataSet data = _data_list[_data_combo->currentIndex()];
-        nsx::PeakCollection* peaks_to_integrate =
-            expt->getPeakCollection(_int_peak_combo->currentText().toStdString());
-        nsx::ShapeCollection* shapes =
-            expt->getPeakCollection(_peak_combo->currentText().toStdString())->shapeCollection();
+        nsx::sptrDataSet data = _data_combo->currentData();
+        nsx::PeakCollection* peaks_to_integrate = _int_peak_combo->currentPeakCollection();
+        nsx::ShapeCollection* shapes = _peak_combo->currentPeakCollection()->shapeCollection();
 
         setIntegrationParameters();
         auto* params = gSession->currentProject()->experiment()->integrator()->parameters();
@@ -506,10 +475,7 @@ void SubframeIntegrate::runIntegration()
 void SubframeIntegrate::openShapeBuilder()
 {
     gGui->setReady(false);
-    nsx::PeakCollection* peak_collection =
-        gSession->currentProject()->experiment()
-            ->getPeakCollection(_peak_combo->currentText().toStdString());
-
+    nsx::PeakCollection* peak_collection = _peak_combo->currentPeakCollection();
     std::unique_ptr<ShapeCollectionDialog> dialog(
         new ShapeCollectionDialog(peak_collection, _shape_params));
 
@@ -559,9 +525,7 @@ void SubframeIntegrate::toggleUnsafeWidgets()
     }
 
     if (!_peak_combo->count() == 0) {
-        nsx::PeakCollection* peaks =
-            gSession->currentProject() ->experiment()
-                ->getPeakCollection(_peak_combo->currentText().toStdString());
+        nsx::PeakCollection* peaks = _peak_combo->currentPeakCollection();
         if (peaks->shapeCollection() == nullptr) {
             _assign_peak_shapes->setEnabled(false);
             _integrate_button->setEnabled(false);
