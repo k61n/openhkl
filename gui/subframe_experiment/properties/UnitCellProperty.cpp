@@ -13,12 +13,15 @@
 //  ***********************************************************************************************
 
 #include "gui/subframe_experiment/properties/UnitCellProperty.h"
+
 #include "base/utils/Units.h"
 #include "core/experiment/Experiment.h"
 #include "gui/models/Project.h"
 #include "gui/models/Session.h"
+#include "gui/utility/CellComboBox.h"
 #include "tables/crystal/SpaceGroup.h"
 #include "tables/crystal/UnitCell.h"
+
 #include <QCompleter>
 #include <QDebug>
 #include <QFormLayout>
@@ -65,7 +68,7 @@ UnitCellProperty::UnitCellProperty()
     grid_layout->addWidget(label_ptr, 5, 0, 1, 1);
     label_ptr->setSizePolicy(*_size_policy_widgets);
 
-    unitcells = new QComboBox();
+    unitcells = new CellComboBox();
     name = new QLineEdit();
     spaceGroup = new QLineEdit();
     chemicalFormula = new QLineEdit();
@@ -347,6 +350,7 @@ void UnitCellProperty::addUnitCell()
             selectedCellChanged(i);
         ++i;
     }
+    gSession->onUnitCellChanged();
 }
 
 void UnitCellProperty::removeUnitCell()
@@ -356,4 +360,5 @@ void UnitCellProperty::removeUnitCell()
     gSession->currentProject()->experiment()->removeUnitCell(name->text().toStdString());
     refreshInput();
     selectedCellChanged(0);
+    gSession->onUnitCellChanged();
 }

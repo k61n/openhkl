@@ -125,9 +125,7 @@ void SubframeRefiner::setInputUp()
 
     _peak_combo = f.addLinkedCombo(ComboType::FoundPeaks, "Peaks");
     _data_combo = f.addLinkedCombo(ComboType::DataSet, "Data set");
-    _cell_combo = new CellComboBox();
-    f.addLabel("Unit Cell");
-    f.addWidget(_cell_combo, 1, -1);
+    _cell_combo = f.addCellCombo("Unit cell");
     _batch_cell_check = f.addCheckBox(
         "Use refined cells", "Use unit cells generated per batch during previous refinement", 1);
     _n_batches_spin = f.addSpinBox(

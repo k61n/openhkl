@@ -2,8 +2,8 @@
 //
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
-//! @file      gui/utility/CellComboBox.h
-//! @brief     Defines class CellComboBox
+//! @file      gui/utility/PeakComboBox.h
+//! @brief     Defines class PeakComboBox
 //!
 //! @homepage  ###HOMEPAGE###
 //! @license   GNU General Public License v3 or higher (see COPYING)
@@ -12,46 +12,47 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_GUI_UTILITY_CELLCOMBO_H
-#define NSX_GUI_UTILITY_CELLCOMBO_H
+#ifndef NSX_GUI_UTILITY_PEAKCOMBO_H
+#define NSX_GUI_UTILITY_PEAKCOMBO_H
 
-#include "tables/crystal/UnitCell.h"
 #include <QComboBox>
 
 namespace nsx
 {
-class UnitCell;
+class PeakCollection;
 }
 
-using CellList = std::vector<nsx::sptrUnitCell>;
+enum class ComboType;
+
+using PeakList = std::vector<nsx::PeakCollection*>;
 
 //! A QComboBox that that is synchronised with all other QComboBoxes of the same type
-class CellComboBox : public QComboBox {
+class PeakComboBox : public QComboBox {
     Q_OBJECT
 
  public:
-    CellComboBox(QWidget* parent = nullptr);
+    PeakComboBox(QWidget* parent = nullptr);
 
-    //! Add a cell via its pointer
-    void addCell(const nsx::sptrUnitCell& cell);
+    //! Add a PeakCollection via its pointer
+    void addPeakCollection(nsx::PeakCollection* peaks);
 
-    //! Add a list of unit cells
-    void addCells(const CellList& cells);
+    //! Add a list of peak collection
+    void addPeakCollections(const PeakList& peaks);
 
     //! Clear all elements
     void clearAll();
 
-    //! Return a pointer to the current unit cell
-    nsx::sptrUnitCell currentCell() const;
+    //! Return a pointer to the current peak collection
+    nsx::PeakCollection* currentPeakCollection() const;
 
     //! Refresh the combo box text
     void refresh();
 
 
  private:
-    //! Index-sorted list of pointers to unit cells
-    static CellList _unit_cells;
+    //! Index-sorted list of pointers to peak collections
+    static PeakList _peak_collections;
 
 };
 
-#endif // NSX_GUI_UTILITY_CELLCOMBO_H
+#endif // NSX_GUI_UTILITY_PEAKCOMBO_H

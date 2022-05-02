@@ -33,6 +33,7 @@
 
 class DetectorWidget;
 class LinkedComboBox;
+class PeakComboBox;
 class PeakItemGraphic;
 class SpoilerCheck;
 class PeakViewWidget;
@@ -90,8 +91,6 @@ class SubframeFilterPeaks : public QWidget {
     void setFilterParameters();
 
     //! Refresh all th einputs
-    void setParametersUp();
-    //! Refresh all th einputs
     void updatePeakList();
     //! Update the datalist as an experiment was changed
     void updateDatasetList();
@@ -144,7 +143,7 @@ class SubframeFilterPeaks : public QWidget {
     SpoilerCheck* _merge_box;
     SpoilerCheck* _overlap_box;
 
-    LinkedComboBox* _peak_combo;
+    PeakComboBox* _peak_combo;
 
     QPushButton* _filter_button;
     QPushButton* _save_button;

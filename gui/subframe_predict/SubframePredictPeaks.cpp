@@ -217,9 +217,7 @@ void SubframePredictPeaks::setParametersUp()
     Spoiler* para_box = new Spoiler("Predict peaks");
     GridFiller f(para_box, true);
 
-    _cell_combo = new CellComboBox();
-    f.addLabel("Unit Cell");
-    f.addWidget(_cell_combo, 1, -1);
+    _cell_combo = f.addCellCombo("Unit cell:");
     _d_min = f.addDoubleSpinBox("d min:", QString::fromUtf8("(\u212B) - minimum d (Bragg's law)"));
     _d_max = f.addDoubleSpinBox("d max:", QString::fromUtf8("(\u212B) - maximum d (Bragg's law)"));
     _predict_button = f.addButton("Predict");

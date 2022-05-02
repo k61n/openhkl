@@ -50,8 +50,7 @@ void Actions::setupExperiment()
     new_experiment = new QAction("New experiment");
     load_experiment = new QAction("Load experiment");
     save_experiment = new QAction("Save");
-    save_experiment_as = new QAction("Save as");
-    save_all_experiment = new QAction("Save all");
+    save_experiment_as = new QAction("Save as"); save_all_experiment = new QAction("Save all");
     remove_experiment = new QAction("Remove experiment");
     quit = new QAction("Quit");
 
@@ -203,7 +202,7 @@ void Actions::addCell()
     expt->addUnitCell(
         dlg->unitCellName().toStdString(), dlg->a(), dlg->b(), dlg->c(), dlg->alpha(),
         dlg->beta(), dlg->gamma(), dlg->spaceGroup().toStdString());
-    gGui->onUnitCellChanged();
+    gSession->onUnitCellChanged();
     auto cell_list = gSession->currentProject()->getUnitCellNames();
     gGui->sentinel->setLinkedComboList(ComboType::UnitCell, cell_list);
     gGui->sideBar()->refreshCurrent();
@@ -223,7 +222,7 @@ void Actions::removeCell()
 
     std::string data_name = dlg->itemName().toStdString();
     gSession->currentProject()->experiment()->removeUnitCell(data_name);
-    gGui->onUnitCellChanged();
+    gSession->onUnitCellChanged();
     cell_list = gSession->currentProject()->getUnitCellNames();
     gGui->sentinel->setLinkedComboList(ComboType::UnitCell, cell_list);
     gGui->sideBar()->refreshCurrent();
@@ -252,7 +251,7 @@ void Actions::removePeaks()
     experiment->removePeakCollection(peaks_name.toStdString());
 
     gSession->currentProject()->removePeakModel(peaks_name);
-    gGui->onPeaksChanged();
+    gSession->onPeaksChanged();
     peaks_list = gSession->currentProject()->getPeakListNames();
 
     emit gGui->sentinel->setLinkedComboList(ComboType::PeakCollection, peaks_list);
@@ -296,6 +295,7 @@ void Actions::clonePeaks()
         emit gGui->sentinel->setLinkedComboList(ComboType::FoundPeaks, peaks_list);
     if (lt == nsx::listtype::PREDICTED)
         emit gGui->sentinel->setLinkedComboList(ComboType::PredictedPeaks, peaks_list);
+    gSession->onPeaksChanged();
     gGui->setReady(true);
 }
 

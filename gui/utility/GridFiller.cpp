@@ -15,8 +15,13 @@
 #include "gui/utility/GridFiller.h"
 
 #include "gui/MainWin.h" // gGui
+#include "gui/utility/CellComboBox.h"
 #include "gui/utility/ColorButton.h"
+#include "gui/utility/DataComboBox.h"
+#include "gui/utility/FoundPeakComboBox.h"
 #include "gui/utility/LinkedComboBox.h"
+#include "gui/utility/PeakComboBox.h"
+#include "gui/utility/PredictedPeakComboBox.h"
 #include "gui/utility/SafeSpinBox.h"
 #include "gui/utility/Spoiler.h"
 
@@ -55,6 +60,67 @@ QComboBox* GridFiller::addCombo(const QString& labelText, const QString& tooltip
         addLabel(labelText, tooltip);
 
     QComboBox* comboBox = new QComboBox();
+    if (!createLabel)
+        comboBox->setToolTip(tooltip);
+    comboBox->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
+    comboBox->setSizeAdjustPolicy(QComboBox::AdjustToContents);
+    _mainLayout->addWidget(comboBox, _nextRow, createLabel ? 1 : 0, 1, -1);
+
+    _nextRow++;
+
+    return comboBox;
+}
+
+DataComboBox* GridFiller::addDataCombo(const QString& labelText, const QString& tooltip)
+{
+    const bool createLabel = !labelText.isEmpty();
+    if (createLabel)
+        addLabel(labelText, tooltip);
+
+    DataComboBox* comboBox = new DataComboBox();
+    if (!createLabel)
+        comboBox->setToolTip(tooltip);
+    comboBox->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
+    comboBox->setSizeAdjustPolicy(QComboBox::AdjustToContents);
+    _mainLayout->addWidget(comboBox, _nextRow, createLabel ? 1 : 0, 1, -1);
+
+    _nextRow++;
+
+    return comboBox;
+}
+
+CellComboBox* GridFiller::addCellCombo(const QString& labelText, const QString& tooltip)
+{
+    const bool createLabel = !labelText.isEmpty();
+    if (createLabel)
+        addLabel(labelText, tooltip);
+
+    CellComboBox* comboBox = new CellComboBox();
+    if (!createLabel)
+        comboBox->setToolTip(tooltip);
+    comboBox->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
+    comboBox->setSizeAdjustPolicy(QComboBox::AdjustToContents);
+    _mainLayout->addWidget(comboBox, _nextRow, createLabel ? 1 : 0, 1, -1);
+
+    _nextRow++;
+
+    return comboBox;
+}
+
+PeakComboBox* GridFiller::addPeakCombo(
+    ComboType type, const QString& labelText, const QString& tooltip)
+{
+    const bool createLabel = !labelText.isEmpty();
+    if (createLabel)
+        addLabel(labelText, tooltip);
+
+    PeakComboBox* comboBox;
+    if (type == ComboType::PeakCollection)
+        comboBox = new PeakComboBox();
+    else if (type == ComboType::FoundPeaks)
+        comboBox = new FoundPeakComboBox();
+    else if (type == ComboType::PredictedPeaks)
+        comboBox = new PredictedPeakComboBox();
     if (!createLabel)
         comboBox->setToolTip(tooltip);
     comboBox->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);

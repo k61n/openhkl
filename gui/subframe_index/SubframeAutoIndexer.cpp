@@ -29,6 +29,8 @@
 #include "gui/models/Project.h"
 #include "gui/models/Session.h"
 #include "gui/utility/CellComboBox.h"
+#include "gui/utility/DataComboBox.h"
+#include "gui/utility/FoundPeakComboBox.h"
 #include "gui/utility/GridFiller.h"
 #include "gui/utility/LinkedComboBox.h"
 #include "gui/utility/PropertyScrollArea.h"
@@ -120,8 +122,8 @@ void SubframeAutoIndexer::setInputUp()
     Spoiler* input_box = new Spoiler("Input");
     GridFiller f(input_box, true);
 
-    _data_combo = f.addLinkedCombo(ComboType::DataSet, "Data set");
-    _peak_combo = f.addLinkedCombo(ComboType::FoundPeaks, "Peak collection");
+    _data_combo = f.addDataCombo("Data set");
+    _peak_combo = f.addPeakCombo(ComboType::FoundPeaks, "Peak collection");
 
     connect(
         _peak_combo, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this,
@@ -711,7 +713,6 @@ void SubframeAutoIndexer::acceptSolution()
         nsx::UnitCell* cell = expt->getUnitCell(cellName);
         cell->setSpaceGroup(dlg->spaceGroup().toStdString());
         collection->setMillerIndices();
-        gGui->sentinel->addLinkedComboItem(ComboType::UnitCell, dlg->unitCellName());
         gGui->refreshMenu(); 
     }
 }

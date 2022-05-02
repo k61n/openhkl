@@ -19,18 +19,16 @@
 #include "core/shape/PeakCollection.h"
 #include "gui/items/PeakCollectionItem.h"
 #include "gui/models/PeakCollectionModel.h"
-#include "gui/utility/CellComboBox.h"
 #include "gui/widgets/PeakViewWidget.h"
 
 #include <QPushButton>
 #include <QSizePolicy>
 #include <QWidget>
-#include <qglobal.h>
-#include <qgridlayout.h>
-#include <qgroupbox.h>
-#include <qobjectdefs.h>
 
 class CellComboBox;
+class DataComboBox;
+class FoundPeakComboBox;
+class PeakComboBox;
 class DetectorWidget;
 class LinkedComboBox;
 class PeakTableView;
@@ -133,8 +131,8 @@ class SubframeAutoIndexer : public QWidget {
     QVBoxLayout* _left_layout;
     QSplitter* _right_element;
 
-    LinkedComboBox* _data_combo;
-    LinkedComboBox* _peak_combo;
+    DataComboBox* _data_combo;
+    PeakComboBox* _peak_combo;
 
     SpoilerCheck* _set_initial_ki;
     QCheckBox* _direct_beam;
