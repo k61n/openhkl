@@ -18,6 +18,7 @@
 #include <qobject.h>
 
 DataList DataComboBox::_data_sets;
+QVector<DataComboBox*> DataComboBox::_all_combos;
 
 DataComboBox::DataComboBox(QWidget* parent) : QComboBox(parent)
 {
@@ -62,4 +63,10 @@ void DataComboBox::refresh()
     for (nsx::sptrDataSet& data : _data_sets)
         addItem(QString::fromStdString(data->name()));
     setCurrentText(_current);
+}
+
+void DataComboBox::refreshAll()
+{
+    for (auto* combo : _all_combos)
+        combo->refresh();
 }

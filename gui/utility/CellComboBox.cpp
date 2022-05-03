@@ -17,6 +17,7 @@
 #include <QSignalBlocker>
 
 CellList CellComboBox::_unit_cells;
+QVector<CellComboBox*> CellComboBox::_all_combos;
 
 CellComboBox::CellComboBox(QWidget* parent) : QComboBox(parent)
 {
@@ -61,4 +62,10 @@ void CellComboBox::refresh()
     for (nsx::sptrUnitCell& cell : _unit_cells)
         addItem(QString::fromStdString(cell->name()));
     setCurrentText(_current);
+}
+
+void CellComboBox::refreshAll()
+{
+    for (auto* combo : _all_combos)
+        combo->refresh();
 }

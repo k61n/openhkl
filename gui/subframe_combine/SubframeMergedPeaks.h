@@ -89,12 +89,6 @@ class SubframeMergedPeaks : public QWidget {
     //! Save the unmerged peaks
     void saveUnmergedPeaks();
 
-    //! The loaded data list
-    std::vector<nsx::sptrDataSet> _data_list;
-    //! The loaded peak list
-    QStringList _peaks1_list;
-    //! The loaded peak list
-    QStringList _peaks2_list;
     //! The merged peak list
     nsx::MergedData* _merged_data;
     //! Merged data per resolution shell

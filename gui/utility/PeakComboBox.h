@@ -51,10 +51,14 @@ class PeakComboBox : public QComboBox {
     //! Set combo to have an empty first entry
     void setEmptyFirst();
 
+    //! Refresh all combos of this type
+    void refreshAll();
 
  private:
     //! Index-sorted list of pointers to peak collections
     static PeakList _peak_collections;
+
+    static QVector<PeakComboBox*> _all_combos;
 
  protected:
     //! pointer to the peak list for the current combo type

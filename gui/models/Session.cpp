@@ -345,6 +345,7 @@ void Session::onDataChanged()
     gGui->onDataChanged();
     _data_combo->clearAll();
     _data_combo->addDataSets(data);
+    _data_combo->refreshAll();
     onPeaksChanged();
 }
 
@@ -375,12 +376,17 @@ void Session::onPeaksChanged()
     gGui->onPeaksChanged();
     _peak_combo->clearAll();
     _peak_combo->addPeakCollections(peaks);
+    _peak_combo->refreshAll();
     _found_peak_combo->clearAll();
     _found_peak_combo->addPeakCollections(peaks);
+    _found_peak_combo->refreshAll();
+        ;
     _predicted_peak_combo->clearAll();
     _predicted_peak_combo->addPeakCollections(peaks);
+    _predicted_peak_combo->refreshAll();
     _integrated_peak_combo->clearAll();
     _integrated_peak_combo->addPeakCollections(peaks);
+    _integrated_peak_combo->refreshAll();
 }
 
 void Session::onUnitCellChanged()
@@ -389,6 +395,7 @@ void Session::onUnitCellChanged()
     gGui->onUnitCellChanged();
     _cell_combo->clearAll();
     _cell_combo->addCells(cells);
+    _cell_combo->refreshAll();
 }
 
 void Session::loadExperimentFromFile(QString filename)

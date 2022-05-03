@@ -48,6 +48,8 @@ class DataComboBox : public QComboBox {
     //! Refresh the combo box text
     void refresh();
 
+    //! Refresh all combos of this type
+    void refreshAll();
 
  private:
     //! Index-sorted list of pointers to unit cells
@@ -55,6 +57,7 @@ class DataComboBox : public QComboBox {
     //! Current data set
     QString _current;
 
+    static QVector<DataComboBox*> _all_combos;
 };
 
 #endif // NSX_GUI_UTILITY_DATACOMBO_H

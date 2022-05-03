@@ -47,6 +47,8 @@ class CellComboBox : public QComboBox {
     //! Refresh the combo box text
     void refresh();
 
+    //! Refresh all combos of this type
+    void refreshAll();
 
  private:
     //! Index-sorted list of pointers to unit cells
@@ -54,6 +56,7 @@ class CellComboBox : public QComboBox {
     //! Current unit cell
     QString _current;
 
+    static QVector<CellComboBox*> _all_combos;
 };
 
 #endif // NSX_GUI_UTILITY_CELLCOMBO_H

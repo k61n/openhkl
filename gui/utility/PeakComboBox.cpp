@@ -20,10 +20,12 @@
 #include <QSignalBlocker>
 
 PeakList PeakComboBox::_peak_collections;
+QVector<PeakComboBox*> PeakComboBox::_all_combos;
 
 PeakComboBox::PeakComboBox(QWidget* parent) : QComboBox(parent)
 {
     _list_pointer = &_peak_collections;
+    _all_combos.push_back(this);
 }
 
 void PeakComboBox::addPeakCollection(nsx::PeakCollection* peaks)
@@ -80,4 +82,10 @@ void PeakComboBox::refresh()
 void PeakComboBox::setEmptyFirst()
 {
     _empty_first = true;
+}
+
+void PeakComboBox::refreshAll()
+{
+    for (auto* combo : _all_combos)
+        combo->refresh();
 }
