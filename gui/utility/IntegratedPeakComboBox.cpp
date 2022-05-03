@@ -35,3 +35,11 @@ void IntegratedPeakComboBox::addPeakCollection(nsx::PeakCollection* peaks)
     _integrated_peaks.push_back(peaks);
     refresh();
 }
+
+void IntegratedPeakComboBox::addPeakCollections(const PeakList& peaks)
+{
+    if (_empty_first && !itemText(0).isEmpty())
+        addItem(QString());
+    for (auto collection : peaks)
+        addPeakCollection(collection);
+}

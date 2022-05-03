@@ -56,7 +56,6 @@ nsx::PeakCollection* PeakComboBox::currentPeakCollection() const
 {
     if (count() != _list_pointer->size()) {
         if (_empty_first) {
-            std::cout << count() << " " << _peak_collections.size() << " " << currentIndex() << std::endl;
             if (currentIndex() == 0)
                 return nullptr;
             return _list_pointer->at(currentIndex() - 1);

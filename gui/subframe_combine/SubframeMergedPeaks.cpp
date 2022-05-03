@@ -369,15 +369,9 @@ void SubframeMergedPeaks::refreshPeakCombos()
     if (!gSession->hasProject())
         return;
 
-    PeakList peaks;
-    for (auto* collection : gSession->currentProject()->experiment()->getPeakCollections()) {
-        if (collection->isIntegrated())
-            peaks.push_back(collection);
-    }
+    gSession->onPeaksChanged();
 
     _peak_combo_1->refresh();
-    _peak_combo_2->clearAll();
-    _peak_combo_2->addPeakCollections(peaks);
     _peak_combo_2->refresh();
 
     // Determine the maximum frame number for the frame spinboxes

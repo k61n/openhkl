@@ -34,6 +34,9 @@ class PredictedPeakComboBox : public PeakComboBox {
     //! Add a PeakCollection via its pointer
     void addPeakCollection(nsx::PeakCollection* peaks);
 
+    //! Add a list of peak collection
+    void addPeakCollections(const PeakList& peaks);
+
  private:
     static PeakList _predicted_peaks;
 };

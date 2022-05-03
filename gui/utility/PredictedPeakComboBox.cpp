@@ -35,3 +35,9 @@ void PredictedPeakComboBox::addPeakCollection(nsx::PeakCollection* peaks)
     _predicted_peaks.push_back(peaks);
     refresh();
 }
+
+void PredictedPeakComboBox::addPeakCollections(const PeakList& peaks)
+{
+    for (auto collection : peaks)
+        addPeakCollection(collection);
+}
