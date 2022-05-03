@@ -29,7 +29,6 @@
 #include "gui/graphics/SXPlot.h"
 #include "gui/models/Project.h"
 #include "gui/models/Session.h"
-#include "gui/utility/LinkedComboBox.h"
 #include "gui/utility/IntegratedPeakComboBox.h"
 #include "gui/utility/SideBar.h"
 #include "tables/crystal/UnitCell.h"

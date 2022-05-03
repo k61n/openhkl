@@ -34,7 +34,6 @@
 #include <QWidget>
 
 class IntegratedPeakComboBox;
-class LinkedComboBox;
 class PeakComboBox;
 class MergedData;
 class SXPlot;

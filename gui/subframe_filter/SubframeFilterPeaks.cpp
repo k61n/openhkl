@@ -113,7 +113,7 @@ void SubframeFilterPeaks::setUnitCellUp()
     _unit_cell_box = new SpoilerCheck("Indexed peaks by unit cell");
     GridFiller f(_unit_cell_box);
 
-    _unit_cell = f.addLinkedCombo(ComboType::UnitCell, "Unit cell:");
+    _unit_cell = f.addCellCombo("Unit cell:");
     _tolerance = f.addDoubleSpinBox("Tolerance:");
 
     _tolerance->setValue(0.2);
@@ -310,6 +310,7 @@ void SubframeFilterPeaks::refreshAll()
         return;
 
     _peak_combo->refresh();
+    _unit_cell->refresh();
     _detector_widget->updateDatasetList(gSession->currentProject()->allData());
     refreshPeakTable();
     grabFilterParameters();

@@ -17,6 +17,7 @@
 
 #include "gui/items/PeakCollectionItem.h"
 #include "gui/models/PeakCollectionModel.h"
+#include "gui/utility/CellComboBox.h"
 #include "gui/utility/ColorButton.h"
 #include "gui/views/PeakTableView.h"
 
@@ -32,7 +33,6 @@
 #include <QWidget>
 
 class DetectorWidget;
-class LinkedComboBox;
 class PeakComboBox;
 class PeakItemGraphic;
 class SpoilerCheck;
@@ -114,7 +114,7 @@ class SubframeFilterPeaks : public QWidget {
     QCheckBox* _indexed_peaks;
     QCheckBox* _extinct_spacegroup;
     QCheckBox* _keep_complementary;
-    LinkedComboBox* _unit_cell;
+    CellComboBox* _unit_cell;
 
     SafeDoubleSpinBox* _tolerance;
     SafeDoubleSpinBox* _strength_min;

@@ -30,7 +30,6 @@ class DataComboBox;
 class FoundPeakComboBox;
 class PeakComboBox;
 class DetectorWidget;
-class LinkedComboBox;
 class PeakTableView;
 class UnitCellTableView;
 class Spoiler;

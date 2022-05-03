@@ -28,7 +28,6 @@
 #include "gui/subwindows/DetectorWindow.h"
 #include "gui/subwindows/LogWindow.h"
 #include "gui/subwindows/PeakWindow.h"
-#include "gui/utility/LinkedComboBox.h"
 #include "gui/utility/SideBar.h"
 #include "gui/widgets/LogWidget.h"
 #include "tables/crystal/SpaceGroup.h"
@@ -153,7 +152,6 @@ void Actions::removeData()
     gSession->currentProject()->experiment()->removeData(data_name);
     gSession->onDataChanged();
     data_list = gSession->currentProject()->getDataNames();
-    gGui->sentinel->setLinkedComboList(ComboType::DataSet, data_list);
 }
 
 void Actions::setupInstrument() { }
@@ -204,7 +202,6 @@ void Actions::addCell()
         dlg->beta(), dlg->gamma(), dlg->spaceGroup().toStdString());
     gSession->onUnitCellChanged();
     auto cell_list = gSession->currentProject()->getUnitCellNames();
-    gGui->sentinel->setLinkedComboList(ComboType::UnitCell, cell_list);
     gGui->sideBar()->refreshCurrent();
 }
 
@@ -224,7 +221,6 @@ void Actions::removeCell()
     gSession->currentProject()->experiment()->removeUnitCell(data_name);
     gSession->onUnitCellChanged();
     cell_list = gSession->currentProject()->getUnitCellNames();
-    gGui->sentinel->setLinkedComboList(ComboType::UnitCell, cell_list);
     gGui->sideBar()->refreshCurrent();
 }
 
@@ -245,8 +241,6 @@ void Actions::removePeaks()
 
     QString peaks_name = dlg->itemName();
     nsx::Experiment* experiment = gSession->currentProject()->experiment();
-    nsx::PeakCollection* peaks = experiment->getPeakCollection(peaks_name.toStdString());
-    nsx::listtype lt = peaks->type();
 
     experiment->removePeakCollection(peaks_name.toStdString());
 
@@ -254,11 +248,6 @@ void Actions::removePeaks()
     gSession->onPeaksChanged();
     peaks_list = gSession->currentProject()->getPeakListNames();
 
-    emit gGui->sentinel->setLinkedComboList(ComboType::PeakCollection, peaks_list);
-    if (lt == nsx::listtype::FOUND)
-        emit gGui->sentinel->setLinkedComboList(ComboType::FoundPeaks, peaks_list);
-    if (lt == nsx::listtype::PREDICTED)
-        emit gGui->sentinel->setLinkedComboList(ComboType::PredictedPeaks, peaks_list);
     gGui->sideBar()->refreshCurrent();
     gGui->setReady(true);
 }
@@ -284,17 +273,8 @@ void Actions::clonePeaks()
 
     QString original = dlg->originalCollectionName();
     QString cloned = dlg->clonedCollectionName();
-    nsx::listtype lt = gSession->currentProject()
-                            ->experiment()
-                            ->getPeakCollection(original.toStdString())
-                            ->type();
     gSession->currentProject()->clonePeakCollection(original, cloned);
     peaks_list = gSession->currentProject()->getPeakListNames();
-    emit gGui->sentinel->setLinkedComboList(ComboType::PeakCollection, peaks_list);
-    if (lt == nsx::listtype::FOUND)
-        emit gGui->sentinel->setLinkedComboList(ComboType::FoundPeaks, peaks_list);
-    if (lt == nsx::listtype::PREDICTED)
-        emit gGui->sentinel->setLinkedComboList(ComboType::PredictedPeaks, peaks_list);
     gSession->onPeaksChanged();
     gGui->setReady(true);
 }
