@@ -27,6 +27,7 @@ class DataComboBox;
 class PeakComboBox;
 class FoundPeakComboBox;
 class PredictedPeakComboBox;
+class IntegratedPeakComboBox;
 namespace nsx {
 enum class DataFormat;
 }
@@ -83,6 +84,7 @@ class Session {
     PeakComboBox* _peak_combo;
     FoundPeakComboBox* _found_peak_combo;
     PredictedPeakComboBox* _predicted_peak_combo;
+    IntegratedPeakComboBox* _integrated_peak_combo;
 };
 
 #endif // NSX_GUI_MODELS_SESSION_H

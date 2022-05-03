@@ -23,6 +23,7 @@ PeakList FoundPeakComboBox::_found_peaks;
 
 FoundPeakComboBox::FoundPeakComboBox(QWidget* parent) : PeakComboBox(parent)
 {
+    _list_pointer = &_found_peaks;
 }
 
 void FoundPeakComboBox::addPeakCollection(nsx::PeakCollection* peaks)
@@ -33,10 +34,4 @@ void FoundPeakComboBox::addPeakCollection(nsx::PeakCollection* peaks)
     addItem(QString::fromStdString(peaks->name()));
     _found_peaks.push_back(peaks);
     refresh();
-}
-
-void FoundPeakComboBox::addPeakCollections(const PeakList& peaks)
-{
-    for (auto collection : peaks)
-        addPeakCollection(collection);
 }

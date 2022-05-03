@@ -33,6 +33,7 @@
 #include <QVBoxLayout>
 #include <QWidget>
 
+class IntegratedPeakComboBox;
 class LinkedComboBox;
 class PeakComboBox;
 class MergedData;
@@ -111,8 +112,8 @@ class SubframeMergedPeaks : public QWidget {
     QWidget* _merged_tab;
     QWidget* _unmerged_tab;
 
-    PeakComboBox* _peak_combo_1;
-    PeakComboBox* _peak_combo_2;
+    IntegratedPeakComboBox* _peak_combo_1;
+    IntegratedPeakComboBox* _peak_combo_2;
 
     QTableView* _d_shell_view;
     QDoubleSpinBox* _d_min;

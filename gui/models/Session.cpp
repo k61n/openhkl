@@ -38,8 +38,9 @@
 #include "gui/utility/CellComboBox.h"
 #include "gui/utility/DataComboBox.h"
 #include "gui/utility/FoundPeakComboBox.h"
-#include "gui/utility/PeakComboBox.h"
+#include "gui/utility/IntegratedPeakComboBox.h"
 #include "gui/utility/LinkedComboBox.h"
+#include "gui/utility/PeakComboBox.h"
 #include "gui/utility/PredictedPeakComboBox.h"
 
 #include <QCollator>
@@ -78,6 +79,7 @@ Session::Session()
     _peak_combo = new PeakComboBox();
     _found_peak_combo = new FoundPeakComboBox();
     _predicted_peak_combo = new PredictedPeakComboBox();
+    _integrated_peak_combo = new IntegratedPeakComboBox();
 }
 
 Project* Session::currentProject()
@@ -373,6 +375,12 @@ void Session::onPeaksChanged()
     gGui->onPeaksChanged();
     _peak_combo->clearAll();
     _peak_combo->addPeakCollections(peaks);
+    _found_peak_combo->clearAll();
+    _found_peak_combo->addPeakCollections(peaks);
+    _predicted_peak_combo->clearAll();
+    _predicted_peak_combo->addPeakCollections(peaks);
+    _integrated_peak_combo->clearAll();
+    _integrated_peak_combo->addPeakCollections(peaks);
 }
 
 void Session::onUnitCellChanged()

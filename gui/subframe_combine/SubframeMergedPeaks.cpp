@@ -30,7 +30,7 @@
 #include "gui/models/Project.h"
 #include "gui/models/Session.h"
 #include "gui/utility/LinkedComboBox.h"
-#include "gui/utility/PeakComboBox.h"
+#include "gui/utility/IntegratedPeakComboBox.h"
 #include "gui/utility/SideBar.h"
 #include "tables/crystal/UnitCell.h"
 
@@ -56,8 +56,9 @@ SubframeMergedPeaks::SubframeMergedPeaks()
 
     QHBoxLayout* drop_layout = new QHBoxLayout();
 
-    _peak_combo_1 = new PeakComboBox();
-    _peak_combo_2 = new PeakComboBox();
+    _peak_combo_1 = new IntegratedPeakComboBox();
+    _peak_combo_2 = new IntegratedPeakComboBox();
+    _peak_combo_2->setEmptyFirst();
 
     _peak_combo_1->setSizePolicy(*_size_policy_right);
     _peak_combo_2->setSizePolicy(*_size_policy_right);
@@ -374,8 +375,6 @@ void SubframeMergedPeaks::refreshPeakCombos()
             peaks.push_back(collection);
     }
 
-    _peak_combo_1->clearAll();
-    _peak_combo_1->addPeakCollections(peaks);
     _peak_combo_1->refresh();
     _peak_combo_2->clearAll();
     _peak_combo_2->addPeakCollections(peaks);

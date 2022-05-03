@@ -161,22 +161,11 @@ void SubframeIntegrate::refreshAll()
     if (!gSession->hasProject())
         return;
 
-    DataList data = gSession->currentProject()->experiment()->getAllData();
-    _data_combo->clearAll();
-    _data_combo->addDataSets(data);
     _data_combo->refresh();
-    _detector_widget->updateDatasetList(data);
+    _detector_widget->updateDatasetList(gSession->currentProject()->experiment()->getAllData());
     _detector_widget->refresh();
-
-    PeakList peaks = gSession->currentProject()->experiment()->getPeakCollections();
-    _peak_combo->clearAll();
-    _peak_combo->addPeakCollections(peaks);
     _peak_combo->refresh();
-
-    _int_peak_combo->clearAll();
-    _int_peak_combo->addPeakCollections(peaks);
     _int_peak_combo->refresh();
-
     refreshPeakTable();
     grabIntegrationParameters();
     toggleUnsafeWidgets();

@@ -41,6 +41,7 @@ void DataComboBox::addDataSets(const DataList& data_list)
 void DataComboBox::clearAll()
 {
     QSignalBlocker blocker(this);
+    _current = currentText();
     clear();
     _data_sets.clear();
 }
@@ -56,7 +57,9 @@ nsx::sptrDataSet DataComboBox::currentData() const
 void DataComboBox::refresh()
 {
     QSignalBlocker blocker(this);
+    _current = currentText();
     clear();
     for (nsx::sptrDataSet& data : _data_sets)
         addItem(QString::fromStdString(data->name()));
+    setCurrentText(_current);
 }

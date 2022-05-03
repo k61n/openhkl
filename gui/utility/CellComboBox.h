@@ -51,6 +51,8 @@ class CellComboBox : public QComboBox {
  private:
     //! Index-sorted list of pointers to unit cells
     static CellList _unit_cells;
+    //! Current unit cell
+    QString _current;
 
 };
 

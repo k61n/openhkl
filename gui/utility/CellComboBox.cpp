@@ -40,6 +40,7 @@ void CellComboBox::addCells(const CellList& cells)
 void CellComboBox::clearAll()
 {
     QSignalBlocker blocker(this);
+    _current = currentText();
     clear();
     _unit_cells.clear();
 }
@@ -55,7 +56,9 @@ nsx::sptrUnitCell CellComboBox::currentCell() const
 void CellComboBox::refresh()
 {
     QSignalBlocker blocker(this);
+    _current = currentText();
     clear();
     for (nsx::sptrUnitCell& cell : _unit_cells)
         addItem(QString::fromStdString(cell->name()));
+    setCurrentText(_current);
 }

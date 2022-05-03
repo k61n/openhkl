@@ -48,10 +48,23 @@ class PeakComboBox : public QComboBox {
     //! Refresh the combo box text
     void refresh();
 
+    //! Set combo to have an empty first entry
+    void setEmptyFirst();
+
 
  private:
     //! Index-sorted list of pointers to peak collections
     static PeakList _peak_collections;
+
+ protected:
+    //! pointer to the peak list for the current combo type
+    PeakList* _list_pointer;
+
+    //! Current peak collection
+    QString _current;
+
+    //! First position in combo is empty
+    bool _empty_first = false;
 
 };
 

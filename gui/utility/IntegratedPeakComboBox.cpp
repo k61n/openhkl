@@ -2,8 +2,8 @@
 //
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
-//! @file      gui/utility/PredictedPeakComboBox.h
-//! @brief     Defines class PredictedPeakComboBox
+//! @file      gui/utility/IntegratedPeakComboBox.h
+//! @brief     Defines class IntegratedPeakComboBox
 //!
 //! @homepage  ###HOMEPAGE###
 //! @license   GNU General Public License v3 or higher (see COPYING)
@@ -12,26 +12,26 @@
 //
 //  ***********************************************************************************************
 
-#include "gui/utility/PeakComboBox.h"
+#include "gui/utility/IntegratedPeakComboBox.h"
 
 #include "core/shape/PeakCollection.h"
-#include "gui/utility/PredictedPeakComboBox.h"
+#include "gui/utility/PeakComboBox.h"
 
 #include <QSignalBlocker>
 
-PeakList PredictedPeakComboBox::_predicted_peaks;
+PeakList IntegratedPeakComboBox::_integrated_peaks;
 
-PredictedPeakComboBox::PredictedPeakComboBox(QWidget* parent) : PeakComboBox(parent)
+IntegratedPeakComboBox::IntegratedPeakComboBox(QWidget* parent) : PeakComboBox(parent)
 {
-    _list_pointer = &_predicted_peaks;
+    _list_pointer = &_integrated_peaks;
 }
 
-void PredictedPeakComboBox::addPeakCollection(nsx::PeakCollection* peaks)
+void IntegratedPeakComboBox::addPeakCollection(nsx::PeakCollection* peaks)
 {
-    if (peaks->type() != nsx::listtype::PREDICTED)
+    if (!peaks->isIntegrated())
         return;
     QSignalBlocker blocker(this);
     addItem(QString::fromStdString(peaks->name()));
-    _predicted_peaks.push_back(peaks);
+    _integrated_peaks.push_back(peaks);
     refresh();
 }

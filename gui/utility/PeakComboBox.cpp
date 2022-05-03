@@ -23,18 +23,21 @@ PeakList PeakComboBox::_peak_collections;
 
 PeakComboBox::PeakComboBox(QWidget* parent) : QComboBox(parent)
 {
+    _list_pointer = &_peak_collections;
 }
 
 void PeakComboBox::addPeakCollection(nsx::PeakCollection* peaks)
 {
     QSignalBlocker blocker(this);
     addItem(QString::fromStdString(peaks->name()));
-    _peak_collections.push_back(peaks);
+    _list_pointer->push_back(peaks);
     refresh();
 }
 
 void PeakComboBox::addPeakCollections(const PeakList& peaks)
 {
+    if (_empty_first && !itemText(0).isEmpty())
+        addItem(QString());
     for (auto collection : peaks)
         addPeakCollection(collection);
 }
@@ -43,22 +46,39 @@ void PeakComboBox::addPeakCollections(const PeakList& peaks)
 void PeakComboBox::clearAll()
 {
     QSignalBlocker blocker(this);
+    _current = currentText();
     clear();
-    _peak_collections.clear();
+    _list_pointer->clear();
 }
 
 //! Return a pointer to the current unit cell
 nsx::PeakCollection* PeakComboBox::currentPeakCollection() const
 {
-    if (count() != _peak_collections.size())
+    if (count() != _list_pointer->size()) {
+        if (_empty_first) {
+            std::cout << count() << " " << _peak_collections.size() << " " << currentIndex() << std::endl;
+            if (currentIndex() == 0)
+                return nullptr;
+            return _list_pointer->at(currentIndex() - 1);
+        }
         throw std::runtime_error("PeakComboBox needs refreshing");
-    return _peak_collections.at(currentIndex());
+    }
+    return _list_pointer->at(currentIndex());
 }
 
 void PeakComboBox::refresh()
 {
     QSignalBlocker blocker(this);
+    _current = currentText();
     clear();
-    for (nsx::PeakCollection* collection : _peak_collections)
+    if (_empty_first)
+        addItem(QString());
+    for (nsx::PeakCollection* collection : *_list_pointer)
         addItem(QString::fromStdString(collection->name()));
+    setCurrentText(_current);
+}
+
+void PeakComboBox::setEmptyFirst()
+{
+    _empty_first = true;
 }

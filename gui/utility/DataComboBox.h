@@ -52,6 +52,8 @@ class DataComboBox : public QComboBox {
  private:
     //! Index-sorted list of pointers to unit cells
     static DataList _data_sets;
+    //! Current data set
+    QString _current;
 
 };
 
