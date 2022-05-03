@@ -57,7 +57,7 @@ class PeakComboBox : public QComboBox {
  private:
     //! Index-sorted list of pointers to peak collections
     static PeakList _peak_collections;
-
+    //! Vector of all instances to refresh all in one call
     static QVector<PeakComboBox*> _all_combos;
 
  protected:

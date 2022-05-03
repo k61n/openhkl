@@ -55,7 +55,7 @@ class CellComboBox : public QComboBox {
     static CellList _unit_cells;
     //! Current unit cell
     QString _current;
-
+    //! Vector of all instances to refresh all in one call
     static QVector<CellComboBox*> _all_combos;
 };
 

@@ -380,7 +380,6 @@ void Session::onPeaksChanged()
     _found_peak_combo->clearAll();
     _found_peak_combo->addPeakCollections(peaks);
     _found_peak_combo->refreshAll();
-        ;
     _predicted_peak_combo->clearAll();
     _predicted_peak_combo->addPeakCollections(peaks);
     _predicted_peak_combo->refreshAll();

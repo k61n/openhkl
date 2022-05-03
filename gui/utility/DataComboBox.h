@@ -56,7 +56,7 @@ class DataComboBox : public QComboBox {
     static DataList _data_sets;
     //! Current data set
     QString _current;
-
+    //! Vector of all instances to refresh all in one call
     static QVector<DataComboBox*> _all_combos;
 };
 
