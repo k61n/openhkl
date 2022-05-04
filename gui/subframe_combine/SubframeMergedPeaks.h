@@ -33,7 +33,8 @@
 #include <QVBoxLayout>
 #include <QWidget>
 
-class LinkedComboBox;
+class IntegratedPeakComboBox;
+class PeakComboBox;
 class MergedData;
 class SXPlot;
 
@@ -87,12 +88,6 @@ class SubframeMergedPeaks : public QWidget {
     //! Save the unmerged peaks
     void saveUnmergedPeaks();
 
-    //! The loaded data list
-    std::vector<nsx::sptrDataSet> _data_list;
-    //! The loaded peak list
-    QStringList _peaks1_list;
-    //! The loaded peak list
-    QStringList _peaks2_list;
     //! The merged peak list
     nsx::MergedData* _merged_data;
     //! Merged data per resolution shell
@@ -110,8 +105,8 @@ class SubframeMergedPeaks : public QWidget {
     QWidget* _merged_tab;
     QWidget* _unmerged_tab;
 
-    LinkedComboBox* _peaks1_drop;
-    LinkedComboBox* _peaks2_drop;
+    IntegratedPeakComboBox* _peak_combo_1;
+    IntegratedPeakComboBox* _peak_combo_2;
 
     QTableView* _d_shell_view;
     QDoubleSpinBox* _d_min;

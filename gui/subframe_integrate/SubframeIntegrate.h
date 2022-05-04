@@ -34,6 +34,9 @@
 #include <QVBoxLayout>
 #include <QWidget>
 
+class PeakComboBox;
+class FoundPeakComboBox;
+class DataComboBox;
 class DetectorWidget;
 class LinkedComboBox;
 class PeakItemGraphic;
@@ -61,10 +64,6 @@ class SubframeIntegrate : public QWidget {
     //! Set the refiner parameters
     void setIntegrationParameters();
 
-    //! Update peak collection list on experiment change
-    void updatePeakList();
-    //! Update the data list on experment change
-    void updateDatasetList();
     //! Update the unit cell list on experment change
     void updateUnitCellList();
     //! Set up integration region spoiler
@@ -101,16 +100,13 @@ class SubframeIntegrate : public QWidget {
     //! Disable unsafe widgets if no data loaded
     void toggleUnsafeWidgets();
 
-    //! The loaded data list
-    std::vector<nsx::sptrDataSet> _data_list;
-
     QVBoxLayout* _left_layout;
     QSplitter* _right_element;
 
     // data selection
-    LinkedComboBox* _peak_combo;
-    LinkedComboBox* _int_peak_combo;
-    LinkedComboBox* _data_combo;
+    PeakComboBox* _peak_combo;
+    PeakComboBox* _int_peak_combo;
+    DataComboBox* _data_combo;
 
     // Integration region
     Spoiler* _integration_region_box;

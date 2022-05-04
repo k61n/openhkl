@@ -21,9 +21,11 @@
 #include "gui/models/PeakCollectionModel.h"
 #include "gui/models/Project.h"
 #include "gui/models/Session.h"
+#include "gui/utility/CellComboBox.h"
 #include "gui/utility/ColorButton.h"
 #include "gui/utility/GridFiller.h"
 #include "gui/utility/LinkedComboBox.h"
+#include "gui/utility/PeakComboBox.h"
 #include "gui/utility/PropertyScrollArea.h"
 #include "gui/utility/SafeSpinBox.h"
 #include "gui/utility/Spoiler.h"
@@ -121,9 +123,11 @@ void DetectorWindow::setInputUp()
     GridFiller f(input_spoiler, true);
 
     _exp_combo = f.addCombo("Experiment:");
-    _peak_combo_1 = f.addLinkedCombo(ComboType::PeakCollection, "Peak collection 1:");
-    _peak_combo_2 = f.addLinkedCombo(ComboType::PeakCollection, "Peak collection 2:");
-    _unit_cell_combo = f.addCombo("Unit cell");
+    _peak_combo_1 = f.addPeakCombo(ComboType::PeakCollection, "Peak collection 1:");
+    _peak_combo_2 = f.addPeakCombo(ComboType::PeakCollection, "Peak collection 2:");
+    _peak_combo_1->setEmptyFirst();
+    _peak_combo_2->setEmptyFirst();
+    _unit_cell_combo = f.addCellCombo("Unit cell");
 
     connect(
         _exp_combo, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this,
@@ -221,17 +225,16 @@ void DetectorWindow::setPlotUp(PeakViewWidget* peak_widget, QString name)
 
 void DetectorWindow::refreshDetectorView()
 {
-    if (_peak_collection_item_1.childCount() == 0)
-        return;
+    if (!(_peak_collection_item_1.childCount() == 0)) {
+        for (int i = 0; i < _peak_collection_item_1.childCount(); i++) {
+            PeakItem* peak = _peak_collection_item_1.peakItemAt(i);
+            auto graphic = peak->peakGraphic();
 
-    for (int i = 0; i < _peak_collection_item_1.childCount(); i++) {
-        PeakItem* peak = _peak_collection_item_1.peakItemAt(i);
-        auto graphic = peak->peakGraphic();
-
-        graphic->showLabel(false);
-        graphic->setColor(Qt::transparent);
-        graphic->initFromPeakViewWidget(
-            peak->peak()->enabled() ? _peak_view_widget_1->set1 : _peak_view_widget_1->set2);
+            graphic->showLabel(false);
+            graphic->setColor(Qt::transparent);
+            graphic->initFromPeakViewWidget(
+                peak->peak()->enabled() ? _peak_view_widget_1->set1 : _peak_view_widget_1->set2);
+        }
     }
 
     if (!(_peak_collection_item_2.childCount() == 0)) {
@@ -258,7 +261,7 @@ void DetectorWindow::refreshDetectorView()
 void DetectorWindow::refreshPeakTable()
 {
     auto expt = gSession->experimentAt(_exp_combo->currentIndex())->experiment();
-    _peak_collection_1 = expt->getPeakCollection(_peak_combo_1->currentText().toStdString());
+    _peak_collection_1 = _peak_combo_1->currentPeakCollection();
 
     if (_peak_collection_1) {
         _peak_collection_item_1.setPeakCollection(_peak_collection_1);
@@ -302,8 +305,6 @@ void DetectorWindow::updateExptList()
         _exp_combo->addItem(exp);
     _exp_combo->setCurrentText(current_exp);
     updateDatasetList();
-    updatePeakList();
-    updateUnitCellList();
     refreshPeakTable();
 }
 
@@ -318,38 +319,6 @@ void DetectorWindow::updateDatasetList()
     _peakCenterData.init(_nframes);
 }
 
-void DetectorWindow::updatePeakList()
-{
-    QSignalBlocker blocker1(_peak_combo_1);
-    QSignalBlocker blocker2(_peak_combo_2);
-    QString current_peaks = _peak_combo_1->currentText();
-    _peak_combo_1->clear();
-    _peak_list.clear();
-    _peak_list = gSession->experimentAt(_exp_combo->currentIndex())->getPeakListNames();
-    _peak_combo_1->addItems(_peak_list);
-    _peak_combo_1->setCurrentText(current_peaks);
-
-    current_peaks = _peak_combo_2->currentText();
-    _peak_combo_2->clear();
-    _peak_list.clear();
-    _peak_list = gSession->experimentAt(_exp_combo->currentIndex())->getPeakListNames();
-
-    _peak_list.push_front("");
-    _peak_combo_2->addItems(_peak_list);
-    _peak_combo_2->setCurrentText(current_peaks);
-}
-
-void DetectorWindow::updateUnitCellList()
-{
-    QSignalBlocker blocker(_unit_cell_combo);
-    QString current_cell = _unit_cell_combo->currentText();
-    _unit_cell_combo->clear();
-
-    _cell_list = gSession->experimentAt(_exp_combo->currentIndex())->getUnitCellNames();
-    _unit_cell_combo->addItems(_cell_list);
-    _unit_cell_combo->setCurrentText(current_cell);
-    setUnitCell();
-}
 
 void DetectorWindow::changeSelected(PeakItemGraphic* peak_graphic)
 {
@@ -370,9 +339,7 @@ void DetectorWindow::setUnitCell()
 {
     if (!gSession->experimentAt(_exp_combo->currentIndex())->hasUnitCell())
         return;
-    nsx::UnitCell* cell =
-        gSession->experimentAt(_exp_combo->currentIndex())->experiment()->getUnitCell(
-        _unit_cell_combo->currentText().toStdString());
+    nsx::UnitCell* cell = _unit_cell_combo->currentCell().get();
     _detector_widget->scene()->setUnitCell(cell);
 }
 

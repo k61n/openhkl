@@ -165,10 +165,12 @@ class Experiment {
     std::vector<UnitCell*> getUnitCells();
     //! Get a vector of unit cells in the experiment
     std::vector<sptrUnitCell> getSptrUnitCells();
+    //! get a vector of pointers to peak collections
+    std::vector<PeakCollection*> getPeakCollections();
 
-    // Instrument state handler
-    //! Add a set of instrment states
-    bool addInstrumentStateSet(sptrDataSet data);
+        // Instrument state handler
+        //! Add a set of instrment states
+        bool addInstrumentStateSet(sptrDataSet data);
     //! Add a set of instrment states
     bool addInstrumentStateSet(
         sptrDataSet data, const InstrumentStateList& states, bool overwrite = true);

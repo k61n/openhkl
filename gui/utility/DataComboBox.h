@@ -2,8 +2,8 @@
 //
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
-//! @file      gui/utility/CellComboBox.h
-//! @brief     Defines class CellComboBox
+//! @file      gui/utility/DataComboBox.h
+//! @brief     Defines class DataComboBox
 //!
 //! @homepage  ###HOMEPAGE###
 //! @license   GNU General Public License v3 or higher (see COPYING)
@@ -12,37 +12,38 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_GUI_UTILITY_CELLCOMBO_H
-#define NSX_GUI_UTILITY_CELLCOMBO_H
+#ifndef NSX_GUI_UTILITY_DATACOMBO_H
+#define NSX_GUI_UTILITY_DATACOMBO_H
 
-#include "tables/crystal/UnitCell.h"
+#include "core/data/DataSet.h"
+
 #include <QComboBox>
 
 namespace nsx
 {
-class UnitCell;
+class DataSet;
 }
 
-using CellList = std::vector<nsx::sptrUnitCell>;
+using DataList = std::vector<nsx::sptrDataSet>;
 
 //! A QComboBox that that is synchronised with all other QComboBoxes of the same type
-class CellComboBox : public QComboBox {
+class DataComboBox : public QComboBox {
     Q_OBJECT
 
  public:
-    CellComboBox(QWidget* parent = nullptr);
+    DataComboBox(QWidget* parent = nullptr);
 
     //! Add a cell via its pointer
-    void addCell(const nsx::sptrUnitCell& cell);
+    void addDataSet(const nsx::sptrDataSet& data);
 
     //! Add a list of unit cells
-    void addCells(const CellList& cells);
+    void addDataSets(const DataList& data_list);
 
     //! Clear all elements
     void clearAll();
 
     //! Return a pointer to the current unit cell
-    nsx::sptrUnitCell currentCell() const;
+    nsx::sptrDataSet currentData() const;
 
     //! Refresh the combo box text
     void refresh();
@@ -52,11 +53,11 @@ class CellComboBox : public QComboBox {
 
  private:
     //! Index-sorted list of pointers to unit cells
-    static CellList _unit_cells;
-    //! Current unit cell
+    static DataList _data_sets;
+    //! Current data set
     QString _current;
     //! Vector of all instances to refresh all in one call
-    static QVector<CellComboBox*> _all_combos;
+    static QVector<DataComboBox*> _all_combos;
 };
 
-#endif // NSX_GUI_UTILITY_CELLCOMBO_H
+#endif // NSX_GUI_UTILITY_DATACOMBO_H

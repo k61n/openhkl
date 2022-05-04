@@ -42,7 +42,7 @@
 #include "gui/utility/ColorButton.h"
 #include "gui/utility/GridFiller.h"
 #include "gui/utility/CellComboBox.h"
-#include "gui/utility/LinkedComboBox.h"
+#include "gui/utility/PeakComboBox.h"
 #include "gui/utility/PropertyScrollArea.h"
 #include "gui/utility/SafeSpinBox.h"
 #include "gui/utility/SideBar.h"
@@ -217,9 +217,7 @@ void SubframePredictPeaks::setParametersUp()
     Spoiler* para_box = new Spoiler("Predict peaks");
     GridFiller f(para_box, true);
 
-    _cell_combo = new CellComboBox();
-    f.addLabel("Unit Cell");
-    f.addWidget(_cell_combo, 1, -1);
+    _cell_combo = f.addCellCombo("Unit cell:");
     _d_min = f.addDoubleSpinBox("d min:", QString::fromUtf8("(\u212B) - minimum d (Bragg's law)"));
     _d_max = f.addDoubleSpinBox("d max:", QString::fromUtf8("(\u212B) - maximum d (Bragg's law)"));
     _predict_button = f.addButton("Predict");
@@ -247,7 +245,7 @@ void SubframePredictPeaks::setShapeCollectionUp()
     Spoiler* shapes_box = new Spoiler("Generate shapes");
     GridFiller f(shapes_box, true);
 
-    _found_peaks_combo = f.addLinkedCombo(
+    _peak_combo = f.addPeakCombo(
         ComboType::PeakCollection, "Found peak collection",
         "Found peaks from which to construct shape collection");
     _nx = f.addSpinBox("histogram bins x", "Number of bins in x direction");
@@ -380,8 +378,8 @@ void SubframePredictPeaks::refreshAll()
         return;
 
     _cell_combo->refresh();
-    updateDatasetList();
-    refreshPeakCombo();
+    _detector_widget->updateDatasetList(gSession->currentProject()->allData());
+    _peak_combo->refresh();
     grabRefinerParameters();
     grabPredictorParameters();
     grabShapeCollectionParameters();
@@ -396,14 +394,6 @@ void SubframePredictPeaks::refreshAll()
         _beam_offset_y->setMinimum(-static_cast<double>(data->nRows()) / 2.0);
     }
     toggleUnsafeWidgets();
-}
-
-void SubframePredictPeaks::updateDatasetList()
-{
-    if (!gSession->currentProject()->hasDataSet())
-        return;
-    _data_list = gSession->currentProject()->allData();
-    _detector_widget->updateDatasetList(_data_list);
 }
 
 void SubframePredictPeaks::grabPredictorParameters()
@@ -518,17 +508,6 @@ void SubframePredictPeaks::setShapeCollectionParameters()
         static_cast<nsx::PeakInterpolation>(_interpolation_combo->currentIndex());
 }
 
-void SubframePredictPeaks::refreshPeakCombo()
-{
-    _found_peaks_combo->blockSignals(true);
-    QString current_peaks = _found_peaks_combo->currentText();
-    _found_peaks_combo->clear();
-    _found_peaks_combo->addItems(
-        gSession->currentProject()->getPeakCollectionNames(nsx::listtype::FOUND));
-    _found_peaks_combo->setCurrentText(current_peaks);
-    _found_peaks_combo->blockSignals(false);
-}
-
 void SubframePredictPeaks::adjustDirectBeam()
 {
     if (_old_direct_beam_events.empty())
@@ -556,7 +535,7 @@ void SubframePredictPeaks::refineKi()
 {
     gGui->setReady(false);
     auto expt = gSession->currentProject()->experiment();
-    auto* peaks = expt->getPeakCollection(_found_peaks_combo->currentText().toStdString());
+    auto* peaks = _peak_combo->currentPeakCollection();
     auto data = _detector_widget->currentData();
     auto* detector = data->diffractometer()->detector();
     auto& states = data->instrumentStates();
@@ -677,8 +656,7 @@ void SubframePredictPeaks::assignPeakShapes()
     gGui->setReady(false);
     auto* experiment = gSession->currentProject()->experiment();
     auto data = experiment->getData(_detector_widget->dataCombo()->currentText().toStdString());
-    auto* found_peaks =
-        experiment->getPeakCollection(_found_peaks_combo->currentText().toStdString());
+    auto* found_peaks = _peak_combo->currentPeakCollection();
 
     setShapeCollectionParameters();
 
@@ -745,11 +723,11 @@ void SubframePredictPeaks::accept()
         return;
     }
 
+    gSession->onPeaksChanged();
+    _peak_combo->refresh();
     auto* collection = expt->getPeakCollection(dlg->listName().toStdString());
     collection->setIndexed(true);
     project->generatePeakModel(dlg->listName());
-    gGui->sentinel->addLinkedComboItem(ComboType::PredictedPeaks, dlg->listName());
-    gGui->sentinel->addLinkedComboItem(ComboType::PeakCollection, dlg->listName());
 }
 
 void SubframePredictPeaks::refreshPeakTable()
@@ -828,10 +806,10 @@ void SubframePredictPeaks::toggleUnsafeWidgets()
     }
 
     nsx::PeakCollection* pc = nullptr;
-    std::string current_pc = _found_peaks_combo->currentText().toStdString();
+    std::string current_pc = _peak_combo->currentText().toStdString();
     if (current_pc.size() == 0)
         return;
-   
+
     if (!gSession->hasProject()) return;
 
     pc = gSession->currentProject()->experiment()->getPeakCollection(current_pc);

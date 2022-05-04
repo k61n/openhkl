@@ -39,7 +39,7 @@
 
 class DetectorWidget;
 class CellComboBox;
-class LinkedComboBox;
+class PeakComboBox;
 class PeakItemGraphic;
 class PeakTableView;
 class PeakViewWidget;
@@ -98,18 +98,12 @@ class SubframePredictPeaks : public QWidget {
     //! Set the save button up
     void setSaveUp();
 
-    //! Update the peak list
-    void updatePeakList();
-    //! Update the peak list
-    void updateDatasetList();
     //! Set refiner parameters
     void setRefinerParameters();
     //! Set prediction parameters
     void setPredictorParameters();
     //! Set shape collection parameters
     void setShapeCollectionParameters();
-    //! Refresh the peak combo
-    void refreshPeakCombo();
     //! Adjust position of the visualised direct beam when spin box is changed
     void adjustDirectBeam();
     //! Allow the user to manual input the initial direct beam position
@@ -143,8 +137,6 @@ class SubframePredictPeaks : public QWidget {
     PeakCollectionItem _peak_collection_item;
     //! The temporary collection
     PeakCollectionModel _peak_collection_model;
-    //! The loaded data list
-    std::vector<nsx::sptrDataSet> _data_list;
     //! Flag to check whether peaks have been predicted
     bool _peaks_predicted;
     //! Flag to check whether shapes have been assigned to predicted peaks
@@ -179,13 +171,11 @@ class SubframePredictPeaks : public QWidget {
     QPushButton* _save_button;
     QPushButton* _predict_button;
 
-    LinkedComboBox* _exp_combo;
-
     PeakViewWidget* _peak_view_widget;
     DetectorWidget* _detector_widget;
     PeakTableView* _peak_table;
 
-    LinkedComboBox* _found_peaks_combo;
+    PeakComboBox* _peak_combo;
     SafeSpinBox* _nx;
     SafeSpinBox* _ny;
     SafeSpinBox* _nz;

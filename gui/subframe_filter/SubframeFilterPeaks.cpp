@@ -25,6 +25,7 @@
 #include "gui/models/Session.h"
 #include "gui/utility/GridFiller.h"
 #include "gui/utility/LinkedComboBox.h"
+#include "gui/utility/PeakComboBox.h"
 #include "gui/utility/PropertyScrollArea.h"
 #include "gui/utility/SafeSpinBox.h"
 #include "gui/utility/SideBar.h"
@@ -85,14 +86,11 @@ void SubframeFilterPeaks::setInputUp()
     auto input_box = new Spoiler("Input");
     GridFiller f(input_box, true);
 
-    _peak_combo = f.addLinkedCombo(ComboType::PeakCollection, "Peak collection");
+    _peak_combo = f.addPeakCombo(ComboType::PeakCollection, "Peak collection");
 
     connect(
         _peak_combo, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this,
-        [=]() {
-            updateDatasetList();
-            refreshPeakTable();
-        });
+        &SubframeFilterPeaks::refreshAll);
 
     _left_layout->addWidget(input_box);
 }
@@ -115,7 +113,7 @@ void SubframeFilterPeaks::setUnitCellUp()
     _unit_cell_box = new SpoilerCheck("Indexed peaks by unit cell");
     GridFiller f(_unit_cell_box);
 
-    _unit_cell = f.addLinkedCombo(ComboType::UnitCell, "Unit cell:");
+    _unit_cell = f.addCellCombo("Unit cell:");
     _tolerance = f.addDoubleSpinBox("Tolerance:");
 
     _tolerance->setValue(0.2);
@@ -308,39 +306,15 @@ void SubframeFilterPeaks::setPeakTableUp()
 
 void SubframeFilterPeaks::refreshAll()
 {
-    setParametersUp();
-    toggleUnsafeWidgets();
-}
-
-void SubframeFilterPeaks::setParametersUp()
-{
-    updatePeakList();
-    grabFilterParameters();
-}
-
-void SubframeFilterPeaks::updatePeakList()
-{
     if (!gSession->hasProject())
         return;
 
-    if (!gSession->currentProject()->hasPeakCollection())
-        return;
-
-    QString current_peaks = _peak_combo->currentText();
-    _peak_combo->clear();
-    auto peak_list = gSession->currentProject()->getPeakListNames();
-    _peak_combo->addItems(peak_list);
-    _peak_combo->setCurrentText(current_peaks);
-    updateDatasetList();
+    _peak_combo->refresh();
+    _unit_cell->refresh();
+    _detector_widget->updateDatasetList(gSession->currentProject()->allData());
     refreshPeakTable();
-}
-
-void SubframeFilterPeaks::updateDatasetList()
-{
-    _data_list = gSession->currentProject()->allData();
-    const nsx::DataList all_data = gSession->currentProject()->allData();
-    if (!_data_list.empty())
-        _detector_widget->updateDatasetList(all_data);
+    grabFilterParameters();
+    toggleUnsafeWidgets();
 }
 
 void SubframeFilterPeaks::grabFilterParameters()
@@ -348,10 +322,7 @@ void SubframeFilterPeaks::grabFilterParameters()
     if (!gSession->hasProject())
         return;
 
-    auto* params = gSession->currentProject()
-                       ->experiment()
-                       ->peakFilter()
-                       ->parameters();
+    auto* params = gSession->currentProject()->experiment()->peakFilter()->parameters();
 
     _tolerance->setValue(params->unit_cell_tolerance);
     _strength_min->setValue(params->strength_min);
@@ -441,9 +412,7 @@ void SubframeFilterPeaks::filterPeaks()
     gGui->setReady(false);
     nsx::PeakFilter* filter =
         gSession->currentProject()->experiment()->peakFilter();
-    nsx::PeakCollection* collection =
-        gSession->currentProject()->experiment()
-            ->getPeakCollection(_peak_combo->currentText().toStdString());
+    nsx::PeakCollection* collection = _peak_combo->currentPeakCollection();
     filter->resetFiltering(collection);
     setFilterParameters();
     filter->filter(collection);
@@ -460,9 +429,7 @@ void SubframeFilterPeaks::filterPeaks()
 
 void SubframeFilterPeaks::accept()
 {
-    nsx::PeakCollection* collection =
-        gSession->currentProject() ->experiment()
-            ->getPeakCollection(_peak_combo->currentText().toStdString());
+    nsx::PeakCollection* collection = _peak_combo->currentPeakCollection();
 
     std::string suggestion = gSession->currentProject()->experiment()->generatePeakCollectionName();
     std::unique_ptr<ListNameDialog> dlg(new ListNameDialog(QString::fromStdString(suggestion)));
@@ -478,9 +445,9 @@ void SubframeFilterPeaks::accept()
         return;
     }
 
+    gSession->onPeaksChanged();
+    _peak_combo->refresh();
     gSession->currentProject()->generatePeakModel(dlg->listName());
-    auto peak_list = gSession->currentProject()->getPeakListNames();
-    _peak_combo->updateList(peak_list);
 }
 
 void SubframeFilterPeaks::refreshPeakTable()
@@ -490,9 +457,7 @@ void SubframeFilterPeaks::refreshPeakTable()
     if (!gSession->currentProject()->hasPeakCollection())
         return;
 
-    nsx::PeakCollection* collection =
-        gSession->currentProject()->experiment()
-            ->getPeakCollection(_peak_combo->currentText().toStdString());
+    nsx::PeakCollection* collection = _peak_combo->currentPeakCollection();
 
     if (!collection)// if no PeakCollection has been selected from the GUI
         return;

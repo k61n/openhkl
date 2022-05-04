@@ -22,6 +22,8 @@
 #include <QSpinBox>
 #include <QWidget>
 
+class CellComboBox;
+
 //! Property widget for unit cell
 class UnitCellProperty : public QWidget {
  public:
@@ -55,7 +57,7 @@ class UnitCellProperty : public QWidget {
     void setInputEnabled(bool state);
 
  private:
-    QComboBox* unitcells;
+    CellComboBox* unitcells;
     QLineEdit* name;
     QLineEdit* chemicalFormula;
     QLineEdit* spaceGroup;

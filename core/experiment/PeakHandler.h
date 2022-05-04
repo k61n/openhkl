@@ -69,6 +69,8 @@ class PeakHandler {
     bool clonePeakCollection(std::string name, std::string new_name);
     //! Generate name for new peak collection
     std::string generateName();
+    //! Get a vector of pointers to peak collections
+    std::vector<PeakCollection*> getPeakCollections();
 
  private:
     //! Pointer to map of peak collections in Experiment

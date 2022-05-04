@@ -28,7 +28,6 @@
 #include "gui/subwindows/DetectorWindow.h"
 #include "gui/subwindows/LogWindow.h"
 #include "gui/subwindows/PeakWindow.h"
-#include "gui/utility/LinkedComboBox.h"
 #include "gui/utility/SideBar.h"
 #include "gui/widgets/LogWidget.h"
 #include "tables/crystal/SpaceGroup.h"
@@ -50,8 +49,7 @@ void Actions::setupExperiment()
     new_experiment = new QAction("New experiment");
     load_experiment = new QAction("Load experiment");
     save_experiment = new QAction("Save");
-    save_experiment_as = new QAction("Save as");
-    save_all_experiment = new QAction("Save all");
+    save_experiment_as = new QAction("Save as"); save_all_experiment = new QAction("Save all");
     remove_experiment = new QAction("Remove experiment");
     quit = new QAction("Quit");
 
@@ -154,7 +152,6 @@ void Actions::removeData()
     gSession->currentProject()->experiment()->removeData(data_name);
     gSession->onDataChanged();
     data_list = gSession->currentProject()->getDataNames();
-    gGui->sentinel->setLinkedComboList(ComboType::DataSet, data_list);
 }
 
 void Actions::setupInstrument() { }
@@ -203,9 +200,8 @@ void Actions::addCell()
     expt->addUnitCell(
         dlg->unitCellName().toStdString(), dlg->a(), dlg->b(), dlg->c(), dlg->alpha(),
         dlg->beta(), dlg->gamma(), dlg->spaceGroup().toStdString());
-    gGui->onUnitCellChanged();
+    gSession->onUnitCellChanged();
     auto cell_list = gSession->currentProject()->getUnitCellNames();
-    gGui->sentinel->setLinkedComboList(ComboType::UnitCell, cell_list);
     gGui->sideBar()->refreshCurrent();
 }
 
@@ -223,9 +219,8 @@ void Actions::removeCell()
 
     std::string data_name = dlg->itemName().toStdString();
     gSession->currentProject()->experiment()->removeUnitCell(data_name);
-    gGui->onUnitCellChanged();
+    gSession->onUnitCellChanged();
     cell_list = gSession->currentProject()->getUnitCellNames();
-    gGui->sentinel->setLinkedComboList(ComboType::UnitCell, cell_list);
     gGui->sideBar()->refreshCurrent();
 }
 
@@ -246,20 +241,13 @@ void Actions::removePeaks()
 
     QString peaks_name = dlg->itemName();
     nsx::Experiment* experiment = gSession->currentProject()->experiment();
-    nsx::PeakCollection* peaks = experiment->getPeakCollection(peaks_name.toStdString());
-    nsx::listtype lt = peaks->type();
 
     experiment->removePeakCollection(peaks_name.toStdString());
 
     gSession->currentProject()->removePeakModel(peaks_name);
-    gGui->onPeaksChanged();
+    gSession->onPeaksChanged();
     peaks_list = gSession->currentProject()->getPeakListNames();
 
-    emit gGui->sentinel->setLinkedComboList(ComboType::PeakCollection, peaks_list);
-    if (lt == nsx::listtype::FOUND)
-        emit gGui->sentinel->setLinkedComboList(ComboType::FoundPeaks, peaks_list);
-    if (lt == nsx::listtype::PREDICTED)
-        emit gGui->sentinel->setLinkedComboList(ComboType::PredictedPeaks, peaks_list);
     gGui->sideBar()->refreshCurrent();
     gGui->setReady(true);
 }
@@ -285,17 +273,9 @@ void Actions::clonePeaks()
 
     QString original = dlg->originalCollectionName();
     QString cloned = dlg->clonedCollectionName();
-    nsx::listtype lt = gSession->currentProject()
-                            ->experiment()
-                            ->getPeakCollection(original.toStdString())
-                            ->type();
     gSession->currentProject()->clonePeakCollection(original, cloned);
     peaks_list = gSession->currentProject()->getPeakListNames();
-    emit gGui->sentinel->setLinkedComboList(ComboType::PeakCollection, peaks_list);
-    if (lt == nsx::listtype::FOUND)
-        emit gGui->sentinel->setLinkedComboList(ComboType::FoundPeaks, peaks_list);
-    if (lt == nsx::listtype::PREDICTED)
-        emit gGui->sentinel->setLinkedComboList(ComboType::PredictedPeaks, peaks_list);
+    gSession->onPeaksChanged();
     gGui->setReady(true);
 }
 

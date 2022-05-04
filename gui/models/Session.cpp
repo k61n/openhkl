@@ -36,7 +36,12 @@
 #include "gui/subframe_predict/SubframePredictPeaks.h"
 #include "gui/subframe_refiner/SubframeRefiner.h"
 #include "gui/utility/CellComboBox.h"
+#include "gui/utility/DataComboBox.h"
+#include "gui/utility/FoundPeakComboBox.h"
+#include "gui/utility/IntegratedPeakComboBox.h"
 #include "gui/utility/LinkedComboBox.h"
+#include "gui/utility/PeakComboBox.h"
+#include "gui/utility/PredictedPeakComboBox.h"
 
 #include <QCollator>
 #include <QDir>
@@ -70,6 +75,11 @@ Session::Session()
 
     //! For refreshing combos in other widgets
     _cell_combo = new CellComboBox();
+    _data_combo = new DataComboBox();
+    _peak_combo = new PeakComboBox();
+    _found_peak_combo = new FoundPeakComboBox();
+    _predicted_peak_combo = new PredictedPeakComboBox();
+    _integrated_peak_combo = new IntegratedPeakComboBox();
 }
 
 Project* Session::currentProject()
@@ -331,7 +341,11 @@ bool Session::loadRawData()
 
 void Session::onDataChanged()
 {
+    DataList data = currentProject()->experiment()->getAllData();
     gGui->onDataChanged();
+    _data_combo->clearAll();
+    _data_combo->addDataSets(data);
+    _data_combo->refreshAll();
     onPeaksChanged();
 }
 
@@ -358,15 +372,29 @@ void Session::onExperimentChanged()
 
 void Session::onPeaksChanged()
 {
+    PeakList peaks = currentProject()->experiment()->getPeakCollections();
     gGui->onPeaksChanged();
+    _peak_combo->clearAll();
+    _peak_combo->addPeakCollections(peaks);
+    _peak_combo->refreshAll();
+    _found_peak_combo->clearAll();
+    _found_peak_combo->addPeakCollections(peaks);
+    _found_peak_combo->refreshAll();
+    _predicted_peak_combo->clearAll();
+    _predicted_peak_combo->addPeakCollections(peaks);
+    _predicted_peak_combo->refreshAll();
+    _integrated_peak_combo->clearAll();
+    _integrated_peak_combo->addPeakCollections(peaks);
+    _integrated_peak_combo->refreshAll();
 }
 
 void Session::onUnitCellChanged()
 {
+    CellList cells = currentProject()->experiment()->getSptrUnitCells();
     gGui->onUnitCellChanged();
     _cell_combo->clearAll();
-    CellList cells = currentProject()->experiment()->getSptrUnitCells();
     _cell_combo->addCells(cells);
+    _cell_combo->refreshAll();
 }
 
 void Session::loadExperimentFromFile(QString filename)

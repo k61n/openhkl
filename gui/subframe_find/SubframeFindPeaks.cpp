@@ -30,8 +30,8 @@
 #include "gui/models/Project.h"
 #include "gui/models/Session.h"
 #include "gui/utility/ColorButton.h"
+#include "gui/utility/DataComboBox.h"
 #include "gui/utility/GridFiller.h"
-#include "gui/utility/LinkedComboBox.h"
 #include "gui/utility/PropertyScrollArea.h"
 #include "gui/utility/SafeSpinBox.h"
 #include "gui/utility/SideBar.h"
@@ -90,12 +90,10 @@ void SubframeFindPeaks::setDataUp()
     Spoiler* _data_box = new Spoiler("Input");
     GridFiller f(_data_box);
 
-    _data_combo = f.addLinkedCombo(ComboType::DataSet, "Data set");
+    _data_combo = f.addDataCombo("Data set");
     _all_data = f.addCheckBox("Search all", "Find peaks in all data sets", 1);
 
-    connect(
-        _data_combo, &QComboBox::currentTextChanged, this,
-        &SubframeFindPeaks::updateDatasetParameters);
+    connect(_data_combo, &QComboBox::currentTextChanged, this, &SubframeFindPeaks::refreshAll);
 
     connect(
         _data_combo, &QComboBox::currentTextChanged, this, &SubframeFindPeaks::toggleUnsafeWidgets);
@@ -267,57 +265,21 @@ void SubframeFindPeaks::setPeakTableUp()
 
 void SubframeFindPeaks::refreshAll()
 {
-    setParametersUp();
-    if (gSession->hasProject())
-        _detector_widget->updateDatasetList(gSession->currentProject()->allData());
-    toggleUnsafeWidgets();
-}
-
-void SubframeFindPeaks::setParametersUp()
-{
     if (!gSession->hasProject())
         return;
 
+    _data_combo->refresh();
+    _detector_widget->updateDatasetList(gSession->currentProject()->allData());
     grabFinderParameters();
-    grabIntegrationParameters();
-    updateDatasetList();
-    refreshPeakTable();
-}
-
-void SubframeFindPeaks::updateDatasetList()
-{
-    Project* project = gSession->currentProject();
-    if (!project->hasDataSet())
-        return;
-
-    QSignalBlocker blocker(_data_combo);
-    QString current_data = _data_combo->currentText();
-    _data_combo->clear();
-    
-    const QStringList& datanames{project->getDataNames()};
-    if (current_data.isEmpty()) current_data = datanames.at(0);
-    _data_combo->addItems(datanames);
-    _data_combo->setCurrentText(current_data);
-    updateDatasetParameters(_data_combo->currentText());
-}
-
-void SubframeFindPeaks::updateDatasetParameters(const QString& dataname)
-{
-    // to be update on the experiment/project list if a new
-    // experiment is added on SubframeHome
-    auto* exp = gSession->currentProject()->experiment();
-    if (!exp->hasData(dataname.toStdString())) {
-        QMessageBox::warning(
-            nullptr, "Dataset does not exist",
-            "The given dataset " + dataname + " could not be found!");
-        return;
-    }
-    nsx::sptrDataSet data = exp->getData(dataname.toStdString());
-
+    auto data = _data_combo->currentData();
     _end_frame_spin->setMaximum(data->nFrames());
     _end_frame_spin->setValue(data->nFrames());
     _start_frame_spin->setMaximum(data->nFrames());
     _start_frame_spin->setValue(1);
+
+    grabIntegrationParameters();
+    refreshPeakTable();
+    toggleUnsafeWidgets();
 }
 
 void SubframeFindPeaks::grabFinderParameters()
@@ -452,7 +414,7 @@ void SubframeFindPeaks::find()
     const nsx::DataList all_data = gSession->currentProject()->allData();
 
     int idx = _data_combo->currentIndex();
-    
+
     if (idx >= all_data.size() || idx == -1){
         _data_combo->setCurrentIndex(0);
     }
@@ -542,9 +504,8 @@ void SubframeFindPeaks::accept()
         return;
     }
     gSession->currentProject()->generatePeakModel(dlg->listName());
-    gGui->sentinel->addLinkedComboItem(ComboType::FoundPeaks, dlg->listName());
-    gGui->sentinel->addLinkedComboItem(ComboType::PeakCollection, dlg->listName());
-    gGui->refreshMenu(); 
+    gSession->onPeaksChanged();
+    gGui->refreshMenu();
 }
 
 void SubframeFindPeaks::refreshPreview()
@@ -559,8 +520,7 @@ void SubframeFindPeaks::refreshPreview()
         return;
     }
 
-    nsx::sptrDataSet data = gSession->currentProject()->experiment()
-                            ->getData(_data_combo->currentText().toStdString());
+    nsx::sptrDataSet data = _data_combo->currentData();
     int nrows = data->nRows();
     int ncols = data->nCols();
 

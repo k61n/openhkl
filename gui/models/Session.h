@@ -16,7 +16,6 @@
 #define NSX_GUI_MODELS_SESSION_H
 
 #include "core/raw/DataKeys.h"
-#include "gui/utility/CellComboBox.h"
 
 #include <QString>
 #include <memory>
@@ -24,6 +23,11 @@
 
 class Project;
 class CellComboBox;
+class DataComboBox;
+class PeakComboBox;
+class FoundPeakComboBox;
+class PredictedPeakComboBox;
+class IntegratedPeakComboBox;
 namespace nsx {
 enum class DataFormat;
 }
@@ -67,14 +71,20 @@ class Session {
     Project* createProject(QString experimentName, QString instrumentName);
     bool addProject(std::unique_ptr<Project> project_ptr);
 
-    CellComboBox* _cell_combo; // for updating other cell combos
-
     std::string generateExperimentName(); 
 
  private:
     std::vector<std::unique_ptr<Project>> _projects;
     int _currentProject = -1;
     int _selectedData = -1;
+
+    // for updating other combos
+    DataComboBox* _data_combo;
+    CellComboBox* _cell_combo;
+    PeakComboBox* _peak_combo;
+    FoundPeakComboBox* _found_peak_combo;
+    PredictedPeakComboBox* _predicted_peak_combo;
+    IntegratedPeakComboBox* _integrated_peak_combo;
 };
 
 #endif // NSX_GUI_MODELS_SESSION_H

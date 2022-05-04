@@ -29,10 +29,11 @@
 
 class ColorButton;
 class DetectorWidget;
-class LinkedComboBox;
 class PeakViewWidget;
 class SafeSpinBox;
 class ShortTable;
+class CellComboBox;
+class PeakComboBox;
 
 //! Modeless dialog containing a non-contextual detector scene (open via Menu)
 class DetectorWindow : public QDialog {
@@ -67,10 +68,6 @@ class DetectorWindow : public QDialog {
     void updateDatasetList();
     //! Update metadata extracted from selected data set
     void updateDatasetParameters(int idx);
-    //! Update peak collection QComboBoxes
-    void updatePeakList();
-    //! Update unit cell QComboBox
-    void updateUnitCellList();
     //! Refresh the detector image
     void refreshDetectorView();
     //! Refresh the peak tables
@@ -85,9 +82,9 @@ class DetectorWindow : public QDialog {
 
     // Control panel elements
     QComboBox* _exp_combo;
-    LinkedComboBox* _peak_combo_1;
-    LinkedComboBox* _peak_combo_2;
-    QComboBox* _unit_cell_combo;
+    PeakComboBox* _peak_combo_1;
+    PeakComboBox* _peak_combo_2;
+    CellComboBox* _unit_cell_combo;
 
     // 3rd party peak plotting elements
     QCheckBox* _draw_3rdparty;

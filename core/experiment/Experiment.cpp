@@ -587,4 +587,9 @@ std::vector<sptrUnitCell> Experiment::getSptrUnitCells()
     return _cell_handler->getSptrUnitCells();
 }
 
+std::vector<PeakCollection*> Experiment::getPeakCollections()
+{
+    return _peak_handler->getPeakCollections();
+}
+
 } // namespace nsx

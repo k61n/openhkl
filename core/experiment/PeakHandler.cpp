@@ -15,6 +15,7 @@
 #include "core/experiment/PeakHandler.h"
 #include "base/utils/Logger.h"
 #include "core/peak/Peak3D.h"
+#include "core/shape/PeakCollection.h"
 #include <stdexcept>
 
 namespace nsx {
@@ -159,6 +160,14 @@ std::string PeakHandler::generateName()
         return "Please enter name for this collection";
     }
     return std::string("PeakCollection") + std::string(n - str.size(), '0').append(str);
+}
+
+std::vector<PeakCollection*> PeakHandler::getPeakCollections()
+{
+    std::vector<PeakCollection*> collections;
+    for (const auto& [name, ptr] : _peak_collections)
+        collections.push_back(ptr.get());
+    return collections;
 }
 
 } // namespace nsx

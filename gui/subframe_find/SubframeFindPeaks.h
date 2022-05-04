@@ -29,9 +29,9 @@
 #include <QVBoxLayout>
 #include <QWidget>
 
+class DataComboBox;
 class DetectorScene;
 class DetectorWidget;
-class LinkedComboBox;
 class PeakItemGraphic;
 class PeakTableView;
 class PeakViewWidget;
@@ -72,8 +72,6 @@ class SubframeFindPeaks : public QWidget {
     void setFigureUp();
     //! Set the peak table view up
     void setPeakTableUp();
-    //! Set the parameters values up
-    void setParametersUp();
 
     //! Refresh the preview
     void refreshPreview();
@@ -88,10 +86,6 @@ class SubframeFindPeaks : public QWidget {
     //! Disable widgets that are unsafe without relevant data
     void toggleUnsafeWidgets();
 
-    //! Update the datalist as an experiment was changed
-    void updateDatasetList();
-    //! Update the dataset related parameters
-    void updateDatasetParameters(const QString& dataname);
     //! Set the finder parameters
     void setFinderParameters();
 
@@ -114,8 +108,7 @@ class SubframeFindPeaks : public QWidget {
     QVBoxLayout* _left_layout;
     QSplitter* _right_element;
 
-    //LinkedComboBox* _exp_combo; // ?
-    LinkedComboBox* _data_combo;
+    DataComboBox* _data_combo;
     QCheckBox* _all_data;
 
     SafeSpinBox* _threshold_spin;

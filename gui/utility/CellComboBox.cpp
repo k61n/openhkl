@@ -2,8 +2,8 @@
 //
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
-//! @file      gui/utility/LinkedComboBox.h
-//! @brief     Defines class LinkedComboBox
+//! @file      gui/utility/CellComboBox.h
+//! @brief     Defines class CellComboBox
 //!
 //! @homepage  ###HOMEPAGE###
 //! @license   GNU General Public License v3 or higher (see COPYING)
@@ -14,24 +14,25 @@
 
 #include "gui/utility/CellComboBox.h"
 
-#include "tables/crystal/UnitCell.h"
-
 #include <QSignalBlocker>
 
 CellList CellComboBox::_unit_cells;
+QVector<CellComboBox*> CellComboBox::_all_combos;
 
 CellComboBox::CellComboBox(QWidget* parent) : QComboBox(parent)
 {
+    _all_combos.push_back(this);
 }
 
 void CellComboBox::addCell(const nsx::sptrUnitCell& cell)
 {
+    QSignalBlocker blocker(this);
     addItem(QString::fromStdString(cell->name()));
     _unit_cells.push_back(cell);
     refresh();
 }
 
-void CellComboBox::addCells(const std::vector<nsx::sptrUnitCell>& cells)
+void CellComboBox::addCells(const CellList& cells)
 {
     for (auto cell : cells)
         addCell(cell);
@@ -40,6 +41,8 @@ void CellComboBox::addCells(const std::vector<nsx::sptrUnitCell>& cells)
 //! Clear all elements
 void CellComboBox::clearAll()
 {
+    QSignalBlocker blocker(this);
+    _current = currentText();
     clear();
     _unit_cells.clear();
 }
@@ -52,16 +55,18 @@ nsx::sptrUnitCell CellComboBox::currentCell() const
     return _unit_cells.at(currentIndex());
 }
 
-void CellComboBox::setCellList(const CellList& list)
-{
-    clearAll();
-    _unit_cells = list;
-    refresh();
-}
-
 void CellComboBox::refresh()
 {
+    QSignalBlocker blocker(this);
+    _current = currentText();
     clear();
     for (nsx::sptrUnitCell& cell : _unit_cells)
         addItem(QString::fromStdString(cell->name()));
+    setCurrentText(_current);
+}
+
+void CellComboBox::refreshAll()
+{
+    for (auto* combo : _all_combos)
+        combo->refresh();
 }

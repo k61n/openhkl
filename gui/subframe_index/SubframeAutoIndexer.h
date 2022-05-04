@@ -19,20 +19,17 @@
 #include "core/shape/PeakCollection.h"
 #include "gui/items/PeakCollectionItem.h"
 #include "gui/models/PeakCollectionModel.h"
-#include "gui/utility/CellComboBox.h"
 #include "gui/widgets/PeakViewWidget.h"
 
 #include <QPushButton>
 #include <QSizePolicy>
 #include <QWidget>
-#include <qglobal.h>
-#include <qgridlayout.h>
-#include <qgroupbox.h>
-#include <qobjectdefs.h>
 
 class CellComboBox;
+class DataComboBox;
+class FoundPeakComboBox;
+class PeakComboBox;
 class DetectorWidget;
-class LinkedComboBox;
 class PeakTableView;
 class UnitCellTableView;
 class Spoiler;
@@ -85,10 +82,6 @@ class SubframeAutoIndexer : public QWidget {
 
     //! Build the table of solution
     void buildSolutionsTable();
-    //! Update the list of data sets
-    void updateDatasetList();
-    //! Update the peak list
-    void updatePeakList();
     //! Refresh the peak table
     void refreshPeakTable();
     //! Change the peak selected in the table
@@ -120,8 +113,6 @@ class SubframeAutoIndexer : public QWidget {
     PeakCollectionItem _peak_collection_item;
     //! The temporary collection
     PeakCollectionModel _peak_collection_model;
-    //! List of data sets
-    std::vector<nsx::sptrDataSet> _data_list;
 
     std::vector<std::pair<nsx::sptrPeak3D, std::shared_ptr<const nsx::UnitCell>>> _defaults;
     std::vector<std::pair<std::shared_ptr<nsx::UnitCell>, double>> _solutions;
@@ -133,8 +124,8 @@ class SubframeAutoIndexer : public QWidget {
     QVBoxLayout* _left_layout;
     QSplitter* _right_element;
 
-    LinkedComboBox* _data_combo;
-    LinkedComboBox* _peak_combo;
+    DataComboBox* _data_combo;
+    PeakComboBox* _peak_combo;
 
     SpoilerCheck* _set_initial_ki;
     QCheckBox* _direct_beam;

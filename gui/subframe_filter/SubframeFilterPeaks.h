@@ -17,6 +17,7 @@
 
 #include "gui/items/PeakCollectionItem.h"
 #include "gui/models/PeakCollectionModel.h"
+#include "gui/utility/CellComboBox.h"
 #include "gui/utility/ColorButton.h"
 #include "gui/views/PeakTableView.h"
 
@@ -32,7 +33,7 @@
 #include <QWidget>
 
 class DetectorWidget;
-class LinkedComboBox;
+class PeakComboBox;
 class PeakItemGraphic;
 class SpoilerCheck;
 class PeakViewWidget;
@@ -89,13 +90,6 @@ class SubframeFilterPeaks : public QWidget {
     //! Set the finder parameters
     void setFilterParameters();
 
-    //! Refresh all th einputs
-    void setParametersUp();
-    //! Refresh all th einputs
-    void updatePeakList();
-    //! Update the datalist as an experiment was changed
-    void updateDatasetList();
-
     //! Refresh the found peaks list
     void refreshPeakTable();
     //! Refresh the found peaks visual properties
@@ -120,7 +114,7 @@ class SubframeFilterPeaks : public QWidget {
     QCheckBox* _indexed_peaks;
     QCheckBox* _extinct_spacegroup;
     QCheckBox* _keep_complementary;
-    LinkedComboBox* _unit_cell;
+    CellComboBox* _unit_cell;
 
     SafeDoubleSpinBox* _tolerance;
     SafeDoubleSpinBox* _strength_min;
@@ -144,7 +138,7 @@ class SubframeFilterPeaks : public QWidget {
     SpoilerCheck* _merge_box;
     SpoilerCheck* _overlap_box;
 
-    LinkedComboBox* _peak_combo;
+    PeakComboBox* _peak_combo;
 
     QPushButton* _filter_button;
     QPushButton* _save_button;
