@@ -339,9 +339,7 @@ void DetectorWindow::setUnitCell()
 {
     if (!gSession->experimentAt(_exp_combo->currentIndex())->hasUnitCell())
         return;
-    nsx::UnitCell* cell =
-        gSession->experimentAt(_exp_combo->currentIndex())->experiment()->getUnitCell(
-        _unit_cell_combo->currentText().toStdString());
+    nsx::UnitCell* cell = _unit_cell_combo->currentCell().get();
     _detector_widget->scene()->setUnitCell(cell);
 }
 
