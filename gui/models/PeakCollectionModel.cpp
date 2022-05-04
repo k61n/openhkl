@@ -59,6 +59,8 @@ bool PeakCollectionModel::indexIsValid(const QModelIndex& index) const
 
 QVariant PeakCollectionModel::data(const QModelIndex& index, int role = Qt::DisplayRole) const
 {
+    if (role != Qt::DisplayRole)
+        return QVariant();
     if (!indexIsValid(index))
         return QVariant();
     return _root_item->data(index, role);
