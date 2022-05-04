@@ -76,7 +76,7 @@ void SubframeIntegrate::setInputUp()
 
     _data_combo = f.addDataCombo("Data set");
     _peak_combo = f.addPeakCombo(
-        ComboType::FoundPeaks, "Peaks for shapes", "Used to build shape collection");
+        ComboType::PeakCollection, "Peaks for shapes", "Used to build shape collection");
     _build_shape_lib_button = f.addButton(
         "Build shape collection",
         "<font>A shape collection is a collection of averaged peaks attached to a peak"
