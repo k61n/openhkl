@@ -21,6 +21,7 @@ QVector<CellComboBox*> CellComboBox::_all_combos;
 
 CellComboBox::CellComboBox(QWidget* parent) : QComboBox(parent)
 {
+    _all_combos.push_back(this);
 }
 
 void CellComboBox::addCell(const nsx::sptrUnitCell& cell)

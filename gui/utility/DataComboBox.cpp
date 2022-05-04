@@ -22,6 +22,7 @@ QVector<DataComboBox*> DataComboBox::_all_combos;
 
 DataComboBox::DataComboBox(QWidget* parent) : QComboBox(parent)
 {
+    _all_combos.push_back(this);
 }
 
 void DataComboBox::addDataSet(const nsx::sptrDataSet& data)
