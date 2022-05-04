@@ -52,9 +52,23 @@ PeakProperties::PeakProperties()
     layout->addLayout(top_layout);
     layout->addWidget(_peak_table);
 
-    _add->setIcon(QIcon(":/images/Add_item.svg"));
-    _filter->setIcon(QIcon(":/images/sidebar/lighttheme/filter.svg"));
-    _remove->setIcon(QIcon(":/images/Delete_item.svg"));
+    QString path1{":images/icons/"};
+    QString path2{":images/sidebar/"};
+    QString light{"lighttheme/"};
+    QString dark{"darktheme/"};
+    
+
+    if (gGui->isDark()) { // looks like we have a dark theme
+        path1 = path1 + dark;
+        path2 = path2 + dark;
+    } else {
+        path1 = path1 + light;
+        path2 = path2 + light;
+    }
+
+    _add->setIcon(QIcon(path1 + "plus.svg"));
+    _filter->setIcon(QIcon(path2 + "filter.svg"));
+    _remove->setIcon(QIcon(path1 + "minus.svg"));
 
     _peak_list_combo->setSizePolicy(*_size_policy_widgets);
 
