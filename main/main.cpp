@@ -23,10 +23,11 @@ int main(int argc, char* argv[])
 {
     qRegisterMetaTypeStreamOperators<QList<QStringList>>("Data"); // for QSettings
     QApplication app{argc, argv};
-
     QApplication::setApplicationName("NSXTool");
     QApplication::setApplicationVersion("1.0");
     QApplication::setOrganizationName("nsx");
+
+    app.setAttribute(Qt::AA_UseHighDpiPixmaps); // Fixes pixellated .svg icons
 
     QLoggingCategory::setFilterRules("*.debug=true\nqt.*.debug=false\nqt.qpa*=false\nkf.*=false");
     Session session;

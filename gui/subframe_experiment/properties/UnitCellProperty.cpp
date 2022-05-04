@@ -19,6 +19,7 @@
 #include "gui/models/Project.h"
 #include "gui/models/Session.h"
 #include "gui/utility/CellComboBox.h"
+#include "gui/MainWin.h"
 #include "tables/crystal/SpaceGroup.h"
 #include "tables/crystal/UnitCell.h"
 
@@ -83,8 +84,18 @@ UnitCellProperty::UnitCellProperty()
 
     _add = new QPushButton();
     _remove = new QPushButton();
-    _add->setIcon(QIcon(":/images/Add_item.svg"));
-    _remove->setIcon(QIcon(":/images/Delete_item.svg"));
+
+    QString path{":images/icons/"};
+    QString light{"lighttheme/"};
+    QString dark{"darktheme/"};
+
+    if (gGui->isDark()) // looks like we have a dark theme
+        path = path + dark;
+    else
+        path = path + light;
+
+    _add->setIcon(QIcon(path + "plus.svg"));
+    _remove->setIcon(QIcon(path + "minus.svg"));
 
     unitcells->setSizePolicy(*_size_policy_widgets);
 
