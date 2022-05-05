@@ -2,7 +2,7 @@
 //
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
-//! @file      gui/subframe_combine/SubframeMergedPeaks.h
+//! @file      gui/subframe_merge/SubframeMergedPeaks.h
 //! @brief     Defines class MergedPeakInformationFrame
 //!
 //! @homepage  ###HOMEPAGE###
@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_GUI_SUBFRAME_COMBINE_SUBFRAMEMERGEDPEAKS_H
-#define NSX_GUI_SUBFRAME_COMBINE_SUBFRAMEMERGEDPEAKS_H
+#ifndef NSX_GUI_SUBFRAME_MERGE_SUBFRAMEMERGEDPEAKS_H
+#define NSX_GUI_SUBFRAME_MERGE_SUBFRAMEMERGEDPEAKS_H
 
 #include "core/data/DataTypes.h"
 #include "core/statistics/PeakExporter.h"
@@ -136,4 +136,4 @@ class SubframeMergedPeaks : public QWidget {
     bool _frame_set;
 };
 
-#endif // NSX_GUI_SUBFRAME_COMBINE_SUBFRAMEMERGEDPEAKS_H
+#endif // NSX_GUI_SUBFRAME_MERGE_SUBFRAMEMERGEDPEAKS_H

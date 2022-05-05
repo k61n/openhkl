@@ -28,7 +28,7 @@
 #include "gui/dialogs/DataNameDialog.h"
 #include "gui/dialogs/RawDataDialog.h"
 #include "gui/models/Project.h"
-#include "gui/subframe_combine/SubframeMergedPeaks.h"
+#include "gui/subframe_merge/SubframeMergedPeaks.h"
 #include "gui/subframe_filter/SubframeFilterPeaks.h"
 #include "gui/subframe_find/SubframeFindPeaks.h"
 #include "gui/subframe_index/SubframeAutoIndexer.h"
