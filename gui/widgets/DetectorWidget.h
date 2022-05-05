@@ -21,7 +21,7 @@
 
 class DetectorScene;
 class DetectorView;
-class LinkedComboBox;
+class DataComboBox;
 class PeakCollectionModel;
 class QSpinBox;
 class QScrollBar;
@@ -53,7 +53,7 @@ class DetectorWidget : public QGridLayout {
     //! Return the frame QScrollBar
     QScrollBar* scroll();
     //! Return the DataSet QComboBox
-    LinkedComboBox* dataCombo();
+    DataComboBox* dataCombo();
     //! Return the interaction mode QComboBox
     QComboBox* modeCombo();
     //! Return the cursor mode QComboBox
@@ -67,12 +67,11 @@ class DetectorWidget : public QGridLayout {
     DetectorView* _detector_view;
     QSpinBox* _spin;
     QScrollBar* _scroll;
-    LinkedComboBox* _data_combo;
+    DataComboBox* _data_combo;
     QComboBox* _mode_combo = nullptr;
     QComboBox* _cursor_combo = nullptr;
     QSlider* _intensity_slider = nullptr;
 
-    std::vector<nsx::sptrDataSet> _data_list;
     bool _has_slider = false;
 
     static QList<DetectorWidget*> _detector_widgets;

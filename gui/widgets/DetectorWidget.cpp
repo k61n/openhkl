@@ -20,8 +20,10 @@
 #include "gui/graphics/DetectorScene.h"
 #include "gui/graphics/DetectorView.h"
 #include "gui/models/PeakCollectionModel.h"
+#include "gui/models/Project.h"
 #include "gui/models/Session.h" // gSession
 #include "gui/subwindows/InstrumentStateWindow.h"
+#include "gui/utility/DataComboBox.h"
 #include "gui/utility/LinkedComboBox.h"
 
 #include <QComboBox>
@@ -58,7 +60,7 @@ DetectorWidget::DetectorWidget(bool mode, bool cursor, bool slider, QWidget* par
 
     int col = 0;
 
-    _data_combo = new LinkedComboBox(ComboType::DataSet, gGui->sentinel);
+    _data_combo = new DataComboBox();
     _data_combo->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     _data_combo->setToolTip("Change the displayed data set");
     bottom_grid->addWidget(_data_combo, 0, ++col, 1, 1);
@@ -136,34 +138,15 @@ void DetectorWidget::syncIntensitySliders()
     }
 }
 
-void DetectorWidget::updateDatasetList(const std::vector<nsx::sptrDataSet>& data_list)
-{
-    _data_list = data_list;
-
-    _data_combo->blockSignals(true);
-    QString current_data = _data_combo->currentText();
-    _data_combo->clear();
-
-    if (!data_list.empty()) {
-        for (const auto& item : _data_list)
-            _data_combo->addItem(QString::fromStdString(item->name()));
-        _data_combo->setCurrentText(current_data);
-    }
-    _data_combo->blockSignals(false);
-    refresh();
-}
-
 void DetectorWidget::refresh()
 {
-    if (_data_combo->count() == 0)
+    if (!gSession->hasProject())
         return;
 
-    // without checking this caused a crash when adding new experiment
-    if (_data_list.size() == 0 ||
-        _data_list.size() < _data_combo->currentIndex()) return;
-    auto data = _data_list.at(_data_combo->currentIndex());
+    if (!gSession->currentProject()->hasDataSet())
+        return;
 
-    if (data==nullptr) return;
+    auto data = _data_combo->currentData();
 
     scene()->slotChangeSelectedData(data, _spin->value());
     scene()->clearPeakItems();
@@ -188,12 +171,7 @@ void DetectorWidget::linkPeakModel(PeakCollectionModel* model1, PeakCollectionMo
 
 nsx::sptrDataSet DetectorWidget::currentData()
 {
-    if (_data_combo->count() == 0 ||
-        _data_list.size() == 0 ||
-        _data_list.size() < _data_combo->currentIndex()
-    )
-        return nullptr;
-    return _data_list.at(_data_combo->currentIndex());
+    return _data_combo->currentData();
 }
 
 void DetectorWidget::changeView(int option)
@@ -223,7 +201,7 @@ QScrollBar* DetectorWidget::scroll()
     return _scroll;
 }
 
-LinkedComboBox* DetectorWidget::dataCombo()
+DataComboBox* DetectorWidget::dataCombo()
 {
     return _data_combo;
 }

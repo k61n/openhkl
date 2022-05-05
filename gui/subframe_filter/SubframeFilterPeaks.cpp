@@ -311,7 +311,7 @@ void SubframeFilterPeaks::refreshAll()
 
     _peak_combo->refresh();
     _unit_cell->refresh();
-    _detector_widget->updateDatasetList(gSession->currentProject()->allData());
+    _detector_widget->refresh();
     refreshPeakTable();
     grabFilterParameters();
     toggleUnsafeWidgets();
