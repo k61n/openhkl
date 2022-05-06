@@ -69,16 +69,12 @@ SubframeExperiment::SubframeExperiment()
     layout->addWidget(splitter);
 }
 
-
-void SubframeExperiment::dataChanged()
+void SubframeExperiment::refreshAll()
 {
     if (!gSession->hasProject())
         return;
-    _data_list = gSession->currentProject()->allData();
-    if (_data_list.empty())
-        return;
 
-    _detector_widget->updateDatasetList(_data_list);
+    _detector_widget->refresh();
 }
 
 DetectorWidget* SubframeExperiment::detectorWidget()

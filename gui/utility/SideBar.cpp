@@ -234,6 +234,7 @@ void SideBar::onExperiment()
         gGui->experiment->getProperty()->experimentChanged();
         gGui->experiment->getProperty()->dataChanged();
     }
+    gGui->experiment->refreshAll();
     emit subframeChanged();
 }
 

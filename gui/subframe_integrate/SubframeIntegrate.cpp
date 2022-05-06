@@ -61,6 +61,13 @@ SubframeIntegrate::SubframeIntegrate() : QWidget()
 
     _right_element->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
+    connect(
+        _data_combo, QOverload<int>::of(&QComboBox::currentIndexChanged),
+        _detector_widget->dataCombo(), &QComboBox::setCurrentIndex);
+    connect(
+        _detector_widget->dataCombo(), QOverload<int>::of(&QComboBox::currentIndexChanged),
+        _data_combo, &QComboBox::setCurrentIndex);
+
     auto propertyScrollArea = new PropertyScrollArea(this);
     propertyScrollArea->setContentLayout(_left_layout);
     main_layout->addWidget(propertyScrollArea);
@@ -162,7 +169,6 @@ void SubframeIntegrate::refreshAll()
         return;
 
     _data_combo->refresh();
-    _detector_widget->updateDatasetList(gSession->currentProject()->experiment()->getAllData());
     _detector_widget->refresh();
     _peak_combo->refresh();
     _int_peak_combo->refresh();

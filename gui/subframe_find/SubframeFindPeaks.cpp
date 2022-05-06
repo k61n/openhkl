@@ -230,6 +230,12 @@ void SubframeFindPeaks::setFigureUp()
     _detector_widget->linkPeakModel(&_peak_collection_model);
 
     connect(
+        _data_combo, QOverload<int>::of(&QComboBox::currentIndexChanged),
+        _detector_widget->dataCombo(), &QComboBox::setCurrentIndex);
+    connect(
+        _detector_widget->dataCombo(), QOverload<int>::of(&QComboBox::currentIndexChanged),
+        _data_combo, &QComboBox::setCurrentIndex);
+    connect(
         _detector_widget->spin(), static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged),
         this, &SubframeFindPeaks::refreshPreview);
     connect(
@@ -269,7 +275,7 @@ void SubframeFindPeaks::refreshAll()
         return;
 
     _data_combo->refresh();
-    _detector_widget->updateDatasetList(gSession->currentProject()->allData());
+    _detector_widget->refresh();
     grabFinderParameters();
     auto data = _data_combo->currentData();
     _end_frame_spin->setMaximum(data->nFrames());

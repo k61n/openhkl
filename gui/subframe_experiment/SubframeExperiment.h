@@ -28,8 +28,9 @@ class SubframeExperiment : public QWidget {
  public:
     SubframeExperiment();
 
-    void dataChanged();
     DetectorWidget* detectorWidget();
+
+    void refreshAll();
 
     PlotPanel* getPlot() { return _plot; };
     PropertyPanel* getProperty() { return _properties; };

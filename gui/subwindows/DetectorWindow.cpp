@@ -313,8 +313,6 @@ void DetectorWindow::updateDatasetList()
     if (!gSession->experimentAt(_exp_combo->currentIndex())->hasDataSet())
         return;
 
-    _data_list = gSession->experimentAt(_exp_combo->currentIndex())->allData();
-    _detector_widget->updateDatasetList(_data_list);
     _nframes = _detector_widget->currentData()->nFrames();
     _peakCenterData.init(_nframes);
 }

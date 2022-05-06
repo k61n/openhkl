@@ -95,6 +95,12 @@ SubframeAutoIndexer::SubframeAutoIndexer()
     connect(
         this, &SubframeAutoIndexer::crosshairChanged, _detector_widget->scene(),
         &DetectorScene::onCrosshairChanged);
+    connect(
+        _data_combo, QOverload<int>::of(&QComboBox::currentIndexChanged),
+        _detector_widget->dataCombo(), &QComboBox::setCurrentIndex);
+    connect(
+        _detector_widget->dataCombo(), QOverload<int>::of(&QComboBox::currentIndexChanged),
+        _data_combo, &QComboBox::setCurrentIndex);
 
     _detector_widget->scene()->linkDirectBeamPositions(&_direct_beam_events);
     _detector_widget->scene()->linkOldDirectBeamPositions(&_old_direct_beam_events);
@@ -333,9 +339,9 @@ void SubframeAutoIndexer::refreshAll()
         return;
 
     _data_combo->refresh();
-    _detector_widget->updateDatasetList(gSession->currentProject()->experiment()->getAllData());
     _peak_combo->refresh();
     refreshPeakTable();
+    _detector_widget->refresh();
     _solution_table->setModel(nullptr);
     _solutions.clear();
     _selected_unit_cell = nullptr;
@@ -741,7 +747,6 @@ void SubframeAutoIndexer::showDirectBeamEvents()
     if (!_show_direct_beam)
         return;
 
-    _detector_widget->updateDatasetList(gSession->currentProject()->experiment()->getAllData());
     _detector_widget->scene()->showDirectBeam(true);
     auto data_name = _detector_widget->dataCombo()->currentText().toStdString();
     if (data_name.empty()) {

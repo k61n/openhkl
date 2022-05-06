@@ -103,6 +103,12 @@ SubframeRefiner::SubframeRefiner()
             updatePeaks();
             refreshPeakVisual();
         });
+    connect(
+        _data_combo, QOverload<int>::of(&QComboBox::currentIndexChanged),
+        _detector_widget->dataCombo(), &QComboBox::setCurrentIndex);
+    connect(
+        _detector_widget->dataCombo(), QOverload<int>::of(&QComboBox::currentIndexChanged),
+        _data_combo, &QComboBox::setCurrentIndex);
 
     _right_element->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     _right_element->addWidget(tab_widget);
@@ -180,7 +186,6 @@ void SubframeRefiner::refreshAll()
     _peak_combo->refresh();
     _cell_combo->refresh();
 
-    _detector_widget->updateDatasetList(gSession->currentProject()->allData());
 
     updatePeaks();
     grabRefinerParameters();

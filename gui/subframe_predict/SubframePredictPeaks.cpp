@@ -378,7 +378,6 @@ void SubframePredictPeaks::refreshAll()
         return;
 
     _cell_combo->refresh();
-    _detector_widget->updateDatasetList(gSession->currentProject()->allData());
     _peak_combo->refresh();
     grabRefinerParameters();
     grabPredictorParameters();
@@ -586,7 +585,7 @@ void SubframePredictPeaks::runPrediction()
     }
     try {
         auto* experiment = gSession->currentProject()->experiment();
-        auto data = experiment->getData(_detector_widget->dataCombo()->currentText().toStdString());
+        auto data = _detector_widget->currentData();
         auto* predictor = experiment->predictor();
         setPredictorParameters();
 
@@ -628,12 +627,7 @@ void SubframePredictPeaks::showDirectBeamEvents()
     if (_direct_beam->isChecked()) {
         _detector_widget->scene()->showDirectBeam(true);
 
-        auto* expt = gSession->currentProject()->experiment();
-        auto data_name = _detector_widget->dataCombo()->currentText().toStdString();
-        if (data_name.empty()) {
-            return;
-        }
-        const auto data = expt->getData(data_name);
+        const auto data = _detector_widget->currentData();
 
         _direct_beam_events.clear();
         const auto& states = data->instrumentStates();
@@ -655,7 +649,6 @@ void SubframePredictPeaks::assignPeakShapes()
 
     gGui->setReady(false);
     auto* experiment = gSession->currentProject()->experiment();
-    auto data = experiment->getData(_detector_widget->dataCombo()->currentText().toStdString());
     auto* found_peaks = _peak_combo->currentPeakCollection();
 
     setShapeCollectionParameters();

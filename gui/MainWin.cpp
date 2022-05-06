@@ -120,7 +120,6 @@ MainWin::MainWin()
 
 void MainWin::onDataChanged() const
 {
-    experiment->dataChanged();
     experiment->getProperty()->dataChanged();
 }
 

@@ -111,7 +111,6 @@ class DetectorWindow : public QDialog {
     PeakCollectionItem _peak_collection_item_2;
     PeakCollectionModel _peak_collection_model_2;
 
-    std::vector<nsx::sptrDataSet> _data_list;
     QStringList _peak_list;
     QStringList _cell_list;
 
