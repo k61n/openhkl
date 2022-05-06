@@ -38,6 +38,7 @@ class SideBar : public QWidget {
     void onFindPeaks();
     void onFilterPeaks();
     void onIndexer();
+    void onShapes();
     void onPredictor();
     void onRefiner();
     void onIntegrator();
