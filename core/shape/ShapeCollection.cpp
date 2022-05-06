@@ -124,6 +124,11 @@ ShapeCollection::ShapeCollection()
     _params = std::make_shared<ShapeCollectionParameters>();
 }
 
+ShapeCollection::ShapeCollection(const std::string& name) : ShapeCollection()
+{
+    _name = name;
+}
+
 ShapeCollection::ShapeCollection(std::shared_ptr<ShapeCollectionParameters> params)
     : _profiles(), _choleskyD(), _choleskyM(), _choleskyS(), _params(params), _handler(nullptr)
 

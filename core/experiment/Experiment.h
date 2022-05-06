@@ -39,6 +39,7 @@ namespace nsx {
 
 class DataHandler;
 class PeakHandler;
+class ShapeHandler;
 class UnitCellHandler;
 
 using DataMap = std::map<std::string, sptrDataSet>;
@@ -168,9 +169,25 @@ class Experiment {
     //! get a vector of pointers to peak collections
     std::vector<PeakCollection*> getPeakCollections();
 
-        // Instrument state handler
-        //! Add a set of instrment states
-        bool addInstrumentStateSet(sptrDataSet data);
+    // ShapeHandler
+    //! Add a peak collection
+    bool addShapeCollection(const std::string& name, const nsx::ShapeCollection& shapes);
+    //! Returns true if the experiment has named peak collection
+    bool hasShapeCollection(const std::string& name) const;
+    //! Returns the named peak collection
+    ShapeCollection* getShapeCollection(const std::string name);
+    // !Remove a shape collection from the experiment
+    void removeShapeCollection(const std::string& name);
+    //! Get the number of shape collections
+    int numShapeCollections() const;
+    //! Generate name for new peak collection
+    std::string generateShapeCollectionName();
+    //! Get a vector of pointers to peak collections
+    std::vector<ShapeCollection*> getShapeCollections();
+
+    // Instrument state handler
+    //! Add a set of instrment states
+    bool addInstrumentStateSet(sptrDataSet data);
     //! Add a set of instrment states
     bool addInstrumentStateSet(
         sptrDataSet data, const InstrumentStateList& states, bool overwrite = true);
@@ -252,6 +269,7 @@ class Experiment {
     // Handlers for peak collections and unit cells
     std::shared_ptr<DataHandler> _data_handler; // shared because Integrator needs access
     std::unique_ptr<PeakHandler> _peak_handler;
+    std::unique_ptr<ShapeHandler> _shape_handler;
     std::unique_ptr<UnitCellHandler> _cell_handler;
     std::unique_ptr<InstrumentStateHandler> _instrumentstate_handler;
 

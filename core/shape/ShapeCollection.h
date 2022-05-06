@@ -76,7 +76,11 @@ class ShapeCollection {
     //! @param detector_coords if true, store profiles in detector coordinates;
     //! otherwise store in Kabsch coordinates
     ShapeCollection();
+    ShapeCollection(const std::string& name);
     ShapeCollection(std::shared_ptr<ShapeCollectionParameters> params);
+
+    //! Get the name
+    std::string name() { return _name; };
 
     //! Add a reference peak to the collection
     bool addPeak(Peak3D* peak, Profile3D&& profile, Profile1D&& integrated_profile);
@@ -146,6 +150,8 @@ class ShapeCollection {
     void setHandler(sptrProgressHandler handler);
 
  private:
+    //! name
+    std::string _name;
     //! Predict the (detector space) covariance given the fit data
     Eigen::Matrix3d predictCovariance(const FitData&) const;
 

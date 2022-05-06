@@ -29,6 +29,7 @@
 #include "core/experiment/ExperimentImporter.h"
 #include "core/experiment/InstrumentStateHandler.h"
 #include "core/experiment/PeakHandler.h"
+#include "core/experiment/ShapeHandler.h"
 #include "core/experiment/UnitCellHandler.h"
 #include "core/instrument/Diffractometer.h"
 #include "core/instrument/Monochromator.h"
@@ -62,6 +63,7 @@ Experiment::Experiment(const std::string& name, const std::string& diffractomete
     _data_handler =
         std::make_shared<DataHandler>(_name, diffractometerName, _instrumentstate_handler.get());
     _peak_handler = std::make_unique<PeakHandler>();
+    _shape_handler = std::make_unique<ShapeHandler>();
     _cell_handler = std::make_unique<UnitCellHandler>();
 
     _peak_finder = std::make_unique<PeakFinder>();
@@ -590,6 +592,41 @@ std::vector<sptrUnitCell> Experiment::getSptrUnitCells()
 std::vector<PeakCollection*> Experiment::getPeakCollections()
 {
     return _peak_handler->getPeakCollections();
+}
+
+bool Experiment::addShapeCollection(const std::string& name, const nsx::ShapeCollection& shapes)
+{
+    return _shape_handler->addShapeCollection(name, shapes);
+}
+
+bool Experiment::hasShapeCollection(const std::string& name) const
+{
+    return _shape_handler->hasShapeCollection(name);
+}
+
+ShapeCollection* Experiment::getShapeCollection(const std::string name)
+{
+    return _shape_handler->getShapeCollection(name);
+}
+
+void Experiment::removeShapeCollection(const std::string& name)
+{
+    _shape_handler->removeShapeCollection(name);
+}
+
+int Experiment::numShapeCollections() const
+{
+    return _shape_handler->numShapeCollections();
+}
+
+std::string Experiment::generateShapeCollectionName()
+{
+    return _shape_handler->generateName();
+}
+
+std::vector<ShapeCollection*> Experiment::getShapeCollections()
+{
+    return _shape_handler->getShapeCollections();
 }
 
 } // namespace nsx
