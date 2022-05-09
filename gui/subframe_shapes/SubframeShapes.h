@@ -18,6 +18,7 @@
 #include "core/data/DataSet.h"
 #include "core/shape/IPeakIntegrator.h"
 #include "core/shape/PeakCollection.h"
+#include "core/shape/Profile3D.h"
 #include "core/shape/ShapeCollection.h"
 #include "gui/items/PeakCollectionItem.h"
 #include "gui/models/PeakCollectionModel.h"
@@ -34,7 +35,6 @@
 #include <QTableWidget>
 #include <QVBoxLayout>
 #include <QWidget>
-#include <qgroupbox.h>
 
 class PeakComboBox;
 class FoundPeakComboBox;
@@ -47,6 +47,8 @@ class PeakViewWidget;
 class Spoiler;
 class SafeSpinBox;
 class SafeDoubleSpinBox;
+class ShapeComboBox;
+class QGraphicsView;
 
 //! Frame containing interface to integrate peaks
 class SubframeShapes : public QWidget {
@@ -62,6 +64,8 @@ class SubframeShapes : public QWidget {
     //! Select dataset, peak collection, set parameters
     void setInputUp();
     //! Select the peak to preview, generate mean covariance for selected peak or whole collection
+    void setComputeShapesUp();
+    //! Set up assignment of shapes to a peak collection
     void setAssignShapesUp();
     //! Grab the refiner parameters
     void grabShapeParameters();
@@ -70,6 +74,8 @@ class SubframeShapes : public QWidget {
 
     //! Set up the peak view widget
     void setPreviewUp();
+    //! Set up the widget to preview the shape
+    void setShapePreviewUp();
     //! Set up the DetectorScene
     void setFigureUp();
     //! Refresh the DetctorScene
@@ -87,12 +93,11 @@ class SubframeShapes : public QWidget {
     void buildShapeCollection();
     //! Compute the mean profile at the given coordinates
     void computeProfile();
+    //! Save the shape collection
+    void saveShapes();
 
     //! Refresh the found peaks list
     void refreshTables();
-
-    //! Do the integration
-    void integrate();
 
     //! Disable unsafe widgets if no data loaded
     void toggleUnsafeWidgets();
@@ -124,8 +129,7 @@ class SubframeShapes : public QWidget {
 
     QPushButton* _build_collection;
 
-    // Preview/Assign shapes box
-    PeakComboBox* _predicted_combo;
+    // Preview/Compute shapes box
     SafeDoubleSpinBox* _x;
     SafeDoubleSpinBox* _y;
     SafeDoubleSpinBox* _frame;
@@ -136,8 +140,16 @@ class SubframeShapes : public QWidget {
     QComboBox* _interpolation_combo;
 
     QPushButton* _calculate_mean_profile;
+    QPushButton* _save_shapes;
 
+    //! Assign shapes box
+    PeakComboBox* _predicted_combo;
+    ShapeComboBox* _shape_combo;
     QPushButton* _assign_peak_shapes;
+
+    //! Shape preview box
+    QGridLayout* _shape_grid;
+    QGraphicsView* _graphics_view;
 
     PeakViewWidget* _peak_view_widget;
     DetectorWidget* _detector_widget;
@@ -147,8 +159,10 @@ class SubframeShapes : public QWidget {
     PeakCollectionItem _peak_collection_item;
     PeakCollectionModel _peak_collection_model;
 
-    std::unique_ptr<nsx::ShapeCollection> _shape_collection;
-    std::shared_ptr<nsx::ShapeCollectionParameters> _shape_params;
+    nsx::ShapeCollection _shape_collection;
+    nsx::Profile3D _profile;
+
+    QGroupBox* _shape_group;
 };
 
 

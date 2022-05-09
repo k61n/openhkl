@@ -594,7 +594,7 @@ std::vector<PeakCollection*> Experiment::getPeakCollections()
     return _peak_handler->getPeakCollections();
 }
 
-bool Experiment::addShapeCollection(const std::string& name, const nsx::ShapeCollection& shapes)
+bool Experiment::addShapeCollection(const std::string& name, const ShapeCollection& shapes)
 {
     return _shape_handler->addShapeCollection(name, shapes);
 }

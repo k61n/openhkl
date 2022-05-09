@@ -39,6 +39,7 @@ bool ShapeHandler::addShapeCollection(const std::string& name, const nsx::ShapeC
         Level::Info, "ShapeHandler::addShapeCollection '", name, "': ", shapes.numberOfPeaks(),
         " shapes");
     std::unique_ptr<ShapeCollection> ptr = std::make_unique<ShapeCollection>(shapes);
+    ptr->setName(name);
     _shape_collections.insert_or_assign(name, std::move(ptr));
     return hasShapeCollection(name); // now name must be in use
 }

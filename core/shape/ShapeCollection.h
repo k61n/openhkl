@@ -79,6 +79,8 @@ class ShapeCollection {
     ShapeCollection(const std::string& name);
     ShapeCollection(std::shared_ptr<ShapeCollectionParameters> params);
 
+    //! Set the name
+    void setName(const std::string& name ) { _name = name; };
     //! Get the name
     std::string name() { return _name; };
 

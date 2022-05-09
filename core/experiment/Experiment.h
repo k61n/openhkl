@@ -171,7 +171,7 @@ class Experiment {
 
     // ShapeHandler
     //! Add a peak collection
-    bool addShapeCollection(const std::string& name, const nsx::ShapeCollection& shapes);
+    bool addShapeCollection(const std::string& name, const ShapeCollection& shapes);
     //! Returns true if the experiment has named peak collection
     bool hasShapeCollection(const std::string& name) const;
     //! Returns the named peak collection

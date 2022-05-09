@@ -33,15 +33,15 @@ class ShapeHandler {
     ShapeHandler() = default;
     ~ShapeHandler();
 
-    //! Get a pointer to the map of peak collections
+    //! Get a pointer to the map of shape collections
     const ShapeCollectionMap* getShapeCollectionMap() const;
-    //! Add a peak collection
+    //! Add a shape collection
     bool addShapeCollection(const std::string& name, const nsx::ShapeCollection& shapes);
     //! Add an empty shape collection
     bool addEmptyCollection(const std::string& name);
-    //! Returns true if the experiment has named peak collection
+    //! Returns true if the experiment has named shape collection
     bool hasShapeCollection(const std::string& name) const;
-    //! Returns the named peak collection
+    //! Returns the named shape collection
     ShapeCollection* getShapeCollection(const std::string name);
     // !Remove a shape collection from the experiment
     void removeShapeCollection(const std::string& name);
@@ -49,9 +49,9 @@ class ShapeHandler {
     std::vector<std::string> getCollectionNames() const;
     //! Get the number of shape collections
     int numShapeCollections() const { return _shape_collections.size(); };
-    //! Generate name for new peak collection
+    //! Generate name for new shape collection
     std::string generateName();
-    //! Get a vector of pointers to peak collections
+    //! Get a vector of pointers to shape collections
     std::vector<ShapeCollection*> getShapeCollections();
 
  private:

@@ -1,4 +1,4 @@
-//  ***********************************************************************************************
+//  ************************************************************************************************
 //
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
@@ -16,24 +16,30 @@
 #include "gui/subframe_shapes/SubframeShapes.h"
 
 #include "core/data/DataTypes.h"
+#include "core/detector/DetectorEvent.h"
 #include "core/experiment/Experiment.h"
 #include "core/peak/Peak3D.h"
+#include "core/shape/Profile3D.h"
 #include "gui/MainWin.h" // gGui
+#include "gui/dialogs/ListNameDialog.h"
 #include "gui/frames/ProgressView.h"
 #include "gui/graphics/DetectorScene.h"
+#include "gui/models/ColorMap.h"
 #include "gui/models/Project.h"
 #include "gui/models/Session.h"
+#include "gui/utility/DataComboBox.h"
 #include "gui/utility/GridFiller.h"
 #include "gui/utility/PeakComboBox.h"
-#include "gui/utility/DataComboBox.h"
 #include "gui/utility/PropertyScrollArea.h"
 #include "gui/utility/SafeSpinBox.h"
+#include "gui/utility/ShapeComboBox.h"
 #include "gui/utility/SideBar.h"
 #include "gui/utility/Spoiler.h"
 #include "gui/views/PeakTableView.h"
 #include "gui/widgets/DetectorWidget.h"
 
 #include <QFileInfo>
+#include <QGraphicsView>
 #include <QGridLayout>
 #include <QGroupBox>
 #include <QHeaderView>
@@ -41,6 +47,7 @@
 #include <QMessageBox>
 #include <QScrollBar>
 #include <QSpacerItem>
+#include <qnamespace.h>
 
 SubframeShapes::SubframeShapes() : QWidget()
 {
@@ -50,9 +57,11 @@ SubframeShapes::SubframeShapes() : QWidget()
     _left_layout = new QVBoxLayout();
 
     setInputUp();
+    setComputeShapesUp();
     setAssignShapesUp();
     setPreviewUp();
     setFigureUp();
+    setShapePreviewUp();
     setPeakTableUp();
 
     _right_element->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
@@ -68,8 +77,6 @@ SubframeShapes::SubframeShapes() : QWidget()
     propertyScrollArea->setContentLayout(_left_layout);
     main_layout->addWidget(propertyScrollArea);
     main_layout->addWidget(_right_element);
-
-    _shape_params = nullptr;
 }
 
 void SubframeShapes::setInputUp()
@@ -85,16 +92,29 @@ void SubframeShapes::setInputUp()
     _ny = f.addSpinBox("histogram bins y", "Number of histogram bins in y direction");
     _nz = f.addSpinBox("histogram bins frames", "Number of histogram bins about rotation axis");
 
+    _sigma_d = new SafeDoubleSpinBox();
+    _sigma_m = new SafeDoubleSpinBox();
 
-    // _kabsch = new QGroupBox("Kabsch coordinates");
-    // _kabsch->setToolTip("Toggle between Kabsch and detector coordinates");
-    // _kabsch->setCheckable(true);
-    // _kabsch->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
+    QGridLayout* grid = new QGridLayout();
+    _kabsch = new QGroupBox("Kabsch coordinates");
+    _kabsch->setToolTip("Toggle between Kabsch and detector coordinates");
+    _kabsch->setCheckable(true);
+    _kabsch->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
+    _kabsch->setLayout(grid);
+    QLabel* label1 = new QLabel("Beam divergence " + QString(QChar(0x03C3)));
+    label1->setToolTip("Variance due to beam divergence");
+    QLabel* label2 = new QLabel("Mosaicity " + QString(QChar(0x03C3)));
+    label2->setToolTip("Variance due to sample mosaicity");
+    grid->addWidget(label1, 0, 0, 1, 1);
+    grid->addWidget(_sigma_d, 0, 1, 1, 1);
+    grid->addWidget(label2, 1, 0, 1, 1);
+    grid->addWidget(_sigma_m, 1, 1, 1, 1);
+    f.addWidget(_kabsch);
 
-    _sigma_d = f.addDoubleSpinBox(
-        ("Beam divergence " + QString(QChar(0x03C3)), "Variance due to beam divergence"));
-    _sigma_m = f.addDoubleSpinBox(
-        ("Mosaicity " + QString(QChar(0x03C3)), "Variance due to sample mosaicity"));
+    // _sigma_d = f.addDoubleSpinBox(
+    //     ("Beam divergence " + QString(QChar(0x03C3)), "Variance due to beam divergence"));
+    // _sigma_m = f.addDoubleSpinBox(
+    //     ("Mosaicity " + QString(QChar(0x03C3)), "Variance due to sample mosaicity"));
     _min_strength = f.addDoubleSpinBox(
         ("Minimum I/" + QString(QChar(0x03C3))),
         "Minimum strength (I/\u03C3) of peak to include in average");
@@ -111,6 +131,8 @@ void SubframeShapes::setInputUp()
         "<font>A shape collection is a collection of averaged peaks attached to a peak"
         "collection. A shape is the averaged peak shape of a peak and its neighbours within a "
         "specified cutoff.</font>"); // Rich text to force line break in tooltip
+    _save_shapes =
+        f.addButton("Save shape model", "Add the generated shape model to the experiment");
 
     _nx->setMinimum(5);
     _nx->setMaximum(10000);
@@ -135,16 +157,17 @@ void SubframeShapes::setInputUp()
     _bkg_end->setMaximum(100);
     _bkg_end->setSingleStep(0.1);
 
+    connect(_build_collection, &QPushButton::clicked, this, &SubframeShapes::buildShapeCollection);
+    connect(_save_shapes, &QPushButton::clicked, this, &SubframeShapes::saveShapes);
+
     _left_layout->addWidget(input_box);
 }
 
-void SubframeShapes::setAssignShapesUp()
+void SubframeShapes::setComputeShapesUp()
 {
-    auto assign_box = new Spoiler("Compute peak shapes");
-    GridFiller f(assign_box, true);
+    auto compute_box = new Spoiler("Compute peak shapes");
+    GridFiller f(compute_box, true);
 
-    _predicted_combo = f.addPeakCombo(
-        ComboType::PredictedPeaks, "Peak collection to assign shapes to");
     _x = f.addDoubleSpinBox("x coordinate", "(pixels) x coordinate of peak shape to preview");
     _y = f.addDoubleSpinBox("y coordinate", "(pixels) y coordinate of peak shape to preview");
     _frame = f.addDoubleSpinBox(
@@ -160,8 +183,6 @@ void SubframeShapes::setAssignShapesUp()
     _calculate_mean_profile = f.addButton(
         "Calculate profile",
         "Compute mean profile at position (x, y, frame) within specified radius");
-    _assign_peak_shapes = f.addButton(
-        "Assign shapes", "Compute shapes and assign them to peaks in given collection");
 
     _x->setMaximum(10000);
     _x->setValue(500);
@@ -176,14 +197,36 @@ void SubframeShapes::setAssignShapesUp()
     _frame_radius->setMaximum(100);
     _frame_radius->setValue(10);
 
-    connect(
-        _calculate_mean_profile, &QPushButton::clicked, this,
-        &SubframeShapes::computeProfile);
-    connect(
-        _assign_peak_shapes, &QPushButton::clicked, this,
-        &SubframeShapes::assignPeakShapes);
+    _interpolation_combo->addItem("None");
+    _interpolation_combo->addItem("Inverse distance");
+    _interpolation_combo->addItem("Intensity");
+
+    connect(_calculate_mean_profile, &QPushButton::clicked, this, &SubframeShapes::computeProfile);
+
+    _left_layout->addWidget(compute_box);
+}
+
+void SubframeShapes::setAssignShapesUp()
+{
+    auto assign_box = new Spoiler("Assign peak shapes");
+    GridFiller f(assign_box, true);
+    _predicted_combo =
+        f.addPeakCombo(ComboType::PredictedPeaks, "Peak collection to assign shapes to");
+    _shape_combo = f.addShapeCombo("Shape collection");
+    _assign_peak_shapes =
+        f.addButton("Assign shapes", "Compute shapes and assign them to peaks in given collection");
+
+    connect(_assign_peak_shapes, &QPushButton::clicked, this, &SubframeShapes::assignPeakShapes);
 
     _left_layout->addWidget(assign_box);
+}
+
+void SubframeShapes::setShapePreviewUp()
+{
+    QGroupBox* shape_group = new QGroupBox("Shape preview");
+    _graphics_view = new QGraphicsView(shape_group);
+
+    _right_element->addWidget(shape_group);
 }
 
 void SubframeShapes::setFigureUp()
@@ -260,12 +303,13 @@ void SubframeShapes::refreshAll()
     _peak_combo->refresh();
     _predicted_combo->refresh();
     refreshPeakTable();
+    grabShapeParameters();
     toggleUnsafeWidgets();
 }
 
 void SubframeShapes::grabShapeParameters()
 {
-    auto* params = _shape_collection->parameters();
+    auto* params = _shape_collection.parameters();
     _peak_combo->currentPeakCollection()->computeSigmas();
 
     _min_d->setValue(params->d_min);
@@ -282,6 +326,7 @@ void SubframeShapes::grabShapeParameters()
     _frame_radius->setValue(params->neighbour_range_frames);
     _sigma_m->setValue(_peak_combo->currentPeakCollection()->sigmaM());
     _sigma_d->setValue(_peak_combo->currentPeakCollection()->sigmaD());
+    _interpolation_combo->setCurrentIndex(static_cast<int>(params->interpolation));
 }
 
 void SubframeShapes::setShapeParameters()
@@ -289,7 +334,7 @@ void SubframeShapes::setShapeParameters()
     if (!gSession->hasProject())
         return;
 
-    auto* params = _shape_collection->parameters();
+    auto* params = _shape_collection.parameters();
 
     params->d_min = _min_d->value();
     params->d_max = _max_d->value();
@@ -305,6 +350,8 @@ void SubframeShapes::setShapeParameters()
     params->neighbour_range_frames = _frame_radius->value();
     params->sigma_m = _sigma_m->value();
     params->sigma_d = _sigma_d->value();
+    params->interpolation =
+        static_cast<nsx::PeakInterpolation>(_interpolation_combo->currentIndex());
 }
 
 void SubframeShapes::setPreviewUp()
@@ -347,7 +394,7 @@ void SubframeShapes::buildShapeCollection()
 {
     gGui->setReady(false);
     setShapeParameters();
-    auto* params = _shape_collection->parameters();
+    auto* params = _shape_collection.parameters();
     std::vector<nsx::Peak3D*> fit_peaks;
 
     for (nsx::Peak3D* peak : _peak_combo->currentPeakCollection()->getPeakList()) {
@@ -355,7 +402,7 @@ void SubframeShapes::buildShapeCollection()
             continue;
         const double d = 1.0 / peak->q().rowVector().norm();
 
-        if (d > params->d_max || d < params->d_min)
+         if (d > params->d_max || d < params->d_min)
             continue;
 
         const nsx::Intensity intensity = peak->correctedIntensity();
@@ -373,15 +420,82 @@ void SubframeShapes::buildShapeCollection()
     for (auto dataset : gSession->currentProject()->experiment()->getAllData())
         data.insert(dataset);
 
-    _shape_collection->integrate(fit_peaks, data, handler);
+    _shape_collection.integrate(fit_peaks, data, handler);
     // _shape_collection.updateFit(1000); // This does nothing!! - zamaan
     gGui->statusBar()->showMessage(
-        QString::number(_shape_collection->numberOfPeaks()) + " shapes generated");
+        QString::number(_shape_collection.numberOfPeaks()) + " shapes generated");
     gGui->setReady(true);
 }
 
 void SubframeShapes::computeProfile()
 {
+    setShapeParameters();
+
+    auto* params = _shape_collection.parameters();
+    const nsx::DetectorEvent ev(_x->value(), _y->value(), _frame->value());
+
+    std::optional<nsx::Profile3D> profile = _shape_collection.meanProfile(
+        ev, params->neighbour_range_pixels, params->neighbour_range_frames);
+    if (!profile) {
+        return;
+    }
+
+    _profile = profile.value();
+
+    int xmax = _profile.shape()[0];
+    int ymax = _profile.shape()[1];
+    int nframes = _profile.shape()[2];
+    // update maximum value, used for drawing
+    double intensity_maximum = 0;
+    for (int i = 0; i < xmax; ++i) {
+        for (int j = 0; j < ymax; ++j) {
+            for (int k = 0; k < nframes; ++k)
+                intensity_maximum = std::max(intensity_maximum, _profile.at(i, j, k));
+        }
+    }
+
+    QImage img(xmax * nframes, ymax, QImage::Format_ARGB32);
+    if (!_graphics_view->scene())
+        _graphics_view->setScene(new QGraphicsScene());
+
+    _graphics_view->scene()->setSceneRect(QRectF(0, 0, xmax * nframes, ymax));
+    _graphics_view->fitInView(_graphics_view->scene()->sceneRect(), Qt::KeepAspectRatio);
+
+    ColorMap cmap;
+    for (int frame = 0; frame < nframes; ++frame ) {
+        int xmin = frame * xmax;
+        for (int i = 0; i < xmax; ++i) {
+            for (int j = 0; j < ymax; ++j) {
+                const double value = _profile.at(i, j, frame);
+                QRgb color = cmap.color(value, intensity_maximum);
+                img.setPixel(i + xmin, j, color);
+            }
+        }
+    }
+    _graphics_view->scene()->addPixmap(QPixmap::fromImage(img));
+}
+
+void SubframeShapes::saveShapes()
+{
+    if (!gSession->hasProject())
+        return;
+
+    std::string suggestion = gSession->currentProject()->experiment()->generateShapeCollectionName();
+    std::unique_ptr<ListNameDialog> dlg =
+        std::make_unique<ListNameDialog>(QString::fromStdString(suggestion));
+    dlg->exec();
+    if (dlg->listName().isEmpty())
+        return;
+    if (dlg->result() == QDialog::Rejected)
+        return;
+    if (!gSession->currentProject()->experiment()->addShapeCollection(
+            dlg->listName().toStdString(), _shape_collection)) {
+        QMessageBox::warning(
+            this, "Unable to add ShapeCollection", "Collection with this name already exists!");
+        return;
+    }
+    std::string name = gSession->currentProject()->experiment()->getShapeCollections()[0]->name();
+    gSession->onShapesChanged();
 }
 
 void SubframeShapes::assignPeakShapes()
@@ -392,13 +506,13 @@ void SubframeShapes::assignPeakShapes()
         ProgressView progressView(nullptr);
         progressView.watch(handler);
 
-        nsx::PeakCollection* peaks = _peak_combo->currentPeakCollection();
 
         int interpol = _interpolation_combo->currentIndex();
         nsx::PeakInterpolation peak_interpolation = static_cast<nsx::PeakInterpolation>(interpol);
+        nsx::PeakCollection* peaks = _predicted_combo->currentPeakCollection();
 
-        _shape_collection->setHandler(handler);
-        _shape_collection->setPredictedShapes(peaks, peak_interpolation);
+        _shape_combo->currentShapes()->setHandler(handler);
+        _shape_combo->currentShapes()->setPredictedShapes(peaks, peak_interpolation);
         gGui->statusBar()->showMessage(
             QString::number(peaks->numberOfValid()) + "/" + QString::number(peaks->numberOfPeaks())
             + " predicted peaks with valid shapes");
