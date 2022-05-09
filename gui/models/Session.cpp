@@ -42,6 +42,7 @@
 #include "gui/utility/LinkedComboBox.h"
 #include "gui/utility/PeakComboBox.h"
 #include "gui/utility/PredictedPeakComboBox.h"
+#include "gui/utility/ShapeComboBox.h"
 
 #include <QCollator>
 #include <QDir>
@@ -80,6 +81,7 @@ Session::Session()
     _found_peak_combo = new FoundPeakComboBox();
     _predicted_peak_combo = new PredictedPeakComboBox();
     _integrated_peak_combo = new IntegratedPeakComboBox();
+    _shape_combo= new ShapeComboBox();
 }
 
 Project* Session::currentProject()
@@ -395,6 +397,14 @@ void Session::onUnitCellChanged()
     _cell_combo->clearAll();
     _cell_combo->addCells(cells);
     _cell_combo->refreshAll();
+}
+
+void Session::onShapesChanged()
+{
+    ShapesList shape_list = currentProject()->experiment()->getShapeCollections();
+    _shape_combo->clearAll();
+    _shape_combo->addShapeCollections(shape_list);
+    _shape_combo->refreshAll();
 }
 
 void Session::loadExperimentFromFile(QString filename)

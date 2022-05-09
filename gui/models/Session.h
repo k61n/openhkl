@@ -28,6 +28,7 @@ class PeakComboBox;
 class FoundPeakComboBox;
 class PredictedPeakComboBox;
 class IntegratedPeakComboBox;
+class ShapeComboBox;
 namespace nsx {
 enum class DataFormat;
 }
@@ -65,6 +66,7 @@ class Session {
     void onExperimentChanged();
     void onPeaksChanged();
     void onUnitCellChanged();
+    void onShapesChanged();
 
     void loadExperimentFromFile(QString filename);
 
@@ -85,6 +87,7 @@ class Session {
     FoundPeakComboBox* _found_peak_combo;
     PredictedPeakComboBox* _predicted_peak_combo;
     IntegratedPeakComboBox* _integrated_peak_combo;
+    ShapeComboBox* _shape_combo;
 };
 
 #endif // NSX_GUI_MODELS_SESSION_H
