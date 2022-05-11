@@ -47,7 +47,6 @@
 #include <QMessageBox>
 #include <QScrollBar>
 #include <QSpacerItem>
-#include <qnamespace.h>
 
 SubframeShapes::SubframeShapes() : QWidget()
 {
@@ -64,6 +63,7 @@ SubframeShapes::SubframeShapes() : QWidget()
     setShapePreviewUp();
     setPeakTableUp();
 
+    _right_element->setSizes(QList<int>({200, 100, 100}));
     _right_element->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
     connect(
@@ -224,7 +224,12 @@ void SubframeShapes::setAssignShapesUp()
 void SubframeShapes::setShapePreviewUp()
 {
     QGroupBox* shape_group = new QGroupBox("Shape preview");
-    _graphics_view = new QGraphicsView(shape_group);
+    QHBoxLayout* layout = new QHBoxLayout;
+    shape_group->setLayout(layout);
+    shape_group->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    _graphics_view = new QGraphicsView();
+    _graphics_view->scale(1, -1);
+    layout->addWidget(_graphics_view);
 
     _right_element->addWidget(shape_group);
 }
@@ -459,7 +464,6 @@ void SubframeShapes::computeProfile()
         _graphics_view->setScene(new QGraphicsScene());
 
     _graphics_view->scene()->setSceneRect(QRectF(0, 0, xmax * nframes, ymax));
-    _graphics_view->fitInView(_graphics_view->scene()->sceneRect(), Qt::KeepAspectRatio);
 
     ColorMap cmap;
     for (int frame = 0; frame < nframes; ++frame ) {
@@ -473,6 +477,7 @@ void SubframeShapes::computeProfile()
         }
     }
     _graphics_view->scene()->addPixmap(QPixmap::fromImage(img));
+    _graphics_view->fitInView(_graphics_view->scene()->sceneRect(), Qt::KeepAspectRatio);
 }
 
 void SubframeShapes::saveShapes()
