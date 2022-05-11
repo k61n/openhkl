@@ -42,10 +42,12 @@
 #include "gui/utility/ColorButton.h"
 #include "gui/utility/GridFiller.h"
 #include "gui/utility/CellComboBox.h"
+#include "gui/utility/LinkedComboBox.h"
 #include "gui/utility/PeakComboBox.h"
 #include "gui/utility/PropertyScrollArea.h"
 #include "gui/utility/SafeSpinBox.h"
 #include "gui/utility/SideBar.h"
+#include "gui/utility/ShapeComboBox.h"
 #include "gui/utility/Spoiler.h"
 #include "gui/utility/SpoilerCheck.h"
 #include "gui/views/PeakTableView.h"
@@ -82,7 +84,7 @@ SubframePredictPeaks::SubframePredictPeaks()
     setAdjustBeamUp();
     setRefineKiUp();
     setParametersUp();
-    setShapeCollectionUp();
+    setShapeModelUp();
     setPreviewUp();
     setSaveUp();
     setFigureUp();
@@ -174,6 +176,8 @@ void SubframePredictPeaks::setRefineKiUp()
     Spoiler* ki_box = new Spoiler("Refine direct beam position");
     GridFiller f(ki_box, true);
 
+    _peak_combo = f.addPeakCombo(
+        ComboType::FoundPeaks, "Found peaks", "Peak collection to be used in refinement");
     _n_batches_spin =
         f.addSpinBox("Number of batches", "Number of batches for refining incident wavevector");
     _max_iter_spin = f.addSpinBox(
@@ -240,29 +244,13 @@ void SubframePredictPeaks::setParametersUp()
     _left_layout->addWidget(para_box);
 }
 
-void SubframePredictPeaks::setShapeCollectionUp()
+void SubframePredictPeaks::setShapeModelUp()
 {
-    Spoiler* shapes_box = new Spoiler("Generate shapes");
+    Spoiler* shapes_box = new Spoiler("Shape model");
     GridFiller f(shapes_box, true);
 
-    _peak_combo = f.addPeakCombo(
-        ComboType::PeakCollection, "Found peak collection",
-        "Found peaks from which to construct shape collection");
-    _nx = f.addSpinBox("histogram bins x", "Number of bins in x direction");
-    _ny = f.addSpinBox("histogram bins y", "Number of bins in x direction");
-    _nz = f.addSpinBox("histogram bins f", "Number of bins in frames direction");
-    _kabsch = f.addCheckBox(
-        "Kabsch coordinates", "Use Kabsch coordinate to mitigate effects of detector geometry", 1);
-    _sigma_m = f.addDoubleSpinBox(
-        QString("Mosaicity ") + QChar(0x03C3), "Variance arising from crystal mosaicity");
-    _sigma_d = f.addDoubleSpinBox(
-        QString("Beam Divergence ") + QString(QChar(0x03C3)),
-        "Variance arising from beam divergence");
-    _min_strength = f.addDoubleSpinBox(
-        "Minimum I/" + QString(QChar(0x03C3)),
-        "Minimum strength for peak to be included in shape collection");
-    _min_d = f.addDoubleSpinBox("d min", "Minimum d for peak to be included in shape collection");
-    _max_d = f.addDoubleSpinBox("d max", "Minimum d for peak to be included in shape collection");
+    _shape_combo = f.addShapeCombo(
+        "Shape model", "Shape model to predict shapes of predicted peaks");
     _peak_end = f.addDoubleSpinBox("Peak end", "(sigmas) - scaling factor for peak region");
     _bkg_begin =
         f.addDoubleSpinBox("Bkg begin:", "(sigmas) - scaling factor for lower limit of background");
@@ -275,24 +263,9 @@ void SubframePredictPeaks::setShapeCollectionUp()
     _min_neighbours = f.addSpinBox(
         "Min. neighbours", "Minimum number of neighbouring shapes to predict peak shape");
     _interpolation_combo = f.addCombo("Interpolation", "Interpolation type for peak shape");
-    _assign_peak_shapes = f.addButton(
+    _apply_shape_model = f.addButton(
         "Assign peak shapes", "Assign peak shapes from shape collection to a predicted collection");
 
-    _nx->setMaximum(100);
-    _ny->setMaximum(100);
-    _nz->setMaximum(100);
-
-    _sigma_m->setMaximum(10);
-    _sigma_m->setDecimals(2);
-
-    _sigma_d->setMaximum(10);
-    _sigma_d->setDecimals(2);
-
-    _min_d->setMaximum(100);
-    _min_d->setDecimals(2);
-
-    _max_d->setMaximum(100);
-    _max_d->setDecimals(2);
 
     _peak_end->setMaximum(100);
     _peak_end->setDecimals(2);
@@ -314,8 +287,7 @@ void SubframePredictPeaks::setShapeCollectionUp()
     _interpolation_combo->addItem("Intensity");
 
     connect(
-        _assign_peak_shapes, &QPushButton::clicked, this, &SubframePredictPeaks::assignPeakShapes);
-    connect(_kabsch, &QCheckBox::clicked, this, &SubframePredictPeaks::toggleUnsafeWidgets);
+        _apply_shape_model, &QPushButton::clicked, this, &SubframePredictPeaks::applyShapeModel);
 
     _left_layout->addWidget(shapes_box);
     grabShapeCollectionParameters();
@@ -383,7 +355,6 @@ void SubframePredictPeaks::refreshAll()
     grabPredictorParameters();
     grabShapeCollectionParameters();
     refreshPeakTable();
-    computeSigmas();
     const auto data = _detector_widget->currentData();
     if (data) {
         _n_batches_spin->setMaximum(data->nFrames());
@@ -416,15 +387,6 @@ void SubframePredictPeaks::setPredictorParameters()
 
     params->d_min = _d_min->value();
     params->d_max = _d_max->value();
-}
-
-void SubframePredictPeaks::computeSigmas()
-{
-    if (!(_peak_collection.numberOfPeaks() == 0)) {
-        _peak_collection.computeSigmas();
-        _sigma_m->setValue(_peak_collection.sigmaM());
-        _sigma_d->setValue(_peak_collection.sigmaD());
-    }
 }
 
 void SubframePredictPeaks::grabRefinerParameters()
@@ -462,18 +424,6 @@ void SubframePredictPeaks::grabShapeCollectionParameters()
     if (!gSession->hasProject())
         return;
 
-    if (!(_peak_collection.numberOfPeaks() == 0)) {
-        _peak_collection.computeSigmas();
-        _sigma_m->setValue(_peak_collection.sigmaM());
-        _sigma_d->setValue(_peak_collection.sigmaD());
-    }
-    _nx->setValue(_shape_params->nbins_x);
-    _ny->setValue(_shape_params->nbins_y);
-    _nz->setValue(_shape_params->nbins_z);
-    _kabsch->setChecked(_shape_params->kabsch_coords);
-    _min_strength->setValue(_shape_params->strength_min);
-    _min_d->setValue(_shape_params->d_min);
-    _max_d->setValue(_shape_params->d_max);
     _peak_end->setValue(_shape_params->peak_end);
     _bkg_begin->setValue(_shape_params->bkg_begin);
     _bkg_end->setValue(_shape_params->bkg_end);
@@ -488,15 +438,6 @@ void SubframePredictPeaks::setShapeCollectionParameters()
     if (!gSession->hasProject())
         return;
 
-    _shape_params->sigma_m = _sigma_m->value();
-    _shape_params->sigma_d = _sigma_d->value();
-    _shape_params->nbins_x = _nx->value();
-    _shape_params->nbins_y = _ny->value();
-    _shape_params->nbins_z = _nz->value();
-    _shape_params->kabsch_coords = _kabsch->isChecked();
-    _shape_params->strength_min = _min_strength->value();
-    _shape_params->d_min = _min_d->value();
-    _shape_params->d_max = _max_d->value();
     _shape_params->peak_end = _peak_end->value();
     _shape_params->bkg_begin = _bkg_begin->value();
     _shape_params->bkg_end = _bkg_end->value();
@@ -643,45 +584,19 @@ void SubframePredictPeaks::showDirectBeamEvents()
     refreshPeakVisual();
 }
 
-void SubframePredictPeaks::assignPeakShapes()
+void SubframePredictPeaks::applyShapeModel()
 {
-    auto shape_collection = std::make_unique<nsx::ShapeCollection>();
 
     gGui->setReady(false);
-    auto* experiment = gSession->currentProject()->experiment();
-    auto* found_peaks = _peak_combo->currentPeakCollection();
+    nsx::ShapeCollection* shapes = _shape_combo->currentShapes();
 
     setShapeCollectionParameters();
-
-    std::set<nsx::sptrDataSet> datalist;
-    std::vector<nsx::Peak3D*> fit_peaks;
-    for (nsx::Peak3D* peak : found_peaks->getPeakList()) {
-        datalist.insert(peak->dataSet());
-        if (!peak->enabled())
-            continue;
-        const double d = 1.0 / peak->q().rowVector().norm();
-
-        if (d > _shape_params->d_max || d < _shape_params->d_min)
-            continue;
-
-        const nsx::Intensity intensity = peak->correctedIntensity();
-
-        if (intensity.value() <= _shape_params->strength_min * intensity.sigma())
-            continue;
-        fit_peaks.push_back(peak);
-    }
 
     nsx::sptrProgressHandler handler(new nsx::ProgressHandler);
     ProgressView progressView(nullptr);
     progressView.watch(handler);
-    experiment->integrator()->setHandler(handler);
 
-    shape_collection->setParameters(_shape_params);
-    shape_collection->integrate(fit_peaks, datalist, handler);
-
-    found_peaks->setShapeCollection(shape_collection);
-
-    nsx::ShapeCollection* shapes = found_peaks->shapeCollection();
+    shapes->setParameters(_shape_params);
     shapes->setHandler(handler);
     shapes->setPredictedShapes(&_peak_collection, _shape_params->interpolation);
 
@@ -728,7 +643,6 @@ void SubframePredictPeaks::refreshPeakTable()
     if (!gSession->hasProject())
         return;
 
-    computeSigmas();
     _peak_collection_model.setRoot(&_peak_collection_item);
     _peak_table->resizeColumnsToContents();
     showDirectBeamEvents();
@@ -771,7 +685,7 @@ void SubframePredictPeaks::toggleUnsafeWidgets()
 {
     _predict_button->setEnabled(false);
     _save_button->setEnabled(false);
-    _assign_peak_shapes->setEnabled(false);
+    _apply_shape_model->setEnabled(false);
     _refine_ki_button->setEnabled(false);
     _direct_beam->setEnabled(false);
     if (!gSession->hasProject())
@@ -780,30 +694,24 @@ void SubframePredictPeaks::toggleUnsafeWidgets()
     if (!gSession->currentProject()->hasUnitCell()) {
         _predict_button->setEnabled(false);
         _save_button->setEnabled(false);
-        _assign_peak_shapes->setEnabled(false);
+        _apply_shape_model->setEnabled(false);
     }
 
     if (!_peaks_predicted) {
-        _assign_peak_shapes->setEnabled(false);
+        _apply_shape_model->setEnabled(false);
         _save_button->setEnabled(false);
     }
 
     // if (!_shapes_assigned) // TODO: reenable later
     //     _save_button->setEnabled(false);
 
-    _sigma_d->setEnabled(true);
-    _sigma_m->setEnabled(true);
-    if (!_kabsch->isChecked()) {
-        _sigma_d->setEnabled(false);
-        _sigma_m->setEnabled(false);
-    }
-
     nsx::PeakCollection* pc = nullptr;
     std::string current_pc = _peak_combo->currentText().toStdString();
     if (current_pc.size() == 0)
         return;
 
-    if (!gSession->hasProject()) return;
+    if (!gSession->hasProject())
+        return;
 
     pc = gSession->currentProject()->experiment()->getPeakCollection(current_pc);
     if (pc == nullptr) return;
@@ -811,7 +719,7 @@ void SubframePredictPeaks::toggleUnsafeWidgets()
     bool is_indexed = pc->isIndexed();
     _predict_button->setEnabled(is_indexed);
     _save_button->setEnabled(is_indexed);
-    _assign_peak_shapes->setEnabled(is_indexed);
+    _apply_shape_model->setEnabled(is_indexed);
     _refine_ki_button->setEnabled(is_indexed);
     _direct_beam->setEnabled(is_indexed);
 }
