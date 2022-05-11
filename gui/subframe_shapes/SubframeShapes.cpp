@@ -238,9 +238,7 @@ void SubframeShapes::setFigureUp()
 {
     QGroupBox* figure_group = new QGroupBox("Preview");
     figure_group->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-    _detector_widget = new DetectorWidget(true, false, true, figure_group);
-    _detector_widget->modeCombo()->addItems(QStringList{"Zoom", "Select peak", "Selection box"});
-    _detector_widget->modeCombo()->setCurrentIndex(1);
+    _detector_widget = new DetectorWidget(false, false, true, figure_group);
     _detector_widget->linkPeakModel(&_peak_collection_model);
     _detector_widget->scene()->drawSinglePeakIntegrationRegion(true);
 

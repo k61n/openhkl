@@ -468,6 +468,13 @@ void DetectorScene::mousePressEvent(QGraphicsSceneMouseEvent* event)
                 return;
             }
         }
+        for (auto* item : items(event->scenePos())) {
+            PeakItemGraphic* peak_item = dynamic_cast<PeakItemGraphic*>(item);
+            if (peak_item) {
+                _selected_peak = peak_item;
+                break;
+            }
+        }
         switch (_mode) {
             case SELECT: {
                 QPoint select_start = event->lastScenePos().toPoint();
@@ -525,16 +532,6 @@ void DetectorScene::mousePressEvent(QGraphicsSceneMouseEvent* event)
             }
             case DRAG_DROP: {
                 _current_dragged_item = _beam_pos_setter;
-                break;
-            }
-            case PICK: {
-                for (auto* item : items(event->scenePos())) {
-                    PeakItemGraphic* peak_item = dynamic_cast<PeakItemGraphic*>(item);
-                    if (peak_item) {
-                        _selected_peak = peak_item;
-                        break;
-                    }
-                }
                 break;
             }
                 default: break;
@@ -596,6 +593,11 @@ void DetectorScene::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
     if (event->button() & Qt::LeftButton) {
         if (event->modifiers() == Qt::ControlModifier)
             return;
+
+        if (_selected_peak) {
+            _peak = _selected_peak->peak();
+            emit signalPeakSelected(_selected_peak->peak());
+        }
 
         if (_mode == SELECT) {
             if (_selectionRect) {
@@ -684,11 +686,6 @@ void DetectorScene::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
             emit beamPosChanged(event->scenePos());
             _current_beam_position = event->scenePos();
             addBeamSetter(size, linewidth);
-        } else if (_mode == PICK) {
-            if (_selected_peak) {
-                _peak = _selected_peak->peak();
-                emit signalPeakSelected(_selected_peak->peak());
-            }
         } else {
             if (_peak_model_1) {
                 // _peak_model_2 is only relevant in DetectorWindow, ignore here.
