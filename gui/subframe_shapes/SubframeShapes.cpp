@@ -15,10 +15,10 @@
 
 #include "gui/subframe_shapes/SubframeShapes.h"
 
+#include "base/geometry/Ellipsoid.h"
 #include "core/data/DataTypes.h"
 #include "core/detector/DetectorEvent.h"
 #include "core/experiment/Experiment.h"
-#include "core/peak/Peak3D.h"
 #include "core/shape/Profile3D.h"
 #include "gui/MainWin.h" // gGui
 #include "gui/dialogs/ListNameDialog.h"
@@ -48,7 +48,7 @@
 #include <QScrollBar>
 #include <QSpacerItem>
 
-SubframeShapes::SubframeShapes() : QWidget()
+SubframeShapes::SubframeShapes() : QWidget(), _preview_peak(nullptr)
 {
     auto main_layout = new QHBoxLayout(this);
     _right_element = new QSplitter(Qt::Vertical, this);
@@ -487,6 +487,23 @@ void SubframeShapes::computeProfile()
     _graphics_view->fitInView(_graphics_view->scene()->sceneRect(), Qt::KeepAspectRatio);
 }
 
+void SubframeShapes::getPreviewPeak(nsx::Peak3D* selected_peak)
+{
+    setShapeParameters();
+    auto* params = _shape_collection.parameters();
+    int interpol = _interpolation_combo->currentIndex();
+    nsx::PeakInterpolation peak_interpolation = static_cast<nsx::PeakInterpolation>(interpol);
+
+    auto cov = _shape_collection.meanCovariance(
+        selected_peak, params->neighbour_range_pixels, params->neighbour_range_frames,
+        params->min_n_neighbors, peak_interpolation);
+    if (cov) {
+        Eigen::Vector3d center = selected_peak->shape().center();
+        nsx::Ellipsoid shape = nsx::Ellipsoid(center, cov.value().inverse());
+        _preview_peak = std::make_unique<nsx::Peak3D>(selected_peak->dataSet(), shape);
+    }
+}
+
 void SubframeShapes::saveShapes()
 {
     if (!gSession->hasProject())
@@ -579,5 +596,10 @@ void SubframeShapes::onPeakSelected(nsx::Peak3D* peak)
     _x->setValue(peak->shape().center()[0]);
     _y->setValue(peak->shape().center()[1]);
     _frame->setValue(peak->shape().center()[2]);
+
+    if (_shape_collection.numberOfPeaks() == 0)
+        return;
     computeProfile();
+    getPreviewPeak(peak);
+    _detector_widget->scene()->setPeak(_preview_peak.get());
 }

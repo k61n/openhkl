@@ -16,6 +16,7 @@
 #define NSX_GUI_SUBFRAME_SHAPES_SUBFRAMESHAPES_H
 
 #include "core/data/DataSet.h"
+#include "core/peak/Peak3D.h"
 #include "core/shape/IPeakIntegrator.h"
 #include "core/shape/PeakCollection.h"
 #include "core/shape/Profile3D.h"
@@ -35,11 +36,6 @@
 #include <QTableWidget>
 #include <QVBoxLayout>
 #include <QWidget>
-
-namespace nsx
-{
-class Peak3D;
-}
 
 class PeakComboBox;
 class FoundPeakComboBox;
@@ -101,6 +97,8 @@ class SubframeShapes : public QWidget {
     void buildShapeCollection();
     //! Compute the mean profile at the given coordinates
     void computeProfile();
+    //! Generate a peak for previewin in DetectorScene
+    void getPreviewPeak(nsx::Peak3D* selected_peak);
     //! Save the shape collection
     void saveShapes();
 
@@ -170,6 +168,7 @@ class SubframeShapes : public QWidget {
     nsx::ShapeCollection _shape_collection;
     nsx::Profile3D _profile;
     nsx::Peak3D* _current_peak;
+    std::unique_ptr<nsx::Peak3D> _preview_peak;
 
     QGroupBox* _shape_group;
 };

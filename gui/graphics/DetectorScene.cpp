@@ -687,7 +687,6 @@ void DetectorScene::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
         } else if (_mode == PICK) {
             if (_selected_peak) {
                 _peak = _selected_peak->peak();
-                refreshSinglePeakIntegrationOverlay();
                 emit signalPeakSelected(_selected_peak->peak());
             }
         } else {
@@ -1211,4 +1210,10 @@ void DetectorScene::onCrosshairChanged(int size, int linewidth)
 QPointF DetectorScene::beamSetterCoords()
 {
     return _current_beam_position;
+}
+
+void DetectorScene::setPeak(nsx::Peak3D* peak)
+{
+    _peak = peak;
+    refreshSinglePeakIntegrationOverlay();
 }

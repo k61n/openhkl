@@ -161,7 +161,7 @@ class DetectorScene : public QGraphicsScene {
     //! Return the interaction mode
     int mode() const { return static_cast<int>(_mode); };
     //! Set single peak for single peak integration overlay
-    void setPeak(nsx::Peak3D* peak) { _peak = peak; };
+    void setPeak(nsx::Peak3D* peak);
     //! Set scene to draw integration for single peak
     void drawSinglePeakIntegrationRegion(bool toggle) { _drawSinglePeakIntegrationRegion = toggle; };
 
