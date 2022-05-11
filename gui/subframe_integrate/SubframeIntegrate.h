@@ -45,6 +45,7 @@ class PeakViewWidget;
 class Spoiler;
 class SafeSpinBox;
 class SafeDoubleSpinBox;
+class ShapeComboBox;
 
 //! Frame containing interface to integrate peaks
 class SubframeIntegrate : public QWidget {
@@ -86,8 +87,6 @@ class SubframeIntegrate : public QWidget {
     void removeOverlappingPeaks();
     //! Wrapper for integration
     void runIntegration();
-    //! Open the shape builder dialog
-    void openShapeBuilder();
     //! Scroll to selected peak in table
     void changeSelected(PeakItemGraphic* peak_graphic);
 
@@ -105,7 +104,6 @@ class SubframeIntegrate : public QWidget {
 
     // data selection
     PeakComboBox* _peak_combo;
-    PeakComboBox* _int_peak_combo;
     DataComboBox* _data_combo;
 
     // Integration region
@@ -115,6 +113,7 @@ class SubframeIntegrate : public QWidget {
     SafeDoubleSpinBox* _bkg_begin;
     SafeDoubleSpinBox* _bkg_end;
 
+    //! Integration parameters
     Spoiler* _integrate_box;
     QComboBox* _integrator_combo;
     QComboBox* _interpolation_combo;
@@ -126,10 +125,9 @@ class SubframeIntegrate : public QWidget {
     SafeDoubleSpinBox* _n_frames_int;
     QCheckBox* _fit_center;
     QCheckBox* _fit_covariance;
+    ShapeComboBox* _shape_combo;
 
     QPushButton* _integrate_button;
-    QPushButton* _build_shape_lib_button;
-    QPushButton* _assign_peak_shapes;
 
     QStringList _cell_list;
     QStringList _predicted_list;
