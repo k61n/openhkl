@@ -84,6 +84,7 @@ DetectorScene::DetectorScene(QObject* parent)
     , _logarithmic(false)
     , _drawIntegrationRegion1(true)
     , _drawIntegrationRegion2(true)
+    , _drawSinglePeakIntegrationRegion(false)
     , _drawDirectBeam(false)
     , _draw3rdParty(true)
     , _colormap(new ColorMap())
@@ -102,6 +103,7 @@ DetectorScene::DetectorScene(QObject* parent)
     , _beam_pos_setter(nullptr)
     , _selected_peak(nullptr)
     , _unit_cell(nullptr)
+    , _peak(nullptr)
     , _peak_center_data(nullptr)
 {
 }
@@ -525,8 +527,18 @@ void DetectorScene::mousePressEvent(QGraphicsSceneMouseEvent* event)
                 _current_dragged_item = _beam_pos_setter;
                 break;
             }
-            default: break;
-        }
+            case PICK: {
+                for (auto* item : items(event->scenePos())) {
+                    PeakItemGraphic* peak_item = dynamic_cast<PeakItemGraphic*>(item);
+                    if (peak_item) {
+                        _selected_peak = peak_item;
+                        break;
+                    }
+                }
+                break;
+            }
+                default: break;
+            }
         if (cutter != nullptr) {
             cutter->setFrom(event->lastScenePos());
             addItem(cutter);
@@ -672,6 +684,12 @@ void DetectorScene::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
             emit beamPosChanged(event->scenePos());
             _current_beam_position = event->scenePos();
             addBeamSetter(size, linewidth);
+        } else if (_mode == PICK) {
+            if (_selected_peak) {
+                _peak = _selected_peak->peak();
+                refreshSinglePeakIntegrationOverlay();
+                emit signalPeakSelected(_selected_peak->peak());
+            }
         } else {
             if (_peak_model_1) {
                 // _peak_model_2 is only relevant in DetectorWindow, ignore here.
@@ -926,9 +944,11 @@ void DetectorScene::loadCurrentImage()
 
     // update the integration region pixmap
     clearIntegrationRegion();
-    if (_drawIntegrationRegion1 || _drawIntegrationRegion2) {
+    if (_drawIntegrationRegion1 || _drawIntegrationRegion2)
         refreshIntegrationOverlay();
-    }
+
+    if (_drawSinglePeakIntegrationRegion && !_drawIntegrationRegion1 && !_drawIntegrationRegion2)
+        refreshSinglePeakIntegrationOverlay();
 
     setSceneRect(_zoomStack.back());
     emit dataChanged();
@@ -966,6 +986,23 @@ void DetectorScene::refreshIntegrationOverlay()
         } else {
             _integrationRegion2->setPixmap(QPixmap::fromImage(*region_img));
         }
+    }
+}
+
+void DetectorScene::refreshSinglePeakIntegrationOverlay()
+{
+    if (!_peak)
+        return;
+
+    Eigen::MatrixXi mask(_currentData->nRows(), _currentData->nCols());
+    mask.setConstant(int(EventType::EXCLUDED));
+    getSinglePeakIntegrationMask(_peak, mask);
+    QImage* region_img = getIntegrationRegionImage(mask, _peakPxColor1, _bkgPxColor1);
+    if (!_integrationRegion1) {
+        _integrationRegion1 = addPixmap(QPixmap::fromImage(*region_img));
+        _integrationRegion1->setZValue(-1);
+    } else {
+        _integrationRegion1->setPixmap(QPixmap::fromImage(*region_img));
     }
 }
 
@@ -1021,6 +1058,17 @@ void DetectorScene::getIntegrationMask(
         if (region.isValid())
             region.updateMask(mask, _currentFrameIndex);
     }
+}
+
+void DetectorScene::getSinglePeakIntegrationMask(
+    nsx::Peak3D* peak, Eigen::MatrixXi& mask, nsx::RegionType region_type)
+{
+    if (!peak)
+        return;
+
+    nsx::IntegrationRegion region(peak, _peak_end_1, _bkg_begin_1, _bkg_end_1, region_type);
+    if (region.isValid())
+        region.updateMask(mask, _currentFrameIndex);
 }
 
 void DetectorScene::initIntRegionFromPeakWidget(

@@ -36,6 +36,11 @@
 #include <QVBoxLayout>
 #include <QWidget>
 
+namespace nsx
+{
+class Peak3D;
+}
+
 class PeakComboBox;
 class FoundPeakComboBox;
 class DataComboBox;
@@ -59,6 +64,9 @@ class SubframeShapes : public QWidget {
     void refreshAll();
     //! detector view
     DetectorWidget* detectorWidget();
+
+ public slots:
+    void onPeakSelected(nsx::Peak3D* peak);
 
  private:
     //! Select dataset, peak collection, set parameters
@@ -161,6 +169,7 @@ class SubframeShapes : public QWidget {
 
     nsx::ShapeCollection _shape_collection;
     nsx::Profile3D _profile;
+    nsx::Peak3D* _current_peak;
 
     QGroupBox* _shape_group;
 };

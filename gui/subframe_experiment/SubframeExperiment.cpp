@@ -43,8 +43,8 @@ SubframeExperiment::SubframeExperiment()
     figure_group->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     _detector_widget = new DetectorWidget(true, false, true, figure_group);
     _detector_widget->modeCombo()->addItems(QStringList{
-        "Zoom", "Selection", "Rectangular mask", "Elliptical mask", "Line plot", "Horizontal slice",
-        "Vertical slice"});
+            "Zoom", "Select peak", "Selection box", "Rectangular mask", "Elliptical mask",
+            "Line plot", "Horizontal slice", "Vertical slice"});
     QWidget* right_widget = new QWidget(this);
     right_widget->setLayout(_detector_widget);
 

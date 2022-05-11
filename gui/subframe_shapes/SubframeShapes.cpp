@@ -238,8 +238,11 @@ void SubframeShapes::setFigureUp()
 {
     QGroupBox* figure_group = new QGroupBox("Preview");
     figure_group->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-    _detector_widget = new DetectorWidget(false, false, true, figure_group);
+    _detector_widget = new DetectorWidget(true, false, true, figure_group);
+    _detector_widget->modeCombo()->addItems(QStringList{"Zoom", "Select peak", "Selection box"});
+    _detector_widget->modeCombo()->setCurrentIndex(1);
     _detector_widget->linkPeakModel(&_peak_collection_model);
+    _detector_widget->scene()->drawSinglePeakIntegrationRegion(true);
 
     connect(
         _detector_widget->scene(), &DetectorScene::signalSelectedPeakItemChanged, this,
@@ -247,6 +250,9 @@ void SubframeShapes::setFigureUp()
     connect(
         _predicted_combo, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
         this, &SubframeShapes::refreshPeakTable);
+    connect(
+        _detector_widget->scene(), &DetectorScene::signalPeakSelected,
+        this, &SubframeShapes::onPeakSelected);
 
     _right_element->addWidget(figure_group);
 }
@@ -300,6 +306,7 @@ void SubframeShapes::refreshPeakTable()
 
 void SubframeShapes::refreshAll()
 {
+    toggleUnsafeWidgets();
     if (!gSession->hasProject())
         return;
 
@@ -309,7 +316,6 @@ void SubframeShapes::refreshAll()
     _predicted_combo->refresh();
     refreshPeakTable();
     grabShapeParameters();
-    toggleUnsafeWidgets();
 }
 
 void SubframeShapes::grabShapeParameters()
@@ -429,6 +435,7 @@ void SubframeShapes::buildShapeCollection()
     // _shape_collection.updateFit(1000); // This does nothing!! - zamaan
     gGui->statusBar()->showMessage(
         QString::number(_shape_collection.numberOfPeaks()) + " shapes generated");
+    toggleUnsafeWidgets();
     gGui->setReady(true);
 }
 
@@ -501,6 +508,7 @@ void SubframeShapes::saveShapes()
     }
     std::string name = gSession->currentProject()->experiment()->getShapeCollections()[0]->name();
     gSession->onShapesChanged();
+    toggleUnsafeWidgets();
 }
 
 void SubframeShapes::assignPeakShapes()
@@ -538,6 +546,25 @@ void SubframeShapes::changeSelected(PeakItemGraphic* peak_graphic)
 
 void SubframeShapes::toggleUnsafeWidgets()
 {
+    _build_collection->setEnabled(false);
+    _save_shapes->setEnabled(false);
+    _calculate_mean_profile->setEnabled(false);
+    _assign_peak_shapes->setEnabled(false);
+
+    if (!gSession->hasProject())
+        return;
+
+    if (gSession->currentProject()->hasPeakCollection())
+        _build_collection->setEnabled(true);
+
+    if (_shape_collection.numberOfPeaks() > 0) {
+        _save_shapes->setEnabled(true);
+        _calculate_mean_profile->setEnabled(true);
+    }
+
+    if (gSession->currentProject()->hasShapeCollection() && (_predicted_combo->count() > 0))
+        _assign_peak_shapes->setEnabled(true);
+
 }
 
 
@@ -546,3 +573,11 @@ DetectorWidget* SubframeShapes::detectorWidget()
     return _detector_widget;
 }
 
+void SubframeShapes::onPeakSelected(nsx::Peak3D* peak)
+{
+    _current_peak = peak;
+    _x->setValue(peak->shape().center()[0]);
+    _y->setValue(peak->shape().center()[1]);
+    _frame->setValue(peak->shape().center()[2]);
+    computeProfile();
+}
