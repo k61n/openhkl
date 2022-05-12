@@ -403,34 +403,38 @@ void SubframeShapes::buildShapeModel()
 {
     gGui->setReady(false);
     setShapeParameters();
-    auto* params = _shape_model.parameters();
-    std::vector<nsx::Peak3D*> fit_peaks;
+    try {
+        auto* params = _shape_model.parameters();
+        std::vector<nsx::Peak3D*> fit_peaks;
 
-    for (nsx::Peak3D* peak : _peak_combo->currentPeakCollection()->getPeakList()) {
-        if (!peak->enabled())
-            continue;
-        const double d = 1.0 / peak->q().rowVector().norm();
+        for (nsx::Peak3D* peak : _peak_combo->currentPeakCollection()->getPeakList()) {
+            if (!peak->enabled())
+                continue;
+            const double d = 1.0 / peak->q().rowVector().norm();
 
-         if (d > params->d_max || d < params->d_min)
-            continue;
+            if (d > params->d_max || d < params->d_min)
+                continue;
 
-        const nsx::Intensity intensity = peak->correctedIntensity();
+            const nsx::Intensity intensity = peak->correctedIntensity();
 
-        if (intensity.value() <= params->strength_min * intensity.sigma())
-            continue;
-        fit_peaks.push_back(peak);
+            if (intensity.value() <= params->strength_min * intensity.sigma())
+                continue;
+            fit_peaks.push_back(peak);
+        }
+
+        nsx::sptrProgressHandler handler(new nsx::ProgressHandler);
+        ProgressView view(this);
+        view.watch(handler);
+
+        std::set<nsx::sptrDataSet> data;
+        for (auto dataset : gSession->currentProject()->experiment()->getAllData())
+            data.insert(dataset);
+
+        _shape_model.integrate(fit_peaks, data, handler);
+        _shape_model.updateFit(1000); // This does nothing!! - zamaan
+    } catch (std::exception& e) {
+        QMessageBox::critical(this, "Error", QString(e.what()));
     }
-
-    nsx::sptrProgressHandler handler(new nsx::ProgressHandler);
-    ProgressView view(this);
-    view.watch(handler);
-
-    std::set<nsx::sptrDataSet> data;
-    for (auto dataset : gSession->currentProject()->experiment()->getAllData())
-        data.insert(dataset);
-
-    _shape_model.integrate(fit_peaks, data, handler);
-    _shape_model.updateFit(1000); // This does nothing!! - zamaan
     gGui->statusBar()->showMessage(
         QString::number(_shape_model.numberOfPeaks()) + " shapes generated");
     toggleUnsafeWidgets();
