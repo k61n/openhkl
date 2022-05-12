@@ -430,7 +430,7 @@ void SubframeShapes::buildShapeModel()
         data.insert(dataset);
 
     _shape_model.integrate(fit_peaks, data, handler);
-    // _shape_model.updateFit(1000); // This does nothing!! - zamaan
+    _shape_model.updateFit(1000); // This does nothing!! - zamaan
     gGui->statusBar()->showMessage(
         QString::number(_shape_model.numberOfPeaks()) + " shapes generated");
     toggleUnsafeWidgets();

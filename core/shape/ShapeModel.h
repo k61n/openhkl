@@ -88,7 +88,7 @@ class ShapeModel {
     bool addPeak(Peak3D* peak, Profile3D&& profile, Profile1D&& integrated_profile);
 
     //! Update the fitted covariances
-    void updateFit(int num_iterations);
+    void updateFit(int num_iterations = 1000);
 
     //! Set the shape collection parameters
     void setParameters(std::shared_ptr<ShapeModelParameters> params);

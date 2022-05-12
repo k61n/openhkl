@@ -180,10 +180,8 @@ bool ShapeModel::addPeak(Peak3D* peak, Profile3D&& profile, Profile1D&& integrat
     return true;
 }
 
-void ShapeModel::updateFit(int /*num_iterations*/)
+void ShapeModel::updateFit(int num_iterations)
 {
-#if 0 // TODO restore
-
     std::vector<std::pair<Eigen::Matrix3d, FitData>> fit_data;
     std::vector<std::pair<int, int>> fit_constraints;
     fit_data.reserve(_profiles.size());
@@ -230,7 +228,6 @@ void ShapeModel::updateFit(int /*num_iterations*/)
     min.initialize(params, 6*fit_data.size());
     min.set_f(residual);
     min.fit(num_iterations);
-#endif
 }
 
 void ShapeModel::setParameters(std::shared_ptr<ShapeModelParameters> params)

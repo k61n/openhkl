@@ -247,7 +247,7 @@ void PeakCollection::buildShapeModel(sptrDataSet data, const ShapeModelParameter
     std::vector<Peak3D*> fit_peak_list = getPeakList();
     _shape_model->integrate(fit_peak_list, datalist);
 
-    // shape_collection.updateFit(1000); // This does nothing!! - zamaan
+    _shape_model->updateFit(1000); // This does nothing!! - zamaan
     nsxlog(Level::Info, "PeakCollection::buildShapeModel finished");
 }
 
