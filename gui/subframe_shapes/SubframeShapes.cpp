@@ -127,10 +127,10 @@ void SubframeShapes::setInputUp()
         "Background end", "(sigmas) - scaling factor for upper limit of background region");
 
     _build_collection = f.addButton(
-        "Build shape collection",
-        "<font>A shape collection is a collection of averaged peaks attached to a peak"
-        "collection. A shape is the averaged peak shape of a peak and its neighbours within a "
-        "specified cutoff.</font>"); // Rich text to force line break in tooltip
+        "Build shape model",
+        "<font>A shape model is a collection of strong peak shapes, to be averaged within a"
+        "specified cutoff in order to infer the shape of a weak peak.</font>");
+        // Rich text to force line break in tooltip
     _save_shapes =
         f.addButton("Save shape model", "Add the generated shape model to the experiment");
 
@@ -165,7 +165,7 @@ void SubframeShapes::setInputUp()
 
 void SubframeShapes::setComputeShapesUp()
 {
-    auto compute_box = new Spoiler("Compute peak shapes");
+    auto compute_box = new Spoiler("Preview peak shapes");
     GridFiller f(compute_box, true);
 
     _x = f.addDoubleSpinBox("x coordinate", "(pixels) x coordinate of peak shape to preview");
@@ -208,13 +208,13 @@ void SubframeShapes::setComputeShapesUp()
 
 void SubframeShapes::setAssignShapesUp()
 {
-    auto assign_box = new Spoiler("Assign peak shapes");
+    auto assign_box = new Spoiler("Apply shape model");
     GridFiller f(assign_box, true);
     _predicted_combo =
-        f.addPeakCombo(ComboType::PredictedPeaks, "Peak collection to assign shapes to");
-    _shape_combo = f.addShapeCombo("Shape collection");
+        f.addPeakCombo(ComboType::PredictedPeaks, "Target peak collection");
+    _shape_combo = f.addShapeCombo("Shape model");
     _assign_peak_shapes =
-        f.addButton("Assign shapes", "Compute shapes and assign them to peaks in given collection");
+        f.addButton("Apply shape model", "Apply selected shape model to a peak collection");
 
     connect(_assign_peak_shapes, &QPushButton::clicked, this, &SubframeShapes::assignPeakShapes);
 

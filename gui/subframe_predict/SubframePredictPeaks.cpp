@@ -264,7 +264,7 @@ void SubframePredictPeaks::setShapeModelUp()
         "Min. neighbours", "Minimum number of neighbouring shapes to predict peak shape");
     _interpolation_combo = f.addCombo("Interpolation", "Interpolation type for peak shape");
     _apply_shape_model = f.addButton(
-        "Assign peak shapes", "Assign peak shapes from shape collection to a predicted collection");
+        "Apply shape model", "Apply shape model to a predicted peak collection");
 
 
     _peak_end->setMaximum(100);
