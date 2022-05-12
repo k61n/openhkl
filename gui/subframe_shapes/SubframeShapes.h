@@ -20,7 +20,7 @@
 #include "core/shape/IPeakIntegrator.h"
 #include "core/shape/PeakCollection.h"
 #include "core/shape/Profile3D.h"
-#include "core/shape/ShapeCollection.h"
+#include "core/shape/ShapeModel.h"
 #include "gui/items/PeakCollectionItem.h"
 #include "gui/models/PeakCollectionModel.h"
 #include "gui/utility/PredictedPeakComboBox.h"
@@ -94,7 +94,7 @@ class SubframeShapes : public QWidget {
     void changeSelected(PeakItemGraphic* peak_graphic);
 
     //! Generate the shape collection
-    void buildShapeCollection();
+    void buildShapeModel();
     //! Compute the mean profile at the given coordinates
     void computeProfile();
     //! Generate a peak for previewin in DetectorScene
@@ -165,7 +165,7 @@ class SubframeShapes : public QWidget {
     PeakCollectionItem _peak_collection_item;
     PeakCollectionModel _peak_collection_model;
 
-    nsx::ShapeCollection _shape_collection;
+    nsx::ShapeModel _shape_model;
     nsx::Profile3D _profile;
     nsx::Peak3D* _current_peak;
     std::unique_ptr<nsx::Peak3D> _preview_peak;

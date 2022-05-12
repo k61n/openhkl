@@ -17,7 +17,7 @@
 
 #include <QSignalBlocker>
 
-ShapesList ShapeComboBox::_shape_collections;
+ShapesList ShapeComboBox::_shape_models;
 QVector<ShapeComboBox*> ShapeComboBox::_all_combos;
 
 ShapeComboBox::ShapeComboBox(QWidget* parent) : QComboBox(parent)
@@ -25,18 +25,18 @@ ShapeComboBox::ShapeComboBox(QWidget* parent) : QComboBox(parent)
     _all_combos.push_back(this);
 }
 
-void ShapeComboBox::addShapeCollection(nsx::ShapeCollection* shapes)
+void ShapeComboBox::addShapeModel(nsx::ShapeModel* shapes)
 {
     QSignalBlocker blocker(this);
     addItem(QString::fromStdString(shapes->name()));
-    _shape_collections.push_back(shapes);
+    _shape_models.push_back(shapes);
     refresh();
 }
 
-void ShapeComboBox::addShapeCollections(const ShapesList& shape_list)
+void ShapeComboBox::addShapeModels(const ShapesList& shape_list)
 {
     for (auto shapes : shape_list)
-        addShapeCollection(shapes);
+        addShapeModel(shapes);
 }
 
 //! Clear all elements
@@ -45,15 +45,15 @@ void ShapeComboBox::clearAll()
     QSignalBlocker blocker(this);
     _current = currentText();
     clear();
-    _shape_collections.clear();
+    _shape_models.clear();
 }
 
 //! Return a pointer to the current unit shapes
-nsx::ShapeCollection* ShapeComboBox::currentShapes() const
+nsx::ShapeModel* ShapeComboBox::currentShapes() const
 {
-    if (count() != _shape_collections.size())
+    if (count() != _shape_models.size())
         throw std::runtime_error("ShapeComboBox needs refreshing");
-    return _shape_collections.at(currentIndex());
+    return _shape_models.at(currentIndex());
 }
 
 void ShapeComboBox::refresh()
@@ -61,7 +61,7 @@ void ShapeComboBox::refresh()
     QSignalBlocker blocker(this);
     _current = currentText();
     clear();
-    for (nsx::ShapeCollection* shapes : _shape_collections)
+    for (nsx::ShapeModel* shapes : _shape_models)
         addItem(QString::fromStdString(shapes->name()));
     setCurrentText(_current);
 }

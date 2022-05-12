@@ -23,7 +23,6 @@
 #include "gui/graphics/DetectorScene.h"
 #include "gui/models/Project.h"
 #include "gui/models/Session.h"
-#include "gui/subframe_predict/ShapeCollectionDialog.h"
 #include "gui/subwindows/DetectorWindow.h"
 #include "gui/utility/DataComboBox.h"
 #include "gui/utility/GridFiller.h"
@@ -412,7 +411,7 @@ void SubframeIntegrate::runIntegration()
         nsx::Integrator* integrator = expt->integrator();
         nsx::sptrDataSet data = _data_combo->currentData();
         nsx::PeakCollection* peaks_to_integrate = _peak_combo->currentPeakCollection();
-        nsx::ShapeCollection* shapes = _shape_combo->currentShapes();
+        nsx::ShapeModel* shapes = _shape_combo->currentShapes();
 
         setIntegrationParameters();
         auto* params = gSession->currentProject()->experiment()->integrator()->parameters();

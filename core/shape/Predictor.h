@@ -17,7 +17,7 @@
 
 #include "base/utils/ProgressHandler.h"
 #include "core/shape/IPeakIntegrator.h"
-#include "core/shape/ShapeCollection.h"
+#include "core/shape/ShapeModel.h"
 
 #include <vector>
 

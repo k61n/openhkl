@@ -25,7 +25,7 @@ namespace nsx {
 PeakCollection::PeakCollection()
     : _name{nsx::kw_peakCollectionDefaultName}
     , _type{nsx::listtype::FOUND}
-    , _shape_collection(nullptr)
+    , _shape_model(nullptr)
     , _indexed(false)
     , _integrated(false)
 {
@@ -34,7 +34,7 @@ PeakCollection::PeakCollection()
 PeakCollection::PeakCollection(const std::string& name, nsx::listtype type)
     : _name{std::string(name)}
     , _type{type}
-    , _shape_collection(nullptr)
+    , _shape_model(nullptr)
     , _indexed(false)
     , _integrated(false)
 {
@@ -143,10 +143,10 @@ MetaData& PeakCollection::metadata()
     return _metadata;
 }
 
-void PeakCollection::setShapeCollection(std::unique_ptr<ShapeCollection>& shape_collection)
+void PeakCollection::setShapeModel(std::unique_ptr<ShapeModel>& shape_collection)
 {
-    resetShapeCollection();
-    _shape_collection = std::move(shape_collection);
+    resetShapeModel();
+    _shape_model = std::move(shape_collection);
 }
 
 void PeakCollection::setName(const std::string& name)
@@ -232,23 +232,23 @@ int PeakCollection::countEnabled() const
     return nenabled;
 }
 
-void PeakCollection::buildShapeCollection(sptrDataSet data, const ShapeCollectionParameters& params)
+void PeakCollection::buildShapeModel(sptrDataSet data, const ShapeModelParameters& params)
 {
-    nsxlog(Level::Info, "PeakCollection::buildShapeCollection");
-    _shape_collection =
-        std::make_unique<ShapeCollection>(std::make_shared<ShapeCollectionParameters>(params));
-    _shape_collection->parameters()->log(Level::Info);
+    nsxlog(Level::Info, "PeakCollection::buildShapeModel");
+    _shape_model =
+        std::make_unique<ShapeModel>(std::make_shared<ShapeModelParameters>(params));
+    _shape_model->parameters()->log(Level::Info);
     computeSigmas();
-    _shape_collection->parameters()->sigma_d = _sigma_d;
-    _shape_collection->parameters()->sigma_m = _sigma_m;
+    _shape_model->parameters()->sigma_d = _sigma_d;
+    _shape_model->parameters()->sigma_m = _sigma_m;
 
     std::set<sptrDataSet> datalist;
     datalist.insert(data);
     std::vector<Peak3D*> fit_peak_list = getPeakList();
-    _shape_collection->integrate(fit_peak_list, datalist);
+    _shape_model->integrate(fit_peak_list, datalist);
 
     // shape_collection.updateFit(1000); // This does nothing!! - zamaan
-    nsxlog(Level::Info, "PeakCollection::buildShapeCollection finished");
+    nsxlog(Level::Info, "PeakCollection::buildShapeModel finished");
 }
 
 void PeakCollection::setUnitCell(const sptrUnitCell& cell)

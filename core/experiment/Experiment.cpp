@@ -227,10 +227,10 @@ void Experiment::autoIndex(PeakCollection* peaks)
     _peak_handler->removePeakCollection(collection_name);
 }
 
-void Experiment::buildShapeCollection(
-    PeakCollection* peaks, sptrDataSet data, const ShapeCollectionParameters& params)
+void Experiment::buildShapeModel(
+    PeakCollection* peaks, sptrDataSet data, const ShapeModelParameters& params)
 {
-    nsxlog(Level::Info, "Experiment::buildShapeCollection");
+    nsxlog(Level::Info, "Experiment::buildShapeModel");
     params.log(Level::Info);
     peaks->computeSigmas();
 
@@ -248,12 +248,12 @@ void Experiment::buildShapeCollection(
     fit_peaks.populateFromFiltered(peaks);
 
     if (fit_peaks.numberOfPeaks() == 0) {
-        nsxlog(Level::Info, "Experiment::buildShapeCollection: no fit peaks found");
+        nsxlog(Level::Info, "Experiment::buildShapeModel: no fit peaks found");
         return;
     }
 
     nsxlog(
-        Level::Info, "Experiment::buildShapeCollection: ", fit_peaks.numberOfPeaks(), " / ",
+        Level::Info, "Experiment::buildShapeModel: ", fit_peaks.numberOfPeaks(), " / ",
         peaks->numberOfPeaks(), " fit peaks");
 
     nsx::AABB aabb;
@@ -268,14 +268,14 @@ void Experiment::buildShapeCollection(
         aabb.setUpper(0.5 * dx);
     }
 
-    std::unique_ptr<ShapeCollection> shapes = std::make_unique<ShapeCollection>();
+    std::unique_ptr<ShapeModel> shapes = std::make_unique<ShapeModel>();
 
     std::vector<Peak3D*> fit_peak_list = fit_peaks.getPeakList();
-    _integrator->integrateShapeCollection(fit_peak_list, data, shapes.get(), aabb, params);
-    peaks->setShapeCollection(shapes);
+    _integrator->integrateShapeModel(fit_peak_list, data, shapes.get(), aabb, params);
+    peaks->setShapeModel(shapes);
 
     // shape_collection.updateFit(1000); // This does nothing!! - zamaan
-    nsxlog(Level::Info, "Experiment::buildShapeCollection finished");
+    nsxlog(Level::Info, "Experiment::buildShapeModel finished");
 }
 
 const UnitCell* Experiment::getAcceptedCell() const
@@ -594,39 +594,39 @@ std::vector<PeakCollection*> Experiment::getPeakCollections()
     return _peak_handler->getPeakCollections();
 }
 
-bool Experiment::addShapeCollection(const std::string& name, const ShapeCollection& shapes)
+bool Experiment::addShapeModel(const std::string& name, const ShapeModel& shapes)
 {
-    return _shape_handler->addShapeCollection(name, shapes);
+    return _shape_handler->addShapeModel(name, shapes);
 }
 
-bool Experiment::hasShapeCollection(const std::string& name) const
+bool Experiment::hasShapeModel(const std::string& name) const
 {
-    return _shape_handler->hasShapeCollection(name);
+    return _shape_handler->hasShapeModel(name);
 }
 
-ShapeCollection* Experiment::getShapeCollection(const std::string name)
+ShapeModel* Experiment::getShapeModel(const std::string name)
 {
-    return _shape_handler->getShapeCollection(name);
+    return _shape_handler->getShapeModel(name);
 }
 
-void Experiment::removeShapeCollection(const std::string& name)
+void Experiment::removeShapeModel(const std::string& name)
 {
-    _shape_handler->removeShapeCollection(name);
+    _shape_handler->removeShapeModel(name);
 }
 
-int Experiment::numShapeCollections() const
+int Experiment::numShapeModels() const
 {
-    return _shape_handler->numShapeCollections();
+    return _shape_handler->numShapeModels();
 }
 
-std::string Experiment::generateShapeCollectionName()
+std::string Experiment::generateShapeModelName()
 {
     return _shape_handler->generateName();
 }
 
-std::vector<ShapeCollection*> Experiment::getShapeCollections()
+std::vector<ShapeModel*> Experiment::getShapeModels()
 {
-    return _shape_handler->getShapeCollections();
+    return _shape_handler->getShapeModels();
 }
 
 } // namespace nsx

@@ -2,8 +2,8 @@
 //
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
-//! @file      gui/subframe_predict/ShapeCollectionDialog.cpp
-//! @brief     Implements class ShapeCollectionDialog
+//! @file      gui/subframe_predict/ShapeModelDialog.cpp
+//! @brief     Implements class ShapeModelDialog
 //!
 //! @homepage  ###HOMEPAGE###
 //! @license   GNU General Public License v3 or higher (see COPYING)
@@ -12,7 +12,7 @@
 //
 //  ***********************************************************************************************
 
-#include "gui/subframe_predict/ShapeCollectionDialog.h"
+#include "gui/subframe_predict/ShapeModelDialog.h"
 
 #include "core/data/DataSet.h"
 #include "core/peak/Peak3D.h"
@@ -20,7 +20,7 @@
 #include "core/shape/PeakCollection.h"
 #include "core/shape/PeakFilter.h"
 #include "core/shape/Profile3D.h"
-#include "core/shape/ShapeCollection.h"
+#include "core/shape/ShapeModel.h"
 #include "gui/MainWin.h" // gGui
 #include "gui/frames/ProgressView.h"
 #include "gui/models/ColorMap.h"
@@ -36,22 +36,22 @@
 #include <QVBoxLayout>
 #include <QtGlobal>
 
-ShapeCollectionDialog::ShapeCollectionDialog(
-    nsx::PeakCollection* peak_collection, std::shared_ptr<nsx::ShapeCollectionParameters> params)
+ShapeModelDialog::ShapeModelDialog(
+    nsx::PeakCollection* peak_collection, std::shared_ptr<nsx::ShapeModelParameters> params)
     : QDialog()
     , _peak_collection_model()
     , _peak_collection_item()
     , _collection_ptr(peak_collection)
     , _params(params)
 {
-    _shape_collection = std::make_unique<nsx::ShapeCollection>();
+    _shape_model = std::make_unique<nsx::ShapeModel>();
 
     setModal(true);
     setSizePolicies();
     setParametersUp();
     setPreviewUp();
     setUpParametrization(peak_collection);
-    grabShapeCollectionParameters();
+    grabShapeModelParameters();
 
     QVBoxLayout* main_layout = new QVBoxLayout(this);
 
@@ -69,12 +69,12 @@ ShapeCollectionDialog::ShapeCollectionDialog(
     main_layout->addLayout(button_layout);
 
 
-    connect(accept_button, &QPushButton::clicked, this, &ShapeCollectionDialog::accept);
+    connect(accept_button, &QPushButton::clicked, this, &ShapeModelDialog::accept);
 
-    connect(reject_button, &QPushButton::clicked, this, &ShapeCollectionDialog::reject);
+    connect(reject_button, &QPushButton::clicked, this, &ShapeModelDialog::reject);
 }
 
-void ShapeCollectionDialog::setUpParametrization(nsx::PeakCollection* peak_collection)
+void ShapeModelDialog::setUpParametrization(nsx::PeakCollection* peak_collection)
 {
     _peaks = peak_collection->getPeakList();
     for (nsx::Peak3D* peak : _peaks)
@@ -87,23 +87,23 @@ void ShapeCollectionDialog::setUpParametrization(nsx::PeakCollection* peak_colle
     _table->setSelectionBehavior(QAbstractItemView::SelectionBehavior::SelectRows);
     _table->setSelectionMode(QAbstractItemView::SelectionMode::SingleSelection);
 
-    connect(_draw_frame, &QSlider::valueChanged, this, &ShapeCollectionDialog::drawFrame);
+    connect(_draw_frame, &QSlider::valueChanged, this, &ShapeModelDialog::drawFrame);
     connect(_table, &QTableView::clicked, [this](QModelIndex index) {
         selectTargetPeak(index.row());
     });
     connect(
         _table->verticalHeader(), &QHeaderView::sectionClicked, this,
-        &ShapeCollectionDialog::selectTargetPeak);
+        &ShapeModelDialog::selectTargetPeak);
 }
 
-void ShapeCollectionDialog::setSizePolicies()
+void ShapeModelDialog::setSizePolicies()
 {
     _size_policy_widgets = new QSizePolicy();
     _size_policy_widgets->setHorizontalPolicy(QSizePolicy::Expanding);
     _size_policy_widgets->setVerticalPolicy(QSizePolicy::Fixed);
 }
 
-void ShapeCollectionDialog::setParametersUp()
+void ShapeModelDialog::setParametersUp()
 {
     // Set up the parameters
     _parameter_widget = new QWidget();
@@ -198,9 +198,9 @@ void ShapeCollectionDialog::setParametersUp()
     tooltip = "(sigmas) - scaling factor for upper limit of background";
     _background_begin->setToolTip(tooltip);
 
-    _build_collection = new QPushButton("Build shape collection");
+    _build_collection = new QPushButton("Build shape model");
     _build_collection->setSizePolicy(*_size_policy_widgets);
-    tooltip = "<font>A shape collection is a collection of averaged peaks attached to a peak \
+    tooltip = "<font>A shape model is a collection of averaged peaks attached to a peak \
         collection. A shape is the averaged peak shape of a peak and its neighbours within a \
         specified cutoff.</font>";
     _build_collection->setToolTip(tooltip);
@@ -219,10 +219,10 @@ void ShapeCollectionDialog::setParametersUp()
     form->addRow("Background end:", _background_end);
     form->addRow(_build_collection);
 
-    connect(_build_collection, &QPushButton::clicked, this, &ShapeCollectionDialog::build);
+    connect(_build_collection, &QPushButton::clicked, this, &ShapeModelDialog::build);
 }
 
-void ShapeCollectionDialog::setPreviewUp()
+void ShapeModelDialog::setPreviewUp()
 {
     // Set up the preview
     _preview_widget = new QWidget();
@@ -280,7 +280,7 @@ void ShapeCollectionDialog::setPreviewUp()
     tooltip = "Compute mean profile at position (x, y, frame) within specified radius";
     _calculate_mean_profile->setToolTip(tooltip);
     connect(
-        _calculate_mean_profile, &QPushButton::clicked, this, &ShapeCollectionDialog::calculate);
+        _calculate_mean_profile, &QPushButton::clicked, this, &ShapeModelDialog::calculate);
 
     left->addWidget(_calculate_mean_profile);
     horizontal->addLayout(left);
@@ -301,10 +301,10 @@ void ShapeCollectionDialog::setPreviewUp()
     vertical->addLayout(horizontal);
 }
 
-void ShapeCollectionDialog::build()
+void ShapeModelDialog::build()
 {
-    setShapeCollectionParameters();
-    auto* params = _shape_collection->parameters();
+    setShapeModelParameters();
+    auto* params = _shape_model->parameters();
     std::vector<nsx::Peak3D*> fit_peaks;
 
     for (nsx::Peak3D* peak : _peaks) {
@@ -332,19 +332,19 @@ void ShapeCollectionDialog::build()
     ProgressView view(this);
     view.watch(handler);
 
-    _shape_collection->integrate(fit_peaks, _data, handler);
+    _shape_model->integrate(fit_peaks, _data, handler);
 
-    // _shape_collection.updateFit(1000); // This does nothing!! - zamaan
+    // _shape_model.updateFit(1000); // This does nothing!! - zamaan
 }
 
-void ShapeCollectionDialog::calculate()
+void ShapeModelDialog::calculate()
 {
-    setShapeCollectionParameters();
-    auto* params = _shape_collection->parameters();
+    setShapeModelParameters();
+    auto* params = _shape_model->parameters();
 
     const nsx::DetectorEvent ev(_x->value(), _y->value(), _frame->value());
     // update maximum value, used for drawing
-    _profile = _shape_collection->meanProfile(
+    _profile = _shape_model->meanProfile(
         ev, params->neighbour_range_pixels, params->neighbour_range_frames);
     if (!_profile) {
         gGui->statusBar()->showMessage(
@@ -362,7 +362,7 @@ void ShapeCollectionDialog::calculate()
     drawFrame(_draw_frame->value()); // draw the updated frame
 }
 
-void ShapeCollectionDialog::drawFrame(int value)
+void ShapeModelDialog::drawFrame(int value)
 {
     if (!_profile)
         return;
@@ -391,7 +391,7 @@ void ShapeCollectionDialog::drawFrame(int value)
     _graphics->fitInView(0, 0, shape[0], shape[1]);
 }
 
-void ShapeCollectionDialog::selectTargetPeak(int row)
+void ShapeModelDialog::selectTargetPeak(int row)
 {
     const nsx::Peak3D* selected_peak = _peak_collection_item.peakCollection()->getPeak(row);
 
@@ -402,15 +402,15 @@ void ShapeCollectionDialog::selectTargetPeak(int row)
     _frame->setValue(center[2]);
 }
 
-void ShapeCollectionDialog::accept()
+void ShapeModelDialog::accept()
 {
-    _collection_ptr->setShapeCollection(_shape_collection);
+    _collection_ptr->setShapeModel(_shape_model);
     QDialog::accept();
 }
 
-void ShapeCollectionDialog::setShapeCollectionParameters()
+void ShapeModelDialog::setShapeModelParameters()
 {
-    auto* params = _shape_collection->parameters();
+    auto* params = _shape_model->parameters();
 
     params->d_min = _min_d->value();
     params->d_max = _max_d->value();
@@ -428,9 +428,9 @@ void ShapeCollectionDialog::setShapeCollectionParameters()
     params->sigma_d = _sigma_D->value();
 }
 
-void ShapeCollectionDialog::grabShapeCollectionParameters()
+void ShapeModelDialog::grabShapeModelParameters()
 {
-    auto* params = _shape_collection->parameters();
+    auto* params = _shape_model->parameters();
     _collection_ptr->computeSigmas();
 
     _min_d->setValue(params->d_min);
@@ -449,9 +449,9 @@ void ShapeCollectionDialog::grabShapeCollectionParameters()
     _sigma_D->setValue(_collection_ptr->sigmaD());
 }
 
-void ShapeCollectionDialog::toggleUnsafeWidgets()
+void ShapeModelDialog::toggleUnsafeWidgets()
 {
     _calculate_mean_profile->setEnabled(true);
-    if (!_shape_collection)
+    if (!_shape_model)
         _calculate_mean_profile->setEnabled(false);
 }

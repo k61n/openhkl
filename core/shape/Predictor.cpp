@@ -2,8 +2,8 @@
 //
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
-//! @file      core/shape/ShapeCollection.cpp
-//! @brief     Implements classes PeakInterpolation, ShapeCollection
+//! @file      core/shape/ShapeModel.cpp
+//! @brief     Implements classes PeakInterpolation, ShapeModel
 //!
 //! @homepage  ###HOMEPAGE###
 //! @license   GNU General Public License v3 or higher (see COPYING)

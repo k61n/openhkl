@@ -28,7 +28,7 @@ class MeanBackgroundIntegrator : public IPeakIntegrator {
     MeanBackgroundIntegrator() = default;
     //! Integrate a peak
     bool compute(
-        Peak3D*, ShapeCollection* shape_collection, const IntegrationRegion& region) override;
+        Peak3D*, ShapeModel* shape_collection, const IntegrationRegion& region) override;
 };
 
 /*! @}*/

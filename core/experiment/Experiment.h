@@ -171,19 +171,19 @@ class Experiment {
 
     // ShapeHandler
     //! Add a peak collection
-    bool addShapeCollection(const std::string& name, const ShapeCollection& shapes);
+    bool addShapeModel(const std::string& name, const ShapeModel& shapes);
     //! Returns true if the experiment has named peak collection
-    bool hasShapeCollection(const std::string& name) const;
+    bool hasShapeModel(const std::string& name) const;
     //! Returns the named peak collection
-    ShapeCollection* getShapeCollection(const std::string name);
+    ShapeModel* getShapeModel(const std::string name);
     // !Remove a shape collection from the experiment
-    void removeShapeCollection(const std::string& name);
+    void removeShapeModel(const std::string& name);
     //! Get the number of shape collections
-    int numShapeCollections() const;
+    int numShapeModels() const;
     //! Generate name for new peak collection
-    std::string generateShapeCollectionName();
+    std::string generateShapeModelName();
     //! Get a vector of pointers to peak collections
-    std::vector<ShapeCollection*> getShapeCollections();
+    std::vector<ShapeModel*> getShapeModels();
 
     // Instrument state handler
     //! Add a set of instrment states
@@ -238,8 +238,8 @@ class Experiment {
     //! Get a pointer to the predictor
     Predictor* predictor() { return _predictor.get(); };
     //! Construct the collection used to fit the shapes of predicted peaks
-    void buildShapeCollection(
-        PeakCollection* peaks, sptrDataSet data, const ShapeCollectionParameters& params);
+    void buildShapeModel(
+        PeakCollection* peaks, sptrDataSet data, const ShapeModelParameters& params);
     //! Get a pointer to the refiner
     Refiner* refiner() { return _refiner.get(); };
     //! Refine unit cell and instrument parameters

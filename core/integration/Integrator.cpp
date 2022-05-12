@@ -24,7 +24,7 @@
 #include "core/integration/Profile3DIntegrator.h"
 #include "core/integration/ShapeIntegrator.h"
 #include "core/shape/PeakCollection.h"
-#include "core/shape/ShapeCollection.h"
+#include "core/shape/ShapeModel.h"
 
 namespace nsx {
 
@@ -73,7 +73,7 @@ void Integrator::integratePeaks(
         "Integrator::integratePeaks: integrating PeakCollection '" + peaks->name() + "'");
     IPeakIntegrator* integrator = getIntegrator(integrator_type);
     integrator->setNNumors(1);
-    integrator->integrate(peaks->getPeakList(), peaks->shapeCollection(), data, 1);
+    integrator->integrate(peaks->getPeakList(), peaks->shapeModel(), data, 1);
     peaks->setIntegrated(true);
 
     _n_peaks = 0;
@@ -86,7 +86,7 @@ void Integrator::integratePeaks(
 }
 
 void Integrator::integratePeaks(
-    sptrDataSet data, PeakCollection* peaks, IntegrationParameters* params, ShapeCollection* shapes)
+    sptrDataSet data, PeakCollection* peaks, IntegrationParameters* params, ShapeModel* shapes)
 {
     nsxlog(
         Level::Info,
@@ -133,11 +133,11 @@ void Integrator::integrateFoundPeaks(PeakFinder* peak_finder)
     peak_finder->setIntegrated(true);
 }
 
-void Integrator::integrateShapeCollection(
-    std::vector<Peak3D*> fit_peaks, sptrDataSet data, ShapeCollection* shape_collection,
-    const AABB& aabb, const ShapeCollectionParameters& params)
+void Integrator::integrateShapeModel(
+    std::vector<Peak3D*> fit_peaks, sptrDataSet data, ShapeModel* shape_collection,
+    const AABB& aabb, const ShapeModelParameters& params)
 {
-    nsxlog(Level::Info, "Integrator::integrateShapeCollection");
+    nsxlog(Level::Info, "Integrator::integrateShapeModel");
     ShapeIntegrator integrator{
         shape_collection, aabb, params.nbins_x, params.nbins_y, params.nbins_z};
     integrator.setNNumors(1);

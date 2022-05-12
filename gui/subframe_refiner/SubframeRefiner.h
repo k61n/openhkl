@@ -18,7 +18,7 @@
 
 #include "core/algo/Refiner.h"
 #include "core/shape/PeakCollection.h"
-#include "core/shape/ShapeCollection.h"
+#include "core/shape/ShapeModel.h"
 #include "gui/items/PeakCollectionItem.h"
 #include "gui/models/PeakCollectionModel.h"
 

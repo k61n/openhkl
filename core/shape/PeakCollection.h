@@ -16,7 +16,7 @@
 #define NSX_CORE_SHAPE_PEAKCOLLECTION_H
 
 #include "core/raw/MetaData.h"
-#include "core/shape/ShapeCollection.h"
+#include "core/shape/ShapeModel.h"
 
 namespace nsx {
 
@@ -100,11 +100,11 @@ class PeakCollection {
     MetaData& metadata();
 
     //! Set the shape collection needed for profile integration
-    void setShapeCollection(std::unique_ptr<ShapeCollection>& shape_collection);
+    void setShapeModel(std::unique_ptr<ShapeModel>& shape_collection);
     //! Clear the shape collection
-    void resetShapeCollection() { _shape_collection.reset(nullptr); };
+    void resetShapeModel() { _shape_model.reset(nullptr); };
     //! Get the shape collection
-    ShapeCollection* shapeCollection() const { return _shape_collection.get(); };
+    ShapeModel* shapeModel() const { return _shape_model.get(); };
 
     //! Count selected peaks
     int countSelected() const;
@@ -112,7 +112,7 @@ class PeakCollection {
     int countEnabled() const;
 
     //! Build shape collection from strong peaks in this peak collection
-    void buildShapeCollection(sptrDataSet data, const ShapeCollectionParameters& params);
+    void buildShapeModel(sptrDataSet data, const ShapeModelParameters& params);
 
 
     bool isIndexed() const { return _indexed; }
@@ -134,7 +134,7 @@ class PeakCollection {
     std::string _file_name;
     std::string _parent;
 
-    std::unique_ptr<ShapeCollection> _shape_collection;
+    std::unique_ptr<ShapeModel> _shape_model;
 
     //! Beam divergence sigma
     double _sigma_d;

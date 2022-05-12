@@ -46,7 +46,7 @@ class ShapeComboBox;
 
 namespace nsx {
 struct PredictionParameters;
-struct ShapeCollectionParameters;
+struct ShapeModelParameters;
 }
 
 //! Frame containing interface for predicting peaks from unit cell
@@ -65,7 +65,7 @@ class SubframePredictPeaks : public QWidget {
     //! Get refiner parameters
     void grabRefinerParameters();
     //! Get shape collection parameters
-    void grabShapeCollectionParameters();
+    void grabShapeModelParameters();
 
  public slots:
     void onBeamPosChanged(QPointF pos);
@@ -100,7 +100,7 @@ class SubframePredictPeaks : public QWidget {
     //! Set prediction parameters
     void setPredictorParameters();
     //! Set shape collection parameters
-    void setShapeCollectionParameters();
+    void setShapeModelParameters();
     //! Adjust position of the visualised direct beam when spin box is changed
     void adjustDirectBeam();
     //! Allow the user to manual input the initial direct beam position
@@ -137,7 +137,7 @@ class SubframePredictPeaks : public QWidget {
     //! Flag to check whether shapes have been assigned to predicted peaks
     bool _shapes_assigned;
     //! Shape collection paramters
-    std::shared_ptr<nsx::ShapeCollectionParameters> _shape_params;
+    std::shared_ptr<nsx::ShapeModelParameters> _shape_params;
     //! Saved direct beam positions
     std::vector<nsx::DetectorEvent> _direct_beam_events;
     //! Current direct beam positions

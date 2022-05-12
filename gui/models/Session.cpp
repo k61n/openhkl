@@ -364,7 +364,7 @@ void Session::onExperimentChanged()
     gGui->indexer->grabIndexerParameters();
     gGui->predictor->grabPredictorParameters();
     gGui->predictor->grabRefinerParameters();
-    gGui->predictor->grabShapeCollectionParameters();
+    gGui->predictor->grabShapeModelParameters();
     gGui->refiner->grabRefinerParameters();
     gGui->integrator->grabIntegrationParameters();
     gGui->merger->grabMergeParameters();
@@ -401,9 +401,9 @@ void Session::onUnitCellChanged()
 
 void Session::onShapesChanged()
 {
-    ShapesList shape_list = currentProject()->experiment()->getShapeCollections();
+    ShapesList shape_list = currentProject()->experiment()->getShapeModels();
     _shape_combo->clearAll();
-    _shape_combo->addShapeCollections(shape_list);
+    _shape_combo->addShapeModels(shape_list);
     _shape_combo->refreshAll();
 }
 

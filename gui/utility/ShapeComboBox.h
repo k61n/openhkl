@@ -15,16 +15,16 @@
 #ifndef NSX_GUI_UTILITY_SHAPECOMBO_H
 #define NSX_GUI_UTILITY_SHAPECOMBO_H
 
-#include "core/shape/ShapeCollection.h"
+#include "core/shape/ShapeModel.h"
 
 #include <QComboBox>
 
 namespace nsx
 {
-class ShapeCollection;
+class ShapeModel;
 }
 
-using ShapesList = std::vector<nsx::ShapeCollection*>;
+using ShapesList = std::vector<nsx::ShapeModel*>;
 
 //! A QComboBox that that is synchronised with all other QComboBoxes of the same type
 class ShapeComboBox : public QComboBox {
@@ -34,16 +34,16 @@ class ShapeComboBox : public QComboBox {
     ShapeComboBox(QWidget* parent = nullptr);
 
     //! Add a cell via its pointer
-    void addShapeCollection(nsx::ShapeCollection* shapes);
+    void addShapeModel(nsx::ShapeModel* shapes);
 
     //! Add a list of unit cells
-    void addShapeCollections(const ShapesList& shapes_list);
+    void addShapeModels(const ShapesList& shapes_list);
 
     //! Clear all elements
     void clearAll();
 
     //! Return a pointer to the current unit cell
-    nsx::ShapeCollection* currentShapes() const;
+    nsx::ShapeModel* currentShapes() const;
 
     //! Refresh the combo box text
     void refresh();
@@ -53,7 +53,7 @@ class ShapeComboBox : public QComboBox {
 
  private:
     //! Index-sorted list of pointers to unit cells
-    static ShapesList _shape_collections;
+    static ShapesList _shape_models;
     //! Current unit cell
     QString _current;
     //! Vector of all instances to refresh all in one call

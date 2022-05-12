@@ -18,14 +18,14 @@
 #include <string>
 #include <vector>
 
-#include "core/shape/ShapeCollection.h"
+#include "core/shape/ShapeModel.h"
 
 namespace nsx {
 
 
 class Peak3D;
 
-using ShapeCollectionMap = std::map<std::string, std::unique_ptr<ShapeCollection>>;
+using ShapeModelMap = std::map<std::string, std::unique_ptr<ShapeModel>>;
 
 class ShapeHandler {
 
@@ -34,29 +34,29 @@ class ShapeHandler {
     ~ShapeHandler();
 
     //! Get a pointer to the map of shape collections
-    const ShapeCollectionMap* getShapeCollectionMap() const;
+    const ShapeModelMap* getShapeModelMap() const;
     //! Add a shape collection
-    bool addShapeCollection(const std::string& name, const nsx::ShapeCollection& shapes);
+    bool addShapeModel(const std::string& name, const nsx::ShapeModel& shapes);
     //! Add an empty shape collection
     bool addEmptyCollection(const std::string& name);
     //! Returns true if the experiment has named shape collection
-    bool hasShapeCollection(const std::string& name) const;
+    bool hasShapeModel(const std::string& name) const;
     //! Returns the named shape collection
-    ShapeCollection* getShapeCollection(const std::string name);
+    ShapeModel* getShapeModel(const std::string name);
     // !Remove a shape collection from the experiment
-    void removeShapeCollection(const std::string& name);
+    void removeShapeModel(const std::string& name);
     //! Get a vector of shape collection names from the handler
     std::vector<std::string> getCollectionNames() const;
     //! Get the number of shape collections
-    int numShapeCollections() const { return _shape_collections.size(); };
+    int numShapeModels() const { return _shape_models.size(); };
     //! Generate name for new shape collection
     std::string generateName();
     //! Get a vector of pointers to shape collections
-    std::vector<ShapeCollection*> getShapeCollections();
+    std::vector<ShapeModel*> getShapeModels();
 
  private:
     //! Map of shape collections in Experiment
-    ShapeCollectionMap _shape_collections;
+    ShapeModelMap _shape_models;
 };
 
 } // namespace nsx

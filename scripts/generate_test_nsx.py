@@ -131,10 +131,10 @@ print(f'{npeaks} predicted')
 
 # Generate shapes
 found_peaks.computeSigmas()
-params = nsx.ShapeCollectionParameters()
+params = nsx.ShapeModelParameters()
 params.sigma_d = found_peaks.sigmaD()
 params.sigma_m = found_peaks.sigmaM()
-found_peaks.buildShapeCollection(data, params)
+found_peaks.buildShapeModel(data, params)
 print(f'{found_peaks.shapeCollection().numberOfPeaks()} shapes generated')
 shapes = found_peaks.shapeCollection()
 

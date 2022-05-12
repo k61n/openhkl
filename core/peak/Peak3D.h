@@ -52,7 +52,7 @@ enum class RejectionFlag {
     InvalidCovariance,
     CentreOutOfBounds,
     BadIntegrationFit,
-    NoShapeCollection,
+    NoShapeModel,
     NoISigmaMinimum,
     PredictionUpdateFailure, // from refiner
     ManuallyRejected,

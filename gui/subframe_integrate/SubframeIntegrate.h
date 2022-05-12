@@ -18,7 +18,7 @@
 #include "core/data/DataSet.h"
 #include "core/shape/IPeakIntegrator.h"
 #include "core/shape/PeakCollection.h"
-#include "core/shape/ShapeCollection.h"
+#include "core/shape/ShapeModel.h"
 #include "gui/items/PeakCollectionItem.h"
 #include "gui/models/PeakCollectionModel.h"
 
@@ -140,7 +140,7 @@ class SubframeIntegrate : public QWidget {
     PeakCollectionItem _peak_collection_item;
     PeakCollectionModel _peak_collection_model;
 
-    std::shared_ptr<nsx::ShapeCollectionParameters> _shape_params;
+    std::shared_ptr<nsx::ShapeModelParameters> _shape_params;
 
     const std::map<std::string, nsx::IntegratorType> _integrator_strings{
         {"Pixel sum integrator", nsx::IntegratorType::PixelSum},

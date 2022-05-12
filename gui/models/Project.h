@@ -81,7 +81,7 @@ class Project {
     bool hasPeakCollection() const;
     bool hasInstrumentStateSet() const;
     bool hasUnitCell() const;
-    bool hasShapeCollection() const;
+    bool hasShapeModel() const;
 
         private : std::unique_ptr<nsx::Experiment> _experiment;
 

@@ -36,7 +36,7 @@
 #include "core/integration/PixelSumIntegrator.h"
 #include "core/peak/Peak3D.h"
 #include "core/shape/PeakFilter.h"
-#include "core/shape/ShapeCollection.h"
+#include "core/shape/ShapeModel.h"
 #include "tables/crystal/UnitCell.h"
 
 TEST_CASE("test/integrate/Test_6_12_38.cpp", "")

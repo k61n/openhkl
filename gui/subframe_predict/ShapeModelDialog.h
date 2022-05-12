@@ -2,8 +2,8 @@
 //
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
-//! @file      gui/subframe_predict/ShapeCollectionDialog.h
-//! @brief     Defines class ShapeCollectionDialog
+//! @file      gui/subframe_predict/ShapeModelDialog.h
+//! @brief     Defines class ShapeModelDialog
 //!
 //! @homepage  ###HOMEPAGE###
 //! @license   GNU General Public License v3 or higher (see COPYING)
@@ -20,7 +20,7 @@
 #include "core/data/DataTypes.h"
 #include "core/peak/Peak3D.h"
 #include "core/shape/Profile3D.h"
-#include "core/shape/ShapeCollection.h"
+#include "core/shape/ShapeModel.h"
 #include "gui/items/PeakCollectionItem.h"
 #include "gui/models/ColorMap.h"
 #include "gui/models/PeakCollectionModel.h"
@@ -43,11 +43,11 @@
 #include <QWidget>
 
 //! Dialog for building the shape collection
-class ShapeCollectionDialog : public QDialog {
+class ShapeModelDialog : public QDialog {
  public:
-    ShapeCollectionDialog(
+    ShapeModelDialog(
         nsx::PeakCollection* peak_collection,
-        std::shared_ptr<nsx::ShapeCollectionParameters> params);
+        std::shared_ptr<nsx::ShapeModelParameters> params);
     double getDMin() { return _min_d->value(); };
     double getDMax() { return _max_d->value(); };
 
@@ -68,9 +68,9 @@ class ShapeCollectionDialog : public QDialog {
     //! Once all the gui elements are set up fill them
     void setUpParametrization(nsx::PeakCollection* peak_collection);
     //! Get the parameters
-    void setShapeCollectionParameters();
+    void setShapeModelParameters();
     //! Set the parameters
-    void grabShapeCollectionParameters();
+    void grabShapeModelParameters();
 
     //! Disable unsafe widgets if no data loaded
     void toggleUnsafeWidgets();
@@ -81,13 +81,13 @@ class ShapeCollectionDialog : public QDialog {
     //! The temporary collection
     PeakCollectionItem _peak_collection_item;
 
-    std::unique_ptr<nsx::ShapeCollection> _shape_collection;
+    std::unique_ptr<nsx::ShapeModel> _shape_model;
     nsx::sptrUnitCell _unitCell;
     std::vector<nsx::Peak3D*> _peaks;
     std::set<nsx::sptrDataSet> _data;
     std::optional<nsx::Profile3D> _profile;
     nsx::PeakCollection* _collection_ptr;
-    std::shared_ptr<nsx::ShapeCollectionParameters> _params;
+    std::shared_ptr<nsx::ShapeModelParameters> _params;
     double _maximum;
     ColorMap _cmap;
 

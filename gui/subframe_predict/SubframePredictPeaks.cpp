@@ -27,7 +27,7 @@
 #include "core/shape/IPeakIntegrator.h"
 #include "core/shape/PeakCollection.h"
 #include "core/shape/Predictor.h"
-#include "core/shape/ShapeCollection.h"
+#include "core/shape/ShapeModel.h"
 #include "gui/MainWin.h" // gGui
 #include "gui/connect/Sentinel.h"
 #include "gui/dialogs/ListNameDialog.h"
@@ -37,7 +37,7 @@
 #include "gui/models/Meta.h"
 #include "gui/models/Project.h"
 #include "gui/models/Session.h"
-#include "gui/subframe_predict/ShapeCollectionDialog.h"
+#include "gui/subframe_predict/ShapeModelDialog.h"
 #include "gui/subframe_refiner/SubframeRefiner.h"
 #include "gui/utility/ColorButton.h"
 #include "gui/utility/GridFiller.h"
@@ -111,7 +111,7 @@ SubframePredictPeaks::SubframePredictPeaks()
     main_layout->addWidget(_right_element);
     _set_initial_ki->setChecked(false);
 
-    _shape_params = std::make_shared<nsx::ShapeCollectionParameters>();
+    _shape_params = std::make_shared<nsx::ShapeModelParameters>();
 }
 
 void SubframePredictPeaks::setAdjustBeamUp()
@@ -239,7 +239,7 @@ void SubframePredictPeaks::setParametersUp()
         &SubframePredictPeaks::setPredictorParameters);
     connect(
         gGui->sideBar(), &SideBar::subframeChanged, this,
-        &SubframePredictPeaks::setShapeCollectionParameters);
+        &SubframePredictPeaks::setShapeModelParameters);
 
     _left_layout->addWidget(para_box);
 }
@@ -290,7 +290,7 @@ void SubframePredictPeaks::setShapeModelUp()
         _apply_shape_model, &QPushButton::clicked, this, &SubframePredictPeaks::applyShapeModel);
 
     _left_layout->addWidget(shapes_box);
-    grabShapeCollectionParameters();
+    grabShapeModelParameters();
 }
 
 void SubframePredictPeaks::setPreviewUp()
@@ -354,7 +354,7 @@ void SubframePredictPeaks::refreshAll()
     _peak_combo->refresh();
     grabRefinerParameters();
     grabPredictorParameters();
-    grabShapeCollectionParameters();
+    grabShapeModelParameters();
     refreshPeakTable();
     if (!gSession->currentProject()->hasDataSet())
         return;
@@ -421,7 +421,7 @@ void SubframePredictPeaks::setRefinerParameters()
     }
 }
 
-void SubframePredictPeaks::grabShapeCollectionParameters()
+void SubframePredictPeaks::grabShapeModelParameters()
 {
     if (!gSession->hasProject())
         return;
@@ -435,7 +435,7 @@ void SubframePredictPeaks::grabShapeCollectionParameters()
     _interpolation_combo->setCurrentIndex(static_cast<int>(_shape_params->interpolation));
 }
 
-void SubframePredictPeaks::setShapeCollectionParameters()
+void SubframePredictPeaks::setShapeModelParameters()
 {
     if (!gSession->hasProject())
         return;
@@ -590,9 +590,9 @@ void SubframePredictPeaks::applyShapeModel()
 {
 
     gGui->setReady(false);
-    nsx::ShapeCollection* shapes = _shape_combo->currentShapes();
+    nsx::ShapeModel* shapes = _shape_combo->currentShapes();
 
-    setShapeCollectionParameters();
+    setShapeModelParameters();
 
     nsx::sptrProgressHandler handler(new nsx::ProgressHandler);
     ProgressView progressView(nullptr);

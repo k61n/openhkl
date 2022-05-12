@@ -2,8 +2,8 @@
 //
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
-//! @file      core/shape/ShapeCollection.cpp
-//! @brief     Implements classes PeakInterpolation, ShapeCollection
+//! @file      core/shape/ShapeModel.cpp
+//! @brief     Implements classes PeakInterpolation, ShapeModel
 //!
 //! @homepage  ###HOMEPAGE###
 //! @license   GNU General Public License v3 or higher (see COPYING)
@@ -12,7 +12,7 @@
 //
 //  ***********************************************************************************************
 
-#include "core/shape/ShapeCollection.h"
+#include "core/shape/ShapeModel.h"
 
 #include "base/fit/Minimizer.h"
 #include "base/geometry/Ellipsoid.h"
@@ -35,7 +35,7 @@
 
 namespace nsx {
 
-void ShapeCollectionParameters::log(const Level& level) const
+void ShapeModelParameters::log(const Level& level) const
 {
     IntegrationParameters::log(level);
     nsxlog(level, "Shape Collection parameters:");
@@ -65,7 +65,7 @@ static Eigen::Matrix3d from_cholesky(const std::array<double, 6>& components)
     return L * L.transpose();
 }
 
-//! Helper struct used internally by the shape collection.
+//! Helper struct used internally by the shape model.
 struct FitData {
     //! Sample orientation matrix
     Eigen::Matrix3d Rs;
@@ -115,21 +115,21 @@ struct FitData {
     }
 };
 
-ShapeCollection::ShapeCollection()
+ShapeModel::ShapeModel()
     : _profiles(), _choleskyD(), _choleskyM(), _choleskyS(), _handler(nullptr)
 {
     _choleskyD.fill(1e-6);
     _choleskyM.fill(1e-6);
     _choleskyS.fill(1e-6);
-    _params = std::make_shared<ShapeCollectionParameters>();
+    _params = std::make_shared<ShapeModelParameters>();
 }
 
-ShapeCollection::ShapeCollection(const std::string& name) : ShapeCollection()
+ShapeModel::ShapeModel(const std::string& name) : ShapeModel()
 {
     _name = name;
 }
 
-ShapeCollection::ShapeCollection(std::shared_ptr<ShapeCollectionParameters> params)
+ShapeModel::ShapeModel(std::shared_ptr<ShapeModelParameters> params)
     : _profiles(), _choleskyD(), _choleskyM(), _choleskyS(), _params(params), _handler(nullptr)
 
 {
@@ -165,7 +165,7 @@ static void covariance_helper(
     result = Jd * cov * Jd.transpose();
 }
 
-bool ShapeCollection::addPeak(Peak3D* peak, Profile3D&& profile, Profile1D&& integrated_profile)
+bool ShapeModel::addPeak(Peak3D* peak, Profile3D&& profile, Profile1D&& integrated_profile)
 {
     Eigen::Matrix3d A = peak->shape().inverseMetric();
     Eigen::Matrix3d cov = 0.5 * (A + A.transpose());
@@ -180,7 +180,7 @@ bool ShapeCollection::addPeak(Peak3D* peak, Profile3D&& profile, Profile1D&& int
     return true;
 }
 
-void ShapeCollection::updateFit(int /*num_iterations*/)
+void ShapeModel::updateFit(int /*num_iterations*/)
 {
 #if 0 // TODO restore
 
@@ -233,19 +233,19 @@ void ShapeCollection::updateFit(int /*num_iterations*/)
 #endif
 }
 
-void ShapeCollection::setParameters(std::shared_ptr<ShapeCollectionParameters> params)
+void ShapeModel::setParameters(std::shared_ptr<ShapeModelParameters> params)
 {
     _params.reset();
     _params = params;
 }
 
-Eigen::Matrix3d ShapeCollection::predictCovariance(Peak3D* peak) const
+Eigen::Matrix3d ShapeModel::predictCovariance(Peak3D* peak) const
 {
     FitData f(peak);
     return predictCovariance(f);
 }
 
-Eigen::Matrix3d ShapeCollection::predictCovariance(const FitData& f) const
+Eigen::Matrix3d ShapeModel::predictCovariance(const FitData& f) const
 {
     Eigen::Matrix3d result;
     Eigen::Matrix3d sigmaM = from_cholesky(_choleskyM);
@@ -255,7 +255,7 @@ Eigen::Matrix3d ShapeCollection::predictCovariance(const FitData& f) const
     return result;
 }
 
-double ShapeCollection::meanPearson() const
+double ShapeModel::meanPearson() const
 {
     double sum_pearson = 0;
 
@@ -268,7 +268,7 @@ double ShapeCollection::meanPearson() const
     return sum_pearson / _profiles.size();
 }
 
-std::optional<Profile3D> ShapeCollection::meanProfile(
+std::optional<Profile3D> ShapeModel::meanProfile(
     const DetectorEvent& ev, double radius, double nframes) const
 {
     Profile3D mean;
@@ -286,7 +286,7 @@ std::optional<Profile3D> ShapeCollection::meanProfile(
     return mean;
 }
 
-std::optional<std::vector<Intensity>> ShapeCollection::meanProfile1D(
+std::optional<std::vector<Intensity>> ShapeModel::meanProfile1D(
     const DetectorEvent& ev, double radius, double nframes) const
 {
     auto neighbors = findNeighbors(ev, radius, nframes);
@@ -308,7 +308,7 @@ std::optional<std::vector<Intensity>> ShapeCollection::meanProfile1D(
     return mean_profile;
 }
 
-std::optional<std::vector<Peak3D*>> ShapeCollection::findNeighbors(
+std::optional<std::vector<Peak3D*>> ShapeModel::findNeighbors(
     const DetectorEvent& ev, double radius, double nframes) const
 {
     std::vector<Peak3D*> neighbors;
@@ -330,7 +330,7 @@ std::optional<std::vector<Peak3D*>> ShapeCollection::findNeighbors(
     return neighbors;
 }
 
-std::optional<Eigen::Matrix3d> ShapeCollection::meanCovariance(
+std::optional<Eigen::Matrix3d> ShapeModel::meanCovariance(
     Peak3D* reference_peak, double radius, double nframes, size_t min_neighbors,
     PeakInterpolation interpolation) const
 {
@@ -393,10 +393,10 @@ std::optional<Eigen::Matrix3d> ShapeCollection::meanCovariance(
     return JI * cov * JI.transpose();
 }
 
-void ShapeCollection::setPredictedShapes(PeakCollection* peaks, PeakInterpolation interpolation)
+void ShapeModel::setPredictedShapes(PeakCollection* peaks, PeakInterpolation interpolation)
 {
     nsxlog(
-        Level::Info, "ShapeCollection: Computing shapes of ", peaks->numberOfPeaks(),
+        Level::Info, "ShapeModel: Computing shapes of ", peaks->numberOfPeaks(),
         " calculated peaks");
 
     int count = 0;
@@ -427,40 +427,40 @@ void ShapeCollection::setPredictedShapes(PeakCollection* peaks, PeakInterpolatio
             _handler->setProgress(progress);
         }
     }
-    nsxlog(Level::Info, "ShapeCollection: finished computing shapes");
+    nsxlog(Level::Info, "ShapeModel: finished computing shapes");
 }
 
-std::array<double, 6> ShapeCollection::choleskyD() const
+std::array<double, 6> ShapeModel::choleskyD() const
 {
     return _choleskyD;
 }
 
-std::array<double, 6> ShapeCollection::choleskyM() const
+std::array<double, 6> ShapeModel::choleskyM() const
 {
     return _choleskyM;
 }
 
-std::array<double, 6> ShapeCollection::choleskyS() const
+std::array<double, 6> ShapeModel::choleskyS() const
 {
     return _choleskyS;
 }
 
-std::map<Peak3D*, std::pair<Profile3D, Profile1D>> ShapeCollection::profiles() const
+std::map<Peak3D*, std::pair<Profile3D, Profile1D>> ShapeModel::profiles() const
 {
     return _profiles;
 }
 
-ShapeCollectionParameters* ShapeCollection::parameters()
+ShapeModelParameters* ShapeModel::parameters()
 {
     return _params.get();
 }
 
-bool ShapeCollection::detectorCoords() const
+bool ShapeModel::detectorCoords() const
 {
     return !_params->kabsch_coords;
 }
 
-AABB ShapeCollection::getAABB()
+AABB ShapeModel::getAABB()
 {
     AABB aabb;
     if (_params->kabsch_coords) {
@@ -475,10 +475,10 @@ AABB ShapeCollection::getAABB()
     return aabb;
 }
 
-void ShapeCollection::integrate(
+void ShapeModel::integrate(
     std::vector<Peak3D*> peaks, std::set<nsx::sptrDataSet> datalist, sptrProgressHandler handler)
 {
-    nsxlog(Level::Info, "ShapeCollection::integrate: integrating ", peaks.size(), " peaks");
+    nsxlog(Level::Info, "ShapeModel::integrate: integrating ", peaks.size(), " peaks");
     ShapeIntegrator integrator(
         this, getAABB(), _params->nbins_x, _params->nbins_y, _params->nbins_z);
     nsx::IntegrationParameters int_params{};
@@ -494,10 +494,10 @@ void ShapeCollection::integrate(
         integrator.integrate(peaks, this, data, n_numor);
         ++n_numor;
     }
-    nsxlog(Level::Info, "ShapeCollection::integrate: finished integrating shapes");
+    nsxlog(Level::Info, "ShapeModel::integrate: finished integrating shapes");
 }
 
-void ShapeCollection::setHandler(sptrProgressHandler handler)
+void ShapeModel::setHandler(sptrProgressHandler handler)
 {
     _handler = handler;
 }

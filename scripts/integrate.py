@@ -44,7 +44,7 @@ def get_shapes(data, peaks, params):
     peaks.computeSigmas()
     params.sigma_d = peaks.sigmaD()
     params.sigma_m = peaks.sigmaM()
-    peaks.buildShapeCollection(data, params)
+    peaks.buildShapeModel(data, params)
     print(f'{peaks.shapeCollection().numberOfPeaks()} shapes generated')
     return peaks.shapeCollection()
 
@@ -55,7 +55,7 @@ def integrate(integrator_type, data, peaks, shapes, params):
 
 
 print('Generating shapes...')
-params = nsx.ShapeCollectionParameters()
+params = nsx.ShapeModelParameters()
 shapes = get_shapes(data, found_peaks, params)
 
 print('Assigning peak shapes...')

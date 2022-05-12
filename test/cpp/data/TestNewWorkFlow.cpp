@@ -38,7 +38,7 @@
 #include "core/peak/Qs2Events.h"
 #include "core/shape/IPeakIntegrator.h"
 #include "core/shape/PeakFilter.h"
-#include "core/shape/ShapeCollection.h"
+#include "core/shape/ShapeModel.h"
 
 //#define OUTPUT_INTERMEDIATE 1
 

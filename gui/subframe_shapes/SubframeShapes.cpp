@@ -86,7 +86,7 @@ void SubframeShapes::setInputUp()
 
     _data_combo = f.addDataCombo("Data set");
     _peak_combo = f.addPeakCombo(
-        ComboType::PeakCollection, "Peaks for shapes", "Used to build shape collection");
+        ComboType::PeakCollection, "Peaks for shapes", "Used to build shape model");
 
     _nx = f.addSpinBox("histogram bins x", "Number of histogram bins in x direction");
     _ny = f.addSpinBox("histogram bins y", "Number of histogram bins in y direction");
@@ -157,7 +157,7 @@ void SubframeShapes::setInputUp()
     _bkg_end->setMaximum(100);
     _bkg_end->setSingleStep(0.1);
 
-    connect(_build_collection, &QPushButton::clicked, this, &SubframeShapes::buildShapeCollection);
+    connect(_build_collection, &QPushButton::clicked, this, &SubframeShapes::buildShapeModel);
     connect(_save_shapes, &QPushButton::clicked, this, &SubframeShapes::saveShapes);
 
     _left_layout->addWidget(input_box);
@@ -318,7 +318,7 @@ void SubframeShapes::refreshAll()
 
 void SubframeShapes::grabShapeParameters()
 {
-    auto* params = _shape_collection.parameters();
+    auto* params = _shape_model.parameters();
     _peak_combo->currentPeakCollection()->computeSigmas();
 
     _min_d->setValue(params->d_min);
@@ -343,7 +343,7 @@ void SubframeShapes::setShapeParameters()
     if (!gSession->hasProject())
         return;
 
-    auto* params = _shape_collection.parameters();
+    auto* params = _shape_model.parameters();
 
     params->d_min = _min_d->value();
     params->d_max = _max_d->value();
@@ -399,11 +399,11 @@ void SubframeShapes::setPreviewUp()
     _left_layout->addWidget(preview_spoiler);
 }
 
-void SubframeShapes::buildShapeCollection()
+void SubframeShapes::buildShapeModel()
 {
     gGui->setReady(false);
     setShapeParameters();
-    auto* params = _shape_collection.parameters();
+    auto* params = _shape_model.parameters();
     std::vector<nsx::Peak3D*> fit_peaks;
 
     for (nsx::Peak3D* peak : _peak_combo->currentPeakCollection()->getPeakList()) {
@@ -429,10 +429,10 @@ void SubframeShapes::buildShapeCollection()
     for (auto dataset : gSession->currentProject()->experiment()->getAllData())
         data.insert(dataset);
 
-    _shape_collection.integrate(fit_peaks, data, handler);
-    // _shape_collection.updateFit(1000); // This does nothing!! - zamaan
+    _shape_model.integrate(fit_peaks, data, handler);
+    // _shape_model.updateFit(1000); // This does nothing!! - zamaan
     gGui->statusBar()->showMessage(
-        QString::number(_shape_collection.numberOfPeaks()) + " shapes generated");
+        QString::number(_shape_model.numberOfPeaks()) + " shapes generated");
     toggleUnsafeWidgets();
     gGui->setReady(true);
 }
@@ -441,10 +441,10 @@ void SubframeShapes::computeProfile()
 {
     setShapeParameters();
 
-    auto* params = _shape_collection.parameters();
+    auto* params = _shape_model.parameters();
     const nsx::DetectorEvent ev(_x->value(), _y->value(), _frame->value());
 
-    std::optional<nsx::Profile3D> profile = _shape_collection.meanProfile(
+    std::optional<nsx::Profile3D> profile = _shape_model.meanProfile(
         ev, params->neighbour_range_pixels, params->neighbour_range_frames);
     if (!profile) {
         return;
@@ -488,11 +488,11 @@ void SubframeShapes::computeProfile()
 void SubframeShapes::getPreviewPeak(nsx::Peak3D* selected_peak)
 {
     setShapeParameters();
-    auto* params = _shape_collection.parameters();
+    auto* params = _shape_model.parameters();
     int interpol = _interpolation_combo->currentIndex();
     nsx::PeakInterpolation peak_interpolation = static_cast<nsx::PeakInterpolation>(interpol);
 
-    auto cov = _shape_collection.meanCovariance(
+    auto cov = _shape_model.meanCovariance(
         selected_peak, params->neighbour_range_pixels, params->neighbour_range_frames,
         params->min_n_neighbors, peak_interpolation);
     if (cov) {
@@ -507,7 +507,7 @@ void SubframeShapes::saveShapes()
     if (!gSession->hasProject())
         return;
 
-    std::string suggestion = gSession->currentProject()->experiment()->generateShapeCollectionName();
+    std::string suggestion = gSession->currentProject()->experiment()->generateShapeModelName();
     std::unique_ptr<ListNameDialog> dlg =
         std::make_unique<ListNameDialog>(QString::fromStdString(suggestion));
     dlg->exec();
@@ -515,13 +515,13 @@ void SubframeShapes::saveShapes()
         return;
     if (dlg->result() == QDialog::Rejected)
         return;
-    if (!gSession->currentProject()->experiment()->addShapeCollection(
-            dlg->listName().toStdString(), _shape_collection)) {
+    if (!gSession->currentProject()->experiment()->addShapeModel(
+            dlg->listName().toStdString(), _shape_model)) {
         QMessageBox::warning(
-            this, "Unable to add ShapeCollection", "Collection with this name already exists!");
+            this, "Unable to add ShapeModel", "Collection with this name already exists!");
         return;
     }
-    std::string name = gSession->currentProject()->experiment()->getShapeCollections()[0]->name();
+    std::string name = gSession->currentProject()->experiment()->getShapeModels()[0]->name();
     gSession->onShapesChanged();
     toggleUnsafeWidgets();
 }
@@ -572,12 +572,12 @@ void SubframeShapes::toggleUnsafeWidgets()
     if (gSession->currentProject()->hasPeakCollection())
         _build_collection->setEnabled(true);
 
-    if (_shape_collection.numberOfPeaks() > 0) {
+    if (_shape_model.numberOfPeaks() > 0) {
         _save_shapes->setEnabled(true);
         _calculate_mean_profile->setEnabled(true);
     }
 
-    if (gSession->currentProject()->hasShapeCollection() && (_predicted_combo->count() > 0))
+    if (gSession->currentProject()->hasShapeModel() && (_predicted_combo->count() > 0))
         _assign_peak_shapes->setEnabled(true);
 
 }
@@ -595,7 +595,7 @@ void SubframeShapes::onPeakSelected(nsx::Peak3D* peak)
     _y->setValue(peak->shape().center()[1]);
     _frame->setValue(peak->shape().center()[2]);
 
-    if (_shape_collection.numberOfPeaks() == 0)
+    if (_shape_model.numberOfPeaks() == 0)
         return;
     computeProfile();
     getPreviewPeak(peak);

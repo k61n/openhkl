@@ -17,7 +17,7 @@
 #include "base/utils/Logger.h"
 #include "core/peak/Peak3D.h"
 #include "core/shape/PeakCollection.h"
-#include "core/shape/ShapeCollection.h"
+#include "core/shape/ShapeModel.h"
 #include <memory>
 #include <stdexcept>
 
@@ -25,55 +25,55 @@ namespace nsx {
 
 ShapeHandler::~ShapeHandler() = default;
 
-const ShapeCollectionMap* ShapeHandler::getShapeCollectionMap() const
+const ShapeModelMap* ShapeHandler::getShapeModelMap() const
 {
-    return &_shape_collections;
+    return &_shape_models;
 }
 
-bool ShapeHandler::addShapeCollection(const std::string& name, const nsx::ShapeCollection& shapes)
+bool ShapeHandler::addShapeModel(const std::string& name, const nsx::ShapeModel& shapes)
 {
     // abort if name is aleady in use
-    if (hasShapeCollection(name))
+    if (hasShapeModel(name))
         return false;
     nsxlog(
-        Level::Info, "ShapeHandler::addShapeCollection '", name, "': ", shapes.numberOfPeaks(),
+        Level::Info, "ShapeHandler::addShapeModel '", name, "': ", shapes.numberOfPeaks(),
         " shapes");
-    std::unique_ptr<ShapeCollection> ptr = std::make_unique<ShapeCollection>(shapes);
+    std::unique_ptr<ShapeModel> ptr = std::make_unique<ShapeModel>(shapes);
     ptr->setName(name);
-    _shape_collections.insert_or_assign(name, std::move(ptr));
-    return hasShapeCollection(name); // now name must be in use
+    _shape_models.insert_or_assign(name, std::move(ptr));
+    return hasShapeModel(name); // now name must be in use
 }
 
 bool ShapeHandler::addEmptyCollection(const std::string& name)
 {
-    if (hasShapeCollection(name))
+    if (hasShapeModel(name))
         return false;
     nsxlog(Level::Info, "ShapeHandler::addEmptyCollection '" + name + "'");
-    std::unique_ptr<ShapeCollection> ptr = std::make_unique<ShapeCollection>(ShapeCollection(name));
-    _shape_collections.insert_or_assign(name, std::move(ptr));
-    return hasShapeCollection(name); // now name must be in use
+    std::unique_ptr<ShapeModel> ptr = std::make_unique<ShapeModel>(ShapeModel(name));
+    _shape_models.insert_or_assign(name, std::move(ptr));
+    return hasShapeModel(name); // now name must be in use
 }
 
-bool ShapeHandler::hasShapeCollection(const std::string& name) const
+bool ShapeHandler::hasShapeModel(const std::string& name) const
 {
-    auto shapes = _shape_collections.find(name);
-    return (shapes != _shape_collections.end());
+    auto shapes = _shape_models.find(name);
+    return (shapes != _shape_models.end());
 }
 
-ShapeCollection* ShapeHandler::getShapeCollection(const std::string name)
+ShapeModel* ShapeHandler::getShapeModel(const std::string name)
 {
-    if (hasShapeCollection(name)) {
-        return _shape_collections[name].get();
+    if (hasShapeModel(name)) {
+        return _shape_models[name].get();
     }
     return nullptr;
 }
 
-void ShapeHandler::removeShapeCollection(const std::string& name)
+void ShapeHandler::removeShapeModel(const std::string& name)
 {
-    if (hasShapeCollection(name)) {
-        auto shapes = _shape_collections.find(name);
+    if (hasShapeModel(name)) {
+        auto shapes = _shape_models.find(name);
         shapes->second.reset();
-        _shape_collections.erase(shapes);
+        _shape_models.erase(shapes);
     }
 }
 
@@ -81,8 +81,8 @@ std::vector<std::string> ShapeHandler::getCollectionNames() const
 {
 
     std::vector<std::string> names;
-    for (ShapeCollectionMap::const_iterator it = _shape_collections.begin();
-         it != _shape_collections.end(); ++it) {
+    for (ShapeModelMap::const_iterator it = _shape_models.begin();
+         it != _shape_models.end(); ++it) {
         names.push_back(it->second->name());
     }
     return names;
@@ -91,17 +91,17 @@ std::vector<std::string> ShapeHandler::getCollectionNames() const
 std::string ShapeHandler::generateName()
 {
     int n = 4; // number of digits
-    std::string str = std::to_string(numShapeCollections() + 1);
+    std::string str = std::to_string(numShapeModels() + 1);
     if (str.size() > n) { //
         return "Please enter name for this collection";
     }
-    return std::string("ShapeCollection") + std::string(n - str.size(), '0').append(str);
+    return std::string("ShapeModel") + std::string(n - str.size(), '0').append(str);
 }
 
-std::vector<ShapeCollection*> ShapeHandler::getShapeCollections()
+std::vector<ShapeModel*> ShapeHandler::getShapeModels()
 {
-    std::vector<ShapeCollection*> collections;
-    for (const auto& [name, ptr] : _shape_collections)
+    std::vector<ShapeModel*> collections;
+    for (const auto& [name, ptr] : _shape_models)
         collections.push_back(ptr.get());
     return collections;
 }
