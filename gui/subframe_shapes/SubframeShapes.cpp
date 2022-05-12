@@ -295,7 +295,7 @@ void SubframeShapes::refreshPeakTable()
     if (!gSession->currentProject()->hasPeakCollection())
         return;
 
-    _peak_collection_item.setPeakCollection(_peak_combo->currentPeakCollection());
+    _peak_collection_item.setPeakCollection(_predicted_combo->currentPeakCollection());
     _peak_collection_model.setRoot(&_peak_collection_item);
     _peak_table->resizeColumnsToContents();
 
