@@ -37,7 +37,6 @@
 #include "gui/models/Meta.h"
 #include "gui/models/Project.h"
 #include "gui/models/Session.h"
-#include "gui/subframe_predict/ShapeModelDialog.h"
 #include "gui/subframe_refiner/SubframeRefiner.h"
 #include "gui/utility/ColorButton.h"
 #include "gui/utility/GridFiller.h"
