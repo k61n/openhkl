@@ -346,6 +346,7 @@ void SubframePredictPeaks::setPeakTableUp()
 
 void SubframePredictPeaks::refreshAll()
 {
+    toggleUnsafeWidgets();
     if (!gSession->hasProject())
         return;
 
@@ -355,6 +356,8 @@ void SubframePredictPeaks::refreshAll()
     grabPredictorParameters();
     grabShapeCollectionParameters();
     refreshPeakTable();
+    if (!gSession->currentProject()->hasDataSet())
+        return;
     const auto data = _detector_widget->currentData();
     if (data) {
         _n_batches_spin->setMaximum(data->nFrames());
@@ -363,7 +366,6 @@ void SubframePredictPeaks::refreshAll()
         _beam_offset_y->setMaximum(static_cast<double>(data->nRows()) / 2.0);
         _beam_offset_y->setMinimum(-static_cast<double>(data->nRows()) / 2.0);
     }
-    toggleUnsafeWidgets();
 }
 
 void SubframePredictPeaks::grabPredictorParameters()
@@ -688,40 +690,26 @@ void SubframePredictPeaks::toggleUnsafeWidgets()
     _apply_shape_model->setEnabled(false);
     _refine_ki_button->setEnabled(false);
     _direct_beam->setEnabled(false);
+
     if (!gSession->hasProject())
         return;
 
-    if (!gSession->currentProject()->hasUnitCell()) {
-        _predict_button->setEnabled(false);
-        _save_button->setEnabled(false);
-        _apply_shape_model->setEnabled(false);
+    if (gSession->currentProject()->hasPeakCollection()) {
+        if (_peak_combo->currentPeakCollection()->isIndexed())
+            _refine_ki_button->setEnabled(true);
     }
 
-    if (!_peaks_predicted) {
-        _apply_shape_model->setEnabled(false);
-        _save_button->setEnabled(false);
+    if (gSession->currentProject()->hasUnitCell())
+        _predict_button->setEnabled(true);
+
+    if (_peaks_predicted) {
+        _apply_shape_model->setEnabled(true);
+        _save_button->setEnabled(true);
     }
 
     // if (!_shapes_assigned) // TODO: reenable later
     //     _save_button->setEnabled(false);
 
-    nsx::PeakCollection* pc = nullptr;
-    std::string current_pc = _peak_combo->currentText().toStdString();
-    if (current_pc.size() == 0)
-        return;
-
-    if (!gSession->hasProject())
-        return;
-
-    pc = gSession->currentProject()->experiment()->getPeakCollection(current_pc);
-    if (pc == nullptr) return;
-
-    bool is_indexed = pc->isIndexed();
-    _predict_button->setEnabled(is_indexed);
-    _save_button->setEnabled(is_indexed);
-    _apply_shape_model->setEnabled(is_indexed);
-    _refine_ki_button->setEnabled(is_indexed);
-    _direct_beam->setEnabled(is_indexed);
 }
 
 DetectorWidget* SubframePredictPeaks::detectorWidget()

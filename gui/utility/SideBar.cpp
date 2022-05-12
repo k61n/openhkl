@@ -271,7 +271,7 @@ void SideBar::onShapes()
 void SideBar::onPredictor()
 {
     gGui->_layout_stack->setCurrentIndex(6);
-    gGui->shapes->refreshAll();
+    gGui->predictor->refreshAll();
     emit subframeChanged();
 }
 
