@@ -56,10 +56,10 @@ static void updateFit(
 }
 
 bool Profile3DIntegrator::compute(
-    Peak3D* peak, ShapeCollection* shape_collection, const IntegrationRegion& region)
+    Peak3D* peak, ShapeModel* shape_collection, const IntegrationRegion& region)
 {
     if (!shape_collection) {
-        peak->setRejectionFlag(RejectionFlag::NoShapeCollection);
+        peak->setRejectionFlag(RejectionFlag::NoShapeModel);
         peak->setSelected(false);
         return false;
     }

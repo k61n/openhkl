@@ -2,8 +2,8 @@
 //
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
-//! @file      gui/subframe_refiner/SubframeIntegrate.h
-//! @brief     Defines class SubframeIntegrate
+//! @file      gui/subframe_shapes/SubframeShapes.h
+//! @brief     Defines class SubframeShapes
 //!
 //! @homepage  ###HOMEPAGE###
 //! @license   GNU General Public License v3 or higher (see COPYING)
@@ -12,15 +12,18 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_GUI_SUBFRAME_INTEGRATE_SUBFRAMEINTEGRATE_H
-#define NSX_GUI_SUBFRAME_INTEGRATE_SUBFRAMEINTEGRATE_H
+#ifndef NSX_GUI_SUBFRAME_SHAPES_SUBFRAMESHAPES_H
+#define NSX_GUI_SUBFRAME_SHAPES_SUBFRAMESHAPES_H
 
 #include "core/data/DataSet.h"
+#include "core/peak/Peak3D.h"
 #include "core/shape/IPeakIntegrator.h"
 #include "core/shape/PeakCollection.h"
+#include "core/shape/Profile3D.h"
 #include "core/shape/ShapeModel.h"
 #include "gui/items/PeakCollectionItem.h"
 #include "gui/models/PeakCollectionModel.h"
+#include "gui/utility/PredictedPeakComboBox.h"
 
 #include <QCheckBox>
 #include <QComboBox>
@@ -46,33 +49,37 @@ class Spoiler;
 class SafeSpinBox;
 class SafeDoubleSpinBox;
 class ShapeComboBox;
+class QGraphicsView;
 
 //! Frame containing interface to integrate peaks
-class SubframeIntegrate : public QWidget {
+class SubframeShapes : public QWidget {
  public:
-    SubframeIntegrate();
+    SubframeShapes();
 
     //! Refresh all the inputs
     void refreshAll();
     //! detector view
     DetectorWidget* detectorWidget();
-    //! Grab the refiner parameters
-    void grabIntegrationParameters();
+
+ public slots:
+    void onPeakSelected(nsx::Peak3D* peak);
 
  private:
-    //! Select experiment, dataset, peak collection, unit cell
+    //! Select dataset, peak collection, set parameters
     void setInputUp();
+    //! Select the peak to preview, generate mean covariance for selected peak or whole collection
+    void setComputeShapesUp();
+    //! Set up assignment of shapes to a peak collection
+    void setAssignShapesUp();
+    //! Grab the refiner parameters
+    void grabShapeParameters();
     //! Set the refiner parameters
-    void setIntegrationParameters();
+    void setShapeParameters();
 
-    //! Update the unit cell list on experment change
-    void updateUnitCellList();
-    //! Set up integration region spoiler
-    void setIntegrationRegionUp();
-    //! Set up integration spoiler
-    void setIntegrateUp();
     //! Set up the peak view widget
     void setPreviewUp();
+    //! Set up the widget to preview the shape
+    void setShapePreviewUp();
     //! Set up the DetectorScene
     void setFigureUp();
     //! Refresh the DetctorScene
@@ -83,18 +90,20 @@ class SubframeIntegrate : public QWidget {
     void refreshPeakTable();
     //! Assign shapes to a peak collection
     void assignPeakShapes();
-    //! Remove overlapping peaks
-    void removeOverlappingPeaks();
-    //! Wrapper for integration
-    void runIntegration();
     //! Scroll to selected peak in table
     void changeSelected(PeakItemGraphic* peak_graphic);
 
+    //! Generate the shape collection
+    void buildShapeModel();
+    //! Compute the mean profile at the given coordinates
+    void computeProfile();
+    //! Generate a peak for previewin in DetectorScene
+    void getPreviewPeak(nsx::Peak3D* selected_peak);
+    //! Save the shape collection
+    void saveShapes();
+
     //! Refresh the found peaks list
     void refreshTables();
-
-    //! Do the integration
-    void integrate();
 
     //! Disable unsafe widgets if no data loaded
     void toggleUnsafeWidgets();
@@ -106,49 +115,63 @@ class SubframeIntegrate : public QWidget {
     PeakComboBox* _peak_combo;
     DataComboBox* _data_combo;
 
-    // Integration region
-    Spoiler* _integration_region_box;
-    LinkedComboBox* _integration_region_type;
+    // Generate shapes box
+    SafeSpinBox* _nx;
+    SafeSpinBox* _ny;
+    SafeSpinBox* _nz;
+
+    QGroupBox* _kabsch;
+
+    SafeDoubleSpinBox* _sigma_d;
+    SafeDoubleSpinBox* _sigma_m;
+
+    SafeDoubleSpinBox* _min_strength;
+    SafeDoubleSpinBox* _min_d;
+    SafeDoubleSpinBox* _max_d;
+
     SafeDoubleSpinBox* _peak_end;
     SafeDoubleSpinBox* _bkg_begin;
     SafeDoubleSpinBox* _bkg_end;
 
-    //! Integration parameters
-    Spoiler* _integrate_box;
-    QComboBox* _integrator_combo;
-    QComboBox* _interpolation_combo;
+    QPushButton* _build_collection;
+
+    // Preview/Compute shapes box
+    SafeDoubleSpinBox* _x;
+    SafeDoubleSpinBox* _y;
+    SafeDoubleSpinBox* _frame;
+
     SafeSpinBox* _min_neighbours;
-    SafeDoubleSpinBox* _radius;
-    SafeDoubleSpinBox* _n_frames;
-    QCheckBox* _remove_overlaps;
-    SafeDoubleSpinBox* _radius_int;
-    SafeDoubleSpinBox* _n_frames_int;
-    QCheckBox* _fit_center;
-    QCheckBox* _fit_covariance;
+    SafeDoubleSpinBox* _pixel_radius;
+    SafeDoubleSpinBox* _frame_radius;
+    QComboBox* _interpolation_combo;
+
+    QPushButton* _calculate_mean_profile;
+    QPushButton* _save_shapes;
+
+    //! Assign shapes box
+    PeakComboBox* _predicted_combo;
     ShapeComboBox* _shape_combo;
+    QPushButton* _assign_peak_shapes;
 
-    QPushButton* _integrate_button;
-
-    QStringList _cell_list;
-    QStringList _predicted_list;
+    //! Shape preview box
+    QGridLayout* _shape_grid;
+    QGraphicsView* _graphics_view;
 
     PeakViewWidget* _peak_view_widget;
     DetectorWidget* _detector_widget;
 
     PeakTableView* _peak_table;
-    nsx::PeakCollection* _peak_collection;
+
     PeakCollectionItem _peak_collection_item;
     PeakCollectionModel _peak_collection_model;
 
-    std::shared_ptr<nsx::ShapeModelParameters> _shape_params;
+    nsx::ShapeModel _shape_model;
+    nsx::Profile3D _profile;
+    nsx::Peak3D* _current_peak;
+    std::unique_ptr<nsx::Peak3D> _preview_peak;
 
-    const std::map<std::string, nsx::IntegratorType> _integrator_strings{
-        {"Pixel sum integrator", nsx::IntegratorType::PixelSum},
-        {"Gaussian integrator", nsx::IntegratorType::Gaussian},
-        {"I/Sigma integrator", nsx::IntegratorType::ISigma},
-        {"1D Profile integrator", nsx::IntegratorType::Profile1D},
-        {"3D Profile integrator", nsx::IntegratorType::Profile3D}};
+    QGroupBox* _shape_group;
 };
 
 
-#endif // NSX_GUI_SUBFRAME_INTEGRATE_SUBFRAMEINTEGRATE_H
+#endif // NSX_GUI_SUBFRAME_SHAPES_SUBFRAMESHAPES_H

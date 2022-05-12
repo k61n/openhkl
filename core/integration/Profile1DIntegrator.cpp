@@ -18,7 +18,7 @@
 #include "core/peak/Intensity.h"
 #include "core/peak/Peak3D.h"
 #include "core/peak/PeakCoordinateSystem.h"
-#include "core/shape/ShapeCollection.h"
+#include "core/shape/ShapeModel.h"
 
 namespace nsx {
 
@@ -76,10 +76,10 @@ static void updateFit(
 }
 
 bool Profile1DIntegrator::compute(
-    Peak3D* peak, ShapeCollection* shape_collection, const IntegrationRegion& region)
+    Peak3D* peak, ShapeModel* shape_collection, const IntegrationRegion& region)
 {
     if (!shape_collection) {
-        peak->setRejectionFlag(RejectionFlag::NoShapeCollection);
+        peak->setRejectionFlag(RejectionFlag::NoShapeModel);
         peak->setSelected(false);
         return false;
     }

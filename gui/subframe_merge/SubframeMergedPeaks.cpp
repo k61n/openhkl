@@ -2,7 +2,7 @@
 //
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
-//! @file      gui/subframe_combine/SubframeMergedPeaks.cpp
+//! @file      gui/subframe_merge/SubframeMergedPeaks.cpp
 //! @brief     Implements class SubframeMergedPeaks
 //!
 //! @homepage  ###HOMEPAGE###
@@ -12,7 +12,7 @@
 //
 //  ***********************************************************************************************
 
-#include "gui/subframe_combine/SubframeMergedPeaks.h"
+#include "gui/subframe_merge/SubframeMergedPeaks.h"
 
 #include "core/data/DataSet.h"
 #include "core/experiment/DataQuality.h"

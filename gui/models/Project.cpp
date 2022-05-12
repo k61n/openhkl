@@ -287,3 +287,8 @@ bool Project::hasInstrumentStateSet() const
 {
     return _experiment->numInstrumentStateSets() > 0;
 }
+
+bool Project::hasShapeModel() const
+{
+    return _experiment->numShapeModels() > 0;
+}

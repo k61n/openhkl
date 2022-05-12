@@ -21,7 +21,6 @@
 #include "core/shape/PeakCollection.h"
 #include "gui/items/PeakCollectionItem.h"
 #include "gui/models/PeakCollectionModel.h"
-#include "gui/utility/CellComboBox.h"
 
 #include <QCheckBox>
 #include <QComboBox>
@@ -33,9 +32,6 @@
 #include <QTableWidget>
 #include <QVBoxLayout>
 #include <QWidget>
-#include <qcheckbox.h>
-#include <qcombobox.h>
-#include <qspinbox.h>
 
 class DetectorWidget;
 class CellComboBox;
@@ -46,10 +42,11 @@ class PeakViewWidget;
 class SafeSpinBox;
 class SafeDoubleSpinBox;
 class SpoilerCheck;
+class ShapeComboBox;
 
 namespace nsx {
 struct PredictionParameters;
-struct ShapeCollectionParameters;
+struct ShapeModelParameters;
 }
 
 //! Frame containing interface for predicting peaks from unit cell
@@ -68,7 +65,7 @@ class SubframePredictPeaks : public QWidget {
     //! Get refiner parameters
     void grabRefinerParameters();
     //! Get shape collection parameters
-    void grabShapeCollectionParameters();
+    void grabShapeModelParameters();
 
  public slots:
     void onBeamPosChanged(QPointF pos);
@@ -86,7 +83,7 @@ class SubframePredictPeaks : public QWidget {
     //! Set the parameters up
     void setParametersUp();
     //! Set the shape collection construction update
-    void setShapeCollectionUp();
+    void setShapeModelUp();
     //! Build the buttons
     void setProceedUp();
     //! Set the peak table view up
@@ -103,7 +100,7 @@ class SubframePredictPeaks : public QWidget {
     //! Set prediction parameters
     void setPredictorParameters();
     //! Set shape collection parameters
-    void setShapeCollectionParameters();
+    void setShapeModelParameters();
     //! Adjust position of the visualised direct beam when spin box is changed
     void adjustDirectBeam();
     //! Allow the user to manual input the initial direct beam position
@@ -119,13 +116,11 @@ class SubframePredictPeaks : public QWidget {
     //! run the prediction
     void runPrediction();
     //! Build the shapes to assign to predicted peaks
-    void assignPeakShapes();
+    void applyShapeModel();
     //! Accept and save current list
     void accept();
     //! Disable unsafe widgets if no data loaded
     void toggleUnsafeWidgets();
-    //! Compute beam divergence and mosaicity sigmas
-    void computeSigmas();
     //! Toggle cursor mode
     void toggleCursorMode();
     //! Transmit crosshair changes to DetectorScene
@@ -142,7 +137,7 @@ class SubframePredictPeaks : public QWidget {
     //! Flag to check whether shapes have been assigned to predicted peaks
     bool _shapes_assigned;
     //! Shape collection paramters
-    std::shared_ptr<nsx::ShapeCollectionParameters> _shape_params;
+    std::shared_ptr<nsx::ShapeModelParameters> _shape_params;
     //! Saved direct beam positions
     std::vector<nsx::DetectorEvent> _direct_beam_events;
     //! Current direct beam positions
@@ -162,6 +157,7 @@ class SubframePredictPeaks : public QWidget {
     QComboBox* _residual_combo;
     QCheckBox* _direct_beam;
     QPushButton* _refine_ki_button;
+    PeakComboBox* _peak_combo;
 
     CellComboBox* _cell_combo;
     QComboBox* _integrator;
@@ -175,16 +171,7 @@ class SubframePredictPeaks : public QWidget {
     DetectorWidget* _detector_widget;
     PeakTableView* _peak_table;
 
-    PeakComboBox* _peak_combo;
-    SafeSpinBox* _nx;
-    SafeSpinBox* _ny;
-    SafeSpinBox* _nz;
-    QCheckBox* _kabsch;
-    SafeDoubleSpinBox* _sigma_m;
-    SafeDoubleSpinBox* _sigma_d;
-    SafeDoubleSpinBox* _min_strength;
-    SafeDoubleSpinBox* _min_d;
-    SafeDoubleSpinBox* _max_d;
+    ShapeComboBox* _shape_combo;
     SafeDoubleSpinBox* _peak_end;
     SafeDoubleSpinBox* _bkg_begin;
     SafeDoubleSpinBox* _bkg_end;
@@ -192,7 +179,7 @@ class SubframePredictPeaks : public QWidget {
     SafeDoubleSpinBox* _radius_frames;
     SafeSpinBox* _min_neighbours;
     QComboBox* _interpolation_combo;
-    QPushButton* _assign_peak_shapes;
+    QPushButton* _apply_shape_model;
 
     int _stored_cursor_mode;
 

@@ -17,7 +17,7 @@
 #include "gui/MainWin.h"
 #include "gui/models/Project.h"
 #include "gui/models/Session.h"
-#include "gui/subframe_combine/SubframeMergedPeaks.h"
+#include "gui/subframe_merge/SubframeMergedPeaks.h"
 #include "gui/subframe_experiment/PropertyPanel.h"
 #include "gui/subframe_experiment/SubframeExperiment.h"
 #include "gui/subframe_filter/SubframeFilterPeaks.h"
@@ -27,6 +27,7 @@
 #include "gui/subframe_integrate/SubframeIntegrate.h"
 #include "gui/subframe_predict/SubframePredictPeaks.h"
 #include "gui/subframe_refiner/SubframeRefiner.h"
+#include "gui/subframe_shapes/SubframeShapes.h"
 
 #include <QDebug>
 #include <QEvent>
@@ -34,7 +35,6 @@
 #include <QPaintEvent>
 #include <QPainter>
 #include <QSignalBlocker>
-#include <qapplication.h>
 
 // TODO: find a better place for this
 // Icon attributions:
@@ -66,6 +66,7 @@ SideBar::SideBar(QWidget* parent) : QWidget(parent), mCheckedAction(nullptr), mO
     QAction* finder = addAction(QIcon(path + QString("finder.svg")), "Find Peaks");
     QAction* filter = addAction(QIcon(path + QString("filter.svg")), "Filter Peaks");
     QAction* indexer = addAction(QIcon(path + QString("indexer.svg")), "Indexer");
+    QAction* shapes = addAction(QIcon(path + QString("shapes.svg")), "Shape model");
     QAction* predictor = addAction(QIcon(path + QString("predictor.svg")), "Predict");
     QAction* refiner = addAction(QIcon(path + QString("refiner.svg")), "Refine");
     QAction* integrator = addAction(QIcon(path + QString("integrator.svg")), "Integrate");
@@ -81,6 +82,7 @@ SideBar::SideBar(QWidget* parent) : QWidget(parent), mCheckedAction(nullptr), mO
     connect(finder, &QAction::triggered, this, &SideBar::onFindPeaks);
     connect(filter, &QAction::triggered, this, &SideBar::onFilterPeaks);
     connect(indexer, &QAction::triggered, this, &SideBar::onIndexer);
+    connect(shapes, &QAction::triggered, this, &SideBar::onShapes);
     connect(predictor, &QAction::triggered, this, &SideBar::onPredictor);
     connect(refiner, &QAction::triggered, this, &SideBar::onRefiner);
     connect(integrator, &QAction::triggered, this, &SideBar::onIntegrator);
@@ -259,30 +261,37 @@ void SideBar::onIndexer()
     emit subframeChanged();
 }
 
-void SideBar::onPredictor()
+void SideBar::onShapes()
 {
     gGui->_layout_stack->setCurrentIndex(5);
+    gGui->shapes->refreshAll();
+    emit subframeChanged();
+}
+
+void SideBar::onPredictor()
+{
+    gGui->_layout_stack->setCurrentIndex(6);
     gGui->predictor->refreshAll();
     emit subframeChanged();
 }
 
 void SideBar::onRefiner()
 {
-    gGui->_layout_stack->setCurrentIndex(6);
+    gGui->_layout_stack->setCurrentIndex(7);
     gGui->refiner->refreshAll();
     emit subframeChanged();
 }
 
 void SideBar::onIntegrator()
 {
-    gGui->_layout_stack->setCurrentIndex(7);
+    gGui->_layout_stack->setCurrentIndex(8);
     gGui->integrator->refreshAll();
     emit subframeChanged();
 }
 
 void SideBar::onMerger()
 {
-    gGui->_layout_stack->setCurrentIndex(8);
+    gGui->_layout_stack->setCurrentIndex(9);
     gGui->merger->refreshAll();
     emit subframeChanged();
 }

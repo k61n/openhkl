@@ -39,6 +39,7 @@ class SubframeMergedPeaks;
 class SubframeRefiner;
 class SubframeIntegrate;
 class SubframePredictPeaks;
+class SubframeShapes;
 
 extern class MainWin* gGui; //!< global pointer to the main window
 
@@ -93,6 +94,7 @@ class MainWin : public QMainWindow {
     SubframeFindPeaks* finder;
     SubframeFilterPeaks* filter;
     SubframeAutoIndexer* indexer;
+    SubframeShapes* shapes;
     SubframePredictPeaks* predictor;
     SubframeRefiner* refiner;
     SubframeIntegrate* integrator;

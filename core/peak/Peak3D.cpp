@@ -51,7 +51,7 @@ const std::map<RejectionFlag, std::string> Peak3D::_rejection_map{
     {RejectionFlag::InvalidShape, "Shape of peak is too small or large"},
     {RejectionFlag::CentreOutOfBounds, "Peak centre moved beyond bounds of data set"},
     {RejectionFlag::BadIntegrationFit, "Pearson coefficient of fit is too low"},
-    {RejectionFlag::NoShapeCollection, "No shape collection found"},
+    {RejectionFlag::NoShapeModel, "No shape model found"},
     {RejectionFlag::NoISigmaMinimum, "Failed to find minimum of I/Sigma"},
     {RejectionFlag::PredictionUpdateFailure, "Failure updating prediction post-refinement"},
     {RejectionFlag::ManuallyRejected, "Manually unselected by user"},

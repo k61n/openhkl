@@ -23,6 +23,7 @@
 #include "gui/utility/PeakComboBox.h"
 #include "gui/utility/PredictedPeakComboBox.h"
 #include "gui/utility/SafeSpinBox.h"
+#include "gui/utility/ShapeComboBox.h"
 #include "gui/utility/Spoiler.h"
 
 #include <QCheckBox>
@@ -121,6 +122,24 @@ PeakComboBox* GridFiller::addPeakCombo(
         comboBox = new FoundPeakComboBox();
     else if (type == ComboType::PredictedPeaks)
         comboBox = new PredictedPeakComboBox();
+    if (!createLabel)
+        comboBox->setToolTip(tooltip);
+    comboBox->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
+    comboBox->setSizeAdjustPolicy(QComboBox::AdjustToContents);
+    _mainLayout->addWidget(comboBox, _nextRow, createLabel ? 1 : 0, 1, -1);
+
+    _nextRow++;
+
+    return comboBox;
+}
+
+ShapeComboBox* GridFiller::addShapeCombo(const QString& labelText, const QString& tooltip)
+{
+    const bool createLabel = !labelText.isEmpty();
+    if (createLabel)
+        addLabel(labelText, tooltip);
+
+    ShapeComboBox* comboBox = new ShapeComboBox();
     if (!createLabel)
         comboBox->setToolTip(tooltip);
     comboBox->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);

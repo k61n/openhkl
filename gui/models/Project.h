@@ -81,9 +81,9 @@ class Project {
     bool hasPeakCollection() const;
     bool hasInstrumentStateSet() const;
     bool hasUnitCell() const;
+    bool hasShapeModel() const;
 
- private:
-    std::unique_ptr<nsx::Experiment> _experiment;
+        private : std::unique_ptr<nsx::Experiment> _experiment;
 
     std::vector<PeakCollectionModel*> _peak_collection_models;
     std::vector<PeakCollectionItem*> _peak_collection_items;

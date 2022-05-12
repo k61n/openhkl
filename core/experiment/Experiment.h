@@ -39,6 +39,7 @@ namespace nsx {
 
 class DataHandler;
 class PeakHandler;
+class ShapeHandler;
 class UnitCellHandler;
 
 using DataMap = std::map<std::string, sptrDataSet>;
@@ -168,9 +169,25 @@ class Experiment {
     //! get a vector of pointers to peak collections
     std::vector<PeakCollection*> getPeakCollections();
 
-        // Instrument state handler
-        //! Add a set of instrment states
-        bool addInstrumentStateSet(sptrDataSet data);
+    // ShapeHandler
+    //! Add a peak collection
+    bool addShapeModel(const std::string& name, const ShapeModel& shapes);
+    //! Returns true if the experiment has named peak collection
+    bool hasShapeModel(const std::string& name) const;
+    //! Returns the named peak collection
+    ShapeModel* getShapeModel(const std::string name);
+    // !Remove a shape collection from the experiment
+    void removeShapeModel(const std::string& name);
+    //! Get the number of shape collections
+    int numShapeModels() const;
+    //! Generate name for new peak collection
+    std::string generateShapeModelName();
+    //! Get a vector of pointers to peak collections
+    std::vector<ShapeModel*> getShapeModels();
+
+    // Instrument state handler
+    //! Add a set of instrment states
+    bool addInstrumentStateSet(sptrDataSet data);
     //! Add a set of instrment states
     bool addInstrumentStateSet(
         sptrDataSet data, const InstrumentStateList& states, bool overwrite = true);
@@ -221,8 +238,8 @@ class Experiment {
     //! Get a pointer to the predictor
     Predictor* predictor() { return _predictor.get(); };
     //! Construct the collection used to fit the shapes of predicted peaks
-    void buildShapeCollection(
-        PeakCollection* peaks, sptrDataSet data, const ShapeCollectionParameters& params);
+    void buildShapeModel(
+        PeakCollection* peaks, sptrDataSet data, const ShapeModelParameters& params);
     //! Get a pointer to the refiner
     Refiner* refiner() { return _refiner.get(); };
     //! Refine unit cell and instrument parameters
@@ -252,6 +269,7 @@ class Experiment {
     // Handlers for peak collections and unit cells
     std::shared_ptr<DataHandler> _data_handler; // shared because Integrator needs access
     std::unique_ptr<PeakHandler> _peak_handler;
+    std::unique_ptr<ShapeHandler> _shape_handler;
     std::unique_ptr<UnitCellHandler> _cell_handler;
     std::unique_ptr<InstrumentStateHandler> _instrumentstate_handler;
 

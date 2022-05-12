@@ -176,7 +176,6 @@ nsx::sptrDataSet DetectorWidget::currentData()
 
 void DetectorWidget::changeView(int option)
 {
-    std::cout << "debug " << option << std::endl;
     if (_detector_view==nullptr) return;
     QTransform trans;
     trans.scale(-1, -1); // fromDetector (default; 0)

@@ -23,6 +23,7 @@ class ColorButton;
 class DataComboBox;
 class LinkedComboBox;
 class PeakComboBox;
+class ShapeComboBox;
 class Spoiler;
 class SafeSpinBox;
 class SafeDoubleSpinBox;
@@ -44,11 +45,16 @@ class GridFiller {
 
     //! Add a row with a label and a combo box. If labelText is empty, then no label is created, and
     //! the tooltip is set on the created combo box directly.
-    QComboBox* addCombo(const QString& labelText = QString(), const QString& tooltip = QString());
-    DataComboBox* addDataCombo(const QString& labelText = QString(), const QString& tooltip = QString());
-    CellComboBox* addCellCombo(const QString& labelText = QString(), const QString& tooltip = QString());
+    QComboBox* addCombo(
+        const QString& labelText = QString(), const QString& tooltip = QString());
+    DataComboBox* addDataCombo(
+        const QString& labelText = QString(), const QString& tooltip = QString());
+    CellComboBox* addCellCombo(
+        const QString& labelText = QString(), const QString& tooltip = QString());
     PeakComboBox* addPeakCombo(
         ComboType type, const QString& labelText = QString(), const QString& tooltip = QString());
+    ShapeComboBox* addShapeCombo(
+        const QString& labelText = QString(), const QString& tooltip = QString());
 
     //! Add a row with a label and a linked combo box. If labelText is empty, then no label is
     //! created, and the tooltip is set on the created combo box directly.

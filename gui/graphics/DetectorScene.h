@@ -89,9 +89,15 @@ class DetectorScene : public QGraphicsScene {
     void initIntRegionFromPeakWidget(const PeakViewWidget::Set& set, bool alt = false);
     //! Refresh the overlay displaying integration regions
     void refreshIntegrationOverlay();
+    //! Refresh overlay with integration region for a single peak
+    void refreshSinglePeakIntegrationOverlay();
     //! Generate a mask of integration regions (a matrix of integers classifying pixels)
     void getIntegrationMask(
         PeakCollectionModel* model, Eigen::MatrixXi& mask,
+        nsx::RegionType region_type = nsx::RegionType::VariableEllipsoid);
+    //! Generate a mask for a single peak only
+    void getSinglePeakIntegrationMask(
+        nsx::Peak3D* peak, Eigen::MatrixXi& mask,
         nsx::RegionType region_type = nsx::RegionType::VariableEllipsoid);
     //! Convert the mask to a QImage with the given colours
     QImage* getIntegrationRegionImage(const Eigen::MatrixXi& mask, QColor& peak, QColor& bkg);
@@ -153,6 +159,10 @@ class DetectorScene : public QGraphicsScene {
     static QPointF beamSetterCoords();
     //! Return the interaction mode
     int mode() const { return static_cast<int>(_mode); };
+    //! Set single peak for single peak integration overlay
+    void setPeak(nsx::Peak3D* peak);
+    //! Set scene to draw integration for single peak
+    void drawSinglePeakIntegrationRegion(bool toggle) { _drawSinglePeakIntegrationRegion = toggle; };
 
  protected:
     void mousePressEvent(QGraphicsSceneMouseEvent* event);
@@ -187,6 +197,7 @@ class DetectorScene : public QGraphicsScene {
     void signalChangeSelectedPeak(nsx::Peak3D* peak);
     void signalSelectedPeakItemChanged(PeakItemGraphic* peak);
     void signalUpdateDetectorScene();
+    void signalPeakSelected(nsx::Peak3D* peak);
     void beamPosChanged(QPointF pos);
 
  private:
@@ -235,6 +246,7 @@ class DetectorScene : public QGraphicsScene {
     bool _logarithmic;
     bool _drawIntegrationRegion1;
     bool _drawIntegrationRegion2;
+    bool _drawSinglePeakIntegrationRegion;
     bool _drawDirectBeam;
     bool _draw3rdParty;
     std::unique_ptr<ColorMap> _colormap;
@@ -281,9 +293,10 @@ class DetectorScene : public QGraphicsScene {
     static QPointF _current_beam_position;
 
 
-    nsx::Peak3D* _selected_peak;
+    PeakItemGraphic* _selected_peak;
 
     nsx::UnitCell* _unit_cell;
+    nsx::Peak3D* _peak;
 
     nsx::PeakCenterDataSet* _peak_center_data;
 };

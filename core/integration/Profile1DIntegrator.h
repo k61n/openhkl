@@ -16,7 +16,7 @@
 #define NSX_CORE_INTEGRATION_PROFILE1DINTEGRATOR_H
 
 #include "core/shape/IPeakIntegrator.h"
-#include "core/shape/ShapeCollection.h"
+#include "core/shape/ShapeModel.h"
 
 namespace nsx {
 
@@ -39,7 +39,7 @@ class Profile1DIntegrator : public IPeakIntegrator {
     Profile1DIntegrator();
     //! Integrate a peak
     bool compute(
-        Peak3D* peak, ShapeCollection* shape_collection, const IntegrationRegion& region) override;
+        Peak3D* peak, ShapeModel* shape_collection, const IntegrationRegion& region) override;
 };
 
 /*! @}*/

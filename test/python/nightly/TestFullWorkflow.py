@@ -132,10 +132,10 @@ class TestFullWorkFlow(unittest.TestCase):
 
         print('Building shape collection...')
         filtered_peaks.computeSigmas()
-        params = nsx.ShapeCollectionParameters()
+        params = nsx.ShapeModelParameters()
         params.sigma_d = filtered_peaks.sigmaD()
         params.sigma_m = filtered_peaks.sigmaM()
-        filtered_peaks.buildShapeCollection(data, params)
+        filtered_peaks.buildShapeModel(data, params)
         print(f'{filtered_peaks.shapeCollection().numberOfPeaks()} shapes generated')
         self.assertTrue(filtered_peaks.shapeCollection().numberOfPeaks() > 1720 and
                         filtered_peaks.shapeCollection().numberOfPeaks() < 1740)

@@ -21,7 +21,7 @@
 #include <QString>
 
 #include "base/geometry/ConvexHull.h"
-#include "core/shape/ShapeCollection.h"
+#include "core/shape/ShapeModel.h"
 
 class QGraphicsPixmapItem;
 class QGraphicsTextItem;

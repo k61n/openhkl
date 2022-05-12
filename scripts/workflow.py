@@ -130,10 +130,10 @@ def predict(experiment, cell, data, d_min):
 
 def get_shapes(data, peaks):
     peaks.computeSigmas()
-    params = nsx.ShapeCollectionParameters()
+    params = nsx.ShapeModelParameters()
     params.sigma_d = peaks.sigmaD()
     params.sigma_m = peaks.sigmaM()
-    peaks.buildShapeCollection(data, params)
+    peaks.buildShapeModel(data, params)
     print(f'{peaks.shapeCollection().numberOfPeaks()} shapes generated')
     return peaks.shapeCollection()
 

@@ -159,7 +159,7 @@ using Eigen::Quaterniond;
 #include "core/raw/MetaData.h"
 #include "core/shape/Profile1D.h"
 #include "core/shape/Profile3D.h"
-#include "core/shape/ShapeCollection.h"
+#include "core/shape/ShapeModel.h"
 #include "core/shape/Predictor.h"
 #include "core/statistics/CC.h"
 #include "core/statistics/RFactor.h"
@@ -329,7 +329,7 @@ ArrayExtendCRef(MillerIndex, int);
 %template(DataList) std::vector<std::shared_ptr<nsx::DataSet>>;
 
 %include "core/shape/IPeakIntegrator.h"
-%include "core/shape/ShapeCollection.h"
+%include "core/shape/ShapeModel.h"
 %include "core/shape/Predictor.h"
 %include "core/integration/Integrator.h"
 

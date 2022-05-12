@@ -23,14 +23,14 @@
 #include "gui/graphics/DetectorScene.h"
 #include "gui/models/Project.h"
 #include "gui/models/Session.h"
-#include "gui/subframe_predict/ShapeCollectionDialog.h"
 #include "gui/subwindows/DetectorWindow.h"
-#include "gui/utility/GridFiller.h"
-#include "gui/utility/PeakComboBox.h"
 #include "gui/utility/DataComboBox.h"
+#include "gui/utility/GridFiller.h"
 #include "gui/utility/LinkedComboBox.h"
+#include "gui/utility/PeakComboBox.h"
 #include "gui/utility/PropertyScrollArea.h"
 #include "gui/utility/SafeSpinBox.h"
+#include "gui/utility/ShapeComboBox.h"
 #include "gui/utility/SideBar.h"
 #include "gui/utility/Spoiler.h"
 #include "gui/views/PeakTableView.h"
@@ -82,17 +82,10 @@ void SubframeIntegrate::setInputUp()
     GridFiller f(input_box, true);
 
     _data_combo = f.addDataCombo("Data set");
-    _peak_combo = f.addPeakCombo(
-        ComboType::PeakCollection, "Peaks for shapes", "Used to build shape collection");
-    _build_shape_lib_button = f.addButton(
-        "Build shape collection",
-        "<font>A shape collection is a collection of averaged peaks attached to a peak"
-        "collection. A shape is the averaged peak shape of a peak and its neighbours within a "
-        "specified cutoff.</font>"); // Rich text to force line break in tooltip
-    _int_peak_combo = f.addPeakCombo(ComboType::PeakCollection, "Peaks to integrate");
+    _peak_combo = f.addPeakCombo(ComboType::PeakCollection, "Peaks to integrate");
 
     connect(
-        _int_peak_combo, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
+        _peak_combo, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
         this, &SubframeIntegrate::toggleUnsafeWidgets);
 
     _left_layout->addWidget(input_box);
@@ -109,7 +102,7 @@ void SubframeIntegrate::setFigureUp()
         _detector_widget->scene(), &DetectorScene::signalSelectedPeakItemChanged, this,
         &SubframeIntegrate::changeSelected);
     connect(
-        _int_peak_combo, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
+        _peak_combo, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
         this, &SubframeIntegrate::refreshPeakTable);
 
     _right_element->addWidget(figure_group);
@@ -155,7 +148,7 @@ void SubframeIntegrate::refreshPeakTable()
     if (!gSession->currentProject()->hasPeakCollection())
         return;
 
-    _peak_collection = _int_peak_combo->currentPeakCollection();
+    _peak_collection = _peak_combo->currentPeakCollection();
     _peak_collection_item.setPeakCollection(_peak_collection);
     _peak_collection_model.setRoot(&_peak_collection_item);
     _peak_table->resizeColumnsToContents();
@@ -171,7 +164,6 @@ void SubframeIntegrate::refreshAll()
     _data_combo->refresh();
     _detector_widget->refresh();
     _peak_combo->refresh();
-    _int_peak_combo->refresh();
     refreshPeakTable();
     grabIntegrationParameters();
     toggleUnsafeWidgets();
@@ -292,8 +284,7 @@ void SubframeIntegrate::setIntegrateUp()
 
     _interpolation_combo = f.addCombo("Interpolation", "Interpolation type for peak shape");
 
-    _assign_peak_shapes = f.addButton(
-        "Assign peak shapes", "Assign peak shapes from shape collection to a predicted collection");
+    _shape_combo = f.addShapeCombo("Shape model", "The shape model used in integraton");
 
     _remove_overlaps = f.addCheckBox(
         "Remove overlaps", "Remove peaks with overlapping adjacent background regions", 1);
@@ -323,9 +314,6 @@ void SubframeIntegrate::setIntegrateUp()
     connect(
         _peak_end, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged),
         this, &SubframeIntegrate::removeOverlappingPeaks);
-    connect(
-        _build_shape_lib_button, &QPushButton::clicked, this, &SubframeIntegrate::openShapeBuilder);
-    connect(_assign_peak_shapes, &QPushButton::clicked, this, &SubframeIntegrate::assignPeakShapes);
     connect(
         _integrator_combo, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
         this, &SubframeIntegrate::toggleUnsafeWidgets);
@@ -378,41 +366,14 @@ void SubframeIntegrate::setPreviewUp()
     _left_layout->addWidget(preview_spoiler);
 }
 
-void SubframeIntegrate::assignPeakShapes()
-{
-    gGui->setReady(false);
-    try {
-        nsx::sptrProgressHandler handler(new nsx::ProgressHandler);
-        ProgressView progressView(nullptr);
-        progressView.watch(handler);
-
-        nsx::PeakCollection* peaks_to_integrate =_int_peak_combo->currentPeakCollection();
-        nsx::ShapeCollection* shapes = _peak_combo->currentPeakCollection()->shapeCollection();
-
-        int interpol = _interpolation_combo->currentIndex();
-        nsx::PeakInterpolation peak_interpolation = static_cast<nsx::PeakInterpolation>(interpol);
-
-        shapes->setHandler(handler);
-        shapes->setPredictedShapes(peaks_to_integrate, peak_interpolation);
-        gGui->statusBar()->showMessage(
-            QString::number(peaks_to_integrate->numberOfValid()) + "/"
-            + QString::number(peaks_to_integrate->numberOfPeaks())
-            + " predicted peaks with valid shapes");
-        refreshPeakTable();
-    } catch (std::exception& e) {
-        QMessageBox::critical(this, "Error", QString(e.what()));
-    }
-    gGui->setReady(true);
-}
-
 void SubframeIntegrate::removeOverlappingPeaks()
 {
     gGui->setReady(false);
 
-    if (_int_peak_combo->count() == 0)
+    if (_peak_combo->count() == 0)
         return;
 
-    nsx::PeakCollection* peaks_to_integrate = _int_peak_combo->currentPeakCollection();
+    nsx::PeakCollection* peaks_to_integrate = _peak_combo->currentPeakCollection();
     nsx::PeakFilter filter;
     filter.resetFiltering(peaks_to_integrate);
     if (_remove_overlaps->isChecked()) {
@@ -449,8 +410,8 @@ void SubframeIntegrate::runIntegration()
         nsx::Experiment* expt = gSession->currentProject()->experiment();
         nsx::Integrator* integrator = expt->integrator();
         nsx::sptrDataSet data = _data_combo->currentData();
-        nsx::PeakCollection* peaks_to_integrate = _int_peak_combo->currentPeakCollection();
-        nsx::ShapeCollection* shapes = _peak_combo->currentPeakCollection()->shapeCollection();
+        nsx::PeakCollection* peaks_to_integrate = _peak_combo->currentPeakCollection();
+        nsx::ShapeModel* shapes = _shape_combo->currentShapes();
 
         setIntegrationParameters();
         auto* params = gSession->currentProject()->experiment()->integrator()->parameters();
@@ -464,23 +425,6 @@ void SubframeIntegrate::runIntegration()
     } catch (std::exception& e) {
         QMessageBox::critical(this, "Error", QString(e.what()));
     }
-    gGui->setReady(true);
-}
-
-void SubframeIntegrate::openShapeBuilder()
-{
-    gGui->setReady(false);
-    nsx::PeakCollection* peak_collection = _peak_combo->currentPeakCollection();
-    std::unique_ptr<ShapeCollectionDialog> dialog(
-        new ShapeCollectionDialog(peak_collection, _shape_params));
-
-    dialog->exec();
-    toggleUnsafeWidgets();
-    if (peak_collection->shapeCollection())
-        gGui->statusBar()->showMessage(
-            QString::number(peak_collection->shapeCollection()->numberOfPeaks())
-            + " shapes generated");
-    refreshPeakVisual();
     gGui->setReady(true);
 }
 
@@ -498,8 +442,6 @@ void SubframeIntegrate::toggleUnsafeWidgets()
     _n_frames_int->setEnabled(true);
     _min_neighbours->setEnabled(true);
     _interpolation_combo->setEnabled(true);
-    _build_shape_lib_button->setEnabled(true);
-    _assign_peak_shapes->setEnabled(true);
     _remove_overlaps->setEnabled(true);
     _integrate_button->setEnabled(true);
 
@@ -510,22 +452,11 @@ void SubframeIntegrate::toggleUnsafeWidgets()
         !gSession->currentProject()->hasPeakCollection()) {
         _integrate_button->setEnabled(false);
         _remove_overlaps->setEnabled(false);
-        _assign_peak_shapes->setEnabled(false);
     }
 
-    if (_int_peak_combo->count() == 0) {
+    if (_peak_combo->count() == 0) {
         _integrate_button->setEnabled(false);
-        _assign_peak_shapes->setEnabled(false);
         _remove_overlaps->setEnabled(false);
-    }
-
-    if (!_peak_combo->count() == 0) {
-        nsx::PeakCollection* peaks = _peak_combo->currentPeakCollection();
-        if (peaks->shapeCollection() == nullptr) {
-            _assign_peak_shapes->setEnabled(false);
-            _integrate_button->setEnabled(false);
-            _remove_overlaps->setEnabled(false);
-        }
     }
 
     if (_integrator_strings.find(_integrator_combo->currentText().toStdString())->second
@@ -535,8 +466,6 @@ void SubframeIntegrate::toggleUnsafeWidgets()
         _radius_int->setEnabled(false);
         _n_frames_int->setEnabled(false);
         _min_neighbours->setEnabled(false);
-        _assign_peak_shapes->setEnabled(false);
-        _build_shape_lib_button->setEnabled(false);
     }
 }
 

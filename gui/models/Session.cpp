@@ -28,7 +28,7 @@
 #include "gui/dialogs/DataNameDialog.h"
 #include "gui/dialogs/RawDataDialog.h"
 #include "gui/models/Project.h"
-#include "gui/subframe_combine/SubframeMergedPeaks.h"
+#include "gui/subframe_merge/SubframeMergedPeaks.h"
 #include "gui/subframe_filter/SubframeFilterPeaks.h"
 #include "gui/subframe_find/SubframeFindPeaks.h"
 #include "gui/subframe_index/SubframeAutoIndexer.h"
@@ -42,6 +42,7 @@
 #include "gui/utility/LinkedComboBox.h"
 #include "gui/utility/PeakComboBox.h"
 #include "gui/utility/PredictedPeakComboBox.h"
+#include "gui/utility/ShapeComboBox.h"
 
 #include <QCollator>
 #include <QDir>
@@ -80,6 +81,7 @@ Session::Session()
     _found_peak_combo = new FoundPeakComboBox();
     _predicted_peak_combo = new PredictedPeakComboBox();
     _integrated_peak_combo = new IntegratedPeakComboBox();
+    _shape_combo= new ShapeComboBox();
 }
 
 Project* Session::currentProject()
@@ -362,7 +364,7 @@ void Session::onExperimentChanged()
     gGui->indexer->grabIndexerParameters();
     gGui->predictor->grabPredictorParameters();
     gGui->predictor->grabRefinerParameters();
-    gGui->predictor->grabShapeCollectionParameters();
+    gGui->predictor->grabShapeModelParameters();
     gGui->refiner->grabRefinerParameters();
     gGui->integrator->grabIntegrationParameters();
     gGui->merger->grabMergeParameters();
@@ -395,6 +397,14 @@ void Session::onUnitCellChanged()
     _cell_combo->clearAll();
     _cell_combo->addCells(cells);
     _cell_combo->refreshAll();
+}
+
+void Session::onShapesChanged()
+{
+    ShapesList shape_list = currentProject()->experiment()->getShapeModels();
+    _shape_combo->clearAll();
+    _shape_combo->addShapeModels(shape_list);
+    _shape_combo->refreshAll();
 }
 
 void Session::loadExperimentFromFile(QString filename)

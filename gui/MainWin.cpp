@@ -20,7 +20,7 @@
 #include "gui/graphics/DetectorScene.h"
 #include "gui/graphics/DetectorView.h"
 #include "gui/graphics_items/PlottableItem.h"
-#include "gui/subframe_combine/SubframeMergedPeaks.h"
+#include "gui/subframe_merge/SubframeMergedPeaks.h"
 #include "gui/subframe_experiment/PlotPanel.h"
 #include "gui/subframe_experiment/PropertyPanel.h"
 #include "gui/subframe_experiment/SubframeExperiment.h"
@@ -31,6 +31,7 @@
 #include "gui/subframe_integrate/SubframeIntegrate.h"
 #include "gui/subframe_predict/SubframePredictPeaks.h"
 #include "gui/subframe_refiner/SubframeRefiner.h"
+#include "gui/subframe_shapes/SubframeShapes.h"
 #include "gui/subwindows/DetectorWindow.h"
 #include "gui/subwindows/InstrumentStateWindow.h"
 #include "gui/subwindows/LogWindow.h"
@@ -82,6 +83,7 @@ MainWin::MainWin()
     finder = new SubframeFindPeaks;
     filter = new SubframeFilterPeaks;
     indexer = new SubframeAutoIndexer;
+    shapes = new SubframeShapes;
     predictor = new SubframePredictPeaks;
     refiner = new SubframeRefiner;
     integrator = new SubframeIntegrate;
@@ -96,6 +98,7 @@ MainWin::MainWin()
     _layout_stack->addWidget(finder);
     _layout_stack->addWidget(filter);
     _layout_stack->addWidget(indexer);
+    _layout_stack->addWidget(shapes);
     _layout_stack->addWidget(predictor);
     _layout_stack->addWidget(refiner);
     _layout_stack->addWidget(integrator);

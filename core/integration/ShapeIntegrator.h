@@ -19,24 +19,24 @@
 
 namespace nsx {
 
-class ShapeCollection;
+class ShapeModel;
 
 /*! \addtogroup python_api
  *  @{*/
 
-/*! \brief Integrate a peak to generate a profile for ShapeCollection*/
+/*! \brief Integrate a peak to generate a profile for ShapeModel*/
 class ShapeIntegrator : public PixelSumIntegrator {
  public:
     //! Construct the integrator with the given shape collection, bounding box, and box shape.
-    ShapeIntegrator(ShapeCollection* lib, const AABB& aabb, int nx, int ny, int nz);
+    ShapeIntegrator(ShapeModel* lib, const AABB& aabb, int nx, int ny, int nz);
     //! Integrate a peak
     bool compute(
-        Peak3D* peak, ShapeCollection* shape_collection, const IntegrationRegion& region) override;
+        Peak3D* peak, ShapeModel* shape_collection, const IntegrationRegion& region) override;
     //! Returns the collection of cached peak shapes
-    const ShapeCollection* collection() const;
+    const ShapeModel* collection() const;
 
  private:
-    ShapeCollection* _collection;
+    ShapeModel* _collection;
     AABB _aabb;
     int _nx, _ny, _nz;
 };

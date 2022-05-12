@@ -20,17 +20,17 @@
 #include "core/peak/PeakCoordinateSystem.h"
 #include "core/shape/Profile1D.h"
 #include "core/shape/Profile3D.h"
-#include "core/shape/ShapeCollection.h"
+#include "core/shape/ShapeModel.h"
 
 namespace nsx {
 
-ShapeIntegrator::ShapeIntegrator(ShapeCollection* lib, const AABB& aabb, int nx, int ny, int nz)
+ShapeIntegrator::ShapeIntegrator(ShapeModel* lib, const AABB& aabb, int nx, int ny, int nz)
     : PixelSumIntegrator(false, false), _collection(lib), _aabb(aabb), _nx(nx), _ny(ny), _nz(nz)
 {
 }
 
 bool ShapeIntegrator::compute(
-    Peak3D* peak, ShapeCollection* shape_collection, const IntegrationRegion& region)
+    Peak3D* peak, ShapeModel* shape_collection, const IntegrationRegion& region)
 {
     const UnitCell* uc = peak->unitCell();
     auto data = peak->dataSet();
@@ -79,7 +79,7 @@ bool ShapeIntegrator::compute(
     return true;
 }
 
-const ShapeCollection* ShapeIntegrator::collection() const
+const ShapeModel* ShapeIntegrator::collection() const
 {
     return _collection;
 }

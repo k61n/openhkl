@@ -226,7 +226,7 @@ void SubframeFindPeaks::setFigureUp()
     figure_group->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     _detector_widget = new DetectorWidget(true, false, true, figure_group);
     _detector_widget->modeCombo()->addItems(
-        QStringList{"Zoom", "Selection", "Rectangular mask", "Elliptical mask"});
+        QStringList{"Zoom", "Selection box", "Rectangular mask", "Elliptical mask"});
     _detector_widget->linkPeakModel(&_peak_collection_model);
 
     connect(

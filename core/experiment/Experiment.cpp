@@ -29,6 +29,7 @@
 #include "core/experiment/ExperimentImporter.h"
 #include "core/experiment/InstrumentStateHandler.h"
 #include "core/experiment/PeakHandler.h"
+#include "core/experiment/ShapeHandler.h"
 #include "core/experiment/UnitCellHandler.h"
 #include "core/instrument/Diffractometer.h"
 #include "core/instrument/Monochromator.h"
@@ -62,6 +63,7 @@ Experiment::Experiment(const std::string& name, const std::string& diffractomete
     _data_handler =
         std::make_shared<DataHandler>(_name, diffractometerName, _instrumentstate_handler.get());
     _peak_handler = std::make_unique<PeakHandler>();
+    _shape_handler = std::make_unique<ShapeHandler>();
     _cell_handler = std::make_unique<UnitCellHandler>();
 
     _peak_finder = std::make_unique<PeakFinder>();
@@ -225,10 +227,10 @@ void Experiment::autoIndex(PeakCollection* peaks)
     _peak_handler->removePeakCollection(collection_name);
 }
 
-void Experiment::buildShapeCollection(
-    PeakCollection* peaks, sptrDataSet data, const ShapeCollectionParameters& params)
+void Experiment::buildShapeModel(
+    PeakCollection* peaks, sptrDataSet data, const ShapeModelParameters& params)
 {
-    nsxlog(Level::Info, "Experiment::buildShapeCollection");
+    nsxlog(Level::Info, "Experiment::buildShapeModel");
     params.log(Level::Info);
     peaks->computeSigmas();
 
@@ -246,12 +248,12 @@ void Experiment::buildShapeCollection(
     fit_peaks.populateFromFiltered(peaks);
 
     if (fit_peaks.numberOfPeaks() == 0) {
-        nsxlog(Level::Info, "Experiment::buildShapeCollection: no fit peaks found");
+        nsxlog(Level::Info, "Experiment::buildShapeModel: no fit peaks found");
         return;
     }
 
     nsxlog(
-        Level::Info, "Experiment::buildShapeCollection: ", fit_peaks.numberOfPeaks(), " / ",
+        Level::Info, "Experiment::buildShapeModel: ", fit_peaks.numberOfPeaks(), " / ",
         peaks->numberOfPeaks(), " fit peaks");
 
     nsx::AABB aabb;
@@ -266,14 +268,14 @@ void Experiment::buildShapeCollection(
         aabb.setUpper(0.5 * dx);
     }
 
-    std::unique_ptr<ShapeCollection> shapes = std::make_unique<ShapeCollection>();
+    std::unique_ptr<ShapeModel> shapes = std::make_unique<ShapeModel>();
 
     std::vector<Peak3D*> fit_peak_list = fit_peaks.getPeakList();
-    _integrator->integrateShapeCollection(fit_peak_list, data, shapes.get(), aabb, params);
-    peaks->setShapeCollection(shapes);
+    _integrator->integrateShapeModel(fit_peak_list, data, shapes.get(), aabb, params);
+    peaks->setShapeModel(shapes);
 
     // shape_collection.updateFit(1000); // This does nothing!! - zamaan
-    nsxlog(Level::Info, "Experiment::buildShapeCollection finished");
+    nsxlog(Level::Info, "Experiment::buildShapeModel finished");
 }
 
 const UnitCell* Experiment::getAcceptedCell() const
@@ -590,6 +592,41 @@ std::vector<sptrUnitCell> Experiment::getSptrUnitCells()
 std::vector<PeakCollection*> Experiment::getPeakCollections()
 {
     return _peak_handler->getPeakCollections();
+}
+
+bool Experiment::addShapeModel(const std::string& name, const ShapeModel& shapes)
+{
+    return _shape_handler->addShapeModel(name, shapes);
+}
+
+bool Experiment::hasShapeModel(const std::string& name) const
+{
+    return _shape_handler->hasShapeModel(name);
+}
+
+ShapeModel* Experiment::getShapeModel(const std::string name)
+{
+    return _shape_handler->getShapeModel(name);
+}
+
+void Experiment::removeShapeModel(const std::string& name)
+{
+    _shape_handler->removeShapeModel(name);
+}
+
+int Experiment::numShapeModels() const
+{
+    return _shape_handler->numShapeModels();
+}
+
+std::string Experiment::generateShapeModelName()
+{
+    return _shape_handler->generateName();
+}
+
+std::vector<ShapeModel*> Experiment::getShapeModels()
+{
+    return _shape_handler->getShapeModels();
 }
 
 } // namespace nsx

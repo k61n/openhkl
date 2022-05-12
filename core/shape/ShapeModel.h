@@ -2,8 +2,8 @@
 //
 //  NSXTool: data reduction for neutron single-crystal diffraction
 //
-//! @file      core/shape/ShapeCollection.h
-//! @brief     Defines classes PeakInterpolation, ShapeCollection
+//! @file      core/shape/ShapeModel.h
+//! @brief     Defines classes PeakInterpolation, ShapeModel
 //!
 //! @homepage  ###HOMEPAGE###
 //! @license   GNU General Public License v3 or higher (see COPYING)
@@ -38,7 +38,7 @@ enum class Level;
 enum class PeakInterpolation { NoInterpolation = 0, InverseDistance = 1, Intensity = 2 };
 
 //! Parameters for building the shape collection
-struct ShapeCollectionParameters : public IntegrationParameters {
+struct ShapeModelParameters : public IntegrationParameters {
     double d_min = 1.5; //!< Minimum d (filter)
     double d_max = 50.0; //!< Maximum d (filter)
     double strength_min = 1.0; //!< Minimum peak strength I/sigma (filter)
@@ -55,9 +55,9 @@ struct ShapeCollectionParameters : public IntegrationParameters {
     void log(const Level& level) const;
 };
 
-class ShapeCollection;
+class ShapeModel;
 
-using sptrShapeCollection = std::shared_ptr<ShapeCollection>;
+using sptrShapeModel = std::shared_ptr<ShapeModel>;
 
 struct FitData;
 
@@ -70,22 +70,28 @@ struct FitData;
  * used in the profile-fitting integration methods.
  */
 
-class ShapeCollection {
+class ShapeModel {
  public:
     //! Construct an empty collection.
     //! @param detector_coords if true, store profiles in detector coordinates;
     //! otherwise store in Kabsch coordinates
-    ShapeCollection();
-    ShapeCollection(std::shared_ptr<ShapeCollectionParameters> params);
+    ShapeModel();
+    ShapeModel(const std::string& name);
+    ShapeModel(std::shared_ptr<ShapeModelParameters> params);
+
+    //! Set the name
+    void setName(const std::string& name ) { _name = name; };
+    //! Get the name
+    std::string name() { return _name; };
 
     //! Add a reference peak to the collection
     bool addPeak(Peak3D* peak, Profile3D&& profile, Profile1D&& integrated_profile);
 
     //! Update the fitted covariances
-    void updateFit(int num_iterations);
+    void updateFit(int num_iterations = 1000);
 
     //! Set the shape collection parameters
-    void setParameters(std::shared_ptr<ShapeCollectionParameters> params);
+    void setParameters(std::shared_ptr<ShapeModelParameters> params);
 
     //! Set shapes of a predicted peak collection
     void setPredictedShapes(PeakCollection* peaks, PeakInterpolation interpolation);
@@ -129,7 +135,7 @@ class ShapeCollection {
     int numberOfPeaks() const { return _profiles.size(); };
 
     //! Shape collection parameters
-    ShapeCollectionParameters* parameters();
+    ShapeModelParameters* parameters();
 
     //! Whether the collection uses Kabsch (f) or detector(t) coordinates
     bool detectorCoords() const;
@@ -146,6 +152,8 @@ class ShapeCollection {
     void setHandler(sptrProgressHandler handler);
 
  private:
+    //! name
+    std::string _name;
     //! Predict the (detector space) covariance given the fit data
     Eigen::Matrix3d predictCovariance(const FitData&) const;
 
@@ -162,7 +170,7 @@ class ShapeCollection {
     std::array<double, 6> _choleskyS;
 
     //! Shape collection parameters
-    std::shared_ptr<ShapeCollectionParameters> _params;
+    std::shared_ptr<ShapeModelParameters> _params;
 
     //! Progress handler
     sptrProgressHandler _handler;
