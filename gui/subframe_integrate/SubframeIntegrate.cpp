@@ -18,6 +18,7 @@
 #include "core/experiment/Experiment.h"
 #include "core/peak/IntegrationRegion.h"
 #include "core/peak/Peak3D.h"
+#include "core/shape/ShapeModel.h"
 #include "gui/MainWin.h" // gGui
 #include "gui/frames/ProgressView.h"
 #include "gui/graphics/DetectorScene.h"
@@ -411,7 +412,9 @@ void SubframeIntegrate::runIntegration()
         nsx::Integrator* integrator = expt->integrator();
         nsx::sptrDataSet data = _data_combo->currentData();
         nsx::PeakCollection* peaks_to_integrate = _peak_combo->currentPeakCollection();
-        nsx::ShapeModel* shapes = _shape_combo->currentShapes();
+        nsx::ShapeModel* shapes = nullptr;
+        if (gSession->currentProject()->hasShapeModel())
+           shapes = _shape_combo->currentShapes();
 
         setIntegrationParameters();
         auto* params = gSession->currentProject()->experiment()->integrator()->parameters();
