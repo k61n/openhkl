@@ -136,13 +136,13 @@ class TestFullWorkFlow(unittest.TestCase):
         params.sigma_d = filtered_peaks.sigmaD()
         params.sigma_m = filtered_peaks.sigmaM()
         filtered_peaks.buildShapeModel(data, params)
-        print(f'{filtered_peaks.shapeCollection().numberOfPeaks()} shapes generated')
-        self.assertTrue(filtered_peaks.shapeCollection().numberOfPeaks() > 1720 and
-                        filtered_peaks.shapeCollection().numberOfPeaks() < 1740)
+        print(f'{filtered_peaks.shapeModel().numberOfPeaks()} shapes generated')
+        self.assertTrue(filtered_peaks.shapeModel().numberOfPeaks() > 1720 and
+                        filtered_peaks.shapeModel().numberOfPeaks() < 1740)
 
         print('Assigning shapes to predicted peaks...')
         interpolation = nsx.PeakInterpolation_InverseDistance
-        filtered_peaks.shapeCollection().setPredictedShapes(predicted_peaks, interpolation)
+        filtered_peaks.shapeModel().setPredictedShapes(predicted_peaks, interpolation)
 
         print('Refining...')
         refiner = expt.refiner()
@@ -183,7 +183,7 @@ class TestFullWorkFlow(unittest.TestCase):
         params = integrator.parameters()
         integrator_type = nsx.IntegratorType_Profile3D
         integrator.getIntegrator(integrator_type)
-        integrator.integratePeaks(data, predicted_peaks, params, filtered_peaks.shapeCollection())
+        integrator.integratePeaks(data, predicted_peaks, params, filtered_peaks.shapeModel())
         print(f'{integrator.numberOfValidPeaks()} / {integrator.numberOfPeaks()} peaks integrated')
         self.assertTrue(integrator.numberOfValidPeaks() >  1570 and
                         integrator.numberOfValidPeaks() < 1590)
