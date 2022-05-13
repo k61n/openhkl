@@ -57,10 +57,10 @@ class IPeakIntegrator {
     virtual ~IPeakIntegrator();
     //! Compute the integrated intensity of the peak given the integration region.
     virtual bool compute(
-        Peak3D* peak, ShapeModel* shape_collection, const IntegrationRegion& region) = 0;
+        Peak3D* peak, ShapeModel* shape_model, const IntegrationRegion& region) = 0;
     //! Integrate all peaks in the list which are contained in the specified data set.
     void integrate(
-        std::vector<nsx::Peak3D*> peaks, ShapeModel* shape_collection, sptrDataSet data,
+        std::vector<nsx::Peak3D*> peaks, ShapeModel* shape_model, sptrDataSet data,
         int n_numor);
     //! Return the mean background.
     Intensity meanBackground() const;

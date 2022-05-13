@@ -39,7 +39,7 @@ class Profile1DIntegrator : public IPeakIntegrator {
     Profile1DIntegrator();
     //! Integrate a peak
     bool compute(
-        Peak3D* peak, ShapeModel* shape_collection, const IntegrationRegion& region) override;
+        Peak3D* peak, ShapeModel* shape_model, const IntegrationRegion& region) override;
 };
 
 /*! @}*/

@@ -143,10 +143,10 @@ MetaData& PeakCollection::metadata()
     return _metadata;
 }
 
-void PeakCollection::setShapeModel(std::unique_ptr<ShapeModel>& shape_collection)
+void PeakCollection::setShapeModel(std::unique_ptr<ShapeModel>& shape_model)
 {
     resetShapeModel();
-    _shape_model = std::move(shape_collection);
+    _shape_model = std::move(shape_model);
 }
 
 void PeakCollection::setName(const std::string& name)

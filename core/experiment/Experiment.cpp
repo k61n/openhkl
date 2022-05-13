@@ -274,7 +274,7 @@ void Experiment::buildShapeModel(
     _integrator->integrateShapeModel(fit_peak_list, data, shapes.get(), aabb, params);
     peaks->setShapeModel(shapes);
 
-    // shape_collection.updateFit(1000); // This does nothing!! - zamaan
+    // shape_model.updateFit(1000); // This does nothing!! - zamaan
     nsxlog(Level::Info, "Experiment::buildShapeModel finished");
 }
 

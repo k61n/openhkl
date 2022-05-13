@@ -59,7 +59,7 @@ const std::vector<Intensity>& IPeakIntegrator::rockingCurve() const
 }
 
 void IPeakIntegrator::integrate(
-    std::vector<nsx::Peak3D*> peaks, ShapeModel* shape_collection, sptrDataSet data,
+    std::vector<nsx::Peak3D*> peaks, ShapeModel* shape_model, sptrDataSet data,
     int n_numor)
 {
     // integrate only those peaks that belong to the specified dataset
@@ -143,7 +143,7 @@ void IPeakIntegrator::integrate(
             // done reading peak data
             if (result && !integrated[peak]) {
                 current_peak->peakData().computeStandard();
-                if (compute(peak, shape_collection, *current_peak)) {
+                if (compute(peak, shape_model, *current_peak)) {
                     peak->updateIntegration(
                         rockingCurve(), meanBackground(), integratedIntensity(), _params.peak_end,
                         _params.bkg_begin, _params.bkg_end);

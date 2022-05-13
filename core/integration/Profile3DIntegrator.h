@@ -52,7 +52,7 @@ class Profile3DIntegrator : public IPeakIntegrator {
     Profile3DIntegrator() = default;
     //! Do the integration
     bool compute(
-        Peak3D* peak, ShapeModel* shape_collection, const IntegrationRegion& region) override;
+        Peak3D* peak, ShapeModel* shape_model, const IntegrationRegion& region) override;
 };
 
 /*! @}*/

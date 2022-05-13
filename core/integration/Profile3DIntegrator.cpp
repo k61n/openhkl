@@ -56,9 +56,9 @@ static void updateFit(
 }
 
 bool Profile3DIntegrator::compute(
-    Peak3D* peak, ShapeModel* shape_collection, const IntegrationRegion& region)
+    Peak3D* peak, ShapeModel* shape_model, const IntegrationRegion& region)
 {
-    if (!shape_collection) {
+    if (!shape_model) {
         peak->setRejectionFlag(RejectionFlag::NoShapeModel);
         peak->setSelected(false);
         return false;
@@ -92,7 +92,7 @@ bool Profile3DIntegrator::compute(
     DetectorEvent event(peak->shape().center());
 
     std::optional<Profile3D> model_profile =
-        shape_collection->meanProfile(event, radius(), nFrames());
+        shape_model->meanProfile(event, radius(), nFrames());
     if (!model_profile)
         return false;
 
@@ -101,7 +101,7 @@ bool Profile3DIntegrator::compute(
     // evaluate the model profile at the given events
     for (int i = 0; i < events.size(); ++i) {
         Eigen::Vector3d x;
-        if (shape_collection->detectorCoords()) {
+        if (shape_model->detectorCoords()) {
             x(0) = events[i].px;
             x(1) = events[i].py;
             x(2) = events[i].frame;

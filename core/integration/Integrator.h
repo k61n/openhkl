@@ -69,7 +69,7 @@ class Integrator {
     void integrateFoundPeaks(PeakFinder* peak_finder);
     //! Integrate the shape collection
     void integrateShapeModel(
-        std::vector<Peak3D*> peaks, sptrDataSet data, ShapeModel* shape_collection,
+        std::vector<Peak3D*> peaks, sptrDataSet data, ShapeModel* shape_model,
         const AABB& aabb, const ShapeModelParameters& params);
     //! Set the parameters
     void setParameters(std::shared_ptr<IntegrationParameters> params);

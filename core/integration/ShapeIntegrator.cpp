@@ -30,7 +30,7 @@ ShapeIntegrator::ShapeIntegrator(ShapeModel* lib, const AABB& aabb, int nx, int 
 }
 
 bool ShapeIntegrator::compute(
-    Peak3D* peak, ShapeModel* shape_collection, const IntegrationRegion& region)
+    Peak3D* peak, ShapeModel* shape_model, const IntegrationRegion& region)
 {
     const UnitCell* uc = peak->unitCell();
     auto data = peak->dataSet();
@@ -47,7 +47,7 @@ bool ShapeIntegrator::compute(
         return false;
     }
 
-    PixelSumIntegrator::compute(peak, shape_collection, region);
+    PixelSumIntegrator::compute(peak, shape_model, region);
 
     const double mean_bkg = _meanBackground.value();
     const auto& events = region.peakData().events();

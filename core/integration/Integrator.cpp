@@ -134,17 +134,17 @@ void Integrator::integrateFoundPeaks(PeakFinder* peak_finder)
 }
 
 void Integrator::integrateShapeModel(
-    std::vector<Peak3D*> fit_peaks, sptrDataSet data, ShapeModel* shape_collection,
+    std::vector<Peak3D*> fit_peaks, sptrDataSet data, ShapeModel* shape_model,
     const AABB& aabb, const ShapeModelParameters& params)
 {
     nsxlog(Level::Info, "Integrator::integrateShapeModel");
     ShapeIntegrator integrator{
-        shape_collection, aabb, params.nbins_x, params.nbins_y, params.nbins_z};
+        shape_model, aabb, params.nbins_x, params.nbins_y, params.nbins_z};
     integrator.setNNumors(1);
     if (_handler)
         integrator.setHandler(_handler);
     integrator.setParameters(params);
-    integrator.integrate(fit_peaks, shape_collection, data, 1);
+    integrator.integrate(fit_peaks, shape_model, data, 1);
 }
 
 void Integrator::setParameters(std::shared_ptr<IntegrationParameters> params)

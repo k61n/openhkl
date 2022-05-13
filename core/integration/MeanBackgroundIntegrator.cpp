@@ -21,7 +21,7 @@
 namespace nsx {
 
 bool MeanBackgroundIntegrator::compute(
-    Peak3D* /*peak*/, ShapeModel* /*shape_collection*/, const IntegrationRegion& region)
+    Peak3D* /*peak*/, ShapeModel* /*shape_model*/, const IntegrationRegion& region)
 {
     double sum_bkg = 0.0;
     double sum_bkg2 = 0.0;

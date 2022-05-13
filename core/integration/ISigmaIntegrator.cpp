@@ -25,9 +25,9 @@ namespace nsx {
 ISigmaIntegrator::ISigmaIntegrator() : PixelSumIntegrator(false, false) { }
 
 bool ISigmaIntegrator::compute(
-    Peak3D* peak, ShapeModel* shape_collection, const IntegrationRegion& region)
+    Peak3D* peak, ShapeModel* shape_model, const IntegrationRegion& region)
 {
-    if (!shape_collection) {
+    if (!shape_model) {
         peak->setRejectionFlag(RejectionFlag::NoShapeModel);
         peak->setSelected(false);
         return false;
@@ -37,7 +37,7 @@ bool ISigmaIntegrator::compute(
         return false;
 
     // first get mean background
-    PixelSumIntegrator::compute(peak, shape_collection, region);
+    PixelSumIntegrator::compute(peak, shape_model, region);
     const double mean_bkg = _meanBackground.value();
     const double var_bkg = _meanBackground.variance();
 
@@ -56,7 +56,7 @@ bool ISigmaIntegrator::compute(
 
     Profile1D profile;
     std::optional<std::vector<Intensity>> mean_profile =
-        shape_collection->meanProfile1D(DetectorEvent(c), radius(), nFrames());
+        shape_model->meanProfile1D(DetectorEvent(c), radius(), nFrames());
     if (!mean_profile)
         return false;
 

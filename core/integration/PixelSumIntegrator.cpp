@@ -32,9 +32,9 @@ PixelSumIntegrator::PixelSumIntegrator(bool fit_center, bool fit_covariance)
 PixelSumIntegrator::~PixelSumIntegrator() = default;
 
 bool PixelSumIntegrator::compute(
-    Peak3D* peak, ShapeModel* shape_collection, const IntegrationRegion& region)
+    Peak3D* peak, ShapeModel* shape_model, const IntegrationRegion& region)
 {
-    if (!MeanBackgroundIntegrator::compute(peak, shape_collection, region)) {
+    if (!MeanBackgroundIntegrator::compute(peak, shape_model, region)) {
         peak->setRejectionFlag(RejectionFlag::TooFewPoints);
         peak->setSelected(false);
         return false;
