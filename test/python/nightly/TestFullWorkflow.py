@@ -115,7 +115,7 @@ class TestFullWorkFlow(unittest.TestCase):
         params.strength_min = 10.0
         params.strength_max = 1000000.0
         filter.filter(found_peaks)
-        filtered_peaks = nsx.PeakCollection('fit', nsx.listtype_FILTERED)
+        filtered_peaks = nsx.PeakCollection('fit', nsx.PeakCollectionType_FOUND)
         filtered_peaks.populateFromFiltered(found_peaks)
 
         print('Predicting peaks...')
@@ -124,7 +124,7 @@ class TestFullWorkFlow(unittest.TestCase):
         params = predictor.parameters()
         params.d_min = 1.5
         predictor.predictPeaks(data, indexed_cell)
-        expt.addPeakCollection('predicted', nsx.listtype_PREDICTED, predictor.peaks())
+        expt.addPeakCollection('predicted', nsx.PeakCollectionType_PREDICTED, predictor.peaks())
         predicted_peaks = expt.getPeakCollection('predicted')
         print(f'{predicted_peaks.numberOfPeaks()} peaks predicted')
         self.assertTrue(predicted_peaks.numberOfPeaks() > 1940 and

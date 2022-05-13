@@ -350,7 +350,7 @@ void ExperimentImporter::loadPeaks(Experiment* experiment)
             }
             nsxlog(Level::Debug, "Finished creating the vector of peaks");
 
-            listtype collection_type = static_cast<listtype>(type);
+            PeakCollectionType collection_type = static_cast<PeakCollectionType>(type);
 
             // converting data types. Ascii code of '0' is 48, of '1' is 49
             experiment->addPeakCollection(

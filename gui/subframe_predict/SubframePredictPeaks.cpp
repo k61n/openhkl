@@ -69,7 +69,7 @@
 
 SubframePredictPeaks::SubframePredictPeaks()
     : QWidget()
-    , _peak_collection("temp", nsx::listtype::PREDICTED)
+    , _peak_collection("temp", nsx::PeakCollectionType::PREDICTED)
     , _peak_collection_item()
     , _peak_collection_model()
     , _peaks_predicted(false)
@@ -624,7 +624,7 @@ void SubframePredictPeaks::accept()
         return;
 
     if (!expt->addPeakCollection(
-            dlg->listName().toStdString(), nsx::listtype::PREDICTED,
+            dlg->listName().toStdString(), nsx::PeakCollectionType::PREDICTED,
             _peak_collection.getPeakList())) {
         QMessageBox::warning(
             this, "Unable to add PeakCollection",

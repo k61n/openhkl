@@ -26,7 +26,7 @@ class Experiment;
 class Peak3D;
 class PeakCollection;
 class UnitCell;
-enum class listtype;
+enum class PeakCollectionType;
 }
 class PeakCollectionItem;
 class PeakCollectionModel;
@@ -53,7 +53,7 @@ class Project {
         const QString& peakListName, int upperindex = -1, int lowerindex = -1) const;
 
     QStringList getPeakListNames() const;
-    QStringList getPeakCollectionNames(nsx::listtype lt) const;
+    QStringList getPeakCollectionNames(nsx::PeakCollectionType lt) const;
 
     int numPeakCollections() const;
 

@@ -95,7 +95,7 @@ GROUP "/" {
          }
 
          GROUP "Meta" {
-            ATTRIBUTE "Type" {  #  { FOUND, FILTERED, PREDICTED, INDEXING }
+            ATTRIBUTE "Type" {  #  { FOUND, PREDICTED, INDEXING }
                DATATYPE  NATIVE_INT32
                DATASPACE  SCALAR
             }

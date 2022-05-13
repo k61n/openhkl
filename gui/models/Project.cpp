@@ -92,7 +92,7 @@ QStringList Project::getPeakListNames() const
     return ret;
 }
 
-QStringList Project::getPeakCollectionNames(nsx::listtype lt) const
+QStringList Project::getPeakCollectionNames(nsx::PeakCollectionType lt) const
 {
     QStringList ret;
     for (const std::string& name : _experiment->getCollectionNames(lt))

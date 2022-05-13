@@ -70,7 +70,7 @@ class PeakFinder {
     PeakCollection* getPeakCollection();
     //! Generate a PeakCollection from a vector of found peaks
     void setPeakCollection(
-        const std::string name, const nsx::listtype type,
+        const std::string name, const nsx::PeakCollectionType type,
         std::vector<std::shared_ptr<nsx::Peak3D>> peak_list);
 
     //! Return the DataList (vector of pointers to DataSets)

@@ -28,7 +28,7 @@ FoundPeakComboBox::FoundPeakComboBox(QWidget* parent) : PeakComboBox(parent)
 
 void FoundPeakComboBox::addPeakCollection(nsx::PeakCollection* peaks)
 {
-    if (peaks->type() != nsx::listtype::FOUND)
+    if (peaks->type() != nsx::PeakCollectionType::FOUND)
         return;
     QSignalBlocker blocker(this);
     addItem(QString::fromStdString(peaks->name()));

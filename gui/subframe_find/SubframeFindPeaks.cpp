@@ -53,7 +53,7 @@
 
 SubframeFindPeaks::SubframeFindPeaks()
     : QWidget()
-    , _peak_collection("temp", nsx::listtype::FOUND)
+    , _peak_collection("temp", nsx::PeakCollectionType::FOUND)
     , _peak_collection_item()
     , _peak_collection_model()
     , _peaks_integrated(false)
