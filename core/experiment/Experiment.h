@@ -95,14 +95,14 @@ class Experiment {
     // Peak handler
     //! Create a new PeakCollection from a vector of peaks
     bool addPeakCollection(
-        const std::string& name, const listtype type, std::vector<Peak3D*> peaks);
+        const std::string& name, const PeakCollectionType type, std::vector<Peak3D*> peaks);
     bool addPeakCollection(
-        const std::string& name, const listtype type, std::vector<Peak3D*> peaks, bool indexed,
+        const std::string& name, const PeakCollectionType type, std::vector<Peak3D*> peaks, bool indexed,
         bool integrated);
     //! Check if the handler has the named peak collection
     bool hasPeakCollection(const std::string& name);
     //! Check if handler has Peak Collections of a certain type
-    bool hasPeakCollectionType(listtype t);
+    bool hasPeakCollectionType(PeakCollectionType t);
     //! returns whether or not experiment has integrated peakcollections
     bool hasIntegratedPeakCollection();
     //! Get a pointer to the named peak collection
@@ -111,13 +111,13 @@ class Experiment {
     void removePeakCollection(const std::string& name);
     //! Get a vector of peak collection names
     std::vector<std::string> getCollectionNames() const;
-    //! Get a vector of peak collection names of a give listtype
-    std::vector<std::string> getCollectionNames(listtype lt) const;
+    //! Get a vector of peak collection names of a give PeakCollectionType
+    std::vector<std::string> getCollectionNames(PeakCollectionType lt) const;
     //! Get the number of peak collections
     int numPeakCollections() const;
     //! Create a new peak collection from peaks caught by a filter
     bool acceptFilter(
-        std::string name, PeakCollection* collection, listtype lt = listtype::FILTERED);
+        std::string name, PeakCollection* collection, PeakCollectionType pct);
     //! Duplicate a peak collection (deep copy) for comparison after some process
     bool clonePeakCollection(std::string name, std::string new_name);
 

@@ -24,7 +24,7 @@ namespace nsx {
  *  @{*/
 
 //! Type of peak collection
-enum class listtype { FOUND, FILTERED, PREDICTED, INDEXING };
+enum class PeakCollectionType { FOUND, PREDICTED, INDEXING };
 
 /*! \brief Store a collection of peak shapes,  for peak prediction and integration.
  *
@@ -35,7 +35,7 @@ class PeakCollection {
  public:
     //! Default contructor
     PeakCollection();
-    PeakCollection(const std::string& name, listtype type);
+    PeakCollection(const std::string& name, PeakCollectionType type);
 
     //! Sets name of the PeakCollection
     void setName(const std::string& name);
@@ -68,10 +68,10 @@ class PeakCollection {
     //! Return a std::vector of pointers to peaks caughtByFilter
     std::vector<nsx::Peak3D*> getFilteredPeakList() const;
 
-    //! Return the listtype of the PeakCollection (FOUND, PREDICTED, etc.)
-    nsx::listtype type() const { return _type; };
-    //! Set the listtype of the PeakCollection (FOUND, PREDICTED, etc.)
-    void setType(listtype type) { _type = type; };
+    //! Return the PeakCollectionType of the PeakCollection (FOUND, PREDICTED, etc.)
+    nsx::PeakCollectionType type() const { return _type; };
+    //! Set the PeakCollectionType of the PeakCollection (FOUND, PREDICTED, etc.)
+    void setType(PeakCollectionType type) { _type = type; };
 
     //! compute beam divergence and mosaicity sigmas
     void computeSigmas();
@@ -128,7 +128,7 @@ class PeakCollection {
     std::string _name;
     std::string _description;
 
-    nsx::listtype _type{listtype::FOUND};
+    nsx::PeakCollectionType _type{PeakCollectionType::FOUND};
     nsx::MetaData _metadata;
 
     std::string _file_name;

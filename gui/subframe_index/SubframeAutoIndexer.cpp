@@ -60,7 +60,7 @@
 
 SubframeAutoIndexer::SubframeAutoIndexer()
     : QWidget()
-    , _peak_collection(nsx::kw_autoindexingCollection, nsx::listtype::INDEXING)
+    , _peak_collection(nsx::kw_autoindexingCollection, nsx::PeakCollectionType::INDEXING)
     , _peak_collection_item()
     , _peak_collection_model()
     , _show_direct_beam(true)
@@ -639,7 +639,7 @@ void SubframeAutoIndexer::acceptSolution()
     if (_selected_unit_cell) {
         nsx::Experiment* expt = gSession->currentProject()->experiment();
         QStringList collections =
-            gSession->currentProject()->getPeakCollectionNames(nsx::listtype::FOUND);
+            gSession->currentProject()->getPeakCollectionNames(nsx::PeakCollectionType::FOUND);
 
         QStringList space_groups;
         for (const std::string& name : _selected_unit_cell->compatibleSpaceGroups())

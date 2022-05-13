@@ -28,7 +28,7 @@ const PeakCollectionMap* PeakHandler::getPeakCollectionMap() const
 }
 
 bool PeakHandler::addPeakCollection(
-    const std::string& name, const listtype type, const std::vector<nsx::Peak3D*> peaks)
+    const std::string& name, const PeakCollectionType type, const std::vector<nsx::Peak3D*> peaks)
 {
     // abort if name is aleady in use
     if (hasPeakCollection(name))
@@ -41,7 +41,7 @@ bool PeakHandler::addPeakCollection(
 }
 
 bool PeakHandler::addPeakCollection(
-    const std::string& name, const listtype type, const std::vector<nsx::Peak3D*> peaks,
+    const std::string& name, const PeakCollectionType type, const std::vector<nsx::Peak3D*> peaks,
     bool indexed, bool integrated)
 {
     // abort if name is aleady in use
@@ -56,7 +56,7 @@ bool PeakHandler::addPeakCollection(
     return hasPeakCollection(name); // now name must be in use
 }
 
-bool PeakHandler::addEmptyCollection(const std::string& name, const listtype type)
+bool PeakHandler::addEmptyCollection(const std::string& name, const PeakCollectionType type)
 {
     if (hasPeakCollection(name))
         return false;
@@ -72,7 +72,7 @@ bool PeakHandler::hasPeakCollection(const std::string& name) const
     return (peaks != _peak_collections.end());
 }
 
-bool PeakHandler::hasPeakCollectionType(listtype t) const
+bool PeakHandler::hasPeakCollectionType(PeakCollectionType t) const
 {
     for (auto& e : _peak_collections)
         if (e.second->type() == t) return true;
@@ -114,23 +114,22 @@ std::vector<std::string> PeakHandler::getCollectionNames() const
     return names;
 }
 
-std::vector<std::string> PeakHandler::getCollectionNames(
-    listtype lt /* = listtype::FILTERED */) const
+std::vector<std::string> PeakHandler::getCollectionNames(PeakCollectionType pct) const
 {
     std::vector<std::string> names;
     for (PeakCollectionMap::const_iterator it = _peak_collections.begin();
          it != _peak_collections.end(); ++it) {
-        if (it->second->type() == lt)
+        if (it->second->type() == pct)
             names.push_back(it->second->name());
     }
     return names;
 }
 
-bool PeakHandler::acceptFilter(std::string name, PeakCollection* collection, listtype lt)
+bool PeakHandler::acceptFilter(std::string name, PeakCollection* collection, PeakCollectionType pct)
 {
     if (hasPeakCollection(name))
         return false;
-    std::unique_ptr<PeakCollection> ptr(new PeakCollection(name, lt));
+    std::unique_ptr<PeakCollection> ptr(new PeakCollection(name, pct));
     ptr->populateFromFiltered(collection);
     _peak_collections.insert_or_assign(name, std::move(ptr));
     return hasPeakCollection(name);

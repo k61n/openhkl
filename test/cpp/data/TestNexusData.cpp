@@ -201,7 +201,7 @@ TEST_CASE("test/data/TestNexusData.cpp", "")
     peak_filter->resetFiltering(found_collection);
     peak_filter->filter(found_collection);
 
-    exp.acceptFilter("filtered_peaks", found_collection);
+    exp.acceptFilter("filtered_peaks", found_collection, found_collection->type());
 
     auto filtered_collection = exp.getPeakCollection("filtered_peaks");
     auto filteredPeaks = filtered_collection->getPeakList();

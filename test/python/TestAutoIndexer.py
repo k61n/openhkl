@@ -26,7 +26,7 @@ class TestAutoIndexer(unittest.TestCase):
         filter.parameters().strength_max = 1.0e7
         filter.filter(found_peaks)
         name = expt.generatePeakCollectionName()
-        expt.acceptFilter(name, found_peaks)
+        expt.acceptFilter(name, found_peaks, found_peaks.type())
         filtered_peaks = expt.getPeakCollection(name)
         n_caught = filtered_peaks.numberCaughtByFilter()
         self.assertEqual(n_caught, 369)

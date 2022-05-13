@@ -441,18 +441,17 @@ void SubframeHome::refreshTables() const
     _dataset_table->setRowCount(0);
     _peak_collections_table->setRowCount(0);
     _unitcell_table->setRowCount(0);
-    
+
     if (!gSession->hasProject())
         return;
-    
+
     try {
         auto b2s = [](bool a) { return !a ? QString("No") : QString("Yes"); };
-        auto Type2s = [](nsx::listtype t) {
+        auto Type2s = [](nsx::PeakCollectionType t) {
             switch (t) {
-                case nsx::listtype::FILTERED: return QString("Filtered"); break;
-                case nsx::listtype::FOUND: return QString("Found"); break;
-                case nsx::listtype::INDEXING: return QString("Indexing"); break;
-                case nsx::listtype::PREDICTED: return QString("Predicted"); break;
+                case nsx::PeakCollectionType::FOUND: return QString("Found"); break;
+                case nsx::PeakCollectionType::INDEXING: return QString("Indexing"); break;
+                case nsx::PeakCollectionType::PREDICTED: return QString("Predicted"); break;
                 default: return QString("UNNANMED"); break;
             }
         };

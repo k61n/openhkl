@@ -193,7 +193,7 @@ TEST_CASE("test/data/TestNewWorkFlow.cpp", "")
     peak_filter->resetFiltering(found_collection);
     peak_filter->filter(found_collection);
 
-    experiment.acceptFilter("filtered_peaks", found_collection);
+    experiment.acceptFilter("filtered_peaks", found_collection, found_collection->type());
 
     auto peakCollection = experiment.getPeakCollection("filtered_peaks");
     auto filteredPeaks = peakCollection->getPeakList();

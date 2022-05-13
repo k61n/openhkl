@@ -120,7 +120,7 @@ PeakCollection* PeakFinder::getPeakCollection()
 }
 
 void PeakFinder::setPeakCollection(
-    const std::string name, const nsx::listtype type,
+    const std::string name, const nsx::PeakCollectionType type,
     std::vector<std::shared_ptr<nsx::Peak3D>> peak_list)
 {
     _peak_collection = PeakCollection(name, type);
@@ -687,7 +687,7 @@ void PeakFinder::find(const DataList numors)
         _handler->setStatus("Peak finding completed.");
         _handler->setProgress(100);
     }
-    setPeakCollection("Found peaks", nsx::listtype::FOUND, _current_peaks);
+    setPeakCollection("Found peaks", nsx::PeakCollectionType::FOUND, _current_peaks);
     nsxlog(Level::Info, "PeakFinder::find: exit");
 }
 

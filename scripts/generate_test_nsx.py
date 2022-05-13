@@ -124,7 +124,7 @@ prediction_params = predictor.parameters()
 prediction_params.d_min = 1.5
 prediction_params.d_max = 50.0
 predictor.predictPeaks(data, indexed_cell)
-expt.addPeakCollection("predicted", nsx.listtype_PREDICTED, predictor.peaks())
+expt.addPeakCollection("predicted", nsx.PeakCollectionType_PREDICTED, predictor.peaks())
 predicted_peaks = expt.getPeakCollection("predicted")
 npeaks = predicted_peaks.numberOfPeaks()
 print(f'{npeaks} predicted')

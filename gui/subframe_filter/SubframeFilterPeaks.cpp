@@ -50,7 +50,7 @@
 
 SubframeFilterPeaks::SubframeFilterPeaks()
     : QWidget()
-    , _peak_collection("temp", nsx::listtype::FOUND)
+    , _peak_collection("temp", nsx::PeakCollectionType::FOUND)
     , _peak_collection_item()
     , _peak_collection_model()
 {
@@ -439,7 +439,7 @@ void SubframeFilterPeaks::accept()
     if (dlg->result() == QDialog::Rejected)
         return;
     if (!gSession->currentProject()->experiment()
-        ->acceptFilter(dlg->listName().toStdString(), collection, nsx::listtype::FILTERED)) {
+        ->acceptFilter(dlg->listName().toStdString(), collection, collection->type())) {
         QMessageBox::warning(
             this, "Unable to add PeakCollection", "Collection with this name already exists!");
         return;

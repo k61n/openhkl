@@ -98,7 +98,7 @@ void Experiment::setDefaultDMin()
 bool Experiment::acceptFoundPeaks(const std::string& name)
 {
     std::vector<Peak3D*> peaks = _peak_finder->currentPeaks();
-    return addPeakCollection(name, listtype::FOUND, peaks);
+    return addPeakCollection(name, PeakCollectionType::FOUND, peaks);
 }
 
 bool Experiment::acceptFoundPeaks(const std::string& name, const PeakCollection& found)
@@ -106,7 +106,7 @@ bool Experiment::acceptFoundPeaks(const std::string& name, const PeakCollection&
     std::vector<Peak3D*> peaks = found.getPeakList();
 
     if (!addPeakCollection(
-            name, listtype::FOUND, peaks, found.isIndexed(), _peak_finder->isIntegrated())) {
+            name, PeakCollectionType::FOUND, peaks, found.isIndexed(), _peak_finder->isIntegrated())) {
         return false;
     }
     _peak_finder->setIntegrated(false); // reset for next use
@@ -221,7 +221,7 @@ void Experiment::autoIndex(PeakCollection* peaks)
     double npeaks = peaks->numberOfPeaks();
     double ncaught = peaks->numberCaughtByFilter();
     nsxlog(Level::Info, "Indexing using ", ncaught, " / ", npeaks, " peaks");
-    _peak_handler->acceptFilter(collection_name, peaks, listtype::INDEXING);
+    _peak_handler->acceptFilter(collection_name, peaks, PeakCollectionType::INDEXING);
     PeakCollection* indexing_collection = getPeakCollection(collection_name);
     _auto_indexer->autoIndex(indexing_collection);
     _peak_handler->removePeakCollection(collection_name);
@@ -244,7 +244,7 @@ void Experiment::buildShapeModel(
     _peak_filter->parameters()->strength_max = params.strength_max;
     _peak_filter->filter(peaks);
     std::string collection_name = nsx::kw_fitCollection;
-    PeakCollection fit_peaks(collection_name, listtype::FILTERED);
+    PeakCollection fit_peaks(collection_name, peaks->type());
     fit_peaks.populateFromFiltered(peaks);
 
     if (fit_peaks.numberOfPeaks() == 0) {
@@ -373,7 +373,7 @@ void Experiment::removeData(const std::string& name)
 
 // Peak handler methods
 bool Experiment::addPeakCollection(
-    const std::string& name, const listtype type, std::vector<Peak3D*> peaks)
+    const std::string& name, const PeakCollectionType type, std::vector<Peak3D*> peaks)
 {
     if (!_peak_handler->hasPeakCollection(name)) {
         _peak_handler->addPeakCollection(name, type, peaks);
@@ -383,7 +383,7 @@ bool Experiment::addPeakCollection(
 }
 
 bool Experiment::addPeakCollection(
-    const std::string& name, const listtype type, std::vector<Peak3D*> peaks, bool indexed,
+    const std::string& name, const PeakCollectionType type, std::vector<Peak3D*> peaks, bool indexed,
     bool integrated)
 {
     return _peak_handler->addPeakCollection(name, type, peaks, indexed, integrated);
@@ -394,7 +394,7 @@ bool Experiment::hasPeakCollection(const std::string& name)
     return _peak_handler->hasPeakCollection(name);
 }
 
-bool Experiment::hasPeakCollectionType(listtype t)
+bool Experiment::hasPeakCollectionType(PeakCollectionType t)
 {
     return _peak_handler->hasPeakCollectionType(t);
 }
@@ -419,7 +419,7 @@ std::vector<std::string> Experiment::getCollectionNames() const
     return _peak_handler->getCollectionNames();
 }
 
-std::vector<std::string> Experiment::getCollectionNames(listtype lt) const
+std::vector<std::string> Experiment::getCollectionNames(PeakCollectionType lt) const
 {
     return _peak_handler->getCollectionNames(lt);
 }
@@ -429,9 +429,9 @@ int Experiment::numPeakCollections() const
     return _peak_handler->numPeakCollections();
 }
 
-bool Experiment::acceptFilter(std::string name, PeakCollection* collection, listtype lt)
+bool Experiment::acceptFilter(std::string name, PeakCollection* collection, PeakCollectionType pct)
 {
-    return _peak_handler->acceptFilter(name, collection, lt);
+    return _peak_handler->acceptFilter(name, collection, pct);
 }
 
 bool Experiment::clonePeakCollection(std::string name, std::string new_name)
