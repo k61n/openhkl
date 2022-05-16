@@ -98,10 +98,8 @@ class SubframeShapes : public QWidget {
     void buildShapeModel();
     //! Compute the mean profile at the given coordinates
     void computeProfile();
-    //! Generate a peak for previewin in DetectorScene
+    //! Generate a peak for preview in in DetectorScene
     void getPreviewPeak(nsx::Peak3D* selected_peak);
-    //! Generate a peak for previewin in DetectorScene
-    void getPreviewPeak(const Eigen::Vector3d& centre);
     //! Save the shape collection
     void saveShapes();
 
