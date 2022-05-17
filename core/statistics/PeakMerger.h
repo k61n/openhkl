@@ -74,6 +74,9 @@ class PeakMerger {
     //! Get the overall quality statistics
     const DataResolution* overallQuality();
 
+    //! Return a string containing a summary of statistics
+    std::string summary();
+
  private:
     std::unique_ptr<MergedData> _merged_data;
     std::vector<std::unique_ptr<MergedData>> _merged_data_per_shell;

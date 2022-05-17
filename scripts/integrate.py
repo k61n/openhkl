@@ -68,5 +68,6 @@ merger.addPeakCollection(predicted_peaks)
 merger.setSpaceGroup(nsx.SpaceGroup(space_group))
 merger.mergePeaks()
 merger.computeQuality()
+print(merger.summary())
 
 print("Integration complete")
