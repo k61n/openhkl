@@ -44,7 +44,7 @@ bool ShapeHandler::addShapeModel(const std::string& name, const nsx::ShapeModel&
     return hasShapeModel(name); // now name must be in use
 }
 
-bool ShapeHandler::addEmptyCollection(const std::string& name)
+bool ShapeHandler::addEmptyModel(const std::string& name)
 {
     if (hasShapeModel(name))
         return false;

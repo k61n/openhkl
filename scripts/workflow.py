@@ -195,7 +195,7 @@ shapes = get_shapes(data, filtered_peaks)
 
 print('Assigning shapes to predicted peaks...')
 interpolation = nsx.PeakInterpolation_InverseDistance
-shapes.setPredictedShapes(predicted_peaks, interpolation)
+shapes.setPredictedShapes(predicted_peaks)
 
 print('Refining...')
 refiner = expt.refiner()

@@ -140,6 +140,6 @@ shapes = found_peaks.shapeCollection()
 
 # Assign shapes to predicted peaks
 interpolation = nsx.PeakInterpolation_InverseDistance
-shapes.setPredictedShapes(predicted_peaks, interpolation)
+shapes.setPredictedShapes(predicted_peaks)
 
 expt.saveToFile(f'{name}.nsx')

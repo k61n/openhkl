@@ -141,8 +141,7 @@ class TestFullWorkFlow(unittest.TestCase):
                         filtered_peaks.shapeModel().numberOfPeaks() < 1740)
 
         print('Assigning shapes to predicted peaks...')
-        interpolation = nsx.PeakInterpolation_InverseDistance
-        filtered_peaks.shapeModel().setPredictedShapes(predicted_peaks, interpolation)
+        filtered_peaks.shapeModel().setPredictedShapes(predicted_peaks)
 
         print('Refining...')
         refiner = expt.refiner()

@@ -16,6 +16,7 @@
 #define NSX_CORE_SHAPE_SHAPECOLLECTION_H
 
 #include "base/utils/ProgressHandler.h"
+#include "core/data/DataTypes.h"
 #include "core/shape/IPeakIntegrator.h"
 #include "core/shape/Profile1D.h"
 #include "core/shape/Profile3D.h"
@@ -94,7 +95,7 @@ class ShapeModel {
     void setParameters(std::shared_ptr<ShapeModelParameters> params);
 
     //! Set shapes of a predicted peak collection
-    void setPredictedShapes(PeakCollection* peaks, PeakInterpolation interpolation);
+    void setPredictedShapes(PeakCollection* peaks);
 
     //! Predict the (detector space) covariance of a given peak
     Eigen::Matrix3d predictCovariance(Peak3D* peak) const;
@@ -147,6 +148,9 @@ class ShapeModel {
     void integrate(
         std::vector<Peak3D*> peaks, std::set<nsx::sptrDataSet> datalist,
         sptrProgressHandler handler = nullptr);
+
+    //! Build a shape model from the given peak collection
+    void build(PeakCollection* peaks, sptrDataSet data);
 
     //! Set the progress handler
     void setHandler(sptrProgressHandler handler);

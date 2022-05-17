@@ -590,13 +590,10 @@ void SubframeShapes::assignPeakShapes()
         ProgressView progressView(nullptr);
         progressView.watch(handler);
 
-
-        int interpol = _interpolation_combo->currentIndex();
-        nsx::PeakInterpolation peak_interpolation = static_cast<nsx::PeakInterpolation>(interpol);
         nsx::PeakCollection* peaks = _predicted_combo->currentPeakCollection();
 
         _shape_combo->currentShapes()->setHandler(handler);
-        _shape_combo->currentShapes()->setPredictedShapes(peaks, peak_interpolation);
+        _shape_combo->currentShapes()->setPredictedShapes(peaks);
         gGui->statusBar()->showMessage(
             QString::number(peaks->numberOfValid()) + "/" + QString::number(peaks->numberOfPeaks())
             + " predicted peaks with valid shapes");

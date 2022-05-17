@@ -22,17 +22,13 @@ lib_dir = "@SWIG_INSTALL_PATH@"  # Path to pynsx.py
 sys.path.append(lib_dir)
 import pynsx as nsx
 
-file = Path('/home/zamaan/projects/250422b_trypsin.nsx')
-experiment = '250422b'
+file = Path('/home/zamaan/projects/datasets/120522b_after_integrate_pxsum336.nsx')
+experiment = '120522b'
 diffractometer = 'BioDiff2500'
 data_name = 'soak_9_d2_I_scanI_9483.raw'
+space_group = "P 21 21 21"
 found_peaks_name = 'findint'
 predicted_peaks_name = 'predict1'
-
-if (file.is_file()):
-    print('Found .nsx file ' + str(file))
-else:
-    print('Could not find file ' + str(file))
 
 expt = nsx.Experiment(experiment, diffractometer)
 expt.loadFromFile(str(file))
@@ -40,37 +36,26 @@ data = expt.getData(data_name)
 found_peaks = expt.getPeakCollection(found_peaks_name)
 predicted_peaks = expt.getPeakCollection(predicted_peaks_name)
 
-def get_shapes(data, peaks, params):
-    peaks.computeSigmas()
-    params.sigma_d = peaks.sigmaD()
-    params.sigma_m = peaks.sigmaM()
-    peaks.buildShapeModel(data, params)
-    print(f'{peaks.shapeCollection().numberOfPeaks()} shapes generated')
-    return peaks.shapeCollection()
-
-def integrate(integrator_type, data, peaks, shapes, params):
-    integrator = expt.integrator()
-    integrator.integratePeaks(integrator_type, data, peaks)
-    print(f'{integrator.numberOfValidPeaks()} / {integrator.numberOfPeaks()} peaks integrated')
-
-
 print('Generating shapes...')
-params = nsx.ShapeModelParameters()
-shapes = get_shapes(data, found_peaks, params)
+expt.addEmptyShapeModel("shapes")
+shapes = expt.getShapeModel("shapes")
+shapes.build(found_peaks, data)
+shape_params = shapes.parameters()
 
 print('Assigning peak shapes...')
-params.neighbour_range_pixels = 500
-params.neighbour_range_frames = 10
-params.min_neighbours = 10
-interpolation_type = nsx.PeakInterpolation_NoInterpolation
-# found_peaks.shapeCollection().setPredictedShapes(predicted_peaks, interpolation_type)
-
+shape_params.neighbour_range_pixels = 500
+shape_params.neighbour_range_frames = 10
+shape_params.min_neighbours = 10
+shape_params.interpolation = nsx.PeakInterpolation_InverseDistance
+shapes.setPredictedShapes(predicted_peaks)
 
 print('Integrating predicted peaks...')
 # Integration parameters
-params = expt.integrator().parameters()
-integrator_type = nsx.IntegratorType_Profile3D
-integrate(integrator_type, data, predicted_peaks, shapes, params)
+integration_params = expt.integrator().parameters()
+integration_params.integrator_type = nsx.IntegratorType_Profile3D
+integrator = expt.integrator()
+integrator.integratePeaks(data, predicted_peaks, integration_params, shapes)
+print(f'{integrator.numberOfValidPeaks()} / {integrator.numberOfPeaks()} peaks integrated')
 
 print('Merging predicted peaks...')
 
@@ -79,9 +64,8 @@ merger = expt.peakMerger()
 params = merger.parameters()
 merger.reset()
 params.d_min = 1.5
-params.frame_min = 1  # exclude first and last frames from statistics
-params.frame_max = data.nFrames() - 1
 merger.addPeakCollection(predicted_peaks)
+merger.setSpaceGroup(nsx.SpaceGroup(space_group))
 merger.mergePeaks()
 merger.computeQuality()
 

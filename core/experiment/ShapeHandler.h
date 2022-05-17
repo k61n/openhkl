@@ -33,25 +33,25 @@ class ShapeHandler {
     ShapeHandler() = default;
     ~ShapeHandler();
 
-    //! Get a pointer to the map of shape collections
+    //! Get a pointer to the map of shape models
     const ShapeModelMap* getShapeModelMap() const;
-    //! Add a shape collection
+    //! Add a shape model
     bool addShapeModel(const std::string& name, const nsx::ShapeModel& shapes);
-    //! Add an empty shape collection
-    bool addEmptyCollection(const std::string& name);
-    //! Returns true if the experiment has named shape collection
+    //! Add an empty shape model
+    bool addEmptyModel(const std::string& name);
+    //! Returns true if the experiment has named shape model
     bool hasShapeModel(const std::string& name) const;
-    //! Returns the named shape collection
+    //! Returns the named shape model
     ShapeModel* getShapeModel(const std::string name);
-    // !Remove a shape collection from the experiment
+    // !Remove a shape model
     void removeShapeModel(const std::string& name);
-    //! Get a vector of shape collection names from the handler
+    //! Get a vector of shape model
     std::vector<std::string> getCollectionNames() const;
-    //! Get the number of shape collections
+    //! Get the number of shape models
     int numShapeModels() const { return _shape_models.size(); };
-    //! Generate name for new shape collection
+    //! Generate name for new shape model
     std::string generateName();
-    //! Get a vector of pointers to shape collections
+    //! Get a vector of pointers to shape models
     std::vector<ShapeModel*> getShapeModels();
 
  private:

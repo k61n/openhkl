@@ -18,6 +18,7 @@
 #include "base/geometry/Ellipsoid.h"
 #include "base/utils/Logger.h"
 #include "core/data/DataSet.h"
+#include "core/data/DataTypes.h"
 #include "core/detector/Detector.h"
 #include "core/detector/DetectorEvent.h"
 #include "core/instrument/Diffractometer.h"
@@ -390,7 +391,7 @@ std::optional<Eigen::Matrix3d> ShapeModel::meanCovariance(
     return JI * cov * JI.transpose();
 }
 
-void ShapeModel::setPredictedShapes(PeakCollection* peaks, PeakInterpolation interpolation)
+void ShapeModel::setPredictedShapes(PeakCollection* peaks)
 {
     nsxlog(
         Level::Info, "ShapeModel: Computing shapes of ", peaks->numberOfPeaks(),
@@ -405,6 +406,7 @@ void ShapeModel::setPredictedShapes(PeakCollection* peaks, PeakInterpolation int
         _handler->setProgress(0);
     }
 
+    int n_bad_shapes = 0;
 #pragma omp parallel for
     for (auto peak : peaks->getPeakList()) {
         peak->setPredicted(true);
@@ -414,9 +416,11 @@ void ShapeModel::setPredictedShapes(PeakCollection* peaks, PeakInterpolation int
         // too few or no neighbouring peaks found)
         if (auto cov = meanCovariance(
                 peak, _params->neighbour_range_pixels, _params->neighbour_range_frames,
-                _params->min_n_neighbors, interpolation)) {
+                _params->min_n_neighbors, _params->interpolation)) {
             Eigen::Vector3d center = peak->shape().center();
             peak->setShape(Ellipsoid(center, cov.value().inverse()));
+        } else {
+            ++n_bad_shapes;
         }
 
         if (_handler) {
@@ -424,7 +428,7 @@ void ShapeModel::setPredictedShapes(PeakCollection* peaks, PeakInterpolation int
             _handler->setProgress(progress);
         }
     }
-    nsxlog(Level::Info, "ShapeModel: finished computing shapes");
+    nsxlog(Level::Info, "ShapeModel: finished computing shapes, ", n_bad_shapes, " failures");
 }
 
 std::array<double, 6> ShapeModel::choleskyD() const
@@ -487,11 +491,53 @@ void ShapeModel::integrate(
     integrator.setParameters(int_params);
 
     int n_numor = 1;
+    // Why loop over all numors? - zamaan
+    // Do we expect to have peaks from different numors in the vector? If so,
+    // how do we ensure that the sample rotation angles are consistent?
     for (const nsx::sptrDataSet& data : datalist) {
         integrator.integrate(peaks, this, data, n_numor);
         ++n_numor;
     }
     nsxlog(Level::Info, "ShapeModel::integrate: finished integrating shapes");
+}
+
+void ShapeModel::build(PeakCollection* peaks, sptrDataSet data)
+{
+    nsxlog(Level::Info, "ShapeModel::build: building shape model");
+    peaks->computeSigmas();
+    _params->sigma_d = peaks->sigmaD();
+    _params->sigma_m = peaks->sigmaM();
+    std::vector<nsx::Peak3D*> fit_peaks;
+
+    for (nsx::Peak3D* peak : peaks->getPeakList()) {
+        if (!peak->enabled())
+            continue;
+        const double d = 1.0 / peak->q().rowVector().norm();
+
+        if (d > _params->d_max || d < _params->d_min)
+            continue;
+
+        const nsx::Intensity intensity = peak->correctedIntensity();
+
+        if (intensity.value() <= _params->strength_min * intensity.sigma())
+            continue;
+        fit_peaks.push_back(peak);
+    }
+
+    nsxlog(Level::Info, "ShapeModel::build: integrating ", fit_peaks.size(), " peaks");
+    ShapeIntegrator integrator(
+        this, getAABB(), _params->nbins_x, _params->nbins_y, _params->nbins_z);
+    nsx::IntegrationParameters int_params{};
+    int_params.peak_end = _params->peak_end;
+    int_params.bkg_begin = _params->bkg_begin;
+    int_params.bkg_end = _params->bkg_end;
+    integrator.setNNumors(1);
+    integrator.setParameters(int_params);
+    integrator.integrate(fit_peaks, this, data, 1);
+    nsxlog(Level::Info, "ShapeModel::build: finished integrating shapes");
+    nsxlog(Level::Info, "ShapeModel::build: updating fit");
+    updateFit(1000);
+    nsxlog(Level::Info, "ShapeModel::build: done");
 }
 
 void ShapeModel::setHandler(sptrProgressHandler handler)

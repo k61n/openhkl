@@ -170,19 +170,21 @@ class Experiment {
     std::vector<PeakCollection*> getPeakCollections();
 
     // ShapeHandler
-    //! Add a peak collection
+    //! Add a shape model
     bool addShapeModel(const std::string& name, const ShapeModel& shapes);
-    //! Returns true if the experiment has named peak collection
+    //! Add an empty shape model
+    bool addEmptyShapeModel(const std::string& name);
+    //! Returns true if the experiment has named shape model
     bool hasShapeModel(const std::string& name) const;
-    //! Returns the named peak collection
+    //! Returns the named shape model
     ShapeModel* getShapeModel(const std::string name);
-    // !Remove a shape collection from the experiment
+    //! Remove a shape model from the experiment
     void removeShapeModel(const std::string& name);
-    //! Get the number of shape collections
+    //! Get the number of shape models
     int numShapeModels() const;
-    //! Generate name for new peak collection
+    //! Generate name for new shape model
     std::string generateShapeModelName();
-    //! Get a vector of pointers to peak collections
+    //! Get a vector of pointers to shape models
     std::vector<ShapeModel*> getShapeModels();
 
     // Instrument state handler
