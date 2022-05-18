@@ -63,6 +63,7 @@ class SubframeShapes : public QWidget {
 
  public slots:
     void onPeakSelected(nsx::Peak3D* peak);
+    void onShapeChanged();
 
  private:
     //! Select dataset, peak collection, set parameters
@@ -97,7 +98,7 @@ class SubframeShapes : public QWidget {
     void buildShapeModel();
     //! Compute the mean profile at the given coordinates
     void computeProfile();
-    //! Generate a peak for previewin in DetectorScene
+    //! Generate a peak for preview in in DetectorScene
     void getPreviewPeak(nsx::Peak3D* selected_peak);
     //! Save the shape collection
     void saveShapes();

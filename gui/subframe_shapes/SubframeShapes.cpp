@@ -47,6 +47,7 @@
 #include <QMessageBox>
 #include <QScrollBar>
 #include <QSpacerItem>
+#include <qobject.h>
 
 SubframeShapes::SubframeShapes() : QWidget(), _preview_peak(nullptr)
 {
@@ -186,14 +187,18 @@ void SubframeShapes::setComputeShapesUp()
 
     _x->setMaximum(10000);
     _x->setValue(500);
+    _x->setSingleStep(1);
     _y->setMaximum(10000);
     _y->setValue(500);
+    _y->setSingleStep(1);
     _frame->setMaximum(100);
     _frame->setValue(5);
+    _frame->setSingleStep(1);
     _min_neighbours->setMaximum(1000);
     _min_neighbours->setValue(10);
     _pixel_radius->setMaximum(10000);
     _pixel_radius->setValue(500);
+    _pixel_radius->setSingleStep(10);
     _frame_radius->setMaximum(100);
     _frame_radius->setValue(10);
 
@@ -201,6 +206,50 @@ void SubframeShapes::setComputeShapesUp()
     _interpolation_combo->addItem("Inverse distance");
     _interpolation_combo->addItem("Intensity");
 
+    connect(
+        _x, qOverload<double>(&QDoubleSpinBox::valueChanged), this,
+        &SubframeShapes::computeProfile);
+    connect(
+        _y, qOverload<double>(&QDoubleSpinBox::valueChanged), this,
+        &SubframeShapes::computeProfile);
+    connect(
+        _frame, qOverload<double>(&QDoubleSpinBox::valueChanged), this,
+        &SubframeShapes::computeProfile);
+    connect(
+        _min_neighbours, qOverload<int>(&QSpinBox::valueChanged), this,
+        &SubframeShapes::computeProfile);
+    connect(
+        _pixel_radius, qOverload<double>(&QDoubleSpinBox::valueChanged), this,
+        &SubframeShapes::computeProfile);
+    connect(
+        _frame_radius, qOverload<double>(&QDoubleSpinBox::valueChanged), this,
+        &SubframeShapes::computeProfile);
+    connect(
+        _interpolation_combo,
+        static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
+        this, &SubframeShapes::computeProfile);
+    connect(
+        _x, qOverload<double>(&QDoubleSpinBox::valueChanged), this,
+        &SubframeShapes::onShapeChanged);
+    connect(
+        _y, qOverload<double>(&QDoubleSpinBox::valueChanged), this,
+        &SubframeShapes::onShapeChanged);
+    connect(
+        _frame, qOverload<double>(&QDoubleSpinBox::valueChanged), this,
+        &SubframeShapes::onShapeChanged);
+    connect(
+        _min_neighbours, qOverload<int>(&QSpinBox::valueChanged), this,
+        &SubframeShapes::onShapeChanged);
+    connect(
+        _pixel_radius, qOverload<double>(&QDoubleSpinBox::valueChanged), this,
+        &SubframeShapes::onShapeChanged);
+    connect(
+        _frame_radius, qOverload<double>(&QDoubleSpinBox::valueChanged), this,
+        &SubframeShapes::onShapeChanged);
+    connect(
+        _interpolation_combo,
+        static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this,
+        &SubframeShapes::onShapeChanged);
     connect(_calculate_mean_profile, &QPushButton::clicked, this, &SubframeShapes::computeProfile);
 
     _left_layout->addWidget(compute_box);
@@ -443,6 +492,9 @@ void SubframeShapes::buildShapeModel()
 
 void SubframeShapes::computeProfile()
 {
+    if (!gSession->hasProject())
+        return;
+
     setShapeParameters();
 
     auto* params = _shape_model.parameters();
@@ -594,6 +646,9 @@ DetectorWidget* SubframeShapes::detectorWidget()
 
 void SubframeShapes::onPeakSelected(nsx::Peak3D* peak)
 {
+    QSignalBlocker block_x(_x) ;
+    QSignalBlocker block_y(_y);
+    QSignalBlocker block_frame(_frame);
     _current_peak = peak;
     _x->setValue(peak->shape().center()[0]);
     _y->setValue(peak->shape().center()[1]);
@@ -603,5 +658,22 @@ void SubframeShapes::onPeakSelected(nsx::Peak3D* peak)
         return;
     computeProfile();
     getPreviewPeak(peak);
+    _detector_widget->scene()->setPeak(_preview_peak.get());
+}
+
+void SubframeShapes::onShapeChanged()
+{
+    QSignalBlocker block_x(_x);
+    QSignalBlocker block_y(_y);
+    QSignalBlocker block_frame(_frame);
+    if (_shape_model.numberOfPeaks() == 0)
+        return;
+    if (!_preview_peak)
+        return;
+    computeProfile();
+    Eigen::Vector3d new_centre = {_x->value(), _y->value(), _frame->value()};
+    nsx::Ellipsoid new_shape = {new_centre, _preview_peak->shape().metric()};
+    _preview_peak->setShape(new_shape);
+    getPreviewPeak(_preview_peak.get());
     _detector_widget->scene()->setPeak(_preview_peak.get());
 }
