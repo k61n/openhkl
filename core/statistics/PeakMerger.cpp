@@ -136,4 +136,12 @@ const DataResolution* PeakMerger::overallQuality()
     return &_overall_quality;
 }
 
+std::string PeakMerger::summary()
+{
+    std::ostringstream oss;
+    for (const auto& shell : _shell_qualities.shells)
+        oss << shell.toString() << std::endl;
+    return oss.str();
+}
+
 } // namespace nsx

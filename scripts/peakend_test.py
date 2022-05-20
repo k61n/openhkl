@@ -36,38 +36,39 @@ data = expt.getData(data_name)
 found_peaks = expt.getPeakCollection(found_peaks_name)
 predicted_peaks = expt.getPeakCollection(predicted_peaks_name)
 
-print('Generating shapes...')
 expt.addEmptyShapeModel("shapes")
 shapes = expt.getShapeModel("shapes")
 shapes.build(found_peaks, data)
 shape_params = shapes.parameters()
 
-print('Assigning peak shapes...')
-shape_params.neighbour_range_pixels = 500
-shape_params.neighbour_range_frames = 10
-shape_params.min_neighbours = 10
-shape_params.interpolation = nsx.PeakInterpolation_InverseDistance
-shapes.setPredictedShapes(predicted_peaks)
+for peak_end in np.arange(2.5, 3.6, 0.1):
+    name = "peakend_" + str(peak_end);
+    expt.clonePeakCollection('predict1', name)
+    peaks = expt.getPeakCollection(name)
+    print(name)
+    shape_params.neighbour_range_pixels = 500
+    shape_params.neighbour_range_frames = 10
+    shape_params.min_neighbours = 10
+    shape_params.interpolation = nsx.PeakInterpolation_InverseDistance
+    shapes.setPredictedShapes(peaks)
 
-print('Integrating predicted peaks...')
-# Integration parameters
-integration_params = expt.integrator().parameters()
-integration_params.integrator_type = nsx.IntegratorType_Profile3D
-integrator = expt.integrator()
-integrator.integratePeaks(data, predicted_peaks, integration_params, shapes)
-print(f'{integrator.numberOfValidPeaks()} / {integrator.numberOfPeaks()} peaks integrated')
+    # Integration parameters
+    integration_params = expt.integrator().parameters()
+    integration_params.integrator_type = nsx.IntegratorType_PixelSum
+    integration_params.peak_end = peak_end
+    integration_params.bkg_begin = peak_end
+    integrator = expt.integrator()
+    integrator.integratePeaks(data, peaks, integration_params, shapes)
 
-print('Merging predicted peaks...')
-
-# Merge parameters
-merger = expt.peakMerger()
-params = merger.parameters()
-merger.reset()
-params.d_min = 1.5
-merger.addPeakCollection(predicted_peaks)
-merger.setSpaceGroup(nsx.SpaceGroup(space_group))
-merger.mergePeaks()
-merger.computeQuality()
-print(merger.summary())
-
-print("Integration complete")
+    # Merge parameters
+    merger = expt.peakMerger()
+    params = merger.parameters()
+    merger.reset()
+    params.d_min = 1.5
+    merger.addPeakCollection(peaks)
+    merger.setSpaceGroup(nsx.SpaceGroup(space_group))
+    merger.mergePeaks()
+    merger.computeQuality()
+    with open(name, "w") as outfile:
+        outfile.write(merger.summary())
+    print(merger.summary())

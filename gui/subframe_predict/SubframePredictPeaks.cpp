@@ -599,7 +599,7 @@ void SubframePredictPeaks::applyShapeModel()
 
     shapes->setParameters(_shape_params);
     shapes->setHandler(handler);
-    shapes->setPredictedShapes(&_peak_collection, _shape_params->interpolation);
+    shapes->setPredictedShapes(&_peak_collection);
 
     refreshPeakTable();
     _shapes_assigned = true;
