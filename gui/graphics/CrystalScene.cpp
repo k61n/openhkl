@@ -1,6 +1,6 @@
 //  ***********************************************************************************************
 //
-//  NSXTool: data reduction for neutron single-crystal diffraction
+//  OpenHKL: data reduction for single crystal diffraction
 //
 //! @file      gui/graphics/CrystalScene.cpp
 //! @brief     Implements class CrystalScene
@@ -246,7 +246,7 @@ void CrystalScene::triangulate()
     try {
         _hull->updateHull();
     } catch (std::exception& e) {
-        QMessageBox::critical(nullptr, "NSXTool", e.what());
+        QMessageBox::critical(nullptr, "OpenHKL", e.what());
         return;
     }
 

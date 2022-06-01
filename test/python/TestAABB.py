@@ -1,6 +1,6 @@
 ##  ***********************************************************************************************
 ##
-##  NSXTool: data reduction for neutron single-crystal diffraction
+##  OpenHKL: data reduction for single crystal diffraction
 ##
 ##! @file      test/python/TestAABB.py
 ##! @brief     Test ...
@@ -12,7 +12,7 @@
 ##
 ##  ***********************************************************************************************
 
-import pynsx as nsx
+import pyohkl as ohkl
 import numpy as np
 import unittest
 
@@ -21,7 +21,7 @@ class TestAABB3D(unittest.TestCase):
     def testBounds(self):
         lb = np.array([0, 0, 0], dtype=float)
         ub = np.array([1, 2, 3], dtype=float)
-        bb = nsx.AABB()
+        bb = ohkl.AABB()
         bb.setLower(lb)
         bb.setUpper(ub)
         center = bb.center()
@@ -38,7 +38,7 @@ class TestAABB3D(unittest.TestCase):
     def testConstructor(self):
         lb = np.array([-1, -2, -3], dtype=float)
         ub = np.array([1, 2, 3], dtype=float)
-        bb = nsx.AABB(lb, ub)
+        bb = ohkl.AABB(lb, ub)
 
         lb = bb.lower();
         ub = bb.upper();

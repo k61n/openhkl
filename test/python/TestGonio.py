@@ -1,6 +1,6 @@
 ##  ***********************************************************************************************
 ##
-##  NSXTool: data reduction for neutron single-crystal diffraction
+##  OpenHKL: data reduction for single crystal diffraction
 ##
 ##! @file      test/python/TestGonio.py
 ##! @brief     Test ...
@@ -12,7 +12,7 @@
 ##
 ##  ***********************************************************************************************
 
-# import pynsx as nsx
+# import pyohkl as ohkl
 import numpy as np
 import unittest
 

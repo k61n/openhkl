@@ -1,6 +1,6 @@
 ##  ***********************************************************************************************
 ##
-##  NSXTool: data reduction for neutron single-crystal diffraction
+##  OpenHKL: data reduction for single crystal diffraction
 ##
 ##! @file      test/python/TestFlatDetector.py
 ##! @brief     Test ...
@@ -12,7 +12,7 @@
 ##
 ##  ***********************************************************************************************
 
-import pynsx as nsx
+import pyohkl as ohkl
 import numpy as np
 import unittest
 
@@ -22,7 +22,7 @@ tolerance = 1e-6
 
 class TestFlatDetector(unittest.TestCase):
     def test(self):
-        d = nsx.FlatDetector("D10-detector")
+        d = ohkl.FlatDetector("D10-detector")
         mm = 1e-3
         d.setDistance(380*mm)
         d.setHeight(80*mm)
@@ -38,7 +38,7 @@ class TestFlatDetector(unittest.TestCase):
         self.assertAlmostEqual(center[1],0.380,0)
         self.assertLess(center[2][0],tolerance)
 
-        state1 = nsx.InstrumentState()
+        state1 = ohkl.InstrumentState()
 
         gamma = state1.gamma(pixel_position)
         self.assertLess(gamma,tolerance)
@@ -50,7 +50,7 @@ class TestFlatDetector(unittest.TestCase):
         self.assertAlmostEqual(th2,0)
 
         # put detetctor at 90deg, event should point along x
-        state2 = nsx.InstrumentState()
+        state2 = ohkl.InstrumentState()
         state2.detectorOrientation = np.array([[0,1,0],[-1,0,0],[0,0,1]], dtype=np.float)
 
         gamma = state2.gamma(pixel_position)

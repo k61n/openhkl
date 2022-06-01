@@ -1,6 +1,6 @@
 //  ***********************************************************************************************
 //
-//  NSXTool: data reduction for neutron single-crystal diffraction
+//  OpenHKL: data reduction for single crystal diffraction
 //
 //! @file      core/loader/BaseHDF5DataReader.h
 //! @brief     Defines class BaseHDF5DataReader (specialized templates)

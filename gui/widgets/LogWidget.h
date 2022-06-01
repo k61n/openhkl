@@ -1,6 +1,6 @@
 //  ***********************************************************************************************
 //
-//  NSXTool: data reduction for neutron single-crystal diffraction
+//  OpenHKL: data reduction for single crystal diffraction
 //
 //! @file      gui/widgets/LogWidget.h
 //! @brief     Defines class LogWidget
@@ -48,7 +48,7 @@ class LogWidget : public QTextEdit {
     const std::string _fontFamily{"Courier"};
     const std::size_t _fontPointSize = 12;
     const std::size_t _wrapColumn = 80;
-    const std::string _initText = "NSXTool Messages";
+    const std::string _initText = "OpenHKL Messages";
 
     //! Receiver handle (for registering log messages)
     nsx::LogMessenger::receiverHandle _receiver_handle;

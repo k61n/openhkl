@@ -1,4 +1,4 @@
-set(app NSXTool)
+set(app OpenHKL)
 
 if(WIN32)
     add_executable(${app} WIN32 main.cpp resources.qrc)
@@ -16,7 +16,7 @@ target_include_directories(${app}
     ${QT_INCLUDES}
     )
 
-target_link_libraries(${app} PRIVATE ${QT_LIBS} nsxgui)
+target_link_libraries(${app} PRIVATE ${QT_LIBS} openhklgui)
 
 if(WIN32)
     include(PackIFW)

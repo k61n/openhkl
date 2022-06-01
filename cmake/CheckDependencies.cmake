@@ -39,7 +39,7 @@ else()
 endif()
 
 ###### Find Python
-if(NSX_PYTHON)
+if(OHKL_PYTHON)
     # python-dev and interpreter
     set(Python_ADDITIONAL_VERSIONS 3.7 3.6 3.5 3.4)
     find_package(PythonInterp 3)
@@ -78,7 +78,7 @@ if(NSX_PYTHON)
     # swig
     find_package(SWIG REQUIRED)
     include(UseSWIG)
-endif(NSX_PYTHON)
+endif(OHKL_PYTHON)
 
 ###### Find C-Blosc
 find_package(Blosc REQUIRED)

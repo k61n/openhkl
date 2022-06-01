@@ -1,6 +1,6 @@
 //  ***********************************************************************************************
 //
-//  NSXTool: data reduction for neutron single-crystal diffraction
+//  OpenHKL: data reduction for single crystal diffraction
 //
 //! @file      gui/items/PeakCollectionItem.cpp
 //! @brief     The visual item of the peak with a pointer to the peak object

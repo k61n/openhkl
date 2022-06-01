@@ -1,6 +1,6 @@
 ##  ***********************************************************************************************
 ##
-##  NSXTool: data reduction for neutron single-crystal diffraction
+##  OpenHKL: data reduction for single crystal diffraction
 ##
 ##! @file      test/python/TestCylindricalDetector.py
 ##! @brief     Test ...
@@ -12,7 +12,7 @@
 ##
 ##  ***********************************************************************************************
 
-import pynsx as nsx
+import pyohkl as ohkl
 import numpy as np
 import unittest
 
@@ -23,7 +23,7 @@ tolerance = 1e-3
 class TestCylindricalDetector(unittest.TestCase):
 
     def test(self):
-        d = nsx.CylindricalDetector("D19-detector")
+        d = ohkl.CylindricalDetector("D19-detector")
         mm = 1e-3
         d.setDistance(764*mm)
         d.setAngularWidth(np.deg2rad(120.0))
@@ -39,7 +39,7 @@ class TestCylindricalDetector(unittest.TestCase):
         self.assertAlmostEqual(center[1,0],0.764)
         self.assertLess(center[2,0],tolerance)
 
-        state1 = nsx.InstrumentState()
+        state1 = ohkl.InstrumentState()
 
         # should be center of the detector so gamma, nu =0 at rest
 
@@ -53,7 +53,7 @@ class TestCylindricalDetector(unittest.TestCase):
         self.assertAlmostEqual(th2,0)
 
         # put detetctor at 90deg, event should point along x
-        state2 = nsx.InstrumentState()
+        state2 = ohkl.InstrumentState()
         state2.detectorOrientation = np.array([[0,1,0],[-1,0,0],[0,0,1]], dtype=np.float)
 
         gamma = state2.gamma(pixel_position)

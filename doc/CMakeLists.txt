@@ -35,4 +35,4 @@ add_custom_target(
     -d "${SPHINX_CACHE_DIR}"
     "${SPHINX_SOURCE_DIR}"
     "${SPHINX_LATEX_DIR}"
-  COMMENT "Compile ${SPHINX_LATEX_DIR}/nsxtool.tex using pdflatex")
+  COMMENT "Compile ${SPHINX_LATEX_DIR}/openhkl.tex using pdflatex")

@@ -19,6 +19,7 @@ debug/
 qbuild/
 cover/
 tidy/
+notebooks/
 
 docs/build
 

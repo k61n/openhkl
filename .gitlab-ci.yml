@@ -31,7 +31,7 @@ mac10_15:
     - bash ../setup_scripts/mk_macos_pkg.sh ../ ./
   artifacts:
     paths:
-    - build/NSXTool-*.dmg
+    - build/OpenHKL-*.dmg
     - build/macospack/*.zip
     expire_in: 10 days
 
@@ -48,14 +48,14 @@ mac12_2:
     - export PYLIB=$PYDIR/lib/libpython3.9.dylib
     - export PYINC=$PYDIR/include/python3.9
     - export TESTDATADIR=$HOME/testdata
-    - cmake .. -D CMAKE_PREFIX_PATH=$QTDIR -D CMAKE_CXX_COMPILER_LAUNCHER=ccache -D PYTHON_INCLUDE_DIR=$PYINC -D PYTHON_LIBRARY=$PYLIB -D NSX_TESTDATA_DIR=$TESTDATADIR
+    - cmake .. -D CMAKE_PREFIX_PATH=$QTDIR -D CMAKE_CXX_COMPILER_LAUNCHER=ccache -D PYTHON_INCLUDE_DIR=$PYINC -D PYTHON_LIBRARY=$PYLIB -D OHKL_TESTDATA_DIR=$TESTDATADIR
     - make -j12
     - ctest -j12 --output-on-failure
     # - cpack -V
     - bash ../setup_scripts/mk_macos_pkg.sh ../ ./
   artifacts:
     paths:
-    - build/NSXTool-*.dmg
+    - build/OpenHKL-*.dmg
     - build/macospack/*.zip
     expire_in: 10 days
 
@@ -73,7 +73,7 @@ native_Debian_clang:
     - cd build
     - |-
       if [[ $CI_PIPELINE_SOURCE == "nightly" ]]; then
-        cmake .. -D CMAKE_CXX_COMPILER_LAUNCHER=ccache -D NSX_FULL_WORKFLOW_TEST=ON
+        cmake .. -D CMAKE_CXX_COMPILER_LAUNCHER=ccache -D OHKL_FULL_WORKFLOW_TEST=ON
       else
         cmake .. -D CMAKE_CXX_COMPILER_LAUNCHER=ccache
       fi

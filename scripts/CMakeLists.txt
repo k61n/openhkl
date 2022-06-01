@@ -2,7 +2,7 @@
 #  Python scripts that require a path to build/swig
 ###################################################################################################
 
-if(NSX_PYTHON)
+if(OHKL_PYTHON)
   configure_file(${CMAKE_SOURCE_DIR}/scripts/workflow.py workflow.py)
   configure_file(${CMAKE_SOURCE_DIR}/scripts/integrate.py integrate.py)
   configure_file(${CMAKE_SOURCE_DIR}/scripts/pxrange_test.py pxrange_test.py)

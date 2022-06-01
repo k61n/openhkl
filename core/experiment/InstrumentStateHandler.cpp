@@ -1,6 +1,6 @@
 //  ***********************************************************************************************
 //
-//  NSXTool: data reduction for neutron single-crystal diffraction
+//  OpenHKL: data reduction for single crystal diffraction
 //
 //! @file      core/experiment/InstrumentStateHandloer.cpp
 //! @brief     Handles instrument state manipulations for Experiment object

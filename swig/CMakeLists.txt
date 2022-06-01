@@ -12,20 +12,20 @@ set(CMAKE_SWIG_OUTDIR ${CMAKE_CURRENT_BINARY_DIR})
 include_directories(${CMAKE_SOURCE_DIR} ${XSection_INCLUDE_DIR})
 include_directories(${PYTHON_INCLUDE_DIRS})
 
-set_property(SOURCE pynsx.i PROPERTY CPLUSPLUS ON)
-set_property(SOURCE pynsx.i PROPERTY SWIG_MODULE_NAME pynsx)
+set_property(SOURCE pyohkl.i PROPERTY CPLUSPLUS ON)
+set_property(SOURCE pyohkl.i PROPERTY SWIG_MODULE_NAME pyohkl)
 
 # Set the core headers path at the swig level
-get_directory_property(PYNSX_INCLUDE_DIRECTORIES INCLUDE_DIRECTORIES)
-list(REMOVE_DUPLICATES PYNSX_INCLUDE_DIRECTORIES)
-set(PYNSX_SWIG_INCLUDE_DIRECTORIES)
-foreach(it ${PYNSX_INCLUDE_DIRECTORIES})
-    set(PYNSX_SWIG_INCLUDE_DIRECTORIES ${PYNSX_SWIG_INCLUDE_DIRECTORIES} "-I${it}")
+get_directory_property(PYOHKL_INCLUDE_DIRECTORIES INCLUDE_DIRECTORIES)
+list(REMOVE_DUPLICATES PYOHKL_INCLUDE_DIRECTORIES)
+set(PYOHKL_SWIG_INCLUDE_DIRECTORIES)
+foreach(it ${PYOHKL_INCLUDE_DIRECTORIES})
+  set(PYOHKL_SWIG_INCLUDE_DIRECTORIES ${PYOHKL_SWIG_INCLUDE_DIRECTORIES} "-I${it}")
 endforeach()
-set_property(SOURCE pynsx.i PROPERTY SWIG_FLAGS ${PYNSX_SWIG_INCLUDE_DIRECTORIES})
+set_property(SOURCE pyohkl.i PROPERTY SWIG_FLAGS ${PYOHKL_SWIG_INCLUDE_DIRECTORIES})
 
-swig_add_library(pynsx TYPE MODULE LANGUAGE python SOURCES pynsx.i)
+swig_add_library(pyohkl TYPE MODULE LANGUAGE python SOURCES pyohkl.i)
 
-swig_link_libraries(pynsx ${PYTHON_LIBRARIES} nsxcore ${XSection_LIBRARIES})
+swig_link_libraries(pyohkl ${PYTHON_LIBRARIES} openhklcore ${XSection_LIBRARIES})
 
 configure_file("${CMAKE_SOURCE_DIR}/swig/pypackage/__init__.py.in" "${CMAKE_BINARY_DIR}/swig/__init__.py" @ONLY)

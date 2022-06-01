@@ -1,6 +1,6 @@
 //  ***********************************************************************************************
 //
-//  NSXTool: data reduction for neutron single-crystal diffraction
+//  OpenHKL: data reduction for single crystal diffraction
 //
 //! @file      core/instrument/HardwareParameters.h from core/resources/Resources.h.in
 //! @brief     Declares functions that relate to resource files

@@ -1,4 +1,4 @@
-set(lib nsxgui)
+set(lib openhklgui)
 
 if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
     add_compile_options(-Wno-deprecated-copy) # to suppress warnings from Qt5 (at least <= 5.12.5)
@@ -17,7 +17,7 @@ target_include_directories(${lib}
 
 target_link_libraries(${lib}
     PRIVATE
-    nsxcore
+    openhklcore
     ${QCustomPlot_LIBRARIES}
     ${QT_LIBS}
     )

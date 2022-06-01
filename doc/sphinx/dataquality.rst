@@ -12,7 +12,7 @@ especially in the high resolution limit :cite:`d-Karplus2012`.
 :math:`R` factors
 -----------------
 
-Three different :math:`R` factors are computed in NSXTool. The subscript
+Three different :math:`R` factors are computed in OpenHKL. The subscript
 :math:`l` denotes observations of reflection :math:`h` with intensity :math:`I`.
 
 1. :math:`R_\mathrm{merge}`:

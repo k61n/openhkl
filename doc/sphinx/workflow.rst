@@ -3,7 +3,7 @@
 Workflow
 ========
 
-The workflow in NSXTool approximately follows the order of the icons in
+The workflow in OpenHKL approximately follows the order of the icons in
 the sidebar: find peaks, filter, autoindex, predict, refine, merge. The
 ``Home`` tab enables experiment creation and loading/saving, while
 the ``Experiment`` tab allows inspection and editing of various aspects

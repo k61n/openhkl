@@ -1,6 +1,6 @@
 ##  ***********************************************************************************************
 ##
-##  NSXTool: data reduction for neutron single-crystal diffraction
+##  OpenHKL: data reduction for single crystal diffraction
 ##
 ##! @file      test/python/TestSpaceGroupCSV.py
 ##! @brief     Test ...
@@ -12,7 +12,7 @@
 ##
 ##  ***********************************************************************************************
 
-import pynsx as nsx
+import pyohkl as ohkl
 # import numpy as np
 import unittest
 
@@ -22,7 +22,7 @@ class TestSpaceGroupCSV(unittest.TestCase):
         num_rows = 0
 
         counts = map
-        symbols = nsx.SpaceGroup.symbols()
+        symbols = ohkl.SpaceGroup.symbols()
         for symbol in symbols:
             # syntax error
             #counts([symbol]) = 0

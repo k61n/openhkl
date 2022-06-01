@@ -1,6 +1,6 @@
 ##  ***********************************************************************************************
 ##
-##  NSXTool: data reduction for neutron single-crystal diffraction
+##  OpenHKL: data reduction for single crystal diffraction
 ##
 ##! @file      test/python/TestNDTree.py
 ##! @brief     Test ...
@@ -12,7 +12,7 @@
 ##
 ##  ***********************************************************************************************
 
-import pynsx as nsx
+import pyohkl as ohkl
 import numpy as np
 import unittest
 
@@ -80,7 +80,7 @@ class TestNDTRee(unittest.TestCase):
          #   del shape
 
     def split_test(self):
-        Ellipsoid3D = nsx.Ellipsoid()
+        Ellipsoid3D = ohkl.Ellipsoid()
         tree = np.array([(0,0,0),(50,50,50)])
         tree.setMaxStorage(4)
 

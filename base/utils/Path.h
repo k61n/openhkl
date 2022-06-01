@@ -1,6 +1,6 @@
 //  ***********************************************************************************************
 //
-//  NSXTool: data reduction for neutron single-crystal diffraction
+//  OpenHKL: data reduction for single crystal diffraction
 //
 //! @file      base/utils/Path.h
 //! @brief     Declares functions that operate on paths
@@ -39,7 +39,7 @@ std::string buildPath(const std::vector<std::string>& paths, const std::string& 
 //! Returns the home directory
 std::string homeDirectory();
 
-//! Returns the NSXTool application data path
+//! Returns the OpenHKL application data path
 std::string applicationDataPath();
 
 //! Returns true if the file exists

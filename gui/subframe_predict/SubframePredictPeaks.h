@@ -1,6 +1,6 @@
 //  ***********************************************************************************************
 //
-//  NSXTool: data reduction for neutron single-crystal diffraction
+//  OpenHKL: data reduction for single crystal diffraction
 //
 //! @file      gui/subframe_predict/SubframePredictPeaks.h
 //! @brief     Defines classes FoundPeaks, PeakFinderFrame

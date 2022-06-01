@@ -22,7 +22,7 @@ their respective peaks. There are four basic steps
 4. **Integration by profile fitting** — summing the peak pixels to
    determine the intensity and variance of the peaks.
 
-There are five main integrators implemented in NSXTool. The pixel sum
+There are five main integrators implemented in OpenHKL. The pixel sum
 integrator is the most lightweight and naive, since it does not use any
 form of profile fitting. It is intended to generate an initial guess for
 the intensities. The 1D (used in DENZO) and 3D (used in XDS) Profile
@@ -125,7 +125,7 @@ resulting in the 2x2 linear system,
      \begin{bmatrix} B \\ I \end{bmatrix} =
      \begin{bmatrix} \sum c_i/v_i^2 \\ \sum c_ip_i/v_i^2 \end{bmatrix}
 
-In NSXTool, the following procedure is used to solve these equations:
+In OpenHKL, the following procedure is used to solve these equations:
 
 #. Set :math:`v_i = b_i` as an initial guess
 

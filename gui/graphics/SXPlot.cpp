@@ -1,6 +1,6 @@
 //  ***********************************************************************************************
 //
-//  NSXTool: data reduction for neutron single-crystal diffraction
+//  OpenHKL: data reduction for single crystal diffraction
 //
 //! @file      gui/graphics/SXPlot.cpp
 //! @brief     Implements class SXPlot
@@ -211,7 +211,7 @@ void SXPlot::titleDoubleClick(QMouseEvent* event, QCPTextElement* title)
     // Set the plot title by double clicking on it
     bool ok;
     QString newTitle = QInputDialog::getText(
-        this, "NSXTool", "New plot title:", QLineEdit::Normal, title->text(), &ok);
+        this, "OpenHKL", "New plot title:", QLineEdit::Normal, title->text(), &ok);
     if (ok) {
         title->setText(newTitle);
         replot();
@@ -228,7 +228,7 @@ void SXPlot::legendDoubleClick(QCPLegend* legend, QCPAbstractLegendItem* item)
         QCPPlottableLegendItem* plItem = qobject_cast<QCPPlottableLegendItem*>(item);
         bool ok;
         QString newName = QInputDialog::getText(
-            this, "NSXTool", "New legent:", QLineEdit::Normal, plItem->plottable()->name(), &ok);
+            this, "OpenHKL", "New legend:", QLineEdit::Normal, plItem->plottable()->name(), &ok);
         if (ok) {
             plItem->plottable()->setName(newName);
             replot();
@@ -253,7 +253,7 @@ void SXPlot::legendDoubleClick(QCPLegend* legend, QCPAbstractLegendItem* item)
 //     std::ofstream file;
 //     file.open(fileName.toStdString().c_str(), std::ios::out);
 //     if (!file.is_open())
-//         QMessageBox::critical(this, tr("NSXTool"), tr("Problem opening file"));
+//         QMessageBox::critical(this, tr("OpenHKL"), tr("Problem opening file"));
 
 //     // TODO: tidy up formatting in file
 //     for (unsigned ind = 0; ind < npoints; ++ind){

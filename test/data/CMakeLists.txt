@@ -28,7 +28,7 @@ configure_file(../cpp/crystal/crystallography.tsv crystallography.tsv COPYONLY)
 configure_file(../cpp/crystal/714898.hdf 714898.hdf COPYONLY)
 
 ###################################################################################################
-#  Long test data files must have been downloaded to directory NSX_TESTDATA_DIR
+#  Long test data files must have been downloaded to directory OHKL_TESTDATA_DIR
 ###################################################################################################
 
 set(test_files
@@ -49,21 +49,21 @@ set(test_files
     CrChiA_c01runab_28617.raw
     CrChiA.nsx)
 
-set(NSX_TESTDATA_URL https://computing.mlz-garching.de/download/testdata/nsx)
-set(NSX_NIGHTLY_TESTDATA_URL ${NSX_TESTDATA_URL}/nightly)
+set(OHKL_TESTDATA_URL https://computing.mlz-garching.de/download/testdata/nsx)
+set(OHKL_NIGHTLY_TESTDATA_URL ${OHKL_TESTDATA_URL}/nightly)
 
 function(check_file expected_hash fname)
-    if(NOT EXISTS ${NSX_TESTDATA_DIR}/${fname})
+    if(NOT EXISTS ${OHKL_TESTDATA_DIR}/${fname})
         message(STATUS "File ${fname} not found, downloading...")
-        file(DOWNLOAD ${NSX_TESTDATA_URL}/${fname} ${NSX_TESTDATA_DIR}/${fname})
+        file(DOWNLOAD ${OHKL_TESTDATA_URL}/${fname} ${OHKL_TESTDATA_DIR}/${fname})
     else()
-        file(SHA384 ${NSX_TESTDATA_DIR}/${fname} found_hash)
+        file(SHA384 ${OHKL_TESTDATA_DIR}/${fname} found_hash)
         if(NOT (${found_hash} STREQUAL ${expected_hash}))
             message(STATUS "- File ${fname} corrupted, downloading...")
-            file(DOWNLOAD ${NSX_TESTDATA_URL}/${fname} ${NSX_TESTDATA_DIR}/${fname})
+            file(DOWNLOAD ${OHKL_TESTDATA_URL}/${fname} ${OHKL_TESTDATA_DIR}/${fname})
         else()
-            if (NOT ${NSX_TESTDATA_DIR} STREQUAL "test/data")
-                configure_file(${NSX_TESTDATA_DIR}/${fname} ${fname} COPYONLY)
+            if (NOT ${OHKL_TESTDATA_DIR} STREQUAL "test/data")
+                configure_file(${OHKL_TESTDATA_DIR}/${fname} ${fname} COPYONLY)
             endif()
         endif()
     endif()
@@ -71,7 +71,7 @@ endfunction()
 
 list(LENGTH test_files nfiles)
 message(STATUS
-    "Checking ${nfiles} test data files in directory NSX_TESTDATA_DIR=${NSX_TESTDATA_DIR}:")
+    "Checking ${nfiles} test data files in directory OHKL_TESTDATA_DIR=${OHKL_TESTDATA_DIR}:")
 
 # SHA384 sum
 check_file(90d4b60a2ae44d2f24865b29d068569b7348ebcd61ca2333476c6daabec1cd17688273acc2bf456ebdafbbc84dee114c  CrChiA_c01runab_28603.raw)
@@ -92,12 +92,12 @@ check_file(598d2406631dd96a6c3b0bf4fe6f41a6b7435077b9475da0178cab34649be4b548fff
 check_file(f6e2f759824dee1310ce12c45a34b2fe22fb61ec4582d7affbd609b0da2369042ba74e6a00af0aeee8b613904a762275 CrChiA.nsx)
 
 ###################################################################################################
-#  Simulated data files for full workflow test (NSX_FULL_WORKFLOW_TEST)
+#  Simulated data files for full workflow test (OHKL_FULL_WORKFLOW_TEST)
 ###################################################################################################
-if (NSX_FULL_WORKFLOW_TEST)
+if (OHKL_FULL_WORKFLOW_TEST)
     message(STATUS "Full workflow test enabled, checking for data file...")
     set(nightly_test_file small_cell_low_intensity.tar.gz)
-    file(DOWNLOAD ${NSX_NIGHTLY_TESTDATA_URL}/${nightly_test_file} ${NSX_TESTDATA_DIR}/${nightly_test_file})
+    file(DOWNLOAD ${OHKL_NIGHTLY_TESTDATA_URL}/${nightly_test_file} ${OHKL_TESTDATA_DIR}/${nightly_test_file})
     check_file(f98e6ae071c6d89c122b89ac9880fa85497ed1f552e524933c37fe70adce30066dd4b37ce0ed660484d0892f8b1c62e3  small_cell_low_intensity.tar.gz)
     file(ARCHIVE_EXTRACT INPUT ${nightly_test_file})
 endif()

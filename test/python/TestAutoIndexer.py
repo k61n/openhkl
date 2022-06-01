@@ -1,7 +1,7 @@
 import sys
 import glob
 import unittest
-import pynsx as nsx
+import pyohkl as ohkl
 
 class TestAutoIndexer(unittest.TestCase):
 
@@ -9,7 +9,7 @@ class TestAutoIndexer(unittest.TestCase):
         # Initialise the experiment
         name = "CrChiA"
         detector = "BioDiff2500"
-        expt = nsx.Experiment(name, detector)
+        expt = ohkl.Experiment(name, detector)
 
         expt.loadFromFile("CrChiA.nsx")
         found_peaks = expt.getPeakCollection("found")
@@ -35,7 +35,7 @@ class TestAutoIndexer(unittest.TestCase):
         # Autoindex the peaks
         autoindexer = expt.autoIndexer()
         expt.setReferenceCell(57.96, 65.12, 86.52, 90.0, 90.0, 90.0)
-        autoindexer_params = nsx.IndexerParameters()
+        autoindexer_params = ohkl.IndexerParameters()
         autoindexer_params.maxdim = 100.0
         autoindexer_params.nSolutions = 10
         autoindexer_params.nVertices = 10000
@@ -44,7 +44,7 @@ class TestAutoIndexer(unittest.TestCase):
         autoindexer_params.minUnitCellVolume = 10000.0
         autoindexer.autoIndex(filtered_peaks)
         reference_cell = expt.getReferenceCell()
-        reference_cell.setSpaceGroup(nsx.SpaceGroup("P 21 21 21"))
+        reference_cell.setSpaceGroup(ohkl.SpaceGroup("P 21 21 21"))
         self.assertTrue(expt.checkAndAssignUnitCell(filtered_peaks, 2.0, 0.1))  # boolean return value
 
 if __name__ == "__main__":
