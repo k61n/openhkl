@@ -1,4 +1,4 @@
-set(lib nsxcore)
+set(lib openhklcore)
 
 file(GLOB_RECURSE sources *.cpp)
 
@@ -14,8 +14,8 @@ target_include_directories(${lib}
 
 target_link_libraries(${lib}
     PUBLIC
-    nsxbase
-    nsxtables
+    openhklbase
+    openhkltables
     PRIVATE
     ${HDF5_LIBRARIES}
     ${Blosc_LIBRARIES}

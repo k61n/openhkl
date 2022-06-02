@@ -1,7 +1,7 @@
 import sys
 import glob
 import unittest
-import pynsx as nsx
+import pyohkl as ohkl
 
 class TestPeakFinder(unittest.TestCase):
 
@@ -9,13 +9,13 @@ class TestPeakFinder(unittest.TestCase):
         # Initialise the experiment
         name = "CrChiA"
         detector = "BioDiff2500"
-        expt = nsx.Experiment(name, detector)
+        expt = ohkl.Experiment(name, detector)
 
         # Read the data
         files = glob.glob('CrChiA_c01runab_28*.raw')
         if len(files) != 15:
             raise Exception(f"Found {len(files)} tiff files while expecting 7")
-        data_params = nsx.RawDataReaderParameters()
+        data_params = ohkl.RawDataReaderParameters()
         # instrument and file parameters
         data_params.wavelength = 2.669
         data_params.delta_omega = 0.3
@@ -23,7 +23,7 @@ class TestPeakFinder(unittest.TestCase):
         data_params.swap_endian = True
         data_params.bpp = 2
 
-        dataset = nsx.DataSet("TestPeakFinder.py", expt.getDiffractometer())
+        dataset = ohkl.DataSet("TestPeakFinder.py", expt.getDiffractometer())
         dataset.setRawReaderParameters(data_params)
         for filename in files:
             dataset.addRawFrame(filename)
@@ -40,7 +40,7 @@ class TestPeakFinder(unittest.TestCase):
         params.maximum_size = 10000
         params.peak_end = 1.0
         params.threshold = 80
-        finder.setConvolver(nsx.AnnularConvolver())
+        finder.setConvolver(ohkl.AnnularConvolver())
 
         finder.find(expt.getAllData())
 

@@ -1,6 +1,6 @@
 //  ***********************************************************************************************
 //
-//  NSXTool: data reduction for neutron single-crystal diffraction
+//  OpenHKL: data reduction for single crystal diffraction
 //
 //! @file      gui/graphics/DetectorView.cpp
 //! @brief     Implements class DetectorView
@@ -33,7 +33,7 @@ DetectorView::DetectorView(QWidget* parent) : QGraphicsView(parent), _scene(new 
     viewport()->setMouseTracking(true);
     setInteractive(true);
     // Invert the y-axis so that (0,0) coordinate is at bottom left (and not top
-    // left) This match detector coordinates in NSXTool
+    // left) This match detector coordinates in OpenHKL
     scale(1, -1);
     setContextMenuPolicy(Qt::CustomContextMenu);
     setCacheMode(QGraphicsView::CacheBackground);

@@ -4,5 +4,5 @@ Code Reference
 ==============
 
 .. doxygengroup:: python_api
-    :project: NSXTool
+    :project: OpenHKL
     :members:

@@ -1,6 +1,6 @@
 //  ***********************************************************************************************
 //
-//  NSXTool: data reduction for neutron single-crystal diffraction
+//  OpenHKL: data reduction for single crystal diffraction
 //
 //! @file      core/raw/HDF5BloscFilter.h
 //! @brief     Implements class HDF5BloscFilter.

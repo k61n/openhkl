@@ -1,6 +1,6 @@
 //  ***********************************************************************************************
 //
-//  NSXTool: data reduction for neutron single-crystal diffraction
+//  OpenHKL: data reduction for single crystal diffraction
 //
 //! @file      gui/subframe_home/SubframeHome.cpp
 //! @brief     Implements class SubframeHome
@@ -266,7 +266,7 @@ void SubframeHome::loadFromFile()
     QString loadDirectory = s.value("experiment", QDir::homePath()).toString();
 
     QString file_path = QFileDialog::getOpenFileName(
-        this, "Load the current experiment", loadDirectory, "NSXTool file (*.nsx)");
+        this, "Load the current experiment", loadDirectory, "OpenHKL file (*.nsx)");
 
     if (file_path.isEmpty())
         return;
@@ -309,7 +309,7 @@ void SubframeHome::saveCurrent(bool dialogue /* = false */)
     } else {
         QString default_name = loadDirectory + "/" + project->currentFileName();
         file_path = QFileDialog::getSaveFileName(
-            this, "Save the current experiment", default_name, "NSXTool file (*.nsx)");
+            this, "Save the current experiment", default_name, "OpenHKL file (*.nsx)");
 
         if (file_path.isEmpty())
             return;

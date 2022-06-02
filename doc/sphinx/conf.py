@@ -17,9 +17,9 @@
 
 # -- Project information -----------------------------------------------------
 
-project = 'NSXTool'
-copyright = '2021, NSXTool authors'
-author = 'NSXTool authors'
+project = 'OpenHKL'
+copyright = '2021, OpenHKL authors'
+author = 'OpenHKL authors'
 
 # The full version, including alpha/beta/rc tags
 release = '0.1'
@@ -43,8 +43,8 @@ extensions = ['sphinx.ext.todo',
 # -- Options for Doxygen output -------------------------------------------------
 
 # Breathe for incorporating Doxygen documentation
-breathe_projects = {"NSXTool" : "@DOXYGEN_XML_DIR@"}
-breathe_default_project = "NSXTool"
+breathe_projects = {"OpenHKL" : "@DOXYGEN_XML_DIR@"}
+breathe_default_project = "OpenHKL"
 
 # Bibtex reference file
 bibtex_bibfiles = ['references.bib']
@@ -94,8 +94,8 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-    (master_doc, 'nsxtool.tex', u'NSXTool Documentation',
-     u'NSXTool Developers', 'manual'),
+    (master_doc, 'nsxtool.tex', u'OpenHKL Documentation',
+     u'OpenHKL Developers', 'manual'),
 ]
 
 
@@ -104,7 +104,7 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    (master_doc, 'nsxtool', u'NSXTool Documentation',
+    (master_doc, 'nsxtool', u'OpenHKL Documentation',
      [author], 1)
 ]
 
@@ -115,9 +115,9 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-    (master_doc, 'NSXTool', u'NSXTool Documentation',
-     'NSXTool Developers', 'NSXTool',
-     'NSXTool: Neutron scattering single crystal data reduction',
+    (master_doc, 'OpenHKL', u'OpenHKL Documentation',
+     'OpenHKL Developers', 'OpenHKL',
+     'OpenHKL: Neutron scattering single crystal data reduction',
      'Miscellaneous'),
 ]
 

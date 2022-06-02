@@ -1,16 +1,16 @@
 file(GLOB_RECURSE sources *.cpp)
 
-add_library(nsxtables ${sources})
+add_library(openhkltables ${sources})
 
 target_include_directories(
-    nsxtables
+    openhkltables
     PUBLIC
     ${XSection_INCLUDE_DIR}
     PRIVATE
     ${CMAKE_SOURCE_DIR})
 
-target_link_libraries(nsxtables
+target_link_libraries(openhkltables
     PUBLIC
-    nsxbase
+    openhklbase
     ${XSection_LIBRARIES}
     )

@@ -1,6 +1,6 @@
 ##  ***********************************************************************************************
 ##
-##  NSXTool: data reduction for neutron single-crystal diffraction
+##  OpenHKL: data reduction for single crystal diffraction
 ##
 ##! @file      test/python/TestFullWorkFlow.py
 ##! @brief     Test ...
@@ -15,7 +15,7 @@
 import numpy as np
 import unittest
 from pathlib import Path
-import pynsx as nsx
+import pyohkl as ohkl
 import os
 
 class TestFullWorkFlow(unittest.TestCase):
@@ -25,9 +25,9 @@ class TestFullWorkFlow(unittest.TestCase):
         data_dir = 'small_cell_low_intensity' # Path to .raw data files
 
         # set up the experiment
-        expt = nsx.Experiment('trypsin-sim', 'BioDiff2500')
+        expt = ohkl.Experiment('trypsin-sim', 'BioDiff2500')
         diffractometer = expt.getDiffractometer()
-        dataset = nsx.DataSet('trypsin-sim', diffractometer)
+        dataset = ohkl.DataSet('trypsin-sim', diffractometer)
 
         # raw data parameters
         data_params = expt.data_params
@@ -72,7 +72,7 @@ class TestFullWorkFlow(unittest.TestCase):
 
         print('Indexing found peaks...')
         expt.setReferenceCell(24.5, 28.7, 37.7, 90, 90, 90) # reference cell used to pick best solution
-        space_group = nsx.SpaceGroup('P 21 21 21') # required to check that Bravais type is correct
+        space_group = ohkl.SpaceGroup('P 21 21 21') # required to check that Bravais type is correct
         reference_cell = expt.getUnitCell('reference')
         reference_cell.setSpaceGroup(space_group)
         indexer = expt.autoIndexer();
@@ -115,7 +115,7 @@ class TestFullWorkFlow(unittest.TestCase):
         params.strength_min = 10.0
         params.strength_max = 1000000.0
         filter.filter(found_peaks)
-        filtered_peaks = nsx.PeakCollection('fit', nsx.PeakCollectionType_FOUND)
+        filtered_peaks = ohkl.PeakCollection('fit', ohkl.PeakCollectionType_FOUND)
         filtered_peaks.populateFromFiltered(found_peaks)
 
         print('Predicting peaks...')
@@ -124,7 +124,7 @@ class TestFullWorkFlow(unittest.TestCase):
         params = predictor.parameters()
         params.d_min = 1.5
         predictor.predictPeaks(data, indexed_cell)
-        expt.addPeakCollection('predicted', nsx.PeakCollectionType_PREDICTED, predictor.peaks())
+        expt.addPeakCollection('predicted', ohkl.PeakCollectionType_PREDICTED, predictor.peaks())
         predicted_peaks = expt.getPeakCollection('predicted')
         print(f'{predicted_peaks.numberOfPeaks()} peaks predicted')
         self.assertTrue(predicted_peaks.numberOfPeaks() > 1940 and
@@ -132,7 +132,7 @@ class TestFullWorkFlow(unittest.TestCase):
 
         print('Building shape collection...')
         filtered_peaks.computeSigmas()
-        params = nsx.ShapeModelParameters()
+        params = ohkl.ShapeModelParameters()
         params.sigma_d = filtered_peaks.sigmaD()
         params.sigma_m = filtered_peaks.sigmaM()
         filtered_peaks.buildShapeModel(data, params)
@@ -152,25 +152,25 @@ class TestFullWorkFlow(unittest.TestCase):
         params.refine_sample_orientation = False
         params.refine_detector_offset = False
         params.refine_ki = False
-        params.residual_type = nsx.ResidualType_RealSpace
+        params.residual_type = ohkl.ResidualType_RealSpace
         states = data.instrumentStates()
         peak_list = found_peaks.getPeakList()
         predicted_peak_list = predicted_peaks.getPeakList()
 
 
-        params.residual_type = nsx.ResidualType_RealSpace
+        params.residual_type = ohkl.ResidualType_RealSpace
         params.use_batch_cells = False
         refiner.makeBatches(states, peak_list, indexed_cell)
         refine_success = refiner.refine()
         n_updated = refiner.updatePredictions(predicted_peak_list)
         print(f'Refine 1: {n_updated} peaks updated')
-        params.residual_type = nsx.ResidualType_QSpace
+        params.residual_type = ohkl.ResidualType_QSpace
         params.use_batch_cells = True
         refiner.makeBatches(states, peak_list, indexed_cell)
         refine_success = refiner.refine()
         n_updated = refiner.updatePredictions(predicted_peak_list)
         print(f'Refine 2: {n_updated} peaks updated')
-        params.residual_type = nsx.ResidualType_RealSpace
+        params.residual_type = ohkl.ResidualType_RealSpace
         params.use_batch_cells = True
         refiner.makeBatches(states, peak_list, indexed_cell)
         refine_success = refiner.refine()
@@ -180,7 +180,7 @@ class TestFullWorkFlow(unittest.TestCase):
         print('Integrating predicted peaks...')
         integrator = expt.integrator()
         params = integrator.parameters()
-        integrator_type = nsx.IntegratorType_Profile3D
+        integrator_type = ohkl.IntegratorType_Profile3D
         integrator.getIntegrator(integrator_type)
         integrator.integratePeaks(data, predicted_peaks, params, filtered_peaks.shapeModel())
         print(f'{integrator.numberOfValidPeaks()} / {integrator.numberOfPeaks()} peaks integrated')

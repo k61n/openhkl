@@ -1,6 +1,6 @@
 //  ***********************************************************************************************
 //
-//  NSXTool: data reduction for neutron single-crystal diffraction
+//  OpenHKL: data reduction for single crystal diffraction
 //
 //! @file      gui/subwindows/InstrumentStateWindow.cpp
 //! @brief     Implements class InstrumentStateWindow

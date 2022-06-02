@@ -1,6 +1,6 @@
 //  ***********************************************************************************************
 //
-//  NSXTool: data reduction for neutron single-crystal diffraction
+//  OpenHKL: data reduction for single crystal diffraction
 //
 //! @file      main/main.cpp
 //! @brief     Implements ###CLASSES###
@@ -23,7 +23,7 @@ int main(int argc, char* argv[])
 {
     qRegisterMetaTypeStreamOperators<QList<QStringList>>("Data"); // for QSettings
     QApplication app{argc, argv};
-    QApplication::setApplicationName("NSXTool");
+    QApplication::setApplicationName("OpenHKL");
     QApplication::setApplicationVersion("1.0");
     QApplication::setOrganizationName("nsx");
 

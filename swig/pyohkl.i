@@ -1,4 +1,4 @@
-%module(directors="1") "pynsx"
+%module(directors="1") "pyohkl"
 
 %include "cpointer.i"
 %include "exception.i"

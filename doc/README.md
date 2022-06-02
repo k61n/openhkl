@@ -1,6 +1,6 @@
-# NSXTool Documentation
+# OpenHKL Documentation
 
-The documentation for NSXTool is generated using
+The documentation for OpenHKL is generated using
 [Sphinx](https://www.sphinx-doc.org/en/master/) and [Read the
 docs](https://readthedocs.org). The prerequisite Python modules can be installed
 via the Python package management tool Pip:
@@ -18,4 +18,4 @@ above.
 
 The documentation can be compiled using `make docs`, and accessed from
 `build/docs/sphinx/index.html`, where `build` is the build directory specified
-for NSXTool
+for OpenHKL

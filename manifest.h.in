@@ -1,15 +1,15 @@
 #ifndef MANIFEST_H
 #define MANIFEST_H
 
-#define VERSION "@NSXTool_VERSION@"
+#define VERSION "@OpenHKL_VERSION@"
 #define GIT_BRANCH "@GIT_BRANCH@"
 #define COMMIT_HASH "@COMMIT_HASH@"
 
-#define APPLICATION_NAME "NSXTool"
-#define APPLICATION_CLAIM "Peak integration for neutron single crystal diffraction"
-#define REPO_URL "https://jugit.fz-juelich.de/mlz/nsxtool"
+#define APPLICATION_NAME "OpenHKL"
+#define APPLICATION_CLAIM "Peak integration for single crystal diffraction"
+#define REPO_URL "https://jugit.fz-juelich.de/mlz/openhkl"
 
-#define ORGANIZATION_NAME "NSXTool"
-#define ORGANIZATION_DOMAIN "https://jugit.fz-juelich.de/mlz/nsxtool"
+#define ORGANIZATION_NAME "OpenHKL"
+#define ORGANIZATION_DOMAIN "https://jugit.fz-juelich.de/mlz/openhkl"
 
 #endif

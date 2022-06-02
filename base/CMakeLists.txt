@@ -1,10 +1,10 @@
 file(GLOB_RECURSE sources *.cpp *.c) # note: *.c needed for blosc
 
-add_library(nsxbase ${sources})
+add_library(openhklbase ${sources})
 
-target_include_directories(nsxbase PRIVATE ${CMAKE_SOURCE_DIR} ${QHULL_INCLUDE_DIR})
+target_include_directories(openhklbase PRIVATE ${CMAKE_SOURCE_DIR} ${QHULL_INCLUDE_DIR})
 
-target_link_libraries(nsxbase
+target_link_libraries(openhklbase
     PRIVATE
     ${YAMLCPP_LIBRARIES}
     ${GSL_LIBRARIES}

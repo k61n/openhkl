@@ -1,6 +1,6 @@
 //  ***********************************************************************************************
 //
-//  NSXTool: data reduction for neutron single-crystal diffraction
+//  OpenHKL: data reduction for single crystal diffraction
 //
 //! @file      gui/graphics/DetectorScene.cpp
 //! @brief     Implements class DetectorScene
@@ -460,7 +460,7 @@ void DetectorScene::mousePressEvent(QGraphicsSceneMouseEvent* event)
             item->setSelected(!item->isSelected());
             return;
         }
-        // If the item is a NSXTools GI and is selected it will become the current
+        // If the item is a OpenHKLs GI and is selected it will become the current
         // active GI
         if (SXGraphicsItem* p = dynamic_cast<SXGraphicsItem*>(item)) {
             if (p->isSelected()) {

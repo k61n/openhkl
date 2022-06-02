@@ -1,6 +1,6 @@
 ##  ***********************************************************************************************
 ##
-##  NSXTool: data reduction for neutron single-crystal diffraction
+##  OpenHKL: data reduction for single crystal diffraction
 ##
 ##! @file      test/python/TestGruberBravais.py
 ##! @brief     Test ...
@@ -12,7 +12,7 @@
 ##
 ##  ***********************************************************************************************
 
-import pynsx as nsx
+import pyohkl as ohkl
 import numpy as np
 import unittest
 import random
@@ -115,7 +115,7 @@ class TestGruberBravais(unittest.TestCase):
                E = p[4]+d[4]
                F = p[5]+d[5]
 
-               cell = nsx.UnitCell()
+               cell = ohkl.UnitCell()
 
                # todo: fix Gruber::reduce (Jonathan)
 

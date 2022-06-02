@@ -2,7 +2,7 @@ import sys
 import glob
 import unittest
 from pdb import set_trace
-import pynsx as nsx
+import pyohkl as ohkl
 
 class TestExperimentFileIO(unittest.TestCase):
 
@@ -11,7 +11,7 @@ class TestExperimentFileIO(unittest.TestCase):
         detector = "BioDiff5000"
 
         # Reference data
-        expt_ref = nsx.Experiment(name, detector)
+        expt_ref = ohkl.Experiment(name, detector)
         expt_ref.loadFromFile("CrChiA.nsx")
         expt_ref.saveToFile("test.nsx") # test ExperimentExporter
         found_peaks_ref = expt_ref.getPeakCollection("found")
@@ -22,7 +22,7 @@ class TestExperimentFileIO(unittest.TestCase):
         nframes_ref = expt_ref.getAllData()[0].nFrames()
 
         # Load HDF5 file and compare with reference
-        expt_test = nsx.Experiment(name, detector)
+        expt_test = ohkl.Experiment(name, detector)
         expt_test.loadFromFile("test.nsx") # test ExperimentImporter
         found_peaks_test = expt_test.getPeakCollection("found")
         filtered_peaks_test = expt_test.getPeakCollection("filtered")

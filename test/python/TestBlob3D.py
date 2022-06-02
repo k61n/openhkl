@@ -1,6 +1,6 @@
 ##  ***********************************************************************************************
 ##
-##  NSXTool: data reduction for neutron single-crystal diffraction
+##  OpenHKL: data reduction for single crystal diffraction
 ##
 ##! @file      test/python/TestBlob3D.py
 ##! @brief     Unit tests for class Blob3D
@@ -12,7 +12,7 @@
 ##
 ##  ***********************************************************************************************
 
-import pynsx as nsx
+import pyohkl as ohkl
 import numpy as np
 import math
 import unittest
@@ -24,7 +24,7 @@ class TestBlob3D(unittest.TestCase):
         Construct _one_ ellipsoidal blob, then check whether it is correctly analyzed.
         '''
 
-        blob = nsx.Blob3D()
+        blob = ohkl.Blob3D()
 
         c_x = 12.0
         c_y = 15.0

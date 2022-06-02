@@ -1,6 +1,6 @@
 ##  ***********************************************************************************************
 ##
-##  NSXTool: data reduction for neutron single-crystal diffraction
+##  OpenHKL: data reduction for single crystal diffraction
 ##
 ##! @file      test/python/TestWorkFlow.py
 ##! @brief     Test ...
@@ -12,32 +12,32 @@
 ##
 ##  ***********************************************************************************************
 
-import pynsx as nsx
+import pyohkl as ohkl
 import numpy as np
 import unittest
 
 class TestWorkFlow(unittest.TestCase):
 
     def test(self):
-        expt = nsx.Experiment('test', 'BioDiff2500')
+        expt = ohkl.Experiment('test', 'BioDiff2500')
         diff = expt.diffractometer()
-        dataset = nsx.DataSet("TestWorkFlow.py", diff)
-        dataset.addDataFile("gal3.hdf", "nsx");
+        dataset = ohkl.DataSet("TestWorkFlow.py", diff)
+        dataset.addDataFile("gal3.hdf", "ohkl");
         dataset.finishRead()
         expt.addData(dataset)
         source = diff.source()
 
-        finder = nsx.PeakFinder()
+        finder = ohkl.PeakFinder()
         finder.setMinSize(30)
         finder.setMaxSize(10000)
         finder.setMaxFrames(10)
 
-        convolver = nsx.AnnularConvolver({})
+        convolver = ohkl.AnnularConvolver({})
 
         finder.setConvolver(convolver)
         finder.setThreshold(15.0)
 
-        numors = nsx.DataList()
+        numors = ohkl.DataList()
         numors.push_back(dataset)
         peaks = finder.find(numors)
 
@@ -50,7 +50,7 @@ class TestWorkFlow(unittest.TestCase):
         self.assertTrue(len(peaks) > 800)
         self.assertTrue(len(selected_peaks) > 650)
 
-        indexer = nsx.AutoIndexer(nsx.ProgressHandler())
+        indexer = ohkl.AutoIndexer(ohkl.ProgressHandler())
 
         for peak in selected_peaks:
 
@@ -62,15 +62,15 @@ class TestWorkFlow(unittest.TestCase):
             indexer.addPeak(peak)
             peak.q()
 
-        params = nsx.IndexerParameters()
-        handler = nsx.ProgressHandler()
+        params = ohkl.IndexerParameters()
+        handler = ohkl.ProgressHandler()
         indexer.autoIndex(params)
 
         soln = indexer.solutions()[0]
 
         self.assertTrue(soln[1] > 92.0)
 
-        uc = nsx.UnitCell(soln[0])
+        uc = ohkl.UnitCell(soln[0])
 
         for peak in peaks:
             peak.setUnitCell(uc)
@@ -82,7 +82,7 @@ class TestWorkFlow(unittest.TestCase):
 
         #todo: fix up the library test
 
-        library = nsx.ShapeModel()
+        library = ohkl.ShapeModel()
 
         library_size = 0
 
