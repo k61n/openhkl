@@ -11,9 +11,11 @@ if ("${GIT_REV}" STREQUAL "")
     set(GIT_TAG "N/A")
     set(GIT_BRANCH "N/A")
 else()
-    execute_process(
-        COMMAND bash -c "git diff --quiet --exit-code || echo +"
-        OUTPUT_VARIABLE GIT_DIFF) # add a "+" if there are uncommitted changes
+	if (NOT WIN32) # generates incorrect string on windows
+		execute_process(
+			COMMAND bash -c "git diff --quiet --exit-code || echo +"
+			OUTPUT_VARIABLE GIT_DIFF) # add a "+" if there are uncommitted changes
+	endif()
     execute_process(
         COMMAND git describe --exact-match --tags
         OUTPUT_VARIABLE GIT_TAG ERROR_QUIET)
