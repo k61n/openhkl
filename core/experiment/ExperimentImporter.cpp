@@ -388,7 +388,7 @@ void ExperimentImporter::loadUnitCells(Experiment* experiment)
             double rec_21 = 0;
             double rec_22 = 1;
             double indexing_tolerance = 0.2;
-            uint z = 1;
+            unsigned int z = 1;
             std::string bravais = "aP";
             std::string space_group = "P 1";
             std::string unit_cell_name;
