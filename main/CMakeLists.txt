@@ -19,5 +19,5 @@ target_include_directories(${app}
 target_link_libraries(${app} PRIVATE ${QT_LIBS} openhklgui)
 
 if(WIN32)
-    include(PackIFW)
+#    include(PackIFW)
 endif()
