@@ -15,6 +15,7 @@
 *.spl
 
 build/
+out/
 debug/
 qbuild/
 cover/
@@ -30,5 +31,7 @@ html/
 .DS_Store
 
 .cache/
+.vs/
+.vscode/
 
 __pycache__
