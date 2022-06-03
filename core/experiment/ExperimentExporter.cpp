@@ -133,7 +133,7 @@ void writeMetadata(H5::Group& meta_group, const nsx::MetaData& metadata)
                     metaSpace);
         }
     } catch (const std::exception& ex) {
-        nsxlog(nsx::Level::Debug, "Exception in ", __PRETTY_FUNCTION__, ": ", ex.what());
+        nsxlog(nsx::Level::Debug, "Exception in writeMetaData: ", ex.what());
     }
 }
 
@@ -441,7 +441,7 @@ void ExperimentExporter::writeUnitCells(const std::vector<UnitCell*> unit_cells)
         writeAttribute(
             unit_cell_group, nsx::at_spacegroup, unitcell_spacegroup_sym.data(), str80Type,
             metaSpace);
-        const uint z_val = unit_cell->z();
+        const unsigned int z_val = unit_cell->z();
         writeAttribute(unit_cell_group, nsx::at_z, &z_val, H5::PredType::NATIVE_UINT, metaSpace);
     }
 }

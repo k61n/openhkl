@@ -16,6 +16,7 @@
 #define NSX_GUI_UTILITY_SIDEBAR_H
 
 #include <QToolBar>
+#include <array>
 
 class SideBar : public QWidget {
     Q_OBJECT
