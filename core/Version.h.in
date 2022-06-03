@@ -1,6 +1,6 @@
 //  ***********************************************************************************************
 //
-//  NSXTool: data reduction for neutron single-crystal diffraction
+//  OpenHKL: data reduction for neutron single-crystal diffraction
 //
 //! @file      core/Version.h.in
 //! @brief     Defines ###CLASSES###
@@ -19,7 +19,7 @@
 
 namespace nsx {
 
-const std::string __version__ = "@NSXTOOL_VERSION@";
+const std::string __version__ = "@OpenHKL_VERSION@";
 
 } // end namespace nsx
 
