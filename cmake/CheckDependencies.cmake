@@ -10,6 +10,7 @@ include_directories(SYSTEM ${EIGEN3_INCLUDE_DIR})
 
 ###### Find HDF5
 find_package(HDF5 COMPONENTS CXX REQUIRED)
+find_library(HDF5_LIB_PATH libhdf5_cpp)
 
 # manually fix problem with windows build
 if(NOT HDF5_LIBRARIES)
@@ -34,6 +35,7 @@ if(HDF5_INCLUDE_DIRS AND HDF5_LIBRARIES)
     message("  versions: ${HDF5_VERSION}")
     message("  libraries: ${HDF5_LIBRARIES}")
     message("  headers: ${HDF5_INCLUDE_DIRS}")
+    message("  CXX path: ${HDF5_LIB_PATH}")
 else()
     message(FATAL_ERROR "HDF5 not found")
 endif()

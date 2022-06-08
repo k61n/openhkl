@@ -1,42 +1,54 @@
-# BornAgain Windows packaging
+# Extra code to deploy DLL dependences to Windows.
 
-set(SELECTED_PYTHON_VERSION "python${Python3_VERSION_MAJOR}.${Python3_VERSION_MINOR}")
+include(CPackIFW)
 
-set(CPACK_PACKAGE_FILE_NAME
-    "${CMAKE_PROJECT_NAME}-${CMAKE_PROJECT_VERSION}-${SELECTED_PYTHON_VERSION}-${BORNAGAIN_ARCHITECTURE}")
+# Transform .lib, as set by find_package commands, to .dll, then install
+set(external_libs
+    ${YAML_CPP_LIBRARIES}
+    ${Blosc_LIBRARIES}
+    ${TIFF_LIBRARIES}
+    ${GSL_LIBRARIES}
+    ${QHULL_LIBRARY1}
+    #${QHULL_LIBRARY2
+    )
 
-set(CPACK_GENERATOR "NSIS")
+foreach(ext ${external_libs})
+    string(REGEX REPLACE "lib$" "dll" dll ${ext})
+    string(REGEX REPLACE "lib" "bin" dll2 ${dll})
+    if (EXISTS ${dll2})
+    message(STATUS "for lib ${ext} install ${dll2}")
+    install(FILES ${dll2} DESTINATION bin)
+    endif()
+endforeach()
 
-set(CPACK_NSIS_INSTALL_ROOT "C:")
-set(CPACK_NSIS_ENABLE_UNINSTALL_BEFORE_INSTALL ON)
+set(thirdparty_libs
+    "3rdparty/qcustomplot/qcustomplot.lib"
+    "3rdparty/xsection/xsection.lib"
+	)
 
-set(CPACK_NSIS_MENU_LINKS "bin\\\\BornAgain.exe" "BornAgain")
+foreach(third ${thirdparty_libs})
+    set(path "${CMAKE_BINARY_DIR}/${third}")
+    message(STATUS "for 3rd party lib ${third} install ${path}")
+    install(FILES ${path} DESTINATION bin)
+endforeach()
 
+string(REGEX REPLACE "lib$" "dll" HDF5_DLL ${HDF5_LIB_PATH})
+string(REGEX REPLACE "/lib/lib" "/bin/" HDF5_DLL_PATH ${HDF5_DLL})
+message(STATUS "for lib ${HDF5_LIB_PATH} install ${HDF5_DLL_PATH}")
+install(FILES ${HDF5_DLL_PATH} DESTINATION bin)
 
-set(CPACK_PACKAGE_ICON "${CMAKE_CURRENT_SOURCE_DIR}/GUI\\\\coregui\\\\images\\\\BornAgain.ico" )
-set(CPACK_NSIS_MUI_ICON "${CMAKE_CURRENT_SOURCE_DIR}/GUI\\\\coregui\\\\images\\\\BornAgain.ico" )
-set(CPACK_NSIS_MUI_UNIICON "${CMAKE_CURRENT_SOURCE_DIR}/GUI\\\\coregui\\\\images\\\\BornAgain.ico" )
+set(QtComponents Core Gui Widgets PrintSupport)
+find_package(Qt5 REQUIRED COMPONENTS ${QtComponents})
+foreach(comp ${QtComponents})
+    set(QtComp Qt5::${comp})
+    get_property(dll TARGET ${QtComp} PROPERTY IMPORTED_LOCATION_RELEASE)
+    message(STATUS "for Qt lib ${QtComp} install ${dll}")
+    install(FILES ${dll} DESTINATION bin)
+endforeach()
 
-set(CPACK_NSIS_EXTRA_INSTALL_COMMANDS "
-  Push \\\"PYTHONPATH\\\"
-  Push \\\"P\\\"
-  Push \\\"HKCU\\\"
-  Push \\\"$INSTDIR\\\\python\\\"
-  Call EnvVarUpdate
-  Pop  \\\$0
+set(QTDIR "C:/Qt/5.15.2/msvc2019_64")
+install(FILES ${QTDIR}/plugins/platforms/qwindows.dll DESTINATION bin/platforms)
+install(FILES ${QTDIR}/plugins/iconengines/qsvgicon.dll DESTINATION bin/iconengines)
 
-  CreateShortCut \\\"$DESKTOP\\\\BornAgain.lnk\\\" \\\"$INSTDIR\\\\bin\\\\BornAgain.exe\\\"
-")
-
-set(CPACK_NSIS_EXTRA_UNINSTALL_COMMANDS "
-  Push \\\"PYTHONPATH\\\"
-  Push \\\"R\\\"
-  Push \\\"HKCU\\\"
-  Push \\\"$INSTDIR\\\\python\\\"
-  Call un.EnvVarUpdate
-  Pop  \\\$0
-
-  RMDir /r \\\"$INSTDIR\\\\bin\\\"
-  RMDir /r \\\"$INSTDIR\\\\python\\\"
-  Delete \\\"$DESKTOP\\\\BornAgain.lnk\\\"
-")
+set(CMAKE_INSTALL_SYSTEM_RUNTIME_COMPONENT System)
+include(InstallRequiredSystemLibraries)
