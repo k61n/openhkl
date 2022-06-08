@@ -1,20 +1,30 @@
 stages:
   - build
 
-# windows:
-#   tags:
-#   - Windows
-#   stage: build
-#   script:
-#     - New-Item -ItemType "directory" -Confirm:$false -Force:$true -Name "build"
-#     - cd build
-#     - cmd.exe "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvars64.bat"
-#     - cmake -G "Visual Studio 16 2019" -A x64 -T host=x64 -DLIB_MAN=OFF -DLIB_INSTALL=OFF -B. ..
-#     - cmake --build . --config Release
-#     - Get-Location
-#     - dir
-#     - dir Release
-#     - ctest -C Release --output-on-failure
+windows:
+  tags:
+  - Windows
+  stage: build
+  script:
+   - $OPT_DIR = "C:/opt/x64"
+   - $BOOST_DIR = "$OPT_DIR/boost_current"
+   - $BOOST_INCLUDE_DIR = "$BOOST_DIR/include"
+   - $BOOST_LIB_DIR = "$BOOST_DIR/lib"
+   - $QT_MSVC_DIR = "C:/Qt/msvc"
+   - $QTCMake_DIR = "$QT_MSVC_DIR/lib/cmake"
+   - $BUILD_DIR = "build"
+   - $QTDIR = "$QT_MSVC_DIR"
+   - cd $BUILD_DIR
+   - Remove-Item CM* -Recurse
+   - cmake -G "Visual Studio 17 2022" -A x64 -T host=x64 -DCMAKE_PREFIX_PATH="$OPT_DIR" -DQTDIR="$QT_MSVC_DIR" -DCMAKE_INCLUDE_PATH="$BOOST_INCLUDE_DIR" -DCMAKE_LIBRARY_PATH="$BOOST_LIB_DIR" -DBA_PY_PACKAGE=ON -DCMAKE_C_COMPILER="cl.exe" -DCMAKE_CXX_COMPILER="cl.exe" -B. ..
+   - cmake --build . --config Release
+   - ctest -C Release --parallel 8 --output-on-failure
+   - cpack -C Release -B ./winpackage
+   - ctest -C Release --output-on-failure
+ artifacts:
+   paths:
+   - build/OpenHKL*.exe
+   expire_in: 10 days
 
 mac10_15:
   tags:
