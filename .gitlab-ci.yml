@@ -15,7 +15,7 @@ windows:
    - $HDF5_LIB_DIR = "C:/Program Files/HDF_Group/HDF5/1.12.2/lib"
    - $HDF5_INCLUDE_DIR = "C:/Program Files/HDF_Group/HDF5/1.12.2/include"
    - Remove-Item CM* -Recurse
-   - cmake -G "Visual Studio 17 2022" -A x64 -T host=x64 -DCMAKE_PREFIX_PATH="$OPT_DIR" -DQTDIR="$QT_MSVC_DIR" -DCMAKE_INCLUDE_PATH="$HDF5_INCLUDE_DIR" -DCMAKE_LIBRARY_PATH="$HDF5_LIB_DIR" -DCMAKE_C_COMPILER="cl.exe" -DCMAKE_CXX_COMPILER="cl.exe" -B. ..
+   - SWIG_DIR="C:\Program Files\swigwin" cmake -G "Visual Studio 17 2022" -A x64 -T host=x64 -DCMAKE_PREFIX_PATH="$OPT_DIR" -DQTDIR="$QT_MSVC_DIR" -DCMAKE_INCLUDE_PATH="$HDF5_INCLUDE_DIR" -DCMAKE_LIBRARY_PATH="$HDF5_LIB_DIR" -DCMAKE_C_COMPILER="cl.exe" -DCMAKE_CXX_COMPILER="cl.exe" -B. ..
    - cmake --build . --config Release
    - ctest -C Release --parallel 8 --output-on-failure
    - cpack -C Release -B ./winpackage
