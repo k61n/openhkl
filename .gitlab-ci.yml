@@ -21,7 +21,7 @@ windows:
    - ctest -C Release --parallel 8 --output-on-failure
    - cpack -C Release -B ./winpackage
    - ctest -C Release --output-on-failure
- artifacts:
+  artifacts:
    paths:
    - build/OpenHKL*.exe
    expire_in: 10 days
