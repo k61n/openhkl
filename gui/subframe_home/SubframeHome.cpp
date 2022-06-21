@@ -114,10 +114,10 @@ void SubframeHome::_setLeftLayout(QHBoxLayout* main_layout)
         new QSpacerItem(10, 0, QSizePolicy::Minimum, QSizePolicy::Expanding);
     left->addSpacerItem(spacer_bottom);
 
-    _dataset_table = new QTableWidget(0, 5);
+    _dataset_table = new QTableWidget(0, 9);
     _dataset_table->setEditTriggers(QAbstractItemView::NoEditTriggers);
     _dataset_table->setHorizontalHeaderLabels(QStringList{
-        "Name", "Diffractometer", "Number of Frames", "Number of Columns", "Number of Rows"});
+        "Name", "Diffractometer", "Number of Frames", "Number of Columns", "Number of Rows","Width", "Height", "Distance/A", "Wavelength/A"});
     _dataset_table->resizeColumnsToContents();
     _dataset_table->verticalHeader()->setVisible(false);
 
@@ -129,11 +129,12 @@ void SubframeHome::_setLeftLayout(QHBoxLayout* main_layout)
     _peak_collections_table->resizeColumnsToContents();
     _peak_collections_table->verticalHeader()->setVisible(false);
 
-    _unitcell_table = new QTableWidget(0, 9);
+    _unitcell_table = new QTableWidget(0, 10);
     _unitcell_table->setEditTriggers(QAbstractItemView::NoEditTriggers);
     _unitcell_table->setHorizontalHeaderLabels(QStringList{
         "ID", "Name", "Space Group", "a", "b", "c", QChar(0xb1, 0x03), QChar(0xb2, 0x03),
-        QChar(0xb3, 0x03)});
+        QChar(0xb3, 0x03), "Indexing Tolerance"
+        });
     _unitcell_table->resizeColumnsToContents();
     _unitcell_table->verticalHeader()->setVisible(false);
 
