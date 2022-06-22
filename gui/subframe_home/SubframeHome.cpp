@@ -114,12 +114,28 @@ void SubframeHome::_setLeftLayout(QHBoxLayout* main_layout)
         new QSpacerItem(10, 0, QSizePolicy::Minimum, QSizePolicy::Expanding);
     left->addSpacerItem(spacer_bottom);
 
+    _show_input_files = new QPushButton();
+    _show_input_files->setText("Show Input files");
+    _show_input_files->setMaximumSize(QSize(100,30));
+    _show_input_files->setMinimumWidth(_new_exp->sizeHint().width());
+    _show_input_files->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
+    tooltip = "Shows a list of all input files";
+    _show_input_files->setToolTip(tooltip);
+
     _dataset_table = new QTableWidget(0, 9);
     _dataset_table->setEditTriggers(QAbstractItemView::NoEditTriggers);
     _dataset_table->setHorizontalHeaderLabels(QStringList{
         "Name", "Diffractometer", "Number of Frames", "Number of Columns", "Number of Rows","Width", "Height", "Distance/A", "Wavelength/A"});
     _dataset_table->resizeColumnsToContents();
     _dataset_table->verticalHeader()->setVisible(false);
+
+    _show_found_peaks = new QPushButton();
+    _show_found_peaks->setText("Show found Peaks");
+    _show_found_peaks->setMaximumSize(QSize(100,30));
+    _show_found_peaks->setMinimumWidth(_new_exp->sizeHint().width());
+    _show_found_peaks->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
+    tooltip = "Shows a list of all found Peaks";
+    _show_found_peaks->setToolTip(tooltip);
 
     _peak_collections_table = new QTableWidget(0, 6);
     _peak_collections_table->setEditTriggers(QAbstractItemView::NoEditTriggers);
@@ -143,14 +159,21 @@ void SubframeHome::_setLeftLayout(QHBoxLayout* main_layout)
     QLabel* lab_peaks = new QLabel("Peak Collections", this);
     QLabel* lab_unitcell = new QLabel("Unit Cells", this);
 
+    QHBoxLayout* lay_datasets_head = new QHBoxLayout();
     QVBoxLayout* lay_datasets = new QVBoxLayout();
+    QHBoxLayout* lay_peaks_head = new QHBoxLayout();
     QVBoxLayout* lay_peaks = new QVBoxLayout();
     QVBoxLayout* lay_unitcells = new QVBoxLayout();
 
-    lay_datasets->addWidget(lab_dataset);
+    lay_datasets_head->addWidget(lab_dataset);
+    lay_datasets_head->addWidget(_show_input_files);
+
+    lay_datasets->addLayout(lay_datasets_head);
     lay_datasets->addWidget(_dataset_table);
 
-    lay_peaks->addWidget(lab_peaks);
+    lay_peaks_head->addWidget(lab_peaks);
+    lay_peaks_head->addWidget(_show_found_peaks);
+    lay_peaks->addLayout(lay_peaks_head);
     lay_peaks->addWidget(_peak_collections_table);
 
     lay_unitcells->addWidget(lab_unitcell);
@@ -163,6 +186,10 @@ void SubframeHome::_setLeftLayout(QHBoxLayout* main_layout)
     refreshTables();
 
     main_layout->addLayout(left);
+
+    connect(
+        _show_input_files, &QPushButton::clicked, this,
+        &SubframeHome::showInputFiles); 
 }
 
 void SubframeHome::_setRightLayout(QHBoxLayout* main_layout)
@@ -493,16 +520,25 @@ void SubframeHome::refreshTables() const
             _unitcell_table->setItem(
                 n, col++,
                 new QTableWidgetItem(QString::number(data->character().gamma / nsx::deg)));
+            _unitcell_table->setItem(
+                n, col++,
+                new QTableWidgetItem(QString::number(data->indexingTolerance())));
+                
         }
         _unitcell_table->resizeColumnsToContents();
 
         auto datasets = gSession->currentProject()->allData();
+             
 
         for (auto it = datasets.begin(); it != datasets.end(); ++it) {
             short n = std::distance(datasets.begin(), it);
 
             if (n >= _dataset_table->rowCount())
                 _dataset_table->insertRow(_dataset_table->rowCount());
+            
+            auto detector =  gSession->currentProject()->experiment()->getDiffractometer()->detector();
+
+          
 
             _dataset_table->setItem(
                 n, 0, new QTableWidgetItem(QString::fromStdString(it->get()->name())));
@@ -515,6 +551,26 @@ void SubframeHome::refreshTables() const
                 n, 3, new QTableWidgetItem(QString::number(it->get()->nCols())));
             _dataset_table->setItem(
                 n, 4, new QTableWidgetItem(QString::number(it->get()->nRows())));
+
+            
+            _dataset_table->setItem(
+                n, 5, new QTableWidgetItem(QString::number(detector->width())));
+            
+            _dataset_table->setItem(
+                n, 6, new QTableWidgetItem(QString::number(detector->height())));
+
+            _dataset_table->setItem(
+                n, 7, new QTableWidgetItem(QString::number(detector->distance())));
+
+            _dataset_table->setItem(
+                n, 8, new QTableWidgetItem(QString::number(it->get()->wavelength())));
+
+                
+
+            
+
+
+
         }
         _dataset_table->resizeColumnsToContents();
 
@@ -553,4 +609,10 @@ void SubframeHome::clearTables()
     _unitcell_table->clearContents();
     _dataset_table->clearContents();
     _peak_collections_table->clearContents();
+}
+
+
+void SubframeHome::showInputFiles() const
+{
+
 }
