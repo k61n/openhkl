@@ -54,8 +54,8 @@ void PropertyPanel::dataChanged() const
 
 void PropertyPanel::experimentChanged() const
 {
-    _peaks->currentProjectChanged();
-    _instrument->refreshInput();
+    //_peaks->currentProjectChanged();
+   // _instrument->refreshInput();
 }
 
 void PropertyPanel::peaksChanged() const

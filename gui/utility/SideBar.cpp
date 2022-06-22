@@ -231,10 +231,10 @@ void SideBar::onExperiment()
 {
     gGui->_layout_stack->setCurrentIndex(1);
     if (gSession->hasProject()) {
-        gGui->experiment->getProperty()->unitCellChanged();
+        /*gGui->experiment->getProperty()->unitCellChanged();
         gGui->experiment->getProperty()->peaksChanged();
         gGui->experiment->getProperty()->experimentChanged();
-        gGui->experiment->getProperty()->dataChanged();
+        gGui->experiment->getProperty()->dataChanged();*/
     }
     gGui->experiment->refreshAll();
     emit subframeChanged();

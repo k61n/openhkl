@@ -63,8 +63,10 @@ Menus::Menus(QMenuBar* menu_bar) : _menu_bar{menu_bar}
     _data_sub->addAction(actions->add_raw);
     _data_sub->addAction(actions->add_hdf5);
     _data_sub->addAction(actions->add_nexus);
+    _data_menu->addAction(actions->show_input_files);
     _data_menu->addAction(actions->remove_data);
 
+    _peaks_menu->addAction(actions->show_peaks);
     _peaks_menu->addAction(actions->clone_peaks);
     _peaks_menu->addAction(actions->remove_peaks);
 

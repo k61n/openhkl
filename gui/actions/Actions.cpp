@@ -90,7 +90,9 @@ void Actions::setupView()
 
 void Actions::setupData()
 {
+   
     add_data = new QAction("Add data set");
+    show_input_files = new QAction("Show input files");
     remove_data = new QAction("Remove data set");
     add_raw = new QAction("Add raw/tiff data");
     add_hdf5 = new QAction("Add NSX(HDF5) data");
@@ -160,6 +162,7 @@ void Actions::setupOptions() { }
 
 void Actions::setupPeaks()
 {
+    show_peaks = new QAction("Show Peaks");
     remove_peaks = new QAction("Remove peak collection");
     clone_peaks = new QAction("Clone peak collection");
 

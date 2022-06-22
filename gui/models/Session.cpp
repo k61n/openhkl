@@ -344,7 +344,7 @@ bool Session::loadRawData()
 void Session::onDataChanged()
 {
     DataList data = currentProject()->experiment()->getAllData();
-    gGui->onDataChanged();
+   // gGui->onDataChanged();
     _data_combo->clearAll();
     _data_combo->addDataSets(data);
     _data_combo->refreshAll();
@@ -375,7 +375,7 @@ void Session::onExperimentChanged()
 void Session::onPeaksChanged()
 {
     PeakList peaks = currentProject()->experiment()->getPeakCollections();
-    gGui->onPeaksChanged();
+    //gGui->onPeaksChanged();
     _peak_combo->clearAll();
     _peak_combo->addPeakCollections(peaks);
     _peak_combo->refreshAll();
@@ -393,7 +393,7 @@ void Session::onPeaksChanged()
 void Session::onUnitCellChanged()
 {
     CellList cells = currentProject()->experiment()->getSptrUnitCells();
-    gGui->onUnitCellChanged();
+    //gGui->onUnitCellChanged();
     _cell_combo->clearAll();
     _cell_combo->addCells(cells);
     _cell_combo->refreshAll();
