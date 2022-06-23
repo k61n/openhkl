@@ -17,6 +17,9 @@
 
 #include <QToolBar>
 #include <array>
+#include <QToolTip>
+
+// subclass Action to integrate tooltips
 
 class SideBar : public QWidget {
     Q_OBJECT
@@ -35,7 +38,7 @@ class SideBar : public QWidget {
 
  private:
     void onHome();
-    void onExperiment();
+    void onDetector();
     void onFindPeaks();
     void onFilterPeaks();
     void onIndexer();

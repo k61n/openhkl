@@ -36,6 +36,8 @@
 #include "gui/subwindows/InstrumentStateWindow.h"
 #include "gui/subwindows/LogWindow.h"
 #include "gui/subwindows/PeakWindow.h"
+#include "gui/subwindows/InputFilesWindow.h"
+#include "gui/subwindows/InstrumentDataWindow.h"
 #include "gui/utility/SideBar.h"
 #include "gui/widgets/DetectorWidget.h"
 
@@ -91,6 +93,8 @@ MainWin::MainWin()
 
     detector_window = new DetectorWindow();
     log_window = new LogWindow(this);
+    input_files_window = new InputFilesWindow(this);
+    instrument_data_window = new InstrumentDataWindow();
 
     _layout_stack = new QStackedWidget(main_widget);
     _layout_stack->addWidget(home);
@@ -123,32 +127,32 @@ MainWin::MainWin()
 
 void MainWin::onDataChanged() const
 {
-    experiment->getProperty()->dataChanged();
+    //experiment->getProperty()->dataChanged();
 }
 
 void MainWin::onExperimentChanged() const
 {
-    experiment->getProperty()->experimentChanged();
+    //experiment->getProperty()->experimentChanged();
 }
 
 void MainWin::onPeaksChanged() const
 {
-    experiment->getProperty()->peaksChanged();
+   // experiment->getProperty()->peaksChanged();
 }
 
 void MainWin::onUnitCellChanged() const
 {
-    experiment->getProperty()->unitCellChanged();
+    //experiment->getProperty()->unitCellChanged();
 }
 
 void MainWin::changeView(int option) const
 {
-    experiment->detectorWidget()->changeView(option);
+   // experiment->detectorWidget()->changeView(option);
 }
 
 void MainWin::updatePlot(PlottableItem* p) const
 {
-    experiment->getPlot()->updatePlot(p);
+    //experiment->getPlot()->updatePlot(p);
 }
 
 void MainWin::cursormode(int i) const
@@ -211,6 +215,9 @@ void MainWin::closeEvent(QCloseEvent* event)
 
     if (instrumentstate_window)
         instrumentstate_window->close();
+
+    //if (input_files_window)
+       // input_files_window->close();
 
     QMainWindow::closeEvent(event);
 }

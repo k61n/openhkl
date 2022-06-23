@@ -35,6 +35,7 @@
 #include <QPaintEvent>
 #include <QPainter>
 #include <QSignalBlocker>
+#include <QLabel>
 
 // TODO: find a better place for this
 // Icon attributions:
@@ -62,7 +63,7 @@ SideBar::SideBar(QWidget* parent) : QWidget(parent), mCheckedAction(nullptr), mO
         path = path + light;
 
     QAction* home = addAction(QIcon(path + QString("home.svg")), "Home");
-    QAction* experiment = addAction(QIcon(path + QString("experiment.svg")), "Experiment");
+    QAction* detector = addAction(QIcon(path + QString("experiment.svg")), "Detector");
     QAction* finder = addAction(QIcon(path + QString("finder.svg")), "Find Peaks");
     QAction* filter = addAction(QIcon(path + QString("filter.svg")), "Filter Peaks");
     QAction* indexer = addAction(QIcon(path + QString("indexer.svg")), "Indexer");
@@ -70,7 +71,10 @@ SideBar::SideBar(QWidget* parent) : QWidget(parent), mCheckedAction(nullptr), mO
     QAction* predictor = addAction(QIcon(path + QString("predictor.svg")), "Predict");
     QAction* refiner = addAction(QIcon(path + QString("refiner.svg")), "Refine");
     QAction* integrator = addAction(QIcon(path + QString("integrator.svg")), "Integrate");
-    QAction* info = addAction(QIcon(path + QString("merger.svg")), "Merge");
+    QAction* info = addAction(QIcon(path + QString("merger.svg")), "Merge"); 
+
+    
+
 
     QAction* tempAction = mActions.at(0);
     mCheckedAction = tempAction;
@@ -78,7 +82,7 @@ SideBar::SideBar(QWidget* parent) : QWidget(parent), mCheckedAction(nullptr), mO
     update();
 
     connect(home, &QAction::triggered, this, &SideBar::onHome);
-    connect(experiment, &QAction::triggered, this, &SideBar::onExperiment);
+    connect(detector, &QAction::triggered, this, &SideBar::onDetector);
     connect(finder, &QAction::triggered, this, &SideBar::onFindPeaks);
     connect(filter, &QAction::triggered, this, &SideBar::onFilterPeaks);
     connect(indexer, &QAction::triggered, this, &SideBar::onIndexer);
@@ -112,8 +116,32 @@ void SideBar::paintEvent(QPaintEvent* event)
             painter.fillRect(actionRect, fill_color);
         }
 
-        if (action == mOverAction)
+        if (action == mOverAction){
             painter.fillRect(actionRect, QColor(150, 150, 150));
+            // tooltips for sidebar
+            static std::array<const char*,11> tips 
+            {
+                "SubframeHome : Load/Save Project files, Manage Experiments, overview of your Experiments",
+                "SubframeDetector : Look through all your loaded data files and mask detector areas",
+                "SubframeFind : Find all Peaks on the detector",
+                "SubframeFilter : Filter your Peaks ",
+                "SubframeIndexer : Find unit cell",
+                "SubframeShapes : asdfsdfsdfas",
+                "SubframePredict : predicition",
+                "SubframeRefiner : refining is king",
+                "SubframeIntegrate : integration",
+                "SubframeMerge : Overview and Analyse of your reduced data"
+            };
+            // find correct icon id
+            int id = action_y/actionRect.height();
+            if (id >=0 && id<10){            
+                QToolTip::showText(QCursor::pos(), tips[id]);               
+            } 
+        }
+
+          
+             
+    
 
         if (gGui->isDark()) // looks like we have a dark theme
             painter.setPen(Qt::white);
@@ -227,7 +255,7 @@ void SideBar::onHome()
     emit subframeChanged();
 }
 
-void SideBar::onExperiment()
+void SideBar::onDetector()
 {
     gGui->_layout_stack->setCurrentIndex(1);
     if (gSession->hasProject()) {

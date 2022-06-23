@@ -17,6 +17,8 @@
 
 #include "gui/models/ExperimentModel.h"
 #include "gui/views/ExperimentTableView.h"
+#include "gui/subwindows/InputFilesWindow.h"
+#include "gui/subwindows/InstrumentDataWindow.h"
 
 #include <memory>
 
@@ -27,6 +29,9 @@
 #include <QVBoxLayout>
 #include <QWidget>
 #include <qpushbutton.h>
+
+class InputFilesWindow;
+class InstrumentDataWindow;
 
 //! Frame containing interface to create, save and load experiments
 class SubframeHome : public QWidget {
@@ -77,6 +82,8 @@ class SubframeHome : public QWidget {
 
     void showInputFiles() const;
 
+    void showInstrumentData() const;
+
     // void UpdatePeakList();
 
  private:
@@ -86,6 +93,7 @@ class SubframeHome : public QWidget {
     QPushButton* _save_all;
     QPushButton* _remove_current;
     QPushButton* _show_input_files;
+    QPushButton* _show_instrument_data;
     QPushButton* _show_found_peaks;
 
     ExperimentTableView* _open_experiments_view;

@@ -27,6 +27,8 @@ class DetectorScene;
 class DetectorWindow;
 class LogWindow;
 class PeakWindow;
+class InputFilesWindow;
+class InstrumentDataWindow;
 class PlottableItem;
 class Sentinel;
 class SideBar;
@@ -111,6 +113,12 @@ class MainWin : public QMainWindow {
 
     // log window
     LogWindow* log_window;
+
+    InputFilesWindow* input_files_window;
+
+    InstrumentDataWindow* instrument_data_window;
+
+
 
     Sentinel* sentinel;
 
