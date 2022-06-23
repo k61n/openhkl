@@ -91,7 +91,7 @@ class TestFullWorkFlow(unittest.TestCase):
         filter.parameters().frame_max= 20
         filter.parameters().strength_min = 1.0
         filter.filter(found_peaks)
-        expt.acceptFilter('indexing', found_peaks)
+        expt.acceptFilter('indexing', found_peaks, ohkl.PeakCollectionType.INDEXING)        
 
         indexing_peaks = expt.getPeakCollection('indexing')
         indexer.autoIndex(indexing_peaks)
