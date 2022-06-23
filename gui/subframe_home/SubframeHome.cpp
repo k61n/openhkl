@@ -122,6 +122,14 @@ void SubframeHome::_setLeftLayout(QHBoxLayout* main_layout)
     tooltip = "Shows a list of all input files";
     _show_input_files->setToolTip(tooltip);
 
+    _show_instrument_data = new QPushButton();
+    _show_instrument_data->setText("Show Instrument Data");
+    _show_instrument_data->setMaximumSize(QSize(100,30));
+    _show_instrument_data->setMinimumWidth(_new_exp->sizeHint().width());
+    _show_instrument_data->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
+    tooltip = "Shows spec of the Instrument";
+    _show_instrument_data->setToolTip(tooltip);
+
     _dataset_table = new QTableWidget(0, 9);
     _dataset_table->setEditTriggers(QAbstractItemView::NoEditTriggers);
     _dataset_table->setHorizontalHeaderLabels(QStringList{
@@ -167,6 +175,7 @@ void SubframeHome::_setLeftLayout(QHBoxLayout* main_layout)
 
     lay_datasets_head->addWidget(lab_dataset);
     lay_datasets_head->addWidget(_show_input_files);
+    lay_datasets_head->addWidget(_show_instrument_data);
 
     lay_datasets->addLayout(lay_datasets_head);
     lay_datasets->addWidget(_dataset_table);
@@ -187,9 +196,27 @@ void SubframeHome::_setLeftLayout(QHBoxLayout* main_layout)
 
     main_layout->addLayout(left);
 
+
+    connect(_show_input_files, &QPushButton::clicked, this,
+        [ ]() {
+            gGui->input_files_window->show();
+            gGui->input_files_window->refreshAll(  );
+        }
+    ); 
+
+   
+   
+    
+
+    //yourTableView->selectionModel()->selectedIndexes();
+
+    
+   // gGui->input_files_window->activateWindow();
+ 
+
     connect(
-        _show_input_files, &QPushButton::clicked, this,
-        &SubframeHome::showInputFiles); 
+        _show_instrument_data, &QPushButton::clicked, this,
+        &SubframeHome::showInstrumentData); 
 }
 
 void SubframeHome::_setRightLayout(QHBoxLayout* main_layout)
@@ -609,10 +636,18 @@ void SubframeHome::clearTables()
     _unitcell_table->clearContents();
     _dataset_table->clearContents();
     _peak_collections_table->clearContents();
-}
-
+} 
 
 void SubframeHome::showInputFiles() const
 {
-
+    std::cout << "ptr" << gGui->input_files_window << std::endl;
+    gGui->input_files_window->show();
+    gGui->input_files_window->refreshAll();
+    gGui->input_files_window->activateWindow();
+ 
 }
+
+void SubframeHome::showInstrumentData() const
+{
+    gGui->instrument_data_window->show();
+} 

@@ -5,6 +5,7 @@ if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
 endif()
 
 file(GLOB_RECURSE sources *.cpp)
+#file(GLOB_RECURSE sources InstrumentDataWindow.cpp)
 add_library(${lib} ${sources})
 
 target_include_directories(${lib}
