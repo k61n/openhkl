@@ -22,6 +22,7 @@
 #include <QWidget>
 #include <QTableWidget>
 #include <QSize>
+#include <QComboBox>
 
 #include "gui/models/Session.h"
 
@@ -30,11 +31,14 @@ class InputFilesWindow : public QDialog {
  public:
     InputFilesWindow(QWidget* parent);
 
-    //! Refresh the whole dialinputog
-    void refreshAll(int id=-1); 
+    void refreshAll( ); 
+
+public slots:
+   void on_combobox_select();
 
  private:
    QTableWidget* _files_table; 
+   QComboBox* _data_set;
 };
 
 #endif // NSX_GUI_SUBWINDOWS_INPUT_FILES_WINDOWS_H

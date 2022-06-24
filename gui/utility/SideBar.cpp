@@ -119,7 +119,7 @@ void SideBar::paintEvent(QPaintEvent* event)
         if (action == mOverAction){
             painter.fillRect(actionRect, QColor(150, 150, 150));
             // tooltips for sidebar
-            static std::array<const char*,11> tips 
+            static std::array<const char*,10> tips 
             {
                 "SubframeHome : Load/Save Project files, Manage Experiments, overview of your Experiments",
                 "SubframeDetector : Look through all your loaded data files and mask detector areas",
