@@ -1,7 +1,11 @@
 [Desktop Entry]
 Name=@PROJECT_NAME@
 StartupWMClass=@PROJECT_NAME@
+<<<<<<< HEAD
 Comment=Single crystal diffraction data reduction tool
+=======
+Comment=OpenHKL: Single crystal diffraction data reduction tool
+>>>>>>> Generate desktop file for linux
 GenericName=@PROJECT_NAME@
 Exec=@CMAKE_INSTALL_PREFIX@/bin/OpenHKL
 Icon=OpenHKL
