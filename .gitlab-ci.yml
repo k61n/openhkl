@@ -12,11 +12,12 @@ windows:
    - $QT_MSVC_DIR = "C:/Qt/msvc"
    - $QTCMake_DIR = "$QT_MSVC_DIR/lib/cmake"
    - $QTDIR = "$QT_MSVC_DIR"
-   - $HDF5_LIB_DIR = "C:/Program Files/HDF_Group/HDF5/1.12.2/lib"
-   - $HDF5_INCLUDE_DIR = "C:/Program Files/HDF_Group/HDF5/1.12.2/include"
-   - $SWIG_DIR = "C:\Program Files\swigwin"
+   - $LIB_DIRS = "C:/Program Files/HDF_Group/HDF5/1.12.2/lib;C:/opt/x64/lib"
+   - $INCLUDE_DIRS = "C:/Program Files/HDF_Group/HDF5/1.12.2/include;C:/opt/x64/include"
+   - $SWIG_DIR = "C:/Program Files/swigwin"
+   - $BLOSC_DIR = "C:/opt/x64/"
    - Remove-Item CM* -Recurse
-   - cmake -G "Visual Studio 17 2022" -A x64 -T host=x64 -DCMAKE_PREFIX_PATH="$OPT_DIR" -DQTDIR="$QT_MSVC_DIR" -DCMAKE_INCLUDE_PATH="$HDF5_INCLUDE_DIR" -DCMAKE_LIBRARY_PATH="$HDF5_LIB_DIR" -DCMAKE_C_COMPILER="cl.exe" -DCMAKE_CXX_COMPILER="cl.exe" -B. ..
+   - cmake -G "Visual Studio 17 2022" -A x64 -T host=x64 -DCMAKE_PREFIX_PATH="$OPT_DIR" -DQTDIR="$QT_MSVC_DIR" -DCMAKE_INCLUDE_PATH="$INCLUDE_DIRS" -DCMAKE_LIBRARY_PATH="$LIB_DIRS" -DCMAKE_C_COMPILER="cl.exe" -DCMAKE_CXX_COMPILER="cl.exe" -B. ..
    - cmake --build . --config Release
    - ctest -C Release --parallel 8 --output-on-failure
    - cpack -C Release -B ./winpackage
