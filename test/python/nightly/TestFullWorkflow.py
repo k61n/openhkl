@@ -92,10 +92,14 @@ class TestFullWorkFlow(unittest.TestCase):
         filter.parameters().strength_min = 1.0
         filter.filter(found_peaks)
 <<<<<<< HEAD
+<<<<<<< HEAD
         expt.acceptFilter('indexing', found_peaks, ohkl.PeakCollectionType_INDEXING)        
 =======
         expt.acceptFilter('indexing', found_peaks, ohkl.PeakCollectionType.INDEXING)        
 >>>>>>> added mandatory argument in FullWorkflow Test script
+=======
+        expt.acceptFilter('indexing', found_peaks, ohkl.PeakCollectionType_INDEXING)        
+>>>>>>> corrected swig syntax error
 
         indexing_peaks = expt.getPeakCollection('indexing')
         indexer.autoIndex(indexing_peaks)
