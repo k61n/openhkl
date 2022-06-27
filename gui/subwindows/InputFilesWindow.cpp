@@ -51,23 +51,21 @@ InputFilesWindow::InputFilesWindow(QWidget* parent)
     _files_table = new QTableWidget();
     _files_table->setColumnCount(2);
     _files_table->setEditTriggers(QAbstractItemView::NoEditTriggers);
-    _files_table->setHorizontalHeaderLabels(QStringList{
-    "Id", "Path"});
+    _files_table->setHorizontalHeaderLabels(QStringList{"Id", "Path"});
     _files_table->resizeColumnsToContents();
     _files_table->verticalHeader()->setVisible(false);
 
-     layout->addLayout(header_layout);
-     layout->addWidget(_files_table);
+    layout->addLayout(header_layout);
+    layout->addWidget(_files_table);
 
-     resize(800, 600); 
-     connect( _data_set, qOverload<int>(&QComboBox::currentIndexChanged), this, &InputFilesWindow::on_combobox_select);
+    resize(800, 600); 
+    connect( _data_set, qOverload<int>(&QComboBox::currentIndexChanged), this, &InputFilesWindow::on_combobox_select);
           
 } 
  
 void InputFilesWindow::refreshAll()
 {    
-    if (gSession->hasProject()){          
-       
+    if (gSession->hasProject()){         
         Project* prj = gSession->currentProject();
         auto expt = prj->experiment();
         auto allData = prj->allData();   
