@@ -131,19 +131,19 @@ function get_depends()
 
 #-- package-related variables
 pack_dirname="macospack"
-pack_nsx_dirname="nsx"
-pack_pynsx_dirname="pynsx"
+pack_ohkl_dirname="ohkl"
+pack_pyohkl_dirname="pyohkl"
 pack_lib_dirname="lib"
 pack_fmwk_dirname="Frameworks"
 pack_qt_fmwk_dirname="Qt"
-pack_filename="nsxtool_macos.zip"
-pack_exe_filename="NSXTool"
+pack_filename="openhkl_macos.zip"
+pack_exe_filename="OpenHKL"
 pack_readme_filename="README.md"
 
 # package structure:
-# nsx
+# ohkl
 # |
-# + NSXTool <executable>
+# + OpenHKL <executable>
 # + dbg_macos_pkg.sh <debug script>
 # + README.md
 # |
@@ -151,32 +151,32 @@ pack_readme_filename="README.md"
 # |  |
 # |  + <external libraries, no Qt>
 # |
-# +- pynsx
+# +- pyohkl
 #    |
 #    + <Python interface library>
 
-bin_dir="main/NSXTool.app/Contents/MacOS"
-nsx_bin0="$build_dir/$bin_dir/$pack_exe_filename"
+bin_dir="main/OpenHKL.app/Contents/MacOS"
+ohkl_bin0="$build_dir/$bin_dir/$pack_exe_filename"
 root_dir="$build_dir/$pack_dirname"
-pack_dir="$root_dir/$pack_nsx_dirname"
-pynsx_dir="$pack_dir/$pack_pynsx_dirname"
+pack_dir="$root_dir/$pack_ohkl_dirname"
+pyohkl_dir="$pack_dir/$pack_pyohkl_dirname"
 xlib_dir="$pack_dir/$pack_lib_dirname"
 fmwk_dir="$pack_dir/$pack_fmwk_dirname"
 qt_fmwk_dir="$fmwk_dir/$pack_qt_fmwk_dirname"
 dbg_script="$source_dir/setup_scripts/dbg_macos_pkg.sh"
 pkg_intro="$source_dir/setup_scripts/intro_macos_pkg.md"
 
-nsx_bin="$pack_dir/NSXTool"
-nsx_readme="$pack_dir/$pack_readme_filename"
-pynsx_files0=$(ls -Ap $build_dir/swig/*.{so,py})
-pynsx_lib0="$build_dir/swig/_pynsx.so"
+ohkl_bin="$pack_dir/OpenHKL"
+ohkl_readme="$pack_dir/$pack_readme_filename"
+pyohkl_files0=$(ls -Ap $build_dir/swig/*.{so,py})
+pyohkl_lib0="$build_dir/swig/_pyohkl.so"
 
 # arrays to store dependency data
 declare -a depends_fullpath=( ) depends_filename=( ) \
    qt_depends_fullpath=( ) qt_depends_filename=( )
 
 # start from the dependencies of the binary
-deps_paths=$(get_depends "$nsx_bin0")
+deps_paths=$(get_depends "$ohkl_bin0")
 
 # collect the dependency data into arrays
 
@@ -202,7 +202,7 @@ qt_dir_rx='s;(.+)/lib/(.+);\1;'
 qt_dir_build=$(echo "${qt_depends_fullpath[0]}" | sed -E $qt_dir_rx)
 qt_rpaths="$qt_rpaths $qt_dir_build"
 
-# extract the Python dependency from the pynsx library
+# extract the Python dependency from the pyohkl library
 # regexp to extract the Python dependence
 py_fmwk_rx='s;[[:blank:]]*(.+)/(Python|libpython.+\.dylib).*;\1/\2;p'
 # regexp to extract the Python framework path
@@ -216,7 +216,7 @@ pylib_rx='s;.*[pP]ython.+[Vv]ersions/([0-9.]+).+(Python|libpython).*;libpython\1
 # regexp to extract the Python version
 pyversion_rx='s;.*[pP]ython.+[Vv]ersions/([0-9.]+).*;\1;'
 
-pydeps0=$(otool -L "$pynsx_lib0")
+pydeps0=$(otool -L "$pyohkl_lib0")
 pydepends_fullpath=$(echo "$pydeps0" | sed -nE $py_fmwk_rx)
 pydepends_filename=$(echo "$pydepends_fullpath" | sed -E $pylib_rx)
 pyversion=$(echo "$pydepends_fullpath" | sed -E $pyversion_rx)
@@ -239,8 +239,8 @@ COPY="cp -nv"
 # copy the executable
 echo "$TITLE: Copy executable..."
 $MKDIR "$pack_dir"
-$COPY "$nsx_bin0" "$nsx_bin"
-exefiles="$nsx_bin"
+$COPY "$ohkl_bin0" "$ohkl_bin"
+exefiles="$ohkl_bin"
 
 # copy the debug script
 echo "$TITLE: Copy debug script..."
@@ -257,19 +257,19 @@ done
 xlibfiles=$(ls -Ap "$xlib_dir/"* | grep -v /$)
 
 # copy the Python library
-echo "$TITLE: Copy Python library '$pynsx_dir'..."
-$MKDIR "$pynsx_dir"
+echo "$TITLE: Copy Python library '$pyohkl_dir'..."
+$MKDIR "$pyohkl_dir"
 
-for dep in $pynsx_files0;
+for dep in $pyohkl_files0;
 do
-    $COPY "$dep" "$pynsx_dir/"
+    $COPY "$dep" "$pyohkl_dir/"
 done
-pynsx_files=$(ls -Ap "$pynsx_dir/"* | grep -v /$)
-pynsx_lib=$(ls -Ap "$pynsx_dir"/*.so)
+pyohkl_files=$(ls -Ap "$pyohkl_dir/"* | grep -v /$)
+pyohkl_lib=$(ls -Ap "$pyohkl_dir"/*.so)
 
 #-- modify the library references in all files
 # ref to external libraries
-for filenm in $xlibfiles $nsx_bin $pynsx_lib
+for filenm in $xlibfiles $ohkl_bin $pyohkl_lib
 do
     for idx in "${!depends_fullpath[@]}";
     do
@@ -285,7 +285,7 @@ do
 done
 # ref to Qt libraries
 # NOTE: It is assumed that only the executable contains Qt dependencies
-for filenm in $nsx_bin
+for filenm in $ohkl_bin
 do
     for idx in "${!qt_depends_fullpath[@]}";
     do
@@ -300,7 +300,7 @@ do
     log "$TITLE: Changed Qt references in '$filenm'"
 done
 #ref to Python library
-install_name_tool "$pynsx_lib" -change "$pydepends_fullpath" "@rpath/$pydepends_filename"
+install_name_tool "$pyohkl_lib" -change "$pydepends_fullpath" "@rpath/$pydepends_filename"
 
 #-- add proper RPATHs
 
@@ -311,19 +311,19 @@ do
 done
 
 # add RPATHs to executable
-install_name_tool "$nsx_bin" -add_rpath "@loader_path/$pack_lib_dirname"
+install_name_tool "$ohkl_bin" -add_rpath "@loader_path/$pack_lib_dirname"
 for rpth in $qt_rpaths
 do
-    install_name_tool "$nsx_bin" -add_rpath "$rpth"
+    install_name_tool "$ohkl_bin" -add_rpath "$rpth"
 done
 
 # add RPATHs to the Python library
-install_name_tool "$pynsx_lib" \
+install_name_tool "$pyohkl_lib" \
    -add_rpath "@loader_path/../$pack_lib_dirname" \
    -add_rpath "$py_fmwk_dir/lib"
 
 for rpth in $py_fmwk_rpaths; do
-    install_name_tool "$pynsx_lib" -add_rpath "$rpth"
+    install_name_tool "$pyohkl_lib" -add_rpath "$rpth"
 done
 
 #-- make a README to include instructions and details
@@ -333,79 +333,79 @@ git_commit=$(git rev-parse --short HEAD)
 date_stamp=$(date "+%d-%m-%Y,%H:%M")
 dyld_debug_cmd="DYLD_PRINT_LIBRARIES=1 DYLD_PRINT_RPATHS=1 DYLD_PRINT_TO_FILE=dyld.log ./$pack_exe_filename"
 
-echo "# NSXTool MacOS zip-package:" > $nsx_readme
-echo "- Build directory = '$build_dir'" >> $nsx_readme
-echo "- NSX package file = '$pack_filename'" >> $nsx_readme
-echo "- Machine specifications: $machine_specs" >> $nsx_readme
-echo "- Git repository branch '$git_branch' at $git_commit" >> $nsx_readme
-echo "- Package created on $date_stamp" >> $nsx_readme
+echo "# OpenHKL MacOS zip-package:" > $ohkl_readme
+echo "- Build directory = '$build_dir'" >> $ohkl_readme
+echo "- OpenHKL package file = '$pack_filename'" >> $ohkl_readme
+echo "- Machine specifications: $machine_specs" >> $ohkl_readme
+echo "- Git repository branch '$git_branch' at $git_commit" >> $ohkl_readme
+echo "- Package created on $date_stamp" >> $ohkl_readme
 # show the contents of the README file
-cat "$nsx_readme"
+cat "$ohkl_readme"
 
 # add instructions
-cat "$pkg_intro" >> $nsx_readme
-echo >> $nsx_readme
+cat "$pkg_intro" >> $ohkl_readme
+echo >> $ohkl_readme
 
 # add details
-echo "* Details:" >> $nsx_readme
-echo "- Executables:" >> $nsx_readme
-echo "$nsx_bin" >> $nsx_readme
-echo >> $nsx_readme
+echo "* Details:" >> $ohkl_readme
+echo "- Executables:" >> $ohkl_readme
+echo "$ohkl_bin" >> $ohkl_readme
+echo >> $ohkl_readme
 
-echo "- Python library:" >> $nsx_readme
+echo "- Python library:" >> $ohkl_readme
 idx=0
-for fnm in $pynsx_files
+for fnm in $pyohkl_files
 do
     idx=$((idx+1))
-    printf "%3d) %s" "$idx" "$fnm\n" >> $nsx_readme
+    printf "%3d) %s" "$idx" "$fnm\n" >> $ohkl_readme
 done
-echo >> $nsx_readme
+echo >> $ohkl_readme
 
-echo "- Library files:" >> $nsx_readme
+echo "- Library files:" >> $ohkl_readme
 idx=0
 for fnm in $xlibfiles
 do
     idx=$((idx+1))
-    printf "%3d) %s" "$idx" "$fnm\n" >> $nsx_readme
+    printf "%3d) %s" "$idx" "$fnm\n" >> $ohkl_readme
 done
-echo >> $nsx_readme
+echo >> $ohkl_readme
 
-echo "- Library reference changes:" >> $nsx_readme
+echo "- Library reference changes:" >> $ohkl_readme
 for idx in "${!depends_fullpath[@]}"
 do
     pth=${depends_fullpath[idx]}
     fnm=${depends_filename[idx]}
-    printf "%3d) '%s' => '%s'\n" "$idx" "$pth" "$fnm" >> $nsx_readme
+    printf "%3d) '%s' => '%s'\n" "$idx" "$pth" "$fnm" >> $ohkl_readme
 done
-echo >> $nsx_readme
+echo >> $ohkl_readme
 
-echo "- Qt reference changes:" >> $nsx_readme
+echo "- Qt reference changes:" >> $ohkl_readme
 for idx in "${!qt_depends_fullpath[@]}"
 do
     pth=${qt_depends_fullpath[idx]}
     fnm=${qt_depends_filename[idx]}
-    printf "%3d) '%s' => '%s'\n" "$idx" "$pth" "$fnm" >> $nsx_readme
+    printf "%3d) '%s' => '%s'\n" "$idx" "$pth" "$fnm" >> $ohkl_readme
 done
-echo >> $nsx_readme
+echo >> $ohkl_readme
 
-echo "- RPATHs:" >> $nsx_readme
-echo "@loader_path" >> $nsx_readme
-echo "@loader_path/$pack_lib_dirname" >> $nsx_readme
-echo "@loader_path/../$pack_lib_dirname" >> $nsx_readme
-echo "$py_fmwk_dir/lib" >> $nsx_readme
+echo "- RPATHs:" >> $ohkl_readme
+echo "@loader_path" >> $ohkl_readme
+echo "@loader_path/$pack_lib_dirname" >> $ohkl_readme
+echo "@loader_path/../$pack_lib_dirname" >> $ohkl_readme
+echo "$py_fmwk_dir/lib" >> $ohkl_readme
 for rpth in $py_fmwk_rpaths; do
-    echo "$rpth" >> $nsx_readme
+    echo "$rpth" >> $ohkl_readme
 done
 for rpth in $qt_rpaths
 do
-    echo "$rpth" >> $nsx_readme
+    echo "$rpth" >> $ohkl_readme
 done
-echo >> $nsx_readme
+echo >> $ohkl_readme
 
 #-- make a zip-package
 echo "$TITLE: Building package '$pack_filename'..."
 pushd "$root_dir"
-zip -v9r "$pack_filename" "$pack_nsx_dirname/"
+zip -v9r "$pack_filename" "$pack_ohkl_dirname/"
 popd
 
 #-- final message
