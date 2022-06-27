@@ -1,7 +1,7 @@
 [Desktop Entry]
 Name=@PROJECT_NAME@
 StartupWMClass=@PROJECT_NAME@
-Comment=OpenHKL: Single crystal diffraction data reduction tool
+Comment=Single crystal diffraction data reduction tool
 GenericName=@PROJECT_NAME@
 Exec=@CMAKE_INSTALL_PREFIX@/bin/OpenHKL
 Icon=OpenHKL
