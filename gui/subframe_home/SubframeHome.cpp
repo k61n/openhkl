@@ -29,6 +29,9 @@
 #include <QSettings>
 #include <QSpacerItem>
 #include <QHeaderView>
+#include <QListView>
+#include <QStringListModel>
+#include <QAbstractItemModel>
 
 // Icon attributions:
 // save.svg: folder open by Loudoun Design Co from the Noun Project
@@ -130,10 +133,15 @@ void SubframeHome::_setLeftLayout(QHBoxLayout* main_layout)
     tooltip = "Shows spec of the Instrument";
     _show_instrument_data->setToolTip(tooltip);
 
-    _dataset_table = new QTableWidget(0, 9);
+    _dataset_table = new QTableWidget(0, 16);
     _dataset_table->setEditTriggers(QAbstractItemView::NoEditTriggers);
     _dataset_table->setHorizontalHeaderLabels(QStringList{
-        "Name", "Diffractometer", "Number of Frames", "Number of Columns", "Number of Rows","Width", "Height", "Distance/A", "Wavelength/A"});
+        "Name", "Diffractometer", "NFrames", "NCols", 
+        "NRows","Width", "Height", "Distance/A", "Wavelength/A",
+        "Detector Name","Angular Width/deg", "SampleName", "SourceName", 
+        "Det Gonio Axes", "Sample Gonio Axes", "Monochromators"
+        
+        });
     _dataset_table->resizeColumnsToContents();
     _dataset_table->verticalHeader()->setVisible(false);
 
@@ -202,21 +210,14 @@ void SubframeHome::_setLeftLayout(QHBoxLayout* main_layout)
             gGui->input_files_window->show();
             gGui->input_files_window->refreshAll(  );
         }
-    ); 
-
-   
-   
-    
-
-    //yourTableView->selectionModel()->selectedIndexes();
-
-    
-   // gGui->input_files_window->activateWindow();
- 
-
+    );  
     connect(
         _show_instrument_data, &QPushButton::clicked, this,
-        &SubframeHome::showInstrumentData); 
+        [ ]() {
+            gGui->instrument_data_window->show();
+            gGui->instrument_data_window->refreshAll(  );
+        }        
+    ); 
 }
 
 void SubframeHome::_setRightLayout(QHBoxLayout* main_layout)
@@ -584,12 +585,83 @@ void SubframeHome::refreshTables() const
             _dataset_table->setItem(
                 n, 8, new QTableWidgetItem(QString::number(it->get()->wavelength())));
 
-                
-
             
+            _dataset_table->setItem(
+                n, 9, new QTableWidgetItem(QString::fromStdString(it->get()->diffractometer()->detector()->name())));
+
+            _dataset_table->setItem(
+                n, 10, new QTableWidgetItem(QString::number(it->get()->diffractometer()->detector()->angularWidth())));
+
+            _dataset_table->setItem(
+                n, 11, new QTableWidgetItem(QString::fromStdString(it->get()->diffractometer()->sample().name())));
+
+            _dataset_table->setItem(
+                n, 12, new QTableWidgetItem(QString::fromStdString(it->get()->diffractometer()->source().name())));
+
+
+            QComboBox* tmp = new QComboBox();
+            for (int i=0; i<it->get()->detector().gonio().nAxes(); ++i){
+                QString str;
+                str+="[";                
+                for (int j=0; j<3; j++){
+                    auto ax = it->get()->detector().gonio().axis(i).axis()[j];
+                    str+= QString::number(ax);
+                    if (j != 2) str+= ";";
+                }
+                str+="]";               
+                tmp->addItem(str);
+            }           
+
+            _dataset_table->setCellWidget(n, 13, tmp);
 
 
 
+             QComboBox* tmp2 = new QComboBox();
+             it->get()->diffractometer()->sample().gonio().nAxes();
+             static const char b2s[2][6]  {"False", "True"};
+             for (int i=0; i<it->get()->diffractometer()->sample().gonio().nAxes(); ++i){
+                QString str = QString::fromStdString( it->get()->diffractometer()->sample().gonio().axis(i).name());
+                str+=" , [";  
+                             
+                for (int j=0; j<3; j++){
+                auto  ax = it->get()->diffractometer()->sample().gonio().axis(i).axis()[j];
+                str+= QString::number(ax);
+                    if (j != 2) str+= ";";
+                }
+                str+="], Physical: " + QString(b2s[it->get()->diffractometer()->sample().gonio().axis(i).physical()]);
+                
+                tmp2->addItem(str);
+            }  
+
+            _dataset_table->setCellWidget(n, 14, tmp2);
+
+            QComboBox* tmp3 = new QComboBox();
+             auto mono = it->get()->diffractometer()->source().monochromators();
+             for (int i=0; i<mono.size(); ++i){
+            
+                tmp3->addItem( QString::fromStdString(mono.at(i).name()));
+            }   
+            _dataset_table->setCellWidget(n, 15, tmp3);
+
+ 
+            
+            /*
+            it->get()->diffractometer()->detector()->name();
+            //it->get()->diffractometer()->detector()->type();
+            it->get()->diffractometer()->detector()->angularWidth();
+            it->get()->detector().gonio().nAxes();
+            it->get()->detector().gonio().axis(0).axis();
+            it->get()->diffractometer()->sample().name();
+            it->get()->diffractometer()->sample().gonio().nAxes();
+            it->get()->diffractometer()->sample().gonio().axis(0);
+            it->get()->diffractometer()->source().name();
+            it->get()->diffractometer()->source().monochromators().at(0).name();
+            it->get()->diffractometer()->source().monochromators().at(0).width();
+            it->get()->diffractometer()->source().monochromators().at(0).height();
+            it->get()->diffractometer()->source().monochromators().at(0).wavelength();
+            it->get()->diffractometer()->source().monochromators().at(0).fullWidthHalfMaximum();
+            it->get()->diffractometer()->source().monochromators().at(0).fullWidthHalfMaximum();*/
+           
         }
         _dataset_table->resizeColumnsToContents();
 
