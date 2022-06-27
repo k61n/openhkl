@@ -107,3 +107,21 @@ include_directories(SYSTEM ${EIGEN3_INCLUDE_DIR})
 ##### Find QHull
 find_package(Qhull MODULE REQUIRED)
 include_directories(SYSTEM ${QHULL_INCLUDE_DIR})
+
+##### Find Boost
+set(Boost_NO_BOOST_CMAKE ON)
+set(Boost_USE_MULTITHREADED ON)
+set(Boost_USE_STATIC_LIBS OFF)
+set(Boost_USE_STATIC_RUNTIME OFF)
+add_definitions(-DBOOST_ALL_DYN_LINK) # line is needed for MSVC
+add_definitions(-DBOOST_UUID_FORCE_AUTO_LINK) # line is needed to link bcrypt for MSVC
+# amends problems with bimap and MSVC, serialization of bimap is currently not needed
+add_definitions(-DBOOST_BIMAP_DISABLE_SERIALIZATION)
+find_package(Boost 1.65.1 REQUIRED)
+if(Boost_FOUND)
+    include_directories(SYSTEM "${Boost_INCLUDE_DIRS}")
+    message(STATUS "Found boost:")
+    message(STATUS "  version: ${Boost_MAJOR_VERSION}.${Boost_MINOR_VERSION}")
+    message(STATUS "  libraries: ${Boost_LIBRARIES}")
+    message(STATUS "  headers: ${Boost_INCLUDE_DIRS}")
+endif()
