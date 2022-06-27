@@ -13,7 +13,7 @@ windows:
    - $QTCMake_DIR = "$QT_MSVC_DIR/lib/cmake"
    - $QTDIR = "$QT_MSVC_DIR"
    - $LIB_DIRS = "C:/Program Files/HDF_Group/HDF5/1.12.2/lib;C:/opt/x64/lib"
-   - $INCLUDE_DIRS = "C:/Program Files/HDF_Group/HDF5/1.12.2/include;C:/opt/x64/include"
+   - $INCLUDE_DIRS = "C:/Program Files/HDF_Group/HDF5/1.12.2/include;C:/opt/x64/include/libtiff"
    - $SWIG_DIR = "C:/Program Files/swigwin"
    - $BLOSC_DIR = "C:/opt/x64/"
    - Remove-Item CM* -Recurse
