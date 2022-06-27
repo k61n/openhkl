@@ -61,7 +61,8 @@ class DetectorScene : public QGraphicsScene {
         LINE = 4,
         HORIZONTALSLICE = 5,
         VERTICALSLICE = 6,
-        DRAG_DROP = 7
+        DRAG_DROP = 7,
+        SET_INIT_DIR_BEAM_POS = 8 
     };
 
     //! Which mode is the cursor diplaying
