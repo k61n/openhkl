@@ -19,6 +19,7 @@
 #include "gui/views/ExperimentTableView.h"
 #include "gui/subwindows/InputFilesWindow.h"
 #include "gui/subwindows/InstrumentDataWindow.h"
+#include "gui/subwindows/PeaklistWindow.h"
 
 #include <memory>
 
@@ -93,7 +94,7 @@ class SubframeHome : public QWidget {
     QPushButton* _save_all;
     QPushButton* _remove_current;
     QPushButton* _show_input_files;
-    QPushButton* _show_instrument_data;
+    QPushButton* _show_axes_information;
     QPushButton* _show_found_peaks;
 
     ExperimentTableView* _open_experiments_view;

@@ -38,6 +38,8 @@
 #include "gui/subwindows/PeakWindow.h"
 #include "gui/subwindows/InputFilesWindow.h"
 #include "gui/subwindows/InstrumentDataWindow.h"
+#include "gui/subwindows/PeaklistWindow.h"
+#include "gui/subwindows/AxisWindow.h"
 #include "gui/utility/SideBar.h"
 #include "gui/widgets/DetectorWidget.h"
 
@@ -95,6 +97,8 @@ MainWin::MainWin()
     log_window = new LogWindow(this);
     input_files_window = new InputFilesWindow(this);
     instrument_data_window = new InstrumentDataWindow();
+    peak_list_window = new PeaklistWindow(this);
+    axis_window = new AxisWindow(this);
 
     _layout_stack = new QStackedWidget(main_widget);
     _layout_stack->addWidget(home);

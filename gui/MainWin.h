@@ -29,6 +29,8 @@ class LogWindow;
 class PeakWindow;
 class InputFilesWindow;
 class InstrumentDataWindow;
+class PeaklistWindow;
+class AxisWindow;
 class PlottableItem;
 class Sentinel;
 class SideBar;
@@ -117,6 +119,10 @@ class MainWin : public QMainWindow {
     InputFilesWindow* input_files_window;
 
     InstrumentDataWindow* instrument_data_window;
+
+    PeaklistWindow* peak_list_window;
+
+    AxisWindow* axis_window;
 
 
 

@@ -49,9 +49,10 @@ void Actions::setupExperiment()
     new_experiment = new QAction("New experiment");
     load_experiment = new QAction("Load experiment");
     save_experiment = new QAction("Save");
-    save_experiment_as = new QAction("Save as"); save_all_experiment = new QAction("Save all");
+    save_experiment_as = new QAction("Save as"); 
+    save_all_experiment = new QAction("Save all");
     remove_experiment = new QAction("Remove experiment");
-    quit = new QAction("Quit");
+    quit = new QAction("Quit"); 
 
     connect(new_experiment, &QAction::triggered, []() { gGui->home->createNew(); });
     connect(new_experiment, &QAction::triggered, []() { gGui->sideBar()->refreshCurrent(); });
@@ -62,7 +63,7 @@ void Actions::setupExperiment()
     connect(save_all_experiment, &QAction::triggered, []() { gGui->home->saveAll(); });
     connect(remove_experiment, &QAction::triggered, this, &Actions::removeExperiment);
 
-    connect(quit, &QAction::triggered, []() { gGui->close(); });
+    connect(quit, &QAction::triggered, []() { gGui->close(); }); 
 }
 
 void Actions::setupView()
@@ -90,7 +91,6 @@ void Actions::setupView()
 
 void Actions::setupData()
 {
-   
     add_data = new QAction("Add data set");
     show_input_files = new QAction("Show input files");
     remove_data = new QAction("Remove data set");
@@ -107,9 +107,14 @@ void Actions::setupData()
     connect(add_hdf5, &QAction::triggered, []() { gGui->sideBar()->refreshCurrent(); });
     connect(add_nexus, &QAction::triggered, []() { gGui->sideBar()->refreshCurrent(); });
 
-    connect(remove_data, &QAction::triggered, this, &Actions::removeData);
+    connect(remove_data, &QAction::triggered, this, &Actions::removeData);    
 
-    
+    connect(show_input_files, &QAction::triggered,
+        [ ]() {
+            gGui->input_files_window->show();
+            gGui->input_files_window->refreshAll(  );
+        }
+    ); 
 }
 
 void Actions::removeExperiment()
@@ -168,6 +173,14 @@ void Actions::setupPeaks()
 
     connect(remove_peaks, &QAction::triggered, this, &Actions::removePeaks);
     connect(clone_peaks, &QAction::triggered, this, &Actions::clonePeaks);
+
+    connect(
+         show_peaks, &QAction::triggered,
+        [ ]() {
+            gGui->peak_list_window->show();
+            gGui->peak_list_window->refreshAll(  );
+        }        
+    );  
 }
 
 void Actions::setupRest()
