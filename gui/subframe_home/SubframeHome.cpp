@@ -115,6 +115,7 @@ void SubframeHome::_setLeftLayout(QHBoxLayout* main_layout)
 
     left->addWidget(_last_import_widget);
 
+
     //QSpacerItem* spacer_bottom =
     //    new QSpacerItem(10, 0, QSizePolicy::Minimum, QSizePolicy::Expanding);
     //left->addSpacerItem(spacer_bottom);
@@ -218,6 +219,7 @@ void SubframeHome::_setLeftLayout(QHBoxLayout* main_layout)
         [this]() {             
             gGui->axis_window->show();
             gGui->axis_window->refreshAll();
+
         }        
     ); 
 
@@ -511,6 +513,10 @@ void SubframeHome::refreshTables() const
     _show_found_peaks->setEnabled(false);
     _show_input_files->setEnabled(false);
 
+    _show_axes_information->setEnabled(false);
+    _show_found_peaks->setEnabled(false);
+    _show_input_files->setEnabled(false);
+
     if (!gSession->hasProject())
         return;
 
@@ -529,6 +535,7 @@ void SubframeHome::refreshTables() const
 
         nsx::Experiment* expt = gSession->currentProject()->experiment();
         if (expt == nullptr) return;
+
 
         _show_input_files->setEnabled(expt->numData() > 0);
         _show_found_peaks->setEnabled(expt->numPeakCollections() > 0);
@@ -628,6 +635,7 @@ void SubframeHome::refreshTables() const
                     str+="]";
                     det_axes->addItem(str);
                 }
+
                 _dataset_table->setCellWidget(n, 13, det_axes);
 
                 QComboBox* diff_axes = new QComboBox();
@@ -636,6 +644,12 @@ void SubframeHome::refreshTables() const
                 for (int i=0; i<it->get()->diffractometer()->sample().gonio().nAxes(); ++i){
                     QString str = QString::fromStdString( it->get()->diffractometer()->sample().gonio().axis(i).name());
                     str+=" , [";
+
+                str+="]";               
+                tmp->addItem(str);
+            }           
+
+            _dataset_table->setCellWidget(n, 13, tmp); 
 
                     for (int j=0; j<3; j++){
                     auto  ax = it->get()->diffractometer()->sample().gonio().axis(i).axis()[j];

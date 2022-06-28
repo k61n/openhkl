@@ -341,3 +341,4 @@ void SideBar::refreshCurrent()
 {
     mCheckedAction->trigger();
 }
+
