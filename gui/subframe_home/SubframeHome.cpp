@@ -23,6 +23,7 @@
 #include "gui/models/Session.h"
 #include "tables/crystal/UnitCell.h"
 #include "gui/utility/SideBar.h"
+#include "gui/subwindows/AxisWindow.h"
 
 #include <QFileDialog>
 #include <QMessageBox>
@@ -107,6 +108,7 @@ void SubframeHome::_setLeftLayout(QHBoxLayout* main_layout)
     left->addLayout(left_top);
 
     _last_import_widget = new QListWidget(this);
+     
     _last_import_widget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
     _last_import_widget->setStyleSheet("background-color: transparent;");
     connect(_last_import_widget, &QListWidget::itemClicked, this, &SubframeHome::_loadSelectedItem);
@@ -115,7 +117,7 @@ void SubframeHome::_setLeftLayout(QHBoxLayout* main_layout)
 
     QSpacerItem* spacer_bottom =
         new QSpacerItem(10, 0, QSizePolicy::Minimum, QSizePolicy::Expanding);
-    left->addSpacerItem(spacer_bottom);
+    //left->addSpacerItem(spacer_bottom);
 
     _show_input_files = new QPushButton();
     _show_input_files->setText("Show Input files");
@@ -125,13 +127,13 @@ void SubframeHome::_setLeftLayout(QHBoxLayout* main_layout)
     tooltip = "Shows a list of all input files";
     _show_input_files->setToolTip(tooltip);
 
-    _show_instrument_data = new QPushButton();
-    _show_instrument_data->setText("Show Instrument Data");
-    _show_instrument_data->setMaximumSize(QSize(100,30));
-    _show_instrument_data->setMinimumWidth(_new_exp->sizeHint().width());
-    _show_instrument_data->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
-    tooltip = "Shows spec of the Instrument";
-    _show_instrument_data->setToolTip(tooltip);
+    _show_axes_information = new QPushButton();
+    _show_axes_information->setText("Show axes");
+    _show_axes_information->setMaximumSize(QSize(100,30));
+    _show_axes_information->setMinimumWidth(_new_exp->sizeHint().width());
+    _show_axes_information->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
+    tooltip = "Shows information about axes";
+    _show_axes_information->setToolTip(tooltip);
 
     _dataset_table = new QTableWidget(0, 16);
     _dataset_table->setEditTriggers(QAbstractItemView::NoEditTriggers);
@@ -183,7 +185,7 @@ void SubframeHome::_setLeftLayout(QHBoxLayout* main_layout)
 
     lay_datasets_head->addWidget(lab_dataset);
     lay_datasets_head->addWidget(_show_input_files);
-    lay_datasets_head->addWidget(_show_instrument_data);
+    lay_datasets_head->addWidget(_show_axes_information);
 
     lay_datasets->addLayout(lay_datasets_head);
     lay_datasets->addWidget(_dataset_table);
@@ -212,12 +214,20 @@ void SubframeHome::_setLeftLayout(QHBoxLayout* main_layout)
         }
     );  
     connect(
-        _show_instrument_data, &QPushButton::clicked, this,
-        [ ]() {
-            gGui->instrument_data_window->show();
-            gGui->instrument_data_window->refreshAll(  );
+        _show_axes_information, &QPushButton::clicked, this,
+        [this]() {             
+            gGui->axis_window->show();
+            gGui->axis_window->refreshAll(  );
         }        
     ); 
+
+    connect(
+         _show_found_peaks, &QPushButton::clicked, this,
+        [ ]() {
+            gGui->peak_list_window->show();
+            gGui->peak_list_window->refreshAll(  );
+        }        
+    );  
 }
 
 void SubframeHome::_setRightLayout(QHBoxLayout* main_layout)
@@ -498,6 +508,10 @@ void SubframeHome::refreshTables() const
     _peak_collections_table->setRowCount(0);
     _unitcell_table->setRowCount(0);
 
+    _show_axes_information->setEnabled(false);
+    _show_found_peaks->setEnabled(false);
+    _show_input_files->setEnabled(false);
+
     if (!gSession->hasProject())
         return;
 
@@ -516,6 +530,12 @@ void SubframeHome::refreshTables() const
 
         nsx::Experiment* expt = gSession->currentProject()->experiment();
         if (expt == nullptr) return;
+
+        
+        _show_input_files->setEnabled(expt->numData() > 0);
+        _show_found_peaks->setEnabled(expt->numPeakCollections() > 0);     
+        _show_axes_information->setEnabled(expt->numData() > 0); 
+
         std::vector<std::string> pcs_names = expt->getCollectionNames();
 
         int row = 0;
@@ -612,9 +632,7 @@ void SubframeHome::refreshTables() const
                 tmp->addItem(str);
             }           
 
-            _dataset_table->setCellWidget(n, 13, tmp);
-
-
+            _dataset_table->setCellWidget(n, 13, tmp); 
 
              QComboBox* tmp2 = new QComboBox();
              it->get()->diffractometer()->sample().gonio().nAxes();
@@ -704,7 +722,7 @@ void SubframeHome::clearTables()
 
 void SubframeHome::showInputFiles() const
 {
-    std::cout << "ptr" << gGui->input_files_window << std::endl;
+     
     gGui->input_files_window->show();
     gGui->input_files_window->refreshAll();
     gGui->input_files_window->activateWindow();
