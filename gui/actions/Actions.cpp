@@ -50,6 +50,7 @@ void Actions::setupExperiment()
     load_experiment = new QAction("Load experiment");
     save_experiment = new QAction("Save");
     save_experiment_as = new QAction("Save as"); 
+    save_experiment_as = new QAction("Save as");
     save_all_experiment = new QAction("Save all");
     remove_experiment = new QAction("Remove experiment");
     quit = new QAction("Quit");
@@ -112,7 +113,8 @@ void Actions::setupData()
     connect(show_input_files, &QAction::triggered,
         [ ]() {
             gGui->input_files_window->show();
-            gGui->input_files_window->refreshAll(  );
+            gGui->input_files_window->refreshAll();
+
         }
     ); 
 }

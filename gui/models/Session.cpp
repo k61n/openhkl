@@ -355,9 +355,9 @@ void Session::onExperimentChanged()
 {
     if (!gSession->hasProject())
         return;
-    if (currentProject()->experiment()->getDiffractometer()) {
+    /*if (currentProject()->experiment()->getDiffractometer()) {
         gGui->onExperimentChanged();
-    }
+    }*/
     gGui->finder->grabFinderParameters();
     gGui->finder->grabIntegrationParameters();
     gGui->filter->grabFilterParameters();

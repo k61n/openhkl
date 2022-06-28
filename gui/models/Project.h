@@ -65,8 +65,6 @@ class Project {
 
     void clonePeakCollection(const QString& name, const QString& new_name);
 
-    void onPeaksChanged();
-
     void addUnitCell(const std::string& name, const nsx::UnitCell& unit_cell);
     QStringList getUnitCellNames() const;
     int numUnitCells() const;
