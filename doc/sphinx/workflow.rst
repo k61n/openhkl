@@ -116,6 +116,20 @@ The collision detection problem for ellipsoids is sped up by storing
 them in an octree. The ellipsoid overlap detection is implemented using
 the criterion described in **TODO: find literature**.
 
+.. _peakfinder:
+.. figure:: peak_finder.png
+   :alt: Masking the detector image
+   :name: fig:peak_finder
+   :width: 100.0%
+
+The screenshot above demostrates masking the detector image to exclude invalid
+regions from the peak search. The beam stop and the seam between detector plates
+(thin white line in this context) have been masked using the masking tool in the
+bottom right hand corner, such that any peaks found in these regions will be
+rejected. The region around the beam stop containing the air scattering halo has
+also been masked because the heterogeneous background will result in poor
+integration.
+
 .. table:: Peak search parameters
 
    +-------------------+----------------+-------------------------------+
@@ -460,7 +474,7 @@ the covariance matrix of the neighbouring peaks, within a cutoff.
    |                        |                | mean covariance         |
    +------------------------+----------------+-------------------------+
 
-The number of histogram bins in the $x$/$y$/$z$ directions do affect the shape
+The number of histogram bins in the x/y/z directions do affect the shape
 model, they only control the grid over which the predicted shape is plottied int
 he "shape preview" widget. The preview is constructed for a single peak at
 coordinates :math:`(x, y, \mathrm{frame})`, and all neighbouring strong peaks
