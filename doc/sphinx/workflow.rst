@@ -557,7 +557,7 @@ the covariance matrix of the neighbouring peaks, within a cutoff.
    |                        |                | mean covariance         |
    +------------------------+----------------+-------------------------+
 
-The number of histogram bins in the x/y/z directions do affect the shape
+The number of histogram bins in the $x$/$y$/$z$ directions do affect the shape
 model, they only control the grid over which the predicted shape is plottied int
 he "shape preview" widget. The preview is constructed for a single peak at
 coordinates :math:`(x, y, \mathrm{frame})`, and all neighbouring strong peaks
@@ -593,7 +593,6 @@ representative of the detector images. Physically, :math:`\sigma_M` will change
 the number of spots on an image since with a higher value they will extend onto
 more frames, and a higher :math:`\sigma_D` will increase the size of the
 integration regions.
-
 
 .. _predict-peaks-1:
 
