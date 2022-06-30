@@ -153,9 +153,10 @@ the criterion described in **TODO: find literature**.
    |                   |                | finding                       |
    +-------------------+----------------+-------------------------------+
 
-At this stage in the workflow, there are no available profiles to perform an
-accurate integration. The found peaks are integrated at this stage using 
-:ref:`sec_pixelsum`.
+At this stage in the workflow, there are no available profiles to perform
+profile integration. The found peaks are integrated at this stage using 
+pixel sum integration :ref:`sec_pixelsum`, a simple summation of peak pixel
+counts with a mean background subtraction.
 
 The following three integration parameters are explained in detail in
 :ref:`sec_peakshape` . Briefly, however, they are scaling factors that determine
@@ -355,6 +356,136 @@ or the correct space group may not be visible in the list in the `Assign unit
 cell` dialogue box. This may require additional experimentation with the
 parameters.
 
+In practice, the position of the direct beam is the parameter that usually
+determines the success of this algorithm. In the first instance, OpenHKL will
+assume that the direct beam position is at the exact centre of the detector
+image, when it is in fact likely to be off by a few pixels, enough to prevent
+the algorithm from finding a solution. At this stage, we have no unit cell, so
+refinement is not an option, leaving the option of manually adjusting the direct
+beam position. This can be done by checking the "set initial direct beam
+position" box and dragging and dropping a crosshair in the detector scene. The
+"x offset" and "y offset" boxes show the offset in pixels from the centre of the
+image, and the "crosshair size" and "crosshair linewidth" controls offer a guide
+to the eye when determining the
+
+.. _directbeam:
+.. figure:: direct_beam.png
+   :alt: Adjusting the direct beamm position manually
+   :name: fig:direct_beam
+   :width: 100.0%
+
+An example of this procedure is shown above. The air scattering halo in this
+instance can be used to give a better estimate of the direct beam position,
+which is off by 2-3 pixels in each direction. This small adjustment is enough to
+successfuly find the correct unit cell, orientation and Bravais lattice with the
+default autoindexing parameters.
+
+Shape model
+-----------
+
+The details of the shape model are explained in :ref:`sec_peakshape`, but for
+the purposes of this section it is enough to know that each peak is modeled as
+an ellipsoid extending over several frames (specifically over a finite sample
+rotation angle). The shape model is intended to define the shape of peaks which
+do not have strong intensity regions on the detector image, and whose shape
+(covariance matrix) is unknown, even though the position of the centre of the
+peak is known. A shape model is constructed by adding the shapes of *strong*
+peaks from a peak collection to a "library"; this model can be used to predict
+the shape of the peak with its centre at given coordinates by taking the mean of
+the covariance matrix of the neighbouring peaks, within a cutoff.
+
+   +------------------------+----------------+-------------------------+
+   | **Parameters**         | Unit           | Description             |
+   +========================+================+=========================+
+   | **histogram bins**     | integer        | Number of histogram     |
+   | **x/y/z**              |                | bins for profile in     |
+   |                        |                | x/y/z direction         |
+   +------------------------+----------------+-------------------------+
+   | **Kabsch coordinates** | T/F            | Toggle Kabsch           |
+   |                        |                | coordinate system as    |
+   |                        |                | opposed to detector     |
+   |                        |                | coordinate system       |
+   |                        |                | (applies only to        |
+   |                        |                | Profile 3D and Profile  |
+   |                        |                | 1D integrators)         |
+   +------------------------+----------------+-------------------------+
+   | Beam divergence        |                | Peak variance due to    |
+   | :math:`\sigma`         |                | beam divergence         |
+   +------------------------+----------------+-------------------------+
+   | Mosaicity              |                | Peak variance due to    |
+   | :math:`\sigma`         |                | crystal mosaicity       |
+   +------------------------+----------------+-------------------------+
+   | **Minimum**            |                | Exclude weak peaks with |
+   | I/:math:`\sigma`       |                | strength                |
+   |                        |                | (I/:math:`\sigma`)      |
+   |                        |                | below this value        |
+   +------------------------+----------------+-------------------------+
+   | **Minimum d**          | Å              | Only include peaks      |
+   |                        |                | above this d value      |
+   +------------------------+----------------+-------------------------+
+   | **Maximum d**          | Å              | Only include peaks      |
+   |                        |                | below this d value      |
+   +------------------------+----------------+-------------------------+
+   | **Peak end**           | :math:`\sigma` | Size of peak region     |
+   +------------------------+----------------+-------------------------+
+   | **Background begin**   | :math:`\sigma` | Size of beginning of    |
+   |                        |                | background region       |
+   +------------------------+----------------+-------------------------+
+   | **Background end**     | :math:`\sigma` | Size of end of          |
+   |                        |                | background region       |
+   +------------------------+----------------+-------------------------+
+   |                        |                |                         |
+   +------------------------+----------------+-------------------------+
+   | **x/y**                | pixels         | Compute mean profile    |
+   |                        |                | for these detector x/y  |
+   |                        |                | coordinates             |
+   +------------------------+----------------+-------------------------+
+   | **Frame**              | frame          | Compute mean profile    |
+   |                        |                | for this frame          |
+   |                        |                | coordinate coordinates  |
+   |                        |                | (with x/y)              |
+   +------------------------+----------------+-------------------------+
+   | **Radius**             | pixels         | Detector image radius   |
+   |                        |                | for neighbour search    |
+   |                        |                | for computing mean      |
+   |                        |                | profile                 |
+   +------------------------+----------------+-------------------------+
+   | **N frames**           | frame          | Detector image radius   |
+   |                        |                | in frames for neighbour |
+   |                        |                | search for computing    |
+   |                        |                | mean profile            |
+   +------------------------+----------------+-------------------------+
+   | **Interpolation type** |                | Type of interpolation   |
+   |                        |                | to use when calculating |
+   |                        |                | mean covariance         |
+   +------------------------+----------------+-------------------------+
+
+The number of histogram bins in the $x$/$y$/$z$ directions do affect the shape
+model, they only control the grid over which the predicted shape is plottied int
+he "shape preview" widget. The preview is constructed for a single peak at
+coordinates :math:`(x, y, \mathrm{frame})`, and all neighbouring strong peaks
+with in the specified pixel and frame cutoff are used to compute the mean
+covariance matrix. This peak is shown in the shape preview widget, and can also
+be displayed in the detector image widget if the coordinates are chosen by
+clicking somewhere on the detector image. When shown on the detector image, the
+shape is plotted as an integration region, with bounds determined by the "peak
+end", "background begin" and "background end" parameters. The peak pixels for
+this region are highlighted in yellow, and the local background pixels in green.
+Note that in order to display the integration region, there must be a predicted
+peak collection ("target peak collection") to which the shape model can be
+applied.
+
+The beam divergence and mosaicity variances are estimated as in section
+:ref:`beam_profile`. The beeam divergence variance :math:`\sigma_D` affects the
+spread of the detector spot in the plane of the detector image, and the
+mosaicity variance :math:`\sigma_M` affects the spread in the direction of the
+frames (i.e. the sample rotation axis). These parameters can be adjusted to
+control the extent of the detector spots if it seems that the model is not
+representative of the detector images. Physically, :math:`\sigma_M` will change
+the number of spots on an image since with a higher value they will extend onto
+more frames, and a higher :math:`\sigma_D` will increase the size of the
+integration regions.
+
 .. _predict-peaks-1:
 
 Predict peaks
@@ -553,99 +684,6 @@ box, since they would invalidate the integration. Note that two peaks are
 defined as overlapping if they collide within `Peak end` sigmas of their
 respective centres.
 
-.. _sec_shape_collection:
-
-Shape collection
-~~~~~~~~~~~~~~~~
-
-The shape collection is the set of “profiles” alluded to in :ref:`sec_3dprofile`
-— i.e. strong peaks with a well-defined shapes that are used to fit the weak
-peaks. In practice this is simply a collection of integrated strong peaks.
-During profile fitting integration of a weak peak, the integrator will compute a
-mean of all profiles in the shape collection within a given radius of the weak
-peak coordinates to use as the fitting profile in that instance.
-
-The ``Build shape collection`` button simply filters out weak peaks and
-integrates the shape collection. The ``Calculate profile button`` uses
-the peak collection to compute the mean profile at the given coordinates
-and neighbours within the given radius, plotting it in the box in the
-bottom right. The slider scrolls through the frames in which the profile
-is visible.
-
-.. table:: Shape collection dialogue parameters
-
-   +------------------------+----------------+-------------------------+
-   | **Parameters**         | Unit           | Description             |
-   +========================+================+=========================+
-   | **Number along x/y/z** | integer        | Number of histogram     |
-   |                        |                | bins for profile in     |
-   |                        |                | x/y/z direction         |
-   +------------------------+----------------+-------------------------+
-   | **Kabsch coordinates** | T/F            | Toggle Kabsch           |
-   |                        |                | coordinate system as    |
-   |                        |                | opposed to detector     |
-   |                        |                | coordinate system       |
-   |                        |                | (applies only to        |
-   |                        |                | Profile 3D and Profile  |
-   |                        |                | 1D integrators)         |
-   +------------------------+----------------+-------------------------+
-   | :math:`\sigma_D`       |                | Peak variance due to    |
-   |                        |                | beam divergence         |
-   +------------------------+----------------+-------------------------+
-   | :math:`\sigma_M`       |                | Peak variance due to    |
-   |                        |                | crystal mosaicity       |
-   +------------------------+----------------+-------------------------+
-   | **Minimum strength**   |                | Exclude weak peaks with |
-   |                        |                | strength                |
-   |                        |                | (I/:math:`\sigma`)      |
-   |                        |                | below this value        |
-   +------------------------+----------------+-------------------------+
-   | **Minimum d**          | Å              | Only include peaks      |
-   |                        |                | above this d value      |
-   +------------------------+----------------+-------------------------+
-   | **Maximum d**          | Å              | Only include peaks      |
-   |                        |                | below this d value      |
-   +------------------------+----------------+-------------------------+
-   | **Peak scale**         | :math:`\sigma` | Size of peak region     |
-   +------------------------+----------------+-------------------------+
-   | **Background begin**   | :math:`\sigma` | Size of beginning of    |
-   |                        |                | background region       |
-   +------------------------+----------------+-------------------------+
-   | **Background end**     | :math:`\sigma` | Size of end of          |
-   |                        |                | background region       |
-   +------------------------+----------------+-------------------------+
-   |                        |                |                         |
-   +------------------------+----------------+-------------------------+
-   | **x/y**                | pixels         | Compute mean profile    |
-   |                        |                | for these detector x/y  |
-   |                        |                | coordinates             |
-   +------------------------+----------------+-------------------------+
-   | **Frame**              | frame          | Compute mean profile    |
-   |                        |                | for this frame          |
-   |                        |                | coordinate coordinates  |
-   |                        |                | (with x/y)              |
-   +------------------------+----------------+-------------------------+
-   | **Radius**             | pixels         | Detector image radius   |
-   |                        |                | for neighbour search    |
-   |                        |                | for computing mean      |
-   |                        |                | profile                 |
-   +------------------------+----------------+-------------------------+
-   | **N frames**           | frame          | Detector image radius   |
-   |                        |                | in frames for neighbour |
-   |                        |                | search for computing    |
-   |                        |                | mean profile            |
-   +------------------------+----------------+-------------------------+
-
-Here, :math:`\sigma_D` and :math:`\sigma_M` are estimated as described in
-:ref:`beam_profile`. The beeam divergence variance :math:`\sigma_D` affects the
-spread of the detector spot in the plane of the detector image, and the
-mosaicity variance :math:`\sigma_M` affects the spread in the direction of the
-frames (i.e. the sample rotation axis). These parameters can be adjusted to
-control the extent of the detector spots if it seems that the model is not
-representative of the detector images. Physically, :math:`\sigma_M` will change
-the number of spots on an image since with a higher value they will extend onto
-more frames, and a higher :math:`\sigma_D` will increase the size of the
-integration regions.
 
 Merge peaks
 -----------
