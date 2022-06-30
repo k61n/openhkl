@@ -190,7 +190,7 @@ them in an octree. The ellipsoid overlap detection is implemented using
 the criterion described in **TODO: find literature**.
 
 .. _peakfinder:
-.. figure:: images/workflow/peak_finder.png
+.. figure:: peak_finder.png
    :alt: Masking the detector image
    :name: fig:peak_finder
    :width: 100.0%
@@ -557,7 +557,7 @@ the covariance matrix of the neighbouring peaks, within a cutoff.
    |                        |                | mean covariance         |
    +------------------------+----------------+-------------------------+
 
-The number of histogram bins in the $x$/$y$/$z$ directions do affect the shape
+The number of histogram bins in the x/y/z directions do affect the shape
 model, they only control the grid over which the predicted shape is plottied int
 he "shape preview" widget. The preview is constructed for a single peak at
 coordinates :math:`(x, y, \mathrm{frame})`, and all neighbouring strong peaks
