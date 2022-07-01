@@ -116,7 +116,7 @@ const std::string kw_autoindexingCollection{"autoindexing"};
 const std::string kw_fitCollection{"fit"};
 const std::string kw_acceptedUnitcell{"accepted"};
 const std::string kw_referenceUnitcell{"reference"};
-const std::string kw_logFilename{"nsx.log"};
+const std::string kw_logFilename{"openhkl.log"};
 
 //-- Axis names
 // detector gonio
