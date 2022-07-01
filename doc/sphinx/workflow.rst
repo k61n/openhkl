@@ -594,6 +594,7 @@ the number of spots on an image since with a higher value they will extend onto
 more frames, and a higher :math:`\sigma_D` will increase the size of the
 integration regions.
 
+
 .. _predict-peaks-1:
 
 Predict peaks
