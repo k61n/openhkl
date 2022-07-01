@@ -125,7 +125,7 @@ void SubframeHome::_setLeftLayout(QHBoxLayout* main_layout)
     _peak_collections_table->setEditTriggers(QAbstractItemView::NoEditTriggers);
     _peak_collections_table->setHorizontalHeaderLabels(QStringList{
         "Name", "Number of Peaks", "Number of Invalid Peaks", "Is indexed", "Is integrated",
-        "List Type"});
+        "Type"});
     _peak_collections_table->resizeColumnsToContents();
     _peak_collections_table->verticalHeader()->setVisible(false);
 
