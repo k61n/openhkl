@@ -35,6 +35,79 @@ existing experiment state.
 
 -  ``Save all`` saves all experiments in ``hdf5`` format.
 
+There are three tables summarising the state of the experiment on the left hand
+side of this window.
+
+.. table:: Datasets
+
+   +--------------------+----------------+-------------------------------+
+   | **Column**         | Unit           | Description                   |
+   +====================+================+===============================+
+   | **Name**           |                | Name of the data set          |
+   +--------------------+----------------+-------------------------------+
+   | **Diffractometer** |                | Name of diffractometer used   |
+   +--------------------+----------------+-------------------------------+
+   | **Number of**      |                | Number of images in this      |
+   | **frames**         |                | data set                      |
+   +--------------------+----------------+-------------------------------+
+   | **Number of**      | pixels         | Height of image in pixels     |
+   | **rows**           |                |                               |
+   +--------------------+----------------+-------------------------------+
+   | **Number of**      | pixels         | Width of image in pixels      |
+   | **columns**        |                |                               |
+   +--------------------+----------------+-------------------------------+
+
+.. table:: Peak collections
+
+   +--------------------+----------------+-------------------------------+
+   | **Column**         | Unit           | Description                   |
+   +====================+================+===============================+
+   | **Name**           |                | Name of the peak collection   |
+   +--------------------+----------------+-------------------------------+
+   | **Number of**      |                | Number of peaks in this       |
+   | **peaks**          |                | collection                    |
+   +--------------------+----------------+-------------------------------+
+   | **Number of**      |                | Number of rejected peaks      |
+   | **invalid peaks**  |                | in this collection            |
+   +--------------------+----------------+-------------------------------+
+   | **Is indexed**     |                | Whether peaks in this         |
+   |                    |                | collection have Miller        |
+   |                    |                | indices assigned              |
+   +--------------------+----------------+-------------------------------+
+   | **Is integrated**  |                | Whether peak in this          |
+   |                    |                | collection have had           |
+   |                    |                | intensities and sigmas        |
+   |                    |                | calculated                    |
+   +--------------------+----------------+-------------------------------+
+   | **Type**           |                | Labels the peak collection    |
+   |                    |                | as either ``found`` or        |
+   |                    |                | ``predicted``                 |
+   +--------------------+----------------+-------------------------------+
+
+.. table:: Unit cells
+
+   +--------------------+----------------+-------------------------------+
+   | **Column**         | Unit           | Description                   |
+   +====================+================+===============================+
+   | **ID**             |                | Integer label of cell         |
+   +--------------------+----------------+-------------------------------+
+   | **Name**           |                | Name of the unit cell         |
+   +--------------------+----------------+-------------------------------+
+   | **Space group**    |                | Space group of cell           |
+   +--------------------+----------------+-------------------------------+
+   | **a**              | Å              | *a* cell parameter            |
+   +--------------------+----------------+-------------------------------+
+   | **b**              | Å              | *b* cell parameter            |
+   +--------------------+----------------+-------------------------------+
+   | **c**              | Å              | *c* cell parameter            |
+   +--------------------+----------------+-------------------------------+
+   | :math:`\alpha`     | degrees        | :math:`\alpha` cell angle     |
+   +--------------------+----------------+-------------------------------+
+   | :math:`\beta`      | degrees        | :math:`\beta` cell angle      |
+   +--------------------+----------------+-------------------------------+
+   | :math:`\gamma`     | degrees        | :math:`\gamma` cell angle     |
+   +--------------------+----------------+-------------------------------+
+
 Experiment
 ----------
 
