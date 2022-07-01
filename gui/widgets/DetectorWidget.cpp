@@ -91,6 +91,8 @@ DetectorWidget::DetectorWidget(bool mode, bool cursor, bool slider, QWidget* par
 
     connect(_detector_view, &QWidget::customContextMenuRequested, this, &DetectorWidget::setmenuRequested);
 
+    connect(_detector_view, &QWidget::customContextMenuRequested, this, &DetectorWidget::setmenuRequested);
+
 
     if (mode){
         _mode_combo = new QComboBox();
@@ -277,6 +279,7 @@ void DetectorWidget::setmenuRequested(QPoint pos)
         QFileInfo fi(QFileDialog::getSaveFileName(_detector_view, tr("Save Image as"),
             "~/openhkl_detector_plot.png",
             tr("Images (*.png *.jpg)")));
+
             
         if (!fi.absoluteFilePath().isNull()){
             QPixmap pixMap = _detector_view->grab();
@@ -284,3 +287,4 @@ void DetectorWidget::setmenuRequested(QPoint pos)
         }
     });
 }
+

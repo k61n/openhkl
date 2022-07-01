@@ -59,6 +59,7 @@ AxisWindow::AxisWindow(QWidget* parent) : QDialog(parent)
     cl_flag->addWidget(_axis_clockwise);
     cl_flag->addItem(new QSpacerItem(465,13, QSizePolicy::Expanding, QSizePolicy::Expanding));
 
+ 
     auto ph_flag = new QHBoxLayout();
     QLabel* label5 = new QLabel(QString("physical:"));
     ph_flag->addWidget(label5);
@@ -85,7 +86,8 @@ AxisWindow::AxisWindow(QWidget* parent) : QDialog(parent)
     layout->addRow(cl_flag);
     layout->addRow(ph_flag);
 
-    connect(_axis_selector, qOverload<int>(&QComboBox::currentIndexChanged), this, &AxisWindow::refreshAll); 
+
+    connect(_axis_selector, qOverload<int>(&QComboBox::currentIndexChanged), this, &AxisWindow::refreshAll);
 }
 
 void AxisWindow::refreshAll()
@@ -120,5 +122,6 @@ void AxisWindow::refreshAll()
              
         }
     }   
+
 }
 
