@@ -28,6 +28,18 @@
 #include <QMenu>
 #include <QWidget>
 
+
+
+#include <QApplication>
+#include <QKeyEvent>
+#include <QPainter>
+#include <fstream>
+
+#include <QString>
+#include <QFileInfo>
+#include <QMenu>
+#include <QWidget>
+
 class DetectorScene;
 class DetectorView;
 class DataComboBox;

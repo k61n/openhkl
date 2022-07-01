@@ -278,7 +278,8 @@ void SXPlot::setmenuRequested(QPoint pos)
     // Add menu to export the graphs to ASCII if graphs are present
     if (this->graphCount()) {
         QMenu* menu = new QMenu(this);
-        QAction* reset_zoom = menu->addAction("Reset zoom");        
+
+        QAction* reset_zoom = menu->addAction("Reset zoom"); 
         menu->popup(mapToGlobal(pos));
 
         connect(reset_zoom, &QAction::triggered, this, &SXPlot::resetZoom);
@@ -300,6 +301,7 @@ void SXPlot::setmenuRequested(QPoint pos)
             QFileInfo fi(QFileDialog::getSaveFileName(this, tr("Save Image as"),
                 "~/openhkl_plot.png",
                 tr("Images (*.png *.jpg)")));
+
             if (!fi.absoluteFilePath().isNull()){
                 if (fi.suffix() == "png") savePng(fi.absoluteFilePath(), 1400, 800, 1.0, 100 ); // we need to make these paramters changable
                 if (fi.suffix() == "jpg") saveJpg(fi.absoluteFilePath(), 1400, 800, 1.0, 100 );
@@ -308,7 +310,8 @@ void SXPlot::setmenuRequested(QPoint pos)
 
         QAction* export_ASCII = menu->addAction("Export to ASCII");
         menu->popup(mapToGlobal(pos));
-        connect(export_ASCII, &QAction::triggered, this, 
+
+        connect(export_ASCII, &QAction::triggered, this,
             [=](){
                 QCPErrorBars *errorBars = new QCPErrorBars( xAxis, yAxis);
                 errorBars->removeFromLegend();
@@ -316,7 +319,8 @@ void SXPlot::setmenuRequested(QPoint pos)
                 errorBars->setDataPlottable( graph(3));
                 errorBars->setPen(QPen(QColor(180,180,180)));
                 //Plot->graph(3)->setName("Measurement");
-                exportToAscii(errorBars);          
+
+                exportToAscii(errorBars); 
         });
     }
 }

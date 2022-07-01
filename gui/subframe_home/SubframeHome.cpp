@@ -509,9 +509,6 @@ void SubframeHome::refreshTables() const
     _dataset_table->setRowCount(0);
     _peak_collections_table->setRowCount(0);
     _unitcell_table->setRowCount(0);
-    _show_axes_information->setEnabled(false);
-    _show_found_peaks->setEnabled(false);
-    _show_input_files->setEnabled(false);
 
     _show_axes_information->setEnabled(false);
     _show_found_peaks->setEnabled(false);
@@ -651,6 +648,8 @@ void SubframeHome::refreshTables() const
 
             _dataset_table->setCellWidget(n, 13, tmp); 
 
+=======
+>>>>>>> fixed crashes, added context menu to Plots, cleaned up
                     for (int j=0; j<3; j++){
                     auto  ax = it->get()->diffractometer()->sample().gonio().axis(i).axis()[j];
                     str+= QString::number(ax);
