@@ -162,6 +162,7 @@ void SubframeHome::_setLeftLayout(QHBoxLayout* main_layout)
         "Number of caught by filter", "Number of rejected by filter", "Selected", "Enabled",
         "Is indexed", "Is integrated",
         "List Type"});
+
     _peak_collections_table->resizeColumnsToContents();
     _peak_collections_table->verticalHeader()->setVisible(false);
 
