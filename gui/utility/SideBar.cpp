@@ -63,7 +63,7 @@ SideBar::SideBar(QWidget* parent) : QWidget(parent), mCheckedAction(nullptr), mO
         path = path + light;
 
     QAction* home = addAction(QIcon(path + QString("home.svg")), "Home");
-    QAction* detector = addAction(QIcon(path + QString("experiment.svg")), "Detector");
+    QAction* experiment = addAction(QIcon(path + QString("experiment.svg")), "Detector");
     QAction* finder = addAction(QIcon(path + QString("finder.svg")), "Find Peaks");
     QAction* filter = addAction(QIcon(path + QString("filter.svg")), "Filter Peaks");
     QAction* indexer = addAction(QIcon(path + QString("indexer.svg")), "Indexer");
@@ -82,7 +82,7 @@ SideBar::SideBar(QWidget* parent) : QWidget(parent), mCheckedAction(nullptr), mO
     update();
 
     connect(home, &QAction::triggered, this, &SideBar::onHome);
-    connect(detector, &QAction::triggered, this, &SideBar::onDetector);
+    connect(experiment, &QAction::triggered, this, &SideBar::onExperiment);
     connect(finder, &QAction::triggered, this, &SideBar::onFindPeaks);
     connect(filter, &QAction::triggered, this, &SideBar::onFilterPeaks);
     connect(indexer, &QAction::triggered, this, &SideBar::onIndexer);
@@ -136,12 +136,8 @@ void SideBar::paintEvent(QPaintEvent* event)
             int id = action_y/actionRect.height();
             if (id >=0 && id<10){            
                 QToolTip::showText(QCursor::pos(), tips[id]);               
-            } 
+            }
         }
-
-          
-             
-    
 
         if (gGui->isDark()) // looks like we have a dark theme
             painter.setPen(Qt::white);
@@ -162,7 +158,7 @@ void SideBar::paintEvent(QPaintEvent* event)
         actionIcon.paint(&painter, actionIconRect);
 
         action_y += actionRect.height();
-    } 
+    }
 }
 QSize SideBar::minimumSizeHint() const
 {
@@ -255,7 +251,7 @@ void SideBar::onHome()
     emit subframeChanged();
 }
 
-void SideBar::onDetector()
+void SideBar::onExperiment()
 {
     gGui->_layout_stack->setCurrentIndex(1);
     if (gSession->hasProject()) {
@@ -326,12 +322,12 @@ void SideBar::onMerger()
 
 void SideBar::refreshAll()
 {
-    if (gSession->currentProjectNum() != -1) {
-        gGui->experiment->getProperty()->unitCellChanged();
-        gGui->experiment->getProperty()->peaksChanged();
-        gGui->experiment->getProperty()->experimentChanged();
-        gGui->experiment->getProperty()->dataChanged();
-    }
+    /*if (gSession->currentProjectNum() != -1) {
+        gGui->detector->getProperty()->unitCellChanged();
+        gGui->detector->getProperty()->peaksChanged();
+        gGui->detector->getProperty()->experimentChanged();
+        gGui->detector->getProperty()->dataChanged();
+    }*/
     gGui->finder->refreshAll();
     gGui->filter->refreshAll();
     gGui->indexer->refreshAll();

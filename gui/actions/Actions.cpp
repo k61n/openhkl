@@ -52,7 +52,7 @@ void Actions::setupExperiment()
     save_experiment_as = new QAction("Save as"); 
     save_all_experiment = new QAction("Save all");
     remove_experiment = new QAction("Remove experiment");
-    quit = new QAction("Quit"); 
+    quit = new QAction("Quit");
 
     connect(new_experiment, &QAction::triggered, []() { gGui->home->createNew(); });
     connect(new_experiment, &QAction::triggered, []() { gGui->sideBar()->refreshCurrent(); });

@@ -20,25 +20,19 @@
 using InstrumentStateList = std::vector<nsx::InstrumentState>;
 
 
-
-#include <iostream>
-
-
-InstrumentDataWindow::InstrumentDataWindow(QWidget* parent) 
+InstrumentDataWindow::InstrumentDataWindow(QWidget* parent)
 : QDialog(parent)
 {
     setModal(false); 
     QVBoxLayout* lay = new QVBoxLayout(this);
-    QHBoxLayout* head_layout = new QHBoxLayout( );
+    QHBoxLayout* head_layout = new QHBoxLayout();
 
-
-   
     QLabel* lab = new QLabel();
-    lab->setText(  QString("Instrument"));
-   
+    lab->setText(QString("Instrument"));
+
     _instruments = new QComboBox();
     _instruments->setMaximumSize(QSize(300,50));
-    
+
     head_layout->addWidget(lab);
     head_layout->addWidget(_instruments);
 
@@ -51,8 +45,6 @@ InstrumentDataWindow::InstrumentDataWindow(QWidget* parent)
     _table->verticalHeader()->setVisible(false);
 
     lay->addWidget(_table);
- 
-
 }             
 
 void InstrumentDataWindow::refreshAll()
@@ -61,34 +53,16 @@ void InstrumentDataWindow::refreshAll()
     auto expt = prj->experiment();
 
     auto data =  expt->getAllData();
-    for (auto &e : data){
-       
-        auto d = expt->getData(e->name());
-    
+    for (auto &e : data){       
+        auto d = expt->getData(e->name());    
+        auto iss = expt->getInstrumentStateSet(d);
+        InstrumentStateList isl = iss->getInstrumentStateList();
 
-    auto iss = expt->getInstrumentStateSet(d);
-    InstrumentStateList isl = iss->getInstrumentStateList();
-    
-
-    std::cout << "got " << isl.size() << " states " << std::endl;
-
-    for (int i=0; i<isl.size(); ++i){
-        auto diff = isl.at(i).diffractometer();
-        auto src  = diff->source();
-     //  auto nmc src->nMonochromators()
-        auto mc = src.monochromators();
-       
-        std::cout << ".. dif name: " <<   diff->name() <<  std::endl;
-        std::cout << "..mc n: " <<   mc.size() <<  std::endl;
-
-        for (int j=0; j<mc.size(); j++)
-        {
-            std::cout << "mono name " << mc.at(j).name() << std::endl;
+        for (int i=0; i<isl.size(); ++i){
+            auto diff = isl.at(i).diffractometer();
+            auto src  = diff->source();
+            //  auto nmc src->nMonochromators()
+            auto mc = src.monochromators();
         }
-
     }
-}
-
-
-
 }

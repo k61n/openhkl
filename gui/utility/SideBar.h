@@ -38,7 +38,7 @@ class SideBar : public QWidget {
 
  private:
     void onHome();
-    void onDetector();
+    void onExperiment();
     void onFindPeaks();
     void onFilterPeaks();
     void onIndexer();
