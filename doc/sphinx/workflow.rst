@@ -394,6 +394,8 @@ which is off by 2-3 pixels in each direction. This small adjustment is enough to
 successfuly find the correct unit cell, orientation and Bravais lattice with the
 default autoindexing parameters.
 
+.. _sec_shape_model:
+
 Shape model
 -----------
 
@@ -485,9 +487,20 @@ clicking somewhere on the detector image. When shown on the detector image, the
 shape is plotted as an integration region, with bounds determined by the "peak
 end", "background begin" and "background end" parameters. The peak pixels for
 this region are highlighted in yellow, and the local background pixels in green.
+
+.. _shapemodel:
+.. figure:: shape_model.png
+   :alt: Visualising a shape generated from a shape model
+   :name: fig:shape_model
+   :width: 100.0%
+
+An example of a shape generated from a model is shown above: clicking on a peak
+from the selected *predicted* peak collection ("target peak collection")
+displays the integration region for the shape int he Preview widget, and plots
+
 Note that in order to display the integration region, there must be a predicted
 peak collection ("target peak collection") to which the shape model can be
-applied.
+applied, and a saved shape model.
 
 The beam divergence and mosaicity variances are estimated as in section
 :ref:`beam_profile`. The beeam divergence variance :math:`\sigma_D` affects the
@@ -500,14 +513,24 @@ the number of spots on an image since with a higher value they will extend onto
 more frames, and a higher :math:`\sigma_D` will increase the size of the
 integration regions.
 
+
 .. _predict-peaks-1:
 
 Predict peaks
 -------------
 
 Given the unit cell, an exhaustive set of Miller indexed reflections can
-be generated within the specified d range. Using the space group,
-symmetry-forbidden reflections can be removed from this collection.
+be generated within the specified d range. Space group-forbiden reflections can
+then be removed from theis collection.
+
+A complete set of Miller index :math:`(hkl)` triples is generated withing a
+given resolution range, then for each triple, a reciprocal space vector
+:math:`\mathbf{q}` is computed by multiplying the :math:`(hkl)` vector by the
+reciprocal basis. For each :math:`\mathbf{q}`, the rotation angle at which it
+intersects the Ewald sphere is located using a bisection algorithm (essentially
+finding the non-integer frame coordinate at which the sign of
+:math:`\mathbf{k}_f - \mathbf{k}_i` changes, bearing in mind that this can
+happen more than once over the rotation range.
 
 .. table:: Peak prediction parameters
 
@@ -516,7 +539,7 @@ symmetry-forbidden reflections can be removed from this collection.
    +==================+========+========================================+
    | **Unit cell**    |        | Unit cell to predict peaks from        |
    +------------------+--------+----------------------------------------+
-   | **Interpolation**|        |                                        |
+   | **Interpolation**|        | Interpolation type for shape model     |
    +------------------+--------+----------------------------------------+
    | **d min**        | Å      | Only include peaks above this d value  |
    +------------------+--------+----------------------------------------+
@@ -527,23 +550,42 @@ symmetry-forbidden reflections can be removed from this collection.
    |                  |        | image                                  |
    +------------------+--------+----------------------------------------+
 
-Before predicting the peaks, the user is advised to refine the incident
-wavevector. This is done as described in :ref:`sec_refine`, using a number of
-batches equal to the number of frames in the data set, and refining only the
-incident wavevector. It has been found that refining the incident wavevector at
-this stage results in a much better fit when the rest of the parameters are
-refined at a later stage. The position of the direct beam before and after
-refinement is shown in the detector view.
-
-When ``Predict peaks`` is clicked, a set of Miller indices within the given d
-range is generated, and a corresponding q-vector computed. For each q-vector,
-the sample rotation angle(s) at which it intersects the Ewald sphere is
-computed, and the resulting coordinates converted to detector space.
+As in the autoindexing step, the positions of the predicted peaks are very
+sensitive to the position of the direct beam. Since we now have the unit cell,
+it is possible to refine the direct beam position using least squares
+minimisation, as described in :ref:`sec_refine`.
 
 At this point, the predicted peaks (detector spots) have a position, but no
-shape; the shape must be generated using as described in
-:ref:`sec_shape_collection`; the ``Generate shapes`` section controls have
-exactly the same function, except without the dialogue box.
+shape. A saved shape model (generated in :ref:`sec_shape_model`) can be applied
+to the predicted peaks.
+
+For the purposes of refinement, it is extremely important to assign a shape
+model to the predicted peak collection. Each peak can be considered to be an
+ellipsoid in real space, and the detector spots are ellipses where the ellipsoid
+intersects the detector image. In general , the principle axes of ellipsoid will
+not coincide with the plane of the detector image, and as a result the ellipse
+for a single peak will generally have differenct centre coordiinates on each
+frame on which it appears (this results in the "precession" of the spot across
+the detector if one scrolls through the images). If we do not have a good
+initial guess for the shape of the ellipsoid before refinement, then it will be
+impossible for the refiner to improve the positions of the detector spots across
+all frames. This can be seen by comparing the integration regions of a predicted
+peak before and after the shape model is assigned.
+
+.. _preshapemodel:
+.. figure:: pre-shape-model.png
+   :alt: Shape of a single predicted peaks before the shape model is applied
+   :name: fig:pre_shape_model
+   :width: 100.0%
+
+.. _postshapemodel:
+.. figure:: post-shape-model.png
+   :alt: Shape of a single peak after the shape model is applied
+   :name: fig:post_shape_model
+   :width: 100.0%
+
+If a shape is not assigned, the predicted peak retains its default shape
+(spherical), which will be grossly inaccurate.
 
 .. _sec_refine:
 
@@ -569,7 +611,7 @@ equivalently angle) in the bottom panel. The per-frame values for the unit cell
 and each instrument state before and after refinement are visible in the tables.
 
 The refinement uses the non-linear least squares minimisation routines from the
-Gnu standard library (GSL). The free parameters as determined by the checkboxes
+Gnu scientific library (GSL). The free parameters as determined by the checkboxes
 under ``parameters to refine`` are varied such that the sum of residuals is
 minimised. These residuals can be computed in two ways, and can be changed using
 the ``residual type`` combo:
@@ -601,9 +643,17 @@ These are described in :cite:`w-Leslie2005`.
 
 After refinement, clicking ``Update`` in the `Update predictions` panel will
 update the peak centre coordiates that changed as a result of unit cell and
-instruement state refinement. Both the found and predicted peaks should then be
-reintegrated using a profile fitting method, and the same parameters as in
-:ref:`sec_integration`.
+instruement state refinement. The change in peak centre coordinates after
+refinement is usually significant, as shown in the example below (pre-refinement
+positions are shown in dark green, post-refinement positions in light green).
+
+.. _refinement:
+.. figure:: refinement.png
+   :alt: Peak centres before and after refinement
+   :name: fig:refinement
+   :width: 100.0%
+
+Both the found and predicted peaks should then be reintegrated.
 
 Note that floating point Miller indices are generated from the "found" peaks,
 i.e. the peaks derived from image processing. The predicted peaks by definition
@@ -670,6 +720,12 @@ integration.
    |                        |                | to compute mean shape            |
    +------------------------+----------------+----------------------------------+
 
+.. _integration:
+.. figure:: integration.png
+   :alt: Example of integration of a collection of predicted and refined peaks
+   :name: fig:integration
+   :width: 100.0%
+
 When a shape collection is generated using the *Build shape collection* button
 (see :ref:`sec_shape_collection`, the computed collection can be used to assign
 shapes to a peak collection. For each peak in the collection, the shape is
@@ -689,14 +745,15 @@ reciprocal space have a lower weight. For ``intensity``, the neighbouring peak i
 weighted by its intensity divided by its variance, i.e. weaker peaks have a lower
 weight.
 
-When shapes have been assigned to the peaks, some may overlap. If a peak
-intensity region intrudes into the background region of an adjacent peak, it
-will make the background value inaccurate, so peak intensity regions are
-automatically subtracted from the background. If, however, two peak intensity
-regions overlap, both peaks can be removed by checking the `remove overlaps`
-box, since they would invalidate the integration. Note that two peaks are
-defined as overlapping if they collide within `Peak end` sigmas of their
-respective centres.
+The ``remove overlaps`` checkbox will remove any instances of the peak
+(intensity) region of a peak intersecting with an adjacent peak region, since
+this will obviously result in inaccurate integrated intensities for both. Note
+that peak pixels are automatically removed from local background calculations,
+so background calculations are not ruined by intruding peak intensity regions.
+It is also possible to prevent overlaps by modifying the integration region
+parameters "peak end", "background begin" and "background end". These
+respectively affect the scaling of the peak region, the start of the background
+region and the end of the background region respectively.
 
 
 Merge peaks
@@ -728,6 +785,12 @@ of d-shells``. For each shell and the overall volume, R-factors and CC values
 are calculated, allowing the user to determine the maximum resolution (if any)
 to which the data set is reliable. The merger is controlled by the following
 parameters.
+
+.. _merge:
+.. figure:: merge.png
+   :alt: Example of merge d-shell statistics
+   :name: fig:merge
+   :width: 100.0%
 
 Not that it is possible for the user to only merge peaks in a specific frame
 range; the rationale for this is that it may be better to ignore peaks on the
@@ -847,12 +910,13 @@ A list of merged peaks is displayed in this section.
    +--------------------+----------------------------------------------+
 
 The merged peaks can be saved to ShelX, FullProf or Phenix format. The Phenix
-format is fixed width, andsome instruments such as BioDiff have a
+format is fixed width, and some instruments such as BioDiff have a
 photomultiplier, meaning that one count on the detector corresponds not to one
 neutron, but some factor greater than one. This can cause the intensities to
 become too large for the column, and make them unreadable by Phenix. The
 ``intensity scale factor`` control allows the user to post-multiply the
-intensity by some factor such that the columns no longer overlap.
+intensity and its associated variance by some factor such that the columns no
+longer overlap.
 
 
 Unmerged representation tab
