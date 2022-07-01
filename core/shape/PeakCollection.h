@@ -114,11 +114,13 @@ class PeakCollection {
     //! Build shape collection from strong peaks in this peak collection
     void buildShapeModel(sptrDataSet data, const ShapeModelParameters& params);
 
-
+    //! Whether PeakCollection has been indexed or not
     bool isIndexed() const { return _indexed; }
+    //! Whether PeakCollection has been integrated or not
     bool isIntegrated() const { return _integrated; }
-
+    //! Set Indexed flag
     void setIndexed(bool value) { _indexed = value; }
+    //! Count Integrated flag
     void setIntegrated(bool value) { _integrated = value; }
 
     void setUnitCell(const sptrUnitCell& cell);
@@ -141,10 +143,10 @@ class PeakCollection {
     //! Mosaicity sigma
     double _sigma_m;
 
-    //! has been indexed already
+    //! Has been indexed already
     bool _indexed;
 
-    //! has been integrated
+    //! Has been integrated
     bool _integrated;
 };
 

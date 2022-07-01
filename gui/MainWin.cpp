@@ -131,37 +131,37 @@ MainWin::MainWin()
 
 void MainWin::onDataChanged() const
 {
-    //experiment->getProperty()->dataChanged();
+    //detector->getProperty()->dataChanged();
 }
 
 void MainWin::onExperimentChanged() const
 {
-    //experiment->getProperty()->experimentChanged();
+    //detector->getProperty()->experimentChanged();
 }
 
 void MainWin::onPeaksChanged() const
 {
-   // experiment->getProperty()->peaksChanged();
+   //detector->getProperty()->peaksChanged();
 }
 
 void MainWin::onUnitCellChanged() const
 {
-    //experiment->getProperty()->unitCellChanged();
+    //detector->getProperty()->unitCellChanged();
 }
 
 void MainWin::changeView(int option) const
 {
-   // experiment->detectorWidget()->changeView(option);
+   //detector->detectorWidget()->changeView(option);
 }
 
 void MainWin::updatePlot(PlottableItem* p) const
 {
-    //experiment->getPlot()->updatePlot(p);
+    experiment->getPlot()->updatePlot(p);
 }
 
 void MainWin::cursormode(int i) const
 {
-    experiment->detectorWidget()->scene()->changeCursorMode(i);
+    //detector->detectorWidget()->scene()->changeCursorMode(i);
 }
 
 void MainWin::exportPlot() const

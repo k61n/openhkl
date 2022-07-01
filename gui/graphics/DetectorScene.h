@@ -29,6 +29,8 @@
 #include <QStack>
 #include <qgraphicsitem.h>
 
+#include <iostream>
+
 namespace nsx {
 class UnitCell;
 class PeakCenterDataSet;
@@ -53,7 +55,7 @@ typedef Eigen::Matrix<int, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor> rowM
 class DetectorScene : public QGraphicsScene {
     Q_OBJECT
  public:
-    enum MODE {
+    enum MODE { // I noticed ELLIPSE MASK and MASK are +1 so I corrected this here temporarily
         ZOOM = 0,
         SELECT = 1,
         MASK = 2,
@@ -61,8 +63,7 @@ class DetectorScene : public QGraphicsScene {
         LINE = 4,
         HORIZONTALSLICE = 5,
         VERTICALSLICE = 6,
-        DRAG_DROP = 7,
-        SET_INIT_DIR_BEAM_POS = 8 
+        DRAG_DROP = 7
     };
 
     //! Which mode is the cursor diplaying
@@ -174,6 +175,7 @@ class DetectorScene : public QGraphicsScene {
     void wheelEvent(QGraphicsSceneWheelEvent* event);
 
  public slots:
+    void resetElements();
     void resetScene();
     void setMaxIntensity(int);
     void slotChangeSelectedData(nsx::sptrDataSet data, int frame);

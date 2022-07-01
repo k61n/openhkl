@@ -24,6 +24,7 @@
 #include "tables/crystal/UnitCell.h"
 #include "gui/utility/SideBar.h"
 #include "gui/subwindows/AxisWindow.h"
+#include "core/data/DataTypes.h"
 
 #include <QFileDialog>
 #include <QMessageBox>
@@ -47,7 +48,6 @@
 SubframeHome::SubframeHome()
 {
     QVBoxLayout* main_layout = new QVBoxLayout(this);
-
     QSpacerItem* spacer_top = new QSpacerItem(10, 50, QSizePolicy::Minimum, QSizePolicy::Fixed);
     main_layout->addSpacerItem(spacer_top);
 
@@ -115,8 +115,8 @@ void SubframeHome::_setLeftLayout(QHBoxLayout* main_layout)
 
     left->addWidget(_last_import_widget);
 
-    QSpacerItem* spacer_bottom =
-        new QSpacerItem(10, 0, QSizePolicy::Minimum, QSizePolicy::Expanding);
+    //QSpacerItem* spacer_bottom =
+    //    new QSpacerItem(10, 0, QSizePolicy::Minimum, QSizePolicy::Expanding);
     //left->addSpacerItem(spacer_bottom);
 
     _show_input_files = new QPushButton();
@@ -155,10 +155,12 @@ void SubframeHome::_setLeftLayout(QHBoxLayout* main_layout)
     tooltip = "Shows a list of all found Peaks";
     _show_found_peaks->setToolTip(tooltip);
 
-    _peak_collections_table = new QTableWidget(0, 6);
+    _peak_collections_table = new QTableWidget(0, 10);
     _peak_collections_table->setEditTriggers(QAbstractItemView::NoEditTriggers);
     _peak_collections_table->setHorizontalHeaderLabels(QStringList{
-        "Name", "Number of Peaks", "Number of Invalid Peaks", "Is indexed", "Is integrated",
+        "Name", "Number of Peaks", "Number of Valid Peaks", "Number of Invalid Peaks",
+        "Number of caught by filter", "Number of rejected by filter", "Selected", "Enabled",
+        "Is indexed", "Is integrated",
         "List Type"});
     _peak_collections_table->resizeColumnsToContents();
     _peak_collections_table->verticalHeader()->setVisible(false);
@@ -210,14 +212,14 @@ void SubframeHome::_setLeftLayout(QHBoxLayout* main_layout)
     connect(_show_input_files, &QPushButton::clicked, this,
         [ ]() {
             gGui->input_files_window->show();
-            gGui->input_files_window->refreshAll(  );
+            gGui->input_files_window->refreshAll();
         }
     );  
     connect(
         _show_axes_information, &QPushButton::clicked, this,
         [this]() {             
             gGui->axis_window->show();
-            gGui->axis_window->refreshAll(  );
+            gGui->axis_window->refreshAll();
         }        
     ); 
 
@@ -225,7 +227,7 @@ void SubframeHome::_setLeftLayout(QHBoxLayout* main_layout)
          _show_found_peaks, &QPushButton::clicked, this,
         [ ]() {
             gGui->peak_list_window->show();
-            gGui->peak_list_window->refreshAll(  );
+            gGui->peak_list_window->refreshAll();
         }        
     );  
 }
@@ -507,7 +509,6 @@ void SubframeHome::refreshTables() const
     _dataset_table->setRowCount(0);
     _peak_collections_table->setRowCount(0);
     _unitcell_table->setRowCount(0);
-
     _show_axes_information->setEnabled(false);
     _show_found_peaks->setEnabled(false);
     _show_input_files->setEnabled(false);
@@ -529,165 +530,134 @@ void SubframeHome::refreshTables() const
         nsx::Experiment* expt = gSession->currentProject()->experiment();
         if (expt == nullptr) return;
 
-        
         _show_input_files->setEnabled(expt->numData() > 0);
-        _show_found_peaks->setEnabled(expt->numPeakCollections() > 0);     
-        _show_axes_information->setEnabled(expt->numData() > 0); 
+        _show_found_peaks->setEnabled(expt->numPeakCollections() > 0);
+        _show_axes_information->setEnabled(expt->numData() > 0);
 
         std::vector<std::string> pcs_names = expt->getCollectionNames();
 
         auto ucell_names = gSession->currentProject()->experiment()->getUnitCellNames();
 
-        for (auto it = ucell_names.begin(); it != ucell_names.end(); ++it) {
+        if (ucell_names.size() > 0){
+            for (auto it = ucell_names.begin(); it != ucell_names.end(); ++it) {
+                auto data = gSession->currentProject()->experiment()->getUnitCell(*it);
+                short n = std::distance(ucell_names.begin(), it);
 
-            auto data = gSession->currentProject()->experiment()->getUnitCell(*it);
-            short n = std::distance(ucell_names.begin(), it);
+                if (n >= _unitcell_table->rowCount())
+                    _unitcell_table->insertRow(_unitcell_table->rowCount());
 
-            if (n >= _unitcell_table->rowCount())
-                _unitcell_table->insertRow(_unitcell_table->rowCount());
-
-            int col = 0;
-            _unitcell_table->setItem(n, col++, new QTableWidgetItem(QString::number(data->id())));
-            _unitcell_table->setItem(n, col++, new QTableWidgetItem(QString::fromStdString(*it)));
-            _unitcell_table->setItem(
-                n, col++,
-                new QTableWidgetItem(QString::fromStdString(data->spaceGroup().symbol())));
-            _unitcell_table->setItem(
-                n, col++, new QTableWidgetItem(QString::number(data->character().a)));
-            _unitcell_table->setItem(
-                n, col++, new QTableWidgetItem(QString::number(data->character().b)));
-            _unitcell_table->setItem(
-                n, col++, new QTableWidgetItem(QString::number(data->character().c)));
-            _unitcell_table->setItem(
-                n, col++,
-                new QTableWidgetItem(QString::number(data->character().alpha / nsx::deg)));
-            _unitcell_table->setItem(
-                n, col++, new QTableWidgetItem(QString::number(data->character().beta / nsx::deg)));
-            _unitcell_table->setItem(
-                n, col++,
-                new QTableWidgetItem(QString::number(data->character().gamma / nsx::deg)));
-            _unitcell_table->setItem(
-                n, col++,
-                new QTableWidgetItem(QString::number(data->indexingTolerance())));
-                
-        }
+                int col = 0;
+                _unitcell_table->setItem(n, col++, new QTableWidgetItem(QString::number(data->id())));
+                _unitcell_table->setItem(n, col++, new QTableWidgetItem(QString::fromStdString(*it)));
+                _unitcell_table->setItem(
+                    n, col++,
+                    new QTableWidgetItem(QString::fromStdString(data->spaceGroup().symbol())));
+                _unitcell_table->setItem(
+                    n, col++, new QTableWidgetItem(QString::number(data->character().a)));
+                _unitcell_table->setItem(
+                    n, col++, new QTableWidgetItem(QString::number(data->character().b)));
+                _unitcell_table->setItem(
+                    n, col++, new QTableWidgetItem(QString::number(data->character().c)));
+                _unitcell_table->setItem(
+                    n, col++,
+                    new QTableWidgetItem(QString::number(data->character().alpha / nsx::deg)));
+                _unitcell_table->setItem(
+                    n, col++, new QTableWidgetItem(QString::number(data->character().beta / nsx::deg)));
+                _unitcell_table->setItem(
+                    n, col++,
+                    new QTableWidgetItem(QString::number(data->character().gamma / nsx::deg)));
+                _unitcell_table->setItem(
+                    n, col++,
+                    new QTableWidgetItem(QString::number(data->indexingTolerance())));
+            }
         _unitcell_table->resizeColumnsToContents();
-
-        auto datasets = gSession->currentProject()->allData();
-             
-
-        for (auto it = datasets.begin(); it != datasets.end(); ++it) {
-            short n = std::distance(datasets.begin(), it);
-
-            if (n >= _dataset_table->rowCount())
-                _dataset_table->insertRow(_dataset_table->rowCount());
-            
-            auto detector =  gSession->currentProject()->experiment()->getDiffractometer()->detector();
-
-          
-
-            _dataset_table->setItem(
-                n, 0, new QTableWidgetItem(QString::fromStdString(it->get()->name())));
-            _dataset_table->setItem(
-                n, 1,
-                new QTableWidgetItem(QString::fromStdString(it->get()->diffractometer()->name())));
-            _dataset_table->setItem(
-                n, 2, new QTableWidgetItem(QString::number(it->get()->nFrames())));
-            _dataset_table->setItem(
-                n, 3, new QTableWidgetItem(QString::number(it->get()->nCols())));
-            _dataset_table->setItem(
-                n, 4, new QTableWidgetItem(QString::number(it->get()->nRows())));
-
-            
-            _dataset_table->setItem(
-                n, 5, new QTableWidgetItem(QString::number(detector->width())));
-            
-            _dataset_table->setItem(
-                n, 6, new QTableWidgetItem(QString::number(detector->height())));
-
-            _dataset_table->setItem(
-                n, 7, new QTableWidgetItem(QString::number(detector->distance())));
-
-            _dataset_table->setItem(
-                n, 8, new QTableWidgetItem(QString::number(it->get()->wavelength())));
-
-            
-            _dataset_table->setItem(
-                n, 9, new QTableWidgetItem(QString::fromStdString(it->get()->diffractometer()->detector()->name())));
-
-            _dataset_table->setItem(
-                n, 10, new QTableWidgetItem(QString::number(it->get()->diffractometer()->detector()->angularWidth())));
-
-            _dataset_table->setItem(
-                n, 11, new QTableWidgetItem(QString::fromStdString(it->get()->diffractometer()->sample().name())));
-
-            _dataset_table->setItem(
-                n, 12, new QTableWidgetItem(QString::fromStdString(it->get()->diffractometer()->source().name())));
-
-
-            QComboBox* tmp = new QComboBox();
-            for (int i=0; i<it->get()->detector().gonio().nAxes(); ++i){
-                QString str;
-                str+="[";                
-                for (int j=0; j<3; j++){
-                    auto ax = it->get()->detector().gonio().axis(i).axis()[j];
-                    str+= QString::number(ax);
-                    if (j != 2) str+= ";";
-                }
-                str+="]";               
-                tmp->addItem(str);
-            }           
-
-            _dataset_table->setCellWidget(n, 13, tmp); 
-
-             QComboBox* tmp2 = new QComboBox();
-             it->get()->diffractometer()->sample().gonio().nAxes();
-             static const char b2s[2][6]  {"False", "True"};
-             for (int i=0; i<it->get()->diffractometer()->sample().gonio().nAxes(); ++i){
-                QString str = QString::fromStdString( it->get()->diffractometer()->sample().gonio().axis(i).name());
-                str+=" , [";  
-                             
-                for (int j=0; j<3; j++){
-                auto  ax = it->get()->diffractometer()->sample().gonio().axis(i).axis()[j];
-                str+= QString::number(ax);
-                    if (j != 2) str+= ";";
-                }
-                str+="], Physical: " + QString(b2s[it->get()->diffractometer()->sample().gonio().axis(i).physical()]);
-                
-                tmp2->addItem(str);
-            }  
-
-            _dataset_table->setCellWidget(n, 14, tmp2);
-
-            QComboBox* tmp3 = new QComboBox();
-             auto mono = it->get()->diffractometer()->source().monochromators();
-             for (int i=0; i<mono.size(); ++i){
-            
-                tmp3->addItem( QString::fromStdString(mono.at(i).name()));
-            }   
-            _dataset_table->setCellWidget(n, 15, tmp3);
-
- 
-            
-            /*
-            it->get()->diffractometer()->detector()->name();
-            //it->get()->diffractometer()->detector()->type();
-            it->get()->diffractometer()->detector()->angularWidth();
-            it->get()->detector().gonio().nAxes();
-            it->get()->detector().gonio().axis(0).axis();
-            it->get()->diffractometer()->sample().name();
-            it->get()->diffractometer()->sample().gonio().nAxes();
-            it->get()->diffractometer()->sample().gonio().axis(0);
-            it->get()->diffractometer()->source().name();
-            it->get()->diffractometer()->source().monochromators().at(0).name();
-            it->get()->diffractometer()->source().monochromators().at(0).width();
-            it->get()->diffractometer()->source().monochromators().at(0).height();
-            it->get()->diffractometer()->source().monochromators().at(0).wavelength();
-            it->get()->diffractometer()->source().monochromators().at(0).fullWidthHalfMaximum();
-            it->get()->diffractometer()->source().monochromators().at(0).fullWidthHalfMaximum();*/
-           
         }
-        _dataset_table->resizeColumnsToContents();
+        auto datasets = gSession->currentProject()->allData();
+
+        if (datasets.size() > 0){
+            for (auto it = datasets.begin(); it != datasets.end(); ++it) {
+                short n = std::distance(datasets.begin(), it);
+
+                if (n >= _dataset_table->rowCount())
+                    _dataset_table->insertRow(_dataset_table->rowCount());
+            
+                auto detector =  gSession->currentProject()->experiment()->getDiffractometer()->detector();
+
+                _dataset_table->setItem(
+                    n, 0, new QTableWidgetItem(QString::fromStdString(it->get()->name())));
+                _dataset_table->setItem(
+                    n, 1, new QTableWidgetItem(QString::fromStdString(it->get()
+                    ->diffractometer()->name())));
+                _dataset_table->setItem(
+                    n, 2, new QTableWidgetItem(QString::number(it->get()->nFrames())));
+                _dataset_table->setItem(
+                    n, 3, new QTableWidgetItem(QString::number(it->get()->nCols())));
+                _dataset_table->setItem(
+                    n, 4, new QTableWidgetItem(QString::number(it->get()->nRows())));
+                _dataset_table->setItem(
+                    n, 5, new QTableWidgetItem(QString::number(detector->width())));
+                _dataset_table->setItem(
+                    n, 6, new QTableWidgetItem(QString::number(detector->height())));
+                _dataset_table->setItem(
+                    n, 7, new QTableWidgetItem(QString::number(detector->distance())));
+                _dataset_table->setItem(
+                    n, 8, new QTableWidgetItem(QString::number(it->get()->wavelength())));
+                _dataset_table->setItem(
+                    n, 9, new QTableWidgetItem(QString::fromStdString(it->get()
+                    ->diffractometer()->detector()->name())));
+                _dataset_table->setItem(
+                    n, 10, new QTableWidgetItem(QString::number(it->get()
+                    ->diffractometer()->detector()->angularWidth())));
+                _dataset_table->setItem(
+                    n, 11, new QTableWidgetItem(QString::fromStdString(it->get()
+                    ->diffractometer()->sample().name())));
+                _dataset_table->setItem(
+                    n, 12, new QTableWidgetItem(QString::fromStdString(it->get()
+                    ->diffractometer()->source().name())));
+
+                // Axes OverView
+                QComboBox* det_axes = new QComboBox();
+                for (int i=0; i<it->get()->detector().gonio().nAxes(); ++i){
+                    QString str;
+                    str+="[";
+                    for (int j=0; j<3; j++){
+                        auto ax = it->get()->detector().gonio().axis(i).axis()[j];
+                        str+= QString::number(ax);
+                        if (j != 2) str+= ";";
+                    }
+                    str+="]";
+                    det_axes->addItem(str);
+                }
+                _dataset_table->setCellWidget(n, 13, det_axes);
+
+                QComboBox* diff_axes = new QComboBox();
+                it->get()->diffractometer()->sample().gonio().nAxes();
+                static const char b2s[2][6]  {"False", "True"};
+                for (int i=0; i<it->get()->diffractometer()->sample().gonio().nAxes(); ++i){
+                    QString str = QString::fromStdString( it->get()->diffractometer()->sample().gonio().axis(i).name());
+                    str+=" , [";
+
+                    for (int j=0; j<3; j++){
+                    auto  ax = it->get()->diffractometer()->sample().gonio().axis(i).axis()[j];
+                    str+= QString::number(ax);
+                        if (j != 2) str+= ";";
+                    }
+                    str+="], Physical: " + QString(b2s[it->get()->diffractometer()->sample().gonio().axis(i).physical()]);
+                    diff_axes->addItem(str);
+                }
+
+            _dataset_table->setCellWidget(n, 14, diff_axes);
+
+            QComboBox* sources = new QComboBox();
+            auto mono = it->get()->diffractometer()->source().monochromators();
+            for (int i=0; i<mono.size(); ++i)
+                sources->addItem( QString::fromStdString(mono.at(i).name()));
+
+            _dataset_table->setCellWidget(n, 15, sources);
+           
+            }
+            _dataset_table->resizeColumnsToContents();
+        }
 
         if (!pcs_names.empty()) {
             std::vector<std::string>::iterator it;
@@ -695,6 +665,7 @@ void SubframeHome::refreshTables() const
 
             for (it = pcs_names.begin(); it != pcs_names.end(); it++) {
                 pc = gSession->currentProject()->experiment()->getPeakCollection(*it);
+
                 short n = std::distance(pcs_names.begin(), it);               
 
                 if (n >= _peak_collections_table->rowCount())
@@ -705,11 +676,21 @@ void SubframeHome::refreshTables() const
                 _peak_collections_table->setItem(
                     n, 1, new QTableWidgetItem(QString::number(pc->numberOfPeaks())));
                 _peak_collections_table->setItem(
-                    n, 2, new QTableWidgetItem(QString::number(pc->numberOfInvalid())));
-                _peak_collections_table->setItem(n, 3, new QTableWidgetItem(b2s(pc->isIndexed())));
+                    n, 2, new QTableWidgetItem(QString::number(pc->numberOfValid())));
                 _peak_collections_table->setItem(
-                    n, 4, new QTableWidgetItem(b2s(pc->isIntegrated())));
-                _peak_collections_table->setItem(n, 5, new QTableWidgetItem(Type2s(pc->type())));
+                    n, 3, new QTableWidgetItem(QString::number(pc->numberOfInvalid())));
+                _peak_collections_table->setItem(
+                    n, 4, new QTableWidgetItem(QString::number(pc->numberCaughtByFilter())));
+                _peak_collections_table->setItem(
+                    n, 5, new QTableWidgetItem(QString::number(pc->numberRejectedByFilter())));
+                _peak_collections_table->setItem(
+                    n, 6, new QTableWidgetItem(QString::number(pc->countSelected())));
+                _peak_collections_table->setItem(
+                    n, 7, new QTableWidgetItem(QString::number(pc->countEnabled())));
+                _peak_collections_table->setItem(n, 8, new QTableWidgetItem(b2s(pc->isIndexed())));
+                _peak_collections_table->setItem(
+                    n, 9, new QTableWidgetItem(b2s(pc->isIntegrated())));
+                _peak_collections_table->setItem(n, 10, new QTableWidgetItem(Type2s(pc->type())));
             }
             _peak_collections_table->resizeColumnsToContents();
         }
@@ -728,14 +709,7 @@ void SubframeHome::clearTables()
 
 void SubframeHome::showInputFiles() const
 {
-     
     gGui->input_files_window->show();
     gGui->input_files_window->refreshAll();
     gGui->input_files_window->activateWindow();
- 
 }
-
-void SubframeHome::showInstrumentData() const
-{
-    gGui->instrument_data_window->show();
-} 

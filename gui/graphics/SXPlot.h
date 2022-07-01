@@ -62,7 +62,7 @@ class SXPlot : public QCustomPlot {
     //! Context menu
     void setmenuRequested(QPoint);
     //! Export the graphs into column ASCII format
-    // void exportToAscii(QCPErrorBars* errorBars);
+    void exportToAscii(QCPErrorBars* errorBars = NULL, const char lim = ',');
 
  private:
     void copyViewToClipboard();

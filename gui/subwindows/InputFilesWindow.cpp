@@ -32,7 +32,7 @@
 #include <regex>
 #include <vector> 
 
-InputFilesWindow::InputFilesWindow(QWidget* parent)
+InputFilesWindow::InputFilesWindow(QWidget* parent) : QDialog(parent)
 {
     setModal(false); 
 

@@ -30,6 +30,7 @@
 #include <QVBoxLayout>
 #include <QWidget>
 #include <qpushbutton.h>
+#include <QSplitter>
 
 class InputFilesWindow;
 class InstrumentDataWindow;
@@ -82,10 +83,6 @@ class SubframeHome : public QWidget {
     void clearTables();
 
     void showInputFiles() const;
-
-    void showInstrumentData() const;
-
-    // void UpdatePeakList();
 
  private:
     QPushButton* _new_exp;
