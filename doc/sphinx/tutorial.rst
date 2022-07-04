@@ -66,7 +66,7 @@ Finding peaks
 -------------
 
 The first step in data reduction is to find the detector spots in the images.
-Unlike with many data reduction progrmmes, this must be done for all frames at
+Unlike with many data reduction programmes, this must be done for all frames at
 once, instead of on a per-frame basis. This is because OpenHKL constructs a
 real-space 3D model of the peaks, so when processing a frame, it also requires
 information on adjacent frames. Click on the ``Find peaks`` icon on the sidebar.
@@ -158,7 +158,7 @@ the ``Autoindex`` icon on the sidebar.
 
 It is absolutely critical that the direct beam position is accurate to within a
 pixel or two at this point; if this is not the case, indexing will be very
-difficult, if not impossible. Click on the ``set initial direct beam position`
+difficult, if not impossible. Click on the ``set initial direct beam position``
 checkbox; this will allow you to drag and drop a crosshair, the size of which
 can be adjusted, on the detector image. The direct beam is by default at the
 exact centre of the image, but the air scattering halo in this data set is a
