@@ -23,7 +23,6 @@
 
 #include <QAction>
 #include <QMenu>
-#include <iostream>
 #include <qkeysequence.h>
 #include <qnamespace.h>
 
@@ -159,6 +158,8 @@ void Menus::toggleEntries()
 
     actions->remove_experiment->setDisabled(no_projects);
 
+    actions->show_input_files->setDisabled(no_datasets);
+    actions->show_peaks->setDisabled(no_pcollections);
     _view_menu->setDisabled(no_projects);
     _data_menu->setDisabled(no_projects);
     _peaks_menu->setDisabled(no_pcollections);
