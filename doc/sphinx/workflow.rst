@@ -190,7 +190,7 @@ them in an octree. The ellipsoid overlap detection is implemented using
 the criterion described in **TODO: find literature**.
 
 .. _peakfinder:
-.. figure:: peak_finder.png
+.. figure:: images/workflow/peak_finder.png
    :alt: Masking the detector image
    :name: fig:peak_finder
    :width: 100.0%
@@ -456,7 +456,7 @@ image, and the "crosshair size" and "crosshair linewidth" controls offer a guide
 to the eye when determining the
 
 .. _directbeam:
-.. figure:: direct_beam.png
+.. figure:: images/workflow/direct_beam.png
    :alt: Adjusting the direct beamm position manually
    :name: fig:direct_beam
    :width: 100.0%
@@ -562,7 +562,7 @@ end", "background begin" and "background end" parameters. The peak pixels for
 this region are highlighted in yellow, and the local background pixels in green.
 
 .. _shapemodel:
-.. figure:: shape_model.png
+.. figure:: images/workflow/shape_model.png
    :alt: Visualising a shape generated from a shape model
    :name: fig:shape_model
    :width: 100.0%
@@ -646,13 +646,13 @@ all frames. This can be seen by comparing the integration regions of a predicted
 peak before and after the shape model is assigned.
 
 .. _preshapemodel:
-.. figure:: pre-shape-model.png
+.. figure:: images/workflow/pre-shape-model.png
    :alt: Shape of a single predicted peaks before the shape model is applied
    :name: fig:pre_shape_model
    :width: 100.0%
 
 .. _postshapemodel:
-.. figure:: post-shape-model.png
+.. figure:: images/workflow/post-shape-model.png
    :alt: Shape of a single peak after the shape model is applied
    :name: fig:post_shape_model
    :width: 100.0%
@@ -721,7 +721,7 @@ refinement is usually significant, as shown in the example below (pre-refinement
 positions are shown in dark green, post-refinement positions in light green).
 
 .. _refinement:
-.. figure:: refinement.png
+.. figure:: images/workflow/refinement.png
    :alt: Peak centres before and after refinement
    :name: fig:refinement
    :width: 100.0%
@@ -794,7 +794,7 @@ integration.
    +------------------------+----------------+----------------------------------+
 
 .. _integration:
-.. figure:: integration.png
+.. figure:: images/workflow/integration.png
    :alt: Example of integration of a collection of predicted and refined peaks
    :name: fig:integration
    :width: 100.0%
@@ -860,7 +860,7 @@ to which the data set is reliable. The merger is controlled by the following
 parameters.
 
 .. _merge:
-.. figure:: merge.png
+.. figure:: images/workflow/merge.png
    :alt: Example of merge d-shell statistics
    :name: fig:merge
    :width: 100.0%
