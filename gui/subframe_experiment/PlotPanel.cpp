@@ -25,6 +25,7 @@ PlotPanel::PlotPanel()
     anchor = new QHBoxLayout(this);
     plot = new SXPlot(this);
     anchor->addWidget(plot);
+    centralWidget = this;
 }
 
 void PlotPanel::plotData(QVector<double>& x, QVector<double>& y, QVector<double>& e)
