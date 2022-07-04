@@ -12,6 +12,8 @@ experimental data: trypsin with bound aniline.
    :name: fig:trypsin_crystal
    :width: 100.0%
 
+   Trypsin with bound aniline crystal
+
 .. _load:
 
 Loading the raw data
@@ -27,7 +29,9 @@ list in the resulting dialogue.
 .. figure:: images/tutorial/new_experiment.png
    :alt: Create a new experiment
    :name: fig:new_experiment
-   :width: 100.0%
+   :width: 75.0%
+
+   Create a new experiment
 
 Next, we need to add the data set, a set of `.tiff` image files from the
 detector. From the main menu, select `Data > Add data set > Add raw/tiff data`.
@@ -39,7 +43,9 @@ metadata dialogue.
 .. figure:: images/tutorial/image_metadata.png
    :alt: Enter the image metadata
    :name: fig:image_metadata
-   :width: 100.0%
+   :width: 75.0%
+
+   Enter the image metadata
 
 In this case, this information is parsed from a `.readme` file in the directory
 containing the images, but this will not normally be the case. In this
@@ -51,6 +57,8 @@ experiment, we have an angular increment of 0.4 degrees and a wavelength of 2.67
    :alt: The home widget
    :name: fig:home
    :width: 100.0%
+
+   The home widget
 
 .. _find_peaks:
 
@@ -75,6 +83,8 @@ images, so we only have to apply them once.
    :name: fig:mask
    :width: 100.0%
 
+   Masking the detector images
+
 The most important peak finder parameter is the threshold, which determines the
 minimum number of counts for a pixel to be in a peak region; in this case, the
 value (80) is appropriate, although if our detector image had too few peaks to
@@ -92,7 +102,9 @@ current values, click on ``Find peaks``, and wait for the processing to finish
 .. figure:: images/tutorial/finder_params.png
    :alt: Peak finder parameters
    :name: fig:finder_params
-   :width: 100.0%
+   :width: 75.0%
+
+   Peak finder parameters
 
 When the peak finding algorithm has finished, we should have identified 9851
 peaks (this may vary slightly due to numerical imprecision and masking). At this
@@ -111,8 +123,10 @@ results; however we want it to be large enough to get good statistics.
 .. _found_peaks:
 .. figure:: images/tutorial/found_peaks.png
    :alt: After peak finding and integration
-   :name: fig:found_peask
+   :name: fig:found_peaks
    :width: 100.0%
+
+   After peak finding and integration
 
 Note that after integration some peaks are marked as invalid; specifically, 8219
 out of 9851 peaks are valid. We can check the ``reason for rejection`` column in
@@ -138,7 +152,9 @@ the ``Autoindex`` icon on the sidebar.
 .. figure:: images/tutorial/set_beam.png
    :alt: Widget to adjust the direct beam position
    :name: fig:set_beam
-   :width: 100.0%
+   :width: 75.0%
+
+   Widget to adjust the direct beam position
 
 It is absolutely critical that the direct beam position is accurate to within a
 pixel or two at this point; if this is not the case, indexing will be very
@@ -156,6 +172,8 @@ well as possible.
    :name: fig:indexed
    :width: 100.0%
 
+   Masking the detector images
+
 Here, the direct beam position has been moved by about one and a half pixels in
 the *x* and *y* directions, but even this tiny change has made a precipitous
 improvement in the ease with which we can index this data set (try it without
@@ -165,7 +183,9 @@ setting the crosshair!).
 .. figure:: images/tutorial/indexer_params.png
    :alt: Autoindexer parameters
    :name: fig:indexer_params
-   :width: 100.0%
+   :width: 75.0%
+
+   Autoindexer parameters
 
 Since we've done the most important task of correcting the direct beam position,
 we don't need to adjust the indexer parameters too much. We only use peak from
@@ -186,6 +206,8 @@ Fourier transform algorithm. Click on ``Find unit cells``, then switch from the
    :name: fig:solutions
    :width: 100.0%
 
+   Candidate unit cells
+
 A list of candidate unit cells is shown. If you were careful when adjusting the
 direct beam, it should be quite easy to find the correct unit cell. In this
 case, the cell parameters are ``54.97 58.53 67.58 90 90 90``. The space group in
@@ -201,7 +223,9 @@ selected unit cell`` to open the following dialogue.
 .. figure:: images/tutorial/assign_cell.png
    :alt: Assign the selected unit cell to the ``found`` peak collection
    :name: fig:assign_cell
-   :width: 100.0%
+   :width: 75.0%
+
+   Assign the selected unit cell to the ``found`` peak collection
 
 This allows us to assign the chosen cell (``indexed``) to the peak collection we
 generated from the image analysis step above.
@@ -223,7 +247,9 @@ click ``build shape model`` and wait for the integration to complete. Click on
 .. figure:: images/tutorial/shape_params.png
    :alt: Shape model parameters
    :name: fig:shape_params
-   :width: 100.0%
+   :width: 75.0%
+
+   Shape model parameters
 
 A shape generated at specific detector coordinates can be previewed using the
 shape preview widget. Here I have chosen the coordinates of a strong peak at
@@ -234,7 +260,9 @@ pixels and 10 frames.
 .. figure:: images/tutorial/shape_preview.png
    :alt: Shape preview parameters
    :name: fig:shape_preview
-   :width: 100.0%
+   :width: 75.0%
+
+   Shape preview parameters
 
 Note that the shape in the preview does not look much like the shape of the
 strong peak at highlighted on the detector image. This is because the covariance
@@ -246,6 +274,8 @@ peaks will have a rectangular bounding box, resulting in elliptical peak shapes.
    :alt: On generating the preliminary shape model
    :name: fig:preliminary_shapes
    :width: 100.0%
+
+   On generating the preliminary shape model
 
 .. _predict:
 
@@ -265,16 +295,20 @@ rotation angle.
 .. figure:: images/tutorial/refine_beam.png
    :alt: Candidate unit cells
    :name: fig:refine_beam
-   :width: 100.0%
+   :width: 75.0%
+
+   Candidate unit cells
 
 Set the value of ``d min`` to 1.5 Å. peaks will be predicted up to this maximum
 resolution. Click the ``predict`` button, and wait for the prediction to finish.
 
 .. _predicted:
 .. figure:: images/tutorial/predicted.png
-   :alt: Candidate unit cells
+   :alt: Predicted peaks
    :name: fig:predicted
    :width: 100.0%
+
+   Predicted peaks
 
 Up to a resolution of 1.5 Å, we have 58229 predicted peaks, and it can be seen
 win the screenshot below that the agreement for the peak centre positions is
@@ -291,11 +325,15 @@ image significantly better afterwards.
    :name: fig:predicted_before_shapes
    :width: 100.0%
 
+   Predicted peaks before applying shape model
+
 .. _predicted_after_shapes:
 .. figure:: images/tutorial/predict_after_shapes.png
    :alt: Predicted peaks after applying shape model
    :name: fig:predicted_after_shapes
    :width: 100.0%
+
+   Predicted peaks after applying shape model
 
 This is because when the shape of a peak changes, the ellipse formed at the
 intersection of the ellipsoid and the detector plane changes, and therefore the
@@ -324,7 +362,9 @@ unit cell and aforementioned instrument parameters to vary.
 .. figure:: images/tutorial/refine_params.png
    :alt: Refinement parameters
    :name: fig:refine_params
-   :width: 100.0%
+   :width: 75.0%
+
+   Refinement parameters
 
 The most important refinement parameter is ``number of batches``. Since the
 instrument parameters and unit cell may change over the course of an experiment
@@ -362,6 +402,8 @@ following under the ``detector`` tab.
    :name: fig:refine1
    :width: 100.0%
 
+   Predicted peaks pre- (dark green) and post-refinement (light green)
+
 The change should be quite significant. You can see how the unit cells and
 instrument parameters change numerically as a function of rotation angle under
 the ``tables`` tab. We can try refining again, using the newly created "batch"
@@ -375,6 +417,8 @@ peaks that have moved significantly.
    :alt: Predicted peaks pre- and post-refinement, second run
    :name: fig:refine2
    :width: 100.0%
+
+   Predicted peaks pre- and post-refinement, second run
 
 This is good enough for now, but later on we might want to run the refiner again
 when we've applied a better shape model.
@@ -399,6 +443,8 @@ the ``integration regions`` checkbox.
    :name: fig:integration_regions
    :width: 100.0%
 
+   Integration regions of predicted peaks
+
 The integration regions look good to the naked eye here, in general. The
 detector spots are in general almost exactly coincident with the peak regions of
 the predicted peaks, and there are no overlaps. If there were overlaps, we could
@@ -419,6 +465,8 @@ image.
    :name: fig:bad_shape
    :width: 100.0%
 
+   Visualising the suspicious peak on its own
+
 The detector spot is well-centred in the middle image, but is less so on
 adjacent images. This is evidence of a poor shape model: the major axis of the
 ellipsoid we generated earlier is skewed with respect the blob formed by the
@@ -438,6 +486,8 @@ that the current values (3, 3, 6) are good enough for the moment. Click on the
    :name: fig:overlaps
    :width: 100.0%
 
+   Peaks removed due to overlaps
+
 In the screenshot above, we can see two instances (red boxes) where peaks were
 invalidated due to overlaps. At the bottom of the detector image there is a
 clear clash, but at the top it is less obvious; the peak is removed because it
@@ -454,6 +504,8 @@ have an acceptable number of overlaps, so we can integrate the peaks by clicking
    :alt: Post-integration screen
    :name: fig:integrated
    :width: 100.0%
+
+   Post-integration screen
 
 Now the ``intensity`` and ``sigma`` columns in the table have been populated,
 and we can see that 54298/58229 peaks were successfully integrated,
@@ -482,9 +534,11 @@ as invalid.
 
 .. _merge:
 .. figure:: images/tutorial/merge.png
-   :alt: Post-integration screen
+   :alt: Resolution shell statistics
    :name: fig:merge
    :width: 100.0%
+
+   Resolution shell statistics
 
 There are many different quality metrics, but for this tutorial, we will just
 look at :math:`R_\mathrm{pim}`. It is close to zero at low resolutions (0.022
@@ -497,11 +551,15 @@ increases, up to 0.5 in the 1.5 to 1.55 Å regime.
    :name: fig:merged_peaks
    :width: 100.0%
 
+   Table of merged peaks
+
 .. _unmerged_peaks:
 .. figure:: images/tutorial/unmerged_peaks.png
    :alt: Table of unmerged peaks
    :name: fig:unmerged_peaks
    :width: 100.0%
+
+   Table of unmerged peaks
 
 Finally, we can inspect the lists of merged and unmerged peaks by clicking on
 their respective tabs. The unmerged peak table is the essential goal of the data
@@ -549,7 +607,7 @@ an exercise for the reader. Here are some hints:
    of surrounding peaks. Results might also be improved with a better choice of
    integration region. One possibility is modifying the bounds of the
    integration region (``peak end``, ``background begin`` and ``background
-   end``) to ensure that even in cases where the predicted peak is slightly off
+    end``) to ensure that even in cases where the predicted peak is slightly off
    centre, all of the peak intensity pixels are encompassed by the integration
    region. It may also be possible to improve the results using a "fixed
    ellipsoid" as the ``integration region type``. In this case, an ellipsoid

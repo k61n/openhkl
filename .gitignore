@@ -27,6 +27,7 @@ docs/build
 Testing/
 
 html/
+auto/
 
 .DS_Store
 
