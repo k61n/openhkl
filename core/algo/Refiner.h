@@ -32,15 +32,26 @@ enum class Level;
 
 //! Parameters for refinement
 struct RefinerParameters {
+    //! Refine unit cell
     bool refine_ub = true;
+    //! Refine incident wavevector
     bool refine_ki = true;
+    //! Refine sample position
     bool refine_sample_position = true;
+    //! Refine sample orientation
     bool refine_sample_orientation = true;
+    //! Refine detector offset
     bool refine_detector_offset = true;
+    //! Number of refinement batches
     int nbatches = 10;
+    //! Type of residual used in minimisation
     ResidualType residual_type = ResidualType::QSpace;
+    //! Maximum number of iteration for minimisation
     unsigned int max_iter = 1000;
+    //! Use unit cells assigned to batches in further refinement
     bool use_batch_cells = true;
+    //! Assign unit cell to peaks when making batches
+    bool set_unit_cell = true;
 
     void log(const Level& level) const;
 };

@@ -15,6 +15,7 @@
 #ifndef NSX_CORE_STATISTICS_PEAKEXPORTER_H
 #define NSX_CORE_STATISTICS_PEAKEXPORTER_H
 
+#include "tables/crystal/UnitCell.h"
 #include <string>
 
 namespace nsx {
@@ -38,14 +39,16 @@ class PeakExporter {
     bool saveToFullProfMerged(const std::string& filename, nsx::MergedData* mergedData);
     //! Saves the peak information to FullProf file format given a peak list.
     bool saveToSCAMerged(
-        const std::string& filename, nsx::MergedData* mergedData, double scale = 1.0);
+        const std::string& filename, nsx::MergedData* mergedData, sptrUnitCell cell,
+        double scale = 1.0);
     //! Saves the peak information to FullProf file format given a merged peak list.
     bool saveToShelXUnmerged(const std::string& filename, nsx::MergedData* mergedData);
     //! Saves the peak information to .sca file format given a peak list.
     bool saveToFullProfUnmerged(const std::string& filename, nsx::MergedData* mergedData);
     //! Saves the peak information to .sca file format given a merged peak list.
     bool saveToSCAUnmerged(
-        const std::string& filename, nsx::MergedData* mergedData, double scale = 1.0);
+        const std::string& filename, nsx::MergedData* mergedData, sptrUnitCell cell,
+        double scale = 1.0);
 
  private:
 };
