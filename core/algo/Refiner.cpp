@@ -42,6 +42,7 @@ void RefinerParameters::log(const Level& level) const
     nsxlog(level, "refine_detector_offset = ", refine_detector_offset);
     nsxlog(level, "refine_ki              = ", refine_ki);
     nsxlog(level, "use_batch_cells        = ", use_batch_cells);
+    nsxlog(level, "set_unit_cell          = ", set_unit_cell);
 }
 
 Refiner::Refiner(UnitCellHandler* cell_handler) : _cell_handler(cell_handler)
@@ -142,8 +143,10 @@ void Refiner::makeBatches(
             oss << "frames " << b.name();
             std::string name = oss.str();
 
-            for (auto* peak : b.peaks())
-                peak->setUnitCell(cell_ptr);
+            if (_params->set_unit_cell) {
+                for (auto* peak : b.peaks())
+                    peak->setUnitCell(cell_ptr);
+            }
 
             _cell_handler->addUnitCell(name, cell_ptr);
 

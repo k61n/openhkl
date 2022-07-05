@@ -704,8 +704,9 @@ void SubframeMergedPeaks::saveMergedPeaks()
         if (filename.isEmpty())
             return;
 
+        nsx::sptrUnitCell cell = singleBatchRefine();
         success = exporter.saveToSCAMerged(
-            filename.toStdString(), merged_data, _intensity_rescale_merged->value());
+            filename.toStdString(), merged_data, cell, _intensity_rescale_merged->value());
     }
     if (!success)
         QMessageBox::critical(this, "Error", "File open unsuccessful");
@@ -752,8 +753,9 @@ void SubframeMergedPeaks::saveUnmergedPeaks()
         if (filename.isEmpty())
             return;
 
+        nsx::sptrUnitCell cell = singleBatchRefine();
         success = exporter.saveToSCAUnmerged(
-            filename.toStdString(), merged_data, _intensity_rescale_unmerged->value());
+            filename.toStdString(), merged_data, cell, _intensity_rescale_unmerged->value());
     }
     if (!success)
         QMessageBox::critical(this, "Error", "File open unsuccessful");
@@ -776,4 +778,34 @@ void SubframeMergedPeaks::toggleUnsafeWidgets()
         _save_merged->setEnabled(true);
         _save_unmerged->setEnabled(true);
     }
+}
+
+nsx::sptrUnitCell SubframeMergedPeaks::singleBatchRefine()
+{
+    auto expt = gSession->currentProject()->experiment();
+    auto* peaks = _peak_combo_1->currentPeakCollection();
+    const auto data= peaks->getPeakList()[0]->dataSet();
+    auto states = data->instrumentStates();
+    auto* refiner = expt->refiner();
+    auto* params = refiner->parameters();
+
+    params->nbatches = 1;
+    params->max_iter = 1000;
+    params->refine_ub = true;
+    params->refine_sample_position = false;
+    params->refine_sample_orientation = false;
+    params->refine_detector_offset = false;
+    params->refine_ki = false;
+    params->use_batch_cells = true;
+    params->set_unit_cell = false;
+
+    try {
+        expt->refine(peaks, data.get());
+        gSession->onUnitCellChanged();
+        toggleUnsafeWidgets();
+    } catch (const std::exception& ex) {
+        gGui->statusBar()->showMessage("Error: " + QString(ex.what()));
+    }
+
+    return refiner->batches()[0].sptrCell();
 }

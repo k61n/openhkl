@@ -210,7 +210,7 @@ bool PeakExporter::saveToFullProfMerged(const std::string& filename, nsx::Merged
 }
 
 bool PeakExporter::saveToSCAUnmerged(
-    const std::string& filename, nsx::MergedData* mergedData, double scale)
+    const std::string& filename, nsx::MergedData* mergedData, sptrUnitCell cell, double scale)
 {
     std::fstream file(filename, std::ios::out);
     if (!file.is_open())
@@ -221,9 +221,8 @@ bool PeakExporter::saveToSCAUnmerged(
         for (auto* unmerged_peak : peak.peaks())
             peak_vector.push_back(unmerged_peak);
     }
-    const UnitCell* unitCell = peak_vector[0]->unitCell();
-    const UnitCellCharacter character = unitCell->character();
-    std::string symbol = unitCell->spaceGroup().symbol();
+    const UnitCellCharacter character = cell->character();
+    std::string symbol = cell->spaceGroup().symbol();
     std::for_each(symbol.begin(), symbol.end(), [](char& c) { c = ::tolower(c); });
     symbol.erase(std::remove(symbol.begin(), symbol.end(), ' '), symbol.end());
 
@@ -265,7 +264,7 @@ bool PeakExporter::saveToSCAUnmerged(
 }
 
 bool PeakExporter::saveToSCAMerged(
-    const std::string& filename, nsx::MergedData* mergedData, double scale)
+    const std::string& filename, nsx::MergedData* mergedData, sptrUnitCell cell, double scale)
 {
     std::fstream file(filename, std::ios::out);
     if (!file.is_open())
@@ -276,9 +275,8 @@ bool PeakExporter::saveToSCAMerged(
         for (const Peak3D* unmerged_peak : peak.peaks())
             peak_vector.push_back(unmerged_peak);
     }
-    const UnitCell* unitCell = peak_vector.at(0)->unitCell();
-    const UnitCellCharacter character = unitCell->character();
-    std::string symbol = unitCell->spaceGroup().symbol();
+    const UnitCellCharacter character = cell->character();
+    std::string symbol = cell->spaceGroup().symbol();
     std::for_each(symbol.begin(), symbol.end(), [](char& c) { c = ::tolower(c); });
     symbol.erase(std::remove(symbol.begin(), symbol.end(), ' '), symbol.end());
 
