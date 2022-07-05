@@ -32,7 +32,7 @@ void DataQuality::computeQuality(MergedData& merged_peaks)
     int max_peaks = merged_peaks.maxPeaks();
     nunique = merged_peaks.mergedPeakSet().size();
     redundancy = merged_peaks.redundancy();
-    Completeness = static_cast<double>(nunique) / static_cast<double>(max_peaks);
+    Completeness = static_cast<double>(nobserved) / static_cast<double>(max_peaks);
 
     nsx::RFactor rfactor;
     rfactor.calculate(&merged_peaks);
