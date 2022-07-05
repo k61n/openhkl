@@ -153,11 +153,6 @@ void MainWin::cursormode(int i) const
 {
 }
 
-void MainWin::updatePlot(PlottableItem* p) const
-{
-    experiment->getPlot()->updatePlot(p);
-} 
-
 void MainWin::exportPlot() const
 {
     experiment->getPlot()->exportPlot();
