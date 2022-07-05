@@ -16,7 +16,7 @@
 #define NSX_GUI_SUBWINDOWS_PEAKLIST_WINDOW_H
 
 #include <QDialog>
-#include "gui/subframe_experiment/properties/PeakProperties.h"
+#include "gui/widgets/PeakProperties.h"
 #include "gui/models/Session.h"
 #include "gui/models/Project.h"
 #include "core/experiment/Experiment.h"

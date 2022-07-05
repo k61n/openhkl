@@ -15,7 +15,6 @@
 #ifndef NSX_GUI_MAINWIN_H
 #define NSX_GUI_MAINWIN_H
 
-#include "gui/subwindows/InstrumentStateWindow.h"
 #include <QMainWindow>
 
 #include <QLabel>
@@ -77,7 +76,7 @@ class MainWin : public QMainWindow {
     void plotData(QVector<double>& x, QVector<double>& y, QVector<double>& e) const;
     //! determine if the system theme is dark
     bool isDark();
-    
+
     void refreshMenu();
 
     //! Get the Sidebar
@@ -107,9 +106,6 @@ class MainWin : public QMainWindow {
     // modeless detector dialog
     DetectorWindow* detector_window;
 
-    // modeless dialog to show instrument states
-    InstrumentStateWindow* instrumentstate_window;
-
     // modeless window to show a single peak
     QVector<PeakWindow*> peak_windows;
 
@@ -123,8 +119,6 @@ class MainWin : public QMainWindow {
     PeaklistWindow* peak_list_window;
 
     AxisWindow* axis_window;
-
-
 
     Sentinel* sentinel;
 

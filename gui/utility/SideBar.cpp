@@ -18,7 +18,6 @@
 #include "gui/models/Project.h"
 #include "gui/models/Session.h"
 #include "gui/subframe_merge/SubframeMergedPeaks.h"
-#include "gui/subframe_experiment/PropertyPanel.h"
 #include "gui/subframe_experiment/SubframeExperiment.h"
 #include "gui/subframe_filter/SubframeFilterPeaks.h"
 #include "gui/subframe_find/SubframeFindPeaks.h"
