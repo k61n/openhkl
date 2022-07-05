@@ -35,6 +35,8 @@
 #include <QClipboard>
 #include "gui/graphics/DetectorScene.h"
 
+#include <iostream>
+
 QList<DetectorWidget*> DetectorWidget::_detector_widgets = QList<DetectorWidget*>();
 
 DetectorWidget::DetectorWidget(bool mode, bool cursor, bool slider, QWidget* parent)
@@ -277,8 +279,8 @@ void DetectorWidget::setmenuRequested(QPoint pos)
         QFileInfo fi(QFileDialog::getSaveFileName(_detector_view, tr("Save Image as"),
             "~/openhkl_detector_plot.png",
             tr("Images (*.png *.jpg)")));
-
-        if (!fi.fileName().isNull() && fi.isFile() && fi.isWritable()){
+            
+        if (!fi.absoluteFilePath().isNull()){
             QPixmap pixMap = _detector_view->grab();
             pixMap.save(fi.absoluteFilePath());
         }

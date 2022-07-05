@@ -300,7 +300,7 @@ void SXPlot::setmenuRequested(QPoint pos)
             QFileInfo fi(QFileDialog::getSaveFileName(this, tr("Save Image as"),
                 "~/openhkl_plot.png",
                 tr("Images (*.png *.jpg)")));
-            if (!fi.fileName().isNull() && fi.isFile() && fi.isWritable()){
+            if (!fi.absoluteFilePath().isNull()){
                 if (fi.suffix() == "png") savePng(fi.absoluteFilePath(), 1400, 800, 1.0, 100 ); // we need to make these paramters changable
                 if (fi.suffix() == "jpg") saveJpg(fi.absoluteFilePath(), 1400, 800, 1.0, 100 );
             }
