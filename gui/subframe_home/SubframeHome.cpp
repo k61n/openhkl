@@ -164,6 +164,7 @@ void SubframeHome::_setLeftLayout(QHBoxLayout* main_layout)
         "Is indexed", "Is integrated",
         "List Type"});
 
+
     _peak_collections_table->resizeColumnsToContents();
     _peak_collections_table->verticalHeader()->setVisible(false);
 
