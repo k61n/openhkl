@@ -117,14 +117,10 @@ class MainWin : public QMainWindow {
     InstrumentDataWindow* instrument_data_window;
 
     PeaklistWindow* peak_list_window;
-<<<<<<< HEAD
-=======
+
 
     AxisWindow* axis_window;
 
->>>>>>> integrated subwindows into gui and menu
-
-    AxisWindow* axis_window;
 
     Sentinel* sentinel;
 
