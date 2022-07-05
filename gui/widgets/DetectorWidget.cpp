@@ -35,8 +35,6 @@
 #include <QClipboard>
 #include "gui/graphics/DetectorScene.h"
 
-#include <iostream>
-
 QList<DetectorWidget*> DetectorWidget::_detector_widgets = QList<DetectorWidget*>();
 
 DetectorWidget::DetectorWidget(bool mode, bool cursor, bool slider, QWidget* parent)
