@@ -18,9 +18,6 @@
 #include "core/data/DataTypes.h"
 
 #include <QGridLayout>
-
-
-
 #include <QApplication>
 #include <QKeyEvent>
 #include <QPainter>
