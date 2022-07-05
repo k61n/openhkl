@@ -21,8 +21,7 @@
 #include "gui/graphics/DetectorView.h"
 #include "gui/graphics_items/PlottableItem.h"
 #include "gui/subframe_merge/SubframeMergedPeaks.h"
-#include "gui/subframe_experiment/PlotPanel.h"
-#include "gui/subframe_experiment/PropertyPanel.h"
+#include "gui/widgets/PlotPanel.h"
 #include "gui/subframe_experiment/SubframeExperiment.h"
 #include "gui/subframe_filter/SubframeFilterPeaks.h"
 #include "gui/subframe_find/SubframeFindPeaks.h"
@@ -54,8 +53,6 @@
 #include <QString>
 #include <QTimer>
 
-#include <iostream>
-
 MainWin* gGui; //!< global pointer to the main window
 
 //  ***********************************************************************************************
@@ -79,8 +76,6 @@ MainWin::MainWin()
 
     _side_bar = new SideBar(main_widget);
     main_layout->addWidget(_side_bar);
-
-    instrumentstate_window = new InstrumentStateWindow();
 
     home = new SubframeHome;
     experiment = new SubframeExperiment;
@@ -131,27 +126,22 @@ MainWin::MainWin()
 
 void MainWin::onDataChanged() const
 {
-    //detector->getProperty()->dataChanged();
 }
 
 void MainWin::onExperimentChanged() const
 {
-    //detector->getProperty()->experimentChanged();
 }
 
 void MainWin::onPeaksChanged() const
 {
-   //detector->getProperty()->peaksChanged();
 }
 
 void MainWin::onUnitCellChanged() const
 {
-    //detector->getProperty()->unitCellChanged();
 }
 
 void MainWin::changeView(int option) const
 {
-   //detector->detectorWidget()->changeView(option);
 }
 
 void MainWin::updatePlot(PlottableItem* p) const
@@ -161,7 +151,6 @@ void MainWin::updatePlot(PlottableItem* p) const
 
 void MainWin::cursormode(int i) const
 {
-    //detector->detectorWidget()->scene()->changeCursorMode(i);
 }
 
 void MainWin::exportPlot() const
@@ -216,12 +205,6 @@ void MainWin::closeEvent(QCloseEvent* event)
 
     if (log_window)
         log_window->close();
-
-    if (instrumentstate_window)
-        instrumentstate_window->close();
-
-    //if (input_files_window)
-       // input_files_window->close();
 
     QMainWindow::closeEvent(event);
 }

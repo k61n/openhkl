@@ -2,7 +2,7 @@
 //
 //  OpenHKL: data reduction for single crystal diffraction
 //
-//! @file      gui/subframe_experiment/properties/PeakProperties.cpp
+//! @file      gui/widgets/PeakProperties.cpp
 //! @brief     Implements classes ListTab, PeakProperties
 //!
 //! @homepage  ###HOMEPAGE###
@@ -12,7 +12,7 @@
 //
 //  ***********************************************************************************************
 
-#include "gui/subframe_experiment/properties/PeakProperties.h"
+#include "gui/widgets/PeakProperties.h"
 
 #include "core/experiment/Experiment.h"
 #include "gui/MainWin.h"

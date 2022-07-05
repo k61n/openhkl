@@ -2,7 +2,7 @@
 //
 //  OpenHKL: data reduction for single crystal diffraction
 //
-//! @file      gui/subframe_experiment/properties/PeakProperties.h
+//! @file      gui/widgets/PeakProperties.h
 //! @brief     Defines classes ListTab, TabPeaks
 //!
 //! @homepage  ###HOMEPAGE###

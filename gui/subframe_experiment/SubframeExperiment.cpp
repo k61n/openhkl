@@ -16,9 +16,7 @@
 
 #include "gui/models/Project.h"
 #include "gui/models/Session.h"
-#include "gui/subframe_experiment/PlotPanel.h"
-#include "gui/subframe_experiment/PropertyPanel.h"
-#include "gui/subframe_experiment/properties/NumorProperty.h"
+#include "gui/widgets/PlotPanel.h" 
 #include "gui/widgets/DetectorWidget.h"
 
 #include <QGroupBox>
@@ -26,17 +24,12 @@
 #include <QSplitter>
 #include <QVBoxLayout>
 #include <QWidget>
+#include <QComboBox>
 
 SubframeExperiment::SubframeExperiment()
 {
     QHBoxLayout* layout = new QHBoxLayout(this);
-    //QSplitter* splitter = new QSplitter(this);
 
-    //QWidget* left_widget = new QWidget();
-    //left_widget->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Expanding);
-    //QVBoxLayout* left_layout = new QVBoxLayout;
-
-    //_properties = new PropertyPanel;
     _plot = new PlotPanel;
 
     QGroupBox* figure_group = new QGroupBox("Preview");
@@ -48,11 +41,6 @@ SubframeExperiment::SubframeExperiment()
     QWidget* right_widget = new QWidget(this);
     right_widget->setLayout(_detector_widget);
 
-    //_properties->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Expanding);
-
-    //left_layout->addWidget(_properties, 7);
-    //left_widget->setLayout(left_layout);
-
     QSplitter* right_splitter = new QSplitter();
     right_splitter->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     right_splitter->setOrientation(Qt::Orientation::Vertical);
@@ -60,15 +48,7 @@ SubframeExperiment::SubframeExperiment()
     right_splitter->addWidget(right_widget);
     right_splitter->addWidget(_plot);
 
-    /*splitter->addWidget(left_widget);
-    splitter->addWidget(right_splitter);
-    splitter->setStretchFactor(0, 1);
-    splitter->setStretchFactor(1, 4);
-    splitter->setChildrenCollapsible(false);*/
-
-    layout->addWidget(right_splitter);
-
-    
+    layout->addWidget(right_splitter); 
 }
 
 void SubframeExperiment::refreshAll()
