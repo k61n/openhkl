@@ -509,7 +509,6 @@ void SubframeHome::refreshTables() const
     _dataset_table->setRowCount(0);
     _peak_collections_table->setRowCount(0);
     _unitcell_table->setRowCount(0);
-
     _show_axes_information->setEnabled(false);
     _show_found_peaks->setEnabled(false);
     _show_input_files->setEnabled(false);
@@ -532,7 +531,6 @@ void SubframeHome::refreshTables() const
 
         nsx::Experiment* expt = gSession->currentProject()->experiment();
         if (expt == nullptr) return;
-
 
         _show_input_files->setEnabled(expt->numData() > 0);
         _show_found_peaks->setEnabled(expt->numPeakCollections() > 0);
@@ -632,7 +630,6 @@ void SubframeHome::refreshTables() const
                     str+="]";
                     det_axes->addItem(str);
                 }
-
                 _dataset_table->setCellWidget(n, 13, det_axes);
 
                 QComboBox* diff_axes = new QComboBox();
@@ -642,14 +639,6 @@ void SubframeHome::refreshTables() const
                     QString str = QString::fromStdString( it->get()->diffractometer()->sample().gonio().axis(i).name());
                     str+=" , [";
 
-                str+="]";               
-                tmp->addItem(str);
-            }           
-
-            _dataset_table->setCellWidget(n, 13, tmp); 
-
-=======
->>>>>>> fixed crashes, added context menu to Plots, cleaned up
                     for (int j=0; j<3; j++){
                     auto  ax = it->get()->diffractometer()->sample().gonio().axis(i).axis()[j];
                     str+= QString::number(ax);
