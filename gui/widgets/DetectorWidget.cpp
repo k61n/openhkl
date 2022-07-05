@@ -91,8 +91,6 @@ DetectorWidget::DetectorWidget(bool mode, bool cursor, bool slider, QWidget* par
 
     connect(_detector_view, &QWidget::customContextMenuRequested, this, &DetectorWidget::setmenuRequested);
 
-    connect(_detector_view, &QWidget::customContextMenuRequested, this, &DetectorWidget::setmenuRequested);
-
 
     if (mode){
         _mode_combo = new QComboBox();
