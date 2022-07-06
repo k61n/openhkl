@@ -45,6 +45,8 @@
 #include <QMessageBox>
 #include <QScrollBar>
 #include <QSpacerItem>
+#include <qgridlayout.h>
+#include <qgroupbox.h>
 
 SubframeIntegrate::SubframeIntegrate() : QWidget()
 {
@@ -180,6 +182,8 @@ void SubframeIntegrate::grabIntegrationParameters()
     _peak_end->setValue(params->peak_end);
     _bkg_begin->setValue(params->bkg_begin);
     _bkg_end->setValue(params->bkg_end);
+    _discard_saturated->setChecked(params->discard_saturated);
+    _max_counts->setValue(params->max_counts);
     _radius_int->setValue(params->neighbour_range_pixels);
     _n_frames_int->setValue(params->neighbour_range_frames);
     _fit_center->setChecked(params->fit_center);
@@ -207,6 +211,8 @@ void SubframeIntegrate::setIntegrationParameters()
     params->peak_end = _peak_end->value();
     params->bkg_begin = _bkg_begin->value();
     params->bkg_end = _bkg_end->value();
+    params->discard_saturated = _discard_saturated->isChecked();
+    params->max_counts = _max_counts->value();
     params->neighbour_range_pixels = _radius_int->value();
     params->neighbour_range_frames = _n_frames_int->value();
     params->fit_center = _fit_center->isChecked();
@@ -265,8 +271,23 @@ void SubframeIntegrate::setIntegrateUp()
     _integrate_box = new Spoiler("Integrate peaks");
     GridFiller f(_integrate_box, true);
 
-    // -- Create controls
     _integrator_combo = f.addCombo();
+
+    _discard_saturated = new QGroupBox("Discard saturated");
+    _discard_saturated->setCheckable(true);
+    _discard_saturated->setChecked(false);
+    _discard_saturated->setToolTip("Discard peaks containing saturated pixels");
+
+    _max_counts = new SafeDoubleSpinBox();
+    _max_counts->setMaximum(100000);
+
+    QLabel* label = new QLabel("Maximum count");
+    label->setToolTip("Maximum count for a pixel in a single peak");
+    QGridLayout* grid = new QGridLayout();
+    _discard_saturated->setLayout(grid);
+    grid->addWidget(label, 0, 0, 1, 1);
+    grid->addWidget(_max_counts, 0, 1, 1, 1);
+    f.addWidget(_discard_saturated);
 
     _fit_center =
         f.addCheckBox("Fit the center", "Allow the peak center to move during integration", 1);

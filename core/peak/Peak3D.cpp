@@ -44,6 +44,7 @@ const std::map<RejectionFlag, std::string> Peak3D::_rejection_map{
     {RejectionFlag::InterpolationFailure, "Frame coordinate interpolation failed"},
     {RejectionFlag::InvalidSigma, "Negative, zero, or undefined sigma"},
     {RejectionFlag::InvalidBkgSigma, "Negative, zero, or undefined background sigma"},
+    {RejectionFlag::SaturatedPixel, "Peak contains saturated pixel(s)"},
     {RejectionFlag::OverlappingBkg, "Adjacent peak background region overlaps this peak"},
     {RejectionFlag::OverlappingPeak, "Adjacent peak intensity region overlaps this peak"},
     {RejectionFlag::InvalidCentroid, "Centre of mass of peak is inconsistent"},
