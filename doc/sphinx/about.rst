@@ -64,7 +64,7 @@ History of OpenHKL
 
 OpenHKL was started by Laurent Chapon and Eric Pellegrini at Institut
 Laue-Langevin in Grenoble under the name NSXTool (Neutron Single Xtal). It later
-became a collaboration between ILL and Forschungszentrum J\"ulich at the Heinz
+became a collaboration between ILL and Forschungszentrum Jülich at the Heinz
 Maier-Leibnitz Zentrum (MLZ) in Garching. It was renamed to OpenHKL in 2022 to
-emphasise that it it is intended also for X-ray diffraction as well as Neutron
+emphasise that it is intended also for X-ray diffraction as well as Neutron
 diffraction.
