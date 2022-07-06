@@ -3,15 +3,13 @@
 OpenHKL: data reduction for single crystal diffraction
 ======================================================
 
-* :doc:`about`
-* :doc:`tutorial`
-* :doc:`workflow`
-* :doc:`peaktable`
-* :doc:`detectorview`
-* :doc:`integration`
-* :doc:`dataquality`
-* :doc:`theory`
-* :doc:`coderef`
+.. include:: about.rst
+
+..
+   _comment: the following directive allows maths to be rendered in the TOC
+
+.. math::
+   :nowrap:
 
 .. toctree::
    :maxdepth: 2
@@ -32,5 +30,4 @@ Indices and tables
 ==================
 
 * :ref:`genindex`
-* :ref:`modindex`
 * :ref:`search`

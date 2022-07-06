@@ -11,7 +11,8 @@ set(SPHINX_CACHE_DIR ${CMAKE_CURRENT_BINARY_DIR}/sphinx/_doctrees/)
 set(SPHINX_HTML_DIR ${CMAKE_CURRENT_BINARY_DIR}/sphinx/html/)
 set(SPHINX_LATEX_DIR ${CMAKE_CURRENT_BINARY_DIR}/sphinx/latex/)
 
-configure_file(${SPHINX_SOURCE_DIR}/conf.py ${SPHINX_BINARY_DIR}/conf.py @ONLY)
+configure_file(${SPHINX_SOURCE_DIR}/conf.py ${SPHINX_BUILD_DIR}/conf.py @ONLY)
+file(COPY ${SPHINX_SOURCE_DIR}/_static DESTINATION ${SPHINX_BUILD_DIR})
 
 set(SPHINX_COMMAND "${SPHINX_EXECUTABLE} -q -b html
   -d ${SPHINX_CACHE_DIR} ${SPHINX_SOURCE_DIR} ${SPHINX_HTML_DIR}")
@@ -21,7 +22,7 @@ add_custom_target(
   COMMAND doxygen ${DOXYGEN_OUTPUT_DIRECTORY}/Doxyfile
   COMMAND ${SPHINX_EXECUTABLE}
     -q -b html
-    -c "${SPHINX_BINARY_DIR}"
+    -c "${SPHINX_SOURCE_DIR}"
     -d "${SPHINX_CACHE_DIR}"
     "${SPHINX_SOURCE_DIR}"
     "${SPHINX_HTML_DIR}"
@@ -31,7 +32,7 @@ add_custom_target(
   pdf
   COMMAND ${SPHINX_EXECUTABLE}
     -b latex
-    -c "${SPHINX_BINARY_DIR}"
+    -c "${SPHINX_SOURCE_DIR}"
     -d "${SPHINX_CACHE_DIR}"
     "${SPHINX_SOURCE_DIR}"
     "${SPHINX_LATEX_DIR}"
