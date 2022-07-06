@@ -17,6 +17,7 @@
 
 #include "core/data/DataTypes.h"
 #include "core/statistics/PeakExporter.h"
+#include "tables/crystal/UnitCell.h"
 
 #include <QCheckBox>
 #include <QComboBox>
@@ -87,6 +88,9 @@ class SubframeMergedPeaks : public QWidget {
     void saveMergedPeaks();
     //! Save the unmerged peaks
     void saveUnmergedPeaks();
+
+    //! Do a single batch refinement to get one unit cell
+    nsx::sptrUnitCell singleBatchRefine();
 
     //! The merged peak list
     nsx::MergedData* _merged_data;
