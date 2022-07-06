@@ -5,6 +5,8 @@ OpenHKL: data reduction for single crystal diffraction
 
 .. include:: about.rst
 
+.. include:: install.rst
+
 ..
    _comment: the following directive allows maths to be rendered in the TOC
 
@@ -16,6 +18,7 @@ OpenHKL: data reduction for single crystal diffraction
    :caption: Contents
 
    about
+   install
    tutorial
    workflow
    peaktable
