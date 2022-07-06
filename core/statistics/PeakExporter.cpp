@@ -101,8 +101,7 @@ bool PeakExporter::saveToShelXUnmerged(const std::string& filename, nsx::MergedD
         return false;
     for (int i = 0; i < peak_vector.size(); i++) {
         const nsx::Peak3D* peak = peak_vector.at(i);
-        const nsx::UnitCell* cell = peak->unitCell();
-        nsx::MillerIndex miller_index(peak->q(), *cell);
+        nsx::MillerIndex miller_index = peak->hkl();
         const Eigen::RowVector3i& hkl = miller_index.rowVector();
         const double intensity = peak->correctedIntensity().value();
         const double sigma_intensity = peak->correctedIntensity().sigma();
@@ -157,8 +156,7 @@ bool PeakExporter::saveToFullProfUnmerged(const std::string& filename, nsx::Merg
 
     for (int i = 0; i < peak_vector.size(); i++) {
         nsx::Peak3D* peak = peak_vector.at(i);
-        const nsx::UnitCell* cell = peak->unitCell();
-        nsx::MillerIndex miller_index(peak->q(), *cell);
+        nsx::MillerIndex miller_index = peak->hkl();
         const Eigen::RowVector3i& hkl = miller_index.rowVector();
         const double intensity = peak->correctedIntensity().value();
         const double sigma_intensity = peak->correctedIntensity().sigma();
@@ -236,8 +234,7 @@ bool PeakExporter::saveToSCAUnmerged(
 
     for (int i = 0; i < peak_vector.size(); i++) {
         const nsx::Peak3D* peak = peak_vector.at(i);
-        const nsx::UnitCell* cell = peak->unitCell();
-        const nsx::MillerIndex miller_index(peak->q(), *cell);
+        const nsx::MillerIndex miller_index = peak->hkl();
         const Eigen::RowVector3i& hkl = miller_index.rowVector();
         const double intensity = peak->correctedIntensity().value() * scale;
         const double sigma_intensity = peak->correctedIntensity().sigma() * scale;
