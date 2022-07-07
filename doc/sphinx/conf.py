@@ -77,6 +77,7 @@ html_theme_options = {
 }
 html_logo = '_static/OpenHKL32px.png'
 
+
 # -- Options for LaTeX output ---------------------------------------------
 
 latex_elements = {
