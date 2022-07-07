@@ -10,7 +10,7 @@ endif()
 set(CMAKE_SWIG_OUTDIR ${CMAKE_CURRENT_BINARY_DIR})
 
 include_directories(${CMAKE_SOURCE_DIR})
-include_directories(${PYTHON_INCLUDE_DIRS})
+include_directories(${Python3_INCLUDE_DIRS} ${Python3_NumPy_INCLUDE_DIRS})
 
 set_property(SOURCE pyohkl.i PROPERTY CPLUSPLUS ON)
 set_property(SOURCE pyohkl.i PROPERTY SWIG_MODULE_NAME pyohkl)
@@ -22,10 +22,11 @@ set(PYOHKL_SWIG_INCLUDE_DIRECTORIES)
 foreach(it ${PYOHKL_INCLUDE_DIRECTORIES})
   set(PYOHKL_SWIG_INCLUDE_DIRECTORIES ${PYOHKL_SWIG_INCLUDE_DIRECTORIES} "-I${it}")
 endforeach()
+
 set_property(SOURCE pyohkl.i PROPERTY SWIG_FLAGS ${PYOHKL_SWIG_INCLUDE_DIRECTORIES})
 
 swig_add_library(pyohkl TYPE MODULE LANGUAGE python SOURCES pyohkl.i)
 
-swig_link_libraries(pyohkl ${PYTHON_LIBRARIES} openhklcore)
+swig_link_libraries(pyohkl ${Python3_LIBRARIES} openhklcore)
 
 configure_file("${CMAKE_SOURCE_DIR}/swig/pypackage/__init__.py.in" "${CMAKE_BINARY_DIR}/swig/__init__.py" @ONLY)
