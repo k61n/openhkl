@@ -206,7 +206,7 @@ if(OHKL_PYTHON AND NOT MSVC AND BUILD_TESTING)
         list(APPEND allsources ${sources})
     endforeach()
     add_test(NAME "CodeLineLength"
-        COMMAND ${PYTHON_EXECUTABLE}
+        COMMAND ${Python3_EXECUTABLE}
         ${CMAKE_SOURCE_DIR}/devtools/check-line-length.py 200 ${allsources})
 endif()
 
