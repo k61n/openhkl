@@ -31,7 +31,7 @@ be used equally well for X-ray diffraction data.
 Open source and fully documented
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-OpenHKL is fully open source, and none of its functionality is a ``black box``.
+OpenHKL is fully open source, and none of its functionality is a "black box".
 All algorithms are fully documented, such that users will no longer be left
 guessing as to what exactly OpenHKL does during the data reductgion process.
 Modification and collaboration are encouraged, with the aim of improving OpenHKL
@@ -41,7 +41,7 @@ Easily extensible for different detector geometries
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 It is easy to extend OpenHKL to include different detector geometries; each
-instrument is described a `.yaml` machine file which contains the metadata and
+instrument is described a ``.yaml`` machine file which contains the metadata and
 physical setup.
 
 Written in C++, with a Modern QT GUI

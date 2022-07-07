@@ -70,9 +70,10 @@ html_static_path = ['_static']
 #
 html_theme = 'press'
 html_theme_options = {
-    'external links': [
+    'external_links': [
         ('GitLab', 'https://jugit.fz-juelich.de/mlz/openhkl'),
-        ('Jülich Centre for Neutron Science (JCNS)', 'https://www.fz-juelich.de/de/jcns')
+        ('Jülich Centre for Neutron Science (JCNS)', 'https://www.fz-juelich.de/de/jcns'),
+        ('Heinz Maier-Leibnitz Zentrum (MLZ)', 'https://mlz-garching.de'),
     ]
 }
 html_logo = '_static/OpenHKL32px.png'

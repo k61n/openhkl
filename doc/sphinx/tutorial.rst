@@ -33,8 +33,8 @@ list in the resulting dialogue.
 
    Create a new experiment
 
-Next, we need to add the data set, a set of `.tiff` image files from the
-detector. From the main menu, select `Data > Add data set > Add raw/tiff data`.
+Next, we need to add the data set, a set of ``.tiff`` image files from the
+detector. From the main menu, select ``Data > Add data set > Add raw/tiff data``.
 Highlight all of the image files, then click ``Open``. This will open the image
 metadata dialogue.
 
@@ -47,7 +47,7 @@ metadata dialogue.
 
    Enter the image metadata
 
-In this case, this information is parsed from a `.readme` file in the directory
+In this case, this information is parsed from a ``.readme`` file in the directory
 containing the images, but this will not normally be the case. In this
 experiment, we have an angular increment of 0.4 degrees and a wavelength of 2.67
 Å. The table in the ``Home`` widget now shows that the data is loaded.
@@ -407,7 +407,7 @@ following under the ``detector`` tab.
 The change should be quite significant. You can see how the unit cells and
 instrument parameters change numerically as a function of rotation angle under
 the ``tables`` tab. We can try refining again, using the newly created "batch"
-unit cells as a starting point by clicking the ``use refined cells` checkbox,
+unit cells as a starting point by clicking the ``use refined cells`` checkbox,
 then clicking ``refine`` again, followed by ``update``. From the screenshot
 below, we can see not much has changed, but there are a few higher resolution
 peaks that have moved significantly.
