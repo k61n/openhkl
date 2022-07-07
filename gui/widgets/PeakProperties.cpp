@@ -231,3 +231,8 @@ void PeakProperties::deleteCollection()
     gSession->currentProject()->removePeakModel(_peak_list_combo->currentText());
     refreshInput();
 }
+
+void PeakProperties::setPeakCollection(QString pc_name)
+{
+    _peak_list_combo->setCurrentText(pc_name);
+}

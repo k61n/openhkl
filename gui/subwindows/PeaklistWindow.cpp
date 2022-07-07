@@ -1,4 +1,5 @@
 #include "PeaklistWindow.h"
+#include "gui/widgets/PeakProperties.h"
 #include <QVBoxLayout>
 
 PeaklistWindow::PeaklistWindow(QWidget* parent) : QDialog(parent)
@@ -38,4 +39,9 @@ void PeaklistWindow::refreshAll()
             }
         }  */
     _peak_properties->refreshInput();
+}
+
+void PeaklistWindow::setPeakCollection(const QString& pc_name)
+{
+    _peak_properties->setPeakCollection(pc_name);
 }

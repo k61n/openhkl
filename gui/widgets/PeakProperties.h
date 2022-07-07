@@ -47,6 +47,8 @@ class PeakProperties : public QWidget {
     void clonePeakCollection();
     //! Set up the GUI size policies
     void deleteCollection();
+    //! Set PeakCollection
+    void setPeakCollection(QString pc_name);
 
  public:
     //! Notify that the usr has selected another peak

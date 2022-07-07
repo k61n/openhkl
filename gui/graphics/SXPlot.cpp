@@ -21,6 +21,7 @@
 #include <fstream>
 #include <QString>
 #include <QFileInfo>
+#include <qmessagebox.h>
 
 
 SXPlot::SXPlot(QWidget* parent) : QCustomPlot(parent)
@@ -29,7 +30,7 @@ SXPlot::SXPlot(QWidget* parent) : QCustomPlot(parent)
     _zoom_box->setVisible(false);
 
     legend->setSelectableParts(QCPLegend::spItems);
-    legend->setVisible(true);
+    legend->setVisible(false); // legend is buggy, so better turn it off
 
     setInteractions(QCP::iSelectAxes | QCP::iSelectLegend | QCP::iSelectPlottables);
 
@@ -250,22 +251,21 @@ void SXPlot::legendDoubleClick(QCPLegend* legend, QCPAbstractLegendItem* item)
          return;
 
      QString fileName = QFileDialog::getSaveFileName(
-         this, tr("Choose ASCII file to export"), "", tr("Data File (*.dat)"));
+         this, tr("Choose CSV file to export"), QString(qgetenv("HOME")), tr("Data File (*.csv)")); 
 
      std::ofstream file;
      file.open(fileName.toStdString().c_str(), std::ios::out);
      if (!file.is_open())
          QMessageBox::critical(this, tr("OpenHKL"), tr("Problem opening file"));
 
-     // TODO: tidy up formatting in file
      for (unsigned ind = 0; ind < npoints; ++ind){
        file << graph(0)->data()->at(ind)->key << lim;
        for (unsigned ngraph = 0; ngraph < ngraphs; ++ngraph){
-         file << graph(ngraph)->data()->at(ind)->value << lim;
+         file << graph(ngraph)->data()->at(ind)->value;
          if (errorBars != NULL){
            double error = 0.5 * (errorBars->data()->at(ind).errorPlus +
                                  errorBars->data()->at(ind).errorMinus);
-           file << error << lim;
+           file << lim << error;
          }
        }
        file << std::endl;
@@ -299,21 +299,33 @@ void SXPlot::setmenuRequested(QPoint pos)
         connect(save_graph, &QAction::triggered, this,
         [=](){
             QFileInfo fi(QFileDialog::getSaveFileName(this, tr("Save Image as"),
-                "~/openhkl_plot.png",
+                QString(qgetenv("HOME")),
                 tr("Images (*.png *.jpg)")));
 
             if (!fi.absoluteFilePath().isNull()){
-                if (fi.suffix() == "png") savePng(fi.absoluteFilePath(), 1400, 800, 1.0, 100 ); // we need to make these paramters changable
-                if (fi.suffix() == "jpg") saveJpg(fi.absoluteFilePath(), 1400, 800, 1.0, 100 );
+                if (fi.suffix() == "png") 
+                    if (!savePng(fi.absoluteFilePath(), 1400, 800, 1.0, 100))
+                        QMessageBox::information(
+                            this,
+                            "Saving file failed",
+                            "The file couldn't be saved to disk."
+                        );
+                if (fi.suffix() == "jpg") 
+                    if (!saveJpg(fi.absoluteFilePath(), 1400, 800, 1.0, 100))
+                        QMessageBox::information(
+                            this,
+                            "Saving file failed",
+                            "The file couldn't be saved to disk."
+                        );
             }
         });
 
-        QAction* export_ASCII = menu->addAction("Export to ASCII");
+        QAction* export_ASCII = menu->addAction("Export to CSV");
         menu->popup(mapToGlobal(pos));
 
         connect(export_ASCII, &QAction::triggered, this,
             [=](){
-                QCPErrorBars *errorBars = new QCPErrorBars( xAxis, yAxis);
+                QCPErrorBars *errorBars = new QCPErrorBars(xAxis, yAxis);
                 errorBars->removeFromLegend();
                 errorBars->setAntialiased(false);
                 errorBars->setDataPlottable( graph(3));
