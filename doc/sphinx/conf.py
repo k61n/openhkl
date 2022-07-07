@@ -75,7 +75,8 @@ html_theme_options = {
         ('Jülich Centre for Neutron Science (JCNS)', 'https://www.fz-juelich.de/de/jcns')
     ]
 }
-html_logo = '_static/OpenHKL.png'
+html_logo = '_static/OpenHKL32px.png'
+
 
 # -- Options for LaTeX output ---------------------------------------------
 
