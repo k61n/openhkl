@@ -42,40 +42,30 @@ endif()
 
 ###### Find Python
 if(OHKL_PYTHON)
-    # python-dev and interpreter
-    set(Python_ADDITIONAL_VERSIONS 3.7 3.6 3.5 3.4)
-    find_package(PythonInterp 3)
-    find_package(PythonLibs 3)
-
-    execute_process (
-        COMMAND ${PYTHON_EXECUTABLE} -c "from __future__ import print_function; import numpy; print(numpy.get_include())"
-        ERROR_VARIABLE NUMPY_FIND_ERROR
-        RESULT_VARIABLE NUMPY_FIND_RESULT
-        OUTPUT_VARIABLE NUMPY_FIND_OUTPUT
-        OUTPUT_STRIP_TRAILING_WHITESPACE
-        )
-
-    ## process the output from the execution of the command
-    if(NOT NUMPY_FIND_RESULT)
-        set (NUMPY_INCLUDES ${NUMPY_FIND_OUTPUT})
-        message(STATUS "numpy includes ${NUMPY_INCLUDES}")
-        include_directories(SYSTEM ${NUMPY_INCLUDES})
-    else()
-        message(FATAL_ERROR "Could NOT find numpy headers")
+    set(pyver_min 3.9)
+    find_package(Python3 ${pyver_min} QUIET
+            COMPONENTS Interpreter Development NumPy)
+    if(NOT Python3_FOUND)
+        message(FATAL_ERROR
+            "Python 3 not found (minimum version ${pyver_min}).")
     endif()
 
-    # Python packages dir
-    execute_process(COMMAND ${PYTHON_EXECUTABLE} -c
-        "from distutils import sysconfig as sc; print(sc.get_python_lib(prefix='', plat_specific=True))"
-        RESULT_VARIABLE PYTHON_SITE_RESULT
-        OUTPUT_VARIABLE PYTHON_SITE
-        OUTPUT_STRIP_TRAILING_WHITESPACE)
-
-    if(PYTHON_SITE_RESULT)
-        message(FATAL_ERROR "Failed running PYTHON_EXECUTABLE=${PYTHON_EXECUTABLE} to determine"
-            " Python package directory; output = '${PYTHON_SITE}'")
-    endif()
-    message(STATUS "Python package destination is ${PYTHON_SITE}")
+    message(STATUS "   Python3_VERSION: ${Python3_VERSION}")
+    message(STATUS "   Python3_VERSION_MINOR: ${Python3_VERSION_MINOR}")
+    message(STATUS "   Python3_VERSION_PATCH: ${Python3_VERSION_PATCH}")
+    message(STATUS "   Python3_INTERPRETER_ID: ${Python3_INTERPRETER_ID}")
+    message(STATUS "   Python3_EXECUTABLE: ${Python3_EXECUTABLE}")
+    message(STATUS "   Python3_STDLIB: ${Python3_STDLIB}")
+    message(STATUS "   Python3_SITELIB: ${Python3_SITELIB}")
+    message(STATUS "   Python3_INCLUDE_DIRS: ${Python3_INCLUDE_DIRS}")
+    message(STATUS "   Python3_LIBRARIES: ${Python3_LIBRARIES}")
+    message(STATUS "   Python3_LIBRARY_RELEASE: ${Python3_LIBRARY_RELEASE}")
+    if(WIN32)
+        message(STATUS "   Python3_LIBRARY_DLL: ${Python3_LIBRARY_DLL}")
+    endif(WIN32)
+    message(STATUS "   Python3_LIBRARY_DIRS: ${Python3_LIBRARY_DIRS}")
+    message(STATUS "   Python3_NumPy_VERSION: ${Python3_NumPy_VERSION}")
+    message(STATUS "   Python3_NumPy_INCLUDE_DIRS: ${Python3_NumPy_INCLUDE_DIRS}")
 
     # swig
     find_package(SWIG REQUIRED)
