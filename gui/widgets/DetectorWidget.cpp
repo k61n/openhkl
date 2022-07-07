@@ -275,9 +275,8 @@ void DetectorWidget::setmenuRequested(QPoint pos)
     connect(save_plot, &QAction::triggered, this,
     [=](){
         QFileInfo fi(QFileDialog::getSaveFileName(_detector_view, tr("Save Image as"),
-            "~/openhkl_detector_plot.png",
+            QString(qgetenv("HOME")),
             tr("Images (*.png *.jpg)")));
-
             
         if (!fi.absoluteFilePath().isNull()){
             QPixmap pixMap = _detector_view->grab();

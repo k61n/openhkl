@@ -31,7 +31,9 @@ class InputFilesWindow : public QDialog {
  public:
     InputFilesWindow(QWidget* parent);
 
-    void refreshAll( ); 
+    void setDataset(QString set);
+
+    void refreshAll(); 
 
 public slots:
    void on_combobox_select();

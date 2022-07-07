@@ -30,7 +30,7 @@
 #include <QPushButton>
 
 #include <regex>
-#include <vector> 
+#include <vector>  
 
 InputFilesWindow::InputFilesWindow(QWidget* parent) : QDialog(parent)
 {
@@ -59,9 +59,14 @@ InputFilesWindow::InputFilesWindow(QWidget* parent) : QDialog(parent)
     layout->addWidget(_files_table);
 
     resize(800, 600); 
-    connect( _data_set, qOverload<int>(&QComboBox::currentIndexChanged), this, &InputFilesWindow::on_combobox_select);
-          
+    connect( _data_set, qOverload<int>(&QComboBox::currentIndexChanged), this, &InputFilesWindow::on_combobox_select);  
 } 
+
+void InputFilesWindow::setDataset(QString set)
+{
+    int index = _data_set->findText(set);
+    _data_set->setItemText(index, set);
+}
  
 void InputFilesWindow::refreshAll()
 {    

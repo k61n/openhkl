@@ -84,6 +84,11 @@ class SubframeHome : public QWidget {
 
     void showInputFiles() const;
 
+
+    void setContextMenuDatasetTable(QPoint pos);
+    void setContextMenuPeakTable(QPoint pos);
+    void setContextMenuUnitCellTable(QPoint pos);
+
  private:
     QPushButton* _new_exp;
     QPushButton* _old_exp;
@@ -91,7 +96,6 @@ class SubframeHome : public QWidget {
     QPushButton* _save_all;
     QPushButton* _remove_current;
     QPushButton* _show_input_files;
-    QPushButton* _show_axes_information;
     QPushButton* _show_found_peaks;
 
     ExperimentTableView* _open_experiments_view;

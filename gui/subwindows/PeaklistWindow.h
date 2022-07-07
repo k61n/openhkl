@@ -25,9 +25,9 @@ class PeaklistWindow : public QDialog{
     public:
         PeaklistWindow(QWidget* parent = nullptr);
         void refreshAll();
+        void setPeakCollection(const QString& pc_name);
     private:
         PeakProperties* _peak_properties;
-        QComboBox* _data_selector;
 };
 
 #endif //NSX_GUI_SUBWINDOWS_PEAKLIST_WINDOW_H
