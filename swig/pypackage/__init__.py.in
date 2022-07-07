@@ -1,7 +1,16 @@
-# init file for the Python package
+# init file for the testing the Python package
+import sys, os
 
 # version
-version_str = "@NSXTool_VERSION_MAJOR@.@NSXTool_VERSION_MINOR@.@NSXTool_VERSION_PATCH@"
-version = (@NSXTool_VERSION_MAJOR@, @NSXTool_VERSION_MINOR@, @NSXTool_VERSION_PATCH@)
+version_str = "@OpenHKL_VERSION_MAJOR@.@OpenHKL_VERSION_MINOR@.@OpenHKL_VERSION_PATCH@"
+version = (@OpenHKL_VERSION_MAJOR@, @OpenHKL_VERSION_MINOR@, @OpenHKL_VERSION_PATCH@)
 
-from .pynsx import *
+# this is needed to adapt to the changes in Python 3.8 on Windows regarding dll loading
+# see https://docs.python.org/3/whatsnew/3.8.html#ctypes
+if sys.version_info >= (3, 8, 0) and sys.platform == 'win32':
+    if "PATH" in os.environ:
+        for p in os.environ['PATH'].split(';'):
+            if p and os.path.exists(p):
+                os.add_dll_directory(os.path.abspath(p))
+
+from .pyohkl import *
