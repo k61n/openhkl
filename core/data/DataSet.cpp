@@ -85,8 +85,6 @@ void DataSet::finishRead()
 
     // Update the monochromator wavelength
     diffractometer()->source().selectedMonochromator().setWavelength(wavelength());
-    // initialise intensity histograms
-    getIntensityHistogram(1000);
 }
 
 void DataSet::addDataFile(const std::string& filename, const std::string& extension)
