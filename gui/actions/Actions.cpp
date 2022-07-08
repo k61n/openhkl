@@ -79,8 +79,8 @@ void Actions::setupView()
         gGui->detector_window->refreshAll();
     });
     connect(instrumentstate_window, &QAction::triggered, []() {
-        //gGui->instrumentstate_window->show();
-        //gGui->instrumentstate_window->refreshAll();
+        gGui->instrumentstate_window->show();
+        gGui->instrumentstate_window->refreshAll();
     });
     connect(log_window, &QAction::triggered, []() {
         gGui->log_window->show();
