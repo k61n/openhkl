@@ -251,7 +251,7 @@ void SXPlot::legendDoubleClick(QCPLegend* legend, QCPAbstractLegendItem* item)
          return;
 
      QString fileName = QFileDialog::getSaveFileName(
-         this, tr("Choose CSV file to export"), QString(qgetenv("HOME")), tr("Data File (*.csv)")); 
+         this, tr("Name CSV file to export"), QString(qgetenv("HOME")), tr("Data file (*.csv)"));
 
      std::ofstream file;
      file.open(fileName.toStdString().c_str(), std::ios::out);
@@ -279,14 +279,14 @@ void SXPlot::setmenuRequested(QPoint pos)
     if (this->graphCount()) {
         QMenu* menu = new QMenu(this);
 
-        QAction* reset_zoom = menu->addAction("Reset zoom"); 
+        QAction* reset_zoom = menu->addAction("Reset zoom");
         menu->popup(mapToGlobal(pos));
 
         connect(reset_zoom, &QAction::triggered, this, &SXPlot::resetZoom);
 
         menu->addSeparator();
 
-        QAction* copy_clpbrd = menu->addAction("Copy to Clipboard");
+        QAction* copy_clpbrd = menu->addAction("Copy to clipboard");
         menu->popup(mapToGlobal(pos));
         connect(copy_clpbrd, &QAction::triggered, this,
         [=](){
@@ -294,28 +294,28 @@ void SXPlot::setmenuRequested(QPoint pos)
         });
 
         // saving images to file
-        QAction* save_graph = menu->addAction("Save Graph");
+        QAction* save_graph = menu->addAction("Save graph");
         menu->popup(mapToGlobal(pos));
         connect(save_graph, &QAction::triggered, this,
         [=](){
-            QFileInfo fi(QFileDialog::getSaveFileName(this, tr("Save Image as"),
+            QFileInfo fi(QFileDialog::getSaveFileName(this, tr("Save image as"),
                 QString(qgetenv("HOME")),
                 tr("Images (*.png *.jpg)")));
 
             if (!fi.absoluteFilePath().isNull()){
-                if (fi.suffix() == "png") 
+                if (fi.suffix() == "png")
                     if (!savePng(fi.absoluteFilePath(), 1400, 800, 1.0, 100))
                         QMessageBox::information(
                             this,
                             "Saving file failed",
-                            "The file couldn't be saved to disk."
+                            "The file couldn't be saved."
                         );
-                if (fi.suffix() == "jpg") 
+                if (fi.suffix() == "jpg")
                     if (!saveJpg(fi.absoluteFilePath(), 1400, 800, 1.0, 100))
                         QMessageBox::information(
                             this,
                             "Saving file failed",
-                            "The file couldn't be saved to disk."
+                            "The file couldn't be saved."
                         );
             }
         });
@@ -332,7 +332,7 @@ void SXPlot::setmenuRequested(QPoint pos)
                 errorBars->setPen(QPen(QColor(180,180,180)));
                 //Plot->graph(3)->setName("Measurement");
 
-                exportToAscii(errorBars); 
+                exportToAscii(errorBars);
         });
     }
 }

@@ -16,7 +16,7 @@
 
 #include "gui/models/Project.h"
 #include "gui/models/Session.h"
-#include "gui/widgets/PlotPanel.h" 
+#include "gui/widgets/PlotPanel.h"
 #include "gui/widgets/DetectorWidget.h"
 
 #include <QGroupBox>
@@ -49,7 +49,7 @@ SubframeExperiment::SubframeExperiment()
     right_splitter->addWidget(right_widget);
     right_splitter->addWidget(_plot);
 
-    layout->addWidget(right_splitter); 
+    layout->addWidget(right_splitter);
     */
 
 
