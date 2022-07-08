@@ -74,7 +74,7 @@ void InputFilesWindow::refreshAll()
         Project* prj = gSession->currentProject();
         auto expt = prj->experiment();
         auto allData = prj->allData();   
-        auto N = prj->allData().size();
+        auto nData = prj->allData().size();
         int id; 
             
         if (_data_set->count() > 0 ){//clear combobox -- needed both clear() and removeItem to be stable working
@@ -83,12 +83,12 @@ void InputFilesWindow::refreshAll()
                 _data_set->removeItem(i);
             _data_set->setCurrentIndex(-1);
         }
-        if (N > 0){            
-            for (int i=0; i<N; i++){    
+        if (nData > 0){            
+            for (int i=0; i<nData; i++){    
                 _data_set->addItem(QString::fromStdString(prj->getData(i)->name()));                         
             }
             id = _data_set->currentIndex();
-            if ((id == -1)||(id >= N)) id = 0;//selects dataset by selected row in table 
+            if ((id == -1)||(id >= nData)) id = 0;//selects dataset by selected row in table 
             
             nsx::sptrDataSet data = prj->getData(id);
             
@@ -124,10 +124,10 @@ void InputFilesWindow::on_combobox_select()
         Project* prj = gSession->currentProject();
         auto expt = prj->experiment();
         auto allData = prj->allData();   
-        auto N = prj->allData().size();
+        auto nData = prj->allData().size();
         int id = _data_set->currentIndex();  
 
-        if (N > 0 && id >= 0 && id < N){           
+        if (nData > 0 && id >= 0 && id < nData){           
             nsx::sptrDataSet data = prj->getData(id);
             const nsx::MetaData& metadata = data->metadata();
             const nsx::MetaDataMap& map = metadata.map(); 
