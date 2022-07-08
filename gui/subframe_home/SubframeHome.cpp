@@ -23,7 +23,6 @@
 #include "gui/models/Session.h"
 #include "tables/crystal/UnitCell.h"
 #include "gui/utility/SideBar.h"
-#include "gui/subwindows/AxisWindow.h"
 #include "core/data/DataTypes.h"
 
 #include <QFileDialog>
