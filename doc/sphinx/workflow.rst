@@ -307,6 +307,9 @@ Overlapping
    adjacent background region ("background end"). Set these to the same value to
    remove only overlapping intensity regions.
 
+Rejection reason
+   Remove all peaks other than those which the selected rejection reason.
+
 Sparse dataset
    Remove peaks from data sets which contain too few peaks.
 
@@ -317,7 +320,12 @@ Merged peak significance
    is rejected.
 
 Extinct from spacegroup
-   Reject peaks that are forbidden by space group symmetry considerations.
+   Reject peaks that are forbidden by space group symmetry considerations. See
+   :ref:`peaktable` for a detailed list of options, with explanations.
+
+Note that the peak table contains an extra column on this widget, ``caught by
+filter``. This allows the user to sort peaks caught by the filter to the top of
+the peak table with a single click.
 
 Autoindexing
 ------------
@@ -761,6 +769,13 @@ integration.
    +------------------------+----------------+----------------------------------+
    | **Parameters**         | Unit           | Description                      |
    +========================+================+==================================+
+   | **Discard saturated**  | T/F            | Discard peaks containing pixels  |
+   |                        |                | with counts overflowing the      |
+   |                        |                | specified maximum                |
+   +------------------------+----------------+----------------------------------+
+   | **Maximum counts**     | counts         | Maximum possible counts per      |
+   |                        |                | pixel before peak is discarded   |
+   +------------------------+----------------+----------------------------------+
    | **Fit the center**     | T/F            | Whether to fit the peak center   |
    +------------------------+----------------+----------------------------------+
    | **Fit the covariance** | T/F            | Whether to fit the covariance    |
@@ -798,6 +813,14 @@ integration.
    :alt: Example of integration of a collection of predicted and refined peaks
    :name: fig:integration
    :width: 100.0%
+
+A 16 bit detector image will be able to display a maximum of 65535 counts, so in
+some cases there is a numerical limit on the number of counts per pixel.
+Moreover, it is possible for the detector to be overexposed, resulting in
+"saturated" pixels. Such pixels will result in incorrect integrated intensities,
+so in cases where an accurate integration is required, peaks containing such
+pixels should be rejected. This is the rationale behind the ``Discard
+saturated`` option.
 
 When a shape collection is generated using the *Build shape collection* button
 (see :ref:`sec_shape_collection`, the computed collection can be used to assign

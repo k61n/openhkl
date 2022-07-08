@@ -42,6 +42,9 @@ exceptions) the follwoing columns.
    | **Reason for**        |                | Reason, if any, why this peak |
    | **rejection**         |                | is marked as invalid          |
    +-----------------------+----------------+-------------------------------+
+   | **Caught by filter**  | T/F            | Whether this peaks was caught |
+   |                       |                | by the filter (for sorting)   |
+   +-----------------------+----------------+-------------------------------+
 
 Rejection flags
 ===============
@@ -94,6 +97,11 @@ Rejected during integration
 
 * **Negative, zero, or undefined background sigma** - certain rare circumstances
   might lead to a mathematically undefined sigma.
+
+* **Peak contains saturated pixel** - A 16-bit detector can hold a maximum of
+  65535 counts per pixel. Moreover, there is physical limit to the number of
+  counts a detector pixel can reach. If the integrator is instructed to reject
+  peaks containing such pixels, this reason is used.
 
 * **Adjacent peak intensity region overlaps this peak** - if two peak intensity
   regions overlap, both peaks are rejected.
