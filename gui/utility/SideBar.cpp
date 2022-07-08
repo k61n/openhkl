@@ -62,7 +62,7 @@ SideBar::SideBar(QWidget* parent) : QWidget(parent), mCheckedAction(nullptr), mO
         path = path + light;
 
     QAction* home = addAction(QIcon(path + QString("home.svg")), "Home");
-    QAction* experiment = addAction(QIcon(path + QString("experiment.svg")), "Detector");
+    QAction* experiment = addAction(QIcon(path + QString("experiment.svg")), "Experiment");
     QAction* finder = addAction(QIcon(path + QString("finder.svg")), "Find Peaks");
     QAction* filter = addAction(QIcon(path + QString("filter.svg")), "Filter Peaks");
     QAction* indexer = addAction(QIcon(path + QString("indexer.svg")), "Indexer");
@@ -113,29 +113,6 @@ void SideBar::paintEvent(QPaintEvent* event)
             else
                 fill_color = QColor(200, 200, 200);
             painter.fillRect(actionRect, fill_color);
-        }
-
-        if (action == mOverAction){
-            painter.fillRect(actionRect, QColor(150, 150, 150));
-            // tooltips for sidebar
-            static std::array<const char*,10> tips 
-            {
-                "SubframeHome : Load/Save Project files, Manage Experiments, overview of your Experiments",
-                "SubframeDetector : Look through all your loaded data files and mask detector areas",
-                "SubframeFind : Find all Peaks on the detector",
-                "SubframeFilter : Filter your Peaks ",
-                "SubframeIndexer : Find unit cell",
-                "SubframeShapes : asdfsdfsdfas",
-                "SubframePredict : predicition",
-                "SubframeRefiner : refining is king",
-                "SubframeIntegrate : integration",
-                "SubframeMerge : Overview and Analyse of your reduced data"
-            };
-            // find correct icon id
-            int id = action_y/actionRect.height();
-            if (id >=0 && id<10){            
-                QToolTip::showText(QCursor::pos(), tips[id]);               
-            }
         }
 
         if (gGui->isDark()) // looks like we have a dark theme
