@@ -31,14 +31,14 @@
 #include <QSlider>
 #include <QSpinBox>
 #include <QVBoxLayout>
-#include <QFileDialog> 
+#include <QFileDialog>
 #include <QClipboard>
 #include "gui/graphics/DetectorScene.h"
 
 QList<DetectorWidget*> DetectorWidget::_detector_widgets = QList<DetectorWidget*>();
 
 DetectorWidget::DetectorWidget(bool mode, bool cursor, bool slider, QWidget* parent)
-    : QGridLayout(parent) 
+    : QGridLayout(parent)
 {
     QGridLayout* top_grid = new QGridLayout();
     QGridLayout* bottom_grid = new QGridLayout();
@@ -253,16 +253,16 @@ void DetectorWidget::setmenuRequested(QPoint pos)
     QMenu* menu = new QMenu(_detector_view);
     QAction* reset = menu->addAction("Reset");
     menu->popup(_detector_view->mapToGlobal(pos));
-    
+
     connect(reset, &QAction::triggered, _detector_view->getScene(),
     [=](){
         _detector_view->getScene()->resetElements();
-        _detector_view->getScene()->loadCurrentImage();     
+        _detector_view->getScene()->loadCurrentImage();
     });
 
     menu->addSeparator();
 
-    QAction* copy_clpbrd = menu->addAction("Copy to Clipboard");
+    QAction* copy_clpbrd = menu->addAction("Copy to clipboard");
     menu->popup(_detector_view->mapToGlobal(pos));
     connect(copy_clpbrd, &QAction::triggered, this,
     [=](){
@@ -270,18 +270,17 @@ void DetectorWidget::setmenuRequested(QPoint pos)
         QApplication::clipboard()->setImage(pixMap.toImage(), QClipboard::Clipboard);
     });
 
-    QAction* save_plot = menu->addAction("Save Plot");
+    QAction* save_plot = menu->addAction("Save plot");
     menu->popup(_detector_view->mapToGlobal(pos));
     connect(save_plot, &QAction::triggered, this,
     [=](){
-        QFileInfo fi(QFileDialog::getSaveFileName(_detector_view, tr("Save Image as"),
+        QFileInfo fi(QFileDialog::getSaveFileName(_detector_view, tr("Save image as"),
             QString(qgetenv("HOME")),
             tr("Images (*.png *.jpg)")));
-            
+
         if (!fi.absoluteFilePath().isNull()){
             QPixmap pixMap = _detector_view->grab();
             pixMap.save(fi.absoluteFilePath());
         }
     });
 }
-

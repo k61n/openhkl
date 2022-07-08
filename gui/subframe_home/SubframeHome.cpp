@@ -125,7 +125,7 @@ void SubframeHome::_setLeftLayout(QHBoxLayout* main_layout)
     _dataset_table = new QTableWidget(0, 6);
     _dataset_table->setEditTriggers(QAbstractItemView::NoEditTriggers);
     _dataset_table->setHorizontalHeaderLabels(QStringList{
-        "Name", "Diffractometer", "Number of Frames", "Number of Cols", 
+        "Name", "Diffractometer", "Number of Frames", "Number of Cols",
         "Number of Rows", "Wavelength (" + QString(QChar(8491)) + ")",
         });
     _dataset_table->resizeColumnsToContents();
@@ -180,11 +180,11 @@ void SubframeHome::_setLeftLayout(QHBoxLayout* main_layout)
 
     refreshTables();
 
-    main_layout->addLayout(left); 
+    main_layout->addLayout(left);
 
     connect(_dataset_table, &QWidget::customContextMenuRequested, this, &SubframeHome::setContextMenuDatasetTable);
     connect(_peak_collections_table, &QWidget::customContextMenuRequested, this, &SubframeHome::setContextMenuPeakTable);
-    connect(_unitcell_table, &QWidget::customContextMenuRequested, this, &SubframeHome::setContextMenuUnitCellTable);    
+    connect(_unitcell_table, &QWidget::customContextMenuRequested, this, &SubframeHome::setContextMenuUnitCellTable);
 }
 
 void SubframeHome::_setRightLayout(QHBoxLayout* main_layout)
@@ -470,9 +470,9 @@ void SubframeHome::refreshTables() const
     _unitcell_table->setRowCount(0);
 
     if (!gSession->hasProject())
-        return;  
-    
-    _open_experiments_view->clearSpans();  
+        return;
+
+    _open_experiments_view->clearSpans();
 
     try {
         auto b2s = [](bool a) { return !a ? QString("No") : QString("Yes"); };
@@ -690,7 +690,7 @@ void SubframeHome::setContextMenuPeakTable(QPoint pos)
 
                     QString txt =  "Enter name for clone of \"" + pc_name + "\"";
                     QString cloned = QInputDialog::getText(
-                        this, 
+                        this,
                         tr("Cloning peak collection"),
                         tr(txt.toStdString().c_str()),
                         QLineEdit::Normal,
@@ -718,7 +718,7 @@ void SubframeHome::setContextMenuPeakTable(QPoint pos)
 
                     QMessageBox::StandardButton reply;
                     reply = QMessageBox::question(
-                        this, 
+                        this,
                         "Removing peak collection",
                         "Do you want really to delete " + pc_name,
                         QMessageBox::Yes|QMessageBox::No
