@@ -20,6 +20,8 @@
 #include "core/peak/Peak3D.h"
 #include "tables/crystal/UnitCell.h"
 
+#include <algorithm>
+
 namespace nsx {
 
 void IntegrationParameters::log(const Level& level) const
@@ -136,6 +138,13 @@ void IPeakIntegrator::integrate(
 #pragma omp parallel for
         for (auto peak : peaks) {
             auto* current_peak = regions.at(peak).get();
+            // Check for saturated pixels
+            const auto& counts = current_peak->peakData().counts();
+            double max = *std::max_element(counts.begin(), counts.end());
+            bool saturated = false;
+            if (_params.discard_saturated && (max > _params.max_counts))
+                saturated = true;
+
             bool result = current_peak->advanceFrame(current_frame, mask, idx);
             // this allows for partials at end of data
             result |= idx == data->nFrames() - 1;
@@ -147,6 +156,10 @@ void IPeakIntegrator::integrate(
                     peak->updateIntegration(
                         rockingCurve(), meanBackground(), integratedIntensity(), _params.peak_end,
                         _params.bkg_begin, _params.bkg_end);
+                    if (saturated) {
+                        peak->setSelected(false);
+                        peak->setRejectionFlag(RejectionFlag::SaturatedPixel);
+                    }
                 } else {
 #pragma omp atomic
                     ++nfailures;

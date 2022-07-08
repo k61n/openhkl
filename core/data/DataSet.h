@@ -21,6 +21,9 @@
 #include "core/loader/IDataReader.h"
 #include "core/peak/Peak3D.h"
 #include "core/raw/DataKeys.h"
+
+#include <gsl/gsl_histogram.h>
+
 #include <memory>
 
 namespace nsx {
@@ -127,6 +130,21 @@ class DataSet {
     //! Return instrument state list
     InstrumentStateList& instrumentStates();
 
+    //! Initialise intensity histograms
+    void initHistograms(std::size_t nbins);
+
+    //! Generate frame intensity histogram
+    void getFrameIntensityHistogram(std::size_t index);
+
+    //! Generate intensity histogram for whole DataSet
+    void getIntensityHistogram(std::size_t nbins);
+
+    //! Free histogram memeory
+    void clearHistograms();
+
+    //! Maximum per pixel count for whole DataSet
+    double maxCount();
+
  private:
     void _setReader(const DataFormat dataformat, const std::string& filename = "");
 
@@ -143,6 +161,11 @@ class DataSet {
     Diffractometer* _diffractometer;
     //! Pointer to instrument states
     InstrumentStateSet* _states;
+
+    //! Per-frame histograms of intensities
+    std::vector<gsl_histogram*> _histograms;
+    //! Intensity histogram for whole DataSet
+    gsl_histogram* _total_histogram;
 
  public:
     //! Data shape (columns, rows, frames)

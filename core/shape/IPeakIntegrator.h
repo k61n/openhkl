@@ -33,10 +33,12 @@ struct IntegrationParameters {
     double peak_end = 3.0; //!< End of peak region (sigmas)
     double bkg_begin = 3.0; //!< Beginning of background region (sigmas)
     double bkg_end = 6.0; //!< End of background region (sigmas)
+    double max_counts = 50000.0; //!< Maximum per-pixel count
     double neighbour_range_pixels = 500.0; //!< Search radius for neighbouring peaks (pixels)
     double neighbour_range_frames = 10.0; //!< Search radius for neighbouring peaks (frames)
     bool fit_center = true; //!< Whether to update the peak centre after integration
     bool fit_cov = true; //!< Whether to update the peak covariance after integration
+    bool discard_saturated = false; //!< Whether to discard peaks with saturated pixels
     int min_neighbors = 10; //!< Minimum number of neighbouring shapes for predicted shape
     IntegratorType integrator_type = IntegratorType::PixelSum; //!< Type of integrator
     RegionType region_type =

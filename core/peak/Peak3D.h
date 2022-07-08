@@ -46,6 +46,7 @@ enum class RejectionFlag {
     InvalidShape,
     InvalidSigma,
     InvalidBkgSigma,
+    SaturatedPixel,
     OverlappingBkg,
     OverlappingPeak,
     InvalidCentroid,

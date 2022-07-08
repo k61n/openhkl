@@ -126,6 +126,8 @@ class SubframeIntegrate : public QWidget {
     QCheckBox* _fit_center;
     QCheckBox* _fit_covariance;
     ShapeComboBox* _shape_combo;
+    QGroupBox* _discard_saturated;
+    SafeDoubleSpinBox* _max_counts;
 
     QPushButton* _integrate_button;
 
