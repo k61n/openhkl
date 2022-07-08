@@ -122,11 +122,11 @@ void SubframeHome::_setLeftLayout(QHBoxLayout* main_layout)
     //    new QSpacerItem(10, 0, QSizePolicy::Minimum, QSizePolicy::Expanding);
     //left->addSpacerItem(spacer_bottom);
 
-    _dataset_table = new QTableWidget(0, 7);
+    _dataset_table = new QTableWidget(0, 6);
     _dataset_table->setEditTriggers(QAbstractItemView::NoEditTriggers);
     _dataset_table->setHorizontalHeaderLabels(QStringList{
         "Name", "Diffractometer", "Number of Frames", "Number of Cols", 
-        "Number of Rows","Distance/A", "Wavelength/A",
+        "Number of Rows", "Wavelength/"+QString(QChar(8491)),
         });
     _dataset_table->resizeColumnsToContents();
     _dataset_table->verticalHeader()->setVisible(false);
@@ -548,9 +548,7 @@ void SubframeHome::refreshTables() const
                 _dataset_table->setItem(
                     n, 4, new QTableWidgetItem(QString::number(it->get()->nRows())));                 
                 _dataset_table->setItem(
-                    n, 5, new QTableWidgetItem(QString::number(detector->distance())));
-                _dataset_table->setItem(
-                    n, 6, new QTableWidgetItem(QString::number(it->get()->wavelength()))); 
+                    n, 5, new QTableWidgetItem(QString::number(it->get()->wavelength()))); 
             }
             _dataset_table->resizeColumnsToContents();
         }
