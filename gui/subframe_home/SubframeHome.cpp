@@ -125,8 +125,8 @@ void SubframeHome::_setLeftLayout(QHBoxLayout* main_layout)
     _dataset_table = new QTableWidget(0, 6);
     _dataset_table->setEditTriggers(QAbstractItemView::NoEditTriggers);
     _dataset_table->setHorizontalHeaderLabels(QStringList{
-        "Name", "Diffractometer", "Number of Frames", "Number of Cols",
-        "Number of Rows", "Wavelength (" + QString(QChar(8491)) + ")",
+        "Name", "Diffractometer", "Number of frames", "Number of columns",
+        "Number of rows", "Wavelength (" + QString(QChar(8491)) + ")",
         });
     _dataset_table->resizeColumnsToContents();
     _dataset_table->verticalHeader()->setVisible(false);
@@ -135,7 +135,7 @@ void SubframeHome::_setLeftLayout(QHBoxLayout* main_layout)
     _peak_collections_table = new QTableWidget(0, 6);
     _peak_collections_table->setEditTriggers(QAbstractItemView::NoEditTriggers);
     _peak_collections_table->setHorizontalHeaderLabels(QStringList{
-        "Name", "Number of Peaks", "Number of Valid Peaks", "Number of Invalid Peaks",
+        "Name", "Number of peaks", "Number of valid peaks", "Number of invalid peaks",
         "Is indexed", "Is integrated",
         "Peak collection type"});
 
@@ -155,8 +155,8 @@ void SubframeHome::_setLeftLayout(QHBoxLayout* main_layout)
 
     // labels for tables
     QLabel* lab_dataset = new QLabel("Datasets", this);
-    QLabel* lab_peaks = new QLabel("Peak Collections", this);
-    QLabel* lab_unitcell = new QLabel("Unit Cells", this);
+    QLabel* lab_peaks = new QLabel("Peak collections", this);
+    QLabel* lab_unitcell = new QLabel("Unit cells", this);
 
     QHBoxLayout* lay_datasets_head = new QHBoxLayout();
     QVBoxLayout* lay_datasets = new QVBoxLayout();
