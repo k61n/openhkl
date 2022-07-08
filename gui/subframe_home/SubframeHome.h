@@ -77,16 +77,15 @@ class SubframeHome : public QWidget {
 
     //! Disable unsafe widgets if no data loaded
     void toggleUnsafeWidgets();
-
+    //! Refreshing tables on SubframeHome
     void refreshTables() const;
-
+    //! Clearing tables on SubframeHome
     void clearTables();
-
-    void showInputFiles() const;
-
-
+    //! Setup ContextMenu on Dataset table 
     void setContextMenuDatasetTable(QPoint pos);
+    //! Setup ContextMenu on PeakCollection table
     void setContextMenuPeakTable(QPoint pos);
+    //! Setup ContextMenu on UnitCell table
     void setContextMenuUnitCellTable(QPoint pos);
 
  private:
