@@ -43,7 +43,7 @@ PeakFilter::PeakFilter()
 void PeakFilter::resetFilterFlags()
 {
     *_filter_flags = {true,  false, false, false, false, false, false,
-                      false, false, false, false, false, false, false};
+                      false, false, false, false, false, false, false, false};
 }
 
 void PeakFilter::filterSignificance(PeakCollection* peak_collection) const
@@ -433,6 +433,19 @@ void PeakFilter::filterFrameRange(PeakCollection* peak_collection) const
     nsxlog(Level::Info, "PeakFilter::filterFrameRange: ", nrejected, " peaks rejected");
 }
 
+void PeakFilter::filterRejectionFlag(PeakCollection* peak_collection) const
+{
+    int ncaught = 0;
+    for (Peak3D* peak : peak_collection->getPeakList()) {
+        if (peak->rejectionFlag() == _filter_params->rejection_flag) {
+            peak->caughtYou(true);
+            ++ncaught;
+        } else 
+            peak->rejectYou(true);
+    }
+    nsxlog(Level::Info, "PeakFilter::filterRejectionFlag: ", ncaught, " peaks caught");
+}
+
 void PeakFilter::filter(PeakCollection* peak_collection) const
 {
     nsxlog(Level::Info, "PeakFilter::filter: filtering peaks");
@@ -503,6 +516,13 @@ void PeakFilter::filter(PeakCollection* peak_collection) const
         nsxlog(
             Level::Info, "Filtering peaks from frames in range", _filter_params->frame_min, "-",
             _filter_params->frame_max);
+    }
+
+    if (_filter_flags->rejection_flag) {
+        filterRejectionFlag(peak_collection);
+        nsxlog(
+            Level::Info, "Filtering by rejection flag: ",
+            static_cast<int>(_filter_params->rejection_flag));
     }
 }
 

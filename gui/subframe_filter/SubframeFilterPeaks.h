@@ -74,6 +74,8 @@ class SubframeFilterPeaks : public QWidget {
     void setMergeUp();
     //! Build overlap
     void setOverlapUp();
+    //! Build rejection flag
+    void setRejectionFlagsUp();
     //! Build the others
     void setProceedUp();
     //! Set up the detector figure up
@@ -137,6 +139,9 @@ class SubframeFilterPeaks : public QWidget {
     SpoilerCheck* _sparse_box;
     SpoilerCheck* _merge_box;
     SpoilerCheck* _overlap_box;
+    SpoilerCheck* _rejection_flag_box;
+
+    QComboBox* _rejection_flag_combo;
 
     PeakComboBox* _peak_combo;
 

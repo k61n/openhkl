@@ -189,6 +189,8 @@ class Peak3D {
     std::string rejectionString() const;
     //! Return a string representation of the peak
     std::string toString() const;
+    //! Return the map of RejectionFlag definitions
+    static const std::map<RejectionFlag, std::string>& rejectionMap();
 
 
 #ifndef SWIG

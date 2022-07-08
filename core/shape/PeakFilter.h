@@ -15,6 +15,7 @@
 #ifndef NSX_CORE_SHAPE_PEAKFILTER_H
 #define NSX_CORE_SHAPE_PEAKFILTER_H
 
+#include "core/peak/Peak3D.h"
 #include "core/shape/PeakCollection.h"
 
 namespace nsx {
@@ -38,6 +39,7 @@ struct PeakFilterFlags {
     bool overlapping; //!
     bool complementary; //!
     bool frames; //!< catch peaks in a specifed frame range
+    bool rejection_flag; //!< catch peaks with a specific rejection flag
 };
 
 //! Parameters for the different filter types
@@ -54,6 +56,7 @@ struct PeakFilterParameters {
     double frame_max = 10.0; //!< end of frame range
     double peak_end = 3.0; //!< scale for peak intensity ellipsoid (sigmas)
     double bkg_end = 6.0; //!< scale for background ellipsoid (sigmas)
+    RejectionFlag rejection_flag = RejectionFlag::NotRejected; //!< rejection flag to keep
 };
 
 /*! \brief Remove peaks that meet specific criteria from a collection
@@ -118,6 +121,9 @@ class PeakFilter {
 
     //! Remove peaks outside the specified frame range
     void filterFrameRange(PeakCollection* peak_collection) const;
+
+    //! Remove peaks *without* the specified rejection flag
+    void filterRejectionFlag(PeakCollection* peak_collection) const;
 
     //! Filter only enabled on a peak vector
     std::vector<Peak3D*> filterEnabled(const std::vector<Peak3D*> peaks, bool flag) const;
