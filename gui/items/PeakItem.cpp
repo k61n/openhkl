@@ -128,6 +128,9 @@ QVariant PeakItem::peakData(const QModelIndex& index, int role, PeakDisplayModes
                 case Column::Rejection: {
                     return QString::fromStdString(_peak->rejectionString());
                 }
+                case Column::Filtered: {
+                    return QString::number(_peak->caughtByFilter());
+                }
             }
             break;
 

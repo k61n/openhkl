@@ -119,6 +119,9 @@ QVariant PeakCollectionModel::headerData(int section, Qt::Orientation orientatio
             case Column::Rejection: {
                 return QString("Reason for rejection");
             }
+            case Column::Filtered: {
+                return QString("Caught by filter");
+            }
             default: return QVariant();
         }
     } else {

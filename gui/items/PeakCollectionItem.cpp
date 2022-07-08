@@ -253,6 +253,14 @@ void PeakCollectionItem::sort(int column, Qt::SortOrder order)
             };
             break;
         }
+        case Column::Filtered: {
+            compareFn = [&](std::unique_ptr<PeakItem>& p1, std::unique_ptr<PeakItem>& p2) {
+                bool s_1 = p1->peak()->caughtByFilter();
+                bool s_2 = p2->peak()->caughtByFilter();
+                return (s_1 < s_2);
+            };
+            break;
+        }
     }
 
     std::sort(_peak_items.begin(), _peak_items.end(), compareFn);

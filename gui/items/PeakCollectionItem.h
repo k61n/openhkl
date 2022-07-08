@@ -60,7 +60,8 @@ class PeakCollectionItem {
         uc,
         d,
         Selected,
-        Count
+        Filtered,
+        Count,
     };
     //! Return the row according to the vis. peak item pointer
     int returnRowOfVisualItem(PeakItemGraphic* peak_graphic) const;
