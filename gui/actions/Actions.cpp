@@ -49,7 +49,9 @@ void Actions::setupExperiment()
     new_experiment = new QAction("New experiment");
     load_experiment = new QAction("Load experiment");
     save_experiment = new QAction("Save");
-    save_experiment_as = new QAction("Save as"); save_all_experiment = new QAction("Save all");
+    save_experiment_as = new QAction("Save as");
+    save_experiment_as = new QAction("Save as");
+    save_all_experiment = new QAction("Save all");
     remove_experiment = new QAction("Remove experiment");
     quit = new QAction("Quit");
 
@@ -91,6 +93,7 @@ void Actions::setupView()
 void Actions::setupData()
 {
     add_data = new QAction("Add data set");
+    show_input_files = new QAction("Show input files");
     remove_data = new QAction("Remove data set");
     add_raw = new QAction("Add raw/tiff data");
     add_hdf5 = new QAction("Add NSX(HDF5) data");
@@ -107,7 +110,13 @@ void Actions::setupData()
 
     connect(remove_data, &QAction::triggered, this, &Actions::removeData);
 
-    
+    connect(show_input_files, &QAction::triggered,
+        [ ]() {
+            gGui->input_files_window->show();
+            gGui->input_files_window->refreshAll();
+
+        }
+    );
 }
 
 void Actions::removeExperiment()
@@ -160,11 +169,20 @@ void Actions::setupOptions() { }
 
 void Actions::setupPeaks()
 {
+    show_peaks = new QAction("Show Peaks");
     remove_peaks = new QAction("Remove peak collection");
     clone_peaks = new QAction("Clone peak collection");
 
     connect(remove_peaks, &QAction::triggered, this, &Actions::removePeaks);
     connect(clone_peaks, &QAction::triggered, this, &Actions::clonePeaks);
+
+    connect(
+         show_peaks, &QAction::triggered,
+        [ ]() {
+            gGui->peak_list_window->show();
+            gGui->peak_list_window->refreshAll(  );
+        }
+    );
 }
 
 void Actions::setupRest()

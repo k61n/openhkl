@@ -17,6 +17,9 @@
 
 #include <QToolBar>
 #include <array>
+#include <QToolTip>
+
+// subclass Action to integrate tooltips
 
 class SideBar : public QWidget {
     Q_OBJECT

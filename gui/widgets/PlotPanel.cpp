@@ -2,7 +2,7 @@
 //
 //  OpenHKL: data reduction for single crystal diffraction
 //
-//! @file      gui/subframe_experiment/PlotPanel.cpp
+//! @file      gui/widgets/PlotPanel.cpp
 //! @brief     Implements class PlotPanel
 //!
 //! @homepage  ###HOMEPAGE###
@@ -12,7 +12,7 @@
 //
 //  ***********************************************************************************************
 
-#include "gui/subframe_experiment/PlotPanel.h"
+#include "gui/widgets/PlotPanel.h"
 
 #include "gui/MainWin.h"
 #include "gui/actions/Actions.h"
@@ -25,6 +25,7 @@ PlotPanel::PlotPanel()
     anchor = new QHBoxLayout(this);
     plot = new SXPlot(this);
     anchor->addWidget(plot);
+    centralWidget = this;
 }
 
 void PlotPanel::plotData(QVector<double>& x, QVector<double>& y, QVector<double>& e)

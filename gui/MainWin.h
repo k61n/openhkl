@@ -27,6 +27,10 @@ class DetectorScene;
 class DetectorWindow;
 class LogWindow;
 class PeakWindow;
+class InputFilesWindow;
+class InstrumentStateWindow;
+class PeaklistWindow;
+class AxisWindow;
 class PlottableItem;
 class Sentinel;
 class SideBar;
@@ -73,7 +77,7 @@ class MainWin : public QMainWindow {
     void plotData(QVector<double>& x, QVector<double>& y, QVector<double>& e) const;
     //! determine if the system theme is dark
     bool isDark();
-    
+
     void refreshMenu();
 
     //! Get the Sidebar
@@ -111,6 +115,10 @@ class MainWin : public QMainWindow {
 
     // log window
     LogWindow* log_window;
+
+    InputFilesWindow* input_files_window; 
+    
+    PeaklistWindow* peak_list_window;
 
     Sentinel* sentinel;
 

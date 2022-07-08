@@ -190,7 +190,7 @@ them in an octree. The ellipsoid overlap detection is implemented using
 the criterion described in **TODO: find literature**.
 
 .. _peakfinder:
-.. figure:: images/workflow/peak_finder.png
+.. figure:: peak_finder.png
    :alt: Masking the detector image
    :name: fig:peak_finder
    :width: 100.0%

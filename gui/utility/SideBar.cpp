@@ -18,7 +18,6 @@
 #include "gui/models/Project.h"
 #include "gui/models/Session.h"
 #include "gui/subframe_merge/SubframeMergedPeaks.h"
-#include "gui/subframe_experiment/PropertyPanel.h"
 #include "gui/subframe_experiment/SubframeExperiment.h"
 #include "gui/subframe_filter/SubframeFilterPeaks.h"
 #include "gui/subframe_find/SubframeFindPeaks.h"
@@ -35,6 +34,7 @@
 #include <QPaintEvent>
 #include <QPainter>
 #include <QSignalBlocker>
+#include <QLabel>
 
 // TODO: find a better place for this
 // Icon attributions:
@@ -70,7 +70,10 @@ SideBar::SideBar(QWidget* parent) : QWidget(parent), mCheckedAction(nullptr), mO
     QAction* predictor = addAction(QIcon(path + QString("predictor.svg")), "Predict");
     QAction* refiner = addAction(QIcon(path + QString("refiner.svg")), "Refine");
     QAction* integrator = addAction(QIcon(path + QString("integrator.svg")), "Integrate");
-    QAction* info = addAction(QIcon(path + QString("merger.svg")), "Merge");
+    QAction* info = addAction(QIcon(path + QString("merger.svg")), "Merge"); 
+
+    
+
 
     QAction* tempAction = mActions.at(0);
     mCheckedAction = tempAction;
@@ -112,8 +115,9 @@ void SideBar::paintEvent(QPaintEvent* event)
             painter.fillRect(actionRect, fill_color);
         }
 
-        if (action == mOverAction)
+        if (action == mOverAction){
             painter.fillRect(actionRect, QColor(150, 150, 150));
+        }
 
         if (gGui->isDark()) // looks like we have a dark theme
             painter.setPen(Qt::white);
@@ -134,7 +138,7 @@ void SideBar::paintEvent(QPaintEvent* event)
         actionIcon.paint(&painter, actionIconRect);
 
         action_y += actionRect.height();
-    } 
+    }
 }
 QSize SideBar::minimumSizeHint() const
 {
@@ -231,10 +235,10 @@ void SideBar::onExperiment()
 {
     gGui->_layout_stack->setCurrentIndex(1);
     if (gSession->hasProject()) {
-        gGui->experiment->getProperty()->unitCellChanged();
+        /*gGui->experiment->getProperty()->unitCellChanged();
         gGui->experiment->getProperty()->peaksChanged();
         gGui->experiment->getProperty()->experimentChanged();
-        gGui->experiment->getProperty()->dataChanged();
+        gGui->experiment->getProperty()->dataChanged();*/
     }
     gGui->experiment->refreshAll();
     emit subframeChanged();
@@ -298,12 +302,12 @@ void SideBar::onMerger()
 
 void SideBar::refreshAll()
 {
-    if (gSession->currentProjectNum() != -1) {
-        gGui->experiment->getProperty()->unitCellChanged();
-        gGui->experiment->getProperty()->peaksChanged();
-        gGui->experiment->getProperty()->experimentChanged();
-        gGui->experiment->getProperty()->dataChanged();
-    }
+    /*if (gSession->currentProjectNum() != -1) {
+        gGui->detector->getProperty()->unitCellChanged();
+        gGui->detector->getProperty()->peaksChanged();
+        gGui->detector->getProperty()->experimentChanged();
+        gGui->detector->getProperty()->dataChanged();
+    }*/
     gGui->finder->refreshAll();
     gGui->filter->refreshAll();
     gGui->indexer->refreshAll();
@@ -318,3 +322,4 @@ void SideBar::refreshCurrent()
 {
     mCheckedAction->trigger();
 }
+

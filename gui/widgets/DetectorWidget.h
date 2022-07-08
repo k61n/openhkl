@@ -18,6 +18,27 @@
 #include "core/data/DataTypes.h"
 
 #include <QGridLayout>
+#include <QApplication>
+#include <QKeyEvent>
+#include <QPainter>
+#include <fstream>
+
+#include <QString>
+#include <QFileInfo>
+#include <QMenu>
+#include <QWidget>
+
+
+
+#include <QApplication>
+#include <QKeyEvent>
+#include <QPainter>
+#include <fstream>
+
+#include <QString>
+#include <QFileInfo>
+#include <QMenu>
+#include <QWidget>
 
 class DetectorScene;
 class DetectorView;
@@ -32,7 +53,6 @@ class DetectorWidget : public QGridLayout {
 
  public:
     DetectorWidget(bool mode, bool cursor, bool slider, QWidget* parent = nullptr);
-
     //! Synchronise intensity sliders and intensities across instances
     void syncIntensitySliders();
     //! Update the DataSet combo
@@ -45,6 +65,8 @@ class DetectorWidget : public QGridLayout {
     nsx::sptrDataSet currentData();
     //! Switch the Detectorscene between coordinate types
     void changeView(int option);
+
+    void datasetChanged();
 
     //! Return the DetectorScene
     DetectorScene* scene();
@@ -62,6 +84,10 @@ class DetectorWidget : public QGridLayout {
     QSlider* slider();
     //! Whether this instance has an intensity slider
     bool hasSlider();
+    //! Return ptr to DetectorView
+    DetectorView* getDetectorView();
+    //! Context menu
+    void setmenuRequested(QPoint pos);
 
  private:
     DetectorView* _detector_view;

@@ -17,6 +17,8 @@
 
 #include "gui/models/ExperimentModel.h"
 #include "gui/views/ExperimentTableView.h"
+#include "gui/subwindows/InputFilesWindow.h"
+#include "gui/subwindows/PeaklistWindow.h"
 
 #include <memory>
 
@@ -27,6 +29,10 @@
 #include <QVBoxLayout>
 #include <QWidget>
 #include <qpushbutton.h>
+#include <QSplitter>
+
+class InputFilesWindow;
+class InstrumentDataWindow;
 
 //! Frame containing interface to create, save and load experiments
 class SubframeHome : public QWidget {
@@ -70,12 +76,16 @@ class SubframeHome : public QWidget {
 
     //! Disable unsafe widgets if no data loaded
     void toggleUnsafeWidgets();
-
+    //! Refreshing tables on SubframeHome
     void refreshTables() const;
-
+    //! Clearing tables on SubframeHome
     void clearTables();
-
-    // void UpdatePeakList();
+    //! Setup ContextMenu on Dataset table 
+    void setContextMenuDatasetTable(QPoint pos);
+    //! Setup ContextMenu on PeakCollection table
+    void setContextMenuPeakTable(QPoint pos);
+    //! Setup ContextMenu on UnitCell table
+    void setContextMenuUnitCellTable(QPoint pos);
 
  private:
     QPushButton* _new_exp;
@@ -83,6 +93,8 @@ class SubframeHome : public QWidget {
     QPushButton* _save_current;
     QPushButton* _save_all;
     QPushButton* _remove_current;
+    QPushButton* _show_input_files;
+    QPushButton* _show_found_peaks;
 
     ExperimentTableView* _open_experiments_view;
     std::unique_ptr<ExperimentModel> _open_experiments_model;

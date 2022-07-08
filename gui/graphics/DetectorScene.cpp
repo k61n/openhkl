@@ -201,6 +201,8 @@ void DetectorScene::clearPeakItems()
 {
     if (!_currentData)
         return;
+    if (_peak_graphics_items.size() == 0) // contin. crashed without for me
+       return;
 
     // _peak_graphics_items can be out of sync (pointer may get deleted outside). Therefore
     // do not use it for removing items from the scene (may cause crash)
@@ -218,6 +220,7 @@ void DetectorScene::clearPeakItems()
 
 void DetectorScene::drawPeakitems()
 {
+
     clearPeakItems();
     if (_peak_model_1)
         drawPeakModelItems(_peak_model_1);
@@ -1153,6 +1156,18 @@ void DetectorScene::resetScene()
     _currentFrameIndex = 0;
     _zoomrect = nullptr;
     _zoomStack.clear();
+    _image = nullptr;
+    _integrationRegion1 = nullptr;
+    _integrationRegion2 = nullptr;
+    _masks.clear();
+    _lastClickedGI = nullptr;
+}
+
+void DetectorScene::resetElements()
+{
+    clearPeakItems();
+    clear();
+    _zoomrect = nullptr;
     _image = nullptr;
     _integrationRegion1 = nullptr;
     _integrationRegion2 = nullptr;

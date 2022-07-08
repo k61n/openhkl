@@ -369,23 +369,25 @@ void SubframeShapes::refreshAll()
 void SubframeShapes::grabShapeParameters()
 {
     auto* params = _shape_model.parameters();
-    _peak_combo->currentPeakCollection()->computeSigmas();
+    if (gSession->currentProject()->hasPeakCollection()){
+        _peak_combo->currentPeakCollection()->computeSigmas();
 
-    _min_d->setValue(params->d_min);
-    _max_d->setValue(params->d_max);
-    _peak_end->setValue(params->peak_end);
-    _bkg_begin->setValue(params->bkg_begin);
-    _bkg_end->setValue(params->bkg_end);
-    _min_strength->setValue(params->strength_min);
-    _kabsch->setChecked(params->kabsch_coords);
-    _nx->setValue(params->nbins_x);
-    _ny->setValue(params->nbins_y);
-    _nz->setValue(params->nbins_z);
-    _pixel_radius->setValue(params->neighbour_range_pixels);
-    _frame_radius->setValue(params->neighbour_range_frames);
-    _sigma_m->setValue(_peak_combo->currentPeakCollection()->sigmaM());
-    _sigma_d->setValue(_peak_combo->currentPeakCollection()->sigmaD());
-    _interpolation_combo->setCurrentIndex(static_cast<int>(params->interpolation));
+        _min_d->setValue(params->d_min);
+        _max_d->setValue(params->d_max);
+        _peak_end->setValue(params->peak_end);
+        _bkg_begin->setValue(params->bkg_begin);
+        _bkg_end->setValue(params->bkg_end);
+        _min_strength->setValue(params->strength_min);
+        _kabsch->setChecked(params->kabsch_coords);
+        _nx->setValue(params->nbins_x);
+        _ny->setValue(params->nbins_y);
+        _nz->setValue(params->nbins_z);
+        _pixel_radius->setValue(params->neighbour_range_pixels);
+        _frame_radius->setValue(params->neighbour_range_frames);
+        _sigma_m->setValue(_peak_combo->currentPeakCollection()->sigmaM());
+        _sigma_d->setValue(_peak_combo->currentPeakCollection()->sigmaD());
+        _interpolation_combo->setCurrentIndex(static_cast<int>(params->interpolation));
+    }
 }
 
 void SubframeShapes::setShapeParameters()

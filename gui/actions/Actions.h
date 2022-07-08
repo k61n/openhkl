@@ -43,6 +43,7 @@ class Actions : public QObject {
     QAction* close_peak_windows;
 
     // Data
+    QAction* show_input_files;
     QAction* add_data;
     QAction* remove_data;
     QAction* add_raw;
@@ -50,6 +51,7 @@ class Actions : public QObject {
     QAction* add_nexus;
 
     // Peaks
+    QAction* show_peaks;
     QAction* remove_peaks;
     QAction* clone_peaks;
 

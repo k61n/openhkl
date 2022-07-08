@@ -2,7 +2,7 @@
 //
 //  OpenHKL: data reduction for single crystal diffraction
 //
-//! @file      gui/subframe_experiment/properties/PeakProperties.h
+//! @file      gui/widgets/PeakProperties.h
 //! @brief     Defines classes ListTab, TabPeaks
 //!
 //! @homepage  ###HOMEPAGE###
@@ -47,6 +47,8 @@ class PeakProperties : public QWidget {
     void clonePeakCollection();
     //! Set up the GUI size policies
     void deleteCollection();
+    //! Set PeakCollection
+    void setPeakCollection(QString pc_name);
 
  public:
     //! Notify that the usr has selected another peak

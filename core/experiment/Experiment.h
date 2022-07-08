@@ -261,8 +261,10 @@ class Experiment {
     //! Container for metadata for reading raw data files
     RawDataReaderParameters data_params;
 
-    // auto generating names for collections
+    //! Generate automatic name for PeakCollection
     std::string generatePeakCollectionName();
+
+    //! Generate automatic name for UnitCell
     std::string generateUnitCellName();
 
  private: // private variables

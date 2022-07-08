@@ -19,7 +19,10 @@
 #include <QKeyEvent>
 #include <QPainter>
 #include <fstream>
-#include <iostream>
+#include <QString>
+#include <QFileInfo>
+#include <qmessagebox.h>
+
 
 SXPlot::SXPlot(QWidget* parent) : QCustomPlot(parent)
 {
@@ -27,7 +30,7 @@ SXPlot::SXPlot(QWidget* parent) : QCustomPlot(parent)
     _zoom_box->setVisible(false);
 
     legend->setSelectableParts(QCPLegend::spItems);
-    legend->setVisible(true);
+    legend->setVisible(false); // legend is buggy, so better turn it off
 
     setInteractions(QCP::iSelectAxes | QCP::iSelectLegend | QCP::iSelectPlottables);
 
@@ -169,7 +172,10 @@ void SXPlot::zoom(double x_init, double x_final, double y_init, double y_final)
 
 void SXPlot::resetZoom()
 {
-    int plot_count = plottableCount();
+    // crashed in for loop below -> there have been less plots as graphCount() suggests
+    // wrong method ?! Seems to work with graphCount well
+    //int plot_count = plottableCount();
+    int plot_count = graphCount();
 
     double x_max = -1e20;
     double x_min = 1e20;
@@ -177,15 +183,13 @@ void SXPlot::resetZoom()
     double y_min = 1e20;
 
     std::vector<double> values_x, values_y;
-
-    for (int i = 0; i < plot_count; ++i) {
+    for (int i = 0; i < plot_count; ++i) {//crash -> plot_count does not have the right size ???
         QCPGraph* graph_item = graph(i);
-
         values_x.clear();
         values_y.clear();
 
         for (QVector<QCPGraphData>::iterator it = graph_item->data()->begin();
-             it != graph_item->data()->end(); ++it) {
+            it != graph_item->data()->end(); ++it) {
             values_x.push_back(it->key);
             values_y.push_back(it->value);
         }
@@ -199,7 +203,6 @@ void SXPlot::resetZoom()
         if (*(std::min_element(values_y.begin(), values_y.end())) < y_min)
             y_min = *(std::min_element(values_y.begin(), values_y.end()));
     }
-
     zoom(x_min, x_max, y_min, y_max);
 }
 
@@ -236,54 +239,100 @@ void SXPlot::legendDoubleClick(QCPLegend* legend, QCPAbstractLegendItem* item)
     }
 }
 
-// void SXPlot::exportToAscii(QCPErrorBars* errorBars = NULL)
-// {
-//     int ngraphs = this->graphCount();
+ void SXPlot::exportToAscii(QCPErrorBars* errorBars, const char lim)
+ {
+     int ngraphs = this->graphCount();
 
-//     if (!ngraphs)
-//         return;
+     if (!ngraphs)
+         return;
 
-//     int npoints = graph(0)->data()->size();
-//     if (!npoints)
-//         return;
+     int npoints = graph(0)->data()->size();
+     if (!npoints)
+         return;
 
-//     QString fileName = QFileDialog::getSaveFileName(
-//         this, tr("Choose ASCII file to export"), "", tr("Data File (*.dat)"));
+     QString fileName = QFileDialog::getSaveFileName(
+         this, tr("Name CSV file to export"), QString(qgetenv("HOME")), tr("Data file (*.csv)"));
 
-//     std::ofstream file;
-//     file.open(fileName.toStdString().c_str(), std::ios::out);
-//     if (!file.is_open())
-//         QMessageBox::critical(this, tr("OpenHKL"), tr("Problem opening file"));
+     std::ofstream file;
+     file.open(fileName.toStdString().c_str(), std::ios::out);
+     if (!file.is_open())
+         QMessageBox::critical(this, tr("OpenHKL"), tr("Problem opening file"));
 
-//     // TODO: tidy up formatting in file
-//     for (unsigned ind = 0; ind < npoints; ++ind){
-//       file << graph(0)->data()->at(ind)->key << " ";
-//       for (unsigned ngraph = 0; ngraph < ngraphs; ++ngraph){
-//         file << graph(ngraph)->data()->at(ind)->value << " ";
-//         if (errorBars != NULL){
-//           double error = 0.5 * (errorBars->data()->at(ind).errorPlus +
-//                                 errorBars->data()->at(ind).errorMinus);
-//           file << error << " ";
-//         }
-//       }
-//       file << std::endl;
-//     }
-//     file.close();
-// }
+     for (unsigned ind = 0; ind < npoints; ++ind){
+       file << graph(0)->data()->at(ind)->key << lim;
+       for (unsigned ngraph = 0; ngraph < ngraphs; ++ngraph){
+         file << graph(ngraph)->data()->at(ind)->value;
+         if (errorBars != NULL){
+           double error = 0.5 * (errorBars->data()->at(ind).errorPlus +
+                                 errorBars->data()->at(ind).errorMinus);
+           file << lim << error;
+         }
+       }
+       file << std::endl;
+     }
+     file.close();
+ }
 
 void SXPlot::setmenuRequested(QPoint pos)
 {
     // Add menu to export the graphs to ASCII if graphs are present
     if (this->graphCount()) {
         QMenu* menu = new QMenu(this);
+
         QAction* reset_zoom = menu->addAction("Reset zoom");
-        // QAction* export_ASCII = menu->addAction("Export to ASCII");
         menu->popup(mapToGlobal(pos));
 
         connect(reset_zoom, &QAction::triggered, this, &SXPlot::resetZoom);
 
-        // connect(
-        //     export_ASCII, &QAction::triggered,
-        //     this, &SXPlot::exportToAscii);
+        menu->addSeparator();
+
+        QAction* copy_clpbrd = menu->addAction("Copy to clipboard");
+        menu->popup(mapToGlobal(pos));
+        connect(copy_clpbrd, &QAction::triggered, this,
+        [=](){
+            QApplication::clipboard()->setImage(toPixmap().toImage(), QClipboard::Clipboard);
+        });
+
+        // saving images to file
+        QAction* save_graph = menu->addAction("Save graph");
+        menu->popup(mapToGlobal(pos));
+        connect(save_graph, &QAction::triggered, this,
+        [=](){
+            QFileInfo fi(QFileDialog::getSaveFileName(this, tr("Save image as"),
+                QString(qgetenv("HOME")),
+                tr("Images (*.png *.jpg)")));
+
+            if (!fi.absoluteFilePath().isNull()){
+                if (fi.suffix() == "png")
+                    if (!savePng(fi.absoluteFilePath(), 1400, 800, 1.0, 100))
+                        QMessageBox::information(
+                            this,
+                            "Saving file failed",
+                            "The file couldn't be saved."
+                        );
+                if (fi.suffix() == "jpg")
+                    if (!saveJpg(fi.absoluteFilePath(), 1400, 800, 1.0, 100))
+                        QMessageBox::information(
+                            this,
+                            "Saving file failed",
+                            "The file couldn't be saved."
+                        );
+            }
+        });
+
+        QAction* export_ASCII = menu->addAction("Export to CSV");
+        menu->popup(mapToGlobal(pos));
+
+        connect(export_ASCII, &QAction::triggered, this,
+            [=](){
+                QCPErrorBars *errorBars = new QCPErrorBars(xAxis, yAxis);
+                errorBars->removeFromLegend();
+                errorBars->setAntialiased(false);
+                errorBars->setDataPlottable( graph(3));
+                errorBars->setPen(QPen(QColor(180,180,180)));
+                //Plot->graph(3)->setName("Measurement");
+
+                exportToAscii(errorBars);
+        });
     }
 }

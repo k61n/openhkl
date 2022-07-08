@@ -21,8 +21,7 @@
 #include "gui/graphics/DetectorView.h"
 #include "gui/graphics_items/PlottableItem.h"
 #include "gui/subframe_merge/SubframeMergedPeaks.h"
-#include "gui/subframe_experiment/PlotPanel.h"
-#include "gui/subframe_experiment/PropertyPanel.h"
+#include "gui/widgets/PlotPanel.h"
 #include "gui/subframe_experiment/SubframeExperiment.h"
 #include "gui/subframe_filter/SubframeFilterPeaks.h"
 #include "gui/subframe_find/SubframeFindPeaks.h"
@@ -36,6 +35,9 @@
 #include "gui/subwindows/InstrumentStateWindow.h"
 #include "gui/subwindows/LogWindow.h"
 #include "gui/subwindows/PeakWindow.h"
+#include "gui/subwindows/InputFilesWindow.h"
+#include "gui/subwindows/InstrumentStateWindow.h"
+#include "gui/subwindows/PeaklistWindow.h"
 #include "gui/utility/SideBar.h"
 #include "gui/widgets/DetectorWidget.h"
 
@@ -49,8 +51,6 @@
 #include <QStatusBar>
 #include <QString>
 #include <QTimer>
-
-#include <iostream>
 
 MainWin* gGui; //!< global pointer to the main window
 
@@ -91,6 +91,8 @@ MainWin::MainWin()
 
     detector_window = new DetectorWindow();
     log_window = new LogWindow(this);
+    input_files_window = new InputFilesWindow(this);
+    peak_list_window = new PeaklistWindow(this);
 
     _layout_stack = new QStackedWidget(main_widget);
     _layout_stack->addWidget(home);
@@ -123,27 +125,22 @@ MainWin::MainWin()
 
 void MainWin::onDataChanged() const
 {
-    experiment->getProperty()->dataChanged();
 }
 
 void MainWin::onExperimentChanged() const
 {
-    experiment->getProperty()->experimentChanged();
 }
 
 void MainWin::onPeaksChanged() const
 {
-    experiment->getProperty()->peaksChanged();
 }
 
 void MainWin::onUnitCellChanged() const
 {
-    experiment->getProperty()->unitCellChanged();
 }
 
 void MainWin::changeView(int option) const
 {
-    experiment->detectorWidget()->changeView(option);
 }
 
 void MainWin::updatePlot(PlottableItem* p) const
@@ -153,7 +150,6 @@ void MainWin::updatePlot(PlottableItem* p) const
 
 void MainWin::cursormode(int i) const
 {
-    experiment->detectorWidget()->scene()->changeCursorMode(i);
 }
 
 void MainWin::exportPlot() const
@@ -208,9 +204,6 @@ void MainWin::closeEvent(QCloseEvent* event)
 
     if (log_window)
         log_window->close();
-
-    if (instrumentstate_window)
-        instrumentstate_window->close();
 
     QMainWindow::closeEvent(event);
 }

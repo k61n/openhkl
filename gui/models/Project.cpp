@@ -237,11 +237,6 @@ void Project::changeInstrument(const QString& instrumentname)
     _experiment.reset(new nsx::Experiment{_experiment->name(), instrumentname.toStdString()});
 }
 
-void Project::onPeaksChanged()
-{
-    gGui->onPeaksChanged();
-}
-
 void Project::saveToFile(QString path)
 {
     try {
