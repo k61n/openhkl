@@ -115,6 +115,10 @@ void SideBar::paintEvent(QPaintEvent* event)
             painter.fillRect(actionRect, fill_color);
         }
 
+        if (action == mOverAction){
+            painter.fillRect(actionRect, QColor(150, 150, 150));
+        }
+
         if (gGui->isDark()) // looks like we have a dark theme
             painter.setPen(Qt::white);
         else
