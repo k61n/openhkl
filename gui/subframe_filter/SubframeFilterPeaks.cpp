@@ -68,6 +68,7 @@ SubframeFilterPeaks::SubframeFilterPeaks()
     setSparseUp();
     setMergeUp();
     setOverlapUp();
+    setRejectionFlagsUp();
     setProceedUp();
     setFigureUp();
     setPeakTableUp();
@@ -222,6 +223,18 @@ void SubframeFilterPeaks::setOverlapUp()
     _left_layout->addWidget(_overlap_box);
 }
 
+void SubframeFilterPeaks::setRejectionFlagsUp()
+{
+    _rejection_flag_box = new SpoilerCheck("Catch rejected peaks");
+    GridFiller f(_rejection_flag_box);
+
+    _rejection_flag_combo = f.addCombo("Rejection reason");
+    for (const auto& [flag, reason] : nsx::Peak3D::rejectionMap())
+        _rejection_flag_combo->addItem(QString::fromStdString(reason));
+
+    _left_layout->addWidget(_rejection_flag_box);
+}
+
 void SubframeFilterPeaks::setProceedUp()
 {
     _extinct_spacegroup = new QCheckBox("Remove extinct from spacegroup");
@@ -334,6 +347,7 @@ void SubframeFilterPeaks::grabFilterParameters()
     _significance_level->setValue(params->significance);
     _peak_end->setValue(params->peak_end);
     _bkg_end->setValue(params->bkg_end);
+    _rejection_flag_combo->setCurrentIndex(static_cast<int>(params->rejection_flag));
 
     auto* flags =
         gSession->currentProject()->experiment()->peakFilter()->flags();
@@ -352,6 +366,7 @@ void SubframeFilterPeaks::grabFilterParameters()
     _sparse_box->setChecked(flags->sparse);
     _merge_box->setChecked(flags->significance);
     _overlap_box->setChecked(flags->overlapping);
+    _rejection_flag_box->setChecked(flags->rejection_flag);
 }
 
 void SubframeFilterPeaks::setFilterParameters()
@@ -391,6 +406,8 @@ void SubframeFilterPeaks::setFilterParameters()
         flags->sparse = true;
     if (_merge_box->isChecked())
         flags->significance = true;
+    if (_rejection_flag_box->isChecked())
+        flags->rejection_flag = true;
 
     auto* params = filter->parameters();
 
@@ -405,6 +422,7 @@ void SubframeFilterPeaks::setFilterParameters()
     params->unit_cell = _unit_cell->currentText().toStdString();
     params->peak_end = _peak_end->value();
     params->bkg_end = _bkg_end->value();
+    params->rejection_flag = static_cast<nsx::RejectionFlag>(_rejection_flag_combo->currentIndex());
 }
 
 void SubframeFilterPeaks::filterPeaks()

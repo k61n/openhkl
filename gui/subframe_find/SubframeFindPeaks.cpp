@@ -263,6 +263,7 @@ void SubframeFindPeaks::setPeakTableUp()
     _peak_table->setColumnHidden(0, true);
     _peak_table->setColumnHidden(1, true);
     _peak_table->setColumnHidden(2, true);
+    _peak_table->setColumnHidden(13, true);
 
     peak_grid->addWidget(_peak_table, 0, 0, 0, 0);
 

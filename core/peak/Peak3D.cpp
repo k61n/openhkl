@@ -434,4 +434,9 @@ std::string Peak3D::toString() const
     return oss.str();
 }
 
+const std::map<RejectionFlag, std::string>& Peak3D::rejectionMap()
+{
+    return _rejection_map;
+}
+
 } // namespace nsx
