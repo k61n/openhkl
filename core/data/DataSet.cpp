@@ -361,7 +361,7 @@ void DataSet::getIntensityHistogram(std::size_t nbins)
     initHistograms(nbins);
     for (std::size_t index = 0; index < nFrames(); ++index)
         getFrameIntensityHistogram(index);
-    gsl_histogram_fprintf(stdout, _total_histogram, "%g", "%g");
+    // gsl_histogram_fprintf(stdout, _total_histogram, "%g", "%g");
 }
 
 void DataSet::clearHistograms()
