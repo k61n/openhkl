@@ -19,6 +19,7 @@
 #include "base/utils/ProgressHandler.h"
 #include "base/utils/StringIO.h" // lowerCase
 #include "base/utils/Units.h" // deg
+#include "core/data/DataTypes.h"
 #include "core/detector/Detector.h"
 #include "core/detector/DetectorEvent.h"
 #include "core/experiment/ExperimentExporter.h"
@@ -36,6 +37,8 @@
 
 
 #include <H5Cpp.h>
+#include <gsl/gsl_histogram.h>
+
 #include <stdexcept>
 
 namespace nsx {
@@ -82,6 +85,8 @@ void DataSet::finishRead()
 
     // Update the monochromator wavelength
     diffractometer()->source().selectedMonochromator().setWavelength(wavelength());
+    // initialise intensity histograms
+    getIntensityHistogram(1000);
 }
 
 void DataSet::addDataFile(const std::string& filename, const std::string& extension)
@@ -323,6 +328,55 @@ void DataSet::setInstrumentStates(InstrumentStateSet* states)
 InstrumentStateList& DataSet::instrumentStates()
 {
     return _states->instrumentStates();
+}
+
+void DataSet::initHistograms(std::size_t nbins)
+{
+    double max_count = maxCount();
+    for (int i = 0; i < nFrames(); ++i) {
+        gsl_histogram* h;
+        _histograms.push_back(h);
+    }
+    _total_histogram = gsl_histogram_alloc(nbins);
+    gsl_histogram_set_ranges_uniform(_total_histogram, 0, max_count);
+    for (std::size_t index = 0; index < nFrames(); ++index) {
+        _histograms[index] = gsl_histogram_alloc(nbins);
+        gsl_histogram_set_ranges_uniform(_histograms[index], 0, max_count);
+    }
+}
+
+void DataSet::getFrameIntensityHistogram(std::size_t index)
+{
+    auto image_mat = frame(index);
+    for (std::size_t col = 0; col < nCols(); ++col) {
+        for (std::size_t row = 0; row < nRows(); ++row) {
+            gsl_histogram_increment(_histograms[index], image_mat(row, col));
+            gsl_histogram_increment(_total_histogram, image_mat(row, col));
+        }
+    }
+}
+
+void DataSet::getIntensityHistogram(std::size_t nbins)
+{
+    initHistograms(nbins);
+    for (std::size_t index = 0; index < nFrames(); ++index)
+        getFrameIntensityHistogram(index);
+    gsl_histogram_fprintf(stdout, _total_histogram, "%g", "%g");
+}
+
+void DataSet::clearHistograms()
+{
+    gsl_histogram_free(_total_histogram);
+    for (auto* hist : _histograms)
+        gsl_histogram_free(hist);
+}
+
+double DataSet::maxCount()
+{
+    double max_count = 0;
+    for (int i = 0; i < nFrames(); ++i)
+        max_count = std::max(max_count, static_cast<double>(frame(i).maxCoeff()));
+    return max_count;
 }
 
 } // namespace nsx
