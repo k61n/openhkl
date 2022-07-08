@@ -36,7 +36,7 @@
 #include "gui/subwindows/LogWindow.h"
 #include "gui/subwindows/PeakWindow.h"
 #include "gui/subwindows/InputFilesWindow.h"
-#include "gui/subwindows/InstrumentDataWindow.h"
+#include "gui/subwindows/InstrumentStateWindow.h"
 #include "gui/subwindows/PeaklistWindow.h"
 #include "gui/utility/SideBar.h"
 #include "gui/widgets/DetectorWidget.h"
@@ -76,6 +76,8 @@ MainWin::MainWin()
     _side_bar = new SideBar(main_widget);
     main_layout->addWidget(_side_bar);
 
+    instrumentstate_window = new InstrumentStateWindow();
+
     home = new SubframeHome;
     experiment = new SubframeExperiment;
     finder = new SubframeFindPeaks;
@@ -90,7 +92,6 @@ MainWin::MainWin()
     detector_window = new DetectorWindow();
     log_window = new LogWindow(this);
     input_files_window = new InputFilesWindow(this);
-    instrument_data_window = new InstrumentDataWindow();
     peak_list_window = new PeaklistWindow(this);
 
     _layout_stack = new QStackedWidget(main_widget);

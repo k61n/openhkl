@@ -18,7 +18,6 @@
 #include "gui/models/ExperimentModel.h"
 #include "gui/views/ExperimentTableView.h"
 #include "gui/subwindows/InputFilesWindow.h"
-#include "gui/subwindows/InstrumentDataWindow.h"
 #include "gui/subwindows/PeaklistWindow.h"
 
 #include <memory>

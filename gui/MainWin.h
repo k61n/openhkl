@@ -15,6 +15,7 @@
 #ifndef NSX_GUI_MAINWIN_H
 #define NSX_GUI_MAINWIN_H
 
+#include "gui/subwindows/InstrumentStateWindow.h"
 #include <QMainWindow>
 
 #include <QLabel>
@@ -27,7 +28,7 @@ class DetectorWindow;
 class LogWindow;
 class PeakWindow;
 class InputFilesWindow;
-class InstrumentDataWindow;
+class InstrumentStateWindow;
 class PeaklistWindow;
 class AxisWindow;
 class PlottableItem;
@@ -106,21 +107,18 @@ class MainWin : public QMainWindow {
     // modeless detector dialog
     DetectorWindow* detector_window;
 
+    // modeless dialog to show instrument states
+    InstrumentStateWindow* instrumentstate_window;
+
     // modeless window to show a single peak
     QVector<PeakWindow*> peak_windows;
 
     // log window
     LogWindow* log_window;
 
-    InputFilesWindow* input_files_window;
-
-    InstrumentDataWindow* instrument_data_window;
-
+    InputFilesWindow* input_files_window; 
+    
     PeaklistWindow* peak_list_window;
-
-
-    AxisWindow* axis_window;
-
 
     Sentinel* sentinel;
 
