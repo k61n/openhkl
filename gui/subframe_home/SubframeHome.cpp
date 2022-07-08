@@ -135,8 +135,10 @@ void SubframeHome::_setLeftLayout(QHBoxLayout* main_layout)
     _peak_collections_table = new QTableWidget(0, 6);
     _peak_collections_table->setEditTriggers(QAbstractItemView::NoEditTriggers);
     _peak_collections_table->setHorizontalHeaderLabels(QStringList{
-        "Name", "Number of Peaks", "Number of Invalid Peaks", "Is indexed", "Is integrated",
-        "Type"});
+        "Name", "Number of peaks", "Number of valid peaks", "Number of invalid peaks",
+        "Is indexed", "Is integrated",
+        "Peak collection type"});
+
     _peak_collections_table->resizeColumnsToContents();
     _peak_collections_table->verticalHeader()->setVisible(false);
     _peak_collections_table->setContextMenuPolicy(Qt::CustomContextMenu);
