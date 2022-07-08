@@ -185,7 +185,7 @@ void SubframeHome::_setLeftLayout(QHBoxLayout* main_layout)
 
     connect(_dataset_table, &QWidget::customContextMenuRequested, this, &SubframeHome::setContextMenuDatasetTable);
     connect(_peak_collections_table, &QWidget::customContextMenuRequested, this, &SubframeHome::setContextMenuPeakTable);
-    connect( _unitcell_table, &QWidget::customContextMenuRequested, this, &SubframeHome::setContextMenuUnitCellTable);    
+    connect(_unitcell_table, &QWidget::customContextMenuRequested, this, &SubframeHome::setContextMenuUnitCellTable);    
 }
 
 void SubframeHome::_setRightLayout(QHBoxLayout* main_layout)
@@ -459,11 +459,6 @@ void SubframeHome::toggleUnsafeWidgets()
     _save_current->setEnabled(gSession->hasProject());
     _save_current->setEnabled(gSession->hasProject());
     _remove_current->setEnabled(gSession->hasProject());
-    /*if (_open_experiments_model->rowCount() == 0) {
-        _save_all->setEnabled(false);
-        _save_current->setEnabled(false);
-        //_remove_current->setEnabled(false);
-    }*/
 }
 
 void SubframeHome::refreshTables() const
@@ -608,12 +603,10 @@ void SubframeHome::setContextMenuDatasetTable(QPoint pos)
     bool hasSelection = _dataset_table->selectionModel()->selectedIndexes().size() > 0;
 
     QMenu* menu = new QMenu(_dataset_table);
-    QAction* list_input_files = menu->addAction("Show input files");
     menu->popup(_dataset_table->mapToGlobal(pos));
-
+    QAction* list_input_files = menu->addAction("Show input files");  
     menu->addSeparator();
     QAction* remove_dataset = menu->addAction("Remove data set");
-    menu->popup(_dataset_table->mapToGlobal(pos));
  
     list_input_files->setDisabled(!(hasData && hasSelection));
     remove_dataset->setDisabled(!(hasData && hasSelection));
@@ -667,9 +660,9 @@ void SubframeHome::setContextMenuPeakTable(QPoint pos)
     bool hasSelection = _peak_collections_table->selectionModel()->selectedIndexes().size() > 0;
 
     QMenu* menu = new QMenu(_peak_collections_table);
-    QAction* show_peaklist = menu->addAction("Show found peaks");
     menu->popup(_peak_collections_table->mapToGlobal(pos));
 
+    QAction* show_peaklist = menu->addAction("Show found peaks");    
     QAction* clone_pc = menu->addAction("Clone PeakCollection");
     QAction* remove_pc = menu->addAction("Remove PeakCollection");
 
@@ -700,15 +693,14 @@ void SubframeHome::setContextMenuPeakTable(QPoint pos)
                     int row = items[0].row(); // we only care for one (first) selected item
                     QString pc_name = _peak_collections_table->item(row, 0)->text();
 
-                    bool t = true;
                     QString txt =  "Enter name for cloned PeakCollection of " + pc_name;
                     QString cloned = QInputDialog::getText(
                         this, 
                         tr("Cloning PeakCollection"),
                         tr(txt.toStdString().c_str()), 
                         QLineEdit::Normal,
-                        QString::fromStdString(gSession->currentProject()->experiment()->generatePeakCollectionName()),
-                        &t);
+                        QString::fromStdString(gSession->currentProject()->experiment()->generatePeakCollectionName())
+                    );
 
                     if (cloned.isEmpty()) return;
                     gGui->setReady(false);
