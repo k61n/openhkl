@@ -37,6 +37,7 @@
 #include <QMenu>
 #include <QMessageBox>
 #include <QInputDialog>
+#include <unistd.h>
 
 // Icon attributions:
 // save.svg: folder open by Loudoun Design Co from the Noun Project
@@ -118,7 +119,6 @@ void SubframeHome::_setLeftLayout(QHBoxLayout* main_layout)
 
     left->addWidget(_last_import_widget);
 
-
     //QSpacerItem* spacer_bottom =
     //    new QSpacerItem(10, 0, QSizePolicy::Minimum, QSizePolicy::Expanding);
     //left->addSpacerItem(spacer_bottom);
@@ -133,11 +133,10 @@ void SubframeHome::_setLeftLayout(QHBoxLayout* main_layout)
     _dataset_table->verticalHeader()->setVisible(false);
     _dataset_table->setContextMenuPolicy(Qt::CustomContextMenu);
 
-    _peak_collections_table = new QTableWidget(0, 10);
+    _peak_collections_table = new QTableWidget(0, 6);
     _peak_collections_table->setEditTriggers(QAbstractItemView::NoEditTriggers);
     _peak_collections_table->setHorizontalHeaderLabels(QStringList{
         "Name", "Number of Peaks", "Number of Valid Peaks", "Number of Invalid Peaks",
-        "Number of caught by filter", "Number of rejected by filter", "Selected", "Enabled",
         "Is indexed", "Is integrated",
         "List Type"});
 
@@ -439,6 +438,7 @@ void SubframeHome::_updateLastLoadedWidget()
 
 void SubframeHome::_loadSelectedItem(QListWidgetItem* item)
 {
+    gGui->setReady(false);
     try {
         gSession->loadExperimentFromFile(item->data(100).toString());
         _open_experiments_model.reset();
@@ -453,6 +453,7 @@ void SubframeHome::_loadSelectedItem(QListWidgetItem* item)
         QMessageBox::critical(this, "Error", QString(e.what()));
     }
     gGui->refreshMenu();
+    gGui->setReady(true);
 }
 
 void SubframeHome::toggleUnsafeWidgets()
@@ -581,18 +582,10 @@ void SubframeHome::refreshTables() const
                     n, 2, new QTableWidgetItem(QString::number(pc->numberOfValid())));
                 _peak_collections_table->setItem(
                     n, 3, new QTableWidgetItem(QString::number(pc->numberOfInvalid())));
+                _peak_collections_table->setItem(n, 4, new QTableWidgetItem(b2s(pc->isIndexed())));
                 _peak_collections_table->setItem(
-                    n, 4, new QTableWidgetItem(QString::number(pc->numberCaughtByFilter())));
-                _peak_collections_table->setItem(
-                    n, 5, new QTableWidgetItem(QString::number(pc->numberRejectedByFilter())));
-                _peak_collections_table->setItem(
-                    n, 6, new QTableWidgetItem(QString::number(pc->countSelected())));
-                _peak_collections_table->setItem(
-                    n, 7, new QTableWidgetItem(QString::number(pc->countEnabled())));
-                _peak_collections_table->setItem(n, 8, new QTableWidgetItem(b2s(pc->isIndexed())));
-                _peak_collections_table->setItem(
-                    n, 9, new QTableWidgetItem(b2s(pc->isIntegrated())));
-                _peak_collections_table->setItem(n, 10, new QTableWidgetItem(Type2s(pc->type())));
+                    n, 5, new QTableWidgetItem(b2s(pc->isIntegrated())));
+                _peak_collections_table->setItem(n, 6, new QTableWidgetItem(Type2s(pc->type())));
             }
             _peak_collections_table->resizeColumnsToContents();
         }
@@ -613,6 +606,7 @@ void SubframeHome::setContextMenuDatasetTable(QPoint pos)
 {
     if (!gSession->hasProject()) return;
     bool hasData = gSession->currentProject()->hasDataSet();
+    bool hasSelection = _dataset_table->selectionModel()->selectedIndexes().size() > 0;
 
     QMenu* menu = new QMenu(_dataset_table);
     QAction* list_input_files = menu->addAction("Show input files");
@@ -622,17 +616,20 @@ void SubframeHome::setContextMenuDatasetTable(QPoint pos)
     QAction* remove_dataset = menu->addAction("Remove data set");
     menu->popup(_dataset_table->mapToGlobal(pos));
  
-    list_input_files->setDisabled(!hasData);
-    remove_dataset->setDisabled(!hasData);
+    list_input_files->setDisabled(!(hasData && hasSelection));
+    remove_dataset->setDisabled(!(hasData && hasSelection));
         
     connect(list_input_files, &QAction::triggered, _dataset_table,
         [=](){
             if (hasData){
-                int row = _dataset_table->selectionModel()->selectedIndexes()[0].row();
-                QString dataset = _dataset_table->item(row, 0)->text();
-                gGui->input_files_window->refreshAll();
-                gGui->input_files_window->setDataset(dataset);
-                gGui->input_files_window->exec();
+                auto items = _dataset_table->selectionModel()->selectedIndexes();
+                if (items.size() > 0){
+                    int row = items[0].row();
+                    QString dataset = _dataset_table->item(row, 0)->text();
+                    gGui->input_files_window->refreshAll();
+                    gGui->input_files_window->setDataset(dataset);
+                    gGui->input_files_window->exec();
+                }
             }
         }
     );
@@ -640,22 +637,25 @@ void SubframeHome::setContextMenuDatasetTable(QPoint pos)
     connect(remove_dataset, &QAction::triggered, _dataset_table,
         [=](){
             if (hasData){
-                int row = _dataset_table->selectionModel()->selectedIndexes()[0].row();
-                QString dataset = _dataset_table->item(row, 0)->text();
-                QMessageBox::StandardButton reply;
-                reply = QMessageBox::question(
-                    this,
-                    "Removing data set",
-                    "Do you want to delete dataset: " + dataset,
-                    QMessageBox::Yes|QMessageBox::No
-                );
+                auto items = _dataset_table->selectionModel()->selectedIndexes();
+                if (items.size() > 0){
+                    int row = items[0].row();
+                    QString dataset = _dataset_table->item(row, 0)->text();
+                    QMessageBox::StandardButton reply;
+                    reply = QMessageBox::question(
+                        this,
+                        "Removing data set",
+                        "Do you want to delete dataset: " + dataset,
+                        QMessageBox::Yes|QMessageBox::No
+                    );
 
-                if (reply == QMessageBox::StandardButton::Yes){
-                    gGui->setReady(false);         
-                    gSession->currentProject()->experiment()->removeData(dataset.toStdString());
-                    gSession->onDataChanged();                
-                    refreshTables();
-                    gGui->setReady(true);
+                    if (reply == QMessageBox::StandardButton::Yes){
+                        gGui->setReady(false);         
+                        gSession->currentProject()->experiment()->removeData(dataset.toStdString());
+                        gSession->onDataChanged();                
+                        refreshTables();
+                        gGui->setReady(true);
+                    }
                 }
             }
         });
@@ -665,6 +665,7 @@ void SubframeHome::setContextMenuPeakTable(QPoint pos)
 {
     if (!gSession->hasProject()) return;
     bool hasPeakCollection = gSession->currentProject()->hasPeakCollection();
+    bool hasSelection = _peak_collections_table->selectionModel()->selectedIndexes().size() > 0;
 
     QMenu* menu = new QMenu(_peak_collections_table);
     QAction* show_peaklist = menu->addAction("Show found peaks");
@@ -673,18 +674,21 @@ void SubframeHome::setContextMenuPeakTable(QPoint pos)
     QAction* clone_pc = menu->addAction("Clone PeakCollection");
     QAction* remove_pc = menu->addAction("Remove PeakCollection");
 
-    show_peaklist->setDisabled(!hasPeakCollection);     
-    clone_pc->setDisabled(!hasPeakCollection);     
-    remove_pc->setDisabled(!hasPeakCollection);     
+    show_peaklist->setDisabled(!(hasPeakCollection && hasSelection));
+    clone_pc->setDisabled(!(hasPeakCollection && hasSelection));
+    remove_pc->setDisabled(!(hasPeakCollection && hasSelection));
 
     connect(show_peaklist, &QAction::triggered, _peak_collections_table,
         [=](){
             if (hasPeakCollection){
-                int row = _peak_collections_table->selectionModel()->selectedIndexes()[0].row();
-                QString pc_name = _peak_collections_table->item(row, 0)->text();
-                gGui->peak_list_window->refreshAll();
-                gGui->peak_list_window->setPeakCollection(pc_name);
-                gGui->peak_list_window->exec();
+                auto items = _peak_collections_table->selectionModel()->selectedIndexes();
+                if (items.size() > 0){
+                    int row = items[0].row(); // we only care for one (first) selected item
+                    QString pc_name = _peak_collections_table->item(row, 0)->text();
+                    gGui->peak_list_window->refreshAll();
+                    gGui->peak_list_window->setPeakCollection(pc_name);
+                    gGui->peak_list_window->exec();
+                }
             }
         }
     );
@@ -692,25 +696,28 @@ void SubframeHome::setContextMenuPeakTable(QPoint pos)
     connect(clone_pc, &QAction::triggered, _peak_collections_table,
         [=](){
             if (hasPeakCollection){
-                int row = _peak_collections_table->selectionModel()->selectedIndexes()[0].row();
-                QString pc_name = _peak_collections_table->item(row, 0)->text();
+                auto items = _peak_collections_table->selectionModel()->selectedIndexes();
+                if (items.size() > 0){
+                    int row = items[0].row(); // we only care for one (first) selected item
+                    QString pc_name = _peak_collections_table->item(row, 0)->text();
 
-                bool t = true;
-                QString txt =  "Enter name for cloned PeakCollection of " + pc_name;
-                QString cloned = QInputDialog::getText(
-                    this, 
-                    tr("Cloning PeakCollection"),
-                    tr(txt.toStdString().c_str()), 
-                    QLineEdit::Normal,
-                    pc_name + QString("_cloned"),
-                    &t);
+                    bool t = true;
+                    QString txt =  "Enter name for cloned PeakCollection of " + pc_name;
+                    QString cloned = QInputDialog::getText(
+                        this, 
+                        tr("Cloning PeakCollection"),
+                        tr(txt.toStdString().c_str()), 
+                        QLineEdit::Normal,
+                        QString::fromStdString(gSession->currentProject()->experiment()->generatePeakCollectionName()),
+                        &t);
 
-                if (cloned.isEmpty()) return;
-                gGui->setReady(false);
-                gSession->currentProject()->clonePeakCollection(pc_name, cloned);
-                gSession->onPeaksChanged();
-                refreshTables();
-                gGui->setReady(true);
+                    if (cloned.isEmpty()) return;
+                    gGui->setReady(false);
+                    gSession->currentProject()->clonePeakCollection(pc_name, cloned);
+                    gSession->onPeaksChanged();
+                    refreshTables();
+                    gGui->setReady(true);
+                }
             }
         }
     );
@@ -718,27 +725,30 @@ void SubframeHome::setContextMenuPeakTable(QPoint pos)
     connect(remove_pc, &QAction::triggered, _peak_collections_table,
         [=](){
             if (hasPeakCollection){
-                int row = _peak_collections_table->selectionModel()->selectedIndexes()[0].row();
-                QString pc_name = _peak_collections_table->item(row, 0)->text();
+                auto items = _peak_collections_table->selectionModel()->selectedIndexes();
+                if (items.size() > 0){
+                    int row = items[0].row(); // we only care for one (first) selected item
+                    QString pc_name = _peak_collections_table->item(row, 0)->text();
 
-                QMessageBox::StandardButton reply;
-                reply = QMessageBox::question(
-                    this, 
-                    "Removing PeakCollection", 
-                    "Do you want to delete PeakCollection: " + pc_name,
-                    QMessageBox::Yes|QMessageBox::No
-                );
+                    QMessageBox::StandardButton reply;
+                    reply = QMessageBox::question(
+                        this, 
+                        "Removing PeakCollection", 
+                        "Do you want to delete PeakCollection: " + pc_name,
+                        QMessageBox::Yes|QMessageBox::No
+                    );
 
-                if (reply == QMessageBox::StandardButton::Yes){ 
-                    gGui->setReady(false);
+                    if (reply == QMessageBox::StandardButton::Yes){ 
+                        gGui->setReady(false);
 
-                    gSession->currentProject()->experiment()->removePeakCollection(pc_name.toStdString());
-                    gSession->currentProject()->removePeakModel(pc_name);
-                    gSession->onPeaksChanged();              
+                        gSession->currentProject()->experiment()->removePeakCollection(pc_name.toStdString());
+                        gSession->currentProject()->removePeakModel(pc_name);
+                        gSession->onPeaksChanged();              
 
-                    gGui->sideBar()->refreshCurrent();
-                    refreshTables();
-                    gGui->setReady(true);
+                        gGui->sideBar()->refreshCurrent();
+                        refreshTables();
+                        gGui->setReady(true);
+                    }
                 }
 
             }
@@ -750,34 +760,38 @@ void SubframeHome::setContextMenuUnitCellTable(QPoint pos)
 {
     if (!gSession->hasProject()) return;
     bool hasUnitCell = gSession->currentProject()->hasUnitCell();
+    bool hasSelection = _unitcell_table->selectionModel()->selectedIndexes().size() > 0;
 
     QMenu* menu = new QMenu(_unitcell_table);
     QAction* removing_unit_cell = menu->addAction("Removing Unit Cell");
     menu->popup(_unitcell_table->mapToGlobal(pos));
 
-    removing_unit_cell->setDisabled(!hasUnitCell);
+    removing_unit_cell->setDisabled(!(hasUnitCell && hasSelection));
 
     connect(removing_unit_cell, &QAction::triggered, _unitcell_table,
         [=](){
             if (hasUnitCell){
-                int row = _unitcell_table->selectionModel()->selectedIndexes()[0].row();
-                QString ucell_name = _unitcell_table->item(row, 1)->text();
+                auto items = _unitcell_table->selectionModel()->selectedIndexes();
+                if (items.size() > 0){
+                    int row = items[0].row();
+                    QString ucell_name = _unitcell_table->item(row, 1)->text();
 
-                QMessageBox::StandardButton reply;
-                reply = QMessageBox::question(
-                    this,
-                    "Removing UnitCell", 
-                    "Do you want to delete UnitCell: " + ucell_name,
-                    QMessageBox::Yes|QMessageBox::No
-                );
+                    QMessageBox::StandardButton reply;
+                    reply = QMessageBox::question(
+                        this,
+                        "Removing UnitCell", 
+                        "Do you want to delete UnitCell: " + ucell_name,
+                        QMessageBox::Yes|QMessageBox::No
+                    );
 
-                if (reply == QMessageBox::StandardButton::Yes){ 
-                    gGui->setReady(false); 
-                    gSession->currentProject()->experiment()->removeUnitCell(ucell_name.toStdString());
-                    gSession->onUnitCellChanged();            
-                    gGui->sideBar()->refreshCurrent();
-                    refreshTables();
-                    gGui->setReady(true);
+                    if (reply == QMessageBox::StandardButton::Yes){ 
+                        gGui->setReady(false); 
+                        gSession->currentProject()->experiment()->removeUnitCell(ucell_name.toStdString());
+                        gSession->onUnitCellChanged();            
+                        gGui->sideBar()->refreshCurrent();
+                        refreshTables();
+                        gGui->setReady(true);
+                    }
                 }
             }
         }
