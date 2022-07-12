@@ -283,7 +283,7 @@ void SubframeExperiment::plotIntensities()
 
     getPlot()->
         plotHistogram(histo->n, histo->range, histo->bin,
-        QString(""), QString(""),
+        QString("Pixels"), QString("Counts"),
         xmin, xmax, ymin, ymax);
 }
 
