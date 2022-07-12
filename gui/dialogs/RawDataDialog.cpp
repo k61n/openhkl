@@ -56,10 +56,10 @@ RawDataDialog::RawDataDialog(
         "Angle incremet about the phi instrument axis");
     _wavelength = gridfiller.addDoubleSpinBox("Wavelength", "Wavelength of the incident beam");
 
-    set_baseline_and_gain = new QGroupBox("Use baseline/gain");
-    set_baseline_and_gain->setCheckable(true);
-    set_baseline_and_gain->setChecked(false);
-    set_baseline_and_gain->setToolTip("Use baseline and gain from yml2c file");
+    _set_baseline_and_gain = new QGroupBox("Use baseline/gain");
+    _set_baseline_and_gain->setCheckable(true);
+    _set_baseline_and_gain->setChecked(false);
+    _set_baseline_and_gain->setToolTip("Use baseline and gain from yml2c file");
 
     QGridLayout* small_grid = new QGridLayout();
     _baseline = new SafeDoubleSpinBox();
@@ -75,12 +75,12 @@ RawDataDialog::RawDataDialog(
     small_grid->addWidget(_baseline, 0, 1, 1, 1);
     small_grid->addWidget(label2, 1, 0, 1, 1);
     small_grid->addWidget(_gain, 1, 1, 1, 1);
-    set_baseline_and_gain->setLayout(small_grid);
+    _set_baseline_and_gain->setLayout(small_grid);
 
     _buttons =
         new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, Qt::Horizontal, this);
 
-    gridfiller.addWidget(set_baseline_and_gain);
+    gridfiller.addWidget(_set_baseline_and_gain);
     gridfiller.addWidget(_buttons);
 
 
