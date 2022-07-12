@@ -16,12 +16,18 @@
 #define NSX_GUI_SUBFRAME_EXPERIMENT_SUBFRAMEEXPERIMENT_H
 
 #include "core/data/DataTypes.h"
+#include "gui/utility/DataComboBox.h"
+#include "gui/utility/SafeSpinBox.h"
 
 #include <QWidget>
+#include <qcheckbox.h>
+#include <qspinbox.h>
 
 class DetectorWidget;
 class PlotPanel;
 class PropertyPanel;
+class QPushButton;
+class QCheckBox;
 
 //! Frame containing information on all aspects of the experiment
 class SubframeExperiment : public QWidget {
@@ -35,11 +41,29 @@ class SubframeExperiment : public QWidget {
     PlotPanel* getPlot() { return _plot; };
     PropertyPanel* getProperty() { return _properties; };
 
+    void plotIntensities();
+    void toggleUnsafeWidgets();
+
  private:
     std::vector<nsx::sptrDataSet> _data_list;
     DetectorWidget* _detector_widget;
     PlotPanel* _plot;
     PropertyPanel* _properties;
+
+    DataComboBox* _data_combo;
+    QSlider* _frame_selector;
+    QSlider* _number_bins;
+    QPushButton* _calc_intensity;
+    QPushButton* _update_plot;
+    QCheckBox* _yLog;
+    QCheckBox* _xZoom;
+    QCheckBox* _yZoom;
+    QDoubleSpinBox* _number_bins_current;
+    QDoubleSpinBox* _frame_selector_curent;
+    QDoubleSpinBox* _minX;
+    QDoubleSpinBox* _maxX;
+    QDoubleSpinBox* _minY;
+    QDoubleSpinBox* _maxY;
 };
 
 #endif // NSX_GUI_SUBFRAME_EXPERIMENT_SUBFRAMEEXPERIMENT_H
