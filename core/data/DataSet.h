@@ -22,6 +22,7 @@
 #include "core/peak/Peak3D.h"
 #include "core/raw/DataKeys.h"
 
+#include <boost/spirit/home/support/detail/hold_any.hpp>
 #include <gsl/gsl_histogram.h>
 
 #include <memory>
@@ -144,6 +145,15 @@ class DataSet {
 
     //! Maximum per pixel count for whole DataSet
     double maxCount();
+    
+    //! getting number of available
+    size_t getNumberHistograms() {return _histograms.size();}
+    
+    //! accessing created histograms
+    gsl_histogram* getHistogram(int index);
+    
+    //! accessing Total histogram
+    gsl_histogram* getTotalHistogram();
 
  private:
     void _setReader(const DataFormat dataformat, const std::string& filename = "");

@@ -377,4 +377,16 @@ double DataSet::maxCount()
     return max_count;
 }
 
+gsl_histogram* DataSet::getHistogram(int index)
+{
+    if (index >= _histograms.size())
+        return nullptr;
+    return _histograms.at(index);
+}
+
+gsl_histogram* DataSet::getTotalHistogram()
+{
+        return _total_histogram;
+}
+
 } // namespace nsx
