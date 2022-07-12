@@ -311,7 +311,7 @@ resolution. Click the ``predict`` button, and wait for the prediction to finish.
    Predicted peaks
 
 Up to a resolution of 1.5 Å, we have 58229 predicted peaks, and it can be seen
-win the screenshot below that the agreement for the peak centre positions is
+in the screenshot below that the agreement for the peak centre positions is
 quite good, if not perfect, and that it is worse at higher resolution. Now we
 can apply our preliminary shape model to the predicted peaks by clicking ``apply
 shape model``. We're not too concerned with the parameters at this point so
