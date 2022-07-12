@@ -317,7 +317,7 @@ can apply our preliminary shape model to the predicted peaks by clicking
 ``apply shape model``.
 We're not too concerned with the parameters at this point so
 we'll just use the defaults. Looking at a section of the detector image before
-and after applying the shape model, we can see that the peak correspond to the
+and after applying the shape model, we can see that the peaks correspond to the
 image significantly better afterwards.
 
 .. _predicted_before_shapes:
