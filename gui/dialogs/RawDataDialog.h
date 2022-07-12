@@ -20,10 +20,12 @@
 #include <QDialog>
 #include <QDialogButtonBox>
 #include <QDoubleSpinBox>
+#include <QGroupBox>
 #include <QLineEdit>
 #include <QString>
 
 #include "core/loader/RawDataReader.h" // RawDataReaderParameters
+#include "gui/utility/SafeSpinBox.h"
 
 #include <string>
 
@@ -34,15 +36,17 @@ class RawDataDialog : public QDialog {
         const nsx::RawDataReaderParameters& parameters0,
         const QStringList& datanames_cur = QStringList());
 
-    QString dataset_name() { return datasetName->text(); }
-    double wavelength() { return wave->value(); }
-    double deltaChi() { return chi->value(); }
-    double deltaOmega() { return omega->value(); }
-    double deltaPhi() { return phi->value(); }
-    bool swapEndian() { return swapEndianness->isChecked(); }
+    QString dataset_name() { return _datasetName->text(); }
+    double wavelength() { return _wavelength->value(); }
+    double deltaChi() { return _chi->value(); }
+    double deltaOmega() { return _omega->value(); }
+    double deltaPhi() { return _phi->value(); }
+    bool swapEndian() { return _swapEndianness->isChecked(); }
+    double baseline() { return _baseline->value(); }
+    double gain() { return _gain->value(); }
     bool rowMajor();
     int bpp();
-    void setWavelength(double newWavelength) { wave->setValue(newWavelength); }
+    void setWavelength(double newWavelength) { _wavelength->setValue(newWavelength); }
     //! Return a copy of the parameters acquired from the dialog
     nsx::RawDataReaderParameters parameters();
 
@@ -51,17 +55,20 @@ class RawDataDialog : public QDialog {
     void verify();
 
  private:
-    QComboBox* dataArrangement;
-    QComboBox* dataFormat;
-    QCheckBox* swapEndianness;
-    QDoubleSpinBox* chi;
-    QDoubleSpinBox* omega;
-    QDoubleSpinBox* phi;
-    QDoubleSpinBox* wave;
-    QDialogButtonBox* buttons;
-    QLineEdit* datasetName;
-    const nsx::RawDataReaderParameters& parameters0; // initial parameters
-    const QStringList& dataset_names; // list of current dataset names
+    QComboBox* _dataArrangement;
+    QComboBox* _dataFormat;
+    QCheckBox* _swapEndianness;
+    SafeDoubleSpinBox* _chi;
+    SafeDoubleSpinBox* _omega;
+    SafeDoubleSpinBox* _phi;
+    SafeDoubleSpinBox* _wavelength;
+    QGroupBox* _set_baseline_and_gain;
+    SafeDoubleSpinBox* _baseline;
+    SafeDoubleSpinBox* _gain;
+    QDialogButtonBox* _buttons;
+    QLineEdit* _datasetName;
+    const nsx::RawDataReaderParameters& _parameters0; // initial parameters
+    const QStringList& _dataset_names; // list of current dataset names
 };
 
 #endif // NSX_GUI_DIALOGS_RAWDATADIALOG_H

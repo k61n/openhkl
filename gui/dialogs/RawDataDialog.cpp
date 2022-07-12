@@ -13,77 +13,112 @@
 //  ***********************************************************************************************
 
 #include "gui/dialogs/RawDataDialog.h"
+
+#include "core/detector/Detector.h"
+#include "core/experiment/Experiment.h"
 #include "gui/dialogs/ConfirmOverwriteDialog.h"
+#include "gui/models/Project.h"
+#include "gui/models/Session.h"
+#include "gui/utility/GridFiller.h"
+#include "gui/utility/SafeSpinBox.h"
 
 #include <QFormLayout>
+#include <QGridLayout>
 #include <QMessageBox>
+#include <QLabel>
 
 RawDataDialog::RawDataDialog(
     const nsx::RawDataReaderParameters& parameters0, const QStringList& datanames_cur)
-    : parameters0{parameters0}, dataset_names{datanames_cur}
+    : _parameters0{parameters0}, _dataset_names{datanames_cur}
 {
     setModal(true);
     resize(400, 300);
 
-    QFormLayout* layout = new QFormLayout(this);
+    QGridLayout* main_grid = new QGridLayout();
+    GridFiller gridfiller(main_grid);
+    setLayout(main_grid);
 
-    dataArrangement = new QComboBox();
-    dataFormat = new QComboBox();
-    swapEndianness = new QCheckBox("Swap endian");
-    chi = new QDoubleSpinBox();
-    omega = new QDoubleSpinBox();
-    phi = new QDoubleSpinBox();
-    wave = new QDoubleSpinBox();
-    datasetName = new QLineEdit();
+    _datasetName = gridfiller.addLineEdit(
+        "Name", QString::fromStdString(parameters0.dataset_name));
+    _dataArrangement = gridfiller.addCombo(
+        "Data arrangement", "Toggle data arrangement between row and column major");
+    _dataFormat = gridfiller.addCombo("Data format", "Number of bytes per pixel in images");
+    _swapEndianness = gridfiller.addCheckBox(
+        "Swap endian", "Swap the endianness of the input data", 1);
+    _chi = gridfiller.addDoubleSpinBox(
+        QString((QChar)0x0394) + " " + QString((QChar)0x03C7),
+        "Angle increment about the chi instrument axis");
+    _omega = gridfiller.addDoubleSpinBox(
+        QString((QChar)0x0394) + " " + QString((QChar)0x03C9),
+        "Angle increment about the omega instrument axis");
+    _phi = gridfiller.addDoubleSpinBox(
+        QString((QChar)0x0394) + " " + QString((QChar)0x03C6),
+        "Angle incremet about the phi instrument axis");
+    _wavelength = gridfiller.addDoubleSpinBox("Wavelength", "Wavelength of the incident beam");
 
-    buttons =
+    _set_baseline_and_gain = new QGroupBox("Use baseline/gain");
+    _set_baseline_and_gain->setCheckable(true);
+    _set_baseline_and_gain->setChecked(false);
+    _set_baseline_and_gain->setToolTip("Use baseline and gain from yml2c file");
+
+    QGridLayout* small_grid = new QGridLayout();
+    _baseline = new SafeDoubleSpinBox();
+    _gain = new SafeDoubleSpinBox();
+    QLabel* label1 = new QLabel("Baseline");
+    label1->setToolTip("To be subtracted from each pixel");
+    label1->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
+    QLabel* label2 = new QLabel("Gain");
+    label2->setToolTip("Each pixel count to be divided by this value");
+    label2->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
+
+    small_grid->addWidget(label1, 0, 0, 1, 1);
+    small_grid->addWidget(_baseline, 0, 1, 1, 1);
+    small_grid->addWidget(label2, 1, 0, 1, 1);
+    small_grid->addWidget(_gain, 1, 1, 1, 1);
+    _set_baseline_and_gain->setLayout(small_grid);
+
+    _buttons =
         new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, Qt::Horizontal, this);
 
-    dataArrangement->addItems(QStringList{"Column major", "Row major"});
-    dataFormat->addItems(QStringList{"8 bit integer", "16 bit integer", "32 bit integer"});
-    chi->setDecimals(3);
-    phi->setDecimals(3);
-    omega->setDecimals(3);
-    wave->setDecimals(3);
+    gridfiller.addWidget(_set_baseline_and_gain);
+    gridfiller.addWidget(_buttons);
+
+
+    _dataArrangement->addItems(QStringList{"Column major", "Row major"});
+    _dataFormat->addItems(QStringList{"8 bit integer", "16 bit integer", "32 bit integer"});
+
+    _chi->setDecimals(3);
+    _phi->setDecimals(3);
+    _omega->setDecimals(3);
+    _wavelength->setDecimals(3);
+    _baseline->setDecimals(3);
+    _gain->setDecimals(3);
+
+    _baseline->setMaximum(10000);
 
     // default to Row major/16 bit
-    dataArrangement->setCurrentIndex(1);
-    dataFormat->setCurrentIndex(1);
-    swapEndianness->setCheckState(Qt::Checked);
+    _dataArrangement->setCurrentIndex(1);
+    _dataFormat->setCurrentIndex(1);
+    _swapEndianness->setCheckState(Qt::Checked);
 
-    chi->setValue(parameters0.delta_chi);
-    omega->setValue(parameters0.delta_omega);
-    phi->setValue(parameters0.delta_phi);
-    wave->setValue(parameters0.wavelength);
-    datasetName->setText(QString::fromStdString(parameters0.dataset_name));
+    _chi->setValue(parameters0.delta_chi);
+    _omega->setValue(parameters0.delta_omega);
+    _phi->setValue(parameters0.delta_phi);
+    _wavelength->setValue(parameters0.wavelength);
+    _datasetName->setText(QString::fromStdString(parameters0.dataset_name));
+    nsx::Detector* detector =
+        gSession->currentProject()->experiment()->getDiffractometer()->detector();
+    _baseline->setValue(detector->baseline());
+    _gain->setValue(detector->gain());
 
-    dataArrangement->setToolTip("Toggle data arrangement between row and column major");
-    chi->setToolTip("Angle increment about the chi instrument axis");
-    omega->setToolTip("Angle increment about the omega instrument axis");
-    phi->setToolTip("Angle increment about the phi instrument axis");
-    swapEndianness->setToolTip("Swap the endianness of the input data");
-    wave->setToolTip("Wavelength of the incident beam");
-    dataFormat->setToolTip("Number of bytes per pixel in images");
-
-    layout->addRow("Name", datasetName);
-    layout->addRow("Data arrangement", dataArrangement);
-    layout->addRow("Data format", dataFormat);
-    layout->addRow("", swapEndianness);
-    layout->addRow(QString((QChar)0x0394) + " " + QString((QChar)0x03C7), chi);
-    layout->addRow(QString((QChar)0x0394) + " " + QString((QChar)0x03C9), omega);
-    layout->addRow(QString((QChar)0x0394) + " " + QString((QChar)0x03C6), phi);
-    layout->addRow("Wavelength", wave);
-    layout->addRow(buttons);
-
-    connect(buttons, &QDialogButtonBox::accepted, this, &RawDataDialog::verify);
-
-    connect(buttons, &QDialogButtonBox::rejected, this, &RawDataDialog::reject);
+    connect(_buttons, &QDialogButtonBox::accepted, this, &RawDataDialog::verify);
+    connect(_buttons, &QDialogButtonBox::rejected, this, &RawDataDialog::reject);
 }
 
 
 bool RawDataDialog::rowMajor()
 {
-    QString selection = dataArrangement->currentText();
+    QString selection = _dataArrangement->currentText();
     if (selection == "Row major")
         return true;
     if (selection == "Column major")
@@ -93,7 +128,7 @@ bool RawDataDialog::rowMajor()
 
 int RawDataDialog::bpp()
 {
-    switch (dataFormat->currentIndex()) {
+    switch (_dataFormat->currentIndex()) {
         case 0: // 8 bit
             return 1;
         case 1: // 16 bit
@@ -108,7 +143,7 @@ void RawDataDialog::verify()
 {
     // confirm overwrite if the name already exists
     const QString& dname = dataset_name();
-    const bool name_exists = dataset_names.contains(dname);
+    const bool name_exists = _dataset_names.contains(dname);
     bool dialog_accepted = true;
 
     if (name_exists) {
@@ -136,13 +171,21 @@ void RawDataDialog::verify()
 nsx::RawDataReaderParameters RawDataDialog::parameters()
 {
     nsx::RawDataReaderParameters parameters;
-    parameters.dataset_name = datasetName->text().toStdString();
-    parameters.wavelength = wave->value();
-    parameters.delta_omega = omega->value();
-    parameters.delta_chi = chi->value();
-    parameters.delta_phi = phi->value();
+    parameters.dataset_name = _datasetName->text().toStdString();
+    parameters.wavelength = _wavelength->value();
+    parameters.delta_omega = _omega->value();
+    parameters.delta_chi = _chi->value();
+    parameters.delta_phi = _phi->value();
     parameters.row_major = rowMajor();
-    parameters.swap_endian = swapEndianness->isChecked();
+    parameters.swap_endian = _swapEndianness->isChecked();
     parameters.bpp = bpp();
+    if (_set_baseline_and_gain->isChecked()) {
+        parameters.baseline = _baseline->value();
+        parameters.gain = _gain->value();
+    } else {
+        parameters.baseline = 0.0;
+        parameters.gain = 1.0;
+    }
+
     return parameters;
 }

@@ -201,4 +201,14 @@ double Detector::pixelWidth() const
     return _width / _nCols;
 }
 
+void Detector::setBaseline(double baseline)
+{
+    _baseline = baseline;
+}
+
+void Detector::setGain(double gain)
+{
+    _gain = gain;
+}
+
 } // namespace nsx

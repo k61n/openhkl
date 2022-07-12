@@ -30,6 +30,7 @@
 #include <QComboBox>
 #include <QGridLayout>
 #include <QLabel>
+#include <QLineEdit>
 #include <QPushButton>
 
 GridFiller::GridFiller(QGridLayout* gridLayout)
@@ -168,6 +169,19 @@ LinkedComboBox* GridFiller::addLinkedCombo(
     _nextRow++;
 
     return comboBox;
+}
+
+QLineEdit* GridFiller::addLineEdit(
+    const QString& labelText, const QString& defaultText, const QString& tooltip)
+{
+    addLabel(labelText, tooltip);
+
+    auto* line_edit = new QLineEdit();
+    line_edit->setText(defaultText);
+    _mainLayout->addWidget(line_edit, _nextRow, 1, 1, -1);
+
+    _nextRow++;
+    return line_edit;
 }
 
 QCheckBox* GridFiller::addCheckBox(const QString& title, int col)

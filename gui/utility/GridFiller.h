@@ -32,6 +32,7 @@ class QComboBox;
 class QWidget;
 class QCheckBox;
 class QPushButton;
+class QLineEdit;
 enum class ComboType;
 
 //! Helps to fill a grid layout according to the standards used all over NSX (e.g. labels are right
@@ -55,6 +56,11 @@ class GridFiller {
         ComboType type, const QString& labelText = QString(), const QString& tooltip = QString());
     ShapeComboBox* addShapeCombo(
         const QString& labelText = QString(), const QString& tooltip = QString());
+
+    //! Add a row with a lable and a line edit widget
+    QLineEdit* addLineEdit(
+        const QString& labelText = QString(), const QString& defaultText = QString(),
+        const QString& tooltip = QString());
 
     //! Add a row with a label and a linked combo box. If labelText is empty, then no label is
     //! created, and the tooltip is set on the created combo box directly.

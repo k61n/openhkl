@@ -106,6 +106,11 @@ class Detector : public Component {
     //! Returns the detector gain. Measured count = gain * (neutron count) + baseline
     double gain() const;
 
+    //! Override the baseline from the .yml2c file
+    void setBaseline(double baseline);
+    //! Override the gain from the .yml2c file
+    void setGain(double gain);
+
  protected:
     //! Detector height
     double _height;

@@ -124,6 +124,8 @@ void RawDataReader::setParameters(const RawDataReaderParameters& parameters)
     _dataset_out->metadata().add<double>(nsx::at_wavelength, _parameters.wavelength);
     _dataset_out->metadata().add<double>(nsx::at_monitorSum, 0.0);
     _dataset_out->metadata().add<int>(nsx::at_numor, 0.0);
+    _dataset_out->metadata().add<double>(nsx::at_baseline, _parameters.baseline);
+    _dataset_out->metadata().add<double>(nsx::at_gain, _parameters.gain);
 
     _data.resize(_parameters.bpp * nrows * ncols);
 }
