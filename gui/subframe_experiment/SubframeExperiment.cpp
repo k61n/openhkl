@@ -204,8 +204,8 @@ SubframeExperiment::SubframeExperiment()
 
             _maxX->setMaximum(data->nCols()*data->nRows());
             _minX->setMaximum(data->nCols()*data->nRows()-1);
-            _maxY->setMaximum(10000000);
-            _minY->setMaximum(10000000);
+            _maxY->setMaximum(1e+100);
+            _minY->setMaximum(1e+100-1);
 
             toggleUnsafeWidgets();
         }
