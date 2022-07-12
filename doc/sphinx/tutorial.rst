@@ -3,7 +3,7 @@
 Tutorial
 ========
 
-In this tutorial, we will look at some real (but relatively unproblmematic)
+In this tutorial, we will look at some real (but relatively unproblematic)
 experimental data: trypsin with bound aniline.
 
 .. _trypsin_crystal:
@@ -494,10 +494,10 @@ clear clash, but at the top it is less obvious; the peak is removed because it
 intersects with another one at a different rotation angle (i.e. on a different
 image). Note that both of these overlaps occur close to the sample rotation
 axis. This is to be expected, since such peaks tend to intersect the Ewald
-sphere over a very large rotation angle; they have large variances and appear on 
+sphere over a very large rotation angle; they have large variances and appear on
 many frames, and are thus more likely to clash. In this instance, however, we
 have an acceptable number of overlaps, so we can integrate the peaks by clicking
-``integrate peaks``. 
+``integrate peaks``.
 
 .. _integrated:
 .. figure:: images/tutorial/integrated.png
