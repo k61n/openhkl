@@ -55,6 +55,7 @@ class SubframeExperiment : public QWidget {
     QSlider* _number_bins;
     QPushButton* _calc_intensity;
     QPushButton* _update_plot;
+    QCheckBox* _totalHistogram;
     QCheckBox* _yLog;
     QCheckBox* _xZoom;
     QCheckBox* _yZoom;

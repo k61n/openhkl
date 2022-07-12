@@ -35,6 +35,7 @@
 #include <QCheckBox>
 #include <QComboBox>
 #include <QLabel>
+#include <gsl/gsl_histogram.h>
 #include <qnamespace.h>
 #include <QPushButton>
 #include <QSlider>
@@ -99,6 +100,7 @@ SubframeExperiment::SubframeExperiment()
     hbox->addWidget(_frame_selector_curent);
 
     f.addWidget(frame_selector_widget,0);
+    _totalHistogram = f.addCheckBox("Show total histogram", 1);
     _yLog = f.addCheckBox("yLog", 1);
     _xZoom = f.addCheckBox("Zoom on X axis", 1);
     _yZoom = f.addCheckBox("Zoom on Y axis", 1);
@@ -159,6 +161,13 @@ SubframeExperiment::SubframeExperiment()
                 plotIntensities();
             }
         );
+
+    connect(_totalHistogram, &QCheckBox::clicked, this,
+        [=](){
+            toggleUnsafeWidgets();
+            plotIntensities();
+        }
+    );
 
     connect(_xZoom, &QCheckBox::clicked, this,
         [=](){
@@ -242,7 +251,13 @@ void SubframeExperiment::plotIntensities()
 
     if (!data) return;
 
-    auto histo = data->getHistogram(_frame_selector->value());
+    gsl_histogram* histo = nullptr;
+
+    if (!_totalHistogram->isChecked())
+        histo = data->getHistogram(_frame_selector->value());
+    else
+        histo = data->getTotalHistogram();
+
     if (!histo)
         return;
 
@@ -293,13 +308,16 @@ void SubframeExperiment::toggleUnsafeWidgets()
     _maxX->setEnabled(false);
     _maxY->setEnabled(false);
     _update_plot->setEnabled(false);
+    _totalHistogram->setEnabled(false);
 
     bool hasProject = gSession->hasProject();
 
     if (!hasProject) return;
     bool hasData = gSession->currentProject()->hasDataSet();
+    bool showTotalHistogram = _totalHistogram->isChecked();
 
     _calc_intensity->setEnabled(hasData);
+    _totalHistogram->setEnabled(hasData);
 
     nsx::Experiment* expt = gSession->currentProject()->experiment();
     auto data = expt->getDataMap()->at(_data_combo->currentText().toStdString());
@@ -307,8 +325,8 @@ void SubframeExperiment::toggleUnsafeWidgets()
 
     bool hasHistograms = data->getNumberHistograms() > 0;
 
-    _frame_selector->setEnabled(hasHistograms);
-    _frame_selector_curent->setEnabled(hasHistograms);
+    _frame_selector->setEnabled(hasHistograms && !showTotalHistogram);
+    _frame_selector_curent->setEnabled(hasHistograms && !showTotalHistogram);
     _yLog->setEnabled(hasHistograms);
     _yZoom->setEnabled(hasHistograms);
     _xZoom->setEnabled(hasHistograms);
