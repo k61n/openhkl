@@ -192,8 +192,10 @@ SubframeExperiment::SubframeExperiment()
         [=](){
             nsx::Experiment* expt = gSession->currentProject()->experiment();
             auto data = expt->getDataMap()->at(_data_combo->currentText().toStdString());
+            bool hasHistograms = data->getNumberHistograms() > 0;
 
             if (!data) return;
+            if (hasHistograms) data->clearHistograms();
             data->getIntensityHistogram(_number_bins->value());
             _frame_selector->setMaximum(data->getNumberHistograms());
             _frame_selector_curent->setMaximum(data->getNumberHistograms());
@@ -317,7 +319,6 @@ void SubframeExperiment::toggleUnsafeWidgets()
     bool showTotalHistogram = _totalHistogram->isChecked();
 
     _calc_intensity->setEnabled(hasData);
-    _totalHistogram->setEnabled(hasData);
 
     nsx::Experiment* expt = gSession->currentProject()->experiment();
     auto data = expt->getDataMap()->at(_data_combo->currentText().toStdString());
@@ -330,6 +331,7 @@ void SubframeExperiment::toggleUnsafeWidgets()
     _yLog->setEnabled(hasHistograms);
     _yZoom->setEnabled(hasHistograms);
     _xZoom->setEnabled(hasHistograms);
+    _totalHistogram->setEnabled(hasHistograms);
 
     _minX->setEnabled(_xZoom->isChecked());
     _minY->setEnabled(_yZoom->isChecked());
