@@ -44,6 +44,7 @@
 #include <QSpinBox>
 #include <QVector>
 #include <QWidget>
+#include <stdexcept>
 
 #include "gui/utility/Spoiler.h"
 #include "gui/utility/GridFiller.h"
@@ -277,6 +278,9 @@ void SubframeExperiment::plotIntensities()
         ymax = -1;
     }
 
+    if (histo->range == nullptr || histo->bin == nullptr)
+        throw std::runtime_error("SubframeExperiment::plotIntensities received invalid arrays for gsl_histogram");
+
     getPlot()->
         plotHistogram(histo->n, histo->range, histo->bin,
         QString(""), QString(""),
@@ -322,7 +326,6 @@ void SubframeExperiment::toggleUnsafeWidgets()
 
     nsx::Experiment* expt = gSession->currentProject()->experiment();
     auto data = expt->getDataMap()->at(_data_combo->currentText().toStdString());
-    auto nHistograms = data->getNumberHistograms();
 
     bool hasHistograms = data->getNumberHistograms() > 0;
 
