@@ -19,7 +19,7 @@ experimental data: trypsin with bound aniline.
 Loading the raw data
 --------------------
 
-The data set consists of 167 images with a resolution of :math:`2500 \times 900`
+The data set consists of 167 images with a resolution of 2500 times 900
 pixels, and the sample is rotated in increments of 0.4 degrees. The instrument
 used in this case is BioDiff :cite:`t-Ostermann2015`. Click on ``Create new experiment`` from the
 ``Home`` widget of OpenHKL, and select the ``BioDiff2500`` instrument from the
