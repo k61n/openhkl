@@ -31,7 +31,7 @@ the same least squares fitting procedure, but the 1D method uses the
 distance of the pixel from the elliptical peak centroid to fit a
 profile, whereas the 3D method uses all pixel coordinates. The
 :math:`I/\sigma` integrator :cite:`i-Wilkinson1988,i-Prince1997`
-uses the Lehman-Larsen :math:`sigma/I` criterion to distinguish the peak
+uses the Lehman-Larsen :math:`\sigma/I` criterion to distinguish the peak
 and background regions. Finally, the Gaussian integrator assumes a
 Gaussian profile shape.
 
@@ -105,7 +105,7 @@ variance is computed as in DENZO, as,
 
 .. math::
    :label: eq_variance
-   
+
    v_i = b_i - I\cdot p_i
 
 Starting with :math:`v_i = b_i`, the intensity is computed iteratively,
