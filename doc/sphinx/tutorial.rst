@@ -88,11 +88,11 @@ images, so we only have to apply them once.
 The most important peak finder parameter is the threshold, which determines the
 minimum number of counts for a pixel to be in a peak region; in this case, the
 value (80) is appropriate, although if our detector image had too few peaks to
-generate a convincing shape model, we might want to decrease thse. The danger in
+generate a convincing shape model, we might want to decrease these. The danger in
 doing this is, of course, that including very weak peaks will degrade the
 quality of our shape model later on. ``Minimum size`` and ``maximum size``
 specify the minimum and maximum number of counts in a blob (i.e. a peak in real
-space); the latter is important becuase a blob with too many counts might be a
+space); the latter is important because a blob with too many counts might be a
 heterogeneous background feature. Finally ``maximum width`` defines the maximum
 number of frames over which a blob can extend. Leaving these parameters at their
 current values, click on ``Find peaks``, and wait for the processing to finish
@@ -112,7 +112,7 @@ point, we need to integrate the peaks. The default integration apraeters are a
 good guess for most situations. The shape of a blob can be characterised by an
 covariance (or inertia) matrix, and we simply rescale this matrix to determine
 the integration region. 3 is a good guess for the extent of the peak region
-(``peak end``) because we expect to find 99.54\% of all counts wtihin three
+(``peak end``) because we expect to find 99.54\% of all counts within three
 standard deviations of the peak centre. After clicking on the ``integrate``
 button and waiting, the intensity, :math:`\sigma` and strength columns in the
 table of peaks will be populated. Note that we don't want to make ``peak end``
@@ -132,7 +132,7 @@ Note that after integration some peaks are marked as invalid; specifically, 8219
 out of 9851 peaks are valid. We can check the ``reason for rejection`` column in
 the table to see why they were rejected. In the first few frames and last few
 frames of the data set, the reason is usually because the peak extends outside
-the sample rotation range and is therefore incomplete. Also note how peak close
+the sample rotation range and is therefore incomplete. Also note how peaks close
 to the rotation axis are often rejected, since they intersect the Ewald sphere
 on many images, and frequently extend outside the sample rotation range as a
 result. In any case, we have a good number of peaks, which we can use to both
@@ -237,7 +237,7 @@ Shape model
 
 Before generating an exhaustive set of predicted peaks, we need to construct a
 preliminary shape model. We're not too interested in optimising the model at this
-stage, but want to be sure that thee predicted peak shapes are reasonable so
+stage, but want to be sure that the predicted peak shapes are reasonable so
 that it's possible to refine them. The most important parameter at this stage is
 ``minimum I/sigma``, excluding weak peaks from the model. Set this to 5.0, then
 click ``build shape model`` and wait for the integration to complete. Click on
