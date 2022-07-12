@@ -19,8 +19,9 @@
 #include "gui/graphics/PlotFactory.h"
 #include "gui/graphics/SXPlot.h"
 #include "gui/graphics_items/PlottableItem.h"
+#include "qcustomplot.h"
 
-PlotPanel::PlotPanel()
+PlotPanel::PlotPanel() : _yLog(false)
 {
     anchor = new QHBoxLayout(this);
     plot = new SXPlot(this);
@@ -42,6 +43,73 @@ void PlotPanel::plotData(QVector<double>& x, QVector<double>& y, QVector<double>
     plot->addErrorBars(plot->graph(0), e);
     plot->rescaleAxes();
     plot->replot();
+}
+
+void PlotPanel::plotHistogram(size_t nData, double* range, double* bin, QString xtitle, QString ytitle, int xmin, int xmax, int ymin, int ymax)
+{
+    // need to convert Data for QCustomplot
+    QVector<double> x;
+    QVector<double> y;
+
+    x.resize(nData);
+    y.resize(nData);
+
+    memcpy(x.data(),  range, nData * sizeof(double));
+    memcpy(y.data(), bin, nData * sizeof(double));
+
+    QSharedPointer<QCPBarsDataContainer> data;
+
+    plot->clearPlottables();
+    plot->addGraph();
+    QCPBars *bars = new QCPBars(plot->xAxis, plot->yAxis);
+    bars->setName("Intensity Histogram");
+    bars->setData(x,y);
+    plot->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom);
+    plot->setFocusPolicy(Qt::StrongFocus);
+    anchor->addWidget(plot);
+
+    plot->xAxis->setLabel(xtitle);
+    plot->yAxis->setLabel(ytitle);
+
+    if ((xmin != -1 && xmax != -1))
+        plot->xAxis->setRange(xmin, xmax);
+
+    if ((ymin != -1 && ymax != -1))
+        plot->yAxis->setRange(ymin, ymax);
+
+    if ((xmin == -1 && xmax == -1) && (ymin == -1 && ymax == -1))
+        plot->rescaleAxes();
+
+    plot->replot();
+}
+
+
+void PlotPanel::setYLog(bool v)
+{
+    if (v == _yLog) return;
+    _yLog = v;
+    if (_yLog){
+        plot->yAxis->grid()->setSubGridVisible(true);
+        plot->xAxis->grid()->setSubGridVisible(true);
+        plot->yAxis->setScaleType(QCPAxis::stLogarithmic);
+        plot->yAxis2->setScaleType(QCPAxis::stLogarithmic);
+        QSharedPointer<QCPAxisTickerLog> logTicker(new QCPAxisTickerLog);
+        plot->yAxis->setTicker(logTicker);
+        plot->yAxis2->setTicker(logTicker);
+        plot->yAxis->setNumberFormat("eb");
+        plot->yAxis->setNumberPrecision(0);
+    }
+    else {
+        plot->yAxis->grid()->setSubGridVisible(true);
+        plot->xAxis->grid()->setSubGridVisible(true);
+        plot->yAxis->setScaleType(QCPAxis::stLinear);
+        plot->yAxis2->setScaleType(QCPAxis::stLinear);
+        QSharedPointer<QCPAxisTicker> ticker(new QCPAxisTicker);
+        plot->yAxis->setTicker(ticker);
+        plot->yAxis2->setTicker(ticker);
+        plot->yAxis->setNumberFormat("eb");
+        plot->yAxis->setNumberPrecision(0);
+    }
 }
 
 void PlotPanel::updatePlot(PlottableItem* item)
