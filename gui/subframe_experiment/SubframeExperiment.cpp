@@ -109,7 +109,7 @@ SubframeExperiment::SubframeExperiment()
 
     left_layout->addWidget(intensity_plot_box);
     left_layout->addStretch();
-    intensity_plot_box->setMaximumWidth(350);
+    intensity_plot_box->setMaximumWidth(400);
 
     _number_bins->setMinimumWidth(1);
     _number_bins->setMaximum(nMaxBins);
@@ -137,6 +137,7 @@ SubframeExperiment::SubframeExperiment()
         "Horizontal slice", "Vertical slice"});
 
     left_widget->setLayout(left_layout);
+    left_widget->setFixedWidth(400);
 
     QSplitter* right_splitter = new QSplitter();
     right_splitter->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
@@ -234,7 +235,6 @@ SubframeExperiment::SubframeExperiment()
            _number_bins->setValue(_number_bins_current->value());
         }
     );
-
 
     connect(_update_plot, &QPushButton::clicked, this,
         [=](){
