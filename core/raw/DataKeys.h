@@ -77,6 +77,9 @@ const std::string at_datasetSources{"sources"}; // list of sources for the DataS
 const std::string at_frameCount{"number of frames"};
 const std::string at_wavelength{"wavelength"};
 const std::string at_monitorSum{"monitor"}; // TODO: explain
+// DataSet metadata
+const std::string at_baseline{"baseline"};
+const std::string at_gain{"gain"};
 // Nexus-specific metadata
 const std::string at_numor{"numor"}; // internal raw data labelling of ILL
 const std::string at_totalSteps{"total steps"};
@@ -87,7 +90,6 @@ const std::string at_endTime{"end time"};
 // peaks
 const std::string at_peakCount{"number of peaks"};
 const std::string at_peakType{"peak type"};
-// added by ctrageser
 const std::string at_indexed{"is indexed"};
 const std::string at_integrated{"is integrated"};
 // unit cell
@@ -164,9 +166,9 @@ const std::string ym_rotClockwise{"clockwise"};
 //-- Recognized metadata keys
 const std::set<std::string> RecognizedMetaDataKeys{
     at_experiment, at_diffractometer, at_formatVersion, at_datasetSources, at_frameCount,
-    at_wavelength, at_monitorSum,     at_numor,         at_totalSteps,     at_title,
-    at_time,       at_startTime,      at_endTime,       at_peakCount,      at_peakType,
-    at_rVec,       at_BravaisLattice, at_indexingTol,   at_spacegroup,     at_z};
+    at_wavelength, at_monitorSum, at_numor, at_totalSteps, at_title, at_time, at_startTime,
+    at_endTime, at_peakCount, at_peakType, at_rVec, at_BravaisLattice, at_indexingTol,
+    at_spacegroup, at_z, at_baseline, at_gain};
 
 } // namespace nsx
 

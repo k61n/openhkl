@@ -18,6 +18,7 @@
 #include "base/utils/Path.h" // fileBasename
 #include "core/data/DataSet.h"
 #include "core/data/DataTypes.h"
+#include "core/detector/Detector.h"
 #include "core/experiment/Experiment.h"
 #include "core/loader/IDataReader.h"
 #include "core/loader/RawDataReader.h"
@@ -28,11 +29,11 @@
 #include "gui/dialogs/DataNameDialog.h"
 #include "gui/dialogs/RawDataDialog.h"
 #include "gui/models/Project.h"
-#include "gui/subframe_merge/SubframeMergedPeaks.h"
 #include "gui/subframe_filter/SubframeFilterPeaks.h"
 #include "gui/subframe_find/SubframeFindPeaks.h"
 #include "gui/subframe_index/SubframeAutoIndexer.h"
 #include "gui/subframe_integrate/SubframeIntegrate.h"
+#include "gui/subframe_merge/SubframeMergedPeaks.h"
 #include "gui/subframe_predict/SubframePredictPeaks.h"
 #include "gui/subframe_refiner/SubframeRefiner.h"
 #include "gui/utility/CellComboBox.h"
@@ -316,6 +317,10 @@ bool Session::loadRawData()
             return false;
         }
         nsx::Experiment* exp = currentProject()->experiment();
+
+        nsx::Detector* detector = exp->getDiffractometer()->detector();
+        detector->setBaseline(dialog.baseline());
+        detector->setGain(dialog.gain());
 
         // update the parameters by those from the dialog
         parameters = dialog.parameters();
