@@ -455,8 +455,7 @@ void SubframeRefiner::refreshPeakVisual()
 
 void SubframeRefiner::grabRefinerParameters()
 {
-    auto* params =
-        gSession->currentProject()->experiment()->refiner()->parameters();
+    auto* params = gSession->currentProject()->experiment()->refiner()->parameters();
 
     _n_batches_spin->setValue(params->nbatches);
     _max_iter_spin->setValue(params->max_iter);
@@ -478,8 +477,7 @@ void SubframeRefiner::setRefinerParameters()
 {
     if (!gSession->hasProject())
         return;
-    auto* params =
-        gSession->currentProject()->experiment()->refiner()->parameters();
+    auto* params = gSession->currentProject()->experiment()->refiner()->parameters();
 
     params->nbatches = _n_batches_spin->value();
     params->max_iter = _max_iter_spin->value();
@@ -540,8 +538,8 @@ void SubframeRefiner::toggleUnsafeWidgets()
     if (_batch_cell_check->isChecked())
         _cell_combo->setEnabled(false);
 
-    if (!gSession->currentProject()->hasDataSet() ||
-        !gSession->currentProject()->hasPeakCollection()) {
+    if (!gSession->currentProject()->hasDataSet()
+        || !gSession->currentProject()->hasPeakCollection()) {
         _refine_button->setEnabled(false);
         _update_button->setEnabled(false);
     }

@@ -81,7 +81,7 @@ class ShapeModel {
     ShapeModel(std::shared_ptr<ShapeModelParameters> params);
 
     //! Set the name
-    void setName(const std::string& name ) { _name = name; };
+    void setName(const std::string& name) { _name = name; };
     //! Get the name
     std::string name() { return _name; };
 

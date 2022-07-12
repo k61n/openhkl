@@ -56,7 +56,7 @@ PeakProperties::PeakProperties()
     QString path2{":images/sidebar/"};
     QString light{"lighttheme/"};
     QString dark{"darktheme/"};
-    
+
 
     if (gGui->isDark()) { // looks like we have a dark theme
         path1 = path1 + dark;

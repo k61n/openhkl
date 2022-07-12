@@ -467,9 +467,11 @@ void ExperimentExporter::writeInstrumentStates(
         HDF5TableWriter detectorOrientation(
             instrument_grp, stateValueType, n_states, mat3d_size, nsx::ds_detectorOrientation),
             detectorPositionOffset(
-                instrument_grp, stateValueType, n_states, vec3d_size, nsx::ds_detectorPositionOffset),
+                instrument_grp, stateValueType, n_states, vec3d_size,
+                nsx::ds_detectorPositionOffset),
             sampleOrientation(
-                instrument_grp, stateValueType, n_states, quaternion_size, nsx::ds_sampleOrientation),
+                instrument_grp, stateValueType, n_states, quaternion_size,
+                nsx::ds_sampleOrientation),
             sampleOrientationOffset(
                 instrument_grp, stateValueType, n_states, quaternion_size,
                 nsx::ds_sampleOrientationOffset),
@@ -477,7 +479,8 @@ void ExperimentExporter::writeInstrumentStates(
                 instrument_grp, stateValueType, n_states, vec3d_size, nsx::ds_samplePosition),
             ni(instrument_grp, stateValueType, n_states, vec3d_size, nsx::ds_beamDirection),
             wavelength(instrument_grp, stateValueType, n_states, 1, nsx::ds_beamWavelength),
-            refined(instrument_grp, H5::PredType::NATIVE_HBOOL, n_states, 1, nsx::ds_isRefinedState);
+            refined(
+                instrument_grp, H5::PredType::NATIVE_HBOOL, n_states, 1, nsx::ds_isRefinedState);
 
         std::size_t i_row = 0;
         for (const nsx::InstrumentState& state : instrumentStates) {

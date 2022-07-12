@@ -202,7 +202,7 @@ void DetectorScene::clearPeakItems()
     if (!_currentData)
         return;
     if (_peak_graphics_items.size() == 0) // contin. crashed without for me
-       return;
+        return;
 
     // _peak_graphics_items can be out of sync (pointer may get deleted outside). Therefore
     // do not use it for removing items from the scene (may cause crash)
@@ -537,8 +537,8 @@ void DetectorScene::mousePressEvent(QGraphicsSceneMouseEvent* event)
                 _current_dragged_item = _beam_pos_setter;
                 break;
             }
-                default: break;
-            }
+            default: break;
+        }
         if (cutter != nullptr) {
             cutter->setFrom(event->lastScenePos());
             addItem(cutter);

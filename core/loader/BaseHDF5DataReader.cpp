@@ -182,8 +182,8 @@ bool BaseHDF5DataReader::initRead()
     // Compatibility 12/7/2022 - TODO: Remove the if block, as all saved experiments will have
     // baseline and gain metadata
     // Update detector baseline and gain
-    if (_dataset_out->metadata().isKey(nsx::at_baseline) &&
-            _dataset_out->metadata().isKey(nsx::at_gain)) {
+    if (_dataset_out->metadata().isKey(nsx::at_baseline)
+        && _dataset_out->metadata().isKey(nsx::at_gain)) {
         const double baseline = _dataset_out->metadata().key<double>(nsx::at_baseline);
         const double gain = _dataset_out->metadata().key<double>(nsx::at_gain);
         _dataset_out->diffractometer()->detector()->setBaseline(baseline);

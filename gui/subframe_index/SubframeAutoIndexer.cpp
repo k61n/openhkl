@@ -411,13 +411,12 @@ void SubframeAutoIndexer::changeSelected(PeakItemGraphic* peak_graphic)
 
 void SubframeAutoIndexer::refreshPeakVisual()
 {
-    auto data = _detector_widget->currentData();   
-    auto scene = _detector_widget->scene();   
+    auto data = _detector_widget->currentData();
+    auto scene = _detector_widget->scene();
 
     scene->initIntRegionFromPeakWidget(_peak_view_widget->set1);
     if (_set_initial_ki->isChecked()) {
-        scene->addBeamSetter(
-            _crosshair_size->value(), _crosshair_linewidth->value());
+        scene->addBeamSetter(_crosshair_size->value(), _crosshair_linewidth->value());
         changeCrosshair();
     }
     showDirectBeamEvents();
@@ -427,9 +426,11 @@ void SubframeAutoIndexer::refreshPeakVisual()
 
     for (int i = 0; i < _peak_collection_item.childCount(); i++) {
         PeakItem* peak = _peak_collection_item.peakItemAt(i);
-        if (peak == nullptr) continue;
+        if (peak == nullptr)
+            continue;
         auto graphic = peak->peakGraphic();
-        if (graphic == nullptr) continue;
+        if (graphic == nullptr)
+            continue;
 
         graphic->showLabel(false);
         graphic->setColor(Qt::transparent);
@@ -667,7 +668,7 @@ void SubframeAutoIndexer::acceptSolution()
         nsx::UnitCell* cell = expt->getUnitCell(cellName);
         cell->setSpaceGroup(dlg->spaceGroup().toStdString());
         collection->setMillerIndices();
-        gGui->refreshMenu(); 
+        gGui->refreshMenu();
     }
 }
 
@@ -675,28 +676,28 @@ void SubframeAutoIndexer::toggleUnsafeWidgets()
 {
     _solve_button->setEnabled(true);
     _save_button->setEnabled(true);
-    if (!gSession->hasProject() || !gSession->currentProject()->hasPeakCollection() ||
-        !gSession->currentProject()->hasDataSet()) {
+    if (!gSession->hasProject() || !gSession->currentProject()->hasPeakCollection()
+        || !gSession->currentProject()->hasDataSet()) {
         _solve_button->setEnabled(false);
         _save_button->setEnabled(false);
     }
     if (_peak_collection_model.rowCount() == 0 || _solutions.empty())
         _save_button->setEnabled(false);
-    
+
     // select a solution before accepting it
-    if (_solution_table->currentIndex().row() == -1){
+    if (_solution_table->currentIndex().row() == -1) {
         _save_button->setEnabled(false);
     } else {
         _save_button->setEnabled(true);
     }
-   
-    if (!gSession->hasProject()) return;
+
+    if (!gSession->hasProject())
+        return;
 
     std::string current_pc = _peak_combo->currentText().toStdString();
     if (current_pc.size() == 0)
         return;
-    auto pc = 
-    gSession->currentProject()->experiment()->getPeakCollection(current_pc);
+    auto pc = gSession->currentProject()->experiment()->getPeakCollection(current_pc);
 
     _solve_button->setEnabled(pc->isIntegrated());
 }

@@ -44,7 +44,6 @@
 #include <QScrollBar>
 #include <QSpacerItem>
 #include <QTableWidgetItem>
-#include <QMessageBox>
 
 #include <sstream>
 
@@ -349,8 +348,7 @@ void SubframeFilterPeaks::grabFilterParameters()
     _bkg_end->setValue(params->bkg_end);
     _rejection_flag_combo->setCurrentIndex(static_cast<int>(params->rejection_flag));
 
-    auto* flags =
-        gSession->currentProject()->experiment()->peakFilter()->flags();
+    auto* flags = gSession->currentProject()->experiment()->peakFilter()->flags();
 
     _selected->setChecked(flags->selected);
     _masked->setChecked(flags->masked);
@@ -428,8 +426,7 @@ void SubframeFilterPeaks::setFilterParameters()
 void SubframeFilterPeaks::filterPeaks()
 {
     gGui->setReady(false);
-    nsx::PeakFilter* filter =
-        gSession->currentProject()->experiment()->peakFilter();
+    nsx::PeakFilter* filter = gSession->currentProject()->experiment()->peakFilter();
     nsx::PeakCollection* collection = _peak_combo->currentPeakCollection();
     filter->resetFiltering(collection);
     setFilterParameters();
@@ -456,8 +453,8 @@ void SubframeFilterPeaks::accept()
         return;
     if (dlg->result() == QDialog::Rejected)
         return;
-    if (!gSession->currentProject()->experiment()
-        ->acceptFilter(dlg->listName().toStdString(), collection, collection->type())) {
+    if (!gSession->currentProject()->experiment()->acceptFilter(
+            dlg->listName().toStdString(), collection, collection->type())) {
         QMessageBox::warning(
             this, "Unable to add PeakCollection", "Collection with this name already exists!");
         return;
@@ -477,7 +474,7 @@ void SubframeFilterPeaks::refreshPeakTable()
 
     nsx::PeakCollection* collection = _peak_combo->currentPeakCollection();
 
-    if (!collection)// if no PeakCollection has been selected from the GUI
+    if (!collection) // if no PeakCollection has been selected from the GUI
         return;
 
     _peak_collection_item.setPeakCollection(collection);

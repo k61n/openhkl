@@ -20,26 +20,25 @@
 #include "gui/graphics/DetectorScene.h"
 #include "gui/graphics/DetectorView.h"
 #include "gui/graphics_items/PlottableItem.h"
-#include "gui/subframe_merge/SubframeMergedPeaks.h"
-#include "gui/widgets/PlotPanel.h"
 #include "gui/subframe_experiment/SubframeExperiment.h"
 #include "gui/subframe_filter/SubframeFilterPeaks.h"
 #include "gui/subframe_find/SubframeFindPeaks.h"
 #include "gui/subframe_home/SubframeHome.h"
 #include "gui/subframe_index/SubframeAutoIndexer.h"
 #include "gui/subframe_integrate/SubframeIntegrate.h"
+#include "gui/subframe_merge/SubframeMergedPeaks.h"
 #include "gui/subframe_predict/SubframePredictPeaks.h"
 #include "gui/subframe_refiner/SubframeRefiner.h"
 #include "gui/subframe_shapes/SubframeShapes.h"
 #include "gui/subwindows/DetectorWindow.h"
+#include "gui/subwindows/InputFilesWindow.h"
 #include "gui/subwindows/InstrumentStateWindow.h"
 #include "gui/subwindows/LogWindow.h"
 #include "gui/subwindows/PeakWindow.h"
-#include "gui/subwindows/InputFilesWindow.h"
-#include "gui/subwindows/InstrumentStateWindow.h"
 #include "gui/subwindows/PeaklistWindow.h"
 #include "gui/utility/SideBar.h"
 #include "gui/widgets/DetectorWidget.h"
+#include "gui/widgets/PlotPanel.h"
 
 #include <QApplication>
 #include <QCloseEvent>
@@ -123,34 +122,22 @@ MainWin::MainWin()
         &SubframeAutoIndexer::onBeamPosChanged);
 }
 
-void MainWin::onDataChanged() const
-{
-}
+void MainWin::onDataChanged() const { }
 
-void MainWin::onExperimentChanged() const
-{
-}
+void MainWin::onExperimentChanged() const { }
 
-void MainWin::onPeaksChanged() const
-{
-}
+void MainWin::onPeaksChanged() const { }
 
-void MainWin::onUnitCellChanged() const
-{
-}
+void MainWin::onUnitCellChanged() const { }
 
-void MainWin::changeView(int option) const
-{
-}
+void MainWin::changeView(int option) const { }
 
 void MainWin::updatePlot(PlottableItem* p) const
 {
     experiment->getPlot()->updatePlot(p);
 }
 
-void MainWin::cursormode(int i) const
-{
-}
+void MainWin::cursormode(int i) const { }
 
 void MainWin::exportPlot() const
 {
@@ -245,5 +232,5 @@ bool MainWin::isDark()
 
 void MainWin::refreshMenu()
 {
-   menus_->toggleEntries();
+    menus_->toggleEntries();
 }

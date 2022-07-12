@@ -18,8 +18,7 @@
 #include "tables/crystal/UnitCell.h"
 #include <QComboBox>
 
-namespace nsx
-{
+namespace nsx {
 class UnitCell;
 }
 

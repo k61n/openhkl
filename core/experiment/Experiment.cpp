@@ -106,7 +106,8 @@ bool Experiment::acceptFoundPeaks(const std::string& name, const PeakCollection&
     std::vector<Peak3D*> peaks = found.getPeakList();
 
     if (!addPeakCollection(
-            name, PeakCollectionType::FOUND, peaks, found.isIndexed(), _peak_finder->isIntegrated())) {
+            name, PeakCollectionType::FOUND, peaks, found.isIndexed(),
+            _peak_finder->isIntegrated())) {
         return false;
     }
     _peak_finder->setIntegrated(false); // reset for next use
@@ -383,8 +384,8 @@ bool Experiment::addPeakCollection(
 }
 
 bool Experiment::addPeakCollection(
-    const std::string& name, const PeakCollectionType type, std::vector<Peak3D*> peaks, bool indexed,
-    bool integrated)
+    const std::string& name, const PeakCollectionType type, std::vector<Peak3D*> peaks,
+    bool indexed, bool integrated)
 {
     return _peak_handler->addPeakCollection(name, type, peaks, indexed, integrated);
 }
@@ -599,7 +600,7 @@ bool Experiment::addShapeModel(const std::string& name, const ShapeModel& shapes
     return _shape_handler->addShapeModel(name, shapes);
 }
 
-bool Experiment::addEmptyShapeModel(const std::string &name)
+bool Experiment::addEmptyShapeModel(const std::string& name)
 {
     return _shape_handler->addEmptyModel(name);
 }

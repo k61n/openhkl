@@ -82,12 +82,12 @@ void PeakCollection::reset()
 }
 
 std::vector<nsx::Peak3D*> PeakCollection::getPeakList() const
-{ 
+{
     std::vector<nsx::Peak3D*> peak_list(_peaks.size());
-    
+
     for (int i = 0; i < _peaks.size(); i++)
-        peak_list[i] = _peaks[i].get();   
-    
+        peak_list[i] = _peaks[i].get();
+
     return peak_list;
 }
 
@@ -235,8 +235,7 @@ int PeakCollection::countEnabled() const
 void PeakCollection::buildShapeModel(sptrDataSet data, const ShapeModelParameters& params)
 {
     nsxlog(Level::Info, "PeakCollection::buildShapeModel");
-    _shape_model =
-        std::make_unique<ShapeModel>(std::make_shared<ShapeModelParameters>(params));
+    _shape_model = std::make_unique<ShapeModel>(std::make_shared<ShapeModelParameters>(params));
     _shape_model->parameters()->log(Level::Info);
     computeSigmas();
     _shape_model->parameters()->sigma_d = _sigma_d;

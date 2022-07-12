@@ -171,15 +171,15 @@ Intensity Peak3D::correctedIntensity() const
     auto c = _shape.center();
     auto state = InterpolatedState::interpolate(_data->instrumentStates(), c[2]);
     if (!state.isValid()) // Interpolation error
-        return Intensity(); 
-   
+        return Intensity();
+
     auto diff = state.diffractometer();
     if (diff == nullptr) {
         return Intensity();
     }
 
-     auto detector = diff->detector();
-    if (detector == nullptr){
+    auto detector = diff->detector();
+    if (detector == nullptr) {
         return Intensity();
     }
 
@@ -423,14 +423,13 @@ std::string Peak3D::toString() const
 {
     std::ostringstream oss;
     // h, k, l, x, y, frame, intensity, sigma
-    oss << std::fixed << std::setw(5) << _hkl.h()
-        << std::fixed << std::setw(5) << _hkl.k()
-        << std::fixed << std::setw(5) << _hkl.l()
-        << std::fixed << std::setw(10) << std::setprecision(2) << shape().center()[0]
-        << std::fixed << std::setw(10) << std::setprecision(2) << shape().center()[1]
-        << std::fixed << std::setw(10) << std::setprecision(2) << shape().center()[2]
-        << std::fixed << std::setw(10) << std::setprecision(2) << correctedIntensity().value()
-        << std::fixed << std::setw(10) << std::setprecision(2) << correctedIntensity().sigma();
+    oss << std::fixed << std::setw(5) << _hkl.h() << std::fixed << std::setw(5) << _hkl.k()
+        << std::fixed << std::setw(5) << _hkl.l() << std::fixed << std::setw(10)
+        << std::setprecision(2) << shape().center()[0] << std::fixed << std::setw(10)
+        << std::setprecision(2) << shape().center()[1] << std::fixed << std::setw(10)
+        << std::setprecision(2) << shape().center()[2] << std::fixed << std::setw(10)
+        << std::setprecision(2) << correctedIntensity().value() << std::fixed << std::setw(10)
+        << std::setprecision(2) << correctedIntensity().sigma();
     return oss.str();
 }
 

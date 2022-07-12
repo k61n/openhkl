@@ -39,11 +39,12 @@ class PeakHandler {
     const PeakCollectionMap* getPeakCollectionMap() const;
     //! Add a peak collection
     bool addPeakCollection(
-        const std::string& name, const PeakCollectionType type, const std::vector<nsx::Peak3D*> peaks);
+        const std::string& name, const PeakCollectionType type,
+        const std::vector<nsx::Peak3D*> peaks);
     //
     bool addPeakCollection(
-        const std::string& name, const PeakCollectionType type, const std::vector<nsx::Peak3D*> peaks,
-        bool indexed, bool integrated);
+        const std::string& name, const PeakCollectionType type,
+        const std::vector<nsx::Peak3D*> peaks, bool indexed, bool integrated);
     //! Add an empty peak collection
     bool addEmptyCollection(const std::string& name, const PeakCollectionType type);
     //! Returns true if the experiment has named peak collection
@@ -63,8 +64,7 @@ class PeakHandler {
     //! Get the number of peak collections
     int numPeakCollections() const { return _peak_collections.size(); };
     //! Create a new collection of peaks caught by _peak_filter
-    bool acceptFilter(
-        const std::string name, PeakCollection* collection, PeakCollectionType pct);
+    bool acceptFilter(const std::string name, PeakCollection* collection, PeakCollectionType pct);
     //! Deep copy a peak collection
     bool clonePeakCollection(std::string name, std::string new_name);
     //! Generate name for new peak collection

@@ -88,8 +88,8 @@ void SubframeIntegrate::setInputUp()
     _peak_combo = f.addPeakCombo(ComboType::PeakCollection, "Peaks to integrate");
 
     connect(
-        _peak_combo, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
-        this, &SubframeIntegrate::toggleUnsafeWidgets);
+        _peak_combo, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this,
+        &SubframeIntegrate::toggleUnsafeWidgets);
 
     _left_layout->addWidget(input_box);
 }
@@ -105,8 +105,8 @@ void SubframeIntegrate::setFigureUp()
         _detector_widget->scene(), &DetectorScene::signalSelectedPeakItemChanged, this,
         &SubframeIntegrate::changeSelected);
     connect(
-        _peak_combo, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
-        this, &SubframeIntegrate::refreshPeakTable);
+        _peak_combo, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this,
+        &SubframeIntegrate::refreshPeakTable);
 
     _right_element->addWidget(figure_group);
 }
@@ -436,7 +436,7 @@ void SubframeIntegrate::runIntegration()
         nsx::PeakCollection* peaks_to_integrate = _peak_combo->currentPeakCollection();
         nsx::ShapeModel* shapes = nullptr;
         if (gSession->currentProject()->hasShapeModel())
-           shapes = _shape_combo->currentShapes();
+            shapes = _shape_combo->currentShapes();
 
         setIntegrationParameters();
         auto* params = gSession->currentProject()->experiment()->integrator()->parameters();
@@ -473,8 +473,8 @@ void SubframeIntegrate::toggleUnsafeWidgets()
     if (!gSession->hasProject())
         return;
 
-    if (!gSession->currentProject()->hasDataSet() ||
-        !gSession->currentProject()->hasPeakCollection()) {
+    if (!gSession->currentProject()->hasDataSet()
+        || !gSession->currentProject()->hasPeakCollection()) {
         _integrate_button->setEnabled(false);
         _remove_overlaps->setEnabled(false);
     }
@@ -499,4 +499,3 @@ DetectorWidget* SubframeIntegrate::detectorWidget()
 {
     return _detector_widget;
 }
-

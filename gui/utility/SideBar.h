@@ -16,8 +16,8 @@
 #define NSX_GUI_UTILITY_SIDEBAR_H
 
 #include <QToolBar>
-#include <array>
 #include <QToolTip>
+#include <array>
 
 // subclass Action to integrate tooltips
 

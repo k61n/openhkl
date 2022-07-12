@@ -86,8 +86,8 @@ void SubframeShapes::setInputUp()
     GridFiller f(input_box, true);
 
     _data_combo = f.addDataCombo("Data set");
-    _peak_combo = f.addPeakCombo(
-        ComboType::PeakCollection, "Peaks for shapes", "Used to build shape model");
+    _peak_combo =
+        f.addPeakCombo(ComboType::PeakCollection, "Peaks for shapes", "Used to build shape model");
 
     _nx = f.addSpinBox("histogram bins x", "Number of histogram bins in x direction");
     _ny = f.addSpinBox("histogram bins y", "Number of histogram bins in y direction");
@@ -131,7 +131,7 @@ void SubframeShapes::setInputUp()
         "Build shape model",
         "<font>A shape model is a collection of strong peak shapes, to be averaged within a"
         "specified cutoff in order to infer the shape of a weak peak.</font>");
-        // Rich text to force line break in tooltip
+    // Rich text to force line break in tooltip
     _save_shapes =
         f.addButton("Save shape model", "Add the generated shape model to the experiment");
 
@@ -174,12 +174,12 @@ void SubframeShapes::setComputeShapesUp()
     _frame = f.addDoubleSpinBox(
         "frame coordinate", "(frames) frame coordinate of peak shape to preview");
 
-    _min_neighbours = f.addSpinBox(
-        "Minimum neighbours", "Fewest possible neighbours to compute a mean profile");
+    _min_neighbours =
+        f.addSpinBox("Minimum neighbours", "Fewest possible neighbours to compute a mean profile");
     _pixel_radius = f.addDoubleSpinBox("Radius", "(pixels) - radius for neighbour search");
     _frame_radius = f.addDoubleSpinBox("Frames", "(frames) - angular radius for neighbour search");
-    _interpolation_combo = f.addCombo(
-        "Interpolation type", "Weighting strategy for mean covariance calculation");
+    _interpolation_combo =
+        f.addCombo("Interpolation type", "Weighting strategy for mean covariance calculation");
 
     _calculate_mean_profile = f.addButton(
         "Calculate profile",
@@ -226,8 +226,8 @@ void SubframeShapes::setComputeShapesUp()
         &SubframeShapes::computeProfile);
     connect(
         _interpolation_combo,
-        static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
-        this, &SubframeShapes::computeProfile);
+        static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this,
+        &SubframeShapes::computeProfile);
     connect(
         _x, qOverload<double>(&QDoubleSpinBox::valueChanged), this,
         &SubframeShapes::onShapeChanged);
@@ -259,8 +259,7 @@ void SubframeShapes::setAssignShapesUp()
 {
     auto assign_box = new Spoiler("Apply shape model");
     GridFiller f(assign_box, true);
-    _predicted_combo =
-        f.addPeakCombo(ComboType::PredictedPeaks, "Target peak collection");
+    _predicted_combo = f.addPeakCombo(ComboType::PredictedPeaks, "Target peak collection");
     _shape_combo = f.addShapeCombo("Shape model");
     _assign_peak_shapes =
         f.addButton("Apply shape model", "Apply selected shape model to a peak collection");
@@ -298,8 +297,8 @@ void SubframeShapes::setFigureUp()
         _predicted_combo, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
         this, &SubframeShapes::refreshPeakTable);
     connect(
-        _detector_widget->scene(), &DetectorScene::signalPeakSelected,
-        this, &SubframeShapes::onPeakSelected);
+        _detector_widget->scene(), &DetectorScene::signalPeakSelected, this,
+        &SubframeShapes::onPeakSelected);
 
     _right_element->addWidget(figure_group);
 }
@@ -369,7 +368,7 @@ void SubframeShapes::refreshAll()
 void SubframeShapes::grabShapeParameters()
 {
     auto* params = _shape_model.parameters();
-    if (gSession->currentProject()->hasPeakCollection()){
+    if (gSession->currentProject()->hasPeakCollection()) {
         _peak_combo->currentPeakCollection()->computeSigmas();
 
         _min_d->setValue(params->d_min);
@@ -530,7 +529,7 @@ void SubframeShapes::computeProfile()
     _graphics_view->scene()->setSceneRect(QRectF(0, 0, xmax * nframes, ymax));
 
     ColorMap cmap;
-    for (int frame = 0; frame < nframes; ++frame ) {
+    for (int frame = 0; frame < nframes; ++frame) {
         int xmin = frame * xmax;
         for (int i = 0; i < xmax; ++i) {
             for (int j = 0; j < ymax; ++j) {
@@ -635,7 +634,6 @@ void SubframeShapes::toggleUnsafeWidgets()
 
     if (gSession->currentProject()->hasShapeModel() && (_predicted_combo->count() > 0))
         _assign_peak_shapes->setEnabled(true);
-
 }
 
 
@@ -646,7 +644,7 @@ DetectorWidget* SubframeShapes::detectorWidget()
 
 void SubframeShapes::onPeakSelected(nsx::Peak3D* peak)
 {
-    QSignalBlocker block_x(_x) ;
+    QSignalBlocker block_x(_x);
     QSignalBlocker block_y(_y);
     QSignalBlocker block_frame(_frame);
     _current_peak = peak;

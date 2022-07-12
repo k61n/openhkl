@@ -110,13 +110,10 @@ void Actions::setupData()
 
     connect(remove_data, &QAction::triggered, this, &Actions::removeData);
 
-    connect(show_input_files, &QAction::triggered,
-        [ ]() {
-            gGui->input_files_window->show();
-            gGui->input_files_window->refreshAll();
-
-        }
-    );
+    connect(show_input_files, &QAction::triggered, []() {
+        gGui->input_files_window->show();
+        gGui->input_files_window->refreshAll();
+    });
 }
 
 void Actions::removeExperiment()
@@ -176,13 +173,10 @@ void Actions::setupPeaks()
     connect(remove_peaks, &QAction::triggered, this, &Actions::removePeaks);
     connect(clone_peaks, &QAction::triggered, this, &Actions::clonePeaks);
 
-    connect(
-         show_peaks, &QAction::triggered,
-        [ ]() {
-            gGui->peak_list_window->show();
-            gGui->peak_list_window->refreshAll(  );
-        }
-    );
+    connect(show_peaks, &QAction::triggered, []() {
+        gGui->peak_list_window->show();
+        gGui->peak_list_window->refreshAll();
+    });
 }
 
 void Actions::setupRest()
@@ -216,8 +210,8 @@ void Actions::addCell()
 
     nsx::Experiment* expt = gSession->currentProject()->experiment();
     expt->addUnitCell(
-        dlg->unitCellName().toStdString(), dlg->a(), dlg->b(), dlg->c(), dlg->alpha(),
-        dlg->beta(), dlg->gamma(), dlg->spaceGroup().toStdString());
+        dlg->unitCellName().toStdString(), dlg->a(), dlg->b(), dlg->c(), dlg->alpha(), dlg->beta(),
+        dlg->gamma(), dlg->spaceGroup().toStdString());
     gSession->onUnitCellChanged();
     auto cell_list = gSession->currentProject()->getUnitCellNames();
     gGui->sideBar()->refreshCurrent();

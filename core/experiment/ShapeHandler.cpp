@@ -81,8 +81,8 @@ std::vector<std::string> ShapeHandler::getCollectionNames() const
 {
 
     std::vector<std::string> names;
-    for (ShapeModelMap::const_iterator it = _shape_models.begin();
-         it != _shape_models.end(); ++it) {
+    for (ShapeModelMap::const_iterator it = _shape_models.begin(); it != _shape_models.end();
+         ++it) {
         names.push_back(it->second->name());
     }
     return names;

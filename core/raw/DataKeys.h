@@ -164,11 +164,17 @@ const std::string ym_goniometer{"goniometer"};
 const std::string ym_rotClockwise{"clockwise"};
 
 //-- Recognized metadata keys
-const std::set<std::string> RecognizedMetaDataKeys{
-    at_experiment, at_diffractometer, at_formatVersion, at_datasetSources, at_frameCount,
-    at_wavelength, at_monitorSum, at_numor, at_totalSteps, at_title, at_time, at_startTime,
-    at_endTime, at_peakCount, at_peakType, at_rVec, at_BravaisLattice, at_indexingTol,
-    at_spacegroup, at_z, at_baseline, at_gain};
+const std::set<std::string> RecognizedMetaDataKeys{at_experiment,     at_diffractometer,
+                                                   at_formatVersion,  at_datasetSources,
+                                                   at_frameCount,     at_wavelength,
+                                                   at_monitorSum,     at_numor,
+                                                   at_totalSteps,     at_title,
+                                                   at_time,           at_startTime,
+                                                   at_endTime,        at_peakCount,
+                                                   at_peakType,       at_rVec,
+                                                   at_BravaisLattice, at_indexingTol,
+                                                   at_spacegroup,     at_z,
+                                                   at_baseline,       at_gain};
 
 } // namespace nsx
 

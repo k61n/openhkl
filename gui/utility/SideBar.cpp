@@ -17,13 +17,13 @@
 #include "gui/MainWin.h"
 #include "gui/models/Project.h"
 #include "gui/models/Session.h"
-#include "gui/subframe_merge/SubframeMergedPeaks.h"
 #include "gui/subframe_experiment/SubframeExperiment.h"
 #include "gui/subframe_filter/SubframeFilterPeaks.h"
 #include "gui/subframe_find/SubframeFindPeaks.h"
 #include "gui/subframe_home/SubframeHome.h"
 #include "gui/subframe_index/SubframeAutoIndexer.h"
 #include "gui/subframe_integrate/SubframeIntegrate.h"
+#include "gui/subframe_merge/SubframeMergedPeaks.h"
 #include "gui/subframe_predict/SubframePredictPeaks.h"
 #include "gui/subframe_refiner/SubframeRefiner.h"
 #include "gui/subframe_shapes/SubframeShapes.h"
@@ -34,7 +34,6 @@
 #include <QPaintEvent>
 #include <QPainter>
 #include <QSignalBlocker>
-#include <QLabel>
 
 // TODO: find a better place for this
 // Icon attributions:
@@ -70,9 +69,7 @@ SideBar::SideBar(QWidget* parent) : QWidget(parent), mCheckedAction(nullptr), mO
     QAction* predictor = addAction(QIcon(path + QString("predictor.svg")), "Predict");
     QAction* refiner = addAction(QIcon(path + QString("refiner.svg")), "Refine");
     QAction* integrator = addAction(QIcon(path + QString("integrator.svg")), "Integrate");
-    QAction* info = addAction(QIcon(path + QString("merger.svg")), "Merge"); 
-
-    
+    QAction* info = addAction(QIcon(path + QString("merger.svg")), "Merge");
 
 
     QAction* tempAction = mActions.at(0);
@@ -115,7 +112,7 @@ void SideBar::paintEvent(QPaintEvent* event)
             painter.fillRect(actionRect, fill_color);
         }
 
-        if (action == mOverAction){
+        if (action == mOverAction) {
             painter.fillRect(actionRect, QColor(150, 150, 150));
         }
 
@@ -322,4 +319,3 @@ void SideBar::refreshCurrent()
 {
     mCheckedAction->trigger();
 }
-

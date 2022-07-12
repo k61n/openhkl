@@ -291,8 +291,7 @@ void SubframeFindPeaks::refreshAll()
 
 void SubframeFindPeaks::grabFinderParameters()
 {
-    nsx::PeakFinder* finder =
-        gSession->currentProject()->experiment()->peakFinder();
+    nsx::PeakFinder* finder = gSession->currentProject()->experiment()->peakFinder();
 
     auto* params = gSession->currentProject()->experiment()->peakFinder()->parameters();
 
@@ -341,8 +340,7 @@ void SubframeFindPeaks::setFinderParameters()
     if (!gSession->hasProject())
         return;
 
-    nsx::PeakFinder* finder =
-        gSession->currentProject()->experiment()->peakFinder();
+    nsx::PeakFinder* finder = gSession->currentProject()->experiment()->peakFinder();
 
     auto* params = gSession->currentProject()->experiment()->peakFinder()->parameters();
     params->minimum_size = _min_size_spin->value();
@@ -422,7 +420,7 @@ void SubframeFindPeaks::find()
 
     int idx = _data_combo->currentIndex();
 
-    if (idx >= all_data.size() || idx == -1){
+    if (idx >= all_data.size() || idx == -1) {
         _data_combo->setCurrentIndex(0);
     }
 
@@ -431,13 +429,12 @@ void SubframeFindPeaks::find()
             data_list.push_back(all_data.at(i));
     } else {
         int idx = _data_combo->currentIndex();
-        if (idx < all_data.size()){
+        if (idx < all_data.size()) {
             data_list.push_back(all_data.at(idx));
         }
     }
 
-    nsx::PeakFinder* finder =
-        gSession->currentProject()->experiment()->peakFinder();
+    nsx::PeakFinder* finder = gSession->currentProject()->experiment()->peakFinder();
     nsx::sptrProgressHandler progHandler = nsx::sptrProgressHandler(new nsx::ProgressHandler);
     ProgressView progressView(nullptr);
     progressView.watch(progHandler);
@@ -504,8 +501,8 @@ void SubframeFindPeaks::accept()
         return;
     if (dlg->result() == QDialog::Rejected)
         return;
-    if (!gSession->currentProject()->experiment()
-             ->acceptFoundPeaks(dlg->listName().toStdString(), _peak_collection)) {
+    if (!gSession->currentProject()->experiment()->acceptFoundPeaks(
+            dlg->listName().toStdString(), _peak_collection)) {
         QMessageBox::warning(
             this, "Unable to add PeakCollection", "Collection with this name already exists!");
         return;

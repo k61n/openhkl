@@ -32,8 +32,7 @@ class PixelSumIntegrator : public MeanBackgroundIntegrator {
     PixelSumIntegrator(bool fit_center, bool fit_covariance);
     ~PixelSumIntegrator();
     //! Integrate a peak
-    bool compute(
-        Peak3D* peak, ShapeModel* shape_model, const IntegrationRegion& region) override;
+    bool compute(Peak3D* peak, ShapeModel* shape_model, const IntegrationRegion& region) override;
 };
 
 /*! @}*/

@@ -24,8 +24,8 @@
 
 #include <QFormLayout>
 #include <QGridLayout>
-#include <QMessageBox>
 #include <QLabel>
+#include <QMessageBox>
 
 RawDataDialog::RawDataDialog(
     const nsx::RawDataReaderParameters& parameters0, const QStringList& datanames_cur)
@@ -38,13 +38,12 @@ RawDataDialog::RawDataDialog(
     GridFiller gridfiller(main_grid);
     setLayout(main_grid);
 
-    _datasetName = gridfiller.addLineEdit(
-        "Name", QString::fromStdString(parameters0.dataset_name));
+    _datasetName = gridfiller.addLineEdit("Name", QString::fromStdString(parameters0.dataset_name));
     _dataArrangement = gridfiller.addCombo(
         "Data arrangement", "Toggle data arrangement between row and column major");
     _dataFormat = gridfiller.addCombo("Data format", "Number of bytes per pixel in images");
-    _swapEndianness = gridfiller.addCheckBox(
-        "Swap endian", "Swap the endianness of the input data", 1);
+    _swapEndianness =
+        gridfiller.addCheckBox("Swap endian", "Swap the endianness of the input data", 1);
     _chi = gridfiller.addDoubleSpinBox(
         QString((QChar)0x0394) + " " + QString((QChar)0x03C7),
         "Angle increment about the chi instrument axis");

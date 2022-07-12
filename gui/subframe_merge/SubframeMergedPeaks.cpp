@@ -95,8 +95,7 @@ SubframeMergedPeaks::SubframeMergedPeaks()
 
 void SubframeMergedPeaks::grabMergeParameters()
 {
-    auto params =
-        gSession->currentProject()->experiment()->peakMerger()->parameters();
+    auto params = gSession->currentProject()->experiment()->peakMerger()->parameters();
 
     _d_min->setValue(params->d_min);
     _d_max->setValue(params->d_max);
@@ -111,8 +110,7 @@ void SubframeMergedPeaks::setMergeParameters()
     if (!gSession->hasProject())
         return;
 
-    auto params =
-        gSession->currentProject()->experiment()->peakMerger()->parameters();
+    auto params = gSession->currentProject()->experiment()->peakMerger()->parameters();
 
     params->d_min = _d_min->value();
     params->d_max = _d_max->value();
@@ -414,7 +412,7 @@ void SubframeMergedPeaks::refreshSpaceGroupCombo()
     std::sort(vec.begin(), vec.end(), [](const auto& x, const auto& y) {
         return x.second > y.second;
     });
-    _space_group->clear();//clear first?
+    _space_group->clear(); // clear first?
     for (const auto& [key, value] : vec)
         _space_group->addItem(QString::fromStdString(key));
     _space_group->setCurrentIndex(0);
@@ -434,8 +432,8 @@ void SubframeMergedPeaks::processMerge()
         std::vector<nsx::PeakCollection*> peak_collections;
         QString collection1 = _peak_combo_1->currentText();
         QString collection2 = _peak_combo_2->currentText();
-        if (_space_group->currentText().toStdString().empty()){
-                return;
+        if (_space_group->currentText().toStdString().empty()) {
+            return;
         }
         nsx::SpaceGroup group = {_space_group->currentText().toStdString()};
         merger->setSpaceGroup(group);
@@ -784,7 +782,7 @@ nsx::sptrUnitCell SubframeMergedPeaks::singleBatchRefine()
 {
     auto expt = gSession->currentProject()->experiment();
     auto* peaks = _peak_combo_1->currentPeakCollection();
-    const auto data= peaks->getPeakList()[0]->dataSet();
+    const auto data = peaks->getPeakList()[0]->dataSet();
     auto states = data->instrumentStates();
     auto* refiner = expt->refiner();
     auto* params = refiner->parameters();

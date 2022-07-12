@@ -29,7 +29,8 @@
 unsigned int Project::_last_id = 0;
 
 Project::Project(QString name, QString instrument)
-    : _experiment{new nsx::Experiment{name.toStdString(), instrument.toStdString()}}, _id(++_last_id)
+    : _experiment{new nsx::Experiment{name.toStdString(), instrument.toStdString()}}
+    , _id(++_last_id)
 {
 }
 

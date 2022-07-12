@@ -16,20 +16,20 @@
 #define NSX_GUI_SUBFRAME_HOME_SUBFRAMEHOME_H
 
 #include "gui/models/ExperimentModel.h"
-#include "gui/views/ExperimentTableView.h"
 #include "gui/subwindows/InputFilesWindow.h"
 #include "gui/subwindows/PeaklistWindow.h"
+#include "gui/views/ExperimentTableView.h"
 
 #include <memory>
 
 #include <QHBoxLayout>
 #include <QListWidget>
 #include <QPushButton>
+#include <QSplitter>
 #include <QTableWidget>
 #include <QVBoxLayout>
 #include <QWidget>
 #include <qpushbutton.h>
-#include <QSplitter>
 
 class InputFilesWindow;
 class InstrumentDataWindow;
@@ -80,7 +80,7 @@ class SubframeHome : public QWidget {
     void refreshTables() const;
     //! Clearing tables on SubframeHome
     void clearTables();
-    //! Setup ContextMenu on Dataset table 
+    //! Setup ContextMenu on Dataset table
     void setContextMenuDatasetTable(QPoint pos);
     //! Setup ContextMenu on PeakCollection table
     void setContextMenuPeakTable(QPoint pos);

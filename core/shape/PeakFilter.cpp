@@ -42,8 +42,8 @@ PeakFilter::PeakFilter()
 
 void PeakFilter::resetFilterFlags()
 {
-    *_filter_flags = {true,  false, false, false, false, false, false,
-                      false, false, false, false, false, false, false, false};
+    *_filter_flags = {true,  false, false, false, false, false, false, false,
+                      false, false, false, false, false, false, false};
 }
 
 void PeakFilter::filterSignificance(PeakCollection* peak_collection) const
@@ -440,7 +440,7 @@ void PeakFilter::filterRejectionFlag(PeakCollection* peak_collection) const
         if (peak->rejectionFlag() == _filter_params->rejection_flag) {
             peak->caughtYou(true);
             ++ncaught;
-        } else 
+        } else
             peak->rejectYou(true);
     }
     nsxlog(Level::Info, "PeakFilter::filterRejectionFlag: ", ncaught, " peaks caught");
@@ -521,8 +521,8 @@ void PeakFilter::filter(PeakCollection* peak_collection) const
     if (_filter_flags->rejection_flag) {
         filterRejectionFlag(peak_collection);
         nsxlog(
-            Level::Info, "Filtering by rejection flag: ",
-            static_cast<int>(_filter_params->rejection_flag));
+            Level::Info,
+            "Filtering by rejection flag: ", static_cast<int>(_filter_params->rejection_flag));
     }
 }
 

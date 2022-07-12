@@ -20,11 +20,7 @@
 
 namespace nsx {
 
-enum class MergeFlag {
-    Valid,
-    InvalidQ,
-    Extinct
-};
+enum class MergeFlag { Valid, InvalidQ, Extinct };
 
 //! A list of peaks, and crystallographic information (SpaceGroup, MillerIndex, ...).
 class MergedPeak {

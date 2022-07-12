@@ -17,8 +17,7 @@
 
 #include <QComboBox>
 
-namespace nsx
-{
+namespace nsx {
 class PeakCollection;
 }
 
@@ -69,7 +68,6 @@ class PeakComboBox : public QComboBox {
 
     //! First position in combo is empty
     bool _empty_first = false;
-
 };
 
 #endif // NSX_GUI_UTILITY_PEAKCOMBO_H

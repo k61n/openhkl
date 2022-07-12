@@ -16,15 +16,15 @@
 
 #include "gui/models/Project.h"
 #include "gui/models/Session.h"
-#include "gui/widgets/PlotPanel.h"
 #include "gui/widgets/DetectorWidget.h"
+#include "gui/widgets/PlotPanel.h"
 
+#include <QComboBox>
 #include <QGroupBox>
 #include <QHBoxLayout>
 #include <QSplitter>
 #include <QVBoxLayout>
 #include <QWidget>
-#include <QComboBox>
 
 SubframeExperiment::SubframeExperiment()
 {
@@ -68,14 +68,14 @@ SubframeExperiment::SubframeExperiment()
     figure_group->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     _detector_widget = new DetectorWidget(true, false, true, figure_group);
     _detector_widget->modeCombo()->addItems(QStringList{
-            "Zoom", "Selection box", "Rectangular mask", "Elliptical mask",
-            "Line plot", "Horizontal slice", "Vertical slice"});
+        "Zoom", "Selection box", "Rectangular mask", "Elliptical mask", "Line plot",
+        "Horizontal slice", "Vertical slice"});
     QWidget* right_widget = new QWidget(this);
     right_widget->setLayout(_detector_widget);
 
     //_properties->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Expanding);
 
-    //left_layout->addWidget(_properties, 7);
+    // left_layout->addWidget(_properties, 7);
     left_widget->setLayout(left_layout);
 
     QSplitter* right_splitter = new QSplitter();
@@ -92,8 +92,6 @@ SubframeExperiment::SubframeExperiment()
     splitter->setChildrenCollapsible(false);
 
     layout->addWidget(splitter);
-
-
 }
 
 void SubframeExperiment::refreshAll()

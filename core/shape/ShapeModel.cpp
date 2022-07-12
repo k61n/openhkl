@@ -116,8 +116,7 @@ struct FitData {
     }
 };
 
-ShapeModel::ShapeModel()
-    : _profiles(), _choleskyD(), _choleskyM(), _choleskyS(), _handler(nullptr)
+ShapeModel::ShapeModel() : _profiles(), _choleskyD(), _choleskyM(), _choleskyS(), _handler(nullptr)
 {
     _choleskyD.fill(1e-6);
     _choleskyM.fill(1e-6);
@@ -187,11 +186,11 @@ void ShapeModel::updateFit(int num_iterations)
     std::vector<std::pair<int, int>> fit_constraints;
     fit_data.reserve(_profiles.size());
 
-    for (const auto& pair: _profiles) {
+    for (const auto& pair : _profiles) {
         auto peak = pair.first;
         Eigen::Matrix3d cov = peak->shape().inverseMetric();
         FitData data(peak);
-        fit_data.push_back({0.5*(cov+cov.transpose()), data});
+        fit_data.push_back({0.5 * (cov + cov.transpose()), data});
     }
 
     nsx::FitParameters params;
@@ -209,7 +208,7 @@ void ShapeModel::updateFit(int num_iterations)
         Eigen::Matrix3d sigmaD = from_cholesky(_choleskyD);
         Eigen::Matrix3d sigmaS = from_cholesky(_choleskyS);
 
-        for (const auto& tup: fit_data) {
+        for (const auto& tup : fit_data) {
             const auto& cov = tup.first;
             const auto& data = tup.second;
 
@@ -218,7 +217,7 @@ void ShapeModel::updateFit(int num_iterations)
 
             for (int i = 0; i < 3; ++i) {
                 for (int j = i; j < 3; ++j)
-                    r(k++) = delta(i,j);
+                    r(k++) = delta(i, j);
             }
         }
 
@@ -226,7 +225,7 @@ void ShapeModel::updateFit(int num_iterations)
     };
 
     nsx::Minimizer min;
-    min.initialize(params, 6*fit_data.size());
+    min.initialize(params, 6 * fit_data.size());
     min.set_f(residual);
     min.fit(num_iterations);
 }

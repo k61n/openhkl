@@ -19,8 +19,7 @@
 
 #include <QComboBox>
 
-namespace nsx
-{
+namespace nsx {
 class PeakCollection;
 }
 
@@ -38,7 +37,6 @@ class FoundPeakComboBox : public PeakComboBox {
     void addPeakCollections(const PeakList& peaks);
 
  private:
-
     static PeakList _found_peaks;
 };
 

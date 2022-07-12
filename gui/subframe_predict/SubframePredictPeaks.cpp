@@ -38,15 +38,15 @@
 #include "gui/models/Project.h"
 #include "gui/models/Session.h"
 #include "gui/subframe_refiner/SubframeRefiner.h"
+#include "gui/utility/CellComboBox.h"
 #include "gui/utility/ColorButton.h"
 #include "gui/utility/GridFiller.h"
-#include "gui/utility/CellComboBox.h"
 #include "gui/utility/LinkedComboBox.h"
 #include "gui/utility/PeakComboBox.h"
 #include "gui/utility/PropertyScrollArea.h"
 #include "gui/utility/SafeSpinBox.h"
-#include "gui/utility/SideBar.h"
 #include "gui/utility/ShapeComboBox.h"
+#include "gui/utility/SideBar.h"
 #include "gui/utility/Spoiler.h"
 #include "gui/utility/SpoilerCheck.h"
 #include "gui/views/PeakTableView.h"
@@ -248,8 +248,8 @@ void SubframePredictPeaks::setShapeModelUp()
     Spoiler* shapes_box = new Spoiler("Shape model");
     GridFiller f(shapes_box, true);
 
-    _shape_combo = f.addShapeCombo(
-        "Shape model", "Shape model to predict shapes of predicted peaks");
+    _shape_combo =
+        f.addShapeCombo("Shape model", "Shape model to predict shapes of predicted peaks");
     _peak_end = f.addDoubleSpinBox("Peak end", "(sigmas) - scaling factor for peak region");
     _bkg_begin =
         f.addDoubleSpinBox("Bkg begin:", "(sigmas) - scaling factor for lower limit of background");
@@ -262,8 +262,8 @@ void SubframePredictPeaks::setShapeModelUp()
     _min_neighbours = f.addSpinBox(
         "Min. neighbours", "Minimum number of neighbouring shapes to predict peak shape");
     _interpolation_combo = f.addCombo("Interpolation", "Interpolation type for peak shape");
-    _apply_shape_model = f.addButton(
-        "Apply shape model", "Apply shape model to a predicted peak collection");
+    _apply_shape_model =
+        f.addButton("Apply shape model", "Apply shape model to a predicted peak collection");
 
 
     _peak_end->setMaximum(100);
@@ -370,8 +370,7 @@ void SubframePredictPeaks::refreshAll()
 
 void SubframePredictPeaks::grabPredictorParameters()
 {
-    auto params =
-        gSession->currentProject()->experiment()->predictor()->parameters();
+    auto params = gSession->currentProject()->experiment()->predictor()->parameters();
 
     _d_min->setValue(params->d_min);
     _d_max->setValue(params->d_max);
@@ -384,8 +383,7 @@ void SubframePredictPeaks::setPredictorParameters()
     if (!gSession->currentProject()->hasUnitCell())
         return;
 
-    auto params =
-        gSession->currentProject()->experiment()->predictor()->parameters();
+    auto params = gSession->currentProject()->experiment()->predictor()->parameters();
 
     params->d_min = _d_min->value();
     params->d_max = _d_max->value();
@@ -393,8 +391,7 @@ void SubframePredictPeaks::setPredictorParameters()
 
 void SubframePredictPeaks::grabRefinerParameters()
 {
-    auto* params =
-        gSession->currentProject()->experiment()->refiner()->parameters();
+    auto* params = gSession->currentProject()->experiment()->refiner()->parameters();
 
     _n_batches_spin->setValue(params->nbatches);
     _max_iter_spin->setValue(params->max_iter);
@@ -410,8 +407,7 @@ void SubframePredictPeaks::setRefinerParameters()
 {
     if (!gSession->hasProject())
         return;
-    auto* params =
-        gSession->currentProject()->experiment()->refiner()->parameters();
+    auto* params = gSession->currentProject()->experiment()->refiner()->parameters();
 
     params->nbatches = _n_batches_spin->value();
     params->max_iter = _max_iter_spin->value();
@@ -709,7 +705,6 @@ void SubframePredictPeaks::toggleUnsafeWidgets()
 
     // if (!_shapes_assigned) // TODO: reenable later
     //     _save_button->setEnabled(false);
-
 }
 
 DetectorWidget* SubframePredictPeaks::detectorWidget()
@@ -737,4 +732,3 @@ void SubframePredictPeaks::changeCrosshair()
 {
     emit crosshairChanged(_crosshair_size->value(), _crosshair_linewidth->value());
 }
-

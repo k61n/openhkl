@@ -99,7 +99,10 @@ class PeakFinder {
     //! Set the convolver flavour for peak/background convolution
     void setConvolver(const Convolver& convolver);
     //! Get the convolver
-    nsx::Convolver* convolver() const { return _convolver.get(); }
+    nsx::Convolver* convolver() const
+    {
+        return _convolver.get();
+    }
 
  private:
     //! Remove blobs that do not meet the above criteria

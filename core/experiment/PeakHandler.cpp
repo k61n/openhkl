@@ -75,14 +75,16 @@ bool PeakHandler::hasPeakCollection(const std::string& name) const
 bool PeakHandler::hasPeakCollectionType(PeakCollectionType t) const
 {
     for (auto& e : _peak_collections)
-        if (e.second->type() == t) return true;
+        if (e.second->type() == t)
+            return true;
     return false;
 }
 
 bool PeakHandler::hasIntegratedPeakCollection()
 {
     for (auto& e : _peak_collections)
-        if (e.second->isIntegrated()) return true;
+        if (e.second->isIntegrated())
+            return true;
     return false;
 }
 

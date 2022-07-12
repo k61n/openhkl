@@ -26,14 +26,14 @@
 #include "gui/utility/DataComboBox.h"
 #include "gui/utility/LinkedComboBox.h"
 
+#include "gui/graphics/DetectorScene.h"
+#include <QClipboard>
 #include <QComboBox>
+#include <QFileDialog>
 #include <QScrollBar>
 #include <QSlider>
 #include <QSpinBox>
 #include <QVBoxLayout>
-#include <QFileDialog>
-#include <QClipboard>
-#include "gui/graphics/DetectorScene.h"
 
 QList<DetectorWidget*> DetectorWidget::_detector_widgets = QList<DetectorWidget*>();
 
@@ -91,10 +91,12 @@ DetectorWidget::DetectorWidget(bool mode, bool cursor, bool slider, QWidget* par
     connect(
         _spin, QOverload<int>::of(&QSpinBox::valueChanged), gGui->instrumentstate_window,
         &InstrumentStateWindow::onFrameChanged);
-    connect(_detector_view, &QWidget::customContextMenuRequested, this, &DetectorWidget::setmenuRequested);
+    connect(
+        _detector_view, &QWidget::customContextMenuRequested, this,
+        &DetectorWidget::setmenuRequested);
 
 
-    if (mode){
+    if (mode) {
         _mode_combo = new QComboBox();
         _mode_combo->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
         _mode_combo->setToolTip("Set the interaction mode for the detector image");
@@ -102,7 +104,7 @@ DetectorWidget::DetectorWidget(bool mode, bool cursor, bool slider, QWidget* par
 
         connect(
             _mode_combo, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
-            [=](int i) {_detector_view->getScene()->changeInteractionMode(i);});
+            [=](int i) { _detector_view->getScene()->changeInteractionMode(i); });
     }
 
     if (cursor) {
@@ -145,7 +147,7 @@ void DetectorWidget::syncIntensitySliders()
 
 void DetectorWidget::datasetChanged()
 {
-      if (!gSession->hasProject())
+    if (!gSession->hasProject())
         return;
 
     if (!gSession->currentProject()->hasDataSet())
@@ -154,7 +156,6 @@ void DetectorWidget::datasetChanged()
     auto data = _data_combo->currentData();
     scene()->removeBeamSetter(); // need to be sensetive of dataset change
     refresh();
-
 }
 
 void DetectorWidget::refresh()
@@ -195,7 +196,8 @@ nsx::sptrDataSet DetectorWidget::currentData()
 
 void DetectorWidget::changeView(int option)
 {
-    if (_detector_view==nullptr) return;
+    if (_detector_view == nullptr)
+        return;
     QTransform trans;
     trans.scale(-1, -1); // fromDetector (default; 0)
     if (option == 1) // fromSample
@@ -256,8 +258,7 @@ void DetectorWidget::setmenuRequested(QPoint pos)
     QAction* reset = menu->addAction("Reset");
     menu->popup(_detector_view->mapToGlobal(pos));
 
-    connect(reset, &QAction::triggered, _detector_view->getScene(),
-    [=](){
+    connect(reset, &QAction::triggered, _detector_view->getScene(), [=]() {
         _detector_view->getScene()->resetElements();
         _detector_view->getScene()->loadCurrentImage();
     });
@@ -266,21 +267,19 @@ void DetectorWidget::setmenuRequested(QPoint pos)
 
     QAction* copy_clpbrd = menu->addAction("Copy to clipboard");
     menu->popup(_detector_view->mapToGlobal(pos));
-    connect(copy_clpbrd, &QAction::triggered, this,
-    [=](){
+    connect(copy_clpbrd, &QAction::triggered, this, [=]() {
         QPixmap pixMap = _detector_view->grab();
         QApplication::clipboard()->setImage(pixMap.toImage(), QClipboard::Clipboard);
     });
 
     QAction* save_plot = menu->addAction("Save plot");
     menu->popup(_detector_view->mapToGlobal(pos));
-    connect(save_plot, &QAction::triggered, this,
-    [=](){
-        QFileInfo fi(QFileDialog::getSaveFileName(_detector_view, tr("Save image as"),
-            QString(qgetenv("HOME")),
+    connect(save_plot, &QAction::triggered, this, [=]() {
+        QFileInfo fi(QFileDialog::getSaveFileName(
+            _detector_view, tr("Save image as"), QString(qgetenv("HOME")),
             tr("Images (*.png *.jpg)")));
 
-        if (!fi.absoluteFilePath().isNull()){
+        if (!fi.absoluteFilePath().isNull()) {
             QPixmap pixMap = _detector_view->grab();
             pixMap.save(fi.absoluteFilePath());
         }

@@ -19,8 +19,7 @@
 
 #include <QComboBox>
 
-namespace nsx
-{
+namespace nsx {
 class DataSet;
 }
 

@@ -39,8 +39,7 @@ class PeakItemGraphic;
 class PeakCollectionModel;
 class SXGraphicsItem;
 
-class DirectBeamGraphic : public QGraphicsEllipseItem {
-}; // Make it easier to remove direct beam
+class DirectBeamGraphic : public QGraphicsEllipseItem { }; // Make it easier to remove direct beam
 
 using EventType = nsx::IntegrationRegion::EventType;
 
@@ -164,7 +163,10 @@ class DetectorScene : public QGraphicsScene {
     //! Set single peak for single peak integration overlay
     void setPeak(nsx::Peak3D* peak);
     //! Set scene to draw integration for single peak
-    void drawSinglePeakIntegrationRegion(bool toggle) { _drawSinglePeakIntegrationRegion = toggle; };
+    void drawSinglePeakIntegrationRegion(bool toggle)
+    {
+        _drawSinglePeakIntegrationRegion = toggle;
+    };
 
  protected:
     void mousePressEvent(QGraphicsSceneMouseEvent* event);

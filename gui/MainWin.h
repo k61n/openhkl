@@ -116,12 +116,11 @@ class MainWin : public QMainWindow {
     // log window
     LogWindow* log_window;
 
-    InputFilesWindow* input_files_window; 
-    
+    InputFilesWindow* input_files_window;
+
     PeaklistWindow* peak_list_window;
 
     Sentinel* sentinel;
-
 
 
  private:

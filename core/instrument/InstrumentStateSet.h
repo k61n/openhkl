@@ -50,7 +50,7 @@ class InstrumentStateSet {
     };
     void reset() { _instrument_states.clear(); };
     void setInstrumentStates(const InstrumentStateList& states) { _instrument_states = states; };
-    InstrumentStateList getInstrumentStateList() {return _instrument_states;};
+    InstrumentStateList getInstrumentStateList() { return _instrument_states; };
 
  private:
     unsigned int _id;

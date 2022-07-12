@@ -97,8 +97,8 @@ class Experiment {
     bool addPeakCollection(
         const std::string& name, const PeakCollectionType type, std::vector<Peak3D*> peaks);
     bool addPeakCollection(
-        const std::string& name, const PeakCollectionType type, std::vector<Peak3D*> peaks, bool indexed,
-        bool integrated);
+        const std::string& name, const PeakCollectionType type, std::vector<Peak3D*> peaks,
+        bool indexed, bool integrated);
     //! Check if the handler has the named peak collection
     bool hasPeakCollection(const std::string& name);
     //! Check if handler has Peak Collections of a certain type
@@ -116,8 +116,7 @@ class Experiment {
     //! Get the number of peak collections
     int numPeakCollections() const;
     //! Create a new peak collection from peaks caught by a filter
-    bool acceptFilter(
-        std::string name, PeakCollection* collection, PeakCollectionType pct);
+    bool acceptFilter(std::string name, PeakCollection* collection, PeakCollectionType pct);
     //! Duplicate a peak collection (deep copy) for comparison after some process
     bool clonePeakCollection(std::string name, std::string new_name);
 
