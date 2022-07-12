@@ -266,7 +266,7 @@ pixels and 10 frames.
 
 Note that the shape in the preview does not look much like the shape of the
 strong peak at highlighted on the detector image. This is because the covariance
-matrix has been interpolated on a square (:math:`20\times 20`) grid, whereas most
+matrix has been interpolated on a square (20 x 20) grid, whereas most
 peaks will have a rectangular bounding box, resulting in elliptical peak shapes.
 
 .. _preliminary_shapes:
