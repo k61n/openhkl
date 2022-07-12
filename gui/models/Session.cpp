@@ -318,12 +318,12 @@ bool Session::loadRawData()
         }
         nsx::Experiment* exp = currentProject()->experiment();
 
-        nsx::Detector* detector = exp->getDiffractometer()->detector();
-        detector->setBaseline(dialog.baseline());
-        detector->setGain(dialog.gain());
-
         // update the parameters by those from the dialog
         parameters = dialog.parameters();
+
+        nsx::Detector* detector = exp->getDiffractometer()->detector();
+        detector->setBaseline(parameters.baseline);
+        detector->setGain(parameters.gain);
 
         nsx::Diffractometer* diff = exp->getDiffractometer();
         const std::shared_ptr<nsx::DataSet> dataset_ptr{

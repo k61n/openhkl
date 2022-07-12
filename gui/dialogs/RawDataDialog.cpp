@@ -186,5 +186,6 @@ nsx::RawDataReaderParameters RawDataDialog::parameters()
         parameters.baseline = 0.0;
         parameters.gain = 1.0;
     }
+
     return parameters;
 }
