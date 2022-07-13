@@ -96,7 +96,7 @@ void SubframeHome::_setLeftLayout(QHBoxLayout* main_layout)
 
     _old_exp = new QPushButton();
     _old_exp->setIcon(QIcon(path + "open.svg"));
-    _old_exp->setText("Load from file");
+    _old_exp->setText("Load experiment from file");
     _old_exp->setMinimumWidth(_new_exp->sizeHint().width());
     _old_exp->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
     tooltip = "Load an existing experiment from a .ohkl (HDF5) file";
@@ -154,7 +154,7 @@ void SubframeHome::_setLeftLayout(QHBoxLayout* main_layout)
     _unitcell_table->verticalHeader()->setVisible(false);
 
     // labels for tables
-    QLabel* lab_dataset = new QLabel("Datasets", this);
+    QLabel* lab_dataset = new QLabel("Data sets", this);
     QLabel* lab_peaks = new QLabel("Peak collections", this);
     QLabel* lab_unitcell = new QLabel("Unit cells", this);
 

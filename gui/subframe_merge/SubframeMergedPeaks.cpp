@@ -79,9 +79,9 @@ SubframeMergedPeaks::SubframeMergedPeaks()
     setMergedUp();
     setUnmergedUp();
 
-    _main_tab_widget->addTab(_shell_tab, "d Shell statistic");
-    _main_tab_widget->addTab(_merged_tab, "Merged representation");
-    _main_tab_widget->addTab(_unmerged_tab, "Unmerged representation");
+    _main_tab_widget->addTab(_shell_tab, "Resolution shell statistics");
+    _main_tab_widget->addTab(_merged_tab, "Merged peaks");
+    _main_tab_widget->addTab(_unmerged_tab, "Unmerged peaks");
 
     layout->addWidget(_main_tab_widget);
 
@@ -178,7 +178,7 @@ void SubframeMergedPeaks::setDShellUp()
 
     label_ptr = new QLabel("Plot axis:");
     label_ptr->setAlignment(Qt::AlignRight);
-    d_shell_down_left->addWidget(label_ptr, 4, 0, 1, 1);
+    d_shell_down_left->addWidget(label_ptr, 5, 0, 1, 1);
     label_ptr->setSizePolicy(*_size_policy_widgets);
 
     _d_min = new QDoubleSpinBox();
@@ -274,7 +274,7 @@ void SubframeMergedPeaks::setMergedUp()
 {
     QVBoxLayout* merged_layout = new QVBoxLayout(_merged_tab);
     _merged_view = new QTableView;
-    _merged_model = new QStandardItemModel(8, 0, this);
+    _merged_model = new QStandardItemModel(0, 8, this);
     _merged_view->setModel(_merged_model);
     QString sigma_header{QString((QChar)0x03C3 + QString{"(I)"})};
     QString chi_header{QString((QChar)0x03C7 + QString{"2"})};
@@ -312,7 +312,7 @@ void SubframeMergedPeaks::setUnmergedUp()
 {
     QVBoxLayout* unmerged_layout = new QVBoxLayout(_unmerged_tab);
     _unmerged_view = new QTableView;
-    _unmerged_model = new QStandardItemModel(8, 0, this);
+    _unmerged_model = new QStandardItemModel(0, 8, this);
     _unmerged_view->setModel(_unmerged_model);
     QString sigma_header{QString((QChar)0x03C3 + QString{"(I)"})};
     _unmerged_model->setHorizontalHeaderLabels(

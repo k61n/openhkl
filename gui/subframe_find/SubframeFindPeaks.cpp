@@ -222,7 +222,7 @@ void SubframeFindPeaks::setSaveUp()
 
 void SubframeFindPeaks::setFigureUp()
 {
-    QGroupBox* figure_group = new QGroupBox("Preview");
+    QGroupBox* figure_group = new QGroupBox("Detector image");
     figure_group->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     _detector_widget = new DetectorWidget(true, false, true, figure_group);
     _detector_widget->modeCombo()->addItems(

@@ -73,8 +73,8 @@ SubframeAutoIndexer::SubframeAutoIndexer()
     QTabWidget* tab_widget = new QTabWidget(this);
     QWidget* tables_tab = new QWidget(tab_widget);
     QWidget* detector_tab = new QWidget(tab_widget);
-    tab_widget->addTab(tables_tab, "Solutions");
-    tab_widget->addTab(detector_tab, "Detector");
+    tab_widget->addTab(tables_tab, "Autoindexer solutions");
+    tab_widget->addTab(detector_tab, "Detector image");
 
     setInputUp();
     setAdjustBeamUp();
@@ -196,11 +196,11 @@ void SubframeAutoIndexer::setAdjustBeamUp()
 
 void SubframeAutoIndexer::setParametersUp()
 {
-    Spoiler* para_box = new Spoiler("Parameters");
+    Spoiler* para_box = new Spoiler("Autoindexer parameters");
     GridFiller f(para_box, true);
 
     std::tie(_min_frame, _max_frame) =
-        f.addSpinBoxPair("Frames:", "(frames) - range of frames over which to index");
+        f.addSpinBoxPair("Image range:", "(images) - range of detector images over which to index");
 
     std::tie(_d_min, _d_max) = f.addDoubleSpinBoxPair(
         "d range:",
