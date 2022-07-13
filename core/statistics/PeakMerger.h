@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_CORE_STATISTICS_PEAKMERGER_H
-#define NSX_CORE_STATISTICS_PEAKMERGER_H
+#ifndef OHKL_CORE_STATISTICS_PEAKMERGER_H
+#define OHKL_CORE_STATISTICS_PEAKMERGER_H
 
 #include "base/utils/Logger.h"
 #include "core/experiment/DataQuality.h"
@@ -93,4 +93,4 @@ class PeakMerger {
 /*! @}*/
 } // namespace ohkl
 
-#endif // NSX_CORE_STATISTICS_PEAKMERGER_H
+#endif // OHKL_CORE_STATISTICS_PEAKMERGER_H

@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_CORE_RAW_METADATA_H
-#define NSX_CORE_RAW_METADATA_H
+#ifndef OHKL_CORE_RAW_METADATA_H
+#define OHKL_CORE_RAW_METADATA_H
 
 #include "base/utils/Logger.h"
 #include "core/raw/DataKeys.h"
@@ -115,4 +115,4 @@ template <typename _type> _type MetaData::key(const char* name) const
 
 } // namespace ohkl
 
-#endif // NSX_CORE_RAW_METADATA_H
+#endif // OHKL_CORE_RAW_METADATA_H

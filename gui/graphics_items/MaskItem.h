@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_GUI_GRAPHICS_ITEMS_MASKITEM_H
-#define NSX_GUI_GRAPHICS_ITEMS_MASKITEM_H
+#ifndef OHKL_GUI_GRAPHICS_ITEMS_MASKITEM_H
+#define OHKL_GUI_GRAPHICS_ITEMS_MASKITEM_H
 
 #include "base/geometry/AABB.h"
 #include "core/data/DataTypes.h"
@@ -68,4 +68,4 @@ class MaskItem : public SXGraphicsItem {
     void updateAABB();
 };
 
-#endif // NSX_GUI_GRAPHICS_ITEMS_MASKITEM_H
+#endif // OHKL_GUI_GRAPHICS_ITEMS_MASKITEM_H

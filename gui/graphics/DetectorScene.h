@@ -11,8 +11,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_GUI_GRAPHICS_DETECTORSCENE_H
-#define NSX_GUI_GRAPHICS_DETECTORSCENE_H
+#ifndef OHKL_GUI_GRAPHICS_DETECTORSCENE_H
+#define OHKL_GUI_GRAPHICS_DETECTORSCENE_H
 
 #include "base/mask/IMask.h"
 #include "core/data/DataTypes.h"
@@ -306,4 +306,4 @@ class DetectorScene : public QGraphicsScene {
     ohkl::PeakCenterDataSet* _peak_center_data;
 };
 
-#endif // NSX_GUI_GRAPHICS_DETECTORSCENE_H
+#endif // OHKL_GUI_GRAPHICS_DETECTORSCENE_H

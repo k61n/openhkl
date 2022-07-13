@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_CORE_ALGO_REFINEMENTBATCH_H
-#define NSX_CORE_ALGO_REFINEMENTBATCH_H
+#ifndef OHKL_CORE_ALGO_REFINEMENTBATCH_H
+#define OHKL_CORE_ALGO_REFINEMENTBATCH_H
 
 #include "base/fit/FitParameters.h"
 #include "core/instrument/InstrumentState.h"
@@ -117,4 +117,4 @@ class RefinementBatch {
 
 } // namespace ohkl
 
-#endif // NSX_CORE_ALGO_REFINEMENTBATCH_H
+#endif // OHKL_CORE_ALGO_REFINEMENTBATCH_H

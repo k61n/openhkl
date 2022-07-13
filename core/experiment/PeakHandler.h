@@ -11,8 +11,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_CORE_EXPERIMENT_PEAKHANDLER_H
-#define NSX_CORE_EXPERIMENT_PEAKHANDLER_H
+#ifndef OHKL_CORE_EXPERIMENT_PEAKHANDLER_H
+#define OHKL_CORE_EXPERIMENT_PEAKHANDLER_H
 
 #include <map>
 #include <string>
@@ -81,4 +81,4 @@ class PeakHandler {
 
 } // namespace ohkl
 
-#endif // NSX_CORE_EXPERIMENT_PEAKHANDLER_H
+#endif // OHKL_CORE_EXPERIMENT_PEAKHANDLER_H

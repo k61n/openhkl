@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_CORE_LOADER_HDF5DATAREADER_H
-#define NSX_CORE_LOADER_HDF5DATAREADER_H
+#ifndef OHKL_CORE_LOADER_HDF5DATAREADER_H
+#define OHKL_CORE_LOADER_HDF5DATAREADER_H
 
 #include "core/loader/BaseHDF5DataReader.h" // inherits from
 #include "core/raw/DataKeys.h" // kw_datasetDefaultName
@@ -39,4 +39,4 @@ class HDF5DataReader : public BaseHDF5DataReader {
 
 } // namespace ohkl
 
-#endif // NSX_CORE_LOADER_HDF5DATAREADER_H
+#endif // OHKL_CORE_LOADER_HDF5DATAREADER_H

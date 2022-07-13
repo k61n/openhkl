@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_TABLES_CRYSTAL_NIGGLIREDUCTION_H
-#define NSX_TABLES_CRYSTAL_NIGGLIREDUCTION_H
+#ifndef OHKL_TABLES_CRYSTAL_NIGGLIREDUCTION_H
+#define OHKL_TABLES_CRYSTAL_NIGGLIREDUCTION_H
 
 #include <Eigen/Dense>
 
@@ -62,4 +62,4 @@ class NiggliReduction {
 
 } // namespace ohkl
 
-#endif // NSX_TABLES_CRYSTAL_NIGGLIREDUCTION_H
+#endif // OHKL_TABLES_CRYSTAL_NIGGLIREDUCTION_H

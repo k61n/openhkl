@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_CORE_DETECTOR_CYLINDRICALDETECTOR_H
-#define NSX_CORE_DETECTOR_CYLINDRICALDETECTOR_H
+#ifndef OHKL_CORE_DETECTOR_CYLINDRICALDETECTOR_H
+#define OHKL_CORE_DETECTOR_CYLINDRICALDETECTOR_H
 
 #include "core/detector/Detector.h"
 
@@ -63,4 +63,4 @@ class CylindricalDetector : public Detector {
 
 } // namespace ohkl
 
-#endif // NSX_CORE_DETECTOR_CYLINDRICALDETECTOR_H
+#endif // OHKL_CORE_DETECTOR_CYLINDRICALDETECTOR_H

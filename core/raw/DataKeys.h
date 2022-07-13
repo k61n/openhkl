@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_CORE_RAW_DATAKEYS_H
-#define NSX_CORE_RAW_DATAKEYS_H
+#ifndef OHKL_CORE_RAW_DATAKEYS_H
+#define OHKL_CORE_RAW_DATAKEYS_H
 
 #include <set>
 #include <string>
@@ -178,4 +178,4 @@ const std::set<std::string> RecognizedMetaDataKeys{at_experiment,     at_diffrac
 
 } // namespace ohkl
 
-#endif // NSX_CORE_RAW_DATAKEYS_H
+#endif // OHKL_CORE_RAW_DATAKEYS_H

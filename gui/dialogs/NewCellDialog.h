@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_GUI_DIALOGS_NEWCELLDIALOG_H
-#define NSX_GUI_DIALOGS_NEWCELLDIALOG_H
+#ifndef OHKL_GUI_DIALOGS_NEWCELLDIALOG_H
+#define OHKL_GUI_DIALOGS_NEWCELLDIALOG_H
 
 #include <QComboBox>
 #include <QDialog>
@@ -46,4 +46,4 @@ class NewCellDialog : public QDialog {
     QDoubleSpinBox* _gamma;
 };
 
-#endif // NSX_GUI_DIALOGS_NEWCELLDIALOG_H
+#endif // OHKL_GUI_DIALOGS_NEWCELLDIALOG_H

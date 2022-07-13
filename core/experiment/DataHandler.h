@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_CORE_EXPERIMENT_DATAHANDLER_H
-#define NSX_CORE_EXPERIMENT_DATAHANDLER_H
+#ifndef OHKL_CORE_EXPERIMENT_DATAHANDLER_H
+#define OHKL_CORE_EXPERIMENT_DATAHANDLER_H
 
 #include "core/data/DataTypes.h"
 #include "core/experiment/InstrumentStateHandler.h"
@@ -71,4 +71,4 @@ class DataHandler {
 
 } // namespace ohkl
 
-#endif // NSX_CORE_EXPERIMENT_DATAHANDLER_H
+#endif // OHKL_CORE_EXPERIMENT_DATAHANDLER_H

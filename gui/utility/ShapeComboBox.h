@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_GUI_UTILITY_SHAPECOMBO_H
-#define NSX_GUI_UTILITY_SHAPECOMBO_H
+#ifndef OHKL_GUI_UTILITY_SHAPECOMBO_H
+#define OHKL_GUI_UTILITY_SHAPECOMBO_H
 
 #include "core/shape/ShapeModel.h"
 
@@ -59,4 +59,4 @@ class ShapeComboBox : public QComboBox {
     static QVector<ShapeComboBox*> _all_combos;
 };
 
-#endif // NSX_GUI_UTILITY_SHAPECOMBO_H
+#endif // OHKL_GUI_UTILITY_SHAPECOMBO_H

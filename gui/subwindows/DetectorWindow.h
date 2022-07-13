@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_GUI_SUBWINDOWS_DETECTORWINDOW_H
-#define NSX_GUI_SUBWINDOWS_DETECTORWINDOW_H
+#ifndef OHKL_GUI_SUBWINDOWS_DETECTORWINDOW_H
+#define OHKL_GUI_SUBWINDOWS_DETECTORWINDOW_H
 
 #include "core/loader/XFileHandler.h"
 #include "core/shape/PeakCollection.h"
@@ -118,4 +118,4 @@ class DetectorWindow : public QDialog {
     ohkl::PeakCenterDataSet _peakCenterData;
 };
 
-#endif // NSX_GUI_SUBWINDOWS_DETECTORWINDOW_H
+#endif // OHKL_GUI_SUBWINDOWS_DETECTORWINDOW_H

@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_CORE_EXPERIMENT_EXPERIMENT_H
-#define NSX_CORE_EXPERIMENT_EXPERIMENT_H
+#ifndef OHKL_CORE_EXPERIMENT_EXPERIMENT_H
+#define OHKL_CORE_EXPERIMENT_EXPERIMENT_H
 
 #include "core/algo/AutoIndexer.h"
 #include "core/algo/Refiner.h"
@@ -293,4 +293,4 @@ class Experiment {
 /*! @}*/
 } // namespace ohkl
 
-#endif // NSX_CORE_EXPERIMENT_EXPERIMENT_H
+#endif // OHKL_CORE_EXPERIMENT_EXPERIMENT_H

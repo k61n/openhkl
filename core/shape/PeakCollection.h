@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_CORE_SHAPE_PEAKCOLLECTION_H
-#define NSX_CORE_SHAPE_PEAKCOLLECTION_H
+#ifndef OHKL_CORE_SHAPE_PEAKCOLLECTION_H
+#define OHKL_CORE_SHAPE_PEAKCOLLECTION_H
 
 #include "core/raw/MetaData.h"
 #include "core/shape/ShapeModel.h"
@@ -153,4 +153,4 @@ class PeakCollection {
 /*! @}*/
 } // namespace ohkl
 
-#endif // NSX_CORE_SHAPE_PEAKCOLLECTION_H
+#endif // OHKL_CORE_SHAPE_PEAKCOLLECTION_H

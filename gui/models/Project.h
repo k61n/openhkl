@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_GUI_MODELS_SESSIONEXPERIMENT_H
-#define NSX_GUI_MODELS_SESSIONEXPERIMENT_H
+#ifndef OHKL_GUI_MODELS_SESSIONEXPERIMENT_H
+#define OHKL_GUI_MODELS_SESSIONEXPERIMENT_H
 
 #include <QStringList>
 #include <memory>
@@ -98,4 +98,4 @@ class Project {
     static unsigned int _last_id;
 };
 
-#endif // NSX_GUI_MODELS_SESSIONEXPERIMENT_H
+#endif // OHKL_GUI_MODELS_SESSIONEXPERIMENT_H

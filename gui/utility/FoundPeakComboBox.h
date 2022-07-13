@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_GUI_UTILITY_FOUNDPEAKCOMBO_H
-#define NSX_GUI_UTILITY_FOUNDPEAKCOMBO_H
+#ifndef OHKL_GUI_UTILITY_FOUNDPEAKCOMBO_H
+#define OHKL_GUI_UTILITY_FOUNDPEAKCOMBO_H
 
 #include "gui/utility/PeakComboBox.h"
 
@@ -40,4 +40,4 @@ class FoundPeakComboBox : public PeakComboBox {
     static PeakList _found_peaks;
 };
 
-#endif // NSX_GUI_UTILITY_FOUNDPEAKCOMBO_H
+#endif // OHKL_GUI_UTILITY_FOUNDPEAKCOMBO_H

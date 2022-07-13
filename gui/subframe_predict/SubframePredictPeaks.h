@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_GUI_SUBFRAME_PREDICT_SUBFRAMEPREDICTPEAKS_H
-#define NSX_GUI_SUBFRAME_PREDICT_SUBFRAMEPREDICTPEAKS_H
+#ifndef OHKL_GUI_SUBFRAME_PREDICT_SUBFRAMEPREDICTPEAKS_H
+#define OHKL_GUI_SUBFRAME_PREDICT_SUBFRAMEPREDICTPEAKS_H
 
 #include "core/algo/Refiner.h"
 #include "core/data/DataTypes.h"
@@ -189,4 +189,4 @@ class SubframePredictPeaks : public QWidget {
         {"Real space", ohkl::ResidualType::RealSpace}};
 };
 
-#endif // NSX_GUI_SUBFRAME_PREDICT_SUBFRAMEPREDICTPEAKS_H
+#endif // OHKL_GUI_SUBFRAME_PREDICT_SUBFRAMEPREDICTPEAKS_H

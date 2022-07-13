@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_CORE_LOADER_RAWDATAREADER_H
-#define NSX_CORE_LOADER_RAWDATAREADER_H
+#ifndef OHKL_CORE_LOADER_RAWDATAREADER_H
+#define OHKL_CORE_LOADER_RAWDATAREADER_H
 
 #include "core/data/DataSet.h"
 #include "core/loader/IDataReader.h" // inherits from
@@ -153,4 +153,4 @@ Eigen::Matrix<T_, Eigen::Dynamic, Eigen::Dynamic> RawDataReader::matrixFromData(
 
 } // namespace ohkl
 
-#endif // NSX_CORE_LOADER_RAWDATAREADER_H
+#endif // OHKL_CORE_LOADER_RAWDATAREADER_H

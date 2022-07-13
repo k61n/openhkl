@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_CORE_PEAK_PEAKDATA_H
-#define NSX_CORE_PEAK_PEAKDATA_H
+#ifndef OHKL_CORE_PEAK_PEAKDATA_H
+#define OHKL_CORE_PEAK_PEAKDATA_H
 
 #include "core/peak/PeakCoordinateSystem.h"
 
@@ -48,4 +48,4 @@ class PeakData {
 
 } // namespace ohkl
 
-#endif // NSX_CORE_PEAK_PEAKDATA_H
+#endif // OHKL_CORE_PEAK_PEAKDATA_H

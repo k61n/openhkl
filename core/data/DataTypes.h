@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_CORE_DATA_DATATYPES_H
-#define NSX_CORE_DATA_DATATYPES_H
+#ifndef OHKL_CORE_DATA_DATATYPES_H
+#define OHKL_CORE_DATA_DATATYPES_H
 
 #include <memory>
 #include <vector>
@@ -29,4 +29,4 @@ enum class DataFormat { Unknown = -1, NSX = 0, RAW, NEXUS, Count };
 
 } // namespace ohkl
 
-#endif // NSX_CORE_DATA_DATATYPES_H
+#endif // OHKL_CORE_DATA_DATATYPES_H

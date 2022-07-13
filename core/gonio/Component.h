@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_CORE_GONIO_COMPONENT_H
-#define NSX_CORE_GONIO_COMPONENT_H
+#ifndef OHKL_CORE_GONIO_COMPONENT_H
+#define OHKL_CORE_GONIO_COMPONENT_H
 
 #include "core/gonio/Gonio.h"
 
@@ -56,4 +56,4 @@ class Component {
 
 } // namespace ohkl
 
-#endif // NSX_CORE_GONIO_COMPONENT_H
+#endif // OHKL_CORE_GONIO_COMPONENT_H

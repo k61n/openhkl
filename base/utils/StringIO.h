@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_BASE_UTILS_STRINGIO_H
-#define NSX_BASE_UTILS_STRINGIO_H
+#ifndef OHKL_BASE_UTILS_STRINGIO_H
+#define OHKL_BASE_UTILS_STRINGIO_H
 
 namespace ohkl {
 
@@ -34,4 +34,4 @@ std::string datetime_str();
 
 } // namespace ohkl
 
-#endif // NSX_BASE_UTILS_STRINGIO_H
+#endif // OHKL_BASE_UTILS_STRINGIO_H

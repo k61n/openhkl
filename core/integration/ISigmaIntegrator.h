@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_CORE_INTEGRATION_ISIGMAINTEGRATOR_H
-#define NSX_CORE_INTEGRATION_ISIGMAINTEGRATOR_H
+#ifndef OHKL_CORE_INTEGRATION_ISIGMAINTEGRATOR_H
+#define OHKL_CORE_INTEGRATION_ISIGMAINTEGRATOR_H
 
 #include "core/integration/PixelSumIntegrator.h"
 #include "core/shape/ShapeModel.h"
@@ -45,4 +45,4 @@ class ISigmaIntegrator : public PixelSumIntegrator {
 /*! @}*/
 } // namespace ohkl
 
-#endif // NSX_CORE_INTEGRATION_ISIGMAINTEGRATOR_H
+#endif // OHKL_CORE_INTEGRATION_ISIGMAINTEGRATOR_H

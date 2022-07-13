@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_GUI_DIALOGS_UNITCELLDIALOG_H
-#define NSX_GUI_DIALOGS_UNITCELLDIALOG_H
+#ifndef OHKL_GUI_DIALOGS_UNITCELLDIALOG_H
+#define OHKL_GUI_DIALOGS_UNITCELLDIALOG_H
 
 #include <QComboBox>
 #include <QDialog>
@@ -33,4 +33,4 @@ class UnitCellDialog : public QDialog {
     QLineEdit* _cell_name;
 };
 
-#endif // NSX_GUI_DIALOGS_UNITCELLDIALOG_H
+#endif // OHKL_GUI_DIALOGS_UNITCELLDIALOG_H

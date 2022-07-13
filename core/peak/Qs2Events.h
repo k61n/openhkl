@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_CORE_PEAK_QS2EVENTS_H
-#define NSX_CORE_PEAK_QS2EVENTS_H
+#ifndef OHKL_CORE_PEAK_QS2EVENTS_H
+#define OHKL_CORE_PEAK_QS2EVENTS_H
 
 #include "base/utils/ProgressHandler.h"
 #include "core/detector/Detector.h"
@@ -64,4 +64,4 @@ std::vector<DetectorEvent> getDirectBeamEvents(
 
 } // namespace ohkl
 
-#endif // NSX_CORE_PEAK_QS2EVENTS_H
+#endif // OHKL_CORE_PEAK_QS2EVENTS_H

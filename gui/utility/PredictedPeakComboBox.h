@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_GUI_UTILITY_PREDICTEDPEAKCOMBO_H
-#define NSX_GUI_UTILITY_PREDICTEDPEAKCOMBO_H
+#ifndef OHKL_GUI_UTILITY_PREDICTEDPEAKCOMBO_H
+#define OHKL_GUI_UTILITY_PREDICTEDPEAKCOMBO_H
 
 #include "gui/utility/PeakComboBox.h"
 
@@ -40,4 +40,4 @@ class PredictedPeakComboBox : public PeakComboBox {
     static PeakList _predicted_peaks;
 };
 
-#endif // NSX_GUI_UTILITY_PREDICTEDPEAKCOMBO_H
+#endif // OHKL_GUI_UTILITY_PREDICTEDPEAKCOMBO_H

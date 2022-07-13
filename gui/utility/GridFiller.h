@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_GUI_UTILITY_GRIDFILLER_H
-#define NSX_GUI_UTILITY_GRIDFILLER_H
+#ifndef OHKL_GUI_UTILITY_GRIDFILLER_H
+#define OHKL_GUI_UTILITY_GRIDFILLER_H
 
 #include <QColor>
 #include <QString>
@@ -110,4 +110,4 @@ class GridFiller {
     int _nextRow; //!< The next row to add
 };
 
-#endif // NSX_GUI_UTILITY_GRIDFILLER_H
+#endif // OHKL_GUI_UTILITY_GRIDFILLER_H

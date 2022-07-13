@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_GUI_SUBFRAME_INTEGRATE_SUBFRAMEINTEGRATE_H
-#define NSX_GUI_SUBFRAME_INTEGRATE_SUBFRAMEINTEGRATE_H
+#ifndef OHKL_GUI_SUBFRAME_INTEGRATE_SUBFRAMEINTEGRATE_H
+#define OHKL_GUI_SUBFRAME_INTEGRATE_SUBFRAMEINTEGRATE_H
 
 #include "core/data/DataSet.h"
 #include "core/shape/IPeakIntegrator.h"
@@ -153,4 +153,4 @@ class SubframeIntegrate : public QWidget {
 };
 
 
-#endif // NSX_GUI_SUBFRAME_INTEGRATE_SUBFRAMEINTEGRATE_H
+#endif // OHKL_GUI_SUBFRAME_INTEGRATE_SUBFRAMEINTEGRATE_H

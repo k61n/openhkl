@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_GUI_SUBWINDOWS_LOGWINDOW_H
-#define NSX_GUI_SUBWINDOWS_LOGWINDOW_H
+#ifndef OHKL_GUI_SUBWINDOWS_LOGWINDOW_H
+#define OHKL_GUI_SUBWINDOWS_LOGWINDOW_H
 
 #include "base/utils/LogLevel.h"
 
@@ -49,4 +49,4 @@ class LogWindow : public QDialog {
         {"Debug", ohkl::Level::Debug}};
 };
 
-#endif // NSX_GUI_SUBWINDOWS_LOGWINDOW_H
+#endif // OHKL_GUI_SUBWINDOWS_LOGWINDOW_H

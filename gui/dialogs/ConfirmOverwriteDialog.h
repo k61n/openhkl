@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_GUI_DIALOGS_CONFIRMOVERWRITEDIALOG_H
-#define NSX_GUI_DIALOGS_CONFIRMOVERWRITEDIALOG_H
+#ifndef OHKL_GUI_DIALOGS_CONFIRMOVERWRITEDIALOG_H
+#define OHKL_GUI_DIALOGS_CONFIRMOVERWRITEDIALOG_H
 
 #include <QDialog>
 #include <QString>
@@ -24,4 +24,4 @@ class ConfirmOverwriteDialog : public QDialog {
     ConfirmOverwriteDialog(const QString& name);
 };
 
-#endif // NSX_GUI_DIALOGS_CONFIRMOVERWRITEDIALOG_H
+#endif // OHKL_GUI_DIALOGS_CONFIRMOVERWRITEDIALOG_H

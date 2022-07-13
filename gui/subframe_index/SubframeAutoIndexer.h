@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_GUI_SUBFRAME_INDEX_SUBFRAMEAUTOINDEXER_H
-#define NSX_GUI_SUBFRAME_INDEX_SUBFRAMEAUTOINDEXER_H
+#ifndef OHKL_GUI_SUBFRAME_INDEX_SUBFRAMEAUTOINDEXER_H
+#define OHKL_GUI_SUBFRAME_INDEX_SUBFRAMEAUTOINDEXER_H
 
 #include "core/algo/AutoIndexer.h"
 #include "core/shape/PeakCollection.h"
@@ -175,4 +175,4 @@ class SubframeAutoIndexer : public QWidget {
     std::vector<ohkl::DetectorEvent> _old_direct_beam_events;
 };
 
-#endif // NSX_GUI_SUBFRAME_INDEX_SUBFRAMEAUTOINDEXER_H
+#endif // OHKL_GUI_SUBFRAME_INDEX_SUBFRAMEAUTOINDEXER_H

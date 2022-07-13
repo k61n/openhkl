@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_GUI_GRAPHICS_ITEMS_PINITEM_H
-#define NSX_GUI_GRAPHICS_ITEMS_PINITEM_H
+#ifndef OHKL_GUI_GRAPHICS_ITEMS_PINITEM_H
+#define OHKL_GUI_GRAPHICS_ITEMS_PINITEM_H
 
 #include <QGraphicsItem>
 
@@ -46,4 +46,4 @@ class PinItem : public QGraphicsItem {
     bool _calibrated;
 };
 
-#endif // NSX_GUI_GRAPHICS_ITEMS_PINITEM_H
+#endif // OHKL_GUI_GRAPHICS_ITEMS_PINITEM_H

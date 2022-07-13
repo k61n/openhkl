@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_GUI_WIDGETS_LOGWIDGET_H
-#define NSX_GUI_WIDGETS_LOGWIDGET_H
+#ifndef OHKL_GUI_WIDGETS_LOGWIDGET_H
+#define OHKL_GUI_WIDGETS_LOGWIDGET_H
 
 #include <string>
 
@@ -59,4 +59,4 @@ class LogWidget : public QTextEdit {
     void _connectUI();
 };
 
-#endif // NSX_GUI_WIDGETS_LOGWIDGET_H
+#endif // OHKL_GUI_WIDGETS_LOGWIDGET_H

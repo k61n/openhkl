@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_CORE_PEAK_INTENSITY_H
-#define NSX_CORE_PEAK_INTENSITY_H
+#ifndef OHKL_CORE_PEAK_INTENSITY_H
+#define OHKL_CORE_PEAK_INTENSITY_H
 
 #include <stdexcept>
 
@@ -72,4 +72,4 @@ class Intensity {
 
 } // namespace ohkl
 
-#endif // NSX_CORE_PEAK_INTENSITY_H
+#endif // OHKL_CORE_PEAK_INTENSITY_H

@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_CORE_INSTRUMENT_INTERPOLATEDSTATE_H
-#define NSX_CORE_INSTRUMENT_INTERPOLATEDSTATE_H
+#ifndef OHKL_CORE_INSTRUMENT_INTERPOLATEDSTATE_H
+#define OHKL_CORE_INSTRUMENT_INTERPOLATEDSTATE_H
 
 #include "core/instrument/InstrumentState.h"
 
@@ -56,4 +56,4 @@ class InterpolatedState : public InstrumentState {
 /*! @}*/
 } // namespace ohkl
 
-#endif // NSX_CORE_INSTRUMENT_INTERPOLATEDSTATE_H
+#endif // OHKL_CORE_INSTRUMENT_INTERPOLATEDSTATE_H

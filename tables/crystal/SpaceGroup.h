@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_TABLES_CRYSTAL_SPACEGROUP_H
-#define NSX_TABLES_CRYSTAL_SPACEGROUP_H
+#ifndef OHKL_TABLES_CRYSTAL_SPACEGROUP_H
+#define OHKL_TABLES_CRYSTAL_SPACEGROUP_H
 
 #include "tables/crystal/MillerIndex.h"
 #include "tables/crystal/SymOp.h"
@@ -72,4 +72,4 @@ std::ostream& operator<<(std::ostream& os, const SpaceGroup& sg);
 
 } // namespace ohkl
 
-#endif // NSX_TABLES_CRYSTAL_SPACEGROUP_H
+#endif // OHKL_TABLES_CRYSTAL_SPACEGROUP_H

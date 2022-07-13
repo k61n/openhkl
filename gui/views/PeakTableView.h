@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_GUI_VIEWS_PEAKTABLEVIEW_H
-#define NSX_GUI_VIEWS_PEAKTABLEVIEW_H
+#ifndef OHKL_GUI_VIEWS_PEAKTABLEVIEW_H
+#define OHKL_GUI_VIEWS_PEAKTABLEVIEW_H
 
 #include <QTableView>
 
@@ -51,4 +51,4 @@ class PeakTableView : public QTableView {
     //     void constructTable();
 };
 
-#endif // NSX_GUI_VIEWS_PEAKTABLEVIEW_H
+#endif // OHKL_GUI_VIEWS_PEAKTABLEVIEW_H

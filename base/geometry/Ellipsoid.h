@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_BASE_GEOMETRY_ELLIPSOID_H
-#define NSX_BASE_GEOMETRY_ELLIPSOID_H
+#ifndef OHKL_BASE_GEOMETRY_ELLIPSOID_H
+#define OHKL_BASE_GEOMETRY_ELLIPSOID_H
 
 #include "base/geometry/AABB.h"
 
@@ -90,4 +90,4 @@ class Ellipsoid {
 
 } // namespace ohkl
 
-#endif // NSX_BASE_GEOMETRY_ELLIPSOID_H
+#endif // OHKL_BASE_GEOMETRY_ELLIPSOID_H

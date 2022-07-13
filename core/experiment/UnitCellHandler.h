@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_CORE_EXPERIMENT_UNITCELLHANDLER_H
-#define NSX_CORE_EXPERIMENT_UNITCELLHANDLER_H
+#ifndef OHKL_CORE_EXPERIMENT_UNITCELLHANDLER_H
+#define OHKL_CORE_EXPERIMENT_UNITCELLHANDLER_H
 
 #include "base/utils/Units.h"
 #include "core/data/DataTypes.h"
@@ -96,4 +96,4 @@ class UnitCellHandler {
 
 } // namespace ohkl
 
-#endif // NSX_CORE_EXPERIMENT_UNITCELLHANDLER_H
+#endif // OHKL_CORE_EXPERIMENT_UNITCELLHANDLER_H

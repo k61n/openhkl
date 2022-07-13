@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_CORE_EXPERIMENT_DATAQUALITY_H
-#define NSX_CORE_EXPERIMENT_DATAQUALITY_H
+#ifndef OHKL_CORE_EXPERIMENT_DATAQUALITY_H
+#define OHKL_CORE_EXPERIMENT_DATAQUALITY_H
 
 #include "base/utils/Logger.h"
 
@@ -66,4 +66,4 @@ struct DataResolution {
 
 } // namespace ohkl
 
-#endif // NSX_CORE_EXPERIMENT_DATAQUALITY_H
+#endif // OHKL_CORE_EXPERIMENT_DATAQUALITY_H

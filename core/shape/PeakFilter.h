@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_CORE_SHAPE_PEAKFILTER_H
-#define NSX_CORE_SHAPE_PEAKFILTER_H
+#ifndef OHKL_CORE_SHAPE_PEAKFILTER_H
+#define OHKL_CORE_SHAPE_PEAKFILTER_H
 
 #include "core/peak/Peak3D.h"
 #include "core/shape/PeakCollection.h"
@@ -152,4 +152,4 @@ class PeakFilter {
 /*! @}*/
 } // namespace ohkl
 
-#endif // NSX_CORE_SHAPE_PEAKFILTER_H
+#endif // OHKL_CORE_SHAPE_PEAKFILTER_H

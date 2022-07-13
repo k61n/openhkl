@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_GUI_SUBFRAME_EXPERIMENT_PROPERTIES_PEAKPROPERTIES_H
-#define NSX_GUI_SUBFRAME_EXPERIMENT_PROPERTIES_PEAKPROPERTIES_H
+#ifndef OHKL_GUI_SUBFRAME_EXPERIMENT_PROPERTIES_PEAKPROPERTIES_H
+#define OHKL_GUI_SUBFRAME_EXPERIMENT_PROPERTIES_PEAKPROPERTIES_H
 
 #include "gui/views/PeakTableView.h"
 
@@ -78,4 +78,4 @@ class PeakProperties : public QWidget {
     QStringList _peak_list;
 };
 
-#endif // NSX_GUI_SUBFRAME_EXPERIMENT_PROPERTIES_PEAKPROPERTIES_H
+#endif // OHKL_GUI_SUBFRAME_EXPERIMENT_PROPERTIES_PEAKPROPERTIES_H

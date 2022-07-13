@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_GUI_SUBFRAME_FILTER_SUBFRAMEFILTERPEAKS_H
-#define NSX_GUI_SUBFRAME_FILTER_SUBFRAMEFILTERPEAKS_H
+#ifndef OHKL_GUI_SUBFRAME_FILTER_SUBFRAMEFILTERPEAKS_H
+#define OHKL_GUI_SUBFRAME_FILTER_SUBFRAMEFILTERPEAKS_H
 
 #include "gui/items/PeakCollectionItem.h"
 #include "gui/models/PeakCollectionModel.h"
@@ -153,4 +153,4 @@ class SubframeFilterPeaks : public QWidget {
     PeakTableView* _peak_table;
 };
 
-#endif // NSX_GUI_SUBFRAME_FILTER_SUBFRAMEFILTERPEAKS_H
+#endif // OHKL_GUI_SUBFRAME_FILTER_SUBFRAMEFILTERPEAKS_H

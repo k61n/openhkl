@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_CORE_DETECTOR_DETECTOREVENT_H
-#define NSX_CORE_DETECTOR_DETECTOREVENT_H
+#ifndef OHKL_CORE_DETECTOR_DETECTOREVENT_H
+#define OHKL_CORE_DETECTOR_DETECTOREVENT_H
 
 #include <Eigen/Dense>
 
@@ -48,4 +48,4 @@ class DetectorEvent {
 
 } // namespace ohkl
 
-#endif // NSX_CORE_DETECTOR_DETECTOREVENT_H
+#endif // OHKL_CORE_DETECTOR_DETECTOREVENT_H

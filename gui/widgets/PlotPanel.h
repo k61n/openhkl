@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_GUI_SUBFRAME_EXPERIMENT_PLOTPANEL_H
-#define NSX_GUI_SUBFRAME_EXPERIMENT_PLOTPANEL_H
+#ifndef OHKL_GUI_SUBFRAME_EXPERIMENT_PLOTPANEL_H
+#define OHKL_GUI_SUBFRAME_EXPERIMENT_PLOTPANEL_H
 
 #include <QHBoxLayout>
 #include <QWidget>
@@ -35,4 +35,4 @@ class PlotPanel : public QWidget {
     QWidget* centralWidget;
 };
 
-#endif // NSX_GUI_SUBFRAME_EXPERIMENT_PLOTPANEL_H
+#endif // OHKL_GUI_SUBFRAME_EXPERIMENT_PLOTPANEL_H

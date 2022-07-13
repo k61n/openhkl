@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_GUI_SUBFRAME_FIND_SUBFRAMEFINDPEAKS_H
-#define NSX_GUI_SUBFRAME_FIND_SUBFRAMEFINDPEAKS_H
+#ifndef OHKL_GUI_SUBFRAME_FIND_SUBFRAMEFINDPEAKS_H
+#define OHKL_GUI_SUBFRAME_FIND_SUBFRAMEFINDPEAKS_H
 
 #include "core/shape/PeakCollection.h"
 #include "gui/items/PeakCollectionItem.h"
@@ -138,4 +138,4 @@ class SubframeFindPeaks : public QWidget {
     PeakTableView* _peak_table;
 };
 
-#endif // NSX_GUI_SUBFRAME_FIND_SUBFRAMEFINDPEAKS_H
+#endif // OHKL_GUI_SUBFRAME_FIND_SUBFRAMEFINDPEAKS_H

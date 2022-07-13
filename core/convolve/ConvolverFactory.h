@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_CORE_CONVOLVE_CONVOLVERFACTORY_H
-#define NSX_CORE_CONVOLVE_CONVOLVERFACTORY_H
+#ifndef OHKL_CORE_CONVOLVE_CONVOLVERFACTORY_H
+#define OHKL_CORE_CONVOLVE_CONVOLVERFACTORY_H
 
 #include "core/convolve/Convolver.h"
 
@@ -46,4 +46,4 @@ Eigen::MatrixXd convolvedFrame(
 
 } // namespace ohkl
 
-#endif // NSX_CORE_CONVOLVE_CONVOLVERFACTORY_H
+#endif // OHKL_CORE_CONVOLVE_CONVOLVERFACTORY_H

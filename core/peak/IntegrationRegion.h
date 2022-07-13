@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_CORE_PEAK_INTEGRATIONREGION_H
-#define NSX_CORE_PEAK_INTEGRATIONREGION_H
+#ifndef OHKL_CORE_PEAK_INTEGRATIONREGION_H
+#define OHKL_CORE_PEAK_INTEGRATIONREGION_H
 
 #include "base/geometry/ConvexHull.h"
 #include "core/peak/PeakData.h"
@@ -91,4 +91,4 @@ class IntegrationRegion {
 
 } // namespace ohkl
 
-#endif // NSX_CORE_PEAK_INTEGRATIONREGION_H
+#endif // OHKL_CORE_PEAK_INTEGRATIONREGION_H

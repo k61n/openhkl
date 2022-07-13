@@ -13,8 +13,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_GUI_SUBFRAME_REFINER_SUBFRAMEREFINER_H
-#define NSX_GUI_SUBFRAME_REFINER_SUBFRAMEREFINER_H
+#ifndef OHKL_GUI_SUBFRAME_REFINER_SUBFRAMEREFINER_H
+#define OHKL_GUI_SUBFRAME_REFINER_SUBFRAMEREFINER_H
 
 #include "core/algo/Refiner.h"
 #include "core/shape/PeakCollection.h"
@@ -177,4 +177,4 @@ class SubframeRefiner : public QWidget {
 };
 
 
-#endif // NSX_GUI_SUBFRAME_REFINER_SUBFRAMEREFINER_H
+#endif // OHKL_GUI_SUBFRAME_REFINER_SUBFRAMEREFINER_H

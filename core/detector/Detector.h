@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_CORE_DETECTOR_DETECTOR_H
-#define NSX_CORE_DETECTOR_DETECTOR_H
+#ifndef OHKL_CORE_DETECTOR_DETECTOR_H
+#define OHKL_CORE_DETECTOR_DETECTOR_H
 
 #include "core/gonio/Component.h" // inheriting from
 
@@ -140,4 +140,4 @@ class Detector : public Component {
 
 } // namespace ohkl
 
-#endif // NSX_CORE_DETECTOR_DETECTOR_H
+#endif // OHKL_CORE_DETECTOR_DETECTOR_H

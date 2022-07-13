@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_CORE_INSTRUMENT_SAMPLE_H
-#define NSX_CORE_INSTRUMENT_SAMPLE_H
+#ifndef OHKL_CORE_INSTRUMENT_SAMPLE_H
+#define OHKL_CORE_INSTRUMENT_SAMPLE_H
 
 #include "base/geometry/ConvexHull.h"
 #include "core/gonio/Component.h" // inheriting from
@@ -53,4 +53,4 @@ class Sample : public Component {
 
 } // namespace ohkl
 
-#endif // NSX_CORE_INSTRUMENT_SAMPLE_H
+#endif // OHKL_CORE_INSTRUMENT_SAMPLE_H

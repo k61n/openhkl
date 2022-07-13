@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_GUI_DIALOGS_RAWDATADIALOG_H
-#define NSX_GUI_DIALOGS_RAWDATADIALOG_H
+#ifndef OHKL_GUI_DIALOGS_RAWDATADIALOG_H
+#define OHKL_GUI_DIALOGS_RAWDATADIALOG_H
 
 #include <QCheckBox>
 #include <QComboBox>
@@ -71,4 +71,4 @@ class RawDataDialog : public QDialog {
     const QStringList& _dataset_names; // list of current dataset names
 };
 
-#endif // NSX_GUI_DIALOGS_RAWDATADIALOG_H
+#endif // OHKL_GUI_DIALOGS_RAWDATADIALOG_H

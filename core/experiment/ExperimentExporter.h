@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_CORE_EXPERIMENT_EXPERIMENTEXPORTER_H
-#define NSX_CORE_EXPERIMENT_EXPERIMENTEXPORTER_H
+#ifndef OHKL_CORE_EXPERIMENT_EXPERIMENTEXPORTER_H
+#define OHKL_CORE_EXPERIMENT_EXPERIMENTEXPORTER_H
 
 #include <map>
 #include <string>
@@ -50,4 +50,4 @@ class ExperimentExporter {
 
 } // namespace ohkl
 
-#endif // NSX_CORE_EXPERIMENT_EXPERIMENTEXPORTER_H
+#endif // OHKL_CORE_EXPERIMENT_EXPERIMENTEXPORTER_H

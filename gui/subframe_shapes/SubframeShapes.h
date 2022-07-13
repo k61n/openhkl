@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_GUI_SUBFRAME_SHAPES_SUBFRAMESHAPES_H
-#define NSX_GUI_SUBFRAME_SHAPES_SUBFRAMESHAPES_H
+#ifndef OHKL_GUI_SUBFRAME_SHAPES_SUBFRAMESHAPES_H
+#define OHKL_GUI_SUBFRAME_SHAPES_SUBFRAMESHAPES_H
 
 #include "core/data/DataSet.h"
 #include "core/peak/Peak3D.h"
@@ -175,4 +175,4 @@ class SubframeShapes : public QWidget {
 };
 
 
-#endif // NSX_GUI_SUBFRAME_SHAPES_SUBFRAMESHAPES_H
+#endif // OHKL_GUI_SUBFRAME_SHAPES_SUBFRAMESHAPES_H

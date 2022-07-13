@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_BASE_MASK_BOXMASK_H
-#define NSX_BASE_MASK_BOXMASK_H
+#ifndef OHKL_BASE_MASK_BOXMASK_H
+#define OHKL_BASE_MASK_BOXMASK_H
 
 #include "base/geometry/AABB.h"
 #include "base/mask/IMask.h"
@@ -44,4 +44,4 @@ class BoxMask : public IMask {
 
 } // namespace ohkl
 
-#endif // NSX_BASE_MASK_BOXMASK_H
+#endif // OHKL_BASE_MASK_BOXMASK_H

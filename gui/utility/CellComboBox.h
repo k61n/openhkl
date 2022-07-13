@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_GUI_UTILITY_CELLCOMBO_H
-#define NSX_GUI_UTILITY_CELLCOMBO_H
+#ifndef OHKL_GUI_UTILITY_CELLCOMBO_H
+#define OHKL_GUI_UTILITY_CELLCOMBO_H
 
 #include "tables/crystal/UnitCell.h"
 #include <QComboBox>
@@ -58,4 +58,4 @@ class CellComboBox : public QComboBox {
     static QVector<CellComboBox*> _all_combos;
 };
 
-#endif // NSX_GUI_UTILITY_CELLCOMBO_H
+#endif // OHKL_GUI_UTILITY_CELLCOMBO_H

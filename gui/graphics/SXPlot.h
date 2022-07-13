@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_GUI_GRAPHICS_SXPLOT_H
-#define NSX_GUI_GRAPHICS_SXPLOT_H
+#ifndef OHKL_GUI_GRAPHICS_SXPLOT_H
+#define OHKL_GUI_GRAPHICS_SXPLOT_H
 
 #include "qcustomplot.h"
 
@@ -73,4 +73,4 @@ class SXPlot : public QCustomPlot {
     QCPItemRect* _zoom_box;
 };
 
-#endif // NSX_GUI_GRAPHICS_SXPLOT_H
+#endif // OHKL_GUI_GRAPHICS_SXPLOT_H

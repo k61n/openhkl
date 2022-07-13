@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_CORE_LOADER_NEXUSMETADATAREADER_H
-#define NSX_CORE_LOADER_NEXUSMETADATAREADER_H
+#ifndef OHKL_CORE_LOADER_NEXUSMETADATAREADER_H
+#define OHKL_CORE_LOADER_NEXUSMETADATAREADER_H
 
 #include "core/loader/IDataReader.h" // inherits from
 
@@ -47,4 +47,4 @@ class BaseNexusDataReader : public IDataReader {
 
 } // namespace ohkl
 
-#endif // NSX_CORE_LOADER_NEXUSMETADATAREADER_H
+#endif // OHKL_CORE_LOADER_NEXUSMETADATAREADER_H

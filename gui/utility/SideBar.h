@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_GUI_UTILITY_SIDEBAR_H
-#define NSX_GUI_UTILITY_SIDEBAR_H
+#ifndef OHKL_GUI_UTILITY_SIDEBAR_H
+#define OHKL_GUI_UTILITY_SIDEBAR_H
 
 #include <QToolBar>
 #include <QToolTip>
@@ -68,4 +68,4 @@ class SideBar : public QWidget {
     const unsigned int _min_icon_height = 80;
 };
 
-#endif // NSX_GUI_UTILITY_SIDEBAR_H
+#endif // OHKL_GUI_UTILITY_SIDEBAR_H

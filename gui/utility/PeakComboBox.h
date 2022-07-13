@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_GUI_UTILITY_PEAKCOMBO_H
-#define NSX_GUI_UTILITY_PEAKCOMBO_H
+#ifndef OHKL_GUI_UTILITY_PEAKCOMBO_H
+#define OHKL_GUI_UTILITY_PEAKCOMBO_H
 
 #include <QComboBox>
 
@@ -70,4 +70,4 @@ class PeakComboBox : public QComboBox {
     bool _empty_first = false;
 };
 
-#endif // NSX_GUI_UTILITY_PEAKCOMBO_H
+#endif // OHKL_GUI_UTILITY_PEAKCOMBO_H

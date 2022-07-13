@@ -11,8 +11,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_CORE_EXPERIMENT_INSTRUMENTSTATEHANDLER_H
-#define NSX_CORE_EXPERIMENT_INSTRUMENTSTATEHANDLER_H
+#ifndef OHKL_CORE_EXPERIMENT_INSTRUMENTSTATEHANDLER_H
+#define OHKL_CORE_EXPERIMENT_INSTRUMENTSTATEHANDLER_H
 
 #include "core/instrument/InstrumentStateSet.h"
 
@@ -64,4 +64,4 @@ class InstrumentStateHandler {
 
 } // namespace ohkl
 
-#endif // NSX_CORE_EXPERIMENT_INSTRUMENTSTATEHANDLER_H
+#endif // OHKL_CORE_EXPERIMENT_INSTRUMENTSTATEHANDLER_H

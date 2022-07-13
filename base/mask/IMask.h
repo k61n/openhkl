@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_BASE_MASK_IMASK_H
-#define NSX_BASE_MASK_IMASK_H
+#ifndef OHKL_BASE_MASK_IMASK_H
+#define OHKL_BASE_MASK_IMASK_H
 
 namespace ohkl {
 
@@ -39,4 +39,4 @@ class IMask {
 
 } // namespace ohkl
 
-#endif // NSX_BASE_MASK_IMASK_H
+#endif // OHKL_BASE_MASK_IMASK_H

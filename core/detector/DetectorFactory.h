@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_CORE_DETECTOR_DETECTORFACTORY_H
-#define NSX_CORE_DETECTOR_DETECTORFACTORY_H
+#ifndef OHKL_CORE_DETECTOR_DETECTORFACTORY_H
+#define OHKL_CORE_DETECTOR_DETECTORFACTORY_H
 
 #include "base/utils/Factory.h"
 
@@ -28,4 +28,4 @@ class DetectorFactory : public Factory<DetectorFactory, Detector, std::string, c
 
 } // namespace ohkl
 
-#endif // NSX_CORE_DETECTOR_DETECTORFACTORY_H
+#endif // OHKL_CORE_DETECTOR_DETECTORFACTORY_H

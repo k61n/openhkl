@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_BASE_PARSER_EIGENTOVECTOR_H
-#define NSX_BASE_PARSER_EIGENTOVECTOR_H
+#ifndef OHKL_BASE_PARSER_EIGENTOVECTOR_H
+#define OHKL_BASE_PARSER_EIGENTOVECTOR_H
 
 #include <vector>
 
@@ -25,4 +25,4 @@ std::vector<double> eigenToVector(const Eigen::VectorXd& ev);
 
 } // namespace ohkl
 
-#endif // NSX_BASE_PARSER_EIGENTOVECTOR_H
+#endif // OHKL_BASE_PARSER_EIGENTOVECTOR_H

@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_CORE_INSTRUMENT_INSTRUMENTSTATESET_H
-#define NSX_CORE_INSTRUMENT_INSTRUMENTSTATESET_H
+#ifndef OHKL_CORE_INSTRUMENT_INSTRUMENTSTATESET_H
+#define OHKL_CORE_INSTRUMENT_INSTRUMENTSTATESET_H
 
 #include "core/data/DataTypes.h"
 #include "core/instrument/InstrumentState.h"
@@ -63,4 +63,4 @@ class InstrumentStateSet {
 /*! @}*/
 } // namespace ohkl
 
-#endif // NSX_CORE_INSTRUMENT_INSTRUMENTSTATESET_H
+#endif // OHKL_CORE_INSTRUMENT_INSTRUMENTSTATESET_H

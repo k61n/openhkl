@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_CORE_ALGO_FFTINDEXING_H
-#define NSX_CORE_ALGO_FFTINDEXING_H
+#ifndef OHKL_CORE_ALGO_FFTINDEXING_H
+#define OHKL_CORE_ALGO_FFTINDEXING_H
 
 #include "base/geometry/ReciprocalVector.h"
 
@@ -36,4 +36,4 @@ std::vector<Eigen::RowVector3d> findOnSphere(
 
 } // namespace ohkl
 
-#endif // NSX_CORE_ALGO_FFTINDEXING_H
+#endif // OHKL_CORE_ALGO_FFTINDEXING_H

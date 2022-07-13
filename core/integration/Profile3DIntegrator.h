@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_CORE_INTEGRATION_PROFILE3DINTEGRATOR_H
-#define NSX_CORE_INTEGRATION_PROFILE3DINTEGRATOR_H
+#ifndef OHKL_CORE_INTEGRATION_PROFILE3DINTEGRATOR_H
+#define OHKL_CORE_INTEGRATION_PROFILE3DINTEGRATOR_H
 
 #include "core/shape/IPeakIntegrator.h"
 #include "core/shape/ShapeModel.h"
@@ -57,4 +57,4 @@ class Profile3DIntegrator : public IPeakIntegrator {
 /*! @}*/
 } // namespace ohkl
 
-#endif // NSX_CORE_INTEGRATION_PROFILE3DINTEGRATOR_H
+#endif // OHKL_CORE_INTEGRATION_PROFILE3DINTEGRATOR_H

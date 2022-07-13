@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_GUI_GRAPHICS_TOOLS_CUTTERITEM_H
-#define NSX_GUI_GRAPHICS_TOOLS_CUTTERITEM_H
+#ifndef OHKL_GUI_GRAPHICS_TOOLS_CUTTERITEM_H
+#define OHKL_GUI_GRAPHICS_TOOLS_CUTTERITEM_H
 
 #include "core/data/DataTypes.h"
 #include "gui/graphics_items/PlottableItem.h"
@@ -57,4 +57,4 @@ class CutterItem : public PlottableItem {
     QPointF _to;
 };
 
-#endif // NSX_GUI_GRAPHICS_TOOLS_CUTTERITEM_H
+#endif // OHKL_GUI_GRAPHICS_TOOLS_CUTTERITEM_H

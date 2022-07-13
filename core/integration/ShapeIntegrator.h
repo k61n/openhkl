@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_CORE_INTEGRATION_SHAPEINTEGRATOR_H
-#define NSX_CORE_INTEGRATION_SHAPEINTEGRATOR_H
+#ifndef OHKL_CORE_INTEGRATION_SHAPEINTEGRATOR_H
+#define OHKL_CORE_INTEGRATION_SHAPEINTEGRATOR_H
 
 #include "core/integration/PixelSumIntegrator.h"
 
@@ -43,4 +43,4 @@ class ShapeIntegrator : public PixelSumIntegrator {
 /*! @}*/
 } // namespace ohkl
 
-#endif // NSX_CORE_INTEGRATION_SHAPEINTEGRATOR_H
+#endif // OHKL_CORE_INTEGRATION_SHAPEINTEGRATOR_H

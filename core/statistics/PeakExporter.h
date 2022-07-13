@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_CORE_STATISTICS_PEAKEXPORTER_H
-#define NSX_CORE_STATISTICS_PEAKEXPORTER_H
+#ifndef OHKL_CORE_STATISTICS_PEAKEXPORTER_H
+#define OHKL_CORE_STATISTICS_PEAKEXPORTER_H
 
 #include "tables/crystal/UnitCell.h"
 #include <string>
@@ -55,4 +55,4 @@ class PeakExporter {
 
 } // namespace ohkl
 
-#endif // NSX_CORE_STATISTICS_PEAKEXPORTER_H
+#endif // OHKL_CORE_STATISTICS_PEAKEXPORTER_H

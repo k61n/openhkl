@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_GUI_MODELS_EXPERIMENTMODEL_H
-#define NSX_GUI_MODELS_EXPERIMENTMODEL_H
+#ifndef OHKL_GUI_MODELS_EXPERIMENTMODEL_H
+#define OHKL_GUI_MODELS_EXPERIMENTMODEL_H
 
 #include <QAbstractTableModel>
 
@@ -44,4 +44,4 @@ class ExperimentModel : public QAbstractTableModel {
     QVariant headerData(int section, Qt::Orientation orientation, int role) const override;
 };
 
-#endif // NSX_GUI_MODELS_EXPERIMENTMODEL_H
+#endif // OHKL_GUI_MODELS_EXPERIMENTMODEL_H

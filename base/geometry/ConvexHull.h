@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_BASE_HULL_H
-#define NSX_BASE_HULL_H
+#ifndef OHKL_BASE_HULL_H
+#define OHKL_BASE_HULL_H
 
 #include <Eigen/Core>
 #include <vector>

@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_CORE_INTEGRATION_BLOB3D_H
-#define NSX_CORE_INTEGRATION_BLOB3D_H
+#ifndef OHKL_CORE_INTEGRATION_BLOB3D_H
+#define OHKL_CORE_INTEGRATION_BLOB3D_H
 
 #include <Eigen/Dense>
 #include <iostream> // needed in no-swig case (?)
@@ -89,4 +89,4 @@ std::ostream& operator<<(std::ostream& os, const Blob3D& b);
 /*! @}*/
 } // namespace ohkl
 
-#endif // NSX_CORE_INTEGRATION_BLOB3D_H
+#endif // OHKL_CORE_INTEGRATION_BLOB3D_H

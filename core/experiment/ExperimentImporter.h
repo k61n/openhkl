@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_CORE_EXPERIMENT_EXPERIMENTIMPORTER_H
-#define NSX_CORE_EXPERIMENT_EXPERIMENTIMPORTER_H
+#ifndef OHKL_CORE_EXPERIMENT_EXPERIMENTIMPORTER_H
+#define OHKL_CORE_EXPERIMENT_EXPERIMENTIMPORTER_H
 
 #include <string>
 
@@ -44,4 +44,4 @@ class ExperimentImporter {
 
 } // namespace ohkl
 
-#endif // NSX_CORE_EXPERIMENT_EXPERIMENTIMPORTER_H
+#endif // OHKL_CORE_EXPERIMENT_EXPERIMENTIMPORTER_H

@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_CORE_CONVOLVE_DELTACONVOLVER_H
-#define NSX_CORE_CONVOLVE_DELTACONVOLVER_H
+#ifndef OHKL_CORE_CONVOLVE_DELTACONVOLVER_H
+#define OHKL_CORE_CONVOLVE_DELTACONVOLVER_H
 
 #include "core/convolve/AtomicConvolver.h" // inherits from
 
@@ -43,4 +43,4 @@ class DeltaConvolver : public AtomicConvolver {
 
 } // namespace ohkl
 
-#endif // NSX_CORE_CONVOLVE_DELTACONVOLVER_H
+#endif // OHKL_CORE_CONVOLVE_DELTACONVOLVER_H

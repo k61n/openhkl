@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_BASE_GEOMETRY_RECIPROCALVECTOR_H
-#define NSX_BASE_GEOMETRY_RECIPROCALVECTOR_H
+#ifndef OHKL_BASE_GEOMETRY_RECIPROCALVECTOR_H
+#define OHKL_BASE_GEOMETRY_RECIPROCALVECTOR_H
 
 #include <Eigen/Dense>
 
@@ -63,4 +63,4 @@ std::ostream& operator<<(std::ostream& os, const ReciprocalVector& rvector);
 
 } // namespace ohkl
 
-#endif // NSX_BASE_GEOMETRY_RECIPROCALVECTOR_H
+#endif // OHKL_BASE_GEOMETRY_RECIPROCALVECTOR_H

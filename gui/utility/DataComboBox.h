@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_GUI_UTILITY_DATACOMBO_H
-#define NSX_GUI_UTILITY_DATACOMBO_H
+#ifndef OHKL_GUI_UTILITY_DATACOMBO_H
+#define OHKL_GUI_UTILITY_DATACOMBO_H
 
 #include "core/data/DataSet.h"
 
@@ -59,4 +59,4 @@ class DataComboBox : public QComboBox {
     static QVector<DataComboBox*> _all_combos;
 };
 
-#endif // NSX_GUI_UTILITY_DATACOMBO_H
+#endif // OHKL_GUI_UTILITY_DATACOMBO_H

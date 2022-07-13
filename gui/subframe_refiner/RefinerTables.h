@@ -15,8 +15,8 @@
 #include <QStandardItemModel>
 #include <QTableWidgetItem>
 
-#ifndef NSX_GUI_SUBFRAME_REFINER_REFINERTABLES_H
-#define NSX_GUI_SUBFRAME_REFINER_TABLES_REFINERTABLES_H
+#ifndef OHKL_GUI_SUBFRAME_REFINER_REFINERTABLES_H
+#define OHKL_GUI_SUBFRAME_REFINER_TABLES_REFINERTABLES_H
 
 class DataSet;
 class Refiner;
@@ -85,4 +85,4 @@ class RefinerTables : public QTabWidget {
     QVector<double> _x_vals;
 };
 
-#endif // NSX_GUI_SUBFRAME_REFINER_TABLES_REFINERTABLES_H
+#endif // OHKL_GUI_SUBFRAME_REFINER_TABLES_REFINERTABLES_H

@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_CORE_RAW_IDATAREADER_H
-#define NSX_CORE_RAW_IDATAREADER_H
+#ifndef OHKL_CORE_RAW_IDATAREADER_H
+#define OHKL_CORE_RAW_IDATAREADER_H
 
 #include "core/instrument/InstrumentState.h"
 #include "core/instrument/InstrumentStateSet.h"
@@ -81,4 +81,4 @@ class IDataReader {
 
 } // namespace ohkl
 
-#endif // NSX_CORE_RAW_IDATAREADER_H
+#endif // OHKL_CORE_RAW_IDATAREADER_H

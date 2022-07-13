@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_CORE_INSTRUMENT_MATRIXOPERATIONS_H
-#define NSX_CORE_INSTRUMENT_MATRIXOPERATIONS_H
+#ifndef OHKL_CORE_INSTRUMENT_MATRIXOPERATIONS_H
+#define OHKL_CORE_INSTRUMENT_MATRIXOPERATIONS_H
 
 #include <Eigen/Dense>
 
@@ -28,4 +28,4 @@ Eigen::Matrix3d interpolateRotation(
 
 } // namespace ohkl
 
-#endif // NSX_CORE_INSTRUMENT_MATRIXOPERATIONS_H
+#endif // OHKL_CORE_INSTRUMENT_MATRIXOPERATIONS_H

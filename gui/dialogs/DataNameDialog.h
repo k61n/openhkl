@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_GUI_DIALOGS_DATANAMEDIALOG_H
-#define NSX_GUI_DIALOGS_DATANAMEDIALOG_H
+#ifndef OHKL_GUI_DIALOGS_DATANAMEDIALOG_H
+#define OHKL_GUI_DIALOGS_DATANAMEDIALOG_H
 
 #include <QDialog>
 #include <QLineEdit>
@@ -31,4 +31,4 @@ class DataNameDialog : public QDialog {
     void verify();
 };
 
-#endif // NSX_GUI_DIALOGS_DATANAMEDIALOG_H
+#endif // OHKL_GUI_DIALOGS_DATANAMEDIALOG_H

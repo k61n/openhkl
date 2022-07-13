@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_CORE_GONIO_GONIO_H
-#define NSX_CORE_GONIO_GONIO_H
+#ifndef OHKL_CORE_GONIO_GONIO_H
+#define OHKL_CORE_GONIO_GONIO_H
 
 #include "base/geometry/DirectVector.h"
 #include "core/gonio/Axis.h"
@@ -72,4 +72,4 @@ class Gonio {
 
 } // namespace ohkl
 
-#endif // NSX_CORE_GONIO_GONIO_H
+#endif // OHKL_CORE_GONIO_GONIO_H

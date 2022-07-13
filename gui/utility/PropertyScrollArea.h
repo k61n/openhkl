@@ -12,8 +12,8 @@
 //
 //  ************************************************************************************************
 
-#ifndef NSX_GUI_UTILITY_PROPERTYSCROLLAREA_H
-#define NSX_GUI_UTILITY_PROPERTYSCROLLAREA_H
+#ifndef OHKL_GUI_UTILITY_PROPERTYSCROLLAREA_H
+#define OHKL_GUI_UTILITY_PROPERTYSCROLLAREA_H
 
 #include <QEvent>
 #include <QScrollArea>
@@ -41,4 +41,4 @@ class PropertyScrollArea : public QScrollArea {
 };
 
 
-#endif // NSX_GUI_UTILITY_PROPERTYSCROLLAREA_H
+#endif // OHKL_GUI_UTILITY_PROPERTYSCROLLAREA_H

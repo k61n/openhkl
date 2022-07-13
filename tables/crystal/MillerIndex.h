@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_TABLES_CRYSTAL_MILLERINDEX_H
-#define NSX_TABLES_CRYSTAL_MILLERINDEX_H
+#ifndef OHKL_TABLES_CRYSTAL_MILLERINDEX_H
+#define OHKL_TABLES_CRYSTAL_MILLERINDEX_H
 
 #include "base/geometry/ReciprocalVector.h"
 
@@ -91,4 +91,4 @@ using MillerIndexList = std::vector<MillerIndex>;
 
 } // namespace ohkl
 
-#endif // NSX_TABLES_CRYSTAL_MILLERINDEX_H
+#endif // OHKL_TABLES_CRYSTAL_MILLERINDEX_H

@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_GUI_GRAPHICS_CRYSTALNODEITEM_H
-#define NSX_GUI_GRAPHICS_CRYSTALNODEITEM_H
+#ifndef OHKL_GUI_GRAPHICS_CRYSTALNODEITEM_H
+#define OHKL_GUI_GRAPHICS_CRYSTALNODEITEM_H
 
 #include <cmath>
 #include <iostream>
@@ -56,4 +56,4 @@ class CrystalNodeItem : public QGraphicsItem {
     double _p1x, _p1y, _p1z, _angle;
 };
 
-#endif // NSX_GUI_GRAPHICS_CRYSTALNODEITEM_H
+#endif // OHKL_GUI_GRAPHICS_CRYSTALNODEITEM_H

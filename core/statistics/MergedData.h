@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_CORE_STATISTICS_MERGEDDATA_H
-#define NSX_CORE_STATISTICS_MERGEDDATA_H
+#ifndef OHKL_CORE_STATISTICS_MERGEDDATA_H
+#define OHKL_CORE_STATISTICS_MERGEDDATA_H
 
 #include "core/shape/PeakCollection.h"
 #include "core/statistics/MergedPeak.h"
@@ -82,4 +82,4 @@ class MergedData {
 
 } // namespace ohkl
 
-#endif // NSX_CORE_STATISTICS_MERGEDDATA_H
+#endif // OHKL_CORE_STATISTICS_MERGEDDATA_H

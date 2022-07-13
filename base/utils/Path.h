@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_BASE_UTILS_PATH_H
-#define NSX_BASE_UTILS_PATH_H
+#ifndef OHKL_BASE_UTILS_PATH_H
+#define OHKL_BASE_UTILS_PATH_H
 
 #include <vector>
 
@@ -52,4 +52,4 @@ std::string tempFilename(const std::string& filename);
 
 } // namespace ohkl
 
-#endif // NSX_BASE_UTILS_PATH_H
+#endif // OHKL_BASE_UTILS_PATH_H

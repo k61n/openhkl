@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_CORE_PEAK_PEAKCOORDINATESYSTEM_H
-#define NSX_CORE_PEAK_PEAKCOORDINATESYSTEM_H
+#ifndef OHKL_CORE_PEAK_PEAKCOORDINATESYSTEM_H
+#define OHKL_CORE_PEAK_PEAKCOORDINATESYSTEM_H
 
 #include "core/detector/DetectorEvent.h"
 #include "core/instrument/InterpolatedState.h"
@@ -74,4 +74,4 @@ class PeakCoordinateSystem {
 
 } // namespace ohkl
 
-#endif // NSX_CORE_PEAK_PEAKCOORDINATESYSTEM_H
+#endif // OHKL_CORE_PEAK_PEAKCOORDINATESYSTEM_H

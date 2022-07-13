@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_CORE_ALGO_AUTOINDEXER_H
-#define NSX_CORE_ALGO_AUTOINDEXER_H
+#ifndef OHKL_CORE_ALGO_AUTOINDEXER_H
+#define OHKL_CORE_ALGO_AUTOINDEXER_H
 
 #include "base/utils/ProgressHandler.h"
 #include "core/shape/PeakCollection.h"
@@ -134,4 +134,4 @@ class AutoIndexer {
 /*! @}*/
 } // namespace ohkl
 
-#endif // NSX_CORE_ALGO_AUTOINDEXER_H
+#endif // OHKL_CORE_ALGO_AUTOINDEXER_H

@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_CORE_DATA_DATASET_H
-#define NSX_CORE_DATA_DATASET_H
+#ifndef OHKL_CORE_DATA_DATASET_H
+#define OHKL_CORE_DATA_DATASET_H
 
 #include "base/mask/IMask.h"
 #include "core/data/DataTypes.h"
@@ -175,4 +175,4 @@ class DataSet {
 /*! @}*/
 } // namespace ohkl
 
-#endif // NSX_CORE_DATA_DATASET_H
+#endif // OHKL_CORE_DATA_DATASET_H

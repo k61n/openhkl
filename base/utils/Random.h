@@ -13,8 +13,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_BASE_UTILS_RANDOM_H
-#define NSX_BASE_UTILS_RANDOM_H
+#ifndef OHKL_BASE_UTILS_RANDOM_H
+#define OHKL_BASE_UTILS_RANDOM_H
 
 #include <random>
 
@@ -45,4 +45,4 @@ class Random {
 
 } // namespace ohkl
 
-#endif // NSX_BASE_UTILS_RANDOM_H
+#endif // OHKL_BASE_UTILS_RANDOM_H

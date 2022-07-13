@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_GUI_GRAPHICS_PLOTFACTORY_H
-#define NSX_GUI_GRAPHICS_PLOTFACTORY_H
+#ifndef OHKL_GUI_GRAPHICS_PLOTFACTORY_H
+#define OHKL_GUI_GRAPHICS_PLOTFACTORY_H
 
 #include "base/utils/Factory.h"
 #include "gui/graphics/SXPlot.h"
@@ -26,4 +26,4 @@ class PlotFactory : public ohkl::Factory<PlotFactory, SXPlot, std::string, QWidg
     PlotFactory();
 };
 
-#endif // NSX_GUI_GRAPHICS_PLOTFACTORY_H
+#endif // OHKL_GUI_GRAPHICS_PLOTFACTORY_H

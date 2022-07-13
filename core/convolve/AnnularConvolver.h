@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_CORE_CONVOLVE_ANNULARCONVOLVER_H
-#define NSX_CORE_CONVOLVE_ANNULARCONVOLVER_H
+#ifndef OHKL_CORE_CONVOLVE_ANNULARCONVOLVER_H
+#define OHKL_CORE_CONVOLVE_ANNULARCONVOLVER_H
 
 #include "core/convolve/Convolver.h" // inherits from
 
@@ -76,4 +76,4 @@ class AnnularConvolver : public Convolver {
 
 } // namespace ohkl
 
-#endif // NSX_CORE_CONVOLVE_ANNULARCONVOLVER_H
+#endif // OHKL_CORE_CONVOLVE_ANNULARCONVOLVER_H

@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_BASE_PARSER_PARSER_H
-#define NSX_BASE_PARSER_PARSER_H
+#ifndef OHKL_BASE_PARSER_PARSER_H
+#define OHKL_BASE_PARSER_PARSER_H
 
 #include <sstream>
 #include <string>
@@ -38,4 +38,4 @@ template <class T> void readNumFromChar(const char* begin, const char* end, std:
 
 } // namespace ohkl
 
-#endif // NSX_BASE_PARSER_PARSER_H
+#endif // OHKL_BASE_PARSER_PARSER_H

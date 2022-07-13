@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_CORE_SHAPE_SHAPECOLLECTION_H
-#define NSX_CORE_SHAPE_SHAPECOLLECTION_H
+#ifndef OHKL_CORE_SHAPE_SHAPECOLLECTION_H
+#define OHKL_CORE_SHAPE_SHAPECOLLECTION_H
 
 #include "base/utils/ProgressHandler.h"
 #include "core/data/DataTypes.h"
@@ -183,4 +183,4 @@ class ShapeModel {
 /*! @}*/
 } // namespace ohkl
 
-#endif // NSX_CORE_SHAPE_SHAPECOLLECTION_H
+#endif // OHKL_CORE_SHAPE_SHAPECOLLECTION_H

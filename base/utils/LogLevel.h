@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_BASE_UTILS_LOGLEVEL_H
-#define NSX_BASE_UTILS_LOGLEVEL_H
+#ifndef OHKL_BASE_UTILS_LOGLEVEL_H
+#define OHKL_BASE_UTILS_LOGLEVEL_H
 
 namespace ohkl {
 
@@ -28,4 +28,4 @@ enum class Level {
 
 } // namespace ohkl
 
-#endif // NSX_BASE_UTILS_LOGLEVEL_H
+#endif // OHKL_BASE_UTILS_LOGLEVEL_H

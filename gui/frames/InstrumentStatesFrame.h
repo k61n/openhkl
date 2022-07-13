@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_GUI_FRAMES_INSTRUMENTSTATESFRAME_H
-#define NSX_GUI_FRAMES_INSTRUMENTSTATESFRAME_H
+#ifndef OHKL_GUI_FRAMES_INSTRUMENTSTATESFRAME_H
+#define OHKL_GUI_FRAMES_INSTRUMENTSTATESFRAME_H
 
 #include <QDoubleSpinBox>
 #include <QFrame>
@@ -74,4 +74,4 @@ class InstrumentStatesFrame : public QFrame {
     QDoubleSpinBox* beamZ;
 };
 
-#endif // NSX_GUI_FRAMES_INSTRUMENTSTATESFRAME_H
+#endif // OHKL_GUI_FRAMES_INSTRUMENTSTATESFRAME_H

@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_GUI_UTILITY_COLORBUTTON_H
-#define NSX_GUI_UTILITY_COLORBUTTON_H
+#ifndef OHKL_GUI_UTILITY_COLORBUTTON_H
+#define OHKL_GUI_UTILITY_COLORBUTTON_H
 
 #include <QPushButton>
 #include <QtGui>
@@ -45,4 +45,4 @@ class ColorButton : public QPushButton {
     QColor _color;
 };
 
-#endif // NSX_GUI_UTILITY_COLORBUTTON_H
+#endif // OHKL_GUI_UTILITY_COLORBUTTON_H

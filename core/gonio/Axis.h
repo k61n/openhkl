@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_CORE_GONIO_AXIS_H
-#define NSX_CORE_GONIO_AXIS_H
+#ifndef OHKL_CORE_GONIO_AXIS_H
+#define OHKL_CORE_GONIO_AXIS_H
 
 #include <Eigen/Geometry>
 #include <yaml-cpp/yaml.h>
@@ -94,4 +94,4 @@ std::ostream& operator<<(std::ostream& os, const Axis& axis);
 
 } // namespace ohkl
 
-#endif // NSX_CORE_GONIO_AXIS_H
+#endif // OHKL_CORE_GONIO_AXIS_H

@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_GUI_SUBWINDOWS_PEAKWINDOW_H
-#define NSX_GUI_SUBWINDOWS_PEAKWINDOW_H
+#ifndef OHKL_GUI_SUBWINDOWS_PEAKWINDOW_H
+#define OHKL_GUI_SUBWINDOWS_PEAKWINDOW_H
 
 #include "core/peak/RegionData.h"
 
@@ -104,4 +104,4 @@ class PeakWindow : public QDialog {
     static PeakWindowParameters _params;
 };
 
-#endif // NSX_GUI_SUBWINDOWS_PEAKWINDOW_H
+#endif // OHKL_GUI_SUBWINDOWS_PEAKWINDOW_H

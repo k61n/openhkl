@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_CORE_SHAPE_IPEAKINTEGRATOR_H
-#define NSX_CORE_SHAPE_IPEAKINTEGRATOR_H
+#ifndef OHKL_CORE_SHAPE_IPEAKINTEGRATOR_H
+#define OHKL_CORE_SHAPE_IPEAKINTEGRATOR_H
 
 #include "base/utils/ProgressHandler.h"
 #include "core/peak/IntegrationRegion.h"
@@ -112,4 +112,4 @@ class IPeakIntegrator {
 /*! @}*/
 } // namespace ohkl
 
-#endif // NSX_CORE_SHAPE_IPEAKINTEGRATOR_H
+#endif // OHKL_CORE_SHAPE_IPEAKINTEGRATOR_H

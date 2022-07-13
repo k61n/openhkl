@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_GUI_SUBFRAME_MERGE_SUBFRAMEMERGEDPEAKS_H
-#define NSX_GUI_SUBFRAME_MERGE_SUBFRAMEMERGEDPEAKS_H
+#ifndef OHKL_GUI_SUBFRAME_MERGE_SUBFRAMEMERGEDPEAKS_H
+#define OHKL_GUI_SUBFRAME_MERGE_SUBFRAMEMERGEDPEAKS_H
 
 #include "core/data/DataTypes.h"
 #include "core/statistics/PeakExporter.h"
@@ -140,4 +140,4 @@ class SubframeMergedPeaks : public QWidget {
     bool _frame_set;
 };
 
-#endif // NSX_GUI_SUBFRAME_MERGE_SUBFRAMEMERGEDPEAKS_H
+#endif // OHKL_GUI_SUBFRAME_MERGE_SUBFRAMEMERGEDPEAKS_H

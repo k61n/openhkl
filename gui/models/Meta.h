@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_GUI_MODELS_META_H
-#define NSX_GUI_MODELS_META_H
+#ifndef OHKL_GUI_MODELS_META_H
+#define OHKL_GUI_MODELS_META_H
 
 #include "core/data/DataTypes.h"
 #include "core/peak/Peak3D.h"
@@ -24,4 +24,4 @@ Q_DECLARE_METATYPE(ohkl::PeakList)
 Q_DECLARE_METATYPE(ohkl::sptrUnitCell)
 Q_DECLARE_METATYPE(ohkl::sptrDataSet)
 
-#endif // NSX_GUI_MODELS_META_H
+#endif // OHKL_GUI_MODELS_META_H

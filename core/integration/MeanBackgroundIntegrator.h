@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_CORE_INTEGRATION_MEANBACKGROUNDINTEGRATOR_H
-#define NSX_CORE_INTEGRATION_MEANBACKGROUNDINTEGRATOR_H
+#ifndef OHKL_CORE_INTEGRATION_MEANBACKGROUNDINTEGRATOR_H
+#define OHKL_CORE_INTEGRATION_MEANBACKGROUNDINTEGRATOR_H
 
 #include "core/shape/IPeakIntegrator.h"
 
@@ -33,4 +33,4 @@ class MeanBackgroundIntegrator : public IPeakIntegrator {
 /*! @}*/
 } // namespace ohkl
 
-#endif // NSX_CORE_INTEGRATION_MEANBACKGROUNDINTEGRATOR_H
+#endif // OHKL_CORE_INTEGRATION_MEANBACKGROUNDINTEGRATOR_H

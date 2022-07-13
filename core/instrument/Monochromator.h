@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_CORE_INSTRUMENT_MONOCHROMATOR_H
-#define NSX_CORE_INSTRUMENT_MONOCHROMATOR_H
+#ifndef OHKL_CORE_INSTRUMENT_MONOCHROMATOR_H
+#define OHKL_CORE_INSTRUMENT_MONOCHROMATOR_H
 
 #include "base/geometry/ReciprocalVector.h"
 
@@ -76,4 +76,4 @@ class Monochromator {
 
 } // namespace ohkl
 
-#endif // NSX_CORE_INSTRUMENT_MONOCHROMATOR_H
+#endif // OHKL_CORE_INSTRUMENT_MONOCHROMATOR_H

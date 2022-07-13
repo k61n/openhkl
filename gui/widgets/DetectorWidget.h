@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_GUI_UTILITY_DETECTORWIDGET_H
-#define NSX_GUI_UTILITY_DETECTORWIDGET_H
+#ifndef OHKL_GUI_UTILITY_DETECTORWIDGET_H
+#define OHKL_GUI_UTILITY_DETECTORWIDGET_H
 
 #include "core/data/DataTypes.h"
 
@@ -102,4 +102,4 @@ class DetectorWidget : public QGridLayout {
     static QList<DetectorWidget*> _detector_widgets;
 };
 
-#endif // NSX_GUI_UTILITY_DETECTORWIDGET_H
+#endif // OHKL_GUI_UTILITY_DETECTORWIDGET_H

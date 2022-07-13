@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_GUI_WIDGETS_PLOTCHECKBOX_H
-#define NSX_GUI_WIDGETS_PLOTCHECKBOX_H
+#ifndef OHKL_GUI_WIDGETS_PLOTCHECKBOX_H
+#define OHKL_GUI_WIDGETS_PLOTCHECKBOX_H
 
 #include <QCheckBox>
 
@@ -39,4 +39,4 @@ class PlotCheckBox : public QCheckBox {
     QString _header;
 };
 
-#endif // NSX_GUI_WIDGETS_PLOTCHECKBOX_H
+#endif // OHKL_GUI_WIDGETS_PLOTCHECKBOX_H

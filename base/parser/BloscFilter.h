@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_BASE_PARSER_BLOSCFILTER_H
-#define NSX_BASE_PARSER_BLOSCFILTER_H
+#ifndef OHKL_BASE_PARSER_BLOSCFILTER_H
+#define OHKL_BASE_PARSER_BLOSCFILTER_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -35,4 +35,4 @@ int register_blosc(char** version, char** date);
 }
 #endif
 
-#endif // NSX_BASE_PARSER_BLOSCFILTER_H
+#endif // OHKL_BASE_PARSER_BLOSCFILTER_H

@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_BASE_UTILS_PROGRESSHANDLER_H
-#define NSX_BASE_UTILS_PROGRESSHANDLER_H
+#ifndef OHKL_BASE_UTILS_PROGRESSHANDLER_H
+#define OHKL_BASE_UTILS_PROGRESSHANDLER_H
 
 #include <atomic>
 #include <functional>
@@ -59,4 +59,4 @@ using sptrProgressHandler = std::shared_ptr<ProgressHandler>;
 
 } // namespace ohkl
 
-#endif // NSX_BASE_UTILS_PROGRESSHANDLER_H
+#endif // OHKL_BASE_UTILS_PROGRESSHANDLER_H

@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_CORE_EXPERIMENT_PEAKFINDER_H
-#define NSX_CORE_EXPERIMENT_PEAKFINDER_H
+#ifndef OHKL_CORE_EXPERIMENT_PEAKFINDER_H
+#define OHKL_CORE_EXPERIMENT_PEAKFINDER_H
 
 #include "core/convolve/Convolver.h"
 #include "core/data/DataSet.h"
@@ -147,4 +147,4 @@ class PeakFinder {
 /*! @}*/
 } // namespace ohkl
 
-#endif // NSX_CORE_EXPERIMENT_PEAKFINDER_H
+#endif // OHKL_CORE_EXPERIMENT_PEAKFINDER_H

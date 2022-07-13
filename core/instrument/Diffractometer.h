@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_CORE_INSTRUMENT_DIFFRACTOMETER_H
-#define NSX_CORE_INSTRUMENT_DIFFRACTOMETER_H
+#ifndef OHKL_CORE_INSTRUMENT_DIFFRACTOMETER_H
+#define OHKL_CORE_INSTRUMENT_DIFFRACTOMETER_H
 
 #include "core/detector/Detector.h"
 #include "core/instrument/InstrumentState.h"
@@ -105,4 +105,4 @@ class Diffractometer {
 /*! @}*/
 } // namespace ohkl
 
-#endif // NSX_CORE_INSTRUMENT_DIFFRACTOMETER_H
+#endif // OHKL_CORE_INSTRUMENT_DIFFRACTOMETER_H

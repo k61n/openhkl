@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_CORE_PEAK_REGIONDATA_H
-#define NSX_CORE_PEAK_REGIONDATA_H
+#ifndef OHKL_CORE_PEAK_REGIONDATA_H
+#define OHKL_CORE_PEAK_REGIONDATA_H
 
 #include <Eigen/Dense>
 #include <vector>
@@ -72,4 +72,4 @@ class RegionData {
 
 } // namespace ohkl
 
-#endif // NSX_CORE_PEAK_REGIONDATA_H
+#endif // OHKL_CORE_PEAK_REGIONDATA_H

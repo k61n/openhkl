@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_CORE_INSTRUMENT_HARDWAREPARAMETERS_H
-#define NSX_CORE_INSTRUMENT_HARDWAREPARAMETERS_H
+#ifndef OHKL_CORE_INSTRUMENT_HARDWAREPARAMETERS_H
+#define OHKL_CORE_INSTRUMENT_HARDWAREPARAMETERS_H
 
 #include <yaml-cpp/yaml.h>
 
@@ -25,4 +25,4 @@ std::set<std::string> getResourcesName(const std::string&);
 
 } // namespace ohkl
 
-#endif // NSX_CORE_INSTRUMENT_HARDWAREPARAMETERS_H
+#endif // OHKL_CORE_INSTRUMENT_HARDWAREPARAMETERS_H

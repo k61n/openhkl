@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_BASE_UTILS_CSV_H
-#define NSX_BASE_UTILS_CSV_H
+#ifndef OHKL_BASE_UTILS_CSV_H
+#define OHKL_BASE_UTILS_CSV_H
 
 #include <iostream>
 #include <vector>
@@ -37,4 +37,4 @@ class CSV {
 
 } // namespace ohkl
 
-#endif // NSX_BASE_UTILS_CSV_H
+#endif // OHKL_BASE_UTILS_CSV_H

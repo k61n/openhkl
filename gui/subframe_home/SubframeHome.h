@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_GUI_SUBFRAME_HOME_SUBFRAMEHOME_H
-#define NSX_GUI_SUBFRAME_HOME_SUBFRAMEHOME_H
+#ifndef OHKL_GUI_SUBFRAME_HOME_SUBFRAMEHOME_H
+#define OHKL_GUI_SUBFRAME_HOME_SUBFRAMEHOME_H
 
 #include "gui/models/ExperimentModel.h"
 #include "gui/subwindows/InputFilesWindow.h"
@@ -107,4 +107,4 @@ class SubframeHome : public QWidget {
     QTableWidget* _unitcell_table;
 };
 
-#endif // NSX_GUI_SUBFRAME_HOME_SUBFRAMEHOME_H
+#endif // OHKL_GUI_SUBFRAME_HOME_SUBFRAMEHOME_H

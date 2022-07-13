@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_CORE_GONIO_AXISFACTORY_H
-#define NSX_CORE_GONIO_AXISFACTORY_H
+#ifndef OHKL_CORE_GONIO_AXISFACTORY_H
+#define OHKL_CORE_GONIO_AXISFACTORY_H
 
 #include "base/utils/Factory.h"
 #include "base/utils/ISingleton.h"
@@ -30,4 +30,4 @@ class AxisFactory : public Factory<AxisFactory, Axis, std::string, const YAML::N
 
 } // namespace ohkl
 
-#endif // NSX_CORE_GONIO_AXISFACTORY_H
+#endif // OHKL_CORE_GONIO_AXISFACTORY_H

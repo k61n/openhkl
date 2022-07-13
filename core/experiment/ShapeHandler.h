@@ -11,8 +11,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_CORE_EXPERIMENT_SHAPEHANDLER_H
-#define NSX_CORE_EXPERIMENT_SHAPEHANDLER_H
+#ifndef OHKL_CORE_EXPERIMENT_SHAPEHANDLER_H
+#define OHKL_CORE_EXPERIMENT_SHAPEHANDLER_H
 
 #include <map>
 #include <string>
@@ -61,4 +61,4 @@ class ShapeHandler {
 
 } // namespace ohkl
 
-#endif // NSX_CORE_EXPERIMENT_SHAPEHANDLER_H
+#endif // OHKL_CORE_EXPERIMENT_SHAPEHANDLER_H

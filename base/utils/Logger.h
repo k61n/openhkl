@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_BASE_UTILS_LOGGER_H
-#define NSX_BASE_UTILS_LOGGER_H
+#ifndef OHKL_BASE_UTILS_LOGGER_H
+#define OHKL_BASE_UTILS_LOGGER_H
 
 #include "base/utils/LogLevel.h"
 #include "base/utils/LogMessenger.h"
@@ -85,4 +85,4 @@ template <typename... T> inline void nsxmsg(const Level& level, const T&... mess
 
 } // namespace ohkl
 
-#endif // NSX_BASE_UTILS_LOGGER_H
+#endif // OHKL_BASE_UTILS_LOGGER_H

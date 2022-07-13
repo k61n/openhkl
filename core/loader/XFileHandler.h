@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_CORE_LOADER_XFILEHANDLER_H
-#define NSX_CORE_LOADER_XFILEHANDLER_H
+#ifndef OHKL_CORE_LOADER_XFILEHANDLER_H
+#define OHKL_CORE_LOADER_XFILEHANDLER_H
 
 #include <Eigen/Dense>
 #include <memory>
@@ -121,4 +121,4 @@ class PeakCenterDataSet {
 
 } // namespace ohkl
 
-#endif // NSX_CORE_LOADER_XFILEHANDLER_H
+#endif // OHKL_CORE_LOADER_XFILEHANDLER_H

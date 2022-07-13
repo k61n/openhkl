@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_BASE_MASK_ELLIPSEMASK_H
-#define NSX_BASE_MASK_ELLIPSEMASK_H
+#ifndef OHKL_BASE_MASK_ELLIPSEMASK_H
+#define OHKL_BASE_MASK_ELLIPSEMASK_H
 
 #include "base/geometry/Ellipsoid.h"
 #include "base/mask/IMask.h"
@@ -45,4 +45,4 @@ class EllipseMask : public IMask {
 
 } // namespace ohkl
 
-#endif // NSX_BASE_MASK_ELLIPSEMASK_H
+#endif // OHKL_BASE_MASK_ELLIPSEMASK_H

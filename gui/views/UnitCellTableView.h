@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_GUI_VIEWS_UNITCELLTABLEVIEW_H
-#define NSX_GUI_VIEWS_UNITCELLTABLEVIEW_H
+#ifndef OHKL_GUI_VIEWS_UNITCELLTABLEVIEW_H
+#define OHKL_GUI_VIEWS_UNITCELLTABLEVIEW_H
 
 #include <QStandardItem>
 #include <QString>
@@ -49,4 +49,4 @@ class ValueTupleItem : public QStandardItem {
 };
 
 
-#endif // NSX_GUI_VIEWS_UNITCELLTABLEVIEW_H
+#endif // OHKL_GUI_VIEWS_UNITCELLTABLEVIEW_H

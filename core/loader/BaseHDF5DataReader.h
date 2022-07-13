@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_CORE_LOADER_HDF5METADATAREADER_H
-#define NSX_CORE_LOADER_HDF5METADATAREADER_H
+#ifndef OHKL_CORE_LOADER_HDF5METADATAREADER_H
+#define OHKL_CORE_LOADER_HDF5METADATAREADER_H
 
 #include "core/loader/IDataReader.h" // inherits from
 #include "core/raw/DataKeys.h" // kw_datasetDefaultName
@@ -61,4 +61,4 @@ class BaseHDF5DataReader : public IDataReader {
 };
 
 } // namespace ohkl
-#endif // NSX_CORE_LOADER_HDF5METADATAREADER_H
+#endif // OHKL_CORE_LOADER_HDF5METADATAREADER_H

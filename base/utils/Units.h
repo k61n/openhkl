@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_BASE_UTILS_UNITS_H
-#define NSX_BASE_UTILS_UNITS_H
+#ifndef OHKL_BASE_UTILS_UNITS_H
+#define OHKL_BASE_UTILS_UNITS_H
 
 #include <cmath>
 #include <string>
@@ -186,4 +186,4 @@ static const double R = 8.3144621 * J / mole / K;
 
 } // namespace ohkl
 
-#endif // NSX_BASE_UTILS_UNITS_H
+#endif // OHKL_BASE_UTILS_UNITS_H

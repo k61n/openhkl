@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_CORE_CONVOLVE_RADIALCONVOLVER_H
-#define NSX_CORE_CONVOLVE_RADIALCONVOLVER_H
+#ifndef OHKL_CORE_CONVOLVE_RADIALCONVOLVER_H
+#define OHKL_CORE_CONVOLVE_RADIALCONVOLVER_H
 
 #include "core/convolve/AtomicConvolver.h" // inherits from
 
@@ -79,4 +79,4 @@ class RadialConvolver : public AtomicConvolver {
 
 } // namespace ohkl
 
-#endif // NSX_CORE_CONVOLVE_RADIALCONVOLVER_H
+#endif // OHKL_CORE_CONVOLVE_RADIALCONVOLVER_H

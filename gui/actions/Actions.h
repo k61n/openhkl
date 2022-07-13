@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_GUI_ACTIONS_ACTIONS_H
-#define NSX_GUI_ACTIONS_ACTIONS_H
+#ifndef OHKL_GUI_ACTIONS_ACTIONS_H
+#define OHKL_GUI_ACTIONS_ACTIONS_H
 
 #include <QAction>
 #include <QObject>
@@ -80,4 +80,4 @@ class Actions : public QObject {
     void closePeakWindows();
 };
 
-#endif // NSX_GUI_ACTIONS_ACTIONS_H
+#endif // OHKL_GUI_ACTIONS_ACTIONS_H

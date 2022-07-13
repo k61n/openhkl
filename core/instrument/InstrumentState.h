@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_CORE_INSTRUMENT_INSTRUMENTSTATE_H
-#define NSX_CORE_INSTRUMENT_INSTRUMENTSTATE_H
+#ifndef OHKL_CORE_INSTRUMENT_INSTRUMENTSTATE_H
+#define OHKL_CORE_INSTRUMENT_INSTRUMENTSTATE_H
 
 #include "base/geometry/DirectVector.h"
 #include "base/geometry/ReciprocalVector.h"
@@ -132,4 +132,4 @@ using InstrumentStateList = std::vector<InstrumentState>;
 /*! @}*/
 } // namespace ohkl
 
-#endif // NSX_CORE_INSTRUMENT_INSTRUMENTSTATE_H
+#endif // OHKL_CORE_INSTRUMENT_INSTRUMENTSTATE_H

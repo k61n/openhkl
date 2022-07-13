@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_CORE_CONVOLVE_CONSTANTCONVOLVER_H
-#define NSX_CORE_CONVOLVE_CONSTANTCONVOLVER_H
+#ifndef OHKL_CORE_CONVOLVE_CONSTANTCONVOLVER_H
+#define OHKL_CORE_CONVOLVE_CONSTANTCONVOLVER_H
 
 #include "core/convolve/AtomicConvolver.h" // inherits from
 
@@ -45,4 +45,4 @@ class ConstantConvolver : public AtomicConvolver {
 
 } // namespace ohkl
 
-#endif // NSX_CORE_CONVOLVE_CONSTANTCONVOLVER_H
+#endif // OHKL_CORE_CONVOLVE_CONSTANTCONVOLVER_H

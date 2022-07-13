@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_GUI_SUBWINDOWS_INSTRUMENTSTATEWINDOW_H
-#define NSX_GUI_SUBWINDOWS_INSTRUMENTSTATEWINDOW_H
+#ifndef OHKL_GUI_SUBWINDOWS_INSTRUMENTSTATEWINDOW_H
+#define OHKL_GUI_SUBWINDOWS_INSTRUMENTSTATEWINDOW_H
 
 #include "gui/utility/LinkedComboBox.h"
 
@@ -53,4 +53,4 @@ class InstrumentStateWindow : public QDialog {
     QVector<QLineEdit*> _ki_elements;
 };
 
-#endif // NSX_GUI_SUBWINDOWS_INSTRUMENTSTATEWINDOW_H
+#endif // OHKL_GUI_SUBWINDOWS_INSTRUMENTSTATEWINDOW_H

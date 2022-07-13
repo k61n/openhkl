@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_CORE_ALGO_REFINER_H
-#define NSX_CORE_ALGO_REFINER_H
+#ifndef OHKL_CORE_ALGO_REFINER_H
+#define OHKL_CORE_ALGO_REFINER_H
 
 #include "core/algo/RefinementBatch.h"
 #include "core/experiment/UnitCellHandler.h"
@@ -157,4 +157,4 @@ class Refiner {
 /*! @}*/
 } // namespace ohkl
 
-#endif // NSX_CORE_ALGO_REFINER_H
+#endif // OHKL_CORE_ALGO_REFINER_H

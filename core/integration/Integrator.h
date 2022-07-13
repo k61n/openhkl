@@ -11,8 +11,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_CORE_EXPERIMENT_INTEGRATOR_H
-#define NSX_CORE_EXPERIMENT_INTEGRATOR_H
+#ifndef OHKL_CORE_EXPERIMENT_INTEGRATOR_H
+#define OHKL_CORE_EXPERIMENT_INTEGRATOR_H
 
 #include "core/shape/IPeakIntegrator.h"
 #include "core/shape/PeakFilter.h"
@@ -95,4 +95,4 @@ class Integrator {
 /*! @}*/
 } // namespace ohkl
 
-#endif // NSX_CORE_EXPERIMENT_INTEGRATOR_H
+#endif // OHKL_CORE_EXPERIMENT_INTEGRATOR_H

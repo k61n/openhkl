@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_CORE_SHAPE_PROFILE1D_H
-#define NSX_CORE_SHAPE_PROFILE1D_H
+#ifndef OHKL_CORE_SHAPE_PROFILE1D_H
+#define OHKL_CORE_SHAPE_PROFILE1D_H
 
 #include <vector>
 
@@ -58,4 +58,4 @@ class Profile1D {
 /*! @}*/
 } // namespace ohkl
 
-#endif // NSX_CORE_SHAPE_PROFILE1D_H
+#endif // OHKL_CORE_SHAPE_PROFILE1D_H

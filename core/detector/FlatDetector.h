@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_CORE_DETECTOR_FLATDETECTOR_H
-#define NSX_CORE_DETECTOR_FLATDETECTOR_H
+#ifndef OHKL_CORE_DETECTOR_FLATDETECTOR_H
+#define OHKL_CORE_DETECTOR_FLATDETECTOR_H
 
 #include "core/detector/Detector.h"
 
@@ -63,4 +63,4 @@ class FlatDetector : public Detector {
 
 } // namespace ohkl
 
-#endif // NSX_CORE_DETECTOR_FLATDETECTOR_H
+#endif // OHKL_CORE_DETECTOR_FLATDETECTOR_H

@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_GUI_MODELS_SESSION_H
-#define NSX_GUI_MODELS_SESSION_H
+#ifndef OHKL_GUI_MODELS_SESSION_H
+#define OHKL_GUI_MODELS_SESSION_H
 
 #include "core/raw/DataKeys.h"
 
@@ -90,4 +90,4 @@ class Session {
     ShapeComboBox* _shape_combo;
 };
 
-#endif // NSX_GUI_MODELS_SESSION_H
+#endif // OHKL_GUI_MODELS_SESSION_H
