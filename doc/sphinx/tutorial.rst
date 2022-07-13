@@ -35,7 +35,7 @@ list in the resulting dialogue.
 
 Next, we need to add the data set, a set of ``.tiff`` image files from the
 detector. From the main menu, select ``Data > Add data set > Add raw/tiff data``.
-Highlight all of the image files, then click ``Open``. This will open the image
+Select all of the image files, then click ``Open``. This will open the image
 metadata dialogue.
 
 
