@@ -146,8 +146,8 @@ SubframeExperiment::SubframeExperiment()
         _detector_widget->dataCombo(), QOverload<int>::of(&QComboBox::currentIndexChanged),
         this,
             [=](){
-                toggleUnsafeWidgets();
                 plotIntensities();
+                toggleUnsafeWidgets();
             }
         );
 
@@ -257,8 +257,9 @@ void SubframeExperiment::plotIntensities()
     if (histo->range == nullptr || histo->bin == nullptr)
         throw std::runtime_error("SubframeExperiment::plotIntensities received invalid arrays for gsl_histogram");
 
-    getPlot()->
-        plotHistogram(histo->n, histo->range, histo->bin,
+    auto plot = getPlot();
+    if (plot != nullptr)
+        plot->plotHistogram(histo->n, histo->range, histo->bin,
         QString("Pixels"), QString("Counts"),
         xmin, xmax, ymin, ymax);
 }
