@@ -1,6 +1,6 @@
 //  ***********************************************************************************************
 //
-//  NSXTool: data reduction for neutron single-crystal diffraction
+//  OpenHKL: data reduction for single crystal diffraction
 //
 //! @file      test/cpp/algo/TestPointsOnSphere.cpp
 //! @brief     Not a real test: output points on sphere for visual inspection

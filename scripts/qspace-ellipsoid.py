@@ -1,7 +1,7 @@
 #!/usr/bin/python
 ##  ***********************************************************************************************
 ##
-##  NSXTool: data reduction for neutron single-crystal diffraction
+##  OpenHKL: data reduction for single-crystal diffraction
 ##
 ##! @file      scripts/qspace-ellipsoid.py
 ##! @brief     Transform peaks to q-space ellipsoids to examine shapes
