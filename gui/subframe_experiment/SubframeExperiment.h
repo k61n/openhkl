@@ -50,8 +50,6 @@ class SubframeExperiment : public QWidget {
     PlotPanel* _plot;
     PropertyPanel* _properties;
 
-    DataComboBox* _data_combo;
-    QSlider* _frame_selector;
     QSlider* _number_bins;
     QPushButton* _calc_intensity;
     QPushButton* _update_plot;
@@ -60,7 +58,6 @@ class SubframeExperiment : public QWidget {
     QCheckBox* _xZoom;
     QCheckBox* _yZoom;
     QDoubleSpinBox* _number_bins_current;
-    QDoubleSpinBox* _frame_selector_curent;
     QDoubleSpinBox* _minX;
     QDoubleSpinBox* _maxX;
     QDoubleSpinBox* _minY;
