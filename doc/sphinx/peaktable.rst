@@ -4,7 +4,7 @@ Peak Table
 ===========
 
 The peak table features in many parts of the workflow, and contains (with a few
-exceptions) the follwoing columns.
+exceptions) the following columns.
 
 
    +-----------------------+----------------+-------------------------------+

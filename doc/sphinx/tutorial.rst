@@ -380,7 +380,7 @@ that there is an "overlap" region between batches, such that the batch 2, for
 example, will contain some peaks from batch 1.
 
 We start with the unit cell found in the :ref:`index` section. The ``use refined
-cells`` checkbox indicates , when checked, that the refiner will use the *batch*
+cells`` checkbox indicates, when checked, that the refiner will use the *batch*
 unit cells instead of the single unit cell indicated in the ``unit cell`` box as
 the starting point (it should be unchecked for the moment). For this data set,
 the optimisation is relatively straightforward, so we can refine all parameters
@@ -469,7 +469,7 @@ image.
 
 The detector spot is well-centred in the middle image, but is less so on
 adjacent images. This is evidence of a poor shape model: the major axis of the
-ellipsoid we generated earlier is skewed with respect the blob formed by the
+ellipsoid we generated earlier is skewed with respect to the blob formed by the
 detector spots. This is not a problem for integration of this specific
 reflection, but may be indicative of a systematic problem with affects peaks in
 high resolution areas of the detector image. For now, however, we will proceed
@@ -494,10 +494,10 @@ clear clash, but at the top it is less obvious; the peak is removed because it
 intersects with another one at a different rotation angle (i.e. on a different
 image). Note that both of these overlaps occur close to the sample rotation
 axis. This is to be expected, since such peaks tend to intersect the Ewald
-sphere over a very large rotation angle; they have large variances and appear on 
+sphere over a very large rotation angle; they have large variances and appear on
 many frames, and are thus more likely to clash. In this instance, however, we
 have an acceptable number of overlaps, so we can integrate the peaks by clicking
-``integrate peaks``. 
+``integrate peaks``.
 
 .. _integrated:
 .. figure:: images/tutorial/integrated.png
@@ -605,9 +605,9 @@ an exercise for the reader. Here are some hints:
    pixels with the local background subtracted. It is possible to achieve better
    results using a profile integration technique, which averages in the shapes
    of surrounding peaks. Results might also be improved with a better choice of
-   integration region. One possibility is modifying the bounds of the
-   integration region (``peak end``, ``background begin`` and ``background
-    end``) to ensure that even in cases where the predicted peak is slightly off
+   integration region. One possibility is modifying the bounds of the integration
+   region (``peak end``, ``background begin`` and ``background end``) to ensure
+   that even in cases where the predicted peak is slightly off
    centre, all of the peak intensity pixels are encompassed by the integration
    region. It may also be possible to improve the results using a "fixed
    ellipsoid" as the ``integration region type``. In this case, an ellipsoid
