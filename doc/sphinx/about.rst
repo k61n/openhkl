@@ -68,3 +68,5 @@ became a collaboration between ILL and Forschungszentrum Jülich at the Heinz
 Maier-Leibnitz Zentrum (MLZ) in Garching. It was renamed to OpenHKL in 2022 to
 emphasise that it is intended also for X-ray diffraction as well as Neutron
 diffraction.
+
+:ref:`authors`

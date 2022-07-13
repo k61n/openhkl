@@ -27,6 +27,7 @@ OpenHKL: data reduction for single crystal diffraction
    dataquality
    theory
    coderef
+   authors
 
 
 Indices and tables
