@@ -63,6 +63,7 @@ SubframeExperiment::SubframeExperiment()
     GridFiller f(intensity_plot_box, true);
 
     int nMaxBins = 100000;
+    int nMinBins = 1000;
 
     _number_bins = new QSlider(Qt::Horizontal);
     QLabel* label = new QLabel("Number of bins: ");
@@ -70,10 +71,11 @@ SubframeExperiment::SubframeExperiment()
     _number_bins_current->setMaximumWidth(100);
     _number_bins_current->setMinimum(1);
     _number_bins_current->setMaximum(nMaxBins);
+    _number_bins_current->setMinimum(nMinBins);
     _number_bins->setMaximumWidth(250);
     _number_bins_current->setDecimals(0);
 
-    _number_bins_current->setValue(1000);
+    _number_bins_current->setValue(nMinBins);
     _number_bins->setValue(1000);
 
     QWidget* bin_selector_widget = new QWidget;
@@ -98,7 +100,8 @@ SubframeExperiment::SubframeExperiment()
 
     _number_bins->setMinimumWidth(1);
     _number_bins->setMaximum(nMaxBins);
-    _number_bins->setValue(100);
+    _number_bins->setMinimum(nMinBins);
+    _number_bins->setValue(nMinBins);
 
     _minX = f.addDoubleSpinBox("minX:");
     _maxX = f.addDoubleSpinBox("maxX:");
@@ -195,7 +198,6 @@ SubframeExperiment::SubframeExperiment()
 
     connect(_number_bins, &QSlider::valueChanged, this,
         [=](){
-            _number_bins->setMaximum(10000);
             _number_bins_current->setValue(_number_bins->value());
         }
      );
