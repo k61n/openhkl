@@ -220,8 +220,8 @@ Bravais lattice (`oP` in the table). Again, the ability to find the correct
 Bravais lattice and centring is crucial, and strongly dependent on the direct
 beam position. In the screen shot, we can see that the hightlighted solution has
 a quality of 100\%, meaning that 100\% of peaks in this collection can be
-indexed using this unit cell. Select the best solution and click ``assign
-selected unit cell`` to open the following dialogue.
+indexed using this unit cell. Select the best solution and click
+``Assign selected unit cell`` to open the following dialogue.
 
 .. _assign_cell:
 .. figure:: images/tutorial/assign_cell.png
