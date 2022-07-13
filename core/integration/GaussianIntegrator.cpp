@@ -23,7 +23,7 @@
 
 #include <Eigen/Cholesky>
 
-namespace nsx {
+namespace ohkl {
 
 GaussianIntegrator::GaussianIntegrator(bool fit_center, bool fit_cov)
 {
@@ -219,4 +219,4 @@ std::vector<double> GaussianIntegrator::profile(Peak3D* peak, const IntegrationR
     return result;
 }
 
-} // namespace nsx
+} // namespace ohkl

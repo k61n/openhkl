@@ -17,7 +17,7 @@
 
 #include <Eigen/Dense>
 
-namespace nsx {
+namespace ohkl {
 
 //! Centering type of the Bravais lattice
 enum class LatticeCentring : char { P = 'P', A = 'A', C = 'C', I = 'I', F = 'F', R = 'R' };
@@ -61,6 +61,6 @@ struct NiggliCharacter {
     bool set(int priority, double s, double t);
 };
 
-} // namespace nsx
+} // namespace ohkl
 
 #endif // NSX_TABLES_CRYSTAL_NIGGLICHARACTER_H

@@ -17,7 +17,7 @@
 
 #include <Eigen/Dense>
 
-namespace nsx {
+namespace ohkl {
 
 //! Lightweight class for detector events.
 
@@ -46,6 +46,6 @@ class DetectorEvent {
     bool _valid;
 };
 
-} // namespace nsx
+} // namespace ohkl
 
 #endif // NSX_CORE_DETECTOR_DETECTOREVENT_H

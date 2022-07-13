@@ -24,7 +24,7 @@
 #include <string>
 #include <vector>
 
-namespace nsx {
+namespace ohkl {
 
 class AutoIndexer;
 class PeakHandler;
@@ -77,7 +77,7 @@ class UnitCellHandler {
         std::string name);
     //! Assign unit cell to a peak collection, compute Miller indices from q and cell
     void assignUnitCell(
-        PeakCollection* peaks, std::string cellName = nsx::kw_acceptedUnitcell) const;
+        PeakCollection* peaks, std::string cellName = ohkl::kw_acceptedUnitcell) const;
     //! Get space groups compatible with unit cell
     std::vector<std::string> getCompatibleSpaceGroups() const;
 
@@ -94,6 +94,6 @@ class UnitCellHandler {
     unsigned int _last_index = 0;
 };
 
-} // namespace nsx
+} // namespace ohkl
 
 #endif // NSX_CORE_EXPERIMENT_UNITCELLHANDLER_H

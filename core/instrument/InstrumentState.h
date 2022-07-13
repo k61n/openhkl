@@ -21,7 +21,7 @@
 #include <vector>
 
 
-namespace nsx {
+namespace ohkl {
 
 class Diffractometer;
 
@@ -130,6 +130,6 @@ class InstrumentState {
 using InstrumentStateList = std::vector<InstrumentState>;
 
 /*! @}*/
-} // namespace nsx
+} // namespace ohkl
 
 #endif // NSX_CORE_INSTRUMENT_INSTRUMENTSTATE_H

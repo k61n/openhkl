@@ -26,7 +26,7 @@
 
 #include <memory>
 
-namespace nsx {
+namespace ohkl {
 
 class Detector;
 class DetectorEvent;
@@ -103,10 +103,10 @@ class DataSet {
     void setName(const std::string& name);
 
     //! Returns a const reference to the MetaData container
-    const nsx::MetaData& metadata() const;
+    const ohkl::MetaData& metadata() const;
 
     //! Returns a reference to the MetaData container
-    nsx::MetaData& metadata();
+    ohkl::MetaData& metadata();
 
     //! Add a data file for reading data. Reading frames will be done only upon request.
     void addDataFile(const std::string& filename, const std::string& extension);
@@ -149,10 +149,10 @@ class DataSet {
     void _setReader(const DataFormat dataformat, const std::string& filename = "");
 
  private:
-    std::string _name = nsx::kw_datasetDefaultName;
+    std::string _name = ohkl::kw_datasetDefaultName;
     std::vector<Eigen::MatrixXi> _data;
     std::set<IMask*> _masks;
-    nsx::MetaData _metadata;
+    ohkl::MetaData _metadata;
     //! Current data reader (set only once)
     std::shared_ptr<IDataReader> _reader;
     //! Current data format (set only once)
@@ -173,6 +173,6 @@ class DataSet {
 };
 
 /*! @}*/
-} // namespace nsx
+} // namespace ohkl
 
 #endif // NSX_CORE_DATA_DATASET_H

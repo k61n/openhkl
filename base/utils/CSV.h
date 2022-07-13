@@ -18,7 +18,7 @@
 #include <iostream>
 #include <vector>
 
-namespace nsx {
+namespace ohkl {
 
 //! Simple CSV parser.
 
@@ -35,6 +35,6 @@ class CSV {
     std::string getToken(std::istream& stream, char& delim) const;
 };
 
-} // namespace nsx
+} // namespace ohkl
 
 #endif // NSX_BASE_UTILS_CSV_H

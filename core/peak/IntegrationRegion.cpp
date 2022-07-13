@@ -21,7 +21,7 @@
 #include "core/peak/Peak3D.h"
 #include "tables/crystal/UnitCell.h"
 
-namespace nsx {
+namespace ohkl {
 
 IntegrationRegion::IntegrationRegion(
     Peak3D* peak, double peak_end, double bkg_begin, double bkg_end,
@@ -310,4 +310,4 @@ bool IntegrationRegion::isValid() const
     return _valid;
 }
 
-} // namespace nsx
+} // namespace ohkl

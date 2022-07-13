@@ -19,7 +19,7 @@
 #include "core/convolve/EnhancedAnnularConvolver.h"
 #include "core/convolve/RadialConvolver.h"
 
-namespace nsx {
+namespace ohkl {
 
 template <typename T> T* create_convolver(const std::map<std::string, double>& parameters)
 {
@@ -64,4 +64,4 @@ Eigen::MatrixXd convolvedFrame(
     return convolver->convolve(frame_data.cast<double>());
 }
 
-} // namespace nsx
+} // namespace ohkl

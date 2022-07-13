@@ -20,7 +20,7 @@
 
 #include <xsection/Material.h>
 
-namespace nsx {
+namespace ohkl {
 
 using sptrUnitCell = std::shared_ptr<UnitCell>;
 
@@ -312,6 +312,6 @@ std::ostream& operator<<(std::ostream&, const UnitCell&);
 using sptrUnitCell = std::shared_ptr<UnitCell>;
 using UnitCellList = std::vector<sptrUnitCell>;
 
-} // namespace nsx
+} // namespace ohkl
 
 #endif // NSX_TABLES_CRYSTAL_UNITCELL_H

@@ -17,12 +17,12 @@
 
 #include <yaml-cpp/yaml.h>
 
-namespace nsx {
+namespace ohkl {
 
 YAML::Node findResource(const std::string& instrumentName);
 
 std::set<std::string> getResourcesName(const std::string&);
 
-} // namespace nsx
+} // namespace ohkl
 
 #endif // NSX_CORE_INSTRUMENT_HARDWAREPARAMETERS_H

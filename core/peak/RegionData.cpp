@@ -16,7 +16,7 @@
 
 #include "core/peak/IntegrationRegion.h"
 
-namespace nsx {
+namespace ohkl {
 
 RegionData::RegionData(
     IntegrationRegion* region, double x1, double x2, double y1, double y2, unsigned int z1,
@@ -120,4 +120,4 @@ unsigned int RegionData::rows() const
     return _ymax - _ymin;
 }
 
-} // namespace nsx
+} // namespace ohkl

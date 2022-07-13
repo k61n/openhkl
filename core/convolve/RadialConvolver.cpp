@@ -14,7 +14,7 @@
 
 #include "core/convolve/RadialConvolver.h"
 
-namespace nsx {
+namespace ohkl {
 
 RadialConvolver::RadialConvolver() : AtomicConvolver({{"r_in", 5}, {"r_out", 10}}) { }
 
@@ -66,4 +66,4 @@ RealMatrix RadialConvolver::_matrix(int nrows, int ncols) const
     return kernel;
 }
 
-} // namespace nsx
+} // namespace ohkl

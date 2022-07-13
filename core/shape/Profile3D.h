@@ -17,7 +17,7 @@
 
 #include "base/geometry/AABB.h"
 
-namespace nsx {
+namespace ohkl {
 
 /*! \addtogroup python_api
  *  @{*/
@@ -77,6 +77,6 @@ class Profile3D {
 };
 
 /*! @}*/
-} // namespace nsx
+} // namespace ohkl
 
 #endif // NSX_CORE_SHAPE_PROFILE3D_H

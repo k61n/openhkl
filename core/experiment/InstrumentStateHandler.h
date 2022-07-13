@@ -24,7 +24,7 @@
 #include <memory>
 #include <string>
 
-namespace nsx {
+namespace ohkl {
 
 using InstrumentStateMap = std::map<sptrDataSet, std::unique_ptr<InstrumentStateSet>>;
 
@@ -62,6 +62,6 @@ class InstrumentStateHandler {
     unsigned int _last_index = 0;
 };
 
-} // namespace nsx
+} // namespace ohkl
 
 #endif // NSX_CORE_EXPERIMENT_INSTRUMENTSTATEHANDLER_H

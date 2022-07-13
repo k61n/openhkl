@@ -59,7 +59,7 @@ std::map<std::string, const char*> database = {
 
 } // namespace
 
-namespace nsx {
+namespace ohkl {
 
 YAML::Node findResource(const std::string& instrumentName)
 {
@@ -74,4 +74,4 @@ std::set<std::string> getResourcesName(const std::string& /* resourceType */)
     return ret;
 }
 
-} // namespace nsx
+} // namespace ohkl

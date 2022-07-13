@@ -21,9 +21,9 @@
 #include "core/gonio/RotAxis.h"
 #include "core/raw/DataKeys.h"
 
-namespace nsx {
+namespace ohkl {
 
-Gonio::Gonio() : _name(nsx::kw_goniometerDefaultName) { }
+Gonio::Gonio() : _name(ohkl::kw_goniometerDefaultName) { }
 
 Gonio::Gonio(const std::string& name) : _name(name) { }
 
@@ -36,10 +36,10 @@ Gonio::Gonio(const Gonio& other) : _name(other._name)
 
 Gonio::Gonio(const YAML::Node& node)
 {
-    _name = node[nsx::ym_goniometerName] ? node[nsx::ym_goniometerName].as<std::string>() : "";
+    _name = node[ohkl::ym_goniometerName] ? node[ohkl::ym_goniometerName].as<std::string>() : "";
 
     // Sets the axis of the detector goniometer from the XML node
-    for (const auto& axisItem : node[nsx::ym_axis])
+    for (const auto& axisItem : node[ohkl::ym_axis])
         _axes.emplace_back(std::unique_ptr<Axis>(Axis::create(axisItem)));
 }
 
@@ -105,4 +105,4 @@ DirectVector Gonio::transform(const DirectVector& v, const std::vector<double>& 
     return DirectVector((result * d_vector.homogeneous()));
 }
 
-} // namespace nsx
+} // namespace ohkl

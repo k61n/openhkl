@@ -22,7 +22,7 @@
 #include <algorithm>
 #include <cassert>
 
-namespace nsx {
+namespace ohkl {
 
 InstrumentState::InstrumentState(Diffractometer* diffractometer) : _diffractometer(diffractometer)
 {
@@ -170,4 +170,4 @@ bool InstrumentState::isValid() const
     return _valid;
 }
 
-} // namespace nsx
+} // namespace ohkl

@@ -103,23 +103,23 @@ class SubframeAutoIndexer : public QWidget {
     //! Toggle cursor mode
     void toggleCursorMode();
     //! Set the initial value of ki from the crosshair position
-    void setInitialKi(nsx::sptrDataSet data);
+    void setInitialKi(ohkl::sptrDataSet data);
     //! Show direct beam position computed from unit cell in DetectorScene
     void showDirectBeamEvents();
 
     //! The model for the indexing peaks
-    nsx::PeakCollection _peak_collection;
+    ohkl::PeakCollection _peak_collection;
     //! The temporary collection
     PeakCollectionItem _peak_collection_item;
     //! The temporary collection
     PeakCollectionModel _peak_collection_model;
 
-    std::vector<std::pair<nsx::sptrPeak3D, std::shared_ptr<const nsx::UnitCell>>> _defaults;
-    std::vector<std::pair<std::shared_ptr<nsx::UnitCell>, double>> _solutions;
+    std::vector<std::pair<ohkl::sptrPeak3D, std::shared_ptr<const ohkl::UnitCell>>> _defaults;
+    std::vector<std::pair<std::shared_ptr<ohkl::UnitCell>, double>> _solutions;
 
     bool _show_direct_beam;
 
-    nsx::sptrUnitCell _selected_unit_cell;
+    ohkl::sptrUnitCell _selected_unit_cell;
 
     QVBoxLayout* _left_layout;
     QSplitter* _right_element;
@@ -170,9 +170,9 @@ class SubframeAutoIndexer : public QWidget {
     int _stored_cursor_mode;
 
     //! Saved direct beam positions
-    std::vector<nsx::DetectorEvent> _direct_beam_events;
+    std::vector<ohkl::DetectorEvent> _direct_beam_events;
     //! Current direct beam positions
-    std::vector<nsx::DetectorEvent> _old_direct_beam_events;
+    std::vector<ohkl::DetectorEvent> _old_direct_beam_events;
 };
 
 #endif // NSX_GUI_SUBFRAME_INDEX_SUBFRAMEAUTOINDEXER_H

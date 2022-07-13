@@ -20,7 +20,7 @@
 #include "core/peak/Intensity.h"
 #include "tables/crystal/UnitCell.h"
 
-namespace nsx {
+namespace ohkl {
 
 class IPeakIntegrator;
 class MillerIndex;
@@ -80,7 +80,7 @@ class Peak3D {
     //! Create peak belonging to data with given shape
     Peak3D(sptrDataSet dataSet, const MillerIndex& hkl);
     //! Creat the peak from another peak
-    Peak3D(std::shared_ptr<nsx::Peak3D> peak);
+    Peak3D(std::shared_ptr<ohkl::Peak3D> peak);
 
     //! Comparison operator used to sort peaks
     friend bool operator<(const Peak3D& p1, const Peak3D& p2);
@@ -230,7 +230,7 @@ class Peak3D {
     //! The transmission factor
     double _transmission;
     //! Reason for rejection
-    nsx::RejectionFlag _rejection_flag;
+    ohkl::RejectionFlag _rejection_flag;
 
     //! Pointer to the dataset from which this peak is derived
     sptrDataSet _data;
@@ -255,6 +255,6 @@ using sptrPeakList = std::shared_ptr<PeakList>;
 //    const SpaceGroup& group, const PeakList& peak_list, bool friedel);
 
 /*! @}*/
-} // namespace nsx
+} // namespace ohkl
 
 #endif // NSX_CORE_PEAK_PEAK3D_H

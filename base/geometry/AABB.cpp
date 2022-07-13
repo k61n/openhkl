@@ -16,7 +16,7 @@
 
 #include "base/geometry/Ellipsoid.h"
 
-namespace nsx {
+namespace ohkl {
 
 AABB::AABB(const Eigen::Vector3d& lb, const Eigen::Vector3d& ub) : _lowerBound(lb), _upperBound(ub)
 {
@@ -114,4 +114,4 @@ std::ostream& operator<<(std::ostream& os, const AABB& aabb)
     return aabb.printSelf(os);
 }
 
-} // namespace nsx
+} // namespace ohkl

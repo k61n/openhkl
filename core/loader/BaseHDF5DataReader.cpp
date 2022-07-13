@@ -34,33 +34,33 @@ namespace {
 // aux. functions to produce the group keys
 std::string _metaKey(const std::string& dataset_name)
 {
-    return nsx::gr_DataCollections + "/" + dataset_name + "/" + nsx::gr_Metadata;
+    return ohkl::gr_DataCollections + "/" + dataset_name + "/" + ohkl::gr_Metadata;
 }
 
 std::string _detectorKey(const std::string& dataset_name)
 {
-    return nsx::gr_DataCollections + "/" + dataset_name + "/" + nsx::gr_Detector;
+    return ohkl::gr_DataCollections + "/" + dataset_name + "/" + ohkl::gr_Detector;
 }
 
 std::string _instrumentStateKey(const std::string& dataset_name)
 {
-    return nsx::gr_DataCollections + "/" + dataset_name + "/" + nsx::gr_Instrument;
+    return ohkl::gr_DataCollections + "/" + dataset_name + "/" + ohkl::gr_Instrument;
 }
 
 std::string _sampleKey(const std::string& dataset_name)
 {
-    return nsx::gr_DataCollections + "/" + dataset_name + "/" + nsx::gr_Sample;
+    return ohkl::gr_DataCollections + "/" + dataset_name + "/" + ohkl::gr_Sample;
 }
 
 std::string _dataKey(const std::string& dataset_name)
 {
-    return nsx::gr_DataCollections + "/" + dataset_name + "/" + nsx::ds_Dataset;
+    return ohkl::gr_DataCollections + "/" + dataset_name + "/" + ohkl::ds_Dataset;
 }
 
 } // namespace
 
 
-namespace nsx {
+namespace ohkl {
 
 BaseHDF5DataReader::BaseHDF5DataReader(const std::string& filename)
     : IDataReader(filename)
@@ -85,7 +85,7 @@ bool BaseHDF5DataReader::initRead()
 
         // If the given dataset name is empty, find the name of the first DataCollection
         if (dataset_name.empty()) {
-            H5::Group data_collections(_file->openGroup(nsx::gr_DataCollections));
+            H5::Group data_collections(_file->openGroup(ohkl::gr_DataCollections));
             hsize_t object_num = data_collections.getNumObjs();
             if (object_num < 1) {
                 throw std::runtime_error("HDF5 file '" + _filename + "' has no DataCollections");
@@ -94,14 +94,14 @@ bool BaseHDF5DataReader::initRead()
                 // Warn about automatic selection of the first dataset when multiple datasets exist
                 if (object_num >= 1) {
                     nsxlog(
-                        nsx::Level::Warning, "HDF5 file '", _filename, "' has ", object_num,
+                        ohkl::Level::Warning, "HDF5 file '", _filename, "' has ", object_num,
                         " DataCollections; the first one, '", dataset_name, "', will be taken.");
                 }
             }
         }
 
         nsxlog(
-            nsx::Level::Info, "Initializing BaseHDF5DataReader to read '", _filename,
+            ohkl::Level::Info, "Initializing BaseHDF5DataReader to read '", _filename,
             "', dataset '", dataset_name, "'");
 
         // TODO: make groups names compatible accross the codebase
@@ -112,32 +112,32 @@ bool BaseHDF5DataReader::initRead()
         // read the name of the experiment and diffractometer
         std::string experiment_name, diffractometer_name, version_str;
 
-        if (_file->attrExists(nsx::at_experiment)) {
-            const H5::Attribute attr = _file->openAttribute(nsx::at_experiment);
+        if (_file->attrExists(ohkl::at_experiment)) {
+            const H5::Attribute attr = _file->openAttribute(ohkl::at_experiment);
             const H5::DataType attr_type = attr.getDataType();
             attr.read(attr_type, experiment_name);
         }
 
-        if (_file->attrExists(nsx::at_diffractometer)) {
-            const H5::Attribute attr = _file->openAttribute(nsx::at_diffractometer);
+        if (_file->attrExists(ohkl::at_diffractometer)) {
+            const H5::Attribute attr = _file->openAttribute(ohkl::at_diffractometer);
             const H5::DataType attr_type = attr.getDataType();
             attr.read(attr_type, diffractometer_name);
         }
 
-        if (_file->attrExists(nsx::at_formatVersion)) {
-            const H5::Attribute attr = _file->openAttribute(nsx::at_formatVersion);
+        if (_file->attrExists(ohkl::at_formatVersion)) {
+            const H5::Attribute attr = _file->openAttribute(ohkl::at_formatVersion);
             const H5::DataType attr_type = attr.getDataType();
             attr.read(attr_type, version_str);
         }
 
         // store the attributes in the metadata
         _dataset_out->metadata().add<std::string>(
-            nsx::at_experiment,
-            experiment_name.empty() ? nsx::kw_experimentDefaultName : experiment_name);
+            ohkl::at_experiment,
+            experiment_name.empty() ? ohkl::kw_experimentDefaultName : experiment_name);
         _dataset_out->metadata().add<std::string>(
-            nsx::at_diffractometer,
-            diffractometer_name.empty() ? nsx::kw_diffractometerDefaultName : diffractometer_name);
-        _dataset_out->metadata().add<std::string>(nsx::at_formatVersion, version_str);
+            ohkl::at_diffractometer,
+            diffractometer_name.empty() ? ohkl::kw_diffractometerDefaultName : diffractometer_name);
+        _dataset_out->metadata().add<std::string>(ohkl::at_formatVersion, version_str);
 
     } catch (H5::Exception& e) {
         std::string what = e.getDetailMsg();
@@ -146,7 +146,7 @@ bool BaseHDF5DataReader::initRead()
 
     // Read the metadata group and store in metadata
     nsxlog(
-        nsx::Level::Debug, "Reading metadata attribute of '", _filename, "', dataset '",
+        ohkl::Level::Debug, "Reading metadata attribute of '", _filename, "', dataset '",
         dataset_name, "'");
     const H5::StrType strVarType(H5::PredType::C_S1, H5T_VARIABLE);
     int nmeta = metaGroup.getNumAttrs();
@@ -160,7 +160,7 @@ bool BaseHDF5DataReader::initRead()
             // TODO: check if this is still needed
             // override stored filename with the current one
             if (key == "filename" || key == "file_name") {
-                _dataset_out->metadata().add<std::string>(nsx::at_datasetSources, value);
+                _dataset_out->metadata().add<std::string>(ohkl::at_datasetSources, value);
                 value = _filename;
             }
             _dataset_out->metadata().add<std::string>(key, value);
@@ -176,24 +176,24 @@ bool BaseHDF5DataReader::initRead()
     }
 
     // Update the monochromator wavelength
-    const double waveln = _dataset_out->metadata().key<double>(nsx::at_wavelength);
+    const double waveln = _dataset_out->metadata().key<double>(ohkl::at_wavelength);
     _dataset_out->diffractometer()->source().selectedMonochromator().setWavelength(waveln);
 
     // Compatibility 12/7/2022 - TODO: Remove the if block, as all saved experiments will have
     // baseline and gain metadata
     // Update detector baseline and gain
-    if (_dataset_out->metadata().isKey(nsx::at_baseline)
-        && _dataset_out->metadata().isKey(nsx::at_gain)) {
-        const double baseline = _dataset_out->metadata().key<double>(nsx::at_baseline);
-        const double gain = _dataset_out->metadata().key<double>(nsx::at_gain);
+    if (_dataset_out->metadata().isKey(ohkl::at_baseline)
+        && _dataset_out->metadata().isKey(ohkl::at_gain)) {
+        const double baseline = _dataset_out->metadata().key<double>(ohkl::at_baseline);
+        const double gain = _dataset_out->metadata().key<double>(ohkl::at_gain);
         _dataset_out->diffractometer()->detector()->setBaseline(baseline);
         _dataset_out->diffractometer()->detector()->setGain(gain);
     }
 
-    const std::size_t nframes = _dataset_out->metadata().key<int>(nsx::at_frameCount);
+    const std::size_t nframes = _dataset_out->metadata().key<int>(ohkl::at_frameCount);
 
     nsxlog(
-        nsx::Level::Debug, "Reading detector state of '", _filename, "', dataset '", dataset_name,
+        ohkl::Level::Debug, "Reading detector state of '", _filename, "', dataset '", dataset_name,
         "'");
 
     const auto& detector_gonio = _dataset_out->diffractometer()->detector()->gonio();
@@ -235,7 +235,7 @@ bool BaseHDF5DataReader::initRead()
     dm *= deg;
 
     nsxlog(
-        nsx::Level::Debug, "Reading gonio state of '", _filename, "', dataset '", dataset_name,
+        ohkl::Level::Debug, "Reading gonio state of '", _filename, "', dataset '", dataset_name,
         "'");
 
     _dataset_out->diffractometer()->detectorStates.resize(nframes);
@@ -285,8 +285,8 @@ bool BaseHDF5DataReader::initRead()
     _file->close();
 
     // Add the list of sources as metadata
-    if (!_dataset_out->metadata().isKey(nsx::at_datasetSources)) {
-        _dataset_out->metadata().add<std::string>(nsx::at_datasetSources, _filename);
+    if (!_dataset_out->metadata().isKey(ohkl::at_datasetSources)) {
+        _dataset_out->metadata().add<std::string>(ohkl::at_datasetSources, _filename);
     }
 
     isInitialized = true;
@@ -302,7 +302,7 @@ void BaseHDF5DataReader::open()
         return;
 
     try {
-        nsxlog(nsx::Level::Info, "Opening datafile '", _filename, "' for read-only access");
+        nsxlog(ohkl::Level::Info, "Opening datafile '", _filename, "' for read-only access");
         _file.reset();
         _file.reset(new H5::H5File(_filename.c_str(), H5F_ACC_RDONLY));
     } catch (...) {
@@ -318,7 +318,7 @@ void BaseHDF5DataReader::open()
         _blosc_filter.reset();
         _blosc_filter.reset(new HDF5BloscFilter);
 
-        nsxlog(nsx::Level::Debug, "Reading dataset '", dataset_name, "',");
+        nsxlog(ohkl::Level::Debug, "Reading dataset '", dataset_name, "',");
         _dataset.reset(new H5::DataSet(_file->openDataSet("/" + _dataKey(dataset_name))));
         // Dataspace of the dataset /counts
         _space.reset(new H5::DataSpace(_dataset->getSpace()));
@@ -337,7 +337,7 @@ void BaseHDF5DataReader::open()
     _dataset_out->datashape[2] = nframes;
 
     nsxlog(
-        nsx::Level::Info, "Data shape: (frames = ", nframes, ", rows = ", nrows,
+        ohkl::Level::Info, "Data shape: (frames = ", nframes, ", rows = ", nrows,
         ", columns = ", ncols, ")");
 
     // Size of one hyperslab
@@ -352,7 +352,7 @@ void BaseHDF5DataReader::close()
     if (!_isOpened)
         return;
 
-    nsxlog(nsx::Level::Info, "Closing datafile '", _filename, "'");
+    nsxlog(ohkl::Level::Info, "Closing datafile '", _filename, "'");
 
     _file->close();
     _space->close();
@@ -370,4 +370,4 @@ std::string BaseHDF5DataReader::NSXfilepath() const
     return _filename;
 }
 
-} // namespace nsx
+} // namespace ohkl

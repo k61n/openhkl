@@ -20,7 +20,7 @@
 //! Cutter item that cuts the data as a line
 class CutLineItem : public CutterItem {
  public:
-    explicit CutLineItem(nsx::sptrDataSet data);
+    explicit CutLineItem(ohkl::sptrDataSet data);
 
     ~CutLineItem();
 

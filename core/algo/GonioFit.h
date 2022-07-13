@@ -20,7 +20,7 @@
 #include <cstddef>
 #include <vector>
 
-namespace nsx {
+namespace ohkl {
 
 //! Stores the result of fitting parameters of a Gonio.
 
@@ -35,6 +35,6 @@ GonioFit fitDetectorGonioOffsets(
 GonioFit fitSampleGonioOffsets(
     const Gonio& gonio, const DataList& dataset, size_t n_iterations, double tolerance);
 
-} // namespace nsx
+} // namespace ohkl
 
 #endif // NSX_CORE_ALGO_GONIOFIT_H

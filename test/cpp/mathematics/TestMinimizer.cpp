@@ -56,12 +56,12 @@ TEST_CASE("test/mathematics/TestMinimizer.cpp", "")
         return 0;
     };
 
-    nsx::FitParameters params;
+    ohkl::FitParameters params;
     params.addParameter(&x(0));
     params.addParameter(&x(1));
     params.addParameter(&x(2));
 
-    nsx::Minimizer min;
+    ohkl::Minimizer min;
     min.initialize(params, 40);
     min.set_f(residual_fn);
     CHECK(min.fit(100));

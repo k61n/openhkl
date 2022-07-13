@@ -14,7 +14,7 @@
 
 #include "base/utils/LogMessenger.h"
 
-namespace nsx {
+namespace ohkl {
 
 LogMessenger::receiverHandle LogMessenger::addReceiver(LogMessenger::receiver_t rec_ptr)
 {
@@ -47,4 +47,4 @@ void LogMessenger::send(const LogMessage& msg)
     }
 }
 
-} // namespace nsx
+} // namespace ohkl

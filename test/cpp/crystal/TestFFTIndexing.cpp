@@ -24,22 +24,22 @@
 
 TEST_CASE("test/crystal/TestFFTIndexing.cpp", "")
 {
-    auto logger = std::make_shared<nsx::ProgressHandler>();
+    auto logger = std::make_shared<ohkl::ProgressHandler>();
     logger->setCallback([logger]() {
         for (const auto& log : logger->getLog())
             std::cout << log << std::endl;
     });
 
-    nsx::Experiment experiment("test", "BioDiff2500");
-    const nsx::sptrDataSet dataset_ptr { std::make_shared<nsx::DataSet>
-          (nsx::kw_datasetDefaultName, experiment.getDiffractometer()) };
+    ohkl::Experiment experiment("test", "BioDiff2500");
+    const ohkl::sptrDataSet dataset_ptr { std::make_shared<ohkl::DataSet>
+          (ohkl::kw_datasetDefaultName, experiment.getDiffractometer()) };
 
     dataset_ptr->addDataFile("gal3.hdf", "nsx");
     dataset_ptr->finishRead();
 
     experiment.addData(dataset_ptr);
 
-    nsx::AutoIndexer* auto_indexer = experiment.autoIndexer();
+    ohkl::AutoIndexer* auto_indexer = experiment.autoIndexer();
 
     auto* params = auto_indexer->parameters();
     params->maxdim = 70.0;
@@ -57,33 +57,33 @@ TEST_CASE("test/crystal/TestFFTIndexing.cpp", "")
     // real basis of unit cell
     Eigen::Matrix3d basis;
     basis << 45.0, 1.0, -2.0, -1.5, 36.0, -2.2, 1.25, -3, 50.0;
-    nsx::UnitCell uc(basis);
+    ohkl::UnitCell uc(basis);
     uc.reduce(params->niggliReduction, params->niggliTolerance, params->gruberTolerance);
     uc = uc.applyNiggliConstraints();
     std::cout << "Basis:\n" << uc.basis() << std::endl;
 
     const auto reflections = uc.generateReflectionsInShell(0.5, 100, 2.67);
-    std::vector<nsx::ReciprocalVector> qs(reflections.size());
-    for (const nsx::MillerIndex& index : reflections) {
+    std::vector<ohkl::ReciprocalVector> qs(reflections.size());
+    for (const ohkl::MillerIndex& index : reflections) {
         // std::cout << "reflection: " << index << std::endl;
         qs.emplace_back(index.rowVector().cast<double>() * uc.reciprocalBasis());
     }
 
-    nsx::PeakCollection peak_collection;
+    ohkl::PeakCollection peak_collection;
     const auto events =
-        nsx::algo::qVectorList2Events(qs, dataset_ptr->instrumentStates(), dataset_ptr->detector(), dataset_ptr->nFrames());
-    for (const nsx::DetectorEvent& event : events) {
+        ohkl::algo::qVectorList2Events(qs, dataset_ptr->instrumentStates(), dataset_ptr->detector(), dataset_ptr->nFrames());
+    for (const ohkl::DetectorEvent& event : events) {
         // std::cout << "event x=" << event.px << " y=" << event.py
         //    << " frame=" << event.frame << " tof=" << event.tof
         //    << std::endl;
-        nsx::Peak3D peak(dataset_ptr);
+        ohkl::Peak3D peak(dataset_ptr);
         const Eigen::Vector3d center = {event.px, event.py, event.frame};
 
         // dummy shape
         try {
-            peak.setShape(nsx::Ellipsoid(center, 1.0));
+            peak.setShape(ohkl::Ellipsoid(center, 1.0));
             peak.setSelected(true);
-            CHECK(nsx::MillerIndex(peak.q(), uc).error().norm() < 1e-10);
+            CHECK(ohkl::MillerIndex(peak.q(), uc).error().norm() < 1e-10);
             peak_collection.push_back(peak);
         } catch (...) {
             // invalid shape, nothing to do

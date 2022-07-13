@@ -29,7 +29,7 @@ class FoundPeakComboBox;
 class PredictedPeakComboBox;
 class IntegratedPeakComboBox;
 class ShapeComboBox;
-namespace nsx {
+namespace ohkl {
 enum class DataFormat;
 }
 
@@ -58,7 +58,7 @@ class Session {
 
     void removeExperiment(unsigned int id);
 
-    void loadData(nsx::DataFormat format);
+    void loadData(ohkl::DataFormat format);
     bool loadRawData();
     void removeData();
 

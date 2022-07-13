@@ -20,7 +20,7 @@
 
 #include <set>
 
-namespace nsx {
+namespace ohkl {
 
 //! A set of `MergedPeak`s.
 
@@ -80,6 +80,6 @@ class MergedData {
     int _max_peaks = 0;
 };
 
-} // namespace nsx
+} // namespace ohkl
 
 #endif // NSX_CORE_STATISTICS_MERGEDDATA_H

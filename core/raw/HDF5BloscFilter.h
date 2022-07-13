@@ -17,7 +17,7 @@
 #include "base/parser/BloscFilter.h"
 #include <memory> // unique_ptr
 
-namespace nsx {
+namespace ohkl {
 
 /* usage:
    # include <H5Cpp.h>
@@ -50,6 +50,6 @@ class HDF5BloscFilter {
     void _register();
 };
 
-} // namespace nsx
+} // namespace ohkl
 
 #endif // NSX_CORE_RAW_HDF5BLOSCFILTER_H

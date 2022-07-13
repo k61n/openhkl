@@ -19,9 +19,9 @@
 
 #include <Eigen/SparseCore>
 
-namespace nsx {
+namespace ohkl {
 
-//! Encapsulates parameters to be passed to nsx::Minimizer.
+//! Encapsulates parameters to be passed to ohkl::Minimizer.
 
 class FitParameters {
  public:
@@ -67,6 +67,6 @@ class FitParameters {
     bool _constrained;
 };
 
-} // namespace nsx
+} // namespace ohkl
 
 #endif // NSX_BASE_FIT_FITPARAMETERS_H

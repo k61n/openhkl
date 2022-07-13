@@ -17,7 +17,7 @@
 
 #include "core/convolve/Convolver.h" // inherits from
 
-namespace nsx {
+namespace ohkl {
 
 //! Annular convolution kernel used for local background subtraction.
 
@@ -74,6 +74,6 @@ class AnnularConvolver : public Convolver {
     RealMatrix convolve(const RealMatrix& image) override;
 };
 
-} // namespace nsx
+} // namespace ohkl
 
 #endif // NSX_CORE_CONVOLVE_ANNULARCONVOLVER_H

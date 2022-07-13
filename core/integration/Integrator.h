@@ -19,9 +19,9 @@
 #include <map>
 #include <string>
 
-namespace nsx {
+namespace ohkl {
 
-using IntegratorMap = std::map<IntegratorType, std::unique_ptr<nsx::IPeakIntegrator>>;
+using IntegratorMap = std::map<IntegratorType, std::unique_ptr<ohkl::IPeakIntegrator>>;
 
 class PeakCollection;
 class PeakFinder;
@@ -58,7 +58,7 @@ class Integrator {
     //! Return a pointer to the data handler
     DataHandler* getDataHandler();
     //! Get an integrator from the map
-    nsx::IPeakIntegrator* getIntegrator(const IntegratorType integrator_type) const;
+    ohkl::IPeakIntegrator* getIntegrator(const IntegratorType integrator_type) const;
     //! Set the found peak integrator
     void integratePeaks(IntegratorType integrator_type, sptrDataSet data, PeakCollection* peaks);
     //! Integrate a peak collection
@@ -93,6 +93,6 @@ class Integrator {
 };
 
 /*! @}*/
-} // namespace nsx
+} // namespace ohkl
 
 #endif // NSX_CORE_EXPERIMENT_INTEGRATOR_H

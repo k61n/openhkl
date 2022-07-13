@@ -18,7 +18,7 @@
 
 #include "base/utils/ProgressHandler.h"
 
-using namespace nsx;
+using namespace ohkl;
 
 TEST_CASE("test/utils/TestProgressHandler.cpp", "")
 {

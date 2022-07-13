@@ -138,18 +138,18 @@ class SubframeIntegrate : public QWidget {
     DetectorWidget* _detector_widget;
 
     PeakTableView* _peak_table;
-    nsx::PeakCollection* _peak_collection;
+    ohkl::PeakCollection* _peak_collection;
     PeakCollectionItem _peak_collection_item;
     PeakCollectionModel _peak_collection_model;
 
-    std::shared_ptr<nsx::ShapeModelParameters> _shape_params;
+    std::shared_ptr<ohkl::ShapeModelParameters> _shape_params;
 
-    const std::map<std::string, nsx::IntegratorType> _integrator_strings{
-        {"Pixel sum integrator", nsx::IntegratorType::PixelSum},
-        {"Gaussian integrator", nsx::IntegratorType::Gaussian},
-        {"I/Sigma integrator", nsx::IntegratorType::ISigma},
-        {"1D Profile integrator", nsx::IntegratorType::Profile1D},
-        {"3D Profile integrator", nsx::IntegratorType::Profile3D}};
+    const std::map<std::string, ohkl::IntegratorType> _integrator_strings{
+        {"Pixel sum integrator", ohkl::IntegratorType::PixelSum},
+        {"Gaussian integrator", ohkl::IntegratorType::Gaussian},
+        {"I/Sigma integrator", ohkl::IntegratorType::ISigma},
+        {"1D Profile integrator", ohkl::IntegratorType::Profile1D},
+        {"3D Profile integrator", ohkl::IntegratorType::Profile3D}};
 };
 
 

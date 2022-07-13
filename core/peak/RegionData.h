@@ -18,7 +18,7 @@
 #include <Eigen/Dense>
 #include <vector>
 
-namespace nsx {
+namespace ohkl {
 
 class IntegrationRegion;
 
@@ -70,6 +70,6 @@ class RegionData {
     unsigned int _zmax;
 };
 
-} // namespace nsx
+} // namespace ohkl
 
 #endif // NSX_CORE_PEAK_REGIONDATA_H

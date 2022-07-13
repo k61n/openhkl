@@ -25,7 +25,7 @@ DataComboBox::DataComboBox(QWidget* parent) : QComboBox(parent)
     _all_combos.push_back(this);
 }
 
-void DataComboBox::addDataSet(const nsx::sptrDataSet& data)
+void DataComboBox::addDataSet(const ohkl::sptrDataSet& data)
 {
     QSignalBlocker blocker(this);
     addItem(QString::fromStdString(data->name()));
@@ -49,7 +49,7 @@ void DataComboBox::clearAll()
 }
 
 //! Return a pointer to the current unit cell
-nsx::sptrDataSet DataComboBox::currentData() const
+ohkl::sptrDataSet DataComboBox::currentData() const
 {
     if (count() != _data_sets.size())
         throw std::runtime_error("DataComboBox needs refreshing");
@@ -61,7 +61,7 @@ void DataComboBox::refresh()
     QSignalBlocker blocker(this);
     _current = currentText();
     clear();
-    for (nsx::sptrDataSet& data : _data_sets)
+    for (ohkl::sptrDataSet& data : _data_sets)
         addItem(QString::fromStdString(data->name()));
     setCurrentText(_current);
 }

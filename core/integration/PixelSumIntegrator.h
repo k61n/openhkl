@@ -17,7 +17,7 @@
 
 #include "core/integration/MeanBackgroundIntegrator.h"
 
-namespace nsx {
+namespace ohkl {
 
 /*! \addtogroup python_api
  *  @{*/
@@ -36,6 +36,6 @@ class PixelSumIntegrator : public MeanBackgroundIntegrator {
 };
 
 /*! @}*/
-} // namespace nsx
+} // namespace ohkl
 
 #endif // NSX_CORE_INTEGRATION_PIXELSUMINTEGRATOR_H

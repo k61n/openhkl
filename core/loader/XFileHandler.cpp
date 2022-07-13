@@ -18,7 +18,7 @@
 #include <iterator>
 #include <sstream>
 
-namespace nsx {
+namespace ohkl {
 
 // TODO: bounds checking against detector object (ncols/nrows)
 
@@ -168,4 +168,4 @@ void PeakCenterDataSet::addFrame(std::string filename, int frame)
     _xfiles[frame]->readXFile(frame);
 }
 
-} // namespace nsx
+} // namespace ohkl

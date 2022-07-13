@@ -17,7 +17,7 @@
 
 #include "base/utils/Factory.h"
 
-namespace nsx {
+namespace ohkl {
 
 //! Factory that gives access to Detector%s of different geometries.
 
@@ -26,6 +26,6 @@ class DetectorFactory : public Factory<DetectorFactory, Detector, std::string, c
     DetectorFactory();
 };
 
-} // namespace nsx
+} // namespace ohkl
 
 #endif // NSX_CORE_DETECTOR_DETECTORFACTORY_H

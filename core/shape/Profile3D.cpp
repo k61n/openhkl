@@ -15,7 +15,7 @@
 #include "core/shape/Profile3D.h"
 #include "base/geometry/Ellipsoid.h"
 
-namespace nsx {
+namespace ohkl {
 
 Profile3D::Profile3D(const AABB& aabb, const Eigen::Vector3i& shape)
     : Profile3D(aabb, shape(0), shape(1), shape(2))
@@ -214,4 +214,4 @@ const AABB& Profile3D::aabb() const
     return _aabb;
 }
 
-} // namespace nsx
+} // namespace ohkl

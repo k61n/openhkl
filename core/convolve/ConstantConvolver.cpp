@@ -14,7 +14,7 @@
 
 #include "core/convolve/ConstantConvolver.h"
 
-namespace nsx {
+namespace ohkl {
 
 ConstantConvolver::ConstantConvolver() : AtomicConvolver({{"box_size", 3}}) { }
 
@@ -61,4 +61,4 @@ RealMatrix ConstantConvolver::_matrix(int nrows, int ncols) const
     return kernel;
 }
 
-} // namespace nsx
+} // namespace ohkl

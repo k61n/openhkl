@@ -17,7 +17,7 @@
 
 #include "core/convolve/AtomicConvolver.h" // inherits from
 
-namespace nsx {
+namespace ohkl {
 
 //! Convolver with constant kernel, to take the average value of the frame.
 
@@ -43,6 +43,6 @@ class ConstantConvolver : public AtomicConvolver {
     RealMatrix _matrix(int nrows, int ncols) const override;
 };
 
-} // namespace nsx
+} // namespace ohkl
 
 #endif // NSX_CORE_CONVOLVE_CONSTANTCONVOLVER_H

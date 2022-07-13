@@ -22,7 +22,7 @@
 
 #include <Eigen/Dense>
 
-namespace nsx {
+namespace ohkl {
 
 Detector* FlatDetector::create(const YAML::Node& node)
 {
@@ -34,16 +34,16 @@ FlatDetector::FlatDetector(const std::string& name) : Detector(name) { }
 FlatDetector::FlatDetector(const YAML::Node& node) : Detector(node)
 {
     // Sets the detector width from the property tree node
-    auto&& widthNode = node[nsx::ym_width];
-    double units = UnitsManager::get(widthNode[nsx::ym_units].as<std::string>());
-    double width = widthNode[nsx::ym_value].as<double>();
+    auto&& widthNode = node[ohkl::ym_width];
+    double units = UnitsManager::get(widthNode[ohkl::ym_units].as<std::string>());
+    double width = widthNode[ohkl::ym_value].as<double>();
     width *= units;
     setWidth(width);
 
     // Sets the detector height from the property tree node
-    auto&& heightNode = node[nsx::ym_height];
-    units = UnitsManager::get(heightNode[nsx::ym_units].as<std::string>());
-    double height = heightNode[nsx::ym_value].as<double>();
+    auto&& heightNode = node[ohkl::ym_height];
+    units = UnitsManager::get(heightNode[ohkl::ym_units].as<std::string>());
+    double height = heightNode[ohkl::ym_value].as<double>();
     height *= units;
     setHeight(height);
 }
@@ -142,4 +142,4 @@ Eigen::Matrix3d FlatDetector::jacobian(double /*px*/, double /*py*/) const
     return J;
 }
 
-} // namespace nsx
+} // namespace ohkl

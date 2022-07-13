@@ -26,7 +26,7 @@
 class MaskItem : public SXGraphicsItem {
  public:
     // Constructs a mask
-    MaskItem(nsx::sptrDataSet data, nsx::AABB* aabb);
+    MaskItem(ohkl::sptrDataSet data, ohkl::AABB* aabb);
     //! The destructor
     ~MaskItem();
 
@@ -44,7 +44,7 @@ class MaskItem : public SXGraphicsItem {
 
     //! Returns the bounding rectangle of the mask
     QRectF boundingRect() const override;
-    nsx::AABB* getAABB();
+    ohkl::AABB* getAABB();
     //! Sets the starting corner of the mask
     void setFrom(const QPointF& pos);
     //! Sets the ending corner of the mask
@@ -57,9 +57,9 @@ class MaskItem : public SXGraphicsItem {
 
  protected:
     //! The data on which the cutter will act upon
-    nsx::sptrDataSet _data;
+    ohkl::sptrDataSet _data;
     //! The AABB of the peak
-    nsx::AABB* _aabb;
+    ohkl::AABB* _aabb;
     QPointF _from;
     QPointF _to;
     QGraphicsTextItem* _text;

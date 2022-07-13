@@ -26,7 +26,7 @@ class RefinerTables : public QTabWidget {
 
  public:
     RefinerTables();
-    void refreshTables(nsx::Refiner* refiner, nsx::DataSet* data);
+    void refreshTables(ohkl::Refiner* refiner, ohkl::DataSet* data);
 
     QVector<double> getXVals() const;
     QVector<double> getYVals(TableType table, int column) const;
@@ -35,19 +35,19 @@ class RefinerTables : public QTabWidget {
     //! construct the tables
     void setLatticeTableUp();
     //! Refresh table contents
-    void refreshLatticeTable(nsx::Refiner* refiner);
+    void refreshLatticeTable(ohkl::Refiner* refiner);
 
     void setSamplePosTableUp();
-    void refreshSamplePosTable(nsx::Refiner* refiner, nsx::DataSet* data);
+    void refreshSamplePosTable(ohkl::Refiner* refiner, ohkl::DataSet* data);
 
     void setSampleOrnTableUp();
-    void refreshSampleOrnTable(nsx::Refiner* refiner, nsx::DataSet* data);
+    void refreshSampleOrnTable(ohkl::Refiner* refiner, ohkl::DataSet* data);
 
     void setDetectorPosTableUp();
-    void refreshDetectorPosTable(nsx::Refiner* refiner, nsx::DataSet* data);
+    void refreshDetectorPosTable(ohkl::Refiner* refiner, ohkl::DataSet* data);
 
     void setKiTableUp();
-    void refreshKiTable(nsx::Refiner* refiner, nsx::DataSet* data);
+    void refreshKiTable(ohkl::Refiner* refiner, ohkl::DataSet* data);
 
  private:
     QWidget* _lattice_tab;

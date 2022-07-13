@@ -19,7 +19,7 @@
 #include "core/peak/PeakData.h"
 #include "core/peak/RegionData.h"
 
-namespace nsx {
+namespace ohkl {
 
 enum class RegionType { VariableEllipsoid, FixedEllipsoid, FixedSphere, Count };
 
@@ -89,6 +89,6 @@ class IntegrationRegion {
     bool _valid;
 };
 
-} // namespace nsx
+} // namespace ohkl
 
 #endif // NSX_CORE_PEAK_INTEGRATIONREGION_H

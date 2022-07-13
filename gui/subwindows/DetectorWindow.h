@@ -104,10 +104,10 @@ class DetectorWindow : public QDialog {
     ShortTable* _peak_table_2;
 
     // Data model
-    nsx::PeakCollection* _peak_collection_1;
+    ohkl::PeakCollection* _peak_collection_1;
     PeakCollectionItem _peak_collection_item_1;
     PeakCollectionModel _peak_collection_model_1;
-    nsx::PeakCollection* _peak_collection_2 = nullptr;
+    ohkl::PeakCollection* _peak_collection_2 = nullptr;
     PeakCollectionItem _peak_collection_item_2;
     PeakCollectionModel _peak_collection_model_2;
 
@@ -115,7 +115,7 @@ class DetectorWindow : public QDialog {
     QStringList _cell_list;
 
     // 3rd party peaks container
-    nsx::PeakCenterDataSet _peakCenterData;
+    ohkl::PeakCenterDataSet _peakCenterData;
 };
 
 #endif // NSX_GUI_SUBWINDOWS_DETECTORWINDOW_H

@@ -23,7 +23,7 @@ TEST_CASE(__FILE__, "")
     std::vector<int> vecI;
     const char* pcI = "\n 0  1 \t 2  3  4\n5\t6    7 8   9   ";
 
-    nsx::readNumFromChar<int>(pcI, pcI + std::strlen(pcI), vecI);
+    ohkl::readNumFromChar<int>(pcI, pcI + std::strlen(pcI), vecI);
 
     CHECK(vecI.size() == 10);
     for (int i = 0; i < vecI.size(); ++i)
@@ -34,7 +34,7 @@ TEST_CASE(__FILE__, "")
     std::vector<double> vecD;
     const char* pcD = "\n 0  1.1 \t 2.2  3.3  4.4\n5.5\t6.6    7.7 8.8   9.9   ";
 
-    nsx::readNumFromChar<double>(pcD, pcD + std::strlen(pcD), vecD);
+    ohkl::readNumFromChar<double>(pcD, pcD + std::strlen(pcD), vecD);
 
     const double eps = 1e-8;
     CHECK(vecD.size() == 10);
@@ -46,7 +46,7 @@ TEST_CASE(__FILE__, "")
     std::vector<int> vecI2;
     const char* pcI2 = "";
 
-    nsx::readNumFromChar<int>(pcI2, pcI2 + std::strlen(pcI2), vecI2);
+    ohkl::readNumFromChar<int>(pcI2, pcI2 + std::strlen(pcI2), vecI2);
 
     CHECK(vecI2.empty());
 }

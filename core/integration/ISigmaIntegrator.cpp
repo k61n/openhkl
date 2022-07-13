@@ -20,7 +20,7 @@
 #include "core/peak/PeakCoordinateSystem.h"
 #include "core/shape/ShapeModel.h"
 
-namespace nsx {
+namespace ohkl {
 
 ISigmaIntegrator::ISigmaIntegrator() : PixelSumIntegrator(false, false) { }
 
@@ -113,4 +113,4 @@ bool ISigmaIntegrator::compute(
     return true;
 }
 
-} // namespace nsx
+} // namespace ohkl

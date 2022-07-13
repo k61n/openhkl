@@ -18,7 +18,7 @@
 #include "base/utils/ProgressHandler.h"
 #include "core/shape/PeakCollection.h"
 
-namespace nsx {
+namespace ohkl {
 
 /*! \addtogroup python_api
  *  @{*/
@@ -107,7 +107,7 @@ class AutoIndexer {
     //! Dump SolutionList as a string
     std::string solutionsToString() const;
     //! Set solution to be unit cell for given peak list
-    void acceptSolution(const sptrUnitCell solution, const std::vector<nsx::Peak3D*>& peaks);
+    void acceptSolution(const sptrUnitCell solution, const std::vector<ohkl::Peak3D*>& peaks);
     //! Set solution to be unit cell for given peak collection
     void acceptSolution(const sptrUnitCell solution, PeakCollection* peaks);
     //! Check if list of solutions contains reference unit cell. If it does,
@@ -132,6 +132,6 @@ class AutoIndexer {
 };
 
 /*! @}*/
-} // namespace nsx
+} // namespace ohkl
 
 #endif // NSX_CORE_ALGO_AUTOINDEXER_H

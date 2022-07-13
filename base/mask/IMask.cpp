@@ -14,8 +14,8 @@
 
 #include "base/mask/IMask.h"
 
-namespace nsx {
+namespace ohkl {
 
 IMask::~IMask() = default;
 
-} // namespace nsx
+} // namespace ohkl

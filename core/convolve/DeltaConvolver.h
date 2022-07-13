@@ -17,7 +17,7 @@
 
 #include "core/convolve/AtomicConvolver.h" // inherits from
 
-namespace nsx {
+namespace ohkl {
 
 //! Convolver with Dirac-delta kernel.
 
@@ -41,6 +41,6 @@ class DeltaConvolver : public AtomicConvolver {
     RealMatrix _matrix(int nrows, int ncols) const override;
 };
 
-} // namespace nsx
+} // namespace ohkl
 
 #endif // NSX_CORE_CONVOLVE_DELTACONVOLVER_H

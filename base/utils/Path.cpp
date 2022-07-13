@@ -29,7 +29,7 @@
 #include "base/utils/Path.h"
 #include "base/utils/StringIO.h"
 
-namespace nsx {
+namespace ohkl {
 
 std::string fileSeparator()
 {
@@ -172,4 +172,4 @@ std::string tempFilename(const std::string& filename)
     return tmp_fname;
 }
 
-} // namespace nsx
+} // namespace ohkl

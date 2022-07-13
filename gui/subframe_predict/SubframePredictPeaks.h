@@ -44,7 +44,7 @@ class SafeDoubleSpinBox;
 class SpoilerCheck;
 class ShapeComboBox;
 
-namespace nsx {
+namespace ohkl {
 struct PredictionParameters;
 struct ShapeModelParameters;
 }
@@ -104,7 +104,7 @@ class SubframePredictPeaks : public QWidget {
     //! Adjust position of the visualised direct beam when spin box is changed
     void adjustDirectBeam();
     //! Allow the user to manual input the initial direct beam position
-    void setInitialKi(nsx::sptrDataSet data);
+    void setInitialKi(ohkl::sptrDataSet data);
     //! Refine the incident wavevector
     void refineKi();
     //! Refresh the found peaks list
@@ -127,7 +127,7 @@ class SubframePredictPeaks : public QWidget {
     void changeCrosshair();
 
     //! The model for the found peaks
-    nsx::PeakCollection _peak_collection;
+    ohkl::PeakCollection _peak_collection;
     //! The temporary collection
     PeakCollectionItem _peak_collection_item;
     //! The temporary collection
@@ -137,11 +137,11 @@ class SubframePredictPeaks : public QWidget {
     //! Flag to check whether shapes have been assigned to predicted peaks
     bool _shapes_assigned;
     //! Shape collection paramters
-    std::shared_ptr<nsx::ShapeModelParameters> _shape_params;
+    std::shared_ptr<ohkl::ShapeModelParameters> _shape_params;
     //! Saved direct beam positions
-    std::vector<nsx::DetectorEvent> _direct_beam_events;
+    std::vector<ohkl::DetectorEvent> _direct_beam_events;
     //! Current direct beam positions
-    std::vector<nsx::DetectorEvent> _old_direct_beam_events;
+    std::vector<ohkl::DetectorEvent> _old_direct_beam_events;
 
 
     QVBoxLayout* _left_layout;
@@ -184,9 +184,9 @@ class SubframePredictPeaks : public QWidget {
     int _stored_cursor_mode;
 
     // Convert enum class ResidualType to a string
-    const std::map<std::string, nsx::ResidualType> _residual_strings{
-        {"Reciprocal space", nsx::ResidualType::QSpace},
-        {"Real space", nsx::ResidualType::RealSpace}};
+    const std::map<std::string, ohkl::ResidualType> _residual_strings{
+        {"Reciprocal space", ohkl::ResidualType::QSpace},
+        {"Real space", ohkl::ResidualType::RealSpace}};
 };
 
 #endif // NSX_GUI_SUBFRAME_PREDICT_SUBFRAMEPREDICTPEAKS_H

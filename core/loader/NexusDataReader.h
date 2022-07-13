@@ -17,7 +17,7 @@
 
 #include "core/loader/BaseNexusDataReader.h" // inherits from
 
-namespace nsx {
+namespace ohkl {
 
 //! Read data from Nexus format.
 
@@ -37,6 +37,6 @@ class NexusDataReader : public BaseNexusDataReader {
     Eigen::MatrixXi data(size_t frame) final;
 };
 
-} // namespace nsx
+} // namespace ohkl
 
 #endif // NSX_CORE_LOADER_NEXUSDATAREADER_H

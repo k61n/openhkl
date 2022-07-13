@@ -26,7 +26,7 @@
 #define M_PI 3.141592653589793238462643383279502884
 #endif
 
-namespace nsx {
+namespace ohkl {
 
 EnhancedAnnularConvolver::EnhancedAnnularConvolver()
     : Convolver({{"r1", 5}, {"r2", 10}, {"r3", 15}})
@@ -68,4 +68,4 @@ RealMatrix EnhancedAnnularConvolver::convolve(const RealMatrix& image)
     return result;
 }
 
-} // namespace nsx
+} // namespace ohkl

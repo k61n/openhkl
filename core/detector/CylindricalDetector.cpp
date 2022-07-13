@@ -23,7 +23,7 @@
 
 #include <Eigen/Dense>
 
-namespace nsx {
+namespace ohkl {
 
 Detector* CylindricalDetector::create(const YAML::Node& node)
 {
@@ -35,16 +35,16 @@ CylindricalDetector::CylindricalDetector(const std::string& name) : Detector(nam
 CylindricalDetector::CylindricalDetector(const YAML::Node& node) : Detector(node)
 {
     // Sets the detector angular width from the property tree node
-    auto&& angularWidthNode = node[nsx::ym_angularWidth];
-    double units = UnitsManager::get(angularWidthNode[nsx::ym_units].as<std::string>());
-    double angularWidth = angularWidthNode[nsx::ym_value].as<double>();
+    auto&& angularWidthNode = node[ohkl::ym_angularWidth];
+    double units = UnitsManager::get(angularWidthNode[ohkl::ym_units].as<std::string>());
+    double angularWidth = angularWidthNode[ohkl::ym_value].as<double>();
     angularWidth *= units;
     setAngularWidth(angularWidth);
 
     // Sets the detector height from the property tree node
-    auto&& heightNode = node[nsx::ym_height];
-    units = UnitsManager::get(heightNode[nsx::ym_units].as<std::string>());
-    double height = heightNode[nsx::ym_value].as<double>();
+    auto&& heightNode = node[ohkl::ym_height];
+    units = UnitsManager::get(heightNode[ohkl::ym_units].as<std::string>());
+    double height = heightNode[ohkl::ym_value].as<double>();
     height *= units;
     setHeight(height);
 }
@@ -170,4 +170,4 @@ Eigen::Matrix3d CylindricalDetector::jacobian(double px, double /*py*/) const
     return J;
 }
 
-} // namespace nsx
+} // namespace ohkl

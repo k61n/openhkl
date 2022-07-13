@@ -29,7 +29,7 @@
 #include "gui/graphics_items/PinItem.h"
 #include "gui/graphics_tools/RulerItem.h"
 
-CrystalScene::CrystalScene(nsx::ConvexHull* hull, QWidget* parent)
+CrystalScene::CrystalScene(ohkl::ConvexHull* hull, QWidget* parent)
     : QGraphicsScene(parent)
     , pixmapitem(nullptr)
     , _ruler(nullptr)

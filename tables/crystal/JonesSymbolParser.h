@@ -17,7 +17,7 @@
 
 #include <Eigen/Dense>
 
-namespace nsx {
+namespace ohkl {
 
 //! Function to parse Jones faithful representation of affine transformations.
 
@@ -36,6 +36,6 @@ namespace nsx {
 
 Eigen::Transform<double, 3, Eigen::Affine> parseJonesSymbol(const std::string& jonesSymbol);
 
-} // namespace nsx
+} // namespace ohkl
 
 #endif // NSX_TABLES_CRYSTAL_JONESSYMBOLPARSER_H

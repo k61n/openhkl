@@ -17,7 +17,7 @@
 #include "base/utils/Logger.h"
 #include <iostream>
 
-namespace nsx {
+namespace ohkl {
 
 BoxMask::BoxMask(const AABB& aabb) : IMask(), _aabb(aabb)
 {
@@ -36,4 +36,4 @@ IMask* BoxMask::clone() const
     return new BoxMask(*this);
 }
 
-} // namespace nsx
+} // namespace ohkl

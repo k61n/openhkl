@@ -17,7 +17,7 @@
 #include <Eigen/Dense>
 #include <stdexcept>
 
-namespace nsx {
+namespace ohkl {
 
 DirectVector::DirectVector(double x, double y, double z) : _dvector(x, y, z) { }
 
@@ -53,4 +53,4 @@ std::ostream& operator<<(std::ostream& os, const DirectVector& dvector)
     return os;
 }
 
-} // namespace nsx
+} // namespace ohkl

@@ -15,7 +15,7 @@
 #include "core/shape/Octree.h"
 #include "base/geometry/Ellipsoid.h"
 
-namespace nsx {
+namespace ohkl {
 
 Octree::Octree() : AABB(), _depth(0), _parent(nullptr)
 {
@@ -375,4 +375,4 @@ unsigned int Octree::numChambers() const
     return 1;
 }
 
-} // namespace nsx
+} // namespace ohkl

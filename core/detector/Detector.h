@@ -20,7 +20,7 @@
 #include "base/geometry/ReciprocalVector.h"
 #include "core/detector/DetectorEvent.h"
 
-namespace nsx {
+namespace ohkl {
 
 //! Pure virtual base class for detectors of different geometry.
 
@@ -138,6 +138,6 @@ class Detector : public Component {
     double _gain;
 };
 
-} // namespace nsx
+} // namespace ohkl
 
 #endif // NSX_CORE_DETECTOR_DETECTOR_H

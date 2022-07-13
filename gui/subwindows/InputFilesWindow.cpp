@@ -93,10 +93,10 @@ void InputFilesWindow::refreshAll()
             if ((id == -1) || (id >= nData))
                 id = 0; // selects dataset by selected row in table
 
-            nsx::sptrDataSet data = prj->getData(id);
+            ohkl::sptrDataSet data = prj->getData(id);
 
-            const nsx::MetaData& metadata = data->metadata();
-            const nsx::MetaDataMap& map = metadata.map();
+            const ohkl::MetaData& metadata = data->metadata();
+            const ohkl::MetaDataMap& map = metadata.map();
 
             for (auto element : map) {
                 if (element.first == "sources") {
@@ -132,9 +132,9 @@ void InputFilesWindow::on_combobox_select()
         int id = _data_set->currentIndex();
 
         if (nData > 0 && id >= 0 && id < nData) {
-            nsx::sptrDataSet data = prj->getData(id);
-            const nsx::MetaData& metadata = data->metadata();
-            const nsx::MetaDataMap& map = metadata.map();
+            ohkl::sptrDataSet data = prj->getData(id);
+            const ohkl::MetaData& metadata = data->metadata();
+            const ohkl::MetaDataMap& map = metadata.map();
 
             _files_table->clear();
             _files_table->setRowCount(0);

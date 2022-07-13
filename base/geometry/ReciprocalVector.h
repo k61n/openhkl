@@ -17,7 +17,7 @@
 
 #include <Eigen/Dense>
 
-namespace nsx {
+namespace ohkl {
 
 //! A vector in reciprocal space.
 
@@ -61,6 +61,6 @@ class ReciprocalVector {
 //! Overload operator<< with ReciprocalVector type
 std::ostream& operator<<(std::ostream& os, const ReciprocalVector& rvector);
 
-} // namespace nsx
+} // namespace ohkl
 
 #endif // NSX_BASE_GEOMETRY_RECIPROCALVECTOR_H

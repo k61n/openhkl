@@ -36,7 +36,7 @@
 ** we just keep the last partial product of these matrices.
 */
 
-namespace nsx {
+namespace ohkl {
 
 void doubleToFraction(double number, int nmax, long& nom, long& dnom)
 {
@@ -95,4 +95,4 @@ void doubleToFraction(double number, int nmax, long& nom, long& dnom)
     }
 }
 
-} // namespace nsx
+} // namespace ohkl

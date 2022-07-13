@@ -20,7 +20,7 @@
 #include <Eigen/Dense>
 #include <vector>
 
-namespace nsx {
+namespace ohkl {
 
 class UnitCell;
 
@@ -89,6 +89,6 @@ std::ostream& operator<<(std::ostream& os, const MillerIndex& hkl);
 
 using MillerIndexList = std::vector<MillerIndex>;
 
-} // namespace nsx
+} // namespace ohkl
 
 #endif // NSX_TABLES_CRYSTAL_MILLERINDEX_H

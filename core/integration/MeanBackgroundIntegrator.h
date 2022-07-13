@@ -17,7 +17,7 @@
 
 #include "core/shape/IPeakIntegrator.h"
 
-namespace nsx {
+namespace ohkl {
 
 /*! \addtogroup python_api
  *  @{*/
@@ -31,6 +31,6 @@ class MeanBackgroundIntegrator : public IPeakIntegrator {
 };
 
 /*! @}*/
-} // namespace nsx
+} // namespace ohkl
 
 #endif // NSX_CORE_INTEGRATION_MEANBACKGROUNDINTEGRATOR_H

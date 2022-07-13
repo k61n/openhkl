@@ -18,7 +18,7 @@
 #include <Eigen/Dense>
 #include <cmath>
 
-namespace nsx {
+namespace ohkl {
 
 MillerIndex::MillerIndex(int h, int k, int l)
     : _hkl(h, k, l), _error(Eigen::RowVector3d::Zero()) { }
@@ -136,4 +136,4 @@ int MillerIndex::l() const
     return _hkl[2];
 }
 
-} // namespace nsx
+} // namespace ohkl

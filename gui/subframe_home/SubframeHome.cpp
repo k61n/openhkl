@@ -481,11 +481,11 @@ void SubframeHome::refreshTables() const
 
     try {
         auto b2s = [](bool a) { return !a ? QString("No") : QString("Yes"); };
-        auto Type2s = [](nsx::PeakCollectionType t) {
+        auto Type2s = [](ohkl::PeakCollectionType t) {
             switch (t) {
-                case nsx::PeakCollectionType::FOUND: return QString("Found"); break;
-                case nsx::PeakCollectionType::INDEXING: return QString("Indexing"); break;
-                case nsx::PeakCollectionType::PREDICTED: return QString("Predicted"); break;
+                case ohkl::PeakCollectionType::FOUND: return QString("Found"); break;
+                case ohkl::PeakCollectionType::INDEXING: return QString("Indexing"); break;
+                case ohkl::PeakCollectionType::PREDICTED: return QString("Predicted"); break;
                 default: return QString("UNNANMED"); break;
             }
         };
@@ -493,7 +493,7 @@ void SubframeHome::refreshTables() const
         if (!gSession->hasProject())
             return;
 
-        nsx::Experiment* expt = gSession->currentProject()->experiment();
+        ohkl::Experiment* expt = gSession->currentProject()->experiment();
         if (expt == nullptr)
             return;
 
@@ -525,13 +525,13 @@ void SubframeHome::refreshTables() const
                     n, col++, new QTableWidgetItem(QString::number(data->character().c)));
                 _unitcell_table->setItem(
                     n, col++,
-                    new QTableWidgetItem(QString::number(data->character().alpha / nsx::deg)));
+                    new QTableWidgetItem(QString::number(data->character().alpha / ohkl::deg)));
                 _unitcell_table->setItem(
                     n, col++,
-                    new QTableWidgetItem(QString::number(data->character().beta / nsx::deg)));
+                    new QTableWidgetItem(QString::number(data->character().beta / ohkl::deg)));
                 _unitcell_table->setItem(
                     n, col++,
-                    new QTableWidgetItem(QString::number(data->character().gamma / nsx::deg)));
+                    new QTableWidgetItem(QString::number(data->character().gamma / ohkl::deg)));
             }
             _unitcell_table->resizeColumnsToContents();
         }
@@ -564,7 +564,7 @@ void SubframeHome::refreshTables() const
 
         if (!pcs_names.empty()) {
             std::vector<std::string>::iterator it;
-            nsx::PeakCollection* pc;
+            ohkl::PeakCollection* pc;
 
             for (it = pcs_names.begin(); it != pcs_names.end(); it++) {
                 pc = gSession->currentProject()->experiment()->getPeakCollection(*it);

@@ -304,13 +304,13 @@ void reduceSymbol(std::string& symbol)
         tokens.push_back(token);
     }
 
-    symbol = nsx::join(tokens, " ");
+    symbol = ohkl::join(tokens, " ");
 }
 
 } // namespace
 
 
-namespace nsx {
+namespace ohkl {
 
 std::vector<std::string> SpaceGroup::symbols()
 {
@@ -559,4 +559,4 @@ std::string SpaceGroup::toString() const
     return _symbol;
 }
 
-} // namespace nsx
+} // namespace ohkl

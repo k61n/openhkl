@@ -25,7 +25,7 @@
 
 #include "base/fit/Minimizer.h"
 
-namespace nsx {
+namespace ohkl {
 
 static void error_handler(const char* reason, const char* file, int line, int gsl_errno)
 {
@@ -166,7 +166,7 @@ bool Minimizer::fit(int max_iter)
         gsl_multifit_nlinear_covar(_gsl->workspace->J, 1e-10, _gsl->covariance);
     } catch (const std::exception& e) {
         nsxlog(
-            nsx::Level::Error,
+            ohkl::Level::Error,
             "Minimizer::fit GSL Library Error Message : " + std::string(e.what()));
         return false;
     }
@@ -322,4 +322,4 @@ double Minimizer::meanSquaredError() const
     return mse / (size - _params.nfree());
 }
 
-} // namespace nsx
+} // namespace ohkl

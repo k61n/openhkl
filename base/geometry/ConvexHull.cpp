@@ -20,7 +20,7 @@
 #include <libqhullcpp/QhullFacetList.h>
 #include <libqhullcpp/QhullVertexSet.h>
 
-namespace nsx {
+namespace ohkl {
 
 using namespace orgQhull;
 
@@ -191,4 +191,4 @@ bool ConvexHull::contains(const Eigen::Vector3d& v) const
     return true;
 }
 
-} // namespace nsx
+} // namespace ohkl

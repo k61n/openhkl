@@ -22,7 +22,7 @@
 
 #include "base/utils/StringIO.h"
 
-namespace nsx {
+namespace ohkl {
 
 std::string trim(const std::string& input_string)
 {
@@ -121,4 +121,4 @@ std::string datetime_str() // yoinked from BornAgain
     return output.str();
 }
 
-} // namespace nsx
+} // namespace ohkl

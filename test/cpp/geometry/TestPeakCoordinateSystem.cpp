@@ -32,10 +32,10 @@
 
 void run_test(const char* filename, const char* instrument)
 {
-    nsx::Experiment experiment("test", instrument);
+    ohkl::Experiment experiment("test", instrument);
 
-    const nsx::sptrDataSet dataset_ptr { std::make_shared<nsx::DataSet>
-          (nsx::kw_datasetDefaultName, experiment.getDiffractometer()) };
+    const ohkl::sptrDataSet dataset_ptr { std::make_shared<ohkl::DataSet>
+          (ohkl::kw_datasetDefaultName, experiment.getDiffractometer()) };
 
     dataset_ptr->addDataFile(filename, "nsx");
     dataset_ptr->finishRead();
@@ -59,20 +59,20 @@ void run_test(const char* filename, const char* instrument)
         }
     }
 
-    nsx::Peak3D peak(dataset_ptr);
+    ohkl::Peak3D peak(dataset_ptr);
 
     for (auto coord : coords) {
-        peak.setShape(nsx::Ellipsoid(coord, 2.0));
-        nsx::PeakCoordinateSystem frame(&peak);
+        peak.setShape(ohkl::Ellipsoid(coord, 2.0));
+        ohkl::PeakCoordinateSystem frame(&peak);
 
         auto J = frame.jacobian();
 
         const double dt = 1e-1;
 
-        Eigen::Vector3d e0 = frame.transform(nsx::DetectorEvent(coord[0], coord[1], coord[2]));
-        Eigen::Vector3d e1 = frame.transform(nsx::DetectorEvent(coord[0] + dt, coord[1], coord[2]));
-        Eigen::Vector3d e2 = frame.transform(nsx::DetectorEvent(coord[0], coord[1] + dt, coord[2]));
-        Eigen::Vector3d e3 = frame.transform(nsx::DetectorEvent(coord[0], coord[1], coord[2] + dt));
+        Eigen::Vector3d e0 = frame.transform(ohkl::DetectorEvent(coord[0], coord[1], coord[2]));
+        Eigen::Vector3d e1 = frame.transform(ohkl::DetectorEvent(coord[0] + dt, coord[1], coord[2]));
+        Eigen::Vector3d e2 = frame.transform(ohkl::DetectorEvent(coord[0], coord[1] + dt, coord[2]));
+        Eigen::Vector3d e3 = frame.transform(ohkl::DetectorEvent(coord[0], coord[1], coord[2] + dt));
 
         Eigen::Vector3d y1 = J * Eigen::Vector3d(dt, 0, 0);
         Eigen::Vector3d y2 = J * Eigen::Vector3d(0, dt, 0);

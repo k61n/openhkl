@@ -20,7 +20,7 @@
 #include "core/peak/Intensity.h"
 #include "core/peak/Peak3D.h"
 
-namespace nsx {
+namespace ohkl {
 
 PixelSumIntegrator::PixelSumIntegrator(bool fit_center, bool fit_covariance)
     : MeanBackgroundIntegrator()
@@ -183,4 +183,4 @@ bool PixelSumIntegrator::compute(
     return true;
 }
 
-} // namespace nsx
+} // namespace ohkl

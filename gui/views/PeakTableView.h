@@ -25,9 +25,9 @@ class PeakTableView : public QTableView {
     //     virtual void keyPressEvent(QKeyEvent* event) override;
     //  signals:
     //     void plotData(const QVector<double>&, const QVector<double>&, const QVector<double>&);
-    //     void plotPeak(nsx::sptrPeak3D);
+    //     void plotPeak(ohkl::sptrPeak3D);
     //     void autoIndexed();
-    //     void updateShapeModel(nsx::sptrShapeModel);
+    //     void updateShapeModel(ohkl::sptrShapeModel);
     //  public slots:
     //     //! Normalize to monitor.
     //     void normalizeToMonitor();

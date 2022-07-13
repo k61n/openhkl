@@ -20,7 +20,7 @@
 #include <fftw3.h>
 #include <vector>
 
-namespace nsx {
+namespace ohkl {
 
 //! Pure virtual base class for ConstantConvolver, DeltaConvolver, RadialConvolver.
 
@@ -63,6 +63,6 @@ class AtomicConvolver : public Convolver {
     std::vector<std::complex<double>> _transformedKernel;
 };
 
-} // namespace nsx
+} // namespace ohkl
 
 #endif // NSX_CORE_CONVOLVE_ATOMICCONVOLVER_H

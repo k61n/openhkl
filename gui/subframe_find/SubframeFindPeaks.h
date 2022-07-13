@@ -96,7 +96,7 @@ class SubframeFindPeaks : public QWidget {
     std::map<std::string, double> convolutionParameters();
 
     //! The model for the found peaks
-    nsx::PeakCollection _peak_collection;
+    ohkl::PeakCollection _peak_collection;
     //! The temporary collection
     PeakCollectionItem _peak_collection_item;
     //! The temporary collection

@@ -18,7 +18,7 @@
 #include <Eigen/Dense>
 #include <vector>
 
-namespace nsx {
+namespace ohkl {
 
 using affineTransformation = Eigen::Transform<double, 3, Eigen::Affine>;
 
@@ -66,6 +66,6 @@ std::ostream& operator<<(std::ostream& os, const SymOp& sym);
 
 using SymOpList = std::vector<SymOp>;
 
-} // namespace nsx
+} // namespace ohkl
 
 #endif // NSX_TABLES_CRYSTAL_SYMOP_H

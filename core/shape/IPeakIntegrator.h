@@ -18,7 +18,7 @@
 #include "base/utils/ProgressHandler.h"
 #include "core/peak/IntegrationRegion.h"
 
-namespace nsx {
+namespace ohkl {
 
 class IntegrationRegion;
 enum class Level;
@@ -62,7 +62,7 @@ class IPeakIntegrator {
         Peak3D* peak, ShapeModel* shape_model, const IntegrationRegion& region) = 0;
     //! Integrate all peaks in the list which are contained in the specified data set.
     void integrate(
-        std::vector<nsx::Peak3D*> peaks, ShapeModel* shape_model, sptrDataSet data, int n_numor);
+        std::vector<ohkl::Peak3D*> peaks, ShapeModel* shape_model, sptrDataSet data, int n_numor);
     //! Return the mean background.
     Intensity meanBackground() const;
     //! Return the integrated intensity.
@@ -77,9 +77,9 @@ class IPeakIntegrator {
  protected:
     //! Mean local background of peak. The uncertainty is the uncertainty of the
     //! _estimate_ of the background.
-    nsx::Intensity _meanBackground;
+    ohkl::Intensity _meanBackground;
     //! Net integrated intensity, after background correction.
-    nsx::Intensity _integratedIntensity;
+    ohkl::Intensity _integratedIntensity;
     //! The rocking curve of the peak.
     std::vector<Intensity> _rockingCurve;
     //! Optional pointer to progress handler.
@@ -110,6 +110,6 @@ class IPeakIntegrator {
 };
 
 /*! @}*/
-} // namespace nsx
+} // namespace ohkl
 
 #endif // NSX_CORE_SHAPE_IPEAKINTEGRATOR_H

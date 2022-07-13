@@ -18,7 +18,7 @@
 #include <set>
 #include <string>
 
-namespace nsx {
+namespace ohkl {
 
 // TODO: Add documentation: Describe the keywords and their units (if any)
 
@@ -176,6 +176,6 @@ const std::set<std::string> RecognizedMetaDataKeys{at_experiment,     at_diffrac
                                                    at_spacegroup,     at_z,
                                                    at_baseline,       at_gain};
 
-} // namespace nsx
+} // namespace ohkl
 
 #endif // NSX_CORE_RAW_DATAKEYS_H

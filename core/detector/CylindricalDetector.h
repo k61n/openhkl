@@ -17,7 +17,7 @@
 
 #include "core/detector/Detector.h"
 
-namespace nsx {
+namespace ohkl {
 
 //! A cylindrical or banana detector.
 
@@ -61,6 +61,6 @@ class CylindricalDetector : public Detector {
     Eigen::Matrix3d jacobian(double px, double py) const override;
 };
 
-} // namespace nsx
+} // namespace ohkl
 
 #endif // NSX_CORE_DETECTOR_CYLINDRICALDETECTOR_H

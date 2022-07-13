@@ -15,7 +15,7 @@
 #include "core/convolve/AnnularConvolver.h"
 #include "core/convolve/RadialConvolver.h"
 
-namespace nsx {
+namespace ohkl {
 
 AnnularConvolver::AnnularConvolver() : Convolver({{"r1", 5}, {"r2", 10}, {"r3", 15}}) { }
 
@@ -51,4 +51,4 @@ RealMatrix AnnularConvolver::convolve(const RealMatrix& image)
     return result;
 }
 
-} // namespace nsx
+} // namespace ohkl

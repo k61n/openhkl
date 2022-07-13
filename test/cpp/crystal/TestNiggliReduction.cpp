@@ -84,8 +84,8 @@ TEST_CASE("test/crystal/TestNiggliReduction.cpp", "")
         basis.col(0) = primitive_a;
         basis.col(1) = primitive_b;
         basis.col(2) = primitive_c;
-        nsx::UnitCell uc(basis);
-        nsx::NiggliReduction niggli_reducer(uc.metric(), 1.0e-5);
+        ohkl::UnitCell uc(basis);
+        ohkl::NiggliReduction niggli_reducer(uc.metric(), 1.0e-5);
         Eigen::Matrix3d newg, P;
         niggli_reducer.reduce(newg, P);
         std::cout << i << std::endl;

@@ -21,8 +21,8 @@
 
 TEST_CASE("test/utils/TestPath.cpp", "")
 {
-    // Test nsx::fileSeparator
-    auto file_sep = nsx::fileSeparator();
+    // Test ohkl::fileSeparator
+    auto file_sep = ohkl::fileSeparator();
     std::string path = file_sep + "usr" + file_sep + "local" + file_sep + "file.txt";
 #ifdef _WIN32
     CHECK(path == "\\usr\\local\\file.txt");
@@ -30,17 +30,17 @@ TEST_CASE("test/utils/TestPath.cpp", "")
     CHECK(path == "/usr/local/file.txt");
 #endif
 
-    // Test nsx::buildPath for bulding a path from a vector of string
+    // Test ohkl::buildPath for bulding a path from a vector of string
     std::vector<std::string> path_components({file_sep + "usr", "local", "file.txt"});
 #ifdef _WIN32
-    CHECK(nsx::buildPath(path_components, "") == path);
+    CHECK(ohkl::buildPath(path_components, "") == path);
 #else
-    CHECK(nsx::buildPath(path_components, "") == path);
+    CHECK(ohkl::buildPath(path_components, "") == path);
 #endif
 
-    // Test nsx::splitFileExtension for splitting a filename from its filename and
+    // Test ohkl::splitFileExtension for splitting a filename from its filename and
     // its extension Case where the filename has an extension
-    auto ext_splitted_filename = nsx::splitFileExtension(path);
+    auto ext_splitted_filename = ohkl::splitFileExtension(path);
 #ifdef _WIN32
     CHECK(ext_splitted_filename.first == "\\usr\\local\\file");
 #else
@@ -48,9 +48,9 @@ TEST_CASE("test/utils/TestPath.cpp", "")
 #endif
     CHECK(ext_splitted_filename.second == ".txt");
 
-    // Test nsx::splitFileExtension for splitting a filename from its filename and
+    // Test ohkl::splitFileExtension for splitting a filename from its filename and
     // its extension Case where the filename has no extension
-    ext_splitted_filename = nsx::splitFileExtension(ext_splitted_filename.first);
+    ext_splitted_filename = ohkl::splitFileExtension(ext_splitted_filename.first);
 #ifdef _WIN32
     CHECK(ext_splitted_filename.first == "\\usr\\local\\file");
 #else
@@ -58,12 +58,12 @@ TEST_CASE("test/utils/TestPath.cpp", "")
 #endif
     CHECK(ext_splitted_filename.second.empty());
 
-    // Test nsx::fileBasename function for getting the basename from a path
-    auto basename = nsx::fileBasename(path);
+    // Test ohkl::fileBasename function for getting the basename from a path
+    auto basename = ohkl::fileBasename(path);
     CHECK(basename == "file.txt");
 
-    // Test nsx::fileDirname function for getting the directory name from a path
-    auto dirname = nsx::fileDirname(path);
+    // Test ohkl::fileDirname function for getting the directory name from a path
+    auto dirname = ohkl::fileDirname(path);
 #ifdef _WIN32
     CHECK(dirname == "\\usr\\local");
 #else

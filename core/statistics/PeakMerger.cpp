@@ -19,7 +19,7 @@
 #include "core/shape/PeakCollection.h"
 #include "tables/crystal/SpaceGroup.h"
 
-namespace nsx {
+namespace ohkl {
 
 void MergeParameters::log(const Level& level) const
 {
@@ -144,4 +144,4 @@ std::string PeakMerger::summary()
     return oss.str();
 }
 
-} // namespace nsx
+} // namespace ohkl

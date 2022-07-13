@@ -26,7 +26,7 @@
 
 PeakWindowParameters PeakWindow::_params = {};
 
-PeakWindow::PeakWindow(nsx::Peak3D* peak, QWidget* parent /* = nullptr */)
+PeakWindow::PeakWindow(ohkl::Peak3D* peak, QWidget* parent /* = nullptr */)
     : QDialog(parent)
     , _peak(peak)
     , _integration_region(nullptr)
@@ -152,7 +152,7 @@ void PeakWindow::setControlWidgetUp()
 
 void PeakWindow::initView()
 {
-    _integration_region = std::make_unique<nsx::IntegrationRegion>(
+    _integration_region = std::make_unique<ohkl::IntegrationRegion>(
         _peak, _params.peak_end, _params.bkg_begin, _params.bkg_end);
     _region_data = _integration_region->getRegion();
     for (std::size_t i = 0; i < _region_data->nFrames(); ++i) {
@@ -180,7 +180,7 @@ void PeakWindow::refresh()
 {
     setParameters();
     _integration_region.reset();
-    _integration_region = std::make_unique<nsx::IntegrationRegion>(
+    _integration_region = std::make_unique<ohkl::IntegrationRegion>(
         _peak, _params.peak_end, _params.bkg_begin, _params.bkg_end);
     _region_data = _integration_region->getRegion();
     for (int i = 0; i < _index.size(); ++i) {
@@ -229,12 +229,12 @@ QImage* PeakWindow::getIntegrationMask(const Eigen::MatrixXi& mask, QColor& peak
 
     for (int c = 0; c < mask.cols(); ++c) {
         for (int r = 0; r < mask.rows(); ++r) {
-            nsx::IntegrationRegion::EventType ev = nsx::IntegrationRegion::EventType(mask(r, c));
+            ohkl::IntegrationRegion::EventType ev = ohkl::IntegrationRegion::EventType(mask(r, c));
             QColor color;
 
             switch (ev) {
-                case nsx::IntegrationRegion::EventType::PEAK: color = peak; break;
-                case nsx::IntegrationRegion::EventType::BACKGROUND: color = bkg; break;
+                case ohkl::IntegrationRegion::EventType::PEAK: color = peak; break;
+                case ohkl::IntegrationRegion::EventType::BACKGROUND: color = bkg; break;
                 default: color = Qt::transparent; break;
             }
 

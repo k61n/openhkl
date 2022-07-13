@@ -18,7 +18,7 @@
 #include <Eigen/Dense>
 #include <iostream> // needed in no-swig case (?)
 
-namespace nsx {
+namespace ohkl {
 
 /*! \addtogroup python_api
  *  @{*/
@@ -87,6 +87,6 @@ std::ostream& operator<<(std::ostream& os, const Blob3D& b);
 #endif
 
 /*! @}*/
-} // namespace nsx
+} // namespace ohkl
 
 #endif // NSX_CORE_INTEGRATION_BLOB3D_H

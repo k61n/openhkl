@@ -25,7 +25,7 @@ enum PeakDisplayModes { VALID, FILTER };
 
 class PeakItem : public QStandardItem {
  public:
-    PeakItem(nsx::Peak3D* peak);
+    PeakItem(ohkl::Peak3D* peak);
     ~PeakItem() = default;
 
     double peak_d() const;
@@ -36,7 +36,7 @@ class PeakItem : public QStandardItem {
     //! Retrieve the data of column and row
     QVariant peakData(const QModelIndex& index, int role, PeakDisplayModes mode) const;
     //! Get the peak pointer
-    nsx::Peak3D* peak() { return _peak; };
+    ohkl::Peak3D* peak() { return _peak; };
     //! Get the graphical representation
     PeakItemGraphic* peakGraphic() { return _peak_graphic.get(); };
     //! The column enumerators
@@ -62,7 +62,7 @@ class PeakItem : public QStandardItem {
 
  private:
     //! pointer to the data
-    nsx::Peak3D* _peak;
+    ohkl::Peak3D* _peak;
     //! Generate the visual item
     std::unique_ptr<PeakItemGraphic> _peak_graphic;
 };

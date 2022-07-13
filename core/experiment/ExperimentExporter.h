@@ -19,7 +19,7 @@
 #include <string>
 #include <vector>
 
-namespace nsx {
+namespace ohkl {
 
 class DataSet;
 class Diffractometer;
@@ -48,6 +48,6 @@ class ExperimentExporter {
     std::string _file_name;
 };
 
-} // namespace nsx
+} // namespace ohkl
 
 #endif // NSX_CORE_EXPERIMENT_EXPERIMENTEXPORTER_H

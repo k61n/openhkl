@@ -21,7 +21,7 @@
 
 #include "base/utils/ISingleton.h"
 
-namespace nsx {
+namespace ohkl {
 
 //! The units used internally in NSXTOOL.
 
@@ -184,6 +184,6 @@ static const double hbar = h / twopi;
 static const double kB = 1.3806513e-23 * J / K;
 static const double R = 8.3144621 * J / mole / K;
 
-} // namespace nsx
+} // namespace ohkl
 
 #endif // NSX_BASE_UTILS_UNITS_H

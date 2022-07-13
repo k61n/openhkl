@@ -18,7 +18,7 @@
 #include "core/shape/PeakCollection.h"
 #include <stdexcept>
 
-namespace nsx {
+namespace ohkl {
 
 PeakHandler::~PeakHandler() = default;
 
@@ -28,7 +28,7 @@ const PeakCollectionMap* PeakHandler::getPeakCollectionMap() const
 }
 
 bool PeakHandler::addPeakCollection(
-    const std::string& name, const PeakCollectionType type, const std::vector<nsx::Peak3D*> peaks)
+    const std::string& name, const PeakCollectionType type, const std::vector<ohkl::Peak3D*> peaks)
 {
     // abort if name is aleady in use
     if (hasPeakCollection(name))
@@ -41,7 +41,7 @@ bool PeakHandler::addPeakCollection(
 }
 
 bool PeakHandler::addPeakCollection(
-    const std::string& name, const PeakCollectionType type, const std::vector<nsx::Peak3D*> peaks,
+    const std::string& name, const PeakCollectionType type, const std::vector<ohkl::Peak3D*> peaks,
     bool indexed, bool integrated)
 {
     // abort if name is aleady in use
@@ -171,4 +171,4 @@ std::vector<PeakCollection*> PeakHandler::getPeakCollections()
     return collections;
 }
 
-} // namespace nsx
+} // namespace ohkl

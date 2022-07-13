@@ -20,7 +20,7 @@
 #include "core/statistics/MergedData.h"
 #include "core/statistics/ResolutionShell.h"
 
-namespace nsx {
+namespace ohkl {
 
 /*! \addtogroup python_api
  *  @{*/
@@ -91,6 +91,6 @@ class PeakMerger {
 };
 
 /*! @}*/
-} // namespace nsx
+} // namespace ohkl
 
 #endif // NSX_CORE_STATISTICS_PEAKMERGER_H

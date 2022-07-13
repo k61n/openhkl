@@ -69,7 +69,7 @@
 
 SubframePredictPeaks::SubframePredictPeaks()
     : QWidget()
-    , _peak_collection("temp", nsx::PeakCollectionType::PREDICTED)
+    , _peak_collection("temp", ohkl::PeakCollectionType::PREDICTED)
     , _peak_collection_item()
     , _peak_collection_model()
     , _peaks_predicted(false)
@@ -110,7 +110,7 @@ SubframePredictPeaks::SubframePredictPeaks()
     main_layout->addWidget(_right_element);
     _set_initial_ki->setChecked(false);
 
-    _shape_params = std::make_shared<nsx::ShapeModelParameters>();
+    _shape_params = std::make_shared<ohkl::ShapeModelParameters>();
 }
 
 void SubframePredictPeaks::setAdjustBeamUp()
@@ -443,7 +443,7 @@ void SubframePredictPeaks::setShapeModelParameters()
     _shape_params->neighbour_range_frames = _radius_frames->value();
     _shape_params->min_neighbors = _min_neighbours->value();
     _shape_params->interpolation =
-        static_cast<nsx::PeakInterpolation>(_interpolation_combo->currentIndex());
+        static_cast<ohkl::PeakInterpolation>(_interpolation_combo->currentIndex());
 }
 
 void SubframePredictPeaks::adjustDirectBeam()
@@ -458,13 +458,13 @@ void SubframePredictPeaks::adjustDirectBeam()
     refreshPeakTable();
 }
 
-void SubframePredictPeaks::setInitialKi(nsx::sptrDataSet data)
+void SubframePredictPeaks::setInitialKi(ohkl::sptrDataSet data)
 {
     const auto* detector = data->diffractometer()->detector();
     const auto coords = _detector_widget->scene()->beamSetterCoords();
 
-    nsx::DirectVector direct = detector->pixelPosition(coords.x(), coords.y());
-    for (nsx::InstrumentState& state : data->instrumentStates())
+    ohkl::DirectVector direct = detector->pixelPosition(coords.x(), coords.y());
+    for (ohkl::InstrumentState& state : data->instrumentStates())
         state.adjustKi(direct);
     emit gGui->sentinel->instrumentStatesChanged();
 }
@@ -481,13 +481,13 @@ void SubframePredictPeaks::refineKi()
     auto* params = refiner->parameters();
     auto cell = _cell_combo->currentCell();
 
-    nsx::RefinerParameters tmp_params = *params;
+    ohkl::RefinerParameters tmp_params = *params;
     setRefinerParameters();
 
     if (_set_initial_ki->isChecked())
         setInitialKi(data);
 
-    _old_direct_beam_events = nsx::algo::getDirectBeamEvents(states, *detector);
+    _old_direct_beam_events = ohkl::algo::getDirectBeamEvents(states, *detector);
     refreshPeakVisual();
 
     params->refine_ki = true;
@@ -528,21 +528,21 @@ void SubframePredictPeaks::runPrediction()
         auto* predictor = experiment->predictor();
         setPredictorParameters();
 
-        nsx::sptrProgressHandler handler(new nsx::ProgressHandler);
+        ohkl::sptrProgressHandler handler(new ohkl::ProgressHandler);
         ProgressView progressView(nullptr);
         progressView.watch(handler);
 
-        nsx::sptrUnitCell cell = _cell_combo->currentCell();
+        ohkl::sptrUnitCell cell = _cell_combo->currentCell();
 
         predictor->setHandler(handler);
         predictor->predictPeaks(data, cell);
 
-        std::vector<nsx::Peak3D*> predicted_peaks;
-        for (nsx::Peak3D* peak : predictor->peaks())
+        std::vector<ohkl::Peak3D*> predicted_peaks;
+        for (ohkl::Peak3D* peak : predictor->peaks())
             predicted_peaks.push_back(peak);
 
         _peak_collection.populate(predicted_peaks);
-        for (nsx::Peak3D* peak : predicted_peaks)
+        for (ohkl::Peak3D* peak : predicted_peaks)
             delete peak;
         predicted_peaks.clear();
 
@@ -571,7 +571,7 @@ void SubframePredictPeaks::showDirectBeamEvents()
         _direct_beam_events.clear();
         const auto& states = data->instrumentStates();
         auto* detector = data->diffractometer()->detector();
-        std::vector<nsx::DetectorEvent> events = nsx::algo::getDirectBeamEvents(states, *detector);
+        std::vector<ohkl::DetectorEvent> events = ohkl::algo::getDirectBeamEvents(states, *detector);
 
         for (auto&& event : events)
             _direct_beam_events.push_back(event);
@@ -586,11 +586,11 @@ void SubframePredictPeaks::applyShapeModel()
 {
 
     gGui->setReady(false);
-    nsx::ShapeModel* shapes = _shape_combo->currentShapes();
+    ohkl::ShapeModel* shapes = _shape_combo->currentShapes();
 
     setShapeModelParameters();
 
-    nsx::sptrProgressHandler handler(new nsx::ProgressHandler);
+    ohkl::sptrProgressHandler handler(new ohkl::ProgressHandler);
     ProgressView progressView(nullptr);
     progressView.watch(handler);
 
@@ -621,7 +621,7 @@ void SubframePredictPeaks::accept()
         return;
 
     if (!expt->addPeakCollection(
-            dlg->listName().toStdString(), nsx::PeakCollectionType::PREDICTED,
+            dlg->listName().toStdString(), ohkl::PeakCollectionType::PREDICTED,
             _peak_collection.getPeakList())) {
         QMessageBox::warning(
             this, "Unable to add PeakCollection",

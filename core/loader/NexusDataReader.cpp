@@ -19,7 +19,7 @@
 
 #include <memory>
 
-namespace nsx {
+namespace ohkl {
 
 NexusDataReader::NexusDataReader(const std::string& filename) : BaseNexusDataReader(filename) { }
 
@@ -47,4 +47,4 @@ Eigen::MatrixXi NexusDataReader::data(size_t frame)
     return Eigen::MatrixXi(m);
 }
 
-} // namespace nsx
+} // namespace ohkl

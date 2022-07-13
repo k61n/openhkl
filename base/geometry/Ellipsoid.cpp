@@ -17,7 +17,7 @@
 
 #include <array>
 
-namespace nsx {
+namespace ohkl {
 
 Ellipsoid::Ellipsoid(const Eigen::Vector3d& center, const Eigen::Matrix3d& metric)
     : _center(center), _metric(metric), _inverseMetric(metric.inverse()), _aabb()
@@ -277,4 +277,4 @@ double Ellipsoid::r2(const Eigen::Vector3d x) const
     return (x - _center).dot(_metric * (x - _center));
 }
 
-} // namespace nsx
+} // namespace ohkl

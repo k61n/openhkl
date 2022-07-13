@@ -14,7 +14,7 @@
 
 #include "core/convolve/Convolver.h"
 
-namespace nsx {
+namespace ohkl {
 
 using parameters_map = std::map<std::string, double>;
 
@@ -46,4 +46,4 @@ void Convolver::setParameters(const std::map<std::string, double>& parameters)
     }
 }
 
-} // namespace nsx
+} // namespace ohkl

@@ -19,7 +19,7 @@
 #include <QDialog>
 #include <QScrollBar>
 
-namespace nsx {
+namespace ohkl {
 class Experiment;
 class RotAxis;
 }
@@ -35,9 +35,9 @@ class AbsorptionDialog : public QDialog {
     void on_button_openFile_pressed();
     void setupInitialButtons();
     //! Link to the experiment
-    nsx::Experiment* _experiment;
+    ohkl::Experiment* _experiment;
     //! Rotation axis to collect movie
-    nsx::RotAxis* _spindleAxis;
+    ohkl::RotAxis* _spindleAxis;
     //! Set of Roatation angle and absolute fileName for jpg image
     std::vector<std::pair<double, std::string>> _imageList;
     //! Path of the file

@@ -30,7 +30,7 @@ TEST_CASE("test/data/TestXFileReader.cpp", "")
     double y_2140 = 1490.1;
     double eps = 1.0e-6;
 
-    nsx::XFileHandler xfh(xfile_name);
+    ohkl::XFileHandler xfh(xfile_name);
     xfh.readXFile(0);
     std::vector<Eigen::Vector3d> peaks = xfh.getPeakCenters();
 

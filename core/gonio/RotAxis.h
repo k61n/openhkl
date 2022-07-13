@@ -17,7 +17,7 @@
 
 #include "core/gonio/Axis.h"
 
-namespace nsx {
+namespace ohkl {
 
 //! A rotation axis in 3D space, constructed by a vector and a direction (CW or CCW).
 
@@ -65,6 +65,6 @@ class RotAxis : public Axis {
     Direction _dir;
 };
 
-} // namespace nsx
+} // namespace ohkl
 
 #endif // NSX_CORE_GONIO_ROTAXIS_H

@@ -47,7 +47,7 @@ RefinerTables::RefinerTables()
     _nframes = 0;
 }
 
-void RefinerTables::refreshTables(nsx::Refiner* refiner, nsx::DataSet* data)
+void RefinerTables::refreshTables(ohkl::Refiner* refiner, ohkl::DataSet* data)
 {
     _nframes = refiner->nframes();
     _x_vals.clear();
@@ -91,7 +91,7 @@ void RefinerTables::setLatticeTableUp()
     connect(hscroll_refined, SIGNAL(valueChanged(int)), hscroll_unrefined, SLOT(setValue(int)));
 }
 
-void RefinerTables::refreshLatticeTable(nsx::Refiner* refiner)
+void RefinerTables::refreshLatticeTable(ohkl::Refiner* refiner)
 {
     QStandardItemModel* m0 = dynamic_cast<QStandardItemModel*>(_original_lattice_view->model());
     QStandardItemModel* model = dynamic_cast<QStandardItemModel*>(_lattice_view->model());
@@ -105,9 +105,9 @@ void RefinerTables::refreshLatticeTable(nsx::Refiner* refiner)
         row.push_back(new QStandardItem(QString::number(c.a)));
         row.push_back(new QStandardItem(QString::number(c.b)));
         row.push_back(new QStandardItem(QString::number(c.c)));
-        row.push_back(new QStandardItem(QString::number(c.alpha / nsx::deg)));
-        row.push_back(new QStandardItem(QString::number(c.beta / nsx::deg)));
-        row.push_back(new QStandardItem(QString::number(c.gamma / nsx::deg)));
+        row.push_back(new QStandardItem(QString::number(c.alpha / ohkl::deg)));
+        row.push_back(new QStandardItem(QString::number(c.beta / ohkl::deg)));
+        row.push_back(new QStandardItem(QString::number(c.gamma / ohkl::deg)));
         m0->appendRow(row);
     }
 
@@ -127,9 +127,9 @@ void RefinerTables::refreshLatticeTable(nsx::Refiner* refiner)
             row.push_back(new QStandardItem(QString::number(c.a)));
             row.push_back(new QStandardItem(QString::number(c.b)));
             row.push_back(new QStandardItem(QString::number(c.c)));
-            row.push_back(new QStandardItem(QString::number(c.alpha / nsx::deg)));
-            row.push_back(new QStandardItem(QString::number(c.beta / nsx::deg)));
-            row.push_back(new QStandardItem(QString::number(c.gamma / nsx::deg)));
+            row.push_back(new QStandardItem(QString::number(c.alpha / ohkl::deg)));
+            row.push_back(new QStandardItem(QString::number(c.beta / ohkl::deg)));
+            row.push_back(new QStandardItem(QString::number(c.gamma / ohkl::deg)));
             model->appendRow(row);
         }
     }
@@ -158,7 +158,7 @@ void RefinerTables::setSamplePosTableUp()
     connect(scroll_refined, SIGNAL(valueChanged(int)), scroll_unrefined, SLOT(setValue(int)));
 }
 
-void RefinerTables::refreshSamplePosTable(nsx::Refiner* refiner, nsx::DataSet* data)
+void RefinerTables::refreshSamplePosTable(ohkl::Refiner* refiner, ohkl::DataSet* data)
 {
     QStandardItemModel* m0 = dynamic_cast<QStandardItemModel*>(_original_sample_pos_view->model());
     QStandardItemModel* model = dynamic_cast<QStandardItemModel*>(_sample_pos_view->model());
@@ -166,7 +166,7 @@ void RefinerTables::refreshSamplePosTable(nsx::Refiner* refiner, nsx::DataSet* d
     model->removeRows(0, model->rowCount());
 
     int frame = 1;
-    for (const nsx::InstrumentState& state : *refiner->unrefinedStates()) {
+    for (const ohkl::InstrumentState& state : *refiner->unrefinedStates()) {
         QList<QStandardItem*> row;
         auto pos = state.samplePosition;
         row.push_back(new QStandardItem(QString::number(frame)));
@@ -184,7 +184,7 @@ void RefinerTables::refreshSamplePosTable(nsx::Refiner* refiner, nsx::DataSet* d
         return;
 
     frame = 1;
-    for (const nsx::InstrumentState& state : *refiner->refinedStates()) {
+    for (const ohkl::InstrumentState& state : *refiner->refinedStates()) {
         QList<QStandardItem*> row;
         auto pos = state.samplePosition;
         row.push_back(new QStandardItem(QString::number(frame)));
@@ -225,7 +225,7 @@ void RefinerTables::setSampleOrnTableUp()
     connect(hscroll_refined, SIGNAL(valueChanged(int)), hscroll_unrefined, SLOT(setValue(int)));
 }
 
-void RefinerTables::refreshSampleOrnTable(nsx::Refiner* refiner, nsx::DataSet* data)
+void RefinerTables::refreshSampleOrnTable(ohkl::Refiner* refiner, ohkl::DataSet* data)
 {
     QStandardItemModel* m0 = dynamic_cast<QStandardItemModel*>(_original_sample_orn_view->model());
     QStandardItemModel* model = dynamic_cast<QStandardItemModel*>(_sample_orn_view->model());
@@ -233,7 +233,7 @@ void RefinerTables::refreshSampleOrnTable(nsx::Refiner* refiner, nsx::DataSet* d
     model->removeRows(0, model->rowCount());
 
     int frame = 1;
-    for (const nsx::InstrumentState& state : *refiner->unrefinedStates()) {
+    for (const ohkl::InstrumentState& state : *refiner->unrefinedStates()) {
         QList<QStandardItem*> row;
         auto mat = state.sampleOrientationMatrix();
         row.push_back(new QStandardItem(QString::number(frame)));
@@ -257,7 +257,7 @@ void RefinerTables::refreshSampleOrnTable(nsx::Refiner* refiner, nsx::DataSet* d
         return;
 
     frame = 1;
-    for (const nsx::InstrumentState& state : *refiner->refinedStates()) {
+    for (const ohkl::InstrumentState& state : *refiner->refinedStates()) {
         QList<QStandardItem*> row;
         auto mat = state.sampleOrientationMatrix();
         row.push_back(new QStandardItem(QString::number(frame)));
@@ -298,7 +298,7 @@ void RefinerTables::setDetectorPosTableUp()
     connect(scroll_refined, SIGNAL(valueChanged(int)), scroll_unrefined, SLOT(setValue(int)));
 }
 
-void RefinerTables::refreshDetectorPosTable(nsx::Refiner* refiner, nsx::DataSet* data)
+void RefinerTables::refreshDetectorPosTable(ohkl::Refiner* refiner, ohkl::DataSet* data)
 {
     QStandardItemModel* m0 =
         dynamic_cast<QStandardItemModel*>(_original_detector_pos_view->model());
@@ -307,7 +307,7 @@ void RefinerTables::refreshDetectorPosTable(nsx::Refiner* refiner, nsx::DataSet*
     model->removeRows(0, model->rowCount());
 
     int frame = 1;
-    for (const nsx::InstrumentState& state : *refiner->unrefinedStates()) {
+    for (const ohkl::InstrumentState& state : *refiner->unrefinedStates()) {
         QList<QStandardItem*> row;
         auto pos = state.detectorPositionOffset;
         row.push_back(new QStandardItem(QString::number(frame)));
@@ -325,7 +325,7 @@ void RefinerTables::refreshDetectorPosTable(nsx::Refiner* refiner, nsx::DataSet*
         return;
 
     frame = 1;
-    for (const nsx::InstrumentState& state : *refiner->refinedStates()) {
+    for (const ohkl::InstrumentState& state : *refiner->refinedStates()) {
         QList<QStandardItem*> row;
         auto pos = state.detectorPositionOffset;
         row.push_back(new QStandardItem(QString::number(frame)));
@@ -360,7 +360,7 @@ void RefinerTables::setKiTableUp()
     connect(scroll_refined, SIGNAL(valueChanged(int)), scroll_unrefined, SLOT(setValue(int)));
 }
 
-void RefinerTables::refreshKiTable(nsx::Refiner* refiner, nsx::DataSet* data)
+void RefinerTables::refreshKiTable(ohkl::Refiner* refiner, ohkl::DataSet* data)
 {
     QStandardItemModel* m0 = dynamic_cast<QStandardItemModel*>(_original_ki_view->model());
     QStandardItemModel* model = dynamic_cast<QStandardItemModel*>(_ki_view->model());
@@ -368,7 +368,7 @@ void RefinerTables::refreshKiTable(nsx::Refiner* refiner, nsx::DataSet* data)
     model->removeRows(0, model->rowCount());
 
     int frame = 1;
-    for (const nsx::InstrumentState& state : *refiner->unrefinedStates()) {
+    for (const ohkl::InstrumentState& state : *refiner->unrefinedStates()) {
         QList<QStandardItem*> row;
         auto ki = state.ki().rowVector();
         row.push_back(new QStandardItem(QString::number(frame)));
@@ -386,7 +386,7 @@ void RefinerTables::refreshKiTable(nsx::Refiner* refiner, nsx::DataSet* data)
         return;
 
     frame = 1;
-    for (const nsx::InstrumentState& state : *refiner->refinedStates()) {
+    for (const ohkl::InstrumentState& state : *refiner->refinedStates()) {
         QList<QStandardItem*> row;
         auto ki = state.ki().rowVector();
         row.push_back(new QStandardItem(QString::number(frame)));

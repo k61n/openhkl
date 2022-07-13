@@ -19,7 +19,7 @@
 #include "base/utils/ISingleton.h"
 #include "core/gonio/Axis.h"
 
-namespace nsx {
+namespace ohkl {
 
 //! Factory to create axes (rotational, translational).
 
@@ -28,6 +28,6 @@ class AxisFactory : public Factory<AxisFactory, Axis, std::string, const YAML::N
     AxisFactory();
 };
 
-} // namespace nsx
+} // namespace ohkl
 
 #endif // NSX_CORE_GONIO_AXISFACTORY_H

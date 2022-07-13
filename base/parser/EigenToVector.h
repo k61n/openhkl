@@ -19,10 +19,10 @@
 
 #include <Eigen/Dense>
 
-namespace nsx {
+namespace ohkl {
 
 std::vector<double> eigenToVector(const Eigen::VectorXd& ev);
 
-} // namespace nsx
+} // namespace ohkl
 
 #endif // NSX_BASE_PARSER_EIGENTOVECTOR_H

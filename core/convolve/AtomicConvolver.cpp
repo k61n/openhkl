@@ -22,7 +22,7 @@
         exit(1);                                                                                   \
     }
 
-namespace nsx {
+namespace ohkl {
 
 AtomicConvolver::AtomicConvolver() : Convolver() { }
 
@@ -125,4 +125,4 @@ RealMatrix AtomicConvolver::matrix(int nrows, int ncols) const
     return _matrix(nrows, ncols);
 }
 
-} // namespace nsx
+} // namespace ohkl

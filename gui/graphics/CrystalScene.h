@@ -46,7 +46,7 @@ class CrystalScene : public QGraphicsScene {
     };
 
     //! Constructors
-    CrystalScene(nsx::ConvexHull* hull, QWidget* parent = 0);
+    CrystalScene(ohkl::ConvexHull* hull, QWidget* parent = 0);
     ~CrystalScene();
     //! Mouse interactions
     virtual void mousePressEvent(QGraphicsSceneMouseEvent* event);
@@ -91,7 +91,7 @@ class CrystalScene : public QGraphicsScene {
     CrystalNodeItem* _current;
     PinItem* _pin;
     bool _pinCreated;
-    nsx::ConvexHull* _hull;
+    ohkl::ConvexHull* _hull;
     QPixmap _pix;
     QGraphicsTextItem* _text;
 };

@@ -18,7 +18,7 @@
 #include "core/raw/MetaData.h"
 #include "core/shape/ShapeModel.h"
 
-namespace nsx {
+namespace ohkl {
 
 /*! \addtogroup python_api
  *  @{*/
@@ -47,29 +47,29 @@ class PeakCollection {
     void setDescription(std::string str) { _description = str; };
 
     //! Populate the PeakCollection with a vector of shared pointers to peaks
-    void populate(const std::vector<std::shared_ptr<nsx::Peak3D>> peak_list);
+    void populate(const std::vector<std::shared_ptr<ohkl::Peak3D>> peak_list);
     //! Populate the PeakCollection with a vector of raw pointers to peaks
-    void populate(const std::vector<nsx::Peak3D*> peak_list);
+    void populate(const std::vector<ohkl::Peak3D*> peak_list);
     //! Append one peak to the PeakCollection
-    void push_back(const nsx::Peak3D& peak);
+    void push_back(const ohkl::Peak3D& peak);
     //! Append one peak to the PeakCollection
-    void addPeak(const std::shared_ptr<nsx::Peak3D>& peak);
+    void addPeak(const std::shared_ptr<ohkl::Peak3D>& peak);
     //! Populate from another collection, taking only peaks caughtByFilter
     void populateFromFiltered(PeakCollection* collection);
     //! Remove all peaks from the PeakCollection
     void reset();
     //! Return the peak with the given index
-    const nsx::Peak3D* getPeak(int index) const { return _peaks.at(index).get(); }
+    const ohkl::Peak3D* getPeak(int index) const { return _peaks.at(index).get(); }
     //! Return the peak with the given index
-    nsx::Peak3D* getPeak(int index) { return _peaks.at(index).get(); }
+    ohkl::Peak3D* getPeak(int index) { return _peaks.at(index).get(); }
 
     //! Return a std::vector of pointers to peaks
-    std::vector<nsx::Peak3D*> getPeakList() const;
+    std::vector<ohkl::Peak3D*> getPeakList() const;
     //! Return a std::vector of pointers to peaks caughtByFilter
-    std::vector<nsx::Peak3D*> getFilteredPeakList() const;
+    std::vector<ohkl::Peak3D*> getFilteredPeakList() const;
 
     //! Return the PeakCollectionType of the PeakCollection (FOUND, PREDICTED, etc.)
-    nsx::PeakCollectionType type() const { return _type; };
+    ohkl::PeakCollectionType type() const { return _type; };
     //! Set the PeakCollectionType of the PeakCollection (FOUND, PREDICTED, etc.)
     void setType(PeakCollectionType type) { _type = type; };
 
@@ -126,12 +126,12 @@ class PeakCollection {
     void setUnitCell(const sptrUnitCell& cell);
 
  private:
-    std::vector<std::unique_ptr<nsx::Peak3D>> _peaks;
+    std::vector<std::unique_ptr<ohkl::Peak3D>> _peaks;
     std::string _name;
     std::string _description;
 
-    nsx::PeakCollectionType _type{PeakCollectionType::FOUND};
-    nsx::MetaData _metadata;
+    ohkl::PeakCollectionType _type{PeakCollectionType::FOUND};
+    ohkl::MetaData _metadata;
 
     std::string _file_name;
     std::string _parent;
@@ -151,6 +151,6 @@ class PeakCollection {
 };
 
 /*! @}*/
-} // namespace nsx
+} // namespace ohkl
 
 #endif // NSX_CORE_SHAPE_PEAKCOLLECTION_H

@@ -18,7 +18,7 @@
 #include <Eigen/Geometry>
 #include <yaml-cpp/yaml.h>
 
-namespace nsx {
+namespace ohkl {
 
 //! Pure virtual base class for homogeneous transforms (RotAxis).
 
@@ -92,6 +92,6 @@ class Axis {
 
 std::ostream& operator<<(std::ostream& os, const Axis& axis);
 
-} // namespace nsx
+} // namespace ohkl
 
 #endif // NSX_CORE_GONIO_AXIS_H

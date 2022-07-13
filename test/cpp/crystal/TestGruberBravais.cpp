@@ -131,16 +131,16 @@ TEST_CASE("test/crystal/TestGruberBravais.cpp", "")
             g12 = p[3] + distribution(generator);
             g22 = p[2] + distribution(generator);
 
-            nsx::UnitCell cell;
+            ohkl::UnitCell cell;
             cell.setMetric(g00, g01, g02, g11, g12, g22);
 
             Eigen::Matrix3d G = cell.metric();
             Eigen::Matrix3d P, NG, NP;
             NG = G;
 
-            nsx::GruberReduction gruber(G, gruber_tolerance);
-            nsx::BravaisType bravais_type;
-            nsx::LatticeCentring centering;
+            ohkl::GruberReduction gruber(G, gruber_tolerance);
+            ohkl::BravaisType bravais_type;
+            ohkl::LatticeCentring centering;
 
             int match = gruber.reduce(P, centering, bravais_type);
             cell.setBravaisType(bravais_type);
@@ -151,7 +151,7 @@ TEST_CASE("test/crystal/TestGruberBravais.cpp", "")
             CHECK(match == condition);
             CHECK(cell.bravaisTypeSymbol() == expected_bravais);
 
-            nsx::NiggliReduction niggli(G, niggli_tolerance);
+            ohkl::NiggliReduction niggli(G, niggli_tolerance);
             niggli.reduce(NG, NP);
         }
         ++condition;

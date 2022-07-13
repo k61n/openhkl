@@ -15,7 +15,7 @@
 #include "core/instrument/MatrixOperations.h"
 #include <Eigen/Core>
 
-namespace nsx {
+namespace ohkl {
 
 void removeColumn(Eigen::MatrixXd& matrix, unsigned int colToRemove)
 {
@@ -48,4 +48,4 @@ Eigen::Matrix3d interpolateRotation(
     return q0.slerp(t, q1).toRotationMatrix();
 }
 
-} // namespace nsx
+} // namespace ohkl

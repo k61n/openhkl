@@ -14,7 +14,7 @@
 
 #include "base/parser/EigenToVector.h"
 
-namespace nsx {
+namespace ohkl {
 
 std::vector<double> eigenToVector(const Eigen::VectorXd& ev)
 {
@@ -25,4 +25,4 @@ std::vector<double> eigenToVector(const Eigen::VectorXd& ev)
     return v;
 }
 
-} // namespace nsx
+} // namespace ohkl

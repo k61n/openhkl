@@ -21,7 +21,7 @@
 #include <memory>
 #include <stdexcept>
 
-namespace nsx {
+namespace ohkl {
 
 ShapeHandler::~ShapeHandler() = default;
 
@@ -30,7 +30,7 @@ const ShapeModelMap* ShapeHandler::getShapeModelMap() const
     return &_shape_models;
 }
 
-bool ShapeHandler::addShapeModel(const std::string& name, const nsx::ShapeModel& shapes)
+bool ShapeHandler::addShapeModel(const std::string& name, const ohkl::ShapeModel& shapes)
 {
     // abort if name is aleady in use
     if (hasShapeModel(name))
@@ -106,4 +106,4 @@ std::vector<ShapeModel*> ShapeHandler::getShapeModels()
     return collections;
 }
 
-} // namespace nsx
+} // namespace ohkl

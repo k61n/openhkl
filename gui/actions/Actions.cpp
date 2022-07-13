@@ -103,8 +103,8 @@ void Actions::setupData()
         if (gSession->loadRawData())
             gGui->sideBar()->refreshCurrent();
     });
-    connect(add_hdf5, &QAction::triggered, []() { gSession->loadData(nsx::DataFormat::NSX); });
-    connect(add_hdf5, &QAction::triggered, []() { gSession->loadData(nsx::DataFormat::NEXUS); });
+    connect(add_hdf5, &QAction::triggered, []() { gSession->loadData(ohkl::DataFormat::NSX); });
+    connect(add_hdf5, &QAction::triggered, []() { gSession->loadData(ohkl::DataFormat::NEXUS); });
     connect(add_hdf5, &QAction::triggered, []() { gGui->sideBar()->refreshCurrent(); });
     connect(add_nexus, &QAction::triggered, []() { gGui->sideBar()->refreshCurrent(); });
 
@@ -198,7 +198,7 @@ void Actions::setupCell()
 void Actions::addCell()
 {
     QStringList space_groups;
-    for (const auto& symbol : nsx::SpaceGroup::symbols())
+    for (const auto& symbol : ohkl::SpaceGroup::symbols())
         space_groups.push_back(QString::fromStdString(symbol));
     std::unique_ptr<NewCellDialog> dlg(new NewCellDialog(space_groups));
     dlg->exec();
@@ -208,7 +208,7 @@ void Actions::addCell()
     if (dlg->result() == QDialog::Rejected)
         return;
 
-    nsx::Experiment* expt = gSession->currentProject()->experiment();
+    ohkl::Experiment* expt = gSession->currentProject()->experiment();
     expt->addUnitCell(
         dlg->unitCellName().toStdString(), dlg->a(), dlg->b(), dlg->c(), dlg->alpha(), dlg->beta(),
         dlg->gamma(), dlg->spaceGroup().toStdString());
@@ -252,7 +252,7 @@ void Actions::removePeaks()
         return;
 
     QString peaks_name = dlg->itemName();
-    nsx::Experiment* experiment = gSession->currentProject()->experiment();
+    ohkl::Experiment* experiment = gSession->currentProject()->experiment();
 
     experiment->removePeakCollection(peaks_name.toStdString());
 

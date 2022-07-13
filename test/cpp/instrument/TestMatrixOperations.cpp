@@ -28,8 +28,8 @@ void test_element_removal()
 
     Eigen::MatrixXd M1 = M;
     Eigen::MatrixXd M2 = M;
-    nsx::removeColumn(M1, 1);
-    nsx::removeRow(M2, 1);
+    ohkl::removeColumn(M1, 1);
+    ohkl::removeRow(M2, 1);
 
 
     const double eps = 1e-6;
@@ -73,7 +73,7 @@ void test_interpolation()
     mat2(2, 1) = 0.0000;
     mat2(2, 2) = 0.4067;
 
-    Eigen::Matrix3d mat = nsx::interpolateRotation(mat1, mat2, 0.25);
+    Eigen::Matrix3d mat = ohkl::interpolateRotation(mat1, mat2, 0.25);
 
 
     const double eps = 1e-4;

@@ -21,7 +21,7 @@
 #include "base/geometry/AABB.h"
 
 
-namespace nsx {
+namespace ohkl {
 
 class ConvexHull {
  public:

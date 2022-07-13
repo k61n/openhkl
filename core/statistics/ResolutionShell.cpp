@@ -21,7 +21,7 @@
 #include "core/peak/Peak3D.h"
 #include "core/statistics/ResolutionShell.h"
 
-namespace nsx {
+namespace ohkl {
 
 ResolutionShell::ResolutionShell(double dmin, double dmax, size_t num_shells)
     : _shells(std::max(num_shells, size_t(1)))
@@ -75,4 +75,4 @@ size_t ResolutionShell::nShells() const
     return _shells.size();
 }
 
-} // namespace nsx
+} // namespace ohkl

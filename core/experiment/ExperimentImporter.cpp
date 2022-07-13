@@ -30,25 +30,25 @@
 #include <stdexcept>
 #include <string>
 
-namespace nsx {
+namespace ohkl {
 
 void ExperimentImporter::setFilePath(const std::string path, Experiment* const experiment)
 {
-    nsxlog(nsx::Level::Debug, "Importing experiment info from path '", path, "'");
+    nsxlog(ohkl::Level::Debug, "Importing experiment info from path '", path, "'");
 
     try {
         _file_name = path;
         H5::H5File file(_file_name.c_str(), H5F_ACC_RDONLY);
-        if (file.attrExists(nsx::at_experiment)) {
-            const H5::Attribute attr = file.openAttribute(nsx::at_experiment);
+        if (file.attrExists(ohkl::at_experiment)) {
+            const H5::Attribute attr = file.openAttribute(ohkl::at_experiment);
             const H5::DataType attr_type = attr.getDataType();
             std::string value;
             attr.read(attr_type, value);
             experiment->setName(value);
         }
 
-        if (file.attrExists(nsx::at_diffractometer)) {
-            const H5::Attribute attr = file.openAttribute(nsx::at_diffractometer);
+        if (file.attrExists(ohkl::at_diffractometer)) {
+            const H5::Attribute attr = file.openAttribute(ohkl::at_diffractometer);
             const H5::DataType attr_type = attr.getDataType();
             std::string value;
             attr.read(attr_type, value);
@@ -56,8 +56,8 @@ void ExperimentImporter::setFilePath(const std::string path, Experiment* const e
         }
 
         std::string version;
-        if (file.attrExists(nsx::at_nsxVersion)) {
-            const H5::Attribute attr = file.openAttribute(nsx::at_nsxVersion);
+        if (file.attrExists(ohkl::at_nsxVersion)) {
+            const H5::Attribute attr = file.openAttribute(ohkl::at_nsxVersion);
             const H5::DataType attr_type = attr.getDataType();
             std::string value;
             attr.read(attr_type, value);
@@ -65,8 +65,8 @@ void ExperimentImporter::setFilePath(const std::string path, Experiment* const e
         }
 
         std::string hash;
-        if (file.attrExists(nsx::at_commitHash)) {
-            const H5::Attribute attr = file.openAttribute(nsx::at_commitHash);
+        if (file.attrExists(ohkl::at_commitHash)) {
+            const H5::Attribute attr = file.openAttribute(ohkl::at_commitHash);
             const H5::DataType attr_type = attr.getDataType();
             std::string value;
             attr.read(attr_type, value);
@@ -75,7 +75,7 @@ void ExperimentImporter::setFilePath(const std::string path, Experiment* const e
         nsxlog(Level::Info, path, " generated using version ", version, " commit hash ", hash);
 
         nsxlog(
-            nsx::Level::Info, "Finished importing info for Experiment '" + experiment->name() + "'",
+            ohkl::Level::Info, "Finished importing info for Experiment '" + experiment->name() + "'",
             " with diffractometer '" + experiment->getDiffractometer()->name() + "'",
             " from path '" + path + "'");
 
@@ -87,17 +87,17 @@ void ExperimentImporter::setFilePath(const std::string path, Experiment* const e
 
 void ExperimentImporter::loadData(Experiment* experiment)
 {
-    nsxlog(nsx::Level::Debug, "Importing data from file '", _file_name, "'");
+    nsxlog(ohkl::Level::Debug, "Importing data from file '", _file_name, "'");
 
     try {
         H5::H5File file(_file_name.c_str(), H5F_ACC_RDONLY);
-        H5::Group data_collections(file.openGroup(nsx::gr_DataCollections));
+        H5::Group data_collections(file.openGroup(ohkl::gr_DataCollections));
 
         hsize_t object_num = data_collections.getNumObjs();
         for (int i = 0; i < object_num; ++i) {
             const std::string collection_name = data_collections.getObjnameByIdx(i);
-            const nsx::sptrDataSet dataset_ptr{
-                std::make_shared<nsx::DataSet>(collection_name, experiment->getDiffractometer())};
+            const ohkl::sptrDataSet dataset_ptr{
+                std::make_shared<ohkl::DataSet>(collection_name, experiment->getDiffractometer())};
             dataset_ptr->addDataFile(_file_name, "nsx");
             dataset_ptr->finishRead();
             experiment->addData(dataset_ptr, false);
@@ -107,12 +107,12 @@ void ExperimentImporter::loadData(Experiment* experiment)
         throw std::runtime_error(what);
     }
 
-    nsxlog(nsx::Level::Debug, "Finished importing data from file '", _file_name, "'");
+    nsxlog(ohkl::Level::Debug, "Finished importing data from file '", _file_name, "'");
 }
 
 void ExperimentImporter::loadPeaks(Experiment* experiment)
 {
-    nsxlog(nsx::Level::Debug, "Importing peaks from file '", _file_name, "'");
+    nsxlog(ohkl::Level::Debug, "Importing peaks from file '", _file_name, "'");
 
     using Eigen_VecXd = Eigen::Matrix<double, Eigen::Dynamic, Eigen::RowMajor>;
     using Eigen_VecXint = Eigen::Matrix<int, Eigen::Dynamic, Eigen::RowMajor>;
@@ -120,12 +120,12 @@ void ExperimentImporter::loadPeaks(Experiment* experiment)
 
     try {
         H5::H5File file(_file_name.c_str(), H5F_ACC_RDONLY);
-        H5::Group peak_collections(file.openGroup(nsx::gr_PeakCollections));
+        H5::Group peak_collections(file.openGroup(ohkl::gr_PeakCollections));
 
         hsize_t object_num = peak_collections.getNumObjs();
         for (int i = 0; i < object_num; ++i) {
             const std::string collection_name = peak_collections.getObjnameByIdx(i);
-            const std::string collection_key = nsx::gr_PeakCollections + "/" + collection_name;
+            const std::string collection_key = ohkl::gr_PeakCollections + "/" + collection_name;
             H5::Group peak_collection(file.openGroup(collection_key));
 
             // Read the info group and store in metadata
@@ -135,27 +135,27 @@ void ExperimentImporter::loadPeaks(Experiment* experiment)
             std::string indexed;
             std::string integrated;
 
-            if (peak_collection.attrExists(nsx::at_peakCount)) {
-                const H5::Attribute attr = peak_collection.openAttribute(nsx::at_peakCount);
+            if (peak_collection.attrExists(ohkl::at_peakCount)) {
+                const H5::Attribute attr = peak_collection.openAttribute(ohkl::at_peakCount);
                 const H5::DataType attr_type = attr.getDataType();
                 attr.read(attr_type, &n_peaks);
             }
 
-            if (peak_collection.attrExists(nsx::at_peakType)) {
-                const H5::Attribute attr = peak_collection.openAttribute(nsx::at_peakType);
+            if (peak_collection.attrExists(ohkl::at_peakType)) {
+                const H5::Attribute attr = peak_collection.openAttribute(ohkl::at_peakType);
                 const H5::DataType attr_type = attr.getDataType();
                 attr.read(attr_type, &type);
             }
 
 
-            if (peak_collection.attrExists(nsx::at_indexed)) {
-                const H5::Attribute attr = peak_collection.openAttribute(nsx::at_indexed);
+            if (peak_collection.attrExists(ohkl::at_indexed)) {
+                const H5::Attribute attr = peak_collection.openAttribute(ohkl::at_indexed);
                 const H5::DataType attr_type = attr.getDataType();
                 attr.read(attr_type, &indexed);
             }
 
-            if (peak_collection.attrExists(nsx::at_integrated)) {
-                const H5::Attribute attr = peak_collection.openAttribute(nsx::at_integrated);
+            if (peak_collection.attrExists(ohkl::at_integrated)) {
+                const H5::Attribute attr = peak_collection.openAttribute(ohkl::at_integrated);
                 const H5::DataType attr_type = attr.getDataType();
                 attr.read(attr_type, &integrated);
             }
@@ -180,18 +180,18 @@ void ExperimentImporter::loadPeaks(Experiment* experiment)
             Eigen_VecXint rejection_flag(n_peaks);
 
             std::map<std::string, Eigen_VecXd*> double_keys{
-                {nsx::ds_BkgBegin, &bkg_begin},
-                {nsx::ds_BkgEnd, &bkg_end},
-                {nsx::ds_PeakEnd, &peak_end},
-                {nsx::ds_Scale, &scale},
-                {nsx::ds_Transmission, &transmission},
-                {nsx::ds_Intensity, &intensity},
-                {nsx::ds_Sigma, &sigma},
-                {nsx::ds_BkgIntensity, &mean_bkg_val},
-                {nsx::ds_BkgSigma, &mean_bkg_sig}};
+                {ohkl::ds_BkgBegin, &bkg_begin},
+                {ohkl::ds_BkgEnd, &bkg_end},
+                {ohkl::ds_PeakEnd, &peak_end},
+                {ohkl::ds_Scale, &scale},
+                {ohkl::ds_Transmission, &transmission},
+                {ohkl::ds_Intensity, &intensity},
+                {ohkl::ds_Sigma, &sigma},
+                {ohkl::ds_BkgIntensity, &mean_bkg_val},
+                {ohkl::ds_BkgSigma, &mean_bkg_sig}};
 
             std::map<std::string, Eigen_VecXint*> int_keys{
-                {nsx::ds_Rejection, &rejection_flag},
+                {ohkl::ds_Rejection, &rejection_flag},
             };
 
             Eigen_VecXbool predicted(n_peaks);
@@ -199,9 +199,9 @@ void ExperimentImporter::loadPeaks(Experiment* experiment)
             Eigen_VecXbool selected(n_peaks);
 
             std::map<std::string, Eigen_VecXbool*> bool_keys{
-                {nsx::ds_Predicted, &predicted},
-                {nsx::ds_Masked, &masked},
-                {nsx::ds_Selected, &selected}};
+                {ohkl::ds_Predicted, &predicted},
+                {ohkl::ds_Masked, &masked},
+                {ohkl::ds_Selected, &selected}};
 
             Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor> center(
                 n_peaks, 3);
@@ -242,7 +242,7 @@ void ExperimentImporter::loadPeaks(Experiment* experiment)
             nsxlog(Level::Debug, "Importing centers");
             // Load the centers
             {
-                H5::DataSet data_set = peak_collection.openDataSet(nsx::ds_Center);
+                H5::DataSet data_set = peak_collection.openDataSet(ohkl::ds_Center);
                 H5::DataSpace space(data_set.getSpace());
                 data_set.read(center.data(), H5::PredType::NATIVE_DOUBLE, space, space);
             }
@@ -250,7 +250,7 @@ void ExperimentImporter::loadPeaks(Experiment* experiment)
             nsxlog(Level::Debug, "Importing metric");
             // Load the metrics
             {
-                H5::DataSet data_set = peak_collection.openDataSet(nsx::ds_Metric);
+                H5::DataSet data_set = peak_collection.openDataSet(ohkl::ds_Metric);
                 H5::DataSpace space(data_set.getSpace());
                 data_set.read(metric.data(), H5::PredType::NATIVE_DOUBLE, space, space);
             }
@@ -258,7 +258,7 @@ void ExperimentImporter::loadPeaks(Experiment* experiment)
             nsxlog(Level::Debug, "Importing hkls");
             // Load the hkls
             {
-                H5::DataSet data_set = peak_collection.openDataSet(nsx::ds_hkl);
+                H5::DataSet data_set = peak_collection.openDataSet(ohkl::ds_hkl);
                 H5::DataSpace space(data_set.getSpace());
                 data_set.read(hkl.data(), H5::PredType::NATIVE_INT, space, space);
             }
@@ -266,7 +266,7 @@ void ExperimentImporter::loadPeaks(Experiment* experiment)
             nsxlog(Level::Debug, "Importing hkl errors");
             // Load the hkl errors
             {
-                H5::DataSet data_set = peak_collection.openDataSet(nsx::ds_hklError);
+                H5::DataSet data_set = peak_collection.openDataSet(ohkl::ds_hklError);
                 H5::DataSpace space(data_set.getSpace());
                 data_set.read(hkl_error.data(), H5::PredType::NATIVE_DOUBLE, space, space);
             }
@@ -274,7 +274,7 @@ void ExperimentImporter::loadPeaks(Experiment* experiment)
             nsxlog(Level::Debug, "Importing DataSet names");
             // Load the data_names
             {
-                H5::DataSet data_set = peak_collection.openDataSet(nsx::ds_DatasetNames);
+                H5::DataSet data_set = peak_collection.openDataSet(ohkl::ds_DatasetNames);
                 H5::DataType data_type = data_set.getDataType();
                 H5::DataSpace space(data_set.getSpace());
 
@@ -294,7 +294,7 @@ void ExperimentImporter::loadPeaks(Experiment* experiment)
             nsxlog(Level::Debug, "Importing UnitCell names");
             // Load the unit cell strings
             if (experiment->numUnitCells() > 0) {
-                H5::DataSet uc_data_set = peak_collection.openDataSet(nsx::ds_UnitCellNames);
+                H5::DataSet uc_data_set = peak_collection.openDataSet(ohkl::ds_UnitCellNames);
                 H5::DataType uc_data_type = uc_data_set.getDataType();
                 H5::DataSpace uc_space = uc_data_set.getSpace();
 
@@ -313,7 +313,7 @@ void ExperimentImporter::loadPeaks(Experiment* experiment)
 
             nsxlog(Level::Debug, "Finished reading peak data from file '", _file_name, "'");
             nsxlog(Level::Debug, "Creating the vector of peaks");
-            std::vector<nsx::Peak3D*> peaks;
+            std::vector<ohkl::Peak3D*> peaks;
 
             Eigen::Vector3d local_center;
             Eigen::Matrix3d local_metric;
@@ -324,13 +324,13 @@ void ExperimentImporter::loadPeaks(Experiment* experiment)
                 local_center = Eigen::Vector3d(center(k, 0), center(k, 1), center(k, 2));
                 local_metric = metric.block(k * 3, 0, 3, 3);
 
-                const nsx::Ellipsoid ellipsoid(local_center, local_metric);
+                const ohkl::Ellipsoid ellipsoid(local_center, local_metric);
 
                 sptrDataSet data_pointer = experiment->getData(std::string(data_names[k]));
-                nsx::Peak3D* peak = new nsx::Peak3D(data_pointer, ellipsoid);
+                ohkl::Peak3D* peak = new ohkl::Peak3D(data_pointer, ellipsoid);
 
-                const nsx::Intensity peak_intensity(intensity[k], sigma[k]);
-                const nsx::Intensity peak_mean_bkg(mean_bkg_val[k], mean_bkg_sig[k]);
+                const ohkl::Intensity peak_intensity(intensity[k], sigma[k]);
+                const ohkl::Intensity peak_mean_bkg(mean_bkg_val[k], mean_bkg_sig[k]);
 
                 peak->setManually(
                     peak_intensity, peak_end[k], bkg_begin[k], bkg_end[k], scale[k],
@@ -341,7 +341,7 @@ void ExperimentImporter::loadPeaks(Experiment* experiment)
                 if (experiment->numUnitCells() > 0) {
                     local_hkl_error = {hkl_error(k, 0), hkl_error(k, 1), hkl_error(k, 2)};
                     local_hkl = {hkl(k, 0), hkl(k, 1), hkl(k, 2)};
-                    const nsx::MillerIndex miller(local_hkl, local_hkl_error);
+                    const ohkl::MillerIndex miller(local_hkl, local_hkl_error);
                     peak->setUnitCell(experiment->getSptrUnitCell(unit_cells[k]));
                     peak->setMillerIndices(miller);
                 }
@@ -363,7 +363,7 @@ void ExperimentImporter::loadPeaks(Experiment* experiment)
         throw std::runtime_error{e.getDetailMsg()};
     }
 
-    nsxlog(nsx::Level::Debug, "Finished importing peaks from file '", _file_name, "'");
+    nsxlog(ohkl::Level::Debug, "Finished importing peaks from file '", _file_name, "'");
 }
 
 void ExperimentImporter::loadUnitCells(Experiment* experiment)
@@ -372,7 +372,7 @@ void ExperimentImporter::loadUnitCells(Experiment* experiment)
 
     try {
         H5::H5File file(_file_name.c_str(), H5F_ACC_RDONLY);
-        H5::Group unit_cells(file.openGroup(nsx::gr_UnitCells));
+        H5::Group unit_cells(file.openGroup(ohkl::gr_UnitCells));
 
         std::vector<unsigned int> cell_ids;
 
@@ -395,7 +395,7 @@ void ExperimentImporter::loadUnitCells(Experiment* experiment)
 
             if (!unit_cells.nameExists(std::to_string(i)))
                 continue;
-            H5::Group unit_cell(file.openGroup(nsx::gr_UnitCells + "/" + std::to_string(i)));
+            H5::Group unit_cell(file.openGroup(ohkl::gr_UnitCells + "/" + std::to_string(i)));
             cell_ids.push_back(i);
 
             // Read the info group and store in metadata
@@ -404,33 +404,33 @@ void ExperimentImporter::loadUnitCells(Experiment* experiment)
                 H5::Attribute attr = unit_cell.openAttribute(j);
                 H5::DataType typ = attr.getDataType();
                 const std::string attr_name = attr.getName();
-                if (attr_name == nsx::at_rVec + "_00")
+                if (attr_name == ohkl::at_rVec + "_00")
                     attr.read(typ, &rec_00);
-                else if (attr_name == nsx::at_rVec + "_01")
+                else if (attr_name == ohkl::at_rVec + "_01")
                     attr.read(typ, &rec_01);
-                else if (attr_name == nsx::at_rVec + "_02")
+                else if (attr_name == ohkl::at_rVec + "_02")
                     attr.read(typ, &rec_02);
-                else if (attr_name == nsx::at_rVec + "_10")
+                else if (attr_name == ohkl::at_rVec + "_10")
                     attr.read(typ, &rec_10);
-                else if (attr_name == nsx::at_rVec + "_11")
+                else if (attr_name == ohkl::at_rVec + "_11")
                     attr.read(typ, &rec_11);
-                else if (attr_name == nsx::at_rVec + "_12")
+                else if (attr_name == ohkl::at_rVec + "_12")
                     attr.read(typ, &rec_12);
-                else if (attr_name == nsx::at_rVec + "_20")
+                else if (attr_name == ohkl::at_rVec + "_20")
                     attr.read(typ, &rec_20);
-                else if (attr_name == nsx::at_rVec + "_21")
+                else if (attr_name == ohkl::at_rVec + "_21")
                     attr.read(typ, &rec_21);
-                else if (attr_name == nsx::at_rVec + "_22")
+                else if (attr_name == ohkl::at_rVec + "_22")
                     attr.read(typ, &rec_22);
-                else if (attr_name == nsx::at_indexingTol)
+                else if (attr_name == ohkl::at_indexingTol)
                     attr.read(typ, &indexing_tolerance);
-                else if (attr_name == nsx::at_BravaisLattice)
+                else if (attr_name == ohkl::at_BravaisLattice)
                     attr.read(typ, bravais);
-                else if (attr_name == nsx::at_spacegroup)
+                else if (attr_name == ohkl::at_spacegroup)
                     attr.read(typ, space_group);
-                else if (attr_name == nsx::at_z)
+                else if (attr_name == ohkl::at_z)
                     attr.read(typ, &z);
-                else if (attr_name == nsx::at_unitCellName)
+                else if (attr_name == ohkl::at_unitCellName)
                     attr.read(typ, unit_cell_name);
             }
             Eigen::Matrix3d aa = Eigen::Matrix3d::Identity();
@@ -462,23 +462,23 @@ void ExperimentImporter::loadInstrumentStates(Experiment* experiment)
 {
     try {
         H5::H5File file(_file_name.c_str(), H5F_ACC_RDONLY);
-        H5::Group instrument_grp(file.openGroup(nsx::gr_Instrument));
+        H5::Group instrument_grp(file.openGroup(ohkl::gr_Instrument));
 
         Diffractometer* diff = experiment->getDiffractometer();
         const hsize_t object_num = instrument_grp.getNumObjs();
         for (int i = 0; i < object_num; ++i) {
-            nsx::InstrumentStateList instrument_states;
+            ohkl::InstrumentStateList instrument_states;
             const std::string data_name = instrument_grp.getObjnameByIdx(i);
-            std::string states_key = nsx::gr_Instrument + "/" + data_name;
+            std::string states_key = ohkl::gr_Instrument + "/" + data_name;
             H5::Group states_grp{file.openGroup(states_key)};
-            H5::DataSet detectorOrientation_ds{states_grp.openDataSet(nsx::ds_detectorOrientation)},
-                detectorPositionOffset_ds{states_grp.openDataSet(nsx::ds_detectorPositionOffset)},
-                sampleOrientation_ds{states_grp.openDataSet(nsx::ds_sampleOrientation)},
-                sampleOrientationOffset_ds{states_grp.openDataSet(nsx::ds_sampleOrientationOffset)},
-                samplePosition_ds{states_grp.openDataSet(nsx::ds_samplePosition)},
-                ni_ds{states_grp.openDataSet(nsx::ds_beamDirection)},
-                wavelength_ds{states_grp.openDataSet(nsx::ds_beamWavelength)},
-                refined_ds{states_grp.openDataSet(nsx::ds_isRefinedState)};
+            H5::DataSet detectorOrientation_ds{states_grp.openDataSet(ohkl::ds_detectorOrientation)},
+                detectorPositionOffset_ds{states_grp.openDataSet(ohkl::ds_detectorPositionOffset)},
+                sampleOrientation_ds{states_grp.openDataSet(ohkl::ds_sampleOrientation)},
+                sampleOrientationOffset_ds{states_grp.openDataSet(ohkl::ds_sampleOrientationOffset)},
+                samplePosition_ds{states_grp.openDataSet(ohkl::ds_samplePosition)},
+                ni_ds{states_grp.openDataSet(ohkl::ds_beamDirection)},
+                wavelength_ds{states_grp.openDataSet(ohkl::ds_beamWavelength)},
+                refined_ds{states_grp.openDataSet(ohkl::ds_isRefinedState)};
 
             HDF5TableReader detectorOrientation(detectorOrientation_ds),
                 detectorPositionOffset(detectorPositionOffset_ds),
@@ -488,7 +488,7 @@ void ExperimentImporter::loadInstrumentStates(Experiment* experiment)
                 refined(refined_ds);
 
             std::size_t n_states = detectorOrientation.n_rows;
-            nsx::InstrumentState state(diff);
+            ohkl::InstrumentState state(diff);
             for (std::size_t i_row = 0; i_row < n_states; ++i_row) {
                 detectorOrientation.readRow(i_row, state.detectorOrientation.data());
                 detectorPositionOffset.readRow(i_row, state.detectorPositionOffset.data());
@@ -516,4 +516,4 @@ void ExperimentImporter::loadInstrumentStates(Experiment* experiment)
 
 void ExperimentImporter::finishLoad() { }
 
-} // namespace nsx
+} // namespace ohkl

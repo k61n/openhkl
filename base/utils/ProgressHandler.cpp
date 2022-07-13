@@ -17,7 +17,7 @@
 
 #include "base/utils/ProgressHandler.h"
 
-namespace nsx {
+namespace ohkl {
 
 ProgressHandler::ProgressHandler()
 {
@@ -106,4 +106,4 @@ bool ProgressHandler::aborted()
     return _aborted;
 }
 
-} // namespace nsx
+} // namespace ohkl

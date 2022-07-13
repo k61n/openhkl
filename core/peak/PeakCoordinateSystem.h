@@ -21,7 +21,7 @@
 
 #include <Eigen/Core>
 
-namespace nsx {
+namespace ohkl {
 
 //! The per-peak coordinate system described by Kabsch (1988, 2010).
 
@@ -55,7 +55,7 @@ class PeakCoordinateSystem {
 
  private:
     //! Reference peak about which the coordinate system is based
-    nsx::Peak3D* _peak;
+    ohkl::Peak3D* _peak;
     //! DetectorEvent corresponding to peak center
     DetectorEvent _event;
     //! State of the instrument at the time peak was observed.
@@ -72,6 +72,6 @@ class PeakCoordinateSystem {
     double _zeta;
 };
 
-} // namespace nsx
+} // namespace ohkl
 
 #endif // NSX_CORE_PEAK_PEAKCOORDINATESYSTEM_H

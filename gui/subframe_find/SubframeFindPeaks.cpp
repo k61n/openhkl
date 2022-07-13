@@ -53,7 +53,7 @@
 
 SubframeFindPeaks::SubframeFindPeaks()
     : QWidget()
-    , _peak_collection("temp", nsx::PeakCollectionType::FOUND)
+    , _peak_collection("temp", ohkl::PeakCollectionType::FOUND)
     , _peak_collection_item()
     , _peak_collection_model()
     , _peaks_integrated(false)
@@ -124,7 +124,7 @@ void SubframeFindPeaks::setBlobUp()
 
     _kernel_combo = f.addCombo("Kernel", "Convolution kernel for peak search");
 
-    nsx::ConvolverFactory convolver_factory;
+    ohkl::ConvolverFactory convolver_factory;
     for (const auto& convolution_kernel_combo : convolver_factory.callbacks())
         _kernel_combo->addItem(QString::fromStdString(convolution_kernel_combo.first));
     _kernel_combo->setCurrentText("annular");
@@ -291,7 +291,7 @@ void SubframeFindPeaks::refreshAll()
 
 void SubframeFindPeaks::grabFinderParameters()
 {
-    nsx::PeakFinder* finder = gSession->currentProject()->experiment()->peakFinder();
+    ohkl::PeakFinder* finder = gSession->currentProject()->experiment()->peakFinder();
 
     auto* params = gSession->currentProject()->experiment()->peakFinder()->parameters();
 
@@ -303,7 +303,7 @@ void SubframeFindPeaks::grabFinderParameters()
     _end_frame_spin->setValue(params->frames_end);
     _threshold_spin->setValue(params->threshold);
 
-    nsx::Convolver* convolver = finder->convolver();
+    ohkl::Convolver* convolver = finder->convolver();
     std::string convolverType = convolver->type();
     _kernel_combo->setCurrentText(QString::fromStdString(convolverType));
 
@@ -340,7 +340,7 @@ void SubframeFindPeaks::setFinderParameters()
     if (!gSession->hasProject())
         return;
 
-    nsx::PeakFinder* finder = gSession->currentProject()->experiment()->peakFinder();
+    ohkl::PeakFinder* finder = gSession->currentProject()->experiment()->peakFinder();
 
     auto* params = gSession->currentProject()->experiment()->peakFinder()->parameters();
     params->minimum_size = _min_size_spin->value();
@@ -352,10 +352,10 @@ void SubframeFindPeaks::setFinderParameters()
     params->threshold = _threshold_spin->value();
 
     std::string convolverType = _kernel_combo->currentText().toStdString();
-    nsx::ConvolverFactory factory;
-    nsx::Convolver* convolver = factory.create(convolverType, {});
+    ohkl::ConvolverFactory factory;
+    ohkl::Convolver* convolver = factory.create(convolverType, {});
     convolver->setParameters(convolutionParameters());
-    finder->setConvolver(std::unique_ptr<nsx::Convolver>(convolver));
+    finder->setConvolver(std::unique_ptr<ohkl::Convolver>(convolver));
 }
 
 void SubframeFindPeaks::grabIntegrationParameters()
@@ -382,8 +382,8 @@ void SubframeFindPeaks::setIntegrationParameters()
 void SubframeFindPeaks::updateConvolutionParameters()
 {
     std::string kernelName = _kernel_combo->currentText().toStdString();
-    nsx::ConvolverFactory _kernel_comboFactory;
-    nsx::Convolver* kernel = _kernel_comboFactory.create(kernelName, {});
+    ohkl::ConvolverFactory _kernel_comboFactory;
+    ohkl::Convolver* kernel = _kernel_comboFactory.create(kernelName, {});
 
     const std::map<std::string, double>& params = kernel->parameters();
     using mapIterator = std::map<std::string, double>::const_iterator;
@@ -415,8 +415,8 @@ void SubframeFindPeaks::updateConvolutionParameters()
 void SubframeFindPeaks::find()
 {
     gGui->setReady(false);
-    nsx::DataList data_list;
-    const nsx::DataList all_data = gSession->currentProject()->allData();
+    ohkl::DataList data_list;
+    const ohkl::DataList all_data = gSession->currentProject()->allData();
 
     int idx = _data_combo->currentIndex();
 
@@ -434,8 +434,8 @@ void SubframeFindPeaks::find()
         }
     }
 
-    nsx::PeakFinder* finder = gSession->currentProject()->experiment()->peakFinder();
-    nsx::sptrProgressHandler progHandler = nsx::sptrProgressHandler(new nsx::ProgressHandler);
+    ohkl::PeakFinder* finder = gSession->currentProject()->experiment()->peakFinder();
+    ohkl::sptrProgressHandler progHandler = ohkl::sptrProgressHandler(new ohkl::ProgressHandler);
     ProgressView progressView(nullptr);
     progressView.watch(progHandler);
     finder->setHandler(progHandler);
@@ -459,12 +459,12 @@ void SubframeFindPeaks::integrate()
     auto* integrator = experiment->integrator();
     auto* finder = experiment->peakFinder();
 
-    nsx::sptrProgressHandler handler(new nsx::ProgressHandler);
+    ohkl::sptrProgressHandler handler(new ohkl::ProgressHandler);
     ProgressView progressView(nullptr);
     progressView.watch(handler);
 
     setIntegrationParameters();
-    integrator->getIntegrator(nsx::IntegratorType::PixelSum)->setHandler(handler);
+    integrator->getIntegrator(ohkl::IntegratorType::PixelSum)->setHandler(handler);
 
     integrator->integrateFoundPeaks(finder);
     refreshPeakTable();
@@ -490,7 +490,7 @@ std::map<std::string, double> SubframeFindPeaks::convolutionParameters()
 void SubframeFindPeaks::accept()
 {
     auto expt = gSession->currentProject()->experiment();
-    nsx::PeakFinder* finder = expt->peakFinder();
+    ohkl::PeakFinder* finder = expt->peakFinder();
 
     if (finder->currentPeaks().empty())
         return;
@@ -524,13 +524,13 @@ void SubframeFindPeaks::refreshPreview()
         return;
     }
 
-    nsx::sptrDataSet data = _data_combo->currentData();
+    ohkl::sptrDataSet data = _data_combo->currentData();
     int nrows = data->nRows();
     int ncols = data->nCols();
 
     std::string convolvertype = _kernel_combo->currentText().toStdString();
     std::map<std::string, double> convolverParams = convolutionParameters();
-    Eigen::MatrixXd convolvedFrame = nsx::convolvedFrame(
+    Eigen::MatrixXd convolvedFrame = ohkl::convolvedFrame(
         data->reader()->data(_detector_widget->spin()->value()), convolvertype, convolverParams);
     if (_live_check->isChecked()) {
         double thresholdVal = _threshold_spin->value();
@@ -556,7 +556,7 @@ void SubframeFindPeaks::refreshPreview()
 
 void SubframeFindPeaks::refreshPeakTable()
 {
-    std::vector<nsx::Peak3D*> peaks =
+    std::vector<ohkl::Peak3D*> peaks =
         gSession->currentProject()->experiment()->peakFinder()->currentPeaks();
 
     _peak_collection.populate(peaks);

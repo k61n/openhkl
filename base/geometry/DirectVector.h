@@ -17,7 +17,7 @@
 
 #include <Eigen/Dense>
 
-namespace nsx {
+namespace ohkl {
 
 //! A vector in direct space.
 
@@ -56,6 +56,6 @@ class DirectVector {
 //! Overload operator<< with DirectVector type
 std::ostream& operator<<(std::ostream& os, const DirectVector& dvector);
 
-} // namespace nsx
+} // namespace ohkl
 
 #endif // NSX_BASE_GEOMETRY_DIRECTVECTOR_H

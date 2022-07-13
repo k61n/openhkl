@@ -24,7 +24,7 @@
 #include <iomanip>
 #include <iostream>
 
-namespace nsx {
+namespace ohkl {
 
 void DataQuality::computeQuality(MergedData& merged_peaks)
 {
@@ -34,9 +34,9 @@ void DataQuality::computeQuality(MergedData& merged_peaks)
     redundancy = merged_peaks.redundancy();
     Completeness = static_cast<double>(nobserved) / static_cast<double>(max_peaks);
 
-    nsx::RFactor rfactor;
+    ohkl::RFactor rfactor;
     rfactor.calculate(&merged_peaks);
-    nsx::CC cc;
+    ohkl::CC cc;
     cc.calculate(&merged_peaks);
     Rmerge = rfactor.Rmerge();
     expectedRmerge = rfactor.expectedRmerge();
@@ -109,4 +109,4 @@ void DataResolution::log() const
     nsxlog(Level::Info, oss.str());
 }
 
-} // namespace nsx
+} // namespace ohkl

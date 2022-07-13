@@ -29,14 +29,14 @@ class ProgressView : public QProgressDialog {
     ProgressView(QWidget* parent);
     ~ProgressView();
 
-    void watch(nsx::sptrProgressHandler handler);
+    void watch(ohkl::sptrProgressHandler handler);
 
  public slots:
     void updateProgress();
     void abort();
 
  private:
-    nsx::sptrProgressHandler _handler;
+    ohkl::sptrProgressHandler _handler;
     std::unique_ptr<QTimer> _timer;
 };
 

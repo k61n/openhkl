@@ -15,7 +15,7 @@
 #ifndef NSX_CORE_STATISTICS_IMERGEDPEAKSTATISTIC_H
 #define NSX_CORE_STATISTICS_IMERGEDPEAKSTATISTIC_H
 
-namespace nsx {
+namespace ohkl {
 
 class MergedData;
 
@@ -30,6 +30,6 @@ class IMergedPeakStatistic {
     double value() const;
 };
 
-} // namespace nsx
+} // namespace ohkl
 
 #endif // NSX_CORE_STATISTICS_IMERGEDPEAKSTATISTIC_H

@@ -18,7 +18,7 @@
 #include "core/data/DataTypes.h"
 #include "core/instrument/Diffractometer.h"
 
-namespace nsx {
+namespace ohkl {
 
 InstrumentStateSet::InstrumentStateSet(DataSet* data, const InstrumentStateList& states)
     : _id(0), _data(data), _instrument_states(states)
@@ -54,4 +54,4 @@ void InstrumentStateSet::setDiffractometer()
         state.setDiffractometer(_data->diffractometer());
 }
 
-} // namespace nsx
+} // namespace ohkl

@@ -41,7 +41,7 @@ ProgressView::ProgressView(QWidget* parent) : QProgressDialog(parent)
 
 ProgressView::~ProgressView() = default;
 
-void ProgressView::watch(nsx::sptrProgressHandler handler)
+void ProgressView::watch(ohkl::sptrProgressHandler handler)
 {
     _handler = handler;
 

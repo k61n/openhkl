@@ -19,7 +19,7 @@
 
 #include <H5Cpp.h>
 
-namespace nsx {
+namespace ohkl {
 
 //! IDataReader for Nexus files. Base class for NexusDataReader and FakeDataReader.
 
@@ -45,6 +45,6 @@ class BaseNexusDataReader : public IDataReader {
     std::unique_ptr<H5::DataSpace> _memspace;
 };
 
-} // namespace nsx
+} // namespace ohkl
 
 #endif // NSX_CORE_LOADER_NEXUSMETADATAREADER_H

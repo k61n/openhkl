@@ -21,12 +21,12 @@
 #include <fstream>
 #include <stdexcept>
 
-namespace nsx {
+namespace ohkl {
 
 //! Minimal meta data set, to supplement binary raw data in RawDataReader.
 
 struct RawDataReaderParameters {
-    std::string dataset_name = nsx::kw_datasetDefaultName;
+    std::string dataset_name = ohkl::kw_datasetDefaultName;
     double wavelength = 0.0;
     double delta_omega = 0.0;
     double delta_chi = 0.0;
@@ -151,6 +151,6 @@ Eigen::Matrix<T_, Eigen::Dynamic, Eigen::Dynamic> RawDataReader::matrixFromData(
     }
 }
 
-} // namespace nsx
+} // namespace ohkl
 
 #endif // NSX_CORE_LOADER_RAWDATAREADER_H

@@ -55,13 +55,13 @@ class DetectorWidget : public QGridLayout {
     //! Synchronise intensity sliders and intensities across instances
     void syncIntensitySliders();
     //! Update the DataSet combo
-    void updateDatasetList(const std::vector<nsx::sptrDataSet>& data_list);
+    void updateDatasetList(const std::vector<ohkl::sptrDataSet>& data_list);
     //! Refresh the DetectorScene
     void refresh();
     //! Link the detector scene to one or two peak models
     void linkPeakModel(PeakCollectionModel* model1, PeakCollectionModel* model2 = nullptr);
     //! Return the current DataSet
-    nsx::sptrDataSet currentData();
+    ohkl::sptrDataSet currentData();
     //! Switch the Detectorscene between coordinate types
     void changeView(int option);
 

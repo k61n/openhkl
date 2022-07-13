@@ -22,7 +22,7 @@
 #include "core/raw/DataKeys.h"
 
 
-namespace nsx {
+namespace ohkl {
 
 /*! \addtogroup python_api
  *  @{*/
@@ -90,7 +90,7 @@ class Diffractometer {
     Diffractometer(const std::string& name);
 
     //! Name of the diffractometer
-    std::string _name = nsx::kw_diffractometerDefaultName;
+    std::string _name = ohkl::kw_diffractometerDefaultName;
 
     //! Pointer to detector
     std::unique_ptr<Detector> _detector;
@@ -103,6 +103,6 @@ class Diffractometer {
 };
 
 /*! @}*/
-} // namespace nsx
+} // namespace ohkl
 
 #endif // NSX_CORE_INSTRUMENT_DIFFRACTOMETER_H

@@ -18,7 +18,7 @@
 #include "base/geometry/AABB.h"
 #include "base/mask/IMask.h"
 
-namespace nsx {
+namespace ohkl {
 
 //! Detector IMask, constructed from an AABB (axis-aligned bounding box).
 
@@ -42,6 +42,6 @@ class BoxMask : public IMask {
     AABB _aabb;
 };
 
-} // namespace nsx
+} // namespace ohkl
 
 #endif // NSX_BASE_MASK_BOXMASK_H

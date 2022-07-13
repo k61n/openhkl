@@ -31,7 +31,7 @@ TEST_CASE("test/utils/TestCSV-default_separators", "")
         "e, f, g, h";
 
     std::istringstream stream(csv_file);
-    nsx::CSV csv;
+    ohkl::CSV csv;
     std::vector<std::string> row;
 
     while (!stream.eof()) {
@@ -48,7 +48,7 @@ TEST_CASE("test/utils/TestCSV-user_defined_separators", "")
                            "a\tb\tc\td'\t'f";
 
     std::istringstream stream(csv_file);
-    nsx::CSV csv('\t', '\'');
+    ohkl::CSV csv('\t', '\'');
     std::vector<std::string> row;
 
     while (!stream.eof()) {

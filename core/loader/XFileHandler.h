@@ -19,7 +19,7 @@
 #include <memory>
 #include <vector>
 
-namespace nsx {
+namespace ohkl {
 
 std::vector<std::string> tokenize(const std::string& s);
 
@@ -119,6 +119,6 @@ class PeakCenterDataSet {
     std::vector<std::unique_ptr<XFileHandler>> _xfiles;
 };
 
-} // namespace nsx
+} // namespace ohkl
 
 #endif // NSX_CORE_LOADER_XFILEHANDLER_H

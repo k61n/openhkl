@@ -31,7 +31,7 @@ InstrumentStatesFrame::InstrumentStatesFrame() : QFrame()
         // gLogger->log("[ERROR] No experiment selected");
         return;
     }
-    const std::vector<nsx::sptrDataSet> datalist = gSession->currentProject()->allData();
+    const std::vector<ohkl::sptrDataSet> datalist = gSession->currentProject()->allData();
     if (datalist.empty()) {
         // gLogger->log("[ERROR] No dataset found");
         return;
@@ -47,7 +47,7 @@ InstrumentStatesFrame::InstrumentStatesFrame() : QFrame()
     QHBoxLayout* horizLayout = new QHBoxLayout;
     QVBoxLayout* vertical_1 = new QVBoxLayout;
     data = new QListWidget(this);
-    for (const nsx::sptrDataSet& d : datalist) {
+    for (const ohkl::sptrDataSet& d : datalist) {
         QListWidgetItem* item = new QListWidgetItem(QString::fromStdString(d->name()));
         item->setData(Qt::UserRole, QVariant::fromValue(d));
         data->addItem(item);
@@ -341,7 +341,7 @@ void InstrumentStatesFrame::selectedDataChanged(int selectedData)
 {
     Q_UNUSED(selectedData)
     QListWidgetItem* currentItem = data->currentItem();
-    nsx::sptrDataSet currentData = currentItem->data(Qt::UserRole).value<nsx::sptrDataSet>();
+    ohkl::sptrDataSet currentData = currentItem->data(Qt::UserRole).value<ohkl::sptrDataSet>();
     frameIndex->setValue(0);
     frameSlider->setMinimum(0);
     frameSlider->setMaximum(currentData->nFrames() - 1);
@@ -351,10 +351,10 @@ void InstrumentStatesFrame::selectedDataChanged(int selectedData)
 
 void InstrumentStatesFrame::selectedFrameChanged(int selectedFrame)
 {
-    nsx::sptrDataSet currentData =
-        data->currentItem()->data(Qt::UserRole).value<nsx::sptrDataSet>();
-    const nsx::InstrumentStateList& instrumentStates = currentData->instrumentStates();
-    nsx::InstrumentState selectedState = instrumentStates[selectedFrame];
+    ohkl::sptrDataSet currentData =
+        data->currentItem()->data(Qt::UserRole).value<ohkl::sptrDataSet>();
+    const ohkl::InstrumentStateList& instrumentStates = currentData->instrumentStates();
+    ohkl::InstrumentState selectedState = instrumentStates[selectedFrame];
 
     QFont font;
     font.setBold(true);

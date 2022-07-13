@@ -411,7 +411,7 @@ void SubframeShapes::setShapeParameters()
     params->sigma_m = _sigma_m->value();
     params->sigma_d = _sigma_d->value();
     params->interpolation =
-        static_cast<nsx::PeakInterpolation>(_interpolation_combo->currentIndex());
+        static_cast<ohkl::PeakInterpolation>(_interpolation_combo->currentIndex());
 }
 
 void SubframeShapes::setPreviewUp()
@@ -456,9 +456,9 @@ void SubframeShapes::buildShapeModel()
     setShapeParameters();
     try {
         auto* params = _shape_model.parameters();
-        std::vector<nsx::Peak3D*> fit_peaks;
+        std::vector<ohkl::Peak3D*> fit_peaks;
 
-        for (nsx::Peak3D* peak : _peak_combo->currentPeakCollection()->getPeakList()) {
+        for (ohkl::Peak3D* peak : _peak_combo->currentPeakCollection()->getPeakList()) {
             if (!peak->enabled())
                 continue;
             const double d = 1.0 / peak->q().rowVector().norm();
@@ -466,18 +466,18 @@ void SubframeShapes::buildShapeModel()
             if (d > params->d_max || d < params->d_min)
                 continue;
 
-            const nsx::Intensity intensity = peak->correctedIntensity();
+            const ohkl::Intensity intensity = peak->correctedIntensity();
 
             if (intensity.value() <= params->strength_min * intensity.sigma())
                 continue;
             fit_peaks.push_back(peak);
         }
 
-        nsx::sptrProgressHandler handler(new nsx::ProgressHandler);
+        ohkl::sptrProgressHandler handler(new ohkl::ProgressHandler);
         ProgressView view(this);
         view.watch(handler);
 
-        std::set<nsx::sptrDataSet> data;
+        std::set<ohkl::sptrDataSet> data;
         for (auto dataset : gSession->currentProject()->experiment()->getAllData())
             data.insert(dataset);
 
@@ -500,9 +500,9 @@ void SubframeShapes::computeProfile()
     setShapeParameters();
 
     auto* params = _shape_model.parameters();
-    const nsx::DetectorEvent ev(_x->value(), _y->value(), _frame->value());
+    const ohkl::DetectorEvent ev(_x->value(), _y->value(), _frame->value());
 
-    std::optional<nsx::Profile3D> profile = _shape_model.meanProfile(
+    std::optional<ohkl::Profile3D> profile = _shape_model.meanProfile(
         ev, params->neighbour_range_pixels, params->neighbour_range_frames);
     if (!profile) {
         return;
@@ -543,20 +543,20 @@ void SubframeShapes::computeProfile()
     _graphics_view->fitInView(_graphics_view->scene()->sceneRect(), Qt::KeepAspectRatio);
 }
 
-void SubframeShapes::getPreviewPeak(nsx::Peak3D* selected_peak)
+void SubframeShapes::getPreviewPeak(ohkl::Peak3D* selected_peak)
 {
     setShapeParameters();
     auto* params = _shape_model.parameters();
     int interpol = _interpolation_combo->currentIndex();
-    nsx::PeakInterpolation peak_interpolation = static_cast<nsx::PeakInterpolation>(interpol);
+    ohkl::PeakInterpolation peak_interpolation = static_cast<ohkl::PeakInterpolation>(interpol);
 
     auto cov = _shape_model.meanCovariance(
         selected_peak, params->neighbour_range_pixels, params->neighbour_range_frames,
         params->min_n_neighbors, peak_interpolation);
     if (cov) {
         Eigen::Vector3d center = selected_peak->shape().center();
-        nsx::Ellipsoid shape = nsx::Ellipsoid(center, cov.value().inverse());
-        _preview_peak = std::make_unique<nsx::Peak3D>(selected_peak->dataSet(), shape);
+        ohkl::Ellipsoid shape = ohkl::Ellipsoid(center, cov.value().inverse());
+        _preview_peak = std::make_unique<ohkl::Peak3D>(selected_peak->dataSet(), shape);
     }
 }
 
@@ -588,11 +588,11 @@ void SubframeShapes::assignPeakShapes()
 {
     gGui->setReady(false);
     try {
-        nsx::sptrProgressHandler handler(new nsx::ProgressHandler);
+        ohkl::sptrProgressHandler handler(new ohkl::ProgressHandler);
         ProgressView progressView(nullptr);
         progressView.watch(handler);
 
-        nsx::PeakCollection* peaks = _predicted_combo->currentPeakCollection();
+        ohkl::PeakCollection* peaks = _predicted_combo->currentPeakCollection();
 
         _shape_combo->currentShapes()->setHandler(handler);
         _shape_combo->currentShapes()->setPredictedShapes(peaks);
@@ -642,7 +642,7 @@ DetectorWidget* SubframeShapes::detectorWidget()
     return _detector_widget;
 }
 
-void SubframeShapes::onPeakSelected(nsx::Peak3D* peak)
+void SubframeShapes::onPeakSelected(ohkl::Peak3D* peak)
 {
     QSignalBlocker block_x(_x);
     QSignalBlocker block_y(_y);
@@ -670,7 +670,7 @@ void SubframeShapes::onShapeChanged()
         return;
     computeProfile();
     Eigen::Vector3d new_centre = {_x->value(), _y->value(), _frame->value()};
-    nsx::Ellipsoid new_shape = {new_centre, _preview_peak->shape().metric()};
+    ohkl::Ellipsoid new_shape = {new_centre, _preview_peak->shape().metric()};
     _preview_peak->setShape(new_shape);
     getPreviewPeak(_preview_peak.get());
     _detector_widget->scene()->setPeak(_preview_peak.get());

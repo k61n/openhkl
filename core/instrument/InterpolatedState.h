@@ -17,7 +17,7 @@
 
 #include "core/instrument/InstrumentState.h"
 
-namespace nsx {
+namespace ohkl {
 
 /*! \addtogroup python_api
  *  @{*/
@@ -54,6 +54,6 @@ class InterpolatedState : public InstrumentState {
 };
 
 /*! @}*/
-} // namespace nsx
+} // namespace ohkl
 
 #endif // NSX_CORE_INSTRUMENT_INTERPOLATEDSTATE_H

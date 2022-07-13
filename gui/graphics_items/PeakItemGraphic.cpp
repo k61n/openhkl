@@ -36,7 +36,7 @@
 #include <QStyleOptionGraphicsItem>
 #include <QWidget>
 
-PeakItemGraphic::PeakItemGraphic(nsx::Peak3D* peak)
+PeakItemGraphic::PeakItemGraphic(ohkl::Peak3D* peak)
     : PlottableItem(nullptr, true, false), _peak(peak)
 {
     setVisible(true);
@@ -50,9 +50,9 @@ PeakItemGraphic::PeakItemGraphic(nsx::Peak3D* peak)
 void PeakItemGraphic::redraw()
 {
     QString peak_label;
-    const nsx::UnitCell* unit_cell = _peak->unitCell();
+    const ohkl::UnitCell* unit_cell = _peak->unitCell();
     if (unit_cell) {
-        nsx::MillerIndex hkl = _peak->hkl();
+        ohkl::MillerIndex hkl = _peak->hkl();
         if (hkl.indexed(unit_cell->indexingTolerance())) {
             peak_label = QString("%1,%2,%3").arg(hkl.h()).arg(hkl.k()).arg(hkl.l());
         } else {
@@ -79,9 +79,9 @@ void PeakItemGraphic::redraw()
     _center_gi->setZValue(10);
     _center_gi->setVisible(_show_center);
 
-    nsx::Ellipsoid peak_ellipsoid = _peak->shape();
+    ohkl::Ellipsoid peak_ellipsoid = _peak->shape();
     peak_ellipsoid.scale(_peak->peakEnd());
-    const nsx::AABB& aabb = peak_ellipsoid.aabb();
+    const ohkl::AABB& aabb = peak_ellipsoid.aabb();
     _lower = aabb.lower();
     _upper = aabb.upper();
 
@@ -101,7 +101,7 @@ void PeakItemGraphic::redraw()
 
 void PeakItemGraphic::setCenter(int frame)
 {
-    nsx::Ellipsoid peak_ellipsoid = _peak->shape();
+    ohkl::Ellipsoid peak_ellipsoid = _peak->shape();
 
     Eigen::Vector3d center =
         peak_ellipsoid.intersectionCenter({0.0, 0.0, 1.0}, {0.0, 0.0, static_cast<double>(frame)});
@@ -138,7 +138,7 @@ void PeakItemGraphic::initFromPeakViewWidget(const PeakViewWidget::Set& set)
     setCenterColor(set.colorPeaks->color());
 }
 
-nsx::Peak3D* PeakItemGraphic::peak() const
+ohkl::Peak3D* PeakItemGraphic::peak() const
 {
     return _peak;
 }
@@ -186,7 +186,7 @@ void PeakItemGraphic::plot(SXPlot* plot)
     if (!p)
         return;
 
-    const std::vector<nsx::Intensity>& rockingCurve = _peak->rockingCurve();
+    const std::vector<ohkl::Intensity>& rockingCurve = _peak->rockingCurve();
     const int N = int(rockingCurve.size());
 
     // Transform to QDouble
@@ -208,8 +208,8 @@ void PeakItemGraphic::plot(SXPlot* plot)
     // Now update text info:
     QString info;
 
-    if (const nsx::UnitCell* cell = _peak->unitCell()) {
-        nsx::MillerIndex hkl = _peak->hkl();
+    if (const ohkl::UnitCell* cell = _peak->unitCell()) {
+        ohkl::MillerIndex hkl = _peak->hkl();
         if (hkl.indexed(cell->indexingTolerance())) {
             info = "(h,k,l):" + QString::number(hkl.h()) + "," + QString::number(hkl.k()) + ","
                 + QString::number(hkl.l());
@@ -221,15 +221,15 @@ void PeakItemGraphic::plot(SXPlot* plot)
     }
 
     const Eigen::Vector3d c = _peak->shape().center();
-    const nsx::InterpolatedState state =
-        nsx::InterpolatedState::interpolate(_peak->dataSet()->instrumentStates(), c[2]);
-    const nsx::DirectVector position =
+    const ohkl::InterpolatedState state =
+        ohkl::InterpolatedState::interpolate(_peak->dataSet()->instrumentStates(), c[2]);
+    const ohkl::DirectVector position =
         _peak->dataSet()->diffractometer()->detector()->pixelPosition(c[0], c[1]);
-    const double g = state.gamma(position) / nsx::deg;
-    const double n = state.nu(position) / nsx::deg;
+    const double g = state.gamma(position) / ohkl::deg;
+    const double n = state.nu(position) / ohkl::deg;
     info += " " + QString(QChar(0x03B3)) + "," + QString(QChar(0x03BD)) + ":"
         + QString::number(g, 'f', 2) + "," + QString::number(n, 'f', 2) + "\n";
-    const nsx::Intensity corr_int = _peak->correctedIntensity();
+    const ohkl::Intensity corr_int = _peak->correctedIntensity();
     const double intensity = corr_int.value();
     const double sI = corr_int.sigma();
     info += "Intensity (" + QString(QChar(0x03C3)) + "I): " + QString::number(intensity) + " ("
@@ -238,7 +238,7 @@ void PeakItemGraphic::plot(SXPlot* plot)
         + " (" + QString::number(sI, 'f', 2) + ")\n";
 
     const double scale = _peak->scale();
-    const double monitor = _peak->dataSet()->metadata().key<double>(nsx::at_monitorSum);
+    const double monitor = _peak->dataSet()->metadata().key<double>(ohkl::at_monitorSum);
     info += "Monitor " + QString::number(monitor * scale) + " counts";
     QCPTextElement* title = dynamic_cast<QCPTextElement*>(p->plotLayout()->element(0, 0));
     if (title != nullptr)

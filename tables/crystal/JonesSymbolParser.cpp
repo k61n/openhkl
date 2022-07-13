@@ -23,7 +23,7 @@
 #include "base/utils/StringIO.h"
 #include "tables/crystal/JonesSymbolParser.h"
 
-namespace nsx {
+namespace ohkl {
 
 Eigen::Transform<double, 3, Eigen::Affine> parseJonesSymbol(const std::string& jonesSymbol)
 {
@@ -122,4 +122,4 @@ Eigen::Transform<double, 3, Eigen::Affine> parseJonesSymbol(const std::string& j
     return matrix;
 }
 
-} // namespace nsx
+} // namespace ohkl

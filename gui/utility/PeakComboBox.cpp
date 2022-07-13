@@ -28,7 +28,7 @@ PeakComboBox::PeakComboBox(QWidget* parent) : QComboBox(parent)
     _all_combos.push_back(this);
 }
 
-void PeakComboBox::addPeakCollection(nsx::PeakCollection* peaks)
+void PeakComboBox::addPeakCollection(ohkl::PeakCollection* peaks)
 {
     QSignalBlocker blocker(this);
     addItem(QString::fromStdString(peaks->name()));
@@ -54,7 +54,7 @@ void PeakComboBox::clearAll()
 }
 
 //! Return a pointer to the current unit cell
-nsx::PeakCollection* PeakComboBox::currentPeakCollection() const
+ohkl::PeakCollection* PeakComboBox::currentPeakCollection() const
 {
     if (count() != _list_pointer->size()) {
         if (_empty_first) {
@@ -74,7 +74,7 @@ void PeakComboBox::refresh()
     clear();
     if (_empty_first)
         addItem(QString());
-    for (nsx::PeakCollection* collection : *_list_pointer)
+    for (ohkl::PeakCollection* collection : *_list_pointer)
         addItem(QString::fromStdString(collection->name()));
     setCurrentText(_current);
 }

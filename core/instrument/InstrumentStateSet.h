@@ -18,7 +18,7 @@
 #include "core/data/DataTypes.h"
 #include "core/instrument/InstrumentState.h"
 
-namespace nsx {
+namespace ohkl {
 
 using sptrDataSet = std::shared_ptr<DataSet>;
 
@@ -61,6 +61,6 @@ class InstrumentStateSet {
 };
 
 /*! @}*/
-} // namespace nsx
+} // namespace ohkl
 
 #endif // NSX_CORE_INSTRUMENT_INSTRUMENTSTATESET_H

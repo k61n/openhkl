@@ -27,7 +27,7 @@ class Peak3D;
 //! Plottable graphics item that represents a peak in the detector image
 class PeakItemGraphic : public PlottableItem {
  public:
-    PeakItemGraphic(nsx::Peak3D* peak);
+    PeakItemGraphic(ohkl::Peak3D* peak);
     ~PeakItemGraphic() = default;
 
     //! Redraw all the elements of the item
@@ -44,7 +44,7 @@ class PeakItemGraphic : public PlottableItem {
     //! Returns the type of plot related to the item
     std::string getPlotType() const override;
     //! return the actual peak pointer
-    nsx::Peak3D* peak() const;
+    ohkl::Peak3D* peak() const;
     //! Show the labels
     void showLabel(bool flag);
     //! Show the peak area
@@ -61,7 +61,7 @@ class PeakItemGraphic : public PlottableItem {
 
  private:
     //! Pointer to the Peak3D object
-    nsx::Peak3D* _peak;
+    ohkl::Peak3D* _peak;
     //! Flag to show the label
     bool _show_label;
     //! Flag to show the area

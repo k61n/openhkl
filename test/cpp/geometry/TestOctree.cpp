@@ -25,22 +25,22 @@
 
 void collision_test()
 {
-    nsx::Octree tree({0, 0, 0}, {100, 100, 100});
+    ohkl::Octree tree({0, 0, 0}, {100, 100, 100});
     auto vects = Eigen::Matrix3d::Identity();
     const double radius = 0.45;
     auto vals = Eigen::Vector3d(radius, radius, radius);
     auto center = Eigen::Vector3d(0.0, 0.0, 0.0);
 
-    std::set<const nsx::Ellipsoid*> test_set;
+    std::set<const ohkl::Ellipsoid*> test_set;
 
-    std::vector<nsx::Ellipsoid*> ellipsoids;
+    std::vector<ohkl::Ellipsoid*> ellipsoids;
 
     // lattice of non-intersecting spheres
     for (int i = 1; i < 20; ++i) {
         for (int j = 1; j < 20; ++j) {
             for (int k = 1; k < 20; ++k) {
                 center = Eigen::Vector3d(i, j, k);
-                auto ellipsoid = new nsx::Ellipsoid(center, vals, vects);
+                auto ellipsoid = new ohkl::Ellipsoid(center, vals, vects);
                 ellipsoids.emplace_back(ellipsoid);
                 tree.addData(ellipsoid);
             }
@@ -65,7 +65,7 @@ void collision_test()
     // add some spheres which will intersect
     center = Eigen::Vector3d(1.5, 1.5, 1.5);
     vals = Eigen::Vector3d(radius, radius, radius);
-    auto ellipsoid = new nsx::Ellipsoid(center, vals, vects);
+    auto ellipsoid = new ohkl::Ellipsoid(center, vals, vects);
 
     CHECK(tree.getCollisions(*ellipsoid).size() == 8);
     ellipsoids.emplace_back(ellipsoid);
@@ -81,15 +81,15 @@ void collision_test()
 
 void collision_test_2()
 {
-    nsx::Octree tree({0, 0, 0}, {100, 100, 100});
+    ohkl::Octree tree({0, 0, 0}, {100, 100, 100});
     auto vects = Eigen::Matrix3d::Identity();
     const double radius = 0.55;
     auto vals = Eigen::Vector3d(radius, radius, radius);
     auto center = Eigen::Vector3d(0.0, 0.0, 0.0);
 
-    std::set<const nsx::Ellipsoid*> test_set;
+    std::set<const ohkl::Ellipsoid*> test_set;
 
-    std::vector<nsx::Ellipsoid*> ellipsoids;
+    std::vector<ohkl::Ellipsoid*> ellipsoids;
 
     const int N = 19;
 
@@ -98,7 +98,7 @@ void collision_test_2()
         for (int j = 1; j < N + 1; ++j) {
             for (int k = 1; k < N + 1; ++k) {
                 center = Eigen::Vector3d(i, j, k);
-                auto ellipsoid = new nsx::Ellipsoid(center, vals, vects);
+                auto ellipsoid = new ohkl::Ellipsoid(center, vals, vects);
                 ellipsoids.emplace_back(ellipsoid);
                 tree.addData(ellipsoid);
             }
@@ -122,7 +122,7 @@ void collision_test_2()
     // add some spheres which will intersect
     center = Eigen::Vector3d(1.5, 1.5, 1.5);
     vals = Eigen::Vector3d(radius, radius, radius);
-    auto ellipsoid = new nsx::Ellipsoid(center, vals, vects);
+    auto ellipsoid = new ohkl::Ellipsoid(center, vals, vects);
 
     CHECK(tree.getCollisions(*ellipsoid).size() == 8);
     ellipsoids.emplace_back(ellipsoid);
@@ -138,25 +138,25 @@ void collision_test_2()
 
 void split_test()
 {
-    nsx::Octree tree({0, 0, 0}, {50, 50, 50});
+    ohkl::Octree tree({0, 0, 0}, {50, 50, 50});
     tree.setMaxStorage(4);
 
     auto vects = Eigen::Matrix3d::Identity();
     const double radius = 1.0;
     auto vals = Eigen::Vector3d(radius, radius, radius);
 
-    std::set<const nsx::Ellipsoid*> test_set;
+    std::set<const ohkl::Ellipsoid*> test_set;
 
-    std::vector<nsx::Ellipsoid*> ellipsoids;
+    std::vector<ohkl::Ellipsoid*> ellipsoids;
 
-    ellipsoids.emplace_back(new nsx::Ellipsoid(Eigen::Vector3d(12.5, 12.5, 12.5), vals, vects));
-    ellipsoids.emplace_back(new nsx::Ellipsoid(Eigen::Vector3d(12.5, 12.5, 37.5), vals, vects));
-    ellipsoids.emplace_back(new nsx::Ellipsoid(Eigen::Vector3d(12.5, 37.5, 12.5), vals, vects));
-    ellipsoids.emplace_back(new nsx::Ellipsoid(Eigen::Vector3d(12.5, 37.5, 37.5), vals, vects));
-    ellipsoids.emplace_back(new nsx::Ellipsoid(Eigen::Vector3d(37.5, 12.5, 12.5), vals, vects));
-    ellipsoids.emplace_back(new nsx::Ellipsoid(Eigen::Vector3d(37.5, 12.5, 37.5), vals, vects));
-    ellipsoids.emplace_back(new nsx::Ellipsoid(Eigen::Vector3d(37.5, 37.5, 12.5), vals, vects));
-    ellipsoids.emplace_back(new nsx::Ellipsoid(Eigen::Vector3d(37.5, 37.5, 37.5), vals, vects));
+    ellipsoids.emplace_back(new ohkl::Ellipsoid(Eigen::Vector3d(12.5, 12.5, 12.5), vals, vects));
+    ellipsoids.emplace_back(new ohkl::Ellipsoid(Eigen::Vector3d(12.5, 12.5, 37.5), vals, vects));
+    ellipsoids.emplace_back(new ohkl::Ellipsoid(Eigen::Vector3d(12.5, 37.5, 12.5), vals, vects));
+    ellipsoids.emplace_back(new ohkl::Ellipsoid(Eigen::Vector3d(12.5, 37.5, 37.5), vals, vects));
+    ellipsoids.emplace_back(new ohkl::Ellipsoid(Eigen::Vector3d(37.5, 12.5, 12.5), vals, vects));
+    ellipsoids.emplace_back(new ohkl::Ellipsoid(Eigen::Vector3d(37.5, 12.5, 37.5), vals, vects));
+    ellipsoids.emplace_back(new ohkl::Ellipsoid(Eigen::Vector3d(37.5, 37.5, 12.5), vals, vects));
+    ellipsoids.emplace_back(new ohkl::Ellipsoid(Eigen::Vector3d(37.5, 37.5, 37.5), vals, vects));
 
     for (const auto& ellipsoid : ellipsoids)
         tree.addData(ellipsoid);
@@ -194,20 +194,20 @@ TEST_CASE("test/geometry/TestOctree.cpp", "")
 
     // Build up a NDTree with (0,0,0) as lower corner and (100,100,100) as upper
     // corner
-    nsx::Octree tree({0, 0, 0}, {100, 100, 100});
+    ohkl::Octree tree({0, 0, 0}, {100, 100, 100});
     tree.setMaxStorage(maxStorage);
 
     std::uniform_real_distribution<> d1(0, 50), d2(50, 100);
     std::mt19937 gen;
 
-    std::vector<nsx::Ellipsoid> ellipsoids;
+    std::vector<ohkl::Ellipsoid> ellipsoids;
     ellipsoids.reserve(100);
 
     for (unsigned int i = 0; i <= maxStorage; ++i) {
         Eigen::Vector3d v1(d1(gen), d1(gen), d1(gen));
         Eigen::Matrix3d mat;
         mat << 1, 0, 0, 0, 1, 0, 0, 0, 1;
-        ellipsoids.emplace_back(nsx::Ellipsoid(v1, mat));
+        ellipsoids.emplace_back(ohkl::Ellipsoid(v1, mat));
         // Test: the root node has no children until it is not splitted
         CHECK(!tree.hasChildren());
         tree.addData(&ellipsoids[i]);
@@ -226,7 +226,7 @@ TEST_CASE("test/geometry/TestOctree.cpp", "")
     // splitted
     CHECK(!tree.hasData());
 
-    std::vector<nsx::Ellipsoid>::const_iterator it1;
+    std::vector<ohkl::Ellipsoid>::const_iterator it1;
 
     // Remove all the data stored in the NDTree
     for (it1 = ellipsoids.begin(); it1 != ellipsoids.end(); ++it1)

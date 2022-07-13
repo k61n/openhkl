@@ -20,7 +20,7 @@
 #include <string>
 #include <vector>
 
-namespace nsx {
+namespace ohkl {
 
 class MergedData;
 class RFactor;
@@ -64,6 +64,6 @@ struct DataResolution {
     void log() const;
 };
 
-} // namespace nsx
+} // namespace ohkl
 
 #endif // NSX_CORE_EXPERIMENT_DATAQUALITY_H

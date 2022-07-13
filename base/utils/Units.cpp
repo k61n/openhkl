@@ -16,7 +16,7 @@
 #include <stdexcept>
 
 namespace {
-using namespace nsx;
+using namespace ohkl;
 
 static std::unordered_map<std::string, double> unitsMap = {
     {"m", m},
@@ -71,7 +71,7 @@ static std::unordered_map<std::string, double> unitsMap = {
 
 } // namespace
 
-namespace nsx {
+namespace ohkl {
 
 double UnitsManager::get(const std::string& units)
 {
@@ -81,4 +81,4 @@ double UnitsManager::get(const std::string& units)
     return it->second;
 }
 
-} // namespace nsx
+} // namespace ohkl

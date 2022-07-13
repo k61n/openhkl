@@ -398,7 +398,7 @@ void SubframeMergedPeaks::refreshSpaceGroupCombo()
     if (!gSession->currentProject()->hasUnitCell())
         return;
 
-    std::vector<nsx::UnitCell*> cells = expt->getUnitCells();
+    std::vector<ohkl::UnitCell*> cells = expt->getUnitCells();
     std::map<std::string, int> space_groups;
     for (auto* cell : cells) {
         if (space_groups.find(cell->spaceGroup().toString()) != space_groups.end())
@@ -429,13 +429,13 @@ void SubframeMergedPeaks::processMerge()
     if (!gSession->currentProject()->hasPeakCollection()) {
         _merged_data = nullptr;
     } else {
-        std::vector<nsx::PeakCollection*> peak_collections;
+        std::vector<ohkl::PeakCollection*> peak_collections;
         QString collection1 = _peak_combo_1->currentText();
         QString collection2 = _peak_combo_2->currentText();
         if (_space_group->currentText().toStdString().empty()) {
             return;
         }
-        nsx::SpaceGroup group = {_space_group->currentText().toStdString()};
+        ohkl::SpaceGroup group = {_space_group->currentText().toStdString()};
         merger->setSpaceGroup(group);
 
         merger->addPeakCollection(expt->getPeakCollection(collection1.toStdString()));
@@ -474,8 +474,8 @@ void SubframeMergedPeaks::refreshDShellTable()
         return;
 
     merger->computeQuality();
-    const nsx::DataResolution* quality = merger->overallQuality();
-    const nsx::DataResolution* resolution = merger->shellQuality();
+    const ohkl::DataResolution* quality = merger->overallQuality();
+    const ohkl::DataResolution* resolution = merger->shellQuality();
 
     for (auto shell : resolution->shells) {
         QList<QStandardItem*> row;
@@ -529,14 +529,14 @@ void SubframeMergedPeaks::refreshMergedTable()
     if (_merged_data == nullptr)
         return;
 
-    for (const nsx::MergedPeak& peak : _merged_data->mergedPeakSet()) {
+    for (const ohkl::MergedPeak& peak : _merged_data->mergedPeakSet()) {
         const auto hkl = peak.index();
 
         const int h = hkl[0];
         const int k = hkl[1];
         const int l = hkl[2];
 
-        nsx::Intensity I = peak.intensity();
+        ohkl::Intensity I = peak.intensity();
 
         const double intensity = I.value();
         const double sigma = I.sigma();
@@ -566,19 +566,19 @@ void SubframeMergedPeaks::refreshUnmergedTable()
     if (_merged_data == nullptr)
         return;
 
-    for (const nsx::MergedPeak& peak : _merged_data->mergedPeakSet()) {
+    for (const ohkl::MergedPeak& peak : _merged_data->mergedPeakSet()) {
         for (auto unmerged_peak : peak.peaks()) {
-            const nsx::UnitCell& cell = *(unmerged_peak->unitCell());
-            const nsx::ReciprocalVector& q = unmerged_peak->q();
+            const ohkl::UnitCell& cell = *(unmerged_peak->unitCell());
+            const ohkl::ReciprocalVector& q = unmerged_peak->q();
 
-            const nsx::MillerIndex hkl(q, cell);
+            const ohkl::MillerIndex hkl(q, cell);
 
             const int h = hkl[0];
             const int k = hkl[1];
             const int l = hkl[2];
 
             const Eigen::Vector3d& c = unmerged_peak->shape().center();
-            nsx::Intensity I = unmerged_peak->correctedIntensity();
+            ohkl::Intensity I = unmerged_peak->correctedIntensity();
 
             const double intensity = I.value();
             const double sigma = I.sigma();
@@ -702,7 +702,7 @@ void SubframeMergedPeaks::saveMergedPeaks()
         if (filename.isEmpty())
             return;
 
-        nsx::sptrUnitCell cell = singleBatchRefine();
+        ohkl::sptrUnitCell cell = singleBatchRefine();
         success = exporter.saveToSCAMerged(
             filename.toStdString(), merged_data, cell, _intensity_rescale_merged->value());
     }
@@ -751,7 +751,7 @@ void SubframeMergedPeaks::saveUnmergedPeaks()
         if (filename.isEmpty())
             return;
 
-        nsx::sptrUnitCell cell = singleBatchRefine();
+        ohkl::sptrUnitCell cell = singleBatchRefine();
         success = exporter.saveToSCAUnmerged(
             filename.toStdString(), merged_data, cell, _intensity_rescale_unmerged->value());
     }
@@ -778,7 +778,7 @@ void SubframeMergedPeaks::toggleUnsafeWidgets()
     }
 }
 
-nsx::sptrUnitCell SubframeMergedPeaks::singleBatchRefine()
+ohkl::sptrUnitCell SubframeMergedPeaks::singleBatchRefine()
 {
     auto expt = gSession->currentProject()->experiment();
     auto* peaks = _peak_combo_1->currentPeakCollection();

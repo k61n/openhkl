@@ -36,7 +36,7 @@ class SubframeExperiment : public QWidget {
     PropertyPanel* getProperty() { return _properties; };
 
  private:
-    std::vector<nsx::sptrDataSet> _data_list;
+    std::vector<ohkl::sptrDataSet> _data_list;
     DetectorWidget* _detector_widget;
     PlotPanel* _plot;
     PropertyPanel* _properties;

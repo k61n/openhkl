@@ -17,7 +17,7 @@
 
 #include <string>
 
-namespace nsx {
+namespace ohkl {
 
 class Experiment;
 
@@ -42,6 +42,6 @@ class ExperimentImporter {
     std::string _file_name;
 };
 
-} // namespace nsx
+} // namespace ohkl
 
 #endif // NSX_CORE_EXPERIMENT_EXPERIMENTIMPORTER_H

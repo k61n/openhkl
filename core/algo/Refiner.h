@@ -21,7 +21,7 @@
 #include "tables/crystal/UnitCell.h"
 #include <vector>
 
-namespace nsx {
+namespace ohkl {
 
 class ProgressHandler;
 using sptrProgressHandler = std::shared_ptr<ProgressHandler>;
@@ -77,7 +77,7 @@ class Refiner {
 
     //! Generate batches of peaks per frame range with the given peak list
     void makeBatches(
-        InstrumentStateList& states, const std::vector<nsx::Peak3D*>& peaks, sptrUnitCell cell);
+        InstrumentStateList& states, const std::vector<ohkl::Peak3D*>& peaks, sptrUnitCell cell);
 
     //! Rebuild old batches if refinement failed
     void reconstructBatches(std::vector<Peak3D*> peaks);
@@ -155,6 +155,6 @@ class Refiner {
 };
 
 /*! @}*/
-} // namespace nsx
+} // namespace ohkl
 
 #endif // NSX_CORE_ALGO_REFINER_H

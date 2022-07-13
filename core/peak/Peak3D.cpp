@@ -26,7 +26,7 @@
 #include <iostream>
 #include <stdexcept>
 
-namespace nsx {
+namespace ohkl {
 
 const std::map<RejectionFlag, std::string> Peak3D::_rejection_map{
     {RejectionFlag::NotRejected, "Not rejected"},
@@ -102,7 +102,7 @@ Peak3D::Peak3D(sptrDataSet data, const MillerIndex& hkl)
 {
 }
 
-Peak3D::Peak3D(std::shared_ptr<nsx::Peak3D> peak)
+Peak3D::Peak3D(std::shared_ptr<ohkl::Peak3D> peak)
 {
     setShape(peak->shape());
     _meanBackground = peak->meanBackground();
@@ -438,4 +438,4 @@ const std::map<RejectionFlag, std::string>& Peak3D::rejectionMap()
     return _rejection_map;
 }
 
-} // namespace nsx
+} // namespace ohkl

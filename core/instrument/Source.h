@@ -18,7 +18,7 @@
 #include "core/gonio/Component.h"
 #include "core/instrument/Monochromator.h"
 
-namespace nsx {
+namespace ohkl {
 
 //! A set of `Monochromator`s, of which one is selected.
 
@@ -59,6 +59,6 @@ class Source : public Component {
     size_t _selectedMonochromator;
 };
 
-} // namespace nsx
+} // namespace ohkl
 
 #endif // NSX_CORE_INSTRUMENT_SOURCE_H

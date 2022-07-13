@@ -23,7 +23,7 @@ TEST_CASE("test/geometry/TestConvexHull.cpp", "")
     const double tolerance = 1e-6;
     const double l = 12.3;
 
-    nsx::ConvexHull hull;
+    ohkl::ConvexHull hull;
     hull.addVertex(Eigen::Vector3d(1, 1, 1));
     hull.addVertex(Eigen::Vector3d(-1, -1, -1));
     hull.addVertex(Eigen::Vector3d(-l, 0, 0));

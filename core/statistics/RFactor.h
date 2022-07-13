@@ -17,7 +17,7 @@
 
 #include "core/statistics/IMergedPeakStatistic.h" // inherits from
 
-namespace nsx {
+namespace ohkl {
 
 //! IMergedPeakStatistic to compute various R factors.
 
@@ -52,6 +52,6 @@ class RFactor : public IMergedPeakStatistic {
     double _expectedRmerge, _expectedRmeas, _expectedRpim;
 };
 
-} // namespace nsx
+} // namespace ohkl
 
 #endif // NSX_CORE_STATISTICS_RFACTOR_H

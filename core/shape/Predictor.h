@@ -23,7 +23,7 @@
 
 class Peak3D;
 
-namespace nsx {
+namespace ohkl {
 
 /*! \addtogroup python_api
  *  @{*/
@@ -70,6 +70,6 @@ class Predictor {
 };
 
 /*! @}*/
-} // namespace nsx
+} // namespace ohkl
 
 #endif // NSX_CORE_SHAPE_PREDICTOR_H

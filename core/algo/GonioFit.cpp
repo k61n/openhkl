@@ -20,7 +20,7 @@
 #include "core/data/DataSet.h"
 #include "core/instrument/Diffractometer.h"
 
-namespace nsx {
+namespace ohkl {
 
 GonioFit fitSampleGonioOffsets(
     const Gonio& gonio, const DataList& dataset, size_t n_iterations, double tolerance)
@@ -93,12 +93,12 @@ GonioFit fitSampleGonioOffsets(
     };
 
     // Pass by address the parameters to be fitted to the parameter store
-    nsx::FitParameters parameters;
+    ohkl::FitParameters parameters;
     for (auto& v : fitted_offsets)
         parameters.addParameter(&v);
 
     // Sets the Minimizer with the parameters store and the size of the residual vector
-    nsx::Minimizer minimizer;
+    ohkl::Minimizer minimizer;
     // Hack to do the fit with GSL for having enough data points
     minimizer.initialize(parameters, n_selected_states);
     minimizer.set_f(residuals);
@@ -184,12 +184,12 @@ GonioFit fitDetectorGonioOffsets(
     };
 
     // Pass by address the parameters to be fitted to the parameter store
-    nsx::FitParameters parameters;
+    ohkl::FitParameters parameters;
     for (double v : fitted_offsets)
         parameters.addParameter(&v);
 
     // Sets the Minimizer with the parameters store and the size of the residual vector
-    nsx::Minimizer minimizer;
+    ohkl::Minimizer minimizer;
     // Hack to do the fit with GSL for having enough data points
     minimizer.initialize(parameters, n_selected_states);
     minimizer.set_f(residuals);
@@ -207,4 +207,4 @@ GonioFit fitDetectorGonioOffsets(
     return {true, std::move(fitted_offsets), std::move(cost_function)};
 }
 
-} // namespace nsx
+} // namespace ohkl

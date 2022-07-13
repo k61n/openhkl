@@ -34,7 +34,7 @@
 
 #include <Eigen/Dense>
 
-namespace nsx {
+namespace ohkl {
 
 void ShapeModelParameters::log(const Level& level) const
 {
@@ -193,7 +193,7 @@ void ShapeModel::updateFit(int num_iterations)
         fit_data.push_back({0.5 * (cov + cov.transpose()), data});
     }
 
-    nsx::FitParameters params;
+    ohkl::FitParameters params;
 
     for (auto i = 0; i < 6; ++i) {
         params.addParameter(&_choleskyD[i]);
@@ -224,7 +224,7 @@ void ShapeModel::updateFit(int num_iterations)
         return 0;
     };
 
-    nsx::Minimizer min;
+    ohkl::Minimizer min;
     min.initialize(params, 6 * fit_data.size());
     min.set_f(residual);
     min.fit(num_iterations);
@@ -476,12 +476,12 @@ AABB ShapeModel::getAABB()
 }
 
 void ShapeModel::integrate(
-    std::vector<Peak3D*> peaks, std::set<nsx::sptrDataSet> datalist, sptrProgressHandler handler)
+    std::vector<Peak3D*> peaks, std::set<ohkl::sptrDataSet> datalist, sptrProgressHandler handler)
 {
     nsxlog(Level::Info, "ShapeModel::integrate: integrating ", peaks.size(), " peaks");
     ShapeIntegrator integrator(
         this, getAABB(), _params->nbins_x, _params->nbins_y, _params->nbins_z);
-    nsx::IntegrationParameters int_params{};
+    ohkl::IntegrationParameters int_params{};
     int_params.peak_end = _params->peak_end;
     int_params.bkg_begin = _params->bkg_begin;
     int_params.bkg_end = _params->bkg_end;
@@ -493,7 +493,7 @@ void ShapeModel::integrate(
     // Why loop over all numors? - zamaan
     // Do we expect to have peaks from different numors in the vector? If so,
     // how do we ensure that the sample rotation angles are consistent?
-    for (const nsx::sptrDataSet& data : datalist) {
+    for (const ohkl::sptrDataSet& data : datalist) {
         integrator.integrate(peaks, this, data, n_numor);
         ++n_numor;
     }
@@ -506,9 +506,9 @@ void ShapeModel::build(PeakCollection* peaks, sptrDataSet data)
     peaks->computeSigmas();
     _params->sigma_d = peaks->sigmaD();
     _params->sigma_m = peaks->sigmaM();
-    std::vector<nsx::Peak3D*> fit_peaks;
+    std::vector<ohkl::Peak3D*> fit_peaks;
 
-    for (nsx::Peak3D* peak : peaks->getPeakList()) {
+    for (ohkl::Peak3D* peak : peaks->getPeakList()) {
         if (!peak->enabled())
             continue;
         const double d = 1.0 / peak->q().rowVector().norm();
@@ -516,7 +516,7 @@ void ShapeModel::build(PeakCollection* peaks, sptrDataSet data)
         if (d > _params->d_max || d < _params->d_min)
             continue;
 
-        const nsx::Intensity intensity = peak->correctedIntensity();
+        const ohkl::Intensity intensity = peak->correctedIntensity();
 
         if (intensity.value() <= _params->strength_min * intensity.sigma())
             continue;
@@ -526,7 +526,7 @@ void ShapeModel::build(PeakCollection* peaks, sptrDataSet data)
     nsxlog(Level::Info, "ShapeModel::build: integrating ", fit_peaks.size(), " peaks");
     ShapeIntegrator integrator(
         this, getAABB(), _params->nbins_x, _params->nbins_y, _params->nbins_z);
-    nsx::IntegrationParameters int_params{};
+    ohkl::IntegrationParameters int_params{};
     int_params.peak_end = _params->peak_end;
     int_params.bkg_begin = _params->bkg_begin;
     int_params.bkg_end = _params->bkg_end;
@@ -544,4 +544,4 @@ void ShapeModel::setHandler(sptrProgressHandler handler)
     _handler = handler;
 }
 
-} // namespace nsx
+} // namespace ohkl

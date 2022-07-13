@@ -15,14 +15,14 @@
 #include "core/instrument/Sample.h"
 #include "core/raw/DataKeys.h"
 
-namespace nsx {
+namespace ohkl {
 
 Sample* Sample::create(const YAML::Node& node)
 {
     return new Sample(node);
 }
 
-Sample::Sample() : Component(nsx::ym_sample), _sampleShape() { }
+Sample::Sample() : Component(ohkl::ym_sample), _sampleShape() { }
 
 Sample::Sample(const std::string& name) : Component(name), _sampleShape() { }
 
@@ -50,4 +50,4 @@ const ConvexHull& Sample::shape() const
     return _sampleShape;
 }
 
-} // namespace nsx
+} // namespace ohkl

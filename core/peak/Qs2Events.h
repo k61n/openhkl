@@ -20,7 +20,7 @@
 #include "core/instrument/InstrumentState.h"
 #include "tables/crystal/MillerIndex.h"
 
-namespace nsx {
+namespace ohkl {
 
 namespace algo {
 
@@ -62,6 +62,6 @@ std::vector<DetectorEvent> getDirectBeamEvents(
 
 } // namespace algo
 
-} // namespace nsx
+} // namespace ohkl
 
 #endif // NSX_CORE_PEAK_QS2EVENTS_H

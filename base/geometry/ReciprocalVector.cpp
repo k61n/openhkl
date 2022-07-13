@@ -16,7 +16,7 @@
 
 #include "base/geometry/ReciprocalVector.h"
 
-namespace nsx {
+namespace ohkl {
 
 ReciprocalVector::ReciprocalVector() : _valid(false) { }
 
@@ -64,4 +64,4 @@ bool ReciprocalVector::isValid() const
     return _valid;
 }
 
-} // namespace nsx
+} // namespace ohkl

@@ -17,7 +17,7 @@
 
 #include <stdexcept>
 
-namespace nsx {
+namespace ohkl {
 
 //! Store intensity and variance of a given peak.
 
@@ -70,6 +70,6 @@ class Intensity {
     bool _valid;
 };
 
-} // namespace nsx
+} // namespace ohkl
 
 #endif // NSX_CORE_PEAK_INTENSITY_H

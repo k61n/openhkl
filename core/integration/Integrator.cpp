@@ -26,7 +26,7 @@
 #include "core/shape/PeakCollection.h"
 #include "core/shape/ShapeModel.h"
 
-namespace nsx {
+namespace ohkl {
 
 Integrator::Integrator(std::shared_ptr<DataHandler> data_handler)
     : _handler(nullptr), _data_handler(data_handler)
@@ -171,4 +171,4 @@ unsigned int Integrator::numberOfValidPeaks()
     return _n_valid;
 }
 
-} // namespace nsx
+} // namespace ohkl

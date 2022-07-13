@@ -17,7 +17,7 @@
 #include "core/statistics/MergedData.h"
 #include "core/statistics/MergedPeak.h"
 
-namespace nsx {
+namespace ohkl {
 
 CC::CC() : _CChalf(0), _CCstar(0) { }
 
@@ -84,4 +84,4 @@ unsigned int CC::nPeaks() const
     return _nPeaks;
 }
 
-} // namespace nsx
+} // namespace ohkl

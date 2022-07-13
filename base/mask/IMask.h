@@ -15,7 +15,7 @@
 #ifndef NSX_BASE_MASK_IMASK_H
 #define NSX_BASE_MASK_IMASK_H
 
-namespace nsx {
+namespace ohkl {
 
 class Ellipsoid;
 
@@ -37,6 +37,6 @@ class IMask {
     IMask& operator=(const IMask& other) = default;
 };
 
-} // namespace nsx
+} // namespace ohkl
 
 #endif // NSX_BASE_MASK_IMASK_H

@@ -14,7 +14,7 @@
 
 #include "core/convolve/DeltaConvolver.h"
 
-namespace nsx {
+namespace ohkl {
 
 DeltaConvolver::DeltaConvolver() : AtomicConvolver() { }
 
@@ -41,4 +41,4 @@ RealMatrix DeltaConvolver::_matrix(int nrows, int ncols) const
     return kernel;
 }
 
-} // namespace nsx
+} // namespace ohkl

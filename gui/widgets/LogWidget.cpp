@@ -39,7 +39,7 @@ LogWidget::LogWidget(QWidget* parent) : QTextEdit(parent)
     setFontFamily(QString::fromStdString(_fontFamily));
     setFontPointSize(_fontPointSize);
     // add a prologue
-    setText(QString::fromStdString("-*- " + _initText + " [" + nsx::datetime_str() + "] -*-"));
+    setText(QString::fromStdString("-*- " + _initText + " [" + ohkl::datetime_str() + "] -*-"));
 
     // set minmimum size to 100 columns, 30 lines (depending on font; assumes monospace)
     auto* fontMetrics = new QFontMetrics(currentFont());
@@ -53,13 +53,13 @@ LogWidget::LogWidget(QWidget* parent) : QTextEdit(parent)
 void LogWidget::_connectUI()
 {
     // register a method as receiver of log messages
-    _receiver_handle = nsx::Logger::instance().Msg.addReceiver(&LogWidget::showMessage, this);
+    _receiver_handle = ohkl::Logger::instance().Msg.addReceiver(&LogWidget::showMessage, this);
 }
 
 LogWidget::~LogWidget()
 {
     // de-register the log-message receiver
-    nsx::Logger::instance().Msg.discardReceiver(_receiver_handle);
+    ohkl::Logger::instance().Msg.discardReceiver(_receiver_handle);
 }
 
 void LogWidget::clearText()
@@ -72,7 +72,7 @@ std::string LogWidget::textStr() const
     return toPlainText().toStdString();
 }
 
-void LogWidget::showMessage(const nsx::LogMessage& message)
+void LogWidget::showMessage(const ohkl::LogMessage& message)
 {
     if (message.level > _print_level)
         return;
@@ -80,10 +80,10 @@ void LogWidget::showMessage(const nsx::LogMessage& message)
     QColor text_color{_infoColor}; // default text color
 
     switch (message.level) {
-        case nsx::Level::Info: text_color = _infoColor; break;
-        case nsx::Level::Error: text_color = _errorColor; break;
-        case nsx::Level::Warning: text_color = _warningColor; break;
-        case nsx::Level::Debug: text_color = _debugColor; break;
+        case ohkl::Level::Info: text_color = _infoColor; break;
+        case ohkl::Level::Error: text_color = _errorColor; break;
+        case ohkl::Level::Warning: text_color = _warningColor; break;
+        case ohkl::Level::Debug: text_color = _debugColor; break;
         default: text_color = _infoColor;
     };
 
@@ -91,7 +91,7 @@ void LogWidget::showMessage(const nsx::LogMessage& message)
     append(QString::fromStdString(message.body));
 }
 
-void LogWidget::setPrintLevel(const nsx::Level& level)
+void LogWidget::setPrintLevel(const ohkl::Level& level)
 {
     _print_level = level;
 }

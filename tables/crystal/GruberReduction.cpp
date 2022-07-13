@@ -17,7 +17,7 @@
 
 #include "tables/crystal/GruberReduction.h"
 
-namespace nsx {
+namespace ohkl {
 
 GruberReduction::GruberReduction(const Eigen::Matrix3d& g, double epsilon)
     : _g(g), _epsilon(epsilon)
@@ -644,4 +644,4 @@ bool NiggliCharacter::set(int priority, double s, double t)
     return false;
 }
 
-} // namespace nsx
+} // namespace ohkl

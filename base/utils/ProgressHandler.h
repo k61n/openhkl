@@ -21,7 +21,7 @@
 #include <mutex>
 #include <vector>
 
-namespace nsx {
+namespace ohkl {
 
 //! Thread-safe class to handle progress and status messages.
 
@@ -57,6 +57,6 @@ class ProgressHandler {
 
 using sptrProgressHandler = std::shared_ptr<ProgressHandler>;
 
-} // namespace nsx
+} // namespace ohkl
 
 #endif // NSX_BASE_UTILS_PROGRESSHANDLER_H

@@ -18,7 +18,7 @@
 #include "base/geometry/ConvexHull.h"
 #include "core/gonio/Component.h" // inheriting from
 
-namespace nsx {
+namespace ohkl {
 
 //! A sample, consisting of a `Gonio`meter (via Component) and a ConvexHull.
 
@@ -51,6 +51,6 @@ class Sample : public Component {
     ConvexHull _sampleShape;
 };
 
-} // namespace nsx
+} // namespace ohkl
 
 #endif // NSX_CORE_INSTRUMENT_SAMPLE_H

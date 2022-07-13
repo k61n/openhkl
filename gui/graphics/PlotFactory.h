@@ -21,7 +21,7 @@
 class SXPlot;
 
 //! A creator for SXPlot%s
-class PlotFactory : public nsx::Factory<PlotFactory, SXPlot, std::string, QWidget*> {
+class PlotFactory : public ohkl::Factory<PlotFactory, SXPlot, std::string, QWidget*> {
  public:
     PlotFactory();
 };

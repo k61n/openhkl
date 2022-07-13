@@ -19,7 +19,7 @@
 
 static const double g_sqrt2pi = std::sqrt(2.0 / M_PI);
 
-namespace nsx {
+namespace ohkl {
 
 void RFactor::calculate(MergedData* data)
 {
@@ -86,4 +86,4 @@ void RFactor::calculate(MergedData* data)
     }
 }
 
-} // namespace nsx
+} // namespace ohkl

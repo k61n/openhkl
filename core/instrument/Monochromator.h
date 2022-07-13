@@ -19,7 +19,7 @@
 
 #include <yaml-cpp/yaml.h>
 
-namespace nsx {
+namespace ohkl {
 
 //! Holds properties of a monochromator, used by Source.
 
@@ -74,6 +74,6 @@ class Monochromator {
     double _height;
 };
 
-} // namespace nsx
+} // namespace ohkl
 
 #endif // NSX_CORE_INSTRUMENT_MONOCHROMATOR_H

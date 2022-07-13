@@ -28,7 +28,7 @@
 #include <QMessageBox>
 
 RawDataDialog::RawDataDialog(
-    const nsx::RawDataReaderParameters& parameters0, const QStringList& datanames_cur)
+    const ohkl::RawDataReaderParameters& parameters0, const QStringList& datanames_cur)
     : _parameters0{parameters0}, _dataset_names{datanames_cur}
 {
     setModal(true);
@@ -105,7 +105,7 @@ RawDataDialog::RawDataDialog(
     _phi->setValue(parameters0.delta_phi);
     _wavelength->setValue(parameters0.wavelength);
     _datasetName->setText(QString::fromStdString(parameters0.dataset_name));
-    nsx::Detector* detector =
+    ohkl::Detector* detector =
         gSession->currentProject()->experiment()->getDiffractometer()->detector();
     _baseline->setValue(detector->baseline());
     _gain->setValue(detector->gain());
@@ -167,9 +167,9 @@ void RawDataDialog::verify()
         this->accept();
 }
 
-nsx::RawDataReaderParameters RawDataDialog::parameters()
+ohkl::RawDataReaderParameters RawDataDialog::parameters()
 {
-    nsx::RawDataReaderParameters parameters;
+    ohkl::RawDataReaderParameters parameters;
     parameters.dataset_name = _datasetName->text().toStdString();
     parameters.wavelength = _wavelength->value();
     parameters.delta_omega = _omega->value();

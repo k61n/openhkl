@@ -29,16 +29,16 @@
 unsigned int Project::_last_id = 0;
 
 Project::Project(QString name, QString instrument)
-    : _experiment{new nsx::Experiment{name.toStdString(), instrument.toStdString()}}
+    : _experiment{new ohkl::Experiment{name.toStdString(), instrument.toStdString()}}
     , _id(++_last_id)
 {
 }
 
-const nsx::Experiment* Project::experiment() const
+const ohkl::Experiment* Project::experiment() const
 {
     return _experiment.get();
 }
-nsx::Experiment* Project::experiment()
+ohkl::Experiment* Project::experiment()
 {
     return _experiment.get();
 }
@@ -52,7 +52,7 @@ QStringList Project::getDataNames() const
 }
 
 // TODO: move logic to core
-nsx::sptrDataSet Project::getData(int index) const
+ohkl::sptrDataSet Project::getData(int index) const
 {
     if (index == -1)
         index = _dataIndex;
@@ -77,9 +77,9 @@ void Project::selectData(int selected)
     _dataIndex = selected;
 }
 
-std::vector<nsx::sptrDataSet> Project::allData() const
+std::vector<ohkl::sptrDataSet> Project::allData() const
 {
-    std::vector<nsx::sptrDataSet> ret;
+    std::vector<ohkl::sptrDataSet> ret;
     for (auto const& [key, value] : *_experiment->getDataMap())
         ret.push_back(value);
     return ret;
@@ -93,7 +93,7 @@ QStringList Project::getPeakListNames() const
     return ret;
 }
 
-QStringList Project::getPeakCollectionNames(nsx::PeakCollectionType lt) const
+QStringList Project::getPeakCollectionNames(ohkl::PeakCollectionType lt) const
 {
     QStringList ret;
     for (const std::string& name : _experiment->getCollectionNames(lt))
@@ -111,7 +111,7 @@ void Project::generatePeakModel(const QString& peakListName)
     if (!_experiment->hasPeakCollection(peakListName.toStdString()))
         return;
 
-    nsx::PeakCollection* peak_collection =
+    ohkl::PeakCollection* peak_collection =
         _experiment->getPeakCollection(peakListName.toStdString());
 
     PeakCollectionItem* peak_collection_item = new PeakCollectionItem(peak_collection);
@@ -128,7 +128,7 @@ void Project::generatePeakModels()
     const std::vector<std::string> names = _experiment->getCollectionNames();
 
     for (const std::string& name : names) {
-        nsx::PeakCollection* peak_collection = _experiment->getPeakCollection(name);
+        ohkl::PeakCollection* peak_collection = _experiment->getPeakCollection(name);
 
         PeakCollectionItem* peak_collection_item = new PeakCollectionItem(peak_collection);
         _peak_collection_items.push_back(peak_collection_item);
@@ -204,7 +204,7 @@ void Project::clonePeakCollection(const QString& name, const QString& new_name)
     }
 }
 
-std::vector<nsx::Peak3D*> Project::getPeaks(
+std::vector<ohkl::Peak3D*> Project::getPeaks(
     const QString& peakListName, int /*upperindex*/, int /*lowerindex*/) const
 {
     if (!_experiment->hasPeakCollection(peakListName.toStdString()))
@@ -212,7 +212,7 @@ std::vector<nsx::Peak3D*> Project::getPeaks(
     return _experiment->getPeakCollection(peakListName.toStdString())->getPeakList();
 }
 
-void Project::addUnitCell(const std::string& name, const nsx::UnitCell& unit_cell)
+void Project::addUnitCell(const std::string& name, const ohkl::UnitCell& unit_cell)
 {
     _experiment->addUnitCell(name, unit_cell);
 }
@@ -235,7 +235,7 @@ void Project::changeInstrument(const QString& instrumentname)
     // Avoid changing the instrument, if Experiment has already some data
     if (_experiment->numData())
         return;
-    _experiment.reset(new nsx::Experiment{_experiment->name(), instrumentname.toStdString()});
+    _experiment.reset(new ohkl::Experiment{_experiment->name(), instrumentname.toStdString()});
 }
 
 void Project::saveToFile(QString path)

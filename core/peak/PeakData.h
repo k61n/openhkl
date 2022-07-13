@@ -19,7 +19,7 @@
 
 #include <deque>
 
-namespace nsx {
+namespace ohkl {
 
 //! Helper class used by integration routines.
 
@@ -46,6 +46,6 @@ class PeakData {
     std::deque<Eigen::Vector3d> _coords;
 };
 
-} // namespace nsx
+} // namespace ohkl
 
 #endif // NSX_CORE_PEAK_PEAKDATA_H

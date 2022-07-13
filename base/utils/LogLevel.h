@@ -15,7 +15,7 @@
 #ifndef NSX_BASE_UTILS_LOGLEVEL_H
 #define NSX_BASE_UTILS_LOGLEVEL_H
 
-namespace nsx {
+namespace ohkl {
 
 //! Verbosity of the logger
 enum class Level {
@@ -26,6 +26,6 @@ enum class Level {
     Debug,
 };
 
-} // namespace nsx
+} // namespace ohkl
 
 #endif // NSX_BASE_UTILS_LOGLEVEL_H

@@ -60,7 +60,7 @@
 
 SubframeAutoIndexer::SubframeAutoIndexer()
     : QWidget()
-    , _peak_collection(nsx::kw_autoindexingCollection, nsx::PeakCollectionType::INDEXING)
+    , _peak_collection(ohkl::kw_autoindexingCollection, ohkl::PeakCollectionType::INDEXING)
     , _peak_collection_item()
     , _peak_collection_model()
     , _show_direct_beam(true)
@@ -500,18 +500,18 @@ void SubframeAutoIndexer::runAutoIndexer()
     auto* autoindexer = expt->autoIndexer();
     auto* params = autoindexer->parameters();
     auto* filter = expt->peakFilter();
-    nsx::PeakCollection* collection = _peak_combo->currentPeakCollection();
+    ohkl::PeakCollection* collection = _peak_combo->currentPeakCollection();
 
     // Manally adjust the direct beam position
     if (_set_initial_ki->isChecked()) {
         auto data = _detector_widget->currentData();
         auto* detector = data->diffractometer()->detector();
         auto& states = data->instrumentStates();
-        _old_direct_beam_events = nsx::algo::getDirectBeamEvents(states, *detector);
+        _old_direct_beam_events = ohkl::algo::getDirectBeamEvents(states, *detector);
         setInitialKi(data);
     }
 
-    std::shared_ptr<nsx::ProgressHandler> handler(new nsx::ProgressHandler());
+    std::shared_ptr<ohkl::ProgressHandler> handler(new ohkl::ProgressHandler());
     autoindexer->setHandler(handler);
 
     filter->resetFiltering(collection);
@@ -568,12 +568,12 @@ void SubframeAutoIndexer::buildSolutionsTable()
 
     // Display solutions
     for (unsigned int i = 0; i < _solutions.size(); ++i) {
-        const nsx::sptrUnitCell cell = _solutions[i].first;
+        const ohkl::sptrUnitCell cell = _solutions[i].first;
         const double quality = _solutions[i].second;
         const double volume = cell->volume();
 
-        const nsx::UnitCellCharacter ch = cell->character();
-        const nsx::UnitCellCharacter sigma = cell->characterSigmas();
+        const ohkl::UnitCellCharacter ch = cell->character();
+        const ohkl::UnitCellCharacter sigma = cell->characterSigmas();
 
         ValueTupleItem* col1 = new ValueTupleItem(
             QString::number(ch.a, 'f', 3) + "(" + QString::number(sigma.a * 1000, 'f', 0) + ")",
@@ -585,16 +585,16 @@ void SubframeAutoIndexer::buildSolutionsTable()
             QString::number(ch.c, 'f', 3) + "(" + QString::number(sigma.c * 1000, 'f', 0) + ")",
             ch.c, sigma.c);
         ValueTupleItem* col4 = new ValueTupleItem(
-            QString::number(ch.alpha / nsx::deg, 'f', 3) + "("
-                + QString::number(sigma.alpha / nsx::deg * 1000, 'f', 0) + ")",
+            QString::number(ch.alpha / ohkl::deg, 'f', 3) + "("
+                + QString::number(sigma.alpha / ohkl::deg * 1000, 'f', 0) + ")",
             ch.alpha, sigma.alpha);
         ValueTupleItem* col5 = new ValueTupleItem(
-            QString::number(ch.beta / nsx::deg, 'f', 3) + "("
-                + QString::number(sigma.beta / nsx::deg * 1000, 'f', 0) + ")",
+            QString::number(ch.beta / ohkl::deg, 'f', 3) + "("
+                + QString::number(sigma.beta / ohkl::deg * 1000, 'f', 0) + ")",
             ch.beta, sigma.beta);
         ValueTupleItem* col6 = new ValueTupleItem(
-            QString::number(ch.gamma / nsx::deg, 'f', 3) + "("
-                + QString::number(sigma.gamma / nsx::deg * 1000, 'f', 0) + ")",
+            QString::number(ch.gamma / ohkl::deg, 'f', 3) + "("
+                + QString::number(sigma.gamma / ohkl::deg * 1000, 'f', 0) + ")",
             ch.gamma, sigma.gamma);
         ValueTupleItem* col7 = new ValueTupleItem(QString::number(volume, 'f', 3), volume);
         QStandardItem* col8 = new QStandardItem(QString::fromStdString(cell->bravaisTypeSymbol()));
@@ -626,10 +626,10 @@ void SubframeAutoIndexer::selectSolutionHeader(int index)
 {
     _selected_unit_cell = _solutions[index].first;
 
-    const nsx::PeakCollection* collection = _peak_combo->currentPeakCollection();
+    const ohkl::PeakCollection* collection = _peak_combo->currentPeakCollection();
 
-    std::vector<nsx::Peak3D*> peaks = collection->getPeakList();
-    for (nsx::Peak3D* peak : peaks) {
+    std::vector<ohkl::Peak3D*> peaks = collection->getPeakList();
+    for (ohkl::Peak3D* peak : peaks) {
         peak->setUnitCell(_selected_unit_cell);
         peak->setMillerIndices();
     }
@@ -639,9 +639,9 @@ void SubframeAutoIndexer::selectSolutionHeader(int index)
 void SubframeAutoIndexer::acceptSolution()
 {
     if (_selected_unit_cell) {
-        nsx::Experiment* expt = gSession->currentProject()->experiment();
+        ohkl::Experiment* expt = gSession->currentProject()->experiment();
         QStringList collections =
-            gSession->currentProject()->getPeakCollectionNames(nsx::PeakCollectionType::FOUND);
+            gSession->currentProject()->getPeakCollectionNames(ohkl::PeakCollectionType::FOUND);
 
         QStringList space_groups;
         for (const std::string& name : _selected_unit_cell->compatibleSpaceGroups())
@@ -662,10 +662,10 @@ void SubframeAutoIndexer::acceptSolution()
 
         gSession->onUnitCellChanged();
 
-        nsx::PeakCollection* collection =
+        ohkl::PeakCollection* collection =
             expt->getPeakCollection(dlg->peakCollectionName().toStdString());
         expt->assignUnitCell(collection, cellName);
-        nsx::UnitCell* cell = expt->getUnitCell(cellName);
+        ohkl::UnitCell* cell = expt->getUnitCell(cellName);
         cell->setSpaceGroup(dlg->spaceGroup().toStdString());
         collection->setMillerIndices();
         gGui->refreshMenu();
@@ -733,13 +733,13 @@ void SubframeAutoIndexer::toggleCursorMode()
     }
 }
 
-void SubframeAutoIndexer::setInitialKi(nsx::sptrDataSet data)
+void SubframeAutoIndexer::setInitialKi(ohkl::sptrDataSet data)
 {
     const auto* detector = data->diffractometer()->detector();
     const auto coords = _detector_widget->scene()->beamSetterCoords();
 
-    nsx::DirectVector direct = detector->pixelPosition(coords.x(), coords.y());
-    for (nsx::InstrumentState& state : data->instrumentStates())
+    ohkl::DirectVector direct = detector->pixelPosition(coords.x(), coords.y());
+    for (ohkl::InstrumentState& state : data->instrumentStates())
         state.adjustKi(direct);
     emit gGui->sentinel->instrumentStatesChanged();
 }
@@ -759,7 +759,7 @@ void SubframeAutoIndexer::showDirectBeamEvents()
     _direct_beam_events.clear();
     const auto& states = data->instrumentStates();
     auto* detector = data->diffractometer()->detector();
-    std::vector<nsx::DetectorEvent> events = nsx::algo::getDirectBeamEvents(states, *detector);
+    std::vector<ohkl::DetectorEvent> events = ohkl::algo::getDirectBeamEvents(states, *detector);
 
     for (auto&& event : events)
         _direct_beam_events.push_back(event);

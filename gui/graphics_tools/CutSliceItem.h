@@ -21,7 +21,7 @@
 class CutSliceItem : public CutterItem {
  public:
     //! Construct a data slicer
-    CutSliceItem(nsx::sptrDataSet, bool horizontal = true);
+    CutSliceItem(ohkl::sptrDataSet, bool horizontal = true);
     //! The destructor
     ~CutSliceItem() = default;
 

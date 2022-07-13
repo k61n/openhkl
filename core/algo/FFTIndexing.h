@@ -17,7 +17,7 @@
 
 #include "base/geometry/ReciprocalVector.h"
 
-namespace nsx {
+namespace ohkl {
 
 namespace algo {
 
@@ -34,6 +34,6 @@ std::vector<Eigen::RowVector3d> findOnSphere(
 
 } // namespace algo
 
-} // namespace nsx
+} // namespace ohkl
 
 #endif // NSX_CORE_ALGO_FFTINDEXING_H

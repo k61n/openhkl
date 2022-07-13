@@ -22,7 +22,7 @@
 #include <string>
 #include <vector>
 
-namespace nsx {
+namespace ohkl {
 
 //! Pure virtual base class of data readers that provide access to detector images and metadata.
 
@@ -79,6 +79,6 @@ class IDataReader {
     DataSet* _dataset_out = nullptr;
 };
 
-} // namespace nsx
+} // namespace ohkl
 
 #endif // NSX_CORE_RAW_IDATAREADER_H

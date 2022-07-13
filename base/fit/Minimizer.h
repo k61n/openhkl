@@ -19,7 +19,7 @@
 
 #include <gsl/gsl_matrix.h>
 
-namespace nsx {
+namespace ohkl {
 
 struct MinimizerGSL;
 
@@ -112,6 +112,6 @@ class Minimizer {
     FitParameters _params;
 };
 
-} // namespace nsx
+} // namespace ohkl
 
 #endif // NSX_BASE_FIT_MINIMIZER_H

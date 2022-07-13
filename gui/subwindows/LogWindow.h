@@ -41,12 +41,12 @@ class LogWindow : public QDialog {
     void _connectUI();
     void _setPrintLevel();
 
-    const std::map<std::string, nsx::Level> _level_strings{
-        {"Off", nsx::Level::Off},
-        {"Info", nsx::Level::Info},
-        {"Error", nsx::Level::Error},
-        {"Warning", nsx::Level::Warning},
-        {"Debug", nsx::Level::Debug}};
+    const std::map<std::string, ohkl::Level> _level_strings{
+        {"Off", ohkl::Level::Off},
+        {"Info", ohkl::Level::Info},
+        {"Error", ohkl::Level::Error},
+        {"Warning", ohkl::Level::Warning},
+        {"Debug", ohkl::Level::Debug}};
 };
 
 #endif // NSX_GUI_SUBWINDOWS_LOGWINDOW_H
