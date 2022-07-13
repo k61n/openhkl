@@ -42,6 +42,7 @@
 #include <QSpinBox>
 #include <QVector>
 #include <QWidget>
+#include <QScrollBar>
 #include <stdexcept>
 
 #include "gui/utility/Spoiler.h"
@@ -60,8 +61,6 @@ SubframeExperiment::SubframeExperiment()
     GridFiller f(intensity_plot_box, true);
 
     int nMaxBins = 100000;
-
-    _data_combo = f.addDataCombo("Dataset: ","Select dataset");
 
     _number_bins = new QSlider(Qt::Horizontal);
     QLabel* label = new QLabel("Number of bins: ");
@@ -86,21 +85,6 @@ SubframeExperiment::SubframeExperiment()
 
     _calc_intensity = f.addButton("Calculate intensity");
 
-    _frame_selector = new QSlider(Qt::Horizontal);
-    label = new QLabel("Frame: ");
-    _frame_selector_curent = new QDoubleSpinBox();
-    _frame_selector->setMaximumWidth(100);
-    _frame_selector->setMaximumWidth(250);
-    _frame_selector_curent->setDecimals(0);
-
-    QWidget* frame_selector_widget = new QWidget;
-    hbox = new QHBoxLayout(frame_selector_widget);
-
-    hbox->addWidget(label);
-    hbox->addWidget(_frame_selector);
-    hbox->addWidget(_frame_selector_curent);
-
-    f.addWidget(frame_selector_widget,0);
     _totalHistogram = f.addCheckBox("Show total histogram", 1);
     _yLog = f.addCheckBox("yLog", 1);
     _xZoom = f.addCheckBox("Zoom on X axis", 1);
@@ -156,7 +140,7 @@ SubframeExperiment::SubframeExperiment()
     layout->addWidget(splitter);
 
     connect(
-        _data_combo, QOverload<int>::of(&QComboBox::currentIndexChanged),
+        _detector_widget->dataCombo(), QOverload<int>::of(&QComboBox::currentIndexChanged),
         this,
             [=](){
                 toggleUnsafeWidgets();
@@ -193,14 +177,12 @@ SubframeExperiment::SubframeExperiment()
     connect(_calc_intensity, &QPushButton::clicked, this,
         [=](){
             nsx::Experiment* expt = gSession->currentProject()->experiment();
-            auto data = expt->getDataMap()->at(_data_combo->currentText().toStdString());
+            auto data = expt->getDataMap()->at(_detector_widget->dataCombo()->currentText().toStdString());
             bool hasHistograms = data->getNumberHistograms() > 0;
 
             if (!data) return;
             if (hasHistograms) data->clearHistograms();
             data->getIntensityHistogram(_number_bins->value());
-            _frame_selector->setMaximum(data->getNumberHistograms());
-            _frame_selector_curent->setMaximum(data->getNumberHistograms());
 
             _maxX->setMaximum(data->nCols()*data->nRows());
             _minX->setMaximum(data->nCols()*data->nRows()-1);
@@ -218,16 +200,9 @@ SubframeExperiment::SubframeExperiment()
         }
      );
 
-    connect(_frame_selector, &QSlider::valueChanged, this,
+    connect(_detector_widget->scroll(), &QScrollBar::valueChanged, this,
         [=](){
             plotIntensities();
-        }
-    );
-
-    connect(_frame_selector_curent, QOverload<double>::of(&QDoubleSpinBox::valueChanged), this,
-        [=](){
-            _frame_selector->setValue(_frame_selector_curent->value());
-            SubframeExperiment::plotIntensities();
         }
     );
 
@@ -248,16 +223,15 @@ SubframeExperiment::SubframeExperiment()
 
 void SubframeExperiment::plotIntensities()
 {
-    _frame_selector_curent->setValue(_frame_selector->value());
     nsx::Experiment* expt = gSession->currentProject()->experiment();
-    auto data = expt->getDataMap()->at(_data_combo->currentText().toStdString());
+    auto data = expt->getDataMap()->at(_detector_widget->dataCombo()->currentText().toStdString());
 
     if (!data) return;
 
     gsl_histogram* histo = nullptr;
 
     if (!_totalHistogram->isChecked())
-        histo = data->getHistogram(_frame_selector->value());
+        histo = data->getHistogram(_detector_widget->scroll()->value());
     else
         histo = data->getTotalHistogram();
 
@@ -304,8 +278,6 @@ DetectorWidget* SubframeExperiment::detectorWidget()
 void SubframeExperiment::toggleUnsafeWidgets()
 {
     _calc_intensity->setEnabled(false);
-    _frame_selector->setEnabled(false);
-    _frame_selector_curent->setEnabled(false);
     _yLog->setEnabled(false);
     _yZoom->setEnabled(false);
     _xZoom->setEnabled(false);
@@ -325,12 +297,10 @@ void SubframeExperiment::toggleUnsafeWidgets()
     _calc_intensity->setEnabled(hasData);
 
     nsx::Experiment* expt = gSession->currentProject()->experiment();
-    auto data = expt->getDataMap()->at(_data_combo->currentText().toStdString());
+    auto data = expt->getDataMap()->at(_detector_widget->dataCombo()->currentText().toStdString());
 
     bool hasHistograms = data->getNumberHistograms() > 0;
 
-    _frame_selector->setEnabled(hasHistograms && !showTotalHistogram);
-    _frame_selector_curent->setEnabled(hasHistograms && !showTotalHistogram);
     _yLog->setEnabled(hasHistograms);
     _yZoom->setEnabled(hasHistograms);
     _xZoom->setEnabled(hasHistograms);
