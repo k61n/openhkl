@@ -112,7 +112,7 @@ current values, click on ``Find peaks``, and wait for the processing to finish
 
 When the peak finding algorithm has finished, we should have identified 9851
 peaks (this may vary slightly due to numerical imprecision and masking). At this
-point, we need to integrate the peaks. The default integration apraeters are a
+point, we need to integrate the peaks. The default integration parameters are a
 good guess for most situations. The shape of a blob can be characterised by an
 covariance (or inertia) matrix, and we simply rescale this matrix to determine
 the integration region. 3 is a good guess for the extent of the peak region
