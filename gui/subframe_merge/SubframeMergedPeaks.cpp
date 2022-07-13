@@ -357,6 +357,8 @@ void SubframeMergedPeaks::refreshAll()
 
 void SubframeMergedPeaks::refreshPeakLists()
 {
+    if (!gSession->currentProject()->hasPeakCollection())
+        return;
     refreshPeakCombos();
     processMerge();
 }
