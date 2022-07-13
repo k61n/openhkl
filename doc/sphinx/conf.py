@@ -75,6 +75,7 @@ html_theme_options = {
         ('Jülich Centre for Neutron Science (JCNS)', 'https://www.fz-juelich.de/de/jcns'),
         ('Heinz Maier-Leibnitz Zentrum (MLZ)', 'https://mlz-garching.de'),
         ('Scientific computing group @ MLZ', 'https://computing.mlz-garching.de'),
+        ('Legal notice/Impressum', 'https://computing.mlz-garching.de/impressum/'),
     ]
 }
 html_logo = '_static/OpenHKL32px.png'
