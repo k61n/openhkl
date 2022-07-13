@@ -12,14 +12,14 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_CORE_INSTRUMENT_MONOCHROMATOR_H
-#define NSX_CORE_INSTRUMENT_MONOCHROMATOR_H
+#ifndef OHKL_CORE_INSTRUMENT_MONOCHROMATOR_H
+#define OHKL_CORE_INSTRUMENT_MONOCHROMATOR_H
 
 #include "base/geometry/ReciprocalVector.h"
 
 #include <yaml-cpp/yaml.h>
 
-namespace nsx {
+namespace ohkl {
 
 //! Holds properties of a monochromator, used by Source.
 
@@ -74,6 +74,6 @@ class Monochromator {
     double _height;
 };
 
-} // namespace nsx
+} // namespace ohkl
 
-#endif // NSX_CORE_INSTRUMENT_MONOCHROMATOR_H
+#endif // OHKL_CORE_INSTRUMENT_MONOCHROMATOR_H

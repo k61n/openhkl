@@ -70,10 +70,10 @@ Eigen::MatrixXd constraintKernel(int nparams, const std::vector<std::vector<int>
 
 } // namespace
 
-namespace nsx {
+namespace ohkl {
 
 RefinementBatch::RefinementBatch(
-    InstrumentStateList& states, sptrUnitCell uc, std::vector<nsx::Peak3D*> peaks)
+    InstrumentStateList& states, sptrUnitCell uc, std::vector<ohkl::Peak3D*> peaks)
     : _fmin(std::numeric_limits<double>::max())
     , _fmax(std::numeric_limits<double>::lowest())
     , _residual_type(ResidualType::QSpace)
@@ -297,7 +297,7 @@ int RefinementBatch::realSpaceResiduals(Eigen::VectorXd& fvec)
     return 0;
 }
 
-std::vector<nsx::Peak3D*> RefinementBatch::peaks() const
+std::vector<ohkl::Peak3D*> RefinementBatch::peaks() const
 {
     return _peaks;
 }
@@ -345,4 +345,4 @@ void RefinementBatch::setResidualType(const ResidualType& residual)
     _residual_type = residual;
 }
 
-} // namespace nsx
+} // namespace ohkl

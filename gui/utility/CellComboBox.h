@@ -12,17 +12,17 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_GUI_UTILITY_CELLCOMBO_H
-#define NSX_GUI_UTILITY_CELLCOMBO_H
+#ifndef OHKL_GUI_UTILITY_CELLCOMBO_H
+#define OHKL_GUI_UTILITY_CELLCOMBO_H
 
 #include "tables/crystal/UnitCell.h"
 #include <QComboBox>
 
-namespace nsx {
+namespace ohkl {
 class UnitCell;
 }
 
-using CellList = std::vector<nsx::sptrUnitCell>;
+using CellList = std::vector<ohkl::sptrUnitCell>;
 
 //! A QComboBox that that is synchronised with all other QComboBoxes of the same type
 class CellComboBox : public QComboBox {
@@ -32,7 +32,7 @@ class CellComboBox : public QComboBox {
     CellComboBox(QWidget* parent = nullptr);
 
     //! Add a cell via its pointer
-    void addCell(const nsx::sptrUnitCell& cell);
+    void addCell(const ohkl::sptrUnitCell& cell);
 
     //! Add a list of unit cells
     void addCells(const CellList& cells);
@@ -41,7 +41,7 @@ class CellComboBox : public QComboBox {
     void clearAll();
 
     //! Return a pointer to the current unit cell
-    nsx::sptrUnitCell currentCell() const;
+    ohkl::sptrUnitCell currentCell() const;
 
     //! Refresh the combo box text
     void refresh();
@@ -58,4 +58,4 @@ class CellComboBox : public QComboBox {
     static QVector<CellComboBox*> _all_combos;
 };
 
-#endif // NSX_GUI_UTILITY_CELLCOMBO_H
+#endif // OHKL_GUI_UTILITY_CELLCOMBO_H

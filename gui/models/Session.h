@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_GUI_MODELS_SESSION_H
-#define NSX_GUI_MODELS_SESSION_H
+#ifndef OHKL_GUI_MODELS_SESSION_H
+#define OHKL_GUI_MODELS_SESSION_H
 
 #include "core/raw/DataKeys.h"
 
@@ -29,7 +29,7 @@ class FoundPeakComboBox;
 class PredictedPeakComboBox;
 class IntegratedPeakComboBox;
 class ShapeComboBox;
-namespace nsx {
+namespace ohkl {
 enum class DataFormat;
 }
 
@@ -58,7 +58,7 @@ class Session {
 
     void removeExperiment(unsigned int id);
 
-    void loadData(nsx::DataFormat format);
+    void loadData(ohkl::DataFormat format);
     bool loadRawData();
     void removeData();
 
@@ -90,4 +90,4 @@ class Session {
     ShapeComboBox* _shape_combo;
 };
 
-#endif // NSX_GUI_MODELS_SESSION_H
+#endif // OHKL_GUI_MODELS_SESSION_H

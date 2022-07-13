@@ -20,7 +20,7 @@
 #include "core/peak/PeakCoordinateSystem.h"
 #include "core/shape/ShapeModel.h"
 
-namespace nsx {
+namespace ohkl {
 
 Profile1DIntegrator::Profile1DIntegrator() : IPeakIntegrator() { }
 
@@ -154,4 +154,4 @@ bool Profile1DIntegrator::compute(
     return true;
 }
 
-} // namespace nsx
+} // namespace ohkl

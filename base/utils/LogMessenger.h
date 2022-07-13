@@ -12,15 +12,15 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_BASE_UTILS_LOGMESSENGER_H
-#define NSX_BASE_UTILS_LOGMESSENGER_H
+#ifndef OHKL_BASE_UTILS_LOGMESSENGER_H
+#define OHKL_BASE_UTILS_LOGMESSENGER_H
 
 #include "base/utils/LogLevel.h"
 
 #include <functional>
 #include <string>
 
-namespace nsx {
+namespace ohkl {
 
 struct LogMessage {
     Level level = Level::Off;
@@ -80,6 +80,6 @@ class LogMessenger {
     receiver_t _receivers[MSG_RECEIVERS_MAXNR]{nullptr};
 };
 
-} // namespace nsx
+} // namespace ohkl
 
-#endif // NSX_BASE_UTILS_LOGMESSENGER_H
+#endif // OHKL_BASE_UTILS_LOGMESSENGER_H

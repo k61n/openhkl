@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_GUI_DIALOGS_LISTNAMEDIALOG_H
-#define NSX_GUI_DIALOGS_LISTNAMEDIALOG_H
+#ifndef OHKL_GUI_DIALOGS_LISTNAMEDIALOG_H
+#define OHKL_GUI_DIALOGS_LISTNAMEDIALOG_H
 
 #include "core/peak/Peak3D.h"
 #include <QDialog>
@@ -29,4 +29,4 @@ class ListNameDialog : public QDialog {
     QLineEdit* _name;
 };
 
-#endif // NSX_GUI_DIALOGS_LISTNAMEDIALOG_H
+#endif // OHKL_GUI_DIALOGS_LISTNAMEDIALOG_H

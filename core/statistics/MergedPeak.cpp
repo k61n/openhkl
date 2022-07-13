@@ -27,7 +27,7 @@
 #include "tables/crystal/MillerIndex.h"
 #include "tables/crystal/UnitCell.h"
 
-namespace nsx {
+namespace ohkl {
 
 MergedPeak::MergedPeak(const SpaceGroup& grp, bool friedel)
     : _intensitySum(0.0, 0.0), _grp(grp), _friedel(friedel)
@@ -192,4 +192,4 @@ double MergedPeak::pValue() const
     return gsl_cdf_chisq_P(x, k);
 }
 
-} // namespace nsx
+} // namespace ohkl

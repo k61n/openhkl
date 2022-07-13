@@ -12,14 +12,14 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_BASE_FIT_MINIMIZER_H
-#define NSX_BASE_FIT_MINIMIZER_H
+#ifndef OHKL_BASE_FIT_MINIMIZER_H
+#define OHKL_BASE_FIT_MINIMIZER_H
 
 #include "base/fit/FitParameters.h"
 
 #include <gsl/gsl_matrix.h>
 
-namespace nsx {
+namespace ohkl {
 
 struct MinimizerGSL;
 
@@ -112,6 +112,6 @@ class Minimizer {
     FitParameters _params;
 };
 
-} // namespace nsx
+} // namespace ohkl
 
-#endif // NSX_BASE_FIT_MINIMIZER_H
+#endif // OHKL_BASE_FIT_MINIMIZER_H

@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_GUI_ITEMS_PEAKCOLLECTIONITEM_H
-#define NSX_GUI_ITEMS_PEAKCOLLECTIONITEM_H
+#ifndef OHKL_GUI_ITEMS_PEAKCOLLECTIONITEM_H
+#define OHKL_GUI_ITEMS_PEAKCOLLECTIONITEM_H
 
 #include "core/peak/Peak3D.h"
 #include "core/shape/PeakCollection.h"
@@ -23,12 +23,12 @@
 class PeakCollectionItem {
  public:
     PeakCollectionItem();
-    PeakCollectionItem(const nsx::PeakCollection* peak_collection);
+    PeakCollectionItem(const ohkl::PeakCollection* peak_collection);
     ~PeakCollectionItem() = default;
 
  public:
     //! Set the peak collection
-    void setPeakCollection(const nsx::PeakCollection* peak_collection);
+    void setPeakCollection(const ohkl::PeakCollection* peak_collection);
     //! Retrieve the name of the collection if present
     std::string name() const;
     //! Retrieve the number of children of this item
@@ -38,7 +38,7 @@ class PeakCollectionItem {
     //! Retrieve the data of column and row
     QVariant data(const QModelIndex& index, int role = Qt::DisplayRole) const;
     //! Get the peak collection pointer
-    const nsx::PeakCollection* peakCollection() const { return _peak_collection; };
+    const ohkl::PeakCollection* peakCollection() const { return _peak_collection; };
     //! Get the peak items pointer
     std::vector<PeakItem*> peakItems() const;
     //! Returns the peak item at a given row
@@ -77,9 +77,9 @@ class PeakCollectionItem {
     void reset();
 
  private:
-    const nsx::PeakCollection* _peak_collection;
+    const ohkl::PeakCollection* _peak_collection;
     std::vector<std::unique_ptr<PeakItem>> _peak_items;
     PeakDisplayModes _mode;
 };
 
-#endif // NSX_GUI_ITEMS_PEAKCOLLECTIONITEM_H
+#endif // OHKL_GUI_ITEMS_PEAKCOLLECTIONITEM_H

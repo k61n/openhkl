@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_GUI_GRAPHICS_SIMPLEPLOT_H
-#define NSX_GUI_GRAPHICS_SIMPLEPLOT_H
+#ifndef OHKL_GUI_GRAPHICS_SIMPLEPLOT_H
+#define OHKL_GUI_GRAPHICS_SIMPLEPLOT_H
 
 #include "gui/graphics/SXPlot.h"
 
@@ -29,4 +29,4 @@ class SimplePlot : public SXPlot {
     std::string getType() const;
 };
 
-#endif // NSX_GUI_GRAPHICS_SIMPLEPLOT_H
+#endif // OHKL_GUI_GRAPHICS_SIMPLEPLOT_H

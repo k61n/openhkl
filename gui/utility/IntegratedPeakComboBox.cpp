@@ -26,7 +26,7 @@ IntegratedPeakComboBox::IntegratedPeakComboBox(QWidget* parent) : PeakComboBox(p
     _list_pointer = &_integrated_peaks;
 }
 
-void IntegratedPeakComboBox::addPeakCollection(nsx::PeakCollection* peaks)
+void IntegratedPeakComboBox::addPeakCollection(ohkl::PeakCollection* peaks)
 {
     if (!peaks->isIntegrated())
         return;

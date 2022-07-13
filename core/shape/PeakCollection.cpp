@@ -20,18 +20,18 @@
 #include <string>
 #include <typeindex>
 
-namespace nsx {
+namespace ohkl {
 
 PeakCollection::PeakCollection()
-    : _name{nsx::kw_peakCollectionDefaultName}
-    , _type{nsx::PeakCollectionType::FOUND}
+    : _name{ohkl::kw_peakCollectionDefaultName}
+    , _type{ohkl::PeakCollectionType::FOUND}
     , _shape_model(nullptr)
     , _indexed(false)
     , _integrated(false)
 {
 }
 
-PeakCollection::PeakCollection(const std::string& name, nsx::PeakCollectionType type)
+PeakCollection::PeakCollection(const std::string& name, ohkl::PeakCollectionType type)
     : _name{std::string(name)}
     , _type{type}
     , _shape_model(nullptr)
@@ -40,26 +40,26 @@ PeakCollection::PeakCollection(const std::string& name, nsx::PeakCollectionType 
 {
 }
 
-void PeakCollection::populate(const std::vector<std::shared_ptr<nsx::Peak3D>> peak_list)
+void PeakCollection::populate(const std::vector<std::shared_ptr<ohkl::Peak3D>> peak_list)
 {
     reset();
     for (const auto& peak : peak_list)
         push_back(*peak);
 }
 
-void PeakCollection::populate(const std::vector<nsx::Peak3D*> peak_list)
+void PeakCollection::populate(const std::vector<ohkl::Peak3D*> peak_list)
 {
     reset();
-    for (nsx::Peak3D* peak : peak_list)
+    for (ohkl::Peak3D* peak : peak_list)
         push_back(*peak);
 }
 
-void PeakCollection::push_back(const nsx::Peak3D& peak)
+void PeakCollection::push_back(const ohkl::Peak3D& peak)
 {
-    _peaks.push_back(std::unique_ptr<nsx::Peak3D>{new Peak3D(peak)});
+    _peaks.push_back(std::unique_ptr<ohkl::Peak3D>{new Peak3D(peak)});
 }
 
-void PeakCollection::addPeak(const std::shared_ptr<nsx::Peak3D>& peak)
+void PeakCollection::addPeak(const std::shared_ptr<ohkl::Peak3D>& peak)
 {
     push_back(peak);
 }
@@ -68,9 +68,9 @@ void PeakCollection::populateFromFiltered(PeakCollection* collection)
 {
     reset();
 
-    std::vector<nsx::Peak3D*> peak_list = collection->getPeakList();
+    std::vector<ohkl::Peak3D*> peak_list = collection->getPeakList();
 
-    for (nsx::Peak3D* peak : peak_list) {
+    for (ohkl::Peak3D* peak : peak_list) {
         if (peak->caughtByFilter())
             push_back(*peak);
     }
@@ -81,9 +81,9 @@ void PeakCollection::reset()
     _peaks.clear();
 }
 
-std::vector<nsx::Peak3D*> PeakCollection::getPeakList() const
+std::vector<ohkl::Peak3D*> PeakCollection::getPeakList() const
 {
-    std::vector<nsx::Peak3D*> peak_list(_peaks.size());
+    std::vector<ohkl::Peak3D*> peak_list(_peaks.size());
 
     for (int i = 0; i < _peaks.size(); i++)
         peak_list[i] = _peaks[i].get();
@@ -91,9 +91,9 @@ std::vector<nsx::Peak3D*> PeakCollection::getPeakList() const
     return peak_list;
 }
 
-std::vector<nsx::Peak3D*> PeakCollection::getFilteredPeakList() const
+std::vector<ohkl::Peak3D*> PeakCollection::getFilteredPeakList() const
 {
-    std::vector<nsx::Peak3D*> peak_list;
+    std::vector<ohkl::Peak3D*> peak_list;
     for (int i = 0; i < _peaks.size(); i++) {
         if (_peaks[i]->caughtByFilter())
             peak_list.push_back(_peaks[i].get());
@@ -133,13 +133,13 @@ int PeakCollection::numberRejectedByFilter() const
 
 MetaData& PeakCollection::metadata()
 {
-    _metadata.add<int>(nsx::at_peakCount, numberOfPeaks());
-    _metadata.add<int>(nsx::at_peakType, static_cast<int>(type()));
+    _metadata.add<int>(ohkl::at_peakCount, numberOfPeaks());
+    _metadata.add<int>(ohkl::at_peakType, static_cast<int>(type()));
 
     // converting booleans to std::strings with 1 bytes size
     // while saving data to files only Int32, String and DBL seemed to supported
-    _metadata.add<std::string>(nsx::at_indexed, std::to_string(isIndexed()));
-    _metadata.add<std::string>(nsx::at_integrated, std::to_string(isIntegrated()));
+    _metadata.add<std::string>(ohkl::at_indexed, std::to_string(isIndexed()));
+    _metadata.add<std::string>(ohkl::at_integrated, std::to_string(isIntegrated()));
     return _metadata;
 }
 
@@ -256,4 +256,4 @@ void PeakCollection::setUnitCell(const sptrUnitCell& cell)
         peak->setUnitCell(cell);
 }
 
-} // namespace nsx
+} // namespace ohkl

@@ -1,6 +1,6 @@
 //  ***********************************************************************************************
 //
-//  NSXTool: data reduction for neutron single-crystal diffraction
+//  OpenHKL: data reduction for single crystal diffraction
 //
 //! @file      test/cpp/geometry/TestAABB.cpp
 //! @brief     Test ...
@@ -23,7 +23,7 @@ const double tolerance = 1e-5;
 
 TEST_CASE("test/geometry/TestAABB.cpp", "")
 {
-    nsx::AABB bb;
+    ohkl::AABB bb;
     bb.setLower(Eigen::Vector3d(0, 0, 0));
     bb.setUpper(Eigen::Vector3d(1, 2, 3));
     Eigen::Vector3d center, extends;
@@ -42,7 +42,7 @@ TEST_CASE("test/geometry/TestAABB.cpp", "")
     // Check that a given point is outside
     CHECK(!bb.isInside(Eigen::Vector3d(2, 3, 4)));
     // A second bounding box, just touching
-    nsx::AABB bb2(Eigen::Vector3d(1, 2, 3), Eigen::Vector3d(2, 3, 4));
+    ohkl::AABB bb2(Eigen::Vector3d(1, 2, 3), Eigen::Vector3d(2, 3, 4));
     CHECK(bb2.collide(bb));
     // Second bounding box overlaps .
     bb2.setLower(Eigen::Vector3d(0.5, 2, 3));

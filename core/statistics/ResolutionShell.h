@@ -12,10 +12,10 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_CORE_STATISTICS_RESOLUTIONSHELL_H
-#define NSX_CORE_STATISTICS_RESOLUTIONSHELL_H
+#ifndef OHKL_CORE_STATISTICS_RESOLUTIONSHELL_H
+#define OHKL_CORE_STATISTICS_RESOLUTIONSHELL_H
 
-namespace nsx {
+namespace ohkl {
 
 class Peak3D;
 
@@ -47,6 +47,6 @@ class ResolutionShell {
     std::vector<DShell> _shells;
 };
 
-} // namespace nsx
+} // namespace ohkl
 
-#endif // NSX_CORE_STATISTICS_RESOLUTIONSHELL_H
+#endif // OHKL_CORE_STATISTICS_RESOLUTIONSHELL_H

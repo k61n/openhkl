@@ -1,6 +1,6 @@
 //  ***********************************************************************************************
 //
-//  NSXTool: data reduction for neutron single-crystal diffraction
+//  OpenHKL: data reduction for single crystal diffraction
 //
 //! @file      test/cpp/crystal/TestQShape.cpp
 //! @brief     Test ...
@@ -27,10 +27,10 @@
 #include "core/instrument/InterpolatedState.h"
 
 
-nsx::Ellipsoid toDetectorSpace(const nsx::Ellipsoid e, const nsx::sptrDataSet data)
+ohkl::Ellipsoid toDetectorSpace(const ohkl::Ellipsoid e, const ohkl::sptrDataSet data)
 {
-    auto events = nsx::algo::qVectorList2Events(
-        {nsx::ReciprocalVector(e.center())}, data->instrumentStates(), data->detector(),
+    auto events = ohkl::algo::qVectorList2Events(
+        {ohkl::ReciprocalVector(e.center())}, data->instrumentStates(), data->detector(),
         data->nFrames());
 
     // something bad happened
@@ -40,29 +40,29 @@ nsx::Ellipsoid toDetectorSpace(const nsx::Ellipsoid e, const nsx::sptrDataSet da
     const auto& event = events[0];
     // auto position =
     //    data->reader()->getDiffractometer()->detector()->pixelPosition(event.px, event.py);
-    auto state = nsx::InterpolatedState::interpolate(data->instrumentStates(), event.frame);
+    auto state = ohkl::InterpolatedState::interpolate(data->instrumentStates(), event.frame);
 
     // Jacobian of map from detector coords to sample q space
     Eigen::Matrix3d J = state.jacobianQ(event.px, event.py);
     const Eigen::Matrix3d det_inv_cov = J.transpose() * e.metric() * J;
 
     Eigen::Vector3d p(event.px, event.py, event.frame);
-    return nsx::Ellipsoid(p, det_inv_cov);
+    return ohkl::Ellipsoid(p, det_inv_cov);
 }
 
 
 TEST_CASE("test/crystal/TestQShape.cpp", "")
 {
-    nsx::Experiment experiment("test", "BioDiff2500");
-    const nsx::sptrDataSet dataset_ptr { std::make_shared<nsx::DataSet>
-          (nsx::kw_datasetDefaultName, experiment.getDiffractometer()) };
+    ohkl::Experiment experiment("test", "BioDiff2500");
+    const ohkl::sptrDataSet dataset_ptr { std::make_shared<ohkl::DataSet>
+          (ohkl::kw_datasetDefaultName, experiment.getDiffractometer()) };
 
     dataset_ptr->addDataFile("gal3.hdf", "nsx");
     dataset_ptr->finishRead();
     experiment.addData(dataset_ptr);
 
-    nsx::sptrProgressHandler progressHandler(new nsx::ProgressHandler);
-    nsx::PeakFinder peakFinder;
+    ohkl::sptrProgressHandler progressHandler(new ohkl::ProgressHandler);
+    ohkl::PeakFinder peakFinder;
 
     auto callback = [progressHandler]() {
         auto log = progressHandler->getLog();
@@ -72,7 +72,7 @@ TEST_CASE("test/crystal/TestQShape.cpp", "")
 
     progressHandler->setCallback(callback);
 
-    nsx::DataList numors;
+    ohkl::DataList numors;
     numors.push_back(dataset_ptr);
 
     // propagate changes to peak finder
@@ -83,9 +83,9 @@ TEST_CASE("test/crystal/TestQShape.cpp", "")
     finder_params->threshold = 15;
     finder_params->peak_end = 1.0;
 
-    nsx::ConvolverFactory convolver_factory;
+    ohkl::ConvolverFactory convolver_factory;
     auto convolver = convolver_factory.create("annular", {});
-    peakFinder.setConvolver(std::unique_ptr<nsx::Convolver>(convolver));
+    peakFinder.setConvolver(std::unique_ptr<ohkl::Convolver>(convolver));
 
 
     peakFinder.setHandler(progressHandler);
@@ -107,13 +107,13 @@ TEST_CASE("test/crystal/TestQShape.cpp", "")
         if (!peak->enabled())
             continue;
 
-        nsx::Ellipsoid qshape;
+        ohkl::Ellipsoid qshape;
         try {
             qshape = peak->qShape();
         } catch (std::range_error& e) {
             continue;
         }
-        nsx::Ellipsoid new_shape;
+        ohkl::Ellipsoid new_shape;
         try {
             new_shape = toDetectorSpace(qshape, dataset_ptr);
         } catch (...) {

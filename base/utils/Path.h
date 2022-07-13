@@ -12,12 +12,12 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_BASE_UTILS_PATH_H
-#define NSX_BASE_UTILS_PATH_H
+#ifndef OHKL_BASE_UTILS_PATH_H
+#define OHKL_BASE_UTILS_PATH_H
 
 #include <vector>
 
-namespace nsx {
+namespace ohkl {
 
 //! Returns the file separator for the running OS
 std::string fileSeparator();
@@ -50,6 +50,6 @@ std::string diffractometersPath();
 //! Returns a temporary filename based on a given filename
 std::string tempFilename(const std::string& filename);
 
-} // namespace nsx
+} // namespace ohkl
 
-#endif // NSX_BASE_UTILS_PATH_H
+#endif // OHKL_BASE_UTILS_PATH_H

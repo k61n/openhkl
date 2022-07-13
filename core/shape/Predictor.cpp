@@ -25,7 +25,7 @@
 #include "core/peak/Qs2Events.h"
 #include "tables/crystal/MillerIndex.h"
 
-namespace nsx {
+namespace ohkl {
 
 void PredictionParameters::log(const Level& level) const
 {
@@ -111,4 +111,4 @@ void Predictor::setHandler(sptrProgressHandler handler)
     _handler = handler;
 }
 
-} // namespace nsx
+} // namespace ohkl

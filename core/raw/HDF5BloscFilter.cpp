@@ -17,7 +17,7 @@
 
 #include <stdexcept>
 
-namespace nsx {
+namespace ohkl {
 
 HDF5BloscFilter::HDF5BloscFilter()
 {
@@ -30,14 +30,14 @@ HDF5BloscFilter::HDF5BloscFilter()
     cd_values[4] = 9; // Highest compression level
     cd_values[5] = 1; // Bit shuffling active; 0: shuffle not active, 1: shuffle active
     cd_values[6] = BLOSC_BLOSCLZ; // Actual compressor to use: BLOSC seem to be the best compromise
-    nsxlog(nsx::Level::Debug, "Initialized Blosc-filter to read HDF5 data");
+    nsxlog(ohkl::Level::Debug, "Initialized Blosc-filter to read HDF5 data");
 }
 
 HDF5BloscFilter::~HDF5BloscFilter()
 {
     if (_init_success) {
         blosc_destroy();
-        nsxlog(nsx::Level::Debug, "Released Blosc-filter resources");
+        nsxlog(ohkl::Level::Debug, "Released Blosc-filter resources");
     }
 }
 
@@ -57,4 +57,4 @@ void HDF5BloscFilter::_register()
     */
 }
 
-} // namespace nsx
+} // namespace ohkl

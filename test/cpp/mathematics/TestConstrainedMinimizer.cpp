@@ -1,6 +1,6 @@
 //  ***********************************************************************************************
 //
-//  NSXTool: data reduction for neutron single-crystal diffraction
+//  OpenHKL: data reduction for single crystal diffraction
 //
 //! @file      test/cpp/mathematics/TestConstrainedMinimizer.cpp
 //! @brief     Test ...
@@ -61,7 +61,7 @@ TEST_CASE("test/mathematics/TestConstrainedMinimizer.cpp", "")
         return 0;
     };
 
-    nsx::FitParameters params;
+    ohkl::FitParameters params;
 
     for (auto i = 0; i < x.size(); ++i)
         params.addParameter(&x(i));
@@ -83,7 +83,7 @@ TEST_CASE("test/mathematics/TestConstrainedMinimizer.cpp", "")
 
     params.setConstraint(constraint);
 
-    nsx::Minimizer min;
+    ohkl::Minimizer min;
     min.initialize(params, 40);
     min.set_f(residual_fn);
     CHECK(min.fit(100));

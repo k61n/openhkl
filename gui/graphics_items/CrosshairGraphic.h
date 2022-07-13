@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_GUI_GRAPHICS_ITEMS_CROSSHAIRGRAPHIC_H
-#define NSX_GUI_GRAPHICS_ITEMS_CROSSHAIRGRAPHIC_H
+#ifndef OHKL_GUI_GRAPHICS_ITEMS_CROSSHAIRGRAPHIC_H
+#define OHKL_GUI_GRAPHICS_ITEMS_CROSSHAIRGRAPHIC_H
 
 #include <Eigen/Dense>
 #include <QColor>
@@ -50,4 +50,4 @@ class CrosshairGraphic : public QGraphicsItem {
     int _linewidth;
 };
 
-#endif // NSX_GUI_GRAPHICS_ITEMS_CROSSHAIRGRAPHIC_H
+#endif // OHKL_GUI_GRAPHICS_ITEMS_CROSSHAIRGRAPHIC_H

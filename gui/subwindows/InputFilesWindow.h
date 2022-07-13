@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_GUI_SUBWINDOWS_INPUT_FILES_WINDOWS_H
-#define NSX_GUI_SUBWINDOWS_INPUT_FILES_WINDOWS_H
+#ifndef OHKL_GUI_SUBWINDOWS_INPUT_FILES_WINDOWS_H
+#define OHKL_GUI_SUBWINDOWS_INPUT_FILES_WINDOWS_H
 
 
 #include <QDialog>
@@ -42,4 +42,4 @@ class InputFilesWindow : public QDialog {
     QComboBox* _data_set;
 };
 
-#endif // NSX_GUI_SUBWINDOWS_INPUT_FILES_WINDOWS_H
+#endif // OHKL_GUI_SUBWINDOWS_INPUT_FILES_WINDOWS_H

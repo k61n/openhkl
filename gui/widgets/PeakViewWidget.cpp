@@ -126,8 +126,8 @@ void PeakViewWidget::addIntegrationRegion(Set& set, const QColor& peak, const QC
         addCheckBox(row++, 1, "Integration region", Qt::CheckState::Unchecked);
     set.regionType = addCombo(row++, ComboType::RegionType);
 
-    for (int i = 0; i < static_cast<int>(nsx::RegionType::Count); ++i)
-        for (const auto& [key, val] : nsx::regionTypeDescription)
+    for (int i = 0; i < static_cast<int>(ohkl::RegionType::Count); ++i)
+        for (const auto& [key, val] : ohkl::regionTypeDescription)
             if (i == static_cast<int>(key))
                 set.regionType->addItem(QString::fromStdString(val));
 

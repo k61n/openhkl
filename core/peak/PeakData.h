@@ -12,14 +12,14 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_CORE_PEAK_PEAKDATA_H
-#define NSX_CORE_PEAK_PEAKDATA_H
+#ifndef OHKL_CORE_PEAK_PEAKDATA_H
+#define OHKL_CORE_PEAK_PEAKDATA_H
 
 #include "core/peak/PeakCoordinateSystem.h"
 
 #include <deque>
 
-namespace nsx {
+namespace ohkl {
 
 //! Helper class used by integration routines.
 
@@ -46,6 +46,6 @@ class PeakData {
     std::deque<Eigen::Vector3d> _coords;
 };
 
-} // namespace nsx
+} // namespace ohkl
 
-#endif // NSX_CORE_PEAK_PEAKDATA_H
+#endif // OHKL_CORE_PEAK_PEAKDATA_H

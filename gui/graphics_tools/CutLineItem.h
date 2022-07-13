@@ -12,15 +12,15 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_GUI_GRAPHICS_TOOLS_CUTLINEITEM_H
-#define NSX_GUI_GRAPHICS_TOOLS_CUTLINEITEM_H
+#ifndef OHKL_GUI_GRAPHICS_TOOLS_CUTLINEITEM_H
+#define OHKL_GUI_GRAPHICS_TOOLS_CUTLINEITEM_H
 
 #include "gui/graphics_tools/CutterItem.h"
 
 //! Cutter item that cuts the data as a line
 class CutLineItem : public CutterItem {
  public:
-    explicit CutLineItem(nsx::sptrDataSet data);
+    explicit CutLineItem(ohkl::sptrDataSet data);
 
     ~CutLineItem();
 
@@ -41,4 +41,4 @@ class CutLineItem : public CutterItem {
     int _nPoints;
 };
 
-#endif // NSX_GUI_GRAPHICS_TOOLS_CUTLINEITEM_H
+#endif // OHKL_GUI_GRAPHICS_TOOLS_CUTLINEITEM_H

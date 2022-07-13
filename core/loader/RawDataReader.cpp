@@ -36,7 +36,7 @@
 #include "core/instrument/Source.h"
 #include "core/raw/DataKeys.h"
 
-namespace nsx {
+namespace ohkl {
 
 RawDataReader::RawDataReader()
     // NOTE: RawDataReader needs a list of frame files which should be given later
@@ -63,10 +63,10 @@ void RawDataReader::addFrame(const std::string& filename)
     _filenames.push_back(filename);
 
     // Update sources list
-    _dataset_out->metadata().add<std::string>(nsx::at_datasetSources, nsx::join(_filenames, ", "));
+    _dataset_out->metadata().add<std::string>(ohkl::at_datasetSources, ohkl::join(_filenames, ", "));
 
     const std::size_t nframes = _filenames.size();
-    _dataset_out->metadata().add<int>(nsx::at_frameCount, nframes);
+    _dataset_out->metadata().add<int>(ohkl::at_frameCount, nframes);
     _dataset_out->datashape[2] = nframes;
 
     const auto& detector_gonio = _dataset_out->diffractometer()->detector()->gonio();
@@ -78,9 +78,9 @@ void RawDataReader::addFrame(const std::string& filename)
     int omega_idx = -1, phi_idx = -1, chi_idx = -1;
     for (size_t i = 0; i < n_sample_gonio_axes; ++i) {
         const std::string axis_name = sample_gonio.axis(i).name();
-        omega_idx = axis_name == nsx::ax_omega ? int(i) : omega_idx;
-        chi_idx = axis_name == nsx::ax_chi ? int(i) : chi_idx;
-        phi_idx = axis_name == nsx::ax_phi ? int(i) : phi_idx;
+        omega_idx = axis_name == ohkl::ax_omega ? int(i) : omega_idx;
+        chi_idx = axis_name == ohkl::ax_chi ? int(i) : chi_idx;
+        phi_idx = axis_name == ohkl::ax_phi ? int(i) : phi_idx;
     }
 
     if (omega_idx == -1 || phi_idx == -1 || chi_idx == -1)
@@ -120,12 +120,12 @@ void RawDataReader::setParameters(const RawDataReaderParameters& parameters)
     mono.setWavelength(_parameters.wavelength);
 
     _dataset_out->metadata().add<std::string>(
-        nsx::at_diffractometer, _dataset_out->diffractometer()->name());
-    _dataset_out->metadata().add<double>(nsx::at_wavelength, _parameters.wavelength);
-    _dataset_out->metadata().add<double>(nsx::at_monitorSum, 0.0);
-    _dataset_out->metadata().add<int>(nsx::at_numor, 0.0);
-    _dataset_out->metadata().add<double>(nsx::at_baseline, _parameters.baseline);
-    _dataset_out->metadata().add<double>(nsx::at_gain, _parameters.gain);
+        ohkl::at_diffractometer, _dataset_out->diffractometer()->name());
+    _dataset_out->metadata().add<double>(ohkl::at_wavelength, _parameters.wavelength);
+    _dataset_out->metadata().add<double>(ohkl::at_monitorSum, 0.0);
+    _dataset_out->metadata().add<int>(ohkl::at_numor, 0.0);
+    _dataset_out->metadata().add<double>(ohkl::at_baseline, _parameters.baseline);
+    _dataset_out->metadata().add<double>(ohkl::at_gain, _parameters.gain);
 
     _data.resize(_parameters.bpp * nrows * ncols);
 }
@@ -188,4 +188,4 @@ Eigen::MatrixXi RawDataReader::data(size_t frame)
     }
 }
 
-} // namespace nsx
+} // namespace ohkl

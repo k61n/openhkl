@@ -13,8 +13,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_GUI_SUBFRAME_REFINER_SUBFRAMEREFINER_H
-#define NSX_GUI_SUBFRAME_REFINER_SUBFRAMEREFINER_H
+#ifndef OHKL_GUI_SUBFRAME_REFINER_SUBFRAMEREFINER_H
+#define OHKL_GUI_SUBFRAME_REFINER_SUBFRAMEREFINER_H
 
 #include "core/algo/Refiner.h"
 #include "core/shape/PeakCollection.h"
@@ -34,7 +34,7 @@
 #include <QVBoxLayout>
 #include <QWidget>
 
-namespace nsx {
+namespace ohkl {
 class PeakCollection;
 }
 class CellComboBox;
@@ -106,7 +106,7 @@ class SubframeRefiner : public QWidget {
 
 
     //! The loaded data list
-    std::vector<nsx::sptrDataSet> _data_list;
+    std::vector<ohkl::sptrDataSet> _data_list;
     //! Number of peaks updated
     int _n_updated;
     //! Whether the refinement succeeded
@@ -142,10 +142,10 @@ class SubframeRefiner : public QWidget {
     DetectorWidget* _detector_widget;
 
     // Peak collections, items and models for refined and unrefined peaks
-    nsx::PeakCollection* _refined_peaks;
+    ohkl::PeakCollection* _refined_peaks;
     PeakCollectionItem _refined_collection_item;
     PeakCollectionModel _refined_model;
-    nsx::PeakCollection _unrefined_peaks;
+    ohkl::PeakCollection _unrefined_peaks;
     PeakCollectionItem _unrefined_collection_item;
     PeakCollectionModel _unrefined_model;
 
@@ -166,15 +166,15 @@ class SubframeRefiner : public QWidget {
     QRandomGenerator _rng;
 
     //! Saved direct beam positions
-    std::vector<nsx::DetectorEvent> _direct_beam_events;
+    std::vector<ohkl::DetectorEvent> _direct_beam_events;
     //! Current direct beam positions
-    std::vector<nsx::DetectorEvent> _old_direct_beam_events;
+    std::vector<ohkl::DetectorEvent> _old_direct_beam_events;
 
     // Convert enum class ResidualType to a string
-    const std::map<std::string, nsx::ResidualType> _residual_strings{
-        {"Reciprocal space", nsx::ResidualType::QSpace},
-        {"Real space", nsx::ResidualType::RealSpace}};
+    const std::map<std::string, ohkl::ResidualType> _residual_strings{
+        {"Reciprocal space", ohkl::ResidualType::QSpace},
+        {"Real space", ohkl::ResidualType::RealSpace}};
 };
 
 
-#endif // NSX_GUI_SUBFRAME_REFINER_SUBFRAMEREFINER_H
+#endif // OHKL_GUI_SUBFRAME_REFINER_SUBFRAMEREFINER_H

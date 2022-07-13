@@ -26,9 +26,9 @@ PredictedPeakComboBox::PredictedPeakComboBox(QWidget* parent) : PeakComboBox(par
     _list_pointer = &_predicted_peaks;
 }
 
-void PredictedPeakComboBox::addPeakCollection(nsx::PeakCollection* peaks)
+void PredictedPeakComboBox::addPeakCollection(ohkl::PeakCollection* peaks)
 {
-    if (peaks->type() != nsx::PeakCollectionType::PREDICTED)
+    if (peaks->type() != ohkl::PeakCollectionType::PREDICTED)
         return;
     QSignalBlocker blocker(this);
     addItem(QString::fromStdString(peaks->name()));

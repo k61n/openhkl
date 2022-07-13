@@ -11,8 +11,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_CORE_EXPERIMENT_SHAPEHANDLER_H
-#define NSX_CORE_EXPERIMENT_SHAPEHANDLER_H
+#ifndef OHKL_CORE_EXPERIMENT_SHAPEHANDLER_H
+#define OHKL_CORE_EXPERIMENT_SHAPEHANDLER_H
 
 #include <map>
 #include <string>
@@ -20,7 +20,7 @@
 
 #include "core/shape/ShapeModel.h"
 
-namespace nsx {
+namespace ohkl {
 
 
 class Peak3D;
@@ -36,7 +36,7 @@ class ShapeHandler {
     //! Get a pointer to the map of shape models
     const ShapeModelMap* getShapeModelMap() const;
     //! Add a shape model
-    bool addShapeModel(const std::string& name, const nsx::ShapeModel& shapes);
+    bool addShapeModel(const std::string& name, const ohkl::ShapeModel& shapes);
     //! Add an empty shape model
     bool addEmptyModel(const std::string& name);
     //! Returns true if the experiment has named shape model
@@ -59,6 +59,6 @@ class ShapeHandler {
     ShapeModelMap _shape_models;
 };
 
-} // namespace nsx
+} // namespace ohkl
 
-#endif // NSX_CORE_EXPERIMENT_SHAPEHANDLER_H
+#endif // OHKL_CORE_EXPERIMENT_SHAPEHANDLER_H

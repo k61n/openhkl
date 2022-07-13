@@ -20,17 +20,17 @@
 #include "core/detector/DetectorFactory.h"
 #include "core/raw/DataKeys.h"
 
-namespace nsx {
+namespace ohkl {
 
 Detector* Detector::create(const YAML::Node& node)
 {
-    std::string detectorType = node[nsx::ym_detectorType].as<std::string>();
+    std::string detectorType = node[ohkl::ym_detectorType].as<std::string>();
 
     return DetectorFactory::instance().create(detectorType, node);
 }
 
 Detector::Detector()
-    : Component(nsx::kw_detectorDefaultName)
+    : Component(ohkl::kw_detectorDefaultName)
     , _height(0.0)
     , _width(0.0)
     , _angularHeight(0.0)
@@ -64,33 +64,33 @@ Detector::Detector(const std::string& name)
 Detector::Detector(const YAML::Node& node) : Component(node)
 {
     // detector gain
-    if (node[nsx::ym_gain])
-        _gain = node[nsx::ym_gain].as<double>();
+    if (node[ohkl::ym_gain])
+        _gain = node[ohkl::ym_gain].as<double>();
     else
         _gain = 1.0;
 
     // detector baseline
-    if (node[nsx::ym_baseline])
-        _baseline = node[nsx::ym_baseline].as<double>();
+    if (node[ohkl::ym_baseline])
+        _baseline = node[ohkl::ym_baseline].as<double>();
     else
         _baseline = 0.0;
 
     // Sets the detector to sample distance from the property tree node
-    auto&& distanceNode = node[nsx::ym_sampleDistance];
-    double units = UnitsManager::get(distanceNode[nsx::ym_units].as<std::string>());
-    double distance = distanceNode[nsx::ym_value].as<double>();
+    auto&& distanceNode = node[ohkl::ym_sampleDistance];
+    double units = UnitsManager::get(distanceNode[ohkl::ym_units].as<std::string>());
+    double distance = distanceNode[ohkl::ym_value].as<double>();
     distance *= units;
     setDistance(distance);
 
     // Sets the detector number of pixels from the property tree node
-    unsigned int nCols = node[nsx::ym_colCount].as<unsigned int>();
+    unsigned int nCols = node[ohkl::ym_colCount].as<unsigned int>();
     setNCols(nCols);
 
-    unsigned int nRows = node[nsx::ym_rowCount].as<unsigned int>();
+    unsigned int nRows = node[ohkl::ym_rowCount].as<unsigned int>();
     setNRows(nRows);
 
-    _minCol = node[nsx::ym_originX] ? node[nsx::ym_originX].as<double>() : 0.0;
-    _minRow = node[nsx::ym_originY] ? node[nsx::ym_originY].as<double>() : 0.0;
+    _minCol = node[ohkl::ym_originX] ? node[ohkl::ym_originX].as<double>() : 0.0;
+    _minRow = node[ohkl::ym_originY] ? node[ohkl::ym_originY].as<double>() : 0.0;
 }
 
 Detector::~Detector() = default;
@@ -211,4 +211,4 @@ void Detector::setGain(double gain)
     _gain = gain;
 }
 
-} // namespace nsx
+} // namespace ohkl

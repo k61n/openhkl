@@ -1,6 +1,6 @@
 //  ***********************************************************************************************
 //
-//  NSXTool: data reduction for neutron single-crystal diffraction
+//  OpenHKL: data reduction for single crystal diffraction
 //
 //! @file      test/cpp/crystal/TestSpaceGroup.cpp
 //! @brief     Test ...
@@ -81,19 +81,19 @@ TEST_CASE("test/crystal/TestSpaceGroup.cpp", "")
         {"I m -3 m", 96},   {"I a -3 d", 96},
     };
 
-    CHECK(nsx::SpaceGroup::symbols().size() == static_cast<size_t>(230));
+    CHECK(ohkl::SpaceGroup::symbols().size() == static_cast<size_t>(230));
 
-    nsx::SpaceGroup sg_pnma("P n m a");
+    ohkl::SpaceGroup sg_pnma("P n m a");
     // Check that string generator strings are OK s
     CHECK(sg_pnma.generators().compare("-x+1/2,-y,z+1/2; -x,y+1/2,-z; -x,-y,-z") == 0);
 
     for (const auto& p : nElementsPerSpaceGroup) {
-        nsx::SpaceGroup sg(p.first);
+        ohkl::SpaceGroup sg(p.first);
         CHECK(sg.groupElements().size() == static_cast<size_t>(p.second));
     }
 
     // Test extinction conditions
-    nsx::SpaceGroup sg("F d -3 m");
+    ohkl::SpaceGroup sg("F d -3 m");
     CHECK(sg.isExtinct({0, 0, 1}));
     CHECK(sg.isExtinct({0, 0, 2}));
     CHECK(sg.isExtinct({0, 0, 3}));
@@ -104,7 +104,7 @@ TEST_CASE("test/crystal/TestSpaceGroup.cpp", "")
     CHECK(!sg.isExtinct({0, 2, 6}));
 
     // Test extinction conditions
-    nsx::SpaceGroup sg2("I 41/a");
+    ohkl::SpaceGroup sg2("I 41/a");
     CHECK(!sg2.isExtinct({1, 2, 1}));
     CHECK(sg2.isExtinct({1, 2, 2}));
     CHECK(sg2.isExtinct({1, 2, 0}));
@@ -117,41 +117,41 @@ TEST_CASE("test/crystal/TestSpaceGroup.cpp", "")
     CHECK(sg2.isExtinct({1, -1, 0}));
     CHECK(!sg2.isExtinct({2, -2, 0}));
 
-    nsx::SpaceGroup sg3("I m -3 m");
+    ohkl::SpaceGroup sg3("I m -3 m");
     CHECK(sg3.bravaisType() == 'c');
 
-    nsx::SpaceGroup sg4("P n m a");
+    ohkl::SpaceGroup sg4("P n m a");
     CHECK(sg4.bravaisType() == 'o');
 
-    nsx::SpaceGroup sg5("F d -3 m");
+    ohkl::SpaceGroup sg5("F d -3 m");
     CHECK(sg5.bravaisType() == 'c');
 
-    nsx::SpaceGroup sg6("C 2/m");
+    ohkl::SpaceGroup sg6("C 2/m");
     CHECK(sg6.bravaisType() == 'm');
 
-    nsx::SpaceGroup sg7("P 21/c");
+    ohkl::SpaceGroup sg7("P 21/c");
     CHECK(sg7.bravaisType() == 'm');
 
-    nsx::SpaceGroup sg8("P 4 m m");
+    ohkl::SpaceGroup sg8("P 4 m m");
     CHECK(sg8.bravaisType() == 't');
 
-    nsx::SpaceGroup sg9("P 4/m m m");
+    ohkl::SpaceGroup sg9("P 4/m m m");
     CHECK(sg9.bravaisType() == 't');
 
-    nsx::SpaceGroup sg10("P 63/m m c");
+    ohkl::SpaceGroup sg10("P 63/m m c");
     CHECK(sg10.bravaisType() == 'h');
 
-    nsx::SpaceGroup sg11("P 3 2 1");
+    ohkl::SpaceGroup sg11("P 3 2 1");
     CHECK(sg11.bravaisType() == 'h');
 
-    nsx::SpaceGroup sg12("P -1");
+    ohkl::SpaceGroup sg12("P -1");
     CHECK(sg12.bravaisType() == 'a');
 
-    nsx::SpaceGroup sg13("R -3 c");
+    ohkl::SpaceGroup sg13("R -3 c");
     CHECK(sg13.bravaisType() == 'h');
 
     // Test extinction conditions
-    nsx::SpaceGroup sg14("P 21 21 21");
+    ohkl::SpaceGroup sg14("P 21 21 21");
     CHECK(sg14.isExtinct({3, 0, 0}));
     CHECK(sg14.isExtinct({0, 3, 0}));
     CHECK(sg14.isExtinct({0, 0, 3}));
@@ -160,7 +160,7 @@ TEST_CASE("test/crystal/TestSpaceGroup.cpp", "")
     CHECK(!sg14.isExtinct({0, 0, 2}));
 
     // Test extinction conditions
-    nsx::SpaceGroup sg15("P 2 2 21");
+    ohkl::SpaceGroup sg15("P 2 2 21");
     CHECK(!sg15.isExtinct({2, 0, 0}));
     CHECK(!sg15.isExtinct({0, 2, 0}));
     CHECK(!sg15.isExtinct({0, 0, 2}));

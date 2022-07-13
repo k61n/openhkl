@@ -1,6 +1,6 @@
 //  ***********************************************************************************************
 //
-//  NSXTool: data reduction for neutron single-crystal diffraction
+//  OpenHKL: data reduction for single crystal diffraction
 //
 //! @file      test/cpp/geometry/TestMillerIndices.cpp
 //! @brief     Test ...
@@ -21,7 +21,7 @@ TEST_CASE("test/geometry/TestMillerIndices.cpp", "")
 {
     Eigen::RowVector3i v1(1, 2, 3);
 
-    nsx::MillerIndex hkl1(v1);
+    ohkl::MillerIndex hkl1(v1);
 
     int& x = hkl1[0];
 

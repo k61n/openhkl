@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_GUI_UTILITY_LINKEDCOMBO_H
-#define NSX_GUI_UTILITY_LINKEDCOMBO_H
+#ifndef OHKL_GUI_UTILITY_LINKEDCOMBO_H
+#define OHKL_GUI_UTILITY_LINKEDCOMBO_H
 
 #include <QComboBox>
 
@@ -60,4 +60,4 @@ class LinkedComboBox : public QComboBox {
     static int _count;
 };
 
-#endif // NSX_GUI_UTILITY_LINKEDCOMBO_H
+#endif // OHKL_GUI_UTILITY_LINKEDCOMBO_H

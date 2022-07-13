@@ -12,15 +12,15 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_CORE_ALGO_REFINEMENTBATCH_H
-#define NSX_CORE_ALGO_REFINEMENTBATCH_H
+#ifndef OHKL_CORE_ALGO_REFINEMENTBATCH_H
+#define OHKL_CORE_ALGO_REFINEMENTBATCH_H
 
 #include "base/fit/FitParameters.h"
 #include "core/instrument/InstrumentState.h"
 #include "core/peak/Peak3D.h"
 #include "tables/crystal/UnitCell.h"
 
-namespace nsx {
+namespace ohkl {
 
 enum class ResidualType { RealSpace, QSpace, Count };
 
@@ -31,7 +31,7 @@ class RefinementBatch {
     //! Default constructor. Should not be used but needed for swig
     RefinementBatch() = default;
     //! A batch contains peaks from frame _fmin to _fmax + 2
-    RefinementBatch(InstrumentStateList& states, sptrUnitCell uc, std::vector<nsx::Peak3D*> peaks);
+    RefinementBatch(InstrumentStateList& states, sptrUnitCell uc, std::vector<ohkl::Peak3D*> peaks);
 
     //! Sets the lattice B matrix to be refined.
     void refineUB();
@@ -61,7 +61,7 @@ class RefinementBatch {
     int realSpaceResiduals(Eigen::VectorXd& fvec);
 
     //! Returns the list of peaks used for refinement.
-    std::vector<nsx::Peak3D*> peaks() const;
+    std::vector<ohkl::Peak3D*> peaks() const;
 
     //! Returns the refined unit cell.
     UnitCell* cell() const;
@@ -99,7 +99,7 @@ class RefinementBatch {
 
     sptrUnitCell _cell;
 
-    std::vector<nsx::Peak3D*> _peaks;
+    std::vector<ohkl::Peak3D*> _peaks;
 
     FitParameters _params;
 
@@ -115,6 +115,6 @@ class RefinementBatch {
     std::vector<double> _cost_function;
 };
 
-} // namespace nsx
+} // namespace ohkl
 
-#endif // NSX_CORE_ALGO_REFINEMENTBATCH_H
+#endif // OHKL_CORE_ALGO_REFINEMENTBATCH_H

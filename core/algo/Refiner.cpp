@@ -28,7 +28,7 @@
 #include "tables/crystal/UnitCell.h"
 
 
-namespace nsx {
+namespace ohkl {
 
 void RefinerParameters::log(const Level& level) const
 {
@@ -85,7 +85,7 @@ sptrUnitCell Refiner::_getUnitCell(const std::vector<Peak3D*> peaks_subset)
 }
 
 void Refiner::makeBatches(
-    InstrumentStateList& states, const std::vector<nsx::Peak3D*>& peaks, sptrUnitCell cell)
+    InstrumentStateList& states, const std::vector<ohkl::Peak3D*>& peaks, sptrUnitCell cell)
 {
     nsxlog(Level::Info, "Refiner::makeBatches: making ", _params->nbatches, " batches");
     _peaks = peaks;
@@ -107,7 +107,7 @@ void Refiner::makeBatches(
     }
 
     PeakFilter peak_filter;
-    std::vector<nsx::Peak3D*> filtered_peaks = peak_filter.filterEnabled(peaks, true);
+    std::vector<ohkl::Peak3D*> filtered_peaks = peak_filter.filterEnabled(peaks, true);
     if (_params->use_batch_cells)
         filtered_peaks = peak_filter.filterIndexed(filtered_peaks);
     else
@@ -127,7 +127,7 @@ void Refiner::makeBatches(
     nsxlog(Level::Info, "Batch size is ", batch_size, " peaks");
     size_t current_batch = 0;
 
-    std::vector<nsx::Peak3D*> peaks_subset;
+    std::vector<ohkl::Peak3D*> peaks_subset;
 
     // batch contains peaks from frame _fmin to _fmax + 2
     for (size_t i = 0; i < filtered_peaks.size(); ++i) {
@@ -171,7 +171,7 @@ void Refiner::reconstructBatches(std::vector<Peak3D*> peaks)
 {
     _batches.clear();
 
-    std::vector<nsx::Peak3D*> filtered_peaks = peaks;
+    std::vector<ohkl::Peak3D*> filtered_peaks = peaks;
     PeakFilter peak_filter;
     filtered_peaks = peak_filter.filterEnabled(peaks, true);
     filtered_peaks = peak_filter.filterIndexed(filtered_peaks);
@@ -188,7 +188,7 @@ void Refiner::reconstructBatches(std::vector<Peak3D*> peaks)
     nsxlog(Level::Info, "Batch size is ", batch_size, " peaks");
     size_t current_batch = 0;
 
-    std::vector<nsx::Peak3D*> peaks_subset;
+    std::vector<ohkl::Peak3D*> peaks_subset;
 
     // batch contains peaks from frame _fmin to _fmax + 2
     for (size_t i = 0; i < filtered_peaks.size(); ++i) {
@@ -298,14 +298,14 @@ int Refiner::updatePredictions(std::vector<Peak3D*> peaks)
     nsxlog(Level::Info, "Refiner::updatePredictions");
     assignPredictedCells(peaks); // Set the batch cells to the predicted peaks
     const PeakFilter peak_filter;
-    std::vector<nsx::Peak3D*> filtered_peaks = peaks;
+    std::vector<ohkl::Peak3D*> filtered_peaks = peaks;
     filtered_peaks = peak_filter.filterEnabled(peaks, true);
     int n_enabled = filtered_peaks.size();
     nsxlog(Level::Info, "Refiner::updatePredictions: ", n_enabled, " enabled peaks");
 
     int updated = 0;
 
-    for (nsx::Peak3D* peak : filtered_peaks) {
+    for (ohkl::Peak3D* peak : filtered_peaks) {
         // find appropriate batch
         const RefinementBatch* b = nullptr;
         const double z = peak->shape().center()[2];
@@ -432,4 +432,4 @@ void Refiner::setParameters(const RefinerParameters& params)
     _params->refine_ki = params.refine_ki;
 }
 
-} // namespace nsx
+} // namespace ohkl

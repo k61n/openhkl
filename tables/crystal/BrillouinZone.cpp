@@ -53,7 +53,7 @@ void remove_duplicates(std::vector<Eigen::RowVector3d>& q_vectors, bool reflect,
 
 } // namespace
 
-namespace nsx {
+namespace ohkl {
 
 BrillouinZone::BrillouinZone(const Eigen::Matrix3d& B, double eps)
     : _qs(), _eps(eps), _B(B), _vertices()
@@ -268,4 +268,4 @@ double BrillouinZone::outerRadius() const
     return std::sqrt(_r2);
 }
 
-} // namespace nsx
+} // namespace ohkl

@@ -12,13 +12,13 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_CORE_GONIO_AXIS_H
-#define NSX_CORE_GONIO_AXIS_H
+#ifndef OHKL_CORE_GONIO_AXIS_H
+#define OHKL_CORE_GONIO_AXIS_H
 
 #include <Eigen/Geometry>
 #include <yaml-cpp/yaml.h>
 
-namespace nsx {
+namespace ohkl {
 
 //! Pure virtual base class for homogeneous transforms (RotAxis).
 
@@ -92,6 +92,6 @@ class Axis {
 
 std::ostream& operator<<(std::ostream& os, const Axis& axis);
 
-} // namespace nsx
+} // namespace ohkl
 
-#endif // NSX_CORE_GONIO_AXIS_H
+#endif // OHKL_CORE_GONIO_AXIS_H

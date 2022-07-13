@@ -12,12 +12,12 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_TABLES_CRYSTAL_BRILLOUINZONE_H
-#define NSX_TABLES_CRYSTAL_BRILLOUINZONE_H
+#ifndef OHKL_TABLES_CRYSTAL_BRILLOUINZONE_H
+#define OHKL_TABLES_CRYSTAL_BRILLOUINZONE_H
 
 #include "base/geometry/ConvexHull.h"
 
-namespace nsx {
+namespace ohkl {
 
 //! Calculates first Brillouin zone of a lattice, and converts it to a ConvexHull representation.
 
@@ -68,6 +68,6 @@ class BrillouinZone {
     void compute_vertices();
 };
 
-} // namespace nsx
+} // namespace ohkl
 
-#endif // NSX_TABLES_CRYSTAL_BRILLOUINZONE_H
+#endif // OHKL_TABLES_CRYSTAL_BRILLOUINZONE_H

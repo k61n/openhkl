@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_GUI_MAINWIN_H
-#define NSX_GUI_MAINWIN_H
+#ifndef OHKL_GUI_MAINWIN_H
+#define OHKL_GUI_MAINWIN_H
 
 #include "gui/subwindows/InstrumentStateWindow.h"
 #include <QMainWindow>
@@ -138,4 +138,4 @@ class MainWin : public QMainWindow {
     friend class SideBar;
 };
 
-#endif // NSX_GUI_MAINWIN_H
+#endif // OHKL_GUI_MAINWIN_H

@@ -189,7 +189,7 @@ void DetectorWidget::linkPeakModel(PeakCollectionModel* model1, PeakCollectionMo
         scene()->linkPeakModel2(model2);
 }
 
-nsx::sptrDataSet DetectorWidget::currentData()
+ohkl::sptrDataSet DetectorWidget::currentData()
 {
     return _data_combo->currentData();
 }

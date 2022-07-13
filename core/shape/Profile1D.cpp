@@ -16,7 +16,7 @@
 
 #include <cmath>
 
-namespace nsx {
+namespace ohkl {
 
 Profile1D::Profile1D(const Intensity& mean_background, double sigma_max, size_t num)
     : _counts(num, 0.0), _npoints(num, 0), _endpoints(num + 1), _meanBkg(mean_background)
@@ -97,4 +97,4 @@ void Profile1D::reset()
     std::fill(_npoints.begin(), _npoints.end(), 0);
 }
 
-} // namespace nsx
+} // namespace ohkl

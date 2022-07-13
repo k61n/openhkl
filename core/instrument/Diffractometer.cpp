@@ -23,7 +23,7 @@
 #include "core/instrument/Source.h"
 #include "core/raw/DataKeys.h"
 
-namespace nsx {
+namespace ohkl {
 
 Diffractometer* Diffractometer::create(const std::string& name)
 {
@@ -31,7 +31,7 @@ Diffractometer* Diffractometer::create(const std::string& name)
 
     Diffractometer* diffractometer;
     try {
-        diffractometer = new Diffractometer(instrumentDefinition[nsx::ym_instrument]);
+        diffractometer = new Diffractometer(instrumentDefinition[ohkl::ym_instrument]);
     } catch (std::exception& e) {
         std::string msg = "Error when reading instrument definition file: ";
         throw std::runtime_error(msg + e.what());
@@ -45,16 +45,16 @@ Diffractometer::Diffractometer() : _detector(nullptr), _sample(), _source() { }
 Diffractometer::Diffractometer(const YAML::Node& node)
 {
     // Sets the name of the diffractometer from the YAML node
-    _name = node[nsx::ym_instrumentName].as<std::string>();
+    _name = node[ohkl::ym_instrumentName].as<std::string>();
 
     // Build the detector from its corresponding YAML node
-    _detector.reset(Detector::create(node[nsx::ym_detector]));
+    _detector.reset(Detector::create(node[ohkl::ym_detector]));
 
     // Build the sample from its corresponding node
-    _sample = Sample(node[nsx::ym_sample]);
+    _sample = Sample(node[ohkl::ym_sample]);
 
     // Build the source from its corresponding node
-    _source = Source(node[nsx::ym_source]);
+    _source = Source(node[ohkl::ym_source]);
 }
 
 Diffractometer::~Diffractometer() = default;
@@ -119,4 +119,4 @@ InstrumentState Diffractometer::instrumentState(const std::size_t frame_idx)
     return InstrumentState::state(this, frame_idx);
 }
 
-} // namespace nsx
+} // namespace ohkl

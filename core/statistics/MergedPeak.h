@@ -12,13 +12,13 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_CORE_STATISTICS_MERGEDPEAK_H
-#define NSX_CORE_STATISTICS_MERGEDPEAK_H
+#ifndef OHKL_CORE_STATISTICS_MERGEDPEAK_H
+#define OHKL_CORE_STATISTICS_MERGEDPEAK_H
 
 #include "core/peak/Intensity.h"
 #include "core/peak/Peak3D.h"
 
-namespace nsx {
+namespace ohkl {
 
 enum class MergeFlag { Valid, InvalidQ, Extinct };
 
@@ -73,6 +73,6 @@ class MergedPeak {
 bool operator<(const MergedPeak& p, const MergedPeak& q);
 #endif
 
-} // namespace nsx
+} // namespace ohkl
 
-#endif // NSX_CORE_STATISTICS_MERGEDPEAK_H
+#endif // OHKL_CORE_STATISTICS_MERGEDPEAK_H

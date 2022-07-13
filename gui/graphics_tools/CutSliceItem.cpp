@@ -21,7 +21,7 @@
 #include "gui/graphics/SimplePlot.h"
 #include <Eigen/Dense>
 
-CutSliceItem::CutSliceItem(nsx::sptrDataSet data, bool horizontal)
+CutSliceItem::CutSliceItem(ohkl::sptrDataSet data, bool horizontal)
     : CutterItem(data), _horizontal(horizontal)
 {
 }
@@ -39,8 +39,8 @@ void CutSliceItem::plot(SXPlot* plot)
     if (!detPtr)
         return;
 
-    nsx::sptrDataSet data = detPtr->getData();
-    const nsx::Detector* det = data->diffractometer()->detector();
+    ohkl::sptrDataSet data = detPtr->getData();
+    const ohkl::Detector* det = data->diffractometer()->detector();
 
     int nrows = det->nRows();
     int ncols = det->nCols();

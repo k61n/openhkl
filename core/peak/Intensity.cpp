@@ -16,7 +16,7 @@
 
 #include <cmath>
 
-namespace nsx {
+namespace ohkl {
 
 Intensity::Intensity() : _value(0), _sigma2(0), _valid(false) { }
 
@@ -96,4 +96,4 @@ bool Intensity::isValid() const
     return _valid;
 }
 
-} // namespace nsx
+} // namespace ohkl

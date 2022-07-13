@@ -1,6 +1,6 @@
 //  ***********************************************************************************************
 //
-//  NSXTool: data reduction for neutron single-crystal diffraction
+//  OpenHKL: data reduction for single crystal diffraction
 //
 //! @file      test/cpp/geometry/TestBlob3D.cpp
 //! @brief     Test ...
@@ -23,7 +23,7 @@ const double tolerance = 1e-5;
 
 TEST_CASE("test/geometry/TestBlob3D.cpp", "")
 {
-    nsx::Blob3D blob;
+    ohkl::Blob3D blob;
     // Create a set of points for a 3D Gaussian.
     double c_x = 12.0;
     double c_y = 15.0;

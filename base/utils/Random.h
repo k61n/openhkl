@@ -13,12 +13,12 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_BASE_UTILS_RANDOM_H
-#define NSX_BASE_UTILS_RANDOM_H
+#ifndef OHKL_BASE_UTILS_RANDOM_H
+#define OHKL_BASE_UTILS_RANDOM_H
 
 #include <random>
 
-namespace nsx {
+namespace ohkl {
 
 //! Random numbers
 
@@ -43,6 +43,6 @@ class Random {
     static std::mt19937 _rng; // random number generator
 };
 
-} // namespace nsx
+} // namespace ohkl
 
-#endif // NSX_BASE_UTILS_RANDOM_H
+#endif // OHKL_BASE_UTILS_RANDOM_H

@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_GUI_WIDGETS_LOGWIDGET_H
-#define NSX_GUI_WIDGETS_LOGWIDGET_H
+#ifndef OHKL_GUI_WIDGETS_LOGWIDGET_H
+#define OHKL_GUI_WIDGETS_LOGWIDGET_H
 
 #include <string>
 
@@ -35,9 +35,9 @@ class LogWidget : public QTextEdit {
     // Get the displayed text as plain text
     std::string textStr() const;
     // Write a message in the log window
-    void showMessage(const nsx::LogMessage& message);
+    void showMessage(const ohkl::LogMessage& message);
     // Set the print level
-    void setPrintLevel(const nsx::Level& level);
+    void setPrintLevel(const ohkl::Level& level);
 
  private:
     // TODO: declare as static
@@ -51,12 +51,12 @@ class LogWidget : public QTextEdit {
     const std::string _initText = "OpenHKL Messages";
 
     //! Receiver handle (for registering log messages)
-    nsx::LogMessenger::receiverHandle _receiver_handle;
+    ohkl::LogMessenger::receiverHandle _receiver_handle;
 
     //! Current print level
-    nsx::Level _print_level;
+    ohkl::Level _print_level;
 
     void _connectUI();
 };
 
-#endif // NSX_GUI_WIDGETS_LOGWIDGET_H
+#endif // OHKL_GUI_WIDGETS_LOGWIDGET_H

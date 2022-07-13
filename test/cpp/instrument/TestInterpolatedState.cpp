@@ -1,6 +1,6 @@
 //  ***********************************************************************************************
 //
-//  NSXTool: data reduction for neutron single-crystal diffraction
+//  OpenHKL: data reduction for single crystal diffraction
 //
 //! @file      test/cpp/instrument/TestInterpolatedState.cpp
 //! @brief     Test ...
@@ -32,12 +32,12 @@
 
 void run_test(const char* filename, const char* instrument)
 {
-    nsx::Experiment experiment("test", instrument);
+    ohkl::Experiment experiment("test", instrument);
     auto diffractometer = experiment.getDiffractometer();
     const auto* detector = diffractometer->detector();
 
-    const nsx::sptrDataSet dataset_ptr { std::make_shared<nsx::DataSet>
-         (nsx::kw_datasetDefaultName, experiment.getDiffractometer()) };
+    const ohkl::sptrDataSet dataset_ptr { std::make_shared<ohkl::DataSet>
+         (ohkl::kw_datasetDefaultName, experiment.getDiffractometer()) };
 
     dataset_ptr->addDataFile(filename, "nsx");
     dataset_ptr->finishRead();
@@ -60,7 +60,7 @@ void run_test(const char* filename, const char* instrument)
     for (auto coord : coords) {
         const double dt = 1e-3;
 
-        auto state = nsx::InterpolatedState::interpolate(dataset_ptr->instrumentStates(), coord[2]);
+        auto state = ohkl::InterpolatedState::interpolate(dataset_ptr->instrumentStates(), coord[2]);
         Eigen::Matrix3d Jq = state.jacobianQ(coord[0], coord[1]);
 
         auto pos0 = detector->pixelPosition(coord[0], coord[1]);
@@ -72,7 +72,7 @@ void run_test(const char* filename, const char* instrument)
         auto pos2 = detector->pixelPosition(coord[0], coord[1] + dt);
         Eigen::Vector3d dq2 = state.sampleQ(pos2).rowVector().transpose() - q0;
 
-        auto state3 = nsx::InterpolatedState::interpolate(dataset_ptr->instrumentStates(), coord[2] + dt);
+        auto state3 = ohkl::InterpolatedState::interpolate(dataset_ptr->instrumentStates(), coord[2] + dt);
         Eigen::Vector3d dq3 = state3.sampleQ(pos0).rowVector().transpose() - q0;
 
         // Numerical Jacobian

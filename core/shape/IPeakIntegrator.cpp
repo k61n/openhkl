@@ -22,7 +22,7 @@
 
 #include <algorithm>
 
-namespace nsx {
+namespace ohkl {
 
 void IntegrationParameters::log(const Level& level) const
 {
@@ -61,7 +61,7 @@ const std::vector<Intensity>& IPeakIntegrator::rockingCurve() const
 }
 
 void IPeakIntegrator::integrate(
-    std::vector<nsx::Peak3D*> peaks, ShapeModel* shape_model, sptrDataSet data, int n_numor)
+    std::vector<ohkl::Peak3D*> peaks, ShapeModel* shape_model, sptrDataSet data, int n_numor)
 {
     // integrate only those peaks that belong to the specified dataset
     auto it = std::remove_if(peaks.begin(), peaks.end(), [&](const Peak3D* peak) {
@@ -196,4 +196,4 @@ void IPeakIntegrator::setNNumors(int n_numors)
     _n_numors = n_numors;
 }
 
-} // namespace nsx
+} // namespace ohkl

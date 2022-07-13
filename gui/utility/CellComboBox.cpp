@@ -24,7 +24,7 @@ CellComboBox::CellComboBox(QWidget* parent) : QComboBox(parent)
     _all_combos.push_back(this);
 }
 
-void CellComboBox::addCell(const nsx::sptrUnitCell& cell)
+void CellComboBox::addCell(const ohkl::sptrUnitCell& cell)
 {
     QSignalBlocker blocker(this);
     addItem(QString::fromStdString(cell->name()));
@@ -48,7 +48,7 @@ void CellComboBox::clearAll()
 }
 
 //! Return a pointer to the current unit cell
-nsx::sptrUnitCell CellComboBox::currentCell() const
+ohkl::sptrUnitCell CellComboBox::currentCell() const
 {
     if (count() != _unit_cells.size())
         throw std::runtime_error("CellComboBox needs refreshing");
@@ -60,7 +60,7 @@ void CellComboBox::refresh()
     QSignalBlocker blocker(this);
     _current = currentText();
     clear();
-    for (nsx::sptrUnitCell& cell : _unit_cells)
+    for (ohkl::sptrUnitCell& cell : _unit_cells)
         addItem(QString::fromStdString(cell->name()));
     setCurrentText(_current);
 }

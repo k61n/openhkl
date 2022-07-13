@@ -31,7 +31,7 @@
 //#define DEBUG_HISTOGRAMS
 
 
-namespace nsx {
+namespace ohkl {
 
 //! Returns a list of approximately equal distributed points on the unit sphere.
 //!
@@ -194,4 +194,4 @@ std::vector<Eigen::RowVector3d> algo::findOnSphere(
     return result;
 }
 
-} // namespace nsx
+} // namespace ohkl

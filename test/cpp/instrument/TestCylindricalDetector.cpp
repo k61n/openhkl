@@ -1,6 +1,6 @@
 //  ***********************************************************************************************
 //
-//  NSXTool: data reduction for neutron single-crystal diffraction
+//  OpenHKL: data reduction for single crystal diffraction
 //
 //! @file      test/cpp/instrument/TestCylindricalDetector.cpp
 //! @brief     Test ...
@@ -26,14 +26,14 @@ const double tolerance = 1e-3;
 
 TEST_CASE("test/instrument/TestCylindricalDetector.cpp", "")
 {
-    nsx::CylindricalDetector d("D19-detector");
-    d.setDistance(764 * nsx::mm);
-    d.setAngularWidth(120.0 * nsx::deg);
-    d.setHeight(40.0 * nsx::cm);
+    ohkl::CylindricalDetector d("D19-detector");
+    d.setDistance(764 * ohkl::mm);
+    d.setAngularWidth(120.0 * ohkl::deg);
+    d.setHeight(40.0 * ohkl::cm);
     d.setNCols(640);
     d.setNRows(256);
 
-    const nsx::DirectVector pixel_position = d.pixelPosition(319.5, 127.5);
+    const ohkl::DirectVector pixel_position = d.pixelPosition(319.5, 127.5);
 
     // This should be the center of the detector at rest at (0,0.764,0)
     const Eigen::Vector3d& center = pixel_position.vector();
@@ -42,7 +42,7 @@ TEST_CASE("test/instrument/TestCylindricalDetector.cpp", "")
     CHECK(std::abs(center[2]) < tolerance);
 
     // Create a fake instrument state
-    const nsx::InstrumentState state1(nullptr);
+    const ohkl::InstrumentState state1(nullptr);
 
     // Should be center of the detector so gamma,nu=0 at rest
     CHECK(std::abs(state1.gamma(pixel_position)) < tolerance);
@@ -50,20 +50,20 @@ TEST_CASE("test/instrument/TestCylindricalDetector.cpp", "")
     CHECK(std::abs(state1.twoTheta(pixel_position)) < tolerance);
 
     // Rotate the detector by 90 deg clockwise
-    nsx::InstrumentState state2(nullptr);
+    ohkl::InstrumentState state2(nullptr);
     state2.detectorOrientation << 0, 1, 0, -1, 0, 0, 0, 0, 1;
 
-    CHECK(state2.gamma(pixel_position) == Approx(90 * nsx::deg).epsilon(tolerance));
+    CHECK(state2.gamma(pixel_position) == Approx(90 * ohkl::deg).epsilon(tolerance));
     CHECK(std::abs(state2.nu(pixel_position)) < tolerance);
-    CHECK(state2.twoTheta(pixel_position) == Approx(90.0 * nsx::deg).epsilon(tolerance));
+    CHECK(state2.twoTheta(pixel_position) == Approx(90.0 * ohkl::deg).epsilon(tolerance));
 
-    const nsx::ReciprocalVector kf = state2.kfLab(pixel_position);
+    const ohkl::ReciprocalVector kf = state2.kfLab(pixel_position);
 
     CHECK(kf[0] == Approx(1).epsilon(tolerance)); // may be converted incorrectly
     CHECK(std::abs(kf[1]) < tolerance);
     CHECK(std::abs(kf[2]) < tolerance);
 
-    const nsx::ReciprocalVector q = state2.sampleQ(pixel_position);
+    const ohkl::ReciprocalVector q = state2.sampleQ(pixel_position);
 
     CHECK(q[0] == Approx(1.0).epsilon(tolerance));
     CHECK(q[1] == Approx(-1.0).epsilon(tolerance));
@@ -76,11 +76,11 @@ TEST_CASE("test/instrument/TestCylindricalDetector.cpp", "")
             auto position = d.pixelPosition(j, i);
 
             Eigen::Vector3d from(-1, -1, -1);
-            from *= nsx::cm;
+            from *= ohkl::cm;
             const Eigen::Vector3d kf = position.vector() - from;
 
-            const nsx::DetectorEvent event = d.constructEvent(
-                nsx::DirectVector(from), nsx::ReciprocalVector(kf.transpose()), 0.);
+            const ohkl::DetectorEvent event = d.constructEvent(
+                ohkl::DirectVector(from), ohkl::ReciprocalVector(kf.transpose()), 0.);
 
             // detector has event
             CHECK(event.tof > 0.0);

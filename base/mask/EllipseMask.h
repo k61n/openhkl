@@ -12,14 +12,14 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_BASE_MASK_ELLIPSEMASK_H
-#define NSX_BASE_MASK_ELLIPSEMASK_H
+#ifndef OHKL_BASE_MASK_ELLIPSEMASK_H
+#define OHKL_BASE_MASK_ELLIPSEMASK_H
 
 #include "base/geometry/Ellipsoid.h"
 #include "base/mask/IMask.h"
 #include "base/utils/Logger.h"
 
-namespace nsx {
+namespace ohkl {
 
 //! Ellipsoidal detector IMask.
 
@@ -43,6 +43,6 @@ class EllipseMask : public IMask {
     Ellipsoid _ellipsoid;
 };
 
-} // namespace nsx
+} // namespace ohkl
 
-#endif // NSX_BASE_MASK_ELLIPSEMASK_H
+#endif // OHKL_BASE_MASK_ELLIPSEMASK_H

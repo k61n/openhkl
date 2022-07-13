@@ -147,17 +147,17 @@ void PeakProperties::selectedPeaksChanged()
         return;
     }
 
-    nsx::PeakCollectionType listType = model->root()->peakCollection()->type();
+    ohkl::PeakCollectionType listType = model->root()->peakCollection()->type();
     switch (listType) {
-        case nsx::PeakCollectionType::FOUND: {
+        case ohkl::PeakCollectionType::FOUND: {
             _type->setText("Found");
             break;
         }
-        case nsx::PeakCollectionType::PREDICTED: {
+        case ohkl::PeakCollectionType::PREDICTED: {
             _type->setText("Predicted");
             break;
         }
-        case nsx::PeakCollectionType::INDEXING: {
+        case ohkl::PeakCollectionType::INDEXING: {
             _type->setText("Indexing");
             break;
         }

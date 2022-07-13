@@ -15,7 +15,7 @@
 #include "core/integration/Profile3DIntegrator.h"
 #include "core/data/DataSet.h"
 
-namespace nsx {
+namespace ohkl {
 
 static void updateFit(
     Intensity& I, Intensity& B, const std::vector<double>& profile,
@@ -144,4 +144,4 @@ bool Profile3DIntegrator::compute(
     return true;
 }
 
-} // namespace nsx
+} // namespace ohkl

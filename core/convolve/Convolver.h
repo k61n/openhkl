@@ -12,13 +12,13 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_CORE_CONVOLVE_CONVOLVER_H
-#define NSX_CORE_CONVOLVE_CONVOLVER_H
+#ifndef OHKL_CORE_CONVOLVE_CONVOLVER_H
+#define OHKL_CORE_CONVOLVE_CONVOLVER_H
 
 #include <Eigen/Dense>
 #include <map>
 
-namespace nsx {
+namespace ohkl {
 
 using RealMatrix = Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>;
 
@@ -59,6 +59,6 @@ class Convolver {
     std::string _convolver_type = "";
 };
 
-} // namespace nsx
+} // namespace ohkl
 
-#endif // NSX_CORE_CONVOLVE_CONVOLVER_H
+#endif // OHKL_CORE_CONVOLVE_CONVOLVER_H

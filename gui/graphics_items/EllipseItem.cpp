@@ -19,7 +19,7 @@
 #include <QPainter>
 #include <QStyleOptionGraphicsItem>
 
-EllipseMaskItem::EllipseMaskItem(nsx::sptrDataSet data, nsx::AABB* aabb)
+EllipseMaskItem::EllipseMaskItem(ohkl::sptrDataSet data, ohkl::AABB* aabb)
     : SXGraphicsItem(nullptr, true, true), _data(data), _aabb(aabb), _from(0, 0), _to(0, 0)
 {
     _pen.setWidth(1);
@@ -79,7 +79,7 @@ void EllipseMaskItem::setTo(const QPointF& pos)
     updateAABB();
 }
 
-nsx::AABB* EllipseMaskItem::getAABB()
+ohkl::AABB* EllipseMaskItem::getAABB()
 {
     return _aabb;
 }

@@ -27,10 +27,10 @@
 #include <QSpinBox>
 #include <QVBoxLayout>
 
-UnitCellWidget::UnitCellWidget(nsx::sptrUnitCell cell, const QString& /*name*/)
+UnitCellWidget::UnitCellWidget(ohkl::sptrUnitCell cell, const QString& /*name*/)
     : QWidget(), unitCell_{cell}, wasSpaceGroupSet{false}
 {
-    nsx::UnitCellCharacter character = unitCell_->character();
+    ohkl::UnitCellCharacter character = unitCell_->character();
     // layout...
     QVBoxLayout* whole = new QVBoxLayout(this);
     QGroupBox* unitcellparams = new QGroupBox("Unit cell parameters", this);
@@ -59,9 +59,9 @@ UnitCellWidget::UnitCellWidget(nsx::sptrUnitCell cell, const QString& /*name*/)
     QDoubleSpinBox* alpha = new QDoubleSpinBox();
     QDoubleSpinBox* beta = new QDoubleSpinBox();
     QDoubleSpinBox* gamma = new QDoubleSpinBox();
-    alpha->setValue(character.alpha / nsx::deg);
-    beta->setValue(character.beta / nsx::deg);
-    gamma->setValue(character.gamma / nsx::deg);
+    alpha->setValue(character.alpha / ohkl::deg);
+    beta->setValue(character.beta / ohkl::deg);
+    gamma->setValue(character.gamma / ohkl::deg);
 
     a->setReadOnly(true);
     b->setReadOnly(true);
@@ -160,19 +160,19 @@ UnitCellWidget::UnitCellWidget(nsx::sptrUnitCell cell, const QString& /*name*/)
 
 void UnitCellWidget::evaluateSpaceGroups()
 {
-    // nsx::PeakList list;
-    // nsx::PeakFilter filter;
+    // ohkl::PeakList list;
+    // ohkl::PeakFilter filter;
 
     // // list = filter.enabled(gSession->currentProject()->getUnitCell(unitCell_), true);
     // list = filter.indexed(list, *unitCell_, unitCell_->indexingTolerance());
 
-    // nsx::MillerIndexList hkls;
-    // for (nsx::sptrPeak3D peak : list)
-    //     hkls.emplace_back(nsx::MillerIndex(peak->q(), *unitCell_).rowVector());
+    // ohkl::MillerIndexList hkls;
+    // for (ohkl::sptrPeak3D peak : list)
+    //     hkls.emplace_back(ohkl::MillerIndex(peak->q(), *unitCell_).rowVector());
     // std::vector<std::string> compatibleSpaceGroups = unitCell_->compatibleSpaceGroups();
     // std::vector<std::pair<std::string, double>> groups;
     // for (std::string& symbol : compatibleSpaceGroups) {
-    //     nsx::SpaceGroup spacegroup = nsx::SpaceGroup(symbol);
+    //     ohkl::SpaceGroup spacegroup = ohkl::SpaceGroup(symbol);
 
     //     std::pair<std::string, double> entry =
     //         std::make_pair(symbol, 100.0 * (1 - spacegroup.fractionExtinct(hkls)));
@@ -191,7 +191,7 @@ void UnitCellWidget::evaluateSpaceGroups()
     //         return quality_a > quality_b;
 
     //     // otherwise we sort by properties of the groups
-    //     nsx::SpaceGroup grp_a(a.first), grp_b(b.first);
+    //     ohkl::SpaceGroup grp_a(a.first), grp_b(b.first);
 
     //     // sort by group ID
     //     return grp_a.id() < grp_b.id();
@@ -214,7 +214,7 @@ void UnitCellWidget::evaluateSpaceGroups()
     // for (const auto& item : groups) {
     //     const std::string& symbol = std::get<0>(item);
     //     double agreement = std::get<1>(item);
-    //     nsx::SpaceGroup grp(symbol);
+    //     ohkl::SpaceGroup grp(symbol);
 
     //     QStandardItem* col0 = new QStandardItem(QString::fromStdString(symbol));
     //     QStandardItem* col1 = new QStandardItem(QString::number(grp.id()));

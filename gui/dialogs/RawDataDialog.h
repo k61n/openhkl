@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_GUI_DIALOGS_RAWDATADIALOG_H
-#define NSX_GUI_DIALOGS_RAWDATADIALOG_H
+#ifndef OHKL_GUI_DIALOGS_RAWDATADIALOG_H
+#define OHKL_GUI_DIALOGS_RAWDATADIALOG_H
 
 #include <QCheckBox>
 #include <QComboBox>
@@ -33,7 +33,7 @@
 class RawDataDialog : public QDialog {
  public:
     RawDataDialog(
-        const nsx::RawDataReaderParameters& parameters0,
+        const ohkl::RawDataReaderParameters& parameters0,
         const QStringList& datanames_cur = QStringList());
 
     QString dataset_name() { return _datasetName->text(); }
@@ -48,7 +48,7 @@ class RawDataDialog : public QDialog {
     int bpp();
     void setWavelength(double newWavelength) { _wavelength->setValue(newWavelength); }
     //! Return a copy of the parameters acquired from the dialog
-    nsx::RawDataReaderParameters parameters();
+    ohkl::RawDataReaderParameters parameters();
 
  private:
     //! Verify user-provided parameters
@@ -67,8 +67,8 @@ class RawDataDialog : public QDialog {
     SafeDoubleSpinBox* _gain;
     QDialogButtonBox* _buttons;
     QLineEdit* _datasetName;
-    const nsx::RawDataReaderParameters& _parameters0; // initial parameters
+    const ohkl::RawDataReaderParameters& _parameters0; // initial parameters
     const QStringList& _dataset_names; // list of current dataset names
 };
 
-#endif // NSX_GUI_DIALOGS_RAWDATADIALOG_H
+#endif // OHKL_GUI_DIALOGS_RAWDATADIALOG_H

@@ -19,11 +19,11 @@
 #include "core/gonio/RotAxis.h"
 #include "core/raw/DataKeys.h"
 
-namespace nsx {
+namespace ohkl {
 
 AxisFactory::AxisFactory()
 {
-    registerCallback(nsx::kw_rotationAxisName, &RotAxis::create);
+    registerCallback(ohkl::kw_rotationAxisName, &RotAxis::create);
 }
 
-} // namespace nsx
+} // namespace ohkl

@@ -12,14 +12,14 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_TABLES_CRYSTAL_DOUBLETOFRACTION_H
-#define NSX_TABLES_CRYSTAL_DOUBLETOFRACTION_H
+#ifndef OHKL_TABLES_CRYSTAL_DOUBLETOFRACTION_H
+#define OHKL_TABLES_CRYSTAL_DOUBLETOFRACTION_H
 
-namespace nsx {
+namespace ohkl {
 
 // Converts a number into nominator and denominator.
 void doubleToFraction(double number, int nmax, long& nom, long& dnom);
 
-} // namespace nsx
+} // namespace ohkl
 
-#endif // NSX_TABLES_CRYSTAL_DOUBLETOFRACTION_H
+#endif // OHKL_TABLES_CRYSTAL_DOUBLETOFRACTION_H

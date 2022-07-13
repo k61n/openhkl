@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_GUI_DIALOGS_CLONEPEAKDIALOG_H
-#define NSX_GUI_DIALOGS_CLONEPEAKDIALOG_H
+#ifndef OHKL_GUI_DIALOGS_CLONEPEAKDIALOG_H
+#define OHKL_GUI_DIALOGS_CLONEPEAKDIALOG_H
 
 #include <QComboBox>
 #include <QDialog>
@@ -31,4 +31,4 @@ class ClonePeakDialog : public QDialog {
     QLineEdit* _new_collection_name;
 };
 
-#endif // NSX_GUI_DIALOGS_CLONEPEAKDIALOG_H
+#endif // OHKL_GUI_DIALOGS_CLONEPEAKDIALOG_H

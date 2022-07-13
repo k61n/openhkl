@@ -12,13 +12,13 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_CORE_SHAPE_OCTREE_H
-#define NSX_CORE_SHAPE_OCTREE_H
+#ifndef OHKL_CORE_SHAPE_OCTREE_H
+#define OHKL_CORE_SHAPE_OCTREE_H
 
 #include "base/geometry/AABB.h"
 #include <set>
 
-namespace nsx {
+namespace ohkl {
 
 class OctreeIterator;
 
@@ -164,6 +164,6 @@ class OctreeIterator {
     const Octree* _node;
 };
 
-} // namespace nsx
+} // namespace ohkl
 
-#endif // NSX_CORE_SHAPE_OCTREE_H
+#endif // OHKL_CORE_SHAPE_OCTREE_H

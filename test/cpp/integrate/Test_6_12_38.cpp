@@ -1,6 +1,6 @@
 //  ***********************************************************************************************
 //
-//  NSXTool: data reduction for neutron single-crystal diffraction
+//  OpenHKL: data reduction for single crystal diffraction
 //
 //! @file      test/cpp/integrate/Test_6_12_38.cpp
 //! @brief     Test ...
@@ -41,10 +41,10 @@
 
 TEST_CASE("test/integrate/Test_6_12_38.cpp", "")
 {
-    nsx::Experiment experiment("test", "BioDiff2500");
+    ohkl::Experiment experiment("test", "BioDiff2500");
 
-    const nsx::sptrDataSet dataset_ptr { std::make_shared<nsx::DataSet>
-          (nsx::kw_datasetDefaultName, experiment.getDiffractometer()) };
+    const ohkl::sptrDataSet dataset_ptr { std::make_shared<ohkl::DataSet>
+          (ohkl::kw_datasetDefaultName, experiment.getDiffractometer()) };
 
     dataset_ptr->addDataFile("gal3.hdf", "nsx");
     dataset_ptr->finishRead();
@@ -67,8 +67,8 @@ TEST_CASE("test/integrate/Test_6_12_38.cpp", "")
 
     const Eigen::Matrix3d B = A.inverse().transpose();
     const Eigen::Vector3d q0 = Eigen::RowVector3d(-6, 12, -38) * B;
-    nsx::Ellipsoid shape(Eigen::Vector3d(434, 802, 10), 2);
-    auto peak = nsx::Peak3D(dataset_ptr, shape);
+    ohkl::Ellipsoid shape(Eigen::Vector3d(434, 802, 10), 2);
+    auto peak = ohkl::Peak3D(dataset_ptr, shape);
     peak.setSelected(true);
 
     Eigen::Vector3d q1 = peak.q().rowVector();
@@ -77,10 +77,10 @@ TEST_CASE("test/integrate/Test_6_12_38.cpp", "")
     std::cout << q0.transpose() << std::endl;
     std::cout << q1.transpose() << std::endl;
 
-    std::vector<nsx::Peak3D*> peaks;
+    std::vector<ohkl::Peak3D*> peaks;
     peaks.push_back(&peak);
-    nsx::PixelSumIntegrator integrator(false, false);
-    nsx::IntegrationParameters params{};
+    ohkl::PixelSumIntegrator integrator(false, false);
+    ohkl::IntegrationParameters params{};
     params.peak_end = 2.7;
     params.bkg_begin = 3.0;
     params.bkg_end = 4.0;

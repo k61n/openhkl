@@ -14,7 +14,7 @@
 
 #include "core/raw/MetaData.h"
 
-namespace nsx {
+namespace ohkl {
 
 // Static that contains all available keys.
 MetaDataKeySet MetaData::_metakeys = std::set<std::string>();
@@ -88,4 +88,4 @@ std::ostream& operator<<(std::ostream& os, const MetaData& metadata)
     return os;
 }
 
-} // End namespace nsx
+} // End namespace ohkl

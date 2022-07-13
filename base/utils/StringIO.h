@@ -12,10 +12,10 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_BASE_UTILS_STRINGIO_H
-#define NSX_BASE_UTILS_STRINGIO_H
+#ifndef OHKL_BASE_UTILS_STRINGIO_H
+#define OHKL_BASE_UTILS_STRINGIO_H
 
-namespace nsx {
+namespace ohkl {
 
 std::string clear_spaces(const std::string& input_string);
 
@@ -32,6 +32,6 @@ std::string lowerCase(const std::string& str_in);
 //! Returns current date and time as a string
 std::string datetime_str();
 
-} // namespace nsx
+} // namespace ohkl
 
-#endif // NSX_BASE_UTILS_STRINGIO_H
+#endif // OHKL_BASE_UTILS_STRINGIO_H

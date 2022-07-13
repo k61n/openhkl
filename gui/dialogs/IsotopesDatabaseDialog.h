@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_GUI_DIALOGS_ISOTOPESDATABASEDIALOG_H
-#define NSX_GUI_DIALOGS_ISOTOPESDATABASEDIALOG_H
+#ifndef OHKL_GUI_DIALOGS_ISOTOPESDATABASEDIALOG_H
+#define OHKL_GUI_DIALOGS_ISOTOPESDATABASEDIALOG_H
 
 #include <QDialog>
 #include <QTableView>
@@ -29,4 +29,4 @@ class IsotopesDatabaseDialog : public QDialog {
     void sortingChanged(int, Qt::SortOrder);
 };
 
-#endif // NSX_GUI_DIALOGS_ISOTOPESDATABASEDIALOG_H
+#endif // OHKL_GUI_DIALOGS_ISOTOPESDATABASEDIALOG_H

@@ -22,7 +22,7 @@
 
 static const double minimum_blob_mass = 1e-15;
 
-namespace nsx {
+namespace ohkl {
 
 Blob3D::Blob3D()
     : _m0(0)
@@ -157,4 +157,4 @@ bool Blob3D::isValid() const
     return _valid;
 }
 
-} // namespace nsx
+} // namespace ohkl

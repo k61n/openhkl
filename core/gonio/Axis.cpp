@@ -21,17 +21,17 @@
 #include "core/gonio/AxisFactory.h"
 #include "core/raw/DataKeys.h"
 
-namespace nsx {
+namespace ohkl {
 
 Axis* Axis::create(const YAML::Node& node)
 {
-    std::string axisType = node[nsx::ym_axisType].as<std::string>();
+    std::string axisType = node[ohkl::ym_axisType].as<std::string>();
 
     return AxisFactory::instance().create(axisType, node);
 }
 
 Axis::Axis()
-    : _name(nsx::kw_axisDefaultName), _axis(Eigen::Vector3d(0.0, 0.0, 1.0)), _physical(true), _id(0)
+    : _name(ohkl::kw_axisDefaultName), _axis(Eigen::Vector3d(0.0, 0.0, 1.0)), _physical(true), _id(0)
 {
 }
 
@@ -48,17 +48,17 @@ Axis::Axis(const std::string& name, const Eigen::Vector3d& axis)
 
 Axis::Axis(const YAML::Node& node)
 {
-    _name = node[nsx::ym_axisName] ? node[nsx::ym_axisName].as<std::string>()
-                                   : nsx::kw_axisDefaultName;
+    _name = node[ohkl::ym_axisName] ? node[ohkl::ym_axisName].as<std::string>()
+                                   : ohkl::kw_axisDefaultName;
 
-    Eigen::Vector3d axis = node[nsx::ym_axisDirection].as<Eigen::Vector3d>();
+    Eigen::Vector3d axis = node[ohkl::ym_axisDirection].as<Eigen::Vector3d>();
     axis.normalize();
 
     _axis = axis;
 
-    _physical = node[nsx::ym_axisPhysical].as<bool>();
+    _physical = node[ohkl::ym_axisPhysical].as<bool>();
 
-    _id = node[nsx::ym_axisId] ? node[nsx::ym_axisId].as<unsigned int>() : nsx::kw_axisDefaultId;
+    _id = node[ohkl::ym_axisId] ? node[ohkl::ym_axisId].as<unsigned int>() : ohkl::kw_axisDefaultId;
 }
 
 Axis::~Axis() = default;
@@ -117,4 +117,4 @@ std::ostream& operator<<(std::ostream& os, const Axis& axis)
     return axis.printSelf(os);
 }
 
-} // namespace nsx
+} // namespace ohkl

@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_GUI_GRAPHICS_ITEMS_ELLIPSEITEM_H
-#define NSX_GUI_GRAPHICS_ITEMS_ELLIPSEITEM_H
+#ifndef OHKL_GUI_GRAPHICS_ITEMS_ELLIPSEITEM_H
+#define OHKL_GUI_GRAPHICS_ITEMS_ELLIPSEITEM_H
 
 #include "base/geometry/AABB.h"
 #include "core/data/DataTypes.h"
@@ -26,7 +26,7 @@
 class EllipseMaskItem : public SXGraphicsItem {
  public:
     // Constructs a mask
-    EllipseMaskItem(nsx::sptrDataSet data, nsx::AABB* aabb);
+    EllipseMaskItem(ohkl::sptrDataSet data, ohkl::AABB* aabb);
     //! The destructor
     ~EllipseMaskItem();
 
@@ -44,7 +44,7 @@ class EllipseMaskItem : public SXGraphicsItem {
 
     //! Returns the bounding rectangle of the mask
     QRectF boundingRect() const override;
-    nsx::AABB* getAABB();
+    ohkl::AABB* getAABB();
     //! Sets the starting corner of the mask
     void setFrom(const QPointF& pos);
     //! Sets the ending corner of the mask
@@ -57,9 +57,9 @@ class EllipseMaskItem : public SXGraphicsItem {
 
  protected:
     //! The data on which the cutter will act upon
-    nsx::sptrDataSet _data;
+    ohkl::sptrDataSet _data;
     //! The AABB of the peak
-    nsx::AABB* _aabb;
+    ohkl::AABB* _aabb;
     QPointF _from;
     QPointF _to;
     QGraphicsTextItem* _text;
@@ -68,4 +68,4 @@ class EllipseMaskItem : public SXGraphicsItem {
     void updateAABB();
 };
 
-#endif // NSX_GUI_GRAPHICS_ITEMS_ELLIPSEITEM_H
+#endif // OHKL_GUI_GRAPHICS_ITEMS_ELLIPSEITEM_H

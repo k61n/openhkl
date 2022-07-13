@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_CORE_RAW_IDATAREADER_H
-#define NSX_CORE_RAW_IDATAREADER_H
+#ifndef OHKL_CORE_RAW_IDATAREADER_H
+#define OHKL_CORE_RAW_IDATAREADER_H
 
 #include "core/instrument/InstrumentState.h"
 #include "core/instrument/InstrumentStateSet.h"
@@ -22,7 +22,7 @@
 #include <string>
 #include <vector>
 
-namespace nsx {
+namespace ohkl {
 
 //! Pure virtual base class of data readers that provide access to detector images and metadata.
 
@@ -79,6 +79,6 @@ class IDataReader {
     DataSet* _dataset_out = nullptr;
 };
 
-} // namespace nsx
+} // namespace ohkl
 
-#endif // NSX_CORE_RAW_IDATAREADER_H
+#endif // OHKL_CORE_RAW_IDATAREADER_H

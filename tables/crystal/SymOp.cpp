@@ -20,7 +20,7 @@
 #include "tables/crystal/JonesSymbolParser.h"
 #include "tables/crystal/SymOp.h"
 
-namespace nsx {
+namespace ohkl {
 
 SymOp::SymOp(std::string generator)
 {
@@ -220,4 +220,4 @@ int SymOp::translationIsIntegralMultiple(const SymOp& other) const
     return 0;
 }
 
-} // namespace nsx
+} // namespace ohkl

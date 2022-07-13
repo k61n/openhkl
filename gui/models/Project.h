@@ -12,15 +12,15 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_GUI_MODELS_SESSIONEXPERIMENT_H
-#define NSX_GUI_MODELS_SESSIONEXPERIMENT_H
+#ifndef OHKL_GUI_MODELS_SESSIONEXPERIMENT_H
+#define OHKL_GUI_MODELS_SESSIONEXPERIMENT_H
 
 #include <QStringList>
 #include <memory>
 #include <string>
 #include <vector>
 
-namespace nsx {
+namespace ohkl {
 class DataSet;
 class Experiment;
 class Peak3D;
@@ -38,22 +38,22 @@ class Project {
     Project(QString name, QString instrument);
     Project(const Project&) = delete;
 
-    const nsx::Experiment* experiment() const;
-    nsx::Experiment* experiment();
+    const ohkl::Experiment* experiment() const;
+    ohkl::Experiment* experiment();
     QStringList getDataNames() const;
-    std::shared_ptr<nsx::DataSet> getData(int index = -1) const;
-    std::vector<std::shared_ptr<nsx::DataSet>> allData() const;
+    std::shared_ptr<ohkl::DataSet> getData(int index = -1) const;
+    std::vector<std::shared_ptr<ohkl::DataSet>> allData() const;
     int getIndex(const QString&) const;
     void selectData(int selected);
     void changeInstrument(const QString& instrumentname);
     bool saved() const { return _saved; };
     unsigned int id() const { return _id; };
 
-    std::vector<nsx::Peak3D*> getPeaks(
+    std::vector<ohkl::Peak3D*> getPeaks(
         const QString& peakListName, int upperindex = -1, int lowerindex = -1) const;
 
     QStringList getPeakListNames() const;
-    QStringList getPeakCollectionNames(nsx::PeakCollectionType lt) const;
+    QStringList getPeakCollectionNames(ohkl::PeakCollectionType lt) const;
 
     int numPeakCollections() const;
 
@@ -65,7 +65,7 @@ class Project {
 
     void clonePeakCollection(const QString& name, const QString& new_name);
 
-    void addUnitCell(const std::string& name, const nsx::UnitCell& unit_cell);
+    void addUnitCell(const std::string& name, const ohkl::UnitCell& unit_cell);
     QStringList getUnitCellNames() const;
     int numUnitCells() const;
 
@@ -82,7 +82,7 @@ class Project {
     bool hasShapeModel() const;
 
  private:
-    std::unique_ptr<nsx::Experiment> _experiment;
+    std::unique_ptr<ohkl::Experiment> _experiment;
 
     std::vector<PeakCollectionModel*> _peak_collection_models;
     std::vector<PeakCollectionItem*> _peak_collection_items;
@@ -98,4 +98,4 @@ class Project {
     static unsigned int _last_id;
 };
 
-#endif // NSX_GUI_MODELS_SESSIONEXPERIMENT_H
+#endif // OHKL_GUI_MODELS_SESSIONEXPERIMENT_H

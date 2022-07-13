@@ -27,9 +27,9 @@
 namespace {
 QStringList allInstrumentNames()
 {
-    std::set<std::string> resources_name = nsx::getResourcesName("instruments");
+    std::set<std::string> resources_name = ohkl::getResourcesName("instruments");
 
-    QDir diffractometersDirectory(QString::fromStdString(nsx::applicationDataPath()));
+    QDir diffractometersDirectory(QString::fromStdString(ohkl::applicationDataPath()));
     diffractometersDirectory.cd("instruments");
 
     QStringList user_diffractometer_files =

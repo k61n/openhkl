@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_GUI_SUBFRAME_SHAPES_SUBFRAMESHAPES_H
-#define NSX_GUI_SUBFRAME_SHAPES_SUBFRAMESHAPES_H
+#ifndef OHKL_GUI_SUBFRAME_SHAPES_SUBFRAMESHAPES_H
+#define OHKL_GUI_SUBFRAME_SHAPES_SUBFRAMESHAPES_H
 
 #include "core/data/DataSet.h"
 #include "core/peak/Peak3D.h"
@@ -62,7 +62,7 @@ class SubframeShapes : public QWidget {
     DetectorWidget* detectorWidget();
 
  public slots:
-    void onPeakSelected(nsx::Peak3D* peak);
+    void onPeakSelected(ohkl::Peak3D* peak);
     void onShapeChanged();
 
  private:
@@ -99,7 +99,7 @@ class SubframeShapes : public QWidget {
     //! Compute the mean profile at the given coordinates
     void computeProfile();
     //! Generate a peak for preview in in DetectorScene
-    void getPreviewPeak(nsx::Peak3D* selected_peak);
+    void getPreviewPeak(ohkl::Peak3D* selected_peak);
     //! Save the shape collection
     void saveShapes();
 
@@ -166,13 +166,13 @@ class SubframeShapes : public QWidget {
     PeakCollectionItem _peak_collection_item;
     PeakCollectionModel _peak_collection_model;
 
-    nsx::ShapeModel _shape_model;
-    nsx::Profile3D _profile;
-    nsx::Peak3D* _current_peak;
-    std::unique_ptr<nsx::Peak3D> _preview_peak;
+    ohkl::ShapeModel _shape_model;
+    ohkl::Profile3D _profile;
+    ohkl::Peak3D* _current_peak;
+    std::unique_ptr<ohkl::Peak3D> _preview_peak;
 
     QGroupBox* _shape_group;
 };
 
 
-#endif // NSX_GUI_SUBFRAME_SHAPES_SUBFRAMESHAPES_H
+#endif // OHKL_GUI_SUBFRAME_SHAPES_SUBFRAMESHAPES_H

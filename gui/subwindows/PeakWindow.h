@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_GUI_SUBWINDOWS_PEAKWINDOW_H
-#define NSX_GUI_SUBWINDOWS_PEAKWINDOW_H
+#ifndef OHKL_GUI_SUBWINDOWS_PEAKWINDOW_H
+#define OHKL_GUI_SUBWINDOWS_PEAKWINDOW_H
 
 #include "core/peak/RegionData.h"
 
@@ -33,7 +33,7 @@
 class ColorButton;
 class ColorMap;
 
-namespace nsx {
+namespace ohkl {
 class Peak3D;
 }
 
@@ -51,7 +51,7 @@ struct PeakWindowParameters {
 class PeakWindow : public QDialog {
 
  public:
-    PeakWindow(nsx::Peak3D* peak, QWidget* parent = nullptr);
+    PeakWindow(ohkl::Peak3D* peak, QWidget* parent = nullptr);
 
     //! Refresh the whole dialog
     void refresh();
@@ -77,9 +77,9 @@ class PeakWindow : public QDialog {
 
     void closeEvent(QCloseEvent* event) override;
 
-    nsx::Peak3D* _peak;
-    std::unique_ptr<nsx::IntegrationRegion> _integration_region;
-    nsx::RegionData* _region_data;
+    ohkl::Peak3D* _peak;
+    std::unique_ptr<ohkl::IntegrationRegion> _integration_region;
+    ohkl::RegionData* _region_data;
 
     int _intensity;
     bool _logarithmic;
@@ -104,4 +104,4 @@ class PeakWindow : public QDialog {
     static PeakWindowParameters _params;
 };
 
-#endif // NSX_GUI_SUBWINDOWS_PEAKWINDOW_H
+#endif // OHKL_GUI_SUBWINDOWS_PEAKWINDOW_H

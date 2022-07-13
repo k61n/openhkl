@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_CORE_EXPERIMENT_EXPERIMENT_H
-#define NSX_CORE_EXPERIMENT_EXPERIMENT_H
+#ifndef OHKL_CORE_EXPERIMENT_EXPERIMENT_H
+#define OHKL_CORE_EXPERIMENT_EXPERIMENT_H
 
 #include "core/algo/AutoIndexer.h"
 #include "core/algo/Refiner.h"
@@ -35,7 +35,7 @@
 #include <memory>
 
 
-namespace nsx {
+namespace ohkl {
 
 class DataHandler;
 class PeakHandler;
@@ -152,7 +152,7 @@ class Experiment {
         PeakCollection* peaks, double length_tol, double angle_tol,
         std::string name = kw_acceptedUnitcell);
     //! Assign unit cell to a peak collection, compute Miller indices from q and cell
-    void assignUnitCell(PeakCollection* peaks, std::string cellName = nsx::kw_acceptedUnitcell);
+    void assignUnitCell(PeakCollection* peaks, std::string cellName = ohkl::kw_acceptedUnitcell);
     //! Set the reference cell
     void setReferenceCell(double a, double b, double c, double alpha, double beta, double gamma);
     //! Get space groups compatible with unit cell
@@ -291,6 +291,6 @@ class Experiment {
 };
 
 /*! @}*/
-} // namespace nsx
+} // namespace ohkl
 
-#endif // NSX_CORE_EXPERIMENT_EXPERIMENT_H
+#endif // OHKL_CORE_EXPERIMENT_EXPERIMENT_H

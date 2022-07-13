@@ -1,6 +1,6 @@
 //  ***********************************************************************************************
 //
-//  NSXTool: data reduction for neutron single-crystal diffraction
+//  OpenHKL: data reduction for single crystal diffraction
 //
 //! @file      test/cpp/crystal/TestFFTIndexingSphere.cpp
 //! @brief     Test ...
@@ -23,7 +23,7 @@
 TEST_CASE("test/crystal/TestSpherePoints.cpp", "")
 {
     unsigned int n_vertices = 128;
-    std::vector<Eigen::RowVector3d> points = nsx::algo::pointsOnSphere(n_vertices);
+    std::vector<Eigen::RowVector3d> points = ohkl::algo::pointsOnSphere(n_vertices);
 
     // plot these points with:
     // gnuplot -p -e "set xyplane 0; splot \"sphere.dat\" u 1:2:3 w points pt 7

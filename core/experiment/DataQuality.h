@@ -12,15 +12,15 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_CORE_EXPERIMENT_DATAQUALITY_H
-#define NSX_CORE_EXPERIMENT_DATAQUALITY_H
+#ifndef OHKL_CORE_EXPERIMENT_DATAQUALITY_H
+#define OHKL_CORE_EXPERIMENT_DATAQUALITY_H
 
 #include "base/utils/Logger.h"
 
 #include <string>
 #include <vector>
 
-namespace nsx {
+namespace ohkl {
 
 class MergedData;
 class RFactor;
@@ -64,6 +64,6 @@ struct DataResolution {
     void log() const;
 };
 
-} // namespace nsx
+} // namespace ohkl
 
-#endif // NSX_CORE_EXPERIMENT_DATAQUALITY_H
+#endif // OHKL_CORE_EXPERIMENT_DATAQUALITY_H

@@ -12,18 +12,18 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_GUI_UTILITY_SHAPECOMBO_H
-#define NSX_GUI_UTILITY_SHAPECOMBO_H
+#ifndef OHKL_GUI_UTILITY_SHAPECOMBO_H
+#define OHKL_GUI_UTILITY_SHAPECOMBO_H
 
 #include "core/shape/ShapeModel.h"
 
 #include <QComboBox>
 
-namespace nsx {
+namespace ohkl {
 class ShapeModel;
 }
 
-using ShapesList = std::vector<nsx::ShapeModel*>;
+using ShapesList = std::vector<ohkl::ShapeModel*>;
 
 //! A QComboBox that that is synchronised with all other QComboBoxes of the same type
 class ShapeComboBox : public QComboBox {
@@ -33,7 +33,7 @@ class ShapeComboBox : public QComboBox {
     ShapeComboBox(QWidget* parent = nullptr);
 
     //! Add a cell via its pointer
-    void addShapeModel(nsx::ShapeModel* shapes);
+    void addShapeModel(ohkl::ShapeModel* shapes);
 
     //! Add a list of unit cells
     void addShapeModels(const ShapesList& shapes_list);
@@ -42,7 +42,7 @@ class ShapeComboBox : public QComboBox {
     void clearAll();
 
     //! Return a pointer to the current unit cell
-    nsx::ShapeModel* currentShapes() const;
+    ohkl::ShapeModel* currentShapes() const;
 
     //! Refresh the combo box text
     void refresh();
@@ -59,4 +59,4 @@ class ShapeComboBox : public QComboBox {
     static QVector<ShapeComboBox*> _all_combos;
 };
 
-#endif // NSX_GUI_UTILITY_SHAPECOMBO_H
+#endif // OHKL_GUI_UTILITY_SHAPECOMBO_H

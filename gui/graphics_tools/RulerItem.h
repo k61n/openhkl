@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_GUI_GRAPHICS_TOOLS_RULERITEM_H
-#define NSX_GUI_GRAPHICS_TOOLS_RULERITEM_H
+#ifndef OHKL_GUI_GRAPHICS_TOOLS_RULERITEM_H
+#define OHKL_GUI_GRAPHICS_TOOLS_RULERITEM_H
 
 #include <QGraphicsItem>
 
@@ -66,4 +66,4 @@ class RulerItem : public QGraphicsItem {
     bool _displaydistance;
 };
 
-#endif // NSX_GUI_GRAPHICS_TOOLS_RULERITEM_H
+#endif // OHKL_GUI_GRAPHICS_TOOLS_RULERITEM_H

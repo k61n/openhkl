@@ -12,13 +12,13 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_CORE_DATA_DATATYPES_H
-#define NSX_CORE_DATA_DATATYPES_H
+#ifndef OHKL_CORE_DATA_DATATYPES_H
+#define OHKL_CORE_DATA_DATATYPES_H
 
 #include <memory>
 #include <vector>
 
-namespace nsx {
+namespace ohkl {
 
 class DataSet;
 using sptrDataSet = std::shared_ptr<DataSet>;
@@ -27,6 +27,6 @@ using DataList = std::vector<sptrDataSet>;
 // NOTE: `Count` is used to compute the number of members in the enum class
 enum class DataFormat { Unknown = -1, NSX = 0, RAW, NEXUS, Count };
 
-} // namespace nsx
+} // namespace ohkl
 
-#endif // NSX_CORE_DATA_DATATYPES_H
+#endif // OHKL_CORE_DATA_DATATYPES_H

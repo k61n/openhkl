@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_GUI_SUBFRAME_FILTER_SUBFRAMEFILTERPEAKS_H
-#define NSX_GUI_SUBFRAME_FILTER_SUBFRAMEFILTERPEAKS_H
+#ifndef OHKL_GUI_SUBFRAME_FILTER_SUBFRAMEFILTERPEAKS_H
+#define OHKL_GUI_SUBFRAME_FILTER_SUBFRAMEFILTERPEAKS_H
 
 #include "gui/items/PeakCollectionItem.h"
 #include "gui/models/PeakCollectionModel.h"
@@ -98,13 +98,13 @@ class SubframeFilterPeaks : public QWidget {
     void refreshPeakVisual();
 
     //! The model for the found peaks
-    nsx::PeakCollection _peak_collection;
+    ohkl::PeakCollection _peak_collection;
     //! The temporary collection
     PeakCollectionItem _peak_collection_item;
     //! The temporary collection
     PeakCollectionModel _peak_collection_model;
     //! The loaded data list
-    std::vector<nsx::sptrDataSet> _data_list;
+    std::vector<ohkl::sptrDataSet> _data_list;
 
     QHBoxLayout* _main_layout;
     QVBoxLayout* _left_layout;
@@ -153,4 +153,4 @@ class SubframeFilterPeaks : public QWidget {
     PeakTableView* _peak_table;
 };
 
-#endif // NSX_GUI_SUBFRAME_FILTER_SUBFRAMEFILTERPEAKS_H
+#endif // OHKL_GUI_SUBFRAME_FILTER_SUBFRAMEFILTERPEAKS_H

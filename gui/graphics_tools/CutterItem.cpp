@@ -17,7 +17,7 @@
 #include <QGraphicsSceneMouseEvent>
 #include <cmath>
 
-CutterItem::CutterItem(nsx::sptrDataSet data)
+CutterItem::CutterItem(ohkl::sptrDataSet data)
     : PlottableItem(nullptr, true, true), _data(data), _from(0, 0), _to(0, 0)
 {
     setZValue(1);
@@ -44,7 +44,7 @@ void CutterItem::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
     }
 }
 
-nsx::sptrDataSet CutterItem::getData()
+ohkl::sptrDataSet CutterItem::getData()
 {
     return _data;
 }

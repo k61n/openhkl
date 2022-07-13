@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_GUI_GRAPHICS_TOOLS_CUTTERITEM_H
-#define NSX_GUI_GRAPHICS_TOOLS_CUTTERITEM_H
+#ifndef OHKL_GUI_GRAPHICS_TOOLS_CUTTERITEM_H
+#define OHKL_GUI_GRAPHICS_TOOLS_CUTTERITEM_H
 
 #include "core/data/DataTypes.h"
 #include "gui/graphics_items/PlottableItem.h"
@@ -22,7 +22,7 @@
 class CutterItem : public PlottableItem {
  public:
     //! Constructs a data cutter
-    CutterItem(nsx::sptrDataSet data);
+    CutterItem(ohkl::sptrDataSet data);
     //! Destructor
     virtual ~CutterItem();
 
@@ -39,7 +39,7 @@ class CutterItem : public PlottableItem {
     //! Returns the bounding rectangle of the item
     QRectF boundingRect() const override;
     //! Returns the data bound to the item
-    nsx::sptrDataSet getData();
+    ohkl::sptrDataSet getData();
     //! Sets the top left corner of the item
     void setFrom(const QPointF& pos);
     //! Sets the bottom right corner of the item
@@ -50,11 +50,11 @@ class CutterItem : public PlottableItem {
 
  protected:
     //! The data on which the cutter will act upon
-    nsx::sptrDataSet _data;
+    ohkl::sptrDataSet _data;
     //! The top left coordinates of the slice
     QPointF _from;
     //! The bottom right coordinates of the slice
     QPointF _to;
 };
 
-#endif // NSX_GUI_GRAPHICS_TOOLS_CUTTERITEM_H
+#endif // OHKL_GUI_GRAPHICS_TOOLS_CUTTERITEM_H

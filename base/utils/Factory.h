@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_BASE_UTILS_FACTORY_H
-#define NSX_BASE_UTILS_FACTORY_H
+#ifndef OHKL_BASE_UTILS_FACTORY_H
+#define OHKL_BASE_UTILS_FACTORY_H
 
 #include "base/utils/ISingleton.h"
 #include <algorithm>
@@ -22,7 +22,7 @@
 #include <stdexcept>
 #include <vector>
 
-namespace nsx {
+namespace ohkl {
 
 //! Generic factory class template.
 
@@ -110,6 +110,6 @@ bool Factory<Child, base, keytype, args...>::hasCallback(const keytype& key)
     return (it != _map.end());
 }
 
-} // namespace nsx
+} // namespace ohkl
 
-#endif // NSX_BASE_UTILS_FACTORY_H
+#endif // OHKL_BASE_UTILS_FACTORY_H

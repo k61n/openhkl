@@ -1,6 +1,6 @@
 //  ***********************************************************************************************
 //
-//  NSXTool: data reduction for neutron single-crystal diffraction
+//  OpenHKL: data reduction for single crystal diffraction
 //
 //! @file      test/cpp/peak_find/TestDeltaConvolver.cpp
 //! @brief     Test ...
@@ -16,9 +16,9 @@
 #include "test/cpp/catch.hpp"
 
 // Generate a image to use for testing the Fourier transform
-nsx::RealMatrix generateImage(int rows, int cols)
+ohkl::RealMatrix generateImage(int rows, int cols)
 {
-    nsx::RealMatrix image(rows, cols);
+    ohkl::RealMatrix image(rows, cols);
 
     for (int i = 0; i < rows; ++i) {
         for (int j = 0; j < cols; ++j) {
@@ -30,11 +30,11 @@ nsx::RealMatrix generateImage(int rows, int cols)
 
 double computeError(int nrows, int ncols)
 {
-    nsx::RealMatrix original = generateImage(nrows, ncols);
-    nsx::DeltaConvolver convolver;
+    ohkl::RealMatrix original = generateImage(nrows, ncols);
+    ohkl::DeltaConvolver convolver;
 
-    nsx::RealMatrix transformed = convolver.convolve(original);
-    nsx::RealMatrix difference = original - transformed;
+    ohkl::RealMatrix transformed = convolver.convolve(original);
+    ohkl::RealMatrix difference = original - transformed;
     double error = (difference * difference.transpose()).sum() / nrows / ncols;
     return std::sqrt(error);
 }

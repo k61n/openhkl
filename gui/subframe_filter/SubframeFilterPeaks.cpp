@@ -49,7 +49,7 @@
 
 SubframeFilterPeaks::SubframeFilterPeaks()
     : QWidget()
-    , _peak_collection("temp", nsx::PeakCollectionType::FOUND)
+    , _peak_collection("temp", ohkl::PeakCollectionType::FOUND)
     , _peak_collection_item()
     , _peak_collection_model()
 {
@@ -228,7 +228,7 @@ void SubframeFilterPeaks::setRejectionFlagsUp()
     GridFiller f(_rejection_flag_box);
 
     _rejection_flag_combo = f.addCombo("Rejection reason");
-    for (const auto& [flag, reason] : nsx::Peak3D::rejectionMap())
+    for (const auto& [flag, reason] : ohkl::Peak3D::rejectionMap())
         _rejection_flag_combo->addItem(QString::fromStdString(reason));
 
     _left_layout->addWidget(_rejection_flag_box);
@@ -420,14 +420,14 @@ void SubframeFilterPeaks::setFilterParameters()
     params->unit_cell = _unit_cell->currentText().toStdString();
     params->peak_end = _peak_end->value();
     params->bkg_end = _bkg_end->value();
-    params->rejection_flag = static_cast<nsx::RejectionFlag>(_rejection_flag_combo->currentIndex());
+    params->rejection_flag = static_cast<ohkl::RejectionFlag>(_rejection_flag_combo->currentIndex());
 }
 
 void SubframeFilterPeaks::filterPeaks()
 {
     gGui->setReady(false);
-    nsx::PeakFilter* filter = gSession->currentProject()->experiment()->peakFilter();
-    nsx::PeakCollection* collection = _peak_combo->currentPeakCollection();
+    ohkl::PeakFilter* filter = gSession->currentProject()->experiment()->peakFilter();
+    ohkl::PeakCollection* collection = _peak_combo->currentPeakCollection();
     filter->resetFiltering(collection);
     setFilterParameters();
     filter->filter(collection);
@@ -444,7 +444,7 @@ void SubframeFilterPeaks::filterPeaks()
 
 void SubframeFilterPeaks::accept()
 {
-    nsx::PeakCollection* collection = _peak_combo->currentPeakCollection();
+    ohkl::PeakCollection* collection = _peak_combo->currentPeakCollection();
 
     std::string suggestion = gSession->currentProject()->experiment()->generatePeakCollectionName();
     std::unique_ptr<ListNameDialog> dlg(new ListNameDialog(QString::fromStdString(suggestion)));
@@ -472,7 +472,7 @@ void SubframeFilterPeaks::refreshPeakTable()
     if (!gSession->currentProject()->hasPeakCollection())
         return;
 
-    nsx::PeakCollection* collection = _peak_combo->currentPeakCollection();
+    ohkl::PeakCollection* collection = _peak_combo->currentPeakCollection();
 
     if (!collection) // if no PeakCollection has been selected from the GUI
         return;

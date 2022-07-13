@@ -21,7 +21,7 @@
 #include <string> // to_string
 
 
-namespace nsx {
+namespace ohkl {
 
 InterpolatedState::InterpolatedState(Diffractometer* diffractometer)
     : InstrumentState(diffractometer)
@@ -105,4 +105,4 @@ double InterpolatedState::lorentzFactor(double px, double py) const
     return lorentz;
 }
 
-} // namespace nsx
+} // namespace ohkl

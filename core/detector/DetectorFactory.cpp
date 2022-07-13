@@ -19,7 +19,7 @@
 #include "core/detector/DetectorFactory.h"
 #include "core/detector/FlatDetector.h"
 
-namespace nsx {
+namespace ohkl {
 
 DetectorFactory::DetectorFactory()
 {
@@ -27,4 +27,4 @@ DetectorFactory::DetectorFactory()
     registerCallback("cylindrical", &CylindricalDetector::create);
 }
 
-} // namespace nsx
+} // namespace ohkl

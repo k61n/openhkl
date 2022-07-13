@@ -12,14 +12,14 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_BASE_PARSER_PARSER_H
-#define NSX_BASE_PARSER_PARSER_H
+#ifndef OHKL_BASE_PARSER_PARSER_H
+#define OHKL_BASE_PARSER_PARSER_H
 
 #include <sstream>
 #include <string>
 #include <vector>
 
-namespace nsx {
+namespace ohkl {
 
 //! Method to read a vector of numeric values from two char pointers
 template <class T> void readNumFromChar(const char* begin, const char* end, std::vector<T>& v)
@@ -36,6 +36,6 @@ template <class T> void readNumFromChar(const char* begin, const char* end, std:
     }
 }
 
-} // namespace nsx
+} // namespace ohkl
 
-#endif // NSX_BASE_PARSER_PARSER_H
+#endif // OHKL_BASE_PARSER_PARSER_H

@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_CORE_SHAPE_SHAPECOLLECTION_H
-#define NSX_CORE_SHAPE_SHAPECOLLECTION_H
+#ifndef OHKL_CORE_SHAPE_SHAPECOLLECTION_H
+#define OHKL_CORE_SHAPE_SHAPECOLLECTION_H
 
 #include "base/utils/ProgressHandler.h"
 #include "core/data/DataTypes.h"
@@ -25,7 +25,7 @@
 #include <optional>
 #include <set>
 
-namespace nsx {
+namespace ohkl {
 
 class DetectorEvent;
 class Peak3D;
@@ -146,7 +146,7 @@ class ShapeModel {
 
     //! Integrate the shape collection
     void integrate(
-        std::vector<Peak3D*> peaks, std::set<nsx::sptrDataSet> datalist,
+        std::vector<Peak3D*> peaks, std::set<ohkl::sptrDataSet> datalist,
         sptrProgressHandler handler = nullptr);
 
     //! Build a shape model from the given peak collection
@@ -181,6 +181,6 @@ class ShapeModel {
 };
 
 /*! @}*/
-} // namespace nsx
+} // namespace ohkl
 
-#endif // NSX_CORE_SHAPE_SHAPECOLLECTION_H
+#endif // OHKL_CORE_SHAPE_SHAPECOLLECTION_H

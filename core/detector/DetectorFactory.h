@@ -12,12 +12,12 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_CORE_DETECTOR_DETECTORFACTORY_H
-#define NSX_CORE_DETECTOR_DETECTORFACTORY_H
+#ifndef OHKL_CORE_DETECTOR_DETECTORFACTORY_H
+#define OHKL_CORE_DETECTOR_DETECTORFACTORY_H
 
 #include "base/utils/Factory.h"
 
-namespace nsx {
+namespace ohkl {
 
 //! Factory that gives access to Detector%s of different geometries.
 
@@ -26,6 +26,6 @@ class DetectorFactory : public Factory<DetectorFactory, Detector, std::string, c
     DetectorFactory();
 };
 
-} // namespace nsx
+} // namespace ohkl
 
-#endif // NSX_CORE_DETECTOR_DETECTORFACTORY_H
+#endif // OHKL_CORE_DETECTOR_DETECTORFACTORY_H

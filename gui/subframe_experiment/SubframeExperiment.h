@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_GUI_SUBFRAME_EXPERIMENT_SUBFRAMEEXPERIMENT_H
-#define NSX_GUI_SUBFRAME_EXPERIMENT_SUBFRAMEEXPERIMENT_H
+#ifndef OHKL_GUI_SUBFRAME_EXPERIMENT_SUBFRAMEEXPERIMENT_H
+#define OHKL_GUI_SUBFRAME_EXPERIMENT_SUBFRAMEEXPERIMENT_H
 
 #include "core/data/DataTypes.h"
 
@@ -36,10 +36,10 @@ class SubframeExperiment : public QWidget {
     PropertyPanel* getProperty() { return _properties; };
 
  private:
-    std::vector<nsx::sptrDataSet> _data_list;
+    std::vector<ohkl::sptrDataSet> _data_list;
     DetectorWidget* _detector_widget;
     PlotPanel* _plot;
     PropertyPanel* _properties;
 };
 
-#endif // NSX_GUI_SUBFRAME_EXPERIMENT_SUBFRAMEEXPERIMENT_H
+#endif // OHKL_GUI_SUBFRAME_EXPERIMENT_SUBFRAMEEXPERIMENT_H

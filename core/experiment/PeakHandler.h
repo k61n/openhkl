@@ -11,8 +11,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_CORE_EXPERIMENT_PEAKHANDLER_H
-#define NSX_CORE_EXPERIMENT_PEAKHANDLER_H
+#ifndef OHKL_CORE_EXPERIMENT_PEAKHANDLER_H
+#define OHKL_CORE_EXPERIMENT_PEAKHANDLER_H
 
 #include <map>
 #include <string>
@@ -20,7 +20,7 @@
 
 #include "core/shape/PeakCollection.h"
 
-namespace nsx {
+namespace ohkl {
 
 using PeakCollectionMap = std::map<std::string, std::unique_ptr<PeakCollection>>;
 
@@ -40,11 +40,11 @@ class PeakHandler {
     //! Add a peak collection
     bool addPeakCollection(
         const std::string& name, const PeakCollectionType type,
-        const std::vector<nsx::Peak3D*> peaks);
+        const std::vector<ohkl::Peak3D*> peaks);
     //
     bool addPeakCollection(
         const std::string& name, const PeakCollectionType type,
-        const std::vector<nsx::Peak3D*> peaks, bool indexed, bool integrated);
+        const std::vector<ohkl::Peak3D*> peaks, bool indexed, bool integrated);
     //! Add an empty peak collection
     bool addEmptyCollection(const std::string& name, const PeakCollectionType type);
     //! Returns true if the experiment has named peak collection
@@ -79,6 +79,6 @@ class PeakHandler {
     // enum class PeakCollectionType { FOUND, PREDICTED, INDEXING };
 };
 
-} // namespace nsx
+} // namespace ohkl
 
-#endif // NSX_CORE_EXPERIMENT_PEAKHANDLER_H
+#endif // OHKL_CORE_EXPERIMENT_PEAKHANDLER_H

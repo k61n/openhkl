@@ -20,16 +20,16 @@
 #include "core/gonio/Gonio.h"
 #include "core/raw/DataKeys.h"
 
-namespace nsx {
+namespace ohkl {
 
 Component::Component(const std::string& name) : _name(name), _gonio() { }
 
 Component::Component(const YAML::Node& node)
 {
     // Sets the component name
-    _name = node[nsx::ym_componentName].as<std::string>();
+    _name = node[ohkl::ym_componentName].as<std::string>();
 
-    _gonio = node[nsx::ym_goniometer] ? Gonio(node[nsx::ym_goniometer]) : Gonio();
+    _gonio = node[ohkl::ym_goniometer] ? Gonio(node[ohkl::ym_goniometer]) : Gonio();
 }
 
 const Gonio& Component::gonio() const
@@ -52,4 +52,4 @@ void Component::setName(const std::string& name)
     _name = name;
 }
 
-} // namespace nsx
+} // namespace ohkl

@@ -1,6 +1,6 @@
 //  ***********************************************************************************************
 //
-//  NSXTool: data reduction for neutron single-crystal diffraction
+//  OpenHKL: data reduction for single crystal diffraction
 //
 //! @file      test/cpp/geometry/TestBrillouinZone.cpp
 //! @brief     Test ...
@@ -26,8 +26,8 @@
 
 void validate_zone(const Eigen::Matrix3d& B, int nverts, int nfaces)
 {
-    nsx::BrillouinZone zone(B, 1e-3);
-    nsx::ConvexHull hull = zone.convexHull();
+    ohkl::BrillouinZone zone(B, 1e-3);
+    ohkl::ConvexHull hull = zone.convexHull();
 
     CHECK(hull.vertices().size() == nverts);
     CHECK(zone.vertices().size() == nverts);
@@ -58,7 +58,7 @@ void validate_zone(const Eigen::Matrix3d& B, int nverts, int nfaces)
 TEST_CASE("test/geometry/TestBrillouinZone.cpp", "")
 {
     const double deg = M_PI / 180.0;
-    nsx::UnitCell uc;
+    ohkl::UnitCell uc;
 
     // todo: write this test!!
     Eigen::Matrix3d B;

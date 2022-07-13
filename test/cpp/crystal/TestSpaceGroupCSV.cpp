@@ -1,6 +1,6 @@
 //  ***********************************************************************************************
 //
-//  NSXTool: data reduction for neutron single-crystal diffraction
+//  OpenHKL: data reduction for single crystal diffraction
 //
 //! @file      test/cpp/crystal/TestSpaceGroupCSV.cpp
 //! @brief     Test ...
@@ -30,7 +30,7 @@ TEST_CASE("test/crystal/TestSpaceGroupCSV.cpp", "")
         return;
     }
 
-    nsx::CSV csv_reader('\t', '#');
+    ohkl::CSV csv_reader('\t', '#');
 
     while (!csv_file.eof()) {
         std::vector<std::string> row = csv_reader.getRow(csv_file);
@@ -43,6 +43,6 @@ TEST_CASE("test/crystal/TestSpaceGroupCSV.cpp", "")
 
         std::cout << row[0] << std::endl;
 
-        CHECK_NOTHROW(nsx::SpaceGroup{row[0]});
+        CHECK_NOTHROW(ohkl::SpaceGroup{row[0]});
     }
 }

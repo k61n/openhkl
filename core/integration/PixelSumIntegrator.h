@@ -12,12 +12,12 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_CORE_INTEGRATION_PIXELSUMINTEGRATOR_H
-#define NSX_CORE_INTEGRATION_PIXELSUMINTEGRATOR_H
+#ifndef OHKL_CORE_INTEGRATION_PIXELSUMINTEGRATOR_H
+#define OHKL_CORE_INTEGRATION_PIXELSUMINTEGRATOR_H
 
 #include "core/integration/MeanBackgroundIntegrator.h"
 
-namespace nsx {
+namespace ohkl {
 
 /*! \addtogroup python_api
  *  @{*/
@@ -36,6 +36,6 @@ class PixelSumIntegrator : public MeanBackgroundIntegrator {
 };
 
 /*! @}*/
-} // namespace nsx
+} // namespace ohkl
 
-#endif // NSX_CORE_INTEGRATION_PIXELSUMINTEGRATOR_H
+#endif // OHKL_CORE_INTEGRATION_PIXELSUMINTEGRATOR_H

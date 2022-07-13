@@ -37,17 +37,17 @@
 %template(vector_2i) std::vector<std::vector<int>>;
 %template(vector_string) std::vector<std::string>;
 
-%shared_ptr(nsx::DataSet)
-%shared_ptr(nsx::Diffractometer)
-%shared_ptr(nsx::Experiment)
-%shared_ptr(nsx::HDF5DataReader)
-%shared_ptr(nsx::BaseHDF5DataReader)
-%shared_ptr(nsx::IDataReader)
-%shared_ptr(nsx::ProgressHandler)
-%shared_ptr(nsx::RawDataReader)
-%shared_ptr(nsx::NexusDataReader)
-%shared_ptr(nsx::BaseNexusDataReader)
-%shared_ptr(nsx::UnitCell)
+%shared_ptr(ohkl::DataSet)
+%shared_ptr(ohkl::Diffractometer)
+%shared_ptr(ohkl::Experiment)
+%shared_ptr(ohkl::HDF5DataReader)
+%shared_ptr(ohkl::BaseHDF5DataReader)
+%shared_ptr(ohkl::IDataReader)
+%shared_ptr(ohkl::ProgressHandler)
+%shared_ptr(ohkl::RawDataReader)
+%shared_ptr(ohkl::NexusDataReader)
+%shared_ptr(ohkl::BaseNexusDataReader)
+%shared_ptr(ohkl::UnitCell)
 
 %{
 #pragma GCC diagnostic ignored "-Wpedantic"
@@ -168,7 +168,7 @@ using Eigen::Quaterniond;
 
 #include "core/statistics/PeakExporter.h"
 
-using namespace nsx;
+using namespace ohkl;
 
 %}
 
@@ -242,20 +242,20 @@ using namespace nsx;
 %include "base/utils/Path.h"
 %include "base/utils/ProgressHandler.h"
 
-%ignore nsx::DirectVector::operator[];
+%ignore ohkl::DirectVector::operator[];
 %include "base/geometry/DirectVector.h"
 ArrayExtendVal (DirectVector, double);
 ArrayExtendCRef(DirectVector, double);
 
-%template(DirectVectorList) std::vector<nsx::DirectVector>;
+%template(DirectVectorList) std::vector<ohkl::DirectVector>;
 
-%ignore nsx::ReciprocalVector::operator[];
+%ignore ohkl::ReciprocalVector::operator[];
 %include "base/geometry/ReciprocalVector.h"
 ArrayExtendVal (ReciprocalVector, double);
 ArrayExtendCRef(ReciprocalVector, double);
 
-%template(ReciprocalVectorList) std::vector<nsx::ReciprocalVector>;
-%template(ReciprocalVectorQueue) std::deque<nsx::ReciprocalVector>;
+%template(ReciprocalVectorList) std::vector<ohkl::ReciprocalVector>;
+%template(ReciprocalVectorQueue) std::deque<ohkl::ReciprocalVector>;
 
 %include "base/geometry/AABB.h"
 %include "base/geometry/Ellipsoid.h"
@@ -269,11 +269,11 @@ ArrayExtendCRef(ReciprocalVector, double);
 %include "base/fit/Minimizer.h"
 
 %include "tables/crystal/SymOp.h"
-%template(SymOpList) std::vector<nsx::SymOp>;
+%template(SymOpList) std::vector<ohkl::SymOp>;
 
-%ignore nsx::MillerIndex::operator[];
+%ignore ohkl::MillerIndex::operator[];
 %include "tables/crystal/MillerIndex.h"
-%template(MillerIndexList) std::vector<nsx::MillerIndex>;
+%template(MillerIndexList) std::vector<ohkl::MillerIndex>;
 ArrayExtendVal (MillerIndex, int);
 ArrayExtendCRef(MillerIndex, int);
 
@@ -281,8 +281,8 @@ ArrayExtendCRef(MillerIndex, int);
 %include "tables/crystal/SpaceGroup.h"
 %include "tables/crystal/NiggliReduction.h"
 %include "tables/crystal/UnitCell.h"
-%template(UnitCellList) std::vector<nsx::sptrUnitCell>;
-%template(indexer_solutions) std::vector<std::pair<std::shared_ptr<nsx::UnitCell>,double>>;
+%template(UnitCellList) std::vector<ohkl::sptrUnitCell>;
+%template(indexer_solutions) std::vector<std::pair<std::shared_ptr<ohkl::UnitCell>,double>>;
 %include "tables/crystal/GruberReduction.h"
 %include "tables/crystal/BrillouinZone.h"
 
@@ -297,8 +297,8 @@ ArrayExtendCRef(MillerIndex, int);
 %include "core/detector/FlatDetector.h"
 %include "core/detector/DetectorFactory.h"
 %include "core/detector/DetectorEvent.h"
-%template(DetectorEventQueue) std::deque<nsx::DetectorEvent>;
-%template(DetectorEventList) std::vector<nsx::DetectorEvent>;
+%template(DetectorEventQueue) std::deque<ohkl::DetectorEvent>;
+%template(DetectorEventList) std::vector<ohkl::DetectorEvent>;
 
 %include "core/instrument/Monochromator.h"
 %include "core/instrument/Diffractometer.h"
@@ -323,10 +323,10 @@ ArrayExtendCRef(MillerIndex, int);
 %include "core/data/DataSet.h"
 %include "core/peak/RegionData.h"
 %include "core/peak/IntegrationRegion.h"
-%template(PeakList) std::vector<nsx::Peak3D*>;
+%template(PeakList) std::vector<ohkl::Peak3D*>;
 
 %include "core/data/DataTypes.h"
-%template(DataList) std::vector<std::shared_ptr<nsx::DataSet>>;
+%template(DataList) std::vector<std::shared_ptr<ohkl::DataSet>>;
 
 %include "core/shape/IPeakIntegrator.h"
 %include "core/shape/ShapeModel.h"
@@ -353,7 +353,7 @@ ArrayExtendCRef(MillerIndex, int);
 %include "core/statistics/MergedData.h"
 %include "core/experiment/PeakFinder.h"
 %include "core/experiment/DataQuality.h"
-%template(MergedPeakSet) std::set<nsx::MergedPeak>;
+%template(MergedPeakSet) std::set<ohkl::MergedPeak>;
 
 %include "core/algo/AutoIndexer.h"
 %include "core/algo/RefinementBatch.h"
@@ -369,13 +369,13 @@ ArrayExtendCRef(MillerIndex, int);
 %include "core/integration/PixelSumIntegrator.h"
 %include "core/integration/ShapeIntegrator.h"
 
-%template(RefinementBatchList) std::vector<nsx::RefinementBatch>;
+%template(RefinementBatchList) std::vector<ohkl::RefinementBatch>;
 
 %include "core/statistics/ResolutionShell.h"
 %include "core/statistics/RFactor.h"
 %include "core/statistics/CC.h"
 
-%template(DataResolutionList) std::vector<nsx::ShellQuality>;
+%template(DataResolutionList) std::vector<ohkl::ShellQuality>;
 
 %include "core/statistics/PeakExporter.h"
 

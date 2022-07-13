@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_GUI_UTILITY_SPOILERCHECK_H
-#define NSX_GUI_UTILITY_SPOILERCHECK_H
+#ifndef OHKL_GUI_UTILITY_SPOILERCHECK_H
+#define OHKL_GUI_UTILITY_SPOILERCHECK_H
 
 #include "gui/utility/Spoiler.h"
 
@@ -23,4 +23,4 @@ class SpoilerCheck : public Spoiler {
     explicit SpoilerCheck(const QString& title);
 };
 
-#endif // NSX_GUI_UTILITY_SPOILERCHECK_H
+#endif // OHKL_GUI_UTILITY_SPOILERCHECK_H

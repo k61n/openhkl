@@ -11,8 +11,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_GUI_GRAPHICS_DETECTORSCENE_H
-#define NSX_GUI_GRAPHICS_DETECTORSCENE_H
+#ifndef OHKL_GUI_GRAPHICS_DETECTORSCENE_H
+#define OHKL_GUI_GRAPHICS_DETECTORSCENE_H
 
 #include "base/mask/IMask.h"
 #include "core/data/DataTypes.h"
@@ -31,7 +31,7 @@
 
 #include <iostream>
 
-namespace nsx {
+namespace ohkl {
 class UnitCell;
 class PeakCenterDataSet;
 }
@@ -41,7 +41,7 @@ class SXGraphicsItem;
 
 class DirectBeamGraphic : public QGraphicsEllipseItem { }; // Make it easier to remove direct beam
 
-using EventType = nsx::IntegrationRegion::EventType;
+using EventType = ohkl::IntegrationRegion::EventType;
 
 // For the plotting part, better to have RowMajor matrix to use QImage scanline
 // function and optimize cache hit.
@@ -77,7 +77,7 @@ class DetectorScene : public QGraphicsScene {
 
     explicit DetectorScene(QObject* parent = 0);
 
-    nsx::sptrDataSet getData() { return _currentData; }
+    ohkl::sptrDataSet getData() { return _currentData; }
     const rowMatrix& getCurrentFrame() const { return _currentFrame; }
     void setLogarithmic(bool checked) { _logarithmic = checked; }
     void setColorMap(const std::string& name)
@@ -95,11 +95,11 @@ class DetectorScene : public QGraphicsScene {
     //! Generate a mask of integration regions (a matrix of integers classifying pixels)
     void getIntegrationMask(
         PeakCollectionModel* model, Eigen::MatrixXi& mask,
-        nsx::RegionType region_type = nsx::RegionType::VariableEllipsoid);
+        ohkl::RegionType region_type = ohkl::RegionType::VariableEllipsoid);
     //! Generate a mask for a single peak only
     void getSinglePeakIntegrationMask(
-        nsx::Peak3D* peak, Eigen::MatrixXi& mask,
-        nsx::RegionType region_type = nsx::RegionType::VariableEllipsoid);
+        ohkl::Peak3D* peak, Eigen::MatrixXi& mask,
+        ohkl::RegionType region_type = ohkl::RegionType::VariableEllipsoid);
     //! Convert the mask to a QImage with the given colours
     QImage* getIntegrationRegionImage(const Eigen::MatrixXi& mask, QColor& peak, QColor& bkg);
     //! Remove integration overlays from the DetectorScene
@@ -115,11 +115,11 @@ class DetectorScene : public QGraphicsScene {
     //! Get the second peak model pointer
     PeakCollectionModel* peakModel2() const;
     //! Populate vector of 3rd party peak centers
-    void link3rdPartyPeaks(nsx::PeakCenterDataSet* pcd);
+    void link3rdPartyPeaks(ohkl::PeakCenterDataSet* pcd);
     //! Set direct beam positions
-    void linkDirectBeamPositions(std::vector<nsx::DetectorEvent>* events);
+    void linkDirectBeamPositions(std::vector<ohkl::DetectorEvent>* events);
     //! Set unrefined direct beam positions
-    void linkOldDirectBeamPositions(std::vector<nsx::DetectorEvent>* events);
+    void linkOldDirectBeamPositions(std::vector<ohkl::DetectorEvent>* events);
     //! Set the first peak model pointer to null
     void unlinkPeakModel1();
     //! Set the second peak model pointer to null
@@ -133,13 +133,13 @@ class DetectorScene : public QGraphicsScene {
     //! Draw peaks for one model
     void drawPeakModelItems(PeakCollectionModel* model);
     //! Draw the direct beam position
-    void drawDirectBeamPositions(std::vector<nsx::DetectorEvent> events);
+    void drawDirectBeamPositions(std::vector<ohkl::DetectorEvent> events);
     //! Draw peak centers from 3rd party software
     void draw3rdPartyItems();
     //! Remove all the peak elements
     void clearPeakItems();
     //! Set unit cell for Miller Index computation
-    void setUnitCell(nsx::UnitCell* cell);
+    void setUnitCell(ohkl::UnitCell* cell);
     //! Plot settings for 3rd party peak centres
     void setup3rdPartyPeaks(bool draw, const QColor& color, int size);
     //! Toggle drawing the direct beam position
@@ -161,7 +161,7 @@ class DetectorScene : public QGraphicsScene {
     //! Return the interaction mode
     int mode() const { return static_cast<int>(_mode); };
     //! Set single peak for single peak integration overlay
-    void setPeak(nsx::Peak3D* peak);
+    void setPeak(ohkl::Peak3D* peak);
     //! Set scene to draw integration for single peak
     void drawSinglePeakIntegrationRegion(bool toggle)
     {
@@ -180,10 +180,10 @@ class DetectorScene : public QGraphicsScene {
     void resetElements();
     void resetScene();
     void setMaxIntensity(int);
-    void slotChangeSelectedData(nsx::sptrDataSet data, int frame);
+    void slotChangeSelectedData(ohkl::sptrDataSet data, int frame);
     void slotChangeSelectedFrame(int frame);
-    void slotChangeEnabledPeak(nsx::Peak3D*) { loadCurrentImage(); }
-    void slotChangeMaskedPeaks(const nsx::PeakList&) { loadCurrentImage(); }
+    void slotChangeEnabledPeak(ohkl::Peak3D*) { loadCurrentImage(); }
+    void slotChangeMaskedPeaks(const ohkl::PeakList&) { loadCurrentImage(); }
     void changeInteractionMode(int mode) { _mode = static_cast<MODE>(mode); }
     void changeCursorMode(int mode) { _cursorMode = static_cast<CURSORMODE>(mode); }
     void showPeakLabels(bool flag);
@@ -197,21 +197,21 @@ class DetectorScene : public QGraphicsScene {
  signals:
     //! Signal emitted for all changes of the image
     void dataChanged();
-    void signalChangeSelectedData(nsx::sptrDataSet data);
+    void signalChangeSelectedData(ohkl::sptrDataSet data);
     void signalChangeSelectedFrame(int selected_frame);
-    void signalChangeSelectedPeak(nsx::Peak3D* peak);
+    void signalChangeSelectedPeak(ohkl::Peak3D* peak);
     void signalSelectedPeakItemChanged(PeakItemGraphic* peak);
     void signalUpdateDetectorScene();
-    void signalPeakSelected(nsx::Peak3D* peak);
+    void signalPeakSelected(ohkl::Peak3D* peak);
     void beamPosChanged(QPointF pos);
 
  private:
     //! Create the text of the tooltip depending on Scene Mode.
     void createToolTipText(QGraphicsSceneMouseEvent*);
     // find the iterator corresponding to given graphics item
-    std::vector<std::pair<QGraphicsItem*, nsx::IMask*>>::iterator findMask(QGraphicsItem* item);
+    std::vector<std::pair<QGraphicsItem*, ohkl::IMask*>>::iterator findMask(QGraphicsItem* item);
 
-    nsx::sptrDataSet _currentData;
+    ohkl::sptrDataSet _currentData;
     unsigned long _currentFrameIndex;
     int _currentIntensity;
     rowMatrix _currentFrame;
@@ -240,13 +240,13 @@ class DetectorScene : public QGraphicsScene {
     //! std vector of peak centres from 3rd party software
     std::vector<PeakCenterGraphic*> _peak_center_items;
     //! std vector of direct beam positions for each frame
-    std::vector<nsx::DetectorEvent>* _direct_beam_events;
+    std::vector<ohkl::DetectorEvent>* _direct_beam_events;
     //! direct beam events pre-refinement
-    std::vector<nsx::DetectorEvent>* _old_direct_beam_events;
+    std::vector<ohkl::DetectorEvent>* _old_direct_beam_events;
 
     bool _itemSelected;
     QGraphicsPixmapItem* _image;
-    std::vector<std::pair<QGraphicsItem*, nsx::IMask*>> _masks;
+    std::vector<std::pair<QGraphicsItem*, ohkl::IMask*>> _masks;
     SXGraphicsItem* _lastClickedGI;
     bool _logarithmic;
     bool _drawIntegrationRegion1;
@@ -271,8 +271,8 @@ class DetectorScene : public QGraphicsScene {
     bool _preview_int_regions_1;
     bool _preview_int_regions_2;
     //! Integration region types
-    nsx::RegionType _int_region_type_1;
-    nsx::RegionType _int_region_type_2;
+    ohkl::RegionType _int_region_type_1;
+    ohkl::RegionType _int_region_type_2;
     //! Integration Region bounds
     double _peak_end_1;
     double _bkg_begin_1;
@@ -300,10 +300,10 @@ class DetectorScene : public QGraphicsScene {
 
     PeakItemGraphic* _selected_peak;
 
-    nsx::UnitCell* _unit_cell;
-    nsx::Peak3D* _peak;
+    ohkl::UnitCell* _unit_cell;
+    ohkl::Peak3D* _peak;
 
-    nsx::PeakCenterDataSet* _peak_center_data;
+    ohkl::PeakCenterDataSet* _peak_center_data;
 };
 
-#endif // NSX_GUI_GRAPHICS_DETECTORSCENE_H
+#endif // OHKL_GUI_GRAPHICS_DETECTORSCENE_H

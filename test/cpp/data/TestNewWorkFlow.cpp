@@ -1,6 +1,6 @@
 //  ***********************************************************************************************
 //
-//  NSXTool: data reduction for neutron single-crystal diffraction
+//  OpenHKL: data reduction for single crystal diffraction
 //
 //! @file      test/cpp/data/TestNewWorkFlow.cpp
 //! @brief     Test ...
@@ -45,10 +45,10 @@
 
 TEST_CASE("test/data/TestNewWorkFlow.cpp", "")
 {
-    nsx::Experiment experiment("test", "BioDiff2500");
+    ohkl::Experiment experiment("test", "BioDiff2500");
 
-    const nsx::sptrDataSet dataset_ptr { std::make_shared<nsx::DataSet>
-          (nsx::kw_datasetDefaultName, experiment.getDiffractometer()) };
+    const ohkl::sptrDataSet dataset_ptr { std::make_shared<ohkl::DataSet>
+          (ohkl::kw_datasetDefaultName, experiment.getDiffractometer()) };
 
     dataset_ptr->addDataFile("gal3.hdf", "nsx");
     dataset_ptr->finishRead();
@@ -77,7 +77,7 @@ TEST_CASE("test/data/TestNewWorkFlow.cpp", "")
     }
 #endif
 
-    nsx::Detector* detector = experiment.getDiffractometer()->detector();
+    ohkl::Detector* detector = experiment.getDiffractometer()->detector();
     std::cout << "Detector distance: " << detector->distance() << ", "
               << "width: " << detector->width() << ", height: " << detector->height() << std::endl;
 
@@ -114,7 +114,7 @@ TEST_CASE("test/data/TestNewWorkFlow.cpp", "")
     std::cout << std::endl;
 
 
-    nsx::sptrProgressHandler progressHandler(new nsx::ProgressHandler);
+    ohkl::sptrProgressHandler progressHandler(new ohkl::ProgressHandler);
 
     auto callback = [progressHandler]() {
         auto log = progressHandler->getLog();
@@ -126,13 +126,13 @@ TEST_CASE("test/data/TestNewWorkFlow.cpp", "")
 
     // #########################################################
     // test the finder
-    nsx::DataList numors;
+    ohkl::DataList numors;
     numors.push_back(dataset_ptr);
 
-    nsx::ConvolverFactory convolver_factory;
+    ohkl::ConvolverFactory convolver_factory;
     auto convolver = convolver_factory.create("annular", {});
 
-    nsx::PeakFinder* peak_finder = experiment.peakFinder();
+    ohkl::PeakFinder* peak_finder = experiment.peakFinder();
 
     auto finder_params = peak_finder->parameters();
     finder_params->minimum_size = 30;
@@ -143,20 +143,20 @@ TEST_CASE("test/data/TestNewWorkFlow.cpp", "")
     finder_params->frames_end = dataset_ptr->nFrames();
     finder_params->threshold = 10;
 
-    peak_finder->setConvolver(std::unique_ptr<nsx::Convolver>(convolver));
+    peak_finder->setConvolver(std::unique_ptr<ohkl::Convolver>(convolver));
     peak_finder->setHandler(progressHandler);
     peak_finder->find(numors);
 
     auto found_peaks = peak_finder->currentPeaks();
 
 #ifdef OUTPUT_INTERMEDIATE
-    for (const nsx::Peak3D* pk : found_peaks) {
+    for (const ohkl::Peak3D* pk : found_peaks) {
         if (!pk->enabled())
             continue;
 
-        nsx::Ellipsoid elli_real = pk->shape();
-        nsx::Ellipsoid elli_recip = pk->qShape();
-        nsx::Intensity intensity = pk->rawIntensity();
+        ohkl::Ellipsoid elli_real = pk->shape();
+        ohkl::Ellipsoid elli_recip = pk->qShape();
+        ohkl::Intensity intensity = pk->rawIntensity();
 
         std::cout << "real peak: " << elli_real.center().transpose() << ", ";
         std::cout << "recip peak: " << elli_recip.center().transpose() << ", ";
@@ -173,23 +173,23 @@ TEST_CASE("test/data/TestNewWorkFlow.cpp", "")
 
     CHECK(found_peaks.size() >= 800);
 
-    nsx::Integrator* integrator = experiment.integrator();
-    nsx::IntegrationParameters* params = integrator->parameters();
+    ohkl::Integrator* integrator = experiment.integrator();
+    ohkl::IntegrationParameters* params = integrator->parameters();
     params->peak_end = 3.0;
     params->bkg_begin = 3.5;
     params->bkg_end = 4.0;
-    integrator->getIntegrator(nsx::IntegratorType::PixelSum)->setHandler(progressHandler);
+    integrator->getIntegrator(ohkl::IntegratorType::PixelSum)->setHandler(progressHandler);
     integrator->integrateFoundPeaks(peak_finder);
     experiment.acceptFoundPeaks("found_peaks");
 
     // #########################################################
     // Filter the peaks
-    nsx::PeakFilter* peak_filter = experiment.peakFilter();
+    ohkl::PeakFilter* peak_filter = experiment.peakFilter();
     peak_filter->flags()->d_range = true;
     peak_filter->parameters()->d_min = 1.5;
     peak_filter->parameters()->d_max = 50.0;
 
-    nsx::PeakCollection* found_collection = experiment.getPeakCollection("found_peaks");
+    ohkl::PeakCollection* found_collection = experiment.getPeakCollection("found_peaks");
     peak_filter->resetFiltering(found_collection);
     peak_filter->filter(found_collection);
 
@@ -198,14 +198,14 @@ TEST_CASE("test/data/TestNewWorkFlow.cpp", "")
     auto peakCollection = experiment.getPeakCollection("filtered_peaks");
     auto filteredPeaks = peakCollection->getPeakList();
 
-    for (const nsx::Peak3D* pk : filteredPeaks) {
+    for (const ohkl::Peak3D* pk : filteredPeaks) {
         if (!pk->enabled())
             continue;
 
-        const nsx::Ellipsoid& elli_real = pk->shape();
-        const nsx::Ellipsoid& elli_recip = pk->qShape();
-        const nsx::Intensity intensity = pk->rawIntensity();
-        const nsx::Intensity background = pk->meanBackground();
+        const ohkl::Ellipsoid& elli_real = pk->shape();
+        const ohkl::Ellipsoid& elli_recip = pk->qShape();
+        const ohkl::Intensity intensity = pk->rawIntensity();
+        const ohkl::Intensity background = pk->meanBackground();
 
         std::cout << "real peak: " << elli_real.center().transpose() << ", ";
         std::cout << "recip peak: " << elli_recip.center().transpose() << ", ";
@@ -223,8 +223,8 @@ TEST_CASE("test/data/TestNewWorkFlow.cpp", "")
 
     // #########################################################
     // at this stage we have the peaks, now we index
-    nsx::AutoIndexer* auto_indexer = experiment.autoIndexer();
-    nsx::PeakCollection* filtered_peaks = experiment.getPeakCollection("filtered_peaks");
+    ohkl::AutoIndexer* auto_indexer = experiment.autoIndexer();
+    ohkl::PeakCollection* filtered_peaks = experiment.getPeakCollection("filtered_peaks");
 
     CHECK_NOTHROW(auto_indexer->autoIndex(filtered_peaks->getPeakList()));
     CHECK(auto_indexer->solutions().size() > 1);
@@ -271,9 +271,9 @@ TEST_CASE("test/data/TestNewWorkFlow.cpp", "")
     // compute shape library
     int n_selected = 0;
     for (auto peak : filtered_peaks->getPeakList()) {
-        std::vector<nsx::ReciprocalVector> q_vectors;
+        std::vector<ohkl::ReciprocalVector> q_vectors;
         q_vectors.push_back(peak->q());
-        auto events = nsx::algo::qVectorList2Events(
+        auto events = ohkl::algo::qVectorList2Events(
             q_vectors, dataset_ptr->instrumentStates(), dataset_ptr->detector(), dataset_ptr->nFrames());
 
         if (events.empty())
@@ -294,8 +294,8 @@ TEST_CASE("test/data/TestNewWorkFlow.cpp", "")
             }
         }
 
-        const Eigen::RowVector3d q0 = nsx::Peak3D(dataset_ptr, nsx::Ellipsoid(p0, 1.0)).q().rowVector();
-        const Eigen::RowVector3d q1 = nsx::Peak3D(dataset_ptr, nsx::Ellipsoid(p1, 1.0)).q().rowVector();
+        const Eigen::RowVector3d q0 = ohkl::Peak3D(dataset_ptr, ohkl::Ellipsoid(p0, 1.0)).q().rowVector();
+        const Eigen::RowVector3d q1 = ohkl::Peak3D(dataset_ptr, ohkl::Ellipsoid(p1, 1.0)).q().rowVector();
 
         CHECK(p0(0) == Approx(p1(0)).epsilon(3e-2));
         CHECK(p0(1) == Approx(p1(1)).epsilon(3e-2));

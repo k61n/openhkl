@@ -49,8 +49,8 @@ void GlobalOffsetsFrame::layout()
     QHBoxLayout* above = new QHBoxLayout;
     QVBoxLayout* left = new QVBoxLayout;
     selectedData = new QListWidget;
-    std::vector<nsx::sptrDataSet> all_data = gSession->currentProject()->allData();
-    for (const nsx::sptrDataSet& data : all_data) {
+    std::vector<ohkl::sptrDataSet> all_data = gSession->currentProject()->allData();
+    for (const ohkl::sptrDataSet& data : all_data) {
         QListWidgetItem* item = new QListWidgetItem(QString::fromStdString(data->name()));
         item->setData(Qt::UserRole, QVariant::fromValue(data));
         selectedData->addItem(item);
@@ -76,12 +76,12 @@ void GlobalOffsetsFrame::layout()
     above->addLayout(left);
     offsets = new QTableWidget;
     offsets->setColumnCount(2);
-    nsx::Gonio& detector_gonio =
+    ohkl::Gonio& detector_gonio =
         gSession->currentProject()->experiment()->getDiffractometer()->detector()->gonio();
     size_t n_axes = detector_gonio.nAxes();
     offsets->setRowCount(n_axes);
     for (size_t i = 0; i < n_axes; ++i) {
-        const nsx::Axis& axis = detector_gonio.axis(i);
+        const ohkl::Axis& axis = detector_gonio.axis(i);
         offsets->setItem(i, 0, new QTableWidgetItem(QString::fromStdString(axis.name())));
     }
 
@@ -114,18 +114,18 @@ void GlobalOffsetsFrame::fit()
         return;
     }
 
-    nsx::DataList selected_data;
+    ohkl::DataList selected_data;
     for (QListWidgetItem* item : selected_items)
-        selected_data.push_back(item->data(Qt::UserRole).value<nsx::sptrDataSet>());
+        selected_data.push_back(item->data(Qt::UserRole).value<ohkl::sptrDataSet>());
 
     QVector<double> xValues;
     QVector<double> yValues;
 
     if (mode_ == offsetMode::DETECTOR) {
         // Fit the detector offsets with the selected data
-        const nsx::Detector* detector =
+        const ohkl::Detector* detector =
             gSession->currentProject()->experiment()->getDiffractometer()->detector();
-        const nsx::GonioFit fit_results = nsx::fitDetectorGonioOffsets(
+        const ohkl::GonioFit fit_results = ohkl::fitDetectorGonioOffsets(
             detector->gonio(), selected_data, iterations->value(), tolerance->value());
 
         // The fit failed for whatever reason, return
@@ -137,7 +137,7 @@ void GlobalOffsetsFrame::fit()
         int comp(0);
         for (double offset : fit_results.offsets) {
             QTableWidgetItem* offset_item = new QTableWidgetItem;
-            offset_item->setData(Qt::DisplayRole, offset / nsx::deg);
+            offset_item->setData(Qt::DisplayRole, offset / ohkl::deg);
             offsets->setItem(comp++, 1, offset_item);
         }
         std::copy(
@@ -147,9 +147,9 @@ void GlobalOffsetsFrame::fit()
         xValues.resize(yValues.size());
         std::iota(xValues.begin(), xValues.end(), 0);
     } else if (mode_ == offsetMode::SAMPLE) {
-        const nsx::Sample& sample =
+        const ohkl::Sample& sample =
             gSession->currentProject()->experiment()->getDiffractometer()->sample();
-        nsx::GonioFit fit_results = nsx::fitSampleGonioOffsets(
+        ohkl::GonioFit fit_results = ohkl::fitSampleGonioOffsets(
             sample.gonio(), selected_data, iterations->value(), tolerance->value());
 
         // The fit failed for whatever reason, return
@@ -161,7 +161,7 @@ void GlobalOffsetsFrame::fit()
         int comp(0);
         for (double offset : fit_results.offsets) {
             QTableWidgetItem* offset_item = new QTableWidgetItem;
-            offset_item->setData(Qt::DisplayRole, offset / nsx::deg);
+            offset_item->setData(Qt::DisplayRole, offset / ohkl::deg);
             offsets->setItem(comp++, 1, offset_item);
         }
         std::copy(

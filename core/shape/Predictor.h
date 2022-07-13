@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_CORE_SHAPE_PREDICTOR_H
-#define NSX_CORE_SHAPE_PREDICTOR_H
+#ifndef OHKL_CORE_SHAPE_PREDICTOR_H
+#define OHKL_CORE_SHAPE_PREDICTOR_H
 
 #include "base/utils/ProgressHandler.h"
 #include "core/shape/IPeakIntegrator.h"
@@ -23,7 +23,7 @@
 
 class Peak3D;
 
-namespace nsx {
+namespace ohkl {
 
 /*! \addtogroup python_api
  *  @{*/
@@ -70,6 +70,6 @@ class Predictor {
 };
 
 /*! @}*/
-} // namespace nsx
+} // namespace ohkl
 
-#endif // NSX_CORE_SHAPE_PREDICTOR_H
+#endif // OHKL_CORE_SHAPE_PREDICTOR_H

@@ -12,15 +12,15 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_CORE_STATISTICS_MERGEDDATA_H
-#define NSX_CORE_STATISTICS_MERGEDDATA_H
+#ifndef OHKL_CORE_STATISTICS_MERGEDDATA_H
+#define OHKL_CORE_STATISTICS_MERGEDDATA_H
 
 #include "core/shape/PeakCollection.h"
 #include "core/statistics/MergedPeak.h"
 
 #include <set>
 
-namespace nsx {
+namespace ohkl {
 
 //! A set of `MergedPeak`s.
 
@@ -80,6 +80,6 @@ class MergedData {
     int _max_peaks = 0;
 };
 
-} // namespace nsx
+} // namespace ohkl
 
-#endif // NSX_CORE_STATISTICS_MERGEDDATA_H
+#endif // OHKL_CORE_STATISTICS_MERGEDDATA_H

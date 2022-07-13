@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_GUI_FRAMES_UNITCELLWIDGET_H
-#define NSX_GUI_FRAMES_UNITCELLWIDGET_H
+#ifndef OHKL_GUI_FRAMES_UNITCELLWIDGET_H
+#define OHKL_GUI_FRAMES_UNITCELLWIDGET_H
 
 #include "tables/crystal/UnitCell.h"
 #include <QTableView>
@@ -22,18 +22,18 @@
 class UnitCellWidget : public QWidget {
     Q_OBJECT
  public:
-    UnitCellWidget(nsx::sptrUnitCell, const QString&);
-    nsx::sptrUnitCell unitCell() const { return unitCell_; }
+    UnitCellWidget(ohkl::sptrUnitCell, const QString&);
+    ohkl::sptrUnitCell unitCell() const { return unitCell_; }
     bool spaceGroupSet() { return wasSpaceGroupSet; }
     void setSpaceGroup();
 
  private:
     void evaluateSpaceGroups();
 
-    nsx::sptrUnitCell unitCell_;
+    ohkl::sptrUnitCell unitCell_;
     QTableView* spaceGroupView;
     bool wasSpaceGroupSet;
     std::string spaceGroupOne;
 };
 
-#endif // NSX_GUI_FRAMES_UNITCELLWIDGET_H
+#endif // OHKL_GUI_FRAMES_UNITCELLWIDGET_H

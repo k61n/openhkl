@@ -12,18 +12,18 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_GUI_UTILITY_DATACOMBO_H
-#define NSX_GUI_UTILITY_DATACOMBO_H
+#ifndef OHKL_GUI_UTILITY_DATACOMBO_H
+#define OHKL_GUI_UTILITY_DATACOMBO_H
 
 #include "core/data/DataSet.h"
 
 #include <QComboBox>
 
-namespace nsx {
+namespace ohkl {
 class DataSet;
 }
 
-using DataList = std::vector<nsx::sptrDataSet>;
+using DataList = std::vector<ohkl::sptrDataSet>;
 
 //! A QComboBox that that is synchronised with all other QComboBoxes of the same type
 class DataComboBox : public QComboBox {
@@ -33,7 +33,7 @@ class DataComboBox : public QComboBox {
     DataComboBox(QWidget* parent = nullptr);
 
     //! Add a cell via its pointer
-    void addDataSet(const nsx::sptrDataSet& data);
+    void addDataSet(const ohkl::sptrDataSet& data);
 
     //! Add a list of unit cells
     void addDataSets(const DataList& data_list);
@@ -42,7 +42,7 @@ class DataComboBox : public QComboBox {
     void clearAll();
 
     //! Return a pointer to the current unit cell
-    nsx::sptrDataSet currentData() const;
+    ohkl::sptrDataSet currentData() const;
 
     //! Refresh the combo box text
     void refresh();
@@ -59,4 +59,4 @@ class DataComboBox : public QComboBox {
     static QVector<DataComboBox*> _all_combos;
 };
 
-#endif // NSX_GUI_UTILITY_DATACOMBO_H
+#endif // OHKL_GUI_UTILITY_DATACOMBO_H

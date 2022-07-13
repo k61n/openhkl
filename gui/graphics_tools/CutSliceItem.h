@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_GUI_GRAPHICS_TOOLS_CUTSLICEITEM_H
-#define NSX_GUI_GRAPHICS_TOOLS_CUTSLICEITEM_H
+#ifndef OHKL_GUI_GRAPHICS_TOOLS_CUTSLICEITEM_H
+#define OHKL_GUI_GRAPHICS_TOOLS_CUTSLICEITEM_H
 
 #include "gui/graphics_tools/CutterItem.h"
 
@@ -21,7 +21,7 @@
 class CutSliceItem : public CutterItem {
  public:
     //! Construct a data slicer
-    CutSliceItem(nsx::sptrDataSet, bool horizontal = true);
+    CutSliceItem(ohkl::sptrDataSet, bool horizontal = true);
     //! The destructor
     ~CutSliceItem() = default;
 
@@ -49,4 +49,4 @@ class CutSliceItem : public CutterItem {
     bool _horizontal;
 };
 
-#endif // NSX_GUI_GRAPHICS_TOOLS_CUTSLICEITEM_H
+#endif // OHKL_GUI_GRAPHICS_TOOLS_CUTSLICEITEM_H

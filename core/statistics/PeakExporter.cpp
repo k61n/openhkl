@@ -34,10 +34,10 @@
 
 // TODO URGENT: lots of code duplication here, needs through cleanup
 
-namespace nsx {
+namespace ohkl {
 
 bool PeakExporter::saveStatistics(
-    std::string filename, const nsx::DataResolution* perShell, const nsx::DataResolution* overall)
+    std::string filename, const ohkl::DataResolution* perShell, const ohkl::DataResolution* overall)
 {
     std::fstream file(filename, std::ios::out);
     if (!file.is_open())
@@ -88,10 +88,10 @@ bool PeakExporter::saveStatistics(
     return true;
 }
 
-bool PeakExporter::saveToShelXUnmerged(const std::string& filename, nsx::MergedData* mergedData)
+bool PeakExporter::saveToShelXUnmerged(const std::string& filename, ohkl::MergedData* mergedData)
 {
     std::vector<Peak3D*> peak_vector;
-    for (const nsx::MergedPeak& peak : mergedData->mergedPeakSet()) {
+    for (const ohkl::MergedPeak& peak : mergedData->mergedPeakSet()) {
         for (auto* unmerged_peak : peak.peaks())
             peak_vector.push_back(unmerged_peak);
     }
@@ -100,8 +100,8 @@ bool PeakExporter::saveToShelXUnmerged(const std::string& filename, nsx::MergedD
     if (!file.is_open())
         return false;
     for (int i = 0; i < peak_vector.size(); i++) {
-        const nsx::Peak3D* peak = peak_vector.at(i);
-        nsx::MillerIndex miller_index = peak->hkl();
+        const ohkl::Peak3D* peak = peak_vector.at(i);
+        ohkl::MillerIndex miller_index = peak->hkl();
         const Eigen::RowVector3i& hkl = miller_index.rowVector();
         const double intensity = peak->correctedIntensity().value();
         const double sigma_intensity = peak->correctedIntensity().sigma();
@@ -116,12 +116,12 @@ bool PeakExporter::saveToShelXUnmerged(const std::string& filename, nsx::MergedD
     return true;
 }
 
-bool PeakExporter::saveToShelXMerged(const std::string& filename, nsx::MergedData* mergedData)
+bool PeakExporter::saveToShelXMerged(const std::string& filename, ohkl::MergedData* mergedData)
 {
     std::fstream file(filename, std::ios::out);
-    for (const nsx::MergedPeak& peak : mergedData->mergedPeakSet()) {
+    for (const ohkl::MergedPeak& peak : mergedData->mergedPeakSet()) {
         const auto hkl = peak.index();
-        nsx::Intensity I = peak.intensity();
+        ohkl::Intensity I = peak.intensity();
         const double intensity = I.value();
         const double sigma = I.sigma();
 
@@ -134,7 +134,7 @@ bool PeakExporter::saveToShelXMerged(const std::string& filename, nsx::MergedDat
     return true;
 }
 
-bool PeakExporter::saveToFullProfUnmerged(const std::string& filename, nsx::MergedData* mergedData)
+bool PeakExporter::saveToFullProfUnmerged(const std::string& filename, ohkl::MergedData* mergedData)
 {
     std::fstream file(filename, std::ios::out);
     if (!file.is_open())
@@ -144,19 +144,19 @@ bool PeakExporter::saveToFullProfUnmerged(const std::string& filename, nsx::Merg
     file << "(3i4,2F14.4,i5,4f8.2)\n";
 
     std::vector<Peak3D*> peak_vector;
-    for (const nsx::MergedPeak& peak : mergedData->mergedPeakSet()) {
+    for (const ohkl::MergedPeak& peak : mergedData->mergedPeakSet()) {
         for (auto* unmerged_peak : peak.peaks())
             peak_vector.push_back(unmerged_peak);
     }
 
-    std::shared_ptr<nsx::DataSet> data = peak_vector.at(0)->dataSet();
-    double wavelength = data->metadata().key<double>(nsx::at_wavelength);
+    std::shared_ptr<ohkl::DataSet> data = peak_vector.at(0)->dataSet();
+    double wavelength = data->metadata().key<double>(ohkl::at_wavelength);
     file << std::fixed << std::setw(8) << std::setprecision(3) << wavelength;
     file << " 0 0" << std::endl;
 
     for (int i = 0; i < peak_vector.size(); i++) {
-        nsx::Peak3D* peak = peak_vector.at(i);
-        nsx::MillerIndex miller_index = peak->hkl();
+        ohkl::Peak3D* peak = peak_vector.at(i);
+        ohkl::MillerIndex miller_index = peak->hkl();
         const Eigen::RowVector3i& hkl = miller_index.rowVector();
         const double intensity = peak->correctedIntensity().value();
         const double sigma_intensity = peak->correctedIntensity().sigma();
@@ -171,7 +171,7 @@ bool PeakExporter::saveToFullProfUnmerged(const std::string& filename, nsx::Merg
     return true;
 }
 
-bool PeakExporter::saveToFullProfMerged(const std::string& filename, nsx::MergedData* mergedData)
+bool PeakExporter::saveToFullProfMerged(const std::string& filename, ohkl::MergedData* mergedData)
 {
     std::fstream file(filename, std::ios::out);
     if (!file.is_open())
@@ -181,18 +181,18 @@ bool PeakExporter::saveToFullProfMerged(const std::string& filename, nsx::Merged
     file << "(3i4,2F14.4,i5,4f8.2)\n";
 
     std::vector<Peak3D*> peak_vector;
-    for (const nsx::MergedPeak& peak : mergedData->mergedPeakSet()) {
+    for (const ohkl::MergedPeak& peak : mergedData->mergedPeakSet()) {
         for (auto* unmerged_peak : peak.peaks())
             peak_vector.push_back(unmerged_peak);
     }
-    std::shared_ptr<nsx::DataSet> data = peak_vector[0]->dataSet();
-    double wavelength = data->metadata().key<double>(nsx::at_wavelength);
+    std::shared_ptr<ohkl::DataSet> data = peak_vector[0]->dataSet();
+    double wavelength = data->metadata().key<double>(ohkl::at_wavelength);
     file << std::fixed << std::setw(8) << std::setprecision(3) << wavelength;
     file << " 0 0" << std::endl;
 
-    for (const nsx::MergedPeak& peak : mergedData->mergedPeakSet()) {
+    for (const ohkl::MergedPeak& peak : mergedData->mergedPeakSet()) {
         const auto hkl = peak.index();
-        nsx::Intensity I = peak.intensity();
+        ohkl::Intensity I = peak.intensity();
         const double intensity = I.value();
         const double sigma = I.sigma();
 
@@ -208,14 +208,14 @@ bool PeakExporter::saveToFullProfMerged(const std::string& filename, nsx::Merged
 }
 
 bool PeakExporter::saveToSCAUnmerged(
-    const std::string& filename, nsx::MergedData* mergedData, sptrUnitCell cell, double scale)
+    const std::string& filename, ohkl::MergedData* mergedData, sptrUnitCell cell, double scale)
 {
     std::fstream file(filename, std::ios::out);
     if (!file.is_open())
         return false;
 
     std::vector<Peak3D*> peak_vector;
-    for (const nsx::MergedPeak& peak : mergedData->mergedPeakSet()) {
+    for (const ohkl::MergedPeak& peak : mergedData->mergedPeakSet()) {
         for (auto* unmerged_peak : peak.peaks())
             peak_vector.push_back(unmerged_peak);
     }
@@ -233,8 +233,8 @@ bool PeakExporter::saveToSCAUnmerged(
          << std::setprecision(3) << character.gamma / deg << " " << symbol << std::endl;
 
     for (int i = 0; i < peak_vector.size(); i++) {
-        const nsx::Peak3D* peak = peak_vector.at(i);
-        const nsx::MillerIndex miller_index = peak->hkl();
+        const ohkl::Peak3D* peak = peak_vector.at(i);
+        const ohkl::MillerIndex miller_index = peak->hkl();
         const Eigen::RowVector3i& hkl = miller_index.rowVector();
         const double intensity = peak->correctedIntensity().value() * scale;
         const double sigma_intensity = peak->correctedIntensity().sigma() * scale;
@@ -261,14 +261,14 @@ bool PeakExporter::saveToSCAUnmerged(
 }
 
 bool PeakExporter::saveToSCAMerged(
-    const std::string& filename, nsx::MergedData* mergedData, sptrUnitCell cell, double scale)
+    const std::string& filename, ohkl::MergedData* mergedData, sptrUnitCell cell, double scale)
 {
     std::fstream file(filename, std::ios::out);
     if (!file.is_open())
         return false;
 
     std::vector<const Peak3D*> peak_vector;
-    for (const nsx::MergedPeak& peak : mergedData->mergedPeakSet()) {
+    for (const ohkl::MergedPeak& peak : mergedData->mergedPeakSet()) {
         for (const Peak3D* unmerged_peak : peak.peaks())
             peak_vector.push_back(unmerged_peak);
     }
@@ -285,9 +285,9 @@ bool PeakExporter::saveToSCAMerged(
          << std::setprecision(3) << character.beta / deg << std::fixed << std::setw(10)
          << std::setprecision(3) << character.gamma / deg << " " << symbol << std::endl;
 
-    for (const nsx::MergedPeak& peak : mergedData->mergedPeakSet()) {
+    for (const ohkl::MergedPeak& peak : mergedData->mergedPeakSet()) {
         const auto hkl = peak.index();
-        nsx::Intensity I = peak.intensity();
+        ohkl::Intensity I = peak.intensity();
         const double intensity = I.value() * scale;
         const double sigma_intensity = I.sigma() * scale;
 
@@ -312,4 +312,4 @@ bool PeakExporter::saveToSCAMerged(
     return true;
 }
 
-} // namespace nsx
+} // namespace ohkl

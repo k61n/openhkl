@@ -19,7 +19,7 @@
 #include "core/detector/DetectorFactory.h"
 #include "core/gonio/Gonio.h"
 
-namespace nsx {
+namespace ohkl {
 
 DetectorEvent::DetectorEvent(double px, double py, double frame, double tof)
     : px(px), py(py), frame(frame), tof(tof)
@@ -36,4 +36,4 @@ bool DetectorEvent::isValid() const
     return _valid;
 }
 
-} // namespace nsx
+} // namespace ohkl

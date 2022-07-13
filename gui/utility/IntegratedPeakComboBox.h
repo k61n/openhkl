@@ -12,14 +12,14 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_GUI_UTILITY_INTEGRATEDPEAKCOMBO_H
-#define NSX_GUI_UTILITY_INTEGRATEDPEAKCOMBO_H
+#ifndef OHKL_GUI_UTILITY_INTEGRATEDPEAKCOMBO_H
+#define OHKL_GUI_UTILITY_INTEGRATEDPEAKCOMBO_H
 
 #include "gui/utility/PeakComboBox.h"
 
 #include <QComboBox>
 
-namespace nsx {
+namespace ohkl {
 class PeakCollection;
 }
 
@@ -31,7 +31,7 @@ class IntegratedPeakComboBox : public PeakComboBox {
     IntegratedPeakComboBox(QWidget* parent = nullptr);
 
     //! Add a PeakCollection via its pointer
-    void addPeakCollection(nsx::PeakCollection* peaks);
+    void addPeakCollection(ohkl::PeakCollection* peaks);
 
     //! Add a list of peak collection
     void addPeakCollections(const PeakList& peaks);
@@ -40,4 +40,4 @@ class IntegratedPeakComboBox : public PeakComboBox {
     static PeakList _integrated_peaks;
 };
 
-#endif // NSX_GUI_UTILITY_INTEGRATEDPEAKCOMBO_H
+#endif // OHKL_GUI_UTILITY_INTEGRATEDPEAKCOMBO_H

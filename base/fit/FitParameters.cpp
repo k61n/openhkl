@@ -22,7 +22,7 @@
 // DEBUGGING
 #include <iostream>
 
-namespace nsx {
+namespace ohkl {
 
 int FitParameters::addParameter(double* addr)
 {
@@ -148,4 +148,4 @@ void FitParameters::setKernel(const Eigen::MatrixXd& ker)
     _constrained = true;
 }
 
-} // namespace nsx
+} // namespace ohkl

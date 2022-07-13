@@ -12,12 +12,12 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_CORE_STATISTICS_CC_H
-#define NSX_CORE_STATISTICS_CC_H
+#ifndef OHKL_CORE_STATISTICS_CC_H
+#define OHKL_CORE_STATISTICS_CC_H
 
 #include "core/statistics/MergedPeak.h"
 
-namespace nsx {
+namespace ohkl {
 
 class MergedData;
 
@@ -43,6 +43,6 @@ class CC {
     unsigned int _nPeaks{0};
 };
 
-} // namespace nsx
+} // namespace ohkl
 
-#endif // NSX_CORE_STATISTICS_CC_H
+#endif // OHKL_CORE_STATISTICS_CC_H

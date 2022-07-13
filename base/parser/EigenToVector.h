@@ -12,17 +12,17 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_BASE_PARSER_EIGENTOVECTOR_H
-#define NSX_BASE_PARSER_EIGENTOVECTOR_H
+#ifndef OHKL_BASE_PARSER_EIGENTOVECTOR_H
+#define OHKL_BASE_PARSER_EIGENTOVECTOR_H
 
 #include <vector>
 
 #include <Eigen/Dense>
 
-namespace nsx {
+namespace ohkl {
 
 std::vector<double> eigenToVector(const Eigen::VectorXd& ev);
 
-} // namespace nsx
+} // namespace ohkl
 
-#endif // NSX_BASE_PARSER_EIGENTOVECTOR_H
+#endif // OHKL_BASE_PARSER_EIGENTOVECTOR_H

@@ -1,6 +1,6 @@
 //  ***********************************************************************************************
 //
-//  NSXTool: data reduction for neutron single-crystal diffraction
+//  OpenHKL: data reduction for single crystal diffraction
 //
 //! @file      test/cpp/mathematics/TestJonesSymbolParser.cpp
 //! @brief     Test ...
@@ -27,7 +27,7 @@ TEST_CASE("test/mathematics/TestJonesSymbolParser.cpp", "")
 {
     Eigen::Transform<double, 3, Eigen::Affine> matrix;
 
-    CHECK_NOTHROW(matrix = nsx::parseJonesSymbol(" x+4y-z+1/2,-x + y -3z +2,-x-y-z +3\t"));
+    CHECK_NOTHROW(matrix = ohkl::parseJonesSymbol(" x+4y-z+1/2,-x + y -3z +2,-x-y-z +3\t"));
 
     // Compare
     CHECK(matrix(0, 0) == Approx(1.0).epsilon(tolerance));
@@ -47,7 +47,7 @@ TEST_CASE("test/mathematics/TestJonesSymbolParser.cpp", "")
     CHECK(std::abs(matrix(3, 2)) < tolerance);
     CHECK(matrix(3, 3) == Approx(1.0).epsilon(tolerance));
 
-    CHECK_NOTHROW(matrix = nsx::parseJonesSymbol("x,y,z"));
+    CHECK_NOTHROW(matrix = ohkl::parseJonesSymbol("x,y,z"));
 
     // Compare
     CHECK(matrix(0, 0) == Approx(1.0).epsilon(tolerance));
@@ -67,11 +67,11 @@ TEST_CASE("test/mathematics/TestJonesSymbolParser.cpp", "")
     CHECK(std::abs(matrix(3, 2)) < tolerance);
     CHECK(matrix(3, 3) == Approx(1.0).epsilon(tolerance));
 
-    CHECK_THROWS(matrix = nsx::parseJonesSymbol("2x"));
+    CHECK_THROWS(matrix = ohkl::parseJonesSymbol("2x"));
 
-    CHECK_THROWS(matrix = nsx::parseJonesSymbol("2x,4y"));
+    CHECK_THROWS(matrix = ohkl::parseJonesSymbol("2x,4y"));
 
-    CHECK_THROWS(matrix = nsx::parseJonesSymbol("1,1,1"));
+    CHECK_THROWS(matrix = ohkl::parseJonesSymbol("1,1,1"));
 
-    CHECK_THROWS(matrix = nsx::parseJonesSymbol("2x,ay+3z,$z+1/2"));
+    CHECK_THROWS(matrix = ohkl::parseJonesSymbol("2x,ay+3z,$z+1/2"));
 }

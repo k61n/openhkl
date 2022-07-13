@@ -12,13 +12,13 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_CORE_LOADER_HDF5DATAREADER_H
-#define NSX_CORE_LOADER_HDF5DATAREADER_H
+#ifndef OHKL_CORE_LOADER_HDF5DATAREADER_H
+#define OHKL_CORE_LOADER_HDF5DATAREADER_H
 
 #include "core/loader/BaseHDF5DataReader.h" // inherits from
 #include "core/raw/DataKeys.h" // kw_datasetDefaultName
 
-namespace nsx {
+namespace ohkl {
 
 //! Read data from HDF5 format.
 class HDF5DataReader : public BaseHDF5DataReader {
@@ -37,6 +37,6 @@ class HDF5DataReader : public BaseHDF5DataReader {
     Eigen::MatrixXi data(size_t frame) override final;
 };
 
-} // namespace nsx
+} // namespace ohkl
 
-#endif // NSX_CORE_LOADER_HDF5DATAREADER_H
+#endif // OHKL_CORE_LOADER_HDF5DATAREADER_H

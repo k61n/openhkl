@@ -195,7 +195,7 @@ void SubframeIntegrate::grabIntegrationParameters()
         if (it->second == params->integrator_type)
             _integrator_combo->setCurrentText(QString::fromStdString(it->first));
 
-    for (auto it = nsx::regionTypeDescription.begin(); it != nsx::regionTypeDescription.end(); ++it)
+    for (auto it = ohkl::regionTypeDescription.begin(); it != ohkl::regionTypeDescription.end(); ++it)
         if (it->first == params->region_type)
             _integration_region_type->setCurrentText(QString::fromStdString(it->second));
 }
@@ -219,11 +219,11 @@ void SubframeIntegrate::setIntegrationParameters()
     params->fit_center = _fit_center->isChecked();
     params->fit_cov = _fit_covariance->isChecked();
     params->min_neighbors = _min_neighbours->value();
-    params->region_type = static_cast<nsx::RegionType>(_integration_region_type->currentIndex());
+    params->region_type = static_cast<ohkl::RegionType>(_integration_region_type->currentIndex());
     params->integrator_type =
         _integrator_strings.find(_integrator_combo->currentText().toStdString())->second;
 
-    for (auto it = nsx::regionTypeDescription.begin(); it != nsx::regionTypeDescription.end(); ++it)
+    for (auto it = ohkl::regionTypeDescription.begin(); it != ohkl::regionTypeDescription.end(); ++it)
         if (it->second == _integration_region_type->currentText().toStdString())
             params->region_type = it->first;
 }
@@ -237,8 +237,8 @@ void SubframeIntegrate::setIntegrationRegionUp()
         ComboType::RegionType, "Integration region type",
         "<font>Specify integration region in Pixels (peak end), and"
         "scaling factors for background region (bkg begin, bkg end)</font>");
-    for (int i = 0; i < static_cast<int>(nsx::RegionType::Count); ++i)
-        for (const auto& [key, val] : nsx::regionTypeDescription)
+    for (int i = 0; i < static_cast<int>(ohkl::RegionType::Count); ++i)
+        for (const auto& [key, val] : ohkl::regionTypeDescription)
             if (i == static_cast<int>(key))
                 _integration_region_type->addItem(QString::fromStdString(val));
 
@@ -396,8 +396,8 @@ void SubframeIntegrate::removeOverlappingPeaks()
     if (_peak_combo->count() == 0)
         return;
 
-    nsx::PeakCollection* peaks_to_integrate = _peak_combo->currentPeakCollection();
-    nsx::PeakFilter filter;
+    ohkl::PeakCollection* peaks_to_integrate = _peak_combo->currentPeakCollection();
+    ohkl::PeakFilter filter;
     filter.resetFiltering(peaks_to_integrate);
     if (_remove_overlaps->isChecked()) {
         filter.parameters()->peak_end = _peak_end->value();
@@ -406,15 +406,15 @@ void SubframeIntegrate::removeOverlappingPeaks()
         for (auto* peak : peaks_to_integrate->getPeakList()) {
             if (!peak->caughtByFilter()) {
                 peak->setSelected(false);
-                peak->setRejectionFlag(nsx::RejectionFlag::OverlappingPeak);
+                peak->setRejectionFlag(ohkl::RejectionFlag::OverlappingPeak);
             }
         }
     } else {
         for (auto* peak : peaks_to_integrate->getPeakList()) {
             if (!(peak->selected())
-                && peak->rejectionFlag() == nsx::RejectionFlag::OverlappingPeak) {
+                && peak->rejectionFlag() == ohkl::RejectionFlag::OverlappingPeak) {
                 peak->setSelected(true);
-                peak->setRejectionFlag(nsx::RejectionFlag::NotRejected, true);
+                peak->setRejectionFlag(ohkl::RejectionFlag::NotRejected, true);
             }
         }
     }
@@ -426,15 +426,15 @@ void SubframeIntegrate::runIntegration()
 {
     gGui->setReady(false);
     try {
-        nsx::sptrProgressHandler handler(new nsx::ProgressHandler);
+        ohkl::sptrProgressHandler handler(new ohkl::ProgressHandler);
         ProgressView progressView(nullptr);
         progressView.watch(handler);
 
-        nsx::Experiment* expt = gSession->currentProject()->experiment();
-        nsx::Integrator* integrator = expt->integrator();
-        nsx::sptrDataSet data = _data_combo->currentData();
-        nsx::PeakCollection* peaks_to_integrate = _peak_combo->currentPeakCollection();
-        nsx::ShapeModel* shapes = nullptr;
+        ohkl::Experiment* expt = gSession->currentProject()->experiment();
+        ohkl::Integrator* integrator = expt->integrator();
+        ohkl::sptrDataSet data = _data_combo->currentData();
+        ohkl::PeakCollection* peaks_to_integrate = _peak_combo->currentPeakCollection();
+        ohkl::ShapeModel* shapes = nullptr;
         if (gSession->currentProject()->hasShapeModel())
             shapes = _shape_combo->currentShapes();
 
@@ -485,7 +485,7 @@ void SubframeIntegrate::toggleUnsafeWidgets()
     }
 
     if (_integrator_strings.find(_integrator_combo->currentText().toStdString())->second
-        == nsx::IntegratorType::PixelSum) {
+        == ohkl::IntegratorType::PixelSum) {
         _integrate_button->setEnabled(true);
         _interpolation_combo->setEnabled(false);
         _radius_int->setEnabled(false);

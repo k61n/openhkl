@@ -18,7 +18,7 @@
 #include "core/peak/Intensity.h"
 #include "core/peak/Peak3D.h"
 
-namespace nsx {
+namespace ohkl {
 
 bool MeanBackgroundIntegrator::compute(
     Peak3D* /*peak*/, ShapeModel* /*shape_model*/, const IntegrationRegion& region)
@@ -80,4 +80,4 @@ bool MeanBackgroundIntegrator::compute(
     return true;
 }
 
-} // namespace nsx
+} // namespace ohkl

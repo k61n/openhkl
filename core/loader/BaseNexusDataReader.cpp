@@ -28,7 +28,7 @@
 #include <memory>
 #include <stdexcept>
 
-namespace nsx {
+namespace ohkl {
 
 BaseNexusDataReader::BaseNexusDataReader(const std::string& filename)
     : IDataReader(filename), _dataset(nullptr), _space(nullptr), _memspace(nullptr)
@@ -103,17 +103,17 @@ bool BaseNexusDataReader::initRead()
 
         // set metadata
         _dataset_out->metadata().add<std::string>(
-            nsx::at_diffractometer, _dataset_out->diffractometer()->name());
-        _dataset_out->metadata().add<double>(nsx::at_wavelength, wavelength);
-        _dataset_out->metadata().add<double>(nsx::at_monitorSum, monitor);
-        _dataset_out->metadata().add<int>(nsx::at_numor, numor);
-        _dataset_out->metadata().add<int>(nsx::at_frameCount, nFrames_i32);
-        _dataset_out->metadata().add<int>(nsx::at_totalSteps, totalSteps);
-        _dataset_out->metadata().add<std::string>(nsx::at_title, title);
-        _dataset_out->metadata().add<std::string>(nsx::at_experiment, experiment_id);
-        _dataset_out->metadata().add<std::string>(nsx::at_startTime, start_time);
-        _dataset_out->metadata().add<std::string>(nsx::at_endTime, end_time);
-        _dataset_out->metadata().add<double>(nsx::at_time, time);
+            ohkl::at_diffractometer, _dataset_out->diffractometer()->name());
+        _dataset_out->metadata().add<double>(ohkl::at_wavelength, wavelength);
+        _dataset_out->metadata().add<double>(ohkl::at_monitorSum, monitor);
+        _dataset_out->metadata().add<int>(ohkl::at_numor, numor);
+        _dataset_out->metadata().add<int>(ohkl::at_frameCount, nFrames_i32);
+        _dataset_out->metadata().add<int>(ohkl::at_totalSteps, totalSteps);
+        _dataset_out->metadata().add<std::string>(ohkl::at_title, title);
+        _dataset_out->metadata().add<std::string>(ohkl::at_experiment, experiment_id);
+        _dataset_out->metadata().add<std::string>(ohkl::at_startTime, start_time);
+        _dataset_out->metadata().add<std::string>(ohkl::at_endTime, end_time);
+        _dataset_out->metadata().add<double>(ohkl::at_time, time);
 
         // put root attributes into meta data
         for (int i = 0; i < rootGroup.getNumAttrs(); ++i) {
@@ -124,15 +124,15 @@ bool BaseNexusDataReader::initRead()
 
             // override stored filename with the current one
             if (attr.getName() == "file_name" || attr.getName() == "filename")
-                _dataset_out->metadata().add<std::string>(nsx::at_datasetSources, value);
+                _dataset_out->metadata().add<std::string>(ohkl::at_datasetSources, value);
             else
                 _dataset_out->metadata().add<std::string>(attr.getName(), value);
         }
 
 
         // Add the list of sources as metadata
-        if (!_dataset_out->metadata().isKey(nsx::at_datasetSources)) {
-            _dataset_out->metadata().add<std::string>(nsx::at_datasetSources, _filename);
+        if (!_dataset_out->metadata().isKey(ohkl::at_datasetSources)) {
+            _dataset_out->metadata().add<std::string>(ohkl::at_datasetSources, _filename);
         }
 
         // which axis is scanned?
@@ -175,9 +175,9 @@ bool BaseNexusDataReader::initRead()
         int omega_idx = -1, phi_idx = -1, chi_idx = -1;
         for (size_t i = 0; i < n_sample_gonio_axes; ++i) {
             const std::string axis_name = sample_gonio.axis(i).name();
-            omega_idx = axis_name == nsx::ax_omega ? int(i) : omega_idx;
-            chi_idx = axis_name == nsx::ax_chi ? int(i) : chi_idx;
-            phi_idx = axis_name == nsx::ax_phi ? int(i) : phi_idx;
+            omega_idx = axis_name == ohkl::ax_omega ? int(i) : omega_idx;
+            chi_idx = axis_name == ohkl::ax_chi ? int(i) : chi_idx;
+            phi_idx = axis_name == ohkl::ax_phi ? int(i) : phi_idx;
         }
 
         if (omega_idx == -1 || phi_idx == -1 || chi_idx == -1)
@@ -298,4 +298,4 @@ void BaseNexusDataReader::close()
     _isOpened = false;
 }
 
-} // namespace nsx
+} // namespace ohkl

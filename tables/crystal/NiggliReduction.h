@@ -12,12 +12,12 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_TABLES_CRYSTAL_NIGGLIREDUCTION_H
-#define NSX_TABLES_CRYSTAL_NIGGLIREDUCTION_H
+#ifndef OHKL_TABLES_CRYSTAL_NIGGLIREDUCTION_H
+#define OHKL_TABLES_CRYSTAL_NIGGLIREDUCTION_H
 
 #include <Eigen/Dense>
 
-namespace nsx {
+namespace ohkl {
 
 //! Class to handle reduction of a general unit cell to a Niggli cell.
 
@@ -60,6 +60,6 @@ class NiggliReduction {
     int _l, _m, _n;
 };
 
-} // namespace nsx
+} // namespace ohkl
 
-#endif // NSX_TABLES_CRYSTAL_NIGGLIREDUCTION_H
+#endif // OHKL_TABLES_CRYSTAL_NIGGLIREDUCTION_H

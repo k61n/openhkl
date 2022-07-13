@@ -19,7 +19,7 @@
 
 #include "core/raw/DataKeys.h"
 
-namespace nsx {
+namespace ohkl {
 
 enum class Direction { CW = 1, CCW = 2 };
 
@@ -28,7 +28,7 @@ Axis* RotAxis::create(const YAML::Node& node)
     return new RotAxis(node);
 }
 
-RotAxis::RotAxis() : Axis(nsx::kw_rotationAxisName), _dir(Direction::CCW) { }
+RotAxis::RotAxis() : Axis(ohkl::kw_rotationAxisName), _dir(Direction::CCW) { }
 
 RotAxis::RotAxis(const std::string& label) : Axis(label), _dir(Direction::CCW) { }
 
@@ -39,7 +39,7 @@ RotAxis::RotAxis(const std::string& label, const Eigen::Vector3d& axis, Directio
 
 RotAxis::RotAxis(const YAML::Node& node) : Axis(node)
 {
-    bool clockwise = node[nsx::ym_rotClockwise].as<bool>();
+    bool clockwise = node[ohkl::ym_rotClockwise].as<bool>();
     _dir = clockwise ? Direction::CW : Direction::CCW;
 }
 
@@ -91,4 +91,4 @@ std::ostream& RotAxis::printSelf(std::ostream& os) const
     return os;
 }
 
-} // namespace nsx
+} // namespace ohkl

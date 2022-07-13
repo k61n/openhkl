@@ -172,8 +172,8 @@ void AbsorptionDialog::readInfoFile(const std::string& filename)
         // Read line with goniometer angles
         getline(file, line);
         // Cout number of axes, validate with goniometer definition
-        const nsx::Sample& sample = _experiment->getDiffractometer()->sample();
-        const nsx::Gonio& sample_gonio = sample.gonio();
+        const ohkl::Sample& sample = _experiment->getDiffractometer()->sample();
+        const ohkl::Gonio& sample_gonio = sample.gonio();
         std::size_t numberAngles = std::count(line.begin(), line.end(), ':');
         if (numberAngles == sample_gonio.nAxes())
             return;

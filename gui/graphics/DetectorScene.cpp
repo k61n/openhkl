@@ -169,18 +169,18 @@ void DetectorScene::unlinkPeakModel1()
         &DetectorScene::peakModelDataChanged);
 }
 
-void DetectorScene::link3rdPartyPeaks(nsx::PeakCenterDataSet* pcd)
+void DetectorScene::link3rdPartyPeaks(ohkl::PeakCenterDataSet* pcd)
 {
     _peak_center_data = pcd;
     drawPeakitems();
 }
 
-void DetectorScene::linkDirectBeamPositions(std::vector<nsx::DetectorEvent>* events)
+void DetectorScene::linkDirectBeamPositions(std::vector<ohkl::DetectorEvent>* events)
 {
     _direct_beam_events = events;
 }
 
-void DetectorScene::linkOldDirectBeamPositions(std::vector<nsx::DetectorEvent>* events)
+void DetectorScene::linkOldDirectBeamPositions(std::vector<ohkl::DetectorEvent>* events)
 {
     _old_direct_beam_events = events;
 }
@@ -280,9 +280,9 @@ void DetectorScene::drawPeakModelItems(PeakCollectionModel* model)
     std::vector<PeakItem*> peak_items = model->root()->peakItems();
 
     for (PeakItem* peak_item : peak_items) {
-        nsx::Ellipsoid peak_ellipsoid = peak_item->peak()->shape();
+        ohkl::Ellipsoid peak_ellipsoid = peak_item->peak()->shape();
         peak_ellipsoid.scale(peak_item->peak()->peakEnd());
-        const nsx::AABB& aabb = peak_ellipsoid.aabb();
+        const ohkl::AABB& aabb = peak_ellipsoid.aabb();
         Eigen::Vector3d lower = aabb.lower();
         Eigen::Vector3d upper = aabb.upper();
 
@@ -302,7 +302,7 @@ void DetectorScene::draw3rdPartyItems()
     if (!_peak_center_data)
         return;
     _peak_center_items.clear();
-    nsx::XFileHandler* xfh = _peak_center_data->getFrame(_currentFrameIndex);
+    ohkl::XFileHandler* xfh = _peak_center_data->getFrame(_currentFrameIndex);
 
     if (!xfh)
         return;
@@ -321,7 +321,7 @@ void DetectorScene::draw3rdPartyItems()
         addItem(peak);
 }
 
-void DetectorScene::slotChangeSelectedData(nsx::sptrDataSet data, int frame)
+void DetectorScene::slotChangeSelectedData(ohkl::sptrDataSet data, int frame)
 {
     if (data != _currentData) {
         _currentData = data;
@@ -516,7 +516,7 @@ void DetectorScene::mousePressEvent(QGraphicsSceneMouseEvent* event)
                 break;
             }
             case MASK: {
-                mask = new MaskItem(_currentData, new nsx::AABB);
+                mask = new MaskItem(_currentData, new ohkl::AABB);
                 mask->setFrom(event->lastScenePos());
                 mask->setTo(event->lastScenePos());
                 addItem(mask);
@@ -525,7 +525,7 @@ void DetectorScene::mousePressEvent(QGraphicsSceneMouseEvent* event)
                 break;
             }
             case ELLIPSE_MASK: {
-                ellipse_mask = new EllipseMaskItem(_currentData, new nsx::AABB);
+                ellipse_mask = new EllipseMaskItem(_currentData, new ohkl::AABB);
                 ellipse_mask->setFrom(event->lastScenePos());
                 ellipse_mask->setTo(event->lastScenePos());
                 addItem(ellipse_mask);
@@ -692,7 +692,7 @@ void DetectorScene::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
         } else {
             if (_peak_model_1) {
                 // _peak_model_2 is only relevant in DetectorWindow, ignore here.
-                std::vector<nsx::Peak3D*> peaks =
+                std::vector<ohkl::Peak3D*> peaks =
                     _peak_model_1->root()->peakCollection()->getPeakList();
                 if (CutterItem* p = dynamic_cast<CutterItem*>(_lastClickedGI)) {
                     // delete p....
@@ -704,7 +704,7 @@ void DetectorScene::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
                     // add a new mask
                     auto it = findMask(p);
                     if (it != _masks.end()) {
-                        it->second = new nsx::BoxMask(*p->getAABB());
+                        it->second = new ohkl::BoxMask(*p->getAABB());
                         _currentData->addMask(it->second);
                         _lastClickedGI = nullptr;
                     }
@@ -714,7 +714,7 @@ void DetectorScene::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
                 } else if (EllipseMaskItem* p = dynamic_cast<EllipseMaskItem*>(_lastClickedGI)) {
                     auto it = findMask(p);
                     if (it != _masks.end()) {
-                        it->second = new nsx::EllipseMask(*p->getAABB());
+                        it->second = new ohkl::EllipseMask(*p->getAABB());
                         _currentData->addMask(it->second);
                         _lastClickedGI = nullptr;
                     }
@@ -727,7 +727,7 @@ void DetectorScene::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
                     // add a new mask
                     auto it = findMask(p);
                     if (it != _masks.end()) {
-                        it->second = new nsx::BoxMask(*p->getAABB());
+                        it->second = new ohkl::BoxMask(*p->getAABB());
                         _currentData->addMask(it->second);
                         _lastClickedGI = nullptr;
                     }
@@ -736,7 +736,7 @@ void DetectorScene::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
                 } else if (EllipseMaskItem* p = dynamic_cast<EllipseMaskItem*>(_lastClickedGI)) {
                     auto it = findMask(p);
                     if (it != _masks.end()) {
-                        it->second = new nsx::EllipseMask(*p->getAABB());
+                        it->second = new ohkl::EllipseMask(*p->getAABB());
                         _currentData->addMask(it->second);
                         _lastClickedGI = nullptr;
                     }
@@ -787,7 +787,7 @@ void DetectorScene::keyPressEvent(QKeyEvent* event)
             // If the item is a peak graphics item, remove its corresponding peak from
             // the data, update the set of peak graphics items and update the scene
             if (PeakItemGraphic* peak_item = dynamic_cast<PeakItemGraphic*>(item)) {
-                peak_item->peak()->setRejectionFlag(nsx::RejectionFlag::ManuallyRejected, true);
+                peak_item->peak()->setRejectionFlag(ohkl::RejectionFlag::ManuallyRejected, true);
                 peak_item->peak()->setSelected(false);
                 peak_item->setCenterColor(Qt::red);
                 // If the item is a mask graphics item, remove its corresponding mask from
@@ -827,7 +827,7 @@ void DetectorScene::keyPressEvent(QKeyEvent* event)
             // If the item is a peak graphics item, remove its corresponding peak from
             // the data, update the set of peak graphics items and update the scene
             if (PeakItemGraphic* peak_item = dynamic_cast<PeakItemGraphic*>(item)) {
-                peak_item->peak()->setRejectionFlag(nsx::RejectionFlag::NotRejected, true);
+                peak_item->peak()->setRejectionFlag(ohkl::RejectionFlag::NotRejected, true);
                 peak_item->peak()->setSelected(true);
                 peak_item->setCenterColor(Qt::green);
             }
@@ -841,8 +841,8 @@ void DetectorScene::createToolTipText(QGraphicsSceneMouseEvent* event)
 {
     if (!_currentData)
         return;
-    nsx::Diffractometer* instr = _currentData->diffractometer();
-    const nsx::Detector& det = _currentData->detector();
+    ohkl::Diffractometer* instr = _currentData->diffractometer();
+    const ohkl::Detector& det = _currentData->detector();
 
     const int nrows = int(det.nRows());
     const int ncols = int(det.nCols());
@@ -854,18 +854,18 @@ void DetectorScene::createToolTipText(QGraphicsSceneMouseEvent* event)
         return;
     const int intensity = _currentFrame(row, col);
 
-    const nsx::Monochromator& mono = instr->source().selectedMonochromator();
+    const ohkl::Monochromator& mono = instr->source().selectedMonochromator();
     double wave = mono.wavelength();
 
     QString ttip;
 
-    nsx::DirectVector pos = _currentData->detector().pixelPosition(col, row);
+    ohkl::DirectVector pos = _currentData->detector().pixelPosition(col, row);
 
 
     bool has_state = true;
-    nsx::InstrumentState state;
+    ohkl::InstrumentState state;
     try {
-        state = nsx::InterpolatedState::interpolate(
+        state = ohkl::InterpolatedState::interpolate(
             _currentData->instrumentStates(), _currentFrameIndex);
     } catch (std::range_error& e) {
         // May get an interpolation error on the last frame of the set. Skip the tooltip if we
@@ -885,14 +885,14 @@ void DetectorScene::createToolTipText(QGraphicsSceneMouseEvent* event)
             double gamma = state.gamma(pos);
             double nu = state.nu(pos);
             ttip = QString("(%1,%2) I: %3")
-                       .arg(gamma / nsx::deg, 0, 'f', 3)
-                       .arg(nu / nsx::deg, 0, 'f', 3)
+                       .arg(gamma / ohkl::deg, 0, 'f', 3)
+                       .arg(nu / ohkl::deg, 0, 'f', 3)
                        .arg(intensity);
             break;
         }
         case THETA: {
             double th2 = state.twoTheta(pos);
-            ttip = QString("(%1) I: %2").arg(th2 / nsx::deg, 0, 'f', 3).arg(intensity);
+            ttip = QString("(%1) I: %2").arg(th2 / ohkl::deg, 0, 'f', 3).arg(intensity);
             break;
         }
         case D_SPACING: {
@@ -902,8 +902,8 @@ void DetectorScene::createToolTipText(QGraphicsSceneMouseEvent* event)
         }
         case MILLER_INDICES: {
             if (_unit_cell) {
-                nsx::ReciprocalVector q = state.sampleQ(pos);
-                nsx::MillerIndex miller_indices(q, *_unit_cell);
+                ohkl::ReciprocalVector q = state.sampleQ(pos);
+                ohkl::MillerIndex miller_indices(q, *_unit_cell);
 
                 Eigen::RowVector3d hkl =
                     miller_indices.rowVector().cast<double>() + miller_indices.error();
@@ -1030,7 +1030,7 @@ QImage* DetectorScene::getIntegrationRegionImage(
 
 void DetectorScene::getIntegrationMask(
     PeakCollectionModel* model, Eigen::MatrixXi& mask,
-    nsx::RegionType region_type /* = nsx::RegionType::VariableEllipsoid */)
+    ohkl::RegionType region_type /* = ohkl::RegionType::VariableEllipsoid */)
 {
     if (model == nullptr || model->root() == nullptr)
         return;
@@ -1039,7 +1039,7 @@ void DetectorScene::getIntegrationMask(
 
     double peak_end, bkg_begin, bkg_end;
     for (PeakItem* peak_item : peak_items) {
-        nsx::Peak3D* peak = peak_item->peak();
+        ohkl::Peak3D* peak = peak_item->peak();
         if (_preview_int_regions_1 && model == _peak_model_1) {
             peak_end = _peak_end_1;
             bkg_begin = _bkg_begin_1;
@@ -1053,19 +1053,19 @@ void DetectorScene::getIntegrationMask(
             bkg_begin = peak_item->peak()->bkgBegin();
             bkg_end = peak_item->peak()->bkgEnd();
         }
-        nsx::IntegrationRegion region(peak, peak_end, bkg_begin, bkg_end, region_type);
+        ohkl::IntegrationRegion region(peak, peak_end, bkg_begin, bkg_end, region_type);
         if (region.isValid())
             region.updateMask(mask, _currentFrameIndex);
     }
 }
 
 void DetectorScene::getSinglePeakIntegrationMask(
-    nsx::Peak3D* peak, Eigen::MatrixXi& mask, nsx::RegionType region_type)
+    ohkl::Peak3D* peak, Eigen::MatrixXi& mask, ohkl::RegionType region_type)
 {
     if (!peak)
         return;
 
-    nsx::IntegrationRegion region(peak, _peak_end_1, _bkg_begin_1, _bkg_end_1, region_type);
+    ohkl::IntegrationRegion region(peak, _peak_end_1, _bkg_begin_1, _bkg_end_1, region_type);
     if (region.isValid())
         region.updateMask(mask, _currentFrameIndex);
 }
@@ -1075,7 +1075,7 @@ void DetectorScene::initIntRegionFromPeakWidget(
 {
     if (!alt) {
         _preview_int_regions_1 = set.previewIntRegion->isChecked();
-        _int_region_type_1 = static_cast<nsx::RegionType>(set.regionType->currentIndex());
+        _int_region_type_1 = static_cast<ohkl::RegionType>(set.regionType->currentIndex());
         _peak_end_1 = set.peakEnd->value();
         _bkg_begin_1 = set.bkgBegin->value();
         _bkg_end_1 = set.bkgEnd->value();
@@ -1086,7 +1086,7 @@ void DetectorScene::initIntRegionFromPeakWidget(
         _bkgPxColor1.setAlphaF(set.alphaIntegrationRegion->value());
     } else { // alternative colour scheme for second overlay
         _preview_int_regions_2 = set.previewIntRegion->isChecked();
-        _int_region_type_2 = static_cast<nsx::RegionType>(set.regionType->currentIndex());
+        _int_region_type_2 = static_cast<ohkl::RegionType>(set.regionType->currentIndex());
         _peak_end_1 = set.peakEnd->value();
         _peak_end_2 = set.peakEnd->value();
         _bkg_begin_2 = set.bkgBegin->value();
@@ -1175,15 +1175,15 @@ void DetectorScene::resetElements()
     _lastClickedGI = nullptr;
 }
 
-std::vector<std::pair<QGraphicsItem*, nsx::IMask*>>::iterator DetectorScene::findMask(
+std::vector<std::pair<QGraphicsItem*, ohkl::IMask*>>::iterator DetectorScene::findMask(
     QGraphicsItem* item)
 {
     return std::find_if(
         _masks.begin(), _masks.end(),
-        [item](const std::pair<QGraphicsItem*, nsx::IMask*>& x) { return x.first == item; });
+        [item](const std::pair<QGraphicsItem*, ohkl::IMask*>& x) { return x.first == item; });
 }
 
-void DetectorScene::setUnitCell(nsx::UnitCell* cell)
+void DetectorScene::setUnitCell(ohkl::UnitCell* cell)
 {
     _unit_cell = cell;
 }
@@ -1224,7 +1224,7 @@ QPointF DetectorScene::beamSetterCoords()
     return _current_beam_position;
 }
 
-void DetectorScene::setPeak(nsx::Peak3D* peak)
+void DetectorScene::setPeak(ohkl::Peak3D* peak)
 {
     _peak = peak;
     refreshSinglePeakIntegrationOverlay();

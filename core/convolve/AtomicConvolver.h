@@ -12,15 +12,15 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_CORE_CONVOLVE_ATOMICCONVOLVER_H
-#define NSX_CORE_CONVOLVE_ATOMICCONVOLVER_H
+#ifndef OHKL_CORE_CONVOLVE_ATOMICCONVOLVER_H
+#define OHKL_CORE_CONVOLVE_ATOMICCONVOLVER_H
 
 #include "core/convolve/Convolver.h" // inherits from
 
 #include <fftw3.h>
 #include <vector>
 
-namespace nsx {
+namespace ohkl {
 
 //! Pure virtual base class for ConstantConvolver, DeltaConvolver, RadialConvolver.
 
@@ -63,6 +63,6 @@ class AtomicConvolver : public Convolver {
     std::vector<std::complex<double>> _transformedKernel;
 };
 
-} // namespace nsx
+} // namespace ohkl
 
-#endif // NSX_CORE_CONVOLVE_ATOMICCONVOLVER_H
+#endif // OHKL_CORE_CONVOLVE_ATOMICCONVOLVER_H

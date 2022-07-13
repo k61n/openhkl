@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_GUI_UTILITY_PEAKVIEWWIDGET_H
-#define NSX_GUI_UTILITY_PEAKVIEWWIDGET_H
+#ifndef OHKL_GUI_UTILITY_PEAKVIEWWIDGET_H
+#define OHKL_GUI_UTILITY_PEAKVIEWWIDGET_H
 
 #include "gui/utility/LinkedComboBox.h"
 
@@ -74,4 +74,4 @@ class PeakViewWidget : public QGridLayout {
     bool _fixed_integration_region;
 };
 
-#endif // NSX_GUI_UTILITY_PEAKVIEWWIDGET_H
+#endif // OHKL_GUI_UTILITY_PEAKVIEWWIDGET_H

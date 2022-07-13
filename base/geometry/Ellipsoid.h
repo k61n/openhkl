@@ -12,14 +12,14 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_BASE_GEOMETRY_ELLIPSOID_H
-#define NSX_BASE_GEOMETRY_ELLIPSOID_H
+#ifndef OHKL_BASE_GEOMETRY_ELLIPSOID_H
+#define OHKL_BASE_GEOMETRY_ELLIPSOID_H
 
 #include "base/geometry/AABB.h"
 
 #include <Eigen/Dense>
 
-namespace nsx {
+namespace ohkl {
 
 //! 3D Ellipsoid, stored as center-and-covariance matrix.
 
@@ -88,6 +88,6 @@ class Ellipsoid {
     AABB _aabb;
 };
 
-} // namespace nsx
+} // namespace ohkl
 
-#endif // NSX_BASE_GEOMETRY_ELLIPSOID_H
+#endif // OHKL_BASE_GEOMETRY_ELLIPSOID_H

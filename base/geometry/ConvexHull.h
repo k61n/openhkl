@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_BASE_HULL_H
-#define NSX_BASE_HULL_H
+#ifndef OHKL_BASE_HULL_H
+#define OHKL_BASE_HULL_H
 
 #include <Eigen/Core>
 #include <vector>
@@ -21,7 +21,7 @@
 #include "base/geometry/AABB.h"
 
 
-namespace nsx {
+namespace ohkl {
 
 class ConvexHull {
  public:

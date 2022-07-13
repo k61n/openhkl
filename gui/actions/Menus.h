@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_GUI_ACTIONS_MENUS_H
-#define NSX_GUI_ACTIONS_MENUS_H
+#ifndef OHKL_GUI_ACTIONS_MENUS_H
+#define OHKL_GUI_ACTIONS_MENUS_H
 
 #include <QMenuBar>
 
@@ -40,4 +40,4 @@ class Menus {
     QMenu* actionsToMenu(const char* menuName, QList<QAction*> actions);
 };
 
-#endif // NSX_GUI_ACTIONS_MENUS_H
+#endif // OHKL_GUI_ACTIONS_MENUS_H

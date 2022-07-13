@@ -20,7 +20,7 @@
 #include "core/instrument/InstrumentState.h"
 #include "core/instrument/InstrumentStateSet.h"
 
-namespace nsx {
+namespace ohkl {
 
 bool InstrumentStateHandler::addInstrumentStateSet(sptrDataSet data)
 {
@@ -92,4 +92,4 @@ void InstrumentStateHandler::removeInstrumentStateSet(const sptrDataSet& data)
             _instrumentstate_map.erase(it);
 }
 
-} // namespace nsx
+} // namespace ohkl

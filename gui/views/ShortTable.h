@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_GUI_VIEWS_SHORTTABLE_H
-#define NSX_GUI_VIEWS_SHORTTABLE_H
+#ifndef OHKL_GUI_VIEWS_SHORTTABLE_H
+#define OHKL_GUI_VIEWS_SHORTTABLE_H
 
 #include <QTableView>
 
@@ -32,4 +32,4 @@ class ShortTable : public PeakTableView {
     int _default_height;
 };
 
-#endif // NSX_GUI_VIEWS_SHORTTABLE_H
+#endif // OHKL_GUI_VIEWS_SHORTTABLE_H

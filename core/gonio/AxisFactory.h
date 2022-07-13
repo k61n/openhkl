@@ -12,14 +12,14 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_CORE_GONIO_AXISFACTORY_H
-#define NSX_CORE_GONIO_AXISFACTORY_H
+#ifndef OHKL_CORE_GONIO_AXISFACTORY_H
+#define OHKL_CORE_GONIO_AXISFACTORY_H
 
 #include "base/utils/Factory.h"
 #include "base/utils/ISingleton.h"
 #include "core/gonio/Axis.h"
 
-namespace nsx {
+namespace ohkl {
 
 //! Factory to create axes (rotational, translational).
 
@@ -28,6 +28,6 @@ class AxisFactory : public Factory<AxisFactory, Axis, std::string, const YAML::N
     AxisFactory();
 };
 
-} // namespace nsx
+} // namespace ohkl
 
-#endif // NSX_CORE_GONIO_AXISFACTORY_H
+#endif // OHKL_CORE_GONIO_AXISFACTORY_H

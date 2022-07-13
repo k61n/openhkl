@@ -12,12 +12,12 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_CORE_GONIO_COMPONENT_H
-#define NSX_CORE_GONIO_COMPONENT_H
+#ifndef OHKL_CORE_GONIO_COMPONENT_H
+#define OHKL_CORE_GONIO_COMPONENT_H
 
 #include "core/gonio/Gonio.h"
 
-namespace nsx {
+namespace ohkl {
 
 //! Pure virtual base class for the components of an instrument (Source, Sample, Detector).
 
@@ -54,6 +54,6 @@ class Component {
     Gonio _gonio;
 };
 
-} // namespace nsx
+} // namespace ohkl
 
-#endif // NSX_CORE_GONIO_COMPONENT_H
+#endif // OHKL_CORE_GONIO_COMPONENT_H

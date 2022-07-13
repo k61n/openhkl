@@ -84,7 +84,7 @@ PeakTableView::PeakTableView(QWidget* parent) : QTableView(parent)
 //     if (peaksModel == nullptr)
 //         return;
 
-//     const nsx::PeakList& peaks = peaksModel->peaks();
+//     const ohkl::PeakList& peaks = peaksModel->peaks();
 //     if (peaks.empty())
 //         return;
 //     // Show all peaks as selected when context menu is requested
@@ -103,8 +103,8 @@ PeakTableView::PeakTableView(QWidget* parent) : QTableView(parent)
 
 //     if (indexList.size()) {
 //         QMenu* plotasmenu = menu->addMenu("Plot as");
-//         const nsx::MetaData& metadata = peaks[indexList[0].row()]->data()->reader()->metadata();
-//         const nsx::MetaDataKeySet& keys = metadata.keys();
+//         const ohkl::MetaData& metadata = peaks[indexList[0].row()]->data()->reader()->metadata();
+//         const ohkl::MetaDataKeySet& keys = metadata.keys();
 //         for (const std::string& key : keys) {
 //             try {
 //                 // Ensure metadata is a Numeric type
@@ -155,7 +155,7 @@ PeakTableView::PeakTableView(QWidget* parent) : QTableView(parent)
 //     if (peaksModel == nullptr)
 //         return;
 
-//     nsx::PeakList peaks = peaksModel->peaks();
+//     ohkl::PeakList peaks = peaksModel->peaks();
 //     if (peaks.empty())
 //         return;
 
@@ -169,7 +169,7 @@ PeakTableView::PeakTableView(QWidget* parent) : QTableView(parent)
 //     // If no row selected do nothing else.
 //     if (!index.isValid())
 //         return;
-//     nsx::sptrPeak3D peak = peaks[index.row()];
+//     ohkl::sptrPeak3D peak = peaks[index.row()];
 //     emit plotPeak(peak);
 // }
 
@@ -183,7 +183,7 @@ PeakTableView::PeakTableView(QWidget* parent) : QTableView(parent)
 //     if (peaksModel == nullptr)
 //         return;
 
-//     nsx::PeakList peaks = peaksModel->peaks();
+//     ohkl::PeakList peaks = peaksModel->peaks();
 //     if (peaks.empty())
 //         return;
 
@@ -194,7 +194,7 @@ PeakTableView::PeakTableView(QWidget* parent) : QTableView(parent)
 //     QVector<double> e(nPoints);
 
 //     for (int i = 0; i < nPoints; ++i) {
-//         nsx::sptrPeak3D p = peaks[indexList[i].row()];
+//         ohkl::sptrPeak3D p = peaks[indexList[i].row()];
 //         x[i] = p->data()->reader()->metadata().key<double>(key);
 //         y[i] = p->correctedIntensity().value();
 //         e[i] = p->correctedIntensity().sigma();

@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_GUI_GRAPHICS_PLOTFACTORY_H
-#define NSX_GUI_GRAPHICS_PLOTFACTORY_H
+#ifndef OHKL_GUI_GRAPHICS_PLOTFACTORY_H
+#define OHKL_GUI_GRAPHICS_PLOTFACTORY_H
 
 #include "base/utils/Factory.h"
 #include "gui/graphics/SXPlot.h"
@@ -21,9 +21,9 @@
 class SXPlot;
 
 //! A creator for SXPlot%s
-class PlotFactory : public nsx::Factory<PlotFactory, SXPlot, std::string, QWidget*> {
+class PlotFactory : public ohkl::Factory<PlotFactory, SXPlot, std::string, QWidget*> {
  public:
     PlotFactory();
 };
 
-#endif // NSX_GUI_GRAPHICS_PLOTFACTORY_H
+#endif // OHKL_GUI_GRAPHICS_PLOTFACTORY_H

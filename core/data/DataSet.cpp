@@ -41,7 +41,7 @@
 
 #include <stdexcept>
 
-namespace nsx {
+namespace ohkl {
 
 DataSet::DataSet(const std::string& dataset_name, Diffractometer* diffractometer)
     : _diffractometer{diffractometer}, _states(nullptr)
@@ -180,7 +180,7 @@ void DataSet::close()
 
 std::size_t DataSet::nFrames() const
 {
-    return metadata().key<int>(nsx::at_frameCount);
+    return metadata().key<int>(ohkl::at_frameCount);
 }
 
 std::size_t DataSet::nCols() const
@@ -195,7 +195,7 @@ std::size_t DataSet::nRows() const
 
 double DataSet::wavelength() const
 {
-    return _metadata.key<double>(nsx::at_wavelength);
+    return _metadata.key<double>(ohkl::at_wavelength);
 }
 
 void DataSet::addMask(IMask* mask)
@@ -308,12 +308,12 @@ std::string DataSet::name() const
     throw std::runtime_error("DataSet has no name yet");
 }
 
-const nsx::MetaData& DataSet::metadata() const
+const ohkl::MetaData& DataSet::metadata() const
 {
     return _metadata;
 }
 
-nsx::MetaData& DataSet::metadata()
+ohkl::MetaData& DataSet::metadata()
 {
     return _metadata;
 }
@@ -377,4 +377,4 @@ double DataSet::maxCount()
     return max_count;
 }
 
-} // namespace nsx
+} // namespace ohkl

@@ -17,7 +17,7 @@
 #include <chrono>
 #include <iomanip>
 
-namespace nsx {
+namespace ohkl {
 
 Logger* Logger::m_logger = nullptr;
 
@@ -35,4 +35,4 @@ Logger& Logger::instance()
     return *m_logger;
 }
 
-} // namespace nsx
+} // namespace ohkl

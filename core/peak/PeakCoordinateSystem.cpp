@@ -18,7 +18,7 @@
 #include "core/instrument/Diffractometer.h"
 #include "core/peak/Peak3D.h"
 
-namespace nsx {
+namespace ohkl {
 
 //    if (!_peak)
 //        throw std::runtime_error("Cannot construct PeakCoordinateSystem from null Peak3d");
@@ -135,4 +135,4 @@ double PeakCoordinateSystem::estimateMosaicity() const
     return std::sqrt(C(2, 2));
 }
 
-} // namespace nsx
+} // namespace ohkl

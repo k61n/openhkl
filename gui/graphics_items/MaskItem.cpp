@@ -20,7 +20,7 @@
 #include <QPainter>
 #include <QStyleOptionGraphicsItem>
 
-MaskItem::MaskItem(nsx::sptrDataSet data, nsx::AABB* aabb)
+MaskItem::MaskItem(ohkl::sptrDataSet data, ohkl::AABB* aabb)
     : SXGraphicsItem(nullptr, true, true), _data(data), _aabb(aabb), _from(0, 0), _to(0, 0)
 {
     _pen.setWidth(1);
@@ -79,7 +79,7 @@ void MaskItem::setTo(const QPointF& pos)
     updateAABB();
 }
 
-nsx::AABB* MaskItem::getAABB()
+ohkl::AABB* MaskItem::getAABB()
 {
     return _aabb;
 }

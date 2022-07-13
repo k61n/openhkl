@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_BASE_UTILS_YAMLTYPE_H
-#define NSX_BASE_UTILS_YAMLTYPE_H
+#ifndef OHKL_BASE_UTILS_YAMLTYPE_H
+#define OHKL_BASE_UTILS_YAMLTYPE_H
 
 #include <Eigen/Dense>
 #include <yaml-cpp/yaml.h>
@@ -84,4 +84,4 @@ template <> struct convert<Eigen::Vector2d> {
 
 } // namespace YAML
 
-#endif // NSX_BASE_UTILS_YAMLTYPE_H
+#endif // OHKL_BASE_UTILS_YAMLTYPE_H

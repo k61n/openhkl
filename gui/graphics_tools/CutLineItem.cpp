@@ -18,7 +18,7 @@
 #include "gui/graphics/SimplePlot.h"
 #include <Eigen/Dense>
 
-CutLineItem::CutLineItem(nsx::sptrDataSet data) : CutterItem(data), _nPoints(10) { }
+CutLineItem::CutLineItem(ohkl::sptrDataSet data) : CutterItem(data), _nPoints(10) { }
 
 CutLineItem::~CutLineItem() = default;
 

@@ -1,6 +1,6 @@
 //  ***********************************************************************************************
 //
-//  NSXTool: data reduction for neutron single-crystal diffraction
+//  OpenHKL: data reduction for single crystal diffraction
 //
 //! @file      test/cpp/geometry/TestEllipsoid.cpp
 //! @brief     Test ...
@@ -28,8 +28,8 @@ TEST_CASE("test/geometry/TestEllipsoid.cpp", "")
     Eigen::Vector3d semi_axes(3, 3, 4);
     Eigen::Matrix3d eigV;
     eigV << 1, 0, 0, 0, 1, 0, 0, 0, 1;
-    nsx::Ellipsoid e(center, semi_axes, eigV);
-    nsx::Ellipsoid f(center, semi_axes, eigV);
+    ohkl::Ellipsoid e(center, semi_axes, eigV);
+    ohkl::Ellipsoid f(center, semi_axes, eigV);
 
     auto p = e.aabb().center();
 
@@ -128,7 +128,7 @@ TEST_CASE("test/geometry/TestEllipsoid.cpp", "")
     e.translate(-shift);
 
     // AABB center at -18,-18,-18
-    nsx::AABB aabb(Eigen::Vector3d(-20, -20, -20), Eigen::Vector3d(-16, -16, -16));
+    ohkl::AABB aabb(Eigen::Vector3d(-20, -20, -20), Eigen::Vector3d(-16, -16, -16));
     CHECK(!f.collide(aabb));
 
     // AABB center at -16,-16,-16
@@ -161,7 +161,7 @@ TEST_CASE("test/geometry/TestEllipsoid.cpp", "")
 
     m << 16.0, 4.0, -1.0, 4.0, 20.0, -3.0, -1.0, -3.0, 10.0;
 
-    nsx::Ellipsoid g(c, m);
+    ohkl::Ellipsoid g(c, m);
 
     Eigen::Matrix4d Q = g.homogeneousMatrix();
     Eigen::Matrix4d QI = g.homogeneousMatrixInverse();
@@ -182,14 +182,14 @@ TEST_CASE("test/geometry/TestEllipsoid.cpp", "")
     std::cout << "--------------" << std::endl;
     std::cout << QI << std::endl;
 
-    nsx::AABB box(Eigen::Vector3d(0, 0, 0), Eigen::Vector3d(1, 1, 1));
+    ohkl::AABB box(Eigen::Vector3d(0, 0, 0), Eigen::Vector3d(1, 1, 1));
 
     const double t = 1.0 / std::sqrt(2);
     Eigen::Matrix3d U;
 
     U << -t, t, 0, t, t, 0, 0, 0, 1;
 
-    nsx::Ellipsoid el(Eigen::Vector3d(3, -3, 0), Eigen::Vector3d(1.0, 20.0, 100.0), U);
+    ohkl::Ellipsoid el(Eigen::Vector3d(3, -3, 0), Eigen::Vector3d(1.0, 20.0, 100.0), U);
 
     // check collision with line segments
     CHECK(el.collideSegment(Eigen::Vector3d(3, -3, 0), Eigen::Vector3d(3, -100, 0)));

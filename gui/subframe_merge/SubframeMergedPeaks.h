@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_GUI_SUBFRAME_MERGE_SUBFRAMEMERGEDPEAKS_H
-#define NSX_GUI_SUBFRAME_MERGE_SUBFRAMEMERGEDPEAKS_H
+#ifndef OHKL_GUI_SUBFRAME_MERGE_SUBFRAMEMERGEDPEAKS_H
+#define OHKL_GUI_SUBFRAME_MERGE_SUBFRAMEMERGEDPEAKS_H
 
 #include "core/data/DataTypes.h"
 #include "core/statistics/PeakExporter.h"
@@ -90,14 +90,14 @@ class SubframeMergedPeaks : public QWidget {
     void saveUnmergedPeaks();
 
     //! Do a single batch refinement to get one unit cell
-    nsx::sptrUnitCell singleBatchRefine();
+    ohkl::sptrUnitCell singleBatchRefine();
 
     //! The merged peak list
-    nsx::MergedData* _merged_data;
+    ohkl::MergedData* _merged_data;
     //! Merged data per resolution shell
-    std::vector<nsx::MergedData*> _merged_data_per_shell;
+    std::vector<ohkl::MergedData*> _merged_data_per_shell;
     //! The peak exporter
-    nsx::PeakExporter exporter;
+    ohkl::PeakExporter exporter;
 
     QSizePolicy* _size_policy_widgets;
     QSizePolicy* _size_policy_box;
@@ -140,4 +140,4 @@ class SubframeMergedPeaks : public QWidget {
     bool _frame_set;
 };
 
-#endif // NSX_GUI_SUBFRAME_MERGE_SUBFRAMEMERGEDPEAKS_H
+#endif // OHKL_GUI_SUBFRAME_MERGE_SUBFRAMEMERGEDPEAKS_H

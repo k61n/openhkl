@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_GUI_DIALOGS_COMBODIALOG_H
-#define NSX_GUI_DIALOGS_COMBODIALOG_H
+#ifndef OHKL_GUI_DIALOGS_COMBODIALOG_H
+#define OHKL_GUI_DIALOGS_COMBODIALOG_H
 
 #include <QComboBox>
 #include <QDialog>
@@ -30,4 +30,4 @@ class ComboDialog : public QDialog {
     QComboBox* _items_combo;
 };
 
-#endif // NSX_GUI_DIALOGS_COMBODIALOG_H
+#endif // OHKL_GUI_DIALOGS_COMBODIALOG_H

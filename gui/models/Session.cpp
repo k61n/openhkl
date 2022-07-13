@@ -177,7 +177,7 @@ void Session::selectProject(int select)
     onExperimentChanged();
 }
 
-void Session::loadData(nsx::DataFormat format)
+void Session::loadData(ohkl::DataFormat format)
 {
     // Loading data requires an existing Experiment
     if (_currentProject < 0) {
@@ -191,11 +191,11 @@ void Session::loadData(nsx::DataFormat format)
 
     QString format_string;
     switch (format) {
-        case nsx::DataFormat::NSX: {
+        case ohkl::DataFormat::NSX: {
             format_string = QString("Data files(*.nsx);;all files (*.* *)");
             break;
         }
-        case nsx::DataFormat::NEXUS: {
+        case ohkl::DataFormat::NEXUS: {
             format_string = QString("Data files(*.nxs);;all files (*.* *)");
             break;
         }
@@ -219,7 +219,7 @@ void Session::loadData(nsx::DataFormat format)
 
     for (const QString& filename : filenames) {
         QFileInfo fileinfo(filename);
-        nsx::Experiment* exp = currentProject()->experiment();
+        ohkl::Experiment* exp = currentProject()->experiment();
 
         try {
             // For all data-readers, a valid diffractometer instrument is needed;
@@ -232,9 +232,9 @@ void Session::loadData(nsx::DataFormat format)
             // default dataset name: basename of the first data-file
             const QStringList& datanames_pre{currentProject()->getDataNames()};
             const std::string dataset_nm{
-                askDataName(nsx::fileBasename(filename.toStdString()), &datanames_pre)};
-            const nsx::sptrDataSet dataset_ptr{
-                std::make_shared<nsx::DataSet>(dataset_nm, exp->getDiffractometer())};
+                askDataName(ohkl::fileBasename(filename.toStdString()), &datanames_pre)};
+            const ohkl::sptrDataSet dataset_ptr{
+                std::make_shared<ohkl::DataSet>(dataset_nm, exp->getDiffractometer())};
 
             dataset_ptr->addDataFile(filename.toStdString(), "nsx");
 
@@ -307,26 +307,26 @@ bool Session::loadRawData()
         for (const QString& filename : qfilenames)
             filenames.push_back(filename.toStdString());
 
-        nsx::RawDataReaderParameters parameters;
-        parameters.dataset_name = nsx::fileBasename(filenames[0]);
+        ohkl::RawDataReaderParameters parameters;
+        parameters.dataset_name = ohkl::fileBasename(filenames[0]);
         parameters.LoadDataFromFile(filenames.at(0));
         const QStringList& datanames_pre{currentProject()->getDataNames()};
         RawDataDialog dialog(parameters, datanames_pre);
         if (!dialog.exec()) {
             return false;
         }
-        nsx::Experiment* exp = currentProject()->experiment();
+        ohkl::Experiment* exp = currentProject()->experiment();
 
         // update the parameters by those from the dialog
         parameters = dialog.parameters();
 
-        nsx::Detector* detector = exp->getDiffractometer()->detector();
+        ohkl::Detector* detector = exp->getDiffractometer()->detector();
         detector->setBaseline(parameters.baseline);
         detector->setGain(parameters.gain);
 
-        nsx::Diffractometer* diff = exp->getDiffractometer();
-        const std::shared_ptr<nsx::DataSet> dataset_ptr{
-            std::make_shared<nsx::DataSet>(parameters.dataset_name, diff)};
+        ohkl::Diffractometer* diff = exp->getDiffractometer();
+        const std::shared_ptr<ohkl::DataSet> dataset_ptr{
+            std::make_shared<ohkl::DataSet>(parameters.dataset_name, diff)};
         dataset_ptr->setRawReaderParameters(parameters);
         for (const auto& filenm : filenames)
             dataset_ptr->addRawFrame(filenm);
@@ -413,25 +413,25 @@ void Session::onShapesChanged()
 void Session::loadExperimentFromFile(QString filename)
 {
     std::unique_ptr<Project> project_ptr{createProject(
-        QString::fromStdString(nsx::kw_experimentDefaultName),
-        QString::fromStdString(nsx::kw_diffractometerDefaultName))};
+        QString::fromStdString(ohkl::kw_experimentDefaultName),
+        QString::fromStdString(ohkl::kw_diffractometerDefaultName))};
 
     if (!project_ptr)
         return;
 
-    nsx::nsxlog(
-        nsx::Level::Debug, "Session: Created Project for file '", filename.toStdString(), "'");
+    ohkl::nsxlog(
+        ohkl::Level::Debug, "Session: Created Project for file '", filename.toStdString(), "'");
 
     try {
         project_ptr->experiment()->loadFromFile(filename.toStdString());
-        nsx::nsxlog(
-            nsx::Level::Debug, "Session: Loaded data for Project created from file '",
+        ohkl::nsxlog(
+            ohkl::Level::Debug, "Session: Loaded data for Project created from file '",
             filename.toStdString(), "'");
 
         project_ptr->generatePeakModels();
 
-        nsx::nsxlog(
-            nsx::Level::Debug, "Session: Generated PeakModels for Project created from file '",
+        ohkl::nsxlog(
+            ohkl::Level::Debug, "Session: Generated PeakModels for Project created from file '",
             filename.toStdString(), "'");
 
     } catch (const std::exception& ex) {
@@ -445,8 +445,8 @@ void Session::loadExperimentFromFile(QString filename)
     addProject(std::move(project_ptr));
     onExperimentChanged();
 
-    nsx::nsxlog(
-        nsx::Level::Debug, "Session: Finished creating Project for file '", filename.toStdString(),
+    ohkl::nsxlog(
+        ohkl::Level::Debug, "Session: Finished creating Project for file '", filename.toStdString(),
         "'");
 }
 

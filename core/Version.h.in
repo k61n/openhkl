@@ -17,10 +17,10 @@
 
 #include <string>
 
-namespace nsx {
+namespace ohkl {
 
 const std::string __version__ = "@OpenHKL_VERSION@";
 
-} // end namespace nsx
+} // end namespace ohkl
 
 #endif // VERSION_HH

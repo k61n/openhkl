@@ -12,13 +12,13 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_BASE_GEOMETRY_AABB_H
-#define NSX_BASE_GEOMETRY_AABB_H
+#ifndef OHKL_BASE_GEOMETRY_AABB_H
+#define OHKL_BASE_GEOMETRY_AABB_H
 
 #include <Eigen/Dense>
 #include <vector>
 
-namespace nsx {
+namespace ohkl {
 
 class Ellipsoid; // cross dependence requires forward declaration
 
@@ -85,6 +85,6 @@ class AABB {
 
 std::ostream& operator<<(std::ostream& os, const AABB& aabb);
 
-} // namespace nsx
+} // namespace ohkl
 
-#endif // NSX_BASE_GEOMETRY_AABB_H
+#endif // OHKL_BASE_GEOMETRY_AABB_H

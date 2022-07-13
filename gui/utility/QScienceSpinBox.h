@@ -1,5 +1,5 @@
-#ifndef NSX_GUI_UTILITY_QSCIENCESPINBOX_H
-#define NSX_GUI_UTILITY_QSCIENCESPINBOX_H
+#ifndef OHKL_GUI_UTILITY_QSCIENCESPINBOX_H
+#define OHKL_GUI_UTILITY_QSCIENCESPINBOX_H
 
 #include <QDebug>
 #include <QDoubleSpinBox>
@@ -40,4 +40,4 @@ class QScienceSpinBox : public QDoubleSpinBox {
     void stepUp();
 };
 
-#endif // NSX_GUI_UTILITY_QSCIENCESPINBOX_H
+#endif // OHKL_GUI_UTILITY_QSCIENCESPINBOX_H

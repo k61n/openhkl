@@ -64,14 +64,14 @@ IsotopesDatabaseDialog::IsotopesDatabaseDialog() : QDialog{}
                     }
                     case xsection::ChemicalPropertyType::Double: {
                         double value = isotopesManager->property<double>(isotopeName, pName)
-                            / nsx::UnitsManager::get(pUnit);
+                            / ohkl::UnitsManager::get(pUnit);
                         item->setText(QString::number(value));
                         break;
                     }
                     case xsection::ChemicalPropertyType::Complex: {
                         std::complex<double> value =
                             isotopesManager->property<std::complex<double>>(isotopeName, pName)
-                            / nsx::UnitsManager::get(pUnit);
+                            / ohkl::UnitsManager::get(pUnit);
                         std::ostringstream os;
                         os << value;
                         item->setText(QString::fromStdString(os.str()));

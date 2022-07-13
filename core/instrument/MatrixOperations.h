@@ -12,12 +12,12 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_CORE_INSTRUMENT_MATRIXOPERATIONS_H
-#define NSX_CORE_INSTRUMENT_MATRIXOPERATIONS_H
+#ifndef OHKL_CORE_INSTRUMENT_MATRIXOPERATIONS_H
+#define OHKL_CORE_INSTRUMENT_MATRIXOPERATIONS_H
 
 #include <Eigen/Dense>
 
-namespace nsx {
+namespace ohkl {
 
 void removeColumn(Eigen::MatrixXd& matrix, unsigned int colToRemove);
 
@@ -26,6 +26,6 @@ void removeRow(Eigen::MatrixXd& matrix, unsigned int rowToRemove);
 Eigen::Matrix3d interpolateRotation(
     const Eigen::Matrix3d& U0, const Eigen::Matrix3d& U1, const double t);
 
-} // namespace nsx
+} // namespace ohkl
 
-#endif // NSX_CORE_INSTRUMENT_MATRIXOPERATIONS_H
+#endif // OHKL_CORE_INSTRUMENT_MATRIXOPERATIONS_H

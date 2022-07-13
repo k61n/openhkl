@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_GUI_GRAPHICS_ITEMS_PLOTTABLEITEM_H
-#define NSX_GUI_GRAPHICS_ITEMS_PLOTTABLEITEM_H
+#ifndef OHKL_GUI_GRAPHICS_ITEMS_PLOTTABLEITEM_H
+#define OHKL_GUI_GRAPHICS_ITEMS_PLOTTABLEITEM_H
 
 #include "gui/graphics_items/SXGraphicsItem.h"
 
@@ -37,4 +37,4 @@ class PlottableItem : public SXGraphicsItem {
     bool isPlottable(SXPlot* plot) const;
 };
 
-#endif // NSX_GUI_GRAPHICS_ITEMS_PLOTTABLEITEM_H
+#endif // OHKL_GUI_GRAPHICS_ITEMS_PLOTTABLEITEM_H

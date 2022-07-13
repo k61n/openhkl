@@ -20,7 +20,7 @@
 #include <cassert>
 #include <stdexcept>
 
-namespace nsx {
+namespace ohkl {
 
 IDataReader::IDataReader(const std::string& filename) : _isOpened(false), _filename(filename) { }
 
@@ -39,7 +39,7 @@ bool IDataReader::initRead()
 
     // Ensure that there is at least one monochromator
     if (_dataset_out->diffractometer()->source().nMonochromators() == 0) {
-        Monochromator mono(nsx::kw_monochromatorDefaultName);
+        Monochromator mono(ohkl::kw_monochromatorDefaultName);
         _dataset_out->diffractometer()->source().addMonochromator(mono);
         nsxlog(
             Level::Warning, __FUNCTION__,
@@ -77,4 +77,4 @@ std::string IDataReader::NSXfilepath() const
     return "";
 }
 
-} // namespace nsx
+} // namespace ohkl

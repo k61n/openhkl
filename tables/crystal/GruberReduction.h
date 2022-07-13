@@ -12,12 +12,12 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_TABLES_CRYSTAL_GRUBERREDUCTION_H
-#define NSX_TABLES_CRYSTAL_GRUBERREDUCTION_H
+#ifndef OHKL_TABLES_CRYSTAL_GRUBERREDUCTION_H
+#define OHKL_TABLES_CRYSTAL_GRUBERREDUCTION_H
 
 #include "tables/crystal/UnitCell.h"
 
-namespace nsx {
+namespace ohkl {
 
 //! Classifies and reduces a lattice according to the 44 types in the international tables.
 
@@ -38,6 +38,6 @@ class GruberReduction {
     double _epsilon;
 };
 
-} // namespace nsx
+} // namespace ohkl
 
-#endif // NSX_TABLES_CRYSTAL_GRUBERREDUCTION_H
+#endif // OHKL_TABLES_CRYSTAL_GRUBERREDUCTION_H

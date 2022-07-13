@@ -16,7 +16,7 @@
 
 #include "base/utils/CSV.h"
 
-namespace nsx {
+namespace ohkl {
 
 CSV::CSV(char delim, char quotchar) : _delim(delim), _quotchar(quotchar) { }
 
@@ -102,4 +102,4 @@ std::string CSV::getToken(std::istream& stream, char& delim) const
     return tok;
 }
 
-} // namespace nsx
+} // namespace ohkl

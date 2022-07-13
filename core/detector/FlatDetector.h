@@ -12,12 +12,12 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_CORE_DETECTOR_FLATDETECTOR_H
-#define NSX_CORE_DETECTOR_FLATDETECTOR_H
+#ifndef OHKL_CORE_DETECTOR_FLATDETECTOR_H
+#define OHKL_CORE_DETECTOR_FLATDETECTOR_H
 
 #include "core/detector/Detector.h"
 
-namespace nsx {
+namespace ohkl {
 
 //! A flat detector.
 
@@ -61,6 +61,6 @@ class FlatDetector : public Detector {
     virtual Eigen::Matrix3d jacobian(double x, double y) const override;
 };
 
-} // namespace nsx
+} // namespace ohkl
 
-#endif // NSX_CORE_DETECTOR_FLATDETECTOR_H
+#endif // OHKL_CORE_DETECTOR_FLATDETECTOR_H

@@ -12,18 +12,18 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_GUI_UTILITY_PEAKCOMBO_H
-#define NSX_GUI_UTILITY_PEAKCOMBO_H
+#ifndef OHKL_GUI_UTILITY_PEAKCOMBO_H
+#define OHKL_GUI_UTILITY_PEAKCOMBO_H
 
 #include <QComboBox>
 
-namespace nsx {
+namespace ohkl {
 class PeakCollection;
 }
 
 enum class ComboType;
 
-using PeakList = std::vector<nsx::PeakCollection*>;
+using PeakList = std::vector<ohkl::PeakCollection*>;
 
 //! A QComboBox that that is synchronised with all other QComboBoxes of the same type
 class PeakComboBox : public QComboBox {
@@ -33,7 +33,7 @@ class PeakComboBox : public QComboBox {
     PeakComboBox(QWidget* parent = nullptr);
 
     //! Add a PeakCollection via its pointer
-    void addPeakCollection(nsx::PeakCollection* peaks);
+    void addPeakCollection(ohkl::PeakCollection* peaks);
 
     //! Add a list of peak collection
     void addPeakCollections(const PeakList& peaks);
@@ -42,7 +42,7 @@ class PeakComboBox : public QComboBox {
     void clearAll();
 
     //! Return a pointer to the current peak collection
-    nsx::PeakCollection* currentPeakCollection() const;
+    ohkl::PeakCollection* currentPeakCollection() const;
 
     //! Refresh the combo box text
     void refresh();
@@ -70,4 +70,4 @@ class PeakComboBox : public QComboBox {
     bool _empty_first = false;
 };
 
-#endif // NSX_GUI_UTILITY_PEAKCOMBO_H
+#endif // OHKL_GUI_UTILITY_PEAKCOMBO_H

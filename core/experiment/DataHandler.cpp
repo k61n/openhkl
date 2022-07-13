@@ -23,14 +23,14 @@
 #include <iostream>
 #include <stdexcept>
 
-namespace nsx {
+namespace ohkl {
 
 DataHandler::DataHandler(
     const std::string& experiment_name, const std::string& diffractometerName,
     InstrumentStateHandler* instrument_state_handler)
     : _experiment_name{experiment_name}, _instrument_state_handler(instrument_state_handler)
 {
-    if (diffractometerName == nsx::kw_diffractometerDefaultName) {
+    if (diffractometerName == ohkl::kw_diffractometerDefaultName) {
         nsxlog(
             Level::Warning,
             "DataHandler: Diffractometer is not set for the experiment '" + experiment_name + "'");
@@ -90,7 +90,7 @@ bool DataHandler::addData(sptrDataSet data, std::string name, bool default_state
 
     const auto& metadata = data->metadata();
 
-    const std::string diffName = metadata.key<std::string>(nsx::at_diffractometer);
+    const std::string diffName = metadata.key<std::string>(ohkl::at_diffractometer);
 
     if (!(diffName.compare(_diffractometer->name()) == 0)) {
         throw std::runtime_error(
@@ -101,11 +101,11 @@ bool DataHandler::addData(sptrDataSet data, std::string name, bool default_state
               "and the data, '"
             + diffName + "'");
     }
-    const double wav = metadata.key<double>(nsx::at_wavelength);
+    const double wav = metadata.key<double>(ohkl::at_wavelength);
 
     // ensure that there is at least one monochromator; if not, create a new one.
     if (_diffractometer->source().nMonochromators() == 0) {
-        Monochromator mono(nsx::kw_monochromatorDefaultName);
+        Monochromator mono(ohkl::kw_monochromatorDefaultName);
         _diffractometer->source().addMonochromator(mono);
     }
 
@@ -144,4 +144,4 @@ void DataHandler::removeData(const std::string& name)
         _data_map.erase(it);
 }
 
-} // namespace nsx
+} // namespace ohkl

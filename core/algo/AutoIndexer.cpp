@@ -27,7 +27,7 @@
 #include <iostream>
 #include <string>
 
-namespace nsx {
+namespace ohkl {
 
 void IndexerParameters::log(const Level& level) const
 {
@@ -313,7 +313,7 @@ std::string AutoIndexer::solutionsToString() const
 }
 
 void AutoIndexer::acceptSolution(
-    const sptrUnitCell solution, const std::vector<nsx::Peak3D*>& peaks)
+    const sptrUnitCell solution, const std::vector<ohkl::Peak3D*>& peaks)
 {
     for (auto* peak : peaks)
         peak->setUnitCell(solution);
@@ -337,4 +337,4 @@ sptrUnitCell AutoIndexer::goodSolution(
     return nullptr;
 }
 
-} // namespace nsx
+} // namespace ohkl

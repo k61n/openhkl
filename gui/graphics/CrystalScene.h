@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_GUI_GRAPHICS_CRYSTALSCENE_H
-#define NSX_GUI_GRAPHICS_CRYSTALSCENE_H
+#ifndef OHKL_GUI_GRAPHICS_CRYSTALSCENE_H
+#define OHKL_GUI_GRAPHICS_CRYSTALSCENE_H
 
 #include <QGraphicsScene>
 #include <QGraphicsSceneMouseEvent>
@@ -46,7 +46,7 @@ class CrystalScene : public QGraphicsScene {
     };
 
     //! Constructors
-    CrystalScene(nsx::ConvexHull* hull, QWidget* parent = 0);
+    CrystalScene(ohkl::ConvexHull* hull, QWidget* parent = 0);
     ~CrystalScene();
     //! Mouse interactions
     virtual void mousePressEvent(QGraphicsSceneMouseEvent* event);
@@ -91,9 +91,9 @@ class CrystalScene : public QGraphicsScene {
     CrystalNodeItem* _current;
     PinItem* _pin;
     bool _pinCreated;
-    nsx::ConvexHull* _hull;
+    ohkl::ConvexHull* _hull;
     QPixmap _pix;
     QGraphicsTextItem* _text;
 };
 
-#endif // NSX_GUI_GRAPHICS_CRYSTALSCENE_H
+#endif // OHKL_GUI_GRAPHICS_CRYSTALSCENE_H

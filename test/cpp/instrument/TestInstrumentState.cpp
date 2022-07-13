@@ -1,6 +1,6 @@
 //  ***********************************************************************************************
 //
-//  NSXTool: data reduction for neutron single-crystal diffraction
+//  OpenHKL: data reduction for single crystal diffraction
 //
 //! @file      test/cpp/instrument/TestInstrumentState.cpp
 //! @brief     Test ...
@@ -20,21 +20,21 @@
 #include "core/instrument/InstrumentState.h"
 #include "core/loader/IDataReader.h"
 
-namespace nsx {
+namespace ohkl {
 
 class UnitTest_DataSet {
  public:
     static int run();
 };
 
-} // namespace nsx
+} // namespace ohkl
 
-int nsx::UnitTest_DataSet::run()
+int ohkl::UnitTest_DataSet::run()
 {
-    nsx::Experiment experiment("test", "BioDiff2500");
+    ohkl::Experiment experiment("test", "BioDiff2500");
 
-    const nsx::sptrDataSet dataset_ptr { std::make_shared<nsx::DataSet>
-          (nsx::kw_datasetDefaultName, experiment.getDiffractometer()) };
+    const ohkl::sptrDataSet dataset_ptr { std::make_shared<ohkl::DataSet>
+          (ohkl::kw_datasetDefaultName, experiment.getDiffractometer()) };
 
     dataset_ptr->addDataFile("gal3.hdf", "nsx");
     dataset_ptr->finishRead();
@@ -64,5 +64,5 @@ int nsx::UnitTest_DataSet::run()
 
 TEST_CASE("test/instrument/TestInstrumentState.cpp", "")
 {
-    nsx::UnitTest_DataSet::run();
+    ohkl::UnitTest_DataSet::run();
 }

@@ -1,6 +1,6 @@
 //  ***********************************************************************************************
 //
-//  NSXTool: data reduction for neutron single-crystal diffraction
+//  OpenHKL: data reduction for single crystal diffraction
 //
 //! @file      test/cpp/crystal/TestGruberReductionCSV.cpp
 //! @brief     Test ...
@@ -40,7 +40,7 @@ TEST_CASE("test/crystal/TestGruberReductionCSV.cpp", "")
 
     std::ifstream database;
     database.open("crystallography.tsv", std::fstream::in);
-    nsx::CSV csv_reader('\t', '#');
+    ohkl::CSV csv_reader('\t', '#');
 
     CHECK(database.is_open());
 
@@ -65,38 +65,38 @@ TEST_CASE("test/crystal/TestGruberReductionCSV.cpp", "")
         a = atof(row[2].c_str());
         b = atof(row[3].c_str());
         c = atof(row[4].c_str());
-        alpha = atof(row[5].c_str()) * nsx::deg;
-        beta = atof(row[6].c_str()) * nsx::deg;
-        gamma = atof(row[7].c_str()) * nsx::deg;
+        alpha = atof(row[5].c_str()) * ohkl::deg;
+        beta = atof(row[6].c_str()) * ohkl::deg;
+        gamma = atof(row[7].c_str()) * ohkl::deg;
 
         std::string bravais;
 
         try {
-            bravais = nsx::SpaceGroup(symbol).bravaisTypeSymbol();
+            bravais = ohkl::SpaceGroup(symbol).bravaisTypeSymbol();
         } catch (...) {
             continue; // unknown space group
         }
 
         ++total;
 
-        nsx::UnitCell niggliCell(a, b, c, alpha, beta, gamma);
-        nsx::UnitCell gruberCell(a, b, c, alpha, beta, gamma);
-        nsx::UnitCell cell;
+        ohkl::UnitCell niggliCell(a, b, c, alpha, beta, gamma);
+        ohkl::UnitCell gruberCell(a, b, c, alpha, beta, gamma);
+        ohkl::UnitCell cell;
 
         cell.setParameters(a, b, c, alpha, beta, gamma);
 
         // perform reduction using NiggliReduction class
         Eigen::Matrix3d niggli_g, niggli_P;
-        nsx::NiggliReduction niggli(niggliCell.metric(), niggli_tolerance);
+        ohkl::NiggliReduction niggli(niggliCell.metric(), niggli_tolerance);
         niggli.reduce(niggli_g, niggli_P);
         niggliCell.transform(niggli_P);
         gruberCell.transform(niggli_P);
 
         // perform reduction using GruberReduction class
         Eigen::Matrix3d gruber_g, gruber_P;
-        nsx::LatticeCentring centering;
-        nsx::BravaisType bravaisType;
-        nsx::GruberReduction gruber(gruberCell.metric(), gruber_tolerance);
+        ohkl::LatticeCentring centering;
+        ohkl::BravaisType bravaisType;
+        ohkl::GruberReduction gruber(gruberCell.metric(), gruber_tolerance);
 
         try {
             gruber.reduce(gruber_P, centering, bravaisType);

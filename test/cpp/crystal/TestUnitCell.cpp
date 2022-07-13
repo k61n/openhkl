@@ -1,6 +1,6 @@
 //  ***********************************************************************************************
 //
-//  NSXTool: data reduction for neutron single-crystal diffraction
+//  OpenHKL: data reduction for single crystal diffraction
 //
 //! @file      test/cpp/crystal/TestUnitCell.cpp
 //! @brief     Test ...
@@ -28,8 +28,8 @@ TEST_CASE("test/crystal/TestUnitCell.cpp", "")
     double a = 6.32;
     double b = 7.22;
     double c = 3.44;
-    double alpha = 90 * nsx::deg;
-    nsx::UnitCell cell(a, b, c, alpha, alpha, alpha);
+    double alpha = 90 * ohkl::deg;
+    ohkl::UnitCell cell(a, b, c, alpha, alpha, alpha);
     auto cc = cell.character();
 
     CHECK(cc.a == Approx(a).epsilon(tolerance));
@@ -74,26 +74,26 @@ TEST_CASE("test/crystal/TestUnitCell.cpp", "")
     CHECK(std::abs(G(1, 2)) < tolerance);
     CHECK(G(2, 2) == Approx(c * c).epsilon(tolerance));
 
-    cell.setLatticeCentring(nsx::LatticeCentring::I);
-    cell.setBravaisType(nsx::BravaisType::Tetragonal);
+    cell.setLatticeCentring(ohkl::LatticeCentring::I);
+    cell.setBravaisType(ohkl::BravaisType::Tetragonal);
     // Check angle calculations
-    nsx::UnitCell cell4(10, 10, 10, 90 * nsx::deg, 98 * nsx::deg, 90 * nsx::deg);
-    CHECK(cell4.angle({1, 0, 0}, {0, 0, 1}) == Approx(82.0 * nsx::deg).epsilon(tolerance));
+    ohkl::UnitCell cell4(10, 10, 10, 90 * ohkl::deg, 98 * ohkl::deg, 90 * ohkl::deg);
+    CHECK(cell4.angle({1, 0, 0}, {0, 0, 1}) == Approx(82.0 * ohkl::deg).epsilon(tolerance));
 
     // Check equivalence
-    cell4.setSpaceGroup(nsx::SpaceGroup("P 4/m m m"));
+    cell4.setSpaceGroup(ohkl::SpaceGroup("P 4/m m m"));
 
     auto space_group = cell4.spaceGroup();
 
-    CHECK(space_group.isEquivalent(nsx::MillerIndex(2, 0, 0), nsx::MillerIndex(0, 2, 0)));
-    CHECK(space_group.isEquivalent(nsx::MillerIndex(2, 3, 2), nsx::MillerIndex(3, 2, -2)));
-    CHECK(!space_group.isEquivalent(nsx::MillerIndex(2, 3, 2), nsx::MillerIndex(3, 2, -3)));
+    CHECK(space_group.isEquivalent(ohkl::MillerIndex(2, 0, 0), ohkl::MillerIndex(0, 2, 0)));
+    CHECK(space_group.isEquivalent(ohkl::MillerIndex(2, 3, 2), ohkl::MillerIndex(3, 2, -2)));
+    CHECK(!space_group.isEquivalent(ohkl::MillerIndex(2, 3, 2), ohkl::MillerIndex(3, 2, -3)));
 
     // test covariance
     Eigen::Matrix3d AA;
     AA << 2.0, 1.0, 1.0, -0.5, 2.5, 0.7, 0.1, 0.2, 1.8;
 
-    cell = nsx::UnitCell(AA);
+    cell = ohkl::UnitCell(AA);
     CHECK(cell.volume() == Approx(std::fabs(AA.determinant())).epsilon(1e-10));
 
     // computed covariance matrix
@@ -110,7 +110,7 @@ TEST_CASE("test/crystal/TestUnitCell.cpp", "")
 
     // generate random unit cells, with some non-zero correlation in components
     // check that we correctly calculate the errors in the lattice character
-    nsx::UnitCellCharacter sigma_expected;
+    ohkl::UnitCellCharacter sigma_expected;
     const int nmax = 1000;
 
     AA << 15.0, 1.0, 1.0, -0.5, 17.5, 0.7, 0.1, 0.2, 19.8;
@@ -134,7 +134,7 @@ TEST_CASE("test/crystal/TestUnitCell.cpp", "")
             }
         }
 
-        nsx::UnitCell new_cell = cell;
+        ohkl::UnitCell new_cell = cell;
         new_cell.setMetric(
             ch.g00 + d[0], ch.g01 + d[5], ch.g02 + d[4], ch.g11 + d[1], ch.g12 + d[3],
             ch.g22 + d[2]);
@@ -213,20 +213,20 @@ TEST_CASE("test/crystal/TestUnitCell.cpp", "")
     CHECK(new_cell.equivalent(cell, 1e-3) == true);
 
     const double deg = M_PI / 180.0;
-    nsx::NiggliCharacter nch;
+    ohkl::NiggliCharacter nch;
 
     // from D19 reference data
     // this unit cell proved to be tricky
 
     // first check with Niggli only
-    cell = nsx::UnitCell(5.557, 5.77, 16.138, 96.314 * deg, 90.0 * deg, 90.0 * deg);
+    cell = ohkl::UnitCell(5.557, 5.77, 16.138, 96.314 * deg, 90.0 * deg, 90.0 * deg);
     cell.reduce(true, 1e-2, 1e-3);
     nch = cell.niggliCharacter();
     CHECK(nch.number == 35);
     CHECK_NOTHROW(cell = cell.applyNiggliConstraints());
 
     // Niggli + Gruber
-    cell = nsx::UnitCell(5.557, 5.77, 16.138, 96.314 * deg, 90.0 * deg, 90.0 * deg);
+    cell = ohkl::UnitCell(5.557, 5.77, 16.138, 96.314 * deg, 90.0 * deg, 90.0 * deg);
     cell.reduce(false, 1e-2, 1e-3);
     nch = cell.niggliCharacter();
     CHECK(nch.number == 35);
@@ -254,14 +254,14 @@ TEST_CASE("test/crystal/TestUnitCell.cpp", "")
         }
     }
 
-    nsx::FitParameters params;
+    ohkl::FitParameters params;
     Eigen::Vector3d u;
     const Eigen::Matrix3d U = cell.niggliOrientation();
     Eigen::VectorXd x = cell.parameters();
     u.setZero();
 
     auto residual = [&](Eigen::VectorXd& f) -> int {
-        nsx::UnitCell uc = cell.fromParameters(U, u, x);
+        ohkl::UnitCell uc = cell.fromParameters(U, u, x);
 
         for (size_t i = 0; i < q.size(); ++i) {
             auto dq = q[i] - hkl[i] * uc.reciprocalBasis();
@@ -282,7 +282,7 @@ TEST_CASE("test/crystal/TestUnitCell.cpp", "")
         params.addParameter(&u(i));
 
     // try to fit the perturbed cell
-    nsx::Minimizer min;
+    ohkl::Minimizer min;
     min.initialize(params, 3 * q.size());
     min.set_f(residual);
     CHECK(min.fit(100) == true);

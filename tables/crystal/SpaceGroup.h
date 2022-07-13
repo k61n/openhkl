@@ -12,13 +12,13 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_TABLES_CRYSTAL_SPACEGROUP_H
-#define NSX_TABLES_CRYSTAL_SPACEGROUP_H
+#ifndef OHKL_TABLES_CRYSTAL_SPACEGROUP_H
+#define OHKL_TABLES_CRYSTAL_SPACEGROUP_H
 
 #include "tables/crystal/MillerIndex.h"
 #include "tables/crystal/SymOp.h"
 
-namespace nsx {
+namespace ohkl {
 
 //! Class to enumerate and construct the 3d spacegroups.
 
@@ -70,6 +70,6 @@ class SpaceGroup {
 
 std::ostream& operator<<(std::ostream& os, const SpaceGroup& sg);
 
-} // namespace nsx
+} // namespace ohkl
 
-#endif // NSX_TABLES_CRYSTAL_SPACEGROUP_H
+#endif // OHKL_TABLES_CRYSTAL_SPACEGROUP_H

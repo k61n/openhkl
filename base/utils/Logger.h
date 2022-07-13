@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_BASE_UTILS_LOGGER_H
-#define NSX_BASE_UTILS_LOGGER_H
+#ifndef OHKL_BASE_UTILS_LOGGER_H
+#define OHKL_BASE_UTILS_LOGGER_H
 
 #include "base/utils/LogLevel.h"
 #include "base/utils/LogMessenger.h"
@@ -24,11 +24,11 @@
 
 // usage: DBG("This is my debug message nr.", 1);
 #define DBG(...)                                                                                   \
-    nsx::nsxlog(                                                                                   \
-        nsx::Level::Info, "DBG> ", __FILE__, ":L", __LINE__, ":", __FUNCTION__, ": ", __VA_ARGS__)
+    ohkl::nsxlog(                                                                                   \
+        ohkl::Level::Info, "DBG> ", __FILE__, ":L", __LINE__, ":", __FUNCTION__, ": ", __VA_ARGS__)
 
 
-namespace nsx {
+namespace ohkl {
 
 //! A singleton class for logging
 class Logger {
@@ -83,6 +83,6 @@ template <typename... T> inline void nsxmsg(const Level& level, const T&... mess
     Logger::instance().Msg.send(msg);
 }
 
-} // namespace nsx
+} // namespace ohkl
 
-#endif // NSX_BASE_UTILS_LOGGER_H
+#endif // OHKL_BASE_UTILS_LOGGER_H

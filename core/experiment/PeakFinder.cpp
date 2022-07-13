@@ -40,15 +40,15 @@ using RealMatrix = Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::
 
 namespace {
 
-void registerEquivalence(int a, int b, nsx::EquivalenceList& equivalences)
+void registerEquivalence(int a, int b, ohkl::EquivalenceList& equivalences)
 {
     if (a < b)
-        equivalences.emplace_back(nsx::EquivalenceList::value_type(b, a));
+        equivalences.emplace_back(ohkl::EquivalenceList::value_type(b, a));
     else
-        equivalences.emplace_back(nsx::EquivalenceList::value_type(a, b));
+        equivalences.emplace_back(ohkl::EquivalenceList::value_type(a, b));
 }
 
-bool sortEquivalences(const nsx::EquivalencePair& pa, const nsx::EquivalencePair& pb)
+bool sortEquivalences(const ohkl::EquivalencePair& pa, const ohkl::EquivalencePair& pb)
 {
     if (pa.first < pb.first)
         return true;
@@ -57,7 +57,7 @@ bool sortEquivalences(const nsx::EquivalencePair& pa, const nsx::EquivalencePair
     return (pa.second < pb.second);
 }
 
-std::map<int, int> removeDuplicates(nsx::EquivalenceList& equivalences)
+std::map<int, int> removeDuplicates(ohkl::EquivalenceList& equivalences)
 {
     auto beg = equivalences.begin();
     auto last = std::unique(equivalences.begin(), equivalences.end());
@@ -80,7 +80,7 @@ void reassignEquivalences(std::map<int, int>& equivalences)
 
 } // namespace
 
-namespace nsx {
+namespace ohkl {
 
 void PeakFinderParameters::log(const Level& level) const
 {
@@ -120,8 +120,8 @@ PeakCollection* PeakFinder::getPeakCollection()
 }
 
 void PeakFinder::setPeakCollection(
-    const std::string name, const nsx::PeakCollectionType type,
-    std::vector<std::shared_ptr<nsx::Peak3D>> peak_list)
+    const std::string name, const ohkl::PeakCollectionType type,
+    std::vector<std::shared_ptr<ohkl::Peak3D>> peak_list)
 {
     _peak_collection = PeakCollection(name, type);
     _peak_collection.populate(peak_list);
@@ -191,7 +191,7 @@ void PeakFinder::mergeCollidingBlobs(const DataSet& data, std::map<int, Blob3D>&
     size_t num_blobs;
 
     do {
-        nsx::EquivalenceList equivalences;
+        ohkl::EquivalenceList equivalences;
         num_blobs = blobs.size();
 
         // determine which additional blobs should be merged due to collisions /
@@ -206,7 +206,7 @@ void PeakFinder::mergeCollidingBlobs(const DataSet& data, std::map<int, Blob3D>&
 }
 
 void PeakFinder::findPrimaryBlobs(
-    const DataSet& data, std::map<int, Blob3D>& blobs, nsx::EquivalenceList& equivalences,
+    const DataSet& data, std::map<int, Blob3D>& blobs, ohkl::EquivalenceList& equivalences,
     size_t begin, size_t end, int n_numor)
 {
     int n_numors = _current_data.size();
@@ -337,7 +337,7 @@ void PeakFinder::findPrimaryBlobs(
 }
 
 void PeakFinder::findCollisions(
-    const DataSet& data, std::map<int, Blob3D>& blobs, nsx::EquivalenceList& equivalences) const
+    const DataSet& data, std::map<int, Blob3D>& blobs, ohkl::EquivalenceList& equivalences) const
 {
     // Clear the equivalence vectors for reuse purpose
     equivalences.clear();
@@ -466,7 +466,7 @@ void PeakFinder::findCollisions(
 }
 
 void PeakFinder::mergeEquivalentBlobs(
-    std::map<int, Blob3D>& blobs, nsx::EquivalenceList& equivalences) const
+    std::map<int, Blob3D>& blobs, ohkl::EquivalenceList& equivalences) const
 {
     // initialize progress handler if necessary
     if (_handler)
@@ -567,7 +567,7 @@ void PeakFinder::find(const DataList numors)
             loop_end = nframes;
 
         std::map<int, Blob3D> local_blobs = {{}};
-        nsx::EquivalenceList local_equivalences;
+        ohkl::EquivalenceList local_equivalences;
 
         // find blobs within the current frame range
         nsxlog(Level::Debug, "PeakFinder::find: findPrimary from ", loop_begin, " to ", loop_end);
@@ -687,7 +687,7 @@ void PeakFinder::find(const DataList numors)
         _handler->setStatus("Peak finding completed.");
         _handler->setProgress(100);
     }
-    setPeakCollection("Found peaks", nsx::PeakCollectionType::FOUND, _current_peaks);
+    setPeakCollection("Found peaks", ohkl::PeakCollectionType::FOUND, _current_peaks);
     nsxlog(Level::Info, "PeakFinder::find: exit");
 }
 
@@ -696,4 +696,4 @@ unsigned int PeakFinder::numberFound()
     return _peaks_found;
 }
 
-} // namespace nsx
+} // namespace ohkl

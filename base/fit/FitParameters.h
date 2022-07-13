@@ -12,16 +12,16 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_BASE_FIT_FITPARAMETERS_H
-#define NSX_BASE_FIT_FITPARAMETERS_H
+#ifndef OHKL_BASE_FIT_FITPARAMETERS_H
+#define OHKL_BASE_FIT_FITPARAMETERS_H
 
 #include <gsl/gsl_vector.h>
 
 #include <Eigen/SparseCore>
 
-namespace nsx {
+namespace ohkl {
 
-//! Encapsulates parameters to be passed to nsx::Minimizer.
+//! Encapsulates parameters to be passed to ohkl::Minimizer.
 
 class FitParameters {
  public:
@@ -67,6 +67,6 @@ class FitParameters {
     bool _constrained;
 };
 
-} // namespace nsx
+} // namespace ohkl
 
-#endif // NSX_BASE_FIT_FITPARAMETERS_H
+#endif // OHKL_BASE_FIT_FITPARAMETERS_H

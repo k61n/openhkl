@@ -12,12 +12,12 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_CORE_CONVOLVE_RADIALCONVOLVER_H
-#define NSX_CORE_CONVOLVE_RADIALCONVOLVER_H
+#ifndef OHKL_CORE_CONVOLVE_RADIALCONVOLVER_H
+#define OHKL_CORE_CONVOLVE_RADIALCONVOLVER_H
 
 #include "core/convolve/AtomicConvolver.h" // inherits from
 
-namespace nsx {
+namespace ohkl {
 
 //! Convolver with kernel that is non-zero in a central circle and in an annular region.
 
@@ -77,6 +77,6 @@ class RadialConvolver : public AtomicConvolver {
     RealMatrix _matrix(int nrows, int ncols) const override;
 };
 
-} // namespace nsx
+} // namespace ohkl
 
-#endif // NSX_CORE_CONVOLVE_RADIALCONVOLVER_H
+#endif // OHKL_CORE_CONVOLVE_RADIALCONVOLVER_H

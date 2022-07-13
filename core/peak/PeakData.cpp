@@ -22,7 +22,7 @@
 #include "core/instrument/InstrumentState.h"
 #include "core/peak/Peak3D.h"
 
-namespace nsx {
+namespace ohkl {
 
 PeakData::PeakData(Peak3D* peak) : _peak(peak), _system(peak), _events(), _counts(), _coords() { }
 
@@ -66,4 +66,4 @@ void PeakData::reset()
     std::swap(_coords, crds);
 }
 
-} // namespace nsx
+} // namespace ohkl

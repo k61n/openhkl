@@ -1,6 +1,6 @@
 //  ***********************************************************************************************
 //
-//  NSXTool: data reduction for neutron single-crystal diffraction
+//  OpenHKL: data reduction for single crystal diffraction
 //
 //! @file      test/cpp/utils/TestProgressHandler.cpp
 //! @brief     Test ...
@@ -18,7 +18,7 @@
 
 #include "base/utils/ProgressHandler.h"
 
-using namespace nsx;
+using namespace ohkl;
 
 TEST_CASE("test/utils/TestProgressHandler.cpp", "")
 {

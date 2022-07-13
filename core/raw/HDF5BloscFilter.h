@@ -11,13 +11,13 @@
 //! @authors   see CITATION, MAINTAINER
 //
 //  ***********************************************************************************************
-#ifndef NSX_CORE_RAW_HDF5BLOSCFILTER_H
-#define NSX_CORE_RAW_HDF5BLOSCFILTER_H
+#ifndef OHKL_CORE_RAW_HDF5BLOSCFILTER_H
+#define OHKL_CORE_RAW_HDF5BLOSCFILTER_H
 
 #include "base/parser/BloscFilter.h"
 #include <memory> // unique_ptr
 
-namespace nsx {
+namespace ohkl {
 
 /* usage:
    # include <H5Cpp.h>
@@ -50,6 +50,6 @@ class HDF5BloscFilter {
     void _register();
 };
 
-} // namespace nsx
+} // namespace ohkl
 
-#endif // NSX_CORE_RAW_HDF5BLOSCFILTER_H
+#endif // OHKL_CORE_RAW_HDF5BLOSCFILTER_H

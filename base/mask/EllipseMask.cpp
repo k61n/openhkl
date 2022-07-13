@@ -14,7 +14,7 @@
 
 #include "base/mask/EllipseMask.h"
 
-namespace nsx {
+namespace ohkl {
 
 EllipseMask::EllipseMask(const AABB& aabb, bool /*two_dim*/) : IMask(), _ellipsoid()
 {
@@ -37,4 +37,4 @@ IMask* EllipseMask::clone() const
     return new EllipseMask(*this);
 }
 
-} // namespace nsx
+} // namespace ohkl

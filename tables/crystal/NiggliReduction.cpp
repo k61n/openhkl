@@ -18,7 +18,7 @@
 
 #include "tables/crystal/NiggliReduction.h"
 
-namespace nsx {
+namespace ohkl {
 
 unsigned int NiggliReduction::_itermax = 10000;
 
@@ -203,4 +203,4 @@ void NiggliReduction::transformG()
     _g = _CMat.transpose() * _g * _CMat;
 }
 
-} // namespace nsx
+} // namespace ohkl

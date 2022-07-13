@@ -20,7 +20,7 @@
 #include "core/shape/PeakCollection.h"
 #include "tables/crystal/UnitCell.h"
 
-namespace nsx {
+namespace ohkl {
 
 UnitCellHandler::UnitCellHandler()
 {
@@ -141,7 +141,7 @@ void UnitCellHandler::swapUnitCells(
 void UnitCellHandler::setReferenceCell(
     double a, double b, double c, double alpha, double beta, double gamma)
 {
-    std::string name = nsx::kw_referenceUnitcell;
+    std::string name = ohkl::kw_referenceUnitcell;
     UnitCell reference_cell{a, b, c, alpha * deg, beta * deg, gamma * deg};
     addUnitCell(name, reference_cell);
 }
@@ -150,7 +150,7 @@ bool UnitCellHandler::checkAndAssignUnitCell(
     PeakCollection* peaks, AutoIndexer* auto_indexer, double length_tol, double angle_tol,
     std::string name)
 {
-    std::string ref_name = nsx::kw_referenceUnitcell;
+    std::string ref_name = ohkl::kw_referenceUnitcell;
     const UnitCell* ref_cell = getUnitCell(ref_name);
     bool accepted = false;
     sptrUnitCell good_cell = auto_indexer->goodSolution(ref_cell, length_tol, angle_tol);
@@ -171,7 +171,7 @@ void UnitCellHandler::assignUnitCell(PeakCollection* peaks, std::string cellName
 
 std::vector<std::string> UnitCellHandler::getCompatibleSpaceGroups() const
 {
-    return getSptrUnitCell(nsx::kw_acceptedUnitcell)->compatibleSpaceGroups();
+    return getSptrUnitCell(ohkl::kw_acceptedUnitcell)->compatibleSpaceGroups();
 }
 
 std::string UnitCellHandler::generateUnitCellName()
@@ -205,4 +205,4 @@ std::vector<sptrUnitCell> UnitCellHandler::getSptrUnitCells() const
     return cells;
 }
 
-} // namespace nsx
+} // namespace ohkl

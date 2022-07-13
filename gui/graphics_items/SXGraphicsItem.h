@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_GUI_GRAPHICS_ITEMS_SXGRAPHICSITEM_H
-#define NSX_GUI_GRAPHICS_ITEMS_SXGRAPHICSITEM_H
+#ifndef OHKL_GUI_GRAPHICS_ITEMS_SXGRAPHICSITEM_H
+#define OHKL_GUI_GRAPHICS_ITEMS_SXGRAPHICSITEM_H
 
 #include <QGraphicsItem>
 #include <QPen>
@@ -66,4 +66,4 @@ class SXGraphicsItem : public QGraphicsItem {
     QGraphicsTextItem* _label_gi;
 };
 
-#endif // NSX_GUI_GRAPHICS_ITEMS_SXGRAPHICSITEM_H
+#endif // OHKL_GUI_GRAPHICS_ITEMS_SXGRAPHICSITEM_H

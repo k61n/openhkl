@@ -25,7 +25,7 @@ ShapeComboBox::ShapeComboBox(QWidget* parent) : QComboBox(parent)
     _all_combos.push_back(this);
 }
 
-void ShapeComboBox::addShapeModel(nsx::ShapeModel* shapes)
+void ShapeComboBox::addShapeModel(ohkl::ShapeModel* shapes)
 {
     QSignalBlocker blocker(this);
     addItem(QString::fromStdString(shapes->name()));
@@ -49,7 +49,7 @@ void ShapeComboBox::clearAll()
 }
 
 //! Return a pointer to the current unit shapes
-nsx::ShapeModel* ShapeComboBox::currentShapes() const
+ohkl::ShapeModel* ShapeComboBox::currentShapes() const
 {
     if (count() != _shape_models.size())
         throw std::runtime_error("ShapeComboBox needs refreshing");
@@ -61,7 +61,7 @@ void ShapeComboBox::refresh()
     QSignalBlocker blocker(this);
     _current = currentText();
     clear();
-    for (nsx::ShapeModel* shapes : _shape_models)
+    for (ohkl::ShapeModel* shapes : _shape_models)
         addItem(QString::fromStdString(shapes->name()));
     setCurrentText(_current);
 }

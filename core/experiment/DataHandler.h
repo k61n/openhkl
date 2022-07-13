@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_CORE_EXPERIMENT_DATAHANDLER_H
-#define NSX_CORE_EXPERIMENT_DATAHANDLER_H
+#ifndef OHKL_CORE_EXPERIMENT_DATAHANDLER_H
+#define OHKL_CORE_EXPERIMENT_DATAHANDLER_H
 
 #include "core/data/DataTypes.h"
 #include "core/experiment/InstrumentStateHandler.h"
@@ -21,7 +21,7 @@
 #include <stdexcept>
 #include <string>
 
-namespace nsx {
+namespace ohkl {
 
 using DataMap = std::map<std::string, sptrDataSet>;
 
@@ -69,6 +69,6 @@ class DataHandler {
     InstrumentStateHandler* _instrument_state_handler;
 };
 
-} // namespace nsx
+} // namespace ohkl
 
-#endif // NSX_CORE_EXPERIMENT_DATAHANDLER_H
+#endif // OHKL_CORE_EXPERIMENT_DATAHANDLER_H

@@ -22,7 +22,7 @@
 #include <string>
 
 
-namespace nsx {
+namespace ohkl {
 
 HDF5DataReader::HDF5DataReader(const std::string& filename) : BaseHDF5DataReader(filename) { }
 
@@ -51,4 +51,4 @@ Eigen::MatrixXi HDF5DataReader::data(std::size_t frame)
     return Eigen::MatrixXi(m);
 }
 
-} // namespace nsx
+} // namespace ohkl

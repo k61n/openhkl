@@ -26,7 +26,7 @@
 #include "tables/crystal/MillerIndex.h"
 #include "tables/crystal/UnitCell.h"
 
-PeakItem::PeakItem(nsx::Peak3D* peak)
+PeakItem::PeakItem(ohkl::Peak3D* peak)
 {
     _peak = peak;
     _peak_graphic = std::unique_ptr<PeakItemGraphic>(new PeakItemGraphic(peak));
@@ -78,7 +78,7 @@ QVariant PeakItem::peakData(const QModelIndex& index, int role, PeakDisplayModes
     int col = index.column();
 
     const Eigen::Vector3d& peak_center = _peak->shape().center();
-    const nsx::MillerIndex miller_index = _peak->hkl();
+    const ohkl::MillerIndex miller_index = _peak->hkl();
     Eigen::RowVector3i hkl = miller_index.rowVector();
     Eigen::RowVector3d hkl_error = miller_index.error();
 
@@ -114,10 +114,10 @@ QVariant PeakItem::peakData(const QModelIndex& index, int role, PeakDisplayModes
                     return strength();
                 }
                 case Column::Numor: {
-                    return _peak->dataSet()->metadata().key<int>(nsx::at_numor);
+                    return _peak->dataSet()->metadata().key<int>(ohkl::at_numor);
                 }
                 case Column::uc: {
-                    const nsx::UnitCell* unit_cell = _peak->unitCell();
+                    const ohkl::UnitCell* unit_cell = _peak->unitCell();
                     if (!unit_cell)
                         return QString("not set");
                     return QString::fromStdString(unit_cell->name());

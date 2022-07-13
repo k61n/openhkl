@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_CORE_RAW_METADATA_H
-#define NSX_CORE_RAW_METADATA_H
+#ifndef OHKL_CORE_RAW_METADATA_H
+#define OHKL_CORE_RAW_METADATA_H
 
 #include "base/utils/Logger.h"
 #include "core/raw/DataKeys.h"
@@ -25,7 +25,7 @@
 #include <string>
 #include <variant>
 
-namespace nsx {
+namespace ohkl {
 
 using MetaDataMap = std::map<std::string, std::variant<int, double, std::string>>;
 using MetaDataKeySet = std::set<std::string>;
@@ -81,8 +81,8 @@ class MetaData {
 template <typename _type> void MetaData::add(const std::string& key, const _type& value)
 {
     // Warn against unrecognized keys
-    if (nsx::RecognizedMetaDataKeys.count(key) == 0) {
-        nsxlog(nsx::Level::Warning, __FUNCTION__, ": MetaData key '" + key + "' not recognized.");
+    if (ohkl::RecognizedMetaDataKeys.count(key) == 0) {
+        nsxlog(ohkl::Level::Warning, __FUNCTION__, ": MetaData key '" + key + "' not recognized.");
     }
 
     // First, make sure the key is already in the keyset
@@ -113,6 +113,6 @@ template <typename _type> _type MetaData::key(const char* name) const
     return key<_type>(std::string(name));
 }
 
-} // namespace nsx
+} // namespace ohkl
 
-#endif // NSX_CORE_RAW_METADATA_H
+#endif // OHKL_CORE_RAW_METADATA_H

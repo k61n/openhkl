@@ -12,15 +12,15 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_CORE_PEAK_QS2EVENTS_H
-#define NSX_CORE_PEAK_QS2EVENTS_H
+#ifndef OHKL_CORE_PEAK_QS2EVENTS_H
+#define OHKL_CORE_PEAK_QS2EVENTS_H
 
 #include "base/utils/ProgressHandler.h"
 #include "core/detector/Detector.h"
 #include "core/instrument/InstrumentState.h"
 #include "tables/crystal/MillerIndex.h"
 
-namespace nsx {
+namespace ohkl {
 
 namespace algo {
 
@@ -62,6 +62,6 @@ std::vector<DetectorEvent> getDirectBeamEvents(
 
 } // namespace algo
 
-} // namespace nsx
+} // namespace ohkl
 
-#endif // NSX_CORE_PEAK_QS2EVENTS_H
+#endif // OHKL_CORE_PEAK_QS2EVENTS_H

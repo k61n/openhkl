@@ -12,13 +12,13 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_CORE_INTEGRATION_PROFILE1DINTEGRATOR_H
-#define NSX_CORE_INTEGRATION_PROFILE1DINTEGRATOR_H
+#ifndef OHKL_CORE_INTEGRATION_PROFILE1DINTEGRATOR_H
+#define OHKL_CORE_INTEGRATION_PROFILE1DINTEGRATOR_H
 
 #include "core/shape/IPeakIntegrator.h"
 #include "core/shape/ShapeModel.h"
 
-namespace nsx {
+namespace ohkl {
 
 /*! \addtogroup python_api
  *  @{*/
@@ -42,6 +42,6 @@ class Profile1DIntegrator : public IPeakIntegrator {
 };
 
 /*! @}*/
-} // namespace nsx
+} // namespace ohkl
 
-#endif // NSX_CORE_INTEGRATION_PROFILE1DINTEGRATOR_H
+#endif // OHKL_CORE_INTEGRATION_PROFILE1DINTEGRATOR_H

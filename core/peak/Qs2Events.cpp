@@ -18,7 +18,7 @@
 #include "core/data/DataSet.h" // TODO mv interpolatedState
 #include "core/instrument/InterpolatedState.h"
 
-namespace nsx {
+namespace ohkl {
 
 // Tolerance for bisection search
 const double eps = 1.0e-10;
@@ -215,4 +215,4 @@ std::vector<DetectorEvent> algo::getDirectBeamEvents(
     return events;
 }
 
-} // namespace nsx
+} // namespace ohkl

@@ -15,7 +15,7 @@
 #include "core/statistics/MergedData.h"
 #include "base/utils/Logger.h"
 
-namespace nsx {
+namespace ohkl {
 
 MergedData::MergedData(
     SpaceGroup space_group, std::vector<PeakCollection*> peak_collections, bool friedel, int fmin,
@@ -143,4 +143,4 @@ double MergedData::dMax() const
     return _d_max;
 }
 
-} // namespace nsx
+} // namespace ohkl

@@ -35,7 +35,7 @@ bool smallDiff(double a, double b, double tolerance)
 
 } // namespace
 
-namespace nsx {
+namespace ohkl {
 
 UnitCellCharacter::UnitCellCharacter()
     : g00(0.0)
@@ -482,7 +482,7 @@ UnitCell UnitCell::applyNiggliConstraints() const
         return 0;
     };
 
-    nsx::Minimizer min;
+    ohkl::Minimizer min;
     FitParameters params;
 
     for (auto i = 0; i < 3; ++i)
@@ -501,7 +501,7 @@ UnitCell UnitCell::applyNiggliConstraints() const
     // note: if the UC already satisfies the constraints, the minimizer will fail
     // with GSL_ENOPROG so we don't check the return value of Minimizer::fit
     min.fit(1000);
-    nsx::UnitCell new_uc = fromParameters(U, uOffset, p);
+    ohkl::UnitCell new_uc = fromParameters(U, uOffset, p);
 
     // check if the new UC is close to the old one
     const double delta = (new_uc.reciprocalBasis() - _b_transposed).norm() / _b_transposed.norm();
@@ -919,4 +919,4 @@ void UnitCell::setId(const unsigned int id)
         _id = id;
 }
 
-} // namespace nsx
+} // namespace ohkl

@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_GUI_GRAPHICS_ITEMS_PEAKCENTERGRAPHIC_H
-#define NSX_GUI_GRAPHICS_ITEMS_PEAKCENTERGRAPHIC_H
+#ifndef OHKL_GUI_GRAPHICS_ITEMS_PEAKCENTERGRAPHIC_H
+#define OHKL_GUI_GRAPHICS_ITEMS_PEAKCENTERGRAPHIC_H
 
 #include "gui/graphics_items/PlottableItem.h"
 
@@ -49,4 +49,4 @@ class PeakCenterGraphic : public QGraphicsItem {
     QColor _center_color; //!< Circle colour
 };
 
-#endif // NSX_GUI_GRAPHICS_ITEMS_PEAKCENTERGRAPHIC_H
+#endif // OHKL_GUI_GRAPHICS_ITEMS_PEAKCENTERGRAPHIC_H

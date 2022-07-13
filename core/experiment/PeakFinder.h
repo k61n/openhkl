@@ -12,14 +12,14 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_CORE_EXPERIMENT_PEAKFINDER_H
-#define NSX_CORE_EXPERIMENT_PEAKFINDER_H
+#ifndef OHKL_CORE_EXPERIMENT_PEAKFINDER_H
+#define OHKL_CORE_EXPERIMENT_PEAKFINDER_H
 
 #include "core/convolve/Convolver.h"
 #include "core/data/DataSet.h"
 #include "core/shape/PeakCollection.h"
 
-namespace nsx {
+namespace ohkl {
 
 /*! \addtogroup python_api
  *  @{*/
@@ -70,8 +70,8 @@ class PeakFinder {
     PeakCollection* getPeakCollection();
     //! Generate a PeakCollection from a vector of found peaks
     void setPeakCollection(
-        const std::string name, const nsx::PeakCollectionType type,
-        std::vector<std::shared_ptr<nsx::Peak3D>> peak_list);
+        const std::string name, const ohkl::PeakCollectionType type,
+        std::vector<std::shared_ptr<ohkl::Peak3D>> peak_list);
 
     //! Return the DataList (vector of pointers to DataSets)
     DataList currentData() { return _current_data; };
@@ -99,7 +99,7 @@ class PeakFinder {
     //! Set the convolver flavour for peak/background convolution
     void setConvolver(const Convolver& convolver);
     //! Get the convolver
-    nsx::Convolver* convolver() const
+    ohkl::Convolver* convolver() const
     {
         return _convolver.get();
     }
@@ -133,11 +133,11 @@ class PeakFinder {
     //! Current label
     int _current_label;
     //! Vector of found peaks
-    nsx::PeakList _current_peaks;
+    ohkl::PeakList _current_peaks;
     //! Vector of DataSets
-    nsx::DataList _current_data;
+    ohkl::DataList _current_data;
     //! PeakCollection attached to PeakFinder
-    nsx::PeakCollection _peak_collection;
+    ohkl::PeakCollection _peak_collection;
     //! Number of found peaks
     unsigned int _peaks_found;
     //! stores value of integration state
@@ -145,6 +145,6 @@ class PeakFinder {
 };
 
 /*! @}*/
-} // namespace nsx
+} // namespace ohkl
 
-#endif // NSX_CORE_EXPERIMENT_PEAKFINDER_H
+#endif // OHKL_CORE_EXPERIMENT_PEAKFINDER_H

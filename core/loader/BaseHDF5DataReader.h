@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_CORE_LOADER_HDF5METADATAREADER_H
-#define NSX_CORE_LOADER_HDF5METADATAREADER_H
+#ifndef OHKL_CORE_LOADER_HDF5METADATAREADER_H
+#define OHKL_CORE_LOADER_HDF5METADATAREADER_H
 
 #include "core/loader/IDataReader.h" // inherits from
 #include "core/raw/DataKeys.h" // kw_datasetDefaultName
@@ -25,7 +25,7 @@
 
 // needed for method definitions
 
-namespace nsx {
+namespace ohkl {
 
 //! IDataReader for HDF5 files. Base class for HDF5DataReader and FakeDataReader.
 class BaseHDF5DataReader : public IDataReader {
@@ -60,5 +60,5 @@ class BaseHDF5DataReader : public IDataReader {
     std::unique_ptr<HDF5BloscFilter> _blosc_filter;
 };
 
-} // namespace nsx
-#endif // NSX_CORE_LOADER_HDF5METADATAREADER_H
+} // namespace ohkl
+#endif // OHKL_CORE_LOADER_HDF5METADATAREADER_H

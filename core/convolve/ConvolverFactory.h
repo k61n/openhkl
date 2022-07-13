@@ -12,12 +12,12 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_CORE_CONVOLVE_CONVOLVERFACTORY_H
-#define NSX_CORE_CONVOLVE_CONVOLVERFACTORY_H
+#ifndef OHKL_CORE_CONVOLVE_CONVOLVERFACTORY_H
+#define OHKL_CORE_CONVOLVE_CONVOLVERFACTORY_H
 
 #include "core/convolve/Convolver.h"
 
-namespace nsx {
+namespace ohkl {
 
 //! Factory for the different convolvers (i.e. image filters).
 
@@ -44,6 +44,6 @@ Eigen::MatrixXd convolvedFrame(
     Eigen::MatrixXi frame_data, const std::string& convolver_type,
     const std::map<std::string, double>& parameters);
 
-} // namespace nsx
+} // namespace ohkl
 
-#endif // NSX_CORE_CONVOLVE_CONVOLVERFACTORY_H
+#endif // OHKL_CORE_CONVOLVE_CONVOLVERFACTORY_H

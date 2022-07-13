@@ -22,7 +22,7 @@
 #include "core/shape/Profile3D.h"
 #include "core/shape/ShapeModel.h"
 
-namespace nsx {
+namespace ohkl {
 
 ShapeIntegrator::ShapeIntegrator(ShapeModel* lib, const AABB& aabb, int nx, int ny, int nz)
     : PixelSumIntegrator(false, false), _collection(lib), _aabb(aabb), _nx(nx), _ny(ny), _nz(nz)
@@ -84,4 +84,4 @@ const ShapeModel* ShapeIntegrator::collection() const
     return _collection;
 }
 
-} // namespace nsx
+} // namespace ohkl

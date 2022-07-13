@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_GUI_SUBWINDOWS_PEAKLIST_WINDOW_H
-#define NSX_GUI_SUBWINDOWS_PEAKLIST_WINDOW_H
+#ifndef OHKL_GUI_SUBWINDOWS_PEAKLIST_WINDOW_H
+#define OHKL_GUI_SUBWINDOWS_PEAKLIST_WINDOW_H
 
 #include "core/experiment/Experiment.h"
 #include "gui/models/Project.h"
@@ -31,4 +31,4 @@ class PeaklistWindow : public QDialog {
     PeakProperties* _peak_properties;
 };
 
-#endif // NSX_GUI_SUBWINDOWS_PEAKLIST_WINDOW_H
+#endif // OHKL_GUI_SUBWINDOWS_PEAKLIST_WINDOW_H

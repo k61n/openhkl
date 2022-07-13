@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_GUI_UTILITY_SAFESPINBOX_H
-#define NSX_GUI_UTILITY_SAFESPINBOX_H
+#ifndef OHKL_GUI_UTILITY_SAFESPINBOX_H
+#define OHKL_GUI_UTILITY_SAFESPINBOX_H
 
 #include <QDoubleSpinBox>
 #include <QSpinBox>
@@ -39,4 +39,4 @@ class SafeDoubleSpinBox : public QDoubleSpinBox {
     virtual void wheelEvent(QWheelEvent* event);
 };
 
-#endif // NSX_GUI_UTILITY_SAFESPINBOX_H
+#endif // OHKL_GUI_UTILITY_SAFESPINBOX_H

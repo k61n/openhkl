@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_GUI_FRAMES_PROGRESSVIEW_H
-#define NSX_GUI_FRAMES_PROGRESSVIEW_H
+#ifndef OHKL_GUI_FRAMES_PROGRESSVIEW_H
+#define OHKL_GUI_FRAMES_PROGRESSVIEW_H
 
 #include "base/utils/ProgressHandler.h"
 #include <QProgressDialog>
@@ -29,15 +29,15 @@ class ProgressView : public QProgressDialog {
     ProgressView(QWidget* parent);
     ~ProgressView();
 
-    void watch(nsx::sptrProgressHandler handler);
+    void watch(ohkl::sptrProgressHandler handler);
 
  public slots:
     void updateProgress();
     void abort();
 
  private:
-    nsx::sptrProgressHandler _handler;
+    ohkl::sptrProgressHandler _handler;
     std::unique_ptr<QTimer> _timer;
 };
 
-#endif // NSX_GUI_FRAMES_PROGRESSVIEW_H
+#endif // OHKL_GUI_FRAMES_PROGRESSVIEW_H

@@ -49,14 +49,14 @@
 #include "manifest.h"
 #include "tables/crystal/UnitCell.h"
 
-namespace nsx {
+namespace ohkl {
 
 Experiment::~Experiment() = default;
 
 Experiment::Experiment(const std::string& name, const std::string& diffractometerName) : _name(name)
 {
     // start logging
-    Logger::instance().start(nsx::kw_logFilename, Level::Info);
+    Logger::instance().start(ohkl::kw_logFilename, Level::Info);
     nsxlog(Level::Info, "Git branch ", GIT_BRANCH, " / commit hash ", COMMIT_HASH);
 
     _instrumentstate_handler = std::make_unique<InstrumentStateHandler>();
@@ -116,7 +116,7 @@ bool Experiment::acceptFoundPeaks(const std::string& name, const PeakCollection&
 
 void Experiment::saveToFile(const std::string& path) const
 {
-    nsx::ExperimentExporter exporter;
+    ohkl::ExperimentExporter exporter;
     nsxlog(Level::Info, "Saving experiment to file: '" + path + "'");
 
     /* If the chosen path for saving is the same as the path of
@@ -185,7 +185,7 @@ void Experiment::saveToFile(const std::string& path) const
 
 void Experiment::loadFromFile(const std::string& path)
 {
-    nsx::ExperimentImporter importer;
+    ohkl::ExperimentImporter importer;
     nsxlog(Level::Info, "Loading experiment from file: '" + path + "'");
 
     importer.setFilePath(path, this);
@@ -201,7 +201,7 @@ void Experiment::autoIndex(PeakCollection* peaks)
 
     auto params = _auto_indexer->parameters();
 
-    std::string collection_name = nsx::kw_autoindexingCollection;
+    std::string collection_name = ohkl::kw_autoindexingCollection;
 
     _peak_filter->resetFiltering(peaks);
     _peak_filter->resetFilterFlags();
@@ -244,7 +244,7 @@ void Experiment::buildShapeModel(
     _peak_filter->parameters()->strength_min = params.strength_min;
     _peak_filter->parameters()->strength_max = params.strength_max;
     _peak_filter->filter(peaks);
-    std::string collection_name = nsx::kw_fitCollection;
+    std::string collection_name = ohkl::kw_fitCollection;
     PeakCollection fit_peaks(collection_name, peaks->type());
     fit_peaks.populateFromFiltered(peaks);
 
@@ -257,7 +257,7 @@ void Experiment::buildShapeModel(
         Level::Info, "Experiment::buildShapeModel: ", fit_peaks.numberOfPeaks(), " / ",
         peaks->numberOfPeaks(), " fit peaks");
 
-    nsx::AABB aabb;
+    ohkl::AABB aabb;
 
     if (params.kabsch_coords) {
         const Eigen::Vector3d sigma(peaks->sigmaD(), peaks->sigmaD(), peaks->sigmaM());
@@ -281,12 +281,12 @@ void Experiment::buildShapeModel(
 
 const UnitCell* Experiment::getAcceptedCell() const
 {
-    return getUnitCell(nsx::kw_acceptedUnitcell);
+    return getUnitCell(ohkl::kw_acceptedUnitcell);
 }
 
 const UnitCell* Experiment::getReferenceCell() const
 {
-    return getUnitCell(nsx::kw_referenceUnitcell);
+    return getUnitCell(ohkl::kw_referenceUnitcell);
 }
 
 bool Experiment::refine(
@@ -635,4 +635,4 @@ std::vector<ShapeModel*> Experiment::getShapeModels()
     return _shape_handler->getShapeModels();
 }
 
-} // namespace nsx
+} // namespace ohkl

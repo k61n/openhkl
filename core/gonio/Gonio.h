@@ -12,13 +12,13 @@
 //
 //  ***********************************************************************************************
 
-#ifndef NSX_CORE_GONIO_GONIO_H
-#define NSX_CORE_GONIO_GONIO_H
+#ifndef OHKL_CORE_GONIO_GONIO_H
+#define OHKL_CORE_GONIO_GONIO_H
 
 #include "base/geometry/DirectVector.h"
 #include "core/gonio/Axis.h"
 
-namespace nsx {
+namespace ohkl {
 
 //! A goniometer, i.e. system of several rotation axes.
 
@@ -70,6 +70,6 @@ class Gonio {
     std::vector<std::unique_ptr<Axis>> _axes;
 };
 
-} // namespace nsx
+} // namespace ohkl
 
-#endif // NSX_CORE_GONIO_GONIO_H
+#endif // OHKL_CORE_GONIO_GONIO_H
