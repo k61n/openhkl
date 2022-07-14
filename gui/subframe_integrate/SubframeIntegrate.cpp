@@ -399,24 +399,29 @@ void SubframeIntegrate::removeOverlappingPeaks()
     ohkl::PeakCollection* peaks_to_integrate = _peak_combo->currentPeakCollection();
     ohkl::PeakFilter filter;
     filter.resetFiltering(peaks_to_integrate);
+    int nrejected = 0;
     if (_remove_overlaps->isChecked()) {
         filter.parameters()->peak_end = _peak_end->value();
         filter.parameters()->bkg_end = _peak_end->value();
         filter.filterOverlapping(peaks_to_integrate);
         for (auto* peak : peaks_to_integrate->getPeakList()) {
-            if (!peak->caughtByFilter()) {
+            if (!peak->caughtByFilter() && peak->selected()) {
                 peak->setSelected(false);
                 peak->setRejectionFlag(ohkl::RejectionFlag::OverlappingPeak);
+                ++nrejected;
             }
         }
+        gGui->statusBar()->showMessage(QString::number(nrejected) + " overlapping peaks rejected");
     } else {
         for (auto* peak : peaks_to_integrate->getPeakList()) {
             if (!(peak->selected())
                 && peak->rejectionFlag() == ohkl::RejectionFlag::OverlappingPeak) {
                 peak->setSelected(true);
                 peak->setRejectionFlag(ohkl::RejectionFlag::NotRejected, true);
+                ++nrejected;
             }
         }
+        gGui->statusBar()->showMessage(QString::number(nrejected) + " overlapping peaks restored");
     }
     refreshPeakTable();
     gGui->setReady(true);
