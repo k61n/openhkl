@@ -269,7 +269,7 @@ void SubframeExperiment::plotIntensities()
 
     auto plot = getPlot();
     if (plot != nullptr)
-        plot->plotData(x,y,e);
+        plot->plotData(x, y, e, QString("Pixels"), QString("Counts"), xmin, xmax, ymin, ymax);
 }
 
 void SubframeExperiment::refreshAll()
