@@ -317,9 +317,9 @@ void SubframeExperiment::toggleUnsafeWidgets()
     _xZoom->setEnabled(hasHistograms);
     _totalHistogram->setEnabled(hasHistograms);
 
-    _minX->setEnabled(_xZoom->isChecked());
-    _minY->setEnabled(_yZoom->isChecked());
-    _maxX->setEnabled(_xZoom->isChecked());
-    _maxY->setEnabled(_yZoom->isChecked());
+    _minX->setEnabled(_xZoom->isChecked() && _xZoom->isEnabled());
+    _minY->setEnabled(_yZoom->isChecked() && _yZoom->isEnabled());
+    _maxX->setEnabled(_xZoom->isChecked() && _xZoom->isEnabled());
+    _maxY->setEnabled(_yZoom->isChecked() && _yZoom->isEnabled());
     _update_plot->setEnabled(hasHistograms);
 }
