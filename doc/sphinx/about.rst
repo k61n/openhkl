@@ -18,7 +18,7 @@ Why use OpenHKL?
 
 There are many existing programmes that perform similar data reductions; many
 have been used extensively in the past and produce excellent results. However,
-OpenHKL is distinguised by a unique combination of important features.
+OpenHKL is distinguished by a unique combination of important features.
 
 Natively handles neutron diffraction
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -33,7 +33,7 @@ Open source and fully documented
 
 OpenHKL is fully open source, and none of its functionality is a "black box".
 All algorithms are fully documented, such that users will no longer be left
-guessing as to what exactly OpenHKL does during the data reductgion process.
+guessing as to what exactly OpenHKL does during the data reduction process.
 Modification and collaboration are encouraged, with the aim of improving OpenHKL
 as a community.
 
