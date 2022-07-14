@@ -98,6 +98,9 @@ void InputFilesWindow::refreshAll()
             const ohkl::MetaData& metadata = data->metadata();
             const ohkl::MetaDataMap& map = metadata.map();
 
+            _files_table->clear();
+            _files_table->setRowCount(0);
+
             for (auto element : map) {
                 if (element.first == "sources") {
                     auto input = std::get<std::string>(element.second);
