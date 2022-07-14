@@ -285,7 +285,8 @@ bool Session::loadRawData()
         QString loadDirectory = qset.value("data_raw", QDir::homePath()).toString();
 
         QStringList qfilenames =
-            QFileDialog::getOpenFileNames(gGui, "import raw data", loadDirectory);
+            QFileDialog::getOpenFileNames(gGui, "import raw data",
+            loadDirectory, "Image files (*.raw *.tiff);; All files (*.* *)");
         if (qfilenames.empty())
             return false;
 
