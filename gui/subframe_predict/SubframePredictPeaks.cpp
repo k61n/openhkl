@@ -355,9 +355,9 @@ void SubframePredictPeaks::refreshAll()
     grabRefinerParameters();
     grabPredictorParameters();
     grabShapeModelParameters();
-    refreshPeakTable();
     if (!gSession->currentProject()->hasDataSet())
         return;
+    refreshPeakTable();
     const auto data = _detector_widget->currentData();
     if (data) {
         _n_batches_spin->setMaximum(data->nFrames());

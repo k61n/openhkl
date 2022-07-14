@@ -278,11 +278,13 @@ void SubframeFindPeaks::refreshAll()
     _data_combo->refresh();
     _detector_widget->refresh();
     grabFinderParameters();
-    auto data = _data_combo->currentData();
-    _end_frame_spin->setMaximum(data->nFrames());
-    _end_frame_spin->setValue(data->nFrames());
-    _start_frame_spin->setMaximum(data->nFrames());
-    _start_frame_spin->setValue(1);
+    if (gSession->currentProject()->hasDataSet()) {
+        auto data = _data_combo->currentData();
+        _end_frame_spin->setMaximum(data->nFrames());
+        _end_frame_spin->setValue(data->nFrames());
+        _start_frame_spin->setMaximum(data->nFrames());
+        _start_frame_spin->setValue(1);
+    }
 
     grabIntegrationParameters();
     refreshPeakTable();
