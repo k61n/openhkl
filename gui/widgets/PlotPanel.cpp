@@ -29,7 +29,7 @@ PlotPanel::PlotPanel() : _yLog(false)
     centralWidget = this;
 }
 
-void PlotPanel::plotData(QVector<double>& x, QVector<double>& y, QVector<double>& e)
+void PlotPanel::plotData(QVector<double>& x, QVector<double>& y, QVector<double>& e, QString xtitle, QString ytitle, int xmin, int xmax, int ymin, int ymax)
 {
     if (plot->getType().compare("simple") != 0) {
         anchor->removeWidget(plot);
@@ -41,7 +41,22 @@ void PlotPanel::plotData(QVector<double>& x, QVector<double>& y, QVector<double>
     }
     plot->graph(0)->setData(x, y);
     plot->addErrorBars(plot->graph(0), e);
-    plot->rescaleAxes();
+
+    if ((xmin != -1 && xmax != -1))
+        plot->xAxis->setRange(xmin, xmax);
+
+    if ((ymin != -1 && ymax != -1))
+        plot->yAxis->setRange(ymin, ymax);
+
+    if ((xmin == -1 && xmax == -1) && (ymin == -1 && ymax == -1))
+        plot->rescaleAxes();
+
+    if (!xtitle.isEmpty())
+        plot->xAxis->setLabel(xtitle);
+
+    if (!ytitle.isEmpty())
+        plot->yAxis->setLabel(ytitle);
+
     plot->replot();
 }
 
