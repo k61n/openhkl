@@ -70,8 +70,6 @@ class SubframeShapes : public QWidget {
     void setInputUp();
     //! Select the peak to preview, generate mean covariance for selected peak or whole collection
     void setComputeShapesUp();
-    //! Set up assignment of shapes to a peak collection
-    void setAssignShapesUp();
     //! Grab the refiner parameters
     void grabShapeParameters();
     //! Set the refiner parameters
