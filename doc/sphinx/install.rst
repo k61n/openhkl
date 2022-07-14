@@ -18,7 +18,7 @@ Compile from source
    * GSL
    * HDF5
    * OpenGL
-   * Boost
+   * Boost (headers only)
    * Tiff
    * QHull
    * YAMLCpp
