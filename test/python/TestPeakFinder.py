@@ -13,8 +13,9 @@ class TestPeakFinder(unittest.TestCase):
 
         # Read the data
         files = glob.glob('CrChiA_c01runab_28*.raw')
-        if len(files) != 15:
-            raise Exception(f"Found {len(files)} tiff files while expecting 7")
+        nfiles = 15
+        if len(files) != nfiles:
+            raise Exception(f"Found {len(files)} tiff files while expecting {nfiles}")
         data_params = ohkl.RawDataReaderParameters()
         # instrument and file parameters
         data_params.wavelength = 2.669
