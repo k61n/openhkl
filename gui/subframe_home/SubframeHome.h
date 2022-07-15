@@ -30,6 +30,7 @@
 #include <QVBoxLayout>
 #include <QWidget>
 #include <qpushbutton.h>
+#include <qt/QtCore/qstringlistmodel.h>
 
 class InputFilesWindow;
 class InstrumentDataWindow;
@@ -99,7 +100,8 @@ class SubframeHome : public QWidget {
     ExperimentTableView* _open_experiments_view;
     std::unique_ptr<ExperimentModel> _open_experiments_model;
 
-    QList<QStringList> _last_imports;
+    QStringList _last_experiments;
+    QStringList _last_file_paths;
     QListWidget* _last_import_widget;
 
     QTableWidget* _dataset_table;

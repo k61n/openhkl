@@ -21,7 +21,6 @@
 
 int main(int argc, char* argv[])
 {
-    qRegisterMetaTypeStreamOperators<QList<QStringList>>("Data"); // for QSettings
     QApplication app{argc, argv};
     QApplication::setApplicationName("OpenHKL");
     QApplication::setApplicationVersion("1.0");

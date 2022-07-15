@@ -369,7 +369,8 @@ void SubframeHome::saveSettings() const
 {
     QSettings s;
     s.beginGroup("RecentFiles");
-    s.setValue("last_loaded", QVariant::fromValue(_last_imports));
+    s.setValue("last_experiment", QVariant::fromValue(_last_experiments));
+    s.setValue("last_file_paths", QVariant::fromValue(_last_file_paths));
     gGui->refreshMenu();
 }
 
@@ -377,20 +378,26 @@ void SubframeHome::readSettings()
 {
     QSettings s;
     s.beginGroup("RecentFiles");
-    _last_imports = s.value("last_loaded").value<QList<QStringList>>();
+    _last_experiments = s.value("last_experiments").value<QStringList>();
+    _last_file_paths = s.value("last_file_paths").value<QStringList>();
     gGui->refreshMenu();
 }
 
 void SubframeHome::_updateLastLoadedList(QString name, QString file_path)
 {
-    QStringList temp = {name, file_path};
-    if (_last_imports.empty())
-        _last_imports.prepend(temp);
-    else if (_last_imports[0][0] != name && _last_imports[0][1] != file_path)
-        _last_imports.prepend(temp);
+    if (_last_experiments.empty())
+        _last_experiments.prepend(name);
+    else if (_last_experiments[0] != name && _last_file_paths[0] != file_path)
+        _last_experiments.prepend(name);
+    if (_last_file_paths.empty())
+        _last_file_paths.prepend(file_path);
+    else if (_last_experiments[0] != name && _last_file_paths[0] != file_path)
+        _last_file_paths.prepend(file_path);
 
-    if (_last_imports.size() > 5)
-        _last_imports.removeLast();
+    if (_last_experiments.size() > 5) {
+        _last_experiments.removeLast();
+        _last_file_paths.removeLast();
+    }
 
     _updateLastLoadedWidget();
     refreshTables();
@@ -412,12 +419,13 @@ void SubframeHome::_updateLastLoadedWidget()
         path = path + light;
 
     QList<QStringList>::iterator it;
-    for (it = _last_imports.begin(); it != _last_imports.end(); ++it) {
+    for (std::size_t index = 0; index < 5; ++index) {
         std::ostringstream oss;
-        oss << (*it).at(0).toStdString() << " (" << (*it).at(1).toStdString() << ")";
+        oss << _last_experiments.at(index).toStdString() << " ("
+            << _last_file_paths.at(index).toStdString() << ")";
         QString fullname = QString::fromStdString(oss.str());
         QListWidgetItem* item = new QListWidgetItem(QIcon(path + "beaker.svg"), fullname);
-        item->setData(100, (*it).at(1));
+        item->setData(100, _last_file_paths.at(index));
         _last_import_widget->addItem(item);
     }
 }
