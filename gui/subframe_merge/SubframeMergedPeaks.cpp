@@ -147,26 +147,28 @@ void SubframeMergedPeaks::setDShellUp()
     _shell_model = new QStandardItemModel(0, 13, this);
     _d_shell_view->setModel(_shell_model);
     _shell_model->setHorizontalHeaderLabels(
-        {"dmax", "dmin", "nobs", "nmerge", "redundancy", "Rmeas", "Rmeas(est.)", "Rmerge/Rsym",
-         "Rmerge(est.)", "Rpim", "Rpim(est.)", "CChalf", "CC*", "Completeness"});
+        {"Max. d", "Min. d", "Num. peaks observed", "Num. merged peaks", "Redundancy",
+        "Rmeas", "Rmeas(est.)", "Rmerge/Rsym", "Rmerge(est.)", "Rpim",
+         "Rpim(est.)", "CChalf", "CC*", "Completeness"});
     shell_layout->addWidget(_d_shell_view);
+    _d_shell_view->resizeColumnsToContents();
 
     QHBoxLayout* d_shell_down = new QHBoxLayout;
     QGridLayout* d_shell_down_left = new QGridLayout;
 
     QLabel* label_ptr;
 
-    label_ptr = new QLabel("d range:");
+    label_ptr = new QLabel("Resolution (d) range:");
     label_ptr->setAlignment(Qt::AlignRight);
     d_shell_down_left->addWidget(label_ptr, 0, 0, 1, 1);
     label_ptr->setSizePolicy(*_size_policy_widgets);
 
-    label_ptr = new QLabel("Frame range:");
+    label_ptr = new QLabel("Image range:");
     label_ptr->setAlignment(Qt::AlignRight);
     d_shell_down_left->addWidget(label_ptr, 1, 0, 1, 1);
     label_ptr->setSizePolicy(*_size_policy_widgets);
 
-    label_ptr = new QLabel("N. of d-shells:");
+    label_ptr = new QLabel("Num. resolution shells:");
     label_ptr->setAlignment(Qt::AlignRight);
     d_shell_down_left->addWidget(label_ptr, 2, 0, 1, 1);
     label_ptr->setSizePolicy(*_size_policy_widgets);
@@ -176,7 +178,7 @@ void SubframeMergedPeaks::setDShellUp()
     d_shell_down_left->addWidget(label_ptr, 3, 0, 1, 1);
     label_ptr->setSizePolicy(*_size_policy_widgets);
 
-    label_ptr = new QLabel("Plot axis:");
+    label_ptr = new QLabel("Plot y axis:");
     label_ptr->setAlignment(Qt::AlignRight);
     d_shell_down_left->addWidget(label_ptr, 5, 0, 1, 1);
     label_ptr->setSizePolicy(*_size_policy_widgets);
@@ -189,7 +191,7 @@ void SubframeMergedPeaks::setDShellUp()
     _friedel = new QCheckBox("Include friedel");
     _space_group = new QComboBox();
     _plottable_statistics = new QComboBox();
-    _save_shell = new QPushButton("Save");
+    _save_shell = new QPushButton("Save statistics");
 
     _d_min->setValue(1.5);
     _d_min->setSingleStep(0.1);
@@ -280,6 +282,7 @@ void SubframeMergedPeaks::setMergedUp()
     QString chi_header{QString((QChar)0x03C7 + QString{"2"})};
     _merged_model->setHorizontalHeaderLabels(
         {"h", "k", "l", "I", sigma_header, "nobs", chi_header, "p"});
+    _merged_view->resizeColumnsToContents();
     merged_layout->addWidget(_merged_view);
 
     QHBoxLayout* merged_row = new QHBoxLayout;
@@ -317,6 +320,7 @@ void SubframeMergedPeaks::setUnmergedUp()
     QString sigma_header{QString((QChar)0x03C3 + QString{"(I)"})};
     _unmerged_model->setHorizontalHeaderLabels(
         {"h", "k", "l", "I", sigma_header, "x", "y", "frame"});
+    _unmerged_view->resizeColumnsToContents();
     unmerged_layout->addWidget(_unmerged_view);
 
     QHBoxLayout* unmerged_row = new QHBoxLayout;
@@ -361,6 +365,9 @@ void SubframeMergedPeaks::refreshPeakLists()
         return;
     refreshPeakCombos();
     processMerge();
+    _d_shell_view->resizeColumnsToContents();
+    _merged_view->resizeColumnsToContents();
+    _unmerged_view->resizeColumnsToContents();
 }
 
 void SubframeMergedPeaks::refreshPeakCombos()
