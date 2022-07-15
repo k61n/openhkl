@@ -296,7 +296,7 @@ void SubframeHome::loadFromFile()
     QString loadDirectory = s.value("experiment", QDir::homePath()).toString();
 
     QString file_path = QFileDialog::getOpenFileName(
-        this, "Load the current experiment", loadDirectory, "OpenHKL file (*.nsx)");
+        this, "Load the current experiment", loadDirectory, "OpenHKL file (*.ohkl)");
 
     if (file_path.isEmpty())
         return;
