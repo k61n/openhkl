@@ -233,8 +233,6 @@ SubframeExperiment::SubframeExperiment()
 
 void SubframeExperiment::updateRanges()
 {
-    auto frame_id  = _detector_widget->scroll()->value();
-
     nsx::Experiment* expt = gSession->currentProject()->experiment();
     auto data = expt->getDataMap()->at(_detector_widget->dataCombo()->currentText().toStdString());
 
@@ -339,7 +337,6 @@ void SubframeExperiment::toggleUnsafeWidgets()
 
     if (!hasProject) return;
     bool hasData = gSession->currentProject()->hasDataSet();
-    bool showTotalHistogram = _totalHistogram->isChecked();
 
     _calc_intensity->setEnabled(hasData);
 
