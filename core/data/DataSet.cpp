@@ -40,11 +40,12 @@
 #include <gsl/gsl_histogram.h>
 
 #include <stdexcept>
+#include <stdexcept>
 
 namespace ohkl {
 
 DataSet::DataSet(const std::string& dataset_name, Diffractometer* diffractometer)
-    : _diffractometer{diffractometer}, _states(nullptr)
+    : _diffractometer{diffractometer}, _states(nullptr), _total_histogram(nullptr)
 {
     setName(dataset_name);
     if (!_diffractometer)
@@ -364,9 +365,12 @@ void DataSet::getIntensityHistogram(std::size_t nbins)
 
 void DataSet::clearHistograms()
 {
-    gsl_histogram_free(_total_histogram);
+    if (_total_histogram != nullptr) gsl_histogram_free(_total_histogram);
     for (auto* hist : _histograms)
         gsl_histogram_free(hist);
+
+    _total_histogram = nullptr;
+    _histograms.clear();
 }
 
 double DataSet::maxCount()
