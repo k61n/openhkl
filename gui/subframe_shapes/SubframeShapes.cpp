@@ -58,7 +58,6 @@ SubframeShapes::SubframeShapes() : QWidget(), _preview_peak(nullptr)
 
     setInputUp();
     setComputeShapesUp();
-    setAssignShapesUp();
     setPreviewUp();
     setFigureUp();
     setShapePreviewUp();
@@ -166,7 +165,7 @@ void SubframeShapes::setInputUp()
 
 void SubframeShapes::setComputeShapesUp()
 {
-    auto compute_box = new Spoiler("Preview peak shapes");
+    auto compute_box = new Spoiler("Preview shapes and apply model");
     GridFiller f(compute_box, true);
 
     _x = f.addDoubleSpinBox("x coordinate", "(pixels) x coordinate of peak shape to preview");
@@ -252,21 +251,14 @@ void SubframeShapes::setComputeShapesUp()
         &SubframeShapes::onShapeChanged);
     connect(_calculate_mean_profile, &QPushButton::clicked, this, &SubframeShapes::computeProfile);
 
-    _left_layout->addWidget(compute_box);
-}
-
-void SubframeShapes::setAssignShapesUp()
-{
-    auto assign_box = new Spoiler("Apply shape model");
-    GridFiller f(assign_box, true);
     _predicted_combo = f.addPeakCombo(ComboType::PredictedPeaks, "Target peak collection");
     _shape_combo = f.addShapeCombo("Shape model");
     _assign_peak_shapes =
         f.addButton("Apply shape model", "Apply selected shape model to a peak collection");
 
-    connect(_assign_peak_shapes, &QPushButton::clicked, this, &SubframeShapes::assignPeakShapes);
+    _left_layout->addWidget(compute_box);
 
-    _left_layout->addWidget(assign_box);
+    connect(_assign_peak_shapes, &QPushButton::clicked, this, &SubframeShapes::assignPeakShapes);
 }
 
 void SubframeShapes::setShapePreviewUp()
