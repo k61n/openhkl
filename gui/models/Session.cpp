@@ -191,8 +191,8 @@ void Session::loadData(ohkl::DataFormat format)
 
     QString format_string;
     switch (format) {
-        case ohkl::DataFormat::NSX: {
-            format_string = QString("Data files(*.nsx);;all files (*.* *)");
+        case ohkl::DataFormat::OHKL: {
+            format_string = QString("Data files(*.ohkl);;all files (*.* *)");
             break;
         }
         case ohkl::DataFormat::NEXUS: {

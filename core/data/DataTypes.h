@@ -25,7 +25,7 @@ using sptrDataSet = std::shared_ptr<DataSet>;
 using DataList = std::vector<sptrDataSet>;
 
 // NOTE: `Count` is used to compute the number of members in the enum class
-enum class DataFormat { Unknown = -1, NSX = 0, RAW, NEXUS, Count };
+enum class DataFormat { Unknown = -1, OHKL = 0, RAW, NEXUS, Count };
 
 } // namespace ohkl
 
