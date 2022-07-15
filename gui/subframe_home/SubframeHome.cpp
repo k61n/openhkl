@@ -337,7 +337,7 @@ void SubframeHome::saveCurrent(bool dialogue /* = false */)
     if (project->saved() && !dialogue) {
         file_path = project->currentFileName();
     } else {
-        QString default_name = loadDirectory + "/" + project->currentFileName();
+        QString default_name = loadDirectory + "/" + project->currentFileName() + ".ohkl";
         file_path = QFileDialog::getSaveFileName(
             this, "Save the current experiment", default_name, "OpenHKL file (*.ohkl)");
 
