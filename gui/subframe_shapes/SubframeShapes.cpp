@@ -122,11 +122,14 @@ void SubframeShapes::setInputUp()
         "Maximum resolution (min. d)", "Minimum d (\u212B) of peak to include in average");
     _max_d = f.addDoubleSpinBox(
         "Minimum resolution (max. d)", "Maximum d (\u212B) of peak to include in average");
-    _peak_end = f.addDoubleSpinBox("Peak end", "(sigmas) - scaling factor for peak region");
+    _peak_end = f.addDoubleSpinBox(
+        "Peak end", "(" + QString(QChar(0x03C3)) + ") - scaling factor for peak region");
     _bkg_begin = f.addDoubleSpinBox(
-        "Background begin", "(sigmas) - scaling factor for lower limit of background region");
+        "Background begin", "(" + QString(QChar(0x03C3)) +
+        ") - scaling factor for lower limit of background region");
     _bkg_end = f.addDoubleSpinBox(
-        "Background end", "(sigmas) - scaling factor for upper limit of background region");
+        "Background end", "(" + QString(QChar(0x03C3)) +
+        ") - scaling factor for upper limit of background region");
 
     _build_collection = f.addButton(
         "Build shape model",

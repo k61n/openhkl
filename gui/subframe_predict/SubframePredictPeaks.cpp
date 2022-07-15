@@ -221,8 +221,10 @@ void SubframePredictPeaks::setParametersUp()
     GridFiller f(para_box, true);
 
     _cell_combo = f.addCellCombo("Unit cell:");
-    _d_min = f.addDoubleSpinBox("d min:", QString::fromUtf8("(\u212B) - minimum d (Bragg's law)"));
-    _d_max = f.addDoubleSpinBox("d max:", QString::fromUtf8("(\u212B) - maximum d (Bragg's law)"));
+    _d_min = f.addDoubleSpinBox(
+        "Maximum resolution (min. d):", QString::fromUtf8("(\u212B) - minimum d (Bragg's law)"));
+    _d_max = f.addDoubleSpinBox(
+        "Minimum resolution (max. d):", QString::fromUtf8("(\u212B) - maximum d (Bragg's law)"));
     _predict_button = f.addButton("Predict");
     _predict_button->setEnabled(false);
 
@@ -252,16 +254,23 @@ void SubframePredictPeaks::setShapeModelUp()
         f.addShapeCombo("Shape model", "Shape model to predict shapes of predicted peaks");
     _peak_end = f.addDoubleSpinBox("Peak end", "(sigmas) - scaling factor for peak region");
     _bkg_begin =
-        f.addDoubleSpinBox("Bkg begin:", "(sigmas) - scaling factor for lower limit of background");
+        f.addDoubleSpinBox(
+            "Background begin:", "(sigmas) - scaling factor for lower limit of background");
     _bkg_end =
-        f.addDoubleSpinBox("Bkg end:", "(sigmas) - scaling factor for upper limit of background");
+        f.addDoubleSpinBox(
+            "Background end:", "(sigmas) - scaling factor for upper limit of background");
     _radius_pix =
-        f.addDoubleSpinBox("Search radius:", "(pixels) - neighbour search radius in pixels");
+        f.addDoubleSpinBox(
+            "Search radius (pixels):",
+            "(pixels) - neighbour search radius in pixels for generating mean covariance");
     _radius_frames =
-        f.addDoubleSpinBox("N. of frames:", "(frames) - neighbour search radius in frames");
+        f.addDoubleSpinBox(
+            "Search radius (images):",
+            "(frames) - neighbour search radius in frames for generating mean covariance");
     _min_neighbours = f.addSpinBox(
-        "Min. neighbours", "Minimum number of neighbouring shapes to predict peak shape");
-    _interpolation_combo = f.addCombo("Interpolation", "Interpolation type for peak shape");
+        "Min. neighbours", "Minimum number of neighbouring shapes to generate mean covariance");
+    _interpolation_combo = f.addCombo(
+        "Interpolation type", "Interpolation strategy for determining mean covariance");
     _apply_shape_model =
         f.addButton("Apply shape model", "Apply shape model to a predicted peak collection");
 

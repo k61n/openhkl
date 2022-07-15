@@ -377,12 +377,12 @@ void SubframeRefiner::refreshPlot()
 
 void SubframeRefiner::setUpdateUp()
 {
-    auto update_box = new Spoiler("Update predictions");
+    auto update_box = new Spoiler("Update predicted peak centres");
     GridFiller f(update_box, true);
 
     _predicted_combo = f.addPeakCombo(ComboType::PredictedPeaks, "Predicted peaks");
 
-    _update_button = f.addButton("Update", "Update peak positions given refined unit cell");
+    _update_button = f.addButton("Update", "Update predicted peak positions given refined unit cell");
 
     _left_layout->addWidget(update_box);
 
