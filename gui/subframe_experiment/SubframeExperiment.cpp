@@ -146,6 +146,7 @@ SubframeExperiment::SubframeExperiment()
         _detector_widget->dataCombo(), QOverload<int>::of(&QComboBox::currentIndexChanged),
         this,
             [=](){
+                updateRanges();
                 plotIntensities();
                 toggleUnsafeWidgets();
             }
@@ -153,6 +154,7 @@ SubframeExperiment::SubframeExperiment()
 
     connect(_totalHistogram, &QCheckBox::clicked, this,
         [=](){
+            updateRanges();
             toggleUnsafeWidgets();
             plotIntensities();
         }
@@ -160,19 +162,22 @@ SubframeExperiment::SubframeExperiment()
 
     connect(_xZoom, &QCheckBox::clicked, this,
         [=](){
+            updateRanges();
             toggleUnsafeWidgets();
         }
     );
 
     connect(_yZoom, &QCheckBox::clicked, this,
         [=](){
-             toggleUnsafeWidgets();
+            updateRanges();
+            toggleUnsafeWidgets();
         }
     );
 
     connect(_yLog, &QCheckBox::clicked, this,
         [=](){
             _plot->setYLog(_yLog->isChecked());
+            updateRanges();
             plotIntensities();
         }
     );
@@ -192,6 +197,7 @@ SubframeExperiment::SubframeExperiment()
             _maxY->setMaximum(1e+100);
             _minY->setMaximum(1e+100-1);
 
+            updateRanges();
             toggleUnsafeWidgets();
         }
     );
@@ -204,6 +210,7 @@ SubframeExperiment::SubframeExperiment()
 
     connect(_detector_widget->scroll(), &QScrollBar::valueChanged, this,
         [=](){
+            updateRanges();
             plotIntensities();
         }
     );
@@ -216,11 +223,40 @@ SubframeExperiment::SubframeExperiment()
 
     connect(_update_plot, &QPushButton::clicked, this,
         [=](){
+            updateRanges();
             plotIntensities();
         }
     );
 
     toggleUnsafeWidgets();
+}
+
+void SubframeExperiment::updateRanges()
+{
+    auto frame_id  = _detector_widget->scroll()->value();
+
+    nsx::Experiment* expt = gSession->currentProject()->experiment();
+    auto data = expt->getDataMap()->at(_detector_widget->dataCombo()->currentText().toStdString());
+
+    gsl_histogram* histo = nullptr;
+
+    if (!_totalHistogram->isChecked())
+        histo = data->getHistogram(_detector_widget->scroll()->value());
+    else
+        histo = data->getTotalHistogram();
+
+    if (!histo) return;
+
+    if (!_xZoom->isChecked()){
+        _minX->setValue(0);
+        _maxX->setValue(data->maxCount());
+    }
+    if (!_yZoom->isChecked()){
+        double max_element = *(std::max_element(histo->bin, histo->bin + histo->n*8));
+
+        _minY->setValue(0);
+        _maxY->setValue(max_element);
+    }
 }
 
 void SubframeExperiment::plotIntensities()
