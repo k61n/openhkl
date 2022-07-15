@@ -43,6 +43,7 @@ class SubframeExperiment : public QWidget {
 
     void plotIntensities();
     void toggleUnsafeWidgets();
+    void updateRanges();
 
  private:
     std::vector<nsx::sptrDataSet> _data_list;
