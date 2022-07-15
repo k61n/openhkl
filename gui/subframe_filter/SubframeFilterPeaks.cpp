@@ -97,20 +97,20 @@ void SubframeFilterPeaks::setInputUp()
 
 void SubframeFilterPeaks::setStateUp()
 {
-    _state_box = new SpoilerCheck("State");
+    _state_box = new SpoilerCheck("Type of peak");
     GridFiller f(_state_box);
 
-    _selected = f.addCheckBox("Selected");
+    _selected = f.addCheckBox("Valid");
     _masked = f.addCheckBox("Masked");
     _predicted = f.addCheckBox("Predicted");
-    _indexed_peaks = f.addCheckBox("Indexed peak");
+    _indexed_peaks = f.addCheckBox("Indexed");
 
     _left_layout->addWidget(_state_box);
 }
 
 void SubframeFilterPeaks::setUnitCellUp()
 {
-    _unit_cell_box = new SpoilerCheck("Indexed peaks by unit cell");
+    _unit_cell_box = new SpoilerCheck("Peak indexed by given unit cell");
     GridFiller f(_unit_cell_box);
 
     _unit_cell = f.addCellCombo("Unit cell:");
@@ -143,15 +143,15 @@ void SubframeFilterPeaks::setStrengthUp()
 
 void SubframeFilterPeaks::setRangeUp()
 {
-    _d_range_box = new SpoilerCheck("d range");
+    _d_range_box = new SpoilerCheck("Resolution range");
     GridFiller f(_d_range_box);
 
-    _d_range_min = f.addDoubleSpinBox("Minimum:");
+    _d_range_min = f.addDoubleSpinBox("Maximum (d min):");
     _d_range_min->setMaximum(100);
     _d_range_min->setDecimals(6);
     _d_range_min->setValue(0.0000);
 
-    _d_range_max = f.addDoubleSpinBox("Maximum:");
+    _d_range_max = f.addDoubleSpinBox("Minimum (d max):");
     _d_range_max->setMaximum(100);
     _d_range_max->setDecimals(6);
     _d_range_max->setValue(100.00000);
@@ -161,7 +161,7 @@ void SubframeFilterPeaks::setRangeUp()
 
 void SubframeFilterPeaks::setFrameRangeUp()
 {
-    _frame_range_box = new SpoilerCheck("Frame range");
+    _frame_range_box = new SpoilerCheck("Detector image range");
     GridFiller f(_frame_range_box);
 
     _frame_min = f.addDoubleSpinBox("Minimum:");

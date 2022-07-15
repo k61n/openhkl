@@ -34,7 +34,6 @@
 #include <QMessageBox>
 #include <QSettings>
 #include <QSpacerItem>
-#include <QStringListModel>
 
 // Icon attributions:
 // save.svg: folder open by Loudoun Design Co from the Noun Project
