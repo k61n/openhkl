@@ -61,7 +61,7 @@ SubframeExperiment::SubframeExperiment()
     GridFiller f(intensity_plot_box, true);
 
     int nMaxBins = 100000;
-    int nMinBins = 1000;
+    int nMinBins = 100;
 
     _number_bins = new QSlider(Qt::Horizontal);
     QLabel* label = new QLabel("Number of bins: ");
