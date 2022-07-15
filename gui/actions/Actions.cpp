@@ -32,6 +32,8 @@
 #include "gui/widgets/LogWidget.h"
 #include "tables/crystal/SpaceGroup.h"
 
+#include <QDesktopServices>
+
 Actions::Actions()
 {
     setupExperiment();
@@ -181,8 +183,10 @@ void Actions::setupPeaks()
 
 void Actions::setupRest()
 {
+    documentation = new QAction("Documentation");
     about = new QAction("About");
 
+    connect(documentation, &QAction::triggered, this, &Actions::openWebsite);
     connect(about, &QAction::triggered, this, &Actions::aboutBox);
 }
 
@@ -302,4 +306,9 @@ void Actions::closePeakWindows()
     for (PeakWindow* window : gGui->peak_windows)
         window->close();
     gGui->peak_windows.clear();
+}
+
+void Actions::openWebsite()
+{
+    QDesktopServices::openUrl(QUrl("https://www.openhkl.org"));
 }

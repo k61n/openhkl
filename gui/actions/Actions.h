@@ -17,6 +17,7 @@
 
 #include <QAction>
 #include <QObject>
+#include <qaction.h>
 
 //! Collection of trigger and toggle actions, for use as member of MainWin.
 class Actions : public QObject {
@@ -60,6 +61,7 @@ class Actions : public QObject {
     QAction* remove_cell;
 
     // Help
+    QAction* documentation;
     QAction* about;
 
  private:
@@ -78,6 +80,7 @@ class Actions : public QObject {
     void clonePeaks();
     void aboutBox();
     void closePeakWindows();
+    void openWebsite();
 };
 
 #endif // OHKL_GUI_ACTIONS_ACTIONS_H
