@@ -71,6 +71,7 @@ SubframeFindPeaks::SubframeFindPeaks()
     setSaveUp();
     setFigureUp();
     setPeakTableUp();
+    updateConvolutionParameters();
 
     _right_element->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
@@ -91,7 +92,7 @@ void SubframeFindPeaks::setDataUp()
     GridFiller f(_data_box);
 
     _data_combo = f.addDataCombo("Data set");
-    _all_data = f.addCheckBox("Search all", "Find peaks in all data sets", 1);
+    _all_data = f.addCheckBox("Search all", "Find peaks in all data sets in this experiment", 1);
 
     connect(_data_combo, &QComboBox::currentTextChanged, this, &SubframeFindPeaks::refreshAll);
 
@@ -110,8 +111,8 @@ void SubframeFindPeaks::setBlobUp()
     _threshold_spin = f.addSpinBox(
         "Threshold", "(counts) - pixels with fewer counts than the threshold are discarded");
 
-    _scale_spin =
-        f.addDoubleSpinBox("Merging scale", "(sigmas) - blob scaling factor to detect collisions");
+    _scale_spin = f.addDoubleSpinBox(
+        "Merging scale", "(" + QString(QChar(0x03C3)) + ") - blob scaling factor to detect collisions");
 
     _min_size_spin = f.addSpinBox(
         "Minimum size", "(integer) - blobs containing fewer points than this count are discarded");
@@ -122,24 +123,25 @@ void SubframeFindPeaks::setBlobUp()
     _max_width_spin = f.addSpinBox(
         "Maximum width", "(frames) - blob is discarded if it spans more frames than this value");
 
-    _kernel_combo = f.addCombo("Kernel", "Convolution kernel for peak search");
+    _kernel_combo = f.addCombo("Convolution kernel", "Convolution kernel for peak search");
 
     ohkl::ConvolverFactory convolver_factory;
     for (const auto& convolution_kernel_combo : convolver_factory.callbacks())
         _kernel_combo->addItem(QString::fromStdString(convolution_kernel_combo.first));
     _kernel_combo->setCurrentText("annular");
 
-    QLabel* kernel_para_label = new QLabel("Parameters:");
+    QLabel* kernel_para_label = new QLabel("Convolver parameters:");
     kernel_para_label->setAlignment(Qt::AlignLeft | Qt::AlignTop);
-    kernel_para_label->setToolTip("r1, r2, r3 parameters for pixel sum integration");
     f.addWidget(kernel_para_label, 0);
 
     _kernel_para_table = new QTableWidget(this);
     f.addWidget(_kernel_para_table, 0);
 
-    _start_frame_spin = f.addSpinBox("Start frame", "(frame) - start frame for peak finding");
+    _start_frame_spin = f.addSpinBox(
+        "First detector image", "(detector image number) - starting image for peak finding");
 
-    _end_frame_spin = f.addSpinBox("End frame", "(frame) - end frame for peak finding");
+    _end_frame_spin = f.addSpinBox(
+        "Last detector image", "(detector image number) - end image for peak finding");
 
     _live_check = f.addCheckBox("Apply threshold to preview", "Only show pixels above threshold");
 
@@ -165,13 +167,16 @@ void SubframeFindPeaks::setIntegrateUp()
     Spoiler* integration_para = new Spoiler("Integration parameters");
     GridFiller f(integration_para);
 
-    _peak_area = f.addDoubleSpinBox("Peak end", "(sigmas) - scaling factor for peak region");
+    _peak_area = f.addDoubleSpinBox(
+        "Peak end", "(" + QString(QChar(0x03C3)) + ") - scaling factor for peak region");
 
-    _bkg_lower =
-        f.addDoubleSpinBox("Bkg. begin", "(sigmas) - scaling factor for lower limit of background");
+    _bkg_lower = f.addDoubleSpinBox(
+        "Background begin",
+        "(" + QString(QChar(0x03C3)) + ") - scaling factor for lower limit of background");
 
-    _bkg_upper =
-        f.addDoubleSpinBox("Bkg. end", "(sigmas) - scaling factor for upper limit of background");
+    _bkg_upper = f.addDoubleSpinBox(
+        "Background end",
+        "(" + QString(QChar(0x03C3)) + ") - scaling factor for upper limit of background");
 
     _integrate_button = f.addButton("Integrate");
 
@@ -222,7 +227,7 @@ void SubframeFindPeaks::setSaveUp()
 
 void SubframeFindPeaks::setFigureUp()
 {
-    QGroupBox* figure_group = new QGroupBox("Preview");
+    QGroupBox* figure_group = new QGroupBox("Detector image");
     figure_group->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     _detector_widget = new DetectorWidget(true, false, true, figure_group);
     _detector_widget->modeCombo()->addItems(

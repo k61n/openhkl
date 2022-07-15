@@ -66,8 +66,8 @@ SubframeRefiner::SubframeRefiner()
     QTabWidget* tab_widget = new QTabWidget(this);
     QWidget* tables_tab = new QWidget(tab_widget);
     QWidget* detector_tab = new QWidget(tab_widget);
-    tab_widget->addTab(tables_tab, "Tables");
-    tab_widget->addTab(detector_tab, "Detector");
+    tab_widget->addTab(tables_tab, "Tables of refined parameters");
+    tab_widget->addTab(detector_tab, "Detector image");
 
     QHBoxLayout* table_layout = new QHBoxLayout();
 
@@ -278,7 +278,7 @@ void SubframeRefiner::setPlotUp()
         return new PlotCheckBox(text, table, column);
     };
 
-    _plot_box = new Spoiler("Plot");
+    _plot_box = new Spoiler("Plot changes in cell or instrument states");
     QVBoxLayout* plot_layout = new QVBoxLayout();
 
     // Create group & gridlayout for checkboxes. Add it already to the main layout
@@ -377,12 +377,12 @@ void SubframeRefiner::refreshPlot()
 
 void SubframeRefiner::setUpdateUp()
 {
-    auto update_box = new Spoiler("Update predictions");
+    auto update_box = new Spoiler("Update predicted peak centres");
     GridFiller f(update_box, true);
 
     _predicted_combo = f.addPeakCombo(ComboType::PredictedPeaks, "Predicted peaks");
 
-    _update_button = f.addButton("Update", "Update peak positions given refined unit cell");
+    _update_button = f.addButton("Update", "Update predicted peak positions given refined unit cell");
 
     _left_layout->addWidget(update_box);
 

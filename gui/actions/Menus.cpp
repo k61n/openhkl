@@ -72,6 +72,7 @@ Menus::Menus(QMenuBar* menu_bar) : _menu_bar{menu_bar}
     _cells_menu->addAction(actions->add_cell);
     _cells_menu->addAction(actions->remove_cell);
 
+    _help_menu->addAction(actions->documentation);
     _help_menu->addAction(actions->about);
 
     // adding shortcuts
@@ -99,7 +100,7 @@ Menus::Menus(QMenuBar* menu_bar) : _menu_bar{menu_bar}
     actions->add_hdf5->setShortcut(QKeySequence("Ctrl+H"));
     actions->add_nexus->setShortcut(QKeySequence("Ctrl+X"));
 
-    actions->about->setShortcut(QKeySequence("F1"));
+    actions->documentation->setShortcut(QKeySequence("F1"));
 
     toggleEntries();
 }

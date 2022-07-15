@@ -118,13 +118,18 @@ void SubframeShapes::setInputUp()
     _min_strength = f.addDoubleSpinBox(
         ("Minimum I/" + QString(QChar(0x03C3))),
         "Minimum strength (I/\u03C3) of peak to include in average");
-    _min_d = f.addDoubleSpinBox("Minimum d", "Minimum d (\u212B) of peak to include in average");
-    _max_d = f.addDoubleSpinBox("Maximum d", "Maximum d (\u212B) of peak to include in average");
-    _peak_end = f.addDoubleSpinBox("Peak end", "(sigmas) - scaling factor for peak region");
+    _min_d = f.addDoubleSpinBox(
+        "Maximum resolution (min. d)", "Minimum d (\u212B) of peak to include in average");
+    _max_d = f.addDoubleSpinBox(
+        "Minimum resolution (max. d)", "Maximum d (\u212B) of peak to include in average");
+    _peak_end = f.addDoubleSpinBox(
+        "Peak end", "(" + QString(QChar(0x03C3)) + ") - scaling factor for peak region");
     _bkg_begin = f.addDoubleSpinBox(
-        "Background begin", "(sigmas) - scaling factor for lower limit of background region");
+        "Background begin", "(" + QString(QChar(0x03C3)) +
+        ") - scaling factor for lower limit of background region");
     _bkg_end = f.addDoubleSpinBox(
-        "Background end", "(sigmas) - scaling factor for upper limit of background region");
+        "Background end", "(" + QString(QChar(0x03C3)) +
+        ") - scaling factor for upper limit of background region");
 
     _build_collection = f.addButton(
         "Build shape model",
@@ -175,8 +180,10 @@ void SubframeShapes::setComputeShapesUp()
 
     _min_neighbours =
         f.addSpinBox("Minimum neighbours", "Fewest possible neighbours to compute a mean profile");
-    _pixel_radius = f.addDoubleSpinBox("Radius", "(pixels) - radius for neighbour search");
-    _frame_radius = f.addDoubleSpinBox("Frames", "(frames) - angular radius for neighbour search");
+    _pixel_radius = f.addDoubleSpinBox(
+        "Search radius (pixels)", "(pixels) - radius for neighbour search");
+    _frame_radius = f.addDoubleSpinBox(
+        "Search radius (images)", "(detector images) - angular \"radius\"\" for neighbour search");
     _interpolation_combo =
         f.addCombo("Interpolation type", "Weighting strategy for mean covariance calculation");
 
@@ -276,7 +283,7 @@ void SubframeShapes::setShapePreviewUp()
 
 void SubframeShapes::setFigureUp()
 {
-    QGroupBox* figure_group = new QGroupBox("Preview");
+    QGroupBox* figure_group = new QGroupBox("Detector image");
     figure_group->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     _detector_widget = new DetectorWidget(false, false, true, figure_group);
     _detector_widget->linkPeakModel(&_peak_collection_model);

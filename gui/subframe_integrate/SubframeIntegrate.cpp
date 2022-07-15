@@ -96,7 +96,7 @@ void SubframeIntegrate::setInputUp()
 
 void SubframeIntegrate::setFigureUp()
 {
-    QGroupBox* figure_group = new QGroupBox("Preview");
+    QGroupBox* figure_group = new QGroupBox("Detector image");
     figure_group->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     _detector_widget = new DetectorWidget(false, false, true, figure_group);
     _detector_widget->linkPeakModel(&_peak_collection_model);
@@ -242,13 +242,16 @@ void SubframeIntegrate::setIntegrationRegionUp()
             if (i == static_cast<int>(key))
                 _integration_region_type->addItem(QString::fromStdString(val));
 
-    _peak_end = f.addDoubleSpinBox("Peak end", "(sigmas) - scaling factor for peak region");
+    _peak_end = f.addDoubleSpinBox(
+        "Peak end", "(" + QString(QChar(0x03C3)) + ") - scaling factor for peak region");
 
-    _bkg_begin =
-        f.addDoubleSpinBox("Bkg begin:", "(sigmas) - scaling factor for lower limit of background");
+    _bkg_begin = f.addDoubleSpinBox(
+        "Background begin:", "(" + QString(QChar(0x03C3)) +
+        ") - scaling factor for lower limit of background");
 
-    _bkg_end =
-        f.addDoubleSpinBox("Bkg end:", "(sigmas) - scaling factor for upper limit of background");
+    _bkg_end = f.addDoubleSpinBox(
+        "Background end:", "(" + QString(QChar(0x03C3)) +
+        ") - scaling factor for upper limit of background");
 
     _peak_end->setMaximum(20);
     _peak_end->setDecimals(2);
@@ -291,21 +294,22 @@ void SubframeIntegrate::setIntegrateUp()
     f.addWidget(_discard_saturated);
 
     _fit_center =
-        f.addCheckBox("Fit the center", "Allow the peak center to move during integration", 1);
+        f.addCheckBox("Fit peak center", "Allow the peak center to move during integration", 1);
 
     _fit_covariance = f.addCheckBox(
-        "Fit the covariance", "Allow the peak covariance matrix to vary during integration", 1);
+        "Fit peak covariance", "Allow the peak covariance matrix to vary during integration", 1);
 
-    _radius_int =
-        f.addDoubleSpinBox("Search radius:", "(pixels) - neighbour search radius in pixels");
+    _radius_int = f.addDoubleSpinBox(
+        "Search radius (pixels):", "(pixels) - neighbour search radius in pixels");
 
-    _n_frames_int =
-        f.addDoubleSpinBox("N. of frames:", "(frames) - neighbour search radius in frames");
+    _n_frames_int = f.addDoubleSpinBox(
+        "Search radius (images)", "(detector images) - neighbour search radius in detector images");
 
     _min_neighbours = f.addSpinBox(
         "Min. neighbours", "Minimum number of neighbouring shapes to predict peak shape");
 
-    _interpolation_combo = f.addCombo("Interpolation", "Interpolation type for peak shape");
+    _interpolation_combo = f.addCombo(
+        "Interpolation type", "Interpolation strategy for computing mean covariance");
 
     _shape_combo = f.addShapeCombo("Shape model", "The shape model used in integraton");
 

@@ -34,8 +34,6 @@
 #include <QMessageBox>
 #include <QSettings>
 #include <QSpacerItem>
-#include <QStringListModel>
-#include <unistd.h>
 
 // Icon attributions:
 // save.svg: folder open by Loudoun Design Co from the Noun Project
@@ -96,7 +94,7 @@ void SubframeHome::_setLeftLayout(QHBoxLayout* main_layout)
 
     _old_exp = new QPushButton();
     _old_exp->setIcon(QIcon(path + "open.svg"));
-    _old_exp->setText("Load from file");
+    _old_exp->setText("Load experiment from file");
     _old_exp->setMinimumWidth(_new_exp->sizeHint().width());
     _old_exp->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
     tooltip = "Load an existing experiment from a .ohkl (HDF5) file";
@@ -116,9 +114,54 @@ void SubframeHome::_setLeftLayout(QHBoxLayout* main_layout)
 
     left->addWidget(_last_import_widget);
 
-    // QSpacerItem* spacer_bottom =
-    //     new QSpacerItem(10, 0, QSizePolicy::Minimum, QSizePolicy::Expanding);
-    // left->addSpacerItem(spacer_bottom);
+    _open_experiments_model = std::make_unique<ExperimentModel>();
+    _open_experiments_view = new ExperimentTableView();
+    _open_experiments_view->setModel(_open_experiments_model.get());
+    connect(
+        _open_experiments_view, &ExperimentTableView::clicked, this,
+        &SubframeHome::_switchCurrentExperiment);
+
+    left->addWidget(_open_experiments_view);
+    _open_experiments_view->resizeColumnsToContents();
+
+    QHBoxLayout* left_bot = new QHBoxLayout();
+
+    _save_current = new QPushButton();
+    _save_current->setIcon(QIcon(path + "save.svg"));
+    _save_current->setText("Save current experiment");
+    _save_current->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
+    _save_current->setToolTip("Save current experiment to .nsx (HDF5) file");
+    connect(_save_current, &QPushButton::clicked, this, &SubframeHome::saveCurrent);
+
+    _save_all = new QPushButton();
+    _save_all->setIcon(QIcon(path + "save.svg"));
+    _save_all->setText("Save all experiments");
+    _save_all->setMinimumWidth(_save_current->sizeHint().width());
+    _save_all->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
+    _save_all->setToolTip("Save all experiments to .nsx (HDF5) file");
+
+    _remove_current = new QPushButton();
+    _remove_current->setIcon(QIcon(path + "delete.svg"));
+    _remove_current->setText("Remove current experiment");
+    _remove_current->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
+    _remove_current->setToolTip("Remove selected experiment from list");
+    connect(_remove_current, &QPushButton::clicked, this, &SubframeHome::removeCurrent);
+
+
+    left_bot->addWidget(_save_current);
+    left_bot->addWidget(_save_all);
+    left_bot->addWidget(_remove_current);
+
+    left->addLayout(left_bot);
+
+    main_layout->addLayout(left);
+
+    _open_experiments_view->resizeColumnsToContents();
+}
+
+void SubframeHome::_setRightLayout(QHBoxLayout* main_layout)
+{
+    QVBoxLayout* right = new QVBoxLayout();
 
     _dataset_table = new QTableWidget(0, 6);
     _dataset_table->setEditTriggers(QAbstractItemView::NoEditTriggers);
@@ -154,9 +197,9 @@ void SubframeHome::_setLeftLayout(QHBoxLayout* main_layout)
     _unitcell_table->verticalHeader()->setVisible(false);
 
     // labels for tables
-    QLabel* lab_dataset = new QLabel("Datasets", this);
-    QLabel* lab_peaks = new QLabel("Peak collections", this);
-    QLabel* lab_unitcell = new QLabel("Unit cells", this);
+    QLabel* lab_dataset = new QLabel("Data sets in current experiment", this);
+    QLabel* lab_peaks = new QLabel("Peak collections in current experiment", this);
+    QLabel* lab_unitcell = new QLabel("Unit cells in current experiment", this);
 
     QHBoxLayout* lay_datasets_head = new QHBoxLayout();
     QVBoxLayout* lay_datasets = new QVBoxLayout();
@@ -176,13 +219,13 @@ void SubframeHome::_setLeftLayout(QHBoxLayout* main_layout)
     lay_unitcells->addWidget(lab_unitcell);
     lay_unitcells->addWidget(_unitcell_table);
 
-    left->addLayout(lay_datasets);
-    left->addLayout(lay_peaks);
-    left->addLayout(lay_unitcells);
+    right->addLayout(lay_datasets);
+    right->addLayout(lay_peaks);
+    right->addLayout(lay_unitcells);
 
     refreshTables();
 
-    main_layout->addLayout(left);
+    main_layout->addLayout(right);
 
     connect(
         _dataset_table, &QWidget::customContextMenuRequested, this,
@@ -193,64 +236,6 @@ void SubframeHome::_setLeftLayout(QHBoxLayout* main_layout)
     connect(
         _unitcell_table, &QWidget::customContextMenuRequested, this,
         &SubframeHome::setContextMenuUnitCellTable);
-}
-
-void SubframeHome::_setRightLayout(QHBoxLayout* main_layout)
-{
-    QVBoxLayout* right = new QVBoxLayout;
-
-    _open_experiments_model = std::make_unique<ExperimentModel>();
-    _open_experiments_view = new ExperimentTableView();
-    _open_experiments_view->setModel(_open_experiments_model.get());
-    connect(
-        _open_experiments_view, &ExperimentTableView::clicked, this,
-        &SubframeHome::_switchCurrentExperiment);
-
-    right->addWidget(_open_experiments_view);
-    _open_experiments_view->resizeColumnsToContents();
-
-    QHBoxLayout* right_bot = new QHBoxLayout();
-
-    QString path{":images/icons/"};
-    QString light{"lighttheme/"};
-    QString dark{"darktheme/"};
-
-    if (gGui->isDark()) // looks like we have a dark theme
-        path = path + dark;
-    else
-        path = path + light;
-
-    _save_current = new QPushButton();
-    _save_current->setIcon(QIcon(path + "save.svg"));
-    _save_current->setText("Save current experiment");
-    _save_current->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
-    _save_current->setToolTip("Save current experiment to .ohkl (HDF5) file");
-    connect(_save_current, &QPushButton::clicked, this, &SubframeHome::saveCurrent);
-
-    _save_all = new QPushButton();
-    _save_all->setIcon(QIcon(path + "save.svg"));
-    _save_all->setText("Save all experiments");
-    _save_all->setMinimumWidth(_save_current->sizeHint().width());
-    _save_all->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
-    _save_all->setToolTip("Save all experiments to .ohkl (HDF5) file");
-
-    _remove_current = new QPushButton();
-    _remove_current->setIcon(QIcon(path + "delete.svg"));
-    _remove_current->setText("Remove current experiment");
-    _remove_current->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
-    _remove_current->setToolTip("Remove selected experiment from list");
-    connect(_remove_current, &QPushButton::clicked, this, &SubframeHome::removeCurrent);
-
-
-    right_bot->addWidget(_save_current);
-    right_bot->addWidget(_save_all);
-    right_bot->addWidget(_remove_current);
-
-    right->addLayout(right_bot);
-
-    main_layout->addLayout(right);
-
-    _open_experiments_view->resizeColumnsToContents();
 }
 
 void SubframeHome::createNew()
