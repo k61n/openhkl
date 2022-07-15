@@ -64,7 +64,7 @@ SideBar::SideBar(QWidget* parent) : QWidget(parent), mCheckedAction(nullptr), mO
     QAction* experiment = addAction(QIcon(path + QString("experiment.svg")), "Experiment");
     QAction* finder = addAction(QIcon(path + QString("finder.svg")), "Find Peaks");
     QAction* filter = addAction(QIcon(path + QString("filter.svg")), "Filter Peaks");
-    QAction* indexer = addAction(QIcon(path + QString("indexer.svg")), "Indexer");
+    QAction* indexer = addAction(QIcon(path + QString("indexer.svg")), "Index");
     QAction* shapes = addAction(QIcon(path + QString("shapes.svg")), "Shape model");
     QAction* predictor = addAction(QIcon(path + QString("predictor.svg")), "Predict");
     QAction* refiner = addAction(QIcon(path + QString("refiner.svg")), "Refine");

@@ -203,40 +203,41 @@ void SubframeAutoIndexer::setParametersUp()
         f.addSpinBoxPair("Image range:", "(images) - range of detector images over which to index");
 
     std::tie(_d_min, _d_max) = f.addDoubleSpinBoxPair(
-        "d range:",
+        "Resolution (d) range:",
         QString::fromUtf8(
-            "(\u212B) - only attempt to index peaks over this d (Bragg's law) range "));
+            "(\u212B) - only attempt to index peaks over this d (from Bragg's law) range"));
 
     std::tie(_str_min, _str_max) = f.addDoubleSpinBoxPair(
-        "Strength:",
+        "Strength range:",
         QString::fromUtf8("(I/\u03C3) - only attempt to index peaks in this strength range"));
 
-    _gruber = f.addDoubleSpinBox("Gruber tol.:", "Tolerance for Gruber reduction");
+    _gruber = f.addDoubleSpinBox("Gruber tolerance:", "Tolerance for Gruber reduction");
 
-    _niggli = f.addDoubleSpinBox("Niggli tol.:", "Tolerance for Niggli reduction");
+    _niggli = f.addDoubleSpinBox("Niggli tolerance:", "Tolerance for Niggli reduction");
 
     _only_niggli = f.addCheckBox("Find Niggli cell only", 1);
 
     _max_cell_dimension = f.addDoubleSpinBox(
-        "Max. Cell dim.:", QString::fromUtf8("(\u212B) - maximum length of any lattice vector"));
+        "Max. Cell dimension:", QString::fromUtf8("(\u212B) - maximum length of any lattice vector"));
 
     _number_vertices = f.addSpinBox(
-        "Q Vertices:",
+        "Num. Q-space trial vectors:",
         "Number of points on reciprocal space unit sphere to test against candidate lattice "
         "vector");
 
-    _number_subdivisions = f.addSpinBox("Subdivisions:", "Number of histogram bins for FFT");
+    _number_subdivisions = f.addSpinBox(
+        "Num. FFT histogram bins:", "Number of histogram bins for Fast Fourier transform");
 
-    _number_solutions = f.addSpinBox("Unit Cells:", "Number of unit cell solutions to find");
+    _number_solutions = f.addSpinBox("Number of solutions:", "Number of unit cell solutions to find");
 
     _min_cell_volume = f.addDoubleSpinBox(
-        "Min. Volume:",
+        "Minimum Volume:",
         QString::fromUtf8("(\u212B^3) - discard candidate cells below this volume"));
 
-    _indexing_tolerance = f.addDoubleSpinBox("Indexing tol.:");
+    _indexing_tolerance = f.addDoubleSpinBox("Indexing tolerance:");
 
     _frequency_tolerance = f.addDoubleSpinBox(
-        "Frequency tol.:",
+        "Frequency tolerance:",
         "Minimum fraction of amplitude of the zeroth Fourier frequency to accept as a candidate "
         "lattice vector");
 
