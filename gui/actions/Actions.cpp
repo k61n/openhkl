@@ -103,7 +103,7 @@ void Actions::setupData()
         if (gSession->loadRawData())
             gGui->sideBar()->refreshCurrent();
     });
-    connect(add_hdf5, &QAction::triggered, []() { gSession->loadData(ohkl::DataFormat::NSX); });
+    connect(add_hdf5, &QAction::triggered, []() { gSession->loadData(ohkl::DataFormat::OHKL); });
     connect(add_hdf5, &QAction::triggered, []() { gSession->loadData(ohkl::DataFormat::NEXUS); });
     connect(add_hdf5, &QAction::triggered, []() { gGui->sideBar()->refreshCurrent(); });
     connect(add_nexus, &QAction::triggered, []() { gGui->sideBar()->refreshCurrent(); });

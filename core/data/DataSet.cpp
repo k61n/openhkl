@@ -61,7 +61,7 @@ void DataSet::_setReader(const DataFormat dataformat, const std::string& filenam
     nsxlog(Level::Debug, "Initializing a DataReader for the format ", static_cast<int>(dataformat));
 
     switch (dataformat) {
-        case DataFormat::NSX: _reader.reset(new HDF5DataReader(filename)); break;
+        case DataFormat::OHKL: _reader.reset(new HDF5DataReader(filename)); break;
         case DataFormat::NEXUS: _reader.reset(new NexusDataReader(filename)); break;
         case DataFormat::RAW:
             // NOTE: RawDataReader needs a list of frame files which should be given later
@@ -96,7 +96,7 @@ void DataSet::addDataFile(const std::string& filename, const std::string& extens
         const std::string ext = lowerCase(extension);
 
         if (ext == "nsx" || ext == "hdf")
-            datafmt = DataFormat::NSX;
+            datafmt = DataFormat::OHKL;
         else if (ext == "nxs")
             datafmt = DataFormat::NEXUS;
         else if (ext == "raw")

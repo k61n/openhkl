@@ -99,7 +99,7 @@ void SubframeHome::_setLeftLayout(QHBoxLayout* main_layout)
     _old_exp->setText("Load from file");
     _old_exp->setMinimumWidth(_new_exp->sizeHint().width());
     _old_exp->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
-    tooltip = "Load an existing experiment from a .nsx (HDF5) file";
+    tooltip = "Load an existing experiment from a .ohkl (HDF5) file";
     _old_exp->setToolTip(tooltip);
     connect(_old_exp, &QPushButton::clicked, this, &SubframeHome::loadFromFile);
 
@@ -224,7 +224,7 @@ void SubframeHome::_setRightLayout(QHBoxLayout* main_layout)
     _save_current->setIcon(QIcon(path + "save.svg"));
     _save_current->setText("Save current experiment");
     _save_current->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
-    _save_current->setToolTip("Save current experiment to .nsx (HDF5) file");
+    _save_current->setToolTip("Save current experiment to .ohkl (HDF5) file");
     connect(_save_current, &QPushButton::clicked, this, &SubframeHome::saveCurrent);
 
     _save_all = new QPushButton();
@@ -232,7 +232,7 @@ void SubframeHome::_setRightLayout(QHBoxLayout* main_layout)
     _save_all->setText("Save all experiments");
     _save_all->setMinimumWidth(_save_current->sizeHint().width());
     _save_all->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
-    _save_all->setToolTip("Save all experiments to .nsx (HDF5) file");
+    _save_all->setToolTip("Save all experiments to .ohkl (HDF5) file");
 
     _remove_current = new QPushButton();
     _remove_current->setIcon(QIcon(path + "delete.svg"));
@@ -339,7 +339,7 @@ void SubframeHome::saveCurrent(bool dialogue /* = false */)
     } else {
         QString default_name = loadDirectory + "/" + project->currentFileName();
         file_path = QFileDialog::getSaveFileName(
-            this, "Save the current experiment", default_name, "OpenHKL file (*.nsx)");
+            this, "Save the current experiment", default_name, "OpenHKL file (*.ohkl)");
 
         if (file_path.isEmpty())
             return;
