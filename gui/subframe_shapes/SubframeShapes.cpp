@@ -118,8 +118,10 @@ void SubframeShapes::setInputUp()
     _min_strength = f.addDoubleSpinBox(
         ("Minimum I/" + QString(QChar(0x03C3))),
         "Minimum strength (I/\u03C3) of peak to include in average");
-    _min_d = f.addDoubleSpinBox("Minimum d", "Minimum d (\u212B) of peak to include in average");
-    _max_d = f.addDoubleSpinBox("Maximum d", "Maximum d (\u212B) of peak to include in average");
+    _min_d = f.addDoubleSpinBox(
+        "Maximum resolution (min. d)", "Minimum d (\u212B) of peak to include in average");
+    _max_d = f.addDoubleSpinBox(
+        "Minimum resolution (max. d)", "Maximum d (\u212B) of peak to include in average");
     _peak_end = f.addDoubleSpinBox("Peak end", "(sigmas) - scaling factor for peak region");
     _bkg_begin = f.addDoubleSpinBox(
         "Background begin", "(sigmas) - scaling factor for lower limit of background region");
@@ -175,8 +177,10 @@ void SubframeShapes::setComputeShapesUp()
 
     _min_neighbours =
         f.addSpinBox("Minimum neighbours", "Fewest possible neighbours to compute a mean profile");
-    _pixel_radius = f.addDoubleSpinBox("Radius", "(pixels) - radius for neighbour search");
-    _frame_radius = f.addDoubleSpinBox("Frames", "(frames) - angular radius for neighbour search");
+    _pixel_radius = f.addDoubleSpinBox(
+        "Search radius (pixels)", "(pixels) - radius for neighbour search");
+    _frame_radius = f.addDoubleSpinBox(
+        "Search radius (images)", "(detector images) - angular \"radius\"\" for neighbour search");
     _interpolation_combo =
         f.addCombo("Interpolation type", "Weighting strategy for mean covariance calculation");
 
