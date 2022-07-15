@@ -71,8 +71,8 @@ void AtomicConvolver::updateKernel(int nrows, int ncols)
     _transformedKernel.resize(nrows * _halfCols);
 
     // Create plans
-    _forwardPlan = fftw_plan_dft_r2c_2d(nrows, ncols, _realData, _transformedData, FFTW_MEASURE);
-    _backwardPlan = fftw_plan_dft_c2r_2d(nrows, ncols, _transformedData, _realData, FFTW_MEASURE);
+    _forwardPlan = fftw_plan_dft_r2c_2d(nrows, ncols, _realData, _transformedData, FFTW_ESTIMATE);
+    _backwardPlan = fftw_plan_dft_c2r_2d(nrows, ncols, _transformedData, _realData, FFTW_ESTIMATE);
 
     // Precompute the transformation of the kernel
     std::memcpy(_realData, kernel.data(), nrows * ncols * sizeof(double));
