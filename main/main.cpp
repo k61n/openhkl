@@ -25,7 +25,7 @@ int main(int argc, char* argv[])
     QApplication app{argc, argv};
     QApplication::setApplicationName("OpenHKL");
     QApplication::setApplicationVersion("1.0");
-    QApplication::setOrganizationName("nsx");
+    QApplication::setOrganizationName("OpenHKL");
 
     app.setAttribute(Qt::AA_UseHighDpiPixmaps); // Fixes pixellated .svg icons
 
