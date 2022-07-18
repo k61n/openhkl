@@ -15,6 +15,7 @@
 #include "gui/subwindows/LogWindow.h"
 
 #include "base/utils/Logger.h"
+#include "gui/MainWin.h" // gGui
 #include "gui/widgets/LogWidget.h"
 
 #include <cstdio> // fopen, fclose, fprintf, FILE
@@ -80,7 +81,7 @@ void LogWindow::_connectUI()
 
 void LogWindow::saveLog()
 {
-    QSettings qset;
+    QSettings qset = gGui->qSettings();
     qset.beginGroup("RecentDirectories");
     QString logSaveDirectory = qset.value("logdir", QDir::homePath()).toString();
 

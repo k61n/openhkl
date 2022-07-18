@@ -156,20 +156,20 @@ void MainWin::resetViews()
 
 void MainWin::saveSettings() const
 {
-    QSettings s;
-    s.beginGroup("MainWindow");
-    s.setValue("geometry", saveGeometry());
-    s.setValue("state", saveState());
+    QSettings settings = qSettings();
+    settings.beginGroup("MainWindow");
+    settings.setValue("geometry", saveGeometry());
+    settings.setValue("state", saveState());
 }
 
 void MainWin::readSettings()
 {
     if (initialState_.isEmpty())
         initialState_ = saveState();
-    QSettings s;
-    s.beginGroup("MainWindow");
-    restoreGeometry(s.value("geometry").toByteArray());
-    restoreState(s.value("state").toByteArray());
+    QSettings settings = qSettings();
+    settings.beginGroup("MainWindow");
+    restoreGeometry(settings.value("geometry").toByteArray());
+    restoreState(settings.value("state").toByteArray());
 }
 
 void MainWin::closeEvent(QCloseEvent* event)
@@ -233,4 +233,9 @@ bool MainWin::isDark()
 void MainWin::refreshMenu()
 {
     menus_->toggleEntries();
+}
+
+QSettings MainWin::qSettings() const
+{
+    return QSettings("OpenHKL", "OpenHKL");
 }

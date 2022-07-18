@@ -122,7 +122,6 @@ void SubframeHome::_setLeftLayout(QHBoxLayout* main_layout)
         &SubframeHome::_switchCurrentExperiment);
 
     left->addWidget(_open_experiments_view);
-    _open_experiments_view->resizeColumnsToContents();
 
     QHBoxLayout* left_bot = new QHBoxLayout();
 
@@ -276,9 +275,9 @@ void SubframeHome::createNew()
 void SubframeHome::loadFromFile()
 {
     gGui->setReady(false);
-    QSettings s;
-    s.beginGroup("RecentDirectories");
-    QString loadDirectory = s.value("experiment", QDir::homePath()).toString();
+    QSettings settings = gGui->qSettings();
+    settings.beginGroup("RecentDirectories");
+    QString loadDirectory = settings.value("experiment", QDir::homePath()).toString();
 
     QString file_path = QFileDialog::getOpenFileName(
         this, "Load the current experiment", loadDirectory, "OpenHKL file (*.ohkl)");
@@ -287,7 +286,7 @@ void SubframeHome::loadFromFile()
         return;
 
     QFileInfo info(file_path);
-    s.setValue("experiment", info.absolutePath());
+    settings.setValue("experiment", info.absolutePath());
 
     try {
         gSession->loadExperimentFromFile(file_path);
@@ -295,6 +294,7 @@ void SubframeHome::loadFromFile()
         _open_experiments_model.reset();
         _open_experiments_model = std::make_unique<ExperimentModel>();
         _open_experiments_view->setModel(_open_experiments_model.get());
+        _open_experiments_view->resizeColumnsToContents();
         _updateLastLoadedList(
             QString::fromStdString(gSession->currentProject()->experiment()->name()), file_path);
         toggleUnsafeWidgets();
@@ -310,9 +310,9 @@ void SubframeHome::loadFromFile()
 void SubframeHome::saveCurrent(bool dialogue /* = false */)
 {
     gGui->setReady(false);
-    QSettings s;
-    s.beginGroup("RecentDirectories");
-    QString loadDirectory = s.value("experiment", QDir::homePath()).toString();
+    QSettings settings = gGui->qSettings();
+    settings.beginGroup("RecentDirectories");
+    QString loadDirectory = settings.value("experiment", QDir::homePath()).toString();
 
     auto* project = gSession->currentProject();
     if (!project)
@@ -332,7 +332,7 @@ void SubframeHome::saveCurrent(bool dialogue /* = false */)
 
     try {
         QFileInfo info(file_path);
-        s.setValue("experiment", info.absolutePath());
+        settings.setValue("experiment", info.absolutePath());
 
         gSession->currentProject()->saveToFile(file_path);
         _updateLastLoadedList(
@@ -367,37 +367,40 @@ void SubframeHome::_switchCurrentExperiment(const QModelIndex& index)
 
 void SubframeHome::saveSettings() const
 {
-    QSettings s;
-    s.beginGroup("RecentFiles");
-    s.setValue("last_experiment", QVariant::fromValue(_last_experiments));
-    s.setValue("last_file_paths", QVariant::fromValue(_last_file_paths));
+    QSettings settings = gGui->qSettings();
+    settings.beginWriteArray("RecentFiles");
+    for (std::size_t index = 0; index < _last_experiments.size(); ++index) {
+        settings.setArrayIndex(index);
+        settings.setValue("experiment_name", _last_experiments[index].first);
+        settings.setValue("file_path", _last_experiments[index].second);
+    }
+    settings.endArray();
     gGui->refreshMenu();
 }
 
 void SubframeHome::readSettings()
 {
-    QSettings s;
-    s.beginGroup("RecentFiles");
-    _last_experiments = s.value("last_experiments").value<QStringList>();
-    _last_file_paths = s.value("last_file_paths").value<QStringList>();
+    QSettings settings = gGui->qSettings();
+    int num_recent_files = settings.beginReadArray("RecentFiles");
+    for (std::size_t index = 0; index < num_recent_files; ++index) {
+        settings.setArrayIndex(index);
+        QString name = settings.value("experiment_name").toString();
+        QString path = settings.value("file_path").toString();
+        _last_experiments.append(qMakePair(name, path));
+    }
+    settings.endArray();
     gGui->refreshMenu();
 }
 
 void SubframeHome::_updateLastLoadedList(QString name, QString file_path)
 {
     if (_last_experiments.empty())
-        _last_experiments.prepend(name);
-    else if (_last_experiments[0] != name && _last_file_paths[0] != file_path)
-        _last_experiments.prepend(name);
-    if (_last_file_paths.empty())
-        _last_file_paths.prepend(file_path);
-    else if (_last_experiments[0] != name && _last_file_paths[0] != file_path)
-        _last_file_paths.prepend(file_path);
+        _last_experiments.prepend(qMakePair(name, file_path));
+    else if (_last_experiments[0].first != name && _last_experiments[0].second != file_path)
+        _last_experiments.prepend(qMakePair(name, file_path));
 
-    if (_last_experiments.size() > 5) {
+    if (_last_experiments.size() > 5)
         _last_experiments.removeLast();
-        _last_file_paths.removeLast();
-    }
 
     _updateLastLoadedWidget();
     refreshTables();
@@ -418,14 +421,15 @@ void SubframeHome::_updateLastLoadedWidget()
     else
         path = path + light;
 
-    QList<QStringList>::iterator it;
-    for (std::size_t index = 0; index < 5; ++index) {
+    if (_last_experiments.empty())
+        return;
+    for (std::size_t index = 0; index < _last_experiments.size(); ++index) {
         std::ostringstream oss;
-        oss << _last_experiments.at(index).toStdString() << " ("
-            << _last_file_paths.at(index).toStdString() << ")";
+        oss << _last_experiments.at(index).first.toStdString() << " ("
+            << _last_experiments.at(index).second.toStdString() << ")";
         QString fullname = QString::fromStdString(oss.str());
         QListWidgetItem* item = new QListWidgetItem(QIcon(path + "beaker.svg"), fullname);
-        item->setData(100, _last_file_paths.at(index));
+        item->setData(100, _last_experiments.at(index).second);
         _last_import_widget->addItem(item);
     }
 }
@@ -471,6 +475,7 @@ void SubframeHome::refreshTables() const
         return;
 
     _open_experiments_view->clearSpans();
+    _open_experiments_view->resizeColumnsToContents();
 
     try {
         auto b2s = [](bool a) { return !a ? QString("No") : QString("Yes"); };

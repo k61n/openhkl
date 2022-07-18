@@ -185,9 +185,9 @@ void DetectorWindow::set3rdPartyPeaksUp()
 
 void DetectorWindow::load3rdPartyPeaks()
 {
-    QSettings s;
-    s.beginGroup("RecentDirectories");
-    QString loadDirectory = s.value("experiment", QDir::homePath()).toString();
+    QSettings settings = gGui->qSettings();
+    settings.beginGroup("RecentDirectories");
+    QString loadDirectory = settings.value("experiment", QDir::homePath()).toString();
 
     QStringList files = QFileDialog::getOpenFileNames(
         this, "Load 3rd party peaks file", loadDirectory, "3rd party output (*.x)");

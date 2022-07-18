@@ -185,7 +185,7 @@ void Session::loadData(ohkl::DataFormat format)
         return;
     }
 
-    QSettings qset;
+    QSettings qset = gGui->qSettings();
     qset.beginGroup("RecentDirectories");
     QString loadDirectory = qset.value("data", QDir::homePath()).toString();
 
@@ -280,7 +280,7 @@ bool Session::loadRawData()
     }
 
     try {
-        QSettings qset;
+        QSettings qset = gGui->qSettings();
         qset.beginGroup("RecentDirectories");
         QString loadDirectory = qset.value("data_raw", QDir::homePath()).toString();
 

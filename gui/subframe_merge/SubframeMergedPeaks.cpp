@@ -43,7 +43,6 @@
 
 #include <fstream>
 #include <iomanip>
-#include <qobject.h>
 
 SubframeMergedPeaks::SubframeMergedPeaks()
 {
@@ -653,9 +652,9 @@ void SubframeMergedPeaks::refreshGraphTable(int column)
 
 void SubframeMergedPeaks::saveStatistics()
 {
-    QSettings s;
-    s.beginGroup("RecentDirectories");
-    QString loadDirectory = s.value("merged", QDir::homePath()).toString();
+    QSettings settings = gGui->qSettings();
+    settings.beginGroup("RecentDirectories");
+    QString loadDirectory = settings.value("merged", QDir::homePath()).toString();
 
     QString filename =
         QFileDialog::getSaveFileName(this, "Save the shell info", loadDirectory, "(*.txt)");
@@ -664,7 +663,7 @@ void SubframeMergedPeaks::saveStatistics()
         return;
 
     QFileInfo info(filename);
-    s.setValue("merged", info.absolutePath());
+    settings.setValue("merged", info.absolutePath());
 
     auto* expt = gSession->currentProject()->experiment();
     auto* merger = expt->peakMerger();
@@ -677,9 +676,9 @@ void SubframeMergedPeaks::saveMergedPeaks()
 {
     QString format = _merged_save_type->currentText();
 
-    QSettings s;
-    s.beginGroup("RecentDirectories");
-    QString loadDirectory = s.value("merged", QDir::homePath()).toString();
+    QSettings settings = gGui->qSettings();
+    settings.beginGroup("RecentDirectories");
+    QString loadDirectory = settings.value("merged", QDir::homePath()).toString();
 
     QString filename;
 
@@ -719,16 +718,16 @@ void SubframeMergedPeaks::saveMergedPeaks()
         QMessageBox::critical(this, "Error", "File open unsuccessful");
 
     QFileInfo info(filename);
-    s.setValue("merged", info.absolutePath());
+    settings.setValue("merged", info.absolutePath());
 }
 
 void SubframeMergedPeaks::saveUnmergedPeaks()
 {
     QString format = _merged_save_type->currentText();
 
-    QSettings s;
-    s.beginGroup("RecentDirectories");
-    QString loadDirectory = s.value("merged", QDir::homePath()).toString();
+    QSettings settings = gGui->qSettings();
+    settings.beginGroup("RecentDirectories");
+    QString loadDirectory = settings.value("merged", QDir::homePath()).toString();
 
     QString filename;
 
@@ -768,7 +767,7 @@ void SubframeMergedPeaks::saveUnmergedPeaks()
         QMessageBox::critical(this, "Error", "File open unsuccessful");
 
     QFileInfo info(filename);
-    s.setValue("merged", info.absolutePath());
+    settings.setValue("merged", info.absolutePath());
 }
 
 void SubframeMergedPeaks::toggleUnsafeWidgets()
