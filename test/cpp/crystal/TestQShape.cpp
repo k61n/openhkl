@@ -26,6 +26,8 @@
 #include "core/peak/Qs2Events.h"
 #include "core/instrument/InterpolatedState.h"
 
+#include <iostream>
+
 
 ohkl::Ellipsoid toDetectorSpace(const ohkl::Ellipsoid e, const ohkl::sptrDataSet data)
 {

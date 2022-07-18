@@ -23,7 +23,6 @@ endforeach()
 
 set(thirdparty_libs
     "3rdparty/qcustomplot/qcustomplot.lib"
-    "3rdparty/xsection/xsection.lib"
 	)
 
 foreach(third ${thirdparty_libs})

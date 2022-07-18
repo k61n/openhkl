@@ -20,6 +20,8 @@
 #include "core/instrument/InstrumentState.h"
 #include "core/loader/IDataReader.h"
 
+#include <iostream>
+
 namespace ohkl {
 
 class UnitTest_DataSet {

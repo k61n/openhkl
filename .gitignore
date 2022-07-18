@@ -14,7 +14,7 @@
 *.vtp
 *.spl
 
-build/
+build*/
 out/
 debug/
 qbuild/

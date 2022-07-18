@@ -113,7 +113,6 @@ UnitCell::UnitCell(const UnitCell& other)
     , _characterSigmas(other._characterSigmas)
     , _id(0)
 {
-    _material.reset(other._material ? other._material->clone() : nullptr);
 }
 
 UnitCell::UnitCell(double a, double b, double c, double alpha, double beta, double gamma)
@@ -128,7 +127,6 @@ UnitCell& UnitCell::operator=(const UnitCell& other)
         _a = other._a;
         _b_transposed = other._b_transposed;
         _NP = other._NP;
-        _material.reset(other._material ? other._material->clone() : nullptr);
         _centring = other._centring;
         _bravaisType = other._bravaisType;
         _Z = other._Z;
@@ -263,14 +261,6 @@ void UnitCell::printSelf(std::ostream& os) const
     os << _niggli.bravais << std::endl;
     os << _niggli.C << std::endl;
     os << _niggli.P << std::endl;
-    //
-    if (_material) {
-        os << *(_material) << std::endl;
-        os << "Molar mass: " << _material->molarMass() / g << "g.mol-1 \n";
-        os << "Density:" << _material->massDensity() / g_per_cm3 << "g.cm-3\n";
-        os << "Linear absorption coef: " << _material->muAbsorption() * cm << "cm-1 @ 1.798 AA \n";
-        os << "Linear incoherent coef: " << _material->muIncoherent() * cm << "cm-1";
-    }
 }
 
 std::string UnitCell::toString() const
@@ -362,26 +352,6 @@ unsigned int UnitCell::z() const
 void UnitCell::setZ(unsigned int Z)
 {
     _Z = Z;
-}
-
-xsection::Material* UnitCell::material()
-{
-    return _material.get();
-}
-
-const xsection::Material* UnitCell::material() const
-{
-    return _material.get();
-}
-
-void UnitCell::setMaterial(std::unique_ptr<xsection::Material> material)
-{
-    _material = std::move(material);
-}
-
-void UnitCell::setMaterial(const xsection::Material& material)
-{
-    _material.reset(material.clone());
 }
 
 void UnitCell::setSpaceGroup(const SpaceGroup& space_group)

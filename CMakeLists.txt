@@ -191,9 +191,6 @@ set(QCustomPlot_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/3rdparty/qcustomplot)
 #        VERSION=${QCustomPlot_VERSION}, LIB=${QCustomPlot_LIBRARIES},
 #        INCLUDE_DIR=${QCustomPlot_INCLUDE_DIR}")
 
-add_subdirectory(3rdparty/xsection)
-#set(XSection_LIBRARIES XSection)
-#set(XSection_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/3rdparty/xsection)
 
 ###################################################################################################
 #  Prepare for tests; static code analysis
