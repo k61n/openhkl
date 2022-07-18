@@ -35,7 +35,7 @@ std::vector<std::pair<MillerIndex, DetectorEvent>> algo::qMap2Events(
     const InstrumentStateList& states, const Detector& detector, const int n_intervals,
     sptrProgressHandler handler /* = nullptr */)
 {
-    nsxlog(
+    ohklLog(
         Level::Debug, "algo::Qs2Events::qVectorList2Events: processing ", sample_qs.size(),
         " q-vectors");
 
@@ -64,7 +64,7 @@ std::vector<std::pair<MillerIndex, DetectorEvent>> algo::qMap2Events(
     }
     if (handler)
         handler->setProgress(100);
-    nsxlog(
+    ohklLog(
         Level::Debug, "algo::Qs2Events::qVectorList2Events: finished; generated ", events.size(),
         " events");
     return events;
@@ -74,7 +74,7 @@ std::vector<DetectorEvent> algo::qVectorList2Events(
     const std::vector<ReciprocalVector>& sample_qs, const InstrumentStateList& states,
     const Detector& detector, const int n_intervals, sptrProgressHandler handler /* = nullptr */)
 {
-    nsxlog(
+    ohklLog(
         Level::Debug, "algo::Qs2Events::qVectorList2Events: processing ", sample_qs.size(),
         " q-vectors");
 
@@ -103,7 +103,7 @@ std::vector<DetectorEvent> algo::qVectorList2Events(
     }
     if (handler)
         handler->setProgress(100);
-    nsxlog(
+    ohklLog(
         Level::Debug, "algo::Qs2Events::qVectorList2Events: finished; generated ", events.size(),
         " events");
     return events;
@@ -194,7 +194,7 @@ std::vector<DetectorEvent> algo::qVector2Events(
 std::vector<DetectorEvent> algo::getDirectBeamEvents(
     const InstrumentStateList& states, const Detector& detector)
 {
-    nsxlog(Level::Debug, "algo::getDirectBeamEvents");
+    ohklLog(Level::Debug, "algo::getDirectBeamEvents");
 
     std::vector<DetectorEvent> events;
     const int nframes = states.size();

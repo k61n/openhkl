@@ -420,18 +420,18 @@ void Session::loadExperimentFromFile(QString filename)
     if (!project_ptr)
         return;
 
-    ohkl::nsxlog(
+    ohkl::ohklLog(
         ohkl::Level::Debug, "Session: Created Project for file '", filename.toStdString(), "'");
 
     try {
         project_ptr->experiment()->loadFromFile(filename.toStdString());
-        ohkl::nsxlog(
+        ohkl::ohklLog(
             ohkl::Level::Debug, "Session: Loaded data for Project created from file '",
             filename.toStdString(), "'");
 
         project_ptr->generatePeakModels();
 
-        ohkl::nsxlog(
+        ohkl::ohklLog(
             ohkl::Level::Debug, "Session: Generated PeakModels for Project created from file '",
             filename.toStdString(), "'");
 
@@ -446,7 +446,7 @@ void Session::loadExperimentFromFile(QString filename)
     addProject(std::move(project_ptr));
     onExperimentChanged();
 
-    ohkl::nsxlog(
+    ohkl::ohklLog(
         ohkl::Level::Debug, "Session: Finished creating Project for file '", filename.toStdString(),
         "'");
 }

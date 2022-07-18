@@ -1,8 +1,8 @@
-# Structure of the nsx file
+# Structure of the ohkl file
 # raw results can be obtained by `h5dump`
 ###########
 
-HDF5 "<filename>.nsx" {
+HDF5 "<filename>.ohkl" {
 GROUP "/" {
    ATTRIBUTE "name" {
       DATATYPE  H5T_STRING80

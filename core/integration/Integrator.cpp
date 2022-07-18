@@ -68,7 +68,7 @@ IPeakIntegrator* Integrator::getIntegrator(const IntegratorType integrator_type)
 void Integrator::integratePeaks(
     IntegratorType integrator_type, sptrDataSet data, PeakCollection* peaks)
 {
-    nsxlog(
+    ohklLog(
         Level::Info,
         "Integrator::integratePeaks: integrating PeakCollection '" + peaks->name() + "'");
     IPeakIntegrator* integrator = getIntegrator(integrator_type);
@@ -88,7 +88,7 @@ void Integrator::integratePeaks(
 void Integrator::integratePeaks(
     sptrDataSet data, PeakCollection* peaks, IntegrationParameters* params, ShapeModel* shapes)
 {
-    nsxlog(
+    ohklLog(
         Level::Info,
         "Integrator::integratePeaks: integrating PeakCollection '" + peaks->name() + "'");
     params->log(Level::Info);
@@ -109,7 +109,7 @@ void Integrator::integratePeaks(
 
 void Integrator::integrateFoundPeaks(PeakFinder* peak_finder)
 {
-    nsxlog(Level::Info, "Integrator::integrateFoundPeaks");
+    ohklLog(Level::Info, "Integrator::integrateFoundPeaks");
     const DataMap* data = _data_handler->getDataMap();
     IPeakIntegrator* integrator = getIntegrator(IntegratorType::PixelSum);
     integrator->setNNumors(data->size());
@@ -137,7 +137,7 @@ void Integrator::integrateShapeModel(
     std::vector<Peak3D*> fit_peaks, sptrDataSet data, ShapeModel* shape_model, const AABB& aabb,
     const ShapeModelParameters& params)
 {
-    nsxlog(Level::Info, "Integrator::integrateShapeModel");
+    ohklLog(Level::Info, "Integrator::integrateShapeModel");
     ShapeIntegrator integrator{shape_model, aabb, params.nbins_x, params.nbins_y, params.nbins_z};
     integrator.setNNumors(1);
     if (_handler)

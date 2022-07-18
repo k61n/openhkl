@@ -92,7 +92,7 @@ void DataQuality::log() const
         << std::setw(8) << "eRmer" << std::setw(8) << "Rpim" << std::setw(8) << "eRpim"
         << std::setw(8) << "CChalf" << std::setw(8) << "Cstar" << std::setw(8) << "Compl.";
     oss << std::endl << toString();
-    nsxlog(Level::Info, oss.str());
+    ohklLog(Level::Info, oss.str());
 }
 
 void DataResolution::log() const
@@ -106,7 +106,7 @@ void DataResolution::log() const
     for (auto shell : shells) {
         oss << std::endl << shell.toString();
     }
-    nsxlog(Level::Info, oss.str());
+    ohklLog(Level::Info, oss.str());
 }
 
 } // namespace ohkl

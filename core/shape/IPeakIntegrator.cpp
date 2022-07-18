@@ -26,16 +26,16 @@ namespace ohkl {
 
 void IntegrationParameters::log(const Level& level) const
 {
-    nsxlog(level, "Integration parameters:");
-    nsxlog(level, "peak_end               = ", peak_end);
-    nsxlog(level, "bkg_begin              = ", bkg_begin);
-    nsxlog(level, "bkg_end                = ", bkg_end);
-    nsxlog(level, "neighbour_range_pixels = ", neighbour_range_pixels);
-    nsxlog(level, "neighbour_range_frames = ", neighbour_range_frames);
-    nsxlog(level, "fit_center             = ", fit_center);
-    nsxlog(level, "fit_cov                = ", fit_cov);
-    nsxlog(level, "integrator_type        = ", static_cast<int>(integrator_type));
-    nsxlog(level, "region_type            = ", static_cast<int>(region_type));
+    ohklLog(level, "Integration parameters:");
+    ohklLog(level, "peak_end               = ", peak_end);
+    ohklLog(level, "bkg_begin              = ", bkg_begin);
+    ohklLog(level, "bkg_end                = ", bkg_end);
+    ohklLog(level, "neighbour_range_pixels = ", neighbour_range_pixels);
+    ohklLog(level, "neighbour_range_frames = ", neighbour_range_frames);
+    ohklLog(level, "fit_center             = ", fit_center);
+    ohklLog(level, "fit_cov                = ", fit_cov);
+    ohklLog(level, "integrator_type        = ", static_cast<int>(integrator_type));
+    ohklLog(level, "region_type            = ", static_cast<int>(region_type));
 }
 
 IPeakIntegrator::IPeakIntegrator()
@@ -71,7 +71,7 @@ void IPeakIntegrator::integrate(
     std::ostringstream oss;
     std::string status = "Integrating " + std::to_string(peaks.size()) + " peaks...";
     oss << "Integrating " << peaks.size() << " peaks in numor " << n_numor << " of " << _n_numors;
-    nsxlog(Level::Info, "IPeakIntegrator::integrate: integrating ", peaks.size(), " peaks");
+    ohklLog(Level::Info, "IPeakIntegrator::integrate: integrating ", peaks.size(), " peaks");
     if (_handler) {
         _handler->setStatus(oss.str().c_str());
         _handler->setProgress(0);
@@ -111,13 +111,13 @@ void IPeakIntegrator::integrate(
     }
 
     // only integrate the peaks with valid integration regions
-    nsxlog(Level::Debug, "IPeakIntegrator::integrate: remove invalid regions");
+    ohklLog(Level::Debug, "IPeakIntegrator::integrate: remove invalid regions");
     it = std::remove_if(peaks.begin(), peaks.end(), [&](Peak3D*& p) {
         return regions.find(p) == regions.end();
     });
     peaks.erase(it, peaks.end());
 
-    nsxlog(Level::Debug, "IPeakIntegrator::integrate: frames loop");
+    ohklLog(Level::Debug, "IPeakIntegrator::integrate: frames loop");
     int nfailures = 0;
     for (idx = 0; idx < data->nFrames(); ++idx) {
         Eigen::MatrixXd current_frame;
@@ -177,7 +177,7 @@ void IPeakIntegrator::integrate(
             _handler->setProgress(progress);
         }
     }
-    nsxlog(Level::Info, "IPeakIntegrator::integrate: end; ", nfailures, " failures");
+    ohklLog(Level::Info, "IPeakIntegrator::integrate: end; ", nfailures, " failures");
 }
 
 void IPeakIntegrator::setHandler(sptrProgressHandler handler)

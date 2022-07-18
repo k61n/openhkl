@@ -34,7 +34,7 @@ const UnitCellList* UnitCellHandler::getCellList() const
 
 void UnitCellHandler::addUnitCell(const std::string& name, const UnitCell& unit_cell)
 {
-    nsxlog(Level::Info, "UnitCellHandler::addUnitCell: '", name, "': ", unit_cell.toString());
+    ohklLog(Level::Info, "UnitCellHandler::addUnitCell: '", name, "': ", unit_cell.toString());
     sptrUnitCell uc = std::make_shared<UnitCell>(unit_cell);
     uc->setName(name);
     uc->setId(_last_index++);
@@ -43,7 +43,7 @@ void UnitCellHandler::addUnitCell(const std::string& name, const UnitCell& unit_
 
 void UnitCellHandler::addUnitCell(const std::string& name, sptrUnitCell unit_cell)
 {
-    nsxlog(Level::Info, "UnitCellHandler::addUnitCell: '", name, "': ", unit_cell->toString());
+    ohklLog(Level::Info, "UnitCellHandler::addUnitCell: '", name, "': ", unit_cell->toString());
     unit_cell->setName(name);
     unit_cell->setId(_last_index++);
     _unit_cells.push_back(std::move(unit_cell));

@@ -39,17 +39,17 @@ namespace ohkl {
 void ShapeModelParameters::log(const Level& level) const
 {
     IntegrationParameters::log(level);
-    nsxlog(level, "Shape Collection parameters:");
-    nsxlog(level, "d_min     = ", d_min);
-    nsxlog(level, "d_max     = ", d_max);
-    nsxlog(level, "strength_min           = ", strength_min);
-    nsxlog(level, "kabsch_coords          = ", kabsch_coords);
-    nsxlog(level, "nbins_x                = ", nbins_x);
-    nsxlog(level, "nbins_y                = ", nbins_y);
-    nsxlog(level, "nbins_z                = ", nbins_z);
-    nsxlog(level, "min_n_neighbors        = ", min_n_neighbors);
-    nsxlog(level, "sigma_m                = ", sigma_m);
-    nsxlog(level, "sigma_d                = ", sigma_d);
+    ohklLog(level, "Shape Collection parameters:");
+    ohklLog(level, "d_min     = ", d_min);
+    ohklLog(level, "d_max     = ", d_max);
+    ohklLog(level, "strength_min           = ", strength_min);
+    ohklLog(level, "kabsch_coords          = ", kabsch_coords);
+    ohklLog(level, "nbins_x                = ", nbins_x);
+    ohklLog(level, "nbins_y                = ", nbins_y);
+    ohklLog(level, "nbins_z                = ", nbins_z);
+    ohklLog(level, "min_n_neighbors        = ", min_n_neighbors);
+    ohklLog(level, "sigma_m                = ", sigma_m);
+    ohklLog(level, "sigma_d                = ", sigma_d);
 }
 
 static Eigen::Matrix3d from_cholesky(const std::array<double, 6>& components)
@@ -392,7 +392,7 @@ std::optional<Eigen::Matrix3d> ShapeModel::meanCovariance(
 
 void ShapeModel::setPredictedShapes(PeakCollection* peaks)
 {
-    nsxlog(
+    ohklLog(
         Level::Info, "ShapeModel: Computing shapes of ", peaks->numberOfPeaks(),
         " calculated peaks");
 
@@ -427,7 +427,7 @@ void ShapeModel::setPredictedShapes(PeakCollection* peaks)
             _handler->setProgress(progress);
         }
     }
-    nsxlog(Level::Info, "ShapeModel: finished computing shapes, ", n_bad_shapes, " failures");
+    ohklLog(Level::Info, "ShapeModel: finished computing shapes, ", n_bad_shapes, " failures");
 }
 
 std::array<double, 6> ShapeModel::choleskyD() const
@@ -478,7 +478,7 @@ AABB ShapeModel::getAABB()
 void ShapeModel::integrate(
     std::vector<Peak3D*> peaks, std::set<ohkl::sptrDataSet> datalist, sptrProgressHandler handler)
 {
-    nsxlog(Level::Info, "ShapeModel::integrate: integrating ", peaks.size(), " peaks");
+    ohklLog(Level::Info, "ShapeModel::integrate: integrating ", peaks.size(), " peaks");
     ShapeIntegrator integrator(
         this, getAABB(), _params->nbins_x, _params->nbins_y, _params->nbins_z);
     ohkl::IntegrationParameters int_params{};
@@ -497,12 +497,12 @@ void ShapeModel::integrate(
         integrator.integrate(peaks, this, data, n_numor);
         ++n_numor;
     }
-    nsxlog(Level::Info, "ShapeModel::integrate: finished integrating shapes");
+    ohklLog(Level::Info, "ShapeModel::integrate: finished integrating shapes");
 }
 
 void ShapeModel::build(PeakCollection* peaks, sptrDataSet data)
 {
-    nsxlog(Level::Info, "ShapeModel::build: building shape model");
+    ohklLog(Level::Info, "ShapeModel::build: building shape model");
     peaks->computeSigmas();
     _params->sigma_d = peaks->sigmaD();
     _params->sigma_m = peaks->sigmaM();
@@ -523,7 +523,7 @@ void ShapeModel::build(PeakCollection* peaks, sptrDataSet data)
         fit_peaks.push_back(peak);
     }
 
-    nsxlog(Level::Info, "ShapeModel::build: integrating ", fit_peaks.size(), " peaks");
+    ohklLog(Level::Info, "ShapeModel::build: integrating ", fit_peaks.size(), " peaks");
     ShapeIntegrator integrator(
         this, getAABB(), _params->nbins_x, _params->nbins_y, _params->nbins_z);
     ohkl::IntegrationParameters int_params{};
@@ -533,10 +533,10 @@ void ShapeModel::build(PeakCollection* peaks, sptrDataSet data)
     integrator.setNNumors(1);
     integrator.setParameters(int_params);
     integrator.integrate(fit_peaks, this, data, 1);
-    nsxlog(Level::Info, "ShapeModel::build: finished integrating shapes");
-    nsxlog(Level::Info, "ShapeModel::build: updating fit");
+    ohklLog(Level::Info, "ShapeModel::build: finished integrating shapes");
+    ohklLog(Level::Info, "ShapeModel::build: updating fit");
     updateFit(1000);
-    nsxlog(Level::Info, "ShapeModel::build: done");
+    ohklLog(Level::Info, "ShapeModel::build: done");
 }
 
 void ShapeModel::setHandler(sptrProgressHandler handler)

@@ -93,14 +93,14 @@ bool BaseHDF5DataReader::initRead()
                 dataset_name = data_collections.getObjnameByIdx(0);
                 // Warn about automatic selection of the first dataset when multiple datasets exist
                 if (object_num >= 1) {
-                    nsxlog(
+                    ohklLog(
                         ohkl::Level::Warning, "HDF5 file '", _filename, "' has ", object_num,
                         " DataCollections; the first one, '", dataset_name, "', will be taken.");
                 }
             }
         }
 
-        nsxlog(
+        ohklLog(
             ohkl::Level::Info, "Initializing BaseHDF5DataReader to read '", _filename,
             "', dataset '", dataset_name, "'");
 
@@ -145,7 +145,7 @@ bool BaseHDF5DataReader::initRead()
     }
 
     // Read the metadata group and store in metadata
-    nsxlog(
+    ohklLog(
         ohkl::Level::Debug, "Reading metadata attribute of '", _filename, "', dataset '",
         dataset_name, "'");
     const H5::StrType strVarType(H5::PredType::C_S1, H5T_VARIABLE);
@@ -192,7 +192,7 @@ bool BaseHDF5DataReader::initRead()
 
     const std::size_t nframes = _dataset_out->metadata().key<int>(ohkl::at_frameCount);
 
-    nsxlog(
+    ohklLog(
         ohkl::Level::Debug, "Reading detector state of '", _filename, "', dataset '", dataset_name,
         "'");
 
@@ -234,7 +234,7 @@ bool BaseHDF5DataReader::initRead()
     // Use natural units internally (rad)
     dm *= deg;
 
-    nsxlog(
+    ohklLog(
         ohkl::Level::Debug, "Reading gonio state of '", _filename, "', dataset '", dataset_name,
         "'");
 
@@ -302,7 +302,7 @@ void BaseHDF5DataReader::open()
         return;
 
     try {
-        nsxlog(ohkl::Level::Info, "Opening datafile '", _filename, "' for read-only access");
+        ohklLog(ohkl::Level::Info, "Opening datafile '", _filename, "' for read-only access");
         _file.reset();
         _file.reset(new H5::H5File(_filename.c_str(), H5F_ACC_RDONLY));
     } catch (...) {
@@ -318,7 +318,7 @@ void BaseHDF5DataReader::open()
         _blosc_filter.reset();
         _blosc_filter.reset(new HDF5BloscFilter);
 
-        nsxlog(ohkl::Level::Debug, "Reading dataset '", dataset_name, "',");
+        ohklLog(ohkl::Level::Debug, "Reading dataset '", dataset_name, "',");
         _dataset.reset(new H5::DataSet(_file->openDataSet("/" + _dataKey(dataset_name))));
         // Dataspace of the dataset /counts
         _space.reset(new H5::DataSpace(_dataset->getSpace()));
@@ -336,7 +336,7 @@ void BaseHDF5DataReader::open()
     _dataset_out->datashape[1] = nrows;
     _dataset_out->datashape[2] = nframes;
 
-    nsxlog(
+    ohklLog(
         ohkl::Level::Info, "Data shape: (frames = ", nframes, ", rows = ", nrows,
         ", columns = ", ncols, ")");
 
@@ -352,7 +352,7 @@ void BaseHDF5DataReader::close()
     if (!_isOpened)
         return;
 
-    nsxlog(ohkl::Level::Info, "Closing datafile '", _filename, "'");
+    ohklLog(ohkl::Level::Info, "Closing datafile '", _filename, "'");
 
     _file->close();
     _space->close();
@@ -365,7 +365,7 @@ void BaseHDF5DataReader::close()
     _isOpened = false;
 }
 
-std::string BaseHDF5DataReader::NSXfilepath() const
+std::string BaseHDF5DataReader::OHKLfilepath() const
 {
     return _filename;
 }

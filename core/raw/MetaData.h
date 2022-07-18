@@ -82,7 +82,7 @@ template <typename _type> void MetaData::add(const std::string& key, const _type
 {
     // Warn against unrecognized keys
     if (ohkl::RecognizedMetaDataKeys.count(key) == 0) {
-        nsxlog(ohkl::Level::Warning, __FUNCTION__, ": MetaData key '" + key + "' not recognized.");
+        ohklLog(ohkl::Level::Warning, __FUNCTION__, ": MetaData key '" + key + "' not recognized.");
     }
 
     // First, make sure the key is already in the keyset

@@ -30,9 +30,9 @@ namespace ohkl {
 void PredictionParameters::log(const Level& level) const
 {
     IntegrationParameters::log(level);
-    nsxlog(level, "Peak prediction parameters: ");
-    nsxlog(level, "d_min     = ", d_min);
-    nsxlog(level, "d_max     = ", d_max);
+    ohklLog(level, "Peak prediction parameters: ");
+    ohklLog(level, "d_min     = ", d_min);
+    ohklLog(level, "d_max     = ", d_max);
 }
 
 Predictor::Predictor() : _handler(nullptr)
@@ -50,7 +50,7 @@ std::vector<Peak3D*> Predictor::buildPeaksFromMillerIndices(
         ReciprocalVector q(idx.rowVector().cast<double>() * BU);
         qs.push_back({idx, q});
     }
-    nsxlog(
+    ohklLog(
         Level::Info, "Predictor::buildPeaksFromMillerIndices: ", qs.size(),
         " q-vectors generated from ", hkls.size(), " Miller indices");
 
@@ -69,7 +69,7 @@ std::vector<Peak3D*> Predictor::buildPeaksFromMillerIndices(
             peaks.push_back(peak);
         }
     }
-    nsxlog(
+    ohklLog(
         Level::Info, "Predictor::buildPeaksFromMillerIndices: ", peaks.size(),
         " peaks generated from ", hkls.size(), " Miller indices");
     return peaks;

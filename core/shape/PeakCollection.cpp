@@ -178,11 +178,11 @@ void PeakCollection::computeSigmas()
     cov /= npeaks;
     _sigma_d = std::sqrt(0.5 * (cov(0, 0) + cov(1, 1)));
     _sigma_m = std::sqrt(cov(2, 2));
-    nsxlog(
+    ohklLog(
         Level::Info, "PeakCollection::computeSigmas: Beam divergence sigma and mosaicity sigma:");
-    nsxlog(Level::Info, "PeakCollection: '" + _name + "'");
-    nsxlog(Level::Info, "sigma_d = ", _sigma_d);
-    nsxlog(Level::Info, "sigma_m = ", _sigma_m);
+    ohklLog(Level::Info, "PeakCollection: '" + _name + "'");
+    ohklLog(Level::Info, "sigma_d = ", _sigma_d);
+    ohklLog(Level::Info, "sigma_m = ", _sigma_m);
 }
 
 double PeakCollection::sigmaD() const
@@ -234,7 +234,7 @@ int PeakCollection::countEnabled() const
 
 void PeakCollection::buildShapeModel(sptrDataSet data, const ShapeModelParameters& params)
 {
-    nsxlog(Level::Info, "PeakCollection::buildShapeModel");
+    ohklLog(Level::Info, "PeakCollection::buildShapeModel");
     _shape_model = std::make_unique<ShapeModel>(std::make_shared<ShapeModelParameters>(params));
     _shape_model->parameters()->log(Level::Info);
     computeSigmas();
@@ -247,7 +247,7 @@ void PeakCollection::buildShapeModel(sptrDataSet data, const ShapeModelParameter
     _shape_model->integrate(fit_peak_list, datalist);
 
     _shape_model->updateFit(1000); // This does nothing!! - zamaan
-    nsxlog(Level::Info, "PeakCollection::buildShapeModel finished");
+    ohklLog(Level::Info, "PeakCollection::buildShapeModel finished");
 }
 
 void PeakCollection::setUnitCell(const sptrUnitCell& cell)

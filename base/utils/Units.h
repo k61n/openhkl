@@ -23,7 +23,7 @@
 
 namespace ohkl {
 
-//! The units used internally in NSXTOOL.
+//! The units used internally in OpenHKL.
 
 //! The units are defined in the international units system aka SI
 //! The Units namespace allows users of the library to specify their units when

@@ -48,7 +48,7 @@ DataSet::DataSet(const std::string& dataset_name, Diffractometer* diffractometer
 {
     setName(dataset_name);
     if (!_diffractometer)
-        nsxlog(Level::Warning, "DataSet '", dataset_name, "' has no diffractometer.");
+        ohklLog(Level::Warning, "DataSet '", dataset_name, "' has no diffractometer.");
     if (_diffractometer && _diffractometer->detector()) {
         datashape[0] = nCols();
         datashape[1] = nRows();
@@ -58,7 +58,7 @@ DataSet::DataSet(const std::string& dataset_name, Diffractometer* diffractometer
 
 void DataSet::_setReader(const DataFormat dataformat, const std::string& filename)
 {
-    nsxlog(Level::Debug, "Initializing a DataReader for the format ", static_cast<int>(dataformat));
+    ohklLog(Level::Debug, "Initializing a DataReader for the format ", static_cast<int>(dataformat));
 
     switch (dataformat) {
         case DataFormat::OHKL: _reader.reset(new HDF5DataReader(filename)); break;
@@ -129,7 +129,7 @@ void DataSet::setRawReaderParameters(const RawDataReaderParameters& params)
     RawDataReader& rawreader = *static_cast<RawDataReader*>(_reader.get());
     rawreader.setParameters(params);
 
-    nsxlog(
+    ohklLog(
         Level::Info,
         "DataSet '" + _name + "': RawDataReader parameters set."); // TODO: log parameter details
 }
@@ -283,14 +283,14 @@ const Detector& DataSet::detector() const
 void DataSet::setName(const std::string& name)
 {
     if (name.empty()) {
-        nsxlog(Level::Warning, "Given name for the DataSet is empty.");
+        ohklLog(Level::Warning, "Given name for the DataSet is empty.");
         return;
     }
 
     const std::string invalid_chars{"\\/"};
     const std::size_t sep = name.find_first_of(invalid_chars);
     if (sep != std::string::npos) {
-        nsxlog(
+        ohklLog(
             Level::Warning, "Given name, '", name,
             "' for the DataSet includes disallowed characters.");
         throw std::invalid_argument(
