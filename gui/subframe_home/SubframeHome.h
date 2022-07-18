@@ -24,12 +24,12 @@
 
 #include <QHBoxLayout>
 #include <QListWidget>
+#include <QPair>
 #include <QPushButton>
 #include <QSplitter>
 #include <QTableWidget>
 #include <QVBoxLayout>
 #include <QWidget>
-#include <qpushbutton.h>
 
 class InputFilesWindow;
 class InstrumentDataWindow;
@@ -99,7 +99,7 @@ class SubframeHome : public QWidget {
     ExperimentTableView* _open_experiments_view;
     std::unique_ptr<ExperimentModel> _open_experiments_model;
 
-    QList<QStringList> _last_imports;
+    QList<QPair<QString, QString>> _last_experiments;
     QListWidget* _last_import_widget;
 
     QTableWidget* _dataset_table;

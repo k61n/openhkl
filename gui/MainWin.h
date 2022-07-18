@@ -20,6 +20,7 @@
 
 #include <QLabel>
 #include <QPixmap>
+#include <QSettings>
 #include <QStackedWidget>
 #include <QStatusBar>
 
@@ -82,6 +83,8 @@ class MainWin : public QMainWindow {
 
     //! Get the Sidebar
     SideBar* sideBar() { return _side_bar; };
+    //! Get a QSettings object
+    QSettings qSettings() const;
 
  public slots:
     void setReady(bool ready);

@@ -48,7 +48,7 @@ void PeakCollectionItem::setPeakCollection(const ohkl::PeakCollection* peak_coll
 {
     if (!peak_collection) {
         throw std::runtime_error(
-            "Error eakCollectionItem::setPeakCollection: No valid PeakCollection was given");
+            "Error PeakCollectionItem::setPeakCollection: No valid PeakCollection was given");
     }
     _peak_collection = peak_collection;
 
