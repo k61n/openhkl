@@ -182,6 +182,8 @@ SubframeExperiment::SubframeExperiment()
             [=](){
                 lineplot_box->setVisible(_detector_widget->modeCombo()->currentIndex() == 4);
                 intensity_plot_box->setVisible(_detector_widget->modeCombo()->currentIndex() == 7);
+               // auto plot = getPlot();
+               // plot->clear();
             }
     );
 
@@ -227,7 +229,7 @@ SubframeExperiment::SubframeExperiment()
 
     connect(_calc_intensity, &QPushButton::clicked, this,
         [=](){
-            nsx::Experiment* expt = gSession->currentProject()->experiment();
+            ohkl::Experiment* expt = gSession->currentProject()->experiment();
             auto data = expt->getDataMap()->at(_detector_widget->dataCombo()->currentText().toStdString());
             bool hasHistograms = data->getNumberHistograms() > 0;
 
@@ -288,7 +290,7 @@ SubframeExperiment::SubframeExperiment()
 
 void SubframeExperiment::updateRanges()
 {
-    nsx::Experiment* expt = gSession->currentProject()->experiment();
+    ohkl::Experiment* expt = gSession->currentProject()->experiment();
     auto data = expt->getDataMap()->at(_detector_widget->dataCombo()->currentText().toStdString());
 
     gsl_histogram* histo = nullptr;
@@ -314,7 +316,7 @@ void SubframeExperiment::updateRanges()
 
 void SubframeExperiment::plotIntensities()
 {
-    nsx::Experiment* expt = gSession->currentProject()->experiment();
+    ohkl::Experiment* expt = gSession->currentProject()->experiment();
     auto data = expt->getDataMap()->at(_detector_widget->dataCombo()->currentText().toStdString());
 
     if (!data) return;
@@ -395,7 +397,7 @@ void SubframeExperiment::toggleUnsafeWidgets()
 
     _calc_intensity->setEnabled(hasData);
 
-    nsx::Experiment* expt = gSession->currentProject()->experiment();
+    ohkl::Experiment* expt = gSession->currentProject()->experiment();
     auto data = expt->getDataMap()->at(_detector_widget->dataCombo()->currentText().toStdString());
 
     bool hasHistograms = data->getNumberHistograms() > 0;
