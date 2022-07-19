@@ -70,13 +70,7 @@ SubframeExperiment::SubframeExperiment()
 
     int nLineplotMaxPoints = 1000;
     int nLineplotMinPoints = 10;
-
-    _intensity_number_datapoints = new QSlider(Qt::Horizontal);
-    _intensity_number_current = new QDoubleSpinBox();
-
-    _lineplot_number_datapoints = new QSlider(Qt::Horizontal);
-    _lineplot_number_current = new QDoubleSpinBox();
-
+ 
     QWidget* ndatapoint_widget_intensity = new QWidget;
     QWidget* ndatapoint_widget_lineplot = new QWidget;
 
@@ -84,11 +78,9 @@ SubframeExperiment::SubframeExperiment()
     QHBoxLayout* hbox2 = new QHBoxLayout(ndatapoint_widget_lineplot);
 
     hbox->addWidget(new QLabel("Number of datapoints:"));
-    hbox->addWidget(_intensity_number_datapoints);
     hbox->addWidget(_intensity_number_current);
 
     hbox2->addWidget(new QLabel("Number of datapoints:"));
-    hbox2->addWidget(_lineplot_number_datapoints);
     hbox2->addWidget(_lineplot_number_current);
 
     f.addWidget(ndatapoint_widget_intensity,0);
@@ -111,28 +103,18 @@ SubframeExperiment::SubframeExperiment()
     _intensity_number_current->setMaximumWidth(100);
     _intensity_number_current->setMaximum(nIntensityMaxPoints);
     _intensity_number_current->setMinimum(nIntensityMinPoints);
-    _intensity_number_datapoints->setMaximumWidth(250);
+    
     _intensity_number_current->setDecimals(0);
-    _intensity_number_current->setValue(nIntensityMinPoints);
-    _intensity_number_datapoints->setValue(nIntensityMinPoints);
-    _intensity_number_datapoints->setMinimumWidth(1);
-    _intensity_number_datapoints->setMaximum(nIntensityMaxPoints);
-    _intensity_number_datapoints->setMinimum(nIntensityMinPoints);
-    _intensity_number_datapoints->setValue(nIntensityMinPoints);
-
-    _lineplot_number_datapoints->setMinimumWidth(1);
-    _lineplot_number_datapoints->setMaximum(nLineplotMaxPoints);
-    _lineplot_number_datapoints->setMinimum(nLineplotMinPoints);
+    _intensity_number_current->setValue(nIntensityMinPoints); 
     _lineplot_number_current->setMaximum(nLineplotMaxPoints);
-    _lineplot_number_current->setMinimum(nLineplotMinPoints);
-    _lineplot_number_datapoints->setValue(nLineplotMinPoints);
+    _lineplot_number_current->setMinimum(nLineplotMinPoints); 
 
     _lineplot_number_current->setMaximumWidth(250);
     _lineplot_number_current->setMinimum(nLineplotMinPoints);
-    _lineplot_number_datapoints->setMaximumWidth(250);
+ 
     _lineplot_number_current->setDecimals(0);
     _lineplot_number_current->setValue(nLineplotMinPoints);
-    _lineplot_number_datapoints->setValue(nLineplotMinPoints);
+ 
 
     _minX = f.addDoubleSpinBox("Minimal x value:");
     _maxX = f.addDoubleSpinBox("Maximum x value:");
@@ -233,7 +215,7 @@ SubframeExperiment::SubframeExperiment()
 
             if (!data) return;
             if (hasHistograms) data->clearHistograms();
-            data->getIntensityHistogram(_intensity_number_datapoints->value());
+            data->getIntensityHistogram(_intensity_number_current->value());
 
             _maxX->setMaximum(data->nCols()*data->nRows());
             _minX->setMaximum(data->nCols()*data->nRows()-1);
@@ -243,36 +225,12 @@ SubframeExperiment::SubframeExperiment()
             updateRanges();
             toggleUnsafeWidgets();
         }
-    );
-
-    connect(_intensity_number_datapoints, &QSlider::valueChanged, this,
-        [=](){
-            _intensity_number_current->setValue(_intensity_number_datapoints->value());
-        }
-    );
-
-    connect(_lineplot_number_datapoints, &QSlider::valueChanged, this,
-        [=](){
-            _lineplot_number_current->setValue(_lineplot_number_datapoints->value());
-        }
-    );
+    );   
 
     connect(_detector_widget->scroll(), &QScrollBar::valueChanged, this,
         [=](){
             updateRanges();
             plotIntensities();
-        }
-    );
-
-    connect(_intensity_number_current, QOverload<double>::of(&QDoubleSpinBox::valueChanged), this,
-        [=](){
-           _intensity_number_datapoints->setValue(_intensity_number_current->value());
-        }
-    );
-
-    connect(_lineplot_number_current, QOverload<double>::of(&QDoubleSpinBox::valueChanged), this,
-        [=](){
-           _lineplot_number_datapoints->setValue(_lineplot_number_current->value());
         }
     );
 

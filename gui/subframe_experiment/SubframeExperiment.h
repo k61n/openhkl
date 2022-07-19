@@ -53,9 +53,7 @@ class SubframeExperiment : public QWidget {
     DetectorWidget* _detector_widget;
     PlotPanel* _plot;
     PropertyPanel* _properties;
-
-    QSlider* _intensity_number_datapoints;
-    QSlider* _lineplot_number_datapoints;
+    
     QPushButton* _calc_intensity;
     QPushButton* _update_plot;
     QCheckBox* _totalHistogram;
