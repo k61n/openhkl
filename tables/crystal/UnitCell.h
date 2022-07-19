@@ -18,7 +18,7 @@
 #include "tables/crystal/NiggliCharacter.h"
 #include "tables/crystal/SpaceGroup.h"
 
-#include <xsection/Material.h>
+#include <memory>
 
 namespace ohkl {
 
@@ -146,20 +146,6 @@ class UnitCell {
     //! Sets the Z value for the unit cell
     void setZ(unsigned int Z);
 
-    //! Returns a pointer to the material of this unit cell
-    xsection::Material* material();
-
-    //! Returns a const pointer to the material of this unit cell
-    const xsection::Material* material() const;
-
-#ifndef SWIG
-    //! Sets the Material for the unit cell
-    void setMaterial(std::unique_ptr<xsection::Material> material);
-#endif
-
-    //! Sets the Material for the unit cell
-    void setMaterial(const xsection::Material& material);
-
     //! Sets space group from its symbol.
     void setSpaceGroup(const SpaceGroup& space_group);
 
@@ -284,8 +270,6 @@ class UnitCell {
     Eigen::Matrix3d _b_transposed;
     //! _NP is the transformation such that _A*_NP.inverse() is the Niggli cell
     Eigen::Matrix3d _NP;
-
-    std::unique_ptr<xsection::Material> _material{nullptr};
 
     LatticeCentring _centring;
 

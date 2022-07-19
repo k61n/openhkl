@@ -20,6 +20,8 @@
 #include "core/peak/Intensity.h"
 #include "tables/crystal/UnitCell.h"
 
+#include <map>
+
 namespace ohkl {
 
 class IPeakIntegrator;

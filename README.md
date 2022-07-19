@@ -1,54 +1,65 @@
 # OpenHKL
 
-## Provisional installation instructions (Development version)
 
-### Linux
+## About OpenHKL
 
-1. Clone this repository:
-```
-git clone https://jugit.fz-juelich.de/mlz/openhkl.git
-```
+### What is OpenHKL?
 
-2. Install global dependencies. These are generally installed at a system level via a package management system on Linux or MacOS.
-    - Blosc
-    - C++ compiler (e.g. g++ or clang)
-    - cmake
-    - Eigen3
-    - FFTW3
-    - GSL
-	- HDF5
-    - Python3
-    - QHull
-    - QT5/6
-    - YAMLCpp
+OpenHKL is a GUI programme for data reduction of single crystal diffraction
+experiment data. It takes a series of detector images collected over a range of
+sample rotation angle increments and constructs a real space 3D model of the
+detector spots. This is used to determine an exhaustive list of reflections
+for sample unit cell, along with their Miller indices, integrated intensities
+and variances.
 
-3. Run `cmake`, and `make`:
-```
-cd /path/to/nsxtool
-mkdir build
-cd build
-cmake ..
-make
-```
+Detailed documentation including and installation guide and a tutorial can be
+found at [www.openhkl.org](https://www.openhkl.org).
 
-4. Note that at present, OpenHKL has no `make install` target, so the code must be run from the `build` directory. The GUI executable is `build/main/NSXTool`. The Python scripts access a SWIG-generated shared library interfaced via `build/swig/pynsx.py`, which should be added to the `PYTHONPATH` environmental variable:
-```
-PYTHONPATH=$PYTHONPATH:/path/to/nsxtool/build/swig
-```
+### Why use OpenHKL?
 
-### MacOS (Monterey)
+There are many existing programmes that perform similar data reductions; many
+have been used extensively in the past and produce excellent results. However,
+OpenHKL is distinguished by a unique combination of important features.
 
-This is largely the same as for Linux, but I use Homebrew [brew.sh](brew.sh), but beware that if you have multiple package managers on MacOS, they can interfere and break something critical. Homebrew will also install any higher order dependencies you need.
+#### Natively handles neutron diffraction
 
-```
-brew install python3 cmake qt5 eigen hdf5 swig c-blosc fftw cpp-gsl
-pip install numpy scipy
-```
+The OpenHKL project was started with the aim of developing a data reduction
+programme specifically for neutron diffraction, which is technically more
+problematic than X-ray diffraction in terms of data reduction. However, it can
+be used equally well for X-ray diffraction data.
 
-Homebrew does not add QT paths to /usr/local/bin, so you will need to use the follwing argument when running `cmake`:
+#### Open source and fully documented
 
-```
-cmake -DCMAKE_PREFIX_PATH=/opt/homebrew/opt/qt ..
-```
+OpenHKL is fully open source, and none of its functionality is a "black box".
+All algorithms are fully documented, such that users will no longer be left
+guessing as to what exactly OpenHKL does during the data reduction process.
+Modification and collaboration are encouraged, with the aim of improving OpenHKL
+as a community.
 
-The rest of the compilation prodedure is step 3 of the Linux instructions onwards.
+#### Easily extensible for different detector geometries
+
+It is easy to extend OpenHKL to include different detector geometries; each
+instrument is described a ``.yaml`` machine file which contains the metadata and
+physical setup.
+
+#### Written in C++, with a Modern QT GUI
+
+OpenHKL is written in C++ for excellent speed, using object-oriented principles
+to facilitate extensibility. It has a modern GUI, making it user friendly for
+the end user.
+
+#### Core functionality available via Python API
+
+All core functionality can be accessed via a Python scripting API, with the aim
+of facilitating i) automation of the data reduction process, and ii) systematic
+testing and optimisation of data reduction parameters.
+
+
+## History of OpenHKL
+
+OpenHKL was started by Laurent Chapon and Eric Pellegrini at Institut
+Laue-Langevin in Grenoble under the name NSXTool (Neutron Single Xtal). It later
+became a collaboration between ILL and Forschungszentrum Jülich at the Heinz
+Maier-Leibnitz Zentrum (MLZ) in Garching. It was renamed to OpenHKL in 2022 to
+emphasise that it is intended also for X-ray diffraction as well as Neutron
+diffraction.
