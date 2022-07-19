@@ -29,7 +29,7 @@ class PlotPanel : public QWidget {
     void plotHistogram(size_t ndata, double* x, double* y, QString, QString, int xmin=0, int xmax=0, int ymin=0, int ymax=0);
     void updatePlot(PlottableItem* item);
     void exportPlot();
-    void setYLog(bool v);
+    void setYLog(bool);
 
  private:
     SXPlot* plot;

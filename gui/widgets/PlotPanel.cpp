@@ -109,10 +109,10 @@ void PlotPanel::plotHistogram(size_t nData, double* range, double* bin, QString 
 }
 
 
-void PlotPanel::setYLog(bool v)
+void PlotPanel::setYLog(bool on)
 {
-    if (v == _yLog) return;
-    _yLog = v;
+    if (on == _yLog) return;
+    _yLog = on;
     if (_yLog){
         plot->yAxis->grid()->setSubGridVisible(true);
         plot->xAxis->grid()->setSubGridVisible(true);
