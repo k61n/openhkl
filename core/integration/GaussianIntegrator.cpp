@@ -153,7 +153,7 @@ bool GaussianIntegrator::compute(
         if (!success)
             return false;
     } catch (std::exception& e) {
-        nsxlog(Level::Warning, __FUNCTION__, ": Gaussian fit failed: ", e.what());
+        ohklLog(Level::Warning, __FUNCTION__, ": Gaussian fit failed: ", e.what());
         return false;
     }
 

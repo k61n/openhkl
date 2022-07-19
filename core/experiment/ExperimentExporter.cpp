@@ -133,7 +133,7 @@ void writeMetadata(H5::Group& meta_group, const ohkl::MetaData& metadata)
                     metaSpace);
         }
     } catch (const std::exception& ex) {
-        nsxlog(ohkl::Level::Debug, "Exception in writeMetaData: ", ex.what());
+        ohklLog(ohkl::Level::Debug, "Exception in writeMetaData: ", ex.what());
     }
 }
 
@@ -224,10 +224,10 @@ void ExperimentExporter::createFile(std::string name, std::string diffractometer
         std::string version = VERSION;
         writeAttribute(file, ohkl::at_experiment, name.data(), str80Type, metaSpace);
         writeAttribute(file, ohkl::at_diffractometer, diffractometer.data(), str80Type, metaSpace);
-        writeAttribute(file, ohkl::at_nsxVersion, version.data(), str80Type, metaSpace);
+        writeAttribute(file, ohkl::at_ohklVersion, version.data(), str80Type, metaSpace);
         writeAttribute(file, ohkl::at_commitHash, hash.data(), str80Type, metaSpace);
     } catch (...) {
-        nsxlog(
+        ohklLog(
             ohkl::Level::Error, "ExperimentExporter: Failed to create the file '", path,
             "' to export data"); //, ex.what());
         throw;

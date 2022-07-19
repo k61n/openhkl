@@ -84,15 +84,15 @@ namespace ohkl {
 
 void PeakFinderParameters::log(const Level& level) const
 {
-    nsxlog(level, "Peak finder parameters:");
-    nsxlog(level, "minimum_size           = ", minimum_size);
-    nsxlog(level, "maximum_size           = ", maximum_size);
-    nsxlog(level, "peak_end               = ", peak_end);
-    nsxlog(level, "maximum_frames         = ", maximum_frames);
-    nsxlog(level, "frames_begin           = ", frames_begin);
-    nsxlog(level, "frames_end             = ", frames_end);
-    nsxlog(level, "threshold              = ", threshold);
-    nsxlog(level, "convolver              = ", convolver);
+    ohklLog(level, "Peak finder parameters:");
+    ohklLog(level, "minimum_size           = ", minimum_size);
+    ohklLog(level, "maximum_size           = ", maximum_size);
+    ohklLog(level, "peak_end               = ", peak_end);
+    ohklLog(level, "maximum_frames         = ", maximum_frames);
+    ohklLog(level, "frames_begin           = ", frames_begin);
+    ohklLog(level, "frames_end             = ", frames_end);
+    ohklLog(level, "threshold              = ", threshold);
+    ohklLog(level, "convolver              = ", convolver);
 }
 
 //  ***********************************************************************************************
@@ -529,14 +529,14 @@ void PeakFinder::mergeEquivalentBlobs(
 void PeakFinder::find(const DataList numors)
 {
     _params->log(Level::Info);
-    nsxlog(Level::Info, "PeakFinder::find: starting, with ", numors.size(), " numors");
+    ohklLog(Level::Info, "PeakFinder::find: starting, with ", numors.size(), " numors");
     _current_peaks.clear();
     _current_data = numors;
 
     int i = 0;
     for (const auto& numor : numors) {
         if (numors.size() > 1)
-            nsxlog(Level::Debug, "PeakFinder::find: starting numor ", i + 1);
+            ohklLog(Level::Debug, "PeakFinder::find: starting numor ", i + 1);
         PeakList numor_peaks;
 
         const auto& dectector = numor->diffractometer()->detector();
@@ -570,20 +570,20 @@ void PeakFinder::find(const DataList numors)
         ohkl::EquivalenceList local_equivalences;
 
         // find blobs within the current frame range
-        nsxlog(Level::Debug, "PeakFinder::find: findPrimary from ", loop_begin, " to ", loop_end);
+        ohklLog(Level::Debug, "PeakFinder::find: findPrimary from ", loop_begin, " to ", loop_end);
         findPrimaryBlobs(*numor, local_blobs, local_equivalences, loop_begin, loop_end, i++);
 
         // merge adjacent blobs
-        nsxlog(Level::Debug, "PeakFinder::find: mergeBlobs");
+        ohklLog(Level::Debug, "PeakFinder::find: mergeBlobs");
         mergeEquivalentBlobs(local_blobs, local_equivalences);
 
-        nsxlog(Level::Debug, "PeakFinder::find: blob loop");
+        ohklLog(Level::Debug, "PeakFinder::find: blob loop");
         // merge the blobs into the global set
         for (const auto& blob : local_blobs)
             blobs.insert(blob);
 
         mergeCollidingBlobs(*numor, blobs);
-        nsxlog(Level::Debug, "PeakFinder::find: found blob collisions");
+        ohklLog(Level::Debug, "PeakFinder::find: found blob collisions");
 
         if (_handler) {
             _handler->setProgress(100);
@@ -665,7 +665,7 @@ void PeakFinder::find(const DataList numors)
             }
         }
 
-        nsxlog(Level::Debug, "PeakFinder::find: blob loop done");
+        ohklLog(Level::Debug, "PeakFinder::find: blob loop done");
 
         if (_handler) {
             _handler->setStatus(
@@ -673,11 +673,11 @@ void PeakFinder::find(const DataList numors)
             _handler->setProgress(0);
         }
 
-        nsxlog(
+        ohklLog(
             Level::Info, "PeakFinder::find: ", numor_peaks.size(), " peaks found,",
             numPeaksTooSmallOrLarge, " peaks too small, ", numPeaksOutsideFrames,
             " peaks outside frame range, ", numPeaksNotInDetArea, " peaks not fully on detector.");
-        nsxlog(Level::Info, "PeakFinder::find: ", numPeaksMasked, " peaks masked");
+        ohklLog(Level::Info, "PeakFinder::find: ", numPeaksMasked, " peaks masked");
         _peaks_found = numor_peaks.size();
 
         numor->close();
@@ -688,7 +688,7 @@ void PeakFinder::find(const DataList numors)
         _handler->setProgress(100);
     }
     setPeakCollection("Found peaks", ohkl::PeakCollectionType::FOUND, _current_peaks);
-    nsxlog(Level::Info, "PeakFinder::find: exit");
+    ohklLog(Level::Info, "PeakFinder::find: exit");
 }
 
 unsigned int PeakFinder::numberFound()

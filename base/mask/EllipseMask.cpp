@@ -22,9 +22,9 @@ EllipseMask::EllipseMask(const AABB& aabb, bool /*two_dim*/) : IMask(), _ellipso
     auto radii = 0.5 * (aabb.upper() - aabb.lower());
     auto axes = Eigen::Matrix3d::Identity();
     _ellipsoid = Ellipsoid(center, radii, axes);
-    nsxlog(Level::Info, "EllipseMask::EllipseMask: Created new ellipsoid mask");
-    nsxlog(Level::Info, "Lower bound: ", aabb.lower().transpose());
-    nsxlog(Level::Info, "Upper bound: ", aabb.upper().transpose());
+    ohklLog(Level::Info, "EllipseMask::EllipseMask: Created new ellipsoid mask");
+    ohklLog(Level::Info, "Lower bound: ", aabb.lower().transpose());
+    ohklLog(Level::Info, "Upper bound: ", aabb.upper().transpose());
 }
 
 bool EllipseMask::collide(const Ellipsoid& ellipsoid) const

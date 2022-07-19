@@ -165,7 +165,7 @@ bool Minimizer::fit(int max_iter)
             max_iter, _xtol, _gtol, _ftol, &callback_helper, this, &_gsl->info, _gsl->workspace);
         gsl_multifit_nlinear_covar(_gsl->workspace->J, 1e-10, _gsl->covariance);
     } catch (const std::exception& e) {
-        nsxlog(
+        ohklLog(
             ohkl::Level::Error,
             "Minimizer::fit GSL Library Error Message : " + std::string(e.what()));
         return false;

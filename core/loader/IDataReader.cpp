@@ -41,7 +41,7 @@ bool IDataReader::initRead()
     if (_dataset_out->diffractometer()->source().nMonochromators() == 0) {
         Monochromator mono(ohkl::kw_monochromatorDefaultName);
         _dataset_out->diffractometer()->source().addMonochromator(mono);
-        nsxlog(
+        ohklLog(
             Level::Warning, __FUNCTION__,
             ": Source had no monochromators; hence, a default monochromator is created.");
     }
@@ -72,7 +72,7 @@ void IDataReader::checkInit()
         throw std::runtime_error("Reader is not initialized");
 }
 
-std::string IDataReader::NSXfilepath() const
+std::string IDataReader::OHKLfilepath() const
 {
     return "";
 }

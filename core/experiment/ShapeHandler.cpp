@@ -35,7 +35,7 @@ bool ShapeHandler::addShapeModel(const std::string& name, const ohkl::ShapeModel
     // abort if name is aleady in use
     if (hasShapeModel(name))
         return false;
-    nsxlog(
+    ohklLog(
         Level::Info, "ShapeHandler::addShapeModel '", name, "': ", shapes.numberOfPeaks(),
         " shapes");
     std::unique_ptr<ShapeModel> ptr = std::make_unique<ShapeModel>(shapes);
@@ -48,7 +48,7 @@ bool ShapeHandler::addEmptyModel(const std::string& name)
 {
     if (hasShapeModel(name))
         return false;
-    nsxlog(Level::Info, "ShapeHandler::addEmptyCollection '" + name + "'");
+    ohklLog(Level::Info, "ShapeHandler::addEmptyCollection '" + name + "'");
     std::unique_ptr<ShapeModel> ptr = std::make_unique<ShapeModel>(ShapeModel(name));
     _shape_models.insert_or_assign(name, std::move(ptr));
     return hasShapeModel(name); // now name must be in use

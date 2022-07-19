@@ -26,7 +26,7 @@ bool InstrumentStateHandler::addInstrumentStateSet(sptrDataSet data)
 {
     if (hasInstrumentStateSet(data))
         return false;
-    nsxlog(Level::Info, "InstrumentStateHandler::addInstrumentStateSet for DataSet'", data->name());
+    ohklLog(Level::Info, "InstrumentStateHandler::addInstrumentStateSet for DataSet'", data->name());
     std::unique_ptr<InstrumentStateSet> ptr = std::make_unique<InstrumentStateSet>(data);
     ptr->setId(_last_index++);
     data->setInstrumentStates(ptr.get());
@@ -39,7 +39,7 @@ bool InstrumentStateHandler::addInstrumentStateSet(
 {
     if (hasInstrumentStateSet(data) && !overwrite)
         return false;
-    nsxlog(Level::Info, "InstrumentStateHandler::addInstrumentStateSet for DataSet'", data->name());
+    ohklLog(Level::Info, "InstrumentStateHandler::addInstrumentStateSet for DataSet'", data->name());
     std::unique_ptr<InstrumentStateSet> ptr = std::make_unique<InstrumentStateSet>(data, states);
     ptr->setId(_last_index++);
     data->setInstrumentStates(ptr.get());
@@ -54,7 +54,7 @@ bool InstrumentStateHandler::addInstrumentStateSet(
 bool InstrumentStateHandler::addInstrumentStateSet(
     sptrDataSet data, std::unique_ptr<InstrumentStateSet>& states)
 {
-    nsxlog(Level::Info, "InstrumentStateHandler::addInstrumentStateSet for DataSet'", data->name());
+    ohklLog(Level::Info, "InstrumentStateHandler::addInstrumentStateSet for DataSet'", data->name());
     std::unique_ptr<InstrumentStateSet> ptr = std::move(states);
     ptr->setId(_last_index++);
     data->setInstrumentStates(ptr.get());

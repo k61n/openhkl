@@ -32,7 +32,7 @@ bool MeanBackgroundIntegrator::compute(
 
     // TODO: should this be hard-coded??
     if (events.size() < 20) {
-        nsxlog(Level::Debug, "MeanBackgroundIntegrator::compute: too few data points");
+        ohklLog(Level::Debug, "MeanBackgroundIntegrator::compute: too few data points");
         return false;
     }
 

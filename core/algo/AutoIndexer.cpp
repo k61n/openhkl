@@ -31,25 +31,25 @@ namespace ohkl {
 
 void IndexerParameters::log(const Level& level) const
 {
-    nsxlog(level, "Autoindexer parameters:");
-    nsxlog(level, "maxdim             = ", maxdim);
-    nsxlog(level, "nSolutions         = ", nSolutions);
-    nsxlog(level, "nVertices          = ", nVertices);
-    nsxlog(level, "subdiv             = ", subdiv);
-    nsxlog(level, "indexingTolerance  = ", indexingTolerance);
-    nsxlog(level, "niggliTolerance    = ", niggliTolerance);
-    nsxlog(level, "gruberTolerance    = ", gruberTolerance);
-    nsxlog(level, "niggliReduction    = ", niggliReduction);
-    nsxlog(level, "minUnitCellVolume  = ", minUnitCellVolume);
-    nsxlog(level, "unitCellEquivalenceTolerance = ", unitCellEquivalenceTolerance);
-    nsxlog(level, "solutionCutoff     = ", solutionCutoff);
-    nsxlog(level, "frequencyTolerance = ", frequencyTolerance);
-    nsxlog(level, "first_frame        = ", first_frame);
-    nsxlog(level, "last_frame         = ", last_frame);
-    nsxlog(level, "d_min              = ", d_min);
-    nsxlog(level, "d_max              = ", d_max);
-    nsxlog(level, "strength_min       = ", strength_min);
-    nsxlog(level, "strength_max       = ", strength_max);
+    ohklLog(level, "Autoindexer parameters:");
+    ohklLog(level, "maxdim             = ", maxdim);
+    ohklLog(level, "nSolutions         = ", nSolutions);
+    ohklLog(level, "nVertices          = ", nVertices);
+    ohklLog(level, "subdiv             = ", subdiv);
+    ohklLog(level, "indexingTolerance  = ", indexingTolerance);
+    ohklLog(level, "niggliTolerance    = ", niggliTolerance);
+    ohklLog(level, "gruberTolerance    = ", gruberTolerance);
+    ohklLog(level, "niggliReduction    = ", niggliReduction);
+    ohklLog(level, "minUnitCellVolume  = ", minUnitCellVolume);
+    ohklLog(level, "unitCellEquivalenceTolerance = ", unitCellEquivalenceTolerance);
+    ohklLog(level, "solutionCutoff     = ", solutionCutoff);
+    ohklLog(level, "frequencyTolerance = ", frequencyTolerance);
+    ohklLog(level, "first_frame        = ", first_frame);
+    ohklLog(level, "last_frame         = ", last_frame);
+    ohklLog(level, "d_min              = ", d_min);
+    ohklLog(level, "d_max              = ", d_max);
+    ohklLog(level, "strength_min       = ", strength_min);
+    ohklLog(level, "strength_max       = ", strength_max);
 }
 
 AutoIndexer::AutoIndexer() : _solutions(), _handler(nullptr)
@@ -65,7 +65,7 @@ IndexerParameters* AutoIndexer::parameters()
 bool AutoIndexer::autoIndex(const std::vector<Peak3D*>& peaks)
 {
     _params->log(Level::Info);
-    nsxlog(Level::Info, "AutoIndexer::autoindex: indexing using ", peaks.size(), " peaks");
+    ohklLog(Level::Info, "AutoIndexer::autoindex: indexing using ", peaks.size(), " peaks");
     // Find the Q-space directions along which the projection of the the Q-vectors
     // shows the highest periodicity
     bool success = computeFFTSolutions(peaks);
@@ -80,14 +80,14 @@ bool AutoIndexer::autoIndex(const std::vector<Peak3D*>& peaks)
     // finally, rank the solutions
     rankSolutions();
 
-    nsxlog(Level::Info, "AutoIndexer::autoindex: ", _solutions.size(), " unit cells found");
-    nsxlog(Level::Info, solutionsToString());
+    ohklLog(Level::Info, "AutoIndexer::autoindex: ", _solutions.size(), " unit cells found");
+    ohklLog(Level::Info, solutionsToString());
     return success;
 }
 
 bool AutoIndexer::autoIndex(PeakCollection* peaks)
 {
-    nsxlog(Level::Info, "AutoIndexer::autoindex: indexing PeakCollection '", peaks->name(), "'");
+    ohklLog(Level::Info, "AutoIndexer::autoindex: indexing PeakCollection '", peaks->name(), "'");
     std::vector<Peak3D*> peak_list = peaks->getPeakList();
 
     if (autoIndex(peak_list)) {
@@ -127,7 +127,7 @@ bool AutoIndexer::computeFFTSolutions(const std::vector<Peak3D*>& peaks)
 
     // Check that a minimum number of peaks have been selected for indexing
     if (qvects.size() < 10) {
-        nsxlog(Level::Info, "AutoIndexer::computeFFTSolutions: Too few peaks to autoindex");
+        ohklLog(Level::Info, "AutoIndexer::computeFFTSolutions: Too few peaks to autoindex");
         return false;
     }
 
@@ -138,7 +138,7 @@ bool AutoIndexer::computeFFTSolutions(const std::vector<Peak3D*>& peaks)
 
     // Need at least 3 t-vectors to form a basis
     if (tvects.size() < 3) {
-        nsxlog(Level::Info, "AutoIndexer::computeFFTSolutions: Too few t-vectors to form basis");
+        ohklLog(Level::Info, "AutoIndexer::computeFFTSolutions: Too few t-vectors to form basis");
         return false;
     }
 

@@ -24,7 +24,7 @@
 
 // usage: DBG("This is my debug message nr.", 1);
 #define DBG(...)                                                                                   \
-    ohkl::nsxlog(                                                                                   \
+    ohkl::ohklLog(                                                                                   \
         ohkl::Level::Info, "DBG> ", __FILE__, ":L", __LINE__, ":", __FUNCTION__, ": ", __VA_ARGS__)
 
 
@@ -61,17 +61,17 @@ class Logger {
     std::ofstream _ofs;
 };
 
-//! Global logger function (prefixed with "nsx" to facilitate grepping)
-//! Usage: nsxlog(Level::Warning, "your message", 1, 3.14, "test")
-template <typename... T> inline void nsxlog(const Level& level, const T&... messages)
+//! Global logger function (prefixed with "ohkl" to facilitate grepping)
+//! Usage: ohklLog(Level::Warning, "your message", 1, 3.14, "test")
+template <typename... T> inline void ohklLog(const Level& level, const T&... messages)
 {
     Logger::instance().log(level, messages...);
-    nsxmsg(level, messages...);
+    ohklMsg(level, messages...);
 }
 
-//! Global messaging function (prefixed with "nsx" to facilitate grepping)
-//! Usage: nsxmsg(Level::Warning, "your message", 1, 3.14, "test")
-template <typename... T> inline void nsxmsg(const Level& level, const T&... messages)
+//! Global messaging function (prefixed with "ohkl" to facilitate grepping)
+//! Usage: ohklMsg(Level::Warning, "your message", 1, 3.14, "test")
+template <typename... T> inline void ohklMsg(const Level& level, const T&... messages)
 {
     // Prepare a log message
     std::stringstream ss;

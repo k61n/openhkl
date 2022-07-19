@@ -31,7 +31,7 @@ DataHandler::DataHandler(
     : _experiment_name{experiment_name}, _instrument_state_handler(instrument_state_handler)
 {
     if (diffractometerName == ohkl::kw_diffractometerDefaultName) {
-        nsxlog(
+        ohklLog(
             Level::Warning,
             "DataHandler: Diffractometer is not set for the experiment '" + experiment_name + "'");
     } else {
@@ -118,7 +118,7 @@ bool DataHandler::addData(sptrDataSet data, std::string name, bool default_state
             throw std::runtime_error("trying to mix data with different wavelengths");
     }
 
-    nsxlog(
+    ohklLog(
         Level::Info, "DataHandler::addData: adding DataSet '", name, "': ", data->nFrames(),
         " frames");
     _data_map.insert({name, data});

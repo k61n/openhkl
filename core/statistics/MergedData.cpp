@@ -22,25 +22,25 @@ MergedData::MergedData(
     int fmax)
     : _group(space_group), _friedel(friedel), _merged_peak_set(), _frame_min(fmin), _frame_max(fmax)
 {
-    nsxlog(Level::Info, "MergedData::MergedData: merging peaks");
+    ohklLog(Level::Info, "MergedData::MergedData: merging peaks");
     _peak_collections = peak_collections;
     for (int i = 0; i < _peak_collections.size(); ++i) {
         if (_peak_collections[i] == nullptr)
             continue;
-        nsxlog(
+        ohklLog(
             Level::Info, "MergedData::MergedData: peak collection ", _peak_collections[i]->name());
         std::vector<Peak3D*> peaks = _peak_collections[i]->getPeakList();
         for (int j = 0; j < peaks.size(); ++j)
             addPeak(peaks[j]);
     }
     if (_nInvalid > 0) {
-        nsxlog(Level::Info, "MergedData::MergedData: ", _max_peaks, " maximum possible peaks");
-        nsxlog(Level::Info, "MergedData::MergedData: ", totalSize(), " merged peaks");
-        nsxlog(Level::Info, "MergedData::MergedData: ", _nExtinct, " extinct peaks");
-        nsxlog(Level::Info, "MergedData::MergedData: ", _nInvalid, " disabled peaks");
-        nsxlog(Level::Info, "MergedData::MergedData: ", _nDupes, " duplicate peaks");
-        nsxlog(Level::Info, "MergedData::MergedData: ", _nNoCell, " peaks without cell");
-        nsxlog(Level::Info, "MergedData::MergedData: ", _nBadInterp, " bad interpolations");
+        ohklLog(Level::Info, "MergedData::MergedData: ", _max_peaks, " maximum possible peaks");
+        ohklLog(Level::Info, "MergedData::MergedData: ", totalSize(), " merged peaks");
+        ohklLog(Level::Info, "MergedData::MergedData: ", _nExtinct, " extinct peaks");
+        ohklLog(Level::Info, "MergedData::MergedData: ", _nInvalid, " disabled peaks");
+        ohklLog(Level::Info, "MergedData::MergedData: ", _nDupes, " duplicate peaks");
+        ohklLog(Level::Info, "MergedData::MergedData: ", _nNoCell, " peaks without cell");
+        ohklLog(Level::Info, "MergedData::MergedData: ", _nBadInterp, " bad interpolations");
     }
 }
 
@@ -83,7 +83,7 @@ bool MergedData::addPeak(Peak3D* peak)
     } else if (success == MergeFlag::Extinct) {
         ++_nPeaks;
         --_max_peaks;
-        nsxlog(Level::Info, "Extinct: ", peak->toString());
+        ohklLog(Level::Info, "Extinct: ", peak->toString());
         return false;
     }
 

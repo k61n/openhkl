@@ -32,17 +32,17 @@ namespace ohkl {
 
 void RefinerParameters::log(const Level& level) const
 {
-    nsxlog(level, "Refiner parameters:");
-    nsxlog(level, "nbatches               = ", nbatches);
-    nsxlog(level, "max_iter               = ", max_iter);
-    nsxlog(level, "refine_ub              = ", refine_ub);
-    nsxlog(level, "residual_type          = ", static_cast<int>(residual_type));
-    nsxlog(level, "refine_sample_position = ", refine_sample_position);
-    nsxlog(level, "refine_sample_orientation = ", refine_sample_orientation);
-    nsxlog(level, "refine_detector_offset = ", refine_detector_offset);
-    nsxlog(level, "refine_ki              = ", refine_ki);
-    nsxlog(level, "use_batch_cells        = ", use_batch_cells);
-    nsxlog(level, "set_unit_cell          = ", set_unit_cell);
+    ohklLog(level, "Refiner parameters:");
+    ohklLog(level, "nbatches               = ", nbatches);
+    ohklLog(level, "max_iter               = ", max_iter);
+    ohklLog(level, "refine_ub              = ", refine_ub);
+    ohklLog(level, "residual_type          = ", static_cast<int>(residual_type));
+    ohklLog(level, "refine_sample_position = ", refine_sample_position);
+    ohklLog(level, "refine_sample_orientation = ", refine_sample_orientation);
+    ohklLog(level, "refine_detector_offset = ", refine_detector_offset);
+    ohklLog(level, "refine_ki              = ", refine_ki);
+    ohklLog(level, "use_batch_cells        = ", use_batch_cells);
+    ohklLog(level, "set_unit_cell          = ", set_unit_cell);
 }
 
 Refiner::Refiner(UnitCellHandler* cell_handler) : _cell_handler(cell_handler)
@@ -87,7 +87,7 @@ sptrUnitCell Refiner::_getUnitCell(const std::vector<Peak3D*> peaks_subset)
 void Refiner::makeBatches(
     InstrumentStateList& states, const std::vector<ohkl::Peak3D*>& peaks, sptrUnitCell cell)
 {
-    nsxlog(Level::Info, "Refiner::makeBatches: making ", _params->nbatches, " batches");
+    ohklLog(Level::Info, "Refiner::makeBatches: making ", _params->nbatches, " batches");
     _peaks = peaks;
     _unrefined_states.clear();
     _batches.clear();
@@ -113,7 +113,7 @@ void Refiner::makeBatches(
     else
         filtered_peaks = peak_filter.filterIndexed(filtered_peaks, _cell.get());
 
-    nsxlog(Level::Info, filtered_peaks.size(), " / ", peaks.size(), " peaks used by refiner");
+    ohklLog(Level::Info, filtered_peaks.size(), " / ", peaks.size(), " peaks used by refiner");
 
     std::sort(
         filtered_peaks.begin(), filtered_peaks.end(),
@@ -124,7 +124,7 @@ void Refiner::makeBatches(
         });
 
     const double batch_size = filtered_peaks.size() / double(_params->nbatches);
-    nsxlog(Level::Info, "Batch size is ", batch_size, " peaks");
+    ohklLog(Level::Info, "Batch size is ", batch_size, " peaks");
     size_t current_batch = 0;
 
     std::vector<ohkl::Peak3D*> peaks_subset;
@@ -185,7 +185,7 @@ void Refiner::reconstructBatches(std::vector<Peak3D*> peaks)
         });
 
     const double batch_size = filtered_peaks.size() / double(_tmp_vec.size());
-    nsxlog(Level::Info, "Batch size is ", batch_size, " peaks");
+    ohklLog(Level::Info, "Batch size is ", batch_size, " peaks");
     size_t current_batch = 0;
 
     std::vector<ohkl::Peak3D*> peaks_subset;
@@ -218,35 +218,35 @@ void Refiner::reconstructBatches(std::vector<Peak3D*> peaks)
 
 void Refiner::refineDetectorOffset()
 {
-    nsxlog(Level::Info, "Refining detector offset");
+    ohklLog(Level::Info, "Refining detector offset");
     for (auto&& batch : _batches)
         batch.refineDetectorOffset();
 }
 
 void Refiner::refineSamplePosition()
 {
-    nsxlog(Level::Info, "Refining sample position");
+    ohklLog(Level::Info, "Refining sample position");
     for (auto&& batch : _batches)
         batch.refineSamplePosition();
 }
 
 void Refiner::refineSampleOrientation()
 {
-    nsxlog(Level::Info, "Refining sample orientation");
+    ohklLog(Level::Info, "Refining sample orientation");
     for (auto&& batch : _batches)
         batch.refineSampleOrientation();
 }
 
 void Refiner::refineKi()
 {
-    nsxlog(Level::Info, "Refining wavevector k_i");
+    ohklLog(Level::Info, "Refining wavevector k_i");
     for (auto&& batch : _batches)
         batch.refineKi();
 }
 
 void Refiner::refineUB()
 {
-    nsxlog(Level::Info, "Refining lattice vectors");
+    ohklLog(Level::Info, "Refining lattice vectors");
     for (auto&& batch : _batches)
         batch.refineUB();
 }
@@ -266,7 +266,7 @@ bool Refiner::refine()
     if (_params->refine_detector_offset)
         refineDetectorOffset();
 
-    nsxlog(Level::Info, "Refiner::refine: ", _batches.size(), " batches");
+    ohklLog(Level::Info, "Refiner::refine: ", _batches.size(), " batches");
     if (_batches.empty())
         return false;
 
@@ -295,13 +295,13 @@ const std::vector<RefinementBatch>& Refiner::batches() const
 
 int Refiner::updatePredictions(std::vector<Peak3D*> peaks)
 {
-    nsxlog(Level::Info, "Refiner::updatePredictions");
+    ohklLog(Level::Info, "Refiner::updatePredictions");
     assignPredictedCells(peaks); // Set the batch cells to the predicted peaks
     const PeakFilter peak_filter;
     std::vector<ohkl::Peak3D*> filtered_peaks = peaks;
     filtered_peaks = peak_filter.filterEnabled(peaks, true);
     int n_enabled = filtered_peaks.size();
-    nsxlog(Level::Info, "Refiner::updatePredictions: ", n_enabled, " enabled peaks");
+    ohklLog(Level::Info, "Refiner::updatePredictions: ", n_enabled, " enabled peaks");
 
     int updated = 0;
 
@@ -350,7 +350,7 @@ int Refiner::updatePredictions(std::vector<Peak3D*> peaks)
             ++updated;
         }
     }
-    nsxlog(Level::Info, updated, " peaks updated");
+    ohklLog(Level::Info, updated, " peaks updated");
     return updated;
 }
 
@@ -381,37 +381,37 @@ bool Refiner::firstRefine() const
 
 void Refiner::logChange()
 {
-    nsxlog(Level::Debug, "Refinement succeeded");
+    ohklLog(Level::Debug, "Refinement succeeded");
     if (!_params->use_batch_cells)
-        nsxlog(Level::Debug, "Original cell: ", _unrefined_cell.toString());
-    nsxlog(Level::Debug, "Batch/Refined cell(s):");
+        ohklLog(Level::Debug, "Original cell: ", _unrefined_cell.toString());
+    ohklLog(Level::Debug, "Batch/Refined cell(s):");
     for (const auto& batch : _batches) {
-        nsxlog(Level::Debug, batch.name(), ": ", batch.cell()->toString());
+        ohklLog(Level::Debug, batch.name(), ": ", batch.cell()->toString());
     }
     Eigen::IOFormat vec3(6, 0, ", ", "\n", "[", "]");
-    nsxlog(Level::Debug, "Frame/k_i:");
+    ohklLog(Level::Debug, "Frame/k_i:");
     for (int i = 0; i < _states->size(); ++i) {
         Eigen::Vector3d k_i_change =
             _unrefined_states[i].ki().rowVector() - (*_states)[i].ki().rowVector();
-        nsxlog(Level::Debug, i + 1, ": ", k_i_change.transpose().format(vec3));
+        ohklLog(Level::Debug, i + 1, ": ", k_i_change.transpose().format(vec3));
     }
-    nsxlog(Level::Debug, "Frame/Detector position:");
+    ohklLog(Level::Debug, "Frame/Detector position:");
     for (int i = 0; i < _states->size(); ++i) {
         Eigen::Vector3d detector_pos_change =
             _unrefined_states[i].detectorPositionOffset - (*_states)[i].detectorPositionOffset;
-        nsxlog(Level::Debug, i + 1, ": ", detector_pos_change.transpose().format(vec3));
+        ohklLog(Level::Debug, i + 1, ": ", detector_pos_change.transpose().format(vec3));
     }
-    nsxlog(Level::Debug, "Frame/Sample position:");
+    ohklLog(Level::Debug, "Frame/Sample position:");
     for (int i = 0; i < _states->size(); ++i) {
         Eigen::Vector3d sample_pos_change =
             _unrefined_states[i].samplePosition - (*_states)[i].samplePosition;
-        nsxlog(Level::Debug, i + 1, ": ", sample_pos_change.transpose().format(vec3));
+        ohklLog(Level::Debug, i + 1, ": ", sample_pos_change.transpose().format(vec3));
     }
-    nsxlog(Level::Debug, "Frame/Sample orientation:");
+    ohklLog(Level::Debug, "Frame/Sample orientation:");
     for (int i = 0; i < _states->size(); ++i) {
         Eigen::Matrix3d sample_orientation_change = _unrefined_states[i].sampleOrientationMatrix()
             - (*_states)[i].sampleOrientationMatrix();
-        nsxlog(Level::Debug, i + 1, ":\n ", sample_orientation_change.transpose().format(vec3));
+        ohklLog(Level::Debug, i + 1, ":\n ", sample_orientation_change.transpose().format(vec3));
     }
 }
 

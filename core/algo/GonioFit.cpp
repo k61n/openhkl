@@ -30,7 +30,7 @@ GonioFit fitSampleGonioOffsets(
 
     // No data provided, return zero offsets
     if (dataset.empty()) {
-        nsxlog(Level::Warning, __FUNCTION__, ": No data provided, offsets set to zero");
+        ohklLog(Level::Warning, __FUNCTION__, ": No data provided, offsets set to zero");
         return {false, std::move(fitted_offsets), {}};
     }
 
@@ -44,7 +44,7 @@ GonioFit fitSampleGonioOffsets(
     }
 
     if (n_selected_states < n_axes) {
-        nsxlog(
+        ohklLog(
             Level::Warning, __FUNCTION__,
             ": No or not enough refined states found in the dataset "
             "for a reliable fit, offsets set to zero");
@@ -109,7 +109,7 @@ GonioFit fitSampleGonioOffsets(
     const bool success = minimizer.fit(n_iterations);
 
     if (!success) {
-        nsxlog(Level::Warning, __FUNCTION__, ": Failed to fit sample orientation offsets");
+        ohklLog(Level::Warning, __FUNCTION__, ": Failed to fit sample orientation offsets");
         return {false, std::move(fitted_offsets), {}};
     }
 
@@ -124,7 +124,7 @@ GonioFit fitDetectorGonioOffsets(
 
     // No data provided, return zero offsets
     if (dataset.empty()) {
-        nsxlog(Level::Warning, __FUNCTION__, ": No data provided, offsets set to zero");
+        ohklLog(Level::Warning, __FUNCTION__, ": No data provided, offsets set to zero");
         return {false, std::move(fitted_offsets), {}};
     }
 
@@ -139,7 +139,7 @@ GonioFit fitDetectorGonioOffsets(
     }
 
     if (n_selected_states < n_axes) {
-        nsxlog(
+        ohklLog(
             Level::Warning, __FUNCTION__,
             ": No or not enough refined states found in the dataset for"
             "a reliable fit, offsets set to zero");
@@ -200,7 +200,7 @@ GonioFit fitDetectorGonioOffsets(
     const bool success = minimizer.fit(n_iterations);
 
     if (!success) {
-        nsxlog(Level::Warning, __FUNCTION__, ": Failed to fit detector orientation offsets");
+        ohklLog(Level::Warning, __FUNCTION__, ": Failed to fit detector orientation offsets");
         return {false, std::move(fitted_offsets), {}};
     }
 

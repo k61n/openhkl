@@ -23,13 +23,13 @@ namespace ohkl {
 
 void MergeParameters::log(const Level& level) const
 {
-    nsxlog(level, "Merge parameters:");
-    nsxlog(level, "d_min                  = ", d_min);
-    nsxlog(level, "d_max                  = ", d_max);
-    nsxlog(level, "frame_min             = ", frame_min);
-    nsxlog(level, "frame_max             = ", frame_max);
-    nsxlog(level, "n_shells               = ", n_shells);
-    nsxlog(level, "friedel                = ", friedel);
+    ohklLog(level, "Merge parameters:");
+    ohklLog(level, "d_min                  = ", d_min);
+    ohklLog(level, "d_max                  = ", d_max);
+    ohklLog(level, "frame_min             = ", frame_min);
+    ohklLog(level, "frame_max             = ", frame_max);
+    ohklLog(level, "n_shells               = ", n_shells);
+    ohklLog(level, "friedel                = ", friedel);
 }
 
 PeakMerger::PeakMerger(PeakCollection* peaks /* = nullptr */)
@@ -62,7 +62,7 @@ void PeakMerger::mergePeaks()
 {
     _merged_data.reset();
     _merged_data_per_shell.clear();
-    nsxlog(Level::Info, "PeakMerger::mergePeaks: parameters");
+    ohklLog(Level::Info, "PeakMerger::mergePeaks: parameters");
     _params->log(Level::Info);
     _merged_data = std::make_unique<MergedData>(
         _space_group, _peak_collections, _params->friedel, _params->frame_min, _params->frame_max);

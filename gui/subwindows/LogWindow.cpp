@@ -103,12 +103,12 @@ void LogWindow::saveLog()
         fclose(file_ptr);
 
         const std::string msg{"Log messages saved to '" + filenm + "'"};
-        ohkl::nsxlog(ohkl::Level::Info, msg);
-        ohkl::nsxmsg(ohkl::Level::Info, msg);
+        ohkl::ohklLog(ohkl::Level::Info, msg);
+        ohkl::ohklMsg(ohkl::Level::Info, msg);
     } else {
         const std::string msg{"Unable to save log messages to '" + filenm + "'"};
-        ohkl::nsxlog(ohkl::Level::Error, msg);
-        ohkl::nsxmsg(ohkl::Level::Error, msg);
+        ohkl::ohklLog(ohkl::Level::Error, msg);
+        ohkl::ohklMsg(ohkl::Level::Error, msg);
     }
 }
 

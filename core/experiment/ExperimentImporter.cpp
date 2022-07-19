@@ -34,7 +34,7 @@ namespace ohkl {
 
 void ExperimentImporter::setFilePath(const std::string path, Experiment* const experiment)
 {
-    nsxlog(ohkl::Level::Debug, "Importing experiment info from path '", path, "'");
+    ohklLog(ohkl::Level::Debug, "Importing experiment info from path '", path, "'");
 
     try {
         _file_name = path;
@@ -56,8 +56,8 @@ void ExperimentImporter::setFilePath(const std::string path, Experiment* const e
         }
 
         std::string version;
-        if (file.attrExists(ohkl::at_nsxVersion)) {
-            const H5::Attribute attr = file.openAttribute(ohkl::at_nsxVersion);
+        if (file.attrExists(ohkl::at_ohklVersion)) {
+            const H5::Attribute attr = file.openAttribute(ohkl::at_ohklVersion);
             const H5::DataType attr_type = attr.getDataType();
             std::string value;
             attr.read(attr_type, value);
@@ -72,9 +72,9 @@ void ExperimentImporter::setFilePath(const std::string path, Experiment* const e
             attr.read(attr_type, value);
             hash = value;
         }
-        nsxlog(Level::Info, path, " generated using version ", version, " commit hash ", hash);
+        ohklLog(Level::Info, path, " generated using version ", version, " commit hash ", hash);
 
-        nsxlog(
+        ohklLog(
             ohkl::Level::Info, "Finished importing info for Experiment '" + experiment->name() + "'",
             " with diffractometer '" + experiment->getDiffractometer()->name() + "'",
             " from path '" + path + "'");
@@ -87,7 +87,7 @@ void ExperimentImporter::setFilePath(const std::string path, Experiment* const e
 
 void ExperimentImporter::loadData(Experiment* experiment)
 {
-    nsxlog(ohkl::Level::Debug, "Importing data from file '", _file_name, "'");
+    ohklLog(ohkl::Level::Debug, "Importing data from file '", _file_name, "'");
 
     try {
         H5::H5File file(_file_name.c_str(), H5F_ACC_RDONLY);
@@ -107,12 +107,12 @@ void ExperimentImporter::loadData(Experiment* experiment)
         throw std::runtime_error(what);
     }
 
-    nsxlog(ohkl::Level::Debug, "Finished importing data from file '", _file_name, "'");
+    ohklLog(ohkl::Level::Debug, "Finished importing data from file '", _file_name, "'");
 }
 
 void ExperimentImporter::loadPeaks(Experiment* experiment)
 {
-    nsxlog(ohkl::Level::Debug, "Importing peaks from file '", _file_name, "'");
+    ohklLog(ohkl::Level::Debug, "Importing peaks from file '", _file_name, "'");
 
     using Eigen_VecXd = Eigen::Matrix<double, Eigen::Dynamic, Eigen::RowMajor>;
     using Eigen_VecXint = Eigen::Matrix<int, Eigen::Dynamic, Eigen::RowMajor>;
@@ -161,10 +161,10 @@ void ExperimentImporter::loadPeaks(Experiment* experiment)
             }
 
 
-            nsxlog(
+            ohklLog(
                 Level::Debug, "ExperimentImporter::loadPeaks: found ", n_peaks,
                 " to import for PeakCollection '", collection_name, "'");
-            nsxlog(Level::Debug, "Preparing the dataspace");
+            ohklLog(Level::Debug, "Preparing the dataspace");
 
             // prepare the loading
             Eigen_VecXd bkg_begin(n_peaks);
@@ -215,7 +215,7 @@ void ExperimentImporter::loadPeaks(Experiment* experiment)
             std::vector<std::string> data_names;
             std::vector<unsigned int> unit_cells;
 
-            nsxlog(Level::Debug, "Importing doubles");
+            ohklLog(Level::Debug, "Importing doubles");
             // Load all doubles
             for (const auto& [key, val] : double_keys) {
                 H5::DataSet data_set = peak_collection.openDataSet(key);
@@ -223,7 +223,7 @@ void ExperimentImporter::loadPeaks(Experiment* experiment)
                 data_set.read(val->data(), H5::PredType::NATIVE_DOUBLE, space, space);
             };
 
-            nsxlog(Level::Debug, "Importing integers");
+            ohklLog(Level::Debug, "Importing integers");
             // Load all ints
             for (const auto& [key, val] : int_keys) {
                 H5::DataSet data_set = peak_collection.openDataSet(key);
@@ -231,7 +231,7 @@ void ExperimentImporter::loadPeaks(Experiment* experiment)
                 data_set.read(val->data(), H5::PredType::NATIVE_INT, space, space);
             }
 
-            nsxlog(Level::Debug, "Importing booleans");
+            ohklLog(Level::Debug, "Importing booleans");
             // Load all booleans
             for (const auto& [key, val] : bool_keys) {
                 H5::DataSet data_set = peak_collection.openDataSet(key);
@@ -239,7 +239,7 @@ void ExperimentImporter::loadPeaks(Experiment* experiment)
                 data_set.read(val->data(), H5::PredType::NATIVE_HBOOL, space, space);
             }
 
-            nsxlog(Level::Debug, "Importing centers");
+            ohklLog(Level::Debug, "Importing centers");
             // Load the centers
             {
                 H5::DataSet data_set = peak_collection.openDataSet(ohkl::ds_Center);
@@ -247,7 +247,7 @@ void ExperimentImporter::loadPeaks(Experiment* experiment)
                 data_set.read(center.data(), H5::PredType::NATIVE_DOUBLE, space, space);
             }
 
-            nsxlog(Level::Debug, "Importing metric");
+            ohklLog(Level::Debug, "Importing metric");
             // Load the metrics
             {
                 H5::DataSet data_set = peak_collection.openDataSet(ohkl::ds_Metric);
@@ -255,7 +255,7 @@ void ExperimentImporter::loadPeaks(Experiment* experiment)
                 data_set.read(metric.data(), H5::PredType::NATIVE_DOUBLE, space, space);
             }
 
-            nsxlog(Level::Debug, "Importing hkls");
+            ohklLog(Level::Debug, "Importing hkls");
             // Load the hkls
             {
                 H5::DataSet data_set = peak_collection.openDataSet(ohkl::ds_hkl);
@@ -263,7 +263,7 @@ void ExperimentImporter::loadPeaks(Experiment* experiment)
                 data_set.read(hkl.data(), H5::PredType::NATIVE_INT, space, space);
             }
 
-            nsxlog(Level::Debug, "Importing hkl errors");
+            ohklLog(Level::Debug, "Importing hkl errors");
             // Load the hkl errors
             {
                 H5::DataSet data_set = peak_collection.openDataSet(ohkl::ds_hklError);
@@ -271,7 +271,7 @@ void ExperimentImporter::loadPeaks(Experiment* experiment)
                 data_set.read(hkl_error.data(), H5::PredType::NATIVE_DOUBLE, space, space);
             }
 
-            nsxlog(Level::Debug, "Importing DataSet names");
+            ohklLog(Level::Debug, "Importing DataSet names");
             // Load the data_names
             {
                 H5::DataSet data_set = peak_collection.openDataSet(ohkl::ds_DatasetNames);
@@ -291,7 +291,7 @@ void ExperimentImporter::loadPeaks(Experiment* experiment)
                 }
             }
 
-            nsxlog(Level::Debug, "Importing UnitCell names");
+            ohklLog(Level::Debug, "Importing UnitCell names");
             // Load the unit cell strings
             if (experiment->numUnitCells() > 0) {
                 H5::DataSet uc_data_set = peak_collection.openDataSet(ohkl::ds_UnitCellNames);
@@ -311,8 +311,8 @@ void ExperimentImporter::loadPeaks(Experiment* experiment)
                 }
             }
 
-            nsxlog(Level::Debug, "Finished reading peak data from file '", _file_name, "'");
-            nsxlog(Level::Debug, "Creating the vector of peaks");
+            ohklLog(Level::Debug, "Finished reading peak data from file '", _file_name, "'");
+            ohklLog(Level::Debug, "Creating the vector of peaks");
             std::vector<ohkl::Peak3D*> peaks;
 
             Eigen::Vector3d local_center;
@@ -348,7 +348,7 @@ void ExperimentImporter::loadPeaks(Experiment* experiment)
 
                 peaks.push_back(peak);
             }
-            nsxlog(Level::Debug, "Finished creating the vector of peaks");
+            ohklLog(Level::Debug, "Finished creating the vector of peaks");
 
             PeakCollectionType collection_type = static_cast<PeakCollectionType>(type);
 
@@ -357,18 +357,18 @@ void ExperimentImporter::loadPeaks(Experiment* experiment)
                 collection_name, collection_type, peaks, static_cast<bool>(indexed[0] - 48),
                 static_cast<bool>(integrated[0] - 48));
 
-            nsxlog(Level::Debug, "Finished creating the peak collection");
+            ohklLog(Level::Debug, "Finished creating the peak collection");
         }
     } catch (H5::Exception& e) {
         throw std::runtime_error{e.getDetailMsg()};
     }
 
-    nsxlog(ohkl::Level::Debug, "Finished importing peaks from file '", _file_name, "'");
+    ohklLog(ohkl::Level::Debug, "Finished importing peaks from file '", _file_name, "'");
 }
 
 void ExperimentImporter::loadUnitCells(Experiment* experiment)
 {
-    nsxlog(Level::Debug, "Importing unit cells from file '", _file_name, "'");
+    ohklLog(Level::Debug, "Importing unit cells from file '", _file_name, "'");
 
     try {
         H5::H5File file(_file_name.c_str(), H5F_ACC_RDONLY);
@@ -455,7 +455,7 @@ void ExperimentImporter::loadUnitCells(Experiment* experiment)
         throw std::runtime_error(what);
     }
 
-    nsxlog(Level::Debug, "Finished importing unit cells from file '", _file_name, "'");
+    ohklLog(Level::Debug, "Finished importing unit cells from file '", _file_name, "'");
 }
 
 void ExperimentImporter::loadInstrumentStates(Experiment* experiment)
@@ -510,7 +510,7 @@ void ExperimentImporter::loadInstrumentStates(Experiment* experiment)
         throw std::runtime_error(what);
     }
 
-    nsxlog(Level::Debug, "Finished importing instrument states from file '", _file_name, "'");
+    ohklLog(Level::Debug, "Finished importing instrument states from file '", _file_name, "'");
 }
 
 

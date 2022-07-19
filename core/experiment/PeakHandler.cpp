@@ -33,7 +33,7 @@ bool PeakHandler::addPeakCollection(
     // abort if name is aleady in use
     if (hasPeakCollection(name))
         return false;
-    nsxlog(Level::Info, "PeakHandler::addPeakCollection '", name, "': ", peaks.size(), " peaks");
+    ohklLog(Level::Info, "PeakHandler::addPeakCollection '", name, "': ", peaks.size(), " peaks");
     std::unique_ptr<PeakCollection> ptr(new PeakCollection(name, type));
     ptr->populate(peaks);
     _peak_collections.insert_or_assign(name, std::move(ptr));
@@ -47,7 +47,7 @@ bool PeakHandler::addPeakCollection(
     // abort if name is aleady in use
     if (hasPeakCollection(name))
         return false;
-    nsxlog(Level::Info, "PeakHandler::addPeakCollection '", name, "': ", peaks.size(), " peaks");
+    ohklLog(Level::Info, "PeakHandler::addPeakCollection '", name, "': ", peaks.size(), " peaks");
     std::unique_ptr<PeakCollection> ptr(new PeakCollection(name, type));
     ptr->setIndexed(indexed);
     ptr->setIntegrated(integrated);
@@ -60,7 +60,7 @@ bool PeakHandler::addEmptyCollection(const std::string& name, const PeakCollecti
 {
     if (hasPeakCollection(name))
         return false;
-    nsxlog(Level::Info, "PeakHandler::addEmptyCollection '" + name + "'");
+    ohklLog(Level::Info, "PeakHandler::addEmptyCollection '" + name + "'");
     std::unique_ptr<PeakCollection> ptr(new PeakCollection(name, type));
     _peak_collections.insert_or_assign(name, std::move(ptr));
     return hasPeakCollection(name); // now name must be in use

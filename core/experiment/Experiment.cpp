@@ -57,7 +57,7 @@ Experiment::Experiment(const std::string& name, const std::string& diffractomete
 {
     // start logging
     Logger::instance().start(ohkl::kw_logFilename, Level::Info);
-    nsxlog(Level::Info, "Git branch ", GIT_BRANCH, " / commit hash ", COMMIT_HASH);
+    ohklLog(Level::Info, "Git branch ", GIT_BRANCH, " / commit hash ", COMMIT_HASH);
 
     _instrumentstate_handler = std::make_unique<InstrumentStateHandler>();
     _data_handler =
@@ -117,7 +117,7 @@ bool Experiment::acceptFoundPeaks(const std::string& name, const PeakCollection&
 void Experiment::saveToFile(const std::string& path) const
 {
     ohkl::ExperimentExporter exporter;
-    nsxlog(Level::Info, "Saving experiment to file: '" + path + "'");
+    ohklLog(Level::Info, "Saving experiment to file: '" + path + "'");
 
     /* If the chosen path for saving is the same as the path of
        the current dataset file, then a two-step process is used
@@ -129,8 +129,8 @@ void Experiment::saveToFile(const std::string& path) const
 
     bool overwrite_datafile = false;
     for (const auto& [ds_nm, ds_ptr] : *_data_handler->getDataMap()) {
-        const std::string nsx_filepath = ds_ptr->reader()->NSXfilepath();
-        if (nsx_filepath == path) {
+        const std::string ohkl_filepath = ds_ptr->reader()->OHKLfilepath();
+        if (ohkl_filepath == path) {
             overwrite_datafile = true;
             break;
         }
@@ -140,7 +140,7 @@ void Experiment::saveToFile(const std::string& path) const
     if (overwrite_datafile) {
         // create a filename for the temporary datafile
         filepath = tempFilename(path);
-        nsxlog(Level::Debug, "Saving experiment to temporary file '" + filepath + "'");
+        ohklLog(Level::Debug, "Saving experiment to temporary file '" + filepath + "'");
     }
 
     exporter.createFile(name(), getDiffractometer()->name(), filepath);
@@ -171,11 +171,11 @@ void Experiment::saveToFile(const std::string& path) const
         // rename the temporary datafile to the given filename
         const int rename_success = rename(filepath.c_str(), path.c_str());
         if (rename_success == 0) {
-            nsxlog(
+            ohklLog(
                 Level::Debug,
                 "Renamed the temporary file '" + filepath + "' " + "to '" + path + "'");
         } else {
-            nsxlog(
+            ohklLog(
                 Level::Error,
                 "Could not rename the temporary file '" + filepath + "' to '" + path
                     + "'. Data might be lost.");
@@ -186,7 +186,7 @@ void Experiment::saveToFile(const std::string& path) const
 void Experiment::loadFromFile(const std::string& path)
 {
     ohkl::ExperimentImporter importer;
-    nsxlog(Level::Info, "Loading experiment from file: '" + path + "'");
+    ohklLog(Level::Info, "Loading experiment from file: '" + path + "'");
 
     importer.setFilePath(path, this);
     importer.loadData(this);
@@ -215,13 +215,13 @@ void Experiment::autoIndex(PeakCollection* peaks)
     _peak_filter->parameters()->frame_min = params->first_frame;
     _peak_filter->parameters()->frame_max = params->last_frame;
 
-    nsxlog(
+    ohklLog(
         Level::Info, "Experiment::autoIndex: attempting with frames ", params->first_frame, " - ",
         params->last_frame);
     _peak_filter->filter(peaks);
     double npeaks = peaks->numberOfPeaks();
     double ncaught = peaks->numberCaughtByFilter();
-    nsxlog(Level::Info, "Indexing using ", ncaught, " / ", npeaks, " peaks");
+    ohklLog(Level::Info, "Indexing using ", ncaught, " / ", npeaks, " peaks");
     _peak_handler->acceptFilter(collection_name, peaks, PeakCollectionType::INDEXING);
     PeakCollection* indexing_collection = getPeakCollection(collection_name);
     _auto_indexer->autoIndex(indexing_collection);
@@ -231,7 +231,7 @@ void Experiment::autoIndex(PeakCollection* peaks)
 void Experiment::buildShapeModel(
     PeakCollection* peaks, sptrDataSet data, const ShapeModelParameters& params)
 {
-    nsxlog(Level::Info, "Experiment::buildShapeModel");
+    ohklLog(Level::Info, "Experiment::buildShapeModel");
     params.log(Level::Info);
     peaks->computeSigmas();
 
@@ -249,11 +249,11 @@ void Experiment::buildShapeModel(
     fit_peaks.populateFromFiltered(peaks);
 
     if (fit_peaks.numberOfPeaks() == 0) {
-        nsxlog(Level::Info, "Experiment::buildShapeModel: no fit peaks found");
+        ohklLog(Level::Info, "Experiment::buildShapeModel: no fit peaks found");
         return;
     }
 
-    nsxlog(
+    ohklLog(
         Level::Info, "Experiment::buildShapeModel: ", fit_peaks.numberOfPeaks(), " / ",
         peaks->numberOfPeaks(), " fit peaks");
 
@@ -276,7 +276,7 @@ void Experiment::buildShapeModel(
     peaks->setShapeModel(shapes);
 
     // shape_model.updateFit(1000); // This does nothing!! - zamaan
-    nsxlog(Level::Info, "Experiment::buildShapeModel finished");
+    ohklLog(Level::Info, "Experiment::buildShapeModel finished");
 }
 
 const UnitCell* Experiment::getAcceptedCell() const
@@ -292,14 +292,14 @@ const UnitCell* Experiment::getReferenceCell() const
 bool Experiment::refine(
     const PeakCollection* peaks, DataSet* data, sptrUnitCell cell /* = nullptr */)
 {
-    nsxlog(Level::Info, "Experiment::refine: Refining peak collection ", peaks->name());
+    ohklLog(Level::Info, "Experiment::refine: Refining peak collection ", peaks->name());
     std::vector<Peak3D*> peak_list = peaks->getPeakList();
     _refiner->makeBatches(getInstrumentStateSet(data)->instrumentStates(), peak_list, cell);
     bool success = _refiner->refine();
     if (success) {
-        nsxlog(Level::Info, "Refinement succeeded");
+        ohklLog(Level::Info, "Refinement succeeded");
     } else {
-        nsxlog(Level::Info, "Refinement failed");
+        ohklLog(Level::Info, "Refinement failed");
     }
     return success;
 }
@@ -308,7 +308,7 @@ void Experiment::updatePredictions(PeakCollection* predicted_peaks)
 {
     auto peak_list = predicted_peaks->getPeakList();
     int update = _refiner->updatePredictions(peak_list);
-    nsxlog(Level::Info, update, " peaks updated");
+    ohklLog(Level::Info, update, " peaks updated");
 }
 
 Integrator* Experiment::integrator()
