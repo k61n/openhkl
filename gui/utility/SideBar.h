@@ -46,6 +46,7 @@ class SideBar : public QWidget {
     void onPredictor();
     void onRefiner();
     void onIntegrator();
+    void onReject();
     void onMerger();
 
  protected:

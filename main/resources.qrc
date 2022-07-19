@@ -28,6 +28,7 @@
         <file>images/sidebar/lighttheme/predictor.svg</file>
         <file>images/sidebar/lighttheme/refiner.svg</file>
         <file>images/sidebar/lighttheme/integrator.svg</file>
+        <file>images/sidebar/lighttheme/reject.svg</file>
         <file>images/sidebar/lighttheme/merger.svg</file>
         <file>images/sidebar/lighttheme/shapes.svg</file>
         <file>images/sidebar/darktheme/home.svg</file>
@@ -38,6 +39,7 @@
         <file>images/sidebar/darktheme/predictor.svg</file>
         <file>images/sidebar/darktheme/refiner.svg</file>
         <file>images/sidebar/darktheme/integrator.svg</file>
+        <file>images/sidebar/darktheme/reject.svg</file>
         <file>images/sidebar/darktheme/merger.svg</file>
         <file>images/sidebar/darktheme/shapes.svg</file>
         <file>images/statusbar/red-circle.svg</file>
