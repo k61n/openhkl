@@ -46,7 +46,7 @@ class SubframeExperiment : public QWidget {
     void toggleUnsafeWidgets();
     void updateRanges();
 
-    int getNumberDataPoints() {return _lineplot_number_current->value();};
+    int getNumberDataPoints() {return _npoints_lineplot->value();};
 
  private:
     std::vector<ohkl::sptrDataSet> _data_list;
@@ -59,13 +59,13 @@ class SubframeExperiment : public QWidget {
     QCheckBox* _totalHistogram;
     QCheckBox* _yLog;
     QCheckBox* _xZoom;
-    QCheckBox* _yZoom;
-    QDoubleSpinBox* _intensity_number_current;
-    QDoubleSpinBox* _lineplot_number_current;
-    QDoubleSpinBox* _minX;
-    QDoubleSpinBox* _maxX;
-    QDoubleSpinBox* _minY;
-    QDoubleSpinBox* _maxY;
+    QCheckBox* _yZoom;    
+    QSpinBox*  _npoints_intensity;
+    QSpinBox* _npoints_lineplot;
+    QSpinBox* _minX;
+    QSpinBox* _maxX;
+    QSpinBox* _minY;
+    QSpinBox* _maxY;
 
     Spoiler* lineplot_box;
     Spoiler* intensity_plot_box;

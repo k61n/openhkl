@@ -69,22 +69,10 @@ SubframeExperiment::SubframeExperiment()
     int nIntensityMinPoints = 100;
 
     int nLineplotMaxPoints = 1000;
-    int nLineplotMinPoints = 10;
- 
-    QWidget* ndatapoint_widget_intensity = new QWidget;
-    QWidget* ndatapoint_widget_lineplot = new QWidget;
+    int nLineplotMinPoints = 10; 
 
-    QHBoxLayout* hbox = new QHBoxLayout(ndatapoint_widget_intensity);
-    QHBoxLayout* hbox2 = new QHBoxLayout(ndatapoint_widget_lineplot);
-
-    hbox->addWidget(new QLabel("Number of datapoints:"));
-    hbox->addWidget(_intensity_number_current);
-
-    hbox2->addWidget(new QLabel("Number of datapoints:"));
-    hbox2->addWidget(_lineplot_number_current);
-
-    f.addWidget(ndatapoint_widget_intensity,0);
-    f2.addWidget(ndatapoint_widget_lineplot,0);
+    _npoints_intensity = f.addSpinBox(QString("Number of datapoints:"));
+    _npoints_lineplot = f2.addSpinBox(QString("Number of datapoints:"));
 
     _calc_intensity = f.addButton("Calculate intensity");
 
@@ -100,33 +88,23 @@ SubframeExperiment::SubframeExperiment()
     intensity_plot_box->setMaximumWidth(400);
     lineplot_box->setMaximumWidth(400);
 
-    _intensity_number_current->setMaximumWidth(100);
-    _intensity_number_current->setMaximum(nIntensityMaxPoints);
-    _intensity_number_current->setMinimum(nIntensityMinPoints);
-    
-    _intensity_number_current->setDecimals(0);
-    _intensity_number_current->setValue(nIntensityMinPoints); 
-    _lineplot_number_current->setMaximum(nLineplotMaxPoints);
-    _lineplot_number_current->setMinimum(nLineplotMinPoints); 
+    _npoints_intensity->setMaximumWidth(100);
+    _npoints_intensity->setMaximum(nIntensityMaxPoints);
+    _npoints_intensity->setMinimum(nIntensityMinPoints);    
+    _npoints_intensity->setValue(nIntensityMinPoints); 
 
-    _lineplot_number_current->setMaximumWidth(250);
-    _lineplot_number_current->setMinimum(nLineplotMinPoints);
+    _npoints_lineplot->setMaximum(nLineplotMaxPoints);
+    _npoints_lineplot->setMinimum(nLineplotMinPoints); 
+    _npoints_lineplot->setMaximumWidth(250);
+    _npoints_lineplot->setMinimum(nLineplotMinPoints); 
+    _npoints_lineplot->setValue(nLineplotMinPoints);
  
-    _lineplot_number_current->setDecimals(0);
-    _lineplot_number_current->setValue(nLineplotMinPoints);
- 
+    _minX = f.addSpinBox("Minimal x value:");
+    _maxX = f.addSpinBox("Maximum x value:");
+    _minY = f.addSpinBox("Minimal y value:");
+    _maxY = f.addSpinBox("Maximal y value:");
 
-    _minX = f.addDoubleSpinBox("Minimal x value:");
-    _maxX = f.addDoubleSpinBox("Maximum x value:");
-    _minY = f.addDoubleSpinBox("Minimal y value:");
-    _maxY = f.addDoubleSpinBox("Maximal y value:");
-
-    _update_plot = f.addButton("Update plot");
-
-    _minY->setDecimals(0);
-    _minX->setDecimals(0);
-    _maxY->setDecimals(0);
-    _maxX->setDecimals(0);
+    _update_plot = f.addButton("Update plot"); 
 
     _plot = new PlotPanel;
 
@@ -215,7 +193,7 @@ SubframeExperiment::SubframeExperiment()
 
             if (!data) return;
             if (hasHistograms) data->clearHistograms();
-            data->getIntensityHistogram(_intensity_number_current->value());
+            data->getIntensityHistogram(_npoints_intensity->value());
 
             _maxX->setMaximum(data->nCols()*data->nRows());
             _minX->setMaximum(data->nCols()*data->nRows()-1);
