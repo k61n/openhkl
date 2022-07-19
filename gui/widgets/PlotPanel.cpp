@@ -73,14 +73,14 @@ void PlotPanel::plotData(QVector<double>& x, QVector<double>& y, QVector<double>
 void PlotPanel::plotHistogram(size_t nData, double* range, double* bin, QString xtitle, QString ytitle, int xmin, int xmax, int ymin, int ymax)
 {
     // need to convert Data for QCustomplot
-    QVector<double> x;
-    QVector<double> y;
+    QVector<double> frequency;
+    QVector<double> counts;
 
-    x.resize(nData);
-    y.resize(nData);
+    frequency.resize(nData);
+    counts.resize(nData);
 
-    memcpy(x.data(), range, nData * sizeof(double));
-    memcpy(y.data(), bin, nData * sizeof(double));
+    memcpy(frequency.data(), range, nData * sizeof(double));
+    memcpy(counts.data(), bin, nData * sizeof(double));
 
     QSharedPointer<QCPBarsDataContainer> data;
 
@@ -88,7 +88,7 @@ void PlotPanel::plotHistogram(size_t nData, double* range, double* bin, QString 
     plot->addGraph();
     QCPBars *bars = new QCPBars(plot->xAxis, plot->yAxis);
     bars->setName("Intensity Histogram");
-    bars->setData(x,y);
+    bars->setData(frequency, counts);
     plot->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom);
     plot->setFocusPolicy(Qt::StrongFocus);
     anchor->addWidget(plot);
