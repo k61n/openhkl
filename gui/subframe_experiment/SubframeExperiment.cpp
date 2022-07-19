@@ -59,7 +59,7 @@ SubframeExperiment::SubframeExperiment()
     left_widget->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Expanding);
     QVBoxLayout* left_layout = new QVBoxLayout;
 
-    intensity_plot_box = new Spoiler("Intensity Plot");
+    intensity_plot_box = new Spoiler("Per-pixel detector count histogram");
     lineplot_box = new Spoiler("Lineplot");
 
     GridFiller gfiller(intensity_plot_box, true);
@@ -172,7 +172,6 @@ void SubframeExperiment::setLogarithmicScale()
     _plot->setYLog(_yLog->isChecked());
     updateRanges();
     plotIntensities();
-
 }
  
 void SubframeExperiment::calculateIntensities()
