@@ -97,9 +97,9 @@ SubframeExperiment::SubframeExperiment()
     _calc_intensity = f.addButton("Calculate intensity");
 
     _totalHistogram = f.addCheckBox("Show total histogram", 1);
-    _yLog = f.addCheckBox("yLog", 1);
-    _xZoom = f.addCheckBox("Zoom on X axis", 1);
-    _yZoom = f.addCheckBox("Zoom on Y axis", 1);
+    _yLog = f.addCheckBox("Use logarithmic y scale", 1);
+    _xZoom = f.addCheckBox("Range on x axis", 1);
+    _yZoom = f.addCheckBox("Range on y axis", 1);
 
     left_layout->addWidget(intensity_plot_box);
     left_layout->addWidget(lineplot_box);
@@ -134,10 +134,10 @@ SubframeExperiment::SubframeExperiment()
     _lineplot_number_current->setValue(nLineplotMinPoints);
     _lineplot_number_datapoints->setValue(nLineplotMinPoints);
 
-    _minX = f.addDoubleSpinBox("minX:");
-    _maxX = f.addDoubleSpinBox("maxX:");
-    _minY = f.addDoubleSpinBox("minY:");
-    _maxY = f.addDoubleSpinBox("maxY:");
+    _minX = f.addDoubleSpinBox("Minimal x value:");
+    _maxX = f.addDoubleSpinBox("Maximum x value:");
+    _minY = f.addDoubleSpinBox("Minimal y value:");
+    _maxY = f.addDoubleSpinBox("Maximal y value:");
 
     _update_plot = f.addButton("Update plot");
 
