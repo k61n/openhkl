@@ -62,8 +62,8 @@ SubframeExperiment::SubframeExperiment()
     intensity_plot_box = new Spoiler("Intensity Plot");
     lineplot_box = new Spoiler("Lineplot");
 
-    GridFiller f(intensity_plot_box, true);
-    GridFiller f2(lineplot_box, true);
+    GridFiller gfiller(intensity_plot_box, true);
+    GridFiller gfiller2(lineplot_box, true);
 
     int nIntensityMaxPoints = 100000;
     int nIntensityMinPoints = 100;
@@ -71,15 +71,15 @@ SubframeExperiment::SubframeExperiment()
     int nLineplotMaxPoints = 1000;
     int nLineplotMinPoints = 10; 
 
-    _npoints_intensity = f.addSpinBox(QString("Number of datapoints:"));
-    _npoints_lineplot = f2.addSpinBox(QString("Number of datapoints:"));
+    _npoints_intensity = gfiller.addSpinBox(QString("Number of datapoints:"));
+    _npoints_lineplot = gfiller2.addSpinBox(QString("Number of datapoints:"));
 
-    _calc_intensity = f.addButton("Calculate intensity");
+    _calc_intensity = gfiller.addButton("Calculate intensity");
 
-    _totalHistogram = f.addCheckBox("Show total histogram", 1);
-    _yLog = f.addCheckBox("Use logarithmic y scale", 1);
-    _xZoom = f.addCheckBox("Range on x axis", 1);
-    _yZoom = f.addCheckBox("Range on y axis", 1);
+    _totalHistogram = gfiller.addCheckBox("Show total histogram", 1);
+    _yLog = gfiller.addCheckBox("Use logarithmic y scale", 1);
+    _xZoom = gfiller.addCheckBox("Range on x axis", 1);
+    _yZoom = gfiller.addCheckBox("Range on y axis", 1);
 
     left_layout->addWidget(intensity_plot_box);
     left_layout->addWidget(lineplot_box);
@@ -99,12 +99,12 @@ SubframeExperiment::SubframeExperiment()
     _npoints_lineplot->setMinimum(nLineplotMinPoints); 
     _npoints_lineplot->setValue(nLineplotMinPoints);
  
-    _minX = f.addSpinBox("Minimal x value:");
-    _maxX = f.addSpinBox("Maximum x value:");
-    _minY = f.addSpinBox("Minimal y value:");
-    _maxY = f.addSpinBox("Maximal y value:");
+    _minX = gfiller.addSpinBox("Minimal x value:");
+    _maxX = gfiller.addSpinBox("Maximum x value:");
+    _minY = gfiller.addSpinBox("Minimal y value:");
+    _maxY = gfiller.addSpinBox("Maximal y value:");
 
-    _update_plot = f.addButton("Update plot"); 
+    _update_plot = gfiller.addButton("Update plot"); 
 
     _plot = new PlotPanel;
 
