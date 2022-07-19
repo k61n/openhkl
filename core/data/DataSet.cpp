@@ -40,7 +40,6 @@
 #include <gsl/gsl_histogram.h>
 
 #include <stdexcept>
-#include <stdexcept>
 
 namespace ohkl {
 
