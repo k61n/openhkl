@@ -182,8 +182,6 @@ SubframeExperiment::SubframeExperiment()
             [=](){
                 lineplot_box->setVisible(_detector_widget->modeCombo()->currentIndex() == 4);
                 intensity_plot_box->setVisible(_detector_widget->modeCombo()->currentIndex() == 7);
-               // auto plot = getPlot();
-               // plot->clear();
             }
     );
 

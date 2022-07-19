@@ -79,7 +79,7 @@ void PlotPanel::plotHistogram(size_t nData, double* range, double* bin, QString 
     x.resize(nData);
     y.resize(nData);
 
-    memcpy(x.data(),  range, nData * sizeof(double));
+    memcpy(x.data(), range, nData * sizeof(double));
     memcpy(y.data(), bin, nData * sizeof(double));
 
     QSharedPointer<QCPBarsDataContainer> data;
