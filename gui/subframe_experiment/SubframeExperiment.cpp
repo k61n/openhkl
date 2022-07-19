@@ -57,33 +57,40 @@ SubframeExperiment::SubframeExperiment()
     left_widget->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Expanding);
     QVBoxLayout* left_layout = new QVBoxLayout;
 
-    Spoiler* intensity_plot_box = new Spoiler("Intensity Plot");
+    intensity_plot_box = new Spoiler("Intensity Plot");
+    lineplot_box = new Spoiler("Lineplot");
+
     GridFiller f(intensity_plot_box, true);
+    GridFiller f2(lineplot_box, true);
 
-    int nMaxBins = 100000;
-    int nMinBins = 100;
+    int nIntensityMaxPoints = 100000;
+    int nIntensityMinPoints = 100;
 
-    _number_bins = new QSlider(Qt::Horizontal);
-    QLabel* label = new QLabel("Number of bins: ");
-    _number_bins_current = new QDoubleSpinBox();
-    _number_bins_current->setMaximumWidth(100);
-    _number_bins_current->setMinimum(1);
-    _number_bins_current->setMaximum(nMaxBins);
-    _number_bins_current->setMinimum(nMinBins);
-    _number_bins->setMaximumWidth(250);
-    _number_bins_current->setDecimals(0);
+    int nLineplotMaxPoints = 1000;
+    int nLineplotMinPoints = 10;
 
-    _number_bins_current->setValue(nMinBins);
-    _number_bins->setValue(1000);
+    _intensity_number_datapoints = new QSlider(Qt::Horizontal);
+    _intensity_number_current = new QDoubleSpinBox();
 
-    QWidget* bin_selector_widget = new QWidget;
-    QHBoxLayout* hbox = new QHBoxLayout(bin_selector_widget);
+    _lineplot_number_datapoints = new QSlider(Qt::Horizontal);
+    _lineplot_number_current = new QDoubleSpinBox();
 
-    hbox->addWidget(label);
-    hbox->addWidget(_number_bins);
-    hbox->addWidget(_number_bins_current);
+    QWidget* ndatapoint_widget_intensity = new QWidget;
+    QWidget* ndatapoint_widget_lineplot = new QWidget;
 
-    f.addWidget(bin_selector_widget,0);
+    QHBoxLayout* hbox = new QHBoxLayout(ndatapoint_widget_intensity);
+    QHBoxLayout* hbox2 = new QHBoxLayout(ndatapoint_widget_lineplot);
+
+    hbox->addWidget(new QLabel("Number of datapoints:"));
+    hbox->addWidget(_intensity_number_datapoints);
+    hbox->addWidget(_intensity_number_current);
+
+    hbox2->addWidget(new QLabel("Number of datapoints:"));
+    hbox2->addWidget(_lineplot_number_datapoints);
+    hbox2->addWidget(_lineplot_number_current);
+
+    f.addWidget(ndatapoint_widget_intensity,0);
+    f2.addWidget(ndatapoint_widget_lineplot,0);
 
     _calc_intensity = f.addButton("Calculate intensity");
 
@@ -93,13 +100,37 @@ SubframeExperiment::SubframeExperiment()
     _yZoom = f.addCheckBox("Zoom on Y axis", 1);
 
     left_layout->addWidget(intensity_plot_box);
+    left_layout->addWidget(lineplot_box);
     left_layout->addStretch();
-    intensity_plot_box->setMaximumWidth(400);
 
-    _number_bins->setMinimumWidth(1);
-    _number_bins->setMaximum(nMaxBins);
-    _number_bins->setMinimum(nMinBins);
-    _number_bins->setValue(nMinBins);
+    intensity_plot_box->setMaximumWidth(400);
+    lineplot_box->setMaximumWidth(400);
+
+    _intensity_number_current->setMaximumWidth(100);
+    _intensity_number_current->setMaximum(nIntensityMaxPoints);
+    _intensity_number_current->setMinimum(nIntensityMinPoints);
+    _intensity_number_datapoints->setMaximumWidth(250);
+    _intensity_number_current->setDecimals(0);
+    _intensity_number_current->setValue(nIntensityMinPoints);
+    _intensity_number_datapoints->setValue(nIntensityMinPoints);
+    _intensity_number_datapoints->setMinimumWidth(1);
+    _intensity_number_datapoints->setMaximum(nIntensityMaxPoints);
+    _intensity_number_datapoints->setMinimum(nIntensityMinPoints);
+    _intensity_number_datapoints->setValue(nIntensityMinPoints);
+
+    _lineplot_number_datapoints->setMinimumWidth(1);
+    _lineplot_number_datapoints->setMaximum(nLineplotMaxPoints);
+    _lineplot_number_datapoints->setMinimum(nLineplotMinPoints);
+    _lineplot_number_current->setMaximum(nLineplotMaxPoints);
+    _lineplot_number_current->setMinimum(nLineplotMinPoints);
+    _lineplot_number_datapoints->setValue(nLineplotMinPoints);
+
+    _lineplot_number_current->setMaximumWidth(250);
+    _lineplot_number_current->setMinimum(nLineplotMinPoints);
+    _lineplot_number_datapoints->setMaximumWidth(250);
+    _lineplot_number_current->setDecimals(0);
+    _lineplot_number_current->setValue(nLineplotMinPoints);
+    _lineplot_number_datapoints->setValue(nLineplotMinPoints);
 
     _minX = f.addDoubleSpinBox("minX:");
     _maxX = f.addDoubleSpinBox("maxX:");
@@ -120,7 +151,7 @@ SubframeExperiment::SubframeExperiment()
     _detector_widget = new DetectorWidget(true, false, true, figure_group);
     _detector_widget->modeCombo()->addItems(QStringList{
             "Zoom", "Selection box", "Rectangular mask", "Elliptical mask",
-            "Line plot", "Horizontal slice", "Vertical slice"});
+            "Line plot", "Horizontal slice", "Vertical slice", "Intensity Histograms"});
 
     QWidget* right_widget = new QWidget(this);
     right_widget->setLayout(_detector_widget);
@@ -142,6 +173,18 @@ SubframeExperiment::SubframeExperiment()
 
     layout->addWidget(splitter);
 
+    lineplot_box->setVisible(false);
+    intensity_plot_box->setVisible(false);
+    
+    connect(
+        _detector_widget->modeCombo(), QOverload<int>::of(&QComboBox::currentIndexChanged),
+        this,
+            [=](){
+                lineplot_box->setVisible(_detector_widget->modeCombo()->currentIndex() == 4);
+                intensity_plot_box->setVisible(_detector_widget->modeCombo()->currentIndex() == 7);
+            }
+    );
+
     connect(
         _detector_widget->dataCombo(), QOverload<int>::of(&QComboBox::currentIndexChanged),
         this,
@@ -150,7 +193,7 @@ SubframeExperiment::SubframeExperiment()
                 plotIntensities();
                 toggleUnsafeWidgets();
             }
-        );
+    );
 
     connect(_totalHistogram, &QCheckBox::clicked, this,
         [=](){
@@ -190,7 +233,7 @@ SubframeExperiment::SubframeExperiment()
 
             if (!data) return;
             if (hasHistograms) data->clearHistograms();
-            data->getIntensityHistogram(_number_bins->value());
+            data->getIntensityHistogram(_intensity_number_datapoints->value());
 
             _maxX->setMaximum(data->nCols()*data->nRows());
             _minX->setMaximum(data->nCols()*data->nRows()-1);
@@ -202,11 +245,17 @@ SubframeExperiment::SubframeExperiment()
         }
     );
 
-    connect(_number_bins, &QSlider::valueChanged, this,
+    connect(_intensity_number_datapoints, &QSlider::valueChanged, this,
         [=](){
-            _number_bins_current->setValue(_number_bins->value());
+            _intensity_number_current->setValue(_intensity_number_datapoints->value());
         }
-     );
+    );
+
+    connect(_lineplot_number_datapoints, &QSlider::valueChanged, this,
+        [=](){
+            _lineplot_number_current->setValue(_lineplot_number_datapoints->value());
+        }
+    );
 
     connect(_detector_widget->scroll(), &QScrollBar::valueChanged, this,
         [=](){
@@ -215,9 +264,15 @@ SubframeExperiment::SubframeExperiment()
         }
     );
 
-    connect(_number_bins_current, QOverload<double>::of(&QDoubleSpinBox::valueChanged), this,
+    connect(_intensity_number_current, QOverload<double>::of(&QDoubleSpinBox::valueChanged), this,
         [=](){
-           _number_bins->setValue(_number_bins_current->value());
+           _intensity_number_datapoints->setValue(_intensity_number_current->value());
+        }
+    );
+
+    connect(_lineplot_number_current, QOverload<double>::of(&QDoubleSpinBox::valueChanged), this,
+        [=](){
+           _lineplot_number_datapoints->setValue(_lineplot_number_current->value());
         }
     );
 
@@ -298,7 +353,7 @@ void SubframeExperiment::plotIntensities()
     x.resize(histo->n);
     y.resize(histo->n);
 
-    memcpy(x.data(),  histo->range, histo->n * sizeof(double));
+    memcpy(x.data(), histo->range, histo->n * sizeof(double));
     memcpy(y.data(), histo->bin, histo->n * sizeof(double));
 
     auto plot = getPlot();
