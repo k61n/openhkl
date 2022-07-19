@@ -39,6 +39,16 @@ void PlotPanel::plotData(QVector<double>& x, QVector<double>& y, QVector<double>
         plot->setFocusPolicy(Qt::StrongFocus);
         anchor->addWidget(plot);
     }
+    plot->clearPlottables();
+    plot->addGraph();
+
+    QPen pen(QColor(0,0,0));
+    pen.setWidth(1);
+    plot->graph(0)->setPen(pen);
+
+    plot->graph(0)->setLineStyle(QCPGraph::LineStyle::lsLine);
+    plot->graph(0)->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssCircle, 3));
+
     plot->graph(0)->setData(x, y);
     plot->addErrorBars(plot->graph(0), e);
 
