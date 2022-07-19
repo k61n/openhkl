@@ -141,79 +141,58 @@ SubframeExperiment::SubframeExperiment()
     connect(
         _detector_widget->dataCombo(), QOverload<int>::of(&QComboBox::currentIndexChanged),
         this,
-            [=](){
-                updateRanges();
-                plotIntensities();
-                toggleUnsafeWidgets();
-            }
-    );
+        &SubframeExperiment::calculateIntensities);
 
     connect(_totalHistogram, &QCheckBox::clicked, this,
-        [=](){
-            updateRanges();
-            toggleUnsafeWidgets();
-            plotIntensities();
-        }
-    );
+        &SubframeExperiment::refreshAll);
 
     connect(_xZoom, &QCheckBox::clicked, this,
-        [=](){
-            updateRanges();
-            toggleUnsafeWidgets();
-        }
-    );
+        &SubframeExperiment::refreshAll);
 
     connect(_yZoom, &QCheckBox::clicked, this,
-        [=](){
-            updateRanges();
-            toggleUnsafeWidgets();
-        }
-    );
+        &SubframeExperiment::refreshAll);
 
     connect(_yLog, &QCheckBox::clicked, this,
-        [=](){
-            _plot->setYLog(_yLog->isChecked());
-            updateRanges();
-            plotIntensities();
-        }
-    );
+        &SubframeExperiment::setLogarithmicScale);
 
     connect(_calc_intensity, &QPushButton::clicked, this,
-        [=](){
-            ohkl::Experiment* expt = gSession->currentProject()->experiment();
-            auto data = expt->getDataMap()->at(_detector_widget->dataCombo()->currentText().toStdString());
-            bool hasHistograms = data->getNumberHistograms() > 0;
+        &SubframeExperiment::calculateIntensities);
 
-            if (!data) return;
-            if (hasHistograms) data->clearHistograms();
-            data->getIntensityHistogram(_npoints_intensity->value());
-
-            _maxX->setMaximum(data->nCols()*data->nRows());
-            _minX->setMaximum(data->nCols()*data->nRows()-1);
-            _maxY->setMaximum(1e+100);
-            _minY->setMaximum(1e+100-1);
-
-            updateRanges();
-            toggleUnsafeWidgets();
-            plotIntensities();
-        }
-    );   
-
-    connect(_detector_widget->scroll(), &QScrollBar::valueChanged, this,
-        [=](){
-            updateRanges();
-            plotIntensities();
-        }
-    );
+    connect(_detector_widget->scroll(), &QScrollBar::valueChanged,
+    this, &SubframeExperiment::refreshAll);
 
     connect(_update_plot, &QPushButton::clicked, this,
-        [=](){
-            updateRanges();
-            plotIntensities();
-        }
-    );
+    &SubframeExperiment::refreshAll);
 
     toggleUnsafeWidgets();
+}
+
+void SubframeExperiment::setLogarithmicScale()
+{
+    _plot->setYLog(_yLog->isChecked());
+    updateRanges();
+    plotIntensities();
+
+}
+ 
+void SubframeExperiment::calculateIntensities()
+{
+    ohkl::Experiment* expt = gSession->currentProject()->experiment();
+    auto data = expt->getDataMap()->at(_detector_widget->dataCombo()->currentText().toStdString());
+    bool hasHistograms = data->getNumberHistograms() > 0;
+
+    if (!data) return;
+    if (hasHistograms) data->clearHistograms();
+    data->getIntensityHistogram(_npoints_intensity->value());
+
+    _maxX->setMaximum(data->nCols()*data->nRows());
+    _minX->setMaximum(data->nCols()*data->nRows()-1);
+    _maxY->setMaximum(1e+100);
+    _minY->setMaximum(1e+100-1);
+
+    updateRanges();
+    toggleUnsafeWidgets();
+    plotIntensities();
 }
 
 void SubframeExperiment::updateRanges()
@@ -297,6 +276,8 @@ void SubframeExperiment::refreshAll()
         return;
 
     _detector_widget->refresh();
+    updateRanges();
+    plotIntensities();
     toggleUnsafeWidgets();
 }
 

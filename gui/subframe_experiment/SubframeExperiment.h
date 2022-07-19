@@ -47,6 +47,8 @@ class SubframeExperiment : public QWidget {
     void updateRanges();
 
     int getNumberDataPoints() {return _npoints_lineplot->value();};
+    void calculateIntensities();
+    void setLogarithmicScale();
 
  private:
     std::vector<ohkl::sptrDataSet> _data_list;
