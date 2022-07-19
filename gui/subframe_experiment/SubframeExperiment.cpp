@@ -195,6 +195,7 @@ SubframeExperiment::SubframeExperiment()
 
             updateRanges();
             toggleUnsafeWidgets();
+            plotIntensities();
         }
     );   
 
