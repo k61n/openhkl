@@ -17,8 +17,11 @@
 
 #include "core/data/DataSet.h"
 #include "core/shape/PeakCollection.h"
+#include "core/statistics/PeakStatistics.h"
 #include "gui/items/PeakCollectionItem.h"
 #include "gui/models/PeakCollectionModel.h"
+
+#include <gsl/gsl_histogram.h>
 
 #include <QCheckBox>
 #include <QComboBox>
@@ -31,6 +34,8 @@
 #include <QTableWidget>
 #include <QVBoxLayout>
 #include <QWidget>
+#include <qcombobox.h>
+#include <qpushbutton.h>
 
 class PeakComboBox;
 class PlotPanel;
@@ -55,8 +60,10 @@ class SubframeReject : public QWidget {
     DetectorWidget* detectorWidget();
 
  private:
-    //! Select experiment, dataset, peak collection, unit cell
+    //! Select dataset, peak collection
     void setInputUp();
+    //! Input parameters for the histogram
+    void setHistogramUp();
 
     //! Set up the peak view widget
     void setPreviewUp();
@@ -64,20 +71,22 @@ class SubframeReject : public QWidget {
     void setFigureUp();
     //! Set up the plot widget
     void setPlotUp();
-    //! Refresh the DetctorScene
-    void refreshPeakVisual();
     //! Set up the peak table
     void setPeakTableUp();
+
+    //! Refresh the DetctorScene
+    void refreshPeakVisual();
     //! Refresh the peak table
     void refreshPeakTable();
     //! Scroll to selected peak in table
     void changeSelected(PeakItemGraphic* peak_graphic);
-
     //! Refresh the found peaks list
     void refreshTables();
-
     //! Disable unsafe widgets if no data loaded
     void toggleUnsafeWidgets();
+
+    //! Compute the selected histogram
+    void computeHistogram();
 
     QVBoxLayout* _left_layout;
     QSplitter* _right_element;
@@ -85,6 +94,15 @@ class SubframeReject : public QWidget {
     // data selection
     PeakComboBox* _peak_combo;
     DataComboBox* _data_combo;
+
+    // histogram generation
+    QComboBox* _histo_combo;
+    SafeSpinBox* _n_bins;
+    SafeSpinBox* _freq_min;
+    SafeSpinBox* _freq_max;
+    SafeSpinBox* _x_min;
+    SafeSpinBox* _x_max;
+    QPushButton* _plot_histogram;
 
     PeakViewWidget* _peak_view_widget;
     DetectorWidget* _detector_widget;
@@ -94,6 +112,9 @@ class SubframeReject : public QWidget {
     ohkl::PeakCollection* _peak_collection;
     PeakCollectionItem _peak_collection_item;
     PeakCollectionModel _peak_collection_model;
+    ohkl::PeakStatistics _peak_stats;
+
+    gsl_histogram* _current_histogram;
 };
 
 

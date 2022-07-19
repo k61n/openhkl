@@ -17,6 +17,7 @@
 
 #include "core/experiment/Experiment.h"
 #include "core/peak/Peak3D.h"
+#include "core/statistics/PeakStatistics.h"
 #include "gui/MainWin.h" // gGui
 #include "gui/frames/ProgressView.h"
 #include "gui/graphics/DetectorScene.h"
@@ -42,6 +43,7 @@
 #include <QMessageBox>
 #include <QScrollBar>
 #include <QSpacerItem>
+#include <qpushbutton.h>
 
 SubframeReject::SubframeReject() : QWidget()
 {
@@ -51,6 +53,7 @@ SubframeReject::SubframeReject() : QWidget()
     _left_layout = new QVBoxLayout();
 
     setInputUp();
+    setHistogramUp();
     setPreviewUp();
     setFigureUp();
     setPeakTableUp();
@@ -69,11 +72,13 @@ SubframeReject::SubframeReject() : QWidget()
     propertyScrollArea->setContentLayout(_left_layout);
     main_layout->addWidget(propertyScrollArea);
     main_layout->addWidget(_right_element);
+
+    _peak_stats = ohkl::PeakStatistics();
 }
 
 void SubframeReject::setInputUp()
 {
-    auto input_box = new Spoiler("Input");
+    auto* input_box = new Spoiler("Input");
     GridFiller f(input_box, true);
 
     _data_combo = f.addDataCombo("Data set");
@@ -84,6 +89,39 @@ void SubframeReject::setInputUp()
         &SubframeReject::toggleUnsafeWidgets);
 
     _left_layout->addWidget(input_box);
+}
+
+void SubframeReject::setHistogramUp()
+{
+    auto* histo_spoiler = new Spoiler("Histogram");
+    GridFiller filler(histo_spoiler, true);
+
+    _histo_combo = filler.addCombo("Histogram type");
+    for (const auto& [type, description] : _peak_stats.getHistoStrings())
+        _histo_combo->addItem(QString::fromStdString(description));
+
+    _n_bins = filler.addSpinBox("Number of bins", "Number of histogram bins");
+    std::tie(_freq_min, _freq_max) = filler.addSpinBoxPair(
+        "Frequency range", "Maximum and minimum frequecies for histogram");
+    std::tie(_x_min, _x_max) = filler.addSpinBoxPair(
+        "Data range", "Minimum and maximum of x data series");
+    _plot_histogram = filler.addButton("Plot histogram");
+
+    _n_bins->setMaximum(10000);
+    _x_min->setMaximum(10000);
+    _x_max->setMaximum(10000);
+    _freq_min->setMaximum(10000);
+    _freq_max->setMaximum(10000);
+
+    _n_bins->setValue(100);
+    _x_min->setValue(0);
+    _x_max->setValue(10000);
+    _freq_min->setValue(0);
+    _freq_max->setValue(1000);
+
+    connect(_plot_histogram, &QPushButton::clicked, this, &SubframeReject::computeHistogram);
+
+    _left_layout->addWidget(histo_spoiler);
 }
 
 void SubframeReject::setFigureUp()
@@ -198,6 +236,17 @@ void SubframeReject::changeSelected(PeakItemGraphic* peak_graphic)
 
 void SubframeReject::toggleUnsafeWidgets()
 {
+}
+
+void SubframeReject::computeHistogram()
+{
+    ohkl::PeakHistogramType type =
+        static_cast<ohkl::PeakHistogramType>(_histo_combo->currentIndex());
+    _current_histogram = _peak_stats.computeHistogram(type, _n_bins->value());
+    _freq_min->setMaximum(_peak_stats.maxCount());
+    _freq_max->setMaximum(_peak_stats.maxCount());
+    _x_max->setMaximum(_peak_stats.maxValue());
+    _x_min->setMaximum(_peak_stats.maxValue());
 }
 
 
