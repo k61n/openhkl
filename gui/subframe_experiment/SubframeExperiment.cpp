@@ -65,12 +65,6 @@ SubframeExperiment::SubframeExperiment()
     GridFiller gfiller(intensity_plot_box, true);
     GridFiller gfiller2(lineplot_box, true);
 
-    int nIntensityMaxPoints = 100000;
-    int nIntensityMinPoints = 100;
-
-    int nLineplotMaxPoints = 1000;
-    int nLineplotMinPoints = 10; 
-
     _npoints_intensity = gfiller.addSpinBox(QString("Number of datapoints:"));
     _npoints_lineplot = gfiller2.addSpinBox(QString("Number of datapoints:"));
 
@@ -89,15 +83,14 @@ SubframeExperiment::SubframeExperiment()
     lineplot_box->setMaximumWidth(400);
 
     _npoints_intensity->setMaximumWidth(100);
-    _npoints_intensity->setMaximum(nIntensityMaxPoints);
-    _npoints_intensity->setMinimum(nIntensityMinPoints);    
-    _npoints_intensity->setValue(nIntensityMinPoints); 
+    _npoints_intensity->setMaximum(65535);
+    _npoints_intensity->setMinimum(100);    
+    _npoints_intensity->setValue(100); 
 
-    _npoints_lineplot->setMaximum(nLineplotMaxPoints);
-    _npoints_lineplot->setMinimum(nLineplotMinPoints); 
-    _npoints_lineplot->setMaximumWidth(250);
-    _npoints_lineplot->setMinimum(nLineplotMinPoints); 
-    _npoints_lineplot->setValue(nLineplotMinPoints);
+    _npoints_lineplot->setMaximum(1000);
+    _npoints_lineplot->setMinimum(10); 
+    _npoints_lineplot->setMaximumWidth(250); 
+    _npoints_lineplot->setValue(10);
  
     _minX = gfiller.addSpinBox("Minimal x value:");
     _maxX = gfiller.addSpinBox("Maximum x value:");
