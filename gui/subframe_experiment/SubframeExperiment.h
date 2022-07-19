@@ -28,6 +28,7 @@ class PlotPanel;
 class PropertyPanel;
 class QPushButton;
 class QCheckBox;
+class Spoiler;
 
 //! Frame containing information on all aspects of the experiment
 class SubframeExperiment : public QWidget {
@@ -45,24 +46,31 @@ class SubframeExperiment : public QWidget {
     void toggleUnsafeWidgets();
     void updateRanges();
 
+    int getNumberDataPoints() {return _lineplot_number_current->value();};
+
  private:
     std::vector<nsx::sptrDataSet> _data_list;
     DetectorWidget* _detector_widget;
     PlotPanel* _plot;
     PropertyPanel* _properties;
 
-    QSlider* _number_bins;
+    QSlider* _intensity_number_datapoints;
+    QSlider* _lineplot_number_datapoints;
     QPushButton* _calc_intensity;
     QPushButton* _update_plot;
     QCheckBox* _totalHistogram;
     QCheckBox* _yLog;
     QCheckBox* _xZoom;
     QCheckBox* _yZoom;
-    QDoubleSpinBox* _number_bins_current;
+    QDoubleSpinBox* _intensity_number_current;
+    QDoubleSpinBox* _lineplot_number_current;
     QDoubleSpinBox* _minX;
     QDoubleSpinBox* _maxX;
     QDoubleSpinBox* _minY;
     QDoubleSpinBox* _maxY;
+
+    Spoiler* lineplot_box;
+    Spoiler* intensity_plot_box;
 };
 
 #endif // NSX_GUI_SUBFRAME_EXPERIMENT_SUBFRAMEEXPERIMENT_H
