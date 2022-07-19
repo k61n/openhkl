@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef OHKL_GUI_SUBFRAME_EXPERIMENT_PLOTPANEL_H
-#define OHKL_GUI_SUBFRAME_EXPERIMENT_PLOTPANEL_H
+#ifndef OHKL_GUI_WIDGETS_PLOTPANEL_H
+#define OHKL_GUI_WIDGETS_PLOTPANEL_H
 
 #include <QHBoxLayout>
 #include <QWidget>
@@ -40,4 +40,4 @@ class PlotPanel : public QWidget {
     bool _yLog;
 };
 
-#endif // OHKL_GUI_SUBFRAME_EXPERIMENT_PLOTPANEL_H
+#endif // OHKL_GUI_WIDGETS_PLOTPANEL_H

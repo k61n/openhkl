@@ -32,6 +32,7 @@
 #include "gui/utility/Spoiler.h"
 #include "gui/views/PeakTableView.h"
 #include "gui/widgets/DetectorWidget.h"
+#include "gui/widgets/PlotPanel.h"
 
 #include <QFileInfo>
 #include <QGridLayout>
@@ -53,6 +54,7 @@ SubframeReject::SubframeReject() : QWidget()
     setPreviewUp();
     setFigureUp();
     setPeakTableUp();
+    setPlotUp();
 
     _right_element->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
@@ -99,6 +101,13 @@ void SubframeReject::setFigureUp()
         &SubframeReject::refreshPeakTable);
 
     _right_element->addWidget(figure_group);
+}
+
+void SubframeReject::setPlotUp()
+{
+    _plot_widget = new PlotPanel;
+
+    _right_element->addWidget(_plot_widget);
 }
 
 void SubframeReject::refreshPeakVisual()

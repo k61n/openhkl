@@ -33,6 +33,7 @@
 #include <QWidget>
 
 class PeakComboBox;
+class PlotPanel;
 class FoundPeakComboBox;
 class DataComboBox;
 class DetectorWidget;
@@ -61,6 +62,8 @@ class SubframeReject : public QWidget {
     void setPreviewUp();
     //! Set up the DetectorScene
     void setFigureUp();
+    //! Set up the plot widget
+    void setPlotUp();
     //! Refresh the DetctorScene
     void refreshPeakVisual();
     //! Set up the peak table
@@ -85,6 +88,7 @@ class SubframeReject : public QWidget {
 
     PeakViewWidget* _peak_view_widget;
     DetectorWidget* _detector_widget;
+    PlotPanel* _plot_widget;
 
     PeakTableView* _peak_table;
     ohkl::PeakCollection* _peak_collection;
