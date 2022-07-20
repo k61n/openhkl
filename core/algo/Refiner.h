@@ -102,7 +102,9 @@ class Refiner {
     //! *before* refine
     bool refine();
 
-    //! Update the centers of predicted peaks, after refinement.
+    //! Updates the centers of predicted peaks, after refinement.
+    //! Returns the number of remaining peaks
+    //! (some peaks may be rejected with flag PredictionUpdateFailure).
     int updatePredictions(std::vector<Peak3D*> peaks);
 
     //! Returns the individual peak/frame batches used during refinement.
