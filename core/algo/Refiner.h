@@ -109,13 +109,13 @@ class Refiner {
     const std::vector<RefinementBatch>& batches() const;
 
     //! Return the unrefined cell
-    UnitCell* unrefinedCell();
+    const UnitCell* unrefinedCell() const;
 
     //! Return the refined states
-    InstrumentStateList* refinedStates();
+    const InstrumentStateList* refinedStates() const;
 
     //! Return the unrefined states
-    InstrumentStateList* unrefinedStates();
+    const InstrumentStateList* unrefinedStates() const;
 
     //! Return number of frames
     int nframes() const;
