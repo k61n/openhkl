@@ -112,7 +112,6 @@ class RefinementBatch {
     std::vector<std::vector<int>> _constraints;
     std::vector<Eigen::Matrix3d> _wts;
     std::vector<std::reference_wrapper<InstrumentState>> _states;
-    std::vector<double> _cost_function;
 };
 
 } // namespace ohkl

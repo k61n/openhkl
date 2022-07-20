@@ -197,9 +197,6 @@ bool RefinementBatch::refine(unsigned int max_iter)
     if (!_constraints.empty())
         _params.setKernel(constraintKernel(_params.nparams(), _constraints));
 
-    _cost_function.clear();
-    _cost_function.shrink_to_fit();
-
     min.initialize(_params, _peaks.size() * 3);
     min.set_f([&](Eigen::VectorXd& fvec) { return residuals(fvec); });
     bool success = min.fit(max_iter);
@@ -245,8 +242,6 @@ int RefinementBatch::qSpaceResiduals(Eigen::VectorXd& fvec)
         }
     }
 
-    _cost_function.push_back(0.5 * fvec.norm());
-
     return 0;
 }
 
@@ -291,8 +286,6 @@ int RefinementBatch::realSpaceResiduals(Eigen::VectorXd& fvec)
             fvec(3 * i + 2) = differences[minInd][2];
         }
     }
-
-    _cost_function.push_back(0.5 * fvec.norm());
 
     return 0;
 }
