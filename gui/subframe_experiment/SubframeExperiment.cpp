@@ -186,8 +186,8 @@ void SubframeExperiment::calculateIntensities()
 
     _maxX->setMaximum(data->nCols()*data->nRows());
     _minX->setMaximum(data->nCols()*data->nRows()-1);
-    _maxY->setMaximum(1e+100);
-    _minY->setMaximum(1e+100-1);
+    _maxY->setMaximum(1e+9);
+    _minY->setMaximum(1e+9-1);
 
     updateRanges();
     toggleUnsafeWidgets();
