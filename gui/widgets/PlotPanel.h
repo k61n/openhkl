@@ -17,6 +17,7 @@
 
 #include <QHBoxLayout>
 #include <QWidget>
+#include <gsl/gsl_histogram.h>
 
 class PlottableItem;
 class SXPlot;
@@ -26,6 +27,7 @@ class PlotPanel : public QWidget {
  public:
     PlotPanel();
     void plotData(QVector<double>&, QVector<double>&, QVector<double>&, QString xtitle = "", QString ytitle = "", int xmin = -1, int xmax = -1, int ymin = -1, int ymax = -1);
+    void plotData(gsl_histogram* histogram, QString xtitle = "", QString ytitle = "", int xmin = -1, int xmax = -1, int ymin =-1, int ymax = -1);
     void plotHistogram(size_t ndata, double* x, double* y, QString, QString, int xmin=0, int xmax=0, int ymin=0, int ymax=0);
     void updatePlot(PlottableItem* item);
     void exportPlot();

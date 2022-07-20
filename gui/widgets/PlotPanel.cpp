@@ -20,6 +20,7 @@
 #include "gui/graphics/SXPlot.h"
 #include "gui/graphics_items/PlottableItem.h"
 #include "qcustomplot.h"
+#include <gsl/gsl_histogram.h>
 
 PlotPanel::PlotPanel() : _yLog(false)
 {
@@ -68,6 +69,23 @@ void PlotPanel::plotData(QVector<double>& x, QVector<double>& y, QVector<double>
         plot->yAxis->setLabel(ytitle);
 
     plot->replot();
+}
+
+void PlotPanel::plotData(gsl_histogram* histogram, QString xtitle, QString ytitle, int xmin, int xmax, int ymin, int ymax)
+{
+    if (!histogram) return;
+
+    QVector<double> x;
+    QVector<double> y;
+    QVector<double> e;
+
+    x.resize(histogram->n);
+    y.resize(histogram->n);
+
+    memcpy(x.data(), histogram->range, histogram->n * sizeof(double));
+    memcpy(y.data(), histogram->bin, histogram->n * sizeof(double));
+
+    plotData(x, y, e, xtitle, ytitle, xmin, xmax, ymin, ymax);
 }
 
 void PlotPanel::plotHistogram(size_t nData, double* range, double* bin, QString xtitle, QString ytitle, int xmin, int xmax, int ymin, int ymax)
