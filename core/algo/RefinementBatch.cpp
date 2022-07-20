@@ -209,7 +209,7 @@ bool RefinementBatch::refine(unsigned int max_iter)
     return success;
 }
 
-int RefinementBatch::residuals(Eigen::VectorXd& fvec)
+int RefinementBatch::residuals(Eigen::VectorXd& fvec) const
 {
     if (_residual_type == ResidualType::QSpace) {
         return qSpaceResiduals(fvec);
@@ -220,7 +220,7 @@ int RefinementBatch::residuals(Eigen::VectorXd& fvec)
     }
 }
 
-int RefinementBatch::qSpaceResiduals(Eigen::VectorXd& fvec)
+int RefinementBatch::qSpaceResiduals(Eigen::VectorXd& fvec) const
 {
     UnitCell uc = _cell->fromParameters(_u0, _uOffsets, _cellParameters);
     const Eigen::Matrix3d& UB = uc.reciprocalBasis();
@@ -245,7 +245,7 @@ int RefinementBatch::qSpaceResiduals(Eigen::VectorXd& fvec)
     return 0;
 }
 
-int RefinementBatch::realSpaceResiduals(Eigen::VectorXd& fvec)
+int RefinementBatch::realSpaceResiduals(Eigen::VectorXd& fvec) const
 {
     UnitCell uc = _cell->fromParameters(_u0, _uOffsets, _cellParameters);
     const Eigen::Matrix3d& UB = uc.reciprocalBasis();
