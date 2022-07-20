@@ -44,7 +44,7 @@
 namespace ohkl {
 
 DataSet::DataSet(const std::string& dataset_name, Diffractometer* diffractometer)
-    : _diffractometer{diffractometer}, _states(nullptr)
+    : _diffractometer{diffractometer}, _states(nullptr), _total_histogram(nullptr)
 {
     setName(dataset_name);
     if (!_diffractometer)
@@ -364,9 +364,12 @@ void DataSet::getIntensityHistogram(std::size_t nbins)
 
 void DataSet::clearHistograms()
 {
-    gsl_histogram_free(_total_histogram);
+    if (_total_histogram != nullptr) gsl_histogram_free(_total_histogram);
     for (auto* hist : _histograms)
         gsl_histogram_free(hist);
+
+    _total_histogram = nullptr;
+    _histograms.clear();
 }
 
 double DataSet::maxCount()
@@ -375,6 +378,18 @@ double DataSet::maxCount()
     for (int i = 0; i < nFrames(); ++i)
         max_count = std::max(max_count, static_cast<double>(frame(i).maxCoeff()));
     return max_count;
+}
+
+gsl_histogram* DataSet::getHistogram(int index)
+{
+    if (index >= _histograms.size())
+        return nullptr;
+    return _histograms.at(index);
+}
+
+gsl_histogram* DataSet::getTotalHistogram()
+{
+        return _total_histogram;
 }
 
 } // namespace ohkl

@@ -17,6 +17,8 @@
 #include "gui/graphics/DetectorScene.h"
 #include "gui/graphics/SimplePlot.h"
 #include <Eigen/Dense>
+#include "gui/subframe_experiment/SubframeExperiment.h"
+#include "gui/MainWin.h"
 
 CutLineItem::CutLineItem(ohkl::sptrDataSet data) : CutterItem(data), _nPoints(10) { }
 
@@ -24,6 +26,7 @@ CutLineItem::~CutLineItem() = default;
 
 void CutLineItem::plot(SXPlot* plot)
 {
+    _nPoints = gGui->experiment->getNumberDataPoints();
     SimplePlot* p = dynamic_cast<SimplePlot*>(plot);
     if (!p)
         return;
