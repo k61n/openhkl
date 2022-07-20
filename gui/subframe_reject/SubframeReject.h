@@ -87,6 +87,8 @@ class SubframeReject : public QWidget {
 
     //! Compute the selected histogram
     void computeHistogram();
+    //! Filter peaks based on selection in plot widget
+    void filterSelection();
 
     QVBoxLayout* _left_layout;
     QSplitter* _right_element;
@@ -102,6 +104,7 @@ class SubframeReject : public QWidget {
     SafeSpinBox* _freq_max;
     SafeSpinBox* _x_min;
     SafeSpinBox* _x_max;
+    QCheckBox* _log_freq;
     QPushButton* _plot_histogram;
 
     PeakViewWidget* _peak_view_widget;

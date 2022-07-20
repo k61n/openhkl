@@ -17,6 +17,7 @@
 
 #include "core/experiment/Experiment.h"
 #include "core/peak/Peak3D.h"
+#include "core/shape/PeakFilter.h"
 #include "core/statistics/PeakStatistics.h"
 #include "gui/MainWin.h" // gGui
 #include "gui/frames/ProgressView.h"
@@ -82,7 +83,7 @@ void SubframeReject::setInputUp()
     GridFiller f(input_box, true);
 
     _data_combo = f.addDataCombo("Data set");
-    _peak_combo = f.addPeakCombo(ComboType::PeakCollection, "Peaks to integrate");
+    _peak_combo = f.addPeakCombo(ComboType::PeakCollection, "Peaks collection");
 
     connect(
         _peak_combo, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this,
@@ -105,6 +106,7 @@ void SubframeReject::setHistogramUp()
         "Frequency range", "Maximum and minimum frequecies for histogram");
     std::tie(_x_min, _x_max) = filler.addSpinBoxPair(
         "Data range", "Minimum and maximum of x data series");
+    _log_freq = filler.addCheckBox("Lograithmic vertical axis", "Switch to log-linear plot", 1);
     _plot_histogram = filler.addButton("Plot histogram");
 
     _n_bins->setMaximum(10000);
@@ -160,7 +162,7 @@ void SubframeReject::refreshPeakVisual()
         graphic->showLabel(false);
         graphic->setColor(Qt::transparent);
         graphic->initFromPeakViewWidget(
-            peak->peak()->enabled() ? _peak_view_widget->set1 : _peak_view_widget->set2);
+            peak->peak()->caughtByFilter() ? _peak_view_widget->set1 : _peak_view_widget->set2);
     }
     _detector_widget->scene()->initIntRegionFromPeakWidget(_peak_view_widget->set1);
     _detector_widget->refresh();
@@ -191,6 +193,7 @@ void SubframeReject::refreshPeakTable()
 
     _peak_collection = _peak_combo->currentPeakCollection();
     _peak_collection_item.setPeakCollection(_peak_collection);
+    _peak_collection_item.setFilterMode();
     _peak_collection_model.setRoot(&_peak_collection_item);
     _peak_table->resizeColumnsToContents();
 
@@ -240,15 +243,52 @@ void SubframeReject::toggleUnsafeWidgets()
 
 void SubframeReject::computeHistogram()
 {
+    _peak_stats.setPeakCollection(_peak_combo->currentPeakCollection());
     ohkl::PeakHistogramType type =
         static_cast<ohkl::PeakHistogramType>(_histo_combo->currentIndex());
     _current_histogram = _peak_stats.computeHistogram(type, _n_bins->value());
+
     _freq_min->setMaximum(_peak_stats.maxCount());
     _freq_max->setMaximum(_peak_stats.maxCount());
     _x_max->setMaximum(_peak_stats.maxValue());
     _x_min->setMaximum(_peak_stats.maxValue());
+
+    _x_max->setValue(_peak_stats.maxValue());
+    _freq_max->setValue(_peak_stats.maxCount());
+
+    QVector<double> value;
+    QVector<double> frequency;
+    QVector<double> error;
+
+    value.resize(_current_histogram->n);
+    frequency.resize(_current_histogram->n);
+
+    memcpy(value.data(), _current_histogram->range, _current_histogram->n * sizeof(double));
+    memcpy(frequency.data(), _current_histogram->bin, _current_histogram->n * sizeof(double));
+
+    QString xLabel = QString::fromStdString(_peak_stats.getHistoStrings().find(type)->second);
+    _plot_widget->setYLog(_log_freq->isChecked());
+    _plot_widget->plotData(
+        value, frequency, error, xLabel, QString("Frequency"),
+        _x_min->value(), _x_max->value(), _freq_min->value(), _freq_max->value());
 }
 
+void SubframeReject::filterSelection()
+{
+    ohkl::PeakFilter* filter = gSession->currentProject()->experiment()->peakFilter();
+    ohkl::PeakCollection* collection = _peak_combo->currentPeakCollection();
+    filter->resetFiltering(collection);
+
+    filter->filter(collection);
+
+    refreshPeakTable();
+
+    int n_peaks = _peak_collection_item.numberOfPeaks();
+    int n_caught = _peak_collection_item.numberCaughtByFilter();
+
+    gGui->statusBar()->showMessage(
+        QString::number(n_caught) + "/" + QString::number(n_peaks) + " caught by filter");
+}
 
 DetectorWidget* SubframeReject::detectorWidget()
 {
