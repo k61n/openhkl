@@ -13,6 +13,7 @@
 //  ***********************************************************************************************
 
 #include "gui/graphics/SXPlot.h"
+#include "qcustomplot.h"
 
 #include <Eigen/Dense>
 #include <QApplication>
@@ -33,21 +34,6 @@ SXPlot::SXPlot(QWidget* parent) : QCustomPlot(parent)
     legend->setVisible(false); // legend is buggy, so better turn it off
 
     setInteractions(QCP::iSelectAxes | QCP::iSelectLegend | QCP::iSelectPlottables);
-
-    connect(this, &QCustomPlot::mouseMove, this, &SXPlot::mouseMove);
-
-    connect(this, &QCustomPlot::mousePress, this, &SXPlot::mousePress);
-
-    connect(this, &QCustomPlot::mouseRelease, this, &SXPlot::mouseRelease);
-
-    connect(this, &QCustomPlot::mouseWheel, this, &SXPlot::mouseWheel);
-
-    // connect(
-    //     this, SIGNAL(titleDoubleClick(QMouseEvent*, QCPPlotTitle*)), this,
-    //     SLOT(titleDoubleClick(QMouseEvent*, QCPPlotTitle*)));
-    // connect(
-    //     this, SIGNAL(legendDoubleClick(QCPLegend*, QCPAbstractLegendItem*, QMouseEvent*)), this,
-    //     SLOT(legendDoubleClick(QCPLegend*, QCPAbstractLegendItem*)));
 
     // Enable right button click to export ASCII data
     setContextMenuPolicy(Qt::CustomContextMenu);
@@ -91,7 +77,7 @@ void SXPlot::keyPressEvent(QKeyEvent* event)
         copyViewToClipboard();
 }
 
-void SXPlot::mousePress(QMouseEvent* mouse_event)
+void SXPlot::mousePressEvent(QMouseEvent* mouse_event)
 {
     if (mouse_event->button() == Qt::LeftButton) {
         _zoom_rect_origin = mouse_event->pos();
@@ -104,18 +90,20 @@ void SXPlot::mousePress(QMouseEvent* mouse_event)
         _zoom_box->setVisible(true);
         replot();
     }
+    QCustomPlot::mousePress(mouse_event);
 }
 
-void SXPlot::mouseMove(QMouseEvent* mouse_event)
+void SXPlot::mouseMoveEvent(QMouseEvent* mouse_event)
 {
     if (mouse_event->button() == Qt::LeftButton || _zoom_box->visible()) {
         _zoom_box->bottomRight->setCoords(
             xAxis->pixelToCoord(mouse_event->x()), yAxis->pixelToCoord(mouse_event->y()));
         replot();
     }
+    QCustomPlot::mouseMove(mouse_event);
 }
 
-void SXPlot::mouseRelease(QMouseEvent* mouse_event)
+void SXPlot::mouseReleaseEvent(QMouseEvent* mouse_event)
 {
     if (mouse_event->button() == Qt::LeftButton || _zoom_box->visible()) {
         _zoom_box->setVisible(false);
@@ -124,9 +112,10 @@ void SXPlot::mouseRelease(QMouseEvent* mouse_event)
             yAxis->pixelToCoord(_zoom_rect_origin.y()),
             yAxis->pixelToCoord(mouse_event->pos().y()));
     }
+    QCustomPlot::mouseRelease(mouse_event);
 }
 
-void SXPlot::mouseWheel(QWheelEvent* wheel_event)
+void SXPlot::mouseWheelEvent(QWheelEvent* wheel_event)
 {
     QRect current_range = axisRect()->rect();
 
@@ -161,6 +150,7 @@ void SXPlot::mouseWheel(QWheelEvent* wheel_event)
         yAxis->setRange(new_edges[2], new_edges[3]);
     }
     replot();
+    QCustomPlot::mouseWheel(wheel_event);
 }
 
 void SXPlot::zoom(double x_init, double x_final, double y_init, double y_final)
