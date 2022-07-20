@@ -98,7 +98,7 @@ class Refiner {
     void refineKi();
 
     //! Perform the refinement with the maximum number of iterations as given. N.B. the four
-    //! previous funcitons set the number of free parameters and at least one must be run
+    //! previous functions set the number of free parameters and at least one must be run
     //! *before* refine
     bool refine();
 
