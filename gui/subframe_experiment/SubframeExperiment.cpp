@@ -254,19 +254,9 @@ void SubframeExperiment::plotIntensities()
     if (histo->range == nullptr || histo->bin == nullptr)
         throw std::runtime_error("SubframeExperiment::plotIntensities received invalid arrays for gsl_histogram");
 
-    QVector<double> x;
-    QVector<double> y;
-    QVector<double> e;
-
-    x.resize(histo->n);
-    y.resize(histo->n);
-
-    memcpy(x.data(), histo->range, histo->n * sizeof(double));
-    memcpy(y.data(), histo->bin, histo->n * sizeof(double));
-
     auto plot = getPlot();
     if (plot != nullptr)
-        plot->plotData(x, y, e, QString("Pixels"), QString("Counts"), xmin, xmax, ymin, ymax);
+        plot->plotData(histo, QString("Pixels"), QString("Counts"), xmin, xmax, ymin, ymax);
 }
 
 void SubframeExperiment::refreshAll()
