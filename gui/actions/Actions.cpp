@@ -54,19 +54,36 @@ void Actions::setupExperiment()
     save_experiment_as = new QAction("Save as");
     save_experiment_as = new QAction("Save as");
     save_all_experiment = new QAction("Save all");
+    export_unmerged = new QAction("Export unmerged");
+    export_unmerged_mtz = new QAction("CCP4 MTZ (*.mtz)");
+    export_unmerged_shelX = new QAction("ShelX (*.hkl)");
+    export_unmerged_fullProf = new QAction("FullProf (*.hkl)");
+    export_unmerged_phenix = new QAction("Phenix (*.sca)");
+    export_merged = new QAction("Export merged");
+    export_merged_mtz = new QAction("*CCP4 MTZ (*.mtz)");
+    export_merged_shelX = new QAction("ShelX (*.hkl)");
+    export_merged_fullProf = new QAction("FullProf (*.hkl)");
+    export_merged_phenix = new QAction("Phenix (*.sca)");
     remove_experiment = new QAction("Remove experiment");
     quit = new QAction("Quit");
 
-    connect(new_experiment, &QAction::triggered, []() { gGui->home->createNew(); });
-    connect(new_experiment, &QAction::triggered, []() { gGui->sideBar()->refreshCurrent(); });
-    connect(load_experiment, &QAction::triggered, []() { gGui->home->loadFromFile(); });
-    connect(load_experiment, &QAction::triggered, []() { gGui->sideBar()->refreshCurrent(); });
-    connect(save_experiment, &QAction::triggered, []() { gGui->home->saveCurrent(); });
-    connect(save_experiment_as, &QAction::triggered, []() { gGui->home->saveCurrent(true); });
-    connect(save_all_experiment, &QAction::triggered, []() { gGui->home->saveAll(); });
+    connect(new_experiment, &QAction::triggered, []() { gGui->home->createNew();});
+    connect(new_experiment, &QAction::triggered, []() { gGui->sideBar()->refreshCurrent();});
+    connect(load_experiment, &QAction::triggered, []() { gGui->home->loadFromFile();});
+    connect(load_experiment, &QAction::triggered, []() { gGui->sideBar()->refreshCurrent();});
+    connect(save_experiment, &QAction::triggered, []() { gGui->home->saveCurrent();});
+    connect(save_experiment_as, &QAction::triggered, []() { gGui->home->saveCurrent(true);});
+    connect(save_all_experiment, &QAction::triggered, []() { gGui->home->saveAll();});
+    connect(export_unmerged_mtz, &QAction::triggered, []() { /* to implement */ });
+    connect(export_unmerged_shelX, &QAction::triggered, []() { gGui->home->saveAll();});
+    connect(export_unmerged_fullProf, &QAction::triggered, []() { gGui->home->saveAll();});
+    connect(export_unmerged_phenix, &QAction::triggered, []() { gGui->home->saveAll();});
+    connect(export_merged_mtz, &QAction::triggered, []() { /* to implement */ });
+    connect(export_merged_shelX, &QAction::triggered, []() { gGui->home->saveAll();});
+    connect(export_merged_fullProf, &QAction::triggered, []() { gGui->home->saveAll();});
+    connect(export_merged_phenix, &QAction::triggered, []() { gGui->home->saveAll();});
     connect(remove_experiment, &QAction::triggered, this, &Actions::removeExperiment);
-
-    connect(quit, &QAction::triggered, []() { gGui->close(); });
+    connect(quit, &QAction::triggered, []() { gGui->close();});
 }
 
 void Actions::setupView()
@@ -105,10 +122,10 @@ void Actions::setupData()
         if (gSession->loadRawData())
             gGui->sideBar()->refreshCurrent();
     });
-    connect(add_hdf5, &QAction::triggered, []() { gSession->loadData(ohkl::DataFormat::OHKL); });
-    connect(add_hdf5, &QAction::triggered, []() { gSession->loadData(ohkl::DataFormat::NEXUS); });
-    connect(add_hdf5, &QAction::triggered, []() { gGui->sideBar()->refreshCurrent(); });
-    connect(add_nexus, &QAction::triggered, []() { gGui->sideBar()->refreshCurrent(); });
+    connect(add_hdf5, &QAction::triggered, []() { gSession->loadData(ohkl::DataFormat::OHKL);});
+    connect(add_hdf5, &QAction::triggered, []() { gSession->loadData(ohkl::DataFormat::NEXUS);});
+    connect(add_hdf5, &QAction::triggered, []() { gGui->sideBar()->refreshCurrent();});
+    connect(add_nexus, &QAction::triggered, []() { gGui->sideBar()->refreshCurrent();});
 
     connect(remove_data, &QAction::triggered, this, &Actions::removeData);
 
@@ -138,7 +155,7 @@ void Actions::removeExperiment()
     if (dlg->result() == QDialog::Rejected)
         return;
 
-    gGui->sideBar()->manualSelect(0); // switch to SubframeHome
+    gGui->sideBar()->manualSelect(0);// switch to SubframeHome
     gSession->removeExperiment(id_list[dlg->itemIndex()]);
     gSession->onExperimentChanged();
 }
