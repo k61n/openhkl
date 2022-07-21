@@ -57,8 +57,7 @@ std::vector<double> PeakStatistics::_getPeakData(PeakHistogramType type)
                 _peak_data.push_back(peak->correctedIntensity().sigma());
                 break;
             case PeakHistogramType::Strength:
-                _peak_data.push_back(
-                    peak->correctedIntensity().value() / peak->correctedIntensity().sigma());
+                _peak_data.push_back(peak->correctedIntensity().strength());
                 break;
         }
     }
