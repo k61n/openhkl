@@ -97,7 +97,8 @@ class SubframeReject : public QWidget {
 
     //! Compute the selected histogram
     void computeHistogram();
-    //! Filter peaks based on selection in plot widget
+    //! Update the plot range based on the selected peak collection
+    void updatePlotRange();
 
     QVBoxLayout* _left_layout;
     QSplitter* _right_element;

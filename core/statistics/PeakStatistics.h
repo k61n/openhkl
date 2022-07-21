@@ -47,7 +47,7 @@ class PeakStatistics {
     ~PeakStatistics();
 
     //! Set peak collection
-    void setPeakCollection(PeakCollection* peaks) { _peaks = peaks; };
+    void setPeakCollection(PeakCollection* peaks, PeakHistogramType type);
     //! Get a pointer to the current histogram
     gsl_histogram* histogram() const { return _current_histogram; };
     //! Get descriptions for histogram types
@@ -61,7 +61,7 @@ class PeakStatistics {
     //! Get the minimum count from the histogram (could be < 0)
     double minCount() const;
     //! Compute a histogram given the current set of points
-    gsl_histogram* computeHistogram(PeakHistogramType type, std::size_t nbins);
+    gsl_histogram* computeHistogram(std::size_t nbins);
 
  private:
     //! Allocate histogram memory

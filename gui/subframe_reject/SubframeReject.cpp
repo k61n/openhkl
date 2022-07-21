@@ -106,7 +106,7 @@ void SubframeReject::setHistogramUp()
         "Frequency range", "Maximum and minimum frequecies for histogram");
     std::tie(_x_min, _x_max) = filler.addSpinBoxPair(
         "Data range", "Minimum and maximum of x data series");
-    _log_freq = filler.addCheckBox("Lograithmic vertical axis", "Switch to log-linear plot", 1);
+    _log_freq = filler.addCheckBox("Logarithmic vertical axis", "Switch to log-linear plot", 1);
     _plot_histogram = filler.addButton("Plot histogram");
 
     _n_bins->setMaximum(10000);
@@ -204,6 +204,11 @@ void SubframeReject::refreshPeakTable()
     _peak_table->resizeColumnsToContents();
     _peak_table->model()->sort(13, Qt::DescendingOrder);
 
+    ohkl::PeakHistogramType type =
+        static_cast<ohkl::PeakHistogramType>(_histo_combo->currentIndex());
+    _peak_stats.setPeakCollection(_peak_collection, type);
+    updatePlotRange();
+
     refreshPeakVisual();
 }
 
@@ -250,21 +255,12 @@ void SubframeReject::toggleUnsafeWidgets()
 
 void SubframeReject::computeHistogram()
 {
-    _peak_stats.setPeakCollection(_peak_combo->currentPeakCollection());
     ohkl::PeakHistogramType type =
         static_cast<ohkl::PeakHistogramType>(_histo_combo->currentIndex());
-    _current_histogram = _peak_stats.computeHistogram(type, _n_bins->value());
+    _current_histogram = _peak_stats.computeHistogram(_n_bins->value());
 
     _freq_min->setMaximum(_peak_stats.maxCount());
     _freq_max->setMaximum(_peak_stats.maxCount());
-    _x_max->setMaximum(_peak_stats.maxValue());
-    _x_min->setMaximum(_peak_stats.maxValue());
-
-    _x_min->setMinimum(_peak_stats.minValue());
-    _x_max->setMinimum(_peak_stats.minValue());
-
-    _x_max->setValue(_peak_stats.maxValue());
-    _x_min->setValue(_peak_stats.minValue());
     _freq_max->setValue(_peak_stats.maxCount());
     _freq_min->setValue(_peak_stats.minCount());
 
@@ -323,6 +319,18 @@ void SubframeReject::updateYRange(double ymin, double ymax)
 {
     _freq_min->setValue(ymin);
     _freq_max->setValue(ymax);
+}
+
+void SubframeReject::updatePlotRange()
+{
+    _x_max->setMaximum(_peak_stats.maxValue());
+    _x_min->setMaximum(_peak_stats.maxValue());
+
+    _x_min->setMinimum(_peak_stats.minValue());
+    _x_max->setMinimum(_peak_stats.minValue());
+
+    _x_max->setValue(_peak_stats.maxValue());
+    _x_min->setValue(_peak_stats.minValue());
 }
 
 DetectorWidget* SubframeReject::detectorWidget()
