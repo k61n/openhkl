@@ -268,20 +268,10 @@ void SubframeReject::computeHistogram()
     _freq_max->setValue(_peak_stats.maxCount());
     _freq_min->setValue(_peak_stats.minCount());
 
-    QVector<double> value;
-    QVector<double> frequency;
-    QVector<double> error;
-
-    value.resize(_current_histogram->n);
-    frequency.resize(_current_histogram->n);
-
-    memcpy(value.data(), _current_histogram->range, _current_histogram->n * sizeof(double));
-    memcpy(frequency.data(), _current_histogram->bin, _current_histogram->n * sizeof(double));
-
     QString xLabel = QString::fromStdString(_peak_stats.getHistoStrings().find(type)->second);
     _plot_widget->setYLog(_log_freq->isChecked());
     _plot_widget->plotData(
-        value, frequency, error, xLabel, QString("Frequency"),
+        _current_histogram, xLabel, QString("Frequency"),
         _x_min->value(), _x_max->value(), _freq_min->value(), _freq_max->value());
 }
 
