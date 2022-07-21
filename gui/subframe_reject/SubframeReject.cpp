@@ -296,8 +296,14 @@ void SubframeReject::filterSelection(double xmin, double xmax)
 
     switch (type) {
     case ohkl::PeakHistogramType::Intensity:
+        filter->flags()->intensity = true;
+        filter->parameters()->intensity_min = xmin;
+        filter->parameters()->intensity_max = xmax;
         break;
     case ohkl::PeakHistogramType::Sigma:
+        filter->flags()->sigma = true;
+        filter->parameters()->sigma_min = xmin;
+        filter->parameters()->sigma_max = xmax;
         break;
     case ohkl::PeakHistogramType::Strength:
         filter->flags()->strength = true;
@@ -305,8 +311,6 @@ void SubframeReject::filterSelection(double xmin, double xmax)
         filter->parameters()->strength_max = xmax;
         break;
     }
-
-
     filter->filter(collection);
 
     refreshPeakTable();

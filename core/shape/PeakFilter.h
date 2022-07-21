@@ -16,6 +16,7 @@
 #define OHKL_CORE_SHAPE_PEAKFILTER_H
 
 #include "core/peak/Peak3D.h"
+#include "core/raw/DataKeys.h"
 #include "core/shape/PeakCollection.h"
 
 namespace ohkl {
@@ -40,6 +41,8 @@ struct PeakFilterFlags {
     bool complementary; //!
     bool frames; //!< catch peaks in a specifed frame range
     bool rejection_flag; //!< catch peaks with a specific rejection flag
+    bool intensity; //!< filter by intensity
+    bool sigma; //!< filter by sigma
 };
 
 //! Parameters for the different filter types
@@ -48,7 +51,11 @@ struct PeakFilterParameters {
     double d_max = 50.0; //!< maximum d (Bragg's law)
     double strength_min = 1.0; //!< minimum strength (I/sigma)
     double strength_max = 1.0e7; //!< maximum strength (I/sigma)
-    std::string unit_cell = "DEFAULT UNIT CELL"; //!< unit cell name
+    double intensity_min = 0.0; //!< minimum intensity
+    double intensity_max = 1.0e7; //!< maximum intensity
+    double sigma_min = 0.0; //!< minimum sigma
+    double sigma_max = 1000.0; //!< maximum sigma
+    std::string unit_cell = kw_unitcellDefaultName; //!< unit cell name
     double unit_cell_tolerance = 0.2; //!< indexing tolerance
     double significance = 0.99; //!< signficance
     double sparse = 100; //!< number of peaks in dataset to be kept
@@ -124,6 +131,12 @@ class PeakFilter {
 
     //! Remove peaks *without* the specified rejection flag
     void filterRejectionFlag(PeakCollection* peak_collection) const;
+
+    //! Remove peaks outside the given intensity range
+    void filterIntensity(PeakCollection* peak_collection) const;
+
+    //! Remove peaks outside the given sigma range
+    void filterSigma(PeakCollection* peak_collection) const;
 
     //! Filter only enabled on a peak vector
     std::vector<Peak3D*> filterEnabled(const std::vector<Peak3D*> peaks, bool flag) const;
