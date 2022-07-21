@@ -672,6 +672,25 @@ void SubframeMergedPeaks::saveStatistics()
         filename.toStdString(), merger->shellQuality(), merger->overallQuality());
 }
 
+void SubframeMergedPeaks::savePeaks(std::string format, bool merged)
+{
+    if (merged){
+        auto idx = _merged_save_type->findText(QString::fromStdString(format));
+        if (idx == -1)
+            throw std::runtime_error("SubframeMergedPeaks::savePeaks Unknown file format");
+        _merged_save_type->setCurrentIndex(idx);
+        saveMergedPeaks();
+    }
+    else {
+        auto idx = _unmerged_save_type->findText(QString::fromStdString(format));
+        if (idx == -1)
+            throw std::runtime_error("SubframeMergedPeaks::savePeaks Unknown file format");
+        _unmerged_save_type->setCurrentIndex(idx);
+        saveUnmergedPeaks();
+    }
+}
+
+
 void SubframeMergedPeaks::saveMergedPeaks()
 {
     QString format = _merged_save_type->currentText();
