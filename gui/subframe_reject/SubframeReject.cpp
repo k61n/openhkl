@@ -45,7 +45,6 @@
 #include <QMessageBox>
 #include <QScrollBar>
 #include <QSpacerItem>
-#include <qpushbutton.h>
 
 SubframeReject::SubframeReject() : QWidget()
 {
@@ -182,7 +181,6 @@ void SubframeReject::setPeakTableUp()
     _peak_collection_model.setRoot(&_peak_collection_item);
     _peak_table->setModel(&_peak_collection_model);
     _peak_table->resizeColumnsToContents();
-    _peak_table->setColumnHidden(13, true);
 
     peak_grid->addWidget(_peak_table, 0, 0, 0, 0);
 
@@ -199,6 +197,7 @@ void SubframeReject::refreshPeakTable()
     _peak_collection_item.setFilterMode();
     _peak_collection_model.setRoot(&_peak_collection_item);
     _peak_table->resizeColumnsToContents();
+    _peak_table->model()->sort(13, Qt::DescendingOrder);
 
     refreshPeakVisual();
 }
@@ -278,6 +277,7 @@ void SubframeReject::computeHistogram()
 
 void SubframeReject::filterSelection(double xmin, double xmax)
 {
+    gGui->setReady(false);
     ohkl::PeakFilter* filter = gSession->currentProject()->experiment()->peakFilter();
     ohkl::PeakCollection* collection = _peak_combo->currentPeakCollection();
     filter->resetFiltering(collection);
@@ -306,6 +306,7 @@ void SubframeReject::filterSelection(double xmin, double xmax)
 
     gGui->statusBar()->showMessage(
         QString::number(n_caught) + "/" + QString::number(n_peaks) + " caught by filter");
+    gGui->setReady(true);
 }
 
 DetectorWidget* SubframeReject::detectorWidget()
