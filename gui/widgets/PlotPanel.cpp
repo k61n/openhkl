@@ -28,6 +28,7 @@ PlotPanel::PlotPanel() : _yLog(false)
     _plot = new SXPlot(this);
     _anchor->addWidget(_plot);
     _centralWidget = this;
+    connect(_plot, &SXPlot::signalXRange, this, &PlotPanel::signalXRangeChanged);
 }
 
 void PlotPanel::plotData(QVector<double>& x, QVector<double>& y, QVector<double>& e, QString xtitle, QString ytitle, int xmin, int xmax, int ymin, int ymax)
@@ -38,6 +39,9 @@ void PlotPanel::plotData(QVector<double>& x, QVector<double>& y, QVector<double>
         _plot = PlotFactory::instance().create("simple", _centralWidget);
         _plot->setObjectName("1D plotter");
         _plot->setFocusPolicy(Qt::StrongFocus);
+        // Thanks to the complicated lifetime of the _plot member, we need to
+        // ensure the connection is made every time we instantiate it.
+        connect(_plot, &SXPlot::signalXRange, this, &PlotPanel::signalXRangeChanged);
         _anchor->addWidget(_plot);
     }
     _plot->clearPlottables();
@@ -164,6 +168,9 @@ void PlotPanel::updatePlot(PlottableItem* item)
         _anchor->removeWidget(_plot);
         delete _plot;
         _plot = PlotFactory::instance().create(item->getPlotType(), _centralWidget);
+        // Thanks to the complicated lifetime of the _plot member, we need to
+        // ensure the connection is made every time we instantiate it.
+        connect(_plot, &SXPlot::signalXRange, this, &PlotPanel::signalXRangeChanged);
         _plot->setObjectName("1D plotter");
         _plot->setFocusPolicy(Qt::StrongFocus);
         _anchor->addWidget(_plot);

@@ -148,7 +148,7 @@ void SubframeReject::setPlotUp()
 {
     _plot_widget = new PlotPanel;
 
-    connect(_plot_widget->sxplot(), &SXPlot::signalXRange, this, &SubframeReject::filterSelection);
+    connect(_plot_widget, &PlotPanel::signalXRangeChanged, this, &SubframeReject::filterSelection);
 
     _right_element->addWidget(_plot_widget);
 }
@@ -278,7 +278,6 @@ void SubframeReject::computeHistogram()
 
 void SubframeReject::filterSelection(double xmin, double xmax)
 {
-    qDebug() << xmin << xmax;
     ohkl::PeakFilter* filter = gSession->currentProject()->experiment()->peakFilter();
     ohkl::PeakCollection* collection = _peak_combo->currentPeakCollection();
     filter->resetFiltering(collection);

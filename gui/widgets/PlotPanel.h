@@ -17,6 +17,7 @@
 
 #include <QHBoxLayout>
 #include <QWidget>
+
 #include <gsl/gsl_histogram.h>
 
 class PlottableItem;
@@ -24,6 +25,7 @@ class SXPlot;
 
 //! Part of the main window that contains the plot
 class PlotPanel : public QWidget {
+    Q_OBJECT
  public:
     PlotPanel();
     void plotData(
@@ -41,11 +43,17 @@ class PlotPanel : public QWidget {
 
     SXPlot* sxplot() { return _plot; };
 
+ signals:
+    void signalXRangeChanged(double xmin, double xmax);
+
  private:
     SXPlot* _plot;
     QHBoxLayout* _anchor;
     QWidget* _centralWidget;
     bool _yLog;
+
+    double _xmin;
+    double _xmax;
 };
 
 #endif // OHKL_GUI_WIDGETS_PLOTPANEL_H
