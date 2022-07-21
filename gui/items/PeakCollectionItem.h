@@ -59,8 +59,9 @@ class PeakCollectionItem {
         Numor,
         uc,
         d,
-        Selected,
+        Rejection,
         Filtered,
+        Selected,
         Count,
     };
     //! Return the row according to the vis. peak item pointer

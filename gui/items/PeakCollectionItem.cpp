@@ -246,6 +246,14 @@ void PeakCollectionItem::sort(int column, Qt::SortOrder order)
             };
             break;
         }
+        case Column::Rejection: {
+            compareFn = [&](std::unique_ptr<PeakItem>& p1, std::unique_ptr<PeakItem>& p2) {
+                int s_1 = static_cast<int>(p1->peak()->rejectionFlag());
+                int s_2 = static_cast<int>(p2->peak()->rejectionFlag());
+                return (s_1 < s_2);
+            };
+            break;
+        }
         case Column::Selected: {
             compareFn = [&](std::unique_ptr<PeakItem>& p1, std::unique_ptr<PeakItem>& p2) {
                 bool s_1 = p1->peak()->selected();

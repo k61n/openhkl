@@ -122,6 +122,9 @@ QVariant PeakCollectionModel::headerData(int section, Qt::Orientation orientatio
             case Column::Filtered: {
                 return QString("Caught by filter");
             }
+            case Column::Selected: {
+                return QString("Valid");
+            }
             default: return QVariant();
         }
     } else {

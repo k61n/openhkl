@@ -308,6 +308,7 @@ void SubframeAutoIndexer::setPeakTableUp()
     _peak_collection_model.setRoot(&_peak_collection_item);
     _peak_table->setModel(&_peak_collection_model);
     _peak_table->setColumnHidden(13, true);
+    _peak_table->setColumnHidden(14, true);
 
     peak_layout->addWidget(_peak_table, 0, 0, 0, 0);
 }

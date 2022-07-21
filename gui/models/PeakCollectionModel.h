@@ -65,6 +65,7 @@ class PeakCollectionModel : public QAbstractTableModel {
         d,
         Rejection,
         Filtered,
+        Selected,
         Count,
     };
     //! The sorting of the peaks

@@ -311,6 +311,8 @@ void SubframeFilterPeaks::setPeakTableUp()
     _peak_table->setModel(&_peak_collection_model);
     _peak_table->resizeColumnsToContents();
 
+    _peak_table->setColumnHidden(14, true);
+
     peak_grid->addWidget(_peak_table, 0, 0, 0, 0);
 
     _right_element->addWidget(peak_group);
@@ -481,6 +483,8 @@ void SubframeFilterPeaks::refreshPeakTable()
     _peak_collection_item.setFilterMode();
     _peak_collection_model.setRoot(&_peak_collection_item);
     _peak_table->resizeColumnsToContents();
+
+    _peak_table->setColumnHidden(14, true);
 
     refreshPeakVisual();
 }

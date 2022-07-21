@@ -131,6 +131,9 @@ QVariant PeakItem::peakData(const QModelIndex& index, int role, PeakDisplayModes
                 case Column::Filtered: {
                     return QString::number(_peak->caughtByFilter());
                 }
+                case Column::Selected: {
+                    return _peak->selected();
+                }
             }
             break;
 
