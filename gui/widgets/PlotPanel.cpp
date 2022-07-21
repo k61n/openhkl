@@ -29,6 +29,7 @@ PlotPanel::PlotPanel() : _yLog(false)
     _anchor->addWidget(_plot);
     _centralWidget = this;
     connect(_plot, &SXPlot::signalXRange, this, &PlotPanel::signalXRangeChanged);
+    connect(_plot, &SXPlot::signalYRange, this, &PlotPanel::signalYRangeChanged);
 }
 
 void PlotPanel::plotData(QVector<double>& x, QVector<double>& y, QVector<double>& e, QString xtitle, QString ytitle, int xmin, int xmax, int ymin, int ymax)
@@ -42,6 +43,7 @@ void PlotPanel::plotData(QVector<double>& x, QVector<double>& y, QVector<double>
         // Thanks to the complicated lifetime of the _plot member, we need to
         // ensure the connection is made every time we instantiate it.
         connect(_plot, &SXPlot::signalXRange, this, &PlotPanel::signalXRangeChanged);
+        connect(_plot, &SXPlot::signalYRange, this, &PlotPanel::signalYRangeChanged);
         _anchor->addWidget(_plot);
     }
     _plot->clearPlottables();
@@ -171,6 +173,7 @@ void PlotPanel::updatePlot(PlottableItem* item)
         // Thanks to the complicated lifetime of the _plot member, we need to
         // ensure the connection is made every time we instantiate it.
         connect(_plot, &SXPlot::signalXRange, this, &PlotPanel::signalXRangeChanged);
+        connect(_plot, &SXPlot::signalYRange, this, &PlotPanel::signalYRangeChanged);
         _plot->setObjectName("1D plotter");
         _plot->setFocusPolicy(Qt::StrongFocus);
         _anchor->addWidget(_plot);

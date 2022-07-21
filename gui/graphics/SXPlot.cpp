@@ -113,6 +113,7 @@ void SXPlot::mouseReleaseEvent(QMouseEvent* mouse_event)
         double y2 = yAxis->pixelToCoord(mouse_event->pos().y());
         zoom(x1, x2, y1, y2);
         emit signalXRange(x1 < x2 ? x1 : x2, x1 < x2 ? x2 : x1);
+        emit signalYRange(y1 < y2 ? y1 : y2, y1 < y2 ? y2 : y1);
     }
     QCustomPlot::mouseRelease(mouse_event);
 }
@@ -196,6 +197,8 @@ void SXPlot::resetZoom()
             y_min = *(std::min_element(values_y.begin(), values_y.end()));
     }
     zoom(x_min, x_max, y_min, y_max);
+    emit signalXRange(x_min, x_max);
+    emit signalYRange(y_min, y_max);
 }
 
 SXPlot::~SXPlot() = default;

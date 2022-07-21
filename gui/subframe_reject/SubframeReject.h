@@ -64,6 +64,10 @@ class SubframeReject : public QWidget {
  public slots:
     //! Filter the peak collection given a data range
     void filterSelection(double xmin, double xmax);
+    //! Set the horizontal range in the control widget
+    void updateXRange(double xmin, double xmax);
+    //! Set the vertical range in the control widget
+    void updateYRange(double ymin, double ymax);
 
  private:
     //! Select dataset, peak collection

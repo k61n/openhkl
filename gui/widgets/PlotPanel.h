@@ -45,6 +45,7 @@ class PlotPanel : public QWidget {
 
  signals:
     void signalXRangeChanged(double xmin, double xmax);
+    void signalYRangeChanged(double ymin, double ymax);
 
  private:
     SXPlot* _plot;

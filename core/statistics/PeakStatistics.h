@@ -54,8 +54,12 @@ class PeakStatistics {
     const std::map<PeakHistogramType, std::string>& getHistoStrings() { return _histogram_strings; };
     //! Get the maximum value from the data series
     double maxValue() const { return _max_value; };
+    //! Get the minimum value from the data series (could be < 0)
+    double minValue() const { return _min_value; };
     //! Get the maximum count from the histogram
     double maxCount() const;
+    //! Get the minimum count from the histogram (could be < 0)
+    double minCount() const;
     //! Compute a histogram given the current set of points
     gsl_histogram* computeHistogram(PeakHistogramType type, std::size_t nbins);
 
@@ -71,6 +75,7 @@ class PeakStatistics {
 
     std::size_t _nbins;
     double _max_value;
+    double _min_value;
     gsl_histogram* _current_histogram;
     std::vector<double> _peak_data;
 

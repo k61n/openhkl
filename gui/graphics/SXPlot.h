@@ -40,6 +40,7 @@ class SXPlot : public QCustomPlot {
 
  signals:
     void signalXRange(double xmin, double xmax);
+    void signalYRange(double ymin, double ymax);
 
  public:
     //! Manage the mouse move

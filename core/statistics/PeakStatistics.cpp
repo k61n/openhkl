@@ -69,13 +69,20 @@ double PeakStatistics::maxCount() const
     return gsl_histogram_max_val(_current_histogram);
 }
 
+double PeakStatistics::minCount() const
+
+{
+    return gsl_histogram_min_val(_current_histogram);
+}
+
 gsl_histogram* PeakStatistics::computeHistogram(PeakHistogramType type, std::size_t nbins)
 {
     _nbins = nbins;
     _peak_data = _getPeakData(type);
     _max_value = *std::max_element(_peak_data.begin(), _peak_data.end());
+    _min_value = *std::min_element(_peak_data.begin(), _peak_data.end());
     _initHistogram(nbins);
-    gsl_histogram_set_ranges_uniform(_current_histogram, 0, _max_value);
+    gsl_histogram_set_ranges_uniform(_current_histogram, _min_value, _max_value);
     for (double point : _peak_data)
         gsl_histogram_increment(_current_histogram, point);
     return _current_histogram;

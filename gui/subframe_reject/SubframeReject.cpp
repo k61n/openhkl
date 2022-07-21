@@ -115,6 +115,9 @@ void SubframeReject::setHistogramUp()
     _freq_min->setMaximum(10000);
     _freq_max->setMaximum(10000);
 
+    _x_min->setMinimum(-10000);
+    _x_max->setMinimum(-10000);
+
     _n_bins->setValue(100);
     _x_min->setValue(0);
     _x_max->setValue(10000);
@@ -148,6 +151,8 @@ void SubframeReject::setPlotUp()
     _plot_widget = new PlotPanel;
 
     connect(_plot_widget, &PlotPanel::signalXRangeChanged, this, &SubframeReject::filterSelection);
+    connect(_plot_widget, &PlotPanel::signalXRangeChanged, this, &SubframeReject::updateXRange);
+    connect(_plot_widget, &PlotPanel::signalYRangeChanged, this, &SubframeReject::updateYRange);
 
     _right_element->addWidget(_plot_widget);
 }
@@ -255,8 +260,13 @@ void SubframeReject::computeHistogram()
     _x_max->setMaximum(_peak_stats.maxValue());
     _x_min->setMaximum(_peak_stats.maxValue());
 
+    _x_min->setMinimum(_peak_stats.minValue());
+    _x_max->setMinimum(_peak_stats.minValue());
+
     _x_max->setValue(_peak_stats.maxValue());
+    _x_min->setValue(_peak_stats.minValue());
     _freq_max->setValue(_peak_stats.maxCount());
+    _freq_min->setValue(_peak_stats.minCount());
 
     QVector<double> value;
     QVector<double> frequency;
@@ -307,6 +317,18 @@ void SubframeReject::filterSelection(double xmin, double xmax)
     gGui->statusBar()->showMessage(
         QString::number(n_caught) + "/" + QString::number(n_peaks) + " caught by filter");
     gGui->setReady(true);
+}
+
+void SubframeReject::updateXRange(double xmin, double xmax)
+{
+    _x_min->setValue(xmin);
+    _x_max->setValue(xmax);
+}
+
+void SubframeReject::updateYRange(double ymin, double ymax)
+{
+    _freq_min->setValue(ymin);
+    _freq_max->setValue(ymax);
 }
 
 DetectorWidget* SubframeReject::detectorWidget()
