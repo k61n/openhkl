@@ -107,10 +107,12 @@ void SXPlot::mouseReleaseEvent(QMouseEvent* mouse_event)
 {
     if (mouse_event->button() == Qt::LeftButton || _zoom_box->visible()) {
         _zoom_box->setVisible(false);
-        zoom(
-            xAxis->pixelToCoord(_zoom_rect_origin.x()), xAxis->pixelToCoord(mouse_event->pos().x()),
-            yAxis->pixelToCoord(_zoom_rect_origin.y()),
-            yAxis->pixelToCoord(mouse_event->pos().y()));
+        double x1 = xAxis->pixelToCoord(_zoom_rect_origin.x());
+        double x2 = xAxis->pixelToCoord(mouse_event->pos().x());
+        double y1 = yAxis->pixelToCoord(_zoom_rect_origin.y());
+        double y2 = yAxis->pixelToCoord(mouse_event->pos().y());
+        zoom(x1, x2, y1, y2);
+        emit signalXRange(x1 < x2 ? x1 : x2, x1 < x2 ? x2 : x1);
     }
     QCustomPlot::mouseRelease(mouse_event);
 }

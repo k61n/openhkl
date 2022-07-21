@@ -24,51 +24,51 @@
 
 PlotPanel::PlotPanel() : _yLog(false)
 {
-    anchor = new QHBoxLayout(this);
-    plot = new SXPlot(this);
-    anchor->addWidget(plot);
-    centralWidget = this;
+    _anchor = new QHBoxLayout(this);
+    _plot = new SXPlot(this);
+    _anchor->addWidget(_plot);
+    _centralWidget = this;
 }
 
 void PlotPanel::plotData(QVector<double>& x, QVector<double>& y, QVector<double>& e, QString xtitle, QString ytitle, int xmin, int xmax, int ymin, int ymax)
 {
-    if (plot->getType().compare("simple") != 0) {
-        anchor->removeWidget(plot);
-        delete plot;
-        plot = PlotFactory::instance().create("simple", centralWidget);
-        plot->setObjectName("1D plotter");
-        plot->setFocusPolicy(Qt::StrongFocus);
-        anchor->addWidget(plot);
+    if (_plot->getType().compare("simple") != 0) {
+        _anchor->removeWidget(_plot);
+        delete _plot;
+        _plot = PlotFactory::instance().create("simple", _centralWidget);
+        _plot->setObjectName("1D plotter");
+        _plot->setFocusPolicy(Qt::StrongFocus);
+        _anchor->addWidget(_plot);
     }
-    plot->clearPlottables();
-    plot->addGraph();
+    _plot->clearPlottables();
+    _plot->addGraph();
 
     QPen pen(QColor(0,0,0));
     pen.setWidth(1);
-    plot->graph(0)->setPen(pen);
+    _plot->graph(0)->setPen(pen);
 
-    plot->graph(0)->setLineStyle(QCPGraph::LineStyle::lsLine);
-    plot->graph(0)->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssCircle, 3));
+    _plot->graph(0)->setLineStyle(QCPGraph::LineStyle::lsLine);
+    _plot->graph(0)->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssCircle, 3));
 
-    plot->graph(0)->setData(x, y);
-    plot->addErrorBars(plot->graph(0), e);
+    _plot->graph(0)->setData(x, y);
+    _plot->addErrorBars(_plot->graph(0), e);
 
     if ((xmin != -1 && xmax != -1))
-        plot->xAxis->setRange(xmin, xmax);
+        _plot->xAxis->setRange(xmin, xmax);
 
     if ((ymin != -1 && ymax != -1))
-        plot->yAxis->setRange(ymin, ymax);
+        _plot->yAxis->setRange(ymin, ymax);
 
     if ((xmin == -1 && xmax == -1) && (ymin == -1 && ymax == -1))
-        plot->rescaleAxes();
+        _plot->rescaleAxes();
 
     if (!xtitle.isEmpty())
-        plot->xAxis->setLabel(xtitle);
+        _plot->xAxis->setLabel(xtitle);
 
     if (!ytitle.isEmpty())
-        plot->yAxis->setLabel(ytitle);
+        _plot->yAxis->setLabel(ytitle);
 
-    plot->replot();
+    _plot->replot();
 }
 
 void PlotPanel::plotData(gsl_histogram* histogram, QString xtitle, QString ytitle, int xmin, int xmax, int ymin, int ymax)
@@ -102,28 +102,28 @@ void PlotPanel::plotHistogram(size_t nData, double* range, double* bin, QString 
 
     QSharedPointer<QCPBarsDataContainer> data;
 
-    plot->clearPlottables();
-    plot->addGraph();
-    QCPBars *bars = new QCPBars(plot->xAxis, plot->yAxis);
+    _plot->clearPlottables();
+    _plot->addGraph();
+    QCPBars *bars = new QCPBars(_plot->xAxis, _plot->yAxis);
     bars->setName("Intensity Histogram");
     bars->setData(frequency, counts);
-    plot->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom);
-    plot->setFocusPolicy(Qt::StrongFocus);
-    anchor->addWidget(plot);
+    _plot->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom);
+    _plot->setFocusPolicy(Qt::StrongFocus);
+    _anchor->addWidget(_plot);
 
-    plot->xAxis->setLabel(xtitle);
-    plot->yAxis->setLabel(ytitle);
+    _plot->xAxis->setLabel(xtitle);
+    _plot->yAxis->setLabel(ytitle);
 
     if ((xmin != -1 && xmax != -1))
-        plot->xAxis->setRange(xmin, xmax);
+        _plot->xAxis->setRange(xmin, xmax);
 
     if ((ymin != -1 && ymax != -1))
-        plot->yAxis->setRange(ymin, ymax);
+        _plot->yAxis->setRange(ymin, ymax);
 
     if ((xmin == -1 && xmax == -1) && (ymin == -1 && ymax == -1))
-        plot->rescaleAxes();
+        _plot->rescaleAxes();
 
-    plot->replot();
+    _plot->replot();
 }
 
 
@@ -132,26 +132,26 @@ void PlotPanel::setYLog(bool on)
     if (on == _yLog) return;
     _yLog = on;
     if (_yLog){
-        plot->yAxis->grid()->setSubGridVisible(true);
-        plot->xAxis->grid()->setSubGridVisible(true);
-        plot->yAxis->setScaleType(QCPAxis::stLogarithmic);
-        plot->yAxis2->setScaleType(QCPAxis::stLogarithmic);
+        _plot->yAxis->grid()->setSubGridVisible(true);
+        _plot->xAxis->grid()->setSubGridVisible(true);
+        _plot->yAxis->setScaleType(QCPAxis::stLogarithmic);
+        _plot->yAxis2->setScaleType(QCPAxis::stLogarithmic);
         QSharedPointer<QCPAxisTickerLog> logTicker(new QCPAxisTickerLog);
-        plot->yAxis->setTicker(logTicker);
-        plot->yAxis2->setTicker(logTicker);
-        plot->yAxis->setNumberFormat("eb");
-        plot->yAxis->setNumberPrecision(0);
+        _plot->yAxis->setTicker(logTicker);
+        _plot->yAxis2->setTicker(logTicker);
+        _plot->yAxis->setNumberFormat("eb");
+        _plot->yAxis->setNumberPrecision(0);
     }
     else {
-        plot->yAxis->grid()->setSubGridVisible(true);
-        plot->xAxis->grid()->setSubGridVisible(true);
-        plot->yAxis->setScaleType(QCPAxis::stLinear);
-        plot->yAxis2->setScaleType(QCPAxis::stLinear);
+        _plot->yAxis->grid()->setSubGridVisible(true);
+        _plot->xAxis->grid()->setSubGridVisible(true);
+        _plot->yAxis->setScaleType(QCPAxis::stLinear);
+        _plot->yAxis2->setScaleType(QCPAxis::stLinear);
         QSharedPointer<QCPAxisTicker> ticker(new QCPAxisTicker);
-        plot->yAxis->setTicker(ticker);
-        plot->yAxis2->setTicker(ticker);
-        plot->yAxis->setNumberFormat("eb");
-        plot->yAxis->setNumberPrecision(0);
+        _plot->yAxis->setTicker(ticker);
+        _plot->yAxis2->setTicker(ticker);
+        _plot->yAxis->setNumberFormat("eb");
+        _plot->yAxis->setNumberPrecision(0);
     }
 }
 
@@ -160,20 +160,20 @@ void PlotPanel::updatePlot(PlottableItem* item)
     if (!item)
         return;
 
-    if (!item->isPlottable(plot)) {
-        anchor->removeWidget(plot);
-        delete plot;
-        plot = PlotFactory::instance().create(item->getPlotType(), centralWidget);
-        plot->setObjectName("1D plotter");
-        plot->setFocusPolicy(Qt::StrongFocus);
-        anchor->addWidget(plot);
+    if (!item->isPlottable(_plot)) {
+        _anchor->removeWidget(_plot);
+        delete _plot;
+        _plot = PlotFactory::instance().create(item->getPlotType(), _centralWidget);
+        _plot->setObjectName("1D plotter");
+        _plot->setFocusPolicy(Qt::StrongFocus);
+        _anchor->addWidget(_plot);
     }
 
-    item->plot(plot);
+    item->plot(_plot);
     // update();
 }
 
 void PlotPanel::exportPlot()
 {
-    // plot->exportToAscii();
+    // _plot->exportToAscii();
 }

@@ -38,6 +38,9 @@ class SXPlot : public QCustomPlot {
 
     virtual std::string getType() const;
 
+ signals:
+    void signalXRange(double xmin, double xmax);
+
  public:
     //! Manage the mouse move
     void mouseMoveEvent(QMouseEvent* mouse_event);
@@ -64,7 +67,6 @@ class SXPlot : public QCustomPlot {
     //! Export the graphs into column ASCII format
     void exportToAscii(QCPErrorBars* errorBars = NULL, const char lim = ',');
 
- private:
     void copyViewToClipboard();
 
 

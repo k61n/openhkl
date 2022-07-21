@@ -35,6 +35,7 @@
 #include <QVBoxLayout>
 #include <QWidget>
 #include <qcombobox.h>
+#include <qobjectdefs.h>
 #include <qpushbutton.h>
 
 class PeakComboBox;
@@ -51,6 +52,7 @@ class SafeDoubleSpinBox;
 
 //! Frame containing interface to integrate peaks
 class SubframeReject : public QWidget {
+    Q_OBJECT
  public:
     SubframeReject();
 
@@ -58,6 +60,10 @@ class SubframeReject : public QWidget {
     void refreshAll();
     //! detector view
     DetectorWidget* detectorWidget();
+
+ public slots:
+    //! Filter the peak collection given a data range
+    void filterSelection(double xmin, double xmax);
 
  private:
     //! Select dataset, peak collection
@@ -88,7 +94,6 @@ class SubframeReject : public QWidget {
     //! Compute the selected histogram
     void computeHistogram();
     //! Filter peaks based on selection in plot widget
-    void filterSelection();
 
     QVBoxLayout* _left_layout;
     QSplitter* _right_element;

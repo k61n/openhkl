@@ -22,6 +22,7 @@
 #include "gui/MainWin.h" // gGui
 #include "gui/frames/ProgressView.h"
 #include "gui/graphics/DetectorScene.h"
+#include "gui/graphics/SXPlot.h"
 #include "gui/models/Project.h"
 #include "gui/models/Session.h"
 #include "gui/subwindows/DetectorWindow.h"
@@ -146,6 +147,8 @@ void SubframeReject::setFigureUp()
 void SubframeReject::setPlotUp()
 {
     _plot_widget = new PlotPanel;
+
+    connect(_plot_widget->sxplot(), &SXPlot::signalXRange, this, &SubframeReject::filterSelection);
 
     _right_element->addWidget(_plot_widget);
 }
@@ -273,11 +276,27 @@ void SubframeReject::computeHistogram()
         _x_min->value(), _x_max->value(), _freq_min->value(), _freq_max->value());
 }
 
-void SubframeReject::filterSelection()
+void SubframeReject::filterSelection(double xmin, double xmax)
 {
+    qDebug() << xmin << xmax;
     ohkl::PeakFilter* filter = gSession->currentProject()->experiment()->peakFilter();
     ohkl::PeakCollection* collection = _peak_combo->currentPeakCollection();
     filter->resetFiltering(collection);
+    ohkl::PeakHistogramType type =
+        static_cast<ohkl::PeakHistogramType>(_histo_combo->currentIndex());
+
+    switch (type) {
+    case ohkl::PeakHistogramType::Intensity:
+        break;
+    case ohkl::PeakHistogramType::Sigma:
+        break;
+    case ohkl::PeakHistogramType::Strength:
+        filter->flags()->strength = true;
+        filter->parameters()->strength_min = xmin;
+        filter->parameters()->strength_max = xmax;
+        break;
+    }
+
 
     filter->filter(collection);
 
