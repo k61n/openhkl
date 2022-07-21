@@ -61,7 +61,7 @@ void Actions::setupExperiment()
     export_unmerged_fullProf = new QAction("FullProf (*.hkl)");
     export_unmerged_phenix = new QAction("Phenix (*.sca)");
     export_merged = new QAction("Export merged");
-    export_merged_mtz = new QAction("*CCP4 MTZ (*.mtz)");
+    export_merged_mtz = new QAction("CCP4 MTZ (*.mtz)");
     export_merged_shelX = new QAction("ShelX (*.hkl)");
     export_merged_fullProf = new QAction("FullProf (*.hkl)");
     export_merged_phenix = new QAction("Phenix (*.sca)");
