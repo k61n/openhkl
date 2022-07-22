@@ -156,7 +156,9 @@ bool PeakCollectionModel::setData(const QModelIndex &index, const QVariant &valu
         if ((Qt::CheckState)value.toInt() == Qt::Checked) {
             _root_item->peakItemAt(index.row())->peak()->setSelected(true);
         } else {
-            _root_item->peakItemAt(index.row())->peak()->reject(ohkl::RejectionFlag::ManuallyRejected);
+            _root_item->peakItemAt(index.row())->peak()->setSelected(false);
+            _root_item->peakItemAt(index.row())->peak()->setRejectionFlag(
+                ohkl::RejectionFlag::ManuallyRejected, true);
         }
         emit dataChanged(index, index);
         return true;
