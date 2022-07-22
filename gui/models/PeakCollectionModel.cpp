@@ -14,6 +14,7 @@
 
 #include "gui/models/PeakCollectionModel.h"
 
+#include "core/peak/Peak3D.h"
 #include "gui/items/PeakCollectionItem.h"
 
 PeakCollectionModel::PeakCollectionModel() : QAbstractTableModel()
@@ -59,8 +60,8 @@ bool PeakCollectionModel::indexIsValid(const QModelIndex& index) const
 
 QVariant PeakCollectionModel::data(const QModelIndex& index, int role = Qt::DisplayRole) const
 {
-    if (role == Qt::CheckStateRole)
-        return QVariant();
+    if (role == Qt::CheckStateRole && index.column() == Column::Selected)
+        return _root_item->data(index, role);
     if (!indexIsValid(index))
         return QVariant();
     return _root_item->data(index, role);
@@ -70,6 +71,8 @@ Qt::ItemFlags PeakCollectionModel::flags(const QModelIndex& index) const
 {
     if (!indexIsValid(index))
         return Qt::ItemIsEnabled;
+    if (index.column() == Column::Selected)
+        return (QAbstractTableModel::flags(index) | Qt::ItemIsEnabled | Qt::ItemIsUserCheckable);
     return QAbstractTableModel::flags(index);
 }
 
@@ -144,4 +147,19 @@ void PeakCollectionModel::reset()
 {
     _root_item = nullptr;
     _name = "No Collection";
+}
+
+bool PeakCollectionModel::setData(const QModelIndex &index, const QVariant &value, int role) {
+    if (!index.isValid())
+        return false;
+    if (role == Qt::CheckStateRole && index.column() == Column::Selected) {
+        if ((Qt::CheckState)value.toInt() == Qt::Checked) {
+            _root_item->peakItemAt(index.row())->peak()->setSelected(true);
+        } else {
+            _root_item->peakItemAt(index.row())->peak()->reject(ohkl::RejectionFlag::ManuallyRejected);
+        }
+        emit dataChanged(index, index);
+        return true;
+    }
+    return false;
 }

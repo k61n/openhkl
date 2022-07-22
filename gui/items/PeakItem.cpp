@@ -131,11 +131,21 @@ QVariant PeakItem::peakData(const QModelIndex& index, int role, PeakDisplayModes
                 case Column::Filtered: {
                     return QString::number(_peak->caughtByFilter());
                 }
-                case Column::Selected: {
-                    return _peak->selected();
-                }
+                // case Column::Selected: {
+                //     return _peak->selected();
+                // }
             }
             break;
+
+        case Qt::CheckStateRole: {
+            if (index.column() == Column::Selected) {
+                if (_peak->selected())
+                    return Qt::Checked;
+                else
+                    return Qt::Unchecked;
+            }
+            break;
+        }
 
         case Qt::ForegroundRole: {
             if (!_peak->enabled())
