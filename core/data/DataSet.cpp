@@ -95,7 +95,7 @@ void DataSet::addDataFile(const std::string& filename, const std::string& extens
     if (!_reader) {
         const std::string ext = lowerCase(extension);
 
-        if (ext == "nsx" || ext == "hdf")
+        if (ext == "nsx" || ext == "hdf" || ext == "ohkl")
             datafmt = DataFormat::OHKL;
         else if (ext == "nxs")
             datafmt = DataFormat::NEXUS;
@@ -201,6 +201,7 @@ double DataSet::wavelength() const
 void DataSet::addMask(IMask* mask)
 {
     _masks.insert(mask);
+    _metadata.add<int>(ohkl::at_nMasks, _masks.size());
 }
 
 void DataSet::removeMask(IMask* mask)

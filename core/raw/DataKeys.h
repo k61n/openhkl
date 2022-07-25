@@ -86,6 +86,7 @@ const std::string at_monitorSum{"monitor"}; // TODO: explain
 // DataSet metadata
 const std::string at_baseline{"baseline"};
 const std::string at_gain{"gain"};
+const std::string at_nMasks{"number of masks"};
 // Nexus-specific metadata
 const std::string at_numor{"numor"}; // internal raw data labelling of ILL
 const std::string at_totalSteps{"total steps"};
@@ -180,7 +181,8 @@ const std::set<std::string> RecognizedMetaDataKeys{at_experiment,     at_diffrac
                                                    at_peakType,       at_rVec,
                                                    at_BravaisLattice, at_indexingTol,
                                                    at_spacegroup,     at_z,
-                                                   at_baseline,       at_gain};
+                                                   at_baseline,       at_gain,
+                                                   at_nMasks};
 
 } // namespace ohkl
 

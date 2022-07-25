@@ -14,6 +14,9 @@
 
 #include "core/loader/BaseHDF5DataReader.h"
 
+#include "base/mask/BoxMask.h"
+#include "base/mask/EllipseMask.h"
+#include "base/mask/IMask.h"
 #include "base/parser/EigenToVector.h"
 #include "base/utils/Logger.h"
 #include "base/utils/Units.h"
@@ -26,10 +29,20 @@
 #include "core/raw/DataKeys.h"
 #include "core/raw/HDF5TableIO.h" // HDF5TableReader
 
+#include <Eigen/src/Core/util/Constants.h>
+#include <H5DataSpace.h>
+#include <H5PredType.h>
 #include <stdexcept>
 #include <string>
 
+#include <iostream>
+
 namespace {
+
+bool pathExists(hid_t id, const std::string& path)
+{
+    return H5Lexists(id, path.c_str(), H5P_DEFAULT) > 0;
+}
 
 // aux. functions to produce the group keys
 std::string _metaKey(const std::string& dataset_name)
@@ -55,6 +68,11 @@ std::string _sampleKey(const std::string& dataset_name)
 std::string _dataKey(const std::string& dataset_name)
 {
     return ohkl::gr_DataCollections + "/" + dataset_name + "/" + ohkl::ds_Dataset;
+}
+
+std::string _maskKey(const std::string& dataset_name)
+{
+    return ohkl::gr_DataCollections + "/" + dataset_name + "/" + ohkl::gr_Masks;
 }
 
 } // namespace
@@ -281,6 +299,51 @@ bool BaseHDF5DataReader::initRead()
     _dataset_out->diffractometer()->sampleStates.resize(nframes);
     for (unsigned int i = 0; i < nframes; ++i)
         _dataset_out->diffractometer()->sampleStates[i] = eigenToVector(dm.col(i));
+
+    // Read the masks
+    ohklLog(
+        ohkl::Level::Debug, "Reading detector masks of '", _filename, "', data set '", dataset_name,
+        "'");
+
+    H5::Group data_group = _file->openGroup(gr_DataCollections);
+    if (pathExists(_file->getId(), _maskKey(dataset_name))) {
+        H5::Group maskGroup = _file->openGroup("/" + _maskKey(dataset_name));
+        std::size_t nmasks = _dataset_out->metadata().key<int>(ohkl::at_nMasks);
+        Eigen::Matrix<int, Eigen::Dynamic, Eigen::RowMajor> maskTypes(nmasks);
+        Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor> upper(nmasks, 3);
+        Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor> lower(nmasks, 3);
+
+        H5::DataSet mask_type_data = maskGroup.openDataSet(ohkl::ds_maskType);
+        H5::DataSpace mask_type_space = mask_type_data.getSpace();
+        mask_type_data.read(
+            maskTypes.data(), H5::PredType::NATIVE_UINT, mask_type_space, mask_type_space);
+        H5::DataSet bb_lower_data = maskGroup.openDataSet(ohkl::ds_lowerBound);
+        H5::DataSpace bb_lower_space = bb_lower_data.getSpace();
+        H5::DataSet bb_upper_data = maskGroup.openDataSet(ohkl::ds_upperBound);
+        H5::DataSpace bb_upper_space = bb_upper_data.getSpace();
+        bb_lower_data.read(lower.data(), H5::PredType::NATIVE_DOUBLE, bb_lower_space, bb_lower_space);
+        bb_upper_data.read(upper.data(), H5::PredType::NATIVE_DOUBLE, bb_upper_space, bb_upper_space);
+
+        for (std::size_t idx = 0; idx < nmasks; ++idx) {
+            ohkl::MaskType mask_type = static_cast<ohkl::MaskType>(maskTypes(idx));
+            Eigen::Vector3d bb_lower(lower(idx, 0), lower(idx, 1), lower(idx, 2));
+            Eigen::Vector3d bb_upper(upper(idx, 0), upper(idx, 1), upper(idx, 2));
+            AABB aabb(bb_lower, bb_upper);
+            switch (mask_type) {
+            case ohkl::MaskType::Rectangle:
+                _dataset_out->addMask(new ohkl::BoxMask(aabb));
+                break;
+            case ohkl::MaskType::Ellipse:
+                _dataset_out->addMask(new ohkl::EllipseMask(aabb));
+                break;
+            }
+        }
+    }
+    else {
+        ohklLog(
+            ohkl::Level::Debug, "No masks found in '", _filename, "', data set '",
+            dataset_name, "'");
+    }
 
     _file->close();
 

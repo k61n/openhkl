@@ -22,7 +22,7 @@ EllipseMask::EllipseMask(const AABB& aabb, bool /*two_dim*/) : IMask(), _ellipso
     auto radii = 0.5 * (aabb.upper() - aabb.lower());
     auto axes = Eigen::Matrix3d::Identity();
     _ellipsoid = Ellipsoid(center, radii, axes);
-    ohklLog(Level::Info, "EllipseMask::EllipseMask: Created new ellipsoid mask");
+    ohklLog(Level::Info, "EllipseMask::EllipseMask: Created new elliptical mask");
     ohklLog(Level::Info, "Lower bound: ", aabb.lower().transpose());
     ohklLog(Level::Info, "Upper bound: ", aabb.upper().transpose());
 }
