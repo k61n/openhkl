@@ -27,6 +27,7 @@ const std::string gr_DataCollections{"DataCollections"};
 const std::string gr_Detector{"Detector"};
 const std::string gr_Instrument{"Instrument"};
 const std::string gr_Sample{"Sample"};
+const std::string gr_Masks("Masks");
 const std::string gr_Metadata{"Metadata"};
 const std::string gr_PeakCollections{"PeakCollections"};
 const std::string gr_UnitCells{"UnitCells"};
@@ -64,6 +65,11 @@ const std::string ds_Masked{"Masked"};
 const std::string ds_Predicted{"Predicted"};
 const std::string ds_hkl{"hkl"};
 const std::string ds_hklError{"hklError"};
+
+// Masks
+const std::string ds_maskType("mask type");
+const std::string ds_upperBound("AABB upper");
+const std::string ds_lowerBound("AABB lower");
 
 //-- HDF Attribute keys
 // general
