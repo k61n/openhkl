@@ -14,7 +14,7 @@ experimental data: trypsin with bound aniline.
 
    Trypsin with bound aniline crystal
 
- Download and extract the archive containing the raw image files from the detector:
+Download and extract the archive containing the raw image files from the detector:
 `trypsin.tar.gz (485 MB)
 <https://computing.mlz-garching.de/download/testdata/nsx/trypsin.tar.gz>`_ .
 
