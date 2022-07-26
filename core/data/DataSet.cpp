@@ -54,6 +54,7 @@ DataSet::DataSet(const std::string& dataset_name, Diffractometer* diffractometer
         datashape[1] = nRows();
         datashape[2] = 0; // nr of frames
     }
+    _metadata.add<int>(ohkl::at_nMasks, 0);
 }
 
 void DataSet::_setReader(const DataFormat dataformat, const std::string& filename)
