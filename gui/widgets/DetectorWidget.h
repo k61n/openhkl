@@ -43,6 +43,7 @@ class DetectorScene;
 class DetectorView;
 class DataComboBox;
 class PeakCollectionModel;
+class QPushButton;
 class QSpinBox;
 class QScrollBar;
 class QComboBox;
@@ -64,6 +65,8 @@ class DetectorWidget : public QGridLayout {
     ohkl::sptrDataSet currentData();
     //! Switch the Detectorscene between coordinate types
     void changeView(int option);
+    //! Set up the toolbar
+    void setToolbarUp();
 
     void datasetChanged();
 
@@ -96,6 +99,12 @@ class DetectorWidget : public QGridLayout {
     QComboBox* _mode_combo = nullptr;
     QComboBox* _cursor_combo = nullptr;
     QSlider* _intensity_slider = nullptr;
+    QPushButton* _hide_masks;
+    QPushButton* _reset;
+    QPushButton* _copy_to_clipboard;
+    QPushButton* _save_to_file;
+    QWidget* _toolbar;
+
 
     bool _has_slider = false;
 

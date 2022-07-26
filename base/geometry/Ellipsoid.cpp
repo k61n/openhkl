@@ -166,6 +166,11 @@ const AABB& Ellipsoid::aabb() const
     return _aabb;
 }
 
+AABB* Ellipsoid::aabbPtr()
+{
+    return &_aabb;
+}
+
 Eigen::Matrix4d Ellipsoid::homogeneousMatrix() const
 {
     Eigen::Matrix4d Q = Eigen::Matrix4d::Zero();

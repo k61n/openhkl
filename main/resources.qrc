@@ -1,17 +1,25 @@
 <RCC>
     <qresource prefix="/">
         <file>images/icons/lighttheme/save.svg</file>
+        <file>images/icons/lighttheme/load.svg</file>
+        <file>images/icons/lighttheme/copy.svg</file>
         <file>images/icons/lighttheme/delete.svg</file>
+        <file>images/icons/lighttheme/reset.svg</file>
         <file>images/icons/lighttheme/open.svg</file>
         <file>images/icons/lighttheme/plus.svg</file>
         <file>images/icons/lighttheme/minus.svg</file>
         <file>images/icons/lighttheme/beaker.svg</file>
+        <file>images/icons/lighttheme/hide.svg</file>
         <file>images/icons/darktheme/save.svg</file>
+        <file>images/icons/darktheme/load.svg</file>
+        <file>images/icons/darktheme/copy.svg</file>
         <file>images/icons/darktheme/delete.svg</file>
+        <file>images/icons/darktheme/reset.svg</file>
         <file>images/icons/darktheme/open.svg</file>
         <file>images/icons/darktheme/plus.svg</file>
         <file>images/icons/darktheme/minus.svg</file>
         <file>images/icons/darktheme/beaker.svg</file>
+        <file>images/icons/darktheme/hide.svg</file>
         <file>images/sidebar/lighttheme/home.svg</file>
         <file>images/sidebar/lighttheme/experiment.svg</file>
         <file>images/sidebar/lighttheme/finder.svg</file>

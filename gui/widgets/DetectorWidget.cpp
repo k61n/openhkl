@@ -34,6 +34,9 @@
 #include <QSlider>
 #include <QSpinBox>
 #include <QVBoxLayout>
+#include <qboxlayout.h>
+#include <qpushbutton.h>
+#include <qsizepolicy.h>
 
 QList<DetectorWidget*> DetectorWidget::_detector_widgets = QList<DetectorWidget*>();
 
@@ -41,7 +44,7 @@ DetectorWidget::DetectorWidget(bool mode, bool cursor, bool slider, QWidget* par
     : QGridLayout(parent)
 {
     QGridLayout* top_grid = new QGridLayout();
-    QGridLayout* bottom_grid = new QGridLayout();
+    QHBoxLayout* bottom_layout = new QHBoxLayout();
 
     _detector_view = new DetectorView();
     _detector_view->scale(1, -1);
@@ -61,26 +64,24 @@ DetectorWidget::DetectorWidget(bool mode, bool cursor, bool slider, QWidget* par
         top_grid->addWidget(_intensity_slider, 0, 1, 1, 1);
     }
 
-    int col = 0;
-
     _data_combo = new DataComboBox();
     _data_combo->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     _data_combo->setToolTip("Change the displayed data set");
-    bottom_grid->addWidget(_data_combo, 0, ++col, 1, 1);
+    bottom_layout->addWidget(_data_combo);
 
     _scroll = new QScrollBar();
     _scroll->setOrientation(Qt::Horizontal);
     _scroll->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
     _scroll->setToolTip("Scroll through the frames in this data set");
-    bottom_grid->addWidget(_scroll, 0, ++col, 1, 1);
+    bottom_layout->addWidget(_scroll);
 
     _spin = new QSpinBox();
     _spin->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     _spin->setToolTip("Go to the numbered frame in this data set");
-    bottom_grid->addWidget(_spin, 0, ++col, 1, 1);
+    bottom_layout->addWidget(_spin);
 
     addLayout(top_grid, 0, 0, 1, 1);
-    addLayout(bottom_grid, 1, 0, 1, 1);
+    addLayout(bottom_layout, 1, 0, 1, 1);
 
     connect(_scroll, &QScrollBar::valueChanged, scene(), &DetectorScene::slotChangeSelectedFrame);
     connect(_spin, QOverload<int>::of(&QSpinBox::valueChanged), _scroll, &QScrollBar::setValue);
@@ -89,18 +90,23 @@ DetectorWidget::DetectorWidget(bool mode, bool cursor, bool slider, QWidget* par
         _data_combo, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this,
         &DetectorWidget::refresh);
     connect(
+        _data_combo, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this,
+        &DetectorWidget::datasetChanged);
+    connect(
         _spin, QOverload<int>::of(&QSpinBox::valueChanged), gGui->instrumentstate_window,
         &InstrumentStateWindow::onFrameChanged);
     connect(
         _detector_view, &QWidget::customContextMenuRequested, this,
         &DetectorWidget::setmenuRequested);
 
+    setToolbarUp();
+    bottom_layout->addWidget(_toolbar);
 
     if (mode) {
         _mode_combo = new QComboBox();
         _mode_combo->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
         _mode_combo->setToolTip("Set the interaction mode for the detector image");
-        bottom_grid->addWidget(_mode_combo, 0, ++col, 1, 1);
+        bottom_layout->addWidget(_mode_combo);
 
         connect(
             _mode_combo, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
@@ -111,7 +117,7 @@ DetectorWidget::DetectorWidget(bool mode, bool cursor, bool slider, QWidget* par
         _cursor_combo = new QComboBox();
         _cursor_combo->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
         _cursor_combo->setToolTip("Set the cursor mode for the detector image");
-        bottom_grid->addWidget(_cursor_combo, 0, ++col, 1, 1);
+        bottom_layout->addWidget(_cursor_combo);
 
         connect(
             _cursor_combo, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
@@ -154,7 +160,7 @@ void DetectorWidget::datasetChanged()
         return;
 
     auto data = _data_combo->currentData();
-    scene()->removeBeamSetter(); // need to be sensetive of dataset change
+    scene()->removeBeamSetter(); // need to be sensitive of dataset change
     refresh();
 }
 
@@ -284,4 +290,73 @@ void DetectorWidget::setmenuRequested(QPoint pos)
             pixMap.save(fi.absoluteFilePath());
         }
     });
+}
+
+void DetectorWidget::setToolbarUp()
+{
+    _toolbar = new QWidget;
+    _toolbar->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+    QHBoxLayout* layout = new QHBoxLayout;
+
+    _hide_masks = new QPushButton;
+    _reset = new QPushButton;
+    _copy_to_clipboard = new QPushButton;
+    _save_to_file = new QPushButton;
+
+    // _hide_masks->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed);
+    // _reset->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed);
+    // _copy_to_clipboard->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed);
+    // _save_to_file->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed);
+
+    layout->addWidget(_hide_masks);
+    layout->addWidget(_reset);
+    layout->addWidget(_copy_to_clipboard);
+    layout->addWidget(_save_to_file);
+
+
+    QString path{":images/icons/"};
+    QString light{"lighttheme/"};
+    QString dark{"darktheme/"};
+
+    if (gGui->isDark()) // looks like we have a dark theme
+        path = path + dark;
+    else
+        path = path + light;
+
+    _hide_masks->setMaximumWidth(_hide_masks->height());
+
+    _hide_masks->setIcon(QIcon(path + "hide.svg"));
+    _reset->setIcon(QIcon(path + "reset.svg"));
+    _copy_to_clipboard->setIcon(QIcon(path + "copy.svg"));
+    _save_to_file->setIcon(QIcon(path + "save.svg"));
+
+    _hide_masks->setToolTip("Show/hide detector masks");
+    _reset->setToolTip("Reset detector image");
+    _copy_to_clipboard->setToolTip("Copy visible detector image to clipboard");
+    _save_to_file->setToolTip("Save visible detector image to file");
+
+    connect(
+        _hide_masks, &QPushButton::clicked, _detector_view->getScene(), &DetectorScene::toggleMasks);
+
+    connect(_reset, &QPushButton::clicked, _detector_view->getScene(), [=]() {
+        _detector_view->getScene()->resetElements();
+        _detector_view->getScene()->loadCurrentImage();
+    });
+
+    connect(_copy_to_clipboard, &QPushButton::clicked, this, [=]() {
+        QPixmap pixMap = _detector_view->grab();
+        QApplication::clipboard()->setImage(pixMap.toImage(), QClipboard::Clipboard);
+    });
+
+    connect(_save_to_file, &QPushButton::clicked, this, [=]() {
+        QFileInfo fi(QFileDialog::getSaveFileName(
+            _detector_view, tr("Save image as"), QString(qgetenv("HOME")),
+            tr("Images (*.png *.jpg)")));
+        if (!fi.absoluteFilePath().isNull()) {
+            QPixmap pixMap = _detector_view->grab();
+            pixMap.save(fi.absoluteFilePath());
+        }
+    });
+
+    _toolbar->setLayout(layout);
 }

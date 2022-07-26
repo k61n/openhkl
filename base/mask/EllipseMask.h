@@ -42,6 +42,8 @@ class EllipseMask : public IMask {
 
     const AABB& aabb() { return _ellipsoid.aabb(); };
 
+    AABB* aabbPtr() { return _ellipsoid.aabbPtr(); };
+
  private:
     Ellipsoid _ellipsoid;
 };

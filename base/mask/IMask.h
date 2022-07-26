@@ -38,6 +38,8 @@ class IMask {
 
     virtual const AABB& aabb() = 0;
 
+    virtual AABB* aabbPtr() = 0;
+
  protected:
     IMask() = default;
 

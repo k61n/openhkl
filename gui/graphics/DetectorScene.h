@@ -105,6 +105,8 @@ class DetectorScene : public QGraphicsScene {
     QImage* getIntegrationRegionImage(const Eigen::MatrixXi& mask, QColor& peak, QColor& bkg);
     //! Remove integration overlays from the DetectorScene
     void clearIntegrationRegion();
+    //! Remove masks
+    void clearMasks();
 
  public:
     //! Set the first peak model pointer
@@ -168,6 +170,10 @@ class DetectorScene : public QGraphicsScene {
     {
         _drawSinglePeakIntegrationRegion = toggle;
     };
+    //! Load masks from current DataSet
+    void loadMasksFromData();
+    //! Draw masks on the detector image
+    void drawMasks();
 
  protected:
     void mousePressEvent(QGraphicsSceneMouseEvent* event);
@@ -194,6 +200,7 @@ class DetectorScene : public QGraphicsScene {
     int currentFrame() const { return _currentFrameIndex; }
     void setBeamSetterPos(QPointF pos);
     void onCrosshairChanged(int size, int linewidth);
+    void toggleMasks();
 
  signals:
     //! Signal emitted for all changes of the image
@@ -255,6 +262,7 @@ class DetectorScene : public QGraphicsScene {
     bool _drawSinglePeakIntegrationRegion;
     bool _drawDirectBeam;
     bool _draw3rdParty;
+    bool _drawMasks;
     std::unique_ptr<ColorMap> _colormap;
     QGraphicsPixmapItem* _integrationRegion1;
     QGraphicsPixmapItem* _integrationRegion2;
