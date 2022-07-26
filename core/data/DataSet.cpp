@@ -209,6 +209,7 @@ void DataSet::removeMask(IMask* mask)
 {
     if (_masks.find(mask) != _masks.end())
         _masks.erase(mask);
+    _metadata.add<int>(ohkl::at_nMasks, _masks.size());
 }
 
 const std::set<IMask*>& DataSet::masks() const
