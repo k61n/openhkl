@@ -27,7 +27,6 @@
 #include <QGraphicsPixmapItem>
 #include <QGraphicsScene>
 #include <QStack>
-#include <qgraphicsitem.h>
 
 #include <iostream>
 

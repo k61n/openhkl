@@ -26,17 +26,15 @@
 #include "gui/utility/DataComboBox.h"
 #include "gui/utility/LinkedComboBox.h"
 
-#include "gui/graphics/DetectorScene.h"
 #include <QClipboard>
 #include <QComboBox>
+#include <QDateTime>
 #include <QFileDialog>
+#include <QPushButton>
 #include <QScrollBar>
 #include <QSlider>
 #include <QSpinBox>
 #include <QVBoxLayout>
-#include <qboxlayout.h>
-#include <qpushbutton.h>
-#include <qsizepolicy.h>
 
 QList<DetectorWidget*> DetectorWidget::_detector_widgets = QList<DetectorWidget*>();
 
@@ -304,15 +302,31 @@ void DetectorWidget::setToolbarUp()
         QApplication::clipboard()->setImage(pixMap.toImage(), QClipboard::Clipboard);
     });
 
-    connect(_save_to_file, &QPushButton::clicked, this, [=]() {
-        QFileInfo fi(QFileDialog::getSaveFileName(
-            _detector_view, tr("Save image as"), QString(qgetenv("HOME")),
-            tr("Images (*.png *.jpg)")));
-        if (!fi.absoluteFilePath().isNull()) {
-            QPixmap pixMap = _detector_view->grab();
-            pixMap.save(fi.absoluteFilePath());
-        }
-    });
+    connect(_save_to_file, &QPushButton::clicked, this, &DetectorWidget::saveScreenshot);
 
     _toolbar->setLayout(layout);
+}
+
+void DetectorWidget::saveScreenshot()
+{
+    QDateTime date = QDateTime::currentDateTime();
+    QString fmt_date = date.toString("ddMMyy-hhmm");
+
+    QSettings settings = gGui->qSettings();
+    settings.beginGroup("RecentDirectories");
+    QString loadDirectory = settings.value("experiment", QDir::homePath()).toString();
+
+    QString default_name =
+        loadDirectory + "/" + QString::fromStdString(_data_combo->currentData()->name()) +
+        "-" + fmt_date + ".png";
+
+    QString file_path =
+        QFileDialog::getSaveFileName(
+            _detector_view, "Save image as", default_name, "Images (*.png *.jpg)");
+
+    QFileInfo file_info(file_path);
+    if (!file_info.absoluteFilePath().isNull()) {
+        QPixmap pixMap = _detector_view->grab();
+        pixMap.save(file_info.absoluteFilePath());
+    }
 }

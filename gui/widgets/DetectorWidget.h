@@ -88,6 +88,8 @@ class DetectorWidget : public QGridLayout {
     bool hasSlider();
     //! Return ptr to DetectorView
     DetectorView* getDetectorView();
+    //! Save a screenshot via QFileDialog
+    void saveScreenshot();
 
  private:
     DetectorView* _detector_view;
