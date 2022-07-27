@@ -172,8 +172,10 @@ class DetectorScene : public QGraphicsScene {
     };
     //! Load masks from current DataSet
     void loadMasksFromData();
-    //! Draw masks on the detector image
-    void drawMasks();
+    //! Toggle mask visibility
+    void setMasksVisible(bool flag);
+    //! Add masks to the detector image
+    void addMasks();
 
  protected:
     void mousePressEvent(QGraphicsSceneMouseEvent* event);

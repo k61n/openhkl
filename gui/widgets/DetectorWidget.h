@@ -88,8 +88,6 @@ class DetectorWidget : public QGridLayout {
     bool hasSlider();
     //! Return ptr to DetectorView
     DetectorView* getDetectorView();
-    //! Context menu
-    void setmenuRequested(QPoint pos);
 
  private:
     DetectorView* _detector_view;

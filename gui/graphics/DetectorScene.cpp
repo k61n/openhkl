@@ -87,6 +87,7 @@ DetectorScene::DetectorScene(QObject* parent)
     , _drawSinglePeakIntegrationRegion(false)
     , _drawDirectBeam(false)
     , _draw3rdParty(true)
+    , _drawMasks(true)
     , _colormap(new ColorMap())
     , _integrationRegion1(nullptr)
     , _integrationRegion2(nullptr)
@@ -951,9 +952,7 @@ void DetectorScene::loadCurrentImage()
     if (_drawSinglePeakIntegrationRegion && !_drawIntegrationRegion1 && !_drawIntegrationRegion2)
         refreshSinglePeakIntegrationOverlay();
 
-    clearMasks();
-    if (_drawMasks)
-        drawMasks();
+    setMasksVisible(_drawMasks);
 
     setSceneRect(_zoomStack.back());
     emit dataChanged();
@@ -1158,13 +1157,15 @@ void DetectorScene::clearMasks()
 {
     if (!_currentData)
         return;
-    if (_masks.empty()) // contin. crashed without for me
+    if (_masks.empty())
         return;
 
     // _peak_graphics_items can be out of sync (pointer may get deleted outside). Therefore
     // do not use it for removing items from the scene (may cause crash)
     for (auto item : items()) {
         if (dynamic_cast<MaskItem*>(item) != nullptr)
+            removeItem(item);
+        if (dynamic_cast<EllipseMaskItem*>(item) != nullptr)
             removeItem(item);
     }
 
@@ -1174,7 +1175,7 @@ void DetectorScene::clearMasks()
 void DetectorScene::resetScene()
 {
     clearPeakItems();
-    clearMasks();
+    setMasksVisible(false);
     clear();
     _currentData = nullptr;
     _currentFrameIndex = 0;
@@ -1189,7 +1190,7 @@ void DetectorScene::resetScene()
 void DetectorScene::resetElements()
 {
     clearPeakItems();
-    clearMasks();
+    setMasksVisible(false);
     clear();
     _zoomrect = nullptr;
     _image = nullptr;
@@ -1245,7 +1246,7 @@ void DetectorScene::onCrosshairChanged(int size, int linewidth)
 void DetectorScene::toggleMasks()
 {
     _drawMasks = !_drawMasks;
-    loadCurrentImage();
+    setMasksVisible(_drawMasks);
 }
 
 QPointF DetectorScene::beamSetterCoords()
@@ -1263,7 +1264,7 @@ void DetectorScene::loadMasksFromData()
 {
     if (!_currentData)
         return;
-    _masks.clear();
+    clearMasks();
     for (auto* mask : _currentData->masks()) {
         if (dynamic_cast<const ohkl::BoxMask*>(mask) != nullptr) {
             MaskItem* mask_item = new MaskItem(_currentData, mask->aabbPtr());
@@ -1275,10 +1276,17 @@ void DetectorScene::loadMasksFromData()
             _masks.emplace_back(ellipse_mask_item, mask);
         }
     }
+    update();
 }
 
-void DetectorScene::drawMasks()
+void DetectorScene::setMasksVisible(bool flag)
 {
     for (const auto& [item, mask] : _masks)
+        item->setVisible(flag);
+}
+
+void DetectorScene::addMasks()
+{
+    for (const auto& [item, mask] :  _masks)
         addItem(item);
 }
