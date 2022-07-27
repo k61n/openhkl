@@ -18,6 +18,7 @@
 #include "base/geometry/AABB.h"
 #include "core/data/DataTypes.h"
 #include "gui/graphics_items/SXGraphicsItem.h"
+#include <Eigen/src/Core/Matrix.h>
 
 //! Creates an ellipse mask
 
@@ -47,8 +48,12 @@ class EllipseMaskItem : public SXGraphicsItem {
     ohkl::AABB* getAABB();
     //! Sets the starting corner of the mask
     void setFrom(const QPointF& pos);
+    //! Overload setFrom for an Eigen::Vector3d argument
+    void setFrom(const Eigen::Vector3d& vec);
     //! Sets the ending corner of the mask
     void setTo(const QPointF& pos);
+    //! Overload setTo for an Eigen::Vector3d argument
+    void setTo(const Eigen::Vector3d& vec);
 
     // Other methods
 

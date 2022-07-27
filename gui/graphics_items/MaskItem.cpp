@@ -71,9 +71,26 @@ void MaskItem::setFrom(const QPointF& pos)
     updateAABB();
 }
 
+void MaskItem::setFrom(const Eigen::Vector3d& vec)
+{
+    _from = {vec(0), vec(1)};
+    _to = {vec(0), vec(1)};
+    setPos(_from);
+    update();
+    updateAABB();
+}
+
 void MaskItem::setTo(const QPointF& pos)
 {
     _to = pos;
+    setPos(0.5 * (_from + _to));
+    update();
+    updateAABB();
+}
+
+void MaskItem::setTo(const Eigen::Vector3d& vec)
+{
+    _to = {vec(0), vec(1)};
     setPos(0.5 * (_from + _to));
     update();
     updateAABB();

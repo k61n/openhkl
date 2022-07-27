@@ -1267,11 +1267,16 @@ void DetectorScene::loadMasksFromData()
     clearMasks();
     for (auto* mask : _currentData->masks()) {
         if (dynamic_cast<const ohkl::BoxMask*>(mask) != nullptr) {
-            MaskItem* mask_item = new MaskItem(_currentData, mask->aabbPtr());
+            MaskItem* mask_item = new MaskItem(_currentData, new ohkl::AABB(mask->aabb()));
+            mask_item->setFrom(mask->aabb().lower());
+            mask_item->setTo(mask->aabb().upper());
             addItem(mask_item);
             _masks.emplace_back(mask_item, mask);
         } else if (dynamic_cast<const ohkl::EllipseMask*>(mask) != nullptr) {
-            EllipseMaskItem* ellipse_mask_item = new EllipseMaskItem(_currentData, mask->aabbPtr());
+            EllipseMaskItem* ellipse_mask_item =
+                new EllipseMaskItem(_currentData, new ohkl::AABB(mask->aabb()));
+            ellipse_mask_item->setFrom(mask->aabb().lower());
+            ellipse_mask_item->setTo(mask->aabb().upper());
             addItem(ellipse_mask_item);
             _masks.emplace_back(ellipse_mask_item, mask);
         }
