@@ -265,16 +265,10 @@ void DetectorWidget::setToolbarUp()
     _copy_to_clipboard = new QPushButton;
     _save_to_file = new QPushButton;
 
-    // _hide_masks->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed);
-    // _reset->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed);
-    // _copy_to_clipboard->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed);
-    // _save_to_file->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed);
-
     layout->addWidget(_hide_masks);
     layout->addWidget(_reset);
     layout->addWidget(_copy_to_clipboard);
     layout->addWidget(_save_to_file);
-
 
     QString path{":images/icons/"};
     QString light{"lighttheme/"};

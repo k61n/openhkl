@@ -1175,8 +1175,9 @@ void DetectorScene::clearMasks()
 void DetectorScene::resetScene()
 {
     clearPeakItems();
-    setMasksVisible(false);
     clear();
+    loadMasksFromData();
+    _drawMasks = false;
     _currentData = nullptr;
     _currentFrameIndex = 0;
     _zoomrect = nullptr;
@@ -1190,13 +1191,14 @@ void DetectorScene::resetScene()
 void DetectorScene::resetElements()
 {
     clearPeakItems();
-    setMasksVisible(false);
     clear();
     _zoomrect = nullptr;
     _image = nullptr;
     _integrationRegion1 = nullptr;
     _integrationRegion2 = nullptr;
     _lastClickedGI = nullptr;
+    loadMasksFromData();
+    _drawMasks = false;
 }
 
 std::vector<std::pair<QGraphicsItem*, ohkl::IMask*>>::iterator DetectorScene::findMask(
@@ -1286,6 +1288,9 @@ void DetectorScene::loadMasksFromData()
 
 void DetectorScene::setMasksVisible(bool flag)
 {
+    if (_masks.empty())
+      return;
+
     for (const auto& [item, mask] : _masks)
         item->setVisible(flag);
 }
