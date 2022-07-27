@@ -15,6 +15,10 @@
 #include "core/experiment/ExperimentExporter.h"
 
 
+#include "base/geometry/AABB.h"
+#include "base/mask/BoxMask.h"
+#include "base/mask/EllipseMask.h"
+#include "base/mask/IMask.h"
 #include "base/utils/Logger.h"
 #include "base/utils/Units.h" // deg
 #include "core/data/DataSet.h"
@@ -111,6 +115,51 @@ void writeSampleState(
             std::string(sampleKey + "/" + axis.name()), stateValueType, scanSpace));
         sample_scan.write(&values(0), stateValueType, scanSpace, scanSpace);
     }
+}
+
+void writeMasks(
+    H5::H5File& file, const std::string& datakey, const ohkl::DataSet* const dataset)
+{
+    const auto& masks = dataset->masks();
+    std::size_t n_masks = masks.size();
+
+    std::vector<int> maskTypes;
+    Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor> upper(n_masks, 3);
+    Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor> lower(n_masks, 3);
+
+    const hsize_t nmask[1] = {n_masks};
+    const hsize_t bb_h[2] = {n_masks, 3};
+    const H5::DataSpace mask_space(1, nmask);
+    const H5::DataSpace bb_lower_space{2, bb_h};
+    const H5::DataSpace bb_upper_space{2, bb_h};
+
+    Eigen::Vector3d temp_col;
+    std::size_t count = 0;
+    for (auto* mask : masks) {
+        if (dynamic_cast<const ohkl::BoxMask*>(mask) != nullptr) {
+            maskTypes.push_back(static_cast<int>(ohkl::MaskType::Rectangle));
+        } else if (dynamic_cast<const ohkl::EllipseMask*>(mask) != nullptr) {
+            maskTypes.push_back(static_cast<int>(ohkl::MaskType::Ellipse));
+        }
+        temp_col = mask->aabb().upper();
+        upper.block(count, 0, 1, 3) = Eigen::RowVector3d(temp_col(0), temp_col(1), temp_col(2));
+        temp_col = mask->aabb().lower();
+        lower.block(count, 0, 1, 3) = Eigen::RowVector3d(temp_col(0), temp_col(1), temp_col(2));
+        ++count;
+    }
+
+    const std::string maskKey = datakey + "/" + ohkl::gr_Masks;
+    const std::string upperKey = maskKey + "/" + ohkl::ds_upperBound;
+    const std::string lowerKey = maskKey + "/" + ohkl::ds_lowerBound;
+    const std::string typeKey = maskKey + "/" + ohkl::ds_maskType;
+    file.createGroup(maskKey);
+
+    H5::DataSet type_H5(file.createDataSet(typeKey, H5::PredType::NATIVE_UINT, mask_space));
+    H5::DataSet upper_H5(file.createDataSet(upperKey, H5::PredType::NATIVE_DOUBLE, bb_upper_space));
+    H5::DataSet lower_H5(file.createDataSet(lowerKey, H5::PredType::NATIVE_DOUBLE, bb_lower_space));
+    type_H5.write(maskTypes.data(), H5::PredType::NATIVE_UINT, mask_space, mask_space);
+    upper_H5.write(upper.data(), H5::PredType::NATIVE_DOUBLE, bb_upper_space, bb_upper_space);
+    lower_H5.write(lower.data(), H5::PredType::NATIVE_DOUBLE, bb_lower_space, bb_lower_space);
 }
 
 void writeMetadata(H5::Group& meta_group, const ohkl::MetaData& metadata)
@@ -244,12 +293,14 @@ void ExperimentExporter::writeData(const std::map<std::string, DataSet*> data)
     for (const auto& it : data) {
         DataSet* data_item = it.second;
         const std::string datakey = dataCollectionsKey + "/" + data_item->name();
-
         // Write detector states
         writeDetectorState(file, datakey, data_item);
 
         // Write sample states
         writeSampleState(file, datakey, data_item);
+
+        // Write masks
+        writeMasks(file, datakey, data_item);
 
         // Write all metadata (string, int and double) into the "Metadata" Group attributes
         const std::string metaKey = datakey + "/" + ohkl::gr_Metadata;
@@ -342,7 +393,7 @@ void ExperimentExporter::writePeaks(const std::map<std::string, PeakCollection*>
                 unit_cells.push_back(unit_cell_id);
 
                 temp_col = peak->hkl().error();
-                hkl_error.block(i, 0, 1, 3) = peak->shape().metric();
+                hkl_error.block(i, 0, 1, 3) = Eigen::RowVector3d(temp_col(0), temp_col(1), temp_col(2));
 
                 Eigen::Vector3i itemp_col = peak->hkl().rowVector();
                 hkl.block(i, 0, 1, 3) =

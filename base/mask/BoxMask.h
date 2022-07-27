@@ -38,6 +38,10 @@ class BoxMask : public IMask {
 
     bool collide(const Ellipsoid& ellipsoid) const override;
 
+    const AABB& aabb() { return _aabb; };
+
+    AABB* aabbPtr() { return &_aabb; };
+
  private:
     AABB _aabb;
 };

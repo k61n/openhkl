@@ -15,9 +15,16 @@
 #ifndef OHKL_BASE_MASK_IMASK_H
 #define OHKL_BASE_MASK_IMASK_H
 
+#include "base/geometry/AABB.h"
+
 namespace ohkl {
 
 class Ellipsoid;
+
+enum class MaskType {
+    Rectangle,
+    Ellipse,
+};
 
 //! Pure virtual base class for detector mask.
 
@@ -28,6 +35,10 @@ class IMask {
     virtual bool collide(const Ellipsoid& e) const = 0;
 
     virtual IMask* clone() const = 0;
+
+    virtual const AABB& aabb() = 0;
+
+    virtual AABB* aabbPtr() = 0;
 
  protected:
     IMask() = default;

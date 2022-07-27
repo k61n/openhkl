@@ -54,6 +54,7 @@ DataSet::DataSet(const std::string& dataset_name, Diffractometer* diffractometer
         datashape[1] = nRows();
         datashape[2] = 0; // nr of frames
     }
+    _metadata.add<int>(ohkl::at_nMasks, 0);
 }
 
 void DataSet::_setReader(const DataFormat dataformat, const std::string& filename)
@@ -95,7 +96,7 @@ void DataSet::addDataFile(const std::string& filename, const std::string& extens
     if (!_reader) {
         const std::string ext = lowerCase(extension);
 
-        if (ext == "nsx" || ext == "hdf")
+        if (ext == "nsx" || ext == "hdf" || ext == "ohkl")
             datafmt = DataFormat::OHKL;
         else if (ext == "nxs")
             datafmt = DataFormat::NEXUS;
@@ -201,12 +202,14 @@ double DataSet::wavelength() const
 void DataSet::addMask(IMask* mask)
 {
     _masks.insert(mask);
+    _metadata.add<int>(ohkl::at_nMasks, _masks.size());
 }
 
 void DataSet::removeMask(IMask* mask)
 {
     if (_masks.find(mask) != _masks.end())
         _masks.erase(mask);
+    _metadata.add<int>(ohkl::at_nMasks, _masks.size());
 }
 
 const std::set<IMask*>& DataSet::masks() const

@@ -27,6 +27,7 @@ const std::string gr_DataCollections{"DataCollections"};
 const std::string gr_Detector{"Detector"};
 const std::string gr_Instrument{"Instrument"};
 const std::string gr_Sample{"Sample"};
+const std::string gr_Masks("Masks");
 const std::string gr_Metadata{"Metadata"};
 const std::string gr_PeakCollections{"PeakCollections"};
 const std::string gr_UnitCells{"UnitCells"};
@@ -65,6 +66,11 @@ const std::string ds_Predicted{"Predicted"};
 const std::string ds_hkl{"hkl"};
 const std::string ds_hklError{"hklError"};
 
+// Masks
+const std::string ds_maskType("mask type");
+const std::string ds_upperBound("AABB upper");
+const std::string ds_lowerBound("AABB lower");
+
 //-- HDF Attribute keys
 // general
 const std::string at_commitHash("commit hash");
@@ -80,6 +86,7 @@ const std::string at_monitorSum{"monitor"}; // TODO: explain
 // DataSet metadata
 const std::string at_baseline{"baseline"};
 const std::string at_gain{"gain"};
+const std::string at_nMasks{"number of masks"};
 // Nexus-specific metadata
 const std::string at_numor{"numor"}; // internal raw data labelling of ILL
 const std::string at_totalSteps{"total steps"};
@@ -174,7 +181,8 @@ const std::set<std::string> RecognizedMetaDataKeys{at_experiment,     at_diffrac
                                                    at_peakType,       at_rVec,
                                                    at_BravaisLattice, at_indexingTol,
                                                    at_spacegroup,     at_z,
-                                                   at_baseline,       at_gain};
+                                                   at_baseline,       at_gain,
+                                                   at_nMasks};
 
 } // namespace ohkl
 
