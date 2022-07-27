@@ -29,13 +29,8 @@
 #include "core/raw/DataKeys.h"
 #include "core/raw/HDF5TableIO.h" // HDF5TableReader
 
-#include <Eigen/src/Core/util/Constants.h>
-#include <H5DataSpace.h>
-#include <H5PredType.h>
 #include <stdexcept>
 #include <string>
-
-#include <iostream>
 
 namespace {
 

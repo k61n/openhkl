@@ -18,7 +18,6 @@
 #include "base/geometry/AABB.h"
 #include "core/data/DataTypes.h"
 #include "gui/graphics_items/SXGraphicsItem.h"
-#include <Eigen/src/Core/Matrix.h>
 
 //! Creates an ellipse mask
 

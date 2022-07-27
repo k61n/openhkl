@@ -41,11 +41,6 @@
 #include "tables/crystal/UnitCell.h"
 
 #include <Eigen/Dense>
-#include <Eigen/src/Core/GeneralProduct.h>
-#include <Eigen/src/Core/Matrix.h>
-#include <H5DataSet.h>
-#include <H5DataSpace.h>
-#include <H5PredType.h>
 #include <sstream>
 #include <string>
 #include <tuple>
