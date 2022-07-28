@@ -34,6 +34,7 @@ class TestFullWorkFlow(unittest.TestCase):
         data_params.wavelength = 2.67
         data_params.delta_omega = 0.3
 
+
         print(f'Reading files from {data_dir}')
         dir = Path(data_dir)
         raw_data_files = sorted(list(dir.glob('*.raw')))
@@ -48,6 +49,10 @@ class TestFullWorkFlow(unittest.TestCase):
         dataset.finishRead()
         expt.addData(dataset)
         data = expt.getData('trypsin-sim')
+
+        # override machine baseline/gain for simulated data
+        data.detector().setBaseline(0.0)
+        data.detector().setGain(1.0)
 
         print('Finding peaks...')
         peak_finder = expt.peakFinder()
@@ -65,6 +70,7 @@ class TestFullWorkFlow(unittest.TestCase):
         params.bkg_end = 6.0
         integrator.integrateFoundPeaks(peak_finder)
         expt.acceptFoundPeaks('found') # Peak collection is now saved to experiment as "found"
+        expt.saveToFile("test.ohkl");
         found_peaks = expt.getPeakCollection('found')
         print(f'Integrated {found_peaks.numberOfValid()} valid peaks')
         self.assertTrue(found_peaks.numberOfValid() > 1900 and
