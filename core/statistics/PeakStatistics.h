@@ -33,7 +33,6 @@ enum class PeakHistogramType {
     Intensity,
     Sigma,
     Strength,
-    Count,
 };
 
 
@@ -43,7 +42,7 @@ enum class PeakHistogramType {
  */
 class PeakStatistics {
  public:
-    PeakStatistics() = default;
+    PeakStatistics();
     ~PeakStatistics();
 
     //! Set peak collection
@@ -62,6 +61,8 @@ class PeakStatistics {
     double minCount() const;
     //! Compute a histogram given the current set of points
     gsl_histogram* computeHistogram(std::size_t nbins);
+    //! Determine whether the histogram exists
+    bool hasHistogram() const { return _current_histogram != nullptr; };
 
  private:
     //! Allocate histogram memory

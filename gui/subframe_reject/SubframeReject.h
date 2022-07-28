@@ -95,6 +95,8 @@ class SubframeReject : public QWidget {
     //! Disable unsafe widgets if no data loaded
     void toggleUnsafeWidgets();
 
+    //! Update the computed statistics
+    void updateStatistics();
     //! Compute the selected histogram
     void computeHistogram();
     //! Update the plot range based on the selected peak collection

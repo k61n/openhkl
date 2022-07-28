@@ -68,6 +68,16 @@ SubframeReject::SubframeReject() : QWidget()
     connect(
         _detector_widget->dataCombo(), QOverload<int>::of(&QComboBox::currentIndexChanged),
         _data_combo, &QComboBox::setCurrentIndex);
+    connect(
+        _peak_combo, QOverload<int>::of(&QComboBox::currentIndexChanged), this, [=]() {
+            updateStatistics();
+            computeHistogram();
+    });
+    connect(
+        _histo_combo, QOverload<int>::of(&QComboBox::currentIndexChanged), this, [=]() {
+            updateStatistics();
+            computeHistogram();
+    });
 
     auto propertyScrollArea = new PropertyScrollArea(this);
     propertyScrollArea->setContentLayout(_left_layout);
@@ -107,7 +117,7 @@ void SubframeReject::setHistogramUp()
     std::tie(_x_min, _x_max) = filler.addSpinBoxPair(
         "Data range", "Minimum and maximum of x data series");
     _log_freq = filler.addCheckBox("Logarithmic vertical axis", "Switch to log-linear plot", 1);
-    _plot_histogram = filler.addButton("Plot histogram");
+    _plot_histogram = filler.addButton("Replot", "Refresh histogram");
 
     _n_bins->setMaximum(10000);
     _x_min->setMaximum(10000);
@@ -124,6 +134,10 @@ void SubframeReject::setHistogramUp()
     _freq_min->setValue(0);
     _freq_max->setValue(1000);
 
+    connect(_log_freq, &QCheckBox::stateChanged, this, [=]() {
+        updateStatistics();
+        computeHistogram();
+    });
     connect(_plot_histogram, &QPushButton::clicked, this, &SubframeReject::computeHistogram);
 
     _left_layout->addWidget(histo_spoiler);
@@ -204,11 +218,6 @@ void SubframeReject::refreshPeakTable()
     _peak_table->resizeColumnsToContents();
     _peak_table->model()->sort(13, Qt::DescendingOrder);
 
-    ohkl::PeakHistogramType type =
-        static_cast<ohkl::PeakHistogramType>(_histo_combo->currentIndex());
-    _peak_stats.setPeakCollection(_peak_collection, type);
-    updatePlotRange();
-
     refreshPeakVisual();
 }
 
@@ -220,6 +229,8 @@ void SubframeReject::refreshAll()
     _data_combo->refresh();
     _detector_widget->refresh();
     _peak_combo->refresh();
+    updateStatistics();
+    computeHistogram();
     refreshPeakTable();
     toggleUnsafeWidgets();
 }
@@ -253,17 +264,28 @@ void SubframeReject::toggleUnsafeWidgets()
 {
 }
 
-void SubframeReject::computeHistogram()
+void SubframeReject::updateStatistics()
 {
+    ohkl::PeakCollection* peaks = _peak_combo->currentPeakCollection();
+    if (!peaks->isIntegrated())
+        return;
+
     ohkl::PeakHistogramType type =
         static_cast<ohkl::PeakHistogramType>(_histo_combo->currentIndex());
+    _peak_stats.setPeakCollection(peaks, type);
+    updatePlotRange();
+}
+
+void SubframeReject::computeHistogram()
+{
+    ohkl::PeakCollection* peaks = _peak_combo->currentPeakCollection();
+    if (!peaks->isIntegrated())
+        return;
+
     _current_histogram = _peak_stats.computeHistogram(_n_bins->value());
 
-    _freq_min->setMaximum(_peak_stats.maxCount());
-    _freq_max->setMaximum(_peak_stats.maxCount());
-    _freq_max->setValue(_peak_stats.maxCount());
-    _freq_min->setValue(_peak_stats.minCount());
-
+    ohkl::PeakHistogramType type =
+        static_cast<ohkl::PeakHistogramType>(_histo_combo->currentIndex());
     QString xLabel = QString::fromStdString(_peak_stats.getHistoStrings().find(type)->second);
     _plot_widget->setYLog(_log_freq->isChecked());
     _plot_widget->plotData(
@@ -323,14 +345,25 @@ void SubframeReject::updateYRange(double ymin, double ymax)
 
 void SubframeReject::updatePlotRange()
 {
-    _x_max->setMaximum(_peak_stats.maxValue());
     _x_min->setMaximum(_peak_stats.maxValue());
+    _x_max->setMaximum(_peak_stats.maxValue());
 
     _x_min->setMinimum(_peak_stats.minValue());
     _x_max->setMinimum(_peak_stats.minValue());
 
     _x_max->setValue(_peak_stats.maxValue());
     _x_min->setValue(_peak_stats.minValue());
+
+    if (_peak_stats.hasHistogram()) {
+        _freq_min->setMinimum(0);
+        _freq_max->setMinimum(0);
+
+        _freq_min->setMaximum(_peak_stats.maxCount());
+        _freq_max->setMaximum(_peak_stats.maxCount());
+
+        _freq_max->setValue(_peak_stats.maxCount());
+        _freq_min->setValue(0);
+    }
 }
 
 DetectorWidget* SubframeReject::detectorWidget()

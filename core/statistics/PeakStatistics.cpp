@@ -25,6 +25,10 @@ const std::map<PeakHistogramType, std::string> PeakStatistics::_histogram_string
     {PeakHistogramType::Sigma, "Sigma"},
     {PeakHistogramType::Strength, "Strength"}};
 
+PeakStatistics::PeakStatistics() : _current_histogram(nullptr)
+{
+}
+
 PeakStatistics::~PeakStatistics()
 {
     _clearHistogram();
@@ -92,6 +96,5 @@ gsl_histogram* PeakStatistics::computeHistogram(std::size_t nbins)
         gsl_histogram_increment(_current_histogram, point);
     return _current_histogram;
 }
-
 
 } // namespace ohkl
