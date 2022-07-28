@@ -450,7 +450,7 @@ void SubframeIntegrate::removeMaskedPeaks()
 
     if (_remove_masked->isChecked()) {
         _mask_saved_flags.clear();
-        data->maskPeaks(peaks, _mask_saved_flags);
+        data->maskPeaks(peaks, _mask_saved_flags, _peak_end->value());
         gGui->statusBar()->showMessage(QString::number(_mask_saved_flags.size()) + " peaks masked");
     } else {
         std::map<ohkl::Peak3D*, ohkl::RejectionFlag>::iterator it;
