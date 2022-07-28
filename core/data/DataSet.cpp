@@ -33,6 +33,7 @@
 #include "core/loader/HDF5DataReader.h"
 #include "core/loader/NexusDataReader.h"
 #include "core/loader/RawDataReader.h"
+#include "core/peak/Peak3D.h"
 #include "core/raw/DataKeys.h"
 
 
@@ -217,7 +218,9 @@ const std::set<IMask*>& DataSet::masks() const
     return _masks;
 }
 
-int DataSet::maskPeaks(std::vector<Peak3D*>& peaks) const
+void DataSet::maskPeaks(
+    std::vector<Peak3D*>& peaks, std::map<Peak3D*, RejectionFlag>& rejection_map,
+    double bkg_end /* = -1.0 */) const
 {
     int n_masked = 0;
     for (const auto& peak : peaks) {
@@ -226,16 +229,22 @@ int DataSet::maskPeaks(std::vector<Peak3D*>& peaks) const
             continue;
 
         peak->setMasked(false);
+        // scale the peak shape to the maximum background radius
+        Ellipsoid shape = peak->shape();
+        if (bkg_end < 0.0)
+            shape.scale(peak->bkgEnd());
+        else
+            shape.scale(bkg_end);
         for (const auto& m : _masks) {
-            // If the background of the peak intercept the mask, unselected the peak
-            if (m->collide(peak->shape())) {
+            // If the background of the peak intercepts the mask, unselected the peak
+            if (m->collide(shape)) {
+                rejection_map.insert_or_assign(peak, peak->rejectionFlag());
                 peak->setMasked(true);
                 ++n_masked;
                 break;
             }
         }
     }
-    return n_masked;
 }
 
 ReciprocalVector DataSet::computeQ(const DetectorEvent& ev) const

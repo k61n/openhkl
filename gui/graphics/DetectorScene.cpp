@@ -695,6 +695,7 @@ void DetectorScene::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
         } else {
             if (_peak_model_1) {
                 // _peak_model_2 is only relevant in DetectorWindow, ignore here.
+                std::map<ohkl::Peak3D*, ohkl::RejectionFlag> tmp_map;
                 std::vector<ohkl::Peak3D*> peaks =
                     _peak_model_1->root()->peakCollection()->getPeakList();
                 if (CutterItem* p = dynamic_cast<CutterItem*>(_lastClickedGI)) {
@@ -711,7 +712,10 @@ void DetectorScene::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
                         _currentData->addMask(it->second);
                         _lastClickedGI = nullptr;
                     }
-                    _currentData->maskPeaks(peaks);
+                    std::map<ohkl::Peak3D*, ohkl::RejectionFlag> tmp_map;
+                    _currentData->maskPeaks(peaks, tmp_map);
+                    gGui->statusBar()->showMessage(
+                        QString::number(tmp_map.size()) + " peaks masked");
                     update();
                     updateMasks();
                 } else if (EllipseMaskItem* p = dynamic_cast<EllipseMaskItem*>(_lastClickedGI)) {
@@ -721,7 +725,9 @@ void DetectorScene::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
                         _currentData->addMask(it->second);
                         _lastClickedGI = nullptr;
                     }
-                    _currentData->maskPeaks(peaks);
+                    _currentData->maskPeaks(peaks, tmp_map);
+                    gGui->statusBar()->showMessage(
+                        QString::number(tmp_map.size()) + " peaks masked");
                     update();
                     updateMasks();
                 }
