@@ -411,11 +411,13 @@ void SubframeIntegrate::removeOverlappingPeaks()
     filter.resetFiltering(peaks_to_integrate);
     int nrejected = 0;
     if (_remove_overlaps->isChecked()) {
+        _overlap_saved_flags.clear();
         filter.parameters()->peak_end = _peak_end->value();
         filter.parameters()->bkg_end = _peak_end->value();
         filter.filterOverlapping(peaks_to_integrate);
         for (auto* peak : peaks_to_integrate->getPeakList()) {
             if (!peak->caughtByFilter() && peak->selected()) {
+                _overlap_saved_flags.insert_or_assign(peak, peak->rejectionFlag());
                 peak->setSelected(false);
                 peak->setRejectionFlag(ohkl::RejectionFlag::OverlappingPeak);
                 ++nrejected;
@@ -423,13 +425,16 @@ void SubframeIntegrate::removeOverlappingPeaks()
         }
         gGui->statusBar()->showMessage(QString::number(nrejected) + " overlapping peaks rejected");
     } else {
-        for (auto* peak : peaks_to_integrate->getPeakList()) {
-            if (!(peak->selected())
-                && peak->rejectionFlag() == ohkl::RejectionFlag::OverlappingPeak) {
-                peak->setSelected(true);
-                peak->setRejectionFlag(ohkl::RejectionFlag::NotRejected, true);
-                ++nrejected;
+        std::map<ohkl::Peak3D*, ohkl::RejectionFlag>::iterator it;
+        for (it = _overlap_saved_flags.begin(); it != _overlap_saved_flags.end(); ++it) {
+            if (it->second == ohkl::RejectionFlag::NotRejected) {
+                it->first->setSelected(true);
+                it->first->setRejectionFlag(ohkl::RejectionFlag::NotRejected, true);
+            } else {
+                it->first->setSelected(false);
+                it->first->setRejectionFlag(it->second, true);
             }
+            ++nrejected;
         }
         gGui->statusBar()->showMessage(QString::number(nrejected) + " overlapping peaks restored");
     }
@@ -442,15 +447,20 @@ void SubframeIntegrate::removeMaskedPeaks()
     gGui->setReady(false);
     auto data = _data_combo->currentData();
     auto peaks = _peak_combo->currentPeakCollection()->getPeakList();
+
     if (_remove_masked->isChecked()) {
-        int n_masked = data->maskPeaks(peaks);
-        gGui->statusBar()->showMessage(QString::number(n_masked) + " peaks masked");
+        _mask_saved_flags.clear();
+        data->maskPeaks(peaks, _mask_saved_flags);
+        gGui->statusBar()->showMessage(QString::number(_mask_saved_flags.size()) + " peaks masked");
     } else {
-        for (auto* peak : peaks) {
-            if (peak->masked()) {
-                peak->setMasked(false);
-                peak->setRejectionFlag(ohkl::RejectionFlag::NotRejected, true);
-            }
+        std::map<ohkl::Peak3D*, ohkl::RejectionFlag>::iterator it;
+        for (it = _mask_saved_flags.begin(); it != _mask_saved_flags.end(); ++it) {
+            it->first->setMasked(false);
+            it->first->setRejectionFlag(it->second, true);
+            if (it->second == ohkl::RejectionFlag::NotRejected)
+                it->first->setSelected(true);
+            else
+                it->first->setSelected(false);
         }
     }
     refreshPeakTable();

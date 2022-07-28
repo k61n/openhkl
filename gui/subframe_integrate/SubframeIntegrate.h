@@ -146,6 +146,9 @@ class SubframeIntegrate : public QWidget {
     PeakCollectionItem _peak_collection_item;
     PeakCollectionModel _peak_collection_model;
 
+    std::map<ohkl::Peak3D*, ohkl::RejectionFlag> _overlap_saved_flags;
+    std::map<ohkl::Peak3D*, ohkl::RejectionFlag> _mask_saved_flags;
+
     std::shared_ptr<ohkl::ShapeModelParameters> _shape_params;
 
     const std::map<std::string, ohkl::IntegratorType> _integrator_strings{
