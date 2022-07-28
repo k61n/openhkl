@@ -45,6 +45,7 @@
 #include <QMessageBox>
 #include <QScrollBar>
 #include <QSpacerItem>
+#include <qcheckbox.h>
 #include <qgridlayout.h>
 #include <qgroupbox.h>
 
@@ -316,6 +317,9 @@ void SubframeIntegrate::setIntegrateUp()
     _remove_overlaps = f.addCheckBox(
         "Remove overlaps", "Remove peaks with overlapping adjacent background regions", 1);
 
+    _remove_masked = f.addCheckBox(
+        "Remove masked peaks", "Remove peaks intersecting detector image masks", 1);
+
     _integrate_button = f.addButton("Integrate peaks");
 
     // -- Initialize controls
@@ -338,6 +342,8 @@ void SubframeIntegrate::setIntegrateUp()
     connect(
         _remove_overlaps, &QCheckBox::stateChanged, this,
         &SubframeIntegrate::removeOverlappingPeaks);
+    connect(
+        _remove_masked, &QCheckBox::stateChanged, this, &SubframeIntegrate::removeMaskedPeaks);
     connect(
         _peak_end, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged),
         this, &SubframeIntegrate::removeOverlappingPeaks);
@@ -426,6 +432,26 @@ void SubframeIntegrate::removeOverlappingPeaks()
             }
         }
         gGui->statusBar()->showMessage(QString::number(nrejected) + " overlapping peaks restored");
+    }
+    refreshPeakTable();
+    gGui->setReady(true);
+}
+
+void SubframeIntegrate::removeMaskedPeaks()
+{
+    gGui->setReady(false);
+    auto data = _data_combo->currentData();
+    auto peaks = _peak_combo->currentPeakCollection()->getPeakList();
+    if (_remove_masked->isChecked()) {
+        int n_masked = data->maskPeaks(peaks);
+        gGui->statusBar()->showMessage(QString::number(n_masked) + " peaks masked");
+    } else {
+        for (auto* peak : peaks) {
+            if (peak->masked()) {
+                peak->setMasked(false);
+                peak->setRejectionFlag(ohkl::RejectionFlag::NotRejected, true);
+            }
+        }
     }
     refreshPeakTable();
     gGui->setReady(true);

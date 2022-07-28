@@ -217,8 +217,9 @@ const std::set<IMask*>& DataSet::masks() const
     return _masks;
 }
 
-void DataSet::maskPeaks(std::vector<Peak3D*>& peaks) const
+int DataSet::maskPeaks(std::vector<Peak3D*>& peaks) const
 {
+    int n_masked = 0;
     for (const auto& peak : peaks) {
         // peak belongs to another dataset
         if (peak->dataSet().get() != this)
@@ -229,11 +230,12 @@ void DataSet::maskPeaks(std::vector<Peak3D*>& peaks) const
             // If the background of the peak intercept the mask, unselected the peak
             if (m->collide(peak->shape())) {
                 peak->setMasked(true);
-                peak->setRejectionFlag(RejectionFlag::Masked);
+                ++n_masked;
                 break;
             }
         }
     }
+    return n_masked;
 }
 
 ReciprocalVector DataSet::computeQ(const DetectorEvent& ev) const

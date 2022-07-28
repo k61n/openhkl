@@ -228,7 +228,10 @@ bool Peak3D::selected() const
 void Peak3D::setMasked(bool masked)
 {
     _masked = masked;
-    _rejection_flag = RejectionFlag::Masked;
+    if (_masked)
+        _rejection_flag = RejectionFlag::Masked;
+    else
+        _rejection_flag = RejectionFlag::NotRejected;
 }
 
 bool Peak3D::masked() const

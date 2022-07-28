@@ -33,6 +33,7 @@
 #include <QTableWidget>
 #include <QVBoxLayout>
 #include <QWidget>
+#include <qcheckbox.h>
 
 class PeakComboBox;
 class FoundPeakComboBox;
@@ -85,6 +86,8 @@ class SubframeIntegrate : public QWidget {
     void assignPeakShapes();
     //! Remove overlapping peaks
     void removeOverlappingPeaks();
+    //! Remove peaks intersecting masks
+    void removeMaskedPeaks();
     //! Wrapper for integration
     void runIntegration();
     //! Scroll to selected peak in table
@@ -121,6 +124,7 @@ class SubframeIntegrate : public QWidget {
     SafeDoubleSpinBox* _radius;
     SafeDoubleSpinBox* _n_frames;
     QCheckBox* _remove_overlaps;
+    QCheckBox* _remove_masked;
     SafeDoubleSpinBox* _radius_int;
     SafeDoubleSpinBox* _n_frames_int;
     QCheckBox* _fit_center;
