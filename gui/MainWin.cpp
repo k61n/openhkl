@@ -29,6 +29,7 @@
 #include "gui/subframe_merge/SubframeMergedPeaks.h"
 #include "gui/subframe_predict/SubframePredictPeaks.h"
 #include "gui/subframe_refiner/SubframeRefiner.h"
+#include "gui/subframe_reject/SubframeReject.h"
 #include "gui/subframe_shapes/SubframeShapes.h"
 #include "gui/subwindows/DetectorWindow.h"
 #include "gui/subwindows/InputFilesWindow.h"
@@ -86,6 +87,7 @@ MainWin::MainWin()
     predictor = new SubframePredictPeaks;
     refiner = new SubframeRefiner;
     integrator = new SubframeIntegrate;
+    rejector = new SubframeReject;
     merger = new SubframeMergedPeaks;
 
     detector_window = new DetectorWindow();
@@ -103,6 +105,7 @@ MainWin::MainWin()
     _layout_stack->addWidget(predictor);
     _layout_stack->addWidget(refiner);
     _layout_stack->addWidget(integrator);
+    _layout_stack->addWidget(rejector);
     _layout_stack->addWidget(merger);
     _layout_stack->setCurrentIndex(0);
 

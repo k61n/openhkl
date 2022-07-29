@@ -126,6 +126,8 @@ class Peak3D {
     bool selected() const;
     //! Set the peak selection state
     void setSelected(bool);
+    //! Reject a peak
+    void reject(RejectionFlag flag);
     //! Is the peak masked? Masked peaks are "invalid", and have been manually
     //! deselected via a selection box in a DetectorScene.
     bool masked() const;

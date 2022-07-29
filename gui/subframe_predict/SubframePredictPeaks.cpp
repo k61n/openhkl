@@ -348,6 +348,7 @@ void SubframePredictPeaks::setPeakTableUp()
     _peak_table->setModel(&_peak_collection_model);
     _peak_table->resizeColumnsToContents();
     _peak_table->setColumnHidden(13, true);
+    _peak_table->setColumnHidden(14, true);
 
     peak_grid->addWidget(_peak_table, 0, 0, 0, 0);
     _right_element->addWidget(peak_group);

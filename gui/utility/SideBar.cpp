@@ -26,6 +26,7 @@
 #include "gui/subframe_merge/SubframeMergedPeaks.h"
 #include "gui/subframe_predict/SubframePredictPeaks.h"
 #include "gui/subframe_refiner/SubframeRefiner.h"
+#include "gui/subframe_reject/SubframeReject.h"
 #include "gui/subframe_shapes/SubframeShapes.h"
 
 #include <QDebug>
@@ -45,6 +46,7 @@
 // predictor.svg: Crystal Ball by Chanut is Industries from the Noun Project
 // refiner.svg: linear regression by Becris from the Noun Project
 // integrator.svg: triple integral by Sumana Chamrunworakiat from the Noun Project
+// reject.svg: Reject by Alfredo @ IconsAlfredo.com
 // merger.svg: Merge by Muneer A.Safiah from the Noun Project
 
 SideBar::SideBar(QWidget* parent) : QWidget(parent), mCheckedAction(nullptr), mOverAction(nullptr)
@@ -69,6 +71,7 @@ SideBar::SideBar(QWidget* parent) : QWidget(parent), mCheckedAction(nullptr), mO
     QAction* predictor = addAction(QIcon(path + QString("predictor.svg")), "Predict");
     QAction* refiner = addAction(QIcon(path + QString("refiner.svg")), "Refine");
     QAction* integrator = addAction(QIcon(path + QString("integrator.svg")), "Integrate");
+    QAction* rejector = addAction(QIcon(path + QString("reject.svg")), "Reject");
     QAction* info = addAction(QIcon(path + QString("merger.svg")), "Merge");
 
 
@@ -86,6 +89,7 @@ SideBar::SideBar(QWidget* parent) : QWidget(parent), mCheckedAction(nullptr), mO
     connect(predictor, &QAction::triggered, this, &SideBar::onPredictor);
     connect(refiner, &QAction::triggered, this, &SideBar::onRefiner);
     connect(integrator, &QAction::triggered, this, &SideBar::onIntegrator);
+    connect(rejector, &QAction::triggered, this, &SideBar::onReject);
     connect(info, &QAction::triggered, this, &SideBar::onMerger);
 }
 
@@ -290,9 +294,16 @@ void SideBar::onIntegrator()
     emit subframeChanged();
 }
 
-void SideBar::onMerger()
+void SideBar::onReject()
 {
     gGui->_layout_stack->setCurrentIndex(9);
+    gGui->rejector->refreshAll();
+    emit subframeChanged();
+}
+
+void SideBar::onMerger()
+{
+    gGui->_layout_stack->setCurrentIndex(10);
     gGui->merger->refreshAll();
     emit subframeChanged();
 }

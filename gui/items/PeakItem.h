@@ -55,6 +55,7 @@ class PeakItem : public QStandardItem {
         d,
         Rejection,
         Filtered,
+        Selected,
         Count,
     };
     //! Whether the peak was caught by the filter

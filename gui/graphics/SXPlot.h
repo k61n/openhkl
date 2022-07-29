@@ -38,15 +38,19 @@ class SXPlot : public QCustomPlot {
 
     virtual std::string getType() const;
 
+ signals:
+    void signalXRange(double xmin, double xmax);
+    void signalYRange(double ymin, double ymax);
+
  public:
     //! Manage the mouse move
-    void mouseMove(QMouseEvent* mouse_event);
+    void mouseMoveEvent(QMouseEvent* mouse_event);
     //! Manage the mouse press
-    void mousePress(QMouseEvent* mouse_event);
+    void mousePressEvent(QMouseEvent* mouse_event);
     //! Manage the mouse release
-    void mouseRelease(QMouseEvent* mouse_event);
+    void mouseReleaseEvent(QMouseEvent* mouse_event);
     //! Manage the mouse wheel
-    void mouseWheel(QWheelEvent* wheel_event);
+    void mouseWheelEvent(QWheelEvent* wheel_event);
 
     //! Manage the zoom
     void zoom(double x_init, double x_final, double y_init, double y_final);
@@ -64,7 +68,6 @@ class SXPlot : public QCustomPlot {
     //! Export the graphs into column ASCII format
     void exportToAscii(QCPErrorBars* errorBars = NULL, const char lim = ',');
 
- private:
     void copyViewToClipboard();
 
 

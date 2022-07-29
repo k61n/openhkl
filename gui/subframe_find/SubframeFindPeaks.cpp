@@ -269,6 +269,7 @@ void SubframeFindPeaks::setPeakTableUp()
     _peak_table->setColumnHidden(1, true);
     _peak_table->setColumnHidden(2, true);
     _peak_table->setColumnHidden(13, true);
+    _peak_table->setColumnHidden(14, true);
 
     peak_grid->addWidget(_peak_table, 0, 0, 0, 0);
 
@@ -574,6 +575,8 @@ void SubframeFindPeaks::refreshPeakTable()
     _peak_table->setColumnHidden(0, true);
     _peak_table->setColumnHidden(1, true);
     _peak_table->setColumnHidden(2, true);
+    _peak_table->setColumnHidden(13, true);
+    _peak_table->setColumnHidden(14, true);
 
     refreshPeakVisual();
 }

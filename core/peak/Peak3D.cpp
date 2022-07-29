@@ -220,6 +220,13 @@ void Peak3D::setSelected(bool s)
         setRejectionFlag(RejectionFlag::NotRejected, true);
 }
 
+void Peak3D::reject(RejectionFlag flag)
+{
+    _selected = false;
+    if (flag == RejectionFlag::NotRejected)
+        _rejection_flag = flag;
+}
+
 bool Peak3D::selected() const
 {
     return _selected;
