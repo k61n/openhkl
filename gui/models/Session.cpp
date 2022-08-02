@@ -52,12 +52,11 @@
 #include <QSettings>
 #include <QStringList>
 
-
 Session* gSession;
 
 namespace {
 
-// open a dialog to choose a name for a dataset; warn against name clashes with previous names
+//! Opens a dialog to choose a name for a dataset; warn against name clashes with previous names
 std::string askDataName(const std::string dataname0, const QStringList* const datanames_pre)
 {
     DataNameDialog dataname_dialog(QString::fromStdString(dataname0), datanames_pre);
@@ -66,6 +65,40 @@ std::string askDataName(const std::string dataname0, const QStringList* const da
         return dataname_dialog.dataName().toStdString();
 
     return dataname0;
+}
+
+//! Opens a dialog to choose a list of raw files
+std::vector<std::string> askRawFileNames()
+{
+    QSettings qset = gGui->qSettings();
+    qset.beginGroup("RecentDirectories");
+    QString loadDirectory = qset.value("data_raw", QDir::homePath()).toString();
+
+    QStringList qfilenames =
+        QFileDialog::getOpenFileNames(gGui, "import raw data", loadDirectory,
+                                      "Image files (*.raw *.tiff);; All files (*.* *)");
+    if (qfilenames.empty())
+        return {};
+
+    // Don't leave sorting the files to the OS. Use QCollator + std::sort to sort naturally
+    // (numerically)
+    QCollator collator;
+    collator.setNumericMode(true);
+    std::sort(
+        qfilenames.begin(), qfilenames.end(),
+        [&collator](const QString& file1, const QString& file2) {
+            return collator.compare(file1, file2) < 0;
+        });
+
+    QFileInfo info(qfilenames.at(0));
+    loadDirectory = info.absolutePath();
+    qset.setValue("data_raw", loadDirectory);
+
+    std::vector<std::string> result;
+    for (const QString& filename : qfilenames)
+        result.push_back(filename.toStdString());
+
+    return result;
 }
 
 } // namespace
@@ -280,33 +313,9 @@ bool Session::loadRawData()
     }
 
     try {
-        QSettings qset = gGui->qSettings();
-        qset.beginGroup("RecentDirectories");
-        QString loadDirectory = qset.value("data_raw", QDir::homePath()).toString();
-
-        QStringList qfilenames =
-            QFileDialog::getOpenFileNames(gGui, "import raw data",
-            loadDirectory, "Image files (*.raw *.tiff);; All files (*.* *)");
-        if (qfilenames.empty())
+        std::vector<std::string> filenames = askRawFileNames();
+        if (filenames.empty())
             return false;
-
-        // Don't leave sorting the files to the OS. Use QCollator + std::sort to sort naturally
-        // (numerically)
-        QCollator collator;
-        collator.setNumericMode(true);
-        std::sort(
-            qfilenames.begin(), qfilenames.end(),
-            [&collator](const QString& file1, const QString& file2) {
-                return collator.compare(file1, file2) < 0;
-            });
-
-        QFileInfo info(qfilenames.at(0));
-        loadDirectory = info.absolutePath();
-        qset.setValue("data_raw", loadDirectory);
-
-        std::vector<std::string> filenames;
-        for (const QString& filename : qfilenames)
-            filenames.push_back(filename.toStdString());
 
         ohkl::RawDataReaderParameters parameters;
         parameters.dataset_name = ohkl::fileBasename(filenames[0]);
