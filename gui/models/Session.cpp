@@ -306,43 +306,43 @@ void Session::removeData()
 
 bool Session::loadRawData()
 {
-    // Loading data requires an existing Experiment
-    if (_currentProject < 0) {
-        return false;
-    }
+    if (_currentProject < 0)
+        return false; // loading data requires an existing Experiment
 
     try {
+        // Get input filenames from dialog.
         std::vector<std::string> filenames = askRawFileNames();
         if (filenames.empty())
             return false;
 
+        // Get metadata from readme file, then edit them in dialog.
+        const QStringList& extant_dataset_names = currentProject()->getDataNames();
         ohkl::RawDataReaderParameters parameters;
         parameters.LoadDataFromFile(filenames.at(0));
-        const QStringList& datanames_pre = currentProject()->getDataNames();
-        RawDataDialog dialog(parameters, datanames_pre);
+        RawDataDialog dialog(parameters, extant_dataset_names);
         if (!dialog.exec())
             return false;
         ohkl::Experiment* exp = currentProject()->experiment();
-
-        // update the parameters by those from the dialog
         parameters = dialog.parameters();
 
+        // Transfer metadata to diffractometer.
         ohkl::Detector* detector = exp->getDiffractometer()->detector();
         detector->setBaseline(parameters.baseline);
         detector->setGain(parameters.gain);
 
-        ohkl::Diffractometer* diff = exp->getDiffractometer();
-        const std::shared_ptr<ohkl::DataSet> dataset_ptr{
-            std::make_shared<ohkl::DataSet>(parameters.dataset_name, diff)};
-        dataset_ptr->setRawReaderParameters(parameters);
-        for (const auto& filenm : filenames)
-            dataset_ptr->addRawFrame(filenm);
+        // Transfer metadata to dataset, and load the raw data.
+        const std::shared_ptr<ohkl::DataSet> dataset{
+            std::make_shared<ohkl::DataSet>(parameters.dataset_name, exp->getDiffractometer())};
+        dataset->setRawReaderParameters(parameters);
+        for (const auto& filename : filenames)
+            dataset->addRawFrame(filename);
+        dataset->finishRead();
+        exp->addData(dataset);
 
-        dataset_ptr->finishRead();
-        if (!exp->addData(dataset_ptr)) { }
         onDataChanged();
-        auto data_list = currentProject()->getDataNames();
-        gGui->sentinel->setLinkedComboList(ComboType::DataSet, data_list);
+        gGui->sentinel->setLinkedComboList(ComboType::DataSet,
+                                           currentProject()->getDataNames());
+
     } catch (std::exception& e) {
         QMessageBox::critical(nullptr, "Error", QString(e.what()));
     } catch (...) {
@@ -354,7 +354,6 @@ bool Session::loadRawData()
 void Session::onDataChanged()
 {
     DataList data = currentProject()->experiment()->getAllData();
-    // gGui->onDataChanged();
     _data_combo->clearAll();
     _data_combo->addDataSets(data);
     _data_combo->refreshAll();
