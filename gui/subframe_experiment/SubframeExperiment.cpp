@@ -84,20 +84,20 @@ SubframeExperiment::SubframeExperiment()
 
     _npoints_intensity->setMaximumWidth(100);
     _npoints_intensity->setMaximum(65535);
-    _npoints_intensity->setMinimum(100);    
-    _npoints_intensity->setValue(100); 
+    _npoints_intensity->setMinimum(100);
+    _npoints_intensity->setValue(100);
 
     _npoints_lineplot->setMaximum(1000);
-    _npoints_lineplot->setMinimum(10); 
-    _npoints_lineplot->setMaximumWidth(250); 
+    _npoints_lineplot->setMinimum(10);
+    _npoints_lineplot->setMaximumWidth(250);
     _npoints_lineplot->setValue(10);
- 
+
     _minX = gfiller.addSpinBox("Minimal x value:");
     _maxX = gfiller.addSpinBox("Maximum x value:");
     _minY = gfiller.addSpinBox("Minimal y value:");
     _maxY = gfiller.addSpinBox("Maximal y value:");
 
-    _update_plot = gfiller.addButton("Update plot"); 
+    _update_plot = gfiller.addButton("Update plot");
 
     _plot = new PlotPanel;
 
@@ -128,7 +128,7 @@ SubframeExperiment::SubframeExperiment()
 
     lineplot_box->setVisible(false);
     intensity_plot_box->setVisible(false);
-    
+
     connect(
         _detector_widget->modeCombo(), QOverload<int>::of(&QComboBox::currentIndexChanged),
         this,
@@ -173,7 +173,7 @@ void SubframeExperiment::setLogarithmicScale()
     updateRanges();
     plotIntensities();
 }
- 
+
 void SubframeExperiment::calculateIntensities()
 {
     ohkl::Experiment* expt = gSession->currentProject()->experiment();
@@ -202,7 +202,7 @@ void SubframeExperiment::updateRanges()
     gsl_histogram* histo = nullptr;
 
     if (!_totalHistogram->isChecked())
-        histo = data->getHistogram(_detector_widget->scroll()->value());
+        histo = data->getHistogram(_detector_widget->scroll()->value() - 1);
     else
         histo = data->getTotalHistogram();
 
@@ -230,7 +230,7 @@ void SubframeExperiment::plotIntensities()
     gsl_histogram* histo = nullptr;
 
     if (!_totalHistogram->isChecked())
-        histo = data->getHistogram(_detector_widget->scroll()->value());
+        histo = data->getHistogram(_detector_widget->scroll()->value() - 1);
     else
         histo = data->getTotalHistogram();
 

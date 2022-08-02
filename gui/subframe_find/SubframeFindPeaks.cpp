@@ -541,7 +541,8 @@ void SubframeFindPeaks::refreshPreview()
     std::string convolvertype = _kernel_combo->currentText().toStdString();
     std::map<std::string, double> convolverParams = convolutionParameters();
     Eigen::MatrixXd convolvedFrame = ohkl::convolvedFrame(
-        data->reader()->data(_detector_widget->spin()->value()), convolvertype, convolverParams);
+        data->reader()->data(_detector_widget->spin()->value() - 1), convolvertype,
+        convolverParams);
     if (_live_check->isChecked()) {
         double thresholdVal = _threshold_spin->value();
         for (int i = 0; i < nrows; ++i) {

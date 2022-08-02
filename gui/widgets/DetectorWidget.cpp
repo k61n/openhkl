@@ -169,7 +169,7 @@ void DetectorWidget::refresh()
 
     auto data = _data_combo->currentData();
 
-    scene()->slotChangeSelectedData(data, _spin->value() - 1);
+    scene()->slotChangeSelectedData(data, _spin->value());
     scene()->clearPeakItems();
     scene()->drawPeakitems();
     scene()->update();
