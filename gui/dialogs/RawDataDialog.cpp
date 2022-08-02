@@ -111,7 +111,7 @@ RawDataDialog::RawDataDialog(
     _gain->setValue(detector->gain());
 
     connect(_buttons, &QDialogButtonBox::accepted, this, &RawDataDialog::verify);
-    connect(_buttons, &QDialogButtonBox::rejected, this, &RawDataDialog::reject);
+    connect(_buttons, &QDialogButtonBox::rejected, this, &QDialog::reject);
 }
 
 
