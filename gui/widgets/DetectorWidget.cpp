@@ -169,15 +169,15 @@ void DetectorWidget::refresh()
 
     auto data = _data_combo->currentData();
 
-    scene()->slotChangeSelectedData(data, _spin->value());
+    scene()->slotChangeSelectedData(data, _spin->value() - 1);
     scene()->clearPeakItems();
     scene()->drawPeakitems();
     scene()->update();
     _detector_view->fitInView(scene()->sceneRect(), Qt::KeepAspectRatio);
-    _scroll->setMinimum(0);
+    _scroll->setMinimum(1);
     _scroll->setMaximum(data->nFrames());
 
-    _spin->setMinimum(0);
+    _spin->setMinimum(1);
     _spin->setMaximum(data->nFrames());
 
     emit scene()->dataChanged();
