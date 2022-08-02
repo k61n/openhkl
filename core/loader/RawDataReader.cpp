@@ -133,9 +133,6 @@ void RawDataReader::setParameters(const RawDataReaderParameters& parameters)
 
 void RawDataReader::swapEndian()
 {
-    if (!_parameters.swap_endian)
-        return;
-
     const std::size_t nrows = _dataset_out->nRows(), ncols = _dataset_out->nCols();
 
     for (std::size_t i = 0; i < nrows * ncols; ++i) {
@@ -149,7 +146,6 @@ void RawDataReader::swapEndian()
 
 Eigen::MatrixXi RawDataReader::data(size_t frame)
 {
-
     checkInit();
 
     std::string filename = _filenames.at(frame);
@@ -174,7 +170,8 @@ Eigen::MatrixXi RawDataReader::data(size_t frame)
         throw std::runtime_error(err_msg);
     }
 
-    swapEndian();
+    if (_parameters.swap_endian)
+        swapEndian();
 
     switch (_parameters.bpp) {
         case 1: return matrixFromData<uint8_t>().cast<int>();
