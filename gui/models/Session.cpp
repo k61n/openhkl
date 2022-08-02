@@ -318,11 +318,10 @@ bool Session::loadRawData()
 
         ohkl::RawDataReaderParameters parameters;
         parameters.LoadDataFromFile(filenames.at(0));
-        const QStringList& datanames_pre{currentProject()->getDataNames()};
+        const QStringList& datanames_pre = currentProject()->getDataNames();
         RawDataDialog dialog(parameters, datanames_pre);
-        if (!dialog.exec()) {
+        if (!dialog.exec())
             return false;
-        }
         ohkl::Experiment* exp = currentProject()->experiment();
 
         // update the parameters by those from the dialog
