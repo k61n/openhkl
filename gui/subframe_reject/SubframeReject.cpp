@@ -229,10 +229,13 @@ void SubframeReject::refreshAll()
     _data_combo->refresh();
     _detector_widget->refresh();
     _peak_combo->refresh();
-    updateStatistics();
-    computeHistogram();
     refreshPeakTable();
     toggleUnsafeWidgets();
+
+    if (!gSession->currentProject()->hasDataSet())
+        return;
+    updateStatistics();
+    computeHistogram();
 }
 
 void SubframeReject::setPreviewUp()

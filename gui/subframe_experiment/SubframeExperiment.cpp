@@ -265,9 +265,12 @@ void SubframeExperiment::refreshAll()
         return;
 
     _detector_widget->refresh();
+    toggleUnsafeWidgets();
+
+    if (!gSession->currentProject()->hasDataSet())
+        return;
     updateRanges();
     plotIntensities();
-    toggleUnsafeWidgets();
 }
 
 DetectorWidget* SubframeExperiment::detectorWidget()
@@ -295,6 +298,8 @@ void SubframeExperiment::toggleUnsafeWidgets()
 
     _calc_intensity->setEnabled(hasData);
 
+    if (!gSession->currentProject()->hasDataSet())
+        return;
     ohkl::Experiment* expt = gSession->currentProject()->experiment();
     auto data = expt->getDataMap()->at(_detector_widget->dataCombo()->currentText().toStdString());
 
