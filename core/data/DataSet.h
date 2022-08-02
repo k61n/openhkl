@@ -161,7 +161,7 @@ class DataSet {
     gsl_histogram* getTotalHistogram();
 
  private:
-    void _setReader(const DataFormat dataformat, const std::string& filename = "");
+    void setReader(const DataFormat dataformat, const std::string& filename = "");
 
  private:
     std::string _name = ohkl::kw_datasetDefaultName;

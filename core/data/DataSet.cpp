@@ -58,7 +58,7 @@ DataSet::DataSet(const std::string& dataset_name, Diffractometer* diffractometer
     _metadata.add<int>(ohkl::at_nMasks, 0);
 }
 
-void DataSet::_setReader(const DataFormat dataformat, const std::string& filename)
+void DataSet::setReader(const DataFormat dataformat, const std::string& filename)
 {
     ohklLog(Level::Debug, "Initializing a DataReader for the format ", static_cast<int>(dataformat));
 
@@ -111,7 +111,7 @@ void DataSet::addDataFile(const std::string& filename, const std::string& extens
         throw std::runtime_error("DataSet '" + _name + "': DataReader is already set.");
     }
 
-    _setReader(datafmt, filename);
+    setReader(datafmt, filename);
 }
 
 void DataSet::setRawReaderParameters(const RawDataReaderParameters& params)
@@ -126,7 +126,7 @@ void DataSet::setRawReaderParameters(const RawDataReaderParameters& params)
             "DataSet '" + _name + "': Cannot set raw parameters since data format is not raw.");
 
     if (!_reader)
-        _setReader(DataFormat::RAW);
+        setReader(DataFormat::RAW);
 
     RawDataReader& rawreader = *static_cast<RawDataReader*>(_reader.get());
     rawreader.setParameters(params);
@@ -139,7 +139,7 @@ void DataSet::setRawReaderParameters(const RawDataReaderParameters& params)
 void DataSet::addRawFrame(const std::string& rawfilename)
 {
     if (!_reader)
-        _setReader(DataFormat::RAW);
+        setReader(DataFormat::RAW);
 
     // prevent mixing data formats
     if (_dataformat != DataFormat::RAW)
