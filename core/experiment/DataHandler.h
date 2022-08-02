@@ -29,6 +29,7 @@ class DataSet;
 class Diffractometer;
 class InstrumentStateHandler;
 
+//! Holds named DataSet%s, experiment name, and info on the instrument.
 class DataHandler {
 
  public:
@@ -40,32 +41,32 @@ class DataHandler {
         const std::string& experiment_name, const std::string& diffractometerName,
         InstrumentStateHandler* instrument_state_handler);
 
- public: // Handling data sets
-    //! Get the diffractometer
+ public:
+    //! Returns pointer to the diffractometer
     Diffractometer* getDiffractometer();
-    //! Set the diffractometer
+    //! Sets the diffractometer
     void setDiffractometer(const std::string& diffractometerName);
-    //! Gets a reference to the data
+    //! Returns pointer to the DataMap
     const DataMap* getDataMap() const;
-    //! Gets the pointer to a given data stored in the experiment
+    //! Returns pointer to the DataSet of given name
     sptrDataSet getData(std::string name) const;
-    //! Return all data sets as a DataList
+    //! Returns all data sets as a DataList
     DataList getAllData() const;
-    //! Get number of data
+    //! Returns number of DataSet%s
     int numData() const;
-    //! Add some data to the experiment
+    //! Adds a DataSet to the experiment
     bool addData(sptrDataSet data, std::string name, bool default_states = true);
-    //! Returns true if the experiment has a data
+    //! Returns true if the experiment has a DataSet of given name
     bool hasData(const std::string& name) const;
-    //! Remove a data from the experiment
+    //! Removes a DataSet from the experiment
     void removeData(const std::string& name);
 
  private:
     std::string _experiment_name;
     std::unique_ptr<Diffractometer> _diffractometer;
-    //! A map of the data related to the experiment.
+    //! Map name -> DataSet, holding all data sets pertaining to the experiment.
     DataMap _data_map;
-    //! pointer to handler for instrument states
+    //! Pointer to handler for instrument states
     InstrumentStateHandler* _instrument_state_handler;
 };
 
