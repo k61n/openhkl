@@ -36,25 +36,15 @@ class RawDataDialog : public QDialog {
         const ohkl::RawDataReaderParameters& parameters0,
         const QStringList& datanames_cur = QStringList());
 
-    QString dataset_name() { return _datasetName->text(); }
-    double wavelength() { return _wavelength->value(); }
-    double deltaChi() { return _chi->value(); }
-    double deltaOmega() { return _omega->value(); }
-    double deltaPhi() { return _phi->value(); }
-    bool swapEndian() { return _swapEndianness->isChecked(); }
-    double baseline() { return _baseline->value(); }
-    double gain() { return _gain->value(); }
-    bool rowMajor();
-    int bpp();
-    void setWavelength(double newWavelength) { _wavelength->setValue(newWavelength); }
     //! Return a copy of the parameters acquired from the dialog
     ohkl::RawDataReaderParameters parameters();
 
  private:
     //! Verify user-provided parameters
     void verify();
+    bool rowMajor();
+    int bpp();
 
- private:
     QComboBox* _dataArrangement;
     QComboBox* _dataFormat;
     QCheckBox* _swapEndianness;
