@@ -172,8 +172,8 @@ Eigen::MatrixXi RawDataReader::data(size_t frame)
     file.read(&_data[0], long(_length));
 
     if (_length != size_t(file.gcount())) {
-        std::string err_msg = "LOL did not read " + filename + " successfully: ";
-        err_msg += "expected " + std::to_string(_length) + " bytes but read "
+        std::string err_msg = "cannot load file " + filename + ": ";
+        err_msg += "expected " + std::to_string(_length) + " bytes but found "
             + std::to_string(file.gcount());
         throw std::runtime_error(err_msg);
     }
