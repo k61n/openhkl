@@ -15,7 +15,6 @@
 #include "gui/models/Session.h"
 
 #include "base/utils/Logger.h"
-#include "base/utils/Path.h" // fileBasename
 #include "core/data/DataSet.h"
 #include "core/data/DataTypes.h"
 #include "core/detector/Detector.h"
@@ -318,7 +317,6 @@ bool Session::loadRawData()
             return false;
 
         ohkl::RawDataReaderParameters parameters;
-        parameters.dataset_name = ohkl::fileBasename(filenames[0]);
         parameters.LoadDataFromFile(filenames.at(0));
         const QStringList& datanames_pre{currentProject()->getDataNames()};
         RawDataDialog dialog(parameters, datanames_pre);

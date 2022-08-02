@@ -18,6 +18,7 @@
 #include "core/data/DataSet.h"
 #include "core/loader/IDataReader.h" // inherits from
 #include "core/raw/DataKeys.h"
+#include "base/utils/Path.h" // fileBasename
 #include <fstream>
 #include <stdexcept>
 
@@ -26,7 +27,7 @@ namespace ohkl {
 //! Minimal meta data set, to supplement binary raw data in RawDataReader.
 
 struct RawDataReaderParameters {
-    std::string dataset_name = ohkl::kw_datasetDefaultName;
+    std::string dataset_name = kw_datasetDefaultName;
     double wavelength = 0.0;
     double delta_omega = 0.0;
     double delta_chi = 0.0;
@@ -39,6 +40,8 @@ struct RawDataReaderParameters {
 
     void LoadDataFromFile(std::string file)
     {
+        dataset_name = fileBasename(file);
+
         std::size_t pos1 = file.find_last_of("/");
         std::size_t pos0 = (file.substr(0, pos1 - 1)).find_last_of("/");
         std::size_t pos2 = file.find_last_of(".");
