@@ -72,8 +72,6 @@ class Ellipsoid {
     Eigen::Vector3d intersectionCenter(const Eigen::Vector3d& n, const Eigen::Vector3d& p) const;
     //! Returns the axis aligned bounding box of the ellipsoid
     const AABB& aabb() const;
-    //! Return pointer to the AABB
-    AABB* aabbPtr();
     //! Returns the value (x-center)*metric*(x-center)
     double r2(const Eigen::Vector3d x) const;
 
