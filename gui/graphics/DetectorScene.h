@@ -96,10 +96,6 @@ class DetectorScene : public QGraphicsScene {
     void getIntegrationMask(
         PeakCollectionModel* model, Eigen::MatrixXi& mask,
         ohkl::RegionType region_type = ohkl::RegionType::VariableEllipsoid);
-    //! Generate a mask for a single peak only
-    void getSinglePeakIntegrationMask(
-        ohkl::Peak3D* peak, Eigen::MatrixXi& mask,
-        ohkl::RegionType region_type = ohkl::RegionType::VariableEllipsoid);
     //! Convert the mask to a QImage with the given colours
     QImage* getIntegrationRegionImage(const Eigen::MatrixXi& mask, QColor& peak, QColor& bkg);
     //! Remove integration overlays from the DetectorScene
@@ -215,6 +211,10 @@ class DetectorScene : public QGraphicsScene {
     void beamPosChanged(QPointF pos);
 
  private:
+    //! Generate a mask for a single peak only
+    void getSinglePeakIntegrationMask(
+        ohkl::Peak3D* peak, Eigen::MatrixXi& mask,
+        ohkl::RegionType region_type = ohkl::RegionType::VariableEllipsoid);
     //! Create the text of the tooltip depending on Scene Mode.
     void createToolTipText(QGraphicsSceneMouseEvent*);
     // find the iterator corresponding to given graphics item
