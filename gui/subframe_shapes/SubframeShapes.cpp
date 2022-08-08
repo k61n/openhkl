@@ -477,11 +477,9 @@ void SubframeShapes::buildShapeModel()
         ProgressView view(this);
         view.watch(handler);
 
-        std::set<ohkl::sptrDataSet> data;
-        for (auto dataset : gSession->currentProject()->experiment()->getAllData())
-            data.insert(dataset);
-
+        const DataList& data = gSession->currentProject()->experiment()->getAllData();
         _shape_model.integrate(fit_peaks, data, handler);
+
         _shape_model.updateFit(1000); // This does nothing!! - zamaan
     } catch (std::exception& e) {
         QMessageBox::critical(this, "Error", QString(e.what()));

@@ -241,8 +241,7 @@ void PeakCollection::buildShapeModel(sptrDataSet data, const ShapeModelParameter
     _shape_model->parameters()->sigma_d = _sigma_d;
     _shape_model->parameters()->sigma_m = _sigma_m;
 
-    std::set<sptrDataSet> datalist;
-    datalist.insert(data);
+    const DataList datalist{data};
     std::vector<Peak3D*> fit_peak_list = getPeakList();
     _shape_model->integrate(fit_peak_list, datalist);
 
