@@ -69,7 +69,6 @@ void IPeakIntegrator::integrate(
     });
     peaks.erase(it, peaks.end());
     std::ostringstream oss;
-    std::string status = "Integrating " + std::to_string(peaks.size()) + " peaks...";
     oss << "Integrating " << peaks.size() << " peaks in numor " << n_numor << " of " << _n_numors;
     ohklLog(Level::Info, "IPeakIntegrator::integrate: integrating ", peaks.size(), " peaks");
     if (_handler) {
