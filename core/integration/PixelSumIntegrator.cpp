@@ -16,14 +16,70 @@
 #include "base/geometry/Ellipsoid.h"
 #include "core/data/DataSet.h"
 #include "core/integration/Blob3D.h"
-#include "core/integration/MeanBackgroundIntegrator.h"
 #include "core/peak/Intensity.h"
 #include "core/peak/Peak3D.h"
 
 namespace ohkl {
 
+std::pair<bool,Intensity> compute_background(const IntegrationRegion& region)
+{
+    double sum_bkg = 0.0;
+    double sum_bkg2 = 0.0;
+    size_t nbkg = 0;
+
+    const auto& events = region.peakData().events();
+    const auto& counts = region.peakData().counts();
+
+    // TODO: should this be hard-coded??
+    if (events.size() < 20) {
+        ohklLog(Level::Debug, "MeanBackgroundIntegrator::compute: too few data points");
+        return {false, {}};
+    }
+
+    // compute initial mean background and error
+    for (auto i = 0; i < counts.size(); ++i) {
+        if (region.classify(events[i]) != IntegrationRegion::EventType::BACKGROUND)
+            continue;
+        sum_bkg += counts[i];
+        sum_bkg2 += counts[i] * counts[i];
+        nbkg++;
+    }
+
+    double mean_bkg = sum_bkg / nbkg;
+    double var_bkg = (sum_bkg2 - nbkg * mean_bkg * mean_bkg) / (nbkg - 1);
+    double sigma_bkg = std::sqrt(var_bkg);
+
+    // update mean, rejecting outliers
+    for (auto i = 0; i < 20; ++i) {
+        sum_bkg = 0;
+        sum_bkg2 = 0;
+        nbkg = 0;
+
+        for (auto i = 0; i < counts.size(); ++i) {
+            if (std::fabs(counts[i] - mean_bkg) > 3 * sigma_bkg
+                || region.classify(events[i]) != IntegrationRegion::EventType::BACKGROUND) {
+                continue;
+            }
+            sum_bkg += counts[i];
+            sum_bkg2 += counts[i] * counts[i];
+            nbkg++;
+        }
+
+        double old_mean = mean_bkg;
+        mean_bkg = sum_bkg / nbkg;
+        var_bkg = (sum_bkg2 - nbkg * mean_bkg * mean_bkg) / (nbkg - 1);
+        sigma_bkg = std::sqrt(var_bkg);
+
+        if (std::fabs((old_mean - mean_bkg) / mean_bkg) < 1e-9)
+            break;
+    }
+
+    return {true, Intensity(mean_bkg, mean_bkg / nbkg)};
+}
+
+
 PixelSumIntegrator::PixelSumIntegrator(bool fit_center, bool fit_covariance)
-    : MeanBackgroundIntegrator()
+    : IPeakIntegrator()
 {
     _params.fit_center = fit_center;
     _params.fit_cov = fit_covariance;
@@ -31,14 +87,16 @@ PixelSumIntegrator::PixelSumIntegrator(bool fit_center, bool fit_covariance)
 
 PixelSumIntegrator::~PixelSumIntegrator() = default;
 
-bool PixelSumIntegrator::compute(
-    Peak3D* peak, ShapeModel* shape_model, const IntegrationRegion& region)
+bool PixelSumIntegrator::compute(Peak3D* peak, ShapeModel*, const IntegrationRegion& region)
 {
-    if (!MeanBackgroundIntegrator::compute(peak, shape_model, region)) {
+    auto [ok, meanBackground] = compute_background(region);
+    if (!ok) {
         peak->setRejectionFlag(RejectionFlag::TooFewPoints);
         peak->setSelected(false);
         return false;
     }
+    _meanBackground = meanBackground;
+
     PeakCoordinateSystem frame(peak);
 
     const auto& events = region.peakData().events();
