@@ -1040,8 +1040,7 @@ QImage* DetectorScene::getIntegrationRegionImage(
 }
 
 void DetectorScene::getIntegrationMask(
-    PeakCollectionModel* model, Eigen::MatrixXi& mask,
-    ohkl::RegionType region_type /* = ohkl::RegionType::VariableEllipsoid */)
+    PeakCollectionModel* model, Eigen::MatrixXi& mask, ohkl::RegionType region_type)
 {
     if (model == nullptr || model->root() == nullptr)
         return;
