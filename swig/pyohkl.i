@@ -13,7 +13,6 @@
   }
 }
 
-%feature("director") IPeakIntegrator;
 %feature("director") PixelSumIntegrator;
 %feature("director") Profile3DIntegrator;
 %feature("director") Profile1DIntegrator;
@@ -146,7 +145,6 @@ using Eigen::Quaterniond;
 #include "core/loader/RawDataReader.h"
 #include "core/loader/NexusDataReader.h"
 #include "core/loader/BaseNexusDataReader.h"
-#include "core/shape/IPeakIntegrator.h"
 #include "core/peak/IntegrationRegion.h"
 #include "core/peak/RegionData.h"
 #include "core/peak/Intensity.h"

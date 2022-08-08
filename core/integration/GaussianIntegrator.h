@@ -26,6 +26,8 @@ namespace ohkl {
 class GaussianIntegrator : public IPeakIntegrator {
  public:
     GaussianIntegrator(bool fit_center, bool fit_cov);
+
+ protected:
     //! Integrate a peak
     bool compute(Peak3D* peak, ShapeModel* shape_model, const IntegrationRegion& region) override;
     //! Returns the analytic profile computed over the given integration region

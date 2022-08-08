@@ -72,8 +72,6 @@ PixelSumIntegrator::PixelSumIntegrator(bool fit_center, bool fit_covariance)
     _params.fit_cov = fit_covariance;
 }
 
-PixelSumIntegrator::~PixelSumIntegrator() = default;
-
 bool PixelSumIntegrator::compute(Peak3D* peak, ShapeModel*, const IntegrationRegion& region)
 {
     auto [ok, meanBackground] = compute_background(region);

@@ -30,7 +30,8 @@ class PixelSumIntegrator : public IPeakIntegrator {
     //! @param fit_center update the peak center as part of integration
     //! @param fit_covariance update the peak shape covariance matrix as part of integration
     PixelSumIntegrator(bool fit_center, bool fit_covariance);
-    ~PixelSumIntegrator();
+
+ protected:
     //! Integrate a peak
     bool compute(Peak3D* peak, ShapeModel*, const IntegrationRegion& region) override;
 };
