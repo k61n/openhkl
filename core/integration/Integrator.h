@@ -53,8 +53,6 @@ class Integrator {
     Integrator(std::shared_ptr<DataHandler> data_handler = nullptr);
 
  public:
-    //! Return a pointer to the integrator map
-    IntegratorMap* getIntegratorMap();
     //! Return a pointer to the data handler
     DataHandler* getDataHandler();
     //! Get an integrator from the map
