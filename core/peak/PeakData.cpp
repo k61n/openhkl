@@ -36,11 +36,11 @@ const std::deque<double>& PeakData::counts() const
     return _counts;
 }
 
-void PeakData::computeStandard()
+void PeakData::standardizeCoords()
 {
     if (_peak == nullptr) {
         throw std::runtime_error(
-            "PeakData::computeStandard() cannot be called if _peak is nullptr");
+            "PeakData::standardizeCoords() cannot be called if _peak is nullptr");
     }
 
     _coords.resize(_events.size());

@@ -143,7 +143,7 @@ void IPeakIntegrator::integrate(
 
             // done reading peak data
             if (result && !integrated[peak]) {
-                current_peak->peakData().computeStandard();
+                current_peak->peakData().standardizeCoords();
                 if (compute(peak, shape_model, *current_peak)) {
                     peak->updateIntegration(
                         rockingCurve(), meanBackground(), integratedIntensity(), _params.peak_end,

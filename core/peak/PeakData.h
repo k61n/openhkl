@@ -32,7 +32,7 @@ class PeakData {
     //! Returns the list of detector counts associated to the peak
     const std::deque<double>& counts() const;
     //! Compute the standard coordinates for each of the observed events.
-    void computeStandard();
+    void standardizeCoords();
     //! Add an event to the list of events.
     void addEvent(const DetectorEvent& ev, double count);
     //! Clear the events
