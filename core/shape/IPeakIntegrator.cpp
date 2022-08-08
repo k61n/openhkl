@@ -93,7 +93,7 @@ void IPeakIntegrator::integrate(
         integrated.emplace(std::make_pair(peak, false));
 
         // ignore partials
-        auto bb = regions.at(peak).get()->peakBB();
+        auto bb = regions.at(peak)->peakBB();
         auto data = peak->dataSet();
         auto lo = bb.lower();
         auto hi = bb.upper();
