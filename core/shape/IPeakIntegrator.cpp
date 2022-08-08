@@ -98,12 +98,8 @@ void IPeakIntegrator::integrate(
         auto lo = bb.lower();
         auto hi = bb.upper();
 
-        if (lo[0] < 0 || lo[1] < 0 || lo[2] < 0) {
-            peak->setSelected(false);
-            peak->setRejectionFlag(RejectionFlag::InvalidRegion);
-        }
-
-        if (hi[0] >= data->nCols() || hi[1] >= data->nRows() || hi[2] >= data->nFrames()) {
+        if (lo[0] < 0 || lo[1] < 0 || lo[2] < 0
+            || hi[0] >= data->nCols() || hi[1] >= data->nRows() || hi[2] >= data->nFrames()) {
             peak->setSelected(false);
             peak->setRejectionFlag(RejectionFlag::InvalidRegion);
         }
