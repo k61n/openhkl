@@ -186,6 +186,10 @@ include(CheckDependencies)
 add_subdirectory(3rdparty/qcustomplot)
 set(QCustomPlot_LIBRARIES qcustomplot)
 set(QCustomPlot_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/3rdparty/qcustomplot)
+
+add_subdirectory(3rdparty/ccp4)
+set(Mtz_LIBRARIES mtz)
+set(Mtz_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/3rdparty/ccp4)
 #find_package(QCustomPlot MODULE REQUIRED)
 #message(STATUS "libQCustomPlot: FOUND=${QCustomPlot_FOUND},
 #        VERSION=${QCustomPlot_VERSION}, LIB=${QCustomPlot_LIBRARIES},
