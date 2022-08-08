@@ -135,9 +135,7 @@ void IPeakIntegrator::integrate(
             // Check for saturated pixels
             const auto& counts = current_peak->peakData().counts();
             double max = *std::max_element(counts.begin(), counts.end());
-            bool saturated = false;
-            if (_params.discard_saturated && (max > _params.max_counts))
-                saturated = true;
+            bool saturated = _params.discard_saturated && (max > _params.max_counts);
 
             bool result = current_peak->advanceFrame(current_frame, mask, idx);
             // this allows for partials at end of data
