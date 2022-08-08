@@ -188,8 +188,8 @@ class DetectorScene : public QGraphicsScene {
     void resetElements();
     void resetScene();
     void setMaxIntensity(int);
-    void slotChangeSelectedData(ohkl::sptrDataSet data, int frame);
-    void slotChangeSelectedFrame(int frame);
+    void slotChangeSelectedData(ohkl::sptrDataSet data, int frame_1based);
+    void slotChangeSelectedFrame(int frame_1based);
     void slotChangeEnabledPeak(ohkl::Peak3D*) { loadCurrentImage(); }
     void slotChangeMaskedPeaks(const ohkl::PeakList&) { loadCurrentImage(); }
     void changeInteractionMode(int mode) { _mode = static_cast<MODE>(mode); }

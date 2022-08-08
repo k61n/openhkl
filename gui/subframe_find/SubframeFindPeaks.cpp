@@ -286,8 +286,10 @@ void SubframeFindPeaks::refreshAll()
     grabFinderParameters();
     if (gSession->currentProject()->hasDataSet()) {
         auto data = _data_combo->currentData();
+        _end_frame_spin->setMinimum(1);
         _end_frame_spin->setMaximum(data->nFrames());
         _end_frame_spin->setValue(data->nFrames());
+        _start_frame_spin->setMinimum(1);
         _start_frame_spin->setMaximum(data->nFrames());
         _start_frame_spin->setValue(1);
     }
@@ -355,8 +357,8 @@ void SubframeFindPeaks::setFinderParameters()
     params->maximum_size = _max_size_spin->value();
     params->peak_end = _scale_spin->value();
     params->maximum_frames = _max_width_spin->value();
-    params->frames_begin = _start_frame_spin->value();
-    params->frames_end = _end_frame_spin->value();
+    params->frames_begin = _start_frame_spin->value() -1;
+    params->frames_end = _end_frame_spin->value() - 1;
     params->threshold = _threshold_spin->value();
 
     std::string convolverType = _kernel_combo->currentText().toStdString();
@@ -539,7 +541,8 @@ void SubframeFindPeaks::refreshPreview()
     std::string convolvertype = _kernel_combo->currentText().toStdString();
     std::map<std::string, double> convolverParams = convolutionParameters();
     Eigen::MatrixXd convolvedFrame = ohkl::convolvedFrame(
-        data->reader()->data(_detector_widget->spin()->value()), convolvertype, convolverParams);
+        data->reader()->data(_detector_widget->spin()->value() - 1), convolvertype,
+        convolverParams);
     if (_live_check->isChecked()) {
         double thresholdVal = _threshold_spin->value();
         for (int i = 0; i < nrows; ++i) {

@@ -322,7 +322,7 @@ void DetectorScene::draw3rdPartyItems()
         addItem(peak);
 }
 
-void DetectorScene::slotChangeSelectedData(ohkl::sptrDataSet data, int frame)
+void DetectorScene::slotChangeSelectedData(ohkl::sptrDataSet data, int frame_1based)
 {
     if (data != _currentData) {
         _currentData = data;
@@ -344,20 +344,20 @@ void DetectorScene::slotChangeSelectedData(ohkl::sptrDataSet data, int frame)
         _current_beam_position = {_currentData->nCols() / 2.0, _currentData->nRows() / 2.0};
     }
 
-    slotChangeSelectedFrame(frame);
+    slotChangeSelectedFrame(frame_1based);
 }
 
-void DetectorScene::slotChangeSelectedFrame(int frame)
+void DetectorScene::slotChangeSelectedFrame(int frame_1based)
 {
     if (!_currentData)
         return;
 
     _currentData->open();
 
-    if (frame == _currentFrameIndex)
+    if (frame_1based - 1 == _currentFrameIndex)
         return;
 
-    _currentFrameIndex = frame;
+    _currentFrameIndex = frame_1based - 1;
 
     clearPeakItems();
     loadCurrentImage();
