@@ -133,6 +133,9 @@ class DataSet {
     //! Return instrument state list
     InstrumentStateList& instrumentStates();
 
+    //! Adjust the direct beam (mainly for scripting purposes)
+    void adjustDirectBeam(double x_offset, double y_offset);
+
     //! Initialise intensity histograms
     void initHistograms(std::size_t nbins);
 
@@ -147,13 +150,13 @@ class DataSet {
 
     //! Maximum per pixel count for whole DataSet
     double maxCount();
-    
+
     //! getting number of available
     size_t getNumberHistograms() {return _histograms.size();}
-    
+
     //! accessing created histograms
     gsl_histogram* getHistogram(int index);
-    
+
     //! accessing Total histogram
     gsl_histogram* getTotalHistogram();
 

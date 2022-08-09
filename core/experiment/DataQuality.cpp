@@ -84,6 +84,20 @@ std::string ShellQuality::toString() const
     return oss.str();
 }
 
+std::string DataResolution::summary() const
+{
+    std::ostringstream oss;
+    oss << "Data quality metrics (per resolution shell):" << std::endl;
+    oss << std::setw(8) << "dmin" << std::setw(8) << "dmax" << std::setw(8) << "Rmea"
+        << std::setw(8) << "eRmea" << std::setw(8) << "Rmer" << std::setw(8) << "eRmer"
+        << std::setw(8) << "Rpim" << std::setw(8) << "eRpim" << std::setw(8) << "CChalf"
+        << std::setw(8) << "Cstar" << std::setw(8) << "Compl.";
+    for (auto shell : shells) {
+        oss << std::endl << shell.toString();
+    }
+    return oss.str();
+}
+
 void DataQuality::log() const
 {
     std::ostringstream oss;
