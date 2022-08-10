@@ -33,6 +33,8 @@
 #include "gui/utility/SideBar.h"
 #include "tables/crystal/UnitCell.h"
 
+#include "core/experiment/MtzExporter.h"
+
 #include <QDialogButtonBox>
 #include <QFileDialog>
 #include <QFormLayout>
@@ -833,4 +835,51 @@ ohkl::sptrUnitCell SubframeMergedPeaks::singleBatchRefine()
     }
 
     return refiner->batches()[0].sptrCell();
+}
+
+void SubframeMergedPeaks::exportMtz(bool use_merged_data)
+{
+    QSettings settings = gGui->qSettings();
+    settings.beginGroup("RecentDirectories");
+    QString loadDirectory = settings.value("merged", QDir::homePath()).toString() +
+    "/export.mtz";
+
+    if (!_merged_data){
+        QMessageBox::warning(
+            this,
+            "Mtz File Export",
+            "Merged data has not yet been created!"
+        );
+        return;
+    }
+
+    /*
+     *      We need to make sure an predicted peak collection will be exported
+     *      we should also maybe include a fully fledged export dialog for this feature
+     *       currently it will work over the already implemented gui elements
+     */
+    QString pcname = _peak_combo_1->currentText();
+    auto pc = gSession->currentProject()->experiment()->getPeakCollection(pcname.toStdString());
+
+    if ((int)pc->type() != 2){
+        QMessageBox::warning(
+            this,
+            "Mtz File Export",
+            tr("Please set in Subframe Merge a predicted PeakCollection in PeakCollection1\n"
+            "Export process has been canceled"),
+            QMessageBox::Ok
+        );
+        return;
+    }
+
+    std::string filename = QFileDialog::getSaveFileName(
+            this, "Export Experiment as Mtz file", loadDirectory, "CCP4 Mtz (*.mtz)").toStdString();
+
+    std::string dataset_name = ""; // later for export dialog we should have this
+
+    if (filename.empty())
+        return;
+
+    if (!gSession->currentProject()->experiment()->exportMtz(filename, dataset_name, use_merged_data, _merged_data))
+        QMessageBox::critical(this, "Error", "Could not export experiment");
 }
