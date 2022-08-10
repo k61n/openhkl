@@ -23,6 +23,7 @@ import os
 class TestFullWorkFlow(unittest.TestCase):
 
     def test(self):
+
         print('OpenHKL TestTrypsin')
         data_dir = 'trypsin' # Path to .raw data files
 
@@ -56,6 +57,7 @@ class TestFullWorkFlow(unittest.TestCase):
         data.detector().setBaseline(0.0)
         data.detector().setGain(1.0)
 
+
         print('Finding peaks...')
         peak_finder = expt.peakFinder()
         params = peak_finder.parameters()
@@ -63,6 +65,7 @@ class TestFullWorkFlow(unittest.TestCase):
         peak_finder.find(expt.getAllData())
         print(f'Found {peak_finder.numberFound()} peaks')
         self.assertTrue(peak_finder.numberFound() == 9913)
+
 
         print('Integrating found peaks...')
         integrator = expt.integrator()
@@ -78,19 +81,8 @@ class TestFullWorkFlow(unittest.TestCase):
         self.assertTrue(found_peaks.numberOfValid() > 8420 and
                         found_peaks.numberOfValid() < 8450)
 
-        print('Indexing found peaks...')
-        expt.setReferenceCell(54.9, 58.4, 67.3, 90, 90, 90) # reference cell used to pick best solution
-        space_group = ohkl.SpaceGroup('P 21 21 21') # required to check that Bravais type is correct
-        reference_cell = expt.getUnitCell('reference')
-        reference_cell.setSpaceGroup(space_group)
-        # Adjust the direct beam position
-        data.adjustDirectBeam(-1.0, -2.0)
-        indexer = expt.autoIndexer();
-        params = indexer.parameters();
-        params.length_tol = 1.0
-        params.angle_tol = 0.1
 
-        # Filter to generate the peak collection for indexing
+        print('Filter peaks for indexing...')
         filter = expt.peakFilter();
         filter.resetFilterFlags();
         filter.flags().strength = True;
@@ -103,6 +95,19 @@ class TestFullWorkFlow(unittest.TestCase):
         filter.filter(found_peaks)
         expt.acceptFilter('indexing', found_peaks, ohkl.PeakCollectionType_INDEXING)
 
+
+        print('Indexing found peaks...')
+        expt.setReferenceCell(54.9, 58.4, 67.3, 90, 90, 90) # reference cell used to pick best solution
+        space_group = ohkl.SpaceGroup('P 21 21 21') # required to check that Bravais type is correct
+        reference_cell = expt.getUnitCell('reference')
+        reference_cell.setSpaceGroup(space_group)
+        # Adjust the direct beam position
+        data.adjustDirectBeam(-1.0, -2.0)
+        indexer = expt.autoIndexer();
+        params = indexer.parameters();
+        params.length_tol = 1.0
+        params.angle_tol = 0.1
+
         indexing_peaks = expt.getPeakCollection('indexing')
         indexer.autoIndex(indexing_peaks)
         indexed_cell = indexer.goodSolution(reference_cell, 1.0, 0.1)
@@ -112,6 +117,7 @@ class TestFullWorkFlow(unittest.TestCase):
         found_peaks.setMillerIndices();
         print(f'Reference cell {reference_cell.toString()}')
         print(f'Using cell     {indexed_cell.toString()}')
+
 
         print('Filtering fit peaks for shape collection...')
         filter = expt.peakFilter()
@@ -128,6 +134,7 @@ class TestFullWorkFlow(unittest.TestCase):
         filtered_peaks = ohkl.PeakCollection('fit', ohkl.PeakCollectionType_FOUND)
         filtered_peaks.populateFromFiltered(found_peaks)
 
+
         print('Predicting peaks...')
         cell = expt.getSptrUnitCell('indexing')
         predictor = expt.predictor()
@@ -141,6 +148,7 @@ class TestFullWorkFlow(unittest.TestCase):
         self.assertTrue(predicted_peaks.numberOfPeaks() > 58720 and
                         predicted_peaks.numberOfPeaks() < 58750)
 
+
         print('Building shape model...')
         filtered_peaks.computeSigmas()
         params = ohkl.ShapeModelParameters()
@@ -153,6 +161,7 @@ class TestFullWorkFlow(unittest.TestCase):
 
         print('Assigning shapes to predicted peaks...')
         filtered_peaks.shapeModel().setPredictedShapes(predicted_peaks)
+
 
         print('Refining...')
         refiner = expt.refiner()
@@ -173,6 +182,7 @@ class TestFullWorkFlow(unittest.TestCase):
         n_updated = refiner.updatePredictions(predicted_peak_list)
         print(f'Refine 1: {n_updated} peaks updated')
 
+
         print('Integrating predicted peaks...')
         integrator = expt.integrator()
         params = integrator.parameters()
@@ -182,6 +192,7 @@ class TestFullWorkFlow(unittest.TestCase):
         print(f'{integrator.numberOfValidPeaks()} / {integrator.numberOfPeaks()} peaks integrated')
         self.assertTrue(integrator.numberOfValidPeaks() >  55730 and
                         integrator.numberOfValidPeaks() < 55750)
+
 
         print('Merging predicted peaks...')
         merger = expt.peakMerger()
