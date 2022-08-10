@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 ##  ***********************************************************************************************
 ##
 ##  OpenHKL: data reduction for single crystal diffraction
