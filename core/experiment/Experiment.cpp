@@ -17,6 +17,7 @@
 #include <memory>
 #include <stdexcept>
 #include <string>
+#include <vector>
 #include <utility>
 
 #include "base/utils/Logger.h"
@@ -48,6 +49,7 @@
 #include "core/statistics/RFactor.h"
 #include "manifest.h"
 #include "tables/crystal/UnitCell.h"
+#include "core/experiment/MtzExporter.h"
 
 namespace ohkl {
 
@@ -635,4 +637,15 @@ std::vector<ShapeModel*> Experiment::getShapeModels()
     return _shape_handler->getShapeModels();
 }
 
+bool Experiment::exportMtz(std::string filename, std::string dataset_name, bool use_merged_data, ohkl::MergedData* merged_data)
+{
+    if (dataset_name.empty())
+        dataset_name = this->getAllData()[0]->name();
+
+    if (!merged_data) return false;
+
+    MtzExporter exporter(this, dataset_name, use_merged_data, merged_data);
+    exporter.exportToFile(filename);
+    return true;
+}
 } // namespace ohkl
