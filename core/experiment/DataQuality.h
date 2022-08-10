@@ -61,6 +61,7 @@ struct DataResolution {
 
     void addShell(const ShellQuality& shell);
     void clear();
+    std::string summary() const;
     void log() const;
 };
 
