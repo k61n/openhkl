@@ -4,8 +4,8 @@
 ##
 ##  OpenHKL: data reduction for single crystal diffraction
 ##
-##! @file      test/python/TestFullWorkFlow.py
-##! @brief     Test ...
+##! @file      test/python/TestTrypsin.py
+##! @brief     Test full workflow for trypsin
 ##!
 ##! @homepage  ###HOMEPAGE###
 ##! @license   GNU General Public License v3 or higher (see COPYING)
@@ -23,7 +23,7 @@ import os
 class TestFullWorkFlow(unittest.TestCase):
 
     def test(self):
-        print()
+        print('OpenHKL TestTrypsin')
         data_dir = 'trypsin' # Path to .raw data files
 
         # set up the experiment
