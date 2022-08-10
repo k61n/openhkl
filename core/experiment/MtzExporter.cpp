@@ -446,7 +446,7 @@ void MtzExporter::buildHistory()
     /* File History */
     // Important for saving data processing steps of OHKL into other programs ?
     // maybe reverse order?
-    for (auto & e : _history)   
+    for (auto & e : _history)
         MtzAddHistory(_mtz_data, (const char (*)[80])e.c_str(), 1);
 }
 
