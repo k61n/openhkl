@@ -189,9 +189,15 @@ class TestFullWorkFlow(unittest.TestCase):
         merger.addPeakCollection(predicted_peaks)
         merger.mergePeaks()
         merger.computeQuality()
-        print(merger.shellQuality().summary())
-        print(merger.overallQuality().shells[0].Rpim)
-        self.assertTrue(merger.overallQuality().shells[0].Rpim < 0.11)
+
+        # Target values for statistics in 3 lowest resolution shells
+        rpim_ref = [0.0266, 0.0536, 0.1635]
+        compl_ref = [0.9704, 0.9611, 0.9587]
+        eps = 0.01
+
+        for i in range(3):
+            self.assertTrue(rpim_ref[i] + eps - merger.shellQuality().shells[i].Rpim > 0)
+            self.assertTrue(compl_ref[i] + eps - merger.shellQuality().shells[i].Completeness > 0)
 
         print("Workflow complete")
 

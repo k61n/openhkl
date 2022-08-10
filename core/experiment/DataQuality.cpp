@@ -91,7 +91,7 @@ std::string DataResolution::summary() const
     oss << std::setw(8) << "dmin" << std::setw(8) << "dmax" << std::setw(8) << "Rmea"
         << std::setw(8) << "eRmea" << std::setw(8) << "Rmer" << std::setw(8) << "eRmer"
         << std::setw(8) << "Rpim" << std::setw(8) << "eRpim" << std::setw(8) << "CChalf"
-        << std::setw(8) << "Cstar" << std::setw(8) << "Compl.";
+        << std::setw(8) << "CCstar" << std::setw(8) << "Compl.";
     for (auto shell : shells) {
         oss << std::endl << shell.toString();
     }
@@ -104,7 +104,7 @@ void DataQuality::log() const
     oss << "Data quality metrics (overall):" << std::endl;
     oss << std::setw(8) << "Rmea" << std::setw(8) << "eRmea" << std::setw(8) << "Rmer"
         << std::setw(8) << "eRmer" << std::setw(8) << "Rpim" << std::setw(8) << "eRpim"
-        << std::setw(8) << "CChalf" << std::setw(8) << "Cstar" << std::setw(8) << "Compl.";
+        << std::setw(8) << "CChalf" << std::setw(8) << "CCstar" << std::setw(8) << "Compl.";
     oss << std::endl << toString();
     ohklLog(Level::Info, oss.str());
 }
@@ -116,7 +116,7 @@ void DataResolution::log() const
     oss << std::setw(8) << "dmin" << std::setw(8) << "dmax" << std::setw(8) << "Rmea"
         << std::setw(8) << "eRmea" << std::setw(8) << "Rmer" << std::setw(8) << "eRmer"
         << std::setw(8) << "Rpim" << std::setw(8) << "eRpim" << std::setw(8) << "CChalf"
-        << std::setw(8) << "Cstar" << std::setw(8) << "Compl.";
+        << std::setw(8) << "CCstar" << std::setw(8) << "Compl.";
     for (auto shell : shells) {
         oss << std::endl << shell.toString();
     }
