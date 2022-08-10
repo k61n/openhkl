@@ -32,7 +32,7 @@ class TestFullWorkFlow(unittest.TestCase):
         # raw data parameters
         data_params = expt.data_params
         data_params.wavelength = 2.67
-        data_params.delta_omega = 0.3
+        data_params.delta_omega = 0.4
 
 
         print(f'Reading files from {data_dir}')
@@ -136,8 +136,8 @@ class TestFullWorkFlow(unittest.TestCase):
         expt.addPeakCollection('predicted', ohkl.PeakCollectionType_PREDICTED, predictor.peaks())
         predicted_peaks = expt.getPeakCollection('predicted')
         print(f'{predicted_peaks.numberOfPeaks()} peaks predicted')
-        self.assertTrue(predicted_peaks.numberOfPeaks() > 43500 and
-                        predicted_peaks.numberOfPeaks() < 43530)
+        self.assertTrue(predicted_peaks.numberOfPeaks() > 58720 and
+                        predicted_peaks.numberOfPeaks() < 58750)
 
         print('Building shape model...')
         filtered_peaks.computeSigmas()
@@ -178,8 +178,8 @@ class TestFullWorkFlow(unittest.TestCase):
         integrator.getIntegrator(integrator_type)
         integrator.integratePeaks(data, predicted_peaks, params, filtered_peaks.shapeModel())
         print(f'{integrator.numberOfValidPeaks()} / {integrator.numberOfPeaks()} peaks integrated')
-        self.assertTrue(integrator.numberOfValidPeaks() >  40650 and
-                        integrator.numberOfValidPeaks() < 40700)
+        self.assertTrue(integrator.numberOfValidPeaks() >  55730 and
+                        integrator.numberOfValidPeaks() < 55750)
 
         print('Merging predicted peaks...')
         merger = expt.peakMerger()
