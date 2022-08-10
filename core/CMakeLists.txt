@@ -9,6 +9,7 @@ target_include_directories(${lib}
     ${CMAKE_BINARY_DIR} # for manifest.h
     PRIVATE
     ${CMAKE_SOURCE_DIR}
+    ${Mtz_INCLUDE_DIR}
     )
 
 target_link_libraries(${lib}
@@ -21,4 +22,5 @@ target_link_libraries(${lib}
     ${FFTW_LIBRARIES}
     ${TIFF_LIBRARY}
     ${GSL_LIBRARIES}
+    ${Mtz_LIBRARIES}
     )
