@@ -75,11 +75,11 @@ void Actions::setupExperiment()
     connect(save_experiment, &QAction::triggered, []() { gGui->home->saveCurrent();});
     connect(save_experiment_as, &QAction::triggered, []() { gGui->home->saveCurrent(true);});
     connect(save_all_experiment, &QAction::triggered, []() { gGui->home->saveAll();});
-    connect(export_unmerged_mtz, &QAction::triggered, []() { });
+    connect(export_unmerged_mtz, &QAction::triggered, []() { gGui->merger->exportMtz(false);});
     connect(export_unmerged_shelX, &QAction::triggered, []() {gGui->merger->savePeaks("ShelX", false);});
     connect(export_unmerged_fullProf, &QAction::triggered, []() {gGui->merger->savePeaks("FullProf", false);});
     connect(export_unmerged_phenix, &QAction::triggered, [](){gGui->merger->savePeaks("Phenix", false);});
-    connect(export_merged_mtz, &QAction::triggered, []() {   });
+    connect(export_merged_mtz, &QAction::triggered, []() {gGui->merger->exportMtz(true);});
     connect(export_merged_shelX, &QAction::triggered, []() {gGui->merger->savePeaks("ShelX", true);});
     connect(export_merged_fullProf, &QAction::triggered, []() {gGui->merger->savePeaks("FullProf", true);});
     connect(export_merged_phenix, &QAction::triggered, []() {gGui->merger->savePeaks("Phenix", true);});
