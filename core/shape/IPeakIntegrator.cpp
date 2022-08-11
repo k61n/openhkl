@@ -69,7 +69,6 @@ void IPeakIntegrator::integrate(
     });
     peaks.erase(it, peaks.end());
     std::ostringstream oss;
-    std::string status = "Integrating " + std::to_string(peaks.size()) + " peaks...";
     oss << "Integrating " << peaks.size() << " peaks in numor " << n_numor << " of " << _n_numors;
     ohklLog(Level::Info, "IPeakIntegrator::integrate: integrating ", peaks.size(), " peaks");
     if (_handler) {
@@ -94,17 +93,13 @@ void IPeakIntegrator::integrate(
         integrated.emplace(std::make_pair(peak, false));
 
         // ignore partials
-        auto bb = regions.at(peak).get()->peakBB();
+        auto bb = regions.at(peak)->peakBB();
         auto data = peak->dataSet();
         auto lo = bb.lower();
         auto hi = bb.upper();
 
-        if (lo[0] < 0 || lo[1] < 0 || lo[2] < 0) {
-            peak->setSelected(false);
-            peak->setRejectionFlag(RejectionFlag::InvalidRegion);
-        }
-
-        if (hi[0] >= data->nCols() || hi[1] >= data->nRows() || hi[2] >= data->nFrames()) {
+        if (lo[0] < 0 || lo[1] < 0 || lo[2] < 0
+            || hi[0] >= data->nCols() || hi[1] >= data->nRows() || hi[2] >= data->nFrames()) {
             peak->setSelected(false);
             peak->setRejectionFlag(RejectionFlag::InvalidRegion);
         }
@@ -140,9 +135,7 @@ void IPeakIntegrator::integrate(
             // Check for saturated pixels
             const auto& counts = current_peak->peakData().counts();
             double max = *std::max_element(counts.begin(), counts.end());
-            bool saturated = false;
-            if (_params.discard_saturated && (max > _params.max_counts))
-                saturated = true;
+            bool saturated = _params.discard_saturated && (max > _params.max_counts);
 
             bool result = current_peak->advanceFrame(current_frame, mask, idx);
             // this allows for partials at end of data
@@ -150,7 +143,7 @@ void IPeakIntegrator::integrate(
 
             // done reading peak data
             if (result && !integrated[peak]) {
-                current_peak->peakData().computeStandard();
+                current_peak->peakData().standardizeCoords();
                 if (compute(peak, shape_model, *current_peak)) {
                     peak->updateIntegration(
                         rockingCurve(), meanBackground(), integratedIntensity(), _params.peak_end,

@@ -13,8 +13,6 @@
   }
 }
 
-%feature("director") IPeakIntegrator;
-%feature("director") MeanBackgroundIntegrator;
 %feature("director") PixelSumIntegrator;
 %feature("director") Profile3DIntegrator;
 %feature("director") Profile1DIntegrator;
@@ -138,7 +136,6 @@ using Eigen::Quaterniond;
 #include "core/instrument/Sample.h"
 #include "core/instrument/Source.h"
 #include "core/integration/ISigmaIntegrator.h"
-#include "core/integration/MeanBackgroundIntegrator.h"
 #include "core/integration/PixelSumIntegrator.h"
 #include "core/integration/Profile1DIntegrator.h"
 #include "core/integration/Profile3DIntegrator.h"
@@ -148,7 +145,6 @@ using Eigen::Quaterniond;
 #include "core/loader/RawDataReader.h"
 #include "core/loader/NexusDataReader.h"
 #include "core/loader/BaseNexusDataReader.h"
-#include "core/shape/IPeakIntegrator.h"
 #include "core/peak/IntegrationRegion.h"
 #include "core/peak/RegionData.h"
 #include "core/peak/Intensity.h"
@@ -362,7 +358,6 @@ ArrayExtendCRef(MillerIndex, int);
 %include "core/experiment/Experiment.h"
 %include "core/algo/FFTIndexing.h"
 
-%include "core/integration/MeanBackgroundIntegrator.h"
 %include "core/integration/Profile3DIntegrator.h"
 %include "core/integration/Profile1DIntegrator.h"
 %include "core/integration/ISigmaIntegrator.h"

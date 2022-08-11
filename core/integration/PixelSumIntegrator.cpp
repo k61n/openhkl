@@ -16,29 +16,72 @@
 #include "base/geometry/Ellipsoid.h"
 #include "core/data/DataSet.h"
 #include "core/integration/Blob3D.h"
-#include "core/integration/MeanBackgroundIntegrator.h"
 #include "core/peak/Intensity.h"
 #include "core/peak/Peak3D.h"
 
 namespace ohkl {
 
+namespace {
+
+std::pair<bool,Intensity> compute_background(const IntegrationRegion& region)
+{
+    const auto& events = region.peakData().events();
+    const auto& counts = region.peakData().counts();
+
+    if (events.size() < 20) {
+        ohklLog(Level::Debug, "compute_background: too few data points");
+        return {false, {}};
+    }
+
+    // Compute mean and variance. Repeat until no more outliers are to be rejected.
+    double mean_bkg = 0;
+    double var_bkg;
+    double sigma_bkg;
+    size_t nbkg;
+    for (auto iteration = 0; iteration < 20; ++iteration) {
+        double sum_bkg = 0;
+        double sum_bkg2 = 0;
+        nbkg = 0;
+        for (auto i = 0; i < counts.size(); ++i) {
+            if (region.classify(events[i]) != IntegrationRegion::EventType::BACKGROUND)
+                continue;
+            if (iteration>0 && std::fabs(counts[i] - mean_bkg) > 3 * sigma_bkg)
+                continue;
+            sum_bkg += counts[i];
+            sum_bkg2 += counts[i] * counts[i];
+            nbkg++;
+        }
+        double old_mean = mean_bkg;
+        mean_bkg = sum_bkg / nbkg;
+        var_bkg = (sum_bkg2 - nbkg * mean_bkg * mean_bkg) / (nbkg - 1);
+        sigma_bkg = std::sqrt(var_bkg);
+        if (iteration > 0 && std::fabs((old_mean - mean_bkg) / mean_bkg) < 1e-9)
+            break;
+    }
+
+    return {true, Intensity(mean_bkg, mean_bkg / nbkg)};
+}
+
+} // namespace
+
+
 PixelSumIntegrator::PixelSumIntegrator(bool fit_center, bool fit_covariance)
-    : MeanBackgroundIntegrator()
+    : IPeakIntegrator()
 {
     _params.fit_center = fit_center;
     _params.fit_cov = fit_covariance;
 }
 
-PixelSumIntegrator::~PixelSumIntegrator() = default;
-
-bool PixelSumIntegrator::compute(
-    Peak3D* peak, ShapeModel* shape_model, const IntegrationRegion& region)
+bool PixelSumIntegrator::compute(Peak3D* peak, ShapeModel*, const IntegrationRegion& region)
 {
-    if (!MeanBackgroundIntegrator::compute(peak, shape_model, region)) {
+    auto [ok, meanBackground] = compute_background(region);
+    if (!ok) {
         peak->setRejectionFlag(RejectionFlag::TooFewPoints);
         peak->setSelected(false);
         return false;
     }
+    _meanBackground = meanBackground;
+
     PeakCoordinateSystem frame(peak);
 
     const auto& events = region.peakData().events();

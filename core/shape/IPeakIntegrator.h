@@ -57,9 +57,6 @@ class IPeakIntegrator {
  public:
     IPeakIntegrator();
     virtual ~IPeakIntegrator();
-    //! Compute the integrated intensity of the peak given the integration region.
-    virtual bool compute(
-        Peak3D* peak, ShapeModel* shape_model, const IntegrationRegion& region) = 0;
     //! Integrate all peaks in the list which are contained in the specified data set.
     void integrate(
         std::vector<ohkl::Peak3D*> peaks, ShapeModel* shape_model, sptrDataSet data, int n_numor);
@@ -107,6 +104,11 @@ class IPeakIntegrator {
 
     //! Assign a parameter set to the integrator
     void setParameters(const IntegrationParameters& params);
+
+ private:
+    //! Compute the integrated intensity of the peak given the integration region.
+    virtual bool compute(
+        Peak3D* peak, ShapeModel* shape_model, const IntegrationRegion& region) = 0;
 };
 
 /*! @}*/

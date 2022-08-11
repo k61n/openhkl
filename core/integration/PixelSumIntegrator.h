@@ -15,7 +15,7 @@
 #ifndef OHKL_CORE_INTEGRATION_PIXELSUMINTEGRATOR_H
 #define OHKL_CORE_INTEGRATION_PIXELSUMINTEGRATOR_H
 
-#include "core/integration/MeanBackgroundIntegrator.h"
+#include "core/shape/IPeakIntegrator.h"
 
 namespace ohkl {
 
@@ -24,15 +24,16 @@ namespace ohkl {
 
 /*! \brief Peak integration using naive background estimation and subtraction.
  */
-class PixelSumIntegrator : public MeanBackgroundIntegrator {
+class PixelSumIntegrator : public IPeakIntegrator {
  public:
     //! Construct the pixel sum integrator
     //! @param fit_center update the peak center as part of integration
     //! @param fit_covariance update the peak shape covariance matrix as part of integration
     PixelSumIntegrator(bool fit_center, bool fit_covariance);
-    ~PixelSumIntegrator();
+
+ protected:
     //! Integrate a peak
-    bool compute(Peak3D* peak, ShapeModel* shape_model, const IntegrationRegion& region) override;
+    bool compute(Peak3D* peak, ShapeModel*, const IntegrationRegion& region) override;
 };
 
 /*! @}*/

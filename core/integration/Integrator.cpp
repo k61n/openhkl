@@ -45,11 +45,6 @@ Integrator::Integrator(std::shared_ptr<DataHandler> data_handler)
     _params = std::make_unique<IntegrationParameters>();
 }
 
-IntegratorMap* Integrator::getIntegratorMap()
-{
-    return &_integrator_map;
-}
-
 DataHandler* Integrator::getDataHandler()
 {
     return _data_handler.get();
