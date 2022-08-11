@@ -442,9 +442,6 @@ void DetectorScene::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
 void DetectorScene::mousePressEvent(QGraphicsSceneMouseEvent* event)
 {
     CutterItem* cutter(nullptr);
-    MaskItem* mask(nullptr);
-    EllipseMaskItem* ellipse_mask(nullptr);
-    //_masks.emplace_back(new graphicsItem(nullptr));
 
     if (_selectionRect) {
         removeItem(_selectionRect);
@@ -519,7 +516,7 @@ void DetectorScene::mousePressEvent(QGraphicsSceneMouseEvent* event)
                 break;
             }
             case MASK: {
-                mask = new MaskItem(_currentData, new ohkl::AABB);
+                auto* mask = new MaskItem(_currentData, new ohkl::AABB);
                 mask->setFrom(event->lastScenePos());
                 mask->setTo(event->lastScenePos());
                 addItem(mask);
@@ -528,7 +525,7 @@ void DetectorScene::mousePressEvent(QGraphicsSceneMouseEvent* event)
                 break;
             }
             case ELLIPSE_MASK: {
-                ellipse_mask = new EllipseMaskItem(_currentData, new ohkl::AABB);
+                auto* ellipse_mask = new EllipseMaskItem(_currentData, new ohkl::AABB);
                 ellipse_mask->setFrom(event->lastScenePos());
                 ellipse_mask->setTo(event->lastScenePos());
                 addItem(ellipse_mask);

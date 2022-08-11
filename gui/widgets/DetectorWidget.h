@@ -18,26 +18,15 @@
 #include "core/data/DataTypes.h"
 
 #include <QApplication>
+#include <QFileInfo>
 #include <QGridLayout>
 #include <QKeyEvent>
-#include <QPainter>
-#include <fstream>
-
-#include <QFileInfo>
 #include <QMenu>
+#include <QPainter>
 #include <QString>
 #include <QWidget>
 
-
-#include <QApplication>
-#include <QKeyEvent>
-#include <QPainter>
 #include <fstream>
-
-#include <QFileInfo>
-#include <QMenu>
-#include <QString>
-#include <QWidget>
 
 class DetectorScene;
 class DetectorView;
