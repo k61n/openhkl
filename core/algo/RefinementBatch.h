@@ -52,13 +52,13 @@ class RefinementBatch {
     bool refine(unsigned int max_iter = 100);
 
     //! Compute the residual vector for the current set of parameters.
-    int residuals(Eigen::VectorXd& fvec);
+    int residuals(Eigen::VectorXd& fvec) const;
 
     //! Compute reciprocal space residual
-    int qSpaceResiduals(Eigen::VectorXd& fvec);
+    int qSpaceResiduals(Eigen::VectorXd& fvec) const;
 
     //! Compute real (detector) space residuals
-    int realSpaceResiduals(Eigen::VectorXd& fvec);
+    int realSpaceResiduals(Eigen::VectorXd& fvec) const;
 
     //! Returns the list of peaks used for refinement.
     std::vector<ohkl::Peak3D*> peaks() const;
@@ -112,7 +112,6 @@ class RefinementBatch {
     std::vector<std::vector<int>> _constraints;
     std::vector<Eigen::Matrix3d> _wts;
     std::vector<std::reference_wrapper<InstrumentState>> _states;
-    std::vector<double> _cost_function;
 };
 
 } // namespace ohkl

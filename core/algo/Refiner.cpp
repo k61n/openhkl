@@ -354,17 +354,17 @@ int Refiner::updatePredictions(std::vector<Peak3D*> peaks)
     return updated;
 }
 
-UnitCell* Refiner::unrefinedCell()
+const UnitCell* Refiner::unrefinedCell() const
 {
     return &_unrefined_cell;
 }
 
-InstrumentStateList* Refiner::refinedStates()
+const InstrumentStateList* Refiner::refinedStates() const
 {
     return _states;
 }
 
-InstrumentStateList* Refiner::unrefinedStates()
+const InstrumentStateList* Refiner::unrefinedStates() const
 {
     return &_unrefined_states;
 }

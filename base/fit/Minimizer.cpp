@@ -190,7 +190,6 @@ void Minimizer::cleanup()
     }
 
     if (_gsl->jacobian) {
-        // jacobian is part of the workspace, doesnt need to be freed
         gsl_matrix_free(_gsl->jacobian);
         _gsl->jacobian = nullptr;
     }

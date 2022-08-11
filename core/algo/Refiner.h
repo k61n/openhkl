@@ -98,24 +98,26 @@ class Refiner {
     void refineKi();
 
     //! Perform the refinement with the maximum number of iterations as given. N.B. the four
-    //! previous funcitons set the number of free parameters and at least one must be run
+    //! previous functions set the number of free parameters and at least one must be run
     //! *before* refine
     bool refine();
 
-    //! Update the centers of predicted peaks, after refinement.
+    //! Updates the centers of predicted peaks, after refinement.
+    //! Returns the number of remaining peaks
+    //! (some peaks may be rejected with flag PredictionUpdateFailure).
     int updatePredictions(std::vector<Peak3D*> peaks);
 
     //! Returns the individual peak/frame batches used during refinement.
     const std::vector<RefinementBatch>& batches() const;
 
     //! Return the unrefined cell
-    UnitCell* unrefinedCell();
+    const UnitCell* unrefinedCell() const;
 
     //! Return the refined states
-    InstrumentStateList* refinedStates();
+    const InstrumentStateList* refinedStates() const;
 
     //! Return the unrefined states
-    InstrumentStateList* unrefinedStates();
+    const InstrumentStateList* unrefinedStates() const;
 
     //! Return number of frames
     int nframes() const;
