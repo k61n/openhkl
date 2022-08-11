@@ -231,7 +231,7 @@ n_updated = refiner.updatePredictions(predicted_peak_list)
 print(f'Refine 3: {n_updated} peaks updated')
 
 print('Integrating predicted peaks...')
-integrator = expt.integrator()
+integ_prov = expt.integrationProvider()
 params = integrator.parameters()
 params.neighbour_range_pixels = 500
 params.neighbour_range_frames = 5

@@ -2,7 +2,7 @@
 //
 //  OpenHKL: data reduction for single crystal diffraction
 //
-//! @file      core/experiment/Integrator.h
+//! @file      core/experiment/IntegrationProvider.h
 //! @brief     Handles integration for Experiment object
 //! //! @homepage  ###HOMEPAGE###
 //! @license   GNU General Public License v3 or higher (see COPYING)
@@ -11,17 +11,17 @@
 //
 //  ***********************************************************************************************
 
-#ifndef OHKL_CORE_EXPERIMENT_INTEGRATOR_H
-#define OHKL_CORE_EXPERIMENT_INTEGRATOR_H
+#ifndef OPENHKL_CORE_EXPERIMENT_INTEGRATIONPROVIDER_H
+#define OPENHKL_CORE_EXPERIMENT_INTEGRATIONPROVIDER_H
 
-#include "core/shape/IPeakIntegrator.h"
+#include "core/integration/IIntegrator.h"
 #include "core/shape/PeakFilter.h"
 #include <map>
 #include <string>
 
 namespace ohkl {
 
-using IntegratorMap = std::map<IntegratorType, std::unique_ptr<ohkl::IPeakIntegrator>>;
+using IntegratorMap = std::map<IntegratorType, std::unique_ptr<ohkl::IIntegrator>>;
 
 class PeakCollection;
 class PeakFinder;
@@ -47,16 +47,14 @@ struct PredictionParameters;
  *  mean covariance of shapes in the vicinity of a predicted peaks to generate
  *  an integration region. This is integrated via profile integration.
  */
-class Integrator {
-
+class IntegrationProvider {
  public:
-    Integrator(std::shared_ptr<DataHandler> data_handler = nullptr);
+    IntegrationProvider(std::shared_ptr<DataHandler> data_handler = nullptr);
 
- public:
+    //! Get an integrator from the map
+    ohkl::IIntegrator* pIntegrator(const IntegratorType integrator_type) const;
     //! Return a pointer to the data handler
     DataHandler* getDataHandler();
-    //! Get an integrator from the map
-    ohkl::IPeakIntegrator* getIntegrator(const IntegratorType integrator_type) const;
     //! Set the found peak integrator
     void integratePeaks(IntegratorType integrator_type, sptrDataSet data, PeakCollection* peaks);
     //! Integrate a peak collection
@@ -93,4 +91,4 @@ class Integrator {
 /*! @}*/
 } // namespace ohkl
 
-#endif // OHKL_CORE_EXPERIMENT_INTEGRATOR_H
+#endif // OPENHKL_CORE_EXPERIMENT_INTEGRATIONPROVIDER_H

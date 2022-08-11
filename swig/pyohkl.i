@@ -105,7 +105,7 @@ using Eigen::Quaterniond;
 #include "core/statistics/MergedPeak.h"
 #include "core/shape/PeakCollection.h"
 #include "core/shape/PeakFilter.h"
-#include "core/integration/Integrator.h"
+#include "core/experiment/IntegrationProvider.h"
 #include "core/experiment/PeakFinder.h"
 #include "core/statistics/PeakMerger.h"
 #include "core/convolve/AnnularConvolver.h"
@@ -122,7 +122,7 @@ using Eigen::Quaterniond;
 #include "core/detector/DetectorFactory.h"
 #include "core/detector/FlatDetector.h"
 #include "core/data/DataSet.h"
-#include "core/integration/Integrator.h"
+#include "core/experiment/IntegrationProvider.h"
 #include "core/experiment/Experiment.h"
 #include "core/gonio/Axis.h"
 #include "core/gonio/AxisFactory.h"
@@ -324,10 +324,10 @@ ArrayExtendCRef(MillerIndex, int);
 %include "core/data/DataTypes.h"
 %template(DataList) std::vector<std::shared_ptr<ohkl::DataSet>>;
 
-%include "core/shape/IPeakIntegrator.h"
+%include "core/integration/IIntegrator.h"
 %include "core/shape/ShapeModel.h"
 %include "core/shape/Predictor.h"
-%include "core/integration/Integrator.h"
+%include "core/experiment/IntegrationProvider.h"
 
 %template(ConvolverParameters) std::map<std::string,double>;
 %include "core/convolve/Convolver.h"

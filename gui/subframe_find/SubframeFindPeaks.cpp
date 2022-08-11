@@ -19,7 +19,7 @@
 #include "core/experiment/Experiment.h"
 #include "core/experiment/PeakFinder.h"
 #include "core/peak/Peak3D.h"
-#include "core/shape/IPeakIntegrator.h"
+#include "core/integration/IIntegrator.h"
 #include "gui/MainWin.h" // gGui
 #include "gui/connect/Sentinel.h"
 #include "gui/dialogs/ListNameDialog.h"
@@ -370,7 +370,7 @@ void SubframeFindPeaks::setFinderParameters()
 
 void SubframeFindPeaks::grabIntegrationParameters()
 {
-    auto* params = gSession->currentProject()->experiment()->integrator()->parameters();
+    auto* params = gSession->currentProject()->experiment()->integrationProvider()->parameters();
 
     _peak_area->setValue(params->peak_end);
     _bkg_lower->setValue(params->bkg_begin);
@@ -382,7 +382,7 @@ void SubframeFindPeaks::setIntegrationParameters()
     if (!gSession->hasProject())
         return;
 
-    auto* params = gSession->currentProject()->experiment()->integrator()->parameters();
+    auto* params = gSession->currentProject()->experiment()->integrationProvider()->parameters();
 
     params->peak_end = _peak_area->value();
     params->bkg_begin = _bkg_lower->value();
@@ -466,7 +466,7 @@ void SubframeFindPeaks::integrate()
 {
     gGui->setReady(false);
     auto* experiment = gSession->currentProject()->experiment();
-    auto* integrator = experiment->integrator();
+    auto* integ_prov = experiment->integrationProvider();
     auto* finder = experiment->peakFinder();
 
     ohkl::sptrProgressHandler handler(new ohkl::ProgressHandler);
@@ -474,15 +474,15 @@ void SubframeFindPeaks::integrate()
     progressView.watch(handler);
 
     setIntegrationParameters();
-    integrator->getIntegrator(ohkl::IntegratorType::PixelSum)->setHandler(handler);
+    integ_prov->pIntegrator(ohkl::IntegratorType::PixelSum)->setHandler(handler);
 
-    integrator->integrateFoundPeaks(finder);
+    integ_prov->integrateFoundPeaks(finder);
     refreshPeakTable();
     _peaks_integrated = true;
     toggleUnsafeWidgets();
     gGui->statusBar()->showMessage(
-        QString::number(integrator->numberOfValidPeaks()) + "/"
-        + QString::number(integrator->numberOfPeaks()) + " peaks integrated");
+        QString::number(integ_prov->numberOfValidPeaks()) + "/"
+        + QString::number(integ_prov->numberOfPeaks()) + " peaks integrated");
     gGui->setReady(true);
 }
 

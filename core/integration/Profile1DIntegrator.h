@@ -15,7 +15,7 @@
 #ifndef OHKL_CORE_INTEGRATION_PROFILE1DINTEGRATOR_H
 #define OHKL_CORE_INTEGRATION_PROFILE1DINTEGRATOR_H
 
-#include "core/shape/IPeakIntegrator.h"
+#include "core/integration/IIntegrator.h"
 #include "core/shape/ShapeModel.h"
 
 namespace ohkl {
@@ -33,7 +33,7 @@ namespace ohkl {
  *  susbscripts \f$i\f$ refer to elements of a 1D profile instead of a 3D
  *  profile.
  */
-class Profile1DIntegrator : public IPeakIntegrator {
+class Profile1DIntegrator : public IIntegrator {
  public:
     //! Construct integrator
     Profile1DIntegrator();

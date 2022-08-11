@@ -2,7 +2,7 @@
 //
 //  OpenHKL: data reduction for single crystal diffraction
 //
-//! @file      core/experiment/Integrator.cpp
+//! @file      core/experiment/IntegrationProvider.cpp
 //! @brief     Handles integrators for Experiment object
 //!
 //! @homepage  ###HOMEPAGE###
@@ -12,7 +12,7 @@
 //
 //  ***********************************************************************************************
 
-#include "core/integration/Integrator.h"
+#include "core/experiment/IntegrationProvider.h"
 
 #include "base/utils/Logger.h"
 #include "core/experiment/DataHandler.h"
@@ -28,7 +28,7 @@
 
 namespace ohkl {
 
-Integrator::Integrator(std::shared_ptr<DataHandler> data_handler)
+IntegrationProvider::IntegrationProvider(std::shared_ptr<DataHandler> data_handler)
     : _handler(nullptr), _data_handler(data_handler)
 {
     _integrator_map.clear();
@@ -45,14 +45,14 @@ Integrator::Integrator(std::shared_ptr<DataHandler> data_handler)
     _params = std::make_unique<IntegrationParameters>();
 }
 
-DataHandler* Integrator::getDataHandler()
+DataHandler* IntegrationProvider::getDataHandler()
 {
     return _data_handler.get();
 }
 
-IPeakIntegrator* Integrator::getIntegrator(const IntegratorType integrator_type) const
+IIntegrator* IntegrationProvider::pIntegrator(const IntegratorType integrator_type) const
 {
-    std::map<IntegratorType, std::unique_ptr<IPeakIntegrator>>::const_iterator it;
+    std::map<IntegratorType, std::unique_ptr<IIntegrator>>::const_iterator it;
     for (it = _integrator_map.begin(); it != _integrator_map.end(); ++it) {
         if (it->first == integrator_type)
             return it->second.get();
@@ -60,13 +60,13 @@ IPeakIntegrator* Integrator::getIntegrator(const IntegratorType integrator_type)
     return nullptr;
 }
 
-void Integrator::integratePeaks(
+void IntegrationProvider::integratePeaks(
     IntegratorType integrator_type, sptrDataSet data, PeakCollection* peaks)
 {
     ohklLog(
         Level::Info,
-        "Integrator::integratePeaks: integrating PeakCollection '" + peaks->name() + "'");
-    IPeakIntegrator* integrator = getIntegrator(integrator_type);
+        "IntegrationProvider::integratePeaks: integrating PeakCollection '" + peaks->name() + "'");
+    IIntegrator* integrator = pIntegrator(integrator_type);
     integrator->setNNumors(1);
     integrator->integrate(peaks->getPeakList(), peaks->shapeModel(), data, 1);
     peaks->setIntegrated(true);
@@ -80,14 +80,14 @@ void Integrator::integratePeaks(
     }
 }
 
-void Integrator::integratePeaks(
+void IntegrationProvider::integratePeaks(
     sptrDataSet data, PeakCollection* peaks, IntegrationParameters* params, ShapeModel* shapes)
 {
     ohklLog(
         Level::Info,
-        "Integrator::integratePeaks: integrating PeakCollection '" + peaks->name() + "'");
+        "IntegrationProvider::integratePeaks: integrating PeakCollection '" + peaks->name() + "'");
     params->log(Level::Info);
-    IPeakIntegrator* integrator = getIntegrator(_params->integrator_type);
+    IIntegrator* integrator = pIntegrator(_params->integrator_type);
     integrator->setParameters(*params);
     integrator->setNNumors(1);
     integrator->integrate(peaks->getPeakList(), shapes, data, 1);
@@ -102,11 +102,11 @@ void Integrator::integratePeaks(
     }
 }
 
-void Integrator::integrateFoundPeaks(PeakFinder* peak_finder)
+void IntegrationProvider::integrateFoundPeaks(PeakFinder* peak_finder)
 {
-    ohklLog(Level::Info, "Integrator::integrateFoundPeaks");
+    ohklLog(Level::Info, "IntegrationProvider::integrateFoundPeaks");
     const DataMap* data = _data_handler->getDataMap();
-    IPeakIntegrator* integrator = getIntegrator(IntegratorType::PixelSum);
+    IIntegrator* integrator = pIntegrator(IntegratorType::PixelSum);
     integrator->setNNumors(data->size());
 
     int n_numor = 1;
@@ -128,11 +128,11 @@ void Integrator::integrateFoundPeaks(PeakFinder* peak_finder)
     peak_finder->setIntegrated(true);
 }
 
-void Integrator::integrateShapeModel(
+void IntegrationProvider::integrateShapeModel(
     std::vector<Peak3D*> fit_peaks, sptrDataSet data, ShapeModel* shape_model, const AABB& aabb,
     const ShapeModelParameters& params)
 {
-    ohklLog(Level::Info, "Integrator::integrateShapeModel");
+    ohklLog(Level::Info, "IntegrationProvider::integrateShapeModel");
     ShapeIntegrator integrator{shape_model, aabb, params.nbins_x, params.nbins_y, params.nbins_z};
     integrator.setNNumors(1);
     if (_handler)
@@ -141,27 +141,27 @@ void Integrator::integrateShapeModel(
     integrator.integrate(fit_peaks, shape_model, data, 1);
 }
 
-void Integrator::setParameters(std::shared_ptr<IntegrationParameters> params)
+void IntegrationProvider::setParameters(std::shared_ptr<IntegrationParameters> params)
 {
     _params = params;
 }
 
-IntegrationParameters* Integrator::parameters()
+IntegrationParameters* IntegrationProvider::parameters()
 {
     return _params.get();
 }
 
-void Integrator::setHandler(sptrProgressHandler handler)
+void IntegrationProvider::setHandler(sptrProgressHandler handler)
 {
     _handler = handler;
 }
 
-unsigned int Integrator::numberOfPeaks()
+unsigned int IntegrationProvider::numberOfPeaks()
 {
     return _n_peaks;
 }
 
-unsigned int Integrator::numberOfValidPeaks()
+unsigned int IntegrationProvider::numberOfValidPeaks()
 {
     return _n_valid;
 }

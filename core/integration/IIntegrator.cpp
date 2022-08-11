@@ -2,8 +2,8 @@
 //
 //  OpenHKL: data reduction for single crystal diffraction
 //
-//! @file      core/shape/IPeakIntegrator.cpp
-//! @brief     Implements class IPeakIntegrator
+//! @file      core/integration/IIntegrator.cpp
+//! @brief     Implements class IIntegrator
 //!
 //! @homepage  ###HOMEPAGE###
 //! @license   GNU General Public License v3 or higher (see COPYING)
@@ -12,7 +12,7 @@
 //
 //  ***********************************************************************************************
 
-#include "core/shape/IPeakIntegrator.h"
+#include "core/integration/IIntegrator.h"
 
 #include "base/utils/Logger.h"
 #include "core/data/DataSet.h"
@@ -38,29 +38,29 @@ void IntegrationParameters::log(const Level& level) const
     ohklLog(level, "region_type            = ", static_cast<int>(region_type));
 }
 
-IPeakIntegrator::IPeakIntegrator()
+IIntegrator::IIntegrator()
     : _meanBackground(), _integratedIntensity(), _rockingCurve(), _handler(nullptr), _params{}
 {
 }
 
-IPeakIntegrator::~IPeakIntegrator() = default;
+IIntegrator::~IIntegrator() = default;
 
-Intensity IPeakIntegrator::meanBackground() const
+Intensity IIntegrator::meanBackground() const
 {
     return _meanBackground;
 }
 
-Intensity IPeakIntegrator::integratedIntensity() const
+Intensity IIntegrator::integratedIntensity() const
 {
     return _integratedIntensity;
 }
 
-const std::vector<Intensity>& IPeakIntegrator::rockingCurve() const
+const std::vector<Intensity>& IIntegrator::rockingCurve() const
 {
     return _rockingCurve;
 }
 
-void IPeakIntegrator::integrate(
+void IIntegrator::integrate(
     std::vector<ohkl::Peak3D*> peaks, ShapeModel* shape_model, sptrDataSet data, int n_numor)
 {
     // integrate only those peaks that belong to the specified dataset
@@ -70,7 +70,7 @@ void IPeakIntegrator::integrate(
     peaks.erase(it, peaks.end());
     std::ostringstream oss;
     oss << "Integrating " << peaks.size() << " peaks in numor " << n_numor << " of " << _n_numors;
-    ohklLog(Level::Info, "IPeakIntegrator::integrate: integrating ", peaks.size(), " peaks");
+    ohklLog(Level::Info, "IIntegrator::integrate: integrating ", peaks.size(), " peaks");
     if (_handler) {
         _handler->setStatus(oss.str().c_str());
         _handler->setProgress(0);
@@ -106,13 +106,13 @@ void IPeakIntegrator::integrate(
     }
 
     // only integrate the peaks with valid integration regions
-    ohklLog(Level::Debug, "IPeakIntegrator::integrate: remove invalid regions");
+    ohklLog(Level::Debug, "IIntegrator::integrate: remove invalid regions");
     it = std::remove_if(peaks.begin(), peaks.end(), [&](Peak3D*& p) {
         return regions.find(p) == regions.end();
     });
     peaks.erase(it, peaks.end());
 
-    ohklLog(Level::Debug, "IPeakIntegrator::integrate: frames loop");
+    ohklLog(Level::Debug, "IIntegrator::integrate: frames loop");
     int nfailures = 0;
     for (idx = 0; idx < data->nFrames(); ++idx) {
         Eigen::MatrixXd current_frame;
@@ -170,21 +170,21 @@ void IPeakIntegrator::integrate(
             _handler->setProgress(progress);
         }
     }
-    ohklLog(Level::Info, "IPeakIntegrator::integrate: end; ", nfailures, " failures");
+    ohklLog(Level::Info, "IIntegrator::integrate: end; ", nfailures, " failures");
 }
 
-void IPeakIntegrator::setHandler(sptrProgressHandler handler)
+void IIntegrator::setHandler(sptrProgressHandler handler)
 {
     _handler = handler;
 }
 
-void IPeakIntegrator::setParameters(const IntegrationParameters& params)
+void IIntegrator::setParameters(const IntegrationParameters& params)
 {
     _params = params;
     _params.log(Level::Info);
 }
 
-void IPeakIntegrator::setNNumors(int n_numors)
+void IIntegrator::setNNumors(int n_numors)
 {
     _n_numors = n_numors;
 }

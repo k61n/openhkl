@@ -66,7 +66,7 @@ std::pair<bool,Intensity> compute_background(const IntegrationRegion& region)
 
 
 PixelSumIntegrator::PixelSumIntegrator(bool fit_center, bool fit_covariance)
-    : IPeakIntegrator()
+    : IIntegrator()
 {
     _params.fit_center = fit_center;
     _params.fit_cov = fit_covariance;

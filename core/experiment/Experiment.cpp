@@ -71,7 +71,7 @@ Experiment::Experiment(const std::string& name, const std::string& diffractomete
     _auto_indexer = std::make_unique<AutoIndexer>();
     _predictor = std::make_unique<Predictor>();
     _refiner = std::make_unique<Refiner>(_cell_handler.get());
-    _integrator = std::make_unique<Integrator>(_data_handler);
+    _integrationProvider = std::make_unique<IntegrationProvider>(_data_handler);
     _peak_merger = std::make_unique<PeakMerger>();
 }
 
@@ -272,7 +272,7 @@ void Experiment::buildShapeModel(
     std::unique_ptr<ShapeModel> shapes = std::make_unique<ShapeModel>();
 
     std::vector<Peak3D*> fit_peak_list = fit_peaks.getPeakList();
-    _integrator->integrateShapeModel(fit_peak_list, data, shapes.get(), aabb, params);
+    _integrationProvider->integrateShapeModel(fit_peak_list, data, shapes.get(), aabb, params);
     peaks->setShapeModel(shapes);
 
     // shape_model.updateFit(1000); // This does nothing!! - zamaan
@@ -311,9 +311,9 @@ void Experiment::updatePredictions(PeakCollection* predicted_peaks)
     ohklLog(Level::Info, update, " peaks updated");
 }
 
-Integrator* Experiment::integrator()
+IntegrationProvider* Experiment::integrationProvider()
 {
-    return _integrator.get();
+    return _integrationProvider.get();
 }
 
 // Data handler methods

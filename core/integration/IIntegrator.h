@@ -2,8 +2,8 @@
 //
 //  OpenHKL: data reduction for single crystal diffraction
 //
-//! @file      core/shape/IPeakIntegrator.h
-//! @brief     Defines class IPeakIntegrator
+//! @file      core/integration/IIntegrator.h
+//! @brief     Defines class IIntegrator
 //!
 //! @homepage  ###HOMEPAGE###
 //! @license   GNU General Public License v3 or higher (see COPYING)
@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef OHKL_CORE_SHAPE_IPEAKINTEGRATOR_H
-#define OHKL_CORE_SHAPE_IPEAKINTEGRATOR_H
+#ifndef OPENHKL_CORE_INTEGRATION_IINTEGRATOR_H
+#define OPENHKL_CORE_INTEGRATION_IINTEGRATOR_H
 
 #include "base/utils/ProgressHandler.h"
 #include "core/peak/IntegrationRegion.h"
@@ -53,10 +53,10 @@ class ShapeModel;
  *
  *  All integrators inherit from this class.
  */
-class IPeakIntegrator {
+class IIntegrator {
  public:
-    IPeakIntegrator();
-    virtual ~IPeakIntegrator();
+    IIntegrator();
+    virtual ~IIntegrator();
     //! Integrate all peaks in the list which are contained in the specified data set.
     void integrate(
         std::vector<ohkl::Peak3D*> peaks, ShapeModel* shape_model, sptrDataSet data, int n_numor);
@@ -114,4 +114,4 @@ class IPeakIntegrator {
 /*! @}*/
 } // namespace ohkl
 
-#endif // OHKL_CORE_SHAPE_IPEAKINTEGRATOR_H
+#endif // OPENHKL_CORE_INTEGRATION_IINTEGRATOR_H

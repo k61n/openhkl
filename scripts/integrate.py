@@ -53,9 +53,9 @@ print('Integrating predicted peaks...')
 # Integration parameters
 integration_params = expt.integrator().parameters()
 integration_params.integrator_type = nsx.IntegratorType_Profile3D
-integrator = expt.integrator()
-integrator.integratePeaks(data, predicted_peaks, integration_params, shapes)
-print(f'{integrator.numberOfValidPeaks()} / {integrator.numberOfPeaks()} peaks integrated')
+integ_prov = expt.integrationProvider()
+integ_prov.integratePeaks(data, predicted_peaks, integration_params, shapes)
+print(f'{integ_prov.numberOfValidPeaks()} / {integ_prov.numberOfPeaks()} peaks integrated')
 
 print('Merging predicted peaks...')
 

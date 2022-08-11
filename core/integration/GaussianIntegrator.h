@@ -15,7 +15,7 @@
 #ifndef OHKL_CORE_INTEGRATION_GAUSSIANINTEGRATOR_H
 #define OHKL_CORE_INTEGRATION_GAUSSIANINTEGRATOR_H
 
-#include "core/shape/IPeakIntegrator.h"
+#include "core/integration/IIntegrator.h"
 
 namespace ohkl {
 
@@ -23,7 +23,7 @@ namespace ohkl {
  *  @{*/
 
 /*! \brief Compute integrated intensity by fitting to an analytic 3D Gaussian.*/
-class GaussianIntegrator : public IPeakIntegrator {
+class GaussianIntegrator : public IIntegrator {
  public:
     GaussianIntegrator(bool fit_center, bool fit_cov);
 
