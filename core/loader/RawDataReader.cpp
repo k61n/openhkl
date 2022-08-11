@@ -14,6 +14,7 @@
 
 #include <cmath>
 #include <cstring>
+#include <filesystem>
 #include <fstream>
 #include <map>
 #include <set>
@@ -132,9 +133,6 @@ void RawDataReader::setParameters(const RawDataReaderParameters& parameters)
 
 void RawDataReader::swapEndian()
 {
-    if (!_parameters.swap_endian)
-        return;
-
     const std::size_t nrows = _dataset_out->nRows(), ncols = _dataset_out->nCols();
 
     for (std::size_t i = 0; i < nrows * ncols; ++i) {
@@ -148,37 +146,32 @@ void RawDataReader::swapEndian()
 
 Eigen::MatrixXi RawDataReader::data(size_t frame)
 {
-
     checkInit();
 
     std::string filename = _filenames.at(frame);
-
-    std::ifstream file;
-    file.open(filename, std::ios_base::binary | std::ios_base::in);
-
-    if (!file.is_open())
-        throw std::runtime_error("could not open data file " + filename);
-
-    file.seekg(0, std::ios_base::end);
-
-    if (_length != size_t(file.tellg())) {
-        std::string err_msg = "data file " + filename + " is not of the expected size: ";
-        err_msg += "expected " + std::to_string(_length) + " bytes but found "
-            + std::to_string(file.tellg());
+    const size_t fsize = std::filesystem::file_size(filename);
+    if (fsize != _length) {
+        std::string err_msg = "data file " + filename + " is not of the expected size: "
+            + "expected " + std::to_string(_length) + " bytes but found "
+            + std::to_string(fsize);
         throw std::runtime_error(err_msg);
     }
 
-    file.seekg(0, std::ios_base::beg);
-    file.read(&_data[0], long(_length));
+    std::ifstream file;
+    file.open(filename, std::ios_base::binary | std::ios_base::in);
+    if (!file.is_open())
+        throw std::runtime_error("could not open data file " + filename);
 
-    if (_length != size_t(file.gcount())) {
-        std::string err_msg = "LOL did not read " + filename + " successfully: ";
-        err_msg += "expected " + std::to_string(_length) + " bytes but read "
+    file.read(&_data[0], long(_length));
+    if (size_t(file.gcount()) != _length) {
+        std::string err_msg = "cannot load file " + filename + ": "
+            + "expected " + std::to_string(_length) + " bytes but found "
             + std::to_string(file.gcount());
         throw std::runtime_error(err_msg);
     }
 
-    swapEndian();
+    if (_parameters.swap_endian)
+        swapEndian();
 
     switch (_parameters.bpp) {
         case 1: return matrixFromData<uint8_t>().cast<int>();

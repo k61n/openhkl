@@ -40,6 +40,7 @@ class Project {
 
     const ohkl::Experiment* experiment() const;
     ohkl::Experiment* experiment();
+    //! Returns list of DataSet names.
     QStringList getDataNames() const;
     std::shared_ptr<ohkl::DataSet> getData(int index = -1) const;
     std::vector<std::shared_ptr<ohkl::DataSet>> allData() const;

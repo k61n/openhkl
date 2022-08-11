@@ -111,7 +111,7 @@ RawDataDialog::RawDataDialog(
     _gain->setValue(detector->gain());
 
     connect(_buttons, &QDialogButtonBox::accepted, this, &RawDataDialog::verify);
-    connect(_buttons, &QDialogButtonBox::rejected, this, &RawDataDialog::reject);
+    connect(_buttons, &QDialogButtonBox::rejected, this, &QDialog::reject);
 }
 
 
@@ -141,7 +141,7 @@ int RawDataDialog::bpp()
 void RawDataDialog::verify()
 {
     // confirm overwrite if the name already exists
-    const QString& dname = dataset_name();
+    const QString& dname = _datasetName->text();
     const bool name_exists = _dataset_names.contains(dname);
     bool dialog_accepted = true;
 
@@ -154,7 +154,7 @@ void RawDataDialog::verify()
 
     // check wavelength
     const double eps = 1e-8;
-    const double waveln = wavelength();
+    const double waveln = _wavelength->value();
     if (waveln < eps) {
         const QString msg{
             QString::fromStdString("Wavelength, " + std::to_string(waveln) + ", must be > 0")};

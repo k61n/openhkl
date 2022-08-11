@@ -15,7 +15,6 @@
 #include "gui/models/Session.h"
 
 #include "base/utils/Logger.h"
-#include "base/utils/Path.h" // fileBasename
 #include "core/data/DataSet.h"
 #include "core/data/DataTypes.h"
 #include "core/detector/Detector.h"
@@ -52,12 +51,11 @@
 #include <QSettings>
 #include <QStringList>
 
-
 Session* gSession;
 
 namespace {
 
-// open a dialog to choose a name for a dataset; warn against name clashes with previous names
+//! Opens a dialog to choose a name for a dataset; warn against name clashes with previous names
 std::string askDataName(const std::string dataname0, const QStringList* const datanames_pre)
 {
     DataNameDialog dataname_dialog(QString::fromStdString(dataname0), datanames_pre);
@@ -66,6 +64,40 @@ std::string askDataName(const std::string dataname0, const QStringList* const da
         return dataname_dialog.dataName().toStdString();
 
     return dataname0;
+}
+
+//! Opens a dialog to choose a list of raw files
+std::vector<std::string> askRawFileNames()
+{
+    QSettings qset = gGui->qSettings();
+    qset.beginGroup("RecentDirectories");
+    QString loadDirectory = qset.value("data_raw", QDir::homePath()).toString();
+
+    QStringList qfilenames =
+        QFileDialog::getOpenFileNames(gGui, "import raw data", loadDirectory,
+                                      "Image files (*.raw *.tiff);; All files (*.* *)");
+    if (qfilenames.empty())
+        return {};
+
+    // Don't leave sorting the files to the OS. Use QCollator + std::sort to sort naturally
+    // (numerically)
+    QCollator collator;
+    collator.setNumericMode(true);
+    std::sort(
+        qfilenames.begin(), qfilenames.end(),
+        [&collator](const QString& file1, const QString& file2) {
+            return collator.compare(file1, file2) < 0;
+        });
+
+    QFileInfo info(qfilenames.at(0));
+    loadDirectory = info.absolutePath();
+    qset.setValue("data_raw", loadDirectory);
+
+    std::vector<std::string> result;
+    for (const QString& filename : qfilenames)
+        result.push_back(filename.toStdString());
+
+    return result;
 }
 
 } // namespace
@@ -274,69 +306,43 @@ void Session::removeData()
 
 bool Session::loadRawData()
 {
-    // Loading data requires an existing Experiment
-    if (_currentProject < 0) {
-        return false;
-    }
+    if (_currentProject < 0)
+        return false; // loading data requires an existing Experiment
 
     try {
-        QSettings qset = gGui->qSettings();
-        qset.beginGroup("RecentDirectories");
-        QString loadDirectory = qset.value("data_raw", QDir::homePath()).toString();
-
-        QStringList qfilenames =
-            QFileDialog::getOpenFileNames(gGui, "import raw data",
-            loadDirectory, "Image files (*.raw *.tiff);; All files (*.* *)");
-        if (qfilenames.empty())
+        // Get input filenames from dialog.
+        std::vector<std::string> filenames = askRawFileNames();
+        if (filenames.empty())
             return false;
 
-        // Don't leave sorting the files to the OS. Use QCollator + std::sort to sort naturally
-        // (numerically)
-        QCollator collator;
-        collator.setNumericMode(true);
-        std::sort(
-            qfilenames.begin(), qfilenames.end(),
-            [&collator](const QString& file1, const QString& file2) {
-                return collator.compare(file1, file2) < 0;
-            });
-
-        QFileInfo info(qfilenames.at(0));
-        loadDirectory = info.absolutePath();
-        qset.setValue("data_raw", loadDirectory);
-
-        std::vector<std::string> filenames;
-        for (const QString& filename : qfilenames)
-            filenames.push_back(filename.toStdString());
-
+        // Get metadata from readme file, then edit them in dialog.
+        const QStringList& extant_dataset_names = currentProject()->getDataNames();
         ohkl::RawDataReaderParameters parameters;
-        parameters.dataset_name = ohkl::fileBasename(filenames[0]);
         parameters.LoadDataFromFile(filenames.at(0));
-        const QStringList& datanames_pre{currentProject()->getDataNames()};
-        RawDataDialog dialog(parameters, datanames_pre);
-        if (!dialog.exec()) {
+        RawDataDialog dialog(parameters, extant_dataset_names);
+        if (!dialog.exec())
             return false;
-        }
         ohkl::Experiment* exp = currentProject()->experiment();
-
-        // update the parameters by those from the dialog
         parameters = dialog.parameters();
 
+        // Transfer metadata to diffractometer.
         ohkl::Detector* detector = exp->getDiffractometer()->detector();
         detector->setBaseline(parameters.baseline);
         detector->setGain(parameters.gain);
 
-        ohkl::Diffractometer* diff = exp->getDiffractometer();
-        const std::shared_ptr<ohkl::DataSet> dataset_ptr{
-            std::make_shared<ohkl::DataSet>(parameters.dataset_name, diff)};
-        dataset_ptr->setRawReaderParameters(parameters);
-        for (const auto& filenm : filenames)
-            dataset_ptr->addRawFrame(filenm);
+        // Transfer metadata to dataset, and load the raw data.
+        const std::shared_ptr<ohkl::DataSet> dataset{
+            std::make_shared<ohkl::DataSet>(parameters.dataset_name, exp->getDiffractometer())};
+        dataset->setRawReaderParameters(parameters);
+        for (const auto& filename : filenames)
+            dataset->addRawFrame(filename);
+        dataset->finishRead();
+        exp->addData(dataset);
 
-        dataset_ptr->finishRead();
-        if (!exp->addData(dataset_ptr)) { }
         onDataChanged();
-        auto data_list = currentProject()->getDataNames();
-        gGui->sentinel->setLinkedComboList(ComboType::DataSet, data_list);
+        gGui->sentinel->setLinkedComboList(ComboType::DataSet,
+                                           currentProject()->getDataNames());
+
     } catch (std::exception& e) {
         QMessageBox::critical(nullptr, "Error", QString(e.what()));
     } catch (...) {
@@ -348,7 +354,6 @@ bool Session::loadRawData()
 void Session::onDataChanged()
 {
     DataList data = currentProject()->experiment()->getAllData();
-    // gGui->onDataChanged();
     _data_combo->clearAll();
     _data_combo->addDataSets(data);
     _data_combo->refreshAll();
