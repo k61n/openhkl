@@ -14,11 +14,9 @@
 ##
 ##  ***********************************************************************************************
 
-import numpy as np
 import unittest
 from pathlib import Path
 import pyohkl as ohkl
-import os
 
 class TestFullWorkFlow(unittest.TestCase):
 
@@ -41,8 +39,6 @@ class TestFullWorkFlow(unittest.TestCase):
         print(f'Reading files from {data_dir}')
         dir = Path(data_dir)
         raw_data_files = sorted(list(dir.glob('*.raw')))
-        # for file in raw_data_files:
-            # print(file)
         dataset.setRawReaderParameters(data_params)
         for filename in raw_data_files:
             dataset.addRawFrame(str(filename))
@@ -97,7 +93,7 @@ class TestFullWorkFlow(unittest.TestCase):
 
 
         print('Indexing found peaks...')
-        expt.setReferenceCell(54.9, 58.4, 67.3, 90, 90, 90) # reference cell used to pick best solution
+        expt.setReferenceCell(54.9, 58.4, 67.3, 90, 90, 90) # used to pick best solution
         space_group = ohkl.SpaceGroup('P 21 21 21') # required to check that Bravais type is correct
         reference_cell = expt.getUnitCell('reference')
         reference_cell.setSpaceGroup(space_group)
