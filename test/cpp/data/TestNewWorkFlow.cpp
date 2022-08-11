@@ -36,7 +36,7 @@
 #include "core/integration/PixelSumIntegrator.h"
 #include "core/peak/Peak3D.h"
 #include "core/peak/Qs2Events.h"
-#include "core/shape/IPeakIntegrator.h"
+#include "core/integration/IIntegrator.h"
 #include "core/shape/PeakFilter.h"
 #include "core/shape/ShapeModel.h"
 

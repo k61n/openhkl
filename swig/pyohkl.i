@@ -324,7 +324,7 @@ ArrayExtendCRef(MillerIndex, int);
 %include "core/data/DataTypes.h"
 %template(DataList) std::vector<std::shared_ptr<ohkl::DataSet>>;
 
-%include "core/shape/IPeakIntegrator.h"
+%include "core/integration/IIntegrator.h"
 %include "core/shape/ShapeModel.h"
 %include "core/shape/Predictor.h"
 %include "core/experiment/IntegrationProvider.h"

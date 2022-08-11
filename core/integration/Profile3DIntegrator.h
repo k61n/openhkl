@@ -15,7 +15,7 @@
 #ifndef OHKL_CORE_INTEGRATION_PROFILE3DINTEGRATOR_H
 #define OHKL_CORE_INTEGRATION_PROFILE3DINTEGRATOR_H
 
-#include "core/shape/IPeakIntegrator.h"
+#include "core/integration/IIntegrator.h"
 #include "core/shape/ShapeModel.h"
 
 namespace ohkl {
@@ -47,7 +47,7 @@ namespace ohkl {
  *  3. Compute updated \f$v_i = b_i - I p_i\f$
  *  4. Repeat from 2 until convergence
  */
-class Profile3DIntegrator : public IPeakIntegrator {
+class Profile3DIntegrator : public IIntegrator {
  public:
     Profile3DIntegrator() = default;
  protected:

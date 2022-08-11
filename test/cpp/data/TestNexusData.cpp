@@ -25,7 +25,7 @@
 #include "core/raw/DataKeys.h"
 #include "core/experiment/Experiment.h"
 #include "core/instrument/Diffractometer.h"
-#include "core/shape/IPeakIntegrator.h"
+#include "core/integration/IIntegrator.h"
 
 
 #define OUTPUT_INTERMEDIATE

@@ -24,7 +24,7 @@
 
 namespace ohkl {
 
-class IPeakIntegrator;
+class IIntegrator;
 class MillerIndex;
 
 /*! \addtogroup python_api

@@ -16,7 +16,7 @@
 #define OHKL_CORE_SHAPE_PREDICTOR_H
 
 #include "base/utils/ProgressHandler.h"
-#include "core/shape/IPeakIntegrator.h"
+#include "core/integration/IIntegrator.h"
 #include "core/shape/ShapeModel.h"
 
 #include <vector>

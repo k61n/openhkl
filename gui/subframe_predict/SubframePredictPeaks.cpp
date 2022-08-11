@@ -24,7 +24,7 @@
 #include "core/integration/ShapeIntegrator.h"
 #include "core/peak/Peak3D.h"
 #include "core/peak/Qs2Events.h"
-#include "core/shape/IPeakIntegrator.h"
+#include "core/integration/IIntegrator.h"
 #include "core/shape/PeakCollection.h"
 #include "core/shape/Predictor.h"
 #include "core/shape/ShapeModel.h"

@@ -17,7 +17,7 @@
 
 #include "core/algo/RefinementBatch.h"
 #include "core/experiment/UnitCellHandler.h"
-#include "core/shape/IPeakIntegrator.h"
+#include "core/integration/IIntegrator.h"
 #include "tables/crystal/UnitCell.h"
 #include <vector>
 

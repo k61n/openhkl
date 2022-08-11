@@ -15,7 +15,7 @@
 #ifndef OHKL_CORE_INTEGRATION_PIXELSUMINTEGRATOR_H
 #define OHKL_CORE_INTEGRATION_PIXELSUMINTEGRATOR_H
 
-#include "core/shape/IPeakIntegrator.h"
+#include "core/integration/IIntegrator.h"
 
 namespace ohkl {
 
@@ -24,7 +24,7 @@ namespace ohkl {
 
 /*! \brief Peak integration using naive background estimation and subtraction.
  */
-class PixelSumIntegrator : public IPeakIntegrator {
+class PixelSumIntegrator : public IIntegrator {
  public:
     //! Construct the pixel sum integrator
     //! @param fit_center update the peak center as part of integration

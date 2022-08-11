@@ -14,14 +14,14 @@
 #ifndef OPENHKL_CORE_EXPERIMENT_INTEGRATIONPROVIDER_H
 #define OPENHKL_CORE_EXPERIMENT_INTEGRATIONPROVIDER_H
 
-#include "core/shape/IPeakIntegrator.h"
+#include "core/integration/IIntegrator.h"
 #include "core/shape/PeakFilter.h"
 #include <map>
 #include <string>
 
 namespace ohkl {
 
-using IntegratorMap = std::map<IntegratorType, std::unique_ptr<ohkl::IPeakIntegrator>>;
+using IntegratorMap = std::map<IntegratorType, std::unique_ptr<ohkl::IIntegrator>>;
 
 class PeakCollection;
 class PeakFinder;
@@ -52,7 +52,7 @@ class IntegrationProvider {
     IntegrationProvider(std::shared_ptr<DataHandler> data_handler = nullptr);
 
     //! Get an integrator from the map
-    ohkl::IPeakIntegrator* pIntegrator(const IntegratorType integrator_type) const;
+    ohkl::IIntegrator* pIntegrator(const IntegratorType integrator_type) const;
     //! Return a pointer to the data handler
     DataHandler* getDataHandler();
     //! Set the found peak integrator

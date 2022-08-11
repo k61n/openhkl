@@ -16,7 +16,7 @@
 #define OHKL_GUI_SUBFRAME_INTEGRATE_SUBFRAMEINTEGRATE_H
 
 #include "core/data/DataSet.h"
-#include "core/shape/IPeakIntegrator.h"
+#include "core/integration/IIntegrator.h"
 #include "core/shape/PeakCollection.h"
 #include "core/shape/ShapeModel.h"
 #include "gui/items/PeakCollectionItem.h"

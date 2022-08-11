@@ -50,9 +50,9 @@ DataHandler* IntegrationProvider::getDataHandler()
     return _data_handler.get();
 }
 
-IPeakIntegrator* IntegrationProvider::pIntegrator(const IntegratorType integrator_type) const
+IIntegrator* IntegrationProvider::pIntegrator(const IntegratorType integrator_type) const
 {
-    std::map<IntegratorType, std::unique_ptr<IPeakIntegrator>>::const_iterator it;
+    std::map<IntegratorType, std::unique_ptr<IIntegrator>>::const_iterator it;
     for (it = _integrator_map.begin(); it != _integrator_map.end(); ++it) {
         if (it->first == integrator_type)
             return it->second.get();
@@ -66,7 +66,7 @@ void IntegrationProvider::integratePeaks(
     ohklLog(
         Level::Info,
         "IntegrationProvider::integratePeaks: integrating PeakCollection '" + peaks->name() + "'");
-    IPeakIntegrator* integrator = pIntegrator(integrator_type);
+    IIntegrator* integrator = pIntegrator(integrator_type);
     integrator->setNNumors(1);
     integrator->integrate(peaks->getPeakList(), peaks->shapeModel(), data, 1);
     peaks->setIntegrated(true);
@@ -87,7 +87,7 @@ void IntegrationProvider::integratePeaks(
         Level::Info,
         "IntegrationProvider::integratePeaks: integrating PeakCollection '" + peaks->name() + "'");
     params->log(Level::Info);
-    IPeakIntegrator* integrator = pIntegrator(_params->integrator_type);
+    IIntegrator* integrator = pIntegrator(_params->integrator_type);
     integrator->setParameters(*params);
     integrator->setNNumors(1);
     integrator->integrate(peaks->getPeakList(), shapes, data, 1);
@@ -106,7 +106,7 @@ void IntegrationProvider::integrateFoundPeaks(PeakFinder* peak_finder)
 {
     ohklLog(Level::Info, "IntegrationProvider::integrateFoundPeaks");
     const DataMap* data = _data_handler->getDataMap();
-    IPeakIntegrator* integrator = pIntegrator(IntegratorType::PixelSum);
+    IIntegrator* integrator = pIntegrator(IntegratorType::PixelSum);
     integrator->setNNumors(data->size());
 
     int n_numor = 1;

@@ -25,7 +25,7 @@
 #include "core/experiment/IntegrationProvider.h"
 #include "core/loader/RawDataReader.h"
 #include "core/raw/DataKeys.h"
-#include "core/shape/IPeakIntegrator.h"
+#include "core/integration/IIntegrator.h"
 #include "core/shape/PeakFilter.h"
 #include "core/shape/Predictor.h"
 #include "core/statistics/MergedData.h"

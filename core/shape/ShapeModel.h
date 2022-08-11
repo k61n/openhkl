@@ -17,7 +17,7 @@
 
 #include "base/utils/ProgressHandler.h"
 #include "core/data/DataTypes.h"
-#include "core/shape/IPeakIntegrator.h"
+#include "core/integration/IIntegrator.h"
 #include "core/shape/Profile1D.h"
 #include "core/shape/Profile3D.h"
 
