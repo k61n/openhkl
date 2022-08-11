@@ -45,7 +45,7 @@ foreach(comp ${QtComponents})
     install(FILES ${dll} DESTINATION bin)
 endforeach()
 
-set(QTDIR "C:/Qt/5.15.2/msvc2019_64")
+#set(QTDIR "C:/Qt/5.15.2/msvc2019_64")
 install(FILES ${QTDIR}/plugins/platforms/qwindows.dll DESTINATION bin/platforms)
 install(FILES ${QTDIR}/plugins/iconengines/qsvgicon.dll DESTINATION bin/iconengines)
 
