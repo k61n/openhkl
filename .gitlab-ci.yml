@@ -81,15 +81,17 @@ native_Debian_clang:
     - pwd && ls
     - mkdir build
     - cd build
-    - |-
-      if ($CI_PIPELINE_SOURCE -eq "scheduled"); then
+    - |
+      if test $CI_PIPELINE_SOURCE == "schedule"
+      then
         cmake .. -D CMAKE_CXX_COMPILER_LAUNCHER=ccache -D OHKL_FULL_WORKFLOW_TEST=ON
       else
         cmake .. -D CMAKE_CXX_COMPILER_LAUNCHER=ccache
       fi
     - make -j6
-    - |-
-      if ($CI_PIPELINE_SOURCE -eq "scheduled"); then
+    - |
+      if test $CI_PIPELINE_SOURCE == "schedule"
+      then
         ctest -j6 --output-on-failure -L "nightly"
       else
         ctest -j6 --output-on-failure -E "nightly"
