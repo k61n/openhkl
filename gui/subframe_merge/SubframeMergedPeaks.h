@@ -50,7 +50,7 @@ class SubframeMergedPeaks : public QWidget {
     //! Save unmerged/merged Peaks
     void savePeaks(std::string format, bool merged);
     //! Exports project into Mtz file
-    void exportMtz(bool merged_data);
+    bool exportMtz(bool merged_data);
     
 
  private:
