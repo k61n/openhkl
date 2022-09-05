@@ -25,10 +25,9 @@
 #include <functional> 
 
 namespace ohkl {
-
-MtzExporter::MtzExporter(ohkl::Experiment* expt, std::string dataset_name, bool use_merged_data, ohkl::MergedData* merged_data) : 
+MtzExporter::MtzExporter(ohkl::Experiment* expt, std::string dataset_name, std::string peakcollection_name, bool use_merged_data, std::string comment, ohkl::MergedData* merged_data) : 
 _use_merged_data(use_merged_data), _expt(expt), _ohkl_data(nullptr), _ohkl_uc(nullptr), _ohkl_merged_data(merged_data),
-_mtz_data (nullptr), _mtz_xtal(nullptr)
+_mtz_data (nullptr), _mtz_xtal(nullptr), _peakcollection_name(peakcollection_name), _comment(comment)
 {
     if (!_expt)
         throw std::runtime_error("E MtzExporter::MtzExporter : invalid project ptr ");
@@ -45,6 +44,8 @@ _mtz_data (nullptr), _mtz_xtal(nullptr)
     /* Retrieving data from Experiment */
     _ohkl_data = _expt->getData(dataset_name);
     _ohkl_uc = _expt->getUnitCells().at(0);
+
+    process();
 }
 
 MtzExporter::~MtzExporter()
@@ -439,6 +440,8 @@ void MtzExporter::buildMtzData()
     buildMNF();
     buildBatch();
     buildHistory();
+
+    MtzAddHistory(_mtz_data, (const char (*)[80])_comment.c_str(), 1);
 }
 
 void MtzExporter::buildHistory()
@@ -476,5 +479,17 @@ bool MtzExporter::exportToFile(std::string filename)
     }
 
     return true;
+}
+
+void  MtzExporter::process( )
+{
+    auto* merger = _expt->peakMerger();
+    merger->reset();
+
+    ohkl::SpaceGroup group = _ohkl_uc->spaceGroup();
+    merger->setSpaceGroup(group);
+    merger->addPeakCollection(_expt->getPeakCollection(_peakcollection_name));
+    merger->mergePeaks();
+    _ohkl_merged_data = merger->getMergedData();
 }
 } // ohkl namespace
