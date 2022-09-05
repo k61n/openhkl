@@ -270,7 +270,7 @@ class Experiment {
     std::string generateUnitCellName();
 
     //!Export this project as MTZ format
-    bool exportMtz(std::string filename, std::string dataset_name, bool use_merged_data, ohkl::MergedData* merged_data);
+    bool exportMtz(std::string filename, std::string dataset_name, std::string peak_collection, bool use_merged_data, std::string comment, ohkl::MergedData* merged_data);
 
  private: // private variables
     std::string _name; //!< The name of this experiment
