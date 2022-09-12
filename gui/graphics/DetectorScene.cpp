@@ -60,6 +60,7 @@
 #include <QPixmap>
 #include <QToolTip>
 #include <QtGlobal>
+#include <opencv2/core/types.hpp>
 
 QPointF DetectorScene::_current_beam_position = {0, 0};
 
@@ -87,6 +88,7 @@ DetectorScene::DetectorScene(QObject* parent)
     , _drawSinglePeakIntegrationRegion(false)
     , _drawDirectBeam(false)
     , _draw3rdParty(true)
+    , _drawFoundSpots(true)
     , _drawMasks(true)
     , _colormap(new ColorMap())
     , _integrationRegion1(nullptr)
@@ -98,6 +100,8 @@ DetectorScene::DetectorScene(QObject* parent)
     , _bkgPxColor2(QColor(0, 100, 0, 128)) // dark green, alpha = 0.5
     , _3rdparty_color(Qt::black)
     , _3rdparty_size(10)
+    , _spot_color(Qt::black)
+    , _spot_size(10)
     , _beam_color(Qt::black)
     , _old_beam_color(Qt::gray)
     , _beam_size(20)
@@ -106,6 +110,7 @@ DetectorScene::DetectorScene(QObject* parent)
     , _unit_cell(nullptr)
     , _peak(nullptr)
     , _peak_center_data(nullptr)
+    , _per_frame_spots(nullptr)
 {
 }
 
@@ -176,6 +181,12 @@ void DetectorScene::link3rdPartyPeaks(ohkl::PeakCenterDataSet* pcd)
     drawPeakitems();
 }
 
+void DetectorScene::linkPerFrameSpots(std::vector<std::vector<cv::KeyPoint>>* points)
+{
+    _per_frame_spots = points;
+    drawPeakitems();
+}
+
 void DetectorScene::linkDirectBeamPositions(std::vector<ohkl::DetectorEvent>* events)
 {
     _direct_beam_events = events;
@@ -229,6 +240,8 @@ void DetectorScene::drawPeakitems()
         drawPeakModelItems(_peak_model_2);
     if (_draw3rdParty)
         draw3rdPartyItems();
+    if (_drawFoundSpots)
+        drawSpotCenters();
     if (_drawDirectBeam)
         drawDirectBeamPositions();
     loadCurrentImage();
@@ -310,6 +323,28 @@ void DetectorScene::draw3rdPartyItems()
 
     for (const Eigen::Vector3d& vector : xfh->getPeakCenters()) {
         PeakCenterGraphic* center = new PeakCenterGraphic(vector);
+        center->setColor(_3rdparty_color);
+        center->setSize(_3rdparty_size);
+        _peak_center_items.emplace_back(center);
+    }
+
+    if (_peak_center_items.empty())
+        return;
+
+    for (auto peak : _peak_center_items)
+        addItem(peak);
+}
+
+void DetectorScene::drawSpotCenters()
+{
+    if (!_per_frame_spots)
+        return;
+
+    _peak_center_items.clear();
+
+    for (const cv::KeyPoint& point : (*_per_frame_spots)[_currentFrameIndex]) {
+        PeakCenterGraphic* center =
+            new PeakCenterGraphic({point.pt.x, point.pt.y, _currentFrameIndex});
         center->setColor(_3rdparty_color);
         center->setSize(_3rdparty_size);
         _peak_center_items.emplace_back(center);
@@ -1221,6 +1256,13 @@ void DetectorScene::setup3rdPartyPeaks(bool draw, const QColor& color, int size)
     _draw3rdParty = draw;
     _3rdparty_color = color;
     _3rdparty_size = size;
+}
+
+void DetectorScene::setupSpotCenters(bool draw, const QColor& color, int size)
+{
+    _drawFoundSpots = draw;
+    _spot_color = color;
+    _spot_size = size;
 }
 
 void DetectorScene::showDirectBeam(bool show)

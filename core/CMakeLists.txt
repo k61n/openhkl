@@ -21,4 +21,5 @@ target_link_libraries(${lib}
     ${FFTW_LIBRARIES}
     ${TIFF_LIBRARY}
     ${GSL_LIBRARIES}
+    ${OpenCV_LIBRARIES}
     )

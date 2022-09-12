@@ -15,12 +15,15 @@
 #include "gui/subframe_experiment/SubframeExperiment.h"
 
 #include "core/data/DataSet.h"
-#include "gui/models/Project.h"
+#include "core/data/DataTypes.h"
 #include "core/experiment/Experiment.h"
+#include "core/experiment/PeakFinder2D.h"
+#include "gui/graphics/DetectorScene.h"
+#include "gui/models/Project.h"
 #include "gui/models/Session.h"
-#include "gui/utility/Spoiler.h"
+#include "gui/utility/DataComboBox.h"
 #include "gui/utility/SafeSpinBox.h"
-#include "gui/widgets/PlotPanel.h"
+#include "gui/utility/Spoiler.h"
 #include "gui/widgets/DetectorWidget.h"
 #include "gui/widgets/PlotPanel.h"
 
@@ -38,13 +41,13 @@
 #include <QComboBox>
 #include <QLabel>
 #include <gsl/gsl_histogram.h>
-#include <qnamespace.h>
 #include <QPushButton>
 #include <QSlider>
 #include <QSpinBox>
 #include <QVector>
 #include <QWidget>
 #include <QScrollBar>
+#include <qpushbutton.h>
 #include <stdexcept>
 
 #include "gui/utility/Spoiler.h"
@@ -57,7 +60,7 @@ SubframeExperiment::SubframeExperiment()
 
     QWidget* left_widget = new QWidget();
     left_widget->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Expanding);
-    QVBoxLayout* left_layout = new QVBoxLayout;
+    _left_layout = new QVBoxLayout;
 
     intensity_plot_box = new Spoiler("Per-pixel detector count histogram");
     lineplot_box = new Spoiler("Lineplot");
@@ -75,9 +78,9 @@ SubframeExperiment::SubframeExperiment()
     _xZoom = gfiller.addCheckBox("Range on x axis", 1);
     _yZoom = gfiller.addCheckBox("Range on y axis", 1);
 
-    left_layout->addWidget(intensity_plot_box);
-    left_layout->addWidget(lineplot_box);
-    left_layout->addStretch();
+    _left_layout->addWidget(intensity_plot_box);
+    _left_layout->addWidget(lineplot_box);
+    _left_layout->addStretch();
 
     intensity_plot_box->setMaximumWidth(400);
     lineplot_box->setMaximumWidth(400);
@@ -108,7 +111,7 @@ SubframeExperiment::SubframeExperiment()
             "Zoom", "Selection box", "Rectangular mask", "Elliptical mask",
             "Line plot", "Horizontal slice", "Vertical slice", "Intensity Histograms"});
 
-    left_widget->setLayout(left_layout);
+    left_widget->setLayout(_left_layout);
     left_widget->setFixedWidth(400);
 
     QSplitter* right_splitter = new QSplitter();
@@ -164,7 +167,35 @@ SubframeExperiment::SubframeExperiment()
     connect(_update_plot, &QPushButton::clicked, this,
     &SubframeExperiment::refreshAll);
 
+    setPeakFinder2DUp();
     toggleUnsafeWidgets();
+}
+
+void SubframeExperiment::setPeakFinder2DUp()
+{
+    Spoiler* peak2D_spoiler = new Spoiler("Find blobs in this image");
+    GridFiller gfiller(peak2D_spoiler, true);
+
+    _data_combo = gfiller.addDataCombo("Data set");
+    _min_thresh = gfiller.addSpinBox("Minimum threshold");
+    _max_thresh = gfiller.addSpinBox("Maximum threshold");
+    _find_peaks_2d = gfiller.addButton("Find blobs in this image");
+
+    _min_thresh->setMaximum(256);
+    _max_thresh->setMaximum(256);
+
+    _min_thresh->setValue(1);
+    _max_thresh->setValue(100);
+
+    connect(
+        _data_combo, &QComboBox::currentTextChanged, this, &SubframeExperiment::toggleUnsafeWidgets);
+    connect(
+        _data_combo, QOverload<int>::of(&QComboBox::currentIndexChanged),
+        _detector_widget->dataCombo(), &QComboBox::setCurrentIndex);
+    connect(
+        _find_peaks_2d, &QPushButton::clicked, this, &SubframeExperiment::find_2d);
+
+    _left_layout->addWidget(peak2D_spoiler);
 }
 
 void SubframeExperiment::setLogarithmicScale()
@@ -252,7 +283,8 @@ void SubframeExperiment::plotIntensities()
     }
 
     if (histo->range == nullptr || histo->bin == nullptr)
-        throw std::runtime_error("SubframeExperiment::plotIntensities received invalid arrays for gsl_histogram");
+        throw std::runtime_error(
+            "SubframeExperiment::plotIntensities received invalid arrays for gsl_histogram");
 
     auto plot = getPlot();
     if (plot != nullptr)
@@ -264,7 +296,9 @@ void SubframeExperiment::refreshAll()
     if (!gSession->hasProject())
         return;
 
+    _data_combo->refresh();
     _detector_widget->refresh();
+    grabFinderParameters();
     toggleUnsafeWidgets();
 
     if (!gSession->currentProject()->hasDataSet())
@@ -315,4 +349,43 @@ void SubframeExperiment::toggleUnsafeWidgets()
     _maxX->setEnabled(_xZoom->isChecked() && _xZoom->isEnabled());
     _maxY->setEnabled(_yZoom->isChecked() && _yZoom->isEnabled());
     _update_plot->setEnabled(hasHistograms);
+}
+
+void SubframeExperiment::find_2d()
+{
+    ohkl::Experiment* expt = gSession->currentProject()->experiment();
+    ohkl::PeakFinder2D* finder = expt->peakFinder2D();
+    ohkl::sptrDataSet data = _data_combo->currentData();
+    int frame = _detector_widget->scene()->currentFrame();
+
+    finder->setData(data);
+    _detector_widget->scene()->linkPerFrameSpots(finder->keypoints());
+
+    setFinderParameters();
+
+    finder->find(frame);
+
+    _detector_widget->refresh();
+}
+
+void SubframeExperiment::grabFinderParameters()
+{
+    if (!gSession->hasProject())
+        return;
+
+    auto* params = gSession->currentProject()->experiment()->peakFinder2D()->parameters();
+
+    _min_thresh->setValue(params->minThreshold);
+    _max_thresh->setValue(params->maxThreshold);
+}
+
+void SubframeExperiment::setFinderParameters()
+{
+    if (!gSession->hasProject())
+        return;
+
+    auto* params = gSession->currentProject()->experiment()->peakFinder2D()->parameters();
+
+    params->minThreshold = _min_thresh->value();
+    params->maxThreshold = _max_thresh->value();
 }

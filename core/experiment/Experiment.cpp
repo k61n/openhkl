@@ -28,6 +28,7 @@
 #include "core/experiment/ExperimentExporter.h"
 #include "core/experiment/ExperimentImporter.h"
 #include "core/experiment/InstrumentStateHandler.h"
+#include "core/experiment/PeakFinder2D.h"
 #include "core/experiment/PeakHandler.h"
 #include "core/experiment/ShapeHandler.h"
 #include "core/experiment/UnitCellHandler.h"
@@ -67,6 +68,7 @@ Experiment::Experiment(const std::string& name, const std::string& diffractomete
     _cell_handler = std::make_unique<UnitCellHandler>();
 
     _peak_finder = std::make_unique<PeakFinder>();
+    _peak_finder_2d = std::make_unique<PeakFinder2D>();
     _peak_filter = std::make_unique<PeakFilter>();
     _auto_indexer = std::make_unique<AutoIndexer>();
     _predictor = std::make_unique<Predictor>();
