@@ -19,12 +19,16 @@
 #include "core/data/DataTypes.h"
 #include "core/experiment/Experiment.h"
 #include "core/experiment/PeakFinder2D.h"
+#include "core/peak/Qs2Events.h"
+#include "gui/MainWin.h" // gGui
+#include "gui/connect/Sentinel.h"
 #include "gui/graphics/DetectorScene.h"
 #include "gui/models/Project.h"
 #include "gui/models/Session.h"
 #include "gui/utility/DataComboBox.h"
 #include "gui/utility/SafeSpinBox.h"
 #include "gui/utility/Spoiler.h"
+#include "gui/utility/SpoilerCheck.h"
 #include "gui/widgets/DetectorWidget.h"
 #include "gui/widgets/PlotPanel.h"
 
@@ -55,6 +59,8 @@
 #include "gui/utility/GridFiller.h"
 
 SubframeExperiment::SubframeExperiment()
+    : QWidget()
+    , _show_direct_beam(true)
 {
     QHBoxLayout* layout = new QHBoxLayout(this);
     QSplitter* splitter = new QSplitter(this);
@@ -168,8 +174,87 @@ SubframeExperiment::SubframeExperiment()
     connect(_update_plot, &QPushButton::clicked, this,
     &SubframeExperiment::refreshAll);
 
+    setAdjustBeamUp();
     setPeakFinder2DUp();
+
+    connect(
+        _detector_widget->scene(), &DetectorScene::beamPosChanged, this,
+        &SubframeExperiment::onBeamPosChanged);
+    connect(
+        this, &SubframeExperiment::beamPosChanged, _detector_widget->scene(),
+        &DetectorScene::setBeamSetterPos);
+    connect(
+        this, &SubframeExperiment::crosshairChanged, _detector_widget->scene(),
+        &DetectorScene::onCrosshairChanged);
+    connect(
+        _data_combo, QOverload<int>::of(&QComboBox::currentIndexChanged),
+        _detector_widget->dataCombo(), &QComboBox::setCurrentIndex);
+    connect(
+        _detector_widget->dataCombo(), QOverload<int>::of(&QComboBox::currentIndexChanged),
+        _data_combo, &QComboBox::setCurrentIndex);
+
+    _set_initial_ki->setChecked(false);
     toggleUnsafeWidgets();
+}
+
+void SubframeExperiment::setAdjustBeamUp()
+{
+    _set_initial_ki = new SpoilerCheck("Set initial direct beam position");
+    GridFiller f(_set_initial_ki, true);
+
+    _beam_offset_x = f.addDoubleSpinBox("x offset", "Direct beam offset in x direction (pixels)");
+
+    _beam_offset_y = f.addDoubleSpinBox("y offset", "Direct beam offset in y direction (pixels)");
+
+    _crosshair_size = new QSlider(Qt::Horizontal);
+    QLabel* crosshair_label = new QLabel("Crosshair size");
+    crosshair_label->setToolTip("Radius of crosshair (pixels)");
+    crosshair_label->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
+    _crosshair_size->setMinimum(5);
+    _crosshair_size->setMaximum(200);
+    _crosshair_size->setValue(15);
+    f.addLabel("Crosshair size", "Radius of crosshair (pixels)");
+    f.addWidget(_crosshair_size, 1);
+
+    _crosshair_linewidth = f.addSpinBox("Crosshair linewidth", "Line width of crosshair");
+
+    _beam_offset_x->setValue(0.0);
+    _beam_offset_x->setMaximum(1000.0);
+    _beam_offset_x->setMinimum(-1000.0);
+    _beam_offset_x->setDecimals(4);
+    _beam_offset_y->setValue(0.0);
+    _beam_offset_y->setMaximum(1000.0);
+    _beam_offset_y->setMinimum(-1000.0);
+    _beam_offset_y->setDecimals(4);
+    _crosshair_linewidth->setValue(2);
+    _crosshair_linewidth->setMinimum(1);
+    _crosshair_linewidth->setMaximum(10);
+
+    connect(
+        _set_initial_ki->checkBox(), &QCheckBox::stateChanged, this,
+        &SubframeExperiment::refreshVisual);
+    connect(
+        _set_initial_ki->checkBox(), &QCheckBox::stateChanged, this,
+        &SubframeExperiment::toggleCursorMode);
+    connect(
+        _beam_offset_x,
+        static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged), this,
+        &SubframeExperiment::onBeamPosSpinChanged);
+    connect(
+        _beam_offset_y,
+        static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged), this,
+        &SubframeExperiment::onBeamPosSpinChanged);
+    connect(
+        _crosshair_size, static_cast<void (QSlider::*)(int)>(&QSlider::valueChanged), this,
+        &SubframeExperiment::changeCrosshair);
+    connect(
+        _crosshair_linewidth, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged), this,
+        &SubframeExperiment::changeCrosshair);
+
+    _detector_widget->scene()->linkDirectBeamPositions(&_direct_beam_events);
+    _detector_widget->scene()->linkOldDirectBeamPositions(&_old_direct_beam_events);
+
+    _left_layout->addWidget(_set_initial_ki);
 }
 
 void SubframeExperiment::setPeakFinder2DUp()
@@ -303,6 +388,18 @@ void SubframeExperiment::plotIntensities()
         plot->plotData(histo, QString("Pixels"), QString("Counts"), xmin, xmax, ymin, ymax);
 }
 
+void SubframeExperiment::refreshVisual()
+{
+    auto scene = _detector_widget->scene();
+
+    if (_set_initial_ki->isChecked()) {
+        scene->addBeamSetter(_crosshair_size->value(), _crosshair_linewidth->value());
+        changeCrosshair();
+    }
+    showDirectBeamEvents();
+    _detector_widget->refresh();
+}
+
 void SubframeExperiment::refreshAll()
 {
     if (!gSession->hasProject())
@@ -406,4 +503,67 @@ void SubframeExperiment::setFinderParameters()
     params->maxThreshold = _blob_max_thresh->value();
     params->threshold = _threshold->value();
     params->kernel = static_cast<ohkl::ConvolutionKernelType>(_convolver_combo->currentIndex());
+}
+
+void SubframeExperiment::onBeamPosChanged(QPointF pos)
+{
+    const QSignalBlocker blocker(this);
+    auto data = _detector_widget->currentData();
+    _beam_offset_x->setValue(pos.x() - (static_cast<double>(data->nCols()) / 2.0));
+    _beam_offset_y->setValue(-pos.y() + (static_cast<double>(data->nRows()) / 2.0));
+}
+
+void SubframeExperiment::onBeamPosSpinChanged()
+{
+    auto data = _detector_widget->currentData();
+    double x = _beam_offset_x->value() + static_cast<double>(data->nCols()) / 2.0;
+    double y = -_beam_offset_y->value() + static_cast<double>(data->nRows()) / 2.0;
+    emit beamPosChanged({x, y});
+}
+
+void SubframeExperiment::changeCrosshair()
+{
+    emit crosshairChanged(_crosshair_size->value(), _crosshair_linewidth->value());
+}
+
+void SubframeExperiment::toggleCursorMode()
+{
+    if (_set_initial_ki->isChecked()) {
+        _stored_cursor_mode = _detector_widget->scene()->mode();
+        _detector_widget->scene()->changeInteractionMode(7);
+    } else {
+        _detector_widget->scene()->changeInteractionMode(_stored_cursor_mode);
+    }
+}
+
+void SubframeExperiment::setInitialKi(ohkl::sptrDataSet data)
+{
+    const auto* detector = data->diffractometer()->detector();
+    const auto coords = _detector_widget->scene()->beamSetterCoords();
+
+    ohkl::DirectVector direct = detector->pixelPosition(coords.x(), coords.y());
+    for (ohkl::InstrumentState& state : data->instrumentStates())
+        state.adjustKi(direct);
+    emit gGui->sentinel->instrumentStatesChanged();
+}
+
+void SubframeExperiment::showDirectBeamEvents()
+{
+    if (!_show_direct_beam)
+        return;
+
+    _detector_widget->scene()->showDirectBeam(true);
+    auto data_name = _detector_widget->dataCombo()->currentText().toStdString();
+    if (data_name.empty()) {
+        return;
+    }
+    const auto data = _detector_widget->currentData();
+
+    _direct_beam_events.clear();
+    const auto& states = data->instrumentStates();
+    auto* detector = data->diffractometer()->detector();
+    std::vector<ohkl::DetectorEvent> events = ohkl::algo::getDirectBeamEvents(states, *detector);
+
+    for (auto&& event : events)
+        _direct_beam_events.push_back(event);
 }
