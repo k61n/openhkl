@@ -50,15 +50,15 @@ PeakFinder2D::PeakFinder2D()
 
 void PeakFinder2D::setData(sptrDataSet data)
 {
-    _current_data = data;
     if (data != _current_data) {
+        _current_data = data;
         for (auto vec : _per_frame_spots)
             vec.clear();
         _per_frame_spots.clear();
-    }
-    for (std::size_t i = 0; i < data->nFrames(); ++i) {
-        std::vector<cv::KeyPoint> keypoints;
-        _per_frame_spots.push_back(keypoints);
+        for (std::size_t i = 0; i < data->nFrames(); ++i) {
+            std::vector<cv::KeyPoint> keypoints;
+            _per_frame_spots.push_back(keypoints);
+        }
     }
 }
 

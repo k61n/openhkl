@@ -340,9 +340,16 @@ void DetectorScene::drawSpotCenters()
     if (!_per_frame_spots)
         return;
 
+    for (auto item : items())
+        if (dynamic_cast<PeakCenterGraphic*>(item) != nullptr)
+            removeItem(item);
+
     _peak_center_items.clear();
 
-    for (const cv::KeyPoint& point : (*_per_frame_spots)[_currentFrameIndex]) {
+    if (_per_frame_spots->at(_currentFrameIndex).empty())
+        return;
+
+    for (const cv::KeyPoint& point : _per_frame_spots->at(_currentFrameIndex)) {
         PeakCenterGraphic* center =
             new PeakCenterGraphic({point.pt.x, point.pt.y, _currentFrameIndex});
         center->setColor(_3rdparty_color);
