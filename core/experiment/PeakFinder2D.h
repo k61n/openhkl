@@ -35,6 +35,11 @@ class ProgressHandler;
  *  PLACEHOLDER
  */
 
+struct PeakFinder2DParameters : public cv::SimpleBlobDetector::Params {
+    ConvolutionKernelType kernel = ConvolutionKernelType::Annular; //!< Convolution kernel type
+    int threshold = 80; //!< Threshold for image thresholding (post-filter)
+};
+
 class PeakFinder2D {
  public:
     PeakFinder2D();
@@ -48,10 +53,15 @@ class PeakFinder2D {
     sptrDataSet currentData() const { return _current_data; };
 
     //! Get the parameters
-    cv::SimpleBlobDetector::Params* parameters() { return &_params; };
+   PeakFinder2DParameters* parameters() { return &_params; };
 
     //! Get the vector of vectors of keypoints
     std::vector<std::vector<cv::KeyPoint>>* keypoints() { return &_per_frame_spots; };
+
+    //! Set the convolver
+    void setConvolver(const ConvolutionKernelType& kernel);
+    //! Get the convolver
+    Convolver* convolver() const { return _convolver.get(); };
 
     //! Set the progress handler
     void setHandler(const sptrProgressHandler& handler) { _handler = handler; };
@@ -67,7 +77,7 @@ class PeakFinder2D {
     std::unique_ptr<Convolver> _convolver;
 
     //! Blob detection parameters
-    cv::SimpleBlobDetector::Params _params;
+    PeakFinder2DParameters _params;
 
     //! Vector of keypoints per frame
     std::vector<std::vector<cv::KeyPoint>> _per_frame_spots;

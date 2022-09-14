@@ -17,6 +17,7 @@
 
 #include "core/data/DataTypes.h"
 #include "gui/utility/SafeSpinBox.h"
+#include "core/convolve/Convolver.h"
 
 #include <QWidget>
 
@@ -26,6 +27,7 @@ class PlotPanel;
 class PropertyPanel;
 class QPushButton;
 class QCheckBox;
+class QComboBox;
 class QVBoxLayout;
 class Spoiler;
 
@@ -76,12 +78,16 @@ class SubframeExperiment : public QWidget {
     QSpinBox* _maxY;
 
     DataComboBox* _data_combo;
+    QComboBox* _convolver_combo;
     QPushButton* _find_peaks_2d;
-    SafeSpinBox* _min_thresh;
-    SafeSpinBox* _max_thresh;
+    SafeSpinBox* _threshold;
+    SafeSpinBox* _blob_min_thresh;
+    SafeSpinBox* _blob_max_thresh;
 
     Spoiler* lineplot_box;
     Spoiler* intensity_plot_box;
+
+    static const std::map<ohkl::ConvolutionKernelType, std::string> _kernel_types;
 };
 
 #endif // OHKL_GUI_SUBFRAME_EXPERIMENT_SUBFRAMEEXPERIMENT_H

@@ -95,9 +95,9 @@ class RawDataReader : public IDataReader {
     //! @param delta_chi per-frame change in chi axis of sample goniometer
     //! @param delta_omega per-frame change in omega axis of sample goniometer
     //! @param delta_phi per-frame change in phi axis of sample goniometer
-    //! @param rowMajor determines if data is stored in row-major format (column
-    //! major otherwise) @param swapEndian determines whether to swap the
-    //! endianness of the input data @param bpp is the number of bytes per pixel
+    //! @param rowMajor determines if data is stored in row-major format (column //! major otherwise)
+    //! @param swapEndian determines whether to swap the endianness of the input data
+    //! @param bpp number of bytes per pixel
     RawDataReader();
 
     ~RawDataReader() = default;

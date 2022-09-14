@@ -200,6 +200,12 @@ double DataSet::wavelength() const
     return _metadata.key<double>(ohkl::at_wavelength);
 }
 
+BitDepth DataSet::bitDepth() const
+{
+    int bd = _metadata.key<int>(ohkl::at_bitDepth);
+    return static_cast<BitDepth>(bd);
+}
+
 void DataSet::addMask(IMask* mask)
 {
     _masks.insert(mask);

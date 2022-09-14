@@ -14,6 +14,7 @@
 
 #include "gui/subframe_experiment/SubframeExperiment.h"
 
+#include "core/convolve/Convolver.h"
 #include "core/data/DataSet.h"
 #include "core/data/DataTypes.h"
 #include "core/experiment/Experiment.h"
@@ -177,15 +178,26 @@ void SubframeExperiment::setPeakFinder2DUp()
     GridFiller gfiller(peak2D_spoiler, true);
 
     _data_combo = gfiller.addDataCombo("Data set");
-    _min_thresh = gfiller.addSpinBox("Minimum threshold");
-    _max_thresh = gfiller.addSpinBox("Maximum threshold");
-    _find_peaks_2d = gfiller.addButton("Find blobs in this image");
+    _convolver_combo = gfiller.addCombo(
+        "Convolution kernel", "Convolver kernel type to use in image filtering");
+    _threshold = gfiller.addSpinBox(
+        "Filtered image threshold", "Minimum counts to use in image thresholding");
+    _blob_min_thresh = gfiller.addSpinBox(
+        "Minimum blob threshold", "Minimum threshold for blob detection");
+    _blob_max_thresh = gfiller.addSpinBox(
+        "Maximum blob threshold", "Maximum threshold for blob detection");
+    _find_peaks_2d = gfiller.addButton("Find spots", "Find detector spots in current image");
 
-    _min_thresh->setMaximum(256);
-    _max_thresh->setMaximum(256);
+    auto kernel_types = ohkl::Convolver::kernelTypes;
+    for (auto it = kernel_types.begin(); it != kernel_types.end(); ++it)
+        _convolver_combo->addItem(QString::fromStdString(it->second));
+    _convolver_combo->setCurrentIndex(1);
 
-    _min_thresh->setValue(1);
-    _max_thresh->setValue(100);
+    _blob_min_thresh->setMaximum(256);
+    _blob_max_thresh->setMaximum(256);
+
+    _blob_min_thresh->setValue(1);
+    _blob_max_thresh->setValue(100);
 
     connect(
         _data_combo, &QComboBox::currentTextChanged, this, &SubframeExperiment::toggleUnsafeWidgets);
@@ -373,10 +385,13 @@ void SubframeExperiment::grabFinderParameters()
     if (!gSession->hasProject())
         return;
 
-    auto* params = gSession->currentProject()->experiment()->peakFinder2D()->parameters();
+    auto* finder = gSession->currentProject()->experiment()->peakFinder2D();
+    auto* params = finder->parameters();
 
-    _min_thresh->setValue(params->minThreshold);
-    _max_thresh->setValue(params->maxThreshold);
+    _blob_min_thresh->setValue(params->minThreshold);
+    _blob_max_thresh->setValue(params->maxThreshold);
+    _threshold->setValue(params->threshold);
+    _convolver_combo->setCurrentIndex(static_cast<int>(params->kernel));
 }
 
 void SubframeExperiment::setFinderParameters()
@@ -384,8 +399,11 @@ void SubframeExperiment::setFinderParameters()
     if (!gSession->hasProject())
         return;
 
-    auto* params = gSession->currentProject()->experiment()->peakFinder2D()->parameters();
+    auto* finder = gSession->currentProject()->experiment()->peakFinder2D();
+    auto* params = finder->parameters();
 
-    params->minThreshold = _min_thresh->value();
-    params->maxThreshold = _max_thresh->value();
+    params->minThreshold = _blob_min_thresh->value();
+    params->maxThreshold = _blob_max_thresh->value();
+    params->threshold = _threshold->value();
+    params->kernel = static_cast<ohkl::ConvolutionKernelType>(_convolver_combo->currentIndex());
 }
