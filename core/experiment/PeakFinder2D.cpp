@@ -119,6 +119,8 @@ std::vector<Peak3D*> PeakFinder2D::getPeakList(std::size_t frame_index)
         _found_peaks.emplace_back(peak);
         peaks.push_back(peak.get());
     }
+    std::map<Peak3D*, ohkl::RejectionFlag> tmp_map;
+    _current_data->maskPeaks(peaks, tmp_map);
     return peaks;
 }
 
