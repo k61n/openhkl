@@ -14,6 +14,7 @@
 
 #include "gui/subframe_experiment/SubframeExperiment.h"
 
+#include "core/algo/AutoIndexer.h"
 #include "core/convolve/Convolver.h"
 #include "core/data/DataSet.h"
 #include "core/data/DataTypes.h"
@@ -52,7 +53,6 @@
 #include <QVector>
 #include <QWidget>
 #include <QScrollBar>
-#include <qpushbutton.h>
 #include <stdexcept>
 
 #include "gui/utility/Spoiler.h"
@@ -176,6 +176,7 @@ SubframeExperiment::SubframeExperiment()
 
     setAdjustBeamUp();
     setPeakFinder2DUp();
+    setIndexerUp();
 
     connect(
         _detector_widget->scene(), &DetectorScene::beamPosChanged, this,
@@ -293,6 +294,17 @@ void SubframeExperiment::setPeakFinder2DUp()
         _find_peaks_2d, &QPushButton::clicked, this, &SubframeExperiment::find_2d);
 
     _left_layout->addWidget(peak2D_spoiler);
+}
+
+void SubframeExperiment::setIndexerUp()
+{
+    Spoiler* index_spoiler = new Spoiler("Autoindex using spots in this image");
+    GridFiller gfiller(index_spoiler, true);
+    _index_button = gfiller.addButton("Autoindex", "Attempt to find a unit cell using spots in this image");
+
+    connect(_index_button, &QPushButton::clicked, this, &SubframeExperiment::autoindex);
+
+    _left_layout->addWidget(index_spoiler);
 }
 
 void SubframeExperiment::setLogarithmicScale()
@@ -475,6 +487,19 @@ void SubframeExperiment::find_2d()
     finder->find(frame);
 
     _detector_widget->refresh();
+}
+
+void SubframeExperiment::autoindex()
+{
+    ohkl::Experiment* expt = gSession->currentProject()->experiment();
+    ohkl::PeakFinder2D* finder = expt->peakFinder2D();
+    ohkl::AutoIndexer* indexer = expt->autoIndexer();
+
+    std::size_t current_frame = _detector_widget->scene()->currentFrame();
+    std::vector<ohkl::Peak3D*> peaks = finder->getPeakList(current_frame);
+
+    indexer->autoIndex(peaks);
+    std::cout << indexer->solutionsToString() << std::endl;
 }
 
 void SubframeExperiment::grabFinderParameters()

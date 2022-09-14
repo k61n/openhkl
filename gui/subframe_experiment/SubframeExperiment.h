@@ -42,6 +42,7 @@ class SubframeExperiment : public QWidget {
 
     void setAdjustBeamUp();
     void setPeakFinder2DUp();
+    void setIndexerUp();
 
     DetectorWidget* detectorWidget();
 
@@ -52,6 +53,7 @@ class SubframeExperiment : public QWidget {
     PropertyPanel* getProperty() { return _properties; };
 
     void find_2d();
+    void autoindex();
     void plotIntensities();
     void toggleUnsafeWidgets();
     void updateRanges();
@@ -113,6 +115,8 @@ class SubframeExperiment : public QWidget {
     SafeSpinBox* _threshold;
     SafeSpinBox* _blob_min_thresh;
     SafeSpinBox* _blob_max_thresh;
+
+    QPushButton* _index_button;
 
     Spoiler* lineplot_box;
     Spoiler* intensity_plot_box;

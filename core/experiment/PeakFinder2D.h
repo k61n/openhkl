@@ -63,14 +63,12 @@ class PeakFinder2D {
     //! Get the convolver
     Convolver* convolver() const { return _convolver.get(); };
 
-    //! Set the progress handler
-    void setHandler(const sptrProgressHandler& handler) { _handler = handler; };
+    //! Generate a list of peaks from found blobs
+    std::vector<Peak3D*> getPeakList(std::size_t frame_index);
 
  private:
 
  private:
-    sptrProgressHandler _handler;
-
     //! The DataSet
     sptrDataSet _current_data;
     //! Convolver for image filtering
@@ -81,6 +79,9 @@ class PeakFinder2D {
 
     //! Vector of keypoints per frame
     std::vector<std::vector<cv::KeyPoint>> _per_frame_spots;
+
+    //! temporary list of peaks for indexing
+    PeakList _found_peaks;
 };
 
 /*! @}*/

@@ -17,6 +17,7 @@
 #include "core/convolve/Convolver.h"
 #include "core/convolve/ConvolverFactory.h"
 #include "core/data/DataTypes.h"
+#include "core/peak/Peak3D.h"
 
 #include <Eigen/src/Core/Matrix.h>
 #include <opencv2/opencv.hpp>
@@ -105,6 +106,20 @@ void PeakFinder2D::find(std::size_t frame_idx)
     _per_frame_spots[frame_idx].clear();
     cv::Ptr<cv::SimpleBlobDetector> detector = cv::SimpleBlobDetector::create(_params);
     detector->detect(cv_frame_8u, _per_frame_spots[frame_idx]);
+}
+
+std::vector<Peak3D*> PeakFinder2D::getPeakList(std::size_t frame_index)
+{
+    _found_peaks.clear();
+    std::vector<Peak3D*> peaks;
+    for (auto keypoint : _per_frame_spots.at(frame_index)) {
+        Eigen::Vector3d center = {keypoint.pt.x, keypoint.pt.y, (double)frame_index};
+        sptrPeak3D peak = std::make_shared<Peak3D>(_current_data);
+        peak->setShape(Ellipsoid(center, 1.0));
+        _found_peaks.emplace_back(peak);
+        peaks.push_back(peak.get());
+    }
+    return peaks;
 }
 
 } // namespace ohkl
