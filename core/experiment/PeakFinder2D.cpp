@@ -13,8 +13,12 @@
 //  ***********************************************************************************************
 
 #include "core/experiment/PeakFinder2D.h"
+
+#include "core/convolve/ConvolverFactory.h"
 #include "core/data/DataTypes.h"
 
+#include <Eigen/src/Core/Matrix.h>
+#include <opencv2/opencv.hpp>
 #include <opencv2/core/cvstd_wrapper.hpp>
 #include <opencv2/core/eigen.hpp>
 #include <opencv2/core/hal/interface.h>
@@ -36,6 +40,8 @@ PeakFinder2D::PeakFinder2D()
     _params.filterByInertia = false;
     _params.filterByArea = false;
     _params.filterByColor = false;
+
+    _convolver.reset(ConvolverFactory{}.create("annular", {{"r1", 5.}, {"r2", 10.}, {"r3", 15.}}));
 }
 
 void PeakFinder2D::setData(sptrDataSet data)
@@ -54,13 +60,15 @@ void PeakFinder2D::setData(sptrDataSet data)
 
 void PeakFinder2D::find(std::size_t frame_idx)
 {
-    Eigen::MatrixXi frame = _current_data->frame(frame_idx);
-    cv::Mat cv_frame, cv_frame_8u;
-    cv::eigen2cv(frame, cv_frame);
+    RealMatrix frame = _current_data->frame(frame_idx).cast<double>();
+    RealMatrix filtered_frame = _convolver->convolve(frame);
 
+    cv::Mat cv_frame, cv_frame_thresholded, cv_frame_8u;
+    cv::eigen2cv(filtered_frame, cv_frame);
+    cv::threshold(cv_frame, cv_frame_thresholded, 80, 65535, cv::THRESH_BINARY_INV);
     // SimpleBlobDetector only accepts 8 bit unsigned images
     double scale = 1.0 / 256.0;
-    cv_frame.convertTo(cv_frame_8u, CV_8U, scale);
+    cv_frame_thresholded.convertTo(cv_frame_8u, CV_8U, scale);
 
     _per_frame_spots[frame_idx].clear();
     cv::Ptr<cv::SimpleBlobDetector> detector = cv::SimpleBlobDetector::create(_params);

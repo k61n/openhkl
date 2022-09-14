@@ -15,6 +15,7 @@
 #ifndef OHKL_CORE_EXPERIMENT_PEAKFINDER2D_H
 #define OHKL_CORE_EXPERIMENT_PEAKFINDER2D_H
 
+#include "core/convolve/Convolver.h"
 #include "core/data/DataSet.h"
 #include "core/data/DataTypes.h"
 #include "core/shape/PeakCollection.h"
@@ -62,6 +63,8 @@ class PeakFinder2D {
 
     //! The DataSet
     sptrDataSet _current_data;
+    //! Convolver for image filtering
+    std::unique_ptr<Convolver> _convolver;
 
     //! Blob detection parameters
     cv::SimpleBlobDetector::Params _params;
