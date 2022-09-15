@@ -58,7 +58,7 @@ mac12_2:
     - export PYLIB=$PYDIR/lib/libpython3.9.dylib
     - export PYINC=$PYDIR/include/python3.9
     - export TESTDATADIR=$HOME/testdata
-    - cmake .. -D CMAKE_PREFIX_PATH=$QTDIR -D CMAKE_CXX_COMPILER_LAUNCHER=ccache -D PYTHON_INCLUDE_DIR=$PYINC -D PYTHON_LIBRARY=$PYLIB -D OHKL_TESTDATA_DIR=$TESTDATADIR
+    - cmake .. -D CMAKE_PREFIX_PATH=$QTDIR -D CMAKE_CXX_COMPILER_LAUNCHER=ccache -D PYTHON_INCLUDE_DIR=$PYINC -D PYTHON_LIBRARY=$PYLIB -D OHKL_TESTDATA_DIR=$TESTDATADIR -D OpenCV_DIR=/opt/homebrew/Cellar/opencv/4.6.0/lib/cmake/opencv4/
     - make -j12
     - ctest -j12 --output-on-failure
     # - cpack -V
