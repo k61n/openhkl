@@ -43,6 +43,10 @@ class SubframeExperiment : public QWidget {
  public:
     SubframeExperiment();
 
+    void setLeftWidgetUp();
+    void setStrategyUp();
+    void setHistogramUp();
+    void setMaskUp();
     void setAdjustBeamUp();
     void setPeakFinder2DUp();
     void setIndexerUp();
@@ -68,6 +72,9 @@ class SubframeExperiment : public QWidget {
     void grabFinderParameters();
     void setFinderParameters();
 
+    void grabIndexerParameters();
+    void setIndexerParameters();
+
     //! Transmit crosshair changes to DetectorScene
     void changeCrosshair();
     //! Toggle cursor mode
@@ -83,6 +90,8 @@ class SubframeExperiment : public QWidget {
     void selectSolutionHeader(int index);
     //! Select a solution
     void selectSolutionTable();
+    //! Save a unit cell to the experiment
+    void saveCell();
 
  public slots:
     void onBeamPosChanged(QPointF pos);
@@ -94,9 +103,13 @@ class SubframeExperiment : public QWidget {
 
  private:
     QTabWidget* _tab_widget;
+    QTabWidget* _left_widget;
     DetectorWidget* _detector_widget;
     PlotPanel* _plot;
     PropertyPanel* _properties;
+    QVBoxLayout* _strategy_layout;
+    QVBoxLayout* _histogram_layout;
+    QVBoxLayout* _mask_layout;
 
     QVBoxLayout* _left_layout;
 
@@ -127,12 +140,23 @@ class SubframeExperiment : public QWidget {
     SafeSpinBox* _blob_min_thresh;
     SafeSpinBox* _blob_max_thresh;
 
+    SafeDoubleSpinBox* _gruber;
+    SafeDoubleSpinBox* _niggli;
+    SafeDoubleSpinBox* _max_cell_dimension;
+    SafeDoubleSpinBox* _min_cell_volume;
+    SafeDoubleSpinBox* _indexing_tolerance;
+    SafeDoubleSpinBox* _frequency_tolerance;
+    SafeSpinBox* _number_vertices;
+    SafeSpinBox* _number_solutions;
+    SafeSpinBox* _number_subdivisions;
+    QCheckBox* _only_niggli;
     QPushButton* _index_button;
+    QPushButton* _save_button;
 
     UnitCellTableView* _solution_table;
 
-    Spoiler* lineplot_box;
-    Spoiler* intensity_plot_box;
+    Spoiler* _lineplot_box;
+    Spoiler* _intensity_plot_box;
 
     bool _show_direct_beam;
     int _stored_cursor_mode;

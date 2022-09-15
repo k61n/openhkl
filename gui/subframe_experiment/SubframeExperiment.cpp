@@ -23,11 +23,14 @@
 #include "core/peak/Qs2Events.h"
 #include "gui/MainWin.h" // gGui
 #include "gui/connect/Sentinel.h"
+#include "gui/dialogs/UnitCellDialog.h"
 #include "gui/graphics/DetectorScene.h"
 #include "gui/models/Project.h"
 #include "gui/models/Session.h"
 #include "gui/utility/DataComboBox.h"
+#include "gui/utility/PropertyScrollArea.h"
 #include "gui/utility/SafeSpinBox.h"
+#include "gui/utility/SideBar.h"
 #include "gui/utility/Spoiler.h"
 #include "gui/utility/SpoilerCheck.h"
 #include "gui/views/UnitCellTableView.h"
@@ -64,65 +67,12 @@ SubframeExperiment::SubframeExperiment()
     QHBoxLayout* layout = new QHBoxLayout(this);
     QSplitter* splitter = new QSplitter(this);
 
-    QWidget* left_widget = new QWidget();
-    left_widget->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Expanding);
-    _left_layout = new QVBoxLayout;
-
-    intensity_plot_box = new Spoiler("Per-pixel detector count histogram");
-    lineplot_box = new Spoiler("Lineplot");
-
-    GridFiller gfiller(intensity_plot_box, true);
-    GridFiller gfiller2(lineplot_box, true);
-
-    _npoints_intensity = gfiller.addSpinBox(QString("Number of datapoints:"));
-    _npoints_lineplot = gfiller2.addSpinBox(QString("Number of datapoints:"));
-
-    _calc_intensity = gfiller.addButton("Calculate intensity");
-
-    _totalHistogram = gfiller.addCheckBox("Show total histogram", 1);
-    _yLog = gfiller.addCheckBox("Use logarithmic y scale", 1);
-    _xZoom = gfiller.addCheckBox("Range on x axis", 1);
-    _yZoom = gfiller.addCheckBox("Range on y axis", 1);
-
-    _left_layout->addWidget(intensity_plot_box);
-    _left_layout->addWidget(lineplot_box);
-    _left_layout->addStretch();
-
-    intensity_plot_box->setMaximumWidth(400);
-    lineplot_box->setMaximumWidth(400);
-
-    _npoints_intensity->setMaximumWidth(100);
-    _npoints_intensity->setMaximum(65535);
-    _npoints_intensity->setMinimum(100);
-    _npoints_intensity->setValue(100);
-
-    _npoints_lineplot->setMaximum(1000);
-    _npoints_lineplot->setMinimum(10);
-    _npoints_lineplot->setMaximumWidth(250);
-    _npoints_lineplot->setValue(10);
-
-    _minX = gfiller.addSpinBox("Minimal x value:");
-    _maxX = gfiller.addSpinBox("Maximum x value:");
-    _minY = gfiller.addSpinBox("Minimal y value:");
-    _maxY = gfiller.addSpinBox("Maximal y value:");
-
-    _update_plot = gfiller.addButton("Update plot");
-
-    QGroupBox* figure_group = new QGroupBox("Detector image");
-    figure_group->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-    _detector_widget = new DetectorWidget(true, false, true, figure_group);
-    _detector_widget->modeCombo()->addItems(QStringList{
-            "Zoom", "Selection box", "Rectangular mask", "Elliptical mask",
-            "Line plot", "Horizontal slice", "Vertical slice", "Intensity Histograms"});
-
-    left_widget->setLayout(_left_layout);
-    left_widget->setFixedWidth(400);
-
     _tab_widget = new QTabWidget(this);
     QWidget* plot_tab = new QWidget(_tab_widget);
     QWidget* indexer_tab = new QWidget(_tab_widget);
     _tab_widget->addTab(plot_tab, "Plot");
     _tab_widget->addTab(indexer_tab, "Indexer solutions");
+    _tab_widget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Minimum);
 
     QHBoxLayout* plot_layout = new QHBoxLayout();
     QHBoxLayout* indexer_layout = new QHBoxLayout();
@@ -136,13 +86,12 @@ SubframeExperiment::SubframeExperiment()
     indexer_tab->setLayout(indexer_layout);
     _solution_table->setModel(nullptr);
 
-    connect(
-        _solution_table->verticalHeader(), &QHeaderView::sectionClicked, this,
-        &SubframeExperiment::selectSolutionHeader);
-
-    connect(
-        _solution_table, &UnitCellTableView::clicked, this,
-        &SubframeExperiment::selectSolutionTable);
+    QGroupBox* figure_group = new QGroupBox("Detector image");
+    figure_group->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    _detector_widget = new DetectorWidget(true, false, true, figure_group);
+    _detector_widget->modeCombo()->addItems(QStringList{
+        "Zoom", "Selection box", "Rectangular mask", "Elliptical mask", "Line plot",
+        "Horizontal slice", "Vertical slice", "Intensity Histograms"});
 
     QSplitter* right_splitter = new QSplitter();
     right_splitter->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
@@ -151,44 +100,28 @@ SubframeExperiment::SubframeExperiment()
     right_splitter->addWidget(figure_group);
     right_splitter->addWidget(_tab_widget);
 
-    splitter->addWidget(left_widget);
+    setLeftWidgetUp();
+    setStrategyUp();
+    setHistogramUp();
+    setMaskUp();
+
+    splitter->addWidget(_left_widget);
     splitter->addWidget(right_splitter);
-    splitter->setStretchFactor(0, 1);
-    splitter->setStretchFactor(1, 4);
     splitter->setChildrenCollapsible(false);
 
     layout->addWidget(splitter);
 
-    lineplot_box->setVisible(false);
-    intensity_plot_box->setVisible(false);
+    connect(
+        _solution_table->verticalHeader(), &QHeaderView::sectionClicked, this,
+        &SubframeExperiment::selectSolutionHeader);
 
     connect(
-        _detector_widget->modeCombo(), QOverload<int>::of(&QComboBox::currentIndexChanged),
-        this,
-            [=](){
-                lineplot_box->setVisible(_detector_widget->modeCombo()->currentIndex() == 4);
-                intensity_plot_box->setVisible(_detector_widget->modeCombo()->currentIndex() == 7);
-            }
-    );
+        _solution_table, &UnitCellTableView::clicked, this,
+        &SubframeExperiment::selectSolutionTable);
 
     connect(
         _detector_widget->dataCombo(), QOverload<int>::of(&QComboBox::currentIndexChanged),
         this,
-        &SubframeExperiment::calculateIntensities);
-
-    connect(_totalHistogram, &QCheckBox::clicked, this,
-        &SubframeExperiment::refreshAll);
-
-    connect(_xZoom, &QCheckBox::clicked, this,
-        &SubframeExperiment::refreshAll);
-
-    connect(_yZoom, &QCheckBox::clicked, this,
-        &SubframeExperiment::refreshAll);
-
-    connect(_yLog, &QCheckBox::clicked, this,
-        &SubframeExperiment::setLogarithmicScale);
-
-    connect(_calc_intensity, &QPushButton::clicked, this,
         &SubframeExperiment::calculateIntensities);
 
     connect(_detector_widget->scroll(), &QScrollBar::valueChanged,
@@ -197,9 +130,6 @@ SubframeExperiment::SubframeExperiment()
     connect(_update_plot, &QPushButton::clicked, this,
     &SubframeExperiment::refreshAll);
 
-    setAdjustBeamUp();
-    setPeakFinder2DUp();
-    setIndexerUp();
 
     connect(
         _detector_widget->scene(), &DetectorScene::beamPosChanged, this,
@@ -219,6 +149,30 @@ SubframeExperiment::SubframeExperiment()
 
     _set_initial_ki->setChecked(false);
     toggleUnsafeWidgets();
+}
+
+void SubframeExperiment::setLeftWidgetUp()
+{
+    _left_widget = new QTabWidget(this);
+    _left_widget->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Expanding);
+
+    QWidget* strategy_tab = new QWidget(_left_widget);
+    QWidget* histogram_tab = new QWidget(_left_widget);
+    QWidget* mask_tab = new QWidget(_left_widget);
+
+    _strategy_layout = new QVBoxLayout();
+    _histogram_layout = new QVBoxLayout();
+    _mask_layout = new QVBoxLayout();
+
+    strategy_tab->setLayout(_strategy_layout);
+    histogram_tab->setLayout(_histogram_layout);
+    mask_tab->setLayout(_mask_layout);
+
+    _left_widget->addTab(strategy_tab, "Strategy");
+    _left_widget->addTab(histogram_tab, "Histograms");
+    _left_widget->addTab(mask_tab, "Masks");
+
+    _left_widget->setFixedWidth(400);
 }
 
 void SubframeExperiment::setAdjustBeamUp()
@@ -278,8 +232,74 @@ void SubframeExperiment::setAdjustBeamUp()
     _detector_widget->scene()->linkDirectBeamPositions(&_direct_beam_events);
     _detector_widget->scene()->linkOldDirectBeamPositions(&_old_direct_beam_events);
 
-    _left_layout->addWidget(_set_initial_ki);
+    _strategy_layout->addWidget(_set_initial_ki);
 }
+
+void SubframeExperiment::setStrategyUp()
+{
+    setAdjustBeamUp();
+    setPeakFinder2DUp();
+    setIndexerUp();
+    _strategy_layout->addStretch();
+}
+
+void SubframeExperiment::setHistogramUp()
+{
+
+    _intensity_plot_box = new Spoiler("Per-pixel detector count histogram");
+    _lineplot_box = new Spoiler("Lineplot");
+
+    GridFiller gfiller(_intensity_plot_box, true);
+    GridFiller gfiller2(_lineplot_box, true);
+
+    _npoints_intensity = gfiller.addSpinBox(QString("Number of datapoints:"));
+    _npoints_lineplot = gfiller2.addSpinBox(QString("Number of datapoints:"));
+
+    _calc_intensity = gfiller.addButton("Calculate intensity");
+
+    _totalHistogram = gfiller.addCheckBox("Show total histogram", 1);
+    _yLog = gfiller.addCheckBox("Use logarithmic y scale", 1);
+    _xZoom = gfiller.addCheckBox("Range on x axis", 1);
+    _yZoom = gfiller.addCheckBox("Range on y axis", 1);
+
+    _histogram_layout->addWidget(_intensity_plot_box);
+    _histogram_layout->addWidget(_lineplot_box);
+
+    _intensity_plot_box->setMaximumWidth(400);
+    _lineplot_box->setMaximumWidth(400);
+
+    _npoints_intensity->setMaximumWidth(100);
+    _npoints_intensity->setMaximum(65535);
+    _npoints_intensity->setMinimum(100);
+    _npoints_intensity->setValue(100);
+
+    _npoints_lineplot->setMaximum(1000);
+    _npoints_lineplot->setMinimum(10);
+    _npoints_lineplot->setMaximumWidth(250);
+    _npoints_lineplot->setValue(10);
+
+    _minX = gfiller.addSpinBox("Minimum x value:");
+    _maxX = gfiller.addSpinBox("Maximum x value:");
+    _minY = gfiller.addSpinBox("Minimum y value:");
+    _maxY = gfiller.addSpinBox("Maximum y value:");
+
+    _histogram_layout->addStretch();
+
+    _update_plot = gfiller.addButton("Update plot");
+
+    connect(_totalHistogram, &QCheckBox::clicked, this, &SubframeExperiment::refreshAll);
+
+    connect(_xZoom, &QCheckBox::clicked, this, &SubframeExperiment::refreshAll);
+
+    connect(_yZoom, &QCheckBox::clicked, this, &SubframeExperiment::refreshAll);
+
+    connect(_yLog, &QCheckBox::clicked, this, &SubframeExperiment::setLogarithmicScale);
+
+    connect(
+        _calc_intensity, &QPushButton::clicked, this, &SubframeExperiment::calculateIntensities);
+}
+
+void SubframeExperiment::setMaskUp() { }
 
 void SubframeExperiment::setPeakFinder2DUp()
 {
@@ -316,18 +336,76 @@ void SubframeExperiment::setPeakFinder2DUp()
     connect(
         _find_peaks_2d, &QPushButton::clicked, this, &SubframeExperiment::find_2d);
 
-    _left_layout->addWidget(peak2D_spoiler);
+    _strategy_layout->addWidget(peak2D_spoiler);
 }
 
 void SubframeExperiment::setIndexerUp()
 {
     Spoiler* index_spoiler = new Spoiler("Autoindex using spots in this image");
     GridFiller gfiller(index_spoiler, true);
-    _index_button = gfiller.addButton("Autoindex", "Attempt to find a unit cell using spots in this image");
+    _gruber = gfiller.addDoubleSpinBox("Gruber tolerance:", "Tolerance for Gruber reduction");
+
+    _niggli = gfiller.addDoubleSpinBox("Niggli tolerance:", "Tolerance for Niggli reduction");
+
+    _only_niggli = gfiller.addCheckBox("Find Niggli cell only", 1);
+
+    _max_cell_dimension = gfiller.addDoubleSpinBox(
+        "Max. Cell dimension:", QString::fromUtf8("(\u212B) - maximum length of any lattice vector"));
+
+    _number_vertices = gfiller.addSpinBox(
+        "Num. Q-space trial vectors:",
+        "Number of points on reciprocal space unit sphere to test against candidate lattice "
+        "vector");
+
+    _number_subdivisions = gfiller.addSpinBox(
+        "Num. FFT histogram bins:", "Number of histogram bins for Fast Fourier transform");
+
+    _number_solutions = gfiller.addSpinBox("Number of solutions:", "Number of unit cell solutions to find");
+
+    _min_cell_volume = gfiller.addDoubleSpinBox(
+        "Minimum Volume:",
+        QString::fromUtf8("(\u212B^3) - discard candidate cells below this volume"));
+
+    _indexing_tolerance = gfiller.addDoubleSpinBox("Indexing tolerance:");
+
+    _frequency_tolerance = gfiller.addDoubleSpinBox(
+        "Frequency tolerance:",
+        "Minimum fraction of amplitude of the zeroth Fourier frequency to accept as a candidate "
+        "lattice vector");
+
+    _index_button =
+        gfiller.addButton("Autoindex", "Attempt to find a unit cell using spots in this image");
+    _save_button = gfiller.addButton("Save unit cell", "Save the selected unit cell");
+
+    _gruber->setMaximum(10);
+    _gruber->setDecimals(6);
+
+    _niggli->setMaximum(10);
+    _niggli->setDecimals(6);
+
+    _max_cell_dimension->setMaximum(1000);
+    _max_cell_dimension->setDecimals(2);
+
+    _number_vertices->setMaximum(100000);
+
+    _number_solutions->setMaximum(1000);
+
+    _min_cell_volume->setMaximum(1000000);
+    _min_cell_volume->setDecimals(2);
+
+    _indexing_tolerance->setMaximum(10);
+    _indexing_tolerance->setDecimals(6);
+
+    _frequency_tolerance->setMaximum(1);
+    _frequency_tolerance->setDecimals(3);
 
     connect(_index_button, &QPushButton::clicked, this, &SubframeExperiment::autoindex);
+    connect(_save_button, &QPushButton::clicked, this, &SubframeExperiment::saveCell);
+    connect(
+        gGui->sideBar(), &SideBar::subframeChanged, this,
+        &SubframeExperiment::setIndexerParameters);
 
-    _left_layout->addWidget(index_spoiler);
+    _strategy_layout->addWidget(index_spoiler);
 }
 
 void SubframeExperiment::setLogarithmicScale()
@@ -444,6 +522,7 @@ void SubframeExperiment::refreshAll()
     _data_combo->refresh();
     _detector_widget->refresh();
     grabFinderParameters();
+    grabIndexerParameters();
     toggleUnsafeWidgets();
 
     if (!gSession->currentProject()->hasDataSet())
@@ -522,6 +601,8 @@ void SubframeExperiment::autoindex()
     std::size_t current_frame = _detector_widget->scene()->currentFrame();
     std::vector<ohkl::Peak3D*> peaks = finder->getPeakList(current_frame);
 
+    setIndexerParameters();
+
     indexer->autoIndex(peaks);
 
     _solutions.clear();
@@ -556,6 +637,46 @@ void SubframeExperiment::setFinderParameters()
     params->maxThreshold = _blob_max_thresh->value();
     params->threshold = _threshold->value();
     params->kernel = static_cast<ohkl::ConvolutionKernelType>(_convolver_combo->currentIndex());
+}
+
+void SubframeExperiment::grabIndexerParameters()
+{
+    if (!gSession->hasProject())
+        return;
+
+    auto* indexer = gSession->currentProject()->experiment()->autoIndexer();
+    auto* params = indexer->parameters();
+
+    _niggli->setValue(params->niggliTolerance);
+    _only_niggli->setChecked(params->niggliReduction);
+    _gruber->setValue(params->gruberTolerance);
+    _number_vertices->setValue(params->nVertices);
+    _number_subdivisions->setValue(params->subdiv);
+    _number_solutions->setValue(params->nSolutions);
+    _max_cell_dimension->setValue(params->maxdim);
+    _indexing_tolerance->setValue(params->indexingTolerance);
+    _frequency_tolerance->setValue(params->frequencyTolerance);
+    _min_cell_volume->setValue(params->minUnitCellVolume);
+}
+
+void SubframeExperiment::setIndexerParameters()
+{
+    if (!gSession->hasProject())
+        return;
+
+    auto* indexer = gSession->currentProject()->experiment()->autoIndexer();
+    auto* params = indexer->parameters();
+
+    params->niggliTolerance = _niggli->value();
+    params->niggliReduction = _only_niggli->isChecked();
+    params->gruberTolerance = _gruber->value();
+    params->nVertices = _number_vertices->value();
+    params->subdiv = _number_subdivisions->value();
+    params->nSolutions = _number_solutions->value();
+    params->maxdim = _max_cell_dimension->value();
+    params->indexingTolerance = _indexing_tolerance->value();
+    params->frequencyTolerance = _frequency_tolerance->value();
+    params->minUnitCellVolume = _min_cell_volume->value();
 }
 
 void SubframeExperiment::onBeamPosChanged(QPointF pos)
@@ -694,4 +815,33 @@ void SubframeExperiment::selectSolutionTable()
 void SubframeExperiment::selectSolutionHeader(int index)
 {
     _selected_unit_cell = _solutions[index].first;
+}
+
+void SubframeExperiment::saveCell()
+{
+    if (_selected_unit_cell) {
+        auto* expt = gSession->currentProject()->experiment();
+        QStringList collections =
+            gSession->currentProject()->getPeakCollectionNames(ohkl::PeakCollectionType::FOUND);
+
+        QStringList space_groups;
+        for (const std::string& name : _selected_unit_cell->compatibleSpaceGroups())
+            space_groups.push_back(QString::fromStdString(name));
+
+        std::unique_ptr<UnitCellDialog> dlg(
+            new UnitCellDialog(QString::fromStdString(expt->generateUnitCellName()), space_groups));
+        dlg->exec();
+        if (dlg->unitCellName().isEmpty())
+            return;
+        if (dlg->result() == QDialog::Rejected)
+            return;
+
+        std::string cellName = dlg->unitCellName().toStdString();
+        _selected_unit_cell->setName(cellName);
+        _selected_unit_cell->setSpaceGroup(dlg->spaceGroup().toStdString());
+        expt->addUnitCell(dlg->unitCellName().toStdString(), *_selected_unit_cell.get());
+        gSession->onUnitCellChanged();
+
+        gGui->refreshMenu();
+    }
 }

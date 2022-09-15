@@ -70,11 +70,11 @@ SubframeAutoIndexer::SubframeAutoIndexer()
     _right_element = new QSplitter(Qt::Vertical, this);
     _left_layout = new QVBoxLayout();
 
-    QTabWidget* tab_widget = new QTabWidget(this);
-    QWidget* tables_tab = new QWidget(tab_widget);
-    QWidget* detector_tab = new QWidget(tab_widget);
-    tab_widget->addTab(tables_tab, "Autoindexer solutions");
-    tab_widget->addTab(detector_tab, "Detector image");
+    _tab_widget = new QTabWidget(this);
+    QWidget* tables_tab = new QWidget(_tab_widget);
+    QWidget* detector_tab = new QWidget(_tab_widget);
+    _tab_widget->addTab(tables_tab, "Autoindexer solutions");
+    _tab_widget->addTab(detector_tab, "Detector image");
 
     setInputUp();
     setAdjustBeamUp();
@@ -116,7 +116,7 @@ SubframeAutoIndexer::SubframeAutoIndexer()
     _peak_collection_item.setPeakCollection(&_peak_collection);
     _peak_collection_model.setRoot(&_peak_collection_item);
 
-    _right_element->addWidget(tab_widget);
+    _right_element->addWidget(_tab_widget);
     _right_element->addWidget(_peak_group);
     _right_element->setSizePolicy(_size_policy_right);
     _set_initial_ki->setChecked(false);
@@ -551,6 +551,7 @@ void SubframeAutoIndexer::runAutoIndexer()
     else
         gGui->statusBar()->showMessage(QString::number(_solutions.size()) + " unit cells found");
 
+    _tab_widget->setCurrentIndex(0);
     gGui->setReady(true);
 }
 
@@ -649,8 +650,9 @@ void SubframeAutoIndexer::acceptSolution()
         for (const std::string& name : _selected_unit_cell->compatibleSpaceGroups())
             space_groups.push_back(QString::fromStdString(name));
 
-        std::unique_ptr<UnitCellDialog> dlg(new UnitCellDialog(
-            QString::fromStdString(expt->generateUnitCellName()), collections, space_groups));
+        std::unique_ptr<UnitCellDialog> dlg(
+            new UnitCellDialog(QString::fromStdString(expt->generateUnitCellName()),
+                               space_groups, collections));
         dlg->exec();
         if (dlg->unitCellName().isEmpty())
             return;
