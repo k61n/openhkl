@@ -15,10 +15,11 @@
 #ifndef OHKL_GUI_SUBFRAME_EXPERIMENT_SUBFRAMEEXPERIMENT_H
 #define OHKL_GUI_SUBFRAME_EXPERIMENT_SUBFRAMEEXPERIMENT_H
 
+#include "core/convolve/Convolver.h"
 #include "core/data/DataTypes.h"
 #include "core/detector/DetectorEvent.h"
 #include "gui/utility/SafeSpinBox.h"
-#include "core/convolve/Convolver.h"
+#include "tables/crystal/UnitCell.h"
 
 #include <QWidget>
 
@@ -30,9 +31,11 @@ class QPushButton;
 class QCheckBox;
 class QComboBox;
 class QSlider;
+class QTabWidget;
 class QVBoxLayout;
 class Spoiler;
 class SpoilerCheck;
+class UnitCellTableView;
 
 //! Frame containing information on all aspects of the experiment
 class SubframeExperiment : public QWidget {
@@ -74,6 +77,13 @@ class SubframeExperiment : public QWidget {
     //! Show direct beam position computed from unit cell in DetectorScene
     void showDirectBeamEvents();
 
+    //! Populate the indexer solutions table
+    void buildSolutionTable();
+    //! Select indexer solution
+    void selectSolutionHeader(int index);
+    //! Select a solution
+    void selectSolutionTable();
+
  public slots:
     void onBeamPosChanged(QPointF pos);
     void onBeamPosSpinChanged();
@@ -83,6 +93,7 @@ class SubframeExperiment : public QWidget {
     void crosshairChanged(int size, int linewidth);
 
  private:
+    QTabWidget* _tab_widget;
     DetectorWidget* _detector_widget;
     PlotPanel* _plot;
     PropertyPanel* _properties;
@@ -118,6 +129,8 @@ class SubframeExperiment : public QWidget {
 
     QPushButton* _index_button;
 
+    UnitCellTableView* _solution_table;
+
     Spoiler* lineplot_box;
     Spoiler* intensity_plot_box;
 
@@ -129,7 +142,10 @@ class SubframeExperiment : public QWidget {
     //! Current direct beam positions
     std::vector<ohkl::DetectorEvent> _old_direct_beam_events;
 
-    static const std::map<ohkl::ConvolutionKernelType, std::string> _kernel_types;
+    //! Storage of indexer solutions
+    std::vector<std::pair<std::shared_ptr<ohkl::UnitCell>, double>> _solutions;
+    //! Unit cell selected in solution table
+    ohkl::sptrUnitCell _selected_unit_cell;
 };
 
 #endif // OHKL_GUI_SUBFRAME_EXPERIMENT_SUBFRAMEEXPERIMENT_H

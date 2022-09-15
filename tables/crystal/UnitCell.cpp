@@ -12,10 +12,7 @@
 //
 //  ***********************************************************************************************
 
-#include <cmath>
-#include <iomanip>
-#include <iostream>
-#include <stdexcept>
+#include "tables/crystal/UnitCell.h"
 
 #include "base/fit/Minimizer.h"
 #include "base/geometry/ReciprocalVector.h"
@@ -25,7 +22,11 @@
 #include "tables/crystal/MillerIndex.h"
 #include "tables/crystal/NiggliCharacter.h"
 #include "tables/crystal/NiggliReduction.h"
-#include "tables/crystal/UnitCell.h"
+
+#include <cmath>
+#include <iomanip>
+#include <iostream>
+#include <stdexcept>
 
 namespace {
 bool smallDiff(double a, double b, double tolerance)

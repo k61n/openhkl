@@ -30,29 +30,28 @@
 #include "gui/utility/SafeSpinBox.h"
 #include "gui/utility/Spoiler.h"
 #include "gui/utility/SpoilerCheck.h"
+#include "gui/views/UnitCellTableView.h"
 #include "gui/widgets/DetectorWidget.h"
 #include "gui/widgets/PlotPanel.h"
 
-#include <QComboBox>
-#include <QGroupBox>
-#include <QHBoxLayout>
-#include <QSplitter>
-#include <QVBoxLayout>
-#include <QWidget>
-#include <QComboBox>
-#include <QLabel>
-#include <cstring>
 #include <QBoxLayout>
 #include <QCheckBox>
 #include <QComboBox>
+#include <QGroupBox>
+#include <QHBoxLayout>
+#include <QHeaderView>
 #include <QLabel>
-#include <gsl/gsl_histogram.h>
 #include <QPushButton>
+#include <QScrollBar>
 #include <QSlider>
 #include <QSpinBox>
+#include <QSplitter>
+#include <QTabWidget>
+#include <QVBoxLayout>
 #include <QVector>
 #include <QWidget>
-#include <QScrollBar>
+#include <cstring>
+#include <gsl/gsl_histogram.h>
 #include <stdexcept>
 
 #include "gui/utility/Spoiler.h"
@@ -109,8 +108,6 @@ SubframeExperiment::SubframeExperiment()
 
     _update_plot = gfiller.addButton("Update plot");
 
-    _plot = new PlotPanel;
-
     QGroupBox* figure_group = new QGroupBox("Detector image");
     figure_group->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     _detector_widget = new DetectorWidget(true, false, true, figure_group);
@@ -121,12 +118,38 @@ SubframeExperiment::SubframeExperiment()
     left_widget->setLayout(_left_layout);
     left_widget->setFixedWidth(400);
 
+    _tab_widget = new QTabWidget(this);
+    QWidget* plot_tab = new QWidget(_tab_widget);
+    QWidget* indexer_tab = new QWidget(_tab_widget);
+    _tab_widget->addTab(plot_tab, "Plot");
+    _tab_widget->addTab(indexer_tab, "Indexer solutions");
+
+    QHBoxLayout* plot_layout = new QHBoxLayout();
+    QHBoxLayout* indexer_layout = new QHBoxLayout();
+
+    _plot = new PlotPanel;
+    plot_layout->addWidget(_plot);
+    plot_tab->setLayout(plot_layout);
+
+    _solution_table = new UnitCellTableView(this);
+    indexer_layout->addWidget(_solution_table);
+    indexer_tab->setLayout(indexer_layout);
+    _solution_table->setModel(nullptr);
+
+    connect(
+        _solution_table->verticalHeader(), &QHeaderView::sectionClicked, this,
+        &SubframeExperiment::selectSolutionHeader);
+
+    connect(
+        _solution_table, &UnitCellTableView::clicked, this,
+        &SubframeExperiment::selectSolutionTable);
+
     QSplitter* right_splitter = new QSplitter();
     right_splitter->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     right_splitter->setOrientation(Qt::Orientation::Vertical);
     right_splitter->setChildrenCollapsible(false);
     right_splitter->addWidget(figure_group);
-    right_splitter->addWidget(_plot);
+    right_splitter->addWidget(_tab_widget);
 
     splitter->addWidget(left_widget);
     splitter->addWidget(right_splitter);
@@ -398,6 +421,7 @@ void SubframeExperiment::plotIntensities()
     auto plot = getPlot();
     if (plot != nullptr)
         plot->plotData(histo, QString("Pixels"), QString("Counts"), xmin, xmax, ymin, ymax);
+    _tab_widget->setCurrentIndex(0);
 }
 
 void SubframeExperiment::refreshVisual()
@@ -499,7 +523,11 @@ void SubframeExperiment::autoindex()
     std::vector<ohkl::Peak3D*> peaks = finder->getPeakList(current_frame);
 
     indexer->autoIndex(peaks);
-    std::cout << indexer->solutionsToString() << std::endl;
+
+    _solutions.clear();
+    _solutions = indexer->solutions();
+    buildSolutionTable();
+    _tab_widget->setCurrentIndex(1);
 }
 
 void SubframeExperiment::grabFinderParameters()
@@ -591,4 +619,79 @@ void SubframeExperiment::showDirectBeamEvents()
 
     for (auto&& event : events)
         _direct_beam_events.push_back(event);
+}
+
+void SubframeExperiment::buildSolutionTable()
+{
+    // Create table with 9 columns
+    QStandardItemModel* model = new QStandardItemModel(_solutions.size(), 9, this);
+    model->setHorizontalHeaderItem(0, new QStandardItem("a"));
+    model->setHorizontalHeaderItem(1, new QStandardItem("b"));
+    model->setHorizontalHeaderItem(2, new QStandardItem("c"));
+    model->setHorizontalHeaderItem(3, new QStandardItem(QString((QChar)0x03B1))); // alpha
+    model->setHorizontalHeaderItem(4, new QStandardItem(QString((QChar)0x03B2))); // beta
+    model->setHorizontalHeaderItem(5, new QStandardItem(QString((QChar)0x03B3))); // gamma
+    model->setHorizontalHeaderItem(6, new QStandardItem("Volume"));
+    model->setHorizontalHeaderItem(7, new QStandardItem("Bravais type"));
+    model->setHorizontalHeaderItem(8, new QStandardItem("Quality"));
+
+    // Display solutions
+    for (unsigned int i = 0; i < _solutions.size(); ++i) {
+        const ohkl::sptrUnitCell cell = _solutions[i].first;
+        const double quality = _solutions[i].second;
+        const double volume = cell->volume();
+
+        const ohkl::UnitCellCharacter ch = cell->character();
+        const ohkl::UnitCellCharacter sigma = cell->characterSigmas();
+
+        ValueTupleItem* col1 = new ValueTupleItem(
+            QString::number(ch.a, 'f', 3) + "(" + QString::number(sigma.a * 1000, 'f', 0) + ")",
+            ch.a, sigma.a);
+        ValueTupleItem* col2 = new ValueTupleItem(
+            QString::number(ch.b, 'f', 3) + "(" + QString::number(sigma.b * 1000, 'f', 0) + ")",
+            ch.b, sigma.b);
+        ValueTupleItem* col3 = new ValueTupleItem(
+            QString::number(ch.c, 'f', 3) + "(" + QString::number(sigma.c * 1000, 'f', 0) + ")",
+            ch.c, sigma.c);
+        ValueTupleItem* col4 = new ValueTupleItem(
+            QString::number(ch.alpha / ohkl::deg, 'f', 3) + "("
+                + QString::number(sigma.alpha / ohkl::deg * 1000, 'f', 0) + ")",
+            ch.alpha, sigma.alpha);
+        ValueTupleItem* col5 = new ValueTupleItem(
+            QString::number(ch.beta / ohkl::deg, 'f', 3) + "("
+                + QString::number(sigma.beta / ohkl::deg * 1000, 'f', 0) + ")",
+            ch.beta, sigma.beta);
+        ValueTupleItem* col6 = new ValueTupleItem(
+            QString::number(ch.gamma / ohkl::deg, 'f', 3) + "("
+                + QString::number(sigma.gamma / ohkl::deg * 1000, 'f', 0) + ")",
+            ch.gamma, sigma.gamma);
+        ValueTupleItem* col7 = new ValueTupleItem(QString::number(volume, 'f', 3), volume);
+        QStandardItem* col8 = new QStandardItem(QString::fromStdString(cell->bravaisTypeSymbol()));
+        ValueTupleItem* col9 = new ValueTupleItem(QString::number(quality, 'f', 2) + "%", quality);
+
+        model->setItem(i, 0, col1);
+        model->setItem(i, 1, col2);
+        model->setItem(i, 2, col3);
+        model->setItem(i, 3, col4);
+        model->setItem(i, 4, col5);
+        model->setItem(i, 5, col6);
+        model->setItem(i, 6, col7);
+        model->setItem(i, 7, col8);
+        model->setItem(i, 8, col9);
+    }
+    _solution_table->setModel(model);
+}
+
+void SubframeExperiment::selectSolutionTable()
+{
+    const QItemSelectionModel* select = _solution_table->selectionModel();
+    QModelIndexList indices = select->selectedRows();
+    if (!indices.empty())
+        selectSolutionHeader(indices[0].row());
+    toggleUnsafeWidgets();
+}
+
+void SubframeExperiment::selectSolutionHeader(int index)
+{
+    _selected_unit_cell = _solutions[index].first;
 }
