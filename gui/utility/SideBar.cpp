@@ -35,6 +35,9 @@
 #include <QPaintEvent>
 #include <QPainter>
 #include <QSignalBlocker>
+#include <QPoint>
+
+#include <iostream>
 
 // TODO: find a better place for this
 // Icon attributions:
@@ -125,16 +128,9 @@ void SideBar::paintEvent(QPaintEvent* event)
         else
             painter.setPen(Qt::black);
 
-        QSize size = painter.fontMetrics().size(Qt::TextSingleLine, action->text());
-        QRect actionTextRect(
-            QPoint(
-                actionRect.width() / 2 - size.width() / 2, actionRect.bottom() - size.height() - 5),
-            size);
-        painter.drawText(actionTextRect, Qt::AlignCenter, action->text());
-
         QRect actionIconRect(
-            0, action_y + 10, actionRect.width(),
-            actionRect.height() - 2 * actionTextRect.height() - 10);
+            2, action_y + 10, actionRect.width(),
+            actionRect.height() - 20);
         QIcon actionIcon(action->icon());
         actionIcon.paint(&painter, actionIconRect);
 
