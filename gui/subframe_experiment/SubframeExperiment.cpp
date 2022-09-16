@@ -88,8 +88,7 @@ SubframeExperiment::SubframeExperiment()
 
     QGroupBox* figure_group = new QGroupBox("Detector image");
     figure_group->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-    _detector_widget = new DetectorWidget(true, false, true, figure_group);
-    _detector_widget->modeCombo()->addItems(QStringList{"Zoom", "Selection box"});
+    _detector_widget = new DetectorWidget(false, true, true, figure_group);
 
     QSplitter* right_splitter = new QSplitter();
     right_splitter->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
@@ -732,30 +731,36 @@ void SubframeExperiment::toggleCursorMode()
     switch(_left_widget->currentIndex()) {
     case 0: {
         if (_set_initial_ki->isChecked()) {
+            _detector_widget->enableCursorMode(false);
             _lineplot_box->setChecked(false);
             _mask_box->setChecked(false);
             _detector_widget->scene()->changeInteractionMode(7);
         } else {
+            _detector_widget->enableCursorMode(true);
             _detector_widget->scene()->changeInteractionMode(0);
         }
         break;
     }
     case 1: {
         if (_lineplot_box->isChecked()) {
+            _detector_widget->enableCursorMode(false);
             _set_initial_ki->setChecked(false);
             _mask_box->setChecked(false);
             setPlotMode();
         } else {
+            _detector_widget->enableCursorMode(true);
             _detector_widget->scene()->changeInteractionMode(0);
         }
         break;
     }
     case 2: {
         if (_mask_box->isChecked()) {
+            _detector_widget->enableCursorMode(false);
             _set_initial_ki->setChecked(false);
             _lineplot_box->setChecked(false);
             setMaskMode();
         } else {
+            _detector_widget->enableCursorMode(true);
             _detector_widget->scene()->changeInteractionMode(0);
         }
         break;

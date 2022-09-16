@@ -10,6 +10,8 @@
         <file>images/icons/lighttheme/minus.svg</file>
         <file>images/icons/lighttheme/beaker.svg</file>
         <file>images/icons/lighttheme/hide.svg</file>
+        <file>images/icons/lighttheme/zoom.svg</file>
+        <file>images/icons/lighttheme/select.svg</file>
         <file>images/icons/darktheme/save.svg</file>
         <file>images/icons/darktheme/load.svg</file>
         <file>images/icons/darktheme/copy.svg</file>
@@ -20,6 +22,8 @@
         <file>images/icons/darktheme/minus.svg</file>
         <file>images/icons/darktheme/beaker.svg</file>
         <file>images/icons/darktheme/hide.svg</file>
+        <file>images/icons/darktheme/zoom.svg</file>
+        <file>images/icons/darktheme/select.svg</file>
         <file>images/sidebar/lighttheme/home.svg</file>
         <file>images/sidebar/lighttheme/experiment.svg</file>
         <file>images/sidebar/lighttheme/finder.svg</file>

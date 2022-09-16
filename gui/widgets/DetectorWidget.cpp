@@ -35,6 +35,8 @@
 #include <QSlider>
 #include <QSpinBox>
 #include <QVBoxLayout>
+#include <qbuttongroup.h>
+#include <qpushbutton.h>
 
 QList<DetectorWidget*> DetectorWidget::_detector_widgets = QList<DetectorWidget*>();
 
@@ -112,6 +114,8 @@ DetectorWidget::DetectorWidget(bool mode, bool cursor, bool slider, QWidget* par
         _cursor_combo = new QComboBox();
         _cursor_combo->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
         _cursor_combo->setToolTip("Set the cursor mode for the detector image");
+        _cursor_combo->addItems(
+            QStringList{"Cursor mode", "Pixel", "\u03B8", "\u03B3/\u03BD", "d", "Miller Indices"});
         bottom_layout->addWidget(_cursor_combo);
 
         connect(
@@ -262,11 +266,27 @@ void DetectorWidget::setToolbarUp()
     _reset = new QPushButton;
     _copy_to_clipboard = new QPushButton;
     _save_to_file = new QPushButton;
+    _zoom = new QPushButton;
+    _select = new QPushButton;
+
+    // only allow one cursor mode with button group
+    _cursor_mode_buttons = new QButtonGroup;
+    _cursor_mode_buttons->addButton(_zoom);
+    _cursor_mode_buttons->addButton(_select);
+    _cursor_mode_buttons->setExclusive(true);
+
+    _zoom->setCheckable(true);
+    _zoom->setChecked(true);
+
+    _select->setCheckable(true);
+    _select->setChecked(false);
 
     layout->addWidget(_hide_masks);
     layout->addWidget(_reset);
     layout->addWidget(_copy_to_clipboard);
     layout->addWidget(_save_to_file);
+    layout->addWidget(_zoom);
+    layout->addWidget(_select);
 
     QString path{":images/icons/"};
     QString light{"lighttheme/"};
@@ -283,26 +303,29 @@ void DetectorWidget::setToolbarUp()
     _reset->setIcon(QIcon(path + "reset.svg"));
     _copy_to_clipboard->setIcon(QIcon(path + "copy.svg"));
     _save_to_file->setIcon(QIcon(path + "save.svg"));
+    _zoom->setIcon(QIcon(path + "zoom.svg"));
+    _select->setIcon(QIcon(path + "select.svg"));
 
     _hide_masks->setToolTip("Show/hide detector masks");
     _reset->setToolTip("Reset detector image");
     _copy_to_clipboard->setToolTip("Copy visible detector image to clipboard");
     _save_to_file->setToolTip("Save visible detector image to file");
+    _zoom->setToolTip("Enable zoom cursor on detector image");
+    _select->setToolTip("Enable rectangle select cursor on detector image");
 
     connect(
         _hide_masks, &QPushButton::clicked, _detector_view->getScene(), &DetectorScene::toggleMasks);
-
     connect(_reset, &QPushButton::clicked, _detector_view->getScene(), [=]() {
         _detector_view->getScene()->resetElements();
         _detector_view->getScene()->loadCurrentImage();
     });
-
     connect(_copy_to_clipboard, &QPushButton::clicked, this, [=]() {
         QPixmap pixMap = _detector_view->grab();
         QApplication::clipboard()->setImage(pixMap.toImage(), QClipboard::Clipboard);
     });
-
     connect(_save_to_file, &QPushButton::clicked, this, &DetectorWidget::saveScreenshot);
+    connect(_zoom, &QPushButton::clicked, this, &DetectorWidget::toggleCursorMode);
+    connect(_select, &QPushButton::clicked, this, &DetectorWidget::toggleCursorMode);
 
     _toolbar->setLayout(layout);
 }
@@ -329,4 +352,18 @@ void DetectorWidget::saveScreenshot()
         QPixmap pixMap = _detector_view->grab();
         pixMap.save(file_info.absoluteFilePath());
     }
+}
+
+void DetectorWidget::toggleCursorMode()
+{
+    if (_zoom->isChecked())
+        scene()->changeInteractionMode(0);
+    else if (_select->isChecked())
+        scene()->changeInteractionMode(1);
+}
+
+void DetectorWidget::enableCursorMode(bool enable)
+{
+    _zoom->setEnabled(enable);
+    _select->setEnabled(enable);
 }

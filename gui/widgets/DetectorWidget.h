@@ -32,6 +32,7 @@ class DetectorScene;
 class DetectorView;
 class DataComboBox;
 class PeakCollectionModel;
+class QButtonGroup;
 class QPushButton;
 class QSpinBox;
 class QScrollBar;
@@ -79,6 +80,10 @@ class DetectorWidget : public QGridLayout {
     DetectorView* getDetectorView();
     //! Save a screenshot via QFileDialog
     void saveScreenshot();
+    //! Set the cursor mode
+    void toggleCursorMode();
+    //! Disable the cursor mode controls
+    void enableCursorMode(bool enable);
 
  private:
     DetectorView* _detector_view;
@@ -92,6 +97,9 @@ class DetectorWidget : public QGridLayout {
     QPushButton* _reset;
     QPushButton* _copy_to_clipboard;
     QPushButton* _save_to_file;
+    QPushButton* _zoom;
+    QPushButton* _select;
+    QButtonGroup* _cursor_mode_buttons;
     QWidget* _toolbar;
 
 
