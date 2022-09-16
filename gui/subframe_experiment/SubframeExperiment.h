@@ -93,6 +93,10 @@ class SubframeExperiment : public QWidget {
     //! Save a unit cell to the experiment
     void saveCell();
 
+    void setPlotMode();
+    void setMaskMode();
+
+
  public slots:
     void onBeamPosChanged(QPointF pos);
     void onBeamPosSpinChanged();
@@ -155,11 +159,14 @@ class SubframeExperiment : public QWidget {
 
     UnitCellTableView* _solution_table;
 
-    Spoiler* _lineplot_box;
+    SpoilerCheck* _lineplot_box;
     Spoiler* _intensity_plot_box;
+    QComboBox* _lineplot_combo;
+
+    SpoilerCheck* _mask_box;
+    QComboBox* _mask_combo;
 
     bool _show_direct_beam;
-    int _stored_cursor_mode;
 
     //! Saved direct beam positions
     std::vector<ohkl::DetectorEvent> _direct_beam_events;

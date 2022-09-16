@@ -89,9 +89,7 @@ SubframeExperiment::SubframeExperiment()
     QGroupBox* figure_group = new QGroupBox("Detector image");
     figure_group->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     _detector_widget = new DetectorWidget(true, false, true, figure_group);
-    _detector_widget->modeCombo()->addItems(QStringList{
-        "Zoom", "Selection box", "Rectangular mask", "Elliptical mask", "Line plot",
-        "Horizontal slice", "Vertical slice", "Intensity Histograms"});
+    _detector_widget->modeCombo()->addItems(QStringList{"Zoom", "Selection box"});
 
     QSplitter* right_splitter = new QSplitter();
     right_splitter->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
@@ -125,10 +123,9 @@ SubframeExperiment::SubframeExperiment()
         &SubframeExperiment::calculateIntensities);
 
     connect(_detector_widget->scroll(), &QScrollBar::valueChanged,
-    this, &SubframeExperiment::refreshAll);
+        this, &SubframeExperiment::refreshAll);
 
-    connect(_update_plot, &QPushButton::clicked, this,
-    &SubframeExperiment::refreshAll);
+    connect(_update_plot, &QPushButton::clicked, this, &SubframeExperiment::refreshAll);
 
 
     connect(
@@ -148,6 +145,8 @@ SubframeExperiment::SubframeExperiment()
         _data_combo, &QComboBox::setCurrentIndex);
 
     _set_initial_ki->setChecked(false);
+    _lineplot_box->setChecked(false);
+    _mask_box->setChecked(false);
     toggleUnsafeWidgets();
 }
 
@@ -247,13 +246,10 @@ void SubframeExperiment::setHistogramUp()
 {
 
     _intensity_plot_box = new Spoiler("Per-pixel detector count histogram");
-    _lineplot_box = new Spoiler("Lineplot");
-
+    _intensity_plot_box->setMaximumWidth(400);
     GridFiller gfiller(_intensity_plot_box, true);
-    GridFiller gfiller2(_lineplot_box, true);
 
     _npoints_intensity = gfiller.addSpinBox(QString("Number of datapoints:"));
-    _npoints_lineplot = gfiller2.addSpinBox(QString("Number of datapoints:"));
 
     _calc_intensity = gfiller.addButton("Calculate intensity");
 
@@ -263,27 +259,18 @@ void SubframeExperiment::setHistogramUp()
     _yZoom = gfiller.addCheckBox("Range on y axis", 1);
 
     _histogram_layout->addWidget(_intensity_plot_box);
-    _histogram_layout->addWidget(_lineplot_box);
 
-    _intensity_plot_box->setMaximumWidth(400);
-    _lineplot_box->setMaximumWidth(400);
 
     _npoints_intensity->setMaximumWidth(100);
     _npoints_intensity->setMaximum(65535);
     _npoints_intensity->setMinimum(100);
     _npoints_intensity->setValue(100);
 
-    _npoints_lineplot->setMaximum(1000);
-    _npoints_lineplot->setMinimum(10);
-    _npoints_lineplot->setMaximumWidth(250);
-    _npoints_lineplot->setValue(10);
-
     _minX = gfiller.addSpinBox("Minimum x value:");
     _maxX = gfiller.addSpinBox("Maximum x value:");
     _minY = gfiller.addSpinBox("Minimum y value:");
     _maxY = gfiller.addSpinBox("Maximum y value:");
 
-    _histogram_layout->addStretch();
 
     _update_plot = gfiller.addButton("Update plot");
 
@@ -297,9 +284,49 @@ void SubframeExperiment::setHistogramUp()
 
     connect(
         _calc_intensity, &QPushButton::clicked, this, &SubframeExperiment::calculateIntensities);
+
+    _lineplot_box = new SpoilerCheck("Plot intensity profiles");
+    _lineplot_box->setMaximumWidth(400);
+    GridFiller gfiller2(_lineplot_box, true);
+
+    _lineplot_combo = gfiller2.addCombo("Plot type");
+    _lineplot_combo->addItems(QStringList{"Line plot", "Horizontal slice", "Vertical slice"});
+
+    _npoints_lineplot = gfiller2.addSpinBox(QString("Number of datapoints:"));
+
+    _npoints_lineplot->setMaximum(1000);
+    _npoints_lineplot->setMinimum(10);
+    _npoints_lineplot->setMaximumWidth(250);
+    _npoints_lineplot->setValue(10);
+
+    _histogram_layout->addWidget(_lineplot_box);
+    _histogram_layout->addStretch();
+
+    connect(
+        _lineplot_box->checkBox(), &QCheckBox::stateChanged, this,
+        &SubframeExperiment::toggleCursorMode);
+    connect(
+        _lineplot_combo, &QComboBox::currentTextChanged, this, &SubframeExperiment::toggleCursorMode);
 }
 
-void SubframeExperiment::setMaskUp() { }
+void SubframeExperiment::setMaskUp()
+{
+    _mask_box = new SpoilerCheck("Add detector image masks");
+    _mask_box->setMaximumWidth(400);
+    GridFiller gfiller(_mask_box, true);
+
+    _mask_combo = gfiller.addCombo("Mask type");
+    _mask_combo->addItems(QStringList{"Rectangular mask", "Elliptical mask"});
+
+    _mask_layout->addWidget(_mask_box);
+    _mask_layout->addStretch();
+
+    connect(
+        _mask_box->checkBox(), &QCheckBox::stateChanged, this,
+        &SubframeExperiment::toggleCursorMode);
+    connect(
+        _mask_combo, &QComboBox::currentTextChanged, this, &SubframeExperiment::toggleCursorMode);
+}
 
 void SubframeExperiment::setPeakFinder2DUp()
 {
@@ -702,11 +729,55 @@ void SubframeExperiment::changeCrosshair()
 
 void SubframeExperiment::toggleCursorMode()
 {
-    if (_set_initial_ki->isChecked()) {
-        _stored_cursor_mode = _detector_widget->scene()->mode();
-        _detector_widget->scene()->changeInteractionMode(7);
-    } else {
-        _detector_widget->scene()->changeInteractionMode(_stored_cursor_mode);
+    switch(_left_widget->currentIndex()) {
+    case 0: {
+        if (_set_initial_ki->isChecked()) {
+            _lineplot_box->setChecked(false);
+            _mask_box->setChecked(false);
+            _detector_widget->scene()->changeInteractionMode(7);
+        } else {
+            _detector_widget->scene()->changeInteractionMode(0);
+        }
+        break;
+    }
+    case 1: {
+        if (_lineplot_box->isChecked()) {
+            _set_initial_ki->setChecked(false);
+            _mask_box->setChecked(false);
+            setPlotMode();
+        } else {
+            _detector_widget->scene()->changeInteractionMode(0);
+        }
+        break;
+    }
+    case 2: {
+        if (_mask_box->isChecked()) {
+            _set_initial_ki->setChecked(false);
+            _lineplot_box->setChecked(false);
+            setMaskMode();
+        } else {
+            _detector_widget->scene()->changeInteractionMode(0);
+        }
+        break;
+    }
+    default: _detector_widget->scene()->changeInteractionMode(0);
+    }
+}
+
+void SubframeExperiment::setPlotMode()
+{
+    switch(_lineplot_combo->currentIndex()) {
+        case 0: _detector_widget->scene()->changeInteractionMode(4); break;
+        case 1: _detector_widget->scene()->changeInteractionMode(5); break;
+        case 2: _detector_widget->scene()->changeInteractionMode(6); break;
+    }
+}
+
+void SubframeExperiment::setMaskMode()
+{
+    switch (_mask_combo->currentIndex()) {
+        case 0: _detector_widget->scene()->changeInteractionMode(2); break;
+        case 1: _detector_widget->scene()->changeInteractionMode(3); break;
     }
 }
 
