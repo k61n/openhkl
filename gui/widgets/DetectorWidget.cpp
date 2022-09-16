@@ -40,7 +40,7 @@
 
 QList<DetectorWidget*> DetectorWidget::_detector_widgets = QList<DetectorWidget*>();
 
-DetectorWidget::DetectorWidget(bool mode, bool cursor, bool slider, QWidget* parent)
+DetectorWidget::DetectorWidget(bool cursor, bool slider, QWidget* parent)
     : QGridLayout(parent)
 {
     QGridLayout* top_grid = new QGridLayout();
@@ -98,17 +98,6 @@ DetectorWidget::DetectorWidget(bool mode, bool cursor, bool slider, QWidget* par
 
     setToolbarUp();
     bottom_layout->addWidget(_toolbar);
-
-    if (mode) {
-        _mode_combo = new QComboBox();
-        _mode_combo->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-        _mode_combo->setToolTip("Set the interaction mode for the detector image");
-        bottom_layout->addWidget(_mode_combo);
-
-        connect(
-            _mode_combo, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
-            [=](int i) { _detector_view->getScene()->changeInteractionMode(i); });
-    }
 
     if (cursor) {
         _cursor_combo = new QComboBox();
@@ -229,11 +218,6 @@ QScrollBar* DetectorWidget::scroll()
 DataComboBox* DetectorWidget::dataCombo()
 {
     return _data_combo;
-}
-
-QComboBox* DetectorWidget::modeCombo()
-{
-    return _mode_combo;
 }
 
 QComboBox* DetectorWidget::cursorCombo()

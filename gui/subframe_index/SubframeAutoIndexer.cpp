@@ -377,7 +377,7 @@ void SubframeAutoIndexer::setPeakViewWidgetUp()
 
 void SubframeAutoIndexer::setFigureUp()
 {
-    _detector_widget = new DetectorWidget(false, false, true);
+    _detector_widget = new DetectorWidget(false, true);
     _detector_widget->linkPeakModel(&_peak_collection_model);
 
     connect(

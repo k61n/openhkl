@@ -82,7 +82,7 @@ void DetectorWindow::setDetectorViewUp()
 {
     QGroupBox* detector_group = new QGroupBox("Detector image");
     detector_group->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-    _detector_widget = new DetectorWidget(false, true, true, detector_group);
+    _detector_widget = new DetectorWidget(true, true, detector_group);
     _detector_widget->linkPeakModel(&_peak_collection_model_1, &_peak_collection_model_2);
 
     connect(

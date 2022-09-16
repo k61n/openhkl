@@ -88,7 +88,7 @@ SubframeExperiment::SubframeExperiment()
 
     QGroupBox* figure_group = new QGroupBox("Detector image");
     figure_group->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-    _detector_widget = new DetectorWidget(false, true, true, figure_group);
+    _detector_widget = new DetectorWidget(true, true, figure_group);
 
     QSplitter* right_splitter = new QSplitter();
     right_splitter->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);

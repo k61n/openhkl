@@ -42,7 +42,7 @@ class QSlider;
 class DetectorWidget : public QGridLayout {
 
  public:
-    DetectorWidget(bool mode, bool cursor, bool slider, QWidget* parent = nullptr);
+    DetectorWidget(bool cursor, bool slider, QWidget* parent = nullptr);
     //! Synchronise intensity sliders and intensities across instances
     void syncIntensitySliders();
     //! Update the DataSet combo
@@ -68,8 +68,6 @@ class DetectorWidget : public QGridLayout {
     QScrollBar* scroll();
     //! Return the DataSet QComboBox
     DataComboBox* dataCombo();
-    //! Return the interaction mode QComboBox
-    QComboBox* modeCombo();
     //! Return the cursor mode QComboBox
     QComboBox* cursorCombo();
     //! Return the maximum intensity slider
@@ -90,7 +88,6 @@ class DetectorWidget : public QGridLayout {
     QSpinBox* _spin;
     QScrollBar* _scroll;
     DataComboBox* _data_combo;
-    QComboBox* _mode_combo = nullptr;
     QComboBox* _cursor_combo = nullptr;
     QSlider* _intensity_slider = nullptr;
     QPushButton* _hide_masks;
