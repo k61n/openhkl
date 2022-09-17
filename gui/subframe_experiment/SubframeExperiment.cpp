@@ -24,6 +24,7 @@
 #include "gui/MainWin.h" // gGui
 #include "gui/connect/Sentinel.h"
 #include "gui/dialogs/UnitCellDialog.h"
+#include "gui/frames/ProgressView.h"
 #include "gui/graphics/DetectorScene.h"
 #include "gui/models/Project.h"
 #include "gui/models/Session.h"
@@ -56,6 +57,8 @@
 #include <QWidget>
 #include <cstring>
 #include <gsl/gsl_histogram.h>
+#include <qabstractitemview.h>
+#include <qsizepolicy.h>
 #include <qspinbox.h>
 #include <stdexcept>
 
@@ -87,6 +90,9 @@ SubframeExperiment::SubframeExperiment()
     indexer_layout->addWidget(_solution_table);
     indexer_tab->setLayout(indexer_layout);
     _solution_table->setModel(nullptr);
+
+    plot_tab->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+    indexer_tab->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
 
     QGroupBox* figure_group = new QGroupBox("Detector image");
     figure_group->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
@@ -324,6 +330,7 @@ void SubframeExperiment::setMaskUp()
     Spoiler* mask_table_box = new Spoiler("List of Masks");
     GridFiller gfiller2(mask_table_box, true);
     _mask_table = new QTableWidget(0, 4);
+    _mask_table->setSelectionBehavior(QAbstractItemView::SelectRows);
     _mask_table->setEditTriggers(QAbstractItemView::NoEditTriggers);
     _mask_table->setHorizontalHeaderLabels(QStringList{"x lower", "y lower", "x upper", "y upper"});
     gfiller2.addWidget(_mask_table, 0, 2);
@@ -356,6 +363,8 @@ void SubframeExperiment::setPeakFinder2DUp()
         "Minimum blob threshold", "Minimum threshold for blob detection");
     _blob_max_thresh = gfiller.addSpinBox(
         "Maximum blob threshold", "Maximum threshold for blob detection");
+    _search_all_frames = gfiller.addCheckBox(
+        "Search all images", "Find blobs in all images in this data set", 1);
     _find_peaks_2d = gfiller.addButton("Find spots", "Find detector spots in current image");
 
     auto kernel_types = ohkl::Convolver::kernelTypes;
@@ -623,12 +632,20 @@ void SubframeExperiment::find_2d()
     ohkl::sptrDataSet data = _data_combo->currentData();
     int frame = _detector_widget->scene()->currentFrame();
 
+    ohkl::sptrProgressHandler progHandler = ohkl::sptrProgressHandler(new ohkl::ProgressHandler);
+    ProgressView progressView(nullptr);
+    progressView.watch(progHandler);
+    finder->setHandler(progHandler);
+
     finder->setData(data);
     _detector_widget->scene()->linkPerFrameSpots(finder->keypoints());
 
     setFinderParameters();
 
-    finder->find(frame);
+    if (_search_all_frames->isChecked())
+        finder->findAll();
+    else
+        finder->find(frame);
 
     _detector_widget->refresh();
 }
@@ -1004,4 +1021,8 @@ void SubframeExperiment::onMaskChanged()
     double y2 = dynamic_cast<QDoubleSpinBox*>(_mask_table->cellWidget(row, 3))->value();
     (*it)->setAABB(ohkl::AABB({x1, y1, 0}, {x2, y2, 0}));
     _detector_widget->scene()->loadMasksFromData();
+}
+
+void SubframeExperiment::onMaskSelected()
+{
 }

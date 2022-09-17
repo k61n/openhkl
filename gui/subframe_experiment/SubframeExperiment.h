@@ -103,6 +103,7 @@ class SubframeExperiment : public QWidget {
     void onBeamPosChanged(QPointF pos);
     void onBeamPosSpinChanged();
     void onMaskChanged();
+    void onMaskSelected();
 
  signals:
     void beamPosChanged(QPointF pos);
@@ -142,10 +143,11 @@ class SubframeExperiment : public QWidget {
 
     DataComboBox* _data_combo;
     QComboBox* _convolver_combo;
-    QPushButton* _find_peaks_2d;
     SafeSpinBox* _threshold;
     SafeSpinBox* _blob_min_thresh;
     SafeSpinBox* _blob_max_thresh;
+    QCheckBox* _search_all_frames;
+    QPushButton* _find_peaks_2d;
 
     SafeDoubleSpinBox* _gruber;
     SafeDoubleSpinBox* _niggli;

@@ -34,7 +34,7 @@ using RealMatrix = Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::
 
 namespace ohkl {
 
-PeakFinder2D::PeakFinder2D()
+PeakFinder2D::PeakFinder2D() : _handler(nullptr)
 {
     _params.minThreshold = 1;
     _params.maxThreshold = 100;
@@ -47,6 +47,11 @@ PeakFinder2D::PeakFinder2D()
     _params.kernel = ConvolutionKernelType::Annular;
 
     setConvolver(_params.kernel);
+}
+
+void PeakFinder2D::setHandler(const sptrProgressHandler& handler)
+{
+    _handler = handler;
 }
 
 void PeakFinder2D::setData(sptrDataSet data)
@@ -106,6 +111,23 @@ void PeakFinder2D::find(std::size_t frame_idx)
     _per_frame_spots[frame_idx].clear();
     cv::Ptr<cv::SimpleBlobDetector> detector = cv::SimpleBlobDetector::create(_params);
     detector->detect(cv_frame_8u, _per_frame_spots[frame_idx]);
+}
+
+void PeakFinder2D::findAll()
+{
+    // update progress handler
+    if (_handler) {
+        _handler->setStatus("Finding blobs");
+        _handler->setProgress(0);
+    }
+    for (std::size_t idx = 0; idx < _current_data->nFrames(); ++idx) {
+        find(idx);
+        if (_handler)
+            _handler->setProgress(100.0 * idx / _current_data->nFrames());
+    }
+
+    if (_handler)
+        _handler->setProgress(100);
 }
 
 std::vector<Peak3D*> PeakFinder2D::getPeakList(std::size_t frame_index)

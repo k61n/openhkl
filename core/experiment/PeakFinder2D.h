@@ -30,6 +30,8 @@ namespace ohkl {
 
 class ProgressHandler;
 
+using sptrProgressHandler = std::shared_ptr<ProgressHandler>;
+
 /*! \brief Perform image recognition on detector images to find peaks in 2D
  *
  *  PLACEHOLDER
@@ -46,7 +48,11 @@ class PeakFinder2D {
 
     //! Find blobs on given image
     void find(std::size_t image_idx);
+    //! Find blobs for all images in the data set
+    void findAll();
 
+    //! Set the progress handler
+    void setHandler(const sptrProgressHandler& handler);
     //! Set the DataSet
     void setData(sptrDataSet data);
     //! Return the DataSet
@@ -67,8 +73,8 @@ class PeakFinder2D {
     std::vector<Peak3D*> getPeakList(std::size_t frame_index);
 
  private:
-
- private:
+    //! progress handler
+    sptrProgressHandler _handler;
     //! The DataSet
     sptrDataSet _current_data;
     //! Convolver for image filtering
