@@ -32,6 +32,7 @@ class QCheckBox;
 class QComboBox;
 class QSlider;
 class QTabWidget;
+class QTableWidget;
 class QVBoxLayout;
 class Spoiler;
 class SpoilerCheck;
@@ -93,13 +94,15 @@ class SubframeExperiment : public QWidget {
     //! Save a unit cell to the experiment
     void saveCell();
 
+    void refreshMaskTable();
+
     void setPlotMode();
     void setMaskMode();
-
 
  public slots:
     void onBeamPosChanged(QPointF pos);
     void onBeamPosSpinChanged();
+    void onMaskChanged();
 
  signals:
     void beamPosChanged(QPointF pos);
@@ -165,6 +168,7 @@ class SubframeExperiment : public QWidget {
 
     SpoilerCheck* _mask_box;
     QComboBox* _mask_combo;
+    QTableWidget* _mask_table;
 
     bool _show_direct_beam;
 

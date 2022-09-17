@@ -42,6 +42,8 @@ class EllipseMask : public IMask {
 
     const AABB& aabb() { return _ellipsoid.aabb(); };
 
+    void setAABB(const AABB& aabb) override;
+
  private:
     Ellipsoid _ellipsoid;
 };

@@ -749,6 +749,7 @@ void DetectorScene::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
                     if (it != _masks.end()) {
                         it->second = new ohkl::BoxMask(*p->getAABB());
                         _currentData->addMask(it->second);
+                        emit signalMaskChanged();
                         _lastClickedGI = nullptr;
                     }
                     std::map<ohkl::Peak3D*, ohkl::RejectionFlag> tmp_map;
@@ -762,6 +763,7 @@ void DetectorScene::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
                     if (it != _masks.end()) {
                         it->second = new ohkl::EllipseMask(*p->getAABB());
                         _currentData->addMask(it->second);
+                        emit signalMaskChanged();
                         _lastClickedGI = nullptr;
                     }
                     _currentData->maskPeaks(peaks, tmp_map);
@@ -777,6 +779,7 @@ void DetectorScene::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
                     if (it != _masks.end()) {
                         it->second = new ohkl::BoxMask(*p->getAABB());
                         _currentData->addMask(it->second);
+                        emit signalMaskChanged();
                         _lastClickedGI = nullptr;
                     }
                     update();
@@ -786,6 +789,7 @@ void DetectorScene::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
                     if (it != _masks.end()) {
                         it->second = new ohkl::EllipseMask(*p->getAABB());
                         _currentData->addMask(it->second);
+                        emit signalMaskChanged();
                         _lastClickedGI = nullptr;
                     }
                     update();
@@ -845,6 +849,7 @@ void DetectorScene::keyPressEvent(QKeyEvent* event)
                 if (it != _masks.end()) {
                     _currentData->removeMask(it->second);
                     _masks.erase(it);
+                    emit signalMaskChanged();
                     update();
                     updateMasks();
                     removeItem(item);
@@ -854,6 +859,7 @@ void DetectorScene::keyPressEvent(QKeyEvent* event)
                 if (it != _masks.end()) {
                     _currentData->removeMask(it->second);
                     _masks.erase(it);
+                    emit signalMaskChanged();
                     update();
                     updateMasks();
                     removeItem(item);
@@ -1334,6 +1340,7 @@ void DetectorScene::loadMasksFromData()
             _masks.emplace_back(ellipse_mask_item, mask);
         }
     }
+    emit signalMaskChanged();
     update();
 }
 

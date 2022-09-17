@@ -50,11 +50,13 @@
 #include <QSpinBox>
 #include <QSplitter>
 #include <QTabWidget>
+#include <QTableWidget>
 #include <QVBoxLayout>
 #include <QVector>
 #include <QWidget>
 #include <cstring>
 #include <gsl/gsl_histogram.h>
+#include <qspinbox.h>
 #include <stdexcept>
 
 #include "gui/utility/Spoiler.h"
@@ -318,6 +320,16 @@ void SubframeExperiment::setMaskUp()
     _mask_combo->addItems(QStringList{"Rectangular mask", "Elliptical mask"});
 
     _mask_layout->addWidget(_mask_box);
+
+    Spoiler* mask_table_box = new Spoiler("List of Masks");
+    GridFiller gfiller2(mask_table_box, true);
+    _mask_table = new QTableWidget(0, 4);
+    _mask_table->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    _mask_table->setHorizontalHeaderLabels(QStringList{"x lower", "y lower", "x upper", "y upper"});
+    gfiller2.addWidget(_mask_table, 0, 2);
+    _mask_table->resizeColumnsToContents();
+
+    _mask_layout->addWidget(mask_table_box);
     _mask_layout->addStretch();
 
     connect(
@@ -325,6 +337,9 @@ void SubframeExperiment::setMaskUp()
         &SubframeExperiment::toggleCursorMode);
     connect(
         _mask_combo, &QComboBox::currentTextChanged, this, &SubframeExperiment::toggleCursorMode);
+    connect(
+        _detector_widget->scene(), &DetectorScene::signalMaskChanged, this,
+        &SubframeExperiment::refreshMaskTable);
 }
 
 void SubframeExperiment::setPeakFinder2DUp()
@@ -920,4 +935,73 @@ void SubframeExperiment::saveCell()
 
         gGui->refreshMenu();
     }
+}
+
+void SubframeExperiment::refreshMaskTable()
+{
+    _mask_table->clearContents();
+    if (!gSession->hasProject())
+        return;
+    if (!gSession->currentProject()->hasDataSet())
+        return;
+
+    auto data = _detector_widget->currentData();
+    int row = 0;
+    QDoubleSpinBox* spin;
+    for (auto* mask : data->masks()) {
+        if (row >= _mask_table->rowCount())
+            _mask_table->insertRow(_mask_table->rowCount());
+        auto aabb = mask->aabb();
+        int col = 0;
+        spin = new QDoubleSpinBox;
+        spin->setMaximum(data->nCols());
+        spin->setValue(aabb.lower()[0]);
+        spin->setProperty("row", row);
+        spin->setProperty("col", col);
+        connect(
+            spin, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged),
+            this, &SubframeExperiment::onMaskChanged);
+        _mask_table->setCellWidget(row, col++, spin);
+        spin = new QDoubleSpinBox;
+        spin->setMaximum(data->nRows());
+        spin->setValue(aabb.lower()[1]);
+        spin->setProperty("row", row);
+        spin->setProperty("col", col);
+        connect(
+            spin, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged),
+            this, &SubframeExperiment::onMaskChanged);
+        _mask_table->setCellWidget(row, col++, spin);
+        spin = new QDoubleSpinBox;
+        spin->setMaximum(data->nCols());
+        spin->setValue(aabb.upper()[0]);
+        spin->setProperty("row", row);
+        spin->setProperty("col", col);
+        connect(
+            spin, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged),
+            this, &SubframeExperiment::onMaskChanged);
+        _mask_table->setCellWidget(row, col++, spin);
+        spin = new QDoubleSpinBox;
+        spin->setMaximum(data->nRows());
+        spin->setValue(aabb.upper()[1]);
+        spin->setProperty("row", row);
+        spin->setProperty("col", col);
+        connect(
+            spin, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged),
+            this, &SubframeExperiment::onMaskChanged);
+        _mask_table->setCellWidget(row++, col++, spin);
+    }
+    _mask_table->resizeColumnsToContents();
+}
+
+void SubframeExperiment::onMaskChanged()
+{
+    int row = sender()->property("row").toInt();
+    std::set<ohkl::IMask*>::iterator it = _detector_widget->currentData()->masks().begin();
+    std::advance(it, row);
+    double x1 = dynamic_cast<QDoubleSpinBox*>(_mask_table->cellWidget(row, 0))->value();
+    double y1 = dynamic_cast<QDoubleSpinBox*>(_mask_table->cellWidget(row, 1))->value();
+    double x2 = dynamic_cast<QDoubleSpinBox*>(_mask_table->cellWidget(row, 2))->value();
+    double y2 = dynamic_cast<QDoubleSpinBox*>(_mask_table->cellWidget(row, 3))->value();
+    (*it)->setAABB(ohkl::AABB({x1, y1, 0}, {x2, y2, 0}));
+    _detector_widget->scene()->loadMasksFromData();
 }

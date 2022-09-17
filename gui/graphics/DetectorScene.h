@@ -215,6 +215,7 @@ class DetectorScene : public QGraphicsScene {
     void signalSelectedPeakItemChanged(PeakItemGraphic* peak);
     void signalUpdateDetectorScene();
     void signalPeakSelected(ohkl::Peak3D* peak);
+    void signalMaskChanged();
     void beamPosChanged(QPointF pos);
 
  private:
