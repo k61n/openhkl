@@ -232,7 +232,8 @@ void SubframeReject::refreshAll()
     refreshPeakTable();
     toggleUnsafeWidgets();
 
-    if (!gSession->currentProject()->hasDataSet())
+    if (!gSession->currentProject()->hasDataSet() ||
+        !gSession->currentProject()->hasPeakCollection())
         return;
     updateStatistics();
     computeHistogram();
