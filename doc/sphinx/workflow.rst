@@ -154,7 +154,111 @@ The detector image serves three purposes:
 1. To adjust the intensity colour scale via the slider on the right
 2. To mask regions of the image such as the beam stop or specific peaks, to
    exclude them from further processing
-3. To plot intensity profiles along a line in the plotting panel at the bottom.
+3. To plot intensity profiles along a line
+
+There are three tabs on the left-hand panel: `strategy`, `Histograms` and
+`Masks`.
+
+The `strategy` tab contains controls for finding blobs (notionally
+peaks) in a single image, using those blobs to determine the unit cell, and
+predicting the completeness of the peaks given a sample rotation angle
+increment. The `Set initial direct beam position` controls the point at which
+the direct beam intersects the detector image. In the first instance, this is
+assumed to be in the centre of the image, but this may be off by a few pixels.
+Clicking the checkbox allows the user to drag a resizable crosshair in the
+detector image panel, which will define the exact direct beam position. The `x
+offset` and `y offset` controls define the offset of this crosshair, in pixels,
+with respect to the *centre* of the image.
+
+The `Find blobs in this image` box allows the user to leverage image processing algorithms from the OpenCV (namely `SimpleBlobDetector`) library to locate detector spots.
+
+   +-------------------+----------------+-------------------------------+
+   | **Parameters**    | Unit           | Description                   |
+   +===================+================+===============================+
+   | **Convolution**   |                | Convolution kernel for blob   |
+   | **kernel**        |                | search                        |
+   |                   |                |                               |
+   +-------------------+----------------+-------------------------------+
+   | **Threshold**     | counts         | Pixels with a value below the |
+   |                   |                | threshold are discarded       |
+   +-------------------+----------------+-------------------------------+
+   | **Minimum blob**  | integer        | Blob is discarded if it       |
+   | **threshold**     |                | contains fewer points than    |
+   |                   |                | this                          |
+   +-------------------+----------------+-------------------------------+
+   | **Maximum blob**  | integer        | Blob is discarded if it       |
+   | **threshold**     |                | contains more points than     |
+   |                   |                | this                          |
+   +-------------------+----------------+-------------------------------+
+   | **Search all**    |                | Loop through all images to    |
+   | **images**        |                | find detector spots           |
+   |                   |                |                               |
+   +-------------------+----------------+-------------------------------+
+
+The autoindexer parameters are described in :ref:`sec_autoindexing`, but it
+should be noted that indexing from a single image generally requires masking of
+``difficult'' regions of the detector such as the beam stop, and a good initial
+guess for the direct beam position.
+
+The `Histograms` tab allows the user to plot histograms of *pixel* statistics
+(as opposed to peak statistics).
+
+   +-------------------+----------------+-------------------------------+
+   | **Parameters**    | Unit           | Description                   |
+   +===================+================+===============================+
+   | **Number of**     | integer        | Number of histogram bins      |
+   | **bins**          |                |                               |
+   |                   |                |                               |
+   +-------------------+----------------+-------------------------------+
+   | **Calculate**     |                | Plot a histogram of pixel     |
+   | **intensity**     |                | intensity statistics for the  |
+   |                   |                | visible image                 |
+   +-------------------+----------------+-------------------------------+
+   | **Show total**    |                | Display histogram for all     |
+   | **histogram**     |                | detector images in data set   |
+   |                   |                |                               |
+   +-------------------+----------------+-------------------------------+
+   | **Use**           |                | Use logarithmic scale for     |
+   | **logarithmic**   |                | counts                        |
+   | **scale**         |                |                               |
+   +-------------------+----------------+-------------------------------+
+   | **Range on x**    |                | Adjust range on x axis        |
+   | **axis**          |                |                               |
+   +-------------------+----------------+-------------------------------+
+   | **Range on y**    |                | Adjust range on y axis        |
+   | **axis**          |                |                               |
+   +-------------------+----------------+-------------------------------+
+   | **Minimum x**     |                | Minimum value on x axis       |
+   | **value**         |                |                               |
+   +-------------------+----------------+-------------------------------+
+   | **Maximum x**     |                | Maximum value on x axis       |
+   | **value**         |                |                               |
+   +-------------------+----------------+-------------------------------+
+   | **Maximum y**     |                | Minimum value on y axis       |
+   | **value**         |                |                               |
+   +-------------------+----------------+-------------------------------+
+   | **Minimum y**     |                | Maximum value on y axis       |
+   | **value**         |                |                               |
+   +-------------------+----------------+-------------------------------+
+   | **Update plot**   |                | Refresh the plot              |
+   +-------------------+----------------+-------------------------------+
+
+   The `Plot intensity profiles` box changes the interaction mode in the
+   detector image to draw a ("Line plot", "Horizontal slice" or "Vertical
+   slice") through the image, and plot a histogram of the intensity along that
+   line with the given number of bins.
+
+   The `Masks` tab allows the user to add masks to the data set. A mask is
+   either an ellipse or a rectangle present on *all images in the data set*, on
+   which detected spots or peaks and integration is not valid. Possible reasons
+   to add a mask can be to prevent peak finding on a the beam spot, or to
+   prevent integration of peaks on heterogeneous features such as seams between
+   detector plates. The `Add detector image masks` check box changes the
+   interaction mode in the detector image to draw a mask by dragging and
+   dropping, the shape of which is specified in the list (rectangular or
+   elliptical). Masks are displayed in the list below, and the extents of the
+   masks can be fine tuned.
+
 
 Find peaks
 ----------
@@ -326,6 +430,8 @@ Extinct from spacegroup
 Note that the peak table contains an extra column on this widget, ``caught by
 filter``. This allows the user to sort peaks caught by the filter to the top of
 the peak table with a single click.
+
+.. _sec_autoindexing:
 
 Autoindexing
 ------------
