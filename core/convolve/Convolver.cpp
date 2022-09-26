@@ -18,7 +18,18 @@ namespace ohkl {
 
 using parameters_map = std::map<std::string, double>;
 
-Convolver::Convolver() : _parameters() { }
+const std::map<ConvolutionKernelType, std::string> Convolver::kernelTypes{
+    {ConvolutionKernelType::None, "none"},
+    {ConvolutionKernelType::Annular, "annular"},
+    {ConvolutionKernelType::EnhancedAnnular, "enhanced annular"},
+    {ConvolutionKernelType::Radial, "radial"},
+    {ConvolutionKernelType::Constant, "constant"},
+    {ConvolutionKernelType::Delta, "delta"}};
+
+Convolver::Convolver()
+    : _parameters()
+{
+}
 
 Convolver::Convolver(const parameters_map& parameters)
 {

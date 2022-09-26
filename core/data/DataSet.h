@@ -35,6 +35,8 @@ class Diffractometer;
 class InstrumentStateSet;
 struct RawDataReaderParameters;
 
+enum class BitDepth { u8b = 8, u16b = 16, u32b = 32 };
+
 /*! \addtogroup python_api
  *  @{*/
 
@@ -126,6 +128,9 @@ class DataSet {
 
     //! Query the wavelength stored in the metadata
     double wavelength() const;
+
+    //! Query image bit depth stored in metadata
+    BitDepth bitDepth() const;
 
     //! Get the initial instrument states
     void setInstrumentStates(InstrumentStateSet* states);

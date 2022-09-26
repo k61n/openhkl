@@ -63,11 +63,11 @@ SubframeRefiner::SubframeRefiner()
     _left_layout = new QVBoxLayout();
 
     // Tabs to switch betwen tables and detector
-    QTabWidget* tab_widget = new QTabWidget(this);
-    QWidget* tables_tab = new QWidget(tab_widget);
-    QWidget* detector_tab = new QWidget(tab_widget);
-    tab_widget->addTab(tables_tab, "Tables of refined parameters");
-    tab_widget->addTab(detector_tab, "Detector image");
+    _tab_widget = new QTabWidget(this);
+    QWidget* tables_tab = new QWidget(_tab_widget);
+    QWidget* detector_tab = new QWidget(_tab_widget);
+    _tab_widget->addTab(tables_tab, "Tables of refined parameters");
+    _tab_widget->addTab(detector_tab, "Detector image");
 
     QHBoxLayout* table_layout = new QHBoxLayout();
 
@@ -90,7 +90,7 @@ SubframeRefiner::SubframeRefiner()
     setPeakViewWidgetUp(_peak_view_widget_2, "View unrefined_peaks");
     refreshAll();
 
-    _detector_widget = new DetectorWidget(false, false, true);
+    _detector_widget = new DetectorWidget(false, true);
     _detector_widget->linkPeakModel(&_unrefined_model, &_refined_model);
     detector_tab->setLayout(_detector_widget);
 
@@ -111,7 +111,7 @@ SubframeRefiner::SubframeRefiner()
         _data_combo, &QComboBox::setCurrentIndex);
 
     _right_element->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-    _right_element->addWidget(tab_widget);
+    _right_element->addWidget(_tab_widget);
 
     _plot_widget = new SXPlot;
     _plot_widget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
@@ -268,6 +268,7 @@ void SubframeRefiner::refine()
     else
         gGui->statusBar()->showMessage("Refinement failed");
     emit gGui->sentinel->instrumentStatesChanged();
+    _tab_widget->setCurrentIndex(0);
     gGui->setReady(true);
 }
 
@@ -515,6 +516,7 @@ void SubframeRefiner::updatePredictions()
     } else {
         QMessageBox::critical(this, "Error", "Cannot update predictions: refinement failed");
     }
+    _tab_widget->setCurrentIndex(1);
     gGui->setReady(true);
 }
 

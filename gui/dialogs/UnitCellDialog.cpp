@@ -24,27 +24,19 @@
 #include <qnamespace.h>
 
 UnitCellDialog::UnitCellDialog(
-    QString suggestion, QStringList collectionNames, QStringList spaceGroups)
+    QString suggestion, QStringList spaceGroups, QStringList collectionNames)
 {
     setModal(true);
 
     QGridLayout* gridLayout = new QGridLayout(this);
 
+    int row = 0;
     QLabel* label = new QLabel("Unit cell name:");
     label->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
     _cell_name = new QLineEdit("");
     _cell_name->setFixedWidth(200);
-    gridLayout->addWidget(label, 0, 0, 1, 1);
-    gridLayout->addWidget(_cell_name, 0, 1, 1, 2);
-
-    label = new QLabel("Peak collection:");
-    label->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
-    _peak_collections = new QComboBox();
-    _peak_collections->addItems(collectionNames);
-    _peak_collections->setInsertPolicy(QComboBox::InsertAlphabetically);
-    _peak_collections->setFixedWidth(200);
-    gridLayout->addWidget(label, 1, 0, 1, 1);
-    gridLayout->addWidget(_peak_collections, 1, 1, 1, 2);
+    gridLayout->addWidget(label, row, 0, 1, 1);
+    gridLayout->addWidget(_cell_name, row++, 1, 1, 2);
 
     label = new QLabel("Space group:");
     label->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
@@ -52,14 +44,25 @@ UnitCellDialog::UnitCellDialog(
     _space_group->addItems(spaceGroups);
     _space_group->setInsertPolicy(QComboBox::InsertAlphabetically);
     _space_group->setFixedWidth(200);
-    gridLayout->addWidget(label, 2, 0, 1, 1);
-    gridLayout->addWidget(_space_group, 2, 1, 1, 2);
+    gridLayout->addWidget(label, row, 0, 1, 1);
+    gridLayout->addWidget(_space_group, row++, 1, 1, 2);
+
+    if (!collectionNames.empty()) {
+        label = new QLabel("Peak collection:");
+        label->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
+        _peak_collections = new QComboBox();
+        _peak_collections->addItems(collectionNames);
+        _peak_collections->setInsertPolicy(QComboBox::InsertAlphabetically);
+        _peak_collections->setFixedWidth(200);
+        gridLayout->addWidget(label, row, 0, 1, 1);
+        gridLayout->addWidget(_peak_collections, row++, 1, 1, 2);
+    }
 
     QDialogButtonBox* buttonBox = new QDialogButtonBox(this);
     buttonBox->setOrientation(Qt::Horizontal);
     buttonBox->setStandardButtons(QDialogButtonBox::Cancel | QDialogButtonBox::Ok);
     buttonBox->setCenterButtons(false);
-    gridLayout->addWidget(buttonBox, 3, 0, 1, 3, Qt::AlignCenter);
+    gridLayout->addWidget(buttonBox, row, 0, 1, 3, Qt::AlignCenter);
 
     _cell_name->setText(suggestion);
     _cell_name->selectAll();

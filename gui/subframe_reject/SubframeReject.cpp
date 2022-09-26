@@ -147,7 +147,7 @@ void SubframeReject::setFigureUp()
 {
     QGroupBox* figure_group = new QGroupBox("Detector image");
     figure_group->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-    _detector_widget = new DetectorWidget(false, false, true, figure_group);
+    _detector_widget = new DetectorWidget(false, true, figure_group);
     _detector_widget->linkPeakModel(&_peak_collection_model);
 
     connect(
@@ -232,7 +232,8 @@ void SubframeReject::refreshAll()
     refreshPeakTable();
     toggleUnsafeWidgets();
 
-    if (!gSession->currentProject()->hasDataSet())
+    if (!gSession->currentProject()->hasDataSet() ||
+        !gSession->currentProject()->hasPeakCollection())
         return;
     updateStatistics();
     computeHistogram();

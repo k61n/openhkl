@@ -32,6 +32,7 @@ class DetectorScene;
 class DetectorView;
 class DataComboBox;
 class PeakCollectionModel;
+class QButtonGroup;
 class QPushButton;
 class QSpinBox;
 class QScrollBar;
@@ -41,7 +42,7 @@ class QSlider;
 class DetectorWidget : public QGridLayout {
 
  public:
-    DetectorWidget(bool mode, bool cursor, bool slider, QWidget* parent = nullptr);
+    DetectorWidget(bool cursor, bool slider, QWidget* parent = nullptr);
     //! Synchronise intensity sliders and intensities across instances
     void syncIntensitySliders();
     //! Update the DataSet combo
@@ -67,8 +68,6 @@ class DetectorWidget : public QGridLayout {
     QScrollBar* scroll();
     //! Return the DataSet QComboBox
     DataComboBox* dataCombo();
-    //! Return the interaction mode QComboBox
-    QComboBox* modeCombo();
     //! Return the cursor mode QComboBox
     QComboBox* cursorCombo();
     //! Return the maximum intensity slider
@@ -79,19 +78,25 @@ class DetectorWidget : public QGridLayout {
     DetectorView* getDetectorView();
     //! Save a screenshot via QFileDialog
     void saveScreenshot();
+    //! Set the cursor mode
+    void toggleCursorMode();
+    //! Disable the cursor mode controls
+    void enableCursorMode(bool enable);
 
  private:
     DetectorView* _detector_view;
     QSpinBox* _spin;
     QScrollBar* _scroll;
     DataComboBox* _data_combo;
-    QComboBox* _mode_combo = nullptr;
     QComboBox* _cursor_combo = nullptr;
     QSlider* _intensity_slider = nullptr;
     QPushButton* _hide_masks;
     QPushButton* _reset;
     QPushButton* _copy_to_clipboard;
     QPushButton* _save_to_file;
+    QPushButton* _zoom;
+    QPushButton* _select;
+    QButtonGroup* _cursor_mode_buttons;
     QWidget* _toolbar;
 
 

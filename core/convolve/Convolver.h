@@ -20,6 +20,15 @@
 
 namespace ohkl {
 
+enum class ConvolutionKernelType {
+    None,
+    Annular,
+    EnhancedAnnular,
+    Radial,
+    Constant,
+    Delta
+};
+
 using RealMatrix = Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>;
 
 //! Pure virtual base class of all convolvers (= image filters).
@@ -53,6 +62,8 @@ class Convolver {
     virtual RealMatrix convolve(const RealMatrix& image) = 0;
 
     virtual std::pair<size_t, size_t> kernelSize() const = 0;
+
+    static const std::map<ConvolutionKernelType, std::string> kernelTypes;
 
  protected:
     std::map<std::string, double> _parameters;

@@ -29,6 +29,7 @@
 #include <QStack>
 
 #include <iostream>
+#include <opencv2/core/types.hpp>
 
 namespace ohkl {
 class UnitCell;
@@ -114,6 +115,8 @@ class DetectorScene : public QGraphicsScene {
     PeakCollectionModel* peakModel2() const;
     //! Populate vector of 3rd party peak centers
     void link3rdPartyPeaks(ohkl::PeakCenterDataSet* pcd);
+    //! Link data for keypoints found via OpenCV
+    void linkPerFrameSpots(std::vector<std::vector<cv::KeyPoint>>* points);
     //! Set direct beam positions
     void linkDirectBeamPositions(std::vector<ohkl::DetectorEvent>* events);
     //! Set unrefined direct beam positions
@@ -134,12 +137,16 @@ class DetectorScene : public QGraphicsScene {
     void drawDirectBeamPositions(std::vector<ohkl::DetectorEvent> events);
     //! Draw peak centers from 3rd party software
     void draw3rdPartyItems();
+    //! Draw spot centers from 2D peak finder
+    void drawSpotCenters();
     //! Remove all the peak elements
     void clearPeakItems();
     //! Set unit cell for Miller Index computation
     void setUnitCell(ohkl::UnitCell* cell);
     //! Plot settings for 3rd party peak centres
     void setup3rdPartyPeaks(bool draw, const QColor& color, int size);
+    //! Set up spot center visualisation (OpenCV blob detection)
+    void setupSpotCenters(bool draw, const QColor& color, int size);
     //! Toggle drawing the direct beam position
     void showDirectBeam(bool show);
     //! Get the current intensity
@@ -208,6 +215,7 @@ class DetectorScene : public QGraphicsScene {
     void signalSelectedPeakItemChanged(PeakItemGraphic* peak);
     void signalUpdateDetectorScene();
     void signalPeakSelected(ohkl::Peak3D* peak);
+    void signalMaskChanged();
     void beamPosChanged(QPointF pos);
 
  private:
@@ -263,6 +271,7 @@ class DetectorScene : public QGraphicsScene {
     bool _drawSinglePeakIntegrationRegion;
     bool _drawDirectBeam;
     bool _draw3rdParty;
+    bool _drawFoundSpots;
     bool _drawMasks;
     std::unique_ptr<ColorMap> _colormap;
     QGraphicsPixmapItem* _integrationRegion1;
@@ -296,6 +305,11 @@ class DetectorScene : public QGraphicsScene {
     //! Size of 3rd party peaks
     int _3rdparty_size;
 
+    //! Colour of spot centers (OpenCV blob detection)
+    QColor _spot_color;
+    //! Size of spot centers
+    int _spot_size;
+
     //! Colour of direct beam
     QColor _beam_color;
     //! Colour of unrefined direct beam;
@@ -314,6 +328,8 @@ class DetectorScene : public QGraphicsScene {
     ohkl::Peak3D* _peak;
 
     ohkl::PeakCenterDataSet* _peak_center_data;
+
+    std::vector<std::vector<cv::KeyPoint>>* _per_frame_spots;
 };
 
 #endif // OHKL_GUI_GRAPHICS_DETECTORSCENE_H

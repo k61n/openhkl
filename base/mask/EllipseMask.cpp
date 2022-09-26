@@ -18,10 +18,7 @@ namespace ohkl {
 
 EllipseMask::EllipseMask(const AABB& aabb, bool /*two_dim*/) : IMask(), _ellipsoid()
 {
-    auto center = aabb.center();
-    auto radii = 0.5 * (aabb.upper() - aabb.lower());
-    auto axes = Eigen::Matrix3d::Identity();
-    _ellipsoid = Ellipsoid(center, radii, axes);
+    setAABB(aabb);
     ohklLog(Level::Info, "EllipseMask::EllipseMask: Created new elliptical mask");
     ohklLog(Level::Info, "Lower bound: ", aabb.lower().transpose());
     ohklLog(Level::Info, "Upper bound: ", aabb.upper().transpose());
@@ -35,6 +32,14 @@ bool EllipseMask::collide(const Ellipsoid& ellipsoid) const
 IMask* EllipseMask::clone() const
 {
     return new EllipseMask(*this);
+}
+
+void EllipseMask::setAABB(const AABB &aabb)
+{
+    auto center = aabb.center();
+    auto radii = 0.5 * (aabb.upper() - aabb.lower());
+    auto axes = Eigen::Matrix3d::Identity();
+    _ellipsoid = Ellipsoid(center, radii, axes);
 }
 
 } // namespace ohkl

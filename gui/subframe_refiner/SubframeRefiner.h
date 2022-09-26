@@ -30,7 +30,6 @@
 #include <QRandomGenerator>
 #include <QSizePolicy>
 #include <QSplitter>
-#include <QTableWidget>
 #include <QVBoxLayout>
 #include <QWidget>
 
@@ -46,6 +45,7 @@ class Spoiler;
 class SXPlot;
 class PeakViewWidget;
 class PlotCheckBox;
+class QTabWidget;
 class SafeSpinBox;
 class SafeDoubleSpinBox;
 
@@ -114,6 +114,7 @@ class SubframeRefiner : public QWidget {
 
     QVBoxLayout* _left_layout;
     QSplitter* _right_element;
+    QTabWidget* _tab_widget;
 
     // data selection
     PeakComboBox* _peak_combo;

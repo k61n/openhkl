@@ -38,6 +38,7 @@ class SafeSpinBox;
 class SafeDoubleSpinBox;
 class QVBoxLayout;
 class QSplitter;
+class QTabWidget;
 class QCheckBox;
 class QGroupBox;
 
@@ -123,6 +124,8 @@ class SubframeAutoIndexer : public QWidget {
 
     QVBoxLayout* _left_layout;
     QSplitter* _right_element;
+
+    QTabWidget* _tab_widget;
 
     DataComboBox* _data_combo;
     PeakComboBox* _peak_combo;

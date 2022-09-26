@@ -98,6 +98,10 @@ include_directories(SYSTEM ${EIGEN3_INCLUDE_DIR})
 find_package(Qhull MODULE REQUIRED)
 include_directories(SYSTEM ${QHULL_INCLUDE_DIR})
 
+##### Find OpenCV
+find_package(OpenCV REQUIRED)
+include_directories(SYSTEM ${OpenCV_INCLUDE_DIRS})
+
 ##### Find Boost
 set(Boost_NO_BOOST_CMAKE ON)
 set(Boost_USE_MULTITHREADED ON)

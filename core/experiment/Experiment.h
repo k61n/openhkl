@@ -20,12 +20,13 @@
 #include "core/data/DataTypes.h"
 #include "core/experiment/DataQuality.h"
 #include "core/experiment/InstrumentStateHandler.h"
-#include "core/experiment/PeakFinder.h"
-#include "core/instrument/Diffractometer.h"
 #include "core/experiment/IntegrationProvider.h"
+#include "core/experiment/PeakFinder.h"
+#include "core/experiment/PeakFinder2D.h"
+#include "core/instrument/Diffractometer.h"
+#include "core/integration/IIntegrator.h"
 #include "core/loader/RawDataReader.h"
 #include "core/raw/DataKeys.h"
-#include "core/integration/IIntegrator.h"
 #include "core/shape/PeakFilter.h"
 #include "core/shape/Predictor.h"
 #include "core/statistics/MergedData.h"
@@ -206,6 +207,8 @@ class Experiment {
     // Peak finder
     //! Return a pointer to the PeakFinder object
     PeakFinder* peakFinder() { return _peak_finder.get(); };
+    //! Return a pointer to the OpenCV peak finder
+    PeakFinder2D* peakFinder2D() { return _peak_finder_2d.get(); };
     //! Create a new peak collection from the peaks found by the peak finder
     bool acceptFoundPeaks(const std::string& name);
     //! Create a new peak collection from a found collection
@@ -278,6 +281,7 @@ class Experiment {
 
     // Objects that do the number crunching
     std::unique_ptr<PeakFinder> _peak_finder;
+    std::unique_ptr<PeakFinder2D> _peak_finder_2d;
     std::unique_ptr<PeakFilter> _peak_filter;
     std::unique_ptr<AutoIndexer> _auto_indexer;
     std::unique_ptr<Predictor> _predictor;

@@ -82,10 +82,8 @@ void DetectorWindow::setDetectorViewUp()
 {
     QGroupBox* detector_group = new QGroupBox("Detector image");
     detector_group->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-    _detector_widget = new DetectorWidget(false, true, true, detector_group);
+    _detector_widget = new DetectorWidget(true, true, detector_group);
     _detector_widget->linkPeakModel(&_peak_collection_model_1, &_peak_collection_model_2);
-    _detector_widget->cursorCombo()->addItems(
-        QStringList{"Cursor mode", "Pixel", "\u03B8", "\u03B3/\u03BD", "d", "Miller Indices"});
 
     connect(
         _detector_widget->scene(), &DetectorScene::signalSelectedPeakItemChanged, this,
