@@ -26,24 +26,27 @@ stages:
 #    - build/OpenHKL*.exe
 #    expire_in: 10 days
 
-# mac10_15:
-#   tags:
-#   - macbuild3
-#   stage: build
-#   script:
-#     - mkdir build
-#     - cd build
-#     - export QTDIR=/usr/local/Cellar/qt/6.3.0
-#     - cmake .. -D CMAKE_PREFIX_PATH=$QTDIR -D CMAKE_CXX_COMPILER_LAUNCHER=ccache -DCMAKE_OSX_DEPLOYMENT_TARGET=10.15 -D BUILD_WITH_QT6=ON -D OpenCV_DIR=/opt/homebrew/Cellar/opencv/4.6.0/lib/cmake/opencv4/
-#     - make -j3
-#     - ctest -j3 --output-on-failure
-#     # - cpack -V
-#     - bash ../setup_scripts/mk_macos_pkg.sh ../ ./
-#   artifacts:
-#     paths:
-#     - build/OpenHKL-*.dmg
-#     - build/macospack/*.zip
-#     expire_in: 10 days
+mac10_15:
+  tags:
+  - macbuild3
+  stage: build
+  script:
+    - mkdir build
+    - cd build
+    - export QTDIR="/usr/local/Cellar/qt/6.3.1_4"
+    # - export QTDIR="/usr/local/opt/qt@5"
+    # - export TESTDATADIR="$HOME/testdata"
+    - export OPENCV_DIR="/usr/local/Cellar/opencv/4.6.0/lib/cmake/opencv4"
+    - cmake .. -D CMAKE_PREFIX_PATH="$QTDIR/lib/cmake" -D CMAKE_CXX_COMPILER_LAUNCHER=ccache -DCMAKE_OSX_DEPLOYMENT_TARGET=10.15 -D OpenCV_DIR="$OPENCV_DIR" -D BUILD_WITH_QT6=ON
+    - make -j3
+    - ctest -j3 --output-on-failure
+    # - cpack -V
+    - bash ../setup_scripts/mk_macos_pkg.sh ../ ./
+  artifacts:
+    paths:
+    - build/OpenHKL-*.dmg
+    - build/macospack/*.zip
+    expire_in: 10 days
 
 mac12_2:
   tags:
