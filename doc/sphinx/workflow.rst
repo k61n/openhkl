@@ -170,7 +170,11 @@ detector image panel, which will define the exact direct beam position. The `x
 offset` and `y offset` controls define the offset of this crosshair, in pixels,
 with respect to the *centre* of the image.
 
-The `Find blobs in this image` box allows the user to leverage image processing algorithms from the OpenCV (namely `SimpleBlobDetector`) library to locate detector spots.
+The `Find blobs in this image` box allows the user to leverage image processing
+algorithms from the OpenCV (namely `SimpleBlobDetector`) library to locate
+detector spots.
+
+.. table:: 2D blob finder parameters
 
    +-------------------+----------------+-------------------------------+
    | **Parameters**    | Unit           | Description                   |
@@ -202,6 +206,8 @@ guess for the direct beam position.
 
 The `Histograms` tab allows the user to plot histograms of *pixel* statistics
 (as opposed to peak statistics).
+
+.. table:: Pixel statistics parameters
 
    +-------------------+----------------+-------------------------------+
    | **Parameters**    | Unit           | Description                   |

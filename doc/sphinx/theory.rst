@@ -3,6 +3,136 @@
 Theory
 ========
 
+.. _peak-finding:
+
+Image processing
+----------------
+
+The first step of extracting features from a detector image is the application
+of a filter, also known as convolution. A convolution kernel is a small matrix
+that operates on every element (pixel) of an image, combining it with the
+surrounding pixels in a convolution, resulting in some modification of the image
+that makes it easier to process, for example, sharpening, blurring or
+edge-finding.
+
+The general expression for convolution is,
+
+.. math::
+
+   g(x, y) = w * f(x, y) = \sum^a_{dx=-a}\sum^b_{dx=-b}w(dx, dy)f(x-dx, y-dy),
+
+where :math:`g(x, y)` is the filtered or transformed image, :math:`f(x, y)` is
+the original image, and :math:`w` is the convolution kernel matrix. This is
+roughly equivalent to a weighted average of the elements of a sub-matrix of the
+image with the same dimensions as the kernel (the weight being the value of the
+element in the kernel), applied to the central element of the sub-matrix.
+
+The effect of the filter obviously depends on the form of the convolution
+kernal, of which there are 5 types.
+
+1. Delta
+
+   A dirac delta function that does not modify the image.
+
+.. math::
+
+   \begin{bmatrix}
+   0 & 0 & 0 \\
+   0 & 1 & 0 \\
+   0 & 0 & 0
+   \end{bmatrix}
+
+
+2. Constant
+
+   Apply a blur, as the average over the pixels surrounding a central pixel. A 3
+   x 3 example:
+
+.. math::
+
+   \frac{1}{9}
+   \begin{bmatrix}
+   1 & 1 & 1 \\
+   1 & 1 & 1 \\
+   1 & 1 & 1
+   \end{bmatrix}
+
+3. Radial
+
+   Taking elements in a radius between :math:`r_1` and :math:`r_2` to be one,
+   and normalising by the sum of the elements of the matrix, this either becomes
+   a notionally circular filter that has the same effect as a constant filter,
+   or an annulus. Not generally of interest itself, but used to construct the
+   annular kernel. The following (unnormalised) example has :math:`r_1 = 10` and
+   :math:`r_2 =
+   15`.
+
+.. math::
+
+  \begin{bmatrix}
+  0 & 0 & 0 & 0 & 0 & 1 & 1 & 1 & 1 & 1 & 0 & 0 & 0 & 0 & 0 \\
+  0 & 0 & 0 & 1 & 1 & 1 & 1 & 1 & 1 & 1 & 1 & 1 & 0 & 0 & 0 \\
+  0 & 0 & 1 & 1 & 1 & 1 & 1 & 1 & 1 & 1 & 1 & 1 & 1 & 0 & 0 \\
+  0 & 1 & 1 & 1 & 1 & 0 & 0 & 0 & 0 & 0 & 1 & 1 & 1 & 1 & 0 \\
+  0 & 1 & 1 & 1 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 1 & 1 & 1 & 0 \\
+  1 & 1 & 1 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 1 & 1 & 1 \\
+  1 & 1 & 1 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 1 & 1 & 1 \\
+  1 & 1 & 1 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 1 & 1 & 1 \\
+  1 & 1 & 1 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 1 & 1 & 1 \\
+  1 & 1 & 1 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 1 & 1 & 1 \\
+  0 & 1 & 1 & 1 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 1 & 1 & 1 & 0 \\
+  0 & 1 & 1 & 1 & 1 & 0 & 0 & 0 & 0 & 0 & 1 & 1 & 1 & 1 & 0 \\
+  0 & 0 & 1 & 1 & 1 & 1 & 1 & 1 & 1 & 1 & 1 & 1 & 1 & 0 & 0 \\
+  0 & 0 & 0 & 1 & 1 & 1 & 1 & 1 & 1 & 1 & 1 & 1 & 0 & 0 & 0 \\
+  0 & 0 & 0 & 0 & 0 & 1 & 1 & 1 & 1 & 1 & 0 & 0 & 0 & 0 & 0
+  \end{bmatrix},
+
+4. Annular
+
+   Consists of two regions: firstly, between 0 and :math:`r_1`, with a positive
+   value, and secondly, between :math:`r_2` and :math:`r_3`, with a negative
+   value. This is equivalent to the sum of two radial kernels, with parameters
+   :math:`\{0, r_1\}` and :math:`\{r_2, r_3\}` respectively, each individually
+   normalised to the sum of its elements. The following (unnormalised) example
+   has parameters :math:`r_1 = 5`, :math:`r_2 = 10` and :math:`r_3 = 15`. The
+   overall effect is a local average with a local mean background subtraction.
+
+.. math::
+
+  \begin{bmatrix}
+  0 & 0 & 0 & 0 & 0 &-1 &-1 &-1 &-1 &-1 & 0 & 0 & 0 & 0 & 0 \\
+  0 & 0 & 0 &-1 &-1 &-1 &-1 &-1 &-1 &-1 &-1 &-1 & 0 & 0 & 0 \\
+  0 & 0 &-1 &-1 &-1 &-1 &-1 &-1 &-1 &-1 &-1 &-1 &-1 & 0 & 0 \\
+  0 &-1 &-1 &-1 &-1 & 0 & 0 & 0 & 0 & 0 &-1 &-1 &-1 &-1 & 0 \\
+  0 &-1 &-1 &-1 & 0 & 0 & 0 & 0 & 0 & 0 & 0 &-1 &-1 &-1 & 0 \\
+  1 &-1 &-1 & 0 & 0 & 0 & 1 & 1 & 1 & 0 & 0 & 0 &-1 &-1 &-1 \\
+  1 &-1 &-1 & 0 & 0 & 1 & 1 & 1 & 1 & 1 & 0 & 0 &-1 &-1 &-1 \\
+  1 &-1 &-1 & 0 & 0 & 1 & 1 & 1 & 1 & 1 & 0 & 0 &-1 &-1 &-1 \\
+  1 &-1 &-1 & 0 & 0 & 1 & 1 & 1 & 1 & 1 & 0 & 0 &-1 &-1 &-1 \\
+  1 &-1 &-1 & 0 & 0 & 0 & 1 & 1 & 1 & 0 & 0 & 0 &-1 &-1 &-1 \\
+  0 &-1 &-1 &-1 & 0 & 0 & 0 & 0 & 0 & 0 & 0 &-1 &-1 &-1 & 0 \\
+  0 &-1 &-1 &-1 &-1 & 0 & 0 & 0 & 0 & 0 &-1 &-1 &-1 &-1 & 0 \\
+  0 & 0 &-1 &-1 &-1 &-1 &-1 &-1 &-1 &-1 &-1 &-1 &-1 & 0 & 0 \\
+  0 & 0 & 0 &-1 &-1 &-1 &-1 &-1 &-1 &-1 &-1 &-1 & 0 & 0 & 0 \\
+  0 & 0 & 0 & 0 & 0 &-1 &-1 &-1 &-1 &-1 & 0 & 0 & 0 & 0 & 0
+  \end{bmatrix},
+
+5. Enhanced annular
+
+   This is similar to the annular kernel, but with a different normalisation.
+   Instead of normalising two radial kernels separately, the enhanced annular
+   kernel is normalised by the sum of the absolute values of the elements.
+
+
+The next state is thresholding, i.e. discarding any pixel with a count below the
+threshold value. After this point, it is possible to use either a `standard
+blob-finding algorithm <https://en.wikipedia.org/wiki/Blob_detection>`_ or an
+OpenCV implementation to detect connected components in the image. The
+difference between the OpenCV implementation in the Experiment section, and the
+proprietary implementation in the Peak Finder section is that the latter merges
+blobs across images to form what is notionally a 3D model, the third dimension
+being perpendicular to the plane of the images.
+
 .. _peak-prediction:
 
 Shape Prediction
