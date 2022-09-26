@@ -145,12 +145,8 @@ endif()
 
 if(BUILD_WITH_QT6)
   set(QT_VER "Qt6")
-  set(QT_LIBS "Qt6::Widgets")
-  set(QT_INCLUDES ${Qt6Widgets_INCLUDE_DIRl})
 else()
   set(QT_VER "Qt5")
-  set(QT_LIBS "Qt5::Widgets")
-  set(QT_INCLUDES ${Qt5Widgets_INCLUDE_DIR})
 endif()
 
 set(OpenGL_GL_PREFERENCE LEGACY)
@@ -160,12 +156,23 @@ message(STATUS "Found OpenGL:")
 message(STATUS "  libraries: ${OPENGL_LIBRARIES}")
 message(STATUS "  headers: ${OPENGL_INCLUDE_DIR}")
 
-if (APPLE)
-    find_package(${QT_VER} COMPONENTS Core Gui Widgets OpenGL PrintSupport REQUIRED
-        HINTS /opt/local/ /opt/local/lib /opt/local/include)
-else()
-    find_package(${QT_VER} COMPONENTS Core Gui Widgets OpenGL PrintSupport REQUIRED)
-endif()
+find_package(${QT_VER} COMPONENTS Core Gui Widgets OpenGL PrintSupport REQUIRED)
+
+set(QT_LIBS "${QT_VER}::Widgets")
+set(QT_INCLUDES "${${QT_VER}Widgets_INCLUDE_DIRS}")
+
+message(STATUS "Found ${QT_VER} version ${${QT_VER}_VERSION}:")
+message(STATUS "  Qt_DIR: ${${QT_VER}_DIR}")
+message(STATUS "  QT_INCLUDES: ${QT_INCLUDES}")
+
+get_target_property(QtWidgets_location ${QT_VER}::Widgets LOCATION_Release)
+message(STATUS "  ${${QT_VER}Widgets_LIBRARIES} ${QtWidgets_location}")
+get_target_property(QtCore_location ${QT_VER}::Core LOCATION_Release)
+message(STATUS "  ${${QT_VER}Core_LIBRARIES} ${QtCore_location}")
+get_target_property(QtGui_location ${QT_VER}::Gui LOCATION_Release)
+message(STATUS "  ${${QT_VER}Gui_LIBRARIES} ${QtGui_location}")
+get_target_property(QtOpenGL_location ${QT_VER}::OpenGL LOCATION_Release)
+message(STATUS "  ${${QT_VER}OpenGL_LIBRARIES} ${QtOpenGL_location}")
 
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
