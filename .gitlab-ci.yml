@@ -33,7 +33,7 @@ mac10_15:
   script:
     - mkdir build
     - cd build
-    - export QTDIR=/usr/local/opt/qt5
+    - export QTDIR=/usr/local/Cellar/qt/6.3.0
     - cmake .. -D CMAKE_PREFIX_PATH=$QTDIR -D CMAKE_CXX_COMPILER_LAUNCHER=ccache -DCMAKE_OSX_DEPLOYMENT_TARGET=10.15 -D BUILD_WITH_QT6=ON
     - make -j3
     - ctest -j3 --output-on-failure
