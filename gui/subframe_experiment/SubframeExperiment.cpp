@@ -256,7 +256,7 @@ void SubframeExperiment::setHistogramUp()
     _intensity_plot_box->setMaximumWidth(400);
     GridFiller gfiller(_intensity_plot_box, true);
 
-    _npoints_intensity = gfiller.addSpinBox(QString("Number of datapoints:"));
+    _npoints_intensity = gfiller.addSpinBox(QString("Number of bins:"));
 
     _calc_intensity = gfiller.addButton("Calculate intensity");
 
@@ -299,12 +299,12 @@ void SubframeExperiment::setHistogramUp()
     _lineplot_combo = gfiller2.addCombo("Plot type");
     _lineplot_combo->addItems(QStringList{"Line plot", "Horizontal slice", "Vertical slice"});
 
-    _npoints_lineplot = gfiller2.addSpinBox(QString("Number of datapoints:"));
+    _npoints_lineplot = gfiller2.addSpinBox(QString("Number of bins:"));
 
     _npoints_lineplot->setMaximum(1000);
     _npoints_lineplot->setMinimum(10);
     _npoints_lineplot->setMaximumWidth(250);
-    _npoints_lineplot->setValue(10);
+    _npoints_lineplot->setValue(100);
 
     _histogram_layout->addWidget(_lineplot_box);
     _histogram_layout->addStretch();

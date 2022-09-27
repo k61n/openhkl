@@ -23,6 +23,7 @@ Compile from source
    * YAMLCpp
    * FFTW3
    * Blosc
+   * OpenCV
    * Swig
 
    Optional dependencies:
