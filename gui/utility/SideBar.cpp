@@ -37,8 +37,6 @@
 #include <QSignalBlocker>
 #include <QPoint>
 
-#include <iostream>
-
 // TODO: find a better place for this
 // Icon attributions:
 // home.svg: Home by Bhuvan from the Noun Project
@@ -136,7 +134,24 @@ void SideBar::paintEvent(QPaintEvent* event)
 
         action_y += actionRect.height();
     }
+
+    // showing names of Subframes as QToolTipText next to icons of Sidebar
+    QPoint global_pos = QCursor::pos();
+    QPoint mouse_pos  = mapFromGlobal(global_pos);
+    QPoint tips_pos; // actual qtooltip window postion - we gonna move it a bit besides the cursor
+
+    int spacing_x = 10;
+    int spacing_y = 0;
+
+    tips_pos.setX(global_pos.x() + spacing_x);
+    tips_pos.setY(global_pos.y() + spacing_y);
+
+    int id =  mouse_pos.y() / _min_icon_height; // find the mAction id
+    
+    if (id < mActions.size())
+            QToolTip::showText(tips_pos, mActions.at(id)->text()); // display mActions text*/
 }
+
 QSize SideBar::minimumSizeHint() const
 {
     return _min_icon_height * QSize(1, mActions.size());
@@ -189,23 +204,6 @@ void SideBar::mousePressEvent(QMouseEvent* event)
 
 void SideBar::mouseMoveEvent(QMouseEvent* event)
 {
-    // displaying stored info text from mActions as QToolTips besides
-    // icons of the sidebar when mouse is hoovering of them
-    QPoint mouse_pos = event->pos();// to find the correct icon id
-    QPoint global_pos = event->globalPos(); // to get base for qtooltip window
-    QPoint tips_pos; // actual qtooltip window postion - we gonna move it a bit besides the cursor
-
-    int spacing_x = 10;
-    int spacing_y = 0;
-
-    tips_pos.setX(global_pos.x() + spacing_x);
-    tips_pos.setY(global_pos.y() + spacing_y);
-
-    int id =  mouse_pos.y() / _min_icon_height; // find the mAction id
-
-    if (id < mActions.size())
-        QToolTip::showText(tips_pos, mActions.at(id)->text()); // display mActions text
-
     QAction* tempAction = actionAt(event->pos());
     if (tempAction == nullptr) {
         mOverAction = nullptr;
