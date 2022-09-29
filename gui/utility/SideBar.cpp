@@ -35,6 +35,7 @@
 #include <QPaintEvent>
 #include <QPainter>
 #include <QSignalBlocker>
+#include <QPoint>
 
 // TODO: find a better place for this
 // Icon attributions:
@@ -125,22 +126,32 @@ void SideBar::paintEvent(QPaintEvent* event)
         else
             painter.setPen(Qt::black);
 
-        QSize size = painter.fontMetrics().size(Qt::TextSingleLine, action->text());
-        QRect actionTextRect(
-            QPoint(
-                actionRect.width() / 2 - size.width() / 2, actionRect.bottom() - size.height() - 5),
-            size);
-        painter.drawText(actionTextRect, Qt::AlignCenter, action->text());
-
         QRect actionIconRect(
-            0, action_y + 10, actionRect.width(),
-            actionRect.height() - 2 * actionTextRect.height() - 10);
+            2, action_y + 10, actionRect.width(),
+            actionRect.height() - 20);
         QIcon actionIcon(action->icon());
         actionIcon.paint(&painter, actionIconRect);
 
         action_y += actionRect.height();
     }
+
+    // showing names of Subframes as QToolTipText next to icons of Sidebar
+    QPoint global_pos = QCursor::pos();
+    QPoint mouse_pos  = mapFromGlobal(global_pos);
+    QPoint tips_pos; // actual qtooltip window postion - we gonna move it a bit besides the cursor
+
+    int spacing_x = 10;
+    int spacing_y = 0;
+
+    tips_pos.setX(global_pos.x() + spacing_x);
+    tips_pos.setY(global_pos.y() + spacing_y);
+
+    int id =  mouse_pos.y() / _min_icon_height; // find the mAction id
+    
+    if (id < mActions.size())
+            QToolTip::showText(tips_pos, mActions.at(id)->text()); // display mActions text*/
 }
+
 QSize SideBar::minimumSizeHint() const
 {
     return _min_icon_height * QSize(1, mActions.size());
