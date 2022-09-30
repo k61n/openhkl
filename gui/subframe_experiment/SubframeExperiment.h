@@ -98,9 +98,13 @@ class SubframeExperiment : public QWidget {
 
     void setPlotMode();
     void setMaskMode();
-
+   //! exports masks to yaml file
     void exportMasks();
+   //! imports maks from yaml file
     void importMasks();
+   //! deletes selected masks from dataset
+    void deleteSelectedMasks();
+    void deselectAllMasks();
 
  public slots:
     void onBeamPosChanged(QPointF pos);
@@ -177,6 +181,7 @@ class SubframeExperiment : public QWidget {
 
     QPushButton* _export_masks;
     QPushButton* _import_masks;
+    QPushButton* _delete_masks;
 
     bool _show_direct_beam;
 
@@ -189,6 +194,8 @@ class SubframeExperiment : public QWidget {
     std::vector<std::pair<std::shared_ptr<ohkl::UnitCell>, double>> _solutions;
     //! Unit cell selected in solution table
     ohkl::sptrUnitCell _selected_unit_cell;
+    //! holds row index of selected masks
+    std::vector<size_t> _selected_masks;
 };
 
 #endif // OHKL_GUI_SUBFRAME_EXPERIMENT_SUBFRAMEEXPERIMENT_H
