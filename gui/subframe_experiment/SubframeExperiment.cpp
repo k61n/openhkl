@@ -655,6 +655,8 @@ void SubframeExperiment::toggleUnsafeWidgets()
     _maxY->setEnabled(false);
     _update_plot->setEnabled(false);
     _totalHistogram->setEnabled(false);
+    _import_masks->setEnabled(false);
+    _export_masks->setEnabled(false);
 
     bool hasProject = gSession->hasProject();
 
@@ -680,6 +682,9 @@ void SubframeExperiment::toggleUnsafeWidgets()
     _maxX->setEnabled(_xZoom->isChecked() && _xZoom->isEnabled());
     _maxY->setEnabled(_yZoom->isChecked() && _yZoom->isEnabled());
     _update_plot->setEnabled(hasHistograms);
+
+    _import_masks->setEnabled(hasData);
+    _export_masks->setEnabled(hasData);
 }
 
 void SubframeExperiment::find_2d()
