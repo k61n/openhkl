@@ -208,18 +208,16 @@ BitDepth DataSet::bitDepth() const
 
 void DataSet::addMask(IMask* mask)
 {
-    _masks.insert(mask);
-    _metadata.add<int>(ohkl::at_nMasks, _masks.size());
+    _masks.emplace_back(mask);
 }
 
 void DataSet::removeMask(IMask* mask)
 {
-    if (_masks.find(mask) != _masks.end())
-        _masks.erase(mask);
+    _masks.erase(std::remove(_masks.begin(), _masks.end(), mask), _masks.end());
     _metadata.add<int>(ohkl::at_nMasks, _masks.size());
 }
 
-const std::set<IMask*>& DataSet::masks() const
+const std::vector<IMask*>& DataSet::masks() const
 {
     return _masks;
 }

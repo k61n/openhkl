@@ -16,7 +16,7 @@
 #include <fstream>
 
 namespace ohkl{
-MaskExporter::MaskExporter(std::set<ohkl::IMask*> masks)
+MaskExporter::MaskExporter(std::vector<ohkl::IMask*> masks)
 {
     int idx = 0;
     _node["size"] = idx;

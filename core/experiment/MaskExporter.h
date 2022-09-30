@@ -27,7 +27,7 @@ namespace ohkl {
 class MaskExporter{
 public:
     //! constructs the yaml nodes from given mask data
-    MaskExporter(std::set<ohkl::IMask*> data);
+    MaskExporter(std::vector<ohkl::IMask*> data);
     //! export to yaml file
     void exportToFile(std::string filename);
     //! generate mask name from index

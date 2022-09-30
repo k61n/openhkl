@@ -1075,7 +1075,7 @@ void SubframeExperiment::refreshMaskTable()
 void SubframeExperiment::onMaskChanged()
 {
     int row = sender()->property("row").toInt();
-    std::set<ohkl::IMask*>::iterator it = _detector_widget->currentData()->masks().begin();
+    auto it = _detector_widget->currentData()->masks().begin();
     std::advance(it, row);
     double x1 = dynamic_cast<QDoubleSpinBox*>(_mask_table->cellWidget(row, 0))->value();
     double y1 = dynamic_cast<QDoubleSpinBox*>(_mask_table->cellWidget(row, 1))->value();
