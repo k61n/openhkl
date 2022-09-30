@@ -217,6 +217,22 @@ void DataSet::removeMask(IMask* mask)
     _metadata.add<int>(ohkl::at_nMasks, _masks.size());
 }
 
+bool DataSet::removeMaskByIndex(std::vector<size_t> idx)
+{
+    if (_masks.size() == 0) return false;
+    std::vector<IMask*> masks_to_delete;
+    for (auto e : idx){// store ptr of masks to be deleted from idx
+        if (e > _masks.size()) continue;
+            _masks.at(e);
+        masks_to_delete.emplace_back(_masks.at(e));
+    }
+
+    for (auto e : masks_to_delete) // now delete
+        removeMask(e);
+
+    return true;
+}
+
 const std::vector<IMask*>& DataSet::masks() const
 {
     return _masks;
@@ -417,6 +433,11 @@ gsl_histogram* DataSet::getHistogram(int index)
 gsl_histogram* DataSet::getTotalHistogram()
 {
         return _total_histogram;
+}
+
+bool DataSet::hasMasks()
+{
+    return _masks.size() > 0;
 }
 
 } // namespace ohkl

@@ -64,6 +64,7 @@ class DataSet {
 
     void addMask(IMask* mask);
     void removeMask(IMask* mask);
+    bool removeMaskByIndex(std::vector<size_t> idx);
     const std::vector<IMask*>& masks() const;
 
     void maskPeaks(
@@ -164,6 +165,9 @@ class DataSet {
 
     //! accessing Total histogram
     gsl_histogram* getTotalHistogram();
+
+    //! returns a booleans whether masks have been created or not
+    bool hasMasks();
 
  private:
     void setReader(const DataFormat dataformat, const std::string& filename = "");
