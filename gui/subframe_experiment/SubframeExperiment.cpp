@@ -38,6 +38,9 @@
 #include "gui/widgets/DetectorWidget.h"
 #include "gui/widgets/PlotPanel.h"
 
+#include "core/experiment/MaskExporter.h"
+#include "core/experiment/MaskImporter.h"
+
 #include <QBoxLayout>
 #include <QCheckBox>
 #include <QComboBox>
@@ -55,6 +58,7 @@
 #include <QVBoxLayout>
 #include <QVector>
 #include <QWidget>
+#include <QFileDialog>
 #include <cstring>
 #include <gsl/gsl_histogram.h>
 #include <qabstractitemview.h>
@@ -337,6 +341,17 @@ void SubframeExperiment::setMaskUp()
     _mask_table->resizeColumnsToContents();
 
     _mask_layout->addWidget(mask_table_box);
+
+    _import_masks = new QPushButton("Import Masks");
+    _export_masks = new QPushButton("Export Masks");
+
+    QWidget* w = new QWidget();
+    QHBoxLayout* left_bot = new QHBoxLayout();
+    left_bot->addWidget(_import_masks);
+    left_bot->addWidget(_export_masks);
+    w->setLayout(left_bot);
+    gfiller2.addWidget(w, 0, 2);
+
     _mask_layout->addStretch();
 
     connect(
@@ -347,6 +362,48 @@ void SubframeExperiment::setMaskUp()
     connect(
         _detector_widget->scene(), &DetectorScene::signalMaskChanged, this,
         &SubframeExperiment::refreshMaskTable);
+    connect(
+       _export_masks, &QPushButton::clicked, this,
+        &SubframeExperiment::exportMasks);
+    connect(
+        _import_masks, &QPushButton::clicked, this,
+        &SubframeExperiment::importMasks);
+}
+
+void SubframeExperiment::importMasks()
+{
+    QSettings settings = gGui->qSettings();
+    settings.beginGroup("RecentDirectories");
+    QString loadDirectory = settings.value("masks", QDir::homePath()).toString() +
+    "/mask.yml";
+
+    std::string file_path = QFileDialog::getOpenFileName(this, "Import masks from file", loadDirectory, "YAML (*.yml)").toStdString();
+
+    if (file_path.empty()) return;
+
+    ohkl::MaskImporter mimp(file_path);
+
+    for (auto & e : mimp.getMasks())
+        _data_combo->currentData()->addMask(e);
+
+    _detector_widget->scene()->loadMasksFromData();
+}
+
+void SubframeExperiment::exportMasks()
+{
+    QSettings settings = gGui->qSettings();
+    settings.beginGroup("RecentDirectories");
+    QString loadDirectory = settings.value("masks", QDir::homePath()).toString() +
+    "/masks.yml";
+
+    std::string file_path =
+    QFileDialog::getSaveFileName(
+        this, "Export maks to ", loadDirectory, "YAML (*.yml)").toStdString();
+
+    if (file_path.empty()) return;
+
+    ohkl::MaskExporter mexp(_data_combo->currentData()->masks());
+    mexp.exportToFile(file_path);
 }
 
 void SubframeExperiment::setPeakFinder2DUp()

@@ -99,6 +99,9 @@ class SubframeExperiment : public QWidget {
     void setPlotMode();
     void setMaskMode();
 
+    void exportMasks();
+    void importMasks();
+
  public slots:
     void onBeamPosChanged(QPointF pos);
     void onBeamPosSpinChanged();
@@ -171,6 +174,9 @@ class SubframeExperiment : public QWidget {
     SpoilerCheck* _mask_box;
     QComboBox* _mask_combo;
     QTableWidget* _mask_table;
+
+    QPushButton* _export_masks;
+    QPushButton* _import_masks;
 
     bool _show_direct_beam;
 
