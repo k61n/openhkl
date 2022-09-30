@@ -209,6 +209,7 @@ BitDepth DataSet::bitDepth() const
 void DataSet::addMask(IMask* mask)
 {
     _masks.emplace_back(mask);
+    _metadata.add<int>(ohkl::at_nMasks, _masks.size());
 }
 
 void DataSet::removeMask(IMask* mask)
