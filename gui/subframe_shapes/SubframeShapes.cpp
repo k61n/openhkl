@@ -477,7 +477,7 @@ void SubframeShapes::buildShapeModel()
         ProgressView view(this);
         view.watch(handler);
 
-        const DataList& data = gSession->currentProject()->experiment()->getAllData();
+        ohkl::sptrDataSet data = _data_combo->currentData();
         _shape_model.integrate(fit_peaks, data, handler);
 
         _shape_model.updateFit(1000); // This does nothing!! - zamaan

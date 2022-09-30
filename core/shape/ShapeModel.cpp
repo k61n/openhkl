@@ -476,7 +476,7 @@ AABB ShapeModel::getAABB()
 }
 
 void ShapeModel::integrate(
-    std::vector<Peak3D*> peaks, const DataList& datalist, sptrProgressHandler handler)
+    std::vector<Peak3D*> peaks, const sptrDataSet data, sptrProgressHandler handler)
 {
     ohklLog(Level::Info, "ShapeModel::integrate: integrating ", peaks.size(), " peaks");
     ShapeIntegrator integrator(
@@ -486,17 +486,9 @@ void ShapeModel::integrate(
     int_params.bkg_begin = _params->bkg_begin;
     int_params.bkg_end = _params->bkg_end;
     integrator.setHandler(handler);
-    integrator.setNNumors(datalist.size());
     integrator.setParameters(int_params);
 
-    int n_numor = 1;
-    // Why loop over all numors? - zamaan
-    // Do we expect to have peaks from different numors in the vector? If so,
-    // how do we ensure that the sample rotation angles are consistent?
-    for (const sptrDataSet& data : datalist) {
-        integrator.integrate(peaks, this, data, n_numor);
-        ++n_numor;
-    }
+    integrator.integrate(peaks, this, data, 1);
     ohklLog(Level::Info, "ShapeModel::integrate: finished integrating shapes");
 }
 

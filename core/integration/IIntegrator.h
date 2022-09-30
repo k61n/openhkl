@@ -84,7 +84,7 @@ class IIntegrator {
     //! Container for user-defined integration parameters
     IntegrationParameters _params;
     //! Number of numors in the dataset to be integrated
-    int _n_numors;
+    int _n_numors = 1;
 
  public:
     //! Return the peak scale

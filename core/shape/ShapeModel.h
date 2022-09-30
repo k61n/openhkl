@@ -146,8 +146,7 @@ class ShapeModel {
 
     //! Integrate the shape collection
     void integrate(
-        std::vector<Peak3D*> peaks, const DataList& datalist,
-        sptrProgressHandler handler = nullptr);
+        std::vector<Peak3D*> peaks, const sptrDataSet data, sptrProgressHandler handler = nullptr);
 
     //! Build a shape model from the given peak collection
     void build(PeakCollection* peaks, sptrDataSet data);
