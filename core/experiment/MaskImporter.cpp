@@ -52,9 +52,9 @@ MaskImporter::MaskImporter(std::string filename)
 
 std::string MaskImporter::generateName(int number)
 {
-    int n = 2; // number of digits
+    int nDigits = 2;
     std::string str = std::to_string(number + 1);
-    return std::string("Mask") + std::string(n - str.size(), '0').append(str);
+    return std::string("Mask") + std::string(nDigits - str.size(), '0').append(str);
 }
 
 std::vector<IMask*> MaskImporter::getMasks()

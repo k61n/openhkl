@@ -32,14 +32,11 @@ MaskExporter::MaskExporter(std::vector<ohkl::IMask*> masks)
         } else
             throw std::runtime_error("E MaskExporter::addMasks Invalid mask type found! ");
 
-            mask["LowerX"] = std::round(e->aabb().lower()[0] * 100)/100;
-            mask["LowerY"] = std::round(e->aabb().lower()[1] * 100)/100;
-            mask["UpperX"] = std::round(e->aabb().upper()[0] * 100)/100;
-            mask["UpperY"] = std::round(e->aabb().upper()[1] * 100)/100;
+        mask["LowerX"] = std::round(e->aabb().lower()[0] * 100)/100;
+        mask["LowerY"] = std::round(e->aabb().lower()[1] * 100)/100;
+        mask["UpperX"] = std::round(e->aabb().upper()[0] * 100)/100;
+        mask["UpperY"] = std::round(e->aabb().upper()[1] * 100)/100;
 
-            //mask["UpperFrame"]  = (e->aabb().upper()[2]); // 150
-            //mask["LowerFrame"] = (e->aabb().lower()[2]);  // 0
-      
         _node[name] = mask;
         ++idx; 
     }
@@ -48,9 +45,9 @@ MaskExporter::MaskExporter(std::vector<ohkl::IMask*> masks)
 
 std::string MaskExporter::generateName(int number)
 {
-    int n = 2; // number of digits
+    int nDigits = 2;
     std::string str = std::to_string(number + 1);
-    return std::string("Mask") + std::string(n - str.size(), '0').append(str);
+    return std::string("Mask") + std::string(nDigits - str.size(), '0').append(str);
 }
 
 void MaskExporter::exportToFile(std::string filename) 
