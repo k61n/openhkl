@@ -105,6 +105,7 @@ class SubframeExperiment : public QWidget {
    //! deletes selected masks from dataset
     void deleteSelectedMasks();
     void deselectAllMasks();
+    void selectAllMasks();
 
  public slots:
     void onBeamPosChanged(QPointF pos);
@@ -182,6 +183,7 @@ class SubframeExperiment : public QWidget {
     QPushButton* _export_masks;
     QPushButton* _import_masks;
     QPushButton* _delete_masks;
+    QPushButton* _toggle_selection;
 
     bool _show_direct_beam;
 

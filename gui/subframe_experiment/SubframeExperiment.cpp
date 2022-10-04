@@ -350,12 +350,14 @@ void SubframeExperiment::setMaskUp()
     _import_masks = new QPushButton("Import masks");
     _export_masks = new QPushButton("Export masks");
     _delete_masks = new QPushButton("Delete masks");
+    _toggle_selection = new QPushButton("Select all");
 
     QWidget* w = new QWidget();
     QHBoxLayout* left_bot = new QHBoxLayout();
     left_bot->addWidget(_import_masks);
     left_bot->addWidget(_export_masks);
     left_bot->addWidget(_delete_masks);
+    left_bot->addWidget(_toggle_selection);
     w->setLayout(left_bot);
     gfiller2.addWidget(w, 0, 2);
 
@@ -377,7 +379,10 @@ void SubframeExperiment::setMaskUp()
         &SubframeExperiment::importMasks);
     connect(
         _delete_masks, &QPushButton::clicked, this,
-        &SubframeExperiment::deleteSelectedMasks); 
+        &SubframeExperiment::deleteSelectedMasks);
+    connect(
+        _toggle_selection, &QPushButton::clicked, this,
+        &SubframeExperiment::selectAllMasks);
 }
 
 void SubframeExperiment::importMasks()
@@ -670,6 +675,8 @@ void SubframeExperiment::toggleUnsafeWidgets()
     _totalHistogram->setEnabled(false);
     _import_masks->setEnabled(false);
     _export_masks->setEnabled(false);
+    _delete_masks->setEnabled(false);
+    _toggle_selection->setEnabled(false);
 
     bool hasProject = gSession->hasProject();
 
@@ -699,7 +706,8 @@ void SubframeExperiment::toggleUnsafeWidgets()
 
     _import_masks->setEnabled(hasData);
     _export_masks->setEnabled(hasMasks);
-    _delete_masks->setEnabled(hasMasks);
+    _delete_masks->setEnabled(_selected_masks.size() > 0);
+    _toggle_selection->setEnabled(hasMasks);
 }
 
 void SubframeExperiment::find_2d()
@@ -1117,6 +1125,7 @@ void SubframeExperiment::onMaskSelected()
         _selected_masks.emplace_back(row);
     else
         _selected_masks.erase(std::remove(_selected_masks.begin(), _selected_masks.end(), row), _selected_masks.end());
+    toggleUnsafeWidgets();
 }
 
 void SubframeExperiment::deleteSelectedMasks()
@@ -1137,5 +1146,29 @@ void SubframeExperiment::deselectAllMasks()
 {
     if (_selected_masks.size() == 0) return;
     _selected_masks.clear();
+    toggleUnsafeWidgets();
+}
+
+void SubframeExperiment::selectAllMasks()
+{
+    if (!_detector_widget->currentData()->hasMasks()) return;
+
+    auto nmasks = _detector_widget->currentData()->getNMasks();
+
+    if (_selected_masks.size() == 0){ // gonna select all masks
+        for (auto i = 0; i < nmasks; ++i){
+            QCheckBox* cb = ((QCheckBox*)_mask_table->cellWidget(i, 4));
+            cb->setChecked(true);
+            _selected_masks.emplace_back(i);
+        }
+        _toggle_selection->setText("Deselect all");
+    } else { // we clear everything from the list
+        for (auto i = 0; i < nmasks; ++i){
+            QCheckBox* cb = ((QCheckBox*)_mask_table->cellWidget(i, 4));
+            cb->setChecked(false);
+        }
+        _selected_masks.clear();
+        _toggle_selection->setText("Select all");
+    }
     toggleUnsafeWidgets();
 }
