@@ -186,7 +186,7 @@ void SubframeExperiment::setLeftWidgetUp()
     _left_widget->addTab(histogram_tab, "Histograms");
     _left_widget->addTab(mask_tab, "Masks");
 
-    _left_widget->setFixedWidth(400);
+    _left_widget->setFixedWidth(460);
 }
 
 void SubframeExperiment::setAdjustBeamUp()
