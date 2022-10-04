@@ -1125,15 +1125,11 @@ void SubframeExperiment::deleteSelectedMasks()
     auto data = _detector_widget->currentData();
     if (data == nullptr) return;
 
-    // clear all maks before deleting them
-    _detector_widget->scene()->clearMasks();
-
-    for (int i=0; i<_selected_masks.size();i++)
-       data->removeMaskByIndex(_selected_masks);
-
+    data->removeMaskByIndex(_selected_masks);
+    _selected_masks.clear();
     refreshMaskTable();
-    _detector_widget->scene()->loadMasksFromData();
 
+    _detector_widget->scene()->loadMasksFromData();
     toggleUnsafeWidgets();
 }
 

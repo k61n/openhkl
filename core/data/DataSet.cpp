@@ -221,14 +221,12 @@ void DataSet::removeMask(IMask* mask)
 bool DataSet::removeMaskByIndex(std::vector<size_t> idx)
 {
     if (_masks.size() == 0) return false;
+    if (idx.size() == 0) return false;
     std::vector<IMask*> masks_to_delete;
-    for (auto e : idx){// store ptr of masks to be deleted from idx
-        if (e > _masks.size()) continue;
-            _masks.at(e);
+    for (auto e : idx)
         masks_to_delete.emplace_back(_masks.at(e));
-    }
 
-    for (auto e : masks_to_delete) // now delete
+    for (auto e : masks_to_delete)// now delete
         removeMask(e);
 
     return true;
