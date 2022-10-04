@@ -1140,6 +1140,7 @@ void SubframeExperiment::deleteSelectedMasks()
 
     _detector_widget->scene()->loadMasksFromData();
     toggleUnsafeWidgets();
+    _mask_table->setRowCount(data->getNMasks());
 }
 
 void SubframeExperiment::deselectAllMasks()
