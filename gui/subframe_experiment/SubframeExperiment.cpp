@@ -37,6 +37,7 @@
 #include "gui/views/UnitCellTableView.h"
 #include "gui/widgets/DetectorWidget.h"
 #include "gui/widgets/PlotPanel.h"
+#include "gui/utility/PropertyScrollArea.h"
 
 #include "core/experiment/MaskExporter.h"
 #include "core/experiment/MaskImporter.h"
@@ -74,15 +75,16 @@ SubframeExperiment::SubframeExperiment()
     : QWidget()
     , _show_direct_beam(true)
 {
-    QHBoxLayout* layout = new QHBoxLayout(this);
-    QSplitter* splitter = new QSplitter(this);
+    _main_layout = new QHBoxLayout(this);
+    _left_layout = new QVBoxLayout();
 
     _tab_widget = new QTabWidget(this);
     QWidget* plot_tab = new QWidget(_tab_widget);
     QWidget* indexer_tab = new QWidget(_tab_widget);
     _tab_widget->addTab(plot_tab, "Plot");
     _tab_widget->addTab(indexer_tab, "Indexer solutions");
-    _tab_widget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Minimum);
+    _tab_widget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    _tab_widget->sizePolicy().setHorizontalStretch(1);
 
     QHBoxLayout* plot_layout = new QHBoxLayout();
     QHBoxLayout* indexer_layout = new QHBoxLayout();
@@ -96,8 +98,8 @@ SubframeExperiment::SubframeExperiment()
     indexer_tab->setLayout(indexer_layout);
     _solution_table->setModel(nullptr);
 
-    plot_tab->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
-    indexer_tab->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+    plot_tab->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    indexer_tab->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
     QGroupBox* figure_group = new QGroupBox("Detector image");
     figure_group->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
@@ -110,16 +112,17 @@ SubframeExperiment::SubframeExperiment()
     right_splitter->addWidget(figure_group);
     right_splitter->addWidget(_tab_widget);
 
+    auto propertyScrollArea = new PropertyScrollArea(this);
+    propertyScrollArea->setContentLayout(_left_layout);
+    _main_layout->addWidget(propertyScrollArea);
+
     setLeftWidgetUp();
     setStrategyUp();
     setHistogramUp();
     setMaskUp();
 
-    splitter->addWidget(_left_widget);
-    splitter->addWidget(right_splitter);
-    splitter->setChildrenCollapsible(false);
-
-    layout->addWidget(splitter);
+    _main_layout->addWidget(_left_widget);
+    _main_layout->addWidget(right_splitter);
 
     connect(
         _solution_table->verticalHeader(), &QHeaderView::sectionClicked, this,
@@ -168,7 +171,7 @@ SubframeExperiment::SubframeExperiment()
 void SubframeExperiment::setLeftWidgetUp()
 {
     _left_widget = new QTabWidget(this);
-    _left_widget->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Expanding);
+    _left_widget->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
 
     QWidget* strategy_tab = new QWidget(_left_widget);
     QWidget* histogram_tab = new QWidget(_left_widget);
@@ -185,8 +188,6 @@ void SubframeExperiment::setLeftWidgetUp()
     _left_widget->addTab(strategy_tab, "Strategy");
     _left_widget->addTab(histogram_tab, "Histograms");
     _left_widget->addTab(mask_tab, "Masks");
-
-    _left_widget->setFixedWidth(460);
 }
 
 void SubframeExperiment::setAdjustBeamUp()
@@ -1125,6 +1126,12 @@ void SubframeExperiment::onMaskSelected()
         _selected_masks.emplace_back(row);
     else
         _selected_masks.erase(std::remove(_selected_masks.begin(), _selected_masks.end(), row), _selected_masks.end());
+
+    if (_selected_masks.size() > 0)
+        _toggle_selection->setText("Deselect all");
+    else
+        _toggle_selection->setText("Select all");
+
     toggleUnsafeWidgets();
 }
 

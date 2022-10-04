@@ -34,6 +34,7 @@ class QSlider;
 class QTabWidget;
 class QTableWidget;
 class QVBoxLayout;
+class QHBoxLayout;
 class Spoiler;
 class SpoilerCheck;
 class UnitCellTableView;
@@ -126,8 +127,8 @@ class SubframeExperiment : public QWidget {
     QVBoxLayout* _strategy_layout;
     QVBoxLayout* _histogram_layout;
     QVBoxLayout* _mask_layout;
-
     QVBoxLayout* _left_layout;
+    QHBoxLayout* _main_layout;
 
     QPushButton* _calc_intensity;
     QPushButton* _update_plot;
