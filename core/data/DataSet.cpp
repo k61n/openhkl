@@ -439,4 +439,9 @@ bool DataSet::hasMasks()
     return _masks.size() > 0;
 }
 
+size_t DataSet::getNMasks()
+{
+    return _masks.size();
+}
+
 } // namespace ohkl

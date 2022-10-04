@@ -168,6 +168,7 @@ class DataSet {
 
     //! returns a booleans whether masks have been created or not
     bool hasMasks();
+    size_t getNMasks();
 
  private:
     void setReader(const DataFormat dataformat, const std::string& filename = "");
