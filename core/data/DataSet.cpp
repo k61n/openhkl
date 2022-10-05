@@ -208,18 +208,31 @@ BitDepth DataSet::bitDepth() const
 
 void DataSet::addMask(IMask* mask)
 {
-    _masks.insert(mask);
+    _masks.emplace_back(mask);
     _metadata.add<int>(ohkl::at_nMasks, _masks.size());
 }
 
 void DataSet::removeMask(IMask* mask)
 {
-    if (_masks.find(mask) != _masks.end())
-        _masks.erase(mask);
+    _masks.erase(std::remove(_masks.begin(), _masks.end(), mask), _masks.end());
     _metadata.add<int>(ohkl::at_nMasks, _masks.size());
 }
 
-const std::set<IMask*>& DataSet::masks() const
+bool DataSet::removeMaskByIndex(std::vector<size_t> idx)
+{
+    if (_masks.size() == 0) return false;
+    if (idx.size() == 0) return false;
+    std::vector<IMask*> masks_to_delete;
+    for (auto e : idx)
+        masks_to_delete.emplace_back(_masks.at(e));
+
+    for (auto e : masks_to_delete)// now delete
+        removeMask(e);
+
+    return true;
+}
+
+const std::vector<IMask*>& DataSet::masks() const
 {
     return _masks;
 }
@@ -419,6 +432,16 @@ gsl_histogram* DataSet::getHistogram(int index)
 gsl_histogram* DataSet::getTotalHistogram()
 {
         return _total_histogram;
+}
+
+bool DataSet::hasMasks()
+{
+    return _masks.size() > 0;
+}
+
+size_t DataSet::getNMasks()
+{
+    return _masks.size();
 }
 
 } // namespace ohkl

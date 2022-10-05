@@ -64,7 +64,8 @@ class DataSet {
 
     void addMask(IMask* mask);
     void removeMask(IMask* mask);
-    const std::set<IMask*>& masks() const;
+    bool removeMaskByIndex(std::vector<size_t> idx);
+    const std::vector<IMask*>& masks() const;
 
     void maskPeaks(
         std::vector<Peak3D*>& peaks, std::map<Peak3D*, RejectionFlag>& rejection_map,
@@ -165,13 +166,17 @@ class DataSet {
     //! accessing Total histogram
     gsl_histogram* getTotalHistogram();
 
+    //! returns a booleans whether masks have been created or not
+    bool hasMasks();
+    size_t getNMasks();
+
  private:
     void setReader(const DataFormat dataformat, const std::string& filename = "");
 
  private:
     std::string _name = ohkl::kw_datasetDefaultName;
     std::vector<Eigen::MatrixXi> _data;
-    std::set<IMask*> _masks;
+    std::vector<IMask*> _masks;
     ohkl::MetaData _metadata;
     //! Current data reader (set only once)
     std::shared_ptr<IDataReader> _reader;

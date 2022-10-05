@@ -37,6 +37,10 @@
 #include "gui/views/UnitCellTableView.h"
 #include "gui/widgets/DetectorWidget.h"
 #include "gui/widgets/PlotPanel.h"
+#include "gui/utility/PropertyScrollArea.h"
+
+#include "core/experiment/MaskExporter.h"
+#include "core/experiment/MaskImporter.h"
 
 #include <QBoxLayout>
 #include <QCheckBox>
@@ -55,12 +59,14 @@
 #include <QVBoxLayout>
 #include <QVector>
 #include <QWidget>
+#include <QFileDialog>
 #include <cstring>
 #include <gsl/gsl_histogram.h>
 #include <qabstractitemview.h>
 #include <qsizepolicy.h>
 #include <qspinbox.h>
 #include <stdexcept>
+#include <QMessageBox>
 
 #include "gui/utility/Spoiler.h"
 #include "gui/utility/GridFiller.h"
@@ -69,15 +75,16 @@ SubframeExperiment::SubframeExperiment()
     : QWidget()
     , _show_direct_beam(true)
 {
-    QHBoxLayout* layout = new QHBoxLayout(this);
-    QSplitter* splitter = new QSplitter(this);
+    _main_layout = new QHBoxLayout(this);
+    _left_layout = new QVBoxLayout();
 
-    _tab_widget = new QTabWidget(this);
+    _tab_widget = new QTabWidget();
     QWidget* plot_tab = new QWidget(_tab_widget);
     QWidget* indexer_tab = new QWidget(_tab_widget);
     _tab_widget->addTab(plot_tab, "Plot");
     _tab_widget->addTab(indexer_tab, "Indexer solutions");
-    _tab_widget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Minimum);
+    _tab_widget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    _tab_widget->sizePolicy().setHorizontalStretch(1);
 
     QHBoxLayout* plot_layout = new QHBoxLayout();
     QHBoxLayout* indexer_layout = new QHBoxLayout();
@@ -91,8 +98,8 @@ SubframeExperiment::SubframeExperiment()
     indexer_tab->setLayout(indexer_layout);
     _solution_table->setModel(nullptr);
 
-    plot_tab->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
-    indexer_tab->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+    plot_tab->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    indexer_tab->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
     QGroupBox* figure_group = new QGroupBox("Detector image");
     figure_group->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
@@ -110,11 +117,11 @@ SubframeExperiment::SubframeExperiment()
     setHistogramUp();
     setMaskUp();
 
-    splitter->addWidget(_left_widget);
-    splitter->addWidget(right_splitter);
-    splitter->setChildrenCollapsible(false);
+    auto propertyScrollArea = new PropertyScrollArea(this);
+    propertyScrollArea->setContentLayout(_left_layout);
+    _main_layout->addWidget(propertyScrollArea);
 
-    layout->addWidget(splitter);
+    _main_layout->addWidget(right_splitter);
 
     connect(
         _solution_table->verticalHeader(), &QHeaderView::sectionClicked, this,
@@ -150,6 +157,9 @@ SubframeExperiment::SubframeExperiment()
     connect(
         _detector_widget->dataCombo(), QOverload<int>::of(&QComboBox::currentIndexChanged),
         _data_combo, &QComboBox::setCurrentIndex);
+    connect(
+        _detector_widget->dataCombo(), QOverload<int>::of(&QComboBox::currentIndexChanged),
+        this, &SubframeExperiment::deselectAllMasks);
 
     _set_initial_ki->setChecked(false);
     _lineplot_box->setChecked(false);
@@ -159,8 +169,8 @@ SubframeExperiment::SubframeExperiment()
 
 void SubframeExperiment::setLeftWidgetUp()
 {
-    _left_widget = new QTabWidget(this);
-    _left_widget->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Expanding);
+    _left_widget = new QTabWidget();
+    _left_widget->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
 
     QWidget* strategy_tab = new QWidget(_left_widget);
     QWidget* histogram_tab = new QWidget(_left_widget);
@@ -177,8 +187,7 @@ void SubframeExperiment::setLeftWidgetUp()
     _left_widget->addTab(strategy_tab, "Strategy");
     _left_widget->addTab(histogram_tab, "Histograms");
     _left_widget->addTab(mask_tab, "Masks");
-
-    _left_widget->setFixedWidth(400);
+    _left_layout->addWidget(_left_widget);
 }
 
 void SubframeExperiment::setAdjustBeamUp()
@@ -329,14 +338,30 @@ void SubframeExperiment::setMaskUp()
 
     Spoiler* mask_table_box = new Spoiler("List of Masks");
     GridFiller gfiller2(mask_table_box, true);
-    _mask_table = new QTableWidget(0, 4);
+    _mask_table = new QTableWidget(0, 5);
     _mask_table->setSelectionBehavior(QAbstractItemView::SelectRows);
     _mask_table->setEditTriggers(QAbstractItemView::NoEditTriggers);
-    _mask_table->setHorizontalHeaderLabels(QStringList{"x lower", "y lower", "x upper", "y upper"});
+    _mask_table->setHorizontalHeaderLabels(QStringList{"x lower", "y lower", "x upper", "y upper", "select"});
+
     gfiller2.addWidget(_mask_table, 0, 2);
     _mask_table->resizeColumnsToContents();
 
     _mask_layout->addWidget(mask_table_box);
+
+    _import_masks = new QPushButton("Import masks");
+    _export_masks = new QPushButton("Export masks");
+    _delete_masks = new QPushButton("Delete masks");
+    _toggle_selection = new QPushButton("(De)select all");
+
+    QWidget* w = new QWidget();
+    QHBoxLayout* left_bot = new QHBoxLayout();
+    left_bot->addWidget(_import_masks);
+    left_bot->addWidget(_export_masks);
+    left_bot->addWidget(_delete_masks);
+    left_bot->addWidget(_toggle_selection);
+    w->setLayout(left_bot);
+    gfiller2.addWidget(w, 0, 2);
+
     _mask_layout->addStretch();
 
     connect(
@@ -347,6 +372,57 @@ void SubframeExperiment::setMaskUp()
     connect(
         _detector_widget->scene(), &DetectorScene::signalMaskChanged, this,
         &SubframeExperiment::refreshMaskTable);
+    connect(
+       _export_masks, &QPushButton::clicked, this,
+        &SubframeExperiment::exportMasks);
+    connect(
+        _import_masks, &QPushButton::clicked, this,
+        &SubframeExperiment::importMasks);
+    connect(
+        _delete_masks, &QPushButton::clicked, this,
+        &SubframeExperiment::deleteSelectedMasks);
+    connect(
+        _toggle_selection, &QPushButton::clicked, this,
+        &SubframeExperiment::selectAllMasks);
+}
+
+void SubframeExperiment::importMasks()
+{
+    QSettings settings = gGui->qSettings();
+    settings.beginGroup("RecentDirectories");
+    QString loadDirectory = settings.value("masks", QDir::homePath()).toString() +
+    "/mask.yml";
+
+    std::string file_path = QFileDialog::getOpenFileName(this, "Import masks from file", loadDirectory, "YAML (*.yml)").toStdString();
+
+    if (file_path.empty()) return;
+
+    ohkl::MaskImporter mimp(file_path);
+
+    for (auto & e : mimp.getMasks())
+        _data_combo->currentData()->addMask(e);
+
+    _detector_widget->scene()->loadMasksFromData();
+    toggleUnsafeWidgets();
+}
+
+void SubframeExperiment::exportMasks()
+{
+    QSettings settings = gGui->qSettings();
+    settings.beginGroup("RecentDirectories");
+    QString loadDirectory = settings.value("masks", QDir::homePath()).toString() +
+    "/masks.yml";
+
+    std::string file_path =
+    QFileDialog::getSaveFileName(
+        this, "Export maks to ", loadDirectory, "YAML (*.yml)").toStdString();
+
+    if (file_path.empty()) return;
+
+    ohkl::MaskExporter mexp(_data_combo->currentData()->masks());
+    mexp.exportToFile(file_path);
+
+    toggleUnsafeWidgets();
 }
 
 void SubframeExperiment::setPeakFinder2DUp()
@@ -598,6 +674,10 @@ void SubframeExperiment::toggleUnsafeWidgets()
     _maxY->setEnabled(false);
     _update_plot->setEnabled(false);
     _totalHistogram->setEnabled(false);
+    _import_masks->setEnabled(false);
+    _export_masks->setEnabled(false);
+    _delete_masks->setEnabled(false);
+    _toggle_selection->setEnabled(false);
 
     bool hasProject = gSession->hasProject();
 
@@ -610,6 +690,7 @@ void SubframeExperiment::toggleUnsafeWidgets()
         return;
     ohkl::Experiment* expt = gSession->currentProject()->experiment();
     auto data = expt->getDataMap()->at(_detector_widget->dataCombo()->currentText().toStdString());
+    bool hasMasks = data->hasMasks();
 
     bool hasHistograms = data->getNumberHistograms() > 0;
 
@@ -623,6 +704,11 @@ void SubframeExperiment::toggleUnsafeWidgets()
     _maxX->setEnabled(_xZoom->isChecked() && _xZoom->isEnabled());
     _maxY->setEnabled(_yZoom->isChecked() && _yZoom->isEnabled());
     _update_plot->setEnabled(hasHistograms);
+
+    _import_masks->setEnabled(hasData);
+    _export_masks->setEnabled(hasMasks);
+    _delete_masks->setEnabled(_selected_masks.size() > 0);
+    _toggle_selection->setEnabled(hasMasks);
 }
 
 void SubframeExperiment::find_2d()
@@ -965,6 +1051,7 @@ void SubframeExperiment::refreshMaskTable()
     auto data = _detector_widget->currentData();
     int row = 0;
     QDoubleSpinBox* spin;
+    QCheckBox* cbox;
     for (auto* mask : data->masks()) {
         if (row >= _mask_table->rowCount())
             _mask_table->insertRow(_mask_table->rowCount());
@@ -1005,15 +1092,24 @@ void SubframeExperiment::refreshMaskTable()
         connect(
             spin, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged),
             this, &SubframeExperiment::onMaskChanged);
-        _mask_table->setCellWidget(row++, col++, spin);
+        _mask_table->setCellWidget(row, col++, spin);
+
+        cbox = new QCheckBox(_mask_table);
+        cbox->setStyleSheet("margin-left:20%; margin-right:20%;");
+        cbox->setProperty("row", row);
+
+        _mask_table->setCellWidget(row++, col++, cbox);
+        connect(cbox, &QCheckBox::stateChanged, this, &SubframeExperiment::onMaskSelected);
     }
     _mask_table->resizeColumnsToContents();
+    _mask_table->clearSpans();
+    toggleUnsafeWidgets();
 }
 
 void SubframeExperiment::onMaskChanged()
 {
     int row = sender()->property("row").toInt();
-    std::set<ohkl::IMask*>::iterator it = _detector_widget->currentData()->masks().begin();
+    auto it = _detector_widget->currentData()->masks().begin();
     std::advance(it, row);
     double x1 = dynamic_cast<QDoubleSpinBox*>(_mask_table->cellWidget(row, 0))->value();
     double y1 = dynamic_cast<QDoubleSpinBox*>(_mask_table->cellWidget(row, 1))->value();
@@ -1025,4 +1121,55 @@ void SubframeExperiment::onMaskChanged()
 
 void SubframeExperiment::onMaskSelected()
 {
+    int row = sender()->property("row").toInt();
+    if (((QCheckBox*)sender())->isChecked())
+        _selected_masks.emplace_back(row);
+    else
+        _selected_masks.erase(std::remove(_selected_masks.begin(), _selected_masks.end(), row), _selected_masks.end());
+
+    toggleUnsafeWidgets();
+}
+
+void SubframeExperiment::deleteSelectedMasks()
+{
+    if (_selected_masks.size() == 0) return;
+    auto data = _detector_widget->currentData();
+    if (data == nullptr) return;
+
+    data->removeMaskByIndex(_selected_masks);
+    _selected_masks.clear();
+    refreshMaskTable();
+
+    _detector_widget->scene()->loadMasksFromData();
+    toggleUnsafeWidgets();
+    _mask_table->setRowCount(data->getNMasks());
+}
+
+void SubframeExperiment::deselectAllMasks()
+{
+    if (_selected_masks.size() == 0) return;
+    _selected_masks.clear();
+    toggleUnsafeWidgets();
+}
+
+void SubframeExperiment::selectAllMasks()
+{
+    if (!_detector_widget->currentData()->hasMasks()) return;
+
+    auto nmasks = _detector_widget->currentData()->getNMasks();
+
+    if (_selected_masks.size() == 0){ // gonna select all masks
+        for (auto i = 0; i < nmasks; ++i){
+            QCheckBox* cb = ((QCheckBox*)_mask_table->cellWidget(i, 4));
+            cb->setChecked(true);
+            _selected_masks.emplace_back(i);
+        }
+    } else { // we clear everything from the list
+        for (auto i = 0; i < nmasks; ++i){
+            QCheckBox* cb = ((QCheckBox*)_mask_table->cellWidget(i, 4));
+            cb->setChecked(false);
+        }
+        _selected_masks.clear();
+    }
+    toggleUnsafeWidgets();
 }

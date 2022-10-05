@@ -34,6 +34,7 @@ class QSlider;
 class QTabWidget;
 class QTableWidget;
 class QVBoxLayout;
+class QHBoxLayout;
 class Spoiler;
 class SpoilerCheck;
 class UnitCellTableView;
@@ -98,6 +99,14 @@ class SubframeExperiment : public QWidget {
 
     void setPlotMode();
     void setMaskMode();
+   //! exports masks to yaml file
+    void exportMasks();
+   //! imports maks from yaml file
+    void importMasks();
+   //! deletes selected masks from dataset
+    void deleteSelectedMasks();
+    void deselectAllMasks();
+    void selectAllMasks();
 
  public slots:
     void onBeamPosChanged(QPointF pos);
@@ -118,8 +127,8 @@ class SubframeExperiment : public QWidget {
     QVBoxLayout* _strategy_layout;
     QVBoxLayout* _histogram_layout;
     QVBoxLayout* _mask_layout;
-
     QVBoxLayout* _left_layout;
+    QHBoxLayout* _main_layout;
 
     QPushButton* _calc_intensity;
     QPushButton* _update_plot;
@@ -172,6 +181,11 @@ class SubframeExperiment : public QWidget {
     QComboBox* _mask_combo;
     QTableWidget* _mask_table;
 
+    QPushButton* _export_masks;
+    QPushButton* _import_masks;
+    QPushButton* _delete_masks;
+    QPushButton* _toggle_selection;
+
     bool _show_direct_beam;
 
     //! Saved direct beam positions
@@ -183,6 +197,8 @@ class SubframeExperiment : public QWidget {
     std::vector<std::pair<std::shared_ptr<ohkl::UnitCell>, double>> _solutions;
     //! Unit cell selected in solution table
     ohkl::sptrUnitCell _selected_unit_cell;
+    //! holds row index of selected masks
+    std::vector<size_t> _selected_masks;
 };
 
 #endif // OHKL_GUI_SUBFRAME_EXPERIMENT_SUBFRAMEEXPERIMENT_H
