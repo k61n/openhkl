@@ -35,6 +35,7 @@ namespace ohkl {
 class UnitCell;
 class PeakCenterDataSet;
 }
+class CutterItem;
 class PeakItemGraphic;
 class PeakCollectionModel;
 class SXGraphicsItem;
@@ -323,6 +324,7 @@ class DetectorScene : public QGraphicsScene {
     //! current position of the crosshair
     static QPointF _current_beam_position;
 
+    CutterItem* _cutter;
 
     PeakItemGraphic* _selected_peak;
 
