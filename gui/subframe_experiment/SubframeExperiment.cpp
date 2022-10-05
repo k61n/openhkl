@@ -78,7 +78,7 @@ SubframeExperiment::SubframeExperiment()
     _main_layout = new QHBoxLayout(this);
     _left_layout = new QVBoxLayout();
 
-    _tab_widget = new QTabWidget(this);
+    _tab_widget = new QTabWidget();
     QWidget* plot_tab = new QWidget(_tab_widget);
     QWidget* indexer_tab = new QWidget(_tab_widget);
     _tab_widget->addTab(plot_tab, "Plot");
@@ -112,16 +112,15 @@ SubframeExperiment::SubframeExperiment()
     right_splitter->addWidget(figure_group);
     right_splitter->addWidget(_tab_widget);
 
-    auto propertyScrollArea = new PropertyScrollArea(this);
-    propertyScrollArea->setContentLayout(_left_layout);
-    _main_layout->addWidget(propertyScrollArea);
-
     setLeftWidgetUp();
     setStrategyUp();
     setHistogramUp();
     setMaskUp();
 
-    _main_layout->addWidget(_left_widget);
+    auto propertyScrollArea = new PropertyScrollArea(this);
+    propertyScrollArea->setContentLayout(_left_layout);
+    _main_layout->addWidget(propertyScrollArea);
+
     _main_layout->addWidget(right_splitter);
 
     connect(
@@ -170,7 +169,7 @@ SubframeExperiment::SubframeExperiment()
 
 void SubframeExperiment::setLeftWidgetUp()
 {
-    _left_widget = new QTabWidget(this);
+    _left_widget = new QTabWidget();
     _left_widget->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
 
     QWidget* strategy_tab = new QWidget(_left_widget);
@@ -188,6 +187,7 @@ void SubframeExperiment::setLeftWidgetUp()
     _left_widget->addTab(strategy_tab, "Strategy");
     _left_widget->addTab(histogram_tab, "Histograms");
     _left_widget->addTab(mask_tab, "Masks");
+    _left_layout->addWidget(_left_widget);
 }
 
 void SubframeExperiment::setAdjustBeamUp()
