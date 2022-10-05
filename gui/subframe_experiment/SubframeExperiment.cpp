@@ -351,7 +351,7 @@ void SubframeExperiment::setMaskUp()
     _import_masks = new QPushButton("Import masks");
     _export_masks = new QPushButton("Export masks");
     _delete_masks = new QPushButton("Delete masks");
-    _toggle_selection = new QPushButton("Select all");
+    _toggle_selection = new QPushButton("(De)select all");
 
     QWidget* w = new QWidget();
     QHBoxLayout* left_bot = new QHBoxLayout();
@@ -1127,11 +1127,6 @@ void SubframeExperiment::onMaskSelected()
     else
         _selected_masks.erase(std::remove(_selected_masks.begin(), _selected_masks.end(), row), _selected_masks.end());
 
-    if (_selected_masks.size() > 0)
-        _toggle_selection->setText("Deselect all");
-    else
-        _toggle_selection->setText("Select all");
-
     toggleUnsafeWidgets();
 }
 
@@ -1169,14 +1164,12 @@ void SubframeExperiment::selectAllMasks()
             cb->setChecked(true);
             _selected_masks.emplace_back(i);
         }
-        _toggle_selection->setText("Deselect all");
     } else { // we clear everything from the list
         for (auto i = 0; i < nmasks; ++i){
             QCheckBox* cb = ((QCheckBox*)_mask_table->cellWidget(i, 4));
             cb->setChecked(false);
         }
         _selected_masks.clear();
-        _toggle_selection->setText("Select all");
     }
     toggleUnsafeWidgets();
 }
