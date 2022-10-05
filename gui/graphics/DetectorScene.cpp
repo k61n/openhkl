@@ -106,6 +106,7 @@ DetectorScene::DetectorScene(QObject* parent)
     , _old_beam_color(Qt::gray)
     , _beam_size(20)
     , _beam_pos_setter(nullptr)
+    , _cutter(nullptr)
     , _selected_peak(nullptr)
     , _unit_cell(nullptr)
     , _peak(nullptr)
@@ -483,7 +484,11 @@ void DetectorScene::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
 
 void DetectorScene::mousePressEvent(QGraphicsSceneMouseEvent* event)
 {
-    CutterItem* cutter(nullptr);
+    if (_cutter) {
+        removeItem(_cutter);
+        delete _cutter;
+        _cutter = nullptr;
+    }
 
     if (_selectionRect) {
         removeItem(_selectionRect);
@@ -546,15 +551,15 @@ void DetectorScene::mousePressEvent(QGraphicsSceneMouseEvent* event)
                 break;
             }
             case HORIZONTALSLICE: {
-                cutter = new CutSliceItem(_currentData, true);
+                _cutter = new CutSliceItem(_currentData, true);
                 break;
             }
             case VERTICALSLICE: {
-                cutter = new CutSliceItem(_currentData, false);
+                _cutter = new CutSliceItem(_currentData, false);
                 break;
             }
             case LINE: {
-                cutter = new CutLineItem(_currentData);
+                _cutter = new CutLineItem(_currentData);
                 break;
             }
             case MASK: {
@@ -581,10 +586,10 @@ void DetectorScene::mousePressEvent(QGraphicsSceneMouseEvent* event)
             }
             default: break;
         }
-        if (cutter != nullptr) {
-            cutter->setFrom(event->lastScenePos());
-            addItem(cutter);
-            _lastClickedGI = cutter;
+        if (_cutter != nullptr) {
+            _cutter->setFrom(event->lastScenePos());
+            addItem(_cutter);
+            _lastClickedGI = _cutter;
         }
     }
     // The right button was pressed
@@ -773,7 +778,13 @@ void DetectorScene::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
                     updateMasks();
                 }
             } else {
-                if (MaskItem* p = dynamic_cast<MaskItem*>(_lastClickedGI)) {
+                if (CutterItem* p = dynamic_cast<CutterItem*>(_lastClickedGI)) {
+                    // delete p....
+                    _lastClickedGI = nullptr;
+                    // removeItem(p);
+                } else if (PlottableItem* p = dynamic_cast<PlottableItem*>(_lastClickedGI)) {
+                    gGui->updatePlot(p);
+                } else if (MaskItem* p = dynamic_cast<MaskItem*>(_lastClickedGI)) {
                     // add a new mask
                     auto it = findMask(p);
                     if (it != _masks.end()) {
