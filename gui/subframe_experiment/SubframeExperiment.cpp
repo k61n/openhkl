@@ -112,6 +112,9 @@ SubframeExperiment::SubframeExperiment()
     right_splitter->addWidget(figure_group);
     right_splitter->addWidget(_tab_widget);
 
+    right_splitter->setStretchFactor(0, 2);
+    right_splitter->setStretchFactor(1, 1);
+
     setLeftWidgetUp();
     setStrategyUp();
     setHistogramUp();
