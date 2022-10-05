@@ -178,6 +178,8 @@ class DetectorScene : public QGraphicsScene {
     void setMasksVisible(bool flag);
     //! Add masks to the detector image
     void addMasks();
+    //! Return mask visibility state
+    bool masksVisible() const { return _drawMasks; };
 
  protected:
     void mousePressEvent(QGraphicsSceneMouseEvent* event);

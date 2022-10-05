@@ -162,6 +162,8 @@ void DetectorWidget::refresh()
 
     ohkl::sptrDataSet data = _data_combo->currentData();
 
+    _hide_masks->setChecked(!scene()->masksVisible());
+
     scene()->slotChangeSelectedData(data, _spin->value());
     scene()->clearPeakItems();
     scene()->drawPeakitems();
@@ -282,6 +284,8 @@ void DetectorWidget::setToolbarUp()
         path = path + light;
 
     _hide_masks->setMaximumWidth(_hide_masks->height());
+    _hide_masks->setCheckable(true);
+    _hide_masks->setChecked(true);
 
     _hide_masks->setIcon(QIcon(path + "hide.svg"));
     _reset->setIcon(QIcon(path + "reset.svg"));
