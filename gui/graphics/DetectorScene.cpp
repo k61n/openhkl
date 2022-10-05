@@ -484,9 +484,11 @@ void DetectorScene::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
 
 void DetectorScene::mousePressEvent(QGraphicsSceneMouseEvent* event)
 {
-    if (_cutter)
+    if (_cutter) {
+        removeItem(_cutter);
         delete _cutter;
-    _cutter = nullptr;
+        _cutter = nullptr;
+    }
 
     if (_selectionRect) {
         removeItem(_selectionRect);
@@ -776,7 +778,13 @@ void DetectorScene::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
                     updateMasks();
                 }
             } else {
-                if (MaskItem* p = dynamic_cast<MaskItem*>(_lastClickedGI)) {
+                if (CutterItem* p = dynamic_cast<CutterItem*>(_lastClickedGI)) {
+                    // delete p....
+                    _lastClickedGI = nullptr;
+                    // removeItem(p);
+                } else if (PlottableItem* p = dynamic_cast<PlottableItem*>(_lastClickedGI)) {
+                    gGui->updatePlot(p);
+                } else if (MaskItem* p = dynamic_cast<MaskItem*>(_lastClickedGI)) {
                     // add a new mask
                     auto it = findMask(p);
                     if (it != _masks.end()) {
