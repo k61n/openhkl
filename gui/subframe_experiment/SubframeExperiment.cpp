@@ -1115,7 +1115,8 @@ void SubframeExperiment::onMaskChanged()
     double y1 = dynamic_cast<QDoubleSpinBox*>(_mask_table->cellWidget(row, 1))->value();
     double x2 = dynamic_cast<QDoubleSpinBox*>(_mask_table->cellWidget(row, 2))->value();
     double y2 = dynamic_cast<QDoubleSpinBox*>(_mask_table->cellWidget(row, 3))->value();
-    (*it)->setAABB(ohkl::AABB({x1, y1, 0}, {x2, y2, 0}));
+    std::size_t nframes = _data_combo->currentData()->nFrames();
+    (*it)->setAABB(ohkl::AABB({x1, y1, 0}, {x2, y2, nframes}));
     _detector_widget->scene()->loadMasksFromData();
 }
 
