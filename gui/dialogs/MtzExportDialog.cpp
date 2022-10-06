@@ -20,9 +20,6 @@ MtzExportDialog::MtzExportDialog(bool merged_data)
     : _selected_data(""), _selected_pc(""), _comment(""), _merged_data(merged_data)
 {
     setModal(true);
-    resize(600, 350);
-    setMinimumSize(600, 350);
-    setMaximumSize(600, 350);
 
     setWindowTitle(QString("Mtz Export"));
 
