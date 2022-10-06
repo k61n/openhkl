@@ -27,6 +27,7 @@ class DataComboBox;
 class DetectorWidget;
 class PlotPanel;
 class PropertyPanel;
+class QGraphicsPixmapItem;
 class QPushButton;
 class QCheckBox;
 class QComboBox;
@@ -66,6 +67,7 @@ class SubframeExperiment : public QWidget {
     void plotIntensities();
     void toggleUnsafeWidgets();
     void updateRanges();
+    void showFilteredImage();
 
     int getNumberDataPoints() {return _npoints_lineplot->value();};
     void calculateIntensities();
@@ -156,6 +158,7 @@ class SubframeExperiment : public QWidget {
     SafeSpinBox* _blob_min_thresh;
     SafeSpinBox* _blob_max_thresh;
     QCheckBox* _search_all_frames;
+    QCheckBox* _threshold_check;
     QPushButton* _find_peaks_2d;
 
     SafeDoubleSpinBox* _gruber;
@@ -199,6 +202,8 @@ class SubframeExperiment : public QWidget {
     ohkl::sptrUnitCell _selected_unit_cell;
     //! holds row index of selected masks
     std::vector<size_t> _selected_masks;
+    //! Filtered/thresholded image
+    QGraphicsPixmapItem* _thresholded_image;
 };
 
 #endif // OHKL_GUI_SUBFRAME_EXPERIMENT_SUBFRAMEEXPERIMENT_H
