@@ -37,6 +37,12 @@ class PeakCollection {
     PeakCollection();
     PeakCollection(const std::string& name, PeakCollectionType type);
 
+    //! Get integer id
+    unsigned int id() { return _id; };
+    //! Set integer id
+    void setId(unsigned int id);
+
+
     //! Sets name of the PeakCollection
     void setName(const std::string& name);
     //! Returns the name of the PeakCollection
@@ -126,6 +132,7 @@ class PeakCollection {
     void setUnitCell(const sptrUnitCell& cell);
 
  private:
+    unsigned int _id;
     std::vector<std::unique_ptr<ohkl::Peak3D>> _peaks;
     std::string _name;
     std::string _description;

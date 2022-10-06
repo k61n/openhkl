@@ -57,6 +57,8 @@ class ShapeHandler {
  private:
     //! Map of shape collections in Experiment
     ShapeModelMap _shape_models;
+
+    unsigned int _last_index = 0;
 };
 
 } // namespace ohkl

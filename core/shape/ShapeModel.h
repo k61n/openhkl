@@ -80,6 +80,11 @@ class ShapeModel {
     ShapeModel(const std::string& name);
     ShapeModel(std::shared_ptr<ShapeModelParameters> params);
 
+    //! Get the integer id
+    unsigned int  id() const { return _id; };
+    //! Set the integer id
+    void setId(unsigned int id);
+
     //! Set the name
     void setName(const std::string& name) { _name = name; };
     //! Get the name
@@ -155,6 +160,8 @@ class ShapeModel {
     void setHandler(sptrProgressHandler handler);
 
  private:
+    //! integer id
+    unsigned int _id;
     //! name
     std::string _name;
     //! Predict the (detector space) covariance given the fit data

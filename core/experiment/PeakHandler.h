@@ -71,10 +71,13 @@ class PeakHandler {
     std::string generateName();
     //! Get a vector of pointers to peak collections
     std::vector<PeakCollection*> getPeakCollections();
+    //! Set the last index for naming peak collections
+    void setLastIndex(unsigned int last_index);
 
  private:
     //! Pointer to map of peak collections in Experiment
     PeakCollectionMap _peak_collections;
+    unsigned int _last_index = 0;
 
     // enum class PeakCollectionType { FOUND, PREDICTED, INDEXING };
 };
