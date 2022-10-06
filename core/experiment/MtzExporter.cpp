@@ -231,8 +231,8 @@ void MtzExporter::buildBatch()
     _mtz_data->batch->delcor = 0;
 
     /* Beam divergence */
-    _mtz_data->batch->divhd = 0.8 ; //FWHM
-    _mtz_data->batch->divvd = 0.7; // FWHM
+    _mtz_data->batch->divhd = 0.0 ; //FWHM
+    _mtz_data->batch->divvd = 0.0; // FWHM
 
     /* xtal to detector distance */
     _mtz_data->batch->dx[0] = 0;
