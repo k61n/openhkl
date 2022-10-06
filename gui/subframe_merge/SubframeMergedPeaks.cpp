@@ -291,7 +291,7 @@ void SubframeMergedPeaks::setMergedUp()
     QHBoxLayout* merged_row = new QHBoxLayout;
 
     _merged_save_type = new QComboBox();
-    _merged_save_type->addItems({"ShelX", "FullProf", "Phenix", "Mtz"});
+    _merged_save_type->addItems({"ShelX", "FullProf", "Phenix", "MTZ"});
     _save_merged = new QPushButton("Save merged");
 
     QLabel* label = new QLabel("Intensity scale factor");
@@ -328,7 +328,7 @@ void SubframeMergedPeaks::setUnmergedUp()
 
     QHBoxLayout* unmerged_row = new QHBoxLayout;
     _unmerged_save_type = new QComboBox();
-    _unmerged_save_type->addItems({"ShelX", "FullProf", "Phenix","Mtz"});
+    _unmerged_save_type->addItems({"ShelX", "FullProf", "Phenix","MTZ"});
     _save_unmerged = new QPushButton("Save unmerged");
 
     QLabel* label = new QLabel("Intensity scale factor");
