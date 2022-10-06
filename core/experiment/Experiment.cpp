@@ -641,11 +641,6 @@ std::vector<ShapeModel*> Experiment::getShapeModels()
 
 bool Experiment::exportMtz(const std::string filename, const std::string dataset_name, const std::string peak_collection, bool use_merged_data, const std::string comment, ohkl::MergedData* merged_data)
 {
-    /*if (dataset_name.empty())
-        dataset_name = this->getAllData()[0]->name();*/
-
-    if (!merged_data) return false;
-
     MtzExporter exporter(this, dataset_name, peak_collection, use_merged_data, comment, merged_data);
     exporter.exportToFile(filename);
     return true;

@@ -850,15 +850,6 @@ bool SubframeMergedPeaks::exportMtz(bool use_merged_data)
     QString loadDirectory = settings.value("mtz", QDir::homePath()).toString() +
     "/export.mtz";
 
-    if (!_merged_data){
-        QMessageBox::warning(
-            this,
-            "Mtz File Export",
-            "Merged data has not yet been created!"
-        );
-        return false;
-    }
-
     ohkl::MtzExportDialog export_dialog(use_merged_data);
     if ( !export_dialog.exec() )
         return false;
