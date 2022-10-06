@@ -1065,36 +1065,28 @@ void SubframeExperiment::refreshMaskTable()
         spin->setValue(aabb.lower()[0]);
         spin->setProperty("row", row);
         spin->setProperty("col", col);
-        connect(
-            spin, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged),
-            this, &SubframeExperiment::onMaskChanged);
+        connect(spin, &QDoubleSpinBox::editingFinished, this, &SubframeExperiment::onMaskChanged);
         _mask_table->setCellWidget(row, col++, spin);
         spin = new QDoubleSpinBox;
         spin->setMaximum(data->nRows());
         spin->setValue(aabb.lower()[1]);
         spin->setProperty("row", row);
         spin->setProperty("col", col);
-        connect(
-            spin, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged),
-            this, &SubframeExperiment::onMaskChanged);
+        connect(spin, &QDoubleSpinBox::editingFinished, this, &SubframeExperiment::onMaskChanged);
         _mask_table->setCellWidget(row, col++, spin);
         spin = new QDoubleSpinBox;
         spin->setMaximum(data->nCols());
         spin->setValue(aabb.upper()[0]);
         spin->setProperty("row", row);
         spin->setProperty("col", col);
-        connect(
-            spin, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged),
-            this, &SubframeExperiment::onMaskChanged);
+        connect(spin, &QDoubleSpinBox::editingFinished, this, &SubframeExperiment::onMaskChanged);
         _mask_table->setCellWidget(row, col++, spin);
         spin = new QDoubleSpinBox;
         spin->setMaximum(data->nRows());
         spin->setValue(aabb.upper()[1]);
         spin->setProperty("row", row);
         spin->setProperty("col", col);
-        connect(
-            spin, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged),
-            this, &SubframeExperiment::onMaskChanged);
+        connect(spin, &QDoubleSpinBox::editingFinished, this, &SubframeExperiment::onMaskChanged);
         _mask_table->setCellWidget(row, col++, spin);
 
         cbox = new QCheckBox(_mask_table);
