@@ -30,6 +30,8 @@
 #include <QLayout>
 #include <QRadioButton>
 #include <QGroupBox>
+#include <QDoubleSpinBox>
+#include <QCheckBox>
 
 #include <string>
 
@@ -47,17 +49,25 @@ namespace ohkl {
 class MtzExportDialog : public QDialog { 
 
     public:
+        //! Constructor
         MtzExportDialog(bool merged_data);
+        //! Destructor
         ~MtzExportDialog();
-
+        //! loads parameters from PeaakMerger to gui
+        void loadMergeParams();
+        //! sets changed parameters from gui to PeakMerger
+        void setMergeParams();
+        //! Refresh gui
         void refresh();
-
+        //! get selected Dataset (for later)
         std::string getDataset() {return _selected_data;}
+        //! get selected PeakCollection name
         std::string getPeakCollection() {return _selected_pc;}
+        //! get entered comment
         std::string getComment() {return _comment;}
+        //! get if unmerged/merged data should be exported
         bool useMergedData() {return _merged_data;};
 
-        
     private:
         QDialogButtonBox* _button_box;
         DataComboBox* _datacombo;
@@ -71,6 +81,15 @@ class MtzExportDialog : public QDialog {
         std::string _selected_pc;
         std::string _comment;
         bool _merged_data;
+
+        QGroupBox* _comment_grp_box;
+        QGroupBox* _merge_param_box;
+        QDoubleSpinBox* _drange_min;
+        QDoubleSpinBox* _drange_max;
+        QDoubleSpinBox* _frame_min;
+        QDoubleSpinBox* _frame_max;
+        QDoubleSpinBox* _shell_res;
+        QCheckBox* _friedel;
 };
 
 } // namespace ohkl
