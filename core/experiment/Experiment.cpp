@@ -639,7 +639,7 @@ std::vector<ShapeModel*> Experiment::getShapeModels()
     return _shape_handler->getShapeModels();
 }
 
-bool Experiment::exportMtz(std::string filename, std::string dataset_name, std::string peak_collection, bool use_merged_data, std::string comment, ohkl::MergedData* merged_data)
+bool Experiment::exportMtz(const std::string filename, const std::string dataset_name, const std::string peak_collection, bool use_merged_data, const std::string comment, ohkl::MergedData* merged_data)
 {
     /*if (dataset_name.empty())
         dataset_name = this->getAllData()[0]->name();*/
