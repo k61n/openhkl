@@ -16,6 +16,7 @@
 
 #include "core/algo/AutoIndexer.h"
 #include "core/convolve/Convolver.h"
+#include "core/convolve/ConvolverFactory.h"
 #include "core/data/DataSet.h"
 #include "core/data/DataTypes.h"
 #include "core/experiment/Experiment.h"
@@ -163,6 +164,9 @@ SubframeExperiment::SubframeExperiment()
     connect(
         _detector_widget->dataCombo(), QOverload<int>::of(&QComboBox::currentIndexChanged),
         this, &SubframeExperiment::deselectAllMasks);
+    connect(
+        _detector_widget->spin(), static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged),
+        this, &SubframeExperiment::showFilteredImage);
 
     _set_initial_ki->setChecked(false);
     _lineplot_box->setChecked(false);
@@ -444,6 +448,8 @@ void SubframeExperiment::setPeakFinder2DUp()
         "Maximum blob threshold", "Maximum threshold for blob detection");
     _search_all_frames = gfiller.addCheckBox(
         "Search all images", "Find blobs in all images in this data set", 1);
+    _threshold_check = gfiller.addCheckBox(
+        "Apply threshold to preview", "Show detector image post filtering/thresholding", 1);
     _find_peaks_2d = gfiller.addButton("Find spots", "Find detector spots in current image");
 
     auto kernel_types = ohkl::Convolver::kernelTypes;
@@ -462,6 +468,7 @@ void SubframeExperiment::setPeakFinder2DUp()
     connect(
         _data_combo, QOverload<int>::of(&QComboBox::currentIndexChanged),
         _detector_widget->dataCombo(), &QComboBox::setCurrentIndex);
+    connect(_threshold_check, &QCheckBox::clicked, this, &SubframeExperiment::showFilteredImage);
     connect(
         _find_peaks_2d, &QPushButton::clicked, this, &SubframeExperiment::find_2d);
 
@@ -588,6 +595,56 @@ void SubframeExperiment::updateRanges()
         _minY->setValue(0);
         _maxY->setValue(max_element);
     }
+}
+
+void SubframeExperiment::showFilteredImage()
+{
+    if (!_threshold_check->isChecked()) {
+        if (_thresholded_image) {
+            _detector_widget->scene()->removeItem(_thresholded_image);
+            delete _thresholded_image;
+            _thresholded_image = nullptr;
+            _detector_widget->scene()->loadCurrentImage();
+        }
+        return;
+    }
+
+    ohkl::sptrDataSet data = _data_combo->currentData();
+    int nrows = data->nRows();
+    int ncols = data->nCols();
+
+
+    ohkl::Experiment* expt = gSession->currentProject()->experiment();
+    ohkl::PeakFinder2D* finder = expt->peakFinder2D();
+    ohkl::Convolver* convolver = finder->convolver();
+    auto* params = finder->parameters();
+    setFinderParameters();
+    finder->setConvolver(params->kernel);
+    std::string convolvertype = _convolver_combo->currentText().toStdString();
+    std::map<std::string, double> convolverParams = convolver->parameters();
+    Eigen::MatrixXd convolvedFrame = ohkl::convolvedFrame(
+        data->reader()->data(_detector_widget->spin()->value() - 1), convolvertype,
+        convolverParams);
+    if (_threshold_check->isChecked()) {
+        double thresholdVal = _threshold->value();
+        for (int i = 0; i < nrows; ++i) {
+            for (int j = 0; j < ncols; ++j)
+                convolvedFrame(i, j) = convolvedFrame(i, j) < thresholdVal ? 0 : 1;
+        }
+    }
+    double minVal = convolvedFrame.minCoeff();
+    double maxVal = convolvedFrame.maxCoeff();
+    if (maxVal - minVal <= 0.0)
+        maxVal = minVal + 1.0;
+    convolvedFrame.array() -= minVal;
+    convolvedFrame.array() /= maxVal - minVal;
+    QRect rect(0, 0, ncols, nrows);
+    ColorMap* m = new ColorMap;
+    QImage image = m->matToImage(convolvedFrame.cast<double>(), rect, maxVal);
+    if (!_thresholded_image)
+        _thresholded_image = _detector_widget->scene()->addPixmap(QPixmap::fromImage(image));
+    else
+        _thresholded_image->setPixmap(QPixmap::fromImage(image));
 }
 
 void SubframeExperiment::plotIntensities()
