@@ -50,17 +50,17 @@ Menus::Menus(QMenuBar* menu_bar) : _menu_bar{menu_bar}
     _expt_menu->addAction(actions->save_all_experiment);
     _expt_menu->addSeparator();
 
-    _data_sub_uexport = _expt_menu->addMenu("Export unmerged");
-    _data_sub_uexport->addAction(actions->export_unmerged_mtz);
-    _data_sub_uexport->addAction(actions->export_unmerged_phenix);
-    _data_sub_uexport->addAction(actions->export_unmerged_fullProf);
-    _data_sub_uexport->addAction(actions->export_unmerged_shelX);
+    _exp_sub_uexport = _expt_menu->addMenu("Export unmerged");
+    _exp_sub_uexport->addAction(actions->export_unmerged_mtz);
+    _exp_sub_uexport->addAction(actions->export_unmerged_phenix);
+    _exp_sub_uexport->addAction(actions->export_unmerged_fullProf);
+    _exp_sub_uexport->addAction(actions->export_unmerged_shelX);
 
-    _data_sub_mexport = _expt_menu->addMenu("Export merged");
-    _data_sub_mexport->addAction(actions->export_merged_mtz);
-    _data_sub_mexport->addAction(actions->export_merged_phenix);
-    _data_sub_mexport->addAction(actions->export_merged_fullProf);
-    _data_sub_mexport->addAction(actions->export_merged_shelX);
+    _exp_sub_mexport = _expt_menu->addMenu("Export merged");
+    _exp_sub_mexport->addAction(actions->export_merged_mtz);
+    _exp_sub_mexport->addAction(actions->export_merged_phenix);
+    _exp_sub_mexport->addAction(actions->export_merged_fullProf);
+    _exp_sub_mexport->addAction(actions->export_merged_shelX);
 
     _expt_menu->addSeparator();
     _expt_menu->addAction(actions->quit);
@@ -157,8 +157,8 @@ void Menus::toggleEntries()
         _data_menu->setDisabled(true);
         _peaks_menu->setDisabled(true);
         _cells_menu->setDisabled(true);
-        _data_sub_uexport->setDisabled(true);
-        _data_sub_mexport->setDisabled(true);
+        _exp_sub_uexport->setDisabled(true);
+        _exp_sub_mexport->setDisabled(true);
         return;
     }
 
@@ -193,8 +193,8 @@ void Menus::toggleEntries()
     actions->show_peaks->setDisabled(no_pcollections);
     _view_menu->setDisabled(no_projects);
     _data_menu->setDisabled(no_projects);
-    _data_sub_uexport->setDisabled(no_datasets);
-    _data_sub_mexport->setDisabled(no_datasets);
+    _exp_sub_uexport->setDisabled(no_datasets);
+    _exp_sub_mexport->setDisabled(no_datasets);
     _peaks_menu->setDisabled(no_pcollections);
     _cells_menu->setDisabled(no_unitcell);
 }
