@@ -36,6 +36,7 @@ bool PeakHandler::addPeakCollection(
     ohklLog(Level::Info, "PeakHandler::addPeakCollection '", name, "': ", peaks.size(), " peaks");
     std::unique_ptr<PeakCollection> ptr(new PeakCollection(name, type));
     ptr->populate(peaks);
+    ptr->setId(_last_index++);
     _peak_collections.insert_or_assign(name, std::move(ptr));
     return hasPeakCollection(name); // now name must be in use
 }
@@ -49,6 +50,7 @@ bool PeakHandler::addPeakCollection(
         return false;
     ohklLog(Level::Info, "PeakHandler::addPeakCollection '", name, "': ", peaks.size(), " peaks");
     std::unique_ptr<PeakCollection> ptr(new PeakCollection(name, type));
+    ptr->setId(_last_index++);
     ptr->setIndexed(indexed);
     ptr->setIntegrated(integrated);
     ptr->populate(peaks);
@@ -62,6 +64,7 @@ bool PeakHandler::addEmptyCollection(const std::string& name, const PeakCollecti
         return false;
     ohklLog(Level::Info, "PeakHandler::addEmptyCollection '" + name + "'");
     std::unique_ptr<PeakCollection> ptr(new PeakCollection(name, type));
+    ptr->setId(_last_index++);
     _peak_collections.insert_or_assign(name, std::move(ptr));
     return hasPeakCollection(name); // now name must be in use
 }
@@ -102,6 +105,7 @@ void PeakHandler::removePeakCollection(const std::string& name)
         auto peak_collection = _peak_collections.find(name);
         peak_collection->second.reset();
         _peak_collections.erase(peak_collection);
+        --_last_index;
     }
 }
 
@@ -156,7 +160,7 @@ bool PeakHandler::clonePeakCollection(std::string name, std::string new_name)
 std::string PeakHandler::generateName()
 {
     int n = 4; // number of digits
-    std::string str = std::to_string(numPeakCollections() + 1);
+    std::string str = std::to_string(_last_index);
     if (str.size() > n) { //
         return "Please enter name for this collection";
     }
@@ -169,6 +173,11 @@ std::vector<PeakCollection*> PeakHandler::getPeakCollections()
     for (const auto& [name, ptr] : _peak_collections)
         collections.push_back(ptr.get());
     return collections;
+}
+
+void PeakHandler::setLastIndex(unsigned int last_index)
+{
+    _last_index = last_index;
 }
 
 } // namespace ohkl

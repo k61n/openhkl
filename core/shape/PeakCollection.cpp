@@ -23,7 +23,8 @@
 namespace ohkl {
 
 PeakCollection::PeakCollection()
-    : _name{ohkl::kw_peakCollectionDefaultName}
+    : _id(0)
+    , _name{ohkl::kw_peakCollectionDefaultName}
     , _type{ohkl::PeakCollectionType::FOUND}
     , _shape_model(nullptr)
     , _indexed(false)
@@ -32,12 +33,19 @@ PeakCollection::PeakCollection()
 }
 
 PeakCollection::PeakCollection(const std::string& name, ohkl::PeakCollectionType type)
-    : _name{std::string(name)}
+    : _id(0)
+    , _name{std::string(name)}
     , _type{type}
     , _shape_model(nullptr)
     , _indexed(false)
     , _integrated(false)
 {
+}
+
+void PeakCollection::setId(unsigned int id)
+{
+    if (_id == 0)
+        _id = id;
 }
 
 void PeakCollection::populate(const std::vector<std::shared_ptr<ohkl::Peak3D>> peak_list)

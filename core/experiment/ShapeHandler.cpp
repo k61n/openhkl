@@ -40,6 +40,7 @@ bool ShapeHandler::addShapeModel(const std::string& name, const ohkl::ShapeModel
         " shapes");
     std::unique_ptr<ShapeModel> ptr = std::make_unique<ShapeModel>(shapes);
     ptr->setName(name);
+    ptr->setId(_last_index++);
     _shape_models.insert_or_assign(name, std::move(ptr));
     return hasShapeModel(name); // now name must be in use
 }
@@ -50,6 +51,7 @@ bool ShapeHandler::addEmptyModel(const std::string& name)
         return false;
     ohklLog(Level::Info, "ShapeHandler::addEmptyCollection '" + name + "'");
     std::unique_ptr<ShapeModel> ptr = std::make_unique<ShapeModel>(ShapeModel(name));
+    ptr->setId(_last_index++);
     _shape_models.insert_or_assign(name, std::move(ptr));
     return hasShapeModel(name); // now name must be in use
 }
@@ -91,7 +93,7 @@ std::vector<std::string> ShapeHandler::getCollectionNames() const
 std::string ShapeHandler::generateName()
 {
     int n = 4; // number of digits
-    std::string str = std::to_string(numShapeModels() + 1);
+    std::string str = std::to_string(_last_index);
     if (str.size() > n) { //
         return "Please enter name for this collection";
     }

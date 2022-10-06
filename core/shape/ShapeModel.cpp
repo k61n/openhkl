@@ -116,7 +116,13 @@ struct FitData {
     }
 };
 
-ShapeModel::ShapeModel() : _profiles(), _choleskyD(), _choleskyM(), _choleskyS(), _handler(nullptr)
+ShapeModel::ShapeModel()
+    : _id(0)
+    , _profiles()
+    , _choleskyD()
+    , _choleskyM()
+    , _choleskyS()
+    , _handler(nullptr)
 {
     _choleskyD.fill(1e-6);
     _choleskyM.fill(1e-6);
@@ -130,12 +136,24 @@ ShapeModel::ShapeModel(const std::string& name) : ShapeModel()
 }
 
 ShapeModel::ShapeModel(std::shared_ptr<ShapeModelParameters> params)
-    : _profiles(), _choleskyD(), _choleskyM(), _choleskyS(), _params(params), _handler(nullptr)
+    : _id(0)
+    , _profiles()
+    , _choleskyD()
+    , _choleskyM()
+    , _choleskyS()
+    , _params(params)
+    , _handler(nullptr)
 
 {
     _choleskyD.fill(1e-6);
     _choleskyM.fill(1e-6);
     _choleskyS.fill(1e-6);
+}
+
+void ShapeModel::setId(unsigned int id)
+{
+    if (_id == 0)
+        _id = id;
 }
 
 static void covariance_helper(
