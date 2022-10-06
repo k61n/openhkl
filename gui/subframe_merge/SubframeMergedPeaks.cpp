@@ -736,7 +736,7 @@ void SubframeMergedPeaks::saveMergedPeaks()
         ohkl::sptrUnitCell cell = singleBatchRefine();
         success = exporter.saveToSCAMerged(
             filename.toStdString(), merged_data, cell, _intensity_rescale_merged->value());
-    } else if (format.compare("Mtz") == 0)
+    } else if (format.compare("MTZ") == 0)
         success = exportMtz(true);
 
     if (!success)
@@ -787,7 +787,7 @@ void SubframeMergedPeaks::saveUnmergedPeaks()
         ohkl::sptrUnitCell cell = singleBatchRefine();
         success = exporter.saveToSCAUnmerged(
             filename.toStdString(), merged_data, cell, _intensity_rescale_unmerged->value());
-    } else if (format.compare("Mtz") == 0)
+    } else if (format.compare("MTZ") == 0)
         success = exportMtz(false);
 
     if (!success)
@@ -868,21 +868,20 @@ bool SubframeMergedPeaks::exportMtz(bool use_merged_data)
      *      we should also maybe include a fully fledged export dialog for this feature
      *       currently it will work over the already implemented gui elements
      */
-    QString pcname = _peak_combo_1->currentText();
+    auto pc = gSession->currentProject()->experiment()->getPeakCollection(export_dialog.getPeakCollection());
 
-   /* if (pc->type() == ohkl::PeakCollectionType::FOUND){
+    if (pc->type() == ohkl::PeakCollectionType::FOUND){
         QMessageBox::warning(
             this,
-            "Mtz File Export",
-            tr("Please set in Subframe Merge a predicted PeakCollection in PeakCollection1\n"
-            "Export process has been canceled"),
+            "MTZ File Export",
+            "A PeakCollection of PeakCollectionTyp FOUND has been selected which cannot be exported to MTZ File.",
             QMessageBox::Ok
         );
-        return;
-    }*/
+        return false;
+    }
 
     std::string filename = QFileDialog::getSaveFileName(
-            this, "Export Experiment as Mtz file", loadDirectory, "CCP4 Mtz (*.mtz)").toStdString();
+            this, "Export Experiment as Mtz file", loadDirectory, "CCP4 Mtz (*.MTZ)").toStdString();
 
     std::string dataset_name = ""; // later for export dialog we should have this
 
