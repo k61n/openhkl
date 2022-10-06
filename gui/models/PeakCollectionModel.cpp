@@ -5,7 +5,7 @@
 //! @file      gui/models/PeakCollectionModel.cpp
 //! @brief     Defines classes PeaksTableModel and PeaksTableView
 //!
-//! @homepage  ###HOMEPAGE###
+//! @homepage  https://openhkl.org
 //! @license   GNU General Public License v3 or higher (see COPYING)
 //! @copyright Institut Laue-Langevin and Forschungszentrum Jülich GmbH 2016-
 //! @authors   see CITATION, MAINTAINER

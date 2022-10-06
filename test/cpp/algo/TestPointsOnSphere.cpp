@@ -5,7 +5,7 @@
 //! @file      test/cpp/algo/TestPointsOnSphere.cpp
 //! @brief     Not a real test: output points on sphere for visual inspection
 //!
-//! @homepage  ###HOMEPAGE###
+//! @homepage  https://openhkl.org
 //! @license   GNU General Public License v3 or higher (see COPYING)
 //! @copyright Institut Laue-Langevin and Forschungszentrum Jülich GmbH 2016-
 //! @authors   see CITATION, MAINTAINER
