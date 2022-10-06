@@ -5,7 +5,7 @@
 //! @file      gui/connect/Sentinel.h
 //! @brief     Defines class Sentinel
 //!
-//! @homepage  ###HOMEPAGE###
+//! @homepage  https://openhkl.org
 //! @license   GNU General Public License v3 or higher (see COPYING)
 //! @copyright Forschungszentrum Jülich GmbH 2016-2018
 //! @authors   Scientific Computing Group at MLZ (see CITATION, MAINTAINER)

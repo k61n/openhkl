@@ -5,7 +5,7 @@
 //! @file      base/utils/LogLevel.h
 //! @brief     Defines struct Level as the log level
 //!
-//! @homepage  ###HOMEPAGE###
+//! @homepage  https://openhkl.org
 //! @license   GNU General Public License v3 or higher (see COPYING)
 //! @copyright Institut Laue-Langevin and Forschungszentrum Jülich GmbH 2016-
 //! @authors   see CITATION, MAINTAINER
