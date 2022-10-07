@@ -878,7 +878,7 @@ bool SubframeMergedPeaks::exportMtz(bool use_merged_data)
     }
 
     std::string filename = QFileDialog::getSaveFileName(
-            this, "Export Experiment as Mtz file", loadDirectory, "CCP4 Mtz (*.MTZ)").toStdString();
+            this, "Export Experiment as MTZ file", loadDirectory, "CCP4 MTZ (*.mtz)").toStdString();
 
     auto expt = gSession->currentProject()->experiment();
 
