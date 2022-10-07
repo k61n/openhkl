@@ -36,7 +36,7 @@ class MtzExporter{
     public:
         //! Constructor
         MtzExporter(ohkl::Experiment* expt, std::string dataset_name, std::string peakcollection_name,
-            bool use_merged_data, std::string comment, ohkl::MergedData* merged_data);
+            bool use_merged_data, std::string comment, ohkl::MergedData* merged_data, ohkl::sptrUnitCell cell);
         //! Deconstructor
         ~MtzExporter();
         //! Builds whole MtzData structure from ohkl data
@@ -67,7 +67,7 @@ class MtzExporter{
         CMtz::MTZCOL* CreateMtzCol(std::string name, std::string label, int grp, 
             int set_id, int active, int src);
 
-        void process( );
+        void process( );       
 
     private: 
         bool _use_merged_data; // 0 = unmerged, 1 = merged

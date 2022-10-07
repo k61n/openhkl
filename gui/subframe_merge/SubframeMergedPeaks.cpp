@@ -854,6 +854,12 @@ bool SubframeMergedPeaks::exportMtz(bool use_merged_data)
     if ( !export_dialog.exec() )
         return false;
 
+    // important note
+    // when trying to access unit cell from MtzExport the unit cell seems to be different
+    // to make sure it is the same as for other exports we access it here and drag it through
+    // the experiment and class
+    ohkl::sptrUnitCell cell = singleBatchRefine();
+
     /*
      *      We need to make sure an predicted peak collection will be exported
      *      we should also maybe include a fully fledged export dialog for this feature
@@ -874,12 +880,11 @@ bool SubframeMergedPeaks::exportMtz(bool use_merged_data)
     std::string filename = QFileDialog::getSaveFileName(
             this, "Export Experiment as Mtz file", loadDirectory, "CCP4 Mtz (*.MTZ)").toStdString();
 
-    std::string dataset_name = ""; // later for export dialog we should have this
+    auto expt = gSession->currentProject()->experiment();
 
-   // if (filename.empty())
-     //    return;
-
-    if (!gSession->currentProject()->experiment()->exportMtz(filename, export_dialog.getDataset(), export_dialog.getPeakCollection(), export_dialog.useMergedData(), export_dialog.getComment(), _merged_data)){
+    if (!expt->exportMtz(filename, export_dialog.getDataset(), export_dialog.getPeakCollection(),
+                            export_dialog.useMergedData(), export_dialog.getComment(),
+                            _merged_data, cell)){
         QMessageBox::critical(this, "Error", "Could not export experiment");
         return false;
     }

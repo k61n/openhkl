@@ -23,11 +23,13 @@
 #include <regex>
 #include <vector>
 #include <functional> 
+#include <iostream> 
 
 namespace ohkl {
-MtzExporter::MtzExporter(ohkl::Experiment* expt, std::string dataset_name, std::string peakcollection_name, bool use_merged_data, std::string comment, ohkl::MergedData* merged_data) : 
-_use_merged_data(use_merged_data), _expt(expt), _ohkl_data(nullptr), _ohkl_uc(nullptr), _ohkl_merged_data(merged_data),
-_mtz_data (nullptr), _mtz_xtal(nullptr), _peakcollection_name(peakcollection_name), _comment(comment)
+MtzExporter::MtzExporter(ohkl::Experiment* expt, std::string dataset_name, std::string peakcollection_name,
+    bool use_merged_data, std::string comment, ohkl::MergedData* merged_data, ohkl::sptrUnitCell cell)
+    : _use_merged_data(use_merged_data), _expt(expt), _ohkl_data(nullptr), _ohkl_uc(cell.get()), _ohkl_merged_data(merged_data),
+    _mtz_data (nullptr), _mtz_xtal(nullptr), _peakcollection_name(peakcollection_name), _comment(comment)
 {
     if (!_expt)
         throw std::runtime_error("E MtzExporter::MtzExporter : invalid project ptr ");
@@ -35,16 +37,11 @@ _mtz_data (nullptr), _mtz_xtal(nullptr), _peakcollection_name(peakcollection_nam
     if (dataset_name.empty())
         throw std::runtime_error("E MtzExporter::MtzExporter : invalid dataset name ");
 
-    if (!_ohkl_merged_data) 
-        throw std::runtime_error("E MtzExporter::MtzExporter invalid data");
-
     _mtz_sets.clear();
     _mtz_cols.clear();
 
-    /* Retrieving data from Experiment */
     _ohkl_data = _expt->getData(dataset_name);
-    _ohkl_uc = _expt->getUnitCells().at(0);
-
+    auto peaks = _expt->getPeakCollection(peakcollection_name);
     process();
 }
 
@@ -431,6 +428,7 @@ void MtzExporter::buildMtzCols()
  
 void MtzExporter::buildMtzData()
 {
+     process();
     ohklLog(ohkl::Level::Debug, "Building Mtz data structure'");
     buildMtz();
     buildSyminfo();
@@ -485,8 +483,7 @@ void  MtzExporter::process( )
 {
     auto* merger = _expt->peakMerger();
     merger->reset();
-
-    ohkl::SpaceGroup group = _ohkl_uc->spaceGroup();
+    ohkl::SpaceGroup group = _expt->getUnitCells().at(0)->spaceGroup();
     merger->setSpaceGroup(group);
     merger->addPeakCollection(_expt->getPeakCollection(_peakcollection_name));
     merger->mergePeaks();
