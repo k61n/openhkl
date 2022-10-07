@@ -31,6 +31,8 @@ class Menus {
     QMenu* _help_menu;
 
     QMenu* _data_sub;
+    QMenu* _exp_sub_uexport;
+    QMenu* _exp_sub_mexport;
 
     void toggleEntries();
 

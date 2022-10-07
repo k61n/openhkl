@@ -33,6 +33,8 @@
 #include "gui/utility/SideBar.h"
 #include "tables/crystal/UnitCell.h"
 
+#include "core/experiment/MtzExporter.h"
+
 #include <QDialogButtonBox>
 #include <QFileDialog>
 #include <QFormLayout>
@@ -43,6 +45,8 @@
 
 #include <fstream>
 #include <iomanip>
+
+#include "gui/dialogs/MtzExportDialog.h" 
 
 SubframeMergedPeaks::SubframeMergedPeaks()
 {
@@ -287,7 +291,7 @@ void SubframeMergedPeaks::setMergedUp()
     QHBoxLayout* merged_row = new QHBoxLayout;
 
     _merged_save_type = new QComboBox();
-    _merged_save_type->addItems({"ShelX", "FullProf", "Phenix"});
+    _merged_save_type->addItems({"ShelX", "FullProf", "Phenix", "MTZ"});
     _save_merged = new QPushButton("Save merged");
 
     QLabel* label = new QLabel("Intensity scale factor");
@@ -324,7 +328,7 @@ void SubframeMergedPeaks::setUnmergedUp()
 
     QHBoxLayout* unmerged_row = new QHBoxLayout;
     _unmerged_save_type = new QComboBox();
-    _unmerged_save_type->addItems({"ShelX", "FullProf", "Phenix"});
+    _unmerged_save_type->addItems({"ShelX", "FullProf", "Phenix","MTZ"});
     _save_unmerged = new QPushButton("Save unmerged");
 
     QLabel* label = new QLabel("Intensity scale factor");
@@ -672,6 +676,25 @@ void SubframeMergedPeaks::saveStatistics()
         filename.toStdString(), merger->shellQuality(), merger->overallQuality());
 }
 
+void SubframeMergedPeaks::savePeaks(std::string format, bool merged)
+{
+    if (merged){
+        auto idx = _merged_save_type->findText(QString::fromStdString(format));
+        if (idx == -1)
+            throw std::runtime_error("SubframeMergedPeaks::savePeaks Unknown file format");
+        _merged_save_type->setCurrentIndex(idx);
+        saveMergedPeaks();
+    }
+    else {
+        auto idx = _unmerged_save_type->findText(QString::fromStdString(format));
+        if (idx == -1)
+            throw std::runtime_error("SubframeMergedPeaks::savePeaks Unknown file format");
+        _unmerged_save_type->setCurrentIndex(idx);
+        saveUnmergedPeaks();
+    }
+}
+
+
 void SubframeMergedPeaks::saveMergedPeaks()
 {
     QString format = _merged_save_type->currentText();
@@ -713,7 +736,9 @@ void SubframeMergedPeaks::saveMergedPeaks()
         ohkl::sptrUnitCell cell = singleBatchRefine();
         success = exporter.saveToSCAMerged(
             filename.toStdString(), merged_data, cell, _intensity_rescale_merged->value());
-    }
+    } else if (format.compare("MTZ") == 0)
+        success = exportMtz(true);
+
     if (!success)
         QMessageBox::critical(this, "Error", "File open unsuccessful");
 
@@ -762,7 +787,9 @@ void SubframeMergedPeaks::saveUnmergedPeaks()
         ohkl::sptrUnitCell cell = singleBatchRefine();
         success = exporter.saveToSCAUnmerged(
             filename.toStdString(), merged_data, cell, _intensity_rescale_unmerged->value());
-    }
+    } else if (format.compare("MTZ") == 0)
+        success = exportMtz(false);
+
     if (!success)
         QMessageBox::critical(this, "Error", "File open unsuccessful");
 
@@ -814,4 +841,52 @@ ohkl::sptrUnitCell SubframeMergedPeaks::singleBatchRefine()
     }
 
     return refiner->batches()[0].sptrCell();
+}
+
+bool SubframeMergedPeaks::exportMtz(bool use_merged_data)
+{
+    QSettings settings = gGui->qSettings();
+    settings.beginGroup("RecentDirectories");
+    QString loadDirectory = settings.value("mtz", QDir::homePath()).toString() +
+    "/export.mtz";
+
+    ohkl::MtzExportDialog export_dialog(use_merged_data);
+    if ( !export_dialog.exec() )
+        return false;
+
+    // important note
+    // when trying to access unit cell from MtzExport the unit cell seems to be different
+    // to make sure it is the same as for other exports we access it here and drag it through
+    // the experiment and class
+    ohkl::sptrUnitCell cell = singleBatchRefine();
+
+    /*
+     *      We need to make sure an predicted peak collection will be exported
+     *      we should also maybe include a fully fledged export dialog for this feature
+     *       currently it will work over the already implemented gui elements
+     */
+    auto pc = gSession->currentProject()->experiment()->getPeakCollection(export_dialog.getPeakCollection());
+
+    if (pc->type() == ohkl::PeakCollectionType::FOUND){
+        QMessageBox::warning(
+            this,
+            "MTZ File Export",
+            "A PeakCollection of PeakCollectionTyp FOUND has been selected which cannot be exported to MTZ File.",
+            QMessageBox::Ok
+        );
+        return false;
+    }
+
+    std::string filename = QFileDialog::getSaveFileName(
+            this, "Export Experiment as MTZ file", loadDirectory, "CCP4 MTZ (*.mtz)").toStdString();
+
+    auto expt = gSession->currentProject()->experiment();
+
+    if (!expt->exportMtz(filename, export_dialog.getDataset(), export_dialog.getPeakCollection(),
+                            export_dialog.useMergedData(), export_dialog.getComment(),
+                            _merged_data, cell)){
+        QMessageBox::critical(this, "Error", "Could not export experiment");
+        return false;
+    }
+    return true;
 }
