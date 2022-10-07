@@ -22,7 +22,7 @@ MtzExportDialog::MtzExportDialog(bool merged_data)
 {
     setModal(true);
 
-    setWindowTitle(QString("Mtz Export"));
+    setWindowTitle(QString("MTZ Export"));
 
     QLabel* lab_data = new QLabel(QString("Dateset:"));
     QLabel* lab_peaks = new QLabel(QString("PeakCollection:"));
