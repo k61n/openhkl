@@ -23,6 +23,7 @@
 #include "gui/frames/ProgressView.h"
 #include "gui/graphics/DetectorScene.h"
 #include "gui/graphics/SXPlot.h"
+#include "gui/graphics_items/PeakItemGraphic.h"
 #include "gui/items/PeakItem.h"
 #include "gui/models/Project.h"
 #include "gui/models/Session.h"
@@ -46,6 +47,7 @@
 #include <QMessageBox>
 #include <QScrollBar>
 #include <QSpacerItem>
+#include <QItemSelectionModel>
 
 SubframeReject::SubframeReject() : QWidget()
 {
@@ -90,6 +92,8 @@ SubframeReject::SubframeReject() : QWidget()
     _right_element->setStretchFactor(2, 2);
 
     _peak_stats = ohkl::PeakStatistics();
+
+    _selection_color = Qt::yellow;
 }
 
 void SubframeReject::setInputUp()
@@ -155,9 +159,9 @@ void SubframeReject::setFigureUp()
     _detector_widget = new DetectorWidget(false, true, figure_group);
     _detector_widget->linkPeakModel(&_peak_collection_model);
 
-    connect(
-        _detector_widget->scene(), &DetectorScene::signalSelectedPeakItemChanged, this,
-        &SubframeReject::changeSelected);
+    // connect(
+    //     _detector_widget->scene(), &DetectorScene::signalSelectedPeakItemChanged, this,
+    //     &SubframeReject::changeSelected);
     connect(
         _peak_combo, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this,
         &SubframeReject::refreshPeakTable);
@@ -209,6 +213,10 @@ void SubframeReject::setPeakTableUp()
     peak_grid->addWidget(_peak_table, 0, 0, 0, 0);
 
     _right_element->addWidget(peak_group);
+
+    connect(
+        _peak_table->selectionModel(), &QItemSelectionModel::selectionChanged, this,
+        &SubframeReject::onPeakTableSelection);
 }
 
 void SubframeReject::refreshPeakTable()
@@ -360,6 +368,25 @@ void SubframeReject::updateYRange(double ymin, double ymax)
 {
     _freq_min->setValue(ymin);
     _freq_max->setValue(ymax);
+}
+
+void SubframeReject::onPeakTableSelection()
+{
+    for (std::size_t idx = 0; idx < _selected_graphics.size(); ++idx)
+        _selected_graphics[idx]->setCenterColor(_saved_colors[idx]);
+    _selected_graphics.clear();
+    _saved_colors.clear();
+    QModelIndexList selected_rows = _peak_table->selectionModel()->selectedRows();
+    for (auto row : selected_rows) {
+        int idx = row.row();
+        PeakItemGraphic* peak_graphic = _peak_collection_item.peakItemAt(idx)->peakGraphic();
+        _saved_colors.push_back(peak_graphic->centerColor());
+        peak_graphic->setCenterColor(_selection_color);
+        _selected_graphics.emplace_back(peak_graphic);
+    }
+    PeakItemGraphic* peak_graphic = _selected_graphics[0];
+    unsigned int frame = static_cast<unsigned int>(peak_graphic->peak()->shape().center()[2]);
+    _detector_widget->spin()->setValue(frame);
 }
 
 void SubframeReject::updatePlotRange()

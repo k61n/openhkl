@@ -131,6 +131,11 @@ void PeakItemGraphic::setCenterColor(QColor color)
     _center_gi->setPen(center_pen);
 }
 
+QColor PeakItemGraphic::centerColor() const
+{
+    return _center_color;
+}
+
 void PeakItemGraphic::initFromPeakViewWidget(const PeakViewWidget::Set& set)
 {
     showArea(set.drawPeaks->isChecked());

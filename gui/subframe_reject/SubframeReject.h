@@ -34,9 +34,6 @@
 #include <QTableWidget>
 #include <QVBoxLayout>
 #include <QWidget>
-#include <qcombobox.h>
-#include <qobjectdefs.h>
-#include <qpushbutton.h>
 
 class PeakComboBox;
 class PlotPanel;
@@ -68,6 +65,8 @@ class SubframeReject : public QWidget {
     void updateXRange(double xmin, double xmax);
     //! Set the vertical range in the control widget
     void updateYRange(double ymin, double ymax);
+    //! When a peak is selected via the table
+    void onPeakTableSelection();
 
  private:
     //! Select dataset, peak collection
@@ -130,6 +129,10 @@ class SubframeReject : public QWidget {
     ohkl::PeakStatistics _peak_stats;
 
     gsl_histogram* _current_histogram;
+
+    std::vector<PeakItemGraphic*> _selected_graphics;
+    QColor _selection_color;
+    QVector<QColor> _saved_colors;
 };
 
 
