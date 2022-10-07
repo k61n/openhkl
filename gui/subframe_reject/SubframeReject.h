@@ -33,6 +33,7 @@
 #include <QSplitter>
 #include <QTableWidget>
 #include <QVBoxLayout>
+#include <QWidget>
 
 class PeakComboBox;
 class PlotPanel;
