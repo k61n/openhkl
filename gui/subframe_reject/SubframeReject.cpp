@@ -38,6 +38,7 @@
 #include "gui/views/PeakTableView.h"
 #include "gui/widgets/DetectorWidget.h"
 #include "gui/widgets/PlotPanel.h"
+#include "tables/crystal/MillerIndex.h"
 
 #include <QFileInfo>
 #include <QGridLayout>
@@ -48,6 +49,7 @@
 #include <QScrollBar>
 #include <QSpacerItem>
 #include <QItemSelectionModel>
+#include <qpushbutton.h>
 
 SubframeReject::SubframeReject() : QWidget()
 {
@@ -57,6 +59,7 @@ SubframeReject::SubframeReject() : QWidget()
     _left_layout = new QVBoxLayout();
 
     setInputUp();
+    setFindUp();
     setHistogramUp();
     setPreviewUp();
     setFigureUp();
@@ -75,6 +78,7 @@ SubframeReject::SubframeReject() : QWidget()
         _peak_combo, QOverload<int>::of(&QComboBox::currentIndexChanged), this, [=]() {
             updateStatistics();
             computeHistogram();
+            _plot_widget->sxplot()->resetZoom();
     });
     connect(
         _histo_combo, QOverload<int>::of(&QComboBox::currentIndexChanged), this, [=]() {
@@ -93,7 +97,7 @@ SubframeReject::SubframeReject() : QWidget()
 
     _peak_stats = ohkl::PeakStatistics();
 
-    _selection_color = Qt::yellow;
+    _selection_color = Qt::black;
 }
 
 void SubframeReject::setInputUp()
@@ -102,13 +106,28 @@ void SubframeReject::setInputUp()
     GridFiller f(input_box, true);
 
     _data_combo = f.addDataCombo("Data set");
-    _peak_combo = f.addPeakCombo(ComboType::PeakCollection, "Peaks collection");
+    _peak_combo = f.addPeakCombo(ComboType::PeakCollection, "Peak collection");
 
     connect(
         _peak_combo, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this,
         &SubframeReject::toggleUnsafeWidgets);
 
     _left_layout->addWidget(input_box);
+}
+
+void SubframeReject::setFindUp()
+{
+    auto* find_box = new Spoiler("Find peak by index");
+    GridFiller gfiller(find_box, true);
+
+    _find_h = gfiller.addSpinBox("h", "h Miller index");
+    _find_k = gfiller.addSpinBox("k", "k Miller index");
+    _find_l = gfiller.addSpinBox("l", "l Miller index");
+    _find_by_index = gfiller.addButton("Find peak", "Find peak by miller index (hkl)");
+
+    connect(_find_by_index, &QPushButton::clicked, this, &SubframeReject::findByIndex);
+
+    _left_layout->addWidget(find_box);
 }
 
 void SubframeReject::setHistogramUp()
@@ -236,8 +255,10 @@ void SubframeReject::refreshPeakTable()
 
 void SubframeReject::refreshAll()
 {
+    toggleUnsafeWidgets();
     if (!gSession->hasProject())
         return;
+
 
     _data_combo->refresh();
     _detector_widget->refresh();
@@ -250,6 +271,7 @@ void SubframeReject::refreshAll()
         return;
     updateStatistics();
     computeHistogram();
+    _plot_widget->sxplot()->resetZoom();
 }
 
 void SubframeReject::setPreviewUp()
@@ -279,6 +301,64 @@ void SubframeReject::changeSelected(PeakItemGraphic* peak_graphic)
 
 void SubframeReject::toggleUnsafeWidgets()
 {
+    bool hasPeaks = false;
+    if (gSession->hasProject())
+        hasPeaks = gSession->currentProject()->hasPeakCollection();
+
+    if (hasPeaks)
+        if (!_peak_combo->currentPeakCollection()->isIndexed())
+            hasPeaks = false;
+
+    _find_h->setEnabled(hasPeaks);
+    _find_k->setEnabled(hasPeaks);
+    _find_l->setEnabled(hasPeaks);
+    _find_by_index->setEnabled(hasPeaks);
+
+    if (hasPeaks) {
+        int h_max = 0;
+        int k_max = 0;
+        int l_max = 0;
+        int h_min = 0;
+        int k_min = 0;
+        int l_min = 0;
+        for (ohkl::Peak3D* peak : _peak_combo->currentPeakCollection()->getPeakList()) {
+            int h = peak->hkl().h();
+            int k = peak->hkl().k();
+            int l = peak->hkl().l();
+            if (h < h_min)
+                h_min = h;
+            if (h > h_max)
+                h_max = h;
+            if (k < k_min)
+                k_min = k;
+            if (k > k_max)
+                k_max = k;
+            if (l < l_min)
+                l_min = l;
+            if (l > l_max)
+                l_max = l;
+        }
+        _find_h->setMaximum(h_max);
+        _find_h->setMinimum(h_min);
+        _find_k->setMaximum(k_max);
+        _find_k->setMinimum(k_min);
+        _find_l->setMaximum(l_max);
+        _find_l->setMinimum(l_min);
+    }
+}
+
+void SubframeReject::findByIndex()
+{
+    std::vector<PeakItem*> items;
+    ohkl::MillerIndex index_to_find = {_find_h->value(), _find_k->value(), _find_l->value()};
+    for (int i = 0; i < _peak_collection_item.childCount(); i++) {
+        PeakItem* item = _peak_collection_item.peakItemAt(i);
+        ohkl::Peak3D* peak = item->peak();
+        if (peak->hkl() == index_to_find)
+            items.emplace_back(item);
+    }
+    assert(items.size() == 1);
+    changeSelected(items[0]->peakGraphic());
 }
 
 void SubframeReject::updateStatistics()

@@ -34,6 +34,7 @@
 #include <QTableWidget>
 #include <QVBoxLayout>
 #include <QWidget>
+#include <qpushbutton.h>
 
 class PeakComboBox;
 class PlotPanel;
@@ -71,6 +72,8 @@ class SubframeReject : public QWidget {
  private:
     //! Select dataset, peak collection
     void setInputUp();
+    //! Find peak by miller index
+    void setFindUp();
     //! Input parameters for the histogram
     void setHistogramUp();
 
@@ -94,6 +97,9 @@ class SubframeReject : public QWidget {
     //! Disable unsafe widgets if no data loaded
     void toggleUnsafeWidgets();
 
+    //! Find a peak by Miller index
+    void findByIndex();
+
     //! Update the computed statistics
     void updateStatistics();
     //! Compute the selected histogram
@@ -107,6 +113,12 @@ class SubframeReject : public QWidget {
     // data selection
     PeakComboBox* _peak_combo;
     DataComboBox* _data_combo;
+
+    // peak search
+    SafeSpinBox* _find_h;
+    SafeSpinBox* _find_k;
+    SafeSpinBox* _find_l;
+    QPushButton* _find_by_index;
 
     // histogram generation
     QComboBox* _histo_combo;

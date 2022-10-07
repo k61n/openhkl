@@ -65,6 +65,8 @@ class MillerIndex {
 
     bool operator<(const MillerIndex& other) const;
 
+    bool operator==(const MillerIndex& other) const;
+
     //! Returns the indexing error (difference between "true" hkl and integers)
     const Eigen::RowVector3d& error() const;
 
