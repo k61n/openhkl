@@ -1217,5 +1217,7 @@ void SubframeExperiment::selectAllMasks()
         for (auto idx = 0; idx < nTotalMasks; ++idx)
             data->setMaskSelectionState(idx, false);
     }
+    refreshMaskTable();
+    _detector_widget->scene()->updateMaskGraphics();
     toggleUnsafeWidgets();
 }
