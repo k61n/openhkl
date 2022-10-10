@@ -1191,7 +1191,10 @@ void SubframeExperiment::deleteSelectedMasks()
     auto data = _detector_widget->currentData();
     if (data == nullptr) return;
 
-    auto del = data->removeSelectedMasks();
+    if (data->nSelectedMasks() !=  data->removeSelectedMasks())
+        QMessageBox::warning(this,
+            "Deleting of detector masks",
+            "Not all selected detetor masks have been removed");
 
     refreshMaskTable();
     _detector_widget->scene()->loadMasksFromData();
