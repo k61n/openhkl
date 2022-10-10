@@ -168,6 +168,10 @@ SubframeExperiment::SubframeExperiment()
         _detector_widget->spin(), static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged),
         this, &SubframeExperiment::showFilteredImage);
 
+    // if masks are selected graphicaly update mask table
+    connect(_detector_widget->scene(),&DetectorScene::signalMasksSelected,
+            this, &SubframeExperiment::refreshMaskTable );
+
     _set_initial_ki->setChecked(false);
     _lineplot_box->setChecked(false);
     _mask_box->setChecked(false);
@@ -767,7 +771,7 @@ void SubframeExperiment::toggleUnsafeWidgets()
 
     _import_masks->setEnabled(hasData);
     _export_masks->setEnabled(hasMasks);
-    _delete_masks->setEnabled(_selected_masks.size() > 0);
+    _delete_masks->setEnabled(data->nSelectedMasks() > 0);
     _toggle_selection->setEnabled(hasMasks);
 }
 
@@ -1149,7 +1153,7 @@ void SubframeExperiment::refreshMaskTable()
         cbox = new QCheckBox(_mask_table);
         cbox->setStyleSheet("margin-left:20%; margin-right:20%;");
         cbox->setProperty("row", row);
-
+        cbox->setCheckState(data->isMaskSelected(row) ? Qt::Checked : Qt::Unchecked);
         _mask_table->setCellWidget(row++, col++, cbox);
         connect(cbox, &QCheckBox::stateChanged, this, &SubframeExperiment::onMaskSelected);
     }
@@ -1174,25 +1178,25 @@ void SubframeExperiment::onMaskChanged()
 
 void SubframeExperiment::onMaskSelected()
 {
+    auto data = _detector_widget->currentData();
     int row = sender()->property("row").toInt();
-    if (((QCheckBox*)sender())->isChecked())
-        _selected_masks.emplace_back(row);
-    else
-        _selected_masks.erase(std::remove(_selected_masks.begin(), _selected_masks.end(), row), _selected_masks.end());
+    data->selectMask(row, ((QCheckBox*)sender())->isChecked());
+
+    // update assoicated selected graphical items
+    _detector_widget->scene()->updateMaskGraphics();
 
     toggleUnsafeWidgets();
 }
 
 void SubframeExperiment::deleteSelectedMasks()
 {
-    if (_selected_masks.size() == 0) return;
+
     auto data = _detector_widget->currentData();
     if (data == nullptr) return;
 
-    data->removeMaskByIndex(_selected_masks);
-    _selected_masks.clear();
-    refreshMaskTable();
+    auto del = data->removeSelectedMasks();
 
+    refreshMaskTable();
     _detector_widget->scene()->loadMasksFromData();
     toggleUnsafeWidgets();
     _mask_table->setRowCount(data->getNMasks());
