@@ -162,9 +162,6 @@ SubframeExperiment::SubframeExperiment()
         _detector_widget->dataCombo(), QOverload<int>::of(&QComboBox::currentIndexChanged),
         _data_combo, &QComboBox::setCurrentIndex);
     connect(
-        _detector_widget->dataCombo(), QOverload<int>::of(&QComboBox::currentIndexChanged),
-        this, &SubframeExperiment::deselectAllMasks);
-    connect(
         _detector_widget->spin(), static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged),
         this, &SubframeExperiment::showFilteredImage);
 
@@ -1190,7 +1187,6 @@ void SubframeExperiment::onMaskSelected()
 
 void SubframeExperiment::deleteSelectedMasks()
 {
-
     auto data = _detector_widget->currentData();
     if (data == nullptr) return;
 
@@ -1202,31 +1198,20 @@ void SubframeExperiment::deleteSelectedMasks()
     _mask_table->setRowCount(data->getNMasks());
 }
 
-void SubframeExperiment::deselectAllMasks()
-{
-    if (_selected_masks.size() == 0) return;
-    _selected_masks.clear();
-    toggleUnsafeWidgets();
-}
-
 void SubframeExperiment::selectAllMasks()
 {
     if (!_detector_widget->currentData()->hasMasks()) return;
 
-    auto nmasks = _detector_widget->currentData()->getNMasks();
+    auto data = _detector_widget->currentData();
+    auto nTotalMasks = data->getNMasks();
+    auto nSelectedMasks = data->nSelectedMasks();
 
-    if (_selected_masks.size() == 0){ // gonna select all masks
-        for (auto i = 0; i < nmasks; ++i){
-            QCheckBox* cb = ((QCheckBox*)_mask_table->cellWidget(i, 4));
-            cb->setChecked(true);
-            _selected_masks.emplace_back(i);
-        }
+    if (nSelectedMasks == 0){ // gonna select all masks
+        for (auto idx = 0; idx < nTotalMasks; ++idx)
+            data->selectMask(idx, true);
     } else { // we clear everything from the list
-        for (auto i = 0; i < nmasks; ++i){
-            QCheckBox* cb = ((QCheckBox*)_mask_table->cellWidget(i, 4));
-            cb->setChecked(false);
-        }
-        _selected_masks.clear();
+        for (auto idx = 0; idx < nTotalMasks; ++idx)
+            data->selectMask(idx, false);
     }
     toggleUnsafeWidgets();
 }
