@@ -37,7 +37,7 @@ void EllipseMaskItem::paint(
 {
     Q_UNUSED(widget);
 
-    painter->setBrush(QBrush(QColor(0, 255, 0, 100)));
+    painter->setBrush(QBrush(QColor(255, 0, 0, 100)));
 
     // Color depending on selection
     if (option->state & QStyle::State_Selected)
