@@ -1151,7 +1151,7 @@ void SubframeExperiment::refreshMaskTable()
         cbox = new QCheckBox(_mask_table);
         cbox->setStyleSheet("margin-left:20%; margin-right:20%;");
         cbox->setProperty("row", row);
-        cbox->setCheckState(data->isMaskSelected(row) ? Qt::Checked : Qt::Unchecked);
+        cbox->setCheckState(data->getMaskSelectionState(row) ? Qt::Checked : Qt::Unchecked);
         _mask_table->setCellWidget(row++, col++, cbox);
         connect(cbox, &QCheckBox::stateChanged, this, &SubframeExperiment::onMaskSelected);
     }
@@ -1178,7 +1178,7 @@ void SubframeExperiment::onMaskSelected()
 {
     auto data = _detector_widget->currentData();
     int row = sender()->property("row").toInt();
-    data->selectMask(row, ((QCheckBox*)sender())->isChecked());
+    data->setMaskSelectionState(row, ((QCheckBox*)sender())->isChecked());
 
     // update assoicated selected graphical items
     _detector_widget->scene()->updateMaskGraphics();
@@ -1212,10 +1212,10 @@ void SubframeExperiment::selectAllMasks()
 
     if (nSelectedMasks == 0){ // gonna select all masks
         for (auto idx = 0; idx < nTotalMasks; ++idx)
-            data->selectMask(idx, true);
+            data->setMaskSelectionState(idx, true);
     } else { // we clear everything from the list
         for (auto idx = 0; idx < nTotalMasks; ++idx)
-            data->selectMask(idx, false);
+            data->setMaskSelectionState(idx, false);
     }
     toggleUnsafeWidgets();
 }
