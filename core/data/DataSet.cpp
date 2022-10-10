@@ -444,4 +444,17 @@ size_t DataSet::getNMasks()
     return _masks.size();
 }
 
+void DataSet::selectMask(size_t idx, bool selected)
+{
+    if (idx >= _masks.size()) return;
+    _masks.at(idx)->setSelected(selected);
+}
+
+bool DataSet::isMaskSelected(size_t idx)
+{
+   if (idx >= _masks.size()) throw std::runtime_error("E DataSet::isMaskSelected No mask here");
+    return _masks.at(idx)->isSelected();
+}
+
+
 } // namespace ohkl
