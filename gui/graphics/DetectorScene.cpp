@@ -678,6 +678,10 @@ void DetectorScene::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
                 QPainterPath path;
                 path.addRect(_selectionRect->rect());
                 setSelectionArea(path);
+                // now mark associated detector masks in DataSet as selected
+                updateMaskObjects();
+                // tell the gui table to update
+                emit signalMasksSelected();
             }
         } else if (_mode == ZOOM) {
             if (_zoomrect) {
@@ -1368,4 +1372,16 @@ void DetectorScene::addMasks()
 {
     for (const auto& [item, mask] :  _masks)
         addItem(item);
+}
+
+void DetectorScene::updateMaskGraphics()
+{
+    for (auto e : _masks)
+        e.first->setSelected(e.second->isSelected());
+}
+
+void DetectorScene::updateMaskObjects()
+{
+    for (auto e : _masks)
+        e.second->setSelected(e.first->isSelected());
 }

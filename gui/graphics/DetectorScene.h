@@ -181,6 +181,10 @@ class DetectorScene : public QGraphicsScene {
     void addMasks();
     //! Return mask visibility state
     bool masksVisible() const { return _drawMasks; };
+    //! Update the selected state in the Masks Objects (from the Mask Graphics)
+    void updateMaskObjects();
+    //! Update the selected state in the Maks Graphics (from the Maks Objects)
+    void updateMaskGraphics();
 
  protected:
     void mousePressEvent(QGraphicsSceneMouseEvent* event);
@@ -220,6 +224,7 @@ class DetectorScene : public QGraphicsScene {
     void signalPeakSelected(ohkl::Peak3D* peak);
     void signalMaskChanged();
     void beamPosChanged(QPointF pos);
+    void signalMasksSelected();
 
  private:
     //! Generate a mask for a single peak only
