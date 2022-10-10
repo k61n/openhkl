@@ -456,5 +456,27 @@ bool DataSet::isMaskSelected(size_t idx)
     return _masks.at(idx)->isSelected();
 }
 
+size_t DataSet::nSelectedMasks()
+{
+    size_t cnt = 0;
+    for (auto m : _masks)
+        if (m->isSelected()) cnt++;
+
+    return cnt;
+}
+
+size_t DataSet::removeSelectedMasks()
+{
+    std::vector<IMask*> to_delete;
+    size_t start_size = _masks.size();
+    for (auto & m : _masks)
+        if (m->isSelected())
+            to_delete.emplace_back(m);
+
+    for (auto & m : to_delete)
+        removeMask(m);
+
+    return start_size - _masks.size();
+}
 
 } // namespace ohkl
