@@ -75,6 +75,7 @@
 SubframeExperiment::SubframeExperiment()
     : QWidget()
     , _show_direct_beam(true)
+    , _thresholded_image(nullptr) // init with nullptr
 {
     _main_layout = new QHBoxLayout(this);
     _left_layout = new QVBoxLayout();
