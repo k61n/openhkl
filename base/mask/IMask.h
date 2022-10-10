@@ -40,6 +40,10 @@ class IMask {
 
     virtual void setAABB(const AABB& aabb) = 0;
 
+    virtual bool isSelected() = 0;
+
+    virtual void setSelected(bool selected) = 0;
+
  protected:
     IMask() = default;
 

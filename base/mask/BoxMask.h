@@ -42,8 +42,12 @@ class BoxMask : public IMask {
 
     void setAABB(const AABB& aabb) override { _aabb = aabb; };
 
+    bool isSelected();
+    void setSelected(bool selected);
+
  private:
     AABB _aabb;
+    bool _selected;
 };
 
 } // namespace ohkl

@@ -22,6 +22,7 @@ EllipseMask::EllipseMask(const AABB& aabb, bool /*two_dim*/) : IMask(), _ellipso
     ohklLog(Level::Info, "EllipseMask::EllipseMask: Created new elliptical mask");
     ohklLog(Level::Info, "Lower bound: ", aabb.lower().transpose());
     ohklLog(Level::Info, "Upper bound: ", aabb.upper().transpose());
+    _selected = false;
 }
 
 bool EllipseMask::collide(const Ellipsoid& ellipsoid) const
@@ -40,6 +41,16 @@ void EllipseMask::setAABB(const AABB &aabb)
     auto radii = 0.5 * (aabb.upper() - aabb.lower());
     auto axes = Eigen::Matrix3d::Identity();
     _ellipsoid = Ellipsoid(center, radii, axes);
+}
+
+bool EllipseMask::isSelected()
+{
+    return _selected;
+}
+
+void EllipseMask::setSelected(bool selected)
+{
+    _selected = selected;
 }
 
 } // namespace ohkl
