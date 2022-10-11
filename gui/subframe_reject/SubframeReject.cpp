@@ -357,8 +357,17 @@ void SubframeReject::findByIndex()
         if (peak->hkl() == index_to_find)
             items.emplace_back(item);
     }
-    assert(items.size() == 1);
-    changeSelected(items[0]->peakGraphic());
+    if (items.empty()) {
+        gGui->statusBar()->showMessage(
+            QString::fromStdString("No peak with this Miller index in collection " +
+                                   _peak_combo->currentPeakCollection()->name()));
+    } else if (items.size() == 1) {
+        changeSelected(items[0]->peakGraphic());
+    } else {
+        gGui->statusBar()->showMessage(QString::fromStdString(
+            "Multiple peaks with this Miller index in collection "
+            + _peak_combo->currentPeakCollection()->name()));
+    }
 }
 
 void SubframeReject::updateStatistics()
