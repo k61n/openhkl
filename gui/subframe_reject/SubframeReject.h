@@ -35,6 +35,10 @@
 #include <QVBoxLayout>
 #include <QWidget>
 
+namespace ohkl {
+class Peak3D;
+}
+
 class PeakComboBox;
 class PlotPanel;
 class FoundPeakComboBox;
@@ -67,6 +71,8 @@ class SubframeReject : public QWidget {
     void updateYRange(double ymin, double ymax);
     //! When a peak is selected via the table
     void onPeakTableSelection();
+    //! Filter out outliers
+    void filterOutliers();
 
  private:
     //! Select dataset, peak collection
@@ -75,6 +81,8 @@ class SubframeReject : public QWidget {
     void setFindUp();
     //! Input parameters for the histogram
     void setHistogramUp();
+    //! Input parameters for outlier rejection
+    void setOutliersUp();
 
     //! Set up the peak view widget
     void setPreviewUp();
@@ -108,6 +116,12 @@ class SubframeReject : public QWidget {
     //! Reject outliers in given data field
     void rejectOutliers();
 
+    //! Get array of intensities and sigmas for a data set
+    void getIntensitiesAndSigmas();
+
+    //! Compute outliers
+    void findOutliers();
+
     QVBoxLayout* _left_layout;
     QSplitter* _right_element;
 
@@ -133,6 +147,12 @@ class SubframeReject : public QWidget {
     SafeDoubleSpinBox* _sigma_factor;
     QPushButton* _reject_outliers;
 
+    // Outlier detection
+    SafeSpinBox* _neighbours;
+    SafeDoubleSpinBox* _threshold;
+    QCheckBox* _normalise;
+    QPushButton* _find_outliers;
+
     PeakViewWidget* _peak_view_widget;
     DetectorWidget* _detector_widget;
     PlotPanel* _plot_widget;
@@ -148,6 +168,9 @@ class SubframeReject : public QWidget {
     std::vector<PeakItemGraphic*> _selected_graphics;
     QColor _selection_color;
     QVector<QColor> _saved_colors;
+
+    std::vector<ohkl::Peak3D*> _unmerged_peaks;
+    std::vector<std::pair<double, ohkl::Peak3D*>> _outliers;
 };
 
 

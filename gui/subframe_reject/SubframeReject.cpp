@@ -18,6 +18,7 @@
 #include "core/experiment/Experiment.h"
 #include "core/peak/Peak3D.h"
 #include "core/shape/PeakFilter.h"
+#include "core/statistics/PeakOutlierDetection.h"
 #include "core/statistics/PeakStatistics.h"
 #include "gui/MainWin.h" // gGui
 #include "gui/frames/ProgressView.h"
@@ -60,6 +61,7 @@ SubframeReject::SubframeReject() : QWidget()
     setInputUp();
     setFindUp();
     setHistogramUp();
+    setOutliersUp();
     setPreviewUp();
     setFigureUp();
     setPeakTableUp();
@@ -173,6 +175,34 @@ void SubframeReject::setHistogramUp()
     connect(_reject_outliers, &QPushButton::clicked, this, &SubframeReject::rejectOutliers);
 
     _left_layout->addWidget(histo_spoiler);
+}
+
+void SubframeReject::setOutliersUp()
+{
+    auto* outlier_spoiler = new Spoiler("Outliers");
+    GridFiller filler(outlier_spoiler, true);
+
+    _neighbours = filler.addSpinBox(
+        "Number of neighbours", "Number of neighbours for k-nearest neighbours");
+    _threshold = filler.addDoubleSpinBox("Threshold", "Threshold for outlier rejection");
+    _normalise = filler.addCheckBox("Normalise", "Normalise the data points", 1);
+    _find_outliers = filler.addButton(
+        "Find outliers", "Find outliers using local outlier factor (LOF)");
+
+    _neighbours->setValue(10);
+    _neighbours->setMaximum(100);
+
+    _threshold->setMaximum(100);
+    _threshold->setMinimum(1);
+    _threshold->setValue(2);
+    _threshold->setDecimals(2);
+
+    connect(_find_outliers, &QPushButton::clicked, this, &SubframeReject::findOutliers);
+    connect(
+        _threshold, QOverload<double>::of(&QDoubleSpinBox::valueChanged), this,
+        &SubframeReject::filterOutliers);
+
+    _left_layout->addWidget(outlier_spoiler);
 }
 
 void SubframeReject::setFigureUp()
@@ -560,4 +590,49 @@ void SubframeReject::rejectOutliers()
 DetectorWidget* SubframeReject::detectorWidget()
 {
     return _detector_widget;
+}
+
+void SubframeReject::getIntensitiesAndSigmas()
+{
+}
+
+void SubframeReject::findOutliers()
+{
+    gGui->setReady(false);
+    ohkl::PeakOutlierDetection detector(_peak_combo->currentPeakCollection());
+    detector.computeOutliers(_neighbours->value(), _normalise->isChecked());
+    std::vector<std::pair<double, ohkl::Peak3D*>> outliers;
+    detector.getOutliers(_threshold->value(), outliers);
+    filterOutliers();
+    gGui->setReady(true);
+}
+
+void SubframeReject::filterOutliers()
+{
+    if (_outliers.empty())
+        return;
+
+    for (const auto& [lof, peak] : _outliers) {
+        if (lof > _threshold->value()) {
+            peak->setSelected(false);
+            peak->setRejectionFlag(ohkl::RejectionFlag::Outlier, true);
+        }
+    }
+
+    ohkl::PeakFilter* filter = gSession->currentProject()->experiment()->peakFilter();
+    ohkl::PeakCollection* collection = _peak_combo->currentPeakCollection();
+    filter->resetFiltering(collection);
+
+    filter->flags()->rejection_flag = true;
+    filter->parameters()->rejection_flag = ohkl::RejectionFlag::Outlier;
+
+    filter->filter(collection);
+
+    refreshPeakTable();
+
+    int n_peaks = _peak_collection_item.numberOfPeaks();
+    int n_caught = _peak_collection_item.numberCaughtByFilter();
+
+    gGui->statusBar()->showMessage(
+        QString::number(n_caught) + "/" + QString::number(n_peaks) + " caught by filter");
 }
