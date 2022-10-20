@@ -42,6 +42,8 @@
 
 #include <stdexcept>
 
+#include <iostream>
+
 namespace ohkl {
 
 DataSet::DataSet(const std::string& dataset_name, Diffractometer* diffractometer)
@@ -281,6 +283,29 @@ Eigen::MatrixXd DataSet::transformedFrame(std::size_t idx) const
     new_frame -= detector().baseline();
     new_frame /= detector().gain();
     return new_frame;
+}
+
+Eigen::MatrixXd DataSet::gradientFrame(std::size_t idx) const
+{
+    Eigen::MatrixXd current_frame, next_frame;
+    double dx, dy, dz;
+    current_frame = transformedFrame(idx);
+    if (idx < nFrames() - 1)
+        next_frame = transformedFrame(idx+1);
+    else
+        next_frame = Eigen::MatrixXd::Zero(nCols(), nRows());
+    Eigen::MatrixXd mag_gradient = Eigen::MatrixXd::Zero(nRows(), nCols());
+
+    for (std::size_t col = 0; col < nCols() - 1; ++col) {
+        for (std::size_t row = 0; row < nRows() - 1; ++row) {
+            dx = current_frame(row+1, col) - current_frame(row, col);
+            dy = current_frame(row, col+1) - current_frame(row, col);
+            // dz = next_frame(col, row) - current_frame(col, row);
+            mag_gradient(row, col) = std::sqrt(dx * dx + dy * dy);
+            // mag_gradient(col, row) = std::sqrt(dx * dx + dy * dy + dz * dz);
+        }
+    }
+    return mag_gradient;
 }
 
 const IDataReader* DataSet::reader() const

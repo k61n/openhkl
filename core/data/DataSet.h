@@ -80,6 +80,9 @@ class DataSet {
     //! Returns frame after transforming to account for detector gain and baseline
     Eigen::MatrixXd transformedFrame(std::size_t idx) const;
 
+    //! Return per-pixel magnitude of gradient of a given frame
+    Eigen::MatrixXd gradientFrame(std::size_t idx) const;
+
     //! Gets the file handle.
     void open();
 

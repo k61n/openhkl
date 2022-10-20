@@ -83,6 +83,7 @@ class DetectorScene : public QGraphicsScene {
     ohkl::sptrDataSet getData() { return _currentData; }
     const rowMatrix& getCurrentFrame() const { return _currentFrame; }
     void setLogarithmic(bool checked) { _logarithmic = checked; }
+    void setGradient(bool checked) { _drawGradient = checked; }
     void setColorMap(const std::string& name)
     {
         _colormap = std::unique_ptr<ColorMap>(new ColorMap(name));
@@ -270,6 +271,7 @@ class DetectorScene : public QGraphicsScene {
     QGraphicsPixmapItem* _image;
     SXGraphicsItem* _lastClickedGI;
     bool _logarithmic;
+    bool _drawGradient;
     bool _drawIntegrationRegion1;
     bool _drawIntegrationRegion2;
     bool _drawSinglePeakIntegrationRegion;

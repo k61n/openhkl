@@ -248,6 +248,7 @@ void DetectorWidget::setToolbarUp()
     _toolbar->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     QHBoxLayout* layout = new QHBoxLayout;
 
+    _gradient = new QPushButton;
     _hide_masks = new QPushButton;
     _reset = new QPushButton;
     _copy_to_clipboard = new QPushButton;
@@ -261,12 +262,20 @@ void DetectorWidget::setToolbarUp()
     _cursor_mode_buttons->addButton(_select);
     _cursor_mode_buttons->setExclusive(true);
 
+    _gradient->setMaximumWidth(_gradient->height());
+    _gradient->setCheckable(true);
+    _gradient->setChecked(false);
+
+    _hide_masks->setCheckable(true);
+    _hide_masks->setChecked(true);
+
     _zoom->setCheckable(true);
     _zoom->setChecked(true);
 
     _select->setCheckable(true);
     _select->setChecked(false);
 
+    layout->addWidget(_gradient);
     layout->addWidget(_hide_masks);
     layout->addWidget(_reset);
     layout->addWidget(_copy_to_clipboard);
@@ -283,10 +292,7 @@ void DetectorWidget::setToolbarUp()
     else
         path = path + light;
 
-    _hide_masks->setMaximumWidth(_hide_masks->height());
-    _hide_masks->setCheckable(true);
-    _hide_masks->setChecked(true);
-
+    _gradient->setIcon(QIcon(path + "gradient.svg"));
     _hide_masks->setIcon(QIcon(path + "hide.svg"));
     _reset->setIcon(QIcon(path + "reset.svg"));
     _copy_to_clipboard->setIcon(QIcon(path + "copy.svg"));
@@ -294,6 +300,7 @@ void DetectorWidget::setToolbarUp()
     _zoom->setIcon(QIcon(path + "zoom.svg"));
     _select->setIcon(QIcon(path + "select.svg"));
 
+    _gradient->setToolTip("Toggle magnitude of gradient of image");
     _hide_masks->setToolTip("Show/hide detector masks");
     _reset->setToolTip("Reset detector image");
     _copy_to_clipboard->setToolTip("Copy visible detector image to clipboard");
@@ -301,6 +308,7 @@ void DetectorWidget::setToolbarUp()
     _zoom->setToolTip("Enable zoom cursor on detector image");
     _select->setToolTip("Enable rectangle select cursor on detector image");
 
+    connect(_gradient, &QPushButton::clicked, this, &DetectorWidget::toggleGradient);
     connect(
         _hide_masks, &QPushButton::clicked, _detector_view->getScene(), &DetectorScene::toggleMasks);
     connect(_reset, &QPushButton::clicked, _detector_view->getScene(), [=]() {
@@ -354,4 +362,10 @@ void DetectorWidget::enableCursorMode(bool enable)
 {
     _zoom->setEnabled(enable);
     _select->setEnabled(enable);
+}
+
+void DetectorWidget::toggleGradient()
+{
+    scene()->setGradient(_gradient->isChecked());
+    scene()->loadCurrentImage();
 }

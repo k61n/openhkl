@@ -86,6 +86,7 @@ DetectorScene::DetectorScene(QObject* parent)
     , _image(nullptr)
     , _lastClickedGI(nullptr)
     , _logarithmic(false)
+    , _drawGradient(false)
     , _drawIntegrationRegion1(false)
     , _drawIntegrationRegion2(false)
     , _drawSinglePeakIntegrationRegion(false)
@@ -1017,12 +1018,24 @@ void DetectorScene::loadCurrentImage()
         _currentFrameIndex = _currentData->nFrames() - 1;
     _currentFrame = _currentData->frame(_currentFrameIndex);
     if (_image == nullptr) {
-        _image = addPixmap(QPixmap::fromImage(_colormap->matToImage(
-            _currentFrame.cast<double>(), full, _currentIntensity, _logarithmic)));
+        if (!_drawGradient) {
+            _image = addPixmap(QPixmap::fromImage(_colormap->matToImage(
+                _currentFrame.cast<double>(), full, _currentIntensity, _logarithmic)));
+        } else {
+            _image = addPixmap(QPixmap::fromImage(_colormap->matToImage(
+                _currentData->gradientFrame(_currentFrameIndex), full, _currentIntensity,
+                _logarithmic)));
+        }
         _image->setZValue(-2);
     } else {
-        _image->setPixmap(QPixmap::fromImage(_colormap->matToImage(
-            _currentFrame.cast<double>(), full, _currentIntensity, _logarithmic)));
+        if (!_drawGradient) {
+            _image->setPixmap(QPixmap::fromImage(_colormap->matToImage(
+                _currentFrame.cast<double>(), full, _currentIntensity, _logarithmic)));
+        } else {
+            _image->setPixmap(QPixmap::fromImage(_colormap->matToImage(
+                _currentData->gradientFrame(_currentFrameIndex), full, _currentIntensity,
+                _logarithmic)));
+        }
     }
 
     // update the integration region pixmap
