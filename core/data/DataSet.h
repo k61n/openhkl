@@ -37,6 +37,15 @@ struct RawDataReaderParameters;
 
 enum class BitDepth { u8b = 8, u16b = 16, u32b = 32 };
 
+//! Structure to store 3 components of the image gradient
+struct ImageGradient {
+    ImageGradient(std::size_t ncols, std::size_t nrows);
+
+    Eigen::MatrixXd dx;
+    Eigen::MatrixXd dy;
+    Eigen::MatrixXd dz;
+};
+
 /*! \addtogroup python_api
  *  @{*/
 
@@ -82,6 +91,9 @@ class DataSet {
 
     //! Return per-pixel magnitude of gradient of a given frame
     Eigen::MatrixXd gradientFrame(std::size_t idx) const;
+
+    //! Return vector gradient of a given frame
+    ImageGradient vectorGradientFrame(std::size_t idx) const;
 
     //! Gets the file handle.
     void open();

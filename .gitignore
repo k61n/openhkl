@@ -21,6 +21,7 @@ qbuild/
 cover/
 tidy/
 notebooks/
+3rdparty/
 
 docs/build
 
