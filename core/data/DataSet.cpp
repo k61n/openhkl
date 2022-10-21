@@ -479,4 +479,10 @@ size_t DataSet::removeSelectedMasks()
     return start_size - _masks.size();
 }
 
+void DataSet::removeAllMaks()
+{
+    if (_masks.size() > 0)
+        _masks.clear();
+}
+
 } // namespace ohkl

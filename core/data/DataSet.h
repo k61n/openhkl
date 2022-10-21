@@ -184,6 +184,8 @@ class DataSet {
     //! remove selected detector masks
     size_t removeSelectedMasks();
 
+    void removeAllMaks();
+
  private:
     void setReader(const DataFormat dataformat, const std::string& filename = "");
 
