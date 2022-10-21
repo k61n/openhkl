@@ -12,7 +12,7 @@
 //
 //  ***********************************************************************************************
 
-#include "gui/graphics_items/EllipseItem.h"
+#include "gui/graphics_items/EllipseMaskItem.h"
 
 #include "core/data/DataSet.h"
 #include <QGraphicsSceneWheelEvent>

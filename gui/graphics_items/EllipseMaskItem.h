@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef OHKL_GUI_GRAPHICS_ITEMS_ELLIPSEITEM_H
-#define OHKL_GUI_GRAPHICS_ITEMS_ELLIPSEITEM_H
+#ifndef OHKL_GUI_GRAPHICS_ITEMS_ELLIPSEMASKITEM_H
+#define OHKL_GUI_GRAPHICS_ITEMS_ELLIPSEMASKITEM_H
 
 #include "base/geometry/AABB.h"
 #include "core/data/DataTypes.h"
