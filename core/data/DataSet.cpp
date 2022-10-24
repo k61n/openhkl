@@ -19,6 +19,7 @@
 #include "base/utils/ProgressHandler.h"
 #include "base/utils/StringIO.h" // lowerCase
 #include "base/utils/Units.h" // deg
+#include "core/convolve/ConvolverFactory.h"
 #include "core/data/DataTypes.h"
 #include "core/detector/Detector.h"
 #include "core/detector/DetectorEvent.h"
@@ -37,6 +38,7 @@
 #include "core/raw/DataKeys.h"
 
 
+#include <Eigen/src/Core/Matrix.h>
 #include <H5Cpp.h>
 #include <gsl/gsl_histogram.h>
 
@@ -48,9 +50,20 @@ namespace ohkl {
 
 ImageGradient::ImageGradient(std::size_t ncols, std::size_t nrows)
 {
-    dx = Eigen::MatrixXd::Zero(nrows, ncols);
-    dy = Eigen::MatrixXd::Zero(nrows, ncols);
-    dz = Eigen::MatrixXd::Zero(nrows, ncols);
+    dx = Eigen::MatrixXd::Zero(ncols, nrows);
+    dy = Eigen::MatrixXd::Zero(ncols, nrows);
+    dz = Eigen::MatrixXd::Zero(ncols, nrows);
+}
+
+Eigen::MatrixXd ImageGradient::magnitude() const
+{
+    Eigen::MatrixXd mag = Eigen::MatrixXd::Zero(dx.rows(), dx.cols());
+    for (std::size_t col = 0; col < mag.cols(); ++col) {
+        for (std::size_t row = 0; row < mag.rows(); ++row) {
+            mag(row, col) = std::sqrt(dx(row, col) * dx(row, col) + dy(row, col) * dy(row, col));
+        }
+    }
+    return mag;
 }
 
 DataSet::DataSet(const std::string& dataset_name, Diffractometer* diffractometer)
@@ -313,6 +326,21 @@ Eigen::MatrixXd DataSet::gradientFrame(std::size_t idx) const
         }
     }
     return mag_gradient;
+}
+
+Eigen::MatrixXd DataSet::sobelGradient(std::size_t idx) const
+{
+    ImageGradient grad(nRows(), nCols());
+    ohkl::ConvolverFactory factory;
+    std::string convolverType = "sobel x";
+    ohkl::Convolver* convolver_x = factory.create(convolverType, {});
+    convolverType = "sobel y";
+    ohkl::Convolver* convolver_y = factory.create(convolverType, {});
+    std::map<std::string, double> params;
+    grad.dx = ohkl::convolvedFrame(frame(idx), "sobel x", params);
+    grad.dy = ohkl::convolvedFrame(frame(idx), "sobel y", params);
+    Eigen::MatrixXd mag = grad.magnitude();
+    return grad.magnitude();
 }
 
 ImageGradient DataSet::vectorGradientFrame(std::size_t idx) const

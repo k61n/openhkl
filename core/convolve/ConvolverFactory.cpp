@@ -18,6 +18,8 @@
 #include "core/convolve/DeltaConvolver.h"
 #include "core/convolve/EnhancedAnnularConvolver.h"
 #include "core/convolve/RadialConvolver.h"
+#include "core/convolve/SobelConvolverX.h"
+#include "core/convolve/SobelConvolverY.h"
 
 namespace ohkl {
 
@@ -34,6 +36,8 @@ ConvolverFactory::ConvolverFactory() : _callbacks()
     _callbacks["enhanced annular"] = &create_convolver<EnhancedAnnularConvolver>;
     _callbacks["none"] = &create_convolver<DeltaConvolver>;
     _callbacks["radial"] = &create_convolver<RadialConvolver>;
+    _callbacks["sobel x"] = &create_convolver<SobelConvolverX>;
+    _callbacks["sobel y"] = &create_convolver<SobelConvolverY>;
 }
 
 Convolver* ConvolverFactory::create(

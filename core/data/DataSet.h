@@ -41,6 +41,8 @@ enum class BitDepth { u8b = 8, u16b = 16, u32b = 32 };
 struct ImageGradient {
     ImageGradient(std::size_t ncols, std::size_t nrows);
 
+    Eigen::MatrixXd magnitude() const;
+
     Eigen::MatrixXd dx;
     Eigen::MatrixXd dy;
     Eigen::MatrixXd dz;
@@ -91,6 +93,9 @@ class DataSet {
 
     //! Return per-pixel magnitude of gradient of a given frame
     Eigen::MatrixXd gradientFrame(std::size_t idx) const;
+
+    //! Return per-pixel magnitude of gradient using Sobel filter
+    Eigen::MatrixXd sobelGradient(std::size_t idx) const;
 
     //! Return vector gradient of a given frame
     ImageGradient vectorGradientFrame(std::size_t idx) const;
