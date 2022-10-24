@@ -20,6 +20,7 @@
 #include "core/detector/DetectorEvent.h"
 #include "gui/utility/SafeSpinBox.h"
 #include "tables/crystal/UnitCell.h"
+#include "gui/models/MaskHandler.h"
 
 #include <QWidget>
 
@@ -107,7 +108,6 @@ class SubframeExperiment : public QWidget {
     void importMasks();
    //! deletes selected masks from dataset
     void deleteSelectedMasks();
-    void deselectAllMasks();
     void selectAllMasks();
 
  public slots:
@@ -200,10 +200,10 @@ class SubframeExperiment : public QWidget {
     std::vector<std::pair<std::shared_ptr<ohkl::UnitCell>, double>> _solutions;
     //! Unit cell selected in solution table
     ohkl::sptrUnitCell _selected_unit_cell;
-    //! holds row index of selected masks
-    std::vector<size_t> _selected_masks;
     //! Filtered/thresholded image
     QGraphicsPixmapItem* _thresholded_image;
+
+    std::shared_ptr<MaskHandler> _mask_handler;
 };
 
 #endif // OHKL_GUI_SUBFRAME_EXPERIMENT_SUBFRAMEEXPERIMENT_H

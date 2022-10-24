@@ -28,17 +28,18 @@
 #include <QGraphicsScene>
 #include <QStack>
 
-#include <iostream>
 #include <opencv2/core/types.hpp>
 
 namespace ohkl {
 class UnitCell;
 class PeakCenterDataSet;
+class MaskHandler;
 }
 class CutterItem;
 class PeakItemGraphic;
 class PeakCollectionModel;
 class SXGraphicsItem;
+class MaskHandler;
 
 class DirectBeamGraphic : public QGraphicsEllipseItem { }; // Make it easier to remove direct beam
 
@@ -175,12 +176,14 @@ class DetectorScene : public QGraphicsScene {
     };
     //! Load masks from current DataSet
     void loadMasksFromData();
-    //! Toggle mask visibility
-    void setMasksVisible(bool flag);
     //! Add masks to the detector image
     void addMasks();
     //! Return mask visibility state
     bool masksVisible() const { return _drawMasks; };
+
+    std::shared_ptr<MaskHandler> getMaskHandler();
+
+    void updateMe();
 
  protected:
     void mousePressEvent(QGraphicsSceneMouseEvent* event);
@@ -220,6 +223,7 @@ class DetectorScene : public QGraphicsScene {
     void signalPeakSelected(ohkl::Peak3D* peak);
     void signalMaskChanged();
     void beamPosChanged(QPointF pos);
+    void signalMasksSelected();
 
  private:
     //! Generate a mask for a single peak only
@@ -228,8 +232,6 @@ class DetectorScene : public QGraphicsScene {
         ohkl::RegionType region_type = ohkl::RegionType::VariableEllipsoid);
     //! Create the text of the tooltip depending on Scene Mode.
     void createToolTipText(QGraphicsSceneMouseEvent*);
-    // find the iterator corresponding to given graphics item
-    std::vector<std::pair<QGraphicsItem*, ohkl::IMask*>>::iterator findMask(QGraphicsItem* item);
 
     ohkl::sptrDataSet _currentData;
     unsigned long _currentFrameIndex;
@@ -266,7 +268,6 @@ class DetectorScene : public QGraphicsScene {
 
     bool _itemSelected;
     QGraphicsPixmapItem* _image;
-    std::vector<std::pair<QGraphicsItem*, ohkl::IMask*>> _masks;
     SXGraphicsItem* _lastClickedGI;
     bool _logarithmic;
     bool _drawIntegrationRegion1;
@@ -334,6 +335,8 @@ class DetectorScene : public QGraphicsScene {
     ohkl::PeakCenterDataSet* _peak_center_data;
 
     std::vector<std::vector<cv::KeyPoint>>* _per_frame_spots;
+
+    std::shared_ptr<MaskHandler> _mask_handler;
 };
 
 #endif // OHKL_GUI_GRAPHICS_DETECTORSCENE_H

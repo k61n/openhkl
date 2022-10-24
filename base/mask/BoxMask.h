@@ -40,10 +40,11 @@ class BoxMask : public IMask {
 
     const AABB& aabb() { return _aabb; };
 
-    void setAABB(const AABB& aabb) override { _aabb = aabb; };
+    void setAABB(const AABB& aabb) override { _aabb = aabb; }
 
  private:
     AABB _aabb;
+    bool _selected;
 };
 
 } // namespace ohkl

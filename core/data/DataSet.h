@@ -168,7 +168,12 @@ class DataSet {
 
     //! returns a booleans whether masks have been created or not
     bool hasMasks();
+
+    //! get the number of detector masks
     size_t getNMasks();
+
+    //! remove all detector masks from DataSet
+    void removeAllMaks();
 
  private:
     void setReader(const DataFormat dataformat, const std::string& filename = "");

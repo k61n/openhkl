@@ -46,6 +46,7 @@ class EllipseMask : public IMask {
 
  private:
     Ellipsoid _ellipsoid;
+    bool _selected;
 };
 
 } // namespace ohkl

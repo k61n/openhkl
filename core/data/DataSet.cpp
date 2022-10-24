@@ -431,7 +431,7 @@ gsl_histogram* DataSet::getHistogram(int index)
 
 gsl_histogram* DataSet::getTotalHistogram()
 {
-        return _total_histogram;
+    return _total_histogram;
 }
 
 bool DataSet::hasMasks()
@@ -442,6 +442,12 @@ bool DataSet::hasMasks()
 size_t DataSet::getNMasks()
 {
     return _masks.size();
+}
+
+void DataSet::removeAllMaks()
+{
+    if (_masks.size() > 0)
+        _masks.clear();
 }
 
 } // namespace ohkl
