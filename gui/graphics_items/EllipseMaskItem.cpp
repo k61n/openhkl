@@ -37,13 +37,17 @@ void EllipseMaskItem::paint(
 {
     Q_UNUSED(widget);
 
-    painter->setBrush(QBrush(QColor(255, 0, 0, 100)));
-
-    // Color depending on selection
-    if (option->state & QStyle::State_Selected)
+    if (option->state & QStyle::State_Selected) {
+        _pen.setWidth(2);
+        _pen.setColor(QColor(255, 0, 0, 255));
         _pen.setStyle(Qt::DashLine);
-    else
+        painter->setBrush(QBrush(QColor(255, 0, 0, 100), Qt::BrushStyle(Qt::Dense5Pattern)));
+    } else {
+        _pen.setWidth(1);
+        _pen.setColor(QColor(255, 0, 0, 255));
         _pen.setStyle(Qt::SolidLine);
+        painter->setBrush(QBrush(QColor(255, 0, 0, 100), Qt::BrushStyle(Qt::SolidPattern)));
+    }
 
     painter->setRenderHint(QPainter::Antialiasing);
     painter->setPen(_pen);
