@@ -20,6 +20,7 @@
 #include "core/detector/DetectorEvent.h"
 #include "gui/utility/SafeSpinBox.h"
 #include "tables/crystal/UnitCell.h"
+#include "gui/models/MaskHandler.h"
 
 #include <QWidget>
 
@@ -201,6 +202,8 @@ class SubframeExperiment : public QWidget {
     ohkl::sptrUnitCell _selected_unit_cell;
     //! Filtered/thresholded image
     QGraphicsPixmapItem* _thresholded_image;
+
+    std::shared_ptr<MaskHandler> _mask_handler;
 };
 
 #endif // OHKL_GUI_SUBFRAME_EXPERIMENT_SUBFRAMEEXPERIMENT_H
