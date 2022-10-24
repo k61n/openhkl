@@ -1197,9 +1197,6 @@ void SubframeExperiment::onMaskSelected()
 
     _mask_handler->setSelectionFlag(data, row, ((QCheckBox*)sender())->isChecked());
 
-    // update assoicated selected graphical items
-    _detector_widget->scene()->updateMaskGraphics();
-
     toggleUnsafeWidgets();
 }
 
@@ -1236,6 +1233,5 @@ void SubframeExperiment::selectAllMasks()
     _mask_handler->setAllSelectionFlags(data, noMasksSelected);
 
     refreshMaskTable();
-    _detector_widget->scene()->updateMaskGraphics();
     toggleUnsafeWidgets();
 }

@@ -172,18 +172,10 @@ class DataSet {
     //! get the number of detector masks
     size_t getNMasks();
 
-    //! change the selected state of the nth detector mask
-    void setMaskSelectionState(size_t idx, bool selected);
-
-    //! is the nth detector masks selected
-    bool getMaskSelectionState(size_t idx);
-
-    //! get the number of selected detector masks
-    size_t nSelectedMasks();
-
     //! remove selected detector masks
     size_t removeSelectedMasks();
 
+    //! remove all detector masks from DataSet
     void removeAllMaks();
 
  private:

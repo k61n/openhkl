@@ -44,10 +44,6 @@ class EllipseMask : public IMask {
 
     void setAABB(const AABB& aabb) override;
 
-    bool isSelected();
-
-    void setSelected(bool selected);
-
  private:
     Ellipsoid _ellipsoid;
     bool _selected;

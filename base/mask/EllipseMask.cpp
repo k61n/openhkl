@@ -43,14 +43,4 @@ void EllipseMask::setAABB(const AABB &aabb)
     _ellipsoid = Ellipsoid(center, radii, axes);
 }
 
-bool EllipseMask::isSelected()
-{
-    return _selected;
-}
-
-void EllipseMask::setSelected(bool selected)
-{
-    _selected = selected;
-}
-
 } // namespace ohkl

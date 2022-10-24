@@ -431,7 +431,7 @@ gsl_histogram* DataSet::getHistogram(int index)
 
 gsl_histogram* DataSet::getTotalHistogram()
 {
-        return _total_histogram;
+    return _total_histogram;
 }
 
 bool DataSet::hasMasks()
@@ -442,41 +442,6 @@ bool DataSet::hasMasks()
 size_t DataSet::getNMasks()
 {
     return _masks.size();
-}
-
-void DataSet::setMaskSelectionState(size_t idx, bool selected)
-{
-    if (idx >= _masks.size()) return;
-    _masks.at(idx)->setSelected(selected);
-}
-
-bool DataSet::getMaskSelectionState(size_t idx)
-{
-   if (idx >= _masks.size()) throw std::runtime_error("E DataSet::isMaskSelected Invalid Maks Id");
-    return _masks.at(idx)->isSelected();
-}
-
-size_t DataSet::nSelectedMasks()
-{
-    size_t cnt = 0;
-    for (auto m : _masks)
-        if (m->isSelected()) cnt++;
-
-    return cnt;
-}
-
-size_t DataSet::removeSelectedMasks()
-{
-    std::vector<IMask*> to_delete;
-    size_t start_size = _masks.size();
-    for (auto & m : _masks)
-        if (m->isSelected())
-            to_delete.emplace_back(m);
-
-    for (auto & m : to_delete)
-        removeMask(m);
-
-    return start_size - _masks.size();
 }
 
 void DataSet::removeAllMaks()

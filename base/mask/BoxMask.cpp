@@ -37,14 +37,4 @@ IMask* BoxMask::clone() const
     return new BoxMask(*this);
 }
 
-bool BoxMask::isSelected()
-{
-    return _selected;
-}
-
-void BoxMask::setSelected(bool selected)
-{
-    _selected = selected;
-}
-
 } // namespace ohkl

@@ -46,7 +46,6 @@ MaskImporter::MaskImporter(std::string filename)
         else 
             throw std::runtime_error("E MaskImporter::MaskImporter Invalid Mask type found");
 
-        mask->setSelected(false);
         _masks.emplace_back(mask);
     } 
 }
