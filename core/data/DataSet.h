@@ -172,9 +172,6 @@ class DataSet {
     //! get the number of detector masks
     size_t getNMasks();
 
-    //! remove selected detector masks
-    size_t removeSelectedMasks();
-
     //! remove all detector masks from DataSet
     void removeAllMaks();
 
