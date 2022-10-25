@@ -81,6 +81,9 @@ SubframeIntegrate::SubframeIntegrate() : QWidget()
     main_layout->addWidget(propertyScrollArea);
     main_layout->addWidget(_right_element);
 
+    _right_element->setStretchFactor(0, 2);
+    _right_element->setStretchFactor(1, 1);
+
     _shape_params = nullptr;
 }
 
