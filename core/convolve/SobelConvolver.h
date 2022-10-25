@@ -2,8 +2,8 @@
 //
 //  OpenHKL: data reduction for single crystal diffraction
 //
-//! @file      core/convolve/SobelConvolverX.h
-//! @brief     Defines class SobelConvolverX
+//! @file      core/convolve/SobelConvolver.h
+//! @brief     Defines class SobelConvolver
 //!
 //! @homepage  https://openhkl.org
 //! @license   GNU General Public License v3 or higher (see COPYING)
@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef OHKL_CORE_CONVOLVE_SOBELCONVOLVERX_H
-#define OHKL_CORE_CONVOLVE_SOBELCONVOLVERX_H
+#ifndef OHKL_CORE_CONVOLVE_SOBELCONVOLVER_H
+#define OHKL_CORE_CONVOLVE_SOBELCONVOLVER_H
 
 #include "core/convolve/AtomicConvolver.h" // inherits from
 
@@ -21,17 +21,17 @@ namespace ohkl {
 
 //! Convolver with Dirac-delta kernel.
 
-class SobelConvolverX : public AtomicConvolver {
+class SobelConvolver : public AtomicConvolver {
  public:
-    SobelConvolverX();
+    SobelConvolver();
 
-    SobelConvolverX(const SobelConvolverX& other) = default;
+    SobelConvolver(const SobelConvolver& other) = default;
 
-    SobelConvolverX(const std::map<std::string, double>& parameters);
+    SobelConvolver(const std::map<std::string, double>& parameters);
 
-    ~SobelConvolverX() = default;
+    ~SobelConvolver() = default;
 
-    SobelConvolverX& operator=(const SobelConvolverX& other) = default;
+    SobelConvolver& operator=(const SobelConvolver& other) = default;
 
     Convolver* clone() const override;
 
@@ -43,4 +43,4 @@ class SobelConvolverX : public AtomicConvolver {
 
 } // namespace ohkl
 
-#endif // OHKL_CORE_CONVOLVE_SOBELCONVOLVERX_H
+#endif // OHKL_CORE_CONVOLVE_SOBELCONVOLVER_H

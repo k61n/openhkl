@@ -331,9 +331,11 @@ Eigen::MatrixXd DataSet::gradientFrame(std::size_t idx) const
 Eigen::MatrixXd DataSet::sobelGradient(std::size_t idx) const
 {
     ImageGradient grad(nRows(), nCols());
-    std::map<std::string, double> params;
-    grad.dx = ohkl::convolvedFrame(frame(idx), "sobel x", params);
-    grad.dy = ohkl::convolvedFrame(frame(idx), "sobel y", params);
+    std::unique_ptr<Convolver> sobel;
+    sobel.reset(ConvolverFactory{}.create("sobel", {{"x", 0.0}}));
+    grad.dx = sobel->convolve(frame(idx).cast<double>());
+    sobel.reset(ConvolverFactory{}.create("sobel", {{"y", 0.0}}));
+    grad.dy = sobel->convolve(frame(idx).cast<double>());
     Eigen::MatrixXd mag = grad.magnitude();
     return grad.magnitude();
 }
