@@ -79,6 +79,9 @@ SubframeFilterPeaks::SubframeFilterPeaks()
 
     _main_layout->addWidget(propertyScrollArea);
     _main_layout->addWidget(_right_element);
+
+    _right_element->setStretchFactor(0, 2);
+    _right_element->setStretchFactor(1, 1);
 }
 
 void SubframeFilterPeaks::setInputUp()

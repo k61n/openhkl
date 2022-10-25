@@ -80,6 +80,9 @@ SubframeFindPeaks::SubframeFindPeaks()
     main_layout->addWidget(propertyScrollArea);
     main_layout->addWidget(_right_element);
 
+    _right_element->setStretchFactor(0, 2);
+    _right_element->setStretchFactor(1, 1);
+
     connect(_kernel_combo, &QComboBox::currentTextChanged, [=](QString) {
         updateConvolutionParameters();
         refreshPreview();

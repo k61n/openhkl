@@ -53,6 +53,7 @@ class AtomicConvolver : public Convolver {
     int _n_rows{0};
     int _n_cols{0};
     int _halfCols;
+    double _norm_fac;
 
     fftw_plan _forwardPlan;
     fftw_plan _backwardPlan;

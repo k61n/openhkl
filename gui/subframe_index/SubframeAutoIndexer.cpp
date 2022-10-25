@@ -120,6 +120,9 @@ SubframeAutoIndexer::SubframeAutoIndexer()
     _right_element->addWidget(_peak_group);
     _right_element->setSizePolicy(_size_policy_right);
     _set_initial_ki->setChecked(false);
+
+    _right_element->setStretchFactor(0, 2);
+    _right_element->setStretchFactor(1, 1);
 }
 
 void SubframeAutoIndexer::setInputUp()

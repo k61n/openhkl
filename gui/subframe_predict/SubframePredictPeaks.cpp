@@ -110,6 +110,9 @@ SubframePredictPeaks::SubframePredictPeaks()
     main_layout->addWidget(_right_element);
     _set_initial_ki->setChecked(false);
 
+    _right_element->setStretchFactor(0, 2);
+    _right_element->setStretchFactor(1, 1);
+
     _shape_params = std::make_shared<ohkl::ShapeModelParameters>();
 }
 

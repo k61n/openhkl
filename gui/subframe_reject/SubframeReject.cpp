@@ -84,6 +84,10 @@ SubframeReject::SubframeReject() : QWidget()
     main_layout->addWidget(propertyScrollArea);
     main_layout->addWidget(_right_element);
 
+    _right_element->setStretchFactor(0, 2);
+    _right_element->setStretchFactor(1, 1);
+    _right_element->setStretchFactor(2, 2);
+
     _peak_stats = ohkl::PeakStatistics();
 }
 

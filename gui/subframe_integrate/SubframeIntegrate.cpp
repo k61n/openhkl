@@ -21,7 +21,6 @@
 #include "core/shape/ShapeModel.h"
 #include "gui/MainWin.h" // gGui
 #include "gui/frames/ProgressView.h"
-#include "gui/graphics/DetectorScene.h"
 #include "gui/models/Project.h"
 #include "gui/models/Session.h"
 #include "gui/subwindows/DetectorWindow.h"
@@ -46,8 +45,10 @@
 #include <QScrollBar>
 #include <QSpacerItem>
 #include <qcheckbox.h>
+#include <qcombobox.h>
 #include <qgridlayout.h>
 #include <qgroupbox.h>
+#include <qnamespace.h>
 
 SubframeIntegrate::SubframeIntegrate() : QWidget()
 {
@@ -71,11 +72,17 @@ SubframeIntegrate::SubframeIntegrate() : QWidget()
     connect(
         _detector_widget->dataCombo(), QOverload<int>::of(&QComboBox::currentIndexChanged),
         _data_combo, &QComboBox::setCurrentIndex);
+    connect(
+        _gradient_kernel, QOverload<int>::of(&QComboBox::currentIndexChanged),
+        _detector_widget->scene(), &DetectorScene::setGradientKernel);
 
     auto propertyScrollArea = new PropertyScrollArea(this);
     propertyScrollArea->setContentLayout(_left_layout);
     main_layout->addWidget(propertyScrollArea);
     main_layout->addWidget(_right_element);
+
+    _right_element->setStretchFactor(0, 2);
+    _right_element->setStretchFactor(1, 1);
 
     _shape_params = nullptr;
 }
@@ -280,6 +287,7 @@ void SubframeIntegrate::setIntegrateUp()
     _integrator_combo = f.addCombo();
 
     _discard_saturated = new QGroupBox("Discard saturated");
+    _discard_saturated->setAlignment(Qt::AlignLeft);
     _discard_saturated->setCheckable(true);
     _discard_saturated->setChecked(false);
     _discard_saturated->setToolTip("Discard peaks containing saturated pixels");
@@ -294,6 +302,31 @@ void SubframeIntegrate::setIntegrateUp()
     grid->addWidget(label, 0, 0, 1, 1);
     grid->addWidget(_max_counts, 0, 1, 1, 1);
     f.addWidget(_discard_saturated);
+
+    _discard_inhom_bkg = new QGroupBox("Filter gradient");
+    _discard_inhom_bkg->setAlignment(Qt::AlignLeft);
+    _discard_inhom_bkg->setCheckable(true);
+    _discard_inhom_bkg->setChecked(false);
+    _discard_inhom_bkg->setToolTip("Discard peaks with high mean background gradient");
+
+    _gradient_kernel = new QComboBox();
+
+    _grad_threshold = new SafeDoubleSpinBox();
+    _grad_threshold->setMaximum(10000);
+
+    grid = new QGridLayout();
+    _discard_inhom_bkg->setLayout(grid);
+    label = new QLabel("Kernel");
+    grid->addWidget(label, 0, 0, 1, 1);
+    grid->addWidget(_gradient_kernel, 0, 1, 1, 1);
+    label = new QLabel("Gradient threshold");
+    grid->addWidget(label, 1, 0, 1, 1);
+    grid->addWidget(_grad_threshold, 1, 1, 1, 1);
+    f.addWidget(_discard_inhom_bkg);
+
+    for (const auto& [kernel, description] : _kernel_description)
+        _gradient_kernel->addItem(description);
+    _gradient_kernel->setCurrentIndex(1);
 
     _fit_center =
         f.addCheckBox("Fit peak center", "Allow the peak center to move during integration", 1);

@@ -45,6 +45,8 @@ class DirectBeamGraphic : public QGraphicsEllipseItem { }; // Make it easier to 
 
 using EventType = ohkl::IntegrationRegion::EventType;
 
+enum class GradientKernel { CentralDifference, Sobel, Sobel5, Prewitt, Roberts };
+
 // For the plotting part, better to have RowMajor matrix to use QImage scanline
 // function and optimize cache hit.
 typedef Eigen::Matrix<int, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor> rowMatrix;
@@ -83,6 +85,7 @@ class DetectorScene : public QGraphicsScene {
     ohkl::sptrDataSet getData() { return _currentData; }
     const rowMatrix& getCurrentFrame() const { return _currentFrame; }
     void setLogarithmic(bool checked) { _logarithmic = checked; }
+    void setGradient(bool checked) { _drawGradient = checked; }
     void setColorMap(const std::string& name)
     {
         _colormap = std::unique_ptr<ColorMap>(new ColorMap(name));
@@ -194,6 +197,7 @@ class DetectorScene : public QGraphicsScene {
     void wheelEvent(QGraphicsSceneWheelEvent* event);
 
  public slots:
+    void setGradientKernel(int kernel);
     void resetElements();
     void resetScene();
     void setMaxIntensity(int);
@@ -270,6 +274,7 @@ class DetectorScene : public QGraphicsScene {
     QGraphicsPixmapItem* _image;
     SXGraphicsItem* _lastClickedGI;
     bool _logarithmic;
+    bool _drawGradient;
     bool _drawIntegrationRegion1;
     bool _drawIntegrationRegion2;
     bool _drawSinglePeakIntegrationRegion;
@@ -337,6 +342,14 @@ class DetectorScene : public QGraphicsScene {
     std::vector<std::vector<cv::KeyPoint>>* _per_frame_spots;
 
     std::shared_ptr<MaskHandler> _mask_handler;
+    GradientKernel _gradient_kernel;
+
+    std::map<GradientKernel, std::string> _kernel_strings{
+        {GradientKernel::CentralDifference, "central"},
+        {GradientKernel::Sobel, "sobel"},
+        {GradientKernel::Sobel5, "sobel5"},
+        {GradientKernel::Prewitt, "prewitt"},
+        {GradientKernel::Roberts, "roberts"}};
 };
 
 #endif // OHKL_GUI_GRAPHICS_DETECTORSCENE_H

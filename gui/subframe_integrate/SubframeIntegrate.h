@@ -19,6 +19,7 @@
 #include "core/integration/IIntegrator.h"
 #include "core/shape/PeakCollection.h"
 #include "core/shape/ShapeModel.h"
+#include "gui/graphics/DetectorScene.h"
 #include "gui/items/PeakCollectionItem.h"
 #include "gui/models/PeakCollectionModel.h"
 
@@ -132,6 +133,9 @@ class SubframeIntegrate : public QWidget {
     ShapeComboBox* _shape_combo;
     QGroupBox* _discard_saturated;
     SafeDoubleSpinBox* _max_counts;
+    QGroupBox* _discard_inhom_bkg;
+    QComboBox* _gradient_kernel;
+    SafeDoubleSpinBox* _grad_threshold;
 
     QPushButton* _integrate_button;
 
@@ -157,6 +161,13 @@ class SubframeIntegrate : public QWidget {
         {"I/Sigma integrator", ohkl::IntegratorType::ISigma},
         {"1D Profile integrator", ohkl::IntegratorType::Profile1D},
         {"3D Profile integrator", ohkl::IntegratorType::Profile3D}};
+
+    const std::map<GradientKernel, QString> _kernel_description{
+        {GradientKernel::CentralDifference, "Central difference"},
+        {GradientKernel::Sobel, "Sobel 3x3"},
+        {GradientKernel::Sobel5, "Sobel 5x5"},
+        {GradientKernel::Prewitt, "Prewitt"},
+        {GradientKernel::Roberts, "Roberts"}};
 };
 
 
