@@ -170,6 +170,10 @@ SubframeExperiment::SubframeExperiment()
     connect(_detector_widget->scene(),&DetectorScene::signalMasksSelected,
             this, &SubframeExperiment::refreshMaskTable );
 
+    connect(
+        _mask_handler.get(), &MaskHandler::signalMaskChanged, this,
+        &SubframeExperiment::refreshMaskTable);
+
     _set_initial_ki->setChecked(false);
     _lineplot_box->setChecked(false);
     _mask_box->setChecked(false);
@@ -380,10 +384,6 @@ void SubframeExperiment::setMaskUp()
         _mask_combo, &QComboBox::currentTextChanged, this, &SubframeExperiment::toggleCursorMode);
     connect(
         _detector_widget->scene(), &DetectorScene::signalMaskChanged, this,
-        &SubframeExperiment::refreshMaskTable);
-
-    connect(
-        _mask_handler.get(), &MaskHandler::signalMaskChanged, this,
         &SubframeExperiment::refreshMaskTable);
 
     connect(
