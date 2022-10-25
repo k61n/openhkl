@@ -45,7 +45,7 @@ class DirectBeamGraphic : public QGraphicsEllipseItem { }; // Make it easier to 
 
 using EventType = ohkl::IntegrationRegion::EventType;
 
-enum class GradientKernel { CentralDifference, Sobel, Prewitt, Roberts };
+enum class GradientKernel { CentralDifference, Sobel, Sobel5, Prewitt, Roberts };
 
 // For the plotting part, better to have RowMajor matrix to use QImage scanline
 // function and optimize cache hit.
@@ -347,9 +347,9 @@ class DetectorScene : public QGraphicsScene {
     std::map<GradientKernel, std::string> _kernel_strings{
         {GradientKernel::CentralDifference, "central"},
         {GradientKernel::Sobel, "sobel"},
+        {GradientKernel::Sobel5, "sobel5"},
         {GradientKernel::Prewitt, "prewitt"},
-        {GradientKernel::Roberts, "roberts"}
-    };
+        {GradientKernel::Roberts, "roberts"}};
 };
 
 #endif // OHKL_GUI_GRAPHICS_DETECTORSCENE_H

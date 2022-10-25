@@ -164,7 +164,8 @@ class SubframeIntegrate : public QWidget {
 
     const std::map<GradientKernel, QString> _kernel_description{
         {GradientKernel::CentralDifference, "Central difference"},
-        {GradientKernel::Sobel, "Sobel"},
+        {GradientKernel::Sobel, "Sobel 3x3"},
+        {GradientKernel::Sobel5, "Sobel 5x5"},
         {GradientKernel::Prewitt, "Prewitt"},
         {GradientKernel::Roberts, "Roberts"}};
 };

@@ -21,6 +21,7 @@
 #include "core/convolve/PrewittConvolver.h"
 #include "core/convolve/RadialConvolver.h"
 #include "core/convolve/RobertsConvolver.h"
+#include "core/convolve/Sobel5Convolver.h"
 #include "core/convolve/SobelConvolver.h"
 
 namespace ohkl {
@@ -42,6 +43,7 @@ ConvolverFactory::ConvolverFactory() : _callbacks()
     _callbacks["central"] = &create_convolver<CentralDifference>;
     _callbacks["prewitt"] = &create_convolver<PrewittConvolver>;
     _callbacks["roberts"] = &create_convolver<RobertsConvolver>;
+    _callbacks["sobel5"] = &create_convolver<Sobel5Convolver>;
 }
 
 Convolver* ConvolverFactory::create(
