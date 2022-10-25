@@ -2,8 +2,8 @@
 //
 //  OpenHKL: data reduction for single crystal diffraction
 //
-//! @file      core/convolve/SobelConvolver.h
-//! @brief     Defines class SobelConvolver
+//! @file      core/convolve/RobertsConvolver.h
+//! @brief     Defines class RobertsConvolver
 //!
 //! @homepage  https://openhkl.org
 //! @license   GNU General Public License v3 or higher (see COPYING)
@@ -12,32 +12,32 @@
 //
 //  ***********************************************************************************************
 
-#ifndef OHKL_CORE_CONVOLVE_SOBELCONVOLVER_H
-#define OHKL_CORE_CONVOLVE_SOBELCONVOLVER_H
+#ifndef OHKL_CORE_CONVOLVE_ROBERTSCONVOLVER_H
+#define OHKL_CORE_CONVOLVE_ROBERTSCONVOLVER_H
 
 #include "core/convolve/AtomicConvolver.h" // inherits from
 
 namespace ohkl {
 
-//! Convolver with Sobel gradient kernel
+//! Convolver with Roberts gradient kernel
 //!
-//! dx = [  1  0 -1 ] dy = [  1  2  1 ]
-//!      [  2  0 -2 ]      [  0  0  0 ]
-//!      [  1  0 -1 ]      [ -1 -2 -1 ]
+//! dx = [  1  0 ] dy = [  0  1 ]
+//!      [  0 -1 ]      [ -1  0 ]
 //!
-//! Computes a smoothed central difference gradient
+//!
+//!
 
-class SobelConvolver : public AtomicConvolver {
+class RobertsConvolver : public AtomicConvolver {
  public:
-    SobelConvolver();
+    RobertsConvolver();
 
-    SobelConvolver(const SobelConvolver& other) = default;
+    RobertsConvolver(const RobertsConvolver& other) = default;
 
-    SobelConvolver(const std::map<std::string, double>& parameters);
+    RobertsConvolver(const std::map<std::string, double>& parameters);
 
-    ~SobelConvolver() = default;
+    ~RobertsConvolver() = default;
 
-    SobelConvolver& operator=(const SobelConvolver& other) = default;
+    RobertsConvolver& operator=(const RobertsConvolver& other) = default;
 
     Convolver* clone() const override;
 
@@ -49,4 +49,4 @@ class SobelConvolver : public AtomicConvolver {
 
 } // namespace ohkl
 
-#endif // OHKL_CORE_CONVOLVE_SOBELCONVOLVER_H
+#endif // OHKL_CORE_CONVOLVE_ROBERTSCONVOLVER_H

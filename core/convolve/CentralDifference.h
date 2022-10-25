@@ -2,8 +2,8 @@
 //
 //  OpenHKL: data reduction for single crystal diffraction
 //
-//! @file      core/convolve/SobelConvolver.h
-//! @brief     Defines class SobelConvolver
+//! @file      core/convolve/CentralDifference.h
+//! @brief     Defines class CentralDifference
 //!
 //! @homepage  https://openhkl.org
 //! @license   GNU General Public License v3 or higher (see COPYING)
@@ -12,32 +12,32 @@
 //
 //  ***********************************************************************************************
 
-#ifndef OHKL_CORE_CONVOLVE_SOBELCONVOLVER_H
-#define OHKL_CORE_CONVOLVE_SOBELCONVOLVER_H
+#ifndef OHKL_CORE_CONVOLVE_CENTRALDIFFERENCE_H
+#define OHKL_CORE_CONVOLVE_CENTRALDIFFERENCE_H
 
 #include "core/convolve/AtomicConvolver.h" // inherits from
 
 namespace ohkl {
 
-//! Convolver with Sobel gradient kernel
+//! Convolver with central difference gradient kernel
 //!
-//! dx = [  1  0 -1 ] dy = [  1  2  1 ]
-//!      [  2  0 -2 ]      [  0  0  0 ]
-//!      [  1  0 -1 ]      [ -1 -2 -1 ]
+//! dx = [  0  0  0 ] dy = [  0  1  0 ]
+//!      [  1  0 -1 ]      [  0  0  0 ]
+//!      [  0  0  0 ]      [  0 -1  0 ]
 //!
-//! Computes a smoothed central difference gradient
+//! Computes a central difference gradient
 
-class SobelConvolver : public AtomicConvolver {
+class CentralDifference : public AtomicConvolver {
  public:
-    SobelConvolver();
+    CentralDifference();
 
-    SobelConvolver(const SobelConvolver& other) = default;
+    CentralDifference(const CentralDifference& other) = default;
 
-    SobelConvolver(const std::map<std::string, double>& parameters);
+    CentralDifference(const std::map<std::string, double>& parameters);
 
-    ~SobelConvolver() = default;
+    ~CentralDifference() = default;
 
-    SobelConvolver& operator=(const SobelConvolver& other) = default;
+    CentralDifference& operator=(const CentralDifference& other) = default;
 
     Convolver* clone() const override;
 
@@ -49,4 +49,4 @@ class SobelConvolver : public AtomicConvolver {
 
 } // namespace ohkl
 
-#endif // OHKL_CORE_CONVOLVE_SOBELCONVOLVER_H
+#endif // OHKL_CORE_CONVOLVE_CENTRALDIFFERENCE_H

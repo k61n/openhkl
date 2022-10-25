@@ -2,8 +2,8 @@
 //
 //  OpenHKL: data reduction for single crystal diffraction
 //
-//! @file      core/convolve/SobelConvolver.h
-//! @brief     Defines class SobelConvolver
+//! @file      core/convolve/PrewittConvolver.h
+//! @brief     Defines class PrewittConvolver
 //!
 //! @homepage  https://openhkl.org
 //! @license   GNU General Public License v3 or higher (see COPYING)
@@ -12,32 +12,32 @@
 //
 //  ***********************************************************************************************
 
-#ifndef OHKL_CORE_CONVOLVE_SOBELCONVOLVER_H
-#define OHKL_CORE_CONVOLVE_SOBELCONVOLVER_H
+#ifndef OHKL_CORE_CONVOLVE_PREWITTCONVOLVER_H
+#define OHKL_CORE_CONVOLVE_PREWITTCONVOLVER_H
 
 #include "core/convolve/AtomicConvolver.h" // inherits from
 
 namespace ohkl {
 
-//! Convolver with Sobel gradient kernel
+//! Convolver with Prewitt gradient kernel
 //!
-//! dx = [  1  0 -1 ] dy = [  1  2  1 ]
-//!      [  2  0 -2 ]      [  0  0  0 ]
-//!      [  1  0 -1 ]      [ -1 -2 -1 ]
+//! dx = [  1  0 -1 ] dy = [  1  1  1 ]
+//!      [  1  0 -1 ]      [  0  0  0 ]
+//!      [  1  0 -1 ]      [ -1 -1 -1 ]
 //!
-//! Computes a smoothed central difference gradient
+//! Computes an averaged central difference gradient
 
-class SobelConvolver : public AtomicConvolver {
+class PrewittConvolver : public AtomicConvolver {
  public:
-    SobelConvolver();
+    PrewittConvolver();
 
-    SobelConvolver(const SobelConvolver& other) = default;
+    PrewittConvolver(const PrewittConvolver& other) = default;
 
-    SobelConvolver(const std::map<std::string, double>& parameters);
+    PrewittConvolver(const std::map<std::string, double>& parameters);
 
-    ~SobelConvolver() = default;
+    ~PrewittConvolver() = default;
 
-    SobelConvolver& operator=(const SobelConvolver& other) = default;
+    PrewittConvolver& operator=(const PrewittConvolver& other) = default;
 
     Convolver* clone() const override;
 
@@ -49,4 +49,4 @@ class SobelConvolver : public AtomicConvolver {
 
 } // namespace ohkl
 
-#endif // OHKL_CORE_CONVOLVE_SOBELCONVOLVER_H
+#endif // OHKL_CORE_CONVOLVE_PREWITTCONVOLVER_H

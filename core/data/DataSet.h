@@ -95,7 +95,7 @@ class DataSet {
     Eigen::MatrixXd gradientFrame(std::size_t idx) const;
 
     //! Return per-pixel magnitude of gradient using Sobel filter
-    Eigen::MatrixXd sobelGradient(std::size_t idx) const;
+    Eigen::MatrixXd imageGradient(std::size_t idx, const std::string& convolver) const;
 
     //! Return vector gradient of a given frame
     ImageGradient vectorGradientFrame(std::size_t idx) const;

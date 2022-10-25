@@ -1023,7 +1023,7 @@ void DetectorScene::loadCurrentImage()
                 _currentFrame.cast<double>(), full, _currentIntensity, _logarithmic)));
         } else {
             _image = addPixmap(QPixmap::fromImage(_colormap->matToImage(
-                _currentData->sobelGradient(_currentFrameIndex), full, _currentIntensity,
+                _currentData->imageGradient(_currentFrameIndex, "sobel"), full, _currentIntensity,
                 _logarithmic)));
         }
         _image->setZValue(-2);
@@ -1033,7 +1033,7 @@ void DetectorScene::loadCurrentImage()
                 _currentFrame.cast<double>(), full, _currentIntensity, _logarithmic)));
         } else {
             _image->setPixmap(QPixmap::fromImage(_colormap->matToImage(
-                _currentData->sobelGradient(_currentFrameIndex), full, _currentIntensity,
+                _currentData->imageGradient(_currentFrameIndex, "sobel"), full, _currentIntensity,
                 _logarithmic)));
         }
     }
