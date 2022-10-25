@@ -22,6 +22,7 @@ PrewittConvolver::PrewittConvolver() : AtomicConvolver() { }
 PrewittConvolver::PrewittConvolver(const std::map<std::string, double>& parameters)
     : AtomicConvolver(parameters)
 {
+    _norm_fac = 1.0 / 6.0;
 }
 
 Convolver* PrewittConvolver::clone() const
@@ -55,7 +56,7 @@ RealMatrix PrewittConvolver::_matrix(int nrows, int ncols) const
         throw std::runtime_error("Prewitt convolver missing direction parameter (x/y)");
     }
 
-    return kernel;
+    return kernel * _norm_fac;
 }
 
 } // namespace ohkl

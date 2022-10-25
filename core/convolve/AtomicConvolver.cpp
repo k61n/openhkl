@@ -27,7 +27,7 @@ namespace ohkl {
 AtomicConvolver::AtomicConvolver() : Convolver() { }
 
 AtomicConvolver::AtomicConvolver(const std::map<std::string, double>& parameters)
-    : Convolver(parameters)
+    : Convolver(parameters), _norm_fac(1.0)
 {
 }
 

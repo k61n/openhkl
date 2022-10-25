@@ -22,6 +22,7 @@ SobelConvolver::SobelConvolver() : AtomicConvolver() { }
 SobelConvolver::SobelConvolver(const std::map<std::string, double>& parameters)
     : AtomicConvolver(parameters)
 {
+    _norm_fac = 1.0 / 8.0;
 }
 
 Convolver* SobelConvolver::clone() const
@@ -55,7 +56,7 @@ RealMatrix SobelConvolver::_matrix(int nrows, int ncols) const
         throw std::runtime_error("Sobel convolver missing direction parameter (x/y)");
     }
 
-    return kernel;
+    return kernel * _norm_fac;
 }
 
 } // namespace ohkl

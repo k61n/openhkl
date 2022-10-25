@@ -22,6 +22,7 @@ RobertsConvolver::RobertsConvolver() : AtomicConvolver() { }
 RobertsConvolver::RobertsConvolver(const std::map<std::string, double>& parameters)
     : AtomicConvolver(parameters)
 {
+    _norm_fac = 0.5;
 }
 
 Convolver* RobertsConvolver::clone() const
@@ -47,7 +48,7 @@ RealMatrix RobertsConvolver::_matrix(int nrows, int ncols) const
         throw std::runtime_error("Roberts convolver missing direction parameter (x/y)");
     }
 
-    return kernel;
+    return kernel * _norm_fac;
 }
 
 } // namespace ohkl
