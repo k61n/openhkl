@@ -117,6 +117,7 @@ DetectorScene::DetectorScene(QObject* parent)
     , _peak_center_data(nullptr)
     , _per_frame_spots(nullptr)
     , _mask_handler(std::make_shared<MaskHandler>())
+    , _gradient_kernel(GradientKernel::Sobel)
 {
     connect(
         _mask_handler.get(), &MaskHandler::signalMaskChanged, this,
@@ -129,6 +130,11 @@ DetectorScene::DetectorScene(QObject* parent)
     update();
  }
 
+void DetectorScene::setGradientKernel(int kernel)
+{
+    _gradient_kernel = static_cast<GradientKernel>(kernel);
+    loadCurrentImage();
+}
 
 void DetectorScene::addBeamSetter(int size, int linewidth)
 {
@@ -1017,13 +1023,14 @@ void DetectorScene::loadCurrentImage()
     if (_currentFrameIndex >= _currentData->nFrames())
         _currentFrameIndex = _currentData->nFrames() - 1;
     _currentFrame = _currentData->frame(_currentFrameIndex);
+    std::string kernel = _kernel_strings.at(_gradient_kernel);
     if (_image == nullptr) {
         if (!_drawGradient) {
             _image = addPixmap(QPixmap::fromImage(_colormap->matToImage(
                 _currentFrame.cast<double>(), full, _currentIntensity, _logarithmic)));
         } else {
             _image = addPixmap(QPixmap::fromImage(_colormap->matToImage(
-                _currentData->imageGradient(_currentFrameIndex, "sobel"), full, _currentIntensity,
+                _currentData->imageGradient(_currentFrameIndex, kernel), full, _currentIntensity,
                 _logarithmic)));
         }
         _image->setZValue(-2);
@@ -1033,7 +1040,7 @@ void DetectorScene::loadCurrentImage()
                 _currentFrame.cast<double>(), full, _currentIntensity, _logarithmic)));
         } else {
             _image->setPixmap(QPixmap::fromImage(_colormap->matToImage(
-                _currentData->imageGradient(_currentFrameIndex, "sobel"), full, _currentIntensity,
+                _currentData->imageGradient(_currentFrameIndex, kernel), full, _currentIntensity,
                 _logarithmic)));
         }
     }
