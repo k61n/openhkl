@@ -39,12 +39,12 @@ RealMatrix SobelConvolver::_matrix(int nrows, int ncols) const
 {
     RealMatrix kernel = RealMatrix::Zero(nrows, ncols);
     if (_parameters.find("x") != _parameters.end()) {
-        kernel(0, 0) = -1.0;
-        kernel(0, 1) = -2.0;
-        kernel(0, 2) = -1.0;
-        kernel(2, 0) = 1.0;
-        kernel(2, 1) = 2.0;
-        kernel(2, 2) = 1.0;
+        kernel(0, 0) = 1.0;
+        kernel(0, 1) = 2.0;
+        kernel(0, 2) = 1.0;
+        kernel(2, 0) = -1.0;
+        kernel(2, 1) = -2.0;
+        kernel(2, 2) = -1.0;
     } else if (_parameters.find("y") != _parameters.end()) {
         kernel(0, 0) = 1.0;
         kernel(1, 0) = 2.0;

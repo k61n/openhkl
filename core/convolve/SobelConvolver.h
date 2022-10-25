@@ -21,9 +21,9 @@ namespace ohkl {
 
 //! Convolver with Sobel gradient kernel
 //!
-//! dx = [  1  0 -1 ] dy = [  1  2  1 ]
-//!      [  2  0 -2 ]      [  0  0  0 ]
-//!      [  1  0 -1 ]      [ -1 -2 -1 ]
+//! dx = [ -1  0  1 ] dy = [  1  2  1 ]
+//!      [ -2  0  2 ]      [  0  0  0 ]
+//!      [ -1  0  1 ]      [ -1 -2 -1 ]
 //!
 //! Computes a smoothed central difference gradient
 

@@ -21,9 +21,9 @@ namespace ohkl {
 
 //! Convolver with Prewitt gradient kernel
 //!
-//! dx = [  1  0 -1 ] dy = [  1  1  1 ]
-//!      [  1  0 -1 ]      [  0  0  0 ]
-//!      [  1  0 -1 ]      [ -1 -1 -1 ]
+//! dx = [ -1  0  1 ] dy = [  1  1  1 ]
+//!      [ -1  0  1 ]      [  0  0  0 ]
+//!      [ -1  0  1 ]      [ -1 -1 -1 ]
 //!
 //! Computes an averaged central difference gradient
 

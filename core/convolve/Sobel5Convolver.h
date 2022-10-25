@@ -19,11 +19,13 @@
 
 namespace ohkl {
 
-//! Convolver with Sobel5 gradient kernel
+//! Convolver with Sobel 5x5 gradient kernel
 //!
-//! dx = [  1  0 -1 ] dy = [  1  2  1 ]
-//!      [  2  0 -2 ]      [  0  0  0 ]
-//!      [  1  0 -1 ]      [ -1 -2 -1 ]
+//! dx = [ -5  -4    0   4    5  ] dy = [   5   8   10  8    5  ]
+//!      [ -8  -10   0   10   8  ]      [   4   10  20  10   4  ]
+//!      [ -10 -20   0   20   10 ]      [   0   0   0   0    0  ]
+//!      [ -8  -10   0   10   8  ]      [  -4  -10 -20 -10  -4  ]
+//!      [ -5  -4    0   4    5  ]      [  -5  -8  -10 -8   -5  ]
 //!
 //! Computes a smoothed central difference gradient
 
