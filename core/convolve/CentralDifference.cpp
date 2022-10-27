@@ -13,41 +13,29 @@
 //  ***********************************************************************************************
 
 #include "core/convolve/CentralDifference.h"
-#include "core/convolve/AtomicConvolver.h"
 
 namespace ohkl {
 
-CentralDifference::CentralDifference() : AtomicConvolver() { }
+CentralDifference::CentralDifference() : GradientConvolver() { }
 
 CentralDifference::CentralDifference(const std::map<std::string, double>& parameters)
-    : AtomicConvolver(parameters)
+    : GradientConvolver(parameters)
 {
+    Eigen::Matrix3d central_x, central_y;
+
+    central_x <<  0,  0,  0,
+                 -1,  0,  1,
+                  0,  0,  0;
+
+    central_y <<  0,  1,  0,
+                  0,  0,  0,
+                  0, -1,  0;
+
+    setOperator(central_x, central_y);
 }
 
 Convolver* CentralDifference::clone() const
 {
     return new CentralDifference(*this);
 }
-
-std::pair<size_t, size_t> CentralDifference::kernelSize() const
-{
-    return std::make_pair(3, 3);
-}
-
-RealMatrix CentralDifference::_matrix(int nrows, int ncols) const
-{
-    RealMatrix kernel = RealMatrix::Zero(nrows, ncols);
-    if (_parameters.find("x") != _parameters.end()) {
-        kernel(0, 1) = -1.0;
-        kernel(2, 1) = 1.0;
-    } else if (_parameters.find("y") != _parameters.end()) {
-        kernel(1, 0) = 1.0;
-        kernel(1, 2) = -1.0;
-    } else {
-        throw std::runtime_error("Sobel convolver missing direction parameter (x/y)");
-    }
-
-    return kernel;
-}
-
 } // namespace ohkl
