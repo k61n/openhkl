@@ -162,12 +162,12 @@ class SubframeIntegrate : public QWidget {
         {"1D Profile integrator", ohkl::IntegratorType::Profile1D},
         {"3D Profile integrator", ohkl::IntegratorType::Profile3D}};
 
-    const std::map<GradientKernel, QString> _kernel_description{
-        {GradientKernel::CentralDifference, "Central difference"},
-        {GradientKernel::Sobel, "Sobel 3x3"},
-        {GradientKernel::Sobel5, "Sobel 5x5"},
-        {GradientKernel::Prewitt, "Prewitt"},
-        {GradientKernel::Roberts, "Roberts"}};
+    const std::map<ohkl::GradientKernel, QString> _kernel_description{
+        {ohkl::GradientKernel::CentralDifference, "Central difference"},
+        {ohkl::GradientKernel::Sobel, "Sobel 3x3"},
+        {ohkl::GradientKernel::Sobel5, "Sobel 5x5"},
+        {ohkl::GradientKernel::Prewitt, "Prewitt"},
+        {ohkl::GradientKernel::Roberts, "Roberts"}};
 };
 
 

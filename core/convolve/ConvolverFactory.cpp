@@ -74,4 +74,13 @@ Eigen::MatrixXd convolvedFrame(
     return convolver->convolve(frame_data.cast<double>());
 }
 
+Eigen::MatrixXd convolvedFrame(
+    Eigen::MatrixXd frame_data, const std::string& convolver_type,
+    const std::map<std::string, double>& parameters)
+{
+    ConvolverFactory convolver_factory;
+    auto convolver = convolver_factory.create(convolver_type, parameters);
+    return convolver->convolve(frame_data);
+}
+
 } // namespace ohkl

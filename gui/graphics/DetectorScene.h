@@ -15,6 +15,7 @@
 #define OHKL_GUI_GRAPHICS_DETECTORSCENE_H
 
 #include "base/mask/IMask.h"
+#include "core/data/DataSet.h"
 #include "core/data/DataTypes.h"
 #include "core/detector/DetectorEvent.h"
 #include "core/peak/IntegrationRegion.h"
@@ -44,8 +45,6 @@ class MaskHandler;
 class DirectBeamGraphic : public QGraphicsEllipseItem { }; // Make it easier to remove direct beam
 
 using EventType = ohkl::IntegrationRegion::EventType;
-
-enum class GradientKernel { CentralDifference, Sobel, Sobel5, Prewitt, Roberts };
 
 // For the plotting part, better to have RowMajor matrix to use QImage scanline
 // function and optimize cache hit.
@@ -342,14 +341,7 @@ class DetectorScene : public QGraphicsScene {
     std::vector<std::vector<cv::KeyPoint>>* _per_frame_spots;
 
     std::shared_ptr<MaskHandler> _mask_handler;
-    GradientKernel _gradient_kernel;
-
-    std::map<GradientKernel, std::string> _kernel_strings{
-        {GradientKernel::CentralDifference, "central"},
-        {GradientKernel::Sobel, "sobel"},
-        {GradientKernel::Sobel5, "sobel5"},
-        {GradientKernel::Prewitt, "prewitt"},
-        {GradientKernel::Roberts, "roberts"}};
+    ohkl::GradientKernel _gradient_kernel;
 };
 
 #endif // OHKL_GUI_GRAPHICS_DETECTORSCENE_H

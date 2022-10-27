@@ -17,6 +17,7 @@
 
 #include "base/mask/IMask.h"
 #include "core/data/DataTypes.h"
+#include "core/data/ImageGradient.h"
 #include "core/instrument/InstrumentState.h"
 #include "core/loader/IDataReader.h"
 #include "core/peak/Peak3D.h"
@@ -36,17 +37,6 @@ class InstrumentStateSet;
 struct RawDataReaderParameters;
 
 enum class BitDepth { u8b = 8, u16b = 16, u32b = 32 };
-
-//! Structure to store 3 components of the image gradient
-struct ImageGradient {
-    ImageGradient(std::size_t ncols, std::size_t nrows);
-
-    Eigen::MatrixXd magnitude() const;
-
-    Eigen::MatrixXd dx;
-    Eigen::MatrixXd dy;
-    Eigen::MatrixXd dz;
-};
 
 /*! \addtogroup python_api
  *  @{*/
@@ -92,13 +82,8 @@ class DataSet {
     Eigen::MatrixXd transformedFrame(std::size_t idx) const;
 
     //! Return per-pixel magnitude of gradient of a given frame
-    Eigen::MatrixXd gradientFrame(std::size_t idx) const;
-
-    //! Return per-pixel magnitude of gradient using Sobel filter
-    Eigen::MatrixXd imageGradient(std::size_t idx, const std::string& convolver) const;
-
-    //! Return vector gradient of a given frame
-    ImageGradient vectorGradientFrame(std::size_t idx) const;
+    Eigen::MatrixXd gradientFrame(
+        std::size_t idx, GradientKernel kernel, bool realspace = true) const;
 
     //! Gets the file handle.
     void open();
