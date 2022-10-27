@@ -342,6 +342,7 @@ class DetectorScene : public QGraphicsScene {
 
     std::shared_ptr<MaskHandler> _mask_handler;
     ohkl::GradientKernel _gradient_kernel;
+    bool _fft_gradient;
 };
 
 #endif // OHKL_GUI_GRAPHICS_DETECTORSCENE_H

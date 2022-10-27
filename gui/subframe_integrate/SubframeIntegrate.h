@@ -135,6 +135,7 @@ class SubframeIntegrate : public QWidget {
     SafeDoubleSpinBox* _max_counts;
     QGroupBox* _discard_inhom_bkg;
     QComboBox* _gradient_kernel;
+    QCheckBox* _fft_gradient;
     SafeDoubleSpinBox* _grad_threshold;
 
     QPushButton* _integrate_button;

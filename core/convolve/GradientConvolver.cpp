@@ -72,7 +72,6 @@ RealMatrix GradientConvolver::_matrix(int nrows, int ncols) const
         }
     }
 
-    std::cout << kernel << std::endl;
     return kernel * _norm_fac;
 }
 

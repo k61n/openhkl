@@ -118,6 +118,7 @@ DetectorScene::DetectorScene(QObject* parent)
     , _per_frame_spots(nullptr)
     , _mask_handler(std::make_shared<MaskHandler>())
     , _gradient_kernel(ohkl::GradientKernel::Sobel)
+    , _fft_gradient(false)
 {
     connect(
         _mask_handler.get(), &MaskHandler::signalMaskChanged, this,
@@ -1029,7 +1030,7 @@ void DetectorScene::loadCurrentImage()
                 _currentFrame.cast<double>(), full, _currentIntensity, _logarithmic)));
         } else {
             _image = addPixmap(QPixmap::fromImage(_colormap->matToImage(
-                _currentData->gradientFrame(_currentFrameIndex, _gradient_kernel),
+            _currentData->gradientFrame(_currentFrameIndex, _gradient_kernel, !_fft_gradient),
                 full, _currentIntensity, _logarithmic)));
         }
         _image->setZValue(-2);
@@ -1039,7 +1040,7 @@ void DetectorScene::loadCurrentImage()
                 _currentFrame.cast<double>(), full, _currentIntensity, _logarithmic)));
         } else {
             _image->setPixmap(QPixmap::fromImage(_colormap->matToImage(
-                _currentData->gradientFrame(_currentFrameIndex, _gradient_kernel),
+            _currentData->gradientFrame(_currentFrameIndex, _gradient_kernel, !_fft_gradient),
                 full, _currentIntensity, _logarithmic)));
         }
     }
