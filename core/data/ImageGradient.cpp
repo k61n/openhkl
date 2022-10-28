@@ -79,8 +79,8 @@ void ImageGradient::computeFFT(GradientKernel kernel)
 
 void ImageGradient::gradient(std::function<void (int, int)> kernel_operator)
 {
-    for (int col = 1; col < _image->cols() - 1; ++col) {
-        for (int row = 1; row < _image->rows() - 1; ++row) {
+    for (int col = 0; col < _image->cols(); ++col) {
+        for (int row = 0; row < _image->rows(); ++row) {
             kernel_operator(row, col);
         }
     }
