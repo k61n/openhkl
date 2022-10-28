@@ -124,20 +124,10 @@ DetectorScene::DetectorScene(QObject* parent)
 {
 }
 
-void DetectorScene::setGradientKernel(int kernel)
+void DetectorScene::onGradientSetting(int kernel, bool fft)
 {
     try {
         _gradient_kernel = static_cast<ohkl::GradientKernel>(kernel);
-        loadCurrentImage();
-    } catch (const std::exception& e) {
-        QMessageBox::critical(nullptr, "Error", QString(e.what()));
-    }
-}
-
-
-void DetectorScene::setGradientComputation(int fft)
-{
-    try {
         _fft_gradient = fft;
         loadCurrentImage();
     } catch (const std::exception& e) {
@@ -381,8 +371,8 @@ void DetectorScene::drawSpotCenters()
         return;
 
     for (const cv::KeyPoint& point : _per_frame_spots->at(_currentFrameIndex)) {
-        PeakCenterGraphic* center =
-            new PeakCenterGraphic({point.pt.x, point.pt.y, _currentFrameIndex});
+        PeakCenterGraphic* center = new PeakCenterGraphic(
+            {point.pt.x, point.pt.y, static_cast<double>(_currentFrameIndex)});
         center->setColor(_3rdparty_color);
         center->setSize(_3rdparty_size);
         _peak_center_items.emplace_back(center);
@@ -813,6 +803,7 @@ void DetectorScene::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
 
             } else {
                 if (CutterItem* p = dynamic_cast<CutterItem*>(_lastClickedGI)) {
+                    Q_UNUSED(p);
                     // delete p....
                     _lastClickedGI = nullptr;
                     // removeItem(p);

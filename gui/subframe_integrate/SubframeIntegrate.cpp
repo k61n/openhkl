@@ -74,11 +74,17 @@ SubframeIntegrate::SubframeIntegrate() : QWidget()
         _detector_widget->dataCombo(), QOverload<int>::of(&QComboBox::currentIndexChanged),
         _data_combo, &QComboBox::setCurrentIndex);
     connect(
-        _gradient_kernel, QOverload<int>::of(&QComboBox::currentIndexChanged),
-        _detector_widget->scene(), &DetectorScene::setGradientKernel);
+        _gradient_kernel, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
+        this, &SubframeIntegrate::onGradientSettingsChanged);
     connect(
-        _fft_gradient, &QCheckBox::stateChanged, _detector_widget->scene(),
-        &DetectorScene::setGradientComputation);
+        _fft_gradient, &QCheckBox::stateChanged, this,
+        &SubframeIntegrate::onGradientSettingsChanged);
+    connect(
+        _discard_inhom_bkg, &QGroupBox::clicked, this,
+        &SubframeIntegrate::onGradientSettingsChanged);
+    connect(
+        this, &SubframeIntegrate::signalGradient, _detector_widget->scene(),
+        &DetectorScene::onGradientSetting);
 
     auto propertyScrollArea = new PropertyScrollArea(this);
     propertyScrollArea->setContentLayout(_left_layout);
@@ -317,6 +323,7 @@ void SubframeIntegrate::setIntegrateUp()
 
     _fft_gradient = new QCheckBox("FFT gradient");
     _fft_gradient->setToolTip("Use Fourier transform for image filtering");
+    _fft_gradient->setChecked(false);
 
     _grad_threshold = new SafeDoubleSpinBox();
     _grad_threshold->setMaximum(10000);
@@ -585,4 +592,9 @@ void SubframeIntegrate::toggleUnsafeWidgets()
 DetectorWidget* SubframeIntegrate::detectorWidget()
 {
     return _detector_widget;
+}
+
+void SubframeIntegrate::onGradientSettingsChanged()
+{
+    emit signalGradient(_gradient_kernel->currentIndex(), _fft_gradient->isChecked());
 }

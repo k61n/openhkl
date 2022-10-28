@@ -19,7 +19,8 @@
 
 namespace ohkl {
 
-//! Convolver with Gradient computing kernel
+//! Convolver with Gradient computing kernel. This subclass automatically offsets the
+//! kernel in the full matrix such that there is no shift in the computed gradient.
 class GradientConvolver : public AtomicConvolver {
  public:
     GradientConvolver();

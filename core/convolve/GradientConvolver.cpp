@@ -62,6 +62,7 @@ RealMatrix GradientConvolver::_matrix(int nrows, int ncols) const
 
     int k, l, row, col;
 
+    // center the matrix such that the central element for an odd kernel size is at (0, 0)
     for (int i = 0; i < _dim; ++i) {
         k = -half + offset + i;
         row = (k + nrows - offset) % nrows;

@@ -194,8 +194,7 @@ class DetectorScene : public QGraphicsScene {
     void wheelEvent(QGraphicsSceneWheelEvent* event);
 
  public slots:
-    void setGradientKernel(int kernel);
-    void setGradientComputation(int fft);
+    void onGradientSetting(int kernel, bool fft);
     void resetElements();
     void resetScene();
     void setMaxIntensity(int);

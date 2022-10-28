@@ -51,6 +51,7 @@ class ShapeComboBox;
 
 //! Frame containing interface to integrate peaks
 class SubframeIntegrate : public QWidget {
+    Q_OBJECT
  public:
     SubframeIntegrate();
 
@@ -60,6 +61,12 @@ class SubframeIntegrate : public QWidget {
     DetectorWidget* detectorWidget();
     //! Grab the refiner parameters
     void grabIntegrationParameters();
+
+ public slots:
+    void onGradientSettingsChanged();
+
+ signals:
+    void signalGradient(int kernel, bool fft);
 
  private:
     //! Select experiment, dataset, peak collection, unit cell
