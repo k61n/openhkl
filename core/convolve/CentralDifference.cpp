@@ -21,6 +21,8 @@ CentralDifference::CentralDifference() : GradientConvolver() { }
 CentralDifference::CentralDifference(const std::map<std::string, double>& parameters)
     : GradientConvolver(parameters)
 {
+    _norm_fac = 0.5;
+
     Eigen::Matrix3d central_x, central_y;
 
     central_x <<  0,  0,  0,
