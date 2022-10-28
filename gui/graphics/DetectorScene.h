@@ -185,8 +185,6 @@ class DetectorScene : public QGraphicsScene {
 
     std::shared_ptr<MaskHandler> getMaskHandler();
 
-    void updateMe();
-
  protected:
     void mousePressEvent(QGraphicsSceneMouseEvent* event);
     void mouseMoveEvent(QGraphicsSceneMouseEvent* event);
@@ -197,6 +195,7 @@ class DetectorScene : public QGraphicsScene {
 
  public slots:
     void setGradientKernel(int kernel);
+    void setGradientComputation(int fft);
     void resetElements();
     void resetScene();
     void setMaxIntensity(int);

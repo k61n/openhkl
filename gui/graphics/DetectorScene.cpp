@@ -50,6 +50,7 @@
 #include "tables/crystal/SpaceGroup.h"
 #include "tables/crystal/UnitCell.h"
 
+#include <exception>
 #include <iostream>
 
 #include <QCheckBox>
@@ -59,6 +60,7 @@
 #include <QGraphicsSceneMouseEvent>
 #include <QKeyEvent>
 #include <QMenu>
+#include <QMessageBox>
 #include <QPainterPath>
 #include <QPixmap>
 #include <QToolTip>
@@ -120,21 +122,27 @@ DetectorScene::DetectorScene(QObject* parent)
     , _gradient_kernel(ohkl::GradientKernel::Sobel)
     , _fft_gradient(false)
 {
-    connect(
-        _mask_handler.get(), &MaskHandler::signalMaskChanged, this,
-        &DetectorScene::updateMe);
 }
-
- void DetectorScene::updateMe()
- {
-    std::cout << "updateme" << std::endl;
-    update();
- }
 
 void DetectorScene::setGradientKernel(int kernel)
 {
-    _gradient_kernel = static_cast<ohkl::GradientKernel>(kernel);
-    loadCurrentImage();
+    try {
+        _gradient_kernel = static_cast<ohkl::GradientKernel>(kernel);
+        loadCurrentImage();
+    } catch (const std::exception& e) {
+        QMessageBox::critical(nullptr, "Error", QString(e.what()));
+    }
+}
+
+
+void DetectorScene::setGradientComputation(int fft)
+{
+    try {
+        _fft_gradient = fft;
+        loadCurrentImage();
+    } catch (const std::exception& e) {
+        QMessageBox::critical(nullptr, "Error", QString(e.what()));
+    }
 }
 
 void DetectorScene::addBeamSetter(int size, int linewidth)

@@ -88,36 +88,36 @@ void ImageGradient::gradient(std::function<void (int, int)> kernel_operator)
 
 void ImageGradient::centralDifference(int row, int col)
 {
-    _dx(row, col) = -pixel(row, col - 1) + pixel(row, col + 1);
-    _dy(row, col) = -pixel(row - 1, col) + pixel(row + 1, col);
+    _dx(row, col) = (- pixel(row, col - 1) + pixel(row, col + 1)) / 2.0;
+    _dy(row, col) = (- pixel(row - 1, col) + pixel(row + 1, col)) / 2.0;
 }
 
 void ImageGradient::sobel(int row, int col)
 {
     _dx(row, col) =
-        - pixel(row - 1, col - 1) - 2 * pixel(row, col - 1) - pixel(row + 1, col - 1)
-        + pixel(row - 1, col + 1) + 2 * pixel(row, col + 1) + pixel(row + 1, col + 1);
+        (- pixel(row - 1, col - 1) - 2 * pixel(row, col - 1) - pixel(row + 1, col - 1)
+         + pixel(row - 1, col + 1) + 2 * pixel(row, col + 1) + pixel(row + 1, col + 1)) / 8.0;
 
     _dy(row, col) =
-        - pixel(row - 1, col - 1) - 2 * pixel(row - 1, col) - pixel(row - 1, col + 1)
-        + pixel(row + 1, col - 1) + 2 * pixel(row + 1, col) + pixel(row + 1, col + 1);
+        (- pixel(row - 1, col - 1) - 2 * pixel(row - 1, col) - pixel(row - 1, col + 1)
+         + pixel(row + 1, col - 1) + 2 * pixel(row + 1, col) + pixel(row + 1, col + 1)) / 8.0;
 }
 
 void ImageGradient::prewitt(int row, int col)
 {
     _dx(row, col) =
-        - pixel(row - 1, col - 1) - pixel(row, col - 1) - pixel(row + 1, col - 1)
-        + pixel(row - 1, col + 1) + pixel(row, col + 1) + pixel(row + 1, col + 1);
+        (- pixel(row - 1, col - 1) - pixel(row, col - 1) - pixel(row + 1, col - 1)
+         + pixel(row - 1, col + 1) + pixel(row, col + 1) + pixel(row + 1, col + 1)) / 6.0;
 
     _dy(row, col) =
-        - pixel(row - 1, col - 1) - pixel(row - 1, col) - pixel(row - 1, col + 1)
-        + pixel(row + 1, col - 1) + pixel(row + 1, col) + pixel(row + 1, col + 1);
+        (- pixel(row - 1, col - 1) - pixel(row - 1, col) - pixel(row - 1, col + 1)
+         + pixel(row + 1, col - 1) + pixel(row + 1, col) + pixel(row + 1, col + 1)) / 6.0;
 }
 
 void ImageGradient::roberts(int row, int col)
 {
-    _dx(row, col) = pixel(row, col) - pixel(row + 1, col + 1);
-    _dy(row, col) = pixel(row + 1, col) - pixel(row, col + 1);
+    _dx(row, col) = (pixel(row, col) - pixel(row + 1, col + 1)) / 2.0;
+    _dy(row, col) = (pixel(row + 1, col) - pixel(row, col + 1)) / 2.0;
 }
 
 Eigen::MatrixXd ImageGradient::magnitude() const

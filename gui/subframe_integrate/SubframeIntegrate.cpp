@@ -21,6 +21,7 @@
 #include "core/shape/ShapeModel.h"
 #include "gui/MainWin.h" // gGui
 #include "gui/frames/ProgressView.h"
+#include "gui/graphics/DetectorScene.h"
 #include "gui/models/Project.h"
 #include "gui/models/Session.h"
 #include "gui/subwindows/DetectorWindow.h"
@@ -75,6 +76,9 @@ SubframeIntegrate::SubframeIntegrate() : QWidget()
     connect(
         _gradient_kernel, QOverload<int>::of(&QComboBox::currentIndexChanged),
         _detector_widget->scene(), &DetectorScene::setGradientKernel);
+    connect(
+        _fft_gradient, &QCheckBox::stateChanged, _detector_widget->scene(),
+        &DetectorScene::setGradientComputation);
 
     auto propertyScrollArea = new PropertyScrollArea(this);
     propertyScrollArea->setContentLayout(_left_layout);
@@ -311,6 +315,9 @@ void SubframeIntegrate::setIntegrateUp()
 
     _gradient_kernel = new QComboBox();
 
+    _fft_gradient = new QCheckBox("FFT gradient");
+    _fft_gradient->setToolTip("Use Fourier transform for image filtering");
+
     _grad_threshold = new SafeDoubleSpinBox();
     _grad_threshold->setMaximum(10000);
 
@@ -319,9 +326,10 @@ void SubframeIntegrate::setIntegrateUp()
     label = new QLabel("Kernel");
     grid->addWidget(label, 0, 0, 1, 1);
     grid->addWidget(_gradient_kernel, 0, 1, 1, 1);
+    grid->addWidget(_fft_gradient, 1, 1, 1, -1);
     label = new QLabel("Gradient threshold");
-    grid->addWidget(label, 1, 0, 1, 1);
-    grid->addWidget(_grad_threshold, 1, 1, 1, 1);
+    grid->addWidget(label, 2, 0, 1, 1);
+    grid->addWidget(_grad_threshold, 2, 1, 1, 1);
     f.addWidget(_discard_inhom_bkg);
 
     for (const auto& [kernel, description] : _kernel_description)
