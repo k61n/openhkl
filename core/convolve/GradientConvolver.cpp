@@ -67,7 +67,7 @@ RealMatrix GradientConvolver::_matrix(int nrows, int ncols) const
         row = (k + nrows - offset) % nrows;
         for (int j = 0; j < _dim; ++j) {
             l = -half + offset + j;
-            col = (j + ncols - offset) % ncols;
+            col = (l + ncols - offset) % ncols;
             kernel(row, col) = matrix(j, i);
         }
     }

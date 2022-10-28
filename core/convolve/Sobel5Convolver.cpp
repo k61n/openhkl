@@ -31,7 +31,7 @@ Sobel5Convolver::Sobel5Convolver(const std::map<std::string, double>& parameters
                 -8, -10,   0,  10,   8,
                 -5,  -4,   0,   4,   5;
 
-    sobel_x <<   5,   8,  10,   8,   5,
+    sobel_y <<   5,   8,  10,   8,   5,
                  4,  10,  20,  10,   4,
                  0,   0,   0,   0,   0,
                 -4, -10, -20, -10,  -4,
