@@ -51,6 +51,7 @@ class ShapeComboBox;
 
 //! Frame containing interface to integrate peaks
 class SubframeIntegrate : public QWidget {
+    Q_OBJECT
  public:
     SubframeIntegrate();
 
@@ -60,6 +61,12 @@ class SubframeIntegrate : public QWidget {
     DetectorWidget* detectorWidget();
     //! Grab the refiner parameters
     void grabIntegrationParameters();
+
+ public slots:
+    void onGradientSettingsChanged();
+
+ signals:
+    void signalGradient(int kernel, bool fft);
 
  private:
     //! Select experiment, dataset, peak collection, unit cell
@@ -135,6 +142,7 @@ class SubframeIntegrate : public QWidget {
     SafeDoubleSpinBox* _max_counts;
     QGroupBox* _discard_inhom_bkg;
     QComboBox* _gradient_kernel;
+    QCheckBox* _fft_gradient;
     SafeDoubleSpinBox* _grad_threshold;
 
     QPushButton* _integrate_button;
@@ -162,12 +170,12 @@ class SubframeIntegrate : public QWidget {
         {"1D Profile integrator", ohkl::IntegratorType::Profile1D},
         {"3D Profile integrator", ohkl::IntegratorType::Profile3D}};
 
-    const std::map<GradientKernel, QString> _kernel_description{
-        {GradientKernel::CentralDifference, "Central difference"},
-        {GradientKernel::Sobel, "Sobel 3x3"},
-        {GradientKernel::Sobel5, "Sobel 5x5"},
-        {GradientKernel::Prewitt, "Prewitt"},
-        {GradientKernel::Roberts, "Roberts"}};
+    const std::map<ohkl::GradientKernel, QString> _kernel_description{
+        {ohkl::GradientKernel::CentralDifference, "Central difference"},
+        {ohkl::GradientKernel::Sobel, "Sobel 3x3"},
+        {ohkl::GradientKernel::Sobel5, "Sobel 5x5"},
+        {ohkl::GradientKernel::Prewitt, "Prewitt"},
+        {ohkl::GradientKernel::Roberts, "Roberts"}};
 };
 
 

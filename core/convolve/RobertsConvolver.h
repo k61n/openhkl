@@ -15,7 +15,7 @@
 #ifndef OHKL_CORE_CONVOLVE_ROBERTSCONVOLVER_H
 #define OHKL_CORE_CONVOLVE_ROBERTSCONVOLVER_H
 
-#include "core/convolve/AtomicConvolver.h" // inherits from
+#include "core/convolve/GradientConvolver.h" // inherits from
 
 namespace ohkl {
 
@@ -27,7 +27,7 @@ namespace ohkl {
 //!
 //!
 
-class RobertsConvolver : public AtomicConvolver {
+class RobertsConvolver : public GradientConvolver {
  public:
     RobertsConvolver();
 
@@ -40,11 +40,6 @@ class RobertsConvolver : public AtomicConvolver {
     RobertsConvolver& operator=(const RobertsConvolver& other) = default;
 
     Convolver* clone() const override;
-
-    virtual std::pair<size_t, size_t> kernelSize() const override;
-
- private:
-    RealMatrix _matrix(int nrows, int ncols) const override;
 };
 
 } // namespace ohkl

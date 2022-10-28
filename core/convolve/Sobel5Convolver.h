@@ -15,7 +15,7 @@
 #ifndef OHKL_CORE_CONVOLVE_SOBEL5CONVOLVER_H
 #define OHKL_CORE_CONVOLVE_SOBEL5CONVOLVER_H
 
-#include "core/convolve/AtomicConvolver.h" // inherits from
+#include "core/convolve/GradientConvolver.h" // inherits from
 
 namespace ohkl {
 
@@ -29,7 +29,7 @@ namespace ohkl {
 //!
 //! Computes a smoothed central difference gradient
 
-class Sobel5Convolver : public AtomicConvolver {
+class Sobel5Convolver : public GradientConvolver {
  public:
     Sobel5Convolver();
 
@@ -42,11 +42,6 @@ class Sobel5Convolver : public AtomicConvolver {
     Sobel5Convolver& operator=(const Sobel5Convolver& other) = default;
 
     Convolver* clone() const override;
-
-    virtual std::pair<size_t, size_t> kernelSize() const override;
-
- private:
-    RealMatrix _matrix(int nrows, int ncols) const override;
 };
 
 } // namespace ohkl

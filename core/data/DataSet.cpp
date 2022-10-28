@@ -48,24 +48,6 @@
 
 namespace ohkl {
 
-ImageGradient::ImageGradient(std::size_t ncols, std::size_t nrows)
-{
-    dx = Eigen::MatrixXd::Zero(ncols, nrows);
-    dy = Eigen::MatrixXd::Zero(ncols, nrows);
-    dz = Eigen::MatrixXd::Zero(ncols, nrows);
-}
-
-Eigen::MatrixXd ImageGradient::magnitude() const
-{
-    Eigen::MatrixXd mag = Eigen::MatrixXd::Zero(dx.rows(), dx.cols());
-    for (std::size_t col = 0; col < mag.cols(); ++col) {
-        for (std::size_t row = 0; row < mag.rows(); ++row) {
-            mag(row, col) = std::sqrt(dx(row, col) * dx(row, col) + dy(row, col) * dy(row, col));
-        }
-    }
-    return mag;
-}
-
 DataSet::DataSet(const std::string& dataset_name, Diffractometer* diffractometer)
     : _diffractometer{diffractometer}, _states(nullptr), _total_histogram(nullptr)
 {
@@ -305,56 +287,12 @@ Eigen::MatrixXd DataSet::transformedFrame(std::size_t idx) const
     return new_frame;
 }
 
-Eigen::MatrixXd DataSet::gradientFrame(std::size_t idx) const
+Eigen::MatrixXd DataSet::gradientFrame(
+    std::size_t idx, GradientKernel kernel, bool realspace) const
 {
-    Eigen::MatrixXd current_frame, next_frame;
-    double dx, dy, dz;
-    current_frame = transformedFrame(idx);
-    if (idx < nFrames() - 1)
-        next_frame = transformedFrame(idx+1);
-    else
-        next_frame = Eigen::MatrixXd::Zero(nCols(), nRows());
-    Eigen::MatrixXd mag_gradient = Eigen::MatrixXd::Zero(nRows(), nCols());
-
-    for (std::size_t col = 0; col < nCols() - 1; ++col) {
-        for (std::size_t row = 0; row < nRows() - 1; ++row) {
-            dx = current_frame(row+1, col) - current_frame(row, col);
-            dy = current_frame(row, col+1) - current_frame(row, col);
-            // dz = next_frame(col, row) - current_frame(col, row);
-            mag_gradient(row, col) = std::sqrt(dx * dx + dy * dy);
-            // mag_gradient(col, row) = std::sqrt(dx * dx + dy * dy + dz * dz);
-        }
-    }
-    return mag_gradient;
-}
-
-Eigen::MatrixXd DataSet::imageGradient(std::size_t idx, const std::string& convolver) const
-{
-    ImageGradient grad(nRows(), nCols());
-    grad.dx = ohkl::convolvedFrame(frame(idx), convolver, {{"x", 0.0}});
-    grad.dy = ohkl::convolvedFrame(frame(idx), convolver, {{"y", 0.0}});
+    ImageGradient grad(transformedFrame(idx), realspace);
+    grad.compute(kernel);
     return grad.magnitude();
-}
-
-ImageGradient DataSet::vectorGradientFrame(std::size_t idx) const
-{
-    Eigen::MatrixXd current_frame, next_frame;
-    double dx, dy, dz;
-    current_frame = transformedFrame(idx);
-    if (idx < nFrames() - 1)
-        next_frame = transformedFrame(idx+1);
-    else
-        next_frame = Eigen::MatrixXd::Zero(nCols(), nRows());
-
-    ImageGradient grad(nRows(), nCols());
-    for (std::size_t col = 0; col < nCols() - 1; ++col) {
-        for (std::size_t row = 0; row < nRows() - 1; ++row) {
-            grad.dx(row, col) = current_frame(row+1, col) - current_frame(row, col);
-            grad.dy(row, col) = current_frame(row, col+1) - current_frame(row, col);
-            grad.dz(row, col) = next_frame(col, row) - current_frame(col, row);
-        }
-    }
-    return grad;
 }
 
 const IDataReader* DataSet::reader() const

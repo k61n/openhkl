@@ -19,7 +19,7 @@
 #include "base/mask/BoxMask.h"
 #include "base/mask/EllipseMask.h"
 #include "base/utils/Units.h"
-#include "core/data/DataSet.h"
+#include "core/data/ImageGradient.h"
 #include "core/detector/Detector.h"
 #include "core/gonio/Gonio.h"
 #include "core/instrument/Diffractometer.h"
@@ -50,6 +50,7 @@
 #include "tables/crystal/SpaceGroup.h"
 #include "tables/crystal/UnitCell.h"
 
+#include <exception>
 #include <iostream>
 
 #include <QCheckBox>
@@ -59,6 +60,7 @@
 #include <QGraphicsSceneMouseEvent>
 #include <QKeyEvent>
 #include <QMenu>
+#include <QMessageBox>
 #include <QPainterPath>
 #include <QPixmap>
 #include <QToolTip>
@@ -117,23 +119,20 @@ DetectorScene::DetectorScene(QObject* parent)
     , _peak_center_data(nullptr)
     , _per_frame_spots(nullptr)
     , _mask_handler(std::make_shared<MaskHandler>())
-    , _gradient_kernel(GradientKernel::Sobel)
+    , _gradient_kernel(ohkl::GradientKernel::Sobel)
+    , _fft_gradient(false)
 {
-    connect(
-        _mask_handler.get(), &MaskHandler::signalMaskChanged, this,
-        &DetectorScene::updateMe);
 }
 
- void DetectorScene::updateMe()
- {
-    std::cout << "updateme" << std::endl;
-    update();
- }
-
-void DetectorScene::setGradientKernel(int kernel)
+void DetectorScene::onGradientSetting(int kernel, bool fft)
 {
-    _gradient_kernel = static_cast<GradientKernel>(kernel);
-    loadCurrentImage();
+    try {
+        _gradient_kernel = static_cast<ohkl::GradientKernel>(kernel);
+        _fft_gradient = fft;
+        loadCurrentImage();
+    } catch (const std::exception& e) {
+        QMessageBox::critical(nullptr, "Error", QString(e.what()));
+    }
 }
 
 void DetectorScene::addBeamSetter(int size, int linewidth)
@@ -372,8 +371,8 @@ void DetectorScene::drawSpotCenters()
         return;
 
     for (const cv::KeyPoint& point : _per_frame_spots->at(_currentFrameIndex)) {
-        PeakCenterGraphic* center =
-            new PeakCenterGraphic({point.pt.x, point.pt.y, _currentFrameIndex});
+        PeakCenterGraphic* center = new PeakCenterGraphic(
+            {point.pt.x, point.pt.y, static_cast<double>(_currentFrameIndex)});
         center->setColor(_3rdparty_color);
         center->setSize(_3rdparty_size);
         _peak_center_items.emplace_back(center);
@@ -804,6 +803,7 @@ void DetectorScene::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
 
             } else {
                 if (CutterItem* p = dynamic_cast<CutterItem*>(_lastClickedGI)) {
+                    Q_UNUSED(p);
                     // delete p....
                     _lastClickedGI = nullptr;
                     // removeItem(p);
@@ -1023,15 +1023,14 @@ void DetectorScene::loadCurrentImage()
     if (_currentFrameIndex >= _currentData->nFrames())
         _currentFrameIndex = _currentData->nFrames() - 1;
     _currentFrame = _currentData->frame(_currentFrameIndex);
-    std::string kernel = _kernel_strings.at(_gradient_kernel);
     if (_image == nullptr) {
         if (!_drawGradient) {
             _image = addPixmap(QPixmap::fromImage(_colormap->matToImage(
                 _currentFrame.cast<double>(), full, _currentIntensity, _logarithmic)));
         } else {
             _image = addPixmap(QPixmap::fromImage(_colormap->matToImage(
-                _currentData->imageGradient(_currentFrameIndex, kernel), full, _currentIntensity,
-                _logarithmic)));
+            _currentData->gradientFrame(_currentFrameIndex, _gradient_kernel, !_fft_gradient),
+                full, _currentIntensity, _logarithmic)));
         }
         _image->setZValue(-2);
     } else {
@@ -1040,8 +1039,8 @@ void DetectorScene::loadCurrentImage()
                 _currentFrame.cast<double>(), full, _currentIntensity, _logarithmic)));
         } else {
             _image->setPixmap(QPixmap::fromImage(_colormap->matToImage(
-                _currentData->imageGradient(_currentFrameIndex, kernel), full, _currentIntensity,
-                _logarithmic)));
+            _currentData->gradientFrame(_currentFrameIndex, _gradient_kernel, !_fft_gradient),
+                full, _currentIntensity, _logarithmic)));
         }
     }
 

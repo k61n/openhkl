@@ -13,42 +13,30 @@
 //  ***********************************************************************************************
 
 #include "core/convolve/RobertsConvolver.h"
-#include "core/convolve/AtomicConvolver.h"
+#include "core/convolve/GradientConvolver.h"
 
 namespace ohkl {
 
-RobertsConvolver::RobertsConvolver() : AtomicConvolver() { }
+RobertsConvolver::RobertsConvolver() : GradientConvolver() { }
 
 RobertsConvolver::RobertsConvolver(const std::map<std::string, double>& parameters)
-    : AtomicConvolver(parameters)
+    : GradientConvolver(parameters)
 {
     _norm_fac = 0.5;
+
+    Eigen::Matrix2d roberts_x, roberts_y;
+
+    roberts_x <<  1,  0,
+                  0, -1;
+
+    roberts_y <<  0,  1,
+                 -1,  0;
+
+    setOperator(roberts_x, roberts_y);
 }
 
 Convolver* RobertsConvolver::clone() const
 {
     return new RobertsConvolver(*this);
 }
-
-std::pair<size_t, size_t> RobertsConvolver::kernelSize() const
-{
-    return std::make_pair(2, 2);
-}
-
-RealMatrix RobertsConvolver::_matrix(int nrows, int ncols) const
-{
-    RealMatrix kernel = RealMatrix::Zero(nrows, ncols);
-    if (_parameters.find("x") != _parameters.end()) {
-        kernel(0, 0) = 1.0;
-        kernel(1, 1) = -1.0;
-    } else if (_parameters.find("y") != _parameters.end()) {
-        kernel(0, 1) = -1.0;
-        kernel(1, 0) = 1.0;
-    } else {
-        throw std::runtime_error("Roberts convolver missing direction parameter (x/y)");
-    }
-
-    return kernel * _norm_fac;
-}
-
 } // namespace ohkl

@@ -133,14 +133,10 @@ void MainWin::onPeaksChanged() const { }
 
 void MainWin::onUnitCellChanged() const { }
 
-void MainWin::changeView(int option) const { }
-
 void MainWin::updatePlot(PlottableItem* p) const
 {
     experiment->getPlot()->updatePlot(p);
 }
-
-void MainWin::cursormode(int i) const { }
 
 void MainWin::exportPlot() const
 {

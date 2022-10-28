@@ -15,7 +15,7 @@
 #ifndef OHKL_CORE_CONVOLVE_PREWITTCONVOLVER_H
 #define OHKL_CORE_CONVOLVE_PREWITTCONVOLVER_H
 
-#include "core/convolve/AtomicConvolver.h" // inherits from
+#include "core/convolve/GradientConvolver.h" // inherits from
 
 namespace ohkl {
 
@@ -27,7 +27,7 @@ namespace ohkl {
 //!
 //! Computes an averaged central difference gradient
 
-class PrewittConvolver : public AtomicConvolver {
+class PrewittConvolver : public GradientConvolver {
  public:
     PrewittConvolver();
 
@@ -40,11 +40,6 @@ class PrewittConvolver : public AtomicConvolver {
     PrewittConvolver& operator=(const PrewittConvolver& other) = default;
 
     Convolver* clone() const override;
-
-    virtual std::pair<size_t, size_t> kernelSize() const override;
-
- private:
-    RealMatrix _matrix(int nrows, int ncols) const override;
 };
 
 } // namespace ohkl
