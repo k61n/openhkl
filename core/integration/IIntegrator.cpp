@@ -115,9 +115,11 @@ void IIntegrator::integrate(
     ohklLog(Level::Debug, "IIntegrator::integrate: frames loop");
     int nfailures = 0;
     for (idx = 0; idx < data->nFrames(); ++idx) {
-        Eigen::MatrixXd current_frame;
+        Eigen::MatrixXd current_frame, gradient;
         Eigen::MatrixXi mask;
         current_frame = data->transformedFrame(idx);
+        if (_params.use_gradient)
+            gradient = data->gradientFrame(idx, _params.gradient_type, !_params.fft_gradient);
 
         mask.resize(data->nRows(), data->nCols());
         mask.setConstant(int(IntegrationRegion::EventType::EXCLUDED));

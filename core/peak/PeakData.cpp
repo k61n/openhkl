@@ -24,7 +24,15 @@
 
 namespace ohkl {
 
-PeakData::PeakData(Peak3D* peak) : _peak(peak), _system(peak), _events(), _counts(), _coords() { }
+PeakData::PeakData(Peak3D* peak)
+    : _peak(peak)
+    , _system(peak)
+    , _events()
+    , _counts()
+    , _gradients()
+    , _coords()
+{
+}
 
 const std::deque<DetectorEvent>& PeakData::events() const
 {
@@ -34,6 +42,11 @@ const std::deque<DetectorEvent>& PeakData::events() const
 const std::deque<double>& PeakData::counts() const
 {
     return _counts;
+}
+
+const std::deque<double>& PeakData::gradients() const
+{
+    return _gradients;
 }
 
 void PeakData::standardizeCoords()
@@ -49,20 +62,23 @@ void PeakData::standardizeCoords()
         _coords[i] = _system.transform(_events[i]);
 }
 
-void PeakData::addEvent(const DetectorEvent& ev, double count)
+void PeakData::addEvent(const DetectorEvent& ev, double count, double gradient)
 {
     _events.push_back(ev);
     _counts.push_back(count);
+    _gradients.push_back(gradient);
 }
 
 void PeakData::reset()
 {
     std::deque<DetectorEvent> e;
     std::deque<double> c;
+    std::deque<double> g;
     std::deque<Eigen::Vector3d> crds;
 
     std::swap(_events, e);
     std::swap(_counts, c);
+    std::swap(_gradients, g);
     std::swap(_coords, crds);
 }
 

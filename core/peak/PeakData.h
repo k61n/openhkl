@@ -27,14 +27,16 @@ class PeakData {
  public:
     //! Construct instance associated to the given peak
     PeakData(Peak3D* peak = nullptr);
-    //! Returns the list of detector events associated to the peak
+    //! Returns the list of detector events associated with the peak
     const std::deque<DetectorEvent>& events() const;
-    //! Returns the list of detector counts associated to the peak
+    //! Returns the list of detector counts associated with the peak
     const std::deque<double>& counts() const;
+    //! Returns the list of gradients associated with the peak
+    const std::deque<double>& gradients() const;
     //! Compute the standard coordinates for each of the observed events.
     void standardizeCoords();
     //! Add an event to the list of events.
-    void addEvent(const DetectorEvent& ev, double count);
+    void addEvent(const DetectorEvent& ev, double count, double gradient = 0);
     //! Clear the events
     void reset();
 
@@ -43,6 +45,7 @@ class PeakData {
     PeakCoordinateSystem _system;
     std::deque<DetectorEvent> _events;
     std::deque<double> _counts;
+    std::deque<double> _gradients;
     std::deque<Eigen::Vector3d> _coords;
 };
 
