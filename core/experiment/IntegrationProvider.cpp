@@ -105,9 +105,11 @@ void IntegrationProvider::integratePeaks(
 void IntegrationProvider::integrateFoundPeaks(PeakFinder* peak_finder)
 {
     ohklLog(Level::Info, "IntegrationProvider::integrateFoundPeaks");
+    _params->log(Level::Info);
     const DataMap* data = _data_handler->getDataMap();
     IIntegrator* integrator = pIntegrator(IntegratorType::PixelSum);
     integrator->setNNumors(data->size());
+    integrator->setParameters(*_params);
 
     int n_numor = 1;
     for (const sptrDataSet& data : peak_finder->currentData()) {

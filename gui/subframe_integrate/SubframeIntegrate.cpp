@@ -15,6 +15,7 @@
 
 #include "gui/subframe_integrate/SubframeIntegrate.h"
 
+#include "core/data/ImageGradient.h"
 #include "core/experiment/Experiment.h"
 #include "core/peak/IntegrationRegion.h"
 #include "core/peak/Peak3D.h"
@@ -158,8 +159,8 @@ void SubframeIntegrate::setPeakTableUp()
     _peak_collection_model.setRoot(&_peak_collection_item);
     _peak_table->setModel(&_peak_collection_model);
     _peak_table->resizeColumnsToContents();
-    _peak_table->setColumnHidden(13, true);
-    _peak_table->setColumnHidden(14, true);
+    _peak_table->setColumnHidden(PeakColumn::Selected, true);
+    _peak_table->setColumnHidden(PeakColumn::Count, true);
 
     peak_grid->addWidget(_peak_table, 0, 0, 0, 0);
 
@@ -209,6 +210,9 @@ void SubframeIntegrate::grabIntegrationParameters()
     _fit_center->setChecked(params->fit_center);
     _fit_covariance->setChecked(params->fit_cov);
     _min_neighbours->setValue(params->min_neighbors);
+    _discard_inhom_bkg->setChecked(params->use_gradient);
+    _fft_gradient->setChecked(params->fft_gradient);
+    _gradient_kernel->setCurrentIndex(static_cast<int>(params->gradient_type));
 
     for (auto it = _integrator_strings.begin(); it != _integrator_strings.end(); ++it)
         if (it->second == params->integrator_type)
@@ -241,6 +245,9 @@ void SubframeIntegrate::setIntegrationParameters()
     params->region_type = static_cast<ohkl::RegionType>(_integration_region_type->currentIndex());
     params->integrator_type =
         _integrator_strings.find(_integrator_combo->currentText().toStdString())->second;
+    params->use_gradient = _discard_inhom_bkg->isChecked();
+    params->fft_gradient = _fft_gradient->isChecked();
+    params->gradient_type = static_cast<ohkl::GradientKernel>(_gradient_kernel->currentIndex());
 
     for (auto it = ohkl::regionTypeDescription.begin(); it != ohkl::regionTypeDescription.end(); ++it)
         if (it->second == _integration_region_type->currentText().toStdString())

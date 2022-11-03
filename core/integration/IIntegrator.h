@@ -65,9 +65,11 @@ class IIntegrator {
     virtual ~IIntegrator();
     //! Integrate all peaks in the list which are contained in the specified data set.
     void integrate(
-        std::vector<ohkl::Peak3D*> peaks, ShapeModel* shape_model, sptrDataSet data, int n_numor);
+        std::vector<Peak3D*> peaks, ShapeModel* shape_model, sptrDataSet data, int n_numor);
     //! Return the mean background.
     Intensity meanBackground() const;
+    //! Return the mean background gradient
+    Intensity meanBkgGradient() const;
     //! Return the integrated intensity.
     Intensity integratedIntensity() const;
     //! Return the peak rocking curve.
@@ -80,9 +82,11 @@ class IIntegrator {
  protected:
     //! Mean local background of peak. The uncertainty is the uncertainty of the
     //! _estimate_ of the background.
-    ohkl::Intensity _meanBackground;
+    Intensity _meanBackground;
+    //! Mean gradient of background (Gaussian statistics)
+    Intensity _meanBkgGradient;
     //! Net integrated intensity, after background correction.
-    ohkl::Intensity _integratedIntensity;
+    Intensity _integratedIntensity;
     //! The rocking curve of the peak.
     std::vector<Intensity> _rockingCurve;
     //! Optional pointer to progress handler.

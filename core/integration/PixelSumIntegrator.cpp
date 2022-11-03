@@ -23,10 +23,12 @@ namespace ohkl {
 
 namespace {
 
-std::pair<bool,Intensity> compute_background(const IntegrationRegion& region)
+std::pair<Intensity, Intensity> compute_background(
+    const IntegrationRegion& region, bool use_gradient = false)
 {
     const auto& events = region.peakData().events();
     const auto& counts = region.peakData().counts();
+    const auto& gradients = region.peakData().gradients();
 
     if (events.size() < 20) {
         ohklLog(Level::Debug, "compute_background: too few data points");
@@ -37,10 +39,15 @@ std::pair<bool,Intensity> compute_background(const IntegrationRegion& region)
     double mean_bkg = 0;
     double var_bkg;
     double sigma_bkg;
+    double mean_grad = 0;
+    double var_grad = 0;
+    double sigma_grad = 0;
     size_t nbkg;
     for (auto iteration = 0; iteration < 20; ++iteration) {
         double sum_bkg = 0;
         double sum_bkg2 = 0;
+        double sum_grad_bkg = 0;
+        double sum_grad_bkg2 = 0;
         nbkg = 0;
         for (auto i = 0; i < counts.size(); ++i) {
             if (region.classify(events[i]) != IntegrationRegion::EventType::BACKGROUND)
@@ -49,17 +56,29 @@ std::pair<bool,Intensity> compute_background(const IntegrationRegion& region)
                 continue;
             sum_bkg += counts[i];
             sum_bkg2 += counts[i] * counts[i];
+            if (use_gradient) {
+                sum_grad_bkg += gradients[i];
+                sum_grad_bkg2 += gradients[i] * gradients[i];
+            }
             nbkg++;
         }
         double old_mean = mean_bkg;
         mean_bkg = sum_bkg / nbkg;
         var_bkg = (sum_bkg2 - nbkg * mean_bkg * mean_bkg) / (nbkg - 1);
         sigma_bkg = std::sqrt(var_bkg);
+        if (use_gradient) {
+            mean_grad = sum_grad_bkg / nbkg;
+            var_grad = (sum_grad_bkg2 - nbkg * mean_grad) / (nbkg - 1);
+            sigma_grad = std::sqrt(var_grad);
+        }
+
         if (iteration > 0 && std::fabs((old_mean - mean_bkg) / mean_bkg) < 1e-9)
             break;
     }
 
-    return {true, Intensity(mean_bkg, mean_bkg / nbkg)};
+    if (!use_gradient)
+        return {Intensity(mean_bkg, mean_bkg / nbkg), {}};
+    return {Intensity(mean_bkg, mean_bkg / nbkg), Intensity(mean_grad, sigma_grad)};
 }
 
 } // namespace
@@ -74,13 +93,14 @@ PixelSumIntegrator::PixelSumIntegrator(bool fit_center, bool fit_covariance)
 
 bool PixelSumIntegrator::compute(Peak3D* peak, ShapeModel*, const IntegrationRegion& region)
 {
-    auto [ok, meanBackground] = compute_background(region);
-    if (!ok) {
+    auto [meanBackground, bkgGradient] = compute_background(region);
+    if (!meanBackground.isValid()) {
         peak->setRejectionFlag(RejectionFlag::TooFewPoints);
         peak->setSelected(false);
         return false;
     }
     _meanBackground = meanBackground;
+    _meanBkgGradient = bkgGradient;
 
     PeakCoordinateSystem frame(peak);
 

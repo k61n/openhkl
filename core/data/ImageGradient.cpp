@@ -14,6 +14,7 @@
 
 #include "core/data/ImageGradient.h"
 
+#include "base/utils/Logger.h"
 #include "core/convolve/ConvolverFactory.h"
 #include <stdexcept>
 #include <memory>
@@ -43,10 +44,17 @@ double ImageGradient::pixel(int row, int col)
 
 void ImageGradient::compute(GradientKernel kernel)
 {
-    if (_real_space)
+    if (_real_space) {
+        ohklLog(
+            Level::Debug, "ImageGradient::compute: real space ",
+            _convolver_callbacks.at(kernel), " kernel");
         computeRealSpace(kernel);
-    else
+    } else {
+            ohklLog(
+            Level::Debug, "ImageGradient::compute: FFT ",
+            _convolver_callbacks.at(kernel), " kernel");
         computeFFT(kernel);
+    }
 }
 
 void ImageGradient::computeRealSpace(GradientKernel kernel)

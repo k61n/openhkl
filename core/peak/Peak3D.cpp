@@ -61,6 +61,7 @@ const std::map<RejectionFlag, std::string> Peak3D::_rejection_map{
 Peak3D::Peak3D(sptrDataSet data)
     : _shape()
     , _meanBackground()
+    , _meanBkgGradient()
     , _peakEnd(3.0)
     , _bkgBegin(3.0)
     , _bkgEnd(6.0)
@@ -85,6 +86,7 @@ Peak3D::Peak3D(sptrDataSet data, const Ellipsoid& shape) : Peak3D(data)
 Peak3D::Peak3D(sptrDataSet data, const MillerIndex& hkl)
     : _shape()
     , _meanBackground()
+    , _meanBkgGradient()
     , _peakEnd(3.0)
     , _bkgBegin(3.0)
     , _bkgEnd(6.0)
@@ -106,6 +108,7 @@ Peak3D::Peak3D(std::shared_ptr<ohkl::Peak3D> peak)
 {
     setShape(peak->shape());
     _meanBackground = peak->meanBackground();
+    _meanBkgGradient = peak->meanBkgGradient();
     _peakEnd = peak->peakEnd();
     _bkgBegin = peak->bkgBegin();
     _bkgEnd = peak->bkgEnd();
@@ -258,10 +261,12 @@ bool Peak3D::predicted() const
 
 void Peak3D::updateIntegration(
     const std::vector<Intensity>& rockingCurve, const Intensity& meanBackground,
-    const Intensity& integratedIntensity, double peakEnd, double bkgBegin, double bkgEnd)
+    const Intensity& meanBkgGradient, const Intensity& integratedIntensity,
+    double peakEnd, double bkgBegin, double bkgEnd)
 {
     _rockingCurve = rockingCurve;
     _meanBackground = meanBackground;
+    _meanBkgGradient = meanBkgGradient;
     _rawIntensity = integratedIntensity;
 
     if (_rawIntensity.sigma() < _sigma2_eps) { // NaN sigma handled by Intensity constructor
@@ -378,6 +383,11 @@ void Peak3D::setManually(
 Intensity Peak3D::meanBackground() const
 {
     return _meanBackground;
+}
+
+Intensity Peak3D::meanBkgGradient() const
+{
+    return _meanBkgGradient;
 }
 
 double Peak3D::peakEnd() const

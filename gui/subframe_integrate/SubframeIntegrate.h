@@ -34,7 +34,6 @@
 #include <QTableWidget>
 #include <QVBoxLayout>
 #include <QWidget>
-#include <qcheckbox.h>
 
 class PeakComboBox;
 class FoundPeakComboBox;

@@ -108,10 +108,10 @@ void DetectorWindow::setPeakTableUp()
     _peak_table_2->resizeColumnsToContents();
     _peak_table_2->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Minimum);
 
-    _peak_table_1->setColumnHidden(13, true);
-    _peak_table_1->setColumnHidden(14, true);
-    _peak_table_2->setColumnHidden(13, true);
-    _peak_table_2->setColumnHidden(14, true);
+    _peak_table_1->setColumnHidden(PeakColumn::Selected, true);
+    _peak_table_1->setColumnHidden(PeakColumn::Count, true);
+    _peak_table_2->setColumnHidden(PeakColumn::Selected, true);
+    _peak_table_2->setColumnHidden(PeakColumn::Count, true);
 
     table_layout->addWidget(_peak_table_1);
     table_layout->addWidget(_peak_table_2);

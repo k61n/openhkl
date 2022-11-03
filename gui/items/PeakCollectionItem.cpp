@@ -80,7 +80,7 @@ int PeakCollectionItem::childCount() const
 
 int PeakCollectionItem::columnCount() const
 {
-    return static_cast<int>(Column::Count);
+    return static_cast<int>(PeakColumn::Count);
 }
 
 QVariant PeakCollectionItem::data(const QModelIndex& index, int role) const
@@ -99,7 +99,7 @@ void PeakCollectionItem::sort(int column, Qt::SortOrder order)
         [](std::unique_ptr<PeakItem>&, std::unique_ptr<PeakItem>&) { return false; };
 
     switch (column) {
-        case Column::h: {
+        case PeakColumn::h: {
             compareFn = [&](std::unique_ptr<PeakItem>& p1, std::unique_ptr<PeakItem>& p2) {
                 const ohkl::UnitCell* cell_1 = p1->peak()->unitCell();
                 const ohkl::UnitCell* cell_2 = p2->peak()->unitCell();
@@ -110,7 +110,7 @@ void PeakCollectionItem::sort(int column, Qt::SortOrder order)
             };
             break;
         }
-        case Column::k: {
+        case PeakColumn::k: {
             compareFn = [&](std::unique_ptr<PeakItem>& p1, std::unique_ptr<PeakItem>& p2) {
                 const ohkl::UnitCell* cell_1 = p1->peak()->unitCell();
                 const ohkl::UnitCell* cell_2 = p2->peak()->unitCell();
@@ -121,7 +121,7 @@ void PeakCollectionItem::sort(int column, Qt::SortOrder order)
             };
             break;
         }
-        case Column::l: {
+        case PeakColumn::l: {
             compareFn = [](std::unique_ptr<PeakItem>& p1, std::unique_ptr<PeakItem>& p2) {
                 const ohkl::UnitCell* cell_1 = p1->peak()->unitCell();
                 const ohkl::UnitCell* cell_2 = p2->peak()->unitCell();
@@ -132,7 +132,7 @@ void PeakCollectionItem::sort(int column, Qt::SortOrder order)
             };
             break;
         }
-        case Column::px: {
+        case PeakColumn::px: {
             compareFn = [](std::unique_ptr<PeakItem>& p1, std::unique_ptr<PeakItem>& p2) {
                 const Eigen::Vector3d& center1 = p1->peak()->shape().center();
                 const Eigen::Vector3d& center2 = p2->peak()->shape().center();
@@ -140,7 +140,7 @@ void PeakCollectionItem::sort(int column, Qt::SortOrder order)
             };
             break;
         }
-        case Column::py: {
+        case PeakColumn::py: {
             compareFn = [](std::unique_ptr<PeakItem>& p1, std::unique_ptr<PeakItem>& p2) {
                 const Eigen::Vector3d& center1 = p1->peak()->shape().center();
                 const Eigen::Vector3d& center2 = p2->peak()->shape().center();
@@ -148,7 +148,7 @@ void PeakCollectionItem::sort(int column, Qt::SortOrder order)
             };
             break;
         }
-        case Column::Frame: {
+        case PeakColumn::Frame: {
             compareFn = [](std::unique_ptr<PeakItem>& p1, std::unique_ptr<PeakItem>& p2) {
                 const Eigen::Vector3d& center1 = p1->peak()->shape().center();
                 const Eigen::Vector3d& center2 = p2->peak()->shape().center();
@@ -156,7 +156,7 @@ void PeakCollectionItem::sort(int column, Qt::SortOrder order)
             };
             break;
         }
-        case Column::Intensity: {
+        case PeakColumn::Intensity: {
             compareFn = [](std::unique_ptr<PeakItem>& p1, std::unique_ptr<PeakItem>& p2) {
                 double intensity1 = 0.0;
                 double intensity2 = 0.0;
@@ -174,7 +174,7 @@ void PeakCollectionItem::sort(int column, Qt::SortOrder order)
             };
             break;
         }
-        case Column::Sigma: {
+        case PeakColumn::Sigma: {
             compareFn = [](std::unique_ptr<PeakItem>& p1, std::unique_ptr<PeakItem>& p2) {
                 double sigma_intensity1 = 0.0;
                 double sigma_intensity2 = 0.0;
@@ -192,7 +192,7 @@ void PeakCollectionItem::sort(int column, Qt::SortOrder order)
             };
             break;
         }
-        case Column::Strength: {
+        case PeakColumn::Strength: {
             compareFn = [](std::unique_ptr<PeakItem>& p1, std::unique_ptr<PeakItem>& p2) {
                 double strength1 = 0.0;
                 double strength2 = 0.0;
@@ -210,7 +210,43 @@ void PeakCollectionItem::sort(int column, Qt::SortOrder order)
             };
             break;
         }
-        case Column::Numor: {
+        case PeakColumn::BkgGradient: {
+            compareFn = [](std::unique_ptr<PeakItem>& p1, std::unique_ptr<PeakItem>& p2) {
+                double gradient1 = 0.0;
+                double gradient2 = 0.0;
+                try {
+                    gradient1 = p1->peak()->meanBkgGradient().value();
+                } catch (std::range_error& e) {
+                    // interpolation error
+                }
+                try {
+                    gradient2 = p2->peak()->meanBkgGradient().value();
+                } catch (std::range_error& e) {
+                    // interpolation error
+                }
+                return (gradient1 < gradient2);
+            };
+            break;
+        }
+        case PeakColumn::BkgGradientSigma: {
+            compareFn = [](std::unique_ptr<PeakItem>& p1, std::unique_ptr<PeakItem>& p2) {
+                double sigma1 = 0.0;
+                double sigma2 = 0.0;
+                try {
+                    sigma1 = p1->peak()->meanBkgGradient().sigma();
+                } catch (std::range_error& e) {
+                    // interpolation error
+                }
+                try {
+                    sigma2 = p2->peak()->meanBkgGradient().sigma();
+                } catch (std::range_error& e) {
+                    // interpolation error
+                }
+                return (sigma1 < sigma2);
+            };
+            break;
+        }
+        case PeakColumn::Numor: {
             compareFn = [&](std::unique_ptr<PeakItem>& p1, std::unique_ptr<PeakItem>& p2) {
                 const int numor_1 = p1->peak()->dataSet()->metadata().key<int>(ohkl::at_numor);
                 const int numor_2 = p2->peak()->dataSet()->metadata().key<int>(ohkl::at_numor);
@@ -218,7 +254,7 @@ void PeakCollectionItem::sort(int column, Qt::SortOrder order)
             };
             break;
         }
-        case Column::uc: {
+        case PeakColumn::uc: {
             compareFn = [&](std::unique_ptr<PeakItem>& p1, std::unique_ptr<PeakItem>& p2) {
                 const ohkl::UnitCell* uc_1 = p1->peak()->unitCell();
                 const ohkl::UnitCell* uc_2 = p2->peak()->unitCell();
@@ -228,7 +264,7 @@ void PeakCollectionItem::sort(int column, Qt::SortOrder order)
             };
             break;
         }
-        case Column::d: {
+        case PeakColumn::d: {
             compareFn = [&](std::unique_ptr<PeakItem>& p1, std::unique_ptr<PeakItem>& p2) {
                 double d_1 = 0.0;
                 double d_2 = 0.0;
@@ -246,7 +282,7 @@ void PeakCollectionItem::sort(int column, Qt::SortOrder order)
             };
             break;
         }
-        case Column::Rejection: {
+        case PeakColumn::Rejection: {
             compareFn = [&](std::unique_ptr<PeakItem>& p1, std::unique_ptr<PeakItem>& p2) {
                 int s_1 = static_cast<int>(p1->peak()->rejectionFlag());
                 int s_2 = static_cast<int>(p2->peak()->rejectionFlag());
@@ -254,7 +290,7 @@ void PeakCollectionItem::sort(int column, Qt::SortOrder order)
             };
             break;
         }
-        case Column::Selected: {
+        case PeakColumn::Selected: {
             compareFn = [&](std::unique_ptr<PeakItem>& p1, std::unique_ptr<PeakItem>& p2) {
                 bool s_1 = p1->peak()->selected();
                 bool s_2 = p2->peak()->selected();
@@ -262,7 +298,7 @@ void PeakCollectionItem::sort(int column, Qt::SortOrder order)
             };
             break;
         }
-        case Column::Filtered: {
+        case PeakColumn::Filtered: {
             compareFn = [&](std::unique_ptr<PeakItem>& p1, std::unique_ptr<PeakItem>& p2) {
                 bool s_1 = p1->peak()->caughtByFilter();
                 bool s_2 = p2->peak()->caughtByFilter();

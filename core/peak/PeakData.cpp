@@ -62,7 +62,7 @@ void PeakData::standardizeCoords()
         _coords[i] = _system.transform(_events[i]);
 }
 
-void PeakData::addEvent(const DetectorEvent& ev, double count, double gradient)
+void PeakData::addEvent(const DetectorEvent& ev, double count, double gradient /* = 0 */)
 {
     _events.push_back(ev);
     _counts.push_back(count);

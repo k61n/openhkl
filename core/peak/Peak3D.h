@@ -108,6 +108,8 @@ class Peak3D {
     Intensity rawIntensity() const;
     //! Return mean background of the peak
     Intensity meanBackground() const;
+    //! Return the mean background gradient of the peak
+    Intensity meanBkgGradient() const;
 
     //! Return shape scale used to define peak region
     double peakEnd() const;
@@ -170,7 +172,8 @@ class Peak3D {
     //! Update the integration parameters for this peak
     void updateIntegration(
         const std::vector<Intensity>& rockingCurve, const Intensity& meanBackground,
-        const Intensity& integratedIntensity, double peakEnd, double bkgBegin, double bkgEnd);
+        const Intensity& meanBkgGradient, const Intensity& integratedIntensity,
+        double peakEnd, double bkgBegin, double bkgEnd);
     //! Return the q vector of the peak, transformed into sample coordinates.
     ReciprocalVector q() const;
     //! Return the data set to which this peak belongs
@@ -208,6 +211,8 @@ class Peak3D {
     Intensity _rawIntensity;
     //! Mean background estimate
     Intensity _meanBackground;
+    //! Mean background gradient
+    Intensity _meanBkgGradient;
     //! Shape scale factor for peak
     double _peakEnd;
     //! Shape scale factor for start of background

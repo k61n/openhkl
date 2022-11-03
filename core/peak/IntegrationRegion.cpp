@@ -238,7 +238,8 @@ IntegrationRegion::EventType IntegrationRegion::classify(const DetectorEvent& ev
 }
 
 bool IntegrationRegion::advanceFrame(
-    const Eigen::MatrixXd& image, const Eigen::MatrixXi& mask, double frame)
+    const Eigen::MatrixXd& image, const Eigen::MatrixXi& mask, double frame,
+    const Eigen::MatrixXd* gradient)
 {
     const auto aabb = _hull.aabb();
     auto lower = aabb.lower();
@@ -265,11 +266,19 @@ bool IntegrationRegion::advanceFrame(
             Eigen::Vector3d p(x, y, frame);
             auto event_type = classify(ev);
 
-            if (event_type == EventType::PEAK)
-                _data.addEvent(ev, image(y, x));
+            if (event_type == EventType::PEAK) {
+                if (!gradient)
+                    _data.addEvent(ev, image(y, x));
+                else
+                    _data.addEvent(ev, image(y, x), (*gradient)(x, y));
+            }
 
-            if (event_type == EventType::BACKGROUND && mask_type == EventType::BACKGROUND)
-                _data.addEvent(ev, image(y, x));
+            if (event_type == EventType::BACKGROUND && mask_type == EventType::BACKGROUND) {
+                if (!gradient)
+                    _data.addEvent(ev, image(y, x));
+                else
+                    _data.addEvent(ev, image(y, x), (*gradient)(x, y));
+            }
 
             // check if point is in Brillouin zone (or AABB if no UC available)
             // if (_hull.contains(p)) {

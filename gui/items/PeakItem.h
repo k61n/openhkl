@@ -23,6 +23,27 @@
 
 enum PeakDisplayModes { VALID, FILTER };
 
+enum PeakColumn {
+    h,
+    k,
+    l,
+    px,
+    py,
+    Frame,
+    Intensity,
+    Sigma,
+    Strength,
+    BkgGradient,
+    BkgGradientSigma,
+    Numor,
+    uc,
+    d,
+    Rejection,
+    Filtered,
+    Selected,
+    Count,
+};
+
 class PeakItem : public QStandardItem {
  public:
     PeakItem(ohkl::Peak3D* peak);
@@ -32,6 +53,8 @@ class PeakItem : public QStandardItem {
     double intensity() const;
     double sigma_intensity() const;
     double strength() const;
+    double bkg_gradient() const;
+    double bkg_gradient_sigma() const;
     bool selected() const;
     //! Retrieve the data of column and row
     QVariant peakData(const QModelIndex& index, int role, PeakDisplayModes mode) const;
@@ -40,24 +63,6 @@ class PeakItem : public QStandardItem {
     //! Get the graphical representation
     PeakItemGraphic* peakGraphic() { return _peak_graphic.get(); };
     //! The column enumerators
-    enum Column {
-        h,
-        k,
-        l,
-        px,
-        py,
-        Frame,
-        Intensity,
-        Sigma,
-        Strength,
-        Numor,
-        uc,
-        d,
-        Rejection,
-        Filtered,
-        Selected,
-        Count,
-    };
     //! Whether the peak was caught by the filter
     bool caughtByFilter() const;
 

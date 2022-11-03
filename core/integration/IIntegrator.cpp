@@ -17,6 +17,7 @@
 #include "base/utils/Logger.h"
 #include "core/data/DataSet.h"
 #include "core/peak/IntegrationRegion.h"
+#include "core/peak/Intensity.h"
 #include "core/peak/Peak3D.h"
 #include "tables/crystal/UnitCell.h"
 
@@ -36,6 +37,9 @@ void IntegrationParameters::log(const Level& level) const
     ohklLog(level, "fit_cov                = ", fit_cov);
     ohklLog(level, "integrator_type        = ", static_cast<int>(integrator_type));
     ohklLog(level, "region_type            = ", static_cast<int>(region_type));
+    ohklLog(level, "use_gradient           = ", use_gradient);
+    ohklLog(level, "fft_gradient           = ", fft_gradient);
+    ohklLog(level, "gradient_type          = ", static_cast<int>(gradient_type));
 }
 
 IIntegrator::IIntegrator()
@@ -48,6 +52,11 @@ IIntegrator::~IIntegrator() = default;
 Intensity IIntegrator::meanBackground() const
 {
     return _meanBackground;
+}
+
+Intensity IIntegrator::meanBkgGradient() const
+{
+    return _meanBkgGradient;
 }
 
 Intensity IIntegrator::integratedIntensity() const
@@ -141,7 +150,11 @@ void IIntegrator::integrate(
                 max = *std::max_element(counts.begin(), counts.end());
             bool saturated = _params.discard_saturated && (max > _params.max_counts);
 
-            bool result = current_peak->advanceFrame(current_frame, mask, idx);
+            bool result;
+            if (_params.use_gradient)
+                result = current_peak->advanceFrame(current_frame, mask, idx, &gradient);
+            else
+                result = current_peak->advanceFrame(current_frame, mask, idx);
             // this allows for partials at end of data
             result |= idx == data->nFrames() - 1;
 
@@ -150,8 +163,8 @@ void IIntegrator::integrate(
                 current_peak->peakData().standardizeCoords();
                 if (compute(peak, shape_model, *current_peak)) {
                     peak->updateIntegration(
-                        rockingCurve(), meanBackground(), integratedIntensity(), _params.peak_end,
-                        _params.bkg_begin, _params.bkg_end);
+                        rockingCurve(), meanBackground(), meanBkgGradient(),
+                        integratedIntensity(), _params.peak_end, _params.bkg_begin, _params.bkg_end);
                     if (saturated) {
                         peak->setSelected(false);
                         peak->setRejectionFlag(RejectionFlag::SaturatedPixel);
