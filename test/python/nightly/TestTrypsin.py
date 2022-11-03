@@ -65,12 +65,12 @@ class TestFullWorkFlow(unittest.TestCase):
 
 
         print('Integrating found peaks...')
-        integ_prov = expt.integrationProvider()
-        params = integ_prov.parameters()
+        integrator = expt.integrator()
+        params = integrator.parameters()
         params.peak_end = 3.0
         params.bkg_begin = 3.0
         params.bkg_end = 6.0
-        integ_prov.integrateFoundPeaks(peak_finder)
+        integrator.integrateFoundPeaks(peak_finder)
         expt.acceptFoundPeaks('found') # Peak collection is now saved to experiment as "found"
         expt.saveToFile("test.ohkl");
         found_peaks = expt.getPeakCollection('found')
@@ -181,14 +181,14 @@ class TestFullWorkFlow(unittest.TestCase):
 
 
         print('Integrating predicted peaks...')
-        integ_prov = expt.integrationProvider()
-        params = integ_prov.parameters()
+        integrator = expt.integrator()
+        params = integrator.parameters()
         integrator_type = ohkl.IntegratorType_PixelSum
-        integ_prov.pIntegrator(integrator_type)
-        integ_prov.integratePeaks(data, predicted_peaks, params, filtered_peaks.shapeModel())
-        print(f'{integ_prov.numberOfValidPeaks()} / {integ_prov.numberOfPeaks()} peaks integrated')
-        self.assertTrue(integ_prov.numberOfValidPeaks() >  55730 and
-                        integ_prov.numberOfValidPeaks() < 55750)
+        integrator.pIntegrator(integrator_type)
+        integrator.integratePeaks(data, predicted_peaks, params, filtered_peaks.shapeModel())
+        print(f'{integrator.numberOfValidPeaks()} / {integrator.numberOfPeaks()} peaks integrated')
+        self.assertTrue(integrator.numberOfValidPeaks() >  55730 and
+                        integrator.numberOfValidPeaks() < 55750)
 
 
         print('Merging predicted peaks...')

@@ -20,7 +20,7 @@
 #include "core/data/DataTypes.h"
 #include "core/experiment/DataQuality.h"
 #include "core/experiment/InstrumentStateHandler.h"
-#include "core/experiment/IntegrationProvider.h"
+#include "core/experiment/Integrator.h"
 #include "core/experiment/PeakFinder.h"
 #include "core/experiment/PeakFinder2D.h"
 #include "core/instrument/Diffractometer.h"
@@ -253,7 +253,7 @@ class Experiment {
 
     // Integration
     //! Get a pointer to the integrator module
-    IntegrationProvider* integrationProvider();
+    Integrator* integrator();
 
     //! Return data quality resolution
     DataResolution* getResolution() { return &_data_resolution; };
@@ -278,7 +278,7 @@ class Experiment {
     std::string _name; //!< The name of this experiment
 
     // Handlers for peak collections and unit cells
-    std::shared_ptr<DataHandler> _data_handler; // shared because IntegrationProvider needs access
+    std::shared_ptr<DataHandler> _data_handler; // shared because Integrator needs access
     std::unique_ptr<PeakHandler> _peak_handler;
     std::unique_ptr<ShapeHandler> _shape_handler;
     std::unique_ptr<UnitCellHandler> _cell_handler;
@@ -291,7 +291,7 @@ class Experiment {
     std::unique_ptr<AutoIndexer> _auto_indexer;
     std::unique_ptr<Predictor> _predictor;
     std::unique_ptr<Refiner> _refiner;
-    std::unique_ptr<IntegrationProvider> _integrationProvider;
+    std::unique_ptr<Integrator> _integrator;
     std::unique_ptr<PeakMerger> _peak_merger;
 
     // Objects containing quality metrics

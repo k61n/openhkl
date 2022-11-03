@@ -55,8 +55,8 @@ for px_range in range(200, 1600, 200):
     # Integration parameters
     integration_params = expt.integrator().parameters()
     integration_params.integrator_type = nsx.IntegratorType_PixelSum
-    integ_prov = expt.integrationProvider()
-    integ_prov.integratePeaks(data, peaks, integration_params, shapes)
+    integrator = expt.integrator()
+    integrator.integratePeaks(data, peaks, integration_params, shapes)
 
     # Merge parameters
     merger = expt.peakMerger()

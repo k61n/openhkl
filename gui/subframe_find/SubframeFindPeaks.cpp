@@ -396,7 +396,7 @@ void SubframeFindPeaks::setFinderParameters()
 
 void SubframeFindPeaks::grabIntegrationParameters()
 {
-    auto* params = gSession->currentProject()->experiment()->integrationProvider()->parameters();
+    auto* params = gSession->currentProject()->experiment()->integrator()->parameters();
 
     _peak_area->setValue(params->peak_end);
     _bkg_lower->setValue(params->bkg_begin);
@@ -411,7 +411,7 @@ void SubframeFindPeaks::setIntegrationParameters()
     if (!gSession->hasProject())
         return;
 
-    auto* params = gSession->currentProject()->experiment()->integrationProvider()->parameters();
+    auto* params = gSession->currentProject()->experiment()->integrator()->parameters();
 
     params->peak_end = _peak_area->value();
     params->bkg_begin = _bkg_lower->value();
@@ -498,7 +498,7 @@ void SubframeFindPeaks::integrate()
 {
     gGui->setReady(false);
     auto* experiment = gSession->currentProject()->experiment();
-    auto* integ_prov = experiment->integrationProvider();
+    auto* integrator = experiment->integrator();
     auto* finder = experiment->peakFinder();
 
     ohkl::sptrProgressHandler handler(new ohkl::ProgressHandler);
@@ -506,15 +506,15 @@ void SubframeFindPeaks::integrate()
     progressView.watch(handler);
 
     setIntegrationParameters();
-    integ_prov->pIntegrator(ohkl::IntegratorType::PixelSum)->setHandler(handler);
+    integrator->getIntegrator(ohkl::IntegratorType::PixelSum)->setHandler(handler);
 
-    integ_prov->integrateFoundPeaks(finder);
+    integrator->integrateFoundPeaks(finder);
     refreshPeakTable();
     _peaks_integrated = true;
     toggleUnsafeWidgets();
     gGui->statusBar()->showMessage(
-        QString::number(integ_prov->numberOfValidPeaks()) + "/"
-        + QString::number(integ_prov->numberOfPeaks()) + " peaks integrated");
+        QString::number(integrator->numberOfValidPeaks()) + "/"
+        + QString::number(integrator->numberOfPeaks()) + " peaks integrated");
     gGui->setReady(true);
 }
 

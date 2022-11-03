@@ -173,13 +173,13 @@ TEST_CASE("test/data/TestNewWorkFlow.cpp", "")
 
     CHECK(found_peaks.size() >= 800);
 
-    ohkl::IntegrationProvider* integ_prov = experiment.integrationProvider();
-    ohkl::IntegrationParameters* params = integ_prov->parameters();
+    ohkl::Integrator* integrator = experiment.integrator();
+    ohkl::IntegrationParameters* params = integrator->parameters();
     params->peak_end = 3.0;
     params->bkg_begin = 3.5;
     params->bkg_end = 4.0;
-    integ_prov->pIntegrator(ohkl::IntegratorType::PixelSum)->setHandler(progressHandler);
-    integ_prov->integrateFoundPeaks(peak_finder);
+    integrator->getIntegrator(ohkl::IntegratorType::PixelSum)->setHandler(progressHandler);
+    integrator->integrateFoundPeaks(peak_finder);
     experiment.acceptFoundPeaks("found_peaks");
 
     // #########################################################
@@ -265,7 +265,7 @@ TEST_CASE("test/data/TestNewWorkFlow.cpp", "")
     params->peak_end = 3.0;
     params->bkg_begin = 4.0;
     params->bkg_end = 5.0;
-    integ_prov->integrateFoundPeaks(peak_finder);
+    integrator->integrateFoundPeaks(peak_finder);
 
     // #########################################################
     // compute shape library

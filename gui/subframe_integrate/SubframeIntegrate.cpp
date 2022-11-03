@@ -197,8 +197,8 @@ void SubframeIntegrate::grabIntegrationParameters()
 {
 
     auto* expt = gSession->currentProject()->experiment();
-    auto* integ_prov = expt->integrationProvider();
-    auto* params = integ_prov->parameters();
+    auto* integrator = expt->integrator();
+    auto* params = integrator->parameters();
 
     _peak_end->setValue(params->peak_end);
     _bkg_begin->setValue(params->bkg_begin);
@@ -229,8 +229,8 @@ void SubframeIntegrate::setIntegrationParameters()
         return;
 
     auto* expt = gSession->currentProject()->experiment();
-    auto* integ_prov = expt->integrationProvider();
-    auto* params = integ_prov->parameters();
+    auto* integrator = expt->integrator();
+    auto* params = integrator->parameters();
 
     params->peak_end = _peak_end->value();
     params->bkg_begin = _bkg_begin->value();
@@ -532,7 +532,7 @@ void SubframeIntegrate::runIntegration()
         progressView.watch(handler);
 
         ohkl::Experiment* expt = gSession->currentProject()->experiment();
-        ohkl::IntegrationProvider* integ_prov = expt->integrationProvider();
+        ohkl::Integrator* integrator = expt->integrator();
         ohkl::sptrDataSet data = _data_combo->currentData();
         ohkl::PeakCollection* peaks_to_integrate = _peak_combo->currentPeakCollection();
         ohkl::ShapeModel* shapes = nullptr;
@@ -540,14 +540,14 @@ void SubframeIntegrate::runIntegration()
             shapes = _shape_combo->currentShapes();
 
         setIntegrationParameters();
-        auto* params = gSession->currentProject()->experiment()->integrationProvider()->parameters();
+        auto* params = gSession->currentProject()->experiment()->integrator()->parameters();
 
-        integ_prov->pIntegrator(params->integrator_type)->setHandler(handler);
-        integ_prov->integratePeaks(data, peaks_to_integrate, params, shapes);
+        integrator->getIntegrator(params->integrator_type)->setHandler(handler);
+        integrator->integratePeaks(data, peaks_to_integrate, params, shapes);
         gGui->detector_window->refreshAll();
         gGui->statusBar()->showMessage(
-            QString::number(integ_prov->numberOfValidPeaks()) + "/"
-            + QString::number(integ_prov->numberOfPeaks()) + " peaks integrated");
+            QString::number(integrator->numberOfValidPeaks()) + "/"
+            + QString::number(integrator->numberOfPeaks()) + " peaks integrated");
     } catch (std::exception& e) {
         QMessageBox::critical(this, "Error", QString(e.what()));
     }

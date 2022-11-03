@@ -2,7 +2,7 @@
 //
 //  OpenHKL: data reduction for single crystal diffraction
 //
-//! @file      core/experiment/IntegrationProvider.h
+//! @file      core/experiment/Integrator.h
 //! @brief     Handles integration for Experiment object
 //! //! @homepage  https://openhkl.org
 //! @license   GNU General Public License v3 or higher (see COPYING)
@@ -11,8 +11,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef OPENHKL_CORE_EXPERIMENT_INTEGRATIONPROVIDER_H
-#define OPENHKL_CORE_EXPERIMENT_INTEGRATIONPROVIDER_H
+#ifndef OPENHKL_CORE_EXPERIMENT_INTEGRATOR_H
+#define OPENHKL_CORE_EXPERIMENT_INTEGRATOR_H
 
 #include "core/integration/IIntegrator.h"
 #include "core/shape/PeakFilter.h"
@@ -47,12 +47,12 @@ struct PredictionParameters;
  *  mean covariance of shapes in the vicinity of a predicted peaks to generate
  *  an integration region. This is integrated via profile integration.
  */
-class IntegrationProvider {
+class Integrator {
  public:
-    IntegrationProvider(std::shared_ptr<DataHandler> data_handler = nullptr);
+    Integrator(std::shared_ptr<DataHandler> data_handler = nullptr);
 
     //! Get an integrator from the map
-    ohkl::IIntegrator* pIntegrator(const IntegratorType integrator_type) const;
+    ohkl::IIntegrator* getIntegrator(const IntegratorType integrator_type) const;
     //! Return a pointer to the data handler
     DataHandler* getDataHandler();
     //! Set the found peak integrator
@@ -91,4 +91,4 @@ class IntegrationProvider {
 /*! @}*/
 } // namespace ohkl
 
-#endif // OPENHKL_CORE_EXPERIMENT_INTEGRATIONPROVIDER_H
+#endif // OPENHKL_CORE_EXPERIMENT_INTEGRATOR_H
