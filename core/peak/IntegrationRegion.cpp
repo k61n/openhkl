@@ -270,14 +270,14 @@ bool IntegrationRegion::advanceFrame(
                 if (!gradient)
                     _data.addEvent(ev, image(y, x));
                 else
-                    _data.addEvent(ev, image(y, x), (*gradient)(x, y));
+                    _data.addEvent(ev, image(y, x), (*gradient)(y, x));
             }
 
             if (event_type == EventType::BACKGROUND && mask_type == EventType::BACKGROUND) {
                 if (!gradient)
                     _data.addEvent(ev, image(y, x));
                 else
-                    _data.addEvent(ev, image(y, x), (*gradient)(x, y));
+                    _data.addEvent(ev, image(y, x), (*gradient)(y, x));
             }
 
             // check if point is in Brillouin zone (or AABB if no UC available)

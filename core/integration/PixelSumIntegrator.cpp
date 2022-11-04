@@ -14,6 +14,7 @@
 
 #include "core/integration/PixelSumIntegrator.h"
 #include "base/geometry/Ellipsoid.h"
+#include "base/utils/Logger.h"
 #include "core/data/DataSet.h"
 #include "core/integration/Blob3D.h"
 #include "core/peak/Intensity.h"
@@ -93,7 +94,7 @@ PixelSumIntegrator::PixelSumIntegrator(bool fit_center, bool fit_covariance)
 
 bool PixelSumIntegrator::compute(Peak3D* peak, ShapeModel*, const IntegrationRegion& region)
 {
-    auto [meanBackground, bkgGradient] = compute_background(region);
+    auto [meanBackground, bkgGradient] = compute_background(region, _params.use_gradient);
     if (!meanBackground.isValid()) {
         peak->setRejectionFlag(RejectionFlag::TooFewPoints);
         peak->setSelected(false);
