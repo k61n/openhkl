@@ -80,9 +80,10 @@ void ImageGradient::computeRealSpace(GradientKernel kernel)
 
 void ImageGradient::computeFFT(GradientKernel kernel)
 {
-    std::string convolver = _convolver_callbacks.at(kernel);
-    _dx = ohkl::convolvedFrame(*_image, convolver, {{"x", 0.0}});
-    _dy = ohkl::convolvedFrame(*_image, convolver, {{"y", 0.0}});
+    _convolver.reset(ConvolverFactory{}.create(_convolver_callbacks.at(kernel), {{"x", 0.0}}));
+    _dx = _convolver->convolve(*_image);
+    _convolver.reset(ConvolverFactory{}.create(_convolver_callbacks.at(kernel), {{"y", 0.0}}));
+    _dy = _convolver->convolve(*_image);
 }
 
 void ImageGradient::gradient(std::function<void (int, int)> kernel_operator)

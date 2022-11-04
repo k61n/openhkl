@@ -17,6 +17,7 @@
 build*/
 out/
 debug/
+clang/
 qbuild/
 cover/
 tidy/

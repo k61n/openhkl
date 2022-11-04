@@ -15,8 +15,11 @@
 #ifndef OHKL_CORE_DATA_IMAGEGRADIENT_H
 #define OHKL_CORE_DATA_IMAGEGRADIENT_H
 
+#include "core/convolve/Convolver.h"
+
 #include <functional>
 #include <map>
+#include <memory>
 #include <Eigen/Dense>
 
 namespace ohkl {
@@ -72,6 +75,8 @@ class ImageGradient {
     Eigen::MatrixXd _dy;
     //! Do calculations in real space (as opposed to FFT)
     bool _real_space;
+    //! Convolver for image filtering
+    std::unique_ptr<Convolver> _convolver;
 
     const std::map<GradientKernel, std::string> _convolver_callbacks = {
         {GradientKernel::CentralDifference, "central"},
