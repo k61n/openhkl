@@ -46,7 +46,7 @@ struct IntegrationParameters {
     //! Kernel to use for gradient convolution
     GradientKernel gradient_type = GradientKernel::Sobel;
     //! Whether to use FFT or real space gradient computation
-    bool fft_gradient = true;
+    bool fft_gradient = false;
     RegionType region_type =
         RegionType::VariableEllipsoid; //!< Set peak end in pixels instead of sigmas
 

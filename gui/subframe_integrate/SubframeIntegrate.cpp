@@ -81,7 +81,7 @@ SubframeIntegrate::SubframeIntegrate() : QWidget()
         _fft_gradient, &QCheckBox::stateChanged, this,
         &SubframeIntegrate::onGradientSettingsChanged);
     connect(
-        _discard_inhom_bkg, &QGroupBox::clicked, this,
+        _compute_gradient, &QGroupBox::clicked, this,
         &SubframeIntegrate::onGradientSettingsChanged);
     connect(
         this, &SubframeIntegrate::signalGradient, _detector_widget->scene(),
@@ -210,7 +210,7 @@ void SubframeIntegrate::grabIntegrationParameters()
     _fit_center->setChecked(params->fit_center);
     _fit_covariance->setChecked(params->fit_cov);
     _min_neighbours->setValue(params->min_neighbors);
-    _discard_inhom_bkg->setChecked(params->use_gradient);
+    _compute_gradient->setChecked(params->use_gradient);
     _fft_gradient->setChecked(params->fft_gradient);
     _gradient_kernel->setCurrentIndex(static_cast<int>(params->gradient_type));
 
@@ -245,7 +245,7 @@ void SubframeIntegrate::setIntegrationParameters()
     params->region_type = static_cast<ohkl::RegionType>(_integration_region_type->currentIndex());
     params->integrator_type =
         _integrator_strings.find(_integrator_combo->currentText().toStdString())->second;
-    params->use_gradient = _discard_inhom_bkg->isChecked();
+    params->use_gradient = _compute_gradient->isChecked();
     params->fft_gradient = _fft_gradient->isChecked();
     params->gradient_type = static_cast<ohkl::GradientKernel>(_gradient_kernel->currentIndex());
 
@@ -320,11 +320,11 @@ void SubframeIntegrate::setIntegrateUp()
     grid->addWidget(_max_counts, 0, 1, 1, 1);
     f.addWidget(_discard_saturated);
 
-    _discard_inhom_bkg = new QGroupBox("Filter gradient");
-    _discard_inhom_bkg->setAlignment(Qt::AlignLeft);
-    _discard_inhom_bkg->setCheckable(true);
-    _discard_inhom_bkg->setChecked(false);
-    _discard_inhom_bkg->setToolTip("Discard peaks with high mean background gradient");
+    _compute_gradient = new QGroupBox("Compute gradient");
+    _compute_gradient->setAlignment(Qt::AlignLeft);
+    _compute_gradient->setCheckable(true);
+    _compute_gradient->setChecked(false);
+    _compute_gradient->setToolTip("Discard peaks with high mean background gradient");
 
     _gradient_kernel = new QComboBox();
 
@@ -332,19 +332,13 @@ void SubframeIntegrate::setIntegrateUp()
     _fft_gradient->setToolTip("Use Fourier transform for image filtering");
     _fft_gradient->setChecked(false);
 
-    _grad_threshold = new SafeDoubleSpinBox();
-    _grad_threshold->setMaximum(10000);
-
     grid = new QGridLayout();
-    _discard_inhom_bkg->setLayout(grid);
+    _compute_gradient->setLayout(grid);
     label = new QLabel("Kernel");
     grid->addWidget(label, 0, 0, 1, 1);
     grid->addWidget(_gradient_kernel, 0, 1, 1, 1);
     grid->addWidget(_fft_gradient, 1, 1, 1, -1);
-    label = new QLabel("Gradient threshold");
-    grid->addWidget(label, 2, 0, 1, 1);
-    grid->addWidget(_grad_threshold, 2, 1, 1, 1);
-    f.addWidget(_discard_inhom_bkg);
+    f.addWidget(_compute_gradient);
 
     for (const auto& [kernel, description] : _kernel_description)
         _gradient_kernel->addItem(description);
