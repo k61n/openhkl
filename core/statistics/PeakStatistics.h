@@ -33,6 +33,8 @@ enum class PeakHistogramType {
     Intensity,
     Sigma,
     Strength,
+    BkgGradient,
+    BkgGradientSigma
 };
 
 

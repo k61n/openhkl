@@ -23,6 +23,7 @@
 #include "gui/frames/ProgressView.h"
 #include "gui/graphics/DetectorScene.h"
 #include "gui/graphics/SXPlot.h"
+#include "gui/items/PeakItem.h"
 #include "gui/models/Project.h"
 #include "gui/models/Session.h"
 #include "gui/subwindows/DetectorWindow.h"
@@ -220,7 +221,7 @@ void SubframeReject::refreshPeakTable()
     _peak_collection_item.setFilterMode();
     _peak_collection_model.setRoot(&_peak_collection_item);
     _peak_table->resizeColumnsToContents();
-    _peak_table->model()->sort(13, Qt::DescendingOrder);
+    _peak_table->model()->sort(PeakColumn::Filtered, Qt::DescendingOrder);
 
     refreshPeakVisual();
 }
@@ -325,6 +326,16 @@ void SubframeReject::filterSelection(double xmin, double xmax)
         filter->flags()->strength = true;
         filter->parameters()->strength_min = xmin;
         filter->parameters()->strength_max = xmax;
+        break;
+    case ohkl::PeakHistogramType::BkgGradient:
+        filter->flags()->gradient = true;
+        filter->parameters()->gradient_min = xmin;
+        filter->parameters()->gradient_max = xmax;
+        break;
+    case ohkl::PeakHistogramType::BkgGradientSigma:
+        filter->flags()->gradient_sigma = true;
+        filter->parameters()->gradient_sigma_min = xmin;
+        filter->parameters()->gradient_sigma_max = xmax;
         break;
     }
     filter->filter(collection);

@@ -43,6 +43,8 @@ struct PeakFilterFlags {
     bool rejection_flag; //!< catch peaks with a specific rejection flag
     bool intensity; //!< filter by intensity
     bool sigma; //!< filter by sigma
+    bool gradient; //!< filter by background gradient
+    bool gradient_sigma; //!< filter by background gradient sigma
 };
 
 //! Parameters for the different filter types
@@ -55,6 +57,10 @@ struct PeakFilterParameters {
     double intensity_max = 1.0e7; //!< maximum intensity
     double sigma_min = 0.0; //!< minimum sigma
     double sigma_max = 1000.0; //!< maximum sigma
+    double gradient_min = 0.0;
+    double gradient_max = 1000.0;
+    double gradient_sigma_min = 0.0;
+    double gradient_sigma_max = 1000.0;
     std::string unit_cell = kw_unitcellDefaultName; //!< unit cell name
     double unit_cell_tolerance = 0.2; //!< indexing tolerance
     double significance = 0.99; //!< signficance
@@ -137,6 +143,12 @@ class PeakFilter {
 
     //! Remove peaks outside the given sigma range
     void filterSigma(PeakCollection* peak_collection) const;
+
+    //! Remove peaks outside given background gradient range
+    void filterGradient(PeakCollection* peak_collection) const;
+
+    //! Remove peaks outside given background gradient sigma range
+    void filterGradientSigma(PeakCollection* peak_collection) const;
 
     //! Filter only enabled on a peak vector
     std::vector<Peak3D*> filterEnabled(const std::vector<Peak3D*> peaks, bool flag) const;

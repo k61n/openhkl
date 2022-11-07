@@ -23,7 +23,10 @@ namespace ohkl {
 const std::map<PeakHistogramType, std::string> PeakStatistics::_histogram_strings {
     {PeakHistogramType::Intensity, "Intensity"},
     {PeakHistogramType::Sigma, "Sigma"},
-    {PeakHistogramType::Strength, "Strength"}};
+    {PeakHistogramType::Strength, "Strength"},
+    {PeakHistogramType::BkgGradient, "Background gradient"},
+    {PeakHistogramType::BkgGradientSigma, "Background gradient sigma"}
+};
 
 PeakStatistics::PeakStatistics() : _current_histogram(nullptr)
 {
@@ -70,6 +73,12 @@ std::vector<double> PeakStatistics::_getPeakData(PeakHistogramType type)
                 break;
             case PeakHistogramType::Strength:
                 _peak_data.push_back(peak->correctedIntensity().strength());
+                break;
+            case PeakHistogramType::BkgGradient:
+                _peak_data.push_back(peak->meanBkgGradient().value());
+                break;
+            case PeakHistogramType::BkgGradientSigma:
+                _peak_data.push_back(peak->meanBkgGradient().sigma());
                 break;
         }
     }
