@@ -2,7 +2,7 @@
 //
 //  OpenHKL: data reduction for single crystal diffraction
 //
-//! @file      gui/subframe_refiner/SubframeReject.h
+//! @file      gui/subframe_reject/SubframeReject.h
 //! @brief     Defines class SubframeReject
 //!
 //! @homepage  https://openhkl.org
@@ -106,6 +106,8 @@ class SubframeReject : public QWidget {
     void computeHistogram();
     //! Update the plot range based on the selected peak collection
     void updatePlotRange();
+    //! Reject outliers in given data field
+    void rejectOutliers();
 
     QVBoxLayout* _left_layout;
     QSplitter* _right_element;
@@ -129,6 +131,8 @@ class SubframeReject : public QWidget {
     SafeSpinBox* _x_max;
     QCheckBox* _log_freq;
     QPushButton* _plot_histogram;
+    SafeDoubleSpinBox* _sigma_factor;
+    QPushButton* _reject_outliers;
 
     PeakViewWidget* _peak_view_widget;
     DetectorWidget* _detector_widget;

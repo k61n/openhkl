@@ -60,6 +60,7 @@ enum class RejectionFlag {
     PredictionUpdateFailure, // from refiner
     ManuallyRejected,
     OutsideIndexingTol,
+    Outlier, // from peak statistics
     Count
 };
 

@@ -2,7 +2,7 @@
 //
 //  OpenHKL: data reduction for single crystal diffraction
 //
-//! @file      gui/subframe_filter/SubframeReject.cpp
+//! @file      gui/subframe_reject/SubframeReject.cpp
 
 //! @brief     Implements class SubframeReject
 //!
@@ -146,12 +146,17 @@ void SubframeReject::setHistogramUp()
         "Data range", "Minimum and maximum of x data series");
     _log_freq = filler.addCheckBox("Logarithmic vertical axis", "Switch to log-linear plot", 1);
     _plot_histogram = filler.addButton("Replot", "Refresh histogram");
+    _sigma_factor = filler.addDoubleSpinBox(
+        "Threshold", "Threshold for peak rejection in standard deviations");
+    _reject_outliers = filler.addButton(
+        "Reject outliers", "Reject peaks outside specified threshold");
 
     _n_bins->setMaximum(10000);
     _x_min->setMaximum(10000);
     _x_max->setMaximum(10000);
     _freq_min->setMaximum(10000);
     _freq_max->setMaximum(10000);
+    _sigma_factor->setMaximum(5);
 
     _x_min->setMinimum(-10000);
     _x_max->setMinimum(-10000);
@@ -161,12 +166,14 @@ void SubframeReject::setHistogramUp()
     _x_max->setValue(10000);
     _freq_min->setValue(0);
     _freq_max->setValue(1000);
+    _sigma_factor->setValue(3);
 
     connect(_log_freq, &QCheckBox::stateChanged, this, [=]() {
         updateStatistics();
         computeHistogram();
     });
     connect(_plot_histogram, &QPushButton::clicked, this, &SubframeReject::computeHistogram);
+    connect(_reject_outliers, &QPushButton::clicked, this, &SubframeReject::rejectOutliers);
 
     _left_layout->addWidget(histo_spoiler);
 }
@@ -499,6 +506,24 @@ void SubframeReject::updatePlotRange()
         _freq_max->setValue(_peak_stats.maxCount());
         _freq_min->setValue(0);
     }
+}
+
+void SubframeReject::rejectOutliers()
+{
+    std::vector<ohkl::Peak3D*> outliers = _peak_stats.findOutliers(_sigma_factor->value());
+    ohkl::PeakFilter* filter = gSession->currentProject()->experiment()->peakFilter();
+    ohkl::PeakCollection* collection = _peak_combo->currentPeakCollection();
+    filter->resetFiltering(collection);
+
+    for (auto* peak : outliers) {
+        peak->setSelected(false);
+        peak->setRejectionFlag(ohkl::RejectionFlag::Outlier);
+        peak->caughtYou(true); // For sorting in the peak table
+    }
+    refreshPeakTable();
+    gGui->statusBar()->showMessage(
+        QString::number(outliers.size()) + "/" + QString::number(collection->numberOfPeaks()) +
+        " outliers rejected");
 }
 
 DetectorWidget* SubframeReject::detectorWidget()
