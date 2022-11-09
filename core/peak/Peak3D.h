@@ -168,7 +168,7 @@ class Peak3D {
     void setManually(
         Intensity intensity, double peakEnd, double bkgBegin, double bkgEnd, double scale,
         double transmission, Intensity mean_bkg, bool predicted, bool selected, bool masked,
-        int rejection_flag);
+        int rejection_flag, Intensity mean_bkg_grad = {});
 
     //! Update the integration parameters for this peak
     void updateIntegration(

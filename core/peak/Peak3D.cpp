@@ -364,7 +364,7 @@ void Peak3D::rejectYou(bool reject)
 void Peak3D::setManually(
     Intensity intensity, double peakEnd, double bkgBegin, double bkgEnd, double scale,
     double transmission, Intensity mean_bkg, bool predicted, bool selected, bool masked,
-    int rejection_flag)
+    int rejection_flag, Intensity mean_bkg_grad /* = {} */)
 {
     _peakEnd = peakEnd;
     _bkgBegin = bkgBegin;
@@ -377,6 +377,7 @@ void Peak3D::setManually(
     _meanBackground = mean_bkg;
     _rawIntensity = intensity;
     _rejection_flag = static_cast<RejectionFlag>(rejection_flag);
+    _meanBkgGradient = mean_bkg_grad;
 }
 
 
