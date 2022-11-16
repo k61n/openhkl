@@ -38,7 +38,7 @@ class BoxMask : public IMask {
 
     bool collide(const Ellipsoid& ellipsoid) const override;
 
-    const AABB& aabb() { return _aabb; };
+    const AABB& aabb() override { return _aabb; };
 
     void setAABB(const AABB& aabb) override { _aabb = aabb; }
 

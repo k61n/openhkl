@@ -152,7 +152,7 @@ void IIntegrator::integrate(
 
             bool result;
             if (_params.use_gradient)
-                result = current_peak->advanceFrame(current_frame, mask, idx, &gradient);
+                result = current_peak->advanceFrame(current_frame, mask, idx, gradient);
             else
                 result = current_peak->advanceFrame(current_frame, mask, idx);
             // this allows for partials at end of data

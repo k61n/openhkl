@@ -57,7 +57,6 @@ class RawDataDialog : public QDialog {
     SafeDoubleSpinBox* _gain;
     QDialogButtonBox* _buttons;
     QLineEdit* _datasetName;
-    const ohkl::RawDataReaderParameters& _parameters0; // initial parameters
     const QStringList& _dataset_names; // list of current dataset names
 };
 

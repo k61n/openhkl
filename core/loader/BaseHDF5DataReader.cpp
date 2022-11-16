@@ -50,11 +50,6 @@ std::string _detectorKey(const std::string& dataset_name)
     return ohkl::gr_DataCollections + "/" + dataset_name + "/" + ohkl::gr_Detector;
 }
 
-std::string _instrumentStateKey(const std::string& dataset_name)
-{
-    return ohkl::gr_DataCollections + "/" + dataset_name + "/" + ohkl::gr_Instrument;
-}
-
 std::string _sampleKey(const std::string& dataset_name)
 {
     return ohkl::gr_DataCollections + "/" + dataset_name + "/" + ohkl::gr_Sample;

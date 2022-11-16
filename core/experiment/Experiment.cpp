@@ -359,7 +359,7 @@ int Experiment::numData() const
 
 bool Experiment::addData(sptrDataSet data, bool default_states)
 {
-    if (!_data_handler->addData(data, data->name()), default_states) {
+    if (!_data_handler->addData(data, data->name(), default_states)) {
         return false;
     }
     setDefaultDMin();

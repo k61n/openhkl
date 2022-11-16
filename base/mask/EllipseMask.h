@@ -40,7 +40,7 @@ class EllipseMask : public IMask {
 
     bool collide(const Ellipsoid& ellipsoid) const override;
 
-    const AABB& aabb() { return _ellipsoid.aabb(); };
+    const AABB& aabb() override { return _ellipsoid.aabb(); };
 
     void setAABB(const AABB& aabb) override;
 
