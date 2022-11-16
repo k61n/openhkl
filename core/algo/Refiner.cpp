@@ -68,7 +68,7 @@ sptrUnitCell Refiner::_getUnitCell(const std::vector<Peak3D*> peaks_subset)
         }
         // Find cell that appears the most in this batch
         int max = 0;
-        const UnitCell* best_cell;
+        const UnitCell* best_cell = cell_ptr.get();
         for (const auto [key, val] : cell_count) {
             if (val > max) {
                 max = val;
@@ -334,8 +334,9 @@ int Refiner::updatePredictions(std::vector<Peak3D*> peaks)
             continue;
         } else if (events.size() > 1) { // Some peaks cross the Ewald sphere more than once
             for (auto event : events) {
-                auto vec =
-                    peak->shape().center() - Eigen::Vector3d(event.px, event.py, event.frame);
+                Eigen::Vector3d other = {event.px, event.py, event.frame};
+                Eigen::Vector3d vec =
+                    peak->shape().center() - other;
                 if (vec.norm() < _eps_norm) {
                     peak->setShape(
                         Ellipsoid({event.px, event.py, event.frame}, peak->shape().metric()));

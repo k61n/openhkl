@@ -117,12 +117,13 @@ PeakComboBox* GridFiller::addPeakCombo(
         addLabel(labelText, tooltip);
 
     PeakComboBox* comboBox;
-    if (type == ComboType::PeakCollection)
-        comboBox = new PeakComboBox();
-    else if (type == ComboType::FoundPeaks)
+    if (type == ComboType::FoundPeaks)
         comboBox = new FoundPeakComboBox();
     else if (type == ComboType::PredictedPeaks)
         comboBox = new PredictedPeakComboBox();
+    else // type == ComboType::PeakCollection
+        comboBox = new PeakComboBox();
+
     if (!createLabel)
         comboBox->setToolTip(tooltip);
     comboBox->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);

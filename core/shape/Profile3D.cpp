@@ -181,8 +181,8 @@ Ellipsoid Profile3D::ellipsoid() const
 {
     const Eigen::Vector3d lower = _dx / 2.0 + _aabb.lower();
     double mass = 0;
-    Eigen::Matrix3d cov;
-    Eigen::Vector3d com;
+    Eigen::Matrix3d cov = Eigen::Matrix3d::Zero();
+    Eigen::Vector3d com = Eigen::Vector3d::Zero();
 
     for (int i = 0; i < _shape[0]; ++i) {
         for (int j = 0; j < _shape[1]; ++j) {
