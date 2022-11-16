@@ -3,7 +3,7 @@
 ##
 ##  OpenHKL: data reduction for single-crystal diffraction
 ##
-##! @file      test/python/TestWorkFlow.py
+##! @file      scripts/generate_test_ohkl.py
 ##! @brief     Test ...
 ##!
 ##! @homepage  https://openhkl.org
@@ -18,10 +18,10 @@ import numpy as np
 from pathlib import Path
 import shutil
 
-lib_dir = "/home/zamaan/projects/nsxtool/build/swig/"  # Path to pynsx.py
+lib_dir = "/home/zamaan/projects/openhkl/build/swig/"  # Path to pyohkl.py
 
 sys.path.append(lib_dir)
-import pynsx as nsx
+import pyohkl as ohkl
 
 data_dir = '/home/zamaan/projects/datasets/CrChiA/'
 files = ("CrChiA_c01runab_28603.raw",
@@ -43,9 +43,9 @@ files = ("CrChiA_c01runab_28603.raw",
 # Initialise the experiment
 name = "CrChiA"
 detector = "BioDiff2500"
-expt = nsx.Experiment(name, detector)
+expt = ohkl.Experiment(name, detector)
 
-dataset = nsx.DataSet("testdata", expt.getDiffractometer())
+dataset = ohkl.DataSet("testdata", expt.getDiffractometer())
 # instrument and file parameters
 data_params = expt.data_params
 data_params.wavelength = 2.669
@@ -70,17 +70,17 @@ params.minimum_size = 30
 params.maximum_size = 10000
 params.peak_end = 1.0
 params.threshold = 80
-finder.setConvolver(nsx.AnnularConvolver())
+finder.setConvolver(ohkl.AnnularConvolver())
 
 finder.find(expt.getAllData())
 
 # Integrate the peaks
-integ_prov = expt.integrationProvider()
-integrator_params = integ_prov.parameters()
+integrator = expt.integrator()
+integrator_params = integrator.parameters()
 integrator_params.peak_end = 3.0
 integrator_params.bkg_begin = 3.0
 integrator_params.bkg_end = 6.0
-integ_prov.integrateFoundPeaks(finder)
+integrator.integrateFoundPeaks(finder)
 expt.acceptFoundPeaks("found")
 found_peaks = expt.getPeakCollection("found")
 n_peaks = found_peaks.numberOfPeaks()
@@ -94,7 +94,7 @@ filter.parameters().d_max = 50.0
 filter.parameters().strength_min = 1.0
 filter.parameters().strength_max = 1.0e7
 filter.filter(found_peaks)
-expt.acceptFilter("filtered", found_peaks)
+expt.acceptFilter("filtered", found_peaks, ohkl.PeakCollectionType_FOUND)
 filtered_peaks = expt.getPeakCollection("filtered")
 n_caught = filtered_peaks.numberCaughtByFilter()
 print(f'Autoindex: {n_caught}/{n_peaks} peaks caught by filter')
@@ -102,7 +102,7 @@ print(f'Autoindex: {n_caught}/{n_peaks} peaks caught by filter')
 # Autoindex the peaks
 autoindexer = expt.autoIndexer()
 expt.setReferenceCell(57.96, 65.12, 86.52, 90.0, 90.0, 90.0)
-autoindexer_params = nsx.IndexerParameters()
+autoindexer_params = ohkl.IndexerParameters()
 autoindexer_params.maxdim = 100.0
 autoindexer_params.nSolutions = 10
 autoindexer_params.nVertices = 10000
@@ -111,7 +111,7 @@ autoindexer_params.indexingTolerance = 0.2
 autoindexer_params.minUnitCellVolume = 10000.0
 autoindexer.autoIndex(filtered_peaks)
 reference_cell = expt.getReferenceCell()
-reference_cell.setSpaceGroup(nsx.SpaceGroup("P 21 21 21"))
+reference_cell.setSpaceGroup(ohkl.SpaceGroup("P 21 21 21"))
 print(autoindexer.solutionsToString())
 print(expt.checkAndAssignUnitCell(found_peaks, 2.0, 0.1))  # boolean return value
 print(expt.checkAndAssignUnitCell(filtered_peaks, 2.0, 0.1))  # boolean return value
@@ -124,22 +124,22 @@ prediction_params = predictor.parameters()
 prediction_params.d_min = 1.5
 prediction_params.d_max = 50.0
 predictor.predictPeaks(data, indexed_cell)
-expt.addPeakCollection("predicted", nsx.PeakCollectionType_PREDICTED, predictor.peaks())
+expt.addPeakCollection("predicted", ohkl.PeakCollectionType_PREDICTED, predictor.peaks())
 predicted_peaks = expt.getPeakCollection("predicted")
 npeaks = predicted_peaks.numberOfPeaks()
 print(f'{npeaks} predicted')
 
 # Generate shapes
 found_peaks.computeSigmas()
-params = nsx.ShapeModelParameters()
+params = ohkl.ShapeModelParameters()
 params.sigma_d = found_peaks.sigmaD()
 params.sigma_m = found_peaks.sigmaM()
 found_peaks.buildShapeModel(data, params)
-print(f'{found_peaks.shapeCollection().numberOfPeaks()} shapes generated')
-shapes = found_peaks.shapeCollection()
+print(f'{found_peaks.shapeModel().numberOfPeaks()} shapes generated')
+shapes = found_peaks.shapeModel()
 
 # Assign shapes to predicted peaks
-interpolation = nsx.PeakInterpolation_InverseDistance
+interpolation = ohkl.PeakInterpolation_InverseDistance
 shapes.setPredictedShapes(predicted_peaks)
 
 expt.saveToFile(f'{name}.nsx')
