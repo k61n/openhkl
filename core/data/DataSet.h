@@ -23,7 +23,6 @@
 #include "core/peak/Peak3D.h"
 #include "core/raw/DataKeys.h"
 
-#include <boost/spirit/home/support/detail/hold_any.hpp>
 #include <gsl/gsl_histogram.h>
 
 #include <memory>
