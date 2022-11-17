@@ -44,7 +44,7 @@ endif()
 if(OHKL_PYTHON)
     set(pyver_min 3.9)
     find_package(Python3 ${pyver_min} QUIET
-            COMPONENTS Interpreter Development  )
+            COMPONENTS Interpreter Development NumPy)
     if(NOT Python3_FOUND)
         message(FATAL_ERROR
             "Python 3 not found (minimum version ${pyver_min}).")
