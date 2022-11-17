@@ -51,7 +51,7 @@ build:ubuntu:
   - |
     if test $CI_PIPELINE_SOURCE == "nightly"
     then
-        ctest -j8 --output-on-failure -L "nightly"
+        ctest --output-on-failure -L "nightly"
     else
         ctest -j8 --output-on-failure -E "nightly"
     fi
