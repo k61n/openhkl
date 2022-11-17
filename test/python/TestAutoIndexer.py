@@ -13,7 +13,7 @@ class TestAutoIndexer(unittest.TestCase):
         detector = "BioDiff2500"
         expt = ohkl.Experiment(name, detector)
 
-        expt.loadFromFile("CrChiA.nsx")
+        expt.loadFromFile("CrChiA.ohkl")
         found_peaks = expt.getPeakCollection("found")
         n_peaks = found_peaks.numberOfPeaks()
         self.assertEqual(n_peaks, 492)

@@ -13,7 +13,7 @@ class TestPrediction(unittest.TestCase):
         detector = "BioDiff2500"
         expt = ohkl.Experiment(name, detector)
 
-        expt.loadFromFile("CrChiA.nsx")
+        expt.loadFromFile("CrChiA.ohkl")
         found_peaks = expt.getPeakCollection("found")
         cell = expt.getUnitCell("accepted")
         data = expt.getData("testdata")

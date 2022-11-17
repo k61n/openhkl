@@ -14,7 +14,7 @@ class TestExperimentFileIO(unittest.TestCase):
 
         # Reference data
         expt_ref = ohkl.Experiment(name, detector)
-        expt_ref.loadFromFile("CrChiA.nsx")
+        expt_ref.loadFromFile("CrChiA.ohkl")
         expt_ref.saveToFile("test.nsx") # test ExperimentExporter
         found_peaks_ref = expt_ref.getPeakCollection("found")
         filtered_peaks_ref = expt_ref.getPeakCollection("filtered")
