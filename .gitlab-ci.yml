@@ -1,15 +1,12 @@
 variables:
   DEBIAN_FRONTEND: noninteractive
 
-stages:
-- build
+image: ubuntu:22.04
 
-build:ubuntu:
-  stage: build
-  image: ubuntu:22.04
-  before_script:
+before_script:
   - apt-get update
   - apt-get install -y
+      build-essential
       build-essential
       cmake
       libblosc-dev
@@ -30,13 +27,44 @@ build:ubuntu:
       qtbase5-dev-tools
       qtchooser
       swig
+      python3-pip
+      doxygen
+      graphviz
+
+stages:
+  - build
+  - deploy:doc
+
+build:ubuntu:
+  stage: build
   script:
-  - mkdir build
-  - cd build
-  - cmake ..
-  - make -j8
-  - ctest -j8
+    - mkdir build
+    - cd build
+    - cmake ..
+    - make -j8
+    - ctest -j8
   # artifacts:
   #   paths:
   #   - src/libmandel.so
   #   expire_in: 1 day
+
+pages:
+  stage: deploy:doc
+  script:
+    - python3 -m pip install -U pip
+    - python3 -m pip install
+        sphinx
+        sphinxcontrib-bibtex
+        sphinx-press-theme
+        breathe
+    - mkdir build
+    - cd build
+    - cmake ..
+    - make docs
+    - mv doc/sphinx/html ../public/
+    - mv doc/sphinx/_static/* ../public/_static/
+  artifacts:
+    paths:
+      - public
+  only:
+    - main
