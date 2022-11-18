@@ -57,7 +57,7 @@ class TestPeakFinder(unittest.TestCase):
         expt.acceptFoundPeaks("found")
         found_peaks = expt.getPeakCollection("found")
         n_peaks = found_peaks.numberOfPeaks()
-        self.assertTrue(n_peaks >= 465, f"found only {n_peaks} peaks")
+        self.assertTrue(n_peaks >= 350, f"found only {n_peaks} peaks")
 
 if __name__ == "__main__":
     unittest.main()
