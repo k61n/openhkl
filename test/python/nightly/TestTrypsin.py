@@ -23,7 +23,7 @@ class TestFullWorkFlow(unittest.TestCase):
     def test(self):
 
         print('OpenHKL TestTrypsin')
-        data_dir = 'trypsin' # Path to .raw data files
+        data_dir = '.' # Path to .raw data files
 
         # set up the experiment
         expt = ohkl.Experiment('trypsin', 'BioDiff2500')
@@ -38,12 +38,13 @@ class TestFullWorkFlow(unittest.TestCase):
 
         print(f'Reading files from {data_dir}')
         dir = Path(data_dir)
-        raw_data_files = sorted(list(dir.glob('*.raw')))
+        raw_data_files = sorted(list(dir.glob('soak_9_d2*.raw')))
         dataset.setRawReaderParameters(data_params)
         for filename in raw_data_files:
             dataset.addRawFrame(str(filename))
 
-        self.assertTrue(len(raw_data_files) == 169)
+        nfiles = len(raw_data_files)
+        self.assertTrue(nfiles == 169, f"found {nfiles} raw data files")
 
         dataset.finishRead()
         expt.addData(dataset)

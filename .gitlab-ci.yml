@@ -38,11 +38,23 @@ stages:
 build:ubuntu:
   stage: build
   script:
-    - mkdir build
-    - cd build
-    - cmake ..
-    - make -j8
-    - ctest -j8
+  - mkdir build
+  - cd build
+  - |
+    if test $CI_PIPELINE_SOURCE == "nightly"
+    then
+        cmake .. -D OHKL_FULL_WORKFLOW_TEST=ON
+    else
+        cmake ..
+    fi
+  - make -j8
+  - |
+    if test $CI_PIPELINE_SOURCE == "nightly"
+    then
+        ctest --output-on-failure -L "nightly"
+    else
+        ctest -j8 --output-on-failure -E "nightly"
+    fi
   # artifacts:
   #   paths:
   #   - src/libmandel.so
