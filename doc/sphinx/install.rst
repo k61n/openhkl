@@ -35,7 +35,7 @@ Compile from source
 
 ::
 
-   git clone https://jugit.fz-juelich.de/mlz/openhkl.git
+   git clone https://iffgit.fz-juelich.de/neutron-simlab/openhkl.git
 
 3. Create a build directory, run ``cmake`` and compile the source:
 

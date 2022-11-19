@@ -13,7 +13,7 @@ for sample unit cell, along with their Miller indices, integrated intensities
 and variances.
 
 Detailed documentation including and installation guide and a tutorial can be
-found at [www.openhkl.org](https://www.openhkl.org).
+found [here](https://neutron-simlab.iffgit.fz-juelich.de/openhkl/).
 
 ### Why use OpenHKL?
 

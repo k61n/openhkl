@@ -7,9 +7,9 @@
 
 #define APPLICATION_NAME "OpenHKL"
 #define APPLICATION_CLAIM "Data reduction for single crystal diffraction"
-#define REPO_URL "https://jugit.fz-juelich.de/mlz/openhkl"
+#define REPO_URL "https://iffgit.fz-juelich.de/neutron-simlab/openhkl"
 
 #define ORGANIZATION_NAME "OpenHKL"
-#define ORGANIZATION_DOMAIN "https://jugit.fz-juelich.de/mlz/openhkl"
+#define ORGANIZATION_DOMAIN "https://openhkl.org"
 
 #endif
