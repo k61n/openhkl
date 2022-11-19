@@ -25,10 +25,10 @@ Compile from source
    * Blosc
    * OpenCV
    * Swig
+   * numpy
 
    Optional dependencies:
 
-   * numpy
    * OpenMP
 
 2. Clone the git repository
