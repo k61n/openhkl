@@ -27,10 +27,10 @@ build:ubuntu:
     else
         ctest -j8 --output-on-failure -E "nightly"
     fi
-  # artifacts:
-  #   paths:
-  #   - src/libmandel.so
-  #   expire_in: 1 day
+  artifacts:
+    paths:
+    - build
+    expire_in: 1 day
 
 pages:
   stage: deploy:doc
