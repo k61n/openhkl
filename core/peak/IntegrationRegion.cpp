@@ -265,11 +265,13 @@ bool IntegrationRegion::advanceFrame(
             Eigen::Vector3d p(x, y, frame);
             auto event_type = classify(ev);
 
-            if (event_type == EventType::PEAK)
+            if (event_type == EventType::PEAK) {
                 _data.addEvent(ev, image(y, x));
+            }
 
-            if (event_type == EventType::BACKGROUND && mask_type == EventType::BACKGROUND)
+            if (event_type == EventType::BACKGROUND && mask_type == EventType::BACKGROUND) {
                 _data.addEvent(ev, image(y, x));
+            }
 
             // check if point is in Brillouin zone (or AABB if no UC available)
             // if (_hull.contains(p)) {
@@ -279,6 +281,53 @@ bool IntegrationRegion::advanceFrame(
     }
     return false;
 }
+
+bool IntegrationRegion::advanceFrame(
+    const Eigen::MatrixXd& image, const Eigen::MatrixXi& mask, double frame,
+    const Eigen::MatrixXd& gradient)
+{
+    const auto aabb = _hull.aabb();
+    auto lower = aabb.lower();
+    auto upper = aabb.upper();
+
+    if (frame < lower[2])
+        return false;
+
+    if (frame > upper[2])
+        return true;
+
+    long xmin = std::max(0L, std::lround(lower[0]));
+    long ymin = std::max(0L, std::lround(lower[1]));
+
+    long xmax = std::min(long(image.cols()), std::lround(upper[0]));
+    long ymax = std::min(long(image.rows()), std::lround(upper[1]));
+
+    for (auto x = xmin; x < xmax; ++x) {
+        for (auto y = ymin; y < ymax; ++y) {
+            EventType mask_type = EventType(mask(y, x));
+            if (mask_type == EventType::FORBIDDEN)
+                continue;
+            DetectorEvent ev(x, y, frame);
+            Eigen::Vector3d p(x, y, frame);
+            auto event_type = classify(ev);
+
+            if (event_type == EventType::PEAK) {
+                _data.addEvent(ev, image(y, x), gradient(y, x));
+            }
+
+            if (event_type == EventType::BACKGROUND && mask_type == EventType::BACKGROUND) {
+                _data.addEvent(ev, image(y, x), gradient(y, x));
+            }
+
+            // check if point is in Brillouin zone (or AABB if no UC available)
+            // if (_hull.contains(p)) {
+            //    _data.addEvent(ev, image(y,x));
+            //}
+        }
+    }
+    return false;
+}
+
 
 void IntegrationRegion::reset()
 {

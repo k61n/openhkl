@@ -57,8 +57,8 @@ for peak_end in np.arange(2.5, 3.6, 0.1):
     integration_params.integrator_type = nsx.IntegratorType_PixelSum
     integration_params.peak_end = peak_end
     integration_params.bkg_begin = peak_end
-    integ_prov = expt.integrationProvider()
-    integ_prov.integratePeaks(data, peaks, integration_params, shapes)
+    integrator = expt.integrator()
+    integrator.integratePeaks(data, peaks, integration_params, shapes)
 
     # Merge parameters
     merger = expt.peakMerger()

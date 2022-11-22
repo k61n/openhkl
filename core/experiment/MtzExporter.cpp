@@ -26,10 +26,19 @@
 #include <iostream> 
 
 namespace ohkl {
-MtzExporter::MtzExporter(ohkl::Experiment* expt, std::string dataset_name, std::string peakcollection_name,
-    bool use_merged_data, std::string comment, ohkl::MergedData* merged_data, ohkl::sptrUnitCell cell)
-    : _use_merged_data(use_merged_data), _expt(expt), _ohkl_data(nullptr), _ohkl_uc(cell.get()), _ohkl_merged_data(merged_data),
-    _mtz_data (nullptr), _mtz_xtal(nullptr), _peakcollection_name(peakcollection_name), _comment(comment)
+MtzExporter::MtzExporter(
+    ohkl::Experiment* expt, std::string dataset_name, std::string peakcollection_name,
+    bool use_merged_data, std::string comment, ohkl::MergedData* merged_data,
+    ohkl::sptrUnitCell cell)
+    : _use_merged_data(use_merged_data)
+    , _expt(expt)
+    , _ohkl_data(nullptr)
+    , _ohkl_uc(cell.get())
+    , _ohkl_merged_data(merged_data)
+    , _comment(comment)
+    , _peakcollection_name(peakcollection_name)
+    , _mtz_data(nullptr)
+    , _mtz_xtal(nullptr)
 {
     if (!_expt)
         throw std::runtime_error("E MtzExporter::MtzExporter : invalid project ptr ");
@@ -41,7 +50,6 @@ MtzExporter::MtzExporter(ohkl::Experiment* expt, std::string dataset_name, std::
     _mtz_cols.clear();
 
     _ohkl_data = _expt->getData(dataset_name);
-    auto peaks = _expt->getPeakCollection(peakcollection_name);
     process();
 }
 

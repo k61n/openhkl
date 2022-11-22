@@ -163,13 +163,13 @@ TEST_CASE("test/data/TestNexusData.cpp", "")
     std::cout << "--------------------------------------------------------------------------------"
               << std::endl;
 
-    ohkl::IntegrationProvider* integ_prov = exp.integrationProvider();
-    ohkl::IntegrationParameters* params = integ_prov->parameters();
+    ohkl::Integrator* integrator = exp.integrator();
+    ohkl::IntegrationParameters* params = integrator->parameters();
     params->peak_end = 3.0;
     params->bkg_begin = 3.5;
     params->bkg_end = 4.5;
-    integ_prov->pIntegrator(ohkl::IntegratorType::PixelSum)->setHandler(progressHandler);
-    integ_prov->integrateFoundPeaks(peak_finder);
+    integrator->getIntegrator(ohkl::IntegratorType::PixelSum)->setHandler(progressHandler);
+    integrator->integrateFoundPeaks(peak_finder);
     exp.acceptFoundPeaks("found_peaks");
     ohkl::PeakCollection* found_collection = exp.getPeakCollection("found_peaks");
 

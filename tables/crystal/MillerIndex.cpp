@@ -109,6 +109,15 @@ bool MillerIndex::operator<(const MillerIndex& other) const
     return false;
 }
 
+bool MillerIndex::operator==(const MillerIndex& other) const
+{
+    for (int i = 0; i < 3; i++) {
+        if (_hkl(i) != other._hkl(i))
+            return false;
+    }
+    return true;
+}
+
 const Eigen::RowVector3d& MillerIndex::error() const
 {
     return _error;

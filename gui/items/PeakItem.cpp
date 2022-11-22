@@ -68,6 +68,24 @@ double PeakItem::strength() const
     }
 }
 
+double PeakItem::bkg_gradient() const
+{
+    try {
+        return _peak->meanBkgGradient().value();
+    } catch (std::range_error& e) {
+        return 0.0;
+    }
+}
+
+double PeakItem::bkg_gradient_sigma() const
+{
+    try {
+        return _peak->meanBkgGradient().sigma();
+    } catch (std::range_error& e) {
+        return 0.0;
+    }
+}
+
 bool PeakItem::selected() const
 {
     return _peak->selected();
@@ -86,59 +104,65 @@ QVariant PeakItem::peakData(const QModelIndex& index, int role, PeakDisplayModes
         case Qt::DisplayRole:
 
             switch (col) {
-                case Column::h: {
+                case PeakColumn::h: {
                     return hkl(0);
                 }
-                case Column::k: {
+                case PeakColumn::k: {
                     return hkl(1);
                 }
-                case Column::l: {
+                case PeakColumn::l: {
                     return hkl(2);
                 }
-                case Column::px: {
+                case PeakColumn::px: {
                     return peak_center(0);
                 }
-                case Column::py: {
+                case PeakColumn::py: {
                     return peak_center(1);
                 }
-                case Column::Frame: {
+                case PeakColumn::Frame: {
                     return peak_center(2);
                 }
-                case Column::Intensity: {
+                case PeakColumn::Intensity: {
                     return intensity();
                 }
-                case Column::Sigma: {
+                case PeakColumn::Sigma: {
                     return sigma_intensity();
                 }
-                case Column::Strength: {
+                case PeakColumn::Strength: {
                     return strength();
                 }
-                case Column::Numor: {
+                case PeakColumn::BkgGradient: {
+                    return bkg_gradient();
+                }
+                case PeakColumn::BkgGradientSigma: {
+                    return bkg_gradient_sigma();
+                }
+                case PeakColumn::Numor: {
                     return _peak->dataSet()->metadata().key<int>(ohkl::at_numor);
                 }
-                case Column::uc: {
+                case PeakColumn::uc: {
                     const ohkl::UnitCell* unit_cell = _peak->unitCell();
                     if (!unit_cell)
                         return QString("not set");
                     return QString::fromStdString(unit_cell->name());
                 }
-                case Column::d: {
+                case PeakColumn::d: {
                     return peak_d();
                 }
-                case Column::Rejection: {
+                case PeakColumn::Rejection: {
                     return QString::fromStdString(_peak->rejectionString());
                 }
-                case Column::Filtered: {
+                case PeakColumn::Filtered: {
                     return QString::number(_peak->caughtByFilter());
                 }
-                // case Column::Selected: {
+                // case PeakColumn::Selected: {
                 //     return _peak->selected();
                 // }
             }
             break;
 
         case Qt::CheckStateRole: {
-            if (index.column() == Column::Selected) {
+            if (index.column() == PeakColumn::Selected) {
                 if (_peak->selected())
                     return Qt::Checked;
                 else
@@ -167,9 +191,9 @@ QVariant PeakItem::peakData(const QModelIndex& index, int role, PeakDisplayModes
         }
         case Qt::ToolTipRole:
             switch (col) {
-                case Column::h: return hkl[0] + hkl_error[0];
-                case Column::k: return hkl[1] + hkl_error[1];
-                case Column::l: return hkl[2] + hkl_error[2];
+                case PeakColumn::h: return hkl[0] + hkl_error[0];
+                case PeakColumn::k: return hkl[1] + hkl_error[1];
+                case PeakColumn::l: return hkl[2] + hkl_error[2];
             }
             break;
     }

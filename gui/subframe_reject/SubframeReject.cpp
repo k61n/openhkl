@@ -2,7 +2,7 @@
 //
 //  OpenHKL: data reduction for single crystal diffraction
 //
-//! @file      gui/subframe_filter/SubframeReject.cpp
+//! @file      gui/subframe_reject/SubframeReject.cpp
 
 //! @brief     Implements class SubframeReject
 //!
@@ -23,6 +23,8 @@
 #include "gui/frames/ProgressView.h"
 #include "gui/graphics/DetectorScene.h"
 #include "gui/graphics/SXPlot.h"
+#include "gui/graphics_items/PeakItemGraphic.h"
+#include "gui/items/PeakItem.h"
 #include "gui/models/Project.h"
 #include "gui/models/Session.h"
 #include "gui/subwindows/DetectorWindow.h"
@@ -36,6 +38,7 @@
 #include "gui/views/PeakTableView.h"
 #include "gui/widgets/DetectorWidget.h"
 #include "gui/widgets/PlotPanel.h"
+#include "tables/crystal/MillerIndex.h"
 
 #include <QFileInfo>
 #include <QGridLayout>
@@ -45,6 +48,8 @@
 #include <QMessageBox>
 #include <QScrollBar>
 #include <QSpacerItem>
+#include <QItemSelectionModel>
+#include <qpushbutton.h>
 
 SubframeReject::SubframeReject() : QWidget()
 {
@@ -54,6 +59,7 @@ SubframeReject::SubframeReject() : QWidget()
     _left_layout = new QVBoxLayout();
 
     setInputUp();
+    setFindUp();
     setHistogramUp();
     setPreviewUp();
     setFigureUp();
@@ -72,6 +78,7 @@ SubframeReject::SubframeReject() : QWidget()
         _peak_combo, QOverload<int>::of(&QComboBox::currentIndexChanged), this, [=]() {
             updateStatistics();
             computeHistogram();
+            _plot_widget->sxplot()->resetZoom();
     });
     connect(
         _histo_combo, QOverload<int>::of(&QComboBox::currentIndexChanged), this, [=]() {
@@ -89,6 +96,8 @@ SubframeReject::SubframeReject() : QWidget()
     _right_element->setStretchFactor(2, 2);
 
     _peak_stats = ohkl::PeakStatistics();
+
+    _selection_color = Qt::black;
 }
 
 void SubframeReject::setInputUp()
@@ -97,13 +106,28 @@ void SubframeReject::setInputUp()
     GridFiller f(input_box, true);
 
     _data_combo = f.addDataCombo("Data set");
-    _peak_combo = f.addPeakCombo(ComboType::PeakCollection, "Peaks collection");
+    _peak_combo = f.addPeakCombo(ComboType::PeakCollection, "Peak collection");
 
     connect(
         _peak_combo, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this,
         &SubframeReject::toggleUnsafeWidgets);
 
     _left_layout->addWidget(input_box);
+}
+
+void SubframeReject::setFindUp()
+{
+    auto* find_box = new Spoiler("Find peak by index");
+    GridFiller gfiller(find_box, true);
+
+    _find_h = gfiller.addSpinBox("h", "h Miller index");
+    _find_k = gfiller.addSpinBox("k", "k Miller index");
+    _find_l = gfiller.addSpinBox("l", "l Miller index");
+    _find_by_index = gfiller.addButton("Find peak", "Find peak by miller index (hkl)");
+
+    connect(_find_by_index, &QPushButton::clicked, this, &SubframeReject::findByIndex);
+
+    _left_layout->addWidget(find_box);
 }
 
 void SubframeReject::setHistogramUp()
@@ -122,12 +146,17 @@ void SubframeReject::setHistogramUp()
         "Data range", "Minimum and maximum of x data series");
     _log_freq = filler.addCheckBox("Logarithmic vertical axis", "Switch to log-linear plot", 1);
     _plot_histogram = filler.addButton("Replot", "Refresh histogram");
+    _sigma_factor = filler.addDoubleSpinBox(
+        "Threshold", "Threshold for peak rejection in standard deviations");
+    _reject_outliers = filler.addButton(
+        "Reject outliers", "Reject peaks outside specified threshold");
 
     _n_bins->setMaximum(10000);
     _x_min->setMaximum(10000);
     _x_max->setMaximum(10000);
     _freq_min->setMaximum(10000);
     _freq_max->setMaximum(10000);
+    _sigma_factor->setMaximum(5);
 
     _x_min->setMinimum(-10000);
     _x_max->setMinimum(-10000);
@@ -137,12 +166,14 @@ void SubframeReject::setHistogramUp()
     _x_max->setValue(10000);
     _freq_min->setValue(0);
     _freq_max->setValue(1000);
+    _sigma_factor->setValue(3);
 
     connect(_log_freq, &QCheckBox::stateChanged, this, [=]() {
         updateStatistics();
         computeHistogram();
     });
     connect(_plot_histogram, &QPushButton::clicked, this, &SubframeReject::computeHistogram);
+    connect(_reject_outliers, &QPushButton::clicked, this, &SubframeReject::rejectOutliers);
 
     _left_layout->addWidget(histo_spoiler);
 }
@@ -154,9 +185,9 @@ void SubframeReject::setFigureUp()
     _detector_widget = new DetectorWidget(false, true, figure_group);
     _detector_widget->linkPeakModel(&_peak_collection_model);
 
-    connect(
-        _detector_widget->scene(), &DetectorScene::signalSelectedPeakItemChanged, this,
-        &SubframeReject::changeSelected);
+    // connect(
+    //     _detector_widget->scene(), &DetectorScene::signalSelectedPeakItemChanged, this,
+    //     &SubframeReject::changeSelected);
     connect(
         _peak_combo, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this,
         &SubframeReject::refreshPeakTable);
@@ -208,6 +239,10 @@ void SubframeReject::setPeakTableUp()
     peak_grid->addWidget(_peak_table, 0, 0, 0, 0);
 
     _right_element->addWidget(peak_group);
+
+    connect(
+        _peak_table->selectionModel(), &QItemSelectionModel::selectionChanged, this,
+        &SubframeReject::onPeakTableSelection);
 }
 
 void SubframeReject::refreshPeakTable()
@@ -220,15 +255,17 @@ void SubframeReject::refreshPeakTable()
     _peak_collection_item.setFilterMode();
     _peak_collection_model.setRoot(&_peak_collection_item);
     _peak_table->resizeColumnsToContents();
-    _peak_table->model()->sort(13, Qt::DescendingOrder);
+    _peak_table->model()->sort(PeakColumn::Filtered, Qt::DescendingOrder);
 
     refreshPeakVisual();
 }
 
 void SubframeReject::refreshAll()
 {
+    toggleUnsafeWidgets();
     if (!gSession->hasProject())
         return;
+
 
     _data_combo->refresh();
     _detector_widget->refresh();
@@ -241,6 +278,7 @@ void SubframeReject::refreshAll()
         return;
     updateStatistics();
     computeHistogram();
+    _plot_widget->sxplot()->resetZoom();
 }
 
 void SubframeReject::setPreviewUp()
@@ -270,6 +308,73 @@ void SubframeReject::changeSelected(PeakItemGraphic* peak_graphic)
 
 void SubframeReject::toggleUnsafeWidgets()
 {
+    bool hasPeaks = false;
+    if (gSession->hasProject())
+        hasPeaks = gSession->currentProject()->hasPeakCollection();
+
+    if (hasPeaks)
+        if (!_peak_combo->currentPeakCollection()->isIndexed())
+            hasPeaks = false;
+
+    _find_h->setEnabled(hasPeaks);
+    _find_k->setEnabled(hasPeaks);
+    _find_l->setEnabled(hasPeaks);
+    _find_by_index->setEnabled(hasPeaks);
+
+    if (hasPeaks) {
+        int h_max = 0;
+        int k_max = 0;
+        int l_max = 0;
+        int h_min = 0;
+        int k_min = 0;
+        int l_min = 0;
+        for (ohkl::Peak3D* peak : _peak_combo->currentPeakCollection()->getPeakList()) {
+            int h = peak->hkl().h();
+            int k = peak->hkl().k();
+            int l = peak->hkl().l();
+            if (h < h_min)
+                h_min = h;
+            if (h > h_max)
+                h_max = h;
+            if (k < k_min)
+                k_min = k;
+            if (k > k_max)
+                k_max = k;
+            if (l < l_min)
+                l_min = l;
+            if (l > l_max)
+                l_max = l;
+        }
+        _find_h->setMaximum(h_max);
+        _find_h->setMinimum(h_min);
+        _find_k->setMaximum(k_max);
+        _find_k->setMinimum(k_min);
+        _find_l->setMaximum(l_max);
+        _find_l->setMinimum(l_min);
+    }
+}
+
+void SubframeReject::findByIndex()
+{
+    std::vector<PeakItem*> items;
+    ohkl::MillerIndex index_to_find = {_find_h->value(), _find_k->value(), _find_l->value()};
+    for (int i = 0; i < _peak_collection_item.childCount(); i++) {
+        PeakItem* item = _peak_collection_item.peakItemAt(i);
+        ohkl::Peak3D* peak = item->peak();
+        if (peak->hkl() == index_to_find)
+            items.emplace_back(item);
+    }
+    if (items.empty()) {
+        gGui->statusBar()->showMessage(
+            QString::fromStdString("No peak with this Miller index in collection " +
+                                   _peak_combo->currentPeakCollection()->name()));
+    } else if (items.size() == 1) {
+        changeSelected(items[0]->peakGraphic());
+    } else {
+        gGui->statusBar()->showMessage(QString::fromStdString(
+            "Multiple peaks with this Miller index in collection "
+            + _peak_combo->currentPeakCollection()->name()));
+    }
 }
 
 void SubframeReject::updateStatistics()
@@ -326,6 +431,16 @@ void SubframeReject::filterSelection(double xmin, double xmax)
         filter->parameters()->strength_min = xmin;
         filter->parameters()->strength_max = xmax;
         break;
+    case ohkl::PeakHistogramType::BkgGradient:
+        filter->flags()->gradient = true;
+        filter->parameters()->gradient_min = xmin;
+        filter->parameters()->gradient_max = xmax;
+        break;
+    case ohkl::PeakHistogramType::BkgGradientSigma:
+        filter->flags()->gradient_sigma = true;
+        filter->parameters()->gradient_sigma_min = xmin;
+        filter->parameters()->gradient_sigma_max = xmax;
+        break;
     }
     filter->filter(collection);
 
@@ -351,6 +466,25 @@ void SubframeReject::updateYRange(double ymin, double ymax)
     _freq_max->setValue(ymax);
 }
 
+void SubframeReject::onPeakTableSelection()
+{
+    for (std::size_t idx = 0; idx < _selected_graphics.size(); ++idx)
+        _selected_graphics[idx]->setCenterColor(_saved_colors[idx]);
+    _selected_graphics.clear();
+    _saved_colors.clear();
+    QModelIndexList selected_rows = _peak_table->selectionModel()->selectedRows();
+    for (auto row : selected_rows) {
+        int idx = row.row();
+        PeakItemGraphic* peak_graphic = _peak_collection_item.peakItemAt(idx)->peakGraphic();
+        _saved_colors.push_back(peak_graphic->centerColor());
+        peak_graphic->setCenterColor(_selection_color);
+        _selected_graphics.emplace_back(peak_graphic);
+    }
+    PeakItemGraphic* peak_graphic = _selected_graphics[0];
+    unsigned int frame = static_cast<unsigned int>(peak_graphic->peak()->shape().center()[2]);
+    _detector_widget->spin()->setValue(frame);
+}
+
 void SubframeReject::updatePlotRange()
 {
     _x_min->setMaximum(_peak_stats.maxValue());
@@ -372,6 +506,24 @@ void SubframeReject::updatePlotRange()
         _freq_max->setValue(_peak_stats.maxCount());
         _freq_min->setValue(0);
     }
+}
+
+void SubframeReject::rejectOutliers()
+{
+    std::vector<ohkl::Peak3D*> outliers = _peak_stats.findOutliers(_sigma_factor->value());
+    ohkl::PeakFilter* filter = gSession->currentProject()->experiment()->peakFilter();
+    ohkl::PeakCollection* collection = _peak_combo->currentPeakCollection();
+    filter->resetFiltering(collection);
+
+    for (auto* peak : outliers) {
+        peak->setSelected(false);
+        peak->setRejectionFlag(ohkl::RejectionFlag::Outlier);
+        peak->caughtYou(true); // For sorting in the peak table
+    }
+    refreshPeakTable();
+    gGui->statusBar()->showMessage(
+        QString::number(outliers.size()) + "/" + QString::number(collection->numberOfPeaks()) +
+        " outliers rejected");
 }
 
 DetectorWidget* SubframeReject::detectorWidget()

@@ -40,6 +40,7 @@ class SafeDoubleSpinBox;
 
 //! Frame containing interface to find peaks from detector images
 class SubframeFindPeaks : public QWidget {
+    Q_OBJECT
  public:
     SubframeFindPeaks();
     //! Change the convolution parameters
@@ -56,6 +57,12 @@ class SubframeFindPeaks : public QWidget {
     void grabFinderParameters();
     //! Grab the integration parameters
     void grabIntegrationParameters();
+
+ public slots:
+    void onGradientSettingsChanged();
+
+ signals:
+    void signalGradient(int kernel, bool fft);
 
  private:
     //! Set up the data selection GUI
@@ -127,6 +134,9 @@ class SubframeFindPeaks : public QWidget {
     SafeDoubleSpinBox* _peak_area;
     SafeDoubleSpinBox* _bkg_lower;
     SafeDoubleSpinBox* _bkg_upper;
+    QCheckBox* _gradient_check;
+    QCheckBox* _fft_gradient_check;
+    QComboBox* _gradient_kernel;
 
     QPushButton* _find_button;
     QPushButton* _integrate_button;
@@ -136,6 +146,13 @@ class SubframeFindPeaks : public QWidget {
     QGraphicsPixmapItem* _pixmap;
 
     PeakTableView* _peak_table;
+
+    const std::map<ohkl::GradientKernel, QString> _kernel_description{
+        {ohkl::GradientKernel::CentralDifference, "Central difference"},
+        {ohkl::GradientKernel::Sobel, "Sobel 3x3"},
+        {ohkl::GradientKernel::Sobel5, "Sobel 5x5"},
+        {ohkl::GradientKernel::Prewitt, "Prewitt"},
+    };
 };
 
 #endif // OHKL_GUI_SUBFRAME_FIND_SUBFRAMEFINDPEAKS_H

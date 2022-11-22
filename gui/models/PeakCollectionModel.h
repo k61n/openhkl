@@ -49,29 +49,10 @@ class PeakCollectionModel : public QAbstractTableModel {
     Qt::ItemFlags flags(const QModelIndex& index) const override;
     //! Returns header information
     QVariant headerData(int section, Qt::Orientation orientation, int role) const override;
-    //! Enumerator class for the model
-    enum Column {
-        h,
-        k,
-        l,
-        px,
-        py,
-        Frame,
-        Intensity,
-        Sigma,
-        Strength,
-        Numor,
-        uc,
-        d,
-        Rejection,
-        Filtered,
-        Selected,
-        Count,
-    };
     //! The sorting of the peaks
     void sort(int column, Qt::SortOrder order) override;
     //! Implement model's setData method for interactable checkbox
-    bool setData(const QModelIndex& index, const QVariant& value, int role);
+    bool setData(const QModelIndex& index, const QVariant& value, int role) override;
 
  public:
     PeakCollectionItem* _root_item = nullptr;

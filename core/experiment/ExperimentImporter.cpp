@@ -176,6 +176,8 @@ void ExperimentImporter::loadPeaks(Experiment* experiment)
             Eigen_VecXd sigma(n_peaks);
             Eigen_VecXd mean_bkg_val(n_peaks);
             Eigen_VecXd mean_bkg_sig(n_peaks);
+            Eigen_VecXd mean_bkg_grad(n_peaks);
+            Eigen_VecXd mean_bkg_grad_sig(n_peaks);
 
             Eigen_VecXint rejection_flag(n_peaks);
 
@@ -188,7 +190,9 @@ void ExperimentImporter::loadPeaks(Experiment* experiment)
                 {ohkl::ds_Intensity, &intensity},
                 {ohkl::ds_Sigma, &sigma},
                 {ohkl::ds_BkgIntensity, &mean_bkg_val},
-                {ohkl::ds_BkgSigma, &mean_bkg_sig}};
+                {ohkl::ds_BkgSigma, &mean_bkg_sig},
+                {ohkl::ds_bkgGrad, &mean_bkg_grad},
+                {ohkl::ds_bkgGradSigma, &mean_bkg_grad_sig}};
 
             std::map<std::string, Eigen_VecXint*> int_keys{
                 {ohkl::ds_Rejection, &rejection_flag},
@@ -331,11 +335,12 @@ void ExperimentImporter::loadPeaks(Experiment* experiment)
 
                 const ohkl::Intensity peak_intensity(intensity[k], sigma[k]);
                 const ohkl::Intensity peak_mean_bkg(mean_bkg_val[k], mean_bkg_sig[k]);
+                const ohkl::Intensity peak_bkg_grad(mean_bkg_grad[k], mean_bkg_grad_sig[k]);
 
                 peak->setManually(
                     peak_intensity, peak_end[k], bkg_begin[k], bkg_end[k], scale[k],
                     transmission[k], peak_mean_bkg, predicted[k], selected[k], masked[k],
-                    rejection_flag[k]);
+                    rejection_flag[k], peak_bkg_grad);
 
 
                 if (experiment->numUnitCells() > 0) {

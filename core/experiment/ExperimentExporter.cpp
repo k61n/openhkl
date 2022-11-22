@@ -41,6 +41,7 @@
 #include "tables/crystal/UnitCell.h"
 
 #include <Eigen/Dense>
+#include <H5PredType.h>
 #include <sstream>
 #include <string>
 #include <tuple>
@@ -336,6 +337,8 @@ void ExperimentExporter::writePeaks(const std::map<std::string, PeakCollection*>
         std::vector<double> sigma(nPeaks);
         std::vector<double> mean_bkg_val(nPeaks);
         std::vector<double> mean_bkg_sig(nPeaks);
+        std::vector<double> mean_bkg_grad(nPeaks);
+        std::vector<double> mean_bkg_grad_sigma(nPeaks);
 
         Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor> hkl_error(nPeaks, 3);
         Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor> center(nPeaks, 3);
@@ -374,6 +377,8 @@ void ExperimentExporter::writePeaks(const std::map<std::string, PeakCollection*>
             sigma[i] = peak->rawIntensity().sigma();
             mean_bkg_val[i] = peak->meanBackground().value();
             mean_bkg_sig[i] = peak->meanBackground().sigma();
+            mean_bkg_grad[i] = peak->meanBkgGradient().value();
+            mean_bkg_grad_sigma[i] = peak->meanBkgGradient().sigma();
 
             rejection_flag[i] = static_cast<int>(peak->rejectionFlag());
 
@@ -397,7 +402,7 @@ void ExperimentExporter::writePeaks(const std::map<std::string, PeakCollection*>
 
                 Eigen::Vector3i itemp_col = peak->hkl().rowVector();
                 hkl.block(i, 0, 1, 3) =
-                    Eigen::RowVector3i{itemp_col(0), itemp_col(1), itemp_col(2)};
+                    Eigen::RowVector3i(itemp_col(0), itemp_col(1), itemp_col(2));
             }
         }
 
@@ -434,7 +439,10 @@ void ExperimentExporter::writePeaks(const std::map<std::string, PeakCollection*>
                 // NATIVE_HBOOL
                 {ohkl::ds_Selected, H5::PredType::NATIVE_HBOOL, peak_space, selected.get()},
                 {ohkl::ds_Masked, H5::PredType::NATIVE_HBOOL, peak_space, masked.get()},
-                {ohkl::ds_Predicted, H5::PredType::NATIVE_HBOOL, peak_space, predicted.get()}};
+                {ohkl::ds_Predicted, H5::PredType::NATIVE_HBOOL, peak_space, predicted.get()},
+                {ohkl::ds_bkgGrad, H5::PredType::NATIVE_DOUBLE, peak_space, mean_bkg_grad.data()},
+                {ohkl::ds_bkgGradSigma, H5::PredType::NATIVE_DOUBLE, peak_space,
+                 mean_bkg_grad_sigma.data()}};
 
         for (const auto& [dkey, dtype, dspace, dptr] : peakData_defs) {
             H5::DataSet data_H5(file.createDataSet(collectionNameKey + "/" + dkey, dtype, dspace));

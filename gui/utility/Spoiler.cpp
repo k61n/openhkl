@@ -175,6 +175,7 @@ void Spoiler::checker(const int state)
 
 void Spoiler::showEvent(QShowEvent* event)
 {
+    Q_UNUSED(event);
     // minimum height of content area is recalculated in some initialization methods (could not find
     // which one). Therefore it has to be re-initialized in here, in case we start collapsed
     if (!_toggleButton->isChecked())

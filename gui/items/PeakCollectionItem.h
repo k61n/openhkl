@@ -45,25 +45,6 @@ class PeakCollectionItem {
     PeakItem* peakItemAt(int row) const;
     //! The sorthing of the peaks
     void sort(int column, Qt::SortOrder order);
-    //! Enumerator class for the model
-    enum Column {
-        h,
-        k,
-        l,
-        px,
-        py,
-        Frame,
-        Intensity,
-        Sigma,
-        Strength,
-        Numor,
-        uc,
-        d,
-        Rejection,
-        Filtered,
-        Selected,
-        Count,
-    };
     //! Return the row according to the vis. peak item pointer
     int returnRowOfVisualItem(PeakItemGraphic* peak_graphic) const;
     //! Set the visual to filter mode

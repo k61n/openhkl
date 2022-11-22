@@ -23,6 +23,7 @@
 
 namespace ohkl {
 
+class Peak3D;
 class PeakCollection;
 
 /*! \addtogroup python_api
@@ -33,8 +34,9 @@ enum class PeakHistogramType {
     Intensity,
     Sigma,
     Strength,
+    BkgGradient,
+    BkgGradientSigma
 };
-
 
 /*! \brief Compute peaks statistics to facilitate outlier rejection
  *
@@ -64,13 +66,18 @@ class PeakStatistics {
     //! Determine whether the histogram exists
     bool hasHistogram() const { return _current_histogram != nullptr; };
 
+    //! Compute statistics
+    std::pair<double, double> computeStatistics();
+    //! Find outliers with sigma < sigma * factor
+    std::vector<Peak3D*> findOutliers(double factor = 3.0);
+
  private:
     //! Allocate histogram memory
     void _initHistogram(std::size_t nbins);
     //! Free histogram memory
     void _clearHistogram();
-    //! Get the data for the histogram from the peak collection
-    std::vector<double> _getPeakData(PeakHistogramType type);
+    //! Get the data for the histogram from the peak collection.
+    void _getPeakData(PeakHistogramType type);
 
     PeakCollection* _peaks;
 
@@ -78,7 +85,7 @@ class PeakStatistics {
     double _max_value;
     double _min_value;
     gsl_histogram* _current_histogram;
-    std::vector<double> _peak_data;
+    std::vector<std::pair<double, Peak3D*>> _peak_data;
 
     static const std::map<PeakHistogramType, std::string> _histogram_strings;
 };

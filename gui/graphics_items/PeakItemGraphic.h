@@ -55,6 +55,8 @@ class PeakItemGraphic : public PlottableItem {
     void setColor(QColor color);
     //! Change the peak center color
     void setCenterColor(QColor color);
+    //! Get the center color
+    QColor centerColor() const;
 
     //! Init properties from a set of controls on \a peakViewWidget
     void initFromPeakViewWidget(const PeakViewWidget::Set& set);

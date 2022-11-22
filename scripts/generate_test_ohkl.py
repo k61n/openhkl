@@ -142,4 +142,4 @@ shapes = found_peaks.shapeModel()
 interpolation = ohkl.PeakInterpolation_InverseDistance
 shapes.setPredictedShapes(predicted_peaks)
 
-expt.saveToFile(f'{name}.nsx')
+expt.saveToFile(f'{name}.ohkl')

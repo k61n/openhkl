@@ -29,38 +29,39 @@
 namespace ohkl {
 
 const std::map<RejectionFlag, std::string> Peak3D::_rejection_map{
-    {RejectionFlag::NotRejected, "Not rejected"},
-    {RejectionFlag::Masked, "Masked by user"},
-    {RejectionFlag::OutsideThreshold, "Too many or few detector counts"},
-    {RejectionFlag::OutsideFrames, "Peak centre outside frame range"},
-    {RejectionFlag::OutsideDetector, "Peak centre outside detector image"},
-    {RejectionFlag::IntegrationFailure, "Integration failed"},
-    {RejectionFlag::TooFewPoints, "Too few points to integrate"},
-    {RejectionFlag::NoNeighbours, "No neighbouring profiles to compute shape"},
-    {RejectionFlag::TooFewNeighbours, "Too few neighbouring profiles to compute shape"},
-    {RejectionFlag::NoUnitCell, "No unit cell assigned"},
-    {RejectionFlag::NoDataSet, "No associated data set"},
-    {RejectionFlag::InvalidRegion, "Integration region extends beyond image/frame range"},
-    {RejectionFlag::InterpolationFailure, "Frame coordinate interpolation failed"},
-    {RejectionFlag::InvalidSigma, "Negative, zero, or undefined sigma"},
-    {RejectionFlag::InvalidBkgSigma, "Negative, zero, or undefined background sigma"},
-    {RejectionFlag::SaturatedPixel, "Peak contains saturated pixel(s)"},
-    {RejectionFlag::OverlappingBkg, "Adjacent peak background region overlaps this peak"},
-    {RejectionFlag::OverlappingPeak, "Adjacent peak intensity region overlaps this peak"},
-    {RejectionFlag::InvalidCentroid, "Centre of mass of peak is inconsistent"},
-    {RejectionFlag::InvalidCovariance, "Covariance matrix of peak is inconsistent"},
-    {RejectionFlag::InvalidShape, "Shape of peak is too small or large"},
-    {RejectionFlag::CentreOutOfBounds, "Peak centre moved beyond bounds of data set"},
-    {RejectionFlag::BadIntegrationFit, "Pearson coefficient of fit is too low"},
-    {RejectionFlag::NoShapeModel, "No shape model found"},
-    {RejectionFlag::NoISigmaMinimum, "Failed to find minimum of I/Sigma"},
-    {RejectionFlag::PredictionUpdateFailure, "Failure updating prediction post-refinement"},
-    {RejectionFlag::ManuallyRejected, "Manually unselected by user"},
-    {RejectionFlag::OutsideIndexingTol, "Outside indexing tolerance"}};
+    {RejectionFlag::NotRejected, "Not rejected"}, {RejectionFlag::Masked, "Masked by user"},
+        {RejectionFlag::OutsideThreshold, "Too many or few detector counts"},
+        {RejectionFlag::OutsideFrames, "Peak centre outside frame range"},
+        {RejectionFlag::OutsideDetector, "Peak centre outside detector image"},
+        {RejectionFlag::IntegrationFailure, "Integration failed"},
+        {RejectionFlag::TooFewPoints, "Too few points to integrate"},
+        {RejectionFlag::NoNeighbours, "No neighbouring profiles to compute shape"},
+        {RejectionFlag::TooFewNeighbours, "Too few neighbouring profiles to compute shape"},
+        {RejectionFlag::NoUnitCell, "No unit cell assigned"},
+        {RejectionFlag::NoDataSet, "No associated data set"},
+        {RejectionFlag::InvalidRegion, "Integration region extends beyond image/frame range"},
+        {RejectionFlag::InterpolationFailure, "Frame coordinate interpolation failed"},
+        {RejectionFlag::InvalidSigma, "Negative, zero, or undefined sigma"},
+        {RejectionFlag::InvalidBkgSigma, "Negative, zero, or undefined background sigma"},
+        {RejectionFlag::SaturatedPixel, "Peak contains saturated pixel(s)"},
+        {RejectionFlag::OverlappingBkg, "Adjacent peak background region overlaps this peak"},
+        {RejectionFlag::OverlappingPeak, "Adjacent peak intensity region overlaps this peak"},
+        {RejectionFlag::InvalidCentroid, "Centre of mass of peak is inconsistent"},
+        {RejectionFlag::InvalidCovariance, "Covariance matrix of peak is inconsistent"},
+        {RejectionFlag::InvalidShape, "Shape of peak is too small or large"},
+        {RejectionFlag::CentreOutOfBounds, "Peak centre moved beyond bounds of data set"},
+        {RejectionFlag::BadIntegrationFit, "Pearson coefficient of fit is too low"},
+        {RejectionFlag::NoShapeModel, "No shape model found"},
+        {RejectionFlag::NoISigmaMinimum, "Failed to find minimum of I/Sigma"},
+        {RejectionFlag::PredictionUpdateFailure, "Failure updating prediction post-refinement"},
+        {RejectionFlag::ManuallyRejected, "Manually unselected by user"},
+        {RejectionFlag::OutsideIndexingTol, "Outside indexing tolerance"},
+        {RejectionFlag::Outlier, "Rejected by outlier detection algorithm"}};
 
 Peak3D::Peak3D(sptrDataSet data)
     : _shape()
     , _meanBackground()
+    , _meanBkgGradient()
     , _peakEnd(3.0)
     , _bkgBegin(3.0)
     , _bkgEnd(6.0)
@@ -85,6 +86,7 @@ Peak3D::Peak3D(sptrDataSet data, const Ellipsoid& shape) : Peak3D(data)
 Peak3D::Peak3D(sptrDataSet data, const MillerIndex& hkl)
     : _shape()
     , _meanBackground()
+    , _meanBkgGradient()
     , _peakEnd(3.0)
     , _bkgBegin(3.0)
     , _bkgEnd(6.0)
@@ -106,6 +108,7 @@ Peak3D::Peak3D(std::shared_ptr<ohkl::Peak3D> peak)
 {
     setShape(peak->shape());
     _meanBackground = peak->meanBackground();
+    _meanBkgGradient = peak->meanBkgGradient();
     _peakEnd = peak->peakEnd();
     _bkgBegin = peak->bkgBegin();
     _bkgEnd = peak->bkgEnd();
@@ -258,10 +261,12 @@ bool Peak3D::predicted() const
 
 void Peak3D::updateIntegration(
     const std::vector<Intensity>& rockingCurve, const Intensity& meanBackground,
-    const Intensity& integratedIntensity, double peakEnd, double bkgBegin, double bkgEnd)
+    const Intensity& meanBkgGradient, const Intensity& integratedIntensity,
+    double peakEnd, double bkgBegin, double bkgEnd)
 {
     _rockingCurve = rockingCurve;
     _meanBackground = meanBackground;
+    _meanBkgGradient = meanBkgGradient;
     _rawIntensity = integratedIntensity;
 
     if (_rawIntensity.sigma() < _sigma2_eps) { // NaN sigma handled by Intensity constructor
@@ -359,7 +364,7 @@ void Peak3D::rejectYou(bool reject)
 void Peak3D::setManually(
     Intensity intensity, double peakEnd, double bkgBegin, double bkgEnd, double scale,
     double transmission, Intensity mean_bkg, bool predicted, bool selected, bool masked,
-    int rejection_flag)
+    int rejection_flag, Intensity mean_bkg_grad /* = {} */)
 {
     _peakEnd = peakEnd;
     _bkgBegin = bkgBegin;
@@ -372,12 +377,18 @@ void Peak3D::setManually(
     _meanBackground = mean_bkg;
     _rawIntensity = intensity;
     _rejection_flag = static_cast<RejectionFlag>(rejection_flag);
+    _meanBkgGradient = mean_bkg_grad;
 }
 
 
 Intensity Peak3D::meanBackground() const
 {
     return _meanBackground;
+}
+
+Intensity Peak3D::meanBkgGradient() const
+{
+    return _meanBkgGradient;
 }
 
 double Peak3D::peakEnd() const

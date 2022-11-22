@@ -29,7 +29,7 @@
 
 RawDataDialog::RawDataDialog(
     const ohkl::RawDataReaderParameters& parameters0, const QStringList& datanames_cur)
-    : _parameters0{parameters0}, _dataset_names{datanames_cur}
+    : _dataset_names{datanames_cur}
 {
     setModal(true);
     resize(400, 300);

@@ -60,7 +60,7 @@ bool PeakCollectionModel::indexIsValid(const QModelIndex& index) const
 
 QVariant PeakCollectionModel::data(const QModelIndex& index, int role = Qt::DisplayRole) const
 {
-    if (role == Qt::CheckStateRole && index.column() == Column::Selected)
+    if (role == Qt::CheckStateRole && index.column() == PeakColumn::Selected)
         return _root_item->data(index, role);
     if (!indexIsValid(index))
         return QVariant();
@@ -71,7 +71,7 @@ Qt::ItemFlags PeakCollectionModel::flags(const QModelIndex& index) const
 {
     if (!indexIsValid(index))
         return Qt::ItemIsEnabled;
-    if (index.column() == Column::Selected)
+    if (index.column() == PeakColumn::Selected)
         return (QAbstractTableModel::flags(index) | Qt::ItemIsEnabled | Qt::ItemIsUserCheckable);
     return QAbstractTableModel::flags(index);
 }
@@ -83,49 +83,55 @@ QVariant PeakCollectionModel::headerData(int section, Qt::Orientation orientatio
 
     if (orientation == Qt::Horizontal) {
         switch (section) {
-            case Column::h: {
+            case PeakColumn::h: {
                 return QString("h");
             }
-            case Column::k: {
+            case PeakColumn::k: {
                 return QString("k");
             }
-            case Column::l: {
+            case PeakColumn::l: {
                 return QString("l");
             }
-            case Column::px: {
+            case PeakColumn::px: {
                 return QString("x pixel");
             }
-            case Column::py: {
+            case PeakColumn::py: {
                 return QString("y pixel");
             }
-            case Column::Frame: {
+            case PeakColumn::Frame: {
                 return QString("Frame");
             }
-            case Column::Intensity: {
+            case PeakColumn::Intensity: {
                 return QString("Intensity");
             }
-            case Column::Sigma: {
-                return QString(QChar(0x03C3)) + "(Int.)";
+            case PeakColumn::Sigma: {
+                return QString(QChar(0x03C3)) + " (Int.)";
             }
-            case Column::Strength: {
+            case PeakColumn::Strength: {
                 return QString("Strength");
             }
-            case Column::Numor: {
+            case PeakColumn::BkgGradient: {
+                return QString("Gradient");
+            }
+            case PeakColumn::BkgGradientSigma: {
+                return QString(QChar(0x03C3)) + " (Grad.)";
+            }
+            case PeakColumn::Numor: {
                 return QString("Numor");
             }
-            case Column::uc: {
+            case PeakColumn::uc: {
                 return QString("Unit cell");
             }
-            case Column::d: {
+            case PeakColumn::d: {
                 return QString("d");
             }
-            case Column::Rejection: {
+            case PeakColumn::Rejection: {
                 return QString("Reason for rejection");
             }
-            case Column::Filtered: {
+            case PeakColumn::Filtered: {
                 return QString("Caught by filter");
             }
-            case Column::Selected: {
+            case PeakColumn::Selected: {
                 return QString("Valid");
             }
             default: return QVariant();
@@ -152,7 +158,7 @@ void PeakCollectionModel::reset()
 bool PeakCollectionModel::setData(const QModelIndex &index, const QVariant &value, int role) {
     if (!index.isValid())
         return false;
-    if (role == Qt::CheckStateRole && index.column() == Column::Selected) {
+    if (role == Qt::CheckStateRole && index.column() == PeakColumn::Selected) {
         if ((Qt::CheckState)value.toInt() == Qt::Checked) {
             _root_item->peakItemAt(index.row())->peak()->setSelected(true);
         } else {

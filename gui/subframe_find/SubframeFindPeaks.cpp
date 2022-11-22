@@ -16,6 +16,7 @@
 
 #include "core/convolve/ConvolverFactory.h"
 #include "core/data/DataSet.h"
+#include "core/data/ImageGradient.h"
 #include "core/experiment/Experiment.h"
 #include "core/experiment/PeakFinder.h"
 #include "core/peak/Peak3D.h"
@@ -87,6 +88,18 @@ SubframeFindPeaks::SubframeFindPeaks()
         updateConvolutionParameters();
         refreshPreview();
     });
+    connect(
+        _gradient_kernel, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
+        this, &SubframeFindPeaks::onGradientSettingsChanged);
+    connect(
+        _fft_gradient_check, &QCheckBox::stateChanged, this,
+        &SubframeFindPeaks::onGradientSettingsChanged);
+    connect(
+        _gradient_check, &QCheckBox::clicked, this,
+        &SubframeFindPeaks::onGradientSettingsChanged);
+    connect(
+        this, &SubframeFindPeaks::signalGradient, _detector_widget->scene(),
+        &DetectorScene::onGradientSetting);
 }
 
 void SubframeFindPeaks::setDataUp()
@@ -181,11 +194,23 @@ void SubframeFindPeaks::setIntegrateUp()
         "Background end",
         "(" + QString(QChar(0x03C3)) + ") - scaling factor for upper limit of background");
 
+    _gradient_check = f.addCheckBox(
+        "Compute gradient", "Compute mean gradient and sigma of background region", 1);
+
+    _fft_gradient_check = f.addCheckBox("FFT gradient", "Use FFT to compute gradient", 1);
+
+    _gradient_kernel = f.addCombo(
+        "Gradient kernel", "Convolution kernel used to compute gradient");
+
     _integrate_button = f.addButton("Integrate");
 
     _peak_area->setMaximum(10);
     _bkg_lower->setMaximum(10);
     _bkg_upper->setMaximum(10);
+
+    for (const auto& [kernel, description] : _kernel_description)
+        _gradient_kernel->addItem(description);
+    _gradient_kernel->setCurrentIndex(1);
 
     connect(_integrate_button, &QPushButton::clicked, this, &SubframeFindPeaks::integrate);
     connect(
@@ -266,11 +291,11 @@ void SubframeFindPeaks::setPeakTableUp()
     _peak_table->setModel(&_peak_collection_model);
     _peak_table->resizeColumnsToContents();
 
-    _peak_table->setColumnHidden(0, true);
-    _peak_table->setColumnHidden(1, true);
-    _peak_table->setColumnHidden(2, true);
-    _peak_table->setColumnHidden(13, true);
-    _peak_table->setColumnHidden(14, true);
+    _peak_table->setColumnHidden(PeakColumn::h, true);
+    _peak_table->setColumnHidden(PeakColumn::k, true);
+    _peak_table->setColumnHidden(PeakColumn::l, true);
+    _peak_table->setColumnHidden(PeakColumn::Selected, true);
+    _peak_table->setColumnHidden(PeakColumn::Count, true);
 
     peak_grid->addWidget(_peak_table, 0, 0, 0, 0);
 
@@ -371,11 +396,14 @@ void SubframeFindPeaks::setFinderParameters()
 
 void SubframeFindPeaks::grabIntegrationParameters()
 {
-    auto* params = gSession->currentProject()->experiment()->integrationProvider()->parameters();
+    auto* params = gSession->currentProject()->experiment()->integrator()->parameters();
 
     _peak_area->setValue(params->peak_end);
     _bkg_lower->setValue(params->bkg_begin);
     _bkg_upper->setValue(params->bkg_end);
+    _gradient_check->setChecked(params->use_gradient);
+    _fft_gradient_check->setChecked(params->fft_gradient);
+    _gradient_kernel->setCurrentIndex(static_cast<int>(params->gradient_type));
 }
 
 void SubframeFindPeaks::setIntegrationParameters()
@@ -383,11 +411,14 @@ void SubframeFindPeaks::setIntegrationParameters()
     if (!gSession->hasProject())
         return;
 
-    auto* params = gSession->currentProject()->experiment()->integrationProvider()->parameters();
+    auto* params = gSession->currentProject()->experiment()->integrator()->parameters();
 
     params->peak_end = _peak_area->value();
     params->bkg_begin = _bkg_lower->value();
     params->bkg_end = _bkg_upper->value();
+    params->use_gradient = _gradient_check->isChecked();
+    params->fft_gradient = _fft_gradient_check->isChecked();
+    params->gradient_type = static_cast<ohkl::GradientKernel>(_gradient_kernel->currentIndex());
 }
 
 void SubframeFindPeaks::updateConvolutionParameters()
@@ -467,7 +498,7 @@ void SubframeFindPeaks::integrate()
 {
     gGui->setReady(false);
     auto* experiment = gSession->currentProject()->experiment();
-    auto* integ_prov = experiment->integrationProvider();
+    auto* integrator = experiment->integrator();
     auto* finder = experiment->peakFinder();
 
     ohkl::sptrProgressHandler handler(new ohkl::ProgressHandler);
@@ -475,15 +506,15 @@ void SubframeFindPeaks::integrate()
     progressView.watch(handler);
 
     setIntegrationParameters();
-    integ_prov->pIntegrator(ohkl::IntegratorType::PixelSum)->setHandler(handler);
+    integrator->getIntegrator(ohkl::IntegratorType::PixelSum)->setHandler(handler);
 
-    integ_prov->integrateFoundPeaks(finder);
+    integrator->integrateFoundPeaks(finder);
     refreshPeakTable();
     _peaks_integrated = true;
     toggleUnsafeWidgets();
     gGui->statusBar()->showMessage(
-        QString::number(integ_prov->numberOfValidPeaks()) + "/"
-        + QString::number(integ_prov->numberOfPeaks()) + " peaks integrated");
+        QString::number(integrator->numberOfValidPeaks()) + "/"
+        + QString::number(integrator->numberOfPeaks()) + " peaks integrated");
     gGui->setReady(true);
 }
 
@@ -576,11 +607,11 @@ void SubframeFindPeaks::refreshPeakTable()
     _peak_collection_model.setRoot(&_peak_collection_item);
     _peak_table->resizeColumnsToContents();
 
-    _peak_table->setColumnHidden(0, true);
-    _peak_table->setColumnHidden(1, true);
-    _peak_table->setColumnHidden(2, true);
-    _peak_table->setColumnHidden(13, true);
-    _peak_table->setColumnHidden(14, true);
+    _peak_table->setColumnHidden(PeakColumn::h, true);
+    _peak_table->setColumnHidden(PeakColumn::k, true);
+    _peak_table->setColumnHidden(PeakColumn::l, true);
+    _peak_table->setColumnHidden(PeakColumn::Selected, true);
+    _peak_table->setColumnHidden(PeakColumn::Count, true);
 
     refreshPeakVisual();
 }
@@ -632,4 +663,9 @@ void SubframeFindPeaks::toggleUnsafeWidgets()
 DetectorWidget* SubframeFindPeaks::detectorWidget()
 {
     return _detector_widget;
+}
+
+void SubframeFindPeaks::onGradientSettingsChanged()
+{
+    emit signalGradient(_gradient_kernel->currentIndex(), _fft_gradient_check->isChecked());
 }

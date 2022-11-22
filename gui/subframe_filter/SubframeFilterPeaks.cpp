@@ -314,7 +314,7 @@ void SubframeFilterPeaks::setPeakTableUp()
     _peak_table->setModel(&_peak_collection_model);
     _peak_table->resizeColumnsToContents();
 
-    _peak_table->setColumnHidden(14, true);
+    _peak_table->setColumnHidden(PeakColumn::Count, true);
 
     peak_grid->addWidget(_peak_table, 0, 0, 0, 0);
 
@@ -487,7 +487,9 @@ void SubframeFilterPeaks::refreshPeakTable()
     _peak_collection_model.setRoot(&_peak_collection_item);
     _peak_table->resizeColumnsToContents();
 
-    _peak_table->setColumnHidden(14, true);
+    _peak_table->setColumnHidden(PeakColumn::Count, true);
+    _peak_table->setColumnHidden(PeakColumn::BkgGradient, true);
+    _peak_table->setColumnHidden(PeakColumn::BkgGradientSigma, true);
 
     refreshPeakVisual();
 }

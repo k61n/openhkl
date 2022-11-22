@@ -44,7 +44,7 @@ void PeakFilter::resetFilterFlags()
 {
     *_filter_flags = {true,  false, false, false, false, false, false, false,
                       false, false, false, false, false, false, false, false,
-                      false};
+                      false, false, false};
 }
 
 void PeakFilter::filterSignificance(PeakCollection* peak_collection) const
@@ -500,6 +500,56 @@ void PeakFilter::filterSigma(PeakCollection *peak_collection) const
     ohklLog(Level::Info, "PeakFilter::filterSigma: ", nrejected, " peaks rejected");
 }
 
+void PeakFilter::filterGradient(PeakCollection* peak_collection) const
+{
+    int nrejected = 0;
+    for (auto* peak : peak_collection->getPeakList()) {
+        Intensity gradient = peak->meanBkgGradient();
+        if (!gradient.isValid()) {
+            peak->rejectYou(true);
+            ++nrejected;
+            continue;
+        }
+        double intensity = gradient.value();
+        if (intensity >= _filter_params->gradient_min
+            && intensity <= _filter_params->gradient_max) {
+            peak->caughtYou(true);
+        } else {
+            peak->rejectYou(true);
+            ++nrejected;
+        }
+    }
+    ohklLog(
+        Level::Info, "PeakFilter::filterGradient: filtering in range ",
+        _filter_params->gradient_min, " - ", _filter_params->gradient_max);
+    ohklLog(Level::Info, "PeakFilter::filterGradient: ", nrejected, " peaks rejected");
+}
+
+void PeakFilter::filterGradientSigma(PeakCollection* peak_collection) const
+{
+    int nrejected = 0;
+    for (auto* peak : peak_collection->getPeakList()) {
+        Intensity gradient = peak->meanBkgGradient();
+        if (!gradient.isValid()) {
+            peak->rejectYou(true);
+            ++nrejected;
+            continue;
+        }
+        double sigma = gradient.sigma();
+        if (sigma >= _filter_params->gradient_sigma_min
+            && sigma <= _filter_params->gradient_sigma_max) {
+            peak->caughtYou(true);
+        } else {
+            peak->rejectYou(true);
+            ++nrejected;
+        }
+    }
+    ohklLog(
+        Level::Info, "PeakFilter::filterGradientSigma: filtering in range ",
+        _filter_params->gradient_sigma_min, " - ", _filter_params->gradient_sigma_max);
+    ohklLog(Level::Info, "PeakFilter::filterGradientSigma: ", nrejected, " peaks rejected");
+}
+
 void PeakFilter::filter(PeakCollection* peak_collection) const
 {
     ohklLog(Level::Info, "PeakFilter::filter: filtering peaks");
@@ -587,6 +637,16 @@ void PeakFilter::filter(PeakCollection* peak_collection) const
     if (_filter_flags->sigma) {
         filterSigma(peak_collection);
         ohklLog(Level::Info, "Filtering by sigma");
+    }
+
+    if (_filter_flags->gradient) {
+        filterGradient(peak_collection);
+        ohklLog(Level::Info, "Filtering by background gradient");
+    }
+
+    if (_filter_flags->gradient_sigma) {
+        filterGradientSigma(peak_collection);
+        ohklLog(Level::Info, "Filtering by background gradient sigma");
     }
 }
 

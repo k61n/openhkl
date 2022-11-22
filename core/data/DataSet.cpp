@@ -281,6 +281,7 @@ ReciprocalVector DataSet::computeQ(const DetectorEvent& ev) const
 
 Eigen::MatrixXd DataSet::transformedFrame(std::size_t idx) const
 {
+    ohklLog(Level::Debug, "Transforming (baseline/gain) frame ", idx);
     Eigen::ArrayXXd new_frame = frame(idx).cast<double>();
     new_frame -= detector().baseline();
     new_frame /= detector().gain();
@@ -290,6 +291,7 @@ Eigen::MatrixXd DataSet::transformedFrame(std::size_t idx) const
 Eigen::MatrixXd DataSet::gradientFrame(
     std::size_t idx, GradientKernel kernel, bool realspace) const
 {
+    ohklLog(Level::Debug, "Computing gradient of frame ", idx);
     ImageGradient grad(transformedFrame(idx), realspace);
     grad.compute(kernel);
     return grad.magnitude();

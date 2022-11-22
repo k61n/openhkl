@@ -23,7 +23,10 @@ namespace ohkl {
 const std::map<PeakHistogramType, std::string> PeakStatistics::_histogram_strings {
     {PeakHistogramType::Intensity, "Intensity"},
     {PeakHistogramType::Sigma, "Sigma"},
-    {PeakHistogramType::Strength, "Strength"}};
+    {PeakHistogramType::Strength, "Strength"},
+    {PeakHistogramType::BkgGradient, "Background gradient"},
+    {PeakHistogramType::BkgGradientSigma, "Background gradient sigma"}
+};
 
 PeakStatistics::PeakStatistics() : _current_histogram(nullptr)
 {
@@ -37,9 +40,10 @@ PeakStatistics::~PeakStatistics()
 void PeakStatistics::setPeakCollection(PeakCollection* peaks, PeakHistogramType type)
 {
     _peaks = peaks;
-    _peak_data = _getPeakData(type);
-    _max_value = *std::max_element(_peak_data.begin(), _peak_data.end());
-    _min_value = *std::min_element(_peak_data.begin(), _peak_data.end());
+    _getPeakData(type);
+    std::sort(_peak_data.rbegin(), _peak_data.rend()); // descending
+    _min_value = _peak_data.back().first;
+    _max_value = _peak_data.front().first;
 }
 
 void PeakStatistics::_initHistogram(std::size_t nbins)
@@ -57,23 +61,30 @@ void PeakStatistics::_clearHistogram()
     _current_histogram = nullptr;
 }
 
-std::vector<double> PeakStatistics::_getPeakData(PeakHistogramType type)
+void PeakStatistics::_getPeakData(PeakHistogramType type)
 {
     _peak_data.clear();
     for (auto* peak : _peaks->getPeakList()) {
+        if (!peak->enabled())
+            continue;
         switch (type) {
             case PeakHistogramType::Intensity:
-                _peak_data.push_back(peak->correctedIntensity().value());
+                _peak_data.push_back({peak->correctedIntensity().value(), peak});
                 break;
             case PeakHistogramType::Sigma:
-                _peak_data.push_back(peak->correctedIntensity().sigma());
+                _peak_data.push_back({peak->correctedIntensity().sigma(), peak});
                 break;
             case PeakHistogramType::Strength:
-                _peak_data.push_back(peak->correctedIntensity().strength());
+                _peak_data.push_back({peak->correctedIntensity().strength(), peak});
+                break;
+            case PeakHistogramType::BkgGradient:
+                _peak_data.push_back({peak->meanBkgGradient().value(), peak});
+                break;
+            case PeakHistogramType::BkgGradientSigma:
+                _peak_data.push_back({peak->meanBkgGradient().sigma(), peak});
                 break;
         }
     }
-    return _peak_data;
 }
 
 double PeakStatistics::maxCount() const
@@ -92,9 +103,37 @@ gsl_histogram* PeakStatistics::computeHistogram(std::size_t nbins)
     _nbins = nbins;
     _initHistogram(nbins);
     gsl_histogram_set_ranges_uniform(_current_histogram, _min_value, _max_value);
-    for (double point : _peak_data)
+    for (const auto& [point, peak] : _peak_data)
         gsl_histogram_increment(_current_histogram, point);
     return _current_histogram;
+}
+
+std::pair<double, double> PeakStatistics::computeStatistics()
+{
+    double sum = 0;
+    double sum2 = 0;
+    double npoints = _peak_data.size();
+    for (const auto& [datum, peak] : _peak_data) {
+        sum += datum;
+        sum2 += datum * datum;
+    }
+    double mean = sum / npoints;
+    double var = (sum2 - npoints * mean * mean) / (npoints - 1);
+    return {mean, std::sqrt(var)};
+}
+
+std::vector<Peak3D*> PeakStatistics::findOutliers(double factor /* = 3.0 */)
+{
+    std::vector<Peak3D*> outliers;
+    auto [mean, sigma] = computeStatistics();
+    double data_max = mean + sigma * factor;
+    for (std::size_t idx = 0; idx < _peak_data.size(); ++idx) {
+        if (_peak_data.at(idx).first > data_max)
+            outliers.push_back(_peak_data.at(idx).second);
+        else
+            break;
+    }
+    return outliers;
 }
 
 } // namespace ohkl

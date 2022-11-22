@@ -30,7 +30,6 @@ PeakWindow::PeakWindow(ohkl::Peak3D* peak, QWidget* parent /* = nullptr */)
     : QDialog(parent)
     , _peak(peak)
     , _integration_region(nullptr)
-    , _intensity(3000)
     , _logarithmic(false)
     , _colormap(new ColorMap())
 {

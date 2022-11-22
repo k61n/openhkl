@@ -55,7 +55,12 @@ class IntegrationRegion {
     //! Classify a detector event (peak, background, forbidden, etc.)
     EventType classify(const DetectorEvent& ev) const;
     //! Update the region with the next frame
-    bool advanceFrame(const Eigen::MatrixXd& image, const Eigen::MatrixXi& mask, double frame);
+    bool advanceFrame(
+        const Eigen::MatrixXd& image, const Eigen::MatrixXi& mask, double frame);
+    //! Update the region with the next frame
+    bool advanceFrame(
+        const Eigen::MatrixXd& image, const Eigen::MatrixXi& mask, double frame,
+        const Eigen::MatrixXd& gradient);
     //! Reset the integration region (i.e. free memory)
     void reset();
     //! Returns the underlying data stored by the region
@@ -84,7 +89,6 @@ class IntegrationRegion {
     double _pixelRadius;
     RegionType _regionType;
     Peak3D* _peak;
-    unsigned int _centre_index;
     RegionData _region_data;
     bool _valid;
 };

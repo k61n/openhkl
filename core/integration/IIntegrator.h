@@ -16,6 +16,7 @@
 #define OPENHKL_CORE_INTEGRATION_IINTEGRATOR_H
 
 #include "base/utils/ProgressHandler.h"
+#include "core/data/ImageGradient.h"
 #include "core/peak/IntegrationRegion.h"
 
 namespace ohkl {
@@ -41,6 +42,11 @@ struct IntegrationParameters {
     bool discard_saturated = false; //!< Whether to discard peaks with saturated pixels
     int min_neighbors = 10; //!< Minimum number of neighbouring shapes for predicted shape
     IntegratorType integrator_type = IntegratorType::PixelSum; //!< Type of integrator
+    bool use_gradient = false; //!< Use gradient to discriminate heterogeneous background regions
+    //! Kernel to use for gradient convolution
+    GradientKernel gradient_type = GradientKernel::Sobel;
+    //! Whether to use FFT or real space gradient computation
+    bool fft_gradient = false;
     RegionType region_type =
         RegionType::VariableEllipsoid; //!< Set peak end in pixels instead of sigmas
 
@@ -59,9 +65,11 @@ class IIntegrator {
     virtual ~IIntegrator();
     //! Integrate all peaks in the list which are contained in the specified data set.
     void integrate(
-        std::vector<ohkl::Peak3D*> peaks, ShapeModel* shape_model, sptrDataSet data, int n_numor);
+        std::vector<Peak3D*> peaks, ShapeModel* shape_model, sptrDataSet data, int n_numor);
     //! Return the mean background.
     Intensity meanBackground() const;
+    //! Return the mean background gradient
+    Intensity meanBkgGradient() const;
     //! Return the integrated intensity.
     Intensity integratedIntensity() const;
     //! Return the peak rocking curve.
@@ -74,9 +82,11 @@ class IIntegrator {
  protected:
     //! Mean local background of peak. The uncertainty is the uncertainty of the
     //! _estimate_ of the background.
-    ohkl::Intensity _meanBackground;
+    Intensity _meanBackground;
+    //! Mean gradient of background (Gaussian statistics)
+    Intensity _meanBkgGradient;
     //! Net integrated intensity, after background correction.
-    ohkl::Intensity _integratedIntensity;
+    Intensity _integratedIntensity;
     //! The rocking curve of the peak.
     std::vector<Intensity> _rockingCurve;
     //! Optional pointer to progress handler.

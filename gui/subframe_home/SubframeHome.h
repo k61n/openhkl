@@ -93,8 +93,6 @@ class SubframeHome : public QWidget {
     QPushButton* _save_current;
     QPushButton* _save_all;
     QPushButton* _remove_current;
-    QPushButton* _show_input_files;
-    QPushButton* _show_found_peaks;
 
     ExperimentTableView* _open_experiments_view;
     std::unique_ptr<ExperimentModel> _open_experiments_model;

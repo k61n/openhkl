@@ -350,8 +350,10 @@ void SubframePredictPeaks::setPeakTableUp()
     _peak_collection_model.setRoot(&_peak_collection_item);
     _peak_table->setModel(&_peak_collection_model);
     _peak_table->resizeColumnsToContents();
-    _peak_table->setColumnHidden(13, true);
-    _peak_table->setColumnHidden(14, true);
+    _peak_table->setColumnHidden(PeakColumn::Selected, true);
+    _peak_table->setColumnHidden(PeakColumn::Count, true);
+    _peak_table->setColumnHidden(PeakColumn::BkgGradient, true);
+    _peak_table->setColumnHidden(PeakColumn::BkgGradientSigma, true);
 
     peak_grid->addWidget(_peak_table, 0, 0, 0, 0);
     _right_element->addWidget(peak_group);

@@ -56,7 +56,7 @@ class PeakWindow : public QDialog {
     //! Refresh the whole dialog
     void refresh();
 
-    QSize sizeHint() const;
+    QSize sizeHint() const override;
 
  private:
     //! set up control widget
@@ -81,16 +81,12 @@ class PeakWindow : public QDialog {
     std::unique_ptr<ohkl::IntegrationRegion> _integration_region;
     ohkl::RegionData* _region_data;
 
-    int _intensity;
     bool _logarithmic;
     std::vector<int> _index;
-
-    QWidget* _scroll_widget;
 
     ColorMap* _colormap;
     QVector<QGraphicsView*> _views;
     QGridLayout* _grid_layout;
-    QGraphicsView* _graphics_view;
     QGridLayout* _control_layout;
 
     QDoubleSpinBox* _peak_end;

@@ -48,12 +48,12 @@ class TestPeakFinder(unittest.TestCase):
         finder.find(expt.getAllData())
 
         # Integrate the peaks
-        integ_prov = expt.integrationProvider()
-        integrator_params = integ_prov.parameters()
+        integrator = expt.integrator()
+        integrator_params = integrator.parameters()
         integrator_params.peak_end = 3.0
         integrator_params.bkg_begin = 3.0
         integrator_params.bkg_end = 6.0
-        integ_prov.integrateFoundPeaks(finder)
+        integrator.integrateFoundPeaks(finder)
         expt.acceptFoundPeaks("found")
         found_peaks = expt.getPeakCollection("found")
         n_peaks = found_peaks.numberOfPeaks()

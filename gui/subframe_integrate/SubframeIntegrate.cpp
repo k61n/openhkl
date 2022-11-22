@@ -15,6 +15,7 @@
 
 #include "gui/subframe_integrate/SubframeIntegrate.h"
 
+#include "core/data/ImageGradient.h"
 #include "core/experiment/Experiment.h"
 #include "core/peak/IntegrationRegion.h"
 #include "core/peak/Peak3D.h"
@@ -80,7 +81,7 @@ SubframeIntegrate::SubframeIntegrate() : QWidget()
         _fft_gradient, &QCheckBox::stateChanged, this,
         &SubframeIntegrate::onGradientSettingsChanged);
     connect(
-        _discard_inhom_bkg, &QGroupBox::clicked, this,
+        _compute_gradient, &QGroupBox::clicked, this,
         &SubframeIntegrate::onGradientSettingsChanged);
     connect(
         this, &SubframeIntegrate::signalGradient, _detector_widget->scene(),
@@ -158,8 +159,8 @@ void SubframeIntegrate::setPeakTableUp()
     _peak_collection_model.setRoot(&_peak_collection_item);
     _peak_table->setModel(&_peak_collection_model);
     _peak_table->resizeColumnsToContents();
-    _peak_table->setColumnHidden(13, true);
-    _peak_table->setColumnHidden(14, true);
+    _peak_table->setColumnHidden(PeakColumn::Selected, true);
+    _peak_table->setColumnHidden(PeakColumn::Count, true);
 
     peak_grid->addWidget(_peak_table, 0, 0, 0, 0);
 
@@ -196,8 +197,8 @@ void SubframeIntegrate::grabIntegrationParameters()
 {
 
     auto* expt = gSession->currentProject()->experiment();
-    auto* integ_prov = expt->integrationProvider();
-    auto* params = integ_prov->parameters();
+    auto* integrator = expt->integrator();
+    auto* params = integrator->parameters();
 
     _peak_end->setValue(params->peak_end);
     _bkg_begin->setValue(params->bkg_begin);
@@ -209,6 +210,9 @@ void SubframeIntegrate::grabIntegrationParameters()
     _fit_center->setChecked(params->fit_center);
     _fit_covariance->setChecked(params->fit_cov);
     _min_neighbours->setValue(params->min_neighbors);
+    _compute_gradient->setChecked(params->use_gradient);
+    _fft_gradient->setChecked(params->fft_gradient);
+    _gradient_kernel->setCurrentIndex(static_cast<int>(params->gradient_type));
 
     for (auto it = _integrator_strings.begin(); it != _integrator_strings.end(); ++it)
         if (it->second == params->integrator_type)
@@ -225,8 +229,8 @@ void SubframeIntegrate::setIntegrationParameters()
         return;
 
     auto* expt = gSession->currentProject()->experiment();
-    auto* integ_prov = expt->integrationProvider();
-    auto* params = integ_prov->parameters();
+    auto* integrator = expt->integrator();
+    auto* params = integrator->parameters();
 
     params->peak_end = _peak_end->value();
     params->bkg_begin = _bkg_begin->value();
@@ -241,6 +245,9 @@ void SubframeIntegrate::setIntegrationParameters()
     params->region_type = static_cast<ohkl::RegionType>(_integration_region_type->currentIndex());
     params->integrator_type =
         _integrator_strings.find(_integrator_combo->currentText().toStdString())->second;
+    params->use_gradient = _compute_gradient->isChecked();
+    params->fft_gradient = _fft_gradient->isChecked();
+    params->gradient_type = static_cast<ohkl::GradientKernel>(_gradient_kernel->currentIndex());
 
     for (auto it = ohkl::regionTypeDescription.begin(); it != ohkl::regionTypeDescription.end(); ++it)
         if (it->second == _integration_region_type->currentText().toStdString())
@@ -313,11 +320,11 @@ void SubframeIntegrate::setIntegrateUp()
     grid->addWidget(_max_counts, 0, 1, 1, 1);
     f.addWidget(_discard_saturated);
 
-    _discard_inhom_bkg = new QGroupBox("Filter gradient");
-    _discard_inhom_bkg->setAlignment(Qt::AlignLeft);
-    _discard_inhom_bkg->setCheckable(true);
-    _discard_inhom_bkg->setChecked(false);
-    _discard_inhom_bkg->setToolTip("Discard peaks with high mean background gradient");
+    _compute_gradient = new QGroupBox("Compute gradient");
+    _compute_gradient->setAlignment(Qt::AlignLeft);
+    _compute_gradient->setCheckable(true);
+    _compute_gradient->setChecked(false);
+    _compute_gradient->setToolTip("Discard peaks with high mean background gradient");
 
     _gradient_kernel = new QComboBox();
 
@@ -325,19 +332,13 @@ void SubframeIntegrate::setIntegrateUp()
     _fft_gradient->setToolTip("Use Fourier transform for image filtering");
     _fft_gradient->setChecked(false);
 
-    _grad_threshold = new SafeDoubleSpinBox();
-    _grad_threshold->setMaximum(10000);
-
     grid = new QGridLayout();
-    _discard_inhom_bkg->setLayout(grid);
+    _compute_gradient->setLayout(grid);
     label = new QLabel("Kernel");
     grid->addWidget(label, 0, 0, 1, 1);
     grid->addWidget(_gradient_kernel, 0, 1, 1, 1);
     grid->addWidget(_fft_gradient, 1, 1, 1, -1);
-    label = new QLabel("Gradient threshold");
-    grid->addWidget(label, 2, 0, 1, 1);
-    grid->addWidget(_grad_threshold, 2, 1, 1, 1);
-    f.addWidget(_discard_inhom_bkg);
+    f.addWidget(_compute_gradient);
 
     for (const auto& [kernel, description] : _kernel_description)
         _gradient_kernel->addItem(description);
@@ -525,7 +526,7 @@ void SubframeIntegrate::runIntegration()
         progressView.watch(handler);
 
         ohkl::Experiment* expt = gSession->currentProject()->experiment();
-        ohkl::IntegrationProvider* integ_prov = expt->integrationProvider();
+        ohkl::Integrator* integrator = expt->integrator();
         ohkl::sptrDataSet data = _data_combo->currentData();
         ohkl::PeakCollection* peaks_to_integrate = _peak_combo->currentPeakCollection();
         ohkl::ShapeModel* shapes = nullptr;
@@ -533,14 +534,14 @@ void SubframeIntegrate::runIntegration()
             shapes = _shape_combo->currentShapes();
 
         setIntegrationParameters();
-        auto* params = gSession->currentProject()->experiment()->integrationProvider()->parameters();
+        auto* params = gSession->currentProject()->experiment()->integrator()->parameters();
 
-        integ_prov->pIntegrator(params->integrator_type)->setHandler(handler);
-        integ_prov->integratePeaks(data, peaks_to_integrate, params, shapes);
+        integrator->getIntegrator(params->integrator_type)->setHandler(handler);
+        integrator->integratePeaks(data, peaks_to_integrate, params, shapes);
         gGui->detector_window->refreshAll();
         gGui->statusBar()->showMessage(
-            QString::number(integ_prov->numberOfValidPeaks()) + "/"
-            + QString::number(integ_prov->numberOfPeaks()) + " peaks integrated");
+            QString::number(integrator->numberOfValidPeaks()) + "/"
+            + QString::number(integrator->numberOfPeaks()) + " peaks integrated");
     } catch (std::exception& e) {
         QMessageBox::critical(this, "Error", QString(e.what()));
     }

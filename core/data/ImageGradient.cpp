@@ -14,6 +14,7 @@
 
 #include "core/data/ImageGradient.h"
 
+#include "base/utils/Logger.h"
 #include "core/convolve/ConvolverFactory.h"
 #include <stdexcept>
 #include <memory>
@@ -31,11 +32,11 @@ ImageGradient::ImageGradient(const Eigen::MatrixXd& image, bool realspace)
 double ImageGradient::pixel(int row, int col)
 {
     if (row < 0)
-        row = _image->rows() + row + 1;
+        row = _image->rows() + row;
     else if (row >= _image->rows())
         row = row % _image->rows();
     if (col < 0)
-        col = _image->cols() + col + 1;
+        col = _image->cols() + col;
     else if (col >= _image->cols())
         col = col % _image->cols();
     return (*_image)(row, col);
@@ -43,10 +44,17 @@ double ImageGradient::pixel(int row, int col)
 
 void ImageGradient::compute(GradientKernel kernel)
 {
-    if (_real_space)
+    if (_real_space) {
+        ohklLog(
+            Level::Debug, "ImageGradient::compute: real space ",
+            _convolver_callbacks.at(kernel), " kernel");
         computeRealSpace(kernel);
-    else
+    } else {
+            ohklLog(
+            Level::Debug, "ImageGradient::compute: FFT ",
+            _convolver_callbacks.at(kernel), " kernel");
         computeFFT(kernel);
+    }
 }
 
 void ImageGradient::computeRealSpace(GradientKernel kernel)
@@ -72,9 +80,10 @@ void ImageGradient::computeRealSpace(GradientKernel kernel)
 
 void ImageGradient::computeFFT(GradientKernel kernel)
 {
-    std::string convolver = _convolver_callbacks.at(kernel);
-    _dx = ohkl::convolvedFrame(*_image, convolver, {{"x", 0.0}});
-    _dy = ohkl::convolvedFrame(*_image, convolver, {{"y", 0.0}});
+    _convolver.reset(ConvolverFactory{}.create(_convolver_callbacks.at(kernel), {{"x", 0.0}}));
+    _dx = _convolver->convolve(*_image);
+    _convolver.reset(ConvolverFactory{}.create(_convolver_callbacks.at(kernel), {{"y", 0.0}}));
+    _dy = _convolver->convolve(*_image);
 }
 
 void ImageGradient::gradient(std::function<void (int, int)> kernel_operator)
