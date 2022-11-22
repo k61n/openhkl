@@ -50,8 +50,6 @@ void AtomicConvolver::reset()
     fftw_free(_transformedData);
 
     _transformedKernel.clear();
-
-    fftw_cleanup(); // TODO check whether this can be removed
 }
 
 void AtomicConvolver::updateKernel(int nrows, int ncols)
