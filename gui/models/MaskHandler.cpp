@@ -71,8 +71,6 @@ bool MaskHandler::addMask(ohkl::sptrDataSet dataset, ohkl::IMask* imask, QGraphi
 
     _mask_collection_map[dataset].insert({imask, gmask});
 
-  //  std::cout << "test " <<  _mask_collection_map[dataset][imask] << std::endl;
-
     return true;
 } 
 
