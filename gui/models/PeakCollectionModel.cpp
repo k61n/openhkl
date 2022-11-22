@@ -105,7 +105,7 @@ QVariant PeakCollectionModel::headerData(int section, Qt::Orientation orientatio
                 return QString("Intensity");
             }
             case PeakColumn::Sigma: {
-                return QString(QChar(0x03C3)) + "(Int.)";
+                return QString(QChar(0x03C3)) + " (Int.)";
             }
             case PeakColumn::Strength: {
                 return QString("Strength");
@@ -114,7 +114,7 @@ QVariant PeakCollectionModel::headerData(int section, Qt::Orientation orientatio
                 return QString("Gradient");
             }
             case PeakColumn::BkgGradientSigma: {
-                return QString("Gradient ") + QString(QChar(0x03C3));
+                return QString(QChar(0x03C3)) + " (Grad.)";
             }
             case PeakColumn::Numor: {
                 return QString("Numor");
