@@ -13,8 +13,6 @@
 //  ***********************************************************************************************
 
 #include "gui/models/MaskHandler.h"
-#include "base/utils/LogLevel.h"
-#include "base/utils/LogMessenger.h"
 
 GraphicItemsMap MaskHandler::getMaskMap(ohkl::sptrDataSet dataset)
 {
@@ -285,9 +283,6 @@ bool MaskHandler::removeMask(ohkl::sptrDataSet dataset, QGraphicsItem* gmask)
 void MaskHandler::setVisibleFlags(ohkl::sptrDataSet dataset, bool flag)
 {
     for (auto & m : dataset->masks())
-        if (getGraphicItem(dataset, m) == nullptr)
-            ohklLog(ohkl::Level::Error, "MaskHandler::setVisibleFlags invalid QGraphicItems", getGraphicItem(dataset, m));
-        else
             getGraphicItem(dataset, m)->setVisible(flag);
 }
 
