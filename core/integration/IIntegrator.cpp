@@ -134,7 +134,9 @@ void IIntegrator::integrate(
             auto* current_peak = regions.at(peak).get();
             // Check for saturated pixels
             const auto& counts = current_peak->peakData().counts();
-            double max = *std::max_element(counts.begin(), counts.end());
+            double max = 0;
+            if (!counts.empty()) // std::max on empty vector segfaults under MacOS
+                max = *std::max_element(counts.begin(), counts.end());
             bool saturated = _params.discard_saturated && (max > _params.max_counts);
 
             bool result = current_peak->advanceFrame(current_frame, mask, idx);
