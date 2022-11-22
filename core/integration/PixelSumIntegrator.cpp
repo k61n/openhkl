@@ -94,6 +94,15 @@ PixelSumIntegrator::PixelSumIntegrator(bool fit_center, bool fit_covariance)
 
 bool PixelSumIntegrator::compute(Peak3D* peak, ShapeModel*, const IntegrationRegion& region)
 {
+    const auto& events = region.peakData().events();
+    const auto& counts = region.peakData().counts();
+
+    if (events.empty()) {
+        peak->setRejectionFlag(RejectionFlag::TooFewPoints);
+        peak->setSelected(false);
+        return false;
+    }
+
     auto [meanBackground, bkgGradient] = compute_background(region, _params.use_gradient);
     if (!meanBackground.isValid()) {
         peak->setRejectionFlag(RejectionFlag::TooFewPoints);
@@ -104,9 +113,6 @@ bool PixelSumIntegrator::compute(Peak3D* peak, ShapeModel*, const IntegrationReg
     _meanBkgGradient = bkgGradient;
 
     PeakCoordinateSystem frame(peak);
-
-    const auto& events = region.peakData().events();
-    const auto& counts = region.peakData().counts();
 
     double sum_peak = 0.0;
     const double mean_bkg = _meanBackground.value();
