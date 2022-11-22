@@ -9,7 +9,6 @@ Current maintainers
 - Zamaan Raza
 - Christian Trageser
 - Ammar Nejati
-- Joachim Wuttke
 
 Scientific contributors
 -----------------------
@@ -30,3 +29,4 @@ Previous contributors
 - Navid Qureshi
 - Alexander Schober
 - Tobias Weber
+- Joachim Wuttke
