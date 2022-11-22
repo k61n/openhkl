@@ -283,7 +283,7 @@ bool MaskHandler::removeMask(ohkl::sptrDataSet dataset, QGraphicsItem* gmask)
 void MaskHandler::setVisibleFlags(ohkl::sptrDataSet dataset, bool flag)
 {
     for (auto & m : dataset->masks())
-        getGraphicItem(dataset, m)->setVisible(flag);
+            getGraphicItem(dataset, m)->setVisible(flag);
 }
 
 size_t MaskHandler::findMaskPosition(ohkl::sptrDataSet dataset, QGraphicsItem* gmask)

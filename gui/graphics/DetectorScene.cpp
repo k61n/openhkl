@@ -1052,8 +1052,10 @@ void DetectorScene::loadCurrentImage()
     if (_drawSinglePeakIntegrationRegion && !_drawIntegrationRegion1 && !_drawIntegrationRegion2)
         refreshSinglePeakIntegrationOverlay();
 
+    // let's recreate QGraphicItems from masks in DataSet since life cycle of this entitys seems unpreditable at best
+    _mask_handler->rebuildMasks(_currentData);
     _mask_handler->setVisibleFlags(_currentData, _drawMasks);
-    //setMasksVisible(_drawMasks);
+    addMasks();
 
     setSceneRect(_zoomStack.back());
     emit dataChanged();
