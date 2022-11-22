@@ -13,6 +13,8 @@
 //  ***********************************************************************************************
 
 #include "gui/models/MaskHandler.h"
+#include "base/utils/LogLevel.h"
+#include "base/utils/LogMessenger.h"
 
 GraphicItemsMap MaskHandler::getMaskMap(ohkl::sptrDataSet dataset)
 {
@@ -68,6 +70,8 @@ bool MaskHandler::addMask(ohkl::sptrDataSet dataset, ohkl::IMask* imask, QGraphi
     }
 
     _mask_collection_map[dataset].insert({imask, gmask});
+
+  //  std::cout << "test " <<  _mask_collection_map[dataset][imask] << std::endl;
 
     return true;
 } 
@@ -283,7 +287,10 @@ bool MaskHandler::removeMask(ohkl::sptrDataSet dataset, QGraphicsItem* gmask)
 void MaskHandler::setVisibleFlags(ohkl::sptrDataSet dataset, bool flag)
 {
     for (auto & m : dataset->masks())
-        getGraphicItem(dataset, m)->setVisible(flag);
+        if (getGraphicItem(dataset, m) == nullptr)
+            ohklLog(ohkl::Level::Error, "MaskHandler::setVisibleFlags invalid QGraphicItems", getGraphicItem(dataset, m));
+        else
+            getGraphicItem(dataset, m)->setVisible(flag);
 }
 
 size_t MaskHandler::findMaskPosition(ohkl::sptrDataSet dataset, QGraphicsItem* gmask)
