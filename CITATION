@@ -3,12 +3,14 @@ It must not be used in production without consent of the developers.
 Information on the proper form of citation will follow.
 
 The initial authors were Laurent Chapon (ILL), Eric Pellegrini (ILL)
-and Jonathan M. Fisher (FZJ).
+Joachim Wuttke (FZJ) and Jonathan M. Fisher (FZJ).
 
-Current development team is composed of Zamaan Raza (FZJ), Alexander
-Schober (FZJ), Tobias Weber (ILL), Joachim Wuttke (FZJ).
+The current development team is Zamaan Raza (FZJ), Christian
+Trageser (FZJ), Tobias Schrader (FZJ), Andreas Ostermann (TUM)
+and Ammar Nejati (FZJ)
 
-We acknowledge help by our student intern, Janike Katter (FZJ).
+We acknowledge the help of student intern, Janike Katter (FZJ).
 
 ILL = Institut Laue-Langevin, Grenoble, France
 FZJ = Forschungszentrum Jülich, JCNS-MLZ, Garching, Germany
+TUM = Technische Universität München
