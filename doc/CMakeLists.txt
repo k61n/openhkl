@@ -22,7 +22,7 @@ add_custom_target(
   COMMAND doxygen ${DOXYGEN_OUTPUT_DIRECTORY}/Doxyfile
   COMMAND ${SPHINX_EXECUTABLE}
     -q -b html
-    -c "${SPHINX_SOURCE_DIR}"
+    -c "${SPHINX_BUILD_DIR}"
     -d "${SPHINX_CACHE_DIR}"
     "${SPHINX_SOURCE_DIR}"
     "${SPHINX_HTML_DIR}"
@@ -32,7 +32,7 @@ add_custom_target(
   pdf
   COMMAND ${SPHINX_EXECUTABLE}
     -b latex
-    -c "${SPHINX_SOURCE_DIR}"
+    -c "${SPHINX_BUILD_DIR}"
     -d "${SPHINX_CACHE_DIR}"
     "${SPHINX_SOURCE_DIR}"
     "${SPHINX_LATEX_DIR}"
