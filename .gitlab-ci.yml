@@ -41,7 +41,6 @@ pages:
         sphinxcontrib-bibtex
         sphinx-press-theme
         breathe
-    - mkdir build
     - cd build
     - cmake ..
     - make docs
