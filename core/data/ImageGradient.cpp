@@ -32,11 +32,11 @@ ImageGradient::ImageGradient(const Eigen::MatrixXd& image, bool realspace)
 double ImageGradient::pixel(int row, int col)
 {
     if (row < 0)
-        row = _image->rows() + row + 1;
+        row = _image->rows() + row;
     else if (row >= _image->rows())
         row = row % _image->rows();
     if (col < 0)
-        col = _image->cols() + col + 1;
+        col = _image->cols() + col;
     else if (col >= _image->cols())
         col = col % _image->cols();
     return (*_image)(row, col);
