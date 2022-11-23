@@ -16,4 +16,4 @@ ubuntu2204-env:
     - docker login -u gitlab-ci-token -p ${CI_JOB_TOKEN} ${CI_REGISTRY}
     - docker push ${CI_REGISTRY_IMAGE}/${CI_JOB_NAME}
   only:
-    - build-docker-images
+    - empty-test
