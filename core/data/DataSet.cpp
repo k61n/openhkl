@@ -42,6 +42,7 @@
 #include <H5Cpp.h>
 #include <gsl/gsl_histogram.h>
 
+#include <memory>
 #include <stdexcept>
 
 #include <iostream>
@@ -49,7 +50,10 @@
 namespace ohkl {
 
 DataSet::DataSet(const std::string& dataset_name, Diffractometer* diffractometer)
-    : _diffractometer{diffractometer}, _states(nullptr), _total_histogram(nullptr)
+    : _diffractometer{diffractometer}
+    , _states(nullptr)
+    , _total_histogram(nullptr)
+    , _buffered(false)
 {
     setName(dataset_name);
     if (!_diffractometer)
@@ -92,6 +96,10 @@ void DataSet::finishRead()
 
     // Update the monochromator wavelength
     diffractometer()->source().selectedMonochromator().setWavelength(wavelength());
+
+    // Initialise the buffer
+    for (std::size_t frame = 0; frame < nFrames(); ++frame)
+        _frame_buffer.push_back(nullptr);
 }
 
 void DataSet::addDataFile(const std::string& filename, const std::string& extension)
@@ -172,6 +180,10 @@ int DataSet::dataAt(const std::size_t x, const std::size_t y, const std::size_t 
 
 Eigen::MatrixXi DataSet::frame(const std::size_t idx) const
 {
+    if (_buffered) {
+        if (_frame_buffer.at(idx))
+            return *_frame_buffer.at(idx);
+    }
     return _reader->data(idx);
 }
 
@@ -474,6 +486,25 @@ void DataSet::removeAllMaks()
 {
     if (_masks.size() > 0)
         _masks.clear();
+}
+
+void DataSet::initBuffer(bool bufferAll)
+{
+    _buffered = true;
+    for (std::size_t idx = 0; idx < nFrames(); ++idx) {
+        if (bufferAll)
+            _frame_buffer.at(idx) = std::make_unique<Eigen::MatrixXi>(_reader->data(idx));
+        else
+            _frame_buffer.at(idx) = nullptr;
+    }
+}
+
+void DataSet::clearBuffer()
+{
+    for (std::size_t idx = 0; idx < nFrames(); ++idx) {
+        _frame_buffer.at(idx).reset();
+        _frame_buffer.at(idx) = nullptr;
+    }
 }
 
 } // namespace ohkl

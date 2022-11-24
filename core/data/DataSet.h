@@ -76,17 +76,14 @@ class DataSet {
 
     //! Read a single frame
     Eigen::MatrixXi frame(const std::size_t idx) const;
-
     //! Returns frame after transforming to account for detector gain and baseline
     Eigen::MatrixXd transformedFrame(std::size_t idx) const;
-
     //! Return per-pixel magnitude of gradient of a given frame
     Eigen::MatrixXd gradientFrame(
         std::size_t idx, GradientKernel kernel, bool realspace = true) const;
 
     //! Gets the file handle.
     void open();
-
     //! Close file and release handle
     void close();
 
@@ -99,35 +96,27 @@ class DataSet {
 
     //! Returns the diffractometer associated to this dataset
     const Diffractometer* diffractometer() const;
-
     //! Returns the diffractometer associated to this dataset
     Diffractometer* diffractometer();
-
     //! Returns the detector associated to this dataset
     Detector& detector();
-
     //! Returns the detector associated to this dataset
     const Detector& detector() const;
-
     std::string name() const;
     void setName(const std::string& name);
 
     //! Returns a const reference to the MetaData container
     const ohkl::MetaData& metadata() const;
-
     //! Returns a reference to the MetaData container
     ohkl::MetaData& metadata();
 
     //! Add a data file for reading data. Reading frames will be done only upon request.
     void addDataFile(const std::string& filename, const std::string& extension);
-
     //! Set the parameters for the raw-data reader.
     void setRawReaderParameters(const RawDataReaderParameters& params);
-
     //! Add a raw file to be read as a single detector image frame. Reading frames will be done only
     //! upon request.
     void addRawFrame(const std::string& rawfilename);
-
     //! Finish reading procedure (must be called before using the data stored in the DataSet).
     void finishRead();
 
@@ -139,7 +128,6 @@ class DataSet {
 
     //! Get the initial instrument states
     void setInstrumentStates(InstrumentStateSet* states);
-
     //! Return instrument state list
     InstrumentStateList& instrumentStates();
 
@@ -148,36 +136,33 @@ class DataSet {
 
     //! Initialise intensity histograms
     void initHistograms(std::size_t nbins);
-
     //! Generate frame intensity histogram
     void getFrameIntensityHistogram(std::size_t index);
-
     //! Generate intensity histogram for whole DataSet
     void getIntensityHistogram(std::size_t nbins);
-
     //! Free histogram memeory
     void clearHistograms();
-
     //! Maximum per pixel count for whole DataSet
     double maxCount();
-
     //! getting number of available
     size_t getNumberHistograms() { return _histograms.size(); }
 
     //! accessing created histograms
     gsl_histogram* getHistogram(int index);
-
     //! accessing Total histogram
     gsl_histogram* getTotalHistogram();
 
     //! returns a booleans whether masks have been created or not
     bool hasMasks();
-
     //! get the number of detector masks
     size_t getNMasks();
-
     //! remove all detector masks from DataSet
     void removeAllMaks();
+
+    //! Initialise the frame buffer
+    void initBuffer(bool bufferAll = true);
+    //! Clear the frame buffer
+    void clearBuffer();
 
  private:
     void setReader(const DataFormat dataformat, const std::string& filename = "");
@@ -200,6 +185,11 @@ class DataSet {
     std::vector<gsl_histogram*> _histograms;
     //! Intensity histogram for whole DataSet
     gsl_histogram* _total_histogram;
+
+    //! Buffer for image data
+    std::vector<std::unique_ptr<Eigen::MatrixXi>> _frame_buffer;
+    //! Whether or not the buffer is active
+    bool _buffered;
 
  public:
     //! Data shape (columns, rows, frames)
