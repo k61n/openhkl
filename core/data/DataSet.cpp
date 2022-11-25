@@ -180,6 +180,7 @@ int DataSet::dataAt(const std::size_t x, const std::size_t y, const std::size_t 
 
 Eigen::MatrixXi DataSet::frame(const std::size_t idx) const
 {
+    std::cout << "frame" << std::endl;
     if (_buffered) {
         if (_frame_buffer.at(idx)) {
             std::cout << "buffer" << std::endl;
@@ -499,8 +500,7 @@ void DataSet::initBuffer(bool bufferAll)
     _buffered = true;
     for (std::size_t idx = 0; idx < nFrames(); ++idx) {
         if (bufferAll) {
-            _frame_buffer.at(idx) = std::make_unique<Eigen::MatrixXi>();
-            *_frame_buffer.at(idx) = _reader->data(idx);
+            _frame_buffer.at(idx) = std::make_unique<Eigen::MatrixXi>(_reader->data(idx));
         } else
             _frame_buffer.at(idx) = nullptr;
     }
