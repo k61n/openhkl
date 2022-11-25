@@ -19,6 +19,7 @@
 #include "core/algo/FFTIndexing.h"
 #include "core/data/DataSet.h" // peak->data()->interpolatedState
 #include "core/instrument/InterpolatedState.h" // interpolate
+#include "core/peak/Peak3D.h"
 #include "core/shape/PeakFilter.h"
 #include "tables/crystal/MillerIndex.h"
 
@@ -119,7 +120,12 @@ bool AutoIndexer::computeFFTSolutions(const std::vector<Peak3D*>& peaks)
 
     // Store the q-vectors of the peaks for auto-indexing
     std::vector<ReciprocalVector> qvects;
-    const std::vector<Peak3D*> filtered_peaks = PeakFilter{}.filterEnabled(peaks, true);
+    const std::vector<Peak3D*> enabled_peaks = PeakFilter{}.filterEnabled(peaks, true);
+    const std::vector<Peak3D*> filtered_peaks =
+        PeakFilter{}.filterDRange(enabled_peaks, _params->d_min, _params->d_max);
+    ohklLog(
+        Level::Info, "AutoIndexer::computeFFTSolutions: ", filtered_peaks.size(),
+        " peaks used in indexing");
     for (const Peak3D* peak : filtered_peaks) {
         auto q = peak->q().rowVector();
         qvects.emplace_back(ReciprocalVector(q));

@@ -157,6 +157,10 @@ class PeakFilter {
     std::vector<Peak3D*> filterIndexed(
         const std::vector<Peak3D*> peaks, const UnitCell* cell = nullptr) const;
 
+    //! Filter d-range on peak vector
+    std::vector<Peak3D*> filterDRange(
+        const std::vector<Peak3D*> peaks, double d_min, double d_max) const;
+
     //! Run the filtering
     void filter(PeakCollection* peak_collection) const;
 

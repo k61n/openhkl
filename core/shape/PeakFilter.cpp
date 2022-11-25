@@ -403,6 +403,22 @@ void PeakFilter::filterDRange(PeakCollection* peak_collection) const
     ohklLog(Level::Info, "PeakFilter::filterDRange: ", nrejected, " peaks rejected");
 }
 
+std::vector<Peak3D*> PeakFilter::filterDRange(
+    const std::vector<Peak3D*> peaks, double d_min, double d_max) const
+{
+    int nrejected = 0;
+    std::vector<Peak3D*> filtered_peaks;
+    for (auto* peak : peaks) {
+        auto q = peak->q();
+        if (!q.isValid())
+            continue;
+        double d = 1.0 / q.rowVector().norm();
+        if (d >= d_min && d <= d_max)
+            filtered_peaks.push_back(peak);
+    }
+    return filtered_peaks;
+}
+
 void PeakFilter::filterHasUnitCell(PeakCollection* peak_collection) const
 {
     int nrejected = 0;
