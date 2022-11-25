@@ -379,11 +379,18 @@ InstrumentStateList& DataSet::instrumentStates()
 
 void DataSet::adjustDirectBeam(double x_offset, double y_offset)
 {
+    ohklLog(
+        Level::Info, "DataSet::adjustDirectBeam: offset (",
+        x_offset, ", ", y_offset, ")");
     double x_coord = x_offset + static_cast<double>(nCols()) / 2.0;
     double y_coord = y_offset + static_cast<double>(nRows()) / 2.0;
+    ohklLog(
+        Level::Info, "DataSet::adjustDirectBeam: position (",
+        x_coord, ", ", y_coord, ")");
     DirectVector direct = detector().pixelPosition(x_coord, y_coord);
     for (auto& state : instrumentStates())
         state.adjustKi(direct);
+    ohklLog(Level::Info, "DataSet::adjustDirectBeam: finished");
 }
 
 void DataSet::initHistograms(std::size_t nbins)
