@@ -97,9 +97,6 @@ void DataSet::finishRead()
     // Update the monochromator wavelength
     diffractometer()->source().selectedMonochromator().setWavelength(wavelength());
 
-    // Initialise the buffer
-    for (std::size_t frame = 0; frame < nFrames(); ++frame)
-        _frame_buffer.push_back(nullptr);
 }
 
 void DataSet::addDataFile(const std::string& filename, const std::string& extension)
@@ -497,13 +494,15 @@ void DataSet::initBuffer(bool bufferAll)
     if (_buffered)
         return;
     std::cout << "initBuffer" << std::endl;
-    _buffered = true;
+    for (std::size_t frame = 0; frame < nFrames(); ++frame)
+        _frame_buffer.push_back(nullptr);
     for (std::size_t idx = 0; idx < nFrames(); ++idx) {
         if (bufferAll) {
             _frame_buffer.at(idx) = std::make_unique<Eigen::MatrixXi>(_reader->data(idx));
         } else
             _frame_buffer.at(idx) = nullptr;
     }
+    _buffered = true;
 }
 
 void DataSet::clearBuffer()
@@ -515,6 +514,7 @@ void DataSet::clearBuffer()
         _frame_buffer.at(idx).reset();
         _frame_buffer.at(idx) = nullptr;
     }
+    _frame_buffer.clear();
 }
 
 } // namespace ohkl
