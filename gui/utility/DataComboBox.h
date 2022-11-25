@@ -43,7 +43,7 @@ class DataComboBox : public QComboBox {
     void clearAll();
 
     //! Return a pointer to the current unit cell
-    ohkl::sptrDataSet currentData() const;
+    ohkl::sptrDataSet currentData();
 
     //! Refresh the combo box text
     void refresh();
@@ -60,7 +60,7 @@ class DataComboBox : public QComboBox {
     //! Current data set
     QString _current_text;
     //! Pointer to current DataSet
-    std::size_t _current_index;
+    int _current_index;
     //! Vector of all instances to refresh all in one call
     static QVector<DataComboBox*> _all_combos;
 };

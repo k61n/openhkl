@@ -96,7 +96,6 @@ void DataSet::finishRead()
 
     // Update the monochromator wavelength
     diffractometer()->source().selectedMonochromator().setWavelength(wavelength());
-
 }
 
 void DataSet::addDataFile(const std::string& filename, const std::string& extension)
@@ -497,9 +496,9 @@ void DataSet::initBuffer(bool bufferAll)
     for (std::size_t frame = 0; frame < nFrames(); ++frame)
         _frame_buffer.push_back(nullptr);
     for (std::size_t idx = 0; idx < nFrames(); ++idx) {
-        if (bufferAll) {
+        if (bufferAll)
             _frame_buffer.at(idx) = std::make_unique<Eigen::MatrixXi>(_reader->data(idx));
-        } else
+        else
             _frame_buffer.at(idx) = nullptr;
     }
     _buffered = true;

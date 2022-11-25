@@ -19,7 +19,7 @@
 DataList DataComboBox::_data_sets;
 QVector<DataComboBox*> DataComboBox::_all_combos;
 
-DataComboBox::DataComboBox(QWidget* parent) : QComboBox(parent)
+DataComboBox::DataComboBox(QWidget* parent) : QComboBox(parent), _current_index(-1)
 {
     _all_combos.push_back(this);
     connect(
@@ -48,15 +48,17 @@ void DataComboBox::clearAll()
 {
     QSignalBlocker blocker(this);
     _current_text = currentText();
+    _current_index = currentIndex();
     clear();
     _data_sets.clear();
 }
 
 //! Return a pointer to the current unit cell
-ohkl::sptrDataSet DataComboBox::currentData() const
+ohkl::sptrDataSet DataComboBox::currentData()
 {
     if (count() != _data_sets.size())
         throw std::runtime_error("DataComboBox needs refreshing");
+    _current_index = currentIndex();
     return _data_sets.at(currentIndex());
 }
 
