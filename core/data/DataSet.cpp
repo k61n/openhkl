@@ -181,9 +181,12 @@ int DataSet::dataAt(const std::size_t x, const std::size_t y, const std::size_t 
 Eigen::MatrixXi DataSet::frame(const std::size_t idx) const
 {
     if (_buffered) {
-        if (_frame_buffer.at(idx))
+        if (_frame_buffer.at(idx)) {
+            std::cout << "buffer" << std::endl;
             return *_frame_buffer.at(idx);
+        }
     }
+    std::cout << "file" << std::endl;
     return _reader->data(idx);
 }
 
@@ -490,17 +493,24 @@ void DataSet::removeAllMaks()
 
 void DataSet::initBuffer(bool bufferAll)
 {
+    if (_buffered)
+        return;
+    std::cout << "initBuffer" << std::endl;
     _buffered = true;
     for (std::size_t idx = 0; idx < nFrames(); ++idx) {
-        if (bufferAll)
-            _frame_buffer.at(idx) = std::make_unique<Eigen::MatrixXi>(_reader->data(idx));
-        else
+        if (bufferAll) {
+            _frame_buffer.at(idx) = std::make_unique<Eigen::MatrixXi>();
+            *_frame_buffer.at(idx) = _reader->data(idx);
+        } else
             _frame_buffer.at(idx) = nullptr;
     }
 }
 
 void DataSet::clearBuffer()
 {
+    if (!_buffered)
+        return;
+    std::cout << "clearBuffer" << std::endl;
     for (std::size_t idx = 0; idx < nFrames(); ++idx) {
         _frame_buffer.at(idx).reset();
         _frame_buffer.at(idx) = nullptr;

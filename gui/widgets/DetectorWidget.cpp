@@ -146,9 +146,9 @@ void DetectorWidget::datasetChanged()
     if (!gSession->currentProject()->hasDataSet())
         return;
 
-    ohkl::sptrDataSet data = _data_combo->currentData();
+    ohkl::sptrDataSet new_data = _data_combo->currentData();
+    scene()->slotChangeSelectedData(new_data, _spin->value());
     scene()->removeBeamSetter(); // need to be sensitive of dataset change
-    refresh();
 }
 
 void DetectorWidget::refresh()
@@ -163,7 +163,6 @@ void DetectorWidget::refresh()
 
     _hide_masks->setChecked(!scene()->masksVisible());
 
-    scene()->slotChangeSelectedData(data, _spin->value());
     scene()->clearPeakItems();
     scene()->drawPeakitems();
     scene()->update();

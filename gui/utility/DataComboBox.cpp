@@ -15,6 +15,7 @@
 #include "gui/utility/DataComboBox.h"
 
 #include <QSignalBlocker>
+#include <qcombobox.h>
 #include <qobject.h>
 
 DataList DataComboBox::_data_sets;
@@ -23,6 +24,9 @@ QVector<DataComboBox*> DataComboBox::_all_combos;
 DataComboBox::DataComboBox(QWidget* parent) : QComboBox(parent)
 {
     _all_combos.push_back(this);
+    connect(
+        this, QOverload<int>::of(&QComboBox::currentIndexChanged),
+        this, &DataComboBox::onDataChanged);
 }
 
 void DataComboBox::addDataSet(const ohkl::sptrDataSet& data)
@@ -30,6 +34,8 @@ void DataComboBox::addDataSet(const ohkl::sptrDataSet& data)
     QSignalBlocker blocker(this);
     addItem(QString::fromStdString(data->name()));
     _data_sets.push_back(data);
+    if (_data_sets.size() == 1) // Init buffer for the first data set
+        data->initBuffer(true);
     refresh();
 }
 
@@ -43,7 +49,7 @@ void DataComboBox::addDataSets(const DataList& data_list)
 void DataComboBox::clearAll()
 {
     QSignalBlocker blocker(this);
-    _current = currentText();
+    _current_text = currentText();
     clear();
     _data_sets.clear();
 }
@@ -59,15 +65,26 @@ ohkl::sptrDataSet DataComboBox::currentData() const
 void DataComboBox::refresh()
 {
     QSignalBlocker blocker(this);
-    _current = currentText();
+    _current_text = currentText();
     clear();
     for (ohkl::sptrDataSet& data : _data_sets)
         addItem(QString::fromStdString(data->name()));
-    setCurrentText(_current);
+    setCurrentText(_current_text);
 }
 
 void DataComboBox::refreshAll()
 {
     for (auto* combo : _all_combos)
         combo->refresh();
+}
+
+void DataComboBox::onDataChanged(int index)
+{
+    if (index != _current_index) {
+        auto old_data = _data_sets.at(_current_index);
+        auto new_data = _data_sets.at(index);
+        old_data->clearBuffer();
+        new_data->initBuffer(true);
+        _current_index = index;
+    }
 }
