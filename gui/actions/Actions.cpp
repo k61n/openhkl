@@ -114,10 +114,12 @@ void Actions::setupData()
         if (gSession->loadRawData())
             gGui->sideBar()->refreshCurrent();
     });
-    connect(add_single_image, &QAction::triggered, []() { // can cause a crash without checking
-        if (gSession->loadRawData(true))
     connect(add_tiff, &QAction::triggered, []() { // can cause a crash without checking
         if (gSession->loadTiffData())
+            gGui->sideBar()->refreshCurrent();
+    });
+    connect(add_single_image, &QAction::triggered, []() { // can cause a crash without checking
+        if (gSession->loadRawData(true))
             gGui->sideBar()->refreshCurrent();
     });
     connect(add_hdf5, &QAction::triggered, []() { gSession->loadData(ohkl::DataFormat::OHKL); });
