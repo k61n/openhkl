@@ -19,6 +19,7 @@
 #include "core/detector/Detector.h"
 #include "core/detector/DetectorFactory.h"
 #include "core/raw/DataKeys.h"
+#include "base/utils/YAMLType.h"
 
 namespace ohkl {
 
@@ -83,11 +84,27 @@ Detector::Detector(const YAML::Node& node) : Component(node)
     setDistance(distance);
 
     // Sets the detector number of pixels from the property tree node
-    unsigned int nCols = node[ohkl::ym_colCount].as<unsigned int>();
-    setNCols(nCols);
+    //unsigned int nCols = node[ohkl::ym_colCount].as<unsigned int>();
+    //Eigen::Vector3d axis = node[ohkl::ym_axisDirection].as<Eigen::Vector3d>();
 
-    unsigned int nRows = node[ohkl::ym_rowCount].as<unsigned int>();
-    setNRows(nRows);
+    // supporting multiple resolution for one detector (up to three)
+    // entry of 0 is considered to be invalid/no entry
+    auto cols = node[ohkl::ym_colCount].as<Eigen::Vector3d>();
+    auto rows = node[ohkl::ym_rowCount].as<Eigen::Vector3d>();
+
+    for (int i=0; i<3; i++)
+        if (cols[i] > 0 && rows[i] > 0) {
+            _nCols_options.emplace_back(cols[i]);
+            _nRows_options.emplace_back(rows[i]);
+        }
+
+    if (_nCols_options.size() == 0) // if no non zero resolutions are found
+        throw std::runtime_error
+        ("E Detector::Detector Found no valid non zero resolution definition for detector in yaml file: ");
+
+    //set first resolution as default - user can change this during file importing
+    setNCols(_nCols_options[0]);
+    setNRows(_nRows_options[0]);
 
     _minCol = node[ohkl::ym_originX] ? node[ohkl::ym_originX].as<double>() : 0.0;
     _minRow = node[ohkl::ym_originY] ? node[ohkl::ym_originY].as<double>() : 0.0;
