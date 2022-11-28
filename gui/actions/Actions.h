@@ -50,6 +50,7 @@ class Actions : public QObject {
     QAction* add_single_image;
     QAction* remove_data;
     QAction* add_raw;
+    QAction* add_tiff;
     QAction* add_hdf5;
     QAction* add_nexus;
 

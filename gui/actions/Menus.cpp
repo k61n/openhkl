@@ -61,6 +61,7 @@ Menus::Menus(QMenuBar* menu_bar) : _menu_bar{menu_bar}
 
     QMenu* _data_sub = _data_menu->addMenu("Add data set");
     _data_sub->addAction(actions->add_raw);
+    _data_sub->addAction(actions->add_tiff);
     _data_sub->addAction(actions->add_hdf5);
     _data_sub->addAction(actions->add_nexus);
     _data_menu->addAction(actions->add_single_image);
@@ -99,6 +100,7 @@ Menus::Menus(QMenuBar* menu_bar) : _menu_bar{menu_bar}
     actions->remove_cell->setShortcut(QKeySequence("Ctrl+U+X"));
 
     actions->add_raw->setShortcut(QKeySequence("Ctrl+R"));
+    actions->add_tiff->setShortcut(QKeySequence("Ctrl+T"));
     actions->add_hdf5->setShortcut(QKeySequence("Ctrl+H"));
     actions->add_nexus->setShortcut(QKeySequence("Ctrl+X"));
 

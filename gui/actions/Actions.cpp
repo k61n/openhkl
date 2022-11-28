@@ -105,7 +105,8 @@ void Actions::setupData()
     add_single_image = new QAction("Load single image (strategy)");
     show_input_files = new QAction("Show input files");
     remove_data = new QAction("Remove data set");
-    add_raw = new QAction("Add raw/tiff data");
+    add_raw = new QAction("Add raw data");
+    add_tiff = new QAction("Add tiff data");
     add_hdf5 = new QAction("Add NSX(HDF5) data");
     add_nexus = new QAction("Add Nexus data");
 
@@ -115,6 +116,8 @@ void Actions::setupData()
     });
     connect(add_single_image, &QAction::triggered, []() { // can cause a crash without checking
         if (gSession->loadRawData(true))
+    connect(add_tiff, &QAction::triggered, []() { // can cause a crash without checking
+        if (gSession->loadTiffData())
             gGui->sideBar()->refreshCurrent();
     });
     connect(add_hdf5, &QAction::triggered, []() { gSession->loadData(ohkl::DataFormat::OHKL); });
