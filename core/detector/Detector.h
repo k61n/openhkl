@@ -20,6 +20,8 @@
 #include "base/geometry/ReciprocalVector.h"
 #include "core/detector/DetectorEvent.h"
 
+#include <vector>
+
 namespace ohkl {
 
 //! Pure virtual base class for detectors of different geometry.
@@ -110,6 +112,23 @@ class Detector : public Component {
     void setBaseline(double baseline);
     //! Override the gain from the .yml2c file
     void setGain(double gain);
+   
+    std::vector<int> getColRes() {return _nCols_options;}
+    std::vector<int> getRowRes() {return _nRows_options;}
+
+    int getNresolutions() {
+      return _nCols_options.size();
+    }
+
+    bool selectDetectorResolution(int choice)
+    {
+      if (choice < 0 || choice > _nCols_options.size()) return false;
+      setNCols(_nCols_options[choice]);
+      setNRows(_nRows_options[choice]);
+      return true;
+    }
+
+
 
  protected:
     //! Detector height
@@ -120,6 +139,14 @@ class Detector : public Component {
     double _angularHeight;
     //! Detector angular width
     double _angularWidth;
+
+   //Eigen::Vector3d _nCols_options;
+   //Eigen::Vector3d _nRows_options;
+   std::vector<int> _nCols_options;
+   std::vector<int> _nRows_options;
+
+
+
     //! Number of rows of pixels
     unsigned int _nRows;
     //! Number of columns of pixels
