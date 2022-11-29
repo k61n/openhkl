@@ -5,32 +5,38 @@ image: iffregistry.fz-juelich.de/neutron-simlab/openhkl/ubuntu2204-env
 
 stages:
   - build
+  - test
   - deploy:doc
 
 build:ubuntu:
   stage: build
   script:
-  - mkdir build
-  - cd build
-  - |
-    if test $CI_PIPELINE_SOURCE == "nightly"
-    then
-        cmake .. -D OHKL_FULL_WORKFLOW_TEST=ON
-    else
-        cmake ..
-    fi
-  - make -j8
-  - |
-    if test $CI_PIPELINE_SOURCE == "nightly"
-    then
-        ctest --output-on-failure -L "nightly"
-    else
-        ctest -j8 --output-on-failure -E "nightly"
-    fi
+    - mkdir build
+    - cd build
+    - |
+      if test $CI_PIPELINE_SOURCE == "nightly"
+      then
+          cmake .. -D OHKL_FULL_WORKFLOW_TEST=ON
+      else
+          cmake ..
+      fi
+    - make -j8
   artifacts:
     paths:
-    - build
+      - build
     expire_in: 1 day
+
+test:ubuntu:
+  stage: test
+  script:
+    - cd build
+    - |
+      if test $CI_PIPELINE_SOURCE == "nightly"
+      then
+          ctest --output-on-failure -L "nightly"
+      else
+          ctest -j8 --output-on-failure -E "nightly"
+      fi
 
 pages:
   stage: deploy:doc
