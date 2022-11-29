@@ -28,6 +28,7 @@ build:ubuntu:
 
 test:ubuntu:
   stage: test
+  script:
     - cd build
     - |
       if test $CI_PIPELINE_SOURCE == "nightly"
@@ -36,10 +37,6 @@ test:ubuntu:
       else
           ctest -j8 --output-on-failure -E "nightly"
       fi
-  artifacts:
-    paths:
-      - build
-    expire_in: 1 day
 
 pages:
   stage: deploy:doc
