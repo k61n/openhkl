@@ -102,7 +102,7 @@ class SubframeMergedPeaks : public QWidget {
     //! Merged data per resolution shell
     std::vector<ohkl::MergedData*> _merged_data_per_shell;
     //! The peak exporter
-    ohkl::PeakExporter exporter;
+    ohkl::PeakExporter _exporter;
 
     QSizePolicy* _size_policy_widgets;
     QSizePolicy* _size_policy_box;
