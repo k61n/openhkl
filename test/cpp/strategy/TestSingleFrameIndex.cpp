@@ -2,7 +2,7 @@
 //
 //  OpenHKL: data reduction for single crystal diffraction
 //
-//! @file      test/cpp/data/TestPeakFinder2D.cpp
+//! @file      test/cpp/data/TestSingleFrameIndex.cpp
 //! @brief     Test ...
 //!
 //! @homepage  https://openhkl.org
@@ -39,6 +39,7 @@
 
 TEST_CASE("test/data/TestSingleFrameIndex.cpp", "")
 {
+    // TODO: indexing only seems to work when multiple frames are added. Look into this!
     const std::vector<std::string> filenames = {
         "CrChiA_c01runab_28603.raw",
         "CrChiA_c01runab_28604.raw",
