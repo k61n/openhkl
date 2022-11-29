@@ -28,7 +28,7 @@ bool MaskHandler::check(ohkl::sptrDataSet dataset)
 {
     if (dataset->masks().size() != _mask_collection_map[dataset].size())
         return false;
-    for (auto & m : dataset->masks())
+    for (auto& m : dataset->masks())
         if (_mask_collection_map[dataset].find(m) == _mask_collection_map[dataset].end())
             return false;
     return true;
@@ -50,7 +50,7 @@ bool MaskHandler::addMask(ohkl::sptrDataSet dataset, ohkl::IMask* imask, QGraphi
         return false;
 
     // we need at least one valid item
-    if (!imask && !gmask) 
+    if (!imask && !gmask)
         return false;
     else if (!imask && gmask) {
         // create a corresponding imask
@@ -59,7 +59,7 @@ bool MaskHandler::addMask(ohkl::sptrDataSet dataset, ohkl::IMask* imask, QGraphi
         // create a corresponding gmask
         gmask = generateGraphicItem(imask, dataset);
     }
-    
+
     dataset->addMask(imask);
 
     // check wether there is already a map entry for this dataset at all
@@ -70,7 +70,7 @@ bool MaskHandler::addMask(ohkl::sptrDataSet dataset, ohkl::IMask* imask, QGraphi
     _mask_collection_map[dataset].insert({imask, gmask});
 
     return true;
-} 
+}
 
 bool MaskHandler::removeMask(ohkl::sptrDataSet dataset, ohkl::IMask* imask)
 {
@@ -79,7 +79,7 @@ bool MaskHandler::removeMask(ohkl::sptrDataSet dataset, ohkl::IMask* imask)
     auto itr = std::find(imasks.begin(), imasks.end(), imask);
     if (itr == imasks.end())
         return false;
-    
+
     dataset->removeMask(imask);
     if (_mask_collection_map[dataset].erase(imask) == 0)
         return false;
@@ -95,20 +95,22 @@ void MaskHandler::clearMasks(ohkl::sptrDataSet dataset)
 void MaskHandler::clearGraphicMaskItems(ohkl::sptrDataSet dataset)
 {
     auto imasks = dataset->masks();
-    for (auto & m : imasks) {
-        if (!m) return;
-        delete getGraphicItem( dataset, m );
+    for (auto& m : imasks) {
+        if (!m)
+            return;
+        delete getGraphicItem(dataset, m);
         _mask_collection_map[dataset].erase(m);
     }
 }
 
 ohkl::IMask* MaskHandler::generateIMask(QGraphicsItem* mask_item)
 {
-    if (!mask_item) return nullptr;
+    if (!mask_item)
+        return nullptr;
 
     if (dynamic_cast<const MaskItem*>(mask_item) != nullptr)
         return new ohkl::BoxMask(*((MaskItem*)mask_item)->getAABB());
-    else 
+    else
         return new ohkl::EllipseMask(*((EllipseMaskItem*)mask_item)->getAABB());
 }
 
@@ -117,14 +119,12 @@ QGraphicsItem* MaskHandler::generateGraphicItem(ohkl::IMask* mask, ohkl::sptrDat
     if (!mask)
         return nullptr;
     if (dynamic_cast<const ohkl::BoxMask*>(mask) != nullptr) {
-        MaskItem* gmask_item 
-        = new MaskItem(dataset, new ohkl::AABB(mask->aabb()));
+        MaskItem* gmask_item = new MaskItem(dataset, new ohkl::AABB(mask->aabb()));
         gmask_item->setFrom(mask->aabb().lower());
         gmask_item->setTo(mask->aabb().upper());
         return gmask_item;
     } else {
-        EllipseMaskItem* gmask_item 
-        = new EllipseMaskItem(dataset, new ohkl::AABB(mask->aabb()));
+        EllipseMaskItem* gmask_item = new EllipseMaskItem(dataset, new ohkl::AABB(mask->aabb()));
         gmask_item->setFrom(mask->aabb().lower());
         gmask_item->setTo(mask->aabb().upper());
         return gmask_item;
@@ -135,13 +135,13 @@ bool MaskHandler::removeDataSet(ohkl::sptrDataSet dataset)
 {
     clearGraphicMaskItems(dataset);
     return true;
-} 
+}
 
 size_t MaskHandler::getNSelectedMasks(ohkl::sptrDataSet dataset)
 {
     size_t nSelectedMasks = 0;
     auto masks = dataset->masks();
-    for (auto & m : masks)
+    for (auto& m : masks)
         if (_mask_collection_map[dataset][m]->isSelected())
             ++nSelectedMasks;
 
@@ -186,7 +186,7 @@ void MaskHandler::setSelectionFlag(ohkl::sptrDataSet dataset, ohkl::IMask* imask
 
 bool MaskHandler::getSelectionFlag(ohkl::sptrDataSet dataset, size_t id)
 {
-    return getSelectionFlag(dataset,  dataset->masks()[id]);
+    return getSelectionFlag(dataset, dataset->masks()[id]);
 }
 
 bool MaskHandler::getSelectionFlag(ohkl::sptrDataSet dataset, ohkl::IMask* imask)
@@ -196,14 +196,14 @@ bool MaskHandler::getSelectionFlag(ohkl::sptrDataSet dataset, ohkl::IMask* imask
 
 void MaskHandler::setAllSelectionFlags(ohkl::sptrDataSet dataset, bool flag)
 {
-    for (auto & m : dataset->masks())
+    for (auto& m : dataset->masks())
         setSelectionFlag(dataset, m, flag);
 }
 
 std::vector<bool> MaskHandler::getAllSelectionFlags(ohkl::sptrDataSet dataset)
 {
     std::vector<bool> flags;
-    for (auto & m : dataset->masks())
+    for (auto& m : dataset->masks())
         flags.emplace_back(getGraphicItem(dataset, m)->isSelected());
     return flags;
 }
@@ -212,9 +212,9 @@ size_t MaskHandler::removeSelectedMasks(ohkl::sptrDataSet dataset)
 {
     size_t nMasksRemoved = 0;
     auto masks = dataset->masks();
-    for (auto & m : masks) {
+    for (auto& m : masks) {
         // MaskHandler and sptrDataSet are out of sync ... -> in that case a error should be thrown
-        //if (_mask_collection_map[dataset].find(m) == _mask_collection_map[dataset].end())
+        // if (_mask_collection_map[dataset].find(m) == _mask_collection_map[dataset].end())
         //    continue;
         if (_mask_collection_map[dataset][m]->isSelected()) {
             delete _mask_collection_map[dataset][m];
@@ -229,7 +229,7 @@ size_t MaskHandler::removeSelectedMasks(ohkl::sptrDataSet dataset)
 std::vector<QGraphicsItem*> MaskHandler::getGraphicalMaskItems(ohkl::sptrDataSet dataset)
 {
     std::vector<QGraphicsItem*> gmasks;
-    for (auto & m : dataset->masks())
+    for (auto& m : dataset->masks())
         gmasks.emplace_back(getGraphicItem(dataset, m));
     return gmasks;
 }
@@ -242,7 +242,7 @@ std::vector<ohkl::IMask*> MaskHandler::getMasks(ohkl::sptrDataSet dataset)
 std::vector<ohkl::IMask*> MaskHandler::getKeys(ohkl::sptrDataSet dataset)
 {
     std::vector<ohkl::IMask*> keys;
-    for (auto & item : _mask_collection_map[dataset])
+    for (auto& item : _mask_collection_map[dataset])
         keys.emplace_back(item.first);
     return keys;
 }
@@ -251,7 +251,7 @@ void MaskHandler::importMasks(std::string filename, ohkl::sptrDataSet dataset)
 {
     ohkl::MaskImporter mimp(filename);
 
-    for (auto & m : mimp.getMasks())
+    for (auto& m : mimp.getMasks())
         addMask(dataset, m);
 }
 
@@ -267,11 +267,11 @@ ohkl::IMask* MaskHandler::findIMask(ohkl::sptrDataSet dataset, QGraphicsItem* gm
         if (getGraphicItem(dataset, m) == gmask)
             return m;
     return nullptr;
-} 
+}
 
 bool MaskHandler::removeMask(ohkl::sptrDataSet dataset, QGraphicsItem* gmask)
 {
-    for (auto & m : dataset->masks())
+    for (auto& m : dataset->masks())
         if (getGraphicItem(dataset, m) == gmask) {
             _mask_collection_map[dataset].erase(m);
             dataset->removeMask(m);
@@ -282,14 +282,14 @@ bool MaskHandler::removeMask(ohkl::sptrDataSet dataset, QGraphicsItem* gmask)
 
 void MaskHandler::setVisibleFlags(ohkl::sptrDataSet dataset, bool flag)
 {
-    for (auto & m : dataset->masks())
-            getGraphicItem(dataset, m)->setVisible(flag);
+    for (auto& m : dataset->masks())
+        getGraphicItem(dataset, m)->setVisible(flag);
 }
 
 size_t MaskHandler::findMaskPosition(ohkl::sptrDataSet dataset, QGraphicsItem* gmask)
-{   
+{
     size_t idx = 0;
-    for (auto & m : dataset->masks()) {
+    for (auto& m : dataset->masks()) {
         if (getGraphicItem(dataset, m) == gmask)
             return idx;
         ++idx;
@@ -306,7 +306,7 @@ bool MaskHandler::removeGraphicMaskItem(ohkl::sptrDataSet dataset, ohkl::IMask* 
 
 bool MaskHandler::removeGraphicMaskItem(ohkl::sptrDataSet dataset, QGraphicsItem* gmask)
 {
-    for (auto & m : dataset->masks())
+    for (auto& m : dataset->masks())
         if (getGraphicItem(dataset, m) == gmask)
             return removeGraphicMaskItem(dataset, m);
 
@@ -316,15 +316,15 @@ bool MaskHandler::removeGraphicMaskItem(ohkl::sptrDataSet dataset, QGraphicsItem
 void MaskHandler::rebuildMasks(ohkl::sptrDataSet dataset)
 {
     auto masks = dataset->masks();
-    for (auto & m : masks) {
+    for (auto& m : masks) {
         delete getGraphicItem(dataset, m);
         _mask_collection_map[dataset].erase(m);
     }
 
-    for (auto & m : masks) {
+    for (auto& m : masks) {
         auto gmask = generateGraphicItem(m, dataset);
         _mask_collection_map[dataset].insert({m, gmask});
-    } 
+    }
 }
 
 bool MaskHandler::addIMask(ohkl::sptrDataSet dataset, QGraphicsItem* gmask, ohkl::IMask* imask)
@@ -336,5 +336,4 @@ bool MaskHandler::addIMask(ohkl::sptrDataSet dataset, QGraphicsItem* gmask, ohkl
         return true;
     }
     return false;
-
 }

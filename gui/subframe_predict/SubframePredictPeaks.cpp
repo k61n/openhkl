@@ -21,10 +21,10 @@
 #include "core/detector/DetectorEvent.h"
 #include "core/experiment/Experiment.h"
 #include "core/instrument/InstrumentState.h"
+#include "core/integration/IIntegrator.h"
 #include "core/integration/ShapeIntegrator.h"
 #include "core/peak/Peak3D.h"
 #include "core/peak/Qs2Events.h"
-#include "core/integration/IIntegrator.h"
 #include "core/shape/PeakCollection.h"
 #include "core/shape/Predictor.h"
 #include "core/shape/ShapeModel.h"
@@ -256,24 +256,20 @@ void SubframePredictPeaks::setShapeModelUp()
     _shape_combo =
         f.addShapeCombo("Shape model", "Shape model to predict shapes of predicted peaks");
     _peak_end = f.addDoubleSpinBox("Peak end", "(sigmas) - scaling factor for peak region");
-    _bkg_begin =
-        f.addDoubleSpinBox(
-            "Background begin:", "(sigmas) - scaling factor for lower limit of background");
-    _bkg_end =
-        f.addDoubleSpinBox(
-            "Background end:", "(sigmas) - scaling factor for upper limit of background");
-    _radius_pix =
-        f.addDoubleSpinBox(
-            "Search radius (pixels):",
-            "(pixels) - neighbour search radius in pixels for generating mean covariance");
-    _radius_frames =
-        f.addDoubleSpinBox(
-            "Search radius (images):",
-            "(frames) - neighbour search radius in frames for generating mean covariance");
+    _bkg_begin = f.addDoubleSpinBox(
+        "Background begin:", "(sigmas) - scaling factor for lower limit of background");
+    _bkg_end = f.addDoubleSpinBox(
+        "Background end:", "(sigmas) - scaling factor for upper limit of background");
+    _radius_pix = f.addDoubleSpinBox(
+        "Search radius (pixels):",
+        "(pixels) - neighbour search radius in pixels for generating mean covariance");
+    _radius_frames = f.addDoubleSpinBox(
+        "Search radius (images):",
+        "(frames) - neighbour search radius in frames for generating mean covariance");
     _min_neighbours = f.addSpinBox(
         "Min. neighbours", "Minimum number of neighbouring shapes to generate mean covariance");
-    _interpolation_combo = f.addCombo(
-        "Interpolation type", "Interpolation strategy for determining mean covariance");
+    _interpolation_combo =
+        f.addCombo("Interpolation type", "Interpolation strategy for determining mean covariance");
     _apply_shape_model =
         f.addButton("Apply shape model", "Apply shape model to a predicted peak collection");
 
@@ -586,7 +582,8 @@ void SubframePredictPeaks::showDirectBeamEvents()
         _direct_beam_events.clear();
         const auto& states = data->instrumentStates();
         auto* detector = data->diffractometer()->detector();
-        std::vector<ohkl::DetectorEvent> events = ohkl::algo::getDirectBeamEvents(states, *detector);
+        std::vector<ohkl::DetectorEvent> events =
+            ohkl::algo::getDirectBeamEvents(states, *detector);
 
         for (auto&& event : events)
             _direct_beam_events.push_back(event);

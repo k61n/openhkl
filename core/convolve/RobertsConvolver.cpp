@@ -26,11 +26,9 @@ RobertsConvolver::RobertsConvolver(const std::map<std::string, double>& paramete
 
     Eigen::Matrix2d roberts_x, roberts_y;
 
-    roberts_x <<  1,  0,
-                  0, -1;
+    roberts_x << 1, 0, 0, -1;
 
-    roberts_y <<  0,  1,
-                 -1,  0;
+    roberts_y << 0, 1, -1, 0;
 
     setOperator(roberts_x, roberts_y);
 }

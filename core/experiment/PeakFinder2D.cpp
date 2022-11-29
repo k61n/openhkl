@@ -20,12 +20,12 @@
 #include "core/peak/Peak3D.h"
 
 #include <Eigen/src/Core/Matrix.h>
-#include <opencv2/opencv.hpp>
 #include <opencv2/core/cvstd_wrapper.hpp>
 #include <opencv2/core/eigen.hpp>
 #include <opencv2/core/hal/interface.h>
 #include <opencv2/core/types.hpp>
 #include <opencv2/features2d.hpp>
+#include <opencv2/opencv.hpp>
 
 #include <opencv2/imgcodecs.hpp>
 #include <stdexcept>

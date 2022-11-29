@@ -118,8 +118,7 @@ void writeSampleState(
     }
 }
 
-void writeMasks(
-    H5::H5File& file, const std::string& datakey, const ohkl::DataSet* const dataset)
+void writeMasks(H5::H5File& file, const std::string& datakey, const ohkl::DataSet* const dataset)
 {
     const auto& masks = dataset->masks();
     std::size_t n_masks = masks.size();
@@ -398,7 +397,8 @@ void ExperimentExporter::writePeaks(const std::map<std::string, PeakCollection*>
                 unit_cells.push_back(unit_cell_id);
 
                 temp_col = peak->hkl().error();
-                hkl_error.block(i, 0, 1, 3) = Eigen::RowVector3d(temp_col(0), temp_col(1), temp_col(2));
+                hkl_error.block(i, 0, 1, 3) =
+                    Eigen::RowVector3d(temp_col(0), temp_col(1), temp_col(2));
 
                 Eigen::Vector3i itemp_col = peak->hkl().rowVector();
                 hkl.block(i, 0, 1, 3) =
@@ -472,7 +472,8 @@ void ExperimentExporter::writeUnitCells(const std::vector<UnitCell*> unit_cells)
 
         const Eigen::MatrixX3d rec = unit_cell->reciprocalBasis();
 
-        const std::string group_name = "/" + ohkl::gr_UnitCells + "/" + std::to_string(unit_cell_id);
+        const std::string group_name =
+            "/" + ohkl::gr_UnitCells + "/" + std::to_string(unit_cell_id);
         H5::Group unit_cell_group = file.createGroup(group_name);
 
         // Write reciprocal-vector components
@@ -495,7 +496,8 @@ void ExperimentExporter::writeUnitCells(const std::vector<UnitCell*> unit_cells)
             metaSpace);
         const std::string bravais_type_sym = unit_cell->bravaisTypeSymbol();
         writeAttribute(
-            unit_cell_group, ohkl::at_BravaisLattice, bravais_type_sym.data(), str80Type, metaSpace);
+            unit_cell_group, ohkl::at_BravaisLattice, bravais_type_sym.data(), str80Type,
+            metaSpace);
         const std::string unitcell_spacegroup_sym = unit_cell->spaceGroup().symbol();
         writeAttribute(
             unit_cell_group, ohkl::at_spacegroup, unitcell_spacegroup_sym.data(), str80Type,

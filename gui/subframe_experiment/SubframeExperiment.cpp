@@ -38,15 +38,16 @@
 #include "gui/views/UnitCellTableView.h"
 #include "gui/widgets/DetectorWidget.h"
 #include "gui/widgets/PlotPanel.h"
-#include "gui/utility/PropertyScrollArea.h"
 
 #include <QBoxLayout>
 #include <QCheckBox>
 #include <QComboBox>
+#include <QFileDialog>
 #include <QGroupBox>
 #include <QHBoxLayout>
 #include <QHeaderView>
 #include <QLabel>
+#include <QMessageBox>
 #include <QPushButton>
 #include <QScrollBar>
 #include <QSlider>
@@ -57,22 +58,18 @@
 #include <QVBoxLayout>
 #include <QVector>
 #include <QWidget>
-#include <QFileDialog>
 #include <cstring>
 #include <gsl/gsl_histogram.h>
 #include <qabstractitemview.h>
 #include <qsizepolicy.h>
 #include <qspinbox.h>
 #include <stdexcept>
-#include <QMessageBox>
 
-#include "gui/utility/Spoiler.h"
 #include "gui/utility/GridFiller.h"
+#include "gui/utility/Spoiler.h"
 
 SubframeExperiment::SubframeExperiment()
-    : QWidget()
-    , _show_direct_beam(true)
-    , _thresholded_image(nullptr) // init with nullptr
+    : QWidget(), _show_direct_beam(true), _thresholded_image(nullptr) // init with nullptr
 {
     _main_layout = new QHBoxLayout(this);
     _left_layout = new QVBoxLayout();
@@ -137,12 +134,12 @@ SubframeExperiment::SubframeExperiment()
         &SubframeExperiment::selectSolutionTable);
 
     connect(
-        _detector_widget->dataCombo(), QOverload<int>::of(&QComboBox::currentIndexChanged),
-        this,
+        _detector_widget->dataCombo(), QOverload<int>::of(&QComboBox::currentIndexChanged), this,
         &SubframeExperiment::calculateIntensities);
 
-    connect(_detector_widget->scroll(), &QScrollBar::valueChanged,
-        this, &SubframeExperiment::refreshAll);
+    connect(
+        _detector_widget->scroll(), &QScrollBar::valueChanged, this,
+        &SubframeExperiment::refreshAll);
 
     connect(_update_plot, &QPushButton::clicked, this, &SubframeExperiment::refreshAll);
 
@@ -167,8 +164,9 @@ SubframeExperiment::SubframeExperiment()
         this, &SubframeExperiment::showFilteredImage);
 
     // if masks are selected graphicaly update mask table
-    connect(_detector_widget->scene(),&DetectorScene::signalMasksSelected,
-            this, &SubframeExperiment::refreshMaskTable );
+    connect(
+        _detector_widget->scene(), &DetectorScene::signalMasksSelected, this,
+        &SubframeExperiment::refreshMaskTable);
 
     connect(
         _mask_handler.get(), &MaskHandler::signalMaskChanged, this,
@@ -335,7 +333,8 @@ void SubframeExperiment::setHistogramUp()
         _lineplot_box->checkBox(), &QCheckBox::stateChanged, this,
         &SubframeExperiment::toggleCursorMode);
     connect(
-        _lineplot_combo, &QComboBox::currentTextChanged, this, &SubframeExperiment::toggleCursorMode);
+        _lineplot_combo, &QComboBox::currentTextChanged, this,
+        &SubframeExperiment::toggleCursorMode);
 }
 
 void SubframeExperiment::setMaskUp()
@@ -354,7 +353,8 @@ void SubframeExperiment::setMaskUp()
     _mask_table = new QTableWidget(0, 5);
     _mask_table->setSelectionBehavior(QAbstractItemView::SelectRows);
     _mask_table->setEditTriggers(QAbstractItemView::NoEditTriggers);
-    _mask_table->setHorizontalHeaderLabels(QStringList{"x lower", "y lower", "x upper", "y upper", "select"});
+    _mask_table->setHorizontalHeaderLabels(
+        QStringList{"x lower", "y lower", "x upper", "y upper", "select"});
 
     gfiller2.addWidget(_mask_table, 0, 2);
     _mask_table->resizeColumnsToContents();
@@ -386,30 +386,24 @@ void SubframeExperiment::setMaskUp()
         _detector_widget->scene(), &DetectorScene::signalMaskChanged, this,
         &SubframeExperiment::refreshMaskTable);
 
-    connect(
-       _export_masks, &QPushButton::clicked, this,
-        &SubframeExperiment::exportMasks);
-    connect(
-        _import_masks, &QPushButton::clicked, this,
-        &SubframeExperiment::importMasks);
-    connect(
-        _delete_masks, &QPushButton::clicked, this,
-        &SubframeExperiment::deleteSelectedMasks);
-    connect(
-        _toggle_selection, &QPushButton::clicked, this,
-        &SubframeExperiment::selectAllMasks);
+    connect(_export_masks, &QPushButton::clicked, this, &SubframeExperiment::exportMasks);
+    connect(_import_masks, &QPushButton::clicked, this, &SubframeExperiment::importMasks);
+    connect(_delete_masks, &QPushButton::clicked, this, &SubframeExperiment::deleteSelectedMasks);
+    connect(_toggle_selection, &QPushButton::clicked, this, &SubframeExperiment::selectAllMasks);
 }
 
 void SubframeExperiment::importMasks()
 {
     QSettings settings = gGui->qSettings();
     settings.beginGroup("RecentDirectories");
-    QString loadDirectory = settings.value("masks", QDir::homePath()).toString() +
-    "/mask.yml";
+    QString loadDirectory = settings.value("masks", QDir::homePath()).toString() + "/mask.yml";
 
-    std::string file_path = QFileDialog::getOpenFileName(this, "Import masks from file", loadDirectory, "YAML (*.yml)").toStdString();
+    std::string file_path =
+        QFileDialog::getOpenFileName(this, "Import masks from file", loadDirectory, "YAML (*.yml)")
+            .toStdString();
 
-    if (file_path.empty()) return;
+    if (file_path.empty())
+        return;
 
     _mask_handler->importMasks(file_path, _data_combo->currentData());
 
@@ -421,14 +415,14 @@ void SubframeExperiment::exportMasks()
 {
     QSettings settings = gGui->qSettings();
     settings.beginGroup("RecentDirectories");
-    QString loadDirectory = settings.value("masks", QDir::homePath()).toString() +
-    "/masks.yml";
+    QString loadDirectory = settings.value("masks", QDir::homePath()).toString() + "/masks.yml";
 
     std::string file_path =
-    QFileDialog::getSaveFileName(
-        this, "Export maks to ", loadDirectory, "YAML (*.yml)").toStdString();
+        QFileDialog::getSaveFileName(this, "Export maks to ", loadDirectory, "YAML (*.yml)")
+            .toStdString();
 
-    if (file_path.empty()) return;
+    if (file_path.empty())
+        return;
 
     _mask_handler->exportMasks(file_path, _data_combo->currentData());
 
@@ -441,16 +435,16 @@ void SubframeExperiment::setPeakFinder2DUp()
     GridFiller gfiller(peak2D_spoiler, true);
 
     _data_combo = gfiller.addDataCombo("Data set");
-    _convolver_combo = gfiller.addCombo(
-        "Convolution kernel", "Convolver kernel type to use in image filtering");
+    _convolver_combo =
+        gfiller.addCombo("Convolution kernel", "Convolver kernel type to use in image filtering");
     _threshold = gfiller.addSpinBox(
         "Filtered image threshold", "Minimum counts to use in image thresholding");
-    _blob_min_thresh = gfiller.addSpinBox(
-        "Minimum blob threshold", "Minimum threshold for blob detection");
-    _blob_max_thresh = gfiller.addSpinBox(
-        "Maximum blob threshold", "Maximum threshold for blob detection");
-    _search_all_frames = gfiller.addCheckBox(
-        "Search all images", "Find blobs in all images in this data set", 1);
+    _blob_min_thresh =
+        gfiller.addSpinBox("Minimum blob threshold", "Minimum threshold for blob detection");
+    _blob_max_thresh =
+        gfiller.addSpinBox("Maximum blob threshold", "Maximum threshold for blob detection");
+    _search_all_frames =
+        gfiller.addCheckBox("Search all images", "Find blobs in all images in this data set", 1);
     _threshold_check = gfiller.addCheckBox(
         "Apply threshold to preview", "Show detector image post filtering/thresholding", 1);
     _find_peaks_2d = gfiller.addButton("Find spots", "Find detector spots in current image");
@@ -467,13 +461,13 @@ void SubframeExperiment::setPeakFinder2DUp()
     _blob_max_thresh->setValue(100);
 
     connect(
-        _data_combo, &QComboBox::currentTextChanged, this, &SubframeExperiment::toggleUnsafeWidgets);
+        _data_combo, &QComboBox::currentTextChanged, this,
+        &SubframeExperiment::toggleUnsafeWidgets);
     connect(
         _data_combo, QOverload<int>::of(&QComboBox::currentIndexChanged),
         _detector_widget->dataCombo(), &QComboBox::setCurrentIndex);
     connect(_threshold_check, &QCheckBox::clicked, this, &SubframeExperiment::showFilteredImage);
-    connect(
-        _find_peaks_2d, &QPushButton::clicked, this, &SubframeExperiment::find_2d);
+    connect(_find_peaks_2d, &QPushButton::clicked, this, &SubframeExperiment::find_2d);
 
     _strategy_layout->addWidget(peak2D_spoiler);
 }
@@ -489,7 +483,8 @@ void SubframeExperiment::setIndexerUp()
     _only_niggli = gfiller.addCheckBox("Find Niggli cell only", 1);
 
     _max_cell_dimension = gfiller.addDoubleSpinBox(
-        "Max. Cell dimension:", QString::fromUtf8("(\u212B) - maximum length of any lattice vector"));
+        "Max. Cell dimension:",
+        QString::fromUtf8("(\u212B) - maximum length of any lattice vector"));
 
     _number_vertices = gfiller.addSpinBox(
         "Num. Q-space trial vectors:",
@@ -499,7 +494,8 @@ void SubframeExperiment::setIndexerUp()
     _number_subdivisions = gfiller.addSpinBox(
         "Num. FFT histogram bins:", "Number of histogram bins for Fast Fourier transform");
 
-    _number_solutions = gfiller.addSpinBox("Number of solutions:", "Number of unit cell solutions to find");
+    _number_solutions =
+        gfiller.addSpinBox("Number of solutions:", "Number of unit cell solutions to find");
 
     _min_cell_volume = gfiller.addDoubleSpinBox(
         "Minimum Volume:",
@@ -560,14 +556,16 @@ void SubframeExperiment::calculateIntensities()
     auto data = expt->getDataMap()->at(_detector_widget->dataCombo()->currentText().toStdString());
     bool hasHistograms = data->getNumberHistograms() > 0;
 
-    if (!data) return;
-    if (hasHistograms) data->clearHistograms();
+    if (!data)
+        return;
+    if (hasHistograms)
+        data->clearHistograms();
     data->getIntensityHistogram(_npoints_intensity->value());
 
-    _maxX->setMaximum(data->nCols()*data->nRows());
-    _minX->setMaximum(data->nCols()*data->nRows()-1);
+    _maxX->setMaximum(data->nCols() * data->nRows());
+    _minX->setMaximum(data->nCols() * data->nRows() - 1);
     _maxY->setMaximum(1e+9);
-    _minY->setMaximum(1e+9-1);
+    _minY->setMaximum(1e+9 - 1);
 
     updateRanges();
     toggleUnsafeWidgets();
@@ -586,14 +584,15 @@ void SubframeExperiment::updateRanges()
     else
         histo = data->getTotalHistogram();
 
-    if (!histo) return;
+    if (!histo)
+        return;
 
-    if (!_xZoom->isChecked()){
+    if (!_xZoom->isChecked()) {
         _minX->setValue(0);
         _maxX->setValue(data->maxCount());
     }
-    if (!_yZoom->isChecked()){
-        double max_element = *(std::max_element(histo->bin, histo->bin + histo->n*8));
+    if (!_yZoom->isChecked()) {
+        double max_element = *(std::max_element(histo->bin, histo->bin + histo->n * 8));
 
         _minY->setValue(0);
         _maxY->setValue(max_element);
@@ -655,7 +654,8 @@ void SubframeExperiment::plotIntensities()
     ohkl::Experiment* expt = gSession->currentProject()->experiment();
     auto data = expt->getDataMap()->at(_detector_widget->dataCombo()->currentText().toStdString());
 
-    if (!data) return;
+    if (!data)
+        return;
 
     gsl_histogram* histo = nullptr;
 
@@ -672,11 +672,11 @@ void SubframeExperiment::plotIntensities()
     int xmax = _maxX->value();
     int ymax = _maxY->value();
 
-    if (!_xZoom->isChecked()){
+    if (!_xZoom->isChecked()) {
         xmin = -1;
         xmax = -1;
     }
-    if (!_yZoom->isChecked()){
+    if (!_yZoom->isChecked()) {
         ymin = -1;
         ymax = -1;
     }
@@ -744,7 +744,8 @@ void SubframeExperiment::toggleUnsafeWidgets()
 
     bool hasProject = gSession->hasProject();
 
-    if (!hasProject) return;
+    if (!hasProject)
+        return;
     bool hasData = gSession->currentProject()->hasDataSet();
 
     _calc_intensity->setEnabled(hasData);
@@ -909,56 +910,56 @@ void SubframeExperiment::changeCrosshair()
 
 void SubframeExperiment::toggleCursorMode()
 {
-    switch(_left_widget->currentIndex()) {
-    case 0: {
-        if (_set_initial_ki->isChecked()) {
-            _detector_widget->enableCursorMode(false);
-            _lineplot_box->setChecked(false);
-            _mask_box->setChecked(false);
-            _detector_widget->scene()->changeInteractionMode(7);
-        } else {
-            _detector_widget->enableCursorMode(true);
-            _detector_widget->scene()->changeInteractionMode(0);
+    switch (_left_widget->currentIndex()) {
+        case 0: {
+            if (_set_initial_ki->isChecked()) {
+                _detector_widget->enableCursorMode(false);
+                _lineplot_box->setChecked(false);
+                _mask_box->setChecked(false);
+                _detector_widget->scene()->changeInteractionMode(7);
+            } else {
+                _detector_widget->enableCursorMode(true);
+                _detector_widget->scene()->changeInteractionMode(0);
+            }
+            break;
         }
-        break;
-    }
-    case 1: {
-        if (_lineplot_box->isChecked()) {
-            _detector_widget->enableCursorMode(false);
-            _set_initial_ki->setChecked(false);
-            _mask_box->setChecked(false);
-            setPlotMode();
-        } else {
-            _detector_widget->enableCursorMode(true);
-            _detector_widget->scene()->changeInteractionMode(0);
+        case 1: {
+            if (_lineplot_box->isChecked()) {
+                _detector_widget->enableCursorMode(false);
+                _set_initial_ki->setChecked(false);
+                _mask_box->setChecked(false);
+                setPlotMode();
+            } else {
+                _detector_widget->enableCursorMode(true);
+                _detector_widget->scene()->changeInteractionMode(0);
+            }
+            break;
         }
-        break;
-    }
-    case 2: {
-        if (_mask_box->isChecked()) {
-            // this is important
-            // ohkl should be either creating new masks or editing 
-            // existing ones, not both things at the same time
-            _mask_handler->setAllSelectionFlags(_data_combo->currentData(), false);
-            refreshMaskTable();
+        case 2: {
+            if (_mask_box->isChecked()) {
+                // this is important
+                // ohkl should be either creating new masks or editing
+                // existing ones, not both things at the same time
+                _mask_handler->setAllSelectionFlags(_data_combo->currentData(), false);
+                refreshMaskTable();
 
-            _detector_widget->enableCursorMode(false);
-            _set_initial_ki->setChecked(false);
-            _lineplot_box->setChecked(false);
-            setMaskMode();
-        } else {
-            _detector_widget->enableCursorMode(true);
-            _detector_widget->scene()->changeInteractionMode(0);
+                _detector_widget->enableCursorMode(false);
+                _set_initial_ki->setChecked(false);
+                _lineplot_box->setChecked(false);
+                setMaskMode();
+            } else {
+                _detector_widget->enableCursorMode(true);
+                _detector_widget->scene()->changeInteractionMode(0);
+            }
+            break;
         }
-        break;
-    }
-    default: _detector_widget->scene()->changeInteractionMode(0);
+        default: _detector_widget->scene()->changeInteractionMode(0);
     }
 }
 
 void SubframeExperiment::setPlotMode()
 {
-    switch(_lineplot_combo->currentIndex()) {
+    switch (_lineplot_combo->currentIndex()) {
         case 0: _detector_widget->scene()->changeInteractionMode(4); break;
         case 1: _detector_widget->scene()->changeInteractionMode(5); break;
         case 2: _detector_widget->scene()->changeInteractionMode(6); break;
@@ -1159,7 +1160,8 @@ void SubframeExperiment::refreshMaskTable()
         cbox->setStyleSheet("margin-left:20%; margin-right:20%;");
         cbox->setProperty("row", row);
 
-        cbox->setCheckState(_mask_handler->getSelectionFlag(data, row) ? Qt::Checked : Qt::Unchecked);
+        cbox->setCheckState(
+            _mask_handler->getSelectionFlag(data, row) ? Qt::Checked : Qt::Unchecked);
         _mask_table->setCellWidget(row++, col++, cbox);
         connect(cbox, &QCheckBox::stateChanged, this, &SubframeExperiment::onMaskSelected);
     }
@@ -1186,7 +1188,7 @@ void SubframeExperiment::onMaskSelected()
 {
     // this is important!
     // before we start selecting masks we need to stop
-    // creating more in first place or ohkl gets in a 
+    // creating more in first place or ohkl gets in a
     // confusing state
     _mask_box->setChecked(false);
     toggleCursorMode();
@@ -1203,16 +1205,13 @@ void SubframeExperiment::onMaskSelected()
 void SubframeExperiment::deleteSelectedMasks()
 {
     auto data = _detector_widget->currentData();
-    if (data == nullptr) return;
+    if (data == nullptr)
+        return;
     _mask_handler->check(data);
     auto nSelected = _mask_handler->getNSelectedMasks(data);
     auto nDeleted = _mask_handler->removeSelectedMasks(data);
     if (nSelected != nDeleted)
-        QMessageBox::warning(
-            this,
-            "Deleting selected masks",
-            "not all masks were delted"
-        );
+        QMessageBox::warning(this, "Deleting selected masks", "not all masks were delted");
 
     refreshMaskTable();
     _detector_widget->scene()->loadMasksFromData();
@@ -1222,7 +1221,8 @@ void SubframeExperiment::deleteSelectedMasks()
 
 void SubframeExperiment::selectAllMasks()
 {
-    if (!_detector_widget->currentData()->hasMasks()) return;
+    if (!_detector_widget->currentData()->hasMasks())
+        return;
 
     auto data = _detector_widget->currentData();
     _mask_handler->check(data);

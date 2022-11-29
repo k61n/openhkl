@@ -46,7 +46,7 @@
 #include <fstream>
 #include <iomanip>
 
-#include "gui/dialogs/MtzExportDialog.h" 
+#include "gui/dialogs/MtzExportDialog.h"
 
 SubframeMergedPeaks::SubframeMergedPeaks()
 {
@@ -150,9 +150,9 @@ void SubframeMergedPeaks::setDShellUp()
     _shell_model = new QStandardItemModel(0, 13, this);
     _d_shell_view->setModel(_shell_model);
     _shell_model->setHorizontalHeaderLabels(
-        {"Max. d", "Min. d", "Num. peaks observed", "Num. merged peaks", "Redundancy",
-        "Rmeas", "Rmeas(est.)", "Rmerge/Rsym", "Rmerge(est.)", "Rpim",
-         "Rpim(est.)", "CChalf", "CC*", "Completeness"});
+        {"Max. d", "Min. d", "Num. peaks observed", "Num. merged peaks", "Redundancy", "Rmeas",
+         "Rmeas(est.)", "Rmerge/Rsym", "Rmerge(est.)", "Rpim", "Rpim(est.)", "CChalf", "CC*",
+         "Completeness"});
     shell_layout->addWidget(_d_shell_view);
     _d_shell_view->resizeColumnsToContents();
 
@@ -328,7 +328,7 @@ void SubframeMergedPeaks::setUnmergedUp()
 
     QHBoxLayout* unmerged_row = new QHBoxLayout;
     _unmerged_save_type = new QComboBox();
-    _unmerged_save_type->addItems({"ShelX", "FullProf", "Phenix","MTZ"});
+    _unmerged_save_type->addItems({"ShelX", "FullProf", "Phenix", "MTZ"});
     _save_unmerged = new QPushButton("Save unmerged");
 
     QLabel* label = new QLabel("Intensity scale factor");
@@ -678,14 +678,13 @@ void SubframeMergedPeaks::saveStatistics()
 
 void SubframeMergedPeaks::savePeaks(std::string format, bool merged)
 {
-    if (merged){
+    if (merged) {
         auto idx = _merged_save_type->findText(QString::fromStdString(format));
         if (idx == -1)
             throw std::runtime_error("SubframeMergedPeaks::savePeaks Unknown file format");
         _merged_save_type->setCurrentIndex(idx);
         saveMergedPeaks();
-    }
-    else {
+    } else {
         auto idx = _unmerged_save_type->findText(QString::fromStdString(format));
         if (idx == -1)
             throw std::runtime_error("SubframeMergedPeaks::savePeaks Unknown file format");
@@ -847,11 +846,10 @@ bool SubframeMergedPeaks::exportMtz(bool use_merged_data)
 {
     QSettings settings = gGui->qSettings();
     settings.beginGroup("RecentDirectories");
-    QString loadDirectory = settings.value("mtz", QDir::homePath()).toString() +
-    "/export.mtz";
+    QString loadDirectory = settings.value("mtz", QDir::homePath()).toString() + "/export.mtz";
 
     ohkl::MtzExportDialog export_dialog(use_merged_data);
-    if ( !export_dialog.exec() )
+    if (!export_dialog.exec())
         return false;
 
     // important note
@@ -865,26 +863,28 @@ bool SubframeMergedPeaks::exportMtz(bool use_merged_data)
      *      we should also maybe include a fully fledged export dialog for this feature
      *       currently it will work over the already implemented gui elements
      */
-    auto pc = gSession->currentProject()->experiment()->getPeakCollection(export_dialog.getPeakCollection());
+    auto pc = gSession->currentProject()->experiment()->getPeakCollection(
+        export_dialog.getPeakCollection());
 
-    if (pc->type() == ohkl::PeakCollectionType::FOUND){
+    if (pc->type() == ohkl::PeakCollectionType::FOUND) {
         QMessageBox::warning(
-            this,
-            "MTZ File Export",
-            "A PeakCollection of PeakCollectionTyp FOUND has been selected which cannot be exported to MTZ File.",
-            QMessageBox::Ok
-        );
+            this, "MTZ File Export",
+            "A PeakCollection of PeakCollectionTyp FOUND has been selected which cannot be "
+            "exported to MTZ File.",
+            QMessageBox::Ok);
         return false;
     }
 
-    std::string filename = QFileDialog::getSaveFileName(
-            this, "Export Experiment as MTZ file", loadDirectory, "CCP4 MTZ (*.mtz)").toStdString();
+    std::string filename =
+        QFileDialog::getSaveFileName(
+            this, "Export Experiment as MTZ file", loadDirectory, "CCP4 MTZ (*.mtz)")
+            .toStdString();
 
     auto expt = gSession->currentProject()->experiment();
 
-    if (!expt->exportMtz(filename, export_dialog.getDataset(), export_dialog.getPeakCollection(),
-                            export_dialog.useMergedData(), export_dialog.getComment(),
-                            _merged_data, cell)){
+    if (!expt->exportMtz(
+            filename, export_dialog.getDataset(), export_dialog.getPeakCollection(),
+            export_dialog.useMergedData(), export_dialog.getComment(), _merged_data, cell)) {
         QMessageBox::critical(this, "Error", "Could not export experiment");
         return false;
     }

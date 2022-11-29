@@ -26,10 +26,7 @@ const std::map<ConvolutionKernelType, std::string> Convolver::kernelTypes{
     {ConvolutionKernelType::Constant, "constant"},
     {ConvolutionKernelType::Delta, "delta"}};
 
-Convolver::Convolver()
-    : _parameters()
-{
-}
+Convolver::Convolver() : _parameters() { }
 
 Convolver::Convolver(const parameters_map& parameters)
 {

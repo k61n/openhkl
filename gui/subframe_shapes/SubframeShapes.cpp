@@ -125,11 +125,11 @@ void SubframeShapes::setInputUp()
     _peak_end = f.addDoubleSpinBox(
         "Peak end", "(" + QString(QChar(0x03C3)) + ") - scaling factor for peak region");
     _bkg_begin = f.addDoubleSpinBox(
-        "Background begin", "(" + QString(QChar(0x03C3)) +
-        ") - scaling factor for lower limit of background region");
+        "Background begin",
+        "(" + QString(QChar(0x03C3)) + ") - scaling factor for lower limit of background region");
     _bkg_end = f.addDoubleSpinBox(
-        "Background end", "(" + QString(QChar(0x03C3)) +
-        ") - scaling factor for upper limit of background region");
+        "Background end",
+        "(" + QString(QChar(0x03C3)) + ") - scaling factor for upper limit of background region");
 
     _build_collection = f.addButton(
         "Build shape model",
@@ -180,8 +180,8 @@ void SubframeShapes::setComputeShapesUp()
 
     _min_neighbours =
         f.addSpinBox("Minimum neighbours", "Fewest possible neighbours to compute a mean profile");
-    _pixel_radius = f.addDoubleSpinBox(
-        "Search radius (pixels)", "(pixels) - radius for neighbour search");
+    _pixel_radius =
+        f.addDoubleSpinBox("Search radius (pixels)", "(pixels) - radius for neighbour search");
     _frame_radius = f.addDoubleSpinBox(
         "Search radius (images)", "(detector images) - angular \"radius\"\" for neighbour search");
     _interpolation_combo =

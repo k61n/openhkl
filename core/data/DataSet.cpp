@@ -64,7 +64,8 @@ DataSet::DataSet(const std::string& dataset_name, Diffractometer* diffractometer
 
 void DataSet::setReader(const DataFormat dataformat, const std::string& filename)
 {
-    ohklLog(Level::Debug, "Initializing a DataReader for the format ", static_cast<int>(dataformat));
+    ohklLog(
+        Level::Debug, "Initializing a DataReader for the format ", static_cast<int>(dataformat));
 
     switch (dataformat) {
         case DataFormat::OHKL: _reader.reset(new HDF5DataReader(filename)); break;
@@ -224,13 +225,15 @@ void DataSet::removeMask(IMask* mask)
 
 bool DataSet::removeMaskByIndex(std::vector<size_t> idx)
 {
-    if (_masks.size() == 0) return false;
-    if (idx.size() == 0) return false;
+    if (_masks.size() == 0)
+        return false;
+    if (idx.size() == 0)
+        return false;
     std::vector<IMask*> masks_to_delete;
     for (auto e : idx)
         masks_to_delete.emplace_back(_masks.at(e));
 
-    for (auto e : masks_to_delete)// now delete
+    for (auto e : masks_to_delete) // now delete
         removeMask(e);
 
     return true;
@@ -288,8 +291,7 @@ Eigen::MatrixXd DataSet::transformedFrame(std::size_t idx) const
     return new_frame;
 }
 
-Eigen::MatrixXd DataSet::gradientFrame(
-    std::size_t idx, GradientKernel kernel, bool realspace) const
+Eigen::MatrixXd DataSet::gradientFrame(std::size_t idx, GradientKernel kernel, bool realspace) const
 {
     ohklLog(Level::Debug, "Computing gradient of frame ", idx);
     ImageGradient grad(transformedFrame(idx), realspace);
@@ -420,7 +422,8 @@ void DataSet::getIntensityHistogram(std::size_t nbins)
 
 void DataSet::clearHistograms()
 {
-    if (_total_histogram != nullptr) gsl_histogram_free(_total_histogram);
+    if (_total_histogram != nullptr)
+        gsl_histogram_free(_total_histogram);
     for (auto* hist : _histograms)
         gsl_histogram_free(hist);
 

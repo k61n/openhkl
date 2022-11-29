@@ -75,7 +75,8 @@ void ExperimentImporter::setFilePath(const std::string path, Experiment* const e
         ohklLog(Level::Info, path, " generated using version ", version, " commit hash ", hash);
 
         ohklLog(
-            ohkl::Level::Info, "Finished importing info for Experiment '" + experiment->name() + "'",
+            ohkl::Level::Info,
+            "Finished importing info for Experiment '" + experiment->name() + "'",
             " with diffractometer '" + experiment->getDiffractometer()->name() + "'",
             " from path '" + path + "'");
 
@@ -476,10 +477,12 @@ void ExperimentImporter::loadInstrumentStates(Experiment* experiment)
             const std::string data_name = instrument_grp.getObjnameByIdx(i);
             std::string states_key = ohkl::gr_Instrument + "/" + data_name;
             H5::Group states_grp{file.openGroup(states_key)};
-            H5::DataSet detectorOrientation_ds{states_grp.openDataSet(ohkl::ds_detectorOrientation)},
+            H5::DataSet detectorOrientation_ds{
+                states_grp.openDataSet(ohkl::ds_detectorOrientation)},
                 detectorPositionOffset_ds{states_grp.openDataSet(ohkl::ds_detectorPositionOffset)},
                 sampleOrientation_ds{states_grp.openDataSet(ohkl::ds_sampleOrientation)},
-                sampleOrientationOffset_ds{states_grp.openDataSet(ohkl::ds_sampleOrientationOffset)},
+                sampleOrientationOffset_ds{
+                    states_grp.openDataSet(ohkl::ds_sampleOrientationOffset)},
                 samplePosition_ds{states_grp.openDataSet(ohkl::ds_samplePosition)},
                 ni_ds{states_grp.openDataSet(ohkl::ds_beamDirection)},
                 wavelength_ds{states_grp.openDataSet(ohkl::ds_beamWavelength)},

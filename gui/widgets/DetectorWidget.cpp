@@ -40,8 +40,7 @@
 
 QList<DetectorWidget*> DetectorWidget::_detector_widgets = QList<DetectorWidget*>();
 
-DetectorWidget::DetectorWidget(bool cursor, bool slider, QWidget* parent)
-    : QGridLayout(parent)
+DetectorWidget::DetectorWidget(bool cursor, bool slider, QWidget* parent) : QGridLayout(parent)
 {
     QGridLayout* top_grid = new QGridLayout();
     QHBoxLayout* bottom_layout = new QHBoxLayout();
@@ -310,7 +309,8 @@ void DetectorWidget::setToolbarUp()
 
     connect(_gradient, &QPushButton::clicked, this, &DetectorWidget::toggleGradient);
     connect(
-        _hide_masks, &QPushButton::clicked, _detector_view->getScene(), &DetectorScene::toggleMasks);
+        _hide_masks, &QPushButton::clicked, _detector_view->getScene(),
+        &DetectorScene::toggleMasks);
     connect(_reset, &QPushButton::clicked, _detector_view->getScene(), [=]() {
         _detector_view->getScene()->resetElements();
         _detector_view->getScene()->loadCurrentImage();
@@ -335,13 +335,11 @@ void DetectorWidget::saveScreenshot()
     settings.beginGroup("RecentDirectories");
     QString loadDirectory = settings.value("experiment", QDir::homePath()).toString();
 
-    QString default_name =
-        loadDirectory + "/" + QString::fromStdString(_data_combo->currentData()->name()) +
-        "-" + fmt_date + ".png";
+    QString default_name = loadDirectory + "/"
+        + QString::fromStdString(_data_combo->currentData()->name()) + "-" + fmt_date + ".png";
 
-    QString file_path =
-        QFileDialog::getSaveFileName(
-            _detector_view, "Save image as", default_name, "Images (*.png *.jpg)");
+    QString file_path = QFileDialog::getSaveFileName(
+        _detector_view, "Save image as", default_name, "Images (*.png *.jpg)");
 
     QFileInfo file_info(file_path);
     if (!file_info.absoluteFilePath().isNull()) {

@@ -107,8 +107,8 @@ void IIntegrator::integrate(
         auto lo = bb.lower();
         auto hi = bb.upper();
 
-        if (lo[0] < 0 || lo[1] < 0 || lo[2] < 0
-            || hi[0] >= data->nCols() || hi[1] >= data->nRows() || hi[2] >= data->nFrames()) {
+        if (lo[0] < 0 || lo[1] < 0 || lo[2] < 0 || hi[0] >= data->nCols() || hi[1] >= data->nRows()
+            || hi[2] >= data->nFrames()) {
             peak->setSelected(false);
             peak->setRejectionFlag(RejectionFlag::InvalidRegion);
         }
@@ -163,8 +163,8 @@ void IIntegrator::integrate(
                 current_peak->peakData().standardizeCoords();
                 if (compute(peak, shape_model, *current_peak)) {
                     peak->updateIntegration(
-                        rockingCurve(), meanBackground(), meanBkgGradient(),
-                        integratedIntensity(), _params.peak_end, _params.bkg_begin, _params.bkg_end);
+                        rockingCurve(), meanBackground(), meanBkgGradient(), integratedIntensity(),
+                        _params.peak_end, _params.bkg_begin, _params.bkg_end);
                     if (saturated) {
                         peak->setSelected(false);
                         peak->setRejectionFlag(RejectionFlag::SaturatedPixel);

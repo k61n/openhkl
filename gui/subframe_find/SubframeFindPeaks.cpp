@@ -19,8 +19,8 @@
 #include "core/data/ImageGradient.h"
 #include "core/experiment/Experiment.h"
 #include "core/experiment/PeakFinder.h"
-#include "core/peak/Peak3D.h"
 #include "core/integration/IIntegrator.h"
+#include "core/peak/Peak3D.h"
 #include "gui/MainWin.h" // gGui
 #include "gui/connect/Sentinel.h"
 #include "gui/dialogs/ListNameDialog.h"
@@ -95,8 +95,7 @@ SubframeFindPeaks::SubframeFindPeaks()
         _fft_gradient_check, &QCheckBox::stateChanged, this,
         &SubframeFindPeaks::onGradientSettingsChanged);
     connect(
-        _gradient_check, &QCheckBox::clicked, this,
-        &SubframeFindPeaks::onGradientSettingsChanged);
+        _gradient_check, &QCheckBox::clicked, this, &SubframeFindPeaks::onGradientSettingsChanged);
     connect(
         this, &SubframeFindPeaks::signalGradient, _detector_widget->scene(),
         &DetectorScene::onGradientSetting);
@@ -128,7 +127,8 @@ void SubframeFindPeaks::setBlobUp()
         "Threshold", "(counts) - pixels with fewer counts than the threshold are discarded");
 
     _scale_spin = f.addDoubleSpinBox(
-        "Merging scale", "(" + QString(QChar(0x03C3)) + ") - blob scaling factor to detect collisions");
+        "Merging scale",
+        "(" + QString(QChar(0x03C3)) + ") - blob scaling factor to detect collisions");
 
     _min_size_spin = f.addSpinBox(
         "Minimum size", "(integer) - blobs containing fewer points than this count are discarded");
@@ -156,8 +156,8 @@ void SubframeFindPeaks::setBlobUp()
     _start_frame_spin = f.addSpinBox(
         "First detector image", "(detector image number) - starting image for peak finding");
 
-    _end_frame_spin = f.addSpinBox(
-        "Last detector image", "(detector image number) - end image for peak finding");
+    _end_frame_spin =
+        f.addSpinBox("Last detector image", "(detector image number) - end image for peak finding");
 
     _live_check = f.addCheckBox("Apply threshold to preview", "Only show pixels above threshold");
 
@@ -199,8 +199,7 @@ void SubframeFindPeaks::setIntegrateUp()
 
     _fft_gradient_check = f.addCheckBox("FFT gradient", "Use FFT to compute gradient", 1);
 
-    _gradient_kernel = f.addCombo(
-        "Gradient kernel", "Convolution kernel used to compute gradient");
+    _gradient_kernel = f.addCombo("Gradient kernel", "Convolution kernel used to compute gradient");
 
     _integrate_button = f.addButton("Integrate");
 
@@ -383,7 +382,7 @@ void SubframeFindPeaks::setFinderParameters()
     params->maximum_size = _max_size_spin->value();
     params->peak_end = _scale_spin->value();
     params->maximum_frames = _max_width_spin->value();
-    params->frames_begin = _start_frame_spin->value() -1;
+    params->frames_begin = _start_frame_spin->value() - 1;
     params->frames_end = _end_frame_spin->value() - 1;
     params->threshold = _threshold_spin->value();
 

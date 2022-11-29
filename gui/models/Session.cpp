@@ -73,9 +73,8 @@ std::vector<std::string> askRawFileNames()
     qset.beginGroup("RecentDirectories");
     QString loadDirectory = qset.value("data_raw", QDir::homePath()).toString();
 
-    QStringList qfilenames =
-        QFileDialog::getOpenFileNames(gGui, "import raw data", loadDirectory,
-                                      "Image files (*.raw *.tiff);; All files (*.* *)");
+    QStringList qfilenames = QFileDialog::getOpenFileNames(
+        gGui, "import raw data", loadDirectory, "Image files (*.raw *.tiff);; All files (*.* *)");
     if (qfilenames.empty())
         return {};
 
@@ -340,8 +339,7 @@ bool Session::loadRawData()
         exp->addData(dataset);
 
         onDataChanged();
-        gGui->sentinel->setLinkedComboList(ComboType::DataSet,
-                                           currentProject()->getDataNames());
+        gGui->sentinel->setLinkedComboList(ComboType::DataSet, currentProject()->getDataNames());
 
     } catch (std::exception& e) {
         QMessageBox::critical(nullptr, "Error", QString(e.what()));

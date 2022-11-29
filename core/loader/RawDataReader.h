@@ -15,10 +15,10 @@
 #ifndef OHKL_CORE_LOADER_RAWDATAREADER_H
 #define OHKL_CORE_LOADER_RAWDATAREADER_H
 
+#include "base/utils/Path.h" // fileBasename
 #include "core/data/DataSet.h"
 #include "core/loader/IDataReader.h" // inherits from
 #include "core/raw/DataKeys.h"
-#include "base/utils/Path.h" // fileBasename
 #include <fstream>
 #include <stdexcept>
 

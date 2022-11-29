@@ -35,7 +35,7 @@ IMask* EllipseMask::clone() const
     return new EllipseMask(*this);
 }
 
-void EllipseMask::setAABB(const AABB &aabb)
+void EllipseMask::setAABB(const AABB& aabb)
 {
     auto center = aabb.center();
     auto radii = 0.5 * (aabb.upper() - aabb.lower());

@@ -15,13 +15,13 @@
 #include "MaskExporter.h"
 #include <fstream>
 
-namespace ohkl{
+namespace ohkl {
 MaskExporter::MaskExporter(std::vector<ohkl::IMask*> masks)
 {
     int idx = 0;
     _node["size"] = idx;
 
-    for (auto & e : masks){
+    for (auto& e : masks) {
         YAML::Node mask;
         std::string name = generateName(idx);
 
@@ -32,13 +32,13 @@ MaskExporter::MaskExporter(std::vector<ohkl::IMask*> masks)
         } else
             throw std::runtime_error("E MaskExporter::addMasks Invalid mask type found! ");
 
-        mask["LowerX"] = std::round(e->aabb().lower()[0] * 100)/100;
-        mask["LowerY"] = std::round(e->aabb().lower()[1] * 100)/100;
-        mask["UpperX"] = std::round(e->aabb().upper()[0] * 100)/100;
-        mask["UpperY"] = std::round(e->aabb().upper()[1] * 100)/100;
+        mask["LowerX"] = std::round(e->aabb().lower()[0] * 100) / 100;
+        mask["LowerY"] = std::round(e->aabb().lower()[1] * 100) / 100;
+        mask["UpperX"] = std::round(e->aabb().upper()[0] * 100) / 100;
+        mask["UpperY"] = std::round(e->aabb().upper()[1] * 100) / 100;
 
         _node[name] = mask;
-        ++idx; 
+        ++idx;
     }
     _node["size"] = idx;
 }
@@ -50,10 +50,10 @@ std::string MaskExporter::generateName(int number)
     return std::string("Mask") + std::string(nDigits - str.size(), '0').append(str);
 }
 
-void MaskExporter::exportToFile(std::string filename) 
+void MaskExporter::exportToFile(std::string filename)
 {
     std::fstream fout(filename.c_str(), std::ios::out);
-    fout << _node; 
+    fout << _node;
     fout.close();
 }
-}//ohkl
+} // ohkl

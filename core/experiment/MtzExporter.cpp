@@ -14,16 +14,16 @@
 
 #include "MtzExporter.h"
 
+#include "core/data/DataTypes.h"
 #include "core/experiment/Experiment.h"
-#include "core/data/DataTypes.h" 
 //#include "3rdparty/ccp4/ccp4_array.h"
 
+#include <functional>
+#include <iostream>
+#include <regex>
 #include <string.h>
 #include <string>
-#include <regex>
 #include <vector>
-#include <functional> 
-#include <iostream> 
 
 namespace ohkl {
 MtzExporter::MtzExporter(
@@ -55,16 +55,17 @@ MtzExporter::MtzExporter(
 
 MtzExporter::~MtzExporter()
 {
-    if (_mtz_data != nullptr) delete _mtz_data;
-    for (auto & e : _mtz_cols ){
-        if (e != nullptr){
-            delete [] e->ref; // cleans up ref array in each col
+    if (_mtz_data != nullptr)
+        delete _mtz_data;
+    for (auto& e : _mtz_cols) {
+        if (e != nullptr) {
+            delete[] e->ref; // cleans up ref array in each col
             delete e;
         }
     }
     _mtz_cols.clear();
 
-    //CMtz::MtzFreeBatch(_mtz_batch);
+    // CMtz::MtzFreeBatch(_mtz_batch);
 }
 
 void MtzExporter::buildMtz()
@@ -76,23 +77,24 @@ void MtzExporter::buildMtz()
 
     /* xtal ptr needs to be prepaired before calling lib method */
     //_mtz_data->nxtal = 1; // the system will keep this updated automatically
-    _mtz_data->xtal = new CMtz::MTZXTAL* [1]; // but we need to crate this structure or we will encouter crashes along the waz
+    _mtz_data->xtal = new CMtz::MTZXTAL*[1]; // but we need to crate this structure or we will
+                                             // encouter crashes along the waz
     _mtz_data->xtal[0] = new CMtz::MTZXTAL();
 
     // Keep reflections in memory
     _mtz_data->refs_in_memory = 1;
     _mtz_data->nref_filein = 1;
 
-    /* 
-        This is an additional place to store any kind of information 
+    /*
+        This is an additional place to store any kind of information
         There are no rules to this at all
         At first we keep ignoring it. maybe later some ohkl information ?
     */
-   _mtz_data->xml = nullptr;
+    _mtz_data->xml = nullptr;
 }
 
 void MtzExporter::buildMNF()
-{ 
+{
     // we don't use this right now
     strncpy(_mtz_data->mnf.amnf, "", 0);
     _mtz_data->mnf.fmnf = 0;
@@ -111,7 +113,7 @@ void MtzExporter::buildBatch()
     auto gonio = _expt->getDiffractometer()->sample().gonio(); // three axis
 
     // Detector gonio
-    //auto gonio = _ohkl_data->diffractometer()->detector()->gonio(); // two axis
+    // auto gonio = _ohkl_data->diffractometer()->detector()->gonio(); // two axis
 
     auto omatrix = _ohkl_uc->orientation();
 
@@ -126,20 +128,20 @@ void MtzExporter::buildBatch()
 
     /* Getting axes Information */
     _mtz_data->batch->ngonax = gonio.nAxes();
-    for (int i=0; i<gonio.nAxes(); i++)
+    for (int i = 0; i < gonio.nAxes(); i++)
         strncpy(_mtz_data->batch->gonlab[i], gonio.axis(i).name().c_str(), 9);
 
     // this values needs to be 0 according to documentation of mtz file format
     _mtz_data->batch->iortyp = 0;
 
     // refinement flags .. needs documentation
-    for(int i=0; i < 6;i++)
+    for (int i = 0; i < 6; i++)
         _mtz_data->batch->lbcell[i] = 0;
 
-    //phixyz 0,1,2
+    // phixyz 0,1,2
     _mtz_data->batch->misflg = 0;
 
-    //reciprocal axis closes to rotation
+    // reciprocal axis closes to rotation
     _mtz_data->batch->jumpax = 0;
 
     // crystal number
@@ -158,7 +160,7 @@ void MtzExporter::buildBatch()
 
     /**< number of batch scales & Bfactors 0 if unset) */
     _mtz_data->batch->nbscal = 0;
- 
+
     // flag for beam info
     // alambd(0), delcor, divhd, divvd(1)
     _mtz_data->batch->lbmflg = 0;
@@ -169,41 +171,41 @@ void MtzExporter::buildBatch()
     /* id of this dataset */
     _mtz_data->batch->nbsetid = 1;
 
-    // cell dimensions 
+    // cell dimensions
     // this information has been written twice to the file then
     // in older mtz file version there was a third instance of cell information
     // but this seemed to have been removed
     _mtz_data->batch->cell[0] = _ohkl_uc->character().a;
     _mtz_data->batch->cell[1] = _ohkl_uc->character().b;
     _mtz_data->batch->cell[2] = _ohkl_uc->character().c;
-    _mtz_data->batch->cell[3] = 180.0/M_PI * _ohkl_uc->character().alpha;
-    _mtz_data->batch->cell[4] = 180.0/M_PI * _ohkl_uc->character().beta;
-    _mtz_data->batch->cell[5] = 180.0/M_PI * _ohkl_uc->character().gamma;
+    _mtz_data->batch->cell[3] = 180.0 / M_PI * _ohkl_uc->character().alpha;
+    _mtz_data->batch->cell[4] = 180.0 / M_PI * _ohkl_uc->character().beta;
+    _mtz_data->batch->cell[5] = 180.0 / M_PI * _ohkl_uc->character().gamma;
 
     /* Writing Orientaion Matrix */
-    for (int i = 0; i < 9; ++i )
-        _mtz_data->batch->umat[i] = omatrix(i%3,i/3); // om(x,y) or om(y,x) ?????
+    for (int i = 0; i < 9; ++i)
+        _mtz_data->batch->umat[i] = omatrix(i % 3, i / 3); // om(x,y) or om(y,x) ?????
 
     /* Misseeting angles */
-    // we keep this at zero for the beginning 
-    for (int i=0;i<2;i++)
-        for (int j=0; j<3; j++)
+    // we keep this at zero for the beginning
+    for (int i = 0; i < 2; i++)
+        for (int j = 0; j < 3; j++)
             _mtz_data->batch->phixyz[i][j] = 0;
 
     /* Mosacity */
     // keeps this at zero for now
-    for (int i=0;i<12;i++)
+    for (int i = 0; i < 12; i++)
         _mtz_data->batch->crydat[i] = 0;
 
     /* datum values of goniostat axes */
-    for (int i=0;i<3;i++)
+    for (int i = 0; i < 3; i++)
         _mtz_data->batch->datum[i] = 0;
 
     _mtz_data->batch->phistt = 0; // relative to datum
     _mtz_data->batch->phiend = 0; // rel;ative to datum
 
     /* Rotation axis in lab frame */
-    for (int i=0;i<3;i++)
+    for (int i = 0; i < 3; i++)
         _mtz_data->batch->scanax[i] = 0;
 
     /* start and stop time */
@@ -220,7 +222,7 @@ void MtzExporter::buildBatch()
 
     /* vector 1,2,3, source and idealied source vector */
     // keep this at zero
-    for (int i=0;i<3;i++){
+    for (int i = 0; i < 3; i++) {
         _mtz_data->batch->e1[i] = 0;
         _mtz_data->batch->e2[i] = 0;
         _mtz_data->batch->e3[i] = 0;
@@ -228,15 +230,15 @@ void MtzExporter::buildBatch()
         _mtz_data->batch->so[i] = 0;
     }
 
-   /* Setting wavelength */ 
+    /* Setting wavelength */
     _mtz_data->batch->alambd = _ohkl_data->wavelength();
 
-   /* Dispersion */
+    /* Dispersion */
     _mtz_data->batch->delamb = 0;
     _mtz_data->batch->delcor = 0;
 
     /* Beam divergence */
-    _mtz_data->batch->divhd = 0.0 ; //FWHM
+    _mtz_data->batch->divhd = 0.0; // FWHM
     _mtz_data->batch->divvd = 0.0; // FWHM
 
     /* xtal to detector distance */
@@ -250,7 +252,7 @@ void MtzExporter::buildBatch()
     // set next batch ptr to nullptr
     // last node needs as always be set to nullptr
     _mtz_data->batch->next = NULL;
-    
+
     // only for one batch for now
     _mtz_data->n_orig_bat = 1;
 }
@@ -277,61 +279,63 @@ void MtzExporter::buildSyminfo()
         Phenix uses this to figure out the spacegrp ?
     */
     int n = 0;
-    for (auto & e : symops){
+    for (auto& e : symops) {
         auto m = e.getMatrix();
-        for (int i=0; i<4; i++){
-            for (int j=0; j<4; j++)
-                _mtz_data->mtzsymm.sym[n][i][j] =  m(i,j);
+        for (int i = 0; i < 4; i++) {
+            for (int j = 0; j < 4; j++)
+                _mtz_data->mtzsymm.sym[n][i][j] = m(i, j);
         }
         ++n;
     }
 
-    _mtz_data->mtzsymm.nsymp = symops.size();;
+    _mtz_data->mtzsymm.nsymp = symops.size();
+    ;
     _mtz_data->mtzsymm.symtyp = symbol.c_str()[0];
-    strncpy(_mtz_data->mtzsymm.pgname,"PntGrName\0", 10);
+    strncpy(_mtz_data->mtzsymm.pgname, "PntGrName\0", 10);
     _mtz_data->mtzsymm.spg_confidence = _ohkl_uc->spaceGroup().bravaisType();
 }
 
 void MtzExporter::buildXTAL()
-{ 
+{
     /* getting cell information */
     float cell[6];
     cell[0] = _ohkl_uc->character().a;
     cell[1] = _ohkl_uc->character().b;
     cell[2] = _ohkl_uc->character().c;
-    cell[3] = 180.0/M_PI * _ohkl_uc->character().alpha;
-    cell[4] = 180.0/M_PI * _ohkl_uc->character().beta;
-    cell[5] = 180.0/M_PI * _ohkl_uc->character().gamma;
+    cell[3] = 180.0 / M_PI * _ohkl_uc->character().alpha;
+    cell[4] = 180.0 / M_PI * _ohkl_uc->character().beta;
+    cell[5] = 180.0 / M_PI * _ohkl_uc->character().gamma;
 
     /* GENERATE XTAL STRUCTURE */
     _mtz_xtal = MtzAddXtal(_mtz_data, _ohkl_data->name().c_str(), _expt->name().c_str(), cell);
 }
 
 void MtzExporter::buildMtzSet()
-{ 
-    if (!_mtz_data) 
+{
+    if (!_mtz_data)
         throw std::runtime_error("MtzExporter::buildMtzSet invalid _mtz structure");
 
-    if (!_mtz_xtal) 
+    if (!_mtz_xtal)
         throw std::runtime_error("MtzExporter::buildMtzSet invalid _mtz xtal");
 
-    if (!_ohkl_data) 
+    if (!_ohkl_data)
         throw std::runtime_error("MtzExporter::buildMtzSet invalid ohkl data");
 
     /* GENERATE MTZ SETS */
     std::string name = "DATASET01";
-    auto ptr = MtzAddDataset(_mtz_data,_mtz_xtal, name.c_str(), _ohkl_data->wavelength());
-    if (!ptr) 
+    auto ptr = MtzAddDataset(_mtz_data, _mtz_xtal, name.c_str(), _ohkl_data->wavelength());
+    if (!ptr)
         throw std::runtime_error("MtzExporter::buildMtzSet unable to create dataset in mtz export");
 }
 
-CMtz::MTZCOL* MtzExporter::CreateMtzCol(std::string name, std::string label, int grp, int set_id, int active, int src)
+CMtz::MTZCOL* MtzExporter::CreateMtzCol(
+    std::string name, std::string label, int grp, int set_id, int active, int src)
 {
     std::string grpname = _use_merged_data ? "MergedPeakData" : "UnmergedPeakData";
 
     CMtz::MTZCOL* ptr = nullptr;
     ptr = MtzAddColumn(_mtz_data, _mtz_xtal->set[set_id], name.c_str(), label.c_str());
-    if (ptr != nullptr){
+    if (ptr != nullptr) {
         auto nPeaks = _ohkl_merged_data->totalSize();
         strncpy(ptr->grpname, grpname.c_str(), grpname.size());
         ptr->active = active;
@@ -339,7 +343,7 @@ CMtz::MTZCOL* MtzExporter::CreateMtzCol(std::string name, std::string label, int
         ptr->min = nPeaks;
         ptr->max = nPeaks;
         ptr->grpposn = grp;
-        ptr->ref = new float [nPeaks];
+        ptr->ref = new float[nPeaks];
         _mtz_cols.emplace_back(ptr);
     }
     return ptr;
@@ -374,20 +378,20 @@ void MtzExporter::buildMtzCols()
             ACTIVE
             SRC
     */
-    CreateMtzCol("H","H", grp++, 0, 1, 0);
-    CreateMtzCol("K","H", grp++, 0, 1, 0);
-    CreateMtzCol("L","H", grp++, 0, 1, 0);
-    CreateMtzCol("IMean","J", grp++, 0, 1, 0);
-    CreateMtzCol("SIGI","Q", grp++, 0, 1, 0);
-    
+    CreateMtzCol("H", "H", grp++, 0, 1, 0);
+    CreateMtzCol("K", "H", grp++, 0, 1, 0);
+    CreateMtzCol("L", "H", grp++, 0, 1, 0);
+    CreateMtzCol("IMean", "J", grp++, 0, 1, 0);
+    CreateMtzCol("SIGI", "Q", grp++, 0, 1, 0);
+
     if (!_use_merged_data) // only if we are processing unmerged data
-        CreateMtzCol("Frame","R", grp++, 0, 1, 0);
+        CreateMtzCol("Frame", "R", grp++, 0, 1, 0);
 
     /*
      *   Filling MtzCols with data
      */
     int idx = 0;
-    if (_use_merged_data){ /* MERGED DATA */
+    if (_use_merged_data) { /* MERGED DATA */
         for (const ohkl::MergedPeak& peak : peaks) {
             const auto hkl = peak.index();
             ohkl::Intensity I = peak.intensity();
@@ -400,22 +404,22 @@ void MtzExporter::buildMtzCols()
             idx++;
         }
     } else { /* UNMERGED DATA */
-        for (auto & peak : peaks){
-            for (auto unmerged_peak : peak.peaks()){
-               const ohkl::UnitCell& cell = *(unmerged_peak->unitCell());
-               const ohkl::ReciprocalVector& q = unmerged_peak->q();
-               const ohkl::MillerIndex hkl(q, cell);
-               ohkl::Intensity I = unmerged_peak->correctedIntensity();
+        for (auto& peak : peaks) {
+            for (auto unmerged_peak : peak.peaks()) {
+                const ohkl::UnitCell& cell = *(unmerged_peak->unitCell());
+                const ohkl::ReciprocalVector& q = unmerged_peak->q();
+                const ohkl::MillerIndex hkl(q, cell);
+                ohkl::Intensity I = unmerged_peak->correctedIntensity();
 
-               _mtz_cols[0]->ref[idx] = hkl.h();
-               _mtz_cols[1]->ref[idx] = hkl.k();
-               _mtz_cols[2]->ref[idx] = hkl.l();
-               _mtz_cols[3]->ref[idx] = I.value();
-               _mtz_cols[4]->ref[idx] = I.sigma();
-               _mtz_cols[5]->ref[idx] = unmerged_peak->shape().center()[2];
-               idx++;
+                _mtz_cols[0]->ref[idx] = hkl.h();
+                _mtz_cols[1]->ref[idx] = hkl.k();
+                _mtz_cols[2]->ref[idx] = hkl.l();
+                _mtz_cols[3]->ref[idx] = I.value();
+                _mtz_cols[4]->ref[idx] = I.sigma();
+                _mtz_cols[5]->ref[idx] = unmerged_peak->shape().center()[2];
+                idx++;
             }
-        } 
+        }
     }
 
     // unsure about this .. better would be more one value in each col
@@ -433,10 +437,10 @@ void MtzExporter::buildMtzCols()
     _mtz_data->order[3] = _mtz_cols.at(3);
     _mtz_data->order[4] = _mtz_cols.at(4);*/
 }
- 
+
 void MtzExporter::buildMtzData()
 {
-     process();
+    process();
     ohklLog(ohkl::Level::Debug, "Building Mtz data structure'");
     buildMtz();
     buildSyminfo();
@@ -447,7 +451,7 @@ void MtzExporter::buildMtzData()
     buildBatch();
     buildHistory();
 
-    MtzAddHistory(_mtz_data, (const char (*)[80])_comment.c_str(), 1);
+    MtzAddHistory(_mtz_data, (const char(*)[80])_comment.c_str(), 1);
 }
 
 void MtzExporter::buildHistory()
@@ -455,26 +459,26 @@ void MtzExporter::buildHistory()
     /* File History */
     // Important for saving data processing steps of OHKL into other programs ?
     // maybe reverse order?
-    for (auto & e : _history)
-        MtzAddHistory(_mtz_data, (const char (*)[80])e.c_str(), 1);
+    for (auto& e : _history)
+        MtzAddHistory(_mtz_data, (const char(*)[80])e.c_str(), 1);
 }
 
 void MtzExporter::addHistory(std::string line)
 {
-  _history.push_back(line);
+    _history.push_back(line);
 }
 
 bool MtzExporter::exportToFile(std::string filename)
-{ 
+{
     ohklLog(ohkl::Level::Debug, "Export OpenHKL project to Mtz file ... '");
-    
+
     /* Check and build Mtz data structure if needed */
-    if (!_mtz_data) 
+    if (!_mtz_data)
         buildMtzData();
 
     /* Print out mtz data structure */
-    //ccp4_lhprt(_mtz_data, 4);
-    //ccp4_lhprt_adv(_mtz_data, 4);
+    // ccp4_lhprt(_mtz_data, 4);
+    // ccp4_lhprt_adv(_mtz_data, 4);
 
     /* saving mtz file */
     if (CMtz::MtzPut(_mtz_data, filename.c_str()) == 1)
@@ -487,7 +491,7 @@ bool MtzExporter::exportToFile(std::string filename)
     return true;
 }
 
-void  MtzExporter::process( )
+void MtzExporter::process()
 {
     auto* merger = _expt->peakMerger();
     merger->reset();

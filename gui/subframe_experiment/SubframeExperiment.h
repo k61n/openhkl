@@ -18,9 +18,9 @@
 #include "core/convolve/Convolver.h"
 #include "core/data/DataTypes.h"
 #include "core/detector/DetectorEvent.h"
+#include "gui/models/MaskHandler.h"
 #include "gui/utility/SafeSpinBox.h"
 #include "tables/crystal/UnitCell.h"
-#include "gui/models/MaskHandler.h"
 
 #include <QWidget>
 
@@ -70,7 +70,7 @@ class SubframeExperiment : public QWidget {
     void updateRanges();
     void showFilteredImage();
 
-    int getNumberDataPoints() {return _npoints_lineplot->value();};
+    int getNumberDataPoints() { return _npoints_lineplot->value(); };
     void calculateIntensities();
     void setLogarithmicScale();
 
@@ -102,11 +102,11 @@ class SubframeExperiment : public QWidget {
 
     void setPlotMode();
     void setMaskMode();
-   //! exports masks to yaml file
+    //! exports masks to yaml file
     void exportMasks();
-   //! imports maks from yaml file
+    //! imports maks from yaml file
     void importMasks();
-   //! deletes selected masks from dataset
+    //! deletes selected masks from dataset
     void deleteSelectedMasks();
     void selectAllMasks();
 
@@ -138,7 +138,7 @@ class SubframeExperiment : public QWidget {
     QCheckBox* _yLog;
     QCheckBox* _xZoom;
     QCheckBox* _yZoom;
-    QSpinBox*  _npoints_intensity;
+    QSpinBox* _npoints_intensity;
     QSpinBox* _npoints_lineplot;
     QSpinBox* _minX;
     QSpinBox* _maxX;

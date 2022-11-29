@@ -64,7 +64,8 @@ void RawDataReader::addFrame(const std::string& filename)
     _filenames.push_back(filename);
 
     // Update sources list
-    _dataset_out->metadata().add<std::string>(ohkl::at_datasetSources, ohkl::join(_filenames, ", "));
+    _dataset_out->metadata().add<std::string>(
+        ohkl::at_datasetSources, ohkl::join(_filenames, ", "));
 
     const std::size_t nframes = _filenames.size();
     _dataset_out->metadata().add<int>(ohkl::at_frameCount, nframes);
@@ -167,8 +168,7 @@ Eigen::MatrixXi RawDataReader::data(size_t frame)
     const size_t fsize = std::filesystem::file_size(filename);
     if (fsize != _length) {
         std::string err_msg = "data file " + filename + " is not of the expected size: "
-            + "expected " + std::to_string(_length) + " bytes but found "
-            + std::to_string(fsize);
+            + "expected " + std::to_string(_length) + " bytes but found " + std::to_string(fsize);
         throw std::runtime_error(err_msg);
     }
 
@@ -179,9 +179,8 @@ Eigen::MatrixXi RawDataReader::data(size_t frame)
 
     file.read(&_data[0], long(_length));
     if (size_t(file.gcount()) != _length) {
-        std::string err_msg = "cannot load file " + filename + ": "
-            + "expected " + std::to_string(_length) + " bytes but found "
-            + std::to_string(file.gcount());
+        std::string err_msg = "cannot load file " + filename + ": " + "expected "
+            + std::to_string(_length) + " bytes but found " + std::to_string(file.gcount());
         throw std::runtime_error(err_msg);
     }
 

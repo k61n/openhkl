@@ -59,7 +59,7 @@ class PeakFinder2D {
     sptrDataSet currentData() const { return _current_data; };
 
     //! Get the parameters
-   PeakFinder2DParameters* parameters() { return &_params; };
+    PeakFinder2DParameters* parameters() { return &_params; };
 
     //! Get the vector of vectors of keypoints
     std::vector<std::vector<cv::KeyPoint>>* keypoints() { return &_per_frame_spots; };

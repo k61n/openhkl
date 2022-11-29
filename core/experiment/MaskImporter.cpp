@@ -15,26 +15,26 @@
 #include "MaskImporter.h"
 #include <fstream>
 
-namespace ohkl{
+namespace ohkl {
 MaskImporter::MaskImporter(std::string filename)
 {
     _node = YAML::LoadFile(filename.c_str());
     int size = _node["size"].as<int>();
 
-    for (int i = 0; i < size; ++i){
+    for (int i = 0; i < size; ++i) {
         std::string name = generateName(i);
         std::string type = _node[name]["Type"].as<std::string>();
 
         IMask* mask;
         Eigen::Vector3d upper;
         Eigen::Vector3d lower;
- 
+
         upper[0] = _node[name]["UpperX"].as<float>();
         upper[1] = _node[name]["UpperY"].as<float>();
         upper[2] = 150;
 
-        lower[0] =  _node[name]["LowerX"].as<float>();
-        lower[1] =  _node[name]["LowerY"].as<float>();
+        lower[0] = _node[name]["LowerX"].as<float>();
+        lower[1] = _node[name]["LowerY"].as<float>();
         lower[2] = 0;
 
         AABB aabb(upper, lower);
@@ -43,11 +43,11 @@ MaskImporter::MaskImporter(std::string filename)
             mask = new BoxMask(aabb);
         else if (type == "Ellipse")
             mask = new EllipseMask(aabb);
-        else 
+        else
             throw std::runtime_error("E MaskImporter::MaskImporter Invalid Mask type found");
 
         _masks.emplace_back(mask);
-    } 
+    }
 }
 
 std::string MaskImporter::generateName(int number)
@@ -60,5 +60,5 @@ std::string MaskImporter::generateName(int number)
 std::vector<IMask*> MaskImporter::getMasks()
 {
     return _masks;
-} 
-}//ohkl
+}
+} // ohkl
