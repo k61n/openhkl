@@ -55,7 +55,7 @@ TEST_CASE("test/data/TestSingleFrameIndex.cpp", "")
 
         ohkl::Experiment experiment("test", "BioDiff2500");
 
-    const ohkl::sptrDataSet data =
+    ohkl::sptrDataSet data =
         std::make_shared<ohkl::DataSet>(ohkl::kw_datasetDefaultName, experiment.getDiffractometer());
 
     ohkl::RawDataReaderParameters data_params;
