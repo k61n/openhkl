@@ -23,7 +23,6 @@
 #include <QDebug>
 #include <QStringList>
 
-#include <iostream>
 #include <vector>
 
 unsigned int Project::_last_id = 0;

@@ -22,6 +22,7 @@
 #include "base/utils/Logger.h"
 #include "core/data/DataSet.h"
 #include "core/instrument/Diffractometer.h"
+#include "core/instrument/InstrumentState.h"
 #include "core/instrument/Sample.h"
 #include "core/peak/Peak3D.h"
 #include "core/shape/Octree.h"
@@ -202,7 +203,7 @@ void PeakFilter::filterEnabled(PeakCollection* peak_collection) const
 }
 
 std::vector<Peak3D*> PeakFilter::filterEnabled(
-    const std::vector<Peak3D*> input_peaks, bool flag) const
+    const std::vector<Peak3D*>& input_peaks, bool flag) const
 {
     std::vector<Peak3D*> filtered_peaks;
     std::copy_if(
@@ -260,7 +261,7 @@ void PeakFilter::filterIndexed(PeakCollection* peak_collection) const
 }
 
 std::vector<Peak3D*> PeakFilter::filterIndexed(
-    const std::vector<Peak3D*> peaks, const UnitCell* cell /* = nullptr  */) const
+    const std::vector<Peak3D*>& peaks, const UnitCell* cell /* = nullptr  */) const
 {
     // reset filters
     for (auto* peak : peaks) {
@@ -404,17 +405,24 @@ void PeakFilter::filterDRange(PeakCollection* peak_collection) const
 }
 
 std::vector<Peak3D*> PeakFilter::filterDRange(
-    const std::vector<Peak3D*> peaks, double d_min, double d_max) const
+    const std::vector<Peak3D*>& peaks, double d_min, double d_max,
+    const InstrumentState* state) const
 {
-    int nrejected = 0;
     std::vector<Peak3D*> filtered_peaks;
     for (auto* peak : peaks) {
-        auto q = peak->q();
-        if (!q.isValid())
+        // If we only have one frame, we don't want to interpolate the InstrumentState
+        ReciprocalVector rvec;
+        if (state)
+            rvec = peak->q(*state);
+        else
+            rvec = peak->q();
+
+        if (!rvec.isValid())
             continue;
-        double d = 1.0 / q.rowVector().norm();
-        if (d >= d_min && d <= d_max)
+        double d = 1.0 / rvec.rowVector().norm();
+        if (d >= d_min && d <= d_max) {
             filtered_peaks.push_back(peak);
+        }
     }
     return filtered_peaks;
 }

@@ -15,17 +15,17 @@
 #include "core/algo/AutoIndexer.h"
 #include "base/fit/FitParameters.h"
 #include "base/fit/Minimizer.h"
+#include "base/geometry/ReciprocalVector.h"
 #include "base/utils/Logger.h"
 #include "core/algo/FFTIndexing.h"
 #include "core/data/DataSet.h" // peak->data()->interpolatedState
+#include "core/instrument/InstrumentState.h"
 #include "core/instrument/InterpolatedState.h" // interpolate
 #include "core/peak/Peak3D.h"
 #include "core/shape/PeakFilter.h"
 #include "tables/crystal/MillerIndex.h"
 
-
 #include <iomanip>
-#include <iostream>
 #include <string>
 
 namespace ohkl {
@@ -63,13 +63,14 @@ IndexerParameters* AutoIndexer::parameters()
     return _params.get();
 }
 
-bool AutoIndexer::autoIndex(const std::vector<Peak3D*>& peaks)
+bool AutoIndexer::autoIndex(const std::vector<Peak3D*>& peaks, const InstrumentState* state)
 {
     _params->log(Level::Info);
     ohklLog(Level::Info, "AutoIndexer::autoindex: indexing using ", peaks.size(), " peaks");
     // Find the Q-space directions along which the projection of the the Q-vectors
     // shows the highest periodicity
-    bool success = computeFFTSolutions(peaks);
+    std::vector<Peak3D*> filtered_peaks = filterPeaks(peaks, state);
+    bool success = computeFFTSolutions(filtered_peaks, state);
     if (!success)
         return success;
     refineSolutions(peaks);
@@ -90,8 +91,9 @@ bool AutoIndexer::autoIndex(PeakCollection* peaks)
 {
     ohklLog(Level::Info, "AutoIndexer::autoindex: indexing PeakCollection '", peaks->name(), "'");
     std::vector<Peak3D*> peak_list = peaks->getPeakList();
+    std::vector<Peak3D*> filtered_peaks = filterPeaks(peak_list);
 
-    if (autoIndex(peak_list)) {
+    if (autoIndex(filtered_peaks)) {
         peaks->setIndexed(true);
         return true;
     }
@@ -114,22 +116,36 @@ const std::vector<std::pair<sptrUnitCell, double>>& AutoIndexer::solutions() con
     return _solutions;
 }
 
-bool AutoIndexer::computeFFTSolutions(const std::vector<Peak3D*>& peaks)
+std::vector<Peak3D*> AutoIndexer::filterPeaks(
+    const std::vector<Peak3D*>& peaks, const InstrumentState* state)
+{
+    const std::vector<Peak3D*> enabled_peaks = PeakFilter{}.filterEnabled(peaks, true);
+    ohklLog(
+        Level::Info, "AutoIndexer::filterPeaks: ", enabled_peaks.size(), " enabled peaks");
+    const std::vector<Peak3D*> filtered_peaks =
+        PeakFilter{}.filterDRange(enabled_peaks, _params->d_min, _params->d_max, state);
+    ohklLog(
+        Level::Info, "AutoIndexer::filterPeaks: ", filtered_peaks.size(),
+        " peaks used in indexing");
+    return filtered_peaks;
+}
+
+bool AutoIndexer::computeFFTSolutions(
+    const std::vector<Peak3D*>& peaks, const InstrumentState* state)
 {
     _solutions.clear();
 
     // Store the q-vectors of the peaks for auto-indexing
     std::vector<ReciprocalVector> qvects;
-    const std::vector<Peak3D*> enabled_peaks = PeakFilter{}.filterEnabled(peaks, true);
-    const std::vector<Peak3D*> filtered_peaks =
-        PeakFilter{}.filterDRange(enabled_peaks, _params->d_min, _params->d_max);
-    ohklLog(
-        Level::Info, "AutoIndexer::computeFFTSolutions: ", filtered_peaks.size(),
-        " peaks used in indexing");
-    for (const Peak3D* peak : filtered_peaks) {
-        auto q = peak->q().rowVector();
-        qvects.emplace_back(ReciprocalVector(q));
+    for (const Peak3D* peak : peaks) {
+        ReciprocalVector qvec;
+        if (state)
+            qvec = peak->q(*state);
+        else
+            qvec = peak->q();
+        qvects.emplace_back(qvec);
     }
+    ohklLog(Level::Info, "AutoIndexer::computeFFTSolutions: ", qvects.size(), " q vectors");
 
     // Check that a minimum number of peaks have been selected for indexing
     if (qvects.size() < 10) {

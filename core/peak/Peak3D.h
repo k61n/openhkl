@@ -16,7 +16,9 @@
 #define OHKL_CORE_PEAK_PEAK3D_H
 
 #include "base/geometry/Ellipsoid.h"
+#include "base/geometry/ReciprocalVector.h"
 #include "core/data/DataTypes.h"
+#include "core/instrument/InstrumentState.h"
 #include "core/peak/Intensity.h"
 #include "tables/crystal/UnitCell.h"
 
@@ -177,6 +179,9 @@ class Peak3D {
         double bkgBegin, double bkgEnd);
     //! Return the q vector of the peak, transformed into sample coordinates.
     ReciprocalVector q() const;
+    //! Return q vector in cases where we do *not* want to interpolate the InstrumentState
+    //! (e.g. when indexing a single frame)
+    ReciprocalVector q(const InstrumentState& state) const;
     //! Return the data set to which this peak belongs
     sptrDataSet dataSet() const { return _data; }
     //! Set the raw intensity count (from image), with no corrections

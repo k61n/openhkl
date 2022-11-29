@@ -51,7 +51,6 @@
 #include "tables/crystal/UnitCell.h"
 
 #include <exception>
-#include <iostream>
 
 #include <QCheckBox>
 #include <QDebug>

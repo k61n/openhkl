@@ -19,6 +19,7 @@
 #include <sstream>
 #include <string>
 #include <vector>
+#include <iostream>
 
 // Test the CSV parser, which in turn seems to be needed for testing only.
 

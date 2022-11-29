@@ -12,20 +12,13 @@
 //
 //  ***********************************************************************************************
 
-#include <cstdio> // rename
-#include <iostream>
-#include <memory>
-#include <stdexcept>
-#include <string>
-#include <utility>
-#include <vector>
+#include "core/experiment/Experiment.h"
 
 #include "base/utils/Logger.h"
 #include "base/utils/Path.h" // tempFilename
 #include "base/utils/Units.h"
 #include "core/data/DataSet.h"
 #include "core/experiment/DataHandler.h"
-#include "core/experiment/Experiment.h"
 #include "core/experiment/ExperimentExporter.h"
 #include "core/experiment/ExperimentImporter.h"
 #include "core/experiment/InstrumentStateHandler.h"
@@ -51,6 +44,13 @@
 #include "core/statistics/RFactor.h"
 #include "manifest.h"
 #include "tables/crystal/UnitCell.h"
+
+#include <cstdio> // rename
+#include <memory>
+#include <stdexcept>
+#include <string>
+#include <utility>
+#include <vector>
 
 namespace ohkl {
 

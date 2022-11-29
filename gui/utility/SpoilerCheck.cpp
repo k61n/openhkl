@@ -1,6 +1,5 @@
 #include <QCheckBox>
 #include <QPropertyAnimation>
-#include <iostream>
 
 #include "SpoilerCheck.h"
 

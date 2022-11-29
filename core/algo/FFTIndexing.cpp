@@ -28,7 +28,6 @@
 #include "core/algo/FFTIndexing.h"
 
 //#define RANDOMISE_FFTINDEXING_SPHERE
-//#define DEBUG_HISTOGRAMS
 
 
 namespace ohkl {
@@ -73,41 +72,6 @@ std::vector<Eigen::RowVector3d> algo::pointsOnSphere(unsigned int n_vertices)
 
     return result;
 }
-
-
-#ifdef DEBUG_HISTOGRAMS
-// Output a histogram and its trafo for debugging.
-// Plot in gnuplot with:
-//      plot "hist_0.dat" u 4:5 w boxes
-//      plot "hist_0.dat" u 4:6 w boxes
-static void save_histogram(
-    std::size_t projidx, const Eigen::RowVector3d& proj_dir, double dq, double qMax,
-    const std::vector<double>& hist, const std::vector<std::complex<double>>& hist_ft)
-{
-    int spacing = 16;
-    std::ofstream ofHist("hist_" + std::to_string(projidx) + ".dat");
-
-    ofHist << std::setw(spacing) << std::left << "# proj_dir_x"
-           << " " << std::setw(spacing) << std::left << "proj_dir_y"
-           << " " << std::setw(spacing) << std::left << "proj_dir_z"
-           << " " << std::setw(spacing) << std::left << "q_proj"
-           << " " << std::setw(spacing) << std::left << "hist"
-           << " " << std::setw(spacing) << std::left << "hist_ft"
-           << "\n";
-
-    for (std::size_t idx = 0; idx < std::min(hist.size(), hist_ft.size()); ++idx) {
-        ofHist << std::setw(spacing) << std::left << proj_dir[0] << " " // proj_dir[0]
-               << std::setw(spacing) << std::left << proj_dir[1] << " " // proj_dir[1]
-               << std::setw(spacing) << std::left << proj_dir[2] << " " // proj_dir[2]
-               << std::setw(spacing) << std::left << double(idx) * dq - qMax << " " // q_proj
-               << std::setw(spacing) << std::left << hist[idx] << " " << std::setw(spacing)
-               << std::left << std::abs(hist_ft[idx]) << "\n";
-    }
-
-    ofHist.flush();
-}
-#endif
-
 
 std::vector<Eigen::RowVector3d> algo::findOnSphere(
     const std::vector<ReciprocalVector>& qvects, unsigned int n_vertices, unsigned int nsolutions,
@@ -154,9 +118,6 @@ std::vector<Eigen::RowVector3d> algo::findOnSphere(
 
         std::vector<std::complex<double>> spectrum;
         fft.fwd(spectrum, hist); // Fourier transform the histogram
-#ifdef DEBUG_HISTOGRAMS
-        save_histogram(q_diridx, q_direction, dq, qMax, hist, spectrum);
-#endif
 
         const double FZero = std::abs(spectrum[0]); // zero mode
         size_t pos_max = 0; // position of maximum mode, other than zero mode

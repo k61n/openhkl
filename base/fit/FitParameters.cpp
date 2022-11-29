@@ -19,9 +19,6 @@
 
 #include "base/fit/FitParameters.h"
 
-// DEBUGGING
-#include <iostream>
-
 namespace ohkl {
 
 int FitParameters::addParameter(double* addr)

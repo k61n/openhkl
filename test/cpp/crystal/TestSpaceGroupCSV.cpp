@@ -19,6 +19,7 @@
 
 #include <fstream>
 #include <string>
+#include <iostream>
 
 TEST_CASE("test/crystal/TestSpaceGroupCSV.cpp", "")
 {

@@ -15,6 +15,7 @@
 #ifndef OHKL_CORE_SHAPE_PEAKFILTER_H
 #define OHKL_CORE_SHAPE_PEAKFILTER_H
 
+#include "core/instrument/InstrumentState.h"
 #include "core/peak/Peak3D.h"
 #include "core/raw/DataKeys.h"
 #include "core/shape/PeakCollection.h"
@@ -151,15 +152,16 @@ class PeakFilter {
     void filterGradientSigma(PeakCollection* peak_collection) const;
 
     //! Filter only enabled on a peak vector
-    std::vector<Peak3D*> filterEnabled(const std::vector<Peak3D*> peaks, bool flag) const;
+    std::vector<Peak3D*> filterEnabled(const std::vector<Peak3D*>& peaks, bool flag) const;
 
     //! Filter only enabled on a peak vector
     std::vector<Peak3D*> filterIndexed(
-        const std::vector<Peak3D*> peaks, const UnitCell* cell = nullptr) const;
+        const std::vector<Peak3D*>& peaks, const UnitCell* cell = nullptr) const;
 
-    //! Filter d-range on peak vector
+    //! Filter d-range on peak vector (intended for a single frame, hence the state)
     std::vector<Peak3D*> filterDRange(
-        const std::vector<Peak3D*> peaks, double d_min, double d_max) const;
+        const std::vector<Peak3D*>& peaks, double d_min, double d_max,
+        const InstrumentState* state = nullptr) const;
 
     //! Run the filtering
     void filter(PeakCollection* peak_collection) const;

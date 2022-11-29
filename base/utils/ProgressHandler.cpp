@@ -12,7 +12,6 @@
 //
 //  ***********************************************************************************************
 
-#include <iostream>
 #include <stdexcept>
 
 #include "base/utils/ProgressHandler.h"

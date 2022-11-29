@@ -77,8 +77,6 @@ void LogWindow::_connectUI()
     connect(_clearButton, &QPushButton::clicked, _log_widget, &LogWidget::clearText);
 }
 
-#include <iostream>
-
 void LogWindow::saveLog()
 {
     QSettings qset = gGui->qSettings();
