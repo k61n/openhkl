@@ -183,8 +183,8 @@ class TestFullWorkFlow(unittest.TestCase):
         print('Integrating predicted peaks...')
         integrator = expt.integrator()
         params = integrator.parameters()
-        integrator_type = ohkl.IntegratorType_PixelSum
-        integrator.pIntegrator(integrator_type)
+        params.integrator_type = ohkl.IntegratorType_PixelSum
+
         integrator.integratePeaks(data, predicted_peaks, params, filtered_peaks.shapeModel())
         print(f'{integrator.numberOfValidPeaks()} / {integrator.numberOfPeaks()} peaks integrated')
         self.assertTrue(integrator.numberOfValidPeaks() >  55730 and
