@@ -21,10 +21,10 @@ build:ubuntu:
           cmake ..
       fi
     - make -j8
-    artifacts:
-      paths:
+  artifacts:
+    paths:
       - build
-      expire_in: 1 day
+    expire_in: 1 day
 
 test:ubuntu:
   stage: test
@@ -36,10 +36,10 @@ test:ubuntu:
       else
           ctest -j8 --output-on-failure -E "nightly"
       fi
-    artifacts:
-      paths:
+  artifacts:
+    paths:
       - build
-      expire_in: 1 day
+    expire_in: 1 day
 
 pages:
   stage: deploy:doc
