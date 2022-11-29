@@ -37,7 +37,8 @@ std::pair<size_t, size_t> GradientConvolver::kernelSize() const
     return std::make_pair(_dim, _dim);
 }
 
-void GradientConvolver::setOperator(const Eigen::MatrixXd& matrix_x, const Eigen::MatrixXd& matrix_y)
+void GradientConvolver::setOperator(
+    const Eigen::MatrixXd& matrix_x, const Eigen::MatrixXd& matrix_y)
 {
     _operator_x = matrix_x;
     _operator_y = matrix_y;

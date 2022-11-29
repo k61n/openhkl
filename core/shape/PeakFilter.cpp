@@ -42,9 +42,8 @@ PeakFilter::PeakFilter()
 
 void PeakFilter::resetFilterFlags()
 {
-    *_filter_flags = {true,  false, false, false, false, false, false, false,
-                      false, false, false, false, false, false, false, false,
-                      false, false, false};
+    *_filter_flags = {true,  false, false, false, false, false, false, false, false, false,
+                      false, false, false, false, false, false, false, false, false};
 }
 
 void PeakFilter::filterSignificance(PeakCollection* peak_collection) const
@@ -450,7 +449,7 @@ void PeakFilter::filterRejectionFlag(PeakCollection* peak_collection) const
     ohklLog(Level::Info, "PeakFilter::filterRejectionFlag: ", ncaught, " peaks caught");
 }
 
-void PeakFilter::filterIntensity(PeakCollection *peak_collection) const
+void PeakFilter::filterIntensity(PeakCollection* peak_collection) const
 {
     int nrejected = 0;
     for (auto* peak : peak_collection->getPeakList()) {
@@ -461,8 +460,8 @@ void PeakFilter::filterIntensity(PeakCollection *peak_collection) const
             continue;
         }
         double intensity = corrected_intensity.value();
-        if (intensity >= _filter_params->intensity_min &&
-            intensity <= _filter_params->intensity_max) {
+        if (intensity >= _filter_params->intensity_min
+            && intensity <= _filter_params->intensity_max) {
             peak->caughtYou(true);
         } else {
             peak->rejectYou(true);
@@ -475,7 +474,7 @@ void PeakFilter::filterIntensity(PeakCollection *peak_collection) const
     ohklLog(Level::Info, "PeakFilter::filterIntensity: ", nrejected, " peaks rejected");
 }
 
-void PeakFilter::filterSigma(PeakCollection *peak_collection) const
+void PeakFilter::filterSigma(PeakCollection* peak_collection) const
 {
     int nrejected = 0;
     for (auto* peak : peak_collection->getPeakList()) {
@@ -486,8 +485,7 @@ void PeakFilter::filterSigma(PeakCollection *peak_collection) const
             continue;
         }
         double sigma = corrected_intensity.sigma();
-        if (sigma >= _filter_params->sigma_min
-            && sigma <= _filter_params->sigma_max) {
+        if (sigma >= _filter_params->sigma_min && sigma <= _filter_params->sigma_max) {
             peak->caughtYou(true);
         } else {
             peak->rejectYou(true);
@@ -495,8 +493,8 @@ void PeakFilter::filterSigma(PeakCollection *peak_collection) const
         }
     }
     ohklLog(
-        Level::Info, "PeakFilter::filterSigma: filtering in range ",
-        _filter_params->sigma_min, " - ", _filter_params->sigma_max);
+        Level::Info, "PeakFilter::filterSigma: filtering in range ", _filter_params->sigma_min,
+        " - ", _filter_params->sigma_max);
     ohklLog(Level::Info, "PeakFilter::filterSigma: ", nrejected, " peaks rejected");
 }
 

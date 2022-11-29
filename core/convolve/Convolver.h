@@ -20,14 +20,7 @@
 
 namespace ohkl {
 
-enum class ConvolutionKernelType {
-    None,
-    Annular,
-    EnhancedAnnular,
-    Radial,
-    Constant,
-    Delta
-};
+enum class ConvolutionKernelType { None, Annular, EnhancedAnnular, Radial, Constant, Delta };
 
 using RealMatrix = Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>;
 

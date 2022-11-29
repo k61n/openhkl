@@ -50,6 +50,7 @@ namespace ohkl {
 class Profile3DIntegrator : public IIntegrator {
  public:
     Profile3DIntegrator() = default;
+
  protected:
     //! Do the integration
     bool compute(Peak3D* peak, ShapeModel* shape_model, const IntegrationRegion& region) override;

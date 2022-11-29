@@ -173,8 +173,8 @@ class Peak3D {
     //! Update the integration parameters for this peak
     void updateIntegration(
         const std::vector<Intensity>& rockingCurve, const Intensity& meanBackground,
-        const Intensity& meanBkgGradient, const Intensity& integratedIntensity,
-        double peakEnd, double bkgBegin, double bkgEnd);
+        const Intensity& meanBkgGradient, const Intensity& integratedIntensity, double peakEnd,
+        double bkgBegin, double bkgEnd);
     //! Return the q vector of the peak, transformed into sample coordinates.
     ReciprocalVector q() const;
     //! Return the data set to which this peak belongs

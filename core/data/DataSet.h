@@ -162,7 +162,7 @@ class DataSet {
     double maxCount();
 
     //! getting number of available
-    size_t getNumberHistograms() {return _histograms.size();}
+    size_t getNumberHistograms() { return _histograms.size(); }
 
     //! accessing created histograms
     gsl_histogram* getHistogram(int index);

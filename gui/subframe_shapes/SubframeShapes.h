@@ -16,8 +16,8 @@
 #define OHKL_GUI_SUBFRAME_SHAPES_SUBFRAMESHAPES_H
 
 #include "core/data/DataSet.h"
-#include "core/peak/Peak3D.h"
 #include "core/integration/IIntegrator.h"
+#include "core/peak/Peak3D.h"
 #include "core/shape/PeakCollection.h"
 #include "core/shape/Profile3D.h"
 #include "core/shape/ShapeModel.h"

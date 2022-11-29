@@ -25,12 +25,7 @@
 namespace ohkl {
 
 PeakData::PeakData(Peak3D* peak)
-    : _peak(peak)
-    , _system(peak)
-    , _events()
-    , _counts()
-    , _gradients()
-    , _coords()
+    : _peak(peak), _system(peak), _events(), _counts(), _gradients(), _coords()
 {
 }
 

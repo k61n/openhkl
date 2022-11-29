@@ -155,7 +155,8 @@ void PeakCollectionModel::reset()
     _name = "No Collection";
 }
 
-bool PeakCollectionModel::setData(const QModelIndex &index, const QVariant &value, int role) {
+bool PeakCollectionModel::setData(const QModelIndex& index, const QVariant& value, int role)
+{
     if (!index.isValid())
         return false;
     if (role == Qt::CheckStateRole && index.column() == PeakColumn::Selected) {
@@ -163,8 +164,9 @@ bool PeakCollectionModel::setData(const QModelIndex &index, const QVariant &valu
             _root_item->peakItemAt(index.row())->peak()->setSelected(true);
         } else {
             _root_item->peakItemAt(index.row())->peak()->setSelected(false);
-            _root_item->peakItemAt(index.row())->peak()->setRejectionFlag(
-                ohkl::RejectionFlag::ManuallyRejected, true);
+            _root_item->peakItemAt(index.row())
+                ->peak()
+                ->setRejectionFlag(ohkl::RejectionFlag::ManuallyRejected, true);
         }
         emit dataChanged(index, index);
         return true;

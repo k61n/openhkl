@@ -53,7 +53,7 @@ std::pair<Intensity, Intensity> compute_background(
         for (auto i = 0; i < counts.size(); ++i) {
             if (region.classify(events[i]) != IntegrationRegion::EventType::BACKGROUND)
                 continue;
-            if (iteration>0 && std::fabs(counts[i] - mean_bkg) > 3 * sigma_bkg)
+            if (iteration > 0 && std::fabs(counts[i] - mean_bkg) > 3 * sigma_bkg)
                 continue;
             sum_bkg += counts[i];
             sum_bkg2 += counts[i] * counts[i];
@@ -85,8 +85,7 @@ std::pair<Intensity, Intensity> compute_background(
 } // namespace
 
 
-PixelSumIntegrator::PixelSumIntegrator(bool fit_center, bool fit_covariance)
-    : IIntegrator()
+PixelSumIntegrator::PixelSumIntegrator(bool fit_center, bool fit_covariance) : IIntegrator()
 {
     _params.fit_center = fit_center;
     _params.fit_cov = fit_covariance;

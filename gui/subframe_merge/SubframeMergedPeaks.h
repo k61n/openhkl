@@ -51,7 +51,7 @@ class SubframeMergedPeaks : public QWidget {
     void savePeaks(std::string format, bool merged);
     //! Exports project into Mtz file
     bool exportMtz(bool merged_data);
-    
+
 
  private:
     //! Set the merge parameters
@@ -92,7 +92,7 @@ class SubframeMergedPeaks : public QWidget {
     void saveMergedPeaks();
     //! Save the unmerged peaks
     void saveUnmergedPeaks();
-    
+
 
     //! Do a single batch refinement to get one unit cell
     ohkl::sptrUnitCell singleBatchRefine();

@@ -25,13 +25,9 @@ SobelConvolver::SobelConvolver(const std::map<std::string, double>& parameters)
 
     Eigen::Matrix3d sobel_x, sobel_y;
 
-    sobel_x << -1,  0,  1,
-               -2,  0,  2,
-               -1,  0,  1;
+    sobel_x << -1, 0, 1, -2, 0, 2, -1, 0, 1;
 
-    sobel_y <<  1,  2,  1,
-                0,  0,  0,
-               -1, -2, -1;
+    sobel_y << 1, 2, 1, 0, 0, 0, -1, -2, -1;
 
     setOperator(sobel_x, sobel_y);
 }

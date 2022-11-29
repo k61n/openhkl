@@ -117,12 +117,7 @@ struct FitData {
 };
 
 ShapeModel::ShapeModel()
-    : _id(0)
-    , _profiles()
-    , _choleskyD()
-    , _choleskyM()
-    , _choleskyS()
-    , _handler(nullptr)
+    : _id(0), _profiles(), _choleskyD(), _choleskyM(), _choleskyS(), _handler(nullptr)
 {
     _choleskyD.fill(1e-6);
     _choleskyM.fill(1e-6);

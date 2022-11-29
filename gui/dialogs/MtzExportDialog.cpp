@@ -17,7 +17,7 @@
 
 namespace ohkl {
 
-MtzExportDialog::MtzExportDialog(bool merged_data) 
+MtzExportDialog::MtzExportDialog(bool merged_data)
     : _selected_data(""), _selected_pc(""), _comment(""), _merged_data(merged_data)
 {
     setModal(true);
@@ -35,17 +35,17 @@ MtzExportDialog::MtzExportDialog(bool merged_data)
     _peakcombo = new QComboBox();
 
     _rb_group = new QGroupBox();
-    _rb_merged = new QRadioButton( );
-    _rb_unmerged = new QRadioButton( );
+    _rb_merged = new QRadioButton();
+    _rb_unmerged = new QRadioButton();
     //_rb_group->setTitle("Export");
 
     QHBoxLayout* hlay_cmb = new QHBoxLayout();
     QHBoxLayout* hlay_rb = new QHBoxLayout(_rb_group);
     QVBoxLayout* vlay = new QVBoxLayout();
 
-    
+
     vlay->setSpacing(10);
-    
+
     hlay_cmb->addWidget(lab_data);
     hlay_cmb->addWidget(_datacombo);
     hlay_cmb->addWidget(lab_peaks);
@@ -55,11 +55,11 @@ MtzExportDialog::MtzExportDialog(bool merged_data)
     hlay_rb->addWidget(_rb_unmerged);
     hlay_rb->addWidget(lab_rb_merged);
     hlay_rb->addWidget(_rb_merged);
-    
+
     vlay->addLayout(hlay_cmb);
     vlay->addWidget(_rb_group);
- 
-    gridLayout->addLayout(vlay,0,0);
+
+    gridLayout->addLayout(vlay, 0, 0);
 
     _merge_param_box = new QGroupBox();
     _drange_min = new QDoubleSpinBox();
@@ -140,29 +140,35 @@ MtzExportDialog::MtzExportDialog(bool merged_data)
     loadMergeParams();
 
     connect(_button_box, &QDialogButtonBox::rejected, this, &QDialog::reject);
-    connect(_button_box, &QDialogButtonBox::accepted, this, 
-    [=](){
-       
+    connect(_button_box, &QDialogButtonBox::accepted, this, [=]() {
         _selected_data = _datacombo->currentData()->name();
         _selected_pc = _peakcombo->currentText().toStdString();
         _comment = _textbox->toPlainText().toStdString();
         _merged_data = _rb_merged->isChecked();
         accept();
-        }
-    );
+    });
 
-    connect(_drange_min, QOverload<double>::of(&QDoubleSpinBox::valueChanged), this, &MtzExportDialog::setMergeParams);
-    connect(_drange_max, QOverload<double>::of(&QDoubleSpinBox::valueChanged), this, &MtzExportDialog::setMergeParams);
-    connect(_frame_min, QOverload<double>::of(&QDoubleSpinBox::valueChanged), this, &MtzExportDialog::setMergeParams);
-    connect(_frame_max, QOverload<double>::of(&QDoubleSpinBox::valueChanged), this, &MtzExportDialog::setMergeParams);
-    connect(_shell_res, QOverload<double>::of(&QDoubleSpinBox::valueChanged), this, &MtzExportDialog::setMergeParams);
+    connect(
+        _drange_min, QOverload<double>::of(&QDoubleSpinBox::valueChanged), this,
+        &MtzExportDialog::setMergeParams);
+    connect(
+        _drange_max, QOverload<double>::of(&QDoubleSpinBox::valueChanged), this,
+        &MtzExportDialog::setMergeParams);
+    connect(
+        _frame_min, QOverload<double>::of(&QDoubleSpinBox::valueChanged), this,
+        &MtzExportDialog::setMergeParams);
+    connect(
+        _frame_max, QOverload<double>::of(&QDoubleSpinBox::valueChanged), this,
+        &MtzExportDialog::setMergeParams);
+    connect(
+        _shell_res, QOverload<double>::of(&QDoubleSpinBox::valueChanged), this,
+        &MtzExportDialog::setMergeParams);
     connect(_friedel, &QCheckBox::stateChanged, this, &MtzExportDialog::setMergeParams);
 
     refresh();
 }
 
-MtzExportDialog::~MtzExportDialog()
-{}
+MtzExportDialog::~MtzExportDialog() { }
 
 void MtzExportDialog::loadMergeParams()
 {
@@ -182,20 +188,20 @@ void MtzExportDialog::setMergeParams()
 
     params->d_min = _drange_min->value();
     params->d_max = _drange_max->value();
-    params->frame_min  = _frame_min->value();
-    params->frame_max  = _frame_max->value();
-    params->n_shells  = _shell_res->value();
+    params->frame_min = _frame_min->value();
+    params->frame_max = _frame_max->value();
+    params->n_shells = _shell_res->value();
     params->friedel = _friedel->isChecked();
 }
 
 void MtzExportDialog::refresh()
-{ 
+{
     _datacombo->refresh();
     loadMergeParams();
 
     auto pcollections = gSession->currentProject()->experiment()->getPeakCollections();
 
-    for (auto & e : pcollections){
+    for (auto& e : pcollections) {
         if (e->type() == ohkl::PeakCollectionType::FOUND)
             continue;
         _peakcombo->addItem(QString::fromStdString(e->name()));

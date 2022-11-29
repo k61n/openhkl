@@ -81,7 +81,7 @@ class ShapeModel {
     ShapeModel(std::shared_ptr<ShapeModelParameters> params);
 
     //! Get the integer id
-    unsigned int  id() const { return _id; };
+    unsigned int id() const { return _id; };
     //! Set the integer id
     void setId(unsigned int id);
 

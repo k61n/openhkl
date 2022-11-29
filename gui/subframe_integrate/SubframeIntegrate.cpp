@@ -218,7 +218,8 @@ void SubframeIntegrate::grabIntegrationParameters()
         if (it->second == params->integrator_type)
             _integrator_combo->setCurrentText(QString::fromStdString(it->first));
 
-    for (auto it = ohkl::regionTypeDescription.begin(); it != ohkl::regionTypeDescription.end(); ++it)
+    for (auto it = ohkl::regionTypeDescription.begin(); it != ohkl::regionTypeDescription.end();
+         ++it)
         if (it->first == params->region_type)
             _integration_region_type->setCurrentText(QString::fromStdString(it->second));
 }
@@ -249,7 +250,8 @@ void SubframeIntegrate::setIntegrationParameters()
     params->fft_gradient = _fft_gradient->isChecked();
     params->gradient_type = static_cast<ohkl::GradientKernel>(_gradient_kernel->currentIndex());
 
-    for (auto it = ohkl::regionTypeDescription.begin(); it != ohkl::regionTypeDescription.end(); ++it)
+    for (auto it = ohkl::regionTypeDescription.begin(); it != ohkl::regionTypeDescription.end();
+         ++it)
         if (it->second == _integration_region_type->currentText().toStdString())
             params->region_type = it->first;
 }
@@ -272,12 +274,12 @@ void SubframeIntegrate::setIntegrationRegionUp()
         "Peak end", "(" + QString(QChar(0x03C3)) + ") - scaling factor for peak region");
 
     _bkg_begin = f.addDoubleSpinBox(
-        "Background begin:", "(" + QString(QChar(0x03C3)) +
-        ") - scaling factor for lower limit of background");
+        "Background begin:",
+        "(" + QString(QChar(0x03C3)) + ") - scaling factor for lower limit of background");
 
     _bkg_end = f.addDoubleSpinBox(
-        "Background end:", "(" + QString(QChar(0x03C3)) +
-        ") - scaling factor for upper limit of background");
+        "Background end:",
+        "(" + QString(QChar(0x03C3)) + ") - scaling factor for upper limit of background");
 
     _peak_end->setMaximum(20);
     _peak_end->setDecimals(2);
@@ -359,16 +361,16 @@ void SubframeIntegrate::setIntegrateUp()
     _min_neighbours = f.addSpinBox(
         "Min. neighbours", "Minimum number of neighbouring shapes to predict peak shape");
 
-    _interpolation_combo = f.addCombo(
-        "Interpolation type", "Interpolation strategy for computing mean covariance");
+    _interpolation_combo =
+        f.addCombo("Interpolation type", "Interpolation strategy for computing mean covariance");
 
     _shape_combo = f.addShapeCombo("Shape model", "The shape model used in integraton");
 
     _remove_overlaps = f.addCheckBox(
         "Remove overlaps", "Remove peaks with overlapping adjacent background regions", 1);
 
-    _remove_masked = f.addCheckBox(
-        "Remove masked peaks", "Remove peaks intersecting detector image masks", 1);
+    _remove_masked =
+        f.addCheckBox("Remove masked peaks", "Remove peaks intersecting detector image masks", 1);
 
     _integrate_button = f.addButton("Integrate peaks");
 
@@ -392,8 +394,7 @@ void SubframeIntegrate::setIntegrateUp()
     connect(
         _remove_overlaps, &QCheckBox::stateChanged, this,
         &SubframeIntegrate::removeOverlappingPeaks);
-    connect(
-        _remove_masked, &QCheckBox::stateChanged, this, &SubframeIntegrate::removeMaskedPeaks);
+    connect(_remove_masked, &QCheckBox::stateChanged, this, &SubframeIntegrate::removeMaskedPeaks);
     connect(
         _peak_end, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged),
         this, &SubframeIntegrate::removeOverlappingPeaks);

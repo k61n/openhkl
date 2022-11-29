@@ -32,7 +32,9 @@ PlotPanel::PlotPanel() : _yLog(false)
     connect(_plot, &SXPlot::signalYRange, this, &PlotPanel::signalYRangeChanged);
 }
 
-void PlotPanel::plotData(QVector<double>& x, QVector<double>& y, QVector<double>& e, QString xtitle, QString ytitle, int xmin, int xmax, int ymin, int ymax)
+void PlotPanel::plotData(
+    QVector<double>& x, QVector<double>& y, QVector<double>& e, QString xtitle, QString ytitle,
+    int xmin, int xmax, int ymin, int ymax)
 {
     if (_plot->getType().compare("simple") != 0) {
         _anchor->removeWidget(_plot);
@@ -49,7 +51,7 @@ void PlotPanel::plotData(QVector<double>& x, QVector<double>& y, QVector<double>
     _plot->clearPlottables();
     _plot->addGraph();
 
-    QPen pen(QColor(0,0,0));
+    QPen pen(QColor(0, 0, 0));
     pen.setWidth(1);
     _plot->graph(0)->setPen(pen);
 
@@ -77,9 +79,12 @@ void PlotPanel::plotData(QVector<double>& x, QVector<double>& y, QVector<double>
     _plot->replot();
 }
 
-void PlotPanel::plotData(gsl_histogram* histogram, QString xtitle, QString ytitle, int xmin, int xmax, int ymin, int ymax)
+void PlotPanel::plotData(
+    gsl_histogram* histogram, QString xtitle, QString ytitle, int xmin, int xmax, int ymin,
+    int ymax)
 {
-    if (!histogram) return;
+    if (!histogram)
+        return;
 
     QVector<double> x;
     QVector<double> y;
@@ -94,7 +99,9 @@ void PlotPanel::plotData(gsl_histogram* histogram, QString xtitle, QString ytitl
     plotData(x, y, e, xtitle, ytitle, xmin, xmax, ymin, ymax);
 }
 
-void PlotPanel::plotHistogram(size_t nData, double* range, double* bin, QString xtitle, QString ytitle, int xmin, int xmax, int ymin, int ymax)
+void PlotPanel::plotHistogram(
+    size_t nData, double* range, double* bin, QString xtitle, QString ytitle, int xmin, int xmax,
+    int ymin, int ymax)
 {
     // need to convert Data for QCustomplot
     QVector<double> frequency;
@@ -110,7 +117,7 @@ void PlotPanel::plotHistogram(size_t nData, double* range, double* bin, QString 
 
     _plot->clearPlottables();
     _plot->addGraph();
-    QCPBars *bars = new QCPBars(_plot->xAxis, _plot->yAxis);
+    QCPBars* bars = new QCPBars(_plot->xAxis, _plot->yAxis);
     bars->setName("Intensity Histogram");
     bars->setData(frequency, counts);
     _plot->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom);
@@ -135,9 +142,10 @@ void PlotPanel::plotHistogram(size_t nData, double* range, double* bin, QString 
 
 void PlotPanel::setYLog(bool on)
 {
-    if (on == _yLog) return;
+    if (on == _yLog)
+        return;
     _yLog = on;
-    if (_yLog){
+    if (_yLog) {
         _plot->yAxis->grid()->setSubGridVisible(true);
         _plot->xAxis->grid()->setSubGridVisible(true);
         _plot->yAxis->setScaleType(QCPAxis::stLogarithmic);
@@ -147,8 +155,7 @@ void PlotPanel::setYLog(bool on)
         _plot->yAxis2->setTicker(logTicker);
         _plot->yAxis->setNumberFormat("eb");
         _plot->yAxis->setNumberPrecision(0);
-    }
-    else {
+    } else {
         _plot->yAxis->grid()->setSubGridVisible(true);
         _plot->xAxis->grid()->setSubGridVisible(true);
         _plot->yAxis->setScaleType(QCPAxis::stLinear);

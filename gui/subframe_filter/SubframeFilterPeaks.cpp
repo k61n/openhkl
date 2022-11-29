@@ -425,7 +425,8 @@ void SubframeFilterPeaks::setFilterParameters()
     params->unit_cell = _unit_cell->currentText().toStdString();
     params->peak_end = _peak_end->value();
     params->bkg_end = _bkg_end->value();
-    params->rejection_flag = static_cast<ohkl::RejectionFlag>(_rejection_flag_combo->currentIndex());
+    params->rejection_flag =
+        static_cast<ohkl::RejectionFlag>(_rejection_flag_combo->currentIndex());
 }
 
 void SubframeFilterPeaks::filterPeaks()

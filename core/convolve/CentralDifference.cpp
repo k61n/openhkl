@@ -25,13 +25,9 @@ CentralDifference::CentralDifference(const std::map<std::string, double>& parame
 
     Eigen::Matrix3d central_x, central_y;
 
-    central_x <<  0,  0,  0,
-                 -1,  0,  1,
-                  0,  0,  0;
+    central_x << 0, 0, 0, -1, 0, 1, 0, 0, 0;
 
-    central_y <<  0,  1,  0,
-                  0,  0,  0,
-                  0, -1,  0;
+    central_y << 0, 1, 0, 0, 0, 0, 0, -1, 0;
 
     setOperator(central_x, central_y);
 }

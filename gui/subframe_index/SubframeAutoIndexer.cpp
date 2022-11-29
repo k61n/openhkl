@@ -221,7 +221,8 @@ void SubframeAutoIndexer::setParametersUp()
     _only_niggli = f.addCheckBox("Find Niggli cell only", 1);
 
     _max_cell_dimension = f.addDoubleSpinBox(
-        "Max. Cell dimension:", QString::fromUtf8("(\u212B) - maximum length of any lattice vector"));
+        "Max. Cell dimension:",
+        QString::fromUtf8("(\u212B) - maximum length of any lattice vector"));
 
     _number_vertices = f.addSpinBox(
         "Num. Q-space trial vectors:",
@@ -231,7 +232,8 @@ void SubframeAutoIndexer::setParametersUp()
     _number_subdivisions = f.addSpinBox(
         "Num. FFT histogram bins:", "Number of histogram bins for Fast Fourier transform");
 
-    _number_solutions = f.addSpinBox("Number of solutions:", "Number of unit cell solutions to find");
+    _number_solutions =
+        f.addSpinBox("Number of solutions:", "Number of unit cell solutions to find");
 
     _min_cell_volume = f.addDoubleSpinBox(
         "Minimum Volume:",
@@ -655,9 +657,8 @@ void SubframeAutoIndexer::acceptSolution()
         for (const std::string& name : _selected_unit_cell->compatibleSpaceGroups())
             space_groups.push_back(QString::fromStdString(name));
 
-        std::unique_ptr<UnitCellDialog> dlg(
-            new UnitCellDialog(QString::fromStdString(expt->generateUnitCellName()),
-                               space_groups, collections));
+        std::unique_ptr<UnitCellDialog> dlg(new UnitCellDialog(
+            QString::fromStdString(expt->generateUnitCellName()), space_groups, collections));
         dlg->exec();
         if (dlg->unitCellName().isEmpty())
             return;

@@ -17,9 +17,9 @@
 
 #include <gsl/gsl_histogram.h>
 
-#include <vector>
 #include <map>
 #include <string>
+#include <vector>
 
 namespace ohkl {
 
@@ -30,13 +30,7 @@ class PeakCollection;
  *  @{*/
 
 //! Specify the type of histogram to generate
-enum class PeakHistogramType {
-    Intensity,
-    Sigma,
-    Strength,
-    BkgGradient,
-    BkgGradientSigma
-};
+enum class PeakHistogramType { Intensity, Sigma, Strength, BkgGradient, BkgGradientSigma };
 
 /*! \brief Compute peaks statistics to facilitate outlier rejection
  *
@@ -52,7 +46,10 @@ class PeakStatistics {
     //! Get a pointer to the current histogram
     gsl_histogram* histogram() const { return _current_histogram; };
     //! Get descriptions for histogram types
-    const std::map<PeakHistogramType, std::string>& getHistoStrings() { return _histogram_strings; };
+    const std::map<PeakHistogramType, std::string>& getHistoStrings()
+    {
+        return _histogram_strings;
+    };
     //! Get the maximum value from the data series
     double maxValue() const { return _max_value; };
     //! Get the minimum value from the data series (could be < 0)

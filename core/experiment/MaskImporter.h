@@ -15,24 +15,25 @@
 #ifndef OHKL_CORE_MASK_IMPORTER_H
 #define OHKL_CORE_MASK_IMPORTER_H
 
-#include "base/mask/IMask.h"
 #include "base/mask/BoxMask.h"
 #include "base/mask/EllipseMask.h"
+#include "base/mask/IMask.h"
 #include "base/utils/YAMLType.h"
 
 #include <set>
 #include <string>
 
 namespace ohkl {
-class MaskImporter{
-public:
+class MaskImporter {
+ public:
     //! constructs the yaml nodes from given mask data
     MaskImporter(std::string filename);
     //! generate Mask name from index
     std::string generateName(int number);
     //! returns restored masks
     std::vector<IMask*> getMasks();
-private:
+
+ private:
     YAML::Node _node;
     std::vector<IMask*> _masks;
 };

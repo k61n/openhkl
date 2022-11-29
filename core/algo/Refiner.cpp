@@ -335,8 +335,7 @@ int Refiner::updatePredictions(std::vector<Peak3D*> peaks)
         } else if (events.size() > 1) { // Some peaks cross the Ewald sphere more than once
             for (auto event : events) {
                 Eigen::Vector3d other = {event.px, event.py, event.frame};
-                Eigen::Vector3d vec =
-                    peak->shape().center() - other;
+                Eigen::Vector3d vec = peak->shape().center() - other;
                 if (vec.norm() < _eps_norm) {
                     peak->setShape(
                         Ellipsoid({event.px, event.py, event.frame}, peak->shape().metric()));

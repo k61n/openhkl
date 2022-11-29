@@ -24,8 +24,9 @@
 
 // usage: DBG("This is my debug message nr.", 1);
 #define DBG(...)                                                                                   \
-    ohkl::ohklLog(                                                                                   \
-        ohkl::Level::Info, "DBG> ", __FILE__, ":L", __LINE__, ":", __FUNCTION__, ": ", __VA_ARGS__)
+    ohkl::ohklLog(                                                                                 \
+        ohkl::Level::Info, "DBG> ", __FILE__, ":L", __LINE__, ":", __FUNCTION__, ": ",             \
+        __VA_ARGS__)
 
 
 namespace ohkl {

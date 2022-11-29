@@ -26,13 +26,9 @@ PrewittConvolver::PrewittConvolver(const std::map<std::string, double>& paramete
 
     Eigen::Matrix3d prewitt_x, prewitt_y;
 
-    prewitt_x << -1,  0,  1,
-                 -1,  0,  1,
-                 -1,  0,  1;
+    prewitt_x << -1, 0, 1, -1, 0, 1, -1, 0, 1;
 
-    prewitt_y <<  1,  1,  1,
-                  0,  0,  0,
-                 -1, -1, -1;
+    prewitt_y << 1, 1, 1, 0, 0, 0, -1, -1, -1;
 
     setOperator(prewitt_x, prewitt_y);
 }

@@ -17,20 +17,14 @@
 
 #include "core/convolve/Convolver.h"
 
+#include <Eigen/Dense>
 #include <functional>
 #include <map>
 #include <memory>
-#include <Eigen/Dense>
 
 namespace ohkl {
 
-enum class GradientKernel {
-    CentralDifference,
-    Sobel,
-    Sobel5,
-    Prewitt,
-    Roberts
-};
+enum class GradientKernel { CentralDifference, Sobel, Sobel5, Prewitt, Roberts };
 
 /*! \addtogroup python_api
  *  @{*/
@@ -54,7 +48,7 @@ class ImageGradient {
     //! Compute gradient using FFT method
     void computeFFT(GradientKernel kernel);
     //! Loop over the image to compute the gradient the gradient
-    void gradient(std::function<void (int, int)> kernel_operator);
+    void gradient(std::function<void(int, int)> kernel_operator);
     //! Compute gradient of a pixel with central differences
     void centralDifference(int row, int col);
     //! Compute gradient of a pixel with Sobel operator
@@ -83,8 +77,7 @@ class ImageGradient {
         {GradientKernel::Sobel, "sobel"},
         {GradientKernel::Sobel5, "sobel5"},
         {GradientKernel::Prewitt, "prewitt"},
-        {GradientKernel::Roberts, "roberts"}
-    };
+        {GradientKernel::Roberts, "roberts"}};
 };
 
 /*! @}*/

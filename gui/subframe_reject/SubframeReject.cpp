@@ -44,11 +44,11 @@
 #include <QGridLayout>
 #include <QGroupBox>
 #include <QHeaderView>
+#include <QItemSelectionModel>
 #include <QLabel>
 #include <QMessageBox>
 #include <QScrollBar>
 #include <QSpacerItem>
-#include <QItemSelectionModel>
 #include <qpushbutton.h>
 
 SubframeReject::SubframeReject() : QWidget()
@@ -74,16 +74,14 @@ SubframeReject::SubframeReject() : QWidget()
     connect(
         _detector_widget->dataCombo(), QOverload<int>::of(&QComboBox::currentIndexChanged),
         _data_combo, &QComboBox::setCurrentIndex);
-    connect(
-        _peak_combo, QOverload<int>::of(&QComboBox::currentIndexChanged), this, [=]() {
-            updateStatistics();
-            computeHistogram();
-            _plot_widget->sxplot()->resetZoom();
+    connect(_peak_combo, QOverload<int>::of(&QComboBox::currentIndexChanged), this, [=]() {
+        updateStatistics();
+        computeHistogram();
+        _plot_widget->sxplot()->resetZoom();
     });
-    connect(
-        _histo_combo, QOverload<int>::of(&QComboBox::currentIndexChanged), this, [=]() {
-            updateStatistics();
-            computeHistogram();
+    connect(_histo_combo, QOverload<int>::of(&QComboBox::currentIndexChanged), this, [=]() {
+        updateStatistics();
+        computeHistogram();
     });
 
     auto propertyScrollArea = new PropertyScrollArea(this);
@@ -140,16 +138,16 @@ void SubframeReject::setHistogramUp()
         _histo_combo->addItem(QString::fromStdString(description));
 
     _n_bins = filler.addSpinBox("Number of bins", "Number of histogram bins");
-    std::tie(_freq_min, _freq_max) = filler.addSpinBoxPair(
-        "Frequency range", "Maximum and minimum frequecies for histogram");
-    std::tie(_x_min, _x_max) = filler.addSpinBoxPair(
-        "Data range", "Minimum and maximum of x data series");
+    std::tie(_freq_min, _freq_max) =
+        filler.addSpinBoxPair("Frequency range", "Maximum and minimum frequecies for histogram");
+    std::tie(_x_min, _x_max) =
+        filler.addSpinBoxPair("Data range", "Minimum and maximum of x data series");
     _log_freq = filler.addCheckBox("Logarithmic vertical axis", "Switch to log-linear plot", 1);
     _plot_histogram = filler.addButton("Replot", "Refresh histogram");
-    _sigma_factor = filler.addDoubleSpinBox(
-        "Threshold", "Threshold for peak rejection in standard deviations");
-    _reject_outliers = filler.addButton(
-        "Reject outliers", "Reject peaks outside specified threshold");
+    _sigma_factor =
+        filler.addDoubleSpinBox("Threshold", "Threshold for peak rejection in standard deviations");
+    _reject_outliers =
+        filler.addButton("Reject outliers", "Reject peaks outside specified threshold");
 
     _n_bins->setMaximum(10000);
     _x_min->setMaximum(10000);
@@ -273,8 +271,8 @@ void SubframeReject::refreshAll()
     refreshPeakTable();
     toggleUnsafeWidgets();
 
-    if (!gSession->currentProject()->hasDataSet() ||
-        !gSession->currentProject()->hasPeakCollection())
+    if (!gSession->currentProject()->hasDataSet()
+        || !gSession->currentProject()->hasPeakCollection())
         return;
     updateStatistics();
     computeHistogram();
@@ -365,9 +363,9 @@ void SubframeReject::findByIndex()
             items.emplace_back(item);
     }
     if (items.empty()) {
-        gGui->statusBar()->showMessage(
-            QString::fromStdString("No peak with this Miller index in collection " +
-                                   _peak_combo->currentPeakCollection()->name()));
+        gGui->statusBar()->showMessage(QString::fromStdString(
+            "No peak with this Miller index in collection "
+            + _peak_combo->currentPeakCollection()->name()));
     } else if (items.size() == 1) {
         changeSelected(items[0]->peakGraphic());
     } else {
@@ -402,8 +400,8 @@ void SubframeReject::computeHistogram()
     QString xLabel = QString::fromStdString(_peak_stats.getHistoStrings().find(type)->second);
     _plot_widget->setYLog(_log_freq->isChecked());
     _plot_widget->plotData(
-        _current_histogram, xLabel, QString("Frequency"),
-        _x_min->value(), _x_max->value(), _freq_min->value(), _freq_max->value());
+        _current_histogram, xLabel, QString("Frequency"), _x_min->value(), _x_max->value(),
+        _freq_min->value(), _freq_max->value());
 }
 
 void SubframeReject::filterSelection(double xmin, double xmax)
@@ -416,31 +414,31 @@ void SubframeReject::filterSelection(double xmin, double xmax)
         static_cast<ohkl::PeakHistogramType>(_histo_combo->currentIndex());
 
     switch (type) {
-    case ohkl::PeakHistogramType::Intensity:
-        filter->flags()->intensity = true;
-        filter->parameters()->intensity_min = xmin;
-        filter->parameters()->intensity_max = xmax;
-        break;
-    case ohkl::PeakHistogramType::Sigma:
-        filter->flags()->sigma = true;
-        filter->parameters()->sigma_min = xmin;
-        filter->parameters()->sigma_max = xmax;
-        break;
-    case ohkl::PeakHistogramType::Strength:
-        filter->flags()->strength = true;
-        filter->parameters()->strength_min = xmin;
-        filter->parameters()->strength_max = xmax;
-        break;
-    case ohkl::PeakHistogramType::BkgGradient:
-        filter->flags()->gradient = true;
-        filter->parameters()->gradient_min = xmin;
-        filter->parameters()->gradient_max = xmax;
-        break;
-    case ohkl::PeakHistogramType::BkgGradientSigma:
-        filter->flags()->gradient_sigma = true;
-        filter->parameters()->gradient_sigma_min = xmin;
-        filter->parameters()->gradient_sigma_max = xmax;
-        break;
+        case ohkl::PeakHistogramType::Intensity:
+            filter->flags()->intensity = true;
+            filter->parameters()->intensity_min = xmin;
+            filter->parameters()->intensity_max = xmax;
+            break;
+        case ohkl::PeakHistogramType::Sigma:
+            filter->flags()->sigma = true;
+            filter->parameters()->sigma_min = xmin;
+            filter->parameters()->sigma_max = xmax;
+            break;
+        case ohkl::PeakHistogramType::Strength:
+            filter->flags()->strength = true;
+            filter->parameters()->strength_min = xmin;
+            filter->parameters()->strength_max = xmax;
+            break;
+        case ohkl::PeakHistogramType::BkgGradient:
+            filter->flags()->gradient = true;
+            filter->parameters()->gradient_min = xmin;
+            filter->parameters()->gradient_max = xmax;
+            break;
+        case ohkl::PeakHistogramType::BkgGradientSigma:
+            filter->flags()->gradient_sigma = true;
+            filter->parameters()->gradient_sigma_min = xmin;
+            filter->parameters()->gradient_sigma_max = xmax;
+            break;
     }
     filter->filter(collection);
 
@@ -522,8 +520,8 @@ void SubframeReject::rejectOutliers()
     }
     refreshPeakTable();
     gGui->statusBar()->showMessage(
-        QString::number(outliers.size()) + "/" + QString::number(collection->numberOfPeaks()) +
-        " outliers rejected");
+        QString::number(outliers.size()) + "/" + QString::number(collection->numberOfPeaks())
+        + " outliers rejected");
 }
 
 DetectorWidget* SubframeReject::detectorWidget()

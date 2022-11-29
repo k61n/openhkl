@@ -14,11 +14,11 @@
 
 #include "gui/graphics_tools/CutLineItem.h"
 
+#include "gui/MainWin.h"
 #include "gui/graphics/DetectorScene.h"
 #include "gui/graphics/SimplePlot.h"
-#include <Eigen/Dense>
 #include "gui/subframe_experiment/SubframeExperiment.h"
-#include "gui/MainWin.h"
+#include <Eigen/Dense>
 
 CutLineItem::CutLineItem(ohkl::sptrDataSet data) : CutterItem(data), _nPoints(10) { }
 

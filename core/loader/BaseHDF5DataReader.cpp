@@ -311,8 +311,10 @@ bool BaseHDF5DataReader::initRead()
         H5::DataSpace bb_lower_space = bb_lower_data.getSpace();
         H5::DataSet bb_upper_data = maskGroup.openDataSet(ohkl::ds_upperBound);
         H5::DataSpace bb_upper_space = bb_upper_data.getSpace();
-        bb_lower_data.read(lower.data(), H5::PredType::NATIVE_DOUBLE, bb_lower_space, bb_lower_space);
-        bb_upper_data.read(upper.data(), H5::PredType::NATIVE_DOUBLE, bb_upper_space, bb_upper_space);
+        bb_lower_data.read(
+            lower.data(), H5::PredType::NATIVE_DOUBLE, bb_lower_space, bb_lower_space);
+        bb_upper_data.read(
+            upper.data(), H5::PredType::NATIVE_DOUBLE, bb_upper_space, bb_upper_space);
 
         for (std::size_t idx = 0; idx < nmasks; ++idx) {
             ohkl::MaskType mask_type = static_cast<ohkl::MaskType>(maskTypes(idx));
@@ -320,19 +322,18 @@ bool BaseHDF5DataReader::initRead()
             Eigen::Vector3d bb_upper(upper(idx, 0), upper(idx, 1), upper(idx, 2));
             AABB aabb(bb_lower, bb_upper);
             switch (mask_type) {
-            case ohkl::MaskType::Rectangle:
-                _dataset_out->addMask(new ohkl::BoxMask(aabb));
-                break;
-            case ohkl::MaskType::Ellipse:
-                _dataset_out->addMask(new ohkl::EllipseMask(aabb));
-                break;
+                case ohkl::MaskType::Rectangle:
+                    _dataset_out->addMask(new ohkl::BoxMask(aabb));
+                    break;
+                case ohkl::MaskType::Ellipse:
+                    _dataset_out->addMask(new ohkl::EllipseMask(aabb));
+                    break;
             }
         }
-    }
-    else {
+    } else {
         ohklLog(
-            ohkl::Level::Debug, "No masks found in '", _filename, "', data set '",
-            dataset_name, "'");
+            ohkl::Level::Debug, "No masks found in '", _filename, "', data set '", dataset_name,
+            "'");
     }
 
     _file->close();
