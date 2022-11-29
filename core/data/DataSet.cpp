@@ -248,6 +248,7 @@ void DataSet::maskPeaks(
     std::vector<Peak3D*>& peaks, std::map<Peak3D*, RejectionFlag>& rejection_map,
     double bkg_end /* = -1.0 */) const
 {
+    ohklLog(Level::Info, "DataSet::maskPeaks: Masking ", peaks.size(), " peaks");
     int n_masked = 0;
     for (const auto& peak : peaks) {
         // peak belongs to another dataset
@@ -271,6 +272,7 @@ void DataSet::maskPeaks(
             }
         }
     }
+    ohklLog(Level::Info, n_masked, " peaks masked");
 }
 
 ReciprocalVector DataSet::computeQ(const DetectorEvent& ev) const

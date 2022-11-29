@@ -14,9 +14,18 @@
 
 #include "base/mask/BoxMask.h"
 #include "base/mask/EllipseMask.h"
+#include "base/utils/Units.h"
 #include "core/convolve/Convolver.h"
+#include "core/convolve/ConvolverFactory.h"
+#include "core/data/DataSet.h"
+#include "core/experiment/Experiment.h"
+#include "core/experiment/PeakFinder2D.h"
+#include "core/instrument/Diffractometer.h"
 #include "core/instrument/InstrumentState.h"
 #include "core/loader/RawDataReader.h"
+#include "core/peak/Peak3D.h"
+#include "core/raw/DataKeys.h"
+#include "core/shape/PeakFilter.h"
 #include "tables/crystal/SpaceGroup.h"
 #include "tables/crystal/UnitCell.h"
 #include "test/cpp/catch.hpp"
@@ -27,15 +36,6 @@
 #include <string>
 #include <vector>
 
-#include "base/utils/Units.h"
-#include "core/convolve/ConvolverFactory.h"
-#include "core/data/DataSet.h"
-#include "core/raw/DataKeys.h"
-#include "core/experiment/Experiment.h"
-#include "core/experiment/PeakFinder2D.h"
-#include "core/instrument/Diffractometer.h"
-#include "core/peak/Peak3D.h"
-#include "core/shape/PeakFilter.h"
 
 TEST_CASE("test/data/TestSingleFrameIndex.cpp", "")
 {
