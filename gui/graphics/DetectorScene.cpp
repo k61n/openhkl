@@ -1022,8 +1022,10 @@ void DetectorScene::loadCurrentImage()
             _image = addPixmap(QPixmap::fromImage(_colormap->matToImage(
                 _currentFrame.cast<double>(), full, _currentIntensity, _logarithmic)));
         } else {
-            _image = addPixmap(QPixmap::fromImage(_colormap->matToImage(
-                _currentData->gradientFrame(_currentFrameIndex, _gradient_kernel, !_fft_gradient),
+            ohkl::ImageGradient* gradient =
+                _currentData->imageGradient(_currentFrameIndex, _gradient_kernel, !_fft_gradient);
+            _image = addPixmap(
+                QPixmap::fromImage(_colormap->matToImage(gradient->magnitude(),
                 full, _currentIntensity, _logarithmic)));
         }
         _image->setZValue(-2);
@@ -1032,8 +1034,10 @@ void DetectorScene::loadCurrentImage()
             _image->setPixmap(QPixmap::fromImage(_colormap->matToImage(
                 _currentFrame.cast<double>(), full, _currentIntensity, _logarithmic)));
         } else {
-            _image->setPixmap(QPixmap::fromImage(_colormap->matToImage(
-                _currentData->gradientFrame(_currentFrameIndex, _gradient_kernel, !_fft_gradient),
+            ohkl::ImageGradient* gradient =
+                _currentData->imageGradient(_currentFrameIndex, _gradient_kernel, !_fft_gradient);
+            _image->setPixmap(
+                QPixmap::fromImage(_colormap->matToImage(gradient->magnitude(),
                 full, _currentIntensity, _logarithmic)));
         }
     }

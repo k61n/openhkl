@@ -80,9 +80,8 @@ class DataSet {
     //! Returns frame after transforming to account for detector gain and baseline
     Eigen::MatrixXd transformedFrame(std::size_t idx) const;
 
-    //! Return per-pixel magnitude of gradient of a given frame
-    Eigen::MatrixXd gradientFrame(
-        std::size_t idx, GradientKernel kernel, bool realspace = true) const;
+    //! Return ImageGradient object for a given frame
+    ImageGradient* imageGradient(std::size_t idx, GradientKernel kernel, bool realspace = true);
 
     //! Gets the file handle.
     void open();
@@ -195,6 +194,8 @@ class DataSet {
     Diffractometer* _diffractometer;
     //! Pointer to instrument states
     InstrumentStateSet* _states;
+    //! Image gradient for a single frame
+    std::unique_ptr<ImageGradient> _grad;
 
     //! Per-frame histograms of intensities
     std::vector<gsl_histogram*> _histograms;

@@ -21,6 +21,7 @@
 #include "base/utils/Units.h" // deg
 #include "core/convolve/ConvolverFactory.h"
 #include "core/data/DataTypes.h"
+#include "core/data/ImageGradient.h"
 #include "core/detector/Detector.h"
 #include "core/detector/DetectorEvent.h"
 #include "core/experiment/ExperimentExporter.h"
@@ -42,6 +43,7 @@
 #include <H5Cpp.h>
 #include <gsl/gsl_histogram.h>
 
+#include <memory>
 #include <stdexcept>
 
 #include <iostream>
@@ -49,7 +51,7 @@
 namespace ohkl {
 
 DataSet::DataSet(const std::string& dataset_name, Diffractometer* diffractometer)
-    : _diffractometer{diffractometer}, _states(nullptr), _total_histogram(nullptr)
+    : _diffractometer{diffractometer}, _states(nullptr), _grad(nullptr), _total_histogram(nullptr)
 {
     setName(dataset_name);
     if (!_diffractometer)
@@ -293,12 +295,12 @@ Eigen::MatrixXd DataSet::transformedFrame(std::size_t idx) const
     return new_frame;
 }
 
-Eigen::MatrixXd DataSet::gradientFrame(std::size_t idx, GradientKernel kernel, bool realspace) const
+ImageGradient* DataSet::imageGradient(std::size_t idx, GradientKernel kernel, bool realspace)
 {
     ohklLog(Level::Debug, "Computing gradient of frame ", idx);
-    ImageGradient grad(transformedFrame(idx), realspace);
-    grad.compute(kernel);
-    return grad.magnitude();
+    _grad.reset(new ImageGradient(transformedFrame(idx), realspace));
+    _grad->compute(kernel);
+    return _grad.get();
 }
 
 const IDataReader* DataSet::reader() const

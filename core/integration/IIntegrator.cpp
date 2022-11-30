@@ -128,7 +128,8 @@ void IIntegrator::integrate(
         Eigen::MatrixXi mask;
         current_frame = data->transformedFrame(idx);
         if (_params.use_gradient)
-            gradient = data->gradientFrame(idx, _params.gradient_type, !_params.fft_gradient);
+            gradient = data->imageGradient(
+                idx, _params.gradient_type, !_params.fft_gradient)->magnitude();
 
         mask.resize(data->nRows(), data->nCols());
         mask.setConstant(int(IntegrationRegion::EventType::EXCLUDED));
