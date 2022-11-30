@@ -23,6 +23,7 @@
 #include "core/peak/Peak3D.h"
 #include "core/raw/DataKeys.h"
 //#include "core/loader/TiffDataReader.h"
+//#include "core/loader/TiffDataReader.h"
 
 #include <gsl/gsl_histogram.h>
 
@@ -35,6 +36,8 @@ class DetectorEvent;
 class Diffractometer;
 class InstrumentStateSet;
 struct RawDataReaderParameters;
+struct tif_file_metadata;
+struct TiffDataReaderParameters;
 struct tif_file_metadata;
 struct TiffDataReaderParameters;
 
@@ -171,6 +174,13 @@ class DataSet {
     void initBuffer(bool bufferAll = true);
     //! Clear the frame buffer
     void clearBuffer();
+    void setRebin(float nbins) {_rebin = nbins;}
+
+    //! get tiff file resolutions
+    static std::vector<std::string> getTiffResolutions(std::vector<std::string> filenames);
+
+    //! check tiff file resolutions
+    static std::string checkTiffResolution(std::vector<std::string> filenames);
 
     //! get tiff file resolutions
     static std::vector<std::string> getTiffResolutions(std::vector<std::string> filenames);
@@ -203,6 +213,8 @@ class DataSet {
     std::vector<gsl_histogram*> _histograms;
     //! Intensity histogram for whole DataSet
     gsl_histogram* _total_histogram;
+    //! rebin
+    float _rebin;
 
     //! Buffer for image data
     std::vector<std::unique_ptr<Eigen::MatrixXi>> _frame_buffer;
