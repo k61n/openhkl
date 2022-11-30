@@ -23,7 +23,6 @@
 #include "core/peak/Peak3D.h"
 #include "core/raw/DataKeys.h"
 //#include "core/loader/TiffDataReader.h"
-//#include "core/loader/TiffDataReader.h"
 
 #include <gsl/gsl_histogram.h>
 
@@ -36,8 +35,6 @@ class DetectorEvent;
 class Diffractometer;
 class InstrumentStateSet;
 struct RawDataReaderParameters;
-struct tif_file_metadata;
-struct TiffDataReaderParameters;
 struct tif_file_metadata;
 struct TiffDataReaderParameters;
 
@@ -193,7 +190,15 @@ class DataSet {
     //! Data shape (columns, rows, frames)
     std::size_t datashape[3]{0, 0, 0};
 
- protected:
+    void setRebin(float nbins) {_rebin = nbins;}
+
+    //! get tiff file resolutions
+    static std::vector<std::string> getTiffResolutions(std::vector<std::string> filenames);
+
+    //! check tiff file resolutions
+    static std::string checkTiffResolution(std::vector<std::string> filenames);
+
+ private:
     void setReader(const DataFormat dataformat, const std::string& filename = "");
 
     std::string _name = ohkl::kw_datasetDefaultName;
