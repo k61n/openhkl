@@ -47,6 +47,7 @@
 #include <regex>
 #include <regex>
 #include <stdexcept>
+#include <regex>
 
 namespace ohkl {
 
@@ -223,12 +224,12 @@ std::size_t DataSet::nFrames() const
 
 std::size_t DataSet::nCols() const
 {
-    return detector().nCols();
+    return (float)detector().nCols();
 }
 
 std::size_t DataSet::nRows() const
 {
-    return detector().nRows();
+    return (float)detector().nRows();
 }
 
 double DataSet::wavelength() const

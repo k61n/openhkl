@@ -207,6 +207,8 @@ class DataSet {
     std::vector<gsl_histogram*> _histograms;
     //! Intensity histogram for whole DataSet
     gsl_histogram* _total_histogram;
+    //! rebin
+    float _rebin;
 
     //! Buffer for image data
     std::vector<std::unique_ptr<Eigen::MatrixXi>> _frame_buffer;
