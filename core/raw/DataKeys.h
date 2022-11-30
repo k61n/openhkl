@@ -85,6 +85,7 @@ const std::string at_diffractometer{"diffractometer"};
 const std::string at_datasetName{"dataset"};
 const std::string at_formatVersion{"OHKL-format version"};
 const std::string at_datasetSources{"sources"}; // list of sources for the DataSet, separated by ';'
+const std::string at_datasetDimensions{"file dimensions"};
 const std::string at_frameCount{"number of frames"};
 const std::string at_wavelength{"wavelength"};
 const std::string at_monitorSum{"monitor"}; // TODO: explain

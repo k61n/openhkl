@@ -22,12 +22,14 @@
 #include "core/experiment/Experiment.h"
 #include "core/loader/IDataReader.h"
 #include "core/loader/RawDataReader.h"
+#include "core/loader/TiffDataReader.h"
 #include "core/raw/DataKeys.h"
 #include "core/raw/MetaData.h"
 #include "gui/MainWin.h"
 #include "gui/connect/Sentinel.h"
 #include "gui/dialogs/DataNameDialog.h"
 #include "gui/dialogs/RawDataDialog.h"
+#include "gui/dialogs/TiffDataDialog.h"
 #include "gui/models/Project.h"
 #include "gui/subframe_filter/SubframeFilterPeaks.h"
 #include "gui/subframe_find/SubframeFindPeaks.h"
@@ -76,8 +78,9 @@ std::vector<std::string> askRawFileNames()
     qset.beginGroup("RecentDirectories");
     QString loadDirectory = qset.value("data_raw", QDir::homePath()).toString();
 
-    QStringList qfilenames = QFileDialog::getOpenFileNames(
-        gGui, "import raw data", loadDirectory, "Image files (*.raw *.tiff);; All files (*.* *)");
+    QStringList qfilenames =
+        QFileDialog::getOpenFileNames(gGui, "import raw data", loadDirectory,
+                                      "Image files (*.raw);; All files (*.* *)");
     if (qfilenames.empty())
         return {};
 
@@ -94,6 +97,39 @@ std::vector<std::string> askRawFileNames()
     QFileInfo info(qfilenames.at(0));
     loadDirectory = info.absolutePath();
     qset.setValue("data_raw", loadDirectory);
+
+    std::vector<std::string> result;
+    for (const QString& filename : qfilenames)
+        result.push_back(filename.toStdString());
+
+    return result;
+}
+
+std::vector<std::string> askTiffFileNames()
+{
+    QSettings qset = gGui->qSettings();
+    qset.beginGroup("RecentDirectories");
+    QString loadDirectory = qset.value("data_tiff", QDir::homePath()).toString();
+
+    QStringList qfilenames =
+        QFileDialog::getOpenFileNames(gGui, "import tiff data", loadDirectory,
+                                      "Image files (*.tif *.tiff);; All files (*.* *)");
+    if (qfilenames.empty())
+        return {};
+
+    // Don't leave sorting the files to the OS. Use QCollator + std::sort to sort naturally
+    // (numerically)
+    QCollator collator;
+    collator.setNumericMode(true);
+    std::sort(
+        qfilenames.begin(), qfilenames.end(),
+        [&collator](const QString& file1, const QString& file2) {
+            return collator.compare(file1, file2) < 0;
+        });
+
+    QFileInfo info(qfilenames.at(0));
+    loadDirectory = info.absolutePath();
+    qset.setValue("data_tiff", loadDirectory);
 
     std::vector<std::string> result;
     for (const QString& filename : qfilenames)
@@ -358,6 +394,84 @@ bool Session::loadRawData(bool single_file /* = false */)
         }
 
         onDataChanged();
+    } catch (std::exception& e) {
+        QMessageBox::critical(nullptr, "Error", QString(e.what()));
+    } catch (...) {
+        return false;
+    }
+    return true;
+}
+
+bool Session::loadTiffData()
+{
+    if (_currentProject < 0)
+        return false;
+
+    ohkl::Experiment* exp = currentProject()->experiment();
+    ohkl::Detector* detector = exp->getDiffractometer()->detector();
+    ohkl::TiffDataReaderParameters params;
+
+    try {
+        // Get input filenames from dialog.
+        std::vector<std::string> filenames = askTiffFileNames();
+        if (filenames.empty())
+            return false;
+
+        std::string ext = ""; // let's store the used file extension for later
+
+        for (auto & e : filenames) {
+            auto pos = e.find_last_of(".");
+            if (pos == std::string::npos )
+                throw std::runtime_error("E unknown file extension");
+
+            std::string tmp_ext = e.substr(pos);
+            transform(tmp_ext.begin(), tmp_ext.end(), tmp_ext.begin(), ::tolower);
+
+            // check if we have only supported file extensions selected
+            if (tmp_ext != ".tiff" && tmp_ext != ".tif")
+                throw std::runtime_error("E Session::loadRawData Only Tiff data are allowed here");
+        }
+
+        // Get metadata from readme file, then edit them in dialog.
+        const QStringList& extant_dataset_names = currentProject()->getDataNames();
+
+        std::string npixels = ohkl::DataSet::checkTiffResolution(filenames);
+
+        if (npixels.empty()) // is only empty if tiff file have different resolutions
+            throw std::runtime_error("Differen TIFF file resolutions for one dataset are not supported!");
+
+        //params.swap_endian = false; // ne default swap for tiff files
+        params.LoadDataFromFile(filenames.at(0));
+        TiffDataDialog dialog(params, extant_dataset_names, QString::fromStdString(npixels));
+
+        if (!dialog.exec())
+            return false;
+
+        params = dialog.parameters();
+
+        const std::shared_ptr<ohkl::DataSet> dataset{
+            std::make_shared<ohkl::DataSet>(params.dataset_name, exp->getDiffractometer())};
+
+        detector->setBaseline(params.baseline);
+        detector->setGain(params.gain);
+        // this must be called before adding files
+        dataset->setTifReaderParameters(params);
+
+        // candidate for being at the wrong spot
+        for (const auto& filename : filenames)
+                dataset->addTifFrame(filename);
+
+        dataset->finishRead();
+
+        if (!exp->addData(dataset)) {
+            // why does this always trigger
+            //throw std::runtime_error("Unable to add dataset");
+        }
+
+        onDataChanged();
+        gGui->sentinel->setLinkedComboList(ComboType::DataSet,
+            currentProject()->getDataNames());
+
     } catch (std::exception& e) {
         QMessageBox::critical(nullptr, "Error", QString(e.what()));
     } catch (...) {

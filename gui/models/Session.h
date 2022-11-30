@@ -30,6 +30,7 @@ class FoundPeakComboBox;
 class PredictedPeakComboBox;
 class IntegratedPeakComboBox;
 class ShapeComboBox;
+struct tif_file_metadata;
 namespace ohkl {
 enum class DataFormat;
 }
@@ -61,6 +62,7 @@ class Session {
 
     void loadData(ohkl::DataFormat format);
     bool loadRawData(bool single_file = false);
+    bool loadTiffData();
     void removeData();
 
     void onDataChanged();
