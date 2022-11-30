@@ -427,7 +427,6 @@ bool Session::loadTiffData()
         //params.swap_endian = false; // ne default swap for tiff files
         params.LoadDataFromFile(filenames.at(0));
         TiffDataDialog dialog(params, extant_dataset_names, QString::fromStdString(npixels));
-
         if (!dialog.exec())
             return false;
 
