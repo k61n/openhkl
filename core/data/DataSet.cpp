@@ -35,7 +35,6 @@
 #include "core/loader/NexusDataReader.h"
 #include "core/loader/RawDataReader.h"
 #include "core/loader/TiffDataReader.h"
-#include "core/loader/TiffDataReader.h"
 #include "core/peak/Peak3D.h"
 #include "core/raw/DataKeys.h"
 
@@ -181,6 +180,20 @@ void DataSet::addTiffFrame(const std::string& tiffilename)
     TiffDataReader& tiffreader = *static_cast<TiffDataReader*>(_reader.get());
 
     tiffreader.addFrame(tiffilename);
+}
+void DataSet::addTifFrame(const std::string& tiffilename)
+{
+    if (!_reader)
+        setReader(DataFormat::TIF);
+
+    // no mixing of different data format
+    if (_dataformat != DataFormat::TIF)
+        throw std::runtime_error(
+            "DataSet '" + _name + "': To read a tif frame, data format must be tif.");
+
+    TiffDataReader& tifreader = *static_cast<TiffDataReader*>(_reader.get());
+
+    tifreader.addFrame(tiffilename);
 }
 void DataSet::addTifFrame(const std::string& tiffilename)
 {
