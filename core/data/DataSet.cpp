@@ -34,6 +34,7 @@
 #include "core/loader/HDF5DataReader.h"
 #include "core/loader/NexusDataReader.h"
 #include "core/loader/RawDataReader.h"
+#include "core/loader/TiffDataReader.h"
 #include "core/peak/Peak3D.h"
 #include "core/raw/DataKeys.h"
 
@@ -44,6 +45,7 @@
 
 #include <memory>
 #include <stdexcept>
+#include <regex>
 
 namespace ohkl {
 
@@ -75,6 +77,9 @@ void DataSet::setReader(const DataFormat dataformat, const std::string& filename
         case DataFormat::RAW:
             // NOTE: RawDataReader needs a list of frame files which should be given later
             _reader.reset(new RawDataReader);
+            break;
+        case DataFormat::TIF:
+            _reader.reset(new TiffDataReader);
             break;
         default: throw std::invalid_argument("Data format is not recognized.");
     }
@@ -111,6 +116,10 @@ void DataSet::addDataFile(const std::string& filename, const std::string& extens
         else if (ext == "raw")
             throw std::runtime_error(
                 "DataSet '" + _name + "': Use 'addRawFrame(<filename>)' for reading raw files.");
+        else if (ext == "tif" || ext == "tiff"){
+
+            datafmt = DataFormat::TIF;
+        }
         else
             throw std::runtime_error("DataSet '" + _name + "': Extension unknown.");
 
@@ -120,7 +129,28 @@ void DataSet::addDataFile(const std::string& filename, const std::string& extens
 
     setReader(datafmt, filename);
 }
+void DataSet::setTifReaderParameters(const TiffDataReaderParameters& params)
+{
+    if (_dataformat == DataFormat::Unknown)
+        _dataformat = DataFormat::TIF;
 
+    if (_dataformat != DataFormat::TIF)
+        throw std::runtime_error(
+            "DataSet '" + _name + "': Cannot set raw parameters since data format is not Tif.");
+
+    if (!_reader)
+        setReader(DataFormat::TIF);
+
+    TiffDataReader& tifreader = *static_cast<TiffDataReader*>(_reader.get());
+    tifreader.setParameters(params);
+
+    tifreader.setWidth(_diffractometer->detector()->nCols());
+    tifreader.setHeight(_diffractometer->detector()->nRows());
+
+    ohklLog(
+        Level::Info,
+        "DataSet '" + _name + "': TifDataReader parameters set."); // TODO: log parameter details
+}
 void DataSet::setRawReaderParameters(const RawDataReaderParameters& params)
 {
     // if data-format is not set, then set it to raw.
@@ -141,6 +171,20 @@ void DataSet::setRawReaderParameters(const RawDataReaderParameters& params)
     ohklLog(
         Level::Info,
         "DataSet '" + _name + "': RawDataReader parameters set."); // TODO: log parameter details
+}
+void DataSet::addTifFrame(const std::string& tiffilename)
+{
+    if (!_reader)
+        setReader(DataFormat::TIF);
+
+    // no mixing of different data format
+    if (_dataformat != DataFormat::TIF)
+        throw std::runtime_error(
+            "DataSet '" + _name + "': To read a tif frame, data format must be tif.");
+
+    TiffDataReader& tifreader = *static_cast<TiffDataReader*>(_reader.get());
+
+    tifreader.addFrame(tiffilename);
 }
 
 void DataSet::addRawFrame(const std::string& rawfilename)
@@ -184,12 +228,12 @@ std::size_t DataSet::nFrames() const
 
 std::size_t DataSet::nCols() const
 {
-    return detector().nCols();
+    return (float)detector().nCols();
 }
 
 std::size_t DataSet::nRows() const
 {
-    return detector().nRows();
+    return (float)detector().nRows();
 }
 
 double DataSet::wavelength() const
@@ -466,6 +510,24 @@ void DataSet::removeAllMaks()
 {
     if (_masks.size() > 0)
         _masks.clear();
+}
+
+std::vector<std::string> DataSet::getTiffResolutions(std::vector<std::string> filenames)
+{
+    ohkl::TiffDataReader reader;
+    return reader.readFileResolutions(filenames);
+}
+
+std::string DataSet::checkTiffResolution(std::vector<std::string> filenames)
+{
+    auto resolutions = getTiffResolutions(filenames);
+    for (auto & r : resolutions)
+        if (resolutions[0] != r)
+            return "";
+
+    if (resolutions.size() >= 0)
+        return resolutions[0];
+    return "";
 }
 
 void DataSet::initBuffer(bool bufferAll)
