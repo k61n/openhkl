@@ -67,9 +67,12 @@ void Integrator::integratePeaks(
         Level::Info,
         "Integrator::integratePeaks: integrating PeakCollection '" + peaks->name() + "'");
     IIntegrator* integrator = getIntegrator(integrator_type);
+    integrator->setParameters(*_params);
     integrator->setNNumors(1);
     integrator->integrate(peaks->getPeakList(), peaks->shapeModel(), data, 1);
     peaks->setIntegrated(true);
+    if (_params->use_gradient)
+        peaks->setBkgGradient(true);
 
     _n_peaks = 0;
     _n_valid = 0;
@@ -92,6 +95,8 @@ void Integrator::integratePeaks(
     integrator->setNNumors(1);
     integrator->integrate(peaks->getPeakList(), shapes, data, 1);
     peaks->setIntegrated(true);
+    if (params->use_gradient)
+        peaks->setBkgGradient(true);
 
     _n_peaks = 0;
     _n_valid = 0;
@@ -128,6 +133,8 @@ void Integrator::integrateFoundPeaks(PeakFinder* peak_finder)
     // peak_finder->getPeakCollection()->setIntegrated(true); // doesnt work since peak collection
     // does not exist yet
     peak_finder->setIntegrated(true);
+    if (_params->use_gradient)
+        peak_finder->setBkgGradient(true);
 }
 
 void Integrator::integrateShapeModel(
