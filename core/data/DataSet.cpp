@@ -296,8 +296,8 @@ Eigen::MatrixXd DataSet::transformedFrame(std::size_t idx) const
 Eigen::MatrixXd DataSet::gradientFrame(std::size_t idx, GradientKernel kernel, bool realspace) const
 {
     ohklLog(Level::Debug, "Computing gradient of frame ", idx);
-    ImageGradient grad(transformedFrame(idx), realspace);
-    grad.compute(kernel);
+    ImageGradient grad(transformedFrame(idx));
+    grad.compute(kernel, realspace);
     return grad.magnitude();
 }
 

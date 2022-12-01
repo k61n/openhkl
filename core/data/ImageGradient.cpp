@@ -21,11 +21,12 @@
 
 namespace ohkl {
 
-ImageGradient::ImageGradient(const Eigen::MatrixXd& image, bool realspace)
-    : _image(&image), _real_space(realspace)
+ImageGradient::ImageGradient(const Eigen::MatrixXd& image) : _image(&image) { }
+
+void ImageGradient::reset()
 {
-    _dx = Eigen::MatrixXd::Zero(image.rows(), image.cols());
-    _dy = Eigen::MatrixXd::Zero(image.rows(), image.cols());
+    _dx = Eigen::MatrixXd::Zero(_image->rows(), _image->cols());
+    _dy = Eigen::MatrixXd::Zero(_image->rows(), _image->cols());
 }
 
 double ImageGradient::pixel(int row, int col)
@@ -41,9 +42,10 @@ double ImageGradient::pixel(int row, int col)
     return (*_image)(row, col);
 }
 
-void ImageGradient::compute(GradientKernel kernel)
+void ImageGradient::compute(GradientKernel kernel, bool realspace)
 {
-    if (_real_space) {
+    reset();
+    if (realspace) {
         ohklLog(
             Level::Debug, "ImageGradient::compute: real space ", _convolver_callbacks.at(kernel),
             " kernel");
