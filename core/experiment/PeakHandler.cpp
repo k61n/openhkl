@@ -43,7 +43,7 @@ bool PeakHandler::addPeakCollection(
 
 bool PeakHandler::addPeakCollection(
     const std::string& name, const PeakCollectionType type, const std::vector<ohkl::Peak3D*> peaks,
-    bool indexed, bool integrated)
+    bool indexed, bool integrated, bool gradient)
 {
     // abort if name is aleady in use
     if (hasPeakCollection(name))
@@ -53,6 +53,7 @@ bool PeakHandler::addPeakCollection(
     ptr->setId(_last_index++);
     ptr->setIndexed(indexed);
     ptr->setIntegrated(integrated);
+    ptr->setBkgGradient(gradient);
     ptr->populate(peaks);
     _peak_collections.insert_or_assign(name, std::move(ptr));
     return hasPeakCollection(name); // now name must be in use

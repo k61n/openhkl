@@ -44,7 +44,7 @@ class PeakHandler {
     //
     bool addPeakCollection(
         const std::string& name, const PeakCollectionType type,
-        const std::vector<ohkl::Peak3D*> peaks, bool indexed, bool integrated);
+        const std::vector<ohkl::Peak3D*> peaks, bool indexed, bool integrated, bool gradient);
     //! Add an empty peak collection
     bool addEmptyCollection(const std::string& name, const PeakCollectionType type);
     //! Returns true if the experiment has named peak collection

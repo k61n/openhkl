@@ -88,8 +88,14 @@ class PeakFinder {
     //! Return integrated state
     bool isIntegrated() { return _integrated; };
 
+    //! Return background gradient status
+    bool hasBkgGradient() { return _gradient; };
+
     //! set integration state
     void setIntegrated(bool b) { _integrated = b; };
+
+    //! set background gradient status
+    void setBkgGradient(bool b) { _gradient = b; };
 
 #ifndef SWIG
     //! Set the convolver flavour for peak/background convolution
@@ -142,6 +148,8 @@ class PeakFinder {
     unsigned int _peaks_found;
     //! stores value of integration state
     bool _integrated;
+    //! whether peaks have background gradient after integration
+    bool _gradient;
 };
 
 /*! @}*/

@@ -29,6 +29,7 @@ PeakCollection::PeakCollection()
     , _shape_model(nullptr)
     , _indexed(false)
     , _integrated(false)
+    , _gradient(false)
 {
 }
 
@@ -39,6 +40,7 @@ PeakCollection::PeakCollection(const std::string& name, ohkl::PeakCollectionType
     , _shape_model(nullptr)
     , _indexed(false)
     , _integrated(false)
+    , _gradient(false)
 {
 }
 
@@ -148,6 +150,7 @@ MetaData& PeakCollection::metadata()
     // while saving data to files only Int32, String and DBL seemed to supported
     _metadata.add<std::string>(ohkl::at_indexed, std::to_string(isIndexed()));
     _metadata.add<std::string>(ohkl::at_integrated, std::to_string(isIntegrated()));
+    _metadata.add<std::string>(ohkl::at_gradient, std::to_string(hasBkgGradient()));
     return _metadata;
 }
 

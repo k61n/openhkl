@@ -102,6 +102,7 @@ const std::string at_peakCount{"number of peaks"};
 const std::string at_peakType{"peak type"};
 const std::string at_indexed{"is indexed"};
 const std::string at_integrated{"is integrated"};
+const std::string at_gradient{"has bkg gradient"};
 // unit cell
 const std::string at_unitCellName{"unit cell name"};
 const std::string at_rVec{"reciprocal"};

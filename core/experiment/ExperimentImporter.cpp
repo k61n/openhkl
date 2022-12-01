@@ -135,6 +135,7 @@ void ExperimentImporter::loadPeaks(Experiment* experiment)
 
             std::string indexed;
             std::string integrated;
+            std::string gradient;
 
             if (peak_collection.attrExists(ohkl::at_peakCount)) {
                 const H5::Attribute attr = peak_collection.openAttribute(ohkl::at_peakCount);
@@ -154,6 +155,14 @@ void ExperimentImporter::loadPeaks(Experiment* experiment)
                 const H5::DataType attr_type = attr.getDataType();
                 attr.read(attr_type, &indexed);
             }
+
+
+            if (peak_collection.attrExists(ohkl::at_gradient)) {
+                const H5::Attribute attr = peak_collection.openAttribute(ohkl::at_gradient);
+                const H5::DataType attr_type = attr.getDataType();
+                attr.read(attr_type, &gradient);
+            }
+
 
             if (peak_collection.attrExists(ohkl::at_integrated)) {
                 const H5::Attribute attr = peak_collection.openAttribute(ohkl::at_integrated);
@@ -361,7 +370,7 @@ void ExperimentImporter::loadPeaks(Experiment* experiment)
             // converting data types. Ascii code of '0' is 48, of '1' is 49
             experiment->addPeakCollection(
                 collection_name, collection_type, peaks, static_cast<bool>(indexed[0] - 48),
-                static_cast<bool>(integrated[0] - 48));
+                static_cast<bool>(integrated[0] - 48), static_cast<bool>(gradient[0] - 48));
 
             ohklLog(Level::Debug, "Finished creating the peak collection");
         }
