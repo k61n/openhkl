@@ -40,10 +40,6 @@ class ImageGradient {
 
     //! Get an element, respecting periodic boundary condition
     double pixel(int row, int col);
-    //! Get the gradient in the x direction
-    Eigen::MatrixXd dx() const { return _dx; };
-    //! Get the gradient in the y direction
-    Eigen::MatrixXd dy() const { return _dy; };
 
     //! Compute the gradient (but not the magnitude)
     void compute(GradientKernel kernel);
