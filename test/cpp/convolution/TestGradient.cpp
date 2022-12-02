@@ -37,22 +37,35 @@ TEST_CASE("test/peak_find/TestGradient.cpp", "")
     data->finishRead();
     experiment.addData(data);
 
-    ohkl::ImageGradient grad{data->transformedFrame(0)};
-    double sum;
+    Eigen::MatrixXd image = data->transformedFrame(0);
+    ohkl::ImageGradient grad(image);
+    double sum, sum_magnitude;
 
     grad.compute(ohkl::GradientKernel::CentralDifference, true);
     sum = grad.dx()->sum() + grad.dy()->sum();
-    std::cout << "Central difference: " << sum << std::endl;
+    CHECK(sum < 1.0E-8);
+    sum_magnitude = grad.magnitude().sum();
+    std::cout << "Central difference: sum = " << sum << std::endl;
 
     grad.compute(ohkl::GradientKernel::CentralDifference, false);
     sum = grad.dx()->sum() + grad.dy()->sum();
-    std::cout << "Central difference (FFT): " << sum << std::endl;
+    CHECK(sum < 1.0E-8);
+    sum_magnitude -= grad.magnitude().sum();
+    CHECK(sum_magnitude < 1.0E-8);
+    std::cout << "Central difference (FFT): sum = " << sum << std::endl;
+    std::cout << "Magnitude diff between real space and FFT: " << sum_magnitude << std::endl;;
 
     grad.compute(ohkl::GradientKernel::Sobel, true);
     sum = grad.dx()->sum() + grad.dy()->sum();
-    std::cout << "Sobel: " << sum << std::endl;
+    CHECK(sum < 1.0E-8);
+    sum_magnitude = grad.magnitude().sum();
+    std::cout << "Sobel: sum = " << sum << std::endl;
 
     grad.compute(ohkl::GradientKernel::Sobel, false);
     sum = grad.dx()->sum() + grad.dy()->sum();
-    std::cout << "Sobel (FFT): " << sum << std::endl;
+    CHECK(sum < 1.0E-8);
+    sum_magnitude -= grad.magnitude().sum();
+    CHECK(sum_magnitude < 1.0E-8);
+    std::cout << "Sobel (FFT): sum = " << sum << std::endl;
+    std::cout << "Magnitude diff between real space and FFT: " << sum_magnitude << std::endl;;
 }

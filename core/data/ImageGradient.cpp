@@ -21,7 +21,10 @@
 
 namespace ohkl {
 
-ImageGradient::ImageGradient(const Eigen::MatrixXd& image) : _image(&image) { }
+ImageGradient::ImageGradient(const Eigen::MatrixXd& image) : _image(&image)
+{
+    reset();
+}
 
 void ImageGradient::reset()
 {
