@@ -111,10 +111,11 @@ bool Experiment::acceptFoundPeaks(const std::string& name, const PeakCollection&
 
     if (!addPeakCollection(
             name, PeakCollectionType::FOUND, peaks, found.isIndexed(),
-            _peak_finder->isIntegrated())) {
+            _peak_finder->isIntegrated(), _peak_finder->hasBkgGradient())) {
         return false;
     }
     _peak_finder->setIntegrated(false); // reset for next use
+    _peak_finder->setBkgGradient(false);
     return true;
 }
 
@@ -389,9 +390,9 @@ bool Experiment::addPeakCollection(
 
 bool Experiment::addPeakCollection(
     const std::string& name, const PeakCollectionType type, std::vector<Peak3D*> peaks,
-    bool indexed, bool integrated)
+    bool indexed, bool integrated, bool gradient)
 {
-    return _peak_handler->addPeakCollection(name, type, peaks, indexed, integrated);
+    return _peak_handler->addPeakCollection(name, type, peaks, indexed, integrated, gradient);
 }
 
 bool Experiment::hasPeakCollection(const std::string& name)

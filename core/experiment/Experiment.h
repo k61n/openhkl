@@ -99,7 +99,7 @@ class Experiment {
         const std::string& name, const PeakCollectionType type, std::vector<Peak3D*> peaks);
     bool addPeakCollection(
         const std::string& name, const PeakCollectionType type, std::vector<Peak3D*> peaks,
-        bool indexed, bool integrated);
+        bool indexed, bool integrated, bool gradient);
     //! Check if the handler has the named peak collection
     bool hasPeakCollection(const std::string& name);
     //! Check if handler has Peak Collections of a certain type

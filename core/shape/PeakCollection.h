@@ -124,10 +124,14 @@ class PeakCollection {
     bool isIndexed() const { return _indexed; }
     //! Whether PeakCollection has been integrated or not
     bool isIntegrated() const { return _integrated; }
+    //! Whether PeakCollection has background gradient
+    bool hasBkgGradient() const { return _gradient; }
     //! Set Indexed flag
     void setIndexed(bool value) { _indexed = value; }
     //! Count Integrated flag
     void setIntegrated(bool value) { _integrated = value; }
+    //! Background gradient flag
+    void setBkgGradient(bool value) { _gradient = value; }
 
     void setUnitCell(const sptrUnitCell& cell);
 
@@ -155,6 +159,9 @@ class PeakCollection {
 
     //! Has been integrated
     bool _integrated;
+
+    //! Integration includes background gradient
+    bool _gradient;
 };
 
 /*! @}*/

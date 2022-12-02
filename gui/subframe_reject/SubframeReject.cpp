@@ -397,6 +397,15 @@ void SubframeReject::computeHistogram()
 
     ohkl::PeakHistogramType type =
         static_cast<ohkl::PeakHistogramType>(_histo_combo->currentIndex());
+    if (type == ohkl::PeakHistogramType::BkgGradient ||
+        type == ohkl::PeakHistogramType::BkgGradientSigma) {
+        if (!peaks->hasBkgGradient()) {
+            gGui->statusBar()->showMessage(
+                "Can't filter by intensity: background gradients not integrated");
+            return;
+        }
+    }
+
     QString xLabel = QString::fromStdString(_peak_stats.getHistoStrings().find(type)->second);
     _plot_widget->setYLog(_log_freq->isChecked());
     _plot_widget->plotData(
@@ -415,26 +424,51 @@ void SubframeReject::filterSelection(double xmin, double xmax)
 
     switch (type) {
         case ohkl::PeakHistogramType::Intensity:
+            if (!collection->isIntegrated()) {
+                gGui->statusBar()->showMessage(
+                    "Can't filter by intensity: peaks are not integrated");
+                return;
+            }
             filter->flags()->intensity = true;
             filter->parameters()->intensity_min = xmin;
             filter->parameters()->intensity_max = xmax;
             break;
         case ohkl::PeakHistogramType::Sigma:
+            if (!collection->isIntegrated()) {
+                gGui->statusBar()->showMessage(
+                    "Can't filter by intensity: peaks are not integrated");
+                return;
+            }
             filter->flags()->sigma = true;
             filter->parameters()->sigma_min = xmin;
             filter->parameters()->sigma_max = xmax;
             break;
         case ohkl::PeakHistogramType::Strength:
+            if (!collection->isIntegrated()) {
+                gGui->statusBar()->showMessage(
+                    "Can't filter by intensity: peaks are not integrated");
+                return;
+            }
             filter->flags()->strength = true;
             filter->parameters()->strength_min = xmin;
             filter->parameters()->strength_max = xmax;
             break;
         case ohkl::PeakHistogramType::BkgGradient:
+            if (!collection->hasBkgGradient()) {
+                gGui->statusBar()->showMessage(
+                    "Can't filter by intensity: background gradients not integrated");
+                return;
+            }
             filter->flags()->gradient = true;
             filter->parameters()->gradient_min = xmin;
             filter->parameters()->gradient_max = xmax;
             break;
         case ohkl::PeakHistogramType::BkgGradientSigma:
+            if (!collection->hasBkgGradient()) {
+                gGui->statusBar()->showMessage(
+                    "Can't filter by intensity: background gradients not integrated");
+                return;
+            }
             filter->flags()->gradient_sigma = true;
             filter->parameters()->gradient_sigma_min = xmin;
             filter->parameters()->gradient_sigma_max = xmax;
