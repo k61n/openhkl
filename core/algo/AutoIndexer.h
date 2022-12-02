@@ -72,6 +72,8 @@ struct IndexerParameters {
     double strength_min = 1.0;
     //! Maximum peak strength
     double strength_max = 1.0e7;
+    //! Whether the peaks are integrated
+    bool peaks_integrated = false;
 
     void log(const Level& level) const;
 };

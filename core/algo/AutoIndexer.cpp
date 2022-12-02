@@ -51,6 +51,7 @@ void IndexerParameters::log(const Level& level) const
     ohklLog(level, "d_max              = ", d_max);
     ohklLog(level, "strength_min       = ", strength_min);
     ohklLog(level, "strength_max       = ", strength_max);
+    ohklLog(level, "peaks_integrated   = ", peaks_integrated);
 }
 
 AutoIndexer::AutoIndexer() : _solutions(), _handler(nullptr)
@@ -92,6 +93,7 @@ bool AutoIndexer::autoIndex(PeakCollection* peaks)
     ohklLog(Level::Info, "AutoIndexer::autoindex: indexing PeakCollection '", peaks->name(), "'");
     std::vector<Peak3D*> peak_list = peaks->getPeakList();
     std::vector<Peak3D*> filtered_peaks = filterPeaks(peak_list);
+    _params->peaks_integrated = peaks->isIntegrated();
 
     if (autoIndex(filtered_peaks)) {
         peaks->setIndexed(true);
@@ -124,6 +126,14 @@ std::vector<Peak3D*> AutoIndexer::filterPeaks(
         Level::Info, "AutoIndexer::filterPeaks: ", enabled_peaks.size(), " enabled peaks");
     const std::vector<Peak3D*> filtered_peaks =
         PeakFilter{}.filterDRange(enabled_peaks, _params->d_min, _params->d_max, state);
+    if (_params->peaks_integrated) {
+        const std::vector<Peak3D*> filtered_peaks_2 = PeakFilter{}.filterStrength(
+            filtered_peaks, _params->strength_min, _params->strength_max);
+        ohklLog(
+            Level::Info, "AutoIndexer::filterPeaks: ", filtered_peaks_2.size(),
+            " peaks used in indexing");
+        return filtered_peaks_2;
+    }
     ohklLog(
         Level::Info, "AutoIndexer::filterPeaks: ", filtered_peaks.size(),
         " peaks used in indexing");

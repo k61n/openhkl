@@ -163,6 +163,10 @@ class PeakFilter {
         const std::vector<Peak3D*>& peaks, double d_min, double d_max,
         const InstrumentState* state = nullptr) const;
 
+    //! Filter strength on peak vector
+    std::vector<Peak3D*> filterStrength(
+        const std::vector<Peak3D*>& peaks, double str_min, double str_max);
+
     //! Run the filtering
     void filter(PeakCollection* peak_collection) const;
 

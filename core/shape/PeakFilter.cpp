@@ -366,6 +366,27 @@ void PeakFilter::filterStrength(PeakCollection* peak_collection) const
     ohklLog(Level::Info, "PeakFilter::filterStrength: ", nrejected, " peaks rejected");
 }
 
+std::vector<Peak3D*> PeakFilter::filterStrength(
+    const std::vector<Peak3D*>& peaks, double str_min, double str_max)
+{
+    std::vector<Peak3D*> filtered_peaks;
+    for (auto* peak : peaks) {
+        Intensity corrected_intensity = peak->correctedIntensity();
+        if (!corrected_intensity.isValid())
+            continue;
+        double intensity = corrected_intensity.value();
+        double sigma = corrected_intensity.sigma();
+
+        if (sigma < 1.0e-6)
+            continue;
+
+        double i_over_sigma = intensity / sigma;
+        if (i_over_sigma >= str_min && i_over_sigma <= str_max)
+            filtered_peaks.push_back(peak);
+    }
+    return filtered_peaks;
+}
+
 void PeakFilter::filterPredicted(PeakCollection* peak_collection) const
 {
     int nrejected = 0;

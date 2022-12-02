@@ -456,7 +456,7 @@ void SubframeAutoIndexer::grabIndexerParameters()
     if (!gSession->hasProject())
         return;
 
-    auto params = gSession->currentProject()->experiment()->autoIndexer()->parameters();
+    auto* params = gSession->currentProject()->experiment()->autoIndexer()->parameters();
     _min_frame->setValue(params->first_frame);
     _max_frame->setValue(params->last_frame);
     _d_min->setValue(params->d_min);
@@ -480,7 +480,7 @@ void SubframeAutoIndexer::setIndexerParameters()
     if (!gSession->hasProject())
         return;
 
-    auto params = gSession->currentProject()->experiment()->autoIndexer()->parameters();
+    auto* params = gSession->currentProject()->experiment()->autoIndexer()->parameters();
 
     params->first_frame = _min_frame->value();
     params->last_frame = _max_frame->value();
@@ -498,6 +498,11 @@ void SubframeAutoIndexer::setIndexerParameters()
     params->indexingTolerance = _indexing_tolerance->value();
     params->frequencyTolerance = _frequency_tolerance->value();
     params->minUnitCellVolume = _min_cell_volume->value();
+
+    if (!gSession->currentProject()->hasPeakCollection())
+        return;
+    auto* peaks = _peak_combo->currentPeakCollection();
+    params->peaks_integrated = peaks->isIntegrated();
 }
 
 void SubframeAutoIndexer::runAutoIndexer()
