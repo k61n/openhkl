@@ -149,13 +149,11 @@ void ExperimentImporter::loadPeaks(Experiment* experiment)
                 attr.read(attr_type, &type);
             }
 
-
             if (peak_collection.attrExists(ohkl::at_indexed)) {
                 const H5::Attribute attr = peak_collection.openAttribute(ohkl::at_indexed);
                 const H5::DataType attr_type = attr.getDataType();
                 attr.read(attr_type, &indexed);
             }
-
 
             if (peak_collection.attrExists(ohkl::at_gradient)) {
                 const H5::Attribute attr = peak_collection.openAttribute(ohkl::at_gradient);
@@ -163,13 +161,11 @@ void ExperimentImporter::loadPeaks(Experiment* experiment)
                 attr.read(attr_type, &gradient);
             }
 
-
             if (peak_collection.attrExists(ohkl::at_integrated)) {
                 const H5::Attribute attr = peak_collection.openAttribute(ohkl::at_integrated);
                 const H5::DataType attr_type = attr.getDataType();
                 attr.read(attr_type, &integrated);
             }
-
 
             ohklLog(
                 Level::Debug, "ExperimentImporter::loadPeaks: found ", n_peaks,

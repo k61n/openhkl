@@ -454,7 +454,7 @@ void SubframeReject::filterSelection(double xmin, double xmax)
             filter->parameters()->strength_max = xmax;
             break;
         case ohkl::PeakHistogramType::BkgGradient:
-            if (!collection->isIntegrated()) {
+            if (!collection->hasBkgGradient()) {
                 gGui->statusBar()->showMessage(
                     "Can't filter by intensity: background gradients not integrated");
                 return;
@@ -464,7 +464,7 @@ void SubframeReject::filterSelection(double xmin, double xmax)
             filter->parameters()->gradient_max = xmax;
             break;
         case ohkl::PeakHistogramType::BkgGradientSigma:
-            if (!collection->isIntegrated()) {
+            if (!collection->hasBkgGradient()) {
                 gGui->statusBar()->showMessage(
                     "Can't filter by intensity: background gradients not integrated");
                 return;
