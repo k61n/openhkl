@@ -14,14 +14,6 @@
 
 #include "core/convolve/AtomicConvolver.h"
 
-#include <iostream>
-
-#define ASSERT(cond)                                                                               \
-    if (!(cond)) {                                                                                 \
-        std::cerr << "assertion failed: " #cond << "\n";                                           \
-        exit(1);                                                                                   \
-    }
-
 namespace ohkl {
 
 AtomicConvolver::AtomicConvolver() : Convolver() { }

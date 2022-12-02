@@ -36,13 +36,20 @@ enum class GradientKernel { CentralDifference, Sobel, Sobel5, Prewitt, Roberts }
  */
 class ImageGradient {
  public:
-    ImageGradient(const Eigen::MatrixXd& image, bool realspace = true);
+    ImageGradient(const Eigen::MatrixXd& image);
+
+    //! Reset the stored matrices
+    void reset();
 
     //! Get an element, respecting periodic boundary condition
     double pixel(int row, int col);
+    //! Get the gradient in the x direction
+    Eigen::MatrixXd* dx() { return &_dx; };
+    //! Get the gradient in the y direction
+    Eigen::MatrixXd* dy() { return &_dy; };
 
     //! Compute the gradient (but not the magnitude)
-    void compute(GradientKernel kernel);
+    void compute(GradientKernel kernel, bool realspace);
     //! Compute gradient using real space method
     void computeRealSpace(GradientKernel kernel);
     //! Compute gradient using FFT method
@@ -67,8 +74,6 @@ class ImageGradient {
     Eigen::MatrixXd _dx;
     //! Gradient in the y direction
     Eigen::MatrixXd _dy;
-    //! Do calculations in real space (as opposed to FFT)
-    bool _real_space;
     //! Convolver for image filtering
     std::unique_ptr<Convolver> _convolver;
 

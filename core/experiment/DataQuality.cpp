@@ -21,8 +21,8 @@
 #include "core/statistics/RFactor.h"
 #include "core/statistics/ResolutionShell.h"
 #include "tables/crystal/SpaceGroup.h"
+
 #include <iomanip>
-#include <iostream>
 
 namespace ohkl {
 

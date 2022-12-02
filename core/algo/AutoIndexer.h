@@ -16,6 +16,7 @@
 #define OHKL_CORE_ALGO_AUTOINDEXER_H
 
 #include "base/utils/ProgressHandler.h"
+#include "core/instrument/InstrumentState.h"
 #include "core/shape/PeakCollection.h"
 
 namespace ohkl {
@@ -71,6 +72,8 @@ struct IndexerParameters {
     double strength_min = 1.0;
     //! Maximum peak strength
     double strength_max = 1.0e7;
+    //! Whether the peaks are integrated
+    bool peaks_integrated = false;
 
     void log(const Level& level) const;
 };
@@ -93,8 +96,8 @@ class AutoIndexer {
     AutoIndexer();
     //! Return the autoindexing parameters
     IndexerParameters* parameters();
-    //! Perform the autoindexing
-    bool autoIndex(const std::vector<Peak3D*>& peaks);
+    //! Perform the autoindexing, possibly for a single frame only
+    bool autoIndex(const std::vector<Peak3D*>& peaks, const InstrumentState* state = nullptr);
     //! Autoindex by passing a peak collection (avoid SWIG memory leak)
     bool autoIndex(PeakCollection* peaks);
     //! Return a list of the best solutions ordered by percentage of successfully indexed peaks
@@ -115,9 +118,13 @@ class AutoIndexer {
     sptrUnitCell goodSolution(const UnitCell* reference_cell, double length_tol, double angle_tol);
 
  private:
+    //! Filter the peaks according to AutoIndexerParameters
+    std::vector<Peak3D*> filterPeaks(
+        const std::vector<Peak3D*>& peaks, const InstrumentState* state = nullptr);
     //! Get a vector of candidate unit cells from a list of peaks using the
     //! Fourier transform method
-    bool computeFFTSolutions(const std::vector<Peak3D*>& peaks);
+    bool computeFFTSolutions(
+        const std::vector<Peak3D*>& peaks, const InstrumentState* state = nullptr);
     //! Do least squares minimisation to refine candidate unit cells
     void refineSolutions(const std::vector<Peak3D*>& peaks);
     //! Rand solutions by quality (percentage of peak indexed)

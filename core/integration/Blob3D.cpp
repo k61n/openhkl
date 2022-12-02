@@ -12,13 +12,14 @@
 //
 //  ***********************************************************************************************
 
-#include <cmath>
-#include <limits>
-#include <stdexcept>
+
+#include "core/integration/Blob3D.h"
 
 #include <Eigen/Eigenvalues>
 
-#include "core/integration/Blob3D.h"
+#include <cmath>
+#include <limits>
+#include <stdexcept>
 
 static const double minimum_blob_mass = 1e-15;
 

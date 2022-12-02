@@ -13,9 +13,9 @@
 //  ***********************************************************************************************
 
 #include "base/mask/BoxMask.h"
+
 #include "base/geometry/Ellipsoid.h"
 #include "base/utils/Logger.h"
-#include <iostream>
 
 namespace ohkl {
 

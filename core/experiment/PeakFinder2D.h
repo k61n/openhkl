@@ -40,6 +40,8 @@ using sptrProgressHandler = std::shared_ptr<ProgressHandler>;
 struct PeakFinder2DParameters : public cv::SimpleBlobDetector::Params {
     ConvolutionKernelType kernel = ConvolutionKernelType::Annular; //!< Convolution kernel type
     int threshold = 80; //!< Threshold for image thresholding (post-filter)
+
+    void log(const Level& level) const;
 };
 
 class PeakFinder2D {

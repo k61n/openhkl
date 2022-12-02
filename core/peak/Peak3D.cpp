@@ -14,16 +14,17 @@
 
 #include "core/peak/Peak3D.h"
 
+#include "base/geometry/ReciprocalVector.h"
 #include "base/utils/LogLevel.h"
 #include "core/data/DataSet.h"
 #include "core/instrument/Diffractometer.h"
+#include "core/instrument/InstrumentState.h"
 #include "core/instrument/InterpolatedState.h"
 #include "tables/crystal/MillerIndex.h"
 
 #include <algorithm>
 #include <cmath>
 #include <iomanip>
-#include <iostream>
 #include <stdexcept>
 
 namespace ohkl {
@@ -294,14 +295,17 @@ void Peak3D::setRawIntensity(const Intensity& i)
 
 ReciprocalVector Peak3D::q() const
 {
-    auto pixel_coords = _shape.center();
-    auto state = InterpolatedState::interpolate(_data->instrumentStates(), pixel_coords[2]);
+    auto state = InterpolatedState::interpolate(_data->instrumentStates(), _shape.center()[2]);
     if (!state.isValid()) // this is the source of many interpolation problems
         return ReciprocalVector();
+    return q(state);
+}
 
+ReciprocalVector Peak3D::q(const InstrumentState& state) const
+{
     const auto* detector = _data->diffractometer()->detector();
     auto detector_position =
-        DirectVector(detector->pixelPosition(pixel_coords[0], pixel_coords[1]));
+        DirectVector(detector->pixelPosition(_shape.center()[0], _shape.center()[1]));
     return state.sampleQ(detector_position);
 }
 

@@ -20,7 +20,6 @@
 #include "core/instrument/Diffractometer.h"
 #include "core/raw/DataKeys.h"
 
-#include <iostream>
 #include <stdexcept>
 
 namespace ohkl {

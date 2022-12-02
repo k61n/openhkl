@@ -248,6 +248,7 @@ void DataSet::maskPeaks(
     std::vector<Peak3D*>& peaks, std::map<Peak3D*, RejectionFlag>& rejection_map,
     double bkg_end /* = -1.0 */) const
 {
+    ohklLog(Level::Info, "DataSet::maskPeaks: Masking ", peaks.size(), " peaks");
     int n_masked = 0;
     for (const auto& peak : peaks) {
         // peak belongs to another dataset
@@ -271,6 +272,7 @@ void DataSet::maskPeaks(
             }
         }
     }
+    ohklLog(Level::Info, n_masked, " peaks masked");
 }
 
 ReciprocalVector DataSet::computeQ(const DetectorEvent& ev) const
@@ -294,8 +296,8 @@ Eigen::MatrixXd DataSet::transformedFrame(std::size_t idx) const
 Eigen::MatrixXd DataSet::gradientFrame(std::size_t idx, GradientKernel kernel, bool realspace) const
 {
     ohklLog(Level::Debug, "Computing gradient of frame ", idx);
-    ImageGradient grad(transformedFrame(idx), realspace);
-    grad.compute(kernel);
+    ImageGradient grad(transformedFrame(idx));
+    grad.compute(kernel, realspace);
     return grad.magnitude();
 }
 
@@ -379,11 +381,18 @@ InstrumentStateList& DataSet::instrumentStates()
 
 void DataSet::adjustDirectBeam(double x_offset, double y_offset)
 {
+    ohklLog(
+        Level::Info, "DataSet::adjustDirectBeam: offset (",
+        x_offset, ", ", y_offset, ")");
     double x_coord = x_offset + static_cast<double>(nCols()) / 2.0;
     double y_coord = y_offset + static_cast<double>(nRows()) / 2.0;
+    ohklLog(
+        Level::Info, "DataSet::adjustDirectBeam: position (",
+        x_coord, ", ", y_coord, ")");
     DirectVector direct = detector().pixelPosition(x_coord, y_coord);
     for (auto& state : instrumentStates())
         state.adjustKi(direct);
+    ohklLog(Level::Info, "DataSet::adjustDirectBeam: finished");
 }
 
 void DataSet::initHistograms(std::size_t nbins)

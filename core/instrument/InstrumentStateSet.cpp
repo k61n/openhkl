@@ -54,4 +54,11 @@ void InstrumentStateSet::setDiffractometer()
         state.setDiffractometer(_data->diffractometer());
 }
 
+const InstrumentState* InstrumentStateSet::state(std::size_t frame)
+{
+    if (frame > _instrument_states.size())
+        throw std::runtime_error("InstrumentStateSet::state: frame index out of range");
+    return &_instrument_states.at(frame);
+}
+
 } // namespace ohkl

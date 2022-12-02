@@ -672,7 +672,7 @@ void SubframeMergedPeaks::saveStatistics()
     auto* expt = gSession->currentProject()->experiment();
     auto* merger = expt->peakMerger();
 
-    exporter.saveStatistics(
+    _exporter.saveStatistics(
         filename.toStdString(), merger->shellQuality(), merger->overallQuality());
 }
 
@@ -716,7 +716,7 @@ void SubframeMergedPeaks::saveMergedPeaks()
         if (filename.isEmpty())
             return;
 
-        success = exporter.saveToShelXMerged(filename.toStdString(), merged_data);
+        success = _exporter.saveToShelXMerged(filename.toStdString(), merged_data);
     } else if (format.compare("FullProf") == 0) {
         filename = QFileDialog::getSaveFileName(
             this, "Save peaks to FullProf", loadDirectory, "FullProf hkl file (*.hkl)");
@@ -724,7 +724,7 @@ void SubframeMergedPeaks::saveMergedPeaks()
         if (filename.isEmpty())
             return;
 
-        success = exporter.saveToFullProfMerged(filename.toStdString(), merged_data);
+        success = _exporter.saveToFullProfMerged(filename.toStdString(), merged_data);
     } else if (format.compare("Phenix") == 0) {
         filename = QFileDialog::getSaveFileName(
             this, "Save peaks to Phenix sca", loadDirectory, "Phenix sca file (*.sca)");
@@ -733,7 +733,7 @@ void SubframeMergedPeaks::saveMergedPeaks()
             return;
 
         ohkl::sptrUnitCell cell = singleBatchRefine();
-        success = exporter.saveToSCAMerged(
+        success = _exporter.saveToSCAMerged(
             filename.toStdString(), merged_data, cell, _intensity_rescale_merged->value());
     } else if (format.compare("MTZ") == 0)
         success = exportMtz(true);
@@ -767,7 +767,7 @@ void SubframeMergedPeaks::saveUnmergedPeaks()
         if (filename.isEmpty())
             return;
 
-        success = exporter.saveToShelXUnmerged(filename.toStdString(), merged_data);
+        success = _exporter.saveToShelXUnmerged(filename.toStdString(), merged_data);
     } else if (format.compare("FullProf") == 0) {
         filename = QFileDialog::getSaveFileName(
             this, "Save peaks to FullProf", loadDirectory, "ShelX hkl file (*.hkl)");
@@ -775,7 +775,7 @@ void SubframeMergedPeaks::saveUnmergedPeaks()
         if (filename.isEmpty())
             return;
 
-        success = exporter.saveToFullProfUnmerged(filename.toStdString(), merged_data);
+        success = _exporter.saveToFullProfUnmerged(filename.toStdString(), merged_data);
     } else if (format.compare("Phenix") == 0) {
         filename = QFileDialog::getSaveFileName(
             this, "Save peaks to Phenix sca", loadDirectory, "Phenix sca file (*.sca)");
@@ -784,7 +784,7 @@ void SubframeMergedPeaks::saveUnmergedPeaks()
             return;
 
         ohkl::sptrUnitCell cell = singleBatchRefine();
-        success = exporter.saveToSCAUnmerged(
+        success = _exporter.saveToSCAUnmerged(
             filename.toStdString(), merged_data, cell, _intensity_rescale_unmerged->value());
     } else if (format.compare("MTZ") == 0)
         success = exportMtz(false);

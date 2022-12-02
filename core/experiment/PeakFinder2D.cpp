@@ -34,6 +34,13 @@ using RealMatrix = Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::
 
 namespace ohkl {
 
+void PeakFinder2DParameters::log(const Level& level) const
+{
+    ohklLog(level, "2D Peak finder parameters:");
+    ohklLog(level, "threshold              = ", threshold);
+    ohklLog(level, "convolver              = ", static_cast<int>(kernel));
+}
+
 PeakFinder2D::PeakFinder2D() : _handler(nullptr)
 {
     _params.minThreshold = 1;
@@ -76,6 +83,7 @@ void PeakFinder2D::setConvolver(const ConvolutionKernelType& kernel)
 
 void PeakFinder2D::find(std::size_t frame_idx)
 {
+    ohklLog(Level::Info, "PeakFinder2D::find: frame ", frame_idx);
     setConvolver(_params.kernel);
     RealMatrix frame = _current_data->frame(frame_idx).cast<double>();
     RealMatrix filtered_frame = _convolver->convolve(frame);
@@ -111,10 +119,13 @@ void PeakFinder2D::find(std::size_t frame_idx)
     _per_frame_spots[frame_idx].clear();
     cv::Ptr<cv::SimpleBlobDetector> detector = cv::SimpleBlobDetector::create(_params);
     detector->detect(cv_frame_8u, _per_frame_spots[frame_idx]);
+    ohklLog(
+        Level::Info, "PeakFinder2D::find: found ", _per_frame_spots[frame_idx].size(), " blobs");
 }
 
 void PeakFinder2D::findAll()
 {
+    ohklLog(Level::Info, "PeakFinder2D::findAll: ", _current_data->nFrames(), " frames");
     // update progress handler
     if (_handler) {
         _handler->setStatus("Finding blobs");
@@ -128,6 +139,8 @@ void PeakFinder2D::findAll()
 
     if (_handler)
         _handler->setProgress(100);
+
+    ohklLog(Level::Info, "PeakFinder2D::findAll: done");
 }
 
 std::vector<Peak3D*> PeakFinder2D::getPeakList(std::size_t frame_index)

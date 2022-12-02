@@ -40,17 +40,27 @@ class InstrumentStateSet {
     InstrumentStateList& instrumentStates() { return _instrument_states; };
     void setDiffractometer();
 
+    //! Get the name of the InstrumentStateSet
     std::string name() const { return _name; };
+    //! Get a pointer to the associated DataSet
     DataSet* data() const { return _data; };
+    //! Get the integer id
     unsigned int id() const { return _id; };
+    //! Set the integer id
     void setId(unsigned int id)
     {
         if (_id == 0)
             _id = id;
     };
+    //! Delete the instrument states
     void reset() { _instrument_states.clear(); };
+    //! Set the states from a vector of InstrumentStates
     void setInstrumentStates(const InstrumentStateList& states) { _instrument_states = states; };
+    //! Get the vector of InstrumentStates
     InstrumentStateList getInstrumentStateList() { return _instrument_states; };
+    //! Return a single InstrumentState by frame index
+    const InstrumentState* state(std::size_t frame);
+
 
  private:
     unsigned int _id;

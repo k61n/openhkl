@@ -15,8 +15,6 @@
 #include "core/convolve/GradientConvolver.h"
 #include "core/convolve/AtomicConvolver.h"
 
-#include <iostream>
-
 namespace ohkl {
 
 GradientConvolver::GradientConvolver() : AtomicConvolver() { }

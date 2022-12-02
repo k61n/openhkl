@@ -16,7 +16,6 @@
 #define OHKL_GUI_GRAPHICS_CRYSTALNODEITEM_H
 
 #include <cmath>
-#include <iostream>
 
 #include <QGraphicsItem>
 #include <QPainter>

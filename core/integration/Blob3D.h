@@ -16,7 +16,6 @@
 #define OHKL_CORE_INTEGRATION_BLOB3D_H
 
 #include <Eigen/Dense>
-#include <iostream> // needed in no-swig case (?)
 
 namespace ohkl {
 
