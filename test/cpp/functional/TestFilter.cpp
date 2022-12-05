@@ -84,4 +84,15 @@ TEST_CASE("test/data/TestPeakFinder.cpp", "")
     std::cout << peaks->numberCaughtByFilter() << "/" << npeaks << " not rejected"
               << std::endl;
     CHECK(peaks->numberCaughtByFilter() == 247);
+
+    filter->resetFilterFlags();
+    filter->resetFiltering(peaks);
+
+    flags->gradient = true;
+    params->gradient_min = 0;
+    params->gradient_max = 6.5;
+    filter->filter(peaks);
+    std::cout << peaks->numberCaughtByFilter() << "/" << npeaks << " with gradient < 6.5"
+              << std::endl;
+    CHECK(peaks->numberCaughtByFilter() == 482);
 }
