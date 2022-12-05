@@ -80,6 +80,9 @@ integrator_params = integrator.parameters()
 integrator_params.peak_end = 3.0
 integrator_params.bkg_begin = 3.0
 integrator_params.bkg_end = 6.0
+integrator_params.use_gradient = True;
+integrator_params.gradient_type = ohkl.GradientKernel_Sobel;
+integrator_params.fft_gradient = False;
 integrator.integrateFoundPeaks(finder)
 expt.acceptFoundPeaks("found")
 found_peaks = expt.getPeakCollection("found")
