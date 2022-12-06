@@ -19,7 +19,6 @@
 #include "core/shape/ShapeModel.h"
 #include "test/cpp/catch.hpp"
 #include "core/experiment/Experiment.h"
-#include "core/experiment/PeakFinder.h"
 #include "core/loader/RawDataReader.h"
 #include "core/convolve/AnnularConvolver.h"
 #include "core/instrument/Diffractometer.h"

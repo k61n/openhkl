@@ -2,7 +2,7 @@
 //
 //  OpenHKL: data reduction for single crystal diffraction
 //
-//! @file      test/cpp/data/TestPeakFinder.cpp
+//! @file      test/cpp/data/TestFilter.cpp
 //! @brief     Test ...
 //!
 //! @homepage  https://openhkl.org
@@ -15,10 +15,8 @@
 #include "core/data/DataSet.h"
 #include "test/cpp/catch.hpp"
 #include "core/experiment/Experiment.h"
-#include "core/experiment/PeakFinder.h"
 #include "core/loader/RawDataReader.h"
 #include "core/convolve/AnnularConvolver.h"
-#include "core/instrument/Diffractometer.h"
 #include "core/peak/Peak3D.h"
 #include "core/shape/PeakFilter.h"
 
@@ -29,7 +27,7 @@
 #include <string>
 #include <vector>
 
-TEST_CASE("test/data/TestPeakFinder.cpp", "")
+TEST_CASE("test/data/TestFilter.cpp", "")
 {
     const std::string filename = "CrChiA.ohkl";
     ohkl::Experiment experiment("test", "BioDiff2500");
