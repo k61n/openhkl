@@ -24,7 +24,7 @@ class TestFullWorkFlow(unittest.TestCase):
 
     def test(self):
         print()
-        data_dir = 'small_cell_low_intensity' # Path to .raw data files
+        data_dir = '.' # Path to .raw data files
 
         # set up the experiment
         expt = ohkl.Experiment('trypsin-sim', 'BioDiff2500')
@@ -39,7 +39,7 @@ class TestFullWorkFlow(unittest.TestCase):
 
         print(f'Reading files from {data_dir}')
         dir = Path(data_dir)
-        raw_data_files = sorted(list(dir.glob('*.raw')))
+        raw_data_files = sorted(list(dir.glob('sim_small_cell*.raw')))
         # for file in raw_data_files:
             # print(file)
         dataset.setRawReaderParameters(data_params)
