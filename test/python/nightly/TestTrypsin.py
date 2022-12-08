@@ -209,10 +209,6 @@ class TestFullWorkFlow(unittest.TestCase):
             self.assertTrue(rpim_ref[i] + eps - merger.shellQuality().shells[i].Rpim > 0)
             self.assertTrue(compl_ref[i] + eps - merger.shellQuality().shells[i].Completeness > 0)
 
-        exporter = ohkl.PeakExporter
-        exporter.saveToShelXMerged("merged_peaks.hkl", merger.getMergedData());
-        exporter.saveToShelXUnmerged("unmerged_peaks.hkl", merger.getMergedData());
-
         print("Workflow complete")
 
 if __name__ == '__main__':
