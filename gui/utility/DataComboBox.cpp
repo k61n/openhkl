@@ -19,7 +19,7 @@
 DataList DataComboBox::_data_sets;
 QVector<DataComboBox*> DataComboBox::_all_combos;
 
-DataComboBox::DataComboBox(QWidget* parent) : QComboBox(parent), _current_index(-1)
+DataComboBox::DataComboBox(QWidget* parent) : QComboBox(parent), _current_index(0)
 {
     _all_combos.push_back(this);
     connect(
@@ -32,8 +32,9 @@ void DataComboBox::addDataSet(const ohkl::sptrDataSet& data)
     QSignalBlocker blocker(this);
     addItem(QString::fromStdString(data->name()));
     _data_sets.push_back(data);
-    if (_data_sets.size() == 1) // Init buffer for the first data set
+    if (!_data_sets.empty()) { // Init buffer for the first data set
         data->initBuffer(true);
+    }
     refresh();
 }
 

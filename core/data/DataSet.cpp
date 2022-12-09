@@ -45,8 +45,6 @@
 #include <memory>
 #include <stdexcept>
 
-#include <iostream>
-
 namespace ohkl {
 
 DataSet::DataSet(const std::string& dataset_name, Diffractometer* diffractometer)
@@ -176,14 +174,11 @@ int DataSet::dataAt(const std::size_t x, const std::size_t y, const std::size_t 
 
 Eigen::MatrixXi DataSet::frame(const std::size_t idx) const
 {
-    std::cout << "frame" << std::endl;
     if (_buffered) {
         if (_frame_buffer.at(idx)) {
-            std::cout << "buffer" << std::endl;
             return *_frame_buffer.at(idx);
         }
     }
-    std::cout << "file" << std::endl;
     return _reader->data(idx);
 }
 
@@ -492,7 +487,6 @@ void DataSet::initBuffer(bool bufferAll)
 {
     if (_buffered)
         return;
-    std::cout << "initBuffer" << std::endl;
     for (std::size_t frame = 0; frame < nFrames(); ++frame)
         _frame_buffer.push_back(nullptr);
     for (std::size_t idx = 0; idx < nFrames(); ++idx) {
@@ -508,7 +502,6 @@ void DataSet::clearBuffer()
 {
     if (!_buffered)
         return;
-    std::cout << "clearBuffer" << std::endl;
     for (std::size_t idx = 0; idx < nFrames(); ++idx) {
         _frame_buffer.at(idx).reset();
         _frame_buffer.at(idx) = nullptr;
