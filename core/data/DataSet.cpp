@@ -496,6 +496,7 @@ void DataSet::initBuffer(bool bufferAll)
             _frame_buffer.at(idx) = std::make_unique<Eigen::MatrixXi>(_reader->data(idx));
     }
     _buffered = true;
+    ohklLog(Level::Debug, "DataSet::initBuffer: ", _name, " buffered");
 }
 
 void DataSet::clearBuffer()
@@ -507,6 +508,7 @@ void DataSet::clearBuffer()
         _frame_buffer.at(idx) = nullptr;
     }
     _buffered = false;
+    ohklLog(Level::Debug, "DataSet::clearBuffer: ", _name, " buffer cleared");
 }
 
 } // namespace ohkl

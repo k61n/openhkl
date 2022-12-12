@@ -31,10 +31,9 @@ void DataComboBox::addDataSet(const ohkl::sptrDataSet& data)
 {
     QSignalBlocker blocker(this);
     addItem(QString::fromStdString(data->name()));
-    _data_sets.push_back(data);
-    if (!_data_sets.empty()) { // Init buffer for the first data set
+    if (!_data_sets.empty()) // Init buffer for the first data set
         data->initBuffer(true);
-    }
+    _data_sets.push_back(data);
     refresh();
 }
 
