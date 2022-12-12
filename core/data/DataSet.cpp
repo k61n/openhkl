@@ -158,26 +158,11 @@ void DataSet::addRawFrame(const std::string& rawfilename)
     rawreader.addFrame(rawfilename);
 }
 
-int DataSet::dataAt(const std::size_t x, const std::size_t y, const std::size_t z) const
-{
-    const std::size_t nframes = nFrames(), ncols = nCols(), nrows = nRows();
-    // Check that the voxel is inside the limit of the data
-    if (z >= nframes || y >= ncols || x >= nrows) {
-        throw std::runtime_error(
-            "DataSet '" + _name + "': Out-of-bound access (" + "x = " + std::to_string(x) + "/"
-            + std::to_string(nrows) + ", y = " + std::to_string(y) + "/" + std::to_string(ncols)
-            + ", z = " + std::to_string(z) + "/" + std::to_string(nframes) + ")");
-    }
-
-    return frame(z)(x, y);
-}
-
 Eigen::MatrixXi DataSet::frame(const std::size_t idx) const
 {
     if (_buffered) {
-        if (_frame_buffer.at(idx)) {
+        if (_frame_buffer.at(idx))
             return *_frame_buffer.at(idx);
-        }
     }
     return _reader->data(idx);
 }
