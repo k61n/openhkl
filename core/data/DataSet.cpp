@@ -485,15 +485,15 @@ void DataSet::removeAllMaks()
 
 void DataSet::initBuffer(bool bufferAll)
 {
+    // Not initialised in the constructor since there will not be any images present
     if (_buffered)
         return;
+    _frame_buffer.clear();
     for (std::size_t frame = 0; frame < nFrames(); ++frame)
         _frame_buffer.push_back(nullptr);
     for (std::size_t idx = 0; idx < nFrames(); ++idx) {
         if (bufferAll)
             _frame_buffer.at(idx) = std::make_unique<Eigen::MatrixXi>(_reader->data(idx));
-        else
-            _frame_buffer.at(idx) = nullptr;
     }
     _buffered = true;
 }
@@ -506,7 +506,7 @@ void DataSet::clearBuffer()
         _frame_buffer.at(idx).reset();
         _frame_buffer.at(idx) = nullptr;
     }
-    _frame_buffer.clear();
+    _buffered = false;
 }
 
 } // namespace ohkl
