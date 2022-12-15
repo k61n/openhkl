@@ -42,14 +42,16 @@
 #include <H5Cpp.h>
 #include <gsl/gsl_histogram.h>
 
+#include <memory>
 #include <stdexcept>
-
-#include <iostream>
 
 namespace ohkl {
 
 DataSet::DataSet(const std::string& dataset_name, Diffractometer* diffractometer)
-    : _diffractometer{diffractometer}, _states(nullptr), _total_histogram(nullptr)
+    : _diffractometer{diffractometer}
+    , _states(nullptr)
+    , _total_histogram(nullptr)
+    , _buffered(false)
 {
     setName(dataset_name);
     if (!_diffractometer)
@@ -156,22 +158,12 @@ void DataSet::addRawFrame(const std::string& rawfilename)
     rawreader.addFrame(rawfilename);
 }
 
-int DataSet::dataAt(const std::size_t x, const std::size_t y, const std::size_t z) const
-{
-    const std::size_t nframes = nFrames(), ncols = nCols(), nrows = nRows();
-    // Check that the voxel is inside the limit of the data
-    if (z >= nframes || y >= ncols || x >= nrows) {
-        throw std::runtime_error(
-            "DataSet '" + _name + "': Out-of-bound access (" + "x = " + std::to_string(x) + "/"
-            + std::to_string(nrows) + ", y = " + std::to_string(y) + "/" + std::to_string(ncols)
-            + ", z = " + std::to_string(z) + "/" + std::to_string(nframes) + ")");
-    }
-
-    return frame(z)(x, y);
-}
-
 Eigen::MatrixXi DataSet::frame(const std::size_t idx) const
 {
+    if (_buffered) {
+        if (_frame_buffer.at(idx))
+            return *_frame_buffer.at(idx);
+    }
     return _reader->data(idx);
 }
 
@@ -474,6 +466,34 @@ void DataSet::removeAllMaks()
 {
     if (_masks.size() > 0)
         _masks.clear();
+}
+
+void DataSet::initBuffer(bool bufferAll)
+{
+    // Not initialised in the constructor since there will not be any images present
+    if (_buffered)
+        return;
+    _frame_buffer.clear();
+    for (std::size_t frame = 0; frame < nFrames(); ++frame)
+        _frame_buffer.push_back(nullptr);
+    for (std::size_t idx = 0; idx < nFrames(); ++idx) {
+        if (bufferAll)
+            _frame_buffer.at(idx) = std::make_unique<Eigen::MatrixXi>(_reader->data(idx));
+    }
+    _buffered = true;
+    ohklLog(Level::Debug, "DataSet::initBuffer: ", _name, " buffered");
+}
+
+void DataSet::clearBuffer()
+{
+    if (!_buffered)
+        return;
+    for (std::size_t idx = 0; idx < nFrames(); ++idx) {
+        _frame_buffer.at(idx).reset();
+        _frame_buffer.at(idx) = nullptr;
+    }
+    _buffered = false;
+    ohklLog(Level::Debug, "DataSet::clearBuffer: ", _name, " buffer cleared");
 }
 
 } // namespace ohkl

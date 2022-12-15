@@ -146,7 +146,8 @@ void DetectorWidget::datasetChanged()
     if (!gSession->currentProject()->hasDataSet())
         return;
 
-    ohkl::sptrDataSet data = _data_combo->currentData();
+    ohkl::sptrDataSet new_data = _data_combo->currentData();
+    scene()->slotChangeSelectedData(new_data, _spin->value());
     scene()->removeBeamSetter(); // need to be sensitive of dataset change
     refresh();
 }

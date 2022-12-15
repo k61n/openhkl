@@ -16,6 +16,7 @@
 #define OHKL_GUI_UTILITY_DATACOMBO_H
 
 #include "core/data/DataSet.h"
+#include "core/data/DataTypes.h"
 
 #include <QComboBox>
 
@@ -42,7 +43,7 @@ class DataComboBox : public QComboBox {
     void clearAll();
 
     //! Return a pointer to the current unit cell
-    ohkl::sptrDataSet currentData() const;
+    ohkl::sptrDataSet currentData();
 
     //! Refresh the combo box text
     void refresh();
@@ -50,11 +51,16 @@ class DataComboBox : public QComboBox {
     //! Refresh all combos of this type
     void refreshAll();
 
+ public slots:
+    void onDataChanged(int index);
+
  private:
     //! Index-sorted list of pointers to unit cells
     static DataList _data_sets;
     //! Current data set
-    QString _current;
+    QString _current_text;
+    //! Pointer to current DataSet
+    int _current_index;
     //! Vector of all instances to refresh all in one call
     static QVector<DataComboBox*> _all_combos;
 };
