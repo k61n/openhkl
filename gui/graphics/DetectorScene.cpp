@@ -1260,7 +1260,6 @@ void DetectorScene::clearMasks()
         if (dynamic_cast<EllipseMaskItem*>(item) != nullptr)
             removeItem(item);
     }
-    _mask_handler->clearGraphicMaskItems(_currentData);
 }
 
 void DetectorScene::resetScene()

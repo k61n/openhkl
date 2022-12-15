@@ -30,9 +30,7 @@ namespace ohkl {
 
 class LocalOutlierFactor : public Knn {
  public:
-    LocalOutlierFactor(
-        unsigned int k, unsigned int dimension, unsigned int npoints, Eigen::MatrixXd* points,
-        bool normalise_data = true);
+    LocalOutlierFactor(unsigned int dimension, unsigned int k, bool normalise_data = true);
 
     //! Return a vector of outliers
     std::vector<std::pair<double, int>> findOutliers();
@@ -44,14 +42,10 @@ class LocalOutlierFactor : public Knn {
     void normalise();
 
     //! Compute local reachability density for a given point
-    double localReachabilityDensity(unsigned int point_idx);
+    double localReachabilityDensity(std::vector<double> point);
     //! Compute local outlier factor for a given point
-    double localOutlierFactor(unsigned int point_idx);
+    double localOutlierFactor(std::vector<double> point);
 
-    //! Lower bound of the data
-    Eigen::VectorXd _lower;
-    //! Upper bound of the data
-    Eigen::VectorXd _upper;
     //! Whether bounds have been computed
     bool _hasBounds;
     //! Whether data has been normalised

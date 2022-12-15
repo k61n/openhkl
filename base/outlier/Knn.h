@@ -15,11 +15,16 @@
 #ifndef OHKL_BASE_OUTLIER_KNN_H
 #define OHKL_BASE_OUTLIER_KNN_H
 
-#include "base/outlier/Distance.h"
+#include <opencv2/flann/miniflann.hpp>
 
 #include <vector>
 
 namespace ohkl {
+
+struct KnnResult {
+    std::vector<int> indices;
+    std::vector<double> distances;
+};
 
 /*! \addtogroup python_api
  *  @{*/
@@ -27,35 +32,41 @@ namespace ohkl {
 /*! \brief Compute k-nearest neighbours for a set of n-dimensional data
  *
  *  Given a npoints x n dimensional matrix of data points, compute the nearest k
- *  neighbours using a given distance function
+ *  neighbours using a given distance function. This is a wrapper for the OpenCV
+ * FLANN (Fast Library for Approximate Nearest Neighbours) k-D tree/KNN implementation
  */
 
 class Knn {
  public:
-    Knn(unsigned int k, unsigned int dimension, unsigned int npoints, Eigen::MatrixXd* points);
+    Knn(unsigned int dimension, unsigned int k);
+
+    template<class PointT>
+    void addPoints(const std::vector<PointT>& points) {
+        cv::flann::KDTreeIndexParams index_params;
+        _points = cv::Mat(points);
+        _kdtree{_points.reshape(1), index_params};
+    };
+
+    KnnResult queryPoint(std::vector<double> point);
+
+    //! Compute the k-distance for a point
+    double kDistance(std::vector<double> point);
+    //! Compute the reachability distance for a pair of points
+    double reachabilityDistance(std::vector<double> point1, std::vector<double> point2);
 
  protected:
-    //! Compute the k-distance for a point
-    void kDistance(unsigned int point_index);
-    //! Compute the reachability distance for a pair of points
-    double reachabilityDistance(unsigned int point1_idx, unsigned int point2_idx);
+    //! Get point with given index
+    cv::Mat getPoint(std::size_t idx) { return _points.row(idx); };
 
-    //! Class for calculating the given distance metric
-    Distance _distance;
-    //! Number of nearest neighbours
-    unsigned int _k;
     //! Dimensionality of data
     unsigned int _dimension;
-    //! Number of points in data set
-    unsigned int _npoints;
-    //! Pointer to the data (_npoints x _dimension matrix)
-    Eigen::MatrixXd* _points;
-    //! Indices of the k nearest neighbours
-    Eigen::MatrixXi _neighbours;
-    //! Vector of k distances
-    Eigen::VectorXd _kDistances;
-    //! Flag determining whether the distance for a specific point has been computed
-    Eigen::VectorXi _hasDistance;
+    //! Number of nearest neighbours
+    unsigned int _k;
+
+    //! The OpenCV KNN object
+    cv::flann::Index _kdtree;
+    //! OpenCV matrix containing the points
+    cv::Mat _points;
 };
 
 } // namespace ohkl
