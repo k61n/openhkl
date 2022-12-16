@@ -55,7 +55,6 @@ namespace ohkl {
 
         std::string dir = "data_" + file.substr(pos0 + 1, pos1 - pos0 - 1);
         std::string readme = file.substr(0, pos1 + 1) + dir + ".readme";
-        
 
         std::ifstream fin(readme.c_str(), std::ios::in);
 
@@ -98,7 +97,7 @@ namespace ohkl {
         uint16 _compression = -1;
         uint16 _photometric = -1;
         uint16 _planar_config = -1;
-        uint32 _npixels = -1;        
+        uint32 _npixels = -1;
 
         friend std::ostream &operator <<(std::ostream &oss, const tif_file_metadata &o){ 
             oss
@@ -148,13 +147,12 @@ namespace ohkl {
             //! Will scan file for tif meta data
             tif_file_metadata scanFile(std::string filename);
             //! will register file dimensions as meta data
-            void registerFileDimension(std::string filename); 
-
+            void registerFileDimension(std::string filename);
+            //! read file resolutions
             std::vector<std::string> readFileResolutions(std::vector<std::string> filenames);
-           
+
         private:
             template <typename T_> Eigen::Matrix<T_, Eigen::Dynamic, Eigen::Dynamic> matrixFromData() const;
-            
             std::vector<std::string> _filenames;
             std::vector<std::string> _file_resolutions;
             TiffDataReaderParameters _parameters; // need this too here ?
@@ -163,7 +161,6 @@ namespace ohkl {
             std::vector<uint16> _buffer; 
 
             tif_file_metadata _tif_meta_data;
-
             int _nwidth;
             int _nheight;
 
@@ -173,14 +170,14 @@ namespace ohkl {
     template <typename T_>
     Eigen::Matrix<T_, Eigen::Dynamic, Eigen::Dynamic> TiffDataReader::matrixFromData() const
     {
-        const std::size_t nrows = _dataset_out->nRows(), ncols = _dataset_out->nCols();       
+        const std::size_t nrows = _dataset_out->nRows(), ncols = _dataset_out->nCols();
 
-        assert(sizeof(T_) * nrows * ncols == _length);      
-        
-        // as far as I can tell row major will always be the same for TIFF files  
+        assert(sizeof(T_) * nrows * ncols == _length);
+
+        // as far as I can tell row major will always be the same for TIFF files
         Eigen::Matrix<T_, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor> frame;
         frame.resize(nrows, ncols);
-        memcpy(&frame(0, 0), &_data[0], _length); 
+        memcpy(&frame(0, 0), &_data[0], _length);
         return frame;
     }
 }
