@@ -71,7 +71,8 @@ IntegrationRegion::IntegrationRegion(
     }
 
     if (peak->rejectionFlag() == RejectionFlag::InvalidRegion
-        || peak->rejectionFlag() == RejectionFlag::InterpolationFailure) {
+        || peak->rejectionFlag() == RejectionFlag::InterpolationFailure
+        || peak->masked()) {
         _valid = false;
     } else {
         Ellipsoid bkg(_shape);
