@@ -31,24 +31,42 @@ enum class IntegratorType { PixelSum, Gaussian, ISigma, Profile1D, Profile3D, Co
 
 //! Structure containing parameters for all integrators
 struct IntegrationParameters {
-    double peak_end = 3.0; //!< End of peak region (sigmas)
-    double bkg_begin = 3.0; //!< Beginning of background region (sigmas)
-    double bkg_end = 6.0; //!< End of background region (sigmas)
-    double max_counts = 50000.0; //!< Maximum per-pixel count
-    double neighbour_range_pixels = 500.0; //!< Search radius for neighbouring peaks (pixels)
-    double neighbour_range_frames = 10.0; //!< Search radius for neighbouring peaks (frames)
-    bool fit_center = true; //!< Whether to update the peak centre after integration
-    bool fit_cov = true; //!< Whether to update the peak covariance after integration
-    bool discard_saturated = false; //!< Whether to discard peaks with saturated pixels
-    int min_neighbors = 10; //!< Minimum number of neighbouring shapes for predicted shape
-    IntegratorType integrator_type = IntegratorType::PixelSum; //!< Type of integrator
-    bool use_gradient = false; //!< Use gradient to discriminate heterogeneous background regions
+    //! End of peak region for RegionType::VariableEllipsoid (sigmas)
+    double peak_end = 3.0;
+    //! Beginning of background region (sigmas)
+    double bkg_begin = 3.0;
+    //! End of background region (sigmas)
+    double bkg_end = 6.0;
+    //! End of peak region for RegionType::FixedEllipsoid (pixels)
+    double fixed_peak_end = 8;
+    //! Beginning of background region (factor of fixed_peak_end)
+    double fixed_bkg_begin = 1.0;
+    //! End of background region (factor of fixed_peak_end)
+    double fixed_bkg_end = 2.0;
+    //! Maximum per-pixel count
+    double max_counts = 50000.0;
+    //! Search radius for neighbouring peaks (pixels)
+    double neighbour_range_pixels = 500.0;
+    //! Search radius for neighbouring peaks (frames)
+    double neighbour_range_frames = 10.0;
+    //! Whether to update the peak centre after integration
+    bool fit_center = true;
+    //! Whether to update the peak covariance after integration
+    bool fit_cov = true;
+    //! Whether to discard peaks with saturated pixels
+    bool discard_saturated = false;
+    //! Minimum number of neighbouring shapes for predicted shape
+    int min_neighbors = 10;
+    //! Type of integrator
+    IntegratorType integrator_type = IntegratorType::PixelSum;
+    //! Use gradient to discriminate heterogeneous background regions
+    bool use_gradient = false;
     //! Kernel to use for gradient convolution
     GradientKernel gradient_type = GradientKernel::Sobel;
     //! Whether to use FFT or real space gradient computation
     bool fft_gradient = false;
-    RegionType region_type =
-        RegionType::VariableEllipsoid; //!< Set peak end in pixels instead of sigmas
+    //! Whether to use fixed or sigma-dependent integration regions
+    RegionType region_type = RegionType::VariableEllipsoid;
 
     void log(const Level& level) const;
 };

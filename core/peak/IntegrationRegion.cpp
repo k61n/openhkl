@@ -41,7 +41,7 @@ IntegrationRegion::IntegrationRegion(
             break;
         }
         case RegionType::FixedEllipsoid: {
-            // scale the ellipsoid to the volume of a unit sphere (in pixels)
+            // scale the ellipsoid by the average radius in pixels
             _shape = peak->shape();
             const double r = _shape.radii().sum() / 3.0;
             if (!std::isnan(r)) { // Eigensolver to compute radii can fail, resulting in NaN

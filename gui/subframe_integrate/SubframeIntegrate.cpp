@@ -200,9 +200,15 @@ void SubframeIntegrate::grabIntegrationParameters()
     auto* integrator = expt->integrator();
     auto* params = integrator->parameters();
 
-    _peak_end->setValue(params->peak_end);
-    _bkg_begin->setValue(params->bkg_begin);
-    _bkg_end->setValue(params->bkg_end);
+    if (params->region_type == ohkl::RegionType::VariableEllipsoid) {
+        _peak_end->setValue(params->peak_end);
+        _bkg_begin->setValue(params->bkg_begin);
+        _bkg_end->setValue(params->bkg_end);
+    } else {
+        _peak_end->setValue(params->fixed_peak_end);
+        _bkg_begin->setValue(params->fixed_bkg_begin);
+        _bkg_end->setValue(params->fixed_bkg_end);
+    }
     _discard_saturated->setChecked(params->discard_saturated);
     _max_counts->setValue(params->max_counts);
     _radius_int->setValue(params->neighbour_range_pixels);
@@ -233,9 +239,6 @@ void SubframeIntegrate::setIntegrationParameters()
     auto* integrator = expt->integrator();
     auto* params = integrator->parameters();
 
-    params->peak_end = _peak_end->value();
-    params->bkg_begin = _bkg_begin->value();
-    params->bkg_end = _bkg_end->value();
     params->discard_saturated = _discard_saturated->isChecked();
     params->max_counts = _max_counts->value();
     params->neighbour_range_pixels = _radius_int->value();
@@ -246,6 +249,15 @@ void SubframeIntegrate::setIntegrationParameters()
     params->region_type = static_cast<ohkl::RegionType>(_integration_region_type->currentIndex());
     params->integrator_type =
         _integrator_strings.find(_integrator_combo->currentText().toStdString())->second;
+    if (params->region_type == ohkl::RegionType::VariableEllipsoid) {
+        params->peak_end = _peak_end->value();
+        params->bkg_begin = _bkg_begin->value();
+        params->bkg_end = _bkg_end->value();
+    } else {
+        params->fixed_peak_end = _peak_end->value();
+        params->fixed_bkg_begin = _bkg_begin->value();
+        params->fixed_bkg_end = _bkg_end->value();
+    }
     params->use_gradient = _compute_gradient->isChecked();
     params->fft_gradient = _fft_gradient->isChecked();
     params->gradient_type = static_cast<ohkl::GradientKernel>(_gradient_kernel->currentIndex());

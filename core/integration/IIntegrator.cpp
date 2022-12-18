@@ -91,6 +91,16 @@ void IIntegrator::integrate(
     std::map<Peak3D*, std::unique_ptr<IntegrationRegion>> regions;
     std::map<Peak3D*, bool> integrated;
 
+    double peak_end, bkg_begin, bkg_end;
+    if (_params.region_type == ohkl::RegionType::VariableEllipsoid) {
+        peak_end = _params.peak_end;
+        bkg_begin = _params.bkg_begin;
+        bkg_end = _params.bkg_begin;
+    } else {
+        peak_end = _params.fixed_peak_end;
+        bkg_begin = _params.fixed_bkg_begin;
+        bkg_end = _params.fixed_bkg_begin;
+    }
     for (auto peak : peaks) {
         if (!peak->enabled())
             continue;
@@ -98,7 +108,7 @@ void IIntegrator::integrate(
         regions.emplace(std::make_pair(
             peak,
             std::make_unique<IntegrationRegion>(
-                peak, _params.peak_end, _params.bkg_begin, _params.bkg_end, _params.region_type)));
+                peak, peak_end, bkg_begin, bkg_end, _params.region_type)));
         integrated.emplace(std::make_pair(peak, false));
 
         // ignore partials
