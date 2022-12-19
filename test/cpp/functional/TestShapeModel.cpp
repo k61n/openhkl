@@ -56,7 +56,7 @@ TEST_CASE("test/data/TestShapeModel.cpp", "")
     filter_params->strength_max = 1.0E7;
     filter->filter(found_peaks);
 
-    ohkl::PeakCollection fit_peaks{"fit", ohkl::PeakCollectionType::FOUND};
+    ohkl::PeakCollection fit_peaks{"fit", ohkl::PeakCollectionType::FOUND, data};
     fit_peaks.populateFromFiltered(found_peaks);
 
     auto shape_params = std::make_shared<ohkl::ShapeModelParameters>();

@@ -15,8 +15,10 @@
 #include "core/shape/PeakCollection.h"
 
 #include "base/utils/Logger.h"
+#include "core/data/DataSet.h"
 #include "core/integration/ShapeIntegrator.h"
 #include "core/raw/DataKeys.h"
+
 #include <string>
 #include <typeindex>
 
@@ -25,6 +27,7 @@ namespace ohkl {
 PeakCollection::PeakCollection()
     : _id(0)
     , _name{ohkl::kw_peakCollectionDefaultName}
+    , _data(nullptr)
     , _type{ohkl::PeakCollectionType::FOUND}
     , _shape_model(nullptr)
     , _indexed(false)
@@ -33,9 +36,10 @@ PeakCollection::PeakCollection()
 {
 }
 
-PeakCollection::PeakCollection(const std::string& name, ohkl::PeakCollectionType type)
+PeakCollection::PeakCollection(const std::string& name, ohkl::PeakCollectionType type, sptrDataSet data)
     : _id(0)
     , _name{std::string(name)}
+    , _data(data)
     , _type{type}
     , _shape_model(nullptr)
     , _indexed(false)
@@ -151,6 +155,7 @@ MetaData& PeakCollection::metadata()
     _metadata.add<std::string>(ohkl::at_indexed, std::to_string(isIndexed()));
     _metadata.add<std::string>(ohkl::at_integrated, std::to_string(isIntegrated()));
     _metadata.add<std::string>(ohkl::at_gradient, std::to_string(hasBkgGradient()));
+    _metadata.add<std::string>(ohkl::at_datasetName, _data->name());
     return _metadata;
 }
 

@@ -61,7 +61,7 @@ class PeakFinder {
     PeakFinder();
 
     //! Iterate through a vector of DataSets, finding the peaks for each
-    void find(const DataList numors);
+    void find(const sptrDataSet data);
 
     //! Return a vector of peaks found by PeakFinder
     std::vector<Peak3D*> currentPeaks();
@@ -71,10 +71,10 @@ class PeakFinder {
     //! Generate a PeakCollection from a vector of found peaks
     void setPeakCollection(
         const std::string name, const ohkl::PeakCollectionType type,
-        std::vector<std::shared_ptr<ohkl::Peak3D>> peak_list);
+        std::vector<std::shared_ptr<ohkl::Peak3D>> peak_list, sptrDataSet data);
 
     //! Return the DataList (vector of pointers to DataSets)
-    DataList currentData() { return _current_data; };
+    sptrDataSet currentData() { return _current_data; };
 
     //! Set the progress handler
     void setHandler(const sptrProgressHandler& handler);
@@ -117,7 +117,7 @@ class PeakFinder {
     //! Detector spot detection algorithm
     void findPrimaryBlobs(
         const DataSet& data, std::map<int, Blob3D>& blobs, EquivalenceList& equivalences,
-        size_t begin, size_t end, int n_numor);
+        size_t begin, size_t end);
 
     //! Detect collisions between blobs
     void findCollisions(
@@ -140,8 +140,8 @@ class PeakFinder {
     int _current_label;
     //! Vector of found peaks
     ohkl::PeakList _current_peaks;
-    //! Vector of DataSets
-    ohkl::DataList _current_data;
+    //! Current DataSet
+    sptrDataSet _current_data;
     //! PeakCollection attached to PeakFinder
     ohkl::PeakCollection _peak_collection;
     //! Number of found peaks

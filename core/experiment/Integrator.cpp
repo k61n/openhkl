@@ -68,8 +68,7 @@ void Integrator::integratePeaks(
         "Integrator::integratePeaks: integrating PeakCollection '" + peaks->name() + "'");
     IIntegrator* integrator = getIntegrator(integrator_type);
     integrator->setParameters(*_params);
-    integrator->setNNumors(1);
-    integrator->integrate(peaks->getPeakList(), peaks->shapeModel(), data, 1);
+    integrator->integrate(peaks->getPeakList(), peaks->shapeModel(), data);
     peaks->setIntegrated(true);
     if (_params->use_gradient)
         peaks->setBkgGradient(true);
@@ -92,8 +91,7 @@ void Integrator::integratePeaks(
     params->log(Level::Info);
     IIntegrator* integrator = getIntegrator(_params->integrator_type);
     integrator->setParameters(*params);
-    integrator->setNNumors(1);
-    integrator->integrate(peaks->getPeakList(), shapes, data, 1);
+    integrator->integrate(peaks->getPeakList(), shapes, data);
     peaks->setIntegrated(true);
     if (params->use_gradient)
         peaks->setBkgGradient(true);
@@ -111,16 +109,10 @@ void Integrator::integrateFoundPeaks(PeakFinder* peak_finder)
 {
     ohklLog(Level::Info, "Integrator::integrateFoundPeaks");
     _params->log(Level::Info);
-    const DataMap* data = _data_handler->getDataMap();
     IIntegrator* integrator = getIntegrator(IntegratorType::PixelSum);
-    integrator->setNNumors(data->size());
     integrator->setParameters(*_params);
 
-    int n_numor = 1;
-    for (const sptrDataSet& data : peak_finder->currentData()) {
-        integrator->integrate(peak_finder->currentPeaks(), nullptr, data, n_numor);
-        ++n_numor;
-    }
+    integrator->integrate(peak_finder->currentPeaks(), nullptr, peak_finder->currentData());
 
     _n_peaks = 0;
     _n_valid = 0;
@@ -129,9 +121,6 @@ void Integrator::integrateFoundPeaks(PeakFinder* peak_finder)
         if (peak->enabled())
             ++_n_valid;
     }
-    // no further checks
-    // peak_finder->getPeakCollection()->setIntegrated(true); // doesnt work since peak collection
-    // does not exist yet
     peak_finder->setIntegrated(true);
     if (_params->use_gradient)
         peak_finder->setBkgGradient(true);
@@ -143,11 +132,10 @@ void Integrator::integrateShapeModel(
 {
     ohklLog(Level::Info, "Integrator::integrateShapeModel");
     ShapeIntegrator integrator{shape_model, aabb, params.nbins_x, params.nbins_y, params.nbins_z};
-    integrator.setNNumors(1);
     if (_handler)
         integrator.setHandler(_handler);
     integrator.setParameters(params);
-    integrator.integrate(fit_peaks, shape_model, data, 1);
+    integrator.integrate(fit_peaks, shape_model, data);
 }
 
 void Integrator::setParameters(std::shared_ptr<IntegrationParameters> params)

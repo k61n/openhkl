@@ -54,7 +54,7 @@
 
 SubframeFindPeaks::SubframeFindPeaks()
     : QWidget()
-    , _peak_collection("temp", ohkl::PeakCollectionType::FOUND)
+    , _peak_collection("temp", ohkl::PeakCollectionType::FOUND, nullptr)
     , _peak_collection_item()
     , _peak_collection_model()
     , _peaks_integrated(false)
@@ -107,7 +107,6 @@ void SubframeFindPeaks::setDataUp()
     GridFiller f(_data_box);
 
     _data_combo = f.addDataCombo("Data set");
-    _all_data = f.addCheckBox("Search all", "Find peaks in all data sets in this experiment", 1);
 
     connect(_data_combo, &QComboBox::currentTextChanged, this, &SubframeFindPeaks::refreshAll);
 
@@ -456,25 +455,8 @@ void SubframeFindPeaks::updateConvolutionParameters()
 void SubframeFindPeaks::find()
 {
     gGui->setReady(false);
-    ohkl::DataList data_list;
-    const ohkl::DataList all_data = gSession->currentProject()->allData();
 
-    int idx = _data_combo->currentIndex();
-
-    if (idx >= all_data.size() || idx == -1) {
-        _data_combo->setCurrentIndex(0);
-    }
-
-    if (_all_data->isChecked()) {
-        for (int i = 0; i < all_data.size(); ++i)
-            data_list.push_back(all_data.at(i));
-    } else {
-        int idx = _data_combo->currentIndex();
-        if (idx < all_data.size()) {
-            data_list.push_back(all_data.at(idx));
-        }
-    }
-
+    ohkl::sptrDataSet data = _data_combo->currentData();
     ohkl::PeakFinder* finder = gSession->currentProject()->experiment()->peakFinder();
     ohkl::sptrProgressHandler progHandler = ohkl::sptrProgressHandler(new ohkl::ProgressHandler);
     ProgressView progressView(nullptr);
@@ -484,7 +466,7 @@ void SubframeFindPeaks::find()
     setFinderParameters();
 
     try {
-        finder->find(data_list);
+        finder->find(data);
         refreshPeakTable();
     } catch (std::exception& e) {
         QMessageBox::critical(this, "Error", QString(e.what()));

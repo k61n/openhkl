@@ -96,10 +96,11 @@ class Experiment {
     // Peak handler
     //! Create a new PeakCollection from a vector of peaks
     bool addPeakCollection(
-        const std::string& name, const PeakCollectionType type, std::vector<Peak3D*> peaks);
+        const std::string& name, const PeakCollectionType type,
+        std::vector<Peak3D*> peaks, sptrDataSet data);
     bool addPeakCollection(
         const std::string& name, const PeakCollectionType type, std::vector<Peak3D*> peaks,
-        bool indexed, bool integrated, bool gradient);
+        sptrDataSet data, bool indexed, bool integrated, bool gradient);
     //! Check if the handler has the named peak collection
     bool hasPeakCollection(const std::string& name);
     //! Check if handler has Peak Collections of a certain type
@@ -117,7 +118,8 @@ class Experiment {
     //! Get the number of peak collections
     int numPeakCollections() const;
     //! Create a new peak collection from peaks caught by a filter
-    bool acceptFilter(std::string name, PeakCollection* collection, PeakCollectionType pct);
+    bool acceptFilter(
+        std::string name, PeakCollection* collection, PeakCollectionType pct, sptrDataSet data);
     //! Duplicate a peak collection (deep copy) for comparison after some process
     bool clonePeakCollection(std::string name, std::string new_name);
 
@@ -222,7 +224,7 @@ class Experiment {
     //! Get a pointer to the AutoIndexer object
     AutoIndexer* autoIndexer() const { return _auto_indexer.get(); };
     //! attempt to autoindex the data
-    void autoIndex(PeakCollection* peaks);
+    void autoIndex(PeakCollection* peaks, sptrDataSet data);
     //! Get a pointer to the accepted/assigned unit cell
     const UnitCell* getAcceptedCell() const;
     //! Get a pointer to the reference unit cell

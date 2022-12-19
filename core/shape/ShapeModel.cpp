@@ -501,7 +501,7 @@ void ShapeModel::integrate(
     integrator.setHandler(handler);
     integrator.setParameters(int_params);
 
-    integrator.integrate(peaks, this, data, 1);
+    integrator.integrate(peaks, this, data);
     ohklLog(Level::Info, "ShapeModel::integrate: finished integrating shapes");
 }
 
@@ -535,9 +535,8 @@ void ShapeModel::build(PeakCollection* peaks, sptrDataSet data)
     int_params.peak_end = _params->peak_end;
     int_params.bkg_begin = _params->bkg_begin;
     int_params.bkg_end = _params->bkg_end;
-    integrator.setNNumors(1);
     integrator.setParameters(int_params);
-    integrator.integrate(fit_peaks, this, data, 1);
+    integrator.integrate(fit_peaks, this, data);
     ohklLog(Level::Info, "ShapeModel::build: finished integrating shapes");
     ohklLog(Level::Info, "ShapeModel::build: updating fit");
     updateFit(1000);

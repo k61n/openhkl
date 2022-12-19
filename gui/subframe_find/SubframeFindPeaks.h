@@ -116,7 +116,6 @@ class SubframeFindPeaks : public QWidget {
     QSplitter* _right_element;
 
     DataComboBox* _data_combo;
-    QCheckBox* _all_data;
 
     SafeSpinBox* _threshold_spin;
     SafeDoubleSpinBox* _scale_spin;

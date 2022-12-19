@@ -18,6 +18,7 @@
 #include <string>
 #include <vector>
 
+#include "core/data/DataSet.h"
 #include "core/shape/PeakCollection.h"
 
 namespace ohkl {
@@ -40,11 +41,12 @@ class PeakHandler {
     //! Add a peak collection
     bool addPeakCollection(
         const std::string& name, const PeakCollectionType type,
-        const std::vector<ohkl::Peak3D*> peaks);
+        const std::vector<ohkl::Peak3D*> peaks, sptrDataSet data);
     //
     bool addPeakCollection(
         const std::string& name, const PeakCollectionType type,
-        const std::vector<ohkl::Peak3D*> peaks, bool indexed, bool integrated, bool gradient);
+        const std::vector<ohkl::Peak3D*> peaks, sptrDataSet data,
+        bool indexed, bool integrated, bool gradient);
     //! Add an empty peak collection
     bool addEmptyCollection(const std::string& name, const PeakCollectionType type);
     //! Returns true if the experiment has named peak collection
@@ -64,7 +66,9 @@ class PeakHandler {
     //! Get the number of peak collections
     int numPeakCollections() const { return _peak_collections.size(); };
     //! Create a new collection of peaks caught by _peak_filter
-    bool acceptFilter(const std::string name, PeakCollection* collection, PeakCollectionType pct);
+    bool acceptFilter(
+        const std::string name, PeakCollection* collection,
+        PeakCollectionType pct, sptrDataSet data);
     //! Deep copy a peak collection
     bool clonePeakCollection(std::string name, std::string new_name);
     //! Generate name for new peak collection

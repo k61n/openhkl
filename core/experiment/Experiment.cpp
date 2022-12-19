@@ -102,7 +102,8 @@ void Experiment::setDefaultDMin()
 bool Experiment::acceptFoundPeaks(const std::string& name)
 {
     std::vector<Peak3D*> peaks = _peak_finder->currentPeaks();
-    return addPeakCollection(name, PeakCollectionType::FOUND, peaks);
+    sptrDataSet data = _peak_finder->currentData();
+    return addPeakCollection(name, PeakCollectionType::FOUND, peaks, data);
 }
 
 bool Experiment::acceptFoundPeaks(const std::string& name, const PeakCollection& found)
@@ -110,8 +111,9 @@ bool Experiment::acceptFoundPeaks(const std::string& name, const PeakCollection&
     std::vector<Peak3D*> peaks = found.getPeakList();
 
     if (!addPeakCollection(
-            name, PeakCollectionType::FOUND, peaks, found.isIndexed(),
-            _peak_finder->isIntegrated(), _peak_finder->hasBkgGradient())) {
+            name, PeakCollectionType::FOUND, peaks, _peak_finder->currentData(),
+            found.isIndexed(), _peak_finder->isIntegrated(),
+            _peak_finder->hasBkgGradient())) {
         return false;
     }
     _peak_finder->setIntegrated(false); // reset for next use
@@ -201,7 +203,7 @@ void Experiment::loadFromFile(const std::string& path)
     setDefaultDMin();
 }
 
-void Experiment::autoIndex(PeakCollection* peaks)
+void Experiment::autoIndex(PeakCollection* peaks, sptrDataSet data)
 {
 
     auto params = _auto_indexer->parameters();
@@ -227,7 +229,7 @@ void Experiment::autoIndex(PeakCollection* peaks)
     double npeaks = peaks->numberOfPeaks();
     double ncaught = peaks->numberCaughtByFilter();
     ohklLog(Level::Info, "Indexing using ", ncaught, " / ", npeaks, " peaks");
-    _peak_handler->acceptFilter(collection_name, peaks, PeakCollectionType::INDEXING);
+    _peak_handler->acceptFilter(collection_name, peaks, PeakCollectionType::INDEXING, data);
     PeakCollection* indexing_collection = getPeakCollection(collection_name);
     _auto_indexer->autoIndex(indexing_collection);
     _peak_handler->removePeakCollection(collection_name);
@@ -250,7 +252,7 @@ void Experiment::buildShapeModel(
     _peak_filter->parameters()->strength_max = params.strength_max;
     _peak_filter->filter(peaks);
     std::string collection_name = ohkl::kw_fitCollection;
-    PeakCollection fit_peaks(collection_name, peaks->type());
+    PeakCollection fit_peaks(collection_name, peaks->type(), data);
     fit_peaks.populateFromFiltered(peaks);
 
     if (fit_peaks.numberOfPeaks() == 0) {
@@ -379,10 +381,11 @@ void Experiment::removeData(const std::string& name)
 
 // Peak handler methods
 bool Experiment::addPeakCollection(
-    const std::string& name, const PeakCollectionType type, std::vector<Peak3D*> peaks)
+    const std::string& name, const PeakCollectionType type,
+    std::vector<Peak3D*> peaks, sptrDataSet data)
 {
     if (!_peak_handler->hasPeakCollection(name)) {
-        _peak_handler->addPeakCollection(name, type, peaks);
+        _peak_handler->addPeakCollection(name, type, peaks, data);
         return true;
     }
     return false;
@@ -390,9 +393,10 @@ bool Experiment::addPeakCollection(
 
 bool Experiment::addPeakCollection(
     const std::string& name, const PeakCollectionType type, std::vector<Peak3D*> peaks,
-    bool indexed, bool integrated, bool gradient)
+    sptrDataSet data, bool indexed, bool integrated, bool gradient)
 {
-    return _peak_handler->addPeakCollection(name, type, peaks, indexed, integrated, gradient);
+    return _peak_handler->addPeakCollection(
+        name, type, peaks, data, indexed, integrated, gradient);
 }
 
 bool Experiment::hasPeakCollection(const std::string& name)
@@ -435,9 +439,9 @@ int Experiment::numPeakCollections() const
     return _peak_handler->numPeakCollections();
 }
 
-bool Experiment::acceptFilter(std::string name, PeakCollection* collection, PeakCollectionType pct)
+bool Experiment::acceptFilter(std::string name, PeakCollection* collection, PeakCollectionType pct, sptrDataSet data)
 {
-    return _peak_handler->acceptFilter(name, collection, pct);
+    return _peak_handler->acceptFilter(name, collection, pct, data);
 }
 
 bool Experiment::clonePeakCollection(std::string name, std::string new_name)

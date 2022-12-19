@@ -65,7 +65,7 @@ class IIntegrator {
     virtual ~IIntegrator();
     //! Integrate all peaks in the list which are contained in the specified data set.
     void integrate(
-        std::vector<Peak3D*> peaks, ShapeModel* shape_model, sptrDataSet data, int n_numor);
+        std::vector<Peak3D*> peaks, ShapeModel* shape_model, sptrDataSet data);
     //! Return the mean background.
     Intensity meanBackground() const;
     //! Return the mean background gradient
@@ -76,8 +76,6 @@ class IIntegrator {
     const std::vector<Intensity>& rockingCurve() const;
     //! Set the progress handler.
     void setHandler(sptrProgressHandler handler);
-    //! Set the number of numors for progress handler
-    void setNNumors(int n_numors);
 
  protected:
     //! Mean local background of peak. The uncertainty is the uncertainty of the
@@ -93,8 +91,6 @@ class IIntegrator {
     sptrProgressHandler _handler;
     //! Container for user-defined integration parameters
     IntegrationParameters _params;
-    //! Number of numors in the dataset to be integrated
-    int _n_numors = 1;
 
  public:
     //! Return the peak scale

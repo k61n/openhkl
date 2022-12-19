@@ -71,7 +71,7 @@ TEST_CASE("test/data/TestPeakFinder.cpp", "")
     finder_params->threshold = 80;
     finder->setConvolver(ohkl::AnnularConvolver());
 
-    finder->find(experiment.getAllData());
+    finder->find(experiment.getAllData()[0]);
     std::cout << finder->numberFound() << " peaks found" << std::endl;
 
     CHECK(finder->numberFound() >= 490);
