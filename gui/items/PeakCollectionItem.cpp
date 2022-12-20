@@ -246,11 +246,11 @@ void PeakCollectionItem::sort(int column, Qt::SortOrder order)
             };
             break;
         }
-        case PeakColumn::Numor: {
+        case PeakColumn::DataSet: {
             compareFn = [&](std::unique_ptr<PeakItem>& p1, std::unique_ptr<PeakItem>& p2) {
-                const int numor_1 = p1->peak()->dataSet()->metadata().key<int>(ohkl::at_numor);
-                const int numor_2 = p2->peak()->dataSet()->metadata().key<int>(ohkl::at_numor);
-                return (numor_1 < numor_2);
+                const std::string data_1 = p1->peak()->dataSet()->name();
+                const std::string data_2 = p2->peak()->dataSet()->name();
+                return (data_1 < data_2);
             };
             break;
         }

@@ -116,8 +116,8 @@ QVariant PeakCollectionModel::headerData(int section, Qt::Orientation orientatio
             case PeakColumn::BkgGradientSigma: {
                 return QString(QChar(0x03C3)) + " (Grad.)";
             }
-            case PeakColumn::Numor: {
-                return QString("Numor");
+            case PeakColumn::DataSet: {
+                return QString("Data set");
             }
             case PeakColumn::uc: {
                 return QString("Unit cell");

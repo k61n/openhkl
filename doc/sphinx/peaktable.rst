@@ -30,8 +30,8 @@ exceptions) the following columns.
    +-----------------------+----------------+-------------------------------+
    | **Strength**          |                | :math:`I/\sigma`              |
    +-----------------------+----------------+-------------------------------+
-   | **Numor**             |                | Number of run from which this |
-   |                       |                | peak was derived              |
+   | **Data set**          |                | Name of data set from which   |
+   |                       |                | this peak was derived         |
    +-----------------------+----------------+-------------------------------+
    | **Unit cell**         |                | Name of unit cell assigned to |
    |                       |                | this peak                     |
