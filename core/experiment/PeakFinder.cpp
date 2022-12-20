@@ -210,6 +210,7 @@ void PeakFinder::findPrimaryBlobs(
     size_t begin, size_t end)
 {
     std::ostringstream oss;
+    oss << "Finding blobs for data set " << data.name();
 
     // update via handler if necessary
     if (_handler) {
