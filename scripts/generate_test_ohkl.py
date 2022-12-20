@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 ##  ***********************************************************************************************
 ##
 ##  OpenHKL: data reduction for single-crystal diffraction
@@ -60,6 +60,7 @@ for filename in files:
 
 dataset.finishRead()
 expt.addData(dataset)
+data = expt.getAllData()[0]
 
 # Find the peaks
 finder = expt.peakFinder()
@@ -72,7 +73,7 @@ params.peak_end = 1.0
 params.threshold = 80
 finder.setConvolver(ohkl.AnnularConvolver())
 
-finder.find(expt.getAllData())
+finder.find(data)
 
 # Integrate the peaks
 integrator = expt.integrator()
@@ -97,7 +98,7 @@ filter.parameters().d_max = 50.0
 filter.parameters().strength_min = 1.0
 filter.parameters().strength_max = 1.0e7
 filter.filter(found_peaks)
-expt.acceptFilter("filtered", found_peaks, ohkl.PeakCollectionType_FOUND)
+expt.acceptFilter("filtered", found_peaks, ohkl.PeakCollectionType_FOUND, data)
 filtered_peaks = expt.getPeakCollection("filtered")
 n_caught = filtered_peaks.numberCaughtByFilter()
 print(f'Autoindex: {n_caught}/{n_peaks} peaks caught by filter')
@@ -121,13 +122,12 @@ print(expt.checkAndAssignUnitCell(filtered_peaks, 2.0, 0.1))  # boolean return v
 
 # Predict peaks
 predictor = expt.predictor()
-data = expt.getAllData()[0]
 indexed_cell = expt.getUnitCell("accepted")
 prediction_params = predictor.parameters()
 prediction_params.d_min = 1.5
 prediction_params.d_max = 50.0
 predictor.predictPeaks(data, indexed_cell)
-expt.addPeakCollection("predicted", ohkl.PeakCollectionType_PREDICTED, predictor.peaks())
+expt.addPeakCollection("predicted", ohkl.PeakCollectionType_PREDICTED, predictor.peaks(), data)
 predicted_peaks = expt.getPeakCollection("predicted")
 npeaks = predicted_peaks.numberOfPeaks()
 print(f'{npeaks} predicted')
