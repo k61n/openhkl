@@ -153,7 +153,7 @@ void ExperimentImporter::loadPeaks(Experiment* experiment)
             if (peak_collection.attrExists(ohkl::at_datasetName)) {
                 const H5::Attribute attr = peak_collection.openAttribute(ohkl::at_datasetName);
                 const H5::DataType attr_type = attr.getDataType();
-                attr.read(attr_type, &dataset_name);
+                attr.read(attr_type, dataset_name);
             }
 
             if (peak_collection.attrExists(ohkl::at_indexed)) {
