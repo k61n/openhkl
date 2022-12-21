@@ -42,7 +42,8 @@ class QSlider;
 class DetectorWidget : public QGridLayout {
 
  public:
-    DetectorWidget(bool cursor, bool slider, QWidget* parent = nullptr);
+    DetectorWidget(
+        std::size_t max_collections, bool cursor, bool slider, QWidget* parent = nullptr);
     //! Synchronise intensity sliders and intensities across instances
     void syncIntensitySliders();
     //! Update the DataSet combo
@@ -50,7 +51,7 @@ class DetectorWidget : public QGridLayout {
     //! Refresh the DetectorScene
     void refresh();
     //! Link the detector scene to one or two peak models
-    void linkPeakModel(PeakCollectionModel* model1, PeakCollectionModel* model2 = nullptr);
+    void linkPeakModel(PeakCollectionModel* model, std::size_t idx = 0);
     //! Return the current DataSet
     ohkl::sptrDataSet currentData();
     //! Switch the Detectorscene between coordinate types

@@ -21,7 +21,9 @@
 #include <QClipboard>
 #include <QKeyEvent>
 
-DetectorView::DetectorView(QWidget* parent) : QGraphicsView(parent), _scene(new DetectorScene(this))
+DetectorView::DetectorView(std::size_t max_collections, QWidget* parent)
+    : QGraphicsView(parent)
+    , _scene(new DetectorScene(max_collections, this))
 {
     setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform);
     setScene(_scene);

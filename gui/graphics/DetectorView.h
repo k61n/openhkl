@@ -23,7 +23,7 @@ class DetectorScene;
 class DetectorView : public QGraphicsView {
     Q_OBJECT
  public:
-    explicit DetectorView(QWidget* parent = 0);
+    explicit DetectorView(std::size_t max_collections, QWidget* parent = 0);
     void resizeEvent(QResizeEvent* event);
     DetectorScene* getScene();
     void keyPressEvent(QKeyEvent* event);

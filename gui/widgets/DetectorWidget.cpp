@@ -40,12 +40,14 @@
 
 QList<DetectorWidget*> DetectorWidget::_detector_widgets = QList<DetectorWidget*>();
 
-DetectorWidget::DetectorWidget(bool cursor, bool slider, QWidget* parent) : QGridLayout(parent)
+DetectorWidget::DetectorWidget(
+    std::size_t max_collections, bool cursor, bool slider, QWidget* parent)
+    : QGridLayout(parent)
 {
     QGridLayout* top_grid = new QGridLayout();
     QHBoxLayout* bottom_layout = new QHBoxLayout();
 
-    _detector_view = new DetectorView();
+    _detector_view = new DetectorView(max_collections);
     _detector_view->scale(1, -1);
     top_grid->addWidget(_detector_view, 0, 0, 1, 1);
 
@@ -162,11 +164,11 @@ void DetectorWidget::refresh()
 
     ohkl::sptrDataSet data = _data_combo->currentData();
 
-    _hide_masks->setChecked(!scene()->masksVisible());
+    _hide_masks->setChecked(!scene()->flags()->masks);
 
     scene()->slotChangeSelectedData(data, _spin->value());
     scene()->clearPeakItems();
-    scene()->drawPeakitems();
+    scene()->drawPeakItems();
     scene()->update();
     _detector_view->fitInView(scene()->sceneRect(), Qt::KeepAspectRatio);
     _scroll->setMinimum(1);
@@ -178,11 +180,9 @@ void DetectorWidget::refresh()
     emit scene()->dataChanged();
 }
 
-void DetectorWidget::linkPeakModel(PeakCollectionModel* model1, PeakCollectionModel* model2)
+void DetectorWidget::linkPeakModel(PeakCollectionModel* model, std::size_t idx)
 {
-    scene()->linkPeakModel1(model1);
-    if (model2)
-        scene()->linkPeakModel2(model2);
+    scene()->linkPeakModel(model, idx);
 }
 
 ohkl::sptrDataSet DetectorWidget::currentData()

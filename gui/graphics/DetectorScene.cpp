@@ -29,6 +29,7 @@
 #include "core/loader/XFileHandler.h"
 #include "core/peak/Peak3D.h"
 #include "gui/MainWin.h"
+#include "gui/graphics/PeakCollectionGraphics.h"
 #include "gui/graphics_items/CrosshairGraphic.h"
 #include "gui/graphics_items/EllipseMaskItem.h"
 #include "gui/graphics_items/MaskItem.h"
@@ -45,7 +46,6 @@
 #include "gui/models/Session.h"
 #include "gui/subwindows/PeakWindow.h"
 #include "gui/utility/ColorButton.h"
-#include "gui/utility/LinkedComboBox.h"
 #include "tables/crystal/MillerIndex.h"
 #include "tables/crystal/SpaceGroup.h"
 #include "tables/crystal/UnitCell.h"
@@ -68,8 +68,9 @@
 
 QPointF DetectorScene::_current_beam_position = {0, 0};
 
-DetectorScene::DetectorScene(QObject* parent)
+DetectorScene::DetectorScene(std::size_t npeakcollections, QObject* parent)
     : QGraphicsScene(parent)
+    , _flags()
     , _currentData(nullptr)
     , _currentFrameIndex(-1)
     , _currentIntensity(3000)
@@ -80,33 +81,12 @@ DetectorScene::DetectorScene(QObject* parent)
     , _zoomrect(nullptr)
     , _selectionRect(nullptr)
     , _zoomStack()
-    , _peak_model_1(nullptr)
-    , _peak_model_2(nullptr)
-    , _peak_graphics_items()
     , _itemSelected(false)
     , _image(nullptr)
     , _lastClickedGI(nullptr)
-    , _logarithmic(false)
-    , _drawGradient(false)
-    , _drawIntegrationRegion1(false)
-    , _drawIntegrationRegion2(false)
-    , _drawSinglePeakIntegrationRegion(false)
-    , _drawDirectBeam(false)
-    , _draw3rdParty(true)
-    , _drawFoundSpots(true)
-    , _drawMasks(true)
     , _colormap(new ColorMap())
-    , _integrationRegion1(nullptr)
-    , _integrationRegion2(nullptr)
     , _selected_peak_gi(nullptr)
-    , _peakPxColor1(QColor(255, 255, 0, 128)) // yellow, alpha = 0.5
-    , _peakPxColor2(QColor(251, 163, 0, 128)) // dark yellow, alpha = 0.5
-    , _bkgPxColor1(QColor(0, 255, 0, 128)) // green, alpha = 0.5
-    , _bkgPxColor2(QColor(0, 100, 0, 128)) // dark green, alpha = 0.5
-    , _3rdparty_color(Qt::black)
-    , _3rdparty_size(10)
-    , _spot_color(Qt::black)
-    , _spot_size(10)
+    , _max_peak_collections(npeakcollections)
     , _beam_color(Qt::black)
     , _old_beam_color(Qt::gray)
     , _beam_size(20)
@@ -115,12 +95,12 @@ DetectorScene::DetectorScene(QObject* parent)
     , _selected_peak(nullptr)
     , _unit_cell(nullptr)
     , _peak(nullptr)
-    , _peak_center_data(nullptr)
-    , _per_frame_spots(nullptr)
     , _mask_handler(std::make_shared<MaskHandler>())
     , _gradient_kernel(ohkl::GradientKernel::Sobel)
     , _fft_gradient(false)
 {
+    for (std::size_t idx = 0; idx < _max_peak_collections; ++idx)
+        _peak_graphics.push_back(nullptr);
 }
 
 void DetectorScene::onGradientSetting(int kernel, bool fft)
@@ -149,10 +129,9 @@ void DetectorScene::addBeamSetter(int size, int linewidth)
 
 void DetectorScene::removeBeamSetter()
 {
-    for (auto item : items()) {
+    for (auto item : items())
         if (dynamic_cast<CrosshairGraphic*>(item) != nullptr)
             removeItem(item);
-    }
 }
 
 void DetectorScene::showBeamSetter(bool show)
@@ -161,50 +140,54 @@ void DetectorScene::showBeamSetter(bool show)
     update();
 }
 
-void DetectorScene::linkPeakModel1(PeakCollectionModel* source)
+void DetectorScene::linkPeakModel(PeakCollectionModel* source, std::size_t idx /* = 0 */)
 {
-    _peak_model_1 = source;
+    // unless specified, link model to first element of _peak_graphics
+    if (idx >= _max_peak_collections)
+        throw std::range_error(
+            "DetectorScene::linkPeakModel: _peak_graphics index out of range");
+
+    //! Check for existence of this model
+    if (_peak_graphics.at(idx)) { // check for nullptr
+        if (_peak_graphics.at(idx)->peakModel() == source)
+            return;
+        else
+            _peak_graphics.at(idx).reset();
+    }
+
+    _peak_graphics.at(idx) = std::make_unique<PeakCollectionGraphics>(source);
     connect(
-        _peak_model_1, &PeakCollectionModel::dataChanged, this,
+        _peak_graphics.at(idx)->peakModel(), &PeakCollectionModel::dataChanged, this,
         &DetectorScene::peakModelDataChanged);
 }
 
-void DetectorScene::linkPeakModel2(PeakCollectionModel* source)
+PeakCollectionGraphics* DetectorScene::peakCollectionGraphics(std::size_t idx) const
 {
-    _peak_model_2 = source;
-    connect(
-        _peak_model_2, &PeakCollectionModel::dataChanged, this,
-        &DetectorScene::peakModelDataChanged);
+    if (idx >= _max_peak_collections)
+        throw std::range_error(
+            "DetectorScene::peakCollectionGraphics: _peak_graphics index out of range");
+    return _peak_graphics.at(idx).get();
 }
 
-PeakCollectionModel* DetectorScene::peakModel1() const
+void DetectorScene::link3rdPartyPeaks(ohkl::PeakCenterDataSet* pcd, std::size_t idx)
 {
-    return _peak_model_1;
+    if (idx >= _max_peak_collections)
+        throw std::range_error(
+            "DetectorScene::link3rdPartyPeaks: _peak_graphics index out of range");
+
+    _peak_graphics.at(idx)->setExtPeakData(pcd);
+    drawPeakItems();
 }
 
-PeakCollectionModel* DetectorScene::peakModel2() const
+void DetectorScene::linkPerFrameSpots(
+    std::vector<std::vector<cv::KeyPoint>>* points, std::size_t idx)
 {
-    return _peak_model_2;
-}
+    if (idx >= _max_peak_collections)
+        throw std::range_error(
+            "DetectorScene::linkPerFrameSpots: _peak_graphics index out of range");
 
-void DetectorScene::unlinkPeakModel1()
-{
-    _peak_model_1 = nullptr;
-    connect(
-        this, &DetectorScene::signalChangeSelectedFrame, this,
-        &DetectorScene::peakModelDataChanged);
-}
-
-void DetectorScene::link3rdPartyPeaks(ohkl::PeakCenterDataSet* pcd)
-{
-    _peak_center_data = pcd;
-    drawPeakitems();
-}
-
-void DetectorScene::linkPerFrameSpots(std::vector<std::vector<cv::KeyPoint>>* points)
-{
-    _per_frame_spots = points;
-    drawPeakitems();
+    _peak_graphics.at(idx)->setPerFrameSpots(points);
+    drawPeakItems();
 }
 
 void DetectorScene::linkDirectBeamPositions(std::vector<ohkl::DetectorEvent>* events)
@@ -217,15 +200,10 @@ void DetectorScene::linkOldDirectBeamPositions(std::vector<ohkl::DetectorEvent>*
     _old_direct_beam_events = events;
 }
 
-void DetectorScene::unlinkPeakModel2()
-{
-    _peak_model_2 = nullptr;
-}
-
 void DetectorScene::peakModelDataChanged()
 {
     loadCurrentImage();
-    drawPeakitems();
+    drawPeakItems();
     update();
 }
 
@@ -233,11 +211,7 @@ void DetectorScene::clearPeakItems()
 {
     if (!_currentData)
         return;
-    if (_peak_graphics_items.size() == 0) // contin. crashed without for me
-        return;
 
-    // _peak_graphics_items can be out of sync (pointer may get deleted outside). Therefore
-    // do not use it for removing items from the scene (may cause crash)
     for (auto item : items()) {
         if (dynamic_cast<PeakItemGraphic*>(item) != nullptr)
             removeItem(item);
@@ -246,23 +220,26 @@ void DetectorScene::clearPeakItems()
         if (dynamic_cast<DirectBeamGraphic*>(item) != nullptr) // Remove direct beam position``
             removeItem(item);
     }
-
-    _peak_graphics_items.clear();
 }
 
-void DetectorScene::drawPeakitems()
+void DetectorScene::drawPeakItems()
 {
-
     clearPeakItems();
-    if (_peak_model_1)
-        drawPeakModelItems(_peak_model_1);
-    if (_peak_model_2)
-        drawPeakModelItems(_peak_model_2);
-    if (_draw3rdParty)
-        draw3rdPartyItems();
-    if (_drawFoundSpots)
-        drawSpotCenters();
-    if (_drawDirectBeam)
+    for (const auto& graphic : _peak_graphics) {
+        if (graphic->peaksEnabled()) {
+            for (auto* peak_graphic : graphic->peakItemGraphics(_currentFrameIndex))
+                addItem(peak_graphic);
+        }
+        if (graphic->extPeaksEnabled()) {
+            for (auto* peak_graphic : graphic->extPeakGraphics(_currentFrameIndex))
+                addItem(peak_graphic);
+        }
+        if (graphic->detectorSpotsEnabled()) {
+            for (auto* peak_graphic : graphic->detectorSpots(_currentFrameIndex))
+              addItem(peak_graphic);
+        }
+    }
+    if (_flags.directBeam)
         drawDirectBeamPositions();
     loadCurrentImage();
 }
@@ -306,91 +283,12 @@ void DetectorScene::drawDirectBeamPositions()
     }
 }
 
-void DetectorScene::drawPeakModelItems(PeakCollectionModel* model)
-{
-    if (model == nullptr || model->root() == nullptr)
-        return;
-
-    std::vector<PeakItem*> peak_items = model->root()->peakItems();
-
-    for (PeakItem* peak_item : peak_items) {
-        ohkl::Ellipsoid peak_ellipsoid = peak_item->peak()->shape();
-        peak_ellipsoid.scale(peak_item->peak()->peakEnd());
-        const ohkl::AABB& aabb = peak_ellipsoid.aabb();
-        Eigen::Vector3d lower = aabb.lower();
-        Eigen::Vector3d upper = aabb.upper();
-
-        // If the current frame of the scene is out of the peak bounds do not paint it
-        if (_currentFrameIndex < lower[2] || _currentFrameIndex > upper[2])
-            continue;
-
-        PeakItemGraphic* peak_graphic = peak_item->peakGraphic();
-        peak_graphic->setCenter(_currentFrameIndex);
-        _peak_graphics_items.push_back(peak_graphic);
-        addItem(peak_graphic);
-    }
-}
-
-void DetectorScene::draw3rdPartyItems()
-{
-    if (!_peak_center_data)
-        return;
-    _peak_center_items.clear();
-    ohkl::XFileHandler* xfh = _peak_center_data->getFrame(_currentFrameIndex);
-
-    if (!xfh)
-        return;
-
-    for (const Eigen::Vector3d& vector : xfh->getPeakCenters()) {
-        PeakCenterGraphic* center = new PeakCenterGraphic(vector);
-        center->setColor(_3rdparty_color);
-        center->setSize(_3rdparty_size);
-        _peak_center_items.emplace_back(center);
-    }
-
-    if (_peak_center_items.empty())
-        return;
-
-    for (auto peak : _peak_center_items)
-        addItem(peak);
-}
-
-void DetectorScene::drawSpotCenters()
-{
-    if (!_per_frame_spots)
-        return;
-
-    for (auto item : items())
-        if (dynamic_cast<PeakCenterGraphic*>(item) != nullptr)
-            removeItem(item);
-
-    _peak_center_items.clear();
-
-    if (_per_frame_spots->at(_currentFrameIndex).empty())
-        return;
-
-    for (const cv::KeyPoint& point : _per_frame_spots->at(_currentFrameIndex)) {
-        PeakCenterGraphic* center = new PeakCenterGraphic(
-            {point.pt.x, point.pt.y, static_cast<double>(_currentFrameIndex)});
-        center->setColor(_3rdparty_color);
-        center->setSize(_3rdparty_size);
-        _peak_center_items.emplace_back(center);
-    }
-
-    if (_peak_center_items.empty())
-        return;
-
-    for (auto peak : _peak_center_items)
-        addItem(peak);
-}
-
 void DetectorScene::slotChangeSelectedData(ohkl::sptrDataSet data, int frame_1based)
 {
     if (data != _currentData) {
+        _currentData->close();
         _currentData = data;
-
         _currentData->open();
-
         _currentFrameIndex = -1;
 
         _zoomStack.clear();
@@ -424,7 +322,7 @@ void DetectorScene::slotChangeSelectedFrame(int frame_1based)
     clearPeakItems();
     loadCurrentImage();
     updateMasks();
-    drawPeakitems();
+    drawPeakItems();
 }
 
 void DetectorScene::setMaxIntensity(int intensity)
@@ -760,13 +658,12 @@ void DetectorScene::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
             _current_beam_position = event->scenePos();
             addBeamSetter(size, linewidth);
         } else {
-            if (_peak_model_1) {
-                // _peak_model_2 is only relevant in DetectorWindow, ignore here.
+            for (const auto& graphic : _peak_graphics) {
+                PeakCollectionModel* model = graphic->peakModel(); 
                 std::map<ohkl::Peak3D*, ohkl::RejectionFlag> tmp_map;
                 std::vector<ohkl::Peak3D*> peaks =
-                    _peak_model_1->root()->peakCollection()->getPeakList();
+                    model->root()->peakCollection()->getPeakList();
                 if (CutterItem* p = dynamic_cast<CutterItem*>(_lastClickedGI)) {
-                    // delete p....
                     _lastClickedGI = nullptr;
                     removeItem(p);
                 } else if (PlottableItem* p = dynamic_cast<PlottableItem*>(_lastClickedGI))
@@ -801,38 +698,6 @@ void DetectorScene::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
                     updateMasks();
                 }
 
-            } else {
-                if (CutterItem* p = dynamic_cast<CutterItem*>(_lastClickedGI)) {
-                    Q_UNUSED(p);
-                    // delete p....
-                    _lastClickedGI = nullptr;
-                    // removeItem(p);
-                } else if (PlottableItem* p = dynamic_cast<PlottableItem*>(_lastClickedGI)) {
-                    gGui->updatePlot(p);
-                } else if (MaskItem* p = dynamic_cast<MaskItem*>(_lastClickedGI)) {
-                    // add a new mask
-                    if (_mask_handler->addMask(
-                            _currentData,
-                            p)) { // mask entry has been found and updated
-                        _lastClickedGI = nullptr;
-                        emit signalMaskChanged();
-                    }
-
-                    update();
-                    updateMasks();
-                } else if (EllipseMaskItem* p = dynamic_cast<EllipseMaskItem*>(_lastClickedGI)) {
-                    if (_mask_handler->addMask(
-                            _currentData,
-                            p)
-
-                    ) { // mask entry has been found and updated
-                        emit signalMaskChanged();
-                        _lastClickedGI = nullptr;
-                    }
-
-                    update();
-                    updateMasks();
-                }
             }
         }
     }
@@ -1018,38 +883,34 @@ void DetectorScene::loadCurrentImage()
         _currentFrameIndex = _currentData->nFrames() - 1;
     _currentFrame = _currentData->frame(_currentFrameIndex);
     if (_image == nullptr) {
-        if (!_drawGradient) {
+        if (!_flags.gradient) {
             _image = addPixmap(QPixmap::fromImage(_colormap->matToImage(
-                _currentFrame.cast<double>(), full, _currentIntensity, _logarithmic)));
+                _currentFrame.cast<double>(), full, _currentIntensity, _flags.logarithmic)));
         } else {
             _image = addPixmap(QPixmap::fromImage(_colormap->matToImage(
                 _currentData->gradientFrame(_currentFrameIndex, _gradient_kernel, !_fft_gradient),
-                full, _currentIntensity, _logarithmic)));
+                full, _currentIntensity, _flags.logarithmic)));
         }
         _image->setZValue(-2);
     } else {
-        if (!_drawGradient) {
+        if (!_flags.gradient) {
             _image->setPixmap(QPixmap::fromImage(_colormap->matToImage(
-                _currentFrame.cast<double>(), full, _currentIntensity, _logarithmic)));
+                _currentFrame.cast<double>(), full, _currentIntensity, _flags.logarithmic)));
         } else {
             _image->setPixmap(QPixmap::fromImage(_colormap->matToImage(
                 _currentData->gradientFrame(_currentFrameIndex, _gradient_kernel, !_fft_gradient),
-                full, _currentIntensity, _logarithmic)));
+                full, _currentIntensity, _flags.logarithmic)));
         }
     }
 
     // update the integration region pixmap
     clearIntegrationRegion();
-    if (_drawIntegrationRegion1 || _drawIntegrationRegion2)
-        refreshIntegrationOverlay();
-
-    if (_drawSinglePeakIntegrationRegion && !_drawIntegrationRegion1 && !_drawIntegrationRegion2)
-        refreshSinglePeakIntegrationOverlay();
+    drawIntegrationRegion();
 
     // let's recreate QGraphicItems from masks in DataSet since life cycle of this entitys seems
     // unpreditable at best
     _mask_handler->rebuildMasks(_currentData);
-    _mask_handler->setVisibleFlags(_currentData, _drawMasks);
+    _mask_handler->setVisibleFlags(_currentData, _flags.masks);
     addMasks();
 
     setSceneRect(_zoomStack.back());
@@ -1059,195 +920,31 @@ void DetectorScene::loadCurrentImage()
         gGui->updatePlot(p);
 }
 
-void DetectorScene::refreshIntegrationOverlay()
+void DetectorScene::drawIntegrationRegion()
 {
-    if (!_peak_model_1 && !_peak_model_2)
+    if (_peak_graphics.empty())
         return;
 
-    Eigen::MatrixXi mask(_currentData->nRows(), _currentData->nCols());
-    mask.setConstant(int(EventType::EXCLUDED));
-
-    if (_peak_model_1 && _drawIntegrationRegion1) {
-        getIntegrationMask(_peak_model_1, mask, _int_region_type_1);
-        QImage* region_img = getIntegrationRegionImage(mask, _peakPxColor1, _bkgPxColor1);
-        if (!_integrationRegion1) {
-            _integrationRegion1 = addPixmap(QPixmap::fromImage(*region_img));
-            _integrationRegion1->setZValue(-1);
-        } else {
-            _integrationRegion1->setPixmap(QPixmap::fromImage(*region_img));
-        }
+    ohkl::Peak3D* peak = nullptr;
+    if (_flags.singlePeakIntRegion)
+        peak = _peak;
+    for (const auto& graphic : _peak_graphics) {
+        if (!graphic->intRegionsEnabled())
+            continue;
+        QImage* region_img = graphic->getIntegrationRegionImage(_currentFrameIndex, peak);
+        QGraphicsPixmapItem* overlay = addPixmap(QPixmap::fromImage(*region_img));
+        overlay->setZValue(-1);
     }
-
-    if (_peak_model_2 && _drawIntegrationRegion2) {
-        mask.setConstant(int(EventType::EXCLUDED));
-        getIntegrationMask(_peak_model_2, mask, _int_region_type_2);
-        QImage* region_img = getIntegrationRegionImage(mask, _peakPxColor2, _bkgPxColor2);
-        if (!_integrationRegion2) {
-            _integrationRegion2 = addPixmap(QPixmap::fromImage(*region_img));
-            _integrationRegion2->setZValue(-1);
-        } else {
-            _integrationRegion2->setPixmap(QPixmap::fromImage(*region_img));
-        }
-    }
-}
-
-void DetectorScene::refreshSinglePeakIntegrationOverlay()
-{
-    if (!_peak)
-        return;
-
-    Eigen::MatrixXi mask(_currentData->nRows(), _currentData->nCols());
-    mask.setConstant(int(EventType::EXCLUDED));
-    getSinglePeakIntegrationMask(_peak, mask);
-    QImage* region_img = getIntegrationRegionImage(mask, _peakPxColor1, _bkgPxColor1);
-    if (!_integrationRegion1) {
-        _integrationRegion1 = addPixmap(QPixmap::fromImage(*region_img));
-        _integrationRegion1->setZValue(-1);
-    } else {
-        _integrationRegion1->setPixmap(QPixmap::fromImage(*region_img));
-    }
-}
-
-QImage* DetectorScene::getIntegrationRegionImage(
-    const Eigen::MatrixXi& mask, QColor& peak, QColor& bkg)
-{
-    QImage* region_img = new QImage(mask.cols(), mask.rows(), QImage::Format_ARGB32);
-
-    for (int c = 0; c < mask.cols(); ++c) {
-        for (int r = 0; r < mask.rows(); ++r) {
-            EventType ev = EventType(mask(r, c));
-            QColor color;
-
-            switch (ev) {
-                case EventType::PEAK: color = peak; break;
-                case EventType::BACKGROUND: color = bkg; break;
-                default: color = Qt::transparent; break;
-            }
-
-            // todo: what about unselected peaks?
-            region_img->setPixelColor(QPoint(c, r), color);
-        }
-    }
-    return region_img;
-}
-
-void DetectorScene::getIntegrationMask(
-    PeakCollectionModel* model, Eigen::MatrixXi& mask, ohkl::RegionType region_type)
-{
-    if (model == nullptr || model->root() == nullptr)
-        return;
-
-    std::vector<PeakItem*> peak_items = model->root()->peakItems();
-
-    double peak_end, bkg_begin, bkg_end;
-    for (PeakItem* peak_item : peak_items) {
-        ohkl::Peak3D* peak = peak_item->peak();
-        if (_preview_int_regions_1 && model == _peak_model_1) {
-            peak_end = _peak_end_1;
-            bkg_begin = _bkg_begin_1;
-            bkg_end = _bkg_end_1;
-        } else if (_preview_int_regions_2 && model == _peak_model_2) {
-            peak_end = _peak_end_2;
-            bkg_begin = _bkg_begin_2;
-            bkg_end = _bkg_end_2;
-        } else {
-            peak_end = peak_item->peak()->peakEnd();
-            bkg_begin = peak_item->peak()->bkgBegin();
-            bkg_end = peak_item->peak()->bkgEnd();
-        }
-        ohkl::IntegrationRegion region(peak, peak_end, bkg_begin, bkg_end, region_type);
-        if (region.isValid())
-            region.updateMask(mask, _currentFrameIndex);
-    }
-}
-
-void DetectorScene::getSinglePeakIntegrationMask(
-    ohkl::Peak3D* peak, Eigen::MatrixXi& mask, ohkl::RegionType region_type)
-{
-    if (!peak)
-        return;
-
-    ohkl::IntegrationRegion region(peak, _peak_end_1, _bkg_begin_1, _bkg_end_1, region_type);
-    if (region.isValid())
-        region.updateMask(mask, _currentFrameIndex);
-}
-
-void DetectorScene::initIntRegionFromPeakWidget(
-    const PeakViewWidget::Set& set, bool alt /* = false */)
-{
-    if (!alt) {
-        _preview_int_regions_1 = set.previewIntRegion->isChecked();
-        _int_region_type_1 = static_cast<ohkl::RegionType>(set.regionType->currentIndex());
-        _peak_end_1 = set.peakEnd->value();
-        _bkg_begin_1 = set.bkgBegin->value();
-        _bkg_end_1 = set.bkgEnd->value();
-        _drawIntegrationRegion1 = set.drawIntegrationRegion->isChecked();
-        _peakPxColor1 = set.colorIntPeak->color();
-        _bkgPxColor1 = set.colorIntBkg->color();
-        _peakPxColor1.setAlphaF(set.alphaIntegrationRegion->value());
-        _bkgPxColor1.setAlphaF(set.alphaIntegrationRegion->value());
-    } else { // alternative colour scheme for second overlay
-        _preview_int_regions_2 = set.previewIntRegion->isChecked();
-        _int_region_type_2 = static_cast<ohkl::RegionType>(set.regionType->currentIndex());
-        _peak_end_1 = set.peakEnd->value();
-        _peak_end_2 = set.peakEnd->value();
-        _bkg_begin_2 = set.bkgBegin->value();
-        _bkg_end_2 = set.bkgEnd->value();
-        _drawIntegrationRegion2 = set.drawIntegrationRegion->isChecked();
-        _peakPxColor2 = set.colorIntPeak->color();
-        _bkgPxColor2 = set.colorIntBkg->color();
-        _peakPxColor2.setAlphaF(set.alphaIntegrationRegion->value());
-        _bkgPxColor2.setAlphaF(set.alphaIntegrationRegion->value());
-    }
-}
-
-void DetectorScene::showPeakLabels(bool flag)
-{
-    for (auto p : _peak_graphics_items)
-        p->showLabel(flag);
-    update();
-}
-
-void DetectorScene::showPeakAreas(bool flag)
-{
-    for (auto p : _peak_graphics_items)
-        p->showArea(flag);
-    update();
-}
-
-void DetectorScene::drawIntegrationRegion(bool flag)
-{
-    // clear the background if necessary
-    if (_integrationRegion1 && !flag) {
-        removeItem(_integrationRegion1);
-        delete _integrationRegion1;
-        _integrationRegion1 = nullptr;
-    }
-    if (_integrationRegion2 && !flag) {
-        removeItem(_integrationRegion2);
-        delete _integrationRegion2;
-        _integrationRegion2 = nullptr;
-    }
-
-    _drawIntegrationRegion1 = flag;
-    _drawIntegrationRegion2 = flag;
-
-    loadCurrentImage();
 }
 
 void DetectorScene::clearIntegrationRegion()
 {
-    if (_integrationRegion1) {
-        removeItem(_integrationRegion1);
-        delete _integrationRegion1;
-        _integrationRegion1 = nullptr;
+    // clear existing integration regions
+    for (auto* region : _integration_regions) {
+        removeItem(region);
+        delete region;
     }
-
-    if (_integrationRegion2) {
-        removeItem(_integrationRegion2);
-        delete _integrationRegion2;
-        _integrationRegion2 = nullptr;
-    }
+    _integration_regions.clear();
 }
 
 void DetectorScene::clearMasks()
@@ -1268,14 +965,13 @@ void DetectorScene::resetScene()
     clearPeakItems();
     clear();
     loadMasksFromData();
-    _drawMasks = false;
+    _flags.masks = false;
     _currentData = nullptr;
     _currentFrameIndex = 0;
     _zoomrect = nullptr;
     _zoomStack.clear();
     _image = nullptr;
-    _integrationRegion1 = nullptr;
-    _integrationRegion2 = nullptr;
+    clearIntegrationRegion();
     _lastClickedGI = nullptr;
 }
 
@@ -1285,11 +981,10 @@ void DetectorScene::resetElements()
     clear();
     _zoomrect = nullptr;
     _image = nullptr;
-    _integrationRegion1 = nullptr;
-    _integrationRegion2 = nullptr;
+    clearIntegrationRegion();
     _lastClickedGI = nullptr;
     loadMasksFromData();
-    _drawMasks = false;
+    _flags.masks = false;
 }
 
 void DetectorScene::setUnitCell(ohkl::UnitCell* cell)
@@ -1297,23 +992,9 @@ void DetectorScene::setUnitCell(ohkl::UnitCell* cell)
     _unit_cell = cell;
 }
 
-void DetectorScene::setup3rdPartyPeaks(bool draw, const QColor& color, int size)
-{
-    _draw3rdParty = draw;
-    _3rdparty_color = color;
-    _3rdparty_size = size;
-}
-
-void DetectorScene::setupSpotCenters(bool draw, const QColor& color, int size)
-{
-    _drawFoundSpots = draw;
-    _spot_color = color;
-    _spot_size = size;
-}
-
 void DetectorScene::showDirectBeam(bool show)
 {
-    _drawDirectBeam = show;
+    _flags.directBeam = show;
 }
 
 Eigen::Vector3d DetectorScene::getBeamSetterPosition() const
@@ -1337,9 +1018,9 @@ void DetectorScene::onCrosshairChanged(int size, int linewidth)
 
 void DetectorScene::toggleMasks()
 {
-    _drawMasks = !_drawMasks;
-    // setMasksVisible(_drawMasks);
-    _mask_handler->setVisibleFlags(_currentData, _drawMasks);
+    _flags.masks = !_flags.masks;
+    // setMasksVisible(_flags.masks);
+    _mask_handler->setVisibleFlags(_currentData, _flags.masks);
 }
 
 QPointF DetectorScene::beamSetterCoords()
@@ -1350,7 +1031,7 @@ QPointF DetectorScene::beamSetterCoords()
 void DetectorScene::setPeak(ohkl::Peak3D* peak)
 {
     _peak = peak;
-    refreshSinglePeakIntegrationOverlay();
+    drawIntegrationRegion();
 }
 
 void DetectorScene::loadMasksFromData()

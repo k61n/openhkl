@@ -384,7 +384,7 @@ void SubframeAutoIndexer::setPeakViewWidgetUp()
 
 void SubframeAutoIndexer::setFigureUp()
 {
-    _detector_widget = new DetectorWidget(false, true);
+    _detector_widget = new DetectorWidget(1, false, true);
     _detector_widget->linkPeakModel(&_peak_collection_model);
 
     connect(
@@ -423,7 +423,6 @@ void SubframeAutoIndexer::refreshPeakVisual()
     auto data = _detector_widget->currentData();
     auto scene = _detector_widget->scene();
 
-    scene->initIntRegionFromPeakWidget(_peak_view_widget->set1);
     if (_set_initial_ki->isChecked()) {
         scene->addBeamSetter(_crosshair_size->value(), _crosshair_linewidth->value());
         changeCrosshair();
@@ -447,7 +446,8 @@ void SubframeAutoIndexer::refreshPeakVisual()
             peak->peak()->enabled() ? _peak_view_widget->set1 : _peak_view_widget->set2);
     }
 
-    _detector_widget->scene()->initIntRegionFromPeakWidget(_peak_view_widget->set1);
+    _detector_widget->scene()->peakCollectionGraphics(0)->
+        initIntRegionFromPeakWidget(_peak_view_widget->set1);
     _detector_widget->refresh();
 }
 

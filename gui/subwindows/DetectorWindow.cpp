@@ -82,8 +82,9 @@ void DetectorWindow::setDetectorViewUp()
 {
     QGroupBox* detector_group = new QGroupBox("Detector image");
     detector_group->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-    _detector_widget = new DetectorWidget(true, true, detector_group);
-    _detector_widget->linkPeakModel(&_peak_collection_model_1, &_peak_collection_model_2);
+    _detector_widget = new DetectorWidget(2, true, true, detector_group);
+    _detector_widget->linkPeakModel(&_peak_collection_model_1);
+    _detector_widget->linkPeakModel(&_peak_collection_model_2);
 
     connect(
         _detector_widget->scene(), &DetectorScene::signalSelectedPeakItemChanged, this,
@@ -156,7 +157,6 @@ void DetectorWindow::set3rdPartyPeaksUp()
     Spoiler* third_party_spoiler = new Spoiler("Plot 3rd party peaks");
     GridFiller f(third_party_spoiler, false);
 
-
     _draw_3rdparty = f.addCheckBox("Plot 3rd party peak centres", 1);
     _draw_3rdparty->setCheckState(Qt::Checked);
     connect(_draw_3rdparty, &QCheckBox::stateChanged, this, &DetectorWindow::refreshDetectorView);
@@ -211,7 +211,7 @@ void DetectorWindow::load3rdPartyPeaks()
     for (int i = current_frame; i < (current_frame + files.size()); ++i)
         _peakCenterData.addFrame(files[i].toStdString(), i);
 
-    _detector_widget->scene()->link3rdPartyPeaks(&_peakCenterData);
+    _detector_widget->scene()->link3rdPartyPeaks(&_peakCenterData, 0);
 }
 
 void DetectorWindow::setPlotUp(PeakViewWidget* peak_widget, QString name)
@@ -252,13 +252,11 @@ void DetectorWindow::refreshDetectorView()
         }
     }
 
-    _detector_widget->scene()->initIntRegionFromPeakWidget(_peak_view_widget_1->set1);
-    _detector_widget->scene()->initIntRegionFromPeakWidget(_peak_view_widget_2->set1, true);
+    _detector_widget->scene()->peakCollectionGraphics(0)->initIntRegionFromPeakWidget(_peak_view_widget_1->set1);
+    _detector_widget->scene()->peakCollectionGraphics(1)->initIntRegionFromPeakWidget(_peak_view_widget_2->set1);
     _detector_widget->refresh();
 
-    _detector_widget->scene()->setup3rdPartyPeaks(
-        _draw_3rdparty->isChecked(), _3rdparty_color->color(), _3rdparty_size->value());
-    _detector_widget->scene()->drawPeakitems();
+    _detector_widget->scene()->drawPeakItems();
 }
 
 void DetectorWindow::refreshPeakTable()

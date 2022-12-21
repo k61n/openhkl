@@ -20,6 +20,7 @@
 #include "core/detector/DetectorEvent.h"
 #include "core/peak/IntegrationRegion.h"
 #include "core/peak/Peak3D.h"
+#include "gui/graphics/PeakCollectionGraphics.h"
 #include "gui/graphics_items/CrosshairGraphic.h"
 #include "gui/graphics_items/PeakCenterGraphic.h"
 #include "gui/models/ColorMap.h"
@@ -50,6 +51,18 @@ using EventType = ohkl::IntegrationRegion::EventType;
 // function and optimize cache hit.
 typedef Eigen::Matrix<int, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor> rowMatrix;
 
+//! Container for toggling elements of DetectorScene
+struct DetectorSceneFlags {
+    bool logarithmic = false;
+    bool gradient = false;
+    bool integrationRegion = false;
+    bool singlePeakIntRegion = false;
+    bool directBeam = false;
+    bool extPeaks = false;
+    bool detectorSpots = false;
+    bool masks = true;
+};
+
 //! Master scene of the detector image
 
 //! Master Scene containing the pixmap of the detector counts
@@ -57,7 +70,7 @@ typedef Eigen::Matrix<int, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor> rowM
 class DetectorScene : public QGraphicsScene {
     Q_OBJECT
  public:
-    enum MODE { // I noticed ELLIPSE MASK and MASK are +1 so I corrected this here temporarily
+    enum MODE {
         ZOOM = 0,
         SELECT = 1,
         MASK = 2,
@@ -71,7 +84,7 @@ class DetectorScene : public QGraphicsScene {
 
     //! Which mode is the cursor diplaying
     enum CURSORMODE {
-        CURSOR = 0, // apparanetly can't have two members named "SELECT" in enums here
+        CURSOR = 0,
         PIXEL = 1,
         THETA = 2,
         GAMMA_NU = 3,
@@ -79,78 +92,46 @@ class DetectorScene : public QGraphicsScene {
         MILLER_INDICES = 5
     };
 
-    explicit DetectorScene(QObject* parent = 0);
+    explicit DetectorScene(std::size_t npeakcollections, QObject* parent = 0);
 
-    ohkl::sptrDataSet getData() { return _currentData; }
-    const rowMatrix& getCurrentFrame() const { return _currentFrame; }
-    void setLogarithmic(bool checked) { _logarithmic = checked; }
-    void setGradient(bool checked) { _drawGradient = checked; }
-    void setColorMap(const std::string& name)
-    {
+    ohkl::sptrDataSet getData() { return _currentData; };
+    const rowMatrix& getCurrentFrame() const { return _currentFrame; };
+    void setLogarithmic(bool checked) { _flags.logarithmic = checked; };
+    void setGradient(bool checked) { _flags.gradient = checked; };
+    void setColorMap(const std::string& name) {
         _colormap = std::unique_ptr<ColorMap>(new ColorMap(name));
-    }
+    };
+    //! Get a pointer to the DetectorSceneFlags
+    DetectorSceneFlags* flags() { return &_flags; };
     //! Load image from current Data and frame
     void loadCurrentImage();
-    //! Set colours for integration region
-    void initIntRegionFromPeakWidget(const PeakViewWidget::Set& set, bool alt = false);
-    //! Refresh the overlay displaying integration regions
-    void refreshIntegrationOverlay();
-    //! Refresh overlay with integration region for a single peak
-    void refreshSinglePeakIntegrationOverlay();
-    //! Generate a mask of integration regions (a matrix of integers classifying pixels)
-    void getIntegrationMask(
-        PeakCollectionModel* model, Eigen::MatrixXi& mask,
-        ohkl::RegionType region_type = ohkl::RegionType::VariableEllipsoid);
-    //! Convert the mask to a QImage with the given colours
-    QImage* getIntegrationRegionImage(const Eigen::MatrixXi& mask, QColor& peak, QColor& bkg);
     //! Remove integration overlays from the DetectorScene
     void clearIntegrationRegion();
     //! Remove masks
     void clearMasks();
 
- public:
-    //! Set the first peak model pointer
-    void linkPeakModel1(PeakCollectionModel* source);
-    //! Set the second peak model pointer
-    void linkPeakModel2(PeakCollectionModel* source);
-    //! Get the first peak model pointer
-    PeakCollectionModel* peakModel1() const;
-    //! Get the second peak model pointer
-    PeakCollectionModel* peakModel2() const;
+    //! Get pointer to a PeakCollectionGraphics object
+    PeakCollectionGraphics* peakCollectionGraphics(std::size_t idx) const;
+    //! Link graphics associated with a peak collection
+    void linkPeakModel(PeakCollectionModel* source, std::size_t idx = 0);
     //! Populate vector of 3rd party peak centers
-    void link3rdPartyPeaks(ohkl::PeakCenterDataSet* pcd);
+    void link3rdPartyPeaks(ohkl::PeakCenterDataSet* pcd, std::size_t idx);
     //! Link data for keypoints found via OpenCV
-    void linkPerFrameSpots(std::vector<std::vector<cv::KeyPoint>>* points);
+    void linkPerFrameSpots(std::vector<std::vector<cv::KeyPoint>>* points, std::size_t idx);
     //! Set direct beam positions
     void linkDirectBeamPositions(std::vector<ohkl::DetectorEvent>* events);
     //! Set unrefined direct beam positions
     void linkOldDirectBeamPositions(std::vector<ohkl::DetectorEvent>* events);
-    //! Set the first peak model pointer to null
-    void unlinkPeakModel1();
-    //! Set the second peak model pointer to null
-    void unlinkPeakModel2();
     //! Refresh the model data
     void peakModelDataChanged();
     //! Draw the peaks
-    void drawPeakitems();
+    void drawPeakItems();
     //! Draw the direct beam position
     void drawDirectBeamPositions();
-    //! Draw peaks for one model
-    void drawPeakModelItems(PeakCollectionModel* model);
-    //! Draw the direct beam position
-    void drawDirectBeamPositions(std::vector<ohkl::DetectorEvent> events);
-    //! Draw peak centers from 3rd party software
-    void draw3rdPartyItems();
-    //! Draw spot centers from 2D peak finder
-    void drawSpotCenters();
     //! Remove all the peak elements
     void clearPeakItems();
     //! Set unit cell for Miller Index computation
     void setUnitCell(ohkl::UnitCell* cell);
-    //! Plot settings for 3rd party peak centres
-    void setup3rdPartyPeaks(bool draw, const QColor& color, int size);
-    //! Set up spot center visualisation (OpenCV blob detection)
-    void setupSpotCenters(bool draw, const QColor& color, int size);
     //! Toggle drawing the direct beam position
     void showDirectBeam(bool show);
     //! Get the current intensity
@@ -172,16 +153,10 @@ class DetectorScene : public QGraphicsScene {
     //! Set single peak for single peak integration overlay
     void setPeak(ohkl::Peak3D* peak);
     //! Set scene to draw integration for single peak
-    void drawSinglePeakIntegrationRegion(bool toggle)
-    {
-        _drawSinglePeakIntegrationRegion = toggle;
-    };
     //! Load masks from current DataSet
     void loadMasksFromData();
     //! Add masks to the detector image
     void addMasks();
-    //! Return mask visibility state
-    bool masksVisible() const { return _drawMasks; };
 
     std::shared_ptr<MaskHandler> getMaskHandler();
 
@@ -204,9 +179,7 @@ class DetectorScene : public QGraphicsScene {
     void slotChangeMaskedPeaks(const ohkl::PeakList&) { loadCurrentImage(); }
     void changeInteractionMode(int mode) { _mode = static_cast<MODE>(mode); }
     void changeCursorMode(int mode) { _cursorMode = static_cast<CURSORMODE>(mode); }
-    void showPeakLabels(bool flag);
-    void showPeakAreas(bool flag);
-    void drawIntegrationRegion(bool);
+    void drawIntegrationRegion();
     void updateMasks() { _lastClickedGI = nullptr; }
     int currentFrame() const { return _currentFrameIndex; }
     void setBeamSetterPos(QPointF pos);
@@ -227,17 +200,20 @@ class DetectorScene : public QGraphicsScene {
     void signalMasksSelected();
 
  private:
-    //! Generate a mask for a single peak only
-    void getSinglePeakIntegrationMask(
-        ohkl::Peak3D* peak, Eigen::MatrixXi& mask,
-        ohkl::RegionType region_type = ohkl::RegionType::VariableEllipsoid);
     //! Create the text of the tooltip depending on Scene Mode.
     void createToolTipText(QGraphicsSceneMouseEvent*);
 
+    //! Flags deterimining what is displayed
+    DetectorSceneFlags _flags;
+    //! Pointer to the current DataSet
     ohkl::sptrDataSet _currentData;
-    unsigned long _currentFrameIndex;
+    //! Integer index of the frame being displayed
+    unsigned int _currentFrameIndex;
+    //! Maximum intensity for the ColorMap
     int _currentIntensity;
+    //! Raw matrix for the current image
     rowMatrix _currentFrame;
+    //! Switches the label behaviour of the cursor
     CURSORMODE _cursorMode;
     //! Current interaction mode
     MODE _mode;
@@ -254,14 +230,6 @@ class DetectorScene : public QGraphicsScene {
     //! item being dragged
     CrosshairGraphic* _current_dragged_item;
 
-    //! The current peak model
-    PeakCollectionModel* _peak_model_1;
-    //! The second peak model (optional, mainly for DetectorWindow)
-    PeakCollectionModel* _peak_model_2;
-    //! std vector of the peakItems
-    std::vector<PeakItemGraphic*> _peak_graphics_items;
-    //! std vector of peak centres from 3rd party software
-    std::vector<PeakCenterGraphic*> _peak_center_items;
     //! std vector of direct beam positions for each frame
     std::vector<ohkl::DetectorEvent>* _direct_beam_events;
     //! direct beam events pre-refinement
@@ -270,51 +238,15 @@ class DetectorScene : public QGraphicsScene {
     bool _itemSelected;
     QGraphicsPixmapItem* _image;
     SXGraphicsItem* _lastClickedGI;
-    bool _logarithmic;
-    bool _drawGradient;
-    bool _drawIntegrationRegion1;
-    bool _drawIntegrationRegion2;
-    bool _drawSinglePeakIntegrationRegion;
-    bool _drawDirectBeam;
-    bool _draw3rdParty;
-    bool _drawFoundSpots;
-    bool _drawMasks;
     std::unique_ptr<ColorMap> _colormap;
-    QGraphicsPixmapItem* _integrationRegion1;
-    QGraphicsPixmapItem* _integrationRegion2;
     QGraphicsRectItem* _selected_peak_gi;
 
-    //! Colour of peak pixels in integration region (first overlay)
-    QColor _peakPxColor1;
-    //! Colour of peak pixels in integration region (second overlay)
-    QColor _peakPxColor2;
-    //! Colour of background pixels in integration region (first overlay)
-    QColor _bkgPxColor1;
-    //! Colour of background pixels in integration region (second overlay)
-    QColor _bkgPxColor2;
-    //! Toggle preview of integration region rather than using regions defined from peaks
-    bool _preview_int_regions_1;
-    bool _preview_int_regions_2;
-    //! Integration region types
-    ohkl::RegionType _int_region_type_1;
-    ohkl::RegionType _int_region_type_2;
-    //! Integration Region bounds
-    double _peak_end_1;
-    double _bkg_begin_1;
-    double _bkg_end_1;
-    double _peak_end_2;
-    double _bkg_begin_2;
-    double _bkg_end_2;
-
-    //! Colour of 3rd party peaks
-    QColor _3rdparty_color;
-    //! Size of 3rd party peaks
-    int _3rdparty_size;
-
-    //! Colour of spot centers (OpenCV blob detection)
-    QColor _spot_color;
-    //! Size of spot centers
-    int _spot_size;
+    //! Object storing all peak-related graphics
+    std::vector<std::unique_ptr<PeakCollectionGraphics>> _peak_graphics;
+    //! Maximum number of peak collections for this scene
+    unsigned int _max_peak_collections;
+    //! Store for pointers to integration overlays
+    QVector<QGraphicsPixmapItem*> _integration_regions;
 
     //! Colour of direct beam
     QColor _beam_color;
@@ -327,16 +259,15 @@ class DetectorScene : public QGraphicsScene {
     //! current position of the crosshair
     static QPointF _current_beam_position;
 
+    //! Object for computing intensity profiles on a line through the scene
     CutterItem* _cutter;
 
+    //! Peak selected by interacting with the DetectorScene
     PeakItemGraphic* _selected_peak;
-
+    //! Unit cell for determining Miller index
     ohkl::UnitCell* _unit_cell;
+    //! Selected peaks for drawing a single integration region
     ohkl::Peak3D* _peak;
-
-    ohkl::PeakCenterDataSet* _peak_center_data;
-
-    std::vector<std::vector<cv::KeyPoint>>* _per_frame_spots;
 
     std::shared_ptr<MaskHandler> _mask_handler;
     ohkl::GradientKernel _gradient_kernel;

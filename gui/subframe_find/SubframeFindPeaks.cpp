@@ -255,7 +255,7 @@ void SubframeFindPeaks::setFigureUp()
 {
     QGroupBox* figure_group = new QGroupBox("Detector image");
     figure_group->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-    _detector_widget = new DetectorWidget(true, true, figure_group);
+    _detector_widget = new DetectorWidget(1, true, true, figure_group);
     _detector_widget->linkPeakModel(&_peak_collection_model);
 
     connect(
@@ -610,9 +610,9 @@ void SubframeFindPeaks::refreshPeakVisual()
         graphic->setColor(Qt::transparent);
         graphic->initFromPeakViewWidget(
             peak->peak()->enabled() ? _peak_view_widget->set1 : _peak_view_widget->set2);
-        _detector_widget->scene()->initIntRegionFromPeakWidget(_peak_view_widget->set1);
     }
-    _detector_widget->scene()->initIntRegionFromPeakWidget(_peak_view_widget->set1);
+    _detector_widget->scene()->peakCollectionGraphics(0)->
+        initIntRegionFromPeakWidget(_peak_view_widget->set1);
     _detector_widget->refresh();
 }
 

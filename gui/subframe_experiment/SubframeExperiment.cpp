@@ -99,7 +99,7 @@ SubframeExperiment::SubframeExperiment()
 
     QGroupBox* figure_group = new QGroupBox("Detector image");
     figure_group->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-    _detector_widget = new DetectorWidget(true, true, figure_group);
+    _detector_widget = new DetectorWidget(1, true, true, figure_group);
 
     QSplitter* right_splitter = new QSplitter();
     right_splitter->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
@@ -788,7 +788,7 @@ void SubframeExperiment::find_2d()
     finder->setHandler(progHandler);
 
     finder->setData(data);
-    _detector_widget->scene()->linkPerFrameSpots(finder->keypoints());
+    _detector_widget->scene()->linkPerFrameSpots(finder->keypoints(), 0);
 
     setFinderParameters();
 
