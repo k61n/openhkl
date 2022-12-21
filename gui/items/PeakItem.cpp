@@ -137,8 +137,8 @@ QVariant PeakItem::peakData(const QModelIndex& index, int role, PeakDisplayModes
                 case PeakColumn::BkgGradientSigma: {
                     return bkg_gradient_sigma();
                 }
-                case PeakColumn::Numor: {
-                    return _peak->dataSet()->metadata().key<int>(ohkl::at_numor);
+                case PeakColumn::DataSet: {
+                    return QString::fromStdString(_peak->dataSet()->name());
                 }
                 case PeakColumn::uc: {
                     const ohkl::UnitCell* unit_cell = _peak->unitCell();

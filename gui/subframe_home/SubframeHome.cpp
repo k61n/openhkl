@@ -167,20 +167,26 @@ void SubframeHome::_setRightLayout(QHBoxLayout* main_layout)
     _dataset_table->setHorizontalHeaderLabels(QStringList{
         "Name",
         "Diffractometer",
-        "Number of frames",
-        "Number of columns",
-        "Number of rows",
+        "Images",
+        "Columns",
+        "Rows",
         "Wavelength (" + QString(QChar(8491)) + ")",
     });
     _dataset_table->resizeColumnsToContents();
     _dataset_table->verticalHeader()->setVisible(false);
     _dataset_table->setContextMenuPolicy(Qt::CustomContextMenu);
 
-    _peak_collections_table = new QTableWidget(0, 6);
+    _peak_collections_table = new QTableWidget(0, 7);
     _peak_collections_table->setEditTriggers(QAbstractItemView::NoEditTriggers);
     _peak_collections_table->setHorizontalHeaderLabels(QStringList{
-        "Name", "Number of peaks", "Number of valid peaks", "Number of invalid peaks", "Is indexed",
-        "Is integrated", "Peak collection type"});
+        "Name",
+        "Data set",
+        "Peaks",
+        "Valid peaks",
+        "Invalid peaks",
+        "Indexed",
+        "Integrated",
+        "Type"});
 
     _peak_collections_table->resizeColumnsToContents();
     _peak_collections_table->verticalHeader()->setVisible(false);
@@ -575,14 +581,16 @@ void SubframeHome::refreshTables() const
                 _peak_collections_table->setItem(
                     n, 0, new QTableWidgetItem(QString((*it).c_str())));
                 _peak_collections_table->setItem(
-                    n, 1, new QTableWidgetItem(QString::number(pc->numberOfPeaks())));
+                    n, 1, new QTableWidgetItem(QString::fromStdString(pc->data()->name())));
                 _peak_collections_table->setItem(
-                    n, 2, new QTableWidgetItem(QString::number(pc->numberOfValid())));
+                    n, 2, new QTableWidgetItem(QString::number(pc->numberOfPeaks())));
                 _peak_collections_table->setItem(
-                    n, 3, new QTableWidgetItem(QString::number(pc->numberOfInvalid())));
-                _peak_collections_table->setItem(n, 4, new QTableWidgetItem(b2s(pc->isIndexed())));
+                    n, 3, new QTableWidgetItem(QString::number(pc->numberOfValid())));
                 _peak_collections_table->setItem(
-                    n, 5, new QTableWidgetItem(b2s(pc->isIntegrated())));
+                    n, 4, new QTableWidgetItem(QString::number(pc->numberOfInvalid())));
+                _peak_collections_table->setItem(n, 5, new QTableWidgetItem(b2s(pc->isIndexed())));
+                _peak_collections_table->setItem(
+                    n, 6, new QTableWidgetItem(b2s(pc->isIntegrated())));
                 _peak_collections_table->setItem(n, 6, new QTableWidgetItem(Type2s(pc->type())));
             }
             _peak_collections_table->resizeColumnsToContents();

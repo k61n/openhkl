@@ -59,7 +59,7 @@ class TestFullWorkFlow(unittest.TestCase):
         peak_finder = expt.peakFinder()
         params = peak_finder.parameters()
         params.threshold = 80
-        peak_finder.find(expt.getAllData())
+        peak_finder.find(data)
         print(f'Found {peak_finder.numberFound()} peaks')
         self.assertTrue(peak_finder.numberFound() == 9913)
 
@@ -90,7 +90,7 @@ class TestFullWorkFlow(unittest.TestCase):
         filter.parameters().frame_max= 10
         filter.parameters().strength_min = 1.0
         filter.filter(found_peaks)
-        expt.acceptFilter('indexing', found_peaks, ohkl.PeakCollectionType_INDEXING)
+        expt.acceptFilter('indexing', found_peaks, ohkl.PeakCollectionType_INDEXING, data)
 
 
         print('Indexing found peaks...')
@@ -128,7 +128,7 @@ class TestFullWorkFlow(unittest.TestCase):
         params.strength_min = 3.0
         params.strength_max = 1000000.0
         filter.filter(found_peaks)
-        filtered_peaks = ohkl.PeakCollection('fit', ohkl.PeakCollectionType_FOUND)
+        filtered_peaks = ohkl.PeakCollection('fit', ohkl.PeakCollectionType_FOUND, data)
         filtered_peaks.populateFromFiltered(found_peaks)
 
 
@@ -139,7 +139,7 @@ class TestFullWorkFlow(unittest.TestCase):
         params.d_min = 1.5
         params.d_max = 50.0
         predictor.predictPeaks(data, indexed_cell)
-        expt.addPeakCollection('predicted', ohkl.PeakCollectionType_PREDICTED, predictor.peaks())
+        expt.addPeakCollection('predicted', ohkl.PeakCollectionType_PREDICTED, predictor.peaks(), data)
         predicted_peaks = expt.getPeakCollection('predicted')
         print(f'{predicted_peaks.numberOfPeaks()} peaks predicted')
         self.assertTrue(predicted_peaks.numberOfPeaks() > 58720 and

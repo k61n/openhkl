@@ -35,7 +35,7 @@ enum PeakColumn {
     Strength,
     BkgGradient,
     BkgGradientSigma,
-    Numor,
+    DataSet,
     uc,
     d,
     Rejection,

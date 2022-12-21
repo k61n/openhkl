@@ -28,13 +28,13 @@ const PeakCollectionMap* PeakHandler::getPeakCollectionMap() const
 }
 
 bool PeakHandler::addPeakCollection(
-    const std::string& name, const PeakCollectionType type, const std::vector<ohkl::Peak3D*> peaks)
+    const std::string& name, const PeakCollectionType type, const std::vector<ohkl::Peak3D*> peaks, sptrDataSet data)
 {
     // abort if name is aleady in use
     if (hasPeakCollection(name))
         return false;
     ohklLog(Level::Info, "PeakHandler::addPeakCollection '", name, "': ", peaks.size(), " peaks");
-    std::unique_ptr<PeakCollection> ptr(new PeakCollection(name, type));
+    std::unique_ptr<PeakCollection> ptr(new PeakCollection(name, type, data));
     ptr->populate(peaks);
     ptr->setId(_last_index++);
     _peak_collections.insert_or_assign(name, std::move(ptr));
@@ -43,13 +43,13 @@ bool PeakHandler::addPeakCollection(
 
 bool PeakHandler::addPeakCollection(
     const std::string& name, const PeakCollectionType type, const std::vector<ohkl::Peak3D*> peaks,
-    bool indexed, bool integrated, bool gradient)
+    sptrDataSet data, bool indexed, bool integrated, bool gradient)
 {
     // abort if name is aleady in use
     if (hasPeakCollection(name))
         return false;
     ohklLog(Level::Info, "PeakHandler::addPeakCollection '", name, "': ", peaks.size(), " peaks");
-    std::unique_ptr<PeakCollection> ptr(new PeakCollection(name, type));
+    std::unique_ptr<PeakCollection> ptr(new PeakCollection(name, type, data));
     ptr->setId(_last_index++);
     ptr->setIndexed(indexed);
     ptr->setIntegrated(integrated);
@@ -64,7 +64,7 @@ bool PeakHandler::addEmptyCollection(const std::string& name, const PeakCollecti
     if (hasPeakCollection(name))
         return false;
     ohklLog(Level::Info, "PeakHandler::addEmptyCollection '" + name + "'");
-    std::unique_ptr<PeakCollection> ptr(new PeakCollection(name, type));
+    std::unique_ptr<PeakCollection> ptr(new PeakCollection(name, type, nullptr));
     ptr->setId(_last_index++);
     _peak_collections.insert_or_assign(name, std::move(ptr));
     return hasPeakCollection(name); // now name must be in use
@@ -132,11 +132,12 @@ std::vector<std::string> PeakHandler::getCollectionNames(PeakCollectionType pct)
     return names;
 }
 
-bool PeakHandler::acceptFilter(std::string name, PeakCollection* collection, PeakCollectionType pct)
+bool PeakHandler::acceptFilter(
+    std::string name, PeakCollection* collection, PeakCollectionType pct, sptrDataSet data)
 {
     if (hasPeakCollection(name))
         return false;
-    std::unique_ptr<PeakCollection> ptr(new PeakCollection(name, pct));
+    std::unique_ptr<PeakCollection> ptr(new PeakCollection(name, pct, data));
     ptr->populateFromFiltered(collection);
     _peak_collections.insert_or_assign(name, std::move(ptr));
     return hasPeakCollection(name);
@@ -151,6 +152,7 @@ bool PeakHandler::clonePeakCollection(std::string name, std::string new_name)
     }
     auto* peaks = getPeakCollection(name);
     auto* new_peaks = getPeakCollection(new_name);
+    new_peaks->setData(peaks->data());
     new_peaks->populate(peaks->getPeakList());
     new_peaks->setIndexed(peaks->isIndexed());
     new_peaks->setIntegrated(peaks->isIntegrated());

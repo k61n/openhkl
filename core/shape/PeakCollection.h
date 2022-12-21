@@ -15,6 +15,7 @@
 #ifndef OHKL_CORE_SHAPE_PEAKCOLLECTION_H
 #define OHKL_CORE_SHAPE_PEAKCOLLECTION_H
 
+#include "core/data/DataTypes.h"
 #include "core/raw/MetaData.h"
 #include "core/shape/ShapeModel.h"
 
@@ -35,18 +36,21 @@ class PeakCollection {
  public:
     //! Default contructor
     PeakCollection();
-    PeakCollection(const std::string& name, PeakCollectionType type);
+    PeakCollection(const std::string& name, PeakCollectionType type, sptrDataSet data);
 
     //! Get integer id
     unsigned int id() { return _id; };
     //! Set integer id
     void setId(unsigned int id);
 
-
     //! Sets name of the PeakCollection
     void setName(const std::string& name);
     //! Returns the name of the PeakCollection
     std::string name() const;
+    //! Set the DataSet associated with these peaks
+    void setData(sptrDataSet data) { _data = data; };
+    //! Get the DataSet associated with these peaks
+    sptrDataSet data() const { return _data; };
     //! Returns description of the PeakCollection
     std::string description() const { return _description; };
     //! set description
@@ -139,6 +143,7 @@ class PeakCollection {
     unsigned int _id;
     std::vector<std::unique_ptr<ohkl::Peak3D>> _peaks;
     std::string _name;
+    sptrDataSet _data;
     std::string _description;
 
     ohkl::PeakCollectionType _type{PeakCollectionType::FOUND};

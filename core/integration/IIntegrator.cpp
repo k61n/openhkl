@@ -70,7 +70,7 @@ const std::vector<Intensity>& IIntegrator::rockingCurve() const
 }
 
 void IIntegrator::integrate(
-    std::vector<ohkl::Peak3D*> peaks, ShapeModel* shape_model, sptrDataSet data, int n_numor)
+    std::vector<ohkl::Peak3D*> peaks, ShapeModel* shape_model, sptrDataSet data)
 {
     // integrate only those peaks that belong to the specified dataset
     auto it = std::remove_if(peaks.begin(), peaks.end(), [&](const Peak3D* peak) {
@@ -78,7 +78,7 @@ void IIntegrator::integrate(
     });
     peaks.erase(it, peaks.end());
     std::ostringstream oss;
-    oss << "Integrating " << peaks.size() << " peaks in numor " << n_numor << " of " << _n_numors;
+    oss << "Integrating " << peaks.size() << " peaks";
     ohklLog(Level::Info, "IIntegrator::integrate: integrating ", peaks.size(), " peaks");
     if (_handler) {
         _handler->setStatus(oss.str().c_str());
@@ -199,11 +199,6 @@ void IIntegrator::setParameters(const IntegrationParameters& params)
 {
     _params = params;
     _params.log(Level::Info);
-}
-
-void IIntegrator::setNNumors(int n_numors)
-{
-    _n_numors = n_numors;
 }
 
 } // namespace ohkl

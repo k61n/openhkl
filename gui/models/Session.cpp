@@ -298,8 +298,8 @@ void Session::removeData()
     if (_selectedData == -1)
         return;
 
-    std::string numorname = currentProject()->getData(_selectedData)->name();
-    currentProject()->experiment()->removeData(numorname);
+    std::string dataname = currentProject()->getData(_selectedData)->name();
+    currentProject()->experiment()->removeData(dataname);
     onDataChanged();
 }
 

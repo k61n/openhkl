@@ -74,9 +74,6 @@ TEST_CASE("test/crystal/TestQShape.cpp", "")
 
     progressHandler->setCallback(callback);
 
-    ohkl::DataList numors;
-    numors.push_back(dataset_ptr);
-
     // propagate changes to peak finder
     auto finder_params = peakFinder.parameters();
     finder_params->minimum_size = 30;
@@ -92,7 +89,7 @@ TEST_CASE("test/crystal/TestQShape.cpp", "")
 
     peakFinder.setHandler(progressHandler);
 
-    peakFinder.find(numors);
+    peakFinder.find(dataset_ptr);
     auto found_peaks = peakFinder.currentPeaks();
 
     try {

@@ -60,7 +60,7 @@
 
 SubframeAutoIndexer::SubframeAutoIndexer()
     : QWidget()
-    , _peak_collection(ohkl::kw_autoindexingCollection, ohkl::PeakCollectionType::INDEXING)
+    , _peak_collection(ohkl::kw_autoindexingCollection, ohkl::PeakCollectionType::INDEXING, nullptr)
     , _peak_collection_item()
     , _peak_collection_model()
     , _show_direct_beam(true)

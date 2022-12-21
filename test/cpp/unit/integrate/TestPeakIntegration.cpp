@@ -30,7 +30,6 @@
 #include "core/raw/DataKeys.h"
 #include "core/detector/DetectorEvent.h"
 #include "core/experiment/Experiment.h"
-#include "core/experiment/PeakFinder.h"
 #include "core/instrument/Diffractometer.h"
 #include "core/instrument/Sample.h"
 #include "core/integration/PixelSumIntegrator.h"
@@ -85,7 +84,7 @@ TEST_CASE("test/integrate/Test_6_12_38.cpp", "")
     params.bkg_begin = 3.0;
     params.bkg_end = 4.0;
     integrator.setParameters(params);
-    integrator.integrate(peaks, nullptr, dataset_ptr, 1);
+    integrator.integrate(peaks, nullptr, dataset_ptr);
 
     CHECK(peak.enabled() == true);
 }

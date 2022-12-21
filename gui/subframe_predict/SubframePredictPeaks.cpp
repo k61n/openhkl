@@ -69,7 +69,7 @@
 
 SubframePredictPeaks::SubframePredictPeaks()
     : QWidget()
-    , _peak_collection("temp", ohkl::PeakCollectionType::PREDICTED)
+    , _peak_collection("temp", ohkl::PeakCollectionType::PREDICTED, nullptr)
     , _peak_collection_item()
     , _peak_collection_model()
     , _peaks_predicted(false)
@@ -624,6 +624,7 @@ void SubframePredictPeaks::accept()
     // suggest name to user
     auto* project = gSession->currentProject();
     auto* expt = project->experiment();
+    auto data = _detector_widget->currentData();
     std::string suggestion = expt->generatePeakCollectionName();
     std::unique_ptr<ListNameDialog> dlg(new ListNameDialog(QString::fromStdString(suggestion)));
     dlg->exec();
@@ -634,7 +635,7 @@ void SubframePredictPeaks::accept()
 
     if (!expt->addPeakCollection(
             dlg->listName().toStdString(), ohkl::PeakCollectionType::PREDICTED,
-            _peak_collection.getPeakList())) {
+            _peak_collection.getPeakList(), data)) {
         QMessageBox::warning(
             this, "Unable to add PeakCollection",
             "Unable to add PeakCollection, please use a unique name");

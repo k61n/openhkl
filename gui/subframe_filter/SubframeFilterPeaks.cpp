@@ -49,7 +49,7 @@
 
 SubframeFilterPeaks::SubframeFilterPeaks()
     : QWidget()
-    , _peak_collection("temp", ohkl::PeakCollectionType::FOUND)
+    , _peak_collection("temp", ohkl::PeakCollectionType::FOUND, nullptr)
     , _peak_collection_item()
     , _peak_collection_model()
 {
@@ -451,6 +451,7 @@ void SubframeFilterPeaks::filterPeaks()
 void SubframeFilterPeaks::accept()
 {
     ohkl::PeakCollection* collection = _peak_combo->currentPeakCollection();
+    ohkl::sptrDataSet data = collection->data();
 
     std::string suggestion = gSession->currentProject()->experiment()->generatePeakCollectionName();
     std::unique_ptr<ListNameDialog> dlg(new ListNameDialog(QString::fromStdString(suggestion)));
@@ -460,7 +461,7 @@ void SubframeFilterPeaks::accept()
     if (dlg->result() == QDialog::Rejected)
         return;
     if (!gSession->currentProject()->experiment()->acceptFilter(
-            dlg->listName().toStdString(), collection, collection->type())) {
+            dlg->listName().toStdString(), collection, collection->type(), data)) {
         QMessageBox::warning(
             this, "Unable to add PeakCollection", "Collection with this name already exists!");
         return;

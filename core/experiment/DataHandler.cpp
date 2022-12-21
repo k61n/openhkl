@@ -55,10 +55,10 @@ const DataMap* DataHandler::getDataMap() const
 
 DataList DataHandler::getAllData() const
 {
-    DataList numors;
+    DataList datasets;
     for (auto const& [key, val] : _data_map)
-        numors.push_back(val);
-    return numors;
+        datasets.push_back(val);
+    return datasets;
 }
 
 sptrDataSet DataHandler::getData(std::string name) const

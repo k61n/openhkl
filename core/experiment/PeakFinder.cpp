@@ -121,9 +121,9 @@ PeakCollection* PeakFinder::getPeakCollection()
 
 void PeakFinder::setPeakCollection(
     const std::string name, const ohkl::PeakCollectionType type,
-    std::vector<std::shared_ptr<ohkl::Peak3D>> peak_list)
+    std::vector<std::shared_ptr<ohkl::Peak3D>> peak_list, sptrDataSet data)
 {
-    _peak_collection = PeakCollection(name, type);
+    _peak_collection = PeakCollection(name, type, data);
     _peak_collection.populate(peak_list);
     _peak_collection.setIntegrated(_integrated);
 }
@@ -207,11 +207,10 @@ void PeakFinder::mergeCollidingBlobs(const DataSet& data, std::map<int, Blob3D>&
 
 void PeakFinder::findPrimaryBlobs(
     const DataSet& data, std::map<int, Blob3D>& blobs, ohkl::EquivalenceList& equivalences,
-    size_t begin, size_t end, int n_numor)
+    size_t begin, size_t end)
 {
-    int n_numors = _current_data.size();
     std::ostringstream oss;
-    oss << "Finding blobs for numor " << n_numor + 1 << " of " << n_numors;
+    oss << "Finding blobs for data set " << data.name();
 
     // update via handler if necessary
     if (_handler) {
@@ -526,168 +525,162 @@ void PeakFinder::mergeEquivalentBlobs(
  * merge colliding blobs
  *
  */
-void PeakFinder::find(const DataList numors)
+void PeakFinder::find(const sptrDataSet data)
 {
+    ohklLog(Level::Debug, "PeakFinder::find: begin");
     _params->log(Level::Info);
-    ohklLog(Level::Info, "PeakFinder::find: starting, with ", numors.size(), " numors");
+    _current_data = data;
     _current_peaks.clear();
-    _current_data = numors;
 
-    int i = 0;
-    for (const auto& numor : numors) {
-        if (numors.size() > 1)
-            ohklLog(Level::Debug, "PeakFinder::find: starting numor ", i + 1);
-        PeakList numor_peaks;
+    PeakList peaks;
 
-        const auto& dectector = numor->diffractometer()->detector();
-        const int nrows = dectector->nRows();
-        const int ncols = dectector->nCols();
-        const int nframes = numor->nFrames();
+    const auto& dectector = data->diffractometer()->detector();
+    const int nrows = dectector->nRows();
+    const int ncols = dectector->nCols();
+    const int nframes = data->nFrames();
 
-        // The blobs found for this numor
-        std::map<int, Blob3D> blobs;
+    std::map<int, Blob3D> blobs;
 
-        _current_label = 0;
+    _current_label = 0;
 
-        int loop_begin = _params->frames_begin;
-        int loop_end = _params->frames_end;
-        if (loop_begin == -1)
-            loop_begin = 0;
-        if (loop_end == -1)
-            loop_end = nframes;
+    int loop_begin = _params->frames_begin;
+    int loop_end = _params->frames_end;
+    if (loop_begin == -1)
+        loop_begin = 0;
+    if (loop_end == -1)
+        loop_end = nframes;
 
-        // keep frame indices in bounds for current numor
-        if (loop_begin < 0)
-            loop_begin = 0;
-        if (loop_begin > nframes)
-            loop_begin = nframes;
-        if (loop_end < 0)
-            loop_end = 0;
-        if (loop_end > nframes)
-            loop_end = nframes;
+    // keep frame indices in bounds
+    if (loop_begin < 0)
+        loop_begin = 0;
+    if (loop_begin > nframes)
+        loop_begin = nframes;
+    if (loop_end < 0)
+        loop_end = 0;
+    if (loop_end > nframes)
+        loop_end = nframes;
 
-        std::map<int, Blob3D> local_blobs = {{}};
-        ohkl::EquivalenceList local_equivalences;
+    std::map<int, Blob3D> local_blobs = {{}};
+    ohkl::EquivalenceList local_equivalences;
 
-        // find blobs within the current frame range
-        ohklLog(Level::Debug, "PeakFinder::find: findPrimary from ", loop_begin, " to ", loop_end);
-        findPrimaryBlobs(*numor, local_blobs, local_equivalences, loop_begin, loop_end, i++);
+    // find blobs within the current frame range
+    ohklLog(Level::Debug, "PeakFinder::find: findPrimary from ", loop_begin, " to ", loop_end);
+    findPrimaryBlobs(*data, local_blobs, local_equivalences, loop_begin, loop_end);
 
-        // merge adjacent blobs
-        ohklLog(Level::Debug, "PeakFinder::find: mergeBlobs");
-        mergeEquivalentBlobs(local_blobs, local_equivalences);
+    // merge adjacent blobs
+    ohklLog(Level::Debug, "PeakFinder::find: mergeBlobs");
+    mergeEquivalentBlobs(local_blobs, local_equivalences);
 
-        ohklLog(Level::Debug, "PeakFinder::find: blob loop");
-        // merge the blobs into the global set
-        for (const auto& blob : local_blobs)
-            blobs.insert(blob);
+    ohklLog(Level::Debug, "PeakFinder::find: blob loop");
+    // merge the blobs into the global set
+    for (const auto& blob : local_blobs)
+        blobs.insert(blob);
 
-        mergeCollidingBlobs(*numor, blobs);
-        ohklLog(Level::Debug, "PeakFinder::find: found blob collisions");
+    mergeCollidingBlobs(*data, blobs);
+    ohklLog(Level::Debug, "PeakFinder::find: found blob collisions");
 
-        if (_handler) {
-            _handler->setProgress(100);
-        }
-
-        if (_handler) {
-            _handler->setStatus("Computing bounding boxes...");
-            _handler->setProgress(0);
-        }
-
-        int count = 0;
-
-        const auto& kernel_size = _convolver->kernelSize();
-        const auto& x_offset = kernel_size.first;
-        const auto& y_offset = kernel_size.second;
-
-        // AABB used for rejecting peaks which overlaps with detector boundaries
-        AABB dAABB(
-            Eigen::Vector3d(x_offset, y_offset, 0),
-            Eigen::Vector3d(ncols - x_offset, nrows - y_offset, nframes - 1));
-
-        static const double peaksTooLargeLimit = 1e5;
-        static const double peaksTooSmallLimit = 1e-5;
-
-        std::size_t numPeaksTooSmallOrLarge = 0;
-        std::size_t numPeaksOutsideFrames = 0;
-        std::size_t numPeaksNotInDetArea = 0;
-        std::size_t numPeaksMasked = 0;
-
-        for (auto& blob : blobs) {
-            Eigen::Vector3d center, eigenvalues;
-            Eigen::Matrix3d eigenvectors;
-
-            blob.second.toEllipsoid(1.0, center, eigenvalues, eigenvectors);
-            auto shape = Ellipsoid(center, eigenvalues, eigenvectors);
-
-            auto p = sptrPeak3D(new Peak3D(numor, shape));
-            const auto extents = p->shape().aabb().extents();
-
-            // peak overlaps with mask
-            for (IMask* mask : numor->masks()) {
-                if (mask->collide(p->shape())) {
-                    p->setMasked(true);
-                    p->setRejectionFlag(RejectionFlag::Masked);
-                    ++numPeaksMasked;
-                }
-            }
-
-            // peak too small or too large
-            if ((extents.maxCoeff() > peaksTooLargeLimit || extents.minCoeff() < peaksTooSmallLimit)
-                && !p->enabled()) {
-                p->setSelected(false);
-                p->setRejectionFlag(RejectionFlag::OutsideThreshold);
-                ++numPeaksTooSmallOrLarge;
-            }
-
-            if (extents(2) > _params->maximum_frames && !p->enabled()) {
-                p->setSelected(false);
-                p->setRejectionFlag(RejectionFlag::OutsideFrames);
-                ++numPeaksOutsideFrames;
-            }
-
-            // peak's bounding box not completely contained in detector image
-            if (!dAABB.contains(p->shape().aabb()) && !p->enabled()) {
-                p->setSelected(false);
-                p->setRejectionFlag(RejectionFlag::OutsideDetector);
-                ++numPeaksNotInDetArea;
-            }
-
-            p->setPredicted(false);
-            numor_peaks.push_back(p);
-            _current_peaks.push_back(p);
-
-            ++count;
-
-            if (_handler) {
-                double progress = count * 100.0 / blobs.size();
-                _handler->setProgress(progress);
-            }
-        }
-
-        ohklLog(Level::Debug, "PeakFinder::find: blob loop done");
-
-        if (_handler) {
-            _handler->setStatus(
-                ("Integrating " + std::to_string(numor_peaks.size()) + " peaks...").c_str());
-            _handler->setProgress(0);
-        }
-
-        ohklLog(
-            Level::Info, "PeakFinder::find: ", numor_peaks.size(), " peaks found,",
-            numPeaksTooSmallOrLarge, " peaks too small, ", numPeaksOutsideFrames,
-            " peaks outside frame range, ", numPeaksNotInDetArea, " peaks not fully on detector.");
-        ohklLog(Level::Info, "PeakFinder::find: ", numPeaksMasked, " peaks masked");
-        _peaks_found = numor_peaks.size();
-
-        numor->close();
+    if (_handler) {
+        _handler->setProgress(100);
     }
+
+    if (_handler) {
+        _handler->setStatus("Computing bounding boxes...");
+        _handler->setProgress(0);
+    }
+
+    int count = 0;
+
+    const auto& kernel_size = _convolver->kernelSize();
+    const auto& x_offset = kernel_size.first;
+    const auto& y_offset = kernel_size.second;
+
+    // AABB used for rejecting peaks which overlaps with detector boundaries
+    AABB dAABB(
+        Eigen::Vector3d(x_offset, y_offset, 0),
+        Eigen::Vector3d(ncols - x_offset, nrows - y_offset, nframes - 1));
+
+    static const double peaksTooLargeLimit = 1e5;
+    static const double peaksTooSmallLimit = 1e-5;
+
+    std::size_t numPeaksTooSmallOrLarge = 0;
+    std::size_t numPeaksOutsideFrames = 0;
+    std::size_t numPeaksNotInDetArea = 0;
+    std::size_t numPeaksMasked = 0;
+
+    for (auto& blob : blobs) {
+        Eigen::Vector3d center, eigenvalues;
+        Eigen::Matrix3d eigenvectors;
+
+        blob.second.toEllipsoid(1.0, center, eigenvalues, eigenvectors);
+        auto shape = Ellipsoid(center, eigenvalues, eigenvectors);
+
+        auto p = sptrPeak3D(new Peak3D(data, shape));
+        const auto extents = p->shape().aabb().extents();
+
+        // peak overlaps with mask
+        for (IMask* mask : data->masks()) {
+            if (mask->collide(p->shape())) {
+                p->setMasked(true);
+                p->setRejectionFlag(RejectionFlag::Masked);
+                ++numPeaksMasked;
+            }
+        }
+
+        // peak too small or too large
+        if ((extents.maxCoeff() > peaksTooLargeLimit || extents.minCoeff() < peaksTooSmallLimit)
+            && !p->enabled()) {
+            p->setSelected(false);
+            p->setRejectionFlag(RejectionFlag::OutsideThreshold);
+            ++numPeaksTooSmallOrLarge;
+        }
+
+        if (extents(2) > _params->maximum_frames && !p->enabled()) {
+            p->setSelected(false);
+            p->setRejectionFlag(RejectionFlag::OutsideFrames);
+            ++numPeaksOutsideFrames;
+        }
+
+        // peak's bounding box not completely contained in detector image
+        if (!dAABB.contains(p->shape().aabb()) && !p->enabled()) {
+            p->setSelected(false);
+            p->setRejectionFlag(RejectionFlag::OutsideDetector);
+            ++numPeaksNotInDetArea;
+        }
+
+        p->setPredicted(false);
+        peaks.push_back(p);
+        _current_peaks.push_back(p);
+
+        ++count;
+
+        if (_handler) {
+            double progress = count * 100.0 / blobs.size();
+            _handler->setProgress(progress);
+        }
+    }
+
+    ohklLog(Level::Debug, "PeakFinder::find: blob loop done");
+
+    if (_handler) {
+        _handler->setStatus(
+            ("Integrating " + std::to_string(peaks.size()) + " peaks...").c_str());
+        _handler->setProgress(0);
+    }
+
+    ohklLog(
+        Level::Info, "PeakFinder::find: ", peaks.size(), " peaks found,",
+        numPeaksTooSmallOrLarge, " peaks too small, ", numPeaksOutsideFrames,
+        " peaks outside frame range, ", numPeaksNotInDetArea, " peaks not fully on detector.");
+    ohklLog(Level::Info, "PeakFinder::find: ", numPeaksMasked, " peaks masked");
+    _peaks_found = peaks.size();
+
+    data->close();
 
     if (_handler) {
         _handler->setStatus("Peak finding completed.");
         _handler->setProgress(100);
     }
-    setPeakCollection("Found peaks", ohkl::PeakCollectionType::FOUND, _current_peaks);
+    setPeakCollection("Found peaks", ohkl::PeakCollectionType::FOUND, _current_peaks, data);
     ohklLog(Level::Info, "PeakFinder::find: exit");
 }
 
