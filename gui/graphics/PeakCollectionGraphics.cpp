@@ -30,16 +30,22 @@
 #include <QDoubleSpinBox>
 #include <vector>
 
-PeakCollectionGraphics::PeakCollectionGraphics(PeakCollectionModel* model)
+PeakCollectionGraphics::PeakCollectionGraphics()
     : _peaks_enabled(true)
     , _int_regions_enabled(false)
     , _ext_peaks_enabled(false)
     , _detector_spots_enabled(false)
     , _params()
-    , _peak_model(model)
+    , _peak_model(nullptr)
     , _peakPxColor(QColor(255, 255, 0, 128)) // yellow, alpha = 0.5
     , _bkgPxColor(QColor(0, 255, 0, 128)) // green, alpha = 0.5
 {
+}
+
+PeakCollectionGraphics::PeakCollectionGraphics(PeakCollectionModel* model)
+    : PeakCollectionGraphics()
+{
+    _peak_model = model;
 }
 
 void PeakCollectionGraphics::initIntRegionFromPeakWidget(
@@ -59,6 +65,9 @@ void PeakCollectionGraphics::initIntRegionFromPeakWidget(
 
 QVector<PeakItemGraphic*> PeakCollectionGraphics::peakItemGraphics(std::size_t frame_idx)
 {
+    if (!_peak_model)
+        return {};
+
     std::vector<PeakItem*> peak_items = _peak_model->root()->peakItems();
 
     QVector<PeakItemGraphic*> graphics;
@@ -82,6 +91,9 @@ QVector<PeakItemGraphic*> PeakCollectionGraphics::peakItemGraphics(std::size_t f
 
 QVector<PeakCenterGraphic*> PeakCollectionGraphics::extPeakGraphics(std::size_t frame_idx)
 {
+    if (!_peak_center_data)
+        return {};
+
     QVector<PeakCenterGraphic*> graphics;
     ohkl::XFileHandler* xfh = _peak_center_data->getFrame(frame_idx);
 
@@ -99,6 +111,9 @@ QVector<PeakCenterGraphic*> PeakCollectionGraphics::extPeakGraphics(std::size_t 
 
 QVector<PeakCenterGraphic*> PeakCollectionGraphics::detectorSpots(std::size_t frame_idx)
 {
+    if (!_per_frame_spots)
+        return {};
+
     QVector<PeakCenterGraphic*> graphics;
 
     for (const cv::KeyPoint& point : _per_frame_spots->at(frame_idx)) {

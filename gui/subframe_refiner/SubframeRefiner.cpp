@@ -90,7 +90,7 @@ SubframeRefiner::SubframeRefiner()
     setPeakViewWidgetUp(_peak_view_widget_2, "View unrefined_peaks");
     refreshAll();
 
-    _detector_widget = new DetectorWidget(1, false, true);
+    _detector_widget = new DetectorWidget(2, false, true);
     _detector_widget->linkPeakModel(&_unrefined_model, 0);
     _detector_widget->linkPeakModel(&_refined_model, 1);
     detector_tab->setLayout(_detector_widget);

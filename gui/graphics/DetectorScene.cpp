@@ -100,7 +100,7 @@ DetectorScene::DetectorScene(std::size_t npeakcollections, QObject* parent)
     , _fft_gradient(false)
 {
     for (std::size_t idx = 0; idx < _max_peak_collections; ++idx)
-        _peak_graphics.push_back(nullptr);
+        _peak_graphics.push_back(std::make_unique<PeakCollectionGraphics>());
 }
 
 void DetectorScene::onGradientSetting(int kernel, bool fft)
@@ -147,15 +147,7 @@ void DetectorScene::linkPeakModel(PeakCollectionModel* source, std::size_t idx /
         throw std::range_error(
             "DetectorScene::linkPeakModel: _peak_graphics index out of range");
 
-    //! Check for existence of this model
-    if (_peak_graphics.at(idx)) { // check for nullptr
-        if (_peak_graphics.at(idx)->peakModel() == source)
-            return;
-        else
-            _peak_graphics.at(idx).reset();
-    }
-
-    _peak_graphics.at(idx) = std::make_unique<PeakCollectionGraphics>(source);
+    _peak_graphics.at(idx)->setPeakModel(source);
     connect(
         _peak_graphics.at(idx)->peakModel(), &PeakCollectionModel::dataChanged, this,
         &DetectorScene::peakModelDataChanged);
@@ -286,7 +278,6 @@ void DetectorScene::drawDirectBeamPositions()
 void DetectorScene::slotChangeSelectedData(ohkl::sptrDataSet data, int frame_1based)
 {
     if (data != _currentData) {
-        _currentData->close();
         _currentData = data;
         _currentData->open();
         _currentFrameIndex = -1;
@@ -934,6 +925,7 @@ void DetectorScene::drawIntegrationRegion()
         QImage* region_img = graphic->getIntegrationRegionImage(_currentFrameIndex, peak);
         QGraphicsPixmapItem* overlay = addPixmap(QPixmap::fromImage(*region_img));
         overlay->setZValue(-1);
+    _integration_regions.push_back(overlay);
     }
 }
 

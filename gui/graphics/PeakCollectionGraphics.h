@@ -37,8 +37,11 @@ class PeakCenterGraphic;
 class PeakCollectionGraphics {
 
  public:
+    PeakCollectionGraphics();
     PeakCollectionGraphics(PeakCollectionModel* model);
 
+    //! Set the peak model pointer
+    void setPeakModel(PeakCollectionModel* model) { _peak_model = model; };
     //! Get the peak model pointer
     PeakCollectionModel* peakModel() const { return _peak_model; };
     //! Get the DataSet pointer associated with the PeakCollection
