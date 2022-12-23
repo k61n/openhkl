@@ -24,7 +24,6 @@
 #include "gui/graphics_items/CrosshairGraphic.h"
 #include "gui/graphics_items/PeakCenterGraphic.h"
 #include "gui/models/ColorMap.h"
-#include "gui/widgets/PeakViewWidget.h"
 
 #include <QGraphicsPixmapItem>
 #include <QGraphicsScene>
@@ -40,6 +39,7 @@ class MaskHandler;
 class CutterItem;
 class PeakItemGraphic;
 class PeakCollectionModel;
+class PeakViewWidget;
 class SXGraphicsItem;
 class MaskHandler;
 
@@ -113,7 +113,7 @@ class DetectorScene : public QGraphicsScene {
     //! Get pointer to a PeakCollectionGraphics object
     PeakCollectionGraphics* peakCollectionGraphics(std::size_t idx) const;
     //! Link graphics associated with a peak collection
-    void linkPeakModel(PeakCollectionModel* source, std::size_t idx = 0);
+    void linkPeakModel(PeakCollectionModel* source, PeakViewWidget* widget, std::size_t idx = 0);
     //! Populate vector of 3rd party peak centers
     void link3rdPartyPeaks(ohkl::PeakCenterDataSet* pcd, std::size_t idx);
     //! Link data for keypoints found via OpenCV

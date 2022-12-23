@@ -126,10 +126,10 @@ void PeakViewWidget::addIntegrationRegion(Set& set, const QColor& peak, const QC
         addCheckBox(row++, 1, "Integration region", Qt::CheckState::Unchecked);
     set.regionType = addCombo(row++, ComboType::RegionType);
 
-    for (int i = 0; i < static_cast<int>(ohkl::RegionType::Count); ++i)
-        for (const auto& [key, val] : ohkl::regionTypeDescription)
-            if (i == static_cast<int>(key))
-                set.regionType->addItem(QString::fromStdString(val));
+    for (int i = 0; i < static_cast<int>(ohkl::RegionType::Count); ++i) {
+        std::string description = ohkl::regionTypeDescription.at(static_cast<ohkl::RegionType>(i));
+        set.regionType->addItem(QString::fromStdString(description));
+    }
 
     addLabel(row, "Alpha");
     set.alphaIntegrationRegion = addDoubleSpinBox(row++, 0.2);

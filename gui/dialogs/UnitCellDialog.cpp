@@ -21,7 +21,6 @@
 #include <QGridLayout>
 #include <QHBoxLayout>
 #include <QLabel>
-#include <qnamespace.h>
 
 UnitCellDialog::UnitCellDialog(
     QString suggestion, QStringList spaceGroups, QStringList collectionNames)

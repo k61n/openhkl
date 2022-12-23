@@ -42,6 +42,8 @@ class PeakCollectionGraphics {
 
     //! Set the peak model pointer
     void setPeakModel(PeakCollectionModel* model) { _peak_model = model; };
+    //! Set the peak view widget, used to set colours etc
+    void setPeakViewWidget(PeakViewWidget* widget) { _peak_view_widget = widget; };
     //! Get the peak model pointer
     PeakCollectionModel* peakModel() const { return _peak_model; };
     //! Get the DataSet pointer associated with the PeakCollection
@@ -77,7 +79,7 @@ class PeakCollectionGraphics {
     //! Get a QImage of the integration region mask
     QImage* getIntegrationRegionImage(std::size_t frame_idx, ohkl::Peak3D* peak = nullptr);
     //! Set integration region overlay parameters from PeakWidget
-    void initIntRegionFromPeakWidget(const PeakViewWidget::Set& set);
+    void initIntRegionFromPeakWidget();
 
     bool peaksEnabled() const { return _peaks_enabled; };
     bool intRegionsEnabled() const { return _int_regions_enabled; };
@@ -119,6 +121,8 @@ class PeakCollectionGraphics {
     ohkl::PeakCenterDataSet* _peak_center_data;
     //! Detector spots found using OpenCV
     std::vector<std::vector<cv::KeyPoint>>* _per_frame_spots;
+    //! The widget used to set visual parameters (color, size etc)
+    PeakViewWidget* _peak_view_widget;
 
     //! Colour of peak pixels in integration region
     QColor _peakPxColor;

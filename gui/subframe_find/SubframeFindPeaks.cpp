@@ -256,7 +256,7 @@ void SubframeFindPeaks::setFigureUp()
     QGroupBox* figure_group = new QGroupBox("Detector image");
     figure_group->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     _detector_widget = new DetectorWidget(1, true, true, figure_group);
-    _detector_widget->linkPeakModel(&_peak_collection_model);
+    _detector_widget->linkPeakModel(&_peak_collection_model, _peak_view_widget);
 
     connect(
         _data_combo, QOverload<int>::of(&QComboBox::currentIndexChanged),
@@ -602,17 +602,6 @@ void SubframeFindPeaks::refreshPeakVisual()
     if (_peak_collection.numberOfPeaks() == 0)
         return;
 
-    for (int i = 0; i < _peak_collection_item.childCount(); i++) {
-        PeakItem* peak = _peak_collection_item.peakItemAt(i);
-        auto graphic = peak->peakGraphic();
-
-        graphic->showLabel(false);
-        graphic->setColor(Qt::transparent);
-        graphic->initFromPeakViewWidget(
-            peak->peak()->enabled() ? _peak_view_widget->set1 : _peak_view_widget->set2);
-    }
-    _detector_widget->scene()->peakCollectionGraphics(0)->
-        initIntRegionFromPeakWidget(_peak_view_widget->set1);
     _detector_widget->refresh();
 }
 

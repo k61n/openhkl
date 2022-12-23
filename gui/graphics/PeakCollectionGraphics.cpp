@@ -28,6 +28,7 @@
 #include <QVector>
 #include <QCheckBox>
 #include <QDoubleSpinBox>
+
 #include <vector>
 
 PeakCollectionGraphics::PeakCollectionGraphics()
@@ -48,9 +49,9 @@ PeakCollectionGraphics::PeakCollectionGraphics(PeakCollectionModel* model)
     _peak_model = model;
 }
 
-void PeakCollectionGraphics::initIntRegionFromPeakWidget(
-    const PeakViewWidget::Set& set)
+void PeakCollectionGraphics::initIntRegionFromPeakWidget()
 {
+    auto set = _peak_view_widget->set1;
     _preview_int_regions = set.previewIntRegion->isChecked();
     _int_region_type = static_cast<ohkl::RegionType>(set.regionType->currentIndex());
     _peak_end = set.peakEnd->value();
@@ -90,6 +91,8 @@ QVector<PeakItemGraphic*> PeakCollectionGraphics::peakItemGraphics(std::size_t f
 
         PeakItemGraphic* peak_graphic = peak_item->peakGraphic();
         peak_graphic->setCenter(frame_idx);
+        peak_graphic->initFromPeakViewWidget(
+            peak_item->peak()->enabled() ? _peak_view_widget->set1 : _peak_view_widget->set2);
         graphics.push_back(peak_graphic);
     }
     return graphics;
@@ -193,9 +196,13 @@ void PeakCollectionGraphics::getSinglePeakIntegrationMask(
 
 QImage* PeakCollectionGraphics::getIntegrationRegionImage(std::size_t frame_idx, ohkl::Peak3D* peak)
 {
+    if (!_int_regions_enabled)
+        return nullptr;
+
     ohkl::sptrDataSet data = _peak_model->dataSet();
     Eigen::MatrixXi mask(data->nRows(), data->nCols());
     mask.setConstant(int(EventType::EXCLUDED));
+    initIntRegionFromPeakWidget();
     if (peak)
         getSinglePeakIntegrationMask(peak, mask, frame_idx);
     else

@@ -71,6 +71,9 @@ class PeakViewWidget : public QGridLayout {
     double _peak_end;
     double _bkg_begin;
     double _bkg_end;
+    double _fixed_peak_end;
+    double _fixed_bkg_begin;
+    double _fixed_bkg_end;
     bool _fixed_integration_region;
 };
 

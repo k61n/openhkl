@@ -91,8 +91,8 @@ SubframeRefiner::SubframeRefiner()
     refreshAll();
 
     _detector_widget = new DetectorWidget(2, false, true);
-    _detector_widget->linkPeakModel(&_unrefined_model, 0);
-    _detector_widget->linkPeakModel(&_refined_model, 1);
+    _detector_widget->linkPeakModel(&_unrefined_model, _peak_view_widget_1, 0);
+    _detector_widget->linkPeakModel(&_refined_model, _peak_view_widget_2, 1);
     detector_tab->setLayout(_detector_widget);
 
     connect(
@@ -421,10 +421,6 @@ void SubframeRefiner::setPeakViewWidgetUp(PeakViewWidget* peak_widget, QString n
 
 void SubframeRefiner::refreshPeakVisual()
 {
-    _detector_widget->scene()->peakCollectionGraphics(0)->
-        initIntRegionFromPeakWidget(_peak_view_widget_1->set1);
-    _detector_widget->scene()->peakCollectionGraphics(1)->
-        initIntRegionFromPeakWidget(_peak_view_widget_2->set1);
     _detector_widget->refresh();
 
     if (_refined_collection_item.childCount() == 0)
@@ -452,10 +448,6 @@ void SubframeRefiner::refreshPeakVisual()
         }
     }
 
-    _detector_widget->scene()->peakCollectionGraphics(0)->
-        initIntRegionFromPeakWidget(_peak_view_widget_1->set1);
-    _detector_widget->scene()->peakCollectionGraphics(1)->
-        initIntRegionFromPeakWidget(_peak_view_widget_1->set1);
     _detector_widget->refresh();
     _detector_widget->scene()->drawPeakItems();
 }

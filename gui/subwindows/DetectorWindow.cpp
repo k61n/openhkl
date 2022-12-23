@@ -84,8 +84,8 @@ void DetectorWindow::setDetectorViewUp()
     QGroupBox* detector_group = new QGroupBox("Detector image");
     detector_group->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     _detector_widget = new DetectorWidget(2, true, true, detector_group);
-    _detector_widget->linkPeakModel(&_peak_collection_model_1, 0);
-    _detector_widget->linkPeakModel(&_peak_collection_model_2, 1);
+    _detector_widget->linkPeakModel(&_peak_collection_model_1, _peak_view_widget_1, 0);
+    _detector_widget->linkPeakModel(&_peak_collection_model_2, _peak_view_widget_2, 1);
 
     connect(
         _detector_widget->scene(), &DetectorScene::signalSelectedPeakItemChanged, this,
@@ -229,32 +229,6 @@ void DetectorWindow::setPlotUp(PeakViewWidget* peak_widget, QString name)
 
 void DetectorWindow::refreshDetectorView()
 {
-    if (!(_peak_collection_item_1.childCount() == 0)) {
-        for (int i = 0; i < _peak_collection_item_1.childCount(); i++) {
-            PeakItem* peak = _peak_collection_item_1.peakItemAt(i);
-            auto graphic = peak->peakGraphic();
-
-            graphic->showLabel(false);
-            graphic->setColor(Qt::transparent);
-            graphic->initFromPeakViewWidget(
-                peak->peak()->enabled() ? _peak_view_widget_1->set1 : _peak_view_widget_1->set2);
-        }
-    }
-
-    if (!(_peak_collection_item_2.childCount() == 0)) {
-        for (int i = 0; i < _peak_collection_item_2.childCount(); i++) {
-            PeakItem* peak = _peak_collection_item_2.peakItemAt(i);
-            auto graphic = peak->peakGraphic();
-
-            graphic->showLabel(false);
-            graphic->setColor(Qt::transparent);
-            graphic->initFromPeakViewWidget(
-                peak->peak()->enabled() ? _peak_view_widget_2->set1 : _peak_view_widget_2->set2);
-        }
-    }
-
-    _detector_widget->scene()->peakCollectionGraphics(0)->initIntRegionFromPeakWidget(_peak_view_widget_1->set1);
-    _detector_widget->scene()->peakCollectionGraphics(1)->initIntRegionFromPeakWidget(_peak_view_widget_2->set1);
     _detector_widget->refresh();
 }
 

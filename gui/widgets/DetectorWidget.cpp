@@ -25,6 +25,7 @@
 #include "gui/subwindows/InstrumentStateWindow.h"
 #include "gui/utility/DataComboBox.h"
 #include "gui/utility/LinkedComboBox.h"
+#include "gui/widgets/PeakViewWidget.h"
 
 #include <QClipboard>
 #include <QComboBox>
@@ -180,9 +181,10 @@ void DetectorWidget::refresh()
     emit scene()->dataChanged();
 }
 
-void DetectorWidget::linkPeakModel(PeakCollectionModel* model, std::size_t idx)
+void DetectorWidget::linkPeakModel(
+    PeakCollectionModel* model, PeakViewWidget* widget, std::size_t idx)
 {
-    scene()->linkPeakModel(model, idx);
+    scene()->linkPeakModel(model, widget, idx);
 }
 
 ohkl::sptrDataSet DetectorWidget::currentData()

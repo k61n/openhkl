@@ -46,6 +46,7 @@
 #include "gui/models/Session.h"
 #include "gui/subwindows/PeakWindow.h"
 #include "gui/utility/ColorButton.h"
+#include "gui/widgets/PeakViewWidget.h"
 #include "tables/crystal/MillerIndex.h"
 #include "tables/crystal/SpaceGroup.h"
 #include "tables/crystal/UnitCell.h"
@@ -140,7 +141,8 @@ void DetectorScene::showBeamSetter(bool show)
     update();
 }
 
-void DetectorScene::linkPeakModel(PeakCollectionModel* source, std::size_t idx /* = 0 */)
+void DetectorScene::linkPeakModel(
+    PeakCollectionModel* source, PeakViewWidget* widget, std::size_t idx /* = 0 */)
 {
     // unless specified, link model to first element of _peak_graphics
     if (idx >= _max_peak_collections)
@@ -148,6 +150,7 @@ void DetectorScene::linkPeakModel(PeakCollectionModel* source, std::size_t idx /
             "DetectorScene::linkPeakModel: _peak_graphics index out of range");
 
     _peak_graphics.at(idx)->setPeakModel(source);
+    _peak_graphics.at(idx)->setPeakViewWidget(widget);
     connect(
         _peak_graphics.at(idx)->peakModel(), &PeakCollectionModel::dataChanged, this,
         &DetectorScene::peakModelDataChanged);
@@ -895,7 +898,6 @@ void DetectorScene::loadCurrentImage()
     }
 
     // update the integration region pixmap
-    clearIntegrationRegion();
     drawIntegrationRegion();
 
     // let's recreate QGraphicItems from masks in DataSet since life cycle of this entitys seems
@@ -916,16 +918,19 @@ void DetectorScene::drawIntegrationRegion()
     if (_peak_graphics.empty())
         return;
 
+    clearIntegrationRegion();
+
     ohkl::Peak3D* peak = nullptr;
     if (_flags.singlePeakIntRegion)
         peak = _peak;
     for (const auto& graphic : _peak_graphics) {
-        if (!graphic->intRegionsEnabled())
-            continue;
+        graphic->initIntRegionFromPeakWidget();
         QImage* region_img = graphic->getIntegrationRegionImage(_currentFrameIndex, peak);
-        QGraphicsPixmapItem* overlay = addPixmap(QPixmap::fromImage(*region_img));
-        overlay->setZValue(-1);
-    _integration_regions.push_back(overlay);
+        if (region_img) {
+            QGraphicsPixmapItem* overlay = addPixmap(QPixmap::fromImage(*region_img));
+            overlay->setZValue(-1);
+            _integration_regions.push_back(overlay);
+        }
     }
 }
 

@@ -287,7 +287,7 @@ void SubframeFilterPeaks::setFigureUp()
     QGroupBox* figure_group = new QGroupBox("Detector image");
     figure_group->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     _detector_widget = new DetectorWidget(1, false, true, figure_group);
-    _detector_widget->linkPeakModel(&_peak_collection_model);
+    _detector_widget->linkPeakModel(&_peak_collection_model, _peak_view_widget);
 
     connect(
         _detector_widget->scene(), &DetectorScene::signalUpdateDetectorScene, this,
@@ -510,8 +510,6 @@ void SubframeFilterPeaks::refreshPeakVisual()
         graphic->initFromPeakViewWidget(
             peak->peak()->caughtByFilter() ? _peak_view_widget->set1 : _peak_view_widget->set2);
     }
-    _detector_widget->scene()->peakCollectionGraphics(0)->
-        initIntRegionFromPeakWidget(_peak_view_widget->set1);
     _detector_widget->refresh();
 }
 

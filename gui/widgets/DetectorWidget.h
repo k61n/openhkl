@@ -32,6 +32,7 @@ class DetectorScene;
 class DetectorView;
 class DataComboBox;
 class PeakCollectionModel;
+class PeakViewWidget;
 class QButtonGroup;
 class QPushButton;
 class QSpinBox;
@@ -51,7 +52,7 @@ class DetectorWidget : public QGridLayout {
     //! Refresh the DetectorScene
     void refresh();
     //! Link the detector scene to one or two peak models
-    void linkPeakModel(PeakCollectionModel* model, std::size_t idx = 0);
+    void linkPeakModel(PeakCollectionModel* model, PeakViewWidget* widget, std::size_t idx = 0);
     //! Return the current DataSet
     ohkl::sptrDataSet currentData();
     //! Switch the Detectorscene between coordinate types

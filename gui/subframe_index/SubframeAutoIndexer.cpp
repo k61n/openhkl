@@ -385,7 +385,7 @@ void SubframeAutoIndexer::setPeakViewWidgetUp()
 void SubframeAutoIndexer::setFigureUp()
 {
     _detector_widget = new DetectorWidget(1, false, true);
-    _detector_widget->linkPeakModel(&_peak_collection_model);
+    _detector_widget->linkPeakModel(&_peak_collection_model, _peak_view_widget);
 
     connect(
         _detector_widget->spin(), static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged),
@@ -446,8 +446,6 @@ void SubframeAutoIndexer::refreshPeakVisual()
             peak->peak()->enabled() ? _peak_view_widget->set1 : _peak_view_widget->set2);
     }
 
-    _detector_widget->scene()->peakCollectionGraphics(0)->
-        initIntRegionFromPeakWidget(_peak_view_widget->set1);
     _detector_widget->refresh();
 }
 
