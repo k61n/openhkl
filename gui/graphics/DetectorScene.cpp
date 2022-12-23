@@ -659,10 +659,11 @@ void DetectorScene::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
             addBeamSetter(size, linewidth);
         } else {
             for (const auto& graphic : _peak_graphics) {
-                PeakCollectionModel* model = graphic->peakModel(); 
+                PeakCollectionModel* model = graphic->peakModel();
+                std::vector<ohkl::Peak3D*> peaks;
                 std::map<ohkl::Peak3D*, ohkl::RejectionFlag> tmp_map;
-                std::vector<ohkl::Peak3D*> peaks =
-                    model->root()->peakCollection()->getPeakList();
+                if (model)
+                    peaks = model->root()->peakCollection()->getPeakList();
                 if (CutterItem* p = dynamic_cast<CutterItem*>(_lastClickedGI)) {
                     _lastClickedGI = nullptr;
                     removeItem(p);
