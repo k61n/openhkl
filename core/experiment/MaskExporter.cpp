@@ -34,8 +34,10 @@ MaskExporter::MaskExporter(std::vector<ohkl::IMask*> masks)
 
         mask["LowerX"] = std::round(e->aabb().lower()[0] * 100) / 100;
         mask["LowerY"] = std::round(e->aabb().lower()[1] * 100) / 100;
+        mask["LowerZ"] = std::round(e->aabb().lower()[2] * 100) / 100;
         mask["UpperX"] = std::round(e->aabb().upper()[0] * 100) / 100;
         mask["UpperY"] = std::round(e->aabb().upper()[1] * 100) / 100;
+        mask["UpperZ"] = std::round(e->aabb().upper()[2] * 100) / 100;
 
         _node[name] = mask;
         ++idx;
@@ -56,4 +58,5 @@ void MaskExporter::exportToFile(std::string filename)
     fout << _node;
     fout.close();
 }
-} // ohkl
+
+} // namespace ohkl

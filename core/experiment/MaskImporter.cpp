@@ -31,11 +31,11 @@ MaskImporter::MaskImporter(std::string filename)
 
         upper[0] = _node[name]["UpperX"].as<float>();
         upper[1] = _node[name]["UpperY"].as<float>();
-        upper[2] = 150;
+        upper[2] = _node[name]["UpperZ"].as<float>();
 
         lower[0] = _node[name]["LowerX"].as<float>();
         lower[1] = _node[name]["LowerY"].as<float>();
-        lower[2] = 0;
+        lower[2] = _node[name]["LowerZ"].as<float>();
 
         AABB aabb(upper, lower);
 
@@ -61,4 +61,5 @@ std::vector<IMask*> MaskImporter::getMasks()
 {
     return _masks;
 }
-} // ohkl
+
+} // namespace ohkl
