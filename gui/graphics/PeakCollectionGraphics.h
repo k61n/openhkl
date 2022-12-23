@@ -33,6 +33,8 @@ class Peak3D;
 class PeakItemGraphic;
 class PeakCenterGraphic;
 
+enum class VisualisationType {Enabled, Filtered};
+
 //! Container for settings and pointers for visualising peaks
 class PeakCollectionGraphics {
 
@@ -50,6 +52,8 @@ class PeakCollectionGraphics {
     ohkl::sptrDataSet dataSet() const { return _peak_model->dataSet(); };
     //! Set the integration parameters
     void setIntegrationParams(const ohkl::IntegrationParameters& params) {_params = params; };
+    //! Set the visualisation type to enabled or filtered
+    void setVisualisationType(VisualisationType vtype) { _visual_type = vtype; };
     //! Generate the PeakItemGraphics and return them in a vector. The parameters
     //! Are used to construct the integration regions
     QVector<PeakItemGraphic*> peakItemGraphics(std::size_t frame_idx);
@@ -96,12 +100,8 @@ class PeakCollectionGraphics {
     //! Generate a mask for a single peak only
     void getSinglePeakIntegrationMask(
         ohkl::Peak3D* peak, Eigen::MatrixXi& mask, std::size_t frame_idx);
-    //! Populate vector of 3rd party peak centers
-    void link3rdPartyPeaks(ohkl::PeakCenterDataSet* pcd);
-    //! Refresh the model data
-    void peakModelDataChanged();
-    //! Plot settings for 3rd party peak centres
-    void setup3rdPartyPeaks(bool draw, const QColor& color, int size);
+    //! Determine the visual type of the peak
+    bool visualType(ohkl::Peak3D* peak);
 
     //! Whether the peaks will be generated
     bool _peaks_enabled;
@@ -123,6 +123,8 @@ class PeakCollectionGraphics {
     std::vector<std::vector<cv::KeyPoint>>* _per_frame_spots;
     //! The widget used to set visual parameters (color, size etc)
     PeakViewWidget* _peak_view_widget;
+    //! Type of peak visualisation (separate by validity or filter status)
+    VisualisationType _visual_type;
 
     //! Colour of peak pixels in integration region
     QColor _peakPxColor;

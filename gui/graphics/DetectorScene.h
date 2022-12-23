@@ -114,6 +114,8 @@ class DetectorScene : public QGraphicsScene {
     PeakCollectionGraphics* peakCollectionGraphics(std::size_t idx) const;
     //! Link graphics associated with a peak collection
     void linkPeakModel(PeakCollectionModel* source, PeakViewWidget* widget, std::size_t idx = 0);
+    //! Set visualisation type for the subframe
+    void setVisualisationMode(VisualisationType vtype);
     //! Populate vector of 3rd party peak centers
     void link3rdPartyPeaks(ohkl::PeakCenterDataSet* pcd, std::size_t idx);
     //! Link data for keypoints found via OpenCV

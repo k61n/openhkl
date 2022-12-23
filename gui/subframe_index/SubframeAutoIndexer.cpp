@@ -429,23 +429,6 @@ void SubframeAutoIndexer::refreshPeakVisual()
     }
     showDirectBeamEvents();
 
-    if (_peak_collection_item.childCount() == 0)
-        return;
-
-    for (int i = 0; i < _peak_collection_item.childCount(); i++) {
-        PeakItem* peak = _peak_collection_item.peakItemAt(i);
-        if (peak == nullptr)
-            continue;
-        auto graphic = peak->peakGraphic();
-        if (graphic == nullptr)
-            continue;
-
-        graphic->showLabel(false);
-        graphic->setColor(Qt::transparent);
-        graphic->initFromPeakViewWidget(
-            peak->peak()->enabled() ? _peak_view_widget->set1 : _peak_view_widget->set2);
-    }
-
     _detector_widget->refresh();
 }
 

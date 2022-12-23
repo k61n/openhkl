@@ -551,6 +551,7 @@ void SubframePredictPeaks::runPrediction()
             predicted_peaks.push_back(peak);
 
         _peak_collection.populate(predicted_peaks);
+        _peak_collection.setData(data);
         for (ohkl::Peak3D* peak : predicted_peaks)
             delete peak;
         predicted_peaks.clear();
@@ -667,18 +668,6 @@ void SubframePredictPeaks::refreshPeakVisual()
         changeCrosshair();
     }
     _detector_widget->refresh();
-    if (_peak_collection_item.childCount() == 0)
-        return;
-
-    for (int i = 0; i < _peak_collection_item.childCount(); ++i) {
-        PeakItem* peak = _peak_collection_item.peakItemAt(i);
-        auto graphic = peak->peakGraphic();
-
-        graphic->showLabel(false);
-        graphic->setColor(Qt::transparent);
-        graphic->initFromPeakViewWidget(
-            peak->peak()->enabled() ? _peak_view_widget->set1 : _peak_view_widget->set2);
-    }
 }
 
 void SubframePredictPeaks::changeSelected(PeakItemGraphic* peak_graphic)

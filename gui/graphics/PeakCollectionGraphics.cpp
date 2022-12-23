@@ -38,6 +38,8 @@ PeakCollectionGraphics::PeakCollectionGraphics()
     , _detector_spots_enabled(false)
     , _params()
     , _peak_model(nullptr)
+    , _peak_view_widget(nullptr)
+    , _visual_type(VisualisationType::Enabled)
     , _peakPxColor(QColor(255, 255, 0, 128)) // yellow, alpha = 0.5
     , _bkgPxColor(QColor(0, 255, 0, 128)) // green, alpha = 0.5
 {
@@ -51,6 +53,9 @@ PeakCollectionGraphics::PeakCollectionGraphics(PeakCollectionModel* model)
 
 void PeakCollectionGraphics::initIntRegionFromPeakWidget()
 {
+    if (!_peak_view_widget)
+        return;
+
     auto set = _peak_view_widget->set1;
     _preview_int_regions = set.previewIntRegion->isChecked();
     _int_region_type = static_cast<ohkl::RegionType>(set.regionType->currentIndex());
@@ -92,7 +97,7 @@ QVector<PeakItemGraphic*> PeakCollectionGraphics::peakItemGraphics(std::size_t f
         PeakItemGraphic* peak_graphic = peak_item->peakGraphic();
         peak_graphic->setCenter(frame_idx);
         peak_graphic->initFromPeakViewWidget(
-            peak_item->peak()->enabled() ? _peak_view_widget->set1 : _peak_view_widget->set2);
+            visualType(peak_item->peak()) ? _peak_view_widget->set1 : _peak_view_widget->set2);
         graphics.push_back(peak_graphic);
     }
     return graphics;
@@ -192,6 +197,21 @@ void PeakCollectionGraphics::getSinglePeakIntegrationMask(
         if (region.isValid())
             region.updateMask(mask, frame_idx);
     }
+}
+
+bool PeakCollectionGraphics::visualType(ohkl::Peak3D* peak)
+{
+    switch (_visual_type) {
+    case VisualisationType::Enabled:
+        if (peak->enabled())
+            return true;
+        break;
+    case VisualisationType::Filtered:
+        if (peak->caughtByFilter())
+            return true;
+        break;
+    }
+    return false;
 }
 
 QImage* PeakCollectionGraphics::getIntegrationRegionImage(std::size_t frame_idx, ohkl::Peak3D* peak)

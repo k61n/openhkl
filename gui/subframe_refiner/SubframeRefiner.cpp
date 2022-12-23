@@ -96,13 +96,13 @@ SubframeRefiner::SubframeRefiner()
     detector_tab->setLayout(_detector_widget);
 
     connect(
-        _peak_combo, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this,
-        &SubframeRefiner::refreshPeakVisual);
+        _peak_combo, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
+        _detector_widget, &DetectorWidget::refresh);
     connect(
         _predicted_combo, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
         this, [=]() {
             updatePeaks();
-            refreshPeakVisual();
+            _detector_widget->refresh();
         });
     connect(
         _data_combo, QOverload<int>::of(&QComboBox::currentIndexChanged),
@@ -110,6 +110,12 @@ SubframeRefiner::SubframeRefiner()
     connect(
         _detector_widget->dataCombo(), QOverload<int>::of(&QComboBox::currentIndexChanged),
         _data_combo, &QComboBox::setCurrentIndex);
+    connect(
+        _peak_view_widget_1, &PeakViewWidget::settingsChanged,
+        _detector_widget, &DetectorWidget::refresh);
+    connect(
+        _peak_view_widget_2, &PeakViewWidget::settingsChanged, _detector_widget,
+        &DetectorWidget::refresh);
 
     _right_element->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     _right_element->addWidget(_tab_widget);
@@ -190,7 +196,7 @@ void SubframeRefiner::refreshAll()
 
     updatePeaks();
     grabRefinerParameters();
-    refreshPeakVisual();
+    _detector_widget->refresh();
     toggleUnsafeWidgets();
 }
 
@@ -252,7 +258,7 @@ void SubframeRefiner::refine()
         states = data->instrumentStates();
         _direct_beam_events = ohkl::algo::getDirectBeamEvents(states, *detector);
         _detector_widget->scene()->linkDirectBeamPositions(&_direct_beam_events);
-        refreshPeakVisual();
+        _detector_widget->refresh();
         gSession->onUnitCellChanged();
         _cell_combo->refresh();
         gGui->detector_window->refreshAll();
@@ -409,47 +415,10 @@ void SubframeRefiner::updatePeaks()
 
 void SubframeRefiner::setPeakViewWidgetUp(PeakViewWidget* peak_widget, QString name)
 {
-
     Spoiler* preview_spoiler = new Spoiler(name);
     preview_spoiler->setContentLayout(*peak_widget, true);
     _left_layout->addWidget(preview_spoiler);
     preview_spoiler->setExpanded(false);
-
-    connect(
-        peak_widget, &PeakViewWidget::settingsChanged, this, &SubframeRefiner::refreshPeakVisual);
-}
-
-void SubframeRefiner::refreshPeakVisual()
-{
-    _detector_widget->refresh();
-
-    if (_refined_collection_item.childCount() == 0)
-        return;
-
-    for (int i = 0; i < _refined_collection_item.childCount(); i++) {
-        PeakItem* peak = _refined_collection_item.peakItemAt(i);
-        auto graphic = peak->peakGraphic();
-
-        graphic->showLabel(false);
-        graphic->setColor(Qt::transparent);
-        graphic->initFromPeakViewWidget(
-            peak->peak()->enabled() ? _peak_view_widget_1->set1 : _peak_view_widget_1->set2);
-    }
-
-    if (!(_unrefined_collection_item.childCount() == 0)) {
-        for (int i = 0; i < _unrefined_collection_item.childCount(); i++) {
-            PeakItem* peak = _unrefined_collection_item.peakItemAt(i);
-            auto graphic = peak->peakGraphic();
-
-            graphic->showLabel(false);
-            graphic->setColor(Qt::transparent);
-            graphic->initFromPeakViewWidget(
-                peak->peak()->enabled() ? _peak_view_widget_2->set1 : _peak_view_widget_2->set2);
-        }
-    }
-
-    _detector_widget->refresh();
-    _detector_widget->scene()->drawPeakItems();
 }
 
 void SubframeRefiner::grabRefinerParameters()
@@ -509,7 +478,7 @@ void SubframeRefiner::updatePredictions()
 
         int n_updated = refiner->updatePredictions(peak_list);
         gGui->statusBar()->showMessage(QString::number(n_updated) + " peaks updated");
-        refreshPeakVisual();
+        _detector_widget->refresh();
         gGui->detector_window->refreshAll();
     } else {
         QMessageBox::critical(this, "Error", "Cannot update predictions: refinement failed");

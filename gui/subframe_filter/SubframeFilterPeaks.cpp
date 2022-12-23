@@ -20,6 +20,7 @@
 #include "gui/MainWin.h" // gGui
 #include "gui/dialogs/ListNameDialog.h"
 #include "gui/graphics/DetectorScene.h"
+#include "gui/graphics/PeakCollectionGraphics.h"
 #include "gui/models/Meta.h"
 #include "gui/models/Project.h"
 #include "gui/models/Session.h"
@@ -82,6 +83,10 @@ SubframeFilterPeaks::SubframeFilterPeaks()
 
     _right_element->setStretchFactor(0, 2);
     _right_element->setStretchFactor(1, 1);
+
+    connect(
+        _peak_view_widget, &PeakViewWidget::settingsChanged, _detector_widget,
+        &DetectorWidget::refresh);
 }
 
 void SubframeFilterPeaks::setInputUp()
@@ -255,9 +260,6 @@ void SubframeFilterPeaks::setProceedUp()
     show_hide_peaks->setContentLayout(*_peak_view_widget);
 
     connect(
-        _peak_view_widget, &PeakViewWidget::settingsChanged, this,
-        &SubframeFilterPeaks::refreshPeakVisual);
-    connect(
         _peak_view_widget->set1.peakEnd, qOverload<double>(&QDoubleSpinBox::valueChanged),
         _peak_end, &QDoubleSpinBox::setValue);
     connect(
@@ -287,6 +289,7 @@ void SubframeFilterPeaks::setFigureUp()
     QGroupBox* figure_group = new QGroupBox("Detector image");
     figure_group->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     _detector_widget = new DetectorWidget(1, false, true, figure_group);
+    _detector_widget->setVisualisationMode(VisualisationType::Filtered);
     _detector_widget->linkPeakModel(&_peak_collection_model, _peak_view_widget);
 
     connect(
@@ -493,23 +496,6 @@ void SubframeFilterPeaks::refreshPeakTable()
     _peak_table->setColumnHidden(PeakColumn::BkgGradient, true);
     _peak_table->setColumnHidden(PeakColumn::BkgGradientSigma, true);
 
-    refreshPeakVisual();
-}
-
-void SubframeFilterPeaks::refreshPeakVisual()
-{
-    if (_peak_collection_item.childCount() == 0)
-        return;
-
-    for (int i = 0; i < _peak_collection_item.childCount(); ++i) {
-        PeakItem* peak = _peak_collection_item.peakItemAt(i);
-        auto graphic = peak->peakGraphic();
-
-        graphic->showLabel(false);
-        graphic->setColor(Qt::transparent);
-        graphic->initFromPeakViewWidget(
-            peak->peak()->caughtByFilter() ? _peak_view_widget->set1 : _peak_view_widget->set2);
-    }
     _detector_widget->refresh();
 }
 

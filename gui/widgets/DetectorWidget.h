@@ -16,6 +16,7 @@
 #define OHKL_GUI_UTILITY_DETECTORWIDGET_H
 
 #include "core/data/DataTypes.h"
+#include "gui/graphics/PeakCollectionGraphics.h"
 
 #include <QApplication>
 #include <QFileInfo>
@@ -39,6 +40,7 @@ class QSpinBox;
 class QScrollBar;
 class QComboBox;
 class QSlider;
+enum class VisualisationType;
 
 class DetectorWidget : public QGridLayout {
 
@@ -53,6 +55,8 @@ class DetectorWidget : public QGridLayout {
     void refresh();
     //! Link the detector scene to one or two peak models
     void linkPeakModel(PeakCollectionModel* model, PeakViewWidget* widget, std::size_t idx = 0);
+    //! Set visualisation type for the subframe
+    void setVisualisationMode(VisualisationType vtype);
     //! Return the current DataSet
     ohkl::sptrDataSet currentData();
     //! Switch the Detectorscene between coordinate types

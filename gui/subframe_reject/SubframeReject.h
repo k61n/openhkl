@@ -86,8 +86,6 @@ class SubframeReject : public QWidget {
     //! Set up the peak table
     void setPeakTableUp();
 
-    //! Refresh the DetctorScene
-    void refreshPeakVisual();
     //! Refresh the peak table
     void refreshPeakTable();
     //! Scroll to selected peak in table

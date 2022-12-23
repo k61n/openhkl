@@ -187,6 +187,11 @@ void DetectorWidget::linkPeakModel(
     scene()->linkPeakModel(model, widget, idx);
 }
 
+void DetectorWidget::setVisualisationMode(VisualisationType vtype)
+{
+    scene()->setVisualisationMode(vtype);
+}
+
 ohkl::sptrDataSet DetectorWidget::currentData()
 {
     return _data_combo->currentData();

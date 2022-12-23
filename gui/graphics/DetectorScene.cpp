@@ -156,6 +156,12 @@ void DetectorScene::linkPeakModel(
         &DetectorScene::peakModelDataChanged);
 }
 
+void DetectorScene::setVisualisationMode(VisualisationType vtype)
+{
+    for (const auto& graphic : _peak_graphics)
+        graphic->setVisualisationType(vtype);
+}
+
 PeakCollectionGraphics* DetectorScene::peakCollectionGraphics(std::size_t idx) const
 {
     if (idx >= _max_peak_collections)

@@ -99,6 +99,9 @@ SubframeFindPeaks::SubframeFindPeaks()
     connect(
         this, &SubframeFindPeaks::signalGradient, _detector_widget->scene(),
         &DetectorScene::onGradientSetting);
+    connect(
+        _peak_view_widget, &PeakViewWidget::settingsChanged, _detector_widget,
+        &DetectorWidget::refresh);
 }
 
 void SubframeFindPeaks::setDataUp()
@@ -222,10 +225,6 @@ void SubframeFindPeaks::setPreviewUp()
 {
     Spoiler* preview_spoiler = new Spoiler("Show/hide peaks");
     _peak_view_widget = new PeakViewWidget("Valid peaks", "Invalid Peaks");
-
-    connect(
-        _peak_view_widget, &PeakViewWidget::settingsChanged, this,
-        &SubframeFindPeaks::refreshPeakVisual);
 
     connect(
         _peak_view_widget->set1.peakEnd, qOverload<double>(&QDoubleSpinBox::valueChanged),
@@ -584,6 +583,7 @@ void SubframeFindPeaks::refreshPeakTable()
         gSession->currentProject()->experiment()->peakFinder()->currentPeaks();
 
     _peak_collection.populate(peaks);
+    _peak_collection.setData(_data_combo->currentData());
     _peak_collection_item.setPeakCollection(&_peak_collection);
     _peak_collection_model.setRoot(&_peak_collection_item);
     _peak_table->resizeColumnsToContents();
@@ -593,14 +593,6 @@ void SubframeFindPeaks::refreshPeakTable()
     _peak_table->setColumnHidden(PeakColumn::l, true);
     _peak_table->setColumnHidden(PeakColumn::Selected, true);
     _peak_table->setColumnHidden(PeakColumn::Count, true);
-
-    refreshPeakVisual();
-}
-
-void SubframeFindPeaks::refreshPeakVisual()
-{
-    if (_peak_collection.numberOfPeaks() == 0)
-        return;
 
     _detector_widget->refresh();
 }

@@ -69,6 +69,14 @@ SubframeIntegrate::SubframeIntegrate() : QWidget()
     connect(
         _detector_widget->dataCombo(), QOverload<int>::of(&QComboBox::currentIndexChanged),
         _data_combo, &QComboBox::setCurrentIndex);
+
+    connect(
+        _peak_view_widget, &PeakViewWidget::settingsChanged, _detector_widget,
+        &DetectorWidget::refresh);
+    connect(
+        _integration_region_type,
+        static_cast<void (LinkedComboBox::*)(int)>(&LinkedComboBox::currentIndexChanged),
+        _detector_widget, &DetectorWidget::refresh);
     connect(
         _gradient_kernel, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
         this, &SubframeIntegrate::onGradientSettingsChanged);
@@ -125,23 +133,6 @@ void SubframeIntegrate::setFigureUp()
     _right_element->addWidget(figure_group);
 }
 
-void SubframeIntegrate::refreshPeakVisual()
-{
-    if (_peak_collection_item.childCount() == 0)
-        return;
-
-    for (int i = 0; i < _peak_collection_item.childCount(); i++) {
-        PeakItem* peak = _peak_collection_item.peakItemAt(i);
-        auto graphic = peak->peakGraphic();
-
-        graphic->showLabel(false);
-        graphic->setColor(Qt::transparent);
-        graphic->initFromPeakViewWidget(
-            peak->peak()->enabled() ? _peak_view_widget->set1 : _peak_view_widget->set2);
-    }
-    _detector_widget->refresh();
-}
-
 void SubframeIntegrate::setPeakTableUp()
 {
     QGroupBox* peak_group = new QGroupBox("Peaks");
@@ -171,7 +162,7 @@ void SubframeIntegrate::refreshPeakTable()
     _peak_collection_model.setRoot(&_peak_collection_item);
     _peak_table->resizeColumnsToContents();
 
-    refreshPeakVisual();
+    _detector_widget->refresh();
 }
 
 void SubframeIntegrate::refreshAll()
@@ -297,11 +288,6 @@ void SubframeIntegrate::setIntegrationRegionUp()
     _bkg_end->setDecimals(2);
 
     _left_layout->addWidget(_integration_region_box);
-
-    connect(
-        _integration_region_type,
-        static_cast<void (LinkedComboBox::*)(int)>(&LinkedComboBox::currentIndexChanged), this,
-        &SubframeIntegrate::refreshPeakVisual);
 }
 
 void SubframeIntegrate::setIntegrateUp()
@@ -418,10 +404,6 @@ void SubframeIntegrate::setPreviewUp()
 {
     Spoiler* preview_spoiler = new Spoiler("Show/hide peaks");
     _peak_view_widget = new PeakViewWidget("Valid peaks", "Invalid Peaks");
-
-    connect(
-        _peak_view_widget, &PeakViewWidget::settingsChanged, this,
-        &SubframeIntegrate::refreshPeakVisual);
 
     preview_spoiler->setContentLayout(*_peak_view_widget);
 

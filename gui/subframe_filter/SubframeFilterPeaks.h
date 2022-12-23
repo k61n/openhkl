@@ -94,8 +94,6 @@ class SubframeFilterPeaks : public QWidget {
 
     //! Refresh the found peaks list
     void refreshPeakTable();
-    //! Refresh the found peaks visual properties
-    void refreshPeakVisual();
 
     //! The model for the found peaks
     ohkl::PeakCollection _peak_collection;
