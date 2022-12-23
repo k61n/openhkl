@@ -44,7 +44,7 @@ MaskImporter::MaskImporter(std::string filename)
         else if (type == "Ellipse")
             mask = new EllipseMask(aabb);
         else
-            throw std::runtime_error("E MaskImporter::MaskImporter Invalid Mask type found");
+            throw std::runtime_error("MaskImporter::MaskImporter Invalid Mask type found");
 
         _masks.emplace_back(mask);
     }

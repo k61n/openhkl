@@ -1186,10 +1186,6 @@ void SubframeExperiment::onMaskChanged()
 
 void SubframeExperiment::onMaskSelected()
 {
-    // this is important!
-    // before we start selecting masks we need to stop
-    // creating more in first place or ohkl gets in a
-    // confusing state
     _mask_box->setChecked(false);
     toggleCursorMode();
 
