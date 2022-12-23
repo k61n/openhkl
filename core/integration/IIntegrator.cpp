@@ -95,12 +95,13 @@ void IIntegrator::integrate(
     if (_params.region_type == ohkl::RegionType::VariableEllipsoid) {
         peak_end = _params.peak_end;
         bkg_begin = _params.bkg_begin;
-        bkg_end = _params.bkg_begin;
+        bkg_end = _params.bkg_end;
     } else {
         peak_end = _params.fixed_peak_end;
         bkg_begin = _params.fixed_bkg_begin;
-        bkg_end = _params.fixed_bkg_begin;
+        bkg_end = _params.fixed_bkg_end;
     }
+
     for (auto peak : peaks) {
         if (!peak->enabled())
             continue;
