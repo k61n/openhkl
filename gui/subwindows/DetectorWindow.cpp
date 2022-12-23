@@ -15,6 +15,7 @@
 #include "gui/subwindows/DetectorWindow.h"
 
 #include "core/experiment/Experiment.h"
+#include "core/shape/PeakCollection.h"
 #include "gui/graphics/DetectorScene.cpp"
 #include "gui/graphics/DetectorView.cpp"
 #include "gui/items/PeakCollectionItem.h"
@@ -83,8 +84,8 @@ void DetectorWindow::setDetectorViewUp()
     QGroupBox* detector_group = new QGroupBox("Detector image");
     detector_group->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     _detector_widget = new DetectorWidget(2, true, true, detector_group);
-    _detector_widget->linkPeakModel(&_peak_collection_model_1);
-    _detector_widget->linkPeakModel(&_peak_collection_model_2);
+    _detector_widget->linkPeakModel(&_peak_collection_model_1, 0);
+    _detector_widget->linkPeakModel(&_peak_collection_model_2, 1);
 
     connect(
         _detector_widget->scene(), &DetectorScene::signalSelectedPeakItemChanged, this,
@@ -255,17 +256,14 @@ void DetectorWindow::refreshDetectorView()
     _detector_widget->scene()->peakCollectionGraphics(0)->initIntRegionFromPeakWidget(_peak_view_widget_1->set1);
     _detector_widget->scene()->peakCollectionGraphics(1)->initIntRegionFromPeakWidget(_peak_view_widget_2->set1);
     _detector_widget->refresh();
-
-    _detector_widget->scene()->drawPeakItems();
 }
 
 void DetectorWindow::refreshPeakTable()
 {
-    auto expt = gSession->experimentAt(_exp_combo->currentIndex())->experiment();
-    _peak_collection_1 = _peak_combo_1->currentPeakCollection();
-
-    if (_peak_collection_1) {
-        _peak_collection_item_1.setPeakCollection(_peak_collection_1);
+    QString collection_1 = _peak_combo_1->currentText();
+    if (!collection_1.isEmpty()) {
+        auto* peak_collection_1 = _peak_combo_1->currentPeakCollection();
+        _peak_collection_item_1.setPeakCollection(peak_collection_1);
         _peak_collection_model_1.setRoot(&_peak_collection_item_1);
         _peak_table_1->resizeColumnsToContents();
     } else {
@@ -273,11 +271,10 @@ void DetectorWindow::refreshPeakTable()
         _peak_collection_model_1.reset();
     }
 
-
     QString collection_2 = _peak_combo_2->currentText();
     if (!collection_2.isEmpty()) {
-        _peak_collection_2 = expt->getPeakCollection(collection_2.toStdString());
-        _peak_collection_item_2.setPeakCollection(_peak_collection_2);
+        auto* peak_collection_2 = _peak_combo_2->currentPeakCollection();
+        _peak_collection_item_2.setPeakCollection(peak_collection_2);
         _peak_collection_model_2.setRoot(&_peak_collection_item_2);
         _peak_table_2->resizeColumnsToContents();
     } else {

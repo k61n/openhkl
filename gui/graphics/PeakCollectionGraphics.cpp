@@ -68,6 +68,12 @@ QVector<PeakItemGraphic*> PeakCollectionGraphics::peakItemGraphics(std::size_t f
     if (!_peak_model)
         return {};
 
+    if (!_peak_model->root())
+        return {};
+
+    if (_peak_model->root()->childCount() == 0)
+        return {};
+
     std::vector<PeakItem*> peak_items = _peak_model->root()->peakItems();
 
     QVector<PeakItemGraphic*> graphics;

@@ -16,7 +16,6 @@
 #define OHKL_GUI_SUBWINDOWS_DETECTORWINDOW_H
 
 #include "core/loader/XFileHandler.h"
-#include "core/shape/PeakCollection.h"
 #include "gui/items/PeakCollectionItem.h"
 #include "gui/models/PeakCollectionModel.h"
 
@@ -104,10 +103,8 @@ class DetectorWindow : public QDialog {
     ShortTable* _peak_table_2;
 
     // Data model
-    ohkl::PeakCollection* _peak_collection_1;
     PeakCollectionItem _peak_collection_item_1;
     PeakCollectionModel _peak_collection_model_1;
-    ohkl::PeakCollection* _peak_collection_2 = nullptr;
     PeakCollectionItem _peak_collection_item_2;
     PeakCollectionModel _peak_collection_model_2;
 
