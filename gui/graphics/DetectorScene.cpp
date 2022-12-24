@@ -15,17 +15,8 @@
 #include "gui/graphics/DetectorScene.h"
 
 #include "base/geometry/AABB.h"
-#include "base/geometry/ReciprocalVector.h"
 #include "base/mask/BoxMask.h"
 #include "base/mask/EllipseMask.h"
-#include "base/utils/Units.h"
-#include "core/data/ImageGradient.h"
-#include "core/detector/Detector.h"
-#include "core/gonio/Gonio.h"
-#include "core/instrument/Diffractometer.h"
-#include "core/instrument/InstrumentState.h"
-#include "core/instrument/Sample.h"
-#include "core/instrument/Source.h"
 #include "core/loader/XFileHandler.h"
 #include "core/peak/Peak3D.h"
 #include "gui/MainWin.h"
@@ -40,31 +31,21 @@
 #include "gui/graphics_tools/CutSliceItem.h"
 #include "gui/graphics_tools/CutterItem.h"
 #include "gui/items/PeakCollectionItem.h"
-#include "gui/items/PeakItem.h"
 #include "gui/models/MaskHandler.h"
 #include "gui/models/PeakCollectionModel.h"
 #include "gui/models/Session.h"
 #include "gui/subwindows/PeakWindow.h"
-#include "gui/utility/ColorButton.h"
 #include "gui/widgets/PeakViewWidget.h"
-#include "tables/crystal/MillerIndex.h"
-#include "tables/crystal/SpaceGroup.h"
-#include "tables/crystal/UnitCell.h"
 
 #include <exception>
 
-#include <QCheckBox>
-#include <QDebug>
-#include <QDoubleSpinBox>
 #include <QGraphicsItem>
 #include <QGraphicsSceneMouseEvent>
 #include <QKeyEvent>
-#include <QMenu>
 #include <QMessageBox>
 #include <QPainterPath>
 #include <QPixmap>
 #include <QToolTip>
-#include <QtGlobal>
 #include <opencv2/core/types.hpp>
 
 QPointF DetectorScene::_current_beam_position = {0, 0};
@@ -91,11 +72,8 @@ DetectorScene::DetectorScene(std::size_t npeakcollections, QObject* parent)
     , _beam_pos_setter(nullptr)
     , _cutter(nullptr)
     , _selected_peak(nullptr)
-    , _unit_cell(nullptr)
     , _peak(nullptr)
     , _mask_handler(std::make_shared<MaskHandler>())
-    , _gradient_kernel(ohkl::GradientKernel::Sobel)
-    , _fft_gradient(false)
 {
     _dataset_graphics = std::make_unique<DataSetGraphics>(&_params);
     for (std::size_t idx = 0; idx < _max_peak_collections; ++idx)
@@ -105,8 +83,8 @@ DetectorScene::DetectorScene(std::size_t npeakcollections, QObject* parent)
 void DetectorScene::onGradientSetting(int kernel, bool fft)
 {
     try {
-        _gradient_kernel = static_cast<ohkl::GradientKernel>(kernel);
-        _fft_gradient = fft;
+        _params.gradientKernel = static_cast<ohkl::GradientKernel>(kernel);
+        _params.fftGradient = fft;
         loadCurrentImage();
     } catch (const std::exception& e) {
         QMessageBox::critical(nullptr, "Error", QString(e.what()));
