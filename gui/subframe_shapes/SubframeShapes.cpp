@@ -290,7 +290,7 @@ void SubframeShapes::setFigureUp()
     figure_group->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     _detector_widget = new DetectorWidget(1, false, true, figure_group);
     _detector_widget->linkPeakModel(&_peak_collection_model, _peak_view_widget);
-    _detector_widget->scene()->flags()->singlePeakIntRegion = true;
+    _detector_widget->scene()->params()->singlePeakIntRegion = true;
 
     connect(
         _detector_widget->scene(), &DetectorScene::signalSelectedPeakItemChanged, this,

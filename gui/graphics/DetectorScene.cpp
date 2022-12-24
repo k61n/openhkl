@@ -71,10 +71,9 @@ QPointF DetectorScene::_current_beam_position = {0, 0};
 
 DetectorScene::DetectorScene(std::size_t npeakcollections, QObject* parent)
     : QGraphicsScene(parent)
-    , _flags()
+    , _params()
     , _currentData(nullptr)
     , _currentFrameIndex(-1)
-    , _currentIntensity(3000)
     , _cursorMode(PIXEL)
     , _mode(ZOOM)
     , _zoomstart(0, 0)
@@ -85,7 +84,6 @@ DetectorScene::DetectorScene(std::size_t npeakcollections, QObject* parent)
     , _itemSelected(false)
     , _image(nullptr)
     , _lastClickedGI(nullptr)
-    , _colormap(new ColorMap())
     , _selected_peak_gi(nullptr)
     , _max_peak_collections(npeakcollections)
     , _beam_color(Qt::black)
@@ -100,6 +98,7 @@ DetectorScene::DetectorScene(std::size_t npeakcollections, QObject* parent)
     , _gradient_kernel(ohkl::GradientKernel::Sobel)
     , _fft_gradient(false)
 {
+    _dataset_graphics = std::make_unique<DataSetGraphics>(&_params);
     for (std::size_t idx = 0; idx < _max_peak_collections; ++idx)
         _peak_graphics.push_back(std::make_unique<PeakCollectionGraphics>());
 }
@@ -240,7 +239,7 @@ void DetectorScene::drawPeakItems()
               addItem(peak_graphic);
         }
     }
-    if (_flags.directBeam)
+    if (_params.directBeam)
         drawDirectBeamPositions();
     loadCurrentImage();
 }
@@ -290,6 +289,7 @@ void DetectorScene::slotChangeSelectedData(ohkl::sptrDataSet data, int frame_1ba
         _currentData = data;
         _currentData->open();
         _currentFrameIndex = -1;
+        _dataset_graphics->setData(_currentData);
 
         _zoomStack.clear();
         _zoomStack.push_back(QRect(0, 0, int(_currentData->nCols()), int(_currentData->nRows())));
@@ -327,9 +327,9 @@ void DetectorScene::slotChangeSelectedFrame(int frame_1based)
 
 void DetectorScene::setMaxIntensity(int intensity)
 {
-    if (_currentIntensity == intensity)
+    if (_params.intensity == intensity)
         return;
-    _currentIntensity = intensity;
+    _params.intensity = intensity;
 
     if (!_currentData)
         return;
@@ -803,7 +803,7 @@ void DetectorScene::createToolTipText(QGraphicsSceneMouseEvent* event)
 
     if (col < 0 || col > ncols - 1 || row < 0 || row > nrows - 1)
         return;
-    const int intensity = _currentFrame(row, col);
+    const int intensity = _dataset_graphics->currentFrame()(row, col);
 
     const ohkl::Monochromator& mono = instr->source().selectedMonochromator();
     double wave = mono.wavelength();
@@ -882,26 +882,15 @@ void DetectorScene::loadCurrentImage()
     QRect full = _zoomStack.front();
     if (_currentFrameIndex >= _currentData->nFrames())
         _currentFrameIndex = _currentData->nFrames() - 1;
-    _currentFrame = _currentData->frame(_currentFrameIndex);
-    if (_image == nullptr) {
-        if (!_flags.gradient) {
-            _image = addPixmap(QPixmap::fromImage(_colormap->matToImage(
-                _currentFrame.cast<double>(), full, _currentIntensity, _flags.logarithmic)));
-        } else {
-            _image = addPixmap(QPixmap::fromImage(_colormap->matToImage(
-                _currentData->gradientFrame(_currentFrameIndex, _gradient_kernel, !_fft_gradient),
-                full, _currentIntensity, _flags.logarithmic)));
-        }
+    std::optional<QImage> base_image = _dataset_graphics->baseImage(_currentFrameIndex, full);
+
+
+    if (base_image) {
+        if (!_image)
+            _image = addPixmap(QPixmap::fromImage(base_image.value()));
+        else
+            _image->setPixmap(QPixmap::fromImage(base_image.value()));
         _image->setZValue(-2);
-    } else {
-        if (!_flags.gradient) {
-            _image->setPixmap(QPixmap::fromImage(_colormap->matToImage(
-                _currentFrame.cast<double>(), full, _currentIntensity, _flags.logarithmic)));
-        } else {
-            _image->setPixmap(QPixmap::fromImage(_colormap->matToImage(
-                _currentData->gradientFrame(_currentFrameIndex, _gradient_kernel, !_fft_gradient),
-                full, _currentIntensity, _flags.logarithmic)));
-        }
     }
 
     // update the integration region pixmap
@@ -910,7 +899,7 @@ void DetectorScene::loadCurrentImage()
     // let's recreate QGraphicItems from masks in DataSet since life cycle of this entitys seems
     // unpreditable at best
     _mask_handler->rebuildMasks(_currentData);
-    _mask_handler->setVisibleFlags(_currentData, _flags.masks);
+    _mask_handler->setVisibleFlags(_currentData, _params.masks);
     addMasks();
 
     setSceneRect(_zoomStack.back());
@@ -928,7 +917,7 @@ void DetectorScene::drawIntegrationRegion()
     clearIntegrationRegion();
 
     ohkl::Peak3D* peak = nullptr;
-    if (_flags.singlePeakIntRegion)
+    if (_params.singlePeakIntRegion)
         peak = _peak;
     for (const auto& graphic : _peak_graphics) {
         graphic->initIntRegionFromPeakWidget();
@@ -969,7 +958,7 @@ void DetectorScene::resetScene()
     clearPeakItems();
     clear();
     loadMasksFromData();
-    _flags.masks = false;
+    _params.masks = false;
     _currentData = nullptr;
     _currentFrameIndex = 0;
     _zoomrect = nullptr;
@@ -988,7 +977,7 @@ void DetectorScene::resetElements()
     clearIntegrationRegion();
     _lastClickedGI = nullptr;
     loadMasksFromData();
-    _flags.masks = false;
+    _params.masks = false;
 }
 
 void DetectorScene::setUnitCell(ohkl::UnitCell* cell)
@@ -998,7 +987,7 @@ void DetectorScene::setUnitCell(ohkl::UnitCell* cell)
 
 void DetectorScene::showDirectBeam(bool show)
 {
-    _flags.directBeam = show;
+    _params.directBeam = show;
 }
 
 Eigen::Vector3d DetectorScene::getBeamSetterPosition() const
@@ -1022,9 +1011,9 @@ void DetectorScene::onCrosshairChanged(int size, int linewidth)
 
 void DetectorScene::toggleMasks()
 {
-    _flags.masks = !_flags.masks;
-    // setMasksVisible(_flags.masks);
-    _mask_handler->setVisibleFlags(_currentData, _flags.masks);
+    _params.masks = !_params.masks;
+    // setMasksVisible(_params.masks);
+    _mask_handler->setVisibleFlags(_currentData, _params.masks);
 }
 
 QPointF DetectorScene::beamSetterCoords()

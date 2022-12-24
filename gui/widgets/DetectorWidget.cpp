@@ -36,8 +36,7 @@
 #include <QSlider>
 #include <QSpinBox>
 #include <QVBoxLayout>
-#include <qbuttongroup.h>
-#include <qpushbutton.h>
+#include <QButtonGroup>
 
 QList<DetectorWidget*> DetectorWidget::_detector_widgets = QList<DetectorWidget*>();
 
@@ -165,7 +164,7 @@ void DetectorWidget::refresh()
 
     ohkl::sptrDataSet data = _data_combo->currentData();
 
-    _hide_masks->setChecked(!scene()->flags()->masks);
+    _hide_masks->setChecked(!scene()->params()->masks);
 
     scene()->slotChangeSelectedData(data, _spin->value());
     scene()->clearPeakItems();

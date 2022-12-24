@@ -20,6 +20,8 @@
 #include "core/detector/DetectorEvent.h"
 #include "core/peak/IntegrationRegion.h"
 #include "core/peak/Peak3D.h"
+#include "gui/graphics/DataSetGraphics.h"
+#include "gui/graphics/DetectorSceneParams.h"
 #include "gui/graphics/PeakCollectionGraphics.h"
 #include "gui/graphics_items/CrosshairGraphic.h"
 #include "gui/graphics_items/PeakCenterGraphic.h"
@@ -50,20 +52,6 @@ using EventType = ohkl::IntegrationRegion::EventType;
 // For the plotting part, better to have RowMajor matrix to use QImage scanline
 // function and optimize cache hit.
 typedef Eigen::Matrix<int, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor> rowMatrix;
-
-//! Container for toggling elements of DetectorScene
-struct DetectorSceneFlags {
-    bool logarithmic = false;
-    bool gradient = false;
-    bool integrationRegion = false;
-    bool singlePeakIntRegion = false;
-    bool directBeam = false;
-    bool extPeaks = false;
-    bool detectorSpots = false;
-    bool masks = true;
-};
-
-//! Master scene of the detector image
 
 //! Master Scene containing the pixmap of the detector counts
 //! and overlayed graphics items (peaks, data cutters, masks ...)
@@ -96,13 +84,10 @@ class DetectorScene : public QGraphicsScene {
 
     ohkl::sptrDataSet getData() { return _currentData; };
     const rowMatrix& getCurrentFrame() const { return _currentFrame; };
-    void setLogarithmic(bool checked) { _flags.logarithmic = checked; };
-    void setGradient(bool checked) { _flags.gradient = checked; };
-    void setColorMap(const std::string& name) {
-        _colormap = std::unique_ptr<ColorMap>(new ColorMap(name));
-    };
-    //! Get a pointer to the DetectorSceneFlags
-    DetectorSceneFlags* flags() { return &_flags; };
+    void setLogarithmic(bool checked) { _params.logarithmic = checked; };
+    void setGradient(bool checked) { _params.gradient = checked; };
+    //! Get a pointer to the DetectorSceneParams
+    DetectorSceneParams* params() { return &_params; };
     //! Load image from current Data and frame
     void loadCurrentImage();
     //! Remove integration overlays from the DetectorScene
@@ -137,7 +122,7 @@ class DetectorScene : public QGraphicsScene {
     //! Toggle drawing the direct beam position
     void showDirectBeam(bool show);
     //! Get the current intensity
-    int intensity() { return _currentIntensity; };
+    int intensity() { return _params.intensity; };
     //! Set up the direct beam crosshair
     void addBeamSetter(int size, int linewidth);
     //! Remove the beam crosshair from the scene
@@ -205,14 +190,12 @@ class DetectorScene : public QGraphicsScene {
     //! Create the text of the tooltip depending on Scene Mode.
     void createToolTipText(QGraphicsSceneMouseEvent*);
 
-    //! Flags deterimining what is displayed
-    DetectorSceneFlags _flags;
+    //! Visual parameters of the scene
+    DetectorSceneParams _params;
     //! Pointer to the current DataSet
     ohkl::sptrDataSet _currentData;
     //! Integer index of the frame being displayed
     unsigned int _currentFrameIndex;
-    //! Maximum intensity for the ColorMap
-    int _currentIntensity;
     //! Raw matrix for the current image
     rowMatrix _currentFrame;
     //! Switches the label behaviour of the cursor
@@ -240,8 +223,10 @@ class DetectorScene : public QGraphicsScene {
     bool _itemSelected;
     QGraphicsPixmapItem* _image;
     SXGraphicsItem* _lastClickedGI;
-    std::unique_ptr<ColorMap> _colormap;
     QGraphicsRectItem* _selected_peak_gi;
+
+    //! Object storing all data set-related graphics
+    std::unique_ptr<DataSetGraphics> _dataset_graphics;
 
     //! Object storing all peak-related graphics
     std::vector<std::unique_ptr<PeakCollectionGraphics>> _peak_graphics;
