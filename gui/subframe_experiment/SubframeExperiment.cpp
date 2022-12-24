@@ -142,7 +142,9 @@ SubframeExperiment::SubframeExperiment()
         &SubframeExperiment::refreshAll);
 
     connect(_update_plot, &QPushButton::clicked, this, &SubframeExperiment::refreshAll);
-
+    connect(
+        _cell_combo, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
+        this, &SubframeExperiment::setUnitCell);
 
     connect(
         _detector_widget->scene(), &DetectorScene::beamPosChanged, this,
@@ -511,6 +513,7 @@ void SubframeExperiment::setIndexerUp()
     _index_button =
         gfiller.addButton("Autoindex", "Attempt to find a unit cell using spots in this image");
     _save_button = gfiller.addButton("Save unit cell", "Save the selected unit cell");
+    _cell_combo = gfiller.addCellCombo("Unit Cell", "Unit cell for Miller index tooltip");
 
     _gruber->setMaximum(10);
     _gruber->setDecimals(6);
@@ -709,7 +712,9 @@ void SubframeExperiment::refreshAll()
         return;
 
     _data_combo->refresh();
+    _cell_combo->refresh();
     _detector_widget->refresh();
+    setUnitCell();
     grabFinderParameters();
     grabIndexerParameters();
     toggleUnsafeWidgets();
@@ -1108,6 +1113,15 @@ void SubframeExperiment::saveCell()
 
         gGui->refreshMenu();
     }
+}
+
+void SubframeExperiment::setUnitCell()
+{
+    if (!gSession->currentProject()->hasUnitCell())
+        return;
+
+    auto* cell = _cell_combo->currentCell().get();
+    _detector_widget->scene()->setUnitCell(cell);
 }
 
 void SubframeExperiment::refreshMaskTable()

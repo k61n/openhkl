@@ -14,8 +14,13 @@
 
 #include "gui/graphics/DataSetGraphics.h"
 
+#include "base/utils/Units.h"
+#include "core/detector/Detector.h"
+#include "core/instrument/InterpolatedState.h"
+
 DataSetGraphics::DataSetGraphics(DetectorSceneParams* params)
     : _data(nullptr)
+    , _cell(nullptr)
     , _color_map(new ColorMap())
     , _params(params)
 {
@@ -26,7 +31,7 @@ std::optional<QImage> DataSetGraphics::baseImage(std::size_t frame_idx, QRect fu
     if (!_data)
         return {};
 
-    _current_index = frame_idx;
+    _params->currentIndex = frame_idx;
     _current_frame = _data->frame(frame_idx);
     if (!_params->gradient) {
         return _color_map->matToImage(
@@ -34,7 +39,109 @@ std::optional<QImage> DataSetGraphics::baseImage(std::size_t frame_idx, QRect fu
     } else {
         return _color_map->matToImage(
             _data->gradientFrame(
-                frame_idx, _params->gradient_kernel, !_params->fft_gradient).cast<double>(),
+                frame_idx, _params->gradientKernel, !_params->fftGradient).cast<double>(),
             full, _params->intensity, _params->logarithmic);
     }
+}
+
+std::optional<QString> DataSetGraphics::tooltip(int col, int row)
+{
+    if (!_data)
+        return {};
+
+    const ohkl::Detector& det = _data->detector();
+    const int nrows = int(det.nRows());
+    const int ncols = int(det.nCols());
+    if (col < 0 || col > ncols - 1 || row < 0 || row > nrows - 1)
+        return {};
+
+    switch (_params->tooltipMode) {
+        case Pixel: return intensity(col, row);
+        case GammaNu: return gammaNu(col, row);
+        case Theta: return twoTheta(col, row);
+        case DSpacing: return dSpacing(col, row);
+        case MillerIndices: return millerIndices(col, row);
+        default: return {};
+    }
+}
+
+int DataSetGraphics::pCount(int col, int row)
+{
+    return _current_frame(row, col);
+}
+
+std::optional<ohkl::InstrumentState> DataSetGraphics::instrumentState()
+{
+    ohkl::InstrumentState state;
+    try {
+        state = ohkl::InterpolatedState::interpolate(
+            _data->instrumentStates(), _params->currentIndex);
+    } catch (std::range_error& e) { // interpolation error for last frame
+        return {};
+    }
+    return state;
+}
+
+std::optional<QString> DataSetGraphics::intensity(int col, int row)
+{
+    return QString("(%1,%2) I:%3").arg(col).arg(row).arg(pCount(col, row));
+}
+
+std::optional<QString> DataSetGraphics::gammaNu(int col, int row)
+{
+    auto state = instrumentState();
+    if (!state)
+        return {};
+
+    ohkl::DirectVector pos = _data->detector().pixelPosition(col, row);
+    double gamma = state.value().gamma(pos);
+    double nu = state.value().nu(pos);
+    return QString("(%1,%2) I: %3")
+        .arg(gamma / ohkl::deg, 0, 'f', 3)
+        .arg(nu / ohkl::deg, 0, 'f', 3)
+        .arg(pCount(col, row));
+}
+
+std::optional<QString> DataSetGraphics::twoTheta(int col, int row)
+{
+    auto state = instrumentState();
+    if (!state)
+        return {};
+
+    ohkl::DirectVector pos = _data->detector().pixelPosition(col, row);
+    double th2 = state.value().twoTheta(pos);
+    return QString("(%1) I: %2").arg(th2 / ohkl::deg, 0, 'f', 3).arg(pCount(col, row));
+}
+
+std::optional<QString> DataSetGraphics::dSpacing(int col, int row)
+{
+    auto state = instrumentState();
+    if (!state)
+        return {};
+
+    double wave = _data->wavelength();
+    ohkl::DirectVector pos = _data->detector().pixelPosition(col, row);
+    double th2 = state.value().twoTheta(pos);
+    return QString(
+        "(%1) I: %2").arg(wave / (2 * sin(0.5 * th2)), 0, 'f', 3).arg(pCount(col, row));
+}
+
+std::optional<QString> DataSetGraphics::millerIndices(int col, int row)
+{
+    auto state = instrumentState();
+    if (!state)
+        return {};
+
+    if (!_cell)
+        return {"No unit cell selected"};
+
+    ohkl::DirectVector pos = _data->detector().pixelPosition(col, row);
+    ohkl::ReciprocalVector q = state.value().sampleQ(pos);
+    ohkl::MillerIndex miller_indices(q, *_cell);
+    Eigen::RowVector3d hkl = miller_indices.rowVector().cast<double>() + miller_indices.error();
+    return QString("(%1,%2,%3) I: %4")
+        .arg(hkl[0], 0, 'f', 2)
+        .arg(hkl[1], 0, 'f', 2)
+        .arg(hkl[2], 0, 'f', 2)
+        .arg(pCount(col, row));
 }

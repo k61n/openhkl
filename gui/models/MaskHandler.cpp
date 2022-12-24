@@ -90,7 +90,7 @@ bool MaskHandler::removeMask(ohkl::sptrDataSet dataset, ohkl::IMask* imask)
 void MaskHandler::clearMasks(ohkl::sptrDataSet dataset)
 {
     clearGraphicMaskItems(dataset);
-    dataset->removeAllMaks();
+    dataset->removeAllMasks();
 }
 void MaskHandler::clearGraphicMaskItems(ohkl::sptrDataSet dataset)
 {

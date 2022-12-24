@@ -462,7 +462,7 @@ size_t DataSet::getNMasks()
     return _masks.size();
 }
 
-void DataSet::removeAllMaks()
+void DataSet::removeAllMasks()
 {
     if (_masks.size() > 0)
         _masks.clear();

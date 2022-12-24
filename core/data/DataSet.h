@@ -154,7 +154,7 @@ class DataSet {
     //! get the number of detector masks
     size_t getNMasks();
     //! remove all detector masks from DataSet
-    void removeAllMaks();
+    void removeAllMasks();
 
     //! Initialise the frame buffer
     void initBuffer(bool bufferAll = true);

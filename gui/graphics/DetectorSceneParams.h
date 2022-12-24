@@ -16,12 +16,22 @@
 
 #include "core/data/ImageGradient.h"
 
+//! Which mode is the cursor diplaying
+enum TooltipMode {
+    Cursor = 0,
+    Pixel = 1,
+    Theta = 2,
+    GammaNu = 3,
+    DSpacing = 4,
+    MillerIndices = 5
+};
+
 //! Container for toggling elements of DetectorSceneParams
 struct DetectorSceneParams {
     // toggles
     bool logarithmic = false;
     bool gradient = false;
-    bool fft_gradient = false;
+    bool fftGradient = false;
     bool integrationRegion = false;
     bool singlePeakIntRegion = false;
     bool directBeam = false;
@@ -30,8 +40,10 @@ struct DetectorSceneParams {
     bool masks = true;
 
     // values
+    int currentIndex = -1;
     int intensity = 3000;
-    ohkl::GradientKernel gradient_kernel = ohkl::GradientKernel::Sobel;
+    ohkl::GradientKernel gradientKernel = ohkl::GradientKernel::Sobel;
+    TooltipMode tooltipMode = Pixel;
 };
 
 #endif // OHKL_GUI_GRAPHICS_DETECTORSCENEPARAMS_H

@@ -70,15 +70,6 @@ class DetectorScene : public QGraphicsScene {
         INTENSITY_HISTO = 8
     };
 
-    //! Which mode is the cursor diplaying
-    enum CURSORMODE {
-        CURSOR = 0,
-        PIXEL = 1,
-        THETA = 2,
-        GAMMA_NU = 3,
-        D_SPACING = 4,
-        MILLER_INDICES = 5
-    };
 
     explicit DetectorScene(std::size_t npeakcollections, QObject* parent = 0);
 
@@ -165,7 +156,7 @@ class DetectorScene : public QGraphicsScene {
     void slotChangeEnabledPeak(ohkl::Peak3D*) { loadCurrentImage(); }
     void slotChangeMaskedPeaks(const ohkl::PeakList&) { loadCurrentImage(); }
     void changeInteractionMode(int mode) { _mode = static_cast<MODE>(mode); }
-    void changeCursorMode(int mode) { _cursorMode = static_cast<CURSORMODE>(mode); }
+    void changeCursorMode(int mode) { _params.tooltipMode = static_cast<TooltipMode>(mode); };
     void drawIntegrationRegion();
     void updateMasks() { _lastClickedGI = nullptr; }
     int currentFrame() const { return _currentFrameIndex; }
@@ -198,8 +189,6 @@ class DetectorScene : public QGraphicsScene {
     unsigned int _currentFrameIndex;
     //! Raw matrix for the current image
     rowMatrix _currentFrame;
-    //! Switches the label behaviour of the cursor
-    CURSORMODE _cursorMode;
     //! Current interaction mode
     MODE _mode;
     //! Point coordinates of the start of zoom region

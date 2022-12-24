@@ -19,6 +19,7 @@
 #include "core/data/DataTypes.h"
 #include "core/detector/DetectorEvent.h"
 #include "gui/models/MaskHandler.h"
+#include "gui/utility/CellComboBox.h"
 #include "gui/utility/SafeSpinBox.h"
 #include "tables/crystal/UnitCell.h"
 
@@ -97,6 +98,8 @@ class SubframeExperiment : public QWidget {
     void selectSolutionTable();
     //! Save a unit cell to the experiment
     void saveCell();
+    //! Set unit cell for displaying Miller index tooltip
+    void setUnitCell();
 
     void refreshMaskTable();
 
@@ -173,6 +176,7 @@ class SubframeExperiment : public QWidget {
     QCheckBox* _only_niggli;
     QPushButton* _index_button;
     QPushButton* _save_button;
+    CellComboBox* _cell_combo;
 
     UnitCellTableView* _solution_table;
 

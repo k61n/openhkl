@@ -229,6 +229,7 @@ void DetectorWindow::setPlotUp(PeakViewWidget* peak_widget, QString name)
 
 void DetectorWindow::refreshDetectorView()
 {
+    setUnitCell();
     _detector_widget->refresh();
 }
 

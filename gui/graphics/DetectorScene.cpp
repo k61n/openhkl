@@ -74,7 +74,6 @@ DetectorScene::DetectorScene(std::size_t npeakcollections, QObject* parent)
     , _params()
     , _currentData(nullptr)
     , _currentFrameIndex(-1)
-    , _cursorMode(PIXEL)
     , _mode(ZOOM)
     , _zoomstart(0, 0)
     , _zoomend(0, 0)
@@ -790,87 +789,14 @@ void DetectorScene::keyPressEvent(QKeyEvent* event)
 
 void DetectorScene::createToolTipText(QGraphicsSceneMouseEvent* event)
 {
-    if (!_currentData)
-        return;
-    ohkl::Diffractometer* instr = _currentData->diffractometer();
-    const ohkl::Detector& det = _currentData->detector();
-
-    const int nrows = int(det.nRows());
-    const int ncols = int(det.nCols());
-
     const int col = static_cast<int>(event->lastScenePos().x());
     const int row = static_cast<int>(event->lastScenePos().y());
 
-    if (col < 0 || col > ncols - 1 || row < 0 || row > nrows - 1)
-        return;
-    const int intensity = _dataset_graphics->currentFrame()(row, col);
-
-    const ohkl::Monochromator& mono = instr->source().selectedMonochromator();
-    double wave = mono.wavelength();
-
-    QString ttip;
-
-    ohkl::DirectVector pos = _currentData->detector().pixelPosition(col, row);
-
-
-    bool has_state = true;
-    ohkl::InstrumentState state;
-    try {
-        state = ohkl::InterpolatedState::interpolate(
-            _currentData->instrumentStates(), _currentFrameIndex);
-    } catch (std::range_error& e) {
-        // May get an interpolation error on the last frame of the set. Skip the tooltip if we
-        // need an interpolated state in this instance.
-        if (!(_cursorMode == PIXEL))
-            has_state = false;
-    }
-    if (!has_state)
+    auto tooltip = _dataset_graphics->tooltip(col, row);
+    if (!tooltip)
         return;
 
-    switch (_cursorMode) {
-        case PIXEL: {
-            ttip = QString("(%1,%2) I:%3").arg(col).arg(row).arg(intensity);
-            break;
-        }
-        case GAMMA_NU: {
-            double gamma = state.gamma(pos);
-            double nu = state.nu(pos);
-            ttip = QString("(%1,%2) I: %3")
-                       .arg(gamma / ohkl::deg, 0, 'f', 3)
-                       .arg(nu / ohkl::deg, 0, 'f', 3)
-                       .arg(intensity);
-            break;
-        }
-        case THETA: {
-            double th2 = state.twoTheta(pos);
-            ttip = QString("(%1) I: %2").arg(th2 / ohkl::deg, 0, 'f', 3).arg(intensity);
-            break;
-        }
-        case D_SPACING: {
-            double th2 = state.twoTheta(pos);
-            ttip = QString("(%1) I: %2").arg(wave / (2 * sin(0.5 * th2)), 0, 'f', 3).arg(intensity);
-            break;
-        }
-        case MILLER_INDICES: {
-            if (_unit_cell) {
-                ohkl::ReciprocalVector q = state.sampleQ(pos);
-                ohkl::MillerIndex miller_indices(q, *_unit_cell);
-
-                Eigen::RowVector3d hkl =
-                    miller_indices.rowVector().cast<double>() + miller_indices.error();
-                ttip = QString("(%1,%2,%3) I: %4")
-                           .arg(hkl[0], 0, 'f', 2)
-                           .arg(hkl[1], 0, 'f', 2)
-                           .arg(hkl[2], 0, 'f', 2)
-                           .arg(intensity);
-            } else {
-                ttip = QString("No unit cell selected");
-            }
-            break;
-        }
-        default: break;
-    }
-    QToolTip::showText(event->screenPos(), ttip);
+    QToolTip::showText(event->screenPos(), tooltip.value());
 }
 
 void DetectorScene::loadCurrentImage()
@@ -982,7 +908,7 @@ void DetectorScene::resetElements()
 
 void DetectorScene::setUnitCell(ohkl::UnitCell* cell)
 {
-    _unit_cell = cell;
+    _dataset_graphics->setUnitCell(cell);
 }
 
 void DetectorScene::showDirectBeam(bool show)
