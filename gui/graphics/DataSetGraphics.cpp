@@ -18,11 +18,16 @@
 #include "core/detector/Detector.h"
 #include "core/instrument/InterpolatedState.h"
 
+#include <QPen>
+
 DataSetGraphics::DataSetGraphics(DetectorSceneParams* params)
     : _data(nullptr)
     , _cell(nullptr)
     , _color_map(new ColorMap())
     , _params(params)
+    , _beam_color(Qt::black)
+    , _old_beam_color(Qt::gray)
+    , _beam_size(20)
 {
 }
 
@@ -63,6 +68,49 @@ std::optional<QString> DataSetGraphics::tooltip(int col, int row)
         case MillerIndices: return millerIndices(col, row);
         default: return {};
     }
+}
+
+QVector<DirectBeamGraphic*> DataSetGraphics::beamGraphics(std::size_t frame_idx)
+{
+    QVector<DirectBeamGraphic*> graphics;
+    for (auto&& event : *_beam) {
+        double upper = double(_params->currentIndex) + 0.01;
+        double lower = double(_params->currentIndex) - 0.01;
+        if (event.frame < upper && event.frame > lower) {
+            DirectBeamGraphic* beam = new DirectBeamGraphic();
+            beam->setPos(event.px, event.py);
+            beam->setZValue(10);
+            beam->setAcceptHoverEvents(false);
+            beam->setRect(-_beam_size / 2, -_beam_size / 2, _beam_size, _beam_size);
+            QPen pen;
+            pen.setCosmetic(true);
+            pen.setColor(_beam_color);
+            pen.setStyle(Qt::SolidLine);
+            beam->setPen(pen);
+            graphics.push_back(beam);
+            break;
+        }
+    }
+
+    for (auto&& event : *_old_beam) {
+        double upper = double(_params->currentIndex) + 0.01;
+        double lower = double(_params->currentIndex) - 0.01;
+        if (event.frame < upper && event.frame > lower) {
+            DirectBeamGraphic* beam = new DirectBeamGraphic();
+            beam->setPos(event.px, event.py);
+            beam->setZValue(10);
+            beam->setAcceptHoverEvents(false);
+            beam->setRect(-_beam_size / 2, -_beam_size / 2, _beam_size, _beam_size);
+            QPen pen;
+            pen.setCosmetic(true);
+            pen.setColor(_old_beam_color);
+            pen.setStyle(Qt::SolidLine);
+            beam->setPen(pen);
+            graphics.push_back(beam);
+            break;
+        }
+    }
+    return graphics;
 }
 
 int DataSetGraphics::pCount(int col, int row)

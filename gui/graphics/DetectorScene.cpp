@@ -66,9 +66,6 @@ DetectorScene::DetectorScene(std::size_t npeakcollections, QObject* parent)
     , _lastClickedGI(nullptr)
     , _selected_peak_gi(nullptr)
     , _max_peak_collections(npeakcollections)
-    , _beam_color(Qt::black)
-    , _old_beam_color(Qt::gray)
-    , _beam_size(20)
     , _beam_pos_setter(nullptr)
     , _cutter(nullptr)
     , _selected_peak(nullptr)
@@ -169,12 +166,12 @@ void DetectorScene::linkPerFrameSpots(
 
 void DetectorScene::linkDirectBeamPositions(std::vector<ohkl::DetectorEvent>* events)
 {
-    _direct_beam_events = events;
+    _dataset_graphics->setBeam(events);
 }
 
 void DetectorScene::linkOldDirectBeamPositions(std::vector<ohkl::DetectorEvent>* events)
 {
-    _old_direct_beam_events = events;
+    _dataset_graphics->setOldBeam(events);
 }
 
 void DetectorScene::peakModelDataChanged()
@@ -216,48 +213,11 @@ void DetectorScene::drawPeakItems()
               addItem(peak_graphic);
         }
     }
-    if (_params.directBeam)
-        drawDirectBeamPositions();
+    if (_params.directBeam) {
+        for (auto* beam_graphic : _dataset_graphics->beamGraphics(_currentFrameIndex))
+            addItem(beam_graphic);
+    }
     loadCurrentImage();
-}
-
-void DetectorScene::drawDirectBeamPositions()
-{
-    for (auto&& event : *_direct_beam_events) {
-        double upper = double(_currentFrameIndex) + 0.01;
-        double lower = double(_currentFrameIndex) - 0.01;
-        if (event.frame < upper && event.frame > lower) {
-            DirectBeamGraphic* beam = new DirectBeamGraphic();
-            beam->setPos(event.px, event.py);
-            beam->setZValue(10);
-            beam->setAcceptHoverEvents(false);
-            beam->setRect(-_beam_size / 2, -_beam_size / 2, _beam_size, _beam_size);
-            QPen pen;
-            pen.setCosmetic(true);
-            pen.setColor(_beam_color);
-            pen.setStyle(Qt::SolidLine);
-            beam->setPen(pen);
-            addItem(beam);
-        }
-    }
-
-    for (auto&& event : *_old_direct_beam_events) {
-        double upper = double(_currentFrameIndex) + 0.01;
-        double lower = double(_currentFrameIndex) - 0.01;
-        if (event.frame < upper && event.frame > lower) {
-            DirectBeamGraphic* beam = new DirectBeamGraphic();
-            beam->setPos(event.px, event.py);
-            beam->setZValue(10);
-            beam->setAcceptHoverEvents(false);
-            beam->setRect(-_beam_size / 2, -_beam_size / 2, _beam_size, _beam_size);
-            QPen pen;
-            pen.setCosmetic(true);
-            pen.setColor(_old_beam_color);
-            pen.setStyle(Qt::SolidLine);
-            beam->setPen(pen);
-            addItem(beam);
-        }
-    }
 }
 
 void DetectorScene::slotChangeSelectedData(ohkl::sptrDataSet data, int frame_1based)

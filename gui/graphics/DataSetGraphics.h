@@ -16,16 +16,20 @@
 
 #include "core/data/DataSet.h"
 #include "core/data/DataTypes.h"
+#include "core/detector/DetectorEvent.h"
 #include "core/instrument/InstrumentState.h"
 #include "gui/graphics/DetectorSceneParams.h"
 #include "gui/models/ColorMap.h"
 #include "tables/crystal/UnitCell.h"
 
 #include <QImage>
+#include <QGraphicsEllipseItem>
 
 #include <optional>
 
 typedef Eigen::Matrix<int, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor> RowMatrix;
+
+class DirectBeamGraphic : public QGraphicsEllipseItem { }; // Make it easier to remove direct beam
 
 //! Container for settings and pointers for visualising DataSets
 class DataSetGraphics {
@@ -37,16 +41,25 @@ class DataSetGraphics {
         _color_map = std::unique_ptr<ColorMap>(new ColorMap(name));
     };
 
+    //! Associate a DataSet with this graphics generator
     void setData(ohkl::sptrDataSet data) { _data = data; };
+    //! Assign a unit cell to compute Miller index positions
     void setUnitCell(ohkl::UnitCell* cell) { _cell = cell; };
+    //! Positions of direct beam
+    void setBeam(std::vector<ohkl::DetectorEvent>* events) { _beam = events; };
+    //! Positions of direct beam before refinement
+    void setOldBeam(std::vector<ohkl::DetectorEvent>* events) { _old_beam = events; };
+    //! DataSet getter
     ohkl::sptrDataSet data() const { return _data; };
+    //! Return the matrix used to construct the current image
     RowMatrix currentFrame() const { return _current_frame; };
 
     //! Get the base image on which peaks etc are superimposed
     std::optional<QImage> baseImage(std::size_t frame_idx, QRect full);
     //! Generate a tooltip for the current scene position
     std::optional<QString> tooltip(int col, int row);
-
+    //! Get graphics marking per-frame position of the direct beam
+    QVector<DirectBeamGraphic*> beamGraphics(std::size_t frame_idx);
 
     //! Get the count of a specific pixel
     int pCount(int col, int row);
@@ -70,6 +83,16 @@ class DataSetGraphics {
 
     DetectorSceneParams* _params;
     RowMatrix _current_frame;
+
+    std::vector<ohkl::DetectorEvent>* _beam;
+    std::vector<ohkl::DetectorEvent>* _old_beam;
+
+    //! Colour of direct beam
+    QColor _beam_color;
+    //! Colour of unrefined direct beam;
+    QColor _old_beam_color;
+    //! Size of direct beam
+    double _beam_size;
 };
 
 #endif // OHKL_GUI_GRAPHICS_DATASETGRAPHICS_H

@@ -45,8 +45,6 @@ class PeakViewWidget;
 class SXGraphicsItem;
 class MaskHandler;
 
-class DirectBeamGraphic : public QGraphicsEllipseItem { }; // Make it easier to remove direct beam
-
 using EventType = ohkl::IntegrationRegion::EventType;
 
 // For the plotting part, better to have RowMajor matrix to use QImage scanline
@@ -77,6 +75,8 @@ class DetectorScene : public QGraphicsScene {
     const rowMatrix& getCurrentFrame() const { return _currentFrame; };
     void setLogarithmic(bool checked) { _params.logarithmic = checked; };
     void setGradient(bool checked) { _params.gradient = checked; };
+    //! Get the current frame
+    int currentFrame() const { return _currentFrameIndex; }
     //! Get a pointer to the DetectorSceneParams
     DetectorSceneParams* params() { return &_params; };
     //! Load image from current Data and frame
@@ -104,8 +104,6 @@ class DetectorScene : public QGraphicsScene {
     void peakModelDataChanged();
     //! Draw the peaks
     void drawPeakItems();
-    //! Draw the direct beam position
-    void drawDirectBeamPositions();
     //! Remove all the peak elements
     void clearPeakItems();
     //! Set unit cell for Miller Index computation
@@ -159,13 +157,11 @@ class DetectorScene : public QGraphicsScene {
     void changeCursorMode(int mode) { _params.tooltipMode = static_cast<TooltipMode>(mode); };
     void drawIntegrationRegion();
     void updateMasks() { _lastClickedGI = nullptr; }
-    int currentFrame() const { return _currentFrameIndex; }
     void setBeamSetterPos(QPointF pos);
     void onCrosshairChanged(int size, int linewidth);
     void toggleMasks();
 
  signals:
-    //! Signal emitted for all changes of the image
     void dataChanged();
     void signalChangeSelectedData(ohkl::sptrDataSet data);
     void signalChangeSelectedFrame(int selected_frame);
@@ -204,11 +200,6 @@ class DetectorScene : public QGraphicsScene {
     //! item being dragged
     CrosshairGraphic* _current_dragged_item;
 
-    //! std vector of direct beam positions for each frame
-    std::vector<ohkl::DetectorEvent>* _direct_beam_events;
-    //! direct beam events pre-refinement
-    std::vector<ohkl::DetectorEvent>* _old_direct_beam_events;
-
     bool _itemSelected;
     QGraphicsPixmapItem* _image;
     SXGraphicsItem* _lastClickedGI;
@@ -216,7 +207,6 @@ class DetectorScene : public QGraphicsScene {
 
     //! Object storing all data set-related graphics
     std::unique_ptr<DataSetGraphics> _dataset_graphics;
-
     //! Object storing all peak-related graphics
     std::vector<std::unique_ptr<PeakCollectionGraphics>> _peak_graphics;
     //! Maximum number of peak collections for this scene
@@ -224,12 +214,6 @@ class DetectorScene : public QGraphicsScene {
     //! Store for pointers to integration overlays
     QVector<QGraphicsPixmapItem*> _integration_regions;
 
-    //! Colour of direct beam
-    QColor _beam_color;
-    //! Colour of unrefined direct beam;
-    QColor _old_beam_color;
-    //! Size of direct beam
-    double _beam_size;
     //! Crosshair for setting direct beam
     CrosshairGraphic* _beam_pos_setter;
     //! current position of the crosshair
