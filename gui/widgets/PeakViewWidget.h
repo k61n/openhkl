@@ -15,6 +15,7 @@
 #ifndef OHKL_GUI_UTILITY_PEAKVIEWWIDGET_H
 #define OHKL_GUI_UTILITY_PEAKVIEWWIDGET_H
 
+#include "core/integration/IIntegrator.h"
 #include "gui/utility/LinkedComboBox.h"
 
 #include <QGridLayout>
@@ -46,11 +47,11 @@ class PeakViewWidget : public QGridLayout {
         QDoubleSpinBox* bkgBegin;
         QDoubleSpinBox* bkgEnd;
 
+        ohkl::IntegrationParameters params;
+
         //! Set the color of all three color buttons at once
         void setColor(const QColor& color);
         void setIntegrationRegionColors(const QColor& peak, const QColor& bkg, double alpha);
-        void setIntegrationBounds(double peak_end, double bkg_begin, double bkg_end);
-
     } set1, set2;
 
  signals:
@@ -68,13 +69,7 @@ class PeakViewWidget : public QGridLayout {
     LinkedComboBox* addCombo(int row, ComboType combo_type);
     ColorButton* addColorButton(int row, int col, const QColor& color);
 
-    double _peak_end;
-    double _bkg_begin;
-    double _bkg_end;
-    double _fixed_peak_end;
-    double _fixed_bkg_begin;
-    double _fixed_bkg_end;
-    bool _fixed_integration_region;
+    void switchIntRegionType();
 };
 
 #endif // OHKL_GUI_UTILITY_PEAKVIEWWIDGET_H

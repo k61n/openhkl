@@ -21,12 +21,11 @@
 
 namespace ohkl {
 
-enum class RegionType { VariableEllipsoid, FixedEllipsoid, FixedSphere, Count };
+enum class RegionType { VariableEllipsoid, FixedEllipsoid, Count };
 
 const std::map<RegionType, std::string> regionTypeDescription{
     {RegionType::VariableEllipsoid, "Variable ellipsoid"},
-    {RegionType::FixedEllipsoid, "Fixed ellipsoid"},
-    {RegionType::FixedSphere, "Fixed sphere"}};
+    {RegionType::FixedEllipsoid, "Fixed ellipsoid"}};
 
 //! Used to construct a peak integration region.
 

@@ -55,14 +55,6 @@ IntegrationRegion::IntegrationRegion(
             _fixed = true;
             break;
         }
-        case RegionType::FixedSphere: {
-            // unit sphere (pixels)
-            _shape = Ellipsoid(peak->shape().center(), peak_end);
-            _pixelRadius = peak_end;
-            _peakEnd = 1.0;
-            _fixed = true;
-            break;
-        }
         default: {
             peak->setRejectionFlag(RejectionFlag::InvalidRegion);
             peak->setSelected(false);
