@@ -75,7 +75,7 @@ void CutSliceItem::plot(SXPlot* plot)
     QVector<double> y(length);
     QVector<double> e(length);
     std::iota(x.begin(), x.end(), start);
-    const rowMatrix& currentFrame = detPtr->getCurrentFrame();
+    const RowMatrix& currentFrame = detPtr->currentFrameMatrix();
 
     if (horizontal) {
         int comp = 0;

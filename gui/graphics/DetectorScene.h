@@ -32,6 +32,7 @@
 #include <QStack>
 
 #include <opencv2/core/types.hpp>
+#include <qgraphicsitem.h>
 
 namespace ohkl {
 class UnitCell;
@@ -44,10 +45,6 @@ class PeakViewWidget;
 class MaskItem;
 
 using EventType = ohkl::IntegrationRegion::EventType;
-
-// For the plotting part, better to have RowMajor matrix to use QImage scanline
-// function and optimize cache hit.
-typedef Eigen::Matrix<int, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor> rowMatrix;
 
 //! Master Scene containing the pixmap of the detector counts
 //! and overlayed graphics items (peaks, data cutters, masks ...)
@@ -66,15 +63,19 @@ class DetectorScene : public QGraphicsScene {
         INTENSITY_HISTO = 8
     };
 
-
     explicit DetectorScene(std::size_t npeakcollections, QObject* parent = 0);
 
     ohkl::sptrDataSet getData() { return _currentData; };
-    const rowMatrix& getCurrentFrame() const { return _currentFrame; };
+    //! Toggle logarithmic colour scale
     void setLogarithmic(bool checked) { _params.logarithmic = checked; };
+    //! Toggle between detector image and its gradient
     void setGradient(bool checked) { _params.gradient = checked; };
+    //! Toggle drawing the direct beam position
+    void showDirectBeam(bool show) { _params.directBeam = show; };
     //! Get the current frame
     int currentFrame() const { return _currentFrameIndex; }
+    //! Get the matrix of current frame data
+    RowMatrix currentFrameMatrix() const { return _dataset_graphics->currentFrame(); };
     //! Get a pointer to the DetectorSceneParams
     DetectorSceneParams* params() { return &_params; };
     //! Load image from current Data and frame
@@ -105,9 +106,7 @@ class DetectorScene : public QGraphicsScene {
     //! Remove all the peak elements
     void clearPeakItems();
     //! Set unit cell for Miller Index computation
-    void setUnitCell(ohkl::UnitCell* cell);
-    //! Toggle drawing the direct beam position
-    void showDirectBeam(bool show);
+    void setUnitCell(ohkl::UnitCell* cell) { _dataset_graphics->setUnitCell(cell); };
     //! Get the current intensity
     int intensity() { return _params.intensity; };
     //! Set up the direct beam crosshair
@@ -116,12 +115,10 @@ class DetectorScene : public QGraphicsScene {
     void removeBeamSetter();
     //! Show/hide the beam setter crosshair
     void showBeamSetter(bool show);
-    //! Get the beam setter position
-    Eigen::Vector3d getBeamSetterPosition() const;
     //! Get the beam setter crosshairs
     CrosshairGraphic* beamSetter() const { return _beam_pos_setter; };
     //! Get the beam setter coordinates
-    static QPointF beamSetterCoords();
+    static QPointF beamSetterCoords() { return _current_beam_position; };
     //! Return the interaction mode
     int mode() const { return static_cast<int>(_mode); };
     //! Set single peak for single peak integration overlay
@@ -143,7 +140,6 @@ class DetectorScene : public QGraphicsScene {
  public slots:
     void onGradientSetting(int kernel, bool fft);
     void resetElements();
-    void resetScene();
     void setMaxIntensity(int);
     void slotChangeSelectedData(ohkl::sptrDataSet data, int frame_1based);
     void slotChangeSelectedFrame(int frame_1based);
@@ -172,6 +168,12 @@ class DetectorScene : public QGraphicsScene {
  private:
     //! Create the text of the tooltip depending on Scene Mode.
     void createToolTipText(QGraphicsSceneMouseEvent*);
+    //! Ensure the bounds for a drag/dropped box are physical
+    void setBoxBounds(QGraphicsRectItem* box);
+    //! Adjust zoom rect bounds if they are at edge of image
+    void adjustZoomRect(QGraphicsRectItem* box);
+    //! Check whether a graphics item exists, if it does, remove + delete
+    void deleteGraphicsItem(QGraphicsItem* item);
 
     //! Visual parameters of the scene
     DetectorSceneParams _params;
@@ -179,8 +181,6 @@ class DetectorScene : public QGraphicsScene {
     ohkl::sptrDataSet _currentData;
     //! Integer index of the frame being displayed
     unsigned int _currentFrameIndex;
-    //! Raw matrix for the current image
-    rowMatrix _currentFrame;
     //! Current interaction mode
     MODE _mode;
     //! Point coordinates of the start of zoom region
@@ -196,7 +196,6 @@ class DetectorScene : public QGraphicsScene {
     //! item being dragged
     CrosshairGraphic* _current_dragged_item;
 
-    bool _itemSelected;
     QGraphicsPixmapItem* _image;
     SXGraphicsItem* _lastClickedGI;
     QGraphicsRectItem* _selected_peak_gi;

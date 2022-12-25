@@ -61,7 +61,6 @@ DetectorScene::DetectorScene(std::size_t npeakcollections, QObject* parent)
     , _zoomrect(nullptr)
     , _selectionRect(nullptr)
     , _zoomStack()
-    , _itemSelected(false)
     , _image(nullptr)
     , _lastClickedGI(nullptr)
     , _selected_peak_gi(nullptr)
@@ -231,11 +230,7 @@ void DetectorScene::slotChangeSelectedData(ohkl::sptrDataSet data, int frame_1ba
         _zoomStack.push_back(QRect(0, 0, int(_currentData->nCols()), int(_currentData->nRows())));
 
         loadMasksFromData();
-
-        if (_lastClickedGI != nullptr) {
-            removeItem(_lastClickedGI);
-            _lastClickedGI = nullptr;
-        }
+        deleteGraphicsItem(_lastClickedGI);
 
         _current_beam_position = {_currentData->nCols() / 2.0, _currentData->nRows() / 2.0};
     }
@@ -328,7 +323,6 @@ void DetectorScene::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
                 continue;
 
             PeakItemGraphic* p = dynamic_cast<PeakItemGraphic*>(gItem);
-
             if (p)
                 emit signalSelectedPeakItemChanged(p);
         }
@@ -337,17 +331,8 @@ void DetectorScene::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
 
 void DetectorScene::mousePressEvent(QGraphicsSceneMouseEvent* event)
 {
-    if (_cutter) {
-        removeItem(_cutter);
-        delete _cutter;
-        _cutter = nullptr;
-    }
-
-    if (_selectionRect) {
-        removeItem(_selectionRect);
-        delete _selectionRect;
-        _selectionRect = nullptr;
-    }
+    deleteGraphicsItem(_cutter);
+    deleteGraphicsItem(_selectionRect);
 
     QPen pen1;
 
@@ -419,7 +404,6 @@ void DetectorScene::mousePressEvent(QGraphicsSceneMouseEvent* event)
                 auto* mask = new BoxMaskItem(_currentData, new ohkl::AABB);
                 mask->setFrom(event->lastScenePos());
                 mask->setTo(event->lastScenePos());
-
                 addItem(mask);
                 _lastClickedGI = mask;
                 break;
@@ -446,11 +430,9 @@ void DetectorScene::mousePressEvent(QGraphicsSceneMouseEvent* event)
     }
     // The right button was pressed
     else if (event->buttons() & Qt::RightButton) {
-        if (_zoomStack.size() > 1) {
-            // Remove the last zoom area stored in the stack
+        if (_zoomStack.size() > 1) {// Remove the last zoom area stored in the stack
             _zoomStack.pop();
-            // If not root, then update the scene
-            if (!_zoomStack.empty()) {
+            if (!_zoomStack.empty()) {// If not root, then update the scene
                 setSceneRect(_zoomStack.top());
                 emit dataChanged();
             }
@@ -460,7 +442,6 @@ void DetectorScene::mousePressEvent(QGraphicsSceneMouseEvent* event)
 
 void DetectorScene::mouseDoubleClickEvent(QGraphicsSceneMouseEvent* event)
 {
-    // If no data is loaded, do nothing
     if (!_currentData)
         return;
 
@@ -485,14 +466,66 @@ void DetectorScene::mouseDoubleClickEvent(QGraphicsSceneMouseEvent* event)
     }
 }
 
-void DetectorScene::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
+void DetectorScene::setBoxBounds(QGraphicsRectItem* box)
 {
-    // If no data is loaded, do nothing
+      qreal top = box->rect().top();
+      qreal bot = box->rect().bottom();
+      qreal left = box->rect().left();
+      qreal right = box->rect().right();
+
+      // Left click and hold without moving
+      if (qAbs(top - bot) <= 1 || qAbs(left - right) <= 1) {
+          deleteGraphicsItem(box);
+          return;
+      }
+
+      if (top > bot)
+          std::swap(top, bot);
+
+      if (right < left)
+          std::swap(left, right);
+
+      box->setRect(left, top, right - left, bot - top);
+}
+
+void DetectorScene::adjustZoomRect(QGraphicsRectItem* box)
+{
+    QRect max = _zoomStack.front();
+    qreal top = box->rect().top();
+    qreal bot = box->rect().bottom();
+    qreal left = box->rect().left();
+    qreal right = box->rect().right();
+
+    if (top < max.top())
+        top = max.top();
+
+    if (bot > max.bottom())
+        bot = max.bottom() + 1;
+
+    if (left < max.left())
+        left = max.left();
+
+    if (right > max.right())
+        right = max.right() + 1;
+
+    box->setRect(left, top, right - left, bot - top);
+}
+
+void DetectorScene::deleteGraphicsItem(QGraphicsItem* item)
+{
+    if (item) {
+        removeItem(item);
+        delete item;
+        item = nullptr;
+    }
+}
+
+void DetectorScene::mouseReleaseEvent(QGraphicsSceneMouseEvent * event)
+{
     if (!_currentData)
         return;
 
-    // The user released the left mouse button
-    if (event->button() & Qt::LeftButton) {
+    if (event->button() & Qt::LeftButton) {// The user released the left mouse button
         if (event->modifiers() == Qt::ControlModifier)
             return;
 
@@ -503,30 +536,8 @@ void DetectorScene::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
 
         if (_mode == SELECT) {
             if (_selectionRect) {
-                qreal top = _selectionRect->rect().top();
-                qreal bot = _selectionRect->rect().bottom();
-                qreal left = _selectionRect->rect().left();
-                qreal right = _selectionRect->rect().right();
-
-                // If the user just clicked on the left mouse button with holding it, skip
-                // the event
-                if (qAbs(top - bot) <= 1 || qAbs(left - right) <= 1) {
-                    if (_selectionRect) {
-                        removeItem(_selectionRect);
-                        delete _selectionRect;
-                        _selectionRect = nullptr;
-                    }
-                    return;
-                }
-
-                if (top > bot)
-                    std::swap(top, bot);
-
-                if (right < left)
-                    std::swap(left, right);
-
+                setBoxBounds(_selectionRect);
                 clearSelection();
-                _selectionRect->setRect(left, top, right - left, bot - top);
                 QPainterPath path;
                 path.addRect(_selectionRect->rect());
                 setSelectionArea(path);
@@ -534,52 +545,11 @@ void DetectorScene::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
             }
         } else if (_mode == ZOOM) {
             if (_zoomrect) {
-                qreal top = _zoomrect->rect().top();
-                qreal bot = _zoomrect->rect().bottom();
-                qreal left = _zoomrect->rect().left();
-                qreal right = _zoomrect->rect().right();
-
-                // If the user just clicked on the left mouse button with holding it, skip
-                // the event
-                if (qAbs(top - bot) <= 1 || qAbs(left - right) <= 1) {
-                    // _zoomrect->setVisible(false);
-                    if (_zoomrect) {
-                        removeItem(_zoomrect);
-                        delete _zoomrect;
-                        _zoomrect = nullptr;
-                    }
-                    return;
-                }
-
-                if (top > bot)
-                    std::swap(top, bot);
-
-                if (right < left)
-                    std::swap(left, right);
-
-                QRect max = _zoomStack.front();
-
-                if (top < max.top())
-                    top = max.top();
-
-                if (bot > max.bottom())
-                    bot = max.bottom() + 1;
-
-                if (left < max.left())
-                    left = max.left();
-
-                if (right > max.right())
-                    right = max.right() + 1;
-
-                _zoomrect->setRect(left, top, right - left, bot - top);
+                setBoxBounds(_zoomrect);
+                adjustZoomRect(_zoomrect);
                 _zoomStack.push_back(_zoomrect->rect().toRect());
                 setSceneRect(_zoomrect->rect());
-                // _zoomrect->setVisible(false);
-                if (_zoomrect) {
-                    removeItem(_zoomrect);
-                    delete _zoomrect;
-                    _zoomrect = nullptr;
-                }
+                deleteGraphicsItem(_zoomrect);
                 emit dataChanged();
             }
         } else if (_mode == DRAG_DROP) {
@@ -602,7 +572,6 @@ void DetectorScene::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
                 } else if (PlottableItem* p = dynamic_cast<PlottableItem*>(_lastClickedGI))
                     gGui->updatePlot(p);
                 else if (BoxMaskItem* p = dynamic_cast<BoxMaskItem*>(_lastClickedGI)) {
-                    // add a new mask
                     ohkl::BoxMask* mask = new ohkl::BoxMask(*p->getAABB());
                     _currentData->addMask(dynamic_cast<ohkl::IMask*>(mask));
                     p->setMask(mask);
@@ -638,10 +607,9 @@ void DetectorScene::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
 
 void DetectorScene::wheelEvent(QGraphicsSceneWheelEvent* event)
 {
-    // If no data, returns
     if (!_currentData)
         return;
-    // Get the graphics item on which the user has performed the wheel event
+
     QGraphicsItem* item = itemAt(event->scenePos(), QTransform());
     SXGraphicsItem* p = dynamic_cast<SXGraphicsItem*>(item);
 
@@ -658,29 +626,24 @@ void DetectorScene::wheelEvent(QGraphicsSceneWheelEvent* event)
 
 void DetectorScene::keyPressEvent(QKeyEvent* event)
 {
-    // If no data, returns
     if (!_currentData)
         return;
 
-    // The user pressed on Backspace key
-    if (event->key() == Qt::Key_Backspace) {
+    if (event->key() == Qt::Key_Backspace) { // backspace to delete graphics items
         for (QGraphicsItem* item : selectedItems()) {
             SXGraphicsItem* p = dynamic_cast<SXGraphicsItem*>(item);
             if (p == nullptr)
                 continue;
-            // The item must be deletable
-            if (!p->isDeletable())
+            if (!p->isDeletable()) // The item must be deletable
                 continue;
 
-            // If the item is a peak graphics item, remove its corresponding peak from
-            // the data, update the set of peak graphics items and update the scene
             if (PeakItemGraphic* peak_item = dynamic_cast<PeakItemGraphic*>(item)) {
+                // Remove a peak item
                 peak_item->peak()->setRejectionFlag(ohkl::RejectionFlag::ManuallyRejected, true);
                 peak_item->peak()->setSelected(false);
                 peak_item->setCenterColor(Qt::red);
-                // If the item is a mask graphics item, remove its corresponding mask from
-                // the data, update the std::vector of mask graphics items and update the scene
             } else if (BoxMaskItem* mask_item = dynamic_cast<BoxMaskItem*>(item)) {
+                // Remove a mask item
                 _currentData->removeMask(mask_item->mask());
                 removeItem(mask_item);
                 emit signalMaskChanged();
@@ -697,17 +660,14 @@ void DetectorScene::keyPressEvent(QKeyEvent* event)
                 _lastClickedGI = nullptr;
         }
     }
-    if (event->key() == Qt::Key_U) {
+    if (event->key() == Qt::Key_U) { // undo manual peak deselection
         for (QGraphicsItem* item : selectedItems()) {
             SXGraphicsItem* p = dynamic_cast<SXGraphicsItem*>(item);
             if (p == nullptr)
                 continue;
-            // The item must be deletable
-            if (!p->isDeletable())
+            if (!p->isDeletable()) // The item must be deletable
                 continue;
 
-            // If the item is a peak graphics item, remove its corresponding peak from
-            // the data, update the set of peak graphics items and update the scene
             if (PeakItemGraphic* peak_item = dynamic_cast<PeakItemGraphic*>(item)) {
                 peak_item->peak()->setRejectionFlag(ohkl::RejectionFlag::NotRejected, true);
                 peak_item->peak()->setSelected(true);
@@ -736,12 +696,10 @@ void DetectorScene::loadCurrentImage()
     if (!_currentData)
         return;
 
-    // Full image size, front of the stack
-    QRect full = _zoomStack.front();
+    QRect full = _zoomStack.front(); // Full image size, front of the stack
     if (_currentFrameIndex >= _currentData->nFrames())
         _currentFrameIndex = _currentData->nFrames() - 1;
     std::optional<QImage> base_image = _dataset_graphics->baseImage(_currentFrameIndex, full);
-
 
     if (base_image) {
         if (!_image)
@@ -751,9 +709,7 @@ void DetectorScene::loadCurrentImage()
         _image->setZValue(-2);
     }
 
-    // update the integration region pixmap
     drawIntegrationRegion();
-    // redraw all masks
     loadMasksFromData();
 
     setSceneRect(_zoomStack.back());
@@ -786,11 +742,8 @@ void DetectorScene::drawIntegrationRegion()
 
 void DetectorScene::clearIntegrationRegion()
 {
-    // clear existing integration regions
-    for (auto* region : _integration_regions) {
-        removeItem(region);
-        delete region;
-    }
+    for (auto* region : _integration_regions)
+        deleteGraphicsItem(region);
     _integration_regions.clear();
 }
 
@@ -803,23 +756,9 @@ void DetectorScene::clearMasks()
             removeItem(item);
 }
 
-void DetectorScene::resetScene()
-{
-    clearPeakItems();
-    clear();
-    loadMasksFromData();
-    _params.masks = false;
-    _currentData = nullptr;
-    _currentFrameIndex = 0;
-    _zoomrect = nullptr;
-    _zoomStack.clear();
-    _image = nullptr;
-    clearIntegrationRegion();
-    _lastClickedGI = nullptr;
-}
-
 void DetectorScene::resetElements()
 {
+    _params.masks = false;
     clearPeakItems();
     clear();
     _zoomrect = nullptr;
@@ -827,24 +766,6 @@ void DetectorScene::resetElements()
     clearIntegrationRegion();
     _lastClickedGI = nullptr;
     loadMasksFromData();
-    _params.masks = false;
-}
-
-void DetectorScene::setUnitCell(ohkl::UnitCell* cell)
-{
-    _dataset_graphics->setUnitCell(cell);
-}
-
-void DetectorScene::showDirectBeam(bool show)
-{
-    _params.directBeam = show;
-}
-
-Eigen::Vector3d DetectorScene::getBeamSetterPosition() const
-{
-    return {
-        _beam_pos_setter->pos().x(), _beam_pos_setter->pos().y(),
-        static_cast<double>(_currentFrameIndex)};
 }
 
 void DetectorScene::setBeamSetterPos(QPointF pos)
@@ -864,11 +785,6 @@ void DetectorScene::toggleMasks()
     _params.masks = !_params.masks;
     for (auto* gmask : maskItems())
         gmask->setVisible(_params.masks);
-}
-
-QPointF DetectorScene::beamSetterCoords()
-{
-    return _current_beam_position;
 }
 
 void DetectorScene::setPeak(ohkl::Peak3D* peak)

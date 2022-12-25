@@ -27,6 +27,8 @@
 
 #include <optional>
 
+// For the plotting part, better to have RowMajor matrix to use QImage scanline
+// function and optimize cache hit.
 typedef Eigen::Matrix<int, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor> RowMatrix;
 
 class MaskItem;
