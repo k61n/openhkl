@@ -36,14 +36,12 @@
 namespace ohkl {
 class UnitCell;
 class PeakCenterDataSet;
-class MaskHandler;
 }
 class CutterItem;
 class PeakItemGraphic;
 class PeakCollectionModel;
 class PeakViewWidget;
-class SXGraphicsItem;
-class MaskHandler;
+class MaskItem;
 
 using EventType = ohkl::IntegrationRegion::EventType;
 
@@ -128,13 +126,11 @@ class DetectorScene : public QGraphicsScene {
     int mode() const { return static_cast<int>(_mode); };
     //! Set single peak for single peak integration overlay
     void setPeak(ohkl::Peak3D* peak);
-    //! Set scene to draw integration for single peak
     //! Load masks from current DataSet
     void loadMasksFromData();
-    //! Add masks to the detector image
-    void addMasks();
+    //! Get pointers to all mask items in the scene
+    QVector<MaskItem*> maskItems() const;
 
-    std::shared_ptr<MaskHandler> getMaskHandler();
 
  protected:
     void mousePressEvent(QGraphicsSceneMouseEvent* event);
@@ -226,8 +222,6 @@ class DetectorScene : public QGraphicsScene {
     PeakItemGraphic* _selected_peak;
     //! Selected peaks for drawing a single integration region
     ohkl::Peak3D* _peak;
-
-    std::shared_ptr<MaskHandler> _mask_handler;
 };
 
 #endif // OHKL_GUI_GRAPHICS_DETECTORSCENE_H

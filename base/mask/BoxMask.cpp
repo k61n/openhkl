@@ -24,7 +24,6 @@ BoxMask::BoxMask(const AABB& aabb) : IMask(), _aabb(aabb)
     ohklLog(Level::Info, "BoxMask::Boxmask: Created new rectangular mask");
     ohklLog(Level::Info, "Lower bound: ", _aabb.lower().transpose());
     ohklLog(Level::Info, "Upper bound: ", _aabb.upper().transpose());
-    _selected = false;
 }
 
 bool BoxMask::collide(const Ellipsoid& ellipsoid) const

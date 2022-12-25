@@ -20,6 +20,8 @@
 #include "core/data/DataSet.h"
 #include "core/data/DataTypes.h"
 #include "core/experiment/Experiment.h"
+#include "core/experiment/MaskExporter.h"
+#include "core/experiment/MaskImporter.h"
 #include "core/experiment/PeakFinder2D.h"
 #include "core/peak/Qs2Events.h"
 #include "gui/MainWin.h" // gGui
@@ -27,9 +29,11 @@
 #include "gui/dialogs/UnitCellDialog.h"
 #include "gui/frames/ProgressView.h"
 #include "gui/graphics/DetectorScene.h"
+#include "gui/graphics_items/MaskItem.h"
 #include "gui/models/Project.h"
 #include "gui/models/Session.h"
 #include "gui/utility/DataComboBox.h"
+#include "gui/utility/GridFiller.h"
 #include "gui/utility/PropertyScrollArea.h"
 #include "gui/utility/SafeSpinBox.h"
 #include "gui/utility/SideBar.h"
@@ -58,18 +62,15 @@
 #include <QVBoxLayout>
 #include <QVector>
 #include <QWidget>
+
 #include <cstring>
 #include <gsl/gsl_histogram.h>
-#include <qabstractitemview.h>
-#include <qsizepolicy.h>
-#include <qspinbox.h>
 #include <stdexcept>
 
-#include "gui/utility/GridFiller.h"
-#include "gui/utility/Spoiler.h"
-
 SubframeExperiment::SubframeExperiment()
-    : QWidget(), _show_direct_beam(true), _thresholded_image(nullptr) // init with nullptr
+    : QWidget()
+    , _show_direct_beam(true)
+    , _thresholded_image(nullptr)
 {
     _main_layout = new QHBoxLayout(this);
     _left_layout = new QVBoxLayout();
@@ -122,9 +123,6 @@ SubframeExperiment::SubframeExperiment()
 
     _main_layout->addWidget(right_splitter);
 
-    // SubframeExperiment also needs access to MaskHandler
-    _mask_handler = _detector_widget->scene()->getMaskHandler();
-
     connect(
         _solution_table->verticalHeader(), &QHeaderView::sectionClicked, this,
         &SubframeExperiment::selectSolutionHeader);
@@ -168,10 +166,6 @@ SubframeExperiment::SubframeExperiment()
     // if masks are selected graphicaly update mask table
     connect(
         _detector_widget->scene(), &DetectorScene::signalMasksSelected, this,
-        &SubframeExperiment::refreshMaskTable);
-
-    connect(
-        _mask_handler.get(), &MaskHandler::signalMaskChanged, this,
         &SubframeExperiment::refreshMaskTable);
 
     _set_initial_ki->setChecked(false);
@@ -407,7 +401,9 @@ void SubframeExperiment::importMasks()
     if (file_path.empty())
         return;
 
-    _mask_handler->importMasks(file_path, _data_combo->currentData());
+    ohkl::MaskImporter importer(file_path);
+    for (auto* mask : importer.getMasks())
+        _data_combo->currentData()->addMask(mask);
 
     _detector_widget->scene()->loadMasksFromData();
     toggleUnsafeWidgets();
@@ -426,7 +422,8 @@ void SubframeExperiment::exportMasks()
     if (file_path.empty())
         return;
 
-    _mask_handler->exportMasks(file_path, _data_combo->currentData());
+    ohkl::MaskExporter exporter(_data_combo->currentData()->masks());
+    exporter.exportToFile(file_path);
 
     toggleUnsafeWidgets();
 }
@@ -555,8 +552,7 @@ void SubframeExperiment::setLogarithmicScale()
 
 void SubframeExperiment::calculateIntensities()
 {
-    ohkl::Experiment* expt = gSession->currentProject()->experiment();
-    auto data = expt->getDataMap()->at(_detector_widget->dataCombo()->currentText().toStdString());
+    auto data = _data_combo->currentData();
     bool hasHistograms = data->getNumberHistograms() > 0;
 
     if (!data)
@@ -577,8 +573,7 @@ void SubframeExperiment::calculateIntensities()
 
 void SubframeExperiment::updateRanges()
 {
-    ohkl::Experiment* expt = gSession->currentProject()->experiment();
-    auto data = expt->getDataMap()->at(_detector_widget->dataCombo()->currentText().toStdString());
+    auto data = _data_combo->currentData();
 
     gsl_histogram* histo = nullptr;
 
@@ -654,8 +649,7 @@ void SubframeExperiment::showFilteredImage()
 
 void SubframeExperiment::plotIntensities()
 {
-    ohkl::Experiment* expt = gSession->currentProject()->experiment();
-    auto data = expt->getDataMap()->at(_detector_widget->dataCombo()->currentText().toStdString());
+    auto data = _data_combo->currentData();
 
     if (!data)
         return;
@@ -747,21 +741,15 @@ void SubframeExperiment::toggleUnsafeWidgets()
     _delete_masks->setEnabled(false);
     _toggle_selection->setEnabled(false);
 
-    bool hasProject = gSession->hasProject();
-
-    if (!hasProject)
+    if (!gSession->hasProject())
         return;
-    bool hasData = gSession->currentProject()->hasDataSet();
 
-    _calc_intensity->setEnabled(hasData);
+    _calc_intensity->setEnabled(gSession->currentProject()->hasDataSet());
 
     if (!gSession->currentProject()->hasDataSet())
         return;
-    ohkl::Experiment* expt = gSession->currentProject()->experiment();
-    auto data = expt->getDataMap()->at(_detector_widget->dataCombo()->currentText().toStdString());
-    bool hasMasks = _mask_handler->getTotalNMasks(data) > 0;
-    bool hasSelectedMasks = _mask_handler->getNSelectedMasks(data) > 0;
-    bool hasHistograms = data->getNumberHistograms() > 0;
+
+    bool hasHistograms = _data_combo->currentData()->getNumberHistograms() > 0;
 
     _yLog->setEnabled(hasHistograms);
     _yZoom->setEnabled(hasHistograms);
@@ -774,10 +762,18 @@ void SubframeExperiment::toggleUnsafeWidgets()
     _maxY->setEnabled(_yZoom->isChecked() && _yZoom->isEnabled());
     _update_plot->setEnabled(hasHistograms);
 
-    _import_masks->setEnabled(hasData);
-    _export_masks->setEnabled(hasMasks);
+    bool hasSelectedMasks = false;
+    for (auto* graphic : _detector_widget->scene()->maskItems()) {
+        if (graphic->isSelected()) {
+            hasSelectedMasks = true;
+            break;
+        }
+    }
+
+    _import_masks->setEnabled(gSession->currentProject()->hasDataSet());
+    _export_masks->setEnabled(gSession->currentProject()->hasDataSet());
     _delete_masks->setEnabled(hasSelectedMasks);
-    _toggle_selection->setEnabled(hasMasks);
+    _toggle_selection->setEnabled(_data_combo->currentData()->hasMasks());
 }
 
 void SubframeExperiment::find_2d()
@@ -942,12 +938,7 @@ void SubframeExperiment::toggleCursorMode()
         }
         case 2: {
             if (_mask_box->isChecked()) {
-                // this is important
-                // ohkl should be either creating new masks or editing
-                // existing ones, not both things at the same time
-                _mask_handler->setAllSelectionFlags(_data_combo->currentData(), false);
                 refreshMaskTable();
-
                 _detector_widget->enableCursorMode(false);
                 _set_initial_ki->setChecked(false);
                 _lineplot_box->setChecked(false);
@@ -1136,35 +1127,35 @@ void SubframeExperiment::refreshMaskTable()
     int row = 0;
     QDoubleSpinBox* spin;
     QCheckBox* cbox;
-    for (auto mask : _mask_handler->getMasks(data)) {
+    for (auto* gmask : _detector_widget->scene()->maskItems()) {
         if (row >= _mask_table->rowCount())
             _mask_table->insertRow(_mask_table->rowCount());
-        auto aabb = mask->aabb();
+        auto* aabb = gmask->getAABB();
         int col = 0;
         spin = new QDoubleSpinBox;
         spin->setMaximum(data->nCols());
-        spin->setValue(aabb.lower()[0]);
+        spin->setValue(aabb->lower()[0]);
         spin->setProperty("row", row);
         spin->setProperty("col", col);
         connect(spin, &QDoubleSpinBox::editingFinished, this, &SubframeExperiment::onMaskChanged);
         _mask_table->setCellWidget(row, col++, spin);
         spin = new QDoubleSpinBox;
         spin->setMaximum(data->nRows());
-        spin->setValue(aabb.lower()[1]);
+        spin->setValue(aabb->lower()[1]);
         spin->setProperty("row", row);
         spin->setProperty("col", col);
         connect(spin, &QDoubleSpinBox::editingFinished, this, &SubframeExperiment::onMaskChanged);
         _mask_table->setCellWidget(row, col++, spin);
         spin = new QDoubleSpinBox;
         spin->setMaximum(data->nCols());
-        spin->setValue(aabb.upper()[0]);
+        spin->setValue(aabb->upper()[0]);
         spin->setProperty("row", row);
         spin->setProperty("col", col);
         connect(spin, &QDoubleSpinBox::editingFinished, this, &SubframeExperiment::onMaskChanged);
         _mask_table->setCellWidget(row, col++, spin);
         spin = new QDoubleSpinBox;
         spin->setMaximum(data->nRows());
-        spin->setValue(aabb.upper()[1]);
+        spin->setValue(aabb->upper()[1]);
         spin->setProperty("row", row);
         spin->setProperty("col", col);
         connect(spin, &QDoubleSpinBox::editingFinished, this, &SubframeExperiment::onMaskChanged);
@@ -1174,8 +1165,6 @@ void SubframeExperiment::refreshMaskTable()
         cbox->setStyleSheet("margin-left:20%; margin-right:20%;");
         cbox->setProperty("row", row);
 
-        cbox->setCheckState(
-            _mask_handler->getSelectionFlag(data, row) ? Qt::Checked : Qt::Unchecked);
         _mask_table->setCellWidget(row++, col++, cbox);
         connect(cbox, &QCheckBox::stateChanged, this, &SubframeExperiment::onMaskSelected);
     }
@@ -1187,14 +1176,14 @@ void SubframeExperiment::refreshMaskTable()
 void SubframeExperiment::onMaskChanged()
 {
     int row = sender()->property("row").toInt();
-    auto it = _detector_widget->currentData()->masks().begin();
+    auto it = _detector_widget->scene()->maskItems().begin();
     std::advance(it, row);
     double x1 = dynamic_cast<QDoubleSpinBox*>(_mask_table->cellWidget(row, 0))->value();
     double y1 = dynamic_cast<QDoubleSpinBox*>(_mask_table->cellWidget(row, 1))->value();
     double x2 = dynamic_cast<QDoubleSpinBox*>(_mask_table->cellWidget(row, 2))->value();
     double y2 = dynamic_cast<QDoubleSpinBox*>(_mask_table->cellWidget(row, 3))->value();
     std::size_t nframes = _data_combo->currentData()->nFrames();
-    (*it)->setAABB(ohkl::AABB({x1, y1, 0}, {x2, y2, static_cast<double>(nframes)}));
+    (*it)->mask()->setAABB(ohkl::AABB({x1, y1, 0}, {x2, y2, static_cast<double>(nframes)}));
     _detector_widget->scene()->loadMasksFromData();
 }
 
@@ -1203,25 +1192,23 @@ void SubframeExperiment::onMaskSelected()
     _mask_box->setChecked(false);
     toggleCursorMode();
 
-    auto data = _detector_widget->currentData();
-    _mask_handler->check(data);
     int row = sender()->property("row").toInt();
-
-    _mask_handler->setSelectionFlag(data, row, ((QCheckBox*)sender())->isChecked());
-
+    bool checked = dynamic_cast<QCheckBox*>(_mask_table->cellWidget(row, 4))->isChecked();
+    _detector_widget->scene()->maskItems().at(row)->setSelected(checked);
     toggleUnsafeWidgets();
 }
 
 void SubframeExperiment::deleteSelectedMasks()
 {
     auto data = _detector_widget->currentData();
-    if (data == nullptr)
-        return;
-    _mask_handler->check(data);
-    auto nSelected = _mask_handler->getNSelectedMasks(data);
-    auto nDeleted = _mask_handler->removeSelectedMasks(data);
-    if (nSelected != nDeleted)
-        QMessageBox::warning(this, "Deleting selected masks", "not all masks were delted");
+    auto* scene = _detector_widget->scene();
+    for (auto* gmask : scene->maskItems()) {
+        if (gmask->isSelected()) {
+            scene->removeItem(gmask);
+            data->removeMask(gmask->mask());
+            delete gmask;
+        }
+    }
 
     refreshMaskTable();
     _detector_widget->scene()->loadMasksFromData();
@@ -1231,16 +1218,8 @@ void SubframeExperiment::deleteSelectedMasks()
 
 void SubframeExperiment::selectAllMasks()
 {
-    if (!_detector_widget->currentData()->hasMasks())
-        return;
-
-    auto data = _detector_widget->currentData();
-    _mask_handler->check(data);
-
-    auto nSelectedMasks = _mask_handler->getNSelectedMasks(data);
-    bool noMasksSelected = (nSelectedMasks == 0);
-
-    _mask_handler->setAllSelectionFlags(data, noMasksSelected);
+    for (auto* gmask : _detector_widget->scene()->maskItems())
+        gmask->setSelected(true);
 
     refreshMaskTable();
     toggleUnsafeWidgets();

@@ -44,7 +44,6 @@ class BoxMask : public IMask {
 
  private:
     AABB _aabb;
-    bool _selected;
 };
 
 } // namespace ohkl

@@ -18,7 +18,6 @@
 #include "core/convolve/Convolver.h"
 #include "core/data/DataTypes.h"
 #include "core/detector/DetectorEvent.h"
-#include "gui/models/MaskHandler.h"
 #include "gui/utility/CellComboBox.h"
 #include "gui/utility/SafeSpinBox.h"
 #include "tables/crystal/UnitCell.h"
@@ -206,8 +205,6 @@ class SubframeExperiment : public QWidget {
     ohkl::sptrUnitCell _selected_unit_cell;
     //! Filtered/thresholded image
     QGraphicsPixmapItem* _thresholded_image;
-
-    std::shared_ptr<MaskHandler> _mask_handler;
 };
 
 #endif // OHKL_GUI_SUBFRAME_EXPERIMENT_SUBFRAMEEXPERIMENT_H

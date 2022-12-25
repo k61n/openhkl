@@ -23,15 +23,15 @@
 #include "gui/graphics/PeakCollectionGraphics.h"
 #include "gui/graphics_items/CrosshairGraphic.h"
 #include "gui/graphics_items/EllipseMaskItem.h"
-#include "gui/graphics_items/MaskItem.h"
+#include "gui/graphics_items/BoxMaskItem.h"
 #include "gui/graphics_items/PeakItemGraphic.h"
 #include "gui/graphics_items/PlottableItem.h"
 #include "gui/graphics_items/SXGraphicsItem.h"
+#include "gui/graphics_items/MaskItem.h"
 #include "gui/graphics_tools/CutLineItem.h"
 #include "gui/graphics_tools/CutSliceItem.h"
 #include "gui/graphics_tools/CutterItem.h"
 #include "gui/items/PeakCollectionItem.h"
-#include "gui/models/MaskHandler.h"
 #include "gui/models/PeakCollectionModel.h"
 #include "gui/models/Session.h"
 #include "gui/subwindows/PeakWindow.h"
@@ -70,7 +70,6 @@ DetectorScene::DetectorScene(std::size_t npeakcollections, QObject* parent)
     , _cutter(nullptr)
     , _selected_peak(nullptr)
     , _peak(nullptr)
-    , _mask_handler(std::make_shared<MaskHandler>())
 {
     _dataset_graphics = std::make_unique<DataSetGraphics>(&_params);
     for (std::size_t idx = 0; idx < _max_peak_collections; ++idx)
@@ -417,7 +416,7 @@ void DetectorScene::mousePressEvent(QGraphicsSceneMouseEvent* event)
                 break;
             }
             case MASK: {
-                auto* mask = new MaskItem(_currentData, new ohkl::AABB);
+                auto* mask = new BoxMaskItem(_currentData, new ohkl::AABB);
                 mask->setFrom(event->lastScenePos());
                 mask->setTo(event->lastScenePos());
 
@@ -531,10 +530,6 @@ void DetectorScene::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
                 QPainterPath path;
                 path.addRect(_selectionRect->rect());
                 setSelectionArea(path);
-                // now mark associated detector masks in DataSet as selected
-                //_mask_handler->updateSelectionFlag(_currentData);
-                // updateMaskObjects();
-                // tell the gui table to update
                 emit signalMasksSelected();
             }
         } else if (_mode == ZOOM) {
@@ -606,14 +601,13 @@ void DetectorScene::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
                     removeItem(p);
                 } else if (PlottableItem* p = dynamic_cast<PlottableItem*>(_lastClickedGI))
                     gGui->updatePlot(p);
-                else if (MaskItem* p = dynamic_cast<MaskItem*>(_lastClickedGI)) {
+                else if (BoxMaskItem* p = dynamic_cast<BoxMaskItem*>(_lastClickedGI)) {
                     // add a new mask
-                    if (!_mask_handler->findIMask(_currentData, p)) {
-                        // no IMask has been found
-                        _mask_handler->addIMask(_currentData, p, new ohkl::BoxMask(*p->getAABB()));
-                        emit signalMaskChanged();
-                        _lastClickedGI = nullptr;
-                    }
+                    ohkl::BoxMask* mask = new ohkl::BoxMask(*p->getAABB());
+                    _currentData->addMask(dynamic_cast<ohkl::IMask*>(mask));
+                    emit signalMaskChanged();
+                    _lastClickedGI = nullptr;
+
                     std::map<ohkl::Peak3D*, ohkl::RejectionFlag> tmp_map;
                     _currentData->maskPeaks(peaks, tmp_map);
                     gGui->statusBar()->showMessage(
@@ -622,13 +616,12 @@ void DetectorScene::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
                     updateMasks();
 
                 } else if (EllipseMaskItem* p = dynamic_cast<EllipseMaskItem*>(_lastClickedGI)) {
-                    if (!_mask_handler->findIMask(_currentData, p)) {
-                        // no IMask has been found
-                        _mask_handler->addIMask(
-                            _currentData, p, new ohkl::EllipseMask(*p->getAABB()));
-                        emit signalMaskChanged();
-                        _lastClickedGI = nullptr;
-                    }
+                    ohkl::EllipseMask* mask = new ohkl::EllipseMask(*p->getAABB());
+                    _currentData->addMask(dynamic_cast<ohkl::IMask*>(mask));
+                    emit signalMaskChanged();
+                    _lastClickedGI = nullptr;
+
+                    std::map<ohkl::Peak3D*, ohkl::RejectionFlag> tmp_map;
                     _currentData->maskPeaks(peaks, tmp_map);
                     gGui->statusBar()->showMessage(
                         QString::number(tmp_map.size()) + " peaks masked");
@@ -685,19 +678,18 @@ void DetectorScene::keyPressEvent(QKeyEvent* event)
                 peak_item->setCenterColor(Qt::red);
                 // If the item is a mask graphics item, remove its corresponding mask from
                 // the data, update the std::vector of mask graphics items and update the scene
-            } else if (MaskItem* mask_item = dynamic_cast<MaskItem*>(item)) {
-                if (_mask_handler->removeMask(_currentData, mask_item)) {
-                    emit signalMaskChanged();
-                    update();
-                    updateMasks();
-                }
-
+            } else if (BoxMaskItem* mask_item = dynamic_cast<BoxMaskItem*>(item)) {
+                _currentData->removeMask(mask_item->mask());
+                removeItem(mask_item);
+                emit signalMaskChanged();
+                update();
+                updateMasks();
             } else if (EllipseMaskItem* ellipse_item = dynamic_cast<EllipseMaskItem*>(item)) {
-                if (_mask_handler->removeMask(_currentData, ellipse_item)) {
-                    emit signalMaskChanged();
-                    update();
-                    updateMasks();
-                }
+                _currentData->removeMask(ellipse_item->mask());
+                removeItem(ellipse_item);
+                emit signalMaskChanged();
+                update();
+                updateMasks();
             }
             if (p == _lastClickedGI)
                 _lastClickedGI = nullptr;
@@ -759,12 +751,8 @@ void DetectorScene::loadCurrentImage()
 
     // update the integration region pixmap
     drawIntegrationRegion();
-
-    // let's recreate QGraphicItems from masks in DataSet since life cycle of this entitys seems
-    // unpreditable at best
-    _mask_handler->rebuildMasks(_currentData);
-    _mask_handler->setVisibleFlags(_currentData, _params.masks);
-    addMasks();
+    // redraw all masks
+    loadMasksFromData();
 
     setSceneRect(_zoomStack.back());
     emit dataChanged();
@@ -808,13 +796,9 @@ void DetectorScene::clearMasks()
 {
     if (!_currentData)
         return;
-    for (auto item : items()) {
+    for (auto item : items())
         if (dynamic_cast<MaskItem*>(item) != nullptr)
             removeItem(item);
-        if (dynamic_cast<EllipseMaskItem*>(item) != nullptr)
-            removeItem(item);
-    }
-    _mask_handler->clearGraphicMaskItems(_currentData);
 }
 
 void DetectorScene::resetScene()
@@ -876,8 +860,8 @@ void DetectorScene::onCrosshairChanged(int size, int linewidth)
 void DetectorScene::toggleMasks()
 {
     _params.masks = !_params.masks;
-    // setMasksVisible(_params.masks);
-    _mask_handler->setVisibleFlags(_currentData, _params.masks);
+    for (auto* gmask : maskItems())
+        gmask->setVisible(_params.masks);
 }
 
 QPointF DetectorScene::beamSetterCoords()
@@ -896,22 +880,18 @@ void DetectorScene::loadMasksFromData()
     if (!_currentData)
         return;
     clearMasks();
-
-    _mask_handler->rebuildMasks(_currentData);
-    for (auto& m : _mask_handler->getGraphicalMaskItems(_currentData))
-        addItem(m);
+    for (auto* gmask :_dataset_graphics->maskGraphics())
+        addItem(gmask);
     emit signalMaskChanged();
     update();
 }
 
-
-void DetectorScene::addMasks()
+QVector<MaskItem*> DetectorScene::maskItems() const
 {
-    for (const auto& item : _mask_handler->getGraphicalMaskItems(_currentData))
-        addItem(item);
-}
-
-std::shared_ptr<MaskHandler> DetectorScene::getMaskHandler()
-{
-    return _mask_handler;
+    QVector<MaskItem*> masks;
+    for (auto item : items())
+        if (MaskItem* mask = dynamic_cast<MaskItem*>(item))
+            masks.push_back(mask);
+    std::sort(masks.begin(), masks.end());
+    return masks;
 }

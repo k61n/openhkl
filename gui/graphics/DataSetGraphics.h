@@ -19,6 +19,7 @@
 #include "core/detector/DetectorEvent.h"
 #include "core/instrument/InstrumentState.h"
 #include "gui/graphics/DetectorSceneParams.h"
+#include "gui/graphics_items/SXGraphicsItem.h"
 #include "gui/models/ColorMap.h"
 #include "tables/crystal/UnitCell.h"
 
@@ -60,6 +61,8 @@ class DataSetGraphics {
     std::optional<QString> tooltip(int col, int row);
     //! Get graphics marking per-frame position of the direct beam
     QVector<DirectBeamGraphic*> beamGraphics(std::size_t frame_idx);
+    //! Get detector mask graphics
+    QVector<SXGraphicsItem*> maskGraphics();
 
     //! Get the count of a specific pixel
     int pCount(int col, int row);

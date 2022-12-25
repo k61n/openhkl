@@ -14,9 +14,14 @@
 
 #include "gui/graphics/DataSetGraphics.h"
 
+#include "base/mask/BoxMask.h"
+#include "base/mask/EllipseMask.h"
 #include "base/utils/Units.h"
 #include "core/detector/Detector.h"
 #include "core/instrument/InterpolatedState.h"
+#include "gui/graphics_items/BoxMaskItem.h"
+#include "gui/graphics_items/EllipseMaskItem.h"
+#include "gui/graphics_items/SXGraphicsItem.h"
 
 #include <QPen>
 
@@ -74,8 +79,8 @@ QVector<DirectBeamGraphic*> DataSetGraphics::beamGraphics(std::size_t frame_idx)
 {
     QVector<DirectBeamGraphic*> graphics;
     for (auto&& event : *_beam) {
-        double upper = double(_params->currentIndex) + 0.01;
-        double lower = double(_params->currentIndex) - 0.01;
+        double upper = double(frame_idx) + 0.01;
+        double lower = double(frame_idx) - 0.01;
         if (event.frame < upper && event.frame > lower) {
             DirectBeamGraphic* beam = new DirectBeamGraphic();
             beam->setPos(event.px, event.py);
@@ -108,6 +113,29 @@ QVector<DirectBeamGraphic*> DataSetGraphics::beamGraphics(std::size_t frame_idx)
             beam->setPen(pen);
             graphics.push_back(beam);
             break;
+        }
+    }
+    return graphics;
+}
+
+QVector<SXGraphicsItem*> DataSetGraphics::maskGraphics()
+{
+    QVector<SXGraphicsItem*> graphics;
+    for (auto* mask : _data->masks()) {
+        if (dynamic_cast<const ohkl::BoxMask*>(mask) != nullptr) {
+            BoxMaskItem* gmask =
+                new BoxMaskItem(_data, new ohkl::AABB(mask->aabb()));
+            gmask->setMask(dynamic_cast<ohkl::BoxMask*>(mask));
+            gmask->setFrom(mask->aabb().lower());
+            gmask->setTo(mask->aabb().upper());
+            graphics.push_back(gmask);
+        } else {
+            EllipseMaskItem* gmask =
+                new EllipseMaskItem(_data, new ohkl::AABB(mask->aabb()));
+            gmask->setMask(dynamic_cast<ohkl::EllipseMask*>(mask));
+            gmask->setFrom(mask->aabb().lower());
+            gmask->setTo(mask->aabb().upper());
+            graphics.push_back(gmask);
         }
     }
     return graphics;

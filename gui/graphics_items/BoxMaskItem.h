@@ -2,8 +2,8 @@
 //
 //  OpenHKL: data reduction for single crystal diffraction
 //
-//! @file      gui/graphics_items/EllipseItem.h
-//! @brief     Defines class EllipseMaskItem
+//! @file      gui/graphics_items/BoxMaskItem.h
+//! @brief     Defines class BoxMaskItem
 //!
 //! @homepage  https://openhkl.org
 //! @license   GNU General Public License v3 or higher (see COPYING)
@@ -12,25 +12,24 @@
 //
 //  ***********************************************************************************************
 
-#ifndef OHKL_GUI_GRAPHICS_ITEMS_ELLIPSEMASKITEM_H
-#define OHKL_GUI_GRAPHICS_ITEMS_ELLIPSEMASKITEM_H
+#ifndef OHKL_GUI_GRAPHICS_ITEMS_BOXMASKITEM_H
+#define OHKL_GUI_GRAPHICS_ITEMS_BOXMASKITEM_H
 
 #include "base/geometry/AABB.h"
 #include "base/mask/BoxMask.h"
-#include "base/mask/EllipseMask.h"
 #include "core/data/DataTypes.h"
 #include "gui/graphics_items/MaskItem.h"
 
-//! Creates an ellipse mask
+//! Creates a mask
 
 //! Creates a mask that will be used to unselect/select peaks whether their intercept or
 //! not the mask
-class EllipseMaskItem : public MaskItem {
+class BoxMaskItem : public MaskItem {
  public:
     // Constructs a graphical mask from a AABB
-    EllipseMaskItem(ohkl::sptrDataSet data, ohkl::AABB* aabb);
+    BoxMaskItem(ohkl::sptrDataSet data, ohkl::AABB* aabb);
     //! The destructor
-    ~EllipseMaskItem();
+    ~BoxMaskItem();
 
     //! The mouse move event.
     //! If the item is selected when the event is triggered then the item will be
@@ -40,13 +39,13 @@ class EllipseMaskItem : public MaskItem {
     //! Handles a mouse wheel event
     void wheelEvent(QGraphicsSceneWheelEvent* event) override;
 
+    //! Return a pointer to the underlying mask object
+    ohkl::BoxMask* mask() const { return _mask; };
+    //! Set pointer to the real mask
+    void setMask(ohkl::BoxMask* mask) { _mask = mask; };
     //! Returns the bounding rectangle of the mask
     QRectF boundingRect() const override;
     ohkl::AABB* getAABB();
-    //! Return a pointer to the underlying mask object
-    ohkl::EllipseMask* mask() const { return _mask; };
-    //! Set pointer to the real mask
-    void setMask(ohkl::EllipseMask* mask) { _mask = mask; };
     //! Sets the starting corner of the mask
     void setFrom(const QPointF& pos);
     //! Overload setFrom for an Eigen::Vector3d argument
@@ -63,14 +62,13 @@ class EllipseMaskItem : public MaskItem {
     //! The data on which the cutter will act upon
     ohkl::sptrDataSet _data;
     //! The actual mask
-    ohkl::EllipseMask* _mask;
+    ohkl::BoxMask* _mask;
     QPointF _from;
     QPointF _to;
     QGraphicsTextItem* _text;
 
  private:
     void updateAABB();
-    bool _selected;
 };
 
-#endif // OHKL_GUI_GRAPHICS_ITEMS_ELLIPSEITEM_H
+#endif // OHKL_GUI_GRAPHICS_ITEMS_BOXMASKITEM_H
