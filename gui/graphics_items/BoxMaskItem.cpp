@@ -25,7 +25,6 @@
 BoxMaskItem::BoxMaskItem(ohkl::sptrDataSet data, ohkl::AABB* aabb)
     : MaskItem(aabb)
     , _data(data)
-    , _mask(nullptr)
     , _from(0, 0)
     , _to(0, 0)
 {

@@ -889,9 +889,10 @@ void DetectorScene::loadMasksFromData()
 QVector<MaskItem*> DetectorScene::maskItems() const
 {
     QVector<MaskItem*> masks;
-    for (auto item : items())
-        if (MaskItem* mask = dynamic_cast<MaskItem*>(item))
-            masks.push_back(mask);
+    for (auto item : items()) {
+        if (MaskItem* gmask = dynamic_cast<MaskItem*>(item))
+            masks.push_back(gmask);
+    }
     std::sort(masks.begin(), masks.end());
     return masks;
 }

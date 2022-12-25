@@ -43,10 +43,6 @@ class EllipseMaskItem : public MaskItem {
     //! Returns the bounding rectangle of the mask
     QRectF boundingRect() const override;
     ohkl::AABB* getAABB();
-    //! Return a pointer to the underlying mask object
-    ohkl::EllipseMask* mask() const { return _mask; };
-    //! Set pointer to the real mask
-    void setMask(ohkl::EllipseMask* mask) { _mask = mask; };
     //! Sets the starting corner of the mask
     void setFrom(const QPointF& pos);
     //! Overload setFrom for an Eigen::Vector3d argument
@@ -62,8 +58,6 @@ class EllipseMaskItem : public MaskItem {
  protected:
     //! The data on which the cutter will act upon
     ohkl::sptrDataSet _data;
-    //! The actual mask
-    ohkl::EllipseMask* _mask;
     QPointF _from;
     QPointF _to;
     QGraphicsTextItem* _text;

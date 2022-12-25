@@ -19,7 +19,6 @@
 #include "core/detector/DetectorEvent.h"
 #include "core/instrument/InstrumentState.h"
 #include "gui/graphics/DetectorSceneParams.h"
-#include "gui/graphics_items/SXGraphicsItem.h"
 #include "gui/models/ColorMap.h"
 #include "tables/crystal/UnitCell.h"
 
@@ -30,6 +29,7 @@
 
 typedef Eigen::Matrix<int, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor> RowMatrix;
 
+class MaskItem;
 class DirectBeamGraphic : public QGraphicsEllipseItem { }; // Make it easier to remove direct beam
 
 //! Container for settings and pointers for visualising DataSets
@@ -62,7 +62,7 @@ class DataSetGraphics {
     //! Get graphics marking per-frame position of the direct beam
     QVector<DirectBeamGraphic*> beamGraphics(std::size_t frame_idx);
     //! Get detector mask graphics
-    QVector<SXGraphicsItem*> maskGraphics();
+    QVector<MaskItem*> maskGraphics();
 
     //! Get the count of a specific pixel
     int pCount(int col, int row);

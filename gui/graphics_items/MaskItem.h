@@ -34,7 +34,10 @@ class MaskItem : public SXGraphicsItem {
     virtual ohkl::AABB* getAABB() { return _aabb; };
 
     //! Get the actual mask
-    virtual ohkl::IMask* mask() { return _mask; };
+    ohkl::IMask* mask() { return _mask; };
+
+    //! Set the actual mask
+    void setMask(ohkl::IMask* mask) { _mask = mask; };
 
  protected:
     //! the AABB

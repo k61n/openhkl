@@ -39,10 +39,6 @@ class BoxMaskItem : public MaskItem {
     //! Handles a mouse wheel event
     void wheelEvent(QGraphicsSceneWheelEvent* event) override;
 
-    //! Return a pointer to the underlying mask object
-    ohkl::BoxMask* mask() const { return _mask; };
-    //! Set pointer to the real mask
-    void setMask(ohkl::BoxMask* mask) { _mask = mask; };
     //! Returns the bounding rectangle of the mask
     QRectF boundingRect() const override;
     ohkl::AABB* getAABB();
@@ -61,8 +57,6 @@ class BoxMaskItem : public MaskItem {
  protected:
     //! The data on which the cutter will act upon
     ohkl::sptrDataSet _data;
-    //! The actual mask
-    ohkl::BoxMask* _mask;
     QPointF _from;
     QPointF _to;
     QGraphicsTextItem* _text;

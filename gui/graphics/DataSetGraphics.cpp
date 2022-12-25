@@ -118,9 +118,9 @@ QVector<DirectBeamGraphic*> DataSetGraphics::beamGraphics(std::size_t frame_idx)
     return graphics;
 }
 
-QVector<SXGraphicsItem*> DataSetGraphics::maskGraphics()
+QVector<MaskItem*> DataSetGraphics::maskGraphics()
 {
-    QVector<SXGraphicsItem*> graphics;
+    QVector<MaskItem*> graphics;
     for (auto* mask : _data->masks()) {
         if (dynamic_cast<const ohkl::BoxMask*>(mask) != nullptr) {
             BoxMaskItem* gmask =
