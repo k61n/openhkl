@@ -588,10 +588,12 @@ void SubframeHome::refreshTables() const
                     n, 3, new QTableWidgetItem(QString::number(pc->numberOfValid())));
                 _peak_collections_table->setItem(
                     n, 4, new QTableWidgetItem(QString::number(pc->numberOfInvalid())));
-                _peak_collections_table->setItem(n, 5, new QTableWidgetItem(b2s(pc->isIndexed())));
+                _peak_collections_table->setItem(
+                    n, 5, new QTableWidgetItem(b2s(pc->isIndexed())));
                 _peak_collections_table->setItem(
                     n, 6, new QTableWidgetItem(b2s(pc->isIntegrated())));
-                _peak_collections_table->setItem(n, 6, new QTableWidgetItem(Type2s(pc->type())));
+                _peak_collections_table->setItem(
+                    n, 7, new QTableWidgetItem(Type2s(pc->type())));
             }
             _peak_collections_table->resizeColumnsToContents();
         }
