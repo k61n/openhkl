@@ -70,7 +70,6 @@
 SubframeExperiment::SubframeExperiment()
     : QWidget()
     , _show_direct_beam(true)
-    , _thresholded_image(nullptr)
 {
     _main_layout = new QHBoxLayout(this);
     _left_layout = new QVBoxLayout();
@@ -159,9 +158,6 @@ SubframeExperiment::SubframeExperiment()
     connect(
         _detector_widget->dataCombo(), QOverload<int>::of(&QComboBox::currentIndexChanged),
         _data_combo, &QComboBox::setCurrentIndex);
-    connect(
-        _detector_widget->spin(), static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged),
-        this, &SubframeExperiment::showFilteredImage);
 
     // if masks are selected graphicaly update mask table
     connect(
@@ -599,52 +595,11 @@ void SubframeExperiment::updateRanges()
 
 void SubframeExperiment::showFilteredImage()
 {
-    if (!_threshold_check->isChecked()) {
-        if (_thresholded_image) {
-            _detector_widget->scene()->removeItem(_thresholded_image);
-            delete _thresholded_image;
-            _thresholded_image = nullptr;
-            _detector_widget->scene()->loadCurrentImage();
-        }
-        return;
-    }
-
-    ohkl::sptrDataSet data = _data_combo->currentData();
-    int nrows = data->nRows();
-    int ncols = data->nCols();
-
-
-    ohkl::Experiment* expt = gSession->currentProject()->experiment();
-    ohkl::PeakFinder2D* finder = expt->peakFinder2D();
-    ohkl::Convolver* convolver = finder->convolver();
-    auto* params = finder->parameters();
-    setFinderParameters();
-    finder->setConvolver(params->kernel);
-    std::string convolvertype = _convolver_combo->currentText().toStdString();
-    std::map<std::string, double> convolverParams = convolver->parameters();
-    Eigen::MatrixXd convolvedFrame = ohkl::convolvedFrame(
-        data->reader()->data(_detector_widget->spin()->value() - 1), convolvertype,
-        convolverParams);
-    if (_threshold_check->isChecked()) {
-        double thresholdVal = _threshold->value();
-        for (int i = 0; i < nrows; ++i) {
-            for (int j = 0; j < ncols; ++j)
-                convolvedFrame(i, j) = convolvedFrame(i, j) < thresholdVal ? 0 : 1;
-        }
-    }
-    double minVal = convolvedFrame.minCoeff();
-    double maxVal = convolvedFrame.maxCoeff();
-    if (maxVal - minVal <= 0.0)
-        maxVal = minVal + 1.0;
-    convolvedFrame.array() -= minVal;
-    convolvedFrame.array() /= maxVal - minVal;
-    QRect rect(0, 0, ncols, nrows);
-    ColorMap* m = new ColorMap;
-    QImage image = m->matToImage(convolvedFrame.cast<double>(), rect, maxVal);
-    if (!_thresholded_image)
-        _thresholded_image = _detector_widget->scene()->addPixmap(QPixmap::fromImage(image));
-    else
-        _thresholded_image->setPixmap(QPixmap::fromImage(image));
+    _detector_widget->scene()->params()->filteredImage = _threshold_check->isChecked();
+    _detector_widget->scene()->params()->threshold = _threshold->value();
+    _detector_widget->scene()->params()->convolver =
+        static_cast<ohkl::ConvolutionKernelType>(_convolver_combo->currentIndex());
+    _detector_widget->refresh();
 }
 
 void SubframeExperiment::plotIntensities()

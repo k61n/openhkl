@@ -14,6 +14,7 @@
 #ifndef OHKL_GUI_GRAPHICS_DETECTORSCENEPARAMS_H
 #define OHKL_GUI_GRAPHICS_DETECTORSCENEPARAMS_H
 
+#include "core/convolve/Convolver.h"
 #include "core/data/ImageGradient.h"
 
 //! Which mode is the cursor diplaying
@@ -34,6 +35,7 @@ struct DetectorSceneParams {
     bool fftGradient = false;
     bool integrationRegion = false;
     bool singlePeakIntRegion = false;
+    bool filteredImage = false;
     bool directBeam = false;
     bool extPeaks = false;
     bool detectorSpots = false;
@@ -42,6 +44,18 @@ struct DetectorSceneParams {
     // values
     int currentIndex = -1;
     int intensity = 3000;
+
+    // image convolution
+    double threshold = 80;
+    std::map<std::string, double> convolver_params = {
+        {"r1", 5.0},
+        {"r2", 10.0},
+        {"r3", 15.0},
+        {"r_in", 5.0},
+        {"r_out", 10.0},
+        {"box_size", 3.0},
+    };
+    ohkl::ConvolutionKernelType convolver = ohkl::ConvolutionKernelType::Annular;
     ohkl::GradientKernel gradientKernel = ohkl::GradientKernel::Sobel;
     TooltipMode tooltipMode = Pixel;
 };

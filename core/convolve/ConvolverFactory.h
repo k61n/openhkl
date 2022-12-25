@@ -40,11 +40,11 @@ class ConvolverFactory {
 };
 
 //! Returns a convolved frame
-Eigen::MatrixXd convolvedFrame(
+    Eigen::MatrixXd convolvedFrame(
     Eigen::MatrixXi frame_data, const std::string& convolver_type,
     const std::map<std::string, double>& parameters);
 //! As above, but with floating point data
-Eigen::MatrixXd convolvedFrame(
+    Eigen::MatrixXd convolvedFrame(
     Eigen::MatrixXd frame_data, const std::string& convolver_type,
     const std::map<std::string, double>& parameters);
 

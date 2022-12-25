@@ -17,11 +17,15 @@
 #include "base/mask/BoxMask.h"
 #include "base/mask/EllipseMask.h"
 #include "base/utils/Units.h"
+#include "core/convolve/Convolver.h"
+#include "core/convolve/ConvolverFactory.h"
 #include "core/detector/Detector.h"
 #include "core/instrument/InterpolatedState.h"
 #include "gui/graphics_items/BoxMaskItem.h"
 #include "gui/graphics_items/EllipseMaskItem.h"
 #include "gui/graphics_items/SXGraphicsItem.h"
+
+#include <string>
 
 #include <QPen>
 
@@ -43,15 +47,41 @@ std::optional<QImage> DataSetGraphics::baseImage(std::size_t frame_idx, QRect fu
 
     _params->currentIndex = frame_idx;
     _current_frame = _data->frame(frame_idx);
-    if (!_params->gradient) {
+    if (_params->gradient) {
         return _color_map->matToImage(
-            _current_frame.cast<double>(), full, _params->intensity, _params->logarithmic);
+            _data->gradientFrame(frame_idx, _params->gradientKernel,
+                !_params->fftGradient).cast<double>(), full, _params->intensity,
+                _params->logarithmic);
+    } else if (_params->filteredImage) {
+        return _color_map->matToImage(
+            filteredImage(_current_frame), full, 1);
     } else {
         return _color_map->matToImage(
-            _data->gradientFrame(
-                frame_idx, _params->gradientKernel, !_params->fftGradient).cast<double>(),
-            full, _params->intensity, _params->logarithmic);
+            _current_frame.cast<double>(), full, _params->intensity, _params->logarithmic);
     }
+}
+
+Eigen::MatrixXd DataSetGraphics::filteredImage(RowMatrix image)
+{
+    int nrows = _data->nRows();
+    int ncols = _data->nCols();
+
+    Eigen::MatrixXd filtered_image = Eigen::MatrixXd::Zero(nrows, ncols);
+    std::string convolver = ohkl::Convolver::kernelTypes.at(_params->convolver);
+    _convolver.reset(ohkl::ConvolverFactory{}.create(convolver, _params->convolver_params));
+    filtered_image = _convolver->convolve(image.cast<double>());
+
+    for (int i = 0; i < nrows; ++i)
+        for (int j = 0; j < ncols; ++j)
+            filtered_image(i, j) = filtered_image(i, j) < _params->threshold ? 0 : 1;
+
+    double minVal = filtered_image.minCoeff();
+    double maxVal = filtered_image.maxCoeff();
+    if (maxVal - minVal <= 0.0)
+        maxVal = minVal + 1.0;
+    filtered_image.array() -= minVal;
+    filtered_image.array() /= maxVal - minVal;
+    return filtered_image;
 }
 
 std::optional<QString> DataSetGraphics::tooltip(int col, int row)
