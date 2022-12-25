@@ -186,6 +186,7 @@ class SubframeExperiment : public QWidget {
     SpoilerCheck* _mask_box;
     QComboBox* _mask_combo;
     QTableWidget* _mask_table;
+    int _mask_table_rows;
 
     QPushButton* _export_masks;
     QPushButton* _import_masks;

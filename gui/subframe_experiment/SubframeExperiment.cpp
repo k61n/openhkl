@@ -69,6 +69,7 @@
 
 SubframeExperiment::SubframeExperiment()
     : QWidget()
+    , _mask_table_rows(15)
     , _show_direct_beam(true)
 {
     _main_layout = new QHBoxLayout(this);
@@ -332,7 +333,6 @@ void SubframeExperiment::setHistogramUp()
 void SubframeExperiment::setMaskUp()
 {
     _mask_box = new SpoilerCheck("Add detector image masks");
-    //_mask_box->setMaximumWidth(400);
     GridFiller gfiller(_mask_box, true);
 
     _mask_combo = gfiller.addCombo("Mask type");
@@ -343,6 +343,8 @@ void SubframeExperiment::setMaskUp()
     Spoiler* mask_table_box = new Spoiler("List of Masks");
     GridFiller gfiller2(mask_table_box, true);
     _mask_table = new QTableWidget(0, 5);
+    _mask_table->setMinimumHeight(
+        _mask_table->verticalHeader()->defaultSectionSize() * _mask_table_rows);
     _mask_table->setSelectionBehavior(QAbstractItemView::SelectRows);
     _mask_table->setEditTriggers(QAbstractItemView::NoEditTriggers);
     _mask_table->setHorizontalHeaderLabels(
