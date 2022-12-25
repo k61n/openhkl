@@ -605,6 +605,7 @@ void DetectorScene::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
                     // add a new mask
                     ohkl::BoxMask* mask = new ohkl::BoxMask(*p->getAABB());
                     _currentData->addMask(dynamic_cast<ohkl::IMask*>(mask));
+                    p->setMask(mask);
                     emit signalMaskChanged();
                     _lastClickedGI = nullptr;
 
@@ -618,6 +619,7 @@ void DetectorScene::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
                 } else if (EllipseMaskItem* p = dynamic_cast<EllipseMaskItem*>(_lastClickedGI)) {
                     ohkl::EllipseMask* mask = new ohkl::EllipseMask(*p->getAABB());
                     _currentData->addMask(dynamic_cast<ohkl::IMask*>(mask));
+                    p->setMask(mask);
                     emit signalMaskChanged();
                     _lastClickedGI = nullptr;
 
