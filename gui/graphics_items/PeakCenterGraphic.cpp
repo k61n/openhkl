@@ -102,7 +102,7 @@ void PeakCenterGraphic::showLabel(bool flag)
     _label_gi->setVisible(_show_label);
 }
 
-void PeakCenterGraphic::showArea(bool flag)
+void PeakCenterGraphic::showPeak(bool flag)
 {
     _show_center = flag;
     _center_gi->setVisible(_show_center);

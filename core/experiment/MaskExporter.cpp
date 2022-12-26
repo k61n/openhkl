@@ -30,7 +30,7 @@ MaskExporter::MaskExporter(std::vector<ohkl::IMask*> masks)
         } else if (dynamic_cast<const ohkl::EllipseMask*>(e) != nullptr) {
             mask["Type"] = "Ellipse";
         } else
-            throw std::runtime_error("E MaskExporter::addMasks Invalid mask type found! ");
+            throw std::runtime_error("MaskExporter::addMasks Invalid mask type found! ");
 
         mask["LowerX"] = std::round(e->aabb().lower()[0] * 100) / 100;
         mask["LowerY"] = std::round(e->aabb().lower()[1] * 100) / 100;
@@ -56,4 +56,5 @@ void MaskExporter::exportToFile(std::string filename)
     fout << _node;
     fout.close();
 }
-} // ohkl
+
+} // namespace ohkl

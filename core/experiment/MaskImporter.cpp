@@ -16,7 +16,7 @@
 #include <fstream>
 
 namespace ohkl {
-MaskImporter::MaskImporter(std::string filename)
+MaskImporter::MaskImporter(std::string filename, int nframes)
 {
     _node = YAML::LoadFile(filename.c_str());
     int size = _node["size"].as<int>();
@@ -31,20 +31,20 @@ MaskImporter::MaskImporter(std::string filename)
 
         upper[0] = _node[name]["UpperX"].as<float>();
         upper[1] = _node[name]["UpperY"].as<float>();
-        upper[2] = 150;
+        upper[2] = nframes;
 
         lower[0] = _node[name]["LowerX"].as<float>();
         lower[1] = _node[name]["LowerY"].as<float>();
         lower[2] = 0;
 
-        AABB aabb(upper, lower);
+        AABB aabb(lower, upper);
 
         if (type == "Rectangle")
             mask = new BoxMask(aabb);
         else if (type == "Ellipse")
             mask = new EllipseMask(aabb);
         else
-            throw std::runtime_error("E MaskImporter::MaskImporter Invalid Mask type found");
+            throw std::runtime_error("MaskImporter::MaskImporter Invalid Mask type found");
 
         _masks.emplace_back(mask);
     }
@@ -61,4 +61,5 @@ std::vector<IMask*> MaskImporter::getMasks()
 {
     return _masks;
 }
-} // ohkl
+
+} // namespace ohkl

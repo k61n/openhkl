@@ -27,7 +27,7 @@ namespace ohkl {
 class MaskImporter {
  public:
     //! constructs the yaml nodes from given mask data
-    MaskImporter(std::string filename);
+    MaskImporter(std::string filename, int nFrames);
     //! generate Mask name from index
     std::string generateName(int number);
     //! returns restored masks

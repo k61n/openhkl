@@ -18,7 +18,7 @@
 #include "core/convolve/Convolver.h"
 #include "core/data/DataTypes.h"
 #include "core/detector/DetectorEvent.h"
-#include "gui/models/MaskHandler.h"
+#include "gui/utility/CellComboBox.h"
 #include "gui/utility/SafeSpinBox.h"
 #include "tables/crystal/UnitCell.h"
 
@@ -97,6 +97,8 @@ class SubframeExperiment : public QWidget {
     void selectSolutionTable();
     //! Save a unit cell to the experiment
     void saveCell();
+    //! Set unit cell for displaying Miller index tooltip
+    void setUnitCell();
 
     void refreshMaskTable();
 
@@ -173,6 +175,7 @@ class SubframeExperiment : public QWidget {
     QCheckBox* _only_niggli;
     QPushButton* _index_button;
     QPushButton* _save_button;
+    CellComboBox* _cell_combo;
 
     UnitCellTableView* _solution_table;
 
@@ -183,6 +186,7 @@ class SubframeExperiment : public QWidget {
     SpoilerCheck* _mask_box;
     QComboBox* _mask_combo;
     QTableWidget* _mask_table;
+    int _mask_table_rows;
 
     QPushButton* _export_masks;
     QPushButton* _import_masks;
@@ -200,10 +204,6 @@ class SubframeExperiment : public QWidget {
     std::vector<std::pair<std::shared_ptr<ohkl::UnitCell>, double>> _solutions;
     //! Unit cell selected in solution table
     ohkl::sptrUnitCell _selected_unit_cell;
-    //! Filtered/thresholded image
-    QGraphicsPixmapItem* _thresholded_image;
-
-    std::shared_ptr<MaskHandler> _mask_handler;
 };
 
 #endif // OHKL_GUI_SUBFRAME_EXPERIMENT_SUBFRAMEEXPERIMENT_H

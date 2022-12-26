@@ -44,7 +44,7 @@ void CutLineItem::plot(SXPlot* plot)
     QLineF line;
     line.setP1(sceneBoundingRect().bottomLeft());
     line.setP2(sceneBoundingRect().topRight());
-    const Eigen::MatrixXi& currentFrame = detPtr->getCurrentFrame();
+    const Eigen::MatrixXi& currentFrame = detPtr->currentFrameMatrix();
     std::iota(x.begin(), x.end(), 0);
 
     for (int i = 0; i < _nPoints; ++i) {

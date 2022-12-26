@@ -48,10 +48,7 @@
 namespace ohkl {
 
 DataSet::DataSet(const std::string& dataset_name, Diffractometer* diffractometer)
-    : _diffractometer{diffractometer}
-    , _states(nullptr)
-    , _total_histogram(nullptr)
-    , _buffered(false)
+    : _diffractometer{diffractometer}, _states(nullptr), _total_histogram(nullptr), _buffered(false)
 {
     setName(dataset_name);
     if (!_diffractometer)
@@ -373,14 +370,10 @@ InstrumentStateList& DataSet::instrumentStates()
 
 void DataSet::adjustDirectBeam(double x_offset, double y_offset)
 {
-    ohklLog(
-        Level::Info, "DataSet::adjustDirectBeam: offset (",
-        x_offset, ", ", y_offset, ")");
+    ohklLog(Level::Info, "DataSet::adjustDirectBeam: offset (", x_offset, ", ", y_offset, ")");
     double x_coord = x_offset + static_cast<double>(nCols()) / 2.0;
     double y_coord = y_offset + static_cast<double>(nRows()) / 2.0;
-    ohklLog(
-        Level::Info, "DataSet::adjustDirectBeam: position (",
-        x_coord, ", ", y_coord, ")");
+    ohklLog(Level::Info, "DataSet::adjustDirectBeam: position (", x_coord, ", ", y_coord, ")");
     DirectVector direct = detector().pixelPosition(x_coord, y_coord);
     for (auto& state : instrumentStates())
         state.adjustKi(direct);
@@ -462,7 +455,7 @@ size_t DataSet::getNMasks()
     return _masks.size();
 }
 
-void DataSet::removeAllMaks()
+void DataSet::removeAllMasks()
 {
     if (_masks.size() > 0)
         _masks.clear();

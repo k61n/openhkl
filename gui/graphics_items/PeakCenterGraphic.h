@@ -36,7 +36,7 @@ class PeakCenterGraphic : public QGraphicsItem {
     void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget) override;
 
     void showLabel(bool flag); //!< Show the labels
-    void showArea(bool flag); //!< Show the peak
+    void showPeak(bool flag); //!< Show the peak
     void setSize(int size); //!< Set the size of the circle
     void setColor(QColor color); //!< Change the circle color
 

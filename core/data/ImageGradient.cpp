@@ -16,6 +16,7 @@
 
 #include "base/utils/Logger.h"
 #include "core/convolve/ConvolverFactory.h"
+
 #include <memory>
 #include <stdexcept>
 

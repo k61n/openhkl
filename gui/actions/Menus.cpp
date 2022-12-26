@@ -23,8 +23,6 @@
 
 #include <QAction>
 #include <QMenu>
-#include <qkeysequence.h>
-#include <qnamespace.h>
 
 class Project;
 

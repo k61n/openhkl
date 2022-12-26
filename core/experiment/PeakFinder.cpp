@@ -662,15 +662,14 @@ void PeakFinder::find(const sptrDataSet data)
     ohklLog(Level::Debug, "PeakFinder::find: blob loop done");
 
     if (_handler) {
-        _handler->setStatus(
-            ("Integrating " + std::to_string(peaks.size()) + " peaks...").c_str());
+        _handler->setStatus(("Integrating " + std::to_string(peaks.size()) + " peaks...").c_str());
         _handler->setProgress(0);
     }
 
     ohklLog(
-        Level::Info, "PeakFinder::find: ", peaks.size(), " peaks found,",
-        numPeaksTooSmallOrLarge, " peaks too small, ", numPeaksOutsideFrames,
-        " peaks outside frame range, ", numPeaksNotInDetArea, " peaks not fully on detector.");
+        Level::Info, "PeakFinder::find: ", peaks.size(), " peaks found,", numPeaksTooSmallOrLarge,
+        " peaks too small, ", numPeaksOutsideFrames, " peaks outside frame range, ",
+        numPeaksNotInDetArea, " peaks not fully on detector.");
     ohklLog(Level::Info, "PeakFinder::find: ", numPeaksMasked, " peaks masked");
     _peaks_found = peaks.size();
 

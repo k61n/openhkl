@@ -122,8 +122,7 @@ std::vector<Peak3D*> AutoIndexer::filterPeaks(
     const std::vector<Peak3D*>& peaks, const InstrumentState* state)
 {
     const std::vector<Peak3D*> enabled_peaks = PeakFilter{}.filterEnabled(peaks, true);
-    ohklLog(
-        Level::Info, "AutoIndexer::filterPeaks: ", enabled_peaks.size(), " enabled peaks");
+    ohklLog(Level::Info, "AutoIndexer::filterPeaks: ", enabled_peaks.size(), " enabled peaks");
     const std::vector<Peak3D*> filtered_peaks =
         PeakFilter{}.filterDRange(enabled_peaks, _params->d_min, _params->d_max, state);
     if (_params->peaks_integrated) {

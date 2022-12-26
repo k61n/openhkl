@@ -41,7 +41,7 @@ IntegrationRegion::IntegrationRegion(
             break;
         }
         case RegionType::FixedEllipsoid: {
-            // scale the ellipsoid to the volume of a unit sphere (in pixels)
+            // scale the ellipsoid by the average radius in pixels
             _shape = peak->shape();
             const double r = _shape.radii().sum() / 3.0;
             if (!std::isnan(r)) { // Eigensolver to compute radii can fail, resulting in NaN
@@ -50,16 +50,7 @@ IntegrationRegion::IntegrationRegion(
                 peak->setRejectionFlag(RejectionFlag::InvalidRegion);
                 peak->setSelected(false);
             }
-            _pixelRadius = peak_end;
-            _peakEnd = 1.0;
-            _fixed = true;
-            break;
-        }
-        case RegionType::FixedSphere: {
-            // unit sphere (pixels)
-            _shape = Ellipsoid(peak->shape().center(), peak_end);
-            _pixelRadius = peak_end;
-            _peakEnd = 1.0;
+            _peakEnd = peak_end;
             _fixed = true;
             break;
         }
@@ -71,8 +62,7 @@ IntegrationRegion::IntegrationRegion(
     }
 
     if (peak->rejectionFlag() == RejectionFlag::InvalidRegion
-        || peak->rejectionFlag() == RejectionFlag::InterpolationFailure
-        || peak->masked()) {
+        || peak->rejectionFlag() == RejectionFlag::InterpolationFailure || peak->masked()) {
         _valid = false;
     } else {
         Ellipsoid bkg(_shape);

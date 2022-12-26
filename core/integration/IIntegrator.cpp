@@ -31,6 +31,9 @@ void IntegrationParameters::log(const Level& level) const
     ohklLog(level, "peak_end               = ", peak_end);
     ohklLog(level, "bkg_begin              = ", bkg_begin);
     ohklLog(level, "bkg_end                = ", bkg_end);
+    ohklLog(level, "fixed_peak_end         = ", fixed_peak_end);
+    ohklLog(level, "fixed_bkg_begin        = ", fixed_bkg_begin);
+    ohklLog(level, "fixed_bkg_end          = ", fixed_bkg_end);
     ohklLog(level, "neighbour_range_pixels = ", neighbour_range_pixels);
     ohklLog(level, "neighbour_range_frames = ", neighbour_range_frames);
     ohklLog(level, "fit_center             = ", fit_center);
@@ -91,6 +94,17 @@ void IIntegrator::integrate(
     std::map<Peak3D*, std::unique_ptr<IntegrationRegion>> regions;
     std::map<Peak3D*, bool> integrated;
 
+    double peak_end, bkg_begin, bkg_end;
+    if (_params.region_type == ohkl::RegionType::VariableEllipsoid) {
+        peak_end = _params.peak_end;
+        bkg_begin = _params.bkg_begin;
+        bkg_end = _params.bkg_end;
+    } else {
+        peak_end = _params.fixed_peak_end;
+        bkg_begin = _params.fixed_bkg_begin;
+        bkg_end = _params.fixed_bkg_end;
+    }
+
     for (auto peak : peaks) {
         if (!peak->enabled())
             continue;
@@ -98,7 +112,7 @@ void IIntegrator::integrate(
         regions.emplace(std::make_pair(
             peak,
             std::make_unique<IntegrationRegion>(
-                peak, _params.peak_end, _params.bkg_begin, _params.bkg_end, _params.region_type)));
+                peak, peak_end, bkg_begin, bkg_end, _params.region_type)));
         integrated.emplace(std::make_pair(peak, false));
 
         // ignore partials
@@ -198,6 +212,7 @@ void IIntegrator::setHandler(sptrProgressHandler handler)
 void IIntegrator::setParameters(const IntegrationParameters& params)
 {
     _params = params;
+    ohklLog(Level::Info, "IIntegrator::setParameters");
     _params.log(Level::Info);
 }
 

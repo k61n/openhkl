@@ -25,6 +25,7 @@
 #include "core/integration/ShapeIntegrator.h"
 #include "core/peak/Peak3D.h"
 #include "core/peak/Qs2Events.h"
+#include "core/raw/DataKeys.h"
 #include "core/shape/PeakCollection.h"
 #include "core/shape/Predictor.h"
 #include "core/shape/ShapeModel.h"
@@ -63,9 +64,6 @@
 #include <QScrollBar>
 #include <QSpacerItem>
 #include <QTableWidgetItem>
-#include <qcombobox.h>
-#include <qmessagebox.h>
-#include <qnamespace.h>
 
 SubframePredictPeaks::SubframePredictPeaks()
     : QWidget()
@@ -99,8 +97,7 @@ SubframePredictPeaks::SubframePredictPeaks()
         this, &SubframePredictPeaks::crosshairChanged, _detector_widget->scene(),
         &DetectorScene::onCrosshairChanged);
 
-    _detector_widget->scene()->linkDirectBeamPositions(&_direct_beam_events);
-    _detector_widget->scene()->linkOldDirectBeamPositions(&_old_direct_beam_events);
+    _detector_widget->scene()->linkDirectBeam(&_direct_beam_events, &_old_direct_beam_events);
 
     _right_element->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
@@ -325,8 +322,8 @@ void SubframePredictPeaks::setFigureUp()
 {
     QGroupBox* figure_group = new QGroupBox("Detector image");
     figure_group->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-    _detector_widget = new DetectorWidget(false, true, figure_group);
-    _detector_widget->linkPeakModel(&_peak_collection_model);
+    _detector_widget = new DetectorWidget(1, false, true, figure_group);
+    _detector_widget->linkPeakModel(&_peak_collection_model, _peak_view_widget);
 
     connect(
         _detector_widget->scene(), &DetectorScene::signalSelectedPeakItemChanged, this,
@@ -553,6 +550,7 @@ void SubframePredictPeaks::runPrediction()
             predicted_peaks.push_back(peak);
 
         _peak_collection.populate(predicted_peaks);
+        _peak_collection.setData(data);
         for (ohkl::Peak3D* peak : predicted_peaks)
             delete peak;
         predicted_peaks.clear();
@@ -575,7 +573,7 @@ void SubframePredictPeaks::runPrediction()
 void SubframePredictPeaks::showDirectBeamEvents()
 {
     if (_direct_beam->isChecked()) {
-        _detector_widget->scene()->showDirectBeam(true);
+        _detector_widget->scene()->params()->directBeam = true;
 
         const auto data = _detector_widget->currentData();
 
@@ -589,7 +587,7 @@ void SubframePredictPeaks::showDirectBeamEvents()
             _direct_beam_events.push_back(event);
 
     } else {
-        _detector_widget->scene()->showDirectBeam(false);
+        _detector_widget->scene()->params()->directBeam = false;
     }
     refreshPeakVisual();
 }
@@ -662,7 +660,6 @@ void SubframePredictPeaks::refreshPeakTable()
 
 void SubframePredictPeaks::refreshPeakVisual()
 {
-    _detector_widget->scene()->initIntRegionFromPeakWidget(_peak_view_widget->set1);
     auto data = _detector_widget->currentData();
     if (_set_initial_ki->isChecked()) {
         _detector_widget->scene()->addBeamSetter(
@@ -670,18 +667,6 @@ void SubframePredictPeaks::refreshPeakVisual()
         changeCrosshair();
     }
     _detector_widget->refresh();
-    if (_peak_collection_item.childCount() == 0)
-        return;
-
-    for (int i = 0; i < _peak_collection_item.childCount(); ++i) {
-        PeakItem* peak = _peak_collection_item.peakItemAt(i);
-        auto graphic = peak->peakGraphic();
-
-        graphic->showLabel(false);
-        graphic->setColor(Qt::transparent);
-        graphic->initFromPeakViewWidget(
-            peak->peak()->enabled() ? _peak_view_widget->set1 : _peak_view_widget->set2);
-    }
 }
 
 void SubframePredictPeaks::changeSelected(PeakItemGraphic* peak_graphic)

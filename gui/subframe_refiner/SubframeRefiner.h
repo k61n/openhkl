@@ -70,8 +70,6 @@ class SubframeRefiner : public QWidget {
     void updatePeaks();
     //! Set up PeakViewWidgets
     void setPeakViewWidgetUp(PeakViewWidget* peak_widget, QString name);
-    //! Refresh the detector scene
-    void refreshPeakVisual();
 
     //! Set the refiner parameters
     void setRefinerParameters();

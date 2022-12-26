@@ -47,7 +47,6 @@
 #include <QMessageBox>
 #include <QScrollBar>
 #include <QSpacerItem>
-#include <qobject.h>
 
 SubframeShapes::SubframeShapes() : QWidget(), _preview_peak(nullptr)
 {
@@ -72,6 +71,9 @@ SubframeShapes::SubframeShapes() : QWidget(), _preview_peak(nullptr)
     connect(
         _detector_widget->dataCombo(), QOverload<int>::of(&QComboBox::currentIndexChanged),
         _data_combo, &QComboBox::setCurrentIndex);
+    connect(
+        _peak_view_widget, &PeakViewWidget::settingsChanged, _detector_widget,
+        &DetectorWidget::refresh);
 
     auto propertyScrollArea = new PropertyScrollArea(this);
     propertyScrollArea->setContentLayout(_left_layout);
@@ -285,9 +287,9 @@ void SubframeShapes::setFigureUp()
 {
     QGroupBox* figure_group = new QGroupBox("Detector image");
     figure_group->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-    _detector_widget = new DetectorWidget(false, true, figure_group);
-    _detector_widget->linkPeakModel(&_peak_collection_model);
-    _detector_widget->scene()->drawSinglePeakIntegrationRegion(true);
+    _detector_widget = new DetectorWidget(1, false, true, figure_group);
+    _detector_widget->linkPeakModel(&_peak_collection_model, _peak_view_widget);
+    _detector_widget->scene()->params()->singlePeakIntRegion = true;
 
     connect(
         _detector_widget->scene(), &DetectorScene::signalSelectedPeakItemChanged, this,
@@ -300,24 +302,6 @@ void SubframeShapes::setFigureUp()
         &SubframeShapes::onPeakSelected);
 
     _right_element->addWidget(figure_group);
-}
-
-void SubframeShapes::refreshPeakVisual()
-{
-    if (_peak_collection_item.childCount() == 0)
-        return;
-
-    for (int i = 0; i < _peak_collection_item.childCount(); i++) {
-        PeakItem* peak = _peak_collection_item.peakItemAt(i);
-        auto graphic = peak->peakGraphic();
-
-        graphic->showLabel(false);
-        graphic->setColor(Qt::transparent);
-        graphic->initFromPeakViewWidget(
-            peak->peak()->enabled() ? _peak_view_widget->set1 : _peak_view_widget->set2);
-    }
-    _detector_widget->scene()->initIntRegionFromPeakWidget(_peak_view_widget->set1);
-    _detector_widget->refresh();
 }
 
 void SubframeShapes::setPeakTableUp()
@@ -350,7 +334,7 @@ void SubframeShapes::refreshPeakTable()
     _peak_collection_model.setRoot(&_peak_collection_item);
     _peak_table->resizeColumnsToContents();
 
-    refreshPeakVisual();
+    _detector_widget->refresh();
 }
 
 void SubframeShapes::refreshAll()
@@ -421,14 +405,7 @@ void SubframeShapes::setPreviewUp()
     Spoiler* preview_spoiler = new Spoiler("Show/hide peaks");
     _peak_view_widget = new PeakViewWidget("Valid peaks", "Invalid Peaks");
 
-    connect(
-        _peak_view_widget, &PeakViewWidget::settingsChanged, this,
-        &SubframeShapes::refreshPeakVisual);
-
     preview_spoiler->setContentLayout(*_peak_view_widget);
-
-    _peak_view_widget->set1.drawIntegrationRegion->setChecked(false);
-    _peak_view_widget->set1.previewIntRegion->setChecked(false);
 
     connect(
         _peak_view_widget->set1.peakEnd, qOverload<double>(&QDoubleSpinBox::valueChanged),

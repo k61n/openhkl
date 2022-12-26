@@ -15,6 +15,8 @@
 #ifndef OHKL_GUI_MODELS_PEAKCOLLECTIONMODEL_H
 #define OHKL_GUI_MODELS_PEAKCOLLECTIONMODEL_H
 
+#include "core/data/DataTypes.h"
+
 #include <QAbstractTableModel>
 
 class PeakCollectionItem;
@@ -41,6 +43,8 @@ class PeakCollectionModel : public QAbstractTableModel {
     bool indexIsValid(const QModelIndex& index) const;
     //! Remove all data
     void reset();
+    //! Get the DataSet pointer associated with the PeakCollection
+    ohkl::sptrDataSet dataSet() const;
 
  public:
     //! Return the data of the item (Manages role interaction)

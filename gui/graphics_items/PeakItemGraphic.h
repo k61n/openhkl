@@ -47,8 +47,8 @@ class PeakItemGraphic : public PlottableItem {
     ohkl::Peak3D* peak() const;
     //! Show the labels
     void showLabel(bool flag);
-    //! Show the peak area
-    void showArea(bool flag);
+    //! Show the peak with a circle
+    void showPeak(bool flag);
     //! Change the peak size
     void setSize(int size);
     //! Change the peak color

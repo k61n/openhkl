@@ -25,7 +25,9 @@
 #include "gui/subwindows/InstrumentStateWindow.h"
 #include "gui/utility/DataComboBox.h"
 #include "gui/utility/LinkedComboBox.h"
+#include "gui/widgets/PeakViewWidget.h"
 
+#include <QButtonGroup>
 #include <QClipboard>
 #include <QComboBox>
 #include <QDateTime>
@@ -35,17 +37,17 @@
 #include <QSlider>
 #include <QSpinBox>
 #include <QVBoxLayout>
-#include <qbuttongroup.h>
-#include <qpushbutton.h>
 
 QList<DetectorWidget*> DetectorWidget::_detector_widgets = QList<DetectorWidget*>();
 
-DetectorWidget::DetectorWidget(bool cursor, bool slider, QWidget* parent) : QGridLayout(parent)
+DetectorWidget::DetectorWidget(
+    std::size_t max_collections, bool cursor, bool slider, QWidget* parent)
+    : QGridLayout(parent)
 {
     QGridLayout* top_grid = new QGridLayout();
     QHBoxLayout* bottom_layout = new QHBoxLayout();
 
-    _detector_view = new DetectorView();
+    _detector_view = new DetectorView(max_collections);
     _detector_view->scale(1, -1);
     top_grid->addWidget(_detector_view, 0, 0, 1, 1);
 
@@ -162,11 +164,11 @@ void DetectorWidget::refresh()
 
     ohkl::sptrDataSet data = _data_combo->currentData();
 
-    _hide_masks->setChecked(!scene()->masksVisible());
+    _hide_masks->setChecked(!scene()->params()->masks);
 
     scene()->slotChangeSelectedData(data, _spin->value());
     scene()->clearPeakItems();
-    scene()->drawPeakitems();
+    scene()->drawPeakItems();
     scene()->update();
     _detector_view->fitInView(scene()->sceneRect(), Qt::KeepAspectRatio);
     _scroll->setMinimum(1);
@@ -178,11 +180,15 @@ void DetectorWidget::refresh()
     emit scene()->dataChanged();
 }
 
-void DetectorWidget::linkPeakModel(PeakCollectionModel* model1, PeakCollectionModel* model2)
+void DetectorWidget::linkPeakModel(
+    PeakCollectionModel* model, PeakViewWidget* widget, std::size_t idx)
 {
-    scene()->linkPeakModel1(model1);
-    if (model2)
-        scene()->linkPeakModel2(model2);
+    scene()->linkPeakModel(model, widget, idx);
+}
+
+void DetectorWidget::setVisualisationMode(VisualisationType vtype)
+{
+    scene()->setVisualisationMode(vtype);
 }
 
 ohkl::sptrDataSet DetectorWidget::currentData()
@@ -250,7 +256,6 @@ void DetectorWidget::setToolbarUp()
 
     _gradient = new QPushButton;
     _hide_masks = new QPushButton;
-    _reset = new QPushButton;
     _copy_to_clipboard = new QPushButton;
     _save_to_file = new QPushButton;
     _zoom = new QPushButton;
@@ -277,7 +282,6 @@ void DetectorWidget::setToolbarUp()
 
     layout->addWidget(_gradient);
     layout->addWidget(_hide_masks);
-    layout->addWidget(_reset);
     layout->addWidget(_copy_to_clipboard);
     layout->addWidget(_save_to_file);
     layout->addWidget(_zoom);
@@ -294,7 +298,6 @@ void DetectorWidget::setToolbarUp()
 
     _gradient->setIcon(QIcon(path + "gradient.svg"));
     _hide_masks->setIcon(QIcon(path + "hide.svg"));
-    _reset->setIcon(QIcon(path + "reset.svg"));
     _copy_to_clipboard->setIcon(QIcon(path + "copy.svg"));
     _save_to_file->setIcon(QIcon(path + "save.svg"));
     _zoom->setIcon(QIcon(path + "zoom.svg"));
@@ -302,20 +305,13 @@ void DetectorWidget::setToolbarUp()
 
     _gradient->setToolTip("Toggle magnitude of gradient of image");
     _hide_masks->setToolTip("Show/hide detector masks");
-    _reset->setToolTip("Reset detector image");
     _copy_to_clipboard->setToolTip("Copy visible detector image to clipboard");
     _save_to_file->setToolTip("Save visible detector image to file");
     _zoom->setToolTip("Enable zoom cursor on detector image");
     _select->setToolTip("Enable rectangle select cursor on detector image");
 
     connect(_gradient, &QPushButton::clicked, this, &DetectorWidget::toggleGradient);
-    connect(
-        _hide_masks, &QPushButton::clicked, _detector_view->getScene(),
-        &DetectorScene::toggleMasks);
-    connect(_reset, &QPushButton::clicked, _detector_view->getScene(), [=]() {
-        _detector_view->getScene()->resetElements();
-        _detector_view->getScene()->loadCurrentImage();
-    });
+    connect(_hide_masks, &QPushButton::clicked, this, &DetectorWidget::toggleMasks);
     connect(_copy_to_clipboard, &QPushButton::clicked, this, [=]() {
         QPixmap pixMap = _detector_view->grab();
         QApplication::clipboard()->setImage(pixMap.toImage(), QClipboard::Clipboard);
@@ -365,6 +361,12 @@ void DetectorWidget::enableCursorMode(bool enable)
 
 void DetectorWidget::toggleGradient()
 {
-    scene()->setGradient(_gradient->isChecked());
+    scene()->params()->gradient = _gradient->isChecked();
+    scene()->loadCurrentImage();
+}
+
+void DetectorWidget::toggleMasks()
+{
+    scene()->params()->masks = !_hide_masks->isChecked();
     scene()->loadCurrentImage();
 }

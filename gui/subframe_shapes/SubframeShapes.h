@@ -81,8 +81,6 @@ class SubframeShapes : public QWidget {
     void setShapePreviewUp();
     //! Set up the DetectorScene
     void setFigureUp();
-    //! Refresh the DetctorScene
-    void refreshPeakVisual();
     //! Set up the peak table
     void setPeakTableUp();
     //! Refresh the peak table

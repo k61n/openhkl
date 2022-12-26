@@ -2,8 +2,8 @@
 //
 //  OpenHKL: data reduction for single crystal diffraction
 //
-//! @file      gui/graphics_items/EllipseItem.h
-//! @brief     Defines class EllipseMaskItem
+//! @file      gui/graphics_items/BoxMaskItem.h
+//! @brief     Defines class BoxMaskItem
 //!
 //! @homepage  https://openhkl.org
 //! @license   GNU General Public License v3 or higher (see COPYING)
@@ -12,25 +12,24 @@
 //
 //  ***********************************************************************************************
 
-#ifndef OHKL_GUI_GRAPHICS_ITEMS_ELLIPSEMASKITEM_H
-#define OHKL_GUI_GRAPHICS_ITEMS_ELLIPSEMASKITEM_H
+#ifndef OHKL_GUI_GRAPHICS_ITEMS_BOXMASKITEM_H
+#define OHKL_GUI_GRAPHICS_ITEMS_BOXMASKITEM_H
 
 #include "base/geometry/AABB.h"
 #include "base/mask/BoxMask.h"
-#include "base/mask/EllipseMask.h"
 #include "core/data/DataTypes.h"
 #include "gui/graphics_items/MaskItem.h"
 
-//! Creates an ellipse mask
+//! Creates a mask
 
 //! Creates a mask that will be used to unselect/select peaks whether their intercept or
 //! not the mask
-class EllipseMaskItem : public MaskItem {
+class BoxMaskItem : public MaskItem {
  public:
     // Constructs a graphical mask from a AABB
-    EllipseMaskItem(ohkl::sptrDataSet data, ohkl::AABB* aabb);
+    BoxMaskItem(ohkl::sptrDataSet data, ohkl::AABB* aabb);
     //! The destructor
-    ~EllipseMaskItem();
+    ~BoxMaskItem();
 
     //! The mouse move event.
     //! If the item is selected when the event is triggered then the item will be
@@ -64,7 +63,6 @@ class EllipseMaskItem : public MaskItem {
 
  private:
     void updateAABB();
-    bool _selected;
 };
 
-#endif // OHKL_GUI_GRAPHICS_ITEMS_ELLIPSEITEM_H
+#endif // OHKL_GUI_GRAPHICS_ITEMS_BOXMASKITEM_H

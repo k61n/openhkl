@@ -15,6 +15,7 @@
 #include "gui/subwindows/DetectorWindow.h"
 
 #include "core/experiment/Experiment.h"
+#include "core/shape/PeakCollection.h"
 #include "gui/graphics/DetectorScene.cpp"
 #include "gui/graphics/DetectorView.cpp"
 #include "gui/items/PeakCollectionItem.h"
@@ -82,8 +83,9 @@ void DetectorWindow::setDetectorViewUp()
 {
     QGroupBox* detector_group = new QGroupBox("Detector image");
     detector_group->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-    _detector_widget = new DetectorWidget(true, true, detector_group);
-    _detector_widget->linkPeakModel(&_peak_collection_model_1, &_peak_collection_model_2);
+    _detector_widget = new DetectorWidget(2, true, true, detector_group);
+    _detector_widget->linkPeakModel(&_peak_collection_model_1, _peak_view_widget_1, 0);
+    _detector_widget->linkPeakModel(&_peak_collection_model_2, _peak_view_widget_2, 1);
 
     connect(
         _detector_widget->scene(), &DetectorScene::signalSelectedPeakItemChanged, this,
@@ -156,7 +158,6 @@ void DetectorWindow::set3rdPartyPeaksUp()
     Spoiler* third_party_spoiler = new Spoiler("Plot 3rd party peaks");
     GridFiller f(third_party_spoiler, false);
 
-
     _draw_3rdparty = f.addCheckBox("Plot 3rd party peak centres", 1);
     _draw_3rdparty->setCheckState(Qt::Checked);
     connect(_draw_3rdparty, &QCheckBox::stateChanged, this, &DetectorWindow::refreshDetectorView);
@@ -211,7 +212,7 @@ void DetectorWindow::load3rdPartyPeaks()
     for (int i = current_frame; i < (current_frame + files.size()); ++i)
         _peakCenterData.addFrame(files[i].toStdString(), i);
 
-    _detector_widget->scene()->link3rdPartyPeaks(&_peakCenterData);
+    _detector_widget->scene()->link3rdPartyPeaks(&_peakCenterData, 0);
 }
 
 void DetectorWindow::setPlotUp(PeakViewWidget* peak_widget, QString name)
@@ -228,46 +229,16 @@ void DetectorWindow::setPlotUp(PeakViewWidget* peak_widget, QString name)
 
 void DetectorWindow::refreshDetectorView()
 {
-    if (!(_peak_collection_item_1.childCount() == 0)) {
-        for (int i = 0; i < _peak_collection_item_1.childCount(); i++) {
-            PeakItem* peak = _peak_collection_item_1.peakItemAt(i);
-            auto graphic = peak->peakGraphic();
-
-            graphic->showLabel(false);
-            graphic->setColor(Qt::transparent);
-            graphic->initFromPeakViewWidget(
-                peak->peak()->enabled() ? _peak_view_widget_1->set1 : _peak_view_widget_1->set2);
-        }
-    }
-
-    if (!(_peak_collection_item_2.childCount() == 0)) {
-        for (int i = 0; i < _peak_collection_item_2.childCount(); i++) {
-            PeakItem* peak = _peak_collection_item_2.peakItemAt(i);
-            auto graphic = peak->peakGraphic();
-
-            graphic->showLabel(false);
-            graphic->setColor(Qt::transparent);
-            graphic->initFromPeakViewWidget(
-                peak->peak()->enabled() ? _peak_view_widget_2->set1 : _peak_view_widget_2->set2);
-        }
-    }
-
-    _detector_widget->scene()->initIntRegionFromPeakWidget(_peak_view_widget_1->set1);
-    _detector_widget->scene()->initIntRegionFromPeakWidget(_peak_view_widget_2->set1, true);
+    setUnitCell();
     _detector_widget->refresh();
-
-    _detector_widget->scene()->setup3rdPartyPeaks(
-        _draw_3rdparty->isChecked(), _3rdparty_color->color(), _3rdparty_size->value());
-    _detector_widget->scene()->drawPeakitems();
 }
 
 void DetectorWindow::refreshPeakTable()
 {
-    auto expt = gSession->experimentAt(_exp_combo->currentIndex())->experiment();
-    _peak_collection_1 = _peak_combo_1->currentPeakCollection();
-
-    if (_peak_collection_1) {
-        _peak_collection_item_1.setPeakCollection(_peak_collection_1);
+    QString collection_1 = _peak_combo_1->currentText();
+    if (!collection_1.isEmpty()) {
+        auto* peak_collection_1 = _peak_combo_1->currentPeakCollection();
+        _peak_collection_item_1.setPeakCollection(peak_collection_1);
         _peak_collection_model_1.setRoot(&_peak_collection_item_1);
         _peak_table_1->resizeColumnsToContents();
     } else {
@@ -275,11 +246,10 @@ void DetectorWindow::refreshPeakTable()
         _peak_collection_model_1.reset();
     }
 
-
     QString collection_2 = _peak_combo_2->currentText();
     if (!collection_2.isEmpty()) {
-        _peak_collection_2 = expt->getPeakCollection(collection_2.toStdString());
-        _peak_collection_item_2.setPeakCollection(_peak_collection_2);
+        auto* peak_collection_2 = _peak_combo_2->currentPeakCollection();
+        _peak_collection_item_2.setPeakCollection(peak_collection_2);
         _peak_collection_model_2.setRoot(&_peak_collection_item_2);
         _peak_table_2->resizeColumnsToContents();
     } else {

@@ -102,8 +102,7 @@ SubframeAutoIndexer::SubframeAutoIndexer()
         _detector_widget->dataCombo(), QOverload<int>::of(&QComboBox::currentIndexChanged),
         _data_combo, &QComboBox::setCurrentIndex);
 
-    _detector_widget->scene()->linkDirectBeamPositions(&_direct_beam_events);
-    _detector_widget->scene()->linkOldDirectBeamPositions(&_old_direct_beam_events);
+    _detector_widget->scene()->linkDirectBeam(&_direct_beam_events, &_old_direct_beam_events);
 
     tables_tab->setLayout(_solution_layout);
     detector_tab->setLayout(_detector_widget);
@@ -384,8 +383,8 @@ void SubframeAutoIndexer::setPeakViewWidgetUp()
 
 void SubframeAutoIndexer::setFigureUp()
 {
-    _detector_widget = new DetectorWidget(false, true);
-    _detector_widget->linkPeakModel(&_peak_collection_model);
+    _detector_widget = new DetectorWidget(1, false, true);
+    _detector_widget->linkPeakModel(&_peak_collection_model, _peak_view_widget);
 
     connect(
         _detector_widget->spin(), static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged),
@@ -423,31 +422,12 @@ void SubframeAutoIndexer::refreshPeakVisual()
     auto data = _detector_widget->currentData();
     auto scene = _detector_widget->scene();
 
-    scene->initIntRegionFromPeakWidget(_peak_view_widget->set1);
     if (_set_initial_ki->isChecked()) {
         scene->addBeamSetter(_crosshair_size->value(), _crosshair_linewidth->value());
         changeCrosshair();
     }
     showDirectBeamEvents();
 
-    if (_peak_collection_item.childCount() == 0)
-        return;
-
-    for (int i = 0; i < _peak_collection_item.childCount(); i++) {
-        PeakItem* peak = _peak_collection_item.peakItemAt(i);
-        if (peak == nullptr)
-            continue;
-        auto graphic = peak->peakGraphic();
-        if (graphic == nullptr)
-            continue;
-
-        graphic->showLabel(false);
-        graphic->setColor(Qt::transparent);
-        graphic->initFromPeakViewWidget(
-            peak->peak()->enabled() ? _peak_view_widget->set1 : _peak_view_widget->set2);
-    }
-
-    _detector_widget->scene()->initIntRegionFromPeakWidget(_peak_view_widget->set1);
     _detector_widget->refresh();
 }
 
@@ -764,7 +744,7 @@ void SubframeAutoIndexer::showDirectBeamEvents()
     if (!_show_direct_beam)
         return;
 
-    _detector_widget->scene()->showDirectBeam(true);
+    _detector_widget->scene()->params()->directBeam = true;
     auto data_name = _detector_widget->dataCombo()->currentText().toStdString();
     if (data_name.empty()) {
         return;

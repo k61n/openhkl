@@ -16,6 +16,7 @@
 #define OHKL_GUI_UTILITY_DETECTORWIDGET_H
 
 #include "core/data/DataTypes.h"
+#include "gui/graphics/PeakCollectionGraphics.h"
 
 #include <QApplication>
 #include <QFileInfo>
@@ -32,17 +33,20 @@ class DetectorScene;
 class DetectorView;
 class DataComboBox;
 class PeakCollectionModel;
+class PeakViewWidget;
 class QButtonGroup;
 class QPushButton;
 class QSpinBox;
 class QScrollBar;
 class QComboBox;
 class QSlider;
+enum class VisualisationType;
 
 class DetectorWidget : public QGridLayout {
 
  public:
-    DetectorWidget(bool cursor, bool slider, QWidget* parent = nullptr);
+    DetectorWidget(
+        std::size_t max_collections, bool cursor, bool slider, QWidget* parent = nullptr);
     //! Synchronise intensity sliders and intensities across instances
     void syncIntensitySliders();
     //! Update the DataSet combo
@@ -50,7 +54,9 @@ class DetectorWidget : public QGridLayout {
     //! Refresh the DetectorScene
     void refresh();
     //! Link the detector scene to one or two peak models
-    void linkPeakModel(PeakCollectionModel* model1, PeakCollectionModel* model2 = nullptr);
+    void linkPeakModel(PeakCollectionModel* model, PeakViewWidget* widget, std::size_t idx = 0);
+    //! Set visualisation type for the subframe
+    void setVisualisationMode(VisualisationType vtype);
     //! Return the current DataSet
     ohkl::sptrDataSet currentData();
     //! Switch the Detectorscene between coordinate types
@@ -84,6 +90,8 @@ class DetectorWidget : public QGridLayout {
     void enableCursorMode(bool enable);
     //! Toggle between image and image gradient
     void toggleGradient();
+    //! Toggle masks
+    void toggleMasks();
 
  private:
     DetectorView* _detector_view;
@@ -94,7 +102,6 @@ class DetectorWidget : public QGridLayout {
     QSlider* _intensity_slider = nullptr;
     QPushButton* _gradient;
     QPushButton* _hide_masks;
-    QPushButton* _reset;
     QPushButton* _copy_to_clipboard;
     QPushButton* _save_to_file;
     QPushButton* _zoom;

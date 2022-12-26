@@ -45,8 +45,8 @@ class PeakHandler {
     //
     bool addPeakCollection(
         const std::string& name, const PeakCollectionType type,
-        const std::vector<ohkl::Peak3D*> peaks, sptrDataSet data,
-        bool indexed, bool integrated, bool gradient);
+        const std::vector<ohkl::Peak3D*> peaks, sptrDataSet data, bool indexed, bool integrated,
+        bool gradient);
     //! Add an empty peak collection
     bool addEmptyCollection(const std::string& name, const PeakCollectionType type);
     //! Returns true if the experiment has named peak collection
@@ -67,8 +67,8 @@ class PeakHandler {
     int numPeakCollections() const { return _peak_collections.size(); };
     //! Create a new collection of peaks caught by _peak_filter
     bool acceptFilter(
-        const std::string name, PeakCollection* collection,
-        PeakCollectionType pct, sptrDataSet data);
+        const std::string name, PeakCollection* collection, PeakCollectionType pct,
+        sptrDataSet data);
     //! Deep copy a peak collection
     bool clonePeakCollection(std::string name, std::string new_name);
     //! Generate name for new peak collection

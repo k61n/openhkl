@@ -138,7 +138,8 @@ QColor PeakItemGraphic::centerColor() const
 
 void PeakItemGraphic::initFromPeakViewWidget(const PeakViewWidget::Set& set)
 {
-    showArea(set.drawPeaks->isChecked());
+    showPeak(set.drawPeaks->isChecked());
+    setColor(Qt::transparent);
     setSize(set.sizePeaks->value());
     setCenterColor(set.colorPeaks->color());
 }
@@ -179,7 +180,7 @@ void PeakItemGraphic::showLabel(bool flag)
     _label_gi->setVisible(_show_label);
 }
 
-void PeakItemGraphic::showArea(bool flag)
+void PeakItemGraphic::showPeak(bool flag)
 {
     _show_center = flag;
     _center_gi->setVisible(_show_center);

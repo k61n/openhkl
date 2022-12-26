@@ -34,7 +34,6 @@
 #include <QTableWidget>
 #include <QVBoxLayout>
 #include <QWidget>
-#include <qpushbutton.h>
 
 class PeakComboBox;
 class PlotPanel;
@@ -86,8 +85,6 @@ class SubframeReject : public QWidget {
     //! Set up the peak table
     void setPeakTableUp();
 
-    //! Refresh the DetctorScene
-    void refreshPeakVisual();
     //! Refresh the peak table
     void refreshPeakTable();
     //! Scroll to selected peak in table

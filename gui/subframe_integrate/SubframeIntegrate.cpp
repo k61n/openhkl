@@ -46,11 +46,6 @@
 #include <QMessageBox>
 #include <QScrollBar>
 #include <QSpacerItem>
-#include <qcheckbox.h>
-#include <qcombobox.h>
-#include <qgridlayout.h>
-#include <qgroupbox.h>
-#include <qnamespace.h>
 
 SubframeIntegrate::SubframeIntegrate() : QWidget()
 {
@@ -74,6 +69,14 @@ SubframeIntegrate::SubframeIntegrate() : QWidget()
     connect(
         _detector_widget->dataCombo(), QOverload<int>::of(&QComboBox::currentIndexChanged),
         _data_combo, &QComboBox::setCurrentIndex);
+
+    connect(
+        _peak_view_widget, &PeakViewWidget::settingsChanged, _detector_widget,
+        &DetectorWidget::refresh);
+    connect(
+        _integration_region_type,
+        static_cast<void (LinkedComboBox::*)(int)>(&LinkedComboBox::currentIndexChanged),
+        _detector_widget, &DetectorWidget::refresh);
     connect(
         _gradient_kernel, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
         this, &SubframeIntegrate::onGradientSettingsChanged);
@@ -117,8 +120,8 @@ void SubframeIntegrate::setFigureUp()
 {
     QGroupBox* figure_group = new QGroupBox("Detector image");
     figure_group->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-    _detector_widget = new DetectorWidget(false, true, figure_group);
-    _detector_widget->linkPeakModel(&_peak_collection_model);
+    _detector_widget = new DetectorWidget(1, false, true, figure_group);
+    _detector_widget->linkPeakModel(&_peak_collection_model, _peak_view_widget);
 
     connect(
         _detector_widget->scene(), &DetectorScene::signalSelectedPeakItemChanged, this,
@@ -128,24 +131,6 @@ void SubframeIntegrate::setFigureUp()
         &SubframeIntegrate::refreshPeakTable);
 
     _right_element->addWidget(figure_group);
-}
-
-void SubframeIntegrate::refreshPeakVisual()
-{
-    if (_peak_collection_item.childCount() == 0)
-        return;
-
-    for (int i = 0; i < _peak_collection_item.childCount(); i++) {
-        PeakItem* peak = _peak_collection_item.peakItemAt(i);
-        auto graphic = peak->peakGraphic();
-
-        graphic->showLabel(false);
-        graphic->setColor(Qt::transparent);
-        graphic->initFromPeakViewWidget(
-            peak->peak()->enabled() ? _peak_view_widget->set1 : _peak_view_widget->set2);
-    }
-    _detector_widget->scene()->initIntRegionFromPeakWidget(_peak_view_widget->set1);
-    _detector_widget->refresh();
 }
 
 void SubframeIntegrate::setPeakTableUp()
@@ -177,7 +162,7 @@ void SubframeIntegrate::refreshPeakTable()
     _peak_collection_model.setRoot(&_peak_collection_item);
     _peak_table->resizeColumnsToContents();
 
-    refreshPeakVisual();
+    _detector_widget->refresh();
 }
 
 void SubframeIntegrate::refreshAll()
@@ -200,9 +185,15 @@ void SubframeIntegrate::grabIntegrationParameters()
     auto* integrator = expt->integrator();
     auto* params = integrator->parameters();
 
-    _peak_end->setValue(params->peak_end);
-    _bkg_begin->setValue(params->bkg_begin);
-    _bkg_end->setValue(params->bkg_end);
+    if (params->region_type == ohkl::RegionType::VariableEllipsoid) {
+        _peak_end->setValue(params->peak_end);
+        _bkg_begin->setValue(params->bkg_begin);
+        _bkg_end->setValue(params->bkg_end);
+    } else {
+        _peak_end->setValue(params->fixed_peak_end);
+        _bkg_begin->setValue(params->fixed_bkg_begin);
+        _bkg_end->setValue(params->fixed_bkg_end);
+    }
     _discard_saturated->setChecked(params->discard_saturated);
     _max_counts->setValue(params->max_counts);
     _radius_int->setValue(params->neighbour_range_pixels);
@@ -233,9 +224,6 @@ void SubframeIntegrate::setIntegrationParameters()
     auto* integrator = expt->integrator();
     auto* params = integrator->parameters();
 
-    params->peak_end = _peak_end->value();
-    params->bkg_begin = _bkg_begin->value();
-    params->bkg_end = _bkg_end->value();
     params->discard_saturated = _discard_saturated->isChecked();
     params->max_counts = _max_counts->value();
     params->neighbour_range_pixels = _radius_int->value();
@@ -246,6 +234,15 @@ void SubframeIntegrate::setIntegrationParameters()
     params->region_type = static_cast<ohkl::RegionType>(_integration_region_type->currentIndex());
     params->integrator_type =
         _integrator_strings.find(_integrator_combo->currentText().toStdString())->second;
+    if (params->region_type == ohkl::RegionType::VariableEllipsoid) {
+        params->peak_end = _peak_end->value();
+        params->bkg_begin = _bkg_begin->value();
+        params->bkg_end = _bkg_end->value();
+    } else {
+        params->fixed_peak_end = _peak_end->value();
+        params->fixed_bkg_begin = _bkg_begin->value();
+        params->fixed_bkg_end = _bkg_end->value();
+    }
     params->use_gradient = _compute_gradient->isChecked();
     params->fft_gradient = _fft_gradient->isChecked();
     params->gradient_type = static_cast<ohkl::GradientKernel>(_gradient_kernel->currentIndex());
@@ -291,11 +288,6 @@ void SubframeIntegrate::setIntegrationRegionUp()
     _bkg_end->setDecimals(2);
 
     _left_layout->addWidget(_integration_region_box);
-
-    connect(
-        _integration_region_type,
-        static_cast<void (LinkedComboBox::*)(int)>(&LinkedComboBox::currentIndexChanged), this,
-        &SubframeIntegrate::refreshPeakVisual);
 }
 
 void SubframeIntegrate::setIntegrateUp()
@@ -413,14 +405,7 @@ void SubframeIntegrate::setPreviewUp()
     Spoiler* preview_spoiler = new Spoiler("Show/hide peaks");
     _peak_view_widget = new PeakViewWidget("Valid peaks", "Invalid Peaks");
 
-    connect(
-        _peak_view_widget, &PeakViewWidget::settingsChanged, this,
-        &SubframeIntegrate::refreshPeakVisual);
-
     preview_spoiler->setContentLayout(*_peak_view_widget);
-
-    _peak_view_widget->set1.drawIntegrationRegion->setChecked(false);
-    _peak_view_widget->set1.previewIntRegion->setChecked(false);
 
     connect(
         _peak_view_widget->set1.peakEnd, qOverload<double>(&QDoubleSpinBox::valueChanged),

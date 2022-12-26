@@ -28,7 +28,8 @@ const PeakCollectionMap* PeakHandler::getPeakCollectionMap() const
 }
 
 bool PeakHandler::addPeakCollection(
-    const std::string& name, const PeakCollectionType type, const std::vector<ohkl::Peak3D*> peaks, sptrDataSet data)
+    const std::string& name, const PeakCollectionType type, const std::vector<ohkl::Peak3D*> peaks,
+    sptrDataSet data)
 {
     // abort if name is aleady in use
     if (hasPeakCollection(name))

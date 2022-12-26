@@ -2,8 +2,8 @@
 //
 //  OpenHKL: data reduction for single crystal diffraction
 //
-//! @file      gui/graphics_items/EllipseItem.cpp
-//! @brief     Implements class EllipseMaskItem
+//! @file      gui/graphics_items/BoxMaskItem.cpp
+//! @brief     Implements class BoxMaskItem
 //!
 //! @homepage  https://openhkl.org
 //! @license   GNU General Public License v3 or higher (see COPYING)
@@ -12,17 +12,18 @@
 //
 //  ***********************************************************************************************
 
-#include "gui/graphics_items/EllipseMaskItem.h"
+#include "gui/graphics_items/BoxMaskItem.h"
 
-#include "base/mask/EllipseMask.h"
+#include "base/mask/BoxMask.h"
 #include "core/data/DataSet.h"
-
+#include <Eigen/Dense>
 #include <QGraphicsSceneWheelEvent>
 #include <QPainter>
 #include <QStyleOptionGraphicsItem>
 
-EllipseMaskItem::EllipseMaskItem(ohkl::sptrDataSet data, ohkl::AABB* aabb)
-    : MaskItem(aabb), _data(data), _from(0, 0), _to(0, 0), _selected(false)
+
+BoxMaskItem::BoxMaskItem(ohkl::sptrDataSet data, ohkl::AABB* aabb)
+    : MaskItem(aabb), _data(data), _from(0, 0), _to(0, 0)
 {
     _pen.setWidth(1);
     _pen.setCosmetic(true);
@@ -32,13 +33,13 @@ EllipseMaskItem::EllipseMaskItem(ohkl::sptrDataSet data, ohkl::AABB* aabb)
     _text->setParentItem(this);
 }
 
-EllipseMaskItem::~EllipseMaskItem() = default;
+BoxMaskItem::~BoxMaskItem() = default;
 
-void EllipseMaskItem::paint(
-    QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget)
+void BoxMaskItem::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget)
 {
     Q_UNUSED(widget);
 
+    // Color depending on selection
     if (option->state & QStyle::State_Selected) {
         _pen.setWidth(2);
         _pen.setColor(QColor(255, 0, 0, 255));
@@ -53,7 +54,7 @@ void EllipseMaskItem::paint(
 
     painter->setRenderHint(QPainter::Antialiasing);
     painter->setPen(_pen);
-    painter->drawEllipse(boundingRect());
+    painter->drawRect(boundingRect());
 
     QPointF tl = sceneBoundingRect().topLeft();
     QPointF br = sceneBoundingRect().bottomRight();
@@ -61,14 +62,14 @@ void EllipseMaskItem::paint(
         + QString::number(br.x()) + "\n" + QString::number(br.y());
 }
 
-QRectF EllipseMaskItem::boundingRect() const
+QRectF BoxMaskItem::boundingRect() const
 {
     qreal w = std::abs(_to.x() - _from.x());
     qreal h = std::abs(_to.y() - _from.y());
     return QRectF(-w / 2, -h / 2, w, h);
 }
 
-void EllipseMaskItem::setFrom(const QPointF& pos)
+void BoxMaskItem::setFrom(const QPointF& pos)
 {
     _from = pos;
     _to = pos;
@@ -77,7 +78,7 @@ void EllipseMaskItem::setFrom(const QPointF& pos)
     updateAABB();
 }
 
-void EllipseMaskItem::setFrom(const Eigen::Vector3d& vec)
+void BoxMaskItem::setFrom(const Eigen::Vector3d& vec)
 {
     _from = {vec(0), vec(1)};
     _to = {vec(0), vec(1)};
@@ -86,7 +87,7 @@ void EllipseMaskItem::setFrom(const Eigen::Vector3d& vec)
     updateAABB();
 }
 
-void EllipseMaskItem::setTo(const QPointF& pos)
+void BoxMaskItem::setTo(const QPointF& pos)
 {
     _to = pos;
     setPos(0.5 * (_from + _to));
@@ -94,7 +95,7 @@ void EllipseMaskItem::setTo(const QPointF& pos)
     updateAABB();
 }
 
-void EllipseMaskItem::setTo(const Eigen::Vector3d& vec)
+void BoxMaskItem::setTo(const Eigen::Vector3d& vec)
 {
     _to = {vec(0), vec(1)};
     setPos(0.5 * (_from + _to));
@@ -102,12 +103,12 @@ void EllipseMaskItem::setTo(const Eigen::Vector3d& vec)
     updateAABB();
 }
 
-ohkl::AABB* EllipseMaskItem::getAABB()
+ohkl::AABB* BoxMaskItem::getAABB()
 {
     return _aabb;
 }
 
-void EllipseMaskItem::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
+void BoxMaskItem::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
 {
     if (event->buttons() & Qt::LeftButton) {
         // If the mask is not selected, the move event corresponds to a modification
@@ -124,7 +125,7 @@ void EllipseMaskItem::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
     }
 }
 
-void EllipseMaskItem::updateAABB()
+void BoxMaskItem::updateAABB()
 {
     QPointF tl = sceneBoundingRect().topLeft();
     QPointF br = sceneBoundingRect().bottomRight();
@@ -132,7 +133,7 @@ void EllipseMaskItem::updateAABB()
     _aabb->setUpper({br.x(), br.y(), static_cast<double>(_data->nFrames())});
 }
 
-void EllipseMaskItem::wheelEvent(QGraphicsSceneWheelEvent* event)
+void BoxMaskItem::wheelEvent(QGraphicsSceneWheelEvent* event)
 {
     // The item must be visible to be wheeled
     if (!isVisible())

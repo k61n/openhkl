@@ -14,6 +14,7 @@
 
 #include "gui/models/PeakCollectionModel.h"
 
+#include "core/data/DataSet.h"
 #include "core/peak/Peak3D.h"
 #include "gui/items/PeakCollectionItem.h"
 
@@ -35,6 +36,13 @@ void PeakCollectionModel::setRoot(PeakCollectionItem* peak_collection)
     _root_item = peak_collection;
     _name = _root_item->name();
     endResetModel();
+}
+
+ohkl::sptrDataSet PeakCollectionModel::dataSet() const
+{
+    if (!_root_item)
+        return nullptr;
+    return _root_item->peakCollection()->data();
 }
 
 int PeakCollectionModel::rowCount(const QModelIndex& /*parent*/) const

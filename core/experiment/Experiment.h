@@ -96,8 +96,8 @@ class Experiment {
     // Peak handler
     //! Create a new PeakCollection from a vector of peaks
     bool addPeakCollection(
-        const std::string& name, const PeakCollectionType type,
-        std::vector<Peak3D*> peaks, sptrDataSet data);
+        const std::string& name, const PeakCollectionType type, std::vector<Peak3D*> peaks,
+        sptrDataSet data);
     bool addPeakCollection(
         const std::string& name, const PeakCollectionType type, std::vector<Peak3D*> peaks,
         sptrDataSet data, bool indexed, bool integrated, bool gradient);

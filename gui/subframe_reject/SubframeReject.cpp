@@ -22,6 +22,7 @@
 #include "gui/MainWin.h" // gGui
 #include "gui/frames/ProgressView.h"
 #include "gui/graphics/DetectorScene.h"
+#include "gui/graphics/PeakCollectionGraphics.h"
 #include "gui/graphics/SXPlot.h"
 #include "gui/graphics_items/PeakItemGraphic.h"
 #include "gui/items/PeakItem.h"
@@ -49,7 +50,6 @@
 #include <QMessageBox>
 #include <QScrollBar>
 #include <QSpacerItem>
-#include <qpushbutton.h>
 
 SubframeReject::SubframeReject() : QWidget()
 {
@@ -74,6 +74,9 @@ SubframeReject::SubframeReject() : QWidget()
     connect(
         _detector_widget->dataCombo(), QOverload<int>::of(&QComboBox::currentIndexChanged),
         _data_combo, &QComboBox::setCurrentIndex);
+    connect(
+        _peak_view_widget, &PeakViewWidget::settingsChanged, _detector_widget,
+        &DetectorWidget::refresh);
     connect(_peak_combo, QOverload<int>::of(&QComboBox::currentIndexChanged), this, [=]() {
         updateStatistics();
         computeHistogram();
@@ -180,8 +183,9 @@ void SubframeReject::setFigureUp()
 {
     QGroupBox* figure_group = new QGroupBox("Detector image");
     figure_group->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-    _detector_widget = new DetectorWidget(false, true, figure_group);
-    _detector_widget->linkPeakModel(&_peak_collection_model);
+    _detector_widget = new DetectorWidget(1, false, true, figure_group);
+    _detector_widget->setVisualisationMode(VisualisationType::Filtered);
+    _detector_widget->linkPeakModel(&_peak_collection_model, _peak_view_widget);
 
     // connect(
     //     _detector_widget->scene(), &DetectorScene::signalSelectedPeakItemChanged, this,
@@ -202,24 +206,6 @@ void SubframeReject::setPlotUp()
     connect(_plot_widget, &PlotPanel::signalYRangeChanged, this, &SubframeReject::updateYRange);
 
     _right_element->addWidget(_plot_widget);
-}
-
-void SubframeReject::refreshPeakVisual()
-{
-    if (_peak_collection_item.childCount() == 0)
-        return;
-
-    for (int i = 0; i < _peak_collection_item.childCount(); i++) {
-        PeakItem* peak = _peak_collection_item.peakItemAt(i);
-        auto graphic = peak->peakGraphic();
-
-        graphic->showLabel(false);
-        graphic->setColor(Qt::transparent);
-        graphic->initFromPeakViewWidget(
-            peak->peak()->caughtByFilter() ? _peak_view_widget->set1 : _peak_view_widget->set2);
-    }
-    _detector_widget->scene()->initIntRegionFromPeakWidget(_peak_view_widget->set1);
-    _detector_widget->refresh();
 }
 
 void SubframeReject::setPeakTableUp()
@@ -255,7 +241,7 @@ void SubframeReject::refreshPeakTable()
     _peak_table->resizeColumnsToContents();
     _peak_table->model()->sort(PeakColumn::Filtered, Qt::DescendingOrder);
 
-    refreshPeakVisual();
+    _detector_widget->refresh();
 }
 
 void SubframeReject::refreshAll()
@@ -284,14 +270,7 @@ void SubframeReject::setPreviewUp()
     Spoiler* preview_spoiler = new Spoiler("Show/hide peaks");
     _peak_view_widget = new PeakViewWidget("Valid peaks", "Invalid Peaks");
 
-    connect(
-        _peak_view_widget, &PeakViewWidget::settingsChanged, this,
-        &SubframeReject::refreshPeakVisual);
-
     preview_spoiler->setContentLayout(*_peak_view_widget);
-
-    _peak_view_widget->set1.drawIntegrationRegion->setChecked(false);
-    _peak_view_widget->set1.previewIntRegion->setChecked(false);
 
     _left_layout->addWidget(preview_spoiler);
 }
@@ -397,8 +376,8 @@ void SubframeReject::computeHistogram()
 
     ohkl::PeakHistogramType type =
         static_cast<ohkl::PeakHistogramType>(_histo_combo->currentIndex());
-    if (type == ohkl::PeakHistogramType::BkgGradient ||
-        type == ohkl::PeakHistogramType::BkgGradientSigma) {
+    if (type == ohkl::PeakHistogramType::BkgGradient
+        || type == ohkl::PeakHistogramType::BkgGradientSigma) {
         if (!peaks->hasBkgGradient()) {
             gGui->statusBar()->showMessage(
                 "Can't filter by intensity: background gradients not integrated");
