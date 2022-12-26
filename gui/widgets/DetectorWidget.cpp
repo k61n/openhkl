@@ -37,7 +37,6 @@
 #include <QSlider>
 #include <QSpinBox>
 #include <QVBoxLayout>
-#include <qpushbutton.h>
 
 QList<DetectorWidget*> DetectorWidget::_detector_widgets = QList<DetectorWidget*>();
 
