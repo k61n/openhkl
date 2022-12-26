@@ -82,8 +82,7 @@ class IIntegrator {
     IIntegrator();
     virtual ~IIntegrator();
     //! Integrate all peaks in the list which are contained in the specified data set.
-    void integrate(
-        std::vector<Peak3D*> peaks, ShapeModel* shape_model, sptrDataSet data);
+    void integrate(std::vector<Peak3D*> peaks, ShapeModel* shape_model, sptrDataSet data);
     //! Return the mean background.
     Intensity meanBackground() const;
     //! Return the mean background gradient

@@ -23,8 +23,8 @@ DataComboBox::DataComboBox(QWidget* parent) : QComboBox(parent), _current_index(
 {
     _all_combos.push_back(this);
     connect(
-        this, QOverload<int>::of(&QComboBox::currentIndexChanged),
-        this, &DataComboBox::onDataChanged);
+        this, QOverload<int>::of(&QComboBox::currentIndexChanged), this,
+        &DataComboBox::onDataChanged);
 }
 
 void DataComboBox::addDataSet(const ohkl::sptrDataSet& data)

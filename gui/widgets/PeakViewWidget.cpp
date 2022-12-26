@@ -21,19 +21,18 @@
 
 #include <QCheckBox>
 #include <QDoubleSpinBox>
+#include <QFrame>
 #include <QLabel>
 #include <QSpinBox>
-#include <QFrame>
 
 PeakViewWidget::PeakViewWidget(const QString& titleSet1, const QString& titleSet2)
 {
     createSet(set1, titleSet1, Qt::green);
     addIntegrationRegion(set1, Qt::yellow, Qt::green);
     createSet(set2, titleSet2, Qt::red);
-    connect(set1.regionType,
-        static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
+    connect(
+        set1.regionType, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
         this, &PeakViewWidget::switchIntRegionType);
-
 }
 
 void PeakViewWidget::addHeadline(int row, const QString& type)
@@ -130,8 +129,7 @@ void PeakViewWidget::addIntegrationRegion(Set& set, const QColor& peak, const QC
     addLabel(row, "Show:");
     set.drawIntegrationRegion =
         addCheckBox(row++, 1, "Integration region", Qt::CheckState::Unchecked);
-    set.previewIntRegion =
-        addCheckBox(row++, 1, "Preview new parameters", Qt::CheckState::Checked);
+    set.previewIntRegion = addCheckBox(row++, 1, "Preview new parameters", Qt::CheckState::Checked);
     set.regionType = addCombo(row++, ComboType::RegionType);
 
     for (int i = 0; i < static_cast<int>(ohkl::RegionType::Count); ++i) {
@@ -164,8 +162,8 @@ void PeakViewWidget::addIntegrationRegion(Set& set, const QColor& peak, const QC
 
 void PeakViewWidget::switchIntRegionType()
 {
-    if (static_cast<ohkl::RegionType>(set1.regionType->currentIndex()) ==
-        ohkl::RegionType::VariableEllipsoid) {
+    if (static_cast<ohkl::RegionType>(set1.regionType->currentIndex())
+        == ohkl::RegionType::VariableEllipsoid) {
         set1.params.fixed_peak_end = set1.peakEnd->value();
         set1.params.fixed_bkg_begin = set1.bkgBegin->value();
         set1.params.fixed_bkg_end = set1.bkgEnd->value();

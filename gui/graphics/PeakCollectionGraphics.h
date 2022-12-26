@@ -33,7 +33,7 @@ class Peak3D;
 class PeakItemGraphic;
 class PeakCenterGraphic;
 
-enum class VisualisationType {Enabled, Filtered};
+enum class VisualisationType { Enabled, Filtered };
 
 //! Container for settings and pointers for visualising peaks
 class PeakCollectionGraphics {
@@ -65,17 +65,20 @@ class PeakCollectionGraphics {
     //! Set data for peaks imported from external code
     void setExtPeakData(ohkl::PeakCenterDataSet* pcd) { _peak_center_data = pcd; };
     //! Set data for detector spots located using OpenCV
-    void setPerFrameSpots(std::vector<std::vector<cv::KeyPoint>>* points) {
+    void setPerFrameSpots(std::vector<std::vector<cv::KeyPoint>>* points)
+    {
         _per_frame_spots = points;
     };
 
     //! Set the integration region peak and background colours
-    void setIntRegionColors(const QColor& peak, const QColor& bkg) {
+    void setIntRegionColors(const QColor& peak, const QColor& bkg)
+    {
         _peakPxColor = peak;
         _bkgPxColor = bkg;
     };
     //! Set the 3rd party peak circle colour and size
-    void setExtPeakCircles(const QColor& color, int size) {
+    void setExtPeakCircles(const QColor& color, int size)
+    {
         _3rdparty_color = color;
         _3rdparty_size = size;
     };

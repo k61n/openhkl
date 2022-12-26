@@ -179,13 +179,7 @@ void SubframeHome::_setRightLayout(QHBoxLayout* main_layout)
     _peak_collections_table = new QTableWidget(0, 7);
     _peak_collections_table->setEditTriggers(QAbstractItemView::NoEditTriggers);
     _peak_collections_table->setHorizontalHeaderLabels(QStringList{
-        "Name",
-        "Data set",
-        "Peaks",
-        "Valid peaks",
-        "Invalid peaks",
-        "Indexed",
-        "Integrated",
+        "Name", "Data set", "Peaks", "Valid peaks", "Invalid peaks", "Indexed", "Integrated",
         "Type"});
 
     _peak_collections_table->resizeColumnsToContents();
@@ -588,12 +582,10 @@ void SubframeHome::refreshTables() const
                     n, 3, new QTableWidgetItem(QString::number(pc->numberOfValid())));
                 _peak_collections_table->setItem(
                     n, 4, new QTableWidgetItem(QString::number(pc->numberOfInvalid())));
-                _peak_collections_table->setItem(
-                    n, 5, new QTableWidgetItem(b2s(pc->isIndexed())));
+                _peak_collections_table->setItem(n, 5, new QTableWidgetItem(b2s(pc->isIndexed())));
                 _peak_collections_table->setItem(
                     n, 6, new QTableWidgetItem(b2s(pc->isIntegrated())));
-                _peak_collections_table->setItem(
-                    n, 7, new QTableWidgetItem(Type2s(pc->type())));
+                _peak_collections_table->setItem(n, 7, new QTableWidgetItem(Type2s(pc->type())));
             }
             _peak_collections_table->resizeColumnsToContents();
         }

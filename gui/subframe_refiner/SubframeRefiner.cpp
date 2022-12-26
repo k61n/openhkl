@@ -111,8 +111,8 @@ SubframeRefiner::SubframeRefiner()
         _detector_widget->dataCombo(), QOverload<int>::of(&QComboBox::currentIndexChanged),
         _data_combo, &QComboBox::setCurrentIndex);
     connect(
-        _peak_view_widget_1, &PeakViewWidget::settingsChanged,
-        _detector_widget, &DetectorWidget::refresh);
+        _peak_view_widget_1, &PeakViewWidget::settingsChanged, _detector_widget,
+        &DetectorWidget::refresh);
     connect(
         _peak_view_widget_2, &PeakViewWidget::settingsChanged, _detector_widget,
         &DetectorWidget::refresh);

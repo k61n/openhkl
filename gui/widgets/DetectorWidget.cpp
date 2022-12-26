@@ -27,6 +27,7 @@
 #include "gui/utility/LinkedComboBox.h"
 #include "gui/widgets/PeakViewWidget.h"
 
+#include <QButtonGroup>
 #include <QClipboard>
 #include <QComboBox>
 #include <QDateTime>
@@ -36,7 +37,6 @@
 #include <QSlider>
 #include <QSpinBox>
 #include <QVBoxLayout>
-#include <QButtonGroup>
 
 QList<DetectorWidget*> DetectorWidget::_detector_widgets = QList<DetectorWidget*>();
 
@@ -311,8 +311,7 @@ void DetectorWidget::setToolbarUp()
     _select->setToolTip("Enable rectangle select cursor on detector image");
 
     connect(_gradient, &QPushButton::clicked, this, &DetectorWidget::toggleGradient);
-    connect(
-        _hide_masks, &QPushButton::clicked, this, &DetectorWidget::toggleMasks);
+    connect(_hide_masks, &QPushButton::clicked, this, &DetectorWidget::toggleMasks);
     connect(_copy_to_clipboard, &QPushButton::clicked, this, [=]() {
         QPixmap pixMap = _detector_view->grab();
         QApplication::clipboard()->setImage(pixMap.toImage(), QClipboard::Clipboard);

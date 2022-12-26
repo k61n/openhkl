@@ -67,10 +67,7 @@
 #include <gsl/gsl_histogram.h>
 #include <stdexcept>
 
-SubframeExperiment::SubframeExperiment()
-    : QWidget()
-    , _mask_table_rows(15)
-    , _show_direct_beam(true)
+SubframeExperiment::SubframeExperiment() : QWidget(), _mask_table_rows(15), _show_direct_beam(true)
 {
     _main_layout = new QHBoxLayout(this);
     _left_layout = new QVBoxLayout();
@@ -141,8 +138,8 @@ SubframeExperiment::SubframeExperiment()
 
     connect(_update_plot, &QPushButton::clicked, this, &SubframeExperiment::refreshAll);
     connect(
-        _cell_combo, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
-        this, &SubframeExperiment::setUnitCell);
+        _cell_combo, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this,
+        &SubframeExperiment::setUnitCell);
 
     connect(
         _detector_widget->scene(), &DetectorScene::beamPosChanged, this,

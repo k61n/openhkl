@@ -376,8 +376,8 @@ void SubframeReject::computeHistogram()
 
     ohkl::PeakHistogramType type =
         static_cast<ohkl::PeakHistogramType>(_histo_combo->currentIndex());
-    if (type == ohkl::PeakHistogramType::BkgGradient ||
-        type == ohkl::PeakHistogramType::BkgGradientSigma) {
+    if (type == ohkl::PeakHistogramType::BkgGradient
+        || type == ohkl::PeakHistogramType::BkgGradientSigma) {
         if (!peaks->hasBkgGradient()) {
             gGui->statusBar()->showMessage(
                 "Can't filter by intensity: background gradients not integrated");

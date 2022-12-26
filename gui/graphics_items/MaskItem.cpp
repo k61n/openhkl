@@ -17,8 +17,6 @@
 int MaskItem::_n_masks = 0;
 
 MaskItem::MaskItem(ohkl::AABB* aabb)
-    : SXGraphicsItem(nullptr, true, true)
-    , _aabb(aabb)
-    , _id(_n_masks++)
+    : SXGraphicsItem(nullptr, true, true), _aabb(aabb), _id(_n_masks++)
 {
 }

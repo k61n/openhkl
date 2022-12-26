@@ -49,12 +49,11 @@ std::optional<QImage> DataSetGraphics::baseImage(std::size_t frame_idx, QRect fu
     _current_frame = _data->frame(frame_idx);
     if (_params->gradient) {
         return _color_map->matToImage(
-            _data->gradientFrame(frame_idx, _params->gradientKernel,
-                !_params->fftGradient).cast<double>(), full, _params->intensity,
-                _params->logarithmic);
+            _data->gradientFrame(frame_idx, _params->gradientKernel, !_params->fftGradient)
+                .cast<double>(),
+            full, _params->intensity, _params->logarithmic);
     } else if (_params->filteredImage) {
-        return _color_map->matToImage(
-            filteredImage(_current_frame), full, 1);
+        return _color_map->matToImage(filteredImage(_current_frame), full, 1);
     } else {
         return _color_map->matToImage(
             _current_frame.cast<double>(), full, _params->intensity, _params->logarithmic);
@@ -153,15 +152,13 @@ QVector<MaskItem*> DataSetGraphics::maskGraphics()
     QVector<MaskItem*> graphics;
     for (auto* mask : _data->masks()) {
         if (dynamic_cast<const ohkl::BoxMask*>(mask) != nullptr) {
-            BoxMaskItem* gmask =
-                new BoxMaskItem(_data, new ohkl::AABB(mask->aabb()));
+            BoxMaskItem* gmask = new BoxMaskItem(_data, new ohkl::AABB(mask->aabb()));
             gmask->setMask(dynamic_cast<ohkl::BoxMask*>(mask));
             gmask->setFrom(mask->aabb().lower());
             gmask->setTo(mask->aabb().upper());
             graphics.push_back(gmask);
         } else {
-            EllipseMaskItem* gmask =
-                new EllipseMaskItem(_data, new ohkl::AABB(mask->aabb()));
+            EllipseMaskItem* gmask = new EllipseMaskItem(_data, new ohkl::AABB(mask->aabb()));
             gmask->setMask(dynamic_cast<ohkl::EllipseMask*>(mask));
             gmask->setFrom(mask->aabb().lower());
             gmask->setTo(mask->aabb().upper());
@@ -180,8 +177,8 @@ std::optional<ohkl::InstrumentState> DataSetGraphics::instrumentState()
 {
     ohkl::InstrumentState state;
     try {
-        state = ohkl::InterpolatedState::interpolate(
-            _data->instrumentStates(), _params->currentIndex);
+        state =
+            ohkl::InterpolatedState::interpolate(_data->instrumentStates(), _params->currentIndex);
     } catch (std::range_error& e) { // interpolation error for last frame
         return {};
     }
@@ -228,8 +225,7 @@ std::optional<QString> DataSetGraphics::dSpacing(int col, int row)
     double wave = _data->wavelength();
     ohkl::DirectVector pos = _data->detector().pixelPosition(col, row);
     double th2 = state.value().twoTheta(pos);
-    return QString(
-        "(%1) I: %2").arg(wave / (2 * sin(0.5 * th2)), 0, 'f', 3).arg(pCount(col, row));
+    return QString("(%1) I: %2").arg(wave / (2 * sin(0.5 * th2)), 0, 'f', 3).arg(pCount(col, row));
 }
 
 std::optional<QString> DataSetGraphics::millerIndices(int col, int row)

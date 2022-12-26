@@ -23,8 +23,8 @@
 #include "gui/models/ColorMap.h"
 #include "tables/crystal/UnitCell.h"
 
-#include <QImage>
 #include <QGraphicsEllipseItem>
+#include <QImage>
 
 #include <optional>
 
@@ -42,7 +42,8 @@ class DataSetGraphics {
  public:
     DataSetGraphics(DetectorSceneParams* params);
 
-    void setColorMap(const std::string& name) {
+    void setColorMap(const std::string& name)
+    {
         _color_map = std::unique_ptr<ColorMap>(new ColorMap(name));
     };
 

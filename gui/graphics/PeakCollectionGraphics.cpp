@@ -25,9 +25,9 @@
 #include "gui/items/PeakItem.h"
 #include "gui/utility/ColorButton.h"
 
-#include <QVector>
 #include <QCheckBox>
 #include <QDoubleSpinBox>
+#include <QVector>
 
 #include <vector>
 
@@ -137,8 +137,8 @@ QVector<PeakCenterGraphic*> PeakCollectionGraphics::detectorSpots(std::size_t fr
     QVector<PeakCenterGraphic*> graphics;
 
     for (const cv::KeyPoint& point : _per_frame_spots->at(frame_idx)) {
-        PeakCenterGraphic* center = new PeakCenterGraphic(
-            {point.pt.x, point.pt.y, static_cast<double>(frame_idx)});
+        PeakCenterGraphic* center =
+            new PeakCenterGraphic({point.pt.x, point.pt.y, static_cast<double>(frame_idx)});
         center->setColor(_3rdparty_color);
         center->setSize(_3rdparty_size);
         graphics.push_back(center);
@@ -208,14 +208,14 @@ void PeakCollectionGraphics::getSinglePeakIntegrationMask(
 bool PeakCollectionGraphics::visualType(ohkl::Peak3D* peak)
 {
     switch (_visual_type) {
-    case VisualisationType::Enabled:
-        if (peak->enabled())
-            return true;
-        break;
-    case VisualisationType::Filtered:
-        if (peak->caughtByFilter())
-            return true;
-        break;
+        case VisualisationType::Enabled:
+            if (peak->enabled())
+                return true;
+            break;
+        case VisualisationType::Filtered:
+            if (peak->caughtByFilter())
+                return true;
+            break;
     }
     return false;
 }

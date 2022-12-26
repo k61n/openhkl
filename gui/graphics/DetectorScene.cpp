@@ -22,13 +22,13 @@
 #include "core/peak/Peak3D.h"
 #include "gui/MainWin.h"
 #include "gui/graphics/PeakCollectionGraphics.h"
+#include "gui/graphics_items/BoxMaskItem.h"
 #include "gui/graphics_items/CrosshairGraphic.h"
 #include "gui/graphics_items/EllipseMaskItem.h"
-#include "gui/graphics_items/BoxMaskItem.h"
+#include "gui/graphics_items/MaskItem.h"
 #include "gui/graphics_items/PeakItemGraphic.h"
 #include "gui/graphics_items/PlottableItem.h"
 #include "gui/graphics_items/SXGraphicsItem.h"
-#include "gui/graphics_items/MaskItem.h"
 #include "gui/graphics_tools/CutLineItem.h"
 #include "gui/graphics_tools/CutSliceItem.h"
 #include "gui/graphics_tools/CutterItem.h"
@@ -118,8 +118,7 @@ void DetectorScene::linkPeakModel(
 {
     // unless specified, link model to first element of _peak_graphics
     if (idx >= _max_peak_collections)
-        throw std::range_error(
-            "DetectorScene::linkPeakModel: _peak_graphics index out of range");
+        throw std::range_error("DetectorScene::linkPeakModel: _peak_graphics index out of range");
 
     _peak_graphics.at(idx)->setPeakModel(source);
     _peak_graphics.at(idx)->setPeakViewWidget(widget);
@@ -206,7 +205,7 @@ void DetectorScene::drawPeakItems()
         }
         if (graphic->detectorSpotsEnabled()) {
             for (auto* peak_graphic : graphic->detectorSpots(_currentFrameIndex))
-              addItem(peak_graphic);
+                addItem(peak_graphic);
         }
     }
     if (_params.directBeam) {
@@ -428,9 +427,9 @@ void DetectorScene::mousePressEvent(QGraphicsSceneMouseEvent* event)
     }
     // The right button was pressed
     else if (event->buttons() & Qt::RightButton) {
-        if (_zoomStack.size() > 1) {// Remove the last zoom area stored in the stack
+        if (_zoomStack.size() > 1) { // Remove the last zoom area stored in the stack
             _zoomStack.pop();
-            if (!_zoomStack.empty()) {// If not root, then update the scene
+            if (!_zoomStack.empty()) { // If not root, then update the scene
                 setSceneRect(_zoomStack.top());
                 emit dataChanged();
             }
@@ -466,24 +465,24 @@ void DetectorScene::mouseDoubleClickEvent(QGraphicsSceneMouseEvent* event)
 
 void DetectorScene::setBoxBounds(QGraphicsRectItem* box)
 {
-      qreal top = box->rect().top();
-      qreal bot = box->rect().bottom();
-      qreal left = box->rect().left();
-      qreal right = box->rect().right();
+    qreal top = box->rect().top();
+    qreal bot = box->rect().bottom();
+    qreal left = box->rect().left();
+    qreal right = box->rect().right();
 
-      // Left click and hold without moving
-      if (qAbs(top - bot) <= 1 || qAbs(left - right) <= 1) {
-          deleteGraphicsItem(box);
-          return;
-      }
+    // Left click and hold without moving
+    if (qAbs(top - bot) <= 1 || qAbs(left - right) <= 1) {
+        deleteGraphicsItem(box);
+        return;
+    }
 
-      if (top > bot)
-          std::swap(top, bot);
+    if (top > bot)
+        std::swap(top, bot);
 
-      if (right < left)
-          std::swap(left, right);
+    if (right < left)
+        std::swap(left, right);
 
-      box->setRect(left, top, right - left, bot - top);
+    box->setRect(left, top, right - left, bot - top);
 }
 
 void DetectorScene::adjustZoomRect(QGraphicsRectItem* box)
@@ -518,12 +517,12 @@ void DetectorScene::deleteGraphicsItem(QGraphicsItem* item)
     }
 }
 
-void DetectorScene::mouseReleaseEvent(QGraphicsSceneMouseEvent * event)
+void DetectorScene::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
 {
     if (!_currentData)
         return;
 
-    if (event->button() & Qt::LeftButton) {// The user released the left mouse button
+    if (event->button() & Qt::LeftButton) { // The user released the left mouse button
         if (event->modifiers() == Qt::ControlModifier)
             return;
 
@@ -597,7 +596,6 @@ void DetectorScene::mouseReleaseEvent(QGraphicsSceneMouseEvent * event)
                     update();
                     updateMasks();
                 }
-
             }
         }
     }
@@ -743,7 +741,8 @@ void DetectorScene::clearIntegrationRegion()
     if (!_currentData)
         return;
     for (auto item : items()) {
-        if (item == _image) continue;
+        if (item == _image)
+            continue;
         if (dynamic_cast<QGraphicsPixmapItem*>(item) != nullptr)
             removeItem(item);
     }
@@ -783,7 +782,7 @@ void DetectorScene::loadMasksFromData()
     clearMasks();
     if (!_params.masks)
         return;
-    for (auto* gmask :_dataset_graphics->maskGraphics())
+    for (auto* gmask : _dataset_graphics->maskGraphics())
         addItem(gmask);
     emit signalMaskChanged();
     update();

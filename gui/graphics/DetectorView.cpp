@@ -22,8 +22,7 @@
 #include <QKeyEvent>
 
 DetectorView::DetectorView(std::size_t max_collections, QWidget* parent)
-    : QGraphicsView(parent)
-    , _scene(new DetectorScene(max_collections, this))
+    : QGraphicsView(parent), _scene(new DetectorScene(max_collections, this))
 {
     setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform);
     setScene(_scene);
