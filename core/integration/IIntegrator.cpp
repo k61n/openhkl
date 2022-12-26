@@ -31,6 +31,9 @@ void IntegrationParameters::log(const Level& level) const
     ohklLog(level, "peak_end               = ", peak_end);
     ohklLog(level, "bkg_begin              = ", bkg_begin);
     ohklLog(level, "bkg_end                = ", bkg_end);
+    ohklLog(level, "fixed_peak_end         = ", fixed_peak_end);
+    ohklLog(level, "fixed_bkg_begin        = ", fixed_bkg_begin);
+    ohklLog(level, "fixed_bkg_end          = ", fixed_bkg_end);
     ohklLog(level, "neighbour_range_pixels = ", neighbour_range_pixels);
     ohklLog(level, "neighbour_range_frames = ", neighbour_range_frames);
     ohklLog(level, "fit_center             = ", fit_center);
@@ -209,6 +212,7 @@ void IIntegrator::setHandler(sptrProgressHandler handler)
 void IIntegrator::setParameters(const IntegrationParameters& params)
 {
     _params = params;
+    ohklLog(Level::Info, "IIntegrator::setParameters");
     _params.log(Level::Info);
 }
 
