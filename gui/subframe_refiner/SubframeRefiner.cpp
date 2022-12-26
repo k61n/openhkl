@@ -227,7 +227,7 @@ void SubframeRefiner::refine()
         auto* refiner = expt->refiner();
         auto* params = refiner->parameters();
 
-        _detector_widget->scene()->showDirectBeam(true);
+        _detector_widget->scene()->params()->directBeam = true;
         auto* detector = data->diffractometer()->detector();
         _old_direct_beam_events = ohkl::algo::getDirectBeamEvents(states, *detector);
 

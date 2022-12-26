@@ -90,6 +90,8 @@ class DetectorWidget : public QGridLayout {
     void enableCursorMode(bool enable);
     //! Toggle between image and image gradient
     void toggleGradient();
+    //! Toggle masks
+    void toggleMasks();
 
  private:
     DetectorView* _detector_view;

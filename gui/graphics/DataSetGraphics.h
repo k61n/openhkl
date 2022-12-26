@@ -33,7 +33,8 @@
 typedef Eigen::Matrix<int, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor> RowMatrix;
 
 class MaskItem;
-class DirectBeamGraphic : public QGraphicsEllipseItem { }; // Make it easier to remove direct beam
+// Make it easier to remove direct beam
+class DirectBeamGraphic : public QGraphicsEllipseItem { };
 
 //! Container for settings and pointers for visualising DataSets
 class DataSetGraphics {

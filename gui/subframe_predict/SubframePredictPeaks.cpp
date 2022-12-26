@@ -573,7 +573,7 @@ void SubframePredictPeaks::runPrediction()
 void SubframePredictPeaks::showDirectBeamEvents()
 {
     if (_direct_beam->isChecked()) {
-        _detector_widget->scene()->showDirectBeam(true);
+        _detector_widget->scene()->params()->directBeam = true;
 
         const auto data = _detector_widget->currentData();
 
@@ -587,7 +587,7 @@ void SubframePredictPeaks::showDirectBeamEvents()
             _direct_beam_events.push_back(event);
 
     } else {
-        _detector_widget->scene()->showDirectBeam(false);
+        _detector_widget->scene()->params()->directBeam = false;
     }
     refreshPeakVisual();
 }

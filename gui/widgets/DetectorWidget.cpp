@@ -316,8 +316,7 @@ void DetectorWidget::setToolbarUp()
 
     connect(_gradient, &QPushButton::clicked, this, &DetectorWidget::toggleGradient);
     connect(
-        _hide_masks, &QPushButton::clicked, _detector_view->getScene(),
-        &DetectorScene::toggleMasks);
+        _hide_masks, &QPushButton::clicked, this, &DetectorWidget::toggleMasks);
     connect(_reset, &QPushButton::clicked, _detector_view->getScene(), [=]() {
         _detector_view->getScene()->resetElements();
         _detector_view->getScene()->loadCurrentImage();
@@ -371,6 +370,12 @@ void DetectorWidget::enableCursorMode(bool enable)
 
 void DetectorWidget::toggleGradient()
 {
-    scene()->setGradient(_gradient->isChecked());
+    scene()->params()->gradient = _gradient->isChecked();
+    scene()->loadCurrentImage();
+}
+
+void DetectorWidget::toggleMasks()
+{
+    scene()->params()->masks = !_hide_masks->isChecked();
     scene()->loadCurrentImage();
 }

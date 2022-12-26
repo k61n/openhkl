@@ -27,9 +27,6 @@ class MaskItem : public SXGraphicsItem {
     //! Get the integer ID
     int id() const { return _id; };
 
-    //! For sorting a vector of MaskItems
-    bool operator<(const MaskItem& other) const { return _id < other._id; };
-
     //! Get the AABB
     virtual ohkl::AABB* getAABB() { return _aabb; };
 

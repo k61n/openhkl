@@ -942,7 +942,7 @@ void SubframeExperiment::showDirectBeamEvents()
     if (!_show_direct_beam)
         return;
 
-    _detector_widget->scene()->showDirectBeam(true);
+    _detector_widget->scene()->params()->directBeam = true;
     auto data_name = _detector_widget->dataCombo()->currentText().toStdString();
     if (data_name.empty()) {
         return;

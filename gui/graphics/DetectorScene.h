@@ -32,7 +32,6 @@
 #include <QStack>
 
 #include <opencv2/core/types.hpp>
-#include <qgraphicsitem.h>
 
 namespace ohkl {
 class UnitCell;
@@ -66,12 +65,6 @@ class DetectorScene : public QGraphicsScene {
     explicit DetectorScene(std::size_t npeakcollections, QObject* parent = 0);
 
     ohkl::sptrDataSet getData() { return _currentData; };
-    //! Toggle logarithmic colour scale
-    void setLogarithmic(bool checked) { _params.logarithmic = checked; };
-    //! Toggle between detector image and its gradient
-    void setGradient(bool checked) { _params.gradient = checked; };
-    //! Toggle drawing the direct beam position
-    void showDirectBeam(bool show) { _params.directBeam = show; };
     //! Get the current frame
     int currentFrame() const { return _currentFrameIndex; }
     //! Get the matrix of current frame data
@@ -150,7 +143,6 @@ class DetectorScene : public QGraphicsScene {
     void updateMasks() { _lastClickedGI = nullptr; }
     void setBeamSetterPos(QPointF pos);
     void onCrosshairChanged(int size, int linewidth);
-    void toggleMasks();
 
  signals:
     void dataChanged();

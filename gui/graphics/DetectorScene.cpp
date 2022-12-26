@@ -48,6 +48,7 @@
 #include <QPixmap>
 #include <QToolTip>
 #include <opencv2/core/types.hpp>
+#include <qgraphicsitem.h>
 
 QPointF DetectorScene::_current_beam_position = {0, 0};
 
@@ -740,6 +741,8 @@ void DetectorScene::drawIntegrationRegion()
 
 void DetectorScene::clearIntegrationRegion()
 {
+    if (!_currentData)
+        return;
     for (auto* region : _integration_regions)
         deleteGraphicsItem(region);
     _integration_regions.clear();
@@ -778,13 +781,6 @@ void DetectorScene::onCrosshairChanged(int size, int linewidth)
     _beam_pos_setter->setLinewidth(linewidth);
 }
 
-void DetectorScene::toggleMasks()
-{
-    _params.masks = !_params.masks;
-    for (auto* gmask : maskItems())
-        gmask->setVisible(_params.masks);
-}
-
 void DetectorScene::setPeak(ohkl::Peak3D* peak)
 {
     _peak = peak;
@@ -796,6 +792,8 @@ void DetectorScene::loadMasksFromData()
     if (!_currentData)
         return;
     clearMasks();
+    if (!_params.masks)
+        return;
     for (auto* gmask :_dataset_graphics->maskGraphics())
         addItem(gmask);
     emit signalMaskChanged();
@@ -809,6 +807,7 @@ QVector<MaskItem*> DetectorScene::maskItems() const
         if (MaskItem* gmask = dynamic_cast<MaskItem*>(item))
             masks.push_back(gmask);
     }
-    std::sort(masks.begin(), masks.end());
+    // sort the vector by address of IMask* object (they are in a vector)
+    std::sort(masks.begin(), masks.end(), [](auto m1, auto m2) { return m1->mask() < m2->mask(); });
     return masks;
 }
