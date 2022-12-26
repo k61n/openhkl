@@ -131,7 +131,6 @@ class DetectorScene : public QGraphicsScene {
 
  public slots:
     void onGradientSetting(int kernel, bool fft);
-    void resetElements();
     void setMaxIntensity(int);
     void slotChangeSelectedData(ohkl::sptrDataSet data, int frame_1based);
     void slotChangeSelectedFrame(int frame_1based);

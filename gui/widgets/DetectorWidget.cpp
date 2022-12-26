@@ -256,7 +256,6 @@ void DetectorWidget::setToolbarUp()
 
     _gradient = new QPushButton;
     _hide_masks = new QPushButton;
-    _reset = new QPushButton;
     _copy_to_clipboard = new QPushButton;
     _save_to_file = new QPushButton;
     _zoom = new QPushButton;
@@ -283,7 +282,6 @@ void DetectorWidget::setToolbarUp()
 
     layout->addWidget(_gradient);
     layout->addWidget(_hide_masks);
-    layout->addWidget(_reset);
     layout->addWidget(_copy_to_clipboard);
     layout->addWidget(_save_to_file);
     layout->addWidget(_zoom);
@@ -300,7 +298,6 @@ void DetectorWidget::setToolbarUp()
 
     _gradient->setIcon(QIcon(path + "gradient.svg"));
     _hide_masks->setIcon(QIcon(path + "hide.svg"));
-    _reset->setIcon(QIcon(path + "reset.svg"));
     _copy_to_clipboard->setIcon(QIcon(path + "copy.svg"));
     _save_to_file->setIcon(QIcon(path + "save.svg"));
     _zoom->setIcon(QIcon(path + "zoom.svg"));
@@ -308,7 +305,6 @@ void DetectorWidget::setToolbarUp()
 
     _gradient->setToolTip("Toggle magnitude of gradient of image");
     _hide_masks->setToolTip("Show/hide detector masks");
-    _reset->setToolTip("Reset detector image");
     _copy_to_clipboard->setToolTip("Copy visible detector image to clipboard");
     _save_to_file->setToolTip("Save visible detector image to file");
     _zoom->setToolTip("Enable zoom cursor on detector image");
@@ -317,10 +313,6 @@ void DetectorWidget::setToolbarUp()
     connect(_gradient, &QPushButton::clicked, this, &DetectorWidget::toggleGradient);
     connect(
         _hide_masks, &QPushButton::clicked, this, &DetectorWidget::toggleMasks);
-    connect(_reset, &QPushButton::clicked, _detector_view->getScene(), [=]() {
-        _detector_view->getScene()->resetElements();
-        _detector_view->getScene()->loadCurrentImage();
-    });
     connect(_copy_to_clipboard, &QPushButton::clicked, this, [=]() {
         QPixmap pixMap = _detector_view->grab();
         QApplication::clipboard()->setImage(pixMap.toImage(), QClipboard::Clipboard);

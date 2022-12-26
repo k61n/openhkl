@@ -759,18 +759,6 @@ void DetectorScene::clearMasks()
             removeItem(item);
 }
 
-void DetectorScene::resetElements()
-{
-    _params.masks = false;
-    clearPeakItems();
-    clear();
-    _zoomrect = nullptr;
-    _image = nullptr;
-    clearIntegrationRegion();
-    _lastClickedGI = nullptr;
-    loadMasksFromData();
-}
-
 void DetectorScene::setBeamSetterPos(QPointF pos)
 {
     _current_beam_position = pos;
