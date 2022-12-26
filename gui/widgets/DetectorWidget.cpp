@@ -256,6 +256,7 @@ void DetectorWidget::setToolbarUp()
 
     _gradient = new QPushButton;
     _hide_masks = new QPushButton;
+    _peak_labels = new QPushButton;
     _copy_to_clipboard = new QPushButton;
     _save_to_file = new QPushButton;
     _zoom = new QPushButton;
@@ -274,6 +275,9 @@ void DetectorWidget::setToolbarUp()
     _hide_masks->setCheckable(true);
     _hide_masks->setChecked(true);
 
+    _peak_labels->setCheckable(true);
+    _peak_labels->setChecked(false);
+
     _zoom->setCheckable(true);
     _zoom->setChecked(true);
 
@@ -282,6 +286,8 @@ void DetectorWidget::setToolbarUp()
 
     layout->addWidget(_gradient);
     layout->addWidget(_hide_masks);
+    layout->addWidget(_peak_labels);
+    layout->addSpacing(30);
     layout->addWidget(_copy_to_clipboard);
     layout->addWidget(_save_to_file);
     layout->addWidget(_zoom);
@@ -298,6 +304,7 @@ void DetectorWidget::setToolbarUp()
 
     _gradient->setIcon(QIcon(path + "gradient.svg"));
     _hide_masks->setIcon(QIcon(path + "hide.svg"));
+    _peak_labels->setIcon(QIcon(path + "layers.svg"));
     _copy_to_clipboard->setIcon(QIcon(path + "copy.svg"));
     _save_to_file->setIcon(QIcon(path + "save.svg"));
     _zoom->setIcon(QIcon(path + "zoom.svg"));
@@ -305,13 +312,15 @@ void DetectorWidget::setToolbarUp()
 
     _gradient->setToolTip("Toggle magnitude of gradient of image");
     _hide_masks->setToolTip("Show/hide detector masks");
-    _copy_to_clipboard->setToolTip("Copy visible detector image to clipboard");
+    _peak_labels->setToolTip("Show/hide Miller index labels");
+        _copy_to_clipboard->setToolTip("Copy visible detector image to clipboard");
     _save_to_file->setToolTip("Save visible detector image to file");
     _zoom->setToolTip("Enable zoom cursor on detector image");
     _select->setToolTip("Enable rectangle select cursor on detector image");
 
     connect(_gradient, &QPushButton::clicked, this, &DetectorWidget::toggleGradient);
     connect(_hide_masks, &QPushButton::clicked, this, &DetectorWidget::toggleMasks);
+    connect(_peak_labels, &QPushButton::clicked, this, &DetectorWidget::toggleLabels);
     connect(_copy_to_clipboard, &QPushButton::clicked, this, [=]() {
         QPixmap pixMap = _detector_view->grab();
         QApplication::clipboard()->setImage(pixMap.toImage(), QClipboard::Clipboard);
@@ -369,4 +378,10 @@ void DetectorWidget::toggleMasks()
 {
     scene()->params()->masks = !_hide_masks->isChecked();
     scene()->loadCurrentImage();
+}
+
+void DetectorWidget::toggleLabels()
+{
+    scene()->params()->labels = _peak_labels->isChecked();
+    scene()->drawPeakItems();
 }

@@ -18,7 +18,6 @@
 #include "core/loader/XFileHandler.h"
 #include "core/peak/IntegrationRegion.h"
 #include "core/peak/Peak3D.h"
-#include "gui/graphics/DetectorScene.h"
 #include "gui/graphics_items/PeakCenterGraphic.h"
 #include "gui/graphics_items/PeakItemGraphic.h"
 #include "gui/items/PeakCollectionItem.h"
@@ -31,24 +30,17 @@
 
 #include <vector>
 
-PeakCollectionGraphics::PeakCollectionGraphics()
-    : _peaks_enabled(true)
-    , _int_regions_enabled(false)
-    , _ext_peaks_enabled(false)
-    , _detector_spots_enabled(false)
-    , _params()
+using EventType = ohkl::IntegrationRegion::EventType;
+
+PeakCollectionGraphics::PeakCollectionGraphics(DetectorSceneParams* params)
+    : _params(params)
+    , _int_params()
     , _peak_model(nullptr)
     , _peak_view_widget(nullptr)
     , _visual_type(VisualisationType::Enabled)
     , _peakPxColor(QColor(255, 255, 0, 128)) // yellow, alpha = 0.5
     , _bkgPxColor(QColor(0, 255, 0, 128)) // green, alpha = 0.5
 {
-}
-
-PeakCollectionGraphics::PeakCollectionGraphics(PeakCollectionModel* model)
-    : PeakCollectionGraphics()
-{
-    _peak_model = model;
 }
 
 void PeakCollectionGraphics::initIntRegionFromPeakWidget()
@@ -58,17 +50,17 @@ void PeakCollectionGraphics::initIntRegionFromPeakWidget()
 
     auto set = _peak_view_widget->set1;
     _preview_int_regions = set.previewIntRegion->isChecked();
-    _params.region_type = static_cast<ohkl::RegionType>(set.regionType->currentIndex());
-    if (_params.region_type == ohkl::RegionType::VariableEllipsoid) {
-        _params.peak_end = set.peakEnd->value();
-        _params.bkg_begin = set.bkgBegin->value();
-        _params.bkg_end = set.bkgEnd->value();
+    _int_params.region_type = static_cast<ohkl::RegionType>(set.regionType->currentIndex());
+    if (_int_params.region_type == ohkl::RegionType::VariableEllipsoid) {
+        _int_params.peak_end = set.peakEnd->value();
+        _int_params.bkg_begin = set.bkgBegin->value();
+        _int_params.bkg_end = set.bkgEnd->value();
     } else {
-        _params.fixed_peak_end = set.peakEnd->value();
-        _params.fixed_bkg_begin = set.bkgBegin->value();
-        _params.fixed_bkg_end = set.bkgEnd->value();
+        _int_params.fixed_peak_end = set.peakEnd->value();
+        _int_params.fixed_bkg_begin = set.bkgBegin->value();
+        _int_params.fixed_bkg_end = set.bkgEnd->value();
     }
-    _int_regions_enabled = set.drawIntegrationRegion->isChecked();
+    _params->integrationRegion = set.drawIntegrationRegion->isChecked();
     _peakPxColor = set.colorIntPeak->color();
     _bkgPxColor = set.colorIntBkg->color();
     _peakPxColor.setAlphaF(set.alphaIntegrationRegion->value());
@@ -102,6 +94,7 @@ QVector<PeakItemGraphic*> PeakCollectionGraphics::peakItemGraphics(std::size_t f
 
         PeakItemGraphic* peak_graphic = peak_item->peakGraphic();
         peak_graphic->setCenter(frame_idx);
+        peak_graphic->showLabel(_params->labels);
         peak_graphic->initFromPeakViewWidget(
             visualType(peak_item->peak()) ? _peak_view_widget->set1 : _peak_view_widget->set2);
         graphics.push_back(peak_graphic);
@@ -155,21 +148,21 @@ void PeakCollectionGraphics::getIntegrationMask(Eigen::MatrixXi& mask, std::size
         ohkl::Peak3D* peak = peak_item->peak();
         double peak_end, bkg_begin, bkg_end;
         if (_preview_int_regions) {
-            if (_params.region_type == ohkl::RegionType::VariableEllipsoid) {
-                peak_end = _params.peak_end;
-                bkg_begin = _params.bkg_begin;
-                bkg_end = _params.bkg_end;
+            if (_int_params.region_type == ohkl::RegionType::VariableEllipsoid) {
+                peak_end = _int_params.peak_end;
+                bkg_begin = _int_params.bkg_begin;
+                bkg_end = _int_params.bkg_end;
             } else {
-                peak_end = _params.fixed_peak_end;
-                bkg_begin = _params.fixed_bkg_begin;
-                bkg_end = _params.fixed_bkg_end;
+                peak_end = _int_params.fixed_peak_end;
+                bkg_begin = _int_params.fixed_bkg_begin;
+                bkg_end = _int_params.fixed_bkg_end;
             }
         } else {
             peak_end = peak_item->peak()->peakEnd();
             bkg_begin = peak_item->peak()->bkgBegin();
             bkg_end = peak_item->peak()->bkgEnd();
         }
-        ohkl::IntegrationRegion region(peak, peak_end, bkg_begin, bkg_end, _params.region_type);
+        ohkl::IntegrationRegion region(peak, peak_end, bkg_begin, bkg_end, _int_params.region_type);
         if (region.isValid())
             region.updateMask(mask, frame_idx);
     }
@@ -184,14 +177,14 @@ void PeakCollectionGraphics::getSinglePeakIntegrationMask(
     double peak_end, bkg_begin, bkg_end;
     if (_preview_int_regions) {
         if (_preview_int_regions) {
-            if (_params.region_type == ohkl::RegionType::VariableEllipsoid) {
-                peak_end = _params.peak_end;
-                bkg_begin = _params.bkg_begin;
-                bkg_end = _params.bkg_end;
+            if (_int_params.region_type == ohkl::RegionType::VariableEllipsoid) {
+                peak_end = _int_params.peak_end;
+                bkg_begin = _int_params.bkg_begin;
+                bkg_end = _int_params.bkg_end;
             } else {
-                peak_end = _params.fixed_peak_end;
-                bkg_begin = _params.fixed_bkg_begin;
-                bkg_end = _params.fixed_bkg_end;
+                peak_end = _int_params.fixed_peak_end;
+                bkg_begin = _int_params.fixed_bkg_begin;
+                bkg_end = _int_params.fixed_bkg_end;
             }
         } else {
             peak_end = peak->peakEnd();
@@ -199,7 +192,7 @@ void PeakCollectionGraphics::getSinglePeakIntegrationMask(
             bkg_end = peak->bkgEnd();
         }
 
-        ohkl::IntegrationRegion region(peak, peak_end, bkg_begin, bkg_end, _params.region_type);
+        ohkl::IntegrationRegion region(peak, peak_end, bkg_begin, bkg_end, _int_params.region_type);
         if (region.isValid())
             region.updateMask(mask, frame_idx);
     }
@@ -222,7 +215,7 @@ bool PeakCollectionGraphics::visualType(ohkl::Peak3D* peak)
 
 QImage* PeakCollectionGraphics::getIntegrationRegionImage(std::size_t frame_idx, ohkl::Peak3D* peak)
 {
-    if (!_int_regions_enabled)
+    if (!_params->integrationRegion)
         return nullptr;
 
     ohkl::sptrDataSet data = _peak_model->dataSet();

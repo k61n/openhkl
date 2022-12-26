@@ -30,8 +30,10 @@ struct DetectorSceneParams {
     bool singlePeakIntRegion = false;
     bool filteredImage = false;
     bool directBeam = false;
+    bool peaks = true;
     bool extPeaks = false;
     bool detectorSpots = false;
+    bool labels = false;
     bool masks = true;
 
     // values

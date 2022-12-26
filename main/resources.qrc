@@ -14,6 +14,7 @@
         <file>images/icons/lighttheme/select.svg</file>
         <file>images/icons/lighttheme/gradient.svg</file>
         <file>images/icons/lighttheme/search.svg</file>
+        <file>images/icons/lighttheme/layers.svg</file>
         <file>images/icons/darktheme/save.svg</file>
         <file>images/icons/darktheme/load.svg</file>
         <file>images/icons/darktheme/copy.svg</file>
@@ -28,6 +29,7 @@
         <file>images/icons/darktheme/select.svg</file>
         <file>images/icons/darktheme/gradient.svg</file>
         <file>images/icons/darktheme/search.svg</file>
+        <file>images/icons/darktheme/layers.svg</file>
         <file>images/sidebar/lighttheme/home.svg</file>
         <file>images/sidebar/lighttheme/experiment.svg</file>
         <file>images/sidebar/lighttheme/finder.svg</file>
