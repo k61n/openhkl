@@ -102,8 +102,7 @@ SubframeAutoIndexer::SubframeAutoIndexer()
         _detector_widget->dataCombo(), QOverload<int>::of(&QComboBox::currentIndexChanged),
         _data_combo, &QComboBox::setCurrentIndex);
 
-    _detector_widget->scene()->linkDirectBeamPositions(&_direct_beam_events);
-    _detector_widget->scene()->linkOldDirectBeamPositions(&_old_direct_beam_events);
+    _detector_widget->scene()->linkDirectBeam(&_direct_beam_events, &_old_direct_beam_events);
 
     tables_tab->setLayout(_solution_layout);
     detector_tab->setLayout(_detector_widget);

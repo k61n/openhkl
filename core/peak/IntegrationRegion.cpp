@@ -50,8 +50,7 @@ IntegrationRegion::IntegrationRegion(
                 peak->setRejectionFlag(RejectionFlag::InvalidRegion);
                 peak->setSelected(false);
             }
-            _pixelRadius = peak_end;
-            _peakEnd = 1.0;
+            _peakEnd = peak_end;
             _fixed = true;
             break;
         }

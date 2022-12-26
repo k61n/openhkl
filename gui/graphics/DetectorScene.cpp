@@ -17,6 +17,7 @@
 #include "base/geometry/AABB.h"
 #include "base/mask/BoxMask.h"
 #include "base/mask/EllipseMask.h"
+#include "core/detector/DetectorEvent.h"
 #include "core/loader/XFileHandler.h"
 #include "core/peak/Peak3D.h"
 #include "gui/MainWin.h"
@@ -162,14 +163,11 @@ void DetectorScene::linkPerFrameSpots(
     drawPeakItems();
 }
 
-void DetectorScene::linkDirectBeamPositions(std::vector<ohkl::DetectorEvent>* events)
+void DetectorScene::linkDirectBeam(
+    std::vector<ohkl::DetectorEvent>* beam, std::vector<ohkl::DetectorEvent>* old)
 {
-    _dataset_graphics->setBeam(events);
-}
-
-void DetectorScene::linkOldDirectBeamPositions(std::vector<ohkl::DetectorEvent>* events)
-{
-    _dataset_graphics->setOldBeam(events);
+    _dataset_graphics->setBeam(beam);
+    _dataset_graphics->setOldBeam(old);
 }
 
 void DetectorScene::peakModelDataChanged()

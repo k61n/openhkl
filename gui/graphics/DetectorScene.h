@@ -95,10 +95,9 @@ class DetectorScene : public QGraphicsScene {
     void link3rdPartyPeaks(ohkl::PeakCenterDataSet* pcd, std::size_t idx);
     //! Link data for keypoints found via OpenCV
     void linkPerFrameSpots(std::vector<std::vector<cv::KeyPoint>>* points, std::size_t idx);
-    //! Set direct beam positions
-    void linkDirectBeamPositions(std::vector<ohkl::DetectorEvent>* events);
-    //! Set unrefined direct beam positions
-    void linkOldDirectBeamPositions(std::vector<ohkl::DetectorEvent>* events);
+    //! Set refined and unrefined beam positions
+    void linkDirectBeam(
+        std::vector<ohkl::DetectorEvent>* beam, std::vector<ohkl::DetectorEvent>* old);
     //! Refresh the model data
     void peakModelDataChanged();
     //! Draw the peaks

@@ -248,8 +248,7 @@ void SubframeExperiment::setAdjustBeamUp()
         _crosshair_linewidth, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged), this,
         &SubframeExperiment::changeCrosshair);
 
-    _detector_widget->scene()->linkDirectBeamPositions(&_direct_beam_events);
-    _detector_widget->scene()->linkOldDirectBeamPositions(&_old_direct_beam_events);
+    _detector_widget->scene()->linkDirectBeam(&_direct_beam_events, &_old_direct_beam_events);
 
     _strategy_layout->addWidget(_set_initial_ki);
 }

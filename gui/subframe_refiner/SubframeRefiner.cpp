@@ -230,7 +230,6 @@ void SubframeRefiner::refine()
         _detector_widget->scene()->showDirectBeam(true);
         auto* detector = data->diffractometer()->detector();
         _old_direct_beam_events = ohkl::algo::getDirectBeamEvents(states, *detector);
-        _detector_widget->scene()->linkOldDirectBeamPositions(&_old_direct_beam_events);
 
         setRefinerParameters();
 
@@ -257,7 +256,7 @@ void SubframeRefiner::refine()
 
         states = data->instrumentStates();
         _direct_beam_events = ohkl::algo::getDirectBeamEvents(states, *detector);
-        _detector_widget->scene()->linkDirectBeamPositions(&_direct_beam_events);
+        _detector_widget->scene()->linkDirectBeam(&_direct_beam_events, &_old_direct_beam_events);
         _detector_widget->refresh();
         gSession->onUnitCellChanged();
         _cell_combo->refresh();

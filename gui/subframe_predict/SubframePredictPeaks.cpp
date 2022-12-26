@@ -97,8 +97,7 @@ SubframePredictPeaks::SubframePredictPeaks()
         this, &SubframePredictPeaks::crosshairChanged, _detector_widget->scene(),
         &DetectorScene::onCrosshairChanged);
 
-    _detector_widget->scene()->linkDirectBeamPositions(&_direct_beam_events);
-    _detector_widget->scene()->linkOldDirectBeamPositions(&_old_direct_beam_events);
+    _detector_widget->scene()->linkDirectBeam(&_direct_beam_events, &_old_direct_beam_events);
 
     _right_element->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 

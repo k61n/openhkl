@@ -84,7 +84,6 @@ class IntegrationRegion {
     PeakData _data;
     ConvexHull _hull;
     bool _fixed;
-    double _pixelRadius;
     RegionType _regionType;
     Peak3D* _peak;
     RegionData _region_data;
