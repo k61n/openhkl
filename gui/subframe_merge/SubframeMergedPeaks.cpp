@@ -81,6 +81,7 @@ SubframeMergedPeaks::SubframeMergedPeaks()
     setDShellUp();
     setMergedUp();
     setUnmergedUp();
+    toggleUnsafeWidgets();
 
     _main_tab_widget->addTab(_shell_tab, "Resolution shell statistics");
     _main_tab_widget->addTab(_merged_tab, "Merged peaks");

@@ -669,32 +669,18 @@ void SubframeAutoIndexer::acceptSolution()
 
 void SubframeAutoIndexer::toggleUnsafeWidgets()
 {
-    _solve_button->setEnabled(true);
-    _save_button->setEnabled(true);
-    if (!gSession->hasProject() || !gSession->currentProject()->hasPeakCollection()
-        || !gSession->currentProject()->hasDataSet()) {
-        _solve_button->setEnabled(false);
-        _save_button->setEnabled(false);
-    }
-    if (_peak_collection_model.rowCount() == 0 || _solutions.empty())
-        _save_button->setEnabled(false);
-
-    // select a solution before accepting it
-    if (_solution_table->currentIndex().row() == -1) {
-        _save_button->setEnabled(false);
-    } else {
-        _save_button->setEnabled(true);
-    }
+    _solve_button->setEnabled(false);
+    _save_button->setEnabled(false);
 
     if (!gSession->hasProject())
         return;
 
-    std::string current_pc = _peak_combo->currentText().toStdString();
-    if (current_pc.size() == 0)
-        return;
-    auto pc = gSession->currentProject()->experiment()->getPeakCollection(current_pc);
+    _solve_button->setEnabled(gSession->currentProject()->hasPeakCollection());
 
-    _solve_button->setEnabled(pc->isIntegrated());
+    // select a solution before accepting it
+    if (_solution_table->currentIndex().row() == -1 && !_solutions.empty() &&
+        _peak_combo->currentPeakCollection()->isIndexed())
+        _save_button->setEnabled(true);
 }
 
 void SubframeAutoIndexer::onBeamPosChanged(QPointF pos)

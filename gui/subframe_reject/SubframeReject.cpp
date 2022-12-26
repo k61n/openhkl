@@ -65,6 +65,7 @@ SubframeReject::SubframeReject() : QWidget()
     setFigureUp();
     setPeakTableUp();
     setPlotUp();
+    toggleUnsafeWidgets();
 
     _right_element->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
@@ -285,50 +286,57 @@ void SubframeReject::changeSelected(PeakItemGraphic* peak_graphic)
 
 void SubframeReject::toggleUnsafeWidgets()
 {
-    bool hasPeaks = false;
-    if (gSession->hasProject())
-        hasPeaks = gSession->currentProject()->hasPeakCollection();
+    _plot_histogram->setEnabled(false);
+    _reject_outliers->setEnabled(false);
 
-    if (hasPeaks)
-        if (!_peak_combo->currentPeakCollection()->isIndexed())
-            hasPeaks = false;
+    if (!gSession->hasProject())
+        return;
 
-    _find_h->setEnabled(hasPeaks);
-    _find_k->setEnabled(hasPeaks);
-    _find_l->setEnabled(hasPeaks);
-    _find_by_index->setEnabled(hasPeaks);
+    if (!gSession->currentProject()->hasPeakCollection())
+        return;
 
-    if (hasPeaks) {
-        int h_max = 0;
-        int k_max = 0;
-        int l_max = 0;
-        int h_min = 0;
-        int k_min = 0;
-        int l_min = 0;
-        for (ohkl::Peak3D* peak : _peak_combo->currentPeakCollection()->getPeakList()) {
-            int h = peak->hkl().h();
-            int k = peak->hkl().k();
-            int l = peak->hkl().l();
-            if (h < h_min)
-                h_min = h;
-            if (h > h_max)
-                h_max = h;
-            if (k < k_min)
-                k_min = k;
-            if (k > k_max)
-                k_max = k;
-            if (l < l_min)
-                l_min = l;
-            if (l > l_max)
-                l_max = l;
-        }
-        _find_h->setMaximum(h_max);
-        _find_h->setMinimum(h_min);
-        _find_k->setMaximum(k_max);
-        _find_k->setMinimum(k_min);
-        _find_l->setMaximum(l_max);
-        _find_l->setMinimum(l_min);
+    bool ready = _peak_combo->currentPeakCollection()->isIndexed() &&
+        _peak_combo->currentPeakCollection()->isIntegrated();
+
+    _find_h->setEnabled(ready);
+    _find_k->setEnabled(ready);
+    _find_l->setEnabled(ready);
+    _find_by_index->setEnabled(ready);
+    _plot_histogram->setEnabled(ready);
+    _reject_outliers->setEnabled(ready);
+
+    if (!ready)
+        return;
+
+    int h_max = 0;
+    int k_max = 0;
+    int l_max = 0;
+    int h_min = 0;
+    int k_min = 0;
+    int l_min = 0;
+    for (ohkl::Peak3D* peak : _peak_combo->currentPeakCollection()->getPeakList()) {
+        int h = peak->hkl().h();
+        int k = peak->hkl().k();
+        int l = peak->hkl().l();
+        if (h < h_min)
+            h_min = h;
+        if (h > h_max)
+            h_max = h;
+        if (k < k_min)
+            k_min = k;
+        if (k > k_max)
+            k_max = k;
+        if (l < l_min)
+            l_min = l;
+        if (l > l_max)
+            l_max = l;
     }
+    _find_h->setMaximum(h_max);
+    _find_h->setMinimum(h_min);
+    _find_k->setMaximum(k_max);
+    _find_k->setMinimum(k_min);
+    _find_l->setMaximum(l_max);
+    _find_l->setMinimum(l_min);
 }
 
 void SubframeReject::findByIndex()

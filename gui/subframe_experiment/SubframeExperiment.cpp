@@ -679,6 +679,10 @@ DetectorWidget* SubframeExperiment::detectorWidget()
 
 void SubframeExperiment::toggleUnsafeWidgets()
 {
+    _find_peaks_2d->setEnabled(false);
+    _index_button->setEnabled(false);
+    _save_button->setEnabled(false);
+
     _calc_intensity->setEnabled(false);
     _yLog->setEnabled(false);
     _yZoom->setEnabled(false);
@@ -689,6 +693,8 @@ void SubframeExperiment::toggleUnsafeWidgets()
     _maxY->setEnabled(false);
     _update_plot->setEnabled(false);
     _totalHistogram->setEnabled(false);
+
+    _mask_box->setEnabled(false);
     _import_masks->setEnabled(false);
     _export_masks->setEnabled(false);
     _delete_masks->setEnabled(false);
@@ -696,6 +702,10 @@ void SubframeExperiment::toggleUnsafeWidgets()
 
     if (!gSession->hasProject())
         return;
+
+    _find_peaks_2d->setEnabled(gSession->currentProject()->hasDataSet());
+    _index_button->setEnabled(gSession->currentProject()->hasDataSet());
+    _save_button->setEnabled(gSession->currentProject()->hasDataSet());
 
     _calc_intensity->setEnabled(gSession->currentProject()->hasDataSet());
 
@@ -723,6 +733,7 @@ void SubframeExperiment::toggleUnsafeWidgets()
         }
     }
 
+    _mask_box->setEnabled(gSession->currentProject()->hasDataSet());
     _import_masks->setEnabled(gSession->currentProject()->hasDataSet());
     _export_masks->setEnabled(gSession->currentProject()->hasDataSet());
     _delete_masks->setEnabled(hasSelectedMasks);

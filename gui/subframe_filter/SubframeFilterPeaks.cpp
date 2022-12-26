@@ -72,6 +72,7 @@ SubframeFilterPeaks::SubframeFilterPeaks()
     setProceedUp();
     setFigureUp();
     setPeakTableUp();
+    toggleUnsafeWidgets();
 
     _right_element->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
@@ -509,14 +510,14 @@ void SubframeFilterPeaks::changeSelected(PeakItemGraphic* peak_graphic)
 
 void SubframeFilterPeaks::toggleUnsafeWidgets()
 {
-    _filter_button->setEnabled(true);
-    _save_button->setEnabled(true);
+    _filter_button->setEnabled(false);
+    _save_button->setEnabled(false);
+
     if (!gSession->hasProject())
         return;
-    if (!gSession->currentProject()->hasPeakCollection()) {
-        _filter_button->setEnabled(false);
-        _save_button->setEnabled(false);
-    }
+
+    _filter_button->setEnabled(gSession->currentProject()->hasPeakCollection());
+    _save_button->setEnabled(gSession->currentProject()->hasPeakCollection());
 }
 
 DetectorWidget* SubframeFilterPeaks::detectorWidget()

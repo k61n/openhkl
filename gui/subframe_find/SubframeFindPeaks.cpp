@@ -73,6 +73,7 @@ SubframeFindPeaks::SubframeFindPeaks()
     setFigureUp();
     setPeakTableUp();
     updateConvolutionParameters();
+    toggleUnsafeWidgets();
 
     _right_element->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
@@ -607,19 +608,23 @@ void SubframeFindPeaks::changeSelected(PeakItemGraphic* peak_graphic)
 
 void SubframeFindPeaks::toggleUnsafeWidgets()
 {
-    _find_button->setEnabled(true);
-    _integrate_button->setEnabled(true);
-    _save_button->setEnabled(true);
+    _find_button->setEnabled(false);
+    _integrate_button->setEnabled(false);
+    _save_button->setEnabled(false);
     _save_button->setToolTip("");
-    if (!gSession->hasProject() || !gSession->currentProject()->hasDataSet()) {
-        _find_button->setEnabled(false);
-        _integrate_button->setEnabled(false);
-        _save_button->setEnabled(false);
-    }
-    if (!_peaks_integrated) {
-        _save_button->setEnabled(false);
+
+    if (!gSession->hasProject())
+        return;
+
+    auto* expt = gSession->currentProject()->experiment();
+    auto* finder = expt->peakFinder();
+
+    _find_button->setEnabled(gSession->currentProject()->hasDataSet());
+    _integrate_button->setEnabled(finder->foundPeaks());
+    _save_button->setEnabled(_peaks_integrated);
+
+    if (!_peaks_integrated)
         _save_button->setToolTip("Peaks must be integrated in order to create a peak collection");
-    }
 }
 
 DetectorWidget* SubframeFindPeaks::detectorWidget()
