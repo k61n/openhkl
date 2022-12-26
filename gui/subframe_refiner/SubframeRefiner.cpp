@@ -89,6 +89,7 @@ SubframeRefiner::SubframeRefiner()
     setPeakViewWidgetUp(_peak_view_widget_1, "View refined_peaks");
     setPeakViewWidgetUp(_peak_view_widget_2, "View unrefined_peaks");
     refreshAll();
+    toggleUnsafeWidgets();
 
     _detector_widget = new DetectorWidget(2, false, true);
     _detector_widget->linkPeakModel(&_unrefined_model, _peak_view_widget_1, 0);
@@ -493,35 +494,22 @@ QList<PlotCheckBox*> SubframeRefiner::plotCheckBoxes() const
 
 void SubframeRefiner::toggleUnsafeWidgets()
 {
-    _refine_button->setEnabled(true);
+    _refine_button->setEnabled(false);
     _update_button->setEnabled(false);
-    _cell_combo->setEnabled(true);
+    _cell_combo->setEnabled(false);
 
     if (!gSession->hasProject())
         return;
 
-    if (!(_predicted_combo->count() == 0))
-        _update_button->setEnabled(true);
-
-    if (_batch_cell_check->isChecked())
-        _cell_combo->setEnabled(false);
-
-    if (!gSession->currentProject()->hasDataSet()
-        || !gSession->currentProject()->hasPeakCollection()) {
-        _refine_button->setEnabled(false);
-        _update_button->setEnabled(false);
-    }
-    if (!_refine_success)
-        _update_button->setEnabled(false);
-
-    ohkl::PeakCollection* pc = nullptr;
-    std::string current_pc = _peak_combo->currentText().toStdString();
-    if (current_pc.size() == 0)
+    if (!gSession->currentProject()->hasPeakCollection())
         return;
-    pc = _peak_combo->currentPeakCollection();
 
-    if (!pc->isIndexed()) {
-        _refine_button->setEnabled(false);
-        _update_button->setEnabled(false);
-    }
+    _update_button->setEnabled(_predicted_combo->count() > 0);
+    _update_button->setEnabled(_peak_combo->currentPeakCollection()->isIndexed());
+    _update_button->setEnabled(_refine_success);
+
+    _cell_combo->setEnabled(!_batch_cell_check->isChecked());
+
+    _refine_button->setEnabled(gSession->currentProject()->hasPeakCollection());
+    _refine_button->setEnabled(_peak_combo->currentPeakCollection()->isIndexed());
 }

@@ -85,6 +85,9 @@ class PeakFinder {
     //! Get the number of peaks found
     unsigned int numberFound();
 
+    //! Have we found peaks?
+    bool foundPeaks() const { return !_current_peaks.empty(); };
+
     //! Return integrated state
     bool isIntegrated() { return _integrated; };
 

@@ -61,6 +61,7 @@ SubframeShapes::SubframeShapes() : QWidget(), _preview_peak(nullptr)
     setFigureUp();
     setShapePreviewUp();
     setPeakTableUp();
+    toggleUnsafeWidgets();
 
     _right_element->setSizes(QList<int>({200, 100, 100}));
     _right_element->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
@@ -601,8 +602,7 @@ void SubframeShapes::toggleUnsafeWidgets()
     if (!gSession->hasProject())
         return;
 
-    if (gSession->currentProject()->hasPeakCollection())
-        _build_collection->setEnabled(true);
+    _build_collection->setEnabled(gSession->currentProject()->hasPeakCollection());
 
     if (_shape_model.numberOfPeaks() > 0) {
         _save_shapes->setEnabled(true);

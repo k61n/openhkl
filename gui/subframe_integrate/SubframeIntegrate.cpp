@@ -60,6 +60,7 @@ SubframeIntegrate::SubframeIntegrate() : QWidget()
     setPreviewUp();
     setFigureUp();
     setPeakTableUp();
+    toggleUnsafeWidgets();
 
     _right_element->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
@@ -544,35 +545,24 @@ void SubframeIntegrate::changeSelected(PeakItemGraphic* peak_graphic)
 
 void SubframeIntegrate::toggleUnsafeWidgets()
 {
-    _radius_int->setEnabled(true);
-    _n_frames_int->setEnabled(true);
-    _min_neighbours->setEnabled(true);
-    _interpolation_combo->setEnabled(true);
-    _remove_overlaps->setEnabled(true);
-    _integrate_button->setEnabled(true);
+    _integrate_button->setEnabled(false);
+    _remove_overlaps->setEnabled(false);
 
     if (!gSession->hasProject())
         return;
 
-    if (!gSession->currentProject()->hasDataSet()
-        || !gSession->currentProject()->hasPeakCollection()) {
-        _integrate_button->setEnabled(false);
-        _remove_overlaps->setEnabled(false);
-    }
+    if (!gSession->currentProject()->hasDataSet())
+        return;
 
-    if (_peak_combo->count() == 0) {
-        _integrate_button->setEnabled(false);
-        _remove_overlaps->setEnabled(false);
-    }
+    if (!gSession->currentProject()->hasPeakCollection())
+        return;
 
-    if (_integrator_strings.find(_integrator_combo->currentText().toStdString())->second
-        == ohkl::IntegratorType::PixelSum) {
+    _remove_overlaps->setEnabled(true);
+
+    if (_integrator_combo->currentIndex() == 0)
         _integrate_button->setEnabled(true);
-        _interpolation_combo->setEnabled(false);
-        _radius_int->setEnabled(false);
-        _n_frames_int->setEnabled(false);
-        _min_neighbours->setEnabled(false);
-    }
+    else
+        _integrate_button->setEnabled(gSession->currentProject()->hasShapeModel());
 }
 
 

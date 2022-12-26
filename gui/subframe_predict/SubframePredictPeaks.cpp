@@ -86,6 +86,7 @@ SubframePredictPeaks::SubframePredictPeaks()
     setSaveUp();
     setFigureUp();
     setPeakTableUp();
+    toggleUnsafeWidgets();
 
     connect(
         _detector_widget->scene(), &DetectorScene::beamPosChanged, this,
@@ -693,16 +694,9 @@ void SubframePredictPeaks::toggleUnsafeWidgets()
             _refine_ki_button->setEnabled(true);
     }
 
-    if (gSession->currentProject()->hasUnitCell())
-        _predict_button->setEnabled(true);
-
-    if (_peaks_predicted) {
-        _apply_shape_model->setEnabled(true);
-        _save_button->setEnabled(true);
-    }
-
-    // if (!_shapes_assigned) // TODO: reenable later
-    //     _save_button->setEnabled(false);
+    _predict_button->setEnabled(gSession->currentProject()->hasUnitCell());
+    _apply_shape_model->setEnabled(_peaks_predicted);
+    _save_button->setEnabled(_peaks_predicted);
 }
 
 DetectorWidget* SubframePredictPeaks::detectorWidget()

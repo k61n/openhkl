@@ -41,7 +41,7 @@ void PeakFinder2DParameters::log(const Level& level) const
     ohklLog(level, "convolver              = ", static_cast<int>(kernel));
 }
 
-PeakFinder2D::PeakFinder2D() : _handler(nullptr)
+PeakFinder2D::PeakFinder2D() : _handler(nullptr), _current_data(nullptr)
 {
     _params.minThreshold = 1;
     _params.maxThreshold = 100;
@@ -145,6 +145,9 @@ void PeakFinder2D::findAll()
 
 std::vector<Peak3D*> PeakFinder2D::getPeakList(std::size_t frame_index)
 {
+    if (!_current_data)
+        return {};
+
     _found_peaks.clear();
     std::vector<Peak3D*> peaks;
     for (auto keypoint : _per_frame_spots.at(frame_index)) {
@@ -157,6 +160,14 @@ std::vector<Peak3D*> PeakFinder2D::getPeakList(std::size_t frame_index)
     std::map<Peak3D*, ohkl::RejectionFlag> tmp_map;
     _current_data->maskPeaks(peaks, tmp_map);
     return peaks;
+}
+
+bool PeakFinder2D::hasPeaks(std::size_t frame_idx)
+{
+    if (!_current_data)
+        return false;
+
+    return !_per_frame_spots.at(frame_idx).empty();
 }
 
 } // namespace ohkl
