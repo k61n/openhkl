@@ -164,6 +164,9 @@ std::vector<Peak3D*> PeakFinder2D::getPeakList(std::size_t frame_index)
 
 bool PeakFinder2D::hasPeaks(std::size_t frame_idx)
 {
+    if (!_current_data)
+        return false;
+
     return !_per_frame_spots.at(frame_idx).empty();
 }
 
