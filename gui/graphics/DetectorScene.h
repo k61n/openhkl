@@ -43,8 +43,6 @@ class PeakCollectionModel;
 class PeakViewWidget;
 class MaskItem;
 
-using EventType = ohkl::IntegrationRegion::EventType;
-
 //! Master Scene containing the pixmap of the detector counts
 //! and overlayed graphics items (peaks, data cutters, masks ...)
 class DetectorScene : public QGraphicsScene {

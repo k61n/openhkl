@@ -73,7 +73,7 @@ DetectorScene::DetectorScene(std::size_t npeakcollections, QObject* parent)
 {
     _dataset_graphics = std::make_unique<DataSetGraphics>(&_params);
     for (std::size_t idx = 0; idx < _max_peak_collections; ++idx)
-        _peak_graphics.push_back(std::make_unique<PeakCollectionGraphics>());
+        _peak_graphics.push_back(std::make_unique<PeakCollectionGraphics>(&_params));
 }
 
 void DetectorScene::onGradientSetting(int kernel, bool fft)
@@ -195,15 +195,15 @@ void DetectorScene::drawPeakItems()
 {
     clearPeakItems();
     for (const auto& graphic : _peak_graphics) {
-        if (graphic->peaksEnabled()) {
+        if (_params.peaks) {
             for (auto* peak_graphic : graphic->peakItemGraphics(_currentFrameIndex))
                 addItem(peak_graphic);
         }
-        if (graphic->extPeaksEnabled()) {
+        if (_params.extPeaks) {
             for (auto* peak_graphic : graphic->extPeakGraphics(_currentFrameIndex))
                 addItem(peak_graphic);
         }
-        if (graphic->detectorSpotsEnabled()) {
+        if (_params.detectorSpots) {
             for (auto* peak_graphic : graphic->detectorSpots(_currentFrameIndex))
                 addItem(peak_graphic);
         }

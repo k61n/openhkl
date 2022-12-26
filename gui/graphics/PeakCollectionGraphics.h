@@ -18,6 +18,7 @@
 #include "core/data/DataTypes.h"
 #include "core/integration/IIntegrator.h"
 #include "core/peak/IntegrationRegion.h"
+#include "gui/graphics/DetectorSceneParams.h"
 #include "gui/models/ColorMap.h"
 #include "gui/models/PeakCollectionModel.h"
 #include "gui/widgets/PeakViewWidget.h"
@@ -37,10 +38,8 @@ enum class VisualisationType { Enabled, Filtered };
 
 //! Container for settings and pointers for visualising peaks
 class PeakCollectionGraphics {
-
  public:
-    PeakCollectionGraphics();
-    PeakCollectionGraphics(PeakCollectionModel* model);
+    PeakCollectionGraphics(DetectorSceneParams* params);
 
     //! Set the peak model pointer
     void setPeakModel(PeakCollectionModel* model) { _peak_model = model; };
@@ -51,7 +50,7 @@ class PeakCollectionGraphics {
     //! Get the DataSet pointer associated with the PeakCollection
     ohkl::sptrDataSet dataSet() const { return _peak_model->dataSet(); };
     //! Set the integration parameters
-    void setIntegrationParams(const ohkl::IntegrationParameters& params) { _params = params; };
+    void setIntegrationParams(const ohkl::IntegrationParameters& params) { _int_params = params; };
     //! Set the visualisation type to enabled or filtered
     void setVisualisationType(VisualisationType vtype) { _visual_type = vtype; };
     //! Generate the PeakItemGraphics and return them in a vector. The parameters
@@ -88,15 +87,6 @@ class PeakCollectionGraphics {
     //! Set integration region overlay parameters from PeakWidget
     void initIntRegionFromPeakWidget();
 
-    bool peaksEnabled() const { return _peaks_enabled; };
-    bool intRegionsEnabled() const { return _int_regions_enabled; };
-    bool extPeaksEnabled() const { return _ext_peaks_enabled; };
-    bool detectorSpotsEnabled() const { return _detector_spots_enabled; };
-    void setPeaksEnabled(bool enabled) { _peaks_enabled = enabled; };
-    void setIntRegionEnabled(bool enabled) { _int_regions_enabled = enabled; };
-    void setExtPeaksEnabled(bool enabled) { _ext_peaks_enabled = enabled; };
-    void setDetectorSpotsEnabled(bool enabled) { _detector_spots_enabled = enabled; };
-
  private:
     //! Generate a mask of integration regions (a matrix of integers classifying pixels)
     void getIntegrationMask(Eigen::MatrixXi& mask, std::size_t frame_idx);
@@ -106,16 +96,10 @@ class PeakCollectionGraphics {
     //! Determine the visual type of the peak
     bool visualType(ohkl::Peak3D* peak);
 
-    //! Whether the peaks will be generated
-    bool _peaks_enabled;
-    //! Whether the integration regions will be generated
-    bool _int_regions_enabled;
-    //! Whether external peaks will be generated
-    bool _ext_peaks_enabled;
-    //! Whether detector spots will be generated
-    bool _detector_spots_enabled;
+    //! DetectorScene parameters to determine what is displayed
+    DetectorSceneParams* _params;
     //! Integration parameters for determining peak shapes
-    ohkl::IntegrationParameters _params;
+    ohkl::IntegrationParameters _int_params;
     //! The peak model
     PeakCollectionModel* _peak_model;
     //! Pointer to peak selected in DetectorScene

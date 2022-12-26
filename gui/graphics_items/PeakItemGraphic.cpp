@@ -53,16 +53,15 @@ void PeakItemGraphic::redraw()
     const ohkl::UnitCell* unit_cell = _peak->unitCell();
     if (unit_cell) {
         ohkl::MillerIndex hkl = _peak->hkl();
-        if (hkl.indexed(unit_cell->indexingTolerance())) {
-            peak_label = QString("%1,%2,%3").arg(hkl.h()).arg(hkl.k()).arg(hkl.l());
-        } else {
-            peak_label = "not indexed";
-        }
-    } else {
-        peak_label = "no unit cell";
+        if (hkl.indexed(unit_cell->indexingTolerance()))
+            peak_label = QString("(%1,%2,%3)").arg(hkl.h()).arg(hkl.k()).arg(hkl.l());
     }
 
+    QFont f;
+    f.setPixelSize(14);
+
     _label_gi = new QGraphicsTextItem(this);
+    _label_gi->setFont(f);
     _label_gi->setFlag(QGraphicsItem::ItemIgnoresTransformations);
     _label_gi->setParentItem(this);
     _label_gi->setPlainText(peak_label);
@@ -70,6 +69,7 @@ void PeakItemGraphic::redraw()
     _label_gi->setZValue(-1);
     _label_gi->setPos(3, 3);
     _label_gi->setVisible(_show_label);
+    _label_gi->adjustSize();
 
     _center_gi = new QGraphicsEllipseItem(this);
     _center_gi->setRect(-_size[0] / 2, -_size[1] / 2, _size[0], _size[1]);

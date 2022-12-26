@@ -92,6 +92,8 @@ class DetectorWidget : public QGridLayout {
     void toggleGradient();
     //! Toggle masks
     void toggleMasks();
+    //! Toggle Miller index labels
+    void toggleLabels();
 
  private:
     DetectorView* _detector_view;
@@ -102,6 +104,7 @@ class DetectorWidget : public QGridLayout {
     QSlider* _intensity_slider = nullptr;
     QPushButton* _gradient;
     QPushButton* _hide_masks;
+    QPushButton* _peak_labels;
     QPushButton* _copy_to_clipboard;
     QPushButton* _save_to_file;
     QPushButton* _zoom;
