@@ -743,9 +743,11 @@ void DetectorScene::clearIntegrationRegion()
 {
     if (!_currentData)
         return;
-    for (auto* region : _integration_regions)
-        deleteGraphicsItem(region);
-    _integration_regions.clear();
+    for (auto item : items()) {
+        if (item == _image) continue;
+        if (dynamic_cast<QGraphicsPixmapItem*>(item) != nullptr)
+            removeItem(item);
+    }
 }
 
 void DetectorScene::clearMasks()
