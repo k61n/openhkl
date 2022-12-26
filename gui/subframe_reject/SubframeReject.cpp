@@ -273,9 +273,6 @@ void SubframeReject::setPreviewUp()
 
     preview_spoiler->setContentLayout(*_peak_view_widget);
 
-    _peak_view_widget->set1.drawIntegrationRegion->setChecked(false);
-    _peak_view_widget->set1.previewIntRegion->setChecked(false);
-
     _left_layout->addWidget(preview_spoiler);
 }
 

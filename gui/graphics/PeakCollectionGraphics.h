@@ -51,7 +51,7 @@ class PeakCollectionGraphics {
     //! Get the DataSet pointer associated with the PeakCollection
     ohkl::sptrDataSet dataSet() const { return _peak_model->dataSet(); };
     //! Set the integration parameters
-    void setIntegrationParams(const ohkl::IntegrationParameters& params) {_params = params; };
+    void setIntegrationParams(const ohkl::IntegrationParameters& params) { _params = params; };
     //! Set the visualisation type to enabled or filtered
     void setVisualisationType(VisualisationType vtype) { _visual_type = vtype; };
     //! Generate the PeakItemGraphics and return them in a vector. The parameters
@@ -132,15 +132,6 @@ class PeakCollectionGraphics {
     QColor _bkgPxColor;
     //! Toggle preview of integration region rather than using regions defined from peaks
     bool _preview_int_regions;
-    //! Integration region types
-    ohkl::RegionType _int_region_type;
-    //! Integration Region bounds
-    double _peak_end;
-    double _bkg_begin;
-    double _bkg_end;
-    double _fixed_peak_end;
-    double _fixed_bkg_begin;
-    double _fixed_bkg_end;
 
     //! Colour of 3rd party peaks
     QColor _3rdparty_color;

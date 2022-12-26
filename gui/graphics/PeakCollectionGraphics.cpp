@@ -58,10 +58,16 @@ void PeakCollectionGraphics::initIntRegionFromPeakWidget()
 
     auto set = _peak_view_widget->set1;
     _preview_int_regions = set.previewIntRegion->isChecked();
-    _int_region_type = static_cast<ohkl::RegionType>(set.regionType->currentIndex());
-    _peak_end = set.peakEnd->value();
-    _bkg_begin = set.bkgBegin->value();
-    _bkg_end = set.bkgEnd->value();
+    _params.region_type = static_cast<ohkl::RegionType>(set.regionType->currentIndex());
+    if (_params.region_type == ohkl::RegionType::VariableEllipsoid) {
+        _params.peak_end = set.peakEnd->value();
+        _params.bkg_begin = set.bkgBegin->value();
+        _params.bkg_end = set.bkgEnd->value();
+    } else {
+        _params.fixed_peak_end = set.peakEnd->value();
+        _params.fixed_bkg_begin = set.bkgBegin->value();
+        _params.fixed_bkg_end = set.bkgEnd->value();
+    }
     _int_regions_enabled = set.drawIntegrationRegion->isChecked();
     _peakPxColor = set.colorIntPeak->color();
     _bkgPxColor = set.colorIntBkg->color();
@@ -149,21 +155,21 @@ void PeakCollectionGraphics::getIntegrationMask(Eigen::MatrixXi& mask, std::size
         ohkl::Peak3D* peak = peak_item->peak();
         double peak_end, bkg_begin, bkg_end;
         if (_preview_int_regions) {
-            if (_int_region_type == ohkl::RegionType::VariableEllipsoid) {
-                peak_end = _peak_end;
-                bkg_begin = _bkg_begin;
-                bkg_end = _bkg_end;
+            if (_params.region_type == ohkl::RegionType::VariableEllipsoid) {
+                peak_end = _params.peak_end;
+                bkg_begin = _params.bkg_begin;
+                bkg_end = _params.bkg_end;
             } else {
-                peak_end = _fixed_peak_end;
-                bkg_begin = _fixed_bkg_begin;
-                bkg_end = _fixed_bkg_end;
+                peak_end = _params.fixed_peak_end;
+                bkg_begin = _params.fixed_bkg_begin;
+                bkg_end = _params.fixed_bkg_end;
             }
         } else {
             peak_end = peak_item->peak()->peakEnd();
             bkg_begin = peak_item->peak()->bkgBegin();
             bkg_end = peak_item->peak()->bkgEnd();
         }
-        ohkl::IntegrationRegion region(peak, peak_end, bkg_begin, bkg_end, _int_region_type);
+        ohkl::IntegrationRegion region(peak, peak_end, bkg_begin, bkg_end, _params.region_type);
         if (region.isValid())
             region.updateMask(mask, frame_idx);
     }
@@ -178,14 +184,14 @@ void PeakCollectionGraphics::getSinglePeakIntegrationMask(
     double peak_end, bkg_begin, bkg_end;
     if (_preview_int_regions) {
         if (_preview_int_regions) {
-            if (_int_region_type == ohkl::RegionType::VariableEllipsoid) {
-                peak_end = _peak_end;
-                bkg_begin = _bkg_begin;
-                bkg_end = _bkg_end;
+            if (_params.region_type == ohkl::RegionType::VariableEllipsoid) {
+                peak_end = _params.peak_end;
+                bkg_begin = _params.bkg_begin;
+                bkg_end = _params.bkg_end;
             } else {
-                peak_end = _fixed_peak_end;
-                bkg_begin = _fixed_bkg_begin;
-                bkg_end = _fixed_bkg_end;
+                peak_end = _params.fixed_peak_end;
+                bkg_begin = _params.fixed_bkg_begin;
+                bkg_end = _params.fixed_bkg_end;
             }
         } else {
             peak_end = peak->peakEnd();
@@ -193,7 +199,7 @@ void PeakCollectionGraphics::getSinglePeakIntegrationMask(
             bkg_end = peak->bkgEnd();
         }
 
-        ohkl::IntegrationRegion region(peak, peak_end, bkg_begin, bkg_end, _int_region_type);
+        ohkl::IntegrationRegion region(peak, peak_end, bkg_begin, bkg_end, _params.region_type);
         if (region.isValid())
             region.updateMask(mask, frame_idx);
     }

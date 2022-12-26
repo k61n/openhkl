@@ -130,6 +130,8 @@ void PeakViewWidget::addIntegrationRegion(Set& set, const QColor& peak, const QC
     addLabel(row, "Show:");
     set.drawIntegrationRegion =
         addCheckBox(row++, 1, "Integration region", Qt::CheckState::Unchecked);
+    set.previewIntRegion =
+        addCheckBox(row++, 1, "Preview new parameters", Qt::CheckState::Checked);
     set.regionType = addCombo(row++, ComboType::RegionType);
 
     for (int i = 0; i < static_cast<int>(ohkl::RegionType::Count); ++i) {
@@ -144,8 +146,6 @@ void PeakViewWidget::addIntegrationRegion(Set& set, const QColor& peak, const QC
     set.colorIntPeak = addColorButton(row++, 1, peak);
     addLabel(row, "Background colour:");
     set.colorIntBkg = addColorButton(row++, 1, bkg);
-    set.previewIntRegion =
-        addCheckBox(row++, 1, "Preview Integration Region", Qt::CheckState::Unchecked);
     addLabel(row, "Peak end:");
     set.peakEnd = addDoubleSpinBox(row++, set.params.peak_end);
     set.peakEnd->setMaximum(50.0);
@@ -172,6 +172,7 @@ void PeakViewWidget::switchIntRegionType()
         set1.peakEnd->setValue(set1.params.peak_end);
         set1.bkgBegin->setValue(set1.params.bkg_begin);
         set1.bkgEnd->setValue(set1.params.bkg_end);
+        set1.peakEnd->setSingleStep(0.1);
     } else {
         set1.params.peak_end = set1.peakEnd->value();
         set1.params.bkg_begin = set1.bkgBegin->value();
@@ -179,6 +180,7 @@ void PeakViewWidget::switchIntRegionType()
         set1.peakEnd->setValue(set1.params.fixed_peak_end);
         set1.bkgBegin->setValue(set1.params.fixed_bkg_begin);
         set1.bkgEnd->setValue(set1.params.fixed_bkg_end);
+        set1.peakEnd->setSingleStep(1.0);
     }
 }
 
