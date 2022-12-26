@@ -580,6 +580,9 @@ void SubframeFindPeaks::refreshPreview()
 
 void SubframeFindPeaks::refreshPeakTable()
 {
+    if (!gSession->currentProject()->hasDataSet())
+        return;
+
     std::vector<ohkl::Peak3D*> peaks =
         gSession->currentProject()->experiment()->peakFinder()->currentPeaks();
 

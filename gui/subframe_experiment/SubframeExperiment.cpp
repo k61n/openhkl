@@ -705,7 +705,8 @@ void SubframeExperiment::toggleUnsafeWidgets()
 
     _find_peaks_2d->setEnabled(gSession->currentProject()->hasDataSet());
     _index_button->setEnabled(gSession->currentProject()->hasDataSet());
-    _save_button->setEnabled(gSession->currentProject()->hasDataSet());
+    auto* indexer = gSession->currentProject()->experiment()->autoIndexer();
+    _save_button->setEnabled(!indexer->solutions().empty());
 
     _calc_intensity->setEnabled(gSession->currentProject()->hasDataSet());
 
@@ -773,6 +774,8 @@ void SubframeExperiment::autoindex()
 
     std::size_t current_frame = _detector_widget->scene()->currentFrame();
     std::vector<ohkl::Peak3D*> peaks = finder->getPeakList(current_frame);
+    if (peaks.empty())
+        return;
 
     setIndexerParameters();
 
