@@ -22,7 +22,6 @@
 #include <QPainter>
 #include <QString>
 #include <fstream>
-#include <qmessagebox.h>
 
 
 SXPlot::SXPlot(QWidget* parent) : QCustomPlot(parent)

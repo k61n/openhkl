@@ -34,7 +34,6 @@
 #include <QTableWidget>
 #include <QVBoxLayout>
 #include <QWidget>
-#include <qpushbutton.h>
 
 class PeakComboBox;
 class PlotPanel;

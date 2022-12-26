@@ -50,7 +50,6 @@
 #include <QMessageBox>
 #include <QScrollBar>
 #include <QSpacerItem>
-#include <qpushbutton.h>
 
 SubframeReject::SubframeReject() : QWidget()
 {

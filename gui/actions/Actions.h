@@ -17,7 +17,6 @@
 
 #include <QAction>
 #include <QObject>
-#include <qaction.h>
 
 //! Collection of trigger and toggle actions, for use as member of MainWin.
 class Actions : public QObject {

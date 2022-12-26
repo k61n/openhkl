@@ -48,7 +48,6 @@
 #include <QPixmap>
 #include <QToolTip>
 #include <opencv2/core/types.hpp>
-#include <qgraphicsitem.h>
 
 QPointF DetectorScene::_current_beam_position = {0, 0};
 

@@ -15,7 +15,6 @@
 #include "gui/graphics_items/CrosshairGraphic.h"
 
 #include <QPainter>
-#include <qgraphicsitem.h>
 
 CrosshairGraphic::CrosshairGraphic(QPointF centre) : _size(15), _linewidth(1)
 {

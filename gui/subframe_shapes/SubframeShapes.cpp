@@ -47,7 +47,6 @@
 #include <QMessageBox>
 #include <QScrollBar>
 #include <QSpacerItem>
-#include <qobject.h>
 
 SubframeShapes::SubframeShapes() : QWidget(), _preview_peak(nullptr)
 {
