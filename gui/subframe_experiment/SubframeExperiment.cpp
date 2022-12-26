@@ -395,7 +395,7 @@ void SubframeExperiment::importMasks()
     if (file_path.empty())
         return;
 
-    ohkl::MaskImporter importer(file_path);
+    ohkl::MaskImporter importer(file_path, _data_combo->currentData()->nFrames());
     for (auto* mask : importer.getMasks())
         _data_combo->currentData()->addMask(mask);
 
