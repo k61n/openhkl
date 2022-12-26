@@ -407,7 +407,7 @@ void SubframeExperiment::exportMasks()
 {
     QSettings settings = gGui->qSettings();
     settings.beginGroup("RecentDirectories");
-    QString loadDirectory = settings.value("masks", QDir::homePath()).toString() + "/masks.yml";
+    QString loadDirectory = settings.value("experiment", QDir::homePath()).toString() + "/masks.yml";
 
     std::string file_path =
         QFileDialog::getSaveFileName(this, "Export maks to ", loadDirectory, "YAML (*.yml)")
