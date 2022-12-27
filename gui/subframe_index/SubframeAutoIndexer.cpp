@@ -676,11 +676,7 @@ void SubframeAutoIndexer::toggleUnsafeWidgets()
         return;
 
     _solve_button->setEnabled(gSession->currentProject()->hasPeakCollection());
-
-    // select a solution before accepting it
-    if (_solution_table->currentIndex().row() == -1 && !_solutions.empty() &&
-        _peak_combo->currentPeakCollection()->isIndexed())
-        _save_button->setEnabled(true);
+    _save_button->setEnabled(!_solutions.empty());
 }
 
 void SubframeAutoIndexer::onBeamPosChanged(QPointF pos)
