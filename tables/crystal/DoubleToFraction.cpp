@@ -61,10 +61,10 @@ void doubleToFraction(double number, int nmax, long& nom, long& dnom)
         t = m[1][0] * ai + m[1][1];
         m[1][1] = m[1][0];
         m[1][0] = t;
-        if (x == (double)ai)
+        if (x == static_cast<double>(ai))
             break; // AF: division by zero
-        x = 1 / (x - (double)ai);
-        if (x > (double)0x7FFFFFFF)
+        x = 1 / (x - static_cast<double>(ai));
+        if (x > static_cast<double>(0x7FFFFFFF))
             break; // AF: representation failure
     }
 

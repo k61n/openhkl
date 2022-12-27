@@ -89,7 +89,8 @@ void CrystalScene::changeBrigthness(int a)
                 newG += ((1 - newG) * a / 100.0);
                 newB += ((1 - newB) * a / 100.0);
             }
-            line[x] = qRgb((int)(newR * 255), (int)(newG * 255), (int)(newB * 255));
+            line[x] = qRgb(static_cast<int>(newR * 255),
+                static_cast<int>(newG * 255), static_cast<int>(newB * 255));
         }
     }
     pixmapitem->setPixmap(QPixmap::fromImage(image));

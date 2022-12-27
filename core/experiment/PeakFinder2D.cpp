@@ -151,7 +151,7 @@ std::vector<Peak3D*> PeakFinder2D::getPeakList(std::size_t frame_index)
     _found_peaks.clear();
     std::vector<Peak3D*> peaks;
     for (auto keypoint : _per_frame_spots.at(frame_index)) {
-        Eigen::Vector3d center = {keypoint.pt.x, keypoint.pt.y, (double)frame_index};
+        Eigen::Vector3d center = {keypoint.pt.x, keypoint.pt.y, static_cast<double>(frame_index)};
         sptrPeak3D peak = std::make_shared<Peak3D>(_current_data);
         peak->setShape(Ellipsoid(center, 1.0));
         _found_peaks.emplace_back(peak);

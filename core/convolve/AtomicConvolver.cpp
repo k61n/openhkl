@@ -84,7 +84,7 @@ RealMatrix AtomicConvolver::convolve(const RealMatrix& image)
         updateKernel(nrows, ncols);
 
     // factor needed to get correct inverse transform
-    double factor = 1.0 / ((double)(nrows * ncols));
+    double factor = 1.0 / (static_cast<double>(nrows * ncols));
 
     // precompute the transformation of the kernel
     std::memcpy(_realData, image.data(), nrows * ncols * sizeof(double));
