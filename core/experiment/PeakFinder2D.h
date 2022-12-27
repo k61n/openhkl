@@ -75,9 +75,6 @@ class PeakFinder2D {
     //! Generate a list of peaks from found blobs
     std::vector<Peak3D*> getPeakList(std::size_t frame_index);
 
-    //! Determine whether we have peaks for a specific frame index
-    bool hasPeaks(std::size_t frame_idx);
-
  private:
     //! progress handler
     sptrProgressHandler _handler;

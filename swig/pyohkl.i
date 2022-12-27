@@ -103,6 +103,7 @@ using Eigen::Quaterniond;
 #include "core/algo/Refiner.h"
 #include "core/integration/Blob3D.h"
 #include "core/statistics/MergedPeak.h"
+#include "core/shape/KeyPointCollection.h"
 #include "core/shape/PeakCollection.h"
 #include "core/shape/PeakFilter.h"
 #include "core/experiment/Integrator.h"
@@ -347,6 +348,7 @@ ArrayExtendCRef(MillerIndex, int);
 
 %include "core/statistics/MergedPeak.h"
 %include "core/integration/Blob3D.h"
+%include "core/shape/KeyPointCollection.h"
 %include "core/shape/PeakCollection.h"
 %include "core/shape/PeakFilter.h"
 %include "core/statistics/MergedData.h"
