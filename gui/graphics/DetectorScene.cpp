@@ -463,7 +463,7 @@ void DetectorScene::mouseDoubleClickEvent(QGraphicsSceneMouseEvent* event)
     }
 }
 
-void DetectorScene::setBoxBounds(QGraphicsRectItem* box)
+bool DetectorScene::setBoxBounds(QGraphicsRectItem* box)
 {
     qreal top = box->rect().top();
     qreal bot = box->rect().bottom();
@@ -473,7 +473,7 @@ void DetectorScene::setBoxBounds(QGraphicsRectItem* box)
     // Left click and hold without moving
     if (qAbs(top - bot) <= 1 || qAbs(left - right) <= 1) {
         deleteGraphicsItem(box);
-        return;
+        return false;
     }
 
     if (top > bot)
@@ -483,6 +483,7 @@ void DetectorScene::setBoxBounds(QGraphicsRectItem* box)
         std::swap(left, right);
 
     box->setRect(left, top, right - left, bot - top);
+    return true;
 }
 
 void DetectorScene::adjustZoomRect(QGraphicsRectItem* box)
@@ -533,7 +534,8 @@ void DetectorScene::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
 
         if (_mode == SELECT) {
             if (_selectionRect) {
-                setBoxBounds(_selectionRect);
+                if (!setBoxBounds(_selectionRect))
+                    return;
                 clearSelection();
                 QPainterPath path;
                 path.addRect(_selectionRect->rect());
@@ -542,7 +544,8 @@ void DetectorScene::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
             }
         } else if (_mode == ZOOM) {
             if (_zoomrect) {
-                setBoxBounds(_zoomrect);
+                if (!setBoxBounds(_zoomrect))
+                    return;
                 adjustZoomRect(_zoomrect);
                 _zoomStack.push_back(_zoomrect->rect().toRect());
                 setSceneRect(_zoomrect->rect());

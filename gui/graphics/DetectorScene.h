@@ -158,7 +158,7 @@ class DetectorScene : public QGraphicsScene {
     //! Create the text of the tooltip depending on Scene Mode.
     void createToolTipText(QGraphicsSceneMouseEvent*);
     //! Ensure the bounds for a drag/dropped box are physical
-    void setBoxBounds(QGraphicsRectItem* box);
+    bool setBoxBounds(QGraphicsRectItem* box);
     //! Adjust zoom rect bounds if they are at edge of image
     void adjustZoomRect(QGraphicsRectItem* box);
     //! Check whether a graphics item exists, if it does, remove + delete
