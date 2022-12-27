@@ -18,6 +18,7 @@
 #include "core/loader/XFileHandler.h"
 #include "core/peak/IntegrationRegion.h"
 #include "core/peak/Peak3D.h"
+#include "core/shape/KeyPointCollection.h"
 #include "gui/graphics_items/PeakCenterGraphic.h"
 #include "gui/graphics_items/PeakItemGraphic.h"
 #include "gui/items/PeakCollectionItem.h"
@@ -40,6 +41,8 @@ PeakCollectionGraphics::PeakCollectionGraphics(DetectorSceneParams* params)
     , _visual_type(VisualisationType::Enabled)
     , _peakPxColor(QColor(255, 255, 0, 128)) // yellow, alpha = 0.5
     , _bkgPxColor(QColor(0, 255, 0, 128)) // green, alpha = 0.5
+    , _spot_color(Qt::black)
+    , _spot_size(10)
 {
 }
 
@@ -115,8 +118,8 @@ QVector<PeakCenterGraphic*> PeakCollectionGraphics::extPeakGraphics(std::size_t 
 
     for (const Eigen::Vector3d& vector : xfh->getPeakCenters()) {
         PeakCenterGraphic* center = new PeakCenterGraphic(vector);
-        center->setColor(_3rdparty_color);
-        center->setSize(_3rdparty_size);
+        center->setColor(_spot_color);
+        center->setSize(_spot_size);
         graphics.push_back(center);
     }
     return graphics;
@@ -124,19 +127,21 @@ QVector<PeakCenterGraphic*> PeakCollectionGraphics::extPeakGraphics(std::size_t 
 
 QVector<PeakCenterGraphic*> PeakCollectionGraphics::detectorSpots(std::size_t frame_idx)
 {
-    if (!_per_frame_spots)
+    if (!_keypoint_collection)
+        return {};
+
+    if (!_keypoint_collection->hasPeaks(frame_idx))
         return {};
 
     QVector<PeakCenterGraphic*> graphics;
 
-    for (const cv::KeyPoint& point : _per_frame_spots->at(frame_idx)) {
+    for (const cv::KeyPoint& point : *(_keypoint_collection->frame(frame_idx))) {
         PeakCenterGraphic* center =
             new PeakCenterGraphic({point.pt.x, point.pt.y, static_cast<double>(frame_idx)});
-        center->setColor(_3rdparty_color);
-        center->setSize(_3rdparty_size);
+        center->setColor(_spot_color);
+        center->setSize(_spot_size);
         graphics.push_back(center);
     }
-
     return graphics;
 }
 

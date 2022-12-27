@@ -18,6 +18,7 @@
 #include "core/convolve/Convolver.h"
 #include "core/data/DataSet.h"
 #include "core/data/DataTypes.h"
+#include "core/shape/KeyPointCollection.h"
 #include "core/shape/PeakCollection.h"
 
 #include <opencv2/core/types.hpp>
@@ -63,8 +64,8 @@ class PeakFinder2D {
     //! Get the parameters
     PeakFinder2DParameters* parameters() { return &_params; };
 
-    //! Get the vector of vectors of keypoints
-    std::vector<std::vector<cv::KeyPoint>>* keypoints() { return &_per_frame_spots; };
+    //! Get object storing per-frame keypoints
+    KeyPointCollection* keypoints() { return &_keypoint_collection; };
 
     //! Set the convolver
     void setConvolver(const ConvolutionKernelType& kernel);
@@ -73,9 +74,6 @@ class PeakFinder2D {
 
     //! Generate a list of peaks from found blobs
     std::vector<Peak3D*> getPeakList(std::size_t frame_index);
-
-    //! Determine whether we have peaks for a specific frame index
-    bool hasPeaks(std::size_t frame_idx);
 
  private:
     //! progress handler
@@ -89,7 +87,7 @@ class PeakFinder2D {
     PeakFinder2DParameters _params;
 
     //! Vector of keypoints per frame
-    std::vector<std::vector<cv::KeyPoint>> _per_frame_spots;
+    KeyPointCollection _keypoint_collection;
 
     //! temporary list of peaks for indexing
     PeakList _found_peaks;

@@ -469,6 +469,8 @@ void SubframeExperiment::setIndexerUp()
 {
     Spoiler* index_spoiler = new Spoiler("Autoindex using spots in this image");
     GridFiller gfiller(index_spoiler, true);
+    std::tie(_d_min, _d_max) = gfiller.addDoubleSpinBoxPair(
+        "d range", "Resolution range for peaks used in indexing");
     _gruber = gfiller.addDoubleSpinBox("Gruber tolerance:", "Tolerance for Gruber reduction");
 
     _niggli = gfiller.addDoubleSpinBox("Niggli tolerance:", "Tolerance for Niggli reduction");
@@ -505,6 +507,14 @@ void SubframeExperiment::setIndexerUp()
         gfiller.addButton("Autoindex", "Attempt to find a unit cell using spots in this image");
     _save_button = gfiller.addButton("Save unit cell", "Save the selected unit cell");
     _cell_combo = gfiller.addCellCombo("Unit Cell", "Unit cell for Miller index tooltip");
+
+    _d_min->setMinimum(0);
+    _d_min->setMaximum(100);
+    _d_min->setValue(1.5);
+
+    _d_max->setMaximum(0);
+    _d_max->setMaximum(100);
+    _d_max->setValue(50);
 
     _gruber->setMaximum(10);
     _gruber->setDecimals(6);
@@ -754,7 +764,8 @@ void SubframeExperiment::find_2d()
     finder->setHandler(progHandler);
 
     finder->setData(data);
-    _detector_widget->scene()->linkPerFrameSpots(finder->keypoints(), 0);
+    _detector_widget->scene()->params()->detectorSpots = true;
+    _detector_widget->scene()->linkKeyPoints(finder->keypoints(), 0);
 
     setFinderParameters();
 
@@ -823,6 +834,8 @@ void SubframeExperiment::grabIndexerParameters()
     auto* indexer = gSession->currentProject()->experiment()->autoIndexer();
     auto* params = indexer->parameters();
 
+    _d_min->setValue(params->d_min);
+    _d_max->setValue(params->d_max);
     _niggli->setValue(params->niggliTolerance);
     _only_niggli->setChecked(params->niggliReduction);
     _gruber->setValue(params->gruberTolerance);
@@ -843,6 +856,8 @@ void SubframeExperiment::setIndexerParameters()
     auto* indexer = gSession->currentProject()->experiment()->autoIndexer();
     auto* params = indexer->parameters();
 
+    params->d_min = _d_min->value();
+    params->d_max = _d_max->value();
     params->niggliTolerance = _niggli->value();
     params->niggliReduction = _only_niggli->isChecked();
     params->gruberTolerance = _gruber->value();
@@ -853,6 +868,7 @@ void SubframeExperiment::setIndexerParameters()
     params->indexingTolerance = _indexing_tolerance->value();
     params->frequencyTolerance = _frequency_tolerance->value();
     params->minUnitCellVolume = _min_cell_volume->value();
+    params->peaks_integrated = false;
 }
 
 void SubframeExperiment::onBeamPosChanged(QPointF pos)

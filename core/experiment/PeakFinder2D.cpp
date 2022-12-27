@@ -65,13 +65,7 @@ void PeakFinder2D::setData(sptrDataSet data)
 {
     if (data != _current_data) {
         _current_data = data;
-        for (auto vec : _per_frame_spots)
-            vec.clear();
-        _per_frame_spots.clear();
-        for (std::size_t i = 0; i < data->nFrames(); ++i) {
-            std::vector<cv::KeyPoint> keypoints;
-            _per_frame_spots.push_back(keypoints);
-        }
+        _keypoint_collection.setData(data);
     }
 }
 
@@ -116,11 +110,12 @@ void PeakFinder2D::find(std::size_t frame_idx)
     }
     cv_frame_thresholded.convertTo(cv_frame_8u, CV_8U, scale);
 
-    _per_frame_spots[frame_idx].clear();
+    _keypoint_collection.clearFrame(frame_idx);
+    std::vector<cv::KeyPoint>* keypoints = _keypoint_collection.frame(frame_idx);
     cv::Ptr<cv::SimpleBlobDetector> detector = cv::SimpleBlobDetector::create(_params);
-    detector->detect(cv_frame_8u, _per_frame_spots[frame_idx]);
+    detector->detect(cv_frame_8u, *keypoints);
     ohklLog(
-        Level::Info, "PeakFinder2D::find: found ", _per_frame_spots[frame_idx].size(), " blobs");
+        Level::Info, "PeakFinder2D::find: found ", keypoints->size(), " blobs");
 }
 
 void PeakFinder2D::findAll()
@@ -150,7 +145,7 @@ std::vector<Peak3D*> PeakFinder2D::getPeakList(std::size_t frame_index)
 
     _found_peaks.clear();
     std::vector<Peak3D*> peaks;
-    for (auto keypoint : _per_frame_spots.at(frame_index)) {
+    for (auto keypoint : *_keypoint_collection.frame(frame_index)) {
         Eigen::Vector3d center = {keypoint.pt.x, keypoint.pt.y, static_cast<double>(frame_index)};
         sptrPeak3D peak = std::make_shared<Peak3D>(_current_data);
         peak->setShape(Ellipsoid(center, 1.0));
@@ -160,14 +155,6 @@ std::vector<Peak3D*> PeakFinder2D::getPeakList(std::size_t frame_index)
     std::map<Peak3D*, ohkl::RejectionFlag> tmp_map;
     _current_data->maskPeaks(peaks, tmp_map);
     return peaks;
-}
-
-bool PeakFinder2D::hasPeaks(std::size_t frame_idx)
-{
-    if (!_current_data)
-        return false;
-
-    return !_per_frame_spots.at(frame_idx).empty();
 }
 
 } // namespace ohkl

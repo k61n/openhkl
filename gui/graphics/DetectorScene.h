@@ -34,6 +34,7 @@
 #include <opencv2/core/types.hpp>
 
 namespace ohkl {
+class KeyPointCollection;
 class UnitCell;
 class PeakCenterDataSet;
 }
@@ -85,7 +86,7 @@ class DetectorScene : public QGraphicsScene {
     //! Populate vector of 3rd party peak centers
     void link3rdPartyPeaks(ohkl::PeakCenterDataSet* pcd, std::size_t idx);
     //! Link data for keypoints found via OpenCV
-    void linkPerFrameSpots(std::vector<std::vector<cv::KeyPoint>>* points, std::size_t idx);
+    void linkKeyPoints(ohkl::KeyPointCollection* points, std::size_t idx);
     //! Set refined and unrefined beam positions
     void linkDirectBeam(
         std::vector<ohkl::DetectorEvent>* beam, std::vector<ohkl::DetectorEvent>* old);

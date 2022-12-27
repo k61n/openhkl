@@ -20,6 +20,7 @@
 #include "core/detector/DetectorEvent.h"
 #include "core/loader/XFileHandler.h"
 #include "core/peak/Peak3D.h"
+#include "core/shape/KeyPointCollection.h"
 #include "gui/MainWin.h"
 #include "gui/graphics/PeakCollectionGraphics.h"
 #include "gui/graphics_items/BoxMaskItem.h"
@@ -151,14 +152,13 @@ void DetectorScene::link3rdPartyPeaks(ohkl::PeakCenterDataSet* pcd, std::size_t 
     drawPeakItems();
 }
 
-void DetectorScene::linkPerFrameSpots(
-    std::vector<std::vector<cv::KeyPoint>>* points, std::size_t idx)
+void DetectorScene::linkKeyPoints(ohkl::KeyPointCollection* points, std::size_t idx)
 {
     if (idx >= _max_peak_collections)
         throw std::range_error(
-            "DetectorScene::linkPerFrameSpots: _peak_graphics index out of range");
+            "DetectorScene::linkKeyPoints: _peak_graphics index out of range");
 
-    _peak_graphics.at(idx)->setPerFrameSpots(points);
+    _peak_graphics.at(idx)->setKeyPoints(points);
     drawPeakItems();
 }
 

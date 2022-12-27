@@ -25,9 +25,9 @@
 
 #include <QGraphicsPixmapItem>
 #include <QVector>
-#include <opencv2/core/types.hpp>
 
 namespace ohkl {
+class KeyPointCollection;
 class PeakCenterDataSet;
 class Peak3D;
 }
@@ -64,9 +64,9 @@ class PeakCollectionGraphics {
     //! Set data for peaks imported from external code
     void setExtPeakData(ohkl::PeakCenterDataSet* pcd) { _peak_center_data = pcd; };
     //! Set data for detector spots located using OpenCV
-    void setPerFrameSpots(std::vector<std::vector<cv::KeyPoint>>* points)
+    void setKeyPoints(ohkl::KeyPointCollection* points)
     {
-        _per_frame_spots = points;
+        _keypoint_collection = points;
     };
 
     //! Set the integration region peak and background colours
@@ -76,10 +76,10 @@ class PeakCollectionGraphics {
         _bkgPxColor = bkg;
     };
     //! Set the 3rd party peak circle colour and size
-    void setExtPeakCircles(const QColor& color, int size)
+    void setSpotCircles(const QColor& color, int size)
     {
-        _3rdparty_color = color;
-        _3rdparty_size = size;
+        _spot_color = color;
+        _spot_size = size;
     };
 
     //! Get a QImage of the integration region mask
@@ -107,7 +107,7 @@ class PeakCollectionGraphics {
     //! Externally generated peak data
     ohkl::PeakCenterDataSet* _peak_center_data;
     //! Detector spots found using OpenCV
-    std::vector<std::vector<cv::KeyPoint>>* _per_frame_spots;
+    ohkl::KeyPointCollection* _keypoint_collection;
     //! The widget used to set visual parameters (color, size etc)
     PeakViewWidget* _peak_view_widget;
     //! Type of peak visualisation (separate by validity or filter status)
@@ -120,10 +120,10 @@ class PeakCollectionGraphics {
     //! Toggle preview of integration region rather than using regions defined from peaks
     bool _preview_int_regions;
 
-    //! Colour of 3rd party peaks
-    QColor _3rdparty_color;
-    //! Size of 3rd party peaks
-    int _3rdparty_size;
+    //! Colour of detector spots
+    QColor _spot_color;
+    //! Size of detector spots
+    int _spot_size;
 };
 
 #endif // OHKL_GUI_GRAPHICS_PEAKCOLLECTIONGRAPHICS_H
