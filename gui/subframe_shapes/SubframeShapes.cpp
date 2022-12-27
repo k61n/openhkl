@@ -545,7 +545,8 @@ void SubframeShapes::saveShapes()
 
     std::string suggestion = gSession->currentProject()->experiment()->generateShapeModelName();
     std::unique_ptr<ListNameDialog> dlg =
-        std::make_unique<ListNameDialog>(QString::fromStdString(suggestion));
+        std::make_unique<ListNameDialog>(
+            QString::fromStdString(suggestion), QString("Shape model"));
     dlg->exec();
     if (dlg->listName().isEmpty())
         return;
