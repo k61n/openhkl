@@ -501,15 +501,16 @@ void SubframeRefiner::toggleUnsafeWidgets()
     if (!gSession->hasProject())
         return;
 
-    if (!gSession->currentProject()->hasPeakCollection())
+    if (_peak_combo->count() < 1)
         return;
 
     _update_button->setEnabled(_predicted_combo->count() > 0);
-    _update_button->setEnabled(_peak_combo->currentPeakCollection()->isIndexed());
     _update_button->setEnabled(_refine_success);
 
     _cell_combo->setEnabled(!_batch_cell_check->isChecked());
 
     _refine_button->setEnabled(gSession->currentProject()->hasPeakCollection());
+
+    _update_button->setEnabled(_peak_combo->currentPeakCollection()->isIndexed());
     _refine_button->setEnabled(_peak_combo->currentPeakCollection()->isIndexed());
 }
