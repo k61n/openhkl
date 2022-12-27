@@ -29,7 +29,7 @@ template <typename NumericType> double compute_average(const void* void_data, in
     const NumericType* data = reinterpret_cast<const NumericType*>(void_data);
 
     double average = 0.0;
-    double factor = 1.0 / (double)length;
+    double factor = 1.0 / static_cast<double>(length);
 
     for (int i = 0; i < length; ++i)
         average += data[i] * factor;
