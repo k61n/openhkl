@@ -53,7 +53,7 @@ void doubleToFraction(double number, int nmax, long& nom, long& dnom)
     m[0][1] = m[1][0] = 0;
 
     /* loop finding terms until denom gets too big */
-    while (m[1][0] * (ai = (long)x) + m[1][1] <= maxden) {
+    while (m[1][0] * (ai = static_cast<long>(x)) + m[1][1] <= maxden) {
         long t;
         t = m[0][0] * ai + m[0][1];
         m[0][1] = m[0][0];
