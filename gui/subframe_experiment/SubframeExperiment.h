@@ -169,6 +169,8 @@ class SubframeExperiment : public QWidget {
     SafeDoubleSpinBox* _min_cell_volume;
     SafeDoubleSpinBox* _indexing_tolerance;
     SafeDoubleSpinBox* _frequency_tolerance;
+    SafeDoubleSpinBox* _d_min;
+    SafeDoubleSpinBox* _d_max;
     SafeSpinBox* _number_vertices;
     SafeSpinBox* _number_solutions;
     SafeSpinBox* _number_subdivisions;

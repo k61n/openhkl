@@ -56,8 +56,8 @@ TEST_CASE("test/data/TestPeakFinder2D.cpp", "")
     finder->setConvolver(ohkl::ConvolutionKernelType::Annular);
     finder->find(0);
 
-    auto keypoints = finder->keypoints();
-    std::cout << keypoints->at(0).size() << " keypoints found" << std::endl;
+    auto* keypoints = finder->keypoints();
+    std::cout << keypoints->frame(0)->size() << " keypoints found" << std::endl;
     std::vector<ohkl::Peak3D*> found_peaks = finder->getPeakList(0);
     std::cout << found_peaks.size() << " peaks found" << std::endl;
 
