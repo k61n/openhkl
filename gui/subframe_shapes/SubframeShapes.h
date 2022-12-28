@@ -162,7 +162,8 @@ class SubframeShapes : public QWidget {
     PeakCollectionItem _peak_collection_item;
     PeakCollectionModel _peak_collection_model;
 
-    ohkl::ShapeModel _shape_model;
+    std::unique_ptr<ohkl::ShapeModel> _shape_model;
+    std::shared_ptr<ohkl::ShapeModelParameters> _params;
     ohkl::Profile3D _profile;
     ohkl::Peak3D* _current_peak;
     std::unique_ptr<ohkl::Peak3D> _preview_peak;

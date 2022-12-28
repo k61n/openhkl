@@ -20,6 +20,7 @@
 #include "core/detector/DetectorEvent.h"
 #include "core/experiment/Experiment.h"
 #include "core/shape/Profile3D.h"
+#include "core/shape/ShapeModel.h"
 #include "gui/MainWin.h" // gGui
 #include "gui/dialogs/ListNameDialog.h"
 #include "gui/frames/ProgressView.h"
@@ -47,9 +48,15 @@
 #include <QMessageBox>
 #include <QScrollBar>
 #include <QSpacerItem>
+#include <iostream>
 
-SubframeShapes::SubframeShapes() : QWidget(), _preview_peak(nullptr)
+SubframeShapes::SubframeShapes()
+    : QWidget()
+    , _shape_model(nullptr)
+    , _preview_peak(nullptr)
 {
+    _params = std::make_shared<ohkl::ShapeModelParameters>();
+
     auto main_layout = new QHBoxLayout(this);
     _right_element = new QSplitter(Qt::Vertical, this);
 
@@ -329,9 +336,9 @@ void SubframeShapes::setPeakTableUp()
 void SubframeShapes::refreshPeakTable()
 {
     if (_predicted_combo->count() == 0)
-        return;
-
-    _peak_collection_item.setPeakCollection(_predicted_combo->currentPeakCollection());
+        _peak_collection_item.setPeakCollection(_peak_combo->currentPeakCollection());
+    else
+        _peak_collection_item.setPeakCollection(_predicted_combo->currentPeakCollection());
     _peak_collection_model.setRoot(&_peak_collection_item);
     _peak_table->resizeColumnsToContents();
 
@@ -345,34 +352,33 @@ void SubframeShapes::refreshAll()
         return;
 
     _data_combo->refresh();
-    _detector_widget->refresh();
     _peak_combo->refresh();
     _predicted_combo->refresh();
     refreshPeakTable();
+    _detector_widget->refresh();
     grabShapeParameters();
 }
 
 void SubframeShapes::grabShapeParameters()
 {
-    auto* params = _shape_model.parameters();
     if (gSession->currentProject()->hasPeakCollection()) {
         _peak_combo->currentPeakCollection()->computeSigmas();
 
-        _min_d->setValue(params->d_min);
-        _max_d->setValue(params->d_max);
-        _peak_end->setValue(params->peak_end);
-        _bkg_begin->setValue(params->bkg_begin);
-        _bkg_end->setValue(params->bkg_end);
-        _min_strength->setValue(params->strength_min);
-        _kabsch->setChecked(params->kabsch_coords);
-        _nx->setValue(params->nbins_x);
-        _ny->setValue(params->nbins_y);
-        _nz->setValue(params->nbins_z);
-        _pixel_radius->setValue(params->neighbour_range_pixels);
-        _frame_radius->setValue(params->neighbour_range_frames);
+        _min_d->setValue(_params->d_min);
+        _max_d->setValue(_params->d_max);
+        _peak_end->setValue(_params->peak_end);
+        _bkg_begin->setValue(_params->bkg_begin);
+        _bkg_end->setValue(_params->bkg_end);
+        _min_strength->setValue(_params->strength_min);
+        _kabsch->setChecked(_params->kabsch_coords);
+        _nx->setValue(_params->nbins_x);
+        _ny->setValue(_params->nbins_y);
+        _nz->setValue(_params->nbins_z);
+        _pixel_radius->setValue(_params->neighbour_range_pixels);
+        _frame_radius->setValue(_params->neighbour_range_frames);
         _sigma_m->setValue(_peak_combo->currentPeakCollection()->sigmaM());
         _sigma_d->setValue(_peak_combo->currentPeakCollection()->sigmaD());
-        _interpolation_combo->setCurrentIndex(static_cast<int>(params->interpolation));
+        _interpolation_combo->setCurrentIndex(static_cast<int>(_params->interpolation));
     }
 }
 
@@ -381,23 +387,21 @@ void SubframeShapes::setShapeParameters()
     if (!gSession->hasProject())
         return;
 
-    auto* params = _shape_model.parameters();
-
-    params->d_min = _min_d->value();
-    params->d_max = _max_d->value();
-    params->peak_end = _peak_end->value();
-    params->bkg_begin = _bkg_begin->value();
-    params->bkg_end = _bkg_end->value();
-    params->strength_min = _min_strength->value();
-    params->kabsch_coords = _kabsch->isChecked();
-    params->nbins_x = _nx->value();
-    params->nbins_y = _ny->value();
-    params->nbins_z = _nz->value();
-    params->neighbour_range_pixels = _pixel_radius->value();
-    params->neighbour_range_frames = _frame_radius->value();
-    params->sigma_m = _sigma_m->value();
-    params->sigma_d = _sigma_d->value();
-    params->interpolation =
+    _params->d_min = _min_d->value();
+    _params->d_max = _max_d->value();
+    _params->peak_end = _peak_end->value();
+    _params->bkg_begin = _bkg_begin->value();
+    _params->bkg_end = _bkg_end->value();
+    _params->strength_min = _min_strength->value();
+    _params->kabsch_coords = _kabsch->isChecked();
+    _params->nbins_x = _nx->value();
+    _params->nbins_y = _ny->value();
+    _params->nbins_z = _nz->value();
+    _params->neighbour_range_pixels = _pixel_radius->value();
+    _params->neighbour_range_frames = _frame_radius->value();
+    _params->sigma_m = _sigma_m->value();
+    _params->sigma_d = _sigma_d->value();
+    _params->interpolation =
         static_cast<ohkl::PeakInterpolation>(_interpolation_combo->currentIndex());
 }
 
@@ -405,6 +409,7 @@ void SubframeShapes::setPreviewUp()
 {
     Spoiler* preview_spoiler = new Spoiler("Show/hide peaks");
     _peak_view_widget = new PeakViewWidget("Valid peaks", "Invalid Peaks");
+    _peak_view_widget->set1.drawIntegrationRegion->setChecked(true);
 
     preview_spoiler->setContentLayout(*_peak_view_widget);
 
@@ -435,7 +440,7 @@ void SubframeShapes::buildShapeModel()
     gGui->setReady(false);
     setShapeParameters();
     try {
-        auto* params = _shape_model.parameters();
+        _shape_model = std::make_unique<ohkl::ShapeModel>(_params);
         std::vector<ohkl::Peak3D*> fit_peaks;
 
         for (ohkl::Peak3D* peak : _peak_combo->currentPeakCollection()->getPeakList()) {
@@ -443,12 +448,12 @@ void SubframeShapes::buildShapeModel()
                 continue;
             const double d = 1.0 / peak->q().rowVector().norm();
 
-            if (d > params->d_max || d < params->d_min)
+            if (d > _params->d_max || d < _params->d_min)
                 continue;
 
             const ohkl::Intensity intensity = peak->correctedIntensity();
 
-            if (intensity.value() <= params->strength_min * intensity.sigma())
+            if (intensity.value() <= _params->strength_min * intensity.sigma())
                 continue;
             fit_peaks.push_back(peak);
         }
@@ -458,14 +463,14 @@ void SubframeShapes::buildShapeModel()
         view.watch(handler);
 
         ohkl::sptrDataSet data = _data_combo->currentData();
-        _shape_model.integrate(fit_peaks, data, handler);
+        _shape_model->integrate(fit_peaks, data, handler);
 
-        _shape_model.updateFit(1000); // This does nothing!! - zamaan
+        _shape_model->updateFit(1000); // This does nothing!! - zamaan
     } catch (std::exception& e) {
         QMessageBox::critical(this, "Error", QString(e.what()));
     }
     gGui->statusBar()->showMessage(
-        QString::number(_shape_model.numberOfPeaks()) + " shapes generated");
+        QString::number(_shape_model->numberOfPeaks()) + " shapes generated");
     toggleUnsafeWidgets();
     gGui->setReady(true);
 }
@@ -477,11 +482,10 @@ void SubframeShapes::computeProfile()
 
     setShapeParameters();
 
-    auto* params = _shape_model.parameters();
     const ohkl::DetectorEvent ev(_x->value(), _y->value(), _frame->value());
 
-    std::optional<ohkl::Profile3D> profile = _shape_model.meanProfile(
-        ev, params->neighbour_range_pixels, params->neighbour_range_frames);
+    std::optional<ohkl::Profile3D> profile = _shape_model->meanProfile(
+        ev, _params->neighbour_range_pixels, _params->neighbour_range_frames);
     if (!profile) {
         return;
     }
@@ -524,13 +528,12 @@ void SubframeShapes::computeProfile()
 void SubframeShapes::getPreviewPeak(ohkl::Peak3D* selected_peak)
 {
     setShapeParameters();
-    auto* params = _shape_model.parameters();
     int interpol = _interpolation_combo->currentIndex();
     ohkl::PeakInterpolation peak_interpolation = static_cast<ohkl::PeakInterpolation>(interpol);
 
-    auto cov = _shape_model.meanCovariance(
-        selected_peak, params->neighbour_range_pixels, params->neighbour_range_frames,
-        params->min_n_neighbors, peak_interpolation);
+    auto cov = _shape_model->meanCovariance(
+        selected_peak, _params->neighbour_range_pixels, _params->neighbour_range_frames,
+        _params->min_n_neighbors, peak_interpolation);
     if (cov) {
         Eigen::Vector3d center = selected_peak->shape().center();
         ohkl::Ellipsoid shape = ohkl::Ellipsoid(center, cov.value().inverse());
@@ -605,7 +608,7 @@ void SubframeShapes::toggleUnsafeWidgets()
 
     _build_collection->setEnabled(gSession->currentProject()->hasPeakCollection());
 
-    if (_shape_model.numberOfPeaks() > 0) {
+    if (_shape_model) {
         _save_shapes->setEnabled(true);
         _calculate_mean_profile->setEnabled(true);
     }
@@ -630,7 +633,7 @@ void SubframeShapes::onPeakSelected(ohkl::Peak3D* peak)
     _y->setValue(peak->shape().center()[1]);
     _frame->setValue(peak->shape().center()[2]);
 
-    if (_shape_model.numberOfPeaks() == 0)
+    if (!_shape_model)
         return;
     computeProfile();
     getPreviewPeak(peak);
@@ -642,7 +645,7 @@ void SubframeShapes::onShapeChanged()
     QSignalBlocker block_x(_x);
     QSignalBlocker block_y(_y);
     QSignalBlocker block_frame(_frame);
-    if (_shape_model.numberOfPeaks() == 0)
+    if (!_shape_model)
         return;
     if (!_preview_peak)
         return;

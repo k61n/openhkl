@@ -227,9 +227,10 @@ QImage* PeakCollectionGraphics::getIntegrationRegionImage(std::size_t frame_idx,
     Eigen::MatrixXi mask(data->nRows(), data->nCols());
     mask.setConstant(int(EventType::EXCLUDED));
     initIntRegionFromPeakWidget();
-    if (peak)
-        getSinglePeakIntegrationMask(peak, mask, frame_idx);
-    else
+    if (_params->singlePeakIntRegion) {
+        if (peak)
+            getSinglePeakIntegrationMask(peak, mask, frame_idx);
+    } else
         getIntegrationMask(mask, frame_idx);
 
     QImage* region_img = new QImage(mask.cols(), mask.rows(), QImage::Format_ARGB32);

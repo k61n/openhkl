@@ -32,7 +32,6 @@ const ShapeModelMap* ShapeHandler::getShapeModelMap() const
 
 bool ShapeHandler::addShapeModel(const std::string& name, const ohkl::ShapeModel& shapes)
 {
-    // abort if name is aleady in use
     if (hasShapeModel(name))
         return false;
     ohklLog(
@@ -42,6 +41,19 @@ bool ShapeHandler::addShapeModel(const std::string& name, const ohkl::ShapeModel
     ptr->setName(name);
     ptr->setId(_last_index++);
     _shape_models.insert_or_assign(name, std::move(ptr));
+    return hasShapeModel(name); // now name must be in use
+}
+
+bool ShapeHandler::addShapeModel(const std::string& name, std::unique_ptr<ohkl::ShapeModel>& shapes)
+{
+    if (hasShapeModel(name))
+        return false;
+    ohklLog(
+        Level::Info, "ShapeHandler::addShapeModel '", name, "': ", shapes->numberOfPeaks(),
+        " shapes");
+    shapes->setName(name);
+    shapes->setId(_last_index++);
+    _shape_models.insert_or_assign(name, std::move(shapes));
     return hasShapeModel(name); // now name must be in use
 }
 

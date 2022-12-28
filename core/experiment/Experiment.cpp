@@ -608,6 +608,11 @@ bool Experiment::addShapeModel(const std::string& name, const ShapeModel& shapes
     return _shape_handler->addShapeModel(name, shapes);
 }
 
+bool Experiment::addShapeModel(const std::string& name, std::unique_ptr<ShapeModel>& shapes)
+{
+    return _shape_handler->addShapeModel(name, shapes);
+}
+
 bool Experiment::addEmptyShapeModel(const std::string& name)
 {
     return _shape_handler->addEmptyModel(name);
