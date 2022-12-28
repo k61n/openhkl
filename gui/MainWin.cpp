@@ -91,9 +91,9 @@ MainWin::MainWin()
     merger = new SubframeMergedPeaks;
 
     detector_window = new DetectorWindow();
-    log_window = new LogWindow(this);
-    input_files_window = new InputFilesWindow(this);
-    peak_list_window = new PeaklistWindow(this);
+    log_window = new LogWindow();
+    input_files_window = new InputFilesWindow();
+    peak_list_window = new PeaklistWindow();
 
     _layout_stack = new QStackedWidget(main_widget);
     _layout_stack->addWidget(home);

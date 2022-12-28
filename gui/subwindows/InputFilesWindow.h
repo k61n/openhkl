@@ -28,7 +28,7 @@
 class InputFilesWindow : public QDialog {
 
  public:
-    InputFilesWindow(QWidget* parent);
+    InputFilesWindow(QWidget* parent = nullptr);
 
     void setDataset(QString set);
 
