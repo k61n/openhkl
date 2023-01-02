@@ -24,7 +24,7 @@ namespace ohkl {
 class IntegrationRegion;
 enum class Level;
 
-enum class IntegratorType { PixelSum, Gaussian, ISigma, Profile1D, Profile3D, Count };
+enum class IntegratorType { PixelSum = 0, Gaussian, ISigma, Profile1D, Profile3D, Count };
 
 /*! \addtogroup python_api
  *  @{*/
@@ -67,6 +67,8 @@ struct IntegrationParameters {
     bool fft_gradient = false;
     //! Whether to use fixed or sigma-dependent integration regions
     RegionType region_type = RegionType::VariableEllipsoid;
+    //! Whether to skip peaks that intersect masks
+    bool skip_masked = true;
 
     void log(const Level& level) const;
 };

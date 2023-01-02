@@ -14,6 +14,7 @@
 
 #include "core/integration/IIntegrator.h"
 
+#include "base/geometry/Ellipsoid.h"
 #include "base/utils/Logger.h"
 #include "core/data/DataSet.h"
 #include "core/peak/IntegrationRegion.h"
@@ -157,6 +158,19 @@ void IIntegrator::integrate(
 #pragma omp parallel for
         for (auto peak : peaks) {
             auto* current_peak = regions.at(peak).get();
+            // Check whether the peak intersects a mask
+            if (_params.skip_masked) {
+                Ellipsoid shape = peak->shape();
+                shape.scale(bkg_end);
+                for (const auto* mask : data->masks()) {
+                    if (mask->collide(shape)) {
+                        peak->setRejectionFlag(RejectionFlag::Masked);
+                        peak->setMasked(true);
+                        ++nfailures;
+                        continue;
+                    }
+                }
+            }
             // Check for saturated pixels
             const auto& counts = current_peak->peakData().counts();
             double max = 0;

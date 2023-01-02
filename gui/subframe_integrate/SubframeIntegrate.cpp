@@ -17,6 +17,7 @@
 
 #include "core/data/ImageGradient.h"
 #include "core/experiment/Experiment.h"
+#include "core/integration/IIntegrator.h"
 #include "core/peak/IntegrationRegion.h"
 #include "core/peak/Peak3D.h"
 #include "core/shape/ShapeModel.h"
@@ -28,7 +29,6 @@
 #include "gui/subwindows/DetectorWindow.h"
 #include "gui/utility/DataComboBox.h"
 #include "gui/utility/GridFiller.h"
-#include "gui/utility/LinkedComboBox.h"
 #include "gui/utility/PeakComboBox.h"
 #include "gui/utility/PropertyScrollArea.h"
 #include "gui/utility/SafeSpinBox.h"
@@ -75,8 +75,12 @@ SubframeIntegrate::SubframeIntegrate() : QWidget()
         _peak_view_widget, &PeakViewWidget::settingsChanged, _detector_widget,
         &DetectorWidget::refresh);
     connect(
+        _integrator_combo,
+        static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
+        this, &SubframeIntegrate::toggleUnsafeWidgets);
+    connect(
         _integration_region_type,
-        static_cast<void (LinkedComboBox::*)(int)>(&LinkedComboBox::currentIndexChanged),
+        static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
         _detector_widget, &DetectorWidget::refresh);
     connect(
         _gradient_kernel, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
@@ -206,9 +210,7 @@ void SubframeIntegrate::grabIntegrationParameters()
     _fft_gradient->setChecked(params->fft_gradient);
     _gradient_kernel->setCurrentIndex(static_cast<int>(params->gradient_type));
 
-    for (auto it = _integrator_strings.begin(); it != _integrator_strings.end(); ++it)
-        if (it->second == params->integrator_type)
-            _integrator_combo->setCurrentText(QString::fromStdString(it->first));
+    _integrator_combo->setCurrentIndex(static_cast<int>(params->integrator_type));
 
     for (auto it = ohkl::regionTypeDescription.begin(); it != ohkl::regionTypeDescription.end();
          ++it)
@@ -233,8 +235,7 @@ void SubframeIntegrate::setIntegrationParameters()
     params->fit_cov = _fit_covariance->isChecked();
     params->min_neighbors = _min_neighbours->value();
     params->region_type = static_cast<ohkl::RegionType>(_integration_region_type->currentIndex());
-    params->integrator_type =
-        _integrator_strings.find(_integrator_combo->currentText().toStdString())->second;
+    params->integrator_type = static_cast<ohkl::IntegratorType>(_integrator_combo->currentIndex());
     if (params->region_type == ohkl::RegionType::VariableEllipsoid) {
         params->peak_end = _peak_end->value();
         params->bkg_begin = _bkg_begin->value();
@@ -368,8 +369,10 @@ void SubframeIntegrate::setIntegrateUp()
     _integrate_button = f.addButton("Integrate peaks");
 
     // -- Initialize controls
-    for (const auto& [key, val] : _integrator_strings)
-        _integrator_combo->addItem(QString::fromStdString(key));
+    for (std::size_t idx = 0; idx < static_cast<int>(ohkl::IntegratorType::Count); ++idx) {
+        const std::string integrator_type = _integrator_strings.at(static_cast<ohkl::IntegratorType>(idx));
+        _integrator_combo->addItem(QString::fromStdString(integrator_type));
+    }
 
     _interpolation_combo->addItem("None");
     _interpolation_combo->addItem("Inverse distance");
@@ -529,6 +532,7 @@ void SubframeIntegrate::runIntegration()
         gGui->statusBar()->showMessage(
             QString::number(integrator->numberOfValidPeaks()) + "/"
             + QString::number(integrator->numberOfPeaks()) + " peaks integrated");
+        refreshPeakTable();
     } catch (std::exception& e) {
         QMessageBox::critical(this, "Error", QString(e.what()));
     }

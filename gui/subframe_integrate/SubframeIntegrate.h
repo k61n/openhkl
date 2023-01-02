@@ -159,12 +159,12 @@ class SubframeIntegrate : public QWidget {
 
     std::shared_ptr<ohkl::ShapeModelParameters> _shape_params;
 
-    const std::map<std::string, ohkl::IntegratorType> _integrator_strings{
-        {"Pixel sum integrator", ohkl::IntegratorType::PixelSum},
-        {"Gaussian integrator", ohkl::IntegratorType::Gaussian},
-        {"I/Sigma integrator", ohkl::IntegratorType::ISigma},
-        {"1D Profile integrator", ohkl::IntegratorType::Profile1D},
-        {"3D Profile integrator", ohkl::IntegratorType::Profile3D}};
+    const std::map<ohkl::IntegratorType, std::string> _integrator_strings{
+        {ohkl::IntegratorType::PixelSum, "Pixel sum integrator"},
+        {ohkl::IntegratorType::Gaussian, "Gaussian integrator"},
+        {ohkl::IntegratorType::ISigma, "I/Sigma integrator"},
+        {ohkl::IntegratorType::Profile1D, "1D Profile integrator"},
+        {ohkl::IntegratorType::Profile3D, "3D Profile integrator"}};
 
     const std::map<ohkl::GradientKernel, QString> _kernel_description{
         {ohkl::GradientKernel::CentralDifference, "Central difference"},
