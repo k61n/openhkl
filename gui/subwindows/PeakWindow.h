@@ -21,6 +21,7 @@
 
 #include <Eigen/Core>
 
+#include <QComboBox>
 #include <QDialog>
 #include <QDoubleSpinBox>
 #include <QGraphicsPixmapItem>
@@ -41,10 +42,14 @@ struct PeakWindowParameters {
     double peak_end = 3.0;
     double bkg_begin = 3.0;
     double bkg_end = 6.0;
+    double fixed_peak_end = 8.0;
+    double fixed_bkg_begin = 1.0;
+    double fixed_bkg_end = 2.0;
     QColor peak_color = Qt::yellow;
     QColor bkg_color = Qt::green;
     double alpha = 0.2;
     int max_intensity = 3000;
+    ohkl::RegionType region_type = ohkl::RegionType::VariableEllipsoid;
 };
 
 //! Modeless dialog containing a non-contextual detector scene (open via Menu)
@@ -72,7 +77,9 @@ class PeakWindow : public QDialog {
     //! Set up the initial display
     void initView();
 
+    //! Set widgets from parameters structure
     void grabParameters();
+    //! Set parameters structure from widgets
     void setParameters();
 
     void closeEvent(QCloseEvent* event) override;
@@ -92,6 +99,7 @@ class PeakWindow : public QDialog {
     QDoubleSpinBox* _peak_end;
     QDoubleSpinBox* _bkg_begin;
     QDoubleSpinBox* _bkg_end;
+    QComboBox* _region_type;
     QDoubleSpinBox* _alpha;
     ColorButton* _peak_color_button;
     ColorButton* _bkg_color_button;

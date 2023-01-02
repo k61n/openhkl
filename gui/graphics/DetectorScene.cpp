@@ -472,7 +472,7 @@ bool DetectorScene::setBoxBounds(QGraphicsRectItem* box)
 
     // Left click and hold without moving
     if (qAbs(top - bot) <= 1 || qAbs(left - right) <= 1) {
-        deleteGraphicsItem(box);
+        box = nullptr;
         return false;
     }
 
@@ -513,7 +513,6 @@ void DetectorScene::deleteGraphicsItem(QGraphicsItem* item)
 {
     if (item) {
         removeItem(item);
-        delete item;
         item = nullptr;
     }
 }
@@ -549,7 +548,8 @@ void DetectorScene::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
                 adjustZoomRect(_zoomrect);
                 _zoomStack.push_back(_zoomrect->rect().toRect());
                 setSceneRect(_zoomrect->rect());
-                deleteGraphicsItem(_zoomrect);
+                removeItem(_zoomrect);
+                _zoomrect = nullptr;
                 emit dataChanged();
             }
         } else if (_mode == DRAG_DROP) {
