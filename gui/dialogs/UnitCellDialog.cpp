@@ -33,7 +33,6 @@ UnitCellDialog::UnitCellDialog(
     QLabel* label = new QLabel("Unit cell name:");
     label->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
     _cell_name = new QLineEdit("");
-    _cell_name->setFixedWidth(200);
     gridLayout->addWidget(label, row, 0, 1, 1);
     gridLayout->addWidget(_cell_name, row++, 1, 1, 2);
 
@@ -42,7 +41,6 @@ UnitCellDialog::UnitCellDialog(
     _space_group = new QComboBox();
     _space_group->addItems(spaceGroups);
     _space_group->setInsertPolicy(QComboBox::InsertAlphabetically);
-    _space_group->setFixedWidth(200);
     gridLayout->addWidget(label, row, 0, 1, 1);
     gridLayout->addWidget(_space_group, row++, 1, 1, 2);
 
@@ -52,7 +50,6 @@ UnitCellDialog::UnitCellDialog(
         _peak_collections = new QComboBox();
         _peak_collections->addItems(collectionNames);
         _peak_collections->setInsertPolicy(QComboBox::InsertAlphabetically);
-        _peak_collections->setFixedWidth(200);
         gridLayout->addWidget(label, row, 0, 1, 1);
         gridLayout->addWidget(_peak_collections, row++, 1, 1, 2);
     }

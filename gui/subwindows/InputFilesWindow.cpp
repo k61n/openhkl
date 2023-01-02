@@ -27,6 +27,7 @@
 #include <QHBoxLayout>
 #include <QHeaderView>
 #include <QPushButton>
+#include <QSizePolicy>
 #include <QTableWidget>
 
 #include <regex>
@@ -35,6 +36,7 @@
 InputFilesWindow::InputFilesWindow(QWidget* parent) : QDialog(parent)
 {
     setModal(false);
+    setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
     auto layout = new QVBoxLayout(this);
     auto header_layout = new QHBoxLayout();
@@ -43,22 +45,23 @@ InputFilesWindow::InputFilesWindow(QWidget* parent) : QDialog(parent)
 
     QLabel* label = new QLabel("Input files for dataset:");
     _data_set = new QComboBox();
-    _data_set->setMaximumSize(QSize(300, 50));
     header_layout->addWidget(label);
     header_layout->addWidget(_data_set);
 
 
     _files_table = new QTableWidget();
+    _files_table->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     _files_table->setColumnCount(2);
     _files_table->setEditTriggers(QAbstractItemView::NoEditTriggers);
     _files_table->setHorizontalHeaderLabels(QStringList{"ID", "Path"});
     _files_table->resizeColumnsToContents();
     _files_table->verticalHeader()->setVisible(false);
+    _files_table->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
     layout->addLayout(header_layout);
     layout->addWidget(_files_table);
+    setLayout(layout);
 
-    resize(800, 600);
     connect(
         _data_set, qOverload<int>(&QComboBox::currentIndexChanged), this,
         &InputFilesWindow::on_combobox_select);
@@ -72,58 +75,61 @@ void InputFilesWindow::setDataset(QString set)
 
 void InputFilesWindow::refreshAll()
 {
-    if (gSession->hasProject()) {
-        Project* prj = gSession->currentProject();
-        auto allData = prj->allData();
-        auto nData = prj->allData().size();
-        int id;
+    if (!gSession->hasProject())
+        return;
 
-        if (_data_set->count()
-            > 0) { // clear combobox -- needed both clear() and removeItem to be stable working
-            _data_set->clear();
-            for (int i = 0; i <= _data_set->count(); i++)
-                _data_set->removeItem(i);
-            _data_set->setCurrentIndex(-1);
+    Project* prj = gSession->currentProject();
+    auto allData = prj->allData();
+    auto nData = prj->allData().size();
+    int id;
+
+    if (_data_set->count()
+        > 0) { // clear combobox -- needed both clear() and removeItem to be stable working
+        _data_set->clear();
+        for (int i = 0; i <= _data_set->count(); i++)
+            _data_set->removeItem(i);
+        _data_set->setCurrentIndex(-1);
+    }
+    if (nData > 0) {
+        for (int i = 0; i < nData; i++) {
+            _data_set->addItem(QString::fromStdString(prj->getData(i)->name()));
         }
-        if (nData > 0) {
-            for (int i = 0; i < nData; i++) {
-                _data_set->addItem(QString::fromStdString(prj->getData(i)->name()));
-            }
-            id = _data_set->currentIndex();
-            if ((id == -1) || (id >= nData))
-                id = 0; // selects dataset by selected row in table
+        id = _data_set->currentIndex();
+        if ((id == -1) || (id >= nData))
+            id = 0; // selects dataset by selected row in table
 
-            ohkl::sptrDataSet data = prj->getData(id);
+        ohkl::sptrDataSet data = prj->getData(id);
 
-            const ohkl::MetaData& metadata = data->metadata();
-            const ohkl::MetaDataMap& map = metadata.map();
+        const ohkl::MetaData& metadata = data->metadata();
+        const ohkl::MetaDataMap& map = metadata.map();
 
-            _files_table->clear();
-            _files_table->setRowCount(0);
+        _files_table->clear();
+        _files_table->setRowCount(0);
 
-            for (auto element : map) {
-                if (element.first == "sources") {
-                    auto input = std::get<std::string>(element.second);
+        for (auto element : map) {
+            if (element.first == "sources") {
+                auto input = std::get<std::string>(element.second);
 
-                    std::regex re("[\\|,:]");
-                    // the '-1' is what makes the regex split (-1 := what was not matched)
-                    std::sregex_token_iterator first{input.begin(), input.end(), re, -1}, last;
-                    std::vector<std::string> tokens{first, last};
+                std::regex re("[\\|,:]");
+                // the '-1' is what makes the regex split (-1 := what was not matched)
+                std::sregex_token_iterator first{input.begin(), input.end(), re, -1}, last;
+                std::vector<std::string> tokens{first, last};
 
-                    for (auto& e : tokens) {
-                        _files_table->insertRow(_files_table->rowCount());
-                        _files_table->setItem(
-                            _files_table->rowCount() - 1, 0,
-                            new QTableWidgetItem(QString::number(_files_table->rowCount() - 1)));
-                        _files_table->setItem(
-                            _files_table->rowCount() - 1, 1,
-                            new QTableWidgetItem(QString::fromStdString(e)));
-                    }
+                for (auto& e : tokens) {
+                    _files_table->insertRow(_files_table->rowCount());
+                    _files_table->setItem(
+                        _files_table->rowCount() - 1, 0,
+                        new QTableWidgetItem(QString::number(_files_table->rowCount() - 1)));
+                    _files_table->setItem(
+                        _files_table->rowCount() - 1, 1,
+                        new QTableWidgetItem(QString::fromStdString(e)));
                 }
             }
         }
     }
     _files_table->resizeColumnsToContents();
+    resize(
+        _files_table->horizontalHeader()->length(), _files_table->verticalHeader()->height()*3);
 }
 
 void InputFilesWindow::on_combobox_select()
@@ -166,4 +172,6 @@ void InputFilesWindow::on_combobox_select()
         }
     }
     _files_table->resizeColumnsToContents();
+    resize(
+        _files_table->horizontalHeader()->length(), _files_table->verticalHeader()->height() * 3);
 }

@@ -20,17 +20,14 @@
 #include <QLabel>
 #include <QVBoxLayout>
 
-ListNameDialog::ListNameDialog(QString suggestion)
+ListNameDialog::ListNameDialog(QString suggestion, QString name)
 {
     setModal(true);
-    resize(500, 130);
-    setMinimumSize(500, 130);
-    setMaximumSize(500, 130);
 
     QVBoxLayout* whole = new QVBoxLayout(this);
     QHBoxLayout* line = new QHBoxLayout;
     _name = new QLineEdit();
-    line->addWidget(new QLabel("Peak collection name: "));
+    line->addWidget(new QLabel(name + QString(" name: ")));
     line->addWidget(_name);
     whole->addLayout(line);
     QDialogButtonBox* buttonbox =

@@ -49,14 +49,10 @@ QStringList allInstrumentNames()
 ExperimentDialog::ExperimentDialog(QString exp_name)
 {
     setModal(true);
-    resize(500, 130);
-    setMinimumSize(500, 130);
-    setMaximumSize(500, 130);
     QGridLayout* gridLayout = new QGridLayout(this);
     QHBoxLayout* horizontalLayout = new QHBoxLayout;
     horizontalLayout->addWidget(new QLabel("Name:"));
     experiment = new QLineEdit("");
-    experiment->setMaximumSize(200, 30);
     horizontalLayout->addWidget(experiment);
     gridLayout->addLayout(horizontalLayout, 0, 0, 1, 1);
     QHBoxLayout* horizontalLayout_2 = new QHBoxLayout;

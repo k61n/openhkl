@@ -472,6 +472,7 @@ void SubframeFindPeaks::find()
         QMessageBox::critical(this, "Error", QString(e.what()));
     }
     gGui->statusBar()->showMessage(QString::number(finder->numberFound()) + " peaks found");
+    toggleUnsafeWidgets();
     gGui->setReady(true);
 }
 
