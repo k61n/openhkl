@@ -539,7 +539,7 @@ void ShapeModel::build(PeakCollection* peaks, sptrDataSet data)
     integrator.integrate(fit_peaks, this, data);
     ohklLog(Level::Info, "ShapeModel::build: finished integrating shapes");
     ohklLog(Level::Info, "ShapeModel::build: updating fit");
-    // updateFit(1000);
+    updateFit(1000);
     ohklLog(Level::Info, "ShapeModel::build: done");
 }
 
