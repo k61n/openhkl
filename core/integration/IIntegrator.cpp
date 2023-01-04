@@ -125,7 +125,7 @@ void IIntegrator::integrate(
         if (lo[0] < 0 || lo[1] < 0 || lo[2] < 0 || hi[0] >= data->nCols() || hi[1] >= data->nRows()
             || hi[2] >= data->nFrames()) {
             peak->setSelected(false);
-            peak->setRejectionFlag(RejectionFlag::InvalidRegion);
+            peak->setIntegrationFlag(RejectionFlag::InvalidRegion);
         }
     }
 
@@ -195,13 +195,13 @@ void IIntegrator::integrate(
                         _params.peak_end, _params.bkg_begin, _params.bkg_end);
                     if (saturated) {
                         peak->setSelected(false);
-                        peak->setRejectionFlag(RejectionFlag::SaturatedPixel);
+                        peak->setIntegrationFlag(RejectionFlag::SaturatedPixel);
                     }
                 } else {
 #pragma omp atomic
                     ++nfailures;
                     peak->setSelected(false);
-                    peak->setRejectionFlag(RejectionFlag::IntegrationFailure);
+                    peak->setIntegrationFlag(RejectionFlag::IntegrationFailure);
                 }
                 // free memory (important!!)
                 current_peak->reset();

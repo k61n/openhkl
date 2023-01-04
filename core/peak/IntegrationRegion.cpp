@@ -47,7 +47,7 @@ IntegrationRegion::IntegrationRegion(
             if (!std::isnan(r)) { // Eigensolver to compute radii can fail, resulting in NaN
                 _shape.scale(peak_end / r);
             } else {
-                peak->setRejectionFlag(RejectionFlag::InvalidRegion);
+                peak->setIntegrationFlag(RejectionFlag::InvalidRegion);
                 peak->setSelected(false);
             }
             _peakEnd = peak_end;
@@ -55,7 +55,7 @@ IntegrationRegion::IntegrationRegion(
             break;
         }
         default: {
-            peak->setRejectionFlag(RejectionFlag::InvalidRegion);
+            peak->setIntegrationFlag(RejectionFlag::InvalidRegion);
             peak->setSelected(false);
             break;
         }

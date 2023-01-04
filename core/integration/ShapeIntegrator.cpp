@@ -37,13 +37,13 @@ bool ShapeIntegrator::compute(
 
     if (!uc) {
         peak->setSelected(false);
-        peak->setRejectionFlag(RejectionFlag::NoUnitCell);
+        peak->setIntegrationFlag(RejectionFlag::NoUnitCell);
         return false;
     }
 
     if (!data) {
         peak->setSelected(false);
-        peak->setRejectionFlag(RejectionFlag::NoDataSet);
+        peak->setIntegrationFlag(RejectionFlag::NoDataSet);
         return false;
     }
 

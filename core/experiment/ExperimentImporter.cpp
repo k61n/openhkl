@@ -193,6 +193,7 @@ void ExperimentImporter::loadPeaks(Experiment* experiment)
             Eigen_VecXd mean_bkg_grad_sig(n_peaks);
 
             Eigen_VecXint rejection_flag(n_peaks);
+            Eigen_VecXint integration_flag(n_peaks);
 
             std::map<std::string, Eigen_VecXd*> double_keys{
                 {ohkl::ds_BkgBegin, &bkg_begin},
@@ -208,7 +209,8 @@ void ExperimentImporter::loadPeaks(Experiment* experiment)
                 {ohkl::ds_bkgGradSigma, &mean_bkg_grad_sig}};
 
             std::map<std::string, Eigen_VecXint*> int_keys{
-                {ohkl::ds_Rejection, &rejection_flag},
+                {ohkl::ds_RejectionFlag, &rejection_flag},
+                {ohkl::ds_IntegrationFlag, &integration_flag},
             };
 
             Eigen_VecXbool predicted(n_peaks);
@@ -353,7 +355,7 @@ void ExperimentImporter::loadPeaks(Experiment* experiment)
                 peak->setManually(
                     peak_intensity, peak_end[k], bkg_begin[k], bkg_end[k], scale[k],
                     transmission[k], peak_mean_bkg, predicted[k], selected[k], masked[k],
-                    rejection_flag[k], peak_bkg_grad);
+                    rejection_flag[k], integration_flag[k], peak_bkg_grad);
 
 
                 if (experiment->numUnitCells() > 0) {
